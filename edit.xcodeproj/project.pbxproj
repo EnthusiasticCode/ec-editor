@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B71C0F0312DB60DC002843EF /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B71C0F0212DB60DC002843EF /* CoreText.framework */; };
 		B736172E12DA112A009801D4 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B736172D12DA112A009801D4 /* UIKit.framework */; };
 		B736173012DA112A009801D4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B736172F12DA112A009801D4 /* Foundation.framework */; };
 		B736173212DA112A009801D4 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B736173112DA112A009801D4 /* CoreGraphics.framework */; };
@@ -22,28 +23,41 @@
 		B736175112DA112A009801D4 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = B736175012DA112A009801D4 /* InfoPlist.strings */; };
 		B736175312DA112A009801D4 /* editTests.h in Resources */ = {isa = PBXBuildFile; fileRef = B736175212DA112A009801D4 /* editTests.h */; };
 		B736175512DA112B009801D4 /* editTests.m in Sources */ = {isa = PBXBuildFile; fileRef = B736175412DA112A009801D4 /* editTests.m */; };
+		B736176612DA26BB009801D4 /* CSEditor.m in Sources */ = {isa = PBXBuildFile; fileRef = B736176512DA26BB009801D4 /* CSEditor.m */; };
+		B736176912DA27E3009801D4 /* CSEditorView.m in Sources */ = {isa = PBXBuildFile; fileRef = B736176812DA27E3009801D4 /* CSEditorView.m */; };
+		B7BF318D12DB7FB700AFF9C1 /* IndexedPosition.m in Sources */ = {isa = PBXBuildFile; fileRef = B7BF318C12DB7FB700AFF9C1 /* IndexedPosition.m */; };
+		B7BF319012DB7FDB00AFF9C1 /* IndexedRange.m in Sources */ = {isa = PBXBuildFile; fileRef = B7BF318F12DB7FDB00AFF9C1 /* IndexedRange.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		B71C0F0212DB60DC002843EF /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
 		B736172A12DA112A009801D4 /* edit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = edit.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B736172D12DA112A009801D4 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		B736172F12DA112A009801D4 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		B736173112DA112A009801D4 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		B736173312DA112A009801D4 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
-		B736173512DA112A009801D4 /* edit-Info.plist */ = {isa = PBXFileReference; path = "edit-Info.plist"; sourceTree = "<group>"; };
-		B736173612DA112A009801D4 /* edit-Prefix.pch */ = {isa = PBXFileReference; path = "edit-Prefix.pch"; sourceTree = "<group>"; };
+		B736173512DA112A009801D4 /* edit-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "edit-Info.plist"; sourceTree = "<group>"; };
+		B736173612DA112A009801D4 /* edit-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "edit-Prefix.pch"; sourceTree = "<group>"; };
 		B736173812DA112A009801D4 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		B736173A12DA112A009801D4 /* edit-main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "edit-main.m"; sourceTree = "<group>"; };
-		B736173C12DA112A009801D4 /* editAppDelegate.h */ = {isa = PBXFileReference; path = editAppDelegate.h; sourceTree = "<group>"; };
+		B736173C12DA112A009801D4 /* editAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = editAppDelegate.h; sourceTree = "<group>"; };
 		B736173D12DA112A009801D4 /* editAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = editAppDelegate.m; sourceTree = "<group>"; };
 		B736173F12DA112A009801D4 /* edit.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = edit.xcdatamodel; sourceTree = "<group>"; };
 		B736174212DA112A009801D4 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainWindow.xib; sourceTree = "<group>"; };
 		B736174A12DA112A009801D4 /* editTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = editTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
-		B736174E12DA112A009801D4 /* editTests-Info.plist */ = {isa = PBXFileReference; path = "editTests-Info.plist"; sourceTree = "<group>"; };
-		B736174F12DA112A009801D4 /* editTests-Prefix.pch */ = {isa = PBXFileReference; path = "editTests-Prefix.pch"; sourceTree = "<group>"; };
+		B736174E12DA112A009801D4 /* editTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "editTests-Info.plist"; sourceTree = "<group>"; };
+		B736174F12DA112A009801D4 /* editTests-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "editTests-Prefix.pch"; sourceTree = "<group>"; };
 		B736175012DA112A009801D4 /* InfoPlist.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = InfoPlist.strings; path = en.lproj/editTests/InfoPlist.strings; sourceTree = "<group>"; };
 		B736175212DA112A009801D4 /* editTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = editTests.h; sourceTree = "<group>"; };
 		B736175412DA112A009801D4 /* editTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = editTests.m; sourceTree = "<group>"; };
+		B736176412DA26BB009801D4 /* CSEditor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSEditor.h; sourceTree = "<group>"; };
+		B736176512DA26BB009801D4 /* CSEditor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CSEditor.m; sourceTree = "<group>"; };
+		B736176712DA27E3009801D4 /* CSEditorView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSEditorView.h; sourceTree = "<group>"; };
+		B736176812DA27E3009801D4 /* CSEditorView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CSEditorView.m; sourceTree = "<group>"; };
+		B7BF318B12DB7FB700AFF9C1 /* IndexedPosition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IndexedPosition.h; sourceTree = "<group>"; };
+		B7BF318C12DB7FB700AFF9C1 /* IndexedPosition.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IndexedPosition.m; sourceTree = "<group>"; };
+		B7BF318E12DB7FDB00AFF9C1 /* IndexedRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IndexedRange.h; sourceTree = "<group>"; };
+		B7BF318F12DB7FDB00AFF9C1 /* IndexedRange.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IndexedRange.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -55,6 +69,7 @@
 				B736173012DA112A009801D4 /* Foundation.framework in Frameworks */,
 				B736173212DA112A009801D4 /* CoreGraphics.framework in Frameworks */,
 				B736173412DA112A009801D4 /* CoreData.framework in Frameworks */,
+				B71C0F0312DB60DC002843EF /* CoreText.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -97,6 +112,14 @@
 			children = (
 				B736173C12DA112A009801D4 /* editAppDelegate.h */,
 				B736173D12DA112A009801D4 /* editAppDelegate.m */,
+				B7BF318B12DB7FB700AFF9C1 /* IndexedPosition.h */,
+				B7BF318C12DB7FB700AFF9C1 /* IndexedPosition.m */,
+				B7BF318E12DB7FDB00AFF9C1 /* IndexedRange.h */,
+				B7BF318F12DB7FDB00AFF9C1 /* IndexedRange.m */,
+				B736176712DA27E3009801D4 /* CSEditorView.h */,
+				B736176812DA27E3009801D4 /* CSEditorView.m */,
+				B736176412DA26BB009801D4 /* CSEditor.h */,
+				B736176512DA26BB009801D4 /* CSEditor.m */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -126,6 +149,7 @@
 		B736172512DA1129009801D4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B71C0F0212DB60DC002843EF /* CoreText.framework */,
 				B736172D12DA112A009801D4 /* UIKit.framework */,
 				B736172F12DA112A009801D4 /* Foundation.framework */,
 				B736173112DA112A009801D4 /* CoreGraphics.framework */,
@@ -258,6 +282,10 @@
 				B736173B12DA112A009801D4 /* edit-main.m in Sources */,
 				B736173E12DA112A009801D4 /* editAppDelegate.m in Sources */,
 				B736174012DA112A009801D4 /* edit.xcdatamodel in Sources */,
+				B736176612DA26BB009801D4 /* CSEditor.m in Sources */,
+				B736176912DA27E3009801D4 /* CSEditorView.m in Sources */,
+				B7BF318D12DB7FB700AFF9C1 /* IndexedPosition.m in Sources */,
+				B7BF319012DB7FDB00AFF9C1 /* IndexedRange.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -345,6 +373,10 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "edit-Prefix.pch";
 				INFOPLIST_FILE = "edit-Info.plist";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SDKROOT)$(SYSTEM_LIBRARY_DIR)/Frameworks/CoreText.framework\"",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -358,6 +390,10 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "edit-Prefix.pch";
 				INFOPLIST_FILE = "edit-Info.plist";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SDKROOT)$(SYSTEM_LIBRARY_DIR)/Frameworks/CoreText.framework\"",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				VALIDATE_PRODUCT = YES;
 				WRAPPER_EXTENSION = app;
