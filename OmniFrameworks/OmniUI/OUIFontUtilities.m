@@ -10,7 +10,7 @@
 #import <OmniUI/OUIInspector.h>
 #import <CoreText/CTFont.h>
 
-RCS_ID("$Id$");
+
 
 // CTFontCreateWithName can end up loading the font off disk, and if this is the only reference, it can do it each time we call this (like when we are reloading in the font family table).
 // Cache the display name for each font to avoid this.

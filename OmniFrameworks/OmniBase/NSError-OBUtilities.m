@@ -8,11 +8,10 @@
 #import <OmniBase/NSError-OBUtilities.h>
 
 #import <Foundation/Foundation.h>
-#import <OmniBase/rcsid.h>
 #import <OmniBase/assertions.h>
 #import <OmniBase/OBUtilities.h>
 
-RCS_ID("$Id$");
+
 
 NSString * const OBErrorDomain = @"com.omnigroup.framework.OmniBase.ErrorDomain";
 NSString * const OBFileNameAndNumberErrorKey = @"com.omnigroup.framework.OmniBase.ErrorDomain.FileLineAndNumber";

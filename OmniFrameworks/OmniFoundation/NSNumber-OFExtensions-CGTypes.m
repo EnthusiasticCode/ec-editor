@@ -7,7 +7,6 @@
 
 #import <OmniFoundation/NSNumber-OFExtensions-CGTypes.h>
 #import <CoreFoundation/CoreFoundation.h>
-#import <OmniBase/rcsid.h>
 
 RCS_ID("$Id$")
 

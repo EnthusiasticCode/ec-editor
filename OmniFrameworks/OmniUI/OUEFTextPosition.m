@@ -7,9 +7,8 @@
 
 #import "OUEFTextPosition.h"
 
-#import <OmniBase/rcsid.h>
 
-RCS_ID("$Id$");
+
 
 @implementation OUEFTextPosition : UITextPosition
 

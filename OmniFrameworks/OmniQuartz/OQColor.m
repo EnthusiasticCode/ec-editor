@@ -27,7 +27,7 @@
 #import <OmniAppKit/NSUserDefaults-OAExtensions.h>
 #endif
 
-RCS_ID("$Id$");
+
 
 /*
  Conceptually, we want to draw the opaque outline background color and then layer on colors based on other styles until we have filled the cell.  But, we need to provide a single color for the layer background color and we start from the deepest nesting. So, instead we want to compute start from the top color and work our way back until we hit an opaque color (hopefully quickly). As we work, we need to either composite a top translucent color and a bottom color that may be opaque or translucent.

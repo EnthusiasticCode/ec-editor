@@ -76,8 +76,6 @@
 		B736175112DA112A009801D4 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = B736175012DA112A009801D4 /* InfoPlist.strings */; };
 		B736175312DA112A009801D4 /* editTests.h in Resources */ = {isa = PBXBuildFile; fileRef = B736175212DA112A009801D4 /* editTests.h */; };
 		B736175512DA112B009801D4 /* editTests.m in Sources */ = {isa = PBXBuildFile; fileRef = B736175412DA112A009801D4 /* editTests.m */; };
-		B736176612DA26BB009801D4 /* CSEditor.m in Sources */ = {isa = PBXBuildFile; fileRef = B736176512DA26BB009801D4 /* CSEditor.m */; };
-		B736176912DA27E3009801D4 /* CSEditorView.m in Sources */ = {isa = PBXBuildFile; fileRef = B736176812DA27E3009801D4 /* CSEditorView.m */; };
 		B77536E712DF592D00E6C048 /* OUITextSelectionHandle.png in Resources */ = {isa = PBXBuildFile; fileRef = B77536DF12DF592D00E6C048 /* OUITextSelectionHandle.png */; };
 		B77536E812DF592D00E6C048 /* OUIRectangularOverlayFrame.png in Resources */ = {isa = PBXBuildFile; fileRef = B77536E012DF592D00E6C048 /* OUIRectangularOverlayFrame.png */; };
 		B77536E912DF592D00E6C048 /* OUIShadowBorderBottom.png in Resources */ = {isa = PBXBuildFile; fileRef = B77536E112DF592D00E6C048 /* OUIShadowBorderBottom.png */; };
@@ -87,8 +85,6 @@
 		B77536ED12DF592D00E6C048 /* OUIShadowBorderTop.png in Resources */ = {isa = PBXBuildFile; fileRef = B77536E512DF592D00E6C048 /* OUIShadowBorderTop.png */; };
 		B77536EE12DF592D00E6C048 /* OUITextSelectionOverlay.png in Resources */ = {isa = PBXBuildFile; fileRef = B77536E612DF592D00E6C048 /* OUITextSelectionOverlay.png */; };
 		B7BD531F12DF1CDB003B83B3 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7BD531E12DF1CDB003B83B3 /* QuartzCore.framework */; };
-		B7BF318D12DB7FB700AFF9C1 /* IndexedPosition.m in Sources */ = {isa = PBXBuildFile; fileRef = B7BF318C12DB7FB700AFF9C1 /* IndexedPosition.m */; };
-		B7BF319012DB7FDB00AFF9C1 /* IndexedRange.m in Sources */ = {isa = PBXBuildFile; fileRef = B7BF318F12DB7FDB00AFF9C1 /* IndexedRange.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -115,7 +111,6 @@
 		B70E586F12DF2FF0001303D0 /* assertions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = assertions.m; sourceTree = "<group>"; };
 		B70E587012DF2FF0001303D0 /* macros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = macros.h; sourceTree = "<group>"; };
 		B70E587112DF2FF0001303D0 /* objc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = objc.h; sourceTree = "<group>"; };
-		B70E587212DF2FF0001303D0 /* rcsid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = rcsid.h; sourceTree = "<group>"; };
 		B70E587312DF2FF0001303D0 /* system.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = system.h; sourceTree = "<group>"; };
 		B70E587512DF2FF0001303D0 /* CFArray-OFExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "CFArray-OFExtensions.h"; sourceTree = "<group>"; };
 		B70E587612DF2FF0001303D0 /* CFArray-OFExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "CFArray-OFExtensions.m"; sourceTree = "<group>"; };
@@ -231,10 +226,6 @@
 		B736175012DA112A009801D4 /* InfoPlist.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = InfoPlist.strings; path = en.lproj/editTests/InfoPlist.strings; sourceTree = "<group>"; };
 		B736175212DA112A009801D4 /* editTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = editTests.h; sourceTree = "<group>"; };
 		B736175412DA112A009801D4 /* editTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = editTests.m; sourceTree = "<group>"; };
-		B736176412DA26BB009801D4 /* CSEditor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSEditor.h; sourceTree = "<group>"; };
-		B736176512DA26BB009801D4 /* CSEditor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CSEditor.m; sourceTree = "<group>"; };
-		B736176712DA27E3009801D4 /* CSEditorView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSEditorView.h; sourceTree = "<group>"; };
-		B736176812DA27E3009801D4 /* CSEditorView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CSEditorView.m; sourceTree = "<group>"; };
 		B77536DF12DF592D00E6C048 /* OUITextSelectionHandle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = OUITextSelectionHandle.png; sourceTree = "<group>"; };
 		B77536E012DF592D00E6C048 /* OUIRectangularOverlayFrame.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = OUIRectangularOverlayFrame.png; sourceTree = "<group>"; };
 		B77536E112DF592D00E6C048 /* OUIShadowBorderBottom.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = OUIShadowBorderBottom.png; sourceTree = "<group>"; };
@@ -244,10 +235,6 @@
 		B77536E512DF592D00E6C048 /* OUIShadowBorderTop.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = OUIShadowBorderTop.png; sourceTree = "<group>"; };
 		B77536E612DF592D00E6C048 /* OUITextSelectionOverlay.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = OUITextSelectionOverlay.png; sourceTree = "<group>"; };
 		B7BD531E12DF1CDB003B83B3 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
-		B7BF318B12DB7FB700AFF9C1 /* IndexedPosition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IndexedPosition.h; sourceTree = "<group>"; };
-		B7BF318C12DB7FB700AFF9C1 /* IndexedPosition.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IndexedPosition.m; sourceTree = "<group>"; };
-		B7BF318E12DB7FDB00AFF9C1 /* IndexedRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IndexedRange.h; sourceTree = "<group>"; };
-		B7BF318F12DB7FDB00AFF9C1 /* IndexedRange.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IndexedRange.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -322,7 +309,6 @@
 				B70E586F12DF2FF0001303D0 /* assertions.m */,
 				B70E587012DF2FF0001303D0 /* macros.h */,
 				B70E587112DF2FF0001303D0 /* objc.h */,
-				B70E587212DF2FF0001303D0 /* rcsid.h */,
 				B70E587312DF2FF0001303D0 /* system.h */,
 			);
 			path = OmniBase;
@@ -470,14 +456,6 @@
 			children = (
 				B736173C12DA112A009801D4 /* editAppDelegate.h */,
 				B736173D12DA112A009801D4 /* editAppDelegate.m */,
-				B7BF318B12DB7FB700AFF9C1 /* IndexedPosition.h */,
-				B7BF318C12DB7FB700AFF9C1 /* IndexedPosition.m */,
-				B7BF318E12DB7FDB00AFF9C1 /* IndexedRange.h */,
-				B7BF318F12DB7FDB00AFF9C1 /* IndexedRange.m */,
-				B736176712DA27E3009801D4 /* CSEditorView.h */,
-				B736176812DA27E3009801D4 /* CSEditorView.m */,
-				B736176412DA26BB009801D4 /* CSEditor.h */,
-				B736176512DA26BB009801D4 /* CSEditor.m */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -665,10 +643,6 @@
 				B736173B12DA112A009801D4 /* edit-main.m in Sources */,
 				B736173E12DA112A009801D4 /* editAppDelegate.m in Sources */,
 				B736174012DA112A009801D4 /* edit.xcdatamodel in Sources */,
-				B736176612DA26BB009801D4 /* CSEditor.m in Sources */,
-				B736176912DA27E3009801D4 /* CSEditorView.m in Sources */,
-				B7BF318D12DB7FB700AFF9C1 /* IndexedPosition.m in Sources */,
-				B7BF319012DB7FDB00AFF9C1 /* IndexedRange.m in Sources */,
 				B70E58FF12DF2FF0001303D0 /* OAFontDescriptor.m in Sources */,
 				B70E590012DF2FF0001303D0 /* OAParagraphStyle.m in Sources */,
 				B70E590112DF2FF0001303D0 /* OATextAttributes.m in Sources */,

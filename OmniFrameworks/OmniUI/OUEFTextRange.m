@@ -7,11 +7,10 @@
 
 #import "OUEFTextRange.h"
 
-#import <OmniBase/rcsid.h>
 
 #import "OUEFTextPosition.h"
 
-RCS_ID("$Id$");
+
 
 @implementation OUEFTextRange : UITextRange
 

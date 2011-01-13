@@ -10,7 +10,7 @@
 #import <OmniFoundation/NSString-OFUnicodeCharacters.h>
 #import <OmniBase/OBObject.h>
 
-RCS_ID("$Id$");
+
 
 @implementation OFCharacterSet
 

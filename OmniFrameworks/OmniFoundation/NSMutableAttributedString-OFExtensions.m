@@ -6,10 +6,9 @@
 // <http://www.omnigroup.com/developer/sourcecode/sourcelicense/>.
 
 #import <OmniFoundation/NSMutableAttributedString-OFExtensions.h>
-#import <OmniBase/rcsid.h>
 #import <OmniBase/assertions.h>
 
-RCS_ID("$Id$");
+
 
 @implementation NSMutableAttributedString (OFExtensions)
 

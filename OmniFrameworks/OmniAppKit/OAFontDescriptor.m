@@ -14,7 +14,7 @@
 
 #import <Foundation/Foundation.h>
 
-RCS_ID("$Id$");
+
 
 // #define FONT_DESC_STATS
 static NSMutableSet *_OAFontDescriptorUniqueTable = nil;

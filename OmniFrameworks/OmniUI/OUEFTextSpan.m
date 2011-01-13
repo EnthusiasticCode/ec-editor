@@ -13,12 +13,11 @@
 #import <OmniAppKit/OAParagraphStyle.h>
 #import <OmniAppKit/OATextAttributes.h>
 #import <OmniUI/OUIEditableFrame.h>
-#import <OmniBase/rcsid.h>
 
 #import "OUEFTextPosition.h"
 
 
-RCS_ID("$Id$");
+
 
 
 @implementation OUEFTextSpan

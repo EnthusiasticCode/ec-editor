@@ -8,7 +8,6 @@
 #import <OmniFoundation/CFString-OFExtensions.h>
 #import <Foundation/NSObjCRuntime.h> // for BOOL
 #import <OmniFoundation/NSString-OFCharacterEnumeration.h> // for OFStringStartLoopThroughCharacters/OFStringEndLoopThroughCharacters
-#import <OmniBase/rcsid.h>
 #import <string.h>
 
 RCS_ID("$Id$")

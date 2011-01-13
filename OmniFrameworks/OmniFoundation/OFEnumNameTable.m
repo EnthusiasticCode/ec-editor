@@ -12,7 +12,7 @@
 
 #import <OmniBase/OmniBase.h>
 
-RCS_ID("$Id$");
+
 
 /*"
 This class is intended for use in a bi-directional mapping between an integer enumeration and string representations for the elements of the enumeration.  This is useful, for example, when converting data structures to and from an external representation.  Instead of encoding internal enumeration values as integers, they can be encoded as string names.  This makes it easier to interpret the external representation and easier to rearrange the private enumeration values without impact to existing external representations in files, defaults property lists, databases, etc.

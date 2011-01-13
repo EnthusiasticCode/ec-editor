@@ -9,7 +9,7 @@
 
 #import <OmniBase/OmniBase.h>
 
-RCS_ID("$Id$");
+
 
 #define UNDERLINE_BY_WORD_MASK (0x8000) // Not documented anywhere. We'll assert this stays true on Mac OS X
 

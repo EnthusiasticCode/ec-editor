@@ -9,7 +9,7 @@
 
 #import <OmniFoundation/OFUnicodeUtilities.h>
 
-RCS_ID("$Id$");
+
 
 @implementation NSString (OFUnicodeCharacters)
 

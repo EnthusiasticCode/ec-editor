@@ -15,7 +15,6 @@
 #import <Foundation/NSAttributedString.h>
 #import <QuartzCore/QuartzCore.h>
 #import <OmniQuartz/OQDrawing.h>
-#import <OmniBase/rcsid.h>
 #import <OmniFoundation/OFNull.h>
 #import <MobileCoreServices/UTCoreTypes.h>
 
@@ -30,7 +29,7 @@
 #import "OUILoupeOverlay.h"
 #import "OUEFTextSpan.h"
 
-RCS_ID("$Id$");
+
 
 #if 0 && defined(DEBUG)
     #define DEBUG_TEXT(format, ...) NSLog(@"TEXT: " format, ## __VA_ARGS__)

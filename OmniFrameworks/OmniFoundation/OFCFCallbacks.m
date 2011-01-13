@@ -8,11 +8,10 @@
 #import <OmniFoundation/OFCFCallbacks.h>
 
 #import <Foundation/NSString.h>
-#import <OmniBase/rcsid.h>
 #import <inttypes.h>
 #import <OmniBase/OBObject.h>
 
-RCS_ID("$Id$");
+
 
 #pragma mark NSObject callbacks
 

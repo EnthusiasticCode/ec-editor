@@ -9,8 +9,6 @@
 #import <UIKit/UIKit.h>
 #import <CoreData/CoreData.h>
 
-#import "CSEditor.h"
-
 @interface editAppDelegate : NSObject <UIApplicationDelegate> {
     UIWindow *window;
     NSManagedObjectContext *managedObjectContext;

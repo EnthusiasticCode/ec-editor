@@ -9,7 +9,7 @@
 
 #import <OmniUI/OUIEditableFrame.h>
 
-RCS_ID("$Id$");
+
 
 @implementation OUITextCursorOverlay
 

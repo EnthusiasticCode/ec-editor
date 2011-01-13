@@ -11,7 +11,6 @@
 
 #import <OmniQuartz/OQDrawing.h>
 #import <QuartzCore/QuartzCore.h>
-#import <OmniBase/rcsid.h>
 
 
 #define THUMB_TOP_GAP (-2)     // The gap between the thumb image and the caret bar (pixels)
@@ -20,7 +19,7 @@
 
 //#define DEBUG_THUMB_GRABBY
 
-RCS_ID("$Id$");
+
 
 @implementation OUITextThumb
 

@@ -6,7 +6,6 @@
 // <http://www.omnigroup.com/developer/sourcecode/sourcelicense/>.
 
 #import <OmniFoundation/OFObject.h>
-#import <OmniBase/rcsid.h>
 #import <OmniBase/assertions.h>
 #import <OmniBase/OBUtilities.h>
 #import <OmniBase/NSException-OBExtensions.h>

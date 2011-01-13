@@ -8,10 +8,9 @@
 #import <OmniFoundation/CFArray-OFExtensions.h>
 
 #import <OmniFoundation/OFCFCallbacks.h>
-#import <OmniBase/rcsid.h>
 #import <Foundation/NSZone.h> // NSMakeCollectable
 
-RCS_ID("$Id$");
+
 
 NSMutableArray *OFCreateNonOwnedPointerArray(void)
 {

@@ -9,9 +9,8 @@
 
 #import <OmniBase/macros.h>
 #import <OmniBase/OBUtilities.h>
-#import <OmniBase/rcsid.h>
 
-RCS_ID("$Id$");
+
 
 @implementation NSException (OBExtensions)
 

@@ -8,12 +8,11 @@
 #import "OUITextInputStringTokenizer.h"
 
 #import <OmniUI/OUIEditableFrame.h>
-#import <OmniBase/rcsid.h>
 
 #import "OUEFTextPosition.h"
 #import "OUEFTextRange.h"
 
-RCS_ID("$Id$");
+
 
 
 /* TODO: Provide a nonempty implementation of this. Looks like the only behavior we need to implement ourselves is the granularity=UITextGranularityLine case of each method, since the others are unaffected by layout. */

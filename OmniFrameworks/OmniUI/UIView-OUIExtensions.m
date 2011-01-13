@@ -10,7 +10,7 @@
 #import <OmniQuartz/OQDrawing.h>
 #import <UIKit/UIView.h>
 
-RCS_ID("$Id$");
+
 
 @implementation UIView (OUIExtensions)
 

@@ -16,8 +16,6 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 
     // Override point for customization after application launch.
-    CSEditor *editor = [[CSEditor alloc] init];
-    window.rootViewController = editor;
     
     [window makeKeyAndVisible];
     return YES;

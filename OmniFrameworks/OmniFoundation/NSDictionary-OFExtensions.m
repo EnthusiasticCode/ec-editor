@@ -9,7 +9,6 @@
 
 #import <OmniFoundation/NSString-OFSimpleMatching.h>
 #import <OmniFoundation/NSMutableArray-OFExtensions.h>
-#import <OmniBase/rcsid.h>
 #import <OmniBase/assertions.h>
 #include <stdlib.h>
 

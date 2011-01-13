@@ -12,7 +12,6 @@
 #import <OmniBase/OBPostLoader.h>
 #endif
 
-#import <OmniBase/rcsid.h>
 #import <OmniBase/OBUtilities.h>
 #import <OmniBase/objc.h>
 

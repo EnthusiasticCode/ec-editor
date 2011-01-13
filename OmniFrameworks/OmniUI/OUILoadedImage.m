@@ -7,7 +7,7 @@
 
 #import <OmniUI/OUILoadedImage.h>
 
-RCS_ID("$Id$");
+
 
 void OUILoadImage(NSString *name, OUILoadedImage *info)
 {

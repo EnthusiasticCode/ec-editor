@@ -7,7 +7,6 @@
 
 #import <OmniBase/assertions.h>
 #import <Foundation/Foundation.h>
-#import <OmniBase/rcsid.h>
 #import <OmniBase/OBUtilities.h>
 #import "OBBacktraceBuffer.h"
 #import <unistd.h> // For getpid()

@@ -9,7 +9,7 @@
 #import <OmniQuartz/OQDrawing.h>
 #import <OmniBase/OmniBase.h>
 
-RCS_ID("$Id$");
+
 
 #if !defined(TARGET_OS_IPHONE) || !TARGET_OS_IPHONE
 void OQSetPatternColorReferencePoint(CGPoint point, NSView *view)

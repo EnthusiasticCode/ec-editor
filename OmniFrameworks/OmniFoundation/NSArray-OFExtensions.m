@@ -10,7 +10,6 @@
 #import <OmniFoundation/CFArray-OFExtensions.h>
 #import <OmniFoundation/NSObject-OFExtensions.h>
 #import <OmniFoundation/OFNull.h>
-#import <OmniBase/rcsid.h>
 #import <OmniBase/assertions.h>
 
 #import <Foundation/Foundation.h>

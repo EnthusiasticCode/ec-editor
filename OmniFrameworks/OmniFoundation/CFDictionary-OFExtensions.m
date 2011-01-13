@@ -11,7 +11,6 @@
 #import <OmniFoundation/CFString-OFExtensions.h>
 #import <Foundation/NSObject.h>
 #import <Foundation/NSString.h>
-#import <OmniBase/rcsid.h>
 
 RCS_ID("$Id$")
 

@@ -22,7 +22,7 @@
 
 #import <OmniBase/OmniBase.h>
 
-RCS_ID("$Id$");
+
 
 //#define DEBUG_PREFERENCES
 

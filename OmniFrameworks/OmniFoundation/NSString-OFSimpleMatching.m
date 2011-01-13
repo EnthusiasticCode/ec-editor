@@ -9,10 +9,9 @@
 
 #import <OmniFoundation/NSString-OFCharacterEnumeration.h>
 #import <OmniFoundation/OFCharacterSet.h>
-#import <OmniBase/rcsid.h>
 #import <OmniBase/assertions.h>
 
-RCS_ID("$Id$");
+
 
 @implementation NSString (OFSimpleMatching)
 

@@ -15,7 +15,7 @@
 #import <Foundation/NSArray.h>
 #import <CoreText/CTParagraphStyle.h>
 
-RCS_ID("$Id$");
+
 
 @implementation OATextTab
 

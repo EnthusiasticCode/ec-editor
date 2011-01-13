@@ -9,7 +9,7 @@
 
 #import <UIKit/UIGestureRecognizerSubclass.h>
 
-RCS_ID("$Id$");
+
 
 static BOOL _failOnIndirectTouch(UIGestureRecognizer *self, NSSet *touches, UIEvent *event)
 {

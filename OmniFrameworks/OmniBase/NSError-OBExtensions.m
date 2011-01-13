@@ -7,14 +7,13 @@
 
 #import <OmniBase/NSError-OBExtensions.h>
 
-#import <OmniBase/rcsid.h>
 #import <OmniBase/assertions.h>
 #import <OmniBase/OBUtilities.h>
 
 #import <Foundation/NSUserDefaults.h>
 #import <Foundation/FoundationErrors.h>
 
-RCS_ID("$Id$");
+
 
 // This might be useful for non-debug builds too.  These are only included in our errors, not Cocoa's, but if we use OBChainError when our code fails due to a Mac OS X framework call failing, we'll get information there.
 #if 0 && defined(DEBUG)

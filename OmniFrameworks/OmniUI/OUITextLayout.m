@@ -16,7 +16,7 @@
 
 #import <OmniBase/OmniBase.h>
 
-RCS_ID("$Id$");
+
 
 @implementation OUITextLayout
 

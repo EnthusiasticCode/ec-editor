@@ -9,9 +9,8 @@
 
 #import <OmniUI/OUIScalingView.h>
 #import <OmniQuartz/OQDrawing.h>
-#import <OmniBase/rcsid.h>
 
-RCS_ID("$Id$");
+
 
 @implementation OUILoupeOverlay
 

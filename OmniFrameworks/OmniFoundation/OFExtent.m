@@ -8,7 +8,7 @@
 
 #import <OmniFoundation/OFExtent.h>
 
-RCS_ID("$Id$");
+
 
 BOOL OFExtentsEqual(OFExtent a, OFExtent b)
 {
