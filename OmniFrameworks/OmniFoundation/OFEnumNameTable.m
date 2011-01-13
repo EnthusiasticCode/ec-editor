@@ -10,7 +10,8 @@
 #import <OmniFoundation/CFArray-OFExtensions.h>
 #import <OmniFoundation/CFDictionary-OFExtensions.h>
 
-#import <OmniBase/OmniBase.h>
+#import <OmniBase/assertions.h>
+#import <OmniBase/OBUtilities.h>
 
 
 

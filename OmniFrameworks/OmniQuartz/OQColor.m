@@ -7,7 +7,8 @@
 
 #import <OmniQuartz/OQColor.h>
 
-#import <OmniBase/OmniBase.h>
+#import <OmniBase/assertions.h>
+#import <OmniBase/OBUtilities.h>
 #import <tgmath.h>
 
 #import <OmniFoundation/NSNumber-OFExtensions-CGTypes.h>

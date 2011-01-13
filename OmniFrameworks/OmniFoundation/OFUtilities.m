@@ -6,7 +6,6 @@
 // <http://www.omnigroup.com/developer/sourcecode/sourcelicense/>.
 
 #import <OmniFoundation/OFUtilities.h>
-#import <OmniFoundation/NSDictionary-OFExtensions.h>
 #import <OmniFoundation/NSString-OFSimpleMatching.h>
 #import <OmniFoundation/OFObject.h>
 
@@ -19,7 +18,8 @@
 #include <string.h>
 #include <stdlib.h>
 
-#import <OmniBase/OmniBase.h>
+#import <OmniBase/assertions.h>
+#import <OmniBase/macros.h>
 
 
 

@@ -8,7 +8,7 @@
 #import <OmniFoundation/NSString-OFUnicodeCharacters.h>
 
 #import <OmniFoundation/OFUnicodeUtilities.h>
-
+#import <OmniBase/assertions.h>
 
 
 @implementation NSString (OFUnicodeCharacters)

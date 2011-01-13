@@ -541,18 +541,6 @@ struct typographicPosition {
     } position;
 };
 
-#if 0
-
-/* These used to be computed by getTypographicPosition(), but only one caller currently wants them, so they're computed by that caller now. */
-struct typographicPositionMetrics {
-    CGPoint baselinePoint;            // The typographic position relative to lineOrigin
-    CGPoint lineOrigin;               // The line's origin in layout space
-    CGFloat ascent, descent;          // The line's ascent and descent, typically poth are positive
-    CGFloat secondaryOffset;          // CoreText gives this to us but I'm not sure what it's for
-};
-
-#endif
-
 static void getTypographicPosition(CFArrayRef lines, NSUInteger posIndex, int affinity, struct typographicPosition *result)
 {
     CFIndex lineCount = CFArrayGetCount(lines);
@@ -1159,39 +1147,6 @@ static BOOL _recognizerTouchedView(UIGestureRecognizer *recognizer, UIView *view
             [_selectionContextMenu setMenuVisible:YES animated:YES];
         }
     }
-}
-
-- (CGSize)sizeThatFits:(CGSize)maximumSize
-{
-    OBASSERT_NOT_REACHED("Don't call this");
-    
-    // CTFramesetterSuggestFrameSizeWithConstraints is useless (see OUITextLayout.m for diatribe).
-    // Instead, set the layout constraints on this instance via layoutSize and ask it for -usedSize;
-    return maximumSize;
-#if 0
-    if (!framesetter || flags.textNeedsUpdate)
-        [self _updateLayout:NO];
-    
-    /* TODO: Adjust size to include the virtual blank line at the end if text ends in \n ? Or only if the selection is down there? */
-    
-    CGSize size = CTFramesetterSuggestFrameSizeWithConstraints(framesetter,
-                                                               (CFRange){ 0, 0 },
-                                                               NULL /* frameAttributes */,
-                                                               maximumSize,
-                                                               NULL);
-    
-    // Size returned by CT is in its CoreGraphics rendering system, but we're returning view coordinates
-    CGFloat scale = self.scale;
-    CGSize viewSize;
-    //    viewSize.width = ceil(ceil(size.width) * scale);
-    //    viewSize.height = ceil(ceil(size.height) * scale);
-    viewSize.width = size.width * scale;
-    viewSize.height = size.height * scale;
-    
-    DEBUG_TEXT(@"CT says %@, scale is %f -> %@", NSStringFromCGSize(size), scale, NSStringFromCGSize(viewSize));
-    
-    return viewSize;
-#endif
 }
 
 - (void)didMoveToWindow

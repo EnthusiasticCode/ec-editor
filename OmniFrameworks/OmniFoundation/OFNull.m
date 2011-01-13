@@ -6,7 +6,8 @@
 // <http://www.omnigroup.com/developer/sourcecode/sourcelicense/>.
 
 #import <OmniFoundation/OFNull.h>
-#import <OmniBase/OmniBase.h>
+#import <OmniBase/assertions.h>
+#import <OmniBase/OBUtilities.h>
 #import <Foundation/NSString.h>
 #import <Foundation/NSNull.h>
 

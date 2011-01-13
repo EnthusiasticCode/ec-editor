@@ -9,6 +9,8 @@
 
 #import <OmniFoundation/NSString-OFSimpleMatching.h>
 #import <OmniFoundation/OFNull.h>
+#import <OmniBase/assertions.h>
+#import <OmniBase/OBUtilities.h>
 
 #import <Foundation/NSDateFormatter.h>
 

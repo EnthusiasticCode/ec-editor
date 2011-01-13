@@ -9,6 +9,7 @@
 #import <Foundation/NSObjCRuntime.h> // for BOOL
 #import <OmniFoundation/NSString-OFCharacterEnumeration.h> // for OFStringStartLoopThroughCharacters/OFStringEndLoopThroughCharacters
 #import <string.h>
+#import <OmniBase/assertions.h>
 
 
 

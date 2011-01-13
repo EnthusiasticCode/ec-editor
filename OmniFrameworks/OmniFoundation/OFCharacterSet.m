@@ -9,7 +9,7 @@
 
 #import <OmniFoundation/NSString-OFUnicodeCharacters.h>
 #import <OmniBase/OBObject.h>
-
+#import <OmniBase/assertions.h>
 
 
 @implementation OFCharacterSet

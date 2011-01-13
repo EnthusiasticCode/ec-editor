@@ -20,7 +20,8 @@
 
 #import <Foundation/Foundation.h>
 
-#import <OmniBase/OmniBase.h>
+#import <OmniBase/assertions.h>
+#import <OmniBase/OBUtilities.h>
 
 
 

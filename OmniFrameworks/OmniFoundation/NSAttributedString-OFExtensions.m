@@ -7,6 +7,7 @@
 
 #import <OmniFoundation/NSAttributedString-OFExtensions.h>
 #import <Foundation/Foundation.h>
+#import <OmniBase/assertions.h>
 
 
 

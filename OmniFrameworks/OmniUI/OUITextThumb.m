@@ -12,6 +12,8 @@
 #import <OmniQuartz/OQDrawing.h>
 #import <QuartzCore/QuartzCore.h>
 
+#import <OmniFoundation/OFUtilities.h>
+
 
 #define THUMB_TOP_GAP (-2)     // The gap between the thumb image and the caret bar (pixels)
 #define THUMB_BOT_GAP ( 0)     // Same, for the end-thumb

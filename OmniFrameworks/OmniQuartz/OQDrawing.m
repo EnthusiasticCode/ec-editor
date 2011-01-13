@@ -7,7 +7,7 @@
 
 #import <tgmath.h>
 #import <OmniQuartz/OQDrawing.h>
-#import <OmniBase/OmniBase.h>
+#import <OmniBase/assertions.h>
 
 
 

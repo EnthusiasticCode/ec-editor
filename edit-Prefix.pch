@@ -12,10 +12,4 @@
     #import <UIKit/UIKit.h>
     #import <Foundation/Foundation.h>
     #import <CoreData/CoreData.h>
-
-    #import <QuartzCore/QuartzCore.h>
-
-    #import <OmniBase/OmniBase.h>
-    #import <OmniFoundation/OFNull.h>
-    #import <OmniFoundation/OFUtilities.h>
 #endif

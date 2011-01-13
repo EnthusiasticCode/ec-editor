@@ -8,8 +8,9 @@
 #import "OUIFontUtilities.h"
 
 #import <CoreText/CTFont.h>
-
-
+#import <OmniBase/assertions.h>
+#import <OmniBase/OBUtilities.h>
+#import <OmniFoundation/OFNull.h>
 
 // CTFontCreateWithName can end up loading the font off disk, and if this is the only reference, it can do it each time we call this (like when we are reloading in the font family table).
 // Cache the display name for each font to avoid this.

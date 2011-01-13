@@ -9,7 +9,11 @@
 #import <OmniUI/OUILoadedImage.h>
 #import <OmniQuartz/OQDrawing.h>
 #import <UIKit/UIView.h>
+#import <OmniBase/assertions.h>
+#import <OmniBase/OBUtilities.h>
+#import <OmniBase/macros.h>
 
+#import <QuartzCore/CALayer.h>
 
 
 @implementation UIView (OUIExtensions)
@@ -117,34 +121,6 @@ static void OUIViewPerformPosing(void)
 
 @end
 
-#ifdef DEBUG // Uses private API
-UIResponder *OUIWindowFindFirstResponder(UIWindow *window)
-{
-    return [window valueForKey:@"firstResponder"];
-}
-
-static void _OUIAppendViewTreeDescription(NSMutableString *str, UIView *view, NSUInteger indent)
-{
-    for (NSUInteger i = 0; i < indent; i++)
-        [str appendString:@"  "];
-    [str appendString:[view shortDescription]];
-    
-    for (UIView *subview in view.subviews)
-        _OUIAppendViewTreeDescription(str, subview, indent + 1);
-}
-
-void OUILogViewTree(UIView *root)
-{
-    NSMutableString *str = [NSMutableString string];
-    _OUIAppendViewTreeDescription(str, root, 0);
-    
-    NSData *data = [str dataUsingEncoding:NSUTF8StringEncoding];
-    fwrite([data bytes], 1, [data length], stderr);
-    fputc('\n', stderr);
-}
-
-#endif
-
 
 #pragma mark -
 #pragma mark Rectangular shadows
@@ -161,54 +137,7 @@ static void LoadShadowImages(void)
     if (ShadowImages.top.image)
         return;
     
-#if 0 && defined(DEBUG)
-    // Code to make the shadow image (which I'll then dice up by hand into pieces).
-    {
-        static const CGFloat kPreviewShadowOffset = 4;
-        static const CGFloat kPreviewShadowRadius = 12;
-        
-        CGColorSpaceRef graySpace = CGColorSpaceCreateDeviceGray();
-        CGFloat totalShadowSize = kPreviewShadowOffset + kPreviewShadowRadius; // worst case; less on sides and top.
-        CGSize imageSize = CGSizeMake(8*totalShadowSize, 8*totalShadowSize);
-        
-        CGFloat shadowComponents[] = {0, 0.5};
-        CGColorRef shadowColor = CGColorCreate(graySpace, shadowComponents);
-        UIImage *shadowImage;
-        
-        UIGraphicsBeginImageContext(imageSize);
-        {
-            CGContextRef ctx = UIGraphicsGetCurrentContext();
-            
-            CGRect imageBounds = CGRectMake(0, 0, imageSize.width, imageSize.height);
-            OQFlipVerticallyInRect(ctx, imageBounds);
-            
-            CGRect boxRect = CGRectInset(imageBounds, totalShadowSize, totalShadowSize);
-            
-            CGContextSetShadowWithColor(ctx, CGSizeMake(0, kPreviewShadowOffset), kPreviewShadowRadius, shadowColor);
-            
-            CGFloat whiteComponents[] = {1.0, 1.0};
-            CGColorRef white = CGColorCreate(graySpace, whiteComponents);
-            CGContextSetFillColorWithColor(ctx, white);
-            CGColorRelease(white);
 
-            CGContextFillRect(ctx, boxRect);
-            
-            shadowImage = UIGraphicsGetImageFromCurrentImageContext();
-        }
-        UIGraphicsEndImageContext();
-        
-        CGColorRelease(shadowColor);
-        CFRelease(graySpace);
-
-        NSData *shadowImagePNGData = UIImagePNGRepresentation(shadowImage);
-        NSError *error = nil;
-        NSString *path = [@"~/Documents/shadow.png" stringByExpandingTildeInPath];
-        if (![shadowImagePNGData writeToFile:path options:0 error:&error])
-            NSLog(@"Unable to write %@: %@", path, [error toPropertyList]);
-        else
-            NSLog(@"Wrote %@", path);
-    }
-#endif
     
     OUILoadImage(@"OUIShadowBorderBottom.png", &ShadowImages.bottom);
     OUILoadImage(@"OUIShadowBorderTop.png", &ShadowImages.top);
@@ -278,22 +207,6 @@ NSArray *OUIViewAddShadowEdges(UIView *self)
     _addShadowEdge(self, &ShadowImages.top, edges);
     _addShadowEdge(self, &ShadowImages.left, edges);
     _addShadowEdge(self, &ShadowImages.right, edges);
-    
-#if 0 && defined(DEBUG_robin)
-    CGFloat hue = 0;
-    for (UIView *edge in edges) {
-        edge.backgroundColor = [UIColor colorWithHue:hue saturation:0 brightness:1 alpha:1];
-        hue += 0.25;
-    }
-    
-//    UIImageView *shadowTestView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"OUIShadowBorderBottom.png"]];
-//    shadowTestView.center = self.center;
-//    shadowTestView.bounds = CGRectMake(0, 0, CGRectGetWidth(self.bounds), 16);
-//    shadowTestView.contentStretch = CGRectMake(0.5, 0.5, 0, 0);
-//    shadowTestView.backgroundColor = [UIColor whiteColor];
-//    [self addSubview:shadowTestView];
-//    [shadowTestView release];
-#endif
     
     return edges;
 }

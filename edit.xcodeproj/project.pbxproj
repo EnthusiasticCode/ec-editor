@@ -7,8 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		B70E590212DF2FF0001303D0 /* NSError-OBExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = B70E586212DF2FF0001303D0 /* NSError-OBExtensions.m */; };
-		B70E590312DF2FF0001303D0 /* NSError-OBUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = B70E586412DF2FF0001303D0 /* NSError-OBUtilities.m */; };
 		B70E590412DF2FF0001303D0 /* NSException-OBExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = B70E586612DF2FF0001303D0 /* NSException-OBExtensions.m */; };
 		B70E590512DF2FF0001303D0 /* OBBacktraceBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = B70E586812DF2FF0001303D0 /* OBBacktraceBuffer.m */; };
 		B70E590612DF2FF0001303D0 /* OBObject.m in Sources */ = {isa = PBXBuildFile; fileRef = B70E586A12DF2FF0001303D0 /* OBObject.m */; };
@@ -17,16 +15,9 @@
 		B70E590912DF2FF0001303D0 /* CFArray-OFExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = B70E587612DF2FF0001303D0 /* CFArray-OFExtensions.m */; };
 		B70E590A12DF2FF0001303D0 /* CFDictionary-OFExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = B70E587812DF2FF0001303D0 /* CFDictionary-OFExtensions.m */; };
 		B70E590B12DF2FF0001303D0 /* CFString-OFExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = B70E587A12DF2FF0001303D0 /* CFString-OFExtensions.m */; };
-		B70E590C12DF2FF0001303D0 /* NSArray-OFExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = B70E587C12DF2FF0001303D0 /* NSArray-OFExtensions.m */; };
 		B70E590D12DF2FF0001303D0 /* NSAttributedString-OFExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = B70E587E12DF2FF0001303D0 /* NSAttributedString-OFExtensions.m */; };
 		B70E590E12DF2FF0001303D0 /* NSDate-OFExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = B70E588012DF2FF0001303D0 /* NSDate-OFExtensions.m */; };
-		B70E590F12DF2FF0001303D0 /* NSDictionary-OFExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = B70E588212DF2FF0001303D0 /* NSDictionary-OFExtensions.m */; };
-		B70E591012DF2FF0001303D0 /* NSMutableArray-OFExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = B70E588412DF2FF0001303D0 /* NSMutableArray-OFExtensions.m */; };
 		B70E591112DF2FF0001303D0 /* NSMutableAttributedString-OFExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = B70E588612DF2FF0001303D0 /* NSMutableAttributedString-OFExtensions.m */; };
-		B70E591212DF2FF0001303D0 /* NSNumber-OFExtensions-CGTypes.m in Sources */ = {isa = PBXBuildFile; fileRef = B70E588812DF2FF0001303D0 /* NSNumber-OFExtensions-CGTypes.m */; };
-		B70E591312DF2FF0001303D0 /* NSNumber-OFExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = B70E588A12DF2FF0001303D0 /* NSNumber-OFExtensions.m */; };
-		B70E591412DF2FF0001303D0 /* NSObject-OFExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = B70E588C12DF2FF0001303D0 /* NSObject-OFExtensions.m */; };
-		B70E591512DF2FF0001303D0 /* NSSet-OFExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = B70E588E12DF2FF0001303D0 /* NSSet-OFExtensions.m */; };
 		B70E591612DF2FF0001303D0 /* NSString-OFSimpleMatching.m in Sources */ = {isa = PBXBuildFile; fileRef = B70E589112DF2FF0001303D0 /* NSString-OFSimpleMatching.m */; };
 		B70E591712DF2FF0001303D0 /* NSString-OFUnicodeCharacters.m in Sources */ = {isa = PBXBuildFile; fileRef = B70E589312DF2FF0001303D0 /* NSString-OFUnicodeCharacters.m */; };
 		B70E591812DF2FF0001303D0 /* OFCFCallbacks.m in Sources */ = {isa = PBXBuildFile; fileRef = B70E589612DF2FF0001303D0 /* OFCFCallbacks.m */; };
@@ -79,13 +70,10 @@
 		B77536ED12DF592D00E6C048 /* OUIShadowBorderTop.png in Resources */ = {isa = PBXBuildFile; fileRef = B77536E512DF592D00E6C048 /* OUIShadowBorderTop.png */; };
 		B77536EE12DF592D00E6C048 /* OUITextSelectionOverlay.png in Resources */ = {isa = PBXBuildFile; fileRef = B77536E612DF592D00E6C048 /* OUITextSelectionOverlay.png */; };
 		B7BD531F12DF1CDB003B83B3 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7BD531E12DF1CDB003B83B3 /* QuartzCore.framework */; };
+		B7EBB3DD12DFA581001552AD /* NSNumber-OFExtensions-CGTypes.m in Sources */ = {isa = PBXBuildFile; fileRef = B7EBB3DC12DFA581001552AD /* NSNumber-OFExtensions-CGTypes.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		B70E586112DF2FF0001303D0 /* NSError-OBExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSError-OBExtensions.h"; sourceTree = "<group>"; };
-		B70E586212DF2FF0001303D0 /* NSError-OBExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSError-OBExtensions.m"; sourceTree = "<group>"; };
-		B70E586312DF2FF0001303D0 /* NSError-OBUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSError-OBUtilities.h"; sourceTree = "<group>"; };
-		B70E586412DF2FF0001303D0 /* NSError-OBUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSError-OBUtilities.m"; sourceTree = "<group>"; };
 		B70E586512DF2FF0001303D0 /* NSException-OBExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSException-OBExtensions.h"; sourceTree = "<group>"; };
 		B70E586612DF2FF0001303D0 /* NSException-OBExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSException-OBExtensions.m"; sourceTree = "<group>"; };
 		B70E586712DF2FF0001303D0 /* OBBacktraceBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OBBacktraceBuffer.h; sourceTree = "<group>"; };
@@ -94,7 +82,6 @@
 		B70E586A12DF2FF0001303D0 /* OBObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OBObject.m; sourceTree = "<group>"; };
 		B70E586B12DF2FF0001303D0 /* OBUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OBUtilities.h; sourceTree = "<group>"; };
 		B70E586C12DF2FF0001303D0 /* OBUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OBUtilities.m; sourceTree = "<group>"; };
-		B70E586D12DF2FF0001303D0 /* OmniBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OmniBase.h; sourceTree = "<group>"; };
 		B70E586E12DF2FF0001303D0 /* assertions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = assertions.h; sourceTree = "<group>"; };
 		B70E586F12DF2FF0001303D0 /* assertions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = assertions.m; sourceTree = "<group>"; };
 		B70E587012DF2FF0001303D0 /* macros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = macros.h; sourceTree = "<group>"; };
@@ -105,26 +92,12 @@
 		B70E587812DF2FF0001303D0 /* CFDictionary-OFExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "CFDictionary-OFExtensions.m"; sourceTree = "<group>"; };
 		B70E587912DF2FF0001303D0 /* CFString-OFExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "CFString-OFExtensions.h"; sourceTree = "<group>"; };
 		B70E587A12DF2FF0001303D0 /* CFString-OFExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "CFString-OFExtensions.m"; sourceTree = "<group>"; };
-		B70E587B12DF2FF0001303D0 /* NSArray-OFExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSArray-OFExtensions.h"; sourceTree = "<group>"; };
-		B70E587C12DF2FF0001303D0 /* NSArray-OFExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSArray-OFExtensions.m"; sourceTree = "<group>"; };
 		B70E587D12DF2FF0001303D0 /* NSAttributedString-OFExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSAttributedString-OFExtensions.h"; sourceTree = "<group>"; };
 		B70E587E12DF2FF0001303D0 /* NSAttributedString-OFExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSAttributedString-OFExtensions.m"; sourceTree = "<group>"; };
 		B70E587F12DF2FF0001303D0 /* NSDate-OFExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDate-OFExtensions.h"; sourceTree = "<group>"; };
 		B70E588012DF2FF0001303D0 /* NSDate-OFExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDate-OFExtensions.m"; sourceTree = "<group>"; };
-		B70E588112DF2FF0001303D0 /* NSDictionary-OFExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDictionary-OFExtensions.h"; sourceTree = "<group>"; };
-		B70E588212DF2FF0001303D0 /* NSDictionary-OFExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDictionary-OFExtensions.m"; sourceTree = "<group>"; };
-		B70E588312DF2FF0001303D0 /* NSMutableArray-OFExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSMutableArray-OFExtensions.h"; sourceTree = "<group>"; };
-		B70E588412DF2FF0001303D0 /* NSMutableArray-OFExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSMutableArray-OFExtensions.m"; sourceTree = "<group>"; };
 		B70E588512DF2FF0001303D0 /* NSMutableAttributedString-OFExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSMutableAttributedString-OFExtensions.h"; sourceTree = "<group>"; };
 		B70E588612DF2FF0001303D0 /* NSMutableAttributedString-OFExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSMutableAttributedString-OFExtensions.m"; sourceTree = "<group>"; };
-		B70E588712DF2FF0001303D0 /* NSNumber-OFExtensions-CGTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSNumber-OFExtensions-CGTypes.h"; sourceTree = "<group>"; };
-		B70E588812DF2FF0001303D0 /* NSNumber-OFExtensions-CGTypes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSNumber-OFExtensions-CGTypes.m"; sourceTree = "<group>"; };
-		B70E588912DF2FF0001303D0 /* NSNumber-OFExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSNumber-OFExtensions.h"; sourceTree = "<group>"; };
-		B70E588A12DF2FF0001303D0 /* NSNumber-OFExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSNumber-OFExtensions.m"; sourceTree = "<group>"; };
-		B70E588B12DF2FF0001303D0 /* NSObject-OFExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject-OFExtensions.h"; sourceTree = "<group>"; };
-		B70E588C12DF2FF0001303D0 /* NSObject-OFExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject-OFExtensions.m"; sourceTree = "<group>"; };
-		B70E588D12DF2FF0001303D0 /* NSSet-OFExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSSet-OFExtensions.h"; sourceTree = "<group>"; };
-		B70E588E12DF2FF0001303D0 /* NSSet-OFExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSSet-OFExtensions.m"; sourceTree = "<group>"; };
 		B70E588F12DF2FF0001303D0 /* NSString-OFCharacterEnumeration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString-OFCharacterEnumeration.h"; sourceTree = "<group>"; };
 		B70E589012DF2FF0001303D0 /* NSString-OFSimpleMatching.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString-OFSimpleMatching.h"; sourceTree = "<group>"; };
 		B70E589112DF2FF0001303D0 /* NSString-OFSimpleMatching.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString-OFSimpleMatching.m"; sourceTree = "<group>"; };
@@ -214,6 +187,8 @@
 		B77536E512DF592D00E6C048 /* OUIShadowBorderTop.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = OUIShadowBorderTop.png; sourceTree = "<group>"; };
 		B77536E612DF592D00E6C048 /* OUITextSelectionOverlay.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = OUITextSelectionOverlay.png; sourceTree = "<group>"; };
 		B7BD531E12DF1CDB003B83B3 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		B7EBB3DB12DFA581001552AD /* NSNumber-OFExtensions-CGTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSNumber-OFExtensions-CGTypes.h"; sourceTree = "<group>"; };
+		B7EBB3DC12DFA581001552AD /* NSNumber-OFExtensions-CGTypes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSNumber-OFExtensions-CGTypes.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -257,10 +232,6 @@
 		B70E586012DF2FF0001303D0 /* OmniBase */ = {
 			isa = PBXGroup;
 			children = (
-				B70E586112DF2FF0001303D0 /* NSError-OBExtensions.h */,
-				B70E586212DF2FF0001303D0 /* NSError-OBExtensions.m */,
-				B70E586312DF2FF0001303D0 /* NSError-OBUtilities.h */,
-				B70E586412DF2FF0001303D0 /* NSError-OBUtilities.m */,
 				B70E586512DF2FF0001303D0 /* NSException-OBExtensions.h */,
 				B70E586612DF2FF0001303D0 /* NSException-OBExtensions.m */,
 				B70E586712DF2FF0001303D0 /* OBBacktraceBuffer.h */,
@@ -269,7 +240,6 @@
 				B70E586A12DF2FF0001303D0 /* OBObject.m */,
 				B70E586B12DF2FF0001303D0 /* OBUtilities.h */,
 				B70E586C12DF2FF0001303D0 /* OBUtilities.m */,
-				B70E586D12DF2FF0001303D0 /* OmniBase.h */,
 				B70E586E12DF2FF0001303D0 /* assertions.h */,
 				B70E586F12DF2FF0001303D0 /* assertions.m */,
 				B70E587012DF2FF0001303D0 /* macros.h */,
@@ -287,26 +257,14 @@
 				B70E587812DF2FF0001303D0 /* CFDictionary-OFExtensions.m */,
 				B70E587912DF2FF0001303D0 /* CFString-OFExtensions.h */,
 				B70E587A12DF2FF0001303D0 /* CFString-OFExtensions.m */,
-				B70E587B12DF2FF0001303D0 /* NSArray-OFExtensions.h */,
-				B70E587C12DF2FF0001303D0 /* NSArray-OFExtensions.m */,
 				B70E587D12DF2FF0001303D0 /* NSAttributedString-OFExtensions.h */,
 				B70E587E12DF2FF0001303D0 /* NSAttributedString-OFExtensions.m */,
 				B70E587F12DF2FF0001303D0 /* NSDate-OFExtensions.h */,
 				B70E588012DF2FF0001303D0 /* NSDate-OFExtensions.m */,
-				B70E588112DF2FF0001303D0 /* NSDictionary-OFExtensions.h */,
-				B70E588212DF2FF0001303D0 /* NSDictionary-OFExtensions.m */,
-				B70E588312DF2FF0001303D0 /* NSMutableArray-OFExtensions.h */,
-				B70E588412DF2FF0001303D0 /* NSMutableArray-OFExtensions.m */,
 				B70E588512DF2FF0001303D0 /* NSMutableAttributedString-OFExtensions.h */,
 				B70E588612DF2FF0001303D0 /* NSMutableAttributedString-OFExtensions.m */,
-				B70E588712DF2FF0001303D0 /* NSNumber-OFExtensions-CGTypes.h */,
-				B70E588812DF2FF0001303D0 /* NSNumber-OFExtensions-CGTypes.m */,
-				B70E588912DF2FF0001303D0 /* NSNumber-OFExtensions.h */,
-				B70E588A12DF2FF0001303D0 /* NSNumber-OFExtensions.m */,
-				B70E588B12DF2FF0001303D0 /* NSObject-OFExtensions.h */,
-				B70E588C12DF2FF0001303D0 /* NSObject-OFExtensions.m */,
-				B70E588D12DF2FF0001303D0 /* NSSet-OFExtensions.h */,
-				B70E588E12DF2FF0001303D0 /* NSSet-OFExtensions.m */,
+				B7EBB3DB12DFA581001552AD /* NSNumber-OFExtensions-CGTypes.h */,
+				B7EBB3DC12DFA581001552AD /* NSNumber-OFExtensions-CGTypes.m */,
 				B70E588F12DF2FF0001303D0 /* NSString-OFCharacterEnumeration.h */,
 				B70E589012DF2FF0001303D0 /* NSString-OFSimpleMatching.h */,
 				B70E589112DF2FF0001303D0 /* NSString-OFSimpleMatching.m */,
@@ -607,8 +565,6 @@
 				B736173B12DA112A009801D4 /* edit-main.m in Sources */,
 				B736173E12DA112A009801D4 /* editAppDelegate.m in Sources */,
 				B736174012DA112A009801D4 /* edit.xcdatamodel in Sources */,
-				B70E590212DF2FF0001303D0 /* NSError-OBExtensions.m in Sources */,
-				B70E590312DF2FF0001303D0 /* NSError-OBUtilities.m in Sources */,
 				B70E590412DF2FF0001303D0 /* NSException-OBExtensions.m in Sources */,
 				B70E590512DF2FF0001303D0 /* OBBacktraceBuffer.m in Sources */,
 				B70E590612DF2FF0001303D0 /* OBObject.m in Sources */,
@@ -617,16 +573,9 @@
 				B70E590912DF2FF0001303D0 /* CFArray-OFExtensions.m in Sources */,
 				B70E590A12DF2FF0001303D0 /* CFDictionary-OFExtensions.m in Sources */,
 				B70E590B12DF2FF0001303D0 /* CFString-OFExtensions.m in Sources */,
-				B70E590C12DF2FF0001303D0 /* NSArray-OFExtensions.m in Sources */,
 				B70E590D12DF2FF0001303D0 /* NSAttributedString-OFExtensions.m in Sources */,
 				B70E590E12DF2FF0001303D0 /* NSDate-OFExtensions.m in Sources */,
-				B70E590F12DF2FF0001303D0 /* NSDictionary-OFExtensions.m in Sources */,
-				B70E591012DF2FF0001303D0 /* NSMutableArray-OFExtensions.m in Sources */,
 				B70E591112DF2FF0001303D0 /* NSMutableAttributedString-OFExtensions.m in Sources */,
-				B70E591212DF2FF0001303D0 /* NSNumber-OFExtensions-CGTypes.m in Sources */,
-				B70E591312DF2FF0001303D0 /* NSNumber-OFExtensions.m in Sources */,
-				B70E591412DF2FF0001303D0 /* NSObject-OFExtensions.m in Sources */,
-				B70E591512DF2FF0001303D0 /* NSSet-OFExtensions.m in Sources */,
 				B70E591612DF2FF0001303D0 /* NSString-OFSimpleMatching.m in Sources */,
 				B70E591712DF2FF0001303D0 /* NSString-OFUnicodeCharacters.m in Sources */,
 				B70E591812DF2FF0001303D0 /* OFCFCallbacks.m in Sources */,
@@ -654,6 +603,7 @@
 				B70E594512DF2FF0001303D0 /* OUITextThumb.m in Sources */,
 				B70E594712DF2FF0001303D0 /* UIView-OUIExtensions.m in Sources */,
 				B720FB6912DF53E7000A22B6 /* OUIScalingView.m in Sources */,
+				B7EBB3DD12DFA581001552AD /* NSNumber-OFExtensions-CGTypes.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

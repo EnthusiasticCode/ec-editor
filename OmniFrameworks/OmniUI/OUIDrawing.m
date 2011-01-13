@@ -7,7 +7,7 @@
 
 #import <OmniUI/OUIDrawing.h>
 #import <UIKit/UIKit.h>
-#import <OmniBase/OmniBase.h>
+#import <OmniBase/assertions.h>
 
 
 

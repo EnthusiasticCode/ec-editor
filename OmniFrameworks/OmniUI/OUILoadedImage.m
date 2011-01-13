@@ -6,7 +6,7 @@
 // <http://www.omnigroup.com/developer/sourcecode/sourcelicense/>.
 
 #import <OmniUI/OUILoadedImage.h>
-
+#import <OmniBase/assertions.h>
 
 
 void OUILoadImage(NSString *name, OUILoadedImage *info)

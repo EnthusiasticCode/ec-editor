@@ -14,7 +14,7 @@
 
 #include <string.h>
 
-#import <OmniBase/OmniBase.h>
+#import <OmniBase/assertions.h>
 
 // externs to enable attributes in Cocoa missing in Core Text
 //extern NSString * const OABackgroundColorAttributeName;
@@ -138,38 +138,6 @@ CTFontRef OUIGlobalDefaultFont(void)
     }
     CGContextRestoreGState(ctx);
 }
-
-#if 0
-static void _logLines(CGContextRef ctx, CTFrameRef frame)
-{
-    CFArrayRef lines = CTFrameGetLines(frame);
-    CFIndex lineCount = CFArrayGetCount(lines);
-    
-    CGFloat minY = CGFLOAT_MAX, maxY = 0;
-    CGPoint *origins = malloc(sizeof(*origins) * lineCount);
-    CTFrameGetLineOrigins(frame, CFRangeMake(0, lineCount), origins);
-    
-    for (CFIndex lineIndex = 0; lineIndex < lineCount; lineIndex++) {
-        CTLineRef line = CFArrayGetValueAtIndex(lines, lineIndex);
-        CGRect imageBounds = CTLineGetImageBounds(line, ctx);
-        
-        CGFloat ascent, descent, leading;
-        double width = CTLineGetTypographicBounds(line, &ascent, &descent, &leading);
-        
-        CFRange lineRange = CTLineGetStringRange(line);
-        
-        NSLog(@"line:%d range:{%d, %d} image bounds:%@ origin:%@", lineIndex, lineRange.location, lineRange.length, NSStringFromRect(imageBounds), NSStringFromPoint(origins[lineIndex]));
-        NSLog(@"  width:%f ascent:%f descent:%f leading:%f", width, ascent, descent, leading);
-        
-        minY = MIN(minY, CGRectGetMinY(imageBounds));
-        maxY = MAX(maxY, CGRectGetMaxY(imageBounds));
-    }
-    
-    NSLog(@" delta Y for all lines %f", maxY - minY);
-    
-    free(origins);
-}
-#endif
 
 // CTFramesetterSuggestFrameSizeWithConstraints seems to be useless. It doesn't return a size that will avoid wrapping in the real frame setter. Also, it doesn't include the descender of the bottom line.
 CGRect OUITextLayoutMeasureFrame(CTFrameRef frame, BOOL includeTrailingWhitespace)
