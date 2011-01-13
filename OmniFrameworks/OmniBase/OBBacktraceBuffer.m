@@ -9,7 +9,6 @@
 #import "OBBacktraceBuffer.h"
 #include <execinfo.h>  // For backtrace()
 
-RCS_ID("$Id$")
 
 // Radar 6964106: clang doesn't have __sync_synchronize builtin (but it claims to be GCC)
 #if !defined(__clang__) && defined(__GNUC__) && ((__GNUC__ * 100 + __GNUC_MINOR__ ) >= 401)

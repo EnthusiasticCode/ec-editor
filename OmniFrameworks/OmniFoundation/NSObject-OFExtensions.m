@@ -7,7 +7,7 @@
 
 #import <OmniFoundation/NSObject-OFExtensions.h>
 
-RCS_ID("$Id$")
+
 
 @implementation NSObject (OFExtensions)
 

@@ -12,7 +12,7 @@
 #import <Foundation/NSObject.h>
 #import <Foundation/NSString.h>
 
-RCS_ID("$Id$")
+
 
 const CFDictionaryKeyCallBacks OFCaseInsensitiveStringKeyDictionaryCallbacks = {
     0,    // version

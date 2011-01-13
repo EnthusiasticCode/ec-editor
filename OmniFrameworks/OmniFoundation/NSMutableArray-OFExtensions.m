@@ -13,7 +13,7 @@
 
 #include <Foundation/Foundation.h>
 
-RCS_ID("$Id$")
+
 
 @implementation NSMutableArray (OFExtensions)
 

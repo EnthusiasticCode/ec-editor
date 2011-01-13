@@ -7,7 +7,7 @@
 
 #import <OmniFoundation/OFStringScanner.h>
 
-RCS_ID("$Id$")
+
 
 @implementation OFStringScanner
 

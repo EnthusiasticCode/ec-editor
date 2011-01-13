@@ -12,7 +12,7 @@
 #import <OmniBase/assertions.h>
 #include <stdlib.h>
 
-RCS_ID("$Id$")
+
 
 NSString * const OmniDictionaryElementNameKey = @"__omniDictionaryElementNameKey";
 

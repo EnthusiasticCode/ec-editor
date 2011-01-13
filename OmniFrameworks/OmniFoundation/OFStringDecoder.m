@@ -11,7 +11,7 @@
 
 #include <pthread.h>
 
-RCS_ID("$Id$")
+
 
 /* From the Unicode standard:
  * U+FFFD REPLACEMENT CHARACTER 

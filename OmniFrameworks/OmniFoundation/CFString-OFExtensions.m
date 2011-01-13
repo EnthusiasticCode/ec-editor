@@ -10,7 +10,7 @@
 #import <OmniFoundation/NSString-OFCharacterEnumeration.h> // for OFStringStartLoopThroughCharacters/OFStringEndLoopThroughCharacters
 #import <string.h>
 
-RCS_ID("$Id$")
+
 
 
 void OFCaseConversionBufferInit(OFCaseConversionBuffer *caseBuffer)

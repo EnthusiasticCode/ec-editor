@@ -10,7 +10,7 @@
 #import <Foundation/NSString.h>
 #import <Foundation/NSNull.h>
 
-RCS_ID("$Id$")
+
 
 @interface OFNullString : NSString
 @end

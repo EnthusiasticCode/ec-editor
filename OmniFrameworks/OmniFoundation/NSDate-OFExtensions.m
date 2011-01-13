@@ -12,7 +12,7 @@
 
 #import <Foundation/NSDateFormatter.h>
 
-RCS_ID("$Id$")
+
 
 @implementation NSDate (OFExtensions)
 

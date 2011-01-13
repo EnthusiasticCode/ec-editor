@@ -8,7 +8,7 @@
 #import <OmniFoundation/NSAttributedString-OFExtensions.h>
 #import <Foundation/Foundation.h>
 
-RCS_ID("$Id$")
+
 
 @implementation NSAttributedString (OFExtensions)
 

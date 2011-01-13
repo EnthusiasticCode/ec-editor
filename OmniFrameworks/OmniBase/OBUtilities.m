@@ -12,7 +12,7 @@
 
 #import <OmniBase/assertions.h>
 
-RCS_ID("$Id$")
+
 
 static BOOL _OBRegisterMethod(IMP imp, Class cls, const char *types, SEL name)
 {

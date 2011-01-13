@@ -22,7 +22,7 @@
 #import <OmniBase/OmniBase.h>
 
 
-RCS_ID("$Id$")
+
 
 #define OF_GET_INPUT_CHUNK_LENGTH 80
 

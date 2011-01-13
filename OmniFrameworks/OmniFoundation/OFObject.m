@@ -16,7 +16,7 @@
 
 #import <libkern/OSAtomic.h>
 
-RCS_ID("$Id$")
+
 
 #if OFOBJECT_USE_INTERNAL_EXTRA_REF_COUNT
 @interface OFObject (Private)

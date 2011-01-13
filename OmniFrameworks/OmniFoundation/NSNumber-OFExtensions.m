@@ -12,7 +12,7 @@
 
 #import <OmniBase/OmniBase.h>
 
-RCS_ID("$Id$")
+
 
 struct numericTypeAttributes {
     unsigned short width;

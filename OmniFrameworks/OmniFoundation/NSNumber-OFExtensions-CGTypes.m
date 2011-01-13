@@ -8,7 +8,7 @@
 #import <OmniFoundation/NSNumber-OFExtensions-CGTypes.h>
 #import <CoreFoundation/CoreFoundation.h>
 
-RCS_ID("$Id$")
+
 
 @implementation NSNumber (OFCGTypeExtensions)
 

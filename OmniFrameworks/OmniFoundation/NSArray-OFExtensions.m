@@ -14,7 +14,7 @@
 
 #import <Foundation/Foundation.h>
 
-RCS_ID("$Id$")
+
 
 @implementation NSArray (OFExtensions)
 

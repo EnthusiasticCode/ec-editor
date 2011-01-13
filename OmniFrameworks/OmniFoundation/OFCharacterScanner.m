@@ -9,7 +9,7 @@
 
 #import <OmniFoundation/OFStringDecoder.h>
 
-RCS_ID("$Id$")
+
 
 @implementation OFCharacterScanner
 
