@@ -9,11 +9,9 @@
 
 #import "OUEFTextRange.h"
 
-#import <OmniUI/OUIInspector.h>
-
 @class OUIEditableFrame;
 
-@interface OUEFTextSpan : OUEFTextRange <OUIColorInspection, OUIFontInspection, OUIParagraphInspection>
+@interface OUEFTextSpan : OUEFTextRange
 {
 @private
     OUIEditableFrame *frame;

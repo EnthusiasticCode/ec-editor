@@ -141,7 +141,7 @@
 			<dictionary class="NSMutableDictionary" key="flattenedProperties">
 				<string key="-1.CustomClassName">UIApplication</string>
 				<string key="-2.CustomClassName">UIResponder</string>
-				<string key="18.CustomClassName">OUIScalingScrollView</string>
+				<string key="18.CustomClassName">UIScrollView</string>
 				<string key="18.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 				<string key="2.IBEditorWindowLastContentRect">{{226, 57}, {783, 799}}</string>
 				<string key="2.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>

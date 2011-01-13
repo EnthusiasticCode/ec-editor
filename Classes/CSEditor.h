@@ -9,7 +9,6 @@
 #import <UIKit/UIKit.h>
 
 #import <OmniUI/OUIEditableFrame.h>
-#import <OmniUI/OUIScalingScrollView.h>
 
 #import "CSEditorView.h"
 

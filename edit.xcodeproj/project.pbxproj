@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		B70E576412DF2C61001303D0 /* TextScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = B70E576312DF2C61001303D0 /* TextScrollView.m */; };
 		B70E58FF12DF2FF0001303D0 /* OAFontDescriptor.m in Sources */ = {isa = PBXBuildFile; fileRef = B70E585B12DF2FF0001303D0 /* OAFontDescriptor.m */; };
 		B70E590012DF2FF0001303D0 /* OAParagraphStyle.m in Sources */ = {isa = PBXBuildFile; fileRef = B70E585D12DF2FF0001303D0 /* OAParagraphStyle.m */; };
 		B70E590112DF2FF0001303D0 /* OATextAttributes.m in Sources */ = {isa = PBXBuildFile; fileRef = B70E585F12DF2FF0001303D0 /* OATextAttributes.m */; };
@@ -49,39 +48,19 @@
 		B70E592512DF2FF0001303D0 /* OUEFTextPosition.m in Sources */ = {isa = PBXBuildFile; fileRef = B70E58B512DF2FF0001303D0 /* OUEFTextPosition.m */; };
 		B70E592612DF2FF0001303D0 /* OUEFTextRange.m in Sources */ = {isa = PBXBuildFile; fileRef = B70E58B712DF2FF0001303D0 /* OUEFTextRange.m */; };
 		B70E592712DF2FF0001303D0 /* OUEFTextSpan.m in Sources */ = {isa = PBXBuildFile; fileRef = B70E58B912DF2FF0001303D0 /* OUEFTextSpan.m */; };
-		B70E592812DF2FF0001303D0 /* OUIColorInspectorSlice.m in Sources */ = {isa = PBXBuildFile; fileRef = B70E58BB12DF2FF0001303D0 /* OUIColorInspectorSlice.m */; };
-		B70E592912DF2FF0001303D0 /* OUIColorPicker.m in Sources */ = {isa = PBXBuildFile; fileRef = B70E58BD12DF2FF0001303D0 /* OUIColorPicker.m */; };
-		B70E592A12DF2FF0001303D0 /* OUIColorSwatch.m in Sources */ = {isa = PBXBuildFile; fileRef = B70E58BF12DF2FF0001303D0 /* OUIColorSwatch.m */; };
-		B70E592B12DF2FF0001303D0 /* OUIColorSwatchPicker.m in Sources */ = {isa = PBXBuildFile; fileRef = B70E58C112DF2FF0001303D0 /* OUIColorSwatchPicker.m */; };
 		B70E592C12DF2FF0001303D0 /* OUIDirectTapGestureRecognizer.m in Sources */ = {isa = PBXBuildFile; fileRef = B70E58C412DF2FF0001303D0 /* OUIDirectTapGestureRecognizer.m */; };
 		B70E592D12DF2FF0001303D0 /* OUIDrawing.m in Sources */ = {isa = PBXBuildFile; fileRef = B70E58C612DF2FF0001303D0 /* OUIDrawing.m */; };
 		B70E592E12DF2FF0001303D0 /* OUIEditableFrame.m in Sources */ = {isa = PBXBuildFile; fileRef = B70E58C812DF2FF0001303D0 /* OUIEditableFrame.m */; };
-		B70E592F12DF2FF0001303D0 /* OUIFontInspectorDetailSlice.m in Sources */ = {isa = PBXBuildFile; fileRef = B70E58CB12DF2FF0001303D0 /* OUIFontInspectorDetailSlice.m */; };
-		B70E593012DF2FF0001303D0 /* OUIFontInspectorSlice.m in Sources */ = {isa = PBXBuildFile; fileRef = B70E58CD12DF2FF0001303D0 /* OUIFontInspectorSlice.m */; };
 		B70E593112DF2FF0001303D0 /* OUIFontUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = B70E58CF12DF2FF0001303D0 /* OUIFontUtilities.m */; };
-		B70E593212DF2FF0001303D0 /* OUIInspector.m in Sources */ = {isa = PBXBuildFile; fileRef = B70E58D112DF2FF0001303D0 /* OUIInspector.m */; };
-		B70E593312DF2FF0001303D0 /* OUIInspectorDetailSlice.m in Sources */ = {isa = PBXBuildFile; fileRef = B70E58D412DF2FF0001303D0 /* OUIInspectorDetailSlice.m */; };
-		B70E593412DF2FF0001303D0 /* OUIInspectorSegmentedControl.m in Sources */ = {isa = PBXBuildFile; fileRef = B70E58D612DF2FF0001303D0 /* OUIInspectorSegmentedControl.m */; };
-		B70E593512DF2FF0001303D0 /* OUIInspectorSegmentedControlButton.m in Sources */ = {isa = PBXBuildFile; fileRef = B70E58D812DF2FF0001303D0 /* OUIInspectorSegmentedControlButton.m */; };
-		B70E593612DF2FF0001303D0 /* OUIInspectorSelectionValue.m in Sources */ = {isa = PBXBuildFile; fileRef = B70E58DA12DF2FF0001303D0 /* OUIInspectorSelectionValue.m */; };
-		B70E593712DF2FF0001303D0 /* OUIInspectorSlice.m in Sources */ = {isa = PBXBuildFile; fileRef = B70E58DC12DF2FF0001303D0 /* OUIInspectorSlice.m */; };
-		B70E593812DF2FF0001303D0 /* OUIInspectorStack.m in Sources */ = {isa = PBXBuildFile; fileRef = B70E58DE12DF2FF0001303D0 /* OUIInspectorStack.m */; };
-		B70E593912DF2FF0001303D0 /* OUIInspectorStepperButton.m in Sources */ = {isa = PBXBuildFile; fileRef = B70E58E012DF2FF0001303D0 /* OUIInspectorStepperButton.m */; };
-		B70E593A12DF2FF0001303D0 /* OUIInspectorTextWell.m in Sources */ = {isa = PBXBuildFile; fileRef = B70E58E212DF2FF0001303D0 /* OUIInspectorTextWell.m */; };
-		B70E593B12DF2FF0001303D0 /* OUIInspectorWell.m in Sources */ = {isa = PBXBuildFile; fileRef = B70E58E412DF2FF0001303D0 /* OUIInspectorWell.m */; };
 		B70E593C12DF2FF0001303D0 /* OUILoadedImage.m in Sources */ = {isa = PBXBuildFile; fileRef = B70E58E612DF2FF0001303D0 /* OUILoadedImage.m */; };
 		B70E593D12DF2FF0001303D0 /* OUILoupeOverlay.m in Sources */ = {isa = PBXBuildFile; fileRef = B70E58E812DF2FF0001303D0 /* OUILoupeOverlay.m */; };
-		B70E593E12DF2FF0001303D0 /* OUIParagraphStyleInspectorSlice.m in Sources */ = {isa = PBXBuildFile; fileRef = B70E58EB12DF2FF0001303D0 /* OUIParagraphStyleInspectorSlice.m */; };
-		B70E593F12DF2FF0001303D0 /* OUIScalingScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = B70E58ED12DF2FF0001303D0 /* OUIScalingScrollView.m */; };
-		B70E594012DF2FF0001303D0 /* OUIScalingView.m in Sources */ = {isa = PBXBuildFile; fileRef = B70E58EF12DF2FF0001303D0 /* OUIScalingView.m */; };
-		B70E594112DF2FF0001303D0 /* OUIScalingViewTile.m in Sources */ = {isa = PBXBuildFile; fileRef = B70E58F112DF2FF0001303D0 /* OUIScalingViewTile.m */; };
 		B70E594212DF2FF0001303D0 /* OUITextCursorOverlay.m in Sources */ = {isa = PBXBuildFile; fileRef = B70E58F312DF2FF0001303D0 /* OUITextCursorOverlay.m */; };
 		B70E594312DF2FF0001303D0 /* OUITextInputStringTokenizer.m in Sources */ = {isa = PBXBuildFile; fileRef = B70E58F512DF2FF0001303D0 /* OUITextInputStringTokenizer.m */; };
 		B70E594412DF2FF0001303D0 /* OUITextLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = B70E58F712DF2FF0001303D0 /* OUITextLayout.m */; };
 		B70E594512DF2FF0001303D0 /* OUITextThumb.m in Sources */ = {isa = PBXBuildFile; fileRef = B70E58F912DF2FF0001303D0 /* OUITextThumb.m */; };
-		B70E594612DF2FF0001303D0 /* OUITiledScalingView.m in Sources */ = {isa = PBXBuildFile; fileRef = B70E58FC12DF2FF0001303D0 /* OUITiledScalingView.m */; };
 		B70E594712DF2FF0001303D0 /* UIView-OUIExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = B70E58FE12DF2FF0001303D0 /* UIView-OUIExtensions.m */; };
 		B71C0F0312DB60DC002843EF /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B71C0F0212DB60DC002843EF /* CoreText.framework */; };
+		B720FB6912DF53E7000A22B6 /* OUIScalingView.m in Sources */ = {isa = PBXBuildFile; fileRef = B720FB6812DF53E7000A22B6 /* OUIScalingView.m */; };
 		B736172E12DA112A009801D4 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B736172D12DA112A009801D4 /* UIKit.framework */; };
 		B736173012DA112A009801D4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B736172F12DA112A009801D4 /* Foundation.framework */; };
 		B736173212DA112A009801D4 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B736173112DA112A009801D4 /* CoreGraphics.framework */; };
@@ -99,14 +78,20 @@
 		B736175512DA112B009801D4 /* editTests.m in Sources */ = {isa = PBXBuildFile; fileRef = B736175412DA112A009801D4 /* editTests.m */; };
 		B736176612DA26BB009801D4 /* CSEditor.m in Sources */ = {isa = PBXBuildFile; fileRef = B736176512DA26BB009801D4 /* CSEditor.m */; };
 		B736176912DA27E3009801D4 /* CSEditorView.m in Sources */ = {isa = PBXBuildFile; fileRef = B736176812DA27E3009801D4 /* CSEditorView.m */; };
+		B77536E712DF592D00E6C048 /* OUITextSelectionHandle.png in Resources */ = {isa = PBXBuildFile; fileRef = B77536DF12DF592D00E6C048 /* OUITextSelectionHandle.png */; };
+		B77536E812DF592D00E6C048 /* OUIRectangularOverlayFrame.png in Resources */ = {isa = PBXBuildFile; fileRef = B77536E012DF592D00E6C048 /* OUIRectangularOverlayFrame.png */; };
+		B77536E912DF592D00E6C048 /* OUIShadowBorderBottom.png in Resources */ = {isa = PBXBuildFile; fileRef = B77536E112DF592D00E6C048 /* OUIShadowBorderBottom.png */; };
+		B77536EA12DF592D00E6C048 /* OUIShadowBorderRight.png in Resources */ = {isa = PBXBuildFile; fileRef = B77536E212DF592D00E6C048 /* OUIShadowBorderRight.png */; };
+		B77536EB12DF592D00E6C048 /* OUIRectangularOverlayArrow.png in Resources */ = {isa = PBXBuildFile; fileRef = B77536E312DF592D00E6C048 /* OUIRectangularOverlayArrow.png */; };
+		B77536EC12DF592D00E6C048 /* OUIShadowBorderLeft.png in Resources */ = {isa = PBXBuildFile; fileRef = B77536E412DF592D00E6C048 /* OUIShadowBorderLeft.png */; };
+		B77536ED12DF592D00E6C048 /* OUIShadowBorderTop.png in Resources */ = {isa = PBXBuildFile; fileRef = B77536E512DF592D00E6C048 /* OUIShadowBorderTop.png */; };
+		B77536EE12DF592D00E6C048 /* OUITextSelectionOverlay.png in Resources */ = {isa = PBXBuildFile; fileRef = B77536E612DF592D00E6C048 /* OUITextSelectionOverlay.png */; };
 		B7BD531F12DF1CDB003B83B3 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7BD531E12DF1CDB003B83B3 /* QuartzCore.framework */; };
 		B7BF318D12DB7FB700AFF9C1 /* IndexedPosition.m in Sources */ = {isa = PBXBuildFile; fileRef = B7BF318C12DB7FB700AFF9C1 /* IndexedPosition.m */; };
 		B7BF319012DB7FDB00AFF9C1 /* IndexedRange.m in Sources */ = {isa = PBXBuildFile; fileRef = B7BF318F12DB7FDB00AFF9C1 /* IndexedRange.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		B70E576212DF2C61001303D0 /* TextScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextScrollView.h; sourceTree = "<group>"; };
-		B70E576312DF2C61001303D0 /* TextScrollView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TextScrollView.m; sourceTree = "<group>"; };
 		B70E585A12DF2FF0001303D0 /* OAFontDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OAFontDescriptor.h; sourceTree = "<group>"; };
 		B70E585B12DF2FF0001303D0 /* OAFontDescriptor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OAFontDescriptor.m; sourceTree = "<group>"; };
 		B70E585C12DF2FF0001303D0 /* OAParagraphStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OAParagraphStyle.h; sourceTree = "<group>"; };
@@ -199,14 +184,6 @@
 		B70E58B712DF2FF0001303D0 /* OUEFTextRange.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OUEFTextRange.m; sourceTree = "<group>"; };
 		B70E58B812DF2FF0001303D0 /* OUEFTextSpan.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OUEFTextSpan.h; sourceTree = "<group>"; };
 		B70E58B912DF2FF0001303D0 /* OUEFTextSpan.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OUEFTextSpan.m; sourceTree = "<group>"; };
-		B70E58BA12DF2FF0001303D0 /* OUIColorInspectorSlice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OUIColorInspectorSlice.h; sourceTree = "<group>"; };
-		B70E58BB12DF2FF0001303D0 /* OUIColorInspectorSlice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OUIColorInspectorSlice.m; sourceTree = "<group>"; };
-		B70E58BC12DF2FF0001303D0 /* OUIColorPicker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OUIColorPicker.h; sourceTree = "<group>"; };
-		B70E58BD12DF2FF0001303D0 /* OUIColorPicker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OUIColorPicker.m; sourceTree = "<group>"; };
-		B70E58BE12DF2FF0001303D0 /* OUIColorSwatch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OUIColorSwatch.h; sourceTree = "<group>"; };
-		B70E58BF12DF2FF0001303D0 /* OUIColorSwatch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OUIColorSwatch.m; sourceTree = "<group>"; };
-		B70E58C012DF2FF0001303D0 /* OUIColorSwatchPicker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OUIColorSwatchPicker.h; sourceTree = "<group>"; };
-		B70E58C112DF2FF0001303D0 /* OUIColorSwatchPicker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OUIColorSwatchPicker.m; sourceTree = "<group>"; };
 		B70E58C212DF2FF0001303D0 /* OUIColorValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OUIColorValue.h; sourceTree = "<group>"; };
 		B70E58C312DF2FF0001303D0 /* OUIDirectTapGestureRecognizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OUIDirectTapGestureRecognizer.h; sourceTree = "<group>"; };
 		B70E58C412DF2FF0001303D0 /* OUIDirectTapGestureRecognizer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OUIDirectTapGestureRecognizer.m; sourceTree = "<group>"; };
@@ -215,46 +192,13 @@
 		B70E58C712DF2FF0001303D0 /* OUIEditableFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OUIEditableFrame.h; sourceTree = "<group>"; };
 		B70E58C812DF2FF0001303D0 /* OUIEditableFrame.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OUIEditableFrame.m; sourceTree = "<group>"; };
 		B70E58C912DF2FF0001303D0 /* OUIEditableFrameDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OUIEditableFrameDelegate.h; sourceTree = "<group>"; };
-		B70E58CA12DF2FF0001303D0 /* OUIFontInspectorDetailSlice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OUIFontInspectorDetailSlice.h; sourceTree = "<group>"; };
-		B70E58CB12DF2FF0001303D0 /* OUIFontInspectorDetailSlice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OUIFontInspectorDetailSlice.m; sourceTree = "<group>"; };
-		B70E58CC12DF2FF0001303D0 /* OUIFontInspectorSlice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OUIFontInspectorSlice.h; sourceTree = "<group>"; };
-		B70E58CD12DF2FF0001303D0 /* OUIFontInspectorSlice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OUIFontInspectorSlice.m; sourceTree = "<group>"; };
 		B70E58CE12DF2FF0001303D0 /* OUIFontUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OUIFontUtilities.h; sourceTree = "<group>"; };
 		B70E58CF12DF2FF0001303D0 /* OUIFontUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OUIFontUtilities.m; sourceTree = "<group>"; };
-		B70E58D012DF2FF0001303D0 /* OUIInspector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OUIInspector.h; sourceTree = "<group>"; };
-		B70E58D112DF2FF0001303D0 /* OUIInspector.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OUIInspector.m; sourceTree = "<group>"; };
-		B70E58D212DF2FF0001303D0 /* OUIInspectorDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OUIInspectorDelegate.h; sourceTree = "<group>"; };
-		B70E58D312DF2FF0001303D0 /* OUIInspectorDetailSlice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OUIInspectorDetailSlice.h; sourceTree = "<group>"; };
-		B70E58D412DF2FF0001303D0 /* OUIInspectorDetailSlice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OUIInspectorDetailSlice.m; sourceTree = "<group>"; };
-		B70E58D512DF2FF0001303D0 /* OUIInspectorSegmentedControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OUIInspectorSegmentedControl.h; sourceTree = "<group>"; };
-		B70E58D612DF2FF0001303D0 /* OUIInspectorSegmentedControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OUIInspectorSegmentedControl.m; sourceTree = "<group>"; };
-		B70E58D712DF2FF0001303D0 /* OUIInspectorSegmentedControlButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OUIInspectorSegmentedControlButton.h; sourceTree = "<group>"; };
-		B70E58D812DF2FF0001303D0 /* OUIInspectorSegmentedControlButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OUIInspectorSegmentedControlButton.m; sourceTree = "<group>"; };
-		B70E58D912DF2FF0001303D0 /* OUIInspectorSelectionValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OUIInspectorSelectionValue.h; sourceTree = "<group>"; };
-		B70E58DA12DF2FF0001303D0 /* OUIInspectorSelectionValue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OUIInspectorSelectionValue.m; sourceTree = "<group>"; };
-		B70E58DB12DF2FF0001303D0 /* OUIInspectorSlice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OUIInspectorSlice.h; sourceTree = "<group>"; };
-		B70E58DC12DF2FF0001303D0 /* OUIInspectorSlice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OUIInspectorSlice.m; sourceTree = "<group>"; };
-		B70E58DD12DF2FF0001303D0 /* OUIInspectorStack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OUIInspectorStack.h; sourceTree = "<group>"; };
-		B70E58DE12DF2FF0001303D0 /* OUIInspectorStack.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OUIInspectorStack.m; sourceTree = "<group>"; };
-		B70E58DF12DF2FF0001303D0 /* OUIInspectorStepperButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OUIInspectorStepperButton.h; sourceTree = "<group>"; };
-		B70E58E012DF2FF0001303D0 /* OUIInspectorStepperButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OUIInspectorStepperButton.m; sourceTree = "<group>"; };
-		B70E58E112DF2FF0001303D0 /* OUIInspectorTextWell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OUIInspectorTextWell.h; sourceTree = "<group>"; };
-		B70E58E212DF2FF0001303D0 /* OUIInspectorTextWell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OUIInspectorTextWell.m; sourceTree = "<group>"; };
-		B70E58E312DF2FF0001303D0 /* OUIInspectorWell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OUIInspectorWell.h; sourceTree = "<group>"; };
-		B70E58E412DF2FF0001303D0 /* OUIInspectorWell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OUIInspectorWell.m; sourceTree = "<group>"; };
 		B70E58E512DF2FF0001303D0 /* OUILoadedImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OUILoadedImage.h; sourceTree = "<group>"; };
 		B70E58E612DF2FF0001303D0 /* OUILoadedImage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OUILoadedImage.m; sourceTree = "<group>"; };
 		B70E58E712DF2FF0001303D0 /* OUILoupeOverlay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OUILoupeOverlay.h; sourceTree = "<group>"; };
 		B70E58E812DF2FF0001303D0 /* OUILoupeOverlay.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OUILoupeOverlay.m; sourceTree = "<group>"; };
 		B70E58E912DF2FF0001303D0 /* OUILoupeOverlaySubject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OUILoupeOverlaySubject.h; sourceTree = "<group>"; };
-		B70E58EA12DF2FF0001303D0 /* OUIParagraphStyleInspectorSlice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OUIParagraphStyleInspectorSlice.h; sourceTree = "<group>"; };
-		B70E58EB12DF2FF0001303D0 /* OUIParagraphStyleInspectorSlice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OUIParagraphStyleInspectorSlice.m; sourceTree = "<group>"; };
-		B70E58EC12DF2FF0001303D0 /* OUIScalingScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OUIScalingScrollView.h; sourceTree = "<group>"; };
-		B70E58ED12DF2FF0001303D0 /* OUIScalingScrollView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OUIScalingScrollView.m; sourceTree = "<group>"; };
-		B70E58EE12DF2FF0001303D0 /* OUIScalingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OUIScalingView.h; sourceTree = "<group>"; };
-		B70E58EF12DF2FF0001303D0 /* OUIScalingView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OUIScalingView.m; sourceTree = "<group>"; };
-		B70E58F012DF2FF0001303D0 /* OUIScalingViewTile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OUIScalingViewTile.h; sourceTree = "<group>"; };
-		B70E58F112DF2FF0001303D0 /* OUIScalingViewTile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OUIScalingViewTile.m; sourceTree = "<group>"; };
 		B70E58F212DF2FF0001303D0 /* OUITextCursorOverlay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OUITextCursorOverlay.h; sourceTree = "<group>"; };
 		B70E58F312DF2FF0001303D0 /* OUITextCursorOverlay.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OUITextCursorOverlay.m; sourceTree = "<group>"; };
 		B70E58F412DF2FF0001303D0 /* OUITextInputStringTokenizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OUITextInputStringTokenizer.h; sourceTree = "<group>"; };
@@ -263,12 +207,11 @@
 		B70E58F712DF2FF0001303D0 /* OUITextLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OUITextLayout.m; sourceTree = "<group>"; };
 		B70E58F812DF2FF0001303D0 /* OUITextThumb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OUITextThumb.h; sourceTree = "<group>"; };
 		B70E58F912DF2FF0001303D0 /* OUITextThumb.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OUITextThumb.m; sourceTree = "<group>"; };
-		B70E58FA12DF2FF0001303D0 /* OUITileDebug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OUITileDebug.h; sourceTree = "<group>"; };
-		B70E58FB12DF2FF0001303D0 /* OUITiledScalingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OUITiledScalingView.h; sourceTree = "<group>"; };
-		B70E58FC12DF2FF0001303D0 /* OUITiledScalingView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OUITiledScalingView.m; sourceTree = "<group>"; };
 		B70E58FD12DF2FF0001303D0 /* UIView-OUIExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView-OUIExtensions.h"; sourceTree = "<group>"; };
 		B70E58FE12DF2FF0001303D0 /* UIView-OUIExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView-OUIExtensions.m"; sourceTree = "<group>"; };
 		B71C0F0212DB60DC002843EF /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
+		B720FB6712DF53E7000A22B6 /* OUIScalingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OUIScalingView.h; sourceTree = "<group>"; };
+		B720FB6812DF53E7000A22B6 /* OUIScalingView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OUIScalingView.m; sourceTree = "<group>"; };
 		B736172A12DA112A009801D4 /* edit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = edit.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B736172D12DA112A009801D4 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		B736172F12DA112A009801D4 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -292,6 +235,14 @@
 		B736176512DA26BB009801D4 /* CSEditor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CSEditor.m; sourceTree = "<group>"; };
 		B736176712DA27E3009801D4 /* CSEditorView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSEditorView.h; sourceTree = "<group>"; };
 		B736176812DA27E3009801D4 /* CSEditorView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CSEditorView.m; sourceTree = "<group>"; };
+		B77536DF12DF592D00E6C048 /* OUITextSelectionHandle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = OUITextSelectionHandle.png; sourceTree = "<group>"; };
+		B77536E012DF592D00E6C048 /* OUIRectangularOverlayFrame.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = OUIRectangularOverlayFrame.png; sourceTree = "<group>"; };
+		B77536E112DF592D00E6C048 /* OUIShadowBorderBottom.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = OUIShadowBorderBottom.png; sourceTree = "<group>"; };
+		B77536E212DF592D00E6C048 /* OUIShadowBorderRight.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = OUIShadowBorderRight.png; sourceTree = "<group>"; };
+		B77536E312DF592D00E6C048 /* OUIRectangularOverlayArrow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = OUIRectangularOverlayArrow.png; sourceTree = "<group>"; };
+		B77536E412DF592D00E6C048 /* OUIShadowBorderLeft.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = OUIShadowBorderLeft.png; sourceTree = "<group>"; };
+		B77536E512DF592D00E6C048 /* OUIShadowBorderTop.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = OUIShadowBorderTop.png; sourceTree = "<group>"; };
+		B77536E612DF592D00E6C048 /* OUITextSelectionOverlay.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = OUITextSelectionOverlay.png; sourceTree = "<group>"; };
 		B7BD531E12DF1CDB003B83B3 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		B7BF318B12DB7FB700AFF9C1 /* IndexedPosition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IndexedPosition.h; sourceTree = "<group>"; };
 		B7BF318C12DB7FB700AFF9C1 /* IndexedPosition.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IndexedPosition.m; sourceTree = "<group>"; };
@@ -461,14 +412,6 @@
 				B70E58B712DF2FF0001303D0 /* OUEFTextRange.m */,
 				B70E58B812DF2FF0001303D0 /* OUEFTextSpan.h */,
 				B70E58B912DF2FF0001303D0 /* OUEFTextSpan.m */,
-				B70E58BA12DF2FF0001303D0 /* OUIColorInspectorSlice.h */,
-				B70E58BB12DF2FF0001303D0 /* OUIColorInspectorSlice.m */,
-				B70E58BC12DF2FF0001303D0 /* OUIColorPicker.h */,
-				B70E58BD12DF2FF0001303D0 /* OUIColorPicker.m */,
-				B70E58BE12DF2FF0001303D0 /* OUIColorSwatch.h */,
-				B70E58BF12DF2FF0001303D0 /* OUIColorSwatch.m */,
-				B70E58C012DF2FF0001303D0 /* OUIColorSwatchPicker.h */,
-				B70E58C112DF2FF0001303D0 /* OUIColorSwatchPicker.m */,
 				B70E58C212DF2FF0001303D0 /* OUIColorValue.h */,
 				B70E58C312DF2FF0001303D0 /* OUIDirectTapGestureRecognizer.h */,
 				B70E58C412DF2FF0001303D0 /* OUIDirectTapGestureRecognizer.m */,
@@ -477,46 +420,15 @@
 				B70E58C712DF2FF0001303D0 /* OUIEditableFrame.h */,
 				B70E58C812DF2FF0001303D0 /* OUIEditableFrame.m */,
 				B70E58C912DF2FF0001303D0 /* OUIEditableFrameDelegate.h */,
-				B70E58CA12DF2FF0001303D0 /* OUIFontInspectorDetailSlice.h */,
-				B70E58CB12DF2FF0001303D0 /* OUIFontInspectorDetailSlice.m */,
-				B70E58CC12DF2FF0001303D0 /* OUIFontInspectorSlice.h */,
-				B70E58CD12DF2FF0001303D0 /* OUIFontInspectorSlice.m */,
 				B70E58CE12DF2FF0001303D0 /* OUIFontUtilities.h */,
 				B70E58CF12DF2FF0001303D0 /* OUIFontUtilities.m */,
-				B70E58D012DF2FF0001303D0 /* OUIInspector.h */,
-				B70E58D112DF2FF0001303D0 /* OUIInspector.m */,
-				B70E58D212DF2FF0001303D0 /* OUIInspectorDelegate.h */,
-				B70E58D312DF2FF0001303D0 /* OUIInspectorDetailSlice.h */,
-				B70E58D412DF2FF0001303D0 /* OUIInspectorDetailSlice.m */,
-				B70E58D512DF2FF0001303D0 /* OUIInspectorSegmentedControl.h */,
-				B70E58D612DF2FF0001303D0 /* OUIInspectorSegmentedControl.m */,
-				B70E58D712DF2FF0001303D0 /* OUIInspectorSegmentedControlButton.h */,
-				B70E58D812DF2FF0001303D0 /* OUIInspectorSegmentedControlButton.m */,
-				B70E58D912DF2FF0001303D0 /* OUIInspectorSelectionValue.h */,
-				B70E58DA12DF2FF0001303D0 /* OUIInspectorSelectionValue.m */,
-				B70E58DB12DF2FF0001303D0 /* OUIInspectorSlice.h */,
-				B70E58DC12DF2FF0001303D0 /* OUIInspectorSlice.m */,
-				B70E58DD12DF2FF0001303D0 /* OUIInspectorStack.h */,
-				B70E58DE12DF2FF0001303D0 /* OUIInspectorStack.m */,
-				B70E58DF12DF2FF0001303D0 /* OUIInspectorStepperButton.h */,
-				B70E58E012DF2FF0001303D0 /* OUIInspectorStepperButton.m */,
-				B70E58E112DF2FF0001303D0 /* OUIInspectorTextWell.h */,
-				B70E58E212DF2FF0001303D0 /* OUIInspectorTextWell.m */,
-				B70E58E312DF2FF0001303D0 /* OUIInspectorWell.h */,
-				B70E58E412DF2FF0001303D0 /* OUIInspectorWell.m */,
 				B70E58E512DF2FF0001303D0 /* OUILoadedImage.h */,
 				B70E58E612DF2FF0001303D0 /* OUILoadedImage.m */,
 				B70E58E712DF2FF0001303D0 /* OUILoupeOverlay.h */,
 				B70E58E812DF2FF0001303D0 /* OUILoupeOverlay.m */,
 				B70E58E912DF2FF0001303D0 /* OUILoupeOverlaySubject.h */,
-				B70E58EA12DF2FF0001303D0 /* OUIParagraphStyleInspectorSlice.h */,
-				B70E58EB12DF2FF0001303D0 /* OUIParagraphStyleInspectorSlice.m */,
-				B70E58EC12DF2FF0001303D0 /* OUIScalingScrollView.h */,
-				B70E58ED12DF2FF0001303D0 /* OUIScalingScrollView.m */,
-				B70E58EE12DF2FF0001303D0 /* OUIScalingView.h */,
-				B70E58EF12DF2FF0001303D0 /* OUIScalingView.m */,
-				B70E58F012DF2FF0001303D0 /* OUIScalingViewTile.h */,
-				B70E58F112DF2FF0001303D0 /* OUIScalingViewTile.m */,
+				B720FB6712DF53E7000A22B6 /* OUIScalingView.h */,
+				B720FB6812DF53E7000A22B6 /* OUIScalingView.m */,
 				B70E58F212DF2FF0001303D0 /* OUITextCursorOverlay.h */,
 				B70E58F312DF2FF0001303D0 /* OUITextCursorOverlay.m */,
 				B70E58F412DF2FF0001303D0 /* OUITextInputStringTokenizer.h */,
@@ -525,9 +437,6 @@
 				B70E58F712DF2FF0001303D0 /* OUITextLayout.m */,
 				B70E58F812DF2FF0001303D0 /* OUITextThumb.h */,
 				B70E58F912DF2FF0001303D0 /* OUITextThumb.m */,
-				B70E58FA12DF2FF0001303D0 /* OUITileDebug.h */,
-				B70E58FB12DF2FF0001303D0 /* OUITiledScalingView.h */,
-				B70E58FC12DF2FF0001303D0 /* OUITiledScalingView.m */,
 				B70E58FD12DF2FF0001303D0 /* UIView-OUIExtensions.h */,
 				B70E58FE12DF2FF0001303D0 /* UIView-OUIExtensions.m */,
 			);
@@ -569,8 +478,6 @@
 				B736176812DA27E3009801D4 /* CSEditorView.m */,
 				B736176412DA26BB009801D4 /* CSEditor.h */,
 				B736176512DA26BB009801D4 /* CSEditor.m */,
-				B70E576212DF2C61001303D0 /* TextScrollView.h */,
-				B70E576312DF2C61001303D0 /* TextScrollView.m */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -588,6 +495,7 @@
 		B736172412DA1129009801D4 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				B77536DE12DF590D00E6C048 /* Images */,
 				B736173512DA112A009801D4 /* edit-Info.plist */,
 				B736173712DA112A009801D4 /* InfoPlist.strings */,
 				B736174112DA112A009801D4 /* MainWindow.xib */,
@@ -626,6 +534,21 @@
 				B736175412DA112A009801D4 /* editTests.m */,
 			);
 			path = Tests;
+			sourceTree = "<group>";
+		};
+		B77536DE12DF590D00E6C048 /* Images */ = {
+			isa = PBXGroup;
+			children = (
+				B77536DF12DF592D00E6C048 /* OUITextSelectionHandle.png */,
+				B77536E012DF592D00E6C048 /* OUIRectangularOverlayFrame.png */,
+				B77536E112DF592D00E6C048 /* OUIShadowBorderBottom.png */,
+				B77536E212DF592D00E6C048 /* OUIShadowBorderRight.png */,
+				B77536E312DF592D00E6C048 /* OUIRectangularOverlayArrow.png */,
+				B77536E412DF592D00E6C048 /* OUIShadowBorderLeft.png */,
+				B77536E512DF592D00E6C048 /* OUIShadowBorderTop.png */,
+				B77536E612DF592D00E6C048 /* OUITextSelectionOverlay.png */,
+			);
+			name = Images;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -696,6 +619,14 @@
 			files = (
 				B736173912DA112A009801D4 /* InfoPlist.strings in Resources */,
 				B736174312DA112A009801D4 /* MainWindow.xib in Resources */,
+				B77536E712DF592D00E6C048 /* OUITextSelectionHandle.png in Resources */,
+				B77536E812DF592D00E6C048 /* OUIRectangularOverlayFrame.png in Resources */,
+				B77536E912DF592D00E6C048 /* OUIShadowBorderBottom.png in Resources */,
+				B77536EA12DF592D00E6C048 /* OUIShadowBorderRight.png in Resources */,
+				B77536EB12DF592D00E6C048 /* OUIRectangularOverlayArrow.png in Resources */,
+				B77536EC12DF592D00E6C048 /* OUIShadowBorderLeft.png in Resources */,
+				B77536ED12DF592D00E6C048 /* OUIShadowBorderTop.png in Resources */,
+				B77536EE12DF592D00E6C048 /* OUITextSelectionOverlay.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -738,7 +669,6 @@
 				B736176912DA27E3009801D4 /* CSEditorView.m in Sources */,
 				B7BF318D12DB7FB700AFF9C1 /* IndexedPosition.m in Sources */,
 				B7BF319012DB7FDB00AFF9C1 /* IndexedRange.m in Sources */,
-				B70E576412DF2C61001303D0 /* TextScrollView.m in Sources */,
 				B70E58FF12DF2FF0001303D0 /* OAFontDescriptor.m in Sources */,
 				B70E590012DF2FF0001303D0 /* OAParagraphStyle.m in Sources */,
 				B70E590112DF2FF0001303D0 /* OATextAttributes.m in Sources */,
@@ -780,38 +710,18 @@
 				B70E592512DF2FF0001303D0 /* OUEFTextPosition.m in Sources */,
 				B70E592612DF2FF0001303D0 /* OUEFTextRange.m in Sources */,
 				B70E592712DF2FF0001303D0 /* OUEFTextSpan.m in Sources */,
-				B70E592812DF2FF0001303D0 /* OUIColorInspectorSlice.m in Sources */,
-				B70E592912DF2FF0001303D0 /* OUIColorPicker.m in Sources */,
-				B70E592A12DF2FF0001303D0 /* OUIColorSwatch.m in Sources */,
-				B70E592B12DF2FF0001303D0 /* OUIColorSwatchPicker.m in Sources */,
 				B70E592C12DF2FF0001303D0 /* OUIDirectTapGestureRecognizer.m in Sources */,
 				B70E592D12DF2FF0001303D0 /* OUIDrawing.m in Sources */,
 				B70E592E12DF2FF0001303D0 /* OUIEditableFrame.m in Sources */,
-				B70E592F12DF2FF0001303D0 /* OUIFontInspectorDetailSlice.m in Sources */,
-				B70E593012DF2FF0001303D0 /* OUIFontInspectorSlice.m in Sources */,
 				B70E593112DF2FF0001303D0 /* OUIFontUtilities.m in Sources */,
-				B70E593212DF2FF0001303D0 /* OUIInspector.m in Sources */,
-				B70E593312DF2FF0001303D0 /* OUIInspectorDetailSlice.m in Sources */,
-				B70E593412DF2FF0001303D0 /* OUIInspectorSegmentedControl.m in Sources */,
-				B70E593512DF2FF0001303D0 /* OUIInspectorSegmentedControlButton.m in Sources */,
-				B70E593612DF2FF0001303D0 /* OUIInspectorSelectionValue.m in Sources */,
-				B70E593712DF2FF0001303D0 /* OUIInspectorSlice.m in Sources */,
-				B70E593812DF2FF0001303D0 /* OUIInspectorStack.m in Sources */,
-				B70E593912DF2FF0001303D0 /* OUIInspectorStepperButton.m in Sources */,
-				B70E593A12DF2FF0001303D0 /* OUIInspectorTextWell.m in Sources */,
-				B70E593B12DF2FF0001303D0 /* OUIInspectorWell.m in Sources */,
 				B70E593C12DF2FF0001303D0 /* OUILoadedImage.m in Sources */,
 				B70E593D12DF2FF0001303D0 /* OUILoupeOverlay.m in Sources */,
-				B70E593E12DF2FF0001303D0 /* OUIParagraphStyleInspectorSlice.m in Sources */,
-				B70E593F12DF2FF0001303D0 /* OUIScalingScrollView.m in Sources */,
-				B70E594012DF2FF0001303D0 /* OUIScalingView.m in Sources */,
-				B70E594112DF2FF0001303D0 /* OUIScalingViewTile.m in Sources */,
 				B70E594212DF2FF0001303D0 /* OUITextCursorOverlay.m in Sources */,
 				B70E594312DF2FF0001303D0 /* OUITextInputStringTokenizer.m in Sources */,
 				B70E594412DF2FF0001303D0 /* OUITextLayout.m in Sources */,
 				B70E594512DF2FF0001303D0 /* OUITextThumb.m in Sources */,
-				B70E594612DF2FF0001303D0 /* OUITiledScalingView.m in Sources */,
 				B70E594712DF2FF0001303D0 /* UIView-OUIExtensions.m in Sources */,
+				B720FB6912DF53E7000A22B6 /* OUIScalingView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -9,8 +9,6 @@
 
 #import <OmniUI/OUIDirectTapGestureRecognizer.h>
 
-#import <OmniUI/OUIColorInspectorSlice.h>
-#import <OmniUI/OUIFontInspectorSlice.h>
 #import <OmniUI/OUITextLayout.h>
 #import <OmniUI/UIView-OUIExtensions.h>
 #import <OmniQuartz/OQColor.h>
@@ -24,7 +22,6 @@
 #import <execinfo.h>
 #import <stdlib.h>
 
-#import "OUIParagraphStyleInspectorSlice.h"
 #import "OUITextThumb.h"
 #import "OUEFTextPosition.h"
 #import "OUEFTextRange.h"
@@ -789,19 +786,6 @@ static void getTypographicPosition(CFArrayRef lines, NSUInteger posIndex, int af
 
 @synthesize linkTextAttributes = _linkTextAttributes;
 
-- (void)setupCustomMenuItemsForMenuController:(UIMenuController *)menuController;
-{
-    UIMenuItem *items[2];
-        
-    /* If we have a range selection, allow the user to inspect its attributes */
-    /* If we don't have a selection, this item will be disabled via -canPerformAction:withSender: */
-    items[0] = [[UIMenuItem alloc] initWithTitle:NSLocalizedStringFromTableInBundle(@"Style", @"OmniUI", OMNI_BUNDLE, @"Contextual menu item") action:@selector(inspectSelectedText:)];
-    
-    menuController.menuItems = [NSArray arrayWithObjects:items count:1];
-    
-    [items[0] release];
-}
-
 - (void)thumbBegan:(OUITextThumb *)thumb;
 {
     if (!_loupe) {
@@ -1146,8 +1130,8 @@ static BOOL _recognizerTouchedView(UIGestureRecognizer *recognizer, UIView *view
     if (selection != nil && ![selection isEmpty])
         flags.showingEditMenu = 1;
     BOOL suppressContextMenu = (_loupe != nil && _loupe.mode != OUILoupeOverlayNone) ||
-                                (_textInspector != nil && _textInspector.isVisible) ||
                                 (delegate && [delegate respondsToSelector:@selector(textViewCanShowContextMenu:)] && ![delegate textViewCanShowContextMenu:self]);
+    suppressContextMenu = NO;
     if (!flags.showingEditMenu || suppressContextMenu || !amFirstResponder) {
         if (_selectionContextMenu) {
             [_selectionContextMenu setMenuVisible:NO animated:( suppressContextMenu? NO : YES )];
@@ -1158,7 +1142,6 @@ static BOOL _recognizerTouchedView(UIGestureRecognizer *recognizer, UIView *view
         BOOL alreadyVisible;
         if (!_selectionContextMenu) {
             UIMenuController *menuController = [UIMenuController sharedMenuController];
-            [self setupCustomMenuItemsForMenuController:menuController];
             _selectionContextMenu = [menuController retain];
             alreadyVisible = NO;
         } else {
@@ -1167,7 +1150,7 @@ static BOOL _recognizerTouchedView(UIGestureRecognizer *recognizer, UIView *view
         
         /* Get the bounding rect of our selection */
         CGRect selectionRectangle = [self boundsOfRange:selection];
-        
+                
         selectionRectangle = CGRectIntegral(selectionRectangle);
         
         [_selectionContextMenu setTargetRect:selectionRectangle inView:self];
@@ -3359,77 +3342,6 @@ static BOOL addRectsToPath(CGPoint p, CGFloat width, CGFloat trailingWS, CGFloat
     [self unmarkText];
     [self _setSelectedTextRange:(OUEFTextRange *)rangeToSelect notifyDelegate:YES];
 }
-
-#pragma mark Context menu methods
-- (NSSet *)inspectableTextSpans;
-{
-    if (!selection)
-        return nil;
-    
-    NSMutableSet *runs = [NSMutableSet set];
-
-    NSRange range = [selection range];
-    while(range.length > 0) {
-        NSRange effective;
-        /* NSDictionary *d = */ [_content attributesAtIndex:range.location longestEffectiveRange:&effective inRange:range];
-        OUEFTextSpan *run = [[OUEFTextSpan alloc] initWithRange:effective generation:generation editor:self];
-        [runs addObject:run];
-        [run release];
-        
-        NSUInteger loc = effective.location + effective.length;
-        if (loc >= range.location + range.length)
-            break;
-        else {
-            range.length = range.location + range.length - loc;
-            range.location = loc;
-        }
-    }
-    
-    return runs;
-}
-
-- (void)inspectSelectedText:(id)sender
-{
-    NSSet *runs = [self inspectableTextSpans];
-    if (!runs)
-        return;
-    
-    CGRect selectionRect = [self boundsOfRange:selection];
-    if (CGRectIsEmpty(selectionRect))
-        return;
-        
-    DEBUG_TEXT(@"Inspecting: %@ rect: %@", [runs description], NSStringFromCGRect(selectionRect));
-    
-    if (!_textInspector) {
-        _textInspector = [[OUIInspector alloc] init];
-        _textInspector.delegate = self;
-    }
-    
-    [_textInspector inspectObjects:runs fromRect:selectionRect inView:self permittedArrowDirections:UIPopoverArrowDirectionAny];
-}
-
-#pragma mark OUIInspectorDelegate
-
-- (NSString *)inspectorTitle:(OUIInspector *)inspector;
-{
-    return NSLocalizedStringFromTableInBundle(@"Text Style", @"OUIInspectors", OMNI_BUNDLE, @"Inspector title");
-}
-
-- (NSArray *)inspectorSlices:(OUIInspector *)inspector;
-{
-    NSMutableArray *slices = [NSMutableArray array];
-    [slices addObject:[[[OUIColorInspectorSlice alloc] init] autorelease]];
-    [slices addObject:[[[OUIFontInspectorSlice alloc] init] autorelease]];
-    [slices addObject:[[[OUIParagraphStyleInspectorSlice alloc] init] autorelease]];
-
-    return slices;
-}
-
-- (void)inspectorDidDismiss:(OUIInspector *)inspector;
-{
-    [self becomeFirstResponder];
-}
-
 
 @end
 

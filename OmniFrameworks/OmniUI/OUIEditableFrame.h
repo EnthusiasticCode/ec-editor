@@ -9,7 +9,6 @@
 
 #import <OmniUI/OUIScalingView.h>
 #import <CoreText/CoreText.h>
-#import <OmniUI/OUIInspector.h>
 #import <OmniUI/OUIEditableFrameDelegate.h>
 #import <OmniUI/OUILoupeOverlaySubject.h>
 
@@ -20,7 +19,7 @@
 
 @class CALayer, CAShapeLayer;
 
-@interface OUIEditableFrame : OUIScalingView <UIKeyInput, UITextInputTraits, UITextInput, OUIInspectorDelegate, OUILoupeOverlaySubject>
+@interface OUIEditableFrame : OUIScalingView <UIKeyInput, UITextInputTraits, UITextInput, OUILoupeOverlaySubject>
 {
 @private
     /* The data model: an attributed string, a selection range. */
@@ -84,7 +83,6 @@
     unsigned short _caretSolidity;
     NSTimer *_solidityTimer;
     OUILoupeOverlay *_loupe;
-    OUIInspector *_textInspector; // TODO: This probably shouldn't live on the editor.
     
     UIMenuController *_selectionContextMenu;
     
@@ -119,7 +117,6 @@
 @property (nonatomic) UITextAutocapitalizationType autocapitalizationType; // defaults to UITextAutocapitalizationTypeNone
 @property (nonatomic) UITextGranularity tapSelectionGranularity;
 
-- (void)setupCustomMenuItemsForMenuController:(UIMenuController *)menuController;
 
 - (OUEFTextRange *)rangeOfLineContainingPosition:(OUEFTextPosition *)posn;
 - (UITextRange *)selectionRangeForPoint:(CGPoint)p wordSelection:(BOOL)selectWords;
@@ -138,6 +135,5 @@
 - (BOOL)hasTouchesForEvent:(UIEvent *)event;
 - (BOOL)hasTouchByGestureRecognizer:(UIGestureRecognizer *)recognizer;
 
-- (NSSet *)inspectableTextSpans;    // returns set of OUEFTextSpans 
 @end
 
