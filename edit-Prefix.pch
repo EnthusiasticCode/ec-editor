@@ -16,9 +16,6 @@
     #import <QuartzCore/QuartzCore.h>
 
     #import <OmniBase/OmniBase.h>
-    //imports unneeded files:
-    //OmniBase/system.h, OmniFoundation/OFStringScanner.h -> OmniFoundation/OFCharacterScanner.h
-    #import <OmniFoundation/OmniFoundation_Prefix.h>
-//    #import <OmniFoundation/OFNull.h>
-//    #import <OmniFoundation/OFUtilities.h>
+    #import <OmniFoundation/OFNull.h>
+    #import <OmniFoundation/OFUtilities.h>
 #endif

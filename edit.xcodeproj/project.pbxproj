@@ -33,15 +33,12 @@
 		B70E591612DF2FF0001303D0 /* NSString-OFSimpleMatching.m in Sources */ = {isa = PBXBuildFile; fileRef = B70E589112DF2FF0001303D0 /* NSString-OFSimpleMatching.m */; };
 		B70E591712DF2FF0001303D0 /* NSString-OFUnicodeCharacters.m in Sources */ = {isa = PBXBuildFile; fileRef = B70E589312DF2FF0001303D0 /* NSString-OFUnicodeCharacters.m */; };
 		B70E591812DF2FF0001303D0 /* OFCFCallbacks.m in Sources */ = {isa = PBXBuildFile; fileRef = B70E589612DF2FF0001303D0 /* OFCFCallbacks.m */; };
-		B70E591912DF2FF0001303D0 /* OFCharacterScanner.m in Sources */ = {isa = PBXBuildFile; fileRef = B70E589812DF2FF0001303D0 /* OFCharacterScanner.m */; };
 		B70E591A12DF2FF0001303D0 /* OFCharacterSet.m in Sources */ = {isa = PBXBuildFile; fileRef = B70E589A12DF2FF0001303D0 /* OFCharacterSet.m */; };
 		B70E591B12DF2FF0001303D0 /* OFEnumNameTable.m in Sources */ = {isa = PBXBuildFile; fileRef = B70E589C12DF2FF0001303D0 /* OFEnumNameTable.m */; };
 		B70E591C12DF2FF0001303D0 /* OFExtent.m in Sources */ = {isa = PBXBuildFile; fileRef = B70E589E12DF2FF0001303D0 /* OFExtent.m */; };
 		B70E591D12DF2FF0001303D0 /* OFNull.m in Sources */ = {isa = PBXBuildFile; fileRef = B70E58A012DF2FF0001303D0 /* OFNull.m */; };
 		B70E591E12DF2FF0001303D0 /* OFObject.m in Sources */ = {isa = PBXBuildFile; fileRef = B70E58A212DF2FF0001303D0 /* OFObject.m */; };
 		B70E591F12DF2FF0001303D0 /* OFPreference.m in Sources */ = {isa = PBXBuildFile; fileRef = B70E58A412DF2FF0001303D0 /* OFPreference.m */; };
-		B70E592012DF2FF0001303D0 /* OFStringDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = B70E58A612DF2FF0001303D0 /* OFStringDecoder.m */; };
-		B70E592112DF2FF0001303D0 /* OFStringScanner.m in Sources */ = {isa = PBXBuildFile; fileRef = B70E58A812DF2FF0001303D0 /* OFStringScanner.m */; };
 		B70E592212DF2FF0001303D0 /* OFUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = B70E58AB12DF2FF0001303D0 /* OFUtilities.m */; };
 		B70E592312DF2FF0001303D0 /* OQColor.m in Sources */ = {isa = PBXBuildFile; fileRef = B70E58B012DF2FF0001303D0 /* OQColor.m */; };
 		B70E592412DF2FF0001303D0 /* OQDrawing.m in Sources */ = {isa = PBXBuildFile; fileRef = B70E58B212DF2FF0001303D0 /* OQDrawing.m */; };
@@ -111,7 +108,6 @@
 		B70E586F12DF2FF0001303D0 /* assertions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = assertions.m; sourceTree = "<group>"; };
 		B70E587012DF2FF0001303D0 /* macros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = macros.h; sourceTree = "<group>"; };
 		B70E587112DF2FF0001303D0 /* objc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = objc.h; sourceTree = "<group>"; };
-		B70E587312DF2FF0001303D0 /* system.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = system.h; sourceTree = "<group>"; };
 		B70E587512DF2FF0001303D0 /* CFArray-OFExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "CFArray-OFExtensions.h"; sourceTree = "<group>"; };
 		B70E587612DF2FF0001303D0 /* CFArray-OFExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "CFArray-OFExtensions.m"; sourceTree = "<group>"; };
 		B70E587712DF2FF0001303D0 /* CFDictionary-OFExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "CFDictionary-OFExtensions.h"; sourceTree = "<group>"; };
@@ -146,8 +142,6 @@
 		B70E589412DF2FF0001303D0 /* OFByte.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OFByte.h; sourceTree = "<group>"; };
 		B70E589512DF2FF0001303D0 /* OFCFCallbacks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OFCFCallbacks.h; sourceTree = "<group>"; };
 		B70E589612DF2FF0001303D0 /* OFCFCallbacks.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OFCFCallbacks.m; sourceTree = "<group>"; };
-		B70E589712DF2FF0001303D0 /* OFCharacterScanner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OFCharacterScanner.h; sourceTree = "<group>"; };
-		B70E589812DF2FF0001303D0 /* OFCharacterScanner.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OFCharacterScanner.m; sourceTree = "<group>"; };
 		B70E589912DF2FF0001303D0 /* OFCharacterSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OFCharacterSet.h; sourceTree = "<group>"; };
 		B70E589A12DF2FF0001303D0 /* OFCharacterSet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OFCharacterSet.m; sourceTree = "<group>"; };
 		B70E589B12DF2FF0001303D0 /* OFEnumNameTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OFEnumNameTable.h; sourceTree = "<group>"; };
@@ -160,15 +154,9 @@
 		B70E58A212DF2FF0001303D0 /* OFObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OFObject.m; sourceTree = "<group>"; };
 		B70E58A312DF2FF0001303D0 /* OFPreference.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OFPreference.h; sourceTree = "<group>"; };
 		B70E58A412DF2FF0001303D0 /* OFPreference.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OFPreference.m; sourceTree = "<group>"; };
-		B70E58A512DF2FF0001303D0 /* OFStringDecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OFStringDecoder.h; sourceTree = "<group>"; };
-		B70E58A612DF2FF0001303D0 /* OFStringDecoder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OFStringDecoder.m; sourceTree = "<group>"; };
-		B70E58A712DF2FF0001303D0 /* OFStringScanner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OFStringScanner.h; sourceTree = "<group>"; };
-		B70E58A812DF2FF0001303D0 /* OFStringScanner.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OFStringScanner.m; sourceTree = "<group>"; };
 		B70E58A912DF2FF0001303D0 /* OFUnicodeUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OFUnicodeUtilities.h; sourceTree = "<group>"; };
 		B70E58AA12DF2FF0001303D0 /* OFUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OFUtilities.h; sourceTree = "<group>"; };
 		B70E58AB12DF2FF0001303D0 /* OFUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OFUtilities.m; sourceTree = "<group>"; };
-		B70E58AC12DF2FF0001303D0 /* OmniFoundation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OmniFoundation.h; sourceTree = "<group>"; };
-		B70E58AD12DF2FF0001303D0 /* OmniFoundation_Prefix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OmniFoundation_Prefix.h; sourceTree = "<group>"; };
 		B70E58AF12DF2FF0001303D0 /* OQColor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OQColor.h; sourceTree = "<group>"; };
 		B70E58B012DF2FF0001303D0 /* OQColor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OQColor.m; sourceTree = "<group>"; };
 		B70E58B112DF2FF0001303D0 /* OQDrawing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OQDrawing.h; sourceTree = "<group>"; };
@@ -309,7 +297,6 @@
 				B70E586F12DF2FF0001303D0 /* assertions.m */,
 				B70E587012DF2FF0001303D0 /* macros.h */,
 				B70E587112DF2FF0001303D0 /* objc.h */,
-				B70E587312DF2FF0001303D0 /* system.h */,
 			);
 			path = OmniBase;
 			sourceTree = "<group>";
@@ -351,8 +338,6 @@
 				B70E589412DF2FF0001303D0 /* OFByte.h */,
 				B70E589512DF2FF0001303D0 /* OFCFCallbacks.h */,
 				B70E589612DF2FF0001303D0 /* OFCFCallbacks.m */,
-				B70E589712DF2FF0001303D0 /* OFCharacterScanner.h */,
-				B70E589812DF2FF0001303D0 /* OFCharacterScanner.m */,
 				B70E589912DF2FF0001303D0 /* OFCharacterSet.h */,
 				B70E589A12DF2FF0001303D0 /* OFCharacterSet.m */,
 				B70E589B12DF2FF0001303D0 /* OFEnumNameTable.h */,
@@ -365,15 +350,9 @@
 				B70E58A212DF2FF0001303D0 /* OFObject.m */,
 				B70E58A312DF2FF0001303D0 /* OFPreference.h */,
 				B70E58A412DF2FF0001303D0 /* OFPreference.m */,
-				B70E58A512DF2FF0001303D0 /* OFStringDecoder.h */,
-				B70E58A612DF2FF0001303D0 /* OFStringDecoder.m */,
-				B70E58A712DF2FF0001303D0 /* OFStringScanner.h */,
-				B70E58A812DF2FF0001303D0 /* OFStringScanner.m */,
 				B70E58A912DF2FF0001303D0 /* OFUnicodeUtilities.h */,
 				B70E58AA12DF2FF0001303D0 /* OFUtilities.h */,
 				B70E58AB12DF2FF0001303D0 /* OFUtilities.m */,
-				B70E58AC12DF2FF0001303D0 /* OmniFoundation.h */,
-				B70E58AD12DF2FF0001303D0 /* OmniFoundation_Prefix.h */,
 			);
 			path = OmniFoundation;
 			sourceTree = "<group>";
@@ -677,15 +656,12 @@
 				B70E591612DF2FF0001303D0 /* NSString-OFSimpleMatching.m in Sources */,
 				B70E591712DF2FF0001303D0 /* NSString-OFUnicodeCharacters.m in Sources */,
 				B70E591812DF2FF0001303D0 /* OFCFCallbacks.m in Sources */,
-				B70E591912DF2FF0001303D0 /* OFCharacterScanner.m in Sources */,
 				B70E591A12DF2FF0001303D0 /* OFCharacterSet.m in Sources */,
 				B70E591B12DF2FF0001303D0 /* OFEnumNameTable.m in Sources */,
 				B70E591C12DF2FF0001303D0 /* OFExtent.m in Sources */,
 				B70E591D12DF2FF0001303D0 /* OFNull.m in Sources */,
 				B70E591E12DF2FF0001303D0 /* OFObject.m in Sources */,
 				B70E591F12DF2FF0001303D0 /* OFPreference.m in Sources */,
-				B70E592012DF2FF0001303D0 /* OFStringDecoder.m in Sources */,
-				B70E592112DF2FF0001303D0 /* OFStringScanner.m in Sources */,
 				B70E592212DF2FF0001303D0 /* OFUtilities.m in Sources */,
 				B70E592312DF2FF0001303D0 /* OQColor.m in Sources */,
 				B70E592412DF2FF0001303D0 /* OQDrawing.m in Sources */,
