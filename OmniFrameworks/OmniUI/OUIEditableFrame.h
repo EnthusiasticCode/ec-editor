@@ -44,7 +44,7 @@
     UIColor *_insertionPointSelectionColor;
     UIColor *_rangeSelectionColor;
     NSDictionary *markedTextStyle; // Supplied by UIKit.
-    NSDictionary *_linkTextAttributes;
+//    NSDictionary *_linkTextAttributes;
     id <OUIEditableFrameDelegate> delegate;
     CGSize layoutSize;
     UIEdgeInsets textInset;
@@ -115,7 +115,7 @@
 @property (nonatomic, readwrite) CTFontRef defaultCTFont;                      /* Applied to any runs lacking kCTFontAttributeName */
 @property (nonatomic, readwrite) CTParagraphStyleRef defaultCTParagraphStyle;  /* Applied to any runs lacking kCTParagraphStyleAttributeName */
 
-@property (nonatomic, copy) NSDictionary *linkTextAttributes;
+//@property (nonatomic, copy) NSDictionary *linkTextAttributes;
 
 @property (nonatomic) BOOL autoCorrectDoubleSpaceToPeriodAtSentenceEnd;
 @property (nonatomic) UITextAutocorrectionType autocorrectionType;  // defaults to UITextAutocorrectionTypeNo

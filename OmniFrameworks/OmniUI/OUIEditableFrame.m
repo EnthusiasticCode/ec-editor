@@ -132,7 +132,7 @@ static id do_init(OUIEditableFrame *self)
     // Avoid ugly stretchy text
     self.contentMode = UIViewContentModeTopLeft;
 
-    self->_linkTextAttributes = [[OUITextLayout defaultLinkTextAttributes] copy];
+//    self->_linkTextAttributes = [[OUITextLayout defaultLinkTextAttributes] copy];
     
     self.autocapitalizationType = UITextAutocapitalizationTypeNone;
     self->tapSelectionGranularity = UITextGranularityWord;
@@ -634,7 +634,7 @@ static void getTypographicPosition(CFArrayRef lines, NSUInteger posIndex, int af
     [typingAttributes release];
     [_insertionPointSelectionColor release];
     [markedTextStyle release];
-    [_linkTextAttributes release];
+//    [_linkTextAttributes release];
     [immutableContent release];
     if (framesetter)
         CFRelease(framesetter);
@@ -783,7 +783,7 @@ static void getTypographicPosition(CFArrayRef lines, NSUInteger posIndex, int af
     return defaultParagraphStyle;
 }
 
-@synthesize linkTextAttributes = _linkTextAttributes;
+//@synthesize linkTextAttributes = _linkTextAttributes;
 
 - (void)thumbBegan:(OUITextThumb *)thumb;
 {
@@ -3238,7 +3238,7 @@ static BOOL addRectsToPath(CGPoint p, CGFloat width, CGFloat trailingWS, CGFloat
         
         [immutableContent release];
         
-        immutableContent = OUICreateTransformedAttributedString(_content, _linkTextAttributes);
+//        immutableContent = OUICreateTransformedAttributedString(_content, _linkTextAttributes);
         if (immutableContent) {
             flags.immutableContentHasAttributeTransforms = YES;
         } else {

@@ -7,9 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		B70E58FF12DF2FF0001303D0 /* OAFontDescriptor.m in Sources */ = {isa = PBXBuildFile; fileRef = B70E585B12DF2FF0001303D0 /* OAFontDescriptor.m */; };
-		B70E590012DF2FF0001303D0 /* OAParagraphStyle.m in Sources */ = {isa = PBXBuildFile; fileRef = B70E585D12DF2FF0001303D0 /* OAParagraphStyle.m */; };
-		B70E590112DF2FF0001303D0 /* OATextAttributes.m in Sources */ = {isa = PBXBuildFile; fileRef = B70E585F12DF2FF0001303D0 /* OATextAttributes.m */; };
 		B70E590212DF2FF0001303D0 /* NSError-OBExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = B70E586212DF2FF0001303D0 /* NSError-OBExtensions.m */; };
 		B70E590312DF2FF0001303D0 /* NSError-OBUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = B70E586412DF2FF0001303D0 /* NSError-OBUtilities.m */; };
 		B70E590412DF2FF0001303D0 /* NSException-OBExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = B70E586612DF2FF0001303D0 /* NSException-OBExtensions.m */; };
@@ -85,12 +82,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		B70E585A12DF2FF0001303D0 /* OAFontDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OAFontDescriptor.h; sourceTree = "<group>"; };
-		B70E585B12DF2FF0001303D0 /* OAFontDescriptor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OAFontDescriptor.m; sourceTree = "<group>"; };
-		B70E585C12DF2FF0001303D0 /* OAParagraphStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OAParagraphStyle.h; sourceTree = "<group>"; };
-		B70E585D12DF2FF0001303D0 /* OAParagraphStyle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OAParagraphStyle.m; sourceTree = "<group>"; };
-		B70E585E12DF2FF0001303D0 /* OATextAttributes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OATextAttributes.h; sourceTree = "<group>"; };
-		B70E585F12DF2FF0001303D0 /* OATextAttributes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OATextAttributes.m; sourceTree = "<group>"; };
 		B70E586112DF2FF0001303D0 /* NSError-OBExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSError-OBExtensions.h"; sourceTree = "<group>"; };
 		B70E586212DF2FF0001303D0 /* NSError-OBExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSError-OBExtensions.m"; sourceTree = "<group>"; };
 		B70E586312DF2FF0001303D0 /* NSError-OBUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSError-OBUtilities.h"; sourceTree = "<group>"; };
@@ -255,26 +246,12 @@
 		B70E585812DF2FF0001303D0 /* OmniFrameworks */ = {
 			isa = PBXGroup;
 			children = (
-				B70E585912DF2FF0001303D0 /* OmniAppKit */,
 				B70E586012DF2FF0001303D0 /* OmniBase */,
 				B70E587412DF2FF0001303D0 /* OmniFoundation */,
 				B70E58AE12DF2FF0001303D0 /* OmniQuartz */,
 				B70E58B312DF2FF0001303D0 /* OmniUI */,
 			);
 			path = OmniFrameworks;
-			sourceTree = "<group>";
-		};
-		B70E585912DF2FF0001303D0 /* OmniAppKit */ = {
-			isa = PBXGroup;
-			children = (
-				B70E585A12DF2FF0001303D0 /* OAFontDescriptor.h */,
-				B70E585B12DF2FF0001303D0 /* OAFontDescriptor.m */,
-				B70E585C12DF2FF0001303D0 /* OAParagraphStyle.h */,
-				B70E585D12DF2FF0001303D0 /* OAParagraphStyle.m */,
-				B70E585E12DF2FF0001303D0 /* OATextAttributes.h */,
-				B70E585F12DF2FF0001303D0 /* OATextAttributes.m */,
-			);
-			path = OmniAppKit;
 			sourceTree = "<group>";
 		};
 		B70E586012DF2FF0001303D0 /* OmniBase */ = {
@@ -630,9 +607,6 @@
 				B736173B12DA112A009801D4 /* edit-main.m in Sources */,
 				B736173E12DA112A009801D4 /* editAppDelegate.m in Sources */,
 				B736174012DA112A009801D4 /* edit.xcdatamodel in Sources */,
-				B70E58FF12DF2FF0001303D0 /* OAFontDescriptor.m in Sources */,
-				B70E590012DF2FF0001303D0 /* OAParagraphStyle.m in Sources */,
-				B70E590112DF2FF0001303D0 /* OATextAttributes.m in Sources */,
 				B70E590212DF2FF0001303D0 /* NSError-OBExtensions.m in Sources */,
 				B70E590312DF2FF0001303D0 /* NSError-OBUtilities.m in Sources */,
 				B70E590412DF2FF0001303D0 /* NSException-OBExtensions.m in Sources */,

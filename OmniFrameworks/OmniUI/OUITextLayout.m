@@ -9,28 +9,36 @@
 
 #import <OmniFoundation/NSAttributedString-OFExtensions.h>
 #import <OmniFoundation/NSMutableAttributedString-OFExtensions.h>
-#import <OmniAppKit/OATextAttributes.h>
+#import <CoreText/CTStringAttributes.h>
 #import <OmniQuartz/OQDrawing.h>
 
 #include <string.h>
 
 #import <OmniBase/OmniBase.h>
 
+// externs to enable attributes in Cocoa missing in Core Text
+//extern NSString * const OABackgroundColorAttributeName;
+//extern NSString * const OALinkAttributeName;
+//extern NSString * const OAStrikethroughStyleAttributeName;
+//extern NSString * const OAStrikethroughColorAttributeName;
+//extern NSUInteger const OAUnderlineByWordMask;
 
 
 @implementation OUITextLayout
 
+/* enable externs ~ line 20 for this method
 + (NSDictionary *)defaultLinkTextAttributes;
 {
     static NSDictionary *attributes = nil;
     
     if (!attributes)
-        attributes = [[NSDictionary alloc] initWithObjectsAndKeys:(id)[[UIColor blueColor] CGColor], OAForegroundColorAttributeName,
+        attributes = [[NSDictionary alloc] initWithObjectsAndKeys:(id)[[UIColor blueColor] CGColor], kCTForegroundColorAttributeName,
                       [NSNumber numberWithUnsignedInt:kCTUnderlineStyleSingle], OAUnderlineStyleAttributeName, nil];
     
     return attributes;
 }
-
+*/
+ 
 CTFontRef OUIGlobalDefaultFont(void)
 {
     static CTFontRef globalFont = NULL;
@@ -298,11 +306,12 @@ void OUITextLayoutFixupParagraphStyles(NSMutableAttributedString *content)
     }
 }
 
+/* enable externs ~ line 20 for this method
 static NSAttributedString *_transformLink(NSMutableAttributedString *source, NSDictionary *attributes, NSRange matchRange, NSRange effectiveAttributeRange, BOOL *isEditing, void *context)
 {
     NSDictionary *linkAttributes = context;
     
-    if ([attributes objectForKey:OALinkAttributeName]) {
+    if ([attributes objectForKey:NSLinkAttributeName]) {
         if (!*isEditing) {
             [source beginEditing];
             *isEditing = YES;
@@ -313,7 +322,9 @@ static NSAttributedString *_transformLink(NSMutableAttributedString *source, NSD
     // We made only attribute changes (if any at all).
     return nil;
 }
+*/
 
+/* enable externs ~ line 20 for this method
 static NSAttributedString *_transformUnderline(NSMutableAttributedString *source, NSDictionary *attributes, NSRange matchRange, NSRange effectiveAttributeRange, BOOL *isEditing, void *context)
 {
     NSCharacterSet *whitespaceCharacterSet = [NSCharacterSet whitespaceCharacterSet];
@@ -339,6 +350,8 @@ static NSAttributedString *_transformUnderline(NSMutableAttributedString *source
     // We made only attribute changes (if any at all).
     return nil;
 }
+*/
+ 
 
 /*
  Later, we may have a callout for a delegate to extent the transformation. For now this applies some hard coded transforms to support features that CoreText doesn't have natively.
@@ -348,6 +361,7 @@ static NSAttributedString *_transformUnderline(NSMutableAttributedString *source
  
  Returns nil if no transformation is done, instead of returning [soure copy].
  */
+/* enable externs ~ line 20 for this method
 NSAttributedString *OUICreateTransformedAttributedString(NSAttributedString *source, NSDictionary *linkAttributes)
 {
     BOOL allowLinkTransform = ([linkAttributes count] > 0);
@@ -395,6 +409,6 @@ NSAttributedString *OUICreateTransformedAttributedString(NSAttributedString *sou
 
     return immutableResult;
 }
-
+*/
 @end
 

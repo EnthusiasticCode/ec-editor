@@ -21,7 +21,7 @@
     CGRect _usedSize;
 }
 
-+ (NSDictionary *)defaultLinkTextAttributes;
+//+ (NSDictionary *)defaultLinkTextAttributes;
 
 - initWithAttributedString:(NSAttributedString *)attributedString constraints:(CGSize)constraints;
 
@@ -42,4 +42,4 @@ extern void OUITextLayoutFixupParagraphStyles(NSMutableAttributedString *content
 
 extern CTFontRef OUIGlobalDefaultFont(void);
 
-extern NSAttributedString *OUICreateTransformedAttributedString(NSAttributedString *source, NSDictionary *linkAttributes);
+//extern NSAttributedString *OUICreateTransformedAttributedString(NSAttributedString *source, NSDictionary *linkAttributes);
