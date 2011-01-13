@@ -7,12 +7,7 @@
 
 #import "OUEFTextSpan.h"
 
-#import <CoreText/CoreText.h>
-#import <OmniQuartz/OQColor.h>
-#import <OmniAppKit/OAFontDescriptor.h>
-#import <OmniAppKit/OAParagraphStyle.h>
-#import <OmniAppKit/OATextAttributes.h>
-#import <OmniUI/OUIEditableFrame.h>
+#import "OUIEditableFrame.h"
 
 #import "OUEFTextPosition.h"
 

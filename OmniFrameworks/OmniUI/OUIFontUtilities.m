@@ -7,7 +7,6 @@
 
 #import "OUIFontUtilities.h"
 
-#import <OmniUI/OUIInspector.h>
 #import <CoreText/CTFont.h>
 
 
@@ -136,40 +135,5 @@ BOOL OUIIsBaseFontNameForFamily(NSString *fontName, NSString *familyName)
     if (OFISNULL(baseFontName))
         return NO;
     return [fontName isEqualToString:baseFontName];
-}
-
-OUIFontSelection OUICollectFontSelection(OUIInspectorSlice *self, NSSet *objects)
-{
-    OBPRECONDITION(self);
-    
-    NSMutableSet *fontDescriptors = [NSMutableSet set];
-    NSMutableSet *fontSizes = [NSMutableSet set];
-    CGFloat minFontSize = 0, maxFontSize = 0;
-    
-    for (id <OUIFontInspection> object in objects) {
-        OAFontDescriptor *fontDescriptor = [object fontDescriptorForInspectorSlice:self];
-        OBASSERT(fontDescriptor);
-        if (fontDescriptor)
-            [fontDescriptors addObject:fontDescriptor];
-        
-        CGFloat fontSize = [object fontSizeForInspectorSlice:self];
-        OBASSERT(fontSize > 0);
-        if (fontSize > 0) {
-            if (![fontSizes count]) {
-                minFontSize = maxFontSize = fontSize;
-            } else {
-                if (minFontSize > fontSize) minFontSize = fontSize;
-                if (maxFontSize < fontSize) maxFontSize = fontSize;
-            }
-            [fontSizes addObject:[NSNumber numberWithFloat:fontSize]];
-        }
-    }
-    
-    return (OUIFontSelection){
-        .fontDescriptors = fontDescriptors,
-        .fontSizes = fontSizes,
-        .minFontSize = minFontSize,
-        .maxFontSize = maxFontSize
-    };
 }
 

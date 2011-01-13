@@ -173,12 +173,12 @@
 		B70E58B012DF2FF0001303D0 /* OQColor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OQColor.m; sourceTree = "<group>"; };
 		B70E58B112DF2FF0001303D0 /* OQDrawing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OQDrawing.h; sourceTree = "<group>"; };
 		B70E58B212DF2FF0001303D0 /* OQDrawing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OQDrawing.m; sourceTree = "<group>"; };
-		B70E58B412DF2FF0001303D0 /* OUEFTextPosition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OUEFTextPosition.h; sourceTree = "<group>"; };
-		B70E58B512DF2FF0001303D0 /* OUEFTextPosition.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OUEFTextPosition.m; sourceTree = "<group>"; };
-		B70E58B612DF2FF0001303D0 /* OUEFTextRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OUEFTextRange.h; sourceTree = "<group>"; };
-		B70E58B712DF2FF0001303D0 /* OUEFTextRange.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OUEFTextRange.m; sourceTree = "<group>"; };
-		B70E58B812DF2FF0001303D0 /* OUEFTextSpan.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OUEFTextSpan.h; sourceTree = "<group>"; };
-		B70E58B912DF2FF0001303D0 /* OUEFTextSpan.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OUEFTextSpan.m; sourceTree = "<group>"; };
+		B70E58B412DF2FF0001303D0 /* OUEFTextPosition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OUEFTextPosition.h; path = OmniFrameworks/OmniUI/OUEFTextPosition.h; sourceTree = "<group>"; };
+		B70E58B512DF2FF0001303D0 /* OUEFTextPosition.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = OUEFTextPosition.m; path = OmniFrameworks/OmniUI/OUEFTextPosition.m; sourceTree = "<group>"; };
+		B70E58B612DF2FF0001303D0 /* OUEFTextRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OUEFTextRange.h; path = OmniFrameworks/OmniUI/OUEFTextRange.h; sourceTree = "<group>"; };
+		B70E58B712DF2FF0001303D0 /* OUEFTextRange.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = OUEFTextRange.m; path = OmniFrameworks/OmniUI/OUEFTextRange.m; sourceTree = "<group>"; };
+		B70E58B812DF2FF0001303D0 /* OUEFTextSpan.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OUEFTextSpan.h; path = OmniFrameworks/OmniUI/OUEFTextSpan.h; sourceTree = "<group>"; };
+		B70E58B912DF2FF0001303D0 /* OUEFTextSpan.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = OUEFTextSpan.m; path = OmniFrameworks/OmniUI/OUEFTextSpan.m; sourceTree = "<group>"; };
 		B70E58C212DF2FF0001303D0 /* OUIColorValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OUIColorValue.h; sourceTree = "<group>"; };
 		B70E58C312DF2FF0001303D0 /* OUIDirectTapGestureRecognizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OUIDirectTapGestureRecognizer.h; sourceTree = "<group>"; };
 		B70E58C412DF2FF0001303D0 /* OUIDirectTapGestureRecognizer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OUIDirectTapGestureRecognizer.m; sourceTree = "<group>"; };
@@ -186,9 +186,9 @@
 		B70E58C612DF2FF0001303D0 /* OUIDrawing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OUIDrawing.m; sourceTree = "<group>"; };
 		B70E58C712DF2FF0001303D0 /* OUIEditableFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OUIEditableFrame.h; sourceTree = "<group>"; };
 		B70E58C812DF2FF0001303D0 /* OUIEditableFrame.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OUIEditableFrame.m; sourceTree = "<group>"; };
-		B70E58C912DF2FF0001303D0 /* OUIEditableFrameDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OUIEditableFrameDelegate.h; sourceTree = "<group>"; };
-		B70E58CE12DF2FF0001303D0 /* OUIFontUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OUIFontUtilities.h; sourceTree = "<group>"; };
-		B70E58CF12DF2FF0001303D0 /* OUIFontUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OUIFontUtilities.m; sourceTree = "<group>"; };
+		B70E58C912DF2FF0001303D0 /* OUIEditableFrameDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OUIEditableFrameDelegate.h; path = OmniFrameworks/OmniUI/OUIEditableFrameDelegate.h; sourceTree = "<group>"; };
+		B70E58CE12DF2FF0001303D0 /* OUIFontUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OUIFontUtilities.h; path = OmniFrameworks/OmniUI/OUIFontUtilities.h; sourceTree = "<group>"; };
+		B70E58CF12DF2FF0001303D0 /* OUIFontUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = OUIFontUtilities.m; path = OmniFrameworks/OmniUI/OUIFontUtilities.m; sourceTree = "<group>"; };
 		B70E58E512DF2FF0001303D0 /* OUILoadedImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OUILoadedImage.h; sourceTree = "<group>"; };
 		B70E58E612DF2FF0001303D0 /* OUILoadedImage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OUILoadedImage.m; sourceTree = "<group>"; };
 		B70E58E712DF2FF0001303D0 /* OUILoupeOverlay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OUILoupeOverlay.h; sourceTree = "<group>"; };
@@ -392,12 +392,6 @@
 		B70E58B312DF2FF0001303D0 /* OmniUI */ = {
 			isa = PBXGroup;
 			children = (
-				B70E58B412DF2FF0001303D0 /* OUEFTextPosition.h */,
-				B70E58B512DF2FF0001303D0 /* OUEFTextPosition.m */,
-				B70E58B612DF2FF0001303D0 /* OUEFTextRange.h */,
-				B70E58B712DF2FF0001303D0 /* OUEFTextRange.m */,
-				B70E58B812DF2FF0001303D0 /* OUEFTextSpan.h */,
-				B70E58B912DF2FF0001303D0 /* OUEFTextSpan.m */,
 				B70E58C212DF2FF0001303D0 /* OUIColorValue.h */,
 				B70E58C312DF2FF0001303D0 /* OUIDirectTapGestureRecognizer.h */,
 				B70E58C412DF2FF0001303D0 /* OUIDirectTapGestureRecognizer.m */,
@@ -405,9 +399,6 @@
 				B70E58C612DF2FF0001303D0 /* OUIDrawing.m */,
 				B70E58C712DF2FF0001303D0 /* OUIEditableFrame.h */,
 				B70E58C812DF2FF0001303D0 /* OUIEditableFrame.m */,
-				B70E58C912DF2FF0001303D0 /* OUIEditableFrameDelegate.h */,
-				B70E58CE12DF2FF0001303D0 /* OUIFontUtilities.h */,
-				B70E58CF12DF2FF0001303D0 /* OUIFontUtilities.m */,
 				B70E58E512DF2FF0001303D0 /* OUILoadedImage.h */,
 				B70E58E612DF2FF0001303D0 /* OUILoadedImage.m */,
 				B70E58E712DF2FF0001303D0 /* OUILoupeOverlay.h */,
@@ -429,10 +420,27 @@
 			path = OmniUI;
 			sourceTree = "<group>";
 		};
+		B726256912DF71330090DE3A /* OmniUI Untethered */ = {
+			isa = PBXGroup;
+			children = (
+				B70E58C912DF2FF0001303D0 /* OUIEditableFrameDelegate.h */,
+				B70E58CE12DF2FF0001303D0 /* OUIFontUtilities.h */,
+				B70E58CF12DF2FF0001303D0 /* OUIFontUtilities.m */,
+				B70E58B412DF2FF0001303D0 /* OUEFTextPosition.h */,
+				B70E58B512DF2FF0001303D0 /* OUEFTextPosition.m */,
+				B70E58B612DF2FF0001303D0 /* OUEFTextRange.h */,
+				B70E58B712DF2FF0001303D0 /* OUEFTextRange.m */,
+				B70E58B812DF2FF0001303D0 /* OUEFTextSpan.h */,
+				B70E58B912DF2FF0001303D0 /* OUEFTextSpan.m */,
+			);
+			name = "OmniUI Untethered";
+			sourceTree = "<group>";
+		};
 		B736171A12DA1129009801D4 = {
 			isa = PBXGroup;
 			children = (
 				B70E585812DF2FF0001303D0 /* OmniFrameworks */,
+				B726256912DF71330090DE3A /* OmniUI Untethered */,
 				B736172112DA1129009801D4 /* Models */,
 				B736172212DA1129009801D4 /* Classes */,
 				B736172312DA1129009801D4 /* Other Sources */,

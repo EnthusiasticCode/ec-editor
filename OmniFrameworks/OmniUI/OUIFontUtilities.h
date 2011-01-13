@@ -18,6 +18,4 @@ typedef struct {
     CGFloat minFontSize, maxFontSize;
 } OUIFontSelection;
 
-@class OUIInspectorSlice;
-extern OUIFontSelection OUICollectFontSelection(OUIInspectorSlice *self, NSSet *objects);
 
