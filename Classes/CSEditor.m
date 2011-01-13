@@ -24,7 +24,7 @@
 
 // Implement loadView to create a view hierarchy programmatically, without using a nib.
 - (void)loadView {
-    self.view = [[CSEditorView alloc] init];
+    self.view = [[CSEditorView alloc] initWithFrame:[[UIScreen mainScreen] applicationFrame]];
     UITapGestureRecognizer *tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self.view action:@selector(tap:)];
     [self.view addGestureRecognizer:tapGestureRecognizer];
     [tapGestureRecognizer release];

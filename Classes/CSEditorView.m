@@ -23,13 +23,24 @@
     return YES;
 }
 
-- (id)init
+- (id)initWithFrame:(CGRect)frame
 {
-    self = [super init];
+    self = [super initWithFrame:frame];
     if (self) {
         _text = [[NSMutableAttributedString alloc] initWithString:@""];
+        [self setupCoreTextTransformationMatrix];
+        [self addObserver:self forKeyPath:@"bounds" options:NSKeyValueObservingOptionNew context:NULL];
     }
     return self;
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    if ([keyPath isEqual:@"bounds"])
+    {
+        [object setupCoreTextTransformationMatrix];
+    }
+    [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
 }
 
 - (void)setupCoreTextTransformationMatrix
@@ -410,11 +421,6 @@
     CGContextSetTextMatrix(context, CGAffineTransformIdentity);
 	CGContextTranslateCTM(context, 0, self.bounds.size.height);
 	CGContextScaleCTM(context, 1.0, -1.0);
-    
-    // set up the translation matrix to convert ui coordinates into core text coordinates
-    // TODO: the translation matrix should change only if the view resizes
-    // try to move this code away from drawRect: for performance reasons
-    [self setupCoreTextTransformationMatrix];
     
     // blank out the background
     [[UIColor whiteColor] setFill];
