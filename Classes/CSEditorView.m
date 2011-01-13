@@ -6,12 +6,6 @@
 //  Copyright 2011 __MyCompanyName__. All rights reserved.
 //
 
-//- (NSDictionary *)markedTextStyle
-//{
-//    return [NSDictionary dictionaryWithObjectsAndKeys:[UIColor yellowColor], UITextInputTextBackgroundColorKey, [UIColor blackColor], UITextInputTextColorKey, [UIFont fontWithName:@"Helvetica" size:32.0], UITextInputTextFontKey, nil];
-//}
-
-
 #import "CSEditorView.h"
 #import "UIKit/UIKit.h"
 
@@ -21,6 +15,7 @@
 @synthesize markedTextStyle;
 
 @synthesize text=_text;
+@synthesize editing=_editing;
 @synthesize inputDelegate=_inputDelegate;
 
 - (BOOL)canBecomeFirstResponder
@@ -28,17 +23,38 @@
     return YES;
 }
 
--(id)init
+- (id)init
 {
     self = [super init];
     if (self) {
-        _text = [[NSMutableAttributedString alloc] initWithString:@"Testing..."];
+        _text = [[NSMutableAttributedString alloc] initWithString:@""];
     }
     return self;
 }
 
+- (void)setupCoreTextTransformationMatrix
+{
+    _coreTextTransformationMatrix = CGAffineTransformIdentity;
+    _coreTextTransformationMatrix = CGAffineTransformTranslate(_coreTextTransformationMatrix, 0, self.bounds.size.height);
+    _coreTextTransformationMatrix = CGAffineTransformScale(_coreTextTransformationMatrix, 1.0, -1.0);
+}
+
+- (CGPoint)applyCoreTextTransformationMatrixToPoint:(CGPoint)point
+{
+    return CGPointApplyAffineTransform (point, _coreTextTransformationMatrix);
+}
+
+- (void)applyCoreTextTransformationMatrixInPlaceToPoints:(CGPoint *)points withCount:(int)count
+{
+    for (int i = 0; i < count; i++)
+    {
+        points[i] = CGPointApplyAffineTransform(points[i], _coreTextTransformationMatrix);
+    }
+}
+
 - (void)dealloc
 {
+    CFRelease(_frame);
     [_text release];
     [super dealloc];
 }
@@ -57,20 +73,48 @@
     return _tokenizer;
 }
 
+- (BOOL)becomeFirstResponder
+{
+    if ([super becomeFirstResponder])
+    {
+        _editing = YES;
+        return YES;
+    }
+    else
+    {
+        return NO;
+    }
+}
+
+- (BOOL)resignFirstResponder
+{
+    if ([super resignFirstResponder])
+    {
+        _editing = NO;
+        return YES;
+    }
+    else
+    {
+        return NO;
+    }
+}
+
 - (void)tap:(UITapGestureRecognizer *)tap
 {
-    NSLog(@"tap");
     if (![self isFirstResponder]) {
         [self becomeFirstResponder];
     } else {
         [self.inputDelegate selectionWillChange:self];
         
-        NSInteger index = [(IndexedPosition *)[self closestPositionToPoint:[tap locationInView:self]] index];
+        CGPoint translatedTapLocation = [self applyCoreTextTransformationMatrixToPoint:[tap locationInView:self]];
+        NSInteger index = [self closestIndexToPoint:translatedTapLocation];
+        NSLog(@"Closest index:%d",index);
         _markedNSRange = NSMakeRange(NSNotFound, 0);
         _selectedNSRange = NSMakeRange(index, 0);
         
         [self.inputDelegate selectionDidChange:self];
     }
+    [self setNeedsDisplay];
 }
 
 - (UITextRange *)selectedTextRange {
@@ -150,7 +194,6 @@
         _selectedNSRange.length = 0;
     } else if (_selectedNSRange.location == 0) {
     } else {
-        NSLog(@"Backspace");
         _selectedNSRange.location--;
         _selectedNSRange.length = 1;
         [_text deleteCharactersInRange:_selectedNSRange];
@@ -181,11 +224,14 @@
     NSRange range = [(IndexedRange *)textRange range];
     int index = range.location;
     NSArray *lines = (NSArray *) CTFrameGetLines(_frame);
-    for (int i = 0; i < [lines count]; i++) {
+    for (int i = 0; i < [lines count]; i++)
+    {
         CTLineRef line = (CTLineRef) [lines objectAtIndex:i];
         CFRange lineRange = CTLineGetStringRange(line);
         int localIndex = index - lineRange.location;
-        if (localIndex >= 0 && localIndex < lineRange.length) {
+         // TODO: once caretRectForPosition: is implemented, change <= to < to fix a bug with selections starting from the first character in the line
+        if (localIndex >= 0 && localIndex <= lineRange.length)
+        {
             int finalIndex = MIN(lineRange.location + lineRange.length, range.location + range.length);
             CGFloat xStart = CTLineGetOffsetForStringIndex(line, index, NULL);
             CGFloat xEnd = CTLineGetOffsetForStringIndex(line, finalIndex, NULL);
@@ -202,23 +248,11 @@
 
 - (CGRect)caretRectForPosition:(UITextPosition *)textPosition
 {
+    // TODO: implement it properly instead of calling firstRectForRange:
+    // TODO: implement different behavious depending on the selectionAffinity property
     int index = [(IndexedPosition *)textPosition index] ;
-    NSArray *lines = (NSArray *) CTFrameGetLines(_frame);
-    for (int i = 0; i < [lines count]; i++) {
-        CTLineRef line = (CTLineRef) [lines objectAtIndex:i];
-        CFRange lineRange = CTLineGetStringRange(line);
-        int localIndex = index - lineRange.location;
-        if (localIndex >= 0 && localIndex < lineRange.length) {
-            CGFloat xStart = CTLineGetOffsetForStringIndex(line, index, NULL);
-            CGPoint origin;
-            CTFrameGetLineOrigins(_frame, CFRangeMake(i, 0), &origin);
-            CGFloat ascent, descent;
-            CTLineGetTypographicBounds(line, &ascent, &descent, NULL);
-            
-            return CGRectMake(xStart, origin.y - descent, 1, ascent + descent);
-        }
-    }
-    return CGRectNull;
+    UITextRange *textRange = [IndexedRange rangeWithNSRange:NSMakeRange(index, 0)];
+    return [self firstRectForRange:textRange];
 }
 
 - (NSInteger)closestIndexToPoint:(CGPoint)point
@@ -228,6 +262,7 @@
     CTFrameGetLineOrigins(_frame, CFRangeMake(0, lines.count), origins);
     
     for (int i = 0; i < lines.count; i++) {
+        NSLog(@"point.y (%f) > origins[%d].y (%f)?",point.y, i, origins[i].y);
         if (point.y > origins[i].y) {
             CTLineRef line = (CTLineRef) [lines objectAtIndex:i];
             return CTLineGetStringIndexForPosition(line, point);
@@ -370,17 +405,23 @@
     // set up the font used for the text
     CTFontRef font = CTFontCreateWithName(CFSTR("Helvetica-Mono"), 32.0, NULL);
 
-    // set up the CG context, flipping coordinates (0, 0) to bottom-left
+    // set up the CG context for Core Text, flipping coordinates (0, 0) to bottom-left
     CGContextRef context = UIGraphicsGetCurrentContext();
     CGContextSetTextMatrix(context, CGAffineTransformIdentity);
 	CGContextTranslateCTM(context, 0, self.bounds.size.height);
 	CGContextScaleCTM(context, 1.0, -1.0);
+    
+    // set up the translation matrix to convert ui coordinates into core text coordinates
+    // TODO: the translation matrix should change only if the view resizes
+    // try to move this code away from drawRect: for performance reasons
+    [self setupCoreTextTransformationMatrix];
     
     // blank out the background
     [[UIColor whiteColor] setFill];
     UIBezierPath *background = [UIBezierPath bezierPathWithRect:[self bounds]];
     [background fill];
     
+    // draw text
     [_text addAttribute:(id)kCTFontAttributeName value:(id)font range:NSMakeRange(0, _text.length)];
         
     CTFramesetterRef framesetter = CTFramesetterCreateWithAttributedString((CFAttributedStringRef) _text);
@@ -388,11 +429,18 @@
     CGMutablePathRef path = CGPathCreateMutable();
     CGPathAddRect(path, NULL, [self bounds]);
     
-    CTFrameRef frame = CTFramesetterCreateFrame(framesetter, CFRangeMake(0, 0), path, NULL);
-    CTFrameDraw(frame, context);
+    _frame = CTFramesetterCreateFrame(framesetter, CFRangeMake(0, 0), path, NULL);
+    CTFrameDraw(_frame, context);
     
+    // draw the caret
+    if (_editing)
+    {
+        [[UIColor blueColor] setStroke];
+        UIBezierPath *caret = [UIBezierPath bezierPathWithRect:[self caretRectForPosition:[IndexedPosition positionWithIndex:_selectedNSRange.location]]];
+        [caret stroke];
+    }
+        
     // clean up CF refs
-    CFRelease(frame);
     CFRelease(path);
     CFRelease(framesetter);
     CFRelease(font);

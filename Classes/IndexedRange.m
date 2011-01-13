@@ -32,7 +32,8 @@
     return [IndexedPosition positionWithIndex:(self.range.location + self.range.length)];
 }
 
--(BOOL)isEmpty {
+-(BOOL)isEmpty
+{
     return (self.range.length == 0);
 }
 
