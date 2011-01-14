@@ -16,13 +16,6 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    OUIEditableFrame *editor = [[OUIEditableFrame alloc] init];
-    
-    editor.frame = [UIScreen mainScreen].applicationFrame;
-    editor.opaque = NO;
-    [window addSubview:editor];
-    [editor release];
-    
     [window makeKeyAndVisible];
     return YES;
 }
