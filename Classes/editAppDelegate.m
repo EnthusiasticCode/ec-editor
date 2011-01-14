@@ -7,34 +7,30 @@
 //
 
 #import "editAppDelegate.h"
+#import "OUIEditableFrame.h"
 
 @implementation editAppDelegate
 
 
 @synthesize window;
 
-- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-
-    // Override point for customization after application launch.
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
+{
+    OUIEditableFrame *editor = [[OUIEditableFrame alloc] init];
+    
+    editor.frame = [UIScreen mainScreen].applicationFrame;
+    editor.opaque = NO;
+    [window addSubview:editor];
+    [editor release];
     
     [window makeKeyAndVisible];
     return YES;
 }
 
-- (void)dealloc {
-
+- (void)dealloc
+{
     [window release];
     [super dealloc];
-}
-
-#pragma mark -
-#pragma mark Application's Documents directory
-
-/**
- Returns the path to the application's Documents directory.
- */
-- (NSString *)applicationDocumentsDirectory {
-    return [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject];
 }
 
 @end

@@ -7,10 +7,6 @@
 //
 // $Id$
 
-// TODO:
-// KNOWN BUGS: Editing menu can be rendered out of bounds if coordinates are translated to or from views with no common ancestor
-// Editing menu doesn't hide if user taps outside of it
-// OUIEditableFrame is not opaque, requires to be inside an opaque view to function properly (UIScrollView)
 
 #import <UIKit/UIGeometry.h>
 #import <UIKit/UITextInput.h>

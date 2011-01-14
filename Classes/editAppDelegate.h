@@ -10,10 +10,10 @@
 
 @interface editAppDelegate : NSObject <UIApplicationDelegate> {
     UIWindow *window;
+    UIViewController *mainViewController;
 }
 
 @property (nonatomic, retain) IBOutlet UIWindow *window;
 
-- (NSString *)applicationDocumentsDirectory;
 
 @end
