@@ -23,14 +23,14 @@
 		B736175112DA112A009801D4 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = B736175012DA112A009801D4 /* InfoPlist.strings */; };
 		B736175312DA112A009801D4 /* editTests.h in Resources */ = {isa = PBXBuildFile; fileRef = B736175212DA112A009801D4 /* editTests.h */; };
 		B736175512DA112B009801D4 /* editTests.m in Sources */ = {isa = PBXBuildFile; fileRef = B736175412DA112A009801D4 /* editTests.m */; };
-		B77536E712DF592D00E6C048 /* OUITextSelectionHandle.png in Resources */ = {isa = PBXBuildFile; fileRef = B77536DF12DF592D00E6C048 /* OUITextSelectionHandle.png */; };
-		B77536E812DF592D00E6C048 /* OUIRectangularOverlayFrame.png in Resources */ = {isa = PBXBuildFile; fileRef = B77536E012DF592D00E6C048 /* OUIRectangularOverlayFrame.png */; };
-		B77536E912DF592D00E6C048 /* OUIShadowBorderBottom.png in Resources */ = {isa = PBXBuildFile; fileRef = B77536E112DF592D00E6C048 /* OUIShadowBorderBottom.png */; };
-		B77536EA12DF592D00E6C048 /* OUIShadowBorderRight.png in Resources */ = {isa = PBXBuildFile; fileRef = B77536E212DF592D00E6C048 /* OUIShadowBorderRight.png */; };
-		B77536EB12DF592D00E6C048 /* OUIRectangularOverlayArrow.png in Resources */ = {isa = PBXBuildFile; fileRef = B77536E312DF592D00E6C048 /* OUIRectangularOverlayArrow.png */; };
-		B77536EC12DF592D00E6C048 /* OUIShadowBorderLeft.png in Resources */ = {isa = PBXBuildFile; fileRef = B77536E412DF592D00E6C048 /* OUIShadowBorderLeft.png */; };
-		B77536ED12DF592D00E6C048 /* OUIShadowBorderTop.png in Resources */ = {isa = PBXBuildFile; fileRef = B77536E512DF592D00E6C048 /* OUIShadowBorderTop.png */; };
-		B77536EE12DF592D00E6C048 /* OUITextSelectionOverlay.png in Resources */ = {isa = PBXBuildFile; fileRef = B77536E612DF592D00E6C048 /* OUITextSelectionOverlay.png */; };
+		B7759ECA12E062B5006E99E7 /* OUIRectangularOverlayArrow.png in Resources */ = {isa = PBXBuildFile; fileRef = B7759EC212E062B5006E99E7 /* OUIRectangularOverlayArrow.png */; };
+		B7759ECB12E062B5006E99E7 /* OUIRectangularOverlayFrame.png in Resources */ = {isa = PBXBuildFile; fileRef = B7759EC312E062B5006E99E7 /* OUIRectangularOverlayFrame.png */; };
+		B7759ECC12E062B5006E99E7 /* OUIShadowBorderBottom.png in Resources */ = {isa = PBXBuildFile; fileRef = B7759EC412E062B5006E99E7 /* OUIShadowBorderBottom.png */; };
+		B7759ECD12E062B5006E99E7 /* OUIShadowBorderLeft.png in Resources */ = {isa = PBXBuildFile; fileRef = B7759EC512E062B5006E99E7 /* OUIShadowBorderLeft.png */; };
+		B7759ECE12E062B5006E99E7 /* OUIShadowBorderRight.png in Resources */ = {isa = PBXBuildFile; fileRef = B7759EC612E062B5006E99E7 /* OUIShadowBorderRight.png */; };
+		B7759ECF12E062B5006E99E7 /* OUIShadowBorderTop.png in Resources */ = {isa = PBXBuildFile; fileRef = B7759EC712E062B5006E99E7 /* OUIShadowBorderTop.png */; };
+		B7759ED012E062B5006E99E7 /* OUITextSelectionHandle.png in Resources */ = {isa = PBXBuildFile; fileRef = B7759EC812E062B5006E99E7 /* OUITextSelectionHandle.png */; };
+		B7759ED112E062B5006E99E7 /* OUITextSelectionOverlay.png in Resources */ = {isa = PBXBuildFile; fileRef = B7759EC912E062B5006E99E7 /* OUITextSelectionOverlay.png */; };
 		B7BD531F12DF1CDB003B83B3 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7BD531E12DF1CDB003B83B3 /* QuartzCore.framework */; };
 		B7BF7B5D12E05D48005CDF48 /* OQDrawing.m in Sources */ = {isa = PBXBuildFile; fileRef = B7BF7B3F12E05D48005CDF48 /* OQDrawing.m */; };
 		B7BF7B5E12E05D48005CDF48 /* OUEFTextPosition.m in Sources */ = {isa = PBXBuildFile; fileRef = B7BF7B4112E05D48005CDF48 /* OUEFTextPosition.m */; };
@@ -69,14 +69,14 @@
 		B736175012DA112A009801D4 /* InfoPlist.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = InfoPlist.strings; path = en.lproj/editTests/InfoPlist.strings; sourceTree = "<group>"; };
 		B736175212DA112A009801D4 /* editTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = editTests.h; sourceTree = "<group>"; };
 		B736175412DA112A009801D4 /* editTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = editTests.m; sourceTree = "<group>"; };
-		B77536DF12DF592D00E6C048 /* OUITextSelectionHandle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = OUITextSelectionHandle.png; sourceTree = "<group>"; };
-		B77536E012DF592D00E6C048 /* OUIRectangularOverlayFrame.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = OUIRectangularOverlayFrame.png; sourceTree = "<group>"; };
-		B77536E112DF592D00E6C048 /* OUIShadowBorderBottom.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = OUIShadowBorderBottom.png; sourceTree = "<group>"; };
-		B77536E212DF592D00E6C048 /* OUIShadowBorderRight.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = OUIShadowBorderRight.png; sourceTree = "<group>"; };
-		B77536E312DF592D00E6C048 /* OUIRectangularOverlayArrow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = OUIRectangularOverlayArrow.png; sourceTree = "<group>"; };
-		B77536E412DF592D00E6C048 /* OUIShadowBorderLeft.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = OUIShadowBorderLeft.png; sourceTree = "<group>"; };
-		B77536E512DF592D00E6C048 /* OUIShadowBorderTop.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = OUIShadowBorderTop.png; sourceTree = "<group>"; };
-		B77536E612DF592D00E6C048 /* OUITextSelectionOverlay.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = OUITextSelectionOverlay.png; sourceTree = "<group>"; };
+		B7759EC212E062B5006E99E7 /* OUIRectangularOverlayArrow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = OUIRectangularOverlayArrow.png; sourceTree = "<group>"; };
+		B7759EC312E062B5006E99E7 /* OUIRectangularOverlayFrame.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = OUIRectangularOverlayFrame.png; sourceTree = "<group>"; };
+		B7759EC412E062B5006E99E7 /* OUIShadowBorderBottom.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = OUIShadowBorderBottom.png; sourceTree = "<group>"; };
+		B7759EC512E062B5006E99E7 /* OUIShadowBorderLeft.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = OUIShadowBorderLeft.png; sourceTree = "<group>"; };
+		B7759EC612E062B5006E99E7 /* OUIShadowBorderRight.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = OUIShadowBorderRight.png; sourceTree = "<group>"; };
+		B7759EC712E062B5006E99E7 /* OUIShadowBorderTop.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = OUIShadowBorderTop.png; sourceTree = "<group>"; };
+		B7759EC812E062B5006E99E7 /* OUITextSelectionHandle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = OUITextSelectionHandle.png; sourceTree = "<group>"; };
+		B7759EC912E062B5006E99E7 /* OUITextSelectionOverlay.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = OUITextSelectionOverlay.png; sourceTree = "<group>"; };
 		B7BD531E12DF1CDB003B83B3 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		B7BF7B3E12E05D48005CDF48 /* OQDrawing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OQDrawing.h; sourceTree = "<group>"; };
 		B7BF7B3F12E05D48005CDF48 /* OQDrawing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OQDrawing.m; sourceTree = "<group>"; };
@@ -182,7 +182,7 @@
 		B736172412DA1129009801D4 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				B77536DE12DF590D00E6C048 /* Images */,
+				B7759EC112E062B5006E99E7 /* Images */,
 				B736173512DA112A009801D4 /* edit-Info.plist */,
 				B736173712DA112A009801D4 /* InfoPlist.strings */,
 				B736174112DA112A009801D4 /* MainWindow.xib */,
@@ -223,19 +223,20 @@
 			path = Tests;
 			sourceTree = "<group>";
 		};
-		B77536DE12DF590D00E6C048 /* Images */ = {
+		B7759EC112E062B5006E99E7 /* Images */ = {
 			isa = PBXGroup;
 			children = (
-				B77536DF12DF592D00E6C048 /* OUITextSelectionHandle.png */,
-				B77536E012DF592D00E6C048 /* OUIRectangularOverlayFrame.png */,
-				B77536E112DF592D00E6C048 /* OUIShadowBorderBottom.png */,
-				B77536E212DF592D00E6C048 /* OUIShadowBorderRight.png */,
-				B77536E312DF592D00E6C048 /* OUIRectangularOverlayArrow.png */,
-				B77536E412DF592D00E6C048 /* OUIShadowBorderLeft.png */,
-				B77536E512DF592D00E6C048 /* OUIShadowBorderTop.png */,
-				B77536E612DF592D00E6C048 /* OUITextSelectionOverlay.png */,
+				B7759EC212E062B5006E99E7 /* OUIRectangularOverlayArrow.png */,
+				B7759EC312E062B5006E99E7 /* OUIRectangularOverlayFrame.png */,
+				B7759EC412E062B5006E99E7 /* OUIShadowBorderBottom.png */,
+				B7759EC512E062B5006E99E7 /* OUIShadowBorderLeft.png */,
+				B7759EC612E062B5006E99E7 /* OUIShadowBorderRight.png */,
+				B7759EC712E062B5006E99E7 /* OUIShadowBorderTop.png */,
+				B7759EC812E062B5006E99E7 /* OUITextSelectionHandle.png */,
+				B7759EC912E062B5006E99E7 /* OUITextSelectionOverlay.png */,
 			);
 			name = Images;
+			path = OmniUI/Images;
 			sourceTree = "<group>";
 		};
 		B7BF7B3D12E05D48005CDF48 /* OmniUI */ = {
@@ -344,14 +345,14 @@
 			files = (
 				B736173912DA112A009801D4 /* InfoPlist.strings in Resources */,
 				B736174312DA112A009801D4 /* MainWindow.xib in Resources */,
-				B77536E712DF592D00E6C048 /* OUITextSelectionHandle.png in Resources */,
-				B77536E812DF592D00E6C048 /* OUIRectangularOverlayFrame.png in Resources */,
-				B77536E912DF592D00E6C048 /* OUIShadowBorderBottom.png in Resources */,
-				B77536EA12DF592D00E6C048 /* OUIShadowBorderRight.png in Resources */,
-				B77536EB12DF592D00E6C048 /* OUIRectangularOverlayArrow.png in Resources */,
-				B77536EC12DF592D00E6C048 /* OUIShadowBorderLeft.png in Resources */,
-				B77536ED12DF592D00E6C048 /* OUIShadowBorderTop.png in Resources */,
-				B77536EE12DF592D00E6C048 /* OUITextSelectionOverlay.png in Resources */,
+				B7759ECA12E062B5006E99E7 /* OUIRectangularOverlayArrow.png in Resources */,
+				B7759ECB12E062B5006E99E7 /* OUIRectangularOverlayFrame.png in Resources */,
+				B7759ECC12E062B5006E99E7 /* OUIShadowBorderBottom.png in Resources */,
+				B7759ECD12E062B5006E99E7 /* OUIShadowBorderLeft.png in Resources */,
+				B7759ECE12E062B5006E99E7 /* OUIShadowBorderRight.png in Resources */,
+				B7759ECF12E062B5006E99E7 /* OUIShadowBorderTop.png in Resources */,
+				B7759ED012E062B5006E99E7 /* OUITextSelectionHandle.png in Resources */,
+				B7759ED112E062B5006E99E7 /* OUITextSelectionOverlay.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
