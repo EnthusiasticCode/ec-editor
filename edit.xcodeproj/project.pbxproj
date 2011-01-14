@@ -14,7 +14,6 @@
 		B736173912DA112A009801D4 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = B736173712DA112A009801D4 /* InfoPlist.strings */; };
 		B736173B12DA112A009801D4 /* edit-main.m in Sources */ = {isa = PBXBuildFile; fileRef = B736173A12DA112A009801D4 /* edit-main.m */; };
 		B736173E12DA112A009801D4 /* editAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = B736173D12DA112A009801D4 /* editAppDelegate.m */; };
-		B736174012DA112A009801D4 /* edit.xcdatamodel in Sources */ = {isa = PBXBuildFile; fileRef = B736173F12DA112A009801D4 /* edit.xcdatamodel */; };
 		B736174312DA112A009801D4 /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = B736174112DA112A009801D4 /* MainWindow.xib */; };
 		B736174B12DA112A009801D4 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B736172D12DA112A009801D4 /* UIKit.framework */; };
 		B736174C12DA112A009801D4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B736172F12DA112A009801D4 /* Foundation.framework */; };
@@ -58,7 +57,6 @@
 		B736173A12DA112A009801D4 /* edit-main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "edit-main.m"; sourceTree = "<group>"; };
 		B736173C12DA112A009801D4 /* editAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = editAppDelegate.h; sourceTree = "<group>"; };
 		B736173D12DA112A009801D4 /* editAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = editAppDelegate.m; sourceTree = "<group>"; };
-		B736173F12DA112A009801D4 /* edit.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = edit.xcdatamodel; sourceTree = "<group>"; };
 		B736174212DA112A009801D4 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainWindow.xib; sourceTree = "<group>"; };
 		B736174A12DA112A009801D4 /* editTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = editTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B736174E12DA112A009801D4 /* editTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "editTests-Info.plist"; sourceTree = "<group>"; };
@@ -136,7 +134,6 @@
 			isa = PBXGroup;
 			children = (
 				B7BF7B3D12E05D48005CDF48 /* OmniUI */,
-				B736172112DA1129009801D4 /* Models */,
 				B736172212DA1129009801D4 /* Classes */,
 				B736172312DA1129009801D4 /* Other Sources */,
 				B736172412DA1129009801D4 /* Resources */,
@@ -144,14 +141,6 @@
 				B736172B12DA112A009801D4 /* Products */,
 				B736174412DA112A009801D4 /* Tests */,
 			);
-			sourceTree = "<group>";
-		};
-		B736172112DA1129009801D4 /* Models */ = {
-			isa = PBXGroup;
-			children = (
-				B736173F12DA112A009801D4 /* edit.xcdatamodel */,
-			);
-			name = Models;
 			sourceTree = "<group>";
 		};
 		B736172212DA1129009801D4 /* Classes */ = {
@@ -380,7 +369,6 @@
 			files = (
 				B736173B12DA112A009801D4 /* edit-main.m in Sources */,
 				B736173E12DA112A009801D4 /* editAppDelegate.m in Sources */,
-				B736174012DA112A009801D4 /* edit.xcdatamodel in Sources */,
 				B7BF7B5D12E05D48005CDF48 /* OQDrawing.m in Sources */,
 				B7BF7B5E12E05D48005CDF48 /* OUEFTextPosition.m in Sources */,
 				B7BF7B5F12E05D48005CDF48 /* OUEFTextRange.m in Sources */,

@@ -1131,7 +1131,6 @@ static BOOL _recognizerTouchedView(UIGestureRecognizer *recognizer, UIView *view
         [_selectionContextMenu setTargetRect:selectionRectangle inView:self];
         
         if (!alreadyVisible) {
-            DEBUG_TEXT(@"Showing context menu");
             [_selectionContextMenu setMenuVisible:YES animated:YES];
         }
     }
@@ -2835,7 +2834,6 @@ static BOOL includeRectsInBound(CGPoint p, CGFloat width, CGFloat trailingWS, CG
         bound.origin.x += layoutOrigin.x;
         bound.origin.y += layoutOrigin.y;
     }
-    
     /* Shift from rendering coordinates to view/bounds coordinates; note that the method is confusingly named */
     return [self convertRectToRenderingSpace:bound];
 }
