@@ -13,10 +13,6 @@
 
 extern UIImage *OUIImageByFlippingHorizontally(UIImage *image);
 
-#ifdef DEBUG
-extern void OUILogAncestorViews(UIView *view);
-#endif
-
 // For segmented contorls, stepper buttons, etc.
 extern void OUIBeginShadowing(CGContextRef ctx);
 extern void OUIBeginControlImageShadow(CGContextRef ctx);

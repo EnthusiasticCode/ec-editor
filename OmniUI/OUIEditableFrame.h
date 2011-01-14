@@ -12,6 +12,11 @@
 // Editing menu doesn't hide if user taps outside of it
 // OUIEditableFrame is not opaque, requires to be inside an opaque view to function properly (UIScrollView)
 
+#import <UIKit/UIGeometry.h>
+#import <UIKit/UITextInput.h>
+#import <UIKit/UIMenuController.h>
+#import <UIKit/UIGraphics.h>
+#import <UIKit/UIPasteboard.h>
 #import "OUIScalingView.h"
 #import <CoreText/CoreText.h>
 #import "OUIEditableFrameDelegate.h"

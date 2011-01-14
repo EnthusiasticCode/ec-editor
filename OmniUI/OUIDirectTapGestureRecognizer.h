@@ -8,6 +8,7 @@
 // $Id$
 
 #import <UIKit/UITapGestureRecognizer.h>
+#import <UIKit/UILongPressGestureRecognizer.h>
 
 @interface OUIDirectTapGestureRecognizer : UITapGestureRecognizer
 @end

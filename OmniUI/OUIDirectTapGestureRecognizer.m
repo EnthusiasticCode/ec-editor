@@ -8,6 +8,8 @@
 #import "OUIDirectTapGestureRecognizer.h"
 
 #import <UIKit/UIGestureRecognizerSubclass.h>
+#import <UIKit/UIWindow.h>
+#import <UIKit/UIView.h>
 
 
 

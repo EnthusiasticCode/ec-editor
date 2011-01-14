@@ -6,6 +6,7 @@
 // <http://www.omnigroup.com/developer/sourcecode/sourcelicense/>.
 
 #import "OUIFontUtilities.h"
+#import <UIKit/UIInterface.h>
 
 #import <CoreText/CTFont.h>
 
@@ -13,12 +14,8 @@
 // Cache the display name for each font to avoid this.
 NSString *OUIDisplayNameForFont(UIFont *font, BOOL useFamilyName)
 {
-    if (![NSThread isMainThread])
-    {
-        NSLog(@"NOT THREADSAFE");
-        return nil;
-    }
-    
+    assert([NSThread isMainThread]); // UIGraphics stuff isn't thread safe. Could rewrite using only CG if needed.
+
     if (!font)
         return @"???";
     
@@ -64,11 +61,7 @@ NSString *OUIDisplayNameForFont(UIFont *font, BOOL useFamilyName)
 
 NSString *OUIDisplayNameForFontFaceName(NSString *displayName, NSString *baseDisplayName)
 {
-    if (![NSThread isMainThread])
-    {
-        NSLog(@"NOT THREADSAFE");
-        return nil;
-    }
+    assert([NSThread isMainThread]); // UIGraphics stuff isn't thread safe. Could rewrite using only CG if needed.
     
     NSMutableString *trimmed = [[displayName mutableCopy] autorelease];
     [trimmed replaceOccurrencesOfString:baseDisplayName withString:@"" options:0 range:NSMakeRange(0, [trimmed length])];
@@ -80,11 +73,7 @@ NSString *OUIDisplayNameForFontFaceName(NSString *displayName, NSString *baseDis
 
 NSString *OUIBaseFontNameForFamilyName(NSString *familyName)
 {
-    if (![NSThread isMainThread])
-    {
-        NSLog(@"NOT THREADSAFE");
-        return nil;
-    }
+    assert([NSThread isMainThread]); // UIGraphics stuff isn't thread safe. Could rewrite using only CG if needed.
     
     static NSMutableDictionary *BaseFontNameForFamilyName = nil;
     if (!BaseFontNameForFamilyName)

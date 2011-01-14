@@ -7,6 +7,9 @@
 //
 // $Id$
 
+#import <Foundation/Foundation.h>
+#import <UIKit/UIImage.h>
+
 @class UIImage;
 
 typedef struct {

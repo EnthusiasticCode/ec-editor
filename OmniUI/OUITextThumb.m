@@ -9,7 +9,9 @@
 
 #import "OUIEditableFrame.h"
 
-#import "OQDrawing.h"
+#import <UIKit/UIPanGestureRecognizer.h>
+#import <UIKit/UIImage.h>
+
 #import <QuartzCore/QuartzCore.h>
 
 

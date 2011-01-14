@@ -7,6 +7,9 @@
 //
 // $Id$
 
+#import <Foundation/Foundation.h>
+#import <UIKit/UIFont.h>
+
 extern NSString *OUIDisplayNameForFont(UIFont *font, BOOL useFamilyName);
 extern NSString *OUIDisplayNameForFontFaceName(NSString *displayName, NSString *baseDisplayName);
 extern NSString *OUIBaseFontNameForFamilyName(NSString *family);

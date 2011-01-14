@@ -706,6 +706,7 @@ static void getTypographicPosition(CFArrayRef lines, NSUInteger posIndex, int af
     if (!drawnFrame || flags.textNeedsUpdate)
         [self _updateLayout:YES];
     
+    assert(drawnFrame);
     if (drawnFrame) {
         CGSize textSize = _usedSize;
         textSize.width += textInset.left + textInset.right;

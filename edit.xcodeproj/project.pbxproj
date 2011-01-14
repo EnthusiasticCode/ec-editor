@@ -11,7 +11,6 @@
 		B736172E12DA112A009801D4 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B736172D12DA112A009801D4 /* UIKit.framework */; };
 		B736173012DA112A009801D4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B736172F12DA112A009801D4 /* Foundation.framework */; };
 		B736173212DA112A009801D4 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B736173112DA112A009801D4 /* CoreGraphics.framework */; };
-		B736173412DA112A009801D4 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B736173312DA112A009801D4 /* CoreData.framework */; };
 		B736173912DA112A009801D4 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = B736173712DA112A009801D4 /* InfoPlist.strings */; };
 		B736173B12DA112A009801D4 /* edit-main.m in Sources */ = {isa = PBXBuildFile; fileRef = B736173A12DA112A009801D4 /* edit-main.m */; };
 		B736173E12DA112A009801D4 /* editAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = B736173D12DA112A009801D4 /* editAppDelegate.m */; };
@@ -54,9 +53,7 @@
 		B736172D12DA112A009801D4 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		B736172F12DA112A009801D4 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		B736173112DA112A009801D4 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
-		B736173312DA112A009801D4 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		B736173512DA112A009801D4 /* edit-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "edit-Info.plist"; sourceTree = "<group>"; };
-		B736173612DA112A009801D4 /* edit-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "edit-Prefix.pch"; sourceTree = "<group>"; };
 		B736173812DA112A009801D4 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		B736173A12DA112A009801D4 /* edit-main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "edit-main.m"; sourceTree = "<group>"; };
 		B736173C12DA112A009801D4 /* editAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = editAppDelegate.h; sourceTree = "<group>"; };
@@ -65,7 +62,6 @@
 		B736174212DA112A009801D4 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainWindow.xib; sourceTree = "<group>"; };
 		B736174A12DA112A009801D4 /* editTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = editTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B736174E12DA112A009801D4 /* editTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "editTests-Info.plist"; sourceTree = "<group>"; };
-		B736174F12DA112A009801D4 /* editTests-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "editTests-Prefix.pch"; sourceTree = "<group>"; };
 		B736175012DA112A009801D4 /* InfoPlist.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = InfoPlist.strings; path = en.lproj/editTests/InfoPlist.strings; sourceTree = "<group>"; };
 		B736175212DA112A009801D4 /* editTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = editTests.h; sourceTree = "<group>"; };
 		B736175412DA112A009801D4 /* editTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = editTests.m; sourceTree = "<group>"; };
@@ -86,7 +82,6 @@
 		B7BF7B4312E05D48005CDF48 /* OUEFTextRange.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OUEFTextRange.m; sourceTree = "<group>"; };
 		B7BF7B4412E05D48005CDF48 /* OUEFTextSpan.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OUEFTextSpan.h; sourceTree = "<group>"; };
 		B7BF7B4512E05D48005CDF48 /* OUEFTextSpan.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OUEFTextSpan.m; sourceTree = "<group>"; };
-		B7BF7B4612E05D48005CDF48 /* OUIColorValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OUIColorValue.h; sourceTree = "<group>"; };
 		B7BF7B4712E05D48005CDF48 /* OUIDirectTapGestureRecognizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OUIDirectTapGestureRecognizer.h; sourceTree = "<group>"; };
 		B7BF7B4812E05D48005CDF48 /* OUIDirectTapGestureRecognizer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OUIDirectTapGestureRecognizer.m; sourceTree = "<group>"; };
 		B7BF7B4912E05D48005CDF48 /* OUIDrawing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OUIDrawing.h; sourceTree = "<group>"; };
@@ -119,7 +114,6 @@
 				B736172E12DA112A009801D4 /* UIKit.framework in Frameworks */,
 				B736173012DA112A009801D4 /* Foundation.framework in Frameworks */,
 				B736173212DA112A009801D4 /* CoreGraphics.framework in Frameworks */,
-				B736173412DA112A009801D4 /* CoreData.framework in Frameworks */,
 				B71C0F0312DB60DC002843EF /* CoreText.framework in Frameworks */,
 				B7BD531F12DF1CDB003B83B3 /* QuartzCore.framework in Frameworks */,
 			);
@@ -172,9 +166,7 @@
 		B736172312DA1129009801D4 /* Other Sources */ = {
 			isa = PBXGroup;
 			children = (
-				B736173612DA112A009801D4 /* edit-Prefix.pch */,
 				B736173A12DA112A009801D4 /* edit-main.m */,
-				B736174F12DA112A009801D4 /* editTests-Prefix.pch */,
 			);
 			name = "Other Sources";
 			sourceTree = "<group>";
@@ -200,7 +192,6 @@
 				B736172D12DA112A009801D4 /* UIKit.framework */,
 				B736172F12DA112A009801D4 /* Foundation.framework */,
 				B736173112DA112A009801D4 /* CoreGraphics.framework */,
-				B736173312DA112A009801D4 /* CoreData.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -250,7 +241,6 @@
 				B7BF7B4312E05D48005CDF48 /* OUEFTextRange.m */,
 				B7BF7B4412E05D48005CDF48 /* OUEFTextSpan.h */,
 				B7BF7B4512E05D48005CDF48 /* OUEFTextSpan.m */,
-				B7BF7B4612E05D48005CDF48 /* OUIColorValue.h */,
 				B7BF7B4712E05D48005CDF48 /* OUIDirectTapGestureRecognizer.h */,
 				B7BF7B4812E05D48005CDF48 /* OUIDirectTapGestureRecognizer.m */,
 				B7BF7B4912E05D48005CDF48 /* OUIDrawing.h */,
@@ -489,8 +479,9 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "edit-Prefix.pch";
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
+				GCC_PREFIX_HEADER = "";
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				HEADER_SEARCH_PATHS = "";
 				INFOPLIST_FILE = "edit-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
@@ -507,8 +498,9 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				COPY_PHASE_STRIP = YES;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "edit-Prefix.pch";
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
+				GCC_PREFIX_HEADER = "";
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				HEADER_SEARCH_PATHS = "";
 				INFOPLIST_FILE = "edit-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
@@ -532,6 +524,7 @@
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "editTests-Prefix.pch";
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = "editTests-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 4.2;
 				OTHER_LDFLAGS = (
@@ -554,6 +547,7 @@
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "editTests-Prefix.pch";
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = "editTests-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 4.2;
 				OTHER_LDFLAGS = (

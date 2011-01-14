@@ -12,11 +12,8 @@
 
 UIImage *OUIImageByFlippingHorizontally(UIImage *image)
 {
-    if (![NSThread isMainThread])
-    {
-        NSLog(@"NOT THREADSAFE"); // UIGraphics stuff isn't thread safe. Could rewrite using only CG if needed.
-        return nil;
-    }
+    
+    assert([NSThread isMainThread]); // UIGraphics stuff isn't thread safe. Could rewrite using only CG if needed.
     
     UIImage *result;
     CGSize size = [image size];
@@ -32,17 +29,6 @@ UIImage *OUIImageByFlippingHorizontally(UIImage *image)
         
     return result;
 }
-
-#ifdef DEBUG
-void OUILogAncestorViews(UIView *view)
-{
-    while (view) {
-        NSLog(@"%@", view);
-        view = view.superview;
-    }
-}
-
-#endif
 
 static const CGSize OUIShadowOffset = {0, -1};
 static UIColor *OUIShadowColor = nil;

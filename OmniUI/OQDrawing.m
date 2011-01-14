@@ -5,19 +5,10 @@
 // distributed with this project and can also be found at
 // <http://www.omnigroup.com/developer/sourcecode/sourcelicense/>.
 
-#import <tgmath.h>
 #import "OQDrawing.h"
 
+#import <tgmath.h>
 
-
-#if !defined(TARGET_OS_IPHONE) || !TARGET_OS_IPHONE
-void OQSetPatternColorReferencePoint(CGPoint point, NSView *view)
-{
-    CGPoint refPoint = [view convertPoint:point toView:nil];
-    CGSize phase = (CGSize){refPoint.x, refPoint.y};
-    CGContextSetPatternPhase([[NSGraphicsContext currentContext] graphicsPort], phase);
-}
-#endif
 
 //
 // Rounded rect support.  These both assume a flipped coordinate system (top == CGRectGetMinY, bottom == CGRectGetMaxY)

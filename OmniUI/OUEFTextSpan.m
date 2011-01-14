@@ -9,11 +9,6 @@
 
 #import "OUIEditableFrame.h"
 
-#import "OUEFTextPosition.h"
-
-
-
-
 
 @implementation OUEFTextSpan
 

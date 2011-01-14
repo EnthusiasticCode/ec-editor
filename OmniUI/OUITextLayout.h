@@ -7,6 +7,8 @@
 //
 // $Id$
 
+#import <Foundation/Foundation.h>
+#import <UIKit/UIGeometry.h>
 #import <CoreText/CTFramesetter.h>
 #import <CoreText/CTFont.h>
 

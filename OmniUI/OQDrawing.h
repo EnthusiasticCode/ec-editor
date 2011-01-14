@@ -7,12 +7,9 @@
 //
 // $Id$
 
-
-#if !defined(TARGET_OS_IPHONE) || !TARGET_OS_IPHONE
-extern void OQSetPatternColorReferencePoint(CGPoint point, NSView *view);
-#else
+#import <Foundation/NSObjCRuntime.h>
 #import <CoreGraphics/CoreGraphics.h>
-#endif
+
 
 // Rounded rect support.
 extern void OQAppendRoundedRect(CGContextRef ctx, CGRect rect, CGFloat radius);

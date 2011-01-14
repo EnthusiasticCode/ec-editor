@@ -5,6 +5,9 @@
 // distributed with this project and can also be found at
 // <http://www.omnigroup.com/developer/sourcecode/sourcelicense/>.
 
+#import <UIKit/UIImage.h>
+#import <UIKit/UIGraphics.h>
+
 #import "OUILoupeOverlay.h"
 
 #import "OUIScalingView.h"

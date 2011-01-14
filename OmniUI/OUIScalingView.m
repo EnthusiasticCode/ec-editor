@@ -8,9 +8,6 @@
 #import "OUIScalingView.h"
 #import <UIKit/UIKit.h>
 #import <QuartzCore/QuartzCore.h>
-#import "OQDrawing.h"
-
-
 
 
 @implementation OUIScalingView
