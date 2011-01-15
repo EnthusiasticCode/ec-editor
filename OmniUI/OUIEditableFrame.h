@@ -23,7 +23,6 @@
 @class OUEFTextPosition, OUEFTextRange, OUITextCursorOverlay, OUILoupeOverlay;
 @class OUIEditableFrame, OUITextThumb;
 
-@class CALayer, CAShapeLayer;
 
 @interface OUIEditableFrame : OUIScalingView <UIKeyInput, UITextInputTraits, UITextInput, OUILoupeOverlaySubject>
 {

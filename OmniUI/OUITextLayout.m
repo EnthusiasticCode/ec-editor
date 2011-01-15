@@ -13,106 +13,12 @@
 #include <string.h>
 
 
-
-@implementation OUITextLayout
- 
 CTFontRef OUIGlobalDefaultFont(void)
 {
     static CTFontRef globalFont = NULL;
     if (!globalFont)
         globalFont = CTFontCreateWithName(CFSTR("Helvetica"), 12, NULL);
     return globalFont;
-}
-
-- initWithAttributedString:(NSAttributedString *)attributedString_ constraints:(CGSize)constraints;
-{
-    _attributedString = [attributedString_ copy];
-    CFAttributedStringRef attributedString = (CFAttributedStringRef)_attributedString;
-    
-    if (!attributedString) {
-        _usedSize = CGRectZero;
-        return nil;
-    }
-    
-    
-    CFIndex baseStringLength = CFAttributedStringGetLength(attributedString);
-    CFMutableAttributedStringRef paddedString = CFAttributedStringCreateMutableCopy(kCFAllocatorDefault, 1+baseStringLength, attributedString);
-    CFDictionaryRef attrs = NULL;
-    if (baseStringLength > 0) {
-        attrs = CFAttributedStringGetAttributes(paddedString, baseStringLength-1, NULL);
-        CFRetain(attrs);
-    } else {
-        CFTypeRef attrKeys[1] = { kCTFontAttributeName };
-        CFTypeRef attrValues[1] = { OUIGlobalDefaultFont() };
-        attrs = CFDictionaryCreate(kCFAllocatorDefault, attrKeys, attrValues, 1, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
-    }
-    CFAttributedStringRef addend = CFAttributedStringCreate(kCFAllocatorDefault, CFSTR("\n"), attrs);
-    CFRelease(attrs);
-    CFAttributedStringReplaceAttributedString(paddedString, (CFRange){ baseStringLength, 0}, addend);
-    CFRelease(addend);
-    
-    CTFramesetterRef framesetter = CTFramesetterCreateWithAttributedString(paddedString);
-    
-    CFDictionaryRef frameAttributes = NULL;
-
-    _layoutSize = constraints;
-    if (_layoutSize.width <= 0)
-        _layoutSize.width = 100000;
-    if (_layoutSize.height <= 0)
-        _layoutSize.height = 100000;
-    
-    CGMutablePathRef path = CGPathCreateMutable();
-    CGPathAddRect(path, NULL/*transform*/, CGRectMake(0, 0, _layoutSize.width, _layoutSize.height));
-    
-    /* Many CoreText APIs accept a zero-length range to mean "until the end" */
-    _frame = CTFramesetterCreateFrame(framesetter, (CFRange){0, 0}, path, frameAttributes);
-    CFRelease(path);
-    CFRelease(framesetter);
-    CFRelease(paddedString);
-    
-    _usedSize = OUITextLayoutMeasureFrame(_frame, NO);
-    
-    return self;
-}
-
-- (void)dealloc;
-{
-    [_attributedString release];
-    if (_frame)
-        CFRelease(_frame);
-
-    [super dealloc];
-}
-
-@synthesize attributedString = _attributedString;
-
-- (CGSize)usedSize
-{
-    return _usedSize.size;
-}
-
-- (void)drawInContext:(CGContextRef)ctx;
-{
-    CGRect bounds;
-    bounds.origin = CGPointZero;
-    bounds.size = _usedSize.size;
-    
-    CGPoint layoutOrigin = OUITextLayoutOrigin(_usedSize, UIEdgeInsetsZero, bounds, 1.0f);
-    
-    OUITextLayoutDrawFrame(ctx, _frame, bounds, layoutOrigin);
-}
-
-- (void)drawFlippedInContext:(CGContextRef)ctx bounds:(CGRect)bounds;
-{
-    CGContextSaveGState(ctx);
-    {
-        OQFlipVerticallyInRect(ctx, bounds);
-        
-        CGContextTranslateCTM(ctx, 0, CGRectGetHeight(bounds) - _usedSize.size.height);
-        
-        [self drawInContext:ctx];
-    }
-    CGContextRestoreGState(ctx);
 }
 
 // CTFramesetterSuggestFrameSizeWithConstraints seems to be useless. It doesn't return a size that will avoid wrapping in the real frame setter. Also, it doesn't include the descender of the bottom line.
@@ -253,6 +159,4 @@ void OUITextLayoutFixupParagraphStyles(NSMutableAttributedString *content)
         }
     }
 }
-
-@end
 
