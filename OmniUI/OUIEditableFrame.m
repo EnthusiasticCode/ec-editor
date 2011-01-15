@@ -21,7 +21,6 @@
 #import "OUEFTextRange.h"
 #import "OUITextCursorOverlay.h"
 #import "OUILoupeOverlay.h"
-#import "OUEFTextSpan.h"
 
 #import <UIKit/UITapGestureRecognizer.h>
 #import <UIKit/UILongPressGestureRecognizer.h>
