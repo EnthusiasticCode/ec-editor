@@ -34,11 +34,7 @@
 		B7BF7B5E12E05D48005CDF48 /* OUEFTextPosition.m in Sources */ = {isa = PBXBuildFile; fileRef = B7BF7B4112E05D48005CDF48 /* OUEFTextPosition.m */; };
 		B7BF7B5F12E05D48005CDF48 /* OUEFTextRange.m in Sources */ = {isa = PBXBuildFile; fileRef = B7BF7B4312E05D48005CDF48 /* OUEFTextRange.m */; };
 		B7BF7B6012E05D48005CDF48 /* OUEFTextSpan.m in Sources */ = {isa = PBXBuildFile; fileRef = B7BF7B4512E05D48005CDF48 /* OUEFTextSpan.m */; };
-		B7BF7B6112E05D48005CDF48 /* OUIDirectTapGestureRecognizer.m in Sources */ = {isa = PBXBuildFile; fileRef = B7BF7B4812E05D48005CDF48 /* OUIDirectTapGestureRecognizer.m */; };
-		B7BF7B6212E05D48005CDF48 /* OUIDrawing.m in Sources */ = {isa = PBXBuildFile; fileRef = B7BF7B4A12E05D48005CDF48 /* OUIDrawing.m */; };
 		B7BF7B6312E05D48005CDF48 /* OUIEditableFrame.m in Sources */ = {isa = PBXBuildFile; fileRef = B7BF7B4C12E05D48005CDF48 /* OUIEditableFrame.m */; };
-		B7BF7B6412E05D48005CDF48 /* OUIFontUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = B7BF7B4F12E05D48005CDF48 /* OUIFontUtilities.m */; };
-		B7BF7B6512E05D48005CDF48 /* OUILoadedImage.m in Sources */ = {isa = PBXBuildFile; fileRef = B7BF7B5112E05D48005CDF48 /* OUILoadedImage.m */; };
 		B7BF7B6612E05D48005CDF48 /* OUILoupeOverlay.m in Sources */ = {isa = PBXBuildFile; fileRef = B7BF7B5312E05D48005CDF48 /* OUILoupeOverlay.m */; };
 		B7BF7B6712E05D48005CDF48 /* OUIScalingView.m in Sources */ = {isa = PBXBuildFile; fileRef = B7BF7B5612E05D48005CDF48 /* OUIScalingView.m */; };
 		B7BF7B6812E05D48005CDF48 /* OUITextCursorOverlay.m in Sources */ = {isa = PBXBuildFile; fileRef = B7BF7B5812E05D48005CDF48 /* OUITextCursorOverlay.m */; };
@@ -80,17 +76,9 @@
 		B7BF7B4312E05D48005CDF48 /* OUEFTextRange.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OUEFTextRange.m; sourceTree = "<group>"; };
 		B7BF7B4412E05D48005CDF48 /* OUEFTextSpan.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OUEFTextSpan.h; sourceTree = "<group>"; };
 		B7BF7B4512E05D48005CDF48 /* OUEFTextSpan.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OUEFTextSpan.m; sourceTree = "<group>"; };
-		B7BF7B4712E05D48005CDF48 /* OUIDirectTapGestureRecognizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OUIDirectTapGestureRecognizer.h; sourceTree = "<group>"; };
-		B7BF7B4812E05D48005CDF48 /* OUIDirectTapGestureRecognizer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OUIDirectTapGestureRecognizer.m; sourceTree = "<group>"; };
-		B7BF7B4912E05D48005CDF48 /* OUIDrawing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OUIDrawing.h; sourceTree = "<group>"; };
-		B7BF7B4A12E05D48005CDF48 /* OUIDrawing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OUIDrawing.m; sourceTree = "<group>"; };
 		B7BF7B4B12E05D48005CDF48 /* OUIEditableFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OUIEditableFrame.h; sourceTree = "<group>"; };
 		B7BF7B4C12E05D48005CDF48 /* OUIEditableFrame.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OUIEditableFrame.m; sourceTree = "<group>"; };
 		B7BF7B4D12E05D48005CDF48 /* OUIEditableFrameDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OUIEditableFrameDelegate.h; sourceTree = "<group>"; };
-		B7BF7B4E12E05D48005CDF48 /* OUIFontUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OUIFontUtilities.h; sourceTree = "<group>"; };
-		B7BF7B4F12E05D48005CDF48 /* OUIFontUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OUIFontUtilities.m; sourceTree = "<group>"; };
-		B7BF7B5012E05D48005CDF48 /* OUILoadedImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OUILoadedImage.h; sourceTree = "<group>"; };
-		B7BF7B5112E05D48005CDF48 /* OUILoadedImage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OUILoadedImage.m; sourceTree = "<group>"; };
 		B7BF7B5212E05D48005CDF48 /* OUILoupeOverlay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OUILoupeOverlay.h; sourceTree = "<group>"; };
 		B7BF7B5312E05D48005CDF48 /* OUILoupeOverlay.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OUILoupeOverlay.m; sourceTree = "<group>"; };
 		B7BF7B5412E05D48005CDF48 /* OUILoupeOverlaySubject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OUILoupeOverlaySubject.h; sourceTree = "<group>"; };
@@ -230,17 +218,9 @@
 				B7BF7B4312E05D48005CDF48 /* OUEFTextRange.m */,
 				B7BF7B4412E05D48005CDF48 /* OUEFTextSpan.h */,
 				B7BF7B4512E05D48005CDF48 /* OUEFTextSpan.m */,
-				B7BF7B4712E05D48005CDF48 /* OUIDirectTapGestureRecognizer.h */,
-				B7BF7B4812E05D48005CDF48 /* OUIDirectTapGestureRecognizer.m */,
-				B7BF7B4912E05D48005CDF48 /* OUIDrawing.h */,
-				B7BF7B4A12E05D48005CDF48 /* OUIDrawing.m */,
 				B7BF7B4B12E05D48005CDF48 /* OUIEditableFrame.h */,
 				B7BF7B4C12E05D48005CDF48 /* OUIEditableFrame.m */,
 				B7BF7B4D12E05D48005CDF48 /* OUIEditableFrameDelegate.h */,
-				B7BF7B4E12E05D48005CDF48 /* OUIFontUtilities.h */,
-				B7BF7B4F12E05D48005CDF48 /* OUIFontUtilities.m */,
-				B7BF7B5012E05D48005CDF48 /* OUILoadedImage.h */,
-				B7BF7B5112E05D48005CDF48 /* OUILoadedImage.m */,
 				B7BF7B5212E05D48005CDF48 /* OUILoupeOverlay.h */,
 				B7BF7B5312E05D48005CDF48 /* OUILoupeOverlay.m */,
 				B7BF7B5412E05D48005CDF48 /* OUILoupeOverlaySubject.h */,
@@ -373,11 +353,7 @@
 				B7BF7B5E12E05D48005CDF48 /* OUEFTextPosition.m in Sources */,
 				B7BF7B5F12E05D48005CDF48 /* OUEFTextRange.m in Sources */,
 				B7BF7B6012E05D48005CDF48 /* OUEFTextSpan.m in Sources */,
-				B7BF7B6112E05D48005CDF48 /* OUIDirectTapGestureRecognizer.m in Sources */,
-				B7BF7B6212E05D48005CDF48 /* OUIDrawing.m in Sources */,
 				B7BF7B6312E05D48005CDF48 /* OUIEditableFrame.m in Sources */,
-				B7BF7B6412E05D48005CDF48 /* OUIFontUtilities.m in Sources */,
-				B7BF7B6512E05D48005CDF48 /* OUILoadedImage.m in Sources */,
 				B7BF7B6612E05D48005CDF48 /* OUILoupeOverlay.m in Sources */,
 				B7BF7B6712E05D48005CDF48 /* OUIScalingView.m in Sources */,
 				B7BF7B6812E05D48005CDF48 /* OUITextCursorOverlay.m in Sources */,

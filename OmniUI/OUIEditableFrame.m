@@ -7,8 +7,6 @@
 
 #import "OUIEditableFrame.h"
 
-#import "OUIDirectTapGestureRecognizer.h"
-
 #import "OUITextLayout.h"
 #import <Foundation/NSAttributedString.h>
 #import <QuartzCore/QuartzCore.h>
@@ -25,6 +23,8 @@
 #import "OUILoupeOverlay.h"
 #import "OUEFTextSpan.h"
 
+#import <UIKit/UITapGestureRecognizer.h>
+#import <UIKit/UILongPressGestureRecognizer.h>
 
 
 #if 0 && defined(DEBUG)
@@ -1216,7 +1216,8 @@ static BOOL _recognizerTouchedView(UIGestureRecognizer *recognizer, UIView *view
     BOOL didBecomeFirstResponder = [super becomeFirstResponder];
     
     if (didBecomeFirstResponder && !actionRecognizers[0]) {
-        UITapGestureRecognizer *singleTap = [[OUIDirectTapGestureRecognizer alloc] initWithTarget:self action:@selector(_activeTap:)];
+//        UITapGestureRecognizer *singleTap = [[OUIDirectTapGestureRecognizer alloc] initWithTarget:self action:@selector(_activeTap:)];
+        UITapGestureRecognizer *singleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(_activeTap:)];
         actionRecognizers[0] = singleTap;
         [self addGestureRecognizer:singleTap];
         // singleTap.maximumSingleTapDuration = 1.5;
