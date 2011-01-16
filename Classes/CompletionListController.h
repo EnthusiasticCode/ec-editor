@@ -8,12 +8,16 @@
 
 #import <UIKit/UIKit.h>
 
+@protocol CompletionListControllerDelegate <NSObject>
 
-@interface CompletionListController : UIViewController {
+- (void)completeWithString:(NSString *)string;
 
+@end
+
+@interface CompletionListController : UITableViewController{
+    NSArray *_resultsList;
 }
 @property (nonatomic,retain) NSArray *resultsList;
-
-- (id)initWithStyle:(UITableViewStyle)style;
+@property (nonatomic,assign) id <CompletionListControllerDelegate> delegate;
 
 @end

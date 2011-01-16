@@ -842,6 +842,10 @@ static void getTypographicPosition(CFArrayRef lines, NSUInteger posIndex, int af
 }
 
 /* The pattern of housekeeping we need to do around every change to our content. Call beforeMutate() before changing _content, afterMutate() after changing the content, and notifyAfterMutate() some time after that before returning from the method. */
+- (void)beforeMutate
+{
+    
+}
 static BOOL beforeMutate(OUIEditableFrame *self, SEL _cmd)
 {
     NSUInteger wasGeneration = self->generation;
@@ -870,6 +874,8 @@ static BOOL beforeMutate(OUIEditableFrame *self, SEL _cmd)
     
     [self->_content beginEditing];
     
+    [self beforeMutate];
+    
     return YES;
 }
 
@@ -879,6 +885,10 @@ static inline void afterMutate(OUIEditableFrame *self, SEL _cmd)
     [self->_content endEditing];
 }
 
+- (void)notifyAfterMutate
+{
+    
+}
 static void notifyAfterMutate(OUIEditableFrame *self, SEL _cmd)
 {
     DEBUG_TEXT(@">>> textDidChange (%@)", NSStringFromSelector(_cmd));
@@ -886,6 +896,7 @@ static void notifyAfterMutate(OUIEditableFrame *self, SEL _cmd)
     if (self->flags.delegateRespondsToContentsChanged)
         [self->delegate textViewContentsChanged:self];
     DEBUG_TEXT(@"<<< textDidChange (%@)", NSStringFromSelector(_cmd));
+    [self notifyAfterMutate];
 }
 
 - (void)setValue:(id)value forAttribute:(NSString *)attr inRange:(UITextRange *)r;

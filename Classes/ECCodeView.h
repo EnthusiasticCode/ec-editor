@@ -10,16 +10,22 @@
 #import <UIKit/UITextChecker.h>
 #import <UIKit/UIPopoverController.h>
 #import "OUIEditableFrame.h"
+#import "CompletionListController.h"
 
 
-@interface ECCodeView : OUIEditableFrame
+@interface ECCodeView : OUIEditableFrame <CompletionListControllerDelegate>
 {
-
+    UITextChecker *_textChecker;
+    UIPopoverController *_completionListPopover;
+    CompletionListController *_completionList;
 }
 @property (nonatomic,retain) NSArray *autoCompletionTokens;
-@property (nonatomic,retain) UITextChecker *textChecker;
+@property (nonatomic,readonly) UITextChecker *textChecker;
+@property (nonatomic,readonly) UIPopoverController *completionListPopover;
+@property (nonatomic,readonly) CompletionListController *completionList;
+
 
 - (NSRange)completionRange;
-
+- (void)showCompletions;
 
 @end
