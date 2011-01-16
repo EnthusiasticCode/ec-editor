@@ -39,6 +39,7 @@
 		B7BF7B6812E05D48005CDF48 /* OUITextCursorOverlay.m in Sources */ = {isa = PBXBuildFile; fileRef = B7BF7B5812E05D48005CDF48 /* OUITextCursorOverlay.m */; };
 		B7BF7B6912E05D48005CDF48 /* OUITextLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = B7BF7B5A12E05D48005CDF48 /* OUITextLayout.m */; };
 		B7BF7B6A12E05D48005CDF48 /* OUITextThumb.m in Sources */ = {isa = PBXBuildFile; fileRef = B7BF7B5C12E05D48005CDF48 /* OUITextThumb.m */; };
+		CD0B939712E2043C00765E4A /* ECCodeView.m in Sources */ = {isa = PBXBuildFile; fileRef = CD0B939612E2043C00765E4A /* ECCodeView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -87,6 +88,8 @@
 		B7BF7B5A12E05D48005CDF48 /* OUITextLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OUITextLayout.m; sourceTree = "<group>"; };
 		B7BF7B5B12E05D48005CDF48 /* OUITextThumb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OUITextThumb.h; sourceTree = "<group>"; };
 		B7BF7B5C12E05D48005CDF48 /* OUITextThumb.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OUITextThumb.m; sourceTree = "<group>"; };
+		CD0B939512E2043C00765E4A /* ECCodeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeView.h; sourceTree = "<group>"; };
+		CD0B939612E2043C00765E4A /* ECCodeView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -133,6 +136,8 @@
 			children = (
 				B736173C12DA112A009801D4 /* editAppDelegate.h */,
 				B736173D12DA112A009801D4 /* editAppDelegate.m */,
+				CD0B939512E2043C00765E4A /* ECCodeView.h */,
+				CD0B939612E2043C00765E4A /* ECCodeView.m */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -353,6 +358,7 @@
 				B7BF7B6812E05D48005CDF48 /* OUITextCursorOverlay.m in Sources */,
 				B7BF7B6912E05D48005CDF48 /* OUITextLayout.m in Sources */,
 				B7BF7B6A12E05D48005CDF48 /* OUITextThumb.m in Sources */,
+				CD0B939712E2043C00765E4A /* ECCodeView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

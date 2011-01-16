@@ -7,22 +7,29 @@
 //
 
 #import "editAppDelegate.h"
-#import "OUIEditableFrame.h"
 
 @implementation editAppDelegate
 
 
 @synthesize window;
+@synthesize codeEditor;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    CTFontRef font = CTFontCreateWithName((CFStringRef)@"Courier New", 12.0, &CGAffineTransformIdentity);
+    NSDictionary *attributes = [NSDictionary dictionaryWithObject:(id)font forKey:(id)kCTFontAttributeName];
+    codeEditor.attributedText = [[NSAttributedString alloc] initWithString:@"int main(arguments)\n{\n\treturn 0;\n}\n" attributes:attributes];
+    
     [window makeKeyAndVisible];
+    
+		CFRelease(font);
     return YES;
 }
 
 - (void)dealloc
 {
     [window release];
+    [codeEditor release];
     [super dealloc];
 }
 

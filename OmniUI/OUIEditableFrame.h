@@ -140,5 +140,8 @@
 - (BOOL)hasTouchesForEvent:(UIEvent *)event;
 - (BOOL)hasTouchByGestureRecognizer:(UIGestureRecognizer *)recognizer;
 
+- (void)beforeMutate;
+- (void)notifyAfterMutate;
+
 @end
 
