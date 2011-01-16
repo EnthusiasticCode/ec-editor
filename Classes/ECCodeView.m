@@ -18,7 +18,7 @@
 - (NSArray *)autoCompletionTokens
 {
     if (!_autoCompletionTokens)
-        _autoCompletionTokens = [NSArray arrayWithObjects:@" ", @".", @")", nil];
+        _autoCompletionTokens = [[NSArray arrayWithObjects:@" ", @".", @")", nil] retain];
     return _autoCompletionTokens;
 }
 

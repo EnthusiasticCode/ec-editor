@@ -48,9 +48,8 @@
     UITableViewCell *completion = [tableView dequeueReusableCellWithIdentifier:@"Completion"];
     if (!completion)
     {
-        completion = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"Completion"];
+        completion = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"Completion"] autorelease];
     }
-    NSLog(@"%@", self.resultsList);
     completion.textLabel.text = [self.resultsList objectAtIndex:(indexPath.row)];
     return completion;
 }

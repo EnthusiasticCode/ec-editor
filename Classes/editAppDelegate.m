@@ -22,6 +22,7 @@
     
     [window makeKeyAndVisible];
     
+		CFRelease(font);
     return YES;
 }
 
