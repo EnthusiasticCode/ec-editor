@@ -8,18 +8,21 @@
 
 #import "editAppDelegate.h"
 
+#import "ECCodeViewController.h"
+#import "ECCodeView.h"
+
 @implementation editAppDelegate
 
 
 @synthesize window;
-@synthesize codeEditor;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     CTFontRef font = CTFontCreateWithName((CFStringRef)@"Courier New", 12.0, &CGAffineTransformIdentity);
     NSDictionary *attributes = [NSDictionary dictionaryWithObject:(id)font forKey:(id)kCTFontAttributeName];
-    codeEditor.attributedText = [[NSAttributedString alloc] initWithString:@"int main(arguments)\n{\n\treturn 0;\n}\n" attributes:attributes];
+    ((ECCodeView *)((ECCodeViewController *)window.rootViewController).view).attributedText = [[NSAttributedString alloc] initWithString:@"int main(arguments)\n{\n\treturn 0;\n}\n" attributes:attributes];
     
+    [window addSubview:window.rootViewController.view];
     [window makeKeyAndVisible];
     
 		CFRelease(font);
@@ -29,7 +32,6 @@
 - (void)dealloc
 {
     [window release];
-    [codeEditor release];
     [super dealloc];
 }
 

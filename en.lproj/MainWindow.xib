@@ -8,7 +8,7 @@
 		<array key="IBDocument.IntegratedClassDependencies">
 			<string>IBUIWindow</string>
 			<string>IBUICustomObject</string>
-			<string>IBUIView</string>
+			<string>IBUIViewController</string>
 			<string>IBProxyObject</string>
 		</array>
 		<array key="IBDocument.PluginDependencies">
@@ -27,26 +27,14 @@
 			<object class="IBUIWindow" id="62075450">
 				<reference key="NSNextResponder"/>
 				<int key="NSvFlags">292</int>
-				<array class="NSMutableArray" key="NSSubviews">
-					<object class="IBUIView" id="130621488">
-						<reference key="NSNextResponder" ref="62075450"/>
-						<int key="NSvFlags">274</int>
-						<string key="NSFrame">{{72, 65}, {607, 738}}</string>
-						<reference key="NSSuperview" ref="62075450"/>
-						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView"/>
-						<object class="NSColor" key="IBUIBackgroundColor" id="794091144">
-							<int key="NSColorSpace">3</int>
-							<bytes key="NSWhite">MQA</bytes>
-						</object>
-						<string key="targetRuntimeIdentifier">IBIPadFramework</string>
-					</object>
-				</array>
 				<string key="NSFrameSize">{768, 1024}</string>
 				<reference key="NSSuperview"/>
 				<reference key="NSWindow"/>
-				<reference key="NSNextKeyView" ref="130621488"/>
-				<reference key="IBUIBackgroundColor" ref="794091144"/>
+				<reference key="NSNextKeyView"/>
+				<object class="NSColor" key="IBUIBackgroundColor">
+					<int key="NSColorSpace">3</int>
+					<bytes key="NSWhite">MQA</bytes>
+				</object>
 				<bool key="IBUIOpaque">NO</bool>
 				<bool key="IBUIClearsContextBeforeDrawing">NO</bool>
 				<object class="IBUISimulatedStatusBarMetrics" key="IBUISimulatedStatusBarMetrics">
@@ -56,6 +44,18 @@
 			</object>
 			<object class="IBUICustomObject" id="250404236">
 				<string key="targetRuntimeIdentifier">IBIPadFramework</string>
+			</object>
+			<object class="IBUIViewController" id="551516461">
+				<string key="IBUINibName">CodeView</string>
+				<object class="IBUISimulatedStatusBarMetrics" key="IBUISimulatedStatusBarMetrics">
+					<int key="IBUIStatusBarStyle">2</int>
+				</object>
+				<object class="IBUISimulatedOrientationMetrics" key="IBUISimulatedOrientationMetrics">
+					<int key="IBUIInterfaceOrientation">1</int>
+					<int key="interfaceOrientation">1</int>
+				</object>
+				<string key="targetRuntimeIdentifier">IBIPadFramework</string>
+				<bool key="IBUIHorizontal">NO</bool>
 			</object>
 		</array>
 		<object class="IBObjectContainer" key="IBDocument.Objects">
@@ -74,15 +74,15 @@
 						<reference key="source" ref="841351856"/>
 						<reference key="destination" ref="250404236"/>
 					</object>
-					<int key="connectionID">23</int>
+					<int key="connectionID">30</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBCocoaTouchOutletConnection" key="connection">
-						<string key="label">codeEditor</string>
-						<reference key="source" ref="250404236"/>
-						<reference key="destination" ref="130621488"/>
+						<string key="label">rootViewController</string>
+						<reference key="source" ref="62075450"/>
+						<reference key="destination" ref="551516461"/>
 					</object>
-					<int key="connectionID">25</int>
+					<int key="connectionID">35</int>
 				</object>
 			</array>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -107,9 +107,7 @@
 					<object class="IBObjectRecord">
 						<int key="objectID">2</int>
 						<reference key="object" ref="62075450"/>
-						<array class="NSMutableArray" key="children">
-							<reference ref="130621488"/>
-						</array>
+						<array class="NSMutableArray" key="children"/>
 						<reference key="parent" ref="0"/>
 					</object>
 					<object class="IBObjectRecord">
@@ -118,9 +116,9 @@
 						<reference key="parent" ref="0"/>
 					</object>
 					<object class="IBObjectRecord">
-						<int key="objectID">24</int>
-						<reference key="object" ref="130621488"/>
-						<reference key="parent" ref="62075450"/>
+						<int key="objectID">34</int>
+						<reference key="object" ref="551516461"/>
+						<reference key="parent" ref="0"/>
 					</object>
 				</array>
 			</object>
@@ -129,8 +127,8 @@
 				<string key="-2.CustomClassName">UIResponder</string>
 				<string key="2.IBEditorWindowLastContentRect">{{226, 57}, {783, 799}}</string>
 				<string key="2.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
-				<string key="24.CustomClassName">ECCodeView</string>
-				<string key="24.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
+				<string key="34.CustomClassName">ECCodeViewController</string>
+				<string key="34.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 				<string key="6.CustomClassName">editAppDelegate</string>
 				<string key="6.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 			</dictionary>
@@ -138,32 +136,16 @@
 			<nil key="activeLocalization"/>
 			<dictionary class="NSMutableDictionary" key="localizations"/>
 			<nil key="sourceID"/>
-			<int key="maxID">25</int>
+			<int key="maxID">35</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<array class="NSMutableArray" key="referencedPartialClassDescriptions">
 				<object class="IBPartialClassDescription">
-					<string key="className">ECCodeView</string>
-					<string key="superclassName">OUIEditableFrame</string>
+					<string key="className">ECCodeViewController</string>
+					<string key="superclassName">UIViewController</string>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">./classes-xjh84/ECCodeView.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
-					<string key="className">OUIEditableFrame</string>
-					<string key="superclassName">OUIScalingView</string>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">./classes-xjh84/OUIEditableFrame.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
-					<string key="className">OUIScalingView</string>
-					<string key="superclassName">UIView</string>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">./classes-xjh84/OUIScalingView.h</string>
+						<string key="minorKey">./classes-xjh84/ECCodeViewController.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
