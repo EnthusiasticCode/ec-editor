@@ -23,10 +23,8 @@
 		B736175112DA112A009801D4 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = B736175012DA112A009801D4 /* InfoPlist.strings */; };
 		B736175312DA112A009801D4 /* editTests.h in Resources */ = {isa = PBXBuildFile; fileRef = B736175212DA112A009801D4 /* editTests.h */; };
 		B736175512DA112B009801D4 /* editTests.m in Sources */ = {isa = PBXBuildFile; fileRef = B736175412DA112A009801D4 /* editTests.m */; };
-		B736176612DA26BB009801D4 /* CSEditor.m in Sources */ = {isa = PBXBuildFile; fileRef = B736176512DA26BB009801D4 /* CSEditor.m */; };
-		B736176912DA27E3009801D4 /* CSEditorView.m in Sources */ = {isa = PBXBuildFile; fileRef = B736176812DA27E3009801D4 /* CSEditorView.m */; };
-		B7BF318D12DB7FB700AFF9C1 /* IndexedPosition.m in Sources */ = {isa = PBXBuildFile; fileRef = B7BF318C12DB7FB700AFF9C1 /* IndexedPosition.m */; };
-		B7BF319012DB7FDB00AFF9C1 /* IndexedRange.m in Sources */ = {isa = PBXBuildFile; fileRef = B7BF318F12DB7FDB00AFF9C1 /* IndexedRange.m */; };
+		CD90FFC612E4D56400C1E41F /* ECCarpetView.m in Sources */ = {isa = PBXBuildFile; fileRef = CD90FFC512E4D56400C1E41F /* ECCarpetView.m */; };
+		CDDCC73C12E4FDCD00125229 /* ECCarpetPanelView.m in Sources */ = {isa = PBXBuildFile; fileRef = CDDCC73B12E4FDCD00125229 /* ECCarpetPanelView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -50,14 +48,10 @@
 		B736175012DA112A009801D4 /* InfoPlist.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = InfoPlist.strings; path = en.lproj/editTests/InfoPlist.strings; sourceTree = "<group>"; };
 		B736175212DA112A009801D4 /* editTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = editTests.h; sourceTree = "<group>"; };
 		B736175412DA112A009801D4 /* editTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = editTests.m; sourceTree = "<group>"; };
-		B736176412DA26BB009801D4 /* CSEditor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSEditor.h; sourceTree = "<group>"; };
-		B736176512DA26BB009801D4 /* CSEditor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CSEditor.m; sourceTree = "<group>"; };
-		B736176712DA27E3009801D4 /* CSEditorView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSEditorView.h; sourceTree = "<group>"; };
-		B736176812DA27E3009801D4 /* CSEditorView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CSEditorView.m; sourceTree = "<group>"; };
-		B7BF318B12DB7FB700AFF9C1 /* IndexedPosition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IndexedPosition.h; sourceTree = "<group>"; };
-		B7BF318C12DB7FB700AFF9C1 /* IndexedPosition.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IndexedPosition.m; sourceTree = "<group>"; };
-		B7BF318E12DB7FDB00AFF9C1 /* IndexedRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IndexedRange.h; sourceTree = "<group>"; };
-		B7BF318F12DB7FDB00AFF9C1 /* IndexedRange.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IndexedRange.m; sourceTree = "<group>"; };
+		CD90FFC412E4D56400C1E41F /* ECCarpetView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCarpetView.h; sourceTree = "<group>"; };
+		CD90FFC512E4D56400C1E41F /* ECCarpetView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCarpetView.m; sourceTree = "<group>"; };
+		CDDCC73A12E4FDCD00125229 /* ECCarpetPanelView.h */ = {isa = PBXFileReference; fileEncoding = 4; path = ECCarpetPanelView.h; sourceTree = "<group>"; };
+		CDDCC73B12E4FDCD00125229 /* ECCarpetPanelView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCarpetPanelView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -112,14 +106,10 @@
 			children = (
 				B736173C12DA112A009801D4 /* editAppDelegate.h */,
 				B736173D12DA112A009801D4 /* editAppDelegate.m */,
-				B7BF318B12DB7FB700AFF9C1 /* IndexedPosition.h */,
-				B7BF318C12DB7FB700AFF9C1 /* IndexedPosition.m */,
-				B7BF318E12DB7FDB00AFF9C1 /* IndexedRange.h */,
-				B7BF318F12DB7FDB00AFF9C1 /* IndexedRange.m */,
-				B736176712DA27E3009801D4 /* CSEditorView.h */,
-				B736176812DA27E3009801D4 /* CSEditorView.m */,
-				B736176412DA26BB009801D4 /* CSEditor.h */,
-				B736176512DA26BB009801D4 /* CSEditor.m */,
+				CD90FFC412E4D56400C1E41F /* ECCarpetView.h */,
+				CD90FFC512E4D56400C1E41F /* ECCarpetView.m */,
+				CDDCC73A12E4FDCD00125229 /* ECCarpetPanelView.h */,
+				CDDCC73B12E4FDCD00125229 /* ECCarpetPanelView.m */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -282,10 +272,8 @@
 				B736173B12DA112A009801D4 /* edit-main.m in Sources */,
 				B736173E12DA112A009801D4 /* editAppDelegate.m in Sources */,
 				B736174012DA112A009801D4 /* edit.xcdatamodel in Sources */,
-				B736176612DA26BB009801D4 /* CSEditor.m in Sources */,
-				B736176912DA27E3009801D4 /* CSEditorView.m in Sources */,
-				B7BF318D12DB7FB700AFF9C1 /* IndexedPosition.m in Sources */,
-				B7BF319012DB7FDB00AFF9C1 /* IndexedRange.m in Sources */,
+				CD90FFC612E4D56400C1E41F /* ECCarpetView.m in Sources */,
+				CDDCC73C12E4FDCD00125229 /* ECCarpetPanelView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
