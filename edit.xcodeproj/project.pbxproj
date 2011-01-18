@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B7019E5712E5E38B004FC837 /* CompletionListController.m in Sources */ = {isa = PBXBuildFile; fileRef = B7019E5612E5E38B004FC837 /* CompletionListController.m */; };
 		B71C0F0312DB60DC002843EF /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B71C0F0212DB60DC002843EF /* CoreText.framework */; };
 		B736172E12DA112A009801D4 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B736172D12DA112A009801D4 /* UIKit.framework */; };
 		B736173012DA112A009801D4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B736172F12DA112A009801D4 /* Foundation.framework */; };
@@ -21,7 +22,6 @@
 		B736175112DA112A009801D4 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = B736175012DA112A009801D4 /* InfoPlist.strings */; };
 		B736175312DA112A009801D4 /* editTests.h in Resources */ = {isa = PBXBuildFile; fileRef = B736175212DA112A009801D4 /* editTests.h */; };
 		B736175512DA112B009801D4 /* editTests.m in Sources */ = {isa = PBXBuildFile; fileRef = B736175412DA112A009801D4 /* editTests.m */; };
-		B769CFE112E25B02007FEB75 /* CompletionListController.m in Sources */ = {isa = PBXBuildFile; fileRef = B769CFE012E25B02007FEB75 /* CompletionListController.m */; };
 		B7759ECA12E062B5006E99E7 /* OUIRectangularOverlayArrow.png in Resources */ = {isa = PBXBuildFile; fileRef = B7759EC212E062B5006E99E7 /* OUIRectangularOverlayArrow.png */; };
 		B7759ECB12E062B5006E99E7 /* OUIRectangularOverlayFrame.png in Resources */ = {isa = PBXBuildFile; fileRef = B7759EC312E062B5006E99E7 /* OUIRectangularOverlayFrame.png */; };
 		B7759ECC12E062B5006E99E7 /* OUIShadowBorderBottom.png in Resources */ = {isa = PBXBuildFile; fileRef = B7759EC412E062B5006E99E7 /* OUIShadowBorderBottom.png */; };
@@ -40,10 +40,15 @@
 		B7BF7B6812E05D48005CDF48 /* OUITextCursorOverlay.m in Sources */ = {isa = PBXBuildFile; fileRef = B7BF7B5812E05D48005CDF48 /* OUITextCursorOverlay.m */; };
 		B7BF7B6912E05D48005CDF48 /* OUITextLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = B7BF7B5A12E05D48005CDF48 /* OUITextLayout.m */; };
 		B7BF7B6A12E05D48005CDF48 /* OUITextThumb.m in Sources */ = {isa = PBXBuildFile; fileRef = B7BF7B5C12E05D48005CDF48 /* OUITextThumb.m */; };
+		B7FC3EAD12E5CE1E00B49A94 /* howto.txt in Resources */ = {isa = PBXBuildFile; fileRef = B7FC3EAB12E5CE1E00B49A94 /* howto.txt */; };
+		B7FC3EAE12E5CE1E00B49A94 /* libclang.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B7FC3EAC12E5CE1E00B49A94 /* libclang.dylib */; };
+		B7FC3EB012E5CE2700B49A94 /* libclang.dylib in Resources */ = {isa = PBXBuildFile; fileRef = B7FC3EAC12E5CE1E00B49A94 /* libclang.dylib */; };
 		CD0B939712E2043C00765E4A /* ECCodeView.m in Sources */ = {isa = PBXBuildFile; fileRef = CD0B939612E2043C00765E4A /* ECCodeView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		B7019E5512E5E38B004FC837 /* CompletionListController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CompletionListController.h; sourceTree = "<group>"; };
+		B7019E5612E5E38B004FC837 /* CompletionListController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CompletionListController.m; sourceTree = "<group>"; };
 		B71C0F0212DB60DC002843EF /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
 		B736172A12DA112A009801D4 /* edit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = edit.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B736172D12DA112A009801D4 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
@@ -60,8 +65,6 @@
 		B736175012DA112A009801D4 /* InfoPlist.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = InfoPlist.strings; path = en.lproj/editTests/InfoPlist.strings; sourceTree = "<group>"; };
 		B736175212DA112A009801D4 /* editTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = editTests.h; sourceTree = "<group>"; };
 		B736175412DA112A009801D4 /* editTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = editTests.m; sourceTree = "<group>"; };
-		B769CFDF12E25B02007FEB75 /* CompletionListController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CompletionListController.h; sourceTree = "<group>"; };
-		B769CFE012E25B02007FEB75 /* CompletionListController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CompletionListController.m; sourceTree = "<group>"; };
 		B7759EC212E062B5006E99E7 /* OUIRectangularOverlayArrow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = OUIRectangularOverlayArrow.png; sourceTree = "<group>"; };
 		B7759EC312E062B5006E99E7 /* OUIRectangularOverlayFrame.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = OUIRectangularOverlayFrame.png; sourceTree = "<group>"; };
 		B7759EC412E062B5006E99E7 /* OUIShadowBorderBottom.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = OUIShadowBorderBottom.png; sourceTree = "<group>"; };
@@ -91,6 +94,9 @@
 		B7BF7B5A12E05D48005CDF48 /* OUITextLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OUITextLayout.m; sourceTree = "<group>"; };
 		B7BF7B5B12E05D48005CDF48 /* OUITextThumb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OUITextThumb.h; sourceTree = "<group>"; };
 		B7BF7B5C12E05D48005CDF48 /* OUITextThumb.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OUITextThumb.m; sourceTree = "<group>"; };
+		B7FC3EAA12E5CE1E00B49A94 /* Index.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Index.h; sourceTree = "<group>"; };
+		B7FC3EAB12E5CE1E00B49A94 /* howto.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = howto.txt; sourceTree = "<group>"; };
+		B7FC3EAC12E5CE1E00B49A94 /* libclang.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libclang.dylib; sourceTree = "<group>"; };
 		CD0B939512E2043C00765E4A /* ECCodeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeView.h; sourceTree = "<group>"; };
 		CD0B939612E2043C00765E4A /* ECCodeView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -105,6 +111,7 @@
 				B736173212DA112A009801D4 /* CoreGraphics.framework in Frameworks */,
 				B71C0F0312DB60DC002843EF /* CoreText.framework in Frameworks */,
 				B7BD531F12DF1CDB003B83B3 /* QuartzCore.framework in Frameworks */,
+				B7FC3EAE12E5CE1E00B49A94 /* libclang.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -124,6 +131,7 @@
 		B736171A12DA1129009801D4 = {
 			isa = PBXGroup;
 			children = (
+				B7FC3EA912E5CE1E00B49A94 /* libclang */,
 				B7BF7B3D12E05D48005CDF48 /* OmniUI */,
 				B736172212DA1129009801D4 /* Classes */,
 				B736172312DA1129009801D4 /* Other Sources */,
@@ -139,8 +147,8 @@
 			children = (
 				B736173C12DA112A009801D4 /* editAppDelegate.h */,
 				B736173D12DA112A009801D4 /* editAppDelegate.m */,
-				B769CFDF12E25B02007FEB75 /* CompletionListController.h */,
-				B769CFE012E25B02007FEB75 /* CompletionListController.m */,
+				B7019E5512E5E38B004FC837 /* CompletionListController.h */,
+				B7019E5612E5E38B004FC837 /* CompletionListController.m */,
 				CD0B939512E2043C00765E4A /* ECCodeView.h */,
 				CD0B939612E2043C00765E4A /* ECCodeView.m */,
 			);
@@ -241,6 +249,16 @@
 			path = OmniUI;
 			sourceTree = "<group>";
 		};
+		B7FC3EA912E5CE1E00B49A94 /* libclang */ = {
+			isa = PBXGroup;
+			children = (
+				B7FC3EAA12E5CE1E00B49A94 /* Index.h */,
+				B7FC3EAB12E5CE1E00B49A94 /* howto.txt */,
+				B7FC3EAC12E5CE1E00B49A94 /* libclang.dylib */,
+			);
+			path = libclang;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -307,6 +325,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B7FC3EB012E5CE2700B49A94 /* libclang.dylib in Resources */,
 				B736173912DA112A009801D4 /* InfoPlist.strings in Resources */,
 				B736174312DA112A009801D4 /* MainWindow.xib in Resources */,
 				B7759ECA12E062B5006E99E7 /* OUIRectangularOverlayArrow.png in Resources */,
@@ -317,6 +336,7 @@
 				B7759ECF12E062B5006E99E7 /* OUIShadowBorderTop.png in Resources */,
 				B7759ED012E062B5006E99E7 /* OUITextSelectionHandle.png in Resources */,
 				B7759ED112E062B5006E99E7 /* OUITextSelectionOverlay.png in Resources */,
+				B7FC3EAD12E5CE1E00B49A94 /* howto.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -364,7 +384,7 @@
 				B7BF7B6912E05D48005CDF48 /* OUITextLayout.m in Sources */,
 				B7BF7B6A12E05D48005CDF48 /* OUITextThumb.m in Sources */,
 				CD0B939712E2043C00765E4A /* ECCodeView.m in Sources */,
-				B769CFE112E25B02007FEB75 /* CompletionListController.m in Sources */,
+				B7019E5712E5E38B004FC837 /* CompletionListController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -454,9 +474,11 @@
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				HEADER_SEARCH_PATHS = "";
 				INFOPLIST_FILE = "edit-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "@loader_path/";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SDKROOT)$(SYSTEM_LIBRARY_DIR)/Frameworks/CoreText.framework\"",
+					"\"$(SRCROOT)/libclang\"",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
@@ -473,9 +495,11 @@
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				HEADER_SEARCH_PATHS = "";
 				INFOPLIST_FILE = "edit-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "@loader_path/";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SDKROOT)$(SYSTEM_LIBRARY_DIR)/Frameworks/CoreText.framework\"",
+					"\"$(SRCROOT)/libclang\"",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				VALIDATE_PRODUCT = YES;
