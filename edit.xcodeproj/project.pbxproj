@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		B7019E5712E5E38B004FC837 /* CompletionListController.m in Sources */ = {isa = PBXBuildFile; fileRef = B7019E5612E5E38B004FC837 /* CompletionListController.m */; };
+		B7019E5712E5E38B004FC837 /* PopoverTableController.m in Sources */ = {isa = PBXBuildFile; fileRef = B7019E5612E5E38B004FC837 /* PopoverTableController.m */; };
 		B71C0F0312DB60DC002843EF /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B71C0F0212DB60DC002843EF /* CoreText.framework */; };
 		B736172E12DA112A009801D4 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B736172D12DA112A009801D4 /* UIKit.framework */; };
 		B736173012DA112A009801D4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B736172F12DA112A009801D4 /* Foundation.framework */; };
@@ -24,6 +24,7 @@
 		B7759ECF12E062B5006E99E7 /* OUIShadowBorderTop.png in Resources */ = {isa = PBXBuildFile; fileRef = B7759EC712E062B5006E99E7 /* OUIShadowBorderTop.png */; };
 		B7759ED012E062B5006E99E7 /* OUITextSelectionHandle.png in Resources */ = {isa = PBXBuildFile; fileRef = B7759EC812E062B5006E99E7 /* OUITextSelectionHandle.png */; };
 		B7759ED112E062B5006E99E7 /* OUITextSelectionOverlay.png in Resources */ = {isa = PBXBuildFile; fileRef = B7759EC912E062B5006E99E7 /* OUITextSelectionOverlay.png */; };
+		B78A18ED12E764A300E259E0 /* doxygen.conf in Resources */ = {isa = PBXBuildFile; fileRef = B78A18EC12E764A300E259E0 /* doxygen.conf */; };
 		B78F092B12E611A600E38985 /* ECCodeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B78F092A12E611A600E38985 /* ECCodeViewController.m */; };
 		B78F092F12E6342E00E38985 /* CodeView.xib in Resources */ = {isa = PBXBuildFile; fileRef = B78F092D12E6342D00E38985 /* CodeView.xib */; };
 		B7BD531F12DF1CDB003B83B3 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7BD531E12DF1CDB003B83B3 /* QuartzCore.framework */; };
@@ -43,10 +44,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		B7019E5512E5E38B004FC837 /* CompletionListController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CompletionListController.h; sourceTree = "<group>"; };
-		B7019E5612E5E38B004FC837 /* CompletionListController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CompletionListController.m; sourceTree = "<group>"; };
+		B7019E5512E5E38B004FC837 /* PopoverTableController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = PopoverTableController.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		B7019E5612E5E38B004FC837 /* PopoverTableController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = PopoverTableController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		B71C0F0212DB60DC002843EF /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
-		B73022F612E63CC30029269C /* edit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = edit.app; path = "Users/bubad/Projects/edit/build/Debug-iphoneos/edit.app"; sourceTree = SDKROOT; };
+		B73022F612E63CC30029269C /* edit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = edit.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B736172D12DA112A009801D4 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		B736172F12DA112A009801D4 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		B736173112DA112A009801D4 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -64,8 +65,10 @@
 		B7759EC712E062B5006E99E7 /* OUIShadowBorderTop.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = OUIShadowBorderTop.png; sourceTree = "<group>"; };
 		B7759EC812E062B5006E99E7 /* OUITextSelectionHandle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = OUITextSelectionHandle.png; sourceTree = "<group>"; };
 		B7759EC912E062B5006E99E7 /* OUITextSelectionOverlay.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = OUITextSelectionOverlay.png; sourceTree = "<group>"; };
-		B78F092912E611A600E38985 /* ECCodeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeViewController.h; sourceTree = "<group>"; };
-		B78F092A12E611A600E38985 /* ECCodeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeViewController.m; sourceTree = "<group>"; };
+		B78A18EC12E764A300E259E0 /* doxygen.conf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = doxygen.conf; sourceTree = "<group>"; };
+		B78A18F012E7676900E259E0 /* PopoverTableControllerDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = PopoverTableControllerDelegate.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		B78F092912E611A600E38985 /* ECCodeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ECCodeViewController.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		B78F092A12E611A600E38985 /* ECCodeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ECCodeViewController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		B78F092E12E6342D00E38985 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/CodeView.xib; sourceTree = "<group>"; };
 		B7BD531E12DF1CDB003B83B3 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		B7BF7B3E12E05D48005CDF48 /* OQDrawing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OQDrawing.h; sourceTree = "<group>"; };
@@ -130,8 +133,9 @@
 			children = (
 				B736173C12DA112A009801D4 /* editAppDelegate.h */,
 				B736173D12DA112A009801D4 /* editAppDelegate.m */,
-				B7019E5512E5E38B004FC837 /* CompletionListController.h */,
-				B7019E5612E5E38B004FC837 /* CompletionListController.m */,
+				B7019E5512E5E38B004FC837 /* PopoverTableController.h */,
+				B78A18F012E7676900E259E0 /* PopoverTableControllerDelegate.h */,
+				B7019E5612E5E38B004FC837 /* PopoverTableController.m */,
 				CD0B939512E2043C00765E4A /* ECCodeView.h */,
 				CD0B939612E2043C00765E4A /* ECCodeView.m */,
 				B78F092912E611A600E38985 /* ECCodeViewController.h */,
@@ -151,6 +155,7 @@
 		B736172412DA1129009801D4 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				B78A18EF12E764A900E259E0 /* Other Resources */,
 				B78F093012E6344900E38985 /* Strings */,
 				B7759EC112E062B5006E99E7 /* Images */,
 				B736174112DA112A009801D4 /* MainWindow.xib */,
@@ -185,6 +190,14 @@
 			);
 			name = Images;
 			path = OmniUI/Images;
+			sourceTree = "<group>";
+		};
+		B78A18EF12E764A900E259E0 /* Other Resources */ = {
+			isa = PBXGroup;
+			children = (
+				B78A18EC12E764A300E259E0 /* doxygen.conf */,
+			);
+			name = "Other Resources";
 			sourceTree = "<group>";
 		};
 		B78F093012E6344900E38985 /* Strings */ = {
@@ -301,6 +314,7 @@
 				B7759ED112E062B5006E99E7 /* OUITextSelectionOverlay.png in Resources */,
 				B7FC3EAD12E5CE1E00B49A94 /* howto.txt in Resources */,
 				B78F092F12E6342E00E38985 /* CodeView.xib in Resources */,
+				B78A18ED12E764A300E259E0 /* doxygen.conf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -323,7 +337,7 @@
 				B7BF7B6912E05D48005CDF48 /* OUITextLayout.m in Sources */,
 				B7BF7B6A12E05D48005CDF48 /* OUITextThumb.m in Sources */,
 				CD0B939712E2043C00765E4A /* ECCodeView.m in Sources */,
-				B7019E5712E5E38B004FC837 /* CompletionListController.m in Sources */,
+				B7019E5712E5E38B004FC837 /* PopoverTableController.m in Sources */,
 				B78F092B12E611A600E38985 /* ECCodeViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

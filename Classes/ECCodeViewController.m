@@ -32,16 +32,16 @@
     return _textChecker;
 }
 
-@synthesize completionList = _completionList;
+@synthesize completionPopover = _completionPopover;
 
-- (CompletionListController *)completionList
+- (PopoverTableController *)completionPopover
 {
-    if (!_completionList)
+    if (!_completionPopover)
     {
-        _completionList = [[CompletionListController alloc] initWithStyle:UITableViewStylePlain];
-        _completionList.delegate = self;
+        _completionPopover = [[PopoverTableController alloc] initWithStyle:UITableViewStylePlain];
+        _completionPopover.delegate = self;
     }   
-    return _completionList;
+    return _completionPopover;
 }
 
 @synthesize completionListPopover = _completionListPopover;
@@ -49,7 +49,7 @@
 - (UIPopoverController *)completionListPopover
 {
     if (!_completionListPopover)
-        _completionListPopover = [[UIPopoverController alloc] initWithContentViewController:[self completionList]];
+        _completionListPopover = [[UIPopoverController alloc] initWithContentViewController:[self completionPopover]];
     _completionListPopover.delegate = (id)self;
     return _completionListPopover;
 }
@@ -67,7 +67,7 @@
 - (void)dealloc
 {
     [_completionListPopover release];
-    [_completionList release];
+    [_completionPopover release];
     [_autoCompletionTokens release];
     [_textChecker release];
     self.view = nil;
@@ -119,7 +119,7 @@
     }
     else
     {
-        self.completionList.resultsList = possibleCompletions;
+        self.completionPopover.resultsList = possibleCompletions;
         self.completionListPopover.popoverContentSize = CGSizeMake(150.0, 400.0);
         
         CGRect pRect = [(ECCodeView *)self.view firstRectForRange:(UITextRange *)[[OUEFTextRange alloc] initWithRange:self.completionRange generation:0]];

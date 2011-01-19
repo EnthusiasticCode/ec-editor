@@ -1,15 +1,17 @@
 //
-//  CompletionListController.m
+//  PopoverTableController.m
 //  edit
 //
 //  Created by Uri Baghin on 1/15/11.
 //  Copyright 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import "CompletionListController.h"
+#import "PopoverTableController.h"
+
+#import <UIKit/UILabel.h>
 
 
-@implementation CompletionListController
+@implementation PopoverTableController
 
 
 @synthesize resultsList;

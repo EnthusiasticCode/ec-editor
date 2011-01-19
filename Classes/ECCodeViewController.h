@@ -11,11 +11,11 @@
 #import <UIKit/UIPopoverController.h>
 
 #import "ECCodeView.h"
-#import "CompletionListController.h"
+#import "PopoverTableController.h"
 
 #import "libclang/Index.h"
 
-@interface ECCodeViewController : UIViewController <CompletionListControllerDelegate>
+@interface ECCodeViewController : UIViewController <PopoverTableControllerDelegate>
 {
 
 }
@@ -23,7 +23,7 @@
 @property (nonatomic, retain) NSArray *autoCompletionTokens;
 @property (nonatomic, retain) UITextChecker *textChecker;
 @property (nonatomic, retain) UIPopoverController *completionListPopover;
-@property (nonatomic, retain) CompletionListController *completionList;
+@property (nonatomic, retain) PopoverTableController *completionPopover;
 
 - (NSRange)completionRange;
 - (void)showCompletions;
