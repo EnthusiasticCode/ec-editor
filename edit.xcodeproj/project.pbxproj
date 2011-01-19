@@ -23,6 +23,7 @@
 		B736175112DA112A009801D4 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = B736175012DA112A009801D4 /* InfoPlist.strings */; };
 		B736175312DA112A009801D4 /* editTests.h in Resources */ = {isa = PBXBuildFile; fileRef = B736175212DA112A009801D4 /* editTests.h */; };
 		B736175512DA112B009801D4 /* editTests.m in Sources */ = {isa = PBXBuildFile; fileRef = B736175412DA112A009801D4 /* editTests.m */; };
+		CD751EE012E5F66F000FA678 /* ECCarpetViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD751EDF12E5F66F000FA678 /* ECCarpetViewController.m */; };
 		CD90FFC612E4D56400C1E41F /* ECCarpetView.m in Sources */ = {isa = PBXBuildFile; fileRef = CD90FFC512E4D56400C1E41F /* ECCarpetView.m */; };
 		CDDCC73C12E4FDCD00125229 /* ECCarpetPanelView.m in Sources */ = {isa = PBXBuildFile; fileRef = CDDCC73B12E4FDCD00125229 /* ECCarpetPanelView.m */; };
 /* End PBXBuildFile section */
@@ -48,9 +49,12 @@
 		B736175012DA112A009801D4 /* InfoPlist.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = InfoPlist.strings; path = en.lproj/editTests/InfoPlist.strings; sourceTree = "<group>"; };
 		B736175212DA112A009801D4 /* editTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = editTests.h; sourceTree = "<group>"; };
 		B736175412DA112A009801D4 /* editTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = editTests.m; sourceTree = "<group>"; };
+		CD751EDE12E5F66F000FA678 /* ECCarpetViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCarpetViewController.h; sourceTree = "<group>"; };
+		CD751EDF12E5F66F000FA678 /* ECCarpetViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCarpetViewController.m; sourceTree = "<group>"; };
+		CD751EE112E5F717000FA678 /* ECCarpetViewControllerDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCarpetViewControllerDelegate.h; sourceTree = "<group>"; };
 		CD90FFC412E4D56400C1E41F /* ECCarpetView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCarpetView.h; sourceTree = "<group>"; };
 		CD90FFC512E4D56400C1E41F /* ECCarpetView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCarpetView.m; sourceTree = "<group>"; };
-		CDDCC73A12E4FDCD00125229 /* ECCarpetPanelView.h */ = {isa = PBXFileReference; fileEncoding = 4; path = ECCarpetPanelView.h; sourceTree = "<group>"; };
+		CDDCC73A12E4FDCD00125229 /* ECCarpetPanelView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCarpetPanelView.h; sourceTree = "<group>"; };
 		CDDCC73B12E4FDCD00125229 /* ECCarpetPanelView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCarpetPanelView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -110,6 +114,9 @@
 				CD90FFC512E4D56400C1E41F /* ECCarpetView.m */,
 				CDDCC73A12E4FDCD00125229 /* ECCarpetPanelView.h */,
 				CDDCC73B12E4FDCD00125229 /* ECCarpetPanelView.m */,
+				CD751EDE12E5F66F000FA678 /* ECCarpetViewController.h */,
+				CD751EDF12E5F66F000FA678 /* ECCarpetViewController.m */,
+				CD751EE112E5F717000FA678 /* ECCarpetViewControllerDelegate.h */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -274,6 +281,7 @@
 				B736174012DA112A009801D4 /* edit.xcdatamodel in Sources */,
 				CD90FFC612E4D56400C1E41F /* ECCarpetView.m in Sources */,
 				CDDCC73C12E4FDCD00125229 /* ECCarpetPanelView.m in Sources */,
+				CD751EE012E5F66F000FA678 /* ECCarpetViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
