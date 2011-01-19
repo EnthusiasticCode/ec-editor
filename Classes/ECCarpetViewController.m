@@ -10,22 +10,7 @@
 
 @interface ECCarpetViewController () 
 
-// Return the unit size of the view controller's at the specified index
-// for the given orientation.
-- (CGFloat)unitsDimensionForViewControllerAtIndex:(NSInteger)anIndex 
-                                  withOrientation:(UIDeviceOrientation)anOrientation;
-
-// TODO remove redundant method?
-// Return YES if the given view controller's view is to be considered visible.
-// Another index can be specified to switch the result if anIndex == switchedIndex
-- (BOOL)shouldConsiderViewControllerAtIndex:(NSInteger)anIndex
-                          switchedIfAtIndex:(NSInteger)switchedIndex;
-
-// Return the frame that the view controller at the specified index should
-// have in the current state. Another index can be passed to generate frames 
-// as if the corresponding view controller's view visible state was switched.
-- (CGRect)frameForViewControllerAtIndex:(NSInteger)anIndex 
-              withSwitchedStateForIndex:(NSInteger)switchIndex;
+- (CGRect)frameForViewController:(UIViewController*)aController;
 
 @end
 
@@ -33,8 +18,7 @@
 
 @synthesize delegate;
 @synthesize viewControllers;
-@synthesize mainControllerIndex;
-@synthesize viewControllersSizes;
+@synthesize mainViewController;
 @synthesize direction;
 
 #pragma mark -
@@ -62,25 +46,22 @@
         | UIViewAutoresizingFlexibleLeftMargin;
     self.view = root;
     
-    UIViewController * controller;
-    for (int i = 0; i != [viewControllers count]; ++i)
+    for(UIViewController* controller in [viewControllers objectEnumerator])
     {
-        controller = (UIViewController*)[viewControllers objectAtIndex:i];
-        if (i == self.mainControllerIndex)
+        if(controller == mainViewController)
         {
             controller.view.frame = root.bounds;
         }
         else
         {
+            controller.view.frame = [self frameForViewController:controller];
             controller.view.hidden = YES;
-            controller.view.frame = [self frameForViewControllerAtIndex:i 
-                                              withSwitchedStateForIndex:-1];
         }
         controller.view.autoresizingMask = root.autoresizingMask;
         [root addSubview:controller.view];
-//        [root bringSubviewToFront:]
     }
-    
+
+    [root bringSubviewToFront:mainViewController.view];    
     [root release];
 }
 
@@ -124,7 +105,6 @@
 
 - (void)dealloc {
     [viewControllers release];
-    [viewControllersSizes release];
     [super dealloc];
 }
 
@@ -134,58 +114,50 @@
 - (void)moveCarpetInDirection:(ECCarpetViewControllerMove)aSide 
                      animated:(BOOL)doAnimation
 {
+    // TODO move with finger movement than snap
     // TODO call delegate's methods
-    // Retrieve view controller to hide/show
-    NSInteger viewControllerToSwitch = -1;
-    int i;
-    NSInteger viewControllersCount = [viewControllers count];
-    if(aSide == ECCarpetMoveUpOrLeft)
+    // Retrieve controllers to reveal/hide
+    UIViewController *toShow = nil, *toHide = nil;
+    BOOL afterMainController = NO;
+    if (aSide == ECCarpetMoveDownOrRight)
     {
-        NSInteger count = MIN(mainControllerIndex, viewControllersCount);
-        for(i = 0; i < count; ++i)
+        for (UIViewController* controller in [viewControllers objectEnumerator])
         {
-            if(!((UIViewController*)[viewControllers objectAtIndex:i]).view.hidden)
+            if (controller == mainViewController)
             {
-                viewControllerToSwitch = i;
+                afterMainController = YES;
+                continue;
+            }
+            if (controller.view.hidden)
+            {
+                if (toShow == nil)
+                    toShow = controller;
+            }
+            else if (afterMainController)
+            {
+                toHide = controller;
                 break;
             }
         }
-        if (viewControllersCount != -1)
-        {
-            for(; i < viewControllersCount; ++i)
-            {
-                if(((UIViewController*)[viewControllers objectAtIndex:i]).view.hidden)
-                {
-                    viewControllerToSwitch = i;
-                    break;
-                }
-            }
-        }
+    }
+    // TODO other side
+    //
+    if (toHide == nil)
+    {
+        toShow.view.hidden = NO;
     }
     else
     {
-        NSInteger count = MAX(mainControllerIndex - 1, 0);
-        for(i = viewControllersCount; i >= count; --i)
-        {
-            if(!((UIViewController*)[viewControllers objectAtIndex:i]).view.hidden)
-            {
-                viewControllerToSwitch = i;
-                break;
-            }
-        }
-        if (viewControllersCount != -1)
-        {
-            for(; i >= 0; --i)
-            {
-                if(((UIViewController*)[viewControllers objectAtIndex:i]).view.hidden)
-                {
-                    viewControllerToSwitch = i;
-                    break;
-                }
-            }
-        }
+        // TODO animate hiding or do it after animation
+        toHide.view.hidden = YES;
     }
-    // Transition to new disposition
+    // Animate
+    CGRect newFrame = [self frameForViewController:mainViewController];
+    [UIView animateWithDuration:1.0 animations:^(void) {
+        mainViewController.view.frame = newFrame;
+    } completion:^(BOOL finished) {
+        // TODO call delegate
+    }];
 }
 
 - (IBAction)moveCarpetDownRight:(id)sender
@@ -195,58 +167,36 @@
 
 - (IBAction)moveCarpetUpLeft:(id)sender
 {
-    [self moveCarpetInDirection:ECCarpetMoveDownOrRight animated:YES];
+    [self moveCarpetInDirection:ECCarpetMoveUpOrLeft animated:YES];
 }
 
 #pragma mark -
 #pragma mark Private category implementation
 
-- (CGFloat)unitsDimensionForViewControllerAtIndex:(NSInteger)anIndex 
-                                  withOrientation:(UIDeviceOrientation)anOrientation
-{
-    // TODO sanity checks
-    CGSize size = [(NSValue*)[self.viewControllersSizes objectAtIndex:anIndex] CGSizeValue];
-    CGFloat dim = UIDeviceOrientationIsLandscape(anOrientation) ? size.width : size.height;
-    if (dim <= 1.0)
-    {
-        CGFloat viewdim = 
-        self.direction == ECCarpetHorizontal 
-            ? self.view.bounds.size.width
-            : self.view.bounds.size.height;
-        dim *= viewdim;
-    }
-    return dim;
-}
 
-- (BOOL)shouldConsiderViewControllerAtIndex:(NSInteger)anIndex 
-                          switchedIfAtIndex:(NSInteger)switchedIndex
+- (CGRect)frameForViewController:(UIViewController *)aController
 {
-    // TODO sanity checks
-    BOOL hidden = ((UIViewController*)[viewControllers objectAtIndex:anIndex]).view.hidden;
-    // TODO use xor?
-    return anIndex == switchedIndex ? hidden : !hidden;
-}
-
-- (CGRect)frameForViewControllerAtIndex:(NSInteger)anIndex
-              withSwitchedStateForIndex:(NSInteger)switchIndex
-{
-    // TODO cache resulting CGRect in array?
-    // FIX dont assume sizes count == controllers count
     CGRect result = CGRectMake(0, 0, 0, 0);
-    UIDeviceOrientation orientation = [UIDevice currentDevice].orientation;
+    NSInteger mainControllerIndex = [viewControllers indexOfObject:mainViewController];
     // Main view controller special case (autosize)
-    if (anIndex == mainControllerIndex)
+    if (aController == mainViewController)
     {
         CGFloat before = 0, after = 0;
-        for (int i = 0; i != [viewControllersSizes count]; ++i)
-            if ([self shouldConsiderViewControllerAtIndex:i switchedIfAtIndex:switchIndex])
+        NSInteger idx = 0;
+        for (UIViewController* obj in [viewControllers objectEnumerator])
         {
-            if (i < mainControllerIndex)
-                before += [self unitsDimensionForViewControllerAtIndex:i withOrientation:orientation];
-            else if (i > mainControllerIndex)
-                after += [self unitsDimensionForViewControllerAtIndex:i withOrientation:orientation];
+            if (!obj.view.hidden)
+            {
+                if (idx < mainControllerIndex)
+                    before += (direction == ECCarpetHorizontal) ? obj.view.bounds.size.width : obj.view.bounds.size.height;
+                else if (idx > mainControllerIndex)
+                    after += (direction == ECCarpetHorizontal) ? obj.view.bounds.size.width : obj.view.bounds.size.height;
+                else if (before != 0)
+                    break;
+            }
+            idx++;
         }
-        if (self.direction == ECCarpetHorizontal)
+        if (direction == ECCarpetHorizontal)
         {
             result.origin.x = before;
             result.size.width = self.view.bounds.size.width - before - after;
@@ -262,48 +212,38 @@
     // Generic view controller
     else
     {
-        CGFloat sizeDirection = 0;
         CGFloat origin = 0;
         // Calculate direction independent parameters
-        if ([self shouldConsiderViewControllerAtIndex:anIndex switchedIfAtIndex:switchIndex])
+        if ([viewControllers indexOfObject:aController] < mainControllerIndex)
         {
-            sizeDirection = [self unitsDimensionForViewControllerAtIndex:anIndex 
-                                                         withOrientation:orientation];
-            if (anIndex < mainControllerIndex)
+            for (UIViewController* obj in [viewControllers objectEnumerator])
             {
-                for (int i = 0; i != anIndex; ++i) 
-                    if ([self shouldConsiderViewControllerAtIndex:i switchedIfAtIndex:switchIndex])
-                    {
-                        origin += [self unitsDimensionForViewControllerAtIndex:i 
-                                                               withOrientation:orientation];
-                    }
+                if (obj == aController)
+                    break;
+                origin += (direction == ECCarpetHorizontal) ? obj.view.bounds.size.width : obj.view.bounds.size.height;
             }
-            else
+        }
+        else
+        {
+            origin = (direction == ECCarpetHorizontal) ? self.view.bounds.size.width : self.view.bounds.size.height;
+            for (UIViewController* obj in [viewControllers reverseObjectEnumerator])
             {
-                origin -= sizeDirection;
-                for (int i = [viewControllersSizes count] - 1; i != anIndex; --i)
-                    if ([self shouldConsiderViewControllerAtIndex:i switchedIfAtIndex:switchIndex])
-                    {
-                        origin -= [self unitsDimensionForViewControllerAtIndex:i 
-                                                               withOrientation:orientation];
-                    }
+                origin -= (direction == ECCarpetHorizontal) ? obj.view.bounds.size.width : obj.view.bounds.size.height;
+                if (obj == aController)
+                    break;
             }
         }
         // Generate direction specific frame
         if (self.direction == ECCarpetHorizontal)
         {
-            result.size.width = sizeDirection;
+            result.size.width = aController.view.bounds.size.width;
             result.size.height = self.view.bounds.size.height;
-            if (anIndex > mainControllerIndex)
-                origin += self.view.bounds.size.width;
             result.origin.x = origin;
         }
         else // vertical
         {
             result.size.width = self.view.bounds.size.width;
-            result.size.height = sizeDirection;
-            if (anIndex > mainControllerIndex)
-                origin += self.view.bounds.size.height;
+            result.size.height = aController.view.bounds.size.height;
             result.origin.y = origin;
         }
     }

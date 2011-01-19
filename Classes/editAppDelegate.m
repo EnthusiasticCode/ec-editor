@@ -7,22 +7,42 @@
 //
 
 #import "editAppDelegate.h"
-#import "ECCarpetView.h"
 
 @implementation editAppDelegate
 @synthesize window;
+@synthesize leftFrameController;
+@synthesize mainFrameController;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    ECCarpetView * carpet = [[ECCarpetView alloc] initWithFrame:[window bounds]];
-    [carpet addPanelWithName:@"MyPanel" size:0.3 position:-1];
-    [window addSubview:carpet];
+    carpetController = [[ECCarpetViewController alloc] init];
+
+    carpetController.viewControllers = [NSArray arrayWithObjects:leftFrameController, mainFrameController, nil];
+    carpetController.mainViewController = mainFrameController;
+    
+    [window addSubview:carpetController.view];
+    
+    [window makeKeyAndVisible];
     return YES;
 }
 
-- (void)dealloc {
+- (void)dealloc 
+{
     [window release];
+    [leftFrameController release];
+    [mainFrameController release];
+    [carpetController release];
     [super dealloc];
+}
+
+- (IBAction)doStuff:(id)sender 
+{
+    [carpetController moveCarpetDownRight:sender];
+}
+
+- (IBAction)doOtherStuff:(id)sender 
+{
+    [carpetController moveCarpetUpLeft:sender];
 }
 
 @end
