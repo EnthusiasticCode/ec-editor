@@ -7,8 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		B7019E5712E5E38B004FC837 /* PopoverTableController.m in Sources */ = {isa = PBXBuildFile; fileRef = B7019E5612E5E38B004FC837 /* PopoverTableController.m */; };
+		B7019E5712E5E38B004FC837 /* ECPopoverTableController.m in Sources */ = {isa = PBXBuildFile; fileRef = B7019E5612E5E38B004FC837 /* ECPopoverTableController.m */; };
 		B71C0F0312DB60DC002843EF /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B71C0F0212DB60DC002843EF /* CoreText.framework */; };
+		B72DB58712E79F010003D0E8 /* ECAttributedTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = B72DB58612E79F010003D0E8 /* ECAttributedTextView.m */; };
 		B736172E12DA112A009801D4 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B736172D12DA112A009801D4 /* UIKit.framework */; };
 		B736173012DA112A009801D4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B736172F12DA112A009801D4 /* Foundation.framework */; };
 		B736173212DA112A009801D4 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B736173112DA112A009801D4 /* CoreGraphics.framework */; };
@@ -44,9 +45,11 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		B7019E5512E5E38B004FC837 /* PopoverTableController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = PopoverTableController.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		B7019E5612E5E38B004FC837 /* PopoverTableController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = PopoverTableController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
+		B7019E5512E5E38B004FC837 /* ECPopoverTableController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ECPopoverTableController.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		B7019E5612E5E38B004FC837 /* ECPopoverTableController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ECPopoverTableController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		B71C0F0212DB60DC002843EF /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
+		B72DB58512E79F010003D0E8 /* ECAttributedTextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECAttributedTextView.h; sourceTree = "<group>"; };
+		B72DB58612E79F010003D0E8 /* ECAttributedTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECAttributedTextView.m; sourceTree = "<group>"; };
 		B73022F612E63CC30029269C /* edit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = edit.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B736172D12DA112A009801D4 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		B736172F12DA112A009801D4 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -66,7 +69,7 @@
 		B7759EC812E062B5006E99E7 /* OUITextSelectionHandle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = OUITextSelectionHandle.png; sourceTree = "<group>"; };
 		B7759EC912E062B5006E99E7 /* OUITextSelectionOverlay.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = OUITextSelectionOverlay.png; sourceTree = "<group>"; };
 		B78A18EC12E764A300E259E0 /* doxygen.conf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = doxygen.conf; sourceTree = "<group>"; };
-		B78A18F012E7676900E259E0 /* PopoverTableControllerDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = PopoverTableControllerDelegate.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		B78A18F012E7676900E259E0 /* ECPopoverTableControllerDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ECPopoverTableControllerDelegate.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		B78F092912E611A600E38985 /* ECCodeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ECCodeViewController.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		B78F092A12E611A600E38985 /* ECCodeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ECCodeViewController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		B78F092E12E6342D00E38985 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/CodeView.xib; sourceTree = "<group>"; };
@@ -133,9 +136,11 @@
 			children = (
 				B736173C12DA112A009801D4 /* editAppDelegate.h */,
 				B736173D12DA112A009801D4 /* editAppDelegate.m */,
-				B7019E5512E5E38B004FC837 /* PopoverTableController.h */,
-				B78A18F012E7676900E259E0 /* PopoverTableControllerDelegate.h */,
-				B7019E5612E5E38B004FC837 /* PopoverTableController.m */,
+				B7019E5512E5E38B004FC837 /* ECPopoverTableController.h */,
+				B7019E5612E5E38B004FC837 /* ECPopoverTableController.m */,
+				B78A18F012E7676900E259E0 /* ECPopoverTableControllerDelegate.h */,
+				B72DB58512E79F010003D0E8 /* ECAttributedTextView.h */,
+				B72DB58612E79F010003D0E8 /* ECAttributedTextView.m */,
 				CD0B939512E2043C00765E4A /* ECCodeView.h */,
 				CD0B939612E2043C00765E4A /* ECCodeView.m */,
 				B78F092912E611A600E38985 /* ECCodeViewController.h */,
@@ -337,8 +342,9 @@
 				B7BF7B6912E05D48005CDF48 /* OUITextLayout.m in Sources */,
 				B7BF7B6A12E05D48005CDF48 /* OUITextThumb.m in Sources */,
 				CD0B939712E2043C00765E4A /* ECCodeView.m in Sources */,
-				B7019E5712E5E38B004FC837 /* PopoverTableController.m in Sources */,
+				B7019E5712E5E38B004FC837 /* ECPopoverTableController.m in Sources */,
 				B78F092B12E611A600E38985 /* ECCodeViewController.m in Sources */,
+				B72DB58712E79F010003D0E8 /* ECAttributedTextView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

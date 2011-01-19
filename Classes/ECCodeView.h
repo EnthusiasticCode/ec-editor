@@ -6,11 +6,10 @@
 //  Copyright 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
-#import "OUIEditableFrame.h"
+#import "ECAttributedTextView.h"
 
-
-@interface ECCodeView : OUIEditableFrame
+/*! A subclass of UITextView with additional features for display and editing code. */
+@interface ECCodeView : ECAttributedTextView
 {
     
 }

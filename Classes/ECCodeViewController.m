@@ -14,15 +14,6 @@
 @implementation ECCodeViewController
 
 
-@synthesize autoCompletionTokens = _autoCompletionTokens;
-
-- (NSArray *)autoCompletionTokens
-{
-    if (!_autoCompletionTokens)
-        _autoCompletionTokens = [[NSArray arrayWithObjects:@" ", @".", @")", nil] retain];
-    return _autoCompletionTokens;
-}
-
 @synthesize textChecker = _textChecker;
 
 - (UITextChecker *)textChecker
@@ -34,24 +25,15 @@
 
 @synthesize completionPopover = _completionPopover;
 
-- (PopoverTableController *)completionPopover
+- (ECPopoverTableController *)completionPopover
 {
     if (!_completionPopover)
     {
-        _completionPopover = [[PopoverTableController alloc] initWithStyle:UITableViewStylePlain];
+        _completionPopover = [[ECPopoverTableController alloc] init];
         _completionPopover.delegate = self;
+        _completionPopover.viewToPresentIn = self.view;
     }   
     return _completionPopover;
-}
-
-@synthesize completionListPopover = _completionListPopover;
-
-- (UIPopoverController *)completionListPopover
-{
-    if (!_completionListPopover)
-        _completionListPopover = [[UIPopoverController alloc] initWithContentViewController:[self completionPopover]];
-    _completionListPopover.delegate = (id)self;
-    return _completionListPopover;
 }
 
 #pragma mark -
@@ -59,17 +41,14 @@
 
 - (void)viewDidLoad
 {
-    NSLog(@"didload");
     [self.view addObserver:self forKeyPath:@"selectedTextRange" options:NSKeyValueObservingOptionNew context:NULL];
     [self.view addObserver:self forKeyPath:@"attributedText" options:NSKeyValueObservingOptionNew context:NULL];
 }
 
 - (void)dealloc
 {
-    [_completionListPopover release];
-    [_completionPopover release];
-    [_autoCompletionTokens release];
-    [_textChecker release];
+    self.completionPopover = nil;
+    self.textChecker = nil;
     self.view = nil;
     [super dealloc];
 }
@@ -79,7 +58,6 @@
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
-    NSLog(@"observe");
     [self showCompletions];
 }
 
@@ -113,25 +91,18 @@
 - (void)showCompletions
 {
     NSArray *possibleCompletions = [self.textChecker guessesForWordRange:[self completionRange] inString:[((ECCodeView *)self.view).attributedText string] language:@"en_US"];
-    if (![possibleCompletions count])
-    {
-        [_completionListPopover dismissPopoverAnimated:YES];
-    }
-    else
-    {
-        self.completionPopover.resultsList = possibleCompletions;
-        self.completionListPopover.popoverContentSize = CGSizeMake(150.0, 400.0);
-        
-        CGRect pRect = [(ECCodeView *)self.view firstRectForRange:(UITextRange *)[[OUEFTextRange alloc] initWithRange:self.completionRange generation:0]];
-        [self.completionListPopover presentPopoverFromRect:pRect inView:(ECCodeView *)self.view permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
-    }
+    OUEFTextRange *completionRange = [[OUEFTextRange alloc] initWithRange:self.completionRange generation:0];
+    self.completionPopover.popoverRect = [(ECCodeView *)self.view firstRectForRange:(UITextRange *)completionRange];
+    self.completionPopover.strings = possibleCompletions;
+    [completionRange release];
 }
 
-- (void)completeWithString:(NSString *)string
+- (void)popoverTableDidSelectRowWithText:(NSString *)string
 {
     UITextRange *replacementRange = (UITextRange *)[[OUEFTextRange alloc] initWithRange:[self completionRange] generation:0];
     NSString *replacementString = [string stringByAppendingString:@" "];
     [(ECCodeView *)self.view replaceRange:replacementRange withText:replacementString];
+    [replacementRange release];
 }
 
 @end
