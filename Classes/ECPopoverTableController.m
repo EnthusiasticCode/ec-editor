@@ -47,6 +47,7 @@
 
 - (void)dealloc {
     self.strings = nil;
+    self.didSelectRow = nil;
     [super dealloc];
 }
 
