@@ -89,6 +89,10 @@
     }
     
     // Add gesture recognition
+    if (gestureRecognizer != nil)
+    {
+        [root addGestureRecognizer:gestureRecognizer];
+    }
 
     [root bringSubviewToFront:mainViewController.view];    
     [root release];
@@ -128,8 +132,13 @@
     }];
 }
 
-- (void)didReceiveMemoryWarning {
-    // TODO release viewControllers views if hidden.
+- (void)didReceiveMemoryWarning 
+{
+    //
+    for (UIViewController* controller in viewControllers)
+    {
+        [controller didReceiveMemoryWarning];
+    }
     
     // Releases the view if it doesn't have a superview.
     [super didReceiveMemoryWarning];
