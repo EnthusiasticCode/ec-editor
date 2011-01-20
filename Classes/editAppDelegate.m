@@ -25,12 +25,12 @@
                                         rightFrameController,
                                         nil];
     carpetController.viewControllersSizes = [NSArray arrayWithObjects:
-                                             [NSValue valueWithCGSize:CGSizeMake(0.3, 0.2)], 
+                                             [NSValue valueWithCGSize:CGSizeMake(0.3, 0.1)], 
                                              [NSValue valueWithCGSize:CGSizeMake(0, 0)], 
-                                             [NSValue valueWithCGSize:CGSizeMake(0.3, 0.2)],
+                                             [NSValue valueWithCGSize:CGSizeMake(0.3, 0.1)],
                                              nil];
     carpetController.mainViewController = mainFrameController;
-    carpetController.direction = ECCarpetVertical;
+    //carpetController.direction = ECCarpetVertical;
     
     // Adding carpet
     [window addSubview:carpetController.view];

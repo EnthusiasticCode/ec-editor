@@ -114,6 +114,19 @@
     return result;
 }
 
+- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
+{
+    // Animate frames to resize acording to orientation
+    [UIView animateWithDuration:duration animations:^(void) {
+        for (UIViewController* controller in [viewControllers objectEnumerator])
+        {
+            if (controller == mainViewController)
+                controller.view.frame = [self frameForMainViewControllerConsideringHidden:nil];
+            else
+                controller.view.frame = [self frameForViewController:controller];
+        }
+    }];
+}
 
 - (void)didReceiveMemoryWarning {
     // TODO release viewControllers views if hidden.
