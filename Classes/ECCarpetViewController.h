@@ -43,8 +43,10 @@
 // Gets or set the duration of the carpet movement animation.
 @property (nonatomic) NSTimeInterval animationDuration;
 
+@property (nonatomic, retain) UIGestureRecognizer *gestureRecognizer;
+
 - (void)moveCarpetInDirection:(ECCarpetViewControllerMove)aSide animated:(BOOL)doAnimation;
 - (IBAction)moveCarpetDownRight:(id)sender;
 - (IBAction)moveCarpetUpLeft:(id)sender;
-
+- (void)handleGesture:(UIGestureRecognizer*)sender;
 @end

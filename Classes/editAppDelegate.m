@@ -16,6 +16,7 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    // Initializing carpet
     carpetController = [[ECCarpetViewController alloc] init];
 
     carpetController.viewControllers = [NSArray arrayWithObjects:
@@ -24,13 +25,22 @@
                                         rightFrameController,
                                         nil];
     carpetController.viewControllersSizes = [NSArray arrayWithObjects:
-                                             [NSValue valueWithCGSize:CGSizeMake(0.3, 0.3)], 
+                                             [NSValue valueWithCGSize:CGSizeMake(0.3, 0.2)], 
                                              [NSValue valueWithCGSize:CGSizeMake(0, 0)], 
-                                             [NSValue valueWithCGSize:CGSizeMake(0.3, 0.3)],
+                                             [NSValue valueWithCGSize:CGSizeMake(0.3, 0.2)],
                                              nil];
     carpetController.mainViewController = mainFrameController;
+    carpetController.direction = ECCarpetVertical;
     
+    // Adding carpet
     [window addSubview:carpetController.view];
+    
+    // Gestures
+    UIPanGestureRecognizer *recognizer = [[UIPanGestureRecognizer alloc] init];
+    recognizer.minimumNumberOfTouches = 1;
+    recognizer.maximumNumberOfTouches = 1;
+    carpetController.gestureRecognizer = recognizer;
+    [recognizer release];
     
     [window makeKeyAndVisible];
     return YES;

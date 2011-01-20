@@ -29,6 +29,24 @@
 @synthesize viewControllersSizes;
 @synthesize direction;
 @synthesize animationDuration;
+@synthesize gestureRecognizer;
+
+- (void)setGestureRecognizer:(UIGestureRecognizer *)aRecognizer
+{
+    if (aRecognizer != gestureRecognizer)
+    {
+        UIGestureRecognizer *oldRecognizer = gestureRecognizer;
+        gestureRecognizer = [aRecognizer retain];
+        if([self isViewLoaded])
+        {
+            [self.view removeGestureRecognizer:oldRecognizer];
+            [self.view addGestureRecognizer:gestureRecognizer];
+        }
+        [oldRecognizer removeTarget:self action:@selector(handleGesture:)];
+        [oldRecognizer release];
+        [gestureRecognizer addTarget:self action:@selector(handleGesture:)];
+    }
+}
 
 #pragma mark -
 #pragma mark UIViewController overloads implementation
@@ -53,6 +71,7 @@
         | UIViewAutoresizingFlexibleLeftMargin;
     self.view = root;
     
+    // Add carpet subviews
     for(UIViewController* controller in [viewControllers objectEnumerator])
     {
         if(controller == mainViewController)
@@ -61,12 +80,15 @@
         }
         else
         {
+            // FIX here the device orientation is unknown.
             controller.view.frame = [self frameForViewController:controller];
             controller.view.hidden = YES;
         }
         controller.view.autoresizingMask = root.autoresizingMask;
         [root addSubview:controller.view];
     }
+    
+    // Add gesture recognition
 
     [root bringSubviewToFront:mainViewController.view];    
     [root release];
@@ -111,6 +133,7 @@
 
 
 - (void)dealloc {
+    self.gestureRecognizer = nil;
     [viewControllers release];
     [viewControllersSizes release];
     [super dealloc];
@@ -200,6 +223,33 @@
 - (IBAction)moveCarpetUpLeft:(id)sender
 {
     [self moveCarpetInDirection:ECCarpetMoveUpOrLeft animated:YES];
+}
+
+- (void)handleGesture:(UIGestureRecognizer*)sender
+{
+    // Pan gestures
+    if ([sender isKindOfClass:[UIPanGestureRecognizer class]])
+    {
+        if (sender.state == UIGestureRecognizerStateEnded)
+        {
+            // TODO use this point to move main controller's view continuously
+            CGPoint trans = [(UIPanGestureRecognizer*)sender translationInView:self.view];
+            ECCarpetViewControllerMove dir;
+            if (ABS(trans.x) > ABS(trans.y))
+            {
+                if (direction != ECCarpetHorizontal)
+                    return;
+                dir = (trans.x > 0) ? ECCarpetMoveDownOrRight : ECCarpetMoveUpOrLeft;
+            }
+            else
+            {
+                if (direction != ECCarpetVertical)
+                    return;
+                dir = (trans.y > 0) ? ECCarpetMoveDownOrRight : ECCarpetMoveUpOrLeft;
+            }
+            [self moveCarpetInDirection:dir animated:YES];
+        }
+    }
 }
 
 #pragma mark -
