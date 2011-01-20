@@ -15,11 +15,9 @@
 - (CGFloat)unitsDimensionForViewControllerAtIndex:(NSInteger)anIndex 
                                   withOrientation:(UIDeviceOrientation)anOrientation;
 
-- (CGRect)frameForMainViewControllerConsideringHidden:(UIViewController*)aController
-                                      withOrientation:(UIDeviceOrientation)anOrientation;
+- (CGRect)frameForMainViewControllerConsideringHidden:(UIViewController*)aController;
 
-- (CGRect)frameForViewController:(UIViewController*)aController 
-                 withOrientation:(UIDeviceOrientation)anOrientation;
+- (CGRect)frameForViewController:(UIViewController*)aController;
 
 @end
 
@@ -74,7 +72,6 @@
     self.view = root;
     
     // Add carpet subviews
-    UIDeviceOrientation orientation = [UIDevice currentDevice].orientation;
     for(UIViewController* controller in [viewControllers objectEnumerator])
     {
         if(controller == mainViewController)
@@ -84,8 +81,7 @@
         else
         {
             // FIX here the device orientation is unknown.
-            controller.view.frame = [self frameForViewController:controller 
-                                                 withOrientation:orientation];
+            controller.view.frame = [self frameForViewController:controller];
             controller.view.hidden = YES;
         }
         controller.view.autoresizingMask = root.autoresizingMask;
@@ -118,16 +114,15 @@
     return result;
 }
 
-- (void)didAnimateFirstHalfOfRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation
+- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
 {
     for (UIViewController* controller in [viewControllers objectEnumerator])
     {
         if (controller == mainViewController)
-            controller.view.frame = [self frameForMainViewControllerConsideringHidden:nil
-                                                                      withOrientation:toInterfaceOrientation];
+            controller.view.frame = [self frameForMainViewControllerConsideringHidden:nil];
         else
-            controller.view.frame = [self frameForViewController:controller
-                                                 withOrientation:toInterfaceOrientation];
+            controller.view.frame = [self frameForViewController:controller];
+        [controller didRotateFromInterfaceOrientation:fromInterfaceOrientation];
     }
 }
 
@@ -238,8 +233,7 @@
         toShow.view.hidden = NO;
     }
     // Animate
-    CGRect newFrame = [self frameForMainViewControllerConsideringHidden:toHide
-                                                        withOrientation:[UIDevice currentDevice].orientation];
+    CGRect newFrame = [self frameForMainViewControllerConsideringHidden:toHide];
     if (doAnimation)
     {
         [UIView animateWithDuration:animationDuration animations:^(void) {
@@ -326,9 +320,9 @@
 }
 
 - (CGRect)frameForMainViewControllerConsideringHidden:(UIViewController*)aController
-                                      withOrientation:(UIDeviceOrientation)orientation
 {
     CGRect result = CGRectMake(0, 0, 0, 0);
+    UIDeviceOrientation orientation = [UIDevice currentDevice].orientation;
     NSInteger viewControllersCount = [viewControllers count];
     NSInteger mainControllerIndex = [viewControllers indexOfObject:mainViewController];
     NSInteger considerHiddenIndex = -1; 
@@ -364,9 +358,9 @@
 }
 
 - (CGRect)frameForViewController:(UIViewController *)aController
-                 withOrientation:(UIDeviceOrientation)orientation
 {
     CGRect result = CGRectMake(0, 0, 0, 0);
+    UIDeviceOrientation orientation = [UIDevice currentDevice].orientation;
     // Main view controller special case (use specific method)
     if (aController == mainViewController)
     {

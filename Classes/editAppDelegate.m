@@ -49,6 +49,8 @@
     horizontalCarpet.direction = ECCarpetHorizontal;
     horizontalCarpet.delegate = self;
     
+    horizontalCarpet.view.backgroundColor = [UIColor redColor];
+    
     // Adding carpet
     [window addSubview:horizontalCarpet.view];
     
