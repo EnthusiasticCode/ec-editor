@@ -10,36 +10,54 @@
 
 @implementation editAppDelegate
 @synthesize window;
-@synthesize leftFrameController;
-@synthesize mainFrameController;
-@synthesize rightFrameController;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    // Initializing carpet
-    carpetController = [[ECCarpetViewController alloc] init];
+//    UIColor panelsColor = [UIColor colorWithRed:58/255.0 green:58/255.0 blue:60/255.0 alpha:1.0];
+    
+    // Initializing vertical carpet
+    verticalCarpet = [[ECCarpetViewController alloc] init];
 
-    carpetController.viewControllers = [NSArray arrayWithObjects:
-                                        leftFrameController, 
-                                        mainFrameController, 
-                                        rightFrameController,
+    verticalCarpet.viewControllers = [NSArray arrayWithObjects:
+                                        [[UIViewController alloc] initWithNibName:@"EditorNavigation" bundle:nil], 
+                                        [[UIViewController alloc] initWithNibName:@"EditorMain" bundle:nil], 
+                                        [[UIViewController alloc] initWithNibName:@"EditorSplitter" bundle:nil],
                                         nil];
-    carpetController.viewControllersSizes = [NSArray arrayWithObjects:
-                                             [NSValue valueWithCGSize:CGSizeMake(0.3, 0.1)], 
+    verticalCarpet.viewControllersSizes = [NSArray arrayWithObjects:
+                                             [NSValue valueWithCGSize:CGSizeMake(70, 70)], 
                                              [NSValue valueWithCGSize:CGSizeMake(0, 0)], 
-                                             [NSValue valueWithCGSize:CGSizeMake(0.3, 0.1)],
+                                             [NSValue valueWithCGSize:CGSizeMake(70, 70)],
                                              nil];
-    carpetController.mainViewController = mainFrameController;
-    //carpetController.direction = ECCarpetVertical;
+    verticalCarpet.mainViewController = [verticalCarpet.viewControllers objectAtIndex:1];
+    verticalCarpet.direction = ECCarpetVertical;
+//    verticalCarpet.delegate = self;
+    
+    // Initializing horizontal carpet
+    horizontalCarpet = [[ECCarpetViewController alloc] init];
+    
+    horizontalCarpet.viewControllers = [NSArray arrayWithObjects:
+                                      [[UIViewController alloc] initWithNibName:@"EditorBrowser" bundle:nil], 
+                                      verticalCarpet, 
+                                      [[UIViewController alloc] initWithNibName:@"EditorInfo" bundle:nil],
+                                      nil];
+    horizontalCarpet.viewControllersSizes = [NSArray arrayWithObjects:
+                                           [NSValue valueWithCGSize:CGSizeMake(300, 200)], 
+                                           [NSValue valueWithCGSize:CGSizeMake(0, 0)], 
+                                           [NSValue valueWithCGSize:CGSizeMake(300, 200)],
+                                           nil];
+    horizontalCarpet.mainViewController = [horizontalCarpet.viewControllers objectAtIndex:1];
+    horizontalCarpet.direction = ECCarpetHorizontal;
+    horizontalCarpet.delegate = self;
     
     // Adding carpet
-    [window addSubview:carpetController.view];
+    [window addSubview:horizontalCarpet.view];
     
     // Gestures
     UIPanGestureRecognizer *recognizer = [[UIPanGestureRecognizer alloc] init];
     recognizer.minimumNumberOfTouches = 1;
     recognizer.maximumNumberOfTouches = 1;
-    carpetController.gestureRecognizer = recognizer;
+    verticalCarpet.gestureRecognizer = recognizer;
+    horizontalCarpet.gestureRecognizer = recognizer;
     [recognizer release];
     
     [window makeKeyAndVisible];
@@ -48,22 +66,28 @@
 
 - (void)dealloc 
 {
+    [verticalCarpet release];
+    [horizontalCarpet release];
     [window release];
-    [leftFrameController release];
-    [mainFrameController release];
-    [carpetController release];
-    [rightFrameController release];
     [super dealloc];
 }
 
-- (IBAction)doStuff:(id)sender 
+- (BOOL)carpetViewController:(ECCarpetViewController *)cvc 
+                  willMoveTo:(ECCarpetViewControllerMove)aDirection 
+       showingViewController:(UIViewController *)aShowableViewController 
+        hidingViewController:(UIViewController *)aHidableViewController
 {
-    [carpetController moveCarpetDownRight:sender];
+    if (aShowableViewController != nil)
+    {
+        if (cvc == horizontalCarpet)
+        {
+            [verticalCarpet resetCarpetWithDuration:0.1 delay:horizontalCarpet.animationDuration];
+        }
+//        else if (cvc == verticalCarpet)
+//        {
+//            [horizontalCarpet resetCarpetWithDuration:0.1 delay:verticalCarpet.animationDuration];
+//        }
+    }
+    return YES;
 }
-
-- (IBAction)doOtherStuff:(id)sender 
-{
-    [carpetController moveCarpetUpLeft:sender];
-}
-
 @end

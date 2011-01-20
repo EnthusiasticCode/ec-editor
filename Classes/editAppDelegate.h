@@ -9,20 +9,10 @@
 #import <UIKit/UIKit.h>
 #import "ECCarpetViewController.h"
 
-@interface editAppDelegate : NSObject <UIApplicationDelegate> {
-
-    UIViewController *leftFrameController;
-    UIViewController *mainFrameController;
-    UIViewController *rightFrameController;
-    ECCarpetViewController *carpetController;
+@interface editAppDelegate : NSObject <UIApplicationDelegate, ECCarpetViewControllerDelegate> {
+    ECCarpetViewController *verticalCarpet, *horizontalCarpet;
 }
 
 @property (nonatomic, retain) IBOutlet UIWindow *window;
-@property (nonatomic, retain) IBOutlet UIViewController *leftFrameController;
-@property (nonatomic, retain) IBOutlet UIViewController *mainFrameController;
-@property (nonatomic, retain) IBOutlet UIViewController *rightFrameController;
-
-- (IBAction)doStuff:(id)sender;
-- (IBAction)doOtherStuff:(id)sender;
 
 @end

@@ -155,6 +155,39 @@
 #pragma mark -
 #pragma mark Custom controller messages implementation
 
+- (void)resetCarpetWithDuration:(NSTimeInterval)aDuration 
+                          delay:(NSTimeInterval)aDelay
+{
+    if (aDuration > 0)
+    {
+        [UIView animateWithDuration:aDuration
+                              delay:aDelay
+                            options:UIViewAnimationCurveEaseInOut | UIViewAnimationTransitionNone
+        animations:^(void) {
+            mainViewController.view.frame = self.view.frame;
+        } 
+        completion:^(BOOL finished) {
+            if (finished)
+            {
+                for (UIViewController* controller in [viewControllers objectEnumerator])
+                {
+                    if (controller != mainViewController)
+                        controller.view.hidden = YES;
+                }
+            }
+        }];
+    }
+    else
+    {
+        mainViewController.view.frame = self.view.frame;
+        for(UIViewController* controller in [viewControllers objectEnumerator])
+        {
+            if (controller != mainViewController)
+                controller.view.hidden = YES;
+        }
+    }
+}
+
 - (void)moveCarpetInDirection:(ECCarpetViewControllerMove)aSide 
                      animated:(BOOL)doAnimation
 {
@@ -186,6 +219,10 @@
             break;
         }
     }
+    if (toHide != nil)
+    {
+        toShow = nil;
+    }
     // Delegate confirmation
     if ([delegate respondsToSelector:@selector(carpetViewController:willMoveTo:showingViewController:hidingViewController:)]
         && ![delegate carpetViewController:self willMoveTo:aSide showingViewController:toShow hidingViewController:toHide])
@@ -204,13 +241,16 @@
         [UIView animateWithDuration:animationDuration animations:^(void) {
             mainViewController.view.frame = newFrame;
         } completion:^(BOOL finished) {
-            if (toHide != nil)
+            if (finished)
             {
-                toHide.view.hidden = YES;
-            }
-            if ([delegate respondsToSelector:@selector(carpetViewController:didMoveTo:showingViewController:hidingViewController:)])
-            {
-                [delegate carpetViewController:self didMoveTo:aSide showingViewController:toShow hidingViewController:toHide];
+                if (toHide != nil)
+                {
+                    toHide.view.hidden = YES;
+                }
+                if ([delegate respondsToSelector:@selector(carpetViewController:didMoveTo:showingViewController:hidingViewController:)])
+                {
+                    [delegate carpetViewController:self didMoveTo:aSide showingViewController:toShow hidingViewController:toHide];
+                }
             }
         }];
     }

@@ -23,7 +23,12 @@
 		B736175112DA112A009801D4 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = B736175012DA112A009801D4 /* InfoPlist.strings */; };
 		B736175312DA112A009801D4 /* editTests.h in Resources */ = {isa = PBXBuildFile; fileRef = B736175212DA112A009801D4 /* editTests.h */; };
 		B736175512DA112B009801D4 /* editTests.m in Sources */ = {isa = PBXBuildFile; fileRef = B736175412DA112A009801D4 /* editTests.m */; };
+		CD661EFA12E867F200492C96 /* EditorBrowser.xib in Resources */ = {isa = PBXBuildFile; fileRef = CD661EF712E867F200492C96 /* EditorBrowser.xib */; };
+		CD661EFB12E867F200492C96 /* EditorInfo.xib in Resources */ = {isa = PBXBuildFile; fileRef = CD661EF812E867F200492C96 /* EditorInfo.xib */; };
+		CD661EFC12E867F200492C96 /* EditorSplitter.xib in Resources */ = {isa = PBXBuildFile; fileRef = CD661EF912E867F200492C96 /* EditorSplitter.xib */; };
+		CD661EFF12E868A500492C96 /* EditorMain.xib in Resources */ = {isa = PBXBuildFile; fileRef = CD661EFE12E868A500492C96 /* EditorMain.xib */; };
 		CD751EE012E5F66F000FA678 /* ECCarpetViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD751EDF12E5F66F000FA678 /* ECCarpetViewController.m */; };
+		CD7E414E12E85E1100C56520 /* EditorNavigation.xib in Resources */ = {isa = PBXBuildFile; fileRef = CD7E414D12E85E1100C56520 /* EditorNavigation.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -47,9 +52,14 @@
 		B736175012DA112A009801D4 /* InfoPlist.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = InfoPlist.strings; path = en.lproj/editTests/InfoPlist.strings; sourceTree = "<group>"; };
 		B736175212DA112A009801D4 /* editTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = editTests.h; sourceTree = "<group>"; };
 		B736175412DA112A009801D4 /* editTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = editTests.m; sourceTree = "<group>"; };
+		CD661EF712E867F200492C96 /* EditorBrowser.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = EditorBrowser.xib; sourceTree = "<group>"; };
+		CD661EF812E867F200492C96 /* EditorInfo.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = EditorInfo.xib; sourceTree = "<group>"; };
+		CD661EF912E867F200492C96 /* EditorSplitter.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = EditorSplitter.xib; sourceTree = "<group>"; };
+		CD661EFE12E868A500492C96 /* EditorMain.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = EditorMain.xib; sourceTree = "<group>"; };
 		CD751EDE12E5F66F000FA678 /* ECCarpetViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCarpetViewController.h; sourceTree = "<group>"; };
 		CD751EDF12E5F66F000FA678 /* ECCarpetViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCarpetViewController.m; sourceTree = "<group>"; };
 		CD751EE112E5F717000FA678 /* ECCarpetViewControllerDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCarpetViewControllerDelegate.h; sourceTree = "<group>"; };
+		CD7E414D12E85E1100C56520 /* EditorNavigation.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = EditorNavigation.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -124,6 +134,7 @@
 		B736172412DA1129009801D4 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				CD661EFD12E8680000492C96 /* Editor */,
 				B736173512DA112A009801D4 /* edit-Info.plist */,
 				B736173712DA112A009801D4 /* InfoPlist.strings */,
 				B736174112DA112A009801D4 /* MainWindow.xib */,
@@ -161,6 +172,18 @@
 				B736175412DA112A009801D4 /* editTests.m */,
 			);
 			path = Tests;
+			sourceTree = "<group>";
+		};
+		CD661EFD12E8680000492C96 /* Editor */ = {
+			isa = PBXGroup;
+			children = (
+				CD661EF712E867F200492C96 /* EditorBrowser.xib */,
+				CD661EF812E867F200492C96 /* EditorInfo.xib */,
+				CD661EF912E867F200492C96 /* EditorSplitter.xib */,
+				CD7E414D12E85E1100C56520 /* EditorNavigation.xib */,
+				CD661EFE12E868A500492C96 /* EditorMain.xib */,
+			);
+			name = Editor;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -231,6 +254,11 @@
 			files = (
 				B736173912DA112A009801D4 /* InfoPlist.strings in Resources */,
 				B736174312DA112A009801D4 /* MainWindow.xib in Resources */,
+				CD7E414E12E85E1100C56520 /* EditorNavigation.xib in Resources */,
+				CD661EFA12E867F200492C96 /* EditorBrowser.xib in Resources */,
+				CD661EFB12E867F200492C96 /* EditorInfo.xib in Resources */,
+				CD661EFC12E867F200492C96 /* EditorSplitter.xib in Resources */,
+				CD661EFF12E868A500492C96 /* EditorMain.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
