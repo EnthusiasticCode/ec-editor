@@ -26,10 +26,22 @@
 // in the carpet. It must be contained in the viewControllers array.
 @property (nonatomic, assign) UIViewController *mainViewController;
 
+// Sizes for the corresponding viewController's view controller 
+// in landscape (width) and portraint (height) orientation independent 
+// by direction of the carpet.
+// If the value is smaller than 1, it will be interpreted as a percentual
+// of the parent view. To initialize this array consider using the following:
+// [NSArray arrayWithObjects: [NSValue valueWithCGSize:CGSizeMake(0.3, 0.3), …, nil]];
+// Value corresponding to mainControllerIndex will be ignored.
+@property (nonatomic, copy) NSArray *viewControllersSizes;
+
 // Indicate the direction of the carpet. With horizontal direction, view cotnrollers
 // will be displayed from left to right in every device orientation; With vertical
 // direction from top to bottom.
 @property (nonatomic) ECCarpetViewControllerDirection direction;
+
+// Gets or set the duration of the carpet movement animation.
+@property (nonatomic) NSTimeInterval animationDuration;
 
 - (void)moveCarpetInDirection:(ECCarpetViewControllerMove)aSide animated:(BOOL)doAnimation;
 - (IBAction)moveCarpetDownRight:(id)sender;

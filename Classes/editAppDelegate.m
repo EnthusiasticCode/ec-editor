@@ -17,7 +17,14 @@
 {
     carpetController = [[ECCarpetViewController alloc] init];
 
-    carpetController.viewControllers = [NSArray arrayWithObjects:leftFrameController, mainFrameController, nil];
+    carpetController.viewControllers = [NSArray arrayWithObjects:
+                                        leftFrameController, 
+                                        mainFrameController, 
+                                        nil];
+    carpetController.viewControllersSizes = [NSArray arrayWithObjects:
+                                             [NSValue valueWithCGSize:CGSizeMake(0.3, 0.3)], 
+                                             [NSValue valueWithCGSize:CGSizeMake(0, 0)], 
+                                             nil];
     carpetController.mainViewController = mainFrameController;
     
     [window addSubview:carpetController.view];
