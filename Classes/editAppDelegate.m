@@ -24,9 +24,9 @@
                                         [[UIViewController alloc] initWithNibName:@"EditorSplitter" bundle:nil],
                                         nil];
     verticalCarpet.viewControllersSizes = [NSArray arrayWithObjects:
-                                             [NSValue valueWithCGSize:CGSizeMake(70, 70)], 
+                                             [NSValue valueWithCGSize:CGSizeMake(60, 60)], 
                                              [NSValue valueWithCGSize:CGSizeMake(0, 0)], 
-                                             [NSValue valueWithCGSize:CGSizeMake(70, 70)],
+                                             [NSValue valueWithCGSize:CGSizeMake(60, 60)],
                                              nil];
     verticalCarpet.mainViewController = [verticalCarpet.viewControllers objectAtIndex:1];
     verticalCarpet.direction = ECCarpetVertical;
@@ -41,9 +41,9 @@
                                       [[UIViewController alloc] initWithNibName:@"EditorInfo" bundle:nil],
                                       nil];
     horizontalCarpet.viewControllersSizes = [NSArray arrayWithObjects:
-                                           [NSValue valueWithCGSize:CGSizeMake(300, 300)], 
+                                           [NSValue valueWithCGSize:CGSizeMake(320, 320)], 
                                            [NSValue valueWithCGSize:CGSizeMake(0, 0)], 
-                                           [NSValue valueWithCGSize:CGSizeMake(300, 300)],
+                                           [NSValue valueWithCGSize:CGSizeMake(320, 320)],
                                            nil];
     horizontalCarpet.mainViewController = [horizontalCarpet.viewControllers objectAtIndex:1];
     horizontalCarpet.direction = ECCarpetHorizontal;
@@ -73,6 +73,14 @@
     [horizontalCarpet release];
     [window release];
     [super dealloc];
+}
+
+- (BOOL)carpetViewController:(ECCarpetViewController *)cvc 
+                  willMoveTo:(ECCarpetViewControllerMove)aDirection 
+       showingViewController:(UIViewController *)aShowableViewController 
+        hidingViewController:(UIViewController *)aHidableViewController
+{
+    return YES;
 }
 
 - (void)carpetViewController:(ECCarpetViewController *)cvc 
