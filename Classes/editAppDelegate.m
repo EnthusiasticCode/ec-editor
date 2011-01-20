@@ -30,7 +30,7 @@
                                              nil];
     verticalCarpet.mainViewController = [verticalCarpet.viewControllers objectAtIndex:1];
     verticalCarpet.direction = ECCarpetVertical;
-//    verticalCarpet.delegate = self;
+    verticalCarpet.delegate = self;
     
     // Initializing horizontal carpet
     horizontalCarpet = [[ECCarpetViewController alloc] init];
@@ -41,14 +41,15 @@
                                       [[UIViewController alloc] initWithNibName:@"EditorInfo" bundle:nil],
                                       nil];
     horizontalCarpet.viewControllersSizes = [NSArray arrayWithObjects:
-                                           [NSValue valueWithCGSize:CGSizeMake(300, 200)], 
+                                           [NSValue valueWithCGSize:CGSizeMake(300, 300)], 
                                            [NSValue valueWithCGSize:CGSizeMake(0, 0)], 
-                                           [NSValue valueWithCGSize:CGSizeMake(300, 200)],
+                                           [NSValue valueWithCGSize:CGSizeMake(300, 300)],
                                            nil];
     horizontalCarpet.mainViewController = [horizontalCarpet.viewControllers objectAtIndex:1];
     horizontalCarpet.direction = ECCarpetHorizontal;
     horizontalCarpet.delegate = self;
     
+    // DEBUG
     horizontalCarpet.view.backgroundColor = [UIColor redColor];
     
     // Adding carpet
@@ -74,8 +75,8 @@
     [super dealloc];
 }
 
-- (BOOL)carpetViewController:(ECCarpetViewController *)cvc 
-                  willMoveTo:(ECCarpetViewControllerMove)aDirection 
+- (void)carpetViewController:(ECCarpetViewController *)cvc 
+                   didMoveTo:(ECCarpetViewControllerMove)aDirection 
        showingViewController:(UIViewController *)aShowableViewController 
         hidingViewController:(UIViewController *)aHidableViewController
 {
@@ -83,13 +84,12 @@
     {
         if (cvc == horizontalCarpet)
         {
-            [verticalCarpet resetCarpetWithDuration:0.1 delay:horizontalCarpet.animationDuration];
+            [verticalCarpet resetCarpetWithDuration:0.1];
         }
-//        else if (cvc == verticalCarpet)
-//        {
-//            [horizontalCarpet resetCarpetWithDuration:0.1 delay:verticalCarpet.animationDuration];
-//        }
+        else if (cvc == verticalCarpet)
+        {
+            [horizontalCarpet resetCarpetWithDuration:0.1];
+        }
     }
-    return YES;
 }
 @end

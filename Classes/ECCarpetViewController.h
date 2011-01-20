@@ -46,7 +46,7 @@
 // Gets or set the gesture recognizer for this carpet.
 @property (nonatomic, retain) UIGestureRecognizer *gestureRecognizer;
 
-- (void)resetCarpetWithDuration:(NSTimeInterval)aDuration delay:(NSTimeInterval)aDelay;
+- (void)resetCarpetWithDuration:(NSTimeInterval)aDuration;
 - (void)moveCarpetInDirection:(ECCarpetViewControllerMove)aSide animated:(BOOL)doAnimation;
 - (IBAction)moveCarpetDownRight:(id)sender;
 - (IBAction)moveCarpetUpLeft:(id)sender;

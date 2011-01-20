@@ -54,7 +54,7 @@
  // The designated initializer.  Override if you create the controller programmatically and want to perform customization that is not appropriate for viewDidLoad.
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
     if ((self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil])) {
-        animationDuration = 0.3;
+        animationDuration = 0.2;
     }
     return self;
 }
@@ -116,14 +116,16 @@
 
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
 {
-    for (UIViewController* controller in [viewControllers objectEnumerator])
-    {
-        if (controller == mainViewController)
-            controller.view.frame = [self frameForMainViewControllerConsideringHidden:nil];
-        else
-            controller.view.frame = [self frameForViewController:controller];
-        [controller didRotateFromInterfaceOrientation:fromInterfaceOrientation];
-    }
+    [UIView animateWithDuration:0.1 animations:^(void) {
+        for (UIViewController* controller in [viewControllers objectEnumerator])
+        {
+            if (controller == mainViewController)
+                controller.view.frame = [self frameForMainViewControllerConsideringHidden:nil];
+            else
+                controller.view.frame = [self frameForViewController:controller];
+            [controller didRotateFromInterfaceOrientation:fromInterfaceOrientation];
+        }
+    }];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -154,30 +156,22 @@
 #pragma mark Custom controller messages implementation
 
 - (void)resetCarpetWithDuration:(NSTimeInterval)aDuration 
-                          delay:(NSTimeInterval)aDelay
 {
     if (aDuration > 0)
     {
-        [UIView animateWithDuration:aDuration
-                              delay:aDelay
-                            options:UIViewAnimationCurveEaseInOut | UIViewAnimationTransitionNone
-        animations:^(void) {
-            mainViewController.view.frame = self.view.frame;
-        } 
-        completion:^(BOOL finished) {
-            if (finished)
+        [UIView animateWithDuration:aDuration animations:^(void) {
+            mainViewController.view.frame = self.view.bounds;
+        } completion:^(BOOL finished) {
+            for (UIViewController* controller in [viewControllers objectEnumerator])
             {
-                for (UIViewController* controller in [viewControllers objectEnumerator])
-                {
-                    if (controller != mainViewController)
-                        controller.view.hidden = YES;
-                }
+                if (controller != mainViewController)
+                    controller.view.hidden = YES;
             }
         }];
     }
     else
     {
-        mainViewController.view.frame = self.view.frame;
+        mainViewController.view.frame = self.view.bounds;
         for(UIViewController* controller in [viewControllers objectEnumerator])
         {
             if (controller != mainViewController)
@@ -239,16 +233,13 @@
         [UIView animateWithDuration:animationDuration animations:^(void) {
             mainViewController.view.frame = newFrame;
         } completion:^(BOOL finished) {
-            if (finished)
+            if (toHide != nil)
             {
-                if (toHide != nil)
-                {
-                    toHide.view.hidden = YES;
-                }
-                if ([delegate respondsToSelector:@selector(carpetViewController:didMoveTo:showingViewController:hidingViewController:)])
-                {
-                    [delegate carpetViewController:self didMoveTo:aSide showingViewController:toShow hidingViewController:toHide];
-                }
+                toHide.view.hidden = YES;
+            }
+            if ([delegate respondsToSelector:@selector(carpetViewController:didMoveTo:showingViewController:hidingViewController:)])
+            {
+                [delegate carpetViewController:self didMoveTo:aSide showingViewController:toShow hidingViewController:toHide];
             }
         }];
     }
