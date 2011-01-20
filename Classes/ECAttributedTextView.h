@@ -6,7 +6,7 @@
 //  Copyright 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import "OmniUI/OUIEditableFrame.h"
+#import "OUIEditableFrame.h"
 
 /*! A subclass of UITextView that supports attributed text. */
 @interface ECAttributedTextView : OUIEditableFrame {

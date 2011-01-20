@@ -10,8 +10,6 @@
 #import <UIKit/UIPopoverController.h>
 #import <UIKit/UIView.h>
 
-#import "ECPopoverTableControllerDelegate.h"
-
 /*! A UIViewController subclass which manages a UITableView presented with a UIPopoverController.
  *
  * To use it, assign the popoverRect and viewToPresentIn properties, then:
@@ -24,11 +22,11 @@
 }
 /*! An NSArray representing the choices the controller will display. */
 @property (nonatomic,retain) NSArray *strings;
-/*! See the ECPopoverTableControllerDelegate protocol for details. */
-@property (nonatomic,assign) id <ECPopoverTableControllerDelegate> delegate;
 /*! The rect in which to present the popover. */
 @property (nonatomic) CGRect popoverRect;
 /*! The view in which to present the popover. Must have a valid window. */
 @property (nonatomic,assign) UIView *viewToPresentIn;
+/*! An block to be executed when the user selects a row in the table. */
+@property (nonatomic, copy) void(^didSelectRow)(int row);
 
 @end

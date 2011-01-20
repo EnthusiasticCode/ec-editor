@@ -15,9 +15,9 @@
 
 
 @synthesize strings = _strings;
-@synthesize delegate;
 @synthesize popoverRect;
 @synthesize viewToPresentIn;
+@synthesize didSelectRow;
 
 - (void)setStrings:(NSArray *)strings
 {
@@ -76,8 +76,8 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if ([self.delegate respondsToSelector:@selector(popoverTableDidSelectRowWithText:)])
-        [self.delegate popoverTableDidSelectRowWithText:[self.strings objectAtIndex:indexPath.row]];
+    if (self.didSelectRow)
+        self.didSelectRow(indexPath.row);
 }
 
 @end

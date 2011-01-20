@@ -6,24 +6,12 @@
 //  Copyright 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
-#import <UIKit/UITextChecker.h>
-#import <UIKit/UIPopoverController.h>
+#import <UIKit/UIViewController.h>
 
-#import "ECCodeView.h"
-#import "ECPopoverTableController.h"
 
-#import "libclang/Index.h"
-
-@interface ECCodeViewController : UIViewController <ECPopoverTableControllerDelegate>
+@interface ECCodeViewController : UIViewController
 {
 
 }
-
-@property (nonatomic, retain) UITextChecker *textChecker;
-@property (nonatomic, retain) ECPopoverTableController *completionPopover;
-
-- (NSRange)completionRange;
-- (void)showCompletions;
 
 @end
