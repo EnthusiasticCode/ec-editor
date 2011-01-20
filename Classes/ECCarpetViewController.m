@@ -289,14 +289,14 @@
     // Generate direction specific frame
     if (self.direction == ECCarpetHorizontal)
     {
-        result.size.width = aController.view.bounds.size.width;
+        result.size.width = [self unitsDimensionForViewControllerAtIndex:controllerIndex withOrientation:orientation];
         result.size.height = self.view.bounds.size.height;
         result.origin.x = origin;
     }
     else // vertical
     {
         result.size.width = self.view.bounds.size.width;
-        result.size.height = aController.view.bounds.size.height;
+        result.size.height = [self unitsDimensionForViewControllerAtIndex:controllerIndex withOrientation:orientation];
         result.origin.y = origin;
     }
     return result;
