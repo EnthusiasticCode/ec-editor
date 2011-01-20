@@ -12,6 +12,7 @@
 @synthesize window;
 @synthesize leftFrameController;
 @synthesize mainFrameController;
+@synthesize rightFrameController;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
@@ -20,10 +21,12 @@
     carpetController.viewControllers = [NSArray arrayWithObjects:
                                         leftFrameController, 
                                         mainFrameController, 
+                                        rightFrameController,
                                         nil];
     carpetController.viewControllersSizes = [NSArray arrayWithObjects:
                                              [NSValue valueWithCGSize:CGSizeMake(0.3, 0.3)], 
                                              [NSValue valueWithCGSize:CGSizeMake(0, 0)], 
+                                             [NSValue valueWithCGSize:CGSizeMake(0.3, 0.3)],
                                              nil];
     carpetController.mainViewController = mainFrameController;
     
@@ -39,6 +42,7 @@
     [leftFrameController release];
     [mainFrameController release];
     [carpetController release];
+    [rightFrameController release];
     [super dealloc];
 }
 

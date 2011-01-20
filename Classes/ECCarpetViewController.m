@@ -281,7 +281,7 @@
     else
     {
         origin = (direction == ECCarpetHorizontal) ? self.view.bounds.size.width : self.view.bounds.size.height;
-        for (int i = viewControllersCount - 1; i > controllerIndex; --i)
+        for (int i = viewControllersCount - 1; i >= controllerIndex; --i)
         {
             origin -= [self unitsDimensionForViewControllerAtIndex:i withOrientation:orientation];
         }

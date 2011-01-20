@@ -13,12 +13,14 @@
 
     UIViewController *leftFrameController;
     UIViewController *mainFrameController;
+    UIViewController *rightFrameController;
     ECCarpetViewController *carpetController;
 }
 
 @property (nonatomic, retain) IBOutlet UIWindow *window;
 @property (nonatomic, retain) IBOutlet UIViewController *leftFrameController;
 @property (nonatomic, retain) IBOutlet UIViewController *mainFrameController;
+@property (nonatomic, retain) IBOutlet UIViewController *rightFrameController;
 
 - (IBAction)doStuff:(id)sender;
 - (IBAction)doOtherStuff:(id)sender;
