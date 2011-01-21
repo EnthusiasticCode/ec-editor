@@ -2,38 +2,63 @@
 //  ECCodeViewController.m
 //  edit
 //
-//  Created by Uri Baghin on 1/18/11.
+//  Created by Nicola Peduzzi on 21/01/11.
 //  Copyright 2011 __MyCompanyName__. All rights reserved.
 //
 
 #import "ECCodeViewController.h"
 
-#import "ECCodeView.h"
-#import "ECClangCodeIndexer.h"
-#import "OUEFTextRange.h"
-
 
 @implementation ECCodeViewController
 
-
-#pragma mark -
-#pragma mark Initializations and clean up
-
-- (void)viewDidLoad
-{
-    // viewDidLoad can be called multiple times without deallocating the view
-    if (![((ECCodeView *)self.view).completionProviders count])
-    {
-        ECClangCodeIndexer *codeIndexer = [[ECClangCodeIndexer alloc] init];
-        [(ECCodeView *)self.view addCompletionProvider:codeIndexer];
-        [codeIndexer release];
+/*
+ // The designated initializer.  Override if you create the controller programmatically and want to perform customization that is not appropriate for viewDidLoad.
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
+    if ((self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil])) {
+        // Custom initialization
     }
+    return self;
+}
+*/
+
+/*
+// Implement loadView to create a view hierarchy programmatically, without using a nib.
+- (void)loadView {
+}
+*/
+
+/*
+// Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
+- (void)viewDidLoad {
+    [super viewDidLoad];
+}
+*/
+
+
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
+    // Overriden to allow any orientation.
+    return YES;
 }
 
-- (void)dealloc
-{
-    self.view = nil;
+
+- (void)didReceiveMemoryWarning {
+    // Releases the view if it doesn't have a superview.
+    [super didReceiveMemoryWarning];
+    
+    // Release any cached data, images, etc that aren't in use.
+}
+
+
+- (void)viewDidUnload {
+    [super viewDidUnload];
+    // Release any retained subviews of the main view.
+    // e.g. self.myOutlet = nil;
+}
+
+
+- (void)dealloc {
     [super dealloc];
 }
+
 
 @end

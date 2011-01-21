@@ -2,15 +2,14 @@
 //  ECCodeViewController.h
 //  edit
 //
-//  Created by Uri Baghin on 1/18/11.
+//  Created by Nicola Peduzzi on 21/01/11.
 //  Copyright 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import <UIKit/UIViewController.h>
+#import <UIKit/UIKit.h>
 
 
-@interface ECCodeViewController : UIViewController
-{
+@interface ECCodeViewController : UIViewController {
 
 }
 
