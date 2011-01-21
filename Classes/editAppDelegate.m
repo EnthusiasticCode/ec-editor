@@ -8,8 +8,8 @@
 
 #import "editAppDelegate.h"
 
-#import "ECCodeViewController.h"
-#import "ECCodeView.h"
+#import "ECCodeProject.h"
+#import "ECCodeProjectController.h"
 
 @implementation editAppDelegate
 
@@ -18,14 +18,13 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    CTFontRef font = CTFontCreateWithName((CFStringRef)@"Courier New", 12.0, &CGAffineTransformIdentity);
-    NSDictionary *attributes = [NSDictionary dictionaryWithObject:(id)font forKey:(id)kCTFontAttributeName];
-    ((ECCodeView *)((ECCodeViewController *)window.rootViewController).view).attributedText = [[NSAttributedString alloc] initWithString:@"int main(arguments)\n{\n\treturn 0;\n}\n" attributes:attributes];
-    
-    [window addSubview:window.rootViewController.view];
+    ECCodeProjectController *rootController;
+    [[UINib nibWithNibName:@"CodeProjectController" bundle:nil] instantiateWithOwner:window options:nil];
+    rootController = (ECCodeProjectController *) window.rootViewController;
+    // directory must exist
+    [rootController loadProject:@"edit" from:[[self applicationDocumentsDirectory] stringByAppendingPathComponent:@"edit/"]];
+    [window addSubview:rootController.view];
     [window makeKeyAndVisible];
-    
-		CFRelease(font);
     return YES;
 }
 
@@ -33,6 +32,13 @@
 {
     self.window = nil;
     [super dealloc];
+}
+
+/**
+ Returns the path to the application's Documents directory.
+ */
+- (NSString *)applicationDocumentsDirectory {
+    return [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject];
 }
 
 @end

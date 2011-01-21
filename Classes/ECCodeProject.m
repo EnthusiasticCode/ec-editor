@@ -15,9 +15,41 @@
 @synthesize managedObjectModel;
 @synthesize managedObjectContext;
 @synthesize persistentStoreCoordinator;
+@synthesize rootDirectory;
+@synthesize name;
+
+- (id)init
+{
+    @throw [NSException exceptionWithName:@"Invalid call to init" reason:@"ECCodeProject can only be initialized through initWithRootDirectory:name:" userInfo:nil];
+}
+
+- (id)initWithRootDirectory:(NSString *)theRootDirectory name:(NSString *)theName
+{
+    self = [super init];
+    if (self)
+    {
+        name = theName;
+        rootDirectory = theRootDirectory;
+    }
+    return self;
+}
 
 - (void)dealloc
 {
+    // Saves changes in the application's managed object context before the application terminates.
+    NSError *error = nil;
+    if (managedObjectContext) {
+        if ([managedObjectContext hasChanges] && ![managedObjectContext save:&error])
+        {
+            /*
+             Replace this implementation with code to handle the error appropriately.
+             
+             abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development. If it is not possible to recover from the error, display an alert panel that instructs the user to quit the application by pressing the Home button.
+             */
+            NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
+            abort();
+        } 
+    }
     [managedObjectContext release];
     [managedObjectModel release];
     [persistentStoreCoordinator release];
@@ -31,14 +63,14 @@
  Returns the managed object context for the application.
  If the context doesn't already exist, it is created and bound to the persistent store coordinator for the application.
  */
-- (NSManagedObjectContext *)managedObjectContext {
-    
-    if (managedObjectContext) {
+- (NSManagedObjectContext *)managedObjectContext
+{
+    if (managedObjectContext)
         return managedObjectContext;
-    }
     
     NSPersistentStoreCoordinator *coordinator = [self persistentStoreCoordinator];
-    if (coordinator) {
+    if (coordinator)
+    {
         managedObjectContext = [[NSManagedObjectContext alloc] init];
         [managedObjectContext setPersistentStoreCoordinator:coordinator];
     }
@@ -49,11 +81,10 @@
  Returns the managed object model for the application.
  If the model doesn't already exist, it is created by merging all of the models found in the application bundle.
  */
-- (NSManagedObjectModel *)managedObjectModel {
-    
-    if (managedObjectModel) {
+- (NSManagedObjectModel *)managedObjectModel
+{
+    if (managedObjectModel)
         return managedObjectModel;
-    }
     managedObjectModel = [[NSManagedObjectModel mergedModelFromBundles:nil] retain];    
     return managedObjectModel;
 }
@@ -62,17 +93,18 @@
  Returns the persistent store coordinator for the application.
  If the coordinator doesn't already exist, it is created and the application's store added to it.
  */
-- (NSPersistentStoreCoordinator *)persistentStoreCoordinator {
+- (NSPersistentStoreCoordinator *)persistentStoreCoordinator
+{
     
-    if (persistentStoreCoordinator) {
+    if (persistentStoreCoordinator)
         return persistentStoreCoordinator;
-    }
     
-    NSURL *storeUrl = [NSURL fileURLWithPath:[[self applicationDocumentsDirectory] stringByAppendingPathComponent:@"Test.sqlite"]];
+    NSURL *storeUrl = [NSURL fileURLWithPath:[self.rootDirectory stringByAppendingPathComponent:[self.name stringByAppendingPathExtension:@"sqlite"]]];
     
     NSError *error = nil;
     persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:[self managedObjectModel]];
-    if (![persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeUrl options:nil error:&error]) {
+    if (![persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeUrl options:nil error:&error])
+    {
         /*
          Replace this implementation with code to handle the error appropriately.
          
@@ -88,13 +120,6 @@
     }    
     
     return persistentStoreCoordinator;
-}
-
-/**
- Returns the path to the application's Documents directory.
- */
-- (NSString *)applicationDocumentsDirectory {
-    return [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject];
 }
 
 @end

@@ -7,10 +7,14 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "ECCodeProject.h"
 
-
-@interface ECCodeProjectController : UISplitViewController {
+@interface ECCodeProjectController : UISplitViewController <UITableViewDataSource, UITableViewDelegate> {
     
 }
+@property (nonatomic, retain, readonly) ECCodeProject *project;
+@property (nonatomic, retain, readonly) NSFileManager *fileManager;
+
+- (void)loadProject:(NSString *)name from:(NSString *)rootDirectory;
 
 @end

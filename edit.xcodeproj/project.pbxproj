@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		B7019E5712E5E38B004FC837 /* ECPopoverTableController.m in Sources */ = {isa = PBXBuildFile; fileRef = B7019E5612E5E38B004FC837 /* ECPopoverTableController.m */; };
+		B70A09DF12E9F61000B498CD /* CodeProjectController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B709A2C612E9AAC00099F6E0 /* CodeProjectController.xib */; };
 		B71C0F0312DB60DC002843EF /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B71C0F0212DB60DC002843EF /* CoreText.framework */; };
 		B72DA8B412E8275D00C12CD5 /* ECCodeIndexer.m in Sources */ = {isa = PBXBuildFile; fileRef = B72DA8B312E8275D00C12CD5 /* ECCodeIndexer.m */; };
 		B72DA8B712E8277100C12CD5 /* ECClangCodeIndexer.m in Sources */ = {isa = PBXBuildFile; fileRef = B72DA8B612E8277100C12CD5 /* ECClangCodeIndexer.m */; };
@@ -23,7 +24,6 @@
 		B736173E12DA112A009801D4 /* editAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = B736173D12DA112A009801D4 /* editAppDelegate.m */; };
 		B736174312DA112A009801D4 /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = B736174112DA112A009801D4 /* MainWindow.xib */; };
 		B76E03EE12E98F3F00E706DC /* ECCodeProjectController.m in Sources */ = {isa = PBXBuildFile; fileRef = B76E03EC12E98F3F00E706DC /* ECCodeProjectController.m */; };
-		B76E03EF12E98F3F00E706DC /* CodeProjectView.xib in Resources */ = {isa = PBXBuildFile; fileRef = B76E03ED12E98F3F00E706DC /* CodeProjectView.xib */; };
 		B7759ECA12E062B5006E99E7 /* OUIRectangularOverlayArrow.png in Resources */ = {isa = PBXBuildFile; fileRef = B7759EC212E062B5006E99E7 /* OUIRectangularOverlayArrow.png */; };
 		B7759ECB12E062B5006E99E7 /* OUIRectangularOverlayFrame.png in Resources */ = {isa = PBXBuildFile; fileRef = B7759EC312E062B5006E99E7 /* OUIRectangularOverlayFrame.png */; };
 		B7759ECC12E062B5006E99E7 /* OUIShadowBorderBottom.png in Resources */ = {isa = PBXBuildFile; fileRef = B7759EC412E062B5006E99E7 /* OUIShadowBorderBottom.png */; };
@@ -55,6 +55,7 @@
 /* Begin PBXFileReference section */
 		B7019E5512E5E38B004FC837 /* ECPopoverTableController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ECPopoverTableController.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		B7019E5612E5E38B004FC837 /* ECPopoverTableController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ECPopoverTableController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
+		B709A2C712E9AAC00099F6E0 /* CodeProjectController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = CodeProjectController.xib; path = en.lproj/CodeProjectController.xib; sourceTree = "<group>"; };
 		B71C0F0212DB60DC002843EF /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
 		B72DA8B212E8275D00C12CD5 /* ECCodeIndexer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeIndexer.h; sourceTree = "<group>"; };
 		B72DA8B312E8275D00C12CD5 /* ECCodeIndexer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeIndexer.m; sourceTree = "<group>"; };
@@ -80,7 +81,6 @@
 		B736174212DA112A009801D4 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainWindow.xib; sourceTree = "<group>"; };
 		B76E03EB12E98F3F00E706DC /* ECCodeProjectController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeProjectController.h; sourceTree = "<group>"; };
 		B76E03EC12E98F3F00E706DC /* ECCodeProjectController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeProjectController.m; sourceTree = "<group>"; };
-		B76E03ED12E98F3F00E706DC /* CodeProjectView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = CodeProjectView.xib; path = Classes/CodeProjectView.xib; sourceTree = "<group>"; };
 		B7759EC212E062B5006E99E7 /* OUIRectangularOverlayArrow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = OUIRectangularOverlayArrow.png; sourceTree = "<group>"; };
 		B7759EC312E062B5006E99E7 /* OUIRectangularOverlayFrame.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = OUIRectangularOverlayFrame.png; sourceTree = "<group>"; };
 		B7759EC412E062B5006E99E7 /* OUIShadowBorderBottom.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = OUIShadowBorderBottom.png; sourceTree = "<group>"; };
@@ -208,7 +208,7 @@
 				B7759EC112E062B5006E99E7 /* Images */,
 				B736174112DA112A009801D4 /* MainWindow.xib */,
 				B78F092D12E6342D00E38985 /* CodeView.xib */,
-				B76E03ED12E98F3F00E706DC /* CodeProjectView.xib */,
+				B709A2C612E9AAC00099F6E0 /* CodeProjectController.xib */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -365,7 +365,7 @@
 				B7FC3EAD12E5CE1E00B49A94 /* howto.txt in Resources */,
 				B78F092F12E6342E00E38985 /* CodeView.xib in Resources */,
 				B78A18ED12E764A300E259E0 /* doxygen.conf in Resources */,
-				B76E03EF12E98F3F00E706DC /* CodeProjectView.xib in Resources */,
+				B70A09DF12E9F61000B498CD /* CodeProjectController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -403,6 +403,14 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
+		B709A2C612E9AAC00099F6E0 /* CodeProjectController.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				B709A2C712E9AAC00099F6E0 /* CodeProjectController.xib */,
+			);
+			name = CodeProjectController.xib;
+			sourceTree = "<group>";
+		};
 		B736173712DA112A009801D4 /* InfoPlist.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
