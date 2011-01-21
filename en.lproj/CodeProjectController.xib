@@ -14,6 +14,7 @@
 			<string>IBUITableViewController</string>
 			<string>IBUITableView</string>
 			<string>IBUINavigationItem</string>
+			<string>IBUIView</string>
 		</array>
 		<array key="IBDocument.PluginDependencies">
 			<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
@@ -101,8 +102,23 @@
 					</array>
 				</object>
 				<object class="IBUIViewController" key="IBUIDetailViewController" id="470557483">
+					<object class="IBUIView" key="IBUIView" id="17041282">
+						<reference key="NSNextResponder"/>
+						<int key="NSvFlags">274</int>
+						<string key="NSFrameSize">{703, 748}</string>
+						<reference key="NSSuperview"/>
+						<reference key="NSWindow"/>
+						<reference key="NSNextKeyView"/>
+						<object class="NSColor" key="IBUIBackgroundColor">
+							<int key="NSColorSpace">3</int>
+							<bytes key="NSWhite">MQA</bytes>
+							<object class="NSColorSpace" key="NSCustomColorSpace">
+								<int key="NSID">2</int>
+							</object>
+						</object>
+						<string key="targetRuntimeIdentifier">IBIPadFramework</string>
+					</object>
 					<reference key="IBUIParentViewController" ref="688665170"/>
-					<string key="IBUINibName">CodeView</string>
 					<object class="IBUISimulatedStatusBarMetrics" key="IBUISimulatedStatusBarMetrics">
 						<int key="IBUIStatusBarStyle">2</int>
 					</object>
@@ -140,6 +156,14 @@
 						<reference key="destination" ref="688665170"/>
 					</object>
 					<int key="connectionID">26</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBCocoaTouchOutletConnection" key="connection">
+						<string key="label">codeView</string>
+						<reference key="source" ref="688665170"/>
+						<reference key="destination" ref="17041282"/>
+					</object>
+					<int key="connectionID">28</int>
 				</object>
 			</array>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -206,8 +230,15 @@
 					<object class="IBObjectRecord">
 						<int key="objectID">20</int>
 						<reference key="object" ref="470557483"/>
-						<array class="NSMutableArray" key="children"/>
+						<array class="NSMutableArray" key="children">
+							<reference ref="17041282"/>
+						</array>
 						<reference key="parent" ref="688665170"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">27</int>
+						<reference key="object" ref="17041282"/>
+						<reference key="parent" ref="470557483"/>
 					</object>
 				</array>
 			</object>
@@ -218,6 +249,8 @@
 				<string key="15.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 				<string key="20.CustomClassName">ECCodeViewController</string>
 				<string key="20.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
+				<string key="27.CustomClassName">ECCodeView</string>
+				<string key="27.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 				<string key="8.CustomClassName">ECCodeProjectController</string>
 				<string key="8.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 				<string key="9.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
@@ -226,16 +259,36 @@
 			<nil key="activeLocalization"/>
 			<dictionary class="NSMutableDictionary" key="localizations"/>
 			<nil key="sourceID"/>
-			<int key="maxID">26</int>
+			<int key="maxID">28</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<array class="NSMutableArray" key="referencedPartialClassDescriptions">
 				<object class="IBPartialClassDescription">
+					<string key="className">ECAttributedTextView</string>
+					<string key="superclassName">OUIEditableFrame</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./classes-xjh84/ECAttributedTextView.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
 					<string key="className">ECCodeProjectController</string>
 					<string key="superclassName">UISplitViewController</string>
+					<object class="NSMutableDictionary" key="outlets">
+						<string key="NS.key.0">codeView</string>
+						<string key="NS.object.0">ECCodeView</string>
+					</object>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
 						<string key="minorKey">./classes-xjh84/ECCodeProjectController.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">ECCodeView</string>
+					<string key="superclassName">ECAttributedTextView</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./classes-xjh84/ECCodeView.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
@@ -244,6 +297,22 @@
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
 						<string key="minorKey">./classes-xjh84/ECCodeViewController.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">OUIEditableFrame</string>
+					<string key="superclassName">OUIScalingView</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./classes-xjh84/OUIEditableFrame.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">OUIScalingView</string>
+					<string key="superclassName">UIView</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./classes-xjh84/OUIScalingView.h</string>
 					</object>
 				</object>
 			</array>

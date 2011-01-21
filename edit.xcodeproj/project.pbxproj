@@ -34,7 +34,6 @@
 		B7759ED112E062B5006E99E7 /* OUITextSelectionOverlay.png in Resources */ = {isa = PBXBuildFile; fileRef = B7759EC912E062B5006E99E7 /* OUITextSelectionOverlay.png */; };
 		B78A18ED12E764A300E259E0 /* doxygen.conf in Resources */ = {isa = PBXBuildFile; fileRef = B78A18EC12E764A300E259E0 /* doxygen.conf */; };
 		B78F092B12E611A600E38985 /* ECCodeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B78F092A12E611A600E38985 /* ECCodeViewController.m */; };
-		B78F092F12E6342E00E38985 /* CodeView.xib in Resources */ = {isa = PBXBuildFile; fileRef = B78F092D12E6342D00E38985 /* CodeView.xib */; };
 		B7BD531F12DF1CDB003B83B3 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7BD531E12DF1CDB003B83B3 /* QuartzCore.framework */; };
 		B7BF7B5D12E05D48005CDF48 /* OQDrawing.m in Sources */ = {isa = PBXBuildFile; fileRef = B7BF7B3F12E05D48005CDF48 /* OQDrawing.m */; };
 		B7BF7B5E12E05D48005CDF48 /* OUEFTextPosition.m in Sources */ = {isa = PBXBuildFile; fileRef = B7BF7B4112E05D48005CDF48 /* OUEFTextPosition.m */; };
@@ -92,7 +91,6 @@
 		B78A18EC12E764A300E259E0 /* doxygen.conf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = doxygen.conf; sourceTree = "<group>"; };
 		B78F092912E611A600E38985 /* ECCodeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ECCodeViewController.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		B78F092A12E611A600E38985 /* ECCodeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ECCodeViewController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
-		B78F092E12E6342D00E38985 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/CodeView.xib; sourceTree = "<group>"; };
 		B7BD531E12DF1CDB003B83B3 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		B7BF7B3E12E05D48005CDF48 /* OQDrawing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OQDrawing.h; sourceTree = "<group>"; };
 		B7BF7B3F12E05D48005CDF48 /* OQDrawing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OQDrawing.m; sourceTree = "<group>"; };
@@ -207,7 +205,6 @@
 				B78F093012E6344900E38985 /* Strings */,
 				B7759EC112E062B5006E99E7 /* Images */,
 				B736174112DA112A009801D4 /* MainWindow.xib */,
-				B78F092D12E6342D00E38985 /* CodeView.xib */,
 				B709A2C612E9AAC00099F6E0 /* CodeProjectController.xib */,
 			);
 			name = Resources;
@@ -363,7 +360,6 @@
 				B7759ED012E062B5006E99E7 /* OUITextSelectionHandle.png in Resources */,
 				B7759ED112E062B5006E99E7 /* OUITextSelectionOverlay.png in Resources */,
 				B7FC3EAD12E5CE1E00B49A94 /* howto.txt in Resources */,
-				B78F092F12E6342E00E38985 /* CodeView.xib in Resources */,
 				B78A18ED12E764A300E259E0 /* doxygen.conf in Resources */,
 				B70A09DF12E9F61000B498CD /* CodeProjectController.xib in Resources */,
 			);
@@ -425,14 +421,6 @@
 				B736174212DA112A009801D4 /* en */,
 			);
 			name = MainWindow.xib;
-			sourceTree = "<group>";
-		};
-		B78F092D12E6342D00E38985 /* CodeView.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				B78F092E12E6342D00E38985 /* en */,
-			);
-			name = CodeView.xib;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */

@@ -13,59 +13,21 @@
 
 @synthesize project;
 @synthesize fileManager;
+@synthesize codeView;
 
 - (NSFileManager *)fileManager
 {
-    if (!fileManager)
-        fileManager = [[NSFileManager alloc] init];
-    return fileManager;
+    return [NSFileManager defaultManager];
 }
-
-/*
- // The designated initializer.  Override if you create the controller programmatically and want to perform customization that is not appropriate for viewDidLoad.
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
-    if ((self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil])) {
-        // Custom initialization
-    }
-    return self;
-}
-*/
-
-
-// Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
-- (void)viewDidLoad {
-    NSLog(@"DidLoad");
-    NSLog(@"%@", self.project.managedObjectContext);
-    NSLog(@"viewcontrollers:%d", [self.viewControllers count]);
-    NSLog(@"%@", [[self.viewControllers objectAtIndex:0] view]);
-    NSLog(@"%@", [[self.viewControllers objectAtIndex:1] view]);
-    [super viewDidLoad];
-}
-
-
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
-    // Overriden to allow any orientation.
     return YES;
 }
 
-
-- (void)didReceiveMemoryWarning {
-    // Releases the view if it doesn't have a superview.
-    [super didReceiveMemoryWarning];
-    
-    // Release any cached data, images, etc that aren't in use.
-}
-
-
-- (void)viewDidUnload {
-    [super viewDidUnload];
-    // Release any retained subviews of the main view.
-    // e.g. self.myOutlet = nil;
-}
-
-
-- (void)dealloc {
+- (void)dealloc
+{
+    [project release];
+    [fileManager release];
     [super dealloc];
 }
 
@@ -76,19 +38,32 @@
     {
         file = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"File"] autorelease];
     }
-    file.textLabel.text = [[self.fileManager contentsOfDirectoryAtPath:self.project.rootDirectory error:NULL] objectAtIndex:(indexPath.row)];
+    file.textLabel.text = [[self contentsOfRootDirectory] objectAtIndex:(indexPath.row)];
     return file;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return [[self.fileManager contentsOfDirectoryAtPath:self.project.rootDirectory error:NULL] count];
+    return [[self contentsOfRootDirectory] count];
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    NSString *fileName = [[self contentsOfRootDirectory] objectAtIndex:indexPath.row];
+    NSString *filePath = [self.project.rootDirectory stringByAppendingPathComponent:fileName];
+    NSString *fileContents = [NSString stringWithContentsOfFile:filePath encoding:NSUTF8StringEncoding error:nil];
+    self.codeView.attributedText = [[NSAttributedString alloc] initWithString:fileContents attributes:nil];
 }
 
 - (void)loadProject:(NSString *)name from:(NSString *)rootDirectory
 {
     if (project) return;
     project = [[ECCodeProject alloc] initWithRootDirectory:rootDirectory name:name];
+}
+
+- (NSArray *)contentsOfRootDirectory
+{
+    return [self.fileManager contentsOfDirectoryAtPath:self.project.rootDirectory error:NULL];
 }
 
 @end

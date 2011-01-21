@@ -28,8 +28,8 @@
     self = [super init];
     if (self)
     {
-        name = theName;
-        rootDirectory = theRootDirectory;
+        name = [theName retain];
+        rootDirectory = [theRootDirectory retain];
     }
     return self;
 }
