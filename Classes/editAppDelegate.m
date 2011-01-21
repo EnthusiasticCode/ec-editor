@@ -31,7 +31,7 @@
 
 - (void)dealloc
 {
-    [window release];
+    self.window = nil;
     [super dealloc];
 }
 

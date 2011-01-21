@@ -13,6 +13,8 @@
 		B72DA8B712E8277100C12CD5 /* ECClangCodeIndexer.m in Sources */ = {isa = PBXBuildFile; fileRef = B72DA8B612E8277100C12CD5 /* ECClangCodeIndexer.m */; };
 		B72DA8BC12E849EA00C12CD5 /* ECCodeViewCompletion.m in Sources */ = {isa = PBXBuildFile; fileRef = B72DA8BB12E849EA00C12CD5 /* ECCodeViewCompletion.m */; };
 		B72DB58712E79F010003D0E8 /* ECAttributedTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = B72DB58612E79F010003D0E8 /* ECAttributedTextView.m */; };
+		B7355B0C12E8EBE800198FD9 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7355B0B12E8EBE800198FD9 /* CoreData.framework */; };
+		B7355B1112E8F1C600198FD9 /* Project.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = B7355B0F12E8F1C600198FD9 /* Project.xcdatamodeld */; };
 		B736172E12DA112A009801D4 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B736172D12DA112A009801D4 /* UIKit.framework */; };
 		B736173012DA112A009801D4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B736172F12DA112A009801D4 /* Foundation.framework */; };
 		B736173212DA112A009801D4 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B736173112DA112A009801D4 /* CoreGraphics.framework */; };
@@ -20,6 +22,8 @@
 		B736173B12DA112A009801D4 /* edit-main.m in Sources */ = {isa = PBXBuildFile; fileRef = B736173A12DA112A009801D4 /* edit-main.m */; };
 		B736173E12DA112A009801D4 /* editAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = B736173D12DA112A009801D4 /* editAppDelegate.m */; };
 		B736174312DA112A009801D4 /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = B736174112DA112A009801D4 /* MainWindow.xib */; };
+		B76E03EE12E98F3F00E706DC /* ECCodeProjectController.m in Sources */ = {isa = PBXBuildFile; fileRef = B76E03EC12E98F3F00E706DC /* ECCodeProjectController.m */; };
+		B76E03EF12E98F3F00E706DC /* CodeProjectView.xib in Resources */ = {isa = PBXBuildFile; fileRef = B76E03ED12E98F3F00E706DC /* CodeProjectView.xib */; };
 		B7759ECA12E062B5006E99E7 /* OUIRectangularOverlayArrow.png in Resources */ = {isa = PBXBuildFile; fileRef = B7759EC212E062B5006E99E7 /* OUIRectangularOverlayArrow.png */; };
 		B7759ECB12E062B5006E99E7 /* OUIRectangularOverlayFrame.png in Resources */ = {isa = PBXBuildFile; fileRef = B7759EC312E062B5006E99E7 /* OUIRectangularOverlayFrame.png */; };
 		B7759ECC12E062B5006E99E7 /* OUIShadowBorderBottom.png in Resources */ = {isa = PBXBuildFile; fileRef = B7759EC412E062B5006E99E7 /* OUIShadowBorderBottom.png */; };
@@ -41,6 +45,7 @@
 		B7BF7B6812E05D48005CDF48 /* OUITextCursorOverlay.m in Sources */ = {isa = PBXBuildFile; fileRef = B7BF7B5812E05D48005CDF48 /* OUITextCursorOverlay.m */; };
 		B7BF7B6912E05D48005CDF48 /* OUITextLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = B7BF7B5A12E05D48005CDF48 /* OUITextLayout.m */; };
 		B7BF7B6A12E05D48005CDF48 /* OUITextThumb.m in Sources */ = {isa = PBXBuildFile; fileRef = B7BF7B5C12E05D48005CDF48 /* OUITextThumb.m */; };
+		B7CC3EA112E8F76F00149D80 /* ECCodeProject.m in Sources */ = {isa = PBXBuildFile; fileRef = B7CC3EA012E8F76F00149D80 /* ECCodeProject.m */; };
 		B7FC3EAD12E5CE1E00B49A94 /* howto.txt in Resources */ = {isa = PBXBuildFile; fileRef = B7FC3EAB12E5CE1E00B49A94 /* howto.txt */; };
 		B7FC3EAE12E5CE1E00B49A94 /* libclang.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B7FC3EAC12E5CE1E00B49A94 /* libclang.dylib */; };
 		B7FC3EB012E5CE2700B49A94 /* libclang.dylib in Resources */ = {isa = PBXBuildFile; fileRef = B7FC3EAC12E5CE1E00B49A94 /* libclang.dylib */; };
@@ -62,6 +67,8 @@
 		B72DB58512E79F010003D0E8 /* ECAttributedTextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECAttributedTextView.h; sourceTree = "<group>"; };
 		B72DB58612E79F010003D0E8 /* ECAttributedTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECAttributedTextView.m; sourceTree = "<group>"; };
 		B73022F612E63CC30029269C /* edit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = edit.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B7355B0B12E8EBE800198FD9 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
+		B7355B1012E8F1C600198FD9 /* Project.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Project.xcdatamodel; sourceTree = "<group>"; };
 		B736172D12DA112A009801D4 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		B736172F12DA112A009801D4 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		B736173112DA112A009801D4 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -71,6 +78,9 @@
 		B736173C12DA112A009801D4 /* editAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = editAppDelegate.h; sourceTree = "<group>"; };
 		B736173D12DA112A009801D4 /* editAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = editAppDelegate.m; sourceTree = "<group>"; };
 		B736174212DA112A009801D4 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainWindow.xib; sourceTree = "<group>"; };
+		B76E03EB12E98F3F00E706DC /* ECCodeProjectController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeProjectController.h; sourceTree = "<group>"; };
+		B76E03EC12E98F3F00E706DC /* ECCodeProjectController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeProjectController.m; sourceTree = "<group>"; };
+		B76E03ED12E98F3F00E706DC /* CodeProjectView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = CodeProjectView.xib; path = Classes/CodeProjectView.xib; sourceTree = "<group>"; };
 		B7759EC212E062B5006E99E7 /* OUIRectangularOverlayArrow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = OUIRectangularOverlayArrow.png; sourceTree = "<group>"; };
 		B7759EC312E062B5006E99E7 /* OUIRectangularOverlayFrame.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = OUIRectangularOverlayFrame.png; sourceTree = "<group>"; };
 		B7759EC412E062B5006E99E7 /* OUIShadowBorderBottom.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = OUIShadowBorderBottom.png; sourceTree = "<group>"; };
@@ -104,6 +114,8 @@
 		B7BF7B5A12E05D48005CDF48 /* OUITextLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OUITextLayout.m; sourceTree = "<group>"; };
 		B7BF7B5B12E05D48005CDF48 /* OUITextThumb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OUITextThumb.h; sourceTree = "<group>"; };
 		B7BF7B5C12E05D48005CDF48 /* OUITextThumb.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OUITextThumb.m; sourceTree = "<group>"; };
+		B7CC3E9F12E8F76F00149D80 /* ECCodeProject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeProject.h; sourceTree = "<group>"; };
+		B7CC3EA012E8F76F00149D80 /* ECCodeProject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeProject.m; sourceTree = "<group>"; };
 		B7FC3EAA12E5CE1E00B49A94 /* Index.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Index.h; sourceTree = "<group>"; };
 		B7FC3EAB12E5CE1E00B49A94 /* howto.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = howto.txt; sourceTree = "<group>"; };
 		B7FC3EAC12E5CE1E00B49A94 /* libclang.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libclang.dylib; sourceTree = "<group>"; };
@@ -122,15 +134,25 @@
 				B71C0F0312DB60DC002843EF /* CoreText.framework in Frameworks */,
 				B7BD531F12DF1CDB003B83B3 /* QuartzCore.framework in Frameworks */,
 				B7FC3EAE12E5CE1E00B49A94 /* libclang.dylib in Frameworks */,
+				B7355B0C12E8EBE800198FD9 /* CoreData.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		B7355B0E12E8EF9300198FD9 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				B7355B0F12E8F1C600198FD9 /* Project.xcdatamodeld */,
+			);
+			name = Models;
+			sourceTree = "<group>";
+		};
 		B736171A12DA1129009801D4 = {
 			isa = PBXGroup;
 			children = (
+				B7355B0E12E8EF9300198FD9 /* Models */,
 				B7FC3EA912E5CE1E00B49A94 /* libclang */,
 				B7BF7B3D12E05D48005CDF48 /* OmniUI */,
 				B736172212DA1129009801D4 /* Classes */,
@@ -146,6 +168,10 @@
 			children = (
 				B736173C12DA112A009801D4 /* editAppDelegate.h */,
 				B736173D12DA112A009801D4 /* editAppDelegate.m */,
+				B7CC3E9F12E8F76F00149D80 /* ECCodeProject.h */,
+				B7CC3EA012E8F76F00149D80 /* ECCodeProject.m */,
+				B76E03EB12E98F3F00E706DC /* ECCodeProjectController.h */,
+				B76E03EC12E98F3F00E706DC /* ECCodeProjectController.m */,
 				B7019E5512E5E38B004FC837 /* ECPopoverTableController.h */,
 				B7019E5612E5E38B004FC837 /* ECPopoverTableController.m */,
 				B72DB58512E79F010003D0E8 /* ECAttributedTextView.h */,
@@ -182,6 +208,7 @@
 				B7759EC112E062B5006E99E7 /* Images */,
 				B736174112DA112A009801D4 /* MainWindow.xib */,
 				B78F092D12E6342D00E38985 /* CodeView.xib */,
+				B76E03ED12E98F3F00E706DC /* CodeProjectView.xib */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -189,6 +216,7 @@
 		B736172512DA1129009801D4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B7355B0B12E8EBE800198FD9 /* CoreData.framework */,
 				B7BD531E12DF1CDB003B83B3 /* QuartzCore.framework */,
 				B71C0F0212DB60DC002843EF /* CoreText.framework */,
 				B736172D12DA112A009801D4 /* UIKit.framework */,
@@ -337,6 +365,7 @@
 				B7FC3EAD12E5CE1E00B49A94 /* howto.txt in Resources */,
 				B78F092F12E6342E00E38985 /* CodeView.xib in Resources */,
 				B78A18ED12E764A300E259E0 /* doxygen.conf in Resources */,
+				B76E03EF12E98F3F00E706DC /* CodeProjectView.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -365,6 +394,9 @@
 				B72DA8B412E8275D00C12CD5 /* ECCodeIndexer.m in Sources */,
 				B72DA8B712E8277100C12CD5 /* ECClangCodeIndexer.m in Sources */,
 				B72DA8BC12E849EA00C12CD5 /* ECCodeViewCompletion.m in Sources */,
+				B7355B1112E8F1C600198FD9 /* Project.xcdatamodeld in Sources */,
+				B7CC3EA112E8F76F00149D80 /* ECCodeProject.m in Sources */,
+				B76E03EE12E98F3F00E706DC /* ECCodeProjectController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -513,6 +545,20 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		B7355B0F12E8F1C600198FD9 /* Project.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				B7355B1012E8F1C600198FD9 /* Project.xcdatamodel */,
+			);
+			currentVersion = B7355B1012E8F1C600198FD9 /* Project.xcdatamodel */;
+			name = Project.xcdatamodeld;
+			path = Models/Project.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = B736171C12DA1129009801D4 /* Project object */;
 }

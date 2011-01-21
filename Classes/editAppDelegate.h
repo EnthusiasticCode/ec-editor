@@ -7,12 +7,12 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <CoreData/CoreData.h>
 
-@interface editAppDelegate : NSObject <UIApplicationDelegate> {
-    UIWindow *window;
+@interface editAppDelegate : NSObject <UIApplicationDelegate>
+{
+    
 }
-
 @property (nonatomic, retain) IBOutlet UIWindow *window;
-
 
 @end
