@@ -7,6 +7,7 @@
 //
 
 #import "ECCodeProjectController.h"
+#import "Index.h"
 
 
 @implementation ECCodeProjectController
@@ -53,6 +54,16 @@
     NSString *filePath = [self.project.rootDirectory stringByAppendingPathComponent:fileName];
     NSString *fileContents = [NSString stringWithContentsOfFile:filePath encoding:NSUTF8StringEncoding error:nil];
     self.codeView.attributedText = [[NSAttributedString alloc] initWithString:fileContents attributes:nil];
+    CXTranslationUnit TranslationUnit = clang_parseTranslationUnit(self.project.Index, [filePath cStringUsingEncoding:NSUTF8StringEncoding], 0, 0, 0, 0, CXTranslationUnit_None);
+    int numDiagnostics = clang_getNumDiagnostics(TranslationUnit);
+    for (int i = 0; i < numDiagnostics; i++)
+    {
+        CXDiagnostic Diagnostic = clang_getDiagnostic(TranslationUnit, i);
+        CXString String = clang_formatDiagnostic(Diagnostic, clang_defaultDiagnosticDisplayOptions());
+        NSLog(@"%s", clang_getCString(String));
+        clang_disposeString(String);
+    }
+    clang_disposeTranslationUnit(TranslationUnit);
 }
 
 - (void)loadProject:(NSString *)name from:(NSString *)rootDirectory

@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
+#import "Index.h"
 
 
 @interface ECCodeProject : NSObject {
@@ -18,6 +19,7 @@
 @property (nonatomic, retain, readonly) NSPersistentStoreCoordinator *persistentStoreCoordinator;
 @property (nonatomic, retain, readonly) NSString *rootDirectory;
 @property (nonatomic, retain, readonly) NSString *name;
+@property (nonatomic, readonly) CXIndex Index;
 
 - (id)initWithRootDirectory:(NSString *)theRootDirectory name:(NSString *)theName;
 
