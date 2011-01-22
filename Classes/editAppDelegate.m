@@ -19,8 +19,12 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     ECCodeProjectController *rootController;
-    [[UINib nibWithNibName:@"CodeProjectController" bundle:nil] instantiateWithOwner:window options:nil];
-    rootController = (ECCodeProjectController *) window.rootViewController;
+    // iOS 3.2:
+    NSArray *bundleContents = [[NSBundle mainBundle] loadNibNamed:@"CodeProjectController" owner:self options:nil];
+    rootController = [[bundleContents objectAtIndex:0] retain];
+    // iOS 4:
+//    [[UINib nibWithNibName:@"CodeProjectController" bundle:nil] instantiateWithOwner:window options:nil];
+//    rootController = (ECCodeProjectController *) window.rootViewController;
     // directory must exist
     [rootController loadProject:@"edit" from:[[self applicationDocumentsDirectory] stringByAppendingPathComponent:@"edit/"]];
     [window addSubview:rootController.view];

@@ -32,3 +32,7 @@ For iPhoneSimulator:
 6) In your target build phases, add libclang.dylib to the "Copy Bundle Resources" phase.
 
 7) In your target build settings, add "@loader_path/" to the "Runpath Search Paths" setting.
+
+
+Still one problem to solve, libclang built this way cannot be used on iOS 4:
+http://www.rawmaterialsoftware.com/viewtopic.php?f=2&t=5644
