@@ -18,7 +18,7 @@
 // References
 // search for "drawing managing text" in documentation.
 
-@interface ECCodeView : UIView {
+@interface ECCodeView : UIScrollView {
     // Content
     NSMutableAttributedString *content;
     

@@ -12,22 +12,11 @@
 @implementation ECCodeView
 @synthesize textInset;
 
+
 - (id)initWithFrame:(CGRect)frame 
 {
-    if ((self = [super initWithFrame:frame])) {
-        CTFontRef font = CTFontCreateWithName((CFStringRef)@"Courier New", 12.0, &CGAffineTransformIdentity);
-        NSDictionary *attributes = [NSDictionary dictionaryWithObject:(id)font forKey:(id)kCTFontAttributeName];
-        
-        content = [[NSMutableAttributedString alloc] initWithString:@"int main(arguments)\n{\n\treturn 0;\n}\n" attributes:attributes];
-        
-        CFRelease(font);
-    }
-    return self;
-}
-
-- (id)initWithCoder:(NSCoder *)aDecoder
-{
-    if ((self = [super initWithCoder:aDecoder])) {
+    if ((self = [super initWithFrame:frame])) 
+    {
         CTFontRef font = CTFontCreateWithName((CFStringRef)@"Courier New", 12.0, &CGAffineTransformIdentity);
         NSDictionary *attributes = [NSDictionary dictionaryWithObject:(id)font forKey:(id)kCTFontAttributeName];
         
@@ -36,6 +25,17 @@
         CFRelease(font);
         
         textInset = UIEdgeInsetsMake(10, 10, 0, 0);
+        
+        [super setContentMode:UIViewContentModeRedraw];
+    }
+    return self;
+}
+
+- (id)initWithCoder:(NSCoder *)aDecoder
+{
+    if ((self = [super initWithCoder:aDecoder])) 
+    {
+        [self init];
     }
     return self;
 }
@@ -108,6 +108,8 @@
     CGContextTranslateCTM(context, -contentFrameOrigin.x, -contentFrameOrigin.y);
     
     // TODO draw decorations
+    
+    [super drawRect:rect];
 }
 
 
@@ -125,5 +127,13 @@
     [super dealloc];
 }
 
+//- (void)touchesEnded:(NSSet*)touches withEvent:(UIEvent*)event
+//{	
+//	if (!self.dragging) 
+//    {
+//		[self.nextResponder touchesEnded:touches withEvent:event]; 
+//	}
+//	[super touchesEnded:touches withEvent:event];
+//}
 
 @end
