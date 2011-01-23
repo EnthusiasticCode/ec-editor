@@ -82,6 +82,7 @@
 		CD0D843912E9A865005DB220 /* ECCodeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeViewController.m; sourceTree = "<group>"; };
 		CD0D843B12E9A87D005DB220 /* ECCodeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeView.h; sourceTree = "<group>"; };
 		CD0D843C12E9A87D005DB220 /* ECCodeView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeView.m; sourceTree = "<group>"; };
+		CD124A1812E9AF5C00DC3D00 /* ECCodeViewDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeViewDelegate.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -121,6 +122,7 @@
 				B736173D12DA112A009801D4 /* editAppDelegate.m */,
 				CD0D843B12E9A87D005DB220 /* ECCodeView.h */,
 				CD0D843C12E9A87D005DB220 /* ECCodeView.m */,
+				CD124A1812E9AF5C00DC3D00 /* ECCodeViewDelegate.h */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
