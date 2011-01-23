@@ -6,15 +6,14 @@
 //  Copyright 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 
-#import "ECAttributedTextView.h"
 #import "ECPopoverTableController.h"
 #import "ECCodeViewCompletionProvider.h"
 #import "ECCodeViewSyntaxChecker.h"
 
 /*! A subclass of UITextView with additional features for display and editing code. */
-@interface ECCodeView : ECAttributedTextView
+@interface ECCodeView : UITextView
 {
 
 }

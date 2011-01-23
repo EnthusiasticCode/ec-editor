@@ -10,7 +10,6 @@
 
 #import "ECCodeView.h"
 #import "ECClangCodeIndexer.h"
-#import "OUEFTextRange.h"
 
 
 @implementation ECCodeViewController
@@ -21,12 +20,14 @@
 
 - (void)viewDidLoad
 {
+    ECCodeView *codeView = (ECCodeView *)self.view;
     // viewDidLoad can be called multiple times without deallocating the view
-    if (![((ECCodeView *)self.view).completionProviders count])
+    if (![codeView.completionProviders count])
     {
         ECClangCodeIndexer *codeIndexer = [[ECClangCodeIndexer alloc] init];
-        [(ECCodeView *)self.view addCompletionProvider:codeIndexer];
+        [codeView addCompletionProvider:codeIndexer];
         [codeIndexer release];
+        codeView.delegate = (id)self;
     }
 }
 
@@ -34,6 +35,16 @@
 {
     self.view = nil;
     [super dealloc];
+}
+
+- (void)textViewDidChange:(UITextView *)textView
+{
+    [(ECCodeView *)self.view showCompletions];
+}
+
+- (void)textViewDidChangeSelection:(UITextView *)textView
+{
+    [(ECCodeView *)self.view showCompletions];
 }
 
 @end

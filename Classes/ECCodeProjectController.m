@@ -53,7 +53,7 @@
     NSString *fileName = [[self contentsOfRootDirectory] objectAtIndex:indexPath.row];
     NSString *filePath = [self.project.rootDirectory stringByAppendingPathComponent:fileName];
     NSString *fileContents = [NSString stringWithContentsOfFile:filePath encoding:NSUTF8StringEncoding error:nil];
-    self.codeView.attributedText = [[NSAttributedString alloc] initWithString:fileContents attributes:nil];
+    self.codeView.text = fileContents;
     CXTranslationUnit TranslationUnit = clang_parseTranslationUnit(self.project.Index, [filePath cStringUsingEncoding:NSUTF8StringEncoding], 0, 0, 0, 0, CXTranslationUnit_None);
     int numDiagnostics = clang_getNumDiagnostics(TranslationUnit);
     for (int i = 0; i < numDiagnostics; i++)

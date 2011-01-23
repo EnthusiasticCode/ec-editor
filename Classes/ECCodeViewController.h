@@ -7,9 +7,10 @@
 //
 
 #import <UIKit/UIViewController.h>
+#import <UIKit/UITextView.h>
 
 
-@interface ECCodeViewController : UIViewController
+@interface ECCodeViewController : UIViewController <UITextViewDelegate>
 {
 
 }

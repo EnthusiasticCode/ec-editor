@@ -8,7 +8,6 @@
 
 #import "ECCodeView.h"
 
-#import "OUEFTextRange.h"
 #import "ECCodeViewCompletion.h"
 
 @implementation ECCodeView
@@ -43,12 +42,6 @@
     return _completionPopover;
 }
 
-- (void)awakeFromNib
-{
-    [self addObserver:self forKeyPath:@"selectedTextRange" options:NSKeyValueObservingOptionNew context:NULL];
-    [self addObserver:self forKeyPath:@"attributedText" options:NSKeyValueObservingOptionNew context:NULL];
-}
-
 - (void)dealloc {
     [_completionProviders release];
     [_syntaxCheckers release];
@@ -72,18 +65,12 @@
     [oldSyntaxCheckers release];
 }
 
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
-{
-    [self showCompletions];
-}
-
 - (void)showCompletions
 {
-    NSRange selectedRange = [(OUEFTextRange *)[self selectedTextRange] range];
     NSMutableArray *possibleCompletions = [[NSMutableArray alloc] init];
     for (id<ECCodeViewCompletionProvider>completionProvider in _completionProviders)
     {
-        [possibleCompletions addObjectsFromArray:[completionProvider completionsWithSelection:selectedRange inString:[self.attributedText string]]];
+        [possibleCompletions addObjectsFromArray:[completionProvider completionsWithSelection:self.selectedRange inString:self.text]];
     }
     NSMutableArray *completionLabels = [[NSMutableArray alloc] initWithCapacity:[possibleCompletions count]];
     for (ECCodeViewCompletion *completion in possibleCompletions)
@@ -95,12 +82,10 @@
         ^ void (int row)
         {
             NSRange replacementRange = [[possibleCompletions objectAtIndex:row] replacementRange];
-            UITextRange *replacementTextRange = (UITextRange *)[[OUEFTextRange alloc] initWithRange:replacementRange generation:0];
             NSString *replacementString = [[possibleCompletions objectAtIndex:row] string];
-            [self replaceRange:replacementTextRange withText:replacementString];
-            [replacementTextRange release];
+            self.text = [self.text stringByReplacingCharactersInRange:replacementRange withString:replacementString];
         };
-    self.completionPopover.popoverRect = [self firstRectForRange:[self selectedTextRange]];
+//    self.completionPopover.popoverRect = [self firstRectForRange:[self selectedRange]];
     self.completionPopover.strings = completionLabels;
     
     [completionLabels release];
