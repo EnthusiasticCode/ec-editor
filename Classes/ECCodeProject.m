@@ -17,7 +17,6 @@
 @synthesize persistentStoreCoordinator;
 @synthesize rootDirectory;
 @synthesize name;
-@synthesize Index;
 
 - (id)init
 {
@@ -31,7 +30,6 @@
     {
         name = [theName retain];
         rootDirectory = [theRootDirectory retain];
-        Index = clang_createIndex(0, 0);
     }
     return self;
 }
@@ -52,7 +50,6 @@
             abort();
         } 
     }
-    clang_disposeIndex(Index);
     [rootDirectory release];
     [name release];
     [managedObjectContext release];

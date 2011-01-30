@@ -17,6 +17,9 @@
  *\param string A string representing the whole scope containing the selection.
  */
 - (NSArray *)completionsWithSelection:(NSRange)selection inString:(NSString *)string;
+- (void)loadFile:(NSString *)file;
+- (void)unloadFile:(NSString *)file;
+- (NSArray *)files;
 
 @end
 

@@ -28,6 +28,7 @@
 - (void)showCompletions;
 
 - (void)loadProject:(NSString *)name from:(NSString *)rootDirectory;
+- (void)loadFile:(NSString *)file;
 - (NSArray *)contentsOfRootDirectory;
 
 @end
