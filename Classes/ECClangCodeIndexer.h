@@ -12,7 +12,7 @@
 #import "ECCodeIndexer.h"
 
 /*! Clang code indexer. Provides completion and syntax checking through Clang. */
-@interface ECClangCodeIndexer : ECCodeIndexer <ECCodeViewCompletionProvider, ECCodeViewSyntaxChecker> {
+@interface ECClangCodeIndexer : ECCodeIndexer <ECCodeIndexer> {
 
 }
 @property (nonatomic, retain) UITextChecker *textChecker;

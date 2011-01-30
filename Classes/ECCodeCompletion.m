@@ -1,15 +1,15 @@
 //
-//  ECCodeViewCompletion.m
+//  ECCodeCompletion.m
 //  edit
 //
 //  Created by Uri Baghin on 1/20/11.
 //  Copyright 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import "ECCodeViewCompletion.h"
+#import "ECCodeCompletion.h"
 
 
-@implementation ECCodeViewCompletion
+@implementation ECCodeCompletion
 
 @synthesize priority = _priority;
 @synthesize replacementRange = _replacementRange;
@@ -17,12 +17,12 @@
 @synthesize string = _string;
 @synthesize note = _note;
 
-+ (ECCodeViewCompletion *)completionWithReplacementRange:(NSRange)replacementRange label:(NSString *)label string:(NSString *)string
++ (ECCodeCompletion *)completionWithReplacementRange:(NSRange)replacementRange label:(NSString *)label string:(NSString *)string
 {
     return [[[self alloc] initWithReplacementRange:replacementRange label:label string:string] autorelease];
 }
 
-- (ECCodeViewCompletion *)initWithPriority:(float)priority replacementRange:(NSRange)replacementRange label:(NSString *)label string:(NSString *)string note:(NSString *)note
+- (ECCodeCompletion *)initWithPriority:(float)priority replacementRange:(NSRange)replacementRange label:(NSString *)label string:(NSString *)string note:(NSString *)note
 {
     self = [super init];
     if (self)
@@ -36,7 +36,7 @@
     return self;
 }
 
-- (ECCodeViewCompletion *)initWithReplacementRange:(NSRange)replacementRange label:(NSString *)label string:(NSString *)string
+- (ECCodeCompletion *)initWithReplacementRange:(NSRange)replacementRange label:(NSString *)label string:(NSString *)string
 {
     return [self initWithPriority:0.0 replacementRange:replacementRange label:label string:string note:nil];
 }

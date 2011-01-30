@@ -9,8 +9,7 @@
 #import <UIKit/UIKit.h>
 
 #import "ECPopoverTableController.h"
-#import "ECCodeViewCompletionProvider.h"
-#import "ECCodeViewSyntaxChecker.h"
+#import "ECCodeIndexer.h"
 
 /*! A subclass of UITextView with additional features for display and editing code. */
 @interface ECCodeView : UITextView
@@ -18,17 +17,13 @@
 
 }
 /* An array of all currently loaded completion providers. */
-@property (nonatomic, readonly, copy) NSArray *completionProviders;
-/* An array of all currently loaded syntax checkers. */
-@property (nonatomic, readonly, copy) NSArray *syntaxCheckers;
+@property (nonatomic, readonly, copy) NSArray *codeIndexers;
 // popovertable used to display completions
 @property (nonatomic, retain) ECPopoverTableController *completionPopover;
 
-/* Add a new completion provider. It is not checked for duplicity. */
-- (void)addCompletionProvider:(id<ECCodeViewCompletionProvider>)completionProvider;
-/* Add a new syntax checker. It is not checked for duplicity. */
-- (void)addSyntaxChecker:(id<ECCodeViewSyntaxChecker>)syntaxChecker;
-// displayers the completion popovertable if possible
+/* Add a new code indexer. It is not checked for duplicity. */
+- (void)addCodeIndexer:(id<ECCodeIndexer>)codeIndexer;
+// display the completion popovertable if possible
 - (void)showCompletions;
 
 @end

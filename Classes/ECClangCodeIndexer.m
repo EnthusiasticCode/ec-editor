@@ -8,7 +8,7 @@
 
 #import "ECClangCodeIndexer.h"
 
-#import "ECCodeViewCompletion.h"
+#import "ECCodeCompletion.h"
 
 @implementation ECClangCodeIndexer
 
@@ -57,7 +57,7 @@
     NSMutableArray *completions = [[[NSMutableArray alloc] init] autorelease];
     for (NSString *guess in guesses)
     {
-        [completions addObject:[ECCodeViewCompletion completionWithReplacementRange:replacementRange label:guess string:[guess stringByAppendingString:@" "]]];
+        [completions addObject:[ECCodeCompletion completionWithReplacementRange:replacementRange label:guess string:[guess stringByAppendingString:@" "]]];
     }
     return completions;
 }

@@ -1,5 +1,5 @@
 //
-//  ECCodeViewCompletion.h
+//  ECCodeCompletion.h
 //  edit
 //
 //  Created by Uri Baghin on 1/20/11.
@@ -11,9 +11,9 @@
 /*! Object representing any possible completion.
  *
  * For use with the ECCodeView view.
- * Related: ECCodeViewCompletionProvider protocol.
+ * Related: ECCodeViewCodeIndexer protocol.
  */
-@interface ECCodeViewCompletion : NSObject {
+@interface ECCodeCompletion : NSObject {
     
 }
 /*! The chance of the completion being the correct one. 0 < priority < 1. */
@@ -27,9 +27,9 @@
 /*! Additional information about the completion to be displayed to the user. */
 @property (nonatomic, retain) NSString *note;
 
-+ (ECCodeViewCompletion *)completionWithReplacementRange:(NSRange)replacementRange label:(NSString *)label string:(NSString *)string;
++ (ECCodeCompletion *)completionWithReplacementRange:(NSRange)replacementRange label:(NSString *)label string:(NSString *)string;
 
-- (ECCodeViewCompletion *)initWithPriority:(float)priority replacementRange:(NSRange)replacementRange label:(NSString *)label string:(NSString *)string note:(NSString *)note;
-- (ECCodeViewCompletion *)initWithReplacementRange:(NSRange)replacementRange label:(NSString *)label string:(NSString *)string;
+- (ECCodeCompletion *)initWithPriority:(float)priority replacementRange:(NSRange)replacementRange label:(NSString *)label string:(NSString *)string note:(NSString *)note;
+- (ECCodeCompletion *)initWithReplacementRange:(NSRange)replacementRange label:(NSString *)label string:(NSString *)string;
 
 @end

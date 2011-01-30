@@ -8,28 +8,20 @@
 
 #import "ECCodeView.h"
 
-#import "ECCodeViewCompletion.h"
+#import "ECCodeCompletion.h"
 
 @implementation ECCodeView
 
 
-@synthesize completionProviders = _completionProviders;
+@synthesize codeIndexers = _codeIndexers;
 
-- (NSArray *)completionProviders
+- (NSArray *)codeIndexers
 {
-    if (!_completionProviders)
-        _completionProviders = [[NSArray alloc] init];
-    return _completionProviders;
+    if (!_codeIndexers)
+        _codeIndexers = [[NSArray alloc] init];
+    return _codeIndexers;
 }
 
-@synthesize syntaxCheckers = _syntaxCheckers;
-
-- (NSArray *)syntaxCheckers
-{
-    if (!_syntaxCheckers)
-        _syntaxCheckers = [[NSArray alloc] init];
-    return _syntaxCheckers;
-}
 @synthesize completionPopover = _completionPopover;
 
 - (ECPopoverTableController *)completionPopover
@@ -43,37 +35,28 @@
 }
 
 - (void)dealloc {
-    [_completionProviders release];
-    [_syntaxCheckers release];
+    [_codeIndexers release];
     self.completionPopover = nil;
     [super dealloc];
 }
 
-- (void) addCompletionProvider:(id<ECCodeViewCompletionProvider>)completionProvider
+- (void) addCodeIndexer:(id<ECCodeIndexer>)codeIndexer
 {
-    NSArray *oldCompletionProviders = _completionProviders;
-    _completionProviders = [self.completionProviders arrayByAddingObject:completionProvider];
-    [_completionProviders retain];
-    [oldCompletionProviders release];
-}
-
-- (void) addSyntaxChecker:(id<ECCodeViewSyntaxChecker>)syntaxChecker
-{
-    NSArray *oldSyntaxCheckers = _syntaxCheckers;
-    _syntaxCheckers = [self.syntaxCheckers arrayByAddingObject:syntaxChecker];
-    [_syntaxCheckers retain];
-    [oldSyntaxCheckers release];
+    NSArray *oldCodeIndexers = _codeIndexers;
+    _codeIndexers = [self.codeIndexers arrayByAddingObject:codeIndexer];
+    [_codeIndexers retain];
+    [oldCodeIndexers release];
 }
 
 - (void)showCompletions
 {
     NSMutableArray *possibleCompletions = [[NSMutableArray alloc] init];
-    for (id<ECCodeViewCompletionProvider>completionProvider in _completionProviders)
+    for (id<ECCodeIndexer>codeIndexer in _codeIndexers)
     {
-        [possibleCompletions addObjectsFromArray:[completionProvider completionsWithSelection:self.selectedRange inString:self.text]];
+        [possibleCompletions addObjectsFromArray:[codeIndexer completionsWithSelection:self.selectedRange inString:self.text]];
     }
     NSMutableArray *completionLabels = [[NSMutableArray alloc] initWithCapacity:[possibleCompletions count]];
-    for (ECCodeViewCompletion *completion in possibleCompletions)
+    for (ECCodeCompletion *completion in possibleCompletions)
     {
         [completionLabels addObject:completion.label];
     }
