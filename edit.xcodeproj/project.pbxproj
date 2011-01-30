@@ -12,7 +12,7 @@
 		B71C0F0312DB60DC002843EF /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B71C0F0212DB60DC002843EF /* CoreText.framework */; };
 		B72DA8B412E8275D00C12CD5 /* ECCodeIndexer.m in Sources */ = {isa = PBXBuildFile; fileRef = B72DA8B312E8275D00C12CD5 /* ECCodeIndexer.m */; };
 		B72DA8B712E8277100C12CD5 /* ECClangCodeIndexer.m in Sources */ = {isa = PBXBuildFile; fileRef = B72DA8B612E8277100C12CD5 /* ECClangCodeIndexer.m */; };
-		B72DA8BC12E849EA00C12CD5 /* ECCodeCompletion.m in Sources */ = {isa = PBXBuildFile; fileRef = B72DA8BB12E849EA00C12CD5 /* ECCodeCompletion.m */; };
+		B72DA8BC12E849EA00C12CD5 /* ECCodeCompletionString.m in Sources */ = {isa = PBXBuildFile; fileRef = B72DA8BB12E849EA00C12CD5 /* ECCodeCompletionString.m */; };
 		B7355B0C12E8EBE800198FD9 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7355B0B12E8EBE800198FD9 /* CoreData.framework */; };
 		B7355B1112E8F1C600198FD9 /* Project.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = B7355B0F12E8F1C600198FD9 /* Project.xcdatamodeld */; };
 		B736172E12DA112A009801D4 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B736172D12DA112A009801D4 /* UIKit.framework */; };
@@ -34,6 +34,7 @@
 		B78A18ED12E764A300E259E0 /* doxygen.conf in Resources */ = {isa = PBXBuildFile; fileRef = B78A18EC12E764A300E259E0 /* doxygen.conf */; };
 		B7BD531F12DF1CDB003B83B3 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7BD531E12DF1CDB003B83B3 /* QuartzCore.framework */; };
 		B7CC3EA112E8F76F00149D80 /* ECCodeProject.m in Sources */ = {isa = PBXBuildFile; fileRef = B7CC3EA012E8F76F00149D80 /* ECCodeProject.m */; };
+		B7DDFEED12F5DED500EFBD32 /* ECCodeCompletionResult.m in Sources */ = {isa = PBXBuildFile; fileRef = B7DDFEEC12F5DED500EFBD32 /* ECCodeCompletionResult.m */; };
 		B7FC3EAD12E5CE1E00B49A94 /* howto.txt in Resources */ = {isa = PBXBuildFile; fileRef = B7FC3EAB12E5CE1E00B49A94 /* howto.txt */; };
 		B7FC3EAE12E5CE1E00B49A94 /* libclang.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B7FC3EAC12E5CE1E00B49A94 /* libclang.dylib */; };
 		B7FC3EB012E5CE2700B49A94 /* libclang.dylib in Resources */ = {isa = PBXBuildFile; fileRef = B7FC3EAC12E5CE1E00B49A94 /* libclang.dylib */; };
@@ -48,8 +49,8 @@
 		B72DA8B312E8275D00C12CD5 /* ECCodeIndexer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeIndexer.m; sourceTree = "<group>"; };
 		B72DA8B512E8277100C12CD5 /* ECClangCodeIndexer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECClangCodeIndexer.h; sourceTree = "<group>"; };
 		B72DA8B612E8277100C12CD5 /* ECClangCodeIndexer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECClangCodeIndexer.m; sourceTree = "<group>"; };
-		B72DA8BA12E849EA00C12CD5 /* ECCodeCompletion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeCompletion.h; sourceTree = "<group>"; };
-		B72DA8BB12E849EA00C12CD5 /* ECCodeCompletion.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeCompletion.m; sourceTree = "<group>"; };
+		B72DA8BA12E849EA00C12CD5 /* ECCodeCompletionString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeCompletionString.h; sourceTree = "<group>"; };
+		B72DA8BB12E849EA00C12CD5 /* ECCodeCompletionString.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeCompletionString.m; sourceTree = "<group>"; };
 		B73022F612E63CC30029269C /* edit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = edit.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B7355B0B12E8EBE800198FD9 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
 		B7355B1012E8F1C600198FD9 /* Project.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Project.xcdatamodel; sourceTree = "<group>"; };
@@ -76,6 +77,8 @@
 		B7BD531E12DF1CDB003B83B3 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		B7CC3E9F12E8F76F00149D80 /* ECCodeProject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeProject.h; sourceTree = "<group>"; };
 		B7CC3EA012E8F76F00149D80 /* ECCodeProject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeProject.m; sourceTree = "<group>"; };
+		B7DDFEEB12F5DED500EFBD32 /* ECCodeCompletionResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeCompletionResult.h; sourceTree = "<group>"; };
+		B7DDFEEC12F5DED500EFBD32 /* ECCodeCompletionResult.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeCompletionResult.m; sourceTree = "<group>"; };
 		B7FC3EAA12E5CE1E00B49A94 /* Index.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Index.h; sourceTree = "<group>"; };
 		B7FC3EAB12E5CE1E00B49A94 /* howto.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = howto.txt; sourceTree = "<group>"; };
 		B7FC3EAC12E5CE1E00B49A94 /* libclang.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libclang.dylib; sourceTree = "<group>"; };
@@ -135,8 +138,10 @@
 				B72DA8B312E8275D00C12CD5 /* ECCodeIndexer.m */,
 				B72DA8B512E8277100C12CD5 /* ECClangCodeIndexer.h */,
 				B72DA8B612E8277100C12CD5 /* ECClangCodeIndexer.m */,
-				B72DA8BA12E849EA00C12CD5 /* ECCodeCompletion.h */,
-				B72DA8BB12E849EA00C12CD5 /* ECCodeCompletion.m */,
+				B7DDFEEB12F5DED500EFBD32 /* ECCodeCompletionResult.h */,
+				B7DDFEEC12F5DED500EFBD32 /* ECCodeCompletionResult.m */,
+				B72DA8BA12E849EA00C12CD5 /* ECCodeCompletionString.h */,
+				B72DA8BB12E849EA00C12CD5 /* ECCodeCompletionString.m */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -301,10 +306,11 @@
 				B7019E5712E5E38B004FC837 /* ECPopoverTableController.m in Sources */,
 				B72DA8B412E8275D00C12CD5 /* ECCodeIndexer.m in Sources */,
 				B72DA8B712E8277100C12CD5 /* ECClangCodeIndexer.m in Sources */,
-				B72DA8BC12E849EA00C12CD5 /* ECCodeCompletion.m in Sources */,
+				B72DA8BC12E849EA00C12CD5 /* ECCodeCompletionString.m in Sources */,
 				B7355B1112E8F1C600198FD9 /* Project.xcdatamodeld in Sources */,
 				B7CC3EA112E8F76F00149D80 /* ECCodeProject.m in Sources */,
 				B76E03EE12E98F3F00E706DC /* ECCodeProjectController.m in Sources */,
+				B7DDFEED12F5DED500EFBD32 /* ECCodeCompletionResult.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

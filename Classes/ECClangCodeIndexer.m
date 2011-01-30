@@ -8,7 +8,7 @@
 
 #import "ECClangCodeIndexer.h"
 
-#import "ECCodeCompletion.h"
+#import "ECCodeCompletionString.h"
 
 @interface ECClangCodeIndexer()
 @property (nonatomic,retain) NSMutableDictionary *translationUnits;
@@ -131,7 +131,7 @@
     NSMutableArray *completions = [[[NSMutableArray alloc] init] autorelease];
     for (NSString *guess in guesses)
     {
-        [completions addObject:[ECCodeCompletion completionWithReplacementRange:replacementRange label:guess string:[guess stringByAppendingString:@" "]]];
+        [completions addObject:[ECCodeCompletionString completionWithReplacementRange:replacementRange label:guess string:[guess stringByAppendingString:@" "]]];
     }
     return completions;
 }

@@ -9,7 +9,7 @@
 #import "ECCodeProjectController.h"
 #import "Index.h"
 #import "ECClangCodeIndexer.h"
-#import "ECCodeCompletion.h"
+#import "ECCodeCompletionString.h"
 
 
 @implementation ECCodeProjectController
@@ -136,7 +136,7 @@
         [possibleCompletions addObjectsFromArray:[codeIndexer completionsWithSelection:self.codeView.selectedRange inString:self.codeView.text]];
     }
     NSMutableArray *completionLabels = [[NSMutableArray alloc] initWithCapacity:[possibleCompletions count]];
-    for (ECCodeCompletion *completion in possibleCompletions)
+    for (ECCodeCompletionString *completion in possibleCompletions)
     {
         [completionLabels addObject:completion.label];
     }
