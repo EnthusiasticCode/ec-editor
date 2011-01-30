@@ -9,6 +9,7 @@
 #import "ECCodeProjectController.h"
 #import "Index.h"
 #import "ECClangCodeIndexer.h"
+#import "ECCodeCompletion.h"
 
 
 @implementation ECCodeProjectController
@@ -22,26 +23,49 @@
     return [NSFileManager defaultManager];
 }
 
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
-    return YES;
+@synthesize codeIndexers = _codeIndexers;
+
+- (NSArray *)codeIndexers
+{
+    if (!_codeIndexers)
+        _codeIndexers = [[NSArray alloc] init];
+    return _codeIndexers;
+}
+
+@synthesize completionPopover = _completionPopover;
+
+- (ECPopoverTableController *)completionPopover
+{
+    if (!_completionPopover)
+    {
+        _completionPopover = [[ECPopoverTableController alloc] init];
+        _completionPopover.viewToPresentIn = self.codeView;
+    }   
+    return _completionPopover;
 }
 
 - (void)awakeFromNib
 {
     // viewDidLoad can be called multiple times without deallocating the view
-    if (![self.codeView.codeIndexers count])
+    if (![self.codeIndexers count])
     {
         ECClangCodeIndexer *codeIndexer = [[ECClangCodeIndexer alloc] init];
-        [self.codeView addCodeIndexer:codeIndexer];
+        [self addCodeIndexer:codeIndexer];
         [codeIndexer release];
     }
 }
 
 - (void)dealloc
 {
+    [_codeIndexers release];
+    self.completionPopover = nil;
     [project release];
     [fileManager release];
     [super dealloc];
+}
+
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
+    return YES;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -94,12 +118,47 @@
 
 - (void)textViewDidChange:(UITextView *)textView
 {
-    [(ECCodeView *)self.codeView showCompletions];
+    [self showCompletions];
 }
 
 - (void)textViewDidChangeSelection:(UITextView *)textView
 {
-    [(ECCodeView *)self.codeView showCompletions];
+    [self showCompletions];
+}
+
+- (void) addCodeIndexer:(id<ECCodeIndexer>)codeIndexer
+{
+    NSArray *oldCodeIndexers = _codeIndexers;
+    _codeIndexers = [self.codeIndexers arrayByAddingObject:codeIndexer];
+    [_codeIndexers retain];
+    [oldCodeIndexers release];
+}
+
+- (void)showCompletions
+{
+    NSMutableArray *possibleCompletions = [[NSMutableArray alloc] init];
+    for (id<ECCodeIndexer>codeIndexer in _codeIndexers)
+    {
+        [possibleCompletions addObjectsFromArray:[codeIndexer completionsWithSelection:self.codeView.selectedRange inString:self.codeView.text]];
+    }
+    NSMutableArray *completionLabels = [[NSMutableArray alloc] initWithCapacity:[possibleCompletions count]];
+    for (ECCodeCompletion *completion in possibleCompletions)
+    {
+        [completionLabels addObject:completion.label];
+    }
+    
+    self.completionPopover.didSelectRow =
+    ^ void (int row)
+    {
+        NSRange replacementRange = [[possibleCompletions objectAtIndex:row] replacementRange];
+        NSString *replacementString = [[possibleCompletions objectAtIndex:row] string];
+        self.codeView.text = [self.codeView.text stringByReplacingCharactersInRange:replacementRange withString:replacementString];
+    };
+    //    self.completionPopover.popoverRect = [self firstRectForRange:[self selectedRange]];
+    self.completionPopover.strings = completionLabels;
+    
+    [completionLabels release];
+    [possibleCompletions release];
 }
 
 @end

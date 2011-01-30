@@ -8,11 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-/*! Object representing any possible completion.
- *
- * For use with the ECCodeView view.
- * Related: ECCodeViewCodeIndexer protocol.
- */
+/*! Object representing any possible completion. */
 @interface ECCodeCompletion : NSObject {
     
 }

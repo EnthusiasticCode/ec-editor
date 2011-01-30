@@ -37,7 +37,6 @@
 		B7FC3EAD12E5CE1E00B49A94 /* howto.txt in Resources */ = {isa = PBXBuildFile; fileRef = B7FC3EAB12E5CE1E00B49A94 /* howto.txt */; };
 		B7FC3EAE12E5CE1E00B49A94 /* libclang.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B7FC3EAC12E5CE1E00B49A94 /* libclang.dylib */; };
 		B7FC3EB012E5CE2700B49A94 /* libclang.dylib in Resources */ = {isa = PBXBuildFile; fileRef = B7FC3EAC12E5CE1E00B49A94 /* libclang.dylib */; };
-		CD0B939712E2043C00765E4A /* ECCodeView.m in Sources */ = {isa = PBXBuildFile; fileRef = CD0B939612E2043C00765E4A /* ECCodeView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -80,8 +79,6 @@
 		B7FC3EAA12E5CE1E00B49A94 /* Index.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Index.h; sourceTree = "<group>"; };
 		B7FC3EAB12E5CE1E00B49A94 /* howto.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = howto.txt; sourceTree = "<group>"; };
 		B7FC3EAC12E5CE1E00B49A94 /* libclang.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libclang.dylib; sourceTree = "<group>"; };
-		CD0B939512E2043C00765E4A /* ECCodeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeView.h; sourceTree = "<group>"; };
-		CD0B939612E2043C00765E4A /* ECCodeView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -140,8 +137,6 @@
 				B72DA8B612E8277100C12CD5 /* ECClangCodeIndexer.m */,
 				B72DA8BA12E849EA00C12CD5 /* ECCodeCompletion.h */,
 				B72DA8BB12E849EA00C12CD5 /* ECCodeCompletion.m */,
-				CD0B939512E2043C00765E4A /* ECCodeView.h */,
-				CD0B939612E2043C00765E4A /* ECCodeView.m */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -303,7 +298,6 @@
 			files = (
 				B736173B12DA112A009801D4 /* edit-main.m in Sources */,
 				B736173E12DA112A009801D4 /* editAppDelegate.m in Sources */,
-				CD0B939712E2043C00765E4A /* ECCodeView.m in Sources */,
 				B7019E5712E5E38B004FC837 /* ECPopoverTableController.m in Sources */,
 				B72DA8B412E8275D00C12CD5 /* ECCodeIndexer.m in Sources */,
 				B72DA8B712E8277100C12CD5 /* ECClangCodeIndexer.m in Sources */,
