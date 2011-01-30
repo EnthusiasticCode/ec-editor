@@ -10,6 +10,7 @@
 
 #import "ECCodeProject.h"
 #import "ECCodeProjectController.h"
+#import "ECClangCodeIndexer.h"
 
 @implementation editAppDelegate
 
@@ -23,6 +24,7 @@
     rootController = (ECCodeProjectController *) window.rootViewController;
     // directory must exist
     [rootController loadProject:@"edit" from:[[self applicationDocumentsDirectory] stringByAppendingPathComponent:@"edit/"]];
+    rootController.codeIndexer = [[ECClangCodeIndexer alloc] init];
     [window addSubview:rootController.view];
     [window makeKeyAndVisible];
     return YES;

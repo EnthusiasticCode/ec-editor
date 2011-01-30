@@ -18,9 +18,18 @@
 @synthesize rootDirectory;
 @synthesize name;
 
-- (id)init
++ (BOOL)instancesRespondToSelector:(SEL)aSelector
 {
-    @throw [NSException exceptionWithName:@"Invalid call to init" reason:@"ECCodeProject can only be initialized through initWithRootDirectory:name:" userInfo:nil];
+    if (aSelector == @selector(init))
+        return NO;
+    return [super instancesRespondToSelector:aSelector];
+}
+
+- (BOOL)respondsToSelector:(SEL)aSelector
+{
+    if (aSelector == @selector(init))
+        return NO;
+    return [super respondsToSelector:aSelector];
 }
 
 - (id)initWithRootDirectory:(NSString *)theRootDirectory name:(NSString *)theName

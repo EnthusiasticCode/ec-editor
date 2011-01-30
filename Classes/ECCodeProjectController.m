@@ -9,27 +9,28 @@
 #import "ECCodeProjectController.h"
 #import "Index.h"
 #import "ECClangCodeIndexer.h"
-#import "ECCodeCompletionString.h"
+#import "ECCompletionString.h"
 
 
 @implementation ECCodeProjectController
 
 @synthesize project;
-@synthesize fileManager;
 @synthesize codeView;
+@synthesize codeIndexer;
+@synthesize possibleCompletions = _possibleCompletions;
+
+- (NSMutableArray *)possibleCompletions
+{
+    if (!_possibleCompletions)
+        _possibleCompletions = [[NSMutableArray alloc] init];
+    return _possibleCompletions;
+}
+
+@synthesize fileManager;
 
 - (NSFileManager *)fileManager
 {
     return [NSFileManager defaultManager];
-}
-
-@synthesize codeIndexers = _codeIndexers;
-
-- (NSArray *)codeIndexers
-{
-    if (!_codeIndexers)
-        _codeIndexers = [[NSArray alloc] init];
-    return _codeIndexers;
 }
 
 @synthesize completionPopover = _completionPopover;
@@ -44,20 +45,10 @@
     return _completionPopover;
 }
 
-- (void)awakeFromNib
-{
-    // viewDidLoad can be called multiple times without deallocating the view
-    if (![self.codeIndexers count])
-    {
-        ECClangCodeIndexer *codeIndexer = [[ECClangCodeIndexer alloc] init];
-        [self addCodeIndexer:codeIndexer];
-        [codeIndexer release];
-    }
-}
-
 - (void)dealloc
 {
-    [_codeIndexers release];
+    self.codeView = nil;
+    self.codeIndexer = nil;
     self.completionPopover = nil;
     [project release];
     [fileManager release];
@@ -98,10 +89,7 @@
 
 - (void)loadFile:(NSString *)file
 {
-    for (id<ECCodeIndexer>codeIndexer in _codeIndexers)
-    {
-        [codeIndexer loadFile:file];
-    }
+    [self.codeIndexer loadFile:file];
     self.codeView.text = [NSString stringWithContentsOfFile:file encoding:NSUTF8StringEncoding error:nil];
 }
 
@@ -120,39 +108,31 @@
     [self showCompletions];
 }
 
-- (void) addCodeIndexer:(id<ECCodeIndexer>)codeIndexer
+- (void)applyCompletion:(int)completionIndex
 {
-    NSArray *oldCodeIndexers = _codeIndexers;
-    _codeIndexers = [self.codeIndexers arrayByAddingObject:codeIndexer];
-    [_codeIndexers retain];
-    [oldCodeIndexers release];
+    NSString *completionText = [[[self.possibleCompletions objectAtIndex:completionIndex] firstChunkWithKind:CXCompletionChunk_TypedText] string];
+    self.codeView.text = [self.codeView.text stringByReplacingCharactersInRange:[(ECClangCodeIndexer *)self.codeIndexer completionRangeWithSelection:self.codeView.selectedRange inString:self.codeView.text] withString:completionText];
 }
 
 - (void)showCompletions
 {
-    NSMutableArray *possibleCompletions = [[NSMutableArray alloc] init];
-    for (id<ECCodeIndexer>codeIndexer in _codeIndexers)
+    [self.possibleCompletions removeAllObjects];
+    [self.possibleCompletions addObjectsFromArray:[self.codeIndexer completionsWithSelection:self.codeView.selectedRange inString:self.codeView.text]];
+    NSMutableArray *completionLabels = [[NSMutableArray alloc] initWithCapacity:[self.possibleCompletions count]];
+    for (ECCompletionString *completion in self.possibleCompletions)
     {
-        [possibleCompletions addObjectsFromArray:[codeIndexer completionsWithSelection:self.codeView.selectedRange inString:self.codeView.text]];
-    }
-    NSMutableArray *completionLabels = [[NSMutableArray alloc] initWithCapacity:[possibleCompletions count]];
-    for (ECCodeCompletionString *completion in possibleCompletions)
-    {
-        [completionLabels addObject:completion.label];
+        [completionLabels addObject:[[completion firstChunkWithKind:CXCompletionChunk_TypedText] string]];
     }
     
     self.completionPopover.didSelectRow =
     ^ void (int row)
     {
-        NSRange replacementRange = [[possibleCompletions objectAtIndex:row] replacementRange];
-        NSString *replacementString = [[possibleCompletions objectAtIndex:row] string];
-        self.codeView.text = [self.codeView.text stringByReplacingCharactersInRange:replacementRange withString:replacementString];
+        [self applyCompletion:row];
     };
     //    self.completionPopover.popoverRect = [self firstRectForRange:[self selectedRange]];
     self.completionPopover.strings = completionLabels;
     
     [completionLabels release];
-    [possibleCompletions release];
 }
 
 @end

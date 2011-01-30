@@ -1,0 +1,52 @@
+//
+//  ECCompletionResult.m
+//  edit
+//
+//  Created by Uri Baghin on 1/30/11.
+//  Copyright 2011 __MyCompanyName__. All rights reserved.
+//
+
+#import "ECCompletionResult.h"
+
+
+@implementation ECCompletionResult
+
+@synthesize cursorKind = _cursorKind;
+@synthesize completionString = _completionString;
+
+- (void)dealloc {
+    [_completionString release];
+    [super dealloc];
+}
+
++ (BOOL)instancesRespondToSelector:(SEL)aSelector
+{
+    if (aSelector == @selector(init))
+        return NO;
+    return [super instancesRespondToSelector:aSelector];
+}
+
+- (BOOL)respondsToSelector:(SEL)aSelector
+{
+    if (aSelector == @selector(init))
+        return NO;
+    return [super respondsToSelector:aSelector];
+}
+
+- (id)initWithCursorKind:(int)cursorKind completionString:(ECCompletionString *)completionString
+{
+    self = [super init];
+    if (self)
+    {
+        _cursorKind = cursorKind;
+        _completionString = [completionString retain];
+    }
+    return self;
+}
+
+- (id)initWithCompletionString:(ECCompletionString *)completionString
+{
+    return [self initWithCursorKind:0 completionString:completionString];
+}
+
+@end

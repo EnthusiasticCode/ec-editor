@@ -17,13 +17,11 @@
 @property (nonatomic, retain, readonly) ECCodeProject *project;
 @property (nonatomic, retain, readonly) NSFileManager *fileManager;
 @property (nonatomic, retain) IBOutlet UITextView *codeView;
-/* An array of all currently loaded completion providers. */
-@property (nonatomic, readonly, copy) NSArray *codeIndexers;
+@property (nonatomic, retain) ECCodeIndexer *codeIndexer;
 // popovertable used to display completions
 @property (nonatomic, retain) ECPopoverTableController *completionPopover;
+@property (nonatomic, retain) NSMutableArray *possibleCompletions;
 
-/* Add a new code indexer. It is not checked for duplicity. */
-- (void)addCodeIndexer:(id<ECCodeIndexer>)codeIndexer;
 // display the completion popovertable if possible
 - (void)showCompletions;
 
