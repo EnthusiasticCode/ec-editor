@@ -18,4 +18,7 @@
 - (id)initWithKind:(int)kind string:(NSString *)string;
 - (id)initWithString:(NSString *)string;
 
++ (id)chunkWithKind:(int)kind string:(NSString *)string;
++ (id)chunkWithString:(NSString *)string;
+
 @end

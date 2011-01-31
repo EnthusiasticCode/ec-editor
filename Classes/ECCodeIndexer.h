@@ -9,19 +9,7 @@
 #import <Foundation/Foundation.h>
 
 
-/*! Protocol that describes interaction with code indexers. */
-@protocol ECCodeIndexer <NSObject>
-/*! Returns possible completions considering the parameters.
- *
- *\param selection The range of the currently selected text.
- *\param string A string representing the whole scope containing the selection.
- */
-- (NSArray *)completionsWithSelection:(NSRange)selection inString:(NSString *)string;
-- (void)loadFile:(NSString *)file;
-- (void)unloadFile:(NSString *)file;
-- (NSArray *)files;
-
-@end
+//TODO: turn this into a class cluster: http://seanmurph.com/weblog/make-your-own-abstract-factory-class-cluster-in-objective-c/
 
 /*! Superclass of all code indexers. Implement language agnostic functionality here.
  *
@@ -30,5 +18,15 @@
 @interface ECCodeIndexer : NSObject {
 
 }
+/*! Returns possible completions considering the parameters.
+ *
+ *\param selection The range of the currently selected text.
+ *\param string A string representing the whole scope containing the selection.
+ */
+- (NSArray *)completionsWithSelection:(NSRange)selection inString:(NSString *)string;
+- (NSRange)completionRangeWithSelection:(NSRange)selection inString:(NSString *)string;
+- (void)loadFile:(NSString *)file;
+- (void)unloadFile:(NSString *)file;
+- (NSArray *)files;
 
 @end

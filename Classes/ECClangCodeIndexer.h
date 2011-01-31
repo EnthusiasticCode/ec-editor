@@ -7,18 +7,18 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <UIKit/UITextChecker.h>
 
 #import "ECCodeIndexer.h"
-#import "Index.h"
+#ifndef CLANG_C_INDEX_H
+typedef void *CXIndex;
+#endif
+@class UITextChecker;
 
 /*! Clang code indexer. Provides completion and syntax checking through Clang. */
-@interface ECClangCodeIndexer : ECCodeIndexer <ECCodeIndexer> {
+@interface ECClangCodeIndexer : ECCodeIndexer{
 
 }
 @property (nonatomic, readonly) CXIndex cIndex;
 @property (nonatomic, retain) UITextChecker *textChecker;
-
-- (NSRange)completionRangeWithSelection:(NSRange)selection inString:(NSString *)string;
 
 @end

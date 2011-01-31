@@ -7,8 +7,9 @@
 //
 
 #import "ECCodeProjectController.h"
-#import "Index.h"
-#import "ECClangCodeIndexer.h"
+#import "ECCodeProject.h"
+#import "ECCodeIndexer.h"
+#import "ECPopoverTableController.h"
 #import "ECCompletionString.h"
 
 
@@ -110,8 +111,8 @@
 
 - (void)applyCompletion:(int)completionIndex
 {
-    NSString *completionText = [[[self.possibleCompletions objectAtIndex:completionIndex] firstChunkWithKind:CXCompletionChunk_TypedText] string];
-    self.codeView.text = [self.codeView.text stringByReplacingCharactersInRange:[(ECClangCodeIndexer *)self.codeIndexer completionRangeWithSelection:self.codeView.selectedRange inString:self.codeView.text] withString:completionText];
+    NSString *completionText = [[[self.possibleCompletions objectAtIndex:completionIndex] firstChunk] string];
+    self.codeView.text = [self.codeView.text stringByReplacingCharactersInRange:[self.codeIndexer completionRangeWithSelection:self.codeView.selectedRange inString:self.codeView.text] withString:[completionText stringByAppendingString:@" "]];
 }
 
 - (void)showCompletions
@@ -121,7 +122,7 @@
     NSMutableArray *completionLabels = [[NSMutableArray alloc] initWithCapacity:[self.possibleCompletions count]];
     for (ECCompletionString *completion in self.possibleCompletions)
     {
-        [completionLabels addObject:[[completion firstChunkWithKind:CXCompletionChunk_TypedText] string]];
+        [completionLabels addObject:[[completion firstChunk] string]];
     }
     
     self.completionPopover.didSelectRow =

@@ -35,4 +35,16 @@
     return [self initWithKind:0 string:string];
 }
 
++ (id)chunkWithKind:(int)kind string:(NSString *)string
+{
+    id chunk = [self alloc];
+    chunk = [chunk initWithKind:kind string:string];
+    return [chunk autorelease];
+}
+
++ (id)chunkWithString:(NSString *)string
+{
+    return [self chunkWithKind:0 string:string];
+}
+
 @end

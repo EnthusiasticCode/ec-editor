@@ -6,12 +6,15 @@
 //  Copyright 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import "ECClangCodeIndexer.h"
 #import "Index.h"
+#import "ECClangCodeIndexer.h"
 
 #import "ECCompletionResult.h"
 #import "ECCompletionString.h"
 #import "ECCompletionChunk.h"
+
+#import <objc/message.h>
+
 
 @interface ECClangCodeIndexer()
 @property (nonatomic,retain) NSMutableDictionary *translationUnits;
@@ -40,7 +43,11 @@
 
 - (id)init
 {
-    self = [super init];
+    // crazy hack to send init to grandparent class instead of parent class, needed to init instances of class cluster without looping
+    struct objc_super grandsuper;
+    grandsuper.receiver = self;
+    grandsuper.super_class = [[self superclass] superclass];
+    self = objc_msgSendSuper(&grandsuper, _cmd);
     if (self)
     {
         _cIndex = clang_createIndex(0, 0);
@@ -104,29 +111,6 @@
     return [self.translationUnits allKeys];
 }
 
-- (NSRange)completionRangeWithSelection:(NSRange)selection inString:(NSString *)string
-{
-    if (selection.length || !selection.location) return NSMakeRange(NSNotFound, 0); //range of text is selected or caret is at beginning of file
-    
-    NSUInteger precedingCharacterIndex = selection.location - 1;
-    NSUInteger precedingCharacter = [string characterAtIndex:precedingCharacterIndex];
-    
-    if (precedingCharacter < 65 || precedingCharacter > 122) return NSMakeRange(NSNotFound, 0); //character is not a letter
-    
-    while (precedingCharacterIndex)
-    {
-        if (precedingCharacter < 65 || precedingCharacter > 122) //character is not a letter
-        {
-            NSUInteger length = selection.location - (precedingCharacterIndex + 1);
-            if (length)
-                return NSMakeRange(precedingCharacterIndex + 1, length);
-        }
-        precedingCharacterIndex--;
-        precedingCharacter = [string characterAtIndex:precedingCharacterIndex];
-    }
-    return NSMakeRange(0, selection.location); //if control has reached this point all character between the caret and the beginning of file are letters
-}
-
 - (NSArray *)completionsWithSelection:(NSRange)selection inString:(NSString *)string;
 {    
     NSRange replacementRange = [self completionRangeWithSelection:selection inString:string];
@@ -134,7 +118,7 @@
     NSMutableArray *completions = [[[NSMutableArray alloc] init] autorelease];
     for (NSString *guess in guesses)
     {
-        [completions addObject:[[[ECCompletionString alloc] initWithCompletionChunks:[[[NSArray alloc] initWithObjects:[[[ECCompletionChunk alloc] initWithKind:CXCompletionChunk_TypedText string:guess] autorelease], nil] autorelease]] autorelease]];
+        [completions addObject:[ECCompletionString stringWithCompletionChunks:[NSArray arrayWithObject:[ECCompletionChunk chunkWithKind:CXCompletionChunk_TypedText string:guess]]]];
     }
     return completions;
 }

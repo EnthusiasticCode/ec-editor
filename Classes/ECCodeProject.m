@@ -7,6 +7,7 @@
 //
 
 #import "ECCodeProject.h"
+#import <CoreData/CoreData.h>
 
 
 @implementation ECCodeProject

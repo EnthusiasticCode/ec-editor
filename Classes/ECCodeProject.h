@@ -7,7 +7,9 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <CoreData/CoreData.h>
+@class NSManagedObjectContext;
+@class NSManagedObjectModel;
+@class NSPersistentStoreCoordinator;
 
 
 @interface ECCodeProject : NSObject {

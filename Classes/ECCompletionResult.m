@@ -49,4 +49,16 @@
     return [self initWithCursorKind:0 completionString:completionString];
 }
 
++ (id)resultWithCursorKind:(int)cursorKind completionString:(ECCompletionString *)completionString
+{
+    id *result = [self alloc];
+    result = [result initWithCursorKind:cursorKind completionString:completionString];
+    return [result autorelease];
+}
+
++ (id)resultWithCompletionString:(ECCompletionString *)completionString
+{
+    return [self resultWithCursorKind:0 completionString:completionString];
+}
+
 @end

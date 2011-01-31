@@ -40,6 +40,13 @@
     return self;
 }
 
++ (id)stringWithCompletionChunks:(NSArray *)completionChunks
+{
+    id string = [self alloc];
+    string = [string initWithCompletionChunks:completionChunks];
+    return [string autorelease];
+}
+
 - (ECCompletionChunk *)firstChunkWithKind:(int)kind
 {
     for (ECCompletionChunk *chunk in self.completionChunks)
@@ -47,6 +54,13 @@
         if (chunk.kind == kind)
             return chunk;
     }
+    return nil;
+}
+
+- (ECCompletionChunk *)firstChunk
+{
+    if (self.completionChunks && [self.completionChunks count])
+        return [self.completionChunks objectAtIndex:0];
     return nil;
 }
 

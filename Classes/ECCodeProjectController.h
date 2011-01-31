@@ -7,9 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "ECCodeProject.h"
-#import "ECCodeIndexer.h"
-#import "ECPopoverTableController.h"
+@class ECPopoverTableController;
+@class ECCodeIndexer;
+@class ECCodeProject;
 
 @interface ECCodeProjectController : UISplitViewController <UITableViewDataSource, UITableViewDelegate> {
     

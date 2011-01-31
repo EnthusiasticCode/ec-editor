@@ -8,8 +8,6 @@
 
 #import "ECPopoverTableController.h"
 
-#import <UIKit/UILabel.h>
-
 
 @implementation ECPopoverTableController
 

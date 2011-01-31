@@ -19,4 +19,7 @@
 - (id)initWithCursorKind:(int)cursorKind completionString:(ECCompletionString *)completionString;
 - (id)initWithCompletionString:(ECCompletionString *)completionString;
 
++ (id)resultWithCursorKind:(int)cursorKind completionString:(ECCompletionString *)completionString;
++ (id)resultWithCompletionString:(ECCompletionString *)completionString;
+
 @end

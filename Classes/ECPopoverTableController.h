@@ -6,9 +6,7 @@
 //  Copyright 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import <UIKit/UITableViewController.h>
-#import <UIKit/UIPopoverController.h>
-#import <UIKit/UIView.h>
+#import <UIKit/UIKit.h>
 
 /*! A UIViewController subclass which manages a UITableView presented with a UIPopoverController.
  *
