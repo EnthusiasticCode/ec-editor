@@ -27,12 +27,20 @@
     CTFrameRef contentFrame;
     CGPoint contentFrameOrigin;
     
+    // 
+    CTFontRef defaultCTFont;
+    
     // Flags
     // TODO create smaller struct?
     BOOL contentFrameInvalid;
 }
 
-// Inset of the text in the rendering frame specified in text space.
-@property (nonatomic, assign) UIEdgeInsets textInset;
+@property (nonatomic, retain) NSString *text;
+
+@property (nonatomic, readwrite) CTParagraphStyleRef defaultParagraphStyle;
+@property (nonatomic, readwrite, retain) UIFont *defaultFont;
+@property (nonatomic, readwrite, retain) UIColor *defaultTextColor;
+
+- (void)addErrorAtRange:(UITextRange*)range;
 
 @end

@@ -10,21 +10,72 @@
 
 
 @implementation ECCodeView
-@synthesize textInset;
+@synthesize text;
+@synthesize defaultParagraphStyle, defaultFont, defaultTextColor;
 
+- (void)setText:(NSString *)aString
+{
+    if (aString != text)
+    {
+        [text release];
+        text = [aString retain];
+        // Create content string with default attributes
+        if (!content || ![content length])
+        {
+            NSMutableDictionary *defaultAttributes = [NSMutableDictionary dictionary];
+            if (defaultParagraphStyle)
+                [defaultAttributes setObject:(id)defaultParagraphStyle forKey:(id)kCTParagraphStyleAttributeName];
+            if (defaultCTFont)
+                [defaultAttributes setObject:(id)defaultCTFont forKey:(id)kCTFontAttributeName];
+            if (defaultTextColor)
+                [defaultAttributes setObject:(id)[defaultTextColor CGColor] forKey:(id)kCTForegroundColorAttributeName];
+            content = [[NSMutableAttributedString alloc] initWithString:@"\n" attributes:defaultAttributes];
+        }
+        // TODO call before mutate
+        NSInteger len = [content length];
+        if (text)
+        {
+            [content replaceCharactersInRange:(NSRange){0, len - 1} withString:text];
+            len = [content length];
+            if (len > 1)
+                [content setAttributes:[content attributesAtIndex:len - 2 effectiveRange:NULL] range:(NSRange){len - 1, 1}];
+        }
+        else
+        {
+            if (len > 1)
+                [content deleteCharactersInRange:(NSRange){0, len - 1}];
+        }
+        // TODO call after mutate
+//        [self unmarkText];
+        // TODO set selection to end
+        // TODO call delegate's textdidcahnge
+        [self setNeedsDisplay];
+    }
+}
+
+- (void)setDefaultFont:(UIFont *)aFont
+{
+    if (defaultFont != aFont)
+    {
+        [defaultFont release];
+        defaultFont = [aFont retain];
+        if (defaultCTFont)
+        {
+            CFRelease(defaultCTFont);
+        }
+        defaultCTFont = CTFontCreateWithName((CFStringRef)defaultFont.fontName, defaultFont.pointSize, &CGAffineTransformIdentity);
+    }
+}
+
+#pragma mark Initializations
 
 - (id)initWithFrame:(CGRect)frame 
 {
     if ((self = [super initWithFrame:frame])) 
-    {
-        CTFontRef font = CTFontCreateWithName((CFStringRef)@"Courier New", 12.0, &CGAffineTransformIdentity);
-        NSDictionary *attributes = [NSDictionary dictionaryWithObject:(id)font forKey:(id)kCTFontAttributeName];
-        
-        content = [[NSMutableAttributedString alloc] initWithString:@"int main(arguments)\n{\n\treturn 0;\n}\n" attributes:attributes];
-        
-        CFRelease(font);
-        
-        textInset = UIEdgeInsetsMake(10, 10, 0, 0);
+    { 
+        self.contentInset = UIEdgeInsetsMake(10, 10, 0, 0);
+        self.defaultFont = [UIFont fontWithName:@"Courier New" size:12];
+        self.text = @"int main(arguments)\n{\n\treturn 0;\n}";
         
         [super setContentMode:UIViewContentModeRedraw];
     }
@@ -74,6 +125,7 @@
     }
     
     // Render core text content frame
+    UIEdgeInsets inset = self.contentInset;
     while (!contentFrame)
     {
         // Setup rendering path
@@ -87,7 +139,7 @@
         //CGSize frameSize = CTFramesetterSuggestFrameSizeWithConstraints(frameSetter, (CFRange){0, 0}, NULL, bounds.size, &fitRange);
         
         // TODO? Calculating the rendering coordinate position of the text layout origin
-        contentFrameOrigin = CGPointMake(textInset.left, -textInset.top);
+        contentFrameOrigin = CGPointMake(inset.left, -inset.top);
         
         // TODO call delegate layoutChanged
     }
@@ -96,8 +148,12 @@
     // TODO draw selection
     
     // Transform to flipped rendering space
-    CGContextTranslateCTM(context, 0, bounds.size.height);
-    CGContextScaleCTM(context, 1.0, -1.0);
+    CGFloat scale = self.zoomScale;
+    CGContextConcatCTM(context, (CGAffineTransform){
+        scale, 0,
+        0, -scale,
+        bounds.origin.x, bounds.origin.y + bounds.size.height
+    });    
     
     // Draw core text frame
     // TODO! clip on rect
@@ -135,5 +191,12 @@
 //	}
 //	[super touchesEnded:touches withEvent:event];
 //}
+
+#pragma mark Code view methods
+
+- (void)addErrorAtRange:(UITextRange*)range
+{
+    
+}
 
 @end
