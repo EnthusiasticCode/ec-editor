@@ -25,8 +25,10 @@
  */
 - (NSArray *)completionsWithSelection:(NSRange)selection inString:(NSString *)string;
 - (NSRange)completionRangeWithSelection:(NSRange)selection inString:(NSString *)string;
+- (void)setActiveFile:(NSString *)file;
 - (void)loadFile:(NSString *)file;
 - (void)unloadFile:(NSString *)file;
 - (NSArray *)files;
+- (NSArray *)diagnostics;
 
 @end

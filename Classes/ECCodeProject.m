@@ -19,20 +19,6 @@
 @synthesize rootDirectory;
 @synthesize name;
 
-+ (BOOL)instancesRespondToSelector:(SEL)aSelector
-{
-    if (aSelector == @selector(init))
-        return NO;
-    return [super instancesRespondToSelector:aSelector];
-}
-
-- (BOOL)respondsToSelector:(SEL)aSelector
-{
-    if (aSelector == @selector(init))
-        return NO;
-    return [super respondsToSelector:aSelector];
-}
-
 - (id)initWithRootDirectory:(NSString *)theRootDirectory name:(NSString *)theName
 {
     self = [super init];

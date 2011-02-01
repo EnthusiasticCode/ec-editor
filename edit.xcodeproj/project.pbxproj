@@ -32,7 +32,12 @@
 		B7759ED012E062B5006E99E7 /* OUITextSelectionHandle.png in Resources */ = {isa = PBXBuildFile; fileRef = B7759EC812E062B5006E99E7 /* OUITextSelectionHandle.png */; };
 		B7759ED112E062B5006E99E7 /* OUITextSelectionOverlay.png in Resources */ = {isa = PBXBuildFile; fileRef = B7759EC912E062B5006E99E7 /* OUITextSelectionOverlay.png */; };
 		B78A18ED12E764A300E259E0 /* doxygen.conf in Resources */ = {isa = PBXBuildFile; fileRef = B78A18EC12E764A300E259E0 /* doxygen.conf */; };
+		B793CE2612F85D8C00999DC1 /* ECClangTranslationUnit.m in Sources */ = {isa = PBXBuildFile; fileRef = B793CE2512F85D8C00999DC1 /* ECClangTranslationUnit.m */; };
 		B7BD531F12DF1CDB003B83B3 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7BD531E12DF1CDB003B83B3 /* QuartzCore.framework */; };
+		B7C4D8AF12F87F850039327B /* ECDiagnostic.m in Sources */ = {isa = PBXBuildFile; fileRef = B7C4D8AE12F87F850039327B /* ECDiagnostic.m */; };
+		B7C4D8B312F8867C0039327B /* ECFixIt.m in Sources */ = {isa = PBXBuildFile; fileRef = B7C4D8B212F8867C0039327B /* ECFixIt.m */; };
+		B7C4D8B612F887710039327B /* ECSourceLocation.m in Sources */ = {isa = PBXBuildFile; fileRef = B7C4D8B512F887710039327B /* ECSourceLocation.m */; };
+		B7C4D8B912F8877A0039327B /* ECSourceRange.m in Sources */ = {isa = PBXBuildFile; fileRef = B7C4D8B812F8877A0039327B /* ECSourceRange.m */; };
 		B7CC3EA112E8F76F00149D80 /* ECCodeProject.m in Sources */ = {isa = PBXBuildFile; fileRef = B7CC3EA012E8F76F00149D80 /* ECCodeProject.m */; };
 		B7DDFEED12F5DED500EFBD32 /* ECCompletionResult.m in Sources */ = {isa = PBXBuildFile; fileRef = B7DDFEEC12F5DED500EFBD32 /* ECCompletionResult.m */; };
 		B7DDFEF312F5EF0900EFBD32 /* ECCompletionChunk.m in Sources */ = {isa = PBXBuildFile; fileRef = B7DDFEF212F5EF0900EFBD32 /* ECCompletionChunk.m */; };
@@ -75,7 +80,18 @@
 		B7759EC812E062B5006E99E7 /* OUITextSelectionHandle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = OUITextSelectionHandle.png; sourceTree = "<group>"; };
 		B7759EC912E062B5006E99E7 /* OUITextSelectionOverlay.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = OUITextSelectionOverlay.png; sourceTree = "<group>"; };
 		B78A18EC12E764A300E259E0 /* doxygen.conf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = doxygen.conf; sourceTree = "<group>"; };
+		B793CE2212F77E5100999DC1 /* c-index-test.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = "c-index-test.c"; sourceTree = "<group>"; };
+		B793CE2412F85D8C00999DC1 /* ECClangTranslationUnit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECClangTranslationUnit.h; sourceTree = "<group>"; };
+		B793CE2512F85D8C00999DC1 /* ECClangTranslationUnit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECClangTranslationUnit.m; sourceTree = "<group>"; };
 		B7BD531E12DF1CDB003B83B3 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		B7C4D8AD12F87F850039327B /* ECDiagnostic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECDiagnostic.h; sourceTree = "<group>"; };
+		B7C4D8AE12F87F850039327B /* ECDiagnostic.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECDiagnostic.m; sourceTree = "<group>"; };
+		B7C4D8B112F8867C0039327B /* ECFixIt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECFixIt.h; sourceTree = "<group>"; };
+		B7C4D8B212F8867C0039327B /* ECFixIt.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECFixIt.m; sourceTree = "<group>"; };
+		B7C4D8B412F887710039327B /* ECSourceLocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECSourceLocation.h; sourceTree = "<group>"; };
+		B7C4D8B512F887710039327B /* ECSourceLocation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECSourceLocation.m; sourceTree = "<group>"; };
+		B7C4D8B712F8877A0039327B /* ECSourceRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECSourceRange.h; sourceTree = "<group>"; };
+		B7C4D8B812F8877A0039327B /* ECSourceRange.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECSourceRange.m; sourceTree = "<group>"; };
 		B7CC3E9F12E8F76F00149D80 /* ECCodeProject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeProject.h; sourceTree = "<group>"; };
 		B7CC3EA012E8F76F00149D80 /* ECCodeProject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeProject.m; sourceTree = "<group>"; };
 		B7DDFEEB12F5DED500EFBD32 /* ECCompletionResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCompletionResult.h; sourceTree = "<group>"; };
@@ -139,8 +155,18 @@
 				B7019E5612E5E38B004FC837 /* ECPopoverTableController.m */,
 				B72DA8B212E8275D00C12CD5 /* ECCodeIndexer.h */,
 				B72DA8B312E8275D00C12CD5 /* ECCodeIndexer.m */,
+				B793CE2412F85D8C00999DC1 /* ECClangTranslationUnit.h */,
+				B793CE2512F85D8C00999DC1 /* ECClangTranslationUnit.m */,
 				B72DA8B512E8277100C12CD5 /* ECClangCodeIndexer.h */,
 				B72DA8B612E8277100C12CD5 /* ECClangCodeIndexer.m */,
+				B7C4D8B412F887710039327B /* ECSourceLocation.h */,
+				B7C4D8B512F887710039327B /* ECSourceLocation.m */,
+				B7C4D8B712F8877A0039327B /* ECSourceRange.h */,
+				B7C4D8B812F8877A0039327B /* ECSourceRange.m */,
+				B7C4D8B112F8867C0039327B /* ECFixIt.h */,
+				B7C4D8B212F8867C0039327B /* ECFixIt.m */,
+				B7C4D8AD12F87F850039327B /* ECDiagnostic.h */,
+				B7C4D8AE12F87F850039327B /* ECDiagnostic.m */,
 				B7DDFEEB12F5DED500EFBD32 /* ECCompletionResult.h */,
 				B7DDFEEC12F5DED500EFBD32 /* ECCompletionResult.m */,
 				B72DA8BA12E849EA00C12CD5 /* ECCompletionString.h */,
@@ -231,6 +257,7 @@
 				B7FC3EAA12E5CE1E00B49A94 /* Index.h */,
 				B7FC3EAB12E5CE1E00B49A94 /* howto.txt */,
 				B7FC3EAC12E5CE1E00B49A94 /* libclang.dylib */,
+				B793CE2212F77E5100999DC1 /* c-index-test.c */,
 			);
 			path = libclang;
 			sourceTree = "<group>";
@@ -317,6 +344,11 @@
 				B76E03EE12E98F3F00E706DC /* ECCodeProjectController.m in Sources */,
 				B7DDFEED12F5DED500EFBD32 /* ECCompletionResult.m in Sources */,
 				B7DDFEF312F5EF0900EFBD32 /* ECCompletionChunk.m in Sources */,
+				B793CE2612F85D8C00999DC1 /* ECClangTranslationUnit.m in Sources */,
+				B7C4D8AF12F87F850039327B /* ECDiagnostic.m in Sources */,
+				B7C4D8B312F8867C0039327B /* ECFixIt.m in Sources */,
+				B7C4D8B612F887710039327B /* ECSourceLocation.m in Sources */,
+				B7C4D8B912F8877A0039327B /* ECSourceRange.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

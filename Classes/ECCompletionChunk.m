@@ -14,7 +14,8 @@
 @synthesize kind = _kind;
 @synthesize string = _string;
 
-- (void)dealloc {
+- (void)dealloc
+{
     [_string release];
     [super dealloc];
 }

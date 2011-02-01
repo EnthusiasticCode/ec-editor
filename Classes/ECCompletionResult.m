@@ -14,23 +14,10 @@
 @synthesize cursorKind = _cursorKind;
 @synthesize completionString = _completionString;
 
-- (void)dealloc {
+- (void)dealloc
+{
     [_completionString release];
     [super dealloc];
-}
-
-+ (BOOL)instancesRespondToSelector:(SEL)aSelector
-{
-    if (aSelector == @selector(init))
-        return NO;
-    return [super instancesRespondToSelector:aSelector];
-}
-
-- (BOOL)respondsToSelector:(SEL)aSelector
-{
-    if (aSelector == @selector(init))
-        return NO;
-    return [super respondsToSelector:aSelector];
 }
 
 - (id)initWithCursorKind:(int)cursorKind completionString:(ECCompletionString *)completionString
