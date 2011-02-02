@@ -8,10 +8,13 @@
 
 #import "ECCodeView.h"
 
+const NSString* ECCodeDefaultText = @"Default";
+const NSString* ECCodeKeyword = @"Keyword";
+const NSString* ECCodeComment = @"Comment";
 
 @implementation ECCodeView
 @synthesize text;
-@synthesize defaultParagraphStyle, defaultFont, defaultTextColor;
+@synthesize styles = _styles;
 
 - (void)setText:(NSString *)aString
 {
@@ -22,13 +25,6 @@
         // Create content string with default attributes
         if (!content || ![content length])
         {
-            NSMutableDictionary *defaultAttributes = [NSMutableDictionary dictionary];
-            if (defaultParagraphStyle)
-                [defaultAttributes setObject:(id)defaultParagraphStyle forKey:(id)kCTParagraphStyleAttributeName];
-            if (defaultCTFont)
-                [defaultAttributes setObject:(id)defaultCTFont forKey:(id)kCTFontAttributeName];
-            if (defaultTextColor)
-                [defaultAttributes setObject:(id)[defaultTextColor CGColor] forKey:(id)kCTForegroundColorAttributeName];
             content = [[NSMutableAttributedString alloc] initWithString:@"\n" attributes:defaultAttributes];
         }
         // TODO call before mutate
@@ -53,18 +49,25 @@
     }
 }
 
-- (void)setDefaultFont:(UIFont *)aFont
+- (void)setStyles:(NSDictionary*)aDictionary
 {
-    if (defaultFont != aFont)
+    [_styles release];
+    _styles = [aDictionary mutableCopy];
+    NSDictionary *def = [aDictionary objectForKey:ECCodeDefaultText];
+    if (def)
     {
-        [defaultFont release];
-        defaultFont = [aFont retain];
-        if (defaultCTFont)
-        {
-            CFRelease(defaultCTFont);
-        }
-        defaultCTFont = CTFontCreateWithName((CFStringRef)defaultFont.fontName, defaultFont.pointSize, &CGAffineTransformIdentity);
+        [defaultAttributes release];
+        defaultAttributes = [def retain];
+        // TODO setup background color?
     }
+    // TODO reset attributes in string
+    [self setNeedsDisplay];
+}
+
+- (void)setAttributes:(NSDictionary*)attributes forStyle:(NSString*)aStyle
+{
+    [_styles setObject:attributes forKey:aStyle];
+    // TODO reset and repaint
 }
 
 #pragma mark Initializations
@@ -73,8 +76,11 @@
 {
     if ((self = [super initWithFrame:frame])) 
     { 
+        CTFontRef defaultFont = CTFontCreateWithName((CFStringRef)@"Courier New", 12.0, &CGAffineTransformIdentity);
+        defaultAttributes = [[NSDictionary dictionaryWithObject:(id)defaultFont forKey:(id)kCTFontAttributeName] retain];
+        // TODO set full default coloring if textSyles == nil
+        
         self.contentInset = UIEdgeInsetsMake(10, 10, 0, 0);
-        self.defaultFont = [UIFont fontWithName:@"Courier New" size:12];
         self.text = @"int main(arguments)\n{\n\treturn 0;\n}";
         
         [super setContentMode:UIViewContentModeRedraw];
@@ -86,11 +92,29 @@
 {
     if ((self = [super initWithCoder:aDecoder])) 
     {
+        // TODO call a do_init instead?
         [self init];
     }
     return self;
 }
 
+- (void)dealloc 
+{
+    [content release];
+    if (contentFrame)
+    {
+        CFRelease(contentFrame);
+    }
+    if (frameSetter)
+    {
+        CFRelease(frameSetter);
+    }
+    self.styles = nil;
+    [defaultAttributes release];
+    [super dealloc];
+}
+
+#pragma mark UIView override
 
 - (void)drawRect:(CGRect)rect 
 {
@@ -168,21 +192,6 @@
     [super drawRect:rect];
 }
 
-
-- (void)dealloc 
-{
-    [content release];
-    if (contentFrame)
-    {
-        CFRelease(contentFrame);
-    }
-    if (frameSetter)
-    {
-        CFRelease(frameSetter);
-    }
-    [super dealloc];
-}
-
 //- (void)touchesEnded:(NSSet*)touches withEvent:(UIEvent*)event
 //{	
 //	if (!self.dragging) 
@@ -194,9 +203,12 @@
 
 #pragma mark Code view methods
 
-- (void)addErrorAtRange:(UITextRange*)range
+- (void)applyStyle:(NSString*)aStyle atRange:(UITextRange*)range
 {
-    
+    NSDictionary *attributes = [_styles objectForKey:aStyle];
+    if (attributes == nil)
+        attributes = defaultAttributes;
+    // TODO modify content attribute and repaint
 }
 
 @end

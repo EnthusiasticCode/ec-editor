@@ -18,6 +18,13 @@
 // References
 // search for "drawing managing text" in documentation.
 
+extern const NSString* ECCodeDefaultText;
+extern const NSString* ECCodeKeyword;
+extern const NSString* ECCodeComment;
+
+// TODO It's ok to derive from UIScrollView to have scroll functionalities
+// and add "find marks" but zoom functionalities should be disabled to
+// permit 2 finger tap zone selection.
 @interface ECCodeView : UIScrollView {
     // Content
     NSMutableAttributedString *content;
@@ -27,8 +34,9 @@
     CTFrameRef contentFrame;
     CGPoint contentFrameOrigin;
     
-    // 
-    CTFontRef defaultCTFont;
+    // Styling objects
+    NSMutableDictionary *_styles;
+    NSDictionary *defaultAttributes;
     
     // Flags
     // TODO create smaller struct?
@@ -37,10 +45,13 @@
 
 @property (nonatomic, retain) NSString *text;
 
-@property (nonatomic, readwrite) CTParagraphStyleRef defaultParagraphStyle;
-@property (nonatomic, readwrite, retain) UIFont *defaultFont;
-@property (nonatomic, readwrite, retain) UIColor *defaultTextColor;
+// Dictionary containig styles for text in the editor.
+// It is expected to contain strings as keys representing a text type
+// (ie: ECCodeDefaultText, ECCodeKeyword, ...) and dictionaries of 
+// core text attributes.
+@property (nonatomic, copy) NSDictionary *styles;
 
-- (void)addErrorAtRange:(UITextRange*)range;
+- (void)setAttributes:(NSDictionary*)attributes forStyle:(NSString*)aStyle;
+- (void)applyStyle:(NSString*)aStyle atRange:(UITextRange*)range;
 
 @end
