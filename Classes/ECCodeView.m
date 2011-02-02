@@ -219,25 +219,16 @@ const NSString* ECCodeStyleComment = @"Comment";
 #pragma mark CodeView methods
 
 // see setValue:forAttribute:inRange
-- (void)applyStyle:(const NSString*)aStyle toRange:(UITextRange*)range
+- (void)applyStyle:(const NSString*)aStyle toRange:(NSRange)range
 {
     // Get attribute dictionary
     NSDictionary *attributes = [_styles objectForKey:aStyle];
     if (attributes == nil)
         attributes = defaultAttributes;
-    //
-    NSUInteger s = ((ECTextPosition*)range.start).index;
-    NSUInteger e = ((ECTextPosition*)range.end).index;
-    if (e < s)
-        return;
     // TODO setSolidCaret
     // TODO call beforeMutate
     NSUInteger length = [content length] - 1; // Don't count tailing new line
-    if (e > length)
-        e = length;
-    if (s > e)
-        s = e;
-    NSRange crange = [[content string] rangeOfComposedCharacterSequencesForRange:(NSRange){ s, e - s }];
+    NSRange crange = [[content string] rangeOfComposedCharacterSequencesForRange:range];
     if (crange.location + crange.length > length)
         crange.length = (length - crange.location);
     [content setAttributes:attributes range:crange];

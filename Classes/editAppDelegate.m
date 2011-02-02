@@ -7,7 +7,6 @@
 //
 
 #import "editAppDelegate.h"
-#import "ECTextRange.h"
 
 @implementation editAppDelegate
 
@@ -17,13 +16,6 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-//    CTFontRef font = CTFontCreateWithName((CFStringRef)@"Courier New", 12.0, &CGAffineTransformIdentity);
-//    NSDictionary *attributes = [NSDictionary dictionaryWithObject:(id)font forKey:(id)kCTFontAttributeName];
-//
-//    codeView.attributedText = [[NSAttributedString alloc] initWithString:@"int main(arguments)\n{\n\treturn 0;\n}\n" attributes:attributes];
-//
-//    CFRelease(font);
-    
     NSDictionary *keywordStyle = [NSDictionary dictionaryWithObjectsAndKeys:
                                   (id)[[UIColor blueColor] CGColor], (id)kCTForegroundColorAttributeName, 
                                   nil];
@@ -31,7 +23,7 @@
     
     codeView.text = @"int main(arguments)\n{\n\treturn 0;\n}";
     
-    [codeView applyStyle:ECCodeStyleKeyword toRange:[[ECTextRange alloc] initWithRange:(NSRange){0, 3}]];
+    [codeView applyStyle:ECCodeStyleKeyword toRange:(NSRange){0, 3}];
     
     //
     [window addSubview:codeView];
