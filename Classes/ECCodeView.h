@@ -52,6 +52,6 @@ extern const NSString* ECCodeStyleComment;
 @property (nonatomic, copy) NSDictionary *styles;
 
 - (void)setAttributes:(NSDictionary*)attributes forStyle:(const NSString*)aStyle;
-- (void)applyStyle:(const NSString*)aStyle toRange:(UITextRange*)range;
+- (void)applyStyle:(const NSString*)aStyle toRange:(NSRange)range;
 
 @end

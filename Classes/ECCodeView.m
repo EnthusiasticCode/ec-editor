@@ -77,10 +77,7 @@ const NSString* ECCodeStyleComment = @"Comment";
 
 - (void)setAttributes:(NSDictionary*)attributes forStyle:(const NSString*)aStyle
 {
-    if (!_styles)
-        _styles = [[NSMutableDictionary alloc] initWithObjectsAndKeys:attributes, aStyle, nil];
-    else
-        [_styles setObject:attributes forKey:aStyle];
+    [_styles setObject:attributes forKey:aStyle];
     // TODO update every content part with this style
 //    [self setNeedsContentFrame];
 //    [self setNeedsDisplay];
@@ -95,6 +92,7 @@ const NSString* ECCodeStyleComment = @"Comment";
         CTFontRef defaultFont = CTFontCreateWithName((CFStringRef)@"Courier New", 12.0, &CGAffineTransformIdentity);
         defaultAttributes = [[NSDictionary dictionaryWithObject:(id)defaultFont forKey:(id)kCTFontAttributeName] retain];
         // TODO set full default coloring if textSyles == nil
+        _styles = [[NSMutableDictionary alloc] initWithObjectsAndKeys:defaultAttributes, ECCodeStyleDefaultText, nil];
         
         self.contentInset = UIEdgeInsetsMake(10, 10, 0, 0);
         
@@ -219,25 +217,16 @@ const NSString* ECCodeStyleComment = @"Comment";
 #pragma mark CodeView methods
 
 // see setValue:forAttribute:inRange
-- (void)applyStyle:(const NSString*)aStyle toRange:(UITextRange*)range
+- (void)applyStyle:(const NSString*)aStyle toRange:(NSRange)range
 {
     // Get attribute dictionary
     NSDictionary *attributes = [_styles objectForKey:aStyle];
     if (attributes == nil)
         attributes = defaultAttributes;
-    //
-    NSUInteger s = ((ECTextPosition*)range.start).index;
-    NSUInteger e = ((ECTextPosition*)range.end).index;
-    if (e < s)
-        return;
     // TODO setSolidCaret
     // TODO call beforeMutate
     NSUInteger length = [content length] - 1; // Don't count tailing new line
-    if (e > length)
-        e = length;
-    if (s > e)
-        s = e;
-    NSRange crange = [[content string] rangeOfComposedCharacterSequencesForRange:(NSRange){ s, e - s }];
+    NSRange crange = [[content string] rangeOfComposedCharacterSequencesForRange:range];
     if (crange.location + crange.length > length)
         crange.length = (length - crange.location);
     [content setAttributes:attributes range:crange];
