@@ -121,38 +121,9 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		B7355B0E12E8EF9300198FD9 /* Models */ = {
+		B72A26DC12F95A8F009C929F /* ECCodeIndexing */ = {
 			isa = PBXGroup;
 			children = (
-				B7355B0F12E8F1C600198FD9 /* Project.xcdatamodeld */,
-			);
-			name = Models;
-			sourceTree = "<group>";
-		};
-		B736171A12DA1129009801D4 = {
-			isa = PBXGroup;
-			children = (
-				B7355B0E12E8EF9300198FD9 /* Models */,
-				B7FC3EA912E5CE1E00B49A94 /* libclang */,
-				B736172212DA1129009801D4 /* Classes */,
-				B736172312DA1129009801D4 /* Other Sources */,
-				B736172412DA1129009801D4 /* Resources */,
-				B736172512DA1129009801D4 /* Frameworks */,
-				B7BC064C12E64060005B5FB2 /* Products */,
-			);
-			sourceTree = "<group>";
-		};
-		B736172212DA1129009801D4 /* Classes */ = {
-			isa = PBXGroup;
-			children = (
-				B736173C12DA112A009801D4 /* editAppDelegate.h */,
-				B736173D12DA112A009801D4 /* editAppDelegate.m */,
-				B7CC3E9F12E8F76F00149D80 /* ECCodeProject.h */,
-				B7CC3EA012E8F76F00149D80 /* ECCodeProject.m */,
-				B76E03EB12E98F3F00E706DC /* ECCodeProjectController.h */,
-				B76E03EC12E98F3F00E706DC /* ECCodeProjectController.m */,
-				B7019E5512E5E38B004FC837 /* ECPopoverTableController.h */,
-				B7019E5612E5E38B004FC837 /* ECPopoverTableController.m */,
 				B72DA8B212E8275D00C12CD5 /* ECCodeIndexer.h */,
 				B72DA8B312E8275D00C12CD5 /* ECCodeIndexer.m */,
 				B793CE2412F85D8C00999DC1 /* ECClangTranslationUnit.h */,
@@ -173,6 +144,44 @@
 				B72DA8BB12E849EA00C12CD5 /* ECCompletionString.m */,
 				B7DDFEF112F5EF0900EFBD32 /* ECCompletionChunk.h */,
 				B7DDFEF212F5EF0900EFBD32 /* ECCompletionChunk.m */,
+			);
+			name = ECCodeIndexing;
+			path = Classes;
+			sourceTree = "<group>";
+		};
+		B7355B0E12E8EF9300198FD9 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				B7355B0F12E8F1C600198FD9 /* Project.xcdatamodeld */,
+			);
+			name = Models;
+			sourceTree = "<group>";
+		};
+		B736171A12DA1129009801D4 = {
+			isa = PBXGroup;
+			children = (
+				B7355B0E12E8EF9300198FD9 /* Models */,
+				B7FC3EA912E5CE1E00B49A94 /* libclang */,
+				B72A26DC12F95A8F009C929F /* ECCodeIndexing */,
+				B736172212DA1129009801D4 /* Classes */,
+				B736172312DA1129009801D4 /* Other Sources */,
+				B736172412DA1129009801D4 /* Resources */,
+				B736172512DA1129009801D4 /* Frameworks */,
+				B7BC064C12E64060005B5FB2 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		B736172212DA1129009801D4 /* Classes */ = {
+			isa = PBXGroup;
+			children = (
+				B736173C12DA112A009801D4 /* editAppDelegate.h */,
+				B736173D12DA112A009801D4 /* editAppDelegate.m */,
+				B7CC3E9F12E8F76F00149D80 /* ECCodeProject.h */,
+				B7CC3EA012E8F76F00149D80 /* ECCodeProject.m */,
+				B76E03EB12E98F3F00E706DC /* ECCodeProjectController.h */,
+				B76E03EC12E98F3F00E706DC /* ECCodeProjectController.m */,
+				B7019E5512E5E38B004FC837 /* ECPopoverTableController.h */,
+				B7019E5612E5E38B004FC837 /* ECPopoverTableController.m */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
