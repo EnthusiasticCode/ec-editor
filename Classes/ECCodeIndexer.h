@@ -30,5 +30,7 @@
 - (void)unloadFile:(NSString *)file;
 - (NSArray *)files;
 - (NSArray *)diagnostics;
+- (NSArray *)tokensForRange:(NSRange)range inFile:(NSString *)string;
+- (NSArray *)tokensForRange:(NSRange)range;
 
 @end

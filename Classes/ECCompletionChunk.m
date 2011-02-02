@@ -20,7 +20,7 @@
     [super dealloc];
 }
 
-- (id)initWithKind:(int)kind string:(NSString *)string
+- (id)initWithKind:(ECCompletionChunkKind)kind string:(NSString *)string
 {
     self = [super init];
     if (self)
@@ -33,10 +33,10 @@
 
 - (id)initWithString:(NSString *)string
 {
-    return [self initWithKind:0 string:string];
+    return [self initWithKind:ECCompletionChunkKindTypedText string:string];
 }
 
-+ (id)chunkWithKind:(int)kind string:(NSString *)string
++ (id)chunkWithKind:(ECCompletionChunkKind)kind string:(NSString *)string
 {
     id chunk = [self alloc];
     chunk = [chunk initWithKind:kind string:string];
@@ -45,7 +45,7 @@
 
 + (id)chunkWithString:(NSString *)string
 {
-    return [self chunkWithKind:0 string:string];
+    return [self chunkWithKind:ECCompletionChunkKindTypedText string:string];
 }
 
 @end

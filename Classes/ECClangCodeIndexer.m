@@ -61,6 +61,11 @@
     return self;
 }
 
+- (void)setActiveFile:(NSString *)file
+{
+    self.activeTranslationUnit = [self.translationUnits objectForKey:file];
+}
+
 - (void)loadFile:(NSString *)file
 {
     if (!file || ![file length])
@@ -95,6 +100,16 @@
 //        [completions addObject:[ECCompletionString stringWithCompletionChunks:[NSArray arrayWithObject:[ECCompletionChunk chunkWithKind:CXCompletionChunk_TypedText string:guess]]]];
 //    }
     return completions;
+}
+
+- (NSArray *)tokensForRange:(NSRange)range inFile:(NSString *)string
+{
+    
+}
+
+- (NSArray *)tokensForRange:(NSRange)range
+{
+    
 }
 
 @end

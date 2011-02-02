@@ -13,11 +13,11 @@
 
 typedef enum ECDiagnosticSeverity
 {
-    ECDiagnostic_Ignored = 0,
-    ECDiagnostic_Note = 1,
-    ECDiagnostic_Warning = 2,
-    ECDiagnostic_Error = 3, 
-    ECDiagnostic_Fatal = 4 
+    ECDiagnosticSeverityIgnored = 0,
+    ECDiagnosticSeverityNote = 1,
+    ECDiagnosticSeverityWarning = 2,
+    ECDiagnosticSeverityError = 3, 
+    ECDiagnosticSeverityFatal = 4 
 } ECDiagnosticSeverity;
 
 @interface ECDiagnostic : NSObject {

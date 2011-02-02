@@ -34,16 +34,6 @@
     return [string autorelease];
 }
 
-- (ECCompletionChunk *)firstChunkWithKind:(int)kind
-{
-    for (ECCompletionChunk *chunk in self.completionChunks)
-    {
-        if (chunk.kind == kind)
-            return chunk;
-    }
-    return nil;
-}
-
 - (ECCompletionChunk *)firstChunk
 {
     if (self.completionChunks && [self.completionChunks count])

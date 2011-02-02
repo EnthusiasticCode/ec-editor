@@ -14,6 +14,13 @@
 @synthesize string = _string;
 @synthesize replacementRange = _replacementRange;
 
+- (void)dealloc
+{
+    [_string release];
+    [_replacementRange release];
+    [super dealloc];
+}
+
 - (id)initWithString:(NSString *)string replacementRange:(ECSourceRange *)replacementRange
 {
     self = [super init];

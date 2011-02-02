@@ -53,19 +53,19 @@ static ECDiagnostic *diagnosticFromClangDiagnostic(CXDiagnostic clangDiagnostic)
     switch (clang_getDiagnosticSeverity(clangDiagnostic))
     {
         case CXDiagnostic_Ignored:
-            severity = ECDiagnostic_Ignored;
+            severity = ECDiagnosticSeverityIgnored;
             break;
         case CXDiagnostic_Note:
-            severity = ECDiagnostic_Note;
+            severity = ECDiagnosticSeverityNote;
             break;
         case CXDiagnostic_Warning:
-            severity = ECDiagnostic_Warning;
+            severity = ECDiagnosticSeverityWarning;
             break;
         case CXDiagnostic_Error:
-            severity = ECDiagnostic_Error;
+            severity = ECDiagnosticSeverityError;
             break;
         case CXDiagnostic_Fatal:
-            severity = ECDiagnostic_Fatal;
+            severity = ECDiagnosticSeverityFatal;
             break;
     };
     ECSourceLocation *location = sourceLocationFromClangSourceLocation(clang_getDiagnosticLocation(clangDiagnostic));

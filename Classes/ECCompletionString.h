@@ -15,10 +15,7 @@
 @property (nonatomic,readonly,copy) NSArray *completionChunks;
 
 - (id)initWithCompletionChunks:(NSArray *)completionChunks;
-
 + (id)stringWithCompletionChunks:(NSArray *)completionChunks;
-
-- (ECCompletionChunk *)firstChunkWithKind:(int)kind;
 - (ECCompletionChunk *)firstChunk;
 
 @end

@@ -18,6 +18,16 @@
 @synthesize sourceRanges = _sourceRanges;
 @synthesize fixIts = _fixIts;
 
+- (void)dealloc
+{
+    [_location release];
+    [_spelling release];
+    [_category release];
+    [_sourceRanges release];
+    [_fixIts release];
+    [super dealloc];
+}
+
 - (id)initWithSeverity:(ECDiagnosticSeverity)severity location:(ECSourceLocation *)location spelling:(NSString *)spelling category:(NSString *)category sourceRanges:(NSArray *)sourceRanges fixIts:(NSArray *)fixIts
 {
     self = [super init];
