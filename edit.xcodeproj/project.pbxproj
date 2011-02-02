@@ -127,10 +127,6 @@
 		B72A26DC12F95A8F009C929F /* ECCodeIndexing */ = {
 			isa = PBXGroup;
 			children = (
-				B793CE2412F85D8C00999DC1 /* ECClangTranslationUnit.h */,
-				B793CE2512F85D8C00999DC1 /* ECClangTranslationUnit.m */,
-				B72DA8B512E8277100C12CD5 /* ECClangCodeIndexer.h */,
-				B72DA8B612E8277100C12CD5 /* ECClangCodeIndexer.m */,
 				B72DA8B212E8275D00C12CD5 /* ECCodeIndexer.h */,
 				B72DA8B312E8275D00C12CD5 /* ECCodeIndexer.m */,
 				B7C4D8B412F887710039327B /* ECSourceLocation.h */,
@@ -150,8 +146,7 @@
 				B7DDFEF112F5EF0900EFBD32 /* ECCompletionChunk.h */,
 				B7DDFEF212F5EF0900EFBD32 /* ECCompletionChunk.m */,
 			);
-			name = ECCodeIndexing;
-			path = Classes;
+			path = ECCodeIndexing;
 			sourceTree = "<group>";
 		};
 		B7355B0E12E8EF9300198FD9 /* Models */ = {
@@ -268,6 +263,10 @@
 		B7FC3EA912E5CE1E00B49A94 /* libclang */ = {
 			isa = PBXGroup;
 			children = (
+				B793CE2412F85D8C00999DC1 /* ECClangTranslationUnit.h */,
+				B793CE2512F85D8C00999DC1 /* ECClangTranslationUnit.m */,
+				B72DA8B512E8277100C12CD5 /* ECClangCodeIndexer.h */,
+				B72DA8B612E8277100C12CD5 /* ECClangCodeIndexer.m */,
 				B7FC3EAA12E5CE1E00B49A94 /* Index.h */,
 				B7FC3EAB12E5CE1E00B49A94 /* howto.txt */,
 				B7FC3EAC12E5CE1E00B49A94 /* libclang.dylib */,
