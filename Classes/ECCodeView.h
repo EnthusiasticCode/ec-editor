@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "OUIEditableFrame.h"
+#import <CoreText/CoreText.h>
 
 // TODO
 // 1. Draw plain text
@@ -18,9 +18,9 @@
 // References
 // search for "drawing managing text" in documentation.
 
-extern const NSString* ECCodeDefaultText;
-extern const NSString* ECCodeKeyword;
-extern const NSString* ECCodeComment;
+extern const NSString* ECCodeStyleDefaultText;
+extern const NSString* ECCodeStyleKeyword;
+extern const NSString* ECCodeStyleComment;
 
 // TODO It's ok to derive from UIScrollView to have scroll functionalities
 // and add "find marks" but zoom functionalities should be disabled to
@@ -51,7 +51,7 @@ extern const NSString* ECCodeComment;
 // core text attributes.
 @property (nonatomic, copy) NSDictionary *styles;
 
-- (void)setAttributes:(NSDictionary*)attributes forStyle:(NSString*)aStyle;
-- (void)applyStyle:(NSString*)aStyle atRange:(UITextRange*)range;
+- (void)setAttributes:(NSDictionary*)attributes forStyle:(const NSString*)aStyle;
+- (void)applyStyle:(const NSString*)aStyle toRange:(UITextRange*)range;
 
 @end

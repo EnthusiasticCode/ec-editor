@@ -7,6 +7,7 @@
 //
 
 #import "editAppDelegate.h"
+#import "ECTextRange.h"
 
 @implementation editAppDelegate
 
@@ -23,8 +24,17 @@
 //
 //    CFRelease(font);
     
-    [window addSubview:codeView];
+    NSDictionary *keywordStyle = [NSDictionary dictionaryWithObjectsAndKeys:
+                                  (id)[[UIColor blueColor] CGColor], (id)kCTForegroundColorAttributeName, 
+                                  nil];
+    [codeView setAttributes:keywordStyle forStyle:ECCodeStyleKeyword];
     
+    codeView.text = @"int main(arguments)\n{\n\treturn 0;\n}";
+    
+    [codeView applyStyle:ECCodeStyleKeyword toRange:[[ECTextRange alloc] initWithRange:(NSRange){0, 3}]];
+    
+    //
+    [window addSubview:codeView];
     [window makeKeyAndVisible];
     
     return YES;

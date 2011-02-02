@@ -7,10 +7,19 @@
 //
 
 #import "ECCodeView.h"
+#import "ECTextPosition.h"
 
-const NSString* ECCodeDefaultText = @"Default";
-const NSString* ECCodeKeyword = @"Keyword";
-const NSString* ECCodeComment = @"Comment";
+const NSString* ECCodeStyleDefaultText = @"Default";
+const NSString* ECCodeStyleKeyword = @"Keyword";
+const NSString* ECCodeStyleComment = @"Comment";
+
+@interface ECCodeView ()
+
+// This method is used to indicate that the content has changed and the 
+// rendering frame generated from it should be recalculated.
+- (void)setNeedsContentFrame;
+
+@end
 
 @implementation ECCodeView
 @synthesize text;
@@ -23,6 +32,8 @@ const NSString* ECCodeComment = @"Comment";
         [text release];
         text = [aString retain];
         // Create content string with default attributes
+        // A tailing new line will be kept to have a reference on used attributes
+        // and possibly a non empty rect when rendering.
         if (!content || ![content length])
         {
             content = [[NSMutableAttributedString alloc] initWithString:@"\n" attributes:defaultAttributes];
@@ -53,7 +64,7 @@ const NSString* ECCodeComment = @"Comment";
 {
     [_styles release];
     _styles = [aDictionary mutableCopy];
-    NSDictionary *def = [aDictionary objectForKey:ECCodeDefaultText];
+    NSDictionary *def = [aDictionary objectForKey:ECCodeStyleDefaultText];
     if (def)
     {
         [defaultAttributes release];
@@ -64,10 +75,15 @@ const NSString* ECCodeComment = @"Comment";
     [self setNeedsDisplay];
 }
 
-- (void)setAttributes:(NSDictionary*)attributes forStyle:(NSString*)aStyle
+- (void)setAttributes:(NSDictionary*)attributes forStyle:(const NSString*)aStyle
 {
-    [_styles setObject:attributes forKey:aStyle];
-    // TODO reset and repaint
+    if (!_styles)
+        _styles = [[NSMutableDictionary alloc] initWithObjectsAndKeys:attributes, aStyle, nil];
+    else
+        [_styles setObject:attributes forKey:aStyle];
+    // TODO update every content part with this style
+//    [self setNeedsContentFrame];
+//    [self setNeedsDisplay];
 }
 
 #pragma mark Initializations
@@ -81,7 +97,6 @@ const NSString* ECCodeComment = @"Comment";
         // TODO set full default coloring if textSyles == nil
         
         self.contentInset = UIEdgeInsetsMake(10, 10, 0, 0);
-        self.text = @"int main(arguments)\n{\n\treturn 0;\n}";
         
         [super setContentMode:UIViewContentModeRedraw];
     }
@@ -201,14 +216,43 @@ const NSString* ECCodeComment = @"Comment";
 //	[super touchesEnded:touches withEvent:event];
 //}
 
-#pragma mark Code view methods
+#pragma mark CodeView methods
 
-- (void)applyStyle:(NSString*)aStyle atRange:(UITextRange*)range
+// see setValue:forAttribute:inRange
+- (void)applyStyle:(const NSString*)aStyle toRange:(UITextRange*)range
 {
+    // Get attribute dictionary
     NSDictionary *attributes = [_styles objectForKey:aStyle];
     if (attributes == nil)
         attributes = defaultAttributes;
-    // TODO modify content attribute and repaint
+    //
+    NSUInteger s = ((ECTextPosition*)range.start).index;
+    NSUInteger e = ((ECTextPosition*)range.end).index;
+    if (e < s)
+        return;
+    // TODO setSolidCaret
+    // TODO call beforeMutate
+    NSUInteger length = [content length] - 1; // Don't count tailing new line
+    if (e > length)
+        e = length;
+    if (s > e)
+        s = e;
+    NSRange crange = [[content string] rangeOfComposedCharacterSequencesForRange:(NSRange){ s, e - s }];
+    if (crange.location + crange.length > length)
+        crange.length = (length - crange.location);
+    [content setAttributes:attributes range:crange];
+    // TODO call after_mutate
+    [self setNeedsContentFrame];
+    [self setNeedsDisplay];
+}
+
+#pragma mark CodeView private methods
+
+- (void)setNeedsContentFrame
+{
+    contentFrameInvalid = YES;
+    
+    // TODO any content sanity check? see _didChangeContent
 }
 
 @end
