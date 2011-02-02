@@ -76,4 +76,11 @@
     return nil;
 }
 
+- (NSArray *)tokens
+{
+    if (!self.delegate || !self.delegateTextKey)
+        return nil;
+    return [self tokensForRange:NSMakeRange(0, [[self.delegate valueForKey:self.delegateTextKey] length])];
+}
+
 @end

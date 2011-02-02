@@ -136,12 +136,12 @@
 				B7C4D8B212F8867C0039327B /* ECFixIt.m */,
 				B7C4D8AD12F87F850039327B /* ECDiagnostic.h */,
 				B7C4D8AE12F87F850039327B /* ECDiagnostic.m */,
-				B7DDFEEB12F5DED500EFBD32 /* ECCompletionResult.h */,
-				B7DDFEEC12F5DED500EFBD32 /* ECCompletionResult.m */,
-				B72DA8BA12E849EA00C12CD5 /* ECCompletionString.h */,
-				B72DA8BB12E849EA00C12CD5 /* ECCompletionString.m */,
 				B7DDFEF112F5EF0900EFBD32 /* ECCompletionChunk.h */,
 				B7DDFEF212F5EF0900EFBD32 /* ECCompletionChunk.m */,
+				B72DA8BA12E849EA00C12CD5 /* ECCompletionString.h */,
+				B72DA8BB12E849EA00C12CD5 /* ECCompletionString.m */,
+				B7DDFEEB12F5DED500EFBD32 /* ECCompletionResult.h */,
+				B7DDFEEC12F5DED500EFBD32 /* ECCompletionResult.m */,
 			);
 			path = ECCodeIndexing;
 			sourceTree = "<group>";

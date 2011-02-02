@@ -21,8 +21,8 @@
 @property (nonatomic, retain) ECCodeIndexer *codeIndexer;
 // popovertable used to display completions
 @property (nonatomic, retain) ECPopoverTableController *completionPopover;
-@property (nonatomic, retain) NSMutableArray *possibleCompletions;
 
+- (void)applyCompletion:(NSString *)completion;
 // display the completion popovertable if possible
 - (void)showCompletions;
 

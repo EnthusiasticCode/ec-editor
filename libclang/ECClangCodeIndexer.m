@@ -9,12 +9,14 @@
 #import "Index.h"
 #import "ECClangCodeIndexer.h"
 
+#import "ECSourceLocation.h"
+#import "ECSourceRange.h"
+#import "ECToken.h"
+#import "ECFixIt.h"
+#import "ECDiagnostic.h"
 #import "ECCompletionResult.h"
 #import "ECCompletionString.h"
 #import "ECCompletionChunk.h"
-
-#import "ECFixIt.h"
-#import "ECDiagnostic.h"
 
 #import <objc/message.h>
 
@@ -43,6 +45,35 @@ static ECSourceRange *sourceRangeFromClangSourceRange(CXSourceRange clangSourceR
     ECSourceLocation *start = sourceLocationFromClangSourceLocation(clang_getRangeStart(clangSourceRange));
     ECSourceLocation *end = sourceLocationFromClangSourceLocation(clang_getRangeEnd(clangSourceRange));
     return [ECSourceRange rangeWithStart:start end:end];
+}
+
+static ECToken *tokenFromClangToken(CXTranslationUnit translationUnit, CXToken clangToken)
+{
+    ECTokenKind kind;
+    switch (clang_getTokenKind(clangToken))
+    {
+        case CXToken_Punctuation:
+            kind = ECTokenKindPunctuation;
+            break;
+        case CXToken_Keyword:
+            kind = ECTokenKindKeyword;
+            break;
+        case CXToken_Identifier:
+            kind = ECTokenKindIdentifier;
+            break;
+        case CXToken_Literal:
+            kind = ECTokenKindLiteral;
+            break;
+        case CXToken_Comment:
+            kind = ECtokenKindComment;
+            break;
+    }
+    CXString clangSpelling = clang_getTokenSpelling(translationUnit, clangToken);
+    NSString *spelling = [NSString stringWithCString:clang_getCString(clangSpelling)];
+    clang_disposeString(clangSpelling);
+    ECSourceLocation *location = sourceLocationFromClangSourceLocation(clang_getTokenLocation(translationUnit, clangToken));
+    ECSourceRange *extent = sourceRangeFromClangSourceRange(clang_getTokenExtent(translationUnit, clangToken));
+    return [ECToken tokenWithKind:kind spelling:spelling location:location extent:extent];
 }
 
 static ECFixIt *fixItFromClangDiagnostic(CXDiagnostic clangDiagnostic, int index)
@@ -184,7 +215,23 @@ static ECDiagnostic *diagnosticFromClangDiagnostic(CXDiagnostic clangDiagnostic)
 
 - (NSArray *)tokensForRange:(NSRange)range
 {
-    
+    if (!self.translationUnit || !self.source)
+        return nil;
+    if (range.location == NSNotFound)
+        return nil;
+    unsigned int numTokens;
+    CXToken *clangTokens;
+    CXFile clangFile = clang_getFile(self.translationUnit, [self.source cStringUsingEncoding:NSUTF8StringEncoding]);
+    CXSourceLocation clangStart = clang_getLocationForOffset(self.translationUnit, clangFile, range.location);
+    CXSourceLocation clangEnd = clang_getLocationForOffset(self.translationUnit, clangFile, range.location + range.length);
+    CXSourceRange clangRange = clang_getRange(clangStart, clangEnd);
+    clang_tokenize(self.translationUnit, clangRange, &clangTokens, &numTokens);
+    NSMutableArray *tokens = [NSMutableArray arrayWithCapacity:numTokens];
+    for (int i = 0; i < numTokens; i++)
+    {
+        [tokens addObject:tokenFromClangToken(self.translationUnit, clangTokens[i])];
+    }
+    return tokens;
 }
 
 @end

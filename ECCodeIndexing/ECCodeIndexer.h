@@ -27,5 +27,6 @@
 - (NSArray *)completionsWithSelection:(NSRange)selection;
 - (NSArray *)diagnostics;
 - (NSArray *)tokensForRange:(NSRange)range;
+- (NSArray *)tokens;
 
 @end

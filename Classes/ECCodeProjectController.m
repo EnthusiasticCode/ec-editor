@@ -12,6 +12,7 @@
 #import "ECPopoverTableController.h"
 #import "ECCompletionString.h"
 #import "ECDiagnostic.h"
+#import "ECToken.h"
 
 
 @implementation ECCodeProjectController
@@ -92,9 +93,11 @@
     codeIndexer.source = file;
     codeIndexer.delegate = self;
     codeIndexer.delegateTextKey = @"text";
-    self.codeIndexer = codeIndexer;
     for (ECDiagnostic *diagnostic in codeIndexer.diagnostics)
         NSLog(@"%@", diagnostic.spelling);
+    for (ECToken *token in codeIndexer.tokens)
+        NSLog(@"%@", token.spelling);
+    self.codeIndexer = codeIndexer;
     [codeIndexer release];
     self.codeView.text = [NSString stringWithContentsOfFile:file encoding:NSUTF8StringEncoding error:nil];
 }
@@ -116,31 +119,28 @@
     [self showCompletions];
 }
 
-- (void)applyCompletion:(int)completionIndex
+- (void)applyCompletion:(NSString *)completion
 {
-    NSString *completionText = [[[self.possibleCompletions objectAtIndex:completionIndex] firstChunk] string];
-    self.codeView.text = [self.codeView.text stringByReplacingCharactersInRange:[self.codeIndexer completionRangeWithSelection:self.codeView.selectedRange] withString:[completionText stringByAppendingString:@" "]];
+    self.codeView.text = [self.codeView.text stringByReplacingCharactersInRange:[self.codeIndexer completionRangeWithSelection:self.codeView.selectedRange] withString:[completion stringByAppendingString:@" "]];
 }
 
 - (void)showCompletions
 {
-    [self.possibleCompletions removeAllObjects];
-    [self.possibleCompletions addObjectsFromArray:[self.codeIndexer completionsWithSelection:self.codeView.selectedRange inString:self.codeView.text]];
-    NSMutableArray *completionLabels = [[NSMutableArray alloc] initWithCapacity:[self.possibleCompletions count]];
-    for (ECCompletionString *completion in self.possibleCompletions)
-    {
-        [completionLabels addObject:[[completion firstChunk] string]];
-    }
-    
-    self.completionPopover.didSelectRow =
-    ^ void (int row)
-    {
-        [self applyCompletion:row];
-    };
-    //    self.completionPopover.popoverRect = [self firstRectForRange:[self selectedRange]];
-    self.completionPopover.strings = completionLabels;
-    
-    [completionLabels release];
+//    NSMutableArray *completionLabels = [[NSMutableArray alloc] initWithCapacity:[self.possibleCompletions count]];
+//    for (ECCompletionString *completion in self.possibleCompletions)
+//    {
+//        [completionLabels addObject:[[completion firstChunk] string]];
+//    }
+//    
+//    self.completionPopover.didSelectRow =
+//    ^ void (int row)
+//    {
+//        [self applyCompletion:row];
+//    };
+//    //    self.completionPopover.popoverRect = [self firstRectForRange:[self selectedRange]];
+//    self.completionPopover.strings = completionLabels;
+//    
+//    [completionLabels release];
 }
 
 @end
