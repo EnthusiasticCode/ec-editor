@@ -11,6 +11,20 @@
 
 @implementation ECCodeIndexer
 
+@synthesize source = _source;
+@synthesize delegate = _delegate;
+@synthesize delegateTextKey = _delegateTextKey;
+@synthesize diagnostics = _diagnostics;
+
+- (void)dealloc
+{
+    self.source = nil;
+    self.delegate = nil;
+    self.delegateTextKey = nil;
+    [_diagnostics dealloc];
+    [super dealloc];
+}
+
 - (id)init
 {
     [self release];
@@ -18,14 +32,20 @@
     return self;
 }
 
-- (NSRange)completionRangeWithSelection:(NSRange)selection inString:(NSString *)string
+- (NSRange)completionRangeWithSelection:(NSRange)selection
 {
-    if (selection.length || !selection.location) return NSMakeRange(NSNotFound, 0); //range of text is selected or caret is at beginning of file
+    if (!self.delegate || !self.delegateTextKey)
+        return NSMakeRange(NSNotFound, 0);
     
+    if (selection.length || !selection.location) //range of text is selected or caret is at beginning of file
+        return NSMakeRange(NSNotFound, 0);
+    
+    NSString *string = [self.delegate valueForKey:self.delegateTextKey];
     NSUInteger precedingCharacterIndex = selection.location - 1;
     NSUInteger precedingCharacter = [string characterAtIndex:precedingCharacterIndex];
     
-    if (precedingCharacter < 65 || precedingCharacter > 122) return NSMakeRange(NSNotFound, 0); //character is not a letter
+    if (precedingCharacter < 65 || precedingCharacter > 122) //character is not a letter
+        return NSMakeRange(NSNotFound, 0);
     
     while (precedingCharacterIndex)
     {
@@ -39,6 +59,21 @@
         precedingCharacter = [string characterAtIndex:precedingCharacterIndex];
     }
     return NSMakeRange(0, selection.location); //if control has reached this point all character between the caret and the beginning of file are letters
+}
+
+- (NSArray *)completionsWithSelection:(NSRange)selection
+{
+    return nil;
+}
+
+- (NSArray *)diagnostics
+{
+    return nil;
+}
+
+- (NSArray *)tokensForRange:(NSRange)range
+{
+    return nil;
 }
 
 @end

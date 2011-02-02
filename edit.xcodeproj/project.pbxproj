@@ -33,7 +33,6 @@
 		B7759ED012E062B5006E99E7 /* OUITextSelectionHandle.png in Resources */ = {isa = PBXBuildFile; fileRef = B7759EC812E062B5006E99E7 /* OUITextSelectionHandle.png */; };
 		B7759ED112E062B5006E99E7 /* OUITextSelectionOverlay.png in Resources */ = {isa = PBXBuildFile; fileRef = B7759EC912E062B5006E99E7 /* OUITextSelectionOverlay.png */; };
 		B78A18ED12E764A300E259E0 /* doxygen.conf in Resources */ = {isa = PBXBuildFile; fileRef = B78A18EC12E764A300E259E0 /* doxygen.conf */; };
-		B793CE2612F85D8C00999DC1 /* ECClangTranslationUnit.m in Sources */ = {isa = PBXBuildFile; fileRef = B793CE2512F85D8C00999DC1 /* ECClangTranslationUnit.m */; };
 		B7BD531F12DF1CDB003B83B3 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7BD531E12DF1CDB003B83B3 /* QuartzCore.framework */; };
 		B7C4D8AF12F87F850039327B /* ECDiagnostic.m in Sources */ = {isa = PBXBuildFile; fileRef = B7C4D8AE12F87F850039327B /* ECDiagnostic.m */; };
 		B7C4D8B312F8867C0039327B /* ECFixIt.m in Sources */ = {isa = PBXBuildFile; fileRef = B7C4D8B212F8867C0039327B /* ECFixIt.m */; };
@@ -84,8 +83,6 @@
 		B7759EC912E062B5006E99E7 /* OUITextSelectionOverlay.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = OUITextSelectionOverlay.png; sourceTree = "<group>"; };
 		B78A18EC12E764A300E259E0 /* doxygen.conf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = doxygen.conf; sourceTree = "<group>"; };
 		B793CE2212F77E5100999DC1 /* c-index-test.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = "c-index-test.c"; sourceTree = "<group>"; };
-		B793CE2412F85D8C00999DC1 /* ECClangTranslationUnit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECClangTranslationUnit.h; sourceTree = "<group>"; };
-		B793CE2512F85D8C00999DC1 /* ECClangTranslationUnit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECClangTranslationUnit.m; sourceTree = "<group>"; };
 		B7BD531E12DF1CDB003B83B3 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		B7C4D8AD12F87F850039327B /* ECDiagnostic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECDiagnostic.h; sourceTree = "<group>"; };
 		B7C4D8AE12F87F850039327B /* ECDiagnostic.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECDiagnostic.m; sourceTree = "<group>"; };
@@ -263,8 +260,6 @@
 		B7FC3EA912E5CE1E00B49A94 /* libclang */ = {
 			isa = PBXGroup;
 			children = (
-				B793CE2412F85D8C00999DC1 /* ECClangTranslationUnit.h */,
-				B793CE2512F85D8C00999DC1 /* ECClangTranslationUnit.m */,
 				B72DA8B512E8277100C12CD5 /* ECClangCodeIndexer.h */,
 				B72DA8B612E8277100C12CD5 /* ECClangCodeIndexer.m */,
 				B7FC3EAA12E5CE1E00B49A94 /* Index.h */,
@@ -357,7 +352,6 @@
 				B76E03EE12E98F3F00E706DC /* ECCodeProjectController.m in Sources */,
 				B7DDFEED12F5DED500EFBD32 /* ECCompletionResult.m in Sources */,
 				B7DDFEF312F5EF0900EFBD32 /* ECCompletionChunk.m in Sources */,
-				B793CE2612F85D8C00999DC1 /* ECClangTranslationUnit.m in Sources */,
 				B7C4D8AF12F87F850039327B /* ECDiagnostic.m in Sources */,
 				B7C4D8B312F8867C0039327B /* ECFixIt.m in Sources */,
 				B7C4D8B612F887710039327B /* ECSourceLocation.m in Sources */,

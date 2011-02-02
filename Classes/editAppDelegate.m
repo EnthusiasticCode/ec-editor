@@ -24,7 +24,6 @@
     rootController = (ECCodeProjectController *) window.rootViewController;
     // directory must exist
     [rootController loadProject:@"edit" from:[[self applicationDocumentsDirectory] stringByAppendingPathComponent:@"edit/"]];
-    rootController.codeIndexer = [[ECCodeIndexer alloc] init];
     [window addSubview:rootController.view];
     [window makeKeyAndVisible];
     return YES;

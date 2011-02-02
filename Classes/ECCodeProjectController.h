@@ -14,9 +14,10 @@
 @interface ECCodeProjectController : UISplitViewController <UITableViewDataSource, UITableViewDelegate> {
     
 }
-@property (nonatomic, retain, readonly) ECCodeProject *project;
-@property (nonatomic, retain, readonly) NSFileManager *fileManager;
+@property (nonatomic, retain) ECCodeProject *project;
+@property (nonatomic, retain) NSFileManager *fileManager;
 @property (nonatomic, retain) IBOutlet UITextView *codeView;
+@property (nonatomic, readonly, retain) NSString *text;
 @property (nonatomic, retain) ECCodeIndexer *codeIndexer;
 // popovertable used to display completions
 @property (nonatomic, retain) ECPopoverTableController *completionPopover;

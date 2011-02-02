@@ -10,6 +10,11 @@
 
 #import "ECCodeIndexer.h"
 
+typedef enum ECClangLanguage
+{
+    ECClangLanguage_ObjectiveC = 1
+} ECClangLanguage;
+
 /*! Clang code indexer. Provides completion and syntax checking through Clang. */
 @interface ECClangCodeIndexer : ECCodeIndexer{
 

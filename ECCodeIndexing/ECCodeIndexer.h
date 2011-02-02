@@ -18,19 +18,14 @@
 @interface ECCodeIndexer : NSObject {
 
 }
-/*! Returns possible completions considering the parameters.
- *
- *\param selection The range of the currently selected text.
- *\param string A string representing the whole scope containing the selection.
- */
-- (NSArray *)completionsWithSelection:(NSRange)selection inString:(NSString *)string;
-- (NSRange)completionRangeWithSelection:(NSRange)selection inString:(NSString *)string;
-- (void)setActiveFile:(NSString *)file;
-- (void)loadFile:(NSString *)file;
-- (void)unloadFile:(NSString *)file;
-- (NSArray *)files;
+@property (nonatomic, retain) NSString *source;
+@property (nonatomic, retain) id delegate;
+@property (nonatomic, retain) NSString *delegateTextKey;
+@property (nonatomic, readonly, retain) NSArray *diagnostics;
+- (id)initWithSource:(NSString *)source;
+- (NSRange)completionRangeWithSelection:(NSRange)selection;
+- (NSArray *)completionsWithSelection:(NSRange)selection;
 - (NSArray *)diagnostics;
-- (NSArray *)tokensForRange:(NSRange)range inFile:(NSString *)string;
 - (NSArray *)tokensForRange:(NSRange)range;
 
 @end

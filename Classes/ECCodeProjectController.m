@@ -11,30 +11,30 @@
 #import "ECCodeIndexer.h"
 #import "ECPopoverTableController.h"
 #import "ECCompletionString.h"
+#import "ECDiagnostic.h"
 
 
 @implementation ECCodeProjectController
 
-@synthesize project;
-@synthesize codeView;
-@synthesize codeIndexer;
-@synthesize possibleCompletions = _possibleCompletions;
+@synthesize project = _project;
+@synthesize codeView = _codeView;
+@synthesize text = _text;
+@synthesize codeIndexer = _codeIndexer;
+@synthesize fileManager = _fileManager;
+@synthesize completionPopover = _completionPopover;
 
-- (NSMutableArray *)possibleCompletions
+- (NSString *)text
 {
-    if (!_possibleCompletions)
-        _possibleCompletions = [[NSMutableArray alloc] init];
-    return _possibleCompletions;
+    if (!self.codeView)
+        return @"";
+    return self.codeView.text;
 }
-
-@synthesize fileManager;
 
 - (NSFileManager *)fileManager
 {
     return [NSFileManager defaultManager];
 }
 
-@synthesize completionPopover = _completionPopover;
 
 - (ECPopoverTableController *)completionPopover
 {
@@ -48,11 +48,10 @@
 
 - (void)dealloc
 {
+    self.project = nil;
     self.codeView = nil;
     self.codeIndexer = nil;
     self.completionPopover = nil;
-    [project release];
-    [fileManager release];
     [super dealloc];
 }
 
@@ -84,13 +83,19 @@
 
 - (void)loadProject:(NSString *)name from:(NSString *)rootDirectory
 {
-    if (project) return;
-    project = [[ECCodeProject alloc] initWithRootDirectory:rootDirectory name:name];
+    self.project = [[ECCodeProject alloc] initWithRootDirectory:rootDirectory name:name];
 }
 
 - (void)loadFile:(NSString *)file
 {
-    [self.codeIndexer loadFile:file];
+    ECCodeIndexer *codeIndexer = [[ECCodeIndexer alloc] init];
+    codeIndexer.source = file;
+    codeIndexer.delegate = self;
+    codeIndexer.delegateTextKey = @"text";
+    self.codeIndexer = codeIndexer;
+    for (ECDiagnostic *diagnostic in codeIndexer.diagnostics)
+        NSLog(@"%@", diagnostic.spelling);
+    [codeIndexer release];
     self.codeView.text = [NSString stringWithContentsOfFile:file encoding:NSUTF8StringEncoding error:nil];
 }
 
@@ -106,13 +111,15 @@
 
 - (void)textViewDidChangeSelection:(UITextView *)textView
 {
+    if (!textView.text)
+        return;
     [self showCompletions];
 }
 
 - (void)applyCompletion:(int)completionIndex
 {
     NSString *completionText = [[[self.possibleCompletions objectAtIndex:completionIndex] firstChunk] string];
-    self.codeView.text = [self.codeView.text stringByReplacingCharactersInRange:[self.codeIndexer completionRangeWithSelection:self.codeView.selectedRange inString:self.codeView.text] withString:[completionText stringByAppendingString:@" "]];
+    self.codeView.text = [self.codeView.text stringByReplacingCharactersInRange:[self.codeIndexer completionRangeWithSelection:self.codeView.selectedRange] withString:[completionText stringByAppendingString:@" "]];
 }
 
 - (void)showCompletions
