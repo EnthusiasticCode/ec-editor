@@ -89,6 +89,7 @@
 
 - (void)loadFile:(NSString *)file
 {
+    self.codeView.text = [NSString stringWithContentsOfFile:file encoding:NSUTF8StringEncoding error:nil];
     ECCodeIndexer *codeIndexer = [[ECCodeIndexer alloc] init];
     codeIndexer.source = file;
     codeIndexer.delegate = self;
@@ -99,7 +100,6 @@
         NSLog(@"%@", token.spelling);
     self.codeIndexer = codeIndexer;
     [codeIndexer release];
-    self.codeView.text = [NSString stringWithContentsOfFile:file encoding:NSUTF8StringEncoding error:nil];
 }
 
 - (NSArray *)contentsOfRootDirectory
