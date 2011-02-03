@@ -7,17 +7,17 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "ECCodeIndexerDelegate.h"
 @class ECPopoverTableController;
 @class ECCodeIndexer;
 @class ECCodeProject;
 
-@interface ECCodeProjectController : UISplitViewController <UITableViewDataSource, UITableViewDelegate> {
+@interface ECCodeProjectController : UISplitViewController <ECCodeIndexerDelegate, UITableViewDataSource, UITableViewDelegate> {
     
 }
 @property (nonatomic, retain) ECCodeProject *project;
 @property (nonatomic, retain) NSFileManager *fileManager;
 @property (nonatomic, retain) IBOutlet UITextView *codeView;
-@property (nonatomic, readonly, retain) NSString *text;
 @property (nonatomic, retain) ECCodeIndexer *codeIndexer;
 // popovertable used to display completions
 @property (nonatomic, retain) ECPopoverTableController *completionPopover;

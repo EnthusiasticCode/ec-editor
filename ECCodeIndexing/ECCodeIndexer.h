@@ -7,9 +7,8 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "ECCodeIndexerDelegate.h"
 
-
-//TODO: turn this into a class cluster: http://seanmurph.com/weblog/make-your-own-abstract-factory-class-cluster-in-objective-c/
 
 /*! Superclass of all code indexers. Implement language agnostic functionality here.
  *
@@ -19,12 +18,11 @@
 
 }
 @property (nonatomic, retain) NSString *source;
-@property (nonatomic, retain) id delegate;
-@property (nonatomic, retain) NSString *delegateTextKey;
+@property (nonatomic, retain) id<ECCodeIndexerDelegate> delegate;
 @property (nonatomic, readonly, retain) NSArray *diagnostics;
 - (id)initWithSource:(NSString *)source;
-- (NSRange)completionRangeWithSelection:(NSRange)selection;
-- (NSArray *)completionsWithSelection:(NSRange)selection;
+- (NSRange)completionRange;
+- (NSArray *)completions;
 - (NSArray *)diagnostics;
 - (NSArray *)tokensForRange:(NSRange)range;
 - (NSArray *)tokens;

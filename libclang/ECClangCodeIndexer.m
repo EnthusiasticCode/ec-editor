@@ -231,6 +231,7 @@ static ECDiagnostic *diagnosticFromClangDiagnostic(CXDiagnostic clangDiagnostic)
     {
         [tokens addObject:tokenFromClangToken(self.translationUnit, clangTokens[i])];
     }
+    clang_disposeTokens(self.translationUnit, clangTokens, numTokens);
     return tokens;
 }
 

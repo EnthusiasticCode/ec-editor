@@ -83,6 +83,7 @@
 		B7759EC912E062B5006E99E7 /* OUITextSelectionOverlay.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = OUITextSelectionOverlay.png; sourceTree = "<group>"; };
 		B78A18EC12E764A300E259E0 /* doxygen.conf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = doxygen.conf; sourceTree = "<group>"; };
 		B793CE2212F77E5100999DC1 /* c-index-test.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = "c-index-test.c"; sourceTree = "<group>"; };
+		B7BC34D812FB1AC800AD5258 /* ECCodeIndexerDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeIndexerDelegate.h; sourceTree = "<group>"; };
 		B7BD531E12DF1CDB003B83B3 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		B7C4D8AD12F87F850039327B /* ECDiagnostic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECDiagnostic.h; sourceTree = "<group>"; };
 		B7C4D8AE12F87F850039327B /* ECDiagnostic.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECDiagnostic.m; sourceTree = "<group>"; };
@@ -126,6 +127,7 @@
 			children = (
 				B72DA8B212E8275D00C12CD5 /* ECCodeIndexer.h */,
 				B72DA8B312E8275D00C12CD5 /* ECCodeIndexer.m */,
+				B7BC34D812FB1AC800AD5258 /* ECCodeIndexerDelegate.h */,
 				B7C4D8B412F887710039327B /* ECSourceLocation.h */,
 				B7C4D8B512F887710039327B /* ECSourceLocation.m */,
 				B7C4D8B712F8877A0039327B /* ECSourceRange.h */,

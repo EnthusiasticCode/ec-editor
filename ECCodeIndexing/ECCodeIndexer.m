@@ -13,14 +13,12 @@
 
 @synthesize source = _source;
 @synthesize delegate = _delegate;
-@synthesize delegateTextKey = _delegateTextKey;
 @synthesize diagnostics = _diagnostics;
 
 - (void)dealloc
 {
     self.source = nil;
     self.delegate = nil;
-    self.delegateTextKey = nil;
     [_diagnostics dealloc];
     [super dealloc];
 }
@@ -32,15 +30,17 @@
     return self;
 }
 
-- (NSRange)completionRangeWithSelection:(NSRange)selection
+- (NSRange)completionRange
 {
-    if (!self.delegate || !self.delegateTextKey)
+    if (!self.delegate)
         return NSMakeRange(NSNotFound, 0);
     
-    if (selection.length || !selection.location) //range of text is selected or caret is at beginning of file
+    NSString *string = [self.delegate indexedTextBuffer];
+    NSRange selection = [self.delegate indexedTextSelection];
+    
+    if (!string || selection.length || !selection.location) //range of text is selected or caret is at beginning of file
         return NSMakeRange(NSNotFound, 0);
     
-    NSString *string = [self.delegate valueForKey:self.delegateTextKey];
     NSUInteger precedingCharacterIndex = selection.location - 1;
     NSUInteger precedingCharacter = [string characterAtIndex:precedingCharacterIndex];
     
@@ -61,7 +61,7 @@
     return NSMakeRange(0, selection.location); //if control has reached this point all character between the caret and the beginning of file are letters
 }
 
-- (NSArray *)completionsWithSelection:(NSRange)selection
+- (NSArray *)completions
 {
     return nil;
 }
@@ -78,9 +78,9 @@
 
 - (NSArray *)tokens
 {
-    if (!self.delegate || !self.delegateTextKey)
+    if (!self.delegate)
         return nil;
-    return [self tokensForRange:NSMakeRange(0, [[self.delegate valueForKey:self.delegateTextKey] length])];
+    return [self tokensForRange:NSMakeRange(0, [[self.delegate indexedTextBuffer] length])];
 }
 
 @end

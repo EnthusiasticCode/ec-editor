@@ -19,17 +19,9 @@
 
 @synthesize project = _project;
 @synthesize codeView = _codeView;
-@synthesize text = _text;
 @synthesize codeIndexer = _codeIndexer;
 @synthesize fileManager = _fileManager;
 @synthesize completionPopover = _completionPopover;
-
-- (NSString *)text
-{
-    if (!self.codeView)
-        return @"";
-    return self.codeView.text;
-}
 
 - (NSFileManager *)fileManager
 {
@@ -93,7 +85,6 @@
     ECCodeIndexer *codeIndexer = [[ECCodeIndexer alloc] init];
     codeIndexer.source = file;
     codeIndexer.delegate = self;
-    codeIndexer.delegateTextKey = @"text";
     for (ECDiagnostic *diagnostic in codeIndexer.diagnostics)
         NSLog(@"%@", diagnostic.spelling);
     for (ECToken *token in codeIndexer.tokens)
@@ -119,9 +110,19 @@
     [self showCompletions];
 }
 
+- (NSString *)indexedTextBuffer
+{
+    return self.codeView.text;
+}
+
+- (NSRange)indexedTextSelection
+{
+    return self.codeView.selectedRange;
+}
+
 - (void)applyCompletion:(NSString *)completion
 {
-    self.codeView.text = [self.codeView.text stringByReplacingCharactersInRange:[self.codeIndexer completionRangeWithSelection:self.codeView.selectedRange] withString:[completion stringByAppendingString:@" "]];
+    self.codeView.text = [self.codeView.text stringByReplacingCharactersInRange:[self.codeIndexer completionRange] withString:[completion stringByAppendingString:@" "]];
 }
 
 - (void)showCompletions
