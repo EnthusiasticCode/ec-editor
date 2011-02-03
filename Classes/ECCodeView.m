@@ -9,9 +9,9 @@
 #import "ECCodeView.h"
 #import "ECTextPosition.h"
 
-const NSString* ECCodeStyleDefaultText = @"Default";
-const NSString* ECCodeStyleKeyword = @"Keyword";
-const NSString* ECCodeStyleComment = @"Comment";
+const NSString* ECCodeStyleDefaultTextName = @"Default";
+const NSString* ECCodeStyleKeywordName = @"Keyword";
+const NSString* ECCodeStyleCommentName = @"Comment";
 
 @interface ECCodeView ()
 
@@ -22,9 +22,10 @@ const NSString* ECCodeStyleComment = @"Comment";
 @end
 
 @implementation ECCodeView
-@synthesize text;
-@synthesize styles = _styles;
 
+#pragma mark Properties
+
+@synthesize text;
 - (void)setText:(NSString *)aString
 {
     if (aString != text)
@@ -36,35 +37,38 @@ const NSString* ECCodeStyleComment = @"Comment";
         // and possibly a non empty rect when rendering.
         if (!content || ![content length])
         {
-            content = [[NSMutableAttributedString alloc] initWithString:@"\n" attributes:defaultAttributes];
+            content = [[NSMutableAttributedString alloc] init];
         }
         // TODO call before mutate
         NSInteger len = [content length];
         if (text)
         {
-            [content replaceCharactersInRange:(NSRange){0, len - 1} withString:text];
+            [content replaceCharactersInRange:(NSRange){0, len} withString:text];
             len = [content length];
             if (len > 1)
-                [content setAttributes:[content attributesAtIndex:len - 2 effectiveRange:NULL] range:(NSRange){len - 1, 1}];
+                [content setAttributes:defaultAttributes range:(NSRange){0, len}];
         }
         else
         {
             if (len > 1)
-                [content deleteCharactersInRange:(NSRange){0, len - 1}];
+                [content deleteCharactersInRange:(NSRange){0, len}];
         }
         // TODO call after mutate
-//        [self unmarkText];
+        //        [self unmarkText];
         // TODO set selection to end
         // TODO call delegate's textdidcahnge
+        [self setNeedsContentFrame];
         [self setNeedsDisplay];
     }
 }
 
+@synthesize styles = _styles;
 - (void)setStyles:(NSDictionary*)aDictionary
 {
     [_styles release];
     _styles = [aDictionary mutableCopy];
-    NSDictionary *def = [aDictionary objectForKey:ECCodeStyleDefaultText];
+    // TODO check that every style's attributes contains style backref
+    NSDictionary *def = [aDictionary objectForKey:ECCodeStyleDefaultTextName];
     if (def)
     {
         [defaultAttributes release];
@@ -75,15 +79,7 @@ const NSString* ECCodeStyleComment = @"Comment";
     [self setNeedsDisplay];
 }
 
-- (void)setAttributes:(NSDictionary*)attributes forStyle:(const NSString*)aStyle
-{
-    [_styles setObject:attributes forKey:aStyle];
-    // TODO update every content part with this style
-//    [self setNeedsContentFrame];
-//    [self setNeedsDisplay];
-}
-
-#pragma mark Initializations
+#pragma mark CodeView Initializations
 
 - (id)initWithFrame:(CGRect)frame 
 {
@@ -92,7 +88,7 @@ const NSString* ECCodeStyleComment = @"Comment";
         CTFontRef defaultFont = CTFontCreateWithName((CFStringRef)@"Courier New", 12.0, &CGAffineTransformIdentity);
         defaultAttributes = [[NSDictionary dictionaryWithObject:(id)defaultFont forKey:(id)kCTFontAttributeName] retain];
         // TODO set full default coloring if textSyles == nil
-        _styles = [[NSMutableDictionary alloc] initWithObjectsAndKeys:defaultAttributes, ECCodeStyleDefaultText, nil];
+        _styles = [[NSMutableDictionary alloc] initWithObjectsAndKeys:defaultAttributes, ECCodeStyleDefaultTextName, nil];
         
         self.contentInset = UIEdgeInsetsMake(10, 10, 0, 0);
         
@@ -217,7 +213,7 @@ const NSString* ECCodeStyleComment = @"Comment";
 #pragma mark CodeView methods
 
 // see setValue:forAttribute:inRange
-- (void)applyStyle:(const NSString*)aStyle toRange:(NSRange)range
+- (void)setStyleNamed:(const NSString*)aStyle toRange:(NSRange)range
 {
     // Get attribute dictionary
     NSDictionary *attributes = [_styles objectForKey:aStyle];
@@ -225,18 +221,30 @@ const NSString* ECCodeStyleComment = @"Comment";
         attributes = defaultAttributes;
     // TODO setSolidCaret
     // TODO call beforeMutate
-    NSUInteger length = [content length] - 1; // Don't count tailing new line
+    NSUInteger contentLength = [content length];
     NSRange crange = [[content string] rangeOfComposedCharacterSequencesForRange:range];
-    if (crange.location + crange.length > length)
-        crange.length = (length - crange.location);
+    if (crange.location + crange.length > contentLength)
+        crange.length = (contentLength - crange.location);
     [content setAttributes:attributes range:crange];
     // TODO call after_mutate
     [self setNeedsContentFrame];
     [self setNeedsDisplay];
 }
 
+#pragma mark CodeViewUtilities
+
+- (void)setAttributes:(NSDictionary*)attributes forStyleNamed:(const NSString*)aStyle
+{
+    [_styles setObject:attributes forKey:aStyle];
+    // TODO update every content part with this style
+    //    [self setNeedsContentFrame];
+    //    [self setNeedsDisplay];
+}
+
 #pragma mark CodeView private methods
 
+// TODO rethink: contentFrameInvalid should be YES if text/attr changed to recreate framesetter, 
+// contentFrame should be released and set to nil when bounds changes.
 - (void)setNeedsContentFrame
 {
     contentFrameInvalid = YES;

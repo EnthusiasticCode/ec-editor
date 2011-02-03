@@ -19,11 +19,11 @@
     NSDictionary *keywordStyle = [NSDictionary dictionaryWithObjectsAndKeys:
                                   (id)[[UIColor blueColor] CGColor], (id)kCTForegroundColorAttributeName, 
                                   nil];
-    [codeView setAttributes:keywordStyle forStyle:ECCodeStyleKeyword];
+    [codeView setAttributes:keywordStyle forStyleNamed:ECCodeStyleKeywordName];
     
     codeView.text = @"int main(arguments)\n{\n\treturn 0;\n}";
     
-    [codeView applyStyle:ECCodeStyleKeyword toRange:(NSRange){0, 3}];
+    [codeView setStyleNamed:ECCodeStyleKeywordName toRange:(NSRange){0, 3}];
     
     //
     [window addSubview:codeView];

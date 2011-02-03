@@ -10,7 +10,7 @@
 #import <CoreText/CoreText.h>
 
 // TODO
-// 1. Draw plain text
+// 1. Draw plain text DONE
 // 2. Text selection
 // 3. Conform to text input/text editing
 // 4. Add coloring function
@@ -18,9 +18,9 @@
 // References
 // search for "drawing managing text" in documentation.
 
-extern const NSString* ECCodeStyleDefaultText;
-extern const NSString* ECCodeStyleKeyword;
-extern const NSString* ECCodeStyleComment;
+extern const NSString* ECCodeStyleDefaultTextName;
+extern const NSString* ECCodeStyleKeywordName;
+extern const NSString* ECCodeStyleCommentName;
 
 // TODO It's ok to derive from UIScrollView to have scroll functionalities
 // and add "find marks" but zoom functionalities should be disabled to
@@ -51,7 +51,7 @@ extern const NSString* ECCodeStyleComment;
 // core text attributes.
 @property (nonatomic, copy) NSDictionary *styles;
 
-- (void)setAttributes:(NSDictionary*)attributes forStyle:(const NSString*)aStyle;
-- (void)applyStyle:(const NSString*)aStyle toRange:(NSRange)range;
+- (void)setAttributes:(NSDictionary*)attributes forStyleNamed:(const NSString*)aStyle;
+- (void)setStyleNamed:(const NSString*)aStyle toRange:(NSRange)range;
 
 @end
