@@ -84,7 +84,6 @@
     self.codeView.text = [NSString stringWithContentsOfFile:file encoding:NSUTF8StringEncoding error:nil];
     ECCodeIndexer *codeIndexer = [[ECCodeIndexer alloc] init];
     codeIndexer.source = file;
-    codeIndexer.delegate = self;
     for (ECDiagnostic *diagnostic in codeIndexer.diagnostics)
         NSLog(@"%@", diagnostic.spelling);
     for (ECToken *token in codeIndexer.tokens)
@@ -122,7 +121,7 @@
 
 - (void)applyCompletion:(NSString *)completion
 {
-    self.codeView.text = [self.codeView.text stringByReplacingCharactersInRange:[self.codeIndexer completionRange] withString:[completion stringByAppendingString:@" "]];
+//    self.codeView.text = [self.codeView.text stringByReplacingCharactersInRange:[self.codeIndexer completionRange] withString:[completion stringByAppendingString:@" "]];
 }
 
 - (void)showCompletions

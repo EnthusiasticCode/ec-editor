@@ -38,7 +38,7 @@
 
 + (id)resultWithCursorKind:(int)cursorKind completionString:(ECCompletionString *)completionString
 {
-    id *result = [self alloc];
+    id result = [self alloc];
     result = [result initWithCursorKind:cursorKind completionString:completionString];
     return [result autorelease];
 }

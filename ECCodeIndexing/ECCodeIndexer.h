@@ -7,7 +7,6 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "ECCodeIndexerDelegate.h"
 
 
 /*! Superclass of all code indexers. Implement language agnostic functionality here.
@@ -18,13 +17,12 @@
 
 }
 @property (nonatomic, retain) NSString *source;
-@property (nonatomic, retain) id<ECCodeIndexerDelegate> delegate;
-@property (nonatomic, readonly, retain) NSArray *diagnostics;
-- (id)initWithSource:(NSString *)source;
-- (NSRange)completionRange;
-- (NSArray *)completions;
+- (NSArray *)completionsForSelection:(NSRange)selection withUnsavedFileBuffers:(NSDictionary *)fileBuffers;
+- (NSArray *)completionsForSelection:(NSRange)selection;
 - (NSArray *)diagnostics;
+- (NSArray *)tokensForRange:(NSRange)range withUnsavedFileBuffers:(NSDictionary *)fileBuffers;
 - (NSArray *)tokensForRange:(NSRange)range;
+- (NSArray *)tokensWithUnsavedFileBuffers:(NSDictionary *)fileBuffers;
 - (NSArray *)tokens;
 
 @end

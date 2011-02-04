@@ -12,14 +12,10 @@
 @implementation ECCodeIndexer
 
 @synthesize source = _source;
-@synthesize delegate = _delegate;
-@synthesize diagnostics = _diagnostics;
 
 - (void)dealloc
 {
     self.source = nil;
-    self.delegate = nil;
-    [_diagnostics dealloc];
     [super dealloc];
 }
 
@@ -30,40 +26,14 @@
     return self;
 }
 
-- (NSRange)completionRange
-{
-    if (!self.delegate)
-        return NSMakeRange(NSNotFound, 0);
-    
-    NSString *string = [self.delegate indexedTextBuffer];
-    NSRange selection = [self.delegate indexedTextSelection];
-    
-    if (!string || selection.length || !selection.location) //range of text is selected or caret is at beginning of file
-        return NSMakeRange(NSNotFound, 0);
-    
-    NSUInteger precedingCharacterIndex = selection.location - 1;
-    NSUInteger precedingCharacter = [string characterAtIndex:precedingCharacterIndex];
-    
-    if (precedingCharacter < 65 || precedingCharacter > 122) //character is not a letter
-        return NSMakeRange(NSNotFound, 0);
-    
-    while (precedingCharacterIndex)
-    {
-        if (precedingCharacter < 65 || precedingCharacter > 122) //character is not a letter
-        {
-            NSUInteger length = selection.location - (precedingCharacterIndex + 1);
-            if (length)
-                return NSMakeRange(precedingCharacterIndex + 1, length);
-        }
-        precedingCharacterIndex--;
-        precedingCharacter = [string characterAtIndex:precedingCharacterIndex];
-    }
-    return NSMakeRange(0, selection.location); //if control has reached this point all character between the caret and the beginning of file are letters
-}
-
-- (NSArray *)completions
+- (NSArray *)completionsForSelection:(NSRange)selection withUnsavedFileBuffers:(NSDictionary *)fileBuffers
 {
     return nil;
+}
+
+- (NSArray *)completionsForSelection:(NSRange)selection
+{
+    return [self completionsForSelection:selection withUnsavedFileBuffers:nil];
 }
 
 - (NSArray *)diagnostics
@@ -71,16 +41,36 @@
     return nil;
 }
 
-- (NSArray *)tokensForRange:(NSRange)range
+- (NSArray *)tokensForRange:(NSRange)range withUnsavedFileBuffers:(NSDictionary *)fileBuffers
 {
     return nil;
 }
 
+- (NSArray *)tokensForRange:(NSRange)range
+{
+    return [self tokensForRange:range withUnsavedFileBuffers:nil];
+}
+
+- (NSArray *)tokensWithUnsavedFileBuffers:(NSDictionary *)fileBuffers
+{
+    if (!self.source || ![self.source length])
+        return nil;
+    NSString *sourceBuffer = [fileBuffers objectForKey:self.source];
+    if (sourceBuffer)
+        return [self tokensForRange:NSMakeRange(0, [sourceBuffer length]) withUnsavedFileBuffers:fileBuffers];
+    NSError *error = nil;
+    NSFileWrapper *sourceWrapper = [[[NSFileWrapper alloc] initWithURL:[NSURL fileURLWithPath:self.source] options:0 error:&error] autorelease];
+    if (error)
+    {
+        NSLog(@"error: %@", error);
+        return nil;
+    }
+    return [self tokensForRange:NSMakeRange(0, [[sourceWrapper regularFileContents] length]) withUnsavedFileBuffers:fileBuffers];
+}
+
 - (NSArray *)tokens
 {
-    if (!self.delegate)
-        return nil;
-    return [self tokensForRange:NSMakeRange(0, [[self.delegate indexedTextBuffer] length])];
+    return [self tokensWithUnsavedFileBuffers:nil];
 }
 
 @end
