@@ -21,6 +21,6 @@
 @property (nonatomic, readonly) NSString *rootDirectory;
 @property (nonatomic, readonly) NSString *name;
 
-- (id)initWithRootDirectory:(NSString *)theRootDirectory name:(NSString *)theName;
+- (id)initWithRootDirectory:(NSString *)rootDirectory;
 
 @end

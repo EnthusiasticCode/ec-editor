@@ -16,16 +16,19 @@
 @synthesize managedObjectModel;
 @synthesize managedObjectContext;
 @synthesize persistentStoreCoordinator;
-@synthesize rootDirectory;
-@synthesize name;
+@synthesize rootDirectory = _rootDirectory;
+@synthesize name = _name;
 
-- (id)initWithRootDirectory:(NSString *)theRootDirectory name:(NSString *)theName
+- (id)initWithRootDirectory:(NSString *)rootDirectory
 {
+    NSFileManager *fileManager = [[[NSFileManager alloc] init] autorelease];
+    if (![fileManager fileExistsAtPath:rootDirectory])
+        return nil;
     self = [super init];
     if (self)
     {
-        name = [theName retain];
-        rootDirectory = [theRootDirectory retain];
+        _name = [[rootDirectory lastPathComponent] retain];
+        _rootDirectory = [rootDirectory retain];
     }
     return self;
 }
@@ -46,8 +49,8 @@
             abort();
         } 
     }
-    [rootDirectory release];
-    [name release];
+    [_rootDirectory release];
+    [_name release];
     [managedObjectContext release];
     [managedObjectModel release];
     [persistentStoreCoordinator release];

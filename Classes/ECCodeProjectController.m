@@ -76,19 +76,13 @@
 
 - (void)loadProject:(NSString *)name from:(NSString *)rootDirectory
 {
-    self.project = [[ECCodeProject alloc] initWithRootDirectory:rootDirectory name:name];
+    self.project = [[ECCodeProject alloc] initWithRootDirectory:rootDirectory];
 }
 
 - (void)loadFile:(NSString *)file
 {
     self.codeView.text = [NSString stringWithContentsOfFile:file encoding:NSUTF8StringEncoding error:nil];
     ECCodeIndexer *codeIndexer = [[ECCodeIndexer alloc] initWithSource:file];
-    for (ECDiagnostic *diagnostic in codeIndexer.diagnostics)
-        NSLog(@"%@", diagnostic.spelling);
-    for (ECToken *token in codeIndexer.tokens)
-        NSLog(@"%@", token.spelling);
-    NSLog(@"%@", codeIndexer.source);
-    NSLog(@"%@", codeIndexer.language);
     self.codeIndexer = codeIndexer;
     [codeIndexer release];
 }

@@ -18,6 +18,8 @@
 #import "ECCompletionString.h"
 #import "ECCompletionChunk.h"
 
+#import <MobileCoreServices/MobileCoreServices.h>
+
 static CXIndex _cIndex;
 static unsigned _translationUnitCount;
 
@@ -227,15 +229,16 @@ static ECCompletionResult *completionResultFromClangCompletionResult(CXCompletio
     _translationUnitCount++;
     _source = [source retain];
     NSString *extension = [source pathExtension];
-    if ([extension isEqualToString:@"h"])
+    CFStringRef UTI = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, (CFStringRef)extension, NULL);
+    if ([(NSString *)UTI isEqualToString:@"public.c-header"])
         _language = @"C";
-    if ([extension isEqualToString:@"c"])
+    if ([(NSString *)UTI isEqualToString:@"public.c-source"])
         _language = @"C";
-    if ([extension isEqualToString:@"m"])
+    if ([(NSString *)UTI isEqualToString:@"public.objective-c-source"])
         _language = @"Objective C";
-    if ([extension isEqualToString:@"cc"])
+    if ([(NSString *)UTI isEqualToString:@"public.c-plus-plus-source"])
         _language = @"C++";
-    if ([extension isEqualToString:@"mm"])
+    if ([(NSString *)UTI isEqualToString:@"public.objective-c-plus-plus-source"])
         _language = @"Objective C++";
     return self;
 }
@@ -251,9 +254,9 @@ static ECCompletionResult *completionResultFromClangCompletionResult(CXCompletio
     return [NSArray arrayWithObjects:@"C", @"Objective C", @"C++", @"Objective C++", nil];
 }
 
-+ (NSArray *)handledExtensions
++ (NSArray *)handledUTIs
 {
-    return [NSArray arrayWithObjects:@"h", @"c", @"m", @"cc", @"mm", nil];
+    return [NSArray arrayWithObjects:@"public.c-header", @"public.c-source", @"public.objective-c-source", @"public.c-plus-plus-source", @"public.objective-c-plus-plus-source", nil];
 }
 
 #pragma mark -

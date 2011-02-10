@@ -32,6 +32,8 @@
 		B7759ECF12E062B5006E99E7 /* OUIShadowBorderTop.png in Resources */ = {isa = PBXBuildFile; fileRef = B7759EC712E062B5006E99E7 /* OUIShadowBorderTop.png */; };
 		B7759ED012E062B5006E99E7 /* OUITextSelectionHandle.png in Resources */ = {isa = PBXBuildFile; fileRef = B7759EC812E062B5006E99E7 /* OUITextSelectionHandle.png */; };
 		B7759ED112E062B5006E99E7 /* OUITextSelectionOverlay.png in Resources */ = {isa = PBXBuildFile; fileRef = B7759EC912E062B5006E99E7 /* OUITextSelectionOverlay.png */; };
+		B78B5BE8130451AB007B22C7 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B78B5BE7130451AB007B22C7 /* MobileCoreServices.framework */; };
+		B78B5BE913045E53007B22C7 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B78B5BE7130451AB007B22C7 /* MobileCoreServices.framework */; };
 		B79EE5FF12FC75B50067B2D0 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B736172D12DA112A009801D4 /* UIKit.framework */; };
 		B79EE60012FC75B50067B2D0 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B736172F12DA112A009801D4 /* Foundation.framework */; };
 		B79EE60112FC75B50067B2D0 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B736173112DA112A009801D4 /* CoreGraphics.framework */; };
@@ -126,7 +128,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		B772784A130352D700DA971F /* PBXContainerItemProxy */ = {
+		B78B5BEA13045E6A007B22C7 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B736171C12DA1129009801D4 /* Project object */;
 			proxyType = 1;
@@ -149,7 +151,7 @@
 		B72DA8BA12E849EA00C12CD5 /* ECCompletionString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCompletionString.h; sourceTree = "<group>"; };
 		B72DA8BB12E849EA00C12CD5 /* ECCompletionString.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCompletionString.m; sourceTree = "<group>"; };
 		B73022F612E63CC30029269C /* edit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = edit.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		B7355B0B12E8EBE800198FD9 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
+		B7355B0B12E8EBE800198FD9 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		B7355B1012E8F1C600198FD9 /* Project.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Project.xcdatamodel; sourceTree = "<group>"; };
 		B736172D12DA112A009801D4 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		B736172F12DA112A009801D4 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -171,6 +173,7 @@
 		B7759EC812E062B5006E99E7 /* OUITextSelectionHandle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = OUITextSelectionHandle.png; sourceTree = "<group>"; };
 		B7759EC912E062B5006E99E7 /* OUITextSelectionOverlay.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = OUITextSelectionOverlay.png; sourceTree = "<group>"; };
 		B78A18EC12E764A300E259E0 /* doxygen.conf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = doxygen.conf; sourceTree = "<group>"; };
+		B78B5BE7130451AB007B22C7 /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
 		B793CE2212F77E5100999DC1 /* c-index-test.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = "c-index-test.c"; sourceTree = "<group>"; };
 		B79EE5FE12FC75B50067B2D0 /* Test.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Test.octest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B79EE61112FC776D0067B2D0 /* KWAfterAllNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KWAfterAllNode.h; sourceTree = "<group>"; };
@@ -350,6 +353,7 @@
 				B7BD531F12DF1CDB003B83B3 /* QuartzCore.framework in Frameworks */,
 				B7FC3EAE12E5CE1E00B49A94 /* libclang.dylib in Frameworks */,
 				B7355B0C12E8EBE800198FD9 /* CoreData.framework in Frameworks */,
+				B78B5BE8130451AB007B22C7 /* MobileCoreServices.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -361,6 +365,7 @@
 				B79EE60012FC75B50067B2D0 /* Foundation.framework in Frameworks */,
 				B79EE60112FC75B50067B2D0 /* CoreGraphics.framework in Frameworks */,
 				B7CC2DBD130029AE00AFB020 /* libclang.dylib in Frameworks */,
+				B78B5BE913045E53007B22C7 /* MobileCoreServices.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -454,6 +459,7 @@
 		B736172512DA1129009801D4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B78B5BE7130451AB007B22C7 /* MobileCoreServices.framework */,
 				B7355B0B12E8EBE800198FD9 /* CoreData.framework */,
 				B7BD531E12DF1CDB003B83B3 /* QuartzCore.framework */,
 				B71C0F0212DB60DC002843EF /* CoreText.framework */,
@@ -692,7 +698,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				B772784B130352D700DA971F /* PBXTargetDependency */,
+				B78B5BEB13045E6A007B22C7 /* PBXTargetDependency */,
 			);
 			name = edit;
 			productName = edit;
@@ -896,10 +902,10 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		B772784B130352D700DA971F /* PBXTargetDependency */ = {
+		B78B5BEB13045E6A007B22C7 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = B79EE5FD12FC75B50067B2D0 /* Test */;
-			targetProxy = B772784A130352D700DA971F /* PBXContainerItemProxy */;
+			targetProxy = B78B5BEA13045E6A007B22C7 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 

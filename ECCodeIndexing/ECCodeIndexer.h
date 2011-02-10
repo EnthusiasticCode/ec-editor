@@ -21,7 +21,7 @@
 + (void)loadLanguages;
 + (void)unloadLanguages;
 + (NSArray *)handledLanguages;
-+ (NSArray *)handledExtensions;
++ (NSArray *)handledUTIs;
 - (id)initWithSource:(NSString *)source language:(NSString *)language;
 - (id)initWithSource:(NSString *)source;
 - (NSArray *)completionsForSelection:(NSRange)selection withUnsavedFileBuffers:(NSDictionary *)fileBuffers;
