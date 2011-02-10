@@ -50,4 +50,9 @@
     return [diagnostic autorelease];
 }
 
+- (NSString *)description
+{
+    return [NSString stringWithFormat:@"Diagnostic at %@ : %@", self.location, self.spelling];
+}
+
 @end

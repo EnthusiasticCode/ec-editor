@@ -13,8 +13,8 @@
 @interface ECFixIt : NSObject {
 
 }
-@property (nonatomic, readonly, retain) NSString *string;
-@property (nonatomic, readonly, retain) ECSourceRange *replacementRange;
+@property (nonatomic, readonly) NSString *string;
+@property (nonatomic, readonly) ECSourceRange *replacementRange;
 
 - (id)initWithString:(NSString *)string replacementRange:(ECSourceRange *)replacementRange;
 + (id)fixItWithString:(NSString *)string replacementRange:(ECSourceRange *)replacementRange;

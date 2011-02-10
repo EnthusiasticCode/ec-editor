@@ -18,8 +18,6 @@
 #import "ECCompletionString.h"
 #import "ECCompletionChunk.h"
 
-#import <objc/message.h>
-
 static CXIndex _cIndex;
 static unsigned int _translationUnitCount;
 
@@ -165,24 +163,8 @@ static ECDiagnostic *diagnosticFromClangDiagnostic(CXDiagnostic clangDiagnostic)
 #pragma mark Properties
 
 @synthesize source = _source;
+@synthesize language = _language;
 @synthesize translationUnit = _translationUnit;
-
-- (void)setSource:(NSString *)source
-{
-    if (!_cIndex)
-        _cIndex = clang_createIndex(0, 0);
-    int parameter_count = 10;
-    const char const *parameters[] = {"-ObjC", "-nostdinc", "-nobuiltininc", "-I/Xcode4//usr/lib/clang/2.0/include", "-I/Xcode4/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator4.2.sdk/usr/include", "-F/Xcode4/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator4.2.sdk/System/Library/Frameworks", "-isysroot=/Xcode4/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator4.2.sdk/", "-DTARGET_OS_IPHONE=1", "-UTARGET_OS_MAC", "-miphoneos-version-min=4.2"};
-    self.translationUnit = clang_parseTranslationUnit(_cIndex, [source cStringUsingEncoding:NSUTF8StringEncoding], parameters, parameter_count, 0, 0, CXTranslationUnit_PrecompiledPreamble | CXTranslationUnit_CacheCompletionResults);
-    if (!self.translationUnit)
-    {
-        [_source release];
-        _source = nil;
-    }
-    _translationUnitCount++;
-    [_source release];
-    _source = [source retain];
-}
 
 #pragma mark Initialization
 
@@ -198,16 +180,44 @@ static ECDiagnostic *diagnosticFromClangDiagnostic(CXDiagnostic clangDiagnostic)
         clang_disposeIndex(_cIndex);
         _cIndex = NULL;
     }
+    [_source release];
+    [_language release];
     [super dealloc];
 }
 
-- (id)init
+- (id)initWithSource:(NSString *)source language:(NSString *)language
 {
-    // crazy hack to send init to grandparent class instead of parent class, needed to init instances of class cluster without looping
-    struct objc_super grandsuper;
-    grandsuper.receiver = self;
-    grandsuper.super_class = [[self superclass] superclass];
-    self = objc_msgSendSuper(&grandsuper, _cmd);
+    self = [self initWithSource:source];
+    if (self)
+        _language = [language retain];
+    return self;
+}
+
+- (id)initWithSource:(NSString *)source
+{
+    self = [super init];
+    if (!self)
+        return nil;
+    if (!_cIndex)
+        _cIndex = clang_createIndex(0, 0);
+    int parameter_count = 10;
+    const char const *parameters[] = {"-ObjC", "-nostdinc", "-nobuiltininc", "-I/Xcode4//usr/lib/clang/2.0/include", "-I/Xcode4/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator4.2.sdk/usr/include", "-F/Xcode4/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator4.2.sdk/System/Library/Frameworks", "-isysroot=/Xcode4/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator4.2.sdk/", "-DTARGET_OS_IPHONE=1", "-UTARGET_OS_MAC", "-miphoneos-version-min=4.2"};
+    self.translationUnit = clang_parseTranslationUnit(_cIndex, [source cStringUsingEncoding:NSUTF8StringEncoding], parameters, parameter_count, 0, 0, CXTranslationUnit_PrecompiledPreamble | CXTranslationUnit_CacheCompletionResults);
+    if (!self.translationUnit)
+        return nil;
+    _translationUnitCount++;
+    _source = [source retain];
+    NSString *extension = [source pathExtension];
+    if ([extension isEqualToString:@"h"])
+        _language = @"C";
+    if ([extension isEqualToString:@"c"])
+        _language = @"C";
+    if ([extension isEqualToString:@"m"])
+        _language = @"Objective C";
+    if ([extension isEqualToString:@"cc"])
+        _language = @"C++";
+    if ([extension isEqualToString:@"mm"])
+        _language = @"Objective C++";
     return self;
 }
 
@@ -215,6 +225,16 @@ static ECDiagnostic *diagnosticFromClangDiagnostic(CXDiagnostic clangDiagnostic)
 {
     _cIndex = NULL;
     _translationUnitCount = 0;
+}
+
++ (NSArray *)handledLanguages
+{
+    return [NSArray arrayWithObjects:@"C", @"Objective C", @"C++", @"Objective C++", nil];
+}
+
++ (NSArray *)handledExtensions
+{
+    return [NSArray arrayWithObjects:@"h", @"c", @"m", @"cc", @"mm", nil];
 }
 
 #pragma mark -

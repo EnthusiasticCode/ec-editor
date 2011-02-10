@@ -19,6 +19,7 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    [ECCodeIndexer loadLanguages];
     ECCodeProjectController *rootController;
     [[UINib nibWithNibName:@"CodeProjectController" bundle:nil] instantiateWithOwner:window options:nil];
     rootController = (ECCodeProjectController *) window.rootViewController;
@@ -31,6 +32,7 @@
 
 - (void)dealloc
 {
+    [ECCodeIndexer unloadLanguages];
     self.window = nil;
     [super dealloc];
 }

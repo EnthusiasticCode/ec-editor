@@ -44,4 +44,9 @@
     return [token autorelease];
 }
 
+- (NSString *)description
+{
+    return self.spelling;
+}
+
 @end

@@ -9,21 +9,100 @@
 #import "ECCodeIndexer.h"
 #import "ECClangCodeIndexer.h"
 
+#import <objc/runtime.h>
+
+static NSMutableDictionary *_codeIndexerClassesByLanguage;
+static NSMutableDictionary *_codeIndexerClassesByExtension;
+static NSMutableSet *_handledLanguages;
+static NSMutableSet *_handledExtensions;
+
 @implementation ECCodeIndexer
 
+@synthesize language = _language;
 @synthesize source = _source;
 
-- (void)dealloc
+- (id)initWithSource:(NSString *)source language:(NSString *)language
 {
-    self.source = nil;
-    [super dealloc];
+    if (self.source)
+        return self;
+    NSFileManager *fileManager = [[[NSFileManager alloc] init] autorelease];
+    if (![fileManager fileExistsAtPath:source])
+        return nil;
+    self = [[[_codeIndexerClassesByLanguage objectForKey:language] alloc] initWithSource:source language:language];
+    return self;
 }
 
-- (id)init
+- (id)initWithSource:(NSString *)source
 {
-    [self release];
-    self = [[ECClangCodeIndexer alloc] init];
+    if (self.source)
+        return self;
+    NSFileManager *fileManager = [[[NSFileManager alloc] init] autorelease];
+    if (![fileManager fileExistsAtPath:source])
+        return nil;
+    NSString *extension = [source pathExtension];
+    self = [[[_codeIndexerClassesByExtension objectForKey:extension] alloc] initWithSource:source];
     return self;
+}
+
++ (void)loadLanguages
+{
+    if (_codeIndexerClassesByLanguage && _codeIndexerClassesByExtension && _handledLanguages && _handledExtensions)
+        return;
+    int numClasses;
+    numClasses = objc_getClassList(NULL, 0);
+    if (!numClasses)
+        return;
+    Class *classes = NULL;
+    NSMutableArray *subclasses;
+    [_handledLanguages release];
+    _handledLanguages = [[NSMutableSet alloc] init];
+    [_codeIndexerClassesByLanguage release];
+    _codeIndexerClassesByLanguage = [[NSMutableDictionary alloc] init];
+    [_handledExtensions release];
+    _handledExtensions = [[NSMutableSet alloc] init];
+    [_codeIndexerClassesByExtension release];
+    _codeIndexerClassesByExtension = [[NSMutableDictionary alloc] init];
+    subclasses = [[NSMutableArray alloc] initWithCapacity:numClasses];
+    classes = malloc(sizeof(Class) * numClasses);
+    objc_getClassList(classes, numClasses);
+    for (int i = 0; i < numClasses; i++)
+    {
+        if (class_getSuperclass(classes[i]) == [ECCodeIndexer class])
+            [subclasses addObject:classes[i]];
+    }
+    for (Class subclass in subclasses)
+    {
+        for (NSString *language in [subclass handledLanguages])
+        {
+            [_codeIndexerClassesByLanguage setObject:subclass forKey:language];
+            [_handledLanguages addObject:language];
+        }
+        for (NSString *extension in [subclass handledExtensions])
+        {
+            [_codeIndexerClassesByExtension setObject:subclass forKey:extension];
+            [_handledExtensions addObject:extension];
+        }
+     }
+    free(classes);
+    [subclasses release];
+}
+
++ (void)unloadLanguages
+{
+    [_codeIndexerClassesByLanguage release];
+    [_codeIndexerClassesByExtension release];
+    [_handledLanguages release];
+    [_handledExtensions release];
+}
+
++ (NSArray *)handledLanguages
+{
+    return [_handledLanguages allObjects];
+}
+
++ (NSArray *)handledExtensions
+{
+    return [_handledExtensions allObjects];
 }
 
 - (NSArray *)completionsForSelection:(NSRange)selection withUnsavedFileBuffers:(NSDictionary *)fileBuffers

@@ -24,11 +24,11 @@ typedef enum ECDiagnosticSeverity
 
 }
 @property (nonatomic, readonly) ECDiagnosticSeverity severity;
-@property (nonatomic, readonly, retain) ECSourceLocation *location;
-@property (nonatomic, readonly, retain) NSString *spelling;
-@property (nonatomic, readonly, retain) NSString *category;
-@property (nonatomic, readonly, retain) NSArray *sourceRanges;
-@property (nonatomic, readonly, retain) NSArray *fixIts;
+@property (nonatomic, readonly) ECSourceLocation *location;
+@property (nonatomic, readonly) NSString *spelling;
+@property (nonatomic, readonly) NSString *category;
+@property (nonatomic, readonly) NSArray *sourceRanges;
+@property (nonatomic, readonly) NSArray *fixIts;
 
 - (id)initWithSeverity:(ECDiagnosticSeverity)severity location:(ECSourceLocation *)location spelling:(NSString *)spelling category:(NSString *)category sourceRanges:(NSArray *)sourceRanges fixIts:(NSArray *)fixIts;
 + (id)diagnosticWithSeverity:(ECDiagnosticSeverity)severity location:(ECSourceLocation *)location spelling:(NSString *)spelling category:(NSString *)category sourceRanges:(NSArray *)sourceRanges fixIts:(NSArray *)fixIts;

@@ -24,9 +24,9 @@ typedef enum ECTokenKind
 
 }
 @property (nonatomic, readonly) ECTokenKind kind;
-@property (nonatomic, readonly, retain) NSString *spelling;
-@property (nonatomic, readonly, retain) ECSourceLocation *location;
-@property (nonatomic, readonly, retain) ECSourceRange *extent;
+@property (nonatomic, readonly) NSString *spelling;
+@property (nonatomic, readonly) ECSourceLocation *location;
+@property (nonatomic, readonly) ECSourceRange *extent;
 
 - (id)initWithKind:(ECTokenKind)kind spelling:(NSString *)spelling location:(ECSourceLocation *)location extent:(ECSourceRange *)extent;
 + (id)tokenWithKind:(ECTokenKind)kind spelling:(NSString *)spelling location:(ECSourceLocation *)location extent:(ECSourceRange *)extent;

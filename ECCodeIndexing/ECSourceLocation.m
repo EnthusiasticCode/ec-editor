@@ -42,4 +42,9 @@
     return [location autorelease];
 }
 
+- (NSString *)description
+{
+    return [NSString stringWithFormat:@"%@,%d,%d", self.file, self.line, self.column];
+}
+
 @end

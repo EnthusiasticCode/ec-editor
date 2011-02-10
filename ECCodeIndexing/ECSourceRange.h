@@ -13,8 +13,8 @@
 @interface ECSourceRange : NSObject {
 
 }
-@property (nonatomic, readonly, retain) ECSourceLocation *start;
-@property (nonatomic, readonly, retain) ECSourceLocation *end;
+@property (nonatomic, readonly) ECSourceLocation *start;
+@property (nonatomic, readonly) ECSourceLocation *end;
 
 - (id)initWithStart:(ECSourceLocation *)start end:(ECSourceLocation *)end;
 + (id)rangeWithStart:(ECSourceLocation *)start end:(ECSourceLocation *)end;

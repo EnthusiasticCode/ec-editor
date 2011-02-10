@@ -12,7 +12,7 @@
 @interface ECSourceLocation : NSObject {
 
 }
-@property (nonatomic, readonly, retain) NSString *file;
+@property (nonatomic, readonly) NSString *file;
 @property (nonatomic, readonly) unsigned int line;
 @property (nonatomic, readonly) unsigned int column;
 @property (nonatomic, readonly) unsigned int offset;

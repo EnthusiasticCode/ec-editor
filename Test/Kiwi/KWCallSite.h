@@ -22,7 +22,7 @@
 #pragma mark -
 #pragma mark Properties
 
-@property (nonatomic, readonly, copy) NSString *filename;
+@property (nonatomic, readonly) NSString *filename;
 @property (nonatomic, readonly) NSUInteger lineNumber;
 
 #pragma mark -

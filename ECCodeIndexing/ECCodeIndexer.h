@@ -16,7 +16,14 @@
 @interface ECCodeIndexer : NSObject {
 
 }
-@property (nonatomic, retain) NSString *source;
+@property (nonatomic, readonly) NSString *language;
+@property (nonatomic, readonly) NSString *source;
++ (void)loadLanguages;
++ (void)unloadLanguages;
++ (NSArray *)handledLanguages;
++ (NSArray *)handledExtensions;
+- (id)initWithSource:(NSString *)source language:(NSString *)language;
+- (id)initWithSource:(NSString *)source;
 - (NSArray *)completionsForSelection:(NSRange)selection withUnsavedFileBuffers:(NSDictionary *)fileBuffers;
 - (NSArray *)completionsForSelection:(NSRange)selection;
 - (NSArray *)diagnostics;

@@ -32,7 +32,6 @@
 		B7759ECF12E062B5006E99E7 /* OUIShadowBorderTop.png in Resources */ = {isa = PBXBuildFile; fileRef = B7759EC712E062B5006E99E7 /* OUIShadowBorderTop.png */; };
 		B7759ED012E062B5006E99E7 /* OUITextSelectionHandle.png in Resources */ = {isa = PBXBuildFile; fileRef = B7759EC812E062B5006E99E7 /* OUITextSelectionHandle.png */; };
 		B7759ED112E062B5006E99E7 /* OUITextSelectionOverlay.png in Resources */ = {isa = PBXBuildFile; fileRef = B7759EC912E062B5006E99E7 /* OUITextSelectionOverlay.png */; };
-		B78A18ED12E764A300E259E0 /* doxygen.conf in Resources */ = {isa = PBXBuildFile; fileRef = B78A18EC12E764A300E259E0 /* doxygen.conf */; };
 		B79EE5FF12FC75B50067B2D0 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B736172D12DA112A009801D4 /* UIKit.framework */; };
 		B79EE60012FC75B50067B2D0 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B736172F12DA112A009801D4 /* Foundation.framework */; };
 		B79EE60112FC75B50067B2D0 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B736173112DA112A009801D4 /* CoreGraphics.framework */; };
@@ -122,13 +121,12 @@
 		B7CC3EA112E8F76F00149D80 /* ECCodeProject.m in Sources */ = {isa = PBXBuildFile; fileRef = B7CC3EA012E8F76F00149D80 /* ECCodeProject.m */; };
 		B7DDFEED12F5DED500EFBD32 /* ECCompletionResult.m in Sources */ = {isa = PBXBuildFile; fileRef = B7DDFEEC12F5DED500EFBD32 /* ECCompletionResult.m */; };
 		B7DDFEF312F5EF0900EFBD32 /* ECCompletionChunk.m in Sources */ = {isa = PBXBuildFile; fileRef = B7DDFEF212F5EF0900EFBD32 /* ECCompletionChunk.m */; };
-		B7FC3EAD12E5CE1E00B49A94 /* howto.txt in Resources */ = {isa = PBXBuildFile; fileRef = B7FC3EAB12E5CE1E00B49A94 /* howto.txt */; };
 		B7FC3EAE12E5CE1E00B49A94 /* libclang.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B7FC3EAC12E5CE1E00B49A94 /* libclang.dylib */; };
 		B7FC3EB012E5CE2700B49A94 /* libclang.dylib in Resources */ = {isa = PBXBuildFile; fileRef = B7FC3EAC12E5CE1E00B49A94 /* libclang.dylib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		B79EE6E412FC7A270067B2D0 /* PBXContainerItemProxy */ = {
+		B772784A130352D700DA971F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B736171C12DA1129009801D4 /* Project object */;
 			proxyType = 1;
@@ -694,7 +692,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				B79EE6E512FC7A270067B2D0 /* PBXTargetDependency */,
+				B772784B130352D700DA971F /* PBXTargetDependency */,
 			);
 			name = edit;
 			productName = edit;
@@ -758,8 +756,6 @@
 				B7759ECF12E062B5006E99E7 /* OUIShadowBorderTop.png in Resources */,
 				B7759ED012E062B5006E99E7 /* OUITextSelectionHandle.png in Resources */,
 				B7759ED112E062B5006E99E7 /* OUITextSelectionOverlay.png in Resources */,
-				B7FC3EAD12E5CE1E00B49A94 /* howto.txt in Resources */,
-				B78A18ED12E764A300E259E0 /* doxygen.conf in Resources */,
 				B70A09DF12E9F61000B498CD /* CodeProjectController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -900,10 +896,10 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		B79EE6E512FC7A270067B2D0 /* PBXTargetDependency */ = {
+		B772784B130352D700DA971F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = B79EE5FD12FC75B50067B2D0 /* Test */;
-			targetProxy = B79EE6E412FC7A270067B2D0 /* PBXContainerItemProxy */;
+			targetProxy = B772784A130352D700DA971F /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -971,6 +967,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 4.2;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = 2;
+				TEST_AFTER_BUILD = YES;
 			};
 			name = Debug;
 		};
@@ -1009,6 +1006,7 @@
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = 2;
+				TEST_AFTER_BUILD = YES;
 			};
 			name = Release;
 		};
@@ -1080,6 +1078,7 @@
 					"$(DEVELOPER_LIBRARY_DIR)/Frameworks",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_TREAT_WARNINGS_AS_ERRORS = NO;
 				GCC_WARN_MULTIPLE_DEFINITION_TYPES_FOR_SELECTOR = NO;
 				GCC_WARN_PEDANTIC = NO;
 				GCC_WARN_STRICT_SELECTOR_MATCH = NO;
@@ -1109,6 +1108,7 @@
 					"$(DEVELOPER_LIBRARY_DIR)/Frameworks",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_TREAT_WARNINGS_AS_ERRORS = NO;
 				GCC_WARN_MULTIPLE_DEFINITION_TYPES_FOR_SELECTOR = NO;
 				GCC_WARN_PEDANTIC = NO;
 				GCC_WARN_STRICT_SELECTOR_MATCH = NO;
