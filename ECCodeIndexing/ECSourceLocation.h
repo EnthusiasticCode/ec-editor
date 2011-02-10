@@ -13,11 +13,11 @@
 
 }
 @property (nonatomic, readonly) NSString *file;
-@property (nonatomic, readonly) unsigned int line;
-@property (nonatomic, readonly) unsigned int column;
-@property (nonatomic, readonly) unsigned int offset;
+@property (nonatomic, readonly) unsigned line;
+@property (nonatomic, readonly) unsigned column;
+@property (nonatomic, readonly) unsigned offset;
 
-- (id)initWithFile:(NSString *)file line:(unsigned int)line column:(unsigned int)column offset:(unsigned int)offset;
-+ (id)locationWithFile:(NSString *)file line:(unsigned int)line column:(unsigned int)column offset:(unsigned int)offset;
+- (id)initWithFile:(NSString *)file line:(unsigned)line column:(unsigned)column offset:(unsigned)offset;
++ (id)locationWithFile:(NSString *)file line:(unsigned)line column:(unsigned)column offset:(unsigned)offset;
 
 @end

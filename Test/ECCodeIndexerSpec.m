@@ -97,7 +97,7 @@ describe(@"A code indexer",^
         [[[codeIndexer language] should] equal:@"Objective C"];
     });
     
-    describe(@"with a C source", ^
+    describe(@"with an example C source", ^
     {
         beforeEach(^
         {
@@ -109,9 +109,14 @@ describe(@"A code indexer",^
             [[[codeIndexer diagnostics] should] beEmpty];
         });
         
-        it(@"has tokens", ^
+        it(@"has exactly 25 tokens", ^
         {
-            [[[[codeIndexer tokens] should] have:25] tokens];
+            [[[codeIndexer should] have:25] tokens];
+        });
+        
+        it(@"have at least 400 completions", ^
+        {
+            [[[codeIndexer completionsForSelection:NSMakeRange(57, 0)] should] haveCountOfAtLeast:400];
         });
     });
 });

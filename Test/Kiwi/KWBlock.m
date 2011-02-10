@@ -13,7 +13,7 @@
 #pragma mark -
 #pragma mark Properties
 
-@property (nonatomic, readonly, assign) KWVoidBlock block;
+@property (nonatomic, readonly) KWVoidBlock block;
 
 @end
 

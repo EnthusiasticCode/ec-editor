@@ -75,8 +75,8 @@
     return [self valueWithBytes:&aValue objCType:@encode(unsigned char)];
 }
 
-+ (id)valueWithUnsignedInt:(unsigned int)aValue {
-    return [self valueWithBytes:&aValue objCType:@encode(unsigned int)];
++ (id)valueWithUnsignedInt:(unsigned)aValue {
+    return [self valueWithBytes:&aValue objCType:@encode(unsigned)];
 }
 
 + (id)valueWithUnsignedInteger:(NSUInteger)aValue {
@@ -161,7 +161,7 @@
     return [[self numberValue] unsignedCharValue];
 }
 
-- (unsigned int)unsignedIntValue {
+- (unsigned)unsignedIntValue {
     return [[self numberValue] unsignedIntValue];
 }
 
@@ -222,7 +222,7 @@
         return [self shortData];
     else if (KWObjCTypeEqualToObjCType(anObjCType, @encode(unsigned char)))
         return [self unsignedCharData];
-    else if (KWObjCTypeEqualToObjCType(anObjCType, @encode(unsigned int)))
+    else if (KWObjCTypeEqualToObjCType(anObjCType, @encode(unsigned)))
         return [self unsignedIntData];
     else if (KWObjCTypeEqualToObjCType(anObjCType, @encode(NSUInteger)))
         return [self unsignedIntegerData];
@@ -287,8 +287,8 @@
 }
 
 - (NSData *)unsignedIntData {
-    unsigned int aValue = [self unsignedIntValue];
-    return [NSData dataWithBytes:&aValue length:sizeof(unsigned int)];
+    unsigned aValue = [self unsignedIntValue];
+    return [NSData dataWithBytes:&aValue length:sizeof(unsigned)];
 }
 
 - (NSData *)unsignedIntegerData {

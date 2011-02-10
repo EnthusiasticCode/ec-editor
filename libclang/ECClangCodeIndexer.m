@@ -19,7 +19,7 @@
 #import "ECCompletionChunk.h"
 
 static CXIndex _cIndex;
-static unsigned int _translationUnitCount;
+static unsigned _translationUnitCount;
 
 @interface ECClangCodeIndexer()
 @property (nonatomic) CXTranslationUnit translationUnit;
@@ -57,9 +57,9 @@ static unsigned int _translationUnitCount;
 static ECSourceLocation *sourceLocationFromClangSourceLocation(CXSourceLocation clangSourceLocation)
 {
     CXFile clangFile;
-    unsigned int clangLine;
-    unsigned int clangColumn;
-    unsigned int clangOffset;
+    unsigned clangLine;
+    unsigned clangColumn;
+    unsigned clangOffset;
     clang_getInstantiationLocation(clangSourceLocation, &clangFile, &clangLine, &clangColumn, &clangOffset);
     CXString clangFilePath = clang_getFileName(clangFile);
     NSString *file = [NSString stringWithCString:clang_getCString(clangFilePath) encoding:NSUTF8StringEncoding];
@@ -103,10 +103,10 @@ static ECToken *tokenFromClangToken(CXTranslationUnit translationUnit, CXToken c
     return [ECToken tokenWithKind:kind spelling:spelling location:location extent:extent];
 }
 
-static ECFixIt *fixItFromClangDiagnostic(CXDiagnostic clangDiagnostic, int index)
+static ECFixIt *fixItFromClangDiagnostic(CXDiagnostic clangDiagnostic, unsigned index)
 {
     CXSourceRange clangReplacementRange;
-    CXString clangString = clang_getDiagnosticFixIt(clangDiagnostic, (unsigned int)index, &clangReplacementRange);
+    CXString clangString = clang_getDiagnosticFixIt(clangDiagnostic, index, &clangReplacementRange);
     NSString *string = [NSString stringWithCString:clang_getCString(clangString) encoding:NSUTF8StringEncoding];
     clang_disposeString(clangString);
     ECSourceRange *replacementRange = sourceRangeFromClangSourceRange(clangReplacementRange);
@@ -141,20 +141,39 @@ static ECDiagnostic *diagnosticFromClangDiagnostic(CXDiagnostic clangDiagnostic)
     CXString clangCategory = clang_getDiagnosticCategoryName(clang_getDiagnosticCategory(clangDiagnostic));
     NSString *category = [NSString stringWithCString:clang_getCString(clangCategory) encoding:NSUTF8StringEncoding];
     clang_disposeString(clangCategory);
-    int numSourceRanges = clang_getDiagnosticNumRanges(clangDiagnostic);
+    unsigned numSourceRanges = clang_getDiagnosticNumRanges(clangDiagnostic);
     NSMutableArray *sourceRanges = [NSMutableArray arrayWithCapacity:numSourceRanges];
-    for (int i = 0; i < numSourceRanges; i++)
-    {
+    for (unsigned i = 0; i < numSourceRanges; i++)
         [sourceRanges addObject:sourceRangeFromClangSourceRange(clang_getDiagnosticRange(clangDiagnostic, i))];
-    }
-    int numFixIts = clang_getDiagnosticNumFixIts(clangDiagnostic);
+    unsigned numFixIts = clang_getDiagnosticNumFixIts(clangDiagnostic);
     NSMutableArray *fixIts = [NSMutableArray arrayWithCapacity:numFixIts];
-    for (int i = 0; i < numFixIts; i++)
-    {
+    for (unsigned i = 0; i < numFixIts; i++)
         [fixIts addObject:fixItFromClangDiagnostic(clangDiagnostic, i)];
-    }
     
     return [ECDiagnostic diagnosticWithSeverity:severity location:location spelling:spelling category:category sourceRanges:sourceRanges fixIts:fixIts];
+}
+
+static ECCompletionChunk *chunkFromClangCompletionString(CXCompletionString clangCompletionString, unsigned index)
+{
+    CXString clangString = clang_getCompletionChunkText(clangCompletionString, index);
+    NSString *string = [NSString stringWithCString:clang_getCString(clangString) encoding:NSUTF8StringEncoding];
+    clang_disposeString(clangString);
+    return [ECCompletionChunk chunkWithKind:clang_getCompletionChunkKind(clangCompletionString, index) string:string];
+}
+
+static ECCompletionString *completionStringFromClangCompletionString(CXCompletionString clangCompletionString)
+{
+    unsigned numChunks = clang_getNumCompletionChunks(clangCompletionString);
+    NSMutableArray *chunks = [NSMutableArray arrayWithCapacity:numChunks];
+    for (unsigned i = 0; i < numChunks; i++)
+        [chunks addObject:chunkFromClangCompletionString(clangCompletionString, i)];
+    return [ECCompletionString stringWithCompletionChunks:chunks];
+}
+
+static ECCompletionResult *completionResultFromClangCompletionResult(CXCompletionResult clangCompletionResult)
+{
+    ECCompletionString *completionString = completionStringFromClangCompletionString(clangCompletionResult.CompletionString);
+    return [ECCompletionResult resultWithCursorKind:clangCompletionResult.CursorKind completionString:completionString];
 }
 
 #pragma mark -
@@ -244,9 +263,9 @@ static ECDiagnostic *diagnosticFromClangDiagnostic(CXDiagnostic clangDiagnostic)
 {
     if (!self.translationUnit)
         return;
-    unsigned int numUnsavedFiles = [fileBuffers count];
+    unsigned numUnsavedFiles = [fileBuffers count];
     struct CXUnsavedFile *unsavedFiles = malloc(numUnsavedFiles * sizeof(struct CXUnsavedFile));
-    int i = 0;
+    unsigned i = 0;
     for (NSString *file in [fileBuffers allKeys]) {
         unsavedFiles[i].Filename = [file cStringUsingEncoding:NSUTF8StringEncoding];
         NSString *fileBuffer = [fileBuffers objectForKey:file];
@@ -262,14 +281,16 @@ static ECDiagnostic *diagnosticFromClangDiagnostic(CXDiagnostic clangDiagnostic)
 #pragma mark ECCodeIndexer
 
 - (NSArray *)completionsForSelection:(NSRange)selection withUnsavedFileBuffers:(NSDictionary *)fileBuffers
-{    
-//    NSRange replacementRange = [self completionRangeWithSelection:selection inString:string];
-//    NSArray *guesses;
+{
+    CXSourceLocation selectionLocation = clang_getLocationForOffset(self.translationUnit, clang_getFile(self.translationUnit, [self.source cStringUsingEncoding:NSUTF8StringEncoding]), selection.location);
+    unsigned line;
+    unsigned column;
+    clang_getInstantiationLocation(selectionLocation, NULL, &line, &column, NULL);
+    CXCodeCompleteResults *clangCompletions = clang_codeCompleteAt(self.translationUnit, [self.source cStringUsingEncoding:NSUTF8StringEncoding], line, column, NULL, 0, clang_defaultCodeCompleteOptions());
     NSMutableArray *completions = [[[NSMutableArray alloc] init] autorelease];
-//    for (NSString *guess in guesses)
-//    {
-//        [completions addObject:[ECCompletionString stringWithCompletionChunks:[NSArray arrayWithObject:[ECCompletionChunk chunkWithKind:CXCompletionChunk_TypedText string:guess]]]];
-//    }
+    for (unsigned i = 0; i < clangCompletions->NumResults; i++)
+        [completions addObject:completionResultFromClangCompletionResult(clangCompletions->Results[i]).completionString];
+    clang_disposeCodeCompleteResults(clangCompletions);
     return completions;
 }
 
@@ -277,9 +298,9 @@ static ECDiagnostic *diagnosticFromClangDiagnostic(CXDiagnostic clangDiagnostic)
 {
     if (!self.translationUnit)
         return nil;
-    int numDiagnostics = clang_getNumDiagnostics(self.translationUnit);
+    unsigned numDiagnostics = clang_getNumDiagnostics(self.translationUnit);
     NSMutableArray *diagnostics = [NSMutableArray arrayWithCapacity:numDiagnostics];
-    for (int i = 0; i < numDiagnostics; i++)
+    for (unsigned i = 0; i < numDiagnostics; i++)
     {
         CXDiagnostic clangDiagnostic = clang_getDiagnostic(self.translationUnit, i);
         ECDiagnostic *diagnostic = diagnosticFromClangDiagnostic(clangDiagnostic);
@@ -297,7 +318,7 @@ static ECDiagnostic *diagnosticFromClangDiagnostic(CXDiagnostic clangDiagnostic)
         return nil;
     if (fileBuffers)
         [self reparseTranslationUnitWithUnsavedFileBuffers:fileBuffers];
-    unsigned int numTokens;
+    unsigned numTokens;
     CXToken *clangTokens;
     CXFile clangFile = clang_getFile(self.translationUnit, [self.source cStringUsingEncoding:NSUTF8StringEncoding]);
     CXSourceLocation clangStart = clang_getLocationForOffset(self.translationUnit, clangFile, range.location);
@@ -305,7 +326,7 @@ static ECDiagnostic *diagnosticFromClangDiagnostic(CXDiagnostic clangDiagnostic)
     CXSourceRange clangRange = clang_getRange(clangStart, clangEnd);
     clang_tokenize(self.translationUnit, clangRange, &clangTokens, &numTokens);
     NSMutableArray *tokens = [NSMutableArray arrayWithCapacity:numTokens];
-    for (unsigned int i = 0; i < numTokens; i++)
+    for (unsigned i = 0; i < numTokens; i++)
     {
         [tokens addObject:tokenFromClangToken(self.translationUnit, clangTokens[i])];
     }

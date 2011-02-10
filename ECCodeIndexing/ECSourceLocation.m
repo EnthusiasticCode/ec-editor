@@ -22,7 +22,7 @@
     [super dealloc];
 }
 
-- (id)initWithFile:(NSString *)file line:(unsigned int)line column:(unsigned int)column offset:(unsigned int)offset
+- (id)initWithFile:(NSString *)file line:(unsigned)line column:(unsigned)column offset:(unsigned)offset
 {
     self = [super init];
     if (self)
@@ -35,7 +35,7 @@
     return self;
 }
 
-+ (id)locationWithFile:(NSString *)file line:(unsigned int)line column:(unsigned int)column offset:(unsigned int)offset
++ (id)locationWithFile:(NSString *)file line:(unsigned)line column:(unsigned)column offset:(unsigned)offset
 {
     id location = [self alloc];
     location = [location initWithFile:file line:line column:column offset:offset];

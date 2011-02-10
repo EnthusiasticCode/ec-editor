@@ -28,7 +28,7 @@
 + (id)valueWithLongLong:(long long)value;
 + (id)valueWithShort:(short)aValue;
 + (id)valueWithUnsignedChar:(unsigned char)aValue;
-+ (id)valueWithUnsignedInt:(unsigned int)aValue;
++ (id)valueWithUnsignedInt:(unsigned)aValue;
 + (id)valueWithUnsignedInteger:(NSUInteger)aValue;
 + (id)valueWithUnsignedLong:(unsigned long)aValue;
 + (id)valueWithUnsignedLongLong:(unsigned long long)aValue;
@@ -54,7 +54,7 @@
 - (long long)longLongValue;
 - (short)shortValue;
 - (unsigned char)unsignedCharValue;
-- (unsigned int)unsignedIntValue;
+- (unsigned)unsignedIntValue;
 - (NSUInteger)unsignedIntegerValue;
 - (unsigned long)unsignedLongValue;
 - (unsigned long long)unsignedLongLongValue;

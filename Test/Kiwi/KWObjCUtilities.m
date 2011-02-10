@@ -36,7 +36,7 @@ BOOL KWObjCTypeIsSignedIntegral(const char *objCType) {
 
 BOOL KWObjCTypeIsUnsignedIntegral(const char *objCType) {
     return strcmp(objCType, @encode(unsigned char)) == 0 ||
-           strcmp(objCType, @encode(unsigned int)) == 0 ||
+           strcmp(objCType, @encode(unsigned)) == 0 ||
            strcmp(objCType, @encode(unsigned short)) == 0 ||
            strcmp(objCType, @encode(unsigned long)) == 0 ||
            strcmp(objCType, @encode(unsigned long long)) == 0;

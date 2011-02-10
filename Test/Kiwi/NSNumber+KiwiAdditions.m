@@ -34,7 +34,7 @@
         return [self numberWithShortBytes:bytes];
     else if (KWObjCTypeEqualToObjCType(anObjCType, @encode(unsigned char)))
         return [self numberWithUnsignedCharBytes:bytes];
-    else if (KWObjCTypeEqualToObjCType(anObjCType, @encode(unsigned int)))
+    else if (KWObjCTypeEqualToObjCType(anObjCType, @encode(unsigned)))
         return [self numberWithUnsignedIntBytes:bytes];
     else if (KWObjCTypeEqualToObjCType(anObjCType, @encode(NSUInteger)))
         return [self numberWithUnsignedIntegerBytes:bytes];
@@ -89,7 +89,7 @@
 }
 
 + (id)numberWithUnsignedIntBytes:(const void *)bytes {
-    return [NSNumber numberWithInt:*(const unsigned int *)bytes];
+    return [NSNumber numberWithInt:*(const unsigned *)bytes];
 }
 
 + (id)numberWithUnsignedIntegerBytes:(const void *)bytes {

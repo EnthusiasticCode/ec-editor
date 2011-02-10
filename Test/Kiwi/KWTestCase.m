@@ -143,10 +143,10 @@
     // Examples are methods returning void with no parameters in the receiver
     // that begin with "it" followed by an uppercase word.
     NSMutableArray *exampleInvocations = [[[NSMutableArray alloc] init] autorelease];    
-    unsigned int methodCount = 0;
+    unsigned methodCount = 0;
     Method *methods = class_copyMethodList([self class], &methodCount);
     
-    for (unsigned int i = 0; i < methodCount; i++) {
+    for (unsigned i = 0; i < methodCount; i++) {
         SEL selector = method_getName(methods[i]);
         NSString *selectorString = NSStringFromSelector(selector);
         

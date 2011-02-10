@@ -178,13 +178,13 @@ static NSString * const StubValueKey = @"StubValueKey";
         [protocolSet addObject:protocol];
         [protocolQueue removeLastObject];
         
-        unsigned int count = 0;
+        unsigned count = 0;
         Protocol **protocols = protocol_copyProtocolList(protocol, &count);
         
         if (count == 0)
             continue;
         
-        for (unsigned int i = 0; i < count; ++i)
+        for (unsigned i = 0; i < count; ++i)
             [protocolQueue addObject:protocols[i]];
         
         free(protocols);
@@ -199,7 +199,7 @@ static NSString * const StubValueKey = @"StubValueKey";
 - (void)removeStubWithMessagePattern:(KWMessagePattern *)messagePattern {
     NSUInteger stubCount = [self.stubs count];
 
-    for (unsigned int i = 0; i < stubCount; ++i) {
+    for (unsigned i = 0; i < stubCount; ++i) {
         KWStub *stub = [self.stubs objectAtIndex:i];
 
         if ([stub.messagePattern isEqualToMessagePattern:messagePattern]) {
