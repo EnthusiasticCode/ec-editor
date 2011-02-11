@@ -16,6 +16,8 @@
 		B72DA8BC12E849EA00C12CD5 /* ECCompletionString.m in Sources */ = {isa = PBXBuildFile; fileRef = B72DA8BB12E849EA00C12CD5 /* ECCompletionString.m */; };
 		B7355B0C12E8EBE800198FD9 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7355B0B12E8EBE800198FD9 /* CoreData.framework */; };
 		B7355B1112E8F1C600198FD9 /* Project.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = B7355B0F12E8F1C600198FD9 /* Project.xcdatamodeld */; };
+		B735F9241305868B00B924F8 /* ECDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = B735F9231305868B00B924F8 /* ECDocument.m */; };
+		B735F9251305868B00B924F8 /* ECDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = B735F9231305868B00B924F8 /* ECDocument.m */; };
 		B736172E12DA112A009801D4 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B736172D12DA112A009801D4 /* UIKit.framework */; };
 		B736173012DA112A009801D4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B736172F12DA112A009801D4 /* Foundation.framework */; };
 		B736173212DA112A009801D4 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B736173112DA112A009801D4 /* CoreGraphics.framework */; };
@@ -24,14 +26,6 @@
 		B736173E12DA112A009801D4 /* editAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = B736173D12DA112A009801D4 /* editAppDelegate.m */; };
 		B736174312DA112A009801D4 /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = B736174112DA112A009801D4 /* MainWindow.xib */; };
 		B76E03EE12E98F3F00E706DC /* ECCodeProjectController.m in Sources */ = {isa = PBXBuildFile; fileRef = B76E03EC12E98F3F00E706DC /* ECCodeProjectController.m */; };
-		B7759ECA12E062B5006E99E7 /* OUIRectangularOverlayArrow.png in Resources */ = {isa = PBXBuildFile; fileRef = B7759EC212E062B5006E99E7 /* OUIRectangularOverlayArrow.png */; };
-		B7759ECB12E062B5006E99E7 /* OUIRectangularOverlayFrame.png in Resources */ = {isa = PBXBuildFile; fileRef = B7759EC312E062B5006E99E7 /* OUIRectangularOverlayFrame.png */; };
-		B7759ECC12E062B5006E99E7 /* OUIShadowBorderBottom.png in Resources */ = {isa = PBXBuildFile; fileRef = B7759EC412E062B5006E99E7 /* OUIShadowBorderBottom.png */; };
-		B7759ECD12E062B5006E99E7 /* OUIShadowBorderLeft.png in Resources */ = {isa = PBXBuildFile; fileRef = B7759EC512E062B5006E99E7 /* OUIShadowBorderLeft.png */; };
-		B7759ECE12E062B5006E99E7 /* OUIShadowBorderRight.png in Resources */ = {isa = PBXBuildFile; fileRef = B7759EC612E062B5006E99E7 /* OUIShadowBorderRight.png */; };
-		B7759ECF12E062B5006E99E7 /* OUIShadowBorderTop.png in Resources */ = {isa = PBXBuildFile; fileRef = B7759EC712E062B5006E99E7 /* OUIShadowBorderTop.png */; };
-		B7759ED012E062B5006E99E7 /* OUITextSelectionHandle.png in Resources */ = {isa = PBXBuildFile; fileRef = B7759EC812E062B5006E99E7 /* OUITextSelectionHandle.png */; };
-		B7759ED112E062B5006E99E7 /* OUITextSelectionOverlay.png in Resources */ = {isa = PBXBuildFile; fileRef = B7759EC912E062B5006E99E7 /* OUITextSelectionOverlay.png */; };
 		B78B5BE8130451AB007B22C7 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B78B5BE7130451AB007B22C7 /* MobileCoreServices.framework */; };
 		B78B5BE913045E53007B22C7 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B78B5BE7130451AB007B22C7 /* MobileCoreServices.framework */; };
 		B78B5BEF13047BA1007B22C7 /* NSURL+ECAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = B78B5BEE13047BA1007B22C7 /* NSURL+ECAdditions.m */; };
@@ -155,6 +149,8 @@
 		B73022F612E63CC30029269C /* edit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = edit.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B7355B0B12E8EBE800198FD9 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		B7355B1012E8F1C600198FD9 /* Project.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Project.xcdatamodel; sourceTree = "<group>"; };
+		B735F9221305868B00B924F8 /* ECDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECDocument.h; sourceTree = "<group>"; };
+		B735F9231305868B00B924F8 /* ECDocument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECDocument.m; sourceTree = "<group>"; };
 		B736172D12DA112A009801D4 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		B736172F12DA112A009801D4 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		B736173112DA112A009801D4 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -166,19 +162,10 @@
 		B736174212DA112A009801D4 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainWindow.xib; sourceTree = "<group>"; };
 		B76E03EB12E98F3F00E706DC /* ECCodeProjectController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeProjectController.h; sourceTree = "<group>"; };
 		B76E03EC12E98F3F00E706DC /* ECCodeProjectController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeProjectController.m; sourceTree = "<group>"; };
-		B7759EC212E062B5006E99E7 /* OUIRectangularOverlayArrow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = OUIRectangularOverlayArrow.png; sourceTree = "<group>"; };
-		B7759EC312E062B5006E99E7 /* OUIRectangularOverlayFrame.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = OUIRectangularOverlayFrame.png; sourceTree = "<group>"; };
-		B7759EC412E062B5006E99E7 /* OUIShadowBorderBottom.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = OUIShadowBorderBottom.png; sourceTree = "<group>"; };
-		B7759EC512E062B5006E99E7 /* OUIShadowBorderLeft.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = OUIShadowBorderLeft.png; sourceTree = "<group>"; };
-		B7759EC612E062B5006E99E7 /* OUIShadowBorderRight.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = OUIShadowBorderRight.png; sourceTree = "<group>"; };
-		B7759EC712E062B5006E99E7 /* OUIShadowBorderTop.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = OUIShadowBorderTop.png; sourceTree = "<group>"; };
-		B7759EC812E062B5006E99E7 /* OUITextSelectionHandle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = OUITextSelectionHandle.png; sourceTree = "<group>"; };
-		B7759EC912E062B5006E99E7 /* OUITextSelectionOverlay.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = OUITextSelectionOverlay.png; sourceTree = "<group>"; };
 		B78A18EC12E764A300E259E0 /* doxygen.conf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = doxygen.conf; sourceTree = "<group>"; };
 		B78B5BE7130451AB007B22C7 /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
 		B78B5BED13047BA1007B22C7 /* NSURL+ECAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSURL+ECAdditions.h"; sourceTree = "<group>"; };
 		B78B5BEE13047BA1007B22C7 /* NSURL+ECAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSURL+ECAdditions.m"; sourceTree = "<group>"; };
-		B793CE2212F77E5100999DC1 /* c-index-test.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = "c-index-test.c"; sourceTree = "<group>"; };
 		B79EE5FE12FC75B50067B2D0 /* Test.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Test.octest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B79EE61112FC776D0067B2D0 /* KWAfterAllNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KWAfterAllNode.h; sourceTree = "<group>"; };
 		B79EE61212FC776D0067B2D0 /* KWAfterAllNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KWAfterAllNode.m; sourceTree = "<group>"; };
@@ -341,7 +328,6 @@
 		B7DDFEF112F5EF0900EFBD32 /* ECCompletionChunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCompletionChunk.h; sourceTree = "<group>"; };
 		B7DDFEF212F5EF0900EFBD32 /* ECCompletionChunk.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCompletionChunk.m; sourceTree = "<group>"; };
 		B7FC3EAA12E5CE1E00B49A94 /* Index.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Index.h; sourceTree = "<group>"; };
-		B7FC3EAB12E5CE1E00B49A94 /* howto.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = howto.txt; sourceTree = "<group>"; };
 		B7FC3EAC12E5CE1E00B49A94 /* libclang.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libclang.dylib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -398,6 +384,7 @@
 				B72DA8BB12E849EA00C12CD5 /* ECCompletionString.m */,
 				B7DDFEEB12F5DED500EFBD32 /* ECCompletionResult.h */,
 				B7DDFEEC12F5DED500EFBD32 /* ECCompletionResult.m */,
+				B7FC3EA912E5CE1E00B49A94 /* libclang */,
 			);
 			path = ECCodeIndexing;
 			sourceTree = "<group>";
@@ -410,13 +397,30 @@
 			name = Models;
 			sourceTree = "<group>";
 		};
-		B736171A12DA1129009801D4 = {
+		B735F9211305863600B924F8 /* ECMobileAppKit */ = {
+			isa = PBXGroup;
+			children = (
+				B735F9221305868B00B924F8 /* ECDocument.h */,
+				B735F9231305868B00B924F8 /* ECDocument.m */,
+			);
+			path = ECMobileAppKit;
+			sourceTree = "<group>";
+		};
+		B735F926130586BF00B924F8 /* ECFrameworks */ = {
 			isa = PBXGroup;
 			children = (
 				B78B5BEC13047AF8007B22C7 /* ECAdditions */,
-				B7355B0E12E8EF9300198FD9 /* Models */,
-				B7FC3EA912E5CE1E00B49A94 /* libclang */,
+				B735F9211305863600B924F8 /* ECMobileAppKit */,
 				B72A26DC12F95A8F009C929F /* ECCodeIndexing */,
+			);
+			path = ECFrameworks;
+			sourceTree = "<group>";
+		};
+		B736171A12DA1129009801D4 = {
+			isa = PBXGroup;
+			children = (
+				B735F926130586BF00B924F8 /* ECFrameworks */,
+				B7355B0E12E8EF9300198FD9 /* Models */,
 				B736172212DA1129009801D4 /* Classes */,
 				B736172312DA1129009801D4 /* Other Sources */,
 				B736172412DA1129009801D4 /* Resources */,
@@ -454,7 +458,6 @@
 			children = (
 				B78A18EF12E764A900E259E0 /* Other Resources */,
 				B78F093012E6344900E38985 /* Strings */,
-				B7759EC112E062B5006E99E7 /* Images */,
 				B736174112DA112A009801D4 /* MainWindow.xib */,
 				B709A2C612E9AAC00099F6E0 /* CodeProjectController.xib */,
 			);
@@ -473,22 +476,6 @@
 				B736173112DA112A009801D4 /* CoreGraphics.framework */,
 			);
 			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		B7759EC112E062B5006E99E7 /* Images */ = {
-			isa = PBXGroup;
-			children = (
-				B7759EC212E062B5006E99E7 /* OUIRectangularOverlayArrow.png */,
-				B7759EC312E062B5006E99E7 /* OUIRectangularOverlayFrame.png */,
-				B7759EC412E062B5006E99E7 /* OUIShadowBorderBottom.png */,
-				B7759EC512E062B5006E99E7 /* OUIShadowBorderLeft.png */,
-				B7759EC612E062B5006E99E7 /* OUIShadowBorderRight.png */,
-				B7759EC712E062B5006E99E7 /* OUIShadowBorderTop.png */,
-				B7759EC812E062B5006E99E7 /* OUITextSelectionHandle.png */,
-				B7759EC912E062B5006E99E7 /* OUITextSelectionOverlay.png */,
-			);
-			name = Images;
-			path = OmniUI/Images;
 			sourceTree = "<group>";
 		};
 		B78A18EF12E764A900E259E0 /* Other Resources */ = {
@@ -691,9 +678,7 @@
 				B72DA8B512E8277100C12CD5 /* ECClangCodeIndexer.h */,
 				B72DA8B612E8277100C12CD5 /* ECClangCodeIndexer.m */,
 				B7FC3EAA12E5CE1E00B49A94 /* Index.h */,
-				B7FC3EAB12E5CE1E00B49A94 /* howto.txt */,
 				B7FC3EAC12E5CE1E00B49A94 /* libclang.dylib */,
-				B793CE2212F77E5100999DC1 /* c-index-test.c */,
 			);
 			path = libclang;
 			sourceTree = "<group>";
@@ -768,14 +753,6 @@
 				B7FC3EB012E5CE2700B49A94 /* libclang.dylib in Resources */,
 				B736173912DA112A009801D4 /* InfoPlist.strings in Resources */,
 				B736174312DA112A009801D4 /* MainWindow.xib in Resources */,
-				B7759ECA12E062B5006E99E7 /* OUIRectangularOverlayArrow.png in Resources */,
-				B7759ECB12E062B5006E99E7 /* OUIRectangularOverlayFrame.png in Resources */,
-				B7759ECC12E062B5006E99E7 /* OUIShadowBorderBottom.png in Resources */,
-				B7759ECD12E062B5006E99E7 /* OUIShadowBorderLeft.png in Resources */,
-				B7759ECE12E062B5006E99E7 /* OUIShadowBorderRight.png in Resources */,
-				B7759ECF12E062B5006E99E7 /* OUIShadowBorderTop.png in Resources */,
-				B7759ED012E062B5006E99E7 /* OUITextSelectionHandle.png in Resources */,
-				B7759ED112E062B5006E99E7 /* OUITextSelectionOverlay.png in Resources */,
 				B70A09DF12E9F61000B498CD /* CodeProjectController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -828,6 +805,7 @@
 				B7C4D8B912F8877A0039327B /* ECSourceRange.m in Sources */,
 				B722514412F95CE3007B8DCD /* ECToken.m in Sources */,
 				B78B5BEF13047BA1007B22C7 /* NSURL+ECAdditions.m in Sources */,
+				B735F9241305868B00B924F8 /* ECDocument.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -912,6 +890,7 @@
 				B7CC2DBB130029A000AFB020 /* ECCompletionString.m in Sources */,
 				B7CC2DBC130029A000AFB020 /* ECCompletionResult.m in Sources */,
 				B78B5BF013047BA1007B22C7 /* NSURL+ECAdditions.m in Sources */,
+				B735F9251305868B00B924F8 /* ECDocument.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -986,7 +965,9 @@
 				GCC_WARN_UNUSED_LABEL = YES;
 				GCC_WARN_UNUSED_PARAMETER = NO;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/ECFrameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 4.2;
+				LIBRARY_SEARCH_PATHS = "\"$(SRCROOT)/ECFrameworks/ECCodeIndexing/\"/**";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = 2;
 				TEST_AFTER_BUILD = YES;
@@ -1024,7 +1005,9 @@
 				GCC_WARN_UNUSED_LABEL = YES;
 				GCC_WARN_UNUSED_PARAMETER = NO;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/ECFrameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 4.2;
+				LIBRARY_SEARCH_PATHS = "\"$(SRCROOT)/ECFrameworks/ECCodeIndexing/\"/**";
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = 2;
@@ -1052,11 +1035,6 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				INFOPLIST_FILE = "edit-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "@loader_path/";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SDKROOT)$(SYSTEM_LIBRARY_DIR)/Frameworks/CoreText.framework\"",
-					"\"$(SRCROOT)/libclang\"",
-				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				WRAPPER_EXTENSION = app;
@@ -1070,11 +1048,6 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				INFOPLIST_FILE = "edit-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "@loader_path/";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SDKROOT)$(SYSTEM_LIBRARY_DIR)/Frameworks/CoreText.framework\"",
-					"\"$(SRCROOT)/libclang\"",
-				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
@@ -1085,7 +1058,6 @@
 		B79EE60D12FC75B50067B2D0 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
@@ -1099,10 +1071,6 @@
 				GCC_WARN_UNDECLARED_SELECTOR = NO;
 				INFOPLIST_FILE = "";
 				LD_RUNPATH_SEARCH_PATHS = "@loader_path/";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/libclang\"",
-				);
 				OTHER_LDFLAGS = (
 					"-framework",
 					SenTestingKit,
@@ -1115,7 +1083,6 @@
 		B79EE60E12FC75B50067B2D0 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
@@ -1129,10 +1096,6 @@
 				GCC_WARN_UNDECLARED_SELECTOR = NO;
 				INFOPLIST_FILE = "";
 				LD_RUNPATH_SEARCH_PATHS = "@loader_path/";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/libclang\"",
-				);
 				OTHER_LDFLAGS = (
 					"-framework",
 					SenTestingKit,

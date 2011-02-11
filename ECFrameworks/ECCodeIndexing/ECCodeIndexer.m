@@ -8,7 +8,7 @@
 
 #import "ECCodeIndexer.h"
 #import "ECClangCodeIndexer.h"
-#import "NSURL+ECAdditions.h"
+#import <ECAdditions/NSURL+ECAdditions.h>
 
 #import <objc/runtime.h>
 #import <MobileCoreServices/MobileCoreServices.h>

@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "ECCodeIndexerDelegate.h"
+#import <ECCodeIndexing/ECCodeIndexerDelegate.h>
 @class ECPopoverTableController;
 @class ECCodeIndexer;
 @class ECCodeProject;

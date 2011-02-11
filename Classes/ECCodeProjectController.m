@@ -8,11 +8,11 @@
 
 #import "ECCodeProjectController.h"
 #import "ECCodeProject.h"
-#import "ECCodeIndexer.h"
+#import <ECCodeIndexing/ECCodeIndexer.h>
 #import "ECPopoverTableController.h"
-#import "ECCompletionString.h"
-#import "ECDiagnostic.h"
-#import "ECToken.h"
+#import <ECCodeIndexing/ECCompletionString.h>
+#import <ECCodeIndexing/ECDiagnostic.h>
+#import <ECCodeIndexing/ECToken.h>
 
 
 @implementation ECCodeProjectController
