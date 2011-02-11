@@ -15,17 +15,19 @@ describe(@"A code indexer",^
 {
     __block ECCodeIndexer *codeIndexer;
     __block NSString *cFilePath;
+    __block NSURL *cFileURL;
     beforeAll(^
     {
-        cFilePath = [[NSTemporaryDirectory() stringByAppendingPathComponent:@"main.c"] retain];
+        cFilePath = [NSTemporaryDirectory() stringByAppendingPathComponent:@"main.c"];
+        cFileURL = [[NSURL alloc] initFileURLWithPath:cFilePath];
         [[NSData dataWithBytes:"#include <stdio.h>\n int main(int argc, char **argv)\n { printf(\"hello world\"); }" length:79] writeToFile:cFilePath atomically:YES];
         [ECCodeIndexer loadLanguages];
     });
     
     afterAll(^
     {
+        [cFileURL release];
         [ECCodeIndexer unloadLanguages];
-        [cFilePath release];
     });
     
     beforeEach(^
@@ -75,25 +77,25 @@ describe(@"A code indexer",^
     
     it(@"doesn't accept an invalid source", ^
     {
-        codeIndexer = [codeIndexer initWithSource:@"thisfiledoesnotexist"];
+        codeIndexer = [codeIndexer initWithSource:nil];
         [[codeIndexer source] shouldBeNil];
     });
     
     it(@"accepts a valid source", ^
     {
-        codeIndexer = [codeIndexer initWithSource:cFilePath];
-        [[[codeIndexer source] should] equal:cFilePath];
+        codeIndexer = [codeIndexer initWithSource:cFileURL];
+        [[[codeIndexer source] should] equal:cFileURL];
     });
     
     it(@"sets language based on source", ^
     {
-        codeIndexer = [codeIndexer initWithSource:cFilePath];
+        codeIndexer = [codeIndexer initWithSource:cFileURL];
         [[[codeIndexer language] should] equal:@"C"];
     });
     
     it(@"can override the automatically set language", ^
     {
-        codeIndexer = [codeIndexer initWithSource:cFilePath language:@"Objective C"];
+        codeIndexer = [codeIndexer initWithSource:cFileURL language:@"Objective C"];
         [[[codeIndexer language] should] equal:@"Objective C"];
     });
     
@@ -101,7 +103,7 @@ describe(@"A code indexer",^
     {
         beforeEach(^
         {
-            codeIndexer = [codeIndexer initWithSource:cFilePath];
+            codeIndexer = [codeIndexer initWithSource:cFileURL];
         });
         
         it(@"loads without diagnostics", ^

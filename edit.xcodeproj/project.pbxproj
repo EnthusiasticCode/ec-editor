@@ -34,6 +34,8 @@
 		B7759ED112E062B5006E99E7 /* OUITextSelectionOverlay.png in Resources */ = {isa = PBXBuildFile; fileRef = B7759EC912E062B5006E99E7 /* OUITextSelectionOverlay.png */; };
 		B78B5BE8130451AB007B22C7 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B78B5BE7130451AB007B22C7 /* MobileCoreServices.framework */; };
 		B78B5BE913045E53007B22C7 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B78B5BE7130451AB007B22C7 /* MobileCoreServices.framework */; };
+		B78B5BEF13047BA1007B22C7 /* NSURL+ECAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = B78B5BEE13047BA1007B22C7 /* NSURL+ECAdditions.m */; };
+		B78B5BF013047BA1007B22C7 /* NSURL+ECAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = B78B5BEE13047BA1007B22C7 /* NSURL+ECAdditions.m */; };
 		B79EE5FF12FC75B50067B2D0 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B736172D12DA112A009801D4 /* UIKit.framework */; };
 		B79EE60012FC75B50067B2D0 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B736172F12DA112A009801D4 /* Foundation.framework */; };
 		B79EE60112FC75B50067B2D0 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B736173112DA112A009801D4 /* CoreGraphics.framework */; };
@@ -174,6 +176,8 @@
 		B7759EC912E062B5006E99E7 /* OUITextSelectionOverlay.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = OUITextSelectionOverlay.png; sourceTree = "<group>"; };
 		B78A18EC12E764A300E259E0 /* doxygen.conf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = doxygen.conf; sourceTree = "<group>"; };
 		B78B5BE7130451AB007B22C7 /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
+		B78B5BED13047BA1007B22C7 /* NSURL+ECAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSURL+ECAdditions.h"; sourceTree = "<group>"; };
+		B78B5BEE13047BA1007B22C7 /* NSURL+ECAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSURL+ECAdditions.m"; sourceTree = "<group>"; };
 		B793CE2212F77E5100999DC1 /* c-index-test.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = "c-index-test.c"; sourceTree = "<group>"; };
 		B79EE5FE12FC75B50067B2D0 /* Test.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Test.octest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B79EE61112FC776D0067B2D0 /* KWAfterAllNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KWAfterAllNode.h; sourceTree = "<group>"; };
@@ -409,6 +413,7 @@
 		B736171A12DA1129009801D4 = {
 			isa = PBXGroup;
 			children = (
+				B78B5BEC13047AF8007B22C7 /* ECAdditions */,
 				B7355B0E12E8EF9300198FD9 /* Models */,
 				B7FC3EA912E5CE1E00B49A94 /* libclang */,
 				B72A26DC12F95A8F009C929F /* ECCodeIndexing */,
@@ -492,6 +497,15 @@
 				B78A18EC12E764A300E259E0 /* doxygen.conf */,
 			);
 			name = "Other Resources";
+			sourceTree = "<group>";
+		};
+		B78B5BEC13047AF8007B22C7 /* ECAdditions */ = {
+			isa = PBXGroup;
+			children = (
+				B78B5BED13047BA1007B22C7 /* NSURL+ECAdditions.h */,
+				B78B5BEE13047BA1007B22C7 /* NSURL+ECAdditions.m */,
+			);
+			path = ECAdditions;
 			sourceTree = "<group>";
 		};
 		B78F093012E6344900E38985 /* Strings */ = {
@@ -813,6 +827,7 @@
 				B7C4D8B612F887710039327B /* ECSourceLocation.m in Sources */,
 				B7C4D8B912F8877A0039327B /* ECSourceRange.m in Sources */,
 				B722514412F95CE3007B8DCD /* ECToken.m in Sources */,
+				B78B5BEF13047BA1007B22C7 /* NSURL+ECAdditions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -896,6 +911,7 @@
 				B7CC2DBA130029A000AFB020 /* ECCompletionChunk.m in Sources */,
 				B7CC2DBB130029A000AFB020 /* ECCompletionString.m in Sources */,
 				B7CC2DBC130029A000AFB020 /* ECCompletionResult.m in Sources */,
+				B78B5BF013047BA1007B22C7 /* NSURL+ECAdditions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1031,12 +1047,9 @@
 		B736175B12DA112B009801D4 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
-				GCC_PREFIX_HEADER = "";
-				HEADER_SEARCH_PATHS = "";
 				INFOPLIST_FILE = "edit-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "@loader_path/";
 				LIBRARY_SEARCH_PATHS = (
@@ -1046,7 +1059,6 @@
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
-				USER_HEADER_SEARCH_PATHS = .;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -1054,11 +1066,8 @@
 		B736175C12DA112B009801D4 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
 				COPY_PHASE_STRIP = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
-				GCC_PREFIX_HEADER = "";
-				HEADER_SEARCH_PATHS = "";
 				INFOPLIST_FILE = "edit-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "@loader_path/";
 				LIBRARY_SEARCH_PATHS = (
@@ -1068,7 +1077,6 @@
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
-				USER_HEADER_SEARCH_PATHS = .;
 				VALIDATE_PRODUCT = YES;
 				WRAPPER_EXTENSION = app;
 			};

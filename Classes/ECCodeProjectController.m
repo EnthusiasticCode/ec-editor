@@ -82,7 +82,7 @@
 - (void)loadFile:(NSString *)file
 {
     self.codeView.text = [NSString stringWithContentsOfFile:file encoding:NSUTF8StringEncoding error:nil];
-    ECCodeIndexer *codeIndexer = [[ECCodeIndexer alloc] initWithSource:file];
+    ECCodeIndexer *codeIndexer = [[ECCodeIndexer alloc] initWithSource:[NSURL fileURLWithPath:file]];
     self.codeIndexer = codeIndexer;
     [codeIndexer release];
 }

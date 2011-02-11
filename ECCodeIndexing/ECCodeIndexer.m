@@ -8,6 +8,7 @@
 
 #import "ECCodeIndexer.h"
 #import "ECClangCodeIndexer.h"
+#import "NSURL+ECAdditions.h"
 
 #import <objc/runtime.h>
 #import <MobileCoreServices/MobileCoreServices.h>
@@ -22,23 +23,21 @@ static NSMutableSet *_handledUTIs;
 @synthesize language = _language;
 @synthesize source = _source;
 
-- (id)initWithSource:(NSString *)source language:(NSString *)language
+- (id)initWithSource:(NSURL *)source language:(NSString *)language
 {
     if (self.source)
         return self;
-    NSFileManager *fileManager = [[[NSFileManager alloc] init] autorelease];
-    if (![fileManager fileExistsAtPath:source])
+    if (![source isFileURLAndExists])
         return nil;
     self = [[[_codeIndexerClassesByLanguage objectForKey:language] alloc] initWithSource:source language:language];
     return self;
 }
 
-- (id)initWithSource:(NSString *)source
+- (id)initWithSource:(NSURL *)source
 {
     if (self.source)
         return self;
-    NSFileManager *fileManager = [[[NSFileManager alloc] init] autorelease];
-    if (![fileManager fileExistsAtPath:source])
+    if (![source isFileURLAndExists])
         return nil;
     NSString *extension = [source pathExtension];
     CFStringRef UTI = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, (CFStringRef)extension, NULL);
@@ -135,13 +134,13 @@ static NSMutableSet *_handledUTIs;
 
 - (NSArray *)tokensWithUnsavedFileBuffers:(NSDictionary *)fileBuffers
 {
-    if (!self.source || ![self.source length])
+    if (!self.source)
         return nil;
     NSString *sourceBuffer = [fileBuffers objectForKey:self.source];
     if (sourceBuffer)
         return [self tokensForRange:NSMakeRange(0, [sourceBuffer length]) withUnsavedFileBuffers:fileBuffers];
     NSError *error = nil;
-    NSFileWrapper *sourceWrapper = [[[NSFileWrapper alloc] initWithURL:[NSURL fileURLWithPath:self.source] options:0 error:&error] autorelease];
+    NSFileWrapper *sourceWrapper = [[[NSFileWrapper alloc] initWithURL:self.source options:0 error:&error] autorelease];
     if (error)
     {
         NSLog(@"error: %@", error);

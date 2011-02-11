@@ -17,13 +17,13 @@
 
 }
 @property (nonatomic, readonly) NSString *language;
-@property (nonatomic, readonly) NSString *source;
+@property (nonatomic, readonly) NSURL *source;
 + (void)loadLanguages;
 + (void)unloadLanguages;
 + (NSArray *)handledLanguages;
 + (NSArray *)handledUTIs;
-- (id)initWithSource:(NSString *)source language:(NSString *)language;
-- (id)initWithSource:(NSString *)source;
+- (id)initWithSource:(NSURL *)source language:(NSString *)language;
+- (id)initWithSource:(NSURL *)source;
 - (NSArray *)completionsForSelection:(NSRange)selection withUnsavedFileBuffers:(NSDictionary *)fileBuffers;
 - (NSArray *)completionsForSelection:(NSRange)selection;
 - (NSArray *)diagnostics;

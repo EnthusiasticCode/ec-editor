@@ -24,7 +24,8 @@ static CXIndex _cIndex;
 static unsigned _translationUnitCount;
 
 @interface ECClangCodeIndexer()
-@property (nonatomic) CXTranslationUnit translationUnit;
+@property (nonatomic, readonly) CXTranslationUnit translationUnit;
+@property (nonatomic, readonly) const char *sourcePath;
 - (void)reparseTranslationUnitWithUnsavedFileBuffers:(NSDictionary *)fileBuffers;
 @end
 
@@ -64,7 +65,9 @@ static ECSourceLocation *sourceLocationFromClangSourceLocation(CXSourceLocation 
     unsigned clangOffset;
     clang_getInstantiationLocation(clangSourceLocation, &clangFile, &clangLine, &clangColumn, &clangOffset);
     CXString clangFilePath = clang_getFileName(clangFile);
-    NSString *file = [NSString stringWithCString:clang_getCString(clangFilePath) encoding:NSUTF8StringEncoding];
+    NSString *file = nil;
+    if (clang_getCString(clangFilePath))
+        file = [NSString stringWithUTF8String:clang_getCString(clangFilePath)];
     clang_disposeString(clangFilePath);
     return [ECSourceLocation locationWithFile:file line:clangLine column:clangColumn offset:clangOffset];
 }
@@ -98,7 +101,7 @@ static ECToken *tokenFromClangToken(CXTranslationUnit translationUnit, CXToken c
             break;
     }
     CXString clangSpelling = clang_getTokenSpelling(translationUnit, clangToken);
-    NSString *spelling = [NSString stringWithCString:clang_getCString(clangSpelling) encoding:NSUTF8StringEncoding];
+    NSString *spelling = [NSString stringWithUTF8String:clang_getCString(clangSpelling)];
     clang_disposeString(clangSpelling);
     ECSourceLocation *location = sourceLocationFromClangSourceLocation(clang_getTokenLocation(translationUnit, clangToken));
     ECSourceRange *extent = sourceRangeFromClangSourceRange(clang_getTokenExtent(translationUnit, clangToken));
@@ -109,7 +112,7 @@ static ECFixIt *fixItFromClangDiagnostic(CXDiagnostic clangDiagnostic, unsigned 
 {
     CXSourceRange clangReplacementRange;
     CXString clangString = clang_getDiagnosticFixIt(clangDiagnostic, index, &clangReplacementRange);
-    NSString *string = [NSString stringWithCString:clang_getCString(clangString) encoding:NSUTF8StringEncoding];
+    NSString *string = [NSString stringWithUTF8String:clang_getCString(clangString)];
     clang_disposeString(clangString);
     ECSourceRange *replacementRange = sourceRangeFromClangSourceRange(clangReplacementRange);
     return [ECFixIt fixItWithString:string replacementRange:replacementRange];
@@ -138,10 +141,10 @@ static ECDiagnostic *diagnosticFromClangDiagnostic(CXDiagnostic clangDiagnostic)
     };
     ECSourceLocation *location = sourceLocationFromClangSourceLocation(clang_getDiagnosticLocation(clangDiagnostic));
     CXString clangSpelling = clang_getDiagnosticSpelling(clangDiagnostic);
-    NSString *spelling = [NSString stringWithCString:clang_getCString(clangSpelling) encoding:NSUTF8StringEncoding];
+    NSString *spelling = [NSString stringWithUTF8String:clang_getCString(clangSpelling)];
     clang_disposeString(clangSpelling);
     CXString clangCategory = clang_getDiagnosticCategoryName(clang_getDiagnosticCategory(clangDiagnostic));
-    NSString *category = [NSString stringWithCString:clang_getCString(clangCategory) encoding:NSUTF8StringEncoding];
+    NSString *category = [NSString stringWithUTF8String:clang_getCString(clangCategory)];
     clang_disposeString(clangCategory);
     unsigned numSourceRanges = clang_getDiagnosticNumRanges(clangDiagnostic);
     NSMutableArray *sourceRanges = [NSMutableArray arrayWithCapacity:numSourceRanges];
@@ -158,7 +161,7 @@ static ECDiagnostic *diagnosticFromClangDiagnostic(CXDiagnostic clangDiagnostic)
 static ECCompletionChunk *chunkFromClangCompletionString(CXCompletionString clangCompletionString, unsigned index)
 {
     CXString clangString = clang_getCompletionChunkText(clangCompletionString, index);
-    NSString *string = [NSString stringWithCString:clang_getCString(clangString) encoding:NSUTF8StringEncoding];
+    NSString *string = [NSString stringWithUTF8String:clang_getCString(clangString)];
     clang_disposeString(clangString);
     return [ECCompletionChunk chunkWithKind:clang_getCompletionChunkKind(clangCompletionString, index) string:string];
 }
@@ -186,6 +189,7 @@ static ECCompletionResult *completionResultFromClangCompletionResult(CXCompletio
 @synthesize source = _source;
 @synthesize language = _language;
 @synthesize translationUnit = _translationUnit;
+@synthesize sourcePath = _sourcePath;
 
 #pragma mark Initialization
 
@@ -206,7 +210,7 @@ static ECCompletionResult *completionResultFromClangCompletionResult(CXCompletio
     [super dealloc];
 }
 
-- (id)initWithSource:(NSString *)source language:(NSString *)language
+- (id)initWithSource:(NSURL *)source language:(NSString *)language
 {
     self = [self initWithSource:source];
     if (self)
@@ -214,7 +218,7 @@ static ECCompletionResult *completionResultFromClangCompletionResult(CXCompletio
     return self;
 }
 
-- (id)initWithSource:(NSString *)source
+- (id)initWithSource:(NSURL *)source
 {
     self = [super init];
     if (!self)
@@ -222,12 +226,16 @@ static ECCompletionResult *completionResultFromClangCompletionResult(CXCompletio
     if (!_cIndex)
         _cIndex = clang_createIndex(0, 0);
     int parameter_count = 10;
+    const char *filePath = [[source path] fileSystemRepresentation];
     const char const *parameters[] = {"-ObjC", "-nostdinc", "-nobuiltininc", "-I/Xcode4//usr/lib/clang/2.0/include", "-I/Xcode4/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator4.2.sdk/usr/include", "-F/Xcode4/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator4.2.sdk/System/Library/Frameworks", "-isysroot=/Xcode4/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator4.2.sdk/", "-DTARGET_OS_IPHONE=1", "-UTARGET_OS_MAC", "-miphoneos-version-min=4.2"};
-    self.translationUnit = clang_parseTranslationUnit(_cIndex, [source cStringUsingEncoding:NSUTF8StringEncoding], parameters, parameter_count, 0, 0, CXTranslationUnit_PrecompiledPreamble | CXTranslationUnit_CacheCompletionResults);
+    _translationUnit = clang_parseTranslationUnit(_cIndex, filePath, parameters, parameter_count, 0, 0, CXTranslationUnit_PrecompiledPreamble | CXTranslationUnit_CacheCompletionResults);
+    // TODO: maybe check for read errors: translation unit gets created, diagnostic has 1 item:
+    // 2011-02-11 12:33:49.204 otest[2548:903] Diagnostic at (null),0,0 : error reading 'filePath'
     if (!self.translationUnit)
         return nil;
     _translationUnitCount++;
     _source = [source retain];
+    _sourcePath = [[source path] fileSystemRepresentation];
     NSString *extension = [source pathExtension];
     CFStringRef UTI = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, (CFStringRef)extension, NULL);
     if ([(NSString *)UTI isEqualToString:@"public.c-header"])
@@ -240,6 +248,7 @@ static ECCompletionResult *completionResultFromClangCompletionResult(CXCompletio
         _language = @"C++";
     if ([(NSString *)UTI isEqualToString:@"public.objective-c-plus-plus-source"])
         _language = @"Objective C++";
+    CFRelease(UTI);
     return self;
 }
 
@@ -270,9 +279,9 @@ static ECCompletionResult *completionResultFromClangCompletionResult(CXCompletio
     struct CXUnsavedFile *unsavedFiles = malloc(numUnsavedFiles * sizeof(struct CXUnsavedFile));
     unsigned i = 0;
     for (NSString *file in [fileBuffers allKeys]) {
-        unsavedFiles[i].Filename = [file cStringUsingEncoding:NSUTF8StringEncoding];
+        unsavedFiles[i].Filename = [file UTF8String];
         NSString *fileBuffer = [fileBuffers objectForKey:file];
-        unsavedFiles[i].Contents = [fileBuffer cStringUsingEncoding:NSUTF8StringEncoding];
+        unsavedFiles[i].Contents = [fileBuffer UTF8String];
         unsavedFiles[i].Length = [fileBuffer length];
         i++;
     }
@@ -285,11 +294,11 @@ static ECCompletionResult *completionResultFromClangCompletionResult(CXCompletio
 
 - (NSArray *)completionsForSelection:(NSRange)selection withUnsavedFileBuffers:(NSDictionary *)fileBuffers
 {
-    CXSourceLocation selectionLocation = clang_getLocationForOffset(self.translationUnit, clang_getFile(self.translationUnit, [self.source cStringUsingEncoding:NSUTF8StringEncoding]), selection.location);
+    CXSourceLocation selectionLocation = clang_getLocationForOffset(self.translationUnit, clang_getFile(self.translationUnit, _sourcePath), selection.location);
     unsigned line;
     unsigned column;
     clang_getInstantiationLocation(selectionLocation, NULL, &line, &column, NULL);
-    CXCodeCompleteResults *clangCompletions = clang_codeCompleteAt(self.translationUnit, [self.source cStringUsingEncoding:NSUTF8StringEncoding], line, column, NULL, 0, clang_defaultCodeCompleteOptions());
+    CXCodeCompleteResults *clangCompletions = clang_codeCompleteAt(self.translationUnit, _sourcePath, line, column, NULL, 0, clang_defaultCodeCompleteOptions());
     NSMutableArray *completions = [[[NSMutableArray alloc] init] autorelease];
     for (unsigned i = 0; i < clangCompletions->NumResults; i++)
         [completions addObject:completionResultFromClangCompletionResult(clangCompletions->Results[i]).completionString];
@@ -308,6 +317,7 @@ static ECCompletionResult *completionResultFromClangCompletionResult(CXCompletio
         CXDiagnostic clangDiagnostic = clang_getDiagnostic(self.translationUnit, i);
         ECDiagnostic *diagnostic = diagnosticFromClangDiagnostic(clangDiagnostic);
         [diagnostics addObject:diagnostic];
+        NSLog(@"%@", diagnostic);
         clang_disposeDiagnostic(clangDiagnostic);
     }
     return diagnostics;
@@ -315,7 +325,7 @@ static ECCompletionResult *completionResultFromClangCompletionResult(CXCompletio
 
 - (NSArray *)tokensForRange:(NSRange)range withUnsavedFileBuffers:(NSDictionary *)fileBuffers
 {
-    if (!self.translationUnit || !self.source || ![self.source length])
+    if (!self.source)
         return nil;
     if (range.location == NSNotFound)
         return nil;
@@ -323,7 +333,7 @@ static ECCompletionResult *completionResultFromClangCompletionResult(CXCompletio
         [self reparseTranslationUnitWithUnsavedFileBuffers:fileBuffers];
     unsigned numTokens;
     CXToken *clangTokens;
-    CXFile clangFile = clang_getFile(self.translationUnit, [self.source cStringUsingEncoding:NSUTF8StringEncoding]);
+    CXFile clangFile = clang_getFile(self.translationUnit, _sourcePath);
     CXSourceLocation clangStart = clang_getLocationForOffset(self.translationUnit, clangFile, range.location);
     CXSourceLocation clangEnd = clang_getLocationForOffset(self.translationUnit, clangFile, range.location + range.length);
     CXSourceRange clangRange = clang_getRange(clangStart, clangEnd);
