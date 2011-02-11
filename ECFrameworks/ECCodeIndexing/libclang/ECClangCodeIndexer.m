@@ -9,14 +9,14 @@
 #import "Index.h"
 #import "ECClangCodeIndexer.h"
 
-#import "ECSourceLocation.h"
-#import "ECSourceRange.h"
-#import "ECToken.h"
-#import "ECFixIt.h"
-#import "ECDiagnostic.h"
-#import "ECCompletionResult.h"
-#import "ECCompletionString.h"
-#import "ECCompletionChunk.h"
+#import "../ECSourceLocation.h"
+#import "../ECSourceRange.h"
+#import "../ECToken.h"
+#import "../ECFixIt.h"
+#import "../ECDiagnostic.h"
+#import "../ECCompletionResult.h"
+#import "../ECCompletionString.h"
+#import "../ECCompletionChunk.h"
 
 #import <MobileCoreServices/MobileCoreServices.h>
 

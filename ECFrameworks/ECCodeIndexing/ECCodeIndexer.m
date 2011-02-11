@@ -7,7 +7,7 @@
 //
 
 #import "ECCodeIndexer.h"
-#import "ECClangCodeIndexer.h"
+#import "libclang/ECClangCodeIndexer.h"
 #import <ECAdditions/NSURL+ECAdditions.h>
 
 #import <objc/runtime.h>

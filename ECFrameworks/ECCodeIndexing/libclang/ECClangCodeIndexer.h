@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-#import "ECCodeIndexer.h"
+#import "../ECCodeIndexer.h"
 
 
 /*! Clang code indexer. Provides completion and syntax checking through Clang. */

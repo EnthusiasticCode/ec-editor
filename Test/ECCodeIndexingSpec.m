@@ -6,10 +6,10 @@
 //  Copyright 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import "ECCodeIndexer.h"
-#import "Kiwi.h"
+#import <ECCodeIndexing/ECCodeIndexer.h>
+#import "Kiwi/Kiwi.h"
 
-SPEC_BEGIN(ECCodeIndexerSpec)
+SPEC_BEGIN(ECCodeIndexingSpec)
 
 describe(@"A code indexer",^
 {
@@ -20,7 +20,7 @@ describe(@"A code indexer",^
     {
         cFilePath = [NSTemporaryDirectory() stringByAppendingPathComponent:@"main.c"];
         cFileURL = [[NSURL alloc] initFileURLWithPath:cFilePath];
-        [[NSData dataWithBytes:"#include <stdio.h>\n int main(int argc, char **argv)\n { printf(\"hello world\"); }" length:79] writeToFile:cFilePath atomically:YES];
+        [[NSData dataWithBytes:"#include <stdio.h>\n int main(int argc, char **argv)\n { printf(\"hello world\"); }" length:79] writeToURL:cFileURL atomically:YES];
         [ECCodeIndexer loadLanguages];
     });
     

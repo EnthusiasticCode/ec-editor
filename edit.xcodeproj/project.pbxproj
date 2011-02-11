@@ -103,7 +103,7 @@
 		B7C4D8B312F8867C0039327B /* ECFixIt.m in Sources */ = {isa = PBXBuildFile; fileRef = B7C4D8B212F8867C0039327B /* ECFixIt.m */; };
 		B7C4D8B612F887710039327B /* ECSourceLocation.m in Sources */ = {isa = PBXBuildFile; fileRef = B7C4D8B512F887710039327B /* ECSourceLocation.m */; };
 		B7C4D8B912F8877A0039327B /* ECSourceRange.m in Sources */ = {isa = PBXBuildFile; fileRef = B7C4D8B812F8877A0039327B /* ECSourceRange.m */; };
-		B7CC2DA81300005900AFB020 /* ECCodeIndexerSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = B7CC2DA71300005900AFB020 /* ECCodeIndexerSpec.m */; };
+		B7CC2DA81300005900AFB020 /* ECCodeIndexingSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = B7CC2DA71300005900AFB020 /* ECCodeIndexingSpec.m */; };
 		B7CC2DB3130029A000AFB020 /* ECClangCodeIndexer.m in Sources */ = {isa = PBXBuildFile; fileRef = B72DA8B612E8277100C12CD5 /* ECClangCodeIndexer.m */; };
 		B7CC2DB4130029A000AFB020 /* ECCodeIndexer.m in Sources */ = {isa = PBXBuildFile; fileRef = B72DA8B312E8275D00C12CD5 /* ECCodeIndexer.m */; };
 		B7CC2DB5130029A000AFB020 /* ECSourceLocation.m in Sources */ = {isa = PBXBuildFile; fileRef = B7C4D8B512F887710039327B /* ECSourceLocation.m */; };
@@ -119,6 +119,8 @@
 		B7CC3EA112E8F76F00149D80 /* ECCodeProject.m in Sources */ = {isa = PBXBuildFile; fileRef = B7CC3EA012E8F76F00149D80 /* ECCodeProject.m */; };
 		B7DDFEED12F5DED500EFBD32 /* ECCompletionResult.m in Sources */ = {isa = PBXBuildFile; fileRef = B7DDFEEC12F5DED500EFBD32 /* ECCompletionResult.m */; };
 		B7DDFEF312F5EF0900EFBD32 /* ECCompletionChunk.m in Sources */ = {isa = PBXBuildFile; fileRef = B7DDFEF212F5EF0900EFBD32 /* ECCompletionChunk.m */; };
+		B7E3FA3B1305A92F0019D123 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7E3FA3A1305A92F0019D123 /* SenTestingKit.framework */; };
+		B7E3FA3C1305A94D0019D123 /* ECAdditionsSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = B7E3FA381305A61F0019D123 /* ECAdditionsSpec.m */; };
 		B7FC3EAE12E5CE1E00B49A94 /* libclang.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B7FC3EAC12E5CE1E00B49A94 /* libclang.dylib */; };
 		B7FC3EB012E5CE2700B49A94 /* libclang.dylib in Resources */ = {isa = PBXBuildFile; fileRef = B7FC3EAC12E5CE1E00B49A94 /* libclang.dylib */; };
 /* End PBXBuildFile section */
@@ -320,13 +322,15 @@
 		B7C4D8B512F887710039327B /* ECSourceLocation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECSourceLocation.m; sourceTree = "<group>"; };
 		B7C4D8B712F8877A0039327B /* ECSourceRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECSourceRange.h; sourceTree = "<group>"; };
 		B7C4D8B812F8877A0039327B /* ECSourceRange.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECSourceRange.m; sourceTree = "<group>"; };
-		B7CC2DA71300005900AFB020 /* ECCodeIndexerSpec.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeIndexerSpec.m; sourceTree = "<group>"; };
+		B7CC2DA71300005900AFB020 /* ECCodeIndexingSpec.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeIndexingSpec.m; sourceTree = "<group>"; };
 		B7CC3E9F12E8F76F00149D80 /* ECCodeProject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeProject.h; sourceTree = "<group>"; };
 		B7CC3EA012E8F76F00149D80 /* ECCodeProject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeProject.m; sourceTree = "<group>"; };
 		B7DDFEEB12F5DED500EFBD32 /* ECCompletionResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCompletionResult.h; sourceTree = "<group>"; };
 		B7DDFEEC12F5DED500EFBD32 /* ECCompletionResult.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCompletionResult.m; sourceTree = "<group>"; };
 		B7DDFEF112F5EF0900EFBD32 /* ECCompletionChunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCompletionChunk.h; sourceTree = "<group>"; };
 		B7DDFEF212F5EF0900EFBD32 /* ECCompletionChunk.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCompletionChunk.m; sourceTree = "<group>"; };
+		B7E3FA381305A61F0019D123 /* ECAdditionsSpec.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECAdditionsSpec.m; sourceTree = "<group>"; };
+		B7E3FA3A1305A92F0019D123 /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Developer/Library/Frameworks/SenTestingKit.framework; sourceTree = SDKROOT; };
 		B7FC3EAA12E5CE1E00B49A94 /* Index.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Index.h; sourceTree = "<group>"; };
 		B7FC3EAC12E5CE1E00B49A94 /* libclang.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libclang.dylib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -344,6 +348,7 @@
 				B7FC3EAE12E5CE1E00B49A94 /* libclang.dylib in Frameworks */,
 				B7355B0C12E8EBE800198FD9 /* CoreData.framework in Frameworks */,
 				B78B5BE8130451AB007B22C7 /* MobileCoreServices.framework in Frameworks */,
+				B7E3FA3B1305A92F0019D123 /* SenTestingKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -467,6 +472,7 @@
 		B736172512DA1129009801D4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B7E3FA3A1305A92F0019D123 /* SenTestingKit.framework */,
 				B78B5BE7130451AB007B22C7 /* MobileCoreServices.framework */,
 				B7355B0B12E8EBE800198FD9 /* CoreData.framework */,
 				B7BD531E12DF1CDB003B83B3 /* QuartzCore.framework */,
@@ -508,7 +514,8 @@
 			isa = PBXGroup;
 			children = (
 				B79EE61012FC776D0067B2D0 /* Kiwi */,
-				B7CC2DA71300005900AFB020 /* ECCodeIndexerSpec.m */,
+				B7CC2DA71300005900AFB020 /* ECCodeIndexingSpec.m */,
+				B7E3FA381305A61F0019D123 /* ECAdditionsSpec.m */,
 			);
 			path = Test;
 			sourceTree = "<group>";
@@ -878,7 +885,7 @@
 				B79EE6DE12FC776D0067B2D0 /* NSObject+KiwiStubAdditions.m in Sources */,
 				B79EE6DF12FC776D0067B2D0 /* NSObject+KiwiVerifierAdditions.m in Sources */,
 				B79EE6E012FC776D0067B2D0 /* NSValue+KiwiAdditions.m in Sources */,
-				B7CC2DA81300005900AFB020 /* ECCodeIndexerSpec.m in Sources */,
+				B7CC2DA81300005900AFB020 /* ECCodeIndexingSpec.m in Sources */,
 				B7CC2DB3130029A000AFB020 /* ECClangCodeIndexer.m in Sources */,
 				B7CC2DB4130029A000AFB020 /* ECCodeIndexer.m in Sources */,
 				B7CC2DB5130029A000AFB020 /* ECSourceLocation.m in Sources */,
@@ -891,6 +898,7 @@
 				B7CC2DBC130029A000AFB020 /* ECCompletionResult.m in Sources */,
 				B78B5BF013047BA1007B22C7 /* NSURL+ECAdditions.m in Sources */,
 				B735F9251305868B00B924F8 /* ECDocument.m in Sources */,
+				B7E3FA3C1305A94D0019D123 /* ECAdditionsSpec.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1031,6 +1039,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SDKROOT)/Developer/Library/Frameworks\"",
+				);
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				INFOPLIST_FILE = "edit-Info.plist";
@@ -1045,6 +1057,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SDKROOT)/Developer/Library/Frameworks\"",
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				INFOPLIST_FILE = "edit-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "@loader_path/";
