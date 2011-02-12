@@ -22,7 +22,7 @@ describe(@"An NSURL with additions", ^
     it(@"checks an existent file", ^
     {
         NSURL *existentFile = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:@"thisfileexists"]];
-        [[NSData data] writeToURL:existentFile atomically:YES];
+        [[NSData data] writeToURL:existentFile atomically:NO];
         [[theValue([existentFile isFileURLAndExists]) should] beYes];
     });
     

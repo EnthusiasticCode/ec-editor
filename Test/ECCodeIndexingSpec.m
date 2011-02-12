@@ -14,13 +14,12 @@ SPEC_BEGIN(ECCodeIndexingSpec)
 describe(@"A code indexer",^
 {
     __block ECCodeIndexer *codeIndexer;
-    __block NSString *cFilePath;
     __block NSURL *cFileURL;
     beforeAll(^
     {
-        cFilePath = [NSTemporaryDirectory() stringByAppendingPathComponent:@"main.c"];
+        NSString *cFilePath = [NSTemporaryDirectory() stringByAppendingPathComponent:@"main.c"];
         cFileURL = [[NSURL alloc] initFileURLWithPath:cFilePath];
-        [[NSData dataWithBytes:"#include <stdio.h>\n int main(int argc, char **argv)\n { printf(\"hello world\"); }" length:79] writeToURL:cFileURL atomically:YES];
+        [[NSData dataWithBytes:"#include <stdio.h>\n int main(int argc, char **argv)\n { printf(\"hello world\"); }" length:79] writeToURL:cFileURL atomically:NO];
         [ECCodeIndexer loadLanguages];
     });
     
@@ -40,27 +39,9 @@ describe(@"A code indexer",^
         [codeIndexer release];
     });
     
-    it(@"initializes", ^
-    {
-        codeIndexer = [codeIndexer init];
-        [codeIndexer shouldNotBeNil];
-    });
-    
     it(@"loads language specific code indexer classes", ^
     {
         [[[ECCodeIndexer should] have:4] handledLanguages];
-    });
-
-    it(@"has a readonly language property", ^
-    {
-        [[codeIndexer should] respondToSelector:@selector(language)];
-        [[codeIndexer shouldNot] respondToSelector:@selector(setLanguage:)];
-    });
-    
-    it(@"has a readonly source property", ^
-    {
-        [[codeIndexer should] respondToSelector:@selector(source)];
-        [[codeIndexer shouldNot] respondToSelector:@selector(setSource:)];
     });
     
     it(@"doesn't have a language set by default", ^

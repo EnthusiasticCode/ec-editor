@@ -121,6 +121,10 @@
 		B7DDFEF312F5EF0900EFBD32 /* ECCompletionChunk.m in Sources */ = {isa = PBXBuildFile; fileRef = B7DDFEF212F5EF0900EFBD32 /* ECCompletionChunk.m */; };
 		B7E3FA3B1305A92F0019D123 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7E3FA3A1305A92F0019D123 /* SenTestingKit.framework */; };
 		B7E3FA3C1305A94D0019D123 /* ECAdditionsSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = B7E3FA381305A61F0019D123 /* ECAdditionsSpec.m */; };
+		B7E3FA3E1305B43C0019D123 /* ECMobileAppKitSpec.m in Resources */ = {isa = PBXBuildFile; fileRef = B7E3FA3D1305B43C0019D123 /* ECMobileAppKitSpec.m */; };
+		B7EE636D1305B6AA00A30FD3 /* ECMobileAppKitSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = B7E3FA3D1305B43C0019D123 /* ECMobileAppKitSpec.m */; };
+		B7EE63701305BBD600A30FD3 /* ECTextDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = B7EE636F1305BBD600A30FD3 /* ECTextDocument.m */; };
+		B7EE637113069EC000A30FD3 /* ECTextDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = B7EE636F1305BBD600A30FD3 /* ECTextDocument.m */; };
 		B7FC3EAE12E5CE1E00B49A94 /* libclang.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B7FC3EAC12E5CE1E00B49A94 /* libclang.dylib */; };
 		B7FC3EB012E5CE2700B49A94 /* libclang.dylib in Resources */ = {isa = PBXBuildFile; fileRef = B7FC3EAC12E5CE1E00B49A94 /* libclang.dylib */; };
 /* End PBXBuildFile section */
@@ -331,6 +335,9 @@
 		B7DDFEF212F5EF0900EFBD32 /* ECCompletionChunk.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCompletionChunk.m; sourceTree = "<group>"; };
 		B7E3FA381305A61F0019D123 /* ECAdditionsSpec.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECAdditionsSpec.m; sourceTree = "<group>"; };
 		B7E3FA3A1305A92F0019D123 /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Developer/Library/Frameworks/SenTestingKit.framework; sourceTree = SDKROOT; };
+		B7E3FA3D1305B43C0019D123 /* ECMobileAppKitSpec.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECMobileAppKitSpec.m; sourceTree = "<group>"; };
+		B7EE636E1305BBD600A30FD3 /* ECTextDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECTextDocument.h; sourceTree = "<group>"; };
+		B7EE636F1305BBD600A30FD3 /* ECTextDocument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECTextDocument.m; sourceTree = "<group>"; };
 		B7FC3EAA12E5CE1E00B49A94 /* Index.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Index.h; sourceTree = "<group>"; };
 		B7FC3EAC12E5CE1E00B49A94 /* libclang.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libclang.dylib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -407,6 +414,8 @@
 			children = (
 				B735F9221305868B00B924F8 /* ECDocument.h */,
 				B735F9231305868B00B924F8 /* ECDocument.m */,
+				B7EE636E1305BBD600A30FD3 /* ECTextDocument.h */,
+				B7EE636F1305BBD600A30FD3 /* ECTextDocument.m */,
 			);
 			path = ECMobileAppKit;
 			sourceTree = "<group>";
@@ -516,6 +525,7 @@
 				B79EE61012FC776D0067B2D0 /* Kiwi */,
 				B7CC2DA71300005900AFB020 /* ECCodeIndexingSpec.m */,
 				B7E3FA381305A61F0019D123 /* ECAdditionsSpec.m */,
+				B7E3FA3D1305B43C0019D123 /* ECMobileAppKitSpec.m */,
 			);
 			path = Test;
 			sourceTree = "<group>";
@@ -769,6 +779,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B7CC2DBE13002A6C00AFB020 /* libclang.dylib in Resources */,
+				B7E3FA3E1305B43C0019D123 /* ECMobileAppKitSpec.m in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -813,6 +824,7 @@
 				B722514412F95CE3007B8DCD /* ECToken.m in Sources */,
 				B78B5BEF13047BA1007B22C7 /* NSURL+ECAdditions.m in Sources */,
 				B735F9241305868B00B924F8 /* ECDocument.m in Sources */,
+				B7EE63701305BBD600A30FD3 /* ECTextDocument.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -820,6 +832,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B7EE636D1305B6AA00A30FD3 /* ECMobileAppKitSpec.m in Sources */,
 				B79EE6A012FC776D0067B2D0 /* KWAfterAllNode.m in Sources */,
 				B79EE6A112FC776D0067B2D0 /* KWAfterEachNode.m in Sources */,
 				B79EE6A212FC776D0067B2D0 /* KWAsyncVerifier.m in Sources */,
@@ -899,6 +912,7 @@
 				B78B5BF013047BA1007B22C7 /* NSURL+ECAdditions.m in Sources */,
 				B735F9251305868B00B924F8 /* ECDocument.m in Sources */,
 				B7E3FA3C1305A94D0019D123 /* ECAdditionsSpec.m in Sources */,
+				B7EE637113069EC000A30FD3 /* ECTextDocument.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
