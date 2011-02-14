@@ -14,6 +14,6 @@
 @private
     
 }
-@property (nonatomic, retain) NSString *text;
+@property (nonatomic, copy) NSString *text;
 
 @end

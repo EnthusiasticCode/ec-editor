@@ -58,7 +58,6 @@ describe(@"An ECTextDocument", ^
         document = [document initWithContentsOfURL:fileURLB ofType:@"public.plain-text" error:NULL];
         document.text = @"testing";
         [document writeToURL:fileURLB ofType:@"public.plain-text" error:NULL];
-        NSLog(@"%@", fileURLB);
         [[[NSString stringWithUTF8String:[[NSData dataWithContentsOfURL:fileURLB] bytes]] should] equal:@"testing"];
     });
 });

@@ -27,7 +27,7 @@
     self = [super init];
     if (self)
     {
-        _file = [file retain];
+        _file = [file copy];
         _line = line;
         _column = column;
         _offset = offset;

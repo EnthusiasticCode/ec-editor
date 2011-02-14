@@ -30,7 +30,7 @@
     if (self)
     {
         _kind = kind;
-        _spelling = [spelling retain];
+        _spelling = [spelling copy];
         _location = [location retain];
         _extent = [extent retain];
     }

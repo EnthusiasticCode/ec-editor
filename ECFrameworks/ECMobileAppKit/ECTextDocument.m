@@ -39,9 +39,7 @@
 - (BOOL)readFromData:(NSData *)data ofType:(NSString *)fileType error:(NSError **)error
 {
     if (!data || ![data bytes])
-    {
         return NO;
-    }
     self.text = [NSString stringWithUTF8String:[data bytes]];
     self.documentEdited = NO;
     return YES;

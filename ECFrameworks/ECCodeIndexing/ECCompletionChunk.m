@@ -26,7 +26,7 @@
     if (self)
     {
         _kind = kind;
-        _string = [string retain];
+        _string = [string copy];
     }
     return self;
 }

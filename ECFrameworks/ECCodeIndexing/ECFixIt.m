@@ -26,7 +26,7 @@
     self = [super init];
     if (self)
     {
-        _string = [string retain];
+        _string = [string copy];
         _replacementRange = [replacementRange retain];
     }
     return self;

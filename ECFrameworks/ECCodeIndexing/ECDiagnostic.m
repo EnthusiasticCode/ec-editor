@@ -35,10 +35,10 @@
     {
         _severity = severity;
         _location = [location retain];
-        _spelling = [spelling retain];
-        _category = [category retain];
-        _sourceRanges = [sourceRanges retain];
-        _fixIts = [fixIts retain];
+        _spelling = [spelling copy];
+        _category = [category copy];
+        _sourceRanges = [sourceRanges copy];
+        _fixIts = [fixIts copy];
     }
     return self;
 }

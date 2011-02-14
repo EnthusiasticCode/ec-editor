@@ -28,7 +28,7 @@
     if (self)
     {
         _name = [[rootDirectory lastPathComponent] retain];
-        _rootDirectory = [rootDirectory retain];
+        _rootDirectory = [rootDirectory copy];
     }
     return self;
 }

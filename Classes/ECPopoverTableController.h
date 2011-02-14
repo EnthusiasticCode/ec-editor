@@ -19,7 +19,7 @@
     UIPopoverController *_popover;
 }
 /*! An NSArray representing the choices the controller will display. */
-@property (nonatomic,retain) NSArray *strings;
+@property (nonatomic,copy) NSArray *strings;
 /*! The rect in which to present the popover. */
 @property (nonatomic) CGRect popoverRect;
 /*! The view in which to present the popover. Must have a valid window. */

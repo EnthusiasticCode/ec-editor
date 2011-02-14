@@ -25,7 +25,7 @@
     }
     else
     {
-        _strings = [strings retain];
+        _strings = [strings copy];
         [self.tableView reloadData];
         [_popover presentPopoverFromRect:self.popoverRect inView:self.viewToPresentIn permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
     }

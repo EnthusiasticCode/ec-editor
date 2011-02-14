@@ -14,7 +14,7 @@
     
 }
 @property (nonatomic, retain) NSURL *fileURL;
-@property (nonatomic, retain) NSString *fileType;
+@property (nonatomic, copy) NSString *fileType;
 @property (nonatomic, retain) NSDate *fileModificationDate;
 @property (nonatomic, getter = isDocumentEdited) BOOL documentEdited;
 @property (nonatomic, readonly) NSString *displayName;

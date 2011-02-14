@@ -23,7 +23,7 @@
 {
     self = [super init];
     if (self)
-        _completionChunks = [completionChunks retain];
+        _completionChunks = [completionChunks copy];
     return self;
 }
 
