@@ -13,11 +13,26 @@ const NSString* ECCodeStyleDefaultTextName = @"Default";
 const NSString* ECCodeStyleKeywordName = @"Keyword";
 const NSString* ECCodeStyleCommentName = @"Comment";
 
+#define RECTWALKER_LEFT_IS_RANGE_BOUNDARY  ( 00001 )
+#define RECTWALKER_RIGHT_IS_RANGE_BOUNDARY ( 00002 )
+#define RECTWALKER_LEFT_IS_LINE_WRAP       ( 00004 )
+#define RECTWALKER_RIGHT_IS_LINE_WRAP      ( 00010 )
+#define RECTWALKER_FIRST_RECT_IN_LINE      ( 00020 )
+#define RECTWALKER_FIRST_LINE              ( 00040 )
+
 @interface ECCodeView ()
 
 // This method is used to indicate that the content has changed and the 
 // rendering frame generated from it should be recalculated.
 - (void)setNeedsContentFrame;
+
+- (void)setSelectedTextRange:(ECTextRange *)selectedTextRange notifyDelegate:(BOOL)shouldNotify;
+
+- (void)setNeedsDisplayInRange:(ECTextRange *)range;
+
+- (CFIndex)lineIndexForLocation:(CFIndex)location 
+                        inLines:(CFArrayRef)lines 
+                    containedIn:(CFRange)range;
 
 @end
 
@@ -231,7 +246,7 @@ const NSString* ECCodeStyleCommentName = @"Comment";
     [self setNeedsDisplay];
 }
 
-#pragma mark CodeViewUtilities
+#pragma mark CodeView utilities
 
 - (void)setAttributes:(NSDictionary*)attributes forStyleNamed:(const NSString*)aStyle
 {
@@ -241,7 +256,202 @@ const NSString* ECCodeStyleCommentName = @"Comment";
     //    [self setNeedsDisplay];
 }
 
+#pragma mark -
+#pragma mark UIKeyInput protocol
+
+- (BOOL)hasText
+{
+    return [content length] > 0;
+}
+
+- (void)insertText:(NSString *)aText
+{
+    // TODO solid carret
+    
+    // Select insertion range
+    NSUInteger contentLength = [content length];
+    NSRange insertRange;
+    if (selection == nil)
+    {
+        insertRange = NSMakeRange(contentLength, 0);
+    }
+    else
+    {
+        NSUInteger s = ((ECTextPosition*)selection.start).index;
+        NSUInteger e = ((ECTextPosition*)selection.end).index;
+        if (e > contentLength || s > contentLength || e < s)
+        {
+            return;
+        }
+        insertRange = NSMakeRange(s, e - s);
+    }
+    
+    // TODO check if char is space and autocomplete
+    
+    // TODO unmakrText
+    
+    // TODO beforeMutate
+    
+    // Insert text
+    // TODO use styled attributes?
+    NSAttributedString *insertText = [[NSAttributedString alloc] initWithString:aText attributes:defaultAttributes];
+    [content replaceCharactersInRange:insertRange withAttributedString:insertText];
+    [insertText release];
+    
+    // TODO afterMutate
+    
+    // TODO setSelectionToIndex
+    
+    [self setNeedsContentFrame];
+    [self setNeedsDisplay];
+}
+
+- (void)deleteBackward
+{
+    // TODO setsolidcarret
+    
+}
+
+#pragma mark -
+#pragma mark UITextInputTraits protocol
+
+// TODO return key based on contest
+
+- (UIKeyboardAppearance)keyboardAppearance
+{
+    return UIKeyboardAppearanceDefault;
+}
+
+@synthesize keyboardType;
+- (UIReturnKeyType)returnKeyType
+{
+    return UIReturnKeyDefault;
+}
+
+- (BOOL)enablesReturnKeyAutomatically
+{
+    return NO;
+}
+
+- (BOOL)isSecureTextEntry
+{
+    return NO;
+}
+
+#pragma mark -
+#pragma mark UITextInput protocol
+
+@synthesize inputDelegate;
+
+#pragma mark Replacing and Returning Text
+
+- (NSString *)textInRange:(UITextRange *)range
+{
+    if(!range || ![range isKindOfClass:[ECTextRange class]])
+        return nil;
+    
+    NSUInteger s = ((ECTextPosition *)range.start).index;
+    NSUInteger e = ((ECTextPosition *)range.end).index;
+    
+    NSString *result;
+    if (e <= s)
+        result = @"";
+    else
+        result = [[content string] substringWithRange:(NSRange){s, e - s}];
+    
+    return result;
+}
+
+- (void)replaceRange:(UITextRange *)range withText:(NSString *)aText
+{
+    // Adjust replacing range
+    if(!range || ![range isKindOfClass:[ECTextRange class]])
+        return;
+    
+    NSUInteger s = ((ECTextPosition *)range.start).index;
+    NSUInteger e = ((ECTextPosition *)range.end).index;
+    NSUInteger contentLength = [content length];
+    
+    if (e < s)
+        return;
+    if (s > contentLength)
+        s = contentLength;
+    
+    // Prepare for contente mutation
+    // TODO setSolidCaret
+    
+    [self unmarkText];
+    
+    // TODO beforeMutate
+    
+    // Mutate content
+    // TODO style differently?
+    NSUInteger endIndex;
+    NSAttributedString *attributedText = [[NSAttributedString alloc] initWithString:aText attributes:[content attributesAtIndex:s effectiveRange:NULL]];
+    if (e > s)
+    {
+        NSRange c = [[content string] rangeOfComposedCharacterSequencesForRange:(NSRange){s, e - s}];
+        if (c.location + c.length > contentLength)
+            c.length = contentLength - c.location;
+        [content replaceCharactersInRange:c withAttributedString:attributedText];
+        endIndex = c.location + [attributedText length];
+    }
+    else
+    {
+        [content insertAttributedString:attributedText atIndex:s];
+        endIndex = s + [attributedText length];
+    }
+    [attributedText release];
+    
+    // TODO afterMutate
+    // TODO setSelection endIndex
+    
+    [self setNeedsContentFrame];
+    [self setNeedsDisplay];
+}
+
+#pragma mark Working with Marked and Selected Text
+
+- (UITextRange *)selectedTextRange
+{
+    return selection;
+}
+
+-(void)setSelectedTextRange:(UITextRange *)selectedTextRange
+{
+    // TODO solidCaret
+    
+    [self unmarkText];
+    
+    [self setSelectedTextRange:(ECTextRange *)selectedTextRange notifyDelegate:YES];
+}
+
 #pragma mark CodeView private methods
+
+- (void)setSelectedTextRange:(ECTextRange *)newSelection notifyDelegate:(BOOL)shouldNotify
+{
+    if (selection == newSelection)
+        return;
+    
+    if (newSelection && selection && [newSelection isEqual:selection])
+        return;
+    
+    // TODO selectionDirtyRect 
+    
+    if (newSelection && (![newSelection isEmpty])) // TODO or solid caret
+        [self setNeedsDisplayInRange:newSelection];
+    
+    if (shouldNotify)
+        [inputDelegate selectionWillChange:self];
+    
+    [selection release];
+    selection = [newSelection retain];
+    
+    if (shouldNotify)
+        [inputDelegate selectionDidChange:self];
+    
+    [self setNeedsLayout];
+}
 
 // TODO rethink: contentFrameInvalid should be YES if text/attr changed to recreate framesetter, 
 // contentFrame should be released and set to nil when bounds changes.
@@ -250,6 +460,159 @@ const NSString* ECCodeStyleCommentName = @"Comment";
     contentFrameInvalid = YES;
     
     // TODO any content sanity check? see _didChangeContent
+}
+
+
+// see - (void)_setNeedsDisplayForRange:(OUEFTextRange *)range;
+- (void)setNeedsDisplayInRange:(ECTextRange *)range
+{
+    if (!range || contentFrameInvalid || !contentFrame)
+        return;
+    
+    CGRect dirtyRect;
+    
+    if ([range isEmpty])
+    {
+        // TODO carretRectForPosition
+    }
+    else
+    {
+        // TODO disaster to select 
+    }
+}
+
+/////////////////////////////////////// TODO move in a CF helpers
+
+- (CFIndex)lineIndexForLocation:(CFIndex)location 
+                        inLines:(CFArrayRef)lines 
+                    containedIn:(CFRange)range
+// TODO? resultLine:(CTLineRef *)result
+{
+    CFIndex pos = range.location;
+    CFIndex end = range.location + range.length;
+    
+    while (end > pos)
+    {
+        CFIndex i = (end + pos - 1) >> 1;
+        CTLineRef line = CFArrayGetValueAtIndex(lines, i);
+        CFRange lineRange = CTLineGetStringRange(line);
+        
+        if (lineRange.location > location)
+            pos = i;
+        else if ((lineRange.location + lineRange.length) > location)
+            // TODO? if (result) *result = line;
+            return i;
+        else 
+            pos = i + 1;
+    }
+    return pos < end ? kCFNotFound : pos;
+}
+
+
+- (void)processRectsForContentRange:(NSRange)range withBlock:(void(^)(CGRect))block
+{
+}
+
+- (CGRect)rectForContentRange:(NSRange)range
+{
+    CGRect resultRect = CGRectNull;
+    
+    CFArrayRef lines = CTFrameGetLines(contentFrame);
+    CFIndex lineCount = CFArrayGetCount(lines);
+    
+    CFIndex firstLine = [self lineIndexForLocation:range.location 
+                                           inLines:lines 
+                                       containedIn:(CFRange){0, lineCount}];
+    if (firstLine < 0 || firstLine >= lineCount)
+        return resultRect;
+    
+    BOOL lastLine = NO;
+
+    for (CFIndex lineIndex = firstLine; lineIndex < lineCount && !lastLine; ++lineIndex) 
+    {
+        CTLineRef line = CFArrayGetValueAtIndex(lines, lineIndex);
+        CFRange lineRange = CTLineGetStringRange(line);
+        //
+        CGFloat left, right, leftSecondary = NAN, rightSecondary = NAN;
+        CGFloat ascent = NAN, descent = NAN;
+        CGFloat lineWidth = CTLineGetTypographicBounds(line, &ascent, &descent, NULL);
+        //
+        CGPoint lineOrigin;
+        CTFrameGetLineOrigins(contentFrame, (CFRange){ lineIndex, 1 }, &lineOrigin);
+        //
+        NSRange spanRange;
+        NSUInteger rangeEndLocation = range.location + range.length;
+        //
+        BOOL firstLine = lineIndex == firstLine;
+        BOOL lineIsBoundary = NO;
+        //
+        CGRect lineRect = CGRectMake(self.contentInset.left, self.contentInset.top + lineOrigin.y - descent, 0, ascent + descent);
+        
+        if (rangeEndLocation < (NSUInteger)lineRange.location)
+        {
+            // Requested range ends before the beginning of this line
+            break;
+        }
+        else if (range.location <= (NSUInteger)lineRange.location) 
+        {
+            // Requested range starts before this line
+            // Left is line wrap
+            left = 0;
+            spanRange.location = (NSUInteger)lineRange.location;
+        } 
+        else 
+        {
+            // Reqeusted range starts inside this line
+            // Left is range boundary
+            left = CTLineGetOffsetForStringIndex(line, range.location, &leftSecondary);
+            spanRange.location = range.location;
+            lineIsBoundary = YES;
+            lineRect.origin.x += lineOrigin.x;
+        }
+
+        CGFloat trailingWhitespace = 0;
+        
+        NSUInteger lineEndLocation = (NSUInteger)(lineRange.location + lineRange.length);
+        if (lineEndLocation >= range.location 
+            && (lineEndLocation - range.location) < range.length)
+        {
+            // Requested range ends after this line
+            // Right is line wrap
+            right = lineWidth;
+            spanRange.length = lineEndLocation - spanRange.location;
+            lastLine = (lineIndex + 1) < lineCount;
+            trailingWhitespace = CTLineGetTrailingWhitespaceWidth(line);
+        }
+        else
+        {
+            // Reqeuested range ends in this line
+            // Right is range boundary
+            right = CTLineGetOffsetForStringIndex(line, rangeEndLocation, &rightSecondary);
+            spanRange.length = rangeEndLocation - spanRange.location;
+            lastLine = YES;
+            lineIsBoundary = YES;
+        }
+        
+        lineRect.size.width = right - left + trailingWhitespace;
+        
+//        if (lineIsBoundary)
+//        {
+//            // Proceed caclulating rects for characters
+//            CFArrayRef runs = CTLineGetGlyphRuns(line);
+//            CFIndex runsCount = CFArrayGetCount(runs);
+//            for (CFIndex i = 0; i < runsCount; ++i)
+//            {
+//                CTRunRef run = CFArrayGetValueAtIndex(runs, i);
+//                CFRange runRange = CTRunGetStringRange(run);
+//                CTRunStatus runStatus = CTRunGetStatus(run);
+//                
+//            }
+//        }
+        
+        resultRect = CGRectUnion(resultRect, lineRect);
+    }
+    
+    return resultRect;
 }
 
 @end
