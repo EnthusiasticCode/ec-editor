@@ -216,7 +216,7 @@ const NSString* ECCodeStyleCommentName = @"Comment";
     // TODO draw decorations
     
     // TESTs
-    CGRect testRect = [self rectForContentRange:(NSRange){0, 6}];
+    CGRect testRect = [self rectForContentRange:(NSRange){0, 26}];
     [[UIColor redColor] setStroke];
     CGContextStrokeRect(context, testRect);
     
@@ -517,7 +517,7 @@ const NSString* ECCodeStyleCommentName = @"Comment";
 }
 
 
-- (void)processLineRectsInRange:(NSRange)range withBlock:(void(^)(CGRect))block
+- (void)processRectsOfLinesInRange:(NSRange)range withBlock:(void(^)(CGRect))block
 {
 }
 
@@ -581,14 +581,14 @@ const NSString* ECCodeStyleCommentName = @"Comment";
         CGFloat trailingWhitespace = 0;
         
         NSUInteger lineEndLocation = (NSUInteger)(lineRange.location + lineRange.length);
-        if (lineEndLocation >= range.location 
-            && (lineEndLocation - range.location) < range.length)
+        if (range.location <= lineEndLocation
+            && range.length > (lineEndLocation - range.location))
         {
             // Requested range ends after this line
             // Right is line wrap
             right = lineWidth;
             spanRange.length = lineEndLocation - spanRange.location;
-            lastLine = (lineIndex + 1) < lineCount;
+            lastLine = (lineIndex + 1) >= lineCount;
             trailingWhitespace = CTLineGetTrailingWhitespaceWidth(line);
         }
         else
@@ -617,10 +617,22 @@ const NSString* ECCodeStyleCommentName = @"Comment";
 //            }
 //        }
         
+        // block(lineRect);
         resultRect = CGRectUnion(resultRect, lineRect);
     }
     
     return resultRect;
 }
+
+//- (CGRect)rectForContentRange:(NSRange)range
+//{
+// TODO result is not properly updated
+//    __block CGRect result = CGRectZero;
+//    [self processRectsOfLinesInRange:range withBlock:^(CGRect r) {
+//        result = CGRectUnion(result, r);
+//    }];
+//    return result;
+//}
+
 
 @end
