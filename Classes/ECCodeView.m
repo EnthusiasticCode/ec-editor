@@ -519,12 +519,6 @@ const NSString* ECCodeStyleCommentName = @"Comment";
 
 - (void)processRectsOfLinesInRange:(NSRange)range withBlock:(void(^)(CGRect))block
 {
-}
-
-- (CGRect)rectForContentRange:(NSRange)range
-{
-    CGRect resultRect = CGRectNull;
-    
     CFArrayRef lines = CTFrameGetLines(contentFrame);
     CFIndex lineCount = CFArrayGetCount(lines);
     
@@ -532,7 +526,7 @@ const NSString* ECCodeStyleCommentName = @"Comment";
                                            inLines:lines 
                                        containedIn:(CFRange){0, lineCount}];
     if (firstLine < 0 || firstLine >= lineCount)
-        return resultRect;
+        return;
     
     BOOL lastLine = NO;
 
@@ -617,22 +611,18 @@ const NSString* ECCodeStyleCommentName = @"Comment";
 //            }
 //        }
         
-        // block(lineRect);
-        resultRect = CGRectUnion(resultRect, lineRect);
+        block(lineRect);
     }
-    
-    return resultRect;
 }
 
-//- (CGRect)rectForContentRange:(NSRange)range
-//{
-// TODO result is not properly updated
-//    __block CGRect result = CGRectZero;
-//    [self processRectsOfLinesInRange:range withBlock:^(CGRect r) {
-//        result = CGRectUnion(result, r);
-//    }];
-//    return result;
-//}
+- (CGRect)rectForContentRange:(NSRange)range
+{
+    __block CGRect result = CGRectNull;
+    [self processRectsOfLinesInRange:range withBlock:^(CGRect r) {
+        result = CGRectUnion(result, r);
+    }];
+    return result;
+}
 
 
 @end
