@@ -34,6 +34,9 @@ const NSString* ECCodeStyleCommentName = @"Comment";
                         inLines:(CFArrayRef)lines 
                     containedIn:(CFRange)range;
 
+- (void)processRectsOfLinesInRange:(NSRange)range 
+                         withBlock:(void(^)(CGRect))block;
+
 - (CGRect)rectForContentRange:(NSRange)range;
 
 @end
@@ -216,9 +219,14 @@ const NSString* ECCodeStyleCommentName = @"Comment";
     // TODO draw decorations
     
     // TESTs
-    CGRect testRect = [self rectForContentRange:(NSRange){0, 26}];
+//    __block CGMutablePathRef testPath = CGPathCreateMutable();
+    [self processRectsOfLinesInRange:(NSRange){0, 26} withBlock:^(CGRect r) {
+//        CGPathAddRect(testPath, NULL, r);
+        CGContextAddRect(context, r);
+    }];
     [[UIColor redColor] setStroke];
-    CGContextStrokeRect(context, testRect);
+//    CGContextAddPath(context, testPath);
+    CGContextStrokePath(context);
     
     [super drawRect:rect];
 }
