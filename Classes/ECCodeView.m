@@ -34,6 +34,8 @@ const NSString* ECCodeStyleCommentName = @"Comment";
                         inLines:(CFArrayRef)lines 
                     containedIn:(CFRange)range;
 
+- (CGRect)rectForContentRange:(NSRange)range;
+
 @end
 
 @implementation ECCodeView
@@ -212,6 +214,11 @@ const NSString* ECCodeStyleCommentName = @"Comment";
     CGContextTranslateCTM(context, -contentFrameOrigin.x, -contentFrameOrigin.y);
     
     // TODO draw decorations
+    
+    // TESTs
+    CGRect testRect = [self rectForContentRange:(NSRange){0, 6}];
+    [[UIColor redColor] setStroke];
+    CGContextStrokeRect(context, testRect);
     
     [super drawRect:rect];
 }
@@ -489,16 +496,17 @@ const NSString* ECCodeStyleCommentName = @"Comment";
 // TODO? resultLine:(CTLineRef *)result
 {
     CFIndex pos = range.location;
-    CFIndex end = range.location + range.length;
+    CFIndex endpos = range.location + range.length;
+    CFIndex end = endpos;
     
-    while (end > pos)
+    while (pos < endpos)
     {
-        CFIndex i = (end + pos - 1) >> 1;
+        CFIndex i = (pos + endpos - 1) >> 1;
         CTLineRef line = CFArrayGetValueAtIndex(lines, i);
         CFRange lineRange = CTLineGetStringRange(line);
         
         if (lineRange.location > location)
-            pos = i;
+            endpos = i;
         else if ((lineRange.location + lineRange.length) > location)
             // TODO? if (result) *result = line;
             return i;
@@ -509,7 +517,7 @@ const NSString* ECCodeStyleCommentName = @"Comment";
 }
 
 
-- (void)processRectsForContentRange:(NSRange)range withBlock:(void(^)(CGRect))block
+- (void)processLineRectsInRange:(NSRange)range withBlock:(void(^)(CGRect))block
 {
 }
 
@@ -543,10 +551,10 @@ const NSString* ECCodeStyleCommentName = @"Comment";
         NSRange spanRange;
         NSUInteger rangeEndLocation = range.location + range.length;
         //
-        BOOL firstLine = lineIndex == firstLine;
+        //BOOL isFirstLine = lineIndex == firstLine;
         BOOL lineIsBoundary = NO;
         //
-        CGRect lineRect = CGRectMake(self.contentInset.left, self.contentInset.top + lineOrigin.y - descent, 0, ascent + descent);
+        CGRect lineRect = CGRectMake(contentFrameOrigin.x, contentFrameOrigin.y + lineOrigin.y - descent, 0, ascent + descent);
         
         if (rangeEndLocation < (NSUInteger)lineRange.location)
         {
