@@ -40,8 +40,10 @@ extern const NSString* ECCodeStyleCommentName;
     NSMutableDictionary *_styles;
     NSDictionary *defaultAttributes;
     
-    //
+    // UITextInput objects
     ECTextRange *selection;
+    NSRange markedRange;
+    CGRect markedRangeDirtyRect;
     
     // UITextInputTraits objects
     UIKeyboardType keyboardType;
@@ -60,6 +62,7 @@ extern const NSString* ECCodeStyleCommentName;
 @property (nonatomic, copy) NSDictionary *styles;
 
 @property (nonatomic, assign) id<UITextInputDelegate> inputDelegate;
+@property (nonatomic, copy) NSDictionary *markedTextStyle;
 
 - (void)setAttributes:(NSDictionary*)attributes forStyleNamed:(const NSString*)aStyle;
 - (void)setStyleNamed:(const NSString*)aStyle toRange:(NSRange)range;

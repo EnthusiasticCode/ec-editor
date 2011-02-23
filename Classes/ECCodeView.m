@@ -111,6 +111,10 @@ const NSString* ECCodeStyleCommentName = @"Comment";
         _styles = [[NSMutableDictionary alloc] initWithObjectsAndKeys:defaultAttributes, ECCodeStyleDefaultTextName, nil];
         
         self.contentInset = UIEdgeInsetsMake(10, 10, 0, 0);
+
+        markedRange.location = 0;
+        markedRange.length = 0;
+        markedRangeDirtyRect = CGRectNull;
         
         [super setContentMode:UIViewContentModeRedraw];
     }
@@ -432,7 +436,7 @@ const NSString* ECCodeStyleCommentName = @"Comment";
     return selection;
 }
 
--(void)setSelectedTextRange:(UITextRange *)selectedTextRange
+- (void)setSelectedTextRange:(UITextRange *)selectedTextRange
 {
     // TODO solidCaret
     
@@ -441,6 +445,205 @@ const NSString* ECCodeStyleCommentName = @"Comment";
     [self setSelectedTextRange:(ECTextRange *)selectedTextRange notifyDelegate:YES];
 }
 
+@synthesize markedTextStyle;
+
+- (UITextRange *)markedTextRange
+{
+    if (markedRange.length == 0)
+        return nil;
+    
+    return [[[ECTextRange alloc] initWithRange:markedRange] autorelease];
+}
+
+- (void)setMarkedText:(NSString *)markedText selectedRange:(NSRange)selectedRange
+{
+    // TODO
+}
+
+- (void)unmarkText
+{
+    if (markedRange.length == 0)
+        return;
+    
+    [self setNeedsDisplayInRect:markedRangeDirtyRect];
+    [self willChangeValueForKey:@"markedTextRange"];
+    markedRange.location = 0;
+    markedRange.length = 0;
+    [self didChangeValueForKey:@"markedTextRange"];
+}
+
+#pragma mark Computing Text Ranges and Text Positions
+
+- (UITextRange *)textRangeFromPosition:(UITextPosition *)fromPosition 
+                            toPosition:(UITextPosition *)toPosition
+{
+    return [[[ECTextRange alloc] initWithStart:(ECTextPosition *)fromPosition end:(ECTextPosition *)toPosition] autorelease];
+}
+
+- (UITextPosition *)positionFromPosition:(UITextPosition *)position 
+                                  offset:(NSInteger)offset
+{
+    return [self positionFromPosition:position inDirection:UITextStorageDirectionForward offset:offset];
+}
+
+- (UITextPosition *)positionFromPosition:(UITextPosition *)position 
+                             inDirection:(UITextLayoutDirection)direction 
+                                  offset:(NSInteger)offset
+{
+    if (offset == 0)
+        return position;
+    
+    NSUInteger pos = [(ECTextPosition *)position index];
+    NSUInteger result;
+    
+    if (direction == UITextStorageDirectionForward 
+        || direction == UITextStorageDirectionBackward) 
+    {
+        if (direction == UITextStorageDirectionBackward)
+            offset = -offset;
+        
+        if (offset < 0 && (NSUInteger)(-offset) >= pos)
+            result = 0;
+        else
+            result = pos + offset;
+    } 
+    else if (direction == UITextLayoutDirectionLeft 
+             || direction == UITextLayoutDirectionRight) 
+    {
+        if (direction == UITextLayoutDirectionLeft)
+            offset = -offset;
+        
+        // TODO should move considering typography characters
+        if (offset < 0 && (NSUInteger)(-offset) >= pos)
+            result = 0;
+        else
+            result = pos + offset;
+    } 
+    else if (direction == UITextLayoutDirectionUp 
+             || direction == UITextLayoutDirectionDown) 
+    {
+        if (direction == UITextLayoutDirectionUp)
+            offset = -offset;
+        
+        CFArrayRef lines = CTFrameGetLines(contentFrame);
+        CFIndex lineCount = CFArrayGetCount(lines);
+        CFIndex lineIndex = [self lineIndexForLocation:pos 
+                                               inLines:lines 
+                                           containedIn:(CFRange){0, lineCount}];
+        CFIndex newIndex = lineIndex + offset;
+        CTLineRef line = CFArrayGetValueAtIndex(lines, lineIndex);
+        
+        if (newIndex < 0 || newIndex >= lineCount)
+            return nil;
+        
+        if (newIndex == lineIndex)
+            return position;
+        
+        CGFloat xPosn = CTLineGetOffsetForStringIndex(line, pos, NULL);
+        CGPoint origins[1];
+        CTFrameGetLineOrigins(contentFrame, (CFRange){lineIndex, 1}, origins);
+        xPosn = xPosn + origins[0].x; // X-coordinate in layout space
+        
+        CTFrameGetLineOrigins(contentFrame, (CFRange){newIndex, 1}, origins);
+        xPosn = xPosn - origins[0].x; // X-coordinate in new line's local coordinates
+        
+        CFIndex newStringIndex = CTLineGetStringIndexForPosition(CFArrayGetValueAtIndex(lines, newIndex), (CGPoint){xPosn, 0});
+        
+        if (newStringIndex == kCFNotFound)
+            return nil;
+        
+        if(newStringIndex < 0)
+            newStringIndex = 0;
+        result = newStringIndex;
+    } 
+    else 
+    {
+        // Direction unimplemented
+        return position;
+    }
+    
+    ECTextPosition *resultPosition = [[[ECTextPosition alloc] initWithIndex:result] autorelease];
+
+    return resultPosition;
+}
+
+- (UITextPosition *)beginningOfDocument
+{
+    ECTextPosition *p = [[[ECTextPosition alloc] initWithIndex:0] autorelease];
+    return p;
+}
+
+- (UITextPosition *)endOfDocument
+{
+    ECTextPosition *p = [[[ECTextPosition alloc] initWithIndex:[content length]] autorelease];
+    return p;
+}
+
+#pragma mark Evaluating Text Positions
+
+- (NSComparisonResult)comparePosition:(UITextPosition *)position 
+                           toPosition:(UITextPosition *)other
+{
+    return [(ECTextPosition *)position compare:other];
+}
+
+- (NSInteger)offsetFromPosition:(UITextPosition *)from 
+                     toPosition:(UITextPosition *)toPosition
+{
+    NSUInteger si = ((ECTextPosition *)from).index;
+    NSUInteger di = ((ECTextPosition *)toPosition).index;
+    return (NSInteger)di - (NSInteger)si;
+}
+
+#pragma mark Determining Layout and Writing Direction
+
+- (UITextRange *)characterRangeByExtendingPosition:(UITextPosition *)position 
+                                       inDirection:(UITextLayoutDirection)direction
+{
+    // TODO
+    abort();
+}
+
+- (UITextWritingDirection)baseWritingDirectionForPosition:(UITextPosition *)position 
+                                              inDirection:(UITextStorageDirection)direction
+{
+    // TODO
+    abort();
+}
+
+-(void)setBaseWritingDirection:(UITextWritingDirection)writingDirection 
+                      forRange:(UITextRange *)range
+{
+    // TODO
+    abort();
+}
+
+#pragma mark Geometry and Hit-Testing Methods
+
+- (CGRect)firstRectForRange:(UITextRange *)range
+{
+    // TODO update layout. NO! actually do it in processing...
+    
+    CGRect r = [self rectForContentRange:[(ECTextRange *)range range]];
+    
+    // TODO additional transformations may be needed
+    return r;
+}
+
+- (CGRect)caretRectForPosition:(UITextPosition *)position
+{
+    NSUInteger contentLength = [content length];
+    NSUInteger pos = ((ECTextPosition *)position).index;
+    CGRect carretRect = CGRectNull;
+    // At the end of the text
+    if (pos >= contentLength)
+    {
+        carretRect = [self rectForContentRange:(NSRange){pos - 1, pos}];
+        carretRect.origin.x += carretRect.size.width - 1.0;
+    }
+}
+
+#pragma mark -
 #pragma mark CodeView private methods
 
 - (void)setSelectedTextRange:(ECTextRange *)newSelection notifyDelegate:(BOOL)shouldNotify
@@ -492,7 +695,7 @@ const NSString* ECCodeStyleCommentName = @"Comment";
     }
     else
     {
-        // TODO disaster to select 
+        dirtyRect = [self rectForContentRange:[range range]];
     }
 }
 
@@ -527,6 +730,7 @@ const NSString* ECCodeStyleCommentName = @"Comment";
 
 - (void)processRectsOfLinesInRange:(NSRange)range withBlock:(void(^)(CGRect))block
 {
+    // TODO update contentFrame if needed
     CFArrayRef lines = CTFrameGetLines(contentFrame);
     CFIndex lineCount = CFArrayGetCount(lines);
     
@@ -619,6 +823,7 @@ const NSString* ECCodeStyleCommentName = @"Comment";
 //            }
 //        }
         
+        // TODO rect require additional transformations?
         block(lineRect);
     }
 }
