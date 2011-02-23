@@ -25,6 +25,8 @@
 		B736173B12DA112A009801D4 /* edit-main.m in Sources */ = {isa = PBXBuildFile; fileRef = B736173A12DA112A009801D4 /* edit-main.m */; };
 		B736173E12DA112A009801D4 /* editAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = B736173D12DA112A009801D4 /* editAppDelegate.m */; };
 		B736174312DA112A009801D4 /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = B736174112DA112A009801D4 /* MainWindow.xib */; };
+		B755B965130BE33A0036193C /* ECPersistentDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = B755B964130BE33A0036193C /* ECPersistentDocument.m */; };
+		B755B966130BE33A0036193C /* ECPersistentDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = B755B964130BE33A0036193C /* ECPersistentDocument.m */; };
 		B76E03EE12E98F3F00E706DC /* ECCodeProjectController.m in Sources */ = {isa = PBXBuildFile; fileRef = B76E03EC12E98F3F00E706DC /* ECCodeProjectController.m */; };
 		B78B5BE8130451AB007B22C7 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B78B5BE7130451AB007B22C7 /* MobileCoreServices.framework */; };
 		B78B5BE913045E53007B22C7 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B78B5BE7130451AB007B22C7 /* MobileCoreServices.framework */; };
@@ -166,6 +168,8 @@
 		B736173C12DA112A009801D4 /* editAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = editAppDelegate.h; sourceTree = "<group>"; };
 		B736173D12DA112A009801D4 /* editAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = editAppDelegate.m; sourceTree = "<group>"; };
 		B736174212DA112A009801D4 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainWindow.xib; sourceTree = "<group>"; };
+		B755B963130BE33A0036193C /* ECPersistentDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECPersistentDocument.h; sourceTree = "<group>"; };
+		B755B964130BE33A0036193C /* ECPersistentDocument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECPersistentDocument.m; sourceTree = "<group>"; };
 		B76E03EB12E98F3F00E706DC /* ECCodeProjectController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeProjectController.h; sourceTree = "<group>"; };
 		B76E03EC12E98F3F00E706DC /* ECCodeProjectController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeProjectController.m; sourceTree = "<group>"; };
 		B78A18EC12E764A300E259E0 /* doxygen.conf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = doxygen.conf; sourceTree = "<group>"; };
@@ -414,6 +418,8 @@
 			children = (
 				B735F9221305868B00B924F8 /* ECDocument.h */,
 				B735F9231305868B00B924F8 /* ECDocument.m */,
+				B755B963130BE33A0036193C /* ECPersistentDocument.h */,
+				B755B964130BE33A0036193C /* ECPersistentDocument.m */,
 				B7EE636E1305BBD600A30FD3 /* ECTextDocument.h */,
 				B7EE636F1305BBD600A30FD3 /* ECTextDocument.m */,
 			);
@@ -825,6 +831,7 @@
 				B78B5BEF13047BA1007B22C7 /* NSURL+ECAdditions.m in Sources */,
 				B735F9241305868B00B924F8 /* ECDocument.m in Sources */,
 				B7EE63701305BBD600A30FD3 /* ECTextDocument.m in Sources */,
+				B755B965130BE33A0036193C /* ECPersistentDocument.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -913,6 +920,7 @@
 				B735F9251305868B00B924F8 /* ECDocument.m in Sources */,
 				B7E3FA3C1305A94D0019D123 /* ECAdditionsSpec.m in Sources */,
 				B7EE637113069EC000A30FD3 /* ECTextDocument.m in Sources */,
+				B755B966130BE33A0036193C /* ECPersistentDocument.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -7,9 +7,51 @@
 //
 
 #import <ECMobileAppKit/ECTextDocument.h>
+#import <ECMobileAppKit/ECPersistentDocument.h>
 #import "Kiwi/Kiwi.h"
 
 SPEC_BEGIN(ECMobileAppKitSpec)
+
+describe(@"An ECDocument", ^
+{
+    __block ECDocument *document;
+    __block NSURL *fileURL;
+    beforeAll(^
+    {
+        NSString *filePath = [NSTemporaryDirectory() stringByAppendingPathComponent:@"test"];
+        fileURL = [[NSURL alloc] initFileURLWithPath:filePath];
+        [[NSData data] writeToURL:fileURL atomically:NO];
+    });
+    
+    afterAll(^
+    {
+        [fileURL release];
+    });
+    
+    beforeEach(^
+    {
+        document = [ECDocument alloc];
+    });
+    
+    afterEach(^
+    {
+        [document release];
+    });
+    
+    it(@"doesn't read files", ^
+    {
+        [[document should] receive:@selector(readFromData:ofType:error:)];
+        [document stub:@selector(readFromData:ofType:error:)];
+        [document readFromURL:fileURL ofType:nil error:NULL];
+    });
+    
+    it(@"doesn't write files", ^
+    {
+        [[document should] receive:@selector(dataOfType:error:)];
+        [document stub:@selector(dataOfType:error:)];
+        [document writeToURL:fileURL ofType:nil error:NULL];
+    });
+});
 
 describe(@"An ECTextDocument", ^
 {
@@ -59,6 +101,33 @@ describe(@"An ECTextDocument", ^
         document.text = @"testing";
         [document writeToURL:fileURLB ofType:@"public.plain-text" error:NULL];
         [[[NSString stringWithUTF8String:[[NSData dataWithContentsOfURL:fileURLB] bytes]] should] equal:@"testing"];
+    });
+});
+
+describe(@"An ECPersistentDocument", ^
+{
+    __block ECPersistentDocument *document;
+    __block NSURL *fileURL;
+    beforeAll(^
+    {
+        NSString *filePath = [NSTemporaryDirectory() stringByAppendingPathComponent:@"pd.xml"];
+        fileURL = [[NSURL alloc] initFileURLWithPath:filePath];
+        [[NSData data] writeToURL:fileURL atomically:NO];
+    });
+    
+    afterAll(^
+    {
+        [fileURL release];
+    });
+    
+    beforeEach(^
+    {
+        document = [ECTextDocument alloc];
+    });
+    
+    afterEach(^
+    {
+        [document release];
     });
 });
 

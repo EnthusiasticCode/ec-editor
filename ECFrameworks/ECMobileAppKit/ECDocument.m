@@ -61,6 +61,7 @@
 
 - (BOOL)readFromData:(NSData *)data ofType:(NSString *)fileType error:(NSError **)error
 {
+    [NSException raise:@"Invalid subclass" format:@"Subclass should override method"];
     return NO;
 }
 
@@ -83,6 +84,7 @@
 
 - (NSData *)dataOfType:(NSString *)fileType error:(NSError **)error
 {
+    [NSException raise:@"Invalid subclass" format:@"Subclass should override method"];
     return nil;
 }
 
