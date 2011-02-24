@@ -13,12 +13,21 @@ const NSString* ECCodeStyleDefaultTextName = @"Default";
 const NSString* ECCodeStyleKeywordName = @"Keyword";
 const NSString* ECCodeStyleCommentName = @"Comment";
 
-#define RECTWALKER_LEFT_IS_RANGE_BOUNDARY  ( 00001 )
-#define RECTWALKER_RIGHT_IS_RANGE_BOUNDARY ( 00002 )
-#define RECTWALKER_LEFT_IS_LINE_WRAP       ( 00004 )
-#define RECTWALKER_RIGHT_IS_LINE_WRAP      ( 00010 )
-#define RECTWALKER_FIRST_RECT_IN_LINE      ( 00020 )
-#define RECTWALKER_FIRST_LINE              ( 00040 )
+// TODO add to respective data structure?
+static inline BOOL in_range(NSRange r, CFIndex i)
+{
+    if (i < 0)
+        return 0;
+    NSUInteger u = (NSUInteger)i;
+    return (u >= r.location && ( u - r.location ) < r.length);
+}
+
+static inline CGFloat square_distance(CGPoint a, CGPoint b)
+{
+    CGFloat dx = (a.x - b.x);
+    CGFloat dy = (a.y - b.y);
+    return dx*dx + dy*dy;
+}
 
 @interface ECCodeView ()
 
@@ -33,6 +42,8 @@ const NSString* ECCodeStyleCommentName = @"Comment";
 - (CFIndex)lineIndexForLocation:(CFIndex)location 
                         inLines:(CFArrayRef)lines 
                     containedIn:(CFRange)range;
+
+- (CFRange)lineRangeForTextRange:(NSRange)range;
 
 - (void)processRectsOfLinesInRange:(NSRange)range 
                          withBlock:(void(^)(CGRect))block;
@@ -678,7 +689,7 @@ const NSString* ECCodeStyleCommentName = @"Comment";
     if (range)
     {
         r = [(ECTextRange *)range range];
-        // TODO!!! lineRangeForStringRange
+        lineRange = [self lineRangeForTextRange:r];
     }
     else
     {
@@ -729,8 +740,10 @@ const NSString* ECCodeStyleCommentName = @"Comment";
                                         inLine:CFArrayGetValueAtIndex(lines, lineRange.location + closest - 1)
                                     withOrigin:origins[closest - 1] 
                                    resultPoint:&point2];
-        // TODO!!! find closest point1/2 to point
-
+        if (square_distance(point1, point) < square_distance(point2, point))
+            result = result1;
+        else
+            result = result2;
     }
     
     free(origins);
@@ -798,14 +811,6 @@ const NSString* ECCodeStyleCommentName = @"Comment";
 
 /////////////////////////////////////// TODO move in a CF helpers
 
-static inline BOOL in_range(NSRange r, CFIndex i)
-{
-    if (i < 0)
-        return 0;
-    NSUInteger u = (NSUInteger)i;
-    return (u >= r.location && ( u - r.location ) < r.length);
-}
-
 - (CFIndex)lineIndexForLocation:(CFIndex)location 
                         inLines:(CFArrayRef)lines 
                     containedIn:(CFRange)range
@@ -832,6 +837,30 @@ static inline BOOL in_range(NSRange r, CFIndex i)
     return pos < end ? kCFNotFound : pos;
 }
 
+- (CFRange)lineRangeForTextRange:(NSRange)range
+{
+    CFArrayRef lines = CTFrameGetLines(contentFrame);
+    CFIndex lineCount = CFArrayGetCount(lines);
+    
+    CFIndex queryEnd = range.location + range.length;
+    
+    CFIndex firstResultLine = [self lineIndexForLocation:range.location inLines:lines containedIn:(CFRange){0, lineCount}];
+    if (firstResultLine < 0)
+        return (CFRange){ 0, 0 };
+    if (firstResultLine >= lineCount)
+        return (CFRange){ lineCount, 0 };
+    
+    CFRange lineStringRange = CTLineGetStringRange(CFArrayGetValueAtIndex(lines, firstResultLine));
+    if ((lineStringRange.location + lineStringRange.length) >= queryEnd)
+        return (CFRange){ firstResultLine, 1 };
+    
+    CFIndex lastResultLine =  [self lineIndexForLocation:queryEnd inLines:lines containedIn:(CFRange){firstResultLine + 1, lineCount}];
+    if (lastResultLine < firstResultLine)
+        return (CFRange){ firstResultLine, 0 };
+    if (lastResultLine >= lineCount)
+        return (CFRange){ firstResultLine, lineCount - firstResultLine };
+    return (CFRange){ firstResultLine, lastResultLine - firstResultLine + 1 };
+}
 
 - (void)processRectsOfLinesInRange:(NSRange)range withBlock:(void(^)(CGRect))block
 {
