@@ -39,6 +39,15 @@ const NSString* ECCodeStyleCommentName = @"Comment";
 
 - (CGRect)rectForContentRange:(NSRange)range;
 
+// Return the closest character index to the given point in the given line within
+// the given range of text. If resultPoint is specified, the closest point in
+// that line is also returned.
+- (NSUInteger)closestPositionToPoint:(CGPoint)point 
+                         withinRange:(NSRange)range
+                              inLine:(CTLineRef)line 
+                          withOrigin:(CGPoint)lineOrigin 
+                         resultPoint:(CGPoint *)resultPoint;
+
 @end
 
 @implementation ECCodeView
@@ -641,6 +650,91 @@ const NSString* ECCodeStyleCommentName = @"Comment";
         carretRect = [self rectForContentRange:(NSRange){pos - 1, pos}];
         carretRect.origin.x += carretRect.size.width - 1.0;
     }
+    else
+    {
+        carretRect = [self rectForContentRange:(NSRange){pos, pos + 1}];
+        carretRect.size.width = 1.0;
+    }
+    CGRectInset(carretRect, -0.1, -0.1);
+    return carretRect;
+}
+
+- (UITextPosition *)closestPositionToPoint:(CGPoint)point
+{
+    return [self closestPositionToPoint:point withinRange:nil];
+}
+
+- (UITextPosition *)closestPositionToPoint:(CGPoint)point 
+                               withinRange:(UITextRange *)range
+{
+    // TODO update content frame if needed
+    NSRange r;
+    CFArrayRef lines = CTFrameGetLines(contentFrame);
+    CFIndex lineCount = CFArrayGetCount(lines);
+    CFRange lineRange;
+    CGPoint *origins = malloc(sizeof(*origins) * lineRange.length);
+    CTFrameGetLineOrigins(contentFrame, lineRange, origins);
+    
+    if (range)
+    {
+        r = [(ECTextRange *)range range];
+        // TODO!!! lineRangeForStringRange
+    }
+    else
+    {
+        r.location = 0;
+        r.length = [content length];
+        lineRange.location = 0;
+        lineRange.length = lineCount;
+    }
+    
+    // Transform point
+    // TODO properly transform with matrix?
+    point.x -= contentFrameOrigin.x;
+    point.y -= contentFrameOrigin.y;
+    
+    // Find lines containing point
+    CFIndex closest = 0;
+    while (closest < lineRange.length && origins[closest].y > point.y)
+        closest++;
+    
+    NSUInteger result;
+    if (closest == 0)
+    {
+        result = [self closestPositionToPoint:point 
+                                  withinRange:r
+                                       inLine:CFArrayGetValueAtIndex(lines, lineRange.location) 
+                                   withOrigin:origins[0] 
+                                  resultPoint:NULL];
+    }
+    else if (closest >= lineRange.length)
+    {
+        result = [self closestPositionToPoint:point 
+                                  withinRange:r
+                                       inLine:CFArrayGetValueAtIndex(lines, lineRange.location + closest - 1)
+                                   withOrigin:origins[closest - 1] 
+                                  resultPoint:NULL];
+    }
+    else
+    {
+        NSUInteger result1, result2;
+        CGPoint point1, point2;
+        result1 = [self closestPositionToPoint:point 
+                                   withinRange:r
+                                        inLine:CFArrayGetValueAtIndex(lines, lineRange.location + closest)
+                                    withOrigin:origins[closest] 
+                                   resultPoint:&point1];
+        result2 = [self closestPositionToPoint:point 
+                                   withinRange:r
+                                        inLine:CFArrayGetValueAtIndex(lines, lineRange.location + closest - 1)
+                                    withOrigin:origins[closest - 1] 
+                                   resultPoint:&point2];
+        // TODO!!! find closest point1/2 to point
+
+    }
+    
+    free(origins);
+    return [[[ECTextPosition alloc] initWithIndex:result] autorelease];
 }
 
 #pragma mark -
@@ -691,15 +785,26 @@ const NSString* ECCodeStyleCommentName = @"Comment";
     
     if ([range isEmpty])
     {
-        // TODO carretRectForPosition
+        dirtyRect = [self caretRectForPosition:(UITextPosition *)(range.start)];
     }
     else
     {
         dirtyRect = [self rectForContentRange:[range range]];
     }
+    
+    if (!CGRectIsEmpty(dirtyRect))
+        [self setNeedsDisplayInRect:dirtyRect];
 }
 
 /////////////////////////////////////// TODO move in a CF helpers
+
+static inline BOOL in_range(NSRange r, CFIndex i)
+{
+    if (i < 0)
+        return 0;
+    NSUInteger u = (NSUInteger)i;
+    return (u >= r.location && ( u - r.location ) < r.length);
+}
 
 - (CFIndex)lineIndexForLocation:(CFIndex)location 
                         inLines:(CFArrayRef)lines 
@@ -787,8 +892,7 @@ const NSString* ECCodeStyleCommentName = @"Comment";
         CGFloat trailingWhitespace = 0;
         
         NSUInteger lineEndLocation = (NSUInteger)(lineRange.location + lineRange.length);
-        if (range.location <= lineEndLocation
-            && range.length > (lineEndLocation - range.location))
+        if (in_range(range, lineEndLocation))
         {
             // Requested range ends after this line
             // Right is line wrap
@@ -823,7 +927,7 @@ const NSString* ECCodeStyleCommentName = @"Comment";
 //            }
 //        }
         
-        // TODO rect require additional transformations?
+        // TODO!!! rect require additional transformations?
         block(lineRect);
     }
 }
@@ -837,5 +941,67 @@ const NSString* ECCodeStyleCommentName = @"Comment";
     return result;
 }
 
+- (NSUInteger)closestPositionToPoint:(CGPoint)point 
+                         withinRange:(NSRange)stringRange
+                              inLine:(CTLineRef)line 
+                          withOrigin:(CGPoint)lineOrigin 
+                         resultPoint:(CGPoint *)resultPoint
+{
+    CGFloat ascent = NAN;
+    CGFloat descent = NAN;
+    CGFloat lineWidth = CTLineGetTypographicBounds(line, &ascent, &descent, NULL);
+    
+    CGFloat x = point.x - lineOrigin.x;
+    CGFloat y = point.y - lineOrigin.y;
+    
+    // Clamp the y-coordinate to the line's typographic bounds
+    if (y < -descent)
+        y = -descent;
+    else if(y > ascent)
+        y = ascent;
+    
+    CFRange lineStringRange = CTLineGetStringRange(line);
+    
+    // Check for past the edges... TODO: bidi booyah
+    if (x <= 0 && in_range(stringRange, lineStringRange.location)) 
+    {
+        if (resultPoint)
+            *resultPoint = (CGPoint){ lineOrigin.x, lineOrigin.y + y };
+        return lineStringRange.location;
+    }
+    if (x >= lineWidth && in_range(stringRange, lineStringRange.location + lineStringRange.length)) 
+    {
+        if (resultPoint)
+            *resultPoint = (CGPoint){ lineOrigin.x + lineWidth, lineOrigin.y + y };
+        return lineStringRange.location + lineStringRange.length;
+    }
+    
+    CFIndex lineStringIndex = CTLineGetStringIndexForPosition(line, (CGPoint){ x, y });
+    NSUInteger hitIndex;
+    
+    if (lineStringIndex < 0 || ((NSUInteger)lineStringIndex < stringRange.location)) 
+    {
+        lineStringIndex = stringRange.location;
+        hitIndex = stringRange.location;
+        x = CTLineGetOffsetForStringIndex(line, lineStringIndex, NULL);
+    } 
+    else if (((NSUInteger)lineStringIndex - stringRange.location) > stringRange.length) 
+    {
+        lineStringIndex = stringRange.location + stringRange.length;
+        hitIndex = stringRange.location + stringRange.length;
+        x = CTLineGetOffsetForStringIndex(line, lineStringIndex, NULL);
+    } 
+    else 
+    {
+        hitIndex = lineStringIndex;
+    }
+    
+    if (resultPoint)
+        *resultPoint = (CGPoint){
+            .x = lineOrigin.x + x,
+            .y = lineOrigin.y + y
+        };
+    return hitIndex;
+}
 
 @end
