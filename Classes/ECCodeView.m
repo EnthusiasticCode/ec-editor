@@ -750,6 +750,18 @@ static inline CGFloat square_distance(CGPoint a, CGPoint b)
     return [[[ECTextPosition alloc] initWithIndex:result] autorelease];
 }
 
+- (UITextRange *)characterRangeAtPoint:(CGPoint)point
+{
+    ECTextPosition *pos = (ECTextPosition *)[self closestPositionToPoint:point];
+    
+    NSRange r = [[content string] rangeOfComposedCharacterSequenceAtIndex:pos.index];
+    
+    if (r.location == NSNotFound)
+        return nil;
+    
+    return [[[ECTextRange alloc] initWithRange:r] autorelease];
+}
+
 #pragma mark -
 #pragma mark CodeView private methods
 
