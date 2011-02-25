@@ -50,7 +50,10 @@ extern const NSString* ECCodeStyleCommentName;
     UIKeyboardType keyboardType;
     
     // Tap recognizers
-    UITapGestureRecognizer *focusRecognizer;
+    UIGestureRecognizer *focusRecognizer;
+    UIGestureRecognizer *tapRecognizer;
+    UIGestureRecognizer *doubleTapRecognizer;
+    UIGestureRecognizer *tapHoldRecognizer;
     
     // Flags
     // TODO create smaller struct?

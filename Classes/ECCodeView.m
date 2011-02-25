@@ -59,6 +59,9 @@ static inline CGFloat square_distance(CGPoint a, CGPoint b)
                           withOrigin:(CGPoint)lineOrigin 
                          resultPoint:(CGPoint *)resultPoint;
 
+// Gesture handles
+- (void)handleGestureFocus;
+
 @end
 
 @implementation ECCodeView
@@ -306,8 +309,12 @@ static inline CGFloat square_distance(CGPoint a, CGPoint b)
     
     if (!focusRecognizer)
     {
-//        focusRecognizer = [[UITapGestureRecognizer alloc] 
+        focusRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleGestureFocus)];
+        [self addGestureRecognizer:focusRecognizer];
     }
+    
+    if (!content)
+        [self setText:nil];
 }
 
 //- (void)touchesEnded:(NSSet*)touches withEvent:(UIEvent*)event
@@ -329,14 +336,53 @@ static inline CGFloat square_distance(CGPoint a, CGPoint b)
 
 - (BOOL)becomeFirstResponder
 {
-    // TODO implement custom stuff
-    return [super becomeFirstResponder];
+    BOOL shouldBecomeFirstResponder = [super becomeFirstResponder];
+    
+    // Lazy create recognizers
+    if (!tapRecognizer && shouldBecomeFirstResponder)
+    {
+        // TODO initialize gesture recognizers
+    }
+    
+    // Activate recognizers
+    if (shouldBecomeFirstResponder)
+    {
+        focusRecognizer.enabled = NO;
+        tapRecognizer.enabled = YES;
+        doubleTapRecognizer.enabled = YES;
+        tapHoldRecognizer.enabled = YES;
+    }
+    
+    [self setNeedsLayout];
+    
+    if (selection)
+        [self setNeedsDisplay];
+    
+    return shouldBecomeFirstResponder;
 }
 
 - (BOOL)resignFirstResponder
 {
-    // TODO implement custom stuff
-    return [super resignFirstResponder];
+    BOOL shouldResignFirstResponder = [super resignFirstResponder];
+    
+    if (![self isFirstResponder])
+    {
+        focusRecognizer.enabled = YES;
+        tapRecognizer.enabled = NO;
+        doubleTapRecognizer.enabled = NO;
+        tapHoldRecognizer.enabled = NO;
+        
+        // TODO remove thumbs
+    }
+    
+    [self setNeedsLayout];
+    
+    if (selection)
+        [self setNeedsDisplay];
+    
+    // TODO call delegate's endediting
+    
+    return shouldResignFirstResponder;
 }
 
 #pragma mark -
@@ -1144,6 +1190,12 @@ static inline CGFloat square_distance(CGPoint a, CGPoint b)
             .y = lineOrigin.y + y
         };
     return hitIndex;
+}
+
+- (void)handleGestureFocus
+{
+    if (![self isFirstResponder])
+        [self becomeFirstResponder];
 }
 
 @end
