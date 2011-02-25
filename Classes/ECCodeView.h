@@ -44,6 +44,7 @@ extern const NSString* ECCodeStyleCommentName;
     ECTextRange *selection;
     NSRange markedRange;
     CGRect markedRangeDirtyRect;
+    UITextInputStringTokenizer *tokenizer;
     
     // UITextInputTraits objects
     UIKeyboardType keyboardType;
@@ -65,6 +66,7 @@ extern const NSString* ECCodeStyleCommentName;
 @property (nonatomic, copy) NSDictionary *styles;
 
 @property (nonatomic, assign) id<UITextInputDelegate> inputDelegate;
+@property (nonatomic, readonly) id<UITextInputTokenizer> tokenizer;
 @property (nonatomic, copy) NSDictionary *markedTextStyle;
 
 - (void)setAttributes:(NSDictionary*)attributes forStyleNamed:(const NSString*)aStyle;

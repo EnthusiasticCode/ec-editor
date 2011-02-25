@@ -165,6 +165,9 @@ static inline CGFloat square_distance(CGPoint a, CGPoint b)
     self.styles = nil;
     [defaultAttributes release];
     
+    //
+    [tokenizer release];
+    
     // Recognizers
     [focusRecognizer release];
     
@@ -422,6 +425,13 @@ static inline CGFloat square_distance(CGPoint a, CGPoint b)
 #pragma mark UITextInput protocol
 
 @synthesize inputDelegate;
+
+- (id<UITextInputTokenizer>)tokenizer
+{
+    if (!tokenizer)
+        tokenizer = [[UITextInputStringTokenizer alloc] initWithTextInput:self];
+    return tokenizer;
+}
 
 #pragma mark Replacing and Returning Text
 
