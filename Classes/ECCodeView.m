@@ -164,9 +164,45 @@ static inline CGFloat square_distance(CGPoint a, CGPoint b)
     }
     self.styles = nil;
     [defaultAttributes release];
+    
+    // Recognizers
+    [focusRecognizer release];
+    
     [super dealloc];
 }
 
+#pragma mark CodeView methods
+
+// see setValue:forAttribute:inRange
+- (void)setStyleNamed:(const NSString*)aStyle toRange:(NSRange)range
+{
+    // Get attribute dictionary
+    NSDictionary *attributes = [_styles objectForKey:aStyle];
+    if (attributes == nil)
+        attributes = defaultAttributes;
+    // TODO setSolidCaret
+    // TODO call beforeMutate
+    NSUInteger contentLength = [content length];
+    NSRange crange = [[content string] rangeOfComposedCharacterSequencesForRange:range];
+    if (crange.location + crange.length > contentLength)
+        crange.length = (contentLength - crange.location);
+    [content setAttributes:attributes range:crange];
+    // TODO call after_mutate
+    [self setNeedsContentFrame];
+    [self setNeedsDisplay];
+}
+
+#pragma mark CodeView utilities
+
+- (void)setAttributes:(NSDictionary*)attributes forStyleNamed:(const NSString*)aStyle
+{
+    [_styles setObject:attributes forKey:aStyle];
+    // TODO update every content part with this style
+    //    [self setNeedsContentFrame];
+    //    [self setNeedsDisplay];
+}
+
+#pragma mark -
 #pragma mark UIView override
 
 - (void)drawRect:(CGRect)rect 
@@ -255,6 +291,22 @@ static inline CGFloat square_distance(CGPoint a, CGPoint b)
     [super drawRect:rect];
 }
 
+- (void)layoutSubviews
+{
+    // TODO implement custom stuff
+    [super layoutSubviews];
+}
+
+- (void)didMoveToWindow
+{
+    [super didMoveToWindow];
+    
+    if (!focusRecognizer)
+    {
+//        focusRecognizer = [[UITapGestureRecognizer alloc] 
+    }
+}
+
 //- (void)touchesEnded:(NSSet*)touches withEvent:(UIEvent*)event
 //{	
 //	if (!self.dragging) 
@@ -264,35 +316,24 @@ static inline CGFloat square_distance(CGPoint a, CGPoint b)
 //	[super touchesEnded:touches withEvent:event];
 //}
 
-#pragma mark CodeView methods
+#pragma mark -
+#pragma mark UIResponder protocol
 
-// see setValue:forAttribute:inRange
-- (void)setStyleNamed:(const NSString*)aStyle toRange:(NSRange)range
+- (BOOL)canBecomeFirstResponder
 {
-    // Get attribute dictionary
-    NSDictionary *attributes = [_styles objectForKey:aStyle];
-    if (attributes == nil)
-        attributes = defaultAttributes;
-    // TODO setSolidCaret
-    // TODO call beforeMutate
-    NSUInteger contentLength = [content length];
-    NSRange crange = [[content string] rangeOfComposedCharacterSequencesForRange:range];
-    if (crange.location + crange.length > contentLength)
-        crange.length = (contentLength - crange.location);
-    [content setAttributes:attributes range:crange];
-    // TODO call after_mutate
-    [self setNeedsContentFrame];
-    [self setNeedsDisplay];
+    return YES;
 }
 
-#pragma mark CodeView utilities
-
-- (void)setAttributes:(NSDictionary*)attributes forStyleNamed:(const NSString*)aStyle
+- (BOOL)becomeFirstResponder
 {
-    [_styles setObject:attributes forKey:aStyle];
-    // TODO update every content part with this style
-    //    [self setNeedsContentFrame];
-    //    [self setNeedsDisplay];
+    // TODO implement custom stuff
+    return [super becomeFirstResponder];
+}
+
+- (BOOL)resignFirstResponder
+{
+    // TODO implement custom stuff
+    return [super resignFirstResponder];
 }
 
 #pragma mark -

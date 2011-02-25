@@ -48,6 +48,9 @@ extern const NSString* ECCodeStyleCommentName;
     // UITextInputTraits objects
     UIKeyboardType keyboardType;
     
+    // Tap recognizers
+    UITapGestureRecognizer *focusRecognizer;
+    
     // Flags
     // TODO create smaller struct?
     BOOL contentFrameInvalid;
