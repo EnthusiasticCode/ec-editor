@@ -433,6 +433,11 @@ static inline CGFloat square_distance(CGPoint a, CGPoint b)
     return tokenizer;
 }
 
+- (UIView *)textInputView
+{
+    return self;
+}
+
 #pragma mark Replacing and Returning Text
 
 - (NSString *)textInRange:(UITextRange *)range
@@ -668,6 +673,13 @@ static inline CGFloat square_distance(CGPoint a, CGPoint b)
 
 #pragma mark Determining Layout and Writing Direction
 
+- (UITextPosition *)positionWithinRange:(UITextRange *)range 
+                    farthestInDirection:(UITextLayoutDirection)direction
+{
+    // TODO
+    abort();
+}
+
 - (UITextRange *)characterRangeByExtendingPosition:(UITextPosition *)position 
                                        inDirection:(UITextLayoutDirection)direction
 {
@@ -811,6 +823,44 @@ static inline CGFloat square_distance(CGPoint a, CGPoint b)
         return nil;
     
     return [[[ECTextRange alloc] initWithRange:r] autorelease];
+}
+
+#pragma mark Returning Text Styling Information
+
+- (NSDictionary *)textStylingAtPosition:(UITextPosition *)position 
+                            inDirection:(UITextStorageDirection)direction
+{
+    ECTextPosition *pos = (ECTextPosition *)position;
+    NSUInteger index = pos.index;
+    
+    NSDictionary *ctStyles;
+    if (direction == UITextStorageDirectionBackward && index > 0)
+        ctStyles = [content attributesAtIndex:index-1 effectiveRange:NULL];
+    else
+        ctStyles = [content attributesAtIndex:index effectiveRange:NULL];
+    
+    // TODO Return typingAttributes, if position is the same as the insertion point?
+    
+    NSMutableDictionary *uiStyles = [ctStyles mutableCopy];
+    [uiStyles autorelease];
+    
+    CTFontRef ctFont = (CTFontRef)[ctStyles objectForKey:(id)kCTFontAttributeName];
+    if (ctFont) 
+    {
+        CFStringRef fontName = CTFontCopyPostScriptName(ctFont);
+        UIFont *uif = [UIFont fontWithName:(id)fontName size:CTFontGetSize(ctFont)];
+        CFRelease(fontName);
+        [uiStyles setObject:uif forKey:UITextInputTextFontKey];
+    }
+    
+    CGColorRef cgColor = (CGColorRef)[ctStyles objectForKey:(id)kCTForegroundColorAttributeName];
+    if (cgColor)
+        [uiStyles setObject:[UIColor colorWithCGColor:cgColor] forKey:UITextInputTextColorKey];
+    
+    if (self.backgroundColor)
+        [uiStyles setObject:self.backgroundColor forKey:UITextInputTextBackgroundColorKey];
+    
+    return uiStyles;
 }
 
 #pragma mark -
