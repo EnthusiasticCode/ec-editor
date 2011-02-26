@@ -73,14 +73,13 @@
     self.codeIndexer = codeIndexer;
     for (ECToken *token in [self.codeIndexer tokens])
     {
-        NSLog(@"%d : %@", token.kind, token.spelling);
         switch (token.kind)
         {
             case ECTokenKindKeyword:
                 [(ECCodeView *)self.codeView setStyleNamed:ECCodeStyleKeywordName toRange:[token.extent range]];
                 break;
             case ECtokenKindComment:
-                [(ECCodeView *)self.codeView setStyleNamed:ECCodeStyleKeywordName toRange:[token.extent range]];
+                [(ECCodeView *)self.codeView setStyleNamed:ECCodeStyleCommentName toRange:[token.extent range]];
                 break;
             default:
                 break;
