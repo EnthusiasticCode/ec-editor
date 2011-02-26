@@ -32,6 +32,9 @@
     [codeView setAttributes:keywordStyle forStyleNamed:ECCodeStyleKeywordName];
     [codeView setAttributes:commentStyle forStyleNamed:ECCodeStyleCommentName];
     
+    // NOTE: codeview crashes if it is drawn without text
+    codeView.text = @"int main(arguments)\n{\n\treturn 0;\n}";
+    
     [self.window addSubview:rootController.view];
     [self.window makeKeyAndVisible];
     
