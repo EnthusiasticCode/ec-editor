@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		B7019E5712E5E38B004FC837 /* ECPopoverTableController.m in Sources */ = {isa = PBXBuildFile; fileRef = B7019E5612E5E38B004FC837 /* ECPopoverTableController.m */; };
 		B70A09DF12E9F61000B498CD /* CodeProjectController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B709A2C612E9AAC00099F6E0 /* CodeProjectController.xib */; };
 		B71C0F0312DB60DC002843EF /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B71C0F0212DB60DC002843EF /* CoreText.framework */; };
 		B722514412F95CE3007B8DCD /* ECToken.m in Sources */ = {isa = PBXBuildFile; fileRef = B722514312F95CE3007B8DCD /* ECToken.m */; };
@@ -121,9 +120,22 @@
 		B7CC3EA112E8F76F00149D80 /* ECCodeProject.m in Sources */ = {isa = PBXBuildFile; fileRef = B7CC3EA012E8F76F00149D80 /* ECCodeProject.m */; };
 		B7DDFEED12F5DED500EFBD32 /* ECCompletionResult.m in Sources */ = {isa = PBXBuildFile; fileRef = B7DDFEEC12F5DED500EFBD32 /* ECCompletionResult.m */; };
 		B7DDFEF312F5EF0900EFBD32 /* ECCompletionChunk.m in Sources */ = {isa = PBXBuildFile; fileRef = B7DDFEF212F5EF0900EFBD32 /* ECCompletionChunk.m */; };
-		B7E3FA3B1305A92F0019D123 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7E3FA3A1305A92F0019D123 /* SenTestingKit.framework */; };
 		B7E3FA3C1305A94D0019D123 /* ECAdditionsSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = B7E3FA381305A61F0019D123 /* ECAdditionsSpec.m */; };
 		B7E3FA3E1305B43C0019D123 /* ECMobileAppKitSpec.m in Resources */ = {isa = PBXBuildFile; fileRef = B7E3FA3D1305B43C0019D123 /* ECMobileAppKitSpec.m */; };
+		B7E9DD0313194153008863CF /* ECCaretView.m in Sources */ = {isa = PBXBuildFile; fileRef = B7E9DCF913194153008863CF /* ECCaretView.m */; };
+		B7E9DD0413194153008863CF /* ECCaretView.m in Sources */ = {isa = PBXBuildFile; fileRef = B7E9DCF913194153008863CF /* ECCaretView.m */; };
+		B7E9DD0513194153008863CF /* ECCodeView.m in Sources */ = {isa = PBXBuildFile; fileRef = B7E9DCFB13194153008863CF /* ECCodeView.m */; };
+		B7E9DD0613194153008863CF /* ECCodeView.m in Sources */ = {isa = PBXBuildFile; fileRef = B7E9DCFB13194153008863CF /* ECCodeView.m */; };
+		B7E9DD0713194153008863CF /* ECCodeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B7E9DCFD13194153008863CF /* ECCodeViewController.m */; };
+		B7E9DD0813194153008863CF /* ECCodeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B7E9DCFD13194153008863CF /* ECCodeViewController.m */; };
+		B7E9DD0913194153008863CF /* ECTextPosition.m in Sources */ = {isa = PBXBuildFile; fileRef = B7E9DD0013194153008863CF /* ECTextPosition.m */; };
+		B7E9DD0A13194153008863CF /* ECTextPosition.m in Sources */ = {isa = PBXBuildFile; fileRef = B7E9DD0013194153008863CF /* ECTextPosition.m */; };
+		B7E9DD0B13194153008863CF /* ECTextRange.m in Sources */ = {isa = PBXBuildFile; fileRef = B7E9DD0213194153008863CF /* ECTextRange.m */; };
+		B7E9DD0C13194153008863CF /* ECTextRange.m in Sources */ = {isa = PBXBuildFile; fileRef = B7E9DD0213194153008863CF /* ECTextRange.m */; };
+		B7E9DD0F131942B0008863CF /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B71C0F0212DB60DC002843EF /* CoreText.framework */; };
+		B7E9DD10131942B4008863CF /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7BD531E12DF1CDB003B83B3 /* QuartzCore.framework */; };
+		B7E9DD11131942B7008863CF /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7355B0B12E8EBE800198FD9 /* CoreData.framework */; };
+		B7E9DD12131942BB008863CF /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7E3FA3A1305A92F0019D123 /* SenTestingKit.framework */; };
 		B7EE636D1305B6AA00A30FD3 /* ECMobileAppKitSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = B7E3FA3D1305B43C0019D123 /* ECMobileAppKitSpec.m */; };
 		B7EE63701305BBD600A30FD3 /* ECTextDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = B7EE636F1305BBD600A30FD3 /* ECTextDocument.m */; };
 		B7EE637113069EC000A30FD3 /* ECTextDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = B7EE636F1305BBD600A30FD3 /* ECTextDocument.m */; };
@@ -142,8 +154,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		B7019E5512E5E38B004FC837 /* ECPopoverTableController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ECPopoverTableController.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		B7019E5612E5E38B004FC837 /* ECPopoverTableController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ECPopoverTableController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		B709A2C712E9AAC00099F6E0 /* CodeProjectController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = CodeProjectController.xib; path = en.lproj/CodeProjectController.xib; sourceTree = "<group>"; };
 		B71C0F0212DB60DC002843EF /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
 		B722514212F95CE3007B8DCD /* ECToken.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECToken.h; sourceTree = "<group>"; };
@@ -340,6 +350,19 @@
 		B7E3FA381305A61F0019D123 /* ECAdditionsSpec.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECAdditionsSpec.m; sourceTree = "<group>"; };
 		B7E3FA3A1305A92F0019D123 /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Developer/Library/Frameworks/SenTestingKit.framework; sourceTree = SDKROOT; };
 		B7E3FA3D1305B43C0019D123 /* ECMobileAppKitSpec.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECMobileAppKitSpec.m; sourceTree = "<group>"; };
+		B7E9DCF813194153008863CF /* ECCaretView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCaretView.h; sourceTree = "<group>"; };
+		B7E9DCF913194153008863CF /* ECCaretView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCaretView.m; sourceTree = "<group>"; };
+		B7E9DCFA13194153008863CF /* ECCodeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeView.h; sourceTree = "<group>"; };
+		B7E9DCFB13194153008863CF /* ECCodeView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeView.m; sourceTree = "<group>"; };
+		B7E9DCFC13194153008863CF /* ECCodeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeViewController.h; sourceTree = "<group>"; };
+		B7E9DCFD13194153008863CF /* ECCodeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeViewController.m; sourceTree = "<group>"; };
+		B7E9DCFE13194153008863CF /* ECCodeViewDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeViewDelegate.h; sourceTree = "<group>"; };
+		B7E9DCFF13194153008863CF /* ECTextPosition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECTextPosition.h; sourceTree = "<group>"; };
+		B7E9DD0013194153008863CF /* ECTextPosition.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECTextPosition.m; sourceTree = "<group>"; };
+		B7E9DD0113194153008863CF /* ECTextRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECTextRange.h; sourceTree = "<group>"; };
+		B7E9DD0213194153008863CF /* ECTextRange.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECTextRange.m; sourceTree = "<group>"; };
+		B7E9DD0D13194280008863CF /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
+		B7E9DD13131942D5008863CF /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
 		B7EE636E1305BBD600A30FD3 /* ECTextDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECTextDocument.h; sourceTree = "<group>"; };
 		B7EE636F1305BBD600A30FD3 /* ECTextDocument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECTextDocument.m; sourceTree = "<group>"; };
 		B7FC3EAA12E5CE1E00B49A94 /* Index.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Index.h; sourceTree = "<group>"; };
@@ -359,7 +382,6 @@
 				B7FC3EAE12E5CE1E00B49A94 /* libclang.dylib in Frameworks */,
 				B7355B0C12E8EBE800198FD9 /* CoreData.framework in Frameworks */,
 				B78B5BE8130451AB007B22C7 /* MobileCoreServices.framework in Frameworks */,
-				B7E3FA3B1305A92F0019D123 /* SenTestingKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -367,11 +389,15 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B7E9DD0F131942B0008863CF /* CoreText.framework in Frameworks */,
 				B79EE5FF12FC75B50067B2D0 /* UIKit.framework in Frameworks */,
 				B79EE60012FC75B50067B2D0 /* Foundation.framework in Frameworks */,
 				B79EE60112FC75B50067B2D0 /* CoreGraphics.framework in Frameworks */,
 				B7CC2DBD130029AE00AFB020 /* libclang.dylib in Frameworks */,
 				B78B5BE913045E53007B22C7 /* MobileCoreServices.framework in Frameworks */,
+				B7E9DD10131942B4008863CF /* QuartzCore.framework in Frameworks */,
+				B7E9DD11131942B7008863CF /* CoreData.framework in Frameworks */,
+				B7E9DD12131942BB008863CF /* SenTestingKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -439,6 +465,7 @@
 		B736171A12DA1129009801D4 = {
 			isa = PBXGroup;
 			children = (
+				B7E9DD13131942D5008863CF /* CoreText.framework */,
 				B735F926130586BF00B924F8 /* ECFrameworks */,
 				B7355B0E12E8EF9300198FD9 /* Models */,
 				B736172212DA1129009801D4 /* Classes */,
@@ -453,14 +480,23 @@
 		B736172212DA1129009801D4 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				B7E9DCF813194153008863CF /* ECCaretView.h */,
+				B7E9DCF913194153008863CF /* ECCaretView.m */,
+				B7E9DCFA13194153008863CF /* ECCodeView.h */,
+				B7E9DCFB13194153008863CF /* ECCodeView.m */,
+				B7E9DCFC13194153008863CF /* ECCodeViewController.h */,
+				B7E9DCFD13194153008863CF /* ECCodeViewController.m */,
+				B7E9DCFE13194153008863CF /* ECCodeViewDelegate.h */,
+				B7E9DCFF13194153008863CF /* ECTextPosition.h */,
+				B7E9DD0013194153008863CF /* ECTextPosition.m */,
+				B7E9DD0113194153008863CF /* ECTextRange.h */,
+				B7E9DD0213194153008863CF /* ECTextRange.m */,
 				B736173C12DA112A009801D4 /* editAppDelegate.h */,
 				B736173D12DA112A009801D4 /* editAppDelegate.m */,
 				B7CC3E9F12E8F76F00149D80 /* ECCodeProject.h */,
 				B7CC3EA012E8F76F00149D80 /* ECCodeProject.m */,
 				B76E03EB12E98F3F00E706DC /* ECCodeProjectController.h */,
 				B76E03EC12E98F3F00E706DC /* ECCodeProjectController.m */,
-				B7019E5512E5E38B004FC837 /* ECPopoverTableController.h */,
-				B7019E5612E5E38B004FC837 /* ECPopoverTableController.m */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -487,6 +523,7 @@
 		B736172512DA1129009801D4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B7E9DD0D13194280008863CF /* CoreText.framework */,
 				B7E3FA3A1305A92F0019D123 /* SenTestingKit.framework */,
 				B78B5BE7130451AB007B22C7 /* MobileCoreServices.framework */,
 				B7355B0B12E8EBE800198FD9 /* CoreData.framework */,
@@ -814,7 +851,6 @@
 			files = (
 				B736173B12DA112A009801D4 /* edit-main.m in Sources */,
 				B736173E12DA112A009801D4 /* editAppDelegate.m in Sources */,
-				B7019E5712E5E38B004FC837 /* ECPopoverTableController.m in Sources */,
 				B72DA8B412E8275D00C12CD5 /* ECCodeIndexer.m in Sources */,
 				B72DA8B712E8277100C12CD5 /* ECClangCodeIndexer.m in Sources */,
 				B72DA8BC12E849EA00C12CD5 /* ECCompletionString.m in Sources */,
@@ -832,6 +868,11 @@
 				B735F9241305868B00B924F8 /* ECDocument.m in Sources */,
 				B7EE63701305BBD600A30FD3 /* ECTextDocument.m in Sources */,
 				B755B965130BE33A0036193C /* ECPersistentDocument.m in Sources */,
+				B7E9DD0313194153008863CF /* ECCaretView.m in Sources */,
+				B7E9DD0513194153008863CF /* ECCodeView.m in Sources */,
+				B7E9DD0713194153008863CF /* ECCodeViewController.m in Sources */,
+				B7E9DD0913194153008863CF /* ECTextPosition.m in Sources */,
+				B7E9DD0B13194153008863CF /* ECTextRange.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -921,6 +962,11 @@
 				B7E3FA3C1305A94D0019D123 /* ECAdditionsSpec.m in Sources */,
 				B7EE637113069EC000A30FD3 /* ECTextDocument.m in Sources */,
 				B755B966130BE33A0036193C /* ECPersistentDocument.m in Sources */,
+				B7E9DD0413194153008863CF /* ECCaretView.m in Sources */,
+				B7E9DD0613194153008863CF /* ECCodeView.m in Sources */,
+				B7E9DD0813194153008863CF /* ECCodeViewController.m in Sources */,
+				B7E9DD0A13194153008863CF /* ECTextPosition.m in Sources */,
+				B7E9DD0C13194153008863CF /* ECTextRange.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

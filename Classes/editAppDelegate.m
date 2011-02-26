@@ -15,28 +15,27 @@
 @implementation editAppDelegate
 
 
-@synthesize window;
-@synthesize codeView;
+@synthesize window = _window;
+@synthesize codeView = _codeView;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     [ECCodeIndexer loadLanguages];
     ECCodeProjectController *rootController;
-    [[UINib nibWithNibName:@"CodeProjectController" bundle:nil] instantiateWithOwner:window options:nil];
-    rootController = (ECCodeProjectController *) window.rootViewController;
+    [[UINib nibWithNibName:@"CodeProjectController" bundle:nil] instantiateWithOwner:self.window options:nil];
+    rootController = (ECCodeProjectController *) self.window.rootViewController;
     // directory must exist
     [rootController loadProject:@"edit" from:[[self applicationDocumentsDirectory] stringByAppendingPathComponent:@"edit/"]];
-    NSDictionary *keywordStyle = [NSDictionary dictionaryWithObjectsAndKeys:
-                                  (id)[[UIColor blueColor] CGColor], (id)kCTForegroundColorAttributeName, 
-                                  nil];
+    NSDictionary *keywordStyle = [NSDictionary dictionaryWithObjectsAndKeys:(id)[[UIColor blueColor] CGColor], (id)kCTForegroundColorAttributeName, nil];
+    ECCodeView *codeView = (ECCodeView *) rootController.codeView;
     [codeView setAttributes:keywordStyle forStyleNamed:ECCodeStyleKeywordName];
     
     codeView.text = @"int main(arguments)\n{\n\treturn 0;\n}";
     
     [codeView setStyleNamed:ECCodeStyleKeywordName toRange:(NSRange){0, 3}];
     
-    [window addSubview:rootController.view];
-    [window makeKeyAndVisible];
+    [self.window addSubview:rootController.view];
+    [self.window makeKeyAndVisible];
     
     return YES;
 }
@@ -45,8 +44,8 @@
 {
     [ECCodeIndexer unloadLanguages];
     self.window = nil;
-		self.codeView = nil;
-		[super dealloc];
+    self.codeView = nil;
+    [super dealloc];
 }
 
 /**

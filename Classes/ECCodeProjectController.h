@@ -8,7 +8,6 @@
 
 #import <UIKit/UIKit.h>
 #import <ECCodeIndexing/ECCodeIndexerDelegate.h>
-@class ECPopoverTableController;
 @class ECCodeIndexer;
 @class ECCodeProject;
 
@@ -19,8 +18,6 @@
 @property (nonatomic, retain) NSFileManager *fileManager;
 @property (nonatomic, retain) IBOutlet UITextView *codeView;
 @property (nonatomic, retain) ECCodeIndexer *codeIndexer;
-// popovertable used to display completions
-@property (nonatomic, retain) ECPopoverTableController *completionPopover;
 
 - (void)applyCompletion:(NSString *)completion;
 // display the completion popovertable if possible

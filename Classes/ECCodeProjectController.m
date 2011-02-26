@@ -9,7 +9,6 @@
 #import "ECCodeProjectController.h"
 #import "ECCodeProject.h"
 #import <ECCodeIndexing/ECCodeIndexer.h>
-#import "ECPopoverTableController.h"
 #import <ECCodeIndexing/ECCompletionString.h>
 #import <ECCodeIndexing/ECDiagnostic.h>
 #import <ECCodeIndexing/ECToken.h>
@@ -21,22 +20,10 @@
 @synthesize codeView = _codeView;
 @synthesize codeIndexer = _codeIndexer;
 @synthesize fileManager = _fileManager;
-@synthesize completionPopover = _completionPopover;
 
 - (NSFileManager *)fileManager
 {
     return [NSFileManager defaultManager];
-}
-
-
-- (ECPopoverTableController *)completionPopover
-{
-    if (!_completionPopover)
-    {
-        _completionPopover = [[ECPopoverTableController alloc] init];
-        _completionPopover.viewToPresentIn = self.codeView;
-    }   
-    return _completionPopover;
 }
 
 - (void)dealloc
@@ -44,7 +31,6 @@
     self.project = nil;
     self.codeView = nil;
     self.codeIndexer = nil;
-    self.completionPopover = nil;
     [super dealloc];
 }
 
