@@ -8,6 +8,7 @@
 
 #import "ECCodeProjectController.h"
 #import "ECCodeProject.h"
+#import "ECCodeView.h"
 #import <ECCodeIndexing/ECCodeIndexer.h>
 #import <ECCodeIndexing/ECCompletionString.h>
 #import <ECCodeIndexing/ECDiagnostic.h>
@@ -70,6 +71,21 @@
     self.codeView.text = [NSString stringWithContentsOfFile:file encoding:NSUTF8StringEncoding error:nil];
     ECCodeIndexer *codeIndexer = [[ECCodeIndexer alloc] initWithSource:[NSURL fileURLWithPath:file]];
     self.codeIndexer = codeIndexer;
+    for (ECToken *token in [self.codeIndexer tokens])
+    {
+        NSLog(@"%d : %@", token.kind, token.spelling);
+        switch (token.kind)
+        {
+            case ECTokenKindKeyword:
+                [(ECCodeView *)self.codeView setStyleNamed:ECCodeStyleKeywordName toRange:[token.extent range]];
+                break;
+            case ECtokenKindComment:
+                [(ECCodeView *)self.codeView setStyleNamed:ECCodeStyleKeywordName toRange:[token.extent range]];
+                break;
+            default:
+                break;
+        }
+    }
     [codeIndexer release];
 }
 

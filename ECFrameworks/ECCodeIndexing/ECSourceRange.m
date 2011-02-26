@@ -39,4 +39,9 @@
     return [range autorelease];
 }
 
+- (NSRange)range
+{
+    return NSMakeRange(self.start.offset, self.end.offset - self.start.offset);
+}
+
 @end

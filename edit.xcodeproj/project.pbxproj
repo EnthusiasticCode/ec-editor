@@ -362,7 +362,6 @@
 		B7E9DD0113194153008863CF /* ECTextRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECTextRange.h; sourceTree = "<group>"; };
 		B7E9DD0213194153008863CF /* ECTextRange.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECTextRange.m; sourceTree = "<group>"; };
 		B7E9DD0D13194280008863CF /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
-		B7E9DD13131942D5008863CF /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
 		B7EE636E1305BBD600A30FD3 /* ECTextDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECTextDocument.h; sourceTree = "<group>"; };
 		B7EE636F1305BBD600A30FD3 /* ECTextDocument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECTextDocument.m; sourceTree = "<group>"; };
 		B7FC3EAA12E5CE1E00B49A94 /* Index.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Index.h; sourceTree = "<group>"; };
@@ -465,7 +464,6 @@
 		B736171A12DA1129009801D4 = {
 			isa = PBXGroup;
 			children = (
-				B7E9DD13131942D5008863CF /* CoreText.framework */,
 				B735F926130586BF00B924F8 /* ECFrameworks */,
 				B7355B0E12E8EF9300198FD9 /* Models */,
 				B736172212DA1129009801D4 /* Classes */,

@@ -19,4 +19,6 @@
 - (id)initWithStart:(ECSourceLocation *)start end:(ECSourceLocation *)end;
 + (id)rangeWithStart:(ECSourceLocation *)start end:(ECSourceLocation *)end;
 
+- (NSRange)range;
+
 @end

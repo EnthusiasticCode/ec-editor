@@ -27,12 +27,10 @@
     // directory must exist
     [rootController loadProject:@"edit" from:[[self applicationDocumentsDirectory] stringByAppendingPathComponent:@"edit/"]];
     NSDictionary *keywordStyle = [NSDictionary dictionaryWithObjectsAndKeys:(id)[[UIColor blueColor] CGColor], (id)kCTForegroundColorAttributeName, nil];
+    NSDictionary *commentStyle = [NSDictionary dictionaryWithObjectsAndKeys:(id)[[UIColor greenColor] CGColor], (id)kCTForegroundColorAttributeName, nil];
     ECCodeView *codeView = (ECCodeView *) rootController.codeView;
     [codeView setAttributes:keywordStyle forStyleNamed:ECCodeStyleKeywordName];
-    
-    codeView.text = @"int main(arguments)\n{\n\treturn 0;\n}";
-    
-    [codeView setStyleNamed:ECCodeStyleKeywordName toRange:(NSRange){0, 3}];
+    [codeView setAttributes:commentStyle forStyleNamed:ECCodeStyleCommentName];
     
     [self.window addSubview:rootController.view];
     [self.window makeKeyAndVisible];
