@@ -31,6 +31,8 @@ static inline CGFloat square_distance(CGPoint a, CGPoint b)
 
 @interface ECCodeView ()
 
+- (void)doInit;
+
 // This method is used to indicate that the content has changed and the 
 // rendering frame generated from it should be recalculated.
 - (void)setNeedsContentFrame;
@@ -61,6 +63,11 @@ static inline CGFloat square_distance(CGPoint a, CGPoint b)
 
 // Gesture handles
 - (void)handleGestureFocus;
+- (void)handleGestureTap:(UITapGestureRecognizer *)recognizer;
+
+// Return the affine transform to move and scale coordinates to the render
+// space. You can specify if you want a flipping transformation.
+- (CGAffineTransform)renderSpaceTransformationFlipped:(BOOL)flipped inverted:(BOOL)inverted;
 
 @end
 
@@ -124,22 +131,27 @@ static inline CGFloat square_distance(CGPoint a, CGPoint b)
 
 #pragma mark CodeView Initializations
 
+- (void)doInit
+{
+    CTFontRef defaultFont = CTFontCreateWithName((CFStringRef)@"Courier New", 12.0, &CGAffineTransformIdentity);
+    defaultAttributes = [[NSDictionary dictionaryWithObject:(id)defaultFont forKey:(id)kCTFontAttributeName] retain];
+    // TODO set full default coloring if textSyles == nil
+    _styles = [[NSMutableDictionary alloc] initWithObjectsAndKeys:defaultAttributes, ECCodeStyleDefaultTextName, nil];
+    
+    self.contentInset = UIEdgeInsetsMake(10, 10, 0, 0);
+    
+    markedRange.location = 0;
+    markedRange.length = 0;
+    markedRangeDirtyRect = CGRectNull;
+    
+    [super setContentMode:UIViewContentModeRedraw];
+}
+
 - (id)initWithFrame:(CGRect)frame 
 {
     if ((self = [super initWithFrame:frame])) 
     { 
-        CTFontRef defaultFont = CTFontCreateWithName((CFStringRef)@"Courier New", 12.0, &CGAffineTransformIdentity);
-        defaultAttributes = [[NSDictionary dictionaryWithObject:(id)defaultFont forKey:(id)kCTFontAttributeName] retain];
-        // TODO set full default coloring if textSyles == nil
-        _styles = [[NSMutableDictionary alloc] initWithObjectsAndKeys:defaultAttributes, ECCodeStyleDefaultTextName, nil];
-        
-        self.contentInset = UIEdgeInsetsMake(10, 10, 0, 0);
-
-        markedRange.location = 0;
-        markedRange.length = 0;
-        markedRangeDirtyRect = CGRectNull;
-        
-        [super setContentMode:UIViewContentModeRedraw];
+        [self doInit];
     }
     return self;
 }
@@ -148,8 +160,7 @@ static inline CGFloat square_distance(CGPoint a, CGPoint b)
 {
     if ((self = [super initWithCoder:aDecoder])) 
     {
-        // TODO call a do_init instead?
-        [self init];
+        [self doInit];
     }
     return self;
 }
@@ -267,16 +278,11 @@ static inline CGFloat square_distance(CGPoint a, CGPoint b)
     // TODO draw selection
     
     // Transform to flipped rendering space
-    CGFloat scale = self.zoomScale;
-    CGContextConcatCTM(context, (CGAffineTransform){
-        scale, 0,
-        0, -scale,
-        bounds.origin.x, bounds.origin.y + bounds.size.height
-    });    
+    CGContextConcatCTM(context, [self renderSpaceTransformationFlipped:YES inverted:NO]);
     
     // Draw core text frame
     // TODO! clip on rect
-    CGContextSetTextPosition(context, 0, 0);
+    CGContextSetTextPosition(context, contentFrameOrigin.x, contentFrameOrigin.y);
     CGContextSetTextMatrix(context, CGAffineTransformIdentity);
     CGContextTranslateCTM(context, contentFrameOrigin.x, contentFrameOrigin.y);
     CTFrameDraw(contentFrame, context);
@@ -293,6 +299,13 @@ static inline CGFloat square_distance(CGPoint a, CGPoint b)
     [[UIColor redColor] setStroke];
 //    CGContextAddPath(context, testPath);
     CGContextStrokePath(context);
+    
+    if (selection)
+    {
+        CGRect caretRect = [self caretRectForPosition:(ECTextPosition *)selection.start];
+        [[UIColor greenColor] setFill];
+        CGContextFillRect(context, caretRect);
+    }
     
     [super drawRect:rect];
 }
@@ -341,6 +354,9 @@ static inline CGFloat square_distance(CGPoint a, CGPoint b)
     // Lazy create recognizers
     if (!tapRecognizer && shouldBecomeFirstResponder)
     {
+        tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleGestureTap:)];
+        [self addGestureRecognizer:tapRecognizer];
+        
         // TODO initialize gesture recognizers
     }
     
@@ -765,16 +781,13 @@ static inline CGFloat square_distance(CGPoint a, CGPoint b)
     NSUInteger pos = ((ECTextPosition *)position).index;
     CGRect carretRect = CGRectNull;
     // At the end of the text
-    if (pos >= contentLength)
-    {
-        carretRect = [self rectForContentRange:(NSRange){pos - 1, pos}];
-        carretRect.origin.x += carretRect.size.width - 1.0;
-    }
-    else
-    {
-        carretRect = [self rectForContentRange:(NSRange){pos, pos + 1}];
-        carretRect.size.width = 1.0;
-    }
+    if (pos > contentLength)
+        pos = contentLength;
+    
+    carretRect = [self rectForContentRange:(NSRange){pos, 0}];
+    carretRect.origin.x -= 1.0;
+    carretRect.size.width = 2.0;
+    
     CGRectInset(carretRect, -0.1, -0.1);
     return carretRect;
 }
@@ -792,8 +805,6 @@ static inline CGFloat square_distance(CGPoint a, CGPoint b)
     CFArrayRef lines = CTFrameGetLines(contentFrame);
     CFIndex lineCount = CFArrayGetCount(lines);
     CFRange lineRange;
-    CGPoint *origins = malloc(sizeof(*origins) * lineRange.length);
-    CTFrameGetLineOrigins(contentFrame, lineRange, origins);
     
     if (range)
     {
@@ -808,8 +819,12 @@ static inline CGFloat square_distance(CGPoint a, CGPoint b)
         lineRange.length = lineCount;
     }
     
+    CGPoint *origins = malloc(sizeof(CGPoint) * lineRange.length);
+    CTFrameGetLineOrigins(contentFrame, lineRange, origins);
+    
     // Transform point
     // TODO properly transform with matrix?
+    point = CGPointApplyAffineTransform(point, [self renderSpaceTransformationFlipped:YES inverted:YES]);
     point.x -= contentFrameOrigin.x;
     point.y -= contentFrameOrigin.y;
     
@@ -1074,7 +1089,7 @@ static inline CGFloat square_distance(CGPoint a, CGPoint b)
             left = CTLineGetOffsetForStringIndex(line, range.location, &leftSecondary);
             spanRange.location = range.location;
             lineIsBoundary = YES;
-            lineRect.origin.x += lineOrigin.x;
+            lineRect.origin.x += lineOrigin.x + left;
         }
 
         CGFloat trailingWhitespace = 0;
@@ -1196,6 +1211,34 @@ static inline CGFloat square_distance(CGPoint a, CGPoint b)
 {
     if (![self isFirstResponder])
         [self becomeFirstResponder];
+}
+
+- (void)handleGestureTap:(UITapGestureRecognizer *)recognizer
+{
+    CGPoint point = [recognizer locationInView:self];
+    
+    UITextPosition *position = [self closestPositionToPoint:point];
+    
+    ECTextRange *range = [[ECTextRange alloc] initWithStart:(ECTextPosition *)position end:(ECTextPosition *)position];
+    
+    [self setSelectedTextRange:range];
+    
+    [range release];
+    
+    [self setNeedsDisplay];
+}
+
+- (CGAffineTransform)renderSpaceTransformationFlipped:(BOOL)flipped 
+                                             inverted:(BOOL)inverted
+{
+    CGFloat scale = self.zoomScale;
+    CGRect bounds = self.bounds;
+    CGAffineTransform transform = {
+        scale, 0,
+        0, flipped ? -scale : scale,
+        bounds.origin.x, bounds.origin.y + bounds.size.height
+    };
+    return inverted ? CGAffineTransformInvert(transform) : transform;
 }
 
 @end

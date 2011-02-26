@@ -13,6 +13,8 @@
 
 #pragma mark Properties
 
+@synthesize pulsePerSecond;
+
 @synthesize blink;
 
 - (void)setBlink:(BOOL)shouldBlink
@@ -20,7 +22,19 @@
     if (blink != shouldBlink)
     {
         blink = shouldBlink;
-        // TODO set blinking animation
+        if (shouldBlink)
+        {
+            [UIView animateWithDuration:1.0 / (pulsePerSecond * 2) delay:0.0 options:UIViewAnimationOptionAutoreverse | UIViewAnimationOptionRepeat | UIViewAnimationOptionCurveEaseInOut | UIViewAnimationOptionTransitionNone animations:^(void) {
+                self.alpha = 0.0;
+            } completion:nil];
+        }
+        else
+        {
+            [UIView animateWithDuration:1.0 / (pulsePerSecond * 2) animations:^(void) {
+                [UIView setAnimationBeginsFromCurrentState:YES];
+                self.alpha = 1.0;
+            }];
+        }
     }
 }
 
@@ -46,9 +60,12 @@
         self.opaque = NO;
         self.backgroundColor = [UIColor redColor];
         self.clearsContextBeforeDrawing = YES;
+        self.pulsePerSecond = 2;
         // Create default caret shape
-        //CGMutablePathRef p = CGPathCreateMutable();
-        // TODO
+        CGMutablePathRef p = CGPathCreateMutable();
+        // TODO rounded rect
+        CGPathAddRect(p, NULL, (CGRect){ {0, 0}, frame.size });
+        self.caretShape = p;
     }
     return self;
 }
@@ -63,8 +80,7 @@
 
 - (void)drawRect:(CGRect)rect
 {
-    CGContextRef context = UIGraphicsGetCurrentContext();
-    [self drawInContext:context];
+    [self drawInContext:UIGraphicsGetCurrentContext()];
 }
 
 #pragma mark Custom methods
@@ -72,6 +88,8 @@
 - (void)drawInContext:(CGContextRef)context
 {
     [self.backgroundColor setFill];
+    CGContextAddPath(context, caretShape);
+    CGContextFillPath(context);
 }
 
 @end
