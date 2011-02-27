@@ -7,7 +7,7 @@
 //
 
 #import <ECCodeIndexing/ECCodeIndexer.h>
-#import "Kiwi/Kiwi.h"
+#import "../../../Test/Kiwi/Kiwi.h"
 
 SPEC_BEGIN(ECCodeIndexingSpec)
 

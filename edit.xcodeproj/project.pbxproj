@@ -104,7 +104,6 @@
 		B7C4D8B312F8867C0039327B /* ECFixIt.m in Sources */ = {isa = PBXBuildFile; fileRef = B7C4D8B212F8867C0039327B /* ECFixIt.m */; };
 		B7C4D8B612F887710039327B /* ECSourceLocation.m in Sources */ = {isa = PBXBuildFile; fileRef = B7C4D8B512F887710039327B /* ECSourceLocation.m */; };
 		B7C4D8B912F8877A0039327B /* ECSourceRange.m in Sources */ = {isa = PBXBuildFile; fileRef = B7C4D8B812F8877A0039327B /* ECSourceRange.m */; };
-		B7CC2DA81300005900AFB020 /* ECCodeIndexingSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = B7CC2DA71300005900AFB020 /* ECCodeIndexingSpec.m */; };
 		B7CC2DB3130029A000AFB020 /* ECClangCodeIndexer.m in Sources */ = {isa = PBXBuildFile; fileRef = B72DA8B612E8277100C12CD5 /* ECClangCodeIndexer.m */; };
 		B7CC2DB4130029A000AFB020 /* ECCodeIndexer.m in Sources */ = {isa = PBXBuildFile; fileRef = B72DA8B312E8275D00C12CD5 /* ECCodeIndexer.m */; };
 		B7CC2DB5130029A000AFB020 /* ECSourceLocation.m in Sources */ = {isa = PBXBuildFile; fileRef = B7C4D8B512F887710039327B /* ECSourceLocation.m */; };
@@ -182,7 +181,6 @@
 		B74E9783131A57870011FD69 /* Application-iPad-Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "Application-iPad-Debug.xcconfig"; sourceTree = "<group>"; };
 		B74E9786131A57970011FD69 /* Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
 		B74E9789131A57B40011FD69 /* Release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = "<group>"; };
-		B74E978C131A57C60011FD69 /* StaticLibrary.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = StaticLibrary.xcconfig; sourceTree = "<group>"; };
 		B74E978F131A593C0011FD69 /* iPad.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = iPad.xcconfig; sourceTree = "<group>"; };
 		B74E9798131A5A680011FD69 /* Application.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Application.xcconfig; sourceTree = "<group>"; };
 		B74E979B131A5AE30011FD69 /* Application-iPad-Release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "Application-iPad-Release.xcconfig"; sourceTree = "<group>"; };
@@ -350,7 +348,6 @@
 		B7C4D8B512F887710039327B /* ECSourceLocation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECSourceLocation.m; sourceTree = "<group>"; };
 		B7C4D8B712F8877A0039327B /* ECSourceRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECSourceRange.h; sourceTree = "<group>"; };
 		B7C4D8B812F8877A0039327B /* ECSourceRange.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECSourceRange.m; sourceTree = "<group>"; };
-		B7CC2DA71300005900AFB020 /* ECCodeIndexingSpec.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeIndexingSpec.m; sourceTree = "<group>"; };
 		B7CC3E9F12E8F76F00149D80 /* ECCodeProject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeProject.h; sourceTree = "<group>"; };
 		B7CC3EA012E8F76F00149D80 /* ECCodeProject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeProject.m; sourceTree = "<group>"; };
 		B7DDFEEB12F5DED500EFBD32 /* ECCompletionResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCompletionResult.h; sourceTree = "<group>"; };
@@ -550,7 +547,6 @@
 			children = (
 				B74E9780131A57560011FD69 /* Shared.xcconfig */,
 				B74E9798131A5A680011FD69 /* Application.xcconfig */,
-				B74E978C131A57C60011FD69 /* StaticLibrary.xcconfig */,
 				B74E978F131A593C0011FD69 /* iPad.xcconfig */,
 				B74E979E131A5DCB0011FD69 /* Test.xcconfig */,
 				B74E9786131A57970011FD69 /* Debug.xcconfig */,
@@ -592,7 +588,6 @@
 			isa = PBXGroup;
 			children = (
 				B79EE61012FC776D0067B2D0 /* Kiwi */,
-				B7CC2DA71300005900AFB020 /* ECCodeIndexingSpec.m */,
 				B7E3FA381305A61F0019D123 /* ECAdditionsSpec.m */,
 				B7E3FA3D1305B43C0019D123 /* ECMobileAppKitSpec.m */,
 			);
@@ -972,7 +967,6 @@
 				B79EE6DE12FC776D0067B2D0 /* NSObject+KiwiStubAdditions.m in Sources */,
 				B79EE6DF12FC776D0067B2D0 /* NSObject+KiwiVerifierAdditions.m in Sources */,
 				B79EE6E012FC776D0067B2D0 /* NSValue+KiwiAdditions.m in Sources */,
-				B7CC2DA81300005900AFB020 /* ECCodeIndexingSpec.m in Sources */,
 				B7CC2DB3130029A000AFB020 /* ECClangCodeIndexer.m in Sources */,
 				B7CC2DB4130029A000AFB020 /* ECCodeIndexer.m in Sources */,
 				B7CC2DB5130029A000AFB020 /* ECSourceLocation.m in Sources */,

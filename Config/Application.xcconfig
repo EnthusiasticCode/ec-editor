@@ -6,5 +6,4 @@
 //  Copyright 2011 __MyCompanyName__. All rights reserved.
 //
 
-LD_RUNPATH_SEARCH_PATHS = @loader_path/
 WRAPPER_EXTENSION = app
