@@ -131,6 +131,8 @@ static inline CGFloat square_distance(CGPoint a, CGPoint b)
     
     self.contentInset = UIEdgeInsetsMake(10, 10, 0, 0);
     
+    self.text = @"";
+    
     markedRange.location = 0;
     markedRange.length = 0;
     markedRangeDirtyRect = CGRectNull;
@@ -189,9 +191,14 @@ static inline CGFloat square_distance(CGPoint a, CGPoint b)
     NSDictionary *attributes = [_styles objectForKey:aStyle];
     if (attributes == nil)
         attributes = defaultAttributes;
+    
+    NSUInteger contentLength = [content length];
+    if (range.location > contentLength)
+        return;
+    if (range.location + range.length > contentLength)
+        range.length = contentLength - range.location;
     // TODO setSolidCaret
     // TODO call beforeMutate
-    NSUInteger contentLength = [content length];
     NSRange crange = [[content string] rangeOfComposedCharacterSequencesForRange:range];
     if (crange.location + crange.length > contentLength)
         crange.length = (contentLength - crange.location);
@@ -270,15 +277,16 @@ static inline CGFloat square_distance(CGPoint a, CGPoint b)
     // TODO draw selection
     
     // Transform to flipped rendering space
+    CGContextSaveGState(context);
     CGContextConcatCTM(context, [self renderSpaceTransformationFlipped:YES inverted:NO]);
     
     // Draw core text frame
     // TODO! clip on rect
-    CGContextSetTextPosition(context, contentFrameOrigin.x, contentFrameOrigin.y);
+    CGContextSetTextPosition(context, 0, 0);
     CGContextSetTextMatrix(context, CGAffineTransformIdentity);
     CGContextTranslateCTM(context, contentFrameOrigin.x, contentFrameOrigin.y);
     CTFrameDraw(contentFrame, context);
-    CGContextTranslateCTM(context, -contentFrameOrigin.x, -contentFrameOrigin.y);
+    CGContextRestoreGState(context);
     
     // TODO draw decorations
     
@@ -803,6 +811,9 @@ static inline CGFloat square_distance(CGPoint a, CGPoint b)
     CFIndex lineCount = CFArrayGetCount(lines);
     CFRange lineRange;
     
+    if (lineCount == 0)
+        return [[[ECTextPosition alloc] initWithIndex:0] autorelease];
+    
     if (range)
     {
         r = [(ECTextRange *)range range];
@@ -1052,6 +1063,12 @@ static inline CGFloat square_distance(CGPoint a, CGPoint b)
     CFArrayRef lines = CTFrameGetLines(contentFrame);
     CFIndex lineCount = CFArrayGetCount(lines);
     
+    if (lineCount == 0)
+    {
+        block(CGRectMake(0, 0, 0, 13));
+        return;
+    }
+    
     CFIndex firstLine = [self lineIndexForLocation:range.location 
                                            inLines:lines 
                                        containedIn:(CFRange){0, lineCount}];
@@ -1059,26 +1076,25 @@ static inline CGFloat square_distance(CGPoint a, CGPoint b)
         return;
     
     BOOL lastLine = NO;
+    CGAffineTransform transform = [self renderSpaceTransformationFlipped:YES inverted:YES];
 
     for (CFIndex lineIndex = firstLine; lineIndex < lineCount && !lastLine; ++lineIndex) 
     {
         CTLineRef line = CFArrayGetValueAtIndex(lines, lineIndex);
         CFRange lineRange = CTLineGetStringRange(line);
         //
-        CGFloat left, right, leftSecondary = NAN, rightSecondary = NAN;
+        CGFloat left, right;
         CGFloat ascent = NAN, descent = NAN;
         CGFloat lineWidth = CTLineGetTypographicBounds(line, &ascent, &descent, NULL);
         //
         CGPoint lineOrigin;
         CTFrameGetLineOrigins(contentFrame, (CFRange){ lineIndex, 1 }, &lineOrigin);
+        lineOrigin = CGPointApplyAffineTransform(lineOrigin, transform);
         //
         NSRange spanRange;
         NSUInteger rangeEndLocation = range.location + range.length;
         //
-        //BOOL isFirstLine = lineIndex == firstLine;
-        BOOL lineIsBoundary = NO;
-        //
-        CGRect lineRect = CGRectMake(contentFrameOrigin.x, contentFrameOrigin.y + lineOrigin.y - descent, 0, ascent + descent);
+        CGRect lineRect = CGRectMake(0, lineOrigin.y, 0, ascent + descent);
         
         if (rangeEndLocation < (NSUInteger)lineRange.location)
         {
@@ -1096,10 +1112,9 @@ static inline CGFloat square_distance(CGPoint a, CGPoint b)
         {
             // Reqeusted range starts inside this line
             // Left is range boundary
-            left = CTLineGetOffsetForStringIndex(line, range.location, &leftSecondary);
+            left = CTLineGetOffsetForStringIndex(line, range.location, NULL);
             spanRange.location = range.location;
-            lineIsBoundary = YES;
-            lineRect.origin.x += lineOrigin.x + left;
+            lineRect.origin.x += left;
         }
 
         CGFloat trailingWhitespace = 0;
@@ -1118,27 +1133,12 @@ static inline CGFloat square_distance(CGPoint a, CGPoint b)
         {
             // Reqeuested range ends in this line
             // Right is range boundary
-            right = CTLineGetOffsetForStringIndex(line, rangeEndLocation, &rightSecondary);
+            right = CTLineGetOffsetForStringIndex(line, rangeEndLocation, NULL);
             spanRange.length = rangeEndLocation - spanRange.location;
             lastLine = YES;
-            lineIsBoundary = YES;
         }
         
         lineRect.size.width = right - left + trailingWhitespace;
-        
-//        if (lineIsBoundary)
-//        {
-//            // Proceed caclulating rects for characters
-//            CFArrayRef runs = CTLineGetGlyphRuns(line);
-//            CFIndex runsCount = CFArrayGetCount(runs);
-//            for (CFIndex i = 0; i < runsCount; ++i)
-//            {
-//                CTRunRef run = CFArrayGetValueAtIndex(runs, i);
-//                CFRange runRange = CTRunGetStringRange(run);
-//                CTRunStatus runStatus = CTRunGetStatus(run);
-//                
-//            }
-//        }
         
         // TODO!!! rect require additional transformations?
         block(lineRect);
