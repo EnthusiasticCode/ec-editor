@@ -182,7 +182,7 @@
 		B7FCA577131A6FC7002D6C7C /* Test.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Test.xcconfig; sourceTree = "<group>"; };
 		B7FCA578131A6FC7002D6C7C /* iPad.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = iPad.xcconfig; sourceTree = "<group>"; };
 		B7FCA60D131A6FE0002D6C7C /* libECCodeIndexing.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libECCodeIndexing.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		B7FCA61D131A6FED002D6C7C /* Test.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = Test.octest; path = "ECCodeIndexing-Test.octest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B7FCA61D131A6FED002D6C7C /* ECCodeIndexing-Test.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "ECCodeIndexing-Test.octest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B7FCA634131A707F002D6C7C /* StaticLibrary-iPad-Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "StaticLibrary-iPad-Debug.xcconfig"; sourceTree = "<group>"; };
 		B7FCA636131A70A1002D6C7C /* StaticLibrary-iPad-Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "StaticLibrary-iPad-Release.xcconfig"; sourceTree = "<group>"; };
 		B7FCA637131A70B7002D6C7C /* StaticLibrary-iPad-Test.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "StaticLibrary-iPad-Test.xcconfig"; sourceTree = "<group>"; };
@@ -444,7 +444,7 @@
 			isa = PBXGroup;
 			children = (
 				B7FCA60D131A6FE0002D6C7C /* libECCodeIndexing.a */,
-				B7FCA61D131A6FED002D6C7C /* Test.octest */,
+				B7FCA61D131A6FED002D6C7C /* ECCodeIndexing-Test.octest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -674,7 +674,7 @@
 			);
 			name = "ECCodeIndexing-Test";
 			productName = Test;
-			productReference = B7FCA61D131A6FED002D6C7C /* Test.octest */;
+			productReference = B7FCA61D131A6FED002D6C7C /* ECCodeIndexing-Test.octest */;
 			productType = "com.apple.product-type.bundle";
 		};
 /* End PBXNativeTarget section */
@@ -717,7 +717,6 @@
 		B7D65C4C131ADFF400C3FA93 /* Test.octest */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.cfbundle;
-			name = Test.octest;
 			path = "ECAdditions-Test.octest";
 			remoteRef = B7D65C4B131ADFF400C3FA93 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;

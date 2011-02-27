@@ -887,7 +887,7 @@ static inline CGFloat square_distance(CGPoint a, CGPoint b)
     if (closest < lineRange.length - 1)
     {
         lineRange = CTLineGetStringRange(line);
-        if (result == lineRange.location + lineRange.length)
+        if ((long)result == lineRange.location + lineRange.length)
             result--;
     }
     

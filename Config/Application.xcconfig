@@ -7,4 +7,5 @@
 //
 
 WRAPPER_EXTENSION = app
+// flags needed to link objective C static libraries correctly
 OTHER_LDFLAGS = $(value) -all_load -ObjC

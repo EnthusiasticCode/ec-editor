@@ -232,7 +232,7 @@
 		B76E03EB12E98F3F00E706DC /* ECCodeProjectController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeProjectController.h; sourceTree = "<group>"; };
 		B76E03EC12E98F3F00E706DC /* ECCodeProjectController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeProjectController.m; sourceTree = "<group>"; };
 		B78A18EC12E764A300E259E0 /* doxygen.conf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = doxygen.conf; sourceTree = "<group>"; };
-		B79EE5FE12FC75B50067B2D0 /* Test.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = Test.octest; path = "edit-Test.octest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B79EE5FE12FC75B50067B2D0 /* edit-Test.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "edit-Test.octest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B79EE61112FC776D0067B2D0 /* KWAfterAllNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KWAfterAllNode.h; sourceTree = "<group>"; };
 		B79EE61212FC776D0067B2D0 /* KWAfterAllNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KWAfterAllNode.m; sourceTree = "<group>"; };
 		B79EE61312FC776D0067B2D0 /* KWAfterEachNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KWAfterEachNode.h; sourceTree = "<group>"; };
@@ -737,7 +737,7 @@
 		B7BC064C12E64060005B5FB2 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				B79EE5FE12FC75B50067B2D0 /* Test.octest */,
+				B79EE5FE12FC75B50067B2D0 /* edit-Test.octest */,
 				B73022F612E63CC30029269C /* edit.app */,
 			);
 			name = Products;
@@ -784,7 +784,7 @@
 			);
 			name = "edit-Test";
 			productName = Test;
-			productReference = B79EE5FE12FC75B50067B2D0 /* Test.octest */;
+			productReference = B79EE5FE12FC75B50067B2D0 /* edit-Test.octest */;
 			productType = "com.apple.product-type.bundle";
 		};
 /* End PBXNativeTarget section */
@@ -835,7 +835,6 @@
 		B761FCE4131B072D006072A0 /* Test.octest */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.cfbundle;
-			name = Test.octest;
 			path = "ECCodeIndexing-Test.octest";
 			remoteRef = B761FCE3131B072D006072A0 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
@@ -850,7 +849,6 @@
 		B761FCF0131B0737006072A0 /* Test.octest */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.cfbundle;
-			name = Test.octest;
 			path = "ECMobileAppKit-Test.octest";
 			remoteRef = B761FCEF131B0737006072A0 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
@@ -865,7 +863,6 @@
 		B761FD0C131B0764006072A0 /* Test.octest */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.cfbundle;
-			name = Test.octest;
 			path = "ECAdditions-Test.octest";
 			remoteRef = B761FD0B131B0764006072A0 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;

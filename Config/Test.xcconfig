@@ -7,12 +7,14 @@
 //
 
 ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+
 OTHER_LDFLAGS = $(value) -framework SenTestingKit;
+// flags needed to link objective C static libraries correctly
 OTHER_LDFLAGS = $(value) -all_load -ObjC;
 WRAPPER_EXTENSION = octest;
 
 
-// Disable some warnings for Kiwi
+// Disable some warnings for Kiwi, remember to delete this if we change testing framework
 GCC_WARN_MULTIPLE_DEFINITION_TYPES_FOR_SELECTOR = NO
 GCC_WARN_PEDANTIC = NO
 GCC_WARN_STRICT_SELECTOR_MATCH = NO

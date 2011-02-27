@@ -113,7 +113,7 @@
 		B7FB5205131AC34F00651FDD /* iPad.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = iPad.xcconfig; sourceTree = "<group>"; };
 		B7FB520B131AC35E00651FDD /* libECMobileAppKit.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libECMobileAppKit.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		B7FB520E131AC35E00651FDD /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS4.2.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
-		B7FB521B131AC36800651FDD /* Test.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = Test.octest; path = "ECMobileAppKit-Test.octest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B7FB521B131AC36800651FDD /* ECMobileAppKit-Test.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "ECMobileAppKit-Test.octest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B7FB5231131AC3A200651FDD /* ECDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECDocument.h; sourceTree = "<group>"; };
 		B7FB5232131AC3A200651FDD /* ECDocument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECDocument.m; sourceTree = "<group>"; };
 		B7FB5233131AC3A200651FDD /* ECPersistentDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECPersistentDocument.h; sourceTree = "<group>"; };
@@ -335,7 +335,7 @@
 			isa = PBXGroup;
 			children = (
 				B7FB520B131AC35E00651FDD /* libECMobileAppKit.a */,
-				B7FB521B131AC36800651FDD /* Test.octest */,
+				B7FB521B131AC36800651FDD /* ECMobileAppKit-Test.octest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -561,7 +561,7 @@
 			);
 			name = "ECMobileAppKit-Test";
 			productName = Test;
-			productReference = B7FB521B131AC36800651FDD /* Test.octest */;
+			productReference = B7FB521B131AC36800651FDD /* ECMobileAppKit-Test.octest */;
 			productType = "com.apple.product-type.bundle";
 		};
 /* End PBXNativeTarget section */

@@ -107,7 +107,7 @@
 		B7FB50E5131AC03B00651FDD /* StaticLibrary.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = StaticLibrary.xcconfig; sourceTree = "<group>"; };
 		B7FB50E6131AC03B00651FDD /* Test.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Test.xcconfig; sourceTree = "<group>"; };
 		B7FB50E7131AC03B00651FDD /* iPad.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = iPad.xcconfig; sourceTree = "<group>"; };
-		B7FB50ED131AC06B00651FDD /* Test.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = Test.octest; path = "ECAdditions-Test.octest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B7FB50ED131AC06B00651FDD /* ECAdditions-Test.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "ECAdditions-Test.octest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B7FB50F2131AC06B00651FDD /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS4.2.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		B7FB5113131AC0A700651FDD /* KWAfterAllNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KWAfterAllNode.h; sourceTree = "<group>"; };
 		B7FB5114131AC0A700651FDD /* KWAfterAllNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KWAfterAllNode.m; sourceTree = "<group>"; };
@@ -322,7 +322,7 @@
 			isa = PBXGroup;
 			children = (
 				B7D65BF5131AD95300C3FA93 /* libECAdditions.a */,
-				B7FB50ED131AC06B00651FDD /* Test.octest */,
+				B7FB50ED131AC06B00651FDD /* ECAdditions-Test.octest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -518,7 +518,7 @@
 			);
 			name = "ECAdditions-Test";
 			productName = Test;
-			productReference = B7FB50ED131AC06B00651FDD /* Test.octest */;
+			productReference = B7FB50ED131AC06B00651FDD /* ECAdditions-Test.octest */;
 			productType = "com.apple.product-type.bundle";
 		};
 		B7FB5107131AC07900651FDD /* ECAdditions */ = {
