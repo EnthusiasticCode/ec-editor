@@ -6,8 +6,8 @@
 //  Copyright 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import <ECAdditions/NSURL+ECAdditions.h>
-#import "Kiwi/Kiwi.h"
+#import "NSURL+ECAdditions.h"
+#import "../../Kiwi/Kiwi.h"
 
 SPEC_BEGIN(ECAdditionsSpec)
 

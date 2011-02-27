@@ -6,8 +6,8 @@
 //  Copyright 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import <ECCodeIndexing/ECCodeIndexer.h>
-#import "../../../Test/Kiwi/Kiwi.h"
+#import "ECCodeIndexer.h"
+#import "../../Kiwi/Kiwi.h"
 
 SPEC_BEGIN(ECCodeIndexingSpec)
 

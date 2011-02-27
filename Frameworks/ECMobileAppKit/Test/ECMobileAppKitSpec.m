@@ -6,9 +6,9 @@
 //  Copyright 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import <ECMobileAppKit/ECTextDocument.h>
-#import <ECMobileAppKit/ECPersistentDocument.h>
-#import "Kiwi/Kiwi.h"
+#import "ECTextDocument.h"
+#import "ECPersistentDocument.h"
+#import "../../Kiwi/Kiwi.h"
 
 SPEC_BEGIN(ECMobileAppKitSpec)
 

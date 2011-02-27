@@ -7,9 +7,9 @@
 //
 
 GCC_VERSION = com.apple.compilers.llvm.clang.1_0
-FRAMEWORK_SEARCH_PATHS = $(inherited) "$(SDKROOT)/Developer/Library/Frameworks" $(BUILD_DIR)/Frameworks
+FRAMEWORK_SEARCH_PATHS = $(inherited) "$(SDKROOT)/Developer/Library/Frameworks" $(BUILD_DIR)
 HEADER_SEARCH_PATHS = $(BUILD_DIR)/include
-LIBRARY_SEARCH_PATHS = $(BUILD_DIR)/lib
+LIBRARY_SEARCH_PATHS = $(BUILD_DIR)
 TEST_AFTER_BUILD = YES
 GCC_PRECOMPILE_PREFIX_HEADER = NO;
 PRODUCT_NAME = $(TARGET_NAME);
