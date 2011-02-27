@@ -158,6 +158,7 @@ static inline CGFloat square_distance(CGPoint a, CGPoint b)
 
 - (id)initWithCoder:(NSCoder *)aDecoder
 {
+    // TODO understand why debugger doesn't always start
     if ((self = [super initWithCoder:aDecoder])) 
     {
         [self doInit];
@@ -780,15 +781,20 @@ static inline CGFloat square_distance(CGPoint a, CGPoint b)
     NSUInteger contentLength = [content length];
     NSUInteger pos = ((ECTextPosition *)position).index;
     CGRect carretRect = CGRectNull;
-    // At the end of the text
-    if (pos > contentLength)
+
+    if (pos >= contentLength)
+    {
         pos = contentLength;
-    
-    carretRect = [self rectForContentRange:(NSRange){pos, 0}];
+        carretRect = [self rectForContentRange:(NSRange){pos - 1, 1}];
+        carretRect.origin.x += carretRect.size.width;
+    }
+    else
+    {
+        carretRect = [self rectForContentRange:(NSRange){pos, 0}];
+    }    
     carretRect.origin.x -= 1.0;
     carretRect.size.width = 2.0;
     
-    CGRectInset(carretRect, -0.1, -0.1);
     return carretRect;
 }
 
@@ -833,41 +839,22 @@ static inline CGFloat square_distance(CGPoint a, CGPoint b)
     while (closest < lineRange.length && origins[closest].y > point.y)
         closest++;
     
+    if (closest >= lineRange.length)
+        closest = lineRange.length - 1;
+    
     NSUInteger result;
-    if (closest == 0)
+    CTLineRef line = CFArrayGetValueAtIndex(lines, lineRange.location + closest);
+    result = [self closestPositionToPoint:point 
+                               withinRange:r
+                                    inLine:line
+                                withOrigin:origins[closest] 
+                               resultPoint:NULL];
+    
+    if (closest < lineRange.length - 1)
     {
-        result = [self closestPositionToPoint:point 
-                                  withinRange:r
-                                       inLine:CFArrayGetValueAtIndex(lines, lineRange.location) 
-                                   withOrigin:origins[0] 
-                                  resultPoint:NULL];
-    }
-    else if (closest >= lineRange.length)
-    {
-        result = [self closestPositionToPoint:point 
-                                  withinRange:r
-                                       inLine:CFArrayGetValueAtIndex(lines, lineRange.location + closest - 1)
-                                   withOrigin:origins[closest - 1] 
-                                  resultPoint:NULL];
-    }
-    else
-    {
-        NSUInteger result1, result2;
-        CGPoint point1, point2;
-        result1 = [self closestPositionToPoint:point 
-                                   withinRange:r
-                                        inLine:CFArrayGetValueAtIndex(lines, lineRange.location + closest)
-                                    withOrigin:origins[closest] 
-                                   resultPoint:&point1];
-        result2 = [self closestPositionToPoint:point 
-                                   withinRange:r
-                                        inLine:CFArrayGetValueAtIndex(lines, lineRange.location + closest - 1)
-                                    withOrigin:origins[closest - 1] 
-                                   resultPoint:&point2];
-        if (square_distance(point1, point) < square_distance(point2, point))
-            result = result1;
-        else
-            result = result2;
+        lineRange = CTLineGetStringRange(line);
+        if (result == lineRange.location + lineRange.length)
+            result--;
     }
     
     free(origins);
