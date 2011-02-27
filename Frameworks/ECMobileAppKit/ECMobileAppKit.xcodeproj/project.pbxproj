@@ -545,9 +545,9 @@
 			productReference = B7FB520B131AC35E00651FDD /* libECMobileAppKit.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		B7FB521A131AC36800651FDD /* Test */ = {
+		B7FB521A131AC36800651FDD /* ECMobileAppKit-Test */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B7FB522C131AC36800651FDD /* Build configuration list for PBXNativeTarget "Test" */;
+			buildConfigurationList = B7FB522C131AC36800651FDD /* Build configuration list for PBXNativeTarget "ECMobileAppKit-Test" */;
 			buildPhases = (
 				B7FB5216131AC36800651FDD /* Sources */,
 				B7FB5217131AC36800651FDD /* Frameworks */,
@@ -559,7 +559,7 @@
 			dependencies = (
 				B7D65C00131AD9C400C3FA93 /* PBXTargetDependency */,
 			);
-			name = Test;
+			name = "ECMobileAppKit-Test";
 			productName = Test;
 			productReference = B7FB521B131AC36800651FDD /* Test.octest */;
 			productType = "com.apple.product-type.bundle";
@@ -582,7 +582,7 @@
 			projectRoot = "";
 			targets = (
 				B7FB520A131AC35E00651FDD /* ECMobileAppKit */,
-				B7FB521A131AC36800651FDD /* Test */,
+				B7FB521A131AC36800651FDD /* ECMobileAppKit-Test */,
 			);
 		};
 /* End PBXProject section */
@@ -777,7 +777,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B7FB522C131AC36800651FDD /* Build configuration list for PBXNativeTarget "Test" */ = {
+		B7FB522C131AC36800651FDD /* Build configuration list for PBXNativeTarget "ECMobileAppKit-Test" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B7FB522D131AC36800651FDD /* Debug */,

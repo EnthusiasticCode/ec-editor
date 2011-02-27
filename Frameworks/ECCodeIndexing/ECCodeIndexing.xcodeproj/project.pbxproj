@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B7D65C19131ADDCA00C3FA93 /* libECCodeIndexing.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7FCA60D131A6FE0002D6C7C /* libECCodeIndexing.a */; };
+		B7D65C62131AE09300C3FA93 /* libECAdditions.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7D65C61131AE09300C3FA93 /* libECAdditions.a */; };
 		B7FCA611131A6FE0002D6C7C /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7FCA610131A6FE0002D6C7C /* Foundation.framework */; };
 		B7FCA620131A6FED002D6C7C /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7FCA610131A6FE0002D6C7C /* Foundation.framework */; };
 		B7FCA63B131A71AE002D6C7C /* ECCodeIndexer.h in Headers */ = {isa = PBXBuildFile; fileRef = B7FCA554131A6FB9002D6C7C /* ECCodeIndexer.h */; };
@@ -33,16 +35,6 @@
 		B7FCA650131A71AE002D6C7C /* Index.h in Headers */ = {isa = PBXBuildFile; fileRef = B7FCA56A131A6FB9002D6C7C /* Index.h */; };
 		B7FCA651131A71AE002D6C7C /* libclang.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B7FCA56B131A6FB9002D6C7C /* libclang.dylib */; };
 		B7FCA653131A71BD002D6C7C /* libclang.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B7FCA56B131A6FB9002D6C7C /* libclang.dylib */; };
-		B7FCA654131A71C3002D6C7C /* ECClangCodeIndexer.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FCA569131A6FB9002D6C7C /* ECClangCodeIndexer.m */; };
-		B7FCA655131A71D6002D6C7C /* ECCodeIndexer.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FCA555131A6FB9002D6C7C /* ECCodeIndexer.m */; };
-		B7FCA656131A71D6002D6C7C /* ECCompletionChunk.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FCA558131A6FB9002D6C7C /* ECCompletionChunk.m */; };
-		B7FCA657131A71D6002D6C7C /* ECCompletionResult.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FCA55A131A6FB9002D6C7C /* ECCompletionResult.m */; };
-		B7FCA658131A71D6002D6C7C /* ECCompletionString.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FCA55C131A6FB9002D6C7C /* ECCompletionString.m */; };
-		B7FCA659131A71D6002D6C7C /* ECDiagnostic.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FCA55E131A6FB9002D6C7C /* ECDiagnostic.m */; };
-		B7FCA65A131A71D6002D6C7C /* ECFixIt.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FCA560131A6FB9002D6C7C /* ECFixIt.m */; };
-		B7FCA65B131A71D6002D6C7C /* ECSourceLocation.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FCA562131A6FB9002D6C7C /* ECSourceLocation.m */; };
-		B7FCA65C131A71D6002D6C7C /* ECSourceRange.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FCA564131A6FB9002D6C7C /* ECSourceRange.m */; };
-		B7FCA65D131A71D6002D6C7C /* ECToken.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FCA566131A6FB9002D6C7C /* ECToken.m */; };
 		B7FCA6EE131A722D002D6C7C /* KWAfterAllNode.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FCA660131A722D002D6C7C /* KWAfterAllNode.m */; };
 		B7FCA6EF131A722D002D6C7C /* KWAfterEachNode.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FCA662131A722D002D6C7C /* KWAfterEachNode.m */; };
 		B7FCA6F0131A722D002D6C7C /* KWAsyncVerifier.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FCA664131A722D002D6C7C /* KWAsyncVerifier.m */; };
@@ -117,17 +109,47 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		B7FCA735131A73F7002D6C7C /* PBXContainerItemProxy */ = {
+		B7D65C13131ADD9C00C3FA93 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B7FCA54A131A6F98002D6C7C /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = B7FCA61C131A6FED002D6C7C;
-			remoteInfo = Test;
+			remoteGlobalIDString = B7FCA60C131A6FE0002D6C7C;
+			remoteInfo = ECCodeIndexing;
+		};
+		B7D65C49131ADFF400C3FA93 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B7D65C41131ADFF400C3FA93 /* ECAdditions.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = B7D65BF5131AD95300C3FA93;
+			remoteInfo = ECAdditions;
+		};
+		B7D65C4B131ADFF400C3FA93 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B7D65C41131ADFF400C3FA93 /* ECAdditions.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = B7FB50ED131AC06B00651FDD;
+			remoteInfo = "ECAdditions-Test";
+		};
+		B7D65C4D131ADFFC00C3FA93 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B7D65C41131ADFF400C3FA93 /* ECAdditions.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = B7FB50EC131AC06B00651FDD;
+			remoteInfo = "ECAdditions-Test";
+		};
+		B7D65C4F131AE00400C3FA93 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B7D65C41131ADFF400C3FA93 /* ECAdditions.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = B7FB5107131AC07900651FDD;
+			remoteInfo = ECAdditions;
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		B7CECBA6131AB84B00B65157 /* Library.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Library.xcconfig; sourceTree = "<group>"; };
+		B7D65C41131ADFF400C3FA93 /* ECAdditions.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ECAdditions.xcodeproj; path = ../ECAdditions/ECAdditions.xcodeproj; sourceTree = "<group>"; };
+		B7D65C61131AE09300C3FA93 /* libECAdditions.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libECAdditions.a; sourceTree = SOURCE_ROOT; };
 		B7FCA554131A6FB9002D6C7C /* ECCodeIndexer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ECCodeIndexer.h; sourceTree = "<group>"; };
 		B7FCA555131A6FB9002D6C7C /* ECCodeIndexer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ECCodeIndexer.m; sourceTree = "<group>"; };
 		B7FCA556131A6FB9002D6C7C /* ECCodeIndexerDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ECCodeIndexerDelegate.h; sourceTree = "<group>"; };
@@ -159,7 +181,7 @@
 		B7FCA578131A6FC7002D6C7C /* iPad.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = iPad.xcconfig; sourceTree = "<group>"; };
 		B7FCA60D131A6FE0002D6C7C /* libECCodeIndexing.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libECCodeIndexing.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		B7FCA610131A6FE0002D6C7C /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
-		B7FCA61D131A6FED002D6C7C /* Test.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Test.octest; sourceTree = BUILT_PRODUCTS_DIR; };
+		B7FCA61D131A6FED002D6C7C /* Test.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = Test.octest; path = "ECCodeIndexing-Test.octest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B7FCA634131A707F002D6C7C /* StaticLibrary-iPad-Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "StaticLibrary-iPad-Debug.xcconfig"; sourceTree = "<group>"; };
 		B7FCA636131A70A1002D6C7C /* StaticLibrary-iPad-Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "StaticLibrary-iPad-Release.xcconfig"; sourceTree = "<group>"; };
 		B7FCA637131A70B7002D6C7C /* StaticLibrary-iPad-Test.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "StaticLibrary-iPad-Test.xcconfig"; sourceTree = "<group>"; };
@@ -320,6 +342,7 @@
 				B7FCA611131A6FE0002D6C7C /* Foundation.framework in Frameworks */,
 				B7FCA651131A71AE002D6C7C /* libclang.dylib in Frameworks */,
 				B7FCA738131A750C002D6C7C /* MobileCoreServices.framework in Frameworks */,
+				B7D65C62131AE09300C3FA93 /* libECAdditions.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -332,12 +355,22 @@
 				B7FCA739131A750C002D6C7C /* MobileCoreServices.framework in Frameworks */,
 				B7FCA73B131A752B002D6C7C /* SenTestingKit.framework in Frameworks */,
 				B7FCA740131A762F002D6C7C /* UIKit.framework in Frameworks */,
+				B7D65C19131ADDCA00C3FA93 /* libECCodeIndexing.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		B7D65C42131ADFF400C3FA93 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				B7D65C4A131ADFF400C3FA93 /* libECAdditions.a */,
+				B7D65C4C131ADFF400C3FA93 /* Test.octest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		B7FCA548131A6F98002D6C7C = {
 			isa = PBXGroup;
 			children = (
@@ -418,6 +451,8 @@
 		B7FCA60F131A6FE0002D6C7C /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B7D65C61131AE09300C3FA93 /* libECAdditions.a */,
+				B7D65C41131ADFF400C3FA93 /* ECAdditions.xcodeproj */,
 				B7FCA73F131A762F002D6C7C /* UIKit.framework */,
 				B7FCA73A131A752B002D6C7C /* SenTestingKit.framework */,
 				B7FCA737131A750C002D6C7C /* MobileCoreServices.framework */,
@@ -574,7 +609,7 @@
 				B7FCA6ED131A722D002D6C7C /* NSValue+KiwiAdditions.m */,
 			);
 			name = Kiwi;
-			path = ../../../Test/Kiwi;
+			path = ../../Kiwi;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -613,16 +648,16 @@
 			buildRules = (
 			);
 			dependencies = (
-				B7FCA736131A73F7002D6C7C /* PBXTargetDependency */,
+				B7D65C50131AE00400C3FA93 /* PBXTargetDependency */,
 			);
 			name = ECCodeIndexing;
 			productName = ECCodeIndexing;
 			productReference = B7FCA60D131A6FE0002D6C7C /* libECCodeIndexing.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		B7FCA61C131A6FED002D6C7C /* Test */ = {
+		B7FCA61C131A6FED002D6C7C /* ECCodeIndexing-Test */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B7FCA62E131A6FED002D6C7C /* Build configuration list for PBXNativeTarget "Test" */;
+			buildConfigurationList = B7FCA62E131A6FED002D6C7C /* Build configuration list for PBXNativeTarget "ECCodeIndexing-Test" */;
 			buildPhases = (
 				B7FCA618131A6FED002D6C7C /* Sources */,
 				B7FCA619131A6FED002D6C7C /* Frameworks */,
@@ -632,8 +667,10 @@
 			buildRules = (
 			);
 			dependencies = (
+				B7D65C4E131ADFFC00C3FA93 /* PBXTargetDependency */,
+				B7D65C14131ADD9C00C3FA93 /* PBXTargetDependency */,
 			);
-			name = Test;
+			name = "ECCodeIndexing-Test";
 			productName = Test;
 			productReference = B7FCA61D131A6FED002D6C7C /* Test.octest */;
 			productType = "com.apple.product-type.bundle";
@@ -653,13 +690,37 @@
 			mainGroup = B7FCA548131A6F98002D6C7C;
 			productRefGroup = B7FCA60E131A6FE0002D6C7C /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = B7D65C42131ADFF400C3FA93 /* Products */;
+					ProjectRef = B7D65C41131ADFF400C3FA93 /* ECAdditions.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				B7FCA60C131A6FE0002D6C7C /* ECCodeIndexing */,
-				B7FCA61C131A6FED002D6C7C /* Test */,
+				B7FCA61C131A6FED002D6C7C /* ECCodeIndexing-Test */,
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		B7D65C4A131ADFF400C3FA93 /* libECAdditions.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libECAdditions.a;
+			remoteRef = B7D65C49131ADFF400C3FA93 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B7D65C4C131ADFF400C3FA93 /* Test.octest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			name = Test.octest;
+			path = "ECAdditions-Test.octest";
+			remoteRef = B7D65C4B131ADFF400C3FA93 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		B7FCA61A131A6FED002D6C7C /* Resources */ = {
@@ -710,16 +771,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B7FCA654131A71C3002D6C7C /* ECClangCodeIndexer.m in Sources */,
-				B7FCA655131A71D6002D6C7C /* ECCodeIndexer.m in Sources */,
-				B7FCA656131A71D6002D6C7C /* ECCompletionChunk.m in Sources */,
-				B7FCA657131A71D6002D6C7C /* ECCompletionResult.m in Sources */,
-				B7FCA658131A71D6002D6C7C /* ECCompletionString.m in Sources */,
-				B7FCA659131A71D6002D6C7C /* ECDiagnostic.m in Sources */,
-				B7FCA65A131A71D6002D6C7C /* ECFixIt.m in Sources */,
-				B7FCA65B131A71D6002D6C7C /* ECSourceLocation.m in Sources */,
-				B7FCA65C131A71D6002D6C7C /* ECSourceRange.m in Sources */,
-				B7FCA65D131A71D6002D6C7C /* ECToken.m in Sources */,
 				B7FCA6EE131A722D002D6C7C /* KWAfterAllNode.m in Sources */,
 				B7FCA6EF131A722D002D6C7C /* KWAfterEachNode.m in Sources */,
 				B7FCA6F0131A722D002D6C7C /* KWAsyncVerifier.m in Sources */,
@@ -792,10 +843,20 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		B7FCA736131A73F7002D6C7C /* PBXTargetDependency */ = {
+		B7D65C14131ADD9C00C3FA93 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = B7FCA61C131A6FED002D6C7C /* Test */;
-			targetProxy = B7FCA735131A73F7002D6C7C /* PBXContainerItemProxy */;
+			target = B7FCA60C131A6FE0002D6C7C /* ECCodeIndexing */;
+			targetProxy = B7D65C13131ADD9C00C3FA93 /* PBXContainerItemProxy */;
+		};
+		B7D65C4E131ADFFC00C3FA93 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "ECAdditions-Test";
+			targetProxy = B7D65C4D131ADFFC00C3FA93 /* PBXContainerItemProxy */;
+		};
+		B7D65C50131AE00400C3FA93 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = ECAdditions;
+			targetProxy = B7D65C4F131AE00400C3FA93 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -816,6 +877,10 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = B7FCA634131A707F002D6C7C /* StaticLibrary-iPad-Debug.xcconfig */;
 			buildSettings = {
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)\"",
+				);
 			};
 			name = Debug;
 		};
@@ -823,6 +888,10 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = B7FCA636131A70A1002D6C7C /* StaticLibrary-iPad-Release.xcconfig */;
 			buildSettings = {
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)\"",
+				);
 			};
 			name = Release;
 		};
@@ -877,7 +946,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B7FCA62E131A6FED002D6C7C /* Build configuration list for PBXNativeTarget "Test" */ = {
+		B7FCA62E131A6FED002D6C7C /* Build configuration list for PBXNativeTarget "ECCodeIndexing-Test" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B7FCA62F131A6FED002D6C7C /* Debug */,

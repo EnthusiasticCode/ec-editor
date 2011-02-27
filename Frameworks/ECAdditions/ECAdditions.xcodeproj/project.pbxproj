@@ -502,9 +502,9 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		B7FB50EC131AC06B00651FDD /* Test */ = {
+		B7FB50EC131AC06B00651FDD /* ECAdditions-Test */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B7FB5101131AC06B00651FDD /* Build configuration list for PBXNativeTarget "Test" */;
+			buildConfigurationList = B7FB5101131AC06B00651FDD /* Build configuration list for PBXNativeTarget "ECAdditions-Test" */;
 			buildPhases = (
 				B7FB50E8131AC06B00651FDD /* Sources */,
 				B7FB50E9131AC06B00651FDD /* Frameworks */,
@@ -516,7 +516,7 @@
 			dependencies = (
 				B7D65BA8131AD15C00C3FA93 /* PBXTargetDependency */,
 			);
-			name = Test;
+			name = "ECAdditions-Test";
 			productName = Test;
 			productReference = B7FB50ED131AC06B00651FDD /* Test.octest */;
 			productType = "com.apple.product-type.bundle";
@@ -556,7 +556,7 @@
 			projectRoot = "";
 			targets = (
 				B7FB5107131AC07900651FDD /* ECAdditions */,
-				B7FB50EC131AC06B00651FDD /* Test */,
+				B7FB50EC131AC06B00651FDD /* ECAdditions-Test */,
 			);
 		};
 /* End PBXProject section */
@@ -748,7 +748,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B7FB5101131AC06B00651FDD /* Build configuration list for PBXNativeTarget "Test" */ = {
+		B7FB5101131AC06B00651FDD /* Build configuration list for PBXNativeTarget "ECAdditions-Test" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B7FB5102131AC06B00651FDD /* Debug */,
