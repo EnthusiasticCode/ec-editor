@@ -48,6 +48,7 @@ static NSMutableSet *_handledUTIs;
 
 + (void)loadLanguages
 {
+    // TODO: implement some priority system for subclass loading
     if (_codeIndexerClassesByLanguage && _codeIndexerClassesByUTI && _handledLanguages && _handledUTIs)
         return;
     int numClasses;
