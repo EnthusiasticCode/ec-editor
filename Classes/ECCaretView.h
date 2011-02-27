@@ -17,6 +17,7 @@
 @property (nonatomic, getter = isBlinking) BOOL blink;
 @property (nonatomic) NSUInteger pulsePerSecond;
 @property (nonatomic) CGPathRef caretShape;
+@property (nonatomic, retain) UIColor *caretColor;
 
 // Draw the solid caret in the specified context
 - (void)drawInContext:(CGContextRef)context;

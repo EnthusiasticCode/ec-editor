@@ -24,7 +24,7 @@
         blink = shouldBlink;
         if (shouldBlink)
         {
-            [UIView animateWithDuration:1.0 / (pulsePerSecond * 2) delay:0.0 options:UIViewAnimationOptionAutoreverse | UIViewAnimationOptionRepeat | UIViewAnimationOptionCurveEaseInOut | UIViewAnimationOptionTransitionNone animations:^(void) {
+            [UIView animateWithDuration:1.0 / (pulsePerSecond * 2) delay:0.0 options:UIViewAnimationOptionAutoreverse | UIViewAnimationOptionRepeat | UIViewAnimationOptionCurveEaseInOut | UIViewAnimationOptionTransitionNone | UIViewAnimationOptionAllowUserInteraction animations:^(void) {
                 self.alpha = 0.0;
             } completion:nil];
         }
@@ -51,6 +51,8 @@
     }
 }
 
+@synthesize caretColor;
+
 #pragma mark UIView override
 
 - (id)initWithFrame:(CGRect)frame
@@ -58,14 +60,17 @@
     self = [super initWithFrame:frame];
     if (self) {
         self.opaque = NO;
-        self.backgroundColor = [UIColor redColor];
+        self.backgroundColor = nil;
+        self.caretColor = [UIColor redColor];
         self.clearsContextBeforeDrawing = YES;
         self.pulsePerSecond = 2;
+        self.userInteractionEnabled = NO;
         // Create default caret shape
         CGMutablePathRef p = CGPathCreateMutable();
         // TODO rounded rect
         CGPathAddRect(p, NULL, (CGRect){ {0, 0}, frame.size });
         self.caretShape = p;
+        CGPathRelease(p);
     }
     return self;
 }
@@ -87,9 +92,10 @@
 
 - (void)drawInContext:(CGContextRef)context
 {
-    [self.backgroundColor setFill];
-    CGContextAddPath(context, caretShape);
-    CGContextFillPath(context);
+    [self.caretColor setFill];
+//    CGContextAddPath(context, caretShape);
+//    CGContextFillPath(context);
+    CGContextFillRect(context, self.bounds);
 }
 
 @end

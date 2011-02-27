@@ -124,11 +124,15 @@ static inline CGFloat square_distance(CGPoint a, CGPoint b)
 
 - (void)doInit
 {
+    // Initialize deafult styles
     CTFontRef defaultFont = CTFontCreateWithName((CFStringRef)@"Courier New", 12.0, &CGAffineTransformIdentity);
     defaultAttributes = [[NSDictionary dictionaryWithObject:(id)defaultFont forKey:(id)kCTFontAttributeName] retain];
     // TODO set full default coloring if textSyles == nil
     _styles = [[NSMutableDictionary alloc] initWithObjectsAndKeys:defaultAttributes, ECCodeStyleDefaultTextName, nil];
     
+    // Set UIView properties
+    self.contentMode = UIViewContentModeTopLeft;
+    self.clearsContextBeforeDrawing = YES;
     self.contentInset = UIEdgeInsetsMake(10, 10, 0, 0);
     
     self.text = @"";
@@ -179,6 +183,7 @@ static inline CGFloat square_distance(CGPoint a, CGPoint b)
     // Recognizers
     [focusRecognizer release];
     
+    [caretView release];
     [super dealloc];
 }
 
@@ -300,12 +305,12 @@ static inline CGFloat square_distance(CGPoint a, CGPoint b)
 //    CGContextAddPath(context, testPath);
     CGContextStrokePath(context);
     
-    if (selection)
-    {
-        CGRect caretRect = [self caretRectForPosition:(ECTextPosition *)selection.start];
-        [[UIColor greenColor] setFill];
-        CGContextFillRect(context, caretRect);
-    }
+//    if (selection)
+//    {
+//        CGRect caretRect = [self caretRectForPosition:(ECTextPosition *)selection.start];
+//        [[UIColor greenColor] setFill];
+//        CGContextFillRect(context, caretRect);
+//    }
     
     [super drawRect:rect];
 }
@@ -314,6 +319,27 @@ static inline CGFloat square_distance(CGPoint a, CGPoint b)
 {
     // TODO implement custom stuff
     [super layoutSubviews];
+    
+    BOOL firstResponder = [self isFirstResponder];
+    
+    // Place cursor caret
+    if (firstResponder && selection && [selection isEmpty])
+    {
+        CGRect caretRect = [self caretRectForPosition:(ECTextPosition *)selection.start];
+        if (!caretView)
+        {
+            caretView = [[ECCaretView alloc] initWithFrame:caretRect];
+            [self addSubview:caretView];
+        }
+        caretView.frame = caretRect;
+        caretView.hidden = NO;
+        caretView.blink = YES;
+    }
+    else if (caretView && !caretView.hidden)
+    {
+        caretView.blink = NO;
+        caretView.hidden = YES;
+    }
 }
 
 - (void)didMoveToWindow
@@ -1172,7 +1198,7 @@ static inline CGFloat square_distance(CGPoint a, CGPoint b)
     
     [range release];
     
-    [self setNeedsDisplay];
+    //[self setNeedsLayout];
 }
 
 - (CGAffineTransform)renderSpaceTransformationFlipped:(BOOL)flipped 

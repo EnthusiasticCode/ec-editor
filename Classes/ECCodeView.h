@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 #import <CoreText/CoreText.h>
 #import "ECTextRange.h"
+#import "ECCaretView.h"
 
 // TODO
 // 1. Draw plain text DONE
@@ -54,6 +55,9 @@ extern const NSString* ECCodeStyleCommentName;
     UIGestureRecognizer *tapRecognizer;
     UIGestureRecognizer *doubleTapRecognizer;
     UIGestureRecognizer *tapHoldRecognizer;
+    
+    // Caret
+    ECCaretView *caretView;
     
     // Flags
     // TODO create smaller struct?
