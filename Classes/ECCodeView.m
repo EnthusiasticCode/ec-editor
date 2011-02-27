@@ -52,15 +52,6 @@ static inline CGFloat square_distance(CGPoint a, CGPoint b)
 
 - (CGRect)rectForContentRange:(NSRange)range;
 
-// Return the closest character index to the given point in the given line within
-// the given range of text. If resultPoint is specified, the closest point in
-// that line is also returned.
-- (NSUInteger)closestPositionToPoint:(CGPoint)point 
-                         withinRange:(NSRange)range
-                              inLine:(CTLineRef)line 
-                          withOrigin:(CGPoint)lineOrigin 
-                         resultPoint:(CGPoint *)resultPoint;
-
 // Gesture handles
 - (void)handleGestureFocus;
 - (void)handleGestureTap:(UITapGestureRecognizer *)recognizer;
@@ -844,12 +835,44 @@ static inline CGFloat square_distance(CGPoint a, CGPoint b)
     
     NSUInteger result;
     CTLineRef line = CFArrayGetValueAtIndex(lines, lineRange.location + closest);
-    result = [self closestPositionToPoint:point 
-                               withinRange:r
-                                    inLine:line
-                                withOrigin:origins[closest] 
-                               resultPoint:NULL];
+    CGFloat ascent = NAN;
+    CGFloat descent = NAN;
+    CGFloat lineWidth = CTLineGetTypographicBounds(line, &ascent, &descent, NULL);
+    CGFloat x = point.x - origins[closest].x;
+    CGFloat y = point.y - origins[closest].y;
     
+    if (y < -descent)
+        y = -descent;
+    else if(y > ascent)
+        y = ascent;
+    
+    CFRange lineStringRange = CTLineGetStringRange(line);
+    
+    if (x <= 0 && in_range(r, lineStringRange.location)) 
+    {
+        result = lineStringRange.location;
+    }
+    if (x >= lineWidth && in_range(r, lineStringRange.location + lineStringRange.length)) 
+    {
+        result = lineStringRange.location + lineStringRange.length;
+    }
+    else
+    {
+        CFIndex lineStringIndex = CTLineGetStringIndexForPosition(line, (CGPoint){ x, y });
+        if (lineStringIndex < 0 || ((NSUInteger)lineStringIndex < r.location)) 
+        {
+            result = r.location;
+        } 
+        else if (((NSUInteger)lineStringIndex - r.location) > r.length) 
+        {
+            result = r.location + r.length;
+        } 
+        else 
+        {
+            result = lineStringIndex;
+        }
+    }
+ 
     if (closest < lineRange.length - 1)
     {
         lineRange = CTLineGetStringRange(line);
@@ -1129,69 +1152,6 @@ static inline CGFloat square_distance(CGPoint a, CGPoint b)
         result = CGRectUnion(result, r);
     }];
     return result;
-}
-
-- (NSUInteger)closestPositionToPoint:(CGPoint)point 
-                         withinRange:(NSRange)stringRange
-                              inLine:(CTLineRef)line 
-                          withOrigin:(CGPoint)lineOrigin 
-                         resultPoint:(CGPoint *)resultPoint
-{
-    CGFloat ascent = NAN;
-    CGFloat descent = NAN;
-    CGFloat lineWidth = CTLineGetTypographicBounds(line, &ascent, &descent, NULL);
-    
-    CGFloat x = point.x - lineOrigin.x;
-    CGFloat y = point.y - lineOrigin.y;
-    
-    // Clamp the y-coordinate to the line's typographic bounds
-    if (y < -descent)
-        y = -descent;
-    else if(y > ascent)
-        y = ascent;
-    
-    CFRange lineStringRange = CTLineGetStringRange(line);
-    
-    // Check for past the edges... TODO: bidi booyah
-    if (x <= 0 && in_range(stringRange, lineStringRange.location)) 
-    {
-        if (resultPoint)
-            *resultPoint = (CGPoint){ lineOrigin.x, lineOrigin.y + y };
-        return lineStringRange.location;
-    }
-    if (x >= lineWidth && in_range(stringRange, lineStringRange.location + lineStringRange.length)) 
-    {
-        if (resultPoint)
-            *resultPoint = (CGPoint){ lineOrigin.x + lineWidth, lineOrigin.y + y };
-        return lineStringRange.location + lineStringRange.length;
-    }
-    
-    CFIndex lineStringIndex = CTLineGetStringIndexForPosition(line, (CGPoint){ x, y });
-    NSUInteger hitIndex;
-    
-    if (lineStringIndex < 0 || ((NSUInteger)lineStringIndex < stringRange.location)) 
-    {
-        lineStringIndex = stringRange.location;
-        hitIndex = stringRange.location;
-        x = CTLineGetOffsetForStringIndex(line, lineStringIndex, NULL);
-    } 
-    else if (((NSUInteger)lineStringIndex - stringRange.location) > stringRange.length) 
-    {
-        lineStringIndex = stringRange.location + stringRange.length;
-        hitIndex = stringRange.location + stringRange.length;
-        x = CTLineGetOffsetForStringIndex(line, lineStringIndex, NULL);
-    } 
-    else 
-    {
-        hitIndex = lineStringIndex;
-    }
-    
-    if (resultPoint)
-        *resultPoint = (CGPoint){
-            .x = lineOrigin.x + x,
-            .y = lineOrigin.y + y
-        };
-    return hitIndex;
 }
 
 - (void)handleGestureFocus
