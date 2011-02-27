@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B7D65BF6131AD96700C3FA93 /* libECAdditions.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7D65BF5131AD95300C3FA93 /* libECAdditions.a */; };
 		B7FB50F3131AC06B00651FDD /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7FB50F2131AC06B00651FDD /* Foundation.framework */; };
 		B7FB5109131AC07900651FDD /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7FB50F2131AC06B00651FDD /* Foundation.framework */; };
 		B7FB51A2131AC0A700651FDD /* KWAfterAllNode.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB5114131AC0A700651FDD /* KWAfterAllNode.m */; };
@@ -75,7 +76,6 @@
 		B7FB51E1131AC0A700651FDD /* NSObject+KiwiVerifierAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB519F131AC0A700651FDD /* NSObject+KiwiVerifierAdditions.m */; };
 		B7FB51E2131AC0A700651FDD /* NSValue+KiwiAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB51A1131AC0A700651FDD /* NSValue+KiwiAdditions.m */; };
 		B7FB51E3131AC0AF00651FDD /* ECAdditionsSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB50D7131AC02F00651FDD /* ECAdditionsSpec.m */; };
-		B7FB51E4131AC0D800651FDD /* NSURL+ECAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB50D5131AC02F00651FDD /* NSURL+ECAdditions.m */; };
 		B7FB51E5131AC0D900651FDD /* NSURL+ECAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB50D5131AC02F00651FDD /* NSURL+ECAdditions.m */; };
 		B7FB51EA131AC26800651FDD /* NSURL+ECAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = B7FB50D4131AC02F00651FDD /* NSURL+ECAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B7FB524C131AC4BB00651FDD /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7FB524B131AC4BB00651FDD /* UIKit.framework */; };
@@ -83,16 +83,17 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		B7FB5110131AC08D00651FDD /* PBXContainerItemProxy */ = {
+		B7D65BA7131AD15C00C3FA93 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B7FB50CA131ABFDE00651FDD /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = B7FB50EC131AC06B00651FDD;
-			remoteInfo = Test;
+			remoteGlobalIDString = B7FB5107131AC07900651FDD;
+			remoteInfo = ECAdditions;
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		B7D65BF5131AD95300C3FA93 /* libECAdditions.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libECAdditions.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		B7FB50D4131AC02F00651FDD /* NSURL+ECAdditions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSURL+ECAdditions.h"; sourceTree = "<group>"; };
 		B7FB50D5131AC02F00651FDD /* NSURL+ECAdditions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSURL+ECAdditions.m"; sourceTree = "<group>"; };
 		B7FB50D7131AC02F00651FDD /* ECAdditionsSpec.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ECAdditionsSpec.m; sourceTree = "<group>"; };
@@ -108,7 +109,6 @@
 		B7FB50E7131AC03B00651FDD /* iPad.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = iPad.xcconfig; sourceTree = "<group>"; };
 		B7FB50ED131AC06B00651FDD /* Test.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Test.octest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B7FB50F2131AC06B00651FDD /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
-		B7FB5108131AC07900651FDD /* libECAdditions.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libECAdditions.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		B7FB5113131AC0A700651FDD /* KWAfterAllNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KWAfterAllNode.h; sourceTree = "<group>"; };
 		B7FB5114131AC0A700651FDD /* KWAfterAllNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KWAfterAllNode.m; sourceTree = "<group>"; };
 		B7FB5115131AC0A700651FDD /* KWAfterEachNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KWAfterEachNode.h; sourceTree = "<group>"; };
@@ -264,6 +264,7 @@
 				B7FB50F3131AC06B00651FDD /* Foundation.framework in Frameworks */,
 				B7FB524C131AC4BB00651FDD /* UIKit.framework in Frameworks */,
 				B7FB524E131AC4CA00651FDD /* SenTestingKit.framework in Frameworks */,
+				B7D65BF6131AD96700C3FA93 /* libECAdditions.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -320,8 +321,8 @@
 		B7FB50EE131AC06B00651FDD /* Products */ = {
 			isa = PBXGroup;
 			children = (
+				B7D65BF5131AD95300C3FA93 /* libECAdditions.a */,
 				B7FB50ED131AC06B00651FDD /* Test.octest */,
-				B7FB5108131AC07900651FDD /* libECAdditions.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -513,6 +514,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				B7D65BA8131AD15C00C3FA93 /* PBXTargetDependency */,
 			);
 			name = Test;
 			productName = Test;
@@ -530,11 +532,10 @@
 			buildRules = (
 			);
 			dependencies = (
-				B7FB5111131AC08D00651FDD /* PBXTargetDependency */,
 			);
 			name = ECAdditions;
 			productName = ECAdditions;
-			productReference = B7FB5108131AC07900651FDD /* libECAdditions.a */;
+			productReference = B7D65BF5131AD95300C3FA93 /* libECAdditions.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
@@ -657,7 +658,6 @@
 				B7FB51E1131AC0A700651FDD /* NSObject+KiwiVerifierAdditions.m in Sources */,
 				B7FB51E2131AC0A700651FDD /* NSValue+KiwiAdditions.m in Sources */,
 				B7FB51E3131AC0AF00651FDD /* ECAdditionsSpec.m in Sources */,
-				B7FB51E4131AC0D800651FDD /* NSURL+ECAdditions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -672,10 +672,10 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		B7FB5111131AC08D00651FDD /* PBXTargetDependency */ = {
+		B7D65BA8131AD15C00C3FA93 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = B7FB50EC131AC06B00651FDD /* Test */;
-			targetProxy = B7FB5110131AC08D00651FDD /* PBXContainerItemProxy */;
+			target = B7FB5107131AC07900651FDD /* ECAdditions */;
+			targetProxy = B7D65BA7131AD15C00C3FA93 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -700,6 +700,10 @@
 					"$(inherited)",
 					"\"$(SDKROOT)/Developer/Library/Frameworks\"",
 				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../../../../Library/Developer/Xcode/DerivedData/Products/Products/Debug-iphonesimulator\"",
+				);
 			};
 			name = Debug;
 		};
@@ -710,6 +714,10 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SDKROOT)/Developer/Library/Frameworks\"",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../../../../Library/Developer/Xcode/DerivedData/Products/Products/Debug-iphonesimulator\"",
 				);
 			};
 			name = Release;
