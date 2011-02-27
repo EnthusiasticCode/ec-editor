@@ -114,9 +114,6 @@
 		B7FCA73B131A752B002D6C7C /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7FCA73A131A752B002D6C7C /* SenTestingKit.framework */; };
 		B7FCA740131A762F002D6C7C /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7FCA73F131A762F002D6C7C /* UIKit.framework */; };
 		B7FCA741131A7673002D6C7C /* libclang.dylib in Resources */ = {isa = PBXBuildFile; fileRef = B7FCA56B131A6FB9002D6C7C /* libclang.dylib */; };
-		B7FCA746131A774D002D6C7C /* NSURL+ECAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = B7FCA743131A774D002D6C7C /* NSURL+ECAdditions.h */; };
-		B7FCA747131A774D002D6C7C /* NSURL+ECAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FCA744131A774D002D6C7C /* NSURL+ECAdditions.m */; };
-		B7FCA748131A774D002D6C7C /* NSURL+ECAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FCA744131A774D002D6C7C /* NSURL+ECAdditions.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -313,8 +310,6 @@
 		B7FCA737131A750C002D6C7C /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS4.2.sdk/System/Library/Frameworks/MobileCoreServices.framework; sourceTree = DEVELOPER_DIR; };
 		B7FCA73A131A752B002D6C7C /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS4.2.sdk/Developer/Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
 		B7FCA73F131A762F002D6C7C /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS4.2.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
-		B7FCA743131A774D002D6C7C /* NSURL+ECAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSURL+ECAdditions.h"; sourceTree = "<group>"; };
-		B7FCA744131A774D002D6C7C /* NSURL+ECAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSURL+ECAdditions.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -346,7 +341,6 @@
 		B7FCA548131A6F98002D6C7C = {
 			isa = PBXGroup;
 			children = (
-				B7FCA742131A774D002D6C7C /* ECAdditions */,
 				B7FCA56E131A6FC7002D6C7C /* Config */,
 				B7FCA554131A6FB9002D6C7C /* ECCodeIndexer.h */,
 				B7FCA555131A6FB9002D6C7C /* ECCodeIndexer.m */,
@@ -583,24 +577,6 @@
 			path = ../../../Test/Kiwi;
 			sourceTree = "<group>";
 		};
-		B7FCA742131A774D002D6C7C /* ECAdditions */ = {
-			isa = PBXGroup;
-			children = (
-				B7FCA743131A774D002D6C7C /* NSURL+ECAdditions.h */,
-				B7FCA744131A774D002D6C7C /* NSURL+ECAdditions.m */,
-				B7FCA745131A774D002D6C7C /* Test */,
-			);
-			name = ECAdditions;
-			path = ../ECAdditions;
-			sourceTree = "<group>";
-		};
-		B7FCA745131A774D002D6C7C /* Test */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Test;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -620,7 +596,6 @@
 				B7FCA64C131A71AE002D6C7C /* ECToken.h in Headers */,
 				B7FCA64E131A71AE002D6C7C /* ECClangCodeIndexer.h in Headers */,
 				B7FCA650131A71AE002D6C7C /* Index.h in Headers */,
-				B7FCA746131A774D002D6C7C /* NSURL+ECAdditions.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -728,7 +703,6 @@
 				B7FCA64B131A71AE002D6C7C /* ECSourceRange.m in Sources */,
 				B7FCA64D131A71AE002D6C7C /* ECToken.m in Sources */,
 				B7FCA64F131A71AE002D6C7C /* ECClangCodeIndexer.m in Sources */,
-				B7FCA747131A774D002D6C7C /* NSURL+ECAdditions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -812,7 +786,6 @@
 				B7FCA72D131A722D002D6C7C /* NSObject+KiwiVerifierAdditions.m in Sources */,
 				B7FCA72E131A722D002D6C7C /* NSValue+KiwiAdditions.m in Sources */,
 				B7FCA734131A73B3002D6C7C /* ECCodeIndexingSpec.m in Sources */,
-				B7FCA748131A774D002D6C7C /* NSURL+ECAdditions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

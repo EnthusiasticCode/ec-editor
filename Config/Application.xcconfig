@@ -7,3 +7,4 @@
 //
 
 WRAPPER_EXTENSION = app
+OTHER_LDFLAGS = $(value) -all_load -ObjC

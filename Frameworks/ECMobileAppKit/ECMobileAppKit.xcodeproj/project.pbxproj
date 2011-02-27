@@ -7,24 +7,22 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B7D65C01131AD9E800C3FA93 /* libECMobileAppKit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7FB520B131AC35E00651FDD /* libECMobileAppKit.a */; };
+		B7D65C02131ADA4D00C3FA93 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7FB5257131AC52800651FDD /* MobileCoreServices.framework */; };
+		B7D65C03131ADA4F00C3FA93 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7FB525A131AC53A00651FDD /* CoreData.framework */; };
 		B7FB520F131AC35E00651FDD /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7FB520E131AC35E00651FDD /* Foundation.framework */; };
 		B7FB521E131AC36800651FDD /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7FB520E131AC35E00651FDD /* Foundation.framework */; };
 		B7FB5237131AC3A200651FDD /* ECDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = B7FB5231131AC3A200651FDD /* ECDocument.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B7FB5238131AC3A200651FDD /* ECDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB5232131AC3A200651FDD /* ECDocument.m */; };
-		B7FB5239131AC3A200651FDD /* ECDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB5232131AC3A200651FDD /* ECDocument.m */; };
 		B7FB523A131AC3A200651FDD /* ECPersistentDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = B7FB5233131AC3A200651FDD /* ECPersistentDocument.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B7FB523B131AC3A200651FDD /* ECPersistentDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB5234131AC3A200651FDD /* ECPersistentDocument.m */; };
-		B7FB523C131AC3A200651FDD /* ECPersistentDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB5234131AC3A200651FDD /* ECPersistentDocument.m */; };
 		B7FB523D131AC3A200651FDD /* ECTextDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = B7FB5235131AC3A200651FDD /* ECTextDocument.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B7FB523E131AC3A200651FDD /* ECTextDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB5236131AC3A200651FDD /* ECTextDocument.m */; };
-		B7FB523F131AC3A200651FDD /* ECTextDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB5236131AC3A200651FDD /* ECTextDocument.m */; };
 		B7FB5242131AC3B100651FDD /* ECMobileAppKitSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB5241131AC3B100651FDD /* ECMobileAppKitSpec.m */; };
 		B7FB5254131AC4F400651FDD /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7FB5253131AC4F400651FDD /* SenTestingKit.framework */; };
 		B7FB5256131AC50300651FDD /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7FB5255131AC50300651FDD /* UIKit.framework */; };
 		B7FB5258131AC52800651FDD /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7FB5257131AC52800651FDD /* MobileCoreServices.framework */; };
-		B7FB5259131AC52800651FDD /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7FB5257131AC52800651FDD /* MobileCoreServices.framework */; };
 		B7FB525B131AC53A00651FDD /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7FB525A131AC53A00651FDD /* CoreData.framework */; };
-		B7FB525C131AC53A00651FDD /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7FB525A131AC53A00651FDD /* CoreData.framework */; };
 		B7FB52ED131AC55E00651FDD /* KWAfterAllNode.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB525F131AC55E00651FDD /* KWAfterAllNode.m */; };
 		B7FB52EE131AC55E00651FDD /* KWAfterEachNode.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB5261131AC55E00651FDD /* KWAfterEachNode.m */; };
 		B7FB52EF131AC55E00651FDD /* KWAsyncVerifier.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB5263131AC55E00651FDD /* KWAsyncVerifier.m */; };
@@ -93,12 +91,12 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		B7FB522F131AC37300651FDD /* PBXContainerItemProxy */ = {
+		B7D65BFF131AD9C400C3FA93 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B7FB51ED131AC31300651FDD /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = B7FB521A131AC36800651FDD;
-			remoteInfo = Test;
+			remoteGlobalIDString = B7FB520A131AC35E00651FDD;
+			remoteInfo = ECMobileAppKit;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -290,8 +288,9 @@
 				B7FB521E131AC36800651FDD /* Foundation.framework in Frameworks */,
 				B7FB5254131AC4F400651FDD /* SenTestingKit.framework in Frameworks */,
 				B7FB5256131AC50300651FDD /* UIKit.framework in Frameworks */,
-				B7FB5259131AC52800651FDD /* MobileCoreServices.framework in Frameworks */,
-				B7FB525C131AC53A00651FDD /* CoreData.framework in Frameworks */,
+				B7D65C02131ADA4D00C3FA93 /* MobileCoreServices.framework in Frameworks */,
+				B7D65C03131ADA4F00C3FA93 /* CoreData.framework in Frameworks */,
+				B7D65C01131AD9E800C3FA93 /* libECMobileAppKit.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -540,7 +539,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				B7FB5230131AC37300651FDD /* PBXTargetDependency */,
 			);
 			name = ECMobileAppKit;
 			productName = ECMobileAppKit;
@@ -559,6 +557,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				B7D65C00131AD9C400C3FA93 /* PBXTargetDependency */,
 			);
 			name = Test;
 			productName = Test;
@@ -629,9 +628,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B7FB5239131AC3A200651FDD /* ECDocument.m in Sources */,
-				B7FB523C131AC3A200651FDD /* ECPersistentDocument.m in Sources */,
-				B7FB523F131AC3A200651FDD /* ECTextDocument.m in Sources */,
 				B7FB5242131AC3B100651FDD /* ECMobileAppKitSpec.m in Sources */,
 				B7FB52ED131AC55E00651FDD /* KWAfterAllNode.m in Sources */,
 				B7FB52EE131AC55E00651FDD /* KWAfterEachNode.m in Sources */,
@@ -704,10 +700,10 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		B7FB5230131AC37300651FDD /* PBXTargetDependency */ = {
+		B7D65C00131AD9C400C3FA93 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = B7FB521A131AC36800651FDD /* Test */;
-			targetProxy = B7FB522F131AC37300651FDD /* PBXContainerItemProxy */;
+			target = B7FB520A131AC35E00651FDD /* ECMobileAppKit */;
+			targetProxy = B7D65BFF131AD9C400C3FA93 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
