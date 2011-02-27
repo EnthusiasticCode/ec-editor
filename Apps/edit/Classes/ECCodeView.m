@@ -31,6 +31,8 @@ static inline CGFloat square_distance(CGPoint a, CGPoint b)
 
 @interface ECCodeView ()
 
+- (void)doInit;
+
 // This method is used to indicate that the content has changed and the 
 // rendering frame generated from it should be recalculated.
 - (void)setNeedsContentFrame;
@@ -50,17 +52,13 @@ static inline CGFloat square_distance(CGPoint a, CGPoint b)
 
 - (CGRect)rectForContentRange:(NSRange)range;
 
-// Return the closest character index to the given point in the given line within
-// the given range of text. If resultPoint is specified, the closest point in
-// that line is also returned.
-- (NSUInteger)closestPositionToPoint:(CGPoint)point 
-                         withinRange:(NSRange)range
-                              inLine:(CTLineRef)line 
-                          withOrigin:(CGPoint)lineOrigin 
-                         resultPoint:(CGPoint *)resultPoint;
-
 // Gesture handles
 - (void)handleGestureFocus;
+- (void)handleGestureTap:(UITapGestureRecognizer *)recognizer;
+
+// Return the affine transform to move and scale coordinates to the render
+// space. You can specify if you want a flipping transformation.
+- (CGAffineTransform)renderSpaceTransformationFlipped:(BOOL)flipped inverted:(BOOL)inverted;
 
 @end
 
@@ -124,32 +122,39 @@ static inline CGFloat square_distance(CGPoint a, CGPoint b)
 
 #pragma mark CodeView Initializations
 
+- (void)doInit
+{
+    CTFontRef defaultFont = CTFontCreateWithName((CFStringRef)@"Courier New", 12.0, &CGAffineTransformIdentity);
+    defaultAttributes = [[NSDictionary dictionaryWithObject:(id)defaultFont forKey:(id)kCTFontAttributeName] retain];
+    // TODO set full default coloring if textSyles == nil
+    _styles = [[NSMutableDictionary alloc] initWithObjectsAndKeys:defaultAttributes, ECCodeStyleDefaultTextName, nil];
+    
+    self.contentInset = UIEdgeInsetsMake(10, 10, 0, 0);
+    
+    self.text = @"";
+    
+    markedRange.location = 0;
+    markedRange.length = 0;
+    markedRangeDirtyRect = CGRectNull;
+    
+    [super setContentMode:UIViewContentModeRedraw];
+}
+
 - (id)initWithFrame:(CGRect)frame 
 {
     if ((self = [super initWithFrame:frame])) 
     { 
-        CTFontRef defaultFont = CTFontCreateWithName((CFStringRef)@"Courier New", 12.0, &CGAffineTransformIdentity);
-        defaultAttributes = [[NSDictionary dictionaryWithObject:(id)defaultFont forKey:(id)kCTFontAttributeName] retain];
-        // TODO set full default coloring if textSyles == nil
-        _styles = [[NSMutableDictionary alloc] initWithObjectsAndKeys:defaultAttributes, ECCodeStyleDefaultTextName, nil];
-        
-        self.contentInset = UIEdgeInsetsMake(10, 10, 0, 0);
-
-        markedRange.location = 0;
-        markedRange.length = 0;
-        markedRangeDirtyRect = CGRectNull;
-        
-        [super setContentMode:UIViewContentModeRedraw];
+        [self doInit];
     }
     return self;
 }
 
 - (id)initWithCoder:(NSCoder *)aDecoder
 {
+    // TODO understand why debugger doesn't always start
     if ((self = [super initWithCoder:aDecoder])) 
     {
-        // TODO call a do_init instead?
-        [self init];
+        [self doInit];
     }
     return self;
 }
@@ -186,9 +191,14 @@ static inline CGFloat square_distance(CGPoint a, CGPoint b)
     NSDictionary *attributes = [_styles objectForKey:aStyle];
     if (attributes == nil)
         attributes = defaultAttributes;
+    
+    NSUInteger contentLength = [content length];
+    if (range.location > contentLength)
+        return;
+    if (range.location + range.length > contentLength)
+        range.length = contentLength - range.location;
     // TODO setSolidCaret
     // TODO call beforeMutate
-    NSUInteger contentLength = [content length];
     NSRange crange = [[content string] rangeOfComposedCharacterSequencesForRange:range];
     if (crange.location + crange.length > contentLength)
         crange.length = (contentLength - crange.location);
@@ -267,12 +277,8 @@ static inline CGFloat square_distance(CGPoint a, CGPoint b)
     // TODO draw selection
     
     // Transform to flipped rendering space
-    CGFloat scale = self.zoomScale;
-    CGContextConcatCTM(context, (CGAffineTransform){
-        scale, 0,
-        0, -scale,
-        bounds.origin.x, bounds.origin.y + bounds.size.height
-    });    
+    CGContextSaveGState(context);
+    CGContextConcatCTM(context, [self renderSpaceTransformationFlipped:YES inverted:NO]);
     
     // Draw core text frame
     // TODO! clip on rect
@@ -280,7 +286,7 @@ static inline CGFloat square_distance(CGPoint a, CGPoint b)
     CGContextSetTextMatrix(context, CGAffineTransformIdentity);
     CGContextTranslateCTM(context, contentFrameOrigin.x, contentFrameOrigin.y);
     CTFrameDraw(contentFrame, context);
-    CGContextTranslateCTM(context, -contentFrameOrigin.x, -contentFrameOrigin.y);
+    CGContextRestoreGState(context);
     
     // TODO draw decorations
     
@@ -293,6 +299,13 @@ static inline CGFloat square_distance(CGPoint a, CGPoint b)
     [[UIColor redColor] setStroke];
 //    CGContextAddPath(context, testPath);
     CGContextStrokePath(context);
+    
+    if (selection)
+    {
+        CGRect caretRect = [self caretRectForPosition:(ECTextPosition *)selection.start];
+        [[UIColor greenColor] setFill];
+        CGContextFillRect(context, caretRect);
+    }
     
     [super drawRect:rect];
 }
@@ -341,6 +354,9 @@ static inline CGFloat square_distance(CGPoint a, CGPoint b)
     // Lazy create recognizers
     if (!tapRecognizer && shouldBecomeFirstResponder)
     {
+        tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleGestureTap:)];
+        [self addGestureRecognizer:tapRecognizer];
+        
         // TODO initialize gesture recognizers
     }
     
@@ -764,18 +780,20 @@ static inline CGFloat square_distance(CGPoint a, CGPoint b)
     NSUInteger contentLength = [content length];
     NSUInteger pos = ((ECTextPosition *)position).index;
     CGRect carretRect = CGRectNull;
-    // At the end of the text
+
     if (pos >= contentLength)
     {
-        carretRect = [self rectForContentRange:(NSRange){pos - 1, pos}];
-        carretRect.origin.x += carretRect.size.width - 1.0;
+        pos = contentLength;
+        carretRect = [self rectForContentRange:(NSRange){pos - 1, 1}];
+        carretRect.origin.x += carretRect.size.width;
     }
     else
     {
-        carretRect = [self rectForContentRange:(NSRange){pos, pos + 1}];
-        carretRect.size.width = 1.0;
-    }
-    CGRectInset(carretRect, -0.1, -0.1);
+        carretRect = [self rectForContentRange:(NSRange){pos, 0}];
+    }    
+    carretRect.origin.x -= 1.0;
+    carretRect.size.width = 2.0;
+    
     return carretRect;
 }
 
@@ -792,8 +810,9 @@ static inline CGFloat square_distance(CGPoint a, CGPoint b)
     CFArrayRef lines = CTFrameGetLines(contentFrame);
     CFIndex lineCount = CFArrayGetCount(lines);
     CFRange lineRange;
-    CGPoint *origins = malloc(sizeof(*origins) * lineRange.length);
-    CTFrameGetLineOrigins(contentFrame, lineRange, origins);
+    
+    if (lineCount == 0)
+        return [[[ECTextPosition alloc] initWithIndex:0] autorelease];
     
     if (range)
     {
@@ -808,8 +827,12 @@ static inline CGFloat square_distance(CGPoint a, CGPoint b)
         lineRange.length = lineCount;
     }
     
+    CGPoint *origins = malloc(sizeof(CGPoint) * lineRange.length);
+    CTFrameGetLineOrigins(contentFrame, lineRange, origins);
+    
     // Transform point
     // TODO properly transform with matrix?
+    point = CGPointApplyAffineTransform(point, [self renderSpaceTransformationFlipped:YES inverted:YES]);
     point.x -= contentFrameOrigin.x;
     point.y -= contentFrameOrigin.y;
     
@@ -818,41 +841,54 @@ static inline CGFloat square_distance(CGPoint a, CGPoint b)
     while (closest < lineRange.length && origins[closest].y > point.y)
         closest++;
     
+    if (closest >= lineRange.length)
+        closest = lineRange.length - 1;
+    
     NSUInteger result;
-    if (closest == 0)
+    CTLineRef line = CFArrayGetValueAtIndex(lines, lineRange.location + closest);
+    CGFloat ascent = NAN;
+    CGFloat descent = NAN;
+    CGFloat lineWidth = CTLineGetTypographicBounds(line, &ascent, &descent, NULL);
+    CGFloat x = point.x - origins[closest].x;
+    CGFloat y = point.y - origins[closest].y;
+    
+    if (y < -descent)
+        y = -descent;
+    else if(y > ascent)
+        y = ascent;
+    
+    CFRange lineStringRange = CTLineGetStringRange(line);
+    
+    if (x <= 0 && in_range(r, lineStringRange.location)) 
     {
-        result = [self closestPositionToPoint:point 
-                                  withinRange:r
-                                       inLine:CFArrayGetValueAtIndex(lines, lineRange.location) 
-                                   withOrigin:origins[0] 
-                                  resultPoint:NULL];
+        result = lineStringRange.location;
     }
-    else if (closest >= lineRange.length)
+    if (x >= lineWidth && in_range(r, lineStringRange.location + lineStringRange.length)) 
     {
-        result = [self closestPositionToPoint:point 
-                                  withinRange:r
-                                       inLine:CFArrayGetValueAtIndex(lines, lineRange.location + closest - 1)
-                                   withOrigin:origins[closest - 1] 
-                                  resultPoint:NULL];
+        result = lineStringRange.location + lineStringRange.length;
     }
     else
     {
-        NSUInteger result1, result2;
-        CGPoint point1, point2;
-        result1 = [self closestPositionToPoint:point 
-                                   withinRange:r
-                                        inLine:CFArrayGetValueAtIndex(lines, lineRange.location + closest)
-                                    withOrigin:origins[closest] 
-                                   resultPoint:&point1];
-        result2 = [self closestPositionToPoint:point 
-                                   withinRange:r
-                                        inLine:CFArrayGetValueAtIndex(lines, lineRange.location + closest - 1)
-                                    withOrigin:origins[closest - 1] 
-                                   resultPoint:&point2];
-        if (square_distance(point1, point) < square_distance(point2, point))
-            result = result1;
-        else
-            result = result2;
+        CFIndex lineStringIndex = CTLineGetStringIndexForPosition(line, (CGPoint){ x, y });
+        if (lineStringIndex < 0 || ((NSUInteger)lineStringIndex < r.location)) 
+        {
+            result = r.location;
+        } 
+        else if (((NSUInteger)lineStringIndex - r.location) > r.length) 
+        {
+            result = r.location + r.length;
+        } 
+        else 
+        {
+            result = lineStringIndex;
+        }
+    }
+ 
+    if (closest < lineRange.length - 1)
+    {
+        lineRange = CTLineGetStringRange(line);
+        if (result == lineRange.location + lineRange.length)
+            result--;
     }
     
     free(origins);
@@ -1027,6 +1063,12 @@ static inline CGFloat square_distance(CGPoint a, CGPoint b)
     CFArrayRef lines = CTFrameGetLines(contentFrame);
     CFIndex lineCount = CFArrayGetCount(lines);
     
+    if (lineCount == 0)
+    {
+        block(CGRectMake(0, 0, 0, 13));
+        return;
+    }
+    
     CFIndex firstLine = [self lineIndexForLocation:range.location 
                                            inLines:lines 
                                        containedIn:(CFRange){0, lineCount}];
@@ -1034,26 +1076,25 @@ static inline CGFloat square_distance(CGPoint a, CGPoint b)
         return;
     
     BOOL lastLine = NO;
+    CGAffineTransform transform = [self renderSpaceTransformationFlipped:YES inverted:YES];
 
     for (CFIndex lineIndex = firstLine; lineIndex < lineCount && !lastLine; ++lineIndex) 
     {
         CTLineRef line = CFArrayGetValueAtIndex(lines, lineIndex);
         CFRange lineRange = CTLineGetStringRange(line);
         //
-        CGFloat left, right, leftSecondary = NAN, rightSecondary = NAN;
+        CGFloat left, right;
         CGFloat ascent = NAN, descent = NAN;
         CGFloat lineWidth = CTLineGetTypographicBounds(line, &ascent, &descent, NULL);
         //
         CGPoint lineOrigin;
         CTFrameGetLineOrigins(contentFrame, (CFRange){ lineIndex, 1 }, &lineOrigin);
+        lineOrigin = CGPointApplyAffineTransform(lineOrigin, transform);
         //
         NSRange spanRange;
         NSUInteger rangeEndLocation = range.location + range.length;
         //
-        //BOOL isFirstLine = lineIndex == firstLine;
-        BOOL lineIsBoundary = NO;
-        //
-        CGRect lineRect = CGRectMake(contentFrameOrigin.x, contentFrameOrigin.y + lineOrigin.y - descent, 0, ascent + descent);
+        CGRect lineRect = CGRectMake(0, lineOrigin.y, 0, ascent + descent);
         
         if (rangeEndLocation < (NSUInteger)lineRange.location)
         {
@@ -1071,10 +1112,9 @@ static inline CGFloat square_distance(CGPoint a, CGPoint b)
         {
             // Reqeusted range starts inside this line
             // Left is range boundary
-            left = CTLineGetOffsetForStringIndex(line, range.location, &leftSecondary);
+            left = CTLineGetOffsetForStringIndex(line, range.location, NULL);
             spanRange.location = range.location;
-            lineIsBoundary = YES;
-            lineRect.origin.x += lineOrigin.x;
+            lineRect.origin.x += left;
         }
 
         CGFloat trailingWhitespace = 0;
@@ -1093,27 +1133,12 @@ static inline CGFloat square_distance(CGPoint a, CGPoint b)
         {
             // Reqeuested range ends in this line
             // Right is range boundary
-            right = CTLineGetOffsetForStringIndex(line, rangeEndLocation, &rightSecondary);
+            right = CTLineGetOffsetForStringIndex(line, rangeEndLocation, NULL);
             spanRange.length = rangeEndLocation - spanRange.location;
             lastLine = YES;
-            lineIsBoundary = YES;
         }
         
         lineRect.size.width = right - left + trailingWhitespace;
-        
-//        if (lineIsBoundary)
-//        {
-//            // Proceed caclulating rects for characters
-//            CFArrayRef runs = CTLineGetGlyphRuns(line);
-//            CFIndex runsCount = CFArrayGetCount(runs);
-//            for (CFIndex i = 0; i < runsCount; ++i)
-//            {
-//                CTRunRef run = CFArrayGetValueAtIndex(runs, i);
-//                CFRange runRange = CTRunGetStringRange(run);
-//                CTRunStatus runStatus = CTRunGetStatus(run);
-//                
-//            }
-//        }
         
         // TODO!!! rect require additional transformations?
         block(lineRect);
@@ -1129,73 +1154,38 @@ static inline CGFloat square_distance(CGPoint a, CGPoint b)
     return result;
 }
 
-- (NSUInteger)closestPositionToPoint:(CGPoint)point 
-                         withinRange:(NSRange)stringRange
-                              inLine:(CTLineRef)line 
-                          withOrigin:(CGPoint)lineOrigin 
-                         resultPoint:(CGPoint *)resultPoint
-{
-    CGFloat ascent = NAN;
-    CGFloat descent = NAN;
-    CGFloat lineWidth = CTLineGetTypographicBounds(line, &ascent, &descent, NULL);
-    
-    CGFloat x = point.x - lineOrigin.x;
-    CGFloat y = point.y - lineOrigin.y;
-    
-    // Clamp the y-coordinate to the line's typographic bounds
-    if (y < -descent)
-        y = -descent;
-    else if(y > ascent)
-        y = ascent;
-    
-    CFRange lineStringRange = CTLineGetStringRange(line);
-    
-    // Check for past the edges... TODO: bidi booyah
-    if (x <= 0 && in_range(stringRange, lineStringRange.location)) 
-    {
-        if (resultPoint)
-            *resultPoint = (CGPoint){ lineOrigin.x, lineOrigin.y + y };
-        return lineStringRange.location;
-    }
-    if (x >= lineWidth && in_range(stringRange, lineStringRange.location + lineStringRange.length)) 
-    {
-        if (resultPoint)
-            *resultPoint = (CGPoint){ lineOrigin.x + lineWidth, lineOrigin.y + y };
-        return lineStringRange.location + lineStringRange.length;
-    }
-    
-    CFIndex lineStringIndex = CTLineGetStringIndexForPosition(line, (CGPoint){ x, y });
-    NSUInteger hitIndex;
-    
-    if (lineStringIndex < 0 || ((NSUInteger)lineStringIndex < stringRange.location)) 
-    {
-        lineStringIndex = stringRange.location;
-        hitIndex = stringRange.location;
-        x = CTLineGetOffsetForStringIndex(line, lineStringIndex, NULL);
-    } 
-    else if (((NSUInteger)lineStringIndex - stringRange.location) > stringRange.length) 
-    {
-        lineStringIndex = stringRange.location + stringRange.length;
-        hitIndex = stringRange.location + stringRange.length;
-        x = CTLineGetOffsetForStringIndex(line, lineStringIndex, NULL);
-    } 
-    else 
-    {
-        hitIndex = lineStringIndex;
-    }
-    
-    if (resultPoint)
-        *resultPoint = (CGPoint){
-            .x = lineOrigin.x + x,
-            .y = lineOrigin.y + y
-        };
-    return hitIndex;
-}
-
 - (void)handleGestureFocus
 {
     if (![self isFirstResponder])
         [self becomeFirstResponder];
+}
+
+- (void)handleGestureTap:(UITapGestureRecognizer *)recognizer
+{
+    CGPoint point = [recognizer locationInView:self];
+    
+    UITextPosition *position = [self closestPositionToPoint:point];
+    
+    ECTextRange *range = [[ECTextRange alloc] initWithStart:(ECTextPosition *)position end:(ECTextPosition *)position];
+    
+    [self setSelectedTextRange:range];
+    
+    [range release];
+    
+    [self setNeedsDisplay];
+}
+
+- (CGAffineTransform)renderSpaceTransformationFlipped:(BOOL)flipped 
+                                             inverted:(BOOL)inverted
+{
+    CGFloat scale = self.zoomScale;
+    CGRect bounds = self.bounds;
+    CGAffineTransform transform = {
+        scale, 0,
+        0, flipped ? -scale : scale,
+        bounds.origin.x, bounds.origin.y + bounds.size.height
+    };
+    return inverted ? CGAffineTransformInvert(transform) : transform;
 }
 
 @end
