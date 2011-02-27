@@ -9,26 +9,27 @@
 /* Begin PBXBuildFile section */
 		B761FCC6131B05A2006072A0 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B761FCC5131B05A2006072A0 /* Foundation.framework */; };
 		B761FCC7131B05A2006072A0 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B761FCC5131B05A2006072A0 /* Foundation.framework */; };
+		B761FD4B131B0902006072A0 /* libclang.dylib in Resources */ = {isa = PBXBuildFile; fileRef = B7FCA56B131A6FB9002D6C7C /* libclang.dylib */; };
 		B7D65C19131ADDCA00C3FA93 /* libECCodeIndexing.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7FCA60D131A6FE0002D6C7C /* libECCodeIndexing.a */; };
 		B7D65C62131AE09300C3FA93 /* libECAdditions.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7D65C61131AE09300C3FA93 /* libECAdditions.a */; };
-		B7FCA63B131A71AE002D6C7C /* ECCodeIndexer.h in Headers */ = {isa = PBXBuildFile; fileRef = B7FCA554131A6FB9002D6C7C /* ECCodeIndexer.h */; };
+		B7FCA63B131A71AE002D6C7C /* ECCodeIndexer.h in Headers */ = {isa = PBXBuildFile; fileRef = B7FCA554131A6FB9002D6C7C /* ECCodeIndexer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B7FCA63C131A71AE002D6C7C /* ECCodeIndexer.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FCA555131A6FB9002D6C7C /* ECCodeIndexer.m */; };
-		B7FCA63D131A71AE002D6C7C /* ECCodeIndexerDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = B7FCA556131A6FB9002D6C7C /* ECCodeIndexerDelegate.h */; };
-		B7FCA63E131A71AE002D6C7C /* ECCompletionChunk.h in Headers */ = {isa = PBXBuildFile; fileRef = B7FCA557131A6FB9002D6C7C /* ECCompletionChunk.h */; };
+		B7FCA63D131A71AE002D6C7C /* ECCodeIndexerDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = B7FCA556131A6FB9002D6C7C /* ECCodeIndexerDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B7FCA63E131A71AE002D6C7C /* ECCompletionChunk.h in Headers */ = {isa = PBXBuildFile; fileRef = B7FCA557131A6FB9002D6C7C /* ECCompletionChunk.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B7FCA63F131A71AE002D6C7C /* ECCompletionChunk.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FCA558131A6FB9002D6C7C /* ECCompletionChunk.m */; };
-		B7FCA640131A71AE002D6C7C /* ECCompletionResult.h in Headers */ = {isa = PBXBuildFile; fileRef = B7FCA559131A6FB9002D6C7C /* ECCompletionResult.h */; };
+		B7FCA640131A71AE002D6C7C /* ECCompletionResult.h in Headers */ = {isa = PBXBuildFile; fileRef = B7FCA559131A6FB9002D6C7C /* ECCompletionResult.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B7FCA641131A71AE002D6C7C /* ECCompletionResult.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FCA55A131A6FB9002D6C7C /* ECCompletionResult.m */; };
-		B7FCA642131A71AE002D6C7C /* ECCompletionString.h in Headers */ = {isa = PBXBuildFile; fileRef = B7FCA55B131A6FB9002D6C7C /* ECCompletionString.h */; };
+		B7FCA642131A71AE002D6C7C /* ECCompletionString.h in Headers */ = {isa = PBXBuildFile; fileRef = B7FCA55B131A6FB9002D6C7C /* ECCompletionString.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B7FCA643131A71AE002D6C7C /* ECCompletionString.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FCA55C131A6FB9002D6C7C /* ECCompletionString.m */; };
-		B7FCA644131A71AE002D6C7C /* ECDiagnostic.h in Headers */ = {isa = PBXBuildFile; fileRef = B7FCA55D131A6FB9002D6C7C /* ECDiagnostic.h */; };
+		B7FCA644131A71AE002D6C7C /* ECDiagnostic.h in Headers */ = {isa = PBXBuildFile; fileRef = B7FCA55D131A6FB9002D6C7C /* ECDiagnostic.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B7FCA645131A71AE002D6C7C /* ECDiagnostic.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FCA55E131A6FB9002D6C7C /* ECDiagnostic.m */; };
-		B7FCA646131A71AE002D6C7C /* ECFixIt.h in Headers */ = {isa = PBXBuildFile; fileRef = B7FCA55F131A6FB9002D6C7C /* ECFixIt.h */; };
+		B7FCA646131A71AE002D6C7C /* ECFixIt.h in Headers */ = {isa = PBXBuildFile; fileRef = B7FCA55F131A6FB9002D6C7C /* ECFixIt.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B7FCA647131A71AE002D6C7C /* ECFixIt.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FCA560131A6FB9002D6C7C /* ECFixIt.m */; };
-		B7FCA648131A71AE002D6C7C /* ECSourceLocation.h in Headers */ = {isa = PBXBuildFile; fileRef = B7FCA561131A6FB9002D6C7C /* ECSourceLocation.h */; };
+		B7FCA648131A71AE002D6C7C /* ECSourceLocation.h in Headers */ = {isa = PBXBuildFile; fileRef = B7FCA561131A6FB9002D6C7C /* ECSourceLocation.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B7FCA649131A71AE002D6C7C /* ECSourceLocation.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FCA562131A6FB9002D6C7C /* ECSourceLocation.m */; };
-		B7FCA64A131A71AE002D6C7C /* ECSourceRange.h in Headers */ = {isa = PBXBuildFile; fileRef = B7FCA563131A6FB9002D6C7C /* ECSourceRange.h */; };
+		B7FCA64A131A71AE002D6C7C /* ECSourceRange.h in Headers */ = {isa = PBXBuildFile; fileRef = B7FCA563131A6FB9002D6C7C /* ECSourceRange.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B7FCA64B131A71AE002D6C7C /* ECSourceRange.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FCA564131A6FB9002D6C7C /* ECSourceRange.m */; };
-		B7FCA64C131A71AE002D6C7C /* ECToken.h in Headers */ = {isa = PBXBuildFile; fileRef = B7FCA565131A6FB9002D6C7C /* ECToken.h */; };
+		B7FCA64C131A71AE002D6C7C /* ECToken.h in Headers */ = {isa = PBXBuildFile; fileRef = B7FCA565131A6FB9002D6C7C /* ECToken.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B7FCA64D131A71AE002D6C7C /* ECToken.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FCA566131A6FB9002D6C7C /* ECToken.m */; };
 		B7FCA64E131A71AE002D6C7C /* ECClangCodeIndexer.h in Headers */ = {isa = PBXBuildFile; fileRef = B7FCA568131A6FB9002D6C7C /* ECClangCodeIndexer.h */; };
 		B7FCA64F131A71AE002D6C7C /* ECClangCodeIndexer.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FCA569131A6FB9002D6C7C /* ECClangCodeIndexer.m */; };
@@ -644,6 +645,7 @@
 				B7FCA609131A6FE0002D6C7C /* Sources */,
 				B7FCA60A131A6FE0002D6C7C /* Frameworks */,
 				B7FCA60B131A6FE0002D6C7C /* Headers */,
+				B761FD4A131B08F2006072A0 /* Resources */,
 			);
 			buildRules = (
 			);
@@ -723,6 +725,14 @@
 /* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
+		B761FD4A131B08F2006072A0 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B761FD4B131B0902006072A0 /* libclang.dylib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B7FCA61A131A6FED002D6C7C /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;

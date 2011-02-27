@@ -21,6 +21,13 @@
 		B761FCB3131B04A9006072A0 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B761FCB1131B04A9006072A0 /* UIKit.framework */; };
 		B761FCB5131B04B0006072A0 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B761FCB4131B04B0006072A0 /* CoreText.framework */; };
 		B761FCB6131B04B0006072A0 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B761FCB4131B04B0006072A0 /* CoreText.framework */; };
+		B761FD32131B0853006072A0 /* libECAdditions.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B761FD31131B0853006072A0 /* libECAdditions.a */; };
+		B761FD34131B0859006072A0 /* libECCodeIndexing.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B761FD33131B0859006072A0 /* libECCodeIndexing.a */; };
+		B761FD36131B085D006072A0 /* libECMobileAppKit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B761FD35131B085D006072A0 /* libECMobileAppKit.a */; };
+		B761FD48131B089C006072A0 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B761FD47131B089C006072A0 /* CoreGraphics.framework */; };
+		B761FD49131B089C006072A0 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B761FD47131B089C006072A0 /* CoreGraphics.framework */; };
+		B761FD4D131B09A4006072A0 /* libclang.dylib in Resources */ = {isa = PBXBuildFile; fileRef = B761FD4C131B09A4006072A0 /* libclang.dylib */; };
+		B761FD6E131B0AC4006072A0 /* libclang.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B761FD4C131B09A4006072A0 /* libclang.dylib */; };
 		B76E03EE12E98F3F00E706DC /* ECCodeProjectController.m in Sources */ = {isa = PBXBuildFile; fileRef = B76E03EC12E98F3F00E706DC /* ECCodeProjectController.m */; };
 		B79EE60012FC75B50067B2D0 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B736172F12DA112A009801D4 /* Foundation.framework */; };
 		B79EE6A012FC776D0067B2D0 /* KWAfterAllNode.m in Sources */ = {isa = PBXBuildFile; fileRef = B79EE61212FC776D0067B2D0 /* KWAfterAllNode.m */; };
@@ -104,12 +111,89 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		B78B5BEA13045E6A007B22C7 /* PBXContainerItemProxy */ = {
+		B761FCE1131B072D006072A0 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = B736171C12DA1129009801D4 /* Project object */;
+			containerPortal = B761FCD5131B072C006072A0 /* ECCodeIndexing.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = B7FCA60D131A6FE0002D6C7C;
+			remoteInfo = ECCodeIndexing;
+		};
+		B761FCE3131B072D006072A0 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B761FCD5131B072C006072A0 /* ECCodeIndexing.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = B7FCA61D131A6FED002D6C7C;
+			remoteInfo = "ECCodeIndexing-Test";
+		};
+		B761FCED131B0737006072A0 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B761FCE5131B0736006072A0 /* ECMobileAppKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = B7FB520B131AC35E00651FDD;
+			remoteInfo = ECMobileAppKit;
+		};
+		B761FCEF131B0737006072A0 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B761FCE5131B0736006072A0 /* ECMobileAppKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = B7FB521B131AC36800651FDD;
+			remoteInfo = "ECMobileAppKit-Test";
+		};
+		B761FD09131B0764006072A0 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B761FD04131B0763006072A0 /* ECAdditions.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = B7D65BF5131AD95300C3FA93;
+			remoteInfo = ECAdditions;
+		};
+		B761FD0B131B0764006072A0 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B761FD04131B0763006072A0 /* ECAdditions.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = B7FB50ED131AC06B00651FDD;
+			remoteInfo = "ECAdditions-Test";
+		};
+		B761FD25131B0828006072A0 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B761FD04131B0763006072A0 /* ECAdditions.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = B79EE5FD12FC75B50067B2D0;
-			remoteInfo = Test;
+			remoteGlobalIDString = B7FB5107131AC07900651FDD;
+			remoteInfo = ECAdditions;
+		};
+		B761FD27131B082E006072A0 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B761FCE5131B0736006072A0 /* ECMobileAppKit.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = B7FB520A131AC35E00651FDD;
+			remoteInfo = ECMobileAppKit;
+		};
+		B761FD29131B0832006072A0 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B761FCD5131B072C006072A0 /* ECCodeIndexing.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = B7FCA60C131A6FE0002D6C7C;
+			remoteInfo = ECCodeIndexing;
+		};
+		B761FD2B131B083A006072A0 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B761FD04131B0763006072A0 /* ECAdditions.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = B7FB50EC131AC06B00651FDD;
+			remoteInfo = "ECAdditions-Test";
+		};
+		B761FD2D131B083D006072A0 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B761FCE5131B0736006072A0 /* ECMobileAppKit.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = B7FB521A131AC36800651FDD;
+			remoteInfo = "ECMobileAppKit-Test";
+		};
+		B761FD2F131B0841006072A0 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B761FCD5131B072C006072A0 /* ECCodeIndexing.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = B7FCA61C131A6FED002D6C7C;
+			remoteInfo = "ECCodeIndexing-Test";
 		};
 /* End PBXContainerItemProxy section */
 
@@ -137,10 +221,18 @@
 		B761FCAE131B04A2006072A0 /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS4.2.sdk/System/Library/Frameworks/MobileCoreServices.framework; sourceTree = DEVELOPER_DIR; };
 		B761FCB1131B04A9006072A0 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS4.2.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
 		B761FCB4131B04B0006072A0 /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS4.2.sdk/System/Library/Frameworks/CoreText.framework; sourceTree = DEVELOPER_DIR; };
+		B761FCD5131B072C006072A0 /* ECCodeIndexing.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ECCodeIndexing.xcodeproj; path = ECCodeIndexing/ECCodeIndexing.xcodeproj; sourceTree = "<group>"; };
+		B761FCE5131B0736006072A0 /* ECMobileAppKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ECMobileAppKit.xcodeproj; path = ECMobileAppKit/ECMobileAppKit.xcodeproj; sourceTree = "<group>"; };
+		B761FD04131B0763006072A0 /* ECAdditions.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ECAdditions.xcodeproj; path = ECAdditions/ECAdditions.xcodeproj; sourceTree = "<group>"; };
+		B761FD31131B0853006072A0 /* libECAdditions.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libECAdditions.a; sourceTree = SOURCE_ROOT; };
+		B761FD33131B0859006072A0 /* libECCodeIndexing.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libECCodeIndexing.a; sourceTree = SOURCE_ROOT; };
+		B761FD35131B085D006072A0 /* libECMobileAppKit.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libECMobileAppKit.a; sourceTree = SOURCE_ROOT; };
+		B761FD47131B089C006072A0 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS4.2.sdk/System/Library/Frameworks/CoreGraphics.framework; sourceTree = DEVELOPER_DIR; };
+		B761FD4C131B09A4006072A0 /* libclang.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libclang.dylib; path = ECCodeIndexing/libclang/libclang.dylib; sourceTree = "<group>"; };
 		B76E03EB12E98F3F00E706DC /* ECCodeProjectController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeProjectController.h; sourceTree = "<group>"; };
 		B76E03EC12E98F3F00E706DC /* ECCodeProjectController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeProjectController.m; sourceTree = "<group>"; };
 		B78A18EC12E764A300E259E0 /* doxygen.conf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = doxygen.conf; sourceTree = "<group>"; };
-		B79EE5FE12FC75B50067B2D0 /* Test.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Test.octest; sourceTree = BUILT_PRODUCTS_DIR; };
+		B79EE5FE12FC75B50067B2D0 /* Test.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = Test.octest; path = "edit-Test.octest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B79EE61112FC776D0067B2D0 /* KWAfterAllNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KWAfterAllNode.h; sourceTree = "<group>"; };
 		B79EE61212FC776D0067B2D0 /* KWAfterAllNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KWAfterAllNode.m; sourceTree = "<group>"; };
 		B79EE61312FC776D0067B2D0 /* KWAfterEachNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KWAfterEachNode.h; sourceTree = "<group>"; };
@@ -310,6 +402,11 @@
 				B761FCAF131B04A2006072A0 /* MobileCoreServices.framework in Frameworks */,
 				B761FCB2131B04A9006072A0 /* UIKit.framework in Frameworks */,
 				B761FCB5131B04B0006072A0 /* CoreText.framework in Frameworks */,
+				B761FD36131B085D006072A0 /* libECMobileAppKit.a in Frameworks */,
+				B761FD34131B0859006072A0 /* libECCodeIndexing.a in Frameworks */,
+				B761FD32131B0853006072A0 /* libECAdditions.a in Frameworks */,
+				B761FD6E131B0AC4006072A0 /* libclang.dylib in Frameworks */,
+				B761FD48131B089C006072A0 /* CoreGraphics.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -323,6 +420,7 @@
 				B761FCB0131B04A2006072A0 /* MobileCoreServices.framework in Frameworks */,
 				B761FCB3131B04A9006072A0 /* UIKit.framework in Frameworks */,
 				B761FCB6131B04B0006072A0 /* CoreText.framework in Frameworks */,
+				B761FD49131B089C006072A0 /* CoreGraphics.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -397,6 +495,14 @@
 		B736172512DA1129009801D4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B761FD4C131B09A4006072A0 /* libclang.dylib */,
+				B761FD35131B085D006072A0 /* libECMobileAppKit.a */,
+				B761FD33131B0859006072A0 /* libECCodeIndexing.a */,
+				B761FD31131B0853006072A0 /* libECAdditions.a */,
+				B761FD04131B0763006072A0 /* ECAdditions.xcodeproj */,
+				B761FCE5131B0736006072A0 /* ECMobileAppKit.xcodeproj */,
+				B761FCD5131B072C006072A0 /* ECCodeIndexing.xcodeproj */,
+				B761FD47131B089C006072A0 /* CoreGraphics.framework */,
 				B761FCB4131B04B0006072A0 /* CoreText.framework */,
 				B761FCB1131B04A9006072A0 /* UIKit.framework */,
 				B761FCAE131B04A2006072A0 /* MobileCoreServices.framework */,
@@ -423,6 +529,33 @@
 			);
 			name = Config;
 			path = ../../Config;
+			sourceTree = "<group>";
+		};
+		B761FCD6131B072C006072A0 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				B761FCE2131B072D006072A0 /* libECCodeIndexing.a */,
+				B761FCE4131B072D006072A0 /* Test.octest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B761FCE6131B0736006072A0 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				B761FCEE131B0737006072A0 /* libECMobileAppKit.a */,
+				B761FCF0131B0737006072A0 /* Test.octest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B761FD05131B0763006072A0 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				B761FD0A131B0764006072A0 /* libECAdditions.a */,
+				B761FD0C131B0764006072A0 /* Test.octest */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 		B78A18EF12E764A900E259E0 /* Other Resources */ = {
@@ -617,23 +750,25 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = B736175A12DA112B009801D4 /* Build configuration list for PBXNativeTarget "edit" */;
 			buildPhases = (
+				B736172812DA1129009801D4 /* Resources */,
 				B736172612DA1129009801D4 /* Sources */,
 				B736172712DA1129009801D4 /* Frameworks */,
-				B736172812DA1129009801D4 /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				B78B5BEB13045E6A007B22C7 /* PBXTargetDependency */,
+				B761FD2A131B0832006072A0 /* PBXTargetDependency */,
+				B761FD28131B082E006072A0 /* PBXTargetDependency */,
+				B761FD26131B0828006072A0 /* PBXTargetDependency */,
 			);
 			name = edit;
 			productName = edit;
 			productReference = B73022F612E63CC30029269C /* edit.app */;
 			productType = "com.apple.product-type.application";
 		};
-		B79EE5FD12FC75B50067B2D0 /* Test */ = {
+		B79EE5FD12FC75B50067B2D0 /* edit-Test */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B79EE60F12FC75B50067B2D0 /* Build configuration list for PBXNativeTarget "Test" */;
+			buildConfigurationList = B79EE60F12FC75B50067B2D0 /* Build configuration list for PBXNativeTarget "edit-Test" */;
 			buildPhases = (
 				B79EE5F912FC75B50067B2D0 /* Sources */,
 				B79EE5FA12FC75B50067B2D0 /* Frameworks */,
@@ -643,8 +778,11 @@
 			buildRules = (
 			);
 			dependencies = (
+				B761FD30131B0841006072A0 /* PBXTargetDependency */,
+				B761FD2E131B083D006072A0 /* PBXTargetDependency */,
+				B761FD2C131B083A006072A0 /* PBXTargetDependency */,
 			);
-			name = Test;
+			name = "edit-Test";
 			productName = Test;
 			productReference = B79EE5FE12FC75B50067B2D0 /* Test.octest */;
 			productType = "com.apple.product-type.bundle";
@@ -664,19 +802,82 @@
 			mainGroup = B736171A12DA1129009801D4;
 			productRefGroup = B736171A12DA1129009801D4;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = B761FD05131B0763006072A0 /* Products */;
+					ProjectRef = B761FD04131B0763006072A0 /* ECAdditions.xcodeproj */;
+				},
+				{
+					ProductGroup = B761FCD6131B072C006072A0 /* Products */;
+					ProjectRef = B761FCD5131B072C006072A0 /* ECCodeIndexing.xcodeproj */;
+				},
+				{
+					ProductGroup = B761FCE6131B0736006072A0 /* Products */;
+					ProjectRef = B761FCE5131B0736006072A0 /* ECMobileAppKit.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				B736172912DA1129009801D4 /* edit */,
-				B79EE5FD12FC75B50067B2D0 /* Test */,
+				B79EE5FD12FC75B50067B2D0 /* edit-Test */,
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		B761FCE2131B072D006072A0 /* libECCodeIndexing.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libECCodeIndexing.a;
+			remoteRef = B761FCE1131B072D006072A0 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B761FCE4131B072D006072A0 /* Test.octest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			name = Test.octest;
+			path = "ECCodeIndexing-Test.octest";
+			remoteRef = B761FCE3131B072D006072A0 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B761FCEE131B0737006072A0 /* libECMobileAppKit.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libECMobileAppKit.a;
+			remoteRef = B761FCED131B0737006072A0 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B761FCF0131B0737006072A0 /* Test.octest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			name = Test.octest;
+			path = "ECMobileAppKit-Test.octest";
+			remoteRef = B761FCEF131B0737006072A0 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B761FD0A131B0764006072A0 /* libECAdditions.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libECAdditions.a;
+			remoteRef = B761FD09131B0764006072A0 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B761FD0C131B0764006072A0 /* Test.octest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			name = Test.octest;
+			path = "ECAdditions-Test.octest";
+			remoteRef = B761FD0B131B0764006072A0 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		B736172812DA1129009801D4 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B761FD4D131B09A4006072A0 /* libclang.dylib in Resources */,
 				B736173912DA112A009801D4 /* InfoPlist.strings in Resources */,
 				B736174312DA112A009801D4 /* MainWindow.xib in Resources */,
 				B70A09DF12E9F61000B498CD /* CodeProjectController.xib in Resources */,
@@ -806,10 +1007,35 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		B78B5BEB13045E6A007B22C7 /* PBXTargetDependency */ = {
+		B761FD26131B0828006072A0 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = B79EE5FD12FC75B50067B2D0 /* Test */;
-			targetProxy = B78B5BEA13045E6A007B22C7 /* PBXContainerItemProxy */;
+			name = ECAdditions;
+			targetProxy = B761FD25131B0828006072A0 /* PBXContainerItemProxy */;
+		};
+		B761FD28131B082E006072A0 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = ECMobileAppKit;
+			targetProxy = B761FD27131B082E006072A0 /* PBXContainerItemProxy */;
+		};
+		B761FD2A131B0832006072A0 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = ECCodeIndexing;
+			targetProxy = B761FD29131B0832006072A0 /* PBXContainerItemProxy */;
+		};
+		B761FD2C131B083A006072A0 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "ECAdditions-Test";
+			targetProxy = B761FD2B131B083A006072A0 /* PBXContainerItemProxy */;
+		};
+		B761FD2E131B083D006072A0 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "ECMobileAppKit-Test";
+			targetProxy = B761FD2D131B083D006072A0 /* PBXContainerItemProxy */;
+		};
+		B761FD30131B0841006072A0 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "ECCodeIndexing-Test";
+			targetProxy = B761FD2F131B0841006072A0 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -870,6 +1096,11 @@
 			baseConfigurationReference = B74E9783131A57870011FD69 /* Application-iPad-Debug.xcconfig */;
 			buildSettings = {
 				INFOPLIST_FILE = "edit-Info.plist";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)\"",
+					"\"$(SRCROOT)/../../Frameworks/ECCodeIndexing/libclang\"",
+				);
 			};
 			name = Debug;
 		};
@@ -878,6 +1109,11 @@
 			baseConfigurationReference = B74E979B131A5AE30011FD69 /* Application-iPad-Release.xcconfig */;
 			buildSettings = {
 				INFOPLIST_FILE = "edit-Info.plist";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)\"",
+					"\"$(SRCROOT)/../../Frameworks/ECCodeIndexing/libclang\"",
+				);
 			};
 			name = Release;
 		};
@@ -918,7 +1154,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B79EE60F12FC75B50067B2D0 /* Build configuration list for PBXNativeTarget "Test" */ = {
+		B79EE60F12FC75B50067B2D0 /* Build configuration list for PBXNativeTarget "edit-Test" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B79EE60D12FC75B50067B2D0 /* Debug */,
