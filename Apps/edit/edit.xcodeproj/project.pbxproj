@@ -163,7 +163,7 @@
 		B72DA8B612E8277100C12CD5 /* ECClangCodeIndexer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECClangCodeIndexer.m; sourceTree = "<group>"; };
 		B72DA8BA12E849EA00C12CD5 /* ECCompletionString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCompletionString.h; sourceTree = "<group>"; };
 		B72DA8BB12E849EA00C12CD5 /* ECCompletionString.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCompletionString.m; sourceTree = "<group>"; };
-		B73022F612E63CC30029269C /* edit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = edit.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B73022F612E63CC30029269C /* edit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = edit.app; path = .app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B7355B0B12E8EBE800198FD9 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		B7355B1012E8F1C600198FD9 /* Project.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Project.xcdatamodel; sourceTree = "<group>"; };
 		B735F9221305868B00B924F8 /* ECDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECDocument.h; sourceTree = "<group>"; };
@@ -194,7 +194,7 @@
 		B78B5BE7130451AB007B22C7 /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
 		B78B5BED13047BA1007B22C7 /* NSURL+ECAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSURL+ECAdditions.h"; sourceTree = "<group>"; };
 		B78B5BEE13047BA1007B22C7 /* NSURL+ECAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSURL+ECAdditions.m"; sourceTree = "<group>"; };
-		B79EE5FE12FC75B50067B2D0 /* Test.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Test.octest; sourceTree = BUILT_PRODUCTS_DIR; };
+		B79EE5FE12FC75B50067B2D0 /* Test.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = Test.octest; path = .bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		B79EE61112FC776D0067B2D0 /* KWAfterAllNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KWAfterAllNode.h; sourceTree = "<group>"; };
 		B79EE61212FC776D0067B2D0 /* KWAfterAllNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KWAfterAllNode.m; sourceTree = "<group>"; };
 		B79EE61312FC776D0067B2D0 /* KWAfterEachNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KWAfterEachNode.h; sourceTree = "<group>"; };
@@ -555,7 +555,8 @@
 				B74E9783131A57870011FD69 /* Application-iPad-Debug.xcconfig */,
 				B74E979B131A5AE30011FD69 /* Application-iPad-Release.xcconfig */,
 			);
-			path = Config;
+			name = Config;
+			path = ../../Config;
 			sourceTree = "<group>";
 		};
 		B78A18EF12E764A900E259E0 /* Other Resources */ = {
