@@ -35,7 +35,7 @@ extern const NSString *ECCodeOverlayDrawBlockName;
 // TODO It's ok to derive from UIScrollView to have scroll functionalities
 // and add "find marks" but zoom functionalities should be disabled to
 // permit 2 finger tap zone selection.
-@interface ECCodeView : UIScrollView <UIKeyInput, UITextInputTraits, UITextInput> {
+@interface ECCodeView : UIView <UIKeyInput, UITextInputTraits, UITextInput> {
 @private
     // Content
     NSMutableAttributedString *content;
@@ -43,7 +43,8 @@ extern const NSString *ECCodeOverlayDrawBlockName;
     // Core text objects and support
     CTFramesetterRef frameSetter;
     CTFrameRef contentFrame;
-    CGPoint contentFrameOrigin;
+    CGRect contentFrameRect;
+    UIEdgeInsets contentFrameInset;
     
     // Styling objects
     NSMutableDictionary *_styles;
