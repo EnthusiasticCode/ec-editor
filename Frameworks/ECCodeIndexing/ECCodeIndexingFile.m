@@ -10,9 +10,9 @@
 
 
 @implementation ECCodeIndexingFile
-@synthesize URL;
-@synthesize language;
-@synthesize buffer;
+@synthesize URL = _URL;
+@synthesize language = _language;
+@synthesize buffer = _buffer;
 
 - (void)dealloc
 {
@@ -37,7 +37,7 @@
 + (id)fileWithURL:(NSURL *)url language:(NSString *)language buffer:(NSString *)buffer
 {
     id file = [self alloc];
-    [file initWithURL:url language:language buffer:buffer];
+    file = [file initWithURL:url language:language buffer:buffer];
     return [file autorelease];
 }
 

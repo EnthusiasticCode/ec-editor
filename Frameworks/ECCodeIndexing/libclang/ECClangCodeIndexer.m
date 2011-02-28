@@ -20,44 +20,13 @@
 
 #import <MobileCoreServices/MobileCoreServices.h>
 
-static CXIndex _cIndex;
-static unsigned _translationUnitCount;
-
 @interface ECClangCodeIndexer()
-@property (nonatomic) CXTranslationUnit translationUnit;
-@property (nonatomic) const char *sourcePath;
-@property (nonatomic, retain) NSString *language;
-@property (nonatomic, retain) NSURL *source;
-- (void)reparseTranslationUnitWithUnsavedFileBuffers:(NSDictionary *)files;
+@property (nonatomic) CXIndex index;
+@property (nonatomic, retain) NSMutableDictionary *files;
 @end
 
 #pragma mark -
 #pragma mark Private functions
-
-//static NSRange completionRange(NSString *string, NSRange selection)
-//{        
-//    if (!string || selection.length || !selection.location) //range of text is selected or caret is at beginning of file
-//        return NSMakeRange(NSNotFound, 0);
-//        
-//        NSUInteger precedingCharacterIndex = selection.location - 1;
-//        NSUInteger precedingCharacter = [string characterAtIndex:precedingCharacterIndex];
-//        
-//        if (precedingCharacter < 65 || precedingCharacter > 122) //character is not a letter
-//            return NSMakeRange(NSNotFound, 0);
-//            
-//            while (precedingCharacterIndex)
-//            {
-//                if (precedingCharacter < 65 || precedingCharacter > 122) //character is not a letter
-//                {
-//                    NSUInteger length = selection.location - (precedingCharacterIndex + 1);
-//                    if (length)
-//                        return NSMakeRange(precedingCharacterIndex + 1, length);
-//                }
-//                precedingCharacterIndex--;
-//                precedingCharacter = [string characterAtIndex:precedingCharacterIndex];
-//            }
-//    return NSMakeRange(0, selection.location); //if control has reached this point all character between the caret and the beginning of file are letters
-//}
 
 static ECSourceLocation *sourceLocationFromClangSourceLocation(CXSourceLocation clangSourceLocation)
 {
@@ -188,57 +157,68 @@ static ECCompletionResult *completionResultFromClangCompletionResult(CXCompletio
 
 #pragma mark Properties
 
-@synthesize source = _source;
-@synthesize language = _language;
-@synthesize translationUnit = _translationUnit;
-@synthesize sourcePath = _sourcePath;
+@synthesize files;
+
+- (NSArray *)handledLanguages
+{
+    return [NSArray arrayWithObjects:@"C", @"Objective C", @"C++", @"Objective C++", nil];
+}
+
+- (NSArray *)handledUTIs
+{
+    return [NSArray arrayWithObjects:@"public.c-header", @"public.c-source", @"public.objective-c-source", @"public.c-plus-plus-source", @"public.objective-c-plus-plus-source", nil];
+}
+
+- (NSSet *)handledFiles
+{
+    return [NSSet setWithArray:[self.files allKeys]];
+}
 
 #pragma mark Initialization
 
 - (void)dealloc
 {
-    if (self.translationUnit)
-    {
-        clang_disposeTranslationUnit(self.translationUnit);
-        _translationUnitCount--;
-    }
-    if (!_translationUnitCount)
-    {
-        clang_disposeIndex(_cIndex);
-        _cIndex = NULL;
-    }
-    self.source = nil;
-    self.language = nil;
+    clang_disposeIndex(self.index);
+    self.files = nil;
     [super dealloc];
 }
 
-- (id)initWithSource:(NSURL *)source language:(NSString *)language
-{
-    self = [self initWithSource:source];
-    if (self)
-        _language = [language copy];
-    return self;
-}
-
-- (id)initWithSource:(NSURL *)source
+- (id)init
 {
     self = [super init];
     if (!self)
         return nil;
-    if (!_cIndex)
-        _cIndex = clang_createIndex(0, 0);
-    int parameter_count = 10;
-    const char *filePath = [[source path] fileSystemRepresentation];
-    const char const *parameters[] = {"-ObjC", "-nostdinc", "-nobuiltininc", "-I/Xcode4//usr/lib/clang/2.0/include", "-I/Xcode4/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator4.2.sdk/usr/include", "-F/Xcode4/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator4.2.sdk/System/Library/Frameworks", "-isysroot=/Xcode4/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator4.2.sdk/", "-DTARGET_OS_IPHONE=1", "-UTARGET_OS_MAC", "-miphoneos-version-min=4.2"};
-    self.translationUnit = clang_parseTranslationUnit(_cIndex, filePath, parameters, parameter_count, 0, 0, CXTranslationUnit_PrecompiledPreamble | CXTranslationUnit_CacheCompletionResults);
-    // TODO: maybe check for read errors: translation unit gets created, diagnostic has 1 item:
-    // 2011-02-11 12:33:49.204 otest[2548:903] Diagnostic at (null),0,0 : error reading 'filePath'
-    if (!self.translationUnit)
-        return nil;
-    _translationUnitCount++;
-    self.source = [source copy];
-    self.sourcePath = [[source path] fileSystemRepresentation];
-    NSString *extension = [source pathExtension];
+    self.index = clang_createIndex(0, 0);
+    return self;
+}
+
+#pragma mark -
+#pragma mark Private methods
+
+//- (void)reparseTranslationUnitWithUnsavedFileBuffers:(NSDictionary *)files
+//{
+//    if (!self.translationUnit)
+//        return;
+//    unsigned numUnsavedFiles = [files count];
+//    struct CXUnsavedFile *unsavedFiles = malloc(numUnsavedFiles * sizeof(struct CXUnsavedFile));
+//    unsigned i = 0;
+//    for (NSString *file in [files allKeys]) {
+//        unsavedFiles[i].Filename = [file UTF8String];
+//        NSString *fileBuffer = [files objectForKey:file];
+//        unsavedFiles[i].Contents = [file UTF8String];
+//        unsavedFiles[i].Length = [file length];
+//        i++;
+//    }
+//    clang_reparseTranslationUnit(self.translationUnit, numUnsavedFiles, unsavedFiles, clang_defaultReparseOptions(self.translationUnit));
+//    free(unsavedFiles);
+//}
+
+#pragma mark -
+#pragma mark ECCodeIndexer
+
+- (void)addFilesObject:(NSURL *)fileURL
+{
+    NSString *extension = [fileURL pathExtension];
     CFStringRef UTI = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, (CFStringRef)extension, NULL);
     if ([(NSString *)UTI isEqualToString:@"public.c-header"])
         _language = @"C";
@@ -251,102 +231,101 @@ static ECCompletionResult *completionResultFromClangCompletionResult(CXCompletio
     if ([(NSString *)UTI isEqualToString:@"public.objective-c-plus-plus-source"])
         _language = @"Objective C++";
     CFRelease(UTI);
-    return self;
 }
 
-+ (void)initialize
+- (void)removeFilesObject:(NSURL *)fileURL
 {
-    _cIndex = NULL;
-    _translationUnitCount = 0;
+    
 }
 
-+ (NSArray *)handledLanguages
+- (void)setLanguage:(NSString *)language forFile:(NSURL *)fileURL;
 {
-    return [NSArray arrayWithObjects:@"C", @"Objective C", @"C++", @"Objective C++", nil];
+    
 }
 
-+ (NSArray *)handledUTIs
+- (void)setBuffer:(NSString *)buffer forFile:(NSURL *)fileURL;
 {
-    return [NSArray arrayWithObjects:@"public.c-header", @"public.c-source", @"public.objective-c-source", @"public.c-plus-plus-source", @"public.objective-c-plus-plus-source", nil];
+    
 }
 
-#pragma mark -
-#pragma mark Private methods
-
-- (void)reparseTranslationUnitWithUnsavedFileBuffers:(NSDictionary *)files
+- (NSArray *)completionsForFile:(NSURL *)fileURL withSelection:(NSRange)selection;
 {
-    if (!self.translationUnit)
-        return;
-    unsigned numUnsavedFiles = [files count];
-    struct CXUnsavedFile *unsavedFiles = malloc(numUnsavedFiles * sizeof(struct CXUnsavedFile));
-    unsigned i = 0;
-    for (NSString *file in [files allKeys]) {
-        unsavedFiles[i].Filename = [file UTF8String];
-        NSString *file = [files objectForKey:file];
-        unsavedFiles[i].Contents = [file UTF8String];
-        unsavedFiles[i].Length = [file length];
-        i++;
-    }
-    clang_reparseTranslationUnit(self.translationUnit, numUnsavedFiles, unsavedFiles, clang_defaultReparseOptions(self.translationUnit));
-    free(unsavedFiles);
+    
 }
 
-#pragma mark -
-#pragma mark ECCodeIndexer
-
-- (NSArray *)completionsForSelection:(NSRange)selection withUnsavedFileBuffers:(NSDictionary *)files
+- (NSArray *)diagnosticsForFile:(NSURL *)fileURL;
 {
-    CXSourceLocation selectionLocation = clang_getLocationForOffset(self.translationUnit, clang_getFile(self.translationUnit, self.sourcePath), selection.location);
-    unsigned line;
-    unsigned column;
-    clang_getInstantiationLocation(selectionLocation, NULL, &line, &column, NULL);
-    CXCodeCompleteResults *clangCompletions = clang_codeCompleteAt(self.translationUnit, self.sourcePath, line, column, NULL, 0, clang_defaultCodeCompleteOptions());
-    NSMutableArray *completions = [[[NSMutableArray alloc] init] autorelease];
-    for (unsigned i = 0; i < clangCompletions->NumResults; i++)
-        [completions addObject:completionResultFromClangCompletionResult(clangCompletions->Results[i]).completionString];
-    clang_disposeCodeCompleteResults(clangCompletions);
-    return completions;
+    
 }
 
-- (NSArray *)diagnostics
+- (NSArray *)fixItsForFile:(NSURL *)fileURL;
 {
-    if (!self.translationUnit)
-        return nil;
-    unsigned numDiagnostics = clang_getNumDiagnostics(self.translationUnit);
-    NSMutableArray *diagnostics = [NSMutableArray arrayWithCapacity:numDiagnostics];
-    for (unsigned i = 0; i < numDiagnostics; i++)
-    {
-        CXDiagnostic clangDiagnostic = clang_getDiagnostic(self.translationUnit, i);
-        ECDiagnostic *diagnostic = diagnosticFromClangDiagnostic(clangDiagnostic);
-        [diagnostics addObject:diagnostic];
-        NSLog(@"%@", diagnostic);
-        clang_disposeDiagnostic(clangDiagnostic);
-    }
-    return diagnostics;
+    
 }
 
-- (NSArray *)tokensForRange:(NSRange)range withUnsavedFileBuffers:(NSDictionary *)files
+- (NSArray *)tokensForFile:(NSURL *)fileURL inRange:(NSRange)range;
 {
-    if (!self.source)
-        return nil;
-    if (range.location == NSNotFound)
-        return nil;
-    if (files)
-        [self reparseTranslationUnitWithUnsavedFileBuffers:files];
-    unsigned numTokens;
-    CXToken *clangTokens;
-    CXFile clangFile = clang_getFile(self.translationUnit, self.sourcePath);
-    CXSourceLocation clangStart = clang_getLocationForOffset(self.translationUnit, clangFile, range.location);
-    CXSourceLocation clangEnd = clang_getLocationForOffset(self.translationUnit, clangFile, range.location + range.length);
-    CXSourceRange clangRange = clang_getRange(clangStart, clangEnd);
-    clang_tokenize(self.translationUnit, clangRange, &clangTokens, &numTokens);
-    NSMutableArray *tokens = [NSMutableArray arrayWithCapacity:numTokens];
-    for (unsigned i = 0; i < numTokens; i++)
-    {
-        [tokens addObject:tokenFromClangToken(self.translationUnit, clangTokens[i])];
-    }
-    clang_disposeTokens(self.translationUnit, clangTokens, numTokens);
-    return tokens;
+    
 }
+
+- (NSArray *)tokensForFile:(NSURL *)fileURL;
+{
+    
+}
+
+//- (NSArray *)completionsForSelection:(NSRange)selection withUnsavedFileBuffers:(NSDictionary *)files
+//{
+//    CXSourceLocation selectionLocation = clang_getLocationForOffset(self.translationUnit, clang_getFile(self.translationUnit, self.sourcePath), selection.location);
+//    unsigned line;
+//    unsigned column;
+//    clang_getInstantiationLocation(selectionLocation, NULL, &line, &column, NULL);
+//    CXCodeCompleteResults *clangCompletions = clang_codeCompleteAt(self.translationUnit, self.sourcePath, line, column, NULL, 0, clang_defaultCodeCompleteOptions());
+//    NSMutableArray *completions = [[[NSMutableArray alloc] init] autorelease];
+//    for (unsigned i = 0; i < clangCompletions->NumResults; i++)
+//        [completions addObject:completionResultFromClangCompletionResult(clangCompletions->Results[i]).completionString];
+//    clang_disposeCodeCompleteResults(clangCompletions);
+//    return completions;
+//}
+//
+//- (NSArray *)diagnostics
+//{
+//    if (!self.translationUnit)
+//        return nil;
+//    unsigned numDiagnostics = clang_getNumDiagnostics(self.translationUnit);
+//    NSMutableArray *diagnostics = [NSMutableArray arrayWithCapacity:numDiagnostics];
+//    for (unsigned i = 0; i < numDiagnostics; i++)
+//    {
+//        CXDiagnostic clangDiagnostic = clang_getDiagnostic(self.translationUnit, i);
+//        ECDiagnostic *diagnostic = diagnosticFromClangDiagnostic(clangDiagnostic);
+//        [diagnostics addObject:diagnostic];
+//        NSLog(@"%@", diagnostic);
+//        clang_disposeDiagnostic(clangDiagnostic);
+//    }
+//    return diagnostics;
+//}
+//
+//- (NSArray *)tokensForRange:(NSRange)range withUnsavedFileBuffers:(NSDictionary *)files
+//{
+//    if (!self.source)
+//        return nil;
+//    if (range.location == NSNotFound)
+//        return nil;
+//    if (files)
+//        [self reparseTranslationUnitWithUnsavedFileBuffers:files];
+//    unsigned numTokens;
+//    CXToken *clangTokens;
+//    CXFile clangFile = clang_getFile(self.translationUnit, self.sourcePath);
+//    CXSourceLocation clangStart = clang_getLocationForOffset(self.translationUnit, clangFile, range.location);
+//    CXSourceLocation clangEnd = clang_getLocationForOffset(self.translationUnit, clangFile, range.location + range.length);
+//    CXSourceRange clangRange = clang_getRange(clangStart, clangEnd);
+//    clang_tokenize(self.translationUnit, clangRange, &clangTokens, &numTokens);
+//    NSMutableArray *tokens = [NSMutableArray arrayWithCapacity:numTokens];
+//    for (unsigned i = 0; i < numTokens; i++)
+//    {
+//        [tokens addObject:tokenFromClangToken(self.translationUnit, clangTokens[i])];
+//    }
+//    clang_disposeTokens(self.translationUnit, clangTokens, numTokens);
+//    return tokens;
+//}
 
 @end
