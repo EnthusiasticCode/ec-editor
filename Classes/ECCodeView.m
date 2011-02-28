@@ -13,6 +13,10 @@ const NSString* ECCodeStyleDefaultTextName = @"Default";
 const NSString* ECCodeStyleKeywordName = @"Keyword";
 const NSString* ECCodeStyleCommentName = @"Comment";
 
+const NSString *ECCodeOverlayColorName = @"OverlayColor";
+const NSString *ECCodeOverlayDrawBlockName = @"OverlayDrawBlock";
+
+
 // TODO add to respective data structure?
 static inline BOOL in_range(NSRange r, CFIndex i)
 {
@@ -51,7 +55,7 @@ static inline BOOL in_range(NSRange r, CFIndex i)
 - (CFRange)lineRangeForTextRange:(NSRange)range;
 
 - (void)processRectsOfLinesInRange:(NSRange)range 
-                         withBlock:(void(^)(CGRect))block;
+                         withBlock:(void(^)(CGRect rct))block;
 
 - (CGRect)rectForContentRange:(NSRange)range;
 
@@ -123,6 +127,47 @@ static inline BOOL in_range(NSRange r, CFIndex i)
     [self setNeedsDisplay];
 }
 
+#pragma mark Overlay methods
+
+@synthesize defaultOverlayDrawBlock;
+
+- (void)setAttributes:(NSDictionary *)attributes forOverlayNamed:(NSString *)overlay
+{
+    [overlayStyles setObject:attributes forKey:overlay];
+}
+
+- (void)addOverlayNamed:(NSString *)overlay toRange:(NSRange)range
+{
+    // Only add if the given overlay style exist
+    NSDictionary *o = [overlayStyles objectForKey:overlay];
+    if (o)
+    {
+        // Get or create the mutable array or ranges
+        NSMutableArray *overlayArray = [overlays objectForKey:o];
+        if (!overlayArray)
+        {
+            overlayArray = [NSMutableArray array];
+            [overlays setObject:overlayArray forKey:o];
+        }
+        // Add given range to array of overlays to applu
+        ECTextRange *r = [[ECTextRange alloc] initWithRange:range];
+        [overlayArray addObject:r];
+        [r release];
+    }
+    
+    [self setNeedsDisplay];
+}
+
+- (void)removeAllOverlays
+{
+    [overlays removeAllObjects];
+}
+
+- (void)removeAllOverlaysNamed:(NSString *)overlay
+{
+    [overlays removeObjectForKey:overlay];
+}
+
 #pragma mark CodeView Initializations
 
 - (void)doInit
@@ -144,7 +189,22 @@ static inline BOOL in_range(NSRange r, CFIndex i)
     markedRange.length = 0;
     markedRangeDirtyRect = CGRectNull;
     
-    [super setContentMode:UIViewContentModeRedraw];
+    // Dictionary of overlay names connected to dictionary of overlay attributes
+    overlayStyles = [[NSMutableDictionary alloc] init];
+    // TODO default overlay styles?
+    
+    // Overlays is a dictionary of dictionary for an overlay named type to
+    // array of ECTextRange to apply the overlay to.
+    overlays = [[NSMutableDictionary alloc] init];
+    
+    // The default block used to render an overlay that doesn't have the ECCodeOverlayDrawBlockName attribute.
+    self.defaultOverlayDrawBlock = ^(CGContextRef ctx, CGRect rct, NSDictionary* attr) {
+        UIColor *c = (UIColor *)[attr objectForKey:ECCodeOverlayColorName];
+        if (!c)
+            c = [UIColor redColor];
+        [c setFill];
+        CGContextFillRect(ctx, rct);
+    };
 }
 
 - (id)initWithFrame:(CGRect)frame 
@@ -187,6 +247,12 @@ static inline BOOL in_range(NSRange r, CFIndex i)
     [focusRecognizer release];
     
     [caretView release];
+    
+    // Overlays
+    [overlays release];
+    [overlayStyles release];
+    self.defaultOverlayDrawBlock = nil;
+    
     [super dealloc];
 }
 
@@ -293,10 +359,25 @@ static inline BOOL in_range(NSRange r, CFIndex i)
     CGContextSetTextPosition(context, 0, 0);
     CGContextSetTextMatrix(context, CGAffineTransformIdentity);
     CGContextTranslateCTM(context, contentFrameOrigin.x, contentFrameOrigin.y);
+//    CGContextAddRect(context, rect); should this clip?
     CTFrameDraw(contentFrame, context);
     CGContextRestoreGState(context);
     
-    // TODO draw decorations
+    //  Draw overlays
+    // TODO evalue if concurrent should be used only in particular case ie overlays > N
+    [overlays enumerateKeysAndObjectsWithOptions:NSEnumerationConcurrent usingBlock:^(id attribs, id ranges, BOOL *stop) {
+        DrawOverlayInContext drawBlock = (DrawOverlayInContext)[attribs objectForKey:ECCodeOverlayDrawBlockName];
+        if (!drawBlock)
+            drawBlock = defaultOverlayDrawBlock;
+        [(NSArray *)ranges enumerateObjectsUsingBlock:^(id range, NSUInteger idx, BOOL *stop) {
+            [self processRectsOfLinesInRange:[(ECTextRange *)range range] withBlock:^(CGRect r) {
+                if (CGRectIntersectsRect(r, rect))
+                {
+                    drawBlock(context, r, attribs);
+                } // TODO else stop 
+            }];
+        }];
+    }];
     
     [super drawRect:rect];
 }
@@ -1124,7 +1205,7 @@ static inline BOOL in_range(NSRange r, CFIndex i)
     return (CFRange){ firstResultLine, lastResultLine - firstResultLine + 1 };
 }
 
-- (void)processRectsOfLinesInRange:(NSRange)range withBlock:(void(^)(CGRect))block
+- (void)processRectsOfLinesInRange:(NSRange)range withBlock:(void(^)(CGRect rct))block
 {
     // TODO update contentFrame if needed
     CFArrayRef lines = CTFrameGetLines(contentFrame);

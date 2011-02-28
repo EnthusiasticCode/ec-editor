@@ -24,9 +24,13 @@
 // References
 // search for "drawing managing text" in documentation.
 
-extern const NSString* ECCodeStyleDefaultTextName;
-extern const NSString* ECCodeStyleKeywordName;
-extern const NSString* ECCodeStyleCommentName;
+extern const NSString *ECCodeStyleDefaultTextName;
+extern const NSString *ECCodeStyleKeywordName;
+extern const NSString *ECCodeStyleCommentName;
+
+typedef void (^DrawOverlayInContext)(CGContextRef ctx, CGRect rct, NSDictionary* attr);
+extern const NSString *ECCodeOverlayColorName;
+extern const NSString *ECCodeOverlayDrawBlockName;
 
 // TODO It's ok to derive from UIScrollView to have scroll functionalities
 // and add "find marks" but zoom functionalities should be disabled to
@@ -63,6 +67,10 @@ extern const NSString* ECCodeStyleCommentName;
     // Caret
     ECCaretView *caretView;
     
+    // Overlays
+    NSMutableDictionary *overlayStyles;
+    NSMutableDictionary *overlays;
+    
     // Flags
     // TODO create smaller struct?
     BOOL contentFrameInvalid;
@@ -80,7 +88,22 @@ extern const NSString* ECCodeStyleCommentName;
 @property (nonatomic, readonly) id<UITextInputTokenizer> tokenizer;
 @property (nonatomic, copy) NSDictionary *markedTextStyle;
 
+// Declare a style. After this declaration one can refer to the named style
+// in the setStyleNamed:toRange: API.
 - (void)setAttributes:(NSDictionary*)attributes forStyleNamed:(const NSString*)aStyle;
+
+// Apply a style to the given range.
+// TODO rename to addStyleNamed ?
+// TODO API to apply a dictionary of style -> array of ranges. applyStyles: toRanges:
 - (void)setStyleNamed:(const NSString*)aStyle toRange:(NSRange)range;
+
+//
+// Overlays API
+//
+@property (nonatomic, copy) DrawOverlayInContext defaultOverlayDrawBlock;
+- (void)setAttributes:(NSDictionary *)attributes forOverlayNamed:(NSString *)overlay;
+- (void)addOverlayNamed:(NSString *)overlay toRange:(NSRange)range;
+- (void)removeAllOverlays;
+- (void)removeAllOverlaysNamed:(NSString *)overlay;
 
 @end
