@@ -30,7 +30,17 @@ static inline BOOL in_range(NSRange r, CFIndex i)
 // rendering frame generated from it should be recalculated.
 - (void)setNeedsContentFrame;
 
+// A convinience method that set the selection and notify the delegate if 
+// needed.
 - (void)setSelectedTextRange:(ECTextRange *)selectedTextRange notifyDelegate:(BOOL)shouldNotify;
+
+// Set the selection based on graphical points. If toPoint is nil or equal to
+// fromPoint an empty selection will be set.
+- (void)setSelectedTextFromPoint:(CGPoint)fromPoint toPoint:(CGPoint)toPoint;
+
+// Convinience method to set the selection to a specific index without 
+// notifying the delegate.
+- (void)setSelectedIndex:(NSUInteger)index;
 
 - (void)setNeedsDisplayInRange:(ECTextRange *)range;
 
@@ -341,7 +351,7 @@ static inline BOOL in_range(NSRange r, CFIndex i)
     
     if (!focusRecognizer)
     {
-        focusRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleGestureFocus)];
+        focusRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleGestureFocus:)];
         [self addGestureRecognizer:focusRecognizer];
     }
     
@@ -444,15 +454,13 @@ static inline BOOL in_range(NSRange r, CFIndex i)
         NSUInteger s = ((ECTextPosition*)selection.start).index;
         NSUInteger e = ((ECTextPosition*)selection.end).index;
         if (e > contentLength || s > contentLength || e < s)
-        {
             return;
-        }
         insertRange = NSMakeRange(s, e - s);
     }
     
     // TODO check if char is space and autocomplete
     
-    // TODO unmakrText
+    [self unmarkText];
     
     // TODO beforeMutate
     
@@ -464,7 +472,8 @@ static inline BOOL in_range(NSRange r, CFIndex i)
     
     // TODO afterMutate
     
-    // TODO setSelectionToIndex
+    // Move selection
+    [self setSelectedIndex:(insertRange.location + [aText length])];
     
     [self setNeedsContentFrame];
     [self setNeedsDisplay];
@@ -992,6 +1001,29 @@ static inline BOOL in_range(NSRange r, CFIndex i)
     [self setNeedsLayout];
 }
 
+- (void)setSelectedTextFromPoint:(CGPoint)fromPoint toPoint:(CGPoint)toPoint
+{
+    UITextPosition *startPosition = [self closestPositionToPoint:fromPoint];
+    UITextPosition *endPosition;
+    if (CGPointEqualToPoint(toPoint, fromPoint))
+        endPosition = startPosition;
+    else
+        endPosition = [self closestPositionToPoint:toPoint];
+    
+    ECTextRange *range = [[ECTextRange alloc] initWithStart:(ECTextPosition *)startPosition end:(ECTextPosition *)endPosition];
+    
+    [self setSelectedTextRange:range];
+    
+    [range release];
+}
+
+- (void)setSelectedIndex:(NSUInteger)index
+{
+    ECTextRange *range = [[ECTextRange alloc] initWithRange:(NSRange){ index, 0}];
+    [self setSelectedTextRange:range notifyDelegate:NO];
+    [range release];
+}
+
 // TODO rethink: contentFrameInvalid should be YES if text/attr changed to recreate framesetter, 
 // contentFrame should be released and set to nil when bounds changes.
 - (void)setNeedsContentFrame
@@ -1177,21 +1209,17 @@ static inline BOOL in_range(NSRange r, CFIndex i)
 {
     if (![self isFirstResponder] && [self canBecomeFirstResponder])
         [self becomeFirstResponder];
+    
+    CGPoint point = [recognizer locationInView:self];
+    
+    [self setSelectedTextFromPoint:point toPoint:point];
 }
 
 - (void)handleGestureTap:(UITapGestureRecognizer *)recognizer
 {
     CGPoint point = [recognizer locationInView:self];
     
-    UITextPosition *position = [self closestPositionToPoint:point];
-    
-    ECTextRange *range = [[ECTextRange alloc] initWithStart:(ECTextPosition *)position end:(ECTextPosition *)position];
-    
-    [self setSelectedTextRange:range];
-    
-    [range release];
-    
-    //[self setNeedsLayout];
+    [self setSelectedTextFromPoint:point toPoint:point];
 }
 
 - (CGAffineTransform)renderSpaceTransformationFlipped:(BOOL)flipped 
