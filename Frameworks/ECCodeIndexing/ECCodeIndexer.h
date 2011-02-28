@@ -30,4 +30,5 @@
 @end
 
 @interface ECCodeIndexer : NSObject <ECCodeIndexer>
+
 @end

@@ -20,9 +20,7 @@ typedef enum ECTokenKind
     ECtokenKindComment = 5
 } ECTokenKind;
 
-@interface ECToken : NSObject {
-
-}
+@interface ECToken : NSObject
 @property (nonatomic, readonly) ECTokenKind kind;
 @property (nonatomic, readonly) NSString *spelling;
 @property (nonatomic, readonly) ECSourceLocation *location;

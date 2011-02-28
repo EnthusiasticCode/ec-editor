@@ -11,9 +11,7 @@
 @class ECCodeIndexer;
 @class ECCodeProject;
 
-@interface ECCodeProjectController : UISplitViewController <ECCodeIndexerDelegate, UITableViewDataSource, UITableViewDelegate> {
-    
-}
+@interface ECCodeProjectController : UISplitViewController <ECCodeIndexerDelegate, UITableViewDataSource, UITableViewDelegate>
 @property (nonatomic, retain) ECCodeProject *project;
 @property (nonatomic, retain) NSFileManager *fileManager;
 @property (nonatomic, retain) IBOutlet UITextView *codeView;

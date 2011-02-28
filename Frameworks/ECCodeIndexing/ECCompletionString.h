@@ -9,9 +9,7 @@
 #import <Foundation/Foundation.h>
 @class ECCompletionChunk;
 /*! Object representing any possible completion. */
-@interface ECCompletionString : NSObject {
-    
-}
+@interface ECCompletionString : NSObject
 @property (nonatomic,readonly,copy) NSArray *completionChunks;
 
 - (id)initWithCompletionChunks:(NSArray *)completionChunks;

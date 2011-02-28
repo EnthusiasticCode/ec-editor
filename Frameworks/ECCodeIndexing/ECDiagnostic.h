@@ -20,9 +20,7 @@ typedef enum ECDiagnosticSeverity
     ECDiagnosticSeverityFatal = 4 
 } ECDiagnosticSeverity;
 
-@interface ECDiagnostic : NSObject {
-
-}
+@interface ECDiagnostic : NSObject
 @property (nonatomic, readonly) ECDiagnosticSeverity severity;
 @property (nonatomic, readonly) ECSourceLocation *location;
 @property (nonatomic, readonly) NSString *spelling;

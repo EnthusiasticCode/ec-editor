@@ -9,9 +9,7 @@
 #import <Foundation/Foundation.h>
 @class ECCompletionString;
 
-@interface ECCompletionResult : NSObject {
-
-}
+@interface ECCompletionResult : NSObject
 // currently unused, reimplement as enum when we figure out something to do with it
 @property (nonatomic,readonly) int cursorKind;
 @property (nonatomic,readonly) ECCompletionString *completionString;

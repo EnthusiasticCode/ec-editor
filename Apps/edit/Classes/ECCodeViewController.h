@@ -9,8 +9,6 @@
 #import <UIKit/UIKit.h>
 
 
-@interface ECCodeViewController : UIViewController {
-
-}
+@interface ECCodeViewController : UIViewController
 
 @end

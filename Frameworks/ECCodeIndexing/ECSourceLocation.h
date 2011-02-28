@@ -9,9 +9,7 @@
 #import <Foundation/Foundation.h>
 
 
-@interface ECSourceLocation : NSObject {
-
-}
+@interface ECSourceLocation : NSObject
 @property (nonatomic, readonly) NSString *file;
 @property (nonatomic, readonly) unsigned line;
 @property (nonatomic, readonly) unsigned column;

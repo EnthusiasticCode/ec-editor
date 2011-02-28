@@ -10,9 +10,7 @@
 
 @class ECSourceRange;
 
-@interface ECFixIt : NSObject {
-
-}
+@interface ECFixIt : NSObject
 @property (nonatomic, readonly) NSString *string;
 @property (nonatomic, readonly) ECSourceRange *replacementRange;
 

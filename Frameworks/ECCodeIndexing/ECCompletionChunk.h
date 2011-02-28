@@ -32,9 +32,7 @@ typedef enum ECCompletionChunkKind
     ECCompletionChunkKindVerticalSpace = 20,
 } ECCompletionChunkKind;
 
-@interface ECCompletionChunk : NSObject {
-
-}
+@interface ECCompletionChunk : NSObject
 @property (nonatomic, readonly) ECCompletionChunkKind kind;
 @property (nonatomic, readonly) NSString *string;
 

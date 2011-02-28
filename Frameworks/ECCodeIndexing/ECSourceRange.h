@@ -10,9 +10,7 @@
 
 @class ECSourceLocation;
 
-@interface ECSourceRange : NSObject {
-
-}
+@interface ECSourceRange : NSObject
 @property (nonatomic, readonly) ECSourceLocation *start;
 @property (nonatomic, readonly) ECSourceLocation *end;
 

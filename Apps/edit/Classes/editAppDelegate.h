@@ -10,12 +10,7 @@
 #import "ECCodeView.h"
 
 @interface editAppDelegate : NSObject <UIApplicationDelegate>
-{
-    
-}
 @property (nonatomic, retain) IBOutlet UIWindow *window;
 @property (nonatomic, retain) IBOutlet ECCodeView *codeView;
-
 - (NSString *)applicationDocumentsDirectory;
-
 @end
