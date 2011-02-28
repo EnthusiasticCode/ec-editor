@@ -28,7 +28,7 @@ static unsigned _translationUnitCount;
 @property (nonatomic) const char *sourcePath;
 @property (nonatomic, retain) NSString *language;
 @property (nonatomic, retain) NSURL *source;
-- (void)reparseTranslationUnitWithUnsavedFileBuffers:(NSDictionary *)fileBuffers;
+- (void)reparseTranslationUnitWithUnsavedFileBuffers:(NSDictionary *)files;
 @end
 
 #pragma mark -
@@ -273,18 +273,18 @@ static ECCompletionResult *completionResultFromClangCompletionResult(CXCompletio
 #pragma mark -
 #pragma mark Private methods
 
-- (void)reparseTranslationUnitWithUnsavedFileBuffers:(NSDictionary *)fileBuffers
+- (void)reparseTranslationUnitWithUnsavedFileBuffers:(NSDictionary *)files
 {
     if (!self.translationUnit)
         return;
-    unsigned numUnsavedFiles = [fileBuffers count];
+    unsigned numUnsavedFiles = [files count];
     struct CXUnsavedFile *unsavedFiles = malloc(numUnsavedFiles * sizeof(struct CXUnsavedFile));
     unsigned i = 0;
-    for (NSString *file in [fileBuffers allKeys]) {
+    for (NSString *file in [files allKeys]) {
         unsavedFiles[i].Filename = [file UTF8String];
-        NSString *fileBuffer = [fileBuffers objectForKey:file];
-        unsavedFiles[i].Contents = [fileBuffer UTF8String];
-        unsavedFiles[i].Length = [fileBuffer length];
+        NSString *file = [files objectForKey:file];
+        unsavedFiles[i].Contents = [file UTF8String];
+        unsavedFiles[i].Length = [file length];
         i++;
     }
     clang_reparseTranslationUnit(self.translationUnit, numUnsavedFiles, unsavedFiles, clang_defaultReparseOptions(self.translationUnit));
@@ -294,7 +294,7 @@ static ECCompletionResult *completionResultFromClangCompletionResult(CXCompletio
 #pragma mark -
 #pragma mark ECCodeIndexer
 
-- (NSArray *)completionsForSelection:(NSRange)selection withUnsavedFileBuffers:(NSDictionary *)fileBuffers
+- (NSArray *)completionsForSelection:(NSRange)selection withUnsavedFileBuffers:(NSDictionary *)files
 {
     CXSourceLocation selectionLocation = clang_getLocationForOffset(self.translationUnit, clang_getFile(self.translationUnit, self.sourcePath), selection.location);
     unsigned line;
@@ -325,14 +325,14 @@ static ECCompletionResult *completionResultFromClangCompletionResult(CXCompletio
     return diagnostics;
 }
 
-- (NSArray *)tokensForRange:(NSRange)range withUnsavedFileBuffers:(NSDictionary *)fileBuffers
+- (NSArray *)tokensForRange:(NSRange)range withUnsavedFileBuffers:(NSDictionary *)files
 {
     if (!self.source)
         return nil;
     if (range.location == NSNotFound)
         return nil;
-    if (fileBuffers)
-        [self reparseTranslationUnitWithUnsavedFileBuffers:fileBuffers];
+    if (files)
+        [self reparseTranslationUnitWithUnsavedFileBuffers:files];
     unsigned numTokens;
     CXToken *clangTokens;
     CXFile clangFile = clang_getFile(self.translationUnit, self.sourcePath);

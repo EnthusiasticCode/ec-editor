@@ -535,7 +535,7 @@
 			isa = PBXGroup;
 			children = (
 				B761FCE2131B072D006072A0 /* libECCodeIndexing.a */,
-				B761FCE4131B072D006072A0 /* Test.octest */,
+				B761FCE4131B072D006072A0 /* ECCodeIndexing-Test.octest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -544,7 +544,7 @@
 			isa = PBXGroup;
 			children = (
 				B761FCEE131B0737006072A0 /* libECMobileAppKit.a */,
-				B761FCF0131B0737006072A0 /* Test.octest */,
+				B761FCF0131B0737006072A0 /* ECMobileAppKit-Test.octest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -553,7 +553,7 @@
 			isa = PBXGroup;
 			children = (
 				B761FD0A131B0764006072A0 /* libECAdditions.a */,
-				B761FD0C131B0764006072A0 /* Test.octest */,
+				B761FD0C131B0764006072A0 /* ECAdditions-Test.octest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -832,7 +832,7 @@
 			remoteRef = B761FCE1131B072D006072A0 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B761FCE4131B072D006072A0 /* Test.octest */ = {
+		B761FCE4131B072D006072A0 /* ECCodeIndexing-Test.octest */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.cfbundle;
 			path = "ECCodeIndexing-Test.octest";
@@ -846,7 +846,7 @@
 			remoteRef = B761FCED131B0737006072A0 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B761FCF0131B0737006072A0 /* Test.octest */ = {
+		B761FCF0131B0737006072A0 /* ECMobileAppKit-Test.octest */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.cfbundle;
 			path = "ECMobileAppKit-Test.octest";
@@ -860,7 +860,7 @@
 			remoteRef = B761FD09131B0764006072A0 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B761FD0C131B0764006072A0 /* Test.octest */ = {
+		B761FD0C131B0764006072A0 /* ECAdditions-Test.octest */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.cfbundle;
 			path = "ECAdditions-Test.octest";

@@ -12,7 +12,8 @@
 
 
 /*! Clang code indexer. Provides completion and syntax checking through Clang. */
-@interface ECClangCodeIndexer : ECCodeIndexer{
+@interface ECClangCodeIndexer : NSObject <ECCodeIndexer>
+{
 
 }
 

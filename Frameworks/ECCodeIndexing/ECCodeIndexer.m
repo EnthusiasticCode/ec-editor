@@ -7,152 +7,165 @@
 //
 
 #import "ECCodeIndexer.h"
-#import "libclang/ECClangCodeIndexer.h"
+#import "ECCodeIndexer.h"
+#import "ECCodeIndexingFile.h"
 #import <ECAdditions/NSURL+ECAdditions.h>
-
-#import <objc/runtime.h>
 #import <MobileCoreServices/MobileCoreServices.h>
+// TODO: plugins are hardcoded for now
+#import "ECClangCodeIndexer.h"
 
-static NSMutableDictionary *_codeIndexerClassesByLanguage;
-static NSMutableDictionary *_codeIndexerClassesByUTI;
-static NSMutableSet *_handledLanguages;
-static NSMutableSet *_handledUTIs;
+@interface ECCodeIndexer ()
+@property (nonatomic, copy) NSDictionary *pluginsByLanguage;
+@property (nonatomic, copy) NSDictionary *pluginsByUTI;
+@property (nonatomic, copy) NSSet *handledLanguages;
+@property (nonatomic, copy) NSSet *handledUTIs;
+@property (nonatomic, retain) NSMutableDictionary *files;
+- (id<ECCodeIndexer>)defaultPluginForFile:(NSURL *)fileURL;
+- (id<ECCodeIndexer>)pluginForFile:(ECCodeIndexingFile *)file;
+- (id<ECCodeIndexer>)pluginforLanguage:(NSString *)language;
+@end
+
 
 @implementation ECCodeIndexer
 
-@synthesize language = _language;
-@synthesize source = _source;
+@synthesize pluginsByLanguage = _pluginsByLanguage;
+@synthesize pluginsByUTI = _pluginsByUTI;
+@synthesize handledLanguages = _handledLanguages;
+@synthesize handledUTIs = _handledUTIs;
+@synthesize files = _files;
 
-- (id)initWithSource:(NSURL *)source language:(NSString *)language
+- (NSSet *)handledFiles
 {
-    if (self.source)
-        return self;
-    if (![source isFileURLAndExists])
-        return nil;
-    self = [[[_codeIndexerClassesByLanguage objectForKey:language] alloc] initWithSource:source language:language];
-    return self;
+    return [NSSet setWithArray:[self.files allKeys]];
 }
 
-- (id)initWithSource:(NSURL *)source
+- (void)dealloc
 {
-    if (self.source)
-        return self;
-    if (![source isFileURLAndExists])
-        return nil;
-    NSString *extension = [source pathExtension];
-    CFStringRef UTI = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, (CFStringRef)extension, NULL);
-    self = [[[_codeIndexerClassesByUTI objectForKey:(NSString *)UTI] alloc] initWithSource:source];
-    CFRelease(UTI);
-    return self;
+    self.pluginsByLanguage = nil;
+    self.pluginsByUTI = nil;
+    self.handledLanguages = nil;
+    self.handledUTIs = nil;
+    self.files = nil;
+    [super dealloc];
 }
 
-+ (void)loadLanguages
+- (id)init
 {
     // TODO: implement some priority system for subclass loading
-    if (_codeIndexerClassesByLanguage && _codeIndexerClassesByUTI && _handledLanguages && _handledUTIs)
-        return;
-    int numClasses;
-    numClasses = objc_getClassList(NULL, 0);
-    if (!numClasses)
-        return;
-    Class *classes = NULL;
-    NSMutableArray *subclasses;
-    [_handledLanguages release];
-    _handledLanguages = [[NSMutableSet alloc] init];
-    [_codeIndexerClassesByLanguage release];
-    _codeIndexerClassesByLanguage = [[NSMutableDictionary alloc] init];
-    [_handledUTIs release];
-    _handledUTIs = [[NSMutableSet alloc] init];
-    [_codeIndexerClassesByUTI release];
-    _codeIndexerClassesByUTI = [[NSMutableDictionary alloc] init];
-    subclasses = [[NSMutableArray alloc] initWithCapacity:numClasses];
-    classes = malloc(sizeof(Class) * numClasses);
-    objc_getClassList(classes, numClasses);
-    for (int i = 0; i < numClasses; i++)
-    {
-        if (class_getSuperclass(classes[i]) == [ECCodeIndexer class])
-            [subclasses addObject:classes[i]];
-    }
-    for (Class subclass in subclasses)
-    {
-        for (NSString *language in [subclass handledLanguages])
-        {
-            [_codeIndexerClassesByLanguage setObject:subclass forKey:language];
-            [_handledLanguages addObject:language];
-        }
-        for (NSString *UTI in [subclass handledUTIs])
-        {
-            [_codeIndexerClassesByUTI setObject:subclass forKey:UTI];
-            [_handledUTIs addObject:UTI];
-        }
-     }
-    free(classes);
-    [subclasses release];
-}
-
-+ (void)unloadLanguages
-{
-    [_codeIndexerClassesByLanguage release];
-    [_codeIndexerClassesByUTI release];
-    [_handledLanguages release];
-    [_handledUTIs release];
-}
-
-+ (NSArray *)handledLanguages
-{
-    return [_handledLanguages allObjects];
-}
-
-+ (NSArray *)handledUTIs
-{
-    return [_handledUTIs allObjects];
-}
-
-- (NSArray *)completionsForSelection:(NSRange)selection withUnsavedFileBuffers:(NSDictionary *)fileBuffers
-{
-    return nil;
-}
-
-- (NSArray *)completionsForSelection:(NSRange)selection
-{
-    return [self completionsForSelection:selection withUnsavedFileBuffers:nil];
-}
-
-- (NSArray *)diagnostics
-{
-    return nil;
-}
-
-- (NSArray *)tokensForRange:(NSRange)range withUnsavedFileBuffers:(NSDictionary *)fileBuffers
-{
-    return nil;
-}
-
-- (NSArray *)tokensForRange:(NSRange)range
-{
-    return [self tokensForRange:range withUnsavedFileBuffers:nil];
-}
-
-- (NSArray *)tokensWithUnsavedFileBuffers:(NSDictionary *)fileBuffers
-{
-    if (!self.source)
+    self = [super init];
+    if (!self)
         return nil;
-    NSString *sourceBuffer = [fileBuffers objectForKey:self.source];
-    if (sourceBuffer)
-        return [self tokensForRange:NSMakeRange(0, [sourceBuffer length]) withUnsavedFileBuffers:fileBuffers];
-    NSError *error = nil;
-    NSFileWrapper *sourceWrapper = [[[NSFileWrapper alloc] initWithURL:self.source options:0 error:&error] autorelease];
-    if (error)
+    NSMutableDictionary *pluginsByLanguage = [NSMutableDictionary dictionary];
+    NSMutableDictionary *pluginsByUTI = [NSMutableDictionary dictionary];
+    NSMutableSet *handledLanguages = [NSMutableSet set];
+    NSMutableSet *handledUTIs = [NSMutableSet set];
+    // TODO: plugin architecture or something like that
+    NSArray *pluginClasses = [NSArray arrayWithObjects:[ECClangCodeIndexer class], nil];
+    id<ECCodeIndexer> plugin;
+    for (Class pluginClass in pluginClasses)
     {
-        NSLog(@"error: %@", error);
-        return nil;
+        if (![pluginClass conformsToProtocol:@protocol(ECCodeIndexer)])
+            continue;
+        plugin = [[pluginClass alloc] init];
+        for (NSString *language in [plugin handledLanguages])
+        {
+            if ([handledLanguages containsObject:language])
+                continue;
+            [pluginsByLanguage setObject:plugin forKey:language];
+            [handledLanguages addObject:language];
+        }
+        for (NSString *UTI in [plugin handledUTIs])
+        {
+            if ([handledUTIs containsObject:UTI])
+                continue;
+            [pluginsByUTI setObject:plugin forKey:UTI];
+            [handledUTIs addObject:UTI];
+        }
     }
-    return [self tokensForRange:NSMakeRange(0, [[sourceWrapper regularFileContents] length]) withUnsavedFileBuffers:fileBuffers];
+    self.pluginsByLanguage = pluginsByLanguage;
+    self.pluginsByUTI = pluginsByUTI;
+    self.handledLanguages = handledLanguages;
+    self.handledUTIs = handledUTIs;
+    return self;
 }
 
-- (NSArray *)tokens
+- (id<ECCodeIndexer>)defaultPluginForFile:(NSURL *)fileURL
 {
-    return [self tokensWithUnsavedFileBuffers:nil];
+    NSString *extension = [fileURL pathExtension];
+    CFStringRef UTI = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, (CFStringRef)extension, NULL);
+    id<ECCodeIndexer> plugin = [self.pluginsByUTI objectForKey:(NSString *)UTI];
+    CFRelease(UTI);
+    return plugin;
+}
+
+- (id<ECCodeIndexer>)pluginForFile:(ECCodeIndexingFile *)file
+{
+    if (file.language)
+        return [self pluginforLanguage:file.language];
+    return [self defaultPluginForFile:file.URL];
+}
+
+- (id<ECCodeIndexer>)pluginforLanguage:(NSString *)language
+{
+    return [self.pluginsByLanguage objectForKey:language];
+}
+
+- (void)addFilesObject:(NSURL *)fileURL
+{
+    if (![fileURL isFileURLAndExists])
+        return;
+    [self.files setObject:[ECCodeIndexingFile fileWithURL:fileURL language:nil buffer:nil]  forKey:fileURL];
+    [[self defaultPluginForFile:fileURL] addFilesObject:fileURL];
+}
+
+- (void)removeFilesObject:(NSURL *)fileURL
+{
+    [[self pluginForFile:[self.files objectForKey:fileURL]] removeFilesObject:fileURL];
+    [self.files removeObjectForKey:fileURL];
+}
+
+- (void)setLanguage:(NSString *)language forFile:(NSURL *)fileURL
+{
+    ECCodeIndexingFile *file = [self.files objectForKey:fileURL];
+    if (!file || [file.language isEqualToString:language])
+        return;
+    [[self pluginForFile:file] removeFilesObject:fileURL];
+    file.language = language;
+    [[self pluginForFile:file] addFilesObject:fileURL];
+}
+
+- (void)setBuffer:(NSString *)buffer forFile:(NSURL *)fileURL
+{
+    ECCodeIndexingFile *file = [self.files objectForKey:fileURL];
+    if (!file || [file.buffer isEqualToString:buffer])
+        return;
+    file.buffer = buffer;
+    [[self pluginForFile:file] setBuffer:buffer forFile:fileURL];
+}
+
+- (NSArray *)completionsForFile:(NSURL *)fileURL withSelection:(NSRange)selection
+{
+    return [[self pluginForFile:[self.files objectForKey:fileURL]] completionsForFile:fileURL withSelection:selection];
+}
+
+- (NSArray *)diagnosticsForFile:(NSURL *)fileURL
+{
+    return [[self pluginForFile:[self.files objectForKey:fileURL]] diagnosticsForFile:fileURL];
+}
+
+- (NSArray *)fixItsForFile:(NSURL *)fileURL
+{
+    return [[self pluginForFile:[self.files objectForKey:fileURL]] fixItsForFile:fileURL];
+}
+
+- (NSArray *)tokensForFile:(NSURL *)fileURL inRange:(NSRange)range
+{
+    return [[self pluginForFile:[self.files objectForKey:fileURL]] tokensForFile:fileURL inRange:range];
+}
+
+- (NSArray *)tokensForFile:(NSURL *)fileURL
+{
+    return [[self pluginForFile:[self.files objectForKey:fileURL]] tokensForFile:fileURL];
 }
 
 @end

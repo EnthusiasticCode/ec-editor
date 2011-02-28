@@ -20,13 +20,11 @@ describe(@"A code indexer",^
         NSString *cFilePath = [NSTemporaryDirectory() stringByAppendingPathComponent:@"main.c"];
         cFileURL = [[NSURL alloc] initFileURLWithPath:cFilePath];
         [[NSData dataWithBytes:"#include <stdio.h>\n int main(int argc, char **argv)\n { printf(\"hello world\"); }" length:79] writeToURL:cFileURL atomically:NO];
-        [ECCodeIndexer loadLanguages];
     });
     
     afterAll(^
     {
         [cFileURL release];
-        [ECCodeIndexer unloadLanguages];
     });
     
     beforeEach(^

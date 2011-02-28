@@ -13,23 +13,21 @@
  *
  * Code indexers encapsulate interaction with parsing and indexing libraries to provide language related functionality such as syntax aware highlighting, hyperlinking and completions.
  */
-@interface ECCodeIndexer : NSObject {
 
-}
-@property (nonatomic, readonly) NSString *language;
-@property (nonatomic, readonly) NSURL *source;
-+ (void)loadLanguages;
-+ (void)unloadLanguages;
-+ (NSArray *)handledLanguages;
-+ (NSArray *)handledUTIs;
-- (id)initWithSource:(NSURL *)source language:(NSString *)language;
-- (id)initWithSource:(NSURL *)source;
-- (NSArray *)completionsForSelection:(NSRange)selection withUnsavedFileBuffers:(NSDictionary *)fileBuffers;
-- (NSArray *)completionsForSelection:(NSRange)selection;
-- (NSArray *)diagnostics;
-- (NSArray *)tokensForRange:(NSRange)range withUnsavedFileBuffers:(NSDictionary *)fileBuffers;
-- (NSArray *)tokensForRange:(NSRange)range;
-- (NSArray *)tokensWithUnsavedFileBuffers:(NSDictionary *)fileBuffers;
-- (NSArray *)tokens;
+@protocol ECCodeIndexer <NSObject>
+@property (nonatomic, readonly, copy) NSSet *handledLanguages;
+@property (nonatomic, readonly, copy) NSSet *handledUTIs;
+@property (nonatomic, readonly, copy) NSSet *handledFiles;
+- (void)addFilesObject:(NSURL *)fileURL;
+- (void)removeFilesObject:(NSURL *)fileURL;
+- (void)setLanguage:(NSString *)language forFile:(NSURL *)fileURL;
+- (void)setBuffer:(NSString *)buffer forFile:(NSURL *)fileURL;
+- (NSArray *)completionsForFile:(NSURL *)fileURL withSelection:(NSRange)selection;
+- (NSArray *)diagnosticsForFile:(NSURL *)fileURL;
+- (NSArray *)fixItsForFile:(NSURL *)fileURL;
+- (NSArray *)tokensForFile:(NSURL *)fileURL inRange:(NSRange)range;
+- (NSArray *)tokensForFile:(NSURL *)fileURL;
+@end
 
+@interface ECCodeIndexer : NSObject <ECCodeIndexer>
 @end

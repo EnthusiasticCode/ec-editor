@@ -365,11 +365,11 @@ static inline BOOL in_range(NSRange r, CFIndex i)
     
     //  Draw overlays
     // TODO evalue if concurrent should be used only in particular case ie overlays > N
-    [overlays enumerateKeysAndObjectsWithOptions:NSEnumerationConcurrent usingBlock:^(id attribs, id ranges, BOOL *stop) {
-        DrawOverlayInContext drawBlock = (DrawOverlayInContext)[attribs objectForKey:ECCodeOverlayDrawBlockName];
+    [overlays enumerateKeysAndObjectsWithOptions:NSEnumerationConcurrent usingBlock:^(id attribs, id ranges, BOOL *outerStop) {
+        DrawOverlayInContext drawBlock = (DrawOverlayInContext)[(NSDictionary *)attribs objectForKey:ECCodeOverlayDrawBlockName];
         if (!drawBlock)
             drawBlock = defaultOverlayDrawBlock;
-        [(NSArray *)ranges enumerateObjectsUsingBlock:^(id range, NSUInteger idx, BOOL *stop) {
+        [(NSArray *)ranges enumerateObjectsUsingBlock:^(id range, NSUInteger idx, BOOL *innerStop) {
             [self processRectsOfLinesInRange:[(ECTextRange *)range range] withBlock:^(CGRect r) {
                 if (CGRectIntersectsRect(r, rect))
                 {
