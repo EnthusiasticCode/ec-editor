@@ -22,13 +22,6 @@ static inline BOOL in_range(NSRange r, CFIndex i)
     return (u >= r.location && ( u - r.location ) < r.length);
 }
 
-static inline CGFloat square_distance(CGPoint a, CGPoint b)
-{
-    CGFloat dx = (a.x - b.x);
-    CGFloat dy = (a.y - b.y);
-    return dx*dx + dy*dy;
-}
-
 @interface ECCodeView ()
 
 - (void)doInit;
@@ -53,7 +46,7 @@ static inline CGFloat square_distance(CGPoint a, CGPoint b)
 - (CGRect)rectForContentRange:(NSRange)range;
 
 // Gesture handles
-- (void)handleGestureFocus;
+- (void)handleGestureFocus:(UIGestureRecognizer *)recognizer;
 - (void)handleGestureTap:(UITapGestureRecognizer *)recognizer;
 
 // Return the affine transform to move and scale coordinates to the render
@@ -1180,9 +1173,9 @@ static inline CGFloat square_distance(CGPoint a, CGPoint b)
     return result;
 }
 
-- (void)handleGestureFocus
+- (void)handleGestureFocus:(UIGestureRecognizer *)recognizer
 {
-    if (![self isFirstResponder])
+    if (![self isFirstResponder] && [self canBecomeFirstResponder])
         [self becomeFirstResponder];
 }
 

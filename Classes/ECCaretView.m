@@ -13,8 +13,10 @@
 
 #pragma mark Properties
 
+@synthesize caretColor;
+@synthesize caretShapeBlock;
+@synthesize caretShape = _caretShape;
 @synthesize pulsePerSecond;
-
 @synthesize blink;
 
 - (void)setBlink:(BOOL)shouldBlink
@@ -38,21 +40,6 @@
     }
 }
 
-@synthesize caretShape;
-
-- (void)setCaretShape:(CGPathRef)aCaretShape
-{
-    if (aCaretShape)
-    {
-        if (caretShape)
-            CGPathRelease(caretShape);
-        
-        caretShape = CGPathRetain(aCaretShape);
-    }
-}
-
-@synthesize caretColor;
-
 #pragma mark UIView override
 
 - (id)initWithFrame:(CGRect)frame
@@ -65,21 +52,22 @@
         self.clearsContextBeforeDrawing = YES;
         self.pulsePerSecond = 2;
         self.userInteractionEnabled = NO;
-        // Create default caret shape
-        CGMutablePathRef p = CGPathCreateMutable();
-        // TODO rounded rect
-        CGPathAddRect(p, NULL, (CGRect){ {0, 0}, frame.size });
-        self.caretShape = p;
-        CGPathRelease(p);
+        self.caretShapeBlock = ^(CGRect b) {
+            CGMutablePathRef p = CGPathCreateMutable();
+            CGPathAddRect(p, NULL, b);
+            return (CGPathRef)p;
+        };
+        _caretShape = caretShapeBlock(self.bounds);
     }
     return self;
 }
 
 - (void)dealloc
 {
-    if (caretShape)
-        CGPathRelease(caretShape);
-    
+    if (_caretShape)
+        CGPathRelease(_caretShape);
+    [caretShapeBlock release];
+    self.caretColor = nil;
     [super dealloc];
 }
 
@@ -88,14 +76,24 @@
     [self drawInContext:UIGraphicsGetCurrentContext()];
 }
 
+- (void)setFrame:(CGRect)frame
+{
+    [super setFrame:frame];
+    if (caretShapeBlock)
+    {
+        if (_caretShape)
+            CGPathRelease(_caretShape);
+        _caretShape = caretShapeBlock(self.bounds);
+    }
+}
+
 #pragma mark Custom methods
 
 - (void)drawInContext:(CGContextRef)context
 {
     [self.caretColor setFill];
-//    CGContextAddPath(context, caretShape);
-//    CGContextFillPath(context);
-    CGContextFillRect(context, self.bounds);
+    CGContextAddPath(context, _caretShape);
+    CGContextFillPath(context);
 }
 
 @end
