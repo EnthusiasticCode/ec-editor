@@ -181,7 +181,8 @@ static inline BOOL in_range(NSRange r, CFIndex i)
     // Set UIView properties
     self.contentMode = UIViewContentModeTopLeft;
     self.clearsContextBeforeDrawing = YES;
-    self.contentInset = UIEdgeInsetsMake(10, 10, 0, 0);
+    
+    contentFrameInset = UIEdgeInsetsMake(10, 10, 10, 10);
     
     self.text = @"";
     
@@ -328,21 +329,28 @@ static inline BOOL in_range(NSRange r, CFIndex i)
     }
     
     // Render core text content frame
-    UIEdgeInsets inset = self.contentInset;
     while (!contentFrame)
     {
         // Setup rendering path
+        CGSize contentFrameSize = bounds.size;
+        contentFrameSize.height = CGFLOAT_MAX;
+        contentFrameSize.width -= contentFrameInset.left + contentFrameInset.right;
+        
+        CFRange fitRange;
+        CGSize frameSize = CTFramesetterSuggestFrameSizeWithConstraints(frameSetter, (CFRange){0, 0}, NULL, contentFrameSize, &fitRange);
+        
         CGMutablePathRef path = CGPathCreateMutable();
-        CGPathAddRect(path, NULL, CGRectMake(0, 0, bounds.size.width, bounds.size.height));
+        CGPathAddRect(path, NULL, CGRectMake(0, 0, frameSize.width, frameSize.height));
+        
+        // Render content frame
         contentFrame = CTFramesetterCreateFrame(frameSetter, (CFRange){0, 0}, path, NULL);
         CFRelease(path);
         
-        // TODO? Calculate effective size
-        //CFRange fitRange;
-        //CGSize frameSize = CTFramesetterSuggestFrameSizeWithConstraints(frameSetter, (CFRange){0, 0}, NULL, bounds.size, &fitRange);
+        // Save content frame rect
+        contentFrameRect.origin = CGPointMake(contentFrameInset.left, contentFrameInset.top);
+        contentFrameRect.size = frameSize;
         
         // TODO? Calculating the rendering coordinate position of the text layout origin
-        contentFrameOrigin = CGPointMake(inset.left, -inset.top);
         
         // TODO call delegate layoutChanged
     }
@@ -358,8 +366,7 @@ static inline BOOL in_range(NSRange r, CFIndex i)
     // TODO!!! clip on rect
     CGContextSetTextPosition(context, 0, 0);
     CGContextSetTextMatrix(context, CGAffineTransformIdentity);
-    CGContextTranslateCTM(context, contentFrameOrigin.x, contentFrameOrigin.y);
-//    CGContextAddRect(context, rect); should this clip?
+   // CGContextTranslateCTM(context, contentFrameRect.origin.x, -contentFrameRect.origin.y);
     CTFrameDraw(contentFrame, context);
     CGContextRestoreGState(context);
     
@@ -958,8 +965,8 @@ static inline BOOL in_range(NSRange r, CFIndex i)
     // Transform point
     // TODO properly transform with matrix?
     point = CGPointApplyAffineTransform(point, [self renderSpaceTransformationFlipped:YES inverted:YES]);
-    point.x -= contentFrameOrigin.x;
-    point.y -= contentFrameOrigin.y;
+//    point.x -= contentFrameRect.origin.x;
+//    point.y -= contentFrameRect.origin.y;
     
     // Find lines containing point
     CFIndex closest = 0;
@@ -1213,7 +1220,8 @@ static inline BOOL in_range(NSRange r, CFIndex i)
     
     if (lineCount == 0)
     {
-        block(CGRectMake(0, 0, 0, 13));
+        // TODO get actual heigth
+        block(CGRectMake(contentFrameInset.left, contentFrameInset.top, 0, 13));
         return;
     }
     
@@ -1242,7 +1250,7 @@ static inline BOOL in_range(NSRange r, CFIndex i)
         NSRange spanRange;
         NSUInteger rangeEndLocation = range.location + range.length;
         //
-        CGRect lineRect = CGRectMake(0, lineOrigin.y, 0, ascent + descent);
+        CGRect lineRect = CGRectMake(contentFrameRect.origin.x, lineOrigin.y - contentFrameRect.origin.y, 0, ascent + descent);
         
         if (rangeEndLocation < (NSUInteger)lineRange.location)
         {
@@ -1322,12 +1330,12 @@ static inline BOOL in_range(NSRange r, CFIndex i)
 - (CGAffineTransform)renderSpaceTransformationFlipped:(BOOL)flipped 
                                              inverted:(BOOL)inverted
 {
-    CGFloat scale = self.zoomScale;
+    CGFloat scale = 1.0;
     CGRect bounds = self.bounds;
     CGAffineTransform transform = {
         scale, 0,
         0, flipped ? -scale : scale,
-        bounds.origin.x, bounds.origin.y + bounds.size.height
+        bounds.origin.x + contentFrameRect.origin.x, bounds.origin.y + contentFrameRect.origin.y + contentFrameRect.size.height
     };
     return inverted ? CGAffineTransformInvert(transform) : transform;
 }
