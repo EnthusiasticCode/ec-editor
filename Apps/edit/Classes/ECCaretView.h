@@ -8,15 +8,25 @@
 
 #import <UIKit/UIKit.h>
 
+typedef CGPathRef (^PathForRectBlock)(CGRect);
 
 @interface ECCaretView : UIView {
 @private
-    
+    CGPathRef _caretShape;
 }
 
 @property (nonatomic, getter = isBlinking) BOOL blink;
 @property (nonatomic) NSUInteger pulsePerSecond;
-@property (nonatomic) CGPathRef caretShape;
+
+// Gets or set the color of the carret.
+@property (nonatomic, retain) UIColor *caretColor;
+
+// Specify or retrieve a block that can be used to create a 
+// path used to draw the caret shape.
+@property (nonatomic, copy) PathForRectBlock caretShapeBlock;
+
+// Retrieve the current shape of the caret.
+@property (nonatomic, readonly) CGPathRef caretShape;
 
 // Draw the solid caret in the specified context
 - (void)drawInContext:(CGContextRef)context;

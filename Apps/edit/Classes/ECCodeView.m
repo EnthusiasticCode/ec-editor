@@ -13,6 +13,10 @@ const NSString* ECCodeStyleDefaultTextName = @"Default";
 const NSString* ECCodeStyleKeywordName = @"Keyword";
 const NSString* ECCodeStyleCommentName = @"Comment";
 
+const NSString *ECCodeOverlayColorName = @"OverlayColor";
+const NSString *ECCodeOverlayDrawBlockName = @"OverlayDrawBlock";
+
+
 // TODO add to respective data structure?
 static inline BOOL in_range(NSRange r, CFIndex i)
 {
@@ -20,13 +24,6 @@ static inline BOOL in_range(NSRange r, CFIndex i)
         return 0;
     NSUInteger u = (NSUInteger)i;
     return (u >= r.location && ( u - r.location ) < r.length);
-}
-
-static inline CGFloat square_distance(CGPoint a, CGPoint b)
-{
-    CGFloat dx = (a.x - b.x);
-    CGFloat dy = (a.y - b.y);
-    return dx*dx + dy*dy;
 }
 
 @interface ECCodeView ()
@@ -37,7 +34,17 @@ static inline CGFloat square_distance(CGPoint a, CGPoint b)
 // rendering frame generated from it should be recalculated.
 - (void)setNeedsContentFrame;
 
+// A convinience method that set the selection and notify the delegate if 
+// needed.
 - (void)setSelectedTextRange:(ECTextRange *)selectedTextRange notifyDelegate:(BOOL)shouldNotify;
+
+// Set the selection based on graphical points. If toPoint is nil or equal to
+// fromPoint an empty selection will be set.
+- (void)setSelectedTextFromPoint:(CGPoint)fromPoint toPoint:(CGPoint)toPoint;
+
+// Convinience method to set the selection to a specific index without 
+// notifying the delegate.
+- (void)setSelectedIndex:(NSUInteger)index;
 
 - (void)setNeedsDisplayInRange:(ECTextRange *)range;
 
@@ -48,12 +55,12 @@ static inline CGFloat square_distance(CGPoint a, CGPoint b)
 - (CFRange)lineRangeForTextRange:(NSRange)range;
 
 - (void)processRectsOfLinesInRange:(NSRange)range 
-                         withBlock:(void(^)(CGRect))block;
+                         withBlock:(void(^)(CGRect rct))block;
 
 - (CGRect)rectForContentRange:(NSRange)range;
 
 // Gesture handles
-- (void)handleGestureFocus;
+- (void)handleGestureFocus:(UIGestureRecognizer *)recognizer;
 - (void)handleGestureTap:(UITapGestureRecognizer *)recognizer;
 
 // Return the affine transform to move and scale coordinates to the render
@@ -120,15 +127,60 @@ static inline CGFloat square_distance(CGPoint a, CGPoint b)
     [self setNeedsDisplay];
 }
 
+#pragma mark Overlay methods
+
+@synthesize defaultOverlayDrawBlock;
+
+- (void)setAttributes:(NSDictionary *)attributes forOverlayNamed:(NSString *)overlay
+{
+    [overlayStyles setObject:attributes forKey:overlay];
+}
+
+- (void)addOverlayNamed:(NSString *)overlay toRange:(NSRange)range
+{
+    // Only add if the given overlay style exist
+    NSDictionary *o = [overlayStyles objectForKey:overlay];
+    if (o)
+    {
+        // Get or create the mutable array or ranges
+        NSMutableArray *overlayArray = [overlays objectForKey:o];
+        if (!overlayArray)
+        {
+            overlayArray = [NSMutableArray array];
+            [overlays setObject:overlayArray forKey:o];
+        }
+        // Add given range to array of overlays to applu
+        ECTextRange *r = [[ECTextRange alloc] initWithRange:range];
+        [overlayArray addObject:r];
+        [r release];
+    }
+    
+    [self setNeedsDisplay];
+}
+
+- (void)removeAllOverlays
+{
+    [overlays removeAllObjects];
+}
+
+- (void)removeAllOverlaysNamed:(NSString *)overlay
+{
+    [overlays removeObjectForKey:overlay];
+}
+
 #pragma mark CodeView Initializations
 
 - (void)doInit
 {
+    // Initialize deafult styles
     CTFontRef defaultFont = CTFontCreateWithName((CFStringRef)@"Courier New", 12.0, &CGAffineTransformIdentity);
     defaultAttributes = [[NSDictionary dictionaryWithObject:(id)defaultFont forKey:(id)kCTFontAttributeName] retain];
     // TODO set full default coloring if textSyles == nil
     _styles = [[NSMutableDictionary alloc] initWithObjectsAndKeys:defaultAttributes, ECCodeStyleDefaultTextName, nil];
     
+    // Set UIView properties
+    self.contentMode = UIViewContentModeTopLeft;
+    self.clearsContextBeforeDrawing = YES;
     self.contentInset = UIEdgeInsetsMake(10, 10, 0, 0);
     
     self.text = @"";
@@ -137,7 +189,22 @@ static inline CGFloat square_distance(CGPoint a, CGPoint b)
     markedRange.length = 0;
     markedRangeDirtyRect = CGRectNull;
     
-    [super setContentMode:UIViewContentModeRedraw];
+    // Dictionary of overlay names connected to dictionary of overlay attributes
+    overlayStyles = [[NSMutableDictionary alloc] init];
+    // TODO default overlay styles?
+    
+    // Overlays is a dictionary of dictionary for an overlay named type to
+    // array of ECTextRange to apply the overlay to.
+    overlays = [[NSMutableDictionary alloc] init];
+    
+    // The default block used to render an overlay that doesn't have the ECCodeOverlayDrawBlockName attribute.
+    self.defaultOverlayDrawBlock = ^(CGContextRef ctx, CGRect rct, NSDictionary* attr) {
+        UIColor *c = (UIColor *)[attr objectForKey:ECCodeOverlayColorName];
+        if (!c)
+            c = [UIColor redColor];
+        [c setFill];
+        CGContextFillRect(ctx, rct);
+    };
 }
 
 - (id)initWithFrame:(CGRect)frame 
@@ -178,6 +245,13 @@ static inline CGFloat square_distance(CGPoint a, CGPoint b)
     
     // Recognizers
     [focusRecognizer release];
+    
+    [caretView release];
+    
+    // Overlays
+    [overlays release];
+    [overlayStyles release];
+    self.defaultOverlayDrawBlock = nil;
     
     [super dealloc];
 }
@@ -281,31 +355,29 @@ static inline CGFloat square_distance(CGPoint a, CGPoint b)
     CGContextConcatCTM(context, [self renderSpaceTransformationFlipped:YES inverted:NO]);
     
     // Draw core text frame
-    // TODO! clip on rect
+    // TODO!!! clip on rect
     CGContextSetTextPosition(context, 0, 0);
     CGContextSetTextMatrix(context, CGAffineTransformIdentity);
     CGContextTranslateCTM(context, contentFrameOrigin.x, contentFrameOrigin.y);
+//    CGContextAddRect(context, rect); should this clip?
     CTFrameDraw(contentFrame, context);
     CGContextRestoreGState(context);
     
-    // TODO draw decorations
-    
-    // TESTs
-//    __block CGMutablePathRef testPath = CGPathCreateMutable();
-    [self processRectsOfLinesInRange:(NSRange){0, 26} withBlock:^(CGRect r) {
-//        CGPathAddRect(testPath, NULL, r);
-        CGContextAddRect(context, r);
+    //  Draw overlays
+    // TODO evalue if concurrent should be used only in particular case ie overlays > N
+    [overlays enumerateKeysAndObjectsWithOptions:NSEnumerationConcurrent usingBlock:^(id attribs, id ranges, BOOL *stop) {
+        DrawOverlayInContext drawBlock = (DrawOverlayInContext)[attribs objectForKey:ECCodeOverlayDrawBlockName];
+        if (!drawBlock)
+            drawBlock = defaultOverlayDrawBlock;
+        [(NSArray *)ranges enumerateObjectsUsingBlock:^(id range, NSUInteger idx, BOOL *stop) {
+            [self processRectsOfLinesInRange:[(ECTextRange *)range range] withBlock:^(CGRect r) {
+                if (CGRectIntersectsRect(r, rect))
+                {
+                    drawBlock(context, r, attribs);
+                } // TODO else stop 
+            }];
+        }];
     }];
-    [[UIColor redColor] setStroke];
-//    CGContextAddPath(context, testPath);
-    CGContextStrokePath(context);
-    
-    if (selection)
-    {
-        CGRect caretRect = [self caretRectForPosition:(ECTextPosition *)selection.start];
-        [[UIColor greenColor] setFill];
-        CGContextFillRect(context, caretRect);
-    }
     
     [super drawRect:rect];
 }
@@ -314,6 +386,60 @@ static inline CGFloat square_distance(CGPoint a, CGPoint b)
 {
     // TODO implement custom stuff
     [super layoutSubviews];
+    
+    BOOL firstResponder = [self isFirstResponder];
+    
+    // Place cursor caret
+    if (firstResponder && selection && [selection isEmpty])
+    {
+        CGRect caretRect = [self caretRectForPosition:(ECTextPosition *)selection.start];
+        if (!caretView)
+        {
+            caretView = [[ECCaretView alloc] initWithFrame:caretRect];
+            caretView.caretShapeBlock = ^(CGRect rect) {
+                CGFloat radius = 1;
+                CGMutablePathRef retPath = CGPathCreateMutable();
+                
+                CGRect innerRect = CGRectInset(rect, radius, radius);
+                
+                CGFloat inside_right = innerRect.origin.x + innerRect.size.width;
+                CGFloat outside_right = rect.origin.x + rect.size.width;
+                CGFloat inside_bottom = innerRect.origin.y + innerRect.size.height;
+                CGFloat outside_bottom = rect.origin.y + rect.size.height;
+                
+                CGFloat inside_top = innerRect.origin.y;
+                CGFloat outside_top = rect.origin.y;
+                CGFloat outside_left = rect.origin.x;
+                
+                CGPathMoveToPoint(retPath, NULL, innerRect.origin.x, outside_top);
+                
+                CGPathAddLineToPoint(retPath, NULL, inside_right, outside_top);
+                CGPathAddArcToPoint(retPath, NULL, outside_right, outside_top, outside_right, inside_top, radius);
+                CGPathAddLineToPoint(retPath, NULL, outside_right, inside_bottom);
+                CGPathAddArcToPoint(retPath, NULL,  outside_right, outside_bottom, inside_right, outside_bottom, radius);
+                
+                CGPathAddLineToPoint(retPath, NULL, innerRect.origin.x, outside_bottom);
+                CGPathAddArcToPoint(retPath, NULL,  outside_left, outside_bottom, outside_left, inside_bottom, radius);
+                CGPathAddLineToPoint(retPath, NULL, outside_left, inside_top);
+                CGPathAddArcToPoint(retPath, NULL,  outside_left, outside_top, innerRect.origin.x, outside_top, radius);
+                
+                CGPathCloseSubpath(retPath);
+                
+                return (CGPathRef)retPath;
+            };
+            caretView.pulsePerSecond = 1;
+            caretView.caretColor = [UIColor grayColor];
+            [self addSubview:caretView];
+        }
+        caretView.frame = caretRect;
+        caretView.hidden = NO;
+        caretView.blink = YES;
+    }
+    else if (caretView && !caretView.hidden)
+    {
+        caretView.blink = NO;
+        caretView.hidden = YES;
+    }
 }
 
 - (void)didMoveToWindow
@@ -322,7 +448,7 @@ static inline CGFloat square_distance(CGPoint a, CGPoint b)
     
     if (!focusRecognizer)
     {
-        focusRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleGestureFocus)];
+        focusRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleGestureFocus:)];
         [self addGestureRecognizer:focusRecognizer];
     }
     
@@ -425,15 +551,13 @@ static inline CGFloat square_distance(CGPoint a, CGPoint b)
         NSUInteger s = ((ECTextPosition*)selection.start).index;
         NSUInteger e = ((ECTextPosition*)selection.end).index;
         if (e > contentLength || s > contentLength || e < s)
-        {
             return;
-        }
         insertRange = NSMakeRange(s, e - s);
     }
     
     // TODO check if char is space and autocomplete
     
-    // TODO unmakrText
+    [self unmarkText];
     
     // TODO beforeMutate
     
@@ -445,7 +569,8 @@ static inline CGFloat square_distance(CGPoint a, CGPoint b)
     
     // TODO afterMutate
     
-    // TODO setSelectionToIndex
+    // Move selection
+    [self setSelectedIndex:(insertRange.location + [aText length])];
     
     [self setNeedsContentFrame];
     [self setNeedsDisplay];
@@ -973,6 +1098,29 @@ static inline CGFloat square_distance(CGPoint a, CGPoint b)
     [self setNeedsLayout];
 }
 
+- (void)setSelectedTextFromPoint:(CGPoint)fromPoint toPoint:(CGPoint)toPoint
+{
+    UITextPosition *startPosition = [self closestPositionToPoint:fromPoint];
+    UITextPosition *endPosition;
+    if (CGPointEqualToPoint(toPoint, fromPoint))
+        endPosition = startPosition;
+    else
+        endPosition = [self closestPositionToPoint:toPoint];
+    
+    ECTextRange *range = [[ECTextRange alloc] initWithStart:(ECTextPosition *)startPosition end:(ECTextPosition *)endPosition];
+    
+    [self setSelectedTextRange:range];
+    
+    [range release];
+}
+
+- (void)setSelectedIndex:(NSUInteger)index
+{
+    ECTextRange *range = [[ECTextRange alloc] initWithRange:(NSRange){ index, 0}];
+    [self setSelectedTextRange:range notifyDelegate:NO];
+    [range release];
+}
+
 // TODO rethink: contentFrameInvalid should be YES if text/attr changed to recreate framesetter, 
 // contentFrame should be released and set to nil when bounds changes.
 - (void)setNeedsContentFrame
@@ -1057,7 +1205,7 @@ static inline CGFloat square_distance(CGPoint a, CGPoint b)
     return (CFRange){ firstResultLine, lastResultLine - firstResultLine + 1 };
 }
 
-- (void)processRectsOfLinesInRange:(NSRange)range withBlock:(void(^)(CGRect))block
+- (void)processRectsOfLinesInRange:(NSRange)range withBlock:(void(^)(CGRect rct))block
 {
     // TODO update contentFrame if needed
     CFArrayRef lines = CTFrameGetLines(contentFrame);
@@ -1154,25 +1302,21 @@ static inline CGFloat square_distance(CGPoint a, CGPoint b)
     return result;
 }
 
-- (void)handleGestureFocus
+- (void)handleGestureFocus:(UIGestureRecognizer *)recognizer
 {
-    if (![self isFirstResponder])
+    if (![self isFirstResponder] && [self canBecomeFirstResponder])
         [self becomeFirstResponder];
+    
+    CGPoint point = [recognizer locationInView:self];
+    
+    [self setSelectedTextFromPoint:point toPoint:point];
 }
 
 - (void)handleGestureTap:(UITapGestureRecognizer *)recognizer
 {
     CGPoint point = [recognizer locationInView:self];
     
-    UITextPosition *position = [self closestPositionToPoint:point];
-    
-    ECTextRange *range = [[ECTextRange alloc] initWithStart:(ECTextPosition *)position end:(ECTextPosition *)position];
-    
-    [self setSelectedTextRange:range];
-    
-    [range release];
-    
-    [self setNeedsDisplay];
+    [self setSelectedTextFromPoint:point toPoint:point];
 }
 
 - (CGAffineTransform)renderSpaceTransformationFlipped:(BOOL)flipped 
