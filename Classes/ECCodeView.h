@@ -13,9 +13,13 @@
 
 // TODO
 // 1. Draw plain text DONE
-// 2. Text selection
-// 3. Conform to text input/text editing
-// 4. Add coloring function
+// 2. Text selection PARTIAL
+// 3. Conform to text input/text editing DONE
+// 4. Add coloring/styling function
+//
+// - Fix up/down cursor movement with keyboard
+// - Create property for block like void (^Decoration)(CGMutablePathRef res, CGRect rect, NSUInteger index, NSUInteger count);
+// - Remove blinking cursor?
 //
 // References
 // search for "drawing managing text" in documentation.

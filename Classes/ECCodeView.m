@@ -289,7 +289,7 @@ static inline BOOL in_range(NSRange r, CFIndex i)
     CGContextConcatCTM(context, [self renderSpaceTransformationFlipped:YES inverted:NO]);
     
     // Draw core text frame
-    // TODO! clip on rect
+    // TODO!!! clip on rect
     CGContextSetTextPosition(context, 0, 0);
     CGContextSetTextMatrix(context, CGAffineTransformIdentity);
     CGContextTranslateCTM(context, contentFrameOrigin.x, contentFrameOrigin.y);
@@ -297,23 +297,6 @@ static inline BOOL in_range(NSRange r, CFIndex i)
     CGContextRestoreGState(context);
     
     // TODO draw decorations
-    
-    // TESTs
-//    __block CGMutablePathRef testPath = CGPathCreateMutable();
-    [self processRectsOfLinesInRange:(NSRange){0, 26} withBlock:^(CGRect r) {
-//        CGPathAddRect(testPath, NULL, r);
-        CGContextAddRect(context, r);
-    }];
-    [[UIColor redColor] setStroke];
-//    CGContextAddPath(context, testPath);
-    CGContextStrokePath(context);
-    
-//    if (selection)
-//    {
-//        CGRect caretRect = [self caretRectForPosition:(ECTextPosition *)selection.start];
-//        [[UIColor greenColor] setFill];
-//        CGContextFillRect(context, caretRect);
-//    }
     
     [super drawRect:rect];
 }
@@ -332,6 +315,39 @@ static inline BOOL in_range(NSRange r, CFIndex i)
         if (!caretView)
         {
             caretView = [[ECCaretView alloc] initWithFrame:caretRect];
+            caretView.caretShapeBlock = ^(CGRect rect) {
+                CGFloat radius = 1;
+                CGMutablePathRef retPath = CGPathCreateMutable();
+                
+                CGRect innerRect = CGRectInset(rect, radius, radius);
+                
+                CGFloat inside_right = innerRect.origin.x + innerRect.size.width;
+                CGFloat outside_right = rect.origin.x + rect.size.width;
+                CGFloat inside_bottom = innerRect.origin.y + innerRect.size.height;
+                CGFloat outside_bottom = rect.origin.y + rect.size.height;
+                
+                CGFloat inside_top = innerRect.origin.y;
+                CGFloat outside_top = rect.origin.y;
+                CGFloat outside_left = rect.origin.x;
+                
+                CGPathMoveToPoint(retPath, NULL, innerRect.origin.x, outside_top);
+                
+                CGPathAddLineToPoint(retPath, NULL, inside_right, outside_top);
+                CGPathAddArcToPoint(retPath, NULL, outside_right, outside_top, outside_right, inside_top, radius);
+                CGPathAddLineToPoint(retPath, NULL, outside_right, inside_bottom);
+                CGPathAddArcToPoint(retPath, NULL,  outside_right, outside_bottom, inside_right, outside_bottom, radius);
+                
+                CGPathAddLineToPoint(retPath, NULL, innerRect.origin.x, outside_bottom);
+                CGPathAddArcToPoint(retPath, NULL,  outside_left, outside_bottom, outside_left, inside_bottom, radius);
+                CGPathAddLineToPoint(retPath, NULL, outside_left, inside_top);
+                CGPathAddArcToPoint(retPath, NULL,  outside_left, outside_top, innerRect.origin.x, outside_top, radius);
+                
+                CGPathCloseSubpath(retPath);
+                
+                return (CGPathRef)retPath;
+            };
+            caretView.pulsePerSecond = 1;
+            caretView.caretColor = [UIColor grayColor];
             [self addSubview:caretView];
         }
         caretView.frame = caretRect;
