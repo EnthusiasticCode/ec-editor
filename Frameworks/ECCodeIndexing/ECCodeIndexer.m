@@ -204,9 +204,9 @@
     ECCodeIndexingFile *file = [self.files objectForKey:fileURL];
     [invocation setArgument:&file atIndex:2];
     id<ECCodeIndexerPlugin> plugin = [self pluginForFile:file];
-    if ([plugin respondsToSelector:[invocation selector]])
-        [invocation invokeWithTarget:plugin];
-    [invocation invokeWithTarget:nil];
+    if (![plugin respondsToSelector:[invocation selector]])
+        [invocation invokeWithTarget:nil];
+    [invocation invokeWithTarget:plugin];
 }
 
 - (void)forwardInvocation:(NSInvocation *)invocation

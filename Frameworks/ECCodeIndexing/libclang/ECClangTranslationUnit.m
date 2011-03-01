@@ -210,7 +210,6 @@ static ECCompletionResult *completionResultFromClangCompletionResult(CXCompletio
         CXDiagnostic clangDiagnostic = clang_getDiagnostic(self.translationUnit, i);
         ECDiagnostic *diagnostic = diagnosticFromClangDiagnostic(clangDiagnostic);
         [diagnostics addObject:diagnostic];
-        NSLog(@"%@", diagnostic);
         clang_disposeDiagnostic(clangDiagnostic);
     }
     return diagnostics;
@@ -237,7 +236,6 @@ static ECCompletionResult *completionResultFromClangCompletionResult(CXCompletio
     for (unsigned i = 0; i < numTokens; i++)
     {
         [tokens addObject:tokenFromClangToken(self.translationUnit, clangTokens[i])];
-        NSLog(@"%@", [tokens objectAtIndex:i]);
     }
     clang_disposeTokens(self.translationUnit, clangTokens, numTokens);
     return tokens;
