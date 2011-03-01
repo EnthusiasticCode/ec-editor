@@ -731,7 +731,8 @@ static inline BOOL in_range(NSRange r, CFIndex i)
     [attributedText release];
     
     // TODO afterMutate
-    // TODO setSelection endIndex
+    
+    [self setSelectedIndex:endIndex];
     
     [self setNeedsContentFrame];
     [self setNeedsDisplay];
@@ -1306,7 +1307,9 @@ static inline BOOL in_range(NSRange r, CFIndex i)
     CFIndex firstLine = [self lineIndexForLocation:range.location 
                                            inLines:lines 
                                        containedIn:(CFRange){0, lineCount}];
-    if (firstLine < 0 || firstLine >= lineCount)
+    if (firstLine >= lineCount)
+        firstLine = lineCount - 1;
+    if (firstLine < 0)
         return;
     
     BOOL lastLine = NO;
