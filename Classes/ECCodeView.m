@@ -65,7 +65,7 @@ static inline BOOL in_range(NSRange r, CFIndex i)
 
 // Return the affine transform to move and scale coordinates to the render
 // space. You can specify if you want a flipping transformation.
-- (CGAffineTransform)renderSpaceTransformationFlipped:(BOOL)flipped inverted:(BOOL)inverted;
+- (CGAffineTransform)transormContentFrameFlipped:(BOOL)flipped inverted:(BOOL)inverted;
 
 @end
 
@@ -360,7 +360,7 @@ static inline BOOL in_range(NSRange r, CFIndex i)
     
     // Transform to flipped rendering space
     CGContextSaveGState(context);
-    CGContextConcatCTM(context, [self renderSpaceTransformationFlipped:YES inverted:NO]);
+    CGContextConcatCTM(context, [self transormContentFrameFlipped:YES inverted:NO]);
     
     // Draw core text frame
     // TODO!!! clip on rect
@@ -461,6 +461,13 @@ static inline BOOL in_range(NSRange r, CFIndex i)
     
     if (!content)
         [self setText:nil];
+}
+
+- (CGSize)sizeThatFits:(CGSize)size
+{
+    CGSize s = [super sizeThatFits:size]; //self.bounds.size;
+    s.height = MAX(s.height, contentFrameRect.size.height);
+    return s;
 }
 
 //- (void)touchesEnded:(NSSet*)touches withEvent:(UIEvent*)event
@@ -964,7 +971,7 @@ static inline BOOL in_range(NSRange r, CFIndex i)
     
     // Transform point
     // TODO properly transform with matrix?
-    point = CGPointApplyAffineTransform(point, [self renderSpaceTransformationFlipped:YES inverted:YES]);
+    point = CGPointApplyAffineTransform(point, [self transormContentFrameFlipped:YES inverted:YES]);
 //    point.x -= contentFrameRect.origin.x;
 //    point.y -= contentFrameRect.origin.y;
     
@@ -1232,7 +1239,7 @@ static inline BOOL in_range(NSRange r, CFIndex i)
         return;
     
     BOOL lastLine = NO;
-    CGAffineTransform transform = [self renderSpaceTransformationFlipped:YES inverted:YES];
+    CGAffineTransform transform = [self transormContentFrameFlipped:YES inverted:YES];
 
     for (CFIndex lineIndex = firstLine; lineIndex < lineCount && !lastLine; ++lineIndex) 
     {
@@ -1327,8 +1334,8 @@ static inline BOOL in_range(NSRange r, CFIndex i)
     [self setSelectedTextFromPoint:point toPoint:point];
 }
 
-- (CGAffineTransform)renderSpaceTransformationFlipped:(BOOL)flipped 
-                                             inverted:(BOOL)inverted
+- (CGAffineTransform)transormContentFrameFlipped:(BOOL)flipped 
+                                        inverted:(BOOL)inverted
 {
     CGFloat scale = 1.0;
     CGRect bounds = self.bounds;
