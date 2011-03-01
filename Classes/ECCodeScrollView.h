@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "ECLineMarksView.h"
 
-@interface ECCodeScrollView : UIScrollView {
+@interface ECCodeScrollView : UIScrollView <ECLineMarksViewDelegate> {
 @private
     ECLineMarksView *marks;
 }

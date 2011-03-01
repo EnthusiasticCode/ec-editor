@@ -25,6 +25,8 @@ typedef void (^DrawMarkBlock)(CGContextRef ctx, CGRect rct, UIColor *clr);
     UIEdgeInsets markInsets;
     NSUInteger lineCount;
     NSMutableDictionary *marks;
+    
+    UITapGestureRecognizer *tapMarkRecognizer;
 }
 
 @property (nonatomic, assign) id<ECLineMarksViewDelegate> delegate;

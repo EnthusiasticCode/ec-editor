@@ -8,18 +8,22 @@
 
 #import "ECLineMarksView.h"
 
+@interface ECLineMarksView ()
+
+- (void)markTapped:(UITapGestureRecognizer *)recognizer;
+
+@end
 
 @implementation ECLineMarksView
 
-@dynamic delegate;
-@synthesize drawMarkBlock, markSize, markInsets, lineCount;
+@synthesize delegate, drawMarkBlock, markSize, markInsets, lineCount;
 
 static inline id init(ECLineMarksView *self)
 {
     [self setOpaque:NO];
     self->marks = [[NSMutableDictionary alloc] init];
     self->markSize = CGSizeMake(7, 3);
-    self->markInsets = UIEdgeInsetsMake(5, 1, 5, 1);
+    self->markInsets = UIEdgeInsetsMake(10, 1, 10, 1);
     self->drawMarkBlock = ^(CGContextRef ctx, CGRect rct, UIColor *clr) {
         [[clr colorWithAlphaComponent:0.4] setFill];
         CGContextFillRect(ctx, rct);
@@ -46,8 +50,19 @@ static inline id init(ECLineMarksView *self)
     return self;
 }
 
+- (void)didMoveToWindow
+{
+    if (!tapMarkRecognizer)
+    {
+        tapMarkRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(markTapped:)];
+        [self addGestureRecognizer:tapMarkRecognizer];
+        tapMarkRecognizer.enabled = [marks count] > 0;
+    }
+}
+
 - (void)dealloc
 {
+    [tapMarkRecognizer release];
     [marks release];
     [super dealloc];
 }
@@ -102,6 +117,8 @@ static inline id init(ECLineMarksView *self)
 
 - (void)addMarksWithColor:(UIColor *)color forLines:(NSIndexSet *)lines
 {
+    if ([lines count] == 0)
+        return;
     NSMutableIndexSet *indexes = [marks objectForKey:color];
     if (!indexes)
     {
@@ -110,18 +127,52 @@ static inline id init(ECLineMarksView *self)
     }
     [indexes addIndexes:lines];
     [self setNeedsDisplay];
+    tapMarkRecognizer.enabled = YES;
 }
 
 - (void)removeAllMarks
 {
     [marks removeAllObjects];
+    tapMarkRecognizer.enabled = NO;
     [self setNeedsDisplay];
 }
 
 - (void)removaAllMarksWithColor:(UIColor *)color
 {
     [marks removeObjectForKey:color];
+    if ([marks count] == 0)
+        tapMarkRecognizer.enabled = NO;
     [self setNeedsDisplay];
+}
+
+#pragma mark -
+#pragma mark Private methods
+
+- (void)markTapped:(UITapGestureRecognizer *)recognizer
+{
+    if (lineCount > 0 && [self.delegate respondsToSelector:@selector(lineMarksView:selectedMarkWithColor:atLine:)])
+    {
+        CGPoint point = [recognizer locationInView:self];
+        CGRect bounds = self.bounds;
+        CGFloat lineStep = (bounds.size.height - markInsets.top - markInsets.bottom ) / lineCount;
+        CGPoint markPoint = CGPointMake(bounds.origin.x + bounds.size.width - markSize.width - markInsets.right, markInsets.top);
+        CGSize tapSize = markSize;
+        tapSize.width += markInsets.left + markInsets.right;
+        tapSize.height = MAX(tapSize.height, lineStep);
+        [marks enumerateKeysAndObjectsUsingBlock:^(id color, id lines, BOOL *stop) {
+            [(NSMutableIndexSet *)lines enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
+                if (idx < lineCount)
+                {
+                    CGRect markRect = (CGRect){ {markPoint.x, markPoint.y + lineStep * idx}, tapSize };
+                    if (CGRectContainsPoint(markRect, point))
+                    {
+                        [self.delegate lineMarksView:self selectedMarkWithColor:(UIColor *)color atLine:idx];
+                        *stop = YES;
+                    }
+                }
+            }];
+        }];
+    }
 }
 
 @end

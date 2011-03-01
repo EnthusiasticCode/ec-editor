@@ -16,6 +16,7 @@
 static inline id init(ECCodeScrollView *self)
 {
     self->marks = [[ECLineMarksView alloc] initWithFrame:[self bounds]];
+    [self->marks setDelegate:self];
     [self addSubview:self->marks];
     return self;
 }
@@ -55,6 +56,14 @@ static inline id init(ECCodeScrollView *self)
         marks.frame = bounds;
         [self bringSubviewToFront:marks];
     }
+}
+
+#pragma mark -
+#pragma mark ECLineMarksViewDelegate methods
+
+- (void)lineMarksView:(ECLineMarksView *)view selectedMarkWithColor:(UIColor *)color atLine:(NSUInteger)index
+{
+    NSLog(@"Tapped mark at line: %d", index);
 }
 
 @end
