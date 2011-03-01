@@ -33,6 +33,7 @@
 		B7BF7B6812E05D48005CDF48 /* OUITextCursorOverlay.m in Sources */ = {isa = PBXBuildFile; fileRef = B7BF7B5812E05D48005CDF48 /* OUITextCursorOverlay.m */; };
 		B7BF7B6912E05D48005CDF48 /* OUITextLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = B7BF7B5A12E05D48005CDF48 /* OUITextLayout.m */; };
 		B7BF7B6A12E05D48005CDF48 /* OUITextThumb.m in Sources */ = {isa = PBXBuildFile; fileRef = B7BF7B5C12E05D48005CDF48 /* OUITextThumb.m */; };
+		CD01B8B2131D2B36005AABFC /* ECLineMarksView.m in Sources */ = {isa = PBXBuildFile; fileRef = CD01B8B1131D2B36005AABFC /* ECLineMarksView.m */; };
 		CD0D843A12E9A865005DB220 /* ECCodeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD0D843912E9A865005DB220 /* ECCodeViewController.m */; };
 		CD0D843D12E9A87D005DB220 /* ECCodeView.m in Sources */ = {isa = PBXBuildFile; fileRef = CD0D843C12E9A87D005DB220 /* ECCodeView.m */; };
 		CD5344AC131CCA690082C0E7 /* ECCodeScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = CD5344AB131CCA690082C0E7 /* ECCodeScrollView.m */; };
@@ -82,6 +83,8 @@
 		B7BF7B5A12E05D48005CDF48 /* OUITextLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OUITextLayout.m; sourceTree = "<group>"; };
 		B7BF7B5B12E05D48005CDF48 /* OUITextThumb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OUITextThumb.h; sourceTree = "<group>"; };
 		B7BF7B5C12E05D48005CDF48 /* OUITextThumb.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OUITextThumb.m; sourceTree = "<group>"; };
+		CD01B8B0131D2B36005AABFC /* ECLineMarksView.h */ = {isa = PBXFileReference; fileEncoding = 4; path = ECLineMarksView.h; sourceTree = "<group>"; };
+		CD01B8B1131D2B36005AABFC /* ECLineMarksView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECLineMarksView.m; sourceTree = "<group>"; };
 		CD0D843812E9A865005DB220 /* ECCodeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeViewController.h; sourceTree = "<group>"; };
 		CD0D843912E9A865005DB220 /* ECCodeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeViewController.m; sourceTree = "<group>"; };
 		CD0D843B12E9A87D005DB220 /* ECCodeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeView.h; sourceTree = "<group>"; };
@@ -143,6 +146,8 @@
 				CD6391A61318E0DE00DB6321 /* ECCaretView.m */,
 				CD5344AA131CCA690082C0E7 /* ECCodeScrollView.h */,
 				CD5344AB131CCA690082C0E7 /* ECCodeScrollView.m */,
+				CD01B8B0131D2B36005AABFC /* ECLineMarksView.h */,
+				CD01B8B1131D2B36005AABFC /* ECLineMarksView.m */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -321,6 +326,7 @@
 				CDB4D5CF12F9760800952DB8 /* ECTextRange.m in Sources */,
 				CD6391A71318E0DE00DB6321 /* ECCaretView.m in Sources */,
 				CD5344AC131CCA690082C0E7 /* ECCodeScrollView.m in Sources */,
+				CD01B8B2131D2B36005AABFC /* ECLineMarksView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -18,7 +18,6 @@
 // 4. Add coloring/styling function
 //
 // - sizeThatFits and scrollview
-// - implement deleteBackward
 // - Fix up/down cursor movement with keyboard
 // - Create property for block like void (^Decoration)(CGMutablePathRef res, CGRect rect, NSUInteger index, NSUInteger count);
 // - Remove blinking cursor?

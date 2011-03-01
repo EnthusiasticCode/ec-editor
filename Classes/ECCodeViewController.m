@@ -47,6 +47,11 @@
     // Scroll view
     [codeScrollView setMinimumZoomScale:1.0];
     [codeScrollView setMaximumZoomScale:1.0];
+    codeScrollView.contentSize = CGSizeMake(100, 3000);
+    
+    codeScrollView.marks.lineCount = 100;
+    NSIndexSet *mlines = [NSIndexSet indexSetWithIndexesInRange:(NSRange){20,10}];
+    [codeScrollView.marks addMarksWithColor:[UIColor blueColor] forLines:mlines];
 }
 
 

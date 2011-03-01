@@ -7,11 +7,13 @@
 //
 
 #import <UIKit/UIKit.h>
-
+#import "ECLineMarksView.h"
 
 @interface ECCodeScrollView : UIScrollView {
 @private
-    
+    ECLineMarksView *marks;
 }
+
+@property (nonatomic, retain) ECLineMarksView *marks;
 
 @end
