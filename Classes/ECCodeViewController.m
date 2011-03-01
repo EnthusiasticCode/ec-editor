@@ -11,28 +11,41 @@
 
 @implementation ECCodeViewController
 
-/*
- // The designated initializer.  Override if you create the controller programmatically and want to perform customization that is not appropriate for viewDidLoad.
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
-    if ((self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil])) {
-        // Custom initialization
-    }
-    return self;
-}
-*/
+@synthesize codeView, codeScrollView;
 
 /*
 // Implement loadView to create a view hierarchy programmatically, without using a nib.
-- (void)loadView {
+- (void)loadView 
+{
+    [super loadView];
+    
+    // TODO gesture recognizers here instead that in the codeview.
 }
-*/
+ */
 
-/*
+
 // Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    codeView.text = @"int main(arguments)\n{\n\treturn 0;\n}";
+    
+    // Styles test
+    NSDictionary *keywordStyle = [NSDictionary dictionaryWithObjectsAndKeys:
+                                  (id)[[UIColor blueColor] CGColor], (id)kCTForegroundColorAttributeName, 
+                                  nil];
+    [codeView setAttributes:keywordStyle forStyleNamed:ECCodeStyleKeywordName];
+    [codeView setStyleNamed:ECCodeStyleKeywordName toRange:(NSRange){0, 3}];
+    
+    // Overlay test
+    NSDictionary *overlayAttrib = [NSDictionary dictionaryWithObject:[UIColor colorWithRed:0 green:0 blue:1 alpha:0.5] forKey:ECCodeOverlayColorName];
+    [codeView setAttributes:overlayAttrib forOverlayNamed:@"MyOverlay"];
+    [codeView addOverlayNamed:@"MyOverlay" toRange:(NSRange){4, 4}];
+    
+    // Scroll view
+    [codeScrollView setMinimumZoomScale:1.0];
+    [codeScrollView setMaximumZoomScale:1.0];
 }
-*/
 
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
@@ -52,11 +65,14 @@
 - (void)viewDidUnload {
     [super viewDidUnload];
     // Release any retained subviews of the main view.
-    // e.g. self.myOutlet = nil;
+    self.codeView = nil;
+    self.codeScrollView = nil;
 }
 
 
 - (void)dealloc {
+    [codeView release];
+    [codeScrollView release];
     [super dealloc];
 }
 

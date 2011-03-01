@@ -7,13 +7,14 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "ECCodeView.h"
+#import "ECCodeViewController.h"
 
 @interface editAppDelegate : NSObject <UIApplicationDelegate> {
+
 }
 
 @property (nonatomic, retain) IBOutlet UIWindow *window;
-@property (nonatomic, retain) IBOutlet ECCodeView *codeView;
+@property (nonatomic, retain) IBOutlet ECCodeViewController *codeViewController;
 
 
 @end

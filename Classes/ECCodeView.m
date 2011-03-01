@@ -1054,6 +1054,9 @@ static inline BOOL in_range(NSRange r, CFIndex i)
     ECTextPosition *pos = (ECTextPosition *)position;
     NSUInteger index = pos.index;
     
+    if (index >= [content length])
+        return defaultAttributes;
+    
     NSDictionary *ctStyles;
     if (direction == UITextStorageDirectionBackward && index > 0)
         ctStyles = [content attributesAtIndex:index-1 effectiveRange:NULL];
