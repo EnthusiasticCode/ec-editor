@@ -57,22 +57,23 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSString *file = [self.project.rootDirectory stringByAppendingPathComponent:[[self contentsOfRootDirectory] objectAtIndex:indexPath.row]];
+    NSURL *file = [NSURL fileURLWithPath:[[self.project.rootDirectory path] stringByAppendingPathComponent:[[self contentsOfRootDirectory] objectAtIndex:indexPath.row]]];
     [self loadFile:file];
 }
 
-- (void)loadProject:(NSString *)name from:(NSString *)rootDirectory
+- (void)loadProjectFromRootDirectory:(NSURL *)rootDirectory
 {
-    self.project = [[ECCodeProject alloc] initWithRootDirectory:rootDirectory];
+    self.project = [ECCodeProject projectWithRootDirectory:rootDirectory];
+    self.codeIndexer = [[[ECCodeIndexer alloc] init] autorelease];
 }
 
-- (void)loadFile:(NSString *)file
+- (void)loadFile:(NSURL *)fileURL
 {
-    self.codeView.text = [NSString stringWithContentsOfFile:file encoding:NSUTF8StringEncoding error:nil];
-    ECCodeIndexer *codeIndexer = [[ECCodeIndexer alloc] initWithSource:[NSURL fileURLWithPath:file]];
-    self.codeIndexer = codeIndexer;
-    for (ECToken *token in [self.codeIndexer tokens])
+    self.codeView.text = [NSString stringWithContentsOfURL:fileURL encoding:NSUTF8StringEncoding error:nil];
+    [self.codeIndexer loadFile:fileURL];
+    for (ECToken *token in [self.codeIndexer tokensForFile:fileURL inRange:NSMakeRange(0, [self.codeView.text length])])
     {
+        NSLog(@"%@", token);
         switch (token.kind)
         {
             case ECTokenKindKeyword:
@@ -85,12 +86,11 @@
                 break;
         }
     }
-    [codeIndexer release];
 }
 
 - (NSArray *)contentsOfRootDirectory
 {
-    return [self.fileManager contentsOfDirectoryAtPath:self.project.rootDirectory error:NULL];
+    return [self.fileManager contentsOfDirectoryAtPath:[self.project.rootDirectory path] error:NULL];
 }
 
 - (void)textViewDidChange:(UITextView *)textView
@@ -103,16 +103,6 @@
     if (!textView.text)
         return;
     [self showCompletions];
-}
-
-- (NSString *)indexedTextBuffer
-{
-    return self.codeView.text;
-}
-
-- (NSRange)indexedTextSelection
-{
-    return self.codeView.selectedRange;
 }
 
 - (void)applyCompletion:(NSString *)completion

@@ -7,6 +7,7 @@
 //
 
 #import "ECCodeProject.h"
+#import <ECAdditions/NSURL+ECAdditions.h>
 #import <CoreData/CoreData.h>
 
 
@@ -18,20 +19,6 @@
 @synthesize persistentStoreCoordinator;
 @synthesize rootDirectory = _rootDirectory;
 @synthesize name = _name;
-
-- (id)initWithRootDirectory:(NSString *)rootDirectory
-{
-    NSFileManager *fileManager = [[[NSFileManager alloc] init] autorelease];
-    if (![fileManager fileExistsAtPath:rootDirectory])
-        return nil;
-    self = [super init];
-    if (self)
-    {
-        _name = [[rootDirectory lastPathComponent] retain];
-        _rootDirectory = [rootDirectory copy];
-    }
-    return self;
-}
 
 - (void)dealloc
 {
@@ -55,6 +42,26 @@
     [managedObjectModel release];
     [persistentStoreCoordinator release];
     [super dealloc];
+}
+
+- (id)initWithRootDirectory:(NSURL *)rootDirectory
+{
+    if (![rootDirectory isFileURLAndExists])
+        return nil;
+    self = [super init];
+    if (self)
+    {
+        _name = [[rootDirectory lastPathComponent] retain];
+        _rootDirectory = [rootDirectory retain];
+    }
+    return self;
+}
+
++ (id)projectWithRootDirectory:(NSURL *)rootDirectory
+{
+    id project = [self alloc];
+    project = [project initWithRootDirectory:rootDirectory];
+    return [project autorelease];
 }
 
 #pragma mark -
@@ -100,7 +107,7 @@
     if (persistentStoreCoordinator)
         return persistentStoreCoordinator;
     
-    NSURL *storeUrl = [NSURL fileURLWithPath:[self.rootDirectory stringByAppendingPathComponent:[self.name stringByAppendingPathExtension:@"sqlite"]]];
+    NSURL *storeUrl = [NSURL fileURLWithPath:[[self.rootDirectory path] stringByAppendingPathComponent:[self.name stringByAppendingPathExtension:@"sqlite"]]];
     
     NSError *error = nil;
     persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:[self managedObjectModel]];

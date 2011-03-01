@@ -106,8 +106,6 @@
 		B7FCA72D131A722D002D6C7C /* NSObject+KiwiVerifierAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FCA6EB131A722D002D6C7C /* NSObject+KiwiVerifierAdditions.m */; };
 		B7FCA72E131A722D002D6C7C /* NSValue+KiwiAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FCA6ED131A722D002D6C7C /* NSValue+KiwiAdditions.m */; };
 		B7FCA734131A73B3002D6C7C /* ECCodeIndexingSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FCA733131A73B3002D6C7C /* ECCodeIndexingSpec.m */; };
-		B7FCA738131A750C002D6C7C /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7FCA737131A750C002D6C7C /* MobileCoreServices.framework */; };
-		B7FCA739131A750C002D6C7C /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7FCA737131A750C002D6C7C /* MobileCoreServices.framework */; };
 		B7FCA73B131A752B002D6C7C /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7FCA73A131A752B002D6C7C /* SenTestingKit.framework */; };
 		B7FCA740131A762F002D6C7C /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7FCA73F131A762F002D6C7C /* UIKit.framework */; };
 		B7FCA741131A7673002D6C7C /* libclang.dylib in Resources */ = {isa = PBXBuildFile; fileRef = B7FCA56B131A6FB9002D6C7C /* libclang.dylib */; };
@@ -161,6 +159,7 @@
 		B7CECBA6131AB84B00B65157 /* Library.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Library.xcconfig; sourceTree = "<group>"; };
 		B7D65C41131ADFF400C3FA93 /* ECAdditions.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ECAdditions.xcodeproj; path = ../ECAdditions/ECAdditions.xcodeproj; sourceTree = "<group>"; };
 		B7D65C61131AE09300C3FA93 /* libECAdditions.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libECAdditions.a; sourceTree = SOURCE_ROOT; };
+		B7FB50E1131AC03B00651FDD /* Shared.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
 		B7FCA554131A6FB9002D6C7C /* ECCodeIndexer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ECCodeIndexer.h; sourceTree = "<group>"; };
 		B7FCA555131A6FB9002D6C7C /* ECCodeIndexer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ECCodeIndexer.m; sourceTree = "<group>"; };
 		B7FCA557131A6FB9002D6C7C /* ECCompletionChunk.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ECCompletionChunk.h; sourceTree = "<group>"; };
@@ -338,7 +337,6 @@
 		B7FCA6EC131A722D002D6C7C /* NSValue+KiwiAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSValue+KiwiAdditions.h"; sourceTree = "<group>"; };
 		B7FCA6ED131A722D002D6C7C /* NSValue+KiwiAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSValue+KiwiAdditions.m"; sourceTree = "<group>"; };
 		B7FCA733131A73B3002D6C7C /* ECCodeIndexingSpec.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeIndexingSpec.m; sourceTree = "<group>"; };
-		B7FCA737131A750C002D6C7C /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS4.2.sdk/System/Library/Frameworks/MobileCoreServices.framework; sourceTree = DEVELOPER_DIR; };
 		B7FCA73A131A752B002D6C7C /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS4.2.sdk/Developer/Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
 		B7FCA73F131A762F002D6C7C /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS4.2.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
 /* End PBXFileReference section */
@@ -349,7 +347,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				B7FCA651131A71AE002D6C7C /* libclang.dylib in Frameworks */,
-				B7FCA738131A750C002D6C7C /* MobileCoreServices.framework in Frameworks */,
 				B7D65C62131AE09300C3FA93 /* libECAdditions.a in Frameworks */,
 				B761FCC6131B05A2006072A0 /* Foundation.framework in Frameworks */,
 			);
@@ -360,7 +357,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				B7FCA653131A71BD002D6C7C /* libclang.dylib in Frameworks */,
-				B7FCA739131A750C002D6C7C /* MobileCoreServices.framework in Frameworks */,
 				B7FCA73B131A752B002D6C7C /* SenTestingKit.framework in Frameworks */,
 				B7FCA740131A762F002D6C7C /* UIKit.framework in Frameworks */,
 				B7D65C19131ADDCA00C3FA93 /* libECCodeIndexing.a in Frameworks */,
@@ -469,7 +465,6 @@
 				B761FCC5131B05A2006072A0 /* Foundation.framework */,
 				B7FCA73F131A762F002D6C7C /* UIKit.framework */,
 				B7FCA73A131A752B002D6C7C /* SenTestingKit.framework */,
-				B7FCA737131A750C002D6C7C /* MobileCoreServices.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -888,12 +883,14 @@
 /* Begin XCBuildConfiguration section */
 		B7FCA54F131A6F98002D6C7C /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B7FCA575131A6FC7002D6C7C /* Shared.xcconfig */;
 			buildSettings = {
 			};
 			name = Debug;
 		};
 		B7FCA550131A6F98002D6C7C /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B7FB50E1131AC03B00651FDD /* Shared.xcconfig */;
 			buildSettings = {
 			};
 			name = Release;

@@ -7,11 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
-#import <ECCodeIndexing/ECCodeIndexerDelegate.h>
 @class ECCodeIndexer;
 @class ECCodeProject;
 
-@interface ECCodeProjectController : UISplitViewController <ECCodeIndexerDelegate, UITableViewDataSource, UITableViewDelegate>
+@interface ECCodeProjectController : UISplitViewController <UITableViewDataSource, UITableViewDelegate>
 @property (nonatomic, retain) ECCodeProject *project;
 @property (nonatomic, retain) NSFileManager *fileManager;
 @property (nonatomic, retain) IBOutlet UITextView *codeView;
@@ -21,8 +20,8 @@
 // display the completion popovertable if possible
 - (void)showCompletions;
 
-- (void)loadProject:(NSString *)name from:(NSString *)rootDirectory;
-- (void)loadFile:(NSString *)file;
+- (void)loadProjectFromRootDirectory:(NSURL *)rootDirectory;
+- (void)loadFile:(NSURL *)file;
 - (NSArray *)contentsOfRootDirectory;
 
 @end

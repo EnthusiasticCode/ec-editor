@@ -10,7 +10,6 @@
 #import "ECCodeIndexingFile.h"
 #import "ECCodeIndexerPlugin.h"
 #import <ECAdditions/NSURL+ECAdditions.h>
-#import <MobileCoreServices/MobileCoreServices.h>
 #import <objc/runtime.h>
 // TODO: plugins are hardcoded for now
 #import "ECClangCodeIndexer.h"
@@ -51,6 +50,7 @@
     self.pluginsByExtension = nil;
     self.languageToExtensionMappingDictionary = nil;
     self.extensionToLanguageMappingDictionary = nil;
+    self.methodsToForwardToPlugins = nil;
     self.files = nil;
     [super dealloc];
 }
@@ -86,6 +86,7 @@
             [pluginsByExtension setObject:plugin forKey:extension];
             [extensionToLanguageMappingDictionary setObject:[pluginExtensionToLanguageMappingDictionary objectForKey:extension] forKey:extension];
         }
+        [plugin release];
     }
     self.pluginsByLanguage = pluginsByLanguage;
     self.pluginsByExtension = pluginsByExtension;
@@ -129,6 +130,7 @@
         [self release];
         return nil;
     }
+    self.files = [NSMutableDictionary dictionary];
     return self;
 }
 
@@ -201,7 +203,10 @@
     [invocation getArgument:&fileURL atIndex:2];
     ECCodeIndexingFile *file = [self.files objectForKey:fileURL];
     [invocation setArgument:&file atIndex:2];
-    [invocation invokeWithTarget:[self pluginForFile:file]];    
+    id<ECCodeIndexerPlugin> plugin = [self pluginForFile:file];
+    if ([plugin respondsToSelector:[invocation selector]])
+        [invocation invokeWithTarget:plugin];
+    [invocation invokeWithTarget:nil];
 }
 
 - (void)forwardInvocation:(NSInvocation *)invocation
@@ -219,33 +224,5 @@
         return YES;
     return [super respondsToSelector:selector];
 }
-
-//- (NSArray *)completionsForFile:(NSURL *)fileURL withSelection:(NSRange)selection
-//{
-//    ECCodeIndexingFile *file = [self.files objectForKey:fileURL];
-//    return [[self pluginForFile:file] completionsForFile:file withSelection:selection];
-//}
-//
-//- (NSArray *)diagnosticsForFile:(NSURL *)fileURL
-//{
-//    ECCodeIndexingFile *file = [self.files objectForKey:fileURL];
-//    return [[self pluginForFile:file] diagnosticsForFile:file];
-//}
-//
-//- (NSArray *)fixItsForFile:(NSURL *)fileURL
-//{
-//    ECCodeIndexingFile *file = [self.files objectForKey:fileURL];
-//    return [[self pluginForFile:file] fixItsForFile:fileURL];
-//}
-//
-//- (NSArray *)tokensForFile:(NSURL *)fileURL inRange:(NSRange)range
-//{
-//    return [[self pluginForFile:[self.files objectForKey:fileURL]] tokensForFile:fileURL inRange:range];
-//}
-//
-//- (NSArray *)tokensForFile:(NSURL *)fileURL
-//{
-//    return [[self pluginForFile:[self.files objectForKey:fileURL]] tokensForFile:fileURL];
-//}
 
 @end

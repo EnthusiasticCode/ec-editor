@@ -110,93 +110,6 @@
 		B7E9DD12131942BB008863CF /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7E3FA3A1305A92F0019D123 /* SenTestingKit.framework */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXContainerItemProxy section */
-		B761FCE1131B072D006072A0 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B761FCD5131B072C006072A0 /* ECCodeIndexing.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = B7FCA60D131A6FE0002D6C7C;
-			remoteInfo = ECCodeIndexing;
-		};
-		B761FCE3131B072D006072A0 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B761FCD5131B072C006072A0 /* ECCodeIndexing.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = B7FCA61D131A6FED002D6C7C;
-			remoteInfo = "ECCodeIndexing-Test";
-		};
-		B761FCED131B0737006072A0 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B761FCE5131B0736006072A0 /* ECMobileAppKit.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = B7FB520B131AC35E00651FDD;
-			remoteInfo = ECMobileAppKit;
-		};
-		B761FCEF131B0737006072A0 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B761FCE5131B0736006072A0 /* ECMobileAppKit.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = B7FB521B131AC36800651FDD;
-			remoteInfo = "ECMobileAppKit-Test";
-		};
-		B761FD09131B0764006072A0 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B761FD04131B0763006072A0 /* ECAdditions.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = B7D65BF5131AD95300C3FA93;
-			remoteInfo = ECAdditions;
-		};
-		B761FD0B131B0764006072A0 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B761FD04131B0763006072A0 /* ECAdditions.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = B7FB50ED131AC06B00651FDD;
-			remoteInfo = "ECAdditions-Test";
-		};
-		B761FD25131B0828006072A0 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B761FD04131B0763006072A0 /* ECAdditions.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = B7FB5107131AC07900651FDD;
-			remoteInfo = ECAdditions;
-		};
-		B761FD27131B082E006072A0 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B761FCE5131B0736006072A0 /* ECMobileAppKit.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = B7FB520A131AC35E00651FDD;
-			remoteInfo = ECMobileAppKit;
-		};
-		B761FD29131B0832006072A0 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B761FCD5131B072C006072A0 /* ECCodeIndexing.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = B7FCA60C131A6FE0002D6C7C;
-			remoteInfo = ECCodeIndexing;
-		};
-		B761FD2B131B083A006072A0 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B761FD04131B0763006072A0 /* ECAdditions.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = B7FB50EC131AC06B00651FDD;
-			remoteInfo = "ECAdditions-Test";
-		};
-		B761FD2D131B083D006072A0 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B761FCE5131B0736006072A0 /* ECMobileAppKit.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = B7FB521A131AC36800651FDD;
-			remoteInfo = "ECMobileAppKit-Test";
-		};
-		B761FD2F131B0841006072A0 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B761FCD5131B072C006072A0 /* ECCodeIndexing.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = B7FCA61C131A6FED002D6C7C;
-			remoteInfo = "ECCodeIndexing-Test";
-		};
-/* End PBXContainerItemProxy section */
-
 /* Begin PBXFileReference section */
 		B709A2C712E9AAC00099F6E0 /* CodeProjectController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = CodeProjectController.xib; path = en.lproj/CodeProjectController.xib; sourceTree = "<group>"; };
 		B73022F612E63CC30029269C /* edit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = edit.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -221,9 +134,9 @@
 		B761FCAE131B04A2006072A0 /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS4.2.sdk/System/Library/Frameworks/MobileCoreServices.framework; sourceTree = DEVELOPER_DIR; };
 		B761FCB1131B04A9006072A0 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS4.2.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
 		B761FCB4131B04B0006072A0 /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS4.2.sdk/System/Library/Frameworks/CoreText.framework; sourceTree = DEVELOPER_DIR; };
-		B761FCD5131B072C006072A0 /* ECCodeIndexing.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ECCodeIndexing.xcodeproj; path = ECCodeIndexing/ECCodeIndexing.xcodeproj; sourceTree = "<group>"; };
-		B761FCE5131B0736006072A0 /* ECMobileAppKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ECMobileAppKit.xcodeproj; path = ECMobileAppKit/ECMobileAppKit.xcodeproj; sourceTree = "<group>"; };
-		B761FD04131B0763006072A0 /* ECAdditions.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ECAdditions.xcodeproj; path = ECAdditions/ECAdditions.xcodeproj; sourceTree = "<group>"; };
+		B761FCD5131B072C006072A0 /* ECCodeIndexing.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ECCodeIndexing.xcodeproj; path = ../../Frameworks/ECCodeIndexing/ECCodeIndexing.xcodeproj; sourceTree = "<group>"; };
+		B761FCE5131B0736006072A0 /* ECMobileAppKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ECMobileAppKit.xcodeproj; path = ../../Frameworks/ECMobileAppKit/ECMobileAppKit.xcodeproj; sourceTree = "<group>"; };
+		B761FD04131B0763006072A0 /* ECAdditions.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ECAdditions.xcodeproj; path = ../../Frameworks/ECAdditions/ECAdditions.xcodeproj; sourceTree = "<group>"; };
 		B761FD31131B0853006072A0 /* libECAdditions.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libECAdditions.a; sourceTree = SOURCE_ROOT; };
 		B761FD33131B0859006072A0 /* libECCodeIndexing.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libECCodeIndexing.a; sourceTree = SOURCE_ROOT; };
 		B761FD35131B085D006072A0 /* libECMobileAppKit.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libECMobileAppKit.a; sourceTree = SOURCE_ROOT; };
@@ -390,6 +303,7 @@
 		B7E9DD0013194153008863CF /* ECTextPosition.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECTextPosition.m; sourceTree = "<group>"; };
 		B7E9DD0113194153008863CF /* ECTextRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECTextRange.h; sourceTree = "<group>"; };
 		B7E9DD0213194153008863CF /* ECTextRange.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECTextRange.m; sourceTree = "<group>"; };
+		B7FCA575131A6FC7002D6C7C /* Shared.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -438,6 +352,9 @@
 		B736171A12DA1129009801D4 = {
 			isa = PBXGroup;
 			children = (
+				B761FD04131B0763006072A0 /* ECAdditions.xcodeproj */,
+				B761FCE5131B0736006072A0 /* ECMobileAppKit.xcodeproj */,
+				B761FCD5131B072C006072A0 /* ECCodeIndexing.xcodeproj */,
 				B74E977F131A571E0011FD69 /* Config */,
 				B7355B0E12E8EF9300198FD9 /* Models */,
 				B736172212DA1129009801D4 /* Classes */,
@@ -499,9 +416,6 @@
 				B761FD35131B085D006072A0 /* libECMobileAppKit.a */,
 				B761FD33131B0859006072A0 /* libECCodeIndexing.a */,
 				B761FD31131B0853006072A0 /* libECAdditions.a */,
-				B761FD04131B0763006072A0 /* ECAdditions.xcodeproj */,
-				B761FCE5131B0736006072A0 /* ECMobileAppKit.xcodeproj */,
-				B761FCD5131B072C006072A0 /* ECCodeIndexing.xcodeproj */,
 				B761FD47131B089C006072A0 /* CoreGraphics.framework */,
 				B761FCB4131B04B0006072A0 /* CoreText.framework */,
 				B761FCB1131B04A9006072A0 /* UIKit.framework */,
@@ -529,33 +443,6 @@
 			);
 			name = Config;
 			path = ../../Config;
-			sourceTree = "<group>";
-		};
-		B761FCD6131B072C006072A0 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				B761FCE2131B072D006072A0 /* libECCodeIndexing.a */,
-				B761FCE4131B072D006072A0 /* ECCodeIndexing-Test.octest */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		B761FCE6131B0736006072A0 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				B761FCEE131B0737006072A0 /* libECMobileAppKit.a */,
-				B761FCF0131B0737006072A0 /* ECMobileAppKit-Test.octest */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		B761FD05131B0763006072A0 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				B761FD0A131B0764006072A0 /* libECAdditions.a */,
-				B761FD0C131B0764006072A0 /* ECAdditions-Test.octest */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 		B78A18EF12E764A900E259E0 /* Other Resources */ = {
@@ -757,9 +644,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				B761FD2A131B0832006072A0 /* PBXTargetDependency */,
-				B761FD28131B082E006072A0 /* PBXTargetDependency */,
-				B761FD26131B0828006072A0 /* PBXTargetDependency */,
 			);
 			name = edit;
 			productName = edit;
@@ -778,9 +662,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				B761FD30131B0841006072A0 /* PBXTargetDependency */,
-				B761FD2E131B083D006072A0 /* PBXTargetDependency */,
-				B761FD2C131B083A006072A0 /* PBXTargetDependency */,
 			);
 			name = "edit-Test";
 			productName = Test;
@@ -802,20 +683,6 @@
 			mainGroup = B736171A12DA1129009801D4;
 			productRefGroup = B736171A12DA1129009801D4;
 			projectDirPath = "";
-			projectReferences = (
-				{
-					ProductGroup = B761FD05131B0763006072A0 /* Products */;
-					ProjectRef = B761FD04131B0763006072A0 /* ECAdditions.xcodeproj */;
-				},
-				{
-					ProductGroup = B761FCD6131B072C006072A0 /* Products */;
-					ProjectRef = B761FCD5131B072C006072A0 /* ECCodeIndexing.xcodeproj */;
-				},
-				{
-					ProductGroup = B761FCE6131B0736006072A0 /* Products */;
-					ProjectRef = B761FCE5131B0736006072A0 /* ECMobileAppKit.xcodeproj */;
-				},
-			);
 			projectRoot = "";
 			targets = (
 				B736172912DA1129009801D4 /* edit */,
@@ -823,51 +690,6 @@
 			);
 		};
 /* End PBXProject section */
-
-/* Begin PBXReferenceProxy section */
-		B761FCE2131B072D006072A0 /* libECCodeIndexing.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libECCodeIndexing.a;
-			remoteRef = B761FCE1131B072D006072A0 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		B761FCE4131B072D006072A0 /* ECCodeIndexing-Test.octest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = "ECCodeIndexing-Test.octest";
-			remoteRef = B761FCE3131B072D006072A0 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		B761FCEE131B0737006072A0 /* libECMobileAppKit.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libECMobileAppKit.a;
-			remoteRef = B761FCED131B0737006072A0 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		B761FCF0131B0737006072A0 /* ECMobileAppKit-Test.octest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = "ECMobileAppKit-Test.octest";
-			remoteRef = B761FCEF131B0737006072A0 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		B761FD0A131B0764006072A0 /* libECAdditions.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libECAdditions.a;
-			remoteRef = B761FD09131B0764006072A0 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		B761FD0C131B0764006072A0 /* ECAdditions-Test.octest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = "ECAdditions-Test.octest";
-			remoteRef = B761FD0B131B0764006072A0 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		B736172812DA1129009801D4 /* Resources */ = {
@@ -1003,39 +825,6 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
-/* Begin PBXTargetDependency section */
-		B761FD26131B0828006072A0 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = ECAdditions;
-			targetProxy = B761FD25131B0828006072A0 /* PBXContainerItemProxy */;
-		};
-		B761FD28131B082E006072A0 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = ECMobileAppKit;
-			targetProxy = B761FD27131B082E006072A0 /* PBXContainerItemProxy */;
-		};
-		B761FD2A131B0832006072A0 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = ECCodeIndexing;
-			targetProxy = B761FD29131B0832006072A0 /* PBXContainerItemProxy */;
-		};
-		B761FD2C131B083A006072A0 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = "ECAdditions-Test";
-			targetProxy = B761FD2B131B083A006072A0 /* PBXContainerItemProxy */;
-		};
-		B761FD2E131B083D006072A0 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = "ECMobileAppKit-Test";
-			targetProxy = B761FD2D131B083D006072A0 /* PBXContainerItemProxy */;
-		};
-		B761FD30131B0841006072A0 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = "ECCodeIndexing-Test";
-			targetProxy = B761FD2F131B0841006072A0 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
-
 /* Begin PBXVariantGroup section */
 		B709A2C612E9AAC00099F6E0 /* CodeProjectController.xib */ = {
 			isa = PBXVariantGroup;
@@ -1066,12 +855,14 @@
 /* Begin XCBuildConfiguration section */
 		B736175612DA112B009801D4 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B74E9780131A57560011FD69 /* Shared.xcconfig */;
 			buildSettings = {
 			};
 			name = Debug;
 		};
 		B736175712DA112B009801D4 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B7FCA575131A6FC7002D6C7C /* Shared.xcconfig */;
 			buildSettings = {
 			};
 			name = Release;

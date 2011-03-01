@@ -25,7 +25,8 @@
 
 //! Protocol declaring methods ECCodeIndexer will forward to its plugins.
 //
-// The first argument must always the file URL the method should apply to.
+// The first argument must always be the file URL the method should apply to.
+// The return type should always be an object, and will be nil if the plugin doesn't implement the method
 @protocol ECCodeIndexerPluginForwarding
 @optional
 - (NSArray *)completionsForFile:(NSURL *)fileURL withSelection:(NSRange)selection;

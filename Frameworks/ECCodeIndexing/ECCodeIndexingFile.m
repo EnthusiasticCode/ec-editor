@@ -7,7 +7,11 @@
 //
 
 #import "ECCodeIndexingFile.h"
-#import <MobileCoreServices/MobileCoreServices.h>
+
+@interface ECCodeIndexingFile ()
+@property (nonatomic, retain) NSURL *URL;
+@property (nonatomic, retain) NSString *extension;
+@end
 
 @implementation ECCodeIndexingFile
 @synthesize URL = _URL;
@@ -19,6 +23,7 @@
 - (void)dealloc
 {
     self.URL = nil;
+    self.extension = nil;
     self.language = nil;
     self.buffer = nil;
     [super dealloc];
@@ -30,10 +35,7 @@
     if (self)
     {
         self.URL = url;
-        NSString *extension = [url pathExtension];
-        CFStringRef extension = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, (CFStringRef)extension, NULL);
-        self.extension = (NSString *)extension;
-        CFRelease(extension);
+        self.extension = [url pathExtension];
     }
     return self;
 }

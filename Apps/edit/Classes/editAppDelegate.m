@@ -20,12 +20,11 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    [ECCodeIndexer loadLanguages];
     ECCodeProjectController *rootController;
     [[UINib nibWithNibName:@"CodeProjectController" bundle:nil] instantiateWithOwner:self.window options:nil];
     rootController = (ECCodeProjectController *) self.window.rootViewController;
     // directory must exist
-    [rootController loadProject:@"edit" from:[[self applicationDocumentsDirectory] stringByAppendingPathComponent:@"edit/"]];
+    [rootController loadProjectFromRootDirectory:[NSURL fileURLWithPath:[[self applicationDocumentsDirectory] stringByAppendingPathComponent:@"edit/"]]];
     NSDictionary *keywordStyle = [NSDictionary dictionaryWithObjectsAndKeys:(id)[[UIColor blueColor] CGColor], (id)kCTForegroundColorAttributeName, nil];
     NSDictionary *commentStyle = [NSDictionary dictionaryWithObjectsAndKeys:(id)[[UIColor greenColor] CGColor], (id)kCTForegroundColorAttributeName, nil];
     ECCodeView *codeView = (ECCodeView *) rootController.codeView;
@@ -43,7 +42,6 @@
 
 - (void)dealloc
 {
-    [ECCodeIndexer unloadLanguages];
     self.window = nil;
     self.codeView = nil;
     [super dealloc];
