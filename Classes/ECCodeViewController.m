@@ -28,6 +28,8 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    // TODO try without this initialization to find more bugs
+    
     codeView.text = @"int main(arguments)\n{\n\treturn 0;\n}";
     
     // Styles test

@@ -30,6 +30,11 @@ static inline BOOL in_range(NSRange r, CFIndex i)
 
 - (void)doInit;
 
+// Return the current content length applying additional checks.
+// Use this instead of [content length] to prevent undesired missbehaviour.
+// TODO cache this value?
+- (NSUInteger)contentLength;
+
 // This method is used to indicate that the content has changed and the 
 // rendering frame generated from it should be recalculated.
 - (void)setNeedsContentFrame;
@@ -74,6 +79,11 @@ static inline BOOL in_range(NSRange r, CFIndex i)
 #pragma mark Properties
 
 @synthesize text;
+- (NSString *)text
+{
+    return [[content string] substringToIndex:[self contentLength]];
+}
+
 - (void)setText:(NSString *)aString
 {
     if (aString != text)
@@ -85,21 +95,18 @@ static inline BOOL in_range(NSRange r, CFIndex i)
         // and possibly a non empty rect when rendering.
         if (!content || ![content length])
         {
-            content = [[NSMutableAttributedString alloc] init];
+            content = [[NSMutableAttributedString alloc] initWithString:@"\n" attributes:defaultAttributes];
         }
         // TODO call before mutate
-        NSInteger len = [content length];
+        NSUInteger contentLength = [self contentLength];
         if (text)
         {
-            [content replaceCharactersInRange:(NSRange){0, len} withString:text];
-            len = [content length];
-            if (len > 1)
-                [content setAttributes:defaultAttributes range:(NSRange){0, len}];
+            [content replaceCharactersInRange:(NSRange){0, contentLength} withString:text];
         }
         else
         {
-            if (len > 1)
-                [content deleteCharactersInRange:(NSRange){0, len}];
+            if (contentLength > 0)
+                [content deleteCharactersInRange:(NSRange){0, contentLength}];
         }
         // TODO call after mutate
         //        [self unmarkText];
@@ -184,8 +191,6 @@ static inline BOOL in_range(NSRange r, CFIndex i)
     
     contentFrameInset = UIEdgeInsetsMake(10, 10, 10, 10);
     
-    self.text = @"";
-    
     markedRange.location = 0;
     markedRange.length = 0;
     markedRangeDirtyRect = CGRectNull;
@@ -267,7 +272,7 @@ static inline BOOL in_range(NSRange r, CFIndex i)
     if (attributes == nil)
         attributes = defaultAttributes;
     
-    NSUInteger contentLength = [content length];
+    NSUInteger contentLength = [self contentLength];
     if (range.location > contentLength)
         return;
     if (range.location + range.length > contentLength)
@@ -546,7 +551,7 @@ static inline BOOL in_range(NSRange r, CFIndex i)
 
 - (BOOL)hasText
 {
-    return [content length] > 0;
+    return [self contentLength] > 0;
 }
 
 - (void)insertText:(NSString *)aText
@@ -554,9 +559,9 @@ static inline BOOL in_range(NSRange r, CFIndex i)
     // TODO solid carret
     
     // Select insertion range
-    NSUInteger contentLength = [content length];
+    NSUInteger contentLength = [self contentLength];
     NSRange insertRange;
-    if (selection == nil)
+    if (!selection)
     {
         insertRange = NSMakeRange(contentLength, 0);
     }
@@ -594,6 +599,32 @@ static inline BOOL in_range(NSRange r, CFIndex i)
 {
     // TODO setsolidcarret
     
+    ECTextRange *sel = (ECTextRange *)[self selectedTextRange];
+    if (!sel)
+        return;
+        
+    NSUInteger s = ((ECTextPosition *)sel.start).index;
+    NSUInteger e = ((ECTextPosition *)sel.end).index;
+    
+    if (s < e)
+    {
+        [self replaceRange:sel withText:@""];
+    }
+    else if (s == 0)
+    {
+        return;
+    }
+    else
+    {
+        [self unmarkText];
+        // TODO beforeMutate
+        NSRange cr = [[content string] rangeOfComposedCharacterSequenceAtIndex:s-1];
+        [content deleteCharactersInRange:cr];
+        // TODO afterMutate
+        [self setSelectedIndex:cr.location];
+        [self setNeedsContentFrame];
+        [self setNeedsDisplay];
+    }
 }
 
 #pragma mark -
@@ -666,10 +697,10 @@ static inline BOOL in_range(NSRange r, CFIndex i)
     
     NSUInteger s = ((ECTextPosition *)range.start).index;
     NSUInteger e = ((ECTextPosition *)range.end).index;
-    NSUInteger contentLength = [content length];
-    
     if (e < s)
         return;
+    
+    NSUInteger contentLength = [self contentLength];
     if (s > contentLength)
         s = contentLength;
     
@@ -734,7 +765,55 @@ static inline BOOL in_range(NSRange r, CFIndex i)
 
 - (void)setMarkedText:(NSString *)markedText selectedRange:(NSRange)selectedRange
 {
-    // TODO
+    NSRange replaceRange;
+    NSUInteger contentLength = [self contentLength];
+    
+    if (markedRange.length == 0)
+    {
+        if (selection)
+        {
+            replaceRange = [selection range];
+        }
+        else
+        {
+            replaceRange.location = contentLength;
+            replaceRange.length = 0;
+        }
+    }
+    else
+    {
+        replaceRange = markedRange;
+    }
+    
+    // TODO setsolidcaret and beforeMutate
+    
+    [content replaceCharactersInRange:replaceRange withString:markedText];
+    
+    // Adjust selection
+    NSRange newSelectionRange;
+    NSUInteger markedTextLength = [markedText length];
+    if (selectedRange.location > markedTextLength 
+        || selectedRange.location + selectedRange.length > markedTextLength)
+    {
+        newSelectionRange = (NSRange){replaceRange.location + markedTextLength, 0};
+    }
+    else
+    {
+        newSelectionRange = (NSRange){replaceRange.location + selectedRange.location, selectedRange.length};
+    }
+    
+    
+    // TODO afterMutate
+    
+    [self willChangeValueForKey:@"markedTextRange"];
+    ECTextRange *newSelection = [[ECTextRange alloc] initWithRange:newSelectionRange];
+    [self setSelectedTextRange:newSelection notifyDelegate:NO];
+    [newSelection release];
+    markedRange = (NSRange){replaceRange.location, markedTextLength};
+    [self didChangeValueForKey:@"markedTextRange"];
+    
+    [self setNeedsContentFrame];
+    [self setNeedsDisplay];
 }
 
 - (void)unmarkText
@@ -839,6 +918,10 @@ static inline BOOL in_range(NSRange r, CFIndex i)
         return position;
     }
     
+    NSUInteger contentLength = [self contentLength];
+    if (result > contentLength)
+        result = contentLength;
+    
     ECTextPosition *resultPosition = [[[ECTextPosition alloc] initWithIndex:result] autorelease];
 
     return resultPosition;
@@ -852,7 +935,7 @@ static inline BOOL in_range(NSRange r, CFIndex i)
 
 - (UITextPosition *)endOfDocument
 {
-    ECTextPosition *p = [[[ECTextPosition alloc] initWithIndex:[content length]] autorelease];
+    ECTextPosition *p = [[[ECTextPosition alloc] initWithIndex:[self contentLength]] autorelease];
     return p;
 }
 
@@ -916,20 +999,8 @@ static inline BOOL in_range(NSRange r, CFIndex i)
 
 - (CGRect)caretRectForPosition:(UITextPosition *)position
 {
-    NSUInteger contentLength = [content length];
     NSUInteger pos = ((ECTextPosition *)position).index;
-    CGRect carretRect = CGRectNull;
-
-    if (pos >= contentLength)
-    {
-        pos = contentLength;
-        carretRect = [self rectForContentRange:(NSRange){pos - 1, 1}];
-        carretRect.origin.x += carretRect.size.width;
-    }
-    else
-    {
-        carretRect = [self rectForContentRange:(NSRange){pos, 0}];
-    }    
+    CGRect carretRect = [self rectForContentRange:(NSRange){pos, 0}];
     carretRect.origin.x -= 1.0;
     carretRect.size.width = 2.0;
     
@@ -961,7 +1032,7 @@ static inline BOOL in_range(NSRange r, CFIndex i)
     else
     {
         r.location = 0;
-        r.length = [content length];
+        r.length = [self contentLength];
         lineRange.location = 0;
         lineRange.length = lineCount;
     }
@@ -970,10 +1041,7 @@ static inline BOOL in_range(NSRange r, CFIndex i)
     CTFrameGetLineOrigins(contentFrame, lineRange, origins);
     
     // Transform point
-    // TODO properly transform with matrix?
     point = CGPointApplyAffineTransform(point, [self transormContentFrameFlipped:YES inverted:YES]);
-//    point.x -= contentFrameRect.origin.x;
-//    point.y -= contentFrameRect.origin.y;
     
     // Find lines containing point
     CFIndex closest = 0;
@@ -1054,9 +1122,6 @@ static inline BOOL in_range(NSRange r, CFIndex i)
     ECTextPosition *pos = (ECTextPosition *)position;
     NSUInteger index = pos.index;
     
-    if (index >= [content length])
-        return defaultAttributes;
-    
     NSDictionary *ctStyles;
     if (direction == UITextStorageDirectionBackward && index > 0)
         ctStyles = [content attributesAtIndex:index-1 effectiveRange:NULL];
@@ -1089,6 +1154,16 @@ static inline BOOL in_range(NSRange r, CFIndex i)
 
 #pragma mark -
 #pragma mark CodeView private methods
+
+- (NSUInteger)contentLength
+{
+    if (!content)
+        return 0;
+    NSUInteger len = [content length];
+    if (len)
+        len--;
+    return len;
+}
 
 - (void)setSelectedTextRange:(ECTextRange *)newSelection notifyDelegate:(BOOL)shouldNotify
 {
@@ -1227,13 +1302,6 @@ static inline BOOL in_range(NSRange r, CFIndex i)
     // TODO update contentFrame if needed
     CFArrayRef lines = CTFrameGetLines(contentFrame);
     CFIndex lineCount = CFArrayGetCount(lines);
-    
-    if (lineCount == 0)
-    {
-        // TODO get actual heigth
-        block(CGRectMake(contentFrameInset.left, contentFrameInset.top, 0, 13));
-        return;
-    }
     
     CFIndex firstLine = [self lineIndexForLocation:range.location 
                                            inLines:lines 
