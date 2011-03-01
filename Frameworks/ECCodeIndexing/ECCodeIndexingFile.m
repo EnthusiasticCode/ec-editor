@@ -7,12 +7,14 @@
 //
 
 #import "ECCodeIndexingFile.h"
-
+#import <MobileCoreServices/MobileCoreServices.h>
 
 @implementation ECCodeIndexingFile
 @synthesize URL = _URL;
+@synthesize extension = _extension;
 @synthesize language = _language;
 @synthesize buffer = _buffer;
+@synthesize dirty = _dirty;
 
 - (void)dealloc
 {
@@ -22,22 +24,24 @@
     [super dealloc];
 }
 
-- (id)initWithURL:(NSURL *)url language:(NSString *)language buffer:(NSString *)buffer
+- (id)initWithURL:(NSURL *)url
 {
     self = [super init];
     if (self)
     {
         self.URL = url;
-        self.language = language;
-        self.buffer = buffer;
+        NSString *extension = [url pathExtension];
+        CFStringRef extension = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, (CFStringRef)extension, NULL);
+        self.extension = (NSString *)extension;
+        CFRelease(extension);
     }
     return self;
 }
 
-+ (id)fileWithURL:(NSURL *)url language:(NSString *)language buffer:(NSString *)buffer
++ (id)fileWithURL:(NSURL *)url
 {
     id file = [self alloc];
-    file = [file initWithURL:url language:language buffer:buffer];
+    file = [file initWithURL:url];
     return [file autorelease];
 }
 

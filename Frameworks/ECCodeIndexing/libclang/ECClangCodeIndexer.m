@@ -9,6 +9,7 @@
 #import "Index.h"
 #import "ECClangCodeIndexer.h"
 
+#import "../ECCodeIndexingFile.h"
 #import "../ECSourceLocation.h"
 #import "../ECSourceRange.h"
 #import "../ECToken.h"
@@ -157,22 +158,8 @@ static ECCompletionResult *completionResultFromClangCompletionResult(CXCompletio
 
 #pragma mark Properties
 
-@synthesize files;
-
-- (NSArray *)handledLanguages
-{
-    return [NSArray arrayWithObjects:@"C", @"Objective C", @"C++", @"Objective C++", nil];
-}
-
-- (NSArray *)handledUTIs
-{
-    return [NSArray arrayWithObjects:@"public.c-header", @"public.c-source", @"public.objective-c-source", @"public.c-plus-plus-source", @"public.objective-c-plus-plus-source", nil];
-}
-
-- (NSSet *)handledFiles
-{
-    return [NSSet setWithArray:[self.files allKeys]];
-}
+@synthesize index = _index;
+@synthesize files = _files;
 
 #pragma mark Initialization
 
@@ -216,59 +203,57 @@ static ECCompletionResult *completionResultFromClangCompletionResult(CXCompletio
 #pragma mark -
 #pragma mark ECCodeIndexer
 
-- (void)addFilesObject:(NSURL *)fileURL
+- (NSDictionary *)languageToExtensionMappingDictionary
 {
-    NSString *extension = [fileURL pathExtension];
-    CFStringRef UTI = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, (CFStringRef)extension, NULL);
-    if ([(NSString *)UTI isEqualToString:@"public.c-header"])
-        _language = @"C";
-    if ([(NSString *)UTI isEqualToString:@"public.c-source"])
-        _language = @"C";
-    if ([(NSString *)UTI isEqualToString:@"public.objective-c-source"])
-        _language = @"Objective C";
-    if ([(NSString *)UTI isEqualToString:@"public.c-plus-plus-source"])
-        _language = @"C++";
-    if ([(NSString *)UTI isEqualToString:@"public.objective-c-plus-plus-source"])
-        _language = @"Objective C++";
-    CFRelease(UTI);
+    NSArray *languages = [NSArray arrayWithObjects:@"C", @"Objective C", @"C++", @"Objective C++", nil];
+    NSArray *extensionForLanguages = [NSArray arrayWithObjects:@"c", @"m", @"cc", @"mm", nil];
+    return [NSDictionary dictionaryWithObjects:extensionForLanguages forKeys:languages];
 }
 
-- (void)removeFilesObject:(NSURL *)fileURL
+- (NSDictionary *)extensionToLanguageMappingDictionary
 {
-    
+    NSArray *extensions = [NSArray arrayWithObjects:@"c", @"m", @"cc", @"mm", @"h", nil];
+    NSArray *languageForextensions = [NSArray arrayWithObjects:@"C", @"Objective C", @"C++", @"Objective C++", @"C", nil];
+    return [NSDictionary dictionaryWithObjects:languageForextensions forKeys:extensions];
 }
 
-- (void)setLanguage:(NSString *)language forFile:(NSURL *)fileURL;
+- (NSSet *)loadedFiles
 {
-    
+    return [NSSet setWithArray:[self.files allKeys]];
 }
 
-- (void)setBuffer:(NSString *)buffer forFile:(NSURL *)fileURL;
+- (BOOL)loadFile:(ECCodeIndexingFile *)file
+{
+    NSString *extension = [file.URL pathExtension];
+
+}
+
+- (BOOL)unloadFile:(ECCodeIndexingFile *)file
 {
     
 }
 
-- (NSArray *)completionsForFile:(NSURL *)fileURL withSelection:(NSRange)selection;
+- (NSArray *)completionsForFile:(ECCodeIndexingFile *)file withSelection:(NSRange)selection;
 {
     
 }
 
-- (NSArray *)diagnosticsForFile:(NSURL *)fileURL;
+- (NSArray *)diagnosticsForFile:(ECCodeIndexingFile *)file;
 {
     
 }
 
-- (NSArray *)fixItsForFile:(NSURL *)fileURL;
+- (NSArray *)fixItsForFile:(ECCodeIndexingFile *)file;
 {
     
 }
 
-- (NSArray *)tokensForFile:(NSURL *)fileURL inRange:(NSRange)range;
+- (NSArray *)tokensForFile:(ECCodeIndexingFile *)file inRange:(NSRange)range;
 {
     
 }
 
-- (NSArray *)tokensForFile:(NSURL *)fileURL;
+- (NSArray *)tokensForFile:(ECCodeIndexingFile *)file;
 {
     
 }

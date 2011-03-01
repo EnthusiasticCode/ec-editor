@@ -14,6 +14,7 @@
 		B79084BF131C3F7B002668FA /* ECCodeIndexingFile.m in Sources */ = {isa = PBXBuildFile; fileRef = B79084BD131C3F7B002668FA /* ECCodeIndexingFile.m */; };
 		B79084D2131C5602002668FA /* ECClangTranslationUnit.h in Headers */ = {isa = PBXBuildFile; fileRef = B79084D0131C5602002668FA /* ECClangTranslationUnit.h */; };
 		B79084D3131C5602002668FA /* ECClangTranslationUnit.m in Sources */ = {isa = PBXBuildFile; fileRef = B79084D1131C5602002668FA /* ECClangTranslationUnit.m */; };
+		B795843F131D201B00636C25 /* ECCodeIndexerPlugin.h in Headers */ = {isa = PBXBuildFile; fileRef = B795843E131D201B00636C25 /* ECCodeIndexerPlugin.h */; };
 		B7D65C19131ADDCA00C3FA93 /* libECCodeIndexing.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7FCA60D131A6FE0002D6C7C /* libECCodeIndexing.a */; };
 		B7D65C62131AE09300C3FA93 /* libECAdditions.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7D65C61131AE09300C3FA93 /* libECAdditions.a */; };
 		B7FCA63B131A71AE002D6C7C /* ECCodeIndexer.h in Headers */ = {isa = PBXBuildFile; fileRef = B7FCA554131A6FB9002D6C7C /* ECCodeIndexer.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -156,6 +157,7 @@
 		B79084BD131C3F7B002668FA /* ECCodeIndexingFile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeIndexingFile.m; sourceTree = "<group>"; };
 		B79084D0131C5602002668FA /* ECClangTranslationUnit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECClangTranslationUnit.h; sourceTree = "<group>"; };
 		B79084D1131C5602002668FA /* ECClangTranslationUnit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECClangTranslationUnit.m; sourceTree = "<group>"; };
+		B795843E131D201B00636C25 /* ECCodeIndexerPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeIndexerPlugin.h; sourceTree = "<group>"; };
 		B7CECBA6131AB84B00B65157 /* Library.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Library.xcconfig; sourceTree = "<group>"; };
 		B7D65C41131ADFF400C3FA93 /* ECAdditions.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ECAdditions.xcodeproj; path = ../ECAdditions/ECAdditions.xcodeproj; sourceTree = "<group>"; };
 		B7D65C61131AE09300C3FA93 /* libECAdditions.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libECAdditions.a; sourceTree = SOURCE_ROOT; };
@@ -384,6 +386,7 @@
 				B7FCA56E131A6FC7002D6C7C /* Config */,
 				B7FCA554131A6FB9002D6C7C /* ECCodeIndexer.h */,
 				B7FCA555131A6FB9002D6C7C /* ECCodeIndexer.m */,
+				B795843E131D201B00636C25 /* ECCodeIndexerPlugin.h */,
 				B79084BC131C3F7B002668FA /* ECCodeIndexingFile.h */,
 				B79084BD131C3F7B002668FA /* ECCodeIndexingFile.m */,
 				B7FCA557131A6FB9002D6C7C /* ECCompletionChunk.h */,
@@ -642,6 +645,7 @@
 				B7FCA650131A71AE002D6C7C /* Index.h in Headers */,
 				B79084BE131C3F7B002668FA /* ECCodeIndexingFile.h in Headers */,
 				B79084D2131C5602002668FA /* ECClangTranslationUnit.h in Headers */,
+				B795843F131D201B00636C25 /* ECCodeIndexerPlugin.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

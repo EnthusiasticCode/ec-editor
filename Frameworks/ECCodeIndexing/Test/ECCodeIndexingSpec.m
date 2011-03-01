@@ -39,7 +39,7 @@ describe(@"A code indexer",^
     
     it(@"loads language specific code indexer classes", ^
     {
-        [[[ECCodeIndexer should] have:4] handledLanguages];
+        [[[ECCodeIndexer should] have:4] languageToExtensionMappingDictionary];
     });
     
     it(@"doesn't have a language set by default", ^

@@ -10,7 +10,5 @@
 
 
 @interface NSURL (ECAdditions)
-
 - (BOOL)isFileURLAndExists;
-
 @end

@@ -8,10 +8,10 @@
 
 #import <Foundation/Foundation.h>
 
-#import "../ECCodeIndexer.h"
+#import "../ECCodeIndexerPlugin.h"
 
 
 /*! Clang code indexer. Provides completion and syntax checking through Clang. */
-@interface ECClangCodeIndexer : NSObject <ECCodeIndexer>
+@interface ECClangCodeIndexer : NSObject <ECCodeIndexerPlugin>
 
 @end

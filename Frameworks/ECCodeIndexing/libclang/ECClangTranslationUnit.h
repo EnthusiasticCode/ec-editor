@@ -11,7 +11,7 @@
 
 @interface ECClangTranslationUnit : NSObject
 @property (nonatomic) CXTranslationUnit translationUnit;
-@property (nonatomic, retain) NSURL *file;
+@property (nonatomic, retain) NSURL *fileURL;
 - (id)initWithFile:(NSURL *)fileURL index:(CXIndex)index options:(NSDictionary *)options;
 + (id)translationUnitWithFile:(NSURL *)fileURL index:(CXIndex)index options:(NSDictionary *)options;
 @end
