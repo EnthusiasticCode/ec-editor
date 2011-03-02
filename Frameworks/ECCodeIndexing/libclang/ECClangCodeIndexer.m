@@ -106,29 +106,29 @@
     return YES;
 }
 
-- (NSArray *)completionsForFile:(ECCodeIndexingFile *)file withSelection:(NSRange)selection;
+- (NSArray *)completionsForFile:(NSURL *)file withSelection:(NSRange)selection;
 {
-    return [[self.translationUnits objectForKey:file.URL] completionsWithSelection:selection];
+    return [[self.translationUnits objectForKey:file] completionsWithSelection:selection];
 }
 
-- (NSArray *)diagnosticsForFile:(ECCodeIndexingFile *)file;
+- (NSArray *)diagnosticsForFile:(NSURL *)file;
 {
-    return [[self.translationUnits objectForKey:file.URL] diagnostics];
+    return [[self.translationUnits objectForKey:file] diagnostics];
 }
 
-- (NSArray *)fixItsForFile:(ECCodeIndexingFile *)file;
+- (NSArray *)fixItsForFile:(NSURL *)file;
 {
-    return [[self.translationUnits objectForKey:file.URL] fixIts];
+    return [[self.translationUnits objectForKey:file] fixIts];
 }
 
-- (NSArray *)tokensForFile:(ECCodeIndexingFile *)file inRange:(NSRange)range;
+- (NSArray *)tokensForFile:(NSURL *)file inRange:(NSRange)range;
 {
-    return [[self.translationUnits objectForKey:file.URL] tokensInRange:range];
+    return [[self.translationUnits objectForKey:file] tokensInRange:range];
 }
 
-- (NSArray *)tokensForFile:(ECCodeIndexingFile *)file;
+- (NSArray *)tokensForFile:(NSURL *)file;
 {
-    return [[self.translationUnits objectForKey:file.URL] tokens];
+    return [[self.translationUnits objectForKey:file] tokens];
 }
 
 @end

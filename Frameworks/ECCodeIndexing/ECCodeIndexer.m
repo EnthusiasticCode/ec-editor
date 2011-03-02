@@ -27,6 +27,8 @@
 - (id<ECCodeIndexerPlugin>)pluginForLanguage:(NSString *)language;
 - (id<ECCodeIndexerPlugin>)pluginForExtension:(NSString *)extension;
 - (id<ECCodeIndexerPlugin>)pluginForFile:(ECCodeIndexingFile *)file;
+- (ECCodeIndexingFile *)loadAndReturnFile:(NSURL *)fileURL;
+- (ECCodeIndexingFile *)fileForURL:(NSURL *)fileURL;
 - (void)forwardInvocationToPlugin:(NSInvocation *)invocation;
 @end
 
@@ -151,13 +153,28 @@
     return [self pluginForExtension:[file.URL pathExtension]];
 }
 
-- (BOOL)loadFile:(NSURL *)fileURL
+- (ECCodeIndexingFile *)loadAndReturnFile:(NSURL *)fileURL
 {
     if (![fileURL isFileURLAndExists])
-        return NO;
+        return nil;
     ECCodeIndexingFile *file = [ECCodeIndexingFile fileWithURL:fileURL];
     [self.files setObject:file forKey:fileURL];
     [[self pluginForExtension:[fileURL pathExtension]] loadFile:file];
+    return file;
+}
+
+- (ECCodeIndexingFile *)fileForURL:(NSURL *)fileURL
+{
+    ECCodeIndexingFile *file = [self.files objectForKey:fileURL];
+    if (!file)
+        file = [self loadAndReturnFile:fileURL];
+    return file;
+}
+
+- (BOOL)loadFile:(NSURL *)fileURL
+{
+    if (![self fileForURL:fileURL])
+        return NO;
     return YES;
 }
 
@@ -196,13 +213,9 @@
 
 - (void)forwardInvocationToPlugin:(NSInvocation *)invocation
 {
-    // arg0 = self, arg1 = _cmd
-    // arg2 = fileURL in all methods ECCodeIndexer should forward to the plugins
-    // get the fileURL, substitute it for the corresponding file, then forward the invocation to the right plugin
     NSURL *fileURL;
     [invocation getArgument:&fileURL atIndex:2];
-    ECCodeIndexingFile *file = [self.files objectForKey:fileURL];
-    [invocation setArgument:&file atIndex:2];
+    ECCodeIndexingFile *file = [self fileForURL:fileURL];
     id<ECCodeIndexerPlugin> plugin = [self pluginForFile:file];
     if (![plugin respondsToSelector:[invocation selector]])
     {

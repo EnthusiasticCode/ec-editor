@@ -7,12 +7,10 @@
 //
 
 #import "ECCodeIndexer.h"
+@class ECCodeIndexingFile;
 
-//! Protocol ECCodeIndexer plugins conform to.
-//
-// Note about methods in ECCodeIndexerPluginForwarding:
-// Plugins will be passed ECCodeIndexingFile instead of NSURL objects as file identifiers
+//! Protocol ECCodeIndexer plugins must conform to.
 @protocol ECCodeIndexerPlugin <ECCodeIndexer, ECCodeIndexerPluginForwarding>
-- (BOOL)loadFile:(id)file;
-- (BOOL)unloadFile:(id)file;
+- (BOOL)loadFile:(ECCodeIndexingFile *)file;
+- (BOOL)unloadFile:(ECCodeIndexingFile *)file;
 @end
