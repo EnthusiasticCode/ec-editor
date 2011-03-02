@@ -682,15 +682,15 @@
 /* Begin XCBuildConfiguration section */
 		B7FB50CF131ABFDE00651FDD /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = B7FB50E1131AC03B00651FDD /* Shared.xcconfig */;
 			buildSettings = {
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 			};
 			name = Debug;
 		};
 		B7FB50D0131ABFDE00651FDD /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = B7FB50E1131AC03B00651FDD /* Shared.xcconfig */;
 			buildSettings = {
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 			};
 			name = Release;
 		};

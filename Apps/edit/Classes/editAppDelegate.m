@@ -10,7 +10,7 @@
 
 #import "ECCodeProject.h"
 #import "ECCodeProjectController.h"
-#import <ECCodeIndexing/ECCodeIndexer.h>
+#import <ECCodeIndexing/ECCodeIndex.h>
 
 @implementation editAppDelegate
 

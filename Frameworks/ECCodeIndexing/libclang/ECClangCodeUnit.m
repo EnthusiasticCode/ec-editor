@@ -7,7 +7,7 @@
 //
 
 #import "Index.h"
-#import "ECClangTranslationUnit.h"
+#import "ECClangCodeUnit.h"
 #import "../ECSourceLocation.h"
 #import "../ECSourceRange.h"
 #import "../ECToken.h"
@@ -17,12 +17,12 @@
 #import "../ECCompletionString.h"
 #import "../ECCompletionChunk.h"
 
-const NSString *ECClangTranslationUnitOptionLanguage = @"Language";
+const NSString *ECClangCodeUnitOptionLanguage = @"Language";
 
-@interface ECClangTranslationUnit ()
+@interface ECClangCodeUnit ()
 @property (nonatomic) CXTranslationUnit translationUnit;
 @property (nonatomic) CXFile source;
-@property (nonatomic, retain) NSURL *fileURL;
+@property (nonatomic, retain) NSURL *url;
 @end
 
 #pragma mark -
@@ -152,15 +152,14 @@ static ECCompletionResult *completionResultFromClangCompletionResult(CXCompletio
     return [ECCompletionResult resultWithCursorKind:clangCompletionResult.CursorKind completionString:completionString];
 }
 
-@implementation ECClangTranslationUnit
+@implementation ECClangCodeUnit
 
 @synthesize translationUnit = _translationUnit;
 @synthesize source = _source;
-@synthesize fileURL = _fileURL;
+@synthesize url = _url;
 
 - (void)dealloc {
     clang_disposeTranslationUnit(self.translationUnit);
-    self.fileURL = nil;
     [super dealloc];
 }
 
@@ -174,11 +173,11 @@ static ECCompletionResult *completionResultFromClangCompletionResult(CXCompletio
     const char const *parameters[] = {"-ObjC", "-nostdinc", "-nobuiltininc", "-I/Xcode4//usr/lib/clang/2.0/include", "-I/Xcode4/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator4.2.sdk/usr/include", "-F/Xcode4/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator4.2.sdk/System/Library/Frameworks", "-isysroot=/Xcode4/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator4.2.sdk/", "-DTARGET_OS_IPHONE=1", "-UTARGET_OS_MAC", "-miphoneos-version-min=4.2"};
     self.translationUnit = clang_parseTranslationUnit(index, filePath, parameters, parameter_count, 0, 0, CXTranslationUnit_PrecompiledPreamble | CXTranslationUnit_CacheCompletionResults);
     self.source = clang_getFile(self.translationUnit, [[fileURL path] UTF8String]);
-    self.fileURL = fileURL;
+    self.url = fileURL;
     return self;
 }
 
-+ (id)translationUnitWithFile:(NSURL *)fileURL index:(CXIndex)index options:(NSDictionary *)options
++ (id)unitWithFile:(NSURL *)fileURL index:(CXIndex)index options:(NSDictionary *)options
 {
     id translationUnit = [self alloc];
     translationUnit = [translationUnit initWithFile:fileURL index:index options:options];
@@ -191,7 +190,7 @@ static ECCompletionResult *completionResultFromClangCompletionResult(CXCompletio
     unsigned line;
     unsigned column;
     clang_getInstantiationLocation(selectionLocation, NULL, &line, &column, NULL);
-    CXCodeCompleteResults *clangCompletions = clang_codeCompleteAt(self.translationUnit, [[self.fileURL path] UTF8String], line, column, NULL, 0, clang_defaultCodeCompleteOptions());
+    CXCodeCompleteResults *clangCompletions = clang_codeCompleteAt(self.translationUnit, [[self.url path] UTF8String], line, column, NULL, 0, clang_defaultCodeCompleteOptions());
     NSMutableArray *completions = [[[NSMutableArray alloc] init] autorelease];
     for (unsigned i = 0; i < clangCompletions->NumResults; i++)
         [completions addObject:completionResultFromClangCompletionResult(clangCompletions->Results[i]).completionString];

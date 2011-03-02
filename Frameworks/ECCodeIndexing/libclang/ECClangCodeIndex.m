@@ -7,17 +7,15 @@
 //
 
 #import "Index.h"
-#import "ECClangCodeIndexer.h"
-#import "ECClangTranslationUnit.h"
+#import "ECClangCodeIndex.h"
+#import "ECClangCodeUnit.h"
 
-#import "../ECCodeIndexingFile.h"
-
-@interface ECClangCodeIndexer()
+@interface ECClangCodeIndex()
 @property (nonatomic) CXIndex index;
 @property (nonatomic, retain) NSMutableDictionary *translationUnits;
 @end
 
-@implementation ECClangCodeIndexer
+@implementation ECClangCodeIndex
 
 #pragma mark Properties
 
@@ -65,70 +63,39 @@
 //}
 
 #pragma mark -
-#pragma mark ECCodeIndexerPlugin
+#pragma mark ECCodeIndex
 
-- (NSDictionary *)languageToExtensionMappingDictionary
+- (NSDictionary *)languageToExtensionMap
 {
     NSArray *languages = [NSArray arrayWithObjects:@"C", @"Objective C", @"C++", @"Objective C++", nil];
     NSArray *extensionForLanguages = [NSArray arrayWithObjects:@"c", @"m", @"cc", @"mm", nil];
     return [NSDictionary dictionaryWithObjects:extensionForLanguages forKeys:languages];
 }
 
-- (NSDictionary *)extensionToLanguageMappingDictionary
+- (NSDictionary *)extensionToLanguageMap
 {
     NSArray *extensions = [NSArray arrayWithObjects:@"c", @"m", @"cc", @"mm", @"h", nil];
     NSArray *languageForextensions = [NSArray arrayWithObjects:@"C", @"Objective C", @"C++", @"Objective C++", @"C", nil];
     return [NSDictionary dictionaryWithObjects:languageForextensions forKeys:extensions];
 }
 
-- (NSSet *)loadedFiles
-{
-    return [NSSet setWithArray:[self.translationUnits allKeys]];
-}
-
-- (BOOL)loadFile:(ECCodeIndexingFile *)file
+- (ECCodeUnit *)unitForURL:(NSURL *)url withLanguage:(NSString *)language
 {
     NSMutableDictionary *options = [NSMutableDictionary dictionary];
-    if (file.language)
-        [options setValue:file.language forKey:ECClangTranslationUnitOptionLanguage];
+    if (language)
+        [options setValue:language forKey:ECClangCodeUnitOptionLanguage];
     else
-        [options setValue:[self.extensionToLanguageMappingDictionary objectForKey:file.extension] forKey:ECClangTranslationUnitOptionLanguage];
-    ECClangTranslationUnit *translationUnit = [ECClangTranslationUnit translationUnitWithFile:file.URL index:self.index options:options];
-    if (!translationUnit)
-        return NO;
-    [self.translationUnits setObject:translationUnit forKey:file.URL];
-    return YES;
+        [options setValue:[self.extensionToLanguageMap objectForKey:[url pathExtension]] forKey:ECClangCodeUnitOptionLanguage];
+    ECClangCodeUnit *codeUnit = [ECClangCodeUnit unitWithFile:url index:self.index options:options];
+    if (!codeUnit)
+        return nil;
+//    [self.translationUnits setObject:translationUnit forKey:file.URL];
+    return codeUnit;
 }
 
-- (BOOL)unloadFile:(ECCodeIndexingFile *)file
+- (ECCodeUnit *)unitForURL:(NSURL *)url
 {
-    [self.translationUnits removeObjectForKey:file.URL];
-    return YES;
-}
-
-- (NSArray *)completionsForFile:(NSURL *)file withSelection:(NSRange)selection;
-{
-    return [[self.translationUnits objectForKey:file] completionsWithSelection:selection];
-}
-
-- (NSArray *)diagnosticsForFile:(NSURL *)file;
-{
-    return [[self.translationUnits objectForKey:file] diagnostics];
-}
-
-- (NSArray *)fixItsForFile:(NSURL *)file;
-{
-    return [[self.translationUnits objectForKey:file] fixIts];
-}
-
-- (NSArray *)tokensForFile:(NSURL *)file inRange:(NSRange)range;
-{
-    return [[self.translationUnits objectForKey:file] tokensInRange:range];
-}
-
-- (NSArray *)tokensForFile:(NSURL *)file;
-{
-    return [[self.translationUnits objectForKey:file] tokens];
+    return [self unitForURL:url withLanguage:nil];
 }
 
 @end

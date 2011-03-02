@@ -6,14 +6,14 @@
 //  Copyright 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import "ECCodeIndexer.h"
+#import "ECCodeIndex.h"
 #import "../../Kiwi/Kiwi.h"
 
 SPEC_BEGIN(ECCodeIndexingSpec)
 
 describe(@"A code indexer",^
 {
-    __block ECCodeIndexer *codeIndexer;
+    __block ECCodeIndex *codeIndexer;
     __block NSURL *cFileURL;
     beforeAll(^
     {
@@ -29,7 +29,7 @@ describe(@"A code indexer",^
     
     beforeEach(^
     {
-        codeIndexer = [ECCodeIndexer alloc];
+        codeIndexer = [ECCodeIndex alloc];
     });
     
     afterEach(^
@@ -39,7 +39,7 @@ describe(@"A code indexer",^
     
     it(@"loads language specific code indexer classes", ^
     {
-        [[[ECCodeIndexer should] have:4] languageToExtensionMappingDictionary];
+        [[[ECCodeIndex should] have:4] languageToExtensionMap];
     });
     
     it(@"doesn't have a language set by default", ^

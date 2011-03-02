@@ -7,14 +7,14 @@
 //
 
 #import <UIKit/UIKit.h>
-@class ECCodeIndexer;
+@class ECCodeIndex;
 @class ECCodeProject;
 
 @interface ECCodeProjectController : UISplitViewController <UITableViewDataSource, UITableViewDelegate>
 @property (nonatomic, retain) ECCodeProject *project;
 @property (nonatomic, retain) NSFileManager *fileManager;
 @property (nonatomic, retain) IBOutlet UITextView *codeView;
-@property (nonatomic, retain) ECCodeIndexer *codeIndexer;
+@property (nonatomic, retain) ECCodeIndex *codeIndexer;
 
 - (void)applyCompletion:(NSString *)completion;
 // display the completion popovertable if possible

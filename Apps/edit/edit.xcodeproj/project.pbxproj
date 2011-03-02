@@ -363,6 +363,7 @@
 				B79EE60212FC75B50067B2D0 /* Test */,
 				B736172512DA1129009801D4 /* Frameworks */,
 				B7BC064C12E64060005B5FB2 /* Products */,
+				B7E7D226131E709A008E3DFA /* Recovered References */,
 			);
 			sourceTree = "<group>";
 		};
@@ -630,6 +631,14 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		B7E7D226131E709A008E3DFA /* Recovered References */ = {
+			isa = PBXGroup;
+			children = (
+				B7FCA575131A6FC7002D6C7C /* Shared.xcconfig */,
+			);
+			name = "Recovered References";
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -855,15 +864,15 @@
 /* Begin XCBuildConfiguration section */
 		B736175612DA112B009801D4 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = B74E9780131A57560011FD69 /* Shared.xcconfig */;
 			buildSettings = {
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 			};
 			name = Debug;
 		};
 		B736175712DA112B009801D4 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = B7FCA575131A6FC7002D6C7C /* Shared.xcconfig */;
 			buildSettings = {
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 			};
 			name = Release;
 		};

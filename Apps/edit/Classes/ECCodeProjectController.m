@@ -9,7 +9,8 @@
 #import "ECCodeProjectController.h"
 #import "ECCodeProject.h"
 #import "ECCodeView.h"
-#import <ECCodeIndexing/ECCodeIndexer.h>
+#import <ECCodeIndexing/ECCodeIndex.h>
+#import <ECCodeIndexing/ECCodeUnit.h>
 #import <ECCodeIndexing/ECCompletionString.h>
 #import <ECCodeIndexing/ECDiagnostic.h>
 #import <ECCodeIndexing/ECToken.h>
@@ -64,14 +65,13 @@
 - (void)loadProjectFromRootDirectory:(NSURL *)rootDirectory
 {
     self.project = [ECCodeProject projectWithRootDirectory:rootDirectory];
-    self.codeIndexer = [[[ECCodeIndexer alloc] init] autorelease];
+    self.codeIndexer = [[[ECCodeIndex alloc] init] autorelease];
 }
 
 - (void)loadFile:(NSURL *)fileURL
 {
     self.codeView.text = [NSString stringWithContentsOfURL:fileURL encoding:NSUTF8StringEncoding error:nil];
-    [self.codeIndexer loadFile:fileURL];
-    for (ECToken *token in [self.codeIndexer tokensForFile:fileURL inRange:NSMakeRange(0, [self.codeView.text length])])
+    for (ECToken *token in [[self.codeIndexer unitForURL:fileURL] tokensInRange:NSMakeRange(0, [self.codeView.text length])])
     {
         NSLog(@"%@", token);
         switch (token.kind)
