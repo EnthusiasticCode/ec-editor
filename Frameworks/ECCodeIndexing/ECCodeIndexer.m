@@ -205,7 +205,10 @@
     [invocation setArgument:&file atIndex:2];
     id<ECCodeIndexerPlugin> plugin = [self pluginForFile:file];
     if (![plugin respondsToSelector:[invocation selector]])
+    {
         [invocation invokeWithTarget:nil];
+        return;
+    }
     [invocation invokeWithTarget:plugin];
 }
 
