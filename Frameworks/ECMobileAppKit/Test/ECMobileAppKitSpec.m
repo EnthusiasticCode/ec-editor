@@ -64,7 +64,7 @@ describe(@"An ECTextDocument", ^
         NSString *filePathB = [NSTemporaryDirectory() stringByAppendingPathComponent:@"b.txt"];
         fileURLA = [[NSURL alloc] initFileURLWithPath:filePathA];
         fileURLB = [[NSURL alloc] initFileURLWithPath:filePathB];
-        [[NSData dataWithBytes:"1234567890" length:10] writeToURL:fileURLA atomically:NO];
+        [@"1234567890" writeToURL:fileURLA atomically:NO encoding:NSUTF8StringEncoding error:NULL];
     });
     
     afterAll(^
@@ -83,11 +83,11 @@ describe(@"An ECTextDocument", ^
         [document release];
     });
     
-//    it(@"initializes with an existing file", ^
-//    {
-//        document = [document initWithContentsOfURL:fileURLA ofType:@"public.plain-text" error:NULL];
-//        [[document.text should] equal:@"1234567890"];
-//    });
+    it(@"initializes with an existing file", ^
+    {
+        document = [document initWithContentsOfURL:fileURLA ofType:@"public.plain-text" error:NULL];
+        [[document.text should] equal:@"1234567890"];
+    });
     
     it(@"initializes without a file", ^
     {
@@ -95,13 +95,13 @@ describe(@"An ECTextDocument", ^
         [[document.text should] equal:@""];
     });
     
-//    it(@"saves changes to file", ^
-//    {
-//        document = [document initWithContentsOfURL:fileURLB ofType:@"public.plain-text" error:NULL];
-//        document.text = @"testing";
-//        [document writeToURL:fileURLB ofType:@"public.plain-text" error:NULL];
-//        [[[NSString stringWithUTF8String:[[NSData dataWithContentsOfURL:fileURLB] bytes]] should] equal:@"testing"];
-//    });
+    it(@"saves changes to file", ^
+    {
+        document = [document initWithContentsOfURL:fileURLB ofType:@"public.plain-text" error:NULL];
+        document.text = @"testing";
+        [document writeToURL:fileURLB ofType:@"public.plain-text" error:NULL];
+        [[[NSString stringWithContentsOfURL:fileURLB encoding:NSUTF8StringEncoding error:NULL] should] equal:@"testing"];
+    });
 });
 
 describe(@"An ECPersistentDocument", ^

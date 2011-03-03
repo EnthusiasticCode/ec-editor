@@ -10,7 +10,7 @@
 @class ECCodeUnit;
 
 //! Protocol objects passed as file to track must conform to.
-@protocol ECCodeIndexingFileTracking <NSObject>
+@protocol ECCodeIndexingFileObserving <NSObject>
 @property (nonatomic, retain) NSURL *URL;
 @property (nonatomic, retain) NSString *unsavedContent;
 @end
@@ -21,8 +21,9 @@
 - (NSDictionary *)extensionToLanguageMap;
 - (NSString *)languageForExtension:(NSString *)extension;
 - (NSString *)extensionForLanguage:(NSString *)language;
-- (NSSet *)trackedFiles;
-- (BOOL)trackFile:(id<ECCodeIndexingFileTracking>)file;
+- (NSSet *)observedFiles;
+- (BOOL)addObserversToFile:(id<ECCodeIndexingFileObserving>)file;
+- (void)removeObserversFromFile:(id<ECCodeIndexingFileObserving>)file;
 - (ECCodeUnit *)unitForURL:(NSURL *)url withLanguage:(NSString *)language;
 - (ECCodeUnit *)unitForURL:(NSURL *)url;
 @end

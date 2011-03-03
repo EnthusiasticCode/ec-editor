@@ -140,14 +140,19 @@
     return [[self languageToExtensionMap] objectForKey:language];
 }
 
-- (NSSet *)trackedFiles
+- (NSSet *)observedFiles
 {
     return [NSSet set];
 }
 
-- (BOOL)trackFile:(id<ECCodeIndexingFileTracking>)file
+- (BOOL)addObserversToFile:(id<ECCodeIndexingFileObserving>)file
 {
     return YES;
+}
+
+- (void)removeObserversFromFile:(id<ECCodeIndexingFileObserving>)file
+{
+    
 }
 
 - (ECCodeUnit *)unitForURL:(NSURL *)url

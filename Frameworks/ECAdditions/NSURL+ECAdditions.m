@@ -13,18 +13,13 @@
 
 - (BOOL)isFileURLAndExists
 {
-    static BOOL firstRun = YES;
-    static BOOL exists;
-    if (!firstRun)
-        return exists;
     if (![self isFileURL])
-        exists = NO;
+        return NO;
     CFDictionaryRef properties;
     CFArrayRef desiredProperties = (CFArrayRef)[NSArray arrayWithObject:(NSString *)kCFURLFileExists];
     CFURLCreateDataAndPropertiesFromResource(NULL, (CFURLRef)self, NULL, &properties, desiredProperties, NULL);
-    exists = CFBooleanGetValue(CFDictionaryGetValue(properties, kCFURLFileExists));
+    BOOL exists = CFBooleanGetValue(CFDictionaryGetValue(properties, kCFURLFileExists));
     CFRelease(properties);
-    firstRun = NO;
     return exists;
 }
 
