@@ -36,20 +36,16 @@
     return self;
 }
 
-- (BOOL)readFromData:(NSData *)data ofType:(NSString *)fileType error:(NSError **)error
+- (BOOL)readFromURL:(NSURL *)fileURL ofType:(NSString *)fileType error:(NSError **)error
 {
-    if (!data || ![data bytes])
-        return NO;
-    self.text = [NSString stringWithUTF8String:[data bytes]];
-    self.documentEdited = NO;
+    self.text = [NSString stringWithContentsOfURL:fileURL encoding:NSUTF8StringEncoding error:error];
     return YES;
 }
 
-- (NSData *)dataOfType:(NSString *)fileType error:(NSError **)error
+- (BOOL)writeToURL:(NSURL *)fileURL ofType:(NSString *)fileType error:(NSError **)error
 {
-    NSData *data = [NSData dataWithBytes:[self.text UTF8String] length:[self.text length]];
-    self.documentEdited = NO;
-    return data;
+    [self.text writeToURL:fileURL atomically:NO encoding:NSUTF8StringEncoding error:error];
+    return YES;
 }
 
 + (BOOL)isNativeType:(NSString *)fileType

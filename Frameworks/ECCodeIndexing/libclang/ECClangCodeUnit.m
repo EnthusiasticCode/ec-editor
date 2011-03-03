@@ -23,6 +23,7 @@ const NSString *ECClangCodeUnitOptionLanguage = @"Language";
 @property (nonatomic) CXTranslationUnit translationUnit;
 @property (nonatomic) CXFile source;
 @property (nonatomic, retain) NSURL *url;
+@property (nonatomic, retain) NSString *language;
 @end
 
 #pragma mark -
@@ -157,6 +158,7 @@ static ECCompletionResult *completionResultFromClangCompletionResult(CXCompletio
 @synthesize translationUnit = _translationUnit;
 @synthesize source = _source;
 @synthesize url = _url;
+@synthesize language = _language;
 
 - (void)dealloc {
     clang_disposeTranslationUnit(self.translationUnit);
@@ -174,6 +176,7 @@ static ECCompletionResult *completionResultFromClangCompletionResult(CXCompletio
     self.translationUnit = clang_parseTranslationUnit(index, filePath, parameters, parameter_count, 0, 0, CXTranslationUnit_PrecompiledPreamble | CXTranslationUnit_CacheCompletionResults);
     self.source = clang_getFile(self.translationUnit, [[fileURL path] UTF8String]);
     self.url = fileURL;
+    self.language = [options objectForKey:ECClangCodeUnitOptionLanguage];
     return self;
 }
 
@@ -242,7 +245,8 @@ static ECCompletionResult *completionResultFromClangCompletionResult(CXCompletio
 
 - (NSArray *)tokens
 {
-    return nil;
+    NSUInteger fileLength = [[NSString stringWithContentsOfURL:self.url encoding:NSUTF8StringEncoding error:NULL] length];
+    return [self tokensInRange:NSMakeRange(0, fileLength)];
 }
 
 @end

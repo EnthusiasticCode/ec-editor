@@ -7,29 +7,35 @@
 //
 
 #import "ECCodeIndex.h"
+#import "ECCodeUnit.h"
 #import "../../Kiwi/Kiwi.h"
 
 SPEC_BEGIN(ECCodeIndexingSpec)
 
-describe(@"A code indexer",^
+describe(@"A code index",^
 {
     __block ECCodeIndex *codeIndex;
+    __block ECCodeUnit *cCodeUnit;
     __block NSURL *cFileURL;
+    __block NSURL *invalidFileURL;
     beforeAll(^
     {
         NSString *cFilePath = [NSTemporaryDirectory() stringByAppendingPathComponent:@"main.c"];
+        NSString *invalidFilePath = [NSTemporaryDirectory() stringByAppendingPathComponent:@"thisfiledoesnotexist"];
         cFileURL = [[NSURL alloc] initFileURLWithPath:cFilePath];
-        [[NSData dataWithBytes:"#include <stdio.h>\n int main(int argc, char **argv)\n { printf(\"hello world\"); }" length:79] writeToURL:cFileURL atomically:NO];
+        invalidFileURL = [[NSURL alloc] initFileURLWithPath:invalidFilePath];
+        [@"#include <stdio.h>\n int main(int argc, char **argv)\n { printf(\"hello world\"); }" writeToURL:cFileURL atomically:NO encoding:NSUTF8StringEncoding error:NULL];
     });
     
     afterAll(^
     {
         [cFileURL release];
+        [invalidFileURL release];
     });
     
     beforeEach(^
     {
-        codeIndex = [ECCodeIndex alloc];
+        codeIndex = [[ECCodeIndex alloc] init];
     });
     
     afterEach(^
@@ -37,67 +43,71 @@ describe(@"A code indexer",^
         [codeIndex release];
     });
     
-    it(@"loads language specific code indexer classes", ^
+    it(@"has a language to extension mapping dictionary", ^
     {
-        [[[ECCodeIndex should] have:4] languageToExtensionMap];
+        [[[codeIndex should] have:4] languageToExtensionMap];
     });
     
-    it(@"doesn't have a language set by default", ^
+    it(@"has an extension to language mapping dictionary", ^
     {
-        codeIndex = [codeIndex init];
-        [[codeIndex language] shouldBeNil];
+        [[[codeIndex should] have:5] extensionToLanguageMap];
     });
     
-    it(@"doesn't have a source set by default", ^
+    it(@"maps extensions to languages", ^
     {
-        codeIndex = [codeIndex init];
-        [[codeIndex source] shouldBeNil];
+        [[[codeIndex languageForExtension:@"m"] should] equal:@"Objective C"];
     });
     
-    it(@"doesn't accept an invalid source", ^
+    it(@"maps languages to extensions", ^
     {
-        codeIndex = [codeIndex initWithSource:nil];
-        [[codeIndex source] shouldBeNil];
+        [[[codeIndex extensionForLanguage:@"Objective C"] should] equal:@"m"];
     });
     
-    it(@"accepts a valid source", ^
+    it(@"doesn't create an invalid code unit", ^
     {
-        codeIndex = [codeIndex initWithSource:cFileURL];
-        [[[codeIndex source] should] equal:cFileURL];
+        [[codeIndex unitForURL:invalidFileURL] shouldBeNil];
     });
     
-    it(@"sets language based on source", ^
+    it(@"creates a valid code unit", ^
     {
-        codeIndex = [codeIndex initWithSource:cFileURL];
-        [[[codeIndex language] should] equal:@"C"];
+        [[codeIndex unitForURL:cFileURL] shouldNotBeNil];
     });
     
-    it(@"can override the automatically set language", ^
-    {
-        codeIndex = [codeIndex initWithSource:cFileURL language:@"Objective C"];
-        [[[codeIndex language] should] equal:@"Objective C"];
-    });
-    
-    describe(@"with an example C source", ^
+    describe(@"creates a code unit which", ^
     {
         beforeEach(^
         {
-            codeIndex = [codeIndex initWithSource:cFileURL];
+            cCodeUnit = [[codeIndex unitForURL:cFileURL] retain];
+        });
+        
+        afterEach(^
+        {
+            [cCodeUnit release];
+        });
+        
+        it(@"detects the language based on source", ^
+        {
+            [[cCodeUnit.language should] equal:@"C"];
         });
         
         it(@"loads without diagnostics", ^
         {
-            [[[codeIndex diagnostics] should] beEmpty];
+            [[[cCodeUnit diagnostics] should] beEmpty];
         });
         
-        it(@"has exactly 25 tokens", ^
+        it(@"has 25 tokens", ^
         {
-            [[[codeIndex should] have:25] tokens];
+            [[[cCodeUnit should] have:25] tokens];
         });
         
-        it(@"have at least 400 completions", ^
+        it(@"has 4 tokens between the 8th and 18th character", ^
         {
-            [[[codeIndex completionsForSelection:NSMakeRange(57, 0)] should] haveCountOfAtLeast:400];
+            [[[cCodeUnit should] have:6] tokensInRange:NSMakeRange(8, 10)];
+        });
+        
+        it(@"has at least 400 completions", ^
+        {
+            [[[cCodeUnit completionsWithSelection:NSMakeRange(57, 0)] should] haveCountOfAtLeast:400];
         });
     });
 });
