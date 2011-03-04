@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B70C040A1320E03F007A3D86 /* ECHashing.m in Sources */ = {isa = PBXBuildFile; fileRef = B70C04081320E03F007A3D86 /* ECHashing.m */; };
+		B70C040B1320E03F007A3D86 /* ECHashing.h in Headers */ = {isa = PBXBuildFile; fileRef = B70C04091320E03F007A3D86 /* ECHashing.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B70C04141320E140007A3D86 /* MurmurHash3.c in Sources */ = {isa = PBXBuildFile; fileRef = B70C04111320E140007A3D86 /* MurmurHash3.c */; };
+		B70C04151320E140007A3D86 /* MurmurHash3.h in Headers */ = {isa = PBXBuildFile; fileRef = B70C04121320E140007A3D86 /* MurmurHash3.h */; };
+		B70C04161320E140007A3D86 /* pstdint.h in Headers */ = {isa = PBXBuildFile; fileRef = B70C04131320E140007A3D86 /* pstdint.h */; };
 		B7D65BF6131AD96700C3FA93 /* libECAdditions.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7D65BF5131AD95300C3FA93 /* libECAdditions.a */; };
 		B7FB50F3131AC06B00651FDD /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7FB50F2131AC06B00651FDD /* Foundation.framework */; };
 		B7FB5109131AC07900651FDD /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7FB50F2131AC06B00651FDD /* Foundation.framework */; };
@@ -93,6 +98,11 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		B70C04081320E03F007A3D86 /* ECHashing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECHashing.m; sourceTree = "<group>"; };
+		B70C04091320E03F007A3D86 /* ECHashing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECHashing.h; sourceTree = "<group>"; };
+		B70C04111320E140007A3D86 /* MurmurHash3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = MurmurHash3.c; sourceTree = "<group>"; };
+		B70C04121320E140007A3D86 /* MurmurHash3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MurmurHash3.h; sourceTree = "<group>"; };
+		B70C04131320E140007A3D86 /* pstdint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pstdint.h; sourceTree = "<group>"; };
 		B7D65BF5131AD95300C3FA93 /* libECAdditions.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libECAdditions.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		B7FB50D4131AC02F00651FDD /* NSURL+ECAdditions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSURL+ECAdditions.h"; sourceTree = "<group>"; };
 		B7FB50D5131AC02F00651FDD /* NSURL+ECAdditions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSURL+ECAdditions.m"; sourceTree = "<group>"; };
@@ -279,12 +289,41 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		B70C040D1320E063007A3D86 /* MurmurHash */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = MurmurHash;
+			sourceTree = "<group>";
+		};
+		B70C040F1320E0A5007A3D86 /* NSFoundation */ = {
+			isa = PBXGroup;
+			children = (
+				B7FB50D4131AC02F00651FDD /* NSURL+ECAdditions.h */,
+				B7FB50D5131AC02F00651FDD /* NSURL+ECAdditions.m */,
+			);
+			name = NSFoundation;
+			sourceTree = "<group>";
+		};
+		B70C04101320E0BB007A3D86 /* Hashing */ = {
+			isa = PBXGroup;
+			children = (
+				B70C04091320E03F007A3D86 /* ECHashing.h */,
+				B70C04081320E03F007A3D86 /* ECHashing.m */,
+				B70C04121320E140007A3D86 /* MurmurHash3.h */,
+				B70C04111320E140007A3D86 /* MurmurHash3.c */,
+				B70C04131320E140007A3D86 /* pstdint.h */,
+			);
+			name = Hashing;
+			sourceTree = "<group>";
+		};
 		B7FB50C8131ABFDE00651FDD = {
 			isa = PBXGroup;
 			children = (
 				B7FB50D9131AC03B00651FDD /* Config */,
-				B7FB50D4131AC02F00651FDD /* NSURL+ECAdditions.h */,
-				B7FB50D5131AC02F00651FDD /* NSURL+ECAdditions.m */,
+				B70C040F1320E0A5007A3D86 /* NSFoundation */,
+				B70C04101320E0BB007A3D86 /* Hashing */,
+				B70C040D1320E063007A3D86 /* MurmurHash */,
 				B7FB50D6131AC02F00651FDD /* Test */,
 				B7FB50EF131AC06B00651FDD /* Frameworks */,
 				B7FB50EE131AC06B00651FDD /* Products */,
@@ -496,6 +535,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				B7FB51EA131AC26800651FDD /* NSURL+ECAdditions.h in Headers */,
+				B70C040B1320E03F007A3D86 /* ECHashing.h in Headers */,
+				B70C04151320E140007A3D86 /* MurmurHash3.h in Headers */,
+				B70C04161320E140007A3D86 /* pstdint.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -666,6 +708,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				B7FB51E5131AC0D900651FDD /* NSURL+ECAdditions.m in Sources */,
+				B70C040A1320E03F007A3D86 /* ECHashing.m in Sources */,
+				B70C04141320E140007A3D86 /* MurmurHash3.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
