@@ -13,8 +13,8 @@ const NSString* ECCodeStyleDefaultTextName = @"Default";
 const NSString* ECCodeStyleKeywordName = @"Keyword";
 const NSString* ECCodeStyleCommentName = @"Comment";
 
-const NSString *ECCodeOverlayColorName = @"OverlayColor";
-const NSString *ECCodeOverlayDrawBlockName = @"OverlayDrawBlock";
+const NSString *ECCodeOverlayAttributeColorName = @"OverlayColor";
+const NSString *ECCodeOverlayAttributeDrawBlockName = @"OverlayDrawBlock";
 
 
 // TODO add to respective data structure?
@@ -78,6 +78,8 @@ static inline BOOL in_range(NSRange r, CFIndex i)
 
 #pragma mark Properties
 
+@synthesize mode;
+
 @synthesize text;
 - (NSString *)text
 {
@@ -117,11 +119,11 @@ static inline BOOL in_range(NSRange r, CFIndex i)
     }
 }
 
-@synthesize styles = _styles;
+@synthesize styles;
 - (void)setStyles:(NSDictionary*)aDictionary
 {
-    [_styles release];
-    _styles = [aDictionary mutableCopy];
+    [styles release];
+    styles = [aDictionary mutableCopy];
     // TODO check that every style's attributes contains style backref
     NSDictionary *def = [aDictionary objectForKey:ECCodeStyleDefaultTextName];
     if (def)
@@ -183,14 +185,18 @@ static inline BOOL in_range(NSRange r, CFIndex i)
     CTFontRef defaultFont = CTFontCreateWithName((CFStringRef)@"Courier New", 12.0, &CGAffineTransformIdentity);
     defaultAttributes = [[NSDictionary dictionaryWithObject:(id)defaultFont forKey:(id)kCTFontAttributeName] retain];
     // TODO set full default coloring if textSyles == nil
-    _styles = [[NSMutableDictionary alloc] initWithObjectsAndKeys:defaultAttributes, ECCodeStyleDefaultTextName, nil];
+    styles = [[NSMutableDictionary alloc] initWithObjectsAndKeys:defaultAttributes, ECCodeStyleDefaultTextName, nil];
     
     // Set UIView properties
-    self.contentMode = UIViewContentModeTopLeft;
+//    self.contentMode = UIViewContentModeTopLeft;
     self.clearsContextBeforeDrawing = YES;
     
-    contentFrameInset = UIEdgeInsetsMake(10, 10, 10, 10);
+    // Set rounded corners for frame
+    self.layer.cornerRadius = 5;
+    self.layer.masksToBounds = YES;
     
+    contentFrameInset = UIEdgeInsetsMake(10, 10, 10, 10);
+
     markedRange.location = 0;
     markedRange.length = 0;
     markedRangeDirtyRect = CGRectNull;
@@ -205,7 +211,7 @@ static inline BOOL in_range(NSRange r, CFIndex i)
     
     // The default block used to render an overlay that doesn't have the ECCodeOverlayDrawBlockName attribute.
     self.defaultOverlayDrawBlock = ^(CGContextRef ctx, CGRect rct, NSDictionary* attr) {
-        UIColor *c = (UIColor *)[attr objectForKey:ECCodeOverlayColorName];
+        UIColor *c = (UIColor *)[attr objectForKey:ECCodeOverlayAttributeColorName];
         if (!c)
             c = [UIColor redColor];
         [c setFill];
@@ -252,7 +258,7 @@ static inline BOOL in_range(NSRange r, CFIndex i)
     // Recognizers
     [focusRecognizer release];
     
-    [caretView release];
+    [blinkAnimation release];
     
     // Overlays
     [overlays release];
@@ -268,7 +274,7 @@ static inline BOOL in_range(NSRange r, CFIndex i)
 - (void)setStyleNamed:(const NSString*)aStyle toRange:(NSRange)range
 {
     // Get attribute dictionary
-    NSDictionary *attributes = [_styles objectForKey:aStyle];
+    NSDictionary *attributes = [styles objectForKey:aStyle];
     if (attributes == nil)
         attributes = defaultAttributes;
     
@@ -292,7 +298,7 @@ static inline BOOL in_range(NSRange r, CFIndex i)
 
 - (void)setAttributes:(NSDictionary*)attributes forStyleNamed:(const NSString*)aStyle
 {
-    [_styles setObject:attributes forKey:aStyle];
+    [styles setObject:attributes forKey:aStyle];
     // TODO update every content part with this style
     //    [self setNeedsContentFrame];
     //    [self setNeedsDisplay];
@@ -378,7 +384,7 @@ static inline BOOL in_range(NSRange r, CFIndex i)
     //  Draw overlays
     // TODO evalue if concurrent should be used only in particular case ie overlays > N
     [overlays enumerateKeysAndObjectsWithOptions:NSEnumerationConcurrent usingBlock:^(id attribs, id ranges, BOOL *stop) {
-        DrawOverlayInContext drawBlock = (DrawOverlayInContext)[attribs objectForKey:ECCodeOverlayDrawBlockName];
+        DrawOverlayBlock drawBlock = (DrawOverlayBlock)[attribs objectForKey:ECCodeOverlayAttributeDrawBlockName];
         if (!drawBlock)
             drawBlock = defaultOverlayDrawBlock;
         [(NSArray *)ranges enumerateObjectsUsingBlock:^(id range, NSUInteger idx, BOOL *stop) {
@@ -404,53 +410,33 @@ static inline BOOL in_range(NSRange r, CFIndex i)
     // Place cursor caret
     if (firstResponder && selection && [selection isEmpty])
     {
-        CGRect caretRect = [self caretRectForPosition:(ECTextPosition *)selection.start];
-        if (!caretView)
+        if (!blinkAnimation)
         {
-            caretView = [[ECCaretView alloc] initWithFrame:caretRect];
-            caretView.caretShapeBlock = ^(CGRect rect) {
-                CGFloat radius = 1;
-                CGMutablePathRef retPath = CGPathCreateMutable();
-                
-                CGRect innerRect = CGRectInset(rect, radius, radius);
-                
-                CGFloat inside_right = innerRect.origin.x + innerRect.size.width;
-                CGFloat outside_right = rect.origin.x + rect.size.width;
-                CGFloat inside_bottom = innerRect.origin.y + innerRect.size.height;
-                CGFloat outside_bottom = rect.origin.y + rect.size.height;
-                
-                CGFloat inside_top = innerRect.origin.y;
-                CGFloat outside_top = rect.origin.y;
-                CGFloat outside_left = rect.origin.x;
-                
-                CGPathMoveToPoint(retPath, NULL, innerRect.origin.x, outside_top);
-                
-                CGPathAddLineToPoint(retPath, NULL, inside_right, outside_top);
-                CGPathAddArcToPoint(retPath, NULL, outside_right, outside_top, outside_right, inside_top, radius);
-                CGPathAddLineToPoint(retPath, NULL, outside_right, inside_bottom);
-                CGPathAddArcToPoint(retPath, NULL,  outside_right, outside_bottom, inside_right, outside_bottom, radius);
-                
-                CGPathAddLineToPoint(retPath, NULL, innerRect.origin.x, outside_bottom);
-                CGPathAddArcToPoint(retPath, NULL,  outside_left, outside_bottom, outside_left, inside_bottom, radius);
-                CGPathAddLineToPoint(retPath, NULL, outside_left, inside_top);
-                CGPathAddArcToPoint(retPath, NULL,  outside_left, outside_top, innerRect.origin.x, outside_top, radius);
-                
-                CGPathCloseSubpath(retPath);
-                
-                return (CGPathRef)retPath;
-            };
-            caretView.pulsePerSecond = 1;
-            caretView.caretColor = [UIColor grayColor];
-            [self addSubview:caretView];
+            blinkAnimation = [[CABasicAnimation animationWithKeyPath:@"opacity"] retain];
+            blinkAnimation.duration = 0.5;
+            blinkAnimation.repeatCount = CGFLOAT_MAX;
+            blinkAnimation.autoreverses = YES;
+            blinkAnimation.fromValue = [NSNumber numberWithFloat:1.0];
+            blinkAnimation.toValue = [NSNumber numberWithFloat:0.0];    
         }
-        caretView.frame = caretRect;
-        caretView.hidden = NO;
-        caretView.blink = YES;
+        
+        CGRect caretRect = [self caretRectForPosition:(ECTextPosition *)selection.start];
+        if (!caretLayer)
+        {
+            caretLayer = [CALayer layer];
+            caretLayer.delegate = self;
+            caretLayer.backgroundColor = [UIColor blackColor].CGColor;
+            caretLayer.cornerRadius = 1.0;
+            [self.layer addSublayer:caretLayer];
+        }
+        caretLayer.frame = caretRect;
+        caretLayer.hidden = NO;
+        [caretLayer addAnimation:blinkAnimation forKey:@"blink"];
     }
-    else if (caretView && !caretView.hidden)
+    else if (caretLayer && !caretLayer.hidden)
     {
-        caretView.blink = NO;
-        caretView.hidden = YES;
+        [caretLayer removeAnimationForKey:@"blink"];
+        caretLayer.hidden = YES;
     }
 }
 
@@ -482,6 +468,21 @@ static inline BOOL in_range(NSRange r, CFIndex i)
 //		[self.nextResponder touchesEnded:touches withEvent:event]; 
 //	}
 //	[super touchesEnded:touches withEvent:event];
+//}
+
+#pragma mark -
+#pragma mark CALayer delegate
+
+//- (void)drawLayer:(CALayer *)layer inContext:(CGContextRef)ctx
+//{
+//    if (layer == caretLayer)
+//    {
+//        
+//    }
+//    else
+//    {
+//        [super drawLayer:layer inContext:ctx];
+//    }
 //}
 
 #pragma mark -
@@ -651,6 +652,11 @@ static inline BOOL in_range(NSRange r, CFIndex i)
 - (BOOL)isSecureTextEntry
 {
     return NO;
+}
+
+- (UITextAutocorrectionType)autocorrectionType
+{
+    return UITextAutocorrectionTypeNo;
 }
 
 #pragma mark -

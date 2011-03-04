@@ -40,7 +40,7 @@
     [codeView setStyleNamed:ECCodeStyleKeywordName toRange:(NSRange){0, 3}];
     
     // Overlay test
-    NSDictionary *overlayAttrib = [NSDictionary dictionaryWithObject:[UIColor colorWithRed:0 green:0 blue:1 alpha:0.5] forKey:ECCodeOverlayColorName];
+    NSDictionary *overlayAttrib = [NSDictionary dictionaryWithObject:[UIColor colorWithRed:0 green:0 blue:1 alpha:0.5] forKey:ECCodeOverlayAttributeColorName];
     [codeView setAttributes:overlayAttrib forOverlayNamed:@"MyOverlay"];
     [codeView addOverlayNamed:@"MyOverlay" toRange:(NSRange){4, 4}];
     
