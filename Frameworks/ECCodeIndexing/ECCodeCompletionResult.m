@@ -79,8 +79,9 @@
     ECCodeCompletionResult *otherResult = other;
     if (!otherResult.cursorKind == _cursorKind)
         return NO;
-    if (![otherResult.completionString isEqual:_completionString])
-        return NO;
+    if (_completionString || otherResult.completionString)
+        if (![otherResult.completionString isEqual:_completionString])
+            return NO;
     return YES;
 }
 

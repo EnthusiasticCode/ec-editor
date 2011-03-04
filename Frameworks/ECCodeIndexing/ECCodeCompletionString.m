@@ -61,9 +61,13 @@
 
 - (NSUInteger)computeHash
 {
-    const NSUInteger propertyCount = 1;
-    NSUInteger propertyHashes[1] = { [_completionChunks hash] };
-    return ECHashNSUIntegers(propertyHashes, propertyCount);
+    NSUInteger chunkCount = [_completionChunks count];
+    NSUInteger *chunkHashes =  malloc(chunkCount * sizeof(NSUInteger));
+    for (NSUInteger i = 0; i < chunkCount; i++)
+    {
+        chunkHashes[i] = [[_completionChunks objectAtIndex:i] hash];
+    }
+    return ECHashNSUIntegers(chunkHashes, chunkCount);
 }
 
 - (BOOL)isEqual:(id)other
@@ -73,8 +77,9 @@
     if (![other isKindOfClass:[self class]])
         return NO;
     ECCodeCompletionString *otherString = other;
-    if (![otherString.completionChunks isEqual:_completionChunks])
-        return NO;
+    if (otherString.completionChunks || _completionChunks)
+        if (![otherString.completionChunks isEqual:_completionChunks])
+            return NO;
     return YES;
 }
 

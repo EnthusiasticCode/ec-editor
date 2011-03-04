@@ -79,8 +79,9 @@
     ECCodeCompletionChunk *otherChunk = other;
     if (!otherChunk.kind == _kind)
         return NO;
-    if (![otherChunk.string isEqual:_string])
-        return NO;
+    if (_string || otherChunk.string)
+        if (![otherChunk.string isEqual:_string])
+            return NO;
     return YES;
 }
 

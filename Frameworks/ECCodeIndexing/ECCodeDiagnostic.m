@@ -86,14 +86,16 @@
     if (![other isKindOfClass:[self class]])
         return NO;
     ECCodeDiagnostic *otherDiagnostic = other;
-    if (!otherDiagnostic.severity == _severity)
-        return NO;
-    if (![otherDiagnostic.fileURL isEqual:_fileURL])
-        return NO;
     if (!otherDiagnostic.offset == _offset)
         return NO;
-    if (![otherDiagnostic.spelling isEqual:_spelling])
+    if (!otherDiagnostic.severity == _severity)
         return NO;
+    if (_fileURL || otherDiagnostic.fileURL)
+        if (![otherDiagnostic.fileURL isEqual:_fileURL])
+            return NO;
+    if (_spelling || otherDiagnostic.spelling)
+        if (![otherDiagnostic.spelling isEqual:_spelling])
+            return NO;
     return YES;
 }
 

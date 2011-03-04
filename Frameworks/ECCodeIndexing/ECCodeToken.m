@@ -79,12 +79,6 @@
     if (![other isKindOfClass:[self class]])
         return NO;
     ECCodeToken *otherToken = other;
-    if (!otherToken.kind == _kind)
-        return NO;
-    if (![otherToken.spelling isEqual:_spelling])
-        return NO;
-    if (![otherToken.fileURL isEqual:_fileURL])
-        return NO;
     if (!otherToken.offset == _offset)
         return NO;
     NSRange otherTokenExtent = otherToken.extent;
@@ -92,6 +86,14 @@
         return NO;
     if (!otherTokenExtent.length == _extent.length)
         return NO;
+    if (!otherToken.kind == _kind)
+        return NO;
+    if (_spelling || otherToken.spelling)
+        if (![otherToken.spelling isEqual:_spelling])
+            return NO;
+    if (_fileURL || otherToken.fileURL)
+        if (![otherToken.fileURL isEqual:_fileURL])
+            return NO;
     return YES;
 }
 

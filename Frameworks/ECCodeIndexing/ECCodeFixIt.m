@@ -70,15 +70,17 @@
     if (![other isKindOfClass:[self class]])
         return NO;
     ECCodeFixIt *otherFixIt = other;
-    if (![otherFixIt.string isEqual:_string])
-        return NO;
-    if (![otherFixIt.fileURL isEqual:_fileURL])
-        return NO;
     NSRange otherFixItReplacementRange = otherFixIt.replacementRange;
     if (!otherFixItReplacementRange.location == _replacementRange.location)
         return NO;
     if (!otherFixItReplacementRange.length == _replacementRange.length)
         return NO;
+    if (_string || otherFixIt.string)
+        if (![otherFixIt.string isEqual:_string])
+            return NO;
+    if (_fileURL || otherFixIt.fileURL)
+        if (![otherFixIt.fileURL isEqual:_fileURL])
+            return NO;
     return YES;
 }
 
