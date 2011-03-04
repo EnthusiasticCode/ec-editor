@@ -11,9 +11,9 @@
 #import "ECCodeView.h"
 #import <ECCodeIndexing/ECCodeIndex.h>
 #import <ECCodeIndexing/ECCodeUnit.h>
-#import <ECCodeIndexing/ECCompletionString.h>
-#import <ECCodeIndexing/ECDiagnostic.h>
-#import <ECCodeIndexing/ECToken.h>
+#import <ECCodeIndexing/ECCodeCompletionString.h>
+#import <ECCodeIndexing/ECCodeDiagnostic.h>
+#import <ECCodeIndexing/ECCodeToken.h>
 
 
 @implementation ECCodeProjectController
@@ -71,12 +71,12 @@
 - (void)loadFile:(NSURL *)fileURL
 {
     self.codeView.text = [NSString stringWithContentsOfURL:fileURL encoding:NSUTF8StringEncoding error:nil];
-    for (ECToken *token in [[self.codeIndexer unitForURL:fileURL] tokensInRange:NSMakeRange(0, [self.codeView.text length])])
+    for (ECCodeToken *token in [[self.codeIndexer unitForURL:fileURL] tokensInRange:NSMakeRange(0, [self.codeView.text length])])
     {
         NSLog(@"%@", token);
         switch (token.kind)
         {
-            case ECTokenKindKeyword:
+            case ECCodeTokenKindKeyword:
                 [(ECCodeView *)self.codeView setStyleNamed:ECCodeStyleKeywordName toRange:[token.extent range]];
                 break;
             case ECtokenKindComment:
@@ -113,7 +113,7 @@
 - (void)showCompletions
 {
 //    NSMutableArray *completionLabels = [[NSMutableArray alloc] initWithCapacity:[self.possibleCompletions count]];
-//    for (ECCompletionString *completion in self.possibleCompletions)
+//    for (ECCodeCompletionString *completion in self.possibleCompletions)
 //    {
 //        [completionLabels addObject:[[completion firstChunk] string]];
 //    }

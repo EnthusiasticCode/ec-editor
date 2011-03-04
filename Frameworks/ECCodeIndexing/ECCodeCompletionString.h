@@ -1,5 +1,5 @@
 //
-//  ECCompletionString.h
+//  ECCodeCompletionString.h
 //  edit
 //
 //  Created by Uri Baghin on 1/20/11.
@@ -7,13 +7,16 @@
 //
 
 #import <Foundation/Foundation.h>
-@class ECCompletionChunk;
+@class ECCodeCompletionChunk;
 /*! Object representing any possible completion. */
-@interface ECCompletionString : NSObject
-@property (nonatomic,readonly,copy) NSArray *completionChunks;
+@interface ECCodeCompletionString : NSObject
+{
+    NSUInteger _hash;
+}
+@property (nonatomic, readonly, copy) NSArray *completionChunks;
 
 - (id)initWithCompletionChunks:(NSArray *)completionChunks;
 + (id)stringWithCompletionChunks:(NSArray *)completionChunks;
-- (ECCompletionChunk *)firstChunk;
+- (ECCodeCompletionChunk *)firstChunk;
 
 @end

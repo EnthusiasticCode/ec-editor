@@ -1,0 +1,33 @@
+//
+//  ECCodeToken.h
+//  edit
+//
+//  Created by Uri Baghin on 2/2/11.
+//  Copyright 2011 __MyCompanyName__. All rights reserved.
+//
+
+#import <Foundation/Foundation.h>
+
+typedef enum ECCodeTokenKind
+{
+    ECCodeTokenKindPunctuation = 1,
+    ECCodeTokenKindKeyword = 2,
+    ECCodeTokenKindIdentifier = 3,
+    ECCodeTokenKindLiteral = 4,
+    ECtokenKindComment = 5
+} ECCodeTokenKind;
+
+@interface ECCodeToken : NSObject
+{
+    NSUInteger _hash;
+}
+@property (nonatomic, readonly) ECCodeTokenKind kind;
+@property (nonatomic, readonly, copy) NSString *spelling;
+@property (nonatomic, readonly, copy) NSURL *fileURL;
+@property (nonatomic, readonly) NSUInteger offset;
+@property (nonatomic, readonly) NSRange extent;
+
+- (id)initWithKind:(ECCodeTokenKind)kind spelling:(NSString *)spelling fileURL:(NSURL *)fileURL offset:(NSUInteger )offset extent:(NSRange)extent;
++ (id)tokenWithKind:(ECCodeTokenKind)kind spelling:(NSString *)spelling fileURL:(NSURL *)fileURL offset:(NSUInteger )offset extent:(NSRange)extent;
+
+@end

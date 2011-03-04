@@ -495,13 +495,13 @@
 		B736172512DA1129009801D4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B761FD04131B0763006072A0 /* ECAdditions.xcodeproj */,
+				B761FCE5131B0736006072A0 /* ECMobileAppKit.xcodeproj */,
+				B761FCD5131B072C006072A0 /* ECCodeIndexing.xcodeproj */,
 				B761FD4C131B09A4006072A0 /* libclang.dylib */,
 				B761FD35131B085D006072A0 /* libECMobileAppKit.a */,
 				B761FD33131B0859006072A0 /* libECCodeIndexing.a */,
 				B761FD31131B0853006072A0 /* libECAdditions.a */,
-				B761FD04131B0763006072A0 /* ECAdditions.xcodeproj */,
-				B761FCE5131B0736006072A0 /* ECMobileAppKit.xcodeproj */,
-				B761FCD5131B072C006072A0 /* ECCodeIndexing.xcodeproj */,
 				B761FD47131B089C006072A0 /* CoreGraphics.framework */,
 				B761FCB4131B04B0006072A0 /* CoreText.framework */,
 				B761FCB1131B04A9006072A0 /* UIKit.framework */,
