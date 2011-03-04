@@ -72,8 +72,8 @@ extern const NSString *ECCodeOverlayAttributeDrawBlockName;
     UIGestureRecognizer *doubleTapRecognizer;
     UIGestureRecognizer *tapHoldRecognizer;
     
-    // Caret overlay
-    CALayer *caretLayer;
+    // Caret/Selection overlay
+    CALayer *selectionLayer;
     CABasicAnimation *blinkAnimation;
     
     // Flags
@@ -99,6 +99,8 @@ extern const NSString *ECCodeOverlayAttributeDrawBlockName;
 @property (nonatomic, assign) id<UITextInputDelegate> inputDelegate;
 @property (nonatomic, readonly) id<UITextInputTokenizer> tokenizer;
 @property (nonatomic, copy) NSDictionary *markedTextStyle;
+
+@property (nonatomic, retain) UIColor *selectionColor;
 
 // Declare a style. After this declaration one can refer to the named style
 // in the setStyleNamed:toRange: API.

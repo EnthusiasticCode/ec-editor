@@ -136,6 +136,8 @@ static inline BOOL in_range(NSRange r, CFIndex i)
     [self setNeedsDisplay];
 }
 
+@synthesize selectionColor;
+
 #pragma mark Overlay methods
 
 @synthesize defaultOverlayDrawBlock;
@@ -209,6 +211,8 @@ static inline BOOL in_range(NSRange r, CFIndex i)
     // array of ECTextRange to apply the overlay to.
     overlays = [[NSMutableDictionary alloc] init];
     
+    selectionColor = [UIColor darkTextColor];
+    
     // The default block used to render an overlay that doesn't have the ECCodeOverlayDrawBlockName attribute.
     self.defaultOverlayDrawBlock = ^(CGContextRef ctx, CGRect rct, NSDictionary* attr) {
         UIColor *c = (UIColor *)[attr objectForKey:ECCodeOverlayAttributeColorName];
@@ -264,6 +268,8 @@ static inline BOOL in_range(NSRange r, CFIndex i)
     [overlays release];
     [overlayStyles release];
     self.defaultOverlayDrawBlock = nil;
+    
+    self.selectionColor = nil;
     
     [super dealloc];
 }
@@ -408,7 +414,8 @@ static inline BOOL in_range(NSRange r, CFIndex i)
     BOOL firstResponder = [self isFirstResponder];
     
     // Place cursor caret
-    if (firstResponder && selection && [selection isEmpty])
+    // TODO move to layoutOverlays
+    if (firstResponder && selection)
     {
         if (!blinkAnimation)
         {
@@ -420,23 +427,36 @@ static inline BOOL in_range(NSRange r, CFIndex i)
             blinkAnimation.toValue = [NSNumber numberWithFloat:0.0];    
         }
         
-        CGRect caretRect = [self caretRectForPosition:(ECTextPosition *)selection.start];
-        if (!caretLayer)
+        if (!selectionLayer)
         {
-            caretLayer = [CALayer layer];
-            caretLayer.delegate = self;
-            caretLayer.backgroundColor = [UIColor blackColor].CGColor;
-            caretLayer.cornerRadius = 1.0;
-            [self.layer addSublayer:caretLayer];
+            selectionLayer = [CALayer layer];
+            selectionLayer.delegate = self;
+            selectionLayer.opaque = NO;
+            selectionLayer.cornerRadius = 1.0;
+            selectionLayer.needsDisplayOnBoundsChange = YES;
+            [self.layer addSublayer:selectionLayer];
         }
-        caretLayer.frame = caretRect;
-        caretLayer.hidden = NO;
-        [caretLayer addAnimation:blinkAnimation forKey:@"blink"];
+        
+        if ([selection isEmpty])
+        {
+            selectionLayer.backgroundColor = [UIColor grayColor].CGColor;
+            [selectionLayer addAnimation:blinkAnimation forKey:@"blink"];
+            selectionLayer.frame = [self caretRectForPosition:(ECTextPosition *)selection.start];
+        }
+        else
+        {
+            // TODO cache also selection shape
+            selectionLayer.backgroundColor = selectionColor.CGColor;
+            [selectionLayer removeAnimationForKey:@"blink"];
+            selectionLayer.opacity = 0.5;
+            selectionLayer.frame = [self rectForContentRange:[selection range]];
+        }
+        selectionLayer.hidden = NO;
     }
-    else if (caretLayer && !caretLayer.hidden)
+    else if (selectionLayer && !selectionLayer.hidden)
     {
-        [caretLayer removeAnimationForKey:@"blink"];
-        caretLayer.hidden = YES;
+        [selectionLayer removeAnimationForKey:@"blink"];
+        selectionLayer.hidden = YES;
     }
 }
 
@@ -473,17 +493,22 @@ static inline BOOL in_range(NSRange r, CFIndex i)
 #pragma mark -
 #pragma mark CALayer delegate
 
-//- (void)drawLayer:(CALayer *)layer inContext:(CGContextRef)ctx
-//{
-//    if (layer == caretLayer)
-//    {
-//        
-//    }
-//    else
-//    {
-//        [super drawLayer:layer inContext:ctx];
-//    }
-//}
+- (void)drawLayer:(CALayer *)layer inContext:(CGContextRef)ctx
+{
+    if (layer == selectionLayer)
+    {
+        if (selection && ![selection isEmpty])
+        {
+            //CGContextSetFillColorWithColor(ctx, [UIColor redColor].CGColor);
+            [self processRectsOfLinesInRange:[selection range] withBlock:^(CGRect rct) {
+                CGContextAddRect(ctx, rct);
+            }];
+            CGContextFillPath(ctx);
+            return;
+        }
+    }
+    [super drawLayer:layer inContext:ctx];
+}
 
 #pragma mark -
 #pragma mark UIResponder protocol
@@ -1410,8 +1435,10 @@ static inline BOOL in_range(NSRange r, CFIndex i)
 - (void)handleGestureTap:(UITapGestureRecognizer *)recognizer
 {
     CGPoint point = [recognizer locationInView:self];
+    CGPoint endpoint = point;
+    endpoint.x += 30;
     
-    [self setSelectedTextFromPoint:point toPoint:point];
+    [self setSelectedTextFromPoint:point toPoint:endpoint];
 }
 
 - (CGAffineTransform)transormContentFrameFlipped:(BOOL)flipped 
