@@ -77,10 +77,10 @@
         switch (token.kind)
         {
             case ECCodeTokenKindKeyword:
-                [(ECCodeView *)self.codeView setStyleNamed:ECCodeStyleKeywordName toRange:[token.extent range]];
+                [(ECCodeView *)self.codeView setStyleNamed:ECCodeStyleKeywordName toRange:token.extent];
                 break;
             case ECtokenKindComment:
-                [(ECCodeView *)self.codeView setStyleNamed:ECCodeStyleCommentName toRange:[token.extent range]];
+                [(ECCodeView *)self.codeView setStyleNamed:ECCodeStyleCommentName toRange:token.extent];
                 break;
             default:
                 break;
