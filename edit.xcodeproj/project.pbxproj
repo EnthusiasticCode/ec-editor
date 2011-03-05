@@ -24,15 +24,6 @@
 		B7759ED012E062B5006E99E7 /* OUITextSelectionHandle.png in Resources */ = {isa = PBXBuildFile; fileRef = B7759EC812E062B5006E99E7 /* OUITextSelectionHandle.png */; };
 		B7759ED112E062B5006E99E7 /* OUITextSelectionOverlay.png in Resources */ = {isa = PBXBuildFile; fileRef = B7759EC912E062B5006E99E7 /* OUITextSelectionOverlay.png */; };
 		B7BD531F12DF1CDB003B83B3 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7BD531E12DF1CDB003B83B3 /* QuartzCore.framework */; };
-		B7BF7B5D12E05D48005CDF48 /* OQDrawing.m in Sources */ = {isa = PBXBuildFile; fileRef = B7BF7B3F12E05D48005CDF48 /* OQDrawing.m */; };
-		B7BF7B5E12E05D48005CDF48 /* OUEFTextPosition.m in Sources */ = {isa = PBXBuildFile; fileRef = B7BF7B4112E05D48005CDF48 /* OUEFTextPosition.m */; };
-		B7BF7B5F12E05D48005CDF48 /* OUEFTextRange.m in Sources */ = {isa = PBXBuildFile; fileRef = B7BF7B4312E05D48005CDF48 /* OUEFTextRange.m */; };
-		B7BF7B6312E05D48005CDF48 /* OUIEditableFrame.m in Sources */ = {isa = PBXBuildFile; fileRef = B7BF7B4C12E05D48005CDF48 /* OUIEditableFrame.m */; };
-		B7BF7B6612E05D48005CDF48 /* OUILoupeOverlay.m in Sources */ = {isa = PBXBuildFile; fileRef = B7BF7B5312E05D48005CDF48 /* OUILoupeOverlay.m */; };
-		B7BF7B6712E05D48005CDF48 /* OUIScalingView.m in Sources */ = {isa = PBXBuildFile; fileRef = B7BF7B5612E05D48005CDF48 /* OUIScalingView.m */; };
-		B7BF7B6812E05D48005CDF48 /* OUITextCursorOverlay.m in Sources */ = {isa = PBXBuildFile; fileRef = B7BF7B5812E05D48005CDF48 /* OUITextCursorOverlay.m */; };
-		B7BF7B6912E05D48005CDF48 /* OUITextLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = B7BF7B5A12E05D48005CDF48 /* OUITextLayout.m */; };
-		B7BF7B6A12E05D48005CDF48 /* OUITextThumb.m in Sources */ = {isa = PBXBuildFile; fileRef = B7BF7B5C12E05D48005CDF48 /* OUITextThumb.m */; };
 		CD01B8B2131D2B36005AABFC /* ECLineMarksView.m in Sources */ = {isa = PBXBuildFile; fileRef = CD01B8B1131D2B36005AABFC /* ECLineMarksView.m */; };
 		CD0D843A12E9A865005DB220 /* ECCodeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD0D843912E9A865005DB220 /* ECCodeViewController.m */; };
 		CD0D843D12E9A87D005DB220 /* ECCodeView.m in Sources */ = {isa = PBXBuildFile; fileRef = CD0D843C12E9A87D005DB220 /* ECCodeView.m */; };
@@ -63,26 +54,6 @@
 		B7759EC812E062B5006E99E7 /* OUITextSelectionHandle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = OUITextSelectionHandle.png; sourceTree = "<group>"; };
 		B7759EC912E062B5006E99E7 /* OUITextSelectionOverlay.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = OUITextSelectionOverlay.png; sourceTree = "<group>"; };
 		B7BD531E12DF1CDB003B83B3 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
-		B7BF7B3E12E05D48005CDF48 /* OQDrawing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OQDrawing.h; sourceTree = "<group>"; };
-		B7BF7B3F12E05D48005CDF48 /* OQDrawing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OQDrawing.m; sourceTree = "<group>"; };
-		B7BF7B4012E05D48005CDF48 /* OUEFTextPosition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OUEFTextPosition.h; sourceTree = "<group>"; };
-		B7BF7B4112E05D48005CDF48 /* OUEFTextPosition.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OUEFTextPosition.m; sourceTree = "<group>"; };
-		B7BF7B4212E05D48005CDF48 /* OUEFTextRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OUEFTextRange.h; sourceTree = "<group>"; };
-		B7BF7B4312E05D48005CDF48 /* OUEFTextRange.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OUEFTextRange.m; sourceTree = "<group>"; };
-		B7BF7B4B12E05D48005CDF48 /* OUIEditableFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OUIEditableFrame.h; sourceTree = "<group>"; };
-		B7BF7B4C12E05D48005CDF48 /* OUIEditableFrame.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OUIEditableFrame.m; sourceTree = "<group>"; };
-		B7BF7B4D12E05D48005CDF48 /* OUIEditableFrameDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OUIEditableFrameDelegate.h; sourceTree = "<group>"; };
-		B7BF7B5212E05D48005CDF48 /* OUILoupeOverlay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OUILoupeOverlay.h; sourceTree = "<group>"; };
-		B7BF7B5312E05D48005CDF48 /* OUILoupeOverlay.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OUILoupeOverlay.m; sourceTree = "<group>"; };
-		B7BF7B5412E05D48005CDF48 /* OUILoupeOverlaySubject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OUILoupeOverlaySubject.h; sourceTree = "<group>"; };
-		B7BF7B5512E05D48005CDF48 /* OUIScalingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OUIScalingView.h; sourceTree = "<group>"; };
-		B7BF7B5612E05D48005CDF48 /* OUIScalingView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OUIScalingView.m; sourceTree = "<group>"; };
-		B7BF7B5712E05D48005CDF48 /* OUITextCursorOverlay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OUITextCursorOverlay.h; sourceTree = "<group>"; };
-		B7BF7B5812E05D48005CDF48 /* OUITextCursorOverlay.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OUITextCursorOverlay.m; sourceTree = "<group>"; };
-		B7BF7B5912E05D48005CDF48 /* OUITextLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OUITextLayout.h; sourceTree = "<group>"; };
-		B7BF7B5A12E05D48005CDF48 /* OUITextLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OUITextLayout.m; sourceTree = "<group>"; };
-		B7BF7B5B12E05D48005CDF48 /* OUITextThumb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OUITextThumb.h; sourceTree = "<group>"; };
-		B7BF7B5C12E05D48005CDF48 /* OUITextThumb.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OUITextThumb.m; sourceTree = "<group>"; };
 		CD01B8B0131D2B36005AABFC /* ECLineMarksView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECLineMarksView.h; sourceTree = "<group>"; };
 		CD01B8B1131D2B36005AABFC /* ECLineMarksView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECLineMarksView.m; sourceTree = "<group>"; };
 		CD0D843812E9A865005DB220 /* ECCodeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeViewController.h; sourceTree = "<group>"; };
@@ -118,7 +89,6 @@
 		B736171A12DA1129009801D4 = {
 			isa = PBXGroup;
 			children = (
-				B7BF7B3D12E05D48005CDF48 /* OmniUI */,
 				B736172212DA1129009801D4 /* Classes */,
 				B736172312DA1129009801D4 /* Other Sources */,
 				B736172412DA1129009801D4 /* Resources */,
@@ -130,22 +100,13 @@
 		B736172212DA1129009801D4 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				CD6C3D5C1322431100A8D90D /* Old */,
+				CD0D843B12E9A87D005DB220 /* ECCodeView.h */,
+				CD0D843C12E9A87D005DB220 /* ECCodeView.m */,
 				CD0D843812E9A865005DB220 /* ECCodeViewController.h */,
 				CD0D843912E9A865005DB220 /* ECCodeViewController.m */,
 				B736173C12DA112A009801D4 /* editAppDelegate.h */,
 				B736173D12DA112A009801D4 /* editAppDelegate.m */,
-				CD0D843B12E9A87D005DB220 /* ECCodeView.h */,
-				CD0D843C12E9A87D005DB220 /* ECCodeView.m */,
-				CDB4D5CA12F9505E00952DB8 /* ECTextPosition.h */,
-				CDB4D5CB12F9505E00952DB8 /* ECTextPosition.m */,
-				CDB4D5CD12F9760800952DB8 /* ECTextRange.h */,
-				CDB4D5CE12F9760800952DB8 /* ECTextRange.m */,
-				CD5344AA131CCA690082C0E7 /* ECCodeScrollView.h */,
-				CD5344AB131CCA690082C0E7 /* ECCodeScrollView.m */,
-				CD01B8B0131D2B36005AABFC /* ECLineMarksView.h */,
-				CD01B8B1131D2B36005AABFC /* ECLineMarksView.m */,
-				CD7140871321283F0031D5D9 /* ECSelectionHandleView.h */,
-				CD7140881321283F0031D5D9 /* ECSelectionHandleView.m */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -213,31 +174,21 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		B7BF7B3D12E05D48005CDF48 /* OmniUI */ = {
+		CD6C3D5C1322431100A8D90D /* Old */ = {
 			isa = PBXGroup;
 			children = (
-				B7BF7B3E12E05D48005CDF48 /* OQDrawing.h */,
-				B7BF7B3F12E05D48005CDF48 /* OQDrawing.m */,
-				B7BF7B4012E05D48005CDF48 /* OUEFTextPosition.h */,
-				B7BF7B4112E05D48005CDF48 /* OUEFTextPosition.m */,
-				B7BF7B4212E05D48005CDF48 /* OUEFTextRange.h */,
-				B7BF7B4312E05D48005CDF48 /* OUEFTextRange.m */,
-				B7BF7B4B12E05D48005CDF48 /* OUIEditableFrame.h */,
-				B7BF7B4C12E05D48005CDF48 /* OUIEditableFrame.m */,
-				B7BF7B4D12E05D48005CDF48 /* OUIEditableFrameDelegate.h */,
-				B7BF7B5212E05D48005CDF48 /* OUILoupeOverlay.h */,
-				B7BF7B5312E05D48005CDF48 /* OUILoupeOverlay.m */,
-				B7BF7B5412E05D48005CDF48 /* OUILoupeOverlaySubject.h */,
-				B7BF7B5512E05D48005CDF48 /* OUIScalingView.h */,
-				B7BF7B5612E05D48005CDF48 /* OUIScalingView.m */,
-				B7BF7B5712E05D48005CDF48 /* OUITextCursorOverlay.h */,
-				B7BF7B5812E05D48005CDF48 /* OUITextCursorOverlay.m */,
-				B7BF7B5912E05D48005CDF48 /* OUITextLayout.h */,
-				B7BF7B5A12E05D48005CDF48 /* OUITextLayout.m */,
-				B7BF7B5B12E05D48005CDF48 /* OUITextThumb.h */,
-				B7BF7B5C12E05D48005CDF48 /* OUITextThumb.m */,
+				CDB4D5CA12F9505E00952DB8 /* ECTextPosition.h */,
+				CDB4D5CB12F9505E00952DB8 /* ECTextPosition.m */,
+				CDB4D5CD12F9760800952DB8 /* ECTextRange.h */,
+				CDB4D5CE12F9760800952DB8 /* ECTextRange.m */,
+				CD5344AA131CCA690082C0E7 /* ECCodeScrollView.h */,
+				CD5344AB131CCA690082C0E7 /* ECCodeScrollView.m */,
+				CD01B8B0131D2B36005AABFC /* ECLineMarksView.h */,
+				CD01B8B1131D2B36005AABFC /* ECLineMarksView.m */,
+				CD7140871321283F0031D5D9 /* ECSelectionHandleView.h */,
+				CD7140881321283F0031D5D9 /* ECSelectionHandleView.m */,
 			);
-			path = OmniUI;
+			name = Old;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -309,15 +260,6 @@
 			files = (
 				B736173B12DA112A009801D4 /* edit-main.m in Sources */,
 				B736173E12DA112A009801D4 /* editAppDelegate.m in Sources */,
-				B7BF7B5D12E05D48005CDF48 /* OQDrawing.m in Sources */,
-				B7BF7B5E12E05D48005CDF48 /* OUEFTextPosition.m in Sources */,
-				B7BF7B5F12E05D48005CDF48 /* OUEFTextRange.m in Sources */,
-				B7BF7B6312E05D48005CDF48 /* OUIEditableFrame.m in Sources */,
-				B7BF7B6612E05D48005CDF48 /* OUILoupeOverlay.m in Sources */,
-				B7BF7B6712E05D48005CDF48 /* OUIScalingView.m in Sources */,
-				B7BF7B6812E05D48005CDF48 /* OUITextCursorOverlay.m in Sources */,
-				B7BF7B6912E05D48005CDF48 /* OUITextLayout.m in Sources */,
-				B7BF7B6A12E05D48005CDF48 /* OUITextThumb.m in Sources */,
 				CD0D843A12E9A865005DB220 /* ECCodeViewController.m in Sources */,
 				CD0D843D12E9A87D005DB220 /* ECCodeView.m in Sources */,
 				CDB4D5CC12F9505E00952DB8 /* ECTextPosition.m in Sources */,

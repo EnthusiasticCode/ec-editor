@@ -8,15 +8,12 @@
 
 #import <UIKit/UIKit.h>
 #import "ECCodeView.h"
-#import "ECCodeScrollView.h"
 
 @interface ECCodeViewController : UIViewController {
-
+@private
     ECCodeView *codeView;
-    ECCodeScrollView *codeScrollView;
 }
 
 @property (nonatomic, retain) IBOutlet ECCodeView *codeView;
-@property (nonatomic, retain) IBOutlet ECCodeScrollView *codeScrollView;
 
 @end
