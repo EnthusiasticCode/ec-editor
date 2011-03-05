@@ -10,7 +10,7 @@
 @class ECCodeUnit;
 
 /// Protocol objects passed as files to track must conform to.
-@protocol ECCodeIndexingFileObserving <NSObject>
+@protocol ECCodeIndexingFileObserving
 @property (nonatomic, retain) NSURL *URL;
 @property (nonatomic, retain) NSString *unsavedContent;
 @end
@@ -26,12 +26,12 @@
 /// Returns the default file extension for a file of the given language.
 - (NSString *)extensionForLanguage:(NSString *)language;
 /// Returns a set containing all files currently being observed by the code index.
-- (NSSet *)observedFiles;
+- (NSArray *)observedFiles;
 /// Attempts to add KVO observers to the given file to track changes to it.
 /// If a file with the same URL is already being tracked, returns NO. No observers are added to the file in that case.
-- (BOOL)addObserversToFile:(id<ECCodeIndexingFileObserving>)file;
+- (BOOL)addObserversToFile:(NSObject<ECCodeIndexingFileObserving> *)file;
 /// Removes all previously added KVO observers from the given file.
-- (void)removeObserversFromFile:(id<ECCodeIndexingFileObserving>)file;
+- (void)removeObserversFromFile:(NSObject<ECCodeIndexingFileObserving> *)file;
 /// Returns a code unit for the given URL, with the given language.
 - (ECCodeUnit *)unitForURL:(NSURL *)url withLanguage:(NSString *)language;
 /// Returns a code unit for the given URL, with the default language as detected from the URL.

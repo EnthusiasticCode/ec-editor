@@ -17,6 +17,10 @@
 @property (nonatomic, readonly, retain) NSURL *url;
 /// The language the unit is using to interpret the file's contents.
 @property (nonatomic, readonly, retain) NSString *language;
+/// Whether or not the unit needs to reparse its files.
+@property (nonatomic) BOOL needsReparse;
+/// Returns whether the unit depends on the file at the given URL or not.
+- (BOOL)isDependentOnFile:(NSURL *)fileURL;
 /// Returns the possible completions at a given insertion range.
 - (NSArray *)completionsWithSelection:(NSRange)selection;
 /// Returns warnings and errors.

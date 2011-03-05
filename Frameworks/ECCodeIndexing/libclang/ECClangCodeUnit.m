@@ -202,6 +202,14 @@ static ECCodeCompletionResult *completionResultFromClangCompletionResult(CXCompl
     return [translationUnit autorelease];
 }
 
+- (BOOL)isDependentOnFile:(NSURL *)fileURL
+{
+    CXFile *clangFile = clang_getFile(self.translationUnit, [[fileURL path] UTF8String]);
+    if (clangFile)
+        return YES;
+    return NO;
+}
+
 - (NSArray *)completionsWithSelection:(NSRange)selection
 {
     CXSourceLocation selectionLocation = clang_getLocationForOffset(self.translationUnit, self.source, selection.location);

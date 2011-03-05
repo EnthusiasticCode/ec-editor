@@ -13,6 +13,8 @@
 		B761FCC6131B05A2006072A0 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B761FCC5131B05A2006072A0 /* Foundation.framework */; };
 		B761FCC7131B05A2006072A0 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B761FCC5131B05A2006072A0 /* Foundation.framework */; };
 		B761FD4B131B0902006072A0 /* libclang.dylib in Resources */ = {isa = PBXBuildFile; fileRef = B7FCA56B131A6FB9002D6C7C /* libclang.dylib */; };
+		B7630B071322638300A8CC63 /* ECCodeIndex(Private).h in Headers */ = {isa = PBXBuildFile; fileRef = B7630B061322638300A8CC63 /* ECCodeIndex(Private).h */; };
+		B7630B0A1322820500A8CC63 /* ECCodeUnit(Private).h in Headers */ = {isa = PBXBuildFile; fileRef = B7630B091322820500A8CC63 /* ECCodeUnit(Private).h */; };
 		B7738F7D13204FC500634ACE /* ECCodeSymbol.h in Headers */ = {isa = PBXBuildFile; fileRef = B7738F7B13204FC500634ACE /* ECCodeSymbol.h */; };
 		B7738F7E13204FC500634ACE /* ECCodeSymbol.m in Sources */ = {isa = PBXBuildFile; fileRef = B7738F7C13204FC500634ACE /* ECCodeSymbol.m */; };
 		B79084D2131C5602002668FA /* ECClangCodeUnit.h in Headers */ = {isa = PBXBuildFile; fileRef = B79084D0131C5602002668FA /* ECClangCodeUnit.h */; };
@@ -147,6 +149,8 @@
 		B74E2F8B132154D600740270 /* ECAdditions.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ECAdditions.xcodeproj; path = ../ECAdditions/ECAdditions.xcodeproj; sourceTree = "<group>"; };
 		B74E2FD11321673500740270 /* libECAdditions.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libECAdditions.a; sourceTree = SOURCE_ROOT; };
 		B761FCC5131B05A2006072A0 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS4.2.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		B7630B061322638300A8CC63 /* ECCodeIndex(Private).h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ECCodeIndex(Private).h"; sourceTree = "<group>"; };
+		B7630B091322820500A8CC63 /* ECCodeUnit(Private).h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ECCodeUnit(Private).h"; sourceTree = "<group>"; };
 		B7738F7B13204FC500634ACE /* ECCodeSymbol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeSymbol.h; sourceTree = "<group>"; };
 		B7738F7C13204FC500634ACE /* ECCodeSymbol.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeSymbol.m; sourceTree = "<group>"; };
 		B79084D0131C5602002668FA /* ECClangCodeUnit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECClangCodeUnit.h; sourceTree = "<group>"; };
@@ -372,8 +376,10 @@
 				B7FCA56E131A6FC7002D6C7C /* Config */,
 				B7FCA554131A6FB9002D6C7C /* ECCodeIndex.h */,
 				B7FCA555131A6FB9002D6C7C /* ECCodeIndex.m */,
+				B7630B061322638300A8CC63 /* ECCodeIndex(Private).h */,
 				B7E7D231131E797C008E3DFA /* ECCodeUnit.h */,
 				B7E7D232131E797C008E3DFA /* ECCodeUnit.m */,
+				B7630B091322820500A8CC63 /* ECCodeUnit(Private).h */,
 				B7738F7B13204FC500634ACE /* ECCodeSymbol.h */,
 				B7738F7C13204FC500634ACE /* ECCodeSymbol.m */,
 				B70C04041320D1AE007A3D86 /* ECCodeCursor.h */,
@@ -629,6 +635,8 @@
 				B7E7D233131E797C008E3DFA /* ECCodeUnit.h in Headers */,
 				B7738F7D13204FC500634ACE /* ECCodeSymbol.h in Headers */,
 				B70C04061320D1AE007A3D86 /* ECCodeCursor.h in Headers */,
+				B7630B071322638300A8CC63 /* ECCodeIndex(Private).h in Headers */,
+				B7630B0A1322820500A8CC63 /* ECCodeUnit(Private).h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

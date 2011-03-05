@@ -7,7 +7,9 @@
 //
 
 #import "ECCodeIndex.h"
+#import "ECCodeIndex(Private).h"
 #import "ECCodeUnit.h"
+#import "ECCodeUnit(Private).h"
 #import <ECAdditions/NSURL+ECAdditions.h>
 #import <objc/runtime.h>
 // TODO: plugins are hardcoded for now
@@ -18,10 +20,16 @@
 @property (nonatomic, copy) NSDictionary *indexesByExtension;
 @property (nonatomic, copy, getter = getLanguageToExtensionMap) NSDictionary *languageToExtensionMap;
 @property (nonatomic, copy, getter = getExtensionToLanguageMap) NSDictionary *extensionToLanguageMap;
+@property (nonatomic, retain) NSMutableDictionary *codeUnitPointers;
+@property (nonatomic, retain) NSMutableDictionary *filePointers;
 - (BOOL)loadPlugins;
 - (ECCodeIndex *)indexForLanguage:(NSString *)language;
 - (ECCodeIndex *)indexForExtension:(NSString *)extension;
+- (void)addObserversForUnitsToFile:(NSObject<ECCodeIndexingFileObserving> *)file;
+- (void)removeObserversForUnitsFromFile:(NSObject<ECCodeIndexingFileObserving> *)file;
 @end
+
+#pragma mark -
 
 @implementation ECCodeIndex
 
@@ -29,16 +37,11 @@
 @synthesize indexesByExtension = _indexesByExtension;
 @synthesize languageToExtensionMap = _languageToExtensionMap;
 @synthesize extensionToLanguageMap = _extensionToLanguageMap;
+@synthesize codeUnitPointers = _codeUnitPointers;
+@synthesize filePointers = _filePointers;
 
-- (ECCodeIndex *)indexForLanguage:(NSString *)language
-{
-    return [self.indexesByLanguage objectForKey:language];
-}
-
-- (ECCodeIndex *)indexForExtension:(NSString *)extension
-{
-    return [self.indexesByExtension objectForKey:extension];
-}
+#pragma mark -
+#pragma mark Initialization and deallocation
 
 - (void)dealloc
 {
@@ -46,8 +49,108 @@
     self.indexesByExtension = nil;
     self.languageToExtensionMap = nil;
     self.extensionToLanguageMap = nil;
+    self.codeUnitPointers = nil;
+    self.filePointers = nil;
     [super dealloc];
 }
+
+- (id)init
+{
+    self = [super init];
+    if (![self isMemberOfClass:[ECCodeIndex class]])
+        return self;
+    if (!self)
+        return nil;
+    if (![self loadPlugins])
+    {
+        [self release];
+        return nil;
+    }
+    self.codeUnitPointers = [NSMutableDictionary dictionary];
+    self.filePointers = [NSMutableDictionary dictionary];
+    return self;
+}
+
+#pragma mark -
+#pragma mark Public Methods
+
+- (NSDictionary *)languageToExtensionMap
+{
+    if (![self isMemberOfClass:[ECCodeIndex class]])
+        return nil;
+    return self.languageToExtensionMap;
+}
+
+- (NSDictionary *)extensionToLanguageMap
+{
+    if (![self isMemberOfClass:[ECCodeIndex class]])
+        return nil;
+    return self.extensionToLanguageMap;
+}
+
+- (NSString *)languageForExtension:(NSString *)extension
+{
+    return [[self extensionToLanguageMap] objectForKey:extension];
+}
+
+- (NSString *)extensionForLanguage:(NSString *)language
+{
+    return [[self languageToExtensionMap] objectForKey:language];
+}
+
+- (NSArray *)observedFiles
+{
+    return [self.filePointers allValues];
+}
+
+- (BOOL)addObserversToFile:(NSObject<ECCodeIndexingFileObserving> *)file
+{
+    if ([self.filePointers objectForKey:file.URL])
+        return NO;
+    [self addObserversForUnitsToFile:file];
+    [file addObserver:self forKeyPath:@"URL" options:NSKeyValueObservingOptionPrior context:NULL];
+    return YES;
+}
+
+- (void)removeObserversFromFile:(NSObject<ECCodeIndexingFileObserving> *)file
+{
+    [self removeObserversForUnitsFromFile:file];
+    [file removeObserver:self forKeyPath:@"URL"];
+    [self.filePointers removeObjectForKey:file.URL];
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    BOOL isPriorToChange = [[change objectForKey:NSKeyValueChangeNotificationIsPriorKey] boolValue];
+    if (isPriorToChange)
+        [self removeObserversForUnitsFromFile:object];
+    NSURL *newURL = [change objectForKey:NSKeyValueChangeNewKey];
+    if (newURL)
+        [self addObserversForUnitsToFile:object];
+}
+
+- (ECCodeUnit *)unitForURL:(NSURL *)url
+{
+    return [self unitForURL:url withLanguage:nil];
+}
+
+- (ECCodeUnit *)unitForURL:(NSURL *)url withLanguage:(NSString *)language
+{
+    if (![self isMemberOfClass:[ECCodeIndex class]])
+        return nil;
+    ECCodeUnit *unit;
+    unit = [[self.codeUnitPointers objectForKey:url] pointerValue];
+    if (unit)
+        return unit;
+    unit = [[self.indexesByExtension objectForKey:[url pathExtension]] unitForURL:url withLanguage:language];
+    [self.codeUnitPointers setObject:[NSValue valueWithNonretainedObject:unit] forKey:url];
+    for (NSObject<ECCodeIndexingFileObserving> *file in self.filePointers)
+        [unit addObserversToFile:file];
+    return unit;
+}
+
+#pragma mark -
+#pragma mark Private methods
 
 - (BOOL)loadPlugins
 {
@@ -101,72 +204,34 @@
     return YES;
 }
 
-- (id)init
+- (ECCodeIndex *)indexForLanguage:(NSString *)language
 {
-    self = [super init];
-    if (![self isMemberOfClass:[ECCodeIndex class]])
-        return self;
-    if (!self)
-        return nil;
-    if (![self loadPlugins])
-    {
-        [self release];
-        return nil;
-    }
-    return self;
+    return [self.indexesByLanguage objectForKey:language];
 }
 
-- (NSDictionary *)languageToExtensionMap
+- (ECCodeIndex *)indexForExtension:(NSString *)extension
 {
-    if (![self isMemberOfClass:[ECCodeIndex class]])
-        return nil;
-    return self.languageToExtensionMap;
+    return [self.indexesByExtension objectForKey:extension];
 }
 
-- (NSDictionary *)extensionToLanguageMap
+- (void)addObserversForUnitsToFile:(NSObject<ECCodeIndexingFileObserving> *)file
 {
-    if (![self isMemberOfClass:[ECCodeIndex class]])
-        return nil;
-    return self.extensionToLanguageMap;
+    for (ECCodeUnit *unit in [self.codeUnitPointers allValues])
+        [unit addObserversToFile:file];
 }
 
-- (NSString *)languageForExtension:(NSString *)extension
+- (void)removeObserversForUnitsFromFile:(NSObject<ECCodeIndexingFileObserving> *)file
 {
-    return [[self extensionToLanguageMap] objectForKey:extension];
+    for (ECCodeUnit *unit in [self.codeUnitPointers allValues])
+        [unit removeObserversFromFile:file];
 }
 
-- (NSString *)extensionForLanguage:(NSString *)language
-{
-    return [[self languageToExtensionMap] objectForKey:language];
-}
+#pragma mark -
+#pragma mark Categories
 
-- (NSSet *)observedFiles
+- (void)removeTranslationUnitForURL:(NSURL *)url
 {
-    return [NSSet set];
-}
-
-- (BOOL)addObserversToFile:(id<ECCodeIndexingFileObserving>)file
-{
-    return YES;
-}
-
-- (void)removeObserversFromFile:(id<ECCodeIndexingFileObserving>)file
-{
-    
-}
-
-- (ECCodeUnit *)unitForURL:(NSURL *)url
-{
-    if (![self isMemberOfClass:[ECCodeIndex class]])
-        return nil;
-    return [[self.indexesByExtension objectForKey:[url pathExtension]] unitForURL:url];
-}
-
-- (ECCodeUnit *)unitForURL:(NSURL *)url withLanguage:(NSString *)language
-{
-    if (![self isMemberOfClass:[ECCodeIndex class]])
-        return nil;
-    return [[self.indexesByLanguage objectForKey:language] unitForURL:url withLanguage:language];
+    [self.codeUnitPointers removeObjectForKey:url];
 }
 
 @end

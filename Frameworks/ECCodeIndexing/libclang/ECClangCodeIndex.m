@@ -93,9 +93,4 @@
     return codeUnit;
 }
 
-- (ECCodeUnit *)unitForURL:(NSURL *)url
-{
-    return [self unitForURL:url withLanguage:nil];
-}
-
 @end
