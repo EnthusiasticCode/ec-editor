@@ -13,4 +13,7 @@
 
 }
 
+/// The text displayed by the code view.
+@property (nonatomic, copy) NSString *text;
+
 @end
