@@ -20,7 +20,7 @@
     
 //    // TODO try without this initialization to find more bugs
 //    
-    codeView.text = @"int main(arguments)\n{\n\treturn 0;\n}\nint main(arguments)\n{\n\treturn 0;\n}\nint main(arguments)\n{\n\treturn 0;\n}\nint main(arguments)\n{\n\treturn 0;\n}\nint main(arguments)\n{\n\treturn 0;\n}\nint main(arguments)\n{\n\treturn 0;\n}\nint main(arguments)\n{\n\treturn 0;\n}\nint main(arguments)\n{\n\treturn 0;\n}\nint main(arguments)\n{\n\treturn 0;\n}\nint main(arguments)\n{\n\treturn 0;\n}\nint main(arguments)\n{\n\treturn 0;\n}\nint main(arguments)\n{\n\treturn 0;\n}\nint main(arguments)\n{\n\treturn 0;\n}\nint main(arguments)\n{\n\treturn 0;\n}\nint main(arguments)\n{\n\treturn 0;\n}\n";
+    codeView.text = @"int main(arguments)\n{\n\treturn 0;\n}";
 //    
 //    // Styles test
 //    NSDictionary *keywordStyle = [NSDictionary dictionaryWithObjectsAndKeys:

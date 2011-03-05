@@ -51,6 +51,8 @@ static inline id init(ECCodeView *self)
     self.opaque = YES;
     self.layer.cornerRadius = 20;
     self.layer.masksToBounds = YES;
+    //    self.clearsContextBeforeDrawing = YES;
+    //    self.contentMode = UIViewContentModeRedraw;
     
     // Text layer
     self->textLayer = [ECTextLayer layer];
@@ -58,10 +60,7 @@ static inline id init(ECCodeView *self)
     self->textLayer.backgroundColor = self.backgroundColor.CGColor;
     self->textLayer.wrapped = YES;
     self->textLayer.needsDisplayOnBoundsChange = YES;
-    [self.layer addSublayer:self->textLayer];    
-    
-//    self.clearsContextBeforeDrawing = YES;
-//    self.contentMode = UIViewContentModeRedraw;
+    [self.layer addSublayer:self->textLayer];
     
     // Default styling
     self.defaultTextStyle = [ECTextStyle textStyleWithName:@"Plain text" font:[UIFont fontWithName:@"Courier New" size:16.0] color:[UIColor blackColor]];
