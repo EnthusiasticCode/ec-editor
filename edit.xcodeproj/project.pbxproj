@@ -30,6 +30,7 @@
 		CD5344AC131CCA690082C0E7 /* ECCodeScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = CD5344AB131CCA690082C0E7 /* ECCodeScrollView.m */; };
 		CD6C3D5F13224FB400A8D90D /* ECTextLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = CD6C3D5E13224FB400A8D90D /* ECTextLayer.m */; };
 		CD6C3D621322A5EB00A8D90D /* ECTextStyle.m in Sources */ = {isa = PBXBuildFile; fileRef = CD6C3D611322A5EB00A8D90D /* ECTextStyle.m */; };
+		CD6C3D651322D7BF00A8D90D /* ECTextOverlayStyle.m in Sources */ = {isa = PBXBuildFile; fileRef = CD6C3D641322D7BF00A8D90D /* ECTextOverlayStyle.m */; };
 		CD7140891321283F0031D5D9 /* ECSelectionHandleView.m in Sources */ = {isa = PBXBuildFile; fileRef = CD7140881321283F0031D5D9 /* ECSelectionHandleView.m */; };
 		CDB4D5CC12F9505E00952DB8 /* ECTextPosition.m in Sources */ = {isa = PBXBuildFile; fileRef = CDB4D5CB12F9505E00952DB8 /* ECTextPosition.m */; };
 		CDB4D5CF12F9760800952DB8 /* ECTextRange.m in Sources */ = {isa = PBXBuildFile; fileRef = CDB4D5CE12F9760800952DB8 /* ECTextRange.m */; };
@@ -68,6 +69,8 @@
 		CD6C3D5E13224FB400A8D90D /* ECTextLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECTextLayer.m; sourceTree = "<group>"; };
 		CD6C3D601322A5EB00A8D90D /* ECTextStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECTextStyle.h; sourceTree = "<group>"; };
 		CD6C3D611322A5EB00A8D90D /* ECTextStyle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECTextStyle.m; sourceTree = "<group>"; };
+		CD6C3D631322D7BF00A8D90D /* ECTextOverlayStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; path = ECTextOverlayStyle.h; sourceTree = "<group>"; };
+		CD6C3D641322D7BF00A8D90D /* ECTextOverlayStyle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECTextOverlayStyle.m; sourceTree = "<group>"; };
 		CD7140871321283F0031D5D9 /* ECSelectionHandleView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECSelectionHandleView.h; sourceTree = "<group>"; };
 		CD7140881321283F0031D5D9 /* ECSelectionHandleView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECSelectionHandleView.m; sourceTree = "<group>"; };
 		CDB4D5CA12F9505E00952DB8 /* ECTextPosition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECTextPosition.h; sourceTree = "<group>"; };
@@ -121,6 +124,8 @@
 				CDB4D5CB12F9505E00952DB8 /* ECTextPosition.m */,
 				CDB4D5CD12F9760800952DB8 /* ECTextRange.h */,
 				CDB4D5CE12F9760800952DB8 /* ECTextRange.m */,
+				CD6C3D631322D7BF00A8D90D /* ECTextOverlayStyle.h */,
+				CD6C3D641322D7BF00A8D90D /* ECTextOverlayStyle.m */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -279,6 +284,7 @@
 				CD7140891321283F0031D5D9 /* ECSelectionHandleView.m in Sources */,
 				CD6C3D5F13224FB400A8D90D /* ECTextLayer.m in Sources */,
 				CD6C3D621322A5EB00A8D90D /* ECTextStyle.m in Sources */,
+				CD6C3D651322D7BF00A8D90D /* ECTextOverlayStyle.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -28,12 +28,13 @@
                                                           font:[UIFont fontWithName:@"Courier New" size:16.0]
                                                          color:[UIColor blueColor]];
     [codeView setTextStyle:stringStyle toTextRange:[ECTextRange textRangeWithRange:(NSRange){9, 9}]];
-    [codeView setTextStyles:[NSArray arrayWithObjects:keywordStyle, keywordStyle, nil] 
-               toTextRanges:[NSArray arrayWithObjects:[ECTextRange textRangeWithRange:(NSRange){0, 3}],
+    [codeView setTextStyles:[NSArray arrayWithObjects:
+                             keywordStyle, 
+                             keywordStyle, nil] 
+               toTextRanges:[NSArray arrayWithObjects:
+                             [ECTextRange textRangeWithRange:(NSRange){0, 3}],
                              [ECTextRange textRangeWithRange:(NSRange){23, 6}], nil]];
-//    [codeView setAttributes:keywordStyle forStyleNamed:ECCodeStyleKeywordName];
-//    [codeView setStyleNamed:ECCodeStyleKeywordName toRange:(NSRange){0, 3}];
-//    
+
 //    // Overlay test
 //    NSDictionary *overlayAttrib = [NSDictionary dictionaryWithObject:[UIColor colorWithRed:0 green:0 blue:1 alpha:0.5] forKey:ECCodeOverlayAttributeColorName];
 //    [codeView setAttributes:overlayAttrib forOverlayNamed:@"MyOverlay"];
