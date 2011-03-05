@@ -47,20 +47,24 @@
 
 static inline id init(ECCodeView *self)
 {
+    // Setup view's layer
+    self.opaque = YES;
+    self.layer.cornerRadius = 20;
+    self.layer.masksToBounds = YES;
+    
     // Text layer
     self->textLayer = [ECTextLayer layer];
+    self->textLayer.opaque = YES;
     self->textLayer.backgroundColor = self.backgroundColor.CGColor;
     self->textLayer.wrapped = YES;
     self->textLayer.needsDisplayOnBoundsChange = YES;
-    [self.layer addSublayer:self->textLayer];
-    
-//    self->textLayer.backgroundColor = [UIColor orangeColor].CGColor; 
+    [self.layer addSublayer:self->textLayer];    
     
 //    self.clearsContextBeforeDrawing = YES;
 //    self.contentMode = UIViewContentModeRedraw;
     
     // Default styling
-    self.defaultTextStyle = [ECTextStyle textStyleWithName:@"Plain text" font:[UIFont fontWithName:@"Courier New" size:12.0] color:[UIColor blackColor]];
+    self.defaultTextStyle = [ECTextStyle textStyleWithName:@"Plain text" font:[UIFont fontWithName:@"Courier New" size:16.0] color:[UIColor blackColor]];
     
     // Trigger text creation
     self.text = nil;
@@ -108,7 +112,7 @@ static inline id init(ECCodeView *self)
     CGRect textLayerFrame = self.layer.bounds;
     textLayerFrame = CGRectInset(textLayerFrame, 20, 20);
     textLayerFrame.size = [textLayer sizeThatFits:textLayerFrame.size];
-    textLayer.frame = textLayerFrame;
+    textLayer.frame = (textLayerFrame);
 }
 
 #pragma mark Private properties

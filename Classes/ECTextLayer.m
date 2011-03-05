@@ -42,7 +42,7 @@
 
 - (void)setBounds:(CGRect)bounds
 {
-    [super setBounds:bounds];
+    [super setBounds:CGRectIntegral(bounds)];
     if (wrapped)
         [self invalidateContent];
 }
@@ -63,8 +63,8 @@
     CGContextFillRect(context, self.bounds);
 
     CGContextConcatCTM(context, (CGAffineTransform){
-        1, 0,
-        0, -1,
+        self.contentsScale, 0,
+        0, -self.contentsScale,
         0, self.CTFrameSize.height
     });
     CGContextSetTextPosition(context, 0, 0);
@@ -100,7 +100,7 @@
 
 - (CTFramesetterRef)CTFrameSetter
 {
-    if (string && !CTFrameSetter || CTFrameInvalid)
+    if (string && (!CTFrameSetter || CTFrameInvalid))
     {
         if (CTFrame)
         {
