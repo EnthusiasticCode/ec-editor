@@ -27,26 +27,15 @@
 
 #pragma mark Properties
 
+@synthesize defaultTextStyle;
+
 - (void)setText:(NSString *)string
 {
-    if (!text)
-    {
-        // TODO extract createText method
-        text = [[NSMutableAttributedString alloc] init];
-        textLayer.string = text;
-    }
-    
-    NSUInteger textLength = [self textLength];
-    if (string)
-    {
-        [text replaceCharactersInRange:(NSRange){0, textLength} withString:string];
-    }
-    else if (textLength > 0)
-    {
-        [text deleteCharactersInRange:(NSRange){0, textLength}];
-    }
-    
-    [textLayer invalidateContent];
+    [text release];
+    if (!string)
+        string = @"";
+    text = [[NSMutableAttributedString alloc] initWithString:string attributes:self.defaultTextStyle.CTAttributes];
+    textLayer.string = text;
 }
 
 - (NSString *)text
@@ -69,6 +58,9 @@ static inline id init(ECCodeView *self)
     
 //    self.clearsContextBeforeDrawing = YES;
 //    self.contentMode = UIViewContentModeRedraw;
+    
+    // Default styling
+    self.defaultTextStyle = [ECTextStyle textStyleWithName:@"Plain text" font:[UIFont fontWithName:@"Courier New" size:12.0] color:[UIColor blackColor]];
     
     // Trigger text creation
     self.text = nil;
@@ -114,6 +106,7 @@ static inline id init(ECCodeView *self)
     
     // Layout sublayers
     CGRect textLayerFrame = self.layer.bounds;
+    textLayerFrame = CGRectInset(textLayerFrame, 20, 20);
     textLayerFrame.size = [textLayer sizeThatFits:textLayerFrame.size];
     textLayer.frame = textLayerFrame;
 }
