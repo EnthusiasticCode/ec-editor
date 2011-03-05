@@ -89,6 +89,7 @@
         size.width = CGFLOAT_MAX;
     }
     size = CTFramesetterSuggestFrameSizeWithConstraints(self.CTFrameSetter, (CFRange){0, 0}, NULL, size, &fitRange);
+    // TODO Fix this fix
     size.height += 2;
     return size;
 }

@@ -17,15 +17,20 @@
 // Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
-//    // TODO try without this initialization to find more bugs
-//    
+      
     codeView.text = @"int main(arguments)\n{\n\treturn 0;\n}";
-//    
-//    // Styles test
-//    NSDictionary *keywordStyle = [NSDictionary dictionaryWithObjectsAndKeys:
-//                                  (id)[[UIColor blueColor] CGColor], (id)kCTForegroundColorAttributeName, 
-//                                  nil];
+    
+    // Styles test
+    ECTextStyle *stringStyle = [ECTextStyle textStyleWithName:@"String" 
+                                                         font:[UIFont fontWithName:@"Courier New" size:16.0]
+                                                        color:[UIColor orangeColor]];
+    ECTextStyle *keywordStyle = [ECTextStyle textStyleWithName:@"Keyword" 
+                                                          font:[UIFont fontWithName:@"Courier New" size:16.0]
+                                                         color:[UIColor blueColor]];
+    [codeView setTextStyle:stringStyle toTextRange:[ECTextRange textRangeWithRange:(NSRange){9, 9}]];
+    [codeView setTextStyles:[NSArray arrayWithObjects:keywordStyle, keywordStyle, nil] 
+               toTextRanges:[NSArray arrayWithObjects:[ECTextRange textRangeWithRange:(NSRange){0, 3}],
+                             [ECTextRange textRangeWithRange:(NSRange){23, 6}], nil]];
 //    [codeView setAttributes:keywordStyle forStyleNamed:ECCodeStyleKeywordName];
 //    [codeView setStyleNamed:ECCodeStyleKeywordName toRange:(NSRange){0, 3}];
 //    

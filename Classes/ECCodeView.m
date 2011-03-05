@@ -43,6 +43,7 @@
     return [[text string] substringToIndex:[self textLength]];
 }
 
+#pragma mark -
 #pragma mark UIView methods
 
 static inline id init(ECCodeView *self)
@@ -114,6 +115,50 @@ static inline id init(ECCodeView *self)
     textLayer.frame = (textLayerFrame);
 }
 
+#pragma mark -
+#pragma mark ECCodeView text style methods
+
+- (void)setTextStyle:(ECTextStyle *)style toTextRange:(ECTextRange *)range
+{
+    if (range && ![range isEmpty] && style)
+    {
+        NSUInteger textLength = [self textLength];
+        NSUInteger s = ((ECTextPosition *)range.start).index;
+        NSUInteger e = MIN(((ECTextPosition *)range.end).index, textLength);
+        if (s < e)
+        {
+            [text setAttributes:style.CTAttributes range:(NSRange){s, e - s}];
+            [textLayer invalidateContent];
+        }
+    }
+}
+
+- (void)setTextStyles:(NSArray *)styles toTextRanges:(NSArray *)ranges
+{
+    NSUInteger count = [styles count];
+    if (count != [ranges count])
+    {
+        return;
+    }
+    
+    NSUInteger textLength = [self textLength];
+    ECTextRange *range;
+    NSUInteger s, e;
+    for (NSUInteger i = 0; i < count; ++i)
+    {
+        range = (ECTextRange *)[ranges objectAtIndex:i];
+        s = ((ECTextPosition *)range.start).index;
+        e = MIN(((ECTextPosition *)range.end).index, textLength);
+        if (s < e)
+        {
+            [text setAttributes:((ECTextStyle *)[styles objectAtIndex:i]).CTAttributes range:(NSRange){s, e - s}];
+        }
+    }
+    
+    [textLayer invalidateContent];
+}
+
+#pragma mark -
 #pragma mark Private properties
 
 - (NSUInteger)textLength

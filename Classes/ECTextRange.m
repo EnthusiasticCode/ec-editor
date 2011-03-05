@@ -115,4 +115,12 @@
     return [NSString stringWithFormat:@"%@..%@", [start description], [end description]];
 }
 
+#pragma mark -
+#pragma mark Class methods
+
++ (id)textRangeWithRange:(NSRange)range
+{
+    return [[[self alloc] initWithRange:range] autorelease];
+}
+
 @end

@@ -20,4 +20,6 @@
 - (ECTextRange*)rangeIncludingPosition:(ECTextPosition*)aPosition;
 - (BOOL)includesPosition:(ECTextPosition*)aPosition;
 
++ (id)textRangeWithRange:(NSRange)range;
+
 @end

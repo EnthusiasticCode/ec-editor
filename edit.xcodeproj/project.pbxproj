@@ -117,6 +117,10 @@
 				CD6C3D5E13224FB400A8D90D /* ECTextLayer.m */,
 				CD6C3D601322A5EB00A8D90D /* ECTextStyle.h */,
 				CD6C3D611322A5EB00A8D90D /* ECTextStyle.m */,
+				CDB4D5CA12F9505E00952DB8 /* ECTextPosition.h */,
+				CDB4D5CB12F9505E00952DB8 /* ECTextPosition.m */,
+				CDB4D5CD12F9760800952DB8 /* ECTextRange.h */,
+				CDB4D5CE12F9760800952DB8 /* ECTextRange.m */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -187,10 +191,6 @@
 		CD6C3D5C1322431100A8D90D /* Old */ = {
 			isa = PBXGroup;
 			children = (
-				CDB4D5CA12F9505E00952DB8 /* ECTextPosition.h */,
-				CDB4D5CB12F9505E00952DB8 /* ECTextPosition.m */,
-				CDB4D5CD12F9760800952DB8 /* ECTextRange.h */,
-				CDB4D5CE12F9760800952DB8 /* ECTextRange.m */,
 				CD5344AA131CCA690082C0E7 /* ECCodeScrollView.h */,
 				CD5344AB131CCA690082C0E7 /* ECCodeScrollView.m */,
 				CD01B8B0131D2B36005AABFC /* ECLineMarksView.h */,
