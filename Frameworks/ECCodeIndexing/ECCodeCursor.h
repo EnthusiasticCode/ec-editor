@@ -8,10 +8,31 @@
 
 #import <Foundation/Foundation.h>
 
+typedef enum
+{
+    ECCodeCursorDeclaration = 1,
+    ECCodeCursorReference,
+    ECCodeCursorExpression,
+    ECCodeCursorStatement,
+    ECCodeCursorInvalid,
+    ECCodeCursorPreprocessing,
+} ECCodeCursorKind;
 
-@interface ECCodeCursor : NSObject {
-@private
-    
+@interface ECCodeCursor : NSObject
+{
+    NSUInteger _hash;
 }
+@property (nonatomic, readonly, copy) NSString *language;
+@property (nonatomic, readonly) ECCodeCursorKind kind;
+@property (nonatomic, readonly, copy) NSString *detailedKind;
+@property (nonatomic, readonly, copy) NSString *spelling;
+@property (nonatomic, readonly, copy) NSURL *fileURL;
+@property (nonatomic, readonly) NSUInteger offset;
+@property (nonatomic, readonly) NSRange extent;
+@property (nonatomic, readonly, copy) NSString *unifiedSymbolResolution;
+
+- (id)initWithLanguage:(NSString *)language kind:(ECCodeCursorKind)kind detailedKind:(NSString *)detailedKind spelling:(NSString *)spelling fileURL:(NSURL *)fileURL offset:(NSUInteger)offset extent:(NSRange)extent unifiedSymbolResolution:(NSString *)unifiedSymbolResolution;
+
++ (id)cursorWithLanguage:(NSString *)language kind:(ECCodeCursorKind)kind detailedKind:(NSString *)detailedKind spelling:(NSString *)spelling fileURL:(NSURL *)fileURL offset:(NSUInteger)offset extent:(NSRange)extent unifiedSymbolResolution:(NSString *)unifiedSymbolResolution;
 
 @end
