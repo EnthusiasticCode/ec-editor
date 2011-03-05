@@ -37,6 +37,7 @@
 		CD0D843A12E9A865005DB220 /* ECCodeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD0D843912E9A865005DB220 /* ECCodeViewController.m */; };
 		CD0D843D12E9A87D005DB220 /* ECCodeView.m in Sources */ = {isa = PBXBuildFile; fileRef = CD0D843C12E9A87D005DB220 /* ECCodeView.m */; };
 		CD5344AC131CCA690082C0E7 /* ECCodeScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = CD5344AB131CCA690082C0E7 /* ECCodeScrollView.m */; };
+		CD7140891321283F0031D5D9 /* ECSelectionHandleView.m in Sources */ = {isa = PBXBuildFile; fileRef = CD7140881321283F0031D5D9 /* ECSelectionHandleView.m */; };
 		CDB4D5CC12F9505E00952DB8 /* ECTextPosition.m in Sources */ = {isa = PBXBuildFile; fileRef = CDB4D5CB12F9505E00952DB8 /* ECTextPosition.m */; };
 		CDB4D5CF12F9760800952DB8 /* ECTextRange.m in Sources */ = {isa = PBXBuildFile; fileRef = CDB4D5CE12F9760800952DB8 /* ECTextRange.m */; };
 /* End PBXBuildFile section */
@@ -88,9 +89,10 @@
 		CD0D843912E9A865005DB220 /* ECCodeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeViewController.m; sourceTree = "<group>"; };
 		CD0D843B12E9A87D005DB220 /* ECCodeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeView.h; sourceTree = "<group>"; };
 		CD0D843C12E9A87D005DB220 /* ECCodeView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeView.m; sourceTree = "<group>"; };
-		CD124A1812E9AF5C00DC3D00 /* ECCodeViewDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeViewDelegate.h; sourceTree = "<group>"; };
 		CD5344AA131CCA690082C0E7 /* ECCodeScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeScrollView.h; sourceTree = "<group>"; };
 		CD5344AB131CCA690082C0E7 /* ECCodeScrollView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeScrollView.m; sourceTree = "<group>"; };
+		CD7140871321283F0031D5D9 /* ECSelectionHandleView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECSelectionHandleView.h; sourceTree = "<group>"; };
+		CD7140881321283F0031D5D9 /* ECSelectionHandleView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECSelectionHandleView.m; sourceTree = "<group>"; };
 		CDB4D5CA12F9505E00952DB8 /* ECTextPosition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECTextPosition.h; sourceTree = "<group>"; };
 		CDB4D5CB12F9505E00952DB8 /* ECTextPosition.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECTextPosition.m; sourceTree = "<group>"; };
 		CDB4D5CD12F9760800952DB8 /* ECTextRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECTextRange.h; sourceTree = "<group>"; };
@@ -134,7 +136,6 @@
 				B736173D12DA112A009801D4 /* editAppDelegate.m */,
 				CD0D843B12E9A87D005DB220 /* ECCodeView.h */,
 				CD0D843C12E9A87D005DB220 /* ECCodeView.m */,
-				CD124A1812E9AF5C00DC3D00 /* ECCodeViewDelegate.h */,
 				CDB4D5CA12F9505E00952DB8 /* ECTextPosition.h */,
 				CDB4D5CB12F9505E00952DB8 /* ECTextPosition.m */,
 				CDB4D5CD12F9760800952DB8 /* ECTextRange.h */,
@@ -143,6 +144,8 @@
 				CD5344AB131CCA690082C0E7 /* ECCodeScrollView.m */,
 				CD01B8B0131D2B36005AABFC /* ECLineMarksView.h */,
 				CD01B8B1131D2B36005AABFC /* ECLineMarksView.m */,
+				CD7140871321283F0031D5D9 /* ECSelectionHandleView.h */,
+				CD7140881321283F0031D5D9 /* ECSelectionHandleView.m */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -321,6 +324,7 @@
 				CDB4D5CF12F9760800952DB8 /* ECTextRange.m in Sources */,
 				CD5344AC131CCA690082C0E7 /* ECCodeScrollView.m in Sources */,
 				CD01B8B2131D2B36005AABFC /* ECLineMarksView.m in Sources */,
+				CD7140891321283F0031D5D9 /* ECSelectionHandleView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -270,6 +270,10 @@ static inline BOOL in_range(NSRange r, CFIndex i)
     self.defaultOverlayDrawBlock = nil;
     
     self.selectionColor = nil;
+    [selectionHandleLeft release];
+    [selectionHandleRight release];
+    if (selectionPath)
+        CGPathRelease(selectionPath);
     
     [super dealloc];
 }
@@ -430,7 +434,8 @@ static inline BOOL in_range(NSRange r, CFIndex i)
         if (!selectionLayer)
         {
             selectionLayer = [CALayer layer];
-            selectionLayer.delegate = self;
+            // FIX only the view's layer can have self as delegate, one should use a proxy
+//            selectionLayer.delegate = self;
             selectionLayer.opaque = NO;
             selectionLayer.cornerRadius = 1.0;
             selectionLayer.needsDisplayOnBoundsChange = YES;
@@ -439,17 +444,53 @@ static inline BOOL in_range(NSRange r, CFIndex i)
         
         if ([selection isEmpty])
         {
-            selectionLayer.backgroundColor = [UIColor grayColor].CGColor;
-            [selectionLayer addAnimation:blinkAnimation forKey:@"blink"];
+            selectionHandleLeft.hidden = YES;
+            selectionHandleRight.hidden = YES;
+            selectionLayer.backgroundColor = [UIColor blackColor].CGColor;
             selectionLayer.frame = [self caretRectForPosition:(ECTextPosition *)selection.start];
+            [selectionLayer addAnimation:blinkAnimation forKey:@"blink"];
         }
         else
         {
-            // TODO cache also selection shape
+            if (!selectionHandleLeft)
+            {
+                selectionHandleLeft = [[ECSelectionHandleView alloc] initWithFrame:CGRectNull];
+                [selectionHandleLeft sizeToFit];
+                selectionHandleLeft.side = ECSelectionHandleSideLeft | ECSelectionHandleSideTop;
+                [self addSubview:selectionHandleLeft];
+            }
+            selectionHandleLeft.hidden = NO;
+            
+            if (!selectionHandleRight)
+            {
+                selectionHandleRight = [[ECSelectionHandleView alloc] initWithFrame:CGRectNull];
+                [selectionHandleRight sizeToFit];
+                selectionHandleRight.side = ECSelectionHandleSideRight | ECSelectionHandleSideBottom;
+                [self addSubview:selectionHandleRight];
+            }
+            selectionHandleRight.hidden = NO;
+
+            //
+            __block CGMutablePathRef path = CGPathCreateMutable();
+            __block CGRect selectionRect = CGRectNull;
+            __block CGRect trackRect = CGRectNull;
+            [self processRectsOfLinesInRange:[selection range] withBlock:^(CGRect rct) {
+                if (CGRectIsNull(trackRect))
+                    [selectionHandleLeft applyToRect:rct];
+                trackRect = rct;
+                selectionRect = CGRectUnion(selectionRect, rct);
+                CGPathAddRect(path, NULL, rct);
+            }];
+            [selectionHandleRight applyToRect:trackRect];
+            if (selectionPath)
+                CGPathRelease(selectionPath);
+            selectionPath = path;
+            
+            //
             selectionLayer.backgroundColor = selectionColor.CGColor;
             [selectionLayer removeAnimationForKey:@"blink"];
             selectionLayer.opacity = 0.5;
-            selectionLayer.frame = [self rectForContentRange:[selection range]];
+            selectionLayer.frame = selectionRect;
         }
         selectionLayer.hidden = NO;
     }
@@ -497,12 +538,9 @@ static inline BOOL in_range(NSRange r, CFIndex i)
 {
     if (layer == selectionLayer)
     {
-        if (selection && ![selection isEmpty])
+        if (selection && ![selection isEmpty] && selectionPath)
         {
-            //CGContextSetFillColorWithColor(ctx, [UIColor redColor].CGColor);
-            [self processRectsOfLinesInRange:[selection range] withBlock:^(CGRect rct) {
-                CGContextAddRect(ctx, rct);
-            }];
+            CGContextAddPath(ctx, selectionPath);
             CGContextFillPath(ctx);
             return;
         }
@@ -1102,7 +1140,7 @@ static inline BOOL in_range(NSRange r, CFIndex i)
     {
         result = lineStringRange.location;
     }
-    if (x >= lineWidth && in_range(r, lineStringRange.location + lineStringRange.length)) 
+    else if (x >= lineWidth && in_range(r, lineStringRange.location + lineStringRange.length)) 
     {
         result = lineStringRange.location + lineStringRange.length;
     }

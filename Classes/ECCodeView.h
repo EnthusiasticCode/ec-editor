@@ -10,6 +10,7 @@
 #import <QuartzCore/QuartzCore.h>
 #import <CoreText/CoreText.h>
 #import "ECTextRange.h"
+#import "ECSelectionHandleView.h"
 
 // TODO
 // 1. Draw plain text DONE
@@ -74,7 +75,9 @@ extern const NSString *ECCodeOverlayAttributeDrawBlockName;
     
     // Caret/Selection overlay
     CALayer *selectionLayer;
+    CGPathRef selectionPath;
     CABasicAnimation *blinkAnimation;
+    ECSelectionHandleView *selectionHandleLeft, *selectionHandleRight;
     
     // Flags
     // TODO create smaller struct?
