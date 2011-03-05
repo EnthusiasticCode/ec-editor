@@ -7,6 +7,7 @@
 //
 
 #import "ECTextOverlayStyle.h"
+#import <math.h>
 
 
 @implementation ECTextOverlayStyle
@@ -37,7 +38,7 @@
     if (!pathBlock || !path || CGRectIsEmpty(rect))
         return;
     
-    pathBlock(path, rect, isAlternative ? alternativeColor : color, attributes);
+    pathBlock(path, rect, isAlternative, attributes);
 }
 
 #pragma mark -
@@ -48,17 +49,66 @@
                        alternativeColor:(UIColor *)alternative 
                            cornerRadius:(CGFloat)radius
 {
-    return [[[self alloc] initWithName:name color:color alternativeColor:alternative attributes:nil pathBlock:^(CGMutablePathRef result, CGRect rect, UIColor *color, NSDictionary *attr) {
-        CGPathAddRect(result, NULL, rect);
+    NSDictionary *attrib = [NSDictionary dictionaryWithObject:[NSNumber numberWithFloat:radius] forKey:@"cornerRadius"];
+    return [[[self alloc] initWithName:name color:color alternativeColor:alternative attributes:attrib pathBlock:^(CGMutablePathRef retPath, CGRect rect, BOOL alternative, NSDictionary *attr) {
+        if (radius == 0)
+        {
+            CGPathAddRect(retPath, NULL, rect);
+        }
+        else
+        {
+            CGFloat cradius = [(NSNumber *)[attr objectForKey:@"cornerRadius"] floatValue];
+            CGRect innerRect = CGRectInset(rect, cradius, cradius);
+            
+            CGFloat inside_right = innerRect.origin.x + innerRect.size.width;
+            CGFloat outside_right = rect.origin.x + rect.size.width;
+            CGFloat inside_bottom = innerRect.origin.y + innerRect.size.height;
+            CGFloat outside_bottom = rect.origin.y + rect.size.height;
+            
+            CGFloat inside_top = innerRect.origin.y;
+            CGFloat outside_top = rect.origin.y;
+            CGFloat outside_left = rect.origin.x;
+            
+            CGPathMoveToPoint(retPath, NULL, innerRect.origin.x, outside_top);
+            
+            CGPathAddLineToPoint(retPath, NULL, inside_right, outside_top);
+            CGPathAddArcToPoint(retPath, NULL, outside_right, outside_top, outside_right, inside_top, radius);
+            CGPathAddLineToPoint(retPath, NULL, outside_right, inside_bottom);
+            CGPathAddArcToPoint(retPath, NULL,  outside_right, outside_bottom, inside_right, outside_bottom, radius);
+            
+            CGPathAddLineToPoint(retPath, NULL, innerRect.origin.x, outside_bottom);
+            CGPathAddArcToPoint(retPath, NULL,  outside_left, outside_bottom, outside_left, inside_bottom, radius);
+            CGPathAddLineToPoint(retPath, NULL, outside_left, inside_top);
+            CGPathAddArcToPoint(retPath, NULL,  outside_left, outside_top, innerRect.origin.x, outside_top, radius);
+            
+            CGPathCloseSubpath(retPath);
+        }
     }] autorelease];
 }
 
 + (id)underlineTextOverlayStyleWithName:(NSString *)name 
                                   color:(UIColor *)color 
                        alternativeColor:(UIColor *)alternative 
-                              thickness:(CGFloat)thickness 
-                                  shape:(NSString *)shape
+                             waveRadius:(CGFloat)wave;
 {
-    
+    NSDictionary *attrib = [NSDictionary dictionaryWithObjectsAndKeys:
+                            [NSNumber numberWithFloat:wave], @"lineWaveRadius", nil];
+    return [[[self alloc] initWithName:name color:color alternativeColor:alternative attributes:attrib pathBlock:^(CGMutablePathRef retPath, CGRect rect, BOOL alternative, NSDictionary *attr) {
+        CGFloat waveRadius = [[attr objectForKey:@"lineWaveRadius"] floatValue];
+        CGFloat liney = rect.origin.y + rect.size.height;
+        CGFloat startx = rect.origin.x;
+        CGFloat endx = rect.origin.x + rect.size.width;
+        if (!waveRadius)
+        {
+            CGPathMoveToPoint(retPath, NULL, startx, liney);
+            CGPathAddLineToPoint(retPath, NULL, endx, liney);
+        }
+        else while (startx < endx)
+        {
+            CGPathAddArc(retPath, NULL, startx, liney, waveRadius, M_PI_2, M_PI_2, YES);
+            startx += 2 * waveRadius;
+            CGPathAddArc(retPath, NULL, startx, liney, waveRadius, M_PI_2, M_PI_2, NO);
+        }
+    }] autorelease];
 }
 @end

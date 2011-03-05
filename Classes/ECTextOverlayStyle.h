@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 
 
-typedef void (^BuildOverlayPathForRectBlock)(CGMutablePathRef result, CGRect rect, UIColor *color, NSDictionary *attr);
+typedef void (^BuildOverlayPathForRectBlock)(CGMutablePathRef result, CGRect rect, BOOL alternative, NSDictionary *attr);
 
 @interface ECTextOverlayStyle : NSObject {
 @protected
@@ -45,6 +45,6 @@ typedef void (^BuildOverlayPathForRectBlock)(CGMutablePathRef result, CGRect rec
 + (id)highlightTextOverlayStyleWithName:(NSString *)name color:(UIColor *)color alternativeColor:(UIColor *)alternative cornerRadius:(CGFloat)radius;
 
 /// Create an underline overlay. 
-+ (id)underlineTextOverlayStyleWithName:(NSString *)name color:(UIColor *)color alternativeColor:(UIColor *)alternative thickness:(CGFloat)thickness shape:(NSString *)shape;
++ (id)underlineTextOverlayStyleWithName:(NSString *)name color:(UIColor *)color alternativeColor:(UIColor *)alternative waveRadius:(CGFloat)wave;
 
 @end
