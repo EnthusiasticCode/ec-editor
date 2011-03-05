@@ -11,6 +11,7 @@
 #import "ECCodeUnit(Private).h"
 
 @interface ECCodeUnit ()
+@property (nonatomic, retain) ECCodeIndex *index;
 @property (nonatomic, retain) NSMutableDictionary *filePointers;
 @end
 
@@ -37,8 +38,7 @@
         [self removeObserversFromFile:file];
     }
     [self.index removeTranslationUnitForURL:self.url];
-    [index_ release];
-    [url_ release];
+    self.index = nil;
     [language_ release];
     self.filePointers = nil;
     [super dealloc];

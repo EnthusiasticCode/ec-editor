@@ -138,11 +138,19 @@
 {
     if (![self isMemberOfClass:[ECCodeIndex class]])
         return nil;
+    if (!url)
+        return nil;
     ECCodeUnit *unit;
-    unit = [[self.codeUnitPointers objectForKey:url] pointerValue];
+    unit = [[self.codeUnitPointers objectForKey:url] nonretainedObjectValue];
     if (unit)
         return unit;
-    unit = [[self.indexesByExtension objectForKey:[url pathExtension]] unitForURL:url withLanguage:language];
+    if (language)
+        unit = [[self indexForLanguage:language] unitForURL:url withLanguage:language];
+    else
+        unit = [[self.indexesByExtension objectForKey:[url pathExtension]] unitForURL:url withLanguage:nil];
+    if (!unit)
+        return nil;
+    unit.index = self;
     [self.codeUnitPointers setObject:[NSValue valueWithNonretainedObject:unit] forKey:url];
     for (NSObject<ECCodeIndexingFileObserving> *file in self.filePointers)
         [unit addObserversToFile:file];

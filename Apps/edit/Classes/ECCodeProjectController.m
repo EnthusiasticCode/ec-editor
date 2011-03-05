@@ -73,7 +73,6 @@
     self.codeView.text = [NSString stringWithContentsOfURL:fileURL encoding:NSUTF8StringEncoding error:nil];
     for (ECCodeToken *token in [[self.codeIndexer unitForURL:fileURL] tokensInRange:NSMakeRange(0, [self.codeView.text length])])
     {
-        NSLog(@"%@", token);
         switch (token.kind)
         {
             case ECCodeTokenKindKeyword:

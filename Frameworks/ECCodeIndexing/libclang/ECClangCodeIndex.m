@@ -19,8 +19,8 @@
 
 #pragma mark Properties
 
-@synthesize index = _index;
-@synthesize translationUnits = _translationUnits;
+@synthesize index = index_;
+@synthesize translationUnits = translationUnits_;
 
 #pragma mark Initialization
 
@@ -86,10 +86,10 @@
         [options setValue:language forKey:ECClangCodeUnitOptionLanguage];
     else
         [options setValue:[self.extensionToLanguageMap objectForKey:[url pathExtension]] forKey:ECClangCodeUnitOptionLanguage];
-    ECClangCodeUnit *codeUnit = [ECClangCodeUnit unitWithFile:url index:self.index options:options];
+    [options setValue:[NSValue valueWithPointer:index_] forKey:ECClangCodeUnitOptionCXIndex];
+    ECClangCodeUnit *codeUnit = [ECClangCodeUnit unitWithFile:url options:options];
     if (!codeUnit)
         return nil;
-//    [self.translationUnits setObject:translationUnit forKey:file.URL];
     return codeUnit;
 }
 

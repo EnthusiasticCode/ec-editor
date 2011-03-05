@@ -10,6 +10,7 @@
 #import "ECCodeUnit.h"
 
 @interface ECCodeUnit (Private)
+@property (nonatomic, retain) ECCodeIndex *index;
 - (BOOL)addObserversToFile:(NSObject<ECCodeIndexingFileObserving> *)file;
 - (void)removeObserversFromFile:(NSObject<ECCodeIndexingFileObserving> *)file;
 @end
