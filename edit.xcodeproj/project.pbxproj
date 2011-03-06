@@ -27,6 +27,8 @@
 		CD01B8B2131D2B36005AABFC /* ECLineMarksView.m in Sources */ = {isa = PBXBuildFile; fileRef = CD01B8B1131D2B36005AABFC /* ECLineMarksView.m */; };
 		CD0D843A12E9A865005DB220 /* ECCodeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD0D843912E9A865005DB220 /* ECCodeViewController.m */; };
 		CD0D843D12E9A87D005DB220 /* ECCodeView.m in Sources */ = {isa = PBXBuildFile; fileRef = CD0D843C12E9A87D005DB220 /* ECCodeView.m */; };
+		CD1D450B13230A70004EA6DC /* ECTextOverlayLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = CD1D450A13230A70004EA6DC /* ECTextOverlayLayer.m */; };
+		CD1D450E1323968B004EA6DC /* ECTextOverlay.m in Sources */ = {isa = PBXBuildFile; fileRef = CD1D450D1323968B004EA6DC /* ECTextOverlay.m */; };
 		CD5344AC131CCA690082C0E7 /* ECCodeScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = CD5344AB131CCA690082C0E7 /* ECCodeScrollView.m */; };
 		CD6C3D5F13224FB400A8D90D /* ECTextLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = CD6C3D5E13224FB400A8D90D /* ECTextLayer.m */; };
 		CD6C3D621322A5EB00A8D90D /* ECTextStyle.m in Sources */ = {isa = PBXBuildFile; fileRef = CD6C3D611322A5EB00A8D90D /* ECTextStyle.m */; };
@@ -63,13 +65,17 @@
 		CD0D843912E9A865005DB220 /* ECCodeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeViewController.m; sourceTree = "<group>"; };
 		CD0D843B12E9A87D005DB220 /* ECCodeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeView.h; sourceTree = "<group>"; };
 		CD0D843C12E9A87D005DB220 /* ECCodeView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeView.m; sourceTree = "<group>"; };
+		CD1D450913230A70004EA6DC /* ECTextOverlayLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECTextOverlayLayer.h; sourceTree = "<group>"; };
+		CD1D450A13230A70004EA6DC /* ECTextOverlayLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECTextOverlayLayer.m; sourceTree = "<group>"; };
+		CD1D450C1323968B004EA6DC /* ECTextOverlay.h */ = {isa = PBXFileReference; fileEncoding = 4; path = ECTextOverlay.h; sourceTree = "<group>"; };
+		CD1D450D1323968B004EA6DC /* ECTextOverlay.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECTextOverlay.m; sourceTree = "<group>"; };
 		CD5344AA131CCA690082C0E7 /* ECCodeScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeScrollView.h; sourceTree = "<group>"; };
 		CD5344AB131CCA690082C0E7 /* ECCodeScrollView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeScrollView.m; sourceTree = "<group>"; };
 		CD6C3D5D13224FB400A8D90D /* ECTextLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECTextLayer.h; sourceTree = "<group>"; };
 		CD6C3D5E13224FB400A8D90D /* ECTextLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECTextLayer.m; sourceTree = "<group>"; };
 		CD6C3D601322A5EB00A8D90D /* ECTextStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECTextStyle.h; sourceTree = "<group>"; };
 		CD6C3D611322A5EB00A8D90D /* ECTextStyle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECTextStyle.m; sourceTree = "<group>"; };
-		CD6C3D631322D7BF00A8D90D /* ECTextOverlayStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; path = ECTextOverlayStyle.h; sourceTree = "<group>"; };
+		CD6C3D631322D7BF00A8D90D /* ECTextOverlayStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECTextOverlayStyle.h; sourceTree = "<group>"; };
 		CD6C3D641322D7BF00A8D90D /* ECTextOverlayStyle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECTextOverlayStyle.m; sourceTree = "<group>"; };
 		CD7140871321283F0031D5D9 /* ECSelectionHandleView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECSelectionHandleView.h; sourceTree = "<group>"; };
 		CD7140881321283F0031D5D9 /* ECSelectionHandleView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECSelectionHandleView.m; sourceTree = "<group>"; };
@@ -126,6 +132,10 @@
 				CDB4D5CE12F9760800952DB8 /* ECTextRange.m */,
 				CD6C3D631322D7BF00A8D90D /* ECTextOverlayStyle.h */,
 				CD6C3D641322D7BF00A8D90D /* ECTextOverlayStyle.m */,
+				CD1D450913230A70004EA6DC /* ECTextOverlayLayer.h */,
+				CD1D450A13230A70004EA6DC /* ECTextOverlayLayer.m */,
+				CD1D450C1323968B004EA6DC /* ECTextOverlay.h */,
+				CD1D450D1323968B004EA6DC /* ECTextOverlay.m */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -285,6 +295,8 @@
 				CD6C3D5F13224FB400A8D90D /* ECTextLayer.m in Sources */,
 				CD6C3D621322A5EB00A8D90D /* ECTextStyle.m in Sources */,
 				CD6C3D651322D7BF00A8D90D /* ECTextOverlayStyle.m in Sources */,
+				CD1D450B13230A70004EA6DC /* ECTextOverlayLayer.m in Sources */,
+				CD1D450E1323968B004EA6DC /* ECTextOverlay.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

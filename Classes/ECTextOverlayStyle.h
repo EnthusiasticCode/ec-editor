@@ -35,6 +35,18 @@ typedef void (^BuildOverlayPathForRectBlock)(CGMutablePathRef result, CGRect rec
 /// The block to use to draw the overlay in the given rect expressed in given conetxt coordinates.
 @property (nonatomic, copy) BuildOverlayPathForRectBlock pathBlock;
 
+/// Indicates if the overlay should be stroked.
+@property (nonatomic) BOOL shouldStroke;
+
+/// A color to use for the overlay stroke.
+@property (nonatomic, retain) UIColor *strokeColor;
+
+/// An alternative color for the overlay stroke.
+@property (nonatomic, retain) UIColor *alternativeStrokeColor;
+
+/// Indicates if the overlay should be filled. Default is YES.
+@property (nonatomic) BOOL shouldFill;
+
 /// Initialize an new style with all its attributes.
 - (id)initWithName:(NSString *)aName color:(UIColor *)aColor alternativeColor:(UIColor *)anAlternative attributes:(NSDictionary *)anyAttrib pathBlock:(BuildOverlayPathForRectBlock)aBlock;
 

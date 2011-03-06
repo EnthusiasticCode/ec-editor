@@ -12,7 +12,7 @@
 
 @implementation ECTextOverlayStyle
 
-@synthesize name, color, alternativeColor, attributes, pathBlock;
+@synthesize name, color, alternativeColor, attributes, pathBlock, shouldStroke, strokeColor, alternativeStrokeColor, shouldFill;
 
 - (id)initWithName:(NSString *)aName 
              color:(UIColor *)aColor 
@@ -27,6 +27,7 @@
         self.alternativeColor = anAlternative;
         self.attributes = anyAttrib;
         self.pathBlock = aBlock;
+        self.shouldFill = YES;
     }
     return self;
 }
@@ -93,7 +94,7 @@
 {
     NSDictionary *attrib = [NSDictionary dictionaryWithObjectsAndKeys:
                             [NSNumber numberWithFloat:wave], @"lineWaveRadius", nil];
-    return [[[self alloc] initWithName:name color:color alternativeColor:alternative attributes:attrib pathBlock:^(CGMutablePathRef retPath, CGRect rect, BOOL alternative, NSDictionary *attr) {
+    ECTextOverlayStyle *result = [[self alloc] initWithName:name color:nil alternativeColor:nil attributes:attrib pathBlock:^(CGMutablePathRef retPath, CGRect rect, BOOL alternative, NSDictionary *attr) {
         CGFloat waveRadius = [[attr objectForKey:@"lineWaveRadius"] floatValue];
         CGFloat liney = rect.origin.y + rect.size.height;
         CGFloat startx = rect.origin.x;
@@ -105,10 +106,15 @@
         }
         else while (startx < endx)
         {
-            CGPathAddArc(retPath, NULL, startx, liney, waveRadius, M_PI_2, M_PI_2, YES);
+            CGPathAddArc(retPath, NULL, startx, liney, waveRadius, M_PI, 0, YES);
             startx += 2 * waveRadius;
-            CGPathAddArc(retPath, NULL, startx, liney, waveRadius, M_PI_2, M_PI_2, NO);
+            CGPathAddArc(retPath, NULL, startx, liney, waveRadius, M_PI, 0, NO);
         }
-    }] autorelease];
+    }];
+    result.shouldFill = NO;
+    result.shouldStroke = YES;
+    result.strokeColor = color;
+    result.alternativeStrokeColor = alternative;
+    return [result autorelease];
 }
 @end

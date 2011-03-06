@@ -8,18 +8,14 @@
 
 #import "ECCodeView.h"
 #import "ECTextLayer.h"
+#import "ECTextOverlayLayer.h"
 
 
-@interface ECCodeView () {
-@protected
-    NSMutableAttributedString *text;
-    
+@interface ECCodeView () {    
 @private
     ECTextLayer *textLayer;
+    NSMutableDictionary *overlayLayers;
 }
-
-/// Return the length of the text, use this method instead of [text length] to maintain compatibility.
-@property (nonatomic, readonly) NSUInteger textLength;
 
 @end
 
@@ -43,6 +39,11 @@
     return [[text string] substringToIndex:[self textLength]];
 }
 
+- (NSUInteger)textLength
+{
+    return [text length];
+}
+
 #pragma mark -
 #pragma mark UIView methods
 
@@ -62,6 +63,9 @@ static inline id init(ECCodeView *self)
     self->textLayer.wrapped = YES;
     self->textLayer.needsDisplayOnBoundsChange = YES;
     [self.layer addSublayer:self->textLayer];
+    
+    // Overlay layers
+    self->overlayLayers = [[NSMutableDictionary dictionaryWithCapacity:3] retain];
     
     // Default styling
     self.defaultTextStyle = [ECTextStyle textStyleWithName:@"Plain text" font:[UIFont fontWithName:@"Courier New" size:16.0] color:[UIColor blackColor]];
@@ -95,6 +99,7 @@ static inline id init(ECCodeView *self)
 - (void)dealloc
 {
     [text release];
+    [overlayLayers release];
     [super dealloc];
 }
 
@@ -159,11 +164,17 @@ static inline id init(ECCodeView *self)
 }
 
 #pragma mark -
+#pragma mark ECCodeView text overlay methods
+
+- (void)setTextOverlayStyle:(ECTextOverlayStyle *)style 
+               forTextRange:(ECTextRange *)range 
+                alternative:(BOOL)alt
+{
+    
+}
+
+#pragma mark -
 #pragma mark Private properties
 
-- (NSUInteger)textLength
-{
-    return [text length];
-}
 
 @end
