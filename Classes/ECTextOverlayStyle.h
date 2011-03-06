@@ -7,9 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "ECRectSet.h"
 
 
-typedef void (^BuildOverlayPathForRectBlock)(CGMutablePathRef result, CGRect rect, BOOL alternative, NSDictionary *attr);
+typedef void (^BuildOverlayPathForRectBlock)(CGMutablePathRef result, CGRect rect, NSUInteger index, NSUInteger count, BOOL alternative, NSDictionary *attr);
 
 @interface ECTextOverlayStyle : NSObject {
 @protected
@@ -52,6 +53,9 @@ typedef void (^BuildOverlayPathForRectBlock)(CGMutablePathRef result, CGRect rec
 
 /// Build a given path to conform to the overlay style in the given rect.
 - (void)buildOverlayPath:(CGMutablePathRef)path forRect:(CGRect)rect alternative:(BOOL)isAlternative;
+
+/// Build a given path to conform to the overlay style in the given set of rects.
+- (void)buildOverlayPath:(CGMutablePathRef)path forRectSet:(ECRectSet *)rect alternative:(BOOL)isAlternative;
 
 /// Create a simple overlay style that will result in a rectangle.
 + (id)highlightTextOverlayStyleWithName:(NSString *)name color:(UIColor *)color alternativeColor:(UIColor *)alternative cornerRadius:(CGFloat)radius;

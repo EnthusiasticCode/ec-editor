@@ -37,22 +37,27 @@
     [self invalidateContent];
 }
 
-- (void)setBounds:(CGRect)bounds
+- (CGAffineTransform)CTFrameTransform
 {
-    [super setBounds:CGRectIntegral(bounds)];
-    if (wrapped)
-        [self invalidateContent];
+    return (CGAffineTransform){
+        self.contentsScale, 0,
+        0, -self.contentsScale,
+        0, self.CTFrameSize.height
+    };
 }
+
+//- (void)setBounds:(CGRect)bounds
+//{
+//    [super setBounds:CGRectIntegral(bounds)];
+//    if (wrapped)
+//        [self invalidateContent];
+//}
 
 #pragma mark CALayer methods
 
 - (CATransform3D)transform
 {
-    CATransform3D t = CATransform3DMakeAffineTransform((CGAffineTransform){
-        self.contentsScale, 0,
-        0, -self.contentsScale,
-        0, self.CTFrameSize.height
-    });
+    CATransform3D t = CATransform3DMakeAffineTransform(self.CTFrameTransform);
     CATransform3D o = [super transform];
     if (!CATransform3DIsIdentity(o))
     {
@@ -63,11 +68,7 @@
 
 - (CGAffineTransform)affineTransform
 {
-    CGAffineTransform t = (CGAffineTransform){
-        self.contentsScale, 0,
-        0, -self.contentsScale,
-        0, self.CTFrameSize.height
-    };
+    CGAffineTransform t = self.CTFrameTransform;
     CGAffineTransform o = [super affineTransform];
     if (!CGAffineTransformIsIdentity(o))
     {
@@ -245,7 +246,7 @@ void ECCoreTextProcessRectsOfLinesInStringRange(CTFrameRef frame, CFRange range,
         NSRange spanRange;
         NSUInteger rangeEndLocation = range.location + range.length;
         //
-        CGRect lineRect = CGRectMake(0, 0, 0, ascent + descent);
+        CGRect lineRect = CGRectMake(lineOrigin.x, lineOrigin.y, 0, ascent + descent);
         
         if (rangeEndLocation < (NSUInteger)lineRange.location)
         {

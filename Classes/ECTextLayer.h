@@ -27,6 +27,9 @@
 /// The array of \c CTLineRef generated from the string.
 @property (nonatomic, readonly) CFArrayRef CTLines;
 
+/// Gets an affine transformation usable to transform from CTFrame to top-left coordinates.
+@property (nonatomic, readonly) CGAffineTransform CTFrameTransform;
+
 /// Invalidate the content taht will be 
 - (void)invalidateContent;
 

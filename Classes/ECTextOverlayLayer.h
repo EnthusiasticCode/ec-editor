@@ -9,6 +9,7 @@
 #import <QuartzCore/QuartzCore.h>
 #import "ECTextOverlayStyle.h"
 #import "ECTextOverlay.h"
+#import "ECTextLayer.h"
 
 @interface ECTextOverlayLayer : CALayer {
 @protected

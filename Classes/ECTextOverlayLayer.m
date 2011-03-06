@@ -47,6 +47,11 @@
     [super dealloc];
 }
 
+- (BOOL)isGeometryFlipped
+{
+    return YES;
+}
+
 - (void)drawInContext:(CGContextRef)context
 {
     if (overlayStyle)
@@ -55,7 +60,14 @@
         for (ECTextOverlay *overlay in overlayRects) {
             // Get overlay path
             path = CGPathCreateMutable();
-            [overlayStyle buildOverlayPath:path forRect:overlay.rect alternative:overlay.isAlternative];
+            if (overlay.rectSet)
+            {
+                [overlayStyle buildOverlayPath:path forRectSet:overlay.rectSet alternative:overlay.isAlternative];
+            }
+            else
+            {
+                [overlayStyle buildOverlayPath:path forRect:overlay.rect alternative:overlay.isAlternative];
+            }
             // Fill
             if (overlayStyle.shouldFill)
             {

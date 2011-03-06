@@ -39,7 +39,22 @@
     if (!pathBlock || !path || CGRectIsEmpty(rect))
         return;
     
-    pathBlock(path, rect, isAlternative, attributes);
+    pathBlock(path, rect, 0, 1, isAlternative, attributes);
+}
+
+- (void)buildOverlayPath:(CGMutablePathRef)path 
+              forRectSet:(ECRectSet *)rect 
+             alternative:(BOOL)isAlternative
+{
+    NSUInteger count = rect.count;
+    if (!pathBlock || !path || count == 0)
+        return;
+    
+    __block NSUInteger idx = 0;
+    [rect enumerateRectsUsingBlock:^(CGRect rect, BOOL *stop) {
+        pathBlock(path, rect, idx, count, isAlternative, attributes);
+        idx++;
+    }];
 }
 
 #pragma mark -
@@ -51,7 +66,7 @@
                            cornerRadius:(CGFloat)radius
 {
     NSDictionary *attrib = [NSDictionary dictionaryWithObject:[NSNumber numberWithFloat:radius] forKey:@"cornerRadius"];
-    return [[[self alloc] initWithName:name color:color alternativeColor:alternative attributes:attrib pathBlock:^(CGMutablePathRef retPath, CGRect rect, BOOL alternative, NSDictionary *attr) {
+    return [[[self alloc] initWithName:name color:color alternativeColor:alternative attributes:attrib pathBlock:^(CGMutablePathRef retPath, CGRect rect, NSUInteger index, NSUInteger count, BOOL alternative, NSDictionary *attr) {
         if (radius == 0)
         {
             CGPathAddRect(retPath, NULL, rect);
@@ -94,7 +109,7 @@
 {
     NSDictionary *attrib = [NSDictionary dictionaryWithObjectsAndKeys:
                             [NSNumber numberWithFloat:wave], @"lineWaveRadius", nil];
-    ECTextOverlayStyle *result = [[self alloc] initWithName:name color:nil alternativeColor:nil attributes:attrib pathBlock:^(CGMutablePathRef retPath, CGRect rect, BOOL alternative, NSDictionary *attr) {
+    ECTextOverlayStyle *result = [[self alloc] initWithName:name color:nil alternativeColor:nil attributes:attrib pathBlock:^(CGMutablePathRef retPath, CGRect rect, NSUInteger index, NSUInteger count, BOOL alternative, NSDictionary *attr) {
         CGFloat waveRadius = [[attr objectForKey:@"lineWaveRadius"] floatValue];
         CGFloat liney = rect.origin.y + rect.size.height;
         CGFloat startx = rect.origin.x;
