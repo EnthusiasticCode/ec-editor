@@ -40,7 +40,12 @@
                                                                                      color:[[UIColor yellowColor] colorWithAlphaComponent:0.5] 
                                                                           alternativeColor:nil 
                                                                               cornerRadius:1];
+    ECTextOverlayStyle *errorMark = [ECTextOverlayStyle underlineTextOverlayStyleWithName:@"Error mark" 
+                                                                                    color:[UIColor redColor] 
+                                                                         alternativeColor:nil 
+                                                                               waveRadius:1];
     [codeView setTextOverlayStyle:yellowMark forTextRange:[ECTextRange textRangeWithRange:(NSRange){4, 4}] alternative:NO];
+    [codeView setTextOverlayStyle:errorMark forTextRange:[ECTextRange textRangeWithRange:(NSRange){9, 9}] alternative:NO];
 
 //    // Scroll view
 //    [codeScrollView setMinimumZoomScale:1.0];

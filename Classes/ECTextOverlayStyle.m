@@ -99,13 +99,14 @@
         CGFloat liney = rect.origin.y + rect.size.height;
         CGFloat startx = rect.origin.x;
         CGFloat endx = rect.origin.x + rect.size.width;
+        CGPathMoveToPoint(retPath, NULL, startx, liney);
         if (!waveRadius)
         {
-            CGPathMoveToPoint(retPath, NULL, startx, liney);
             CGPathAddLineToPoint(retPath, NULL, endx, liney);
         }
         else while (startx < endx)
         {
+            startx += 2 * waveRadius;
             CGPathAddArc(retPath, NULL, startx, liney, waveRadius, M_PI, 0, YES);
             startx += 2 * waveRadius;
             CGPathAddArc(retPath, NULL, startx, liney, waveRadius, M_PI, 0, NO);
