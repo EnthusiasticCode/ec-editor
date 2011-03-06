@@ -35,11 +35,13 @@
                              [ECTextRange textRangeWithRange:(NSRange){0, 3}],
                              [ECTextRange textRangeWithRange:(NSRange){23, 6}], nil]];
 
-//    // Overlay test
-//    NSDictionary *overlayAttrib = [NSDictionary dictionaryWithObject:[UIColor colorWithRed:0 green:0 blue:1 alpha:0.5] forKey:ECCodeOverlayAttributeColorName];
-//    [codeView setAttributes:overlayAttrib forOverlayNamed:@"MyOverlay"];
-//    [codeView addOverlayNamed:@"MyOverlay" toRange:(NSRange){4, 4}];
-//    
+    // Overlay test
+    ECTextOverlayStyle *yellowMark = [ECTextOverlayStyle highlightTextOverlayStyleWithName:@"Yellow mark" 
+                                                                                     color:[[UIColor yellowColor] colorWithAlphaComponent:0.5] 
+                                                                          alternativeColor:nil 
+                                                                              cornerRadius:1];
+    [codeView setTextOverlayStyle:yellowMark forTextRange:[ECTextRange textRangeWithRange:(NSRange){4, 4}] alternative:NO];
+
 //    // Scroll view
 //    [codeScrollView setMinimumZoomScale:1.0];
 //    [codeScrollView setMaximumZoomScale:1.0];

@@ -99,11 +99,6 @@
     CGContextSetTextPosition(context, 0, 0);
     CGContextSetTextMatrix(context, CGAffineTransformIdentity);
     CTFrameDraw(self.CTFrame, context);
-    
-    ECCoreTextProcessRectsOfLinesInStringRange(self.CTFrame, (CFRange){3, 10}, ^(CGRect rect) {
-        rect = CGRectApplyAffineTransform(rect, t);
-        CGContextStrokeRect(context, rect);
-    });
 }
 
 #pragma mark Public methods
@@ -161,7 +156,7 @@
 
 - (CTFrameRef)CTFrame
 {
-    if (!CTFrame && CTFrameSetter)
+    if (!CTFrame)
     {
         CGSize size = self.CTFrameSize;
         CGMutablePathRef path = CGPathCreateMutable();
@@ -298,4 +293,13 @@ void ECCoreTextProcessRectsOfLinesInStringRange(CTFrameRef frame, CFRange range,
         
         block(lineRect);
     }
+}
+
+CGRect ECCoreTextBoundRectOfLinesForStringRange(CTFrameRef frame, CFRange range)
+{
+    __block CGRect result = CGRectNull;
+    ECCoreTextProcessRectsOfLinesInStringRange(frame, range, ^(CGRect rect) {
+        result = CGRectUnion(result, rect);
+    });
+    return result;
 }

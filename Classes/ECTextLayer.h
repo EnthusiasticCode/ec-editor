@@ -46,3 +46,7 @@ CFIndex ECCoreTextLineContainingLocation(CFArrayRef lines, CFIndex location, CFR
 
 /// For every line that contains part of the given string range, a rect is generated and passed to the given block.
 void ECCoreTextProcessRectsOfLinesInStringRange(CTFrameRef frame, CFRange range, RectBlock block);
+
+/// Returns the bounding rect for the string range in the given frame.
+CGRect ECCoreTextBoundRectOfLinesForStringRange(CTFrameRef frame, CFRange range);
+
