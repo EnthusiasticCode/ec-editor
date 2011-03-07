@@ -164,8 +164,9 @@ extern inline _Bool ECCoreTextIndexInRange(CFIndex index, CFRange range)
     return (index >= range.location && (index - range.location) < range.length);
 }
 
-CFIndex ECCoreTextLineContainingLocation(CFArrayRef lines, CFIndex location, CFRange within, CTLineRef *resultLine)
+CFIndex ECCTFrameGetLineContainingStringIndex(CTFrameRef frame, CFIndex location, CFRange within, CTLineRef *resultLine)
 {
+    CFArrayRef lines = CTFrameGetLines(frame);
     CFIndex pos = within.location;
     CFIndex endpos = within.location + within.length;
     CFIndex end = endpos;
@@ -192,14 +193,14 @@ CFIndex ECCoreTextLineContainingLocation(CFArrayRef lines, CFIndex location, CFR
     return pos < end ? kCFNotFound : pos;
 }
 
-void ECCoreTextProcessRectsOfLinesInStringRange(CTFrameRef frame, CFRange range, RectBlock block)
+void ECCTFrameProcessRectsOfLinesInStringRange(CTFrameRef frame, CFRange range, RectBlock block)
 {
     CFArrayRef lines = CTFrameGetLines(frame);
     CFIndex lineCount = CFArrayGetCount(lines);
     CGPathRef framePath = CTFrameGetPath(frame);
     CGRect framePathBunds = CGPathGetPathBoundingBox(framePath);
     
-    CFIndex firstLine = ECCoreTextLineContainingLocation(lines, range.location, (CFRange){0, lineCount}, NULL);
+    CFIndex firstLine = ECCTFrameGetLineContainingStringIndex(frame, range.location, (CFRange){0, lineCount}, NULL);
 
     if (firstLine >= lineCount)
         firstLine = lineCount - 1;
@@ -272,23 +273,23 @@ void ECCoreTextProcessRectsOfLinesInStringRange(CTFrameRef frame, CFRange range,
     }
 }
 
-CGRect ECCoreTextBoundRectOfLinesForStringRange(CTFrameRef frame, CFRange range)
+CGRect ECCTFrameGetBoundRectOfLinesForStringRange(CTFrameRef frame, CFRange range)
 {
     __block CGRect result = CGRectNull;
-    ECCoreTextProcessRectsOfLinesInStringRange(frame, range, ^(CGRect rect) {
+    ECCTFrameProcessRectsOfLinesInStringRange(frame, range, ^(CGRect rect) {
         result = CGRectUnion(result, rect);
     });
     return result;
 }
 
-CFRange ECCoreTextLineRangeOfStringRange(CTFrameRef frame, CFRange range)
+CFRange ECCTFrameGetLineRangeOfStringRange(CTFrameRef frame, CFRange range)
 {
     CFArrayRef lines = CTFrameGetLines(frame);
     CFIndex lineCount = CFArrayGetCount(lines);
     
     CFIndex queryEnd = range.location + range.length;
     
-    CFIndex firstResultLine = ECCoreTextLineContainingLocation(lines, range.location, (CFRange){ 0, lineCount }, NULL);
+    CFIndex firstResultLine = ECCTFrameGetLineContainingStringIndex(frame, range.location, (CFRange){ 0, lineCount }, NULL);
     if (firstResultLine < 0)
         return (CFRange){ 0, 0 };
     if (firstResultLine >= lineCount)
@@ -298,7 +299,7 @@ CFRange ECCoreTextLineRangeOfStringRange(CTFrameRef frame, CFRange range)
     if ((lineStringRange.location + lineStringRange.length) >= queryEnd)
         return (CFRange){ firstResultLine, 1 };
     
-    CFIndex lastResultLine = ECCoreTextLineContainingLocation(lines, queryEnd, (CFRange){ firstResultLine + 1, lineCount }, NULL);
+    CFIndex lastResultLine = ECCTFrameGetLineContainingStringIndex(frame, queryEnd, (CFRange){ firstResultLine + 1, lineCount }, NULL);
     if (lastResultLine < firstResultLine)
         return (CFRange){ firstResultLine, 0 };
     if (lastResultLine >= lineCount)
@@ -306,7 +307,7 @@ CFRange ECCoreTextLineRangeOfStringRange(CTFrameRef frame, CFRange range)
     return (CFRange){ firstResultLine, lastResultLine - firstResultLine + 1 };
 }
 
-CFIndex ECCoreTextClosestStringIndexInRangeToPoint(CTFrameRef frame, CFRange stringRange, CGPoint point)
+CFIndex ECCTFrameGetClosestStringIndexInRangeToPoint(CTFrameRef frame, CFRange stringRange, CGPoint point)
 {
     CFArrayRef lines = CTFrameGetLines(frame);
     CFIndex lineCount = CFArrayGetCount(lines);
@@ -319,7 +320,7 @@ CFIndex ECCoreTextClosestStringIndexInRangeToPoint(CTFrameRef frame, CFRange str
     }
     else if (stringRange.location != frameStringRange.location && stringRange.length != frameStringRange.length)
     {
-        lineRange = ECCoreTextLineRangeOfStringRange(frame, stringRange);
+        lineRange = ECCTFrameGetLineRangeOfStringRange(frame, stringRange);
     }
     
     CGPoint *origins = malloc(sizeof(CGPoint) * lineRange.length);
@@ -367,11 +368,11 @@ CFIndex ECCoreTextClosestStringIndexInRangeToPoint(CTFrameRef frame, CFRange str
         if (lineStringIndex < 0 || lineStringIndex < stringRange.location) 
         {
             result = stringRange.location;
-        } 
+        }
         else if ((lineStringIndex - stringRange.location) > stringRange.length) 
         {
             result = stringRange.location + stringRange.length;
-        } 
+        }
         else 
         {
             result = lineStringIndex;

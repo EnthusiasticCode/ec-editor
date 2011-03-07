@@ -517,9 +517,11 @@
         if (direction == UITextLayoutDirectionUp)
             offset = -offset;
         
+        // TODO move to ec core text extensions
+        
         CFArrayRef lines = CTFrameGetLines(self->textLayer.CTFrame);
         CFIndex lineCount = CFArrayGetCount(lines);
-        CFIndex lineIndex = ECCoreTextLineContainingLocation(lines, pos, (CFRange){0, lineCount}, NULL);
+        CFIndex lineIndex = ECCTFrameGetLineContainingStringIndex(self->textLayer.CTFrame, pos, (CFRange){0, lineCount}, NULL);
         CFIndex newIndex = lineIndex + offset;
         CTLineRef line = CFArrayGetValueAtIndex(lines, lineIndex);
         
@@ -623,14 +625,14 @@
 
 - (CGRect)firstRectForRange:(UITextRange *)range
 {    
-    CGRect r = ECCoreTextBoundRectOfLinesForStringRange(self->textLayer.CTFrame, [(ECTextRange *)range CFRange]);
+    CGRect r = ECCTFrameGetBoundRectOfLinesForStringRange(self->textLayer.CTFrame, [(ECTextRange *)range CFRange]);
     return r;
 }
 
 - (CGRect)caretRectForPosition:(UITextPosition *)position
 {
     NSUInteger pos = ((ECTextPosition *)position).index;
-    CGRect carretRect = ECCoreTextBoundRectOfLinesForStringRange(self->textLayer.CTFrame, (CFRange){pos, 0});
+    CGRect carretRect = ECCTFrameGetBoundRectOfLinesForStringRange(self->textLayer.CTFrame, (CFRange){pos, 0});
     // TODO parametrize caret rect sizes
     carretRect.origin.x -= 1.0;
     carretRect.size.width = 2.0;
@@ -645,7 +647,7 @@
 - (UITextPosition *)closestPositionToPoint:(CGPoint)point 
                                withinRange:(UITextRange *)range
 {
-    CFIndex index = ECCoreTextClosestStringIndexInRangeToPoint(self->textLayer.CTFrame, ((ECTextRange *)range).CFRange, point);
+    CFIndex index = ECCTFrameGetClosestStringIndexInRangeToPoint(self->textLayer.CTFrame, ((ECTextRange *)range).CFRange, point);
     return [[[ECTextPosition alloc] initWithIndex:(NSUInteger)index] autorelease];
 }
 

@@ -200,7 +200,7 @@ static inline id init(ECCodeView *self)
     
     NSRange r = [range range];
     ECMutableRectSet *rs = [ECMutableRectSet rectSet];
-    ECCoreTextProcessRectsOfLinesInStringRange(textLayer.CTFrame, CFRangeMake(r.location, r.length), ^(CGRect rect) {
+    ECCTFrameProcessRectsOfLinesInStringRange(textLayer.CTFrame, CFRangeMake(r.location, r.length), ^(CGRect rect) {
         [rs addRect:rect];
     });
     

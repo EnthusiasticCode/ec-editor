@@ -42,16 +42,16 @@ typedef void (^RectBlock)(CGRect rect);
 inline _Bool ECCoreTextIndexInRange(CFIndex index, CFRange range);
 
 /// Within a range in the given lines, this function search for the line containing the given string location. If resultLine is not NULL, it will contain the referene to the found line. The function will return kCFNotFound if the line has not been found.
-CFIndex ECCoreTextLineContainingLocation(CFArrayRef lines, CFIndex location, CFRange within, CTLineRef *resultLine);
+CFIndex ECCTFrameGetLineContainingStringIndex(CTFrameRef frame, CFIndex location, CFRange within, CTLineRef *resultLine);
 
 /// For every line that contains part of the given string range, a rect is generated and passed to the given block.
-void ECCoreTextProcessRectsOfLinesInStringRange(CTFrameRef frame, CFRange range, RectBlock block);
+void ECCTFrameProcessRectsOfLinesInStringRange(CTFrameRef frame, CFRange range, RectBlock block);
 
 /// Returns the bounding rect for the string range in the given frame.
-CGRect ECCoreTextBoundRectOfLinesForStringRange(CTFrameRef frame, CFRange range);
+CGRect ECCTFrameGetBoundRectOfLinesForStringRange(CTFrameRef frame, CFRange range);
 
 /// Returns the range of lines that contains the given string range.
-CFRange ECCoreTextLineRangeOfStringRange(CTFrameRef frame, CFRange stringRange);
+CFRange ECCTFrameGetLineRangeOfStringRange(CTFrameRef frame, CFRange stringRange);
 
 /// Search for the string index within the given range in the frame's lines that is closest to the provided point. The should consider to have origin at the frame's origins. If an empty string range is specified, the whole frame is searched.
-CFIndex ECCoreTextClosestStringIndexInRangeToPoint(CTFrameRef frame, CFRange stringRange, CGPoint point);
+CFIndex ECCTFrameGetClosestStringIndexInRangeToPoint(CTFrameRef frame, CFRange stringRange, CGPoint point);
