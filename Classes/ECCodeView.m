@@ -7,13 +7,11 @@
 //
 
 #import "ECCodeView.h"
-#import "ECTextLayer.h"
 #import "ECTextOverlayLayer.h"
 
 
 @interface ECCodeView () {    
 @private
-    ECTextLayer *textLayer;
     NSMutableDictionary *overlayLayers;
 }
 
@@ -43,6 +41,14 @@
 {
     return [text length];
 }
+
+#pragma mark -
+#pragma mark Public methods
+- (void)setNeedsTextRendering
+{
+    [textLayer setNeedsCTFrameRendering];
+}
+
 
 #pragma mark -
 #pragma mark UIView methods
@@ -139,7 +145,7 @@ static inline id init(ECCodeView *self)
         if (s < e)
         {
             [text setAttributes:style.CTAttributes range:(NSRange){s, e - s}];
-            [textLayer invalidateContent];
+            [textLayer setNeedsCTFrameRendering];
         }
     }
 }
@@ -166,7 +172,7 @@ static inline id init(ECCodeView *self)
         }
     }
     
-    [textLayer invalidateContent];
+    [textLayer setNeedsCTFrameRendering];
 }
 
 #pragma mark -

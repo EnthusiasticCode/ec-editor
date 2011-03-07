@@ -14,9 +14,11 @@
     ECTextPosition *start, *end;
 }
 
+@property (nonatomic, readonly) NSRange range;
+@property (nonatomic, readonly) CFRange CFRange;
+
 - (id)initWithStart:(ECTextPosition*)aStart end:(ECTextPosition*)aEnd;
 - (id)initWithRange:(NSRange)characterRange;
-- (NSRange)range;
 - (ECTextRange*)rangeIncludingPosition:(ECTextPosition*)aPosition;
 - (BOOL)includesPosition:(ECTextPosition*)aPosition;
 

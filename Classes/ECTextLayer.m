@@ -34,7 +34,7 @@
 - (void)setString:(NSAttributedString *)aString
 {
     string = aString;
-    [self invalidateContent];
+    [self setNeedsCTFrameRendering];
 }
 
 
@@ -78,7 +78,7 @@
 
 #pragma mark Public methods
 
-- (void)invalidateContent
+- (void)setNeedsCTFrameRendering
 {
     CTFrameInvalid = YES;
     [self setNeedsDisplay];
@@ -279,4 +279,29 @@ CGRect ECCoreTextBoundRectOfLinesForStringRange(CTFrameRef frame, CFRange range)
         result = CGRectUnion(result, rect);
     });
     return result;
+}
+
+CFRange ECCoreTextLineRangeOfStringRange(CTFrameRef frame, CFRange range)
+{
+    CFArrayRef lines = CTFrameGetLines(frame);
+    CFIndex lineCount = CFArrayGetCount(lines);
+    
+    CFIndex queryEnd = range.location + range.length;
+    
+    CFIndex firstResultLine = ECCoreTextLineContainingLocation(lines, range.location, (CFRange){ 0, lineCount }, NULL);
+    if (firstResultLine < 0)
+        return (CFRange){ 0, 0 };
+    if (firstResultLine >= lineCount)
+        return (CFRange){ lineCount, 0 };
+    
+    CFRange lineStringRange = CTLineGetStringRange(CFArrayGetValueAtIndex(lines, firstResultLine));
+    if ((lineStringRange.location + lineStringRange.length) >= queryEnd)
+        return (CFRange){ firstResultLine, 1 };
+    
+    CFIndex lastResultLine = ECCoreTextLineContainingLocation(lines, queryEnd, (CFRange){ firstResultLine + 1, lineCount }, NULL);
+    if (lastResultLine < firstResultLine)
+        return (CFRange){ firstResultLine, 0 };
+    if (lastResultLine >= lineCount)
+        return (CFRange){ firstResultLine, lineCount - firstResultLine };
+    return (CFRange){ firstResultLine, lastResultLine - firstResultLine + 1 };
 }

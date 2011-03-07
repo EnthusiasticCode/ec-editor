@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "ECTextLayer.h"
 #import "ECTextStyle.h"
 #import "ECTextOverlayStyle.h"
 #import "ECTextRange.h"
@@ -14,6 +15,8 @@
 
 @interface ECCodeView : UIView {
 @protected
+    // TODO create a setNeedsTextRendering and make this layer private
+    ECTextLayer *textLayer;
     NSMutableAttributedString *text;
 }
 
@@ -22,6 +25,9 @@
 
 /// Return the length of the text, this method should return the same value as [text length];
 @property (nonatomic, readonly) NSUInteger textLength;
+
+/// Marks the receiver’s text as needing to be redrawn.
+- (void)setNeedsTextRendering;
 
 #pragma mark Text style API
 

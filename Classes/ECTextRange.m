@@ -10,7 +10,20 @@
 
 
 @implementation ECTextRange
+
+#pragma mark Properties
+
 @synthesize start, end;
+
+- (NSRange)range
+{
+    return (NSRange){start.index, end.index - start.index};
+}
+
+- (CFRange)CFRange
+{
+    return (CFRange){(CFIndex)start.index, (CFIndex)(end.index - start.index)};
+}
 
 - (id)initWithStart:(ECTextPosition*)aStart end:(ECTextPosition*)aEnd
 {
@@ -46,14 +59,6 @@
     [start release];
     [end release];
     [super dealloc];
-}
-
-- (NSRange)range
-{
-    NSRange r;
-    r.location = start.index;
-    r.length = end.index - start.index;
-    return r;
 }
 
 - (ECTextRange*)rangeIncludingPosition:(ECTextPosition*)p

@@ -27,8 +27,8 @@
 /// The array of \c CTLineRef generated from the string.
 @property (nonatomic, readonly) CFArrayRef CTLines;
 
-/// Invalidate the content taht will be 
-- (void)invalidateContent;
+/// Invalidate the content taht will be marked as needing redraw.
+- (void)setNeedsCTFrameRendering;
 
 /// Asks the layer to calculate and return the size that best fits its contents.
 - (CGSize)sizeThatFits:(CGSize)size;
@@ -50,3 +50,5 @@ void ECCoreTextProcessRectsOfLinesInStringRange(CTFrameRef frame, CFRange range,
 /// Returns the bounding rect for the string range in the given frame.
 CGRect ECCoreTextBoundRectOfLinesForStringRange(CTFrameRef frame, CFRange range);
 
+/// Returns the range of lines that contains the given string range.
+CFRange ECCoreTextLineRangeOfStringRange(CTFrameRef frame, CFRange stringRange);
