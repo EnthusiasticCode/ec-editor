@@ -305,3 +305,86 @@ CFRange ECCoreTextLineRangeOfStringRange(CTFrameRef frame, CFRange range)
         return (CFRange){ firstResultLine, lineCount - firstResultLine };
     return (CFRange){ firstResultLine, lastResultLine - firstResultLine + 1 };
 }
+
+CFIndex ECCoreTextClosestStringIndexInRangeToPoint(CTFrameRef frame, CFRange stringRange, CGPoint point)
+{
+    CFArrayRef lines = CTFrameGetLines(frame);
+    CFIndex lineCount = CFArrayGetCount(lines);
+    CFRange frameStringRange = CTFrameGetStringRange(frame);
+    
+    CFRange lineRange = CFRangeMake(0, lineCount);
+    if (stringRange.location == 0 && stringRange.length == 0)
+    {
+        stringRange = frameStringRange;
+    }
+    else if (stringRange.location != frameStringRange.location && stringRange.length != frameStringRange.length)
+    {
+        lineRange = ECCoreTextLineRangeOfStringRange(frame, stringRange);
+    }
+    
+    CGPoint *origins = malloc(sizeof(CGPoint) * lineRange.length);
+    CTFrameGetLineOrigins(frame, lineRange, origins);
+    CGPathRef framePath = CTFrameGetPath(frame);
+    CGRect framePathBounds = CGPathGetPathBoundingBox(framePath);
+    
+    // Transform point
+    point.y = framePathBounds.size.height - point.y;
+    
+    // Find lines containing point
+    CFIndex closest = 0;
+    while (closest < lineRange.length && origins[closest].y > point.y)
+        closest++;
+    
+    if (closest >= lineRange.length)
+        closest = lineRange.length - 1;
+    
+    CFIndex result;
+    CTLineRef line = CFArrayGetValueAtIndex(lines, lineRange.location + closest);
+    CGFloat ascent = NAN;
+    CGFloat descent = NAN;
+    CGFloat lineWidth = CTLineGetTypographicBounds(line, &ascent, &descent, NULL);
+    CGFloat x = point.x - origins[closest].x;
+    CGFloat y = point.y - origins[closest].y;
+    
+    if (y < -descent)
+        y = -descent;
+    else if(y > ascent)
+        y = ascent;
+    
+    CFRange lineStringRange = CTLineGetStringRange(line);
+    
+    if (x <= 0 && ECCoreTextIndexInRange(lineStringRange.location, stringRange)) 
+    {
+        result = lineStringRange.location;
+    }
+    else if (x >= lineWidth && ECCoreTextIndexInRange(lineStringRange.location + lineStringRange.length, stringRange)) 
+    {
+        result = lineStringRange.location + lineStringRange.length;
+    }
+    else
+    {
+        CFIndex lineStringIndex = CTLineGetStringIndexForPosition(line, (CGPoint){ x, y });
+        if (lineStringIndex < 0 || lineStringIndex < stringRange.location) 
+        {
+            result = stringRange.location;
+        } 
+        else if ((lineStringIndex - stringRange.location) > stringRange.length) 
+        {
+            result = stringRange.location + stringRange.length;
+        } 
+        else 
+        {
+            result = lineStringIndex;
+        }
+    }
+    
+    if (closest < lineRange.length - 1)
+    {
+        lineRange = CTLineGetStringRange(line);
+        if (result == lineRange.location + lineRange.length)
+            result--;
+    }
+    
+    free(origins);
+    return result;
+}

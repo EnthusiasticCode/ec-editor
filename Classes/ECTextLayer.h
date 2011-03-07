@@ -52,3 +52,6 @@ CGRect ECCoreTextBoundRectOfLinesForStringRange(CTFrameRef frame, CFRange range)
 
 /// Returns the range of lines that contains the given string range.
 CFRange ECCoreTextLineRangeOfStringRange(CTFrameRef frame, CFRange stringRange);
+
+/// Search for the string index within the given range in the frame's lines that is closest to the provided point. The should consider to have origin at the frame's origins. If an empty string range is specified, the whole frame is searched.
+CFIndex ECCoreTextClosestStringIndexInRangeToPoint(CTFrameRef frame, CFRange stringRange, CGPoint point);

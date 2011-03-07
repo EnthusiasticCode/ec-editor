@@ -186,7 +186,13 @@
         if ([selection isEmpty])
         {
             // Laying out as caret
-            selectionLayer.frame = [self caretRectForPosition:(ECTextPosition *)selection.start];
+            CGRect caretRect = [self caretRectForPosition:(ECTextPosition *)selection.start];
+            CGPoint textLayerOrigin = self->textLayer.frame.origin;
+            caretRect.origin.x += textLayerOrigin.x;
+            caretRect.origin.y += textLayerOrigin.y;
+            // TODO this should work instead
+//            caretRect = [self.layer convertRect:caretRect toLayer:self->textLayer];
+            selectionLayer.frame = caretRect;
             selectionLayer.hidden = NO;
         }
         else
@@ -639,95 +645,8 @@
 - (UITextPosition *)closestPositionToPoint:(CGPoint)point 
                                withinRange:(UITextRange *)range
 {
-    // TODO update content frame if needed
-    CFRange r;
-    CFArrayRef lines = CTFrameGetLines(self->textLayer.CTFrame);
-    CFIndex lineCount = CFArrayGetCount(lines);
-    CFRange lineRange;
-    
-    if (lineCount == 0)
-        return [[[ECTextPosition alloc] initWithIndex:0] autorelease];
-    
-    if (range)
-    {
-        r = [(ECTextRange *)range CFRange];
-        lineRange = ECCoreTextLineRangeOfStringRange(self->textLayer.CTFrame, r);
-    }
-    else
-    {
-        r.location = 0;
-        r.length = [self textLength];
-        lineRange.location = 0;
-        lineRange.length = lineCount;
-    }
-    
-    // TODO move all this to a ECCoreText function
-    
-    CGPoint *origins = malloc(sizeof(CGPoint) * lineRange.length);
-    CTFrameGetLineOrigins(self->textLayer.CTFrame, lineRange, origins);
-    CGPathRef framePath = CTFrameGetPath(self->textLayer.CTFrame);
-    CGRect framePathBounds = CGPathGetPathBoundingBox(framePath);
-    
-    // Transform point
-    point.x += framePathBounds.size.height;
-    
-    // Find lines containing point
-    CFIndex closest = 0;
-    while (closest < lineRange.length && origins[closest].y > point.y)
-        closest++;
-    
-    if (closest >= lineRange.length)
-        closest = lineRange.length - 1;
-    
-    NSUInteger result;
-    CTLineRef line = CFArrayGetValueAtIndex(lines, lineRange.location + closest);
-    CGFloat ascent = NAN;
-    CGFloat descent = NAN;
-    CGFloat lineWidth = CTLineGetTypographicBounds(line, &ascent, &descent, NULL);
-    CGFloat x = point.x - origins[closest].x;
-    CGFloat y = point.y - origins[closest].y;
-    
-    if (y < -descent)
-        y = -descent;
-    else if(y > ascent)
-        y = ascent;
-    
-    CFRange lineStringRange = CTLineGetStringRange(line);
-    
-    if (x <= 0 && ECCoreTextIndexInRange(lineStringRange.location, r)) 
-    {
-        result = lineStringRange.location;
-    }
-    else if (x >= lineWidth && ECCoreTextIndexInRange(lineStringRange.location + lineStringRange.length, r)) 
-    {
-        result = lineStringRange.location + lineStringRange.length;
-    }
-    else
-    {
-        CFIndex lineStringIndex = CTLineGetStringIndexForPosition(line, (CGPoint){ x, y });
-        if (lineStringIndex < 0 || ((NSUInteger)lineStringIndex < r.location)) 
-        {
-            result = r.location;
-        } 
-        else if (((NSUInteger)lineStringIndex - r.location) > r.length) 
-        {
-            result = r.location + r.length;
-        } 
-        else 
-        {
-            result = lineStringIndex;
-        }
-    }
-    
-    if (closest < lineRange.length - 1)
-    {
-        lineRange = CTLineGetStringRange(line);
-        if (result == lineRange.location + lineRange.length)
-            result--;
-    }
-    
-    free(origins);
-    return [[[ECTextPosition alloc] initWithIndex:result] autorelease];
+    CFIndex index = ECCoreTextClosestStringIndexInRangeToPoint(self->textLayer.CTFrame, ((ECTextRange *)range).CFRange, point);
+    return [[[ECTextPosition alloc] initWithIndex:(NSUInteger)index] autorelease];
 }
 
 - (UITextRange *)characterRangeAtPoint:(CGPoint)point
