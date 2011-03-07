@@ -14,7 +14,9 @@
     NSRange markedRange;
     
     // TODO add markedtext overlay layer
+    CALayer *selectionLayer;
     
+    // Recognizers
     UITapGestureRecognizer *tapRecognizer;
 }
 
@@ -38,31 +40,31 @@
 
 @implementation ECEditCodeView
 
-inline static id init(ECEditCodeView *self)
-{
-    return self;
-}
+//inline static id init(ECEditCodeView *self)
+//{
+//    return self;
+//}
 
 #pragma mark -
 #pragma mark ECCodeView methods
 
-- (id)initWithFrame:(CGRect)frame
-{
-    if ((self = [super initWithFrame:frame]))
-    {
-        init(self);
-    }
-    return self;
-}
-
-- (id)initWithCoder:(NSCoder *)aDecoder
-{
-    if ((self = [super initWithCoder:aDecoder]))
-    {
-        init(self);
-    }
-    return self;
-}
+//- (id)initWithFrame:(CGRect)frame
+//{
+//    if ((self = [super initWithFrame:frame]))
+//    {
+//        init(self);
+//    }
+//    return self;
+//}
+//
+//- (id)initWithCoder:(NSCoder *)aDecoder
+//{
+//    if ((self = [super initWithCoder:aDecoder]))
+//    {
+//        init(self);
+//    }
+//    return self;
+//}
 
 - (void)dealloc
 {
@@ -118,6 +120,7 @@ inline static id init(ECEditCodeView *self)
     {
         tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleGestureTap:)];
         [self addGestureRecognizer:tapRecognizer];
+        [tapRecognizer release];
         
         // TODO initialize gesture recognizers
     }
@@ -159,6 +162,39 @@ inline static id init(ECEditCodeView *self)
     // TODO call delegate's endediting
     
     return shouldResignFirstResponder;
+}
+
+#pragma mark -
+#pragma mark UIView methods
+
+- (void)layoutSubviews
+{
+    [super layoutSubviews];
+    
+    // Create and layout selection layer
+    if (selection)
+    {
+        if (!selectionLayer)
+        {
+            // TODO make this an overlay layer on the layer pool always on top
+            selectionLayer = [CALayer layer];
+            selectionLayer.backgroundColor = [UIColor blackColor].CGColor;
+            // Make in a sublayer of textlayer (on top always)
+            [self.layer insertSublayer:selectionLayer above:self->textLayer];
+        }
+        
+        if ([selection isEmpty])
+        {
+            // Laying out as caret
+            selectionLayer.frame = [self caretRectForPosition:(ECTextPosition *)selection.start];
+            selectionLayer.hidden = NO;
+        }
+        else
+        {
+            // TODO draw actual selection
+            selectionLayer.hidden = YES;
+        }
+    }
 }
 
 #pragma mark -
@@ -824,6 +860,7 @@ inline static id init(ECEditCodeView *self)
 - (void)handleGestureTap:(UITapGestureRecognizer *)recognizer
 {
     CGPoint point = [recognizer locationInView:self];
+    point = [self.layer convertPoint:point toLayer:self->textLayer];
     [self setSelectedTextFromPoint:point toPoint:point];
 }
 
