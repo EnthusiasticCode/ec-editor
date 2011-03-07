@@ -121,9 +121,9 @@ static inline id init(ECCodeView *self)
     textLayer.frame = textLayerFrame;
     
     // Layout text overlay layers
-    [overlayLayers enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
-        [(ECTextOverlayLayer *)obj setFrame:textLayerFrame];
-    }];
+//    [overlayLayers enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+//        [(ECTextOverlayLayer *)obj setFrame:textLayerFrame];
+//    }];
 }
 
 #pragma mark -
@@ -184,17 +184,16 @@ static inline id init(ECCodeView *self)
     if (!overlayLayer)
     {
         overlayLayer = [[ECTextOverlayLayer alloc] initWithOverlayStyle:style];
+        overlayLayer.needsDisplayOnBoundsChange = YES;
         [overlayLayers setObject:overlayLayer forKey:style.name];
-        [self.layer insertSublayer:overlayLayer above:textLayer];
+        [textLayer addSublayer:overlayLayer];
         [overlayLayer release];
     }
     
-    // TODO text overlay should manage multiple rects?
-    CGAffineTransform textLayerTransf = textLayer.CTFrameTransform;
     NSRange r = [range range];
     ECMutableRectSet *rs = [ECMutableRectSet rectSet];
     ECCoreTextProcessRectsOfLinesInStringRange(textLayer.CTFrame, CFRangeMake(r.location, r.length), ^(CGRect rect) {
-        [rs addRect:CGRectApplyAffineTransform(rect, textLayerTransf)];
+        [rs addRect:rect];
     });
     
 //    CGRect rectForRange = ECCoreTextBoundRectOfLinesForStringRange(textLayer.CTFrame, CFRangeMake(r.location, r.length));

@@ -56,6 +56,12 @@
 {
     if (overlayStyle)
     {
+//        CGContextConcatCTM(context, (CGAffineTransform){
+//            self.contentsScale, 0,
+//            0, -self.contentsScale,
+//            0, self.bounds.size.height
+//        });
+        
         CGMutablePathRef path;
         for (ECTextOverlay *overlay in overlayRects) {
             // Get overlay path

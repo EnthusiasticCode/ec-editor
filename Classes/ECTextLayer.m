@@ -37,45 +37,8 @@
     [self invalidateContent];
 }
 
-- (CGAffineTransform)CTFrameTransform
-{
-    return (CGAffineTransform){
-        self.contentsScale, 0,
-        0, -self.contentsScale,
-        0, self.CTFrameSize.height
-    };
-}
-
-//- (void)setBounds:(CGRect)bounds
-//{
-//    [super setBounds:CGRectIntegral(bounds)];
-//    if (wrapped)
-//        [self invalidateContent];
-//}
 
 #pragma mark CALayer methods
-
-- (CATransform3D)transform
-{
-    CATransform3D t = CATransform3DMakeAffineTransform(self.CTFrameTransform);
-    CATransform3D o = [super transform];
-    if (!CATransform3DIsIdentity(o))
-    {
-        t = CATransform3DConcat(t, o);
-    }
-    return t;
-}
-
-- (CGAffineTransform)affineTransform
-{
-    CGAffineTransform t = self.CTFrameTransform;
-    CGAffineTransform o = [super affineTransform];
-    if (!CGAffineTransformIsIdentity(o))
-    {
-        t = CGAffineTransformConcat(t, o);
-    }
-    return t;
-}
 
 - (BOOL)isGeometryFlipped
 {
@@ -95,11 +58,22 @@
     CGContextSetFillColorWithColor(context, self.backgroundColor);
     CGContextFillRect(context, self.bounds);
 
-    CGAffineTransform t = [self affineTransform];
-    CGContextConcatCTM(context, t);
+    // TODO concat custom transform?
+    CGContextConcatCTM(context, (CGAffineTransform){
+        self.contentsScale, 0,
+        0, -self.contentsScale,
+        0, self.bounds.size.height
+    });
     CGContextSetTextPosition(context, 0, 0);
     CGContextSetTextMatrix(context, CGAffineTransformIdentity);
     CTFrameDraw(self.CTFrame, context);
+}
+
+- (void)layoutSublayers
+{
+    for (CALayer *layer in self.sublayers) {
+        layer.frame = self.bounds;
+    }
 }
 
 #pragma mark Public methods
@@ -222,6 +196,8 @@ void ECCoreTextProcessRectsOfLinesInStringRange(CTFrameRef frame, CFRange range,
 {
     CFArrayRef lines = CTFrameGetLines(frame);
     CFIndex lineCount = CFArrayGetCount(lines);
+    CGPathRef framePath = CTFrameGetPath(frame);
+    CGRect framePathBunds = CGPathGetPathBoundingBox(framePath);
     
     CFIndex firstLine = ECCoreTextLineContainingLocation(lines, range.location, (CFRange){0, lineCount}, NULL);
 
@@ -246,7 +222,7 @@ void ECCoreTextProcessRectsOfLinesInStringRange(CTFrameRef frame, CFRange range,
         NSRange spanRange;
         NSUInteger rangeEndLocation = range.location + range.length;
         //
-        CGRect lineRect = CGRectMake(lineOrigin.x, lineOrigin.y, 0, ascent + descent);
+        CGRect lineRect = CGRectMake(lineOrigin.x, framePathBunds.size.height - lineOrigin.y - ascent, 0, ascent + descent);
         
         if (rangeEndLocation < (NSUInteger)lineRange.location)
         {
