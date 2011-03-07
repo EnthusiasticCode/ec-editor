@@ -61,7 +61,7 @@ static inline id init(ECCodeView *self)
     self->textLayer.opaque = YES;
     self->textLayer.backgroundColor = self.backgroundColor.CGColor;
     self->textLayer.wrapped = YES;
-    self->textLayer.needsDisplayOnBoundsChange = YES;
+//    self->textLayer.needsDisplayOnBoundsChange = YES;
     [self.layer addSublayer:self->textLayer];
     
     // Overlay layers
@@ -172,7 +172,9 @@ static inline id init(ECCodeView *self)
 #pragma mark -
 #pragma mark ECCodeView text overlay methods
 
-- (void)setTextOverlayStyle:(ECTextOverlayStyle *)style 
+// TODO instead of one layer per style, layers should be created as a shared resource and used by a style if 
+// hidden/empty. This way a style could apply different animations to specific instances of overlay to a range.
+- (void)addTextOverlayStyle:(ECTextOverlayStyle *)style 
                forTextRange:(ECTextRange *)range 
                 alternative:(BOOL)alt
 {
@@ -184,7 +186,7 @@ static inline id init(ECCodeView *self)
     if (!overlayLayer)
     {
         overlayLayer = [[ECTextOverlayLayer alloc] initWithOverlayStyle:style];
-        overlayLayer.needsDisplayOnBoundsChange = YES;
+//        overlayLayer.needsDisplayOnBoundsChange = YES;
         [overlayLayers setObject:overlayLayer forKey:style.name];
         [textLayer addSublayer:overlayLayer];
         [overlayLayer release];
@@ -199,6 +201,24 @@ static inline id init(ECCodeView *self)
 //    CGRect rectForRange = ECCoreTextBoundRectOfLinesForStringRange(textLayer.CTFrame, CFRangeMake(r.location, r.length));
     [overlayLayer setTextOverlays:[NSArray arrayWithObject:[ECTextOverlay textOverlayWithRectSet:rs alternative:NO]] animate:YES];
     [overlayLayer setNeedsDisplay];
+}
+
+- (void)clearTextOverlayWithStyle:(ECTextOverlayStyle *)style
+{
+    CALayer *overlayLayer = [overlayLayers objectForKey:style.name];
+    if (overlayLayer)
+    {
+        [overlayLayer removeFromSuperlayer];
+        [overlayLayers removeObjectForKey:style.name];
+    }
+}
+
+- (void)clearAllTextOverlays
+{
+    [overlayLayers enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+        [obj removeFromSuperlayer];
+    }];
+    [overlayLayers removeAllObjects];
 }
 
 #pragma mark -

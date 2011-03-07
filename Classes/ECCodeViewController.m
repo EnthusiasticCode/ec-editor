@@ -44,8 +44,8 @@
                                                                                     color:[UIColor redColor] 
                                                                          alternativeColor:nil 
                                                                                waveRadius:1];
-    [codeView setTextOverlayStyle:yellowMark forTextRange:[ECTextRange textRangeWithRange:(NSRange){9, 15}] alternative:NO];
-    [codeView setTextOverlayStyle:errorMark forTextRange:[ECTextRange textRangeWithRange:(NSRange){9, 15}] alternative:NO];
+    [codeView addTextOverlayStyle:yellowMark forTextRange:[ECTextRange textRangeWithRange:(NSRange){9, 15}] alternative:NO];
+    [codeView addTextOverlayStyle:errorMark forTextRange:[ECTextRange textRangeWithRange:(NSRange){9, 15}] alternative:NO];
 
 //    // Scroll view
 //    [codeScrollView setMinimumZoomScale:1.0];

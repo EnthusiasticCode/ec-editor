@@ -36,6 +36,13 @@
 
 #pragma mark Text overlay API
 
-- (void)setTextOverlayStyle:(ECTextOverlayStyle *)style forTextRange:(ECTextRange *)range alternative:(BOOL)alt;
+/// Add an overlay to the specified text range. If alternative is YES, the alternative options in the style will be used.
+- (void)addTextOverlayStyle:(ECTextOverlayStyle *)style forTextRange:(ECTextRange *)range alternative:(BOOL)alt;
+
+/// Remove all text overlays with the given style.
+- (void)clearTextOverlayWithStyle:(ECTextOverlayStyle *)style;
+
+/// Remove all text overlays.
+- (void)clearAllTextOverlays;
 
 @end

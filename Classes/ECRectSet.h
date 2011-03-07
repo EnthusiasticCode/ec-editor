@@ -8,7 +8,7 @@
 
 #import <QuartzCore/QuartzCore.h>
 
-
+// TODO comment this
 @interface ECRectSet : NSObject <NSCopying, NSMutableCopying> {
 @protected
     CGRect *buffer;
