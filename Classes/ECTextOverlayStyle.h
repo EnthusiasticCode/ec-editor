@@ -10,8 +10,7 @@
 #import "ECRectSet.h"
 
 
-// TODO pass ECRectSet instead of rect, index, count. it could be needed to have references to the current and last rects.
-typedef void (^BuildOverlayPathForRectBlock)(CGMutablePathRef result, CGRect rect, NSUInteger index, NSUInteger count, BOOL alternative, NSDictionary *attr);
+typedef void (^BuildOverlayPathForRectBlock)(CGMutablePathRef result, ECRectSet *rects, BOOL alternative, NSDictionary *attr);
 
 @interface ECTextOverlayStyle : NSObject {
 @protected

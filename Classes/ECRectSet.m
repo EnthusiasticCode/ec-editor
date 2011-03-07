@@ -99,6 +99,20 @@
     }
 }
 
+//- (NSUInteger)countByEnumeratingWithState:(NSFastEnumerationState *)state objects:(id *)stackbuf count:(NSUInteger)len
+//{
+//    if (state->state >= count)
+//    {
+//        return 0;
+//    }
+//    
+//    state->itemsPtr = buffer;
+//    state->state = count;
+//    state->mutationsPtr = (unsigned long*)self;
+//    
+//    return count;
+//}
+
 + (id)rectSet
 {
     return [[[self alloc] init] autorelease];
