@@ -12,8 +12,12 @@
 @interface ECCodeViewController : UIViewController {
 @private
     ECCodeView *codeView;
+    
+    UITapGestureRecognizer *focusRecognizer;
 }
 
 @property (nonatomic, retain) IBOutlet ECCodeView *codeView;
+
+- (void)handleGestureFocus:(UITapGestureRecognizer *)recognizer;
 
 @end

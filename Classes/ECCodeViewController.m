@@ -46,6 +46,12 @@
                                                                                waveRadius:1];
     [codeView addTextOverlayStyle:yellowMark forTextRange:[ECTextRange textRangeWithRange:(NSRange){9, 15}] alternative:NO];
     [codeView addTextOverlayStyle:errorMark forTextRange:[ECTextRange textRangeWithRange:(NSRange){9, 15}] alternative:NO];
+    
+    // Edit tests
+    
+    // Focus recognizer
+    focusRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleGestureFocus:)];
+    [codeView addGestureRecognizer:focusRecognizer];
 
 //    // Scroll view
 //    [codeScrollView setMinimumZoomScale:1.0];
@@ -58,17 +64,9 @@
 }
 
 
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
-    // Overriden to allow any orientation.
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation 
+{
     return YES;
-}
-
-
-- (void)didReceiveMemoryWarning {
-    // Releases the view if it doesn't have a superview.
-    [super didReceiveMemoryWarning];
-    
-    // Release any cached data, images, etc that aren't in use.
 }
 
 - (void)dealloc 
@@ -77,5 +75,10 @@
     [super dealloc];
 }
 
+- (void)handleGestureFocus:(UITapGestureRecognizer *)recognizer
+{
+    if ([[recognizer view] canBecomeFirstResponder])
+        recognizer.enabled = ![[recognizer view] becomeFirstResponder];
+}
 
 @end

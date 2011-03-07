@@ -14,6 +14,8 @@
     NSRange markedRange;
     
     // TODO add markedtext overlay layer
+    
+    UITapGestureRecognizer *tapRecognizer;
 }
 
 /// Method to be used before any text modification occurs.
@@ -26,12 +28,47 @@
 /// Convinience method to set the selection to an index location.
 - (void)setSelectedIndex:(NSUInteger)index;
 
+/// Helper method to set the selection starting from two points.
+- (void)setSelectedTextFromPoint:(CGPoint)fromPoint toPoint:(CGPoint)toPoint;
+
+/// Handler for common editor tap gestures.
+- (void)handleGestureTap:(UITapGestureRecognizer *)recognizer;
+
 @end
 
 @implementation ECEditCodeView
 
+inline static id init(ECEditCodeView *self)
+{
+    return self;
+}
+
 #pragma mark -
 #pragma mark ECCodeView methods
+
+- (id)initWithFrame:(CGRect)frame
+{
+    if ((self = [super initWithFrame:frame]))
+    {
+        init(self);
+    }
+    return self;
+}
+
+- (id)initWithCoder:(NSCoder *)aDecoder
+{
+    if ((self = [super initWithCoder:aDecoder]))
+    {
+        init(self);
+    }
+    return self;
+}
+
+- (void)dealloc
+{
+    [selection release];
+    [super dealloc];
+}
 
 - (NSUInteger)textLength
 {
@@ -62,6 +99,66 @@
         }
     }
     [self afterTextChange];
+}
+
+#pragma mark -
+#pragma mark UIResponder protocol
+
+- (BOOL)canBecomeFirstResponder
+{
+    return YES;
+}
+
+- (BOOL)becomeFirstResponder
+{
+    BOOL shouldBecomeFirstResponder = [super becomeFirstResponder];
+    
+    // Lazy create recognizers
+    if (!tapRecognizer && shouldBecomeFirstResponder)
+    {
+        tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleGestureTap:)];
+        [self addGestureRecognizer:tapRecognizer];
+        
+        // TODO initialize gesture recognizers
+    }
+    
+    // Activate recognizers
+    if (shouldBecomeFirstResponder)
+    {
+        tapRecognizer.enabled = YES;
+//        doubleTapRecognizer.enabled = YES;
+//        tapHoldRecognizer.enabled = YES;
+    }
+    
+    [self setNeedsLayout];
+    
+    if (selection)
+        [self setNeedsDisplay];
+    
+    return shouldBecomeFirstResponder;   
+}
+
+- (BOOL)resignFirstResponder
+{
+    BOOL shouldResignFirstResponder = [super resignFirstResponder];
+    
+    if (![self isFirstResponder])
+    {
+        tapRecognizer.enabled = NO;
+//        doubleTapRecognizer.enabled = NO;
+//        tapHoldRecognizer.enabled = NO;
+        
+        // TODO remove thumbs
+    }
+    
+    [self setNeedsLayout];
+    
+    if (selection)
+        [self setNeedsDisplay];
+    
+    // TODO call delegate's endediting
+    
+    return shouldResignFirstResponder;
 }
 
 #pragma mark -
@@ -704,6 +801,30 @@
     ECTextRange *range = [[ECTextRange alloc] initWithRange:(NSRange){index, 0}];
     [self setSelectedTextRange:range notifyDelegate:NO];
     [range release];
+}
+
+- (void)setSelectedTextFromPoint:(CGPoint)fromPoint toPoint:(CGPoint)toPoint
+{
+    UITextPosition *startPosition = [self closestPositionToPoint:fromPoint];
+    UITextPosition *endPosition;
+    if (CGPointEqualToPoint(toPoint, fromPoint))
+        endPosition = startPosition;
+    else
+        endPosition = [self closestPositionToPoint:toPoint];
+    
+    ECTextRange *range = [[ECTextRange alloc] initWithStart:(ECTextPosition *)startPosition end:(ECTextPosition *)endPosition];
+    
+    [self setSelectedTextRange:range];
+    
+    [range release];
+}
+
+#pragma mark Gesture handlers
+
+- (void)handleGestureTap:(UITapGestureRecognizer *)recognizer
+{
+    CGPoint point = [recognizer locationInView:self];
+    [self setSelectedTextFromPoint:point toPoint:point];
 }
 
 @end
