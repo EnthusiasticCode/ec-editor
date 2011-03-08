@@ -2,11 +2,11 @@
 *.swp
 *~.nib
 
-build/
+Build
 
 *.mode1v3
 *.pbxuser
 *.perspective
 *.perspectivev3
 *.xcworkspace
-*/xcuserdata/
+xcuserdata/

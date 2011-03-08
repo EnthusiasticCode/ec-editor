@@ -1,0 +1,13 @@
+//
+//  Shared-iPhone.xcconfig
+//  edit
+//
+//  Created by Uri Baghin on 2/27/11.
+//  Copyright 2011 __MyCompanyName__. All rights reserved.
+//
+
+IPHONEOS_DEPLOYMENT_TARGET = 4.2
+ARCHS = $(ARCHS_UNIVERSAL_IPHONE_OS)
+SDKROOT = iphoneos
+// 2 = iPad
+TARGETED_DEVICE_FAMILY = 2

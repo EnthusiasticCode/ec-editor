@@ -1,0 +1,20 @@
+//
+//  Test.xcconfig
+//  edit
+//
+//  Created by Uri Baghin on 2/27/11.
+//  Copyright 2011 __MyCompanyName__. All rights reserved.
+//
+
+ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+
+OTHER_LDFLAGS = $(value) -framework SenTestingKit;
+// flags needed to link objective C static libraries correctly
+OTHER_LDFLAGS = $(value) -all_load -ObjC;
+WRAPPER_EXTENSION = octest;
+
+
+// Disable some warnings for Kiwi, remember to delete this if we change testing framework
+GCC_WARN_PEDANTIC = NO
+GCC_WARN_STRICT_SELECTOR_MATCH = NO
+GCC_WARN_UNDECLARED_SELECTOR = NO
