@@ -91,19 +91,19 @@
 
 - (void)handleDragging:(UIPanGestureRecognizer *)recognizer
 {
-    if (delegate && [delegate respondsToSelector:@selector(selectionHandle:draggedTo:andStop:)])
-    {
-        UIGestureRecognizerState state = recognizer.state;
-        
-        if (state == UIGestureRecognizerStateBegan)
-        {
-            dragStartPoint = self.center;
-        }
-        
-        CGPoint delta = [recognizer translationInView:self];
-        
-        [delegate selectionHandle:self draggedTo:(CGPoint){ dragStartPoint.x + delta.x, dragStartPoint.y + delta.y  } andStop:(state == UIGestureRecognizerStateCancelled || state == UIGestureRecognizerStateEnded)];
-    }
+//    if (delegate && [delegate respondsToSelector:@selector(selectionHandle:draggedTo:andStop:)])
+//    {
+//        UIGestureRecognizerState state = recognizer.state;
+//        
+//        if (state == UIGestureRecognizerStateBegan)
+//        {
+//            dragStartPoint = self.center;
+//        }
+//        
+//        CGPoint delta = [recognizer translationInView:self];
+//        
+//        [delegate selectionHandle:self draggedTo:(CGPoint){ dragStartPoint.x + delta.x, dragStartPoint.y + delta.y  } andStop:(state == UIGestureRecognizerStateCancelled || state == UIGestureRecognizerStateEnded)];
+//    }
 }
 
 @end

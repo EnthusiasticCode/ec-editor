@@ -1,0 +1,9 @@
+//
+//  Library-iPhone.xcconfig
+//  edit
+//
+//  Created by Uri Baghin on 2/27/11.
+//  Copyright 2011 __MyCompanyName__. All rights reserved.
+//
+
+#include "Library.xcconfig"

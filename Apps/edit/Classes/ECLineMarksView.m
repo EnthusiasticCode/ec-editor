@@ -78,7 +78,7 @@ static inline id init(ECLineMarksView *self)
         CGFloat lineStep = (bounds.size.height - markInsets.top - markInsets.bottom ) / lineCount;
         CGPoint markPoint = CGPointMake(bounds.origin.x + bounds.size.width - markSize.width - markInsets.right, markInsets.top);
         [marks enumerateKeysAndObjectsUsingBlock:^(id color, id lines, BOOL *stop) {
-            [(NSMutableIndexSet *)lines enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
+            [(NSMutableIndexSet *)lines enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *istop) {
                 if (idx < lineCount)
                 {
                     CGRect markRect = (CGRect){ {markPoint.x, markPoint.y + lineStep * idx}, markSize };
@@ -150,29 +150,29 @@ static inline id init(ECLineMarksView *self)
 
 - (void)markTapped:(UITapGestureRecognizer *)recognizer
 {
-    if (lineCount > 0 && [self.delegate respondsToSelector:@selector(lineMarksView:selectedMarkWithColor:atLine:)])
-    {
-        CGPoint point = [recognizer locationInView:self];
-        CGRect bounds = self.bounds;
-        CGFloat lineStep = (bounds.size.height - markInsets.top - markInsets.bottom ) / lineCount;
-        CGPoint markPoint = CGPointMake(bounds.origin.x + bounds.size.width - markSize.width - markInsets.right, markInsets.top);
-        CGSize tapSize = markSize;
-        tapSize.width += markInsets.left + markInsets.right;
-        tapSize.height = MAX(tapSize.height, lineStep);
-        [marks enumerateKeysAndObjectsUsingBlock:^(id color, id lines, BOOL *stop) {
-            [(NSMutableIndexSet *)lines enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
-                if (idx < lineCount)
-                {
-                    CGRect markRect = (CGRect){ {markPoint.x, markPoint.y + lineStep * idx}, tapSize };
-                    if (CGRectContainsPoint(markRect, point))
-                    {
-                        [self.delegate lineMarksView:self selectedMarkWithColor:(UIColor *)color atLine:idx];
-                        *stop = YES;
-                    }
-                }
-            }];
-        }];
-    }
+//    if (lineCount > 0 && [self.delegate respondsToSelector:@selector(lineMarksView:selectedMarkWithColor:atLine:)])
+//    {
+//        CGPoint point = [recognizer locationInView:self];
+//        CGRect bounds = self.bounds;
+//        CGFloat lineStep = (bounds.size.height - markInsets.top - markInsets.bottom ) / lineCount;
+//        CGPoint markPoint = CGPointMake(bounds.origin.x + bounds.size.width - markSize.width - markInsets.right, markInsets.top);
+//        CGSize tapSize = markSize;
+//        tapSize.width += markInsets.left + markInsets.right;
+//        tapSize.height = MAX(tapSize.height, lineStep);
+//        [marks enumerateKeysAndObjectsUsingBlock:^(id color, id lines, BOOL *stop) {
+//            [(NSMutableIndexSet *)lines enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *istop) {
+//                if (idx < lineCount)
+//                {
+//                    CGRect markRect = (CGRect){ {markPoint.x, markPoint.y + lineStep * idx}, tapSize };
+//                    if (CGRectContainsPoint(markRect, point))
+//                    {
+//                        [self.delegate lineMarksView:self selectedMarkWithColor:(UIColor *)color atLine:idx];
+//                        *stop = YES;
+//                    }
+//                }
+//            }];
+//        }];
+//    }
 }
 
 @end

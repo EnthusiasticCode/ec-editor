@@ -62,7 +62,7 @@
                            cornerRadius:(CGFloat)radius
 {
     NSDictionary *attrib = [NSDictionary dictionaryWithObject:[NSNumber numberWithFloat:radius] forKey:@"cornerRadius"];
-    return [[[self alloc] initWithName:name color:color alternativeColor:alternative attributes:attrib pathBlock:^(CGMutablePathRef retPath, ECRectSet *rects, BOOL alternative, NSDictionary *attr) {
+    return [[[self alloc] initWithName:name color:color alternativeColor:alternative attributes:attrib pathBlock:^(CGMutablePathRef retPath, ECRectSet *rects, BOOL alt, NSDictionary *attr) {
         [rects enumerateRectsUsingBlock:^(CGRect rect, BOOL *stop) {
             if (radius == 0)
             {
@@ -107,7 +107,7 @@
 {
     NSDictionary *attrib = [NSDictionary dictionaryWithObjectsAndKeys:
                             [NSNumber numberWithFloat:wave], @"lineWaveRadius", nil];
-    ECTextOverlayStyle *result = [[self alloc] initWithName:name color:nil alternativeColor:nil attributes:attrib pathBlock:^(CGMutablePathRef retPath, ECRectSet *rects, BOOL alternative, NSDictionary *attr) {
+    ECTextOverlayStyle *result = [[self alloc] initWithName:name color:nil alternativeColor:nil attributes:attrib pathBlock:^(CGMutablePathRef retPath, ECRectSet *rects, BOOL alt, NSDictionary *attr) {
         [rects enumerateRectsUsingBlock:^(CGRect rect, BOOL *stop) {
             CGFloat waveRadius = [[attr objectForKey:@"lineWaveRadius"] floatValue];
             CGFloat liney = rect.origin.y + rect.size.height;

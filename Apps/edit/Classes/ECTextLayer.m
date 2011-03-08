@@ -230,12 +230,12 @@ void ECCTFrameProcessRectsOfLinesInStringRange(CTFrameRef frame, CFRange range, 
             // Requested range ends before the beginning of this line
             break;
         }
-        else if (range.location <= (NSUInteger)lineRange.location) 
+        else if (range.location <= lineRange.location) 
         {
             // Requested range starts before this line
             // Left is line wrap
             left = 0;
-            spanRange.location = (NSUInteger)lineRange.location;
+            spanRange.location = lineRange.location;
         } 
         else 
         {

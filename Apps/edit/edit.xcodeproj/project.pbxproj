@@ -15,14 +15,6 @@
 		B736173B12DA112A009801D4 /* edit-main.m in Sources */ = {isa = PBXBuildFile; fileRef = B736173A12DA112A009801D4 /* edit-main.m */; };
 		B736173E12DA112A009801D4 /* editAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = B736173D12DA112A009801D4 /* editAppDelegate.m */; };
 		B736174312DA112A009801D4 /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = B736174112DA112A009801D4 /* MainWindow.xib */; };
-		B7759ECA12E062B5006E99E7 /* OUIRectangularOverlayArrow.png in Resources */ = {isa = PBXBuildFile; fileRef = B7759EC212E062B5006E99E7 /* OUIRectangularOverlayArrow.png */; };
-		B7759ECB12E062B5006E99E7 /* OUIRectangularOverlayFrame.png in Resources */ = {isa = PBXBuildFile; fileRef = B7759EC312E062B5006E99E7 /* OUIRectangularOverlayFrame.png */; };
-		B7759ECC12E062B5006E99E7 /* OUIShadowBorderBottom.png in Resources */ = {isa = PBXBuildFile; fileRef = B7759EC412E062B5006E99E7 /* OUIShadowBorderBottom.png */; };
-		B7759ECD12E062B5006E99E7 /* OUIShadowBorderLeft.png in Resources */ = {isa = PBXBuildFile; fileRef = B7759EC512E062B5006E99E7 /* OUIShadowBorderLeft.png */; };
-		B7759ECE12E062B5006E99E7 /* OUIShadowBorderRight.png in Resources */ = {isa = PBXBuildFile; fileRef = B7759EC612E062B5006E99E7 /* OUIShadowBorderRight.png */; };
-		B7759ECF12E062B5006E99E7 /* OUIShadowBorderTop.png in Resources */ = {isa = PBXBuildFile; fileRef = B7759EC712E062B5006E99E7 /* OUIShadowBorderTop.png */; };
-		B7759ED012E062B5006E99E7 /* OUITextSelectionHandle.png in Resources */ = {isa = PBXBuildFile; fileRef = B7759EC812E062B5006E99E7 /* OUITextSelectionHandle.png */; };
-		B7759ED112E062B5006E99E7 /* OUITextSelectionOverlay.png in Resources */ = {isa = PBXBuildFile; fileRef = B7759EC912E062B5006E99E7 /* OUITextSelectionOverlay.png */; };
 		B7BD531F12DF1CDB003B83B3 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7BD531E12DF1CDB003B83B3 /* QuartzCore.framework */; };
 		CD01B8B2131D2B36005AABFC /* ECLineMarksView.m in Sources */ = {isa = PBXBuildFile; fileRef = CD01B8B1131D2B36005AABFC /* ECLineMarksView.m */; };
 		CD0D843A12E9A865005DB220 /* ECCodeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD0D843912E9A865005DB220 /* ECCodeViewController.m */; };
@@ -35,9 +27,31 @@
 		CD6C3D621322A5EB00A8D90D /* ECTextStyle.m in Sources */ = {isa = PBXBuildFile; fileRef = CD6C3D611322A5EB00A8D90D /* ECTextStyle.m */; };
 		CD6C3D651322D7BF00A8D90D /* ECTextOverlayStyle.m in Sources */ = {isa = PBXBuildFile; fileRef = CD6C3D641322D7BF00A8D90D /* ECTextOverlayStyle.m */; };
 		CD7140891321283F0031D5D9 /* ECSelectionHandleView.m in Sources */ = {isa = PBXBuildFile; fileRef = CD7140881321283F0031D5D9 /* ECSelectionHandleView.m */; };
+		CDA00C7713261AEE00DDB649 /* OUIRectangularOverlayArrow.png in Resources */ = {isa = PBXBuildFile; fileRef = CDA00C6F13261AEE00DDB649 /* OUIRectangularOverlayArrow.png */; };
+		CDA00C7813261AEE00DDB649 /* OUIRectangularOverlayFrame.png in Resources */ = {isa = PBXBuildFile; fileRef = CDA00C7013261AEE00DDB649 /* OUIRectangularOverlayFrame.png */; };
+		CDA00C7913261AEE00DDB649 /* OUIShadowBorderBottom.png in Resources */ = {isa = PBXBuildFile; fileRef = CDA00C7113261AEE00DDB649 /* OUIShadowBorderBottom.png */; };
+		CDA00C7A13261AEE00DDB649 /* OUIShadowBorderLeft.png in Resources */ = {isa = PBXBuildFile; fileRef = CDA00C7213261AEE00DDB649 /* OUIShadowBorderLeft.png */; };
+		CDA00C7B13261AEE00DDB649 /* OUIShadowBorderRight.png in Resources */ = {isa = PBXBuildFile; fileRef = CDA00C7313261AEE00DDB649 /* OUIShadowBorderRight.png */; };
+		CDA00C7C13261AEE00DDB649 /* OUIShadowBorderTop.png in Resources */ = {isa = PBXBuildFile; fileRef = CDA00C7413261AEE00DDB649 /* OUIShadowBorderTop.png */; };
+		CDA00C7D13261AEE00DDB649 /* OUITextSelectionHandle.png in Resources */ = {isa = PBXBuildFile; fileRef = CDA00C7513261AEE00DDB649 /* OUITextSelectionHandle.png */; };
+		CDA00C7E13261AEE00DDB649 /* OUITextSelectionOverlay.png in Resources */ = {isa = PBXBuildFile; fileRef = CDA00C7613261AEE00DDB649 /* OUITextSelectionOverlay.png */; };
 		CDB4D5CC12F9505E00952DB8 /* ECTextPosition.m in Sources */ = {isa = PBXBuildFile; fileRef = CDB4D5CB12F9505E00952DB8 /* ECTextPosition.m */; };
 		CDB4D5CF12F9760800952DB8 /* ECTextRange.m in Sources */ = {isa = PBXBuildFile; fileRef = CDB4D5CE12F9760800952DB8 /* ECTextRange.m */; };
 		CDD538821324F4E00064BC17 /* ECEditCodeView.m in Sources */ = {isa = PBXBuildFile; fileRef = CDD538811324F4E00064BC17 /* ECEditCodeView.m */; };
+		CDF4273B13261BD3003443F2 /* Application-iPad-Debug.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = CDF4272D13261BD3003443F2 /* Application-iPad-Debug.xcconfig */; };
+		CDF4273C13261BD3003443F2 /* Application-iPad-Release.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = CDF4272E13261BD3003443F2 /* Application-iPad-Release.xcconfig */; };
+		CDF4273D13261BD3003443F2 /* Application-iPad-Test.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = CDF4272F13261BD3003443F2 /* Application-iPad-Test.xcconfig */; };
+		CDF4273E13261BD3003443F2 /* Application.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = CDF4273013261BD3003443F2 /* Application.xcconfig */; };
+		CDF4273F13261BD3003443F2 /* Debug.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = CDF4273113261BD3003443F2 /* Debug.xcconfig */; };
+		CDF4274013261BD3003443F2 /* iPad.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = CDF4273213261BD3003443F2 /* iPad.xcconfig */; };
+		CDF4274113261BD3003443F2 /* Library.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = CDF4273313261BD3003443F2 /* Library.xcconfig */; };
+		CDF4274213261BD3003443F2 /* Release.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = CDF4273413261BD3003443F2 /* Release.xcconfig */; };
+		CDF4274313261BD3003443F2 /* Shared.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = CDF4273513261BD3003443F2 /* Shared.xcconfig */; };
+		CDF4274413261BD3003443F2 /* StaticLibrary-iPad-Debug.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = CDF4273613261BD3003443F2 /* StaticLibrary-iPad-Debug.xcconfig */; };
+		CDF4274513261BD3003443F2 /* StaticLibrary-iPad-Release.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = CDF4273713261BD3003443F2 /* StaticLibrary-iPad-Release.xcconfig */; };
+		CDF4274613261BD3003443F2 /* StaticLibrary-iPad-Test.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = CDF4273813261BD3003443F2 /* StaticLibrary-iPad-Test.xcconfig */; };
+		CDF4274713261BD3003443F2 /* StaticLibrary.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = CDF4273913261BD3003443F2 /* StaticLibrary.xcconfig */; };
+		CDF4274813261BD3003443F2 /* Test.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = CDF4273A13261BD3003443F2 /* Test.xcconfig */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -52,14 +66,6 @@
 		B736173C12DA112A009801D4 /* editAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = editAppDelegate.h; sourceTree = "<group>"; };
 		B736173D12DA112A009801D4 /* editAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = editAppDelegate.m; sourceTree = "<group>"; };
 		B736174212DA112A009801D4 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainWindow.xib; sourceTree = "<group>"; };
-		B7759EC212E062B5006E99E7 /* OUIRectangularOverlayArrow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = OUIRectangularOverlayArrow.png; sourceTree = "<group>"; };
-		B7759EC312E062B5006E99E7 /* OUIRectangularOverlayFrame.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = OUIRectangularOverlayFrame.png; sourceTree = "<group>"; };
-		B7759EC412E062B5006E99E7 /* OUIShadowBorderBottom.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = OUIShadowBorderBottom.png; sourceTree = "<group>"; };
-		B7759EC512E062B5006E99E7 /* OUIShadowBorderLeft.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = OUIShadowBorderLeft.png; sourceTree = "<group>"; };
-		B7759EC612E062B5006E99E7 /* OUIShadowBorderRight.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = OUIShadowBorderRight.png; sourceTree = "<group>"; };
-		B7759EC712E062B5006E99E7 /* OUIShadowBorderTop.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = OUIShadowBorderTop.png; sourceTree = "<group>"; };
-		B7759EC812E062B5006E99E7 /* OUITextSelectionHandle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = OUITextSelectionHandle.png; sourceTree = "<group>"; };
-		B7759EC912E062B5006E99E7 /* OUITextSelectionOverlay.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = OUITextSelectionOverlay.png; sourceTree = "<group>"; };
 		B7BD531E12DF1CDB003B83B3 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		CD01B8B0131D2B36005AABFC /* ECLineMarksView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECLineMarksView.h; sourceTree = "<group>"; };
 		CD01B8B1131D2B36005AABFC /* ECLineMarksView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECLineMarksView.m; sourceTree = "<group>"; };
@@ -83,12 +89,34 @@
 		CD6C3D641322D7BF00A8D90D /* ECTextOverlayStyle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECTextOverlayStyle.m; sourceTree = "<group>"; };
 		CD7140871321283F0031D5D9 /* ECSelectionHandleView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECSelectionHandleView.h; sourceTree = "<group>"; };
 		CD7140881321283F0031D5D9 /* ECSelectionHandleView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECSelectionHandleView.m; sourceTree = "<group>"; };
+		CDA00C6F13261AEE00DDB649 /* OUIRectangularOverlayArrow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = OUIRectangularOverlayArrow.png; path = Resources/Images/OUIRectangularOverlayArrow.png; sourceTree = SOURCE_ROOT; };
+		CDA00C7013261AEE00DDB649 /* OUIRectangularOverlayFrame.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = OUIRectangularOverlayFrame.png; path = Resources/Images/OUIRectangularOverlayFrame.png; sourceTree = SOURCE_ROOT; };
+		CDA00C7113261AEE00DDB649 /* OUIShadowBorderBottom.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = OUIShadowBorderBottom.png; path = Resources/Images/OUIShadowBorderBottom.png; sourceTree = SOURCE_ROOT; };
+		CDA00C7213261AEE00DDB649 /* OUIShadowBorderLeft.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = OUIShadowBorderLeft.png; path = Resources/Images/OUIShadowBorderLeft.png; sourceTree = SOURCE_ROOT; };
+		CDA00C7313261AEE00DDB649 /* OUIShadowBorderRight.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = OUIShadowBorderRight.png; path = Resources/Images/OUIShadowBorderRight.png; sourceTree = SOURCE_ROOT; };
+		CDA00C7413261AEE00DDB649 /* OUIShadowBorderTop.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = OUIShadowBorderTop.png; path = Resources/Images/OUIShadowBorderTop.png; sourceTree = SOURCE_ROOT; };
+		CDA00C7513261AEE00DDB649 /* OUITextSelectionHandle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = OUITextSelectionHandle.png; path = Resources/Images/OUITextSelectionHandle.png; sourceTree = SOURCE_ROOT; };
+		CDA00C7613261AEE00DDB649 /* OUITextSelectionOverlay.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = OUITextSelectionOverlay.png; path = Resources/Images/OUITextSelectionOverlay.png; sourceTree = SOURCE_ROOT; };
 		CDB4D5CA12F9505E00952DB8 /* ECTextPosition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECTextPosition.h; sourceTree = "<group>"; };
 		CDB4D5CB12F9505E00952DB8 /* ECTextPosition.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECTextPosition.m; sourceTree = "<group>"; };
 		CDB4D5CD12F9760800952DB8 /* ECTextRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECTextRange.h; sourceTree = "<group>"; };
 		CDB4D5CE12F9760800952DB8 /* ECTextRange.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECTextRange.m; sourceTree = "<group>"; };
 		CDD538801324F4E00064BC17 /* ECEditCodeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECEditCodeView.h; sourceTree = "<group>"; };
 		CDD538811324F4E00064BC17 /* ECEditCodeView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECEditCodeView.m; sourceTree = "<group>"; };
+		CDF4272D13261BD3003443F2 /* Application-iPad-Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "Application-iPad-Debug.xcconfig"; sourceTree = "<group>"; };
+		CDF4272E13261BD3003443F2 /* Application-iPad-Release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "Application-iPad-Release.xcconfig"; sourceTree = "<group>"; };
+		CDF4272F13261BD3003443F2 /* Application-iPad-Test.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "Application-iPad-Test.xcconfig"; sourceTree = "<group>"; };
+		CDF4273013261BD3003443F2 /* Application.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Application.xcconfig; sourceTree = "<group>"; };
+		CDF4273113261BD3003443F2 /* Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
+		CDF4273213261BD3003443F2 /* iPad.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = iPad.xcconfig; sourceTree = "<group>"; };
+		CDF4273313261BD3003443F2 /* Library.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Library.xcconfig; sourceTree = "<group>"; };
+		CDF4273413261BD3003443F2 /* Release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = "<group>"; };
+		CDF4273513261BD3003443F2 /* Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
+		CDF4273613261BD3003443F2 /* StaticLibrary-iPad-Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "StaticLibrary-iPad-Debug.xcconfig"; sourceTree = "<group>"; };
+		CDF4273713261BD3003443F2 /* StaticLibrary-iPad-Release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "StaticLibrary-iPad-Release.xcconfig"; sourceTree = "<group>"; };
+		CDF4273813261BD3003443F2 /* StaticLibrary-iPad-Test.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "StaticLibrary-iPad-Test.xcconfig"; sourceTree = "<group>"; };
+		CDF4273913261BD3003443F2 /* StaticLibrary.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = StaticLibrary.xcconfig; sourceTree = "<group>"; };
+		CDF4273A13261BD3003443F2 /* Test.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Test.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -110,6 +138,7 @@
 		B736171A12DA1129009801D4 = {
 			isa = PBXGroup;
 			children = (
+				CDF4272C13261BD3003443F2 /* Config */,
 				B736172212DA1129009801D4 /* Classes */,
 				B736172312DA1129009801D4 /* Other Sources */,
 				B736172412DA1129009801D4 /* Resources */,
@@ -183,14 +212,14 @@
 		B7759EC112E062B5006E99E7 /* Images */ = {
 			isa = PBXGroup;
 			children = (
-				B7759EC212E062B5006E99E7 /* OUIRectangularOverlayArrow.png */,
-				B7759EC312E062B5006E99E7 /* OUIRectangularOverlayFrame.png */,
-				B7759EC412E062B5006E99E7 /* OUIShadowBorderBottom.png */,
-				B7759EC512E062B5006E99E7 /* OUIShadowBorderLeft.png */,
-				B7759EC612E062B5006E99E7 /* OUIShadowBorderRight.png */,
-				B7759EC712E062B5006E99E7 /* OUIShadowBorderTop.png */,
-				B7759EC812E062B5006E99E7 /* OUITextSelectionHandle.png */,
-				B7759EC912E062B5006E99E7 /* OUITextSelectionOverlay.png */,
+				CDA00C6F13261AEE00DDB649 /* OUIRectangularOverlayArrow.png */,
+				CDA00C7013261AEE00DDB649 /* OUIRectangularOverlayFrame.png */,
+				CDA00C7113261AEE00DDB649 /* OUIShadowBorderBottom.png */,
+				CDA00C7213261AEE00DDB649 /* OUIShadowBorderLeft.png */,
+				CDA00C7313261AEE00DDB649 /* OUIShadowBorderRight.png */,
+				CDA00C7413261AEE00DDB649 /* OUIShadowBorderTop.png */,
+				CDA00C7513261AEE00DDB649 /* OUITextSelectionHandle.png */,
+				CDA00C7613261AEE00DDB649 /* OUITextSelectionOverlay.png */,
 			);
 			name = Images;
 			path = OmniUI/Images;
@@ -224,6 +253,28 @@
 				CD7140881321283F0031D5D9 /* ECSelectionHandleView.m */,
 			);
 			name = Old;
+			sourceTree = "<group>";
+		};
+		CDF4272C13261BD3003443F2 /* Config */ = {
+			isa = PBXGroup;
+			children = (
+				CDF4272D13261BD3003443F2 /* Application-iPad-Debug.xcconfig */,
+				CDF4272E13261BD3003443F2 /* Application-iPad-Release.xcconfig */,
+				CDF4272F13261BD3003443F2 /* Application-iPad-Test.xcconfig */,
+				CDF4273013261BD3003443F2 /* Application.xcconfig */,
+				CDF4273113261BD3003443F2 /* Debug.xcconfig */,
+				CDF4273213261BD3003443F2 /* iPad.xcconfig */,
+				CDF4273313261BD3003443F2 /* Library.xcconfig */,
+				CDF4273413261BD3003443F2 /* Release.xcconfig */,
+				CDF4273513261BD3003443F2 /* Shared.xcconfig */,
+				CDF4273613261BD3003443F2 /* StaticLibrary-iPad-Debug.xcconfig */,
+				CDF4273713261BD3003443F2 /* StaticLibrary-iPad-Release.xcconfig */,
+				CDF4273813261BD3003443F2 /* StaticLibrary-iPad-Test.xcconfig */,
+				CDF4273913261BD3003443F2 /* StaticLibrary.xcconfig */,
+				CDF4273A13261BD3003443F2 /* Test.xcconfig */,
+			);
+			name = Config;
+			path = ../../Config;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -275,14 +326,28 @@
 			files = (
 				B736173912DA112A009801D4 /* InfoPlist.strings in Resources */,
 				B736174312DA112A009801D4 /* MainWindow.xib in Resources */,
-				B7759ECA12E062B5006E99E7 /* OUIRectangularOverlayArrow.png in Resources */,
-				B7759ECB12E062B5006E99E7 /* OUIRectangularOverlayFrame.png in Resources */,
-				B7759ECC12E062B5006E99E7 /* OUIShadowBorderBottom.png in Resources */,
-				B7759ECD12E062B5006E99E7 /* OUIShadowBorderLeft.png in Resources */,
-				B7759ECE12E062B5006E99E7 /* OUIShadowBorderRight.png in Resources */,
-				B7759ECF12E062B5006E99E7 /* OUIShadowBorderTop.png in Resources */,
-				B7759ED012E062B5006E99E7 /* OUITextSelectionHandle.png in Resources */,
-				B7759ED112E062B5006E99E7 /* OUITextSelectionOverlay.png in Resources */,
+				CDA00C7713261AEE00DDB649 /* OUIRectangularOverlayArrow.png in Resources */,
+				CDA00C7813261AEE00DDB649 /* OUIRectangularOverlayFrame.png in Resources */,
+				CDA00C7913261AEE00DDB649 /* OUIShadowBorderBottom.png in Resources */,
+				CDA00C7A13261AEE00DDB649 /* OUIShadowBorderLeft.png in Resources */,
+				CDA00C7B13261AEE00DDB649 /* OUIShadowBorderRight.png in Resources */,
+				CDA00C7C13261AEE00DDB649 /* OUIShadowBorderTop.png in Resources */,
+				CDA00C7D13261AEE00DDB649 /* OUITextSelectionHandle.png in Resources */,
+				CDA00C7E13261AEE00DDB649 /* OUITextSelectionOverlay.png in Resources */,
+				CDF4273B13261BD3003443F2 /* Application-iPad-Debug.xcconfig in Resources */,
+				CDF4273C13261BD3003443F2 /* Application-iPad-Release.xcconfig in Resources */,
+				CDF4273D13261BD3003443F2 /* Application-iPad-Test.xcconfig in Resources */,
+				CDF4273E13261BD3003443F2 /* Application.xcconfig in Resources */,
+				CDF4273F13261BD3003443F2 /* Debug.xcconfig in Resources */,
+				CDF4274013261BD3003443F2 /* iPad.xcconfig in Resources */,
+				CDF4274113261BD3003443F2 /* Library.xcconfig in Resources */,
+				CDF4274213261BD3003443F2 /* Release.xcconfig in Resources */,
+				CDF4274313261BD3003443F2 /* Shared.xcconfig in Resources */,
+				CDF4274413261BD3003443F2 /* StaticLibrary-iPad-Debug.xcconfig in Resources */,
+				CDF4274513261BD3003443F2 /* StaticLibrary-iPad-Release.xcconfig in Resources */,
+				CDF4274613261BD3003443F2 /* StaticLibrary-iPad-Test.xcconfig in Resources */,
+				CDF4274713261BD3003443F2 /* StaticLibrary.xcconfig in Resources */,
+				CDF4274813261BD3003443F2 /* Test.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -342,6 +407,7 @@
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = DEBUG;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 4.2;
@@ -357,6 +423,7 @@
 				ARCHS = "$(ARCHS_UNIVERSAL_IPHONE_OS)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 4.2;
@@ -381,45 +448,15 @@
 		};
 		B736175B12DA112B009801D4 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = CDF4272D13261BD3003443F2 /* Application-iPad-Debug.xcconfig */;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COPY_PHASE_STRIP = NO;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_PRECOMPILE_PREFIX_HEADER = NO;
-				GCC_PREFIX_HEADER = "";
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
-				HEADER_SEARCH_PATHS = "";
-				INFOPLIST_FILE = "edit-Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "@loader_path/";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SDKROOT)$(SYSTEM_LIBRARY_DIR)/Frameworks/CoreText.framework\"",
-				);
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				USER_HEADER_SEARCH_PATHS = .;
-				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
 		};
 		B736175C12DA112B009801D4 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = CDF4272E13261BD3003443F2 /* Application-iPad-Release.xcconfig */;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COPY_PHASE_STRIP = YES;
-				GCC_PRECOMPILE_PREFIX_HEADER = NO;
-				GCC_PREFIX_HEADER = "";
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
-				HEADER_SEARCH_PATHS = "";
-				INFOPLIST_FILE = "edit-Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "@loader_path/";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SDKROOT)$(SYSTEM_LIBRARY_DIR)/Frameworks/CoreText.framework\"",
-				);
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				USER_HEADER_SEARCH_PATHS = .;
-				VALIDATE_PRODUCT = YES;
-				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
 		};

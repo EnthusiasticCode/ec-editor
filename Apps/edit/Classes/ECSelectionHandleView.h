@@ -29,7 +29,7 @@ typedef NSUInteger ECSelectionHandleSide;
 @interface ECSelectionHandleView : UIView {
 @private
     UIPanGestureRecognizer *dragRecognizer;
-    CGPoint dragStartPoint;
+//    CGPoint dragStartPoint;
 }
 
 @property (nonatomic, assign) id<ECSelectionHandleViewDelegate> delegate;

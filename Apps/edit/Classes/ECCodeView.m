@@ -141,7 +141,9 @@ static inline id init(ECCodeView *self)
     {
         NSUInteger textLength = [self textLength];
         NSUInteger s = ((ECTextPosition *)range.start).index;
-        NSUInteger e = MIN(((ECTextPosition *)range.end).index, textLength);
+        NSUInteger e = ((ECTextPosition *)range.end).index;
+        if (e > textLength)
+            e = textLength;
         if (s < e)
         {
             [text setAttributes:style.CTAttributes range:(NSRange){s, e - s}];
@@ -165,7 +167,9 @@ static inline id init(ECCodeView *self)
     {
         range = (ECTextRange *)[ranges objectAtIndex:i];
         s = ((ECTextPosition *)range.start).index;
-        e = MIN(((ECTextPosition *)range.end).index, textLength);
+        e = ((ECTextPosition *)range.end).index;
+        if (e > textLength)
+            e = textLength;
         if (s < e)
         {
             [text setAttributes:((ECTextStyle *)[styles objectAtIndex:i]).CTAttributes range:(NSRange){s, e - s}];
