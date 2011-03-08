@@ -28,23 +28,6 @@
 		CDCD9CDF13262BD6007B1F15 /* libECUIKit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDCD9CDE13262BD6007B1F15 /* libECUIKit.a */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXContainerItemProxy section */
-		CDCD9C96132622E1007B1F15 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CDCD9C8F132622E1007B1F15 /* ECUIKit.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = CDCD9C731326214D007B1F15;
-			remoteInfo = ECUIKit;
-		};
-		CDCD9CDC1326281D007B1F15 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CDCD9C8F132622E1007B1F15 /* ECUIKit.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = CDCD9C721326214D007B1F15;
-			remoteInfo = ECUIKit;
-		};
-/* End PBXContainerItemProxy section */
-
 /* Begin PBXFileReference section */
 		B71C0F0212DB60DC002843EF /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
 		B736172D12DA112A009801D4 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
@@ -67,7 +50,6 @@
 		CDA00C7413261AEE00DDB649 /* OUIShadowBorderTop.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = OUIShadowBorderTop.png; path = Resources/Images/OUIShadowBorderTop.png; sourceTree = SOURCE_ROOT; };
 		CDA00C7513261AEE00DDB649 /* OUITextSelectionHandle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = OUITextSelectionHandle.png; path = Resources/Images/OUITextSelectionHandle.png; sourceTree = SOURCE_ROOT; };
 		CDA00C7613261AEE00DDB649 /* OUITextSelectionOverlay.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = OUITextSelectionOverlay.png; path = Resources/Images/OUITextSelectionOverlay.png; sourceTree = SOURCE_ROOT; };
-		CDCD9C8F132622E1007B1F15 /* ECUIKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ECUIKit.xcodeproj; path = ../../Frameworks/ECUIKit/ECUIKit.xcodeproj; sourceTree = "<group>"; };
 		CDCD9CA013262677007B1F15 /* edit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = edit.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CDCD9CDE13262BD6007B1F15 /* libECUIKit.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libECUIKit.a; path = "../../../../../Library/Developer/Xcode/DerivedData/build/Products/Debug-iphonesimulator/libECUIKit.a"; sourceTree = "<group>"; };
 		CDF4272D13261BD3003443F2 /* Application-iPad-Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "Application-iPad-Debug.xcconfig"; sourceTree = "<group>"; };
@@ -148,7 +130,6 @@
 			isa = PBXGroup;
 			children = (
 				CDCD9CDE13262BD6007B1F15 /* libECUIKit.a */,
-				CDCD9C8F132622E1007B1F15 /* ECUIKit.xcodeproj */,
 				B7BD531E12DF1CDB003B83B3 /* QuartzCore.framework */,
 				B71C0F0212DB60DC002843EF /* CoreText.framework */,
 				B736172D12DA112A009801D4 /* UIKit.framework */,
@@ -181,14 +162,6 @@
 				B736173712DA112A009801D4 /* InfoPlist.strings */,
 			);
 			name = Strings;
-			sourceTree = "<group>";
-		};
-		CDCD9C90132622E1007B1F15 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				CDCD9C97132622E1007B1F15 /* libECUIKit.a */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 		CDCD9CA21326267E007B1F15 /* Products */ = {
@@ -235,7 +208,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				CDCD9CDD1326281D007B1F15 /* PBXTargetDependency */,
 			);
 			name = edit;
 			productName = edit;
@@ -257,28 +229,12 @@
 			mainGroup = B736171A12DA1129009801D4;
 			productRefGroup = B736171A12DA1129009801D4;
 			projectDirPath = "";
-			projectReferences = (
-				{
-					ProductGroup = CDCD9C90132622E1007B1F15 /* Products */;
-					ProjectRef = CDCD9C8F132622E1007B1F15 /* ECUIKit.xcodeproj */;
-				},
-			);
 			projectRoot = "";
 			targets = (
 				B736172912DA1129009801D4 /* edit */,
 			);
 		};
 /* End PBXProject section */
-
-/* Begin PBXReferenceProxy section */
-		CDCD9C97132622E1007B1F15 /* libECUIKit.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libECUIKit.a;
-			remoteRef = CDCD9C96132622E1007B1F15 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		B736172812DA1129009801D4 /* Resources */ = {
@@ -312,14 +268,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		CDCD9CDD1326281D007B1F15 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = ECUIKit;
-			targetProxy = CDCD9CDC1326281D007B1F15 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		B736173712DA112A009801D4 /* InfoPlist.strings */ = {
@@ -392,10 +340,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = CDF4272D13261BD3003443F2 /* Application-iPad-Debug.xcconfig */;
 			buildSettings = {
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/../../../../../Library/Developer/Xcode/DerivedData/build/Products/Debug-iphonesimulator\"",
-				);
+				INFOPLIST_FILE = "edit-Info.plist";
 			};
 			name = Debug;
 		};
@@ -403,10 +348,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = CDF4272E13261BD3003443F2 /* Application-iPad-Release.xcconfig */;
 			buildSettings = {
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/../../../../../Library/Developer/Xcode/DerivedData/build/Products/Debug-iphonesimulator\"",
-				);
+				INFOPLIST_FILE = "edit-Info.plist";
 			};
 			name = Release;
 		};
