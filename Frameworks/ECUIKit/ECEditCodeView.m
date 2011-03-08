@@ -179,6 +179,13 @@
             // TODO make this an overlay layer on the layer pool always on top
             selectionLayer = [CALayer layer];
             selectionLayer.backgroundColor = [UIColor blackColor].CGColor;
+            NSMutableDictionary *newActions = [NSMutableDictionary dictionaryWithObjectsAndKeys:
+                                               [NSNull null], @"bounds",
+                                               [NSNull null], @"anchorPoint",
+                                               [NSNull null], @"position",
+                                               nil];
+            selectionLayer.actions = newActions;
+//            textLayer.actions = newActions;
             // Make in a sublayer of textlayer (on top always)
             [self.layer insertSublayer:selectionLayer above:self->textLayer];
         }
@@ -192,8 +199,11 @@
             caretRect.origin.y += textLayerOrigin.y;
             // TODO this should work instead
 //            caretRect = [self.layer convertRect:caretRect toLayer:self->textLayer];
+//            [CATransaction begin];
+//            [CATransaction setDisableActions:YES];
             selectionLayer.frame = caretRect;
             selectionLayer.hidden = NO;
+//            [CATransaction commit];
         }
         else
         {

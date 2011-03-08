@@ -76,6 +76,11 @@
     }
 }
 
+- (id<CAAction>)actionForKey:(NSString *)event
+{
+    return nil;
+}
+
 #pragma mark Public methods
 
 - (void)setNeedsCTFrameRendering

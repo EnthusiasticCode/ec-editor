@@ -134,12 +134,6 @@
 			children = (
 				CDB9F88D13263381009EEEE0 /* ECTextLayer.h */,
 				CDB9F88E13263381009EEEE0 /* ECTextLayer.m */,
-				CDB9F88F13263381009EEEE0 /* ECTextOverlay.h */,
-				CDB9F89013263381009EEEE0 /* ECTextOverlay.m */,
-				CDB9F89113263381009EEEE0 /* ECTextOverlayLayer.h */,
-				CDB9F89213263381009EEEE0 /* ECTextOverlayLayer.m */,
-				CDB9F89313263381009EEEE0 /* ECTextOverlayStyle.h */,
-				CDB9F89413263381009EEEE0 /* ECTextOverlayStyle.m */,
 				CDB9F89513263381009EEEE0 /* ECTextPosition.h */,
 				CDB9F89613263381009EEEE0 /* ECTextPosition.m */,
 				CDB9F89713263381009EEEE0 /* ECTextRange.h */,
@@ -164,6 +158,7 @@
 			children = (
 				CDB9F8BB132633B2009EEEE0 /* Core Graphics */,
 				CDB9F8BA132633A4009EEEE0 /* Text */,
+				CDDE4A3413266D0500A59671 /* Text Overlay */,
 				CDB9F8B813263393009EEEE0 /* CodeScrollView */,
 				CDB9F87F13263373009EEEE0 /* CodeView */,
 				CDCD9C801326216B007B1F15 /* Config */,
@@ -212,6 +207,19 @@
 			);
 			name = Config;
 			path = ../../Config;
+			sourceTree = "<group>";
+		};
+		CDDE4A3413266D0500A59671 /* Text Overlay */ = {
+			isa = PBXGroup;
+			children = (
+				CDB9F88F13263381009EEEE0 /* ECTextOverlay.h */,
+				CDB9F89013263381009EEEE0 /* ECTextOverlay.m */,
+				CDB9F89113263381009EEEE0 /* ECTextOverlayLayer.h */,
+				CDB9F89213263381009EEEE0 /* ECTextOverlayLayer.m */,
+				CDB9F89313263381009EEEE0 /* ECTextOverlayStyle.h */,
+				CDB9F89413263381009EEEE0 /* ECTextOverlayStyle.m */,
+			);
+			name = "Text Overlay";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
