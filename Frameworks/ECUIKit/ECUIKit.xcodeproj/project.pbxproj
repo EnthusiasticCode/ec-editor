@@ -1,0 +1,219 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		CDCD9C771326214D007B1F15 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CDCD9C761326214D007B1F15 /* Foundation.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		CDCD9C731326214D007B1F15 /* libECUIKit.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libECUIKit.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		CDCD9C761326214D007B1F15 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		CDCD9C811326216B007B1F15 /* Application-iPad-Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "Application-iPad-Debug.xcconfig"; sourceTree = "<group>"; };
+		CDCD9C821326216B007B1F15 /* Application-iPad-Release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "Application-iPad-Release.xcconfig"; sourceTree = "<group>"; };
+		CDCD9C831326216B007B1F15 /* Application-iPad-Test.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "Application-iPad-Test.xcconfig"; sourceTree = "<group>"; };
+		CDCD9C841326216B007B1F15 /* Application.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Application.xcconfig; sourceTree = "<group>"; };
+		CDCD9C851326216B007B1F15 /* Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
+		CDCD9C861326216B007B1F15 /* iPad.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = iPad.xcconfig; sourceTree = "<group>"; };
+		CDCD9C871326216B007B1F15 /* Library.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Library.xcconfig; sourceTree = "<group>"; };
+		CDCD9C881326216B007B1F15 /* Release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = "<group>"; };
+		CDCD9C891326216B007B1F15 /* Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
+		CDCD9C8A1326216B007B1F15 /* StaticLibrary-iPad-Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "StaticLibrary-iPad-Debug.xcconfig"; sourceTree = "<group>"; };
+		CDCD9C8B1326216B007B1F15 /* StaticLibrary-iPad-Release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "StaticLibrary-iPad-Release.xcconfig"; sourceTree = "<group>"; };
+		CDCD9C8C1326216B007B1F15 /* StaticLibrary-iPad-Test.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "StaticLibrary-iPad-Test.xcconfig"; sourceTree = "<group>"; };
+		CDCD9C8D1326216B007B1F15 /* StaticLibrary.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = StaticLibrary.xcconfig; sourceTree = "<group>"; };
+		CDCD9C8E1326216B007B1F15 /* Test.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Test.xcconfig; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		CDCD9C701326214D007B1F15 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CDCD9C771326214D007B1F15 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		CDCD9C681326214D007B1F15 = {
+			isa = PBXGroup;
+			children = (
+				CDCD9C801326216B007B1F15 /* Config */,
+				CDCD9C751326214D007B1F15 /* Frameworks */,
+				CDCD9C741326214D007B1F15 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		CDCD9C741326214D007B1F15 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				CDCD9C731326214D007B1F15 /* libECUIKit.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		CDCD9C751326214D007B1F15 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				CDCD9C761326214D007B1F15 /* Foundation.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		CDCD9C801326216B007B1F15 /* Config */ = {
+			isa = PBXGroup;
+			children = (
+				CDCD9C811326216B007B1F15 /* Application-iPad-Debug.xcconfig */,
+				CDCD9C821326216B007B1F15 /* Application-iPad-Release.xcconfig */,
+				CDCD9C831326216B007B1F15 /* Application-iPad-Test.xcconfig */,
+				CDCD9C841326216B007B1F15 /* Application.xcconfig */,
+				CDCD9C851326216B007B1F15 /* Debug.xcconfig */,
+				CDCD9C861326216B007B1F15 /* iPad.xcconfig */,
+				CDCD9C871326216B007B1F15 /* Library.xcconfig */,
+				CDCD9C881326216B007B1F15 /* Release.xcconfig */,
+				CDCD9C891326216B007B1F15 /* Shared.xcconfig */,
+				CDCD9C8A1326216B007B1F15 /* StaticLibrary-iPad-Debug.xcconfig */,
+				CDCD9C8B1326216B007B1F15 /* StaticLibrary-iPad-Release.xcconfig */,
+				CDCD9C8C1326216B007B1F15 /* StaticLibrary-iPad-Test.xcconfig */,
+				CDCD9C8D1326216B007B1F15 /* StaticLibrary.xcconfig */,
+				CDCD9C8E1326216B007B1F15 /* Test.xcconfig */,
+			);
+			name = Config;
+			path = ../../Config;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		CDCD9C711326214D007B1F15 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		CDCD9C721326214D007B1F15 /* ECUIKit */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CDCD9C7D1326214D007B1F15 /* Build configuration list for PBXNativeTarget "ECUIKit" */;
+			buildPhases = (
+				CDCD9C6F1326214D007B1F15 /* Sources */,
+				CDCD9C701326214D007B1F15 /* Frameworks */,
+				CDCD9C711326214D007B1F15 /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ECUIKit;
+			productName = ECUIKit;
+			productReference = CDCD9C731326214D007B1F15 /* libECUIKit.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		CDCD9C6A1326214D007B1F15 /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = CDCD9C6D1326214D007B1F15 /* Build configuration list for PBXProject "ECUIKit" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = CDCD9C681326214D007B1F15;
+			productRefGroup = CDCD9C741326214D007B1F15 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				CDCD9C721326214D007B1F15 /* ECUIKit */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		CDCD9C6F1326214D007B1F15 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		CDCD9C7B1326214D007B1F15 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = DEBUG;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 4.2;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		CDCD9C7C1326214D007B1F15 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 4.2;
+				SDKROOT = iphoneos;
+			};
+			name = Release;
+		};
+		CDCD9C7E1326214D007B1F15 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = CDCD9C8A1326216B007B1F15 /* StaticLibrary-iPad-Debug.xcconfig */;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		CDCD9C7F1326214D007B1F15 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = CDCD9C8B1326216B007B1F15 /* StaticLibrary-iPad-Release.xcconfig */;
+			buildSettings = {
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		CDCD9C6D1326214D007B1F15 /* Build configuration list for PBXProject "ECUIKit" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CDCD9C7B1326214D007B1F15 /* Debug */,
+				CDCD9C7C1326214D007B1F15 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CDCD9C7D1326214D007B1F15 /* Build configuration list for PBXNativeTarget "ECUIKit" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CDCD9C7E1326214D007B1F15 /* Debug */,
+				CDCD9C7F1326214D007B1F15 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = CDCD9C6A1326214D007B1F15 /* Project object */;
+}

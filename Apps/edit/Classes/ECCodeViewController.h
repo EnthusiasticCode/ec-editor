@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "ECCodeView.h"
+#import <ECUIKit/ECCodeView.h>
 
 @interface ECCodeViewController : UIViewController {
 @private
