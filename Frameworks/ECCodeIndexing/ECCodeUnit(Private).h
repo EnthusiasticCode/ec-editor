@@ -8,9 +8,12 @@
 
 #import "ECCodeIndex.h"
 #import "ECCodeUnit.h"
+#import "ECCodeUnitPlugin.h"
 
 @interface ECCodeUnit (Private)
-@property (nonatomic, retain) ECCodeIndex *index;
+- (id)initWithIndex:(ECCodeIndex *)index url:(NSURL *)url language:(NSString *)language plugin:(id<ECCodeUnitPlugin>)plugin;
++ (id)unitWithIndex:(ECCodeIndex *)index url:(NSURL *)url language:(NSString *)language plugin:(id<ECCodeUnitPlugin>)plugin;
+- (NSArray *)observedFiles;
 - (BOOL)addObserversToFile:(NSObject<ECCodeIndexingFileObserving> *)file;
 - (void)removeObserversFromFile:(NSObject<ECCodeIndexingFileObserving> *)file;
 @end

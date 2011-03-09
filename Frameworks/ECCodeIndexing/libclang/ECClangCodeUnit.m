@@ -20,7 +20,7 @@ const NSString *ECClangCodeUnitOptionLanguage = @"Language";
 const NSString *ECClangCodeUnitOptionCXIndex = @"CXIndex";
 
 @interface ECClangCodeUnit ()
-@property (nonatomic, retain) ECCodeIndex *index;
+@property (nonatomic) CXIndex index;
 @property (nonatomic) CXTranslationUnit translationUnit;
 @property (nonatomic) CXFile source;
 @property (nonatomic, retain) NSURL *url;
@@ -181,16 +181,16 @@ static ECCodeCompletionResult *completionResultFromClangCompletionResult(CXCompl
 
 - (void)dealloc {
     clang_disposeTranslationUnit(self.translationUnit);
+    self.url = nil;
     [super dealloc];
 }
 
-- (id)initWithFile:(NSURL *)fileURL options:(NSDictionary *)options
+- (id)initWithFile:(NSURL *)fileURL index:(CXIndex)index language:(NSString *)language
 {
     self = [super init];
     if (!self)
         return nil;
-    CXIndex cxIndex = [[options objectForKey:ECClangCodeUnitOptionCXIndex] pointerValue];
-    if (!cxIndex)
+    if (!index)
     {
         [self release];
         return nil;
@@ -198,17 +198,17 @@ static ECCodeCompletionResult *completionResultFromClangCompletionResult(CXCompl
     int parameter_count = 10;
     const char *filePath = [[fileURL path] fileSystemRepresentation];
     const char const *parameters[] = {"-ObjC", "-nostdinc", "-nobuiltininc", "-I/Xcode4//usr/lib/clang/2.0/include", "-I/Xcode4/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator4.2.sdk/usr/include", "-F/Xcode4/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator4.2.sdk/System/Library/Frameworks", "-isysroot=/Xcode4/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator4.2.sdk/", "-DTARGET_OS_IPHONE=1", "-UTARGET_OS_MAC", "-miphoneos-version-min=4.2"};
-    self.translationUnit = clang_parseTranslationUnit(cxIndex, filePath, parameters, parameter_count, 0, 0, CXTranslationUnit_PrecompiledPreamble | CXTranslationUnit_CacheCompletionResults);
+    self.index = index;
+    self.translationUnit = clang_parseTranslationUnit(index, filePath, parameters, parameter_count, 0, 0, CXTranslationUnit_PrecompiledPreamble | CXTranslationUnit_CacheCompletionResults);
     self.source = clang_getFile(self.translationUnit, [[fileURL path] UTF8String]);
     self.url = fileURL;
-    self.language = [options objectForKey:ECClangCodeUnitOptionLanguage];
     return self;
 }
 
-+ (id)unitWithFile:(NSURL *)fileURL options:(NSDictionary *)options
++ (id)unitWithFile:(NSURL *)fileURL index:(CXIndex)index language:(NSString *)language
 {
     id codeUnit = [self alloc];
-    codeUnit = [codeUnit initWithFile:fileURL options:options];
+    codeUnit = [codeUnit initWithFile:fileURL index:index language:language];
     return [codeUnit autorelease];
 }
 
@@ -218,6 +218,11 @@ static ECCodeCompletionResult *completionResultFromClangCompletionResult(CXCompl
     if (clangFile)
         return YES;
     return NO;
+}
+
+- (void)reparseDependentFiles:(NSArray *)files
+{
+    
 }
 
 - (NSArray *)completionsWithSelection:(NSRange)selection

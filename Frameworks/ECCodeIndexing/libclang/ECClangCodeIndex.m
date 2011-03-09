@@ -12,22 +12,15 @@
 
 @interface ECClangCodeIndex()
 @property (nonatomic) CXIndex index;
-@property (nonatomic, retain) NSMutableDictionary *translationUnits;
 @end
 
 @implementation ECClangCodeIndex
 
-#pragma mark Properties
-
 @synthesize index = index_;
-@synthesize translationUnits = translationUnits_;
-
-#pragma mark Initialization
 
 - (void)dealloc
 {
     clang_disposeIndex(self.index);
-    self.translationUnits = nil;
     [super dealloc];
 }
 
@@ -37,33 +30,8 @@
     if (!self)
         return nil;
     self.index = clang_createIndex(0, 0);
-    self.translationUnits = [NSMutableDictionary dictionary];
     return self;
 }
-
-#pragma mark -
-#pragma mark Private methods
-
-//- (void)reparseTranslationUnitWithUnsavedFileBuffers:(NSDictionary *)translationUnits
-//{
-//    if (!self.translationUnit)
-//        return;
-//    unsigned numUnsavedFiles = [translationUnits count];
-//    struct CXUnsavedFile *unsavedFiles = malloc(numUnsavedFiles * sizeof(struct CXUnsavedFile));
-//    unsigned i = 0;
-//    for (NSString *file in [translationUnits allKeys]) {
-//        unsavedFiles[i].Filename = [file UTF8String];
-//        NSString *fileBuffer = [translationUnits objectForKey:file];
-//        unsavedFiles[i].Contents = [file UTF8String];
-//        unsavedFiles[i].Length = [file length];
-//        i++;
-//    }
-//    clang_reparseTranslationUnit(self.translationUnit, numUnsavedFiles, unsavedFiles, clang_defaultReparseOptions(self.translationUnit));
-//    free(unsavedFiles);
-//}
-
-#pragma mark -
-#pragma mark ECCodeIndex
 
 - (NSDictionary *)languageToExtensionMap
 {
@@ -79,18 +47,9 @@
     return [NSDictionary dictionaryWithObjects:languageForextensions forKeys:extensions];
 }
 
-- (ECCodeUnit *)unitForURL:(NSURL *)url withLanguage:(NSString *)language
+- (id<ECCodeUnitPlugin>)unitPluginForURL:(NSURL *)url withLanguage:(NSString *)language
 {
-    NSMutableDictionary *options = [NSMutableDictionary dictionary];
-    if (language)
-        [options setValue:language forKey:ECClangCodeUnitOptionLanguage];
-    else
-        [options setValue:[self.extensionToLanguageMap objectForKey:[url pathExtension]] forKey:ECClangCodeUnitOptionLanguage];
-    [options setValue:[NSValue valueWithPointer:index_] forKey:ECClangCodeUnitOptionCXIndex];
-    ECClangCodeUnit *codeUnit = [ECClangCodeUnit unitWithFile:url options:options];
-    if (!codeUnit)
-        return nil;
-    return codeUnit;
+    return [ECClangCodeUnit unitWithFile:url index:self.index language:language];
 }
 
 @end

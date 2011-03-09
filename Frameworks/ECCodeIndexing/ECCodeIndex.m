@@ -6,25 +6,22 @@
 //  Copyright 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import "ECCodeIndex.h"
-#import "ECCodeIndex(Private).h"
-#import "ECCodeUnit.h"
-#import "ECCodeUnit(Private).h"
 #import <ECAdditions/NSURL+ECAdditions.h>
 #import <objc/runtime.h>
-// TODO: plugins are hardcoded for now
-#import "ECClangCodeIndex.h"
+#import "ECCodeIndex.h"
+#import "ECCodeIndex(Private).h"
+#import "ECCodeIndexPlugin.h"
+#import "ECCodeUnit.h"
+#import "ECCodeUnit(Private).h"
 
 @interface ECCodeIndex ()
-@property (nonatomic, copy) NSDictionary *indexesByLanguage;
-@property (nonatomic, copy) NSDictionary *indexesByExtension;
-@property (nonatomic, copy, getter = getLanguageToExtensionMap) NSDictionary *languageToExtensionMap;
-@property (nonatomic, copy, getter = getExtensionToLanguageMap) NSDictionary *extensionToLanguageMap;
+@property (nonatomic, copy) NSDictionary *pluginsByLanguage;
+@property (nonatomic, copy) NSDictionary *languageToExtensionMap;
+@property (nonatomic, copy) NSDictionary *extensionToLanguageMap;
 @property (nonatomic, retain) NSMutableDictionary *codeUnitPointers;
 @property (nonatomic, retain) NSMutableDictionary *filePointers;
 - (BOOL)loadPlugins;
-- (ECCodeIndex *)indexForLanguage:(NSString *)language;
-- (ECCodeIndex *)indexForExtension:(NSString *)extension;
+- (id<ECCodeIndexPlugin>)pluginForLanguage:(NSString *)language;
 - (void)addObserversForUnitsToFile:(NSObject<ECCodeIndexingFileObserving> *)file;
 - (void)removeObserversForUnitsFromFile:(NSObject<ECCodeIndexingFileObserving> *)file;
 @end
@@ -33,8 +30,7 @@
 
 @implementation ECCodeIndex
 
-@synthesize indexesByLanguage = _indexesByLanguage;
-@synthesize indexesByExtension = _indexesByExtension;
+@synthesize pluginsByLanguage = _pluginsByLanguage;
 @synthesize languageToExtensionMap = _languageToExtensionMap;
 @synthesize extensionToLanguageMap = _extensionToLanguageMap;
 @synthesize codeUnitPointers = _codeUnitPointers;
@@ -45,8 +41,7 @@
 
 - (void)dealloc
 {
-    self.indexesByLanguage = nil;
-    self.indexesByExtension = nil;
+    self.pluginsByLanguage = nil;
     self.languageToExtensionMap = nil;
     self.extensionToLanguageMap = nil;
     self.codeUnitPointers = nil;
@@ -57,8 +52,6 @@
 - (id)init
 {
     self = [super init];
-    if (![self isMemberOfClass:[ECCodeIndex class]])
-        return self;
     if (!self)
         return nil;
     if (![self loadPlugins])
@@ -73,20 +66,6 @@
 
 #pragma mark -
 #pragma mark Public Methods
-
-- (NSDictionary *)languageToExtensionMap
-{
-    if (![self isMemberOfClass:[ECCodeIndex class]])
-        return nil;
-    return self.languageToExtensionMap;
-}
-
-- (NSDictionary *)extensionToLanguageMap
-{
-    if (![self isMemberOfClass:[ECCodeIndex class]])
-        return nil;
-    return self.extensionToLanguageMap;
-}
 
 - (NSString *)languageForExtension:(NSString *)extension
 {
@@ -136,21 +115,17 @@
 
 - (ECCodeUnit *)unitForURL:(NSURL *)url withLanguage:(NSString *)language
 {
-    if (![self isMemberOfClass:[ECCodeIndex class]])
-        return nil;
     if (!url)
         return nil;
     ECCodeUnit *unit;
     unit = [[self.codeUnitPointers objectForKey:url] nonretainedObjectValue];
     if (unit)
         return unit;
-    if (language)
-        unit = [[self indexForLanguage:language] unitForURL:url withLanguage:language];
-    else
-        unit = [[self.indexesByExtension objectForKey:[url pathExtension]] unitForURL:url withLanguage:nil];
+    if (!language)
+        language = [self languageForExtension:[url pathExtension]];
+    unit = [ECCodeUnit unitWithIndex:self url:url language:language plugin:[[self pluginForLanguage:language] unitPluginForURL:url withLanguage:language]];
     if (!unit)
         return nil;
-    unit.index = self;
     [self.codeUnitPointers setObject:[NSValue valueWithNonretainedObject:unit] forKey:url];
     for (NSObject<ECCodeIndexingFileObserving> *file in self.filePointers)
         [unit addObserversToFile:file];
@@ -168,67 +143,59 @@
     if (!numClasses)
         return NO;
     Class *classes = NULL;
-    NSMutableArray *indexClasses;
-    indexClasses = [[NSMutableArray alloc] initWithCapacity:numClasses];
+    NSMutableArray *pluginClasses;
+    pluginClasses = [NSMutableArray array];
     classes = malloc(sizeof(Class) * numClasses);
     objc_getClassList(classes, numClasses);
     for (int i = 0; i < numClasses; i++)
     {
-        if (class_getSuperclass(classes[i]) == [ECCodeIndex class])
-            [indexClasses addObject:classes[i]];
+        if (class_getSuperclass(classes[i]) != Nil)
+            if (class_conformsToProtocol(classes[i], @protocol(ECCodeIndexPlugin)))
+                [pluginClasses addObject:classes[i]];
     }
     free(classes);
-    ECCodeIndex *index;
-    NSMutableDictionary *indexesByLanguage = [NSMutableDictionary dictionary];
-    NSMutableDictionary *indexesByExtension = [NSMutableDictionary dictionary];
+    id<ECCodeIndexPlugin> plugin;
+    NSMutableDictionary *pluginsByLanguage = [NSMutableDictionary dictionary];
     NSMutableDictionary *languageToExtensionMap = [NSMutableDictionary dictionary];
     NSMutableDictionary *extensionToLanguageMap = [NSMutableDictionary dictionary];
-    for (Class indexClass in indexClasses)
+    for (Class pluginClass in pluginClasses)
     {
-        index = [[indexClass alloc] init];
-        NSDictionary *pluginLanguageToExtensionMappingDictionary = [index languageToExtensionMap];
+        plugin = [[pluginClass alloc] init];
+        NSDictionary *pluginLanguageToExtensionMappingDictionary = [plugin languageToExtensionMap];
         for (NSString *language in [pluginLanguageToExtensionMappingDictionary allKeys])
         {
             if ([languageToExtensionMap objectForKey:language])
                 continue;
-            [indexesByLanguage setObject:index forKey:language];
+            [pluginsByLanguage setObject:plugin forKey:language];
             [languageToExtensionMap setObject:[pluginLanguageToExtensionMappingDictionary objectForKey:language] forKey:language];
         }
-        NSDictionary *pluginExtensionToLanguageMappingDictionary = [index extensionToLanguageMap];
+        NSDictionary *pluginExtensionToLanguageMappingDictionary = [plugin extensionToLanguageMap];
         for (NSString *extension in [pluginExtensionToLanguageMappingDictionary allKeys])
         {
             if ([extensionToLanguageMap objectForKey:extension])
                 continue;
-            [indexesByExtension setObject:index forKey:extension];
             [extensionToLanguageMap setObject:[pluginExtensionToLanguageMappingDictionary objectForKey:extension] forKey:extension];
         }
-        [index release];
+        [plugin release];
     }
-    [indexClasses release];
-    self.indexesByLanguage = indexesByLanguage;
-    self.indexesByExtension = indexesByExtension;
+    self.pluginsByLanguage = pluginsByLanguage;
     self.languageToExtensionMap = languageToExtensionMap;
     self.extensionToLanguageMap = extensionToLanguageMap;
     return YES;
 }
 
-- (ECCodeIndex *)indexForLanguage:(NSString *)language
+- (ECCodeIndex *)pluginForLanguage:(NSString *)language
 {
-    return [self.indexesByLanguage objectForKey:language];
+    return [self.pluginsByLanguage objectForKey:language];
 }
 
-- (ECCodeIndex *)indexForExtension:(NSString *)extension
-{
-    return [self.indexesByExtension objectForKey:extension];
-}
-
-- (void)addObserversForUnitsToFile:(NSObject<ECCodeIndexingFileObserving> *)file
+- (void)addObserversForUnitsToFile:(id<ECCodeIndexingFileObserving>)file
 {
     for (ECCodeUnit *unit in [self.codeUnitPointers allValues])
         [unit addObserversToFile:file];
 }
 
-- (void)removeObserversForUnitsFromFile:(NSObject<ECCodeIndexingFileObserving> *)file
+- (void)removeObserversForUnitsFromFile:(id<ECCodeIndexingFileObserving>)file
 {
     for (ECCodeUnit *unit in [self.codeUnitPointers allValues])
         [unit removeObserversFromFile:file];

@@ -10,5 +10,4 @@
 #import "ECCodeUnit.h"
 
 @interface ECCodeCursor (Private)
-@property (nonatomic, retain) ECCodeUnit *codeUnit;
 @end

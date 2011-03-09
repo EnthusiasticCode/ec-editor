@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "ECCodeUnit.h"
 
 typedef enum
 {
@@ -19,6 +20,7 @@ typedef enum
 } ECCodeCursorKind;
 
 @interface ECCodeCursor : NSObject
+@property (nonatomic, readonly, retain) ECCodeUnit *codeUnit;
 @property (nonatomic, readonly, copy) NSString *language;
 @property (nonatomic, readonly) ECCodeCursorKind kind;
 @property (nonatomic, readonly, copy) NSString *detailedKind;

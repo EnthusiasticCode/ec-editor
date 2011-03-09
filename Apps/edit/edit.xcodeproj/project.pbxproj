@@ -757,9 +757,9 @@
 			buildRules = (
 			);
 			dependencies = (
+				B761FD26131B0828006072A0 /* PBXTargetDependency */,
 				B761FD2A131B0832006072A0 /* PBXTargetDependency */,
 				B761FD28131B082E006072A0 /* PBXTargetDependency */,
-				B761FD26131B0828006072A0 /* PBXTargetDependency */,
 			);
 			name = edit;
 			productName = edit;

@@ -7,13 +7,12 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "../ECCodeIndex.h"
-#import "../ECCodeUnit.h"
+#import "../ECCodeUnitPlugin.h"
 
 extern NSString *ECClangCodeUnitOptionLanguage;
 extern NSString *ECClangCodeUnitOptionCXIndex;
 
-@interface ECClangCodeUnit : ECCodeUnit
-- (id)initWithFile:(NSURL *)fileURL options:(NSDictionary *)options;
-+ (id)unitWithFile:(NSURL *)fileURL options:(NSDictionary *)options;
+@interface ECClangCodeUnit : NSObject <ECCodeUnitPlugin>
+- (id)initWithFile:(NSURL *)fileURL index:(CXIndex)index language:(NSString *)language;
++ (id)unitWithFile:(NSURL *)fileURL index:(CXIndex)index language:(NSString *)language;
 @end
