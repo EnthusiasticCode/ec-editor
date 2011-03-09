@@ -208,7 +208,6 @@ static inline id init(ECCodeView *self)
         [rs addRect:rect];
     });
     
-//    CGRect rectForRange = ECCoreTextBoundRectOfLinesForStringRange(textLayer.CTFrame, CFRangeMake(r.location, r.length));
     [overlayLayer setTextOverlays:[NSArray arrayWithObject:[ECTextOverlay textOverlayWithRectSet:rs alternative:NO]] animate:YES];
     [overlayLayer setNeedsDisplay];
 }

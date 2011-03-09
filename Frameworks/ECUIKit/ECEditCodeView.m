@@ -18,11 +18,14 @@
     
     // Recognizers
     UITapGestureRecognizer *tapRecognizer;
+    
+    // Delegate's flags
+    BOOL delegateHasTextChangedInRange;
 }
 
 /// Method to be used before any text modification occurs.
 - (void)beforeTextChange;
-- (void)afterTextChange;
+- (void)afterTextChangeInRange:(UITextRange *)range;
 
 /// Support method to set the selection and notify the input delefate.
 - (void)setSelectedTextRange:(ECTextRange *)newSelection notifyDelegate:(BOOL)shouldNotify;
@@ -40,31 +43,18 @@
 
 @implementation ECEditCodeView
 
-//inline static id init(ECEditCodeView *self)
-//{
-//    return self;
-//}
+#pragma mark Properties
+
+@synthesize delegate;
+
+- (void)setDelegate:(id<ECEditCodeViewDelegate>)aDelegate
+{
+    delegate = aDelegate;
+    delegateHasTextChangedInRange = [delegate respondsToSelector:@selector(editCodeView:textChangedInRange:)];
+}
 
 #pragma mark -
 #pragma mark ECCodeView methods
-
-//- (id)initWithFrame:(CGRect)frame
-//{
-//    if ((self = [super initWithFrame:frame]))
-//    {
-//        init(self);
-//    }
-//    return self;
-//}
-//
-//- (id)initWithCoder:(NSCoder *)aDecoder
-//{
-//    if ((self = [super initWithCoder:aDecoder]))
-//    {
-//        init(self);
-//    }
-//    return self;
-//}
 
 - (void)dealloc
 {
@@ -88,19 +78,20 @@
         self->textLayer.string = text;
     }
     
+    NSUInteger textLength = [self textLength];
+    NSRange range = (NSRange){ 0, textLength };
     [self beforeTextChange];
     {
-        NSUInteger textLength = [self textLength];
         if (string)
         {
-            [text replaceCharactersInRange:(NSRange){0, textLength} withString:string];
+            [text replaceCharactersInRange:range withString:string];
         }
         else if (textLength > 0)
         {
-            [text deleteCharactersInRange:(NSRange){0, textLength}];
+            [text deleteCharactersInRange:range];
         }
     }
-    [self afterTextChange];
+    [self afterTextChangeInRange:[ECTextRange textRangeWithRange:range]];
 }
 
 #pragma mark -
@@ -228,7 +219,7 @@
     NSRange insertRange;
     if (!selection)
     {
-        insertRange = NSMakeRange(textLength, 0);
+        insertRange = (NSRange){ textLength, 0 };
     }
     else
     {
@@ -236,7 +227,7 @@
         NSUInteger e = ((ECTextPosition*)selection.end).index;
         if (e > textLength || s > textLength || e < s)
             return;
-        insertRange = NSMakeRange(s, e - s);
+        insertRange = (NSRange){ s, e - s };
     }
     
     // TODO check if char is space and autocomplete
@@ -248,7 +239,7 @@
         [insertText release];
         [self setSelectedIndex:(insertRange.location + [aText length])];
     }    
-    [self afterTextChange];
+    [self afterTextChangeInRange:[ECTextRange textRangeWithRange:insertRange]];
 }
 
 - (void)deleteBackward
@@ -270,13 +261,13 @@
     }
     else
     {
+        NSRange cr = [[text string] rangeOfComposedCharacterSequenceAtIndex:s-1];
         [self beforeTextChange];
         {
-            NSRange cr = [[text string] rangeOfComposedCharacterSequenceAtIndex:s-1];
             [text deleteCharactersInRange:cr];
             [self setSelectedIndex:cr.location];
         }
-        [self afterTextChange];
+        [self afterTextChangeInRange:[ECTextRange textRangeWithRange:cr]];
     }
 }
 
@@ -384,7 +375,7 @@
         [attributedText release];
         [self setSelectedIndex:endIndex];
     }
-    [self afterTextChange];
+    [self afterTextChangeInRange:range];
 }
 
 #pragma mark Working with Marked and Selected Text
@@ -440,19 +431,19 @@
     [self beforeTextChange];
     {
         [text replaceCharactersInRange:replaceRange withString:markedText];
-        
-        // Adjust selection
-        if (selectedRange.location > markedTextLength 
-            || selectedRange.location + selectedRange.length > markedTextLength)
-        {
-            newSelectionRange = (NSRange){replaceRange.location + markedTextLength, 0};
-        }
-        else
-        {
-            newSelectionRange = (NSRange){replaceRange.location + selectedRange.location, selectedRange.length};
-        }        
     }
-    [self afterTextChange];
+    [self afterTextChangeInRange:[ECTextRange textRangeWithRange:replaceRange]];
+    
+    // Adjust selection
+    if (selectedRange.location > markedTextLength 
+        || selectedRange.location + selectedRange.length > markedTextLength)
+    {
+        newSelectionRange = (NSRange){replaceRange.location + markedTextLength, 0};
+    }
+    else
+    {
+        newSelectionRange = (NSRange){replaceRange.location + selectedRange.location, selectedRange.length};
+    }
     
     [self willChangeValueForKey:@"markedTextRange"];
     ECTextRange *newSelection = [[ECTextRange alloc] initWithRange:newSelectionRange];
@@ -722,14 +713,21 @@
     
     [self unmarkText];
     
+    [self clearAllTextOverlays];
+    
     [inputDelegate textWillChange:self];
     
     [text beginEditing];
 }
 
-- (void)afterTextChange
+- (void)afterTextChangeInRange:(UITextRange *)range
 {
     [text endEditing];
+    
+    if (delegateHasTextChangedInRange)
+    {
+        [delegate editCodeView:self textChangedInRange:range];
+    }
     
     [self setNeedsTextRendering];
     
