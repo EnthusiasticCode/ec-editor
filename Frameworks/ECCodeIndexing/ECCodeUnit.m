@@ -55,7 +55,7 @@
     url_ = [url copy];
     language_ = [language copy];
     plugin_ = [plugin retain];
-    filePointers_ = [NSMutableDictionary dictionary];
+    filePointers_ = [[NSMutableDictionary dictionary] retain];
     return self;
 }
 
