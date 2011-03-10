@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+@class ECCodeCursor;
 
 typedef enum ECCodeTokenKind
 {
@@ -14,7 +15,7 @@ typedef enum ECCodeTokenKind
     ECCodeTokenKindKeyword = 2,
     ECCodeTokenKindIdentifier = 3,
     ECCodeTokenKindLiteral = 4,
-    ECtokenKindComment = 5
+    ECCodeTokenKindComment = 5
 } ECCodeTokenKind;
 
 @interface ECCodeToken : NSObject
@@ -26,8 +27,9 @@ typedef enum ECCodeTokenKind
 @property (nonatomic, readonly, copy) NSURL *fileURL;
 @property (nonatomic, readonly) NSUInteger offset;
 @property (nonatomic, readonly) NSRange extent;
+@property (nonatomic, readonly, retain) ECCodeCursor *cursor;
 
-- (id)initWithKind:(ECCodeTokenKind)kind spelling:(NSString *)spelling fileURL:(NSURL *)fileURL offset:(NSUInteger )offset extent:(NSRange)extent;
-+ (id)tokenWithKind:(ECCodeTokenKind)kind spelling:(NSString *)spelling fileURL:(NSURL *)fileURL offset:(NSUInteger )offset extent:(NSRange)extent;
+- (id)initWithKind:(ECCodeTokenKind)kind spelling:(NSString *)spelling fileURL:(NSURL *)fileURL offset:(NSUInteger )offset extent:(NSRange)extent cursor:(ECCodeCursor *)cursor;
++ (id)tokenWithKind:(ECCodeTokenKind)kind spelling:(NSString *)spelling fileURL:(NSURL *)fileURL offset:(NSUInteger )offset extent:(NSRange)extent cursor:(ECCodeCursor *)cursor;
 
 @end

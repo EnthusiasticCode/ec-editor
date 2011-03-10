@@ -12,6 +12,11 @@
 const NSString* ECCodeStyleDefaultTextName = @"Default";
 const NSString* ECCodeStyleKeywordName = @"Keyword";
 const NSString* ECCodeStyleCommentName = @"Comment";
+const NSString* ECCodeStyleIdentifierName = @"Identifier";
+const NSString* ECCodeStyleLiteralName = @"Literal";
+const NSString *ECCodeStyleReferenceName = @"Reference";
+const NSString *ECCodeStyleDeclarationName = @"Declaration";
+const NSString *ECCodeStylePreprocessingName = @"Preprocessing";
 
 const NSString *ECCodeOverlayColorName = @"OverlayColor";
 const NSString *ECCodeOverlayDrawBlockName = @"OverlayDrawBlock";

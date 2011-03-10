@@ -117,12 +117,17 @@
 {
     if (!url)
         return nil;
+    if (!language)
+        language = [self languageForExtension:[url pathExtension]];
     ECCodeUnit *unit;
     unit = [[self.codeUnitPointers objectForKey:url] nonretainedObjectValue];
     if (unit)
-        return unit;
-    if (!language)
-        language = [self languageForExtension:[url pathExtension]];
+    {
+        if ([unit.language isEqual:language])
+            return unit;
+        else
+            return nil;
+    }
     unit = [ECCodeUnit unitWithIndex:self url:url language:language plugin:[[self pluginForLanguage:language] unitPluginForURL:url withLanguage:language]];
     if (!unit)
         return nil;
@@ -149,7 +154,7 @@
     objc_getClassList(classes, numClasses);
     for (int i = 0; i < numClasses; i++)
     {
-        if (class_getSuperclass(classes[i]) != Nil)
+        if (class_getSuperclass(classes[i]) != Nil) // class is not a base class
             if (class_conformsToProtocol(classes[i], @protocol(ECCodeIndexPlugin)))
                 [pluginClasses addObject:classes[i]];
     }

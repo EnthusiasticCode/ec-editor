@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 @class ECCodeIndex;
+@class ECCodeCursor;
 
 /// Class that encapsulates interaction with parsing and indexing libraries to provide language related file-specific functionality such as syntax aware highlighting, diagnostics and completions.
 @interface ECCodeUnit : NSObject
@@ -30,7 +31,11 @@
 /// Returns fixits.
 - (NSArray *)fixIts;
 /// Returns tokens in the given range.
-- (NSArray *)tokensInRange:(NSRange)range;
+- (NSArray *)tokensInRange:(NSRange)range withCursors:(BOOL)attachCursors;
 /// Returns all tokens in the file.
-- (NSArray *)tokens;
+- (NSArray *)tokensWithCursors:(BOOL)attachCursors;
+/// Return the cursor for the unit.
+- (ECCodeCursor *)cursor;
+/// Return the cursor for an offset in the unit's main source file.
+- (ECCodeCursor *)cursorForOffset:(NSUInteger)offset;
 @end

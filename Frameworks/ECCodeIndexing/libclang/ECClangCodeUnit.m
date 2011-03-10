@@ -15,6 +15,7 @@
 #import "../ECCodeCompletionResult.h"
 #import "../ECCodeCompletionString.h"
 #import "../ECCodeCompletionChunk.h"
+#import "../ECCodeCursor.h"
 
 const NSString *ECClangCodeUnitOptionLanguage = @"Language";
 const NSString *ECClangCodeUnitOptionCXIndex = @"CXIndex";
@@ -32,6 +33,8 @@ const NSString *ECClangCodeUnitOptionCXIndex = @"CXIndex";
 
 static void offsetAndURLFromClangSourceLocation(CXSourceLocation clangSourceLocation, NSUInteger *offset, NSURL **url)
 {
+    if (clang_equalLocations(clangSourceLocation, clang_getNullLocation()))
+        return;
     CXFile clangFile;
     unsigned clangLine;
     unsigned clangColumn;
@@ -47,9 +50,9 @@ static void offsetAndURLFromClangSourceLocation(CXSourceLocation clangSourceLoca
 
 static void rangeAndURLFromClangSourceRange(CXSourceRange clangSourceRange, NSRange *range, NSURL **url)
 {
-    NSUInteger start;
-    NSURL *startURL;
-    NSUInteger end;
+    NSUInteger start = NSNotFound;
+    NSURL *startURL = nil;
+    NSUInteger end = NSNotFound;
     offsetAndURLFromClangSourceLocation(clang_getRangeStart(clangSourceRange), &start, &startURL);
     offsetAndURLFromClangSourceLocation(clang_getRangeEnd(clangSourceRange), &end, NULL);
     if (range)
@@ -58,7 +61,68 @@ static void rangeAndURLFromClangSourceRange(CXSourceRange clangSourceRange, NSRa
         *url = startURL;
 }
 
-static ECCodeToken *tokenFromClangToken(CXTranslationUnit translationUnit, CXToken clangToken)
+static ECCodeCursor *cursorFromClangCursor(CXCursor clangCursor)
+{
+    if (clang_equalCursors(clangCursor, clang_getNullCursor()))
+        return nil;
+    NSString *language;
+    enum CXLanguageKind clangLanguage = clang_getCursorLanguage(clangCursor);
+    switch (clangLanguage)
+    {
+        case CXLanguage_C:
+            language = @"C";
+            break;
+        case CXLanguage_ObjC:
+            language = @"Objective C";
+            break;
+        case CXLanguage_CPlusPlus:
+            language = @"C++";
+            break;
+        case CXLanguage_Invalid:
+        default:
+            language = @"Unknown";
+    }
+    ECCodeCursorKind kind = ECCodeCursorUnknown;
+    enum CXCursorKind clangKind = clang_getCursorKind(clangCursor);
+    if (clang_isDeclaration(clangKind))
+        kind = ECCodeCursorDeclaration;
+    if (clang_isExpression(clangKind))
+        kind = ECCodeCursorExpression;
+    if (clang_isInvalid(clangKind))
+        kind = ECCodeCursorInvalid;
+    if (clang_isPreprocessing(clangKind))
+        kind = ECCodeCursorPreprocessing;
+    if (clang_isReference(clangKind))
+        kind = ECCodeCursorReference;
+    if (clang_isStatement(clangKind))
+        kind = ECCodeCursorStatement;
+    if (clang_isTranslationUnit(clangKind))
+        kind = ECCodeCursorUnit;
+    if (clang_isUnexposed(clangKind))
+        kind = ECCodeCursorUnexposed;
+    NSString *detailedKind;
+    CXString clangKindSpelling = clang_getCursorKindSpelling(clangKind);
+    detailedKind = [NSString stringWithUTF8String:clang_getCString(clangKindSpelling)];
+    clang_disposeString(clangKindSpelling);
+    NSString *spelling;
+    CXString clangSpelling = clang_getCursorSpelling(clangCursor);
+    spelling = [NSString stringWithUTF8String:clang_getCString(clangSpelling)];
+    clang_disposeString(clangSpelling);
+    NSURL *fileURL;
+    NSUInteger offset;
+    CXSourceLocation clangLocation = clang_getCursorLocation(clangCursor);
+    offsetAndURLFromClangSourceLocation(clangLocation, &offset, &fileURL);
+    NSRange extent;
+    CXSourceRange clangExtent = clang_getCursorExtent(clangCursor);
+    rangeAndURLFromClangSourceRange(clangExtent, &extent, NULL);
+    NSString *unifiedSymbolResolution;
+    CXString clangUSR = clang_getCursorUSR(clangCursor);
+    unifiedSymbolResolution = [NSString stringWithUTF8String:clang_getCString(clangUSR)];
+    clang_disposeString(clangUSR);
+    return [ECCodeCursor cursorWithLanguage:language kind:kind detailedKind:detailedKind spelling:spelling fileURL:fileURL offset:offset extent:extent unifiedSymbolResolution:unifiedSymbolResolution];
+}
+
+static ECCodeToken *tokenFromClangToken(CXTranslationUnit translationUnit, CXToken clangToken, BOOL attachCursor, CXCursor clangTokenCursor)
 {
     ECCodeTokenKind kind;
     switch (clang_getTokenKind(clangToken))
@@ -76,7 +140,7 @@ static ECCodeToken *tokenFromClangToken(CXTranslationUnit translationUnit, CXTok
             kind = ECCodeTokenKindLiteral;
             break;
         case CXToken_Comment:
-            kind = ECtokenKindComment;
+            kind = ECCodeTokenKindComment;
             break;
     }
     CXString clangSpelling = clang_getTokenSpelling(translationUnit, clangToken);
@@ -87,7 +151,10 @@ static ECCodeToken *tokenFromClangToken(CXTranslationUnit translationUnit, CXTok
     offsetAndURLFromClangSourceLocation(clang_getTokenLocation(translationUnit, clangToken), &offset, &fileURL);
     NSRange extent;
     rangeAndURLFromClangSourceRange(clang_getTokenExtent(translationUnit, clangToken), &extent, NULL);
-    return [ECCodeToken tokenWithKind:kind spelling:spelling fileURL:fileURL offset:offset extent:extent];
+    ECCodeCursor *cursor = nil;
+    if (attachCursor)
+        cursor = cursorFromClangCursor(clangTokenCursor);
+    return [ECCodeToken tokenWithKind:kind spelling:spelling fileURL:fileURL offset:offset extent:extent cursor:cursor];
 }
 
 static ECCodeFixIt *fixItFromClangDiagnostic(CXDiagnostic clangDiagnostic, unsigned index)
@@ -260,7 +327,7 @@ static ECCodeCompletionResult *completionResultFromClangCompletionResult(CXCompl
     return nil;
 }
 
-- (NSArray *)tokensInRange:(NSRange)range
+- (NSArray *)tokensInRange:(NSRange)range withCursors:(BOOL)attachCursors
 {
     if (!self.source)
         return nil;
@@ -273,18 +340,22 @@ static ECCodeCompletionResult *completionResultFromClangCompletionResult(CXCompl
     CXSourceRange clangRange = clang_getRange(clangStart, clangEnd);
     clang_tokenize(self.translationUnit, clangRange, &clangTokens, &numTokens);
     NSMutableArray *tokens = [NSMutableArray arrayWithCapacity:numTokens];
+    CXCursor *clangTokenCursors = malloc(numTokens * sizeof(CXCursor));
+    if (attachCursors)
+        clang_annotateTokens(self.translationUnit, clangTokens, numTokens, clangTokenCursors);
     for (unsigned i = 0; i < numTokens; i++)
     {
-        [tokens addObject:tokenFromClangToken(self.translationUnit, clangTokens[i])];
+        [tokens addObject:tokenFromClangToken(self.translationUnit, clangTokens[i], attachCursors, clangTokenCursors[i])];
     }
     clang_disposeTokens(self.translationUnit, clangTokens, numTokens);
+    free(clangTokenCursors);
     return tokens;
 }
 
-- (NSArray *)tokens
+- (NSArray *)tokensWithCursors:(BOOL)attachCursors
 {
     NSUInteger fileLength = [[NSString stringWithContentsOfURL:self.url encoding:NSUTF8StringEncoding error:NULL] length];
-    return [self tokensInRange:NSMakeRange(0, fileLength)];
+    return [self tokensInRange:NSMakeRange(0, fileLength) withCursors:attachCursors];
 }
 
 @end

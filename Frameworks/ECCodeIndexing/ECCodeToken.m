@@ -20,6 +20,7 @@
 @synthesize fileURL = _fileURL;
 @synthesize offset = _offset;
 @synthesize extent = _extent;
+@synthesize cursor = cursor_;
 
 - (void)dealloc
 {
@@ -28,7 +29,7 @@
     [super dealloc];
 }
 
-- (id)initWithKind:(ECCodeTokenKind)kind spelling:(NSString *)spelling fileURL:(NSURL *)fileURL offset:(NSUInteger )offset extent:(NSRange)extent
+- (id)initWithKind:(ECCodeTokenKind)kind spelling:(NSString *)spelling fileURL:(NSURL *)fileURL offset:(NSUInteger )offset extent:(NSRange)extent cursor:(ECCodeCursor *)cursor
 {
     self = [super init];
     if (self)
@@ -38,15 +39,16 @@
         _fileURL = [fileURL copy];
         _offset = offset;
         _extent = extent;
+        cursor_ = [cursor retain];
         _hash = [self computeHash];
     }
     return self;
 }
 
-+ (id)tokenWithKind:(ECCodeTokenKind)kind spelling:(NSString *)spelling fileURL:(NSURL *)fileURL offset:(NSUInteger )offset extent:(NSRange)extent
++ (id)tokenWithKind:(ECCodeTokenKind)kind spelling:(NSString *)spelling fileURL:(NSURL *)fileURL offset:(NSUInteger )offset extent:(NSRange)extent cursor:(ECCodeCursor *)cursor
 {
     id token = [self alloc];
-    token = [token initWithKind:kind spelling:spelling fileURL:fileURL offset:offset extent:extent];
+    token = [token initWithKind:kind spelling:spelling fileURL:fileURL offset:offset extent:extent cursor:cursor];
     return [token autorelease];
 }
 

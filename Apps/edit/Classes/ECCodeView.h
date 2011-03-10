@@ -27,6 +27,11 @@
 extern const NSString *ECCodeStyleDefaultTextName;
 extern const NSString *ECCodeStyleKeywordName;
 extern const NSString *ECCodeStyleCommentName;
+extern const NSString *ECCodeStyleIdentifierName;
+extern const NSString *ECCodeStyleLiteralName;
+extern const NSString *ECCodeStyleReferenceName;
+extern const NSString *ECCodeStyleDeclarationName;
+extern const NSString *ECCodeStylePreprocessingName;
 
 typedef void (^DrawOverlayInContext)(CGContextRef ctx, CGRect rct, NSDictionary* attr);
 extern const NSString *ECCodeOverlayColorName;

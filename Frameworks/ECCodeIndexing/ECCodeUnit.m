@@ -103,22 +103,32 @@
     return [plugin_ fixIts];
 }
 
-- (NSArray *)tokensInRange:(NSRange)range
+- (NSArray *)tokensInRange:(NSRange)range withCursors:(BOOL)attachCursors
 {
-    if (![plugin_ respondsToSelector:@selector(tokensInRange:)])
+    if (![plugin_ respondsToSelector:@selector(tokensInRange:withCursors:)])
         return nil;
     if (self.filesHaveUnsavedContent)
         [plugin_ reparseDependentFiles:[self observedFiles]];
-    return [plugin_ tokensInRange:range];
+    return [plugin_ tokensInRange:range withCursors:attachCursors];
 }
 
-- (NSArray *)tokens;
+- (NSArray *)tokensWithCursors:(BOOL)attachCursors
 {
-    if (![plugin_ respondsToSelector:@selector(tokens)])
+    if (![plugin_ respondsToSelector:@selector(tokensWithCursors:)])
         return nil;
     if (self.filesHaveUnsavedContent)
         [plugin_ reparseDependentFiles:[self observedFiles]];
-    return [plugin_ tokens];
+    return [plugin_ tokensWithCursors:attachCursors];
+}
+
+- (ECCodeCursor *)cursor
+{
+    return nil;
+}
+
+- (ECCodeCursor *)cursorForOffset:(NSUInteger)offset
+{
+    return nil;
 }
 
 - (NSArray *)observedFiles

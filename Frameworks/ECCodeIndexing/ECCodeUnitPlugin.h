@@ -22,7 +22,7 @@
 /// Returns fixits.
 - (NSArray *)fixIts;
 /// Returns tokens in the given range.
-- (NSArray *)tokensInRange:(NSRange)range;
+- (NSArray *)tokensInRange:(NSRange)range withCursors:(BOOL)attachCursors;
 /// Returns all tokens in the file.
-- (NSArray *)tokens;
+- (NSArray *)tokensWithCursors:(BOOL)attachCursors;
 @end

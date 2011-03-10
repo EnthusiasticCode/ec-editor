@@ -16,10 +16,6 @@
 @property (nonatomic, retain) IBOutlet UITextView *codeView;
 @property (nonatomic, retain) ECCodeIndex *codeIndexer;
 
-- (void)applyCompletion:(NSString *)completion;
-// display the completion popovertable if possible
-- (void)showCompletions;
-
 - (void)loadProjectFromRootDirectory:(NSURL *)rootDirectory;
 - (void)loadFile:(NSURL *)file;
 - (NSArray *)contentsOfRootDirectory;

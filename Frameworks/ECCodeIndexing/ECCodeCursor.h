@@ -11,12 +11,15 @@
 
 typedef enum
 {
-    ECCodeCursorDeclaration = 1,
+    ECCodeCursorUnknown = 0,
+    ECCodeCursorDeclaration,
     ECCodeCursorReference,
     ECCodeCursorExpression,
     ECCodeCursorStatement,
     ECCodeCursorInvalid,
     ECCodeCursorPreprocessing,
+    ECCodeCursorUnit,
+    ECCodeCursorUnexposed,
 } ECCodeCursorKind;
 
 @interface ECCodeCursor : NSObject

@@ -14,6 +14,7 @@
 #import <ECCodeIndexing/ECCodeCompletionString.h>
 #import <ECCodeIndexing/ECCodeDiagnostic.h>
 #import <ECCodeIndexing/ECCodeToken.h>
+#import <ECCodeIndexing/ECCodeCursor.h>
 
 
 @implementation ECCodeProjectController
@@ -71,17 +72,34 @@
 - (void)loadFile:(NSURL *)fileURL
 {
     self.codeView.text = [NSString stringWithContentsOfURL:fileURL encoding:NSUTF8StringEncoding error:nil];
-    for (ECCodeToken *token in [[self.codeIndexer unitForURL:fileURL] tokensInRange:NSMakeRange(0, [self.codeView.text length])])
+    for (ECCodeToken *token in [[self.codeIndexer unitForURL:fileURL] tokensInRange:NSMakeRange(0, [self.codeView.text length]) withCursors:YES])
     {
         switch (token.kind)
         {
             case ECCodeTokenKindKeyword:
                 [(ECCodeView *)self.codeView setStyleNamed:ECCodeStyleKeywordName toRange:token.extent];
                 break;
-            case ECtokenKindComment:
+            case ECCodeTokenKindComment:
                 [(ECCodeView *)self.codeView setStyleNamed:ECCodeStyleCommentName toRange:token.extent];
                 break;
+            case ECCodeTokenKindLiteral:
+                [(ECCodeView *)self.codeView setStyleNamed:ECCodeStyleLiteralName toRange:token.extent];
+                break;
             default:
+                switch (token.cursor.kind)
+                {
+                    case ECCodeCursorDeclaration:
+                        [(ECCodeView *)self.codeView setStyleNamed:ECCodeStyleDeclarationName toRange:token.extent];
+                        break;
+                    case ECCodeCursorReference:
+                        [(ECCodeView *)self.codeView setStyleNamed:ECCodeStyleReferenceName toRange:token.extent];
+                        break;
+                    case ECCodeCursorPreprocessing:
+                        [(ECCodeView *)self.codeView setStyleNamed:ECCodeStylePreprocessingName toRange:token.extent];
+                        break;
+                    default:
+                        break;
+                }
                 break;
         }
     }
@@ -90,42 +108,6 @@
 - (NSArray *)contentsOfRootDirectory
 {
     return [self.fileManager contentsOfDirectoryAtPath:[self.project.rootDirectory path] error:NULL];
-}
-
-- (void)textViewDidChange:(UITextView *)textView
-{
-    [self showCompletions];
-}
-
-- (void)textViewDidChangeSelection:(UITextView *)textView
-{
-    if (!textView.text)
-        return;
-    [self showCompletions];
-}
-
-- (void)applyCompletion:(NSString *)completion
-{
-//    self.codeView.text = [self.codeView.text stringByReplacingCharactersInRange:[self.codeIndexer completionRange] withString:[completion stringByAppendingString:@" "]];
-}
-
-- (void)showCompletions
-{
-//    NSMutableArray *completionLabels = [[NSMutableArray alloc] initWithCapacity:[self.possibleCompletions count]];
-//    for (ECCodeCompletionString *completion in self.possibleCompletions)
-//    {
-//        [completionLabels addObject:[[completion firstChunk] string]];
-//    }
-//    
-//    self.completionPopover.didSelectRow =
-//    ^ void (int row)
-//    {
-//        [self applyCompletion:row];
-//    };
-//    //    self.completionPopover.popoverRect = [self firstRectForRange:[self selectedRange]];
-//    self.completionPopover.strings = completionLabels;
-//    
-//    [completionLabels release];
 }
 
 @end
