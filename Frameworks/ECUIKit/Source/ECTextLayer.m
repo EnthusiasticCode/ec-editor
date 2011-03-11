@@ -40,6 +40,12 @@
 
 #pragma mark CALayer methods
 
+- (void)setBounds:(CGRect)bounds
+{
+    CTFrameInvalid = YES;
+    [super setBounds:bounds];
+}
+
 - (BOOL)isGeometryFlipped
 {
     return YES;
@@ -62,7 +68,7 @@
     CGContextConcatCTM(context, (CGAffineTransform){
         self.contentsScale, 0,
         0, -self.contentsScale,
-        0, self.bounds.size.height
+        0, self.CTFrameSize.height
     });
     CGContextSetTextPosition(context, 0, 0);
     CGContextSetTextMatrix(context, CGAffineTransformIdentity);
@@ -74,6 +80,11 @@
     for (CALayer *layer in self.sublayers) {
         layer.frame = self.bounds;
     }
+}
+
+- (id<CAAction>)actionForKey:(NSString *)event
+{
+    return nil;
 }
 
 #pragma mark Public methods
@@ -131,7 +142,7 @@
 
 - (CTFrameRef)CTFrame
 {
-    if (!CTFrame)
+    if (!CTFrame || CTFrameInvalid)
     {
         CGSize size = self.CTFrameSize;
         CGMutablePathRef path = CGPathCreateMutable();
@@ -145,7 +156,7 @@
 
 - (CGSize)CTFrameSize
 {
-    if (CGSizeEqualToSize(CTFrameSize, CGSizeZero))
+    if (CGSizeEqualToSize(CTFrameSize, CGSizeZero) || CTFrameInvalid)
     {
         CTFrameSize = [self sizeThatFits:self.bounds.size];
     }

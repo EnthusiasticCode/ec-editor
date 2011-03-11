@@ -9,7 +9,18 @@
 #import <UIKit/UIKit.h>
 #import "ECCodeView.h"
 
+@class ECEditCodeView;
+
+@protocol ECEditCodeViewDelegate <NSObject>
+
+/// Tells the delegate when the text in the given range has changed in the view's text property.
+- (void)editCodeView:(ECEditCodeView *)view textChangedInRange:(UITextRange *)range;
+
+@end
+
 @interface ECEditCodeView : ECCodeView <UIKeyInput, UITextInputTraits, UITextInput>
+
+@property (nonatomic, assign) id <ECEditCodeViewDelegate> delegate;
 
 #pragma mark UITextInput properties
 
