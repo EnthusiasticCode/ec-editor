@@ -15,6 +15,7 @@ WRAPPER_EXTENSION = octest;
 
 
 // Disable some warnings for Kiwi, remember to delete this if we change testing framework
+GCC_WARN_MULTIPLE_DEFINITION_TYPES_FOR_SELECTOR = NO
 GCC_WARN_PEDANTIC = NO
 GCC_WARN_STRICT_SELECTOR_MATCH = NO
 GCC_WARN_UNDECLARED_SELECTOR = NO

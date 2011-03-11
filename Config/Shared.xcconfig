@@ -9,7 +9,7 @@
 // use clang because gcc sucks
 GCC_VERSION = com.apple.compilers.llvm.clang.1_0
 // search frameworks headers and libraries in the build directory, this way we can use subprojects
-FRAMEWORK_SEARCH_PATHS = $(inherited) "$(SDKROOT)/Developer/Library/Frameworks" $(BUILD_DIR)
+FRAMEWORK_SEARCH_PATHS = $(inherited) $(BUILD_DIR)
 HEADER_SEARCH_PATHS = $(BUILD_DIR)/include
 LIBRARY_SEARCH_PATHS = $(BUILD_DIR)
 
