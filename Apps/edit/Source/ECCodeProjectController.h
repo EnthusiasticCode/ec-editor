@@ -14,8 +14,8 @@
 @interface ECCodeProjectController : UISplitViewController <UITableViewDataSource, UITableViewDelegate>
 {
 @private
-    ECCodeView *codeView;
-    
+    NSDictionary *textStyles_;
+    NSDictionary *diagnosticOverlayStyles_;
     UITapGestureRecognizer *focusRecognizer;
 }
 @property (nonatomic, retain) ECCodeProject *project;

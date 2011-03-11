@@ -31,6 +31,8 @@
 
 - (void)dealloc
 {
+    [textStyles_ release];
+    [diagnosticOverlayStyles_ release];
     self.project = nil;
     self.codeView = nil;
     self.codeIndexer = nil;
@@ -70,6 +72,29 @@
     self.codeView.text = @"int main(arguments)\n{\n\treturn 0;\n}";
     
     // Styles test
+    //    NSDictionary *keywordStyle = [NSDictionary dictionaryWithObjectsAndKeys:(id)[[UIColor blueColor] CGColor], (id)kCTForegroundColorAttributeName, nil];
+    //    NSDictionary *commentStyle = [NSDictionary dictionaryWithObjectsAndKeys:(id)[[UIColor greenColor] CGColor], (id)kCTForegroundColorAttributeName, nil];
+    //    NSDictionary *referenceStyle = [NSDictionary dictionaryWithObjectsAndKeys:(id)[[UIColor purpleColor] CGColor], (id)kCTForegroundColorAttributeName, nil];
+    //    NSDictionary *literalStyle = [NSDictionary dictionaryWithObjectsAndKeys:(id)[[UIColor redColor] CGColor], (id)kCTForegroundColorAttributeName, nil];
+    //    NSDictionary *declarationStyle = [NSDictionary dictionaryWithObjectsAndKeys:(id)[[UIColor magentaColor] CGColor], (id)kCTForegroundColorAttributeName, nil];
+    //    NSDictionary *preprocessingStyle = [NSDictionary dictionaryWithObjectsAndKeys:(id)[[UIColor orangeColor] CGColor], (id)kCTForegroundColorAttributeName, nil];
+    //    ECCodeView *codeView = (ECCodeView *) rootController.codeView;
+    //    [codeView setAttributes:keywordStyle forStyleNamed:ECCodeStyleKeywordName];
+    //    [codeView setAttributes:commentStyle forStyleNamed:ECCodeStyleCommentName];
+    //    [codeView setAttributes:referenceStyle forStyleNamed:ECCodeStyleIdentifierName];
+    //    [codeView setAttributes:literalStyle forStyleNamed:ECCodeStyleLiteralName];
+    //    [codeView setAttributes:declarationStyle forStyleNamed:ECCodeStyleDeclarationName];
+    //    [codeView setAttributes:preprocessingStyle forStyleNamed:ECCodeStylePreprocessingName];
+    NSMutableDictionary *textStyles = [NSMutableDictionary dictionary];
+    UIFont *font = [UIFont fontWithName:@"Courier New" size:16.0];
+    [textStyles setObject:[ECTextStyle textStyleWithName:@"Keyword" font:font color:[UIColor blueColor]] forKey:@"Keyword"];
+    [textStyles setObject:[ECTextStyle textStyleWithName:@"Comment" font:font color:[UIColor greenColor]] forKey:@"Comment"];
+    [textStyles setObject:[ECTextStyle textStyleWithName:@"Reference" font:font color:[UIColor purpleColor]] forKey:@"Reference"];
+    [textStyles setObject:[ECTextStyle textStyleWithName:@"Literal" font:font color:[UIColor redColor]] forKey:@"Literal"];
+    [textStyles setObject:[ECTextStyle textStyleWithName:@"Declaration" font:font color:[UIColor brownColor]] forKey:@"Declaration"];
+    [textStyles setObject:[ECTextStyle textStyleWithName:@"Preprocessing" font:font color:[UIColor orangeColor]] forKey:@"Preprocessing"];
+    textStyles_ = [textStyles copy];
+
     ECTextStyle *stringStyle = [ECTextStyle textStyleWithName:@"String" 
                                                          font:[UIFont fontWithName:@"Courier New" size:16.0]
                                                         color:[UIColor orangeColor]];
@@ -93,6 +118,8 @@
                                                                                     color:[UIColor redColor] 
                                                                          alternativeColor:nil 
                                                                                waveRadius:1];
+    diagnosticOverlayStyles_ = [[NSDictionary alloc] initWithObjectsAndKeys:yellowMark, @"Warning", errorMark, @"Error", nil];
+    
     [self.codeView addTextOverlayStyle:yellowMark forTextRange:[ECTextRange textRangeWithRange:(NSRange){9, 15}] alternative:NO];
     [self.codeView addTextOverlayStyle:errorMark forTextRange:[ECTextRange textRangeWithRange:(NSRange){9, 15}] alternative:NO];
     
@@ -121,37 +148,55 @@
 - (void)loadFile:(NSURL *)fileURL
 {
     self.codeView.text = [NSString stringWithContentsOfURL:fileURL encoding:NSUTF8StringEncoding error:nil];
-//    for (ECCodeToken *token in [[self.codeIndexer unitForURL:fileURL] tokensInRange:NSMakeRange(0, [self.codeView.text length]) withCursors:YES])
-//    {
-//        switch (token.kind)
-//        {
-//            case ECCodeTokenKindKeyword:
-//                [(ECCodeView *)self.codeView setStyleNamed:ECCodeStyleKeywordName toRange:token.extent];
-//                break;
-//            case ECCodeTokenKindComment:
-//                [(ECCodeView *)self.codeView setStyleNamed:ECCodeStyleCommentName toRange:token.extent];
-//                break;
-//            case ECCodeTokenKindLiteral:
-//                [(ECCodeView *)self.codeView setStyleNamed:ECCodeStyleLiteralName toRange:token.extent];
-//                break;
-//            default:
-//                switch (token.cursor.kind)
-//                {
-//                    case ECCodeCursorDeclaration:
-//                        [(ECCodeView *)self.codeView setStyleNamed:ECCodeStyleDeclarationName toRange:token.extent];
-//                        break;
-//                    case ECCodeCursorReference:
-//                        [(ECCodeView *)self.codeView setStyleNamed:ECCodeStyleReferenceName toRange:token.extent];
-//                        break;
-//                    case ECCodeCursorPreprocessing:
-//                        [(ECCodeView *)self.codeView setStyleNamed:ECCodeStylePreprocessingName toRange:token.extent];
-//                        break;
-//                    default:
-//                        break;
-//                }
-//                break;
-//        }
-//    }
+    ECCodeUnit *codeUnit = [self.codeIndexer unitForURL:fileURL];
+    for (ECCodeToken *token in [codeUnit tokensInRange:NSMakeRange(0, [self.codeView.text length]) withCursors:YES])
+    {
+        switch (token.kind)
+        {
+            case ECCodeTokenKindKeyword:
+                [self.codeView setTextStyle:[textStyles_ objectForKey:@"Keyword"] toTextRange:[ECTextRange textRangeWithRange:token.extent]];
+                break;
+            case ECCodeTokenKindComment:
+                [self.codeView setTextStyle:[textStyles_ objectForKey:@"Comment"] toTextRange:[ECTextRange textRangeWithRange:token.extent]];
+                break;
+            case ECCodeTokenKindLiteral:
+                [self.codeView setTextStyle:[textStyles_ objectForKey:@"Literal"] toTextRange:[ECTextRange textRangeWithRange:token.extent]];
+                break;
+            default:
+                switch (token.cursor.kind)
+                {
+                    case ECCodeCursorDeclaration:
+                        [self.codeView setTextStyle:[textStyles_ objectForKey:@"Declaration"] toTextRange:[ECTextRange textRangeWithRange:token.extent]];
+                        break;
+                    case ECCodeCursorReference:
+                        [self.codeView setTextStyle:[textStyles_ objectForKey:@"Reference"] toTextRange:[ECTextRange textRangeWithRange:token.extent]];
+                        break;
+                    case ECCodeCursorPreprocessing:
+                        [self.codeView setTextStyle:[textStyles_ objectForKey:@"Preprocessing"] toTextRange:[ECTextRange textRangeWithRange:token.extent]];
+                        break;
+                    default:
+                        break;
+                }
+                break;
+        }
+    }
+    for (ECCodeDiagnostic *diagnostic in [codeUnit diagnostics])
+    {
+        NSLog(@"%@", diagnostic);
+        NSLog(@"%d", diagnostic.offset);
+        switch (diagnostic.severity) {
+            case ECCodeDiagnosticSeverityWarning:
+                [self.codeView addTextOverlayStyle:[diagnosticOverlayStyles_ objectForKey:@"Warning"] forTextRange:[ECTextRange textRangeWithRange:(NSRange){diagnostic.offset, diagnostic.offset + 20}] alternative:NO];
+                break;
+                
+            case ECCodeDiagnosticSeverityError:
+                [self.codeView addTextOverlayStyle:[diagnosticOverlayStyles_ objectForKey:@"Error"] forTextRange:[ECTextRange textRangeWithRange:NSMakeRange(diagnostic.offset, diagnostic.offset + 20)] alternative:NO];
+                break;
+                
+            default:
+                break;
+        }
+    }
     [self.codeView setNeedsLayout];
 }
 
