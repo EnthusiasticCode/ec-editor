@@ -11,12 +11,7 @@
 		B736172E12DA112A009801D4 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B736172D12DA112A009801D4 /* UIKit.framework */; };
 		B736173012DA112A009801D4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B736172F12DA112A009801D4 /* Foundation.framework */; };
 		B736173212DA112A009801D4 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B736173112DA112A009801D4 /* CoreGraphics.framework */; };
-		B736173912DA112A009801D4 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = B736173712DA112A009801D4 /* InfoPlist.strings */; };
-		B736173B12DA112A009801D4 /* edit-main.m in Sources */ = {isa = PBXBuildFile; fileRef = B736173A12DA112A009801D4 /* edit-main.m */; };
-		B736173E12DA112A009801D4 /* editAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = B736173D12DA112A009801D4 /* editAppDelegate.m */; };
-		B736174312DA112A009801D4 /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = B736174112DA112A009801D4 /* MainWindow.xib */; };
 		B7BD531F12DF1CDB003B83B3 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7BD531E12DF1CDB003B83B3 /* QuartzCore.framework */; };
-		CD0D843A12E9A865005DB220 /* ECCodeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD0D843912E9A865005DB220 /* ECCodeViewController.m */; };
 		CDA00C7713261AEE00DDB649 /* OUIRectangularOverlayArrow.png in Resources */ = {isa = PBXBuildFile; fileRef = CDA00C6F13261AEE00DDB649 /* OUIRectangularOverlayArrow.png */; };
 		CDA00C7813261AEE00DDB649 /* OUIRectangularOverlayFrame.png in Resources */ = {isa = PBXBuildFile; fileRef = CDA00C7013261AEE00DDB649 /* OUIRectangularOverlayFrame.png */; };
 		CDA00C7913261AEE00DDB649 /* OUIShadowBorderBottom.png in Resources */ = {isa = PBXBuildFile; fileRef = CDA00C7113261AEE00DDB649 /* OUIShadowBorderBottom.png */; };
@@ -25,6 +20,11 @@
 		CDA00C7C13261AEE00DDB649 /* OUIShadowBorderTop.png in Resources */ = {isa = PBXBuildFile; fileRef = CDA00C7413261AEE00DDB649 /* OUIShadowBorderTop.png */; };
 		CDA00C7D13261AEE00DDB649 /* OUITextSelectionHandle.png in Resources */ = {isa = PBXBuildFile; fileRef = CDA00C7513261AEE00DDB649 /* OUITextSelectionHandle.png */; };
 		CDA00C7E13261AEE00DDB649 /* OUITextSelectionOverlay.png in Resources */ = {isa = PBXBuildFile; fileRef = CDA00C7613261AEE00DDB649 /* OUITextSelectionOverlay.png */; };
+		CDB22DB7132A46450000EB18 /* ECCodeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDB22DB4132A46450000EB18 /* ECCodeViewController.m */; };
+		CDB22DB8132A46450000EB18 /* editAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = CDB22DB6132A46450000EB18 /* editAppDelegate.m */; };
+		CDB22DBD132A46630000EB18 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = CDB22DBB132A46630000EB18 /* InfoPlist.strings */; };
+		CDB22DC0132A466D0000EB18 /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = CDB22DBE132A466D0000EB18 /* MainWindow.xib */; };
+		CDB22DF7132A477B0000EB18 /* edit-main.m in Sources */ = {isa = PBXBuildFile; fileRef = CDB22DF6132A477B0000EB18 /* edit-main.m */; };
 		CDCD9CDF13262BD6007B1F15 /* libECUIKit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDCD9CDE13262BD6007B1F15 /* libECUIKit.a */; };
 /* End PBXBuildFile section */
 
@@ -33,15 +33,7 @@
 		B736172D12DA112A009801D4 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		B736172F12DA112A009801D4 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		B736173112DA112A009801D4 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
-		B736173512DA112A009801D4 /* edit-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "edit-Info.plist"; sourceTree = "<group>"; };
-		B736173812DA112A009801D4 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		B736173A12DA112A009801D4 /* edit-main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "edit-main.m"; sourceTree = "<group>"; };
-		B736173C12DA112A009801D4 /* editAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = editAppDelegate.h; sourceTree = "<group>"; };
-		B736173D12DA112A009801D4 /* editAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = editAppDelegate.m; sourceTree = "<group>"; };
-		B736174212DA112A009801D4 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainWindow.xib; sourceTree = "<group>"; };
 		B7BD531E12DF1CDB003B83B3 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
-		CD0D843812E9A865005DB220 /* ECCodeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeViewController.h; sourceTree = "<group>"; };
-		CD0D843912E9A865005DB220 /* ECCodeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeViewController.m; sourceTree = "<group>"; };
 		CDA00C6F13261AEE00DDB649 /* OUIRectangularOverlayArrow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = OUIRectangularOverlayArrow.png; path = Resources/Images/OUIRectangularOverlayArrow.png; sourceTree = SOURCE_ROOT; };
 		CDA00C7013261AEE00DDB649 /* OUIRectangularOverlayFrame.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = OUIRectangularOverlayFrame.png; path = Resources/Images/OUIRectangularOverlayFrame.png; sourceTree = SOURCE_ROOT; };
 		CDA00C7113261AEE00DDB649 /* OUIShadowBorderBottom.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = OUIShadowBorderBottom.png; path = Resources/Images/OUIShadowBorderBottom.png; sourceTree = SOURCE_ROOT; };
@@ -50,6 +42,14 @@
 		CDA00C7413261AEE00DDB649 /* OUIShadowBorderTop.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = OUIShadowBorderTop.png; path = Resources/Images/OUIShadowBorderTop.png; sourceTree = SOURCE_ROOT; };
 		CDA00C7513261AEE00DDB649 /* OUITextSelectionHandle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = OUITextSelectionHandle.png; path = Resources/Images/OUITextSelectionHandle.png; sourceTree = SOURCE_ROOT; };
 		CDA00C7613261AEE00DDB649 /* OUITextSelectionOverlay.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = OUITextSelectionOverlay.png; path = Resources/Images/OUITextSelectionOverlay.png; sourceTree = SOURCE_ROOT; };
+		CDB22DB3132A46450000EB18 /* ECCodeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECCodeViewController.h; path = Source/ECCodeViewController.h; sourceTree = SOURCE_ROOT; };
+		CDB22DB4132A46450000EB18 /* ECCodeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECCodeViewController.m; path = Source/ECCodeViewController.m; sourceTree = SOURCE_ROOT; };
+		CDB22DB5132A46450000EB18 /* editAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = editAppDelegate.h; path = Source/editAppDelegate.h; sourceTree = SOURCE_ROOT; };
+		CDB22DB6132A46450000EB18 /* editAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = editAppDelegate.m; path = Source/editAppDelegate.m; sourceTree = SOURCE_ROOT; };
+		CDB22DBC132A46630000EB18 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = Resources/en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		CDB22DBF132A466D0000EB18 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = Resources/en.lproj/MainWindow.xib; sourceTree = "<group>"; };
+		CDB22DF6132A477B0000EB18 /* edit-main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "edit-main.m"; path = "Resources/edit-main.m"; sourceTree = "<group>"; };
+		CDB22DFA132A48AC0000EB18 /* edit-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "edit-Info.plist"; path = "Resources/edit-Info.plist"; sourceTree = "<group>"; };
 		CDCD9CA013262677007B1F15 /* edit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = edit.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CDCD9CDE13262BD6007B1F15 /* libECUIKit.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libECUIKit.a; path = "../../../../../Library/Developer/Xcode/DerivedData/build/Products/Debug-iphonesimulator/libECUIKit.a"; sourceTree = "<group>"; };
 		CDF4272D13261BD3003443F2 /* Application-iPad-Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "Application-iPad-Debug.xcconfig"; sourceTree = "<group>"; };
@@ -89,7 +89,7 @@
 			isa = PBXGroup;
 			children = (
 				CDF4272C13261BD3003443F2 /* Config */,
-				B736172212DA1129009801D4 /* Classes */,
+				B736172212DA1129009801D4 /* Sources */,
 				B736172312DA1129009801D4 /* Other Sources */,
 				B736172412DA1129009801D4 /* Resources */,
 				B736172512DA1129009801D4 /* Frameworks */,
@@ -97,21 +97,22 @@
 			);
 			sourceTree = "<group>";
 		};
-		B736172212DA1129009801D4 /* Classes */ = {
+		B736172212DA1129009801D4 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
-				CD0D843812E9A865005DB220 /* ECCodeViewController.h */,
-				CD0D843912E9A865005DB220 /* ECCodeViewController.m */,
-				B736173C12DA112A009801D4 /* editAppDelegate.h */,
-				B736173D12DA112A009801D4 /* editAppDelegate.m */,
+				CDB22DB3132A46450000EB18 /* ECCodeViewController.h */,
+				CDB22DB4132A46450000EB18 /* ECCodeViewController.m */,
+				CDB22DB5132A46450000EB18 /* editAppDelegate.h */,
+				CDB22DB6132A46450000EB18 /* editAppDelegate.m */,
 			);
+			name = Sources;
 			path = Classes;
 			sourceTree = "<group>";
 		};
 		B736172312DA1129009801D4 /* Other Sources */ = {
 			isa = PBXGroup;
 			children = (
-				B736173A12DA112A009801D4 /* edit-main.m */,
+				CDB22DF6132A477B0000EB18 /* edit-main.m */,
 			);
 			name = "Other Sources";
 			sourceTree = "<group>";
@@ -119,9 +120,9 @@
 		B736172412DA1129009801D4 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				CDB22DBE132A466D0000EB18 /* MainWindow.xib */,
 				B78F093012E6344900E38985 /* Strings */,
 				B7759EC112E062B5006E99E7 /* Images */,
-				B736174112DA112A009801D4 /* MainWindow.xib */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -158,8 +159,8 @@
 		B78F093012E6344900E38985 /* Strings */ = {
 			isa = PBXGroup;
 			children = (
-				B736173512DA112A009801D4 /* edit-Info.plist */,
-				B736173712DA112A009801D4 /* InfoPlist.strings */,
+				CDB22DFA132A48AC0000EB18 /* edit-Info.plist */,
+				CDB22DBB132A46630000EB18 /* InfoPlist.strings */,
 			);
 			name = Strings;
 			sourceTree = "<group>";
@@ -241,8 +242,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B736173912DA112A009801D4 /* InfoPlist.strings in Resources */,
-				B736174312DA112A009801D4 /* MainWindow.xib in Resources */,
 				CDA00C7713261AEE00DDB649 /* OUIRectangularOverlayArrow.png in Resources */,
 				CDA00C7813261AEE00DDB649 /* OUIRectangularOverlayFrame.png in Resources */,
 				CDA00C7913261AEE00DDB649 /* OUIShadowBorderBottom.png in Resources */,
@@ -251,6 +250,8 @@
 				CDA00C7C13261AEE00DDB649 /* OUIShadowBorderTop.png in Resources */,
 				CDA00C7D13261AEE00DDB649 /* OUITextSelectionHandle.png in Resources */,
 				CDA00C7E13261AEE00DDB649 /* OUITextSelectionOverlay.png in Resources */,
+				CDB22DBD132A46630000EB18 /* InfoPlist.strings in Resources */,
+				CDB22DC0132A466D0000EB18 /* MainWindow.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -261,27 +262,27 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B736173B12DA112A009801D4 /* edit-main.m in Sources */,
-				B736173E12DA112A009801D4 /* editAppDelegate.m in Sources */,
-				CD0D843A12E9A865005DB220 /* ECCodeViewController.m in Sources */,
+				CDB22DB7132A46450000EB18 /* ECCodeViewController.m in Sources */,
+				CDB22DB8132A46450000EB18 /* editAppDelegate.m in Sources */,
+				CDB22DF7132A477B0000EB18 /* edit-main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
-		B736173712DA112A009801D4 /* InfoPlist.strings */ = {
+		CDB22DBB132A46630000EB18 /* InfoPlist.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
-				B736173812DA112A009801D4 /* en */,
+				CDB22DBC132A46630000EB18 /* en */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
 		};
-		B736174112DA112A009801D4 /* MainWindow.xib */ = {
+		CDB22DBE132A466D0000EB18 /* MainWindow.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
-				B736174212DA112A009801D4 /* en */,
+				CDB22DBF132A466D0000EB18 /* en */,
 			);
 			name = MainWindow.xib;
 			sourceTree = "<group>";
@@ -340,7 +341,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = CDF4272D13261BD3003443F2 /* Application-iPad-Debug.xcconfig */;
 			buildSettings = {
-				INFOPLIST_FILE = "edit-Info.plist";
+				INFOPLIST_FILE = "Resources/edit-Info.plist";
 			};
 			name = Debug;
 		};
@@ -348,7 +349,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = CDF4272E13261BD3003443F2 /* Application-iPad-Release.xcconfig */;
 			buildSettings = {
-				INFOPLIST_FILE = "edit-Info.plist";
+				INFOPLIST_FILE = "Resources/edit-Info.plist";
 			};
 			name = Release;
 		};
