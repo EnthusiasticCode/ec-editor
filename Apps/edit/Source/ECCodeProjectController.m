@@ -152,6 +152,7 @@
 //                break;
 //        }
 //    }
+    [self.codeView setNeedsLayout];
 }
 
 - (NSArray *)contentsOfRootDirectory

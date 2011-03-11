@@ -94,6 +94,7 @@
 		B70D6646132A2813008DDEA4 /* NSValue+KiwiAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = B70D6605132A2813008DDEA4 /* NSValue+KiwiAdditions.m */; };
 		B70D6648132A2849008DDEA4 /* editSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = B70D6647132A2849008DDEA4 /* editSpec.m */; };
 		B70D664A132A28AB008DDEA4 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B70D6649132A28AB008DDEA4 /* SenTestingKit.framework */; };
+		B79111C1132A986800D11F37 /* libclang.dylib in Resources */ = {isa = PBXBuildFile; fileRef = B70D6570132A273E008DDEA4 /* libclang.dylib */; };
 		B7DBA4E7132A2B8E004C0E1D /* libECCodeIndexingPlugins.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7DBA4E6132A2B8E004C0E1D /* libECCodeIndexingPlugins.a */; };
 		B7DBA4E8132A2BD5004C0E1D /* libclang.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B70D6570132A273E008DDEA4 /* libclang.dylib */; };
 		B7DBA580132A3281004C0E1D /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7DBA57F132A3281004C0E1D /* QuartzCore.framework */; };
@@ -825,6 +826,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B79111C1132A986800D11F37 /* libclang.dylib in Resources */,
 				B70D6506132A25F4008DDEA4 /* edit-Info.plist in Resources */,
 				B70D6508132A25F4008DDEA4 /* CodeProjectController.xib in Resources */,
 				B70D6509132A25F4008DDEA4 /* InfoPlist.strings in Resources */,

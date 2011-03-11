@@ -7,7 +7,7 @@
 //
 
 #import "ECCodeProject.h"
-#import <ECAdditions/NSURL+ECAdditions.h>
+#import <ECFoundation/NSURL+ECFoundation.h>
 #import <CoreData/CoreData.h>
 
 
