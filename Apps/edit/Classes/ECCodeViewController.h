@@ -20,4 +20,6 @@
 
 - (void)handleGestureFocus:(UITapGestureRecognizer *)recognizer;
 
+- (IBAction)doSomething:(id)sender;
+
 @end

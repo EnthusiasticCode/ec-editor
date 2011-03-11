@@ -15,6 +15,7 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     [window addSubview:codeViewController.view];
+    codeViewController.view.frame = CGRectMake(100, 100, self.window.bounds.size.width / 2, 300);
     [window makeKeyAndVisible];
     
     return YES;

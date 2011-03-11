@@ -81,4 +81,9 @@
         recognizer.enabled = ![[recognizer view] becomeFirstResponder];
 }
 
+- (IBAction)doSomething:(id)sender 
+{
+    codeView.text = @"Ciao!!";
+}
+
 @end

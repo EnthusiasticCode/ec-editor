@@ -25,6 +25,7 @@
 
 - (void)setText:(NSString *)string
 {
+    [self clearAllTextOverlays];
     [text release];
     if (!string)
         string = @"";
@@ -57,7 +58,7 @@ static inline id init(ECCodeView *self)
 {
     // Setup view's layer
     self.opaque = YES;
-    self.layer.cornerRadius = 20;
+    self.layer.cornerRadius = 5;
     self.layer.masksToBounds = YES;
     //    self.clearsContextBeforeDrawing = YES;
     //    self.contentMode = UIViewContentModeRedraw;
@@ -67,7 +68,7 @@ static inline id init(ECCodeView *self)
     self->textLayer.opaque = YES;
     self->textLayer.backgroundColor = self.backgroundColor.CGColor;
     self->textLayer.wrapped = YES;
-//    self->textLayer.needsDisplayOnBoundsChange = YES;
+    self->textLayer.needsDisplayOnBoundsChange = YES;
     [self.layer addSublayer:self->textLayer];
     
     // Overlay layers
@@ -117,11 +118,11 @@ static inline id init(ECCodeView *self)
 
 - (void)layoutSubviews
 {
-    [super layoutSubviews];
+//    [super layoutSubviews];
     
     // Layout text layer
-    CGRect textLayerFrame = self.layer.bounds;
-    textLayerFrame = CGRectInset(textLayerFrame, 20, 20);
+    CGRect textLayerFrame = self.bounds;
+    textLayerFrame = CGRectInset(textLayerFrame, 10, 10);
     textLayerFrame.size = [textLayer sizeThatFits:textLayerFrame.size];
     textLayerFrame = CGRectIntegral(textLayerFrame);
     textLayer.frame = textLayerFrame;

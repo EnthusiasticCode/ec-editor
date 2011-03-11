@@ -84,7 +84,9 @@
     {
         if (string)
         {
-            [text replaceCharactersInRange:range withString:string];
+            NSAttributedString *attrString = [[NSAttributedString alloc] initWithString:string attributes:self.defaultTextStyle.CTAttributes];
+            [text replaceCharactersInRange:range withAttributedString:attrString];
+            [attrString release];
         }
         else if (textLength > 0)
         {
@@ -147,6 +149,7 @@
     
     [self setNeedsLayout];
     
+    // TODO clear selection layer
     if (selection)
         [self setNeedsDisplay];
     
