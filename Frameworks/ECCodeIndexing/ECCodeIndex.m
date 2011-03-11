@@ -6,7 +6,7 @@
 //  Copyright 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import <ECAdditions/NSURL+ECAdditions.h>
+#import <ECFoundation/NSURL+ECFoundation.h>
 #import <objc/runtime.h>
 #import "ECCodeIndex.h"
 #import "ECCodeIndex(Private).h"

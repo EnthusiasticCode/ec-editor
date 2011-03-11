@@ -7,7 +7,7 @@
 //
 
 #import "ECCodeDiagnostic.h"
-#import <ECAdditions/ECHashing.h>
+#import <ECFoundation/ECHashing.h>
 
 @interface ECCodeDiagnostic ()
 - (NSUInteger)computeHash;

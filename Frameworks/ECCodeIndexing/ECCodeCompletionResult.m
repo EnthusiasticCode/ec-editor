@@ -7,7 +7,7 @@
 //
 
 #import "ECCodeCompletionResult.h"
-#import <ECAdditions/ECHashing.h>
+#import <ECFoundation/ECHashing.h>
 
 @interface ECCodeCompletionResult ()
 - (NSUInteger)computeHash;

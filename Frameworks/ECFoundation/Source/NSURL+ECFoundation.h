@@ -1,5 +1,5 @@
 //
-//  NSURL+ECAdditions.h
+//  NSURL+ECFoundation.h
 //  edit
 //
 //  Created by Uri Baghin on 2/10/11.
@@ -9,6 +9,6 @@
 #import <Foundation/Foundation.h>
 
 
-@interface NSURL (ECAdditions)
+@interface NSURL (ECFoundation)
 - (BOOL)isFileURLAndExists;
 @end

@@ -6,7 +6,7 @@
 //  Copyright 2011 __MyCompanyName__. All rights reserved.
 //
 
-IPHONEOS_DEPLOYMENT_TARGET = 4.2
+IPHONEOS_DEPLOYMENT_TARGET = 4.3
 ARCHS = $(ARCHS_UNIVERSAL_IPHONE_OS)
 SDKROOT = iphoneos
 // 2 = iPad

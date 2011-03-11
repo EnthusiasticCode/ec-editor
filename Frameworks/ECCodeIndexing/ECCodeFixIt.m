@@ -7,7 +7,7 @@
 //
 
 #import "ECCodeFixIt.h"
-#import <ECAdditions/ECHashing.h>
+#import <ECFoundation/ECHashing.h>
 
 @interface ECCodeFixIt ()
 - (NSUInteger)computeHash;

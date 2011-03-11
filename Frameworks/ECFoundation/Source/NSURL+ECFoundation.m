@@ -1,15 +1,15 @@
 //
-//  NSURL+ECAdditions.m
+//  NSURL+ECFoundation.m
 //  edit
 //
 //  Created by Uri Baghin on 2/10/11.
 //  Copyright 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import "NSURL+ECAdditions.h"
+#import "NSURL+ECFoundation.h"
 
 
-@implementation NSURL (ECAdditions)
+@implementation NSURL (ECFoundation)
 
 - (BOOL)isFileURLAndExists
 {

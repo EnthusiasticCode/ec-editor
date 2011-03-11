@@ -7,7 +7,6 @@
 //
 
 #import "ECTextDocument.h"
-#import <MobileCoreServices/MobileCoreServices.h>
 
 
 @implementation ECTextDocument
@@ -46,13 +45,6 @@
 {
     [self.text writeToURL:fileURL atomically:NO encoding:NSUTF8StringEncoding error:error];
     return YES;
-}
-
-+ (BOOL)isNativeType:(NSString *)fileType
-{
-    if (UTTypeConformsTo((CFStringRef)fileType, (CFStringRef)@"public.plain-text"))
-        return YES;
-    return NO;
 }
 
 + (NSArray *)readableTypes

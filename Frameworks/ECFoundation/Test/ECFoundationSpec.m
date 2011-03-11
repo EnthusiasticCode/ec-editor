@@ -6,10 +6,10 @@
 //  Copyright 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import "NSURL+ECAdditions.h"
+#import "NSURL+ECFoundation.h"
 #import "../../Kiwi/Kiwi.h"
 
-SPEC_BEGIN(ECAdditionsSpec)
+SPEC_BEGIN(ECFoundationSpec)
 
 describe(@"An NSURL with additions", ^
 {
