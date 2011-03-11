@@ -8,18 +8,18 @@
 
 /* Begin PBXBuildFile section */
 		B70C04071320D1AE007A3D86 /* ECCodeCursor.m in Sources */ = {isa = PBXBuildFile; fileRef = B70C04051320D1AE007A3D86 /* ECCodeCursor.m */; };
-		B729123E1323DE8F008F611D /* ECClangCodeCursor.m in Sources */ = {isa = PBXBuildFile; fileRef = B729123C1323DE8F008F611D /* ECClangCodeCursor.m */; };
 		B74B9BD0132A191400856815 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B74B9BCF132A191400856815 /* SenTestingKit.framework */; };
 		B74B9BD2132A192200856815 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B74B9BD1132A192200856815 /* UIKit.framework */; };
-		B74B9BD4132A194600856815 /* libECFoundation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B74B9BD3132A194600856815 /* libECFoundation.a */; };
-		B761FD4B131B0902006072A0 /* libclang.dylib in Resources */ = {isa = PBXBuildFile; fileRef = B7FCA56B131A6FB9002D6C7C /* libclang.dylib */; };
 		B7738F7E13204FC500634ACE /* ECCodeSymbol.m in Sources */ = {isa = PBXBuildFile; fileRef = B7738F7C13204FC500634ACE /* ECCodeSymbol.m */; };
-		B79084D3131C5602002668FA /* ECClangCodeUnit.m in Sources */ = {isa = PBXBuildFile; fileRef = B79084D1131C5602002668FA /* ECClangCodeUnit.m */; };
 		B7D65C19131ADDCA00C3FA93 /* libECCodeIndexing.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7FCA60D131A6FE0002D6C7C /* libECCodeIndexing.a */; };
 		B7DB796F1328D2920084F6FA /* ECCodeCursor.h in Headers */ = {isa = PBXBuildFile; fileRef = B70C04041320D1AE007A3D86 /* ECCodeCursor.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B7DB79701328D29E0084F6FA /* ECCodeIndexPlugin.h in Headers */ = {isa = PBXBuildFile; fileRef = B74E64E613277EB500539179 /* ECCodeIndexPlugin.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B7DB79711328D29E0084F6FA /* ECCodeUnitPlugin.h in Headers */ = {isa = PBXBuildFile; fileRef = B74E64EB1327861F00539179 /* ECCodeUnitPlugin.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B7DB79721328D29E0084F6FA /* ECCodeCursorPlugin.h in Headers */ = {isa = PBXBuildFile; fileRef = B74E64EF1327863900539179 /* ECCodeCursorPlugin.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B7DBA49B132A29FE004C0E1D /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7F1F5D6132A15CD00A7B93F /* Foundation.framework */; };
+		B7DBA4AF132A2A59004C0E1D /* ECClangCodeIndex.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FCA569131A6FB9002D6C7C /* ECClangCodeIndex.m */; };
+		B7DBA4B1132A2A59004C0E1D /* ECClangCodeUnit.m in Sources */ = {isa = PBXBuildFile; fileRef = B79084D1131C5602002668FA /* ECClangCodeUnit.m */; };
+		B7DBA4B3132A2A59004C0E1D /* ECClangCodeCursor.m in Sources */ = {isa = PBXBuildFile; fileRef = B729123C1323DE8F008F611D /* ECClangCodeCursor.m */; };
 		B7E7D233131E797C008E3DFA /* ECCodeUnit.h in Headers */ = {isa = PBXBuildFile; fileRef = B7E7D231131E797C008E3DFA /* ECCodeUnit.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B7E7D234131E797C008E3DFA /* ECCodeUnit.m in Sources */ = {isa = PBXBuildFile; fileRef = B7E7D232131E797C008E3DFA /* ECCodeUnit.m */; };
 		B7F1F5D7132A15CD00A7B93F /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7F1F5D6132A15CD00A7B93F /* Foundation.framework */; };
@@ -38,8 +38,6 @@
 		B7FCA647131A71AE002D6C7C /* ECCodeFixIt.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FCA560131A6FB9002D6C7C /* ECCodeFixIt.m */; };
 		B7FCA64C131A71AE002D6C7C /* ECCodeToken.h in Headers */ = {isa = PBXBuildFile; fileRef = B7FCA565131A6FB9002D6C7C /* ECCodeToken.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B7FCA64D131A71AE002D6C7C /* ECCodeToken.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FCA566131A6FB9002D6C7C /* ECCodeToken.m */; };
-		B7FCA64F131A71AE002D6C7C /* ECClangCodeIndex.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FCA569131A6FB9002D6C7C /* ECClangCodeIndex.m */; };
-		B7FCA651131A71AE002D6C7C /* libclang.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B7FCA56B131A6FB9002D6C7C /* libclang.dylib */; };
 		B7FCA653131A71BD002D6C7C /* libclang.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B7FCA56B131A6FB9002D6C7C /* libclang.dylib */; };
 		B7FCA6EE131A722D002D6C7C /* KWAfterAllNode.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FCA660131A722D002D6C7C /* KWAfterAllNode.m */; };
 		B7FCA6EF131A722D002D6C7C /* KWAfterEachNode.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FCA662131A722D002D6C7C /* KWAfterEachNode.m */; };
@@ -125,13 +123,6 @@
 			remoteGlobalIDString = B72BB41C132A1C2B00C1C19B;
 			remoteInfo = "ECFoundation-Test";
 		};
-		B79C0279132A21E4007BD5DB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B79C026D132A21D9007BD5DB /* ECFoundation.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = B72BB40B132A1BF200C1C19B;
-			remoteInfo = ECFoundation;
-		};
 		B79C027B132A21F1007BD5DB /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B79C026D132A21D9007BD5DB /* ECFoundation.xcodeproj */;
@@ -145,6 +136,27 @@
 			proxyType = 1;
 			remoteGlobalIDString = B7FCA60C131A6FE0002D6C7C;
 			remoteInfo = ECCodeIndexing;
+		};
+		B7DBA4A2132A2A0D004C0E1D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B7FCA54A131A6F98002D6C7C /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B7DBA499132A29FE004C0E1D;
+			remoteInfo = ECCodeIndexingPlugins;
+		};
+		B7DBA4A6132A2A2D004C0E1D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B7FCA54A131A6F98002D6C7C /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B7FCA60C131A6FE0002D6C7C;
+			remoteInfo = ECCodeIndexing;
+		};
+		B7DBA4A8132A2A32004C0E1D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B79C026D132A21D9007BD5DB /* ECFoundation.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = B72BB40B132A1BF200C1C19B;
+			remoteInfo = ECFoundation;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -168,6 +180,7 @@
 		B79084D1131C5602002668FA /* ECClangCodeUnit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECClangCodeUnit.m; sourceTree = "<group>"; };
 		B79C026D132A21D9007BD5DB /* ECFoundation.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ECFoundation.xcodeproj; path = ../ECFoundation/ECFoundation.xcodeproj; sourceTree = "<group>"; };
 		B7CECBA6131AB84B00B65157 /* Library.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Library.xcconfig; sourceTree = "<group>"; };
+		B7DBA49A132A29FE004C0E1D /* libECCodeIndexingPlugins.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libECCodeIndexingPlugins.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		B7E7D231131E797C008E3DFA /* ECCodeUnit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeUnit.h; sourceTree = "<group>"; };
 		B7E7D232131E797C008E3DFA /* ECCodeUnit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeUnit.m; sourceTree = "<group>"; };
 		B7F1F5D6132A15CD00A7B93F /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS4.3.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
@@ -347,12 +360,18 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		B7DBA497132A29FE004C0E1D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B7DBA49B132A29FE004C0E1D /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B7FCA60A131A6FE0002D6C7C /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B74B9BD4132A194600856815 /* libECFoundation.a in Frameworks */,
-				B7FCA651131A71AE002D6C7C /* libclang.dylib in Frameworks */,
 				B7F1F5D7132A15CD00A7B93F /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -381,10 +400,9 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		B7FCA548131A6F98002D6C7C = {
+		B7DBA486132A291E004C0E1D /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				B7FCA56E131A6FC7002D6C7C /* Config */,
 				B7FCA554131A6FB9002D6C7C /* ECCodeIndex.h */,
 				B7FCA555131A6FB9002D6C7C /* ECCodeIndex.m */,
 				B7630B061322638300A8CC63 /* ECCodeIndex(Private).h */,
@@ -411,7 +429,24 @@
 				B7FCA560131A6FB9002D6C7C /* ECCodeFixIt.m */,
 				B7FCA565131A6FB9002D6C7C /* ECCodeToken.h */,
 				B7FCA566131A6FB9002D6C7C /* ECCodeToken.m */,
+			);
+			path = Source;
+			sourceTree = "<group>";
+		};
+		B7DBA487132A2936004C0E1D /* Plugins */ = {
+			isa = PBXGroup;
+			children = (
 				B7FCA567131A6FB9002D6C7C /* libclang */,
+			);
+			path = Plugins;
+			sourceTree = "<group>";
+		};
+		B7FCA548131A6F98002D6C7C = {
+			isa = PBXGroup;
+			children = (
+				B7FCA56E131A6FC7002D6C7C /* Config */,
+				B7DBA486132A291E004C0E1D /* Source */,
+				B7DBA487132A2936004C0E1D /* Plugins */,
 				B7FCA56C131A6FB9002D6C7C /* Test */,
 				B7FCA60F131A6FE0002D6C7C /* Frameworks */,
 				B7FCA60E131A6FE0002D6C7C /* Products */,
@@ -465,6 +500,7 @@
 			children = (
 				B7FCA60D131A6FE0002D6C7C /* libECCodeIndexing.a */,
 				B7FCA61D131A6FED002D6C7C /* ECCodeIndexing-Test.octest */,
+				B7DBA49A132A29FE004C0E1D /* libECCodeIndexingPlugins.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -635,6 +671,13 @@
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
+		B7DBA498132A29FE004C0E1D /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B7FCA60B131A6FE0002D6C7C /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -657,6 +700,24 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		B7DBA499132A29FE004C0E1D /* ECCodeIndexingPlugins */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B7DBA49F132A29FE004C0E1D /* Build configuration list for PBXNativeTarget "ECCodeIndexingPlugins" */;
+			buildPhases = (
+				B7DBA496132A29FE004C0E1D /* Sources */,
+				B7DBA497132A29FE004C0E1D /* Frameworks */,
+				B7DBA498132A29FE004C0E1D /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				B7DBA4A7132A2A2D004C0E1D /* PBXTargetDependency */,
+			);
+			name = ECCodeIndexingPlugins;
+			productName = ECCodeIndexingPlugins;
+			productReference = B7DBA49A132A29FE004C0E1D /* libECCodeIndexingPlugins.a */;
+			productType = "com.apple.product-type.library.static";
+		};
 		B7FCA60C131A6FE0002D6C7C /* ECCodeIndexing */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = B7FCA615131A6FE0002D6C7C /* Build configuration list for PBXNativeTarget "ECCodeIndexing" */;
@@ -669,7 +730,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				B79C027A132A21E4007BD5DB /* PBXTargetDependency */,
+				B7DBA4A9132A2A32004C0E1D /* PBXTargetDependency */,
 			);
 			name = ECCodeIndexing;
 			productName = ECCodeIndexing;
@@ -688,8 +749,9 @@
 			buildRules = (
 			);
 			dependencies = (
-				B79C027C132A21F1007BD5DB /* PBXTargetDependency */,
 				B7D65C14131ADD9C00C3FA93 /* PBXTargetDependency */,
+				B7DBA4A3132A2A0D004C0E1D /* PBXTargetDependency */,
+				B79C027C132A21F1007BD5DB /* PBXTargetDependency */,
 			);
 			name = "ECCodeIndexing-Test";
 			productName = Test;
@@ -720,6 +782,7 @@
 			projectRoot = "";
 			targets = (
 				B7FCA60C131A6FE0002D6C7C /* ECCodeIndexing */,
+				B7DBA499132A29FE004C0E1D /* ECCodeIndexingPlugins */,
 				B7FCA61C131A6FED002D6C7C /* ECCodeIndexing-Test */,
 			);
 		};
@@ -747,7 +810,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B761FD4B131B0902006072A0 /* libclang.dylib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -778,6 +840,16 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		B7DBA496132A29FE004C0E1D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B7DBA4AF132A2A59004C0E1D /* ECClangCodeIndex.m in Sources */,
+				B7DBA4B1132A2A59004C0E1D /* ECClangCodeUnit.m in Sources */,
+				B7DBA4B3132A2A59004C0E1D /* ECClangCodeCursor.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B7FCA609131A6FE0002D6C7C /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -789,12 +861,9 @@
 				B7FCA645131A71AE002D6C7C /* ECCodeDiagnostic.m in Sources */,
 				B7FCA647131A71AE002D6C7C /* ECCodeFixIt.m in Sources */,
 				B7FCA64D131A71AE002D6C7C /* ECCodeToken.m in Sources */,
-				B7FCA64F131A71AE002D6C7C /* ECClangCodeIndex.m in Sources */,
-				B79084D3131C5602002668FA /* ECClangCodeUnit.m in Sources */,
 				B7E7D234131E797C008E3DFA /* ECCodeUnit.m in Sources */,
 				B7738F7E13204FC500634ACE /* ECCodeSymbol.m in Sources */,
 				B70C04071320D1AE007A3D86 /* ECCodeCursor.m in Sources */,
-				B729123E1323DE8F008F611D /* ECClangCodeCursor.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -874,11 +943,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		B79C027A132A21E4007BD5DB /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = ECFoundation;
-			targetProxy = B79C0279132A21E4007BD5DB /* PBXContainerItemProxy */;
-		};
 		B79C027C132A21F1007BD5DB /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = "ECFoundation-Test";
@@ -889,9 +953,38 @@
 			target = B7FCA60C131A6FE0002D6C7C /* ECCodeIndexing */;
 			targetProxy = B7D65C13131ADD9C00C3FA93 /* PBXContainerItemProxy */;
 		};
+		B7DBA4A3132A2A0D004C0E1D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B7DBA499132A29FE004C0E1D /* ECCodeIndexingPlugins */;
+			targetProxy = B7DBA4A2132A2A0D004C0E1D /* PBXContainerItemProxy */;
+		};
+		B7DBA4A7132A2A2D004C0E1D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B7FCA60C131A6FE0002D6C7C /* ECCodeIndexing */;
+			targetProxy = B7DBA4A6132A2A2D004C0E1D /* PBXContainerItemProxy */;
+		};
+		B7DBA4A9132A2A32004C0E1D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = ECFoundation;
+			targetProxy = B7DBA4A8132A2A32004C0E1D /* PBXContainerItemProxy */;
+		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		B7DBA4A0132A29FE004C0E1D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = B7FCA634131A707F002D6C7C /* StaticLibrary-iPad-Debug.xcconfig */;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		B7DBA4A1132A29FE004C0E1D /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = B7FCA636131A70A1002D6C7C /* StaticLibrary-iPad-Release.xcconfig */;
+			buildSettings = {
+			};
+			name = Release;
+		};
 		B7FCA54F131A6F98002D6C7C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -965,6 +1058,14 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		B7DBA49F132A29FE004C0E1D /* Build configuration list for PBXNativeTarget "ECCodeIndexingPlugins" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B7DBA4A0132A29FE004C0E1D /* Debug */,
+				B7DBA4A1132A29FE004C0E1D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
 		B7FCA54D131A6F98002D6C7C /* Build configuration list for PBXProject "ECCodeIndexing" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

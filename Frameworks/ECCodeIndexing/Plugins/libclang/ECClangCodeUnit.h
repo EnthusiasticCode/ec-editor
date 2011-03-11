@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "../ECCodeUnitPlugin.h"
+#import <ECCodeIndexing/ECCodeUnitPlugin.h>
 
 extern NSString *ECClangCodeUnitOptionLanguage;
 extern NSString *ECClangCodeUnitOptionCXIndex;

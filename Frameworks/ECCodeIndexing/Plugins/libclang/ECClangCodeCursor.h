@@ -6,9 +6,9 @@
 //  Copyright 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import "../ECCodeCursor.h"
+#import <Foundation/Foundation.h>
+#import <ECCodeIndexing/ECCodeCursorPlugin.h>
 
-
-@interface ECClangCodeCursor : ECCodeCursor
+@interface ECClangCodeCursor : NSObject
 
 @end
