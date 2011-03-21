@@ -38,14 +38,12 @@
     // Overlay test
     ECTextOverlayStyle *yellowMark = [ECTextOverlayStyle highlightTextOverlayStyleWithName:@"Yellow mark" 
                                                                                      color:[[UIColor yellowColor] colorWithAlphaComponent:0.5] 
-                                                                          alternativeColor:nil 
                                                                               cornerRadius:1];
     ECTextOverlayStyle *errorMark = [ECTextOverlayStyle underlineTextOverlayStyleWithName:@"Error mark" 
                                                                                     color:[UIColor redColor] 
-                                                                         alternativeColor:nil 
                                                                                waveRadius:1];
-    [codeView addTextOverlayStyle:yellowMark forTextRange:[ECTextRange textRangeWithRange:(NSRange){9, 15}] alternative:NO];
-    [codeView addTextOverlayStyle:errorMark forTextRange:[ECTextRange textRangeWithRange:(NSRange){9, 15}] alternative:NO];
+    [codeView addTextOverlayStyle:yellowMark forTextRange:[ECTextRange textRangeWithRange:(NSRange){9, 15}]];
+    [codeView addTextOverlayStyle:errorMark forTextRange:[ECTextRange textRangeWithRange:(NSRange){9, 15}]];
     
     // Edit tests
     

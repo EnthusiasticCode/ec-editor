@@ -24,6 +24,7 @@
 - (id)initWithRect:(CGRect)rect;
 - (id)initWithRects:(ECRectSet *)rects;
 - (void)enumerateRectsUsingBlock:(void (^)(CGRect rect, BOOL *stop))block;
+- (void)addRectsToContext:(CGContextRef)context;
 
 + (id)rectSet;
 + (id)rectSetWithRect:(CGRect)rect;
@@ -35,6 +36,7 @@
 - (id)initWithCapacity:(NSUInteger)cap;
 
 - (void)addRect:(CGRect)rect;
+- (void)addRects:(ECRectSet *)rects;
 - (void)removeRect:(CGRect)rect;
 - (void)removeAllRects;
 

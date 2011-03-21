@@ -10,19 +10,21 @@
 #import "ECTextOverlayStyle.h"
 #import "ECTextOverlay.h"
 #import "ECTextLayer.h"
+#import "ECRectSet.h"
 
-@interface ECTextOverlayLayer : CALayer {
-@protected
-    NSArray *overlayRects;
-}
+@interface ECTextOverlayLayer : CALayer
+
+#pragma mark Creating Text Overlay Layers
+
+/// Create an overlay layer with an overlay style associated with it.
+- (id)initWithTextOverlayStyle:(ECTextOverlayStyle *)aStyle;
+
+#pragma mark Stiling and Content of Layer
 
 /// The style to apply to the overlay.
 @property (nonatomic, retain) ECTextOverlayStyle *overlayStyle;
 
-/// Create an overlay layer with an overlay style associated with it.
-- (id)initWithOverlayStyle:(ECTextOverlayStyle *)aStyle;
-
-/// Set the rects of the overlay and animate to display them. The array should contain \c ECTextOverlay objects.
-- (void)setTextOverlays:(NSArray *)rects animate:(BOOL)doAnimation;
+/// The \c ECRectSet to draw as overlays.
+@property (nonatomic, retain) NSArray *overlayRectSets;
 
 @end

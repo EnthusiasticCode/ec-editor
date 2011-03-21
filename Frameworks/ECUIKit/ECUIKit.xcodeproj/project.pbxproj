@@ -7,31 +7,31 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		CDB22DDC132A46970000EB18 /* ECCodeScrollView.h in Headers */ = {isa = PBXBuildFile; fileRef = CDB22DC2132A46970000EB18 /* ECCodeScrollView.h */; };
+		CDB22DDC132A46970000EB18 /* ECCodeScrollView.h in Headers */ = {isa = PBXBuildFile; fileRef = CDB22DC2132A46970000EB18 /* ECCodeScrollView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CDB22DDD132A46970000EB18 /* ECCodeScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = CDB22DC3132A46970000EB18 /* ECCodeScrollView.m */; };
-		CDB22DDE132A46970000EB18 /* ECCodeView.h in Headers */ = {isa = PBXBuildFile; fileRef = CDB22DC4132A46970000EB18 /* ECCodeView.h */; };
+		CDB22DDE132A46970000EB18 /* ECCodeView.h in Headers */ = {isa = PBXBuildFile; fileRef = CDB22DC4132A46970000EB18 /* ECCodeView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CDB22DDF132A46970000EB18 /* ECCodeView.m in Sources */ = {isa = PBXBuildFile; fileRef = CDB22DC5132A46970000EB18 /* ECCodeView.m */; };
-		CDB22DE0132A46970000EB18 /* ECEditCodeView.h in Headers */ = {isa = PBXBuildFile; fileRef = CDB22DC6132A46970000EB18 /* ECEditCodeView.h */; };
+		CDB22DE0132A46970000EB18 /* ECEditCodeView.h in Headers */ = {isa = PBXBuildFile; fileRef = CDB22DC6132A46970000EB18 /* ECEditCodeView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CDB22DE1132A46970000EB18 /* ECEditCodeView.m in Sources */ = {isa = PBXBuildFile; fileRef = CDB22DC7132A46970000EB18 /* ECEditCodeView.m */; };
-		CDB22DE2132A46970000EB18 /* ECLineMarksView.h in Headers */ = {isa = PBXBuildFile; fileRef = CDB22DC8132A46970000EB18 /* ECLineMarksView.h */; };
+		CDB22DE2132A46970000EB18 /* ECLineMarksView.h in Headers */ = {isa = PBXBuildFile; fileRef = CDB22DC8132A46970000EB18 /* ECLineMarksView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CDB22DE3132A46970000EB18 /* ECLineMarksView.m in Sources */ = {isa = PBXBuildFile; fileRef = CDB22DC9132A46970000EB18 /* ECLineMarksView.m */; };
-		CDB22DE4132A46970000EB18 /* ECRectSet.h in Headers */ = {isa = PBXBuildFile; fileRef = CDB22DCA132A46970000EB18 /* ECRectSet.h */; };
+		CDB22DE4132A46970000EB18 /* ECRectSet.h in Headers */ = {isa = PBXBuildFile; fileRef = CDB22DCA132A46970000EB18 /* ECRectSet.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CDB22DE5132A46970000EB18 /* ECRectSet.m in Sources */ = {isa = PBXBuildFile; fileRef = CDB22DCB132A46970000EB18 /* ECRectSet.m */; };
-		CDB22DE6132A46970000EB18 /* ECSelectionHandleView.h in Headers */ = {isa = PBXBuildFile; fileRef = CDB22DCC132A46970000EB18 /* ECSelectionHandleView.h */; };
+		CDB22DE6132A46970000EB18 /* ECSelectionHandleView.h in Headers */ = {isa = PBXBuildFile; fileRef = CDB22DCC132A46970000EB18 /* ECSelectionHandleView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CDB22DE7132A46970000EB18 /* ECSelectionHandleView.m in Sources */ = {isa = PBXBuildFile; fileRef = CDB22DCD132A46970000EB18 /* ECSelectionHandleView.m */; };
-		CDB22DE8132A46970000EB18 /* ECTextLayer.h in Headers */ = {isa = PBXBuildFile; fileRef = CDB22DCE132A46970000EB18 /* ECTextLayer.h */; };
+		CDB22DE8132A46970000EB18 /* ECTextLayer.h in Headers */ = {isa = PBXBuildFile; fileRef = CDB22DCE132A46970000EB18 /* ECTextLayer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CDB22DE9132A46970000EB18 /* ECTextLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = CDB22DCF132A46970000EB18 /* ECTextLayer.m */; };
-		CDB22DEA132A46970000EB18 /* ECTextOverlay.h in Headers */ = {isa = PBXBuildFile; fileRef = CDB22DD0132A46970000EB18 /* ECTextOverlay.h */; };
+		CDB22DEA132A46970000EB18 /* ECTextOverlay.h in Headers */ = {isa = PBXBuildFile; fileRef = CDB22DD0132A46970000EB18 /* ECTextOverlay.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CDB22DEB132A46970000EB18 /* ECTextOverlay.m in Sources */ = {isa = PBXBuildFile; fileRef = CDB22DD1132A46970000EB18 /* ECTextOverlay.m */; };
-		CDB22DEC132A46970000EB18 /* ECTextOverlayLayer.h in Headers */ = {isa = PBXBuildFile; fileRef = CDB22DD2132A46970000EB18 /* ECTextOverlayLayer.h */; };
+		CDB22DEC132A46970000EB18 /* ECTextOverlayLayer.h in Headers */ = {isa = PBXBuildFile; fileRef = CDB22DD2132A46970000EB18 /* ECTextOverlayLayer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CDB22DED132A46970000EB18 /* ECTextOverlayLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = CDB22DD3132A46970000EB18 /* ECTextOverlayLayer.m */; };
-		CDB22DEE132A46970000EB18 /* ECTextOverlayStyle.h in Headers */ = {isa = PBXBuildFile; fileRef = CDB22DD4132A46970000EB18 /* ECTextOverlayStyle.h */; };
+		CDB22DEE132A46970000EB18 /* ECTextOverlayStyle.h in Headers */ = {isa = PBXBuildFile; fileRef = CDB22DD4132A46970000EB18 /* ECTextOverlayStyle.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CDB22DEF132A46970000EB18 /* ECTextOverlayStyle.m in Sources */ = {isa = PBXBuildFile; fileRef = CDB22DD5132A46970000EB18 /* ECTextOverlayStyle.m */; };
-		CDB22DF0132A46970000EB18 /* ECTextPosition.h in Headers */ = {isa = PBXBuildFile; fileRef = CDB22DD6132A46970000EB18 /* ECTextPosition.h */; };
+		CDB22DF0132A46970000EB18 /* ECTextPosition.h in Headers */ = {isa = PBXBuildFile; fileRef = CDB22DD6132A46970000EB18 /* ECTextPosition.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CDB22DF1132A46970000EB18 /* ECTextPosition.m in Sources */ = {isa = PBXBuildFile; fileRef = CDB22DD7132A46970000EB18 /* ECTextPosition.m */; };
-		CDB22DF2132A46970000EB18 /* ECTextRange.h in Headers */ = {isa = PBXBuildFile; fileRef = CDB22DD8132A46970000EB18 /* ECTextRange.h */; };
+		CDB22DF2132A46970000EB18 /* ECTextRange.h in Headers */ = {isa = PBXBuildFile; fileRef = CDB22DD8132A46970000EB18 /* ECTextRange.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CDB22DF3132A46970000EB18 /* ECTextRange.m in Sources */ = {isa = PBXBuildFile; fileRef = CDB22DD9132A46970000EB18 /* ECTextRange.m */; };
-		CDB22DF4132A46970000EB18 /* ECTextStyle.h in Headers */ = {isa = PBXBuildFile; fileRef = CDB22DDA132A46970000EB18 /* ECTextStyle.h */; };
+		CDB22DF4132A46970000EB18 /* ECTextStyle.h in Headers */ = {isa = PBXBuildFile; fileRef = CDB22DDA132A46970000EB18 /* ECTextStyle.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CDB22DF5132A46970000EB18 /* ECTextStyle.m in Sources */ = {isa = PBXBuildFile; fileRef = CDB22DDB132A46970000EB18 /* ECTextStyle.m */; };
 		CDB9F8741326334D009EEEE0 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CDB9F8731326334D009EEEE0 /* CoreText.framework */; };
 		CDB9F87713263351009EEEE0 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CDB9F87613263351009EEEE0 /* CoreGraphics.framework */; };
@@ -132,8 +132,14 @@
 		CDB9F8BA132633A4009EEEE0 /* Text */ = {
 			isa = PBXGroup;
 			children = (
+				CDB22DD6132A46970000EB18 /* ECTextPosition.h */,
+				CDB22DD7132A46970000EB18 /* ECTextPosition.m */,
+				CDB22DD8132A46970000EB18 /* ECTextRange.h */,
+				CDB22DD9132A46970000EB18 /* ECTextRange.m */,
 				CDB22DCE132A46970000EB18 /* ECTextLayer.h */,
 				CDB22DCF132A46970000EB18 /* ECTextLayer.m */,
+				CDB22DDA132A46970000EB18 /* ECTextStyle.h */,
+				CDB22DDB132A46970000EB18 /* ECTextStyle.m */,
 			);
 			name = Text;
 			sourceTree = "<group>";
@@ -206,12 +212,6 @@
 		CDDE4A3413266D0500A59671 /* Text Overlay */ = {
 			isa = PBXGroup;
 			children = (
-				CDB22DD6132A46970000EB18 /* ECTextPosition.h */,
-				CDB22DD7132A46970000EB18 /* ECTextPosition.m */,
-				CDB22DD8132A46970000EB18 /* ECTextRange.h */,
-				CDB22DD9132A46970000EB18 /* ECTextRange.m */,
-				CDB22DDA132A46970000EB18 /* ECTextStyle.h */,
-				CDB22DDB132A46970000EB18 /* ECTextStyle.m */,
 				CDB22DD0132A46970000EB18 /* ECTextOverlay.h */,
 				CDB22DD1132A46970000EB18 /* ECTextOverlay.m */,
 				CDB22DD2132A46970000EB18 /* ECTextOverlayLayer.h */,

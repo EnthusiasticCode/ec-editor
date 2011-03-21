@@ -187,7 +187,6 @@ static inline id init(ECCodeView *self)
 // hidden/empty. This way a style could apply different animations to specific instances of overlay to a range.
 - (void)addTextOverlayStyle:(ECTextOverlayStyle *)style 
                forTextRange:(ECTextRange *)range 
-                alternative:(BOOL)alt
 {
     if (!style || !range)
         return;
@@ -196,7 +195,7 @@ static inline id init(ECCodeView *self)
     
     if (!overlayLayer)
     {
-        overlayLayer = [[ECTextOverlayLayer alloc] initWithOverlayStyle:style];
+        overlayLayer = [[ECTextOverlayLayer alloc] initWithTextOverlayStyle:style];
 //        overlayLayer.needsDisplayOnBoundsChange = YES;
         [overlayLayers setObject:overlayLayer forKey:style.name];
         [textLayer addSublayer:overlayLayer];
@@ -209,8 +208,9 @@ static inline id init(ECCodeView *self)
         [rs addRect:rect];
     });
     
-    [overlayLayer setTextOverlays:[NSArray arrayWithObject:[ECTextOverlay textOverlayWithRectSet:rs alternative:NO]] animate:YES];
-    [overlayLayer setNeedsDisplay];
+    NSMutableArray *rects = [overlayLayer.overlayRectSets mutableCopy];
+    [rects addObject:rs];
+    overlayLayer.overlayRectSets = rects;
 }
 
 - (void)clearTextOverlayWithStyle:(ECTextOverlayStyle *)style
