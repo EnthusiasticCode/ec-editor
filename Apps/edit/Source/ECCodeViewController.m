@@ -42,8 +42,8 @@
     ECTextOverlayStyle *errorMark = [ECTextOverlayStyle underlineTextOverlayStyleWithName:@"Error mark" 
                                                                                     color:[UIColor redColor] 
                                                                                waveRadius:1];
-    [codeView addTextOverlayStyle:yellowMark forTextRange:[ECTextRange textRangeWithRange:(NSRange){9, 15}]];
-    [codeView addTextOverlayStyle:errorMark forTextRange:[ECTextRange textRangeWithRange:(NSRange){9, 15}]];
+    [codeView addTextOverlayWithStyle:yellowMark forTextRange:[ECTextRange textRangeWithRange:(NSRange){9, 15}]];
+    [codeView addTextOverlayWithStyle:errorMark forTextRange:[ECTextRange textRangeWithRange:(NSRange){9, 15}]];
     
     // Edit tests
     

@@ -21,8 +21,6 @@
 		CDB22DE7132A46970000EB18 /* ECSelectionHandleView.m in Sources */ = {isa = PBXBuildFile; fileRef = CDB22DCD132A46970000EB18 /* ECSelectionHandleView.m */; };
 		CDB22DE8132A46970000EB18 /* ECTextLayer.h in Headers */ = {isa = PBXBuildFile; fileRef = CDB22DCE132A46970000EB18 /* ECTextLayer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CDB22DE9132A46970000EB18 /* ECTextLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = CDB22DCF132A46970000EB18 /* ECTextLayer.m */; };
-		CDB22DEA132A46970000EB18 /* ECTextOverlay.h in Headers */ = {isa = PBXBuildFile; fileRef = CDB22DD0132A46970000EB18 /* ECTextOverlay.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		CDB22DEB132A46970000EB18 /* ECTextOverlay.m in Sources */ = {isa = PBXBuildFile; fileRef = CDB22DD1132A46970000EB18 /* ECTextOverlay.m */; };
 		CDB22DEC132A46970000EB18 /* ECTextOverlayLayer.h in Headers */ = {isa = PBXBuildFile; fileRef = CDB22DD2132A46970000EB18 /* ECTextOverlayLayer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CDB22DED132A46970000EB18 /* ECTextOverlayLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = CDB22DD3132A46970000EB18 /* ECTextOverlayLayer.m */; };
 		CDB22DEE132A46970000EB18 /* ECTextOverlayStyle.h in Headers */ = {isa = PBXBuildFile; fileRef = CDB22DD4132A46970000EB18 /* ECTextOverlayStyle.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -55,8 +53,6 @@
 		CDB22DCD132A46970000EB18 /* ECSelectionHandleView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECSelectionHandleView.m; path = Source/ECSelectionHandleView.m; sourceTree = "<group>"; };
 		CDB22DCE132A46970000EB18 /* ECTextLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECTextLayer.h; path = Source/ECTextLayer.h; sourceTree = "<group>"; };
 		CDB22DCF132A46970000EB18 /* ECTextLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECTextLayer.m; path = Source/ECTextLayer.m; sourceTree = "<group>"; };
-		CDB22DD0132A46970000EB18 /* ECTextOverlay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECTextOverlay.h; path = Source/ECTextOverlay.h; sourceTree = "<group>"; };
-		CDB22DD1132A46970000EB18 /* ECTextOverlay.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECTextOverlay.m; path = Source/ECTextOverlay.m; sourceTree = "<group>"; };
 		CDB22DD2132A46970000EB18 /* ECTextOverlayLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECTextOverlayLayer.h; path = Source/ECTextOverlayLayer.h; sourceTree = "<group>"; };
 		CDB22DD3132A46970000EB18 /* ECTextOverlayLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECTextOverlayLayer.m; path = Source/ECTextOverlayLayer.m; sourceTree = "<group>"; };
 		CDB22DD4132A46970000EB18 /* ECTextOverlayStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECTextOverlayStyle.h; path = Source/ECTextOverlayStyle.h; sourceTree = "<group>"; };
@@ -212,8 +208,6 @@
 		CDDE4A3413266D0500A59671 /* Text Overlay */ = {
 			isa = PBXGroup;
 			children = (
-				CDB22DD0132A46970000EB18 /* ECTextOverlay.h */,
-				CDB22DD1132A46970000EB18 /* ECTextOverlay.m */,
 				CDB22DD2132A46970000EB18 /* ECTextOverlayLayer.h */,
 				CDB22DD3132A46970000EB18 /* ECTextOverlayLayer.m */,
 				CDB22DD4132A46970000EB18 /* ECTextOverlayStyle.h */,
@@ -236,7 +230,6 @@
 				CDB22DE4132A46970000EB18 /* ECRectSet.h in Headers */,
 				CDB22DE6132A46970000EB18 /* ECSelectionHandleView.h in Headers */,
 				CDB22DE8132A46970000EB18 /* ECTextLayer.h in Headers */,
-				CDB22DEA132A46970000EB18 /* ECTextOverlay.h in Headers */,
 				CDB22DEC132A46970000EB18 /* ECTextOverlayLayer.h in Headers */,
 				CDB22DEE132A46970000EB18 /* ECTextOverlayStyle.h in Headers */,
 				CDB22DF0132A46970000EB18 /* ECTextPosition.h in Headers */,
@@ -299,7 +292,6 @@
 				CDB22DE5132A46970000EB18 /* ECRectSet.m in Sources */,
 				CDB22DE7132A46970000EB18 /* ECSelectionHandleView.m in Sources */,
 				CDB22DE9132A46970000EB18 /* ECTextLayer.m in Sources */,
-				CDB22DEB132A46970000EB18 /* ECTextOverlay.m in Sources */,
 				CDB22DED132A46970000EB18 /* ECTextOverlayLayer.m in Sources */,
 				CDB22DEF132A46970000EB18 /* ECTextOverlayStyle.m in Sources */,
 				CDB22DF1132A46970000EB18 /* ECTextPosition.m in Sources */,

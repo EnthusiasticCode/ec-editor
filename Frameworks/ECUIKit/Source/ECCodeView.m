@@ -185,7 +185,7 @@ static inline id init(ECCodeView *self)
 
 // TODO instead of one layer per style, layers should be created as a shared resource and used by a style if 
 // hidden/empty. This way a style could apply different animations to specific instances of overlay to a range.
-- (void)addTextOverlayStyle:(ECTextOverlayStyle *)style 
+- (void)addTextOverlayWithStyle:(ECTextOverlayStyle *)style 
                forTextRange:(ECTextRange *)range 
 {
     if (!style || !range)

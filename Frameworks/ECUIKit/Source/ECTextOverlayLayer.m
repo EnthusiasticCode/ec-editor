@@ -16,6 +16,15 @@
 @synthesize overlayStyle;
 @synthesize overlayRectSets;
 
+- (NSArray *)overlayRectSets
+{
+    if (!overlayRectSets) {
+        return [NSArray array];
+    }
+    
+    return overlayRectSets;
+}
+
 - (void)setOverlayRectSets:(NSArray *)aRectSet
 {
     [overlayRectSets release];
