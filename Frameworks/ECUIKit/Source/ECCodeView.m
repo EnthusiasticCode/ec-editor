@@ -25,7 +25,7 @@
 
 - (void)setText:(NSString *)string
 {
-    [self clearAllTextOverlays];
+    [self removeAllTextOverlays];
     [text release];
     if (!string)
         string = @"";
@@ -182,9 +182,25 @@ static inline id init(ECCodeView *self)
 #pragma mark -
 #pragma mark ECCodeView text overlay methods
 
+- (NSString *)addTextOverlayLayer:(CALayer *)layer
+{
+    NSString *key = layer.name;
+    if (!key || ![key length]) 
+    {
+        key = [NSString stringWithFormat:@"Overlay%d", [overlayLayers count]];
+    }
+    
+    [self removeTextOverlayLayerWithKey:key];
+    
+    [overlayLayers setObject:layer forKey:key];
+    [self.layer addSublayer:layer];
+    
+    return key;
+}
+
 // TODO instead of one layer per style, layers should be created as a shared resource and used by a style if 
 // hidden/empty. This way a style could apply different animations to specific instances of overlay to a range.
-- (void)addTextOverlayWithStyle:(ECTextOverlayStyle *)style 
+- (void)addTextOverlayLayerWithStyle:(ECTextOverlayStyle *)style 
                forTextRange:(ECTextRange *)range 
 {
     if (!style || !range)
@@ -219,17 +235,28 @@ static inline id init(ECCodeView *self)
     overlayLayer.overlayRectSets = rects;
 }
 
-- (void)clearTextOverlayWithStyle:(ECTextOverlayStyle *)style
+- (void)removeTextOverlayLayerWithStyle:(ECTextOverlayStyle *)style
 {
-    CALayer *overlayLayer = [overlayLayers objectForKey:style.name];
-    if (overlayLayer)
+    if (style)
     {
-        [overlayLayer removeFromSuperlayer];
-        [overlayLayers removeObjectForKey:style.name];
+        [self removeTextOverlayLayerWithKey:style.name];
     }
 }
 
-- (void)clearAllTextOverlays
+- (void)removeTextOverlayLayerWithKey:(NSString *)key;
+{
+    if (key)
+    {
+        CALayer *overlayLayer = [overlayLayers objectForKey:key];
+        if (overlayLayer)
+        {
+            [overlayLayer removeFromSuperlayer];
+            [overlayLayers removeObjectForKey:key];
+        }
+    }
+}
+
+- (void)removeAllTextOverlays
 {
     [overlayLayers enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
         [obj removeFromSuperlayer];

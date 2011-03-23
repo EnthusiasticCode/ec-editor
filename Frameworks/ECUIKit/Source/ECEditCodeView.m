@@ -716,7 +716,7 @@
     
     [self unmarkText];
     
-    [self clearAllTextOverlays];
+    [self removeAllTextOverlays];
     
     [inputDelegate textWillChange:self];
     

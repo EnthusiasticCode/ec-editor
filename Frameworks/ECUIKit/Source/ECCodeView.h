@@ -42,16 +42,19 @@
 
 #pragma mark Text overlay API
 
-// TODO implement this?
-//- (void)addTextOverlayLayer:(CALayer *)layer;
+/// Add a layer as a text overlay. The layer will be retained by the view and will be resized to match the text layer frame. The name of the layer will be used as key to access the layer from other methods such as \c removeTextOverlayLayerWithKey:. If the layer has no name a key will be generated and returned by the method.
+- (NSString *)addTextOverlayLayer:(CALayer *)layer;
 
-/// Add an overlay to the specified text range. If alternative is YES, the alternative options in the style will be used.
-- (void)addTextOverlayWithStyle:(ECTextOverlayStyle *)style forTextRange:(ECTextRange *)range;
+/// Add a text overlay layer to the specified text range. If this function is called multiple times with the same style (styles having the same name), the given range will be added to the already existing layer. The style's name will be used as key to retrieve the layer in methods as \c removeTextOverlayLayerWithKey:.
+- (void)addTextOverlayLayerWithStyle:(ECTextOverlayStyle *)style forTextRange:(ECTextRange *)range;
 
-/// Remove all text overlays with the given style.
-- (void)clearTextOverlayWithStyle:(ECTextOverlayStyle *)style;
+/// Remove text overlay layer with the given style.
+- (void)removeTextOverlayLayerWithStyle:(ECTextOverlayStyle *)style;
+
+/// Remove text overlay layer with the given key.
+- (void)removeTextOverlayLayerWithKey:(NSString *)key;
 
 /// Remove all text overlays.
-- (void)clearAllTextOverlays;
+- (void)removeAllTextOverlays;
 
 @end
