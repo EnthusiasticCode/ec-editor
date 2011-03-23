@@ -39,6 +39,7 @@
     ECTextOverlayStyle *yellowMark = [ECTextOverlayStyle highlightTextOverlayStyleWithName:@"Yellow mark" 
                                                                                      color:[[UIColor yellowColor] colorWithAlphaComponent:0.5] 
                                                                               cornerRadius:1];
+    yellowMark.belowText = YES;
     ECTextOverlayStyle *errorMark = [ECTextOverlayStyle underlineTextOverlayStyleWithName:@"Error mark" 
                                                                                     color:[UIColor redColor] 
                                                                                waveRadius:1];

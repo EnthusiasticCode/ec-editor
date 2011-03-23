@@ -61,9 +61,6 @@
 
  - (void)drawInContext:(CGContextRef)context
 {
-    CGContextSetFillColorWithColor(context, self.backgroundColor);
-    CGContextFillRect(context, self.bounds);
-
     // TODO concat custom transform?
     CGContextConcatCTM(context, (CGAffineTransform){
         self.contentsScale, 0,
@@ -84,6 +81,7 @@
 
 - (id<CAAction>)actionForKey:(NSString *)event
 {
+    // Removing every implicit animation
     return nil;
 }
 

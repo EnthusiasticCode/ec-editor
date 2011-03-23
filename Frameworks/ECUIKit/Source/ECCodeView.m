@@ -65,8 +65,7 @@ static inline id init(ECCodeView *self)
     
     // Text layer
     self->textLayer = [ECTextLayer layer];
-    self->textLayer.opaque = YES;
-    self->textLayer.backgroundColor = self.backgroundColor.CGColor;
+    self->textLayer.opaque = NO;
     self->textLayer.wrapped = YES;
     self->textLayer.needsDisplayOnBoundsChange = YES;
     [self.layer addSublayer:self->textLayer];
@@ -128,9 +127,9 @@ static inline id init(ECCodeView *self)
     textLayer.frame = textLayerFrame;
     
     // Layout text overlay layers
-//    [overlayLayers enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
-//        [(ECTextOverlayLayer *)obj setFrame:textLayerFrame];
-//    }];
+    [overlayLayers enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+        [(CALayer *)obj setFrame:textLayerFrame];
+    }];
 }
 
 #pragma mark -
@@ -198,7 +197,14 @@ static inline id init(ECCodeView *self)
         overlayLayer = [[ECTextOverlayLayer alloc] initWithTextOverlayStyle:style];
 //        overlayLayer.needsDisplayOnBoundsChange = YES;
         [overlayLayers setObject:overlayLayer forKey:style.name];
-        [textLayer addSublayer:overlayLayer];
+        if (style.isBelowText)
+        {
+            [self.layer insertSublayer:overlayLayer below:textLayer];
+        }
+        else 
+        {
+            [self.layer addSublayer:overlayLayer];
+        }
         [overlayLayer release];
     }
     

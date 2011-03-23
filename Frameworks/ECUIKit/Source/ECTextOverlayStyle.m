@@ -12,7 +12,7 @@
 
 @implementation ECTextOverlayStyle
 
-@synthesize name, color, attributes, pathBlock, strokeColor;
+@synthesize name, color, attributes, pathBlock, strokeColor, belowText;
 
 - (id)initWithName:(NSString *)aName 
              color:(UIColor *)aColor 
