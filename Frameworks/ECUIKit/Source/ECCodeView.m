@@ -132,6 +132,11 @@ static inline id init(ECCodeView *self)
     }];
 }
 
+- (CGSize)sizeThatFits:(CGSize)size
+{
+    return [textLayer sizeThatFits:size];
+}
+
 #pragma mark -
 #pragma mark ECCodeView text style methods
 

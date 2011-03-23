@@ -17,8 +17,16 @@
 // Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
 - (void)viewDidLoad {
     [super viewDidLoad];
-      
-    codeView.text = @"int main(arguments)\n{\n\treturn 0;\n}";
+
+    NSURL *fileURL = [NSURL URLWithString:@"../Documents/test.txt" relativeToURL:[[NSBundle mainBundle] bundleURL]];
+    NSString *fileContent = [NSString stringWithContentsOfURL:fileURL encoding:NSUTF8StringEncoding error:NULL];
+    if (!fileContent) 
+    {
+        fileContent = @"int main(arguments)\n{\n\treturn 0;\n}";
+    }
+
+    codeView.text = fileContent;
+    [codeView sizeToFit];
     
     // Styles test
     ECTextStyle *stringStyle = [ECTextStyle textStyleWithName:@"String" 
