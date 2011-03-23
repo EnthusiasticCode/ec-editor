@@ -181,7 +181,7 @@
             selectionLayer.actions = newActions;
 //            textLayer.actions = newActions;
             // Make in a sublayer of textlayer (on top always)
-            [self.layer insertSublayer:selectionLayer above:self->textLayer];
+            [self.layer insertSublayer:selectionLayer atIndex:0];
         }
         
         if ([selection isEmpty])
@@ -228,7 +228,11 @@
     {
         NSUInteger s = ((ECTextPosition*)selection.start).index;
         NSUInteger e = ((ECTextPosition*)selection.end).index;
-        if (e > textLength || s > textLength || e < s)
+        if (s > textLength)
+            s = textLength;
+        if (e > textLength)
+            e = textLength;
+        if (e < s)
             return;
         insertRange = (NSRange){ s, e - s };
     }
@@ -651,7 +655,10 @@
 - (UITextPosition *)closestPositionToPoint:(CGPoint)point 
                                withinRange:(UITextRange *)range
 {
-    CFIndex index = ECCTFrameGetClosestStringIndexInRangeToPoint(self->textLayer.CTFrame, ((ECTextRange *)range).CFRange, point);
+    NSUInteger textLength = [self textLength];
+    NSUInteger index = (NSUInteger)ECCTFrameGetClosestStringIndexInRangeToPoint(self->textLayer.CTFrame, ((ECTextRange *)range).CFRange, point);
+    if (index >= textLength)
+        index = textLength;
     return [[[ECTextPosition alloc] initWithIndex:(NSUInteger)index] autorelease];
 }
 
