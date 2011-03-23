@@ -189,7 +189,7 @@
             [self.layer insertSublayer:selectionLayer atIndex:0];
         }
         
-        if ([selection isEmpty])
+        if ([selection isEmpty] && [self isFirstResponder])
         {
             // Laying out as caret
             CGRect caretRect = [self caretRectForPosition:(ECTextPosition *)selection.start];
@@ -808,6 +808,7 @@
     
     [self becomeFirstResponder];
     
+    // TODO may not be the desired behaviour
     [self handleGestureTap:recognizer];
 }
 
