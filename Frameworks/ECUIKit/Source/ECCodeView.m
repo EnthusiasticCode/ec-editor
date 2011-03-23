@@ -7,6 +7,7 @@
 //
 
 #import "ECCodeView.h"
+#import "ECCoreText.h"
 #import "ECTextOverlayLayer.h"
 
 
@@ -122,7 +123,7 @@ static inline id init(ECCodeView *self)
     // Layout text layer
     CGRect textLayerFrame = self.bounds;
     textLayerFrame = CGRectInset(textLayerFrame, 10, 10);
-    textLayerFrame.size = [textLayer sizeThatFits:textLayerFrame.size];
+    textLayerFrame.size = textLayer.CTFrameSize;
     textLayerFrame = CGRectIntegral(textLayerFrame);
     textLayer.frame = textLayerFrame;
     
@@ -134,7 +135,8 @@ static inline id init(ECCodeView *self)
 
 - (CGSize)sizeThatFits:(CGSize)size
 {
-    return [textLayer sizeThatFits:size];
+    // TODO add insets etc...
+    return textLayer.CTFrameSize;
 }
 
 #pragma mark -

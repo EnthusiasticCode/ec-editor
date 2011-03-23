@@ -7,6 +7,8 @@
 //
 
 #import "ECEditCodeView.h"
+#import "ECCoreText.h"
+
 
 @interface ECEditCodeView () {
 @private

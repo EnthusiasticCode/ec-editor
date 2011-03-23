@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CD94D49B133A35120065E115 /* ECCoreText.h in Headers */ = {isa = PBXBuildFile; fileRef = CD94D499133A35120065E115 /* ECCoreText.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CD94D49C133A35120065E115 /* ECCoreText.m in Sources */ = {isa = PBXBuildFile; fileRef = CD94D49A133A35120065E115 /* ECCoreText.m */; };
 		CDB22DDC132A46970000EB18 /* ECCodeScrollView.h in Headers */ = {isa = PBXBuildFile; fileRef = CDB22DC2132A46970000EB18 /* ECCodeScrollView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CDB22DDD132A46970000EB18 /* ECCodeScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = CDB22DC3132A46970000EB18 /* ECCodeScrollView.m */; };
 		CDB22DDE132A46970000EB18 /* ECCodeView.h in Headers */ = {isa = PBXBuildFile; fileRef = CDB22DC4132A46970000EB18 /* ECCodeView.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -39,6 +41,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		CD94D499133A35120065E115 /* ECCoreText.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECCoreText.h; path = Source/ECCoreText.h; sourceTree = "<group>"; };
+		CD94D49A133A35120065E115 /* ECCoreText.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECCoreText.m; path = Source/ECCoreText.m; sourceTree = "<group>"; };
 		CDB22DC2132A46970000EB18 /* ECCodeScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECCodeScrollView.h; path = Source/ECCodeScrollView.h; sourceTree = "<group>"; };
 		CDB22DC3132A46970000EB18 /* ECCodeScrollView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECCodeScrollView.m; path = Source/ECCodeScrollView.m; sourceTree = "<group>"; };
 		CDB22DC4132A46970000EB18 /* ECCodeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECCodeView.h; path = Source/ECCodeView.h; sourceTree = "<group>"; };
@@ -101,6 +105,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		CD94D497133A34D10065E115 /* Core Text */ = {
+			isa = PBXGroup;
+			children = (
+				CD94D499133A35120065E115 /* ECCoreText.h */,
+				CD94D49A133A35120065E115 /* ECCoreText.m */,
+			);
+			name = "Core Text";
+			sourceTree = "<group>";
+		};
 		CDB9F87F13263373009EEEE0 /* CodeView */ = {
 			isa = PBXGroup;
 			children = (
@@ -152,6 +165,7 @@
 		CDCD9C681326214D007B1F15 = {
 			isa = PBXGroup;
 			children = (
+				CD94D497133A34D10065E115 /* Core Text */,
 				CDB9F8BB132633B2009EEEE0 /* Core Graphics */,
 				CDB9F8BA132633A4009EEEE0 /* Text */,
 				CDDE4A3413266D0500A59671 /* Text Overlay */,
@@ -223,6 +237,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CD94D49B133A35120065E115 /* ECCoreText.h in Headers */,
 				CDB22DDC132A46970000EB18 /* ECCodeScrollView.h in Headers */,
 				CDB22DDE132A46970000EB18 /* ECCodeView.h in Headers */,
 				CDB22DE0132A46970000EB18 /* ECEditCodeView.h in Headers */,
@@ -297,6 +312,7 @@
 				CDB22DF1132A46970000EB18 /* ECTextPosition.m in Sources */,
 				CDB22DF3132A46970000EB18 /* ECTextRange.m in Sources */,
 				CDB22DF5132A46970000EB18 /* ECTextStyle.m in Sources */,
+				CD94D49C133A35120065E115 /* ECCoreText.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
