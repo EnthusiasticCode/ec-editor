@@ -49,7 +49,7 @@
     // Edit tests
     
     // Focus recognizer
-    focusRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleGestureFocus:)];
+    focusRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:codeView action:@selector(handleGestureFocus:)];
     [codeView addGestureRecognizer:focusRecognizer];
 
 //    // Scroll view
@@ -72,12 +72,6 @@
 {
     self.codeView = nil;
     [super dealloc];
-}
-
-- (void)handleGestureFocus:(UITapGestureRecognizer *)recognizer
-{
-    if ([[recognizer view] canBecomeFirstResponder])
-        recognizer.enabled = ![[recognizer view] becomeFirstResponder];
 }
 
 - (IBAction)doSomething:(id)sender 

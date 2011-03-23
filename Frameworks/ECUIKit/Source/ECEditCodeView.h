@@ -18,9 +18,15 @@
 
 @end
 
+
 @interface ECEditCodeView : ECCodeView <UIKeyInput, UITextInputTraits, UITextInput>
 
+#pragma mark Handling Code View Behaviours
+
 @property (nonatomic, assign) id <ECEditCodeViewDelegate> delegate;
+
+/// Provide a public selector to internally manage a focus gesture. The given recognizer will be deactivated on focus and reactivated when the view resign as first responder.
+- (void)handleGestureFocus:(UITapGestureRecognizer *)recognizer;
 
 #pragma mark UITextInput properties
 

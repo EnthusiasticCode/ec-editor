@@ -17,6 +17,7 @@
     CALayer *selectionLayer;
     
     // Recognizers
+    UITapGestureRecognizer *focusRecognizer;
     UITapGestureRecognizer *tapRecognizer;
     
     // Delegate's flags
@@ -59,6 +60,8 @@
 - (void)dealloc
 {
     [selection release];
+    // TODO should be managed in a different way?
+    [focusRecognizer release];
     [super dealloc];
 }
 
@@ -121,6 +124,7 @@
     // Activate recognizers
     if (shouldBecomeFirstResponder)
     {
+        focusRecognizer.enabled = NO;
         tapRecognizer.enabled = YES;
 //        doubleTapRecognizer.enabled = YES;
 //        tapHoldRecognizer.enabled = YES;
@@ -140,6 +144,7 @@
     
     if (![self isFirstResponder])
     {
+        focusRecognizer.enabled = YES;
         tapRecognizer.enabled = NO;
 //        doubleTapRecognizer.enabled = NO;
 //        tapHoldRecognizer.enabled = NO;
@@ -795,6 +800,16 @@
 }
 
 #pragma mark Gesture handlers
+
+- (void)handleGestureFocus:(UITapGestureRecognizer *)recognizer
+{
+    [focusRecognizer release];
+    focusRecognizer = [recognizer retain];
+    
+    [self becomeFirstResponder];
+    
+    [self handleGestureTap:recognizer];
+}
 
 - (void)handleGestureTap:(UITapGestureRecognizer *)recognizer
 {

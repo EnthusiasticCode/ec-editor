@@ -7,18 +7,16 @@
 //
 
 #import <UIKit/UIKit.h>
-#import <ECUIKit/ECCodeView.h>
+#import <ECUIKit/ECEditCodeView.h>
 
 @interface ECCodeViewController : UIViewController {
 @private
-    ECCodeView *codeView;
+    ECEditCodeView *codeView;
     
     UITapGestureRecognizer *focusRecognizer;
 }
 
-@property (nonatomic, retain) IBOutlet ECCodeView *codeView;
-
-- (void)handleGestureFocus:(UITapGestureRecognizer *)recognizer;
+@property (nonatomic, retain) IBOutlet ECEditCodeView *codeView;
 
 - (IBAction)doSomething:(id)sender;
 
