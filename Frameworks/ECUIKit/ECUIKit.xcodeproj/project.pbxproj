@@ -114,6 +114,8 @@
 		B7DBA526132A2EE6004C0E1D /* ECTextRange.m in Sources */ = {isa = PBXBuildFile; fileRef = B7DBA509132A2EE6004C0E1D /* ECTextRange.m */; };
 		B7DBA527132A2EE6004C0E1D /* ECTextStyle.h in Headers */ = {isa = PBXBuildFile; fileRef = B7DBA50A132A2EE6004C0E1D /* ECTextStyle.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B7DBA528132A2EE6004C0E1D /* ECTextStyle.m in Sources */ = {isa = PBXBuildFile; fileRef = B7DBA50B132A2EE6004C0E1D /* ECTextStyle.m */; };
+		B7FCE930133E264E00280969 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7FCE92F133E264E00280969 /* CoreText.framework */; };
+		B7FCE935133E2DF900280969 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7FCE934133E2DF900280969 /* QuartzCore.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -326,6 +328,8 @@
 		B7DBA509132A2EE6004C0E1D /* ECTextRange.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECTextRange.m; sourceTree = "<group>"; };
 		B7DBA50A132A2EE6004C0E1D /* ECTextStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECTextStyle.h; sourceTree = "<group>"; };
 		B7DBA50B132A2EE6004C0E1D /* ECTextStyle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECTextStyle.m; sourceTree = "<group>"; };
+		B7FCE92F133E264E00280969 /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
+		B7FCE934133E2DF900280969 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -338,6 +342,8 @@
 				B7219075132A201C00FAD198 /* Foundation.framework in Frameworks */,
 				B7219077132A201C00FAD198 /* CoreGraphics.framework in Frameworks */,
 				B79C0264132A2149007BD5DB /* SenTestingKit.framework in Frameworks */,
+				B7FCE930133E264E00280969 /* CoreText.framework in Frameworks */,
+				B7FCE935133E2DF900280969 /* QuartzCore.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -375,6 +381,8 @@
 			isa = PBXGroup;
 			children = (
 				B721908B132A202900FAD198 /* libECUIKit.a */,
+				B7FCE934133E2DF900280969 /* QuartzCore.framework */,
+				B7FCE92F133E264E00280969 /* CoreText.framework */,
 				B79C0263132A2149007BD5DB /* SenTestingKit.framework */,
 				B7219072132A201C00FAD198 /* UIKit.framework */,
 				B7219074132A201C00FAD198 /* Foundation.framework */,
