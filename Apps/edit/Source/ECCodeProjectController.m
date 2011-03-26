@@ -110,18 +110,18 @@
                              [ECTextRange textRangeWithRange:(NSRange){23, 6}], nil]];
     
     // Overlay test
-    ECTextOverlayStyle *yellowMark = [ECTextOverlayStyle highlightTextOverlayStyleWithName:@"Yellow mark" 
-                                                                                     color:[[UIColor yellowColor] colorWithAlphaComponent:0.5] 
-                                                                          alternativeColor:nil 
-                                                                              cornerRadius:1];
-    ECTextOverlayStyle *errorMark = [ECTextOverlayStyle underlineTextOverlayStyleWithName:@"Error mark" 
-                                                                                    color:[UIColor redColor] 
-                                                                         alternativeColor:nil 
-                                                                               waveRadius:1];
-    diagnosticOverlayStyles_ = [[NSDictionary alloc] initWithObjectsAndKeys:yellowMark, @"Warning", errorMark, @"Error", nil];
-    
-    [self.codeView addTextOverlayStyle:yellowMark forTextRange:[ECTextRange textRangeWithRange:(NSRange){9, 15}] alternative:NO];
-    [self.codeView addTextOverlayStyle:errorMark forTextRange:[ECTextRange textRangeWithRange:(NSRange){9, 15}] alternative:NO];
+//    ECTextOverlayStyle *yellowMark = [ECTextOverlayStyle highlightTextOverlayStyleWithName:@"Yellow mark" 
+//                                                                                     color:[[UIColor yellowColor] colorWithAlphaComponent:0.5] 
+//                                                                          alternativeColor:nil 
+//                                                                              cornerRadius:1];
+//    ECTextOverlayStyle *errorMark = [ECTextOverlayStyle underlineTextOverlayStyleWithName:@"Error mark" 
+//                                                                                    color:[UIColor redColor] 
+//                                                                         alternativeColor:nil 
+//                                                                               waveRadius:1];
+//    diagnosticOverlayStyles_ = [[NSDictionary alloc] initWithObjectsAndKeys:yellowMark, @"Warning", errorMark, @"Error", nil];
+//    
+//    [self.codeView addTextOverlayStyle:yellowMark forTextRange:[ECTextRange textRangeWithRange:(NSRange){9, 15}] alternative:NO];
+//    [self.codeView addTextOverlayStyle:errorMark forTextRange:[ECTextRange textRangeWithRange:(NSRange){9, 15}] alternative:NO];
     
     // Edit tests
     
@@ -184,18 +184,18 @@
     {
         NSLog(@"%@", diagnostic);
         NSLog(@"%d", diagnostic.offset);
-        switch (diagnostic.severity) {
-            case ECCodeDiagnosticSeverityWarning:
-                [self.codeView addTextOverlayStyle:[diagnosticOverlayStyles_ objectForKey:@"Warning"] forTextRange:[ECTextRange textRangeWithRange:(NSRange){diagnostic.offset, diagnostic.offset + 20}] alternative:NO];
-                break;
-                
-            case ECCodeDiagnosticSeverityError:
-                [self.codeView addTextOverlayStyle:[diagnosticOverlayStyles_ objectForKey:@"Error"] forTextRange:[ECTextRange textRangeWithRange:NSMakeRange(diagnostic.offset, diagnostic.offset + 20)] alternative:NO];
-                break;
-                
-            default:
-                break;
-        }
+//        switch (diagnostic.severity) {
+//            case ECCodeDiagnosticSeverityWarning:
+//                [self.codeView addTextOverlayStyle:[diagnosticOverlayStyles_ objectForKey:@"Warning"] forTextRange:[ECTextRange textRangeWithRange:(NSRange){diagnostic.offset, diagnostic.offset + 20}] alternative:NO];
+//                break;
+//                
+//            case ECCodeDiagnosticSeverityError:
+//                [self.codeView addTextOverlayStyle:[diagnosticOverlayStyles_ objectForKey:@"Error"] forTextRange:[ECTextRange textRangeWithRange:NSMakeRange(diagnostic.offset, diagnostic.offset + 20)] alternative:NO];
+//                break;
+//                
+//            default:
+//                break;
+//        }
     }
     [self.codeView setNeedsLayout];
 }

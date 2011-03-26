@@ -102,8 +102,6 @@
 		B7DBA51A132A2EE6004C0E1D /* ECSelectionHandleView.m in Sources */ = {isa = PBXBuildFile; fileRef = B7DBA4FD132A2EE5004C0E1D /* ECSelectionHandleView.m */; };
 		B7DBA51B132A2EE6004C0E1D /* ECTextLayer.h in Headers */ = {isa = PBXBuildFile; fileRef = B7DBA4FE132A2EE6004C0E1D /* ECTextLayer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B7DBA51C132A2EE6004C0E1D /* ECTextLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = B7DBA4FF132A2EE6004C0E1D /* ECTextLayer.m */; };
-		B7DBA51D132A2EE6004C0E1D /* ECTextOverlay.h in Headers */ = {isa = PBXBuildFile; fileRef = B7DBA500132A2EE6004C0E1D /* ECTextOverlay.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B7DBA51E132A2EE6004C0E1D /* ECTextOverlay.m in Sources */ = {isa = PBXBuildFile; fileRef = B7DBA501132A2EE6004C0E1D /* ECTextOverlay.m */; };
 		B7DBA51F132A2EE6004C0E1D /* ECTextOverlayLayer.h in Headers */ = {isa = PBXBuildFile; fileRef = B7DBA502132A2EE6004C0E1D /* ECTextOverlayLayer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B7DBA520132A2EE6004C0E1D /* ECTextOverlayLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = B7DBA503132A2EE6004C0E1D /* ECTextOverlayLayer.m */; };
 		B7DBA521132A2EE6004C0E1D /* ECTextOverlayStyle.h in Headers */ = {isa = PBXBuildFile; fileRef = B7DBA504132A2EE6004C0E1D /* ECTextOverlayStyle.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -116,6 +114,8 @@
 		B7DBA528132A2EE6004C0E1D /* ECTextStyle.m in Sources */ = {isa = PBXBuildFile; fileRef = B7DBA50B132A2EE6004C0E1D /* ECTextStyle.m */; };
 		B7FCE930133E264E00280969 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7FCE92F133E264E00280969 /* CoreText.framework */; };
 		B7FCE935133E2DF900280969 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7FCE934133E2DF900280969 /* QuartzCore.framework */; };
+		B7FD9F0D133E3F7800D71C26 /* ECCoreText.h in Headers */ = {isa = PBXBuildFile; fileRef = B7FD9F0B133E3F7800D71C26 /* ECCoreText.h */; };
+		B7FD9F0E133E3F7800D71C26 /* ECCoreText.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FD9F0C133E3F7800D71C26 /* ECCoreText.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -316,8 +316,6 @@
 		B7DBA4FD132A2EE5004C0E1D /* ECSelectionHandleView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECSelectionHandleView.m; sourceTree = "<group>"; };
 		B7DBA4FE132A2EE6004C0E1D /* ECTextLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECTextLayer.h; sourceTree = "<group>"; };
 		B7DBA4FF132A2EE6004C0E1D /* ECTextLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECTextLayer.m; sourceTree = "<group>"; };
-		B7DBA500132A2EE6004C0E1D /* ECTextOverlay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECTextOverlay.h; sourceTree = "<group>"; };
-		B7DBA501132A2EE6004C0E1D /* ECTextOverlay.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECTextOverlay.m; sourceTree = "<group>"; };
 		B7DBA502132A2EE6004C0E1D /* ECTextOverlayLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECTextOverlayLayer.h; sourceTree = "<group>"; };
 		B7DBA503132A2EE6004C0E1D /* ECTextOverlayLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECTextOverlayLayer.m; sourceTree = "<group>"; };
 		B7DBA504132A2EE6004C0E1D /* ECTextOverlayStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECTextOverlayStyle.h; sourceTree = "<group>"; };
@@ -330,6 +328,8 @@
 		B7DBA50B132A2EE6004C0E1D /* ECTextStyle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECTextStyle.m; sourceTree = "<group>"; };
 		B7FCE92F133E264E00280969 /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
 		B7FCE934133E2DF900280969 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		B7FD9F0B133E3F7800D71C26 /* ECCoreText.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCoreText.h; sourceTree = "<group>"; };
+		B7FD9F0C133E3F7800D71C26 /* ECCoreText.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCoreText.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -403,6 +403,8 @@
 		B721909F132A20A200FAD198 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				B7FD9F0B133E3F7800D71C26 /* ECCoreText.h */,
+				B7FD9F0C133E3F7800D71C26 /* ECCoreText.m */,
 				B7DBA4EF132A2EE5004C0E1D /* ECCarpetViewController.h */,
 				B7DBA4F0132A2EE5004C0E1D /* ECCarpetViewController.m */,
 				B7DBA4F1132A2EE5004C0E1D /* ECCarpetViewControllerDelegate.h */,
@@ -420,8 +422,6 @@
 				B7DBA4FD132A2EE5004C0E1D /* ECSelectionHandleView.m */,
 				B7DBA4FE132A2EE6004C0E1D /* ECTextLayer.h */,
 				B7DBA4FF132A2EE6004C0E1D /* ECTextLayer.m */,
-				B7DBA500132A2EE6004C0E1D /* ECTextOverlay.h */,
-				B7DBA501132A2EE6004C0E1D /* ECTextOverlay.m */,
 				B7DBA502132A2EE6004C0E1D /* ECTextOverlayLayer.h */,
 				B7DBA503132A2EE6004C0E1D /* ECTextOverlayLayer.m */,
 				B7DBA504132A2EE6004C0E1D /* ECTextOverlayStyle.h */,
@@ -634,12 +634,12 @@
 				B7DBA517132A2EE6004C0E1D /* ECRectSet.h in Headers */,
 				B7DBA519132A2EE6004C0E1D /* ECSelectionHandleView.h in Headers */,
 				B7DBA51B132A2EE6004C0E1D /* ECTextLayer.h in Headers */,
-				B7DBA51D132A2EE6004C0E1D /* ECTextOverlay.h in Headers */,
 				B7DBA51F132A2EE6004C0E1D /* ECTextOverlayLayer.h in Headers */,
 				B7DBA521132A2EE6004C0E1D /* ECTextOverlayStyle.h in Headers */,
 				B7DBA523132A2EE6004C0E1D /* ECTextPosition.h in Headers */,
 				B7DBA525132A2EE6004C0E1D /* ECTextRange.h in Headers */,
 				B7DBA527132A2EE6004C0E1D /* ECTextStyle.h in Headers */,
+				B7FD9F0D133E3F7800D71C26 /* ECCoreText.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -820,12 +820,12 @@
 				B7DBA518132A2EE6004C0E1D /* ECRectSet.m in Sources */,
 				B7DBA51A132A2EE6004C0E1D /* ECSelectionHandleView.m in Sources */,
 				B7DBA51C132A2EE6004C0E1D /* ECTextLayer.m in Sources */,
-				B7DBA51E132A2EE6004C0E1D /* ECTextOverlay.m in Sources */,
 				B7DBA520132A2EE6004C0E1D /* ECTextOverlayLayer.m in Sources */,
 				B7DBA522132A2EE6004C0E1D /* ECTextOverlayStyle.m in Sources */,
 				B7DBA524132A2EE6004C0E1D /* ECTextPosition.m in Sources */,
 				B7DBA526132A2EE6004C0E1D /* ECTextRange.m in Sources */,
 				B7DBA528132A2EE6004C0E1D /* ECTextStyle.m in Sources */,
+				B7FD9F0E133E3F7800D71C26 /* ECCoreText.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

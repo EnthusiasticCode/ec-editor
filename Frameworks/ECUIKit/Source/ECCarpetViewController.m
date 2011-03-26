@@ -286,7 +286,7 @@
             // TODO use this point to move main controller's view continuously
             CGPoint trans = [(UIPanGestureRecognizer*)sender translationInView:self.view];
             ECCarpetViewControllerMove dir;
-            if (ABS(trans.x) > ABS(trans.y))
+            if (abs(trans.x) > abs(trans.y))
             {
                 if (direction != ECCarpetHorizontal)
                     return;

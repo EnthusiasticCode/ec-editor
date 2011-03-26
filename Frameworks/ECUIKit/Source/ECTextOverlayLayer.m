@@ -14,11 +14,28 @@
 #pragma mark Properties
 
 @synthesize overlayStyle;
+@synthesize overlayRectSets;
+
+- (NSArray *)overlayRectSets
+{
+    if (!overlayRectSets) {
+        return [NSArray array];
+    }
+    
+    return overlayRectSets;
+}
+
+- (void)setOverlayRectSets:(NSArray *)aRectSet
+{
+    [overlayRectSets release];
+    overlayRectSets = [aRectSet retain];
+    [self setNeedsDisplay];
+}
 
 #pragma mark -
 #pragma mark Public methods
 
-- (id)initWithOverlayStyle:(ECTextOverlayStyle *)aStyle
+- (id)initWithTextOverlayStyle:(ECTextOverlayStyle *)aStyle
 {
     if ((self = [super init]))
     {
@@ -27,23 +44,13 @@
     return self;
 }
 
-- (void)setTextOverlays:(NSArray *)rects animate:(BOOL)doAnimation
-{
-    if (doAnimation)
-        self.opacity = 0;
-    [overlayRects release];
-    overlayRects = [rects retain];
-    [self setNeedsDisplay];
-    if (doAnimation)
-        self.opacity = 1;
-}
-
 #pragma mark -
 #pragma mark CALayer methods
 
 - (void)dealloc
 {
-    [overlayRects release];
+    [overlayStyle release];
+    [overlayRectSets release];
     [super dealloc];
 }
 
@@ -52,40 +59,34 @@
     return YES;
 }
 
+- (id<CAAction>)actionForKey:(NSString *)event
+{
+    // TODO return style one.
+    return [super actionForKey:event];
+}
+
 - (void)drawInContext:(CGContextRef)context
 {
-    if (overlayStyle)
+    if (overlayStyle && overlayRectSets)
     {
-//        CGContextConcatCTM(context, (CGAffineTransform){
-//            self.contentsScale, 0,
-//            0, -self.contentsScale,
-//            0, self.bounds.size.height
-//        });
-        
+        // TODO move drawing in style?
         CGMutablePathRef path;
-        for (ECTextOverlay *overlay in overlayRects) {
+        for (ECRectSet *rects in overlayRectSets) {
             // Get overlay path
             path = CGPathCreateMutable();
-            if (overlay.rectSet)
-            {
-                [overlayStyle buildOverlayPath:path forRectSet:overlay.rectSet alternative:overlay.isAlternative];
-            }
-            else
-            {
-                [overlayStyle buildOverlayPath:path forRect:overlay.rect alternative:overlay.isAlternative];
-            }
+            [overlayStyle buildOverlayPath:path forRectSet:rects];
             // Fill
-            if (overlayStyle.shouldFill)
+            if (overlayStyle.color)
             {
                 CGContextAddPath(context, path);
-                CGContextSetFillColorWithColor(context, overlay.isAlternative ? overlayStyle.alternativeColor.CGColor : overlayStyle.color.CGColor);
+                CGContextSetFillColorWithColor(context, overlayStyle.color.CGColor);
                 CGContextFillPath(context);
             }
             // Stroke
-            if (overlayStyle.shouldStroke)
+            if (overlayStyle.strokeColor)
             {
                 CGContextAddPath(context, path);
-                CGContextSetStrokeColorWithColor(context, overlay.isAlternative ? overlayStyle.alternativeStrokeColor.CGColor : overlayStyle.strokeColor.CGColor);
+                CGContextSetStrokeColorWithColor(context, overlayStyle.strokeColor.CGColor);
                 CGContextStrokePath(context);
             }
             CGPathRelease(path);
