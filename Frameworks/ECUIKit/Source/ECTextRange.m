@@ -27,11 +27,13 @@
 
 - (id)initWithStart:(ECTextPosition*)aStart end:(ECTextPosition*)aEnd
 {
-    [super init];
-    start = [aStart retain];
-    end = [aEnd retain];
     assert([aStart isKindOfClass:[ECTextPosition class]]);
     assert([aEnd isKindOfClass:[ECTextPosition class]]);
+    if((self = [super init]))
+    {
+        start = [aStart retain];
+        end = [aEnd retain];
+    }
     return self;
 }
 
@@ -41,8 +43,11 @@
     ECTextPosition *en;
     
     if (characterRange.length == 0)
+    {
         en = [st retain];
-    else {
+    }
+    else 
+    {
         en = [[ECTextPosition alloc] initWithIndex:(characterRange.location + characterRange.length)];
     }
     

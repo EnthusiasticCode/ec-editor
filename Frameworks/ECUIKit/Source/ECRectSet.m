@@ -73,6 +73,11 @@
     }
 }
 
+- (void)addRectsToContext:(CGContextRef)context
+{
+    CGContextAddRects(context, buffer, count);
+}
+
 - (id)copyWithZone:(NSZone *)zone
 {
     if (NSShouldRetainWithZone(self, zone))
@@ -149,6 +154,23 @@
     }
     buffer[count] = rect;
     count = newCount;
+}
+
+- (void)addRects:(ECRectSet *)rects
+{
+    if (!rects || !rects.count)
+        return;
+
+    if (capacity - count < rects.count) 
+    {
+        capacity = count + rects.count;
+        buffer = (CGRect *)realloc(buffer, capacity * sizeof(CGRect));
+    }
+
+    memcpy(&buffer[count], rects->buffer, rects.count * sizeof(CGRect));
+    count += rects.count;
+    
+    // TODO calculate bounds?
 }
 
 - (void)removeRect:(CGRect)rect

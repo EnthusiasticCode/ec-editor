@@ -12,11 +12,10 @@
 
 @implementation ECTextOverlayStyle
 
-@synthesize name, color, alternativeColor, attributes, pathBlock, shouldStroke, strokeColor, alternativeStrokeColor, shouldFill;
+@synthesize name, color, attributes, pathBlock, strokeColor, belowText;
 
 - (id)initWithName:(NSString *)aName 
              color:(UIColor *)aColor 
-  alternativeColor:(UIColor *)anAlternative 
         attributes:(NSDictionary *)anyAttrib 
          pathBlock:(BuildOverlayPathForRectBlock)aBlock
 {
@@ -24,33 +23,29 @@
     {
         self.name = aName;
         self.color = aColor;
-        self.alternativeColor = anAlternative;
         self.attributes = anyAttrib;
         self.pathBlock = aBlock;
-        self.shouldFill = YES;
     }
     return self;
 }
 
 - (void)buildOverlayPath:(CGMutablePathRef)path 
-                 forRect:(CGRect)rect 
-             alternative:(BOOL)isAlternative
+                 forRect:(CGRect)rect
 {
     if (!pathBlock || !path || CGRectIsEmpty(rect))
         return;
     
-    pathBlock(path, [ECRectSet rectSetWithRect:rect], isAlternative, attributes);
+    pathBlock(path, [ECRectSet rectSetWithRect:rect], attributes);
 }
 
 - (void)buildOverlayPath:(CGMutablePathRef)path 
               forRectSet:(ECRectSet *)rect 
-             alternative:(BOOL)isAlternative
 {
     NSUInteger count = rect.count;
     if (!pathBlock || !path || count == 0)
         return;
     
-    pathBlock(path, rect, isAlternative, attributes);
+    pathBlock(path, rect, attributes);
 }
 
 #pragma mark -
@@ -58,11 +53,10 @@
 
 + (id)highlightTextOverlayStyleWithName:(NSString *)name 
                                   color:(UIColor *)color 
-                       alternativeColor:(UIColor *)alternative 
                            cornerRadius:(CGFloat)radius
 {
     NSDictionary *attrib = [NSDictionary dictionaryWithObject:[NSNumber numberWithFloat:radius] forKey:@"cornerRadius"];
-    return [[[self alloc] initWithName:name color:color alternativeColor:alternative attributes:attrib pathBlock:^(CGMutablePathRef retPath, ECRectSet *rects, BOOL alt, NSDictionary *attr) {
+    return [[[self alloc] initWithName:name color:color attributes:attrib pathBlock:^(CGMutablePathRef retPath, ECRectSet *rects, NSDictionary *attr) {
         [rects enumerateRectsUsingBlock:^(CGRect rect, BOOL *stop) {
             if (radius == 0)
             {
@@ -102,12 +96,11 @@
 
 + (id)underlineTextOverlayStyleWithName:(NSString *)name 
                                   color:(UIColor *)color 
-                       alternativeColor:(UIColor *)alternative 
                              waveRadius:(CGFloat)wave;
 {
     NSDictionary *attrib = [NSDictionary dictionaryWithObjectsAndKeys:
                             [NSNumber numberWithFloat:wave], @"lineWaveRadius", nil];
-    ECTextOverlayStyle *result = [[self alloc] initWithName:name color:nil alternativeColor:nil attributes:attrib pathBlock:^(CGMutablePathRef retPath, ECRectSet *rects, BOOL alt, NSDictionary *attr) {
+    ECTextOverlayStyle *result = [[self alloc] initWithName:name color:nil attributes:attrib pathBlock:^(CGMutablePathRef retPath, ECRectSet *rects, NSDictionary *attr) {
         [rects enumerateRectsUsingBlock:^(CGRect rect, BOOL *stop) {
             CGFloat waveRadius = [[attr objectForKey:@"lineWaveRadius"] floatValue];
             CGFloat liney = rect.origin.y + rect.size.height;
@@ -127,10 +120,7 @@
             }
         }];
     }];
-    result.shouldFill = NO;
-    result.shouldStroke = YES;
     result.strokeColor = color;
-    result.alternativeStrokeColor = alternative;
     return [result autorelease];
 }
 @end

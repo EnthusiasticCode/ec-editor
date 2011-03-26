@@ -7,6 +7,7 @@
 //
 
 #import "ECCodeView.h"
+#import "ECCoreText.h"
 #import "ECTextOverlayLayer.h"
 
 
@@ -25,7 +26,7 @@
 
 - (void)setText:(NSString *)string
 {
-    [self clearAllTextOverlays];
+    [self removeAllTextOverlays];
     [text release];
     if (!string)
         string = @"";
@@ -65,8 +66,7 @@ static inline id init(ECCodeView *self)
     
     // Text layer
     self->textLayer = [ECTextLayer layer];
-    self->textLayer.opaque = YES;
-    self->textLayer.backgroundColor = self.backgroundColor.CGColor;
+    self->textLayer.opaque = NO;
     self->textLayer.wrapped = YES;
     self->textLayer.needsDisplayOnBoundsChange = YES;
     [self.layer addSublayer:self->textLayer];
@@ -123,14 +123,20 @@ static inline id init(ECCodeView *self)
     // Layout text layer
     CGRect textLayerFrame = self.bounds;
     textLayerFrame = CGRectInset(textLayerFrame, 10, 10);
-    textLayerFrame.size = [textLayer sizeThatFits:textLayerFrame.size];
+    textLayerFrame.size = textLayer.CTFrameSize;
     textLayerFrame = CGRectIntegral(textLayerFrame);
     textLayer.frame = textLayerFrame;
     
     // Layout text overlay layers
-//    [overlayLayers enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
-//        [(ECTextOverlayLayer *)obj setFrame:textLayerFrame];
-//    }];
+    [overlayLayers enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+        [(CALayer *)obj setFrame:textLayerFrame];
+    }];
+}
+
+- (CGSize)sizeThatFits:(CGSize)size
+{
+    // TODO add insets etc...
+    return textLayer.CTFrameSize;
 }
 
 #pragma mark -
@@ -183,11 +189,26 @@ static inline id init(ECCodeView *self)
 #pragma mark -
 #pragma mark ECCodeView text overlay methods
 
+- (NSString *)addTextOverlayLayer:(CALayer *)layer
+{
+    NSString *key = layer.name;
+    if (!key || ![key length]) 
+    {
+        key = [NSString stringWithFormat:@"Overlay%d", [overlayLayers count]];
+    }
+    
+    [self removeTextOverlayLayerWithKey:key];
+    
+    [overlayLayers setObject:layer forKey:key];
+    [self.layer addSublayer:layer];
+    
+    return key;
+}
+
 // TODO instead of one layer per style, layers should be created as a shared resource and used by a style if 
 // hidden/empty. This way a style could apply different animations to specific instances of overlay to a range.
-- (void)addTextOverlayStyle:(ECTextOverlayStyle *)style 
+- (void)addTextOverlayLayerWithStyle:(ECTextOverlayStyle *)style 
                forTextRange:(ECTextRange *)range 
-                alternative:(BOOL)alt
 {
     if (!style || !range)
         return;
@@ -196,10 +217,17 @@ static inline id init(ECCodeView *self)
     
     if (!overlayLayer)
     {
-        overlayLayer = [[ECTextOverlayLayer alloc] initWithOverlayStyle:style];
+        overlayLayer = [[ECTextOverlayLayer alloc] initWithTextOverlayStyle:style];
 //        overlayLayer.needsDisplayOnBoundsChange = YES;
         [overlayLayers setObject:overlayLayer forKey:style.name];
-        [textLayer addSublayer:overlayLayer];
+        if (style.isBelowText)
+        {
+            [self.layer insertSublayer:overlayLayer below:textLayer];
+        }
+        else 
+        {
+            [self.layer addSublayer:overlayLayer];
+        }
         [overlayLayer release];
     }
     
@@ -209,21 +237,33 @@ static inline id init(ECCodeView *self)
         [rs addRect:rect];
     });
     
-    [overlayLayer setTextOverlays:[NSArray arrayWithObject:[ECTextOverlay textOverlayWithRectSet:rs alternative:NO]] animate:YES];
-    [overlayLayer setNeedsDisplay];
+    NSMutableArray *rects = [overlayLayer.overlayRectSets mutableCopy];
+    [rects addObject:rs];
+    overlayLayer.overlayRectSets = rects;
 }
 
-- (void)clearTextOverlayWithStyle:(ECTextOverlayStyle *)style
+- (void)removeTextOverlayLayerWithStyle:(ECTextOverlayStyle *)style
 {
-    CALayer *overlayLayer = [overlayLayers objectForKey:style.name];
-    if (overlayLayer)
+    if (style)
     {
-        [overlayLayer removeFromSuperlayer];
-        [overlayLayers removeObjectForKey:style.name];
+        [self removeTextOverlayLayerWithKey:style.name];
     }
 }
 
-- (void)clearAllTextOverlays
+- (void)removeTextOverlayLayerWithKey:(NSString *)key;
+{
+    if (key)
+    {
+        CALayer *overlayLayer = [overlayLayers objectForKey:key];
+        if (overlayLayer)
+        {
+            [overlayLayer removeFromSuperlayer];
+            [overlayLayers removeObjectForKey:key];
+        }
+    }
+}
+
+- (void)removeAllTextOverlays
 {
     [overlayLayers enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
         [obj removeFromSuperlayer];

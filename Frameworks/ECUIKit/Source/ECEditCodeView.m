@@ -7,6 +7,8 @@
 //
 
 #import "ECEditCodeView.h"
+#import "ECCoreText.h"
+
 
 @interface ECEditCodeView () {
 @private
@@ -17,6 +19,7 @@
     CALayer *selectionLayer;
     
     // Recognizers
+    UITapGestureRecognizer *focusRecognizer;
     UITapGestureRecognizer *tapRecognizer;
     
     // Delegate's flags
@@ -59,6 +62,8 @@
 - (void)dealloc
 {
     [selection release];
+    // TODO should be managed in a different way?
+    [focusRecognizer release];
     [super dealloc];
 }
 
@@ -121,6 +126,7 @@
     // Activate recognizers
     if (shouldBecomeFirstResponder)
     {
+        focusRecognizer.enabled = NO;
         tapRecognizer.enabled = YES;
 //        doubleTapRecognizer.enabled = YES;
 //        tapHoldRecognizer.enabled = YES;
@@ -140,6 +146,7 @@
     
     if (![self isFirstResponder])
     {
+        focusRecognizer.enabled = YES;
         tapRecognizer.enabled = NO;
 //        doubleTapRecognizer.enabled = NO;
 //        tapHoldRecognizer.enabled = NO;
@@ -181,10 +188,10 @@
             selectionLayer.actions = newActions;
 //            textLayer.actions = newActions;
             // Make in a sublayer of textlayer (on top always)
-            [self.layer insertSublayer:selectionLayer above:self->textLayer];
+            [self.layer insertSublayer:selectionLayer atIndex:0];
         }
         
-        if ([selection isEmpty])
+        if ([selection isEmpty] && [self isFirstResponder])
         {
             // Laying out as caret
             CGRect caretRect = [self caretRectForPosition:(ECTextPosition *)selection.start];
@@ -228,7 +235,11 @@
     {
         NSUInteger s = ((ECTextPosition*)selection.start).index;
         NSUInteger e = ((ECTextPosition*)selection.end).index;
-        if (e > textLength || s > textLength || e < s)
+        if (s > textLength)
+            s = textLength;
+        if (e > textLength)
+            e = textLength;
+        if (e < s)
             return;
         insertRange = (NSRange){ s, e - s };
     }
@@ -651,7 +662,10 @@
 - (UITextPosition *)closestPositionToPoint:(CGPoint)point 
                                withinRange:(UITextRange *)range
 {
-    CFIndex index = ECCTFrameGetClosestStringIndexInRangeToPoint(self->textLayer.CTFrame, ((ECTextRange *)range).CFRange, point);
+    NSUInteger textLength = [self textLength];
+    NSUInteger index = (NSUInteger)ECCTFrameGetClosestStringIndexInRangeToPoint(self->textLayer.CTFrame, ((ECTextRange *)range).CFRange, point);
+    if (index >= textLength)
+        index = textLength;
     return [[[ECTextPosition alloc] initWithIndex:(NSUInteger)index] autorelease];
 }
 
@@ -716,7 +730,7 @@
     
     [self unmarkText];
     
-    [self clearAllTextOverlays];
+    [self removeAllTextOverlays];
     
     [inputDelegate textWillChange:self];
     
@@ -788,6 +802,17 @@
 }
 
 #pragma mark Gesture handlers
+
+- (void)handleGestureFocus:(UITapGestureRecognizer *)recognizer
+{
+    [focusRecognizer release];
+    focusRecognizer = [recognizer retain];
+    
+    [self becomeFirstResponder];
+    
+    // TODO may not be the desired behaviour
+    [self handleGestureTap:recognizer];
+}
 
 - (void)handleGestureTap:(UITapGestureRecognizer *)recognizer
 {
