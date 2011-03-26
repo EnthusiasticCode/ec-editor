@@ -7,6 +7,8 @@
 //
 
 #import "ECTextLayer.h"
+#import "ECCoreText.h"
+
 
 @interface ECTextLayer () {
 @private
@@ -42,8 +44,11 @@
 
 - (void)setBounds:(CGRect)bounds
 {
-    CTFrameInvalid = YES;
-    [super setBounds:bounds];
+    if (!CGRectEqualToRect(self.bounds, bounds)) 
+    {
+        CTFrameInvalid = YES;
+        [super setBounds:bounds];
+    }
 }
 
 - (BOOL)isGeometryFlipped
@@ -61,9 +66,6 @@
 
  - (void)drawInContext:(CGContextRef)context
 {
-    CGContextSetFillColorWithColor(context, self.backgroundColor);
-    CGContextFillRect(context, self.bounds);
-
     // TODO concat custom transform?
     CGContextConcatCTM(context, (CGAffineTransform){
         self.contentsScale, 0,
@@ -84,6 +86,7 @@
 
 - (id<CAAction>)actionForKey:(NSString *)event
 {
+    // Removing every implicit animation
     return nil;
 }
 
@@ -106,6 +109,9 @@
     size = CTFramesetterSuggestFrameSizeWithConstraints(self.CTFrameSetter, (CFRange){0, 0}, NULL, size, &fitRange);
     // TODO Fix this fix
     size.height += 2;
+    
+    size.width = floorf(size.width);
+    size.height = floorf(size.height);
     return size;
 }
 
