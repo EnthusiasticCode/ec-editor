@@ -29,3 +29,6 @@ CFRange ECCTFrameGetLineRangeOfStringRange(CTFrameRef frame, CFRange stringRange
 
 /// Search for the string index within the given range in the frame's lines that is closest to the provided point. The should consider to have origin at the frame's origins. If an empty string range is specified, the whole frame is searched.
 CFIndex ECCTFrameGetClosestStringIndexInRangeToPoint(CTFrameRef frame, CFRange stringRange, CGPoint point);
+
+/// Calculate the actual used rectangle that fits the given frame.
+CGRect ECCTFrameGetUsedRect(CTFrameRef frame, _Bool constrainedWidth);

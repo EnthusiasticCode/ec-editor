@@ -33,11 +33,11 @@
     return CTFrameGetLines(self.CTFrame);
 }
 
-- (void)setString:(NSAttributedString *)aString
-{
-    string = aString;
-    [self setNeedsCTFrameRendering];
-}
+//- (void)setString:(NSAttributedString *)aString
+//{
+//    string = aString;
+//    [self setNeedsCTFrameRendering];
+//}
 
 
 #pragma mark CALayer methods
@@ -46,8 +46,8 @@
 {
     if (!CGRectEqualToRect(self.bounds, bounds)) 
     {
-        CTFrameInvalid = YES;
         [super setBounds:bounds];
+        CTFrameInvalid = YES;
     }
 }
 
