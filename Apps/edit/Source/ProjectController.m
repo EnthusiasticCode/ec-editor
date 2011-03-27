@@ -1,13 +1,13 @@
 //
-//  ECCodeProjectController.m
+//  ProjectController.m
 //  edit
 //
 //  Created by Uri Baghin on 1/21/11.
 //  Copyright 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import "ECCodeProjectController.h"
-#import "ECCodeProject.h"
+#import "ProjectController.h"
+#import "Project.h"
 #import <ECUIKit/ECCodeView.h>
 #import <ECCodeIndexing/ECCodeIndex.h>
 #import <ECCodeIndexing/ECCodeUnit.h>
@@ -17,7 +17,7 @@
 #import <ECCodeIndexing/ECCodeCursor.h>
 
 
-@implementation ECCodeProjectController
+@implementation ProjectController
 
 @synthesize project = _project;
 @synthesize codeView = _codeView;
@@ -141,7 +141,7 @@
 
 - (void)loadProjectFromRootDirectory:(NSURL *)rootDirectory
 {
-    self.project = [ECCodeProject projectWithRootDirectory:rootDirectory];
+    self.project = [Project projectWithRootDirectory:rootDirectory];
     self.codeIndexer = [[[ECCodeIndex alloc] init] autorelease];
 }
 

@@ -1,5 +1,5 @@
 //
-//  ECCodeProjectController.h
+//  ProjectController.h
 //  edit
 //
 //  Created by Uri Baghin on 1/21/11.
@@ -9,16 +9,16 @@
 #import <UIKit/UIKit.h>
 @class ECCodeView;
 @class ECCodeIndex;
-@class ECCodeProject;
+@class Project;
 
-@interface ECCodeProjectController : UISplitViewController <UITableViewDataSource, UITableViewDelegate>
+@interface ProjectController : UISplitViewController <UITableViewDataSource, UITableViewDelegate>
 {
 @private
     NSDictionary *textStyles_;
     NSDictionary *diagnosticOverlayStyles_;
     UITapGestureRecognizer *focusRecognizer;
 }
-@property (nonatomic, retain) ECCodeProject *project;
+@property (nonatomic, retain) Project *project;
 @property (nonatomic, retain) NSFileManager *fileManager;
 @property (nonatomic, retain) IBOutlet ECCodeView *codeView;
 @property (nonatomic, retain) ECCodeIndex *codeIndexer;

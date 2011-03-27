@@ -8,8 +8,8 @@
 
 #import "editAppDelegate.h"
 
-#import "ECCodeProject.h"
-#import "ECCodeProjectController.h"
+#import "Project.h"
+#import "ProjectController.h"
 #import <ECCodeIndexing/ECCodeIndex.h>
 
 @implementation editAppDelegate
@@ -19,9 +19,9 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    ECCodeProjectController *rootController;
-    [[UINib nibWithNibName:@"CodeProjectController" bundle:nil] instantiateWithOwner:self.window options:nil];
-    rootController = (ECCodeProjectController *) self.window.rootViewController;
+    ProjectController *rootController;
+    [[UINib nibWithNibName:@"ProjectController" bundle:nil] instantiateWithOwner:self.window options:nil];
+    rootController = (ProjectController *) self.window.rootViewController;
     [rootController loadProjectFromRootDirectory:[NSURL fileURLWithPath:[[self applicationDocumentsDirectory] stringByAppendingPathComponent:@"edit/"]]];    
     [self.window addSubview:rootController.view];
     [self.window makeKeyAndVisible];

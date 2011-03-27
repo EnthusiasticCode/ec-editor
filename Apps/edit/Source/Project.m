@@ -1,17 +1,17 @@
 //
-//  ECCodeProject.m
+//  Project.m
 //  edit
 //
 //  Created by Uri Baghin on 1/21/11.
 //  Copyright 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import "ECCodeProject.h"
+#import "Project.h"
 #import <ECFoundation/NSURL+ECFoundation.h>
 #import <CoreData/CoreData.h>
 
 
-@implementation ECCodeProject
+@implementation Project
 
 
 @synthesize managedObjectModel;

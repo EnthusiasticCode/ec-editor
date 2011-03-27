@@ -85,9 +85,6 @@
 		B721918B132A20F400FAD198 /* NSValue+KiwiAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = B721914A132A20F400FAD198 /* NSValue+KiwiAdditions.m */; };
 		B79C0264132A2149007BD5DB /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B79C0263132A2149007BD5DB /* SenTestingKit.framework */; };
 		B79C0266132A2172007BD5DB /* libECUIKit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B721908B132A202900FAD198 /* libECUIKit.a */; };
-		B7DBA50C132A2EE6004C0E1D /* ECCarpetViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = B7DBA4EF132A2EE5004C0E1D /* ECCarpetViewController.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B7DBA50D132A2EE6004C0E1D /* ECCarpetViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B7DBA4F0132A2EE5004C0E1D /* ECCarpetViewController.m */; };
-		B7DBA50E132A2EE6004C0E1D /* ECCarpetViewControllerDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = B7DBA4F1132A2EE5004C0E1D /* ECCarpetViewControllerDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B7DBA50F132A2EE6004C0E1D /* ECCodeScrollView.h in Headers */ = {isa = PBXBuildFile; fileRef = B7DBA4F2132A2EE5004C0E1D /* ECCodeScrollView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B7DBA510132A2EE6004C0E1D /* ECCodeScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = B7DBA4F3132A2EE5004C0E1D /* ECCodeScrollView.m */; };
 		B7DBA511132A2EE6004C0E1D /* ECCodeView.h in Headers */ = {isa = PBXBuildFile; fileRef = B7DBA4F4132A2EE5004C0E1D /* ECCodeView.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -299,9 +296,6 @@
 		B7219149132A20F400FAD198 /* NSValue+KiwiAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSValue+KiwiAdditions.h"; sourceTree = "<group>"; };
 		B721914A132A20F400FAD198 /* NSValue+KiwiAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSValue+KiwiAdditions.m"; sourceTree = "<group>"; };
 		B79C0263132A2149007BD5DB /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Developer/Library/Frameworks/SenTestingKit.framework; sourceTree = SDKROOT; };
-		B7DBA4EF132A2EE5004C0E1D /* ECCarpetViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCarpetViewController.h; sourceTree = "<group>"; };
-		B7DBA4F0132A2EE5004C0E1D /* ECCarpetViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCarpetViewController.m; sourceTree = "<group>"; };
-		B7DBA4F1132A2EE5004C0E1D /* ECCarpetViewControllerDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCarpetViewControllerDelegate.h; sourceTree = "<group>"; };
 		B7DBA4F2132A2EE5004C0E1D /* ECCodeScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeScrollView.h; sourceTree = "<group>"; };
 		B7DBA4F3132A2EE5004C0E1D /* ECCodeScrollView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeScrollView.m; sourceTree = "<group>"; };
 		B7DBA4F4132A2EE5004C0E1D /* ECCodeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeView.h; sourceTree = "<group>"; };
@@ -405,9 +399,6 @@
 			children = (
 				B7FD9F0B133E3F7800D71C26 /* ECCoreText.h */,
 				B7FD9F0C133E3F7800D71C26 /* ECCoreText.m */,
-				B7DBA4EF132A2EE5004C0E1D /* ECCarpetViewController.h */,
-				B7DBA4F0132A2EE5004C0E1D /* ECCarpetViewController.m */,
-				B7DBA4F1132A2EE5004C0E1D /* ECCarpetViewControllerDelegate.h */,
 				B7DBA4F2132A2EE5004C0E1D /* ECCodeScrollView.h */,
 				B7DBA4F3132A2EE5004C0E1D /* ECCodeScrollView.m */,
 				B7DBA4F4132A2EE5004C0E1D /* ECCodeView.h */,
@@ -625,8 +616,6 @@
 				B72190A6132A20A200FAD198 /* ECDocument.h in Headers */,
 				B72190A8132A20A200FAD198 /* ECPersistentDocument.h in Headers */,
 				B72190AA132A20A200FAD198 /* ECTextDocument.h in Headers */,
-				B7DBA50C132A2EE6004C0E1D /* ECCarpetViewController.h in Headers */,
-				B7DBA50E132A2EE6004C0E1D /* ECCarpetViewControllerDelegate.h in Headers */,
 				B7DBA50F132A2EE6004C0E1D /* ECCodeScrollView.h in Headers */,
 				B7DBA511132A2EE6004C0E1D /* ECCodeView.h in Headers */,
 				B7DBA513132A2EE6004C0E1D /* ECEditCodeView.h in Headers */,
@@ -812,7 +801,6 @@
 				B72190A7132A20A200FAD198 /* ECDocument.m in Sources */,
 				B72190A9132A20A200FAD198 /* ECPersistentDocument.m in Sources */,
 				B72190AB132A20A200FAD198 /* ECTextDocument.m in Sources */,
-				B7DBA50D132A2EE6004C0E1D /* ECCarpetViewController.m in Sources */,
 				B7DBA510132A2EE6004C0E1D /* ECCodeScrollView.m in Sources */,
 				B7DBA512132A2EE6004C0E1D /* ECCodeView.m in Sources */,
 				B7DBA514132A2EE6004C0E1D /* ECEditCodeView.m in Sources */,

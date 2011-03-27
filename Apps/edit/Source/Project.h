@@ -1,5 +1,5 @@
 //
-//  ECCodeProject.h
+//  Project.h
 //  edit
 //
 //  Created by Uri Baghin on 1/21/11.
@@ -12,7 +12,7 @@
 @class NSPersistentStoreCoordinator;
 
 
-@interface ECCodeProject : NSObject
+@interface Project : NSObject
 @property (nonatomic, readonly) NSManagedObjectContext *managedObjectContext;
 @property (nonatomic, readonly) NSManagedObjectModel *managedObjectModel;
 @property (nonatomic, readonly) NSPersistentStoreCoordinator *persistentStoreCoordinator;
