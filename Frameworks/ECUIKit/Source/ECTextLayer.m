@@ -11,8 +11,7 @@
 
 
 @interface ECTextLayer () {
-@private
-    BOOL CTFrameInvalid;
+    BOOL framesetterInvalid;
 }
 
 @property (nonatomic, readonly) CTFramesetterRef CTFrameSetter;
@@ -27,28 +26,28 @@
 
 @synthesize string;
 @synthesize wrapped;
+@synthesize CTFrameSetter;
+@synthesize CTFrame;
+@synthesize CTFrameRect;
 
-- (CFArrayRef)CTLines
+- (CFArrayRef)CTFrameLines
 {
     return CTFrameGetLines(self.CTFrame);
 }
 
-//- (void)setString:(NSAttributedString *)aString
-//{
-//    string = aString;
-//    [self setNeedsCTFrameRendering];
-//}
+- (void)setString:(NSAttributedString *)aString
+{
+    string = aString;
+    framesetterInvalid = YES;
+}
 
 
 #pragma mark CALayer methods
 
 - (void)setBounds:(CGRect)bounds
 {
-    if (!CGRectEqualToRect(self.bounds, bounds)) 
-    {
-        [super setBounds:bounds];
-        CTFrameInvalid = YES;
-    }
+    [super setBounds:bounds];
+    [self setNeedsTextRendering];
 }
 
 - (BOOL)isGeometryFlipped
@@ -58,20 +57,19 @@
 
 - (CGSize)preferredFrameSize
 {
-    CGRect bounds = self.bounds;
-    bounds.size = self.CTFrameSize;
-    bounds = [self.superlayer convertRect:bounds fromLayer:self];
-    return bounds.size;
+    return self.CTFrameRect.size;
 }
 
  - (void)drawInContext:(CGContextRef)context
-{
+{    
     // TODO concat custom transform?
+    CGRect bounds = self.bounds;
     CGContextConcatCTM(context, (CGAffineTransform){
         self.contentsScale, 0,
         0, -self.contentsScale,
-        0, self.CTFrameSize.height
+        bounds.origin.x, bounds.origin.y + bounds.size.height
     });
+    CGContextTranslateCTM(context, 0, CGRectGetMaxY(bounds) - CGRectGetMaxY(self.CTFrameRect));
     CGContextSetTextPosition(context, 0, 0);
     CGContextSetTextMatrix(context, CGAffineTransformIdentity);
     CTFrameDraw(self.CTFrame, context);
@@ -92,38 +90,21 @@
 
 #pragma mark Public methods
 
-- (void)setNeedsCTFrameRendering
+- (void)setNeedsTextRendering
 {
-    CTFrameInvalid = YES;
-    [self setNeedsDisplay];
-}
-
-- (CGSize)sizeThatFits:(CGSize)size
-{
-    CFRange fitRange;
-    size.height = CGFLOAT_MAX;
-    if (!wrapped)
+    if (CTFrame) 
     {
-        size.width = CGFLOAT_MAX;
+        CFRelease(CTFrame);
+        CTFrame = NULL;
     }
-    size = CTFramesetterSuggestFrameSizeWithConstraints(self.CTFrameSetter, (CFRange){0, 0}, NULL, size, &fitRange);
-    // TODO Fix this fix
-    size.height += 2;
-    
-    size.width = floorf(size.width);
-    size.height = floorf(size.height);
-    return size;
+    CTFrameRect = CGRectNull;
 }
 
 #pragma mark Private properties
 
-@synthesize CTFrameSetter;
-@synthesize CTFrame;
-@synthesize CTFrameSize;
-
 - (CTFramesetterRef)CTFrameSetter
 {
-    if (string && (!CTFrameSetter || CTFrameInvalid))
+    if (string && (!CTFrameSetter || framesetterInvalid))
     {
         if (CTFrame)
         {
@@ -137,20 +118,26 @@
             CTFrameSetter = NULL;
         }
         
-        CTFrameSize = CGSizeZero;
+        CTFrameRect = CGRectNull;
         
         CTFrameSetter = CTFramesetterCreateWithAttributedString((CFAttributedStringRef)string);
         
-        CTFrameInvalid = NO;
+        framesetterInvalid = NO;
     }
     return CTFrameSetter;
 }
 
 - (CTFrameRef)CTFrame
 {
-    if (!CTFrame || CTFrameInvalid)
+    if (!CTFrame || framesetterInvalid)
     {
-        CGSize size = [self sizeThatFits:self.superlayer.bounds.size];
+        CGSize size = self.bounds.size;
+        if (CGSizeEqualToSize(size, CGSizeZero) && self.superlayer) {
+            size = self.superlayer.bounds.size;
+        }
+        size.height = 100000;
+        if (!wrapped || !size.width)
+            size.width = 100000;
         CGMutablePathRef path = CGPathCreateMutable();
         CGPathAddRect(path, NULL, CGRectMake(0, 0, size.width, size.height));
         CTFrame = CTFramesetterCreateFrame(self.CTFrameSetter, (CFRange){0, 0}, path, NULL);
@@ -160,15 +147,13 @@
     return CTFrame;
 }
 
-- (CGSize)CTFrameSize
+- (CGRect)CTFrameRect
 {
-    if (CGSizeEqualToSize(CTFrameSize, CGSizeZero) || CTFrameInvalid)
+    if (CGRectIsNull(CTFrameRect) || framesetterInvalid)
     {
-        CGPathRef path = CTFrameGetPath(self.CTFrame);
-        CGRect rect = CGPathGetPathBoundingBox(path);
-        CTFrameSize = rect.size;
+        CTFrameRect = ECCTFrameGetUsedRect(self.CTFrame, wrapped);
     }
-    return CTFrameSize;
+    return CTFrameRect;
 }
 
 @end

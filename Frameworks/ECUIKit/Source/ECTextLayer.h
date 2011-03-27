@@ -22,15 +22,12 @@
 @property (nonatomic, readonly) CTFrameRef CTFrame;
 
 /// Gets the core text frame size.
-@property (nonatomic, readonly) CGSize CTFrameSize;
+@property (nonatomic, readonly) CGRect CTFrameRect;
 
 /// The array of \c CTLineRef generated from the string.
-@property (nonatomic, readonly) CFArrayRef CTLines;
+@property (nonatomic, readonly) CFArrayRef CTFrameLines;
 
 /// Invalidate the content taht will be marked as needing redraw.
-- (void)setNeedsCTFrameRendering;
-
-/// Asks the layer to calculate and return the size that best fits its contents.
-- (CGSize)sizeThatFits:(CGSize)size;
+- (void)setNeedsTextRendering;
 
 @end

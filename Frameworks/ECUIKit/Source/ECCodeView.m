@@ -32,6 +32,7 @@
         string = @"";
     text = [[NSMutableAttributedString alloc] initWithString:string attributes:self.defaultTextStyle.CTAttributes];
     textLayer.string = text;
+    [textLayer setNeedsDisplay];
 }
 
 - (NSString *)text
@@ -48,7 +49,7 @@
 #pragma mark Public methods
 - (void)setNeedsTextRendering
 {
-    [textLayer setNeedsCTFrameRendering];
+    [textLayer setNeedsTextRendering];
 }
 
 
@@ -118,13 +119,9 @@ static inline id init(ECCodeView *self)
 
 - (void)layoutSubviews
 {
-//    [super layoutSubviews];
-    
     // Layout text layer
     CGRect textLayerFrame = self.bounds;
     textLayerFrame = CGRectInset(textLayerFrame, 10, 10);
-    textLayerFrame.size = textLayer.CTFrameSize;
-    textLayerFrame = CGRectIntegral(textLayerFrame);
     textLayer.frame = textLayerFrame;
     
     // Layout text overlay layers
@@ -136,7 +133,7 @@ static inline id init(ECCodeView *self)
 - (CGSize)sizeThatFits:(CGSize)size
 {
     // TODO add insets etc...
-    return textLayer.CTFrameSize;
+    return textLayer.CTFrameRect.size;
 }
 
 #pragma mark -
@@ -154,7 +151,7 @@ static inline id init(ECCodeView *self)
         if (s < e)
         {
             [text setAttributes:style.CTAttributes range:(NSRange){s, e - s}];
-            [textLayer setNeedsCTFrameRendering];
+            [textLayer setNeedsTextRendering];
         }
     }
 }
@@ -183,7 +180,7 @@ static inline id init(ECCodeView *self)
         }
     }
     
-    [textLayer setNeedsCTFrameRendering];
+    [textLayer setNeedsTextRendering];
 }
 
 #pragma mark -
