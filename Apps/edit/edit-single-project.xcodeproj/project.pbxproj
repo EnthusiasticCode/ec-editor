@@ -127,36 +127,36 @@
 		B7298391133F8E6300F65728 /* pstdint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pstdint.h; sourceTree = "<group>"; };
 		B7298396133F8E7000F65728 /* ECCodeScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeScrollView.h; sourceTree = "<group>"; };
 		B7298397133F8E7000F65728 /* ECCodeScrollView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeScrollView.m; sourceTree = "<group>"; };
-		B7298398133F8E7000F65728 /* ECCodeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeView.h; sourceTree = "<group>"; };
-		B7298399133F8E7000F65728 /* ECCodeView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeView.m; sourceTree = "<group>"; };
-		B729839A133F8E7000F65728 /* ECCoreText.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCoreText.h; sourceTree = "<group>"; };
-		B729839B133F8E7000F65728 /* ECCoreText.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCoreText.m; sourceTree = "<group>"; };
-		B729839C133F8E7000F65728 /* ECDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECDocument.h; sourceTree = "<group>"; };
-		B729839D133F8E7000F65728 /* ECDocument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECDocument.m; sourceTree = "<group>"; };
-		B729839E133F8E7000F65728 /* ECEditCodeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECEditCodeView.h; sourceTree = "<group>"; };
-		B729839F133F8E7000F65728 /* ECEditCodeView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECEditCodeView.m; sourceTree = "<group>"; };
+		B7298398133F8E7000F65728 /* ECCodeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECCodeView.h; path = ECUIKit/Source/ECCodeView.h; sourceTree = "<group>"; };
+		B7298399133F8E7000F65728 /* ECCodeView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECCodeView.m; path = ECUIKit/Source/ECCodeView.m; sourceTree = "<group>"; };
+		B729839A133F8E7000F65728 /* ECCoreText.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECCoreText.h; path = ECUIKit/Source/ECCoreText.h; sourceTree = "<group>"; };
+		B729839B133F8E7000F65728 /* ECCoreText.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECCoreText.m; path = ECUIKit/Source/ECCoreText.m; sourceTree = "<group>"; };
+		B729839C133F8E7000F65728 /* ECDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECDocument.h; path = ECUIKit/Source/ECDocument.h; sourceTree = "<group>"; };
+		B729839D133F8E7000F65728 /* ECDocument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECDocument.m; path = ECUIKit/Source/ECDocument.m; sourceTree = "<group>"; };
+		B729839E133F8E7000F65728 /* ECEditCodeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECEditCodeView.h; path = ECUIKit/Source/ECEditCodeView.h; sourceTree = "<group>"; };
+		B729839F133F8E7000F65728 /* ECEditCodeView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECEditCodeView.m; path = ECUIKit/Source/ECEditCodeView.m; sourceTree = "<group>"; };
 		B72983A0133F8E7000F65728 /* ECLineMarksView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECLineMarksView.h; sourceTree = "<group>"; };
 		B72983A1133F8E7000F65728 /* ECLineMarksView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECLineMarksView.m; sourceTree = "<group>"; };
-		B72983A2133F8E7000F65728 /* ECPersistentDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECPersistentDocument.h; sourceTree = "<group>"; };
-		B72983A3133F8E7000F65728 /* ECPersistentDocument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECPersistentDocument.m; sourceTree = "<group>"; };
-		B72983A4133F8E7000F65728 /* ECRectSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECRectSet.h; sourceTree = "<group>"; };
-		B72983A5133F8E7000F65728 /* ECRectSet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECRectSet.m; sourceTree = "<group>"; };
+		B72983A2133F8E7000F65728 /* ECPersistentDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECPersistentDocument.h; path = ECUIKit/Source/ECPersistentDocument.h; sourceTree = "<group>"; };
+		B72983A3133F8E7000F65728 /* ECPersistentDocument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECPersistentDocument.m; path = ECUIKit/Source/ECPersistentDocument.m; sourceTree = "<group>"; };
+		B72983A4133F8E7000F65728 /* ECRectSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECRectSet.h; path = ECUIKit/Source/ECRectSet.h; sourceTree = "<group>"; };
+		B72983A5133F8E7000F65728 /* ECRectSet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECRectSet.m; path = ECUIKit/Source/ECRectSet.m; sourceTree = "<group>"; };
 		B72983A6133F8E7000F65728 /* ECSelectionHandleView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECSelectionHandleView.h; sourceTree = "<group>"; };
 		B72983A7133F8E7000F65728 /* ECSelectionHandleView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECSelectionHandleView.m; sourceTree = "<group>"; };
-		B72983A8133F8E7000F65728 /* ECTextDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECTextDocument.h; sourceTree = "<group>"; };
-		B72983A9133F8E7000F65728 /* ECTextDocument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECTextDocument.m; sourceTree = "<group>"; };
-		B72983AA133F8E7000F65728 /* ECTextLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECTextLayer.h; sourceTree = "<group>"; };
-		B72983AB133F8E7000F65728 /* ECTextLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECTextLayer.m; sourceTree = "<group>"; };
-		B72983AC133F8E7000F65728 /* ECTextOverlayLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECTextOverlayLayer.h; sourceTree = "<group>"; };
-		B72983AD133F8E7000F65728 /* ECTextOverlayLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECTextOverlayLayer.m; sourceTree = "<group>"; };
-		B72983AE133F8E7000F65728 /* ECTextOverlayStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECTextOverlayStyle.h; sourceTree = "<group>"; };
-		B72983AF133F8E7000F65728 /* ECTextOverlayStyle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECTextOverlayStyle.m; sourceTree = "<group>"; };
-		B72983B0133F8E7000F65728 /* ECTextPosition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECTextPosition.h; sourceTree = "<group>"; };
-		B72983B1133F8E7000F65728 /* ECTextPosition.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECTextPosition.m; sourceTree = "<group>"; };
-		B72983B2133F8E7000F65728 /* ECTextRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECTextRange.h; sourceTree = "<group>"; };
-		B72983B3133F8E7000F65728 /* ECTextRange.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECTextRange.m; sourceTree = "<group>"; };
-		B72983B4133F8E7000F65728 /* ECTextStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECTextStyle.h; sourceTree = "<group>"; };
-		B72983B5133F8E7000F65728 /* ECTextStyle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECTextStyle.m; sourceTree = "<group>"; };
+		B72983A8133F8E7000F65728 /* ECTextDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECTextDocument.h; path = ECUIKit/Source/ECTextDocument.h; sourceTree = "<group>"; };
+		B72983A9133F8E7000F65728 /* ECTextDocument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECTextDocument.m; path = ECUIKit/Source/ECTextDocument.m; sourceTree = "<group>"; };
+		B72983AA133F8E7000F65728 /* ECTextLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECTextLayer.h; path = ECUIKit/Source/ECTextLayer.h; sourceTree = "<group>"; };
+		B72983AB133F8E7000F65728 /* ECTextLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECTextLayer.m; path = ECUIKit/Source/ECTextLayer.m; sourceTree = "<group>"; };
+		B72983AC133F8E7000F65728 /* ECTextOverlayLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECTextOverlayLayer.h; path = ECUIKit/Source/ECTextOverlayLayer.h; sourceTree = "<group>"; };
+		B72983AD133F8E7000F65728 /* ECTextOverlayLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECTextOverlayLayer.m; path = ECUIKit/Source/ECTextOverlayLayer.m; sourceTree = "<group>"; };
+		B72983AE133F8E7000F65728 /* ECTextOverlayStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECTextOverlayStyle.h; path = ECUIKit/Source/ECTextOverlayStyle.h; sourceTree = "<group>"; };
+		B72983AF133F8E7000F65728 /* ECTextOverlayStyle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECTextOverlayStyle.m; path = ECUIKit/Source/ECTextOverlayStyle.m; sourceTree = "<group>"; };
+		B72983B0133F8E7000F65728 /* ECTextPosition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECTextPosition.h; path = ECUIKit/Source/ECTextPosition.h; sourceTree = "<group>"; };
+		B72983B1133F8E7000F65728 /* ECTextPosition.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECTextPosition.m; path = ECUIKit/Source/ECTextPosition.m; sourceTree = "<group>"; };
+		B72983B2133F8E7000F65728 /* ECTextRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECTextRange.h; path = ECUIKit/Source/ECTextRange.h; sourceTree = "<group>"; };
+		B72983B3133F8E7000F65728 /* ECTextRange.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECTextRange.m; path = ECUIKit/Source/ECTextRange.m; sourceTree = "<group>"; };
+		B72983B4133F8E7000F65728 /* ECTextStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECTextStyle.h; path = ECUIKit/Source/ECTextStyle.h; sourceTree = "<group>"; };
+		B72983B5133F8E7000F65728 /* ECTextStyle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECTextStyle.m; path = ECUIKit/Source/ECTextStyle.m; sourceTree = "<group>"; };
 		B72983C6133F8F6500F65728 /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
 		B72983C8133F8F7000F65728 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
@@ -265,7 +265,11 @@
 		B7298354133F8E0100F65728 /* ECUIKit */ = {
 			isa = PBXGroup;
 			children = (
-				B7298395133F8E7000F65728 /* Source */,
+				CD622A68133F9F3500AE01BC /* Core Additions */,
+				CD622A6A133F9F9300AE01BC /* Text Drawings */,
+				CD622A69133F9F5B00AE01BC /* Text */,
+				CD622A66133F9F2300AE01BC /* Code View */,
+				B7298395133F8E7000F65728 /* Code Scroll View */,
 			);
 			name = ECUIKit;
 			sourceTree = "<group>";
@@ -358,35 +362,51 @@
 			path = ECFoundation/Source;
 			sourceTree = "<group>";
 		};
-		B7298395133F8E7000F65728 /* Source */ = {
+		B7298395133F8E7000F65728 /* Code Scroll View */ = {
 			isa = PBXGroup;
 			children = (
 				B7298396133F8E7000F65728 /* ECCodeScrollView.h */,
 				B7298397133F8E7000F65728 /* ECCodeScrollView.m */,
+				B72983A0133F8E7000F65728 /* ECLineMarksView.h */,
+				B72983A1133F8E7000F65728 /* ECLineMarksView.m */,
+				B72983A6133F8E7000F65728 /* ECSelectionHandleView.h */,
+				B72983A7133F8E7000F65728 /* ECSelectionHandleView.m */,
+			);
+			name = "Code Scroll View";
+			path = ECUIKit/Source;
+			sourceTree = "<group>";
+		};
+		CD622A66133F9F2300AE01BC /* Code View */ = {
+			isa = PBXGroup;
+			children = (
 				B7298398133F8E7000F65728 /* ECCodeView.h */,
 				B7298399133F8E7000F65728 /* ECCodeView.m */,
+				B729839E133F8E7000F65728 /* ECEditCodeView.h */,
+				B729839F133F8E7000F65728 /* ECEditCodeView.m */,
+			);
+			name = "Code View";
+			sourceTree = "<group>";
+		};
+		CD622A68133F9F3500AE01BC /* Core Additions */ = {
+			isa = PBXGroup;
+			children = (
 				B729839A133F8E7000F65728 /* ECCoreText.h */,
 				B729839B133F8E7000F65728 /* ECCoreText.m */,
 				B729839C133F8E7000F65728 /* ECDocument.h */,
 				B729839D133F8E7000F65728 /* ECDocument.m */,
-				B729839E133F8E7000F65728 /* ECEditCodeView.h */,
-				B729839F133F8E7000F65728 /* ECEditCodeView.m */,
-				B72983A0133F8E7000F65728 /* ECLineMarksView.h */,
-				B72983A1133F8E7000F65728 /* ECLineMarksView.m */,
 				B72983A2133F8E7000F65728 /* ECPersistentDocument.h */,
 				B72983A3133F8E7000F65728 /* ECPersistentDocument.m */,
 				B72983A4133F8E7000F65728 /* ECRectSet.h */,
 				B72983A5133F8E7000F65728 /* ECRectSet.m */,
-				B72983A6133F8E7000F65728 /* ECSelectionHandleView.h */,
-				B72983A7133F8E7000F65728 /* ECSelectionHandleView.m */,
+			);
+			name = "Core Additions";
+			sourceTree = "<group>";
+		};
+		CD622A69133F9F5B00AE01BC /* Text */ = {
+			isa = PBXGroup;
+			children = (
 				B72983A8133F8E7000F65728 /* ECTextDocument.h */,
 				B72983A9133F8E7000F65728 /* ECTextDocument.m */,
-				B72983AA133F8E7000F65728 /* ECTextLayer.h */,
-				B72983AB133F8E7000F65728 /* ECTextLayer.m */,
-				B72983AC133F8E7000F65728 /* ECTextOverlayLayer.h */,
-				B72983AD133F8E7000F65728 /* ECTextOverlayLayer.m */,
-				B72983AE133F8E7000F65728 /* ECTextOverlayStyle.h */,
-				B72983AF133F8E7000F65728 /* ECTextOverlayStyle.m */,
 				B72983B0133F8E7000F65728 /* ECTextPosition.h */,
 				B72983B1133F8E7000F65728 /* ECTextPosition.m */,
 				B72983B2133F8E7000F65728 /* ECTextRange.h */,
@@ -394,8 +414,20 @@
 				B72983B4133F8E7000F65728 /* ECTextStyle.h */,
 				B72983B5133F8E7000F65728 /* ECTextStyle.m */,
 			);
-			name = Source;
-			path = ECUIKit/Source;
+			name = Text;
+			sourceTree = "<group>";
+		};
+		CD622A6A133F9F9300AE01BC /* Text Drawings */ = {
+			isa = PBXGroup;
+			children = (
+				B72983AA133F8E7000F65728 /* ECTextLayer.h */,
+				B72983AB133F8E7000F65728 /* ECTextLayer.m */,
+				B72983AC133F8E7000F65728 /* ECTextOverlayLayer.h */,
+				B72983AD133F8E7000F65728 /* ECTextOverlayLayer.m */,
+				B72983AE133F8E7000F65728 /* ECTextOverlayStyle.h */,
+				B72983AF133F8E7000F65728 /* ECTextOverlayStyle.m */,
+			);
+			name = "Text Drawings";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -631,6 +663,7 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_TREAT_WARNINGS_AS_ERRORS = NO;
 				INFOPLIST_FILE = "Resources/edit-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
 				LD_RUNPATH_SEARCH_PATHS = "@loader_path/";
@@ -649,6 +682,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				COPY_PHASE_STRIP = YES;
+				GCC_TREAT_WARNINGS_AS_ERRORS = NO;
 				INFOPLIST_FILE = "Resources/edit-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
 				LD_RUNPATH_SEARCH_PATHS = "@loader_path/";
