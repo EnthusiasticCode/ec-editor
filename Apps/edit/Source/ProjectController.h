@@ -7,25 +7,19 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "FileBrowser.h"
+@class FileMapController;
+@class FileViewController;
 @class ECCodeView;
 @class ECCodeIndex;
 @class Project;
 
-@interface ProjectController : UISplitViewController <UITableViewDataSource, UITableViewDelegate>
-{
-@private
-    NSDictionary *textStyles_;
-    NSDictionary *diagnosticOverlayStyles_;
-    UITapGestureRecognizer *focusRecognizer;
-}
+@interface ProjectController : UIViewController <FileBrowser, FileBrowserDelegate>
+@property (nonatomic, retain) IBOutlet FileMapController *fileMapController;
+@property (nonatomic, retain) IBOutlet FileViewController *fileViewController;
 @property (nonatomic, retain) Project *project;
-@property (nonatomic, retain) NSFileManager *fileManager;
-@property (nonatomic, retain) IBOutlet ECCodeView *codeView;
-@property (nonatomic, retain) ECCodeIndex *codeIndexer;
+@property (nonatomic, retain) ECCodeIndex *codeIndex;
 
-- (void)loadProjectFromRootDirectory:(NSURL *)rootDirectory;
+- (void)loadProject:(NSURL *)projectRoot;
 - (void)loadFile:(NSURL *)file;
-- (NSArray *)contentsOfRootDirectory;
-
-- (void)handleGestureFocus:(UITapGestureRecognizer *)recognizer;
 @end

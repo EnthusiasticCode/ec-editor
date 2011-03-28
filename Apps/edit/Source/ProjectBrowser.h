@@ -7,10 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "FileBrowser.h"
+#import "FileBrowserDelegate.h"
 
-
-@interface ProjectBrowser : UIViewController {
-    
-}
+@interface ProjectBrowser : UIViewController <UITableViewDataSource, UITableViewDelegate, FileBrowser>
 
 @end
