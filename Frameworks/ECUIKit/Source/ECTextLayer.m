@@ -150,7 +150,7 @@
 {
     if (!CTFrame || CTFrameInvalid)
     {
-        CGSize size = self.CTFrameSize;
+        CGSize size = [self sizeThatFits:self.superlayer.bounds.size];
         CGMutablePathRef path = CGPathCreateMutable();
         CGPathAddRect(path, NULL, CGRectMake(0, 0, size.width, size.height));
         CTFrame = CTFramesetterCreateFrame(self.CTFrameSetter, (CFRange){0, 0}, path, NULL);
@@ -164,7 +164,9 @@
 {
     if (CGSizeEqualToSize(CTFrameSize, CGSizeZero) || CTFrameInvalid)
     {
-        CTFrameSize = [self sizeThatFits:self.bounds.size];
+        CGPathRef path = CTFrameGetPath(self.CTFrame);
+        CGRect rect = CGPathGetPathBoundingBox(path);
+        CTFrameSize = rect.size;
     }
     return CTFrameSize;
 }
