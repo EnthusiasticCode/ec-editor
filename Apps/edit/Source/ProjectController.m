@@ -108,6 +108,7 @@
 - (void)fileBrowser:(id<FileBrowser>)fileBrowser didSelectFileAtPath:(NSURL *)path
 {
     [self loadFile:path];
+    [self.delegate fileBrowser:self didSelectFileAtPath:path];
 }
 
 @end

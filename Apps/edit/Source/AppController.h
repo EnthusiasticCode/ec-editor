@@ -11,8 +11,10 @@
 @class ProjectBrowser;
 @class ProjectController;
 
-@interface AppController : NSObject <UIApplicationDelegate, FileBrowserDelegate>
+@interface AppController : NSObject <UIApplicationDelegate, FileBrowserDelegate, UINavigationBarDelegate>
 @property (nonatomic, retain) IBOutlet UINavigationBar *navigationBar;
+@property (nonatomic, retain) IBOutlet UINavigationItem *projectItem;
+@property (nonatomic, retain) IBOutlet UINavigationItem *fileItem;
 @property (nonatomic, retain) IBOutlet UIWindow *window;
 @property (nonatomic, retain) IBOutlet UIView *contentView;
 @property (nonatomic, retain) IBOutlet ProjectBrowser *projectBrowser;

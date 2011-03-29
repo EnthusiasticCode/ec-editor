@@ -15,6 +15,8 @@
 @synthesize window = window_;
 @synthesize contentView = contentView_;
 @synthesize navigationBar = navigationBar_;
+@synthesize projectItem = titleItem_;
+@synthesize fileItem = fileItem_;
 @synthesize projectBrowser = projectBrowser_;
 @synthesize projectController = projectController_;
 
@@ -22,6 +24,8 @@
 {
     self.projectController = nil;
     self.projectBrowser = nil;
+    self.projectItem = nil;
+    self.fileItem = nil;
     self.navigationBar = nil;
     self.contentView = nil;
     self.window = nil;
@@ -52,7 +56,16 @@
 - (void)fileBrowser:(id<FileBrowser>)fileBrowser didSelectFileAtPath:(NSURL *)path
 {
     if (fileBrowser == self.projectBrowser)
+    {
         [self loadProject:path];
+        self.projectItem.title = [path lastPathComponent];
+        [self.navigationBar pushNavigationItem:self.projectItem animated:YES];
+    }
+    if (fileBrowser == self.projectController)
+    {
+        self.fileItem.title = [path lastPathComponent];
+        [self.navigationBar pushNavigationItem:self.fileItem animated:YES];
+    }
 }
 
 - (void)loadProject:(NSURL *)projectRoot
@@ -61,6 +74,14 @@
     [self.projectBrowser.view removeFromSuperview];
     [self.contentView addSubview:self.projectController.view];
     self.projectController.view.frame = self.contentView.bounds;
+}
+
+- (void)navigationBar:(UINavigationBar *)navigationBar didPopItem:(UINavigationItem *)item
+{
+    if (item == self.fileItem)
+        [self.projectController browseFolder:self.projectController.folder];
+    if (item == self.projectItem)
+        [self browseProjects];
 }
 
 @end
