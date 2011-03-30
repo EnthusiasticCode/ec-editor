@@ -8,14 +8,14 @@
 
 #import <UIKit/UIKit.h>
 #import "FileBrowser.h"
-@class FileMapController;
+@class ProjectViewController;
 @class FileViewController;
 @class ECCodeView;
 @class ECCodeIndex;
 @class Project;
 
 @interface ProjectController : UIViewController <FileBrowser, FileBrowserDelegate>
-@property (nonatomic, retain) IBOutlet FileMapController *fileMapController;
+@property (nonatomic, retain) IBOutlet ProjectViewController *projectViewController;
 @property (nonatomic, retain) IBOutlet FileViewController *fileViewController;
 @property (nonatomic, retain) Project *project;
 @property (nonatomic, retain) ECCodeIndex *codeIndex;

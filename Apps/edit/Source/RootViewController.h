@@ -10,6 +10,6 @@
 #import "FileBrowser.h"
 #import "FileBrowserDelegate.h"
 
-@interface ProjectBrowser : UIViewController <UITableViewDataSource, UITableViewDelegate, FileBrowser>
+@interface RootViewController : UIViewController <UITableViewDataSource, UITableViewDelegate, FileBrowser>
 
 @end

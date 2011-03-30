@@ -6,7 +6,7 @@
 //  Copyright 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import "FileMapController.h"
+#import "ProjectViewController.h"
 #import "FileViewController.h"
 #import "ProjectController.h"
 #import "Project.h"
@@ -21,15 +21,19 @@
 @implementation ProjectController
 
 @synthesize delegate = delegate_;
-@synthesize folder = folder_;
-@synthesize fileMapController = fileMapController_;
+@synthesize projectViewController = projectViewController_;
 @synthesize fileViewController = fileViewController_;
 @synthesize project = project_;
 @synthesize codeIndex = codeIndex_;
 
+- (NSURL *)folder
+{
+    return self.projectViewController.folder;
+}
+
 - (NSFileManager *)fileManager
 {
-    return self.fileMapController.fileManager;
+    return self.projectViewController.fileManager;
 }
 
 - (void)dealloc
@@ -85,7 +89,7 @@
 {
     ECCodeUnit *codeUnit = [self.codeIndex unitForURL:fileURL];
     [self.fileViewController loadFile:fileURL withCodeUnit:codeUnit];
-    [self.fileMapController.view removeFromSuperview];
+    [self.projectViewController.view removeFromSuperview];
     [self.view addSubview:self.fileViewController.view];
     self.fileViewController.view.frame = self.view.bounds;
 }
@@ -94,20 +98,19 @@
 {
     if (![self.project.rootDirectory isEqual:folder])
         [self loadProject:folder];
-    [self.fileMapController browseFolder:folder];
+    [self.projectViewController browseFolder:folder];
     [self.fileViewController.view removeFromSuperview];
-    [self.view addSubview:self.fileMapController.view];
-    self.fileMapController.view.frame = self.view.bounds;
+    [self.view addSubview:self.projectViewController.view];
+    self.projectViewController.view.frame = self.view.bounds;
 }
 
 - (NSArray *)contentsOfFolder
 {
-    return [self.fileMapController contentsOfFolder];
+    return [self.projectViewController contentsOfFolder];
 }
 
 - (void)fileBrowser:(id<FileBrowser>)fileBrowser didSelectFileAtPath:(NSURL *)path
 {
-    [self loadFile:path];
     [self.delegate fileBrowser:self didSelectFileAtPath:path];
 }
 

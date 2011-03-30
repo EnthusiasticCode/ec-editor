@@ -7,26 +7,32 @@
 //
 
 #import "AppController.h"
-#import "ProjectBrowser.h"
+#import "RootViewController.h"
 #import "ProjectController.h"
 
 @implementation AppController
 
 @synthesize window = window_;
 @synthesize contentView = contentView_;
-@synthesize navigationBar = navigationBar_;
-@synthesize projectItem = titleItem_;
-@synthesize fileItem = fileItem_;
-@synthesize projectBrowser = projectBrowser_;
+@synthesize toolbar = toolbar_;
+@synthesize browseRootToolbarButton = browseRootToolbarButton_;
+@synthesize rootToolbarTitle = rootToolbarTitle_;
+@synthesize browseProjectToolbarButton = browseProjectToolbarButton_;
+@synthesize projectToolbarTitle = projectToolbarTitle_;
+@synthesize fileToolbarTitle = fileToolbarTitle_;
+@synthesize rootViewController = rootViewController_;
 @synthesize projectController = projectController_;
 
 - (void)dealloc
 {
     self.projectController = nil;
-    self.projectBrowser = nil;
-    self.projectItem = nil;
-    self.fileItem = nil;
-    self.navigationBar = nil;
+    self.rootViewController = nil;
+    self.fileToolbarTitle = nil;
+    self.projectToolbarTitle = nil;
+    self.browseProjectToolbarButton = nil;
+    self.rootToolbarTitle = nil;
+    self.browseRootToolbarButton = nil;
+    self.toolbar = nil;
     self.contentView = nil;
     self.window = nil;
     [super dealloc];
@@ -34,7 +40,7 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    [self browseProjects];
+    [self browseRoot:self];
     [self.window makeKeyAndVisible];
     return YES;
 }
@@ -44,44 +50,67 @@
     return [NSURL fileURLWithPath:[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject]];
 }
 
-- (BOOL)browseProjects
+- (void)setupToolbarWithFarLeftButton:(UIBarButtonItem *)farLeftButton leftButton:(UIBarButtonItem *)leftButton centerLabel:(UIBarButtonItem *)centerLabel rightButton:(UIBarButtonItem *)rightButton farRightButton:(UIBarButtonItem *)farRightButton
 {
-    [self.projectBrowser browseFolder:[self applicationDocumentsDirectory]];
+    NSMutableArray *items = [NSMutableArray arrayWithCapacity:7];
+    UIBarButtonItem *flexibleSpace = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil] autorelease];
+    if (farLeftButton)
+        [items addObject:farLeftButton];
+    if (leftButton)
+        [items addObject:leftButton];
+    [items addObject:flexibleSpace];
+    if (centerLabel)
+        [items addObject:centerLabel];
+    [items addObject:flexibleSpace];
+    if (rightButton)
+        [items addObject:rightButton];
+    if (farLeftButton)
+        [items addObject:farLeftButton];
+    [self.toolbar setItems:items animated:YES];
+}
+
+- (IBAction)browseRoot:(id)sender
+{
+    [self.rootViewController browseFolder:[self applicationDocumentsDirectory]];
+    [self setupToolbarWithFarLeftButton:nil leftButton:nil centerLabel:self.rootToolbarTitle rightButton:nil farRightButton:nil];
     [self.projectController.view removeFromSuperview];
-    [self.contentView addSubview:self.projectBrowser.view];
-    self.projectBrowser.view.frame = self.contentView.bounds;
-    return YES;
+    [self.contentView addSubview:self.rootViewController.view];
+    self.rootViewController.view.frame = self.contentView.bounds;
 }
 
 - (void)fileBrowser:(id<FileBrowser>)fileBrowser didSelectFileAtPath:(NSURL *)path
 {
-    if (fileBrowser == self.projectBrowser)
+    if (fileBrowser == self.rootViewController)
     {
         [self loadProject:path];
-        self.projectItem.title = [path lastPathComponent];
-        [self.navigationBar pushNavigationItem:self.projectItem animated:YES];
     }
     if (fileBrowser == self.projectController)
     {
-        self.fileItem.title = [path lastPathComponent];
-        [self.navigationBar pushNavigationItem:self.fileItem animated:YES];
+        [self loadFile:path];
     }
 }
 
 - (void)loadProject:(NSURL *)projectRoot
 {
     [self.projectController browseFolder:projectRoot];
-    [self.projectBrowser.view removeFromSuperview];
+    self.projectToolbarTitle.title = [projectRoot lastPathComponent];
+    self.browseProjectToolbarButton.title = [projectRoot lastPathComponent];
+    [self setupToolbarWithFarLeftButton:self.browseRootToolbarButton leftButton:nil centerLabel:self.projectToolbarTitle rightButton:nil farRightButton:nil];
+    [self.rootViewController.view removeFromSuperview];
     [self.contentView addSubview:self.projectController.view];
     self.projectController.view.frame = self.contentView.bounds;
 }
 
-- (void)navigationBar:(UINavigationBar *)navigationBar didPopItem:(UINavigationItem *)item
+- (IBAction)browseProject:(id)sender
 {
-    if (item == self.fileItem)
-        [self.projectController browseFolder:self.projectController.folder];
-    if (item == self.projectItem)
-        [self browseProjects];
+    [self loadProject:self.projectController.folder];
+}
+
+- (void)loadFile:(NSURL *)fileURL
+{
+    [self.projectController loadFile:fileURL];
+    self.fileToolbarTitle.title = [fileURL lastPathComponent];
+    [self setupToolbarWithFarLeftButton:self.browseProjectToolbarButton leftButton:nil centerLabel:self.fileToolbarTitle rightButton:nil farRightButton:nil];
 }
 
 @end

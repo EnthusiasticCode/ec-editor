@@ -1,19 +1,19 @@
 //
-//  ProjectBrowser.m
-//  edit
+//  FileMap.m
+//  edit-single-project
 //
-//  Created by Uri Baghin on 3/26/11.
+//  Created by Uri Baghin on 3/27/11.
 //  Copyright 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import "ProjectBrowser.h"
+#import "ProjectViewController.h"
 
-@interface ProjectBrowser ()
+@interface ProjectViewController ()
 @property (nonatomic, retain) NSFileManager *fileManager;
 @property (nonatomic, retain) NSURL *folder;
 @end
 
-@implementation ProjectBrowser
+@implementation ProjectViewController
 
 @synthesize delegate = delegate_;
 @synthesize fileManager = fileManager_;
@@ -48,11 +48,20 @@
 
 #pragma mark - View lifecycle
 
+/*
+// Implement loadView to create a view hierarchy programmatically, without using a nib.
+- (void)loadView
+{
+}
+*/
+
+/*
+// Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    // Do any additional setup after loading the view from its nib.
 }
+*/
 
 - (void)viewDidUnload
 {
@@ -67,14 +76,14 @@
 	return YES;
 }
 
-- (void)browseFolder:(NSURL *)folder
-{
-    self.folder = folder;
-}
-
 - (NSArray *)contentsOfFolder
 {
     return [self.fileManager contentsOfDirectoryAtPath:[self.folder path] error:NULL];
+}
+
+- (void)browseFolder:(NSURL *)folder
+{
+    self.folder = folder;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -90,15 +99,13 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    if (!self.folder)
-        return 0;
     return [[self contentsOfFolder] count];
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSURL *projectURL = [self.folder URLByAppendingPathComponent:[[self contentsOfFolder] objectAtIndex:indexPath.row]];
-    [self.delegate fileBrowser:self didSelectFileAtPath:projectURL];
+    NSURL *file = [self.folder URLByAppendingPathComponent:[[self contentsOfFolder] objectAtIndex:indexPath.row]];
+    [self.delegate fileBrowser:self didSelectFileAtPath:file];
 }
 
 @end

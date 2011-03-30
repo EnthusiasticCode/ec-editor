@@ -9,6 +9,6 @@
 #import <UIKit/UIKit.h>
 #import "FileBrowser.h"
 
-@interface FileMapController : UIViewController <UITableViewDataSource, UITableViewDelegate, FileBrowser>
+@interface ProjectViewController : UIViewController <UITableViewDataSource, UITableViewDelegate, FileBrowser>
 
 @end
