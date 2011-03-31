@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B722F0971344E41E00AD8603 /* ECDoubleOutlineView.m in Sources */ = {isa = PBXBuildFile; fileRef = B722F0961344E41E00AD8603 /* ECDoubleOutlineView.m */; };
 		B72982E2133F8B0900F65728 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B72982E1133F8B0900F65728 /* UIKit.framework */; };
 		B72982E4133F8B0900F65728 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B72982E3133F8B0900F65728 /* Foundation.framework */; };
 		B72982E6133F8B0900F65728 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B72982E5133F8B0900F65728 /* CoreGraphics.framework */; };
@@ -64,6 +65,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		B722F0951344E41E00AD8603 /* ECDoubleOutlineView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECDoubleOutlineView.h; sourceTree = "<group>"; };
+		B722F0961344E41E00AD8603 /* ECDoubleOutlineView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECDoubleOutlineView.m; sourceTree = "<group>"; };
 		B72982DD133F8B0900F65728 /* edit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = edit.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B72982E1133F8B0900F65728 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		B72982E3133F8B0900F65728 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -78,7 +81,7 @@
 		B7298345133F8DE700F65728 /* AppController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppController.m; path = Source/AppController.m; sourceTree = SOURCE_ROOT; };
 		B7298348133F8DE700F65728 /* Project.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Project.h; path = Source/Project.h; sourceTree = SOURCE_ROOT; };
 		B7298349133F8DE700F65728 /* Project.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Project.m; path = Source/Project.m; sourceTree = SOURCE_ROOT; };
-		B729834A133F8DE700F65728 /* RootViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; name = RootViewController.h; path = Source/RootViewController.h; sourceTree = SOURCE_ROOT; };
+		B729834A133F8DE700F65728 /* RootViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RootViewController.h; path = Source/RootViewController.h; sourceTree = SOURCE_ROOT; };
 		B729834B133F8DE700F65728 /* RootViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RootViewController.m; path = Source/RootViewController.m; sourceTree = SOURCE_ROOT; };
 		B729834C133F8DE700F65728 /* ProjectController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProjectController.h; path = Source/ProjectController.h; sourceTree = SOURCE_ROOT; };
 		B729834D133F8DE700F65728 /* ProjectController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ProjectController.m; path = Source/ProjectController.m; sourceTree = SOURCE_ROOT; };
@@ -158,7 +161,7 @@
 		B72983C6133F8F6500F65728 /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
 		B72983C8133F8F7000F65728 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		B72983FE133F983A00F65728 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = Resources/en.lproj/FileViewController.xib; sourceTree = SOURCE_ROOT; };
-		B7298401133FA56700F65728 /* ProjectViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; name = ProjectViewController.h; path = Source/ProjectViewController.h; sourceTree = SOURCE_ROOT; };
+		B7298401133FA56700F65728 /* ProjectViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProjectViewController.h; path = Source/ProjectViewController.h; sourceTree = SOURCE_ROOT; };
 		B7298402133FA56800F65728 /* ProjectViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ProjectViewController.m; path = Source/ProjectViewController.m; sourceTree = SOURCE_ROOT; };
 		B7298404133FA57B00F65728 /* ProjectViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = ProjectViewController.xib; path = Resources/ProjectViewController.xib; sourceTree = SOURCE_ROOT; };
 		B7298406133FAE2E00F65728 /* FileViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileViewController.h; path = Source/FileViewController.h; sourceTree = SOURCE_ROOT; };
@@ -381,6 +384,8 @@
 				B729839B133F8E7000F65728 /* ECCoreText.m */,
 				B729839C133F8E7000F65728 /* ECDocument.h */,
 				B729839D133F8E7000F65728 /* ECDocument.m */,
+				B722F0951344E41E00AD8603 /* ECDoubleOutlineView.h */,
+				B722F0961344E41E00AD8603 /* ECDoubleOutlineView.m */,
 				B729839E133F8E7000F65728 /* ECEditCodeView.h */,
 				B729839F133F8E7000F65728 /* ECEditCodeView.m */,
 				B72983A0133F8E7000F65728 /* ECLineMarksView.h */,
@@ -514,6 +519,7 @@
 				B72983C5133F8E7100F65728 /* ECTextStyle.m in Sources */,
 				B7298403133FA56800F65728 /* ProjectViewController.m in Sources */,
 				B7298408133FAE2F00F65728 /* FileViewController.m in Sources */,
+				B722F0971344E41E00AD8603 /* ECDoubleOutlineView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
