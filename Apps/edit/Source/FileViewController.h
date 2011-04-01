@@ -12,5 +12,5 @@
 
 @interface FileViewController : UIViewController
 @property (nonatomic, retain) IBOutlet ECEditCodeView *codeView;
-- (void)loadFile:(NSURL *)fileURL withCodeUnit:(ECCodeUnit *)codeUnit;
+- (void)loadFile:(NSString *)file withCodeUnit:(ECCodeUnit *)codeUnit;
 @end

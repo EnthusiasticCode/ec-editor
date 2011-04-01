@@ -26,7 +26,7 @@
 @synthesize project = project_;
 @synthesize codeIndex = codeIndex_;
 
-- (NSURL *)folder
+- (NSString *)folder
 {
     return self.projectViewController.folder;
 }
@@ -79,22 +79,22 @@
 	return YES;
 }
 
-- (void)loadProject:(NSURL *)projectRoot
+- (void)loadProject:(NSString *)projectRoot
 {
     self.project = [Project projectWithRootDirectory:projectRoot];
     self.codeIndex = [[[ECCodeIndex alloc] init] autorelease];
 }
 
-- (void)loadFile:(NSURL *)fileURL
+- (void)loadFile:(NSString *)file
 {
-    ECCodeUnit *codeUnit = [self.codeIndex unitForURL:fileURL];
-    [self.fileViewController loadFile:fileURL withCodeUnit:codeUnit];
+    ECCodeUnit *codeUnit = [self.codeIndex unitForFile:file];
+    [self.fileViewController loadFile:file withCodeUnit:codeUnit];
     [self.projectViewController.view removeFromSuperview];
     [self.view addSubview:self.fileViewController.view];
     self.fileViewController.view.frame = self.view.bounds;
 }
 
-- (void)browseFolder:(NSURL *)folder
+- (void)browseFolder:(NSString *)folder
 {
     if (![self.project.rootDirectory isEqual:folder])
         [self loadProject:folder];
@@ -109,7 +109,7 @@
     return [self.projectViewController contentsOfFolder];
 }
 
-- (void)fileBrowser:(id<FileBrowser>)fileBrowser didSelectFileAtPath:(NSURL *)path
+- (void)fileBrowser:(id<FileBrowser>)fileBrowser didSelectFileAtPath:(NSString *)path
 {
     [self.delegate fileBrowser:self didSelectFileAtPath:path];
 }

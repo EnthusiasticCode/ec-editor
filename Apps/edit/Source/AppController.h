@@ -24,8 +24,8 @@
 @property (nonatomic, retain) IBOutlet ProjectController *projectController;
 - (IBAction)browseProject:(id)sender;
 - (IBAction)browseRoot:(id)sender;
-- (NSURL *)applicationDocumentsDirectory;
+- (NSString *)applicationDocumentsDirectory;
 - (void)setupToolbarWithFarLeftButton:(UIBarButtonItem *)farLeftButton leftButton:(UIBarButtonItem *)leftButton centerLabel:(UIBarButtonItem *)centerLabel rightButton:(UIBarButtonItem *)rightButton farRightButton:(UIBarButtonItem *)farRightButton;
-- (void)loadProject:(NSURL *)projectRoot;
-- (void)loadFile:(NSURL *)fileURL;
+- (void)loadProject:(NSString *)projectRoot;
+- (void)loadFile:(NSString *)file;
 @end

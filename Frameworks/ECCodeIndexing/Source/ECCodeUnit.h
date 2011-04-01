@@ -14,14 +14,14 @@
 @interface ECCodeUnit : NSObject
 /// The code index that generated the code unit.
 @property (nonatomic, readonly, retain) ECCodeIndex *index;
-/// The URL of the file the unit is attached to.
-@property (nonatomic, readonly, retain) NSURL *url;
+/// The file of the file the unit is attached to.
+@property (nonatomic, readonly, retain) NSString *file;
 /// The language the unit is using to interpret the file's contents.
 @property (nonatomic, readonly, retain) NSString *language;
 /// Whether or not the files the units is depending on have unsaved content.
 @property (nonatomic, readonly) BOOL filesHaveUnsavedContent;
-/// Returns whether the unit depends on the file at the given URL or not.
-- (BOOL)isDependentOnFile:(NSURL *)fileURL;
+/// Returns whether the unit depends on the file at the given file or not.
+- (BOOL)isDependentOnFile:(NSString *)file;
 /// Force the code unit to reparse all files.
 - (void)setNeedsReparse;
 /// Returns the possible completions at a given insertion range.

@@ -18,8 +18,6 @@
 		B72BB443132A1D3200C1C19B /* ECHashing.m in Sources */ = {isa = PBXBuildFile; fileRef = B72BB43C132A1D3200C1C19B /* ECHashing.m */; };
 		B72BB444132A1D3200C1C19B /* MurmurHash3.c in Sources */ = {isa = PBXBuildFile; fileRef = B72BB43D132A1D3200C1C19B /* MurmurHash3.c */; };
 		B72BB445132A1D3200C1C19B /* MurmurHash3.h in Headers */ = {isa = PBXBuildFile; fileRef = B72BB43E132A1D3200C1C19B /* MurmurHash3.h */; };
-		B72BB446132A1D3200C1C19B /* NSURL+ECFoundation.h in Headers */ = {isa = PBXBuildFile; fileRef = B72BB43F132A1D3200C1C19B /* NSURL+ECFoundation.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B72BB447132A1D3200C1C19B /* NSURL+ECFoundation.m in Sources */ = {isa = PBXBuildFile; fileRef = B72BB440132A1D3200C1C19B /* NSURL+ECFoundation.m */; };
 		B72BB448132A1D3200C1C19B /* pstdint.h in Headers */ = {isa = PBXBuildFile; fileRef = B72BB441132A1D3200C1C19B /* pstdint.h */; };
 		B72BB4D9132A1DAE00C1C19B /* KWAfterAllNode.m in Sources */ = {isa = PBXBuildFile; fileRef = B72BB44B132A1DAE00C1C19B /* KWAfterAllNode.m */; };
 		B72BB4DA132A1DAE00C1C19B /* KWAfterEachNode.m in Sources */ = {isa = PBXBuildFile; fileRef = B72BB44D132A1DAE00C1C19B /* KWAfterEachNode.m */; };
@@ -124,8 +122,6 @@
 		B72BB43C132A1D3200C1C19B /* ECHashing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECHashing.m; sourceTree = "<group>"; };
 		B72BB43D132A1D3200C1C19B /* MurmurHash3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = MurmurHash3.c; sourceTree = "<group>"; };
 		B72BB43E132A1D3200C1C19B /* MurmurHash3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MurmurHash3.h; sourceTree = "<group>"; };
-		B72BB43F132A1D3200C1C19B /* NSURL+ECFoundation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSURL+ECFoundation.h"; sourceTree = "<group>"; };
-		B72BB440132A1D3200C1C19B /* NSURL+ECFoundation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSURL+ECFoundation.m"; sourceTree = "<group>"; };
 		B72BB441132A1D3200C1C19B /* pstdint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pstdint.h; sourceTree = "<group>"; };
 		B72BB44A132A1DAE00C1C19B /* KWAfterAllNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KWAfterAllNode.h; sourceTree = "<group>"; };
 		B72BB44B132A1DAE00C1C19B /* KWAfterAllNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KWAfterAllNode.m; sourceTree = "<group>"; };
@@ -365,8 +361,6 @@
 				B72BB43C132A1D3200C1C19B /* ECHashing.m */,
 				B72BB43D132A1D3200C1C19B /* MurmurHash3.c */,
 				B72BB43E132A1D3200C1C19B /* MurmurHash3.h */,
-				B72BB43F132A1D3200C1C19B /* NSURL+ECFoundation.h */,
-				B72BB440132A1D3200C1C19B /* NSURL+ECFoundation.m */,
 				B72BB441132A1D3200C1C19B /* pstdint.h */,
 			);
 			path = Source;
@@ -532,7 +526,6 @@
 			files = (
 				B72BB442132A1D3200C1C19B /* ECHashing.h in Headers */,
 				B72BB445132A1D3200C1C19B /* MurmurHash3.h in Headers */,
-				B72BB446132A1D3200C1C19B /* NSURL+ECFoundation.h in Headers */,
 				B72BB448132A1D3200C1C19B /* pstdint.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -632,7 +625,6 @@
 			files = (
 				B72BB443132A1D3200C1C19B /* ECHashing.m in Sources */,
 				B72BB444132A1D3200C1C19B /* MurmurHash3.c in Sources */,
-				B72BB447132A1D3200C1C19B /* NSURL+ECFoundation.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

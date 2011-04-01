@@ -17,7 +17,7 @@
 
 @synthesize kind = _kind;
 @synthesize spelling = _spelling;
-@synthesize fileURL = _fileURL;
+@synthesize file = _file;
 @synthesize offset = _offset;
 @synthesize extent = _extent;
 @synthesize cursor = cursor_;
@@ -25,18 +25,18 @@
 - (void)dealloc
 {
     [_spelling release];
-    [_fileURL release];
+    [_file release];
     [super dealloc];
 }
 
-- (id)initWithKind:(ECCodeTokenKind)kind spelling:(NSString *)spelling fileURL:(NSURL *)fileURL offset:(NSUInteger )offset extent:(NSRange)extent cursor:(ECCodeCursor *)cursor
+- (id)initWithKind:(ECCodeTokenKind)kind spelling:(NSString *)spelling file:(NSString *)file offset:(NSUInteger )offset extent:(NSRange)extent cursor:(ECCodeCursor *)cursor
 {
     self = [super init];
     if (self)
     {
         _kind = kind;
         _spelling = [spelling copy];
-        _fileURL = [fileURL copy];
+        _file = [file copy];
         _offset = offset;
         _extent = extent;
         cursor_ = [cursor retain];
@@ -45,10 +45,10 @@
     return self;
 }
 
-+ (id)tokenWithKind:(ECCodeTokenKind)kind spelling:(NSString *)spelling fileURL:(NSURL *)fileURL offset:(NSUInteger )offset extent:(NSRange)extent cursor:(ECCodeCursor *)cursor
++ (id)tokenWithKind:(ECCodeTokenKind)kind spelling:(NSString *)spelling file:(NSString *)file offset:(NSUInteger )offset extent:(NSRange)extent cursor:(ECCodeCursor *)cursor
 {
     id token = [self alloc];
-    token = [token initWithKind:kind spelling:spelling fileURL:fileURL offset:offset extent:extent cursor:cursor];
+    token = [token initWithKind:kind spelling:spelling file:file offset:offset extent:extent cursor:cursor];
     return [token autorelease];
 }
 
@@ -70,7 +70,7 @@
 - (NSUInteger)computeHash
 {
     const NSUInteger propertyCount = 6;
-    NSUInteger propertyHashes[6] = { _kind, [_spelling hash], [_fileURL hash], _offset, _extent.location, _extent.length };
+    NSUInteger propertyHashes[6] = { _kind, [_spelling hash], [_file hash], _offset, _extent.location, _extent.length };
     return ECHashNSUIntegers(propertyHashes, propertyCount);
 }
 
@@ -93,8 +93,8 @@
     if (_spelling || otherToken.spelling)
         if (![otherToken.spelling isEqual:_spelling])
             return NO;
-    if (_fileURL || otherToken.fileURL)
-        if (![otherToken.fileURL isEqual:_fileURL])
+    if (_file || otherToken.file)
+        if (![otherToken.file isEqual:_file])
             return NO;
     return YES;
 }

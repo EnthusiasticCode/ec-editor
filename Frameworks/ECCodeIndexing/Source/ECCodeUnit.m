@@ -22,53 +22,53 @@
 @implementation ECCodeUnit
 
 @synthesize index = index_;
-@synthesize url = url_;
+@synthesize file = file_;
 @synthesize language = language_;
 @synthesize filesHaveUnsavedContent = filesHaveUnsavedContent_;
 
 - (void)dealloc
 {
-    for (NSObject<ECCodeIndexingFileObserving> * file in [filePointers_ allValues])
+    for (NSObject<ECCodeIndexingFileObserving> *fileObject in [filePointers_ allValues])
     {
-        [self removeObserversFromFile:file];
+        [self removeObserversFromFile:fileObject];
     }
-    [self.index removeTranslationUnitForURL:self.url];
+    [self.index removeTranslationUnitForFile:self.file];
     [index_ release];
-    [url_ release];
+    [file_ release];
     [language_ release];
     [plugin_ release];
     [filePointers_ release];
     [super dealloc];
 }
 
-- (id)initWithIndex:(ECCodeIndex *)index url:(NSURL *)url language:(NSString *)language plugin:(id<ECCodeUnitPlugin>)plugin
+- (id)initWithIndex:(ECCodeIndex *)index file:(NSString *)file language:(NSString *)language plugin:(id<ECCodeUnitPlugin>)plugin
 {
     self = [super init];
     if (!self)
         return nil;
-    if (!plugin || !language || !url || !index)
+    if (!plugin || !language || !file || !index)
     {
         [self release];
         return nil;
     }
     index_ = [index retain];
-    url_ = [url copy];
+    file_ = [file copy];
     language_ = [language copy];
     plugin_ = [plugin retain];
     filePointers_ = [[NSMutableDictionary dictionary] retain];
     return self;
 }
 
-+ (id)unitWithIndex:(ECCodeIndex *)index url:(NSURL *)url language:(NSString *)language plugin:(id<ECCodeUnitPlugin>)plugin
++ (id)unitWithIndex:(ECCodeIndex *)index file:(NSString *)file language:(NSString *)language plugin:(id<ECCodeUnitPlugin>)plugin
 {
     id codeUnit = [self alloc];
-    codeUnit = [codeUnit initWithIndex:index url:url language:language plugin:plugin];
+    codeUnit = [codeUnit initWithIndex:index file:file language:language plugin:plugin];
     return [codeUnit autorelease];
 }
 
-- (BOOL)isDependentOnFile:(NSURL *)fileURL
+- (BOOL)isDependentOnFile:(NSString *)file
 {
-    return [plugin_ isDependentOnFile:fileURL];
+    return [plugin_ isDependentOnFile:file];
 }
 
 - (void)setNeedsReparse
@@ -139,20 +139,20 @@
     return observedFiles;
 }
 
-- (BOOL)addObserversToFile:(NSObject<ECCodeIndexingFileObserving> *)file
+- (BOOL)addObserversToFile:(NSObject<ECCodeIndexingFileObserving> *)fileObject
 {
-    NSURL *fileURL = file.URL;
-    if (![self isDependentOnFile:fileURL])
+    NSString *file = fileObject.file;
+    if (![self isDependentOnFile:file])
         return NO;
-    [filePointers_ setObject:[NSValue valueWithNonretainedObject:file] forKey:file.URL];
+    [filePointers_ setObject:[NSValue valueWithNonretainedObject:fileObject] forKey:file];
     [file addObserver:self forKeyPath:@"unsavedContent" options:0 context:NULL];
     return YES;
 }
 
-- (void)removeObserversFromFile:(NSObject<ECCodeIndexingFileObserving> *)file
+- (void)removeObserversFromFile:(NSObject<ECCodeIndexingFileObserving> *)fileObject
 {
-    [filePointers_ removeObjectForKey:file.URL];
-    [file removeObserver:self forKeyPath:@"unsavedContent"];
+    [filePointers_ removeObjectForKey:fileObject.file];
+    [fileObject removeObserver:self forKeyPath:@"unsavedContent"];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context

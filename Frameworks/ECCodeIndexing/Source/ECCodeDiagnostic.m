@@ -16,7 +16,7 @@
 @implementation ECCodeDiagnostic
 
 @synthesize severity = _severity;
-@synthesize fileURL = _fileURL;
+@synthesize file = _file;
 @synthesize offset = _offset;
 @synthesize spelling = _spelling;
 @synthesize category = _category;
@@ -25,7 +25,7 @@
 
 - (void)dealloc
 {
-    [_fileURL release];
+    [_file release];
     [_spelling release];
     [_category release];
     [_sourceRanges release];
@@ -33,13 +33,13 @@
     [super dealloc];
 }
 
-- (id)initWithSeverity:(ECCodeDiagnosticSeverity)severity fileURL:(NSURL *)fileURL offset:(NSUInteger)offset spelling:(NSString *)spelling category:(NSString *)category sourceRanges:(NSArray *)sourceRanges fixIts:(NSArray *)fixIts
+- (id)initWithSeverity:(ECCodeDiagnosticSeverity)severity file:(NSString *)file offset:(NSUInteger)offset spelling:(NSString *)spelling category:(NSString *)category sourceRanges:(NSArray *)sourceRanges fixIts:(NSArray *)fixIts
 {
     self = [super init];
     if (self)
     {
         _severity = severity;
-        _fileURL = [fileURL copy];
+        _file = [file copy];
         _offset = offset;
         _spelling = [spelling copy];
         _category = [category copy];
@@ -50,16 +50,16 @@
     return self;
 }
 
-+ (id)diagnosticWithSeverity:(ECCodeDiagnosticSeverity)severity fileURL:(NSURL *)fileURL offset:(NSUInteger)offset spelling:(NSString *)spelling category:(NSString *)category sourceRanges:(NSArray *)sourceRanges fixIts:(NSArray *)fixIts
++ (id)diagnosticWithSeverity:(ECCodeDiagnosticSeverity)severity file:(NSString *)file offset:(NSUInteger)offset spelling:(NSString *)spelling category:(NSString *)category sourceRanges:(NSArray *)sourceRanges fixIts:(NSArray *)fixIts
 {
     id diagnostic = [self alloc];
-    diagnostic = [diagnostic initWithSeverity:severity fileURL:fileURL offset:offset spelling:spelling category:category sourceRanges:sourceRanges fixIts:fixIts];
+    diagnostic = [diagnostic initWithSeverity:severity file:file offset:offset spelling:spelling category:category sourceRanges:sourceRanges fixIts:fixIts];
     return [diagnostic autorelease];
 }
 
 - (NSString *)description
 {
-    return [NSString stringWithFormat:@"Diagnostic at %@;%d : %@", self.fileURL, self.offset, self.spelling];
+    return [NSString stringWithFormat:@"Diagnostic at %@;%d : %@", self.file, self.offset, self.spelling];
 }
 
 - (id)copyWithZone:(NSZone *)zone
@@ -75,7 +75,7 @@
 - (NSUInteger)computeHash
 {
     const NSUInteger propertyCount = 7;
-    NSUInteger propertyHashes[7] = { _severity, [_fileURL hash], _offset, [_spelling hash], [_category hash], [_sourceRanges hash], [_fixIts hash]};
+    NSUInteger propertyHashes[7] = { _severity, [_file hash], _offset, [_spelling hash], [_category hash], [_sourceRanges hash], [_fixIts hash]};
     return ECHashNSUIntegers(propertyHashes, propertyCount);
 }
 
@@ -90,8 +90,8 @@
         return NO;
     if (!otherDiagnostic.severity == _severity)
         return NO;
-    if (_fileURL || otherDiagnostic.fileURL)
-        if (![otherDiagnostic.fileURL isEqual:_fileURL])
+    if (_file || otherDiagnostic.file)
+        if (![otherDiagnostic.file isEqual:_file])
             return NO;
     if (_spelling || otherDiagnostic.spelling)
         if (![otherDiagnostic.spelling isEqual:_spelling])

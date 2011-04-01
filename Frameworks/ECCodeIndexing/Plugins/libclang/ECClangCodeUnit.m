@@ -24,14 +24,14 @@ const NSString *ECClangCodeUnitOptionCXIndex = @"CXIndex";
 @property (nonatomic) CXIndex index;
 @property (nonatomic) CXTranslationUnit translationUnit;
 @property (nonatomic) CXFile source;
-@property (nonatomic, retain) NSURL *url;
+@property (nonatomic, retain) NSString *file;
 @property (nonatomic, retain) NSString *language;
 @end
 
 #pragma mark -
 #pragma mark Private functions
 
-static void offsetAndURLFromClangSourceLocation(CXSourceLocation clangSourceLocation, NSUInteger *offset, NSURL **url)
+static void offsetAndFileFromClangSourceLocation(CXSourceLocation clangSourceLocation, NSUInteger *offset, NSString **file)
 {
     if (clang_equalLocations(clangSourceLocation, clang_getNullLocation()))
         return;
@@ -43,22 +43,22 @@ static void offsetAndURLFromClangSourceLocation(CXSourceLocation clangSourceLoca
     CXString clangFileName = clang_getFileName(clangFile);
     if (offset)
         *offset = clangOffset;
-    if (url)
-        *url = [NSURL fileURLWithPath:[NSString stringWithUTF8String:clang_getCString(clangFileName)]];
+    if (file)
+        *file = [NSString stringWithUTF8String:clang_getCString(clangFileName)];
     clang_disposeString(clangFileName);
 }
 
-static void rangeAndURLFromClangSourceRange(CXSourceRange clangSourceRange, NSRange *range, NSURL **url)
+static void rangeAndFileFromClangSourceRange(CXSourceRange clangSourceRange, NSRange *range, NSString **file)
 {
     NSUInteger start = NSNotFound;
-    NSURL *startURL = nil;
+    NSString *startFile = nil;
     NSUInteger end = NSNotFound;
-    offsetAndURLFromClangSourceLocation(clang_getRangeStart(clangSourceRange), &start, &startURL);
-    offsetAndURLFromClangSourceLocation(clang_getRangeEnd(clangSourceRange), &end, NULL);
+    offsetAndFileFromClangSourceLocation(clang_getRangeStart(clangSourceRange), &start, &startFile);
+    offsetAndFileFromClangSourceLocation(clang_getRangeEnd(clangSourceRange), &end, NULL);
     if (range)
         *range = NSMakeRange(start, end - start);
-    if (url)
-        *url = startURL;
+    if (file)
+        *file = startFile;
 }
 
 static ECCodeCursor *cursorFromClangCursor(CXCursor clangCursor)
@@ -108,18 +108,18 @@ static ECCodeCursor *cursorFromClangCursor(CXCursor clangCursor)
     CXString clangSpelling = clang_getCursorSpelling(clangCursor);
     spelling = [NSString stringWithUTF8String:clang_getCString(clangSpelling)];
     clang_disposeString(clangSpelling);
-    NSURL *fileURL;
+    NSString *file;
     NSUInteger offset;
     CXSourceLocation clangLocation = clang_getCursorLocation(clangCursor);
-    offsetAndURLFromClangSourceLocation(clangLocation, &offset, &fileURL);
+    offsetAndFileFromClangSourceLocation(clangLocation, &offset, &file);
     NSRange extent;
     CXSourceRange clangExtent = clang_getCursorExtent(clangCursor);
-    rangeAndURLFromClangSourceRange(clangExtent, &extent, NULL);
+    rangeAndFileFromClangSourceRange(clangExtent, &extent, NULL);
     NSString *unifiedSymbolResolution;
     CXString clangUSR = clang_getCursorUSR(clangCursor);
     unifiedSymbolResolution = [NSString stringWithUTF8String:clang_getCString(clangUSR)];
     clang_disposeString(clangUSR);
-    return [ECCodeCursor cursorWithLanguage:language kind:kind detailedKind:detailedKind spelling:spelling fileURL:fileURL offset:offset extent:extent unifiedSymbolResolution:unifiedSymbolResolution];
+    return [ECCodeCursor cursorWithLanguage:language kind:kind detailedKind:detailedKind spelling:spelling file:file offset:offset extent:extent unifiedSymbolResolution:unifiedSymbolResolution];
 }
 
 static ECCodeToken *tokenFromClangToken(CXTranslationUnit translationUnit, CXToken clangToken, BOOL attachCursor, CXCursor clangTokenCursor)
@@ -147,14 +147,14 @@ static ECCodeToken *tokenFromClangToken(CXTranslationUnit translationUnit, CXTok
     NSString *spelling = [NSString stringWithUTF8String:clang_getCString(clangSpelling)];
     clang_disposeString(clangSpelling);
     NSUInteger offset;
-    NSURL *fileURL;
-    offsetAndURLFromClangSourceLocation(clang_getTokenLocation(translationUnit, clangToken), &offset, &fileURL);
+    NSString *file;
+    offsetAndFileFromClangSourceLocation(clang_getTokenLocation(translationUnit, clangToken), &offset, &file);
     NSRange extent;
-    rangeAndURLFromClangSourceRange(clang_getTokenExtent(translationUnit, clangToken), &extent, NULL);
+    rangeAndFileFromClangSourceRange(clang_getTokenExtent(translationUnit, clangToken), &extent, NULL);
     ECCodeCursor *cursor = nil;
     if (attachCursor)
         cursor = cursorFromClangCursor(clangTokenCursor);
-    return [ECCodeToken tokenWithKind:kind spelling:spelling fileURL:fileURL offset:offset extent:extent cursor:cursor];
+    return [ECCodeToken tokenWithKind:kind spelling:spelling file:file offset:offset extent:extent cursor:cursor];
 }
 
 static ECCodeFixIt *fixItFromClangDiagnostic(CXDiagnostic clangDiagnostic, unsigned index)
@@ -164,9 +164,9 @@ static ECCodeFixIt *fixItFromClangDiagnostic(CXDiagnostic clangDiagnostic, unsig
     NSString *string = [NSString stringWithUTF8String:clang_getCString(clangString)];
     clang_disposeString(clangString);
     NSRange replacementRange;
-    NSURL *fileURL;
-    rangeAndURLFromClangSourceRange(clangReplacementRange, &replacementRange, &fileURL);
-    return [ECCodeFixIt fixItWithString:string fileURL:fileURL replacementRange:replacementRange];
+    NSString *file;
+    rangeAndFileFromClangSourceRange(clangReplacementRange, &replacementRange, &file);
+    return [ECCodeFixIt fixItWithString:string file:file replacementRange:replacementRange];
 }
 
 static ECCodeDiagnostic *diagnosticFromClangDiagnostic(CXDiagnostic clangDiagnostic)
@@ -191,8 +191,8 @@ static ECCodeDiagnostic *diagnosticFromClangDiagnostic(CXDiagnostic clangDiagnos
             break;
     };
     NSUInteger offset;
-    NSURL *fileURL;
-    offsetAndURLFromClangSourceLocation(clang_getDiagnosticLocation(clangDiagnostic), &offset, &fileURL);
+    NSString *file;
+    offsetAndFileFromClangSourceLocation(clang_getDiagnosticLocation(clangDiagnostic), &offset, &file);
     CXString clangSpelling = clang_getDiagnosticSpelling(clangDiagnostic);
     NSString *spelling = [NSString stringWithUTF8String:clang_getCString(clangSpelling)];
     clang_disposeString(clangSpelling);
@@ -204,7 +204,7 @@ static ECCodeDiagnostic *diagnosticFromClangDiagnostic(CXDiagnostic clangDiagnos
     for (unsigned i = 0; i < numRanges; i++)
     {
         NSRange range;
-        rangeAndURLFromClangSourceRange(clang_getDiagnosticRange(clangDiagnostic, i), &range, NULL);
+        rangeAndFileFromClangSourceRange(clang_getDiagnosticRange(clangDiagnostic, i), &range, NULL);
         [ranges addObject:[NSValue valueWithRange:range]];
     }
     unsigned numFixIts = clang_getDiagnosticNumFixIts(clangDiagnostic);
@@ -212,7 +212,7 @@ static ECCodeDiagnostic *diagnosticFromClangDiagnostic(CXDiagnostic clangDiagnos
     for (unsigned i = 0; i < numFixIts; i++)
         [fixIts addObject:fixItFromClangDiagnostic(clangDiagnostic, i)];
     
-    return [ECCodeDiagnostic diagnosticWithSeverity:severity fileURL:fileURL offset:offset spelling:spelling category:category sourceRanges:ranges fixIts:fixIts];
+    return [ECCodeDiagnostic diagnosticWithSeverity:severity file:file offset:offset spelling:spelling category:category sourceRanges:ranges fixIts:fixIts];
 }
 
 static ECCodeCompletionChunk *chunkFromClangCompletionString(CXCompletionString clangCompletionString, unsigned index)
@@ -243,16 +243,16 @@ static ECCodeCompletionResult *completionResultFromClangCompletionResult(CXCompl
 @synthesize index = index_;
 @synthesize translationUnit = translationUnit_;
 @synthesize source = source_;
-@synthesize url = url_;
+@synthesize file = file_;
 @synthesize language = language_;
 
 - (void)dealloc {
     clang_disposeTranslationUnit(self.translationUnit);
-    self.url = nil;
+    self.file = nil;
     [super dealloc];
 }
 
-- (id)initWithFile:(NSURL *)fileURL index:(CXIndex)index language:(NSString *)language
+- (id)initWithFile:(NSString *)file index:(CXIndex)index language:(NSString *)language
 {
     self = [super init];
     if (!self)
@@ -263,25 +263,24 @@ static ECCodeCompletionResult *completionResultFromClangCompletionResult(CXCompl
         return nil;
     }
     int parameter_count = 10;
-    const char *filePath = [[fileURL path] fileSystemRepresentation];
     const char const *parameters[] = {"-ObjC", "-nostdinc", "-nobuiltininc", "-I/Xcode4//usr/lib/clang/2.0/include", "-I/Xcode4/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator4.2.sdk/usr/include", "-F/Xcode4/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator4.2.sdk/System/Library/Frameworks", "-isysroot=/Xcode4/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator4.2.sdk/", "-DTARGET_OS_IPHONE=1", "-UTARGET_OS_MAC", "-miphoneos-version-min=4.2"};
     self.index = index;
-    self.translationUnit = clang_parseTranslationUnit(index, filePath, parameters, parameter_count, 0, 0, CXTranslationUnit_PrecompiledPreamble | CXTranslationUnit_CacheCompletionResults);
-    self.source = clang_getFile(self.translationUnit, [[fileURL path] UTF8String]);
-    self.url = fileURL;
+    self.translationUnit = clang_parseTranslationUnit(index, [file fileSystemRepresentation], parameters, parameter_count, 0, 0, CXTranslationUnit_PrecompiledPreamble | CXTranslationUnit_CacheCompletionResults);
+    self.source = clang_getFile(self.translationUnit, [file fileSystemRepresentation]);
+    self.file = file;
     return self;
 }
 
-+ (id)unitWithFile:(NSURL *)fileURL index:(CXIndex)index language:(NSString *)language
++ (id)unitForFile:(NSString *)file index:(CXIndex)index language:(NSString *)language
 {
     id codeUnit = [self alloc];
-    codeUnit = [codeUnit initWithFile:fileURL index:index language:language];
+    codeUnit = [codeUnit initWithFile:file index:index language:language];
     return [codeUnit autorelease];
 }
 
-- (BOOL)isDependentOnFile:(NSURL *)fileURL
+- (BOOL)isDependentOnFile:(NSString *)file
 {
-    CXFile *clangFile = clang_getFile(self.translationUnit, [[fileURL path] UTF8String]);
+    CXFile *clangFile = clang_getFile(self.translationUnit, [file fileSystemRepresentation]);
     if (clangFile)
         return YES;
     return NO;
@@ -298,7 +297,7 @@ static ECCodeCompletionResult *completionResultFromClangCompletionResult(CXCompl
     unsigned line;
     unsigned column;
     clang_getInstantiationLocation(selectionLocation, NULL, &line, &column, NULL);
-    CXCodeCompleteResults *clangCompletions = clang_codeCompleteAt(self.translationUnit, [[self.url path] UTF8String], line, column, NULL, 0, clang_defaultCodeCompleteOptions());
+    CXCodeCompleteResults *clangCompletions = clang_codeCompleteAt(self.translationUnit, [self.file fileSystemRepresentation], line, column, NULL, 0, clang_defaultCodeCompleteOptions());
     NSMutableArray *completions = [[[NSMutableArray alloc] init] autorelease];
     for (unsigned i = 0; i < clangCompletions->NumResults; i++)
         [completions addObject:completionResultFromClangCompletionResult(clangCompletions->Results[i]).completionString];
@@ -354,7 +353,7 @@ static ECCodeCompletionResult *completionResultFromClangCompletionResult(CXCompl
 
 - (NSArray *)tokensWithCursors:(BOOL)attachCursors
 {
-    NSUInteger fileLength = [[NSString stringWithContentsOfURL:self.url encoding:NSUTF8StringEncoding error:NULL] length];
+    NSUInteger fileLength = [[NSString stringWithContentsOfFile:self.file encoding:NSUTF8StringEncoding error:NULL] length];
     return [self tokensInRange:NSMakeRange(0, fileLength) withCursors:attachCursors];
 }
 

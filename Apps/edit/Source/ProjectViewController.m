@@ -10,7 +10,8 @@
 
 @interface ProjectViewController ()
 @property (nonatomic, retain) NSFileManager *fileManager;
-@property (nonatomic, retain) NSURL *folder;
+@property (nonatomic, retain) NSString *folder;
+- (NSArray *)filesInSubfolder:(NSString *)subfolder;
 @end
 
 @implementation ProjectViewController
@@ -78,12 +79,54 @@
 
 - (NSArray *)contentsOfFolder
 {
-    return [self.fileManager contentsOfDirectoryAtPath:[self.folder path] error:NULL];
+    NSMutableArray *subfolders = [NSMutableArray array];
+    NSEnumerator *links = [self.fileManager enumeratorAtPath:self.folder];
+    BOOL isDirectory;
+    NSString *oldWorkingDirectory = [self.fileManager currentDirectoryPath];
+    [self.fileManager changeCurrentDirectoryPath:self.folder];
+    for (NSString *link in links)
+    {
+        if(![self.fileManager fileExistsAtPath:link isDirectory:&isDirectory])
+            continue;
+        if(isDirectory)
+            [subfolders addObject:link];
+    }
+    [self.fileManager changeCurrentDirectoryPath:oldWorkingDirectory];
+    return subfolders;
 }
 
-- (void)browseFolder:(NSURL *)folder
+- (void)browseFolder:(NSString *)folder
 {
     self.folder = folder;
+}
+
+- (NSArray *)filesInSubfolder:(NSString *)subfolder
+{
+    NSMutableArray *files = [NSMutableArray array];
+    NSString *subfolderAbsolutePath = [self.folder stringByAppendingPathComponent:subfolder];
+    NSArray *links = [self.fileManager contentsOfDirectoryAtPath:subfolderAbsolutePath error:NULL];
+    BOOL isDirectory;
+    NSString *oldWorkingDirectory = [self.fileManager currentDirectoryPath];
+    [self.fileManager changeCurrentDirectoryPath:subfolderAbsolutePath];
+    for (NSString *link in links)
+    {
+        if(![self.fileManager fileExistsAtPath:link isDirectory:&isDirectory])
+            continue;
+        if(!isDirectory)
+            [files addObject:link];
+    }
+    [self.fileManager changeCurrentDirectoryPath:oldWorkingDirectory];
+    return files;
+}
+
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
+    return [[self contentsOfFolder] count];
+}
+
+- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
+{
+    return [[self contentsOfFolder] objectAtIndex:section];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -93,19 +136,22 @@
     {
         file = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"File"] autorelease];
     }
-    file.textLabel.text = [[self contentsOfFolder] objectAtIndex:(indexPath.row)];
+    file.textLabel.text = [[self filesInSubfolder:[self tableView:nil titleForHeaderInSection:indexPath.section]] objectAtIndex:(indexPath.row)];
     return file;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return [[self contentsOfFolder] count];
+    NSArray *links = [self filesInSubfolder:[self tableView:nil titleForHeaderInSection:section]];
+    return [links count];
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSURL *file = [self.folder URLByAppendingPathComponent:[[self contentsOfFolder] objectAtIndex:indexPath.row]];
-    [self.delegate fileBrowser:self didSelectFileAtPath:file];
+    NSString *subfolder = [self tableView:nil titleForHeaderInSection:indexPath.section];
+    NSString *file = [[self filesInSubfolder:subfolder] objectAtIndex:indexPath.row];
+    NSString *absoluteFilePath = [[self.folder stringByAppendingPathComponent:subfolder] stringByAppendingPathComponent:file];
+    [self.delegate fileBrowser:self didSelectFileAtPath:absoluteFilePath];
 }
 
 @end

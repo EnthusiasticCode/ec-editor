@@ -6,7 +6,6 @@
 //  Copyright 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import <ECFoundation/NSURL+ECFoundation.h>
 #import <objc/runtime.h>
 #import "ECCodeIndex.h"
 #import "ECCodeIndex(Private).h"
@@ -22,8 +21,8 @@
 @property (nonatomic, retain) NSMutableDictionary *filePointers;
 - (BOOL)loadPlugins;
 - (id<ECCodeIndexPlugin>)pluginForLanguage:(NSString *)language;
-- (void)addObserversForUnitsToFile:(NSObject<ECCodeIndexingFileObserving> *)file;
-- (void)removeObserversForUnitsFromFile:(NSObject<ECCodeIndexingFileObserving> *)file;
+- (void)addObserversForUnitsToFile:(NSObject<ECCodeIndexingFileObserving> *)fileObject;
+- (void)removeObserversForUnitsFromFile:(NSObject<ECCodeIndexingFileObserving> *)fileObject;
 @end
 
 #pragma mark -
@@ -82,20 +81,20 @@
     return [self.filePointers allValues];
 }
 
-- (BOOL)addObserversToFile:(NSObject<ECCodeIndexingFileObserving> *)file
+- (BOOL)addObserversToFile:(NSObject<ECCodeIndexingFileObserving> *)fileObject
 {
-    if ([self.filePointers objectForKey:file.URL])
+    if ([self.filePointers objectForKey:fileObject.file])
         return NO;
-    [self addObserversForUnitsToFile:file];
-    [file addObserver:self forKeyPath:@"URL" options:NSKeyValueObservingOptionPrior context:NULL];
+    [self addObserversForUnitsToFile:fileObject];
+    [fileObject addObserver:self forKeyPath:@"file" options:NSKeyValueObservingOptionPrior context:NULL];
     return YES;
 }
 
-- (void)removeObserversFromFile:(NSObject<ECCodeIndexingFileObserving> *)file
+- (void)removeObserversFromFile:(NSObject<ECCodeIndexingFileObserving> *)fileObject
 {
-    [self removeObserversForUnitsFromFile:file];
-    [file removeObserver:self forKeyPath:@"URL"];
-    [self.filePointers removeObjectForKey:file.URL];
+    [self removeObserversForUnitsFromFile:fileObject];
+    [fileObject removeObserver:self forKeyPath:@"file"];
+    [self.filePointers removeObjectForKey:fileObject.file];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
@@ -103,24 +102,24 @@
     BOOL isPriorToChange = [[change objectForKey:NSKeyValueChangeNotificationIsPriorKey] boolValue];
     if (isPriorToChange)
         [self removeObserversForUnitsFromFile:object];
-    NSURL *newURL = [change objectForKey:NSKeyValueChangeNewKey];
-    if (newURL)
+    NSString *newFile = [change objectForKey:NSKeyValueChangeNewKey];
+    if (newFile)
         [self addObserversForUnitsToFile:object];
 }
 
-- (ECCodeUnit *)unitForURL:(NSURL *)url
+- (ECCodeUnit *)unitForFile:(NSString *)file
 {
-    return [self unitForURL:url withLanguage:nil];
+    return [self unitForFile:file withLanguage:nil];
 }
 
-- (ECCodeUnit *)unitForURL:(NSURL *)url withLanguage:(NSString *)language
+- (ECCodeUnit *)unitForFile:(NSString *)file withLanguage:(NSString *)language
 {
-    if (!url)
+    if (!file)
         return nil;
     if (!language)
-        language = [self languageForExtension:[url pathExtension]];
+        language = [self languageForExtension:[file pathExtension]];
     ECCodeUnit *unit;
-    unit = [[self.codeUnitPointers objectForKey:url] nonretainedObjectValue];
+    unit = [[self.codeUnitPointers objectForKey:file] nonretainedObjectValue];
     if (unit)
     {
         if ([unit.language isEqual:language])
@@ -128,12 +127,12 @@
         else
             return nil;
     }
-    unit = [ECCodeUnit unitWithIndex:self url:url language:language plugin:[[self pluginForLanguage:language] unitPluginForURL:url withLanguage:language]];
+    unit = [ECCodeUnit unitWithIndex:self file:file language:language plugin:[[self pluginForLanguage:language] unitPluginForFile:file withLanguage:language]];
     if (!unit)
         return nil;
-    [self.codeUnitPointers setObject:[NSValue valueWithNonretainedObject:unit] forKey:url];
-    for (NSObject<ECCodeIndexingFileObserving> *file in self.filePointers)
-        [unit addObserversToFile:file];
+    [self.codeUnitPointers setObject:[NSValue valueWithNonretainedObject:unit] forKey:file];
+    for (NSObject<ECCodeIndexingFileObserving> *fileObject in self.filePointers)
+        [unit addObserversToFile:fileObject];
     return unit;
 }
 
@@ -194,24 +193,24 @@
     return [self.pluginsByLanguage objectForKey:language];
 }
 
-- (void)addObserversForUnitsToFile:(id<ECCodeIndexingFileObserving>)file
+- (void)addObserversForUnitsToFile:(id<ECCodeIndexingFileObserving>)fileObject
 {
     for (ECCodeUnit *unit in [self.codeUnitPointers allValues])
-        [unit addObserversToFile:file];
+        [unit addObserversToFile:fileObject];
 }
 
-- (void)removeObserversForUnitsFromFile:(id<ECCodeIndexingFileObserving>)file
+- (void)removeObserversForUnitsFromFile:(id<ECCodeIndexingFileObserving>)fileObject
 {
     for (ECCodeUnit *unit in [self.codeUnitPointers allValues])
-        [unit removeObserversFromFile:file];
+        [unit removeObserversFromFile:fileObject];
 }
 
 #pragma mark -
 #pragma mark Categories
 
-- (void)removeTranslationUnitForURL:(NSURL *)url
+- (void)removeTranslationUnitForFile:(NSString *)file
 {
-    [self.codeUnitPointers removeObjectForKey:url];
+    [self.codeUnitPointers removeObjectForKey:file];
 }
 
 @end

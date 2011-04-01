@@ -20,6 +20,6 @@
 @property (nonatomic, retain) Project *project;
 @property (nonatomic, retain) ECCodeIndex *codeIndex;
 
-- (void)loadProject:(NSURL *)projectRoot;
-- (void)loadFile:(NSURL *)file;
+- (void)loadProject:(NSString *)projectRoot;
+- (void)loadFile:(NSString *)file;
 @end

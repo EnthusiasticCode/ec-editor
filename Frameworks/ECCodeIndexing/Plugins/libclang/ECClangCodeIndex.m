@@ -47,9 +47,9 @@
     return [NSDictionary dictionaryWithObjects:languageForextensions forKeys:extensions];
 }
 
-- (id<ECCodeUnitPlugin>)unitPluginForURL:(NSURL *)url withLanguage:(NSString *)language
+- (id<ECCodeUnitPlugin>)unitPluginForFile:(NSString *)file withLanguage:(NSString *)language
 {
-    return [ECClangCodeUnit unitWithFile:url index:self.index language:language];
+    return [ECClangCodeUnit unitForFile:file index:self.index language:language];
 }
 
 @end

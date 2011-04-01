@@ -119,9 +119,9 @@
 	return YES;
 }
 
-- (void)loadFile:(NSURL *)fileURL withCodeUnit:(ECCodeUnit *)codeUnit
+- (void)loadFile:(NSString *)file withCodeUnit:(ECCodeUnit *)codeUnit
 {
-    self.codeView.text = [NSString stringWithContentsOfURL:fileURL encoding:NSUTF8StringEncoding error:nil];
+    self.codeView.text = [NSString stringWithContentsOfFile:file encoding:NSUTF8StringEncoding error:nil];
     for (ECCodeToken *token in [codeUnit tokensInRange:NSMakeRange(0, [self.codeView.text length]) withCursors:YES])
     {
         switch (token.kind)

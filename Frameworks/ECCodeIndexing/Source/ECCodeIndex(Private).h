@@ -9,5 +9,5 @@
 #import "ECCodeIndex.h"
 
 @interface ECCodeIndex (Private)
-- (void)removeTranslationUnitForURL:(NSURL *)url;
+- (void)removeTranslationUnitForFile:(NSString *)file;
 @end
