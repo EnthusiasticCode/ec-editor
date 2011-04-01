@@ -7,7 +7,7 @@
 //
 
 #import "ECRelationalTableView.h"
-#import "ECRelationalTableItemView.h"
+#import "ECRelationalTableViewItemView.h"
 
 @interface ECRelationalTableView ()
 @property (nonatomic, retain) UIScrollView *scrollView;
