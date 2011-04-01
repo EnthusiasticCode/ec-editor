@@ -17,11 +17,13 @@
     NSDictionary *textStyles_;
     NSDictionary *diagnosticOverlayStyles_;
     UITapGestureRecognizer *focusRecognizer;
+    UIScrollView *_codeScrollView;
 }
 @property (nonatomic, retain) Project *project;
 @property (nonatomic, retain) NSFileManager *fileManager;
 @property (nonatomic, retain) IBOutlet ECCodeView *codeView;
 @property (nonatomic, retain) ECCodeIndex *codeIndexer;
+@property (nonatomic, retain) IBOutlet UIScrollView *codeScrollView;
 
 - (void)loadProjectFromRootDirectory:(NSURL *)rootDirectory;
 - (void)loadFile:(NSURL *)file;

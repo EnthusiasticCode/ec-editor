@@ -12,6 +12,7 @@
 
 @interface ECTextLayer () {
     BOOL framesetterInvalid;
+    CGFloat wrapWidth;
 }
 
 @property (nonatomic, readonly) CTFramesetterRef CTFrameSetter;
@@ -41,14 +42,13 @@
     framesetterInvalid = YES;
 }
 
-
 #pragma mark CALayer methods
 
-- (void)setBounds:(CGRect)bounds
-{
-    [super setBounds:bounds];
-    [self setNeedsTextRendering];
-}
+//- (void)setBounds:(CGRect)bounds
+//{
+//    [super setBounds:bounds];
+//    [self setNeedsTextRendering];
+//}
 
 - (BOOL)isGeometryFlipped
 {
@@ -100,6 +100,19 @@
     CTFrameRect = CGRectNull;
 }
 
+- (void)setFrame:(CGRect)frame autoAdjustToWrap:(BOOL)autoadjust
+{
+    wrapWidth = frame.size.width;
+    if (autoadjust) 
+    {
+        [self setNeedsTextRendering];
+        CGSize frameSize = frame.size;
+        frameSize.height = ceilf(self.CTFrameRect.size.height);
+        frame.size = frameSize;
+    }
+    [self setFrame:frame];
+}
+
 #pragma mark Private properties
 
 - (CTFramesetterRef)CTFrameSetter
@@ -131,13 +144,7 @@
 {
     if (!CTFrame || framesetterInvalid)
     {
-        CGSize size = self.bounds.size;
-        if (CGSizeEqualToSize(size, CGSizeZero) && self.superlayer) {
-            size = self.superlayer.bounds.size;
-        }
-        size.height = 100000;
-        if (!wrapped || !size.width)
-            size.width = 100000;
+        CGSize size = CGSizeMake(wrapWidth ? wrapWidth : 100000, 100000);
         CGMutablePathRef path = CGPathCreateMutable();
         CGPathAddRect(path, NULL, CGRectMake(0, 0, size.width, size.height));
         CTFrame = CTFramesetterCreateFrame(self.CTFrameSetter, (CFRange){0, 0}, path, NULL);

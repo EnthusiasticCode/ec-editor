@@ -22,6 +22,7 @@
 @synthesize project = _project;
 @synthesize codeView = _codeView;
 @synthesize codeIndexer = _codeIndexer;
+@synthesize codeScrollView = _codeScrollView;
 @synthesize fileManager = _fileManager;
 
 - (NSFileManager *)fileManager
@@ -36,6 +37,7 @@
     self.project = nil;
     self.codeView = nil;
     self.codeIndexer = nil;
+    [_codeScrollView release];
     [super dealloc];
 }
 
@@ -180,6 +182,11 @@
                 break;
         }
     }
+    
+    [self.codeView sizeToFit];
+    CGSize codeViewSize = self.codeView.bounds.size;
+    self.codeScrollView.contentSize = codeViewSize;
+    
     for (ECCodeDiagnostic *diagnostic in [codeUnit diagnostics])
     {
         NSLog(@"%@", diagnostic);
@@ -197,7 +204,6 @@
 //                break;
 //        }
     }
-    [self.codeView setNeedsLayout];
 }
 
 - (NSArray *)contentsOfRootDirectory

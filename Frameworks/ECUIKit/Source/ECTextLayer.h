@@ -30,4 +30,7 @@
 /// Invalidate the content taht will be marked as needing redraw.
 - (void)setNeedsTextRendering;
 
+/// Set the frame and adjust it to wrap the text.
+- (void)setFrame:(CGRect)frame autoAdjustToWrap:(BOOL)autoadjust;
+
 @end
