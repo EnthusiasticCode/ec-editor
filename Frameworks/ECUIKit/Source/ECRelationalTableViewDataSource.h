@@ -1,5 +1,5 @@
 //
-//  ECHierarchicalTableViewDataSource.h
+//  ECRelationalTableViewDataSource.h
 //  edit-single-project-ungrouped
 //
 //  Created by Uri Baghin on 4/1/11.
@@ -7,9 +7,9 @@
 //
 
 #import <Foundation/Foundation.h>
-@class ECHierarchicalTableView;
+@class ECRelationalTableView;
 
-@protocol ECHierarchicalTableViewDataSource <NSObject>
+@protocol ECRelationalTableViewDataSource <NSObject>
 @required
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section;

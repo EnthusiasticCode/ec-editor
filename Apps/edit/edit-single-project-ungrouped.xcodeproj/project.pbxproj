@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		B722F0971344E41E00AD8603 /* ECHierarchicalTableView.m in Sources */ = {isa = PBXBuildFile; fileRef = B722F0961344E41E00AD8603 /* ECHierarchicalTableView.m */; };
+		B722F0971344E41E00AD8603 /* ECRelationalTableView.m in Sources */ = {isa = PBXBuildFile; fileRef = B722F0961344E41E00AD8603 /* ECRelationalTableView.m */; };
 		B72982E2133F8B0900F65728 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B72982E1133F8B0900F65728 /* UIKit.framework */; };
 		B72982E4133F8B0900F65728 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B72982E3133F8B0900F65728 /* Foundation.framework */; };
 		B72982E6133F8B0900F65728 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B72982E5133F8B0900F65728 /* CoreGraphics.framework */; };
@@ -62,12 +62,12 @@
 		B7298405133FA57B00F65728 /* ProjectViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B7298404133FA57B00F65728 /* ProjectViewController.xib */; };
 		B7298408133FAE2F00F65728 /* FileViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B7298407133FAE2E00F65728 /* FileViewController.m */; };
 		B7298412133FB57C00F65728 /* ProjectController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B7298411133FB57C00F65728 /* ProjectController.xib */; };
-		B7B91BC61345BB3400117840 /* ECHierarchicalTableItemView.m in Sources */ = {isa = PBXBuildFile; fileRef = B7B91BC51345BB3400117840 /* ECHierarchicalTableItemView.m */; };
+		B7B91BC61345BB3400117840 /* ECRelationalTableItemView.m in Sources */ = {isa = PBXBuildFile; fileRef = B7B91BC51345BB3400117840 /* ECRelationalTableItemView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		B722F0951344E41E00AD8603 /* ECHierarchicalTableView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECHierarchicalTableView.h; sourceTree = "<group>"; };
-		B722F0961344E41E00AD8603 /* ECHierarchicalTableView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECHierarchicalTableView.m; sourceTree = "<group>"; };
+		B722F0951344E41E00AD8603 /* ECRelationalTableView.h */ = {isa = PBXFileReference; fileEncoding = 4; path = ECRelationalTableView.h; sourceTree = "<group>"; };
+		B722F0961344E41E00AD8603 /* ECRelationalTableView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECRelationalTableView.m; sourceTree = "<group>"; };
 		B72982DD133F8B0900F65728 /* edit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = edit.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B72982E1133F8B0900F65728 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		B72982E3133F8B0900F65728 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -170,10 +170,10 @@
 		B7298411133FB57C00F65728 /* ProjectController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = ProjectController.xib; path = Resources/ProjectController.xib; sourceTree = SOURCE_ROOT; };
 		B7298413133FBEED00F65728 /* FileBrowserDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileBrowserDelegate.h; path = Source/FileBrowserDelegate.h; sourceTree = SOURCE_ROOT; };
 		B72984141340791000F65728 /* FileBrowser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileBrowser.h; path = Source/FileBrowser.h; sourceTree = SOURCE_ROOT; };
-		B7B91BBE1345B14A00117840 /* ECHierarchicalTableViewDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECHierarchicalTableViewDelegate.h; sourceTree = "<group>"; };
-		B7B91BC01345B15700117840 /* ECHierarchicalTableViewDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECHierarchicalTableViewDataSource.h; sourceTree = "<group>"; };
-		B7B91BC41345BB3300117840 /* ECHierarchicalTableItemView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECHierarchicalTableItemView.h; sourceTree = "<group>"; };
-		B7B91BC51345BB3400117840 /* ECHierarchicalTableItemView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECHierarchicalTableItemView.m; sourceTree = "<group>"; };
+		B7B91BBE1345B14A00117840 /* ECRelationalTableViewDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; path = ECRelationalTableViewDelegate.h; sourceTree = "<group>"; };
+		B7B91BC01345B15700117840 /* ECRelationalTableViewDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; path = ECRelationalTableViewDataSource.h; sourceTree = "<group>"; };
+		B7B91BC41345BB3300117840 /* ECRelationalTableItemView.h */ = {isa = PBXFileReference; fileEncoding = 4; path = ECRelationalTableItemView.h; sourceTree = "<group>"; };
+		B7B91BC51345BB3400117840 /* ECRelationalTableItemView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECRelationalTableItemView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -389,12 +389,12 @@
 				B729839B133F8E7000F65728 /* ECCoreText.m */,
 				B729839C133F8E7000F65728 /* ECDocument.h */,
 				B729839D133F8E7000F65728 /* ECDocument.m */,
-				B7B91BBE1345B14A00117840 /* ECHierarchicalTableViewDelegate.h */,
-				B7B91BC01345B15700117840 /* ECHierarchicalTableViewDataSource.h */,
-				B722F0951344E41E00AD8603 /* ECHierarchicalTableView.h */,
-				B722F0961344E41E00AD8603 /* ECHierarchicalTableView.m */,
-				B7B91BC41345BB3300117840 /* ECHierarchicalTableItemView.h */,
-				B7B91BC51345BB3400117840 /* ECHierarchicalTableItemView.m */,
+				B7B91BBE1345B14A00117840 /* ECRelationalTableViewDelegate.h */,
+				B7B91BC01345B15700117840 /* ECRelationalTableViewDataSource.h */,
+				B722F0951344E41E00AD8603 /* ECRelationalTableView.h */,
+				B722F0961344E41E00AD8603 /* ECRelationalTableView.m */,
+				B7B91BC41345BB3300117840 /* ECRelationalTableItemView.h */,
+				B7B91BC51345BB3400117840 /* ECRelationalTableItemView.m */,
 				B729839E133F8E7000F65728 /* ECEditCodeView.h */,
 				B729839F133F8E7000F65728 /* ECEditCodeView.m */,
 				B72983A0133F8E7000F65728 /* ECLineMarksView.h */,
@@ -528,8 +528,8 @@
 				B72983C5133F8E7100F65728 /* ECTextStyle.m in Sources */,
 				B7298403133FA56800F65728 /* ProjectViewController.m in Sources */,
 				B7298408133FAE2F00F65728 /* FileViewController.m in Sources */,
-				B722F0971344E41E00AD8603 /* ECHierarchicalTableView.m in Sources */,
-				B7B91BC61345BB3400117840 /* ECHierarchicalTableItemView.m in Sources */,
+				B722F0971344E41E00AD8603 /* ECRelationalTableView.m in Sources */,
+				B7B91BC61345BB3400117840 /* ECRelationalTableItemView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

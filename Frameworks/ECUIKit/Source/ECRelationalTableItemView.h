@@ -1,5 +1,5 @@
 //
-//  ECHierarchicalTableItemView.h
+//  ECRelationalTableItemView.h
 //  edit-single-project-ungrouped
 //
 //  Created by Uri Baghin on 4/1/11.
@@ -9,6 +9,6 @@
 #import <UIKit/UIKit.h>
 
 
-@interface ECHierarchicalTableItemView : UIView
+@interface ECRelationalTableItemView : UIView
 
 @end

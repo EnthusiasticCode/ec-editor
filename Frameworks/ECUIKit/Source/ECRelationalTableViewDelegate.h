@@ -1,5 +1,5 @@
 //
-//  ECHierarchicalTableViewDelegate.h
+//  ECRelationalTableViewDelegate.h
 //  edit-single-project-ungrouped
 //
 //  Created by Uri Baghin on 4/1/11.
@@ -8,6 +8,6 @@
 
 #import <Foundation/Foundation.h>
 
-@protocol ECHierarchicalTableViewDelegate <NSObject>
+@protocol ECRelationalTableViewDelegate <NSObject>
 
 @end

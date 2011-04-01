@@ -1,20 +1,20 @@
 //
-//  ECHierarchicalTableView.m
+//  ECRelationalTableView.m
 //  edit-single-project-ungrouped
 //
 //  Created by Uri Baghin on 3/31/11.
 //  Copyright 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import "ECHierarchicalTableView.h"
-#import "ECHierarchicalTableItemView.h"
+#import "ECRelationalTableView.h"
+#import "ECRelationalTableItemView.h"
 
-@interface ECHierarchicalTableView ()
+@interface ECRelationalTableView ()
 @property (nonatomic, retain) UIScrollView *scrollView;
 @property (nonatomic, retain) UIView *rootView;
 @end
 
-@implementation ECHierarchicalTableView
+@implementation ECRelationalTableView
 
 @synthesize scrollView = scrollView_;
 @synthesize rootView = rootView_;
@@ -31,7 +31,7 @@
     [super dealloc];
 }
 
-static id init(ECHierarchicalTableView *self)
+static id init(ECRelationalTableView *self)
 {
     self.scrollView = [[[UIScrollView alloc] initWithFrame:self.bounds] autorelease];
     [self addSubview:self.scrollView];
