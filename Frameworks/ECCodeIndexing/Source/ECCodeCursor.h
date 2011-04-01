@@ -28,10 +28,10 @@ typedef enum
 @property (nonatomic, readonly) ECCodeCursorKind kind;
 @property (nonatomic, readonly, copy) NSString *detailedKind;
 @property (nonatomic, readonly, copy) NSString *spelling;
-@property (nonatomic, readonly, copy) NSURL *fileURL;
+@property (nonatomic, readonly, copy) NSString *file;
 @property (nonatomic, readonly) NSUInteger offset;
 @property (nonatomic, readonly) NSRange extent;
 @property (nonatomic, readonly, copy) NSString *unifiedSymbolResolution;
-- (id)initWithLanguage:(NSString *)language kind:(ECCodeCursorKind)kind detailedKind:(NSString *)detailedKind spelling:(NSString *)spelling fileURL:(NSURL *)fileURL offset:(NSUInteger)offset extent:(NSRange)extent unifiedSymbolResolution:(NSString *)unifiedSymbolResolution;
-+ (id)cursorWithLanguage:(NSString *)language kind:(ECCodeCursorKind)kind detailedKind:(NSString *)detailedKind spelling:(NSString *)spelling fileURL:(NSURL *)fileURL offset:(NSUInteger)offset extent:(NSRange)extent unifiedSymbolResolution:(NSString *)unifiedSymbolResolution;
+- (id)initWithLanguage:(NSString *)language kind:(ECCodeCursorKind)kind detailedKind:(NSString *)detailedKind spelling:(NSString *)spelling file:(NSString *)file offset:(NSUInteger)offset extent:(NSRange)extent unifiedSymbolResolution:(NSString *)unifiedSymbolResolution;
++ (id)cursorWithLanguage:(NSString *)language kind:(ECCodeCursorKind)kind detailedKind:(NSString *)detailedKind spelling:(NSString *)spelling file:(NSString *)file offset:(NSUInteger)offset extent:(NSRange)extent unifiedSymbolResolution:(NSString *)unifiedSymbolResolution;
 @end

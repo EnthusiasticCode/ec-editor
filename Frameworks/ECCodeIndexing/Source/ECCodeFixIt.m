@@ -16,33 +16,33 @@
 @implementation ECCodeFixIt
 
 @synthesize string = _string;
-@synthesize fileURL = _fileURL;
+@synthesize file = _file;
 @synthesize replacementRange = _replacementRange;
 
 - (void)dealloc
 {
     [_string release];
-    [_fileURL release];
+    [_file release];
     [super dealloc];
 }
 
-- (id)initWithString:(NSString *)string fileURL:(NSURL *)fileURL replacementRange:(NSRange)replacementRange
+- (id)initWithString:(NSString *)string file:(NSString *)file replacementRange:(NSRange)replacementRange
 {
     self = [super init];
     if (self)
     {
         _string = [string copy];
-        _fileURL = [fileURL copy];
+        _file = [file copy];
         _replacementRange = replacementRange;
         _hash = [self computeHash];
     }
     return self;
 }
 
-+ (id)fixItWithString:(NSString *)string fileURL:(NSURL *)fileURL replacementRange:(NSRange)replacementRange
++ (id)fixItWithString:(NSString *)string file:(NSString *)file replacementRange:(NSRange)replacementRange
 {
     id fixIt = [self alloc];
-    fixIt = [fixIt initWithString:string fileURL:fileURL replacementRange:replacementRange];
+    fixIt = [fixIt initWithString:string file:file replacementRange:replacementRange];
     return [fixIt autorelease];
 }
 
@@ -59,7 +59,7 @@
 - (NSUInteger)computeHash
 {
     const NSUInteger propertyCount = 4;
-    NSUInteger propertyHashes[4] = { [_string hash], [_fileURL hash], _replacementRange.location, _replacementRange.length };
+    NSUInteger propertyHashes[4] = { [_string hash], [_file hash], _replacementRange.location, _replacementRange.length };
     return ECHashNSUIntegers(propertyHashes, propertyCount);
 }
 
@@ -78,8 +78,8 @@
     if (_string || otherFixIt.string)
         if (![otherFixIt.string isEqual:_string])
             return NO;
-    if (_fileURL || otherFixIt.fileURL)
-        if (![otherFixIt.fileURL isEqual:_fileURL])
+    if (_file || otherFixIt.file)
+        if (![otherFixIt.file isEqual:_file])
             return NO;
     return YES;
 }

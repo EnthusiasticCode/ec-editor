@@ -36,7 +36,6 @@
 		B7298389133F8E5200F65728 /* ECCodeUnit.m in Sources */ = {isa = PBXBuildFile; fileRef = B729837A133F8E5100F65728 /* ECCodeUnit.m */; };
 		B7298392133F8E6300F65728 /* ECHashing.m in Sources */ = {isa = PBXBuildFile; fileRef = B729838C133F8E6300F65728 /* ECHashing.m */; };
 		B7298393133F8E6300F65728 /* MurmurHash3.c in Sources */ = {isa = PBXBuildFile; fileRef = B729838D133F8E6300F65728 /* MurmurHash3.c */; };
-		B7298394133F8E6300F65728 /* NSURL+ECFoundation.m in Sources */ = {isa = PBXBuildFile; fileRef = B7298390133F8E6300F65728 /* NSURL+ECFoundation.m */; };
 		B72983B6133F8E7000F65728 /* ECCodeScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = B7298397133F8E7000F65728 /* ECCodeScrollView.m */; };
 		B72983B7133F8E7000F65728 /* ECCodeView.m in Sources */ = {isa = PBXBuildFile; fileRef = B7298399133F8E7000F65728 /* ECCodeView.m */; };
 		B72983B8133F8E7000F65728 /* ECCoreText.m in Sources */ = {isa = PBXBuildFile; fileRef = B729839B133F8E7000F65728 /* ECCoreText.m */; };
@@ -78,7 +77,7 @@
 		B7298345133F8DE700F65728 /* AppController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppController.m; path = Source/AppController.m; sourceTree = SOURCE_ROOT; };
 		B7298348133F8DE700F65728 /* Project.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Project.h; path = Source/Project.h; sourceTree = SOURCE_ROOT; };
 		B7298349133F8DE700F65728 /* Project.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Project.m; path = Source/Project.m; sourceTree = SOURCE_ROOT; };
-		B729834A133F8DE700F65728 /* RootViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; name = RootViewController.h; path = Source/RootViewController.h; sourceTree = SOURCE_ROOT; };
+		B729834A133F8DE700F65728 /* RootViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RootViewController.h; path = Source/RootViewController.h; sourceTree = SOURCE_ROOT; };
 		B729834B133F8DE700F65728 /* RootViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RootViewController.m; path = Source/RootViewController.m; sourceTree = SOURCE_ROOT; };
 		B729834C133F8DE700F65728 /* ProjectController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProjectController.h; path = Source/ProjectController.h; sourceTree = SOURCE_ROOT; };
 		B729834D133F8DE700F65728 /* ProjectController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ProjectController.m; path = Source/ProjectController.m; sourceTree = SOURCE_ROOT; };
@@ -120,8 +119,6 @@
 		B729838C133F8E6300F65728 /* ECHashing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECHashing.m; sourceTree = "<group>"; };
 		B729838D133F8E6300F65728 /* MurmurHash3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = MurmurHash3.c; sourceTree = "<group>"; };
 		B729838E133F8E6300F65728 /* MurmurHash3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MurmurHash3.h; sourceTree = "<group>"; };
-		B729838F133F8E6300F65728 /* NSURL+ECFoundation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSURL+ECFoundation.h"; sourceTree = "<group>"; };
-		B7298390133F8E6300F65728 /* NSURL+ECFoundation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSURL+ECFoundation.m"; sourceTree = "<group>"; };
 		B7298391133F8E6300F65728 /* pstdint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pstdint.h; sourceTree = "<group>"; };
 		B7298396133F8E7000F65728 /* ECCodeScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeScrollView.h; sourceTree = "<group>"; };
 		B7298397133F8E7000F65728 /* ECCodeScrollView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeScrollView.m; sourceTree = "<group>"; };
@@ -158,7 +155,7 @@
 		B72983C6133F8F6500F65728 /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
 		B72983C8133F8F7000F65728 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		B72983FE133F983A00F65728 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = Resources/en.lproj/FileViewController.xib; sourceTree = SOURCE_ROOT; };
-		B7298401133FA56700F65728 /* ProjectViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; name = ProjectViewController.h; path = Source/ProjectViewController.h; sourceTree = SOURCE_ROOT; };
+		B7298401133FA56700F65728 /* ProjectViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProjectViewController.h; path = Source/ProjectViewController.h; sourceTree = SOURCE_ROOT; };
 		B7298402133FA56800F65728 /* ProjectViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ProjectViewController.m; path = Source/ProjectViewController.m; sourceTree = SOURCE_ROOT; };
 		B7298404133FA57B00F65728 /* ProjectViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = ProjectViewController.xib; path = Resources/ProjectViewController.xib; sourceTree = SOURCE_ROOT; };
 		B7298406133FAE2E00F65728 /* FileViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileViewController.h; path = Source/FileViewController.h; sourceTree = SOURCE_ROOT; };
@@ -362,8 +359,6 @@
 				B729838C133F8E6300F65728 /* ECHashing.m */,
 				B729838D133F8E6300F65728 /* MurmurHash3.c */,
 				B729838E133F8E6300F65728 /* MurmurHash3.h */,
-				B729838F133F8E6300F65728 /* NSURL+ECFoundation.h */,
-				B7298390133F8E6300F65728 /* NSURL+ECFoundation.m */,
 				B7298391133F8E6300F65728 /* pstdint.h */,
 			);
 			name = Source;
@@ -495,7 +490,6 @@
 				B7298389133F8E5200F65728 /* ECCodeUnit.m in Sources */,
 				B7298392133F8E6300F65728 /* ECHashing.m in Sources */,
 				B7298393133F8E6300F65728 /* MurmurHash3.c in Sources */,
-				B7298394133F8E6300F65728 /* NSURL+ECFoundation.m in Sources */,
 				B72983B6133F8E7000F65728 /* ECCodeScrollView.m in Sources */,
 				B72983B7133F8E7000F65728 /* ECCodeView.m in Sources */,
 				B72983B8133F8E7000F65728 /* ECCoreText.m in Sources */,
@@ -590,6 +584,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
 				PUBLIC_HEADERS_FOLDER_PATH = "$(BUILD_DIR)";
+				RUN_CLANG_STATIC_ANALYZER = YES;
 				SDKROOT = iphoneos;
 				WARNING_CFLAGS = "-Wall";
 			};
@@ -628,6 +623,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				PUBLIC_HEADERS_FOLDER_PATH = "$(BUILD_DIR)";
+				RUN_CLANG_STATIC_ANALYZER = YES;
 				SDKROOT = iphoneos;
 				WARNING_CFLAGS = "-Wall";
 			};

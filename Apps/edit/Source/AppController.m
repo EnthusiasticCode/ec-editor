@@ -45,9 +45,9 @@
     return YES;
 }
 
-- (NSURL *)applicationDocumentsDirectory
+- (NSString *)applicationDocumentsDirectory
 {
-    return [NSURL fileURLWithPath:[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject]];
+    return [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject];
 }
 
 - (void)setupToolbarWithFarLeftButton:(UIBarButtonItem *)farLeftButton leftButton:(UIBarButtonItem *)leftButton centerLabel:(UIBarButtonItem *)centerLabel rightButton:(UIBarButtonItem *)rightButton farRightButton:(UIBarButtonItem *)farRightButton
@@ -78,7 +78,7 @@
     self.rootViewController.view.frame = self.contentView.bounds;
 }
 
-- (void)fileBrowser:(id<FileBrowser>)fileBrowser didSelectFileAtPath:(NSURL *)path
+- (void)fileBrowser:(id<FileBrowser>)fileBrowser didSelectFileAtPath:(NSString *)path
 {
     if (fileBrowser == self.rootViewController)
     {
@@ -90,7 +90,7 @@
     }
 }
 
-- (void)loadProject:(NSURL *)projectRoot
+- (void)loadProject:(NSString *)projectRoot
 {
     [self.projectController browseFolder:projectRoot];
     self.projectToolbarTitle.title = [projectRoot lastPathComponent];
@@ -106,10 +106,10 @@
     [self loadProject:self.projectController.folder];
 }
 
-- (void)loadFile:(NSURL *)fileURL
+- (void)loadFile:(NSString *)file
 {
-    [self.projectController loadFile:fileURL];
-    self.fileToolbarTitle.title = [fileURL lastPathComponent];
+    [self.projectController loadFile:file];
+    self.fileToolbarTitle.title = [file lastPathComponent];
     [self setupToolbarWithFarLeftButton:self.browseProjectToolbarButton leftButton:nil centerLabel:self.fileToolbarTitle rightButton:nil farRightButton:nil];
 }
 

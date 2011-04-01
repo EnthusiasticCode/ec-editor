@@ -16,9 +16,9 @@
 @property (nonatomic, readonly) NSManagedObjectContext *managedObjectContext;
 @property (nonatomic, readonly) NSManagedObjectModel *managedObjectModel;
 @property (nonatomic, readonly) NSPersistentStoreCoordinator *persistentStoreCoordinator;
-@property (nonatomic, readonly) NSURL *rootDirectory;
+@property (nonatomic, readonly) NSString *rootDirectory;
 @property (nonatomic, readonly) NSString *name;
 
-- (id)initWithRootDirectory:(NSURL *)rootDirectory;
-+ (id)projectWithRootDirectory:(NSURL *)rootDirectory;
+- (id)initWithRootDirectory:(NSString *)rootDirectory;
++ (id)projectWithRootDirectory:(NSString *)rootDirectory;
 @end

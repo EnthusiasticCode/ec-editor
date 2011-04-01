@@ -12,7 +12,7 @@
 @protocol FileBrowser <NSObject>
 @property (nonatomic, assign) IBOutlet id<FileBrowserDelegate> delegate;
 @property (nonatomic, retain, readonly) NSFileManager *fileManager;
-@property (nonatomic, retain, readonly) NSURL *folder;
-- (void)browseFolder:(NSURL *)folder;
+@property (nonatomic, retain, readonly) NSString *folder;
+- (void)browseFolder:(NSString *)folder;
 - (NSArray *)contentsOfFolder;
 @end

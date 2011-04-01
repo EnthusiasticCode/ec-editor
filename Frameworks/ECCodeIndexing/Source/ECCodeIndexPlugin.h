@@ -14,6 +14,6 @@
 - (NSDictionary *)languageToExtensionMap;
 /// Returns a dictionary with file extensions for keys, and the languages they are usually associated to.
 - (NSDictionary *)extensionToLanguageMap;
-/// Returns a code unit for the given URL, with the given language.
-- (id<ECCodeUnitPlugin>)unitPluginForURL:(NSURL *)url withLanguage:(NSString *)language;
+/// Returns a code unit for the given file, with the given language.
+- (id<ECCodeUnitPlugin>)unitPluginForFile:(NSString *)file withLanguage:(NSString *)language;
 @end

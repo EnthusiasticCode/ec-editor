@@ -10,5 +10,5 @@
 @protocol FileBrowser;
 
 @protocol FileBrowserDelegate <NSObject>
-- (void)fileBrowser:(id<FileBrowser>)fileBrowser didSelectFileAtPath:(NSURL *)path;
+- (void)fileBrowser:(id<FileBrowser>)fileBrowser didSelectFileAtPath:(NSString *)path;
 @end

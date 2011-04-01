@@ -7,7 +7,6 @@
 //
 
 #import "Project.h"
-#import <ECFoundation/NSURL+ECFoundation.h>
 #import <CoreData/CoreData.h>
 
 
@@ -44,10 +43,8 @@
     [super dealloc];
 }
 
-- (id)initWithRootDirectory:(NSURL *)rootDirectory
+- (id)initWithRootDirectory:(NSString *)rootDirectory
 {
-    if (![rootDirectory isFileURLAndExists])
-        return nil;
     self = [super init];
     if (self)
     {
@@ -57,7 +54,7 @@
     return self;
 }
 
-+ (id)projectWithRootDirectory:(NSURL *)rootDirectory
++ (id)projectWithRootDirectory:(NSString *)rootDirectory
 {
     id project = [self alloc];
     project = [project initWithRootDirectory:rootDirectory];
@@ -107,11 +104,11 @@
     if (persistentStoreCoordinator)
         return persistentStoreCoordinator;
     
-    NSURL *storeUrl = [NSURL fileURLWithPath:[[self.rootDirectory path] stringByAppendingPathComponent:[self.name stringByAppendingPathExtension:@"sqlite"]]];
+    NSString *storePath = [self.rootDirectory stringByAppendingPathComponent:[self.name stringByAppendingPathExtension:@"sqlite"]];
     
     NSError *error = nil;
     persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:[self managedObjectModel]];
-    if (![persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeUrl options:nil error:&error])
+    if (![persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:[NSURL fileURLWithPath:storePath] options:nil error:&error])
     {
         /*
          Replace this implementation with code to handle the error appropriately.

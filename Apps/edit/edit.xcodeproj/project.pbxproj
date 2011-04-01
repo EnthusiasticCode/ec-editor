@@ -16,12 +16,10 @@
 		B70D6505132A25F4008DDEA4 /* Project.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = B70D64FB132A25F4008DDEA4 /* Project.xcdatamodeld */; };
 		B70D6506132A25F4008DDEA4 /* edit-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = B70D64FD132A25F4008DDEA4 /* edit-Info.plist */; };
 		B70D6507132A25F4008DDEA4 /* edit-main.m in Sources */ = {isa = PBXBuildFile; fileRef = B70D64FE132A25F4008DDEA4 /* edit-main.m */; };
-		B70D6508132A25F4008DDEA4 /* ProjectController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B70D64FF132A25F4008DDEA4 /* ProjectController.xib */; };
 		B70D6509132A25F4008DDEA4 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = B70D6501132A25F4008DDEA4 /* InfoPlist.strings */; };
 		B70D650A132A25F4008DDEA4 /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = B70D6503132A25F4008DDEA4 /* MainWindow.xib */; };
 		B70D6520132A260C008DDEA4 /* Project.m in Sources */ = {isa = PBXBuildFile; fileRef = B70D6511132A260C008DDEA4 /* Project.m */; };
 		B70D6521132A260C008DDEA4 /* ProjectController.m in Sources */ = {isa = PBXBuildFile; fileRef = B70D6513132A260C008DDEA4 /* ProjectController.m */; };
-		B70D6526132A260C008DDEA4 /* editAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = B70D651E132A260C008DDEA4 /* editAppDelegate.m */; };
 		B70D656B132A26C1008DDEA4 /* libECFoundation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B70D656A132A26C1008DDEA4 /* libECFoundation.a */; };
 		B70D656D132A26C5008DDEA4 /* libECCodeIndexing.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B70D656C132A26C5008DDEA4 /* libECCodeIndexing.a */; };
 		B70D656F132A26C9008DDEA4 /* libECUIKit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B70D656E132A26C9008DDEA4 /* libECUIKit.a */; };
@@ -95,10 +93,7 @@
 		B70D6648132A2849008DDEA4 /* editSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = B70D6647132A2849008DDEA4 /* editSpec.m */; };
 		B70D664A132A28AB008DDEA4 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B70D6649132A28AB008DDEA4 /* SenTestingKit.framework */; };
 		B79111C1132A986800D11F37 /* libclang.dylib in Resources */ = {isa = PBXBuildFile; fileRef = B70D6570132A273E008DDEA4 /* libclang.dylib */; };
-		B7C6D86F133E6E3C0081759F /* Toolbar.xib in Resources */ = {isa = PBXBuildFile; fileRef = B7C6D86D133E6E3C0081759F /* Toolbar.xib */; };
 		B7C6D8A1133E70E10081759F /* AppController.m in Sources */ = {isa = PBXBuildFile; fileRef = B7C6D8A0133E70E10081759F /* AppController.m */; };
-		B7C6D8A5133E72BE0081759F /* ProjectBrowser.m in Sources */ = {isa = PBXBuildFile; fileRef = B7C6D8A3133E72BE0081759F /* ProjectBrowser.m */; };
-		B7C6D8A9133E72FA0081759F /* ProjectBrowser.xib in Resources */ = {isa = PBXBuildFile; fileRef = B7C6D8A7133E72FA0081759F /* ProjectBrowser.xib */; };
 		B7DBA4E7132A2B8E004C0E1D /* libECCodeIndexingPlugins.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7DBA4E6132A2B8E004C0E1D /* libECCodeIndexingPlugins.a */; };
 		B7DBA4E8132A2BD5004C0E1D /* libclang.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B70D6570132A273E008DDEA4 /* libclang.dylib */; };
 		B7DBA580132A3281004C0E1D /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7DBA57F132A3281004C0E1D /* QuartzCore.framework */; };
@@ -193,15 +188,12 @@
 		B70D64FC132A25F4008DDEA4 /* Project.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Project.xcdatamodel; sourceTree = "<group>"; };
 		B70D64FD132A25F4008DDEA4 /* edit-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "edit-Info.plist"; sourceTree = "<group>"; };
 		B70D64FE132A25F4008DDEA4 /* edit-main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "edit-main.m"; sourceTree = "<group>"; };
-		B70D6500132A25F4008DDEA4 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/ProjectController.xib; sourceTree = "<group>"; };
 		B70D6502132A25F4008DDEA4 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		B70D6504132A25F4008DDEA4 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainWindow.xib; sourceTree = "<group>"; };
 		B70D6510132A260C008DDEA4 /* Project.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Project.h; sourceTree = "<group>"; };
 		B70D6511132A260C008DDEA4 /* Project.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Project.m; sourceTree = "<group>"; };
 		B70D6512132A260C008DDEA4 /* ProjectController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProjectController.h; sourceTree = "<group>"; };
 		B70D6513132A260C008DDEA4 /* ProjectController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProjectController.m; sourceTree = "<group>"; };
-		B70D651D132A260C008DDEA4 /* editAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = editAppDelegate.h; sourceTree = "<group>"; };
-		B70D651E132A260C008DDEA4 /* editAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = editAppDelegate.m; sourceTree = "<group>"; };
 		B70D6528132A2636008DDEA4 /* Application-iPad-Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Application-iPad-Debug.xcconfig"; sourceTree = "<group>"; };
 		B70D6529132A2636008DDEA4 /* Application-iPad-Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Application-iPad-Release.xcconfig"; sourceTree = "<group>"; };
 		B70D652A132A2636008DDEA4 /* Application-iPad-Test.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Application-iPad-Test.xcconfig"; sourceTree = "<group>"; };
@@ -370,12 +362,8 @@
 		B70D6605132A2813008DDEA4 /* NSValue+KiwiAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSValue+KiwiAdditions.m"; sourceTree = "<group>"; };
 		B70D6647132A2849008DDEA4 /* editSpec.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = editSpec.m; path = Test/editSpec.m; sourceTree = SOURCE_ROOT; };
 		B70D6649132A28AB008DDEA4 /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Developer/Library/Frameworks/SenTestingKit.framework; sourceTree = SDKROOT; };
-		B7C6D86E133E6E3C0081759F /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/Toolbar.xib; sourceTree = "<group>"; };
 		B7C6D89F133E70E10081759F /* AppController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppController.h; sourceTree = "<group>"; };
 		B7C6D8A0133E70E10081759F /* AppController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppController.m; sourceTree = "<group>"; };
-		B7C6D8A2133E72BE0081759F /* ProjectBrowser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProjectBrowser.h; sourceTree = "<group>"; };
-		B7C6D8A3133E72BE0081759F /* ProjectBrowser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProjectBrowser.m; sourceTree = "<group>"; };
-		B7C6D8A8133E72FA0081759F /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/ProjectBrowser.xib; sourceTree = "<group>"; };
 		B7DBA4E6132A2B8E004C0E1D /* libECCodeIndexingPlugins.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libECCodeIndexingPlugins.a; sourceTree = SOURCE_ROOT; };
 		B7DBA57F132A3281004C0E1D /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
@@ -462,9 +450,6 @@
 				B70D64FA132A25F4008DDEA4 /* Models */,
 				B70D64FD132A25F4008DDEA4 /* edit-Info.plist */,
 				B70D64FE132A25F4008DDEA4 /* edit-main.m */,
-				B70D64FF132A25F4008DDEA4 /* ProjectController.xib */,
-				B7C6D86D133E6E3C0081759F /* Toolbar.xib */,
-				B7C6D8A7133E72FA0081759F /* ProjectBrowser.xib */,
 				B70D6501132A25F4008DDEA4 /* InfoPlist.strings */,
 				B70D6503132A25F4008DDEA4 /* MainWindow.xib */,
 			);
@@ -493,14 +478,10 @@
 			children = (
 				B70D6510132A260C008DDEA4 /* Project.h */,
 				B70D6511132A260C008DDEA4 /* Project.m */,
-				B7C6D8A2133E72BE0081759F /* ProjectBrowser.h */,
-				B7C6D8A3133E72BE0081759F /* ProjectBrowser.m */,
 				B70D6512132A260C008DDEA4 /* ProjectController.h */,
 				B70D6513132A260C008DDEA4 /* ProjectController.m */,
 				B7C6D89F133E70E10081759F /* AppController.h */,
 				B7C6D8A0133E70E10081759F /* AppController.m */,
-				B70D651D132A260C008DDEA4 /* editAppDelegate.h */,
-				B70D651E132A260C008DDEA4 /* editAppDelegate.m */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -844,11 +825,8 @@
 			files = (
 				B79111C1132A986800D11F37 /* libclang.dylib in Resources */,
 				B70D6506132A25F4008DDEA4 /* edit-Info.plist in Resources */,
-				B70D6508132A25F4008DDEA4 /* ProjectController.xib in Resources */,
 				B70D6509132A25F4008DDEA4 /* InfoPlist.strings in Resources */,
 				B70D650A132A25F4008DDEA4 /* MainWindow.xib in Resources */,
-				B7C6D86F133E6E3C0081759F /* Toolbar.xib in Resources */,
-				B7C6D8A9133E72FA0081759F /* ProjectBrowser.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -886,9 +864,7 @@
 				B70D6507132A25F4008DDEA4 /* edit-main.m in Sources */,
 				B70D6520132A260C008DDEA4 /* Project.m in Sources */,
 				B70D6521132A260C008DDEA4 /* ProjectController.m in Sources */,
-				B70D6526132A260C008DDEA4 /* editAppDelegate.m in Sources */,
 				B7C6D8A1133E70E10081759F /* AppController.m in Sources */,
-				B7C6D8A5133E72BE0081759F /* ProjectBrowser.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -991,14 +967,6 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		B70D64FF132A25F4008DDEA4 /* ProjectController.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				B70D6500132A25F4008DDEA4 /* en */,
-			);
-			name = ProjectController.xib;
-			sourceTree = "<group>";
-		};
 		B70D6501132A25F4008DDEA4 /* InfoPlist.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -1013,22 +981,6 @@
 				B70D6504132A25F4008DDEA4 /* en */,
 			);
 			name = MainWindow.xib;
-			sourceTree = "<group>";
-		};
-		B7C6D86D133E6E3C0081759F /* Toolbar.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				B7C6D86E133E6E3C0081759F /* en */,
-			);
-			name = Toolbar.xib;
-			sourceTree = "<group>";
-		};
-		B7C6D8A7133E72FA0081759F /* ProjectBrowser.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				B7C6D8A8133E72FA0081759F /* en */,
-			);
-			name = ProjectBrowser.xib;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */

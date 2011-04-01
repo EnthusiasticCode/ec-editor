@@ -22,14 +22,14 @@ typedef enum ECCodeDiagnosticSeverity
     NSUInteger _hash;
 }
 @property (nonatomic, readonly) ECCodeDiagnosticSeverity severity;
-@property (nonatomic, readonly, copy) NSURL *fileURL;
+@property (nonatomic, readonly, copy) NSString *file;
 @property (nonatomic, readonly) NSUInteger offset;
 @property (nonatomic, readonly, copy) NSString *spelling;
 @property (nonatomic, readonly, copy) NSString *category;
 @property (nonatomic, readonly, copy) NSArray *sourceRanges;
 @property (nonatomic, readonly, copy) NSArray *fixIts;
 
-- (id)initWithSeverity:(ECCodeDiagnosticSeverity)severity fileURL:(NSURL *)fileURL offset:(NSUInteger)offset spelling:(NSString *)spelling category:(NSString *)category sourceRanges:(NSArray *)sourceRanges fixIts:(NSArray *)fixIts;
-+ (id)diagnosticWithSeverity:(ECCodeDiagnosticSeverity)severity fileURL:(NSURL *)fileURL offset:(NSUInteger)offset spelling:(NSString *)spelling category:(NSString *)category sourceRanges:(NSArray *)sourceRanges fixIts:(NSArray *)fixIts;
+- (id)initWithSeverity:(ECCodeDiagnosticSeverity)severity file:(NSString *)file offset:(NSUInteger)offset spelling:(NSString *)spelling category:(NSString *)category sourceRanges:(NSArray *)sourceRanges fixIts:(NSArray *)fixIts;
++ (id)diagnosticWithSeverity:(ECCodeDiagnosticSeverity)severity file:(NSString *)file offset:(NSUInteger)offset spelling:(NSString *)spelling category:(NSString *)category sourceRanges:(NSArray *)sourceRanges fixIts:(NSArray *)fixIts;
 
 @end

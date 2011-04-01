@@ -1065,6 +1065,7 @@
 				B7DBA4A1132A29FE004C0E1D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		B7FCA54D131A6F98002D6C7C /* Build configuration list for PBXProject "ECCodeIndexing" */ = {
 			isa = XCConfigurationList;

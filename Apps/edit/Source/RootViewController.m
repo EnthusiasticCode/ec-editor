@@ -10,7 +10,7 @@
 
 @interface RootViewController ()
 @property (nonatomic, retain) NSFileManager *fileManager;
-@property (nonatomic, retain) NSURL *folder;
+@property (nonatomic, retain) NSString *folder;
 @end
 
 @implementation RootViewController
@@ -67,14 +67,23 @@
 	return YES;
 }
 
-- (void)browseFolder:(NSURL *)folder
+- (void)browseFolder:(NSString *)folder
 {
     self.folder = folder;
 }
 
 - (NSArray *)contentsOfFolder
 {
-    return [self.fileManager contentsOfDirectoryAtPath:[self.folder path] error:NULL];
+    NSMutableArray *subfolders = [NSMutableArray array];
+    NSArray *links = [self.fileManager contentsOfDirectoryAtPath:self.folder error:NULL];
+    BOOL isDirectory;
+    for (NSString *link in links)
+    {
+        [self.fileManager fileExistsAtPath:[self.folder stringByAppendingPathComponent:link] isDirectory:&isDirectory];
+        if(isDirectory)
+            [subfolders addObject:link];
+    }
+    return subfolders;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -84,7 +93,7 @@
     {
         file = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"File"] autorelease];
     }
-    file.textLabel.text = [[self contentsOfFolder] objectAtIndex:(indexPath.row)];
+    file.textLabel.text = [[[self contentsOfFolder] objectAtIndex:(indexPath.row)] lastPathComponent];
     return file;
 }
 
@@ -97,8 +106,8 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSURL *projectURL = [self.folder URLByAppendingPathComponent:[[self contentsOfFolder] objectAtIndex:indexPath.row]];
-    [self.delegate fileBrowser:self didSelectFileAtPath:projectURL];
+    NSString *projectFile = [[self contentsOfFolder] objectAtIndex:indexPath.row];
+    [self.delegate fileBrowser:self didSelectFileAtPath:[self.folder stringByAppendingPathComponent:projectFile]];
 }
 
 @end

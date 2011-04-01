@@ -10,8 +10,8 @@
 
 
 @protocol ECCodeUnitPlugin <NSObject>
-/// Returns whether the unit depends on the file at the given URL or not.
-- (BOOL)isDependentOnFile:(NSURL *)fileURL;
+/// Returns whether the unit depends on the file at the given file or not.
+- (BOOL)isDependentOnFile:(NSString *)file;
 /// Reparses the unit.
 - (void)reparseDependentFiles:(NSArray *)files;
 @optional

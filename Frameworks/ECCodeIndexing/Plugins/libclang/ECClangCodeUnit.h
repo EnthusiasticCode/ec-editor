@@ -13,6 +13,6 @@ extern NSString *ECClangCodeUnitOptionLanguage;
 extern NSString *ECClangCodeUnitOptionCXIndex;
 
 @interface ECClangCodeUnit : NSObject <ECCodeUnitPlugin>
-- (id)initWithFile:(NSURL *)fileURL index:(CXIndex)index language:(NSString *)language;
-+ (id)unitWithFile:(NSURL *)fileURL index:(CXIndex)index language:(NSString *)language;
+- (id)initWithFile:(NSString *)file index:(CXIndex)index language:(NSString *)language;
++ (id)unitForFile:(NSString *)file index:(CXIndex)index language:(NSString *)language;
 @end
