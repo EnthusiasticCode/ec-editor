@@ -7,16 +7,18 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "ECEditCodeView.h"
+#import "ECCodeView.h"
 
 
 @interface codeview2ViewController : UIViewController {
     
     UIScrollView *scrollView;
-    ECEditCodeView *codeView;
+    ECCodeView *codeView;
 }
 
 @property (nonatomic, retain) IBOutlet UIScrollView *scrollView;
-@property (nonatomic, retain) IBOutlet ECEditCodeView *codeView;
+@property (nonatomic, retain) IBOutlet ECCodeView *codeView;
+
+- (IBAction)loadSomething:(id)sender;
 
 @end

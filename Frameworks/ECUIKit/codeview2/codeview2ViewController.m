@@ -60,4 +60,12 @@
 	return YES;
 }
 
+- (IBAction)loadSomething:(id)sender {
+    NSStringEncoding fileEncoding;
+    NSString *fileContent = [NSString stringWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"ECEditCodeView" ofType:[sender tag] ? @"m" : @"h"] usedEncoding:&fileEncoding error:NULL];
+    codeView.text = fileContent;
+    [codeView sizeToFit];
+    scrollView.contentSize = codeView.bounds.size;
+}
+
 @end
