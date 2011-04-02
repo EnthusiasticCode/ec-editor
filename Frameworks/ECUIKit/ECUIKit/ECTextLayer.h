@@ -30,9 +30,7 @@
 /// Invalidate the content taht will be marked as needing redraw.
 - (void)setNeedsTextRendering;
 
+/// Calculates and returns a size that best fits the receiver’s string content.
 - (CGSize)sizeThatFits:(CGSize)size;
-
-/// Set the frame and adjust it to wrap the text.
-- (void)setFrame:(CGRect)frame autoAdjustToWrap:(BOOL)autoadjust;
 
 @end
