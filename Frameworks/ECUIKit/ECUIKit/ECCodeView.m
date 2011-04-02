@@ -24,6 +24,7 @@
 
 @synthesize defaultTextStyle;
 @synthesize textInsets;
+@synthesize needsDisplayOnTextChange;
 
 - (void)setText:(NSString *)string
 {
@@ -33,7 +34,10 @@
         string = @"";
     text = [[NSMutableAttributedString alloc] initWithString:string attributes:self.defaultTextStyle.CTAttributes];
     textLayer.string = text;
-//    [textLayer setNeedsDisplay];
+    if (needsDisplayOnTextChange) 
+    {
+        [textLayer setNeedsDisplay];
+    }
 }
 
 - (NSString *)text

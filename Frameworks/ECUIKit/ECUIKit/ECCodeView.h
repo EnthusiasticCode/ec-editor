@@ -32,6 +32,9 @@
 /// Marks the receiver’s text as needing to be redrawn.
 - (void)setNeedsTextRendering;
 
+/// Indicates if the view should be refreshed when text changes.
+@property BOOL needsDisplayOnTextChange;
+
 #pragma mark Text style API
 
 /// The text style used for newly added text.
