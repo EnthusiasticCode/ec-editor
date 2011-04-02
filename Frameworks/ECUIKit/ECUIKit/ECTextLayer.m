@@ -44,11 +44,14 @@
 
 #pragma mark CALayer methods
 
-//- (void)setBounds:(CGRect)bounds
-//{
-//    [super setBounds:bounds];
-//    [self setNeedsTextRendering];
-//}
+- (void)setBounds:(CGRect)bounds
+{
+    if (!CGRectEqualToRect(bounds, self.bounds)) 
+    {
+        [super setBounds:bounds];
+        [self setNeedsTextRendering];
+    }
+}
 
 - (BOOL)isGeometryFlipped
 {
@@ -69,7 +72,7 @@
         0, -self.contentsScale,
         bounds.origin.x, bounds.origin.y + bounds.size.height
     });
-    CGContextTranslateCTM(context, 0, CGRectGetMaxY(bounds) - CGRectGetMaxY(self.CTFrameRect));
+//    CGContextTranslateCTM(context, 0, CGRectGetMaxY(bounds) - CGRectGetMaxY(self.CTFrameRect));
     CGContextSetTextPosition(context, 0, 0);
     CGContextSetTextMatrix(context, CGAffineTransformIdentity);
     CTFrameDraw(self.CTFrame, context);
@@ -112,6 +115,25 @@
         CTFrame = NULL;
     }
     CTFrameRect = CGRectNull;
+}
+
+- (CGSize)sizeThatFits:(CGSize)size
+{
+    if (!wrapped) {
+        size.width = CGFLOAT_MAX;
+    }
+    size.height = CGFLOAT_MAX;
+    
+    CFRange fitRange;
+    size = CTFramesetterSuggestFrameSizeWithConstraints(self.CTFrameSetter, (CFRange){0, 0}, NULL, size, &fitRange);
+    
+    // Fix this fix
+    size.height += 2;
+    
+    size.height = ceilf(size.height);
+    size.width = ceilf(size.width);
+    
+    return size;
 }
 
 - (void)setFrame:(CGRect)frame autoAdjustToWrap:(BOOL)autoadjust
@@ -158,7 +180,9 @@
 {
     if (!CTFrame || framesetterInvalid)
     {
-        CGSize size = CGSizeMake(wrapped ? wrapWidth : 100000, 100000);
+//        CGSize size = CGSizeMake(wrapped ? wrapWidth : 100000, 100000);
+//        CGSize size = [self sizeThatFits:self.bounds.size];
+        CGSize size = self.bounds.size;
         CGMutablePathRef path = CGPathCreateMutable();
         CGPathAddRect(path, NULL, CGRectMake(0, 0, size.width, size.height));
         CTFrame = CTFramesetterCreateFrame(self.CTFrameSetter, (CFRange){0, 0}, path, NULL);

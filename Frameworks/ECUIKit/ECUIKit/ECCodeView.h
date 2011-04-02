@@ -26,6 +26,9 @@
 /// Return the length of the text, this method should return the same value as [text length];
 @property (nonatomic, readonly) NSUInteger textLength;
 
+/// The text insets from the view's border.
+@property (nonatomic) UIEdgeInsets textInsets;
+
 /// Marks the receiver’s text as needing to be redrawn.
 - (void)setNeedsTextRendering;
 

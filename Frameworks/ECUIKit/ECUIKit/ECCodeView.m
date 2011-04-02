@@ -23,6 +23,7 @@
 #pragma mark Properties
 
 @synthesize defaultTextStyle;
+@synthesize textInsets;
 
 - (void)setText:(NSString *)string
 {
@@ -32,7 +33,7 @@
         string = @"";
     text = [[NSMutableAttributedString alloc] initWithString:string attributes:self.defaultTextStyle.CTAttributes];
     textLayer.string = text;
-    [textLayer setNeedsDisplay];
+//    [textLayer setNeedsDisplay];
 }
 
 - (NSString *)text
@@ -51,7 +52,6 @@
 {
     [textLayer setNeedsTextRendering];
 }
-
 
 #pragma mark -
 #pragma mark UIView methods
@@ -79,6 +79,7 @@ static inline id init(ECCodeView *self)
     self.defaultTextStyle = [ECTextStyle textStyleWithName:@"Plain text" font:[UIFont fontWithName:@"Courier New" size:16.0] color:[UIColor blackColor]];
     
     // Trigger text creation
+    self.textInsets = UIEdgeInsetsMake(10, 10, 10, 10);
     self.text = nil;
     
     [self setNeedsDisplay];
@@ -120,22 +121,38 @@ static inline id init(ECCodeView *self)
 - (void)layoutSubviews
 {
     // Layout text layer
-    CGRect textLayerFrame = self.bounds;
-    textLayerFrame = CGRectInset(textLayerFrame, 10, 10);
-    //textLayer.frame = textLayerFrame;
-    [textLayer setFrame:textLayerFrame autoAdjustToWrap:YES];
+    CGRect bounds = self.bounds;
+    CGPoint origin = bounds.origin;
+    CGSize size = bounds.size;
+    origin.x += textInsets.left;
+    origin.y += textInsets.top;
+    size.width -= textInsets.left + textInsets.right;
+    size.height -= textInsets.top + textInsets.bottom;
+    bounds.origin = origin;
+    bounds.size = size;
+    
+//    textLayerFrame.size = [textLayer sizeThatFits:textLayerFrame.size];
+    textLayer.frame = bounds;
+    
+//    [textLayer setFrame:textLayerFrame autoAdjustToWrap:YES];
     // TODO not good, need to size the layer to fit its content
     
     // Layout text overlay layers
     [overlayLayers enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
-        [(CALayer *)obj setFrame:textLayerFrame];
+        [(CALayer *)obj setFrame:bounds];
     }];
 }
 
 - (CGSize)sizeThatFits:(CGSize)size
 {
     // TODO add insets etc...
-    size.height = ceilf(textLayer.CTFrameRect.size.height) + 20;
+    //size.height = ceilf(textLayer.CTFrameRect.size.height) + 20;
+    
+    //size.height = textLayer.bounds.size.height;
+    
+    size = [textLayer sizeThatFits:CGSizeMake(size.width - textInsets.left + textInsets.right, 0)];
+    size.height += textInsets.top + textInsets.bottom;
+    
     return size;
 }
 
