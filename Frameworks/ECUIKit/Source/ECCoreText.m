@@ -242,3 +242,39 @@ CFIndex ECCTFrameGetClosestStringIndexInRangeToPoint(CTFrameRef frame, CFRange s
     free(origins);
     return result;
 }
+
+CGRect ECCTFrameGetUsedRect(CTFrameRef frame, _Bool constrainedWidth)
+{
+    CFArrayRef lines = CTFrameGetLines(frame);
+    CFIndex lineCount = CFArrayGetCount(lines);
+    
+    if (lineCount == 0)
+        return CGRectNull;
+    
+    CGPoint lineOrigins[lineCount];
+    CTFrameGetLineOrigins(frame, CFRangeMake(0, lineCount), lineOrigins);
+    
+    CGFloat minX = CGFLOAT_MAX, minY = CGFLOAT_MAX;
+    CGFloat maxX = CGFLOAT_MIN, maxY = CGFLOAT_MIN;
+    
+    for (CFIndex lineIndex = 0; lineIndex < lineCount; lineIndex++) 
+    {
+        CTLineRef line = CFArrayGetValueAtIndex(lines, lineIndex);
+        
+        CGFloat ascent, descent;
+        double width = CTLineGetTypographicBounds(line, &ascent, &descent, NULL);
+        
+        CGPoint lineOrigin = lineOrigins[lineIndex];
+        
+        minX = MIN(minX, constrainedWidth ? lineOrigin.x : 0);
+        
+        CGFloat thisMaxX = constrainedWidth ? lineOrigin.x + width : width;
+        maxX = MAX(maxX, thisMaxX);
+        
+        minY = MIN(minY, lineOrigins[lineIndex].y - descent);
+        maxY = MAX(maxY, lineOrigins[lineIndex].y + ascent);
+    }
+    
+    CGRect result = CGRectMake(minX, minY, MAX(0, maxX - minX), MAX(0, maxY - minY));
+    return result;
+}
