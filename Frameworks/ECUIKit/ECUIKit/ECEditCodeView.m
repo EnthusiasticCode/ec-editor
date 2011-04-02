@@ -746,11 +746,14 @@
         [delegate editCodeView:self textChangedInRange:range];
     }
     
-    [self setNeedsTextRendering];
-    
-    // TODO if needed, fix paragraph styles
-    
-    [self setNeedsDisplay];
+    if (self.needsDisplayOnTextChange)
+    {
+        [self setNeedsTextRendering];
+        
+        // TODO if needed, fix paragraph styles
+        
+        [self setNeedsDisplay];
+    }
 }
 
 - (void)setSelectedTextRange:(ECTextRange *)newSelection notifyDelegate:(BOOL)shouldNotify
