@@ -73,6 +73,20 @@
     CGContextSetTextPosition(context, 0, 0);
     CGContextSetTextMatrix(context, CGAffineTransformIdentity);
     CTFrameDraw(self.CTFrame, context);
+    
+//    CFArrayRef lines = CTFrameGetLines(self.CTFrame);
+//    CFIndex lineCount = CFArrayGetCount(lines);
+//    
+//    CGFloat width, ascent, descent;
+//    for (CFIndex lineIndex = 0; lineIndex < lineCount && lineIndex < 20; ++lineIndex) {
+//        CTLineRef line = CFArrayGetValueAtIndex(lines, lineIndex);
+//        CTLineDraw(line, context);
+//        
+//        width = CTLineGetTypographicBounds(line, &ascent, &descent, NULL);
+//        
+//        // note: context is in unknown state after ct draws, use save/reset
+//        CGContextTranslateCTM(context, -width, ascent + descent);
+//    }
 }
 
 - (void)layoutSublayers
@@ -144,7 +158,7 @@
 {
     if (!CTFrame || framesetterInvalid)
     {
-        CGSize size = CGSizeMake(wrapWidth ? wrapWidth : 100000, 100000);
+        CGSize size = CGSizeMake(wrapped ? wrapWidth : 100000, 100000);
         CGMutablePathRef path = CGPathCreateMutable();
         CGPathAddRect(path, NULL, CGRectMake(0, 0, size.width, size.height));
         CTFrame = CTFramesetterCreateFrame(self.CTFrameSetter, (CFRange){0, 0}, path, NULL);
