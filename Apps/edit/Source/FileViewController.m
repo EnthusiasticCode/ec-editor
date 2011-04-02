@@ -122,6 +122,7 @@
 - (void)loadFile:(NSString *)file withCodeUnit:(ECCodeUnit *)codeUnit
 {
     self.codeView.text = [NSString stringWithContentsOfFile:file encoding:NSUTF8StringEncoding error:nil];
+    ((UIScrollView *)self.view).contentSize = self.codeView.bounds.size;
     for (ECCodeToken *token in [codeUnit tokensInRange:NSMakeRange(0, [self.codeView.text length]) withCursors:YES])
     {
         switch (token.kind)
@@ -169,7 +170,7 @@
         //                break;
         //        }
     }
-    [self.codeView setNeedsLayout];
+    [self.codeView sizeToFit];
 }
 
 @end

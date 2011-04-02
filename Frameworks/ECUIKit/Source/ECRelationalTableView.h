@@ -32,7 +32,7 @@ typedef enum {
 @property (nonatomic, assign) IBOutlet id<ECRelationalTableViewDataSource> dataSource;
 @property (nonatomic) CGFloat inset;
 @property (nonatomic) CGFloat spacing;
-@property (nonatomic) CGFloat indent;
+@property (nonatomic) CGFloat indent; /*
 @property (nonatomic) CGFloat sectionHeaderHeight;
 @property (nonatomic) CGFloat sectionFooterHeight;
 @property (nonatomic, readwrite, retain) UIView *backgroundView;
@@ -89,5 +89,5 @@ typedef enum {
 // Selects and deselects items. These methods will not call the delegate methods (-tableView:willSelectItemAtIndexPath: or tableView:didSelectItemAtIndexPath:), nor will it send out a notification.
 - (void)selectItemAtIndexPath:(NSIndexPath *)indexPath animated:(BOOL)animated scrollPosition:(ECRelationalTableViewScrollPosition)scrollPosition;
 - (void)deselectItemAtIndexPath:(NSIndexPath *)indexPath animated:(BOOL)animated;
-
+*/
 @end
