@@ -124,7 +124,6 @@ static inline id init(ECCodeView *self)
 
 - (void)layoutSubviews
 {
-    // Layout text layer
     CGRect bounds = self.bounds;
     CGPoint origin = bounds.origin;
     CGSize size = bounds.size;
@@ -135,11 +134,8 @@ static inline id init(ECCodeView *self)
     bounds.origin = origin;
     bounds.size = size;
     
-//    textLayerFrame.size = [textLayer sizeThatFits:textLayerFrame.size];
+    // Layout text layer
     textLayer.frame = bounds;
-    
-//    [textLayer setFrame:textLayerFrame autoAdjustToWrap:YES];
-    // TODO not good, need to size the layer to fit its content
     
     // Layout text overlay layers
     [overlayLayers enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
@@ -149,15 +145,11 @@ static inline id init(ECCodeView *self)
 
 - (CGSize)sizeThatFits:(CGSize)size
 {
-    // TODO add insets etc...
-    //size.height = ceilf(textLayer.CTFrameRect.size.height) + 20;
+    CGSize fitted = [textLayer sizeThatFits:CGSizeMake(size.width - textInsets.left + textInsets.right, 0)];
+    fitted.height += textInsets.top + textInsets.bottom;
+    fitted.width = size.width;
     
-    //size.height = textLayer.bounds.size.height;
-    
-    size = [textLayer sizeThatFits:CGSizeMake(size.width - textInsets.left + textInsets.right, 0)];
-    size.height += textInsets.top + textInsets.bottom;
-    
-    return size;
+    return fitted;
 }
 
 #pragma mark -

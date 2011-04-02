@@ -45,6 +45,7 @@
     [super viewDidLoad];
     
     codeView.text = @"int main(params)\n{\n\treturn 0;\n}";
+    [codeView sizeToFit];
 }
 
 - (void)viewDidUnload
