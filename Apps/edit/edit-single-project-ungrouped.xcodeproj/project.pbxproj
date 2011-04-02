@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B71DF2AC1345F8D4001DA89D /* ECRelationalTableViewItem.m in Sources */ = {isa = PBXBuildFile; fileRef = B71DF2AB1345F8D4001DA89D /* ECRelationalTableViewItem.m */; };
+		B722F0971344E41E00AD8603 /* ECRelationalTableView.m in Sources */ = {isa = PBXBuildFile; fileRef = B722F0961344E41E00AD8603 /* ECRelationalTableView.m */; };
 		B72982E2133F8B0900F65728 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B72982E1133F8B0900F65728 /* UIKit.framework */; };
 		B72982E4133F8B0900F65728 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B72982E3133F8B0900F65728 /* Foundation.framework */; };
 		B72982E6133F8B0900F65728 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B72982E5133F8B0900F65728 /* CoreGraphics.framework */; };
@@ -57,12 +59,16 @@
 		B72983CA133F8F8E00F65728 /* libclang.dylib in Resources */ = {isa = PBXBuildFile; fileRef = B7298360133F8E5100F65728 /* libclang.dylib */; };
 		B72983FF133F983A00F65728 /* FileViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B72983FD133F983A00F65728 /* FileViewController.xib */; };
 		B7298403133FA56800F65728 /* ProjectViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B7298402133FA56800F65728 /* ProjectViewController.m */; };
-		B7298405133FA57B00F65728 /* ProjectViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B7298404133FA57B00F65728 /* ProjectViewController.xib */; };
 		B7298408133FAE2F00F65728 /* FileViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B7298407133FAE2E00F65728 /* FileViewController.m */; };
-		B7298412133FB57C00F65728 /* ProjectController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B7298411133FB57C00F65728 /* ProjectController.xib */; };
+		B7C81D6E1347DEAC0050427D /* ProjectController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B7C81D6A1347DEAC0050427D /* ProjectController.xib */; };
+		B7C81D6F1347DEAC0050427D /* ProjectViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B7C81D6C1347DEAC0050427D /* ProjectViewController.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		B71DF2AA1345F8D4001DA89D /* ECRelationalTableViewItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECRelationalTableViewItem.h; sourceTree = "<group>"; };
+		B71DF2AB1345F8D4001DA89D /* ECRelationalTableViewItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECRelationalTableViewItem.m; sourceTree = "<group>"; };
+		B722F0951344E41E00AD8603 /* ECRelationalTableView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECRelationalTableView.h; sourceTree = "<group>"; };
+		B722F0961344E41E00AD8603 /* ECRelationalTableView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECRelationalTableView.m; sourceTree = "<group>"; };
 		B72982DD133F8B0900F65728 /* edit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = edit.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B72982E1133F8B0900F65728 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		B72982E3133F8B0900F65728 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -157,12 +163,15 @@
 		B72983FE133F983A00F65728 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = Resources/en.lproj/FileViewController.xib; sourceTree = SOURCE_ROOT; };
 		B7298401133FA56700F65728 /* ProjectViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProjectViewController.h; path = Source/ProjectViewController.h; sourceTree = SOURCE_ROOT; };
 		B7298402133FA56800F65728 /* ProjectViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ProjectViewController.m; path = Source/ProjectViewController.m; sourceTree = SOURCE_ROOT; };
-		B7298404133FA57B00F65728 /* ProjectViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = ProjectViewController.xib; path = Resources/ProjectViewController.xib; sourceTree = SOURCE_ROOT; };
 		B7298406133FAE2E00F65728 /* FileViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileViewController.h; path = Source/FileViewController.h; sourceTree = SOURCE_ROOT; };
 		B7298407133FAE2E00F65728 /* FileViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FileViewController.m; path = Source/FileViewController.m; sourceTree = SOURCE_ROOT; };
-		B7298411133FB57C00F65728 /* ProjectController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = ProjectController.xib; path = Resources/ProjectController.xib; sourceTree = SOURCE_ROOT; };
 		B7298413133FBEED00F65728 /* FileBrowserDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileBrowserDelegate.h; path = Source/FileBrowserDelegate.h; sourceTree = SOURCE_ROOT; };
 		B72984141340791000F65728 /* FileBrowser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileBrowser.h; path = Source/FileBrowser.h; sourceTree = SOURCE_ROOT; };
+		B74E82911347143100CC425C /* ECRelationalTableViewItem(Private).h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ECRelationalTableViewItem(Private).h"; sourceTree = "<group>"; };
+		B7B91BBE1345B14A00117840 /* ECRelationalTableViewDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECRelationalTableViewDelegate.h; sourceTree = "<group>"; };
+		B7B91BC01345B15700117840 /* ECRelationalTableViewDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECRelationalTableViewDataSource.h; sourceTree = "<group>"; };
+		B7C81D6B1347DEAC0050427D /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = Resources/en.lproj/ProjectController.xib; sourceTree = SOURCE_ROOT; };
+		B7C81D6D1347DEAC0050427D /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = Resources/en.lproj/ProjectViewController.xib; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -250,8 +259,8 @@
 				B7298335133F8DD400F65728 /* InfoPlist.strings */,
 				B7298337133F8DD400F65728 /* MainWindow.xib */,
 				B7298339133F8DD400F65728 /* RootViewController.xib */,
-				B7298411133FB57C00F65728 /* ProjectController.xib */,
-				B7298404133FA57B00F65728 /* ProjectViewController.xib */,
+				B7C81D6A1347DEAC0050427D /* ProjectController.xib */,
+				B7C81D6C1347DEAC0050427D /* ProjectViewController.xib */,
 				B72983FD133F983A00F65728 /* FileViewController.xib */,
 				B7298333133F8DCC00F65728 /* Project.xcdatamodeld */,
 				B729832F133F8DC500F65728 /* edit-Info.plist */,
@@ -376,6 +385,13 @@
 				B729839B133F8E7000F65728 /* ECCoreText.m */,
 				B729839C133F8E7000F65728 /* ECDocument.h */,
 				B729839D133F8E7000F65728 /* ECDocument.m */,
+				B7B91BBE1345B14A00117840 /* ECRelationalTableViewDelegate.h */,
+				B7B91BC01345B15700117840 /* ECRelationalTableViewDataSource.h */,
+				B722F0951344E41E00AD8603 /* ECRelationalTableView.h */,
+				B722F0961344E41E00AD8603 /* ECRelationalTableView.m */,
+				B74E82911347143100CC425C /* ECRelationalTableViewItem(Private).h */,
+				B71DF2AA1345F8D4001DA89D /* ECRelationalTableViewItem.h */,
+				B71DF2AB1345F8D4001DA89D /* ECRelationalTableViewItem.m */,
 				B729839E133F8E7000F65728 /* ECEditCodeView.h */,
 				B729839F133F8E7000F65728 /* ECEditCodeView.m */,
 				B72983A0133F8E7000F65728 /* ECLineMarksView.h */,
@@ -457,8 +473,8 @@
 				B7298340133F8DD400F65728 /* MainWindow.xib in Resources */,
 				B7298341133F8DD400F65728 /* RootViewController.xib in Resources */,
 				B72983FF133F983A00F65728 /* FileViewController.xib in Resources */,
-				B7298405133FA57B00F65728 /* ProjectViewController.xib in Resources */,
-				B7298412133FB57C00F65728 /* ProjectController.xib in Resources */,
+				B7C81D6E1347DEAC0050427D /* ProjectController.xib in Resources */,
+				B7C81D6F1347DEAC0050427D /* ProjectViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -508,6 +524,8 @@
 				B72983C5133F8E7100F65728 /* ECTextStyle.m in Sources */,
 				B7298403133FA56800F65728 /* ProjectViewController.m in Sources */,
 				B7298408133FAE2F00F65728 /* FileViewController.m in Sources */,
+				B722F0971344E41E00AD8603 /* ECRelationalTableView.m in Sources */,
+				B71DF2AC1345F8D4001DA89D /* ECRelationalTableViewItem.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -544,6 +562,22 @@
 				B72983FE133F983A00F65728 /* en */,
 			);
 			name = FileViewController.xib;
+			sourceTree = "<group>";
+		};
+		B7C81D6A1347DEAC0050427D /* ProjectController.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				B7C81D6B1347DEAC0050427D /* en */,
+			);
+			name = ProjectController.xib;
+			sourceTree = "<group>";
+		};
+		B7C81D6C1347DEAC0050427D /* ProjectViewController.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				B7C81D6D1347DEAC0050427D /* en */,
+			);
+			name = ProjectViewController.xib;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
@@ -584,7 +618,6 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
 				PUBLIC_HEADERS_FOLDER_PATH = "$(BUILD_DIR)";
-				RUN_CLANG_STATIC_ANALYZER = YES;
 				SDKROOT = iphoneos;
 				WARNING_CFLAGS = "-Wall";
 			};
@@ -623,7 +656,6 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				PUBLIC_HEADERS_FOLDER_PATH = "$(BUILD_DIR)";
-				RUN_CLANG_STATIC_ANALYZER = YES;
 				SDKROOT = iphoneos;
 				WARNING_CFLAGS = "-Wall";
 			};
