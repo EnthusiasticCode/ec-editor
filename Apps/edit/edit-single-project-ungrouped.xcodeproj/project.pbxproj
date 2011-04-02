@@ -38,7 +38,6 @@
 		B7298389133F8E5200F65728 /* ECCodeUnit.m in Sources */ = {isa = PBXBuildFile; fileRef = B729837A133F8E5100F65728 /* ECCodeUnit.m */; };
 		B7298392133F8E6300F65728 /* ECHashing.m in Sources */ = {isa = PBXBuildFile; fileRef = B729838C133F8E6300F65728 /* ECHashing.m */; };
 		B7298393133F8E6300F65728 /* MurmurHash3.c in Sources */ = {isa = PBXBuildFile; fileRef = B729838D133F8E6300F65728 /* MurmurHash3.c */; };
-		B7298394133F8E6300F65728 /* NSURL+ECFoundation.m in Sources */ = {isa = PBXBuildFile; fileRef = B7298390133F8E6300F65728 /* NSURL+ECFoundation.m */; };
 		B72983B6133F8E7000F65728 /* ECCodeScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = B7298397133F8E7000F65728 /* ECCodeScrollView.m */; };
 		B72983B7133F8E7000F65728 /* ECCodeView.m in Sources */ = {isa = PBXBuildFile; fileRef = B7298399133F8E7000F65728 /* ECCodeView.m */; };
 		B72983B8133F8E7000F65728 /* ECCoreText.m in Sources */ = {isa = PBXBuildFile; fileRef = B729839B133F8E7000F65728 /* ECCoreText.m */; };
@@ -63,11 +62,10 @@
 		B7298405133FA57B00F65728 /* ProjectViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B7298404133FA57B00F65728 /* ProjectViewController.xib */; };
 		B7298408133FAE2F00F65728 /* FileViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B7298407133FAE2E00F65728 /* FileViewController.m */; };
 		B7298412133FB57C00F65728 /* ProjectController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B7298411133FB57C00F65728 /* ProjectController.xib */; };
-		B7B91BC61345BB3400117840 /* ECRelationalTableViewItemView.m in Sources */ = {isa = PBXBuildFile; fileRef = B7B91BC51345BB3400117840 /* ECRelationalTableViewItemView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		B71DF2AA1345F8D4001DA89D /* ECRelationalTableViewItem.h */ = {isa = PBXFileReference; fileEncoding = 4; path = ECRelationalTableViewItem.h; sourceTree = "<group>"; };
+		B71DF2AA1345F8D4001DA89D /* ECRelationalTableViewItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECRelationalTableViewItem.h; sourceTree = "<group>"; };
 		B71DF2AB1345F8D4001DA89D /* ECRelationalTableViewItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECRelationalTableViewItem.m; sourceTree = "<group>"; };
 		B722F0951344E41E00AD8603 /* ECRelationalTableView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECRelationalTableView.h; sourceTree = "<group>"; };
 		B722F0961344E41E00AD8603 /* ECRelationalTableView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECRelationalTableView.m; sourceTree = "<group>"; };
@@ -127,8 +125,6 @@
 		B729838C133F8E6300F65728 /* ECHashing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECHashing.m; sourceTree = "<group>"; };
 		B729838D133F8E6300F65728 /* MurmurHash3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = MurmurHash3.c; sourceTree = "<group>"; };
 		B729838E133F8E6300F65728 /* MurmurHash3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MurmurHash3.h; sourceTree = "<group>"; };
-		B729838F133F8E6300F65728 /* NSURL+ECFoundation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSURL+ECFoundation.h"; sourceTree = "<group>"; };
-		B7298390133F8E6300F65728 /* NSURL+ECFoundation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSURL+ECFoundation.m"; sourceTree = "<group>"; };
 		B7298391133F8E6300F65728 /* pstdint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pstdint.h; sourceTree = "<group>"; };
 		B7298396133F8E7000F65728 /* ECCodeScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeScrollView.h; sourceTree = "<group>"; };
 		B7298397133F8E7000F65728 /* ECCodeScrollView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeScrollView.m; sourceTree = "<group>"; };
@@ -173,10 +169,9 @@
 		B7298411133FB57C00F65728 /* ProjectController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = ProjectController.xib; path = Resources/ProjectController.xib; sourceTree = SOURCE_ROOT; };
 		B7298413133FBEED00F65728 /* FileBrowserDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileBrowserDelegate.h; path = Source/FileBrowserDelegate.h; sourceTree = SOURCE_ROOT; };
 		B72984141340791000F65728 /* FileBrowser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileBrowser.h; path = Source/FileBrowser.h; sourceTree = SOURCE_ROOT; };
+		B74E82911347143100CC425C /* ECRelationalTableViewItem(Private).h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ECRelationalTableViewItem(Private).h"; sourceTree = "<group>"; };
 		B7B91BBE1345B14A00117840 /* ECRelationalTableViewDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECRelationalTableViewDelegate.h; sourceTree = "<group>"; };
 		B7B91BC01345B15700117840 /* ECRelationalTableViewDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECRelationalTableViewDataSource.h; sourceTree = "<group>"; };
-		B7B91BC41345BB3300117840 /* ECRelationalTableViewItemView.h */ = {isa = PBXFileReference; fileEncoding = 4; path = ECRelationalTableViewItemView.h; sourceTree = "<group>"; };
-		B7B91BC51345BB3400117840 /* ECRelationalTableViewItemView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECRelationalTableViewItemView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -373,8 +368,6 @@
 				B729838C133F8E6300F65728 /* ECHashing.m */,
 				B729838D133F8E6300F65728 /* MurmurHash3.c */,
 				B729838E133F8E6300F65728 /* MurmurHash3.h */,
-				B729838F133F8E6300F65728 /* NSURL+ECFoundation.h */,
-				B7298390133F8E6300F65728 /* NSURL+ECFoundation.m */,
 				B7298391133F8E6300F65728 /* pstdint.h */,
 			);
 			name = Source;
@@ -396,10 +389,9 @@
 				B7B91BC01345B15700117840 /* ECRelationalTableViewDataSource.h */,
 				B722F0951344E41E00AD8603 /* ECRelationalTableView.h */,
 				B722F0961344E41E00AD8603 /* ECRelationalTableView.m */,
+				B74E82911347143100CC425C /* ECRelationalTableViewItem(Private).h */,
 				B71DF2AA1345F8D4001DA89D /* ECRelationalTableViewItem.h */,
 				B71DF2AB1345F8D4001DA89D /* ECRelationalTableViewItem.m */,
-				B7B91BC41345BB3300117840 /* ECRelationalTableViewItemView.h */,
-				B7B91BC51345BB3400117840 /* ECRelationalTableViewItemView.m */,
 				B729839E133F8E7000F65728 /* ECEditCodeView.h */,
 				B729839F133F8E7000F65728 /* ECEditCodeView.m */,
 				B72983A0133F8E7000F65728 /* ECLineMarksView.h */,
@@ -514,7 +506,6 @@
 				B7298389133F8E5200F65728 /* ECCodeUnit.m in Sources */,
 				B7298392133F8E6300F65728 /* ECHashing.m in Sources */,
 				B7298393133F8E6300F65728 /* MurmurHash3.c in Sources */,
-				B7298394133F8E6300F65728 /* NSURL+ECFoundation.m in Sources */,
 				B72983B6133F8E7000F65728 /* ECCodeScrollView.m in Sources */,
 				B72983B7133F8E7000F65728 /* ECCodeView.m in Sources */,
 				B72983B8133F8E7000F65728 /* ECCoreText.m in Sources */,
@@ -534,7 +525,6 @@
 				B7298403133FA56800F65728 /* ProjectViewController.m in Sources */,
 				B7298408133FAE2F00F65728 /* FileViewController.m in Sources */,
 				B722F0971344E41E00AD8603 /* ECRelationalTableView.m in Sources */,
-				B7B91BC61345BB3400117840 /* ECRelationalTableViewItemView.m in Sources */,
 				B71DF2AC1345F8D4001DA89D /* ECRelationalTableViewItem.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
