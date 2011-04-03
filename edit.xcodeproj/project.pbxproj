@@ -10,12 +10,8 @@
 		B70D64BC132A2581008DDEA4 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B70D64BB132A2581008DDEA4 /* UIKit.framework */; };
 		B70D64BE132A2581008DDEA4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B70D64BD132A2581008DDEA4 /* Foundation.framework */; };
 		B70D64C0132A2581008DDEA4 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B70D64BF132A2581008DDEA4 /* CoreGraphics.framework */; };
-		B70D64E0132A25CB008DDEA4 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B70D64BB132A2581008DDEA4 /* UIKit.framework */; };
-		B70D64E1132A25CB008DDEA4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B70D64BD132A2581008DDEA4 /* Foundation.framework */; };
-		B70D64E2132A25CB008DDEA4 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B70D64BF132A2581008DDEA4 /* CoreGraphics.framework */; };
 		B70D6573132A277C008DDEA4 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B70D6572132A277C008DDEA4 /* CoreText.framework */; };
 		B70D6575132A279C008DDEA4 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B70D6574132A279C008DDEA4 /* CoreData.framework */; };
-		B70D664A132A28AB008DDEA4 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B70D6649132A28AB008DDEA4 /* SenTestingKit.framework */; };
 		B7DBA580132A3281004C0E1D /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7DBA57F132A3281004C0E1D /* QuartzCore.framework */; };
 		CD040B3C1348A21300C6EDD0 /* libclang.dylib in Resources */ = {isa = PBXBuildFile; fileRef = CDEBF2AF13489C8700CE2285 /* libclang.dylib */; };
 		CDEBF21613489A8E00CE2285 /* AppController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDEBF20913489A8E00CE2285 /* AppController.m */; };
@@ -24,14 +20,6 @@
 		CDEBF21913489A8E00CE2285 /* ProjectController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDEBF21113489A8E00CE2285 /* ProjectController.m */; };
 		CDEBF21A13489A8E00CE2285 /* ProjectViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDEBF21313489A8E00CE2285 /* ProjectViewController.m */; };
 		CDEBF21B13489A8E00CE2285 /* RootViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDEBF21513489A8E00CE2285 /* RootViewController.m */; };
-		CDEBF23013489A9F00CE2285 /* edit-main.m in Sources */ = {isa = PBXBuildFile; fileRef = CDEBF21D13489A9F00CE2285 /* edit-main.m */; };
-		CDEBF23113489A9F00CE2285 /* FileViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CDEBF21F13489A9F00CE2285 /* FileViewController.xib */; };
-		CDEBF23213489A9F00CE2285 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = CDEBF22113489A9F00CE2285 /* InfoPlist.strings */; };
-		CDEBF23313489A9F00CE2285 /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = CDEBF22313489A9F00CE2285 /* MainWindow.xib */; };
-		CDEBF23413489A9F00CE2285 /* ProjectController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CDEBF22513489A9F00CE2285 /* ProjectController.xib */; };
-		CDEBF23513489A9F00CE2285 /* ProjectViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CDEBF22713489A9F00CE2285 /* ProjectViewController.xib */; };
-		CDEBF23613489A9F00CE2285 /* RootViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CDEBF22913489A9F00CE2285 /* RootViewController.xib */; };
-		CDEBF23713489A9F00CE2285 /* Project.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = CDEBF22D13489A9F00CE2285 /* Project.xcdatamodeld */; };
 		CDEBF24013489AF800CE2285 /* ECHashing.m in Sources */ = {isa = PBXBuildFile; fileRef = CDEBF23A13489AF800CE2285 /* ECHashing.m */; };
 		CDEBF24113489AF800CE2285 /* MurmurHash3.c in Sources */ = {isa = PBXBuildFile; fileRef = CDEBF23B13489AF800CE2285 /* MurmurHash3.c */; };
 		CDEBF24213489AF800CE2285 /* NSFileManager(ECAdditions).m in Sources */ = {isa = PBXBuildFile; fileRef = CDEBF23E13489AF800CE2285 /* NSFileManager(ECAdditions).m */; };
@@ -67,6 +55,14 @@
 		CDEBF2AD13489BE800CE2285 /* ECTextRange.m in Sources */ = {isa = PBXBuildFile; fileRef = CDEBF29A13489BE800CE2285 /* ECTextRange.m */; };
 		CDEBF2AE13489BE800CE2285 /* ECTextStyle.m in Sources */ = {isa = PBXBuildFile; fileRef = CDEBF29C13489BE800CE2285 /* ECTextStyle.m */; };
 		CDEBF2B013489C8700CE2285 /* libclang.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CDEBF2AF13489C8700CE2285 /* libclang.dylib */; };
+		CDEFF96E1348BD5E006FEFCC /* edit-main.m in Sources */ = {isa = PBXBuildFile; fileRef = CDEFF95C1348BD5E006FEFCC /* edit-main.m */; };
+		CDEFF96F1348BD5E006FEFCC /* FileViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CDEFF95E1348BD5E006FEFCC /* FileViewController.xib */; };
+		CDEFF9701348BD5E006FEFCC /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = CDEFF9601348BD5E006FEFCC /* InfoPlist.strings */; };
+		CDEFF9711348BD5E006FEFCC /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = CDEFF9621348BD5E006FEFCC /* MainWindow.xib */; };
+		CDEFF9721348BD5E006FEFCC /* ProjectController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CDEFF9641348BD5E006FEFCC /* ProjectController.xib */; };
+		CDEFF9731348BD5E006FEFCC /* ProjectViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CDEFF9661348BD5E006FEFCC /* ProjectViewController.xib */; };
+		CDEFF9741348BD5E006FEFCC /* RootViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CDEFF9681348BD5E006FEFCC /* RootViewController.xib */; };
+		CDEFF9751348BD5E006FEFCC /* Project.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = CDEFF96B1348BD5E006FEFCC /* Project.xcdatamodeld */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -74,7 +70,6 @@
 		B70D64BB132A2581008DDEA4 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		B70D64BD132A2581008DDEA4 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		B70D64BF132A2581008DDEA4 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
-		B70D64DF132A25CB008DDEA4 /* .bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = .bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		B70D6572132A277C008DDEA4 /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
 		B70D6574132A279C008DDEA4 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		B70D6649132A28AB008DDEA4 /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Developer/Library/Frameworks/SenTestingKit.framework; sourceTree = SDKROOT; };
@@ -93,15 +88,6 @@
 		CDEBF21313489A8E00CE2285 /* ProjectViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ProjectViewController.m; path = Apps/edit/ProjectViewController.m; sourceTree = SOURCE_ROOT; };
 		CDEBF21413489A8E00CE2285 /* RootViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RootViewController.h; path = Apps/edit/RootViewController.h; sourceTree = SOURCE_ROOT; };
 		CDEBF21513489A8E00CE2285 /* RootViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RootViewController.m; path = Apps/edit/RootViewController.m; sourceTree = SOURCE_ROOT; };
-		CDEBF21C13489A9F00CE2285 /* edit-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "edit-Info.plist"; path = "Apps/edit/Resources/edit-Info.plist"; sourceTree = SOURCE_ROOT; };
-		CDEBF21D13489A9F00CE2285 /* edit-main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "edit-main.m"; path = "Apps/edit/Resources/edit-main.m"; sourceTree = SOURCE_ROOT; };
-		CDEBF22013489A9F00CE2285 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = FileViewController.xib; sourceTree = "<group>"; };
-		CDEBF22213489A9F00CE2285 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = InfoPlist.strings; sourceTree = "<group>"; };
-		CDEBF22413489A9F00CE2285 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = MainWindow.xib; sourceTree = "<group>"; };
-		CDEBF22613489A9F00CE2285 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = ProjectController.xib; sourceTree = "<group>"; };
-		CDEBF22813489A9F00CE2285 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = ProjectViewController.xib; sourceTree = "<group>"; };
-		CDEBF22A13489A9F00CE2285 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = RootViewController.xib; sourceTree = "<group>"; };
-		CDEBF22E13489A9F00CE2285 /* Project.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Project.xcdatamodel; sourceTree = "<group>"; };
 		CDEBF23913489AF800CE2285 /* ECHashing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECHashing.h; path = Frameworks/ECFoundation/ECHashing.h; sourceTree = "<group>"; };
 		CDEBF23A13489AF800CE2285 /* ECHashing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECHashing.m; path = Frameworks/ECFoundation/ECHashing.m; sourceTree = "<group>"; };
 		CDEBF23B13489AF800CE2285 /* MurmurHash3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = MurmurHash3.c; path = Frameworks/ECFoundation/MurmurHash3.c; sourceTree = "<group>"; };
@@ -182,6 +168,15 @@
 		CDEBF29B13489BE800CE2285 /* ECTextStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECTextStyle.h; path = Frameworks/ECUIKit/ECTextStyle.h; sourceTree = "<group>"; };
 		CDEBF29C13489BE800CE2285 /* ECTextStyle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECTextStyle.m; path = Frameworks/ECUIKit/ECTextStyle.m; sourceTree = "<group>"; };
 		CDEBF2AF13489C8700CE2285 /* libclang.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libclang.dylib; path = Frameworks/ECCodeIndexing/Plugins/libclang/libclang.dylib; sourceTree = "<group>"; };
+		CDEFF95B1348BD5E006FEFCC /* edit-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "edit-Info.plist"; path = "Apps/edit/edit-Info.plist"; sourceTree = SOURCE_ROOT; };
+		CDEFF95C1348BD5E006FEFCC /* edit-main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "edit-main.m"; path = "Apps/edit/edit-main.m"; sourceTree = SOURCE_ROOT; };
+		CDEFF95F1348BD5E006FEFCC /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = FileViewController.xib; sourceTree = "<group>"; };
+		CDEFF9611348BD5E006FEFCC /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = InfoPlist.strings; sourceTree = "<group>"; };
+		CDEFF9631348BD5E006FEFCC /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = MainWindow.xib; sourceTree = "<group>"; };
+		CDEFF9651348BD5E006FEFCC /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = ProjectController.xib; sourceTree = "<group>"; };
+		CDEFF9671348BD5E006FEFCC /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = ProjectViewController.xib; sourceTree = "<group>"; };
+		CDEFF9691348BD5E006FEFCC /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = RootViewController.xib; sourceTree = "<group>"; };
+		CDEFF96C1348BD5E006FEFCC /* Project.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Project.xcdatamodel; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -196,17 +191,6 @@
 				B70D6573132A277C008DDEA4 /* CoreText.framework in Frameworks */,
 				B70D6575132A279C008DDEA4 /* CoreData.framework in Frameworks */,
 				B7DBA580132A3281004C0E1D /* QuartzCore.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B70D64DB132A25CB008DDEA4 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B70D64E0132A25CB008DDEA4 /* UIKit.framework in Frameworks */,
-				B70D64E1132A25CB008DDEA4 /* Foundation.framework in Frameworks */,
-				B70D64E2132A25CB008DDEA4 /* CoreGraphics.framework in Frameworks */,
-				B70D664A132A28AB008DDEA4 /* SenTestingKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -230,7 +214,6 @@
 			isa = PBXGroup;
 			children = (
 				B70D64B7132A2581008DDEA4 /* edit.app */,
-				B70D64DF132A25CB008DDEA4 /* .bundle */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -253,11 +236,10 @@
 		B70D64F9132A25F4008DDEA4 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				CDEBF21C13489A9F00CE2285 /* edit-Info.plist */,
-				CDEBF21D13489A9F00CE2285 /* edit-main.m */,
-				CDEBF21E13489A9F00CE2285 /* en */,
-				CDEBF22B13489A9F00CE2285 /* Images */,
-				CDEBF22C13489A9F00CE2285 /* Models */,
+				CDEFF95B1348BD5E006FEFCC /* edit-Info.plist */,
+				CDEFF95C1348BD5E006FEFCC /* edit-main.m */,
+				CDEFF95D1348BD5E006FEFCC /* en.lproj */,
+				CDEFF96A1348BD5E006FEFCC /* Models */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -283,37 +265,6 @@
 			name = Application;
 			path = Source;
 			sourceTree = "<group>";
-		};
-		CDEBF21E13489A9F00CE2285 /* en */ = {
-			isa = PBXGroup;
-			children = (
-				CDEBF21F13489A9F00CE2285 /* FileViewController.xib */,
-				CDEBF22113489A9F00CE2285 /* InfoPlist.strings */,
-				CDEBF22313489A9F00CE2285 /* MainWindow.xib */,
-				CDEBF22513489A9F00CE2285 /* ProjectController.xib */,
-				CDEBF22713489A9F00CE2285 /* ProjectViewController.xib */,
-				CDEBF22913489A9F00CE2285 /* RootViewController.xib */,
-			);
-			name = en;
-			path = Apps/edit/Resources/en.lproj;
-			sourceTree = SOURCE_ROOT;
-		};
-		CDEBF22B13489A9F00CE2285 /* Images */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = Images;
-			path = Apps/edit/Resources/Images;
-			sourceTree = SOURCE_ROOT;
-		};
-		CDEBF22C13489A9F00CE2285 /* Models */ = {
-			isa = PBXGroup;
-			children = (
-				CDEBF22D13489A9F00CE2285 /* Project.xcdatamodeld */,
-			);
-			name = Models;
-			path = Apps/edit/Resources/Models;
-			sourceTree = SOURCE_ROOT;
 		};
 		CDEBF23813489AB900CE2285 /* ECFoundation */ = {
 			isa = PBXGroup;
@@ -479,6 +430,29 @@
 			name = "Text Layer";
 			sourceTree = "<group>";
 		};
+		CDEFF95D1348BD5E006FEFCC /* en.lproj */ = {
+			isa = PBXGroup;
+			children = (
+				CDEFF95E1348BD5E006FEFCC /* FileViewController.xib */,
+				CDEFF9601348BD5E006FEFCC /* InfoPlist.strings */,
+				CDEFF9621348BD5E006FEFCC /* MainWindow.xib */,
+				CDEFF9641348BD5E006FEFCC /* ProjectController.xib */,
+				CDEFF9661348BD5E006FEFCC /* ProjectViewController.xib */,
+				CDEFF9681348BD5E006FEFCC /* RootViewController.xib */,
+			);
+			name = en.lproj;
+			path = Apps/edit/en.lproj;
+			sourceTree = SOURCE_ROOT;
+		};
+		CDEFF96A1348BD5E006FEFCC /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				CDEFF96B1348BD5E006FEFCC /* Project.xcdatamodeld */,
+			);
+			name = Models;
+			path = Apps/edit/Models;
+			sourceTree = SOURCE_ROOT;
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -499,24 +473,6 @@
 			productReference = B70D64B7132A2581008DDEA4 /* edit.app */;
 			productType = "com.apple.product-type.application";
 		};
-		B70D64DE132A25CB008DDEA4 /* edit-Test */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = B70D64EE132A25CB008DDEA4 /* Build configuration list for PBXNativeTarget "edit-Test" */;
-			buildPhases = (
-				B70D64DA132A25CB008DDEA4 /* Sources */,
-				B70D64DB132A25CB008DDEA4 /* Frameworks */,
-				B70D64DC132A25CB008DDEA4 /* Resources */,
-				B70D64DD132A25CB008DDEA4 /* ShellScript */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = "edit-Test";
-			productName = "edit-Test";
-			productReference = B70D64DF132A25CB008DDEA4 /* .bundle */;
-			productType = "com.apple.product-type.bundle";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -535,7 +491,6 @@
 			projectRoot = "";
 			targets = (
 				B70D64B6132A2581008DDEA4 /* edit */,
-				B70D64DE132A25CB008DDEA4 /* edit-Test */,
 			);
 		};
 /* End PBXProject section */
@@ -545,40 +500,17 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CDEBF23113489A9F00CE2285 /* FileViewController.xib in Resources */,
-				CDEBF23213489A9F00CE2285 /* InfoPlist.strings in Resources */,
-				CDEBF23313489A9F00CE2285 /* MainWindow.xib in Resources */,
-				CDEBF23413489A9F00CE2285 /* ProjectController.xib in Resources */,
-				CDEBF23513489A9F00CE2285 /* ProjectViewController.xib in Resources */,
-				CDEBF23613489A9F00CE2285 /* RootViewController.xib in Resources */,
 				CD040B3C1348A21300C6EDD0 /* libclang.dylib in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B70D64DC132A25CB008DDEA4 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
+				CDEFF96F1348BD5E006FEFCC /* FileViewController.xib in Resources */,
+				CDEFF9701348BD5E006FEFCC /* InfoPlist.strings in Resources */,
+				CDEFF9711348BD5E006FEFCC /* MainWindow.xib in Resources */,
+				CDEFF9721348BD5E006FEFCC /* ProjectController.xib in Resources */,
+				CDEFF9731348BD5E006FEFCC /* ProjectViewController.xib in Resources */,
+				CDEFF9741348BD5E006FEFCC /* RootViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		B70D64DD132A25CB008DDEA4 /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# Run the unit tests in this test bundle.\n\"${SYSTEM_DEVELOPER_DIR}/Tools/RunUnitTests\"\n";
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		B70D64B3132A2581008DDEA4 /* Sources */ = {
@@ -591,8 +523,6 @@
 				CDEBF21913489A8E00CE2285 /* ProjectController.m in Sources */,
 				CDEBF21A13489A8E00CE2285 /* ProjectViewController.m in Sources */,
 				CDEBF21B13489A8E00CE2285 /* RootViewController.m in Sources */,
-				CDEBF23013489A9F00CE2285 /* edit-main.m in Sources */,
-				CDEBF23713489A9F00CE2285 /* Project.xcdatamodeld in Sources */,
 				CDEBF24013489AF800CE2285 /* ECHashing.m in Sources */,
 				CDEBF24113489AF800CE2285 /* MurmurHash3.c in Sources */,
 				CDEBF24213489AF800CE2285 /* NSFileManager(ECAdditions).m in Sources */,
@@ -627,63 +557,58 @@
 				CDEBF2AC13489BE800CE2285 /* ECTextPosition.m in Sources */,
 				CDEBF2AD13489BE800CE2285 /* ECTextRange.m in Sources */,
 				CDEBF2AE13489BE800CE2285 /* ECTextStyle.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B70D64DA132A25CB008DDEA4 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
+				CDEFF96E1348BD5E006FEFCC /* edit-main.m in Sources */,
+				CDEFF9751348BD5E006FEFCC /* Project.xcdatamodeld in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
-		CDEBF21F13489A9F00CE2285 /* FileViewController.xib */ = {
+		CDEFF95E1348BD5E006FEFCC /* FileViewController.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
-				CDEBF22013489A9F00CE2285 /* en */,
+				CDEFF95F1348BD5E006FEFCC /* en */,
 			);
 			name = FileViewController.xib;
 			sourceTree = "<group>";
 		};
-		CDEBF22113489A9F00CE2285 /* InfoPlist.strings */ = {
+		CDEFF9601348BD5E006FEFCC /* InfoPlist.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
-				CDEBF22213489A9F00CE2285 /* en */,
+				CDEFF9611348BD5E006FEFCC /* en */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
 		};
-		CDEBF22313489A9F00CE2285 /* MainWindow.xib */ = {
+		CDEFF9621348BD5E006FEFCC /* MainWindow.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
-				CDEBF22413489A9F00CE2285 /* en */,
+				CDEFF9631348BD5E006FEFCC /* en */,
 			);
 			name = MainWindow.xib;
 			sourceTree = "<group>";
 		};
-		CDEBF22513489A9F00CE2285 /* ProjectController.xib */ = {
+		CDEFF9641348BD5E006FEFCC /* ProjectController.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
-				CDEBF22613489A9F00CE2285 /* en */,
+				CDEFF9651348BD5E006FEFCC /* en */,
 			);
 			name = ProjectController.xib;
 			sourceTree = "<group>";
 		};
-		CDEBF22713489A9F00CE2285 /* ProjectViewController.xib */ = {
+		CDEFF9661348BD5E006FEFCC /* ProjectViewController.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
-				CDEBF22813489A9F00CE2285 /* en */,
+				CDEFF9671348BD5E006FEFCC /* en */,
 			);
 			name = ProjectViewController.xib;
 			sourceTree = "<group>";
 		};
-		CDEBF22913489A9F00CE2285 /* RootViewController.xib */ = {
+		CDEFF9681348BD5E006FEFCC /* RootViewController.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
-				CDEBF22A13489A9F00CE2285 /* en */,
+				CDEFF9691348BD5E006FEFCC /* en */,
 			);
 			name = RootViewController.xib;
 			sourceTree = "<group>";
@@ -711,7 +636,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				HEADER_SEARCH_PATHS = Frameworks;
-				INFOPLIST_FILE = "Apps/edit/Resources/edit-Info.plist";
+				INFOPLIST_FILE = "Apps/edit/edit-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
 				LD_RUNPATH_SEARCH_PATHS = "@loader_path/";
 				LIBRARY_SEARCH_PATHS = (
@@ -728,7 +653,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				HEADER_SEARCH_PATHS = Frameworks;
-				INFOPLIST_FILE = "Apps/edit/Resources/edit-Info.plist";
+				INFOPLIST_FILE = "Apps/edit/edit-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
 				LD_RUNPATH_SEARCH_PATHS = "@loader_path/";
 				LIBRARY_SEARCH_PATHS = (
@@ -738,26 +663,6 @@
 				);
 				PRODUCT_NAME = edit;
 				TARGETED_DEVICE_FAMILY = 2;
-			};
-			name = Release;
-		};
-		B70D64EF132A25CB008DDEA4 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SDKROOT)$(DEVELOPER_FRAMEWORKS_DIR)\"",
-				);
-			};
-			name = Debug;
-		};
-		B70D64F0132A25CB008DDEA4 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SDKROOT)$(DEVELOPER_FRAMEWORKS_DIR)\"",
-				);
 			};
 			name = Release;
 		};
@@ -782,24 +687,15 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B70D64EE132A25CB008DDEA4 /* Build configuration list for PBXNativeTarget "edit-Test" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				B70D64EF132A25CB008DDEA4 /* Debug */,
-				B70D64F0132A25CB008DDEA4 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 /* End XCConfigurationList section */
 
 /* Begin XCVersionGroup section */
-		CDEBF22D13489A9F00CE2285 /* Project.xcdatamodeld */ = {
+		CDEFF96B1348BD5E006FEFCC /* Project.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
-				CDEBF22E13489A9F00CE2285 /* Project.xcdatamodel */,
+				CDEFF96C1348BD5E006FEFCC /* Project.xcdatamodel */,
 			);
-			currentVersion = CDEBF22E13489A9F00CE2285 /* Project.xcdatamodel */;
+			currentVersion = CDEFF96C1348BD5E006FEFCC /* Project.xcdatamodel */;
 			path = Project.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
