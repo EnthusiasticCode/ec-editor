@@ -84,6 +84,8 @@
 		B72BB517132A1DAE00C1C19B /* NSObject+KiwiStubAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = B72BB4D4132A1DAE00C1C19B /* NSObject+KiwiStubAdditions.m */; };
 		B72BB518132A1DAE00C1C19B /* NSObject+KiwiVerifierAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = B72BB4D6132A1DAE00C1C19B /* NSObject+KiwiVerifierAdditions.m */; };
 		B72BB519132A1DAE00C1C19B /* NSValue+KiwiAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = B72BB4D8132A1DAE00C1C19B /* NSValue+KiwiAdditions.m */; };
+		B7E5CEF3134898C500A4C65A /* NSFileManager(ECAdditions).h in Headers */ = {isa = PBXBuildFile; fileRef = B7E5CEF1134898C500A4C65A /* NSFileManager(ECAdditions).h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B7E5CEF4134898C500A4C65A /* NSFileManager(ECAdditions).m in Sources */ = {isa = PBXBuildFile; fileRef = B7E5CEF2134898C500A4C65A /* NSFileManager(ECAdditions).m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -266,6 +268,8 @@
 		B72BB4D6132A1DAE00C1C19B /* NSObject+KiwiVerifierAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+KiwiVerifierAdditions.m"; sourceTree = "<group>"; };
 		B72BB4D7132A1DAE00C1C19B /* NSValue+KiwiAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSValue+KiwiAdditions.h"; sourceTree = "<group>"; };
 		B72BB4D8132A1DAE00C1C19B /* NSValue+KiwiAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSValue+KiwiAdditions.m"; sourceTree = "<group>"; };
+		B7E5CEF1134898C500A4C65A /* NSFileManager(ECAdditions).h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSFileManager(ECAdditions).h"; sourceTree = "<group>"; };
+		B7E5CEF2134898C500A4C65A /* NSFileManager(ECAdditions).m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSFileManager(ECAdditions).m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -357,6 +361,8 @@
 		B72BB43A132A1D3200C1C19B /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				B7E5CEF1134898C500A4C65A /* NSFileManager(ECAdditions).h */,
+				B7E5CEF2134898C500A4C65A /* NSFileManager(ECAdditions).m */,
 				B72BB43B132A1D3200C1C19B /* ECHashing.h */,
 				B72BB43C132A1D3200C1C19B /* ECHashing.m */,
 				B72BB43D132A1D3200C1C19B /* MurmurHash3.c */,
@@ -527,6 +533,7 @@
 				B72BB442132A1D3200C1C19B /* ECHashing.h in Headers */,
 				B72BB445132A1D3200C1C19B /* MurmurHash3.h in Headers */,
 				B72BB448132A1D3200C1C19B /* pstdint.h in Headers */,
+				B7E5CEF3134898C500A4C65A /* NSFileManager(ECAdditions).h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -625,6 +632,7 @@
 			files = (
 				B72BB443132A1D3200C1C19B /* ECHashing.m in Sources */,
 				B72BB444132A1D3200C1C19B /* MurmurHash3.c in Sources */,
+				B7E5CEF4134898C500A4C65A /* NSFileManager(ECAdditions).m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -109,6 +109,13 @@
 		B7DBA526132A2EE6004C0E1D /* ECTextRange.m in Sources */ = {isa = PBXBuildFile; fileRef = B7DBA509132A2EE6004C0E1D /* ECTextRange.m */; };
 		B7DBA527132A2EE6004C0E1D /* ECTextStyle.h in Headers */ = {isa = PBXBuildFile; fileRef = B7DBA50A132A2EE6004C0E1D /* ECTextStyle.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B7DBA528132A2EE6004C0E1D /* ECTextStyle.m in Sources */ = {isa = PBXBuildFile; fileRef = B7DBA50B132A2EE6004C0E1D /* ECTextStyle.m */; };
+		B7E5CEE9134898AA00A4C65A /* ECRelationalTableView.h in Headers */ = {isa = PBXBuildFile; fileRef = B7E5CEE2134898AA00A4C65A /* ECRelationalTableView.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B7E5CEEA134898AA00A4C65A /* ECRelationalTableView.m in Sources */ = {isa = PBXBuildFile; fileRef = B7E5CEE3134898AA00A4C65A /* ECRelationalTableView.m */; };
+		B7E5CEEB134898AA00A4C65A /* ECRelationalTableViewDataSource.h in Headers */ = {isa = PBXBuildFile; fileRef = B7E5CEE4134898AA00A4C65A /* ECRelationalTableViewDataSource.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B7E5CEEC134898AA00A4C65A /* ECRelationalTableViewDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = B7E5CEE5134898AA00A4C65A /* ECRelationalTableViewDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B7E5CEED134898AA00A4C65A /* ECRelationalTableViewItem.h in Headers */ = {isa = PBXBuildFile; fileRef = B7E5CEE6134898AA00A4C65A /* ECRelationalTableViewItem.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B7E5CEEE134898AA00A4C65A /* ECRelationalTableViewItem.m in Sources */ = {isa = PBXBuildFile; fileRef = B7E5CEE7134898AA00A4C65A /* ECRelationalTableViewItem.m */; };
+		B7E5CEEF134898AA00A4C65A /* ECRelationalTableViewItem(Private).h in Headers */ = {isa = PBXBuildFile; fileRef = B7E5CEE8134898AA00A4C65A /* ECRelationalTableViewItem(Private).h */; };
 		B7FCE930133E264E00280969 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7FCE92F133E264E00280969 /* CoreText.framework */; };
 		B7FCE935133E2DF900280969 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7FCE934133E2DF900280969 /* QuartzCore.framework */; };
 		B7FD9F0D133E3F7800D71C26 /* ECCoreText.h in Headers */ = {isa = PBXBuildFile; fileRef = B7FD9F0B133E3F7800D71C26 /* ECCoreText.h */; };
@@ -320,6 +327,13 @@
 		B7DBA509132A2EE6004C0E1D /* ECTextRange.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECTextRange.m; sourceTree = "<group>"; };
 		B7DBA50A132A2EE6004C0E1D /* ECTextStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECTextStyle.h; sourceTree = "<group>"; };
 		B7DBA50B132A2EE6004C0E1D /* ECTextStyle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECTextStyle.m; sourceTree = "<group>"; };
+		B7E5CEE2134898AA00A4C65A /* ECRelationalTableView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECRelationalTableView.h; sourceTree = "<group>"; };
+		B7E5CEE3134898AA00A4C65A /* ECRelationalTableView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECRelationalTableView.m; sourceTree = "<group>"; };
+		B7E5CEE4134898AA00A4C65A /* ECRelationalTableViewDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECRelationalTableViewDataSource.h; sourceTree = "<group>"; };
+		B7E5CEE5134898AA00A4C65A /* ECRelationalTableViewDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECRelationalTableViewDelegate.h; sourceTree = "<group>"; };
+		B7E5CEE6134898AA00A4C65A /* ECRelationalTableViewItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECRelationalTableViewItem.h; sourceTree = "<group>"; };
+		B7E5CEE7134898AA00A4C65A /* ECRelationalTableViewItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECRelationalTableViewItem.m; sourceTree = "<group>"; };
+		B7E5CEE8134898AA00A4C65A /* ECRelationalTableViewItem(Private).h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ECRelationalTableViewItem(Private).h"; sourceTree = "<group>"; };
 		B7FCE92F133E264E00280969 /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
 		B7FCE934133E2DF900280969 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		B7FD9F0B133E3F7800D71C26 /* ECCoreText.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCoreText.h; sourceTree = "<group>"; };
@@ -397,6 +411,13 @@
 		B721909F132A20A200FAD198 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				B7E5CEE2134898AA00A4C65A /* ECRelationalTableView.h */,
+				B7E5CEE3134898AA00A4C65A /* ECRelationalTableView.m */,
+				B7E5CEE4134898AA00A4C65A /* ECRelationalTableViewDataSource.h */,
+				B7E5CEE5134898AA00A4C65A /* ECRelationalTableViewDelegate.h */,
+				B7E5CEE6134898AA00A4C65A /* ECRelationalTableViewItem.h */,
+				B7E5CEE7134898AA00A4C65A /* ECRelationalTableViewItem.m */,
+				B7E5CEE8134898AA00A4C65A /* ECRelationalTableViewItem(Private).h */,
 				B7FD9F0B133E3F7800D71C26 /* ECCoreText.h */,
 				B7FD9F0C133E3F7800D71C26 /* ECCoreText.m */,
 				B7DBA4F2132A2EE5004C0E1D /* ECCodeScrollView.h */,
@@ -629,6 +650,11 @@
 				B7DBA525132A2EE6004C0E1D /* ECTextRange.h in Headers */,
 				B7DBA527132A2EE6004C0E1D /* ECTextStyle.h in Headers */,
 				B7FD9F0D133E3F7800D71C26 /* ECCoreText.h in Headers */,
+				B7E5CEE9134898AA00A4C65A /* ECRelationalTableView.h in Headers */,
+				B7E5CEEB134898AA00A4C65A /* ECRelationalTableViewDataSource.h in Headers */,
+				B7E5CEEC134898AA00A4C65A /* ECRelationalTableViewDelegate.h in Headers */,
+				B7E5CEED134898AA00A4C65A /* ECRelationalTableViewItem.h in Headers */,
+				B7E5CEEF134898AA00A4C65A /* ECRelationalTableViewItem(Private).h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -814,6 +840,8 @@
 				B7DBA526132A2EE6004C0E1D /* ECTextRange.m in Sources */,
 				B7DBA528132A2EE6004C0E1D /* ECTextStyle.m in Sources */,
 				B7FD9F0E133E3F7800D71C26 /* ECCoreText.m in Sources */,
+				B7E5CEEA134898AA00A4C65A /* ECRelationalTableView.m in Sources */,
+				B7E5CEEE134898AA00A4C65A /* ECRelationalTableViewItem.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -97,6 +97,13 @@
 		B7DBA4E7132A2B8E004C0E1D /* libECCodeIndexingPlugins.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7DBA4E6132A2B8E004C0E1D /* libECCodeIndexingPlugins.a */; };
 		B7DBA4E8132A2BD5004C0E1D /* libclang.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B70D6570132A273E008DDEA4 /* libclang.dylib */; };
 		B7DBA580132A3281004C0E1D /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7DBA57F132A3281004C0E1D /* QuartzCore.framework */; };
+		B7E5CEFE134898F600A4C65A /* FileViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B7E5CEF9134898F600A4C65A /* FileViewController.m */; };
+		B7E5CEFF134898F600A4C65A /* ProjectViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B7E5CEFB134898F600A4C65A /* ProjectViewController.m */; };
+		B7E5CF00134898F600A4C65A /* RootViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B7E5CEFD134898F600A4C65A /* RootViewController.m */; };
+		B7E5CF091348990100A4C65A /* FileViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B7E5CF011348990100A4C65A /* FileViewController.xib */; };
+		B7E5CF0A1348990100A4C65A /* ProjectController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B7E5CF031348990100A4C65A /* ProjectController.xib */; };
+		B7E5CF0B1348990100A4C65A /* ProjectViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B7E5CF051348990100A4C65A /* ProjectViewController.xib */; };
+		B7E5CF0C1348990100A4C65A /* RootViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B7E5CF071348990100A4C65A /* RootViewController.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -366,6 +373,18 @@
 		B7C6D8A0133E70E10081759F /* AppController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppController.m; sourceTree = "<group>"; };
 		B7DBA4E6132A2B8E004C0E1D /* libECCodeIndexingPlugins.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libECCodeIndexingPlugins.a; sourceTree = SOURCE_ROOT; };
 		B7DBA57F132A3281004C0E1D /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		B7E5CEF6134898F600A4C65A /* FileBrowser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileBrowser.h; sourceTree = "<group>"; };
+		B7E5CEF7134898F600A4C65A /* FileBrowserDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileBrowserDelegate.h; sourceTree = "<group>"; };
+		B7E5CEF8134898F600A4C65A /* FileViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileViewController.h; sourceTree = "<group>"; };
+		B7E5CEF9134898F600A4C65A /* FileViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileViewController.m; sourceTree = "<group>"; };
+		B7E5CEFA134898F600A4C65A /* ProjectViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProjectViewController.h; sourceTree = "<group>"; };
+		B7E5CEFB134898F600A4C65A /* ProjectViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProjectViewController.m; sourceTree = "<group>"; };
+		B7E5CEFC134898F600A4C65A /* RootViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RootViewController.h; sourceTree = "<group>"; };
+		B7E5CEFD134898F600A4C65A /* RootViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RootViewController.m; sourceTree = "<group>"; };
+		B7E5CF021348990100A4C65A /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/FileViewController.xib; sourceTree = "<group>"; };
+		B7E5CF041348990100A4C65A /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/ProjectController.xib; sourceTree = "<group>"; };
+		B7E5CF061348990100A4C65A /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/ProjectViewController.xib; sourceTree = "<group>"; };
+		B7E5CF081348990100A4C65A /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/RootViewController.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -448,10 +467,14 @@
 			isa = PBXGroup;
 			children = (
 				B70D64FA132A25F4008DDEA4 /* Models */,
+				B70D6503132A25F4008DDEA4 /* MainWindow.xib */,
+				B7E5CF071348990100A4C65A /* RootViewController.xib */,
+				B7E5CF031348990100A4C65A /* ProjectController.xib */,
+				B7E5CF051348990100A4C65A /* ProjectViewController.xib */,
+				B7E5CF011348990100A4C65A /* FileViewController.xib */,
 				B70D64FD132A25F4008DDEA4 /* edit-Info.plist */,
 				B70D64FE132A25F4008DDEA4 /* edit-main.m */,
 				B70D6501132A25F4008DDEA4 /* InfoPlist.strings */,
-				B70D6503132A25F4008DDEA4 /* MainWindow.xib */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -476,6 +499,14 @@
 		B70D650D132A260C008DDEA4 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				B7E5CEF6134898F600A4C65A /* FileBrowser.h */,
+				B7E5CEF7134898F600A4C65A /* FileBrowserDelegate.h */,
+				B7E5CEF8134898F600A4C65A /* FileViewController.h */,
+				B7E5CEF9134898F600A4C65A /* FileViewController.m */,
+				B7E5CEFA134898F600A4C65A /* ProjectViewController.h */,
+				B7E5CEFB134898F600A4C65A /* ProjectViewController.m */,
+				B7E5CEFC134898F600A4C65A /* RootViewController.h */,
+				B7E5CEFD134898F600A4C65A /* RootViewController.m */,
 				B70D6510132A260C008DDEA4 /* Project.h */,
 				B70D6511132A260C008DDEA4 /* Project.m */,
 				B70D6512132A260C008DDEA4 /* ProjectController.h */,
@@ -827,6 +858,10 @@
 				B70D6506132A25F4008DDEA4 /* edit-Info.plist in Resources */,
 				B70D6509132A25F4008DDEA4 /* InfoPlist.strings in Resources */,
 				B70D650A132A25F4008DDEA4 /* MainWindow.xib in Resources */,
+				B7E5CF091348990100A4C65A /* FileViewController.xib in Resources */,
+				B7E5CF0A1348990100A4C65A /* ProjectController.xib in Resources */,
+				B7E5CF0B1348990100A4C65A /* ProjectViewController.xib in Resources */,
+				B7E5CF0C1348990100A4C65A /* RootViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -865,6 +900,9 @@
 				B70D6520132A260C008DDEA4 /* Project.m in Sources */,
 				B70D6521132A260C008DDEA4 /* ProjectController.m in Sources */,
 				B7C6D8A1133E70E10081759F /* AppController.m in Sources */,
+				B7E5CEFE134898F600A4C65A /* FileViewController.m in Sources */,
+				B7E5CEFF134898F600A4C65A /* ProjectViewController.m in Sources */,
+				B7E5CF00134898F600A4C65A /* RootViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -981,6 +1019,38 @@
 				B70D6504132A25F4008DDEA4 /* en */,
 			);
 			name = MainWindow.xib;
+			sourceTree = "<group>";
+		};
+		B7E5CF011348990100A4C65A /* FileViewController.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				B7E5CF021348990100A4C65A /* en */,
+			);
+			name = FileViewController.xib;
+			sourceTree = "<group>";
+		};
+		B7E5CF031348990100A4C65A /* ProjectController.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				B7E5CF041348990100A4C65A /* en */,
+			);
+			name = ProjectController.xib;
+			sourceTree = "<group>";
+		};
+		B7E5CF051348990100A4C65A /* ProjectViewController.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				B7E5CF061348990100A4C65A /* en */,
+			);
+			name = ProjectViewController.xib;
+			sourceTree = "<group>";
+		};
+		B7E5CF071348990100A4C65A /* RootViewController.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				B7E5CF081348990100A4C65A /* en */,
+			);
+			name = RootViewController.xib;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
