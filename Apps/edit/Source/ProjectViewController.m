@@ -82,7 +82,8 @@
 
 - (NSArray *)contentsOfFolder
 {
-    return [self.fileManager contentsOfDirectoryAtPath:self.folder withExtensions:nil options:NSDirectoryEnumerationSkipsHiddenFiles skipFiles:YES skipDirectories:NO error:(NSError **)NULL];
+    NSDirectoryEnumerationOptions options = NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsPackageDescendants;
+    return [self.fileManager subpathsOfDirectoryAtPath:self.folder withExtensions:nil options:options skipFiles:YES skipDirectories:NO error:(NSError **)NULL];
 }
 
 - (NSArray *)filesInSubfolder:(NSString *)subfolder
