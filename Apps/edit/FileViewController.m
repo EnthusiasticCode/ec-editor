@@ -24,7 +24,8 @@
 
 @implementation FileViewController
 
-@synthesize codeView = codeView_;
+@synthesize codeView;
+@synthesize scrollView;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -40,6 +41,7 @@
     [textStyles_ release];
     [diagnosticOverlayStyles_ release];
     self.codeView = nil;
+    [scrollView release];
     [super dealloc];
 }
 
@@ -108,6 +110,7 @@
 
 - (void)viewDidUnload
 {
+    [self setScrollView:nil];
     [super viewDidUnload];
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;
@@ -121,8 +124,7 @@
 
 - (void)loadFile:(NSString *)file withCodeUnit:(ECCodeUnit *)codeUnit
 {
-    self.codeView.text = [NSString stringWithContentsOfFile:file encoding:NSUTF8StringEncoding error:nil];
-    ((UIScrollView *)self.view).contentSize = self.codeView.bounds.size;
+    codeView.text = [NSString stringWithContentsOfFile:file encoding:NSUTF8StringEncoding error:nil];
     for (ECCodeToken *token in [codeUnit tokensInRange:NSMakeRange(0, [self.codeView.text length]) withCursors:YES])
     {
         switch (token.kind)
@@ -154,6 +156,8 @@
                 break;
         }
     }
+    [codeView sizeToFit];
+    scrollView.contentSize = codeView.bounds.size;
     for (ECCodeDiagnostic *diagnostic in [codeUnit diagnostics])
     {
         //        switch (diagnostic.severity) {
@@ -170,7 +174,6 @@
         //                break;
         //        }
     }
-    [self.codeView sizeToFit];
 }
 
 @end

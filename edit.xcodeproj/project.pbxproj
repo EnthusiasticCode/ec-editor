@@ -17,6 +17,7 @@
 		B70D6575132A279C008DDEA4 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B70D6574132A279C008DDEA4 /* CoreData.framework */; };
 		B70D664A132A28AB008DDEA4 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B70D6649132A28AB008DDEA4 /* SenTestingKit.framework */; };
 		B7DBA580132A3281004C0E1D /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7DBA57F132A3281004C0E1D /* QuartzCore.framework */; };
+		CD040B3C1348A21300C6EDD0 /* libclang.dylib in Resources */ = {isa = PBXBuildFile; fileRef = CDEBF2AF13489C8700CE2285 /* libclang.dylib */; };
 		CDEBF21613489A8E00CE2285 /* AppController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDEBF20913489A8E00CE2285 /* AppController.m */; };
 		CDEBF21713489A8E00CE2285 /* FileViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDEBF20D13489A8E00CE2285 /* FileViewController.m */; };
 		CDEBF21813489A8E00CE2285 /* Project.m in Sources */ = {isa = PBXBuildFile; fileRef = CDEBF20F13489A8E00CE2285 /* Project.m */; };
@@ -379,39 +380,68 @@
 		CDEBF27513489BD400CE2285 /* ECUIKit */ = {
 			isa = PBXGroup;
 			children = (
-				CDEBF27613489BE800CE2285 /* ECCodeScrollView.h */,
-				CDEBF27713489BE800CE2285 /* ECCodeScrollView.m */,
+				CDEBF2C013489EC100CE2285 /* Text Layer */,
+				CDEBF2BE13489DDA00CE2285 /* Text */,
+				CDEBF2BD13489DD200CE2285 /* Document */,
+				CDEBF2BF13489E0100CE2285 /* Relational Table */,
+				CDEBF2BC13489DCA00CE2285 /* Core Additions */,
+				CDEBF2BB13489DC100CE2285 /* Code Scroll View */,
+				CDEBF2B913489DBA00CE2285 /* Code View */,
+			);
+			name = ECUIKit;
+			sourceTree = "<group>";
+		};
+		CDEBF2B913489DBA00CE2285 /* Code View */ = {
+			isa = PBXGroup;
+			children = (
 				CDEBF27813489BE800CE2285 /* ECCodeView.h */,
 				CDEBF27913489BE800CE2285 /* ECCodeView.m */,
-				CDEBF27A13489BE800CE2285 /* ECCoreText.h */,
-				CDEBF27B13489BE800CE2285 /* ECCoreText.m */,
-				CDEBF27C13489BE800CE2285 /* ECDocument.h */,
-				CDEBF27D13489BE800CE2285 /* ECDocument.m */,
 				CDEBF27E13489BE800CE2285 /* ECEditCodeView.h */,
 				CDEBF27F13489BE800CE2285 /* ECEditCodeView.m */,
-				CDEBF28013489BE800CE2285 /* ECLineMarksView.h */,
-				CDEBF28113489BE800CE2285 /* ECLineMarksView.m */,
-				CDEBF28213489BE800CE2285 /* ECPersistentDocument.h */,
-				CDEBF28313489BE800CE2285 /* ECPersistentDocument.m */,
-				CDEBF28413489BE800CE2285 /* ECRectSet.h */,
-				CDEBF28513489BE800CE2285 /* ECRectSet.m */,
-				CDEBF28613489BE800CE2285 /* ECRelationalTableView.h */,
-				CDEBF28713489BE800CE2285 /* ECRelationalTableView.m */,
-				CDEBF28813489BE800CE2285 /* ECRelationalTableViewDataSource.h */,
-				CDEBF28913489BE800CE2285 /* ECRelationalTableViewDelegate.h */,
-				CDEBF28A13489BE800CE2285 /* ECRelationalTableViewItem.h */,
-				CDEBF28B13489BE800CE2285 /* ECRelationalTableViewItem.m */,
-				CDEBF28C13489BE800CE2285 /* ECRelationalTableViewItem(Private).h */,
 				CDEBF28D13489BE800CE2285 /* ECSelectionHandleView.h */,
 				CDEBF28E13489BE800CE2285 /* ECSelectionHandleView.m */,
+			);
+			name = "Code View";
+			sourceTree = "<group>";
+		};
+		CDEBF2BB13489DC100CE2285 /* Code Scroll View */ = {
+			isa = PBXGroup;
+			children = (
+				CDEBF27613489BE800CE2285 /* ECCodeScrollView.h */,
+				CDEBF27713489BE800CE2285 /* ECCodeScrollView.m */,
+				CDEBF28013489BE800CE2285 /* ECLineMarksView.h */,
+				CDEBF28113489BE800CE2285 /* ECLineMarksView.m */,
+			);
+			name = "Code Scroll View";
+			sourceTree = "<group>";
+		};
+		CDEBF2BC13489DCA00CE2285 /* Core Additions */ = {
+			isa = PBXGroup;
+			children = (
+				CDEBF27A13489BE800CE2285 /* ECCoreText.h */,
+				CDEBF27B13489BE800CE2285 /* ECCoreText.m */,
+				CDEBF28413489BE800CE2285 /* ECRectSet.h */,
+				CDEBF28513489BE800CE2285 /* ECRectSet.m */,
+			);
+			name = "Core Additions";
+			sourceTree = "<group>";
+		};
+		CDEBF2BD13489DD200CE2285 /* Document */ = {
+			isa = PBXGroup;
+			children = (
 				CDEBF28F13489BE800CE2285 /* ECTextDocument.h */,
 				CDEBF29013489BE800CE2285 /* ECTextDocument.m */,
-				CDEBF29113489BE800CE2285 /* ECTextLayer.h */,
-				CDEBF29213489BE800CE2285 /* ECTextLayer.m */,
-				CDEBF29313489BE800CE2285 /* ECTextOverlayLayer.h */,
-				CDEBF29413489BE800CE2285 /* ECTextOverlayLayer.m */,
-				CDEBF29513489BE800CE2285 /* ECTextOverlayStyle.h */,
-				CDEBF29613489BE800CE2285 /* ECTextOverlayStyle.m */,
+				CDEBF27C13489BE800CE2285 /* ECDocument.h */,
+				CDEBF27D13489BE800CE2285 /* ECDocument.m */,
+				CDEBF28213489BE800CE2285 /* ECPersistentDocument.h */,
+				CDEBF28313489BE800CE2285 /* ECPersistentDocument.m */,
+			);
+			name = Document;
+			sourceTree = "<group>";
+		};
+		CDEBF2BE13489DDA00CE2285 /* Text */ = {
+			isa = PBXGroup;
+			children = (
 				CDEBF29713489BE800CE2285 /* ECTextPosition.h */,
 				CDEBF29813489BE800CE2285 /* ECTextPosition.m */,
 				CDEBF29913489BE800CE2285 /* ECTextRange.h */,
@@ -419,7 +449,34 @@
 				CDEBF29B13489BE800CE2285 /* ECTextStyle.h */,
 				CDEBF29C13489BE800CE2285 /* ECTextStyle.m */,
 			);
-			name = ECUIKit;
+			name = Text;
+			sourceTree = "<group>";
+		};
+		CDEBF2BF13489E0100CE2285 /* Relational Table */ = {
+			isa = PBXGroup;
+			children = (
+				CDEBF28613489BE800CE2285 /* ECRelationalTableView.h */,
+				CDEBF28713489BE800CE2285 /* ECRelationalTableView.m */,
+				CDEBF28813489BE800CE2285 /* ECRelationalTableViewDataSource.h */,
+				CDEBF28913489BE800CE2285 /* ECRelationalTableViewDelegate.h */,
+				CDEBF28A13489BE800CE2285 /* ECRelationalTableViewItem.h */,
+				CDEBF28B13489BE800CE2285 /* ECRelationalTableViewItem.m */,
+				CDEBF28C13489BE800CE2285 /* ECRelationalTableViewItem(Private).h */,
+			);
+			name = "Relational Table";
+			sourceTree = "<group>";
+		};
+		CDEBF2C013489EC100CE2285 /* Text Layer */ = {
+			isa = PBXGroup;
+			children = (
+				CDEBF29113489BE800CE2285 /* ECTextLayer.h */,
+				CDEBF29213489BE800CE2285 /* ECTextLayer.m */,
+				CDEBF29313489BE800CE2285 /* ECTextOverlayLayer.h */,
+				CDEBF29413489BE800CE2285 /* ECTextOverlayLayer.m */,
+				CDEBF29513489BE800CE2285 /* ECTextOverlayStyle.h */,
+				CDEBF29613489BE800CE2285 /* ECTextOverlayStyle.m */,
+			);
+			name = "Text Layer";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -494,6 +551,7 @@
 				CDEBF23413489A9F00CE2285 /* ProjectController.xib in Resources */,
 				CDEBF23513489A9F00CE2285 /* ProjectViewController.xib in Resources */,
 				CDEBF23613489A9F00CE2285 /* RootViewController.xib in Resources */,
+				CD040B3C1348A21300C6EDD0 /* libclang.dylib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -654,12 +712,15 @@
 			buildSettings = {
 				HEADER_SEARCH_PATHS = Frameworks;
 				INFOPLIST_FILE = "Apps/edit/Resources/edit-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
+				LD_RUNPATH_SEARCH_PATHS = "@loader_path/";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)\"",
 					"\"$(SRCROOT)/Frameworks/ECCodeIndexing/Plugins/libclang\"",
 				);
 				PRODUCT_NAME = edit;
+				TARGETED_DEVICE_FAMILY = 2;
 			};
 			name = Debug;
 		};
@@ -668,12 +729,15 @@
 			buildSettings = {
 				HEADER_SEARCH_PATHS = Frameworks;
 				INFOPLIST_FILE = "Apps/edit/Resources/edit-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
+				LD_RUNPATH_SEARCH_PATHS = "@loader_path/";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)\"",
 					"\"$(SRCROOT)/Frameworks/ECCodeIndexing/Plugins/libclang\"",
 				);
 				PRODUCT_NAME = edit;
+				TARGETED_DEVICE_FAMILY = 2;
 			};
 			name = Release;
 		};
