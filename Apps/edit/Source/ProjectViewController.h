@@ -10,5 +10,5 @@
 #import "FileBrowser.h"
 
 @interface ProjectViewController : UIViewController <UITableViewDataSource, UITableViewDelegate, FileBrowser>
-
+@property (nonatomic, retain) NSArray *extensionsToShow;
 @end

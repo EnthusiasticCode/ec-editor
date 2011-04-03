@@ -7,6 +7,7 @@
 //
 
 #import "RootViewController.h"
+#import <ECFoundation/NSFileManager(ECAdditions).h>
 
 @interface RootViewController ()
 @property (nonatomic, retain) NSFileManager *fileManager;
@@ -74,16 +75,7 @@
 
 - (NSArray *)contentsOfFolder
 {
-    NSMutableArray *subfolders = [NSMutableArray array];
-    NSArray *links = [self.fileManager contentsOfDirectoryAtPath:self.folder error:NULL];
-    BOOL isDirectory;
-    for (NSString *link in links)
-    {
-        [self.fileManager fileExistsAtPath:[self.folder stringByAppendingPathComponent:link] isDirectory:&isDirectory];
-        if(isDirectory)
-            [subfolders addObject:link];
-    }
-    return subfolders;
+    return [self.fileManager contentsOfDirectoryAtPath:self.folder withExtensions:nil options:NSDirectoryEnumerationSkipsHiddenFiles skipFiles:YES skipDirectories:NO error:(NSError **)NULL];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath

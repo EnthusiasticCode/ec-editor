@@ -62,13 +62,14 @@
 		B7298408133FAE2F00F65728 /* FileViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B7298407133FAE2E00F65728 /* FileViewController.m */; };
 		B7C81D6E1347DEAC0050427D /* ProjectController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B7C81D6A1347DEAC0050427D /* ProjectController.xib */; };
 		B7C81D6F1347DEAC0050427D /* ProjectViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B7C81D6C1347DEAC0050427D /* ProjectViewController.xib */; };
+		B7C81D8213485F9C0050427D /* NSFileManager(ECAdditions).m in Sources */ = {isa = PBXBuildFile; fileRef = B7C81D8113485F9C0050427D /* NSFileManager(ECAdditions).m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		B71DF2AA1345F8D4001DA89D /* ECRelationalTableViewItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECRelationalTableViewItem.h; path = ECUIKit/Source/ECRelationalTableViewItem.h; sourceTree = "<group>"; };
-		B71DF2AB1345F8D4001DA89D /* ECRelationalTableViewItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECRelationalTableViewItem.m; path = ECUIKit/Source/ECRelationalTableViewItem.m; sourceTree = "<group>"; };
-		B722F0951344E41E00AD8603 /* ECRelationalTableView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECRelationalTableView.h; path = ECUIKit/Source/ECRelationalTableView.h; sourceTree = "<group>"; };
-		B722F0961344E41E00AD8603 /* ECRelationalTableView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECRelationalTableView.m; path = ECUIKit/Source/ECRelationalTableView.m; sourceTree = "<group>"; };
+		B71DF2AA1345F8D4001DA89D /* ECRelationalTableViewItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECRelationalTableViewItem.h; sourceTree = "<group>"; };
+		B71DF2AB1345F8D4001DA89D /* ECRelationalTableViewItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECRelationalTableViewItem.m; sourceTree = "<group>"; };
+		B722F0951344E41E00AD8603 /* ECRelationalTableView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECRelationalTableView.h; sourceTree = "<group>"; };
+		B722F0961344E41E00AD8603 /* ECRelationalTableView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECRelationalTableView.m; sourceTree = "<group>"; };
 		B72982DD133F8B0900F65728 /* edit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = edit.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B72982E1133F8B0900F65728 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		B72982E3133F8B0900F65728 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -132,32 +133,32 @@
 		B7298399133F8E7000F65728 /* ECCodeView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeView.m; sourceTree = "<group>"; };
 		B729839A133F8E7000F65728 /* ECCoreText.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCoreText.h; sourceTree = "<group>"; };
 		B729839B133F8E7000F65728 /* ECCoreText.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCoreText.m; sourceTree = "<group>"; };
-		B729839C133F8E7000F65728 /* ECDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECDocument.h; path = ECUIKit/Source/ECDocument.h; sourceTree = "<group>"; };
-		B729839D133F8E7000F65728 /* ECDocument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECDocument.m; path = ECUIKit/Source/ECDocument.m; sourceTree = "<group>"; };
+		B729839C133F8E7000F65728 /* ECDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECDocument.h; sourceTree = "<group>"; };
+		B729839D133F8E7000F65728 /* ECDocument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECDocument.m; sourceTree = "<group>"; };
 		B729839E133F8E7000F65728 /* ECEditCodeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECEditCodeView.h; sourceTree = "<group>"; };
 		B729839F133F8E7000F65728 /* ECEditCodeView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECEditCodeView.m; sourceTree = "<group>"; };
 		B72983A0133F8E7000F65728 /* ECLineMarksView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECLineMarksView.h; sourceTree = "<group>"; };
 		B72983A1133F8E7000F65728 /* ECLineMarksView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECLineMarksView.m; sourceTree = "<group>"; };
-		B72983A2133F8E7000F65728 /* ECPersistentDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECPersistentDocument.h; path = ECUIKit/Source/ECPersistentDocument.h; sourceTree = "<group>"; };
-		B72983A3133F8E7000F65728 /* ECPersistentDocument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECPersistentDocument.m; path = ECUIKit/Source/ECPersistentDocument.m; sourceTree = "<group>"; };
+		B72983A2133F8E7000F65728 /* ECPersistentDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECPersistentDocument.h; sourceTree = "<group>"; };
+		B72983A3133F8E7000F65728 /* ECPersistentDocument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECPersistentDocument.m; sourceTree = "<group>"; };
 		B72983A4133F8E7000F65728 /* ECRectSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECRectSet.h; sourceTree = "<group>"; };
 		B72983A5133F8E7000F65728 /* ECRectSet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECRectSet.m; sourceTree = "<group>"; };
-		B72983A6133F8E7000F65728 /* ECSelectionHandleView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECSelectionHandleView.h; path = ECUIKit/Source/ECSelectionHandleView.h; sourceTree = "<group>"; };
-		B72983A7133F8E7000F65728 /* ECSelectionHandleView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECSelectionHandleView.m; path = ECUIKit/Source/ECSelectionHandleView.m; sourceTree = "<group>"; };
-		B72983A8133F8E7000F65728 /* ECTextDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECTextDocument.h; path = ECUIKit/Source/ECTextDocument.h; sourceTree = "<group>"; };
-		B72983A9133F8E7000F65728 /* ECTextDocument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECTextDocument.m; path = ECUIKit/Source/ECTextDocument.m; sourceTree = "<group>"; };
-		B72983AA133F8E7000F65728 /* ECTextLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECTextLayer.h; path = ECUIKit/Source/ECTextLayer.h; sourceTree = "<group>"; };
-		B72983AB133F8E7000F65728 /* ECTextLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECTextLayer.m; path = ECUIKit/Source/ECTextLayer.m; sourceTree = "<group>"; };
-		B72983AC133F8E7000F65728 /* ECTextOverlayLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECTextOverlayLayer.h; path = ECUIKit/Source/ECTextOverlayLayer.h; sourceTree = "<group>"; };
-		B72983AD133F8E7000F65728 /* ECTextOverlayLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECTextOverlayLayer.m; path = ECUIKit/Source/ECTextOverlayLayer.m; sourceTree = "<group>"; };
-		B72983AE133F8E7000F65728 /* ECTextOverlayStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECTextOverlayStyle.h; path = ECUIKit/Source/ECTextOverlayStyle.h; sourceTree = "<group>"; };
-		B72983AF133F8E7000F65728 /* ECTextOverlayStyle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECTextOverlayStyle.m; path = ECUIKit/Source/ECTextOverlayStyle.m; sourceTree = "<group>"; };
-		B72983B0133F8E7000F65728 /* ECTextPosition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECTextPosition.h; path = ECUIKit/Source/ECTextPosition.h; sourceTree = "<group>"; };
-		B72983B1133F8E7000F65728 /* ECTextPosition.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECTextPosition.m; path = ECUIKit/Source/ECTextPosition.m; sourceTree = "<group>"; };
-		B72983B2133F8E7000F65728 /* ECTextRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECTextRange.h; path = ECUIKit/Source/ECTextRange.h; sourceTree = "<group>"; };
-		B72983B3133F8E7000F65728 /* ECTextRange.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECTextRange.m; path = ECUIKit/Source/ECTextRange.m; sourceTree = "<group>"; };
-		B72983B4133F8E7000F65728 /* ECTextStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECTextStyle.h; path = ECUIKit/Source/ECTextStyle.h; sourceTree = "<group>"; };
-		B72983B5133F8E7000F65728 /* ECTextStyle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECTextStyle.m; path = ECUIKit/Source/ECTextStyle.m; sourceTree = "<group>"; };
+		B72983A6133F8E7000F65728 /* ECSelectionHandleView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECSelectionHandleView.h; sourceTree = "<group>"; };
+		B72983A7133F8E7000F65728 /* ECSelectionHandleView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECSelectionHandleView.m; sourceTree = "<group>"; };
+		B72983A8133F8E7000F65728 /* ECTextDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECTextDocument.h; sourceTree = "<group>"; };
+		B72983A9133F8E7000F65728 /* ECTextDocument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECTextDocument.m; sourceTree = "<group>"; };
+		B72983AA133F8E7000F65728 /* ECTextLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECTextLayer.h; sourceTree = "<group>"; };
+		B72983AB133F8E7000F65728 /* ECTextLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECTextLayer.m; sourceTree = "<group>"; };
+		B72983AC133F8E7000F65728 /* ECTextOverlayLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECTextOverlayLayer.h; sourceTree = "<group>"; };
+		B72983AD133F8E7000F65728 /* ECTextOverlayLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECTextOverlayLayer.m; sourceTree = "<group>"; };
+		B72983AE133F8E7000F65728 /* ECTextOverlayStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECTextOverlayStyle.h; sourceTree = "<group>"; };
+		B72983AF133F8E7000F65728 /* ECTextOverlayStyle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECTextOverlayStyle.m; sourceTree = "<group>"; };
+		B72983B0133F8E7000F65728 /* ECTextPosition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECTextPosition.h; sourceTree = "<group>"; };
+		B72983B1133F8E7000F65728 /* ECTextPosition.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECTextPosition.m; sourceTree = "<group>"; };
+		B72983B2133F8E7000F65728 /* ECTextRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECTextRange.h; sourceTree = "<group>"; };
+		B72983B3133F8E7000F65728 /* ECTextRange.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECTextRange.m; sourceTree = "<group>"; };
+		B72983B4133F8E7000F65728 /* ECTextStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECTextStyle.h; sourceTree = "<group>"; };
+		B72983B5133F8E7000F65728 /* ECTextStyle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECTextStyle.m; sourceTree = "<group>"; };
 		B72983C6133F8F6500F65728 /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
 		B72983C8133F8F7000F65728 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		B72983FE133F983A00F65728 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = Resources/en.lproj/FileViewController.xib; sourceTree = SOURCE_ROOT; };
@@ -167,11 +168,13 @@
 		B7298407133FAE2E00F65728 /* FileViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FileViewController.m; path = Source/FileViewController.m; sourceTree = SOURCE_ROOT; };
 		B7298413133FBEED00F65728 /* FileBrowserDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileBrowserDelegate.h; path = Source/FileBrowserDelegate.h; sourceTree = SOURCE_ROOT; };
 		B72984141340791000F65728 /* FileBrowser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileBrowser.h; path = Source/FileBrowser.h; sourceTree = SOURCE_ROOT; };
-		B74E82911347143100CC425C /* ECRelationalTableViewItem(Private).h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "ECRelationalTableViewItem(Private).h"; path = "ECUIKit/Source/ECRelationalTableViewItem(Private).h"; sourceTree = "<group>"; };
-		B7B91BBE1345B14A00117840 /* ECRelationalTableViewDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECRelationalTableViewDelegate.h; path = ECUIKit/Source/ECRelationalTableViewDelegate.h; sourceTree = "<group>"; };
-		B7B91BC01345B15700117840 /* ECRelationalTableViewDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECRelationalTableViewDataSource.h; path = ECUIKit/Source/ECRelationalTableViewDataSource.h; sourceTree = "<group>"; };
+		B74E82911347143100CC425C /* ECRelationalTableViewItem(Private).h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ECRelationalTableViewItem(Private).h"; sourceTree = "<group>"; };
+		B7B91BBE1345B14A00117840 /* ECRelationalTableViewDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECRelationalTableViewDelegate.h; sourceTree = "<group>"; };
+		B7B91BC01345B15700117840 /* ECRelationalTableViewDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECRelationalTableViewDataSource.h; sourceTree = "<group>"; };
 		B7C81D6B1347DEAC0050427D /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = Resources/en.lproj/ProjectController.xib; sourceTree = SOURCE_ROOT; };
 		B7C81D6D1347DEAC0050427D /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = Resources/en.lproj/ProjectViewController.xib; sourceTree = SOURCE_ROOT; };
+		B7C81D8013485F9C0050427D /* NSFileManager(ECAdditions).h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSFileManager(ECAdditions).h"; sourceTree = "<group>"; };
+		B7C81D8113485F9C0050427D /* NSFileManager(ECAdditions).m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSFileManager(ECAdditions).m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -283,12 +286,7 @@
 		B7298354133F8E0100F65728 /* ECUIKit */ = {
 			isa = PBXGroup;
 			children = (
-				CDEBF1D51348636500CE2285 /* Table view */,
-				CDEBF1D41348634000CE2285 /* Document */,
-				CDEBF1D31348632400CE2285 /* Text */,
-				CDEBF1D21348630400CE2285 /* Core Additions */,
-				B7298395133F8E7000F65728 /* Code View */,
-				CDEBF1D61348638300CE2285 /* Code Scroll View */,
+				B7298395133F8E7000F65728 /* Source */,
 			);
 			name = ECUIKit;
 			sourceTree = "<group>";
@@ -371,6 +369,8 @@
 			children = (
 				B729838B133F8E6300F65728 /* ECHashing.h */,
 				B729838C133F8E6300F65728 /* ECHashing.m */,
+				B7C81D8013485F9C0050427D /* NSFileManager(ECAdditions).h */,
+				B7C81D8113485F9C0050427D /* NSFileManager(ECAdditions).m */,
 				B729838D133F8E6300F65728 /* MurmurHash3.c */,
 				B729838E133F8E6300F65728 /* MurmurHash3.h */,
 				B7298391133F8E6300F65728 /* pstdint.h */,
@@ -379,33 +379,36 @@
 			path = ECFoundation/Source;
 			sourceTree = "<group>";
 		};
-		B7298395133F8E7000F65728 /* Code View */ = {
+		B7298395133F8E7000F65728 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				B7298396133F8E7000F65728 /* ECCodeScrollView.h */,
+				B7298397133F8E7000F65728 /* ECCodeScrollView.m */,
 				B7298398133F8E7000F65728 /* ECCodeView.h */,
 				B7298399133F8E7000F65728 /* ECCodeView.m */,
-				B729839E133F8E7000F65728 /* ECEditCodeView.h */,
-				B729839F133F8E7000F65728 /* ECEditCodeView.m */,
-			);
-			name = "Code View";
-			path = ECUIKit/Source;
-			sourceTree = "<group>";
-		};
-		CDEBF1D21348630400CE2285 /* Core Additions */ = {
-			isa = PBXGroup;
-			children = (
 				B729839A133F8E7000F65728 /* ECCoreText.h */,
 				B729839B133F8E7000F65728 /* ECCoreText.m */,
+				B729839C133F8E7000F65728 /* ECDocument.h */,
+				B729839D133F8E7000F65728 /* ECDocument.m */,
+				B7B91BBE1345B14A00117840 /* ECRelationalTableViewDelegate.h */,
+				B7B91BC01345B15700117840 /* ECRelationalTableViewDataSource.h */,
+				B722F0951344E41E00AD8603 /* ECRelationalTableView.h */,
+				B722F0961344E41E00AD8603 /* ECRelationalTableView.m */,
+				B74E82911347143100CC425C /* ECRelationalTableViewItem(Private).h */,
+				B71DF2AA1345F8D4001DA89D /* ECRelationalTableViewItem.h */,
+				B71DF2AB1345F8D4001DA89D /* ECRelationalTableViewItem.m */,
+				B729839E133F8E7000F65728 /* ECEditCodeView.h */,
+				B729839F133F8E7000F65728 /* ECEditCodeView.m */,
+				B72983A0133F8E7000F65728 /* ECLineMarksView.h */,
+				B72983A1133F8E7000F65728 /* ECLineMarksView.m */,
+				B72983A2133F8E7000F65728 /* ECPersistentDocument.h */,
+				B72983A3133F8E7000F65728 /* ECPersistentDocument.m */,
 				B72983A4133F8E7000F65728 /* ECRectSet.h */,
 				B72983A5133F8E7000F65728 /* ECRectSet.m */,
-			);
-			name = "Core Additions";
-			path = ECUIKit/Source;
-			sourceTree = "<group>";
-		};
-		CDEBF1D31348632400CE2285 /* Text */ = {
-			isa = PBXGroup;
-			children = (
+				B72983A6133F8E7000F65728 /* ECSelectionHandleView.h */,
+				B72983A7133F8E7000F65728 /* ECSelectionHandleView.m */,
+				B72983A8133F8E7000F65728 /* ECTextDocument.h */,
+				B72983A9133F8E7000F65728 /* ECTextDocument.m */,
 				B72983AA133F8E7000F65728 /* ECTextLayer.h */,
 				B72983AB133F8E7000F65728 /* ECTextLayer.m */,
 				B72983AC133F8E7000F65728 /* ECTextOverlayLayer.h */,
@@ -419,47 +422,7 @@
 				B72983B4133F8E7000F65728 /* ECTextStyle.h */,
 				B72983B5133F8E7000F65728 /* ECTextStyle.m */,
 			);
-			name = Text;
-			sourceTree = "<group>";
-		};
-		CDEBF1D41348634000CE2285 /* Document */ = {
-			isa = PBXGroup;
-			children = (
-				B729839C133F8E7000F65728 /* ECDocument.h */,
-				B729839D133F8E7000F65728 /* ECDocument.m */,
-				B72983A2133F8E7000F65728 /* ECPersistentDocument.h */,
-				B72983A3133F8E7000F65728 /* ECPersistentDocument.m */,
-				B72983A6133F8E7000F65728 /* ECSelectionHandleView.h */,
-				B72983A7133F8E7000F65728 /* ECSelectionHandleView.m */,
-				B72983A8133F8E7000F65728 /* ECTextDocument.h */,
-				B72983A9133F8E7000F65728 /* ECTextDocument.m */,
-			);
-			name = Document;
-			sourceTree = "<group>";
-		};
-		CDEBF1D51348636500CE2285 /* Table view */ = {
-			isa = PBXGroup;
-			children = (
-				B7B91BBE1345B14A00117840 /* ECRelationalTableViewDelegate.h */,
-				B7B91BC01345B15700117840 /* ECRelationalTableViewDataSource.h */,
-				B722F0951344E41E00AD8603 /* ECRelationalTableView.h */,
-				B722F0961344E41E00AD8603 /* ECRelationalTableView.m */,
-				B74E82911347143100CC425C /* ECRelationalTableViewItem(Private).h */,
-				B71DF2AA1345F8D4001DA89D /* ECRelationalTableViewItem.h */,
-				B71DF2AB1345F8D4001DA89D /* ECRelationalTableViewItem.m */,
-			);
-			name = "Table view";
-			sourceTree = "<group>";
-		};
-		CDEBF1D61348638300CE2285 /* Code Scroll View */ = {
-			isa = PBXGroup;
-			children = (
-				B7298396133F8E7000F65728 /* ECCodeScrollView.h */,
-				B7298397133F8E7000F65728 /* ECCodeScrollView.m */,
-				B72983A0133F8E7000F65728 /* ECLineMarksView.h */,
-				B72983A1133F8E7000F65728 /* ECLineMarksView.m */,
-			);
-			name = "Code Scroll View";
+			name = Source;
 			path = ECUIKit/Source;
 			sourceTree = "<group>";
 		};
@@ -568,6 +531,7 @@
 				B7298408133FAE2F00F65728 /* FileViewController.m in Sources */,
 				B722F0971344E41E00AD8603 /* ECRelationalTableView.m in Sources */,
 				B71DF2AC1345F8D4001DA89D /* ECRelationalTableViewItem.m in Sources */,
+				B7C81D8213485F9C0050427D /* NSFileManager(ECAdditions).m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
