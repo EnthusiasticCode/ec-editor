@@ -112,7 +112,7 @@
     size = CTFramesetterSuggestFrameSizeWithConstraints(self.CTFrameSetter, (CFRange){0, 0}, NULL, size, &fitRange);
     
     // Fix this fix
-    size.height += 1;
+    size.height += 50;
     
     size.height = ceilf(size.height);
     size.width = ceilf(size.width);

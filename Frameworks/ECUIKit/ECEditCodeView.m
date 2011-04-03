@@ -79,8 +79,6 @@
     {
         [text release];
         text = [[NSMutableAttributedString alloc] initWithString:@"\n" attributes:self.defaultTextStyle.CTAttributes];
-        // TODO find a way to remove this
-        self->textLayer.string = text;
     }
     
     NSUInteger textLength = [self textLength];
