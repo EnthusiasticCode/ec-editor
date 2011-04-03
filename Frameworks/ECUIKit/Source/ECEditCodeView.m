@@ -746,12 +746,12 @@
         [delegate editCodeView:self textChangedInRange:range];
     }
     
+    textLayer.string = text;
+
+    // TODO if needed, fix paragraph styles
+    
     if (self.needsDisplayOnTextChange)
     {
-        [self setNeedsTextRendering];
-        
-        // TODO if needed, fix paragraph styles
-        
         [self setNeedsDisplay];
     }
 }
