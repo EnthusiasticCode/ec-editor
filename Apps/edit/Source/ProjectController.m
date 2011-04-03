@@ -83,6 +83,7 @@
 {
     self.project = [Project projectWithRootDirectory:projectRoot];
     self.codeIndex = [[[ECCodeIndex alloc] init] autorelease];
+    self.projectViewController.extensionsToShow = [[self.codeIndex extensionToLanguageMap] allKeys];
 }
 
 - (void)loadFile:(NSString *)file

@@ -7,6 +7,7 @@
 //
 
 #import "ProjectViewController.h"
+#import <ECFoundation/NSFileManager(ECAdditions).h>
 
 @interface ProjectViewController ()
 @property (nonatomic, retain) NSFileManager *fileManager;
@@ -19,6 +20,7 @@
 @synthesize delegate = delegate_;
 @synthesize fileManager = fileManager_;
 @synthesize folder = folder_;
+@synthesize extensionsToShow = extensionsToShow_;
 
 - (NSFileManager *)fileManager
 {
@@ -36,6 +38,7 @@
 
 - (void)dealloc
 {
+    self.extensionsToShow = nil;
     [super dealloc];
 }
 
@@ -79,44 +82,18 @@
 
 - (NSArray *)contentsOfFolder
 {
-    NSMutableArray *subfolders = [NSMutableArray array];
-    NSEnumerator *links = [self.fileManager enumeratorAtPath:self.folder];
-    BOOL isDirectory;
-    NSString *oldWorkingDirectory = [self.fileManager currentDirectoryPath];
-    [self.fileManager changeCurrentDirectoryPath:self.folder];
-    for (NSString *link in links)
-    {
-        if(![self.fileManager fileExistsAtPath:link isDirectory:&isDirectory])
-            continue;
-        if(isDirectory)
-            [subfolders addObject:link];
-    }
-    [self.fileManager changeCurrentDirectoryPath:oldWorkingDirectory];
-    return subfolders;
+    return [self.fileManager contentsOfDirectoryAtPath:self.folder withExtensions:nil options:NSDirectoryEnumerationSkipsHiddenFiles skipFiles:YES skipDirectories:NO error:(NSError **)NULL];
+}
+
+- (NSArray *)filesInSubfolder:(NSString *)subfolder
+{
+    NSDirectoryEnumerationOptions options = NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsPackageDescendants;
+    return [self.fileManager contentsOfDirectoryAtPath:[self.folder stringByAppendingPathComponent:subfolder] withExtensions:self.extensionsToShow options:options skipFiles:NO skipDirectories:YES error:(NSError **)NULL];
 }
 
 - (void)browseFolder:(NSString *)folder
 {
     self.folder = folder;
-}
-
-- (NSArray *)filesInSubfolder:(NSString *)subfolder
-{
-    NSMutableArray *files = [NSMutableArray array];
-    NSString *subfolderAbsolutePath = [self.folder stringByAppendingPathComponent:subfolder];
-    NSArray *links = [self.fileManager contentsOfDirectoryAtPath:subfolderAbsolutePath error:NULL];
-    BOOL isDirectory;
-    NSString *oldWorkingDirectory = [self.fileManager currentDirectoryPath];
-    [self.fileManager changeCurrentDirectoryPath:subfolderAbsolutePath];
-    for (NSString *link in links)
-    {
-        if(![self.fileManager fileExistsAtPath:link isDirectory:&isDirectory])
-            continue;
-        if(!isDirectory)
-            [files addObject:link];
-    }
-    [self.fileManager changeCurrentDirectoryPath:oldWorkingDirectory];
-    return files;
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView

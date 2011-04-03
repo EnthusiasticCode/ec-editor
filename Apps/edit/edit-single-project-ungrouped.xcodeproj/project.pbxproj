@@ -62,6 +62,7 @@
 		B7298408133FAE2F00F65728 /* FileViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B7298407133FAE2E00F65728 /* FileViewController.m */; };
 		B7C81D6E1347DEAC0050427D /* ProjectController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B7C81D6A1347DEAC0050427D /* ProjectController.xib */; };
 		B7C81D6F1347DEAC0050427D /* ProjectViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B7C81D6C1347DEAC0050427D /* ProjectViewController.xib */; };
+		B7C81D8213485F9C0050427D /* NSFileManager(ECAdditions).m in Sources */ = {isa = PBXBuildFile; fileRef = B7C81D8113485F9C0050427D /* NSFileManager(ECAdditions).m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -172,6 +173,8 @@
 		B7B91BC01345B15700117840 /* ECRelationalTableViewDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECRelationalTableViewDataSource.h; sourceTree = "<group>"; };
 		B7C81D6B1347DEAC0050427D /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = Resources/en.lproj/ProjectController.xib; sourceTree = SOURCE_ROOT; };
 		B7C81D6D1347DEAC0050427D /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = Resources/en.lproj/ProjectViewController.xib; sourceTree = SOURCE_ROOT; };
+		B7C81D8013485F9C0050427D /* NSFileManager(ECAdditions).h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSFileManager(ECAdditions).h"; sourceTree = "<group>"; };
+		B7C81D8113485F9C0050427D /* NSFileManager(ECAdditions).m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSFileManager(ECAdditions).m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -366,6 +369,8 @@
 			children = (
 				B729838B133F8E6300F65728 /* ECHashing.h */,
 				B729838C133F8E6300F65728 /* ECHashing.m */,
+				B7C81D8013485F9C0050427D /* NSFileManager(ECAdditions).h */,
+				B7C81D8113485F9C0050427D /* NSFileManager(ECAdditions).m */,
 				B729838D133F8E6300F65728 /* MurmurHash3.c */,
 				B729838E133F8E6300F65728 /* MurmurHash3.h */,
 				B7298391133F8E6300F65728 /* pstdint.h */,
@@ -526,6 +531,7 @@
 				B7298408133FAE2F00F65728 /* FileViewController.m in Sources */,
 				B722F0971344E41E00AD8603 /* ECRelationalTableView.m in Sources */,
 				B71DF2AC1345F8D4001DA89D /* ECRelationalTableViewItem.m in Sources */,
+				B7C81D8213485F9C0050427D /* NSFileManager(ECAdditions).m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
