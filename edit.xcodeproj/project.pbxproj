@@ -13,7 +13,10 @@
 		B70D6573132A277C008DDEA4 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B70D6572132A277C008DDEA4 /* CoreText.framework */; };
 		B70D6575132A279C008DDEA4 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B70D6574132A279C008DDEA4 /* CoreData.framework */; };
 		B7DBA580132A3281004C0E1D /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7DBA57F132A3281004C0E1D /* QuartzCore.framework */; };
-		CD040B3C1348A21300C6EDD0 /* libclang.dylib in Resources */ = {isa = PBXBuildFile; fileRef = CDEBF2AF13489C8700CE2285 /* libclang.dylib */; };
+		B7E5CF931348C20B00A4C65A /* ECClangCodeCursor.m in Sources */ = {isa = PBXBuildFile; fileRef = B7E5CF8C1348C20B00A4C65A /* ECClangCodeCursor.m */; };
+		B7E5CF941348C20B00A4C65A /* ECClangCodeIndex.m in Sources */ = {isa = PBXBuildFile; fileRef = B7E5CF8E1348C20B00A4C65A /* ECClangCodeIndex.m */; };
+		B7E5CF951348C20B00A4C65A /* ECClangCodeUnit.m in Sources */ = {isa = PBXBuildFile; fileRef = B7E5CF901348C20B00A4C65A /* ECClangCodeUnit.m */; };
+		B7E5CF961348C20B00A4C65A /* libclang.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B7E5CF921348C20B00A4C65A /* libclang.dylib */; };
 		CDEBF21613489A8E00CE2285 /* AppController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDEBF20913489A8E00CE2285 /* AppController.m */; };
 		CDEBF21713489A8E00CE2285 /* FileViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDEBF20D13489A8E00CE2285 /* FileViewController.m */; };
 		CDEBF21813489A8E00CE2285 /* Project.m in Sources */ = {isa = PBXBuildFile; fileRef = CDEBF20F13489A8E00CE2285 /* Project.m */; };
@@ -33,9 +36,6 @@
 		CDEBF26513489B1D00CE2285 /* ECCodeSymbol.m in Sources */ = {isa = PBXBuildFile; fileRef = CDEBF25713489B1D00CE2285 /* ECCodeSymbol.m */; };
 		CDEBF26613489B1D00CE2285 /* ECCodeToken.m in Sources */ = {isa = PBXBuildFile; fileRef = CDEBF25913489B1D00CE2285 /* ECCodeToken.m */; };
 		CDEBF26713489B1D00CE2285 /* ECCodeUnit.m in Sources */ = {isa = PBXBuildFile; fileRef = CDEBF25B13489B1D00CE2285 /* ECCodeUnit.m */; };
-		CDEBF27213489BC800CE2285 /* ECClangCodeCursor.m in Sources */ = {isa = PBXBuildFile; fileRef = CDEBF26C13489BC800CE2285 /* ECClangCodeCursor.m */; };
-		CDEBF27313489BC800CE2285 /* ECClangCodeIndex.m in Sources */ = {isa = PBXBuildFile; fileRef = CDEBF26E13489BC800CE2285 /* ECClangCodeIndex.m */; };
-		CDEBF27413489BC800CE2285 /* ECClangCodeUnit.m in Sources */ = {isa = PBXBuildFile; fileRef = CDEBF27013489BC800CE2285 /* ECClangCodeUnit.m */; };
 		CDEBF29D13489BE800CE2285 /* ECCodeScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = CDEBF27713489BE800CE2285 /* ECCodeScrollView.m */; };
 		CDEBF29E13489BE800CE2285 /* ECCodeView.m in Sources */ = {isa = PBXBuildFile; fileRef = CDEBF27913489BE800CE2285 /* ECCodeView.m */; };
 		CDEBF29F13489BE800CE2285 /* ECCoreText.m in Sources */ = {isa = PBXBuildFile; fileRef = CDEBF27B13489BE800CE2285 /* ECCoreText.m */; };
@@ -54,7 +54,6 @@
 		CDEBF2AC13489BE800CE2285 /* ECTextPosition.m in Sources */ = {isa = PBXBuildFile; fileRef = CDEBF29813489BE800CE2285 /* ECTextPosition.m */; };
 		CDEBF2AD13489BE800CE2285 /* ECTextRange.m in Sources */ = {isa = PBXBuildFile; fileRef = CDEBF29A13489BE800CE2285 /* ECTextRange.m */; };
 		CDEBF2AE13489BE800CE2285 /* ECTextStyle.m in Sources */ = {isa = PBXBuildFile; fileRef = CDEBF29C13489BE800CE2285 /* ECTextStyle.m */; };
-		CDEBF2B013489C8700CE2285 /* libclang.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CDEBF2AF13489C8700CE2285 /* libclang.dylib */; };
 		CDEFF96E1348BD5E006FEFCC /* edit-main.m in Sources */ = {isa = PBXBuildFile; fileRef = CDEFF95C1348BD5E006FEFCC /* edit-main.m */; };
 		CDEFF96F1348BD5E006FEFCC /* FileViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CDEFF95E1348BD5E006FEFCC /* FileViewController.xib */; };
 		CDEFF9701348BD5E006FEFCC /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = CDEFF9601348BD5E006FEFCC /* InfoPlist.strings */; };
@@ -74,6 +73,14 @@
 		B70D6574132A279C008DDEA4 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		B70D6649132A28AB008DDEA4 /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Developer/Library/Frameworks/SenTestingKit.framework; sourceTree = SDKROOT; };
 		B7DBA57F132A3281004C0E1D /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		B7E5CF8B1348C20B00A4C65A /* ECClangCodeCursor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECClangCodeCursor.h; path = Frameworks/ECCodeIndexing/ECClangCodeCursor.h; sourceTree = "<group>"; };
+		B7E5CF8C1348C20B00A4C65A /* ECClangCodeCursor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECClangCodeCursor.m; path = Frameworks/ECCodeIndexing/ECClangCodeCursor.m; sourceTree = "<group>"; };
+		B7E5CF8D1348C20B00A4C65A /* ECClangCodeIndex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECClangCodeIndex.h; path = Frameworks/ECCodeIndexing/ECClangCodeIndex.h; sourceTree = "<group>"; };
+		B7E5CF8E1348C20B00A4C65A /* ECClangCodeIndex.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECClangCodeIndex.m; path = Frameworks/ECCodeIndexing/ECClangCodeIndex.m; sourceTree = "<group>"; };
+		B7E5CF8F1348C20B00A4C65A /* ECClangCodeUnit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECClangCodeUnit.h; path = Frameworks/ECCodeIndexing/ECClangCodeUnit.h; sourceTree = "<group>"; };
+		B7E5CF901348C20B00A4C65A /* ECClangCodeUnit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECClangCodeUnit.m; path = Frameworks/ECCodeIndexing/ECClangCodeUnit.m; sourceTree = "<group>"; };
+		B7E5CF911348C20B00A4C65A /* Index.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Index.h; path = Frameworks/ECCodeIndexing/Index.h; sourceTree = "<group>"; };
+		B7E5CF921348C20B00A4C65A /* libclang.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libclang.dylib; path = Frameworks/ECCodeIndexing/libclang.dylib; sourceTree = "<group>"; };
 		CDEBF20813489A8E00CE2285 /* AppController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppController.h; path = Apps/edit/AppController.h; sourceTree = SOURCE_ROOT; };
 		CDEBF20913489A8E00CE2285 /* AppController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppController.m; path = Apps/edit/AppController.m; sourceTree = SOURCE_ROOT; };
 		CDEBF20A13489A8E00CE2285 /* FileBrowser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileBrowser.h; path = Apps/edit/FileBrowser.h; sourceTree = SOURCE_ROOT; };
@@ -121,13 +128,6 @@
 		CDEBF25B13489B1D00CE2285 /* ECCodeUnit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECCodeUnit.m; path = Frameworks/ECCodeIndexing/ECCodeUnit.m; sourceTree = "<group>"; };
 		CDEBF25C13489B1D00CE2285 /* ECCodeUnit(Private).h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "ECCodeUnit(Private).h"; path = "Frameworks/ECCodeIndexing/ECCodeUnit(Private).h"; sourceTree = "<group>"; };
 		CDEBF25D13489B1D00CE2285 /* ECCodeUnitPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECCodeUnitPlugin.h; path = Frameworks/ECCodeIndexing/ECCodeUnitPlugin.h; sourceTree = "<group>"; };
-		CDEBF26B13489BC800CE2285 /* ECClangCodeCursor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECClangCodeCursor.h; path = Frameworks/ECCodeIndexing/Plugins/libclang/ECClangCodeCursor.h; sourceTree = "<group>"; };
-		CDEBF26C13489BC800CE2285 /* ECClangCodeCursor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECClangCodeCursor.m; path = Frameworks/ECCodeIndexing/Plugins/libclang/ECClangCodeCursor.m; sourceTree = "<group>"; };
-		CDEBF26D13489BC800CE2285 /* ECClangCodeIndex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECClangCodeIndex.h; path = Frameworks/ECCodeIndexing/Plugins/libclang/ECClangCodeIndex.h; sourceTree = "<group>"; };
-		CDEBF26E13489BC800CE2285 /* ECClangCodeIndex.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECClangCodeIndex.m; path = Frameworks/ECCodeIndexing/Plugins/libclang/ECClangCodeIndex.m; sourceTree = "<group>"; };
-		CDEBF26F13489BC800CE2285 /* ECClangCodeUnit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECClangCodeUnit.h; path = Frameworks/ECCodeIndexing/Plugins/libclang/ECClangCodeUnit.h; sourceTree = "<group>"; };
-		CDEBF27013489BC800CE2285 /* ECClangCodeUnit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECClangCodeUnit.m; path = Frameworks/ECCodeIndexing/Plugins/libclang/ECClangCodeUnit.m; sourceTree = "<group>"; };
-		CDEBF27113489BC800CE2285 /* Index.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Index.h; path = Frameworks/ECCodeIndexing/Plugins/libclang/Index.h; sourceTree = "<group>"; };
 		CDEBF27613489BE800CE2285 /* ECCodeScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECCodeScrollView.h; path = Frameworks/ECUIKit/ECCodeScrollView.h; sourceTree = "<group>"; };
 		CDEBF27713489BE800CE2285 /* ECCodeScrollView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECCodeScrollView.m; path = Frameworks/ECUIKit/ECCodeScrollView.m; sourceTree = "<group>"; };
 		CDEBF27813489BE800CE2285 /* ECCodeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECCodeView.h; path = Frameworks/ECUIKit/ECCodeView.h; sourceTree = "<group>"; };
@@ -167,7 +167,6 @@
 		CDEBF29A13489BE800CE2285 /* ECTextRange.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECTextRange.m; path = Frameworks/ECUIKit/ECTextRange.m; sourceTree = "<group>"; };
 		CDEBF29B13489BE800CE2285 /* ECTextStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECTextStyle.h; path = Frameworks/ECUIKit/ECTextStyle.h; sourceTree = "<group>"; };
 		CDEBF29C13489BE800CE2285 /* ECTextStyle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECTextStyle.m; path = Frameworks/ECUIKit/ECTextStyle.m; sourceTree = "<group>"; };
-		CDEBF2AF13489C8700CE2285 /* libclang.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libclang.dylib; path = Frameworks/ECCodeIndexing/Plugins/libclang/libclang.dylib; sourceTree = "<group>"; };
 		CDEFF95B1348BD5E006FEFCC /* edit-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "edit-Info.plist"; path = "Apps/edit/edit-Info.plist"; sourceTree = SOURCE_ROOT; };
 		CDEFF95C1348BD5E006FEFCC /* edit-main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "edit-main.m"; path = "Apps/edit/edit-main.m"; sourceTree = SOURCE_ROOT; };
 		CDEFF95F1348BD5E006FEFCC /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = FileViewController.xib; sourceTree = "<group>"; };
@@ -184,13 +183,13 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CDEBF2B013489C8700CE2285 /* libclang.dylib in Frameworks */,
 				B70D64BC132A2581008DDEA4 /* UIKit.framework in Frameworks */,
 				B70D64BE132A2581008DDEA4 /* Foundation.framework in Frameworks */,
 				B70D64C0132A2581008DDEA4 /* CoreGraphics.framework in Frameworks */,
 				B70D6573132A277C008DDEA4 /* CoreText.framework in Frameworks */,
 				B70D6575132A279C008DDEA4 /* CoreData.framework in Frameworks */,
 				B7DBA580132A3281004C0E1D /* QuartzCore.framework in Frameworks */,
+				B7E5CF961348C20B00A4C65A /* libclang.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -221,7 +220,6 @@
 		B70D64BA132A2581008DDEA4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				CDEBF26A13489BAC00CE2285 /* Clang */,
 				B7DBA57F132A3281004C0E1D /* QuartzCore.framework */,
 				B70D6649132A28AB008DDEA4 /* SenTestingKit.framework */,
 				B70D6574132A279C008DDEA4 /* CoreData.framework */,
@@ -283,6 +281,14 @@
 		CDEBF24313489AFE00CE2285 /* ECCodeIndexing */ = {
 			isa = PBXGroup;
 			children = (
+				B7E5CF8B1348C20B00A4C65A /* ECClangCodeCursor.h */,
+				B7E5CF8C1348C20B00A4C65A /* ECClangCodeCursor.m */,
+				B7E5CF8D1348C20B00A4C65A /* ECClangCodeIndex.h */,
+				B7E5CF8E1348C20B00A4C65A /* ECClangCodeIndex.m */,
+				B7E5CF8F1348C20B00A4C65A /* ECClangCodeUnit.h */,
+				B7E5CF901348C20B00A4C65A /* ECClangCodeUnit.m */,
+				B7E5CF911348C20B00A4C65A /* Index.h */,
+				B7E5CF921348C20B00A4C65A /* libclang.dylib */,
 				CDEBF24413489B1D00CE2285 /* ECCodeCompletionChunk.h */,
 				CDEBF24513489B1D00CE2285 /* ECCodeCompletionChunk.m */,
 				CDEBF24613489B1D00CE2285 /* ECCodeCompletionResult.h */,
@@ -311,21 +317,6 @@
 				CDEBF25D13489B1D00CE2285 /* ECCodeUnitPlugin.h */,
 			);
 			name = ECCodeIndexing;
-			sourceTree = "<group>";
-		};
-		CDEBF26A13489BAC00CE2285 /* Clang */ = {
-			isa = PBXGroup;
-			children = (
-				CDEBF2AF13489C8700CE2285 /* libclang.dylib */,
-				CDEBF26B13489BC800CE2285 /* ECClangCodeCursor.h */,
-				CDEBF26C13489BC800CE2285 /* ECClangCodeCursor.m */,
-				CDEBF26D13489BC800CE2285 /* ECClangCodeIndex.h */,
-				CDEBF26E13489BC800CE2285 /* ECClangCodeIndex.m */,
-				CDEBF26F13489BC800CE2285 /* ECClangCodeUnit.h */,
-				CDEBF27013489BC800CE2285 /* ECClangCodeUnit.m */,
-				CDEBF27113489BC800CE2285 /* Index.h */,
-			);
-			name = Clang;
 			sourceTree = "<group>";
 		};
 		CDEBF27513489BD400CE2285 /* ECUIKit */ = {
@@ -441,7 +432,7 @@
 				CDEFF9681348BD5E006FEFCC /* RootViewController.xib */,
 			);
 			name = en.lproj;
-			path = Apps/edit/en.lproj;
+			path = Apps/edit;
 			sourceTree = SOURCE_ROOT;
 		};
 		CDEFF96A1348BD5E006FEFCC /* Models */ = {
@@ -450,7 +441,7 @@
 				CDEFF96B1348BD5E006FEFCC /* Project.xcdatamodeld */,
 			);
 			name = Models;
-			path = Apps/edit/Models;
+			path = Apps/edit;
 			sourceTree = SOURCE_ROOT;
 		};
 /* End PBXGroup section */
@@ -500,7 +491,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CD040B3C1348A21300C6EDD0 /* libclang.dylib in Resources */,
 				CDEFF96F1348BD5E006FEFCC /* FileViewController.xib in Resources */,
 				CDEFF9701348BD5E006FEFCC /* InfoPlist.strings in Resources */,
 				CDEFF9711348BD5E006FEFCC /* MainWindow.xib in Resources */,
@@ -536,9 +526,6 @@
 				CDEBF26513489B1D00CE2285 /* ECCodeSymbol.m in Sources */,
 				CDEBF26613489B1D00CE2285 /* ECCodeToken.m in Sources */,
 				CDEBF26713489B1D00CE2285 /* ECCodeUnit.m in Sources */,
-				CDEBF27213489BC800CE2285 /* ECClangCodeCursor.m in Sources */,
-				CDEBF27313489BC800CE2285 /* ECClangCodeIndex.m in Sources */,
-				CDEBF27413489BC800CE2285 /* ECClangCodeUnit.m in Sources */,
 				CDEBF29D13489BE800CE2285 /* ECCodeScrollView.m in Sources */,
 				CDEBF29E13489BE800CE2285 /* ECCodeView.m in Sources */,
 				CDEBF29F13489BE800CE2285 /* ECCoreText.m in Sources */,
@@ -559,6 +546,9 @@
 				CDEBF2AE13489BE800CE2285 /* ECTextStyle.m in Sources */,
 				CDEFF96E1348BD5E006FEFCC /* edit-main.m in Sources */,
 				CDEFF9751348BD5E006FEFCC /* Project.xcdatamodeld in Sources */,
+				B7E5CF931348C20B00A4C65A /* ECClangCodeCursor.m in Sources */,
+				B7E5CF941348C20B00A4C65A /* ECClangCodeIndex.m in Sources */,
+				B7E5CF951348C20B00A4C65A /* ECClangCodeUnit.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -641,8 +631,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "@loader_path/";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)\"",
-					"\"$(SRCROOT)/Frameworks/ECCodeIndexing/Plugins/libclang\"",
+					"\"$(SRCROOT)/Frameworks/ECCodeIndexing\"",
 				);
 				PRODUCT_NAME = edit;
 				TARGETED_DEVICE_FAMILY = 2;
@@ -658,8 +647,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "@loader_path/";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)\"",
-					"\"$(SRCROOT)/Frameworks/ECCodeIndexing/Plugins/libclang\"",
+					"\"$(SRCROOT)/Frameworks/ECCodeIndexing\"",
 				);
 				PRODUCT_NAME = edit;
 				TARGETED_DEVICE_FAMILY = 2;
