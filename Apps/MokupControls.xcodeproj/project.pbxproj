@@ -1,0 +1,285 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		CDEFF9331348BB8F006FEFCC /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CDEFF9321348BB8F006FEFCC /* UIKit.framework */; };
+		CDEFF9351348BB8F006FEFCC /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CDEFF9341348BB8F006FEFCC /* Foundation.framework */; };
+		CDEFF9371348BB8F006FEFCC /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CDEFF9361348BB8F006FEFCC /* CoreGraphics.framework */; };
+		CDEFF93D1348BB8F006FEFCC /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = CDEFF93B1348BB8F006FEFCC /* InfoPlist.strings */; };
+		CDEFF9401348BB8F006FEFCC /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = CDEFF93F1348BB8F006FEFCC /* main.m */; };
+		CDEFF9431348BB8F006FEFCC /* MokupControlsAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = CDEFF9421348BB8F006FEFCC /* MokupControlsAppDelegate.m */; };
+		CDEFF9461348BB8F006FEFCC /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = CDEFF9441348BB8F006FEFCC /* MainWindow.xib */; };
+		CDEFF9491348BB8F006FEFCC /* MokupControlsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDEFF9481348BB8F006FEFCC /* MokupControlsViewController.m */; };
+		CDEFF94C1348BB8F006FEFCC /* MokupControlsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CDEFF94A1348BB8F006FEFCC /* MokupControlsViewController.xib */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		CDEFF92E1348BB8F006FEFCC /* MokupControls.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MokupControls.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		CDEFF9321348BB8F006FEFCC /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		CDEFF9341348BB8F006FEFCC /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		CDEFF9361348BB8F006FEFCC /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		CDEFF93A1348BB8F006FEFCC /* MokupControls-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "MokupControls-Info.plist"; sourceTree = "<group>"; };
+		CDEFF93C1348BB8F006FEFCC /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		CDEFF93E1348BB8F006FEFCC /* MokupControls-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MokupControls-Prefix.pch"; sourceTree = "<group>"; };
+		CDEFF93F1348BB8F006FEFCC /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		CDEFF9411348BB8F006FEFCC /* MokupControlsAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MokupControlsAppDelegate.h; sourceTree = "<group>"; };
+		CDEFF9421348BB8F006FEFCC /* MokupControlsAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MokupControlsAppDelegate.m; sourceTree = "<group>"; };
+		CDEFF9451348BB8F006FEFCC /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainWindow.xib; sourceTree = "<group>"; };
+		CDEFF9471348BB8F006FEFCC /* MokupControlsViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MokupControlsViewController.h; sourceTree = "<group>"; };
+		CDEFF9481348BB8F006FEFCC /* MokupControlsViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MokupControlsViewController.m; sourceTree = "<group>"; };
+		CDEFF94B1348BB8F006FEFCC /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MokupControlsViewController.xib; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		CDEFF92B1348BB8F006FEFCC /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CDEFF9331348BB8F006FEFCC /* UIKit.framework in Frameworks */,
+				CDEFF9351348BB8F006FEFCC /* Foundation.framework in Frameworks */,
+				CDEFF9371348BB8F006FEFCC /* CoreGraphics.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		CDEFF9231348BB8F006FEFCC = {
+			isa = PBXGroup;
+			children = (
+				CDEFF9381348BB8F006FEFCC /* MokupControls */,
+				CDEFF9311348BB8F006FEFCC /* Frameworks */,
+				CDEFF92F1348BB8F006FEFCC /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		CDEFF92F1348BB8F006FEFCC /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				CDEFF92E1348BB8F006FEFCC /* MokupControls.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		CDEFF9311348BB8F006FEFCC /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				CDEFF9321348BB8F006FEFCC /* UIKit.framework */,
+				CDEFF9341348BB8F006FEFCC /* Foundation.framework */,
+				CDEFF9361348BB8F006FEFCC /* CoreGraphics.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		CDEFF9381348BB8F006FEFCC /* MokupControls */ = {
+			isa = PBXGroup;
+			children = (
+				CDEFF9411348BB8F006FEFCC /* MokupControlsAppDelegate.h */,
+				CDEFF9421348BB8F006FEFCC /* MokupControlsAppDelegate.m */,
+				CDEFF9441348BB8F006FEFCC /* MainWindow.xib */,
+				CDEFF9471348BB8F006FEFCC /* MokupControlsViewController.h */,
+				CDEFF9481348BB8F006FEFCC /* MokupControlsViewController.m */,
+				CDEFF94A1348BB8F006FEFCC /* MokupControlsViewController.xib */,
+				CDEFF9391348BB8F006FEFCC /* Supporting Files */,
+			);
+			path = MokupControls;
+			sourceTree = "<group>";
+		};
+		CDEFF9391348BB8F006FEFCC /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				CDEFF93A1348BB8F006FEFCC /* MokupControls-Info.plist */,
+				CDEFF93B1348BB8F006FEFCC /* InfoPlist.strings */,
+				CDEFF93E1348BB8F006FEFCC /* MokupControls-Prefix.pch */,
+				CDEFF93F1348BB8F006FEFCC /* main.m */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		CDEFF92D1348BB8F006FEFCC /* MokupControls */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CDEFF94F1348BB8F006FEFCC /* Build configuration list for PBXNativeTarget "MokupControls" */;
+			buildPhases = (
+				CDEFF92A1348BB8F006FEFCC /* Sources */,
+				CDEFF92B1348BB8F006FEFCC /* Frameworks */,
+				CDEFF92C1348BB8F006FEFCC /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = MokupControls;
+			productName = MokupControls;
+			productReference = CDEFF92E1348BB8F006FEFCC /* MokupControls.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		CDEFF9251348BB8F006FEFCC /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = CDEFF9281348BB8F006FEFCC /* Build configuration list for PBXProject "MokupControls" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = CDEFF9231348BB8F006FEFCC;
+			productRefGroup = CDEFF92F1348BB8F006FEFCC /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				CDEFF92D1348BB8F006FEFCC /* MokupControls */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		CDEFF92C1348BB8F006FEFCC /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CDEFF93D1348BB8F006FEFCC /* InfoPlist.strings in Resources */,
+				CDEFF9461348BB8F006FEFCC /* MainWindow.xib in Resources */,
+				CDEFF94C1348BB8F006FEFCC /* MokupControlsViewController.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		CDEFF92A1348BB8F006FEFCC /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CDEFF9401348BB8F006FEFCC /* main.m in Sources */,
+				CDEFF9431348BB8F006FEFCC /* MokupControlsAppDelegate.m in Sources */,
+				CDEFF9491348BB8F006FEFCC /* MokupControlsViewController.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		CDEFF93B1348BB8F006FEFCC /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				CDEFF93C1348BB8F006FEFCC /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		CDEFF9441348BB8F006FEFCC /* MainWindow.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				CDEFF9451348BB8F006FEFCC /* en */,
+			);
+			name = MainWindow.xib;
+			sourceTree = "<group>";
+		};
+		CDEFF94A1348BB8F006FEFCC /* MokupControlsViewController.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				CDEFF94B1348BB8F006FEFCC /* en */,
+			);
+			name = MokupControlsViewController.xib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		CDEFF94D1348BB8F006FEFCC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_UNIVERSAL_IPHONE_OS)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = DEBUG;
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = com.apple.compilers.llvmgcc42;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 2;
+			};
+			name = Debug;
+		};
+		CDEFF94E1348BB8F006FEFCC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_UNIVERSAL_IPHONE_OS)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_VERSION = com.apple.compilers.llvmgcc42;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
+				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 2;
+			};
+			name = Release;
+		};
+		CDEFF9501348BB8F006FEFCC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "MokupControls/MokupControls-Prefix.pch";
+				INFOPLIST_FILE = "MokupControls/MokupControls-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		CDEFF9511348BB8F006FEFCC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "MokupControls/MokupControls-Prefix.pch";
+				INFOPLIST_FILE = "MokupControls/MokupControls-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				VALIDATE_PRODUCT = YES;
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		CDEFF9281348BB8F006FEFCC /* Build configuration list for PBXProject "MokupControls" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CDEFF94D1348BB8F006FEFCC /* Debug */,
+				CDEFF94E1348BB8F006FEFCC /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CDEFF94F1348BB8F006FEFCC /* Build configuration list for PBXNativeTarget "MokupControls" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CDEFF9501348BB8F006FEFCC /* Debug */,
+				CDEFF9511348BB8F006FEFCC /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = CDEFF9251348BB8F006FEFCC /* Project object */;
+}
