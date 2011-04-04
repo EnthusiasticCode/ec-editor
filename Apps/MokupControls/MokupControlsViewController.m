@@ -7,6 +7,7 @@
 //
 
 #import "MokupControlsViewController.h"
+#import <QuartzCore/QuartzCore.h>
 
 @implementation MokupControlsViewController
 
@@ -25,13 +26,38 @@
 
 #pragma mark - View lifecycle
 
-/*
 // Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    UIColor *darkColor = [UIColor colorWithHue:0 saturation:0 brightness:0.01 alpha:1];
+    UIColor *shadowColor = [UIColor colorWithHue:0 saturation:0 brightness:0.8 alpha:0.3];
+    CGFontRef font = CGFontCreateWithFontName((CFStringRef)@"Helvetica-Bold");
+    
+    CALayer *testLayer = [CALayer layer];
+    testLayer.frame = CGRectMake(50, 50, 100, 100);
+    testLayer.masksToBounds = YES;
+    testLayer.opaque = NO;
+    testLayer.cornerRadius = 3;
+    testLayer.borderWidth = 1;
+    testLayer.borderColor = darkColor.CGColor;
+    
+    CATextLayer *testText = [CATextLayer layer];
+    testText.frame = CGRectMake(50, 90, 100, 100);
+    testText.alignmentMode = kCAAlignmentCenter;
+    testText.string = @"Button";
+    testText.foregroundColor = darkColor.CGColor;
+    testText.font = font;
+    testText.fontSize = 16;
+    testText.shadowColor = shadowColor.CGColor;
+    testText.shadowOffset = CGSizeMake(0, 1);
+    testText.shadowOpacity = 1;
+    testText.shadowRadius = 0;
+    
+    [self.view.layer addSublayer:testLayer];
+    [self.view.layer addSublayer:testText];
 }
-*/
 
 - (void)viewDidUnload
 {
