@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CD7CC5E21349D7E300870E13 /* ECMockupButton.m in Sources */ = {isa = PBXBuildFile; fileRef = CD7CC5E11349D7E300870E13 /* ECMockupButton.m */; };
 		CDACD8A81349C57B0055B7F3 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CDACD8A71349C57B0055B7F3 /* QuartzCore.framework */; };
 		CDEFF9331348BB8F006FEFCC /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CDEFF9321348BB8F006FEFCC /* UIKit.framework */; };
 		CDEFF9351348BB8F006FEFCC /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CDEFF9341348BB8F006FEFCC /* Foundation.framework */; };
@@ -19,6 +20,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		CD7CC5E01349D7E300870E13 /* ECMockupButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECMockupButton.h; sourceTree = "<group>"; };
+		CD7CC5E11349D7E300870E13 /* ECMockupButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECMockupButton.m; sourceTree = "<group>"; };
 		CDACD8A71349C57B0055B7F3 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		CDEFF92E1348BB8F006FEFCC /* MokupControls.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MokupControls.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CDEFF9321348BB8F006FEFCC /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
@@ -85,6 +88,8 @@
 				CDEFF9481348BB8F006FEFCC /* MokupControlsViewController.m */,
 				CDEFF94A1348BB8F006FEFCC /* MokupControlsViewController.xib */,
 				CDEFF9391348BB8F006FEFCC /* Supporting Files */,
+				CD7CC5E01349D7E300870E13 /* ECMockupButton.h */,
+				CD7CC5E11349D7E300870E13 /* ECMockupButton.m */,
 			);
 			path = MokupControls;
 			sourceTree = "<group>";
@@ -162,6 +167,7 @@
 			files = (
 				CDEFF9401348BB8F006FEFCC /* main.m in Sources */,
 				CDEFF9491348BB8F006FEFCC /* MokupControlsViewController.m in Sources */,
+				CD7CC5E21349D7E300870E13 /* ECMockupButton.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -237,6 +243,7 @@
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MokupControls/MokupControls-Prefix.pch";
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = "MokupControls/MokupControls-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
@@ -250,6 +257,7 @@
 				COPY_PHASE_STRIP = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MokupControls/MokupControls-Prefix.pch";
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = "MokupControls/MokupControls-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				VALIDATE_PRODUCT = YES;

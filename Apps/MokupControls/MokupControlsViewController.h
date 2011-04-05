@@ -12,4 +12,7 @@
     
 }
 
+- (IBAction)doSomething:(id)sender;
+- (IBAction)changeArrows:(id)sender;
+
 @end

@@ -8,6 +8,7 @@
 
 #import "MokupControlsViewController.h"
 #import <QuartzCore/QuartzCore.h>
+#import "ECMockupButton.h"
 
 @implementation MokupControlsViewController
 
@@ -72,4 +73,16 @@
     return YES;
 }
 
+- (IBAction)doSomething:(id)sender {
+    [sender setSelected:![sender isSelected]];
+}
+
+- (IBAction)changeArrows:(id)sender {
+    if (UIEdgeInsetsEqualToEdgeInsets([sender arrowSizes], UIEdgeInsetsZero)) {
+        [sender setArrowSizes:UIEdgeInsetsMake(0, 10, 0, 10)];
+    }
+    else {
+            [sender setArrowSizes:UIEdgeInsetsZero];
+    }
+}
 @end
