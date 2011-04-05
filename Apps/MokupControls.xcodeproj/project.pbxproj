@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		CD7CC5E21349D7E300870E13 /* ECMockupButton.m in Sources */ = {isa = PBXBuildFile; fileRef = CD7CC5E11349D7E300870E13 /* ECMockupButton.m */; };
 		CDACD8A81349C57B0055B7F3 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CDACD8A71349C57B0055B7F3 /* QuartzCore.framework */; };
+		CDC501AC134B2A94006CCBD7 /* ECMockupLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = CDC501AB134B2A94006CCBD7 /* ECMockupLayer.m */; };
 		CDEFF9331348BB8F006FEFCC /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CDEFF9321348BB8F006FEFCC /* UIKit.framework */; };
 		CDEFF9351348BB8F006FEFCC /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CDEFF9341348BB8F006FEFCC /* Foundation.framework */; };
 		CDEFF9371348BB8F006FEFCC /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CDEFF9361348BB8F006FEFCC /* CoreGraphics.framework */; };
@@ -23,6 +24,8 @@
 		CD7CC5E01349D7E300870E13 /* ECMockupButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECMockupButton.h; sourceTree = "<group>"; };
 		CD7CC5E11349D7E300870E13 /* ECMockupButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECMockupButton.m; sourceTree = "<group>"; };
 		CDACD8A71349C57B0055B7F3 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		CDC501AA134B2A94006CCBD7 /* ECMockupLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECMockupLayer.h; sourceTree = "<group>"; };
+		CDC501AB134B2A94006CCBD7 /* ECMockupLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECMockupLayer.m; sourceTree = "<group>"; };
 		CDEFF92E1348BB8F006FEFCC /* MokupControls.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MokupControls.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CDEFF9321348BB8F006FEFCC /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		CDEFF9341348BB8F006FEFCC /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -90,6 +93,8 @@
 				CDEFF9391348BB8F006FEFCC /* Supporting Files */,
 				CD7CC5E01349D7E300870E13 /* ECMockupButton.h */,
 				CD7CC5E11349D7E300870E13 /* ECMockupButton.m */,
+				CDC501AA134B2A94006CCBD7 /* ECMockupLayer.h */,
+				CDC501AB134B2A94006CCBD7 /* ECMockupLayer.m */,
 			);
 			path = MokupControls;
 			sourceTree = "<group>";
@@ -168,6 +173,7 @@
 				CDEFF9401348BB8F006FEFCC /* main.m in Sources */,
 				CDEFF9491348BB8F006FEFCC /* MokupControlsViewController.m in Sources */,
 				CD7CC5E21349D7E300870E13 /* ECMockupButton.m in Sources */,
+				CDC501AC134B2A94006CCBD7 /* ECMockupLayer.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

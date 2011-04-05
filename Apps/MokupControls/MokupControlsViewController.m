@@ -8,6 +8,7 @@
 
 #import "MokupControlsViewController.h"
 #import <QuartzCore/QuartzCore.h>
+#import "ECMockupLayer.h"
 
 @implementation MokupControlsViewController
 @synthesize aButton;
@@ -59,6 +60,15 @@
     
     [self.view.layer addSublayer:testLayer];
     [self.view.layer addSublayer:testText];
+    
+    ECMockupLayer *mLayer = [ECMockupLayer layer];
+    mLayer.rightArrowSize = 10;
+    mLayer.cornerRadius = 3;
+    mLayer.borderColor = darkColor.CGColor;
+    mLayer.frame = CGRectMake(100, 8, 79, 29);
+    mLayer.borderWidth = 1;
+    [self.view.layer addSublayer:mLayer];
+    [mLayer setNeedsDisplay];
     
     aButton.arrowSizes = UIEdgeInsetsMake(0, 10, 0, 0);
 }
