@@ -21,6 +21,11 @@
 - (void)setArrowSizes:(UIEdgeInsets)sizes
 {
     arrowSizes = sizes;
+    if (buttonPath) {
+        CGPathRelease(buttonPath);
+        buttonPath = NULL;
+    }
+    
     CALayer *layer = self.layer;
     if (UIEdgeInsetsEqualToEdgeInsets(arrowSizes, UIEdgeInsetsZero))
     {
@@ -33,10 +38,6 @@
     else
     {
         layer.borderWidth = 0;
-        
-        if (buttonPath) {
-            CGPathRelease(buttonPath);
-        }
         
         buttonPath = CGPathCreateMutable();
         
@@ -124,16 +125,37 @@
     [self.layer setNeedsDisplay];
 }
 
+- (void)setBounds:(CGRect)bounds
+{
+    [super setBounds:bounds];
+    self.arrowSizes = arrowSizes;
+}
+
 - (void)setHighlighted:(BOOL)highlighted
 {
     [super setHighlighted:highlighted];
-    [self setNeedsDisplay];
+    if (buttonPath)
+    {
+        [self setNeedsDisplay];
+    }
 }
 
 - (void)setSelected:(BOOL)selected
 {
     [super setSelected:selected];
-    [self setNeedsDisplay];
+    if (buttonPath)
+    {
+        [self setNeedsDisplay];
+    }
+}
+
+- (void)setEnabled:(BOOL)enabled
+{
+    [super setEnabled:enabled];
+    if (buttonPath)
+    {
+        [self setNeedsDisplay];
+    }
 }
 
 #pragma mark -
@@ -169,9 +191,19 @@ static void init(ECMockupButton *self)
     return self;
 }
 
+- (void)dealloc
+{
+    if (buttonPath) {
+        CGPathRelease(buttonPath);
+    }
+    self.borderColor = nil;
+    [backgroundColors release];
+    [super dealloc];
+}
+
 - (void)drawRect:(CGRect)rect
 {
-    if (!UIEdgeInsetsEqualToEdgeInsets(arrowSizes, UIEdgeInsetsZero))
+    if (buttonPath)
     {
         CGContextRef context = UIGraphicsGetCurrentContext();
         
@@ -199,7 +231,7 @@ static void init(ECMockupButton *self)
     [super layoutSubviews];
     
     UIColor *bgcolor;
-    if (UIEdgeInsetsEqualToEdgeInsets(arrowSizes, UIEdgeInsetsZero)
+    if (!buttonPath
         && (NSNull *)(bgcolor = [self backgroundColorForState:self.state]) != [NSNull null])
     {
         self.layer.backgroundColor = bgcolor.CGColor;
@@ -210,14 +242,15 @@ static void init(ECMockupButton *self)
     }
 }
 
-- (void)dealloc
+- (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event
 {
-    if (buttonPath) {
-        CGPathRelease(buttonPath);
+    if (buttonPath) 
+    {
+        if (CGPathContainsPoint(buttonPath, NULL, point, NO))
+            return self;
+        return nil;
     }
-    self.borderColor = nil;
-    [backgroundColors release];
-    [super dealloc];
+    return [super hitTest:point withEvent:event];
 }
 
 #pragma mark -
