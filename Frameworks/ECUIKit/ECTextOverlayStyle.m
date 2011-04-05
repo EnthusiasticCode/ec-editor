@@ -79,14 +79,14 @@
                 CGPathMoveToPoint(retPath, NULL, innerRect.origin.x, outside_top);
                 
                 CGPathAddLineToPoint(retPath, NULL, inside_right, outside_top);
-                CGPathAddArcToPoint(retPath, NULL, outside_right, outside_top, outside_right, inside_top, radius);
+                CGPathAddArcToPoint(retPath, NULL, outside_right, outside_top, outside_right, inside_top, cradius);
                 CGPathAddLineToPoint(retPath, NULL, outside_right, inside_bottom);
-                CGPathAddArcToPoint(retPath, NULL,  outside_right, outside_bottom, inside_right, outside_bottom, radius);
+                CGPathAddArcToPoint(retPath, NULL,  outside_right, outside_bottom, inside_right, outside_bottom, cradius);
                 
                 CGPathAddLineToPoint(retPath, NULL, innerRect.origin.x, outside_bottom);
-                CGPathAddArcToPoint(retPath, NULL,  outside_left, outside_bottom, outside_left, inside_bottom, radius);
+                CGPathAddArcToPoint(retPath, NULL,  outside_left, outside_bottom, outside_left, inside_bottom, cradius);
                 CGPathAddLineToPoint(retPath, NULL, outside_left, inside_top);
-                CGPathAddArcToPoint(retPath, NULL,  outside_left, outside_top, innerRect.origin.x, outside_top, radius);
+                CGPathAddArcToPoint(retPath, NULL,  outside_left, outside_top, innerRect.origin.x, outside_top, cradius);
                 
                 CGPathCloseSubpath(retPath);
             }
