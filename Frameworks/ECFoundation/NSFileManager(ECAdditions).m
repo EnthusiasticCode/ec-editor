@@ -14,6 +14,8 @@ static BOOL isPackage(NSString *path)
         return YES;
     if ([[path pathExtension] isEqualToString:@"xcworkspace"])
         return YES;
+    if ([[path pathExtension] isEqualToString:@"xcdatamodeld"])
+        return YES;
     return NO;
 }
 

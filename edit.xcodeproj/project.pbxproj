@@ -150,7 +150,6 @@
 		CDEBF28913489BE800CE2285 /* ECRelationalTableViewDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECRelationalTableViewDelegate.h; path = Frameworks/ECUIKit/ECRelationalTableViewDelegate.h; sourceTree = "<group>"; };
 		CDEBF28A13489BE800CE2285 /* ECRelationalTableViewItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECRelationalTableViewItem.h; path = Frameworks/ECUIKit/ECRelationalTableViewItem.h; sourceTree = "<group>"; };
 		CDEBF28B13489BE800CE2285 /* ECRelationalTableViewItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECRelationalTableViewItem.m; path = Frameworks/ECUIKit/ECRelationalTableViewItem.m; sourceTree = "<group>"; };
-		CDEBF28C13489BE800CE2285 /* ECRelationalTableViewItem(Private).h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "ECRelationalTableViewItem(Private).h"; path = "Frameworks/ECUIKit/ECRelationalTableViewItem(Private).h"; sourceTree = "<group>"; };
 		CDEBF28D13489BE800CE2285 /* ECSelectionHandleView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECSelectionHandleView.h; path = Frameworks/ECUIKit/ECSelectionHandleView.h; sourceTree = "<group>"; };
 		CDEBF28E13489BE800CE2285 /* ECSelectionHandleView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECSelectionHandleView.m; path = Frameworks/ECUIKit/ECSelectionHandleView.m; sourceTree = "<group>"; };
 		CDEBF28F13489BE800CE2285 /* ECTextDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECTextDocument.h; path = Frameworks/ECUIKit/ECTextDocument.h; sourceTree = "<group>"; };
@@ -403,7 +402,6 @@
 				CDEBF28913489BE800CE2285 /* ECRelationalTableViewDelegate.h */,
 				CDEBF28A13489BE800CE2285 /* ECRelationalTableViewItem.h */,
 				CDEBF28B13489BE800CE2285 /* ECRelationalTableViewItem.m */,
-				CDEBF28C13489BE800CE2285 /* ECRelationalTableViewItem(Private).h */,
 			);
 			name = "Relational Table";
 			sourceTree = "<group>";
