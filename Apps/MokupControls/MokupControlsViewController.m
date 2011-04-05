@@ -8,12 +8,13 @@
 
 #import "MokupControlsViewController.h"
 #import <QuartzCore/QuartzCore.h>
-#import "ECMockupButton.h"
 
 @implementation MokupControlsViewController
+@synthesize aButton;
 
 - (void)dealloc
 {
+    [aButton release];
     [super dealloc];
 }
 
@@ -58,10 +59,13 @@
     
     [self.view.layer addSublayer:testLayer];
     [self.view.layer addSublayer:testText];
+    
+    aButton.arrowSizes = UIEdgeInsetsMake(0, 10, 0, 0);
 }
 
 - (void)viewDidUnload
 {
+    [self setAButton:nil];
     [super viewDidUnload];
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;

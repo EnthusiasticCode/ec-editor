@@ -33,8 +33,107 @@
     else
     {
         layer.borderWidth = 0;
+        
+        if (buttonPath) {
+            CGPathRelease(buttonPath);
+        }
+        
+        buttonPath = CGPathCreateMutable();
+        
+        CGRect rect = CGRectInset(self.bounds, 0.5, 0.5);
+        
+        CGFloat radius = 3;
+        CGRect innerRect = CGRectInset(rect, radius, radius);
+        
+        CGFloat outside_right = rect.origin.x + rect.size.width;
+        CGFloat outside_bottom = rect.origin.y + rect.size.height;
+        CGFloat inside_left = innerRect.origin.x + arrowSizes.left;
+        CGFloat inside_right = innerRect.origin.x + innerRect.size.width - arrowSizes.right;
+        CGFloat inside_bottom = innerRect.origin.y + innerRect.size.height;
+        
+        CGFloat inside_top = innerRect.origin.y;
+        CGFloat outside_top = rect.origin.y;
+        CGFloat outside_left = rect.origin.x;
+        
+        //        CGFloat middle_width = outside_right / 2.0;
+        CGFloat middle_height = outside_bottom / 2.0;
+        
+        // TODO No top arrow for now
+        CGPathMoveToPoint(buttonPath, NULL, inside_left, outside_top);
+        CGPathAddLineToPoint(buttonPath, NULL, inside_right, outside_top);
+        
+        // Right arrow
+        if (arrowSizes.right > 0) 
+        {
+            CGFloat arrow_size = arrowSizes.right * 0.3;
+            CGFloat inside_arrow = inside_right + arrowSizes.right + radius * 0.7;
+            CGFloat arrow_midtop = middle_height - radius / 2;
+            CGFloat arrow_midbottom = arrow_midtop + radius;
+            CGPathAddCurveToPoint(buttonPath, NULL,
+                                  inside_right + arrow_size, outside_top, 
+                                  inside_arrow, arrow_midtop, 
+                                  inside_arrow, arrow_midtop);
+            CGPathAddCurveToPoint(buttonPath, NULL,
+                                  outside_right, middle_height, 
+                                  outside_right, middle_height, 
+                                  inside_arrow, arrow_midbottom);
+            CGPathAddCurveToPoint(buttonPath, NULL,
+                                  inside_arrow, arrow_midbottom, 
+                                  inside_right + arrow_size, outside_bottom, 
+                                  inside_right, outside_bottom);
+        }
+        else
+        {
+            CGPathAddArcToPoint(buttonPath, NULL, outside_right, outside_top, outside_right, inside_top, radius);
+            CGPathAddLineToPoint(buttonPath, NULL, outside_right, inside_bottom);
+            CGPathAddArcToPoint(buttonPath, NULL, outside_right, outside_bottom, inside_right, outside_bottom, radius);
+        }
+        
+        // TODO no bottom arrow
+        CGPathAddLineToPoint(buttonPath, NULL, inside_left, outside_bottom);
+        
+        // Left arrow
+        if (arrowSizes.left > 0) 
+        {
+            CGFloat arrow_size = arrowSizes.left * 0.3;
+            CGFloat inside_arrow = inside_left - arrowSizes.left - radius * 0.7;
+            CGFloat arrow_midtop = middle_height - radius / 2;
+            CGFloat arrow_midbottom = arrow_midtop + radius;
+            CGPathAddCurveToPoint(buttonPath, NULL,
+                                  inside_left - arrow_size, outside_bottom,
+                                  inside_arrow, arrow_midbottom,
+                                  inside_arrow, arrow_midbottom);
+            CGPathAddCurveToPoint(buttonPath, NULL,
+                                  outside_left, middle_height, 
+                                  outside_left, middle_height, 
+                                  inside_arrow, arrow_midtop);
+            CGPathAddCurveToPoint(buttonPath, NULL, 
+                                  inside_arrow, arrow_midtop, 
+                                  inside_left - arrow_size, outside_top, 
+                                  inside_left, outside_top);
+        }
+        else
+        {
+            CGPathAddArcToPoint(buttonPath, NULL, outside_left, outside_bottom, outside_left, inside_bottom, radius);
+            CGPathAddLineToPoint(buttonPath, NULL, outside_left, inside_top);
+            CGPathAddArcToPoint(buttonPath, NULL, outside_left, outside_top, inside_left, outside_top, radius);
+        }
+        
+        CGPathCloseSubpath(buttonPath);
     }
     [self.layer setNeedsDisplay];
+}
+
+- (void)setHighlighted:(BOOL)highlighted
+{
+    [super setHighlighted:highlighted];
+    [self setNeedsDisplay];
+}
+
+- (void)setSelected:(BOOL)selected
+{
+    [super setSelected:selected];
+    [self setNeedsDisplay];
 }
 
 #pragma mark -
@@ -70,97 +169,28 @@ static void init(ECMockupButton *self)
     return self;
 }
 
-- (void)drawLayer:(CALayer *)layer inContext:(CGContextRef)context
+- (void)drawRect:(CGRect)rect
 {
-    if (layer == self.layer && !UIEdgeInsetsEqualToEdgeInsets(arrowSizes, UIEdgeInsetsZero))
+    if (!UIEdgeInsetsEqualToEdgeInsets(arrowSizes, UIEdgeInsetsZero))
     {
-        CGRect rect = CGRectInset(self.bounds, 0.5, 0.5);
+        CGContextRef context = UIGraphicsGetCurrentContext();
         
-        CGFloat radius = 3;
-        CGRect innerRect = CGRectInset(rect, radius, radius);
-        
-        CGFloat outside_right = rect.origin.x + rect.size.width;
-        CGFloat outside_bottom = rect.origin.y + rect.size.height;
-        CGFloat inside_left = innerRect.origin.x + arrowSizes.left;
-        CGFloat inside_right = innerRect.origin.x + innerRect.size.width - arrowSizes.right;
-        CGFloat inside_bottom = innerRect.origin.y + innerRect.size.height;
-        
-        CGFloat inside_top = innerRect.origin.y;
-        CGFloat outside_top = rect.origin.y;
-        CGFloat outside_left = rect.origin.x;
-        
-//        CGFloat middle_width = outside_right / 2.0;
-        CGFloat middle_height = outside_bottom / 2.0;
-
-        // TODO No top arrow for now
-        CGContextMoveToPoint(context, inside_left, outside_top);
-        CGContextAddLineToPoint(context, inside_right, outside_top);
-        
-        // Right arrow
-        if (arrowSizes.right > 0) 
+        // Fill
+        UIColor *bgcolor;
+        if ((NSNull *)(bgcolor = [self backgroundColorForState:self.state]) != [NSNull null])
         {
-            CGFloat arrow_size = arrowSizes.right * 0.3;
-            CGFloat inside_arrow = inside_right + arrowSizes.right + radius * 0.7;
-            CGFloat arrow_midtop = middle_height - radius / 2;
-            CGFloat arrow_midbottom = arrow_midtop + radius;
-            CGContextAddCurveToPoint(context, 
-                                     inside_right + arrow_size, outside_top, 
-                                     inside_arrow, arrow_midtop, 
-                                     inside_arrow, arrow_midtop);
-            CGContextAddCurveToPoint(context, 
-                                     outside_right, middle_height, 
-                                     outside_right, middle_height, 
-                                     inside_arrow, arrow_midbottom);
-            CGContextAddCurveToPoint(context, 
-                                     inside_arrow, arrow_midbottom, 
-                                     inside_right + arrow_size, outside_bottom, 
-                                     inside_right, outside_bottom);
-        }
-        else
-        {
-            CGContextAddArcToPoint(context, outside_right, outside_top, outside_right, inside_top, radius);
-            CGContextAddLineToPoint(context, outside_right, inside_bottom);
-            CGContextAddArcToPoint(context, outside_right, outside_bottom, inside_right, outside_bottom, radius);
+            [bgcolor setFill];
+            CGContextAddPath(context, buttonPath);
+            CGContextFillPath(context);
         }
         
-        // TODO no bottom arrow
-        CGContextAddLineToPoint(context, inside_left, outside_bottom);
-        
-        // Left arrow
-        if (arrowSizes.left > 0) 
+        // Stroke
+        if (borderColor)
         {
-            CGFloat arrow_size = arrowSizes.left * 0.3;
-            CGFloat inside_arrow = inside_left - arrowSizes.left - radius * 0.7;
-            CGFloat arrow_midtop = middle_height - radius / 2;
-            CGFloat arrow_midbottom = arrow_midtop + radius;
-            CGContextAddCurveToPoint(context, 
-                                     inside_left - arrow_size, outside_bottom,
-                                     inside_arrow, arrow_midbottom,
-                                     inside_arrow, arrow_midbottom);
-            CGContextAddCurveToPoint(context, 
-                                     outside_left, middle_height, 
-                                     outside_left, middle_height, 
-                                     inside_arrow, arrow_midtop);
-            CGContextAddCurveToPoint(context, 
-                                     inside_arrow, arrow_midtop, 
-                                     inside_left - arrow_size, outside_top, 
-                                     inside_left, outside_top);
+            [borderColor setStroke];
+            CGContextAddPath(context, buttonPath);
+            CGContextStrokePath(context);
         }
-        else
-        {
-            CGContextAddArcToPoint(context, outside_left, outside_bottom, outside_left, inside_bottom, radius);
-            CGContextAddLineToPoint(context, outside_left, inside_top);
-            CGContextAddArcToPoint(context, outside_left, outside_top, inside_left, outside_top, radius);
-        }
-        
-        CGContextClosePath(context);
-        
-        [borderColor setStroke];
-        CGContextStrokePath(context);
-    }
-    else 
-    {
-        //[super drawLayer:layer inContext:context];
     }
 }
 
@@ -168,19 +198,23 @@ static void init(ECMockupButton *self)
 {
     [super layoutSubviews];
     
-    UIColor *bgcolor = [self backgroundColorForState:self.state];
-    if ((NSNull *)bgcolor == [NSNull null])
+    UIColor *bgcolor;
+    if (UIEdgeInsetsEqualToEdgeInsets(arrowSizes, UIEdgeInsetsZero)
+        && (NSNull *)(bgcolor = [self backgroundColorForState:self.state]) != [NSNull null])
     {
-        self.layer.backgroundColor = NULL;
+        self.layer.backgroundColor = bgcolor.CGColor;
     }
     else
     {
-        self.layer.backgroundColor = bgcolor.CGColor;
+        self.layer.backgroundColor = NULL;
     }
 }
 
 - (void)dealloc
 {
+    if (buttonPath) {
+        CGPathRelease(buttonPath);
+    }
     self.borderColor = nil;
     [backgroundColors release];
     [super dealloc];
@@ -191,44 +225,30 @@ static void init(ECMockupButton *self)
 
 - (void)setBackgroundColor:(UIColor *)color forState:(UIControlState)state
 {
-    NSUInteger index;
-    switch (state) {
-        case UIControlStateHighlighted:
-            index = 1;
-            break;
-        case UIControlStateDisabled:
-            index = 2;
-            break;
-            
-        case UIControlStateSelected:
-            index = 3;
-            break;
-            
-        default:
-            index = 0;
-            break;
+    NSUInteger index = 0;
+    if (state & UIControlStateHighlighted) {
+        index = 1;
+    }
+    else if (state & UIControlStateSelected) {
+        index = 3;
+    }
+    else if (state & UIControlStateDisabled) {
+        index = 2;
     }
     [backgroundColors replaceObjectAtIndex:index withObject:color];
 }
 
 - (UIColor *)backgroundColorForState:(UIControlState)state
 {
-    NSUInteger index;
-    switch (state) {
-        case UIControlStateHighlighted:
-            index = 1;
-            break;
-        case UIControlStateDisabled:
-            index = 2;
-            break;
-            
-        case UIControlStateSelected:
-            index = 3;
-            break;
-            
-        default:
-            index = 0;
-            break;
+    NSUInteger index = 0;
+    if (state & UIControlStateHighlighted) {
+        index = 1;
+    }
+    else if (state & UIControlStateSelected) {
+        index = 3;
+    }
+    else if (state & UIControlStateDisabled) {
+        index = 2;
     }
     return [backgroundColors objectAtIndex:index];
 }

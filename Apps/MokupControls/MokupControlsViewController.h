@@ -7,10 +7,14 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "ECMockupButton.h"
+
 
 @interface MokupControlsViewController : UIViewController {
     
 }
+
+@property (nonatomic, retain) IBOutlet ECMockupButton *aButton;
 
 - (IBAction)doSomething:(id)sender;
 - (IBAction)changeArrows:(id)sender;

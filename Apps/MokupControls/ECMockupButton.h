@@ -10,6 +10,7 @@
 
 @interface ECMockupButton : UIButton {
     NSMutableArray *backgroundColors;
+    CGMutablePathRef buttonPath;
 }
 
 @property (nonatomic) UIEdgeInsets arrowSizes;
