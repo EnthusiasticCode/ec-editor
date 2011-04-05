@@ -8,15 +8,20 @@
 
 #import <UIKit/UIKit.h>
 #import "ECMockupButton.h"
+#import "ECStackFilterBarController.h"
 
 
 @interface MokupControlsViewController : UIViewController {
     
+    UITextField *aTextField;
+    ECStackFilterBarController *stackFilterBarController;
+    
 }
 
 @property (nonatomic, retain) IBOutlet ECMockupButton *aButton;
+@property (nonatomic, retain) IBOutlet UITextField *aTextField;
+@property (nonatomic, retain) IBOutlet ECStackFilterBarController *stackFilterBarController;
 
 - (IBAction)doSomething:(id)sender;
-- (IBAction)changeArrows:(id)sender;
 
 @end
