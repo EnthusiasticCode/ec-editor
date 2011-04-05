@@ -14,7 +14,7 @@
 @protocol ECRelationalTableViewDataSource <NSObject>
 @required
 
-- (NSInteger)relationalTableView:(ECRelationalTableView *)relationalTableView numberOfItemsInSection:(NSInteger)section;
+- (NSUInteger)relationalTableView:(ECRelationalTableView *)relationalTableView numberOfItemsInSection:(NSUInteger)section;
 
 // Item gets various attributes set automatically based on table (separators) and data source (accessory views, editing controls)
 
@@ -22,10 +22,10 @@
 
 @optional
 
-- (NSInteger)numberOfSectionsInTableView:(ECRelationalTableView *)relationalTableView;              // Default is 1 if not implemented
+- (NSUInteger)numberOfSectionsInTableView:(ECRelationalTableView *)relationalTableView;              // Default is 1 if not implemented
 
-- (NSString *)relationalTableView:(ECRelationalTableView *)relationalTableView titleForHeaderInSection:(NSInteger)section;    // fixed font style. use custom view (UILabel) if you want something different
-- (NSString *)relationalTableView:(ECRelationalTableView *)relationalTableView titleForFooterInSection:(NSInteger)section;
+- (NSString *)relationalTableView:(ECRelationalTableView *)relationalTableView titleForHeaderInSection:(NSUInteger)section;    // fixed font style. use custom view (UILabel) if you want something different
+- (NSString *)relationalTableView:(ECRelationalTableView *)relationalTableView titleForFooterInSection:(NSUInteger)section;
 
 // Editing
 

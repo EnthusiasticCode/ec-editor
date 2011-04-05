@@ -105,9 +105,10 @@
     self.imageView = [[UIImageView alloc] init];
     [self.contentView addSubview:self.imageView];
     self.imageView.frame = CGRectMake(0.0, 0.0, 100.0, 80.0);
+    self.imageView.backgroundColor = [UIColor redColor];
     self.textLabel = [[UILabel alloc] init];
     [self.contentView addSubview:self.textLabel];
-    self.textLabel.frame = CGRectMake(0.0, 0.0, 100.0, 20.0);
+    self.textLabel.frame = CGRectMake(0.0, 80.0, 100.0, 20.0);
     [self.contentView sizeToFit];
     
     self.zoomedContentView = [[UIView alloc] init];
@@ -116,7 +117,7 @@
     self.zoomedImageView.frame = CGRectMake(0.0, 0.0, 200.0, 160.0);
     self.zoomedTextLabel = [[UILabel alloc] init];
     [self.zoomedContentView addSubview:self.zoomedTextLabel];
-    self.zoomedTextLabel.frame = CGRectMake(0.0, 0.0, 200.0, 40.0);
+    self.zoomedTextLabel.frame = CGRectMake(0.0, 160.0, 200.0, 40.0);
     [self.zoomedContentView sizeToFit];
     return self;
 }

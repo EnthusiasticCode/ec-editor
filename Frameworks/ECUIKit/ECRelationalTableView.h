@@ -27,33 +27,56 @@ typedef enum {
     ECRelationalTableViewItemAnimationMiddle,      // available in iPhone 3.2.  attempts to keep item centered in the space it will/did occupy
 } ECRelationalTableViewItemAnimation;
 
+typedef enum {
+    ECRelationalTableViewGrowthDirectionLeftToRight,
+    ECRelationalTableViewGrowthDirectionRightToLeft,
+    ECRelationalTableViewGrowthDirectionTopToBottom,
+    ECRelationalTableViewGrowthDirectionBottomToTop,
+} ECRelationalTableViewGrowthDirection;
+
+typedef enum {
+    ECRelationalTableViewIndentDirectionHorizontal,
+    ECRelationalTableViewIndentDirectionVertical,
+} ECRelationalTableViewIndentDirection;
+
+typedef enum {
+    ECRelationalTableViewWrappingNone,
+    ECRelationalTableViewWrappingHorizontal,
+    ECRelationalTableViewWrappingVertical,
+} ECRelationalTableViewWrapping;
+
 @interface ECRelationalTableView : UIView
 @property (nonatomic, assign) IBOutlet id<ECRelationalTableViewDelegate> delegate;
 @property (nonatomic, assign) IBOutlet id<ECRelationalTableViewDataSource> dataSource;
-@property (nonatomic) CGFloat inset;
-@property (nonatomic) CGFloat spacing;
-@property (nonatomic) CGFloat indent; /*
+@property (nonatomic) UIEdgeInsets tableInsets;
+@property (nonatomic) UIEdgeInsets itemInsets;
+@property (nonatomic) UIEdgeInsets indentInsets;
+@property (nonatomic) UIEdgeInsets sectionHeaderInsets;
+@property (nonatomic) UIEdgeInsets sectionFooterInsets;
 @property (nonatomic) CGFloat sectionHeaderHeight;
 @property (nonatomic) CGFloat sectionFooterHeight;
-@property (nonatomic, readwrite, retain) UIView *backgroundView;
-@property (nonatomic,retain) UIView *tableHeaderView;
-@property (nonatomic,retain) UIView *tableFooterView;
-@property (nonatomic,getter=isEditing) BOOL editing;
+@property (nonatomic, retain) UIView *backgroundView;
+@property (nonatomic, retain) UIView *tableHeaderView;
+@property (nonatomic, retain) UIView *tableFooterView;
+@property (nonatomic, getter = isEditing) BOOL editing;
 @property (nonatomic) BOOL allowsSelection;
 @property (nonatomic) BOOL allowsSelectionDuringEditing;
+@property (nonatomic) ECRelationalTableViewGrowthDirection growthDirection;
+@property (nonatomic) ECRelationalTableViewIndentDirection indentDirection;
+@property (nonatomic) ECRelationalTableViewWrapping wrapping;
 
 // Data
 
 - (void)reloadData;
-
+/*
 // Info
 
-- (NSInteger)numberOfSections;
-- (NSInteger)numberOfItemsInSection:(NSInteger)section;
+- (NSUInteger)numberOfSections;
+- (NSUInteger)numberOfItemsInSection:(NSUInteger)section;
 
-- (CGRect)rectForSection:(NSInteger)section;                                    // includes header, footer and all items
-- (CGRect)rectForHeaderInSection:(NSInteger)section;
-- (CGRect)rectForFooterInSection:(NSInteger)section;
+- (CGRect)rectForSection:(NSUInteger)section;                                    // includes header, footer and all items
+- (CGRect)rectForHeaderInSection:(NSUInteger)section;
+- (CGRect)rectForFooterInSection:(NSUInteger)section;
 - (CGRect)rectForItemAtIndexPath:(NSIndexPath *)indexPath;
 
 - (NSIndexPath *)indexPathForItemAtPoint:(CGPoint)point;

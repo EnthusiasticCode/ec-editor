@@ -38,6 +38,8 @@
 
 - (void)dealloc
 {
+    self.projectViewController = nil;
+    self.fileViewController = nil;
     self.project = nil;
     self.codeIndex = nil;
     [super dealloc];
