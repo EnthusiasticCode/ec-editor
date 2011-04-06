@@ -12,12 +12,12 @@
 
 @protocol ECJumpBarDelegate <NSObject>
 
-/// Called when the user tap a button in the button stack.
-- (void)jumpBar:(ECJumpBar *)jumpBar tapAtStackIndex:(NSUInteger)index;
-
 // TODO may need 'will' to actually be able to retrieve the button
 /// Called when a button in the stack is popped. This method is called multiple time if more than one button are popped at once.
 - (void)jumpBar:(ECJumpBar *)jumpBar didPopButtonAtStackIndex:(NSUInteger)index;
+
+/// Called when there are too many buttons in the jump bar and they collapse.
+- (void)jumpBar:(ECJumpBar *)jumpBar didCollapseFromIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex;
 
 /// Called when the editable search string is changed.
 - (void)jumpBar:(ECJumpBar *)jumpBar changedSearchStringTo:(NSString *)searchString;
@@ -81,7 +81,7 @@
 
 // TODO add image to be used always or when the button is under a certian dimension.
 /// Push a button into the stack adding it to the bar.
-- (NSUInteger)pushButtonWithTitle:(NSString *)title;
+- (UIButton *)pushButtonWithTitle:(NSString *)title;
 
 /// Pop the last inserted button from the stack, removing it from the bar.
 - (void)popButton;

@@ -47,7 +47,6 @@
 - (void)setDelegate:(id<ECJumpBarDelegate>)aDelegate
 {
     delegate = aDelegate;
-    delegateHasTapAtStackIndex = [delegate respondsToSelector:@selector(jumpBar:tapAtStackIndex:)];
     delegateHasDidPopButtonAtStackIndex = [delegate respondsToSelector:@selector(jumpBar:didPopButtonAtStackIndex:)];
     delegateHasChangedSearchStringTo = [delegate respondsToSelector:@selector(jumpBar:changedSearchStringTo:)];
 }
@@ -258,7 +257,7 @@ static void init(ECJumpBar *self)
     return [buttonStack objectAtIndex:index];
 }
 
-- (NSUInteger)pushButtonWithTitle:(NSString *)title
+- (UIButton *)pushButtonWithTitle:(NSString *)title
 {    
     // Generate new button
     ECMockupButton *button = [ECMockupButton buttonWithType:UIButtonTypeCustom];
@@ -287,7 +286,7 @@ static void init(ECJumpBar *self)
     
     [self setNeedsLayout];
     
-    return [buttonStack count] - 1;
+    return button;
 }
 
 - (void)popButton
