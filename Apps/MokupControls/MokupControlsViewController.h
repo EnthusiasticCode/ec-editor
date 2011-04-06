@@ -8,16 +8,16 @@
 
 #import <UIKit/UIKit.h>
 #import "ECMockupButton.h"
-#import "ECJumpBarView.h"
+#import "ECJumpBar.h"
 
 
 @interface MokupControlsViewController : UIViewController {
     
-    ECJumpBarView *jumpBar;
+    ECJumpBar *jumpBar;
 }
 
 @property (nonatomic, retain) IBOutlet ECMockupButton *aButton;
-@property (nonatomic, retain) IBOutlet ECJumpBarView *jumpBar;
+@property (nonatomic, retain) IBOutlet ECJumpBar *jumpBar;
 
 - (IBAction)pushToJumpBar:(id)sender;
 
