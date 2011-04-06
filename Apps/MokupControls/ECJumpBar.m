@@ -266,7 +266,6 @@ static void init(ECJumpBar *self)
     button.titleLabel.font = self.font;
     button.titleLabel.shadowOffset = self.textShadowOffset;
     button.titleLabel.lineBreakMode = UILineBreakModeTailTruncation;
-    button.titleEdgeInsets = UIEdgeInsetsMake(0, TEXT_PADDING, 0, BUTTON_ARROW_WIDTH + TEXT_PADDING);
     [button setTitleShadowColor:self.textShadowColor forState:UIControlStateNormal];
     [button setTitleColor:self.textColor forState:UIControlStateNormal];
     [button setBackgroundColor:self.buttonColor forState:UIControlStateNormal];
@@ -275,9 +274,15 @@ static void init(ECJumpBar *self)
     
     // Add button to view
     if ([buttonStack count])
+    {
+        button.titleEdgeInsets = UIEdgeInsetsMake(0, TEXT_PADDING + BUTTON_ARROW_WIDTH, 0, BUTTON_ARROW_WIDTH);
         [self insertSubview:button belowSubview:[buttonStack lastObject]];
+    }
     else
+    {
+        button.titleEdgeInsets = UIEdgeInsetsMake(0, TEXT_PADDING, 0, BUTTON_ARROW_WIDTH);
         [self insertSubview:button aboveSubview:searchField];
+    }
     
     // Add button to stack
     if (!buttonStack)
