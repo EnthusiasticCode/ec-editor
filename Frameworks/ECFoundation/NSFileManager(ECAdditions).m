@@ -97,7 +97,7 @@ static BOOL arrayIncludesExtensionOfPath(NSArray *extensions, NSString *path)
     if (skipDirectories)
     {
         NSMutableIndexSet *directories = [NSMutableIndexSet indexSet];
-        for (NSUInteger i = 0; i < [subpaths count]; i++)
+        for (NSUInteger i = 0; i < [subpaths count]; ++i)
             if ([self fileExistsAndIsDirectoryAtPath:[subpaths objectAtIndex:i]])
                 [directories addIndex:i];
         [subpaths removeObjectsAtIndexes:directories];

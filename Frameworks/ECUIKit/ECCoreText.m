@@ -187,7 +187,7 @@ CFIndex ECCTFrameGetClosestStringIndexInRangeToPoint(CTFrameRef frame, CFRange s
     // Find lines containing point
     CFIndex closest = 0;
     while (closest < lineRange.length && origins[closest].y > point.y)
-        closest++;
+        ++closest;
     
     if (closest >= lineRange.length)
         closest = lineRange.length - 1;
@@ -236,7 +236,7 @@ CFIndex ECCTFrameGetClosestStringIndexInRangeToPoint(CTFrameRef frame, CFRange s
     {
         lineRange = CTLineGetStringRange(line);
         if (result == lineRange.location + lineRange.length)
-            result--;
+            --result;
     }
     
     free(origins);
