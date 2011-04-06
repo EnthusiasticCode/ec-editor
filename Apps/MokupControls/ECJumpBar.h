@@ -20,7 +20,7 @@
 - (void)jumpBar:(ECJumpBar *)jumpBar didPopButton:(UIControl *)button atStackIndex:(NSUInteger)index;
 
 /// Called when there are too many buttons in the jump bar and they collapse.
-- (void)jumpBar:(ECJumpBar *)jumpBar didCollapseToButton:(UIControl *)button fromIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex;
+- (void)jumpBar:(ECJumpBar *)jumpBar didCollapseToButton:(UIControl *)button collapsedRange:(NSRange)collapsedRange;
 
 /// Called when the editable search string is changed.
 - (void)jumpBar:(ECJumpBar *)jumpBar changedSearchStringTo:(NSString *)searchString;
@@ -70,9 +70,6 @@
 
 /// The maximum width of a button in the bar.
 @property (nonatomic) CGFloat maximumStackButtonWidth;
-
-// The maximum allowed number of buttons in the bar.
-@property (nonatomic) NSUInteger maximumButtonStackSize;
 
 #pragma mark Hanling Button Stack
 

@@ -250,6 +250,8 @@ static void init(ECMockupButton *self)
 
 - (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event
 {
+    if (self.hidden)
+        return nil;
     if (buttonPath) 
     {
         if (CGPathContainsPoint(buttonPath, NULL, point, NO))

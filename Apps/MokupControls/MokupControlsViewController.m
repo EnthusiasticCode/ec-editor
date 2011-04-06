@@ -54,6 +54,6 @@
 }
 
 - (IBAction)pushToJumpBar:(id)sender {
-    [jumpBar pushButtonWithTitle:@"Project"];
+    [jumpBar pushButtonWithTitle:[NSString stringWithFormat:@"%dProject", jumpBar.stackSize]];
 }
 @end
