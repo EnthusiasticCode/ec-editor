@@ -255,6 +255,9 @@ static void init(ECJumpBar *self)
     UIControl *button;
     CGFloat diff = buttonSize.width - BUTTON_ARROW_WIDTH - TEXT_PADDING;
     NSUInteger collapseEnd = collapsedRange.location + collapsedRange.length;
+    if (collapsedRange.length == 0) {
+        collapsedButton.hidden = YES;
+    }
     for (NSUInteger i = 0; i < buttonStackCount; ++i) 
     {
         button = (UIControl *)[buttonStack objectAtIndex:i];
@@ -389,6 +392,7 @@ static void init(ECJumpBar *self)
     NSUInteger buttonStackCount = [buttonStack count];
     if (maxCount == 0 || buttonStackCount <= maxCount)
     {
+        collapsedRange.length = collapsedRange.location = 0;
         if (collapsedButton)
             [collapsedButton removeFromSuperview];
         return;
@@ -402,8 +406,6 @@ static void init(ECJumpBar *self)
     collapse.length = buttonStackCount - maxCount + 1;
     if (NSEqualRanges(collapse, collapsedRange))
         return;
-    
-//    [self insertSubview:collapsedButton aboveSubview:[buttonStack objectAtIndex:collapse.location + collapse.length]];
     
     collapsedRange = collapse;
     if (delegateHasDidCollapseToButtonCollapsedRange) 
