@@ -6,10 +6,9 @@
 //  Copyright 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import "ECRelationalTableViewItem.h"
-#import "ECRelationalTableViewItem(Private).h"
-
-@interface ECRelationalTableViewItem ()
+#import "ECRelationalTableViewCell.h"
+/*
+@interface ECRelationalTableViewCell ()
 {
     @private
     struct {
@@ -43,9 +42,9 @@
 @property (nonatomic, retain) UILabel *zoomedTextLabel;
 @property (nonatomic, retain) UIView *zoomedContentView;
 @end
-
-@implementation ECRelationalTableViewItem
-
+*/
+@implementation ECRelationalTableViewCell
+/*
 @synthesize imageView = imageView_;
 @synthesize textLabel = textLabel_;
 @synthesize contentView = contentView_;
@@ -126,5 +125,5 @@
 {
     
 }
-
+*/
 @end

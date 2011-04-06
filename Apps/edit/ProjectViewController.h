@@ -8,9 +8,9 @@
 
 #import <UIKit/UIKit.h>
 #import "FileBrowser.h"
-#import "ECRelationalTableViewDataSource.h"
-#import "ECRelationalTableViewDelegate.h"
+#import "ECRelationalTableView.h"
 
 @interface ProjectViewController : UIViewController <FileBrowser, ECRelationalTableViewDataSource, ECRelationalTableViewDelegate>
 @property (nonatomic, retain) NSArray *extensionsToShow;
+@property (nonatomic, retain) IBOutlet ECRelationalTableView *tableView;
 @end

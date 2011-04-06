@@ -8,6 +8,7 @@
 
 #import "ProjectViewController.h"
 #import <ECFoundation/NSFileManager(ECAdditions).h>
+#import <ECUIKit/ECRelationalTableView.h>
 
 @interface ProjectViewController ()
 @property (nonatomic, retain) NSFileManager *fileManager;
@@ -21,10 +22,18 @@
 @synthesize fileManager = fileManager_;
 @synthesize folder = folder_;
 @synthesize extensionsToShow = extensionsToShow_;
+@synthesize tableView = tableView_;
 
 - (NSFileManager *)fileManager
 {
     return [NSFileManager defaultManager];
+}
+
+- (void)dealloc
+{
+    self.extensionsToShow = nil;
+    self.tableView = nil;
+    [super dealloc];
 }
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -34,12 +43,6 @@
         // Custom initialization
     }
     return self;
-}
-
-- (void)dealloc
-{
-    self.extensionsToShow = nil;
-    [super dealloc];
 }
 
 - (void)didReceiveMemoryWarning
@@ -59,13 +62,14 @@
 }
 */
 
-/*
+
 // Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
 - (void)viewDidLoad
 {
+    [self.tableView reloadData];
     [super viewDidLoad];
 }
-*/
+
 
 - (void)viewDidUnload
 {
@@ -97,32 +101,36 @@
     self.folder = folder;
 }
 
-- (NSUInteger)numberOfSectionsInTableView:(ECRelationalTableView *)relationalTableView
+- (NSUInteger)numberOfAreasInTableView:(ECRelationalTableView *)relationalTableView
 {
     return [[self contentsOfFolder] count];
 }
 
-- (NSString *)relationalTableView:(ECRelationalTableView *)relationalTableView titleForHeaderInSection:(NSUInteger)section
+- (NSString *)relationalTableView:(ECRelationalTableView *)relationalTableView titleForHeaderInArea:(NSUInteger)area
 {
-    return [[self contentsOfFolder] objectAtIndex:section];
+    return [[self contentsOfFolder] objectAtIndex:area];
 }
 
-- (ECRelationalTableViewItem *)relationalTableView:(ECRelationalTableView *)relationalTableView itemForIndexPath:(NSIndexPath *)indexPath
+- (ECRelationalTableViewCell *)relationalTableView:(ECRelationalTableView *)relationalTableView cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    ECRelationalTableViewItem *file = [[[ECRelationalTableViewItem alloc] init] autorelease];
-    file.textLabel.text = [[self filesInSubfolder:[self relationalTableView:nil titleForHeaderInSection:indexPath.section]] objectAtIndex:(indexPath.row)];
+    ECRelationalTableViewCell *file = [[[ECRelationalTableViewCell alloc] init] autorelease];
+//    UILabel *label = [[UILabel alloc] init];
+//    label.text = [[self filesInSubfolder:[self relationalTableView:nil titleForHeaderInArea:indexPath.area]] objectAtIndex:(indexPath.item)];
+//    [file addSubview:label];
+//    label.frame = file.bounds;
+    file.backgroundColor = [UIColor redColor];
     return file;
 }
 
-- (NSUInteger)relationalTableView:(ECRelationalTableView *)relationalTableView numberOfItemsInSection:(NSUInteger)section
+- (NSUInteger)relationalTableView:(ECRelationalTableView *)relationalTableView numberOfItemsAtLevel:(NSUInteger)level inArea:(NSUInteger)area
 {
-    NSArray *links = [self filesInSubfolder:[self relationalTableView:nil titleForHeaderInSection:section]];
+    NSArray *links = [self filesInSubfolder:[self relationalTableView:nil titleForHeaderInArea:area]];
     return [links count];
 }
 
 - (void)relationalTableView:(ECRelationalTableView *)relationalTableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSString *subfolder = [self relationalTableView:nil titleForHeaderInSection:indexPath.section];
+    NSString *subfolder = [self relationalTableView:nil titleForHeaderInArea:indexPath.area];
     NSString *file = [[self filesInSubfolder:subfolder] objectAtIndex:indexPath.row];
     NSString *absoluteFilePath = [[self.folder stringByAppendingPathComponent:subfolder] stringByAppendingPathComponent:file];
     [self.delegate fileBrowser:self didSelectFileAtPath:absoluteFilePath];
@@ -130,7 +138,7 @@
 
 - (NSInteger)tableView:(UITableView *)tableView indentationLevelForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSString *subfolder = [self tableView:nil titleForHeaderInSection:indexPath.section];
+    NSString *subfolder = [self relationalTableView:nil titleForHeaderInArea:indexPath.area];
     NSString *file = [[self filesInSubfolder:subfolder] objectAtIndex:indexPath.row];
     NSString *absoluteFilePath = [[self.folder stringByAppendingPathComponent:subfolder] stringByAppendingPathComponent:file];
     return ([[absoluteFilePath pathExtension] isEqualToString:@"h"]) ? 0 : 1;

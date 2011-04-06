@@ -7,181 +7,93 @@
 //
 
 #import "ECRelationalTableView.h"
-#import "ECRelationalTableViewItem.h"
-#import "ECRelationalTableViewItem(Private).h"
+#import "ECRelationalTableViewCell.h"
 
 @interface ECRelationalTableView ()
 {
     @private
     struct {
-        unsigned int dataSourceNumberOfItemsInSection:1;
-        unsigned int dataSourceItemForIndexPath:1;
-        unsigned int dataSourceNumberOfSectionsInTableView:1;
-        unsigned int dataSourceTitleForHeaderInSection:1;
-        unsigned int dataSourceTitleForFooterInSection:1;
+        unsigned int dataSourceNumberOfLevelsInArea:1;
+        unsigned int dataSourceNumberOfItemsAtLevelInArea:1;
+        unsigned int dataSourceCellForItemAtIndexPath:1;
+        unsigned int dataSourceNumberOfAreasInTableView:1;
+        unsigned int dataSourceTitleForHeaderInArea:1;
+        unsigned int dataSourceTitleForFooterInArea:1;
         unsigned int dataSourceCommitEditingStyle:1;
         unsigned int dataSourceCanEditItem:1;
         unsigned int dataSourceCanMoveItem:1;
         unsigned int dataSourceMoveItem:1;
-//		  unsigned int dataSourceCanUpdateItem:1;
-//        unsigned int dataSourceCanPerformAction:1;
-//        unsigned int dataSourcePerformAction:1;
-        unsigned int delegateEditingStyleForItem:1;
-        unsigned int delegateTitleForDeleteConfirmationButtonForItem:1;
-        unsigned int delegateWillDisplayItem:1;
-        unsigned int delegateHeightForSectionHeader:1;
-        unsigned int delegateHeightForSectionFooter:1;
-        unsigned int delegateViewForHeaderInSection:1;
-        unsigned int delegateViewForFooterInSection:1;
-//        unsigned int delegateAccessoryTypeForItem:1;
-//        unsigned int delegateAccessoryButtonTappedForItem:1;
+        unsigned int delegateWillDisplayCellForItemAtIndexPath:1;
+        unsigned int delegateViewForHeaderInArea:1;
+        unsigned int delegateViewForFooterInArea:1;
+        unsigned int delegateAccessoryTypeForItem:1;
+        unsigned int delegateAccessoryButtonTappedForItem:1;
         unsigned int delegateWillSelectItem:1;
         unsigned int delegateWillDeselectItem:1;
         unsigned int delegateDidSelectItem:1;
         unsigned int delegateDidDeselectItem:1;
-        unsigned int delegateWillBeginEditing:1;
-        unsigned int delegateDidEndEditing:1;
-        unsigned int delegateWillMoveToItem:1;
-        unsigned int delegateIndentationLevelForItem:1;
-        unsigned int delegateHeaderTitleAlignment:1;
-        unsigned int delegateFooterTitleAlignment:1;
-//        unsigned int delegateDidFinishReload:1;
-        unsigned int delegateHeightForHeader:1;
-        unsigned int delegateHeightForFooter:1;
-        unsigned int delegateViewForHeader:1;
-        unsigned int delegateViewForFooter:1;
-        unsigned int wasEditing:1;
-        unsigned int isEditing:1;
-        unsigned int scrollsToSelection:1;
-        unsigned int updating:1;
-        unsigned int needsReload:1;
-        unsigned int ignoreDragSwipe:1;        
-        unsigned int ignoreTouchSelect:1;
-        unsigned int allowsSelection:1;
-        unsigned int allowsSelectionDuringEditing:1;
-        unsigned int showsSelectionImmediatelyOnTouchBegin:1;
-        unsigned int defaultShowsHorizontalScrollIndicator:1;
-        unsigned int defaultShowsVerticalScrollIndicator:1;
-        unsigned int hideScrollIndicators:1;
-        unsigned int keepFirstResponderWhenInteractionDisabled:1;
-        unsigned int keepFirstResponderVisibleOnBoundsChange:1;
-        unsigned int growthDirection:2;
-        unsigned int indentDirection:2;
-        unsigned int wrapping:2;
+        unsigned int delegateEditingStyleForItem:1;
+        unsigned int delegateTitleForDeleteConfirmationButtonForItem:1;
+        unsigned int delegateTargetIndexPathForMoveFromItem:1;
+//        unsigned int scrollsToSelection:1;
+//        unsigned int updating:1;
+//        unsigned int showsSelectionImmediatelyOnTouchBegin:1;
+//        unsigned int defaultShowsHorizontalScrollIndicator:1;
+//        unsigned int defaultShowsVerticalScrollIndicator:1;
+//        unsigned int hideScrollIndicators:1;
     } flags_;
 }
 @property (nonatomic, retain) UIScrollView *scrollView;
 @property (nonatomic, retain) UIView *rootView;
-@property (nonatomic, retain) NSMutableArray *sectionHeaders;
-@property (nonatomic, retain) NSMutableArray *sectionFooters;
-@property (nonatomic, retain) NSMutableArray *sectionItems;
+- (void)recalculatePaddedCellSizeAndContentWidthInCells;
+- (void)recalculatePaddedAreaHeaderSize;
+@property (nonatomic, retain) NSMutableArray *areas;
 @end
 
 @implementation ECRelationalTableView
 
 @synthesize scrollView = scrollView_;
 @synthesize rootView = rootView_;
-@synthesize sectionHeaders = sectionHeaders_;
-@synthesize sectionFooters = sectionFooters_;
-@synthesize sectionItems = sectionItems_;
 @synthesize delegate = delegate_;
 @synthesize dataSource = dataSource_;
 @synthesize tableInsets = tableInsets_;
-@synthesize itemInsets = itemInsets_;
-@synthesize indentInsets = indentInsets_;
-@synthesize sectionHeaderInsets = sectionHeaderInsets_;
-@synthesize sectionFooterInsets = sectionFooterInsets_;
-@synthesize sectionHeaderHeight = sectionHeaderHeight_;
-@synthesize sectionFooterHeight = sectionFooterHeight_;
+@synthesize cellInsets = cellInsets_;
+@synthesize levelInsets = levelInsets_;
+@synthesize areaHeaderInsets = areaHeaderInsets_;
+@synthesize areaFooterInsets = areaFooterInsets_;
+@synthesize cellSize = cellSize_;
+@synthesize paddedCellSize = paddedCellSize_;
+@synthesize contentWidthInCells = contentWidthInCells_;
+@synthesize areaHeaderHeight = areaHeaderHeight_;
+@synthesize paddedAreaHeaderSize = paddedAreaHeaderSize_;
+@synthesize areaFooterHeight = areaFooterHeight_;
+@synthesize paddedAreaFooterSize = paddedAreaFooterSize_;
 @synthesize backgroundView = backgroundView_;
 @synthesize tableHeaderView = tableHeaderView_;
 @synthesize tableFooterView = tableFooterView_;
-
-- (BOOL)isEditing
-{
-    return flags_.isEditing;
-}
-
-- (void)setEditing:(BOOL)editing
-{
-    flags_.isEditing = editing;
-}
-
-- (BOOL)allowsSelection
-{
-    return flags_.allowsSelection;
-}
-
-- (void)setAllowsSelection:(BOOL)allowsSelection
-{
-    flags_.allowsSelection = allowsSelection;
-}
-
-- (BOOL)allowsSelectionDuringEditing
-{
-    return flags_.allowsSelectionDuringEditing;
-}
-
-- (void)setAllowsSelectionDuringEditing:(BOOL)allowsSelectionDuringEditing
-{
-    flags_.allowsSelectionDuringEditing = allowsSelectionDuringEditing;
-}
-
-- (ECRelationalTableViewGrowthDirection)growthDirection
-{
-    return flags_.growthDirection;
-}
-
-- (void)setGrowthDirection:(ECRelationalTableViewGrowthDirection)growthDirection
-{
-    flags_.growthDirection = growthDirection;
-}
-
-- (ECRelationalTableViewIndentDirection)indentDirection
-{
-    return flags_.indentDirection;
-}
-
-- (void)setIndentDirection:(ECRelationalTableViewIndentDirection)indentDirection
-{
-    flags_.indentDirection = indentDirection;
-}
-
-- (ECRelationalTableViewWrapping)wrapping
-{
-    return flags_.wrapping;
-}
-
-- (void)setWrapping:(ECRelationalTableViewWrapping)wrapping
-{
-    flags_.wrapping = wrapping;
-}
+@synthesize editing = editing_;
+@synthesize allowsSelection = allowsSelection_;
+@synthesize allowsSelectionDuringEditing = allowsSelectionDuringEditing_;
+@synthesize itemGrowthDirection = itemGrowthDirection_;
+@synthesize itemWrapDirection = itemWrapDirection_;
+@synthesize levelGrowthDirection = levelGrowthDirection_;
+@synthesize areas = areas_;
 
 - (void)setDelegate:(id<ECRelationalTableViewDelegate>)delegate
 {
     if (delegate == delegate_)
         return;
     delegate_ = delegate;
-    flags_.delegateWillDisplayItem = [delegate respondsToSelector:@selector(relationalTableView:willDisplayItem:forIndexPath:)];
-    flags_.delegateHeaderTitleAlignment = [delegate respondsToSelector:@selector(relationalTableView:alignmentForHeaderTitleInSection:)];
-    flags_.delegateFooterTitleAlignment = [delegate respondsToSelector:@selector(relationalTableView:alignmentForFooterTitleInSection:)];
-    flags_.delegateHeightForHeader = [delegate respondsToSelector:@selector(heightForHeaderInTableView:)];
-    flags_.delegateHeightForFooter = [delegate respondsToSelector:@selector(heightForFooterInTableView:)];
-    flags_.delegateViewForHeader = [delegate respondsToSelector:@selector(headerForTableView:)];
-    flags_.delegateViewForFooter = [delegate respondsToSelector:@selector(footerForTableView:)];
-    flags_.delegateHeightForHeader = [delegate respondsToSelector:@selector(relationalTableView:heightForHeaderInSection:)];
-    flags_.delegateHeightForFooter = [delegate respondsToSelector:@selector(relationalTableView:heightForFooterInSection:)];
-    flags_.delegateViewForHeaderInSection = [delegate respondsToSelector:@selector(relationalTableView:viewForHeaderInSection:)];
-    flags_.delegateViewForFooterInSection = [delegate respondsToSelector:@selector(relationalTableView:viewForFooterInSection:)];
+    flags_.delegateWillDisplayCellForItemAtIndexPath = [delegate respondsToSelector:@selector(relationalTableView:willDisplayCell:forItemAtIndexPath:)];
+    flags_.delegateViewForHeaderInArea = [delegate respondsToSelector:@selector(relationalTableView:viewForHeaderInArea:)];
+    flags_.delegateViewForFooterInArea = [delegate respondsToSelector:@selector(relationalTableView:viewForFooterInArea:)];
     flags_.delegateWillSelectItem = [delegate respondsToSelector:@selector(relationalTableView:willSelectItemAtIndexPath:)];
     flags_.delegateWillDeselectItem = [delegate respondsToSelector:@selector(relationalTableView:willDeselectItemAtIndexPath:)];
     flags_.delegateDidSelectItem = [delegate respondsToSelector:@selector(relationalTableView:didSelectItemAtIndexPath:)];
     flags_.delegateDidDeselectItem = [delegate respondsToSelector:@selector(relationalTableView:didDeselectItemAtIndexPath:)];
     flags_.delegateEditingStyleForItem = [delegate respondsToSelector:@selector(relationalTableView:editingStyleForItemAtIndexPath:)];
     flags_.delegateTitleForDeleteConfirmationButtonForItem = [delegate respondsToSelector:@selector(relationalTableView:titleForDeleteConfirmationButtonForItemAtIndexPath:)];
-    flags_.delegateWillBeginEditing = [delegate respondsToSelector:@selector(relationalTableView:willBeginEditingItemAtIndexPath:)];
-    flags_.delegateDidEndEditing = [delegate respondsToSelector:@selector(relationalTableView:didEndEditingItemAtIndexPath:)];
-    flags_.delegateWillMoveToItem = [delegate respondsToSelector:@selector(relationalTableView:targetIndexPathForMoveFromItemAtIndexPath:toProposedIndexPath:)];
+    flags_.delegateTargetIndexPathForMoveFromItem = [delegate respondsToSelector:@selector(relationalTableView:targetIndexPathForMoveFromItemAtIndexPath:toProposedIndexPath:)];
 }
 
 - (void)setDataSource:(id<ECRelationalTableViewDataSource>)dataSource
@@ -189,21 +101,57 @@
     if (dataSource == dataSource_)
         return;
     dataSource_ = dataSource;
-    flags_.dataSourceNumberOfItemsInSection = [dataSource respondsToSelector:@selector(relationalTableView:numberOfItemsInSection:)];
-    flags_.dataSourceItemForIndexPath = [dataSource respondsToSelector:@selector(relationalTableView:itemForIndexPath:)];
-    flags_.dataSourceNumberOfSectionsInTableView = [dataSource respondsToSelector:@selector(numberOfSectionsInTableView:)];
-    flags_.dataSourceTitleForHeaderInSection = [dataSource respondsToSelector:@selector(relationalTableView:titleForHeaderInSection:)];
-    flags_.dataSourceTitleForFooterInSection = [dataSource respondsToSelector:@selector(relationalTableView:titleForFooterInSection:)];
+    flags_.dataSourceNumberOfLevelsInArea = [dataSource respondsToSelector:@selector(relationalTableView:numberOfLevelsInArea:)];
+    flags_.dataSourceNumberOfItemsAtLevelInArea = [dataSource respondsToSelector:@selector(relationalTableView:numberOfItemsAtLevel:inArea:)];
+    flags_.dataSourceCellForItemAtIndexPath = [dataSource respondsToSelector:@selector(relationalTableView:cellForItemAtIndexPath:)];
+    flags_.dataSourceNumberOfAreasInTableView = [dataSource respondsToSelector:@selector(numberOfAreasInTableView:)];
+    flags_.dataSourceTitleForHeaderInArea = [dataSource respondsToSelector:@selector(relationalTableView:titleForHeaderInArea:)];
+    flags_.dataSourceTitleForFooterInArea = [dataSource respondsToSelector:@selector(relationalTableView:titleForFooterInArea:)];
     flags_.dataSourceCanEditItem = [dataSource respondsToSelector:@selector(relationalTableView:canEditItemAtIndexPath:)];
     flags_.dataSourceCanMoveItem = [dataSource respondsToSelector:@selector(relationalTableView:canMoveItemAtIndexPath:)];
     flags_.dataSourceCommitEditingStyle = [dataSource respondsToSelector:@selector(relationalTableView:commitEditingStyle:forItemAtIndexPath:)];
     flags_.dataSourceMoveItem = [dataSource respondsToSelector:@selector(relationalTableView:moveItemAtIndexPath:toIndexPath:)];
 }
 
+- (void)setTableInsets:(UIEdgeInsets)tableInsets
+{
+    tableInsets_ = tableInsets;
+    [self recalculatePaddedCellSizeAndContentWidthInCells];
+    [self recalculatePaddedAreaHeaderSize];
+}
+
+- (void)setCellInsets:(UIEdgeInsets)cellInsets
+{
+    cellInsets_ = cellInsets;
+    [self recalculatePaddedCellSizeAndContentWidthInCells];
+}
+
+- (void)setAreaHeaderInsets:(UIEdgeInsets)areaHeaderInsets
+{
+    areaHeaderInsets_ = areaHeaderInsets;
+    [self recalculatePaddedAreaHeaderSize];
+}
+
+- (void)setLevelInsets:(UIEdgeInsets)levelInsets
+{
+    levelInsets_ = levelInsets;
+    [self recalculatePaddedCellSizeAndContentWidthInCells];
+}
+
+- (void)setCellSize:(CGSize)cellSize
+{
+    cellSize_ = cellSize;
+    [self recalculatePaddedCellSizeAndContentWidthInCells];
+}
+
 - (void)dealloc
 {
+    self.backgroundView = nil;
+    self.tableHeaderView = nil;
+    self.tableFooterView = nil;
     self.scrollView = nil;
     self.rootView = nil;
+    self.areas = nil;
     [super dealloc];
 }
 
@@ -213,10 +161,13 @@ static id init(ECRelationalTableView *self)
     [self addSubview:self.scrollView];
     self.rootView = [[[UIView alloc] init] autorelease];
     [self.scrollView addSubview:self.rootView];
-    self.sectionHeaders = [NSMutableArray array];
-    self.sectionFooters = [NSMutableArray array];
-    self.sectionItems = [NSMutableArray array];
-    self->flags_.needsReload = YES;
+    self->cellSize_ = CGSizeMake(120.0, 30.0);
+    self->tableInsets_ = UIEdgeInsetsMake(10.0, 10.0, 10.0, 10.0);
+    self->cellInsets_ = UIEdgeInsetsMake(20.0, 20.0, 20.0, 20.0);
+    self->levelInsets_ = UIEdgeInsetsMake(10.0, 0.0, 10.0, 0.0);
+    self->areaHeaderHeight_ = 20.0;
+    [self recalculatePaddedCellSizeAndContentWidthInCells];
+    [self recalculatePaddedAreaHeaderSize];
     return self;
 }
 
@@ -238,112 +189,190 @@ static id init(ECRelationalTableView *self)
     return init(self);
 }
 
-- (void)layoutSubviews
+- (void)recalculatePaddedCellSizeAndContentWidthInCells
 {
-    if (flags_.needsReload)
-        [self reloadData];
-    [super layoutSubviews];
-    CGFloat currentX;
-    CGFloat maxX;
-    CGFloat currentY = self.tableInsets.top;
-    NSUInteger numSections = [self.sectionHeaders count];
-    for (NSUInteger i = 0; i < numSections; i++)
-    {
-        currentX = self.tableInsets.left;
-        UIView *header = [self.sectionHeaders objectAtIndex:i];
-        if (![header superview])
-            [self.rootView addSubview:header];
-        header.backgroundColor = [UIColor blueColor];
-        header.frame = CGRectMake(currentX + self.sectionHeaderInsets.left, currentY + self.sectionHeaderInsets.top, 0.0, 0.0);
-        [header sizeToFit];
-        NSArray *itemsInSection = [self.sectionItems objectAtIndex:i];
-        currentY += header.frame.size.height + self.sectionHeaderInsets.top + self.sectionHeaderInsets.bottom;
-        for (NSUInteger j = 0; j < [itemsInSection count]; j++)
-        {
-            NSUInteger itemDepth = 0;
-            if (flags_.delegateIndentationLevelForItem)
-                itemDepth = [self.delegate relationalTableView:self indentationLevelForItemAtIndexPath:[NSIndexPath indexPathForRow:j inSection:i]];
-            ECRelationalTableViewItem *item = [itemsInSection objectAtIndex:j];
-            UIView *itemView = item.contentView;
-            if (![itemView superview])
-                [self.rootView addSubview:itemView];
-            itemView.frame = CGRectMake(currentX + self.itemInsets.left, currentY + self.itemInsets.top, 100.0, 100.0);
-            currentX += itemView.frame.size.width + self.itemInsets.left + self.itemInsets.right;
-            if (currentX > maxX)
-                maxX = currentX;
-        }
-        currentY += 100.0 + self.itemInsets.top + self.itemInsets.bottom;
-    }
-    for (UIView *header in self.sectionHeaders)
-    {
-        CGRect newFrame = header.frame;
-        newFrame.size.width = maxX - self.tableInsets.left - self.sectionHeaderInsets.left - self.sectionHeaderInsets.right;
-        header.frame = newFrame;
-    }
-    self.rootView.frame = CGRectMake(0.0, 0.0, maxX + self.tableInsets.right, currentY + self.tableInsets.bottom);
-    self.scrollView.contentSize = self.rootView.frame.size;
+    UIEdgeInsets cellInsets = self.cellInsets;
+    CGSize size = self.cellSize;
+    size.width += cellInsets.left + cellInsets.right;
+    size.height += cellInsets.top + cellInsets.bottom;
+    CGFloat netWidth = self.bounds.size.width - self.tableInsets.left - self.tableInsets.right - self.levelInsets.left - self.levelInsets.right;
+    contentWidthInCells_ = netWidth / size.width;
+    size.width = netWidth / (CGFloat)contentWidthInCells_;
+    paddedCellSize_ = size;
+}
+
+- (void)recalculatePaddedAreaHeaderSize
+{
+    CGSize size = CGSizeZero;
+    size.width = self.bounds.size.width - self.tableInsets.left - self.tableInsets.right;
+    size.height = self.areaHeaderHeight + self.areaHeaderInsets.top + self.areaHeaderInsets.bottom;
+    paddedAreaHeaderSize_ = size;
+}
+
+- (NSUInteger)heightInCellsForContentAtLevel:(NSUInteger)level inArea:(NSUInteger)area
+{
+    NSUInteger numCells = [self numberOfItemsAtLevel:level inArea:area];
+    return ceil((CGFloat)numCells / (CGFloat)self.contentWidthInCells);
 }
 
 - (void)reloadData
 {
-    // clear all data
-    [self.sectionHeaders removeAllObjects];
-    [self.sectionFooters removeAllObjects];
-    [self.sectionItems removeAllObjects];
-    
-    // count number of sections
-    NSUInteger sections = 1;
-    if (flags_.dataSourceNumberOfSectionsInTableView)
-        sections = [self.dataSource numberOfSectionsInTableView:self];
-    if (!sections)
-        return;
-    
-    // get or create view for headers
-    if (flags_.delegateViewForHeaderInSection)
-        for (NSUInteger i = 0; i < sections; i++)
-            [self.sectionHeaders addObject:[self.delegate relationalTableView:self viewForHeaderInSection:i]];
-    else if (flags_.dataSourceTitleForHeaderInSection)
-        for (NSUInteger i = 0; i < sections; i++)
-        {
-            NSString *sectionTitle = [self.dataSource relationalTableView:self titleForHeaderInSection:i];
-            UILabel *sectionHeaderLabel = [[[UILabel alloc] init] autorelease];
-            sectionHeaderLabel.text = sectionTitle;
-            [self.sectionHeaders addObject:sectionHeaderLabel];
-        }
-    
-    // get items
-    if (flags_.dataSourceItemForIndexPath)
+    NSUInteger numAreas = 1;
+    if (flags_.dataSourceNumberOfAreasInTableView)
+        numAreas = [self.dataSource numberOfAreasInTableView:self];
+    self.areas = [NSMutableArray arrayWithCapacity:numAreas];
+    for (NSUInteger i = 0; i < numAreas; ++i)
     {
-        for (NSUInteger i = 0; i < sections; i++)
+        NSUInteger numLevels = 1;
+        if (flags_.dataSourceNumberOfLevelsInArea)
+            numLevels = [self.dataSource relationalTableView:self numberOfLevelsInArea:i];
+        NSMutableArray *levels = [NSMutableArray arrayWithCapacity:numLevels];
+        for (NSUInteger j = 0; j < numLevels; ++j)
         {
-            NSMutableArray *currentSection = [NSMutableArray array];
-            [self.sectionItems addObject:currentSection];
             NSUInteger numItems = 0;
-            if (flags_.dataSourceNumberOfItemsInSection)
-                numItems = [self.dataSource relationalTableView:self numberOfItemsInSection:i];
-            if (!numItems)
-                continue;
-            for (NSUInteger j = 0; j < numItems; j++)
+            if (flags_.dataSourceNumberOfItemsAtLevelInArea)
+                numItems = [self.dataSource relationalTableView:self numberOfItemsAtLevel:j inArea:i];
+            NSMutableArray *items = [NSMutableArray arrayWithCapacity:numItems];
+            for (NSUInteger k = 0; k < numItems; ++k)
             {
-                NSUInteger itemDepth = 0;
-                NSIndexPath *itemIndexPath = [NSIndexPath indexPathForRow:j inSection:i];
-                ECRelationalTableViewItem *item = [self.dataSource relationalTableView:self itemForIndexPath:itemIndexPath];
-                if (flags_.delegateIndentationLevelForItem)
-                    itemDepth = [self.delegate relationalTableView:self indentationLevelForItemAtIndexPath:itemIndexPath];
-                [currentSection addObject:item];
+                NSIndexPath *indexPath = [NSIndexPath indexPathForItem:k atLevel:j inArea:i];
+                [items addObject:[self.dataSource relationalTableView:self cellForItemAtIndexPath:indexPath]];
+            }
+            [levels addObject:items];
+        }
+        [self.areas addObject:levels];
+    }
+}
+
+- (NSUInteger)numberOfAreas
+{
+    return [self.areas count];
+}
+
+- (NSUInteger)numberOfLevelsInArea:(NSUInteger)area
+{
+    return [[self.areas objectAtIndex:area] count];
+}
+
+- (NSUInteger)numberOfItemsAtLevel:(NSUInteger)level inArea:(NSUInteger)area
+{
+    return [[[self.areas objectAtIndex:area] objectAtIndex:level] count];
+}
+
+- (CGRect)rectForArea:(NSUInteger)area
+{
+    CGFloat areaHeaderHeight = self.paddedAreaHeaderSize.height;
+    CGFloat cellHeight = self.paddedCellSize.height;
+    UIEdgeInsets tableInsets = self.tableInsets;
+    CGFloat x = tableInsets.left;
+    CGFloat y = tableInsets.top;
+    y +=  areaHeaderHeight * area;
+    for (NSUInteger i = 0; i < area; ++i)
+        for (NSUInteger j = 0; j < [self numberOfLevelsInArea:i]; ++j)
+            y += [self heightInCellsForContentAtLevel:j inArea:i] * cellHeight;
+    CGFloat width = self.bounds.size.width - tableInsets.left - tableInsets.right;
+    CGFloat height = areaHeaderHeight;
+    for (NSUInteger j = 0; j < [self numberOfLevelsInArea:area]; ++j)
+        height += [self heightInCellsForContentAtLevel:j inArea:area] * cellHeight;
+    return CGRectMake(x, y, width, height);
+}
+
+- (CGRect)rectForHeaderInArea:(NSUInteger)area
+{
+    CGRect areaRect = [self rectForArea:area];
+    CGFloat x = areaRect.origin.x + self.areaHeaderInsets.left;
+    CGFloat y = areaRect.origin.y + self.areaHeaderInsets.top;
+    return (CGRect){ (CGPoint){x, y} , self.paddedAreaHeaderSize };
+}
+
+- (CGRect)rectForLevel:(NSUInteger)level inArea:(NSUInteger)area
+{
+    CGRect areaRect = [self rectForArea:area];
+    CGFloat x = areaRect.origin.x + self.levelInsets.left;
+    CGFloat y = areaRect.origin.y + self.areaHeaderInsets.top + self.paddedAreaHeaderSize.height + self.areaHeaderInsets.bottom;
+    y += (self.levelInsets.top + self.levelInsets.bottom) * level;
+    for (NSUInteger i = 0; i < level; ++i)
+        y += [self heightInCellsForContentAtLevel:i inArea:area];
+    y += self.levelInsets.top;
+    CGFloat width = self.bounds.size.width - self.tableInsets.left - self.tableInsets.right - self.levelInsets.left - self.levelInsets.right;
+    CGFloat height = [self heightInCellsForContentAtLevel:level inArea:area];
+    return CGRectMake(x, y, width, height);
+}
+
+- (CGRect)rectForItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    CGRect levelRect = [self rectForLevel:indexPath.level inArea:indexPath.area];
+    CGFloat x = levelRect.origin.x + self.cellInsets.left;
+    CGFloat y = levelRect.origin.y + self.cellInsets.top;
+    NSUInteger item = indexPath.item / self.contentWidthInCells;
+    NSUInteger column = indexPath.item % self.contentWidthInCells;
+    x += item * self.paddedCellSize.width;
+    y += column * self.paddedCellSize.height;
+    NSLog(@"Rect for header: %f, %f, %f, %f", x, y, self.paddedCellSize.width, self.paddedCellSize.height);
+    return (CGRect){ (CGPoint){x, y}, self.cellSize};
+}
+
+- (ECRelationalTableViewCell *)cellForItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    return [[[self.areas objectAtIndex:indexPath.area] objectAtIndex:indexPath.level] objectAtIndex:indexPath.item];
+}
+
+- (void)layoutSubviews
+{
+    NSUInteger numAreas = [self numberOfAreas];
+    for (NSUInteger i = 0; i < numAreas; ++i)
+    {
+        UIView *header = nil;
+        if (flags_.delegateViewForHeaderInArea)
+            header = [self.delegate relationalTableView:self viewForHeaderInArea:i];
+        else if (flags_.dataSourceTitleForHeaderInArea)
+        {
+            header = [[[UILabel alloc] init] autorelease];
+            ((UILabel *)header).text = [self.dataSource relationalTableView:self titleForHeaderInArea:i];
+        }
+        if (![header superview])
+        {
+            [self.rootView addSubview:header];
+        }
+        header.backgroundColor = [UIColor grayColor];
+        header.frame = [self rectForHeaderInArea:i];
+        for (NSUInteger j = 0; j < [self numberOfLevelsInArea:j]; ++j)
+        {
+            for (NSUInteger k = 0; k < [self numberOfItemsAtLevel:j inArea:i]; ++k)
+            {
+                NSIndexPath *itemIndexPath = [NSIndexPath indexPathForItem:k atLevel:j inArea:i];
+                ECRelationalTableViewCell *cell = [self cellForItemAtIndexPath:itemIndexPath];
+                [self.rootView addSubview:cell];
+                cell.frame = [self rectForItemAtIndexPath:itemIndexPath];
             }
         }
     }
-    flags_.needsReload = NO;
+    CGRect lastAreaFrame = [self rectForArea:numAreas - 1];
+    self.scrollView.contentSize = CGSizeMake(self.bounds.size.width, lastAreaFrame.origin.y + lastAreaFrame.size.height + self.tableInsets.bottom);
 }
 
-/*
-// Only override drawRect: if you perform custom drawing.
-// An empty implementation adversely affects performance during animation.
-- (void)drawRect:(CGRect)rect
+@end
+
+@implementation NSIndexPath (ECRelationalTableView)
+
+- (NSUInteger)area
 {
-    // Drawing code
+    return [self indexAtPosition:0];
 }
-*/
+
+- (NSUInteger)level
+{
+    return [self indexAtPosition:1];
+}
+
+- (NSUInteger)item
+{
+    return [self indexAtPosition:2];
+}
+
++ (NSIndexPath *)indexPathForItem:(NSUInteger)item atLevel:(NSUInteger)level inArea:(NSUInteger)area
+{
+    return [self indexPathWithIndexes:(NSUInteger[3]){area, level, item} length:3];
+}
 
 @end
