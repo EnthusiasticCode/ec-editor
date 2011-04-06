@@ -10,6 +10,7 @@
 #import "ECRelationalTableViewItem.h"
 
 @interface ECRelationalTableView ()
+@property (nonatomic, retain) NSMutableDictionary *cellCache;
 - (void)recalculatePaddedCellSizeAndWidthInCells;
 - (void)recalculatePaddedSectionHeaderSize;
 @end
@@ -25,6 +26,7 @@
 @synthesize paddedCellSize = paddedCellSize_;
 @synthesize paddedSectionHeaderSize = paddedSectionHeaderSize_;
 @synthesize widthInCells = widthInCells_;
+@synthesize cellCache = cellCache_;
 
 - (void)setTableInsets:(UIEdgeInsets)tableInsets
 {
@@ -51,13 +53,20 @@
     [self recalculatePaddedCellSizeAndWidthInCells];
 }
 
+- (void)dealloc
+{
+    self.cellCache = nil;
+    [super dealloc];
+}
+
 static ECRelationalTableView *init(ECRelationalTableView *self)
 {
-    self.rowHeight = 0.0;
+    self.rowHeight = 30.0;
     self.backgroundColor = [UIColor blackColor];
     self->cellSize_ = CGSizeMake(100.0, 100.0);
     self->tableInsets_ = UIEdgeInsetsMake(10.0, 10.0, 10.0, 10.0);
     self->cellInsets_ = UIEdgeInsetsMake(20.0, 20.0, 20.0, 20.0);
+    self.cellCache = [NSMutableDictionary dictionary];
     [self recalculatePaddedCellSizeAndWidthInCells];
     [self recalculatePaddedSectionHeaderSize];
     return self;
@@ -142,17 +151,36 @@ static ECRelationalTableView *init(ECRelationalTableView *self)
     return CGRectMake(x, y, width, height);
 }
 
+- (UITableViewCell *)cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    // sometimes gets called with nil index path
+    if (!indexPath)
+        return nil;
+    NSRange indexPathRange = NSMakeRange(indexPath.section, indexPath.row);
+    UITableViewCell *cell = nil;
+    cell = [self.cellCache objectForKey:[NSValue valueWithRange:indexPathRange]];
+    if (!cell)
+    {
+        if ([self.dataSource respondsToSelector:@selector(tableView:cellForRowAtIndexPath:)])
+            cell = [self.dataSource tableView:self cellForRowAtIndexPath:indexPath];
+        if (cell)
+            [self.cellCache setObject:cell forKey:[NSValue valueWithRange:indexPathRange]];
+    }
+    return cell;
+}
+
 - (void)layoutSubviews
 {
 //    [super layoutSubviews];
-    for (NSInteger i = 0; i < [self numberOfSections]; ++i)
+    NSInteger numSections = [self numberOfSections];
+    for (NSInteger i = 0; i < numSections; ++i)
     {
-        UIView *header;
+        UIView *header = nil;
         if ([self.delegate respondsToSelector:@selector(tableView:viewForHeaderInSection:)])
             header = [self.delegate tableView:self viewForHeaderInSection:i];
         else if ([self.dataSource respondsToSelector:@selector(tableView:titleForHeaderInSection:)])
         {
-            header = [[UILabel alloc] init];
+            header = [[[UILabel alloc] init] autorelease];
             ((UILabel *)header).text = [self.dataSource tableView:self titleForHeaderInSection:i];
         }
         if (![header superview])
@@ -172,7 +200,8 @@ static ECRelationalTableView *init(ECRelationalTableView *self)
             cell.frame = [self rectForRowAtIndexPath:rowIndexPath];
         }
     }
-//    self.contentSize = CGSizeMake(maxX + self.tableInsets.right, currentY + self.tableInsets.bottom);
+    CGRect lastSectionFrame = [self rectForSection:numSections - 1];
+    self.contentSize = CGSizeMake(self.bounds.size.width, lastSectionFrame.origin.y + lastSectionFrame.size.height + self.tableInsets.bottom);
 }
 
 @end

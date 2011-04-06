@@ -113,7 +113,7 @@
     if (!file)
     {
         file = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"File"] autorelease];
-        UILabel *label = [[UILabel alloc] init];
+        UILabel *label = [[[UILabel alloc] init] autorelease];
         label.tag = 1;
         [file.contentView addSubview:label];
         label.frame = file.contentView.bounds;
