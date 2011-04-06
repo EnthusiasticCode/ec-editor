@@ -128,4 +128,12 @@
     [self.delegate fileBrowser:self didSelectFileAtPath:absoluteFilePath];
 }
 
+- (NSInteger)tableView:(UITableView *)tableView indentationLevelForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    NSString *subfolder = [self tableView:nil titleForHeaderInSection:indexPath.section];
+    NSString *file = [[self filesInSubfolder:subfolder] objectAtIndex:indexPath.row];
+    NSString *absoluteFilePath = [[self.folder stringByAppendingPathComponent:subfolder] stringByAppendingPathComponent:file];
+    return ([[absoluteFilePath pathExtension] isEqualToString:@"h"]) ? 0 : 1;
+}
+
 @end

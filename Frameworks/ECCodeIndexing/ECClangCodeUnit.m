@@ -201,7 +201,7 @@ static ECCodeDiagnostic *diagnosticFromClangDiagnostic(CXDiagnostic clangDiagnos
     clang_disposeString(clangCategory);
     unsigned numRanges = clang_getDiagnosticNumRanges(clangDiagnostic);
     NSMutableArray *ranges = [NSMutableArray arrayWithCapacity:numRanges];
-    for (unsigned i = 0; i < numRanges; i++)
+    for (unsigned i = 0; i < numRanges; ++i)
     {
         NSRange range;
         rangeAndFileFromClangSourceRange(clang_getDiagnosticRange(clangDiagnostic, i), &range, NULL);
@@ -209,7 +209,7 @@ static ECCodeDiagnostic *diagnosticFromClangDiagnostic(CXDiagnostic clangDiagnos
     }
     unsigned numFixIts = clang_getDiagnosticNumFixIts(clangDiagnostic);
     NSMutableArray *fixIts = [NSMutableArray arrayWithCapacity:numFixIts];
-    for (unsigned i = 0; i < numFixIts; i++)
+    for (unsigned i = 0; i < numFixIts; ++i)
         [fixIts addObject:fixItFromClangDiagnostic(clangDiagnostic, i)];
     
     return [ECCodeDiagnostic diagnosticWithSeverity:severity file:file offset:offset spelling:spelling category:category sourceRanges:ranges fixIts:fixIts];
@@ -227,7 +227,7 @@ static ECCodeCompletionString *completionStringFromClangCompletionString(CXCompl
 {
     unsigned numChunks = clang_getNumCompletionChunks(clangCompletionString);
     NSMutableArray *chunks = [NSMutableArray arrayWithCapacity:numChunks];
-    for (unsigned i = 0; i < numChunks; i++)
+    for (unsigned i = 0; i < numChunks; ++i)
         [chunks addObject:chunkFromClangCompletionString(clangCompletionString, i)];
     return [ECCodeCompletionString stringWithCompletionChunks:chunks];
 }
@@ -299,7 +299,7 @@ static ECCodeCompletionResult *completionResultFromClangCompletionResult(CXCompl
     clang_getInstantiationLocation(selectionLocation, NULL, &line, &column, NULL);
     CXCodeCompleteResults *clangCompletions = clang_codeCompleteAt(self.translationUnit, [self.file fileSystemRepresentation], line, column, NULL, 0, clang_defaultCodeCompleteOptions());
     NSMutableArray *completions = [[[NSMutableArray alloc] init] autorelease];
-    for (unsigned i = 0; i < clangCompletions->NumResults; i++)
+    for (unsigned i = 0; i < clangCompletions->NumResults; ++i)
         [completions addObject:completionResultFromClangCompletionResult(clangCompletions->Results[i]).completionString];
     clang_disposeCodeCompleteResults(clangCompletions);
     return completions;
@@ -311,7 +311,7 @@ static ECCodeCompletionResult *completionResultFromClangCompletionResult(CXCompl
         return nil;
     unsigned numDiagnostics = clang_getNumDiagnostics(self.translationUnit);
     NSMutableArray *diagnostics = [NSMutableArray arrayWithCapacity:numDiagnostics];
-    for (unsigned i = 0; i < numDiagnostics; i++)
+    for (unsigned i = 0; i < numDiagnostics; ++i)
     {
         CXDiagnostic clangDiagnostic = clang_getDiagnostic(self.translationUnit, i);
         ECCodeDiagnostic *diagnostic = diagnosticFromClangDiagnostic(clangDiagnostic);
@@ -342,7 +342,7 @@ static ECCodeCompletionResult *completionResultFromClangCompletionResult(CXCompl
     CXCursor *clangTokenCursors = malloc(numTokens * sizeof(CXCursor));
     if (attachCursors)
         clang_annotateTokens(self.translationUnit, clangTokens, numTokens, clangTokenCursors);
-    for (unsigned i = 0; i < numTokens; i++)
+    for (unsigned i = 0; i < numTokens; ++i)
     {
         [tokens addObject:tokenFromClangToken(self.translationUnit, clangTokens[i], attachCursors, clangTokenCursors[i])];
     }
