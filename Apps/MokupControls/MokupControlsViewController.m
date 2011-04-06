@@ -15,12 +15,14 @@
 @synthesize aButton;
 @synthesize jumpBar;
 @synthesize imageView;
+@synthesize imageView2;
 
 - (void)dealloc
 {
     [aButton release];
     [jumpBar release];
     [imageView release];
+    [imageView2 release];
     [super dealloc];
 }
 
@@ -43,9 +45,13 @@
     
     jumpBar.delegate = self;
     
-    
+    // Document icon
     imageView.image = [UIImage imageWithSize:imageView.bounds.size block:^(CGContextRef ctx, CGRect rect) {
         [[UIColor blackColor] setFill];
+        
+        CGFloat margin = ceilf(rect.size.width / 20);
+        rect.origin.x += margin;
+        rect.size.width -= margin * 2;
         
         CGFloat line = ceilf(rect.size.height / 7.0);
         CGFloat corner = ceilf(rect.size.height / 4.0);
@@ -82,6 +88,55 @@
         CGContextClosePath(ctx);
         CGContextFillPath(ctx);
     }];
+    
+    imageView2.image = [UIImage imageWithSize:imageView2.bounds.size block:^(CGContextRef ctx, CGRect rect) {
+        [[UIColor blackColor] setFill];
+        
+        CGFloat line = ceilf(rect.size.height / 7.0);
+        CGFloat mid = ceilf(rect.size.height / 2.0);
+        CGFloat midInner = ceilf(rect.size.height / 43);
+        CGFloat midOutter = ceilf(rect.size.height / 32);
+        CGFloat innerLeft = mid - midInner;
+        CGFloat outterLeft = innerLeft - midOutter;
+        CGFloat innerRight = mid + midInner;
+        CGFloat outterRight = innerRight + midOutter;
+        CGFloat topInset = ceilf(rect.size.height / 8.0);
+        
+        CGRect innerRect = CGRectInset(rect, line, line);
+        
+        // Top line
+        CGContextFillRect(ctx, (CGRect) {
+            rect.origin,
+            { innerLeft, line }
+        });
+        CGContextFillRect(ctx, (CGRect) {
+            { rect.origin.x + innerRight, rect.origin.y + topInset },
+            { rect.size.width - innerRight, line }
+        });
+        // Right line
+        CGContextFillRect(ctx, (CGRect) {
+            { innerRect.origin.x + innerRect.size.width, rect.origin.y + topInset + line },
+            { line, innerRect.size.height }
+        });
+        // Left line
+        CGContextFillRect(ctx, (CGRect) {
+            { rect.origin.x, innerRect.origin.y },
+            { line, innerRect.size.height }
+        });
+        // Bottom line
+        CGContextFillRect(ctx, (CGRect) {
+            { rect.origin.x, innerRect.origin.y + innerRect.size.height },
+            { rect.size.width, line }
+        });
+        
+        // Corner (assuming origin at 0,0)
+        CGContextMoveToPoint(ctx, innerLeft, 0);
+        CGContextAddLineToPoint(ctx, outterRight, topInset);
+        CGContextAddLineToPoint(ctx, innerRight, topInset + line);
+        CGContextAddLineToPoint(ctx, outterLeft, line);
+        CGContextClosePath(ctx);
+        CGContextFillPath(ctx);
+    }];
 }
 
 - (void)viewDidUnload
@@ -89,6 +144,7 @@
     [self setAButton:nil];
     [self setJumpBar:nil];
     [self setImageView:nil];
+    [self setImageView2:nil];
     [super viewDidUnload];
 }
 
