@@ -114,11 +114,12 @@
 - (ECRelationalTableViewCell *)relationalTableView:(ECRelationalTableView *)relationalTableView cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
     ECRelationalTableViewCell *file = [[[ECRelationalTableViewCell alloc] init] autorelease];
-//    UILabel *label = [[UILabel alloc] init];
-//    label.text = [[self filesInSubfolder:[self relationalTableView:nil titleForHeaderInArea:indexPath.area]] objectAtIndex:(indexPath.item)];
-//    [file addSubview:label];
-//    label.frame = file.bounds;
-    file.backgroundColor = [UIColor redColor];
+    UILabel *label = [[UILabel alloc] init];
+    label.text = [[self filesInSubfolder:[self relationalTableView:nil titleForHeaderInArea:indexPath.area]] objectAtIndex:(indexPath.item)];
+    [file addSubview:label];
+    label.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    label.frame = file.bounds;
+    label.backgroundColor = [UIColor redColor];
     return file;
 }
 

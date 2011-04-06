@@ -41,6 +41,7 @@
 //        unsigned int defaultShowsHorizontalScrollIndicator:1;
 //        unsigned int defaultShowsVerticalScrollIndicator:1;
 //        unsigned int hideScrollIndicators:1;
+        unsigned int needsLayoutSubviews:1
     } flags_;
 }
 @property (nonatomic, retain) UIScrollView *scrollView;
@@ -242,6 +243,7 @@ static id init(ECRelationalTableView *self)
         }
         [self.areas addObject:levels];
     }
+    flags_.needsLayoutSubviews = YES;
 }
 
 - (NSUInteger)numberOfAreas
@@ -304,11 +306,10 @@ static id init(ECRelationalTableView *self)
     CGRect levelRect = [self rectForLevel:indexPath.level inArea:indexPath.area];
     CGFloat x = levelRect.origin.x + self.cellInsets.left;
     CGFloat y = levelRect.origin.y + self.cellInsets.top;
-    NSUInteger item = indexPath.item / self.contentWidthInCells;
+    NSUInteger row = indexPath.item / self.contentWidthInCells;
     NSUInteger column = indexPath.item % self.contentWidthInCells;
-    x += item * self.paddedCellSize.width;
-    y += column * self.paddedCellSize.height;
-    NSLog(@"Rect for header: %f, %f, %f, %f", x, y, self.paddedCellSize.width, self.paddedCellSize.height);
+    x += column * self.paddedCellSize.width;
+    y += row * self.paddedCellSize.height;
     return (CGRect){ (CGPoint){x, y}, self.cellSize};
 }
 
@@ -319,6 +320,8 @@ static id init(ECRelationalTableView *self)
 
 - (void)layoutSubviews
 {
+    if (!flags_.needsLayoutSubviews)
+        return;
     NSUInteger numAreas = [self numberOfAreas];
     for (NSUInteger i = 0; i < numAreas; ++i)
     {
@@ -349,6 +352,7 @@ static id init(ECRelationalTableView *self)
     }
     CGRect lastAreaFrame = [self rectForArea:numAreas - 1];
     self.scrollView.contentSize = CGSizeMake(self.bounds.size.width, lastAreaFrame.origin.y + lastAreaFrame.size.height + self.tableInsets.bottom);
+    flags_.needsLayoutSubviews = NO;
 }
 
 @end
