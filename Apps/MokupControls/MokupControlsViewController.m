@@ -13,11 +13,13 @@
 @implementation MokupControlsViewController
 @synthesize aButton;
 @synthesize jumpBar;
+@synthesize imageView;
 
 - (void)dealloc
 {
     [aButton release];
     [jumpBar release];
+    [imageView release];
     [super dealloc];
 }
 
@@ -39,12 +41,31 @@
     aButton.arrowSizes = UIEdgeInsetsMake(0, 10, 0, 0);
     
     jumpBar.delegate = self;
+    
+    //
+    CGRect bitmapRect = CGRectMake(0, 0, 100, 100);
+    UIGraphicsBeginImageContext(bitmapRect.size);
+
+    CGContextRef c = UIGraphicsGetCurrentContext();
+    [[UIColor redColor] setFill];
+    CGContextFillEllipseInRect(c, bitmapRect);
+    
+    CGImageRef bitmap = CGBitmapContextCreateImage(c);
+    
+    UIGraphicsEndImageContext();
+    
+    //
+    UIImage *image = [UIImage imageWithCGImage:bitmap];
+    CGImageRelease(bitmap);
+    
+    imageView.image = image;
 }
 
 - (void)viewDidUnload
 {
     [self setAButton:nil];
     [self setJumpBar:nil];
+    [self setImageView:nil];
     [super viewDidUnload];
 }
 

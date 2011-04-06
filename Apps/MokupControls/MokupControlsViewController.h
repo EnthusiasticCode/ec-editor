@@ -14,13 +14,15 @@
 @interface MokupControlsViewController : UIViewController <ECJumpBarDelegate> {
     
     ECJumpBar *jumpBar;
+    UIImageView *imageView;
 }
 
 @property (nonatomic, retain) IBOutlet ECMockupButton *aButton;
 @property (nonatomic, retain) IBOutlet ECJumpBar *jumpBar;
 
-- (IBAction)pushToJumpBar:(id)sender;
+@property (nonatomic, retain) IBOutlet UIImageView *imageView;
 
+- (IBAction)pushToJumpBar:(id)sender;
 - (void)jumpBarButtonAction:(id)sender;
 
 @end

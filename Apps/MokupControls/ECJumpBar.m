@@ -300,6 +300,13 @@ static void init(ECJumpBar *self)
     return [buttonStack objectAtIndex:index];
 }
 
+- (NSString *)titleOfControlAtStackIndex:(NSUInteger)index
+{
+    if (index >= [buttonStack count])
+        return nil;
+    return [[buttonStack objectAtIndex:index] title];
+}
+
 - (void)pushControlWithTitle:(NSString *)title
 {    
     // Generate new button

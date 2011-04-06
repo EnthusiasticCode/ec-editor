@@ -12,14 +12,14 @@
 
 @protocol ECJumpBarDelegate <NSObject>
 
-/// Called whrn a button is pushed to the stack.
+/// Called when a control is pushed to the stack.
 - (void)jumpBar:(ECJumpBar *)jumpBar didPushControl:(UIControl *)control atStackIndex:(NSUInteger)index;
 
 // TODO may need 'will' to actually be able to retrieve the button
-/// Called when a button in the stack is popped. This method is called multiple time if more than one button are popped at once.
+/// Called when a control in the stack is popped. This method is called multiple time if more than one control are popped at once.
 - (void)jumpBar:(ECJumpBar *)jumpBar didPopControl:(UIControl *)control atStackIndex:(NSUInteger)index;
 
-/// Called when there are too many buttons in the jump bar and they collapse.
+/// Called when there are too many controls in the jump bar and they collapse.
 - (void)jumpBar:(ECJumpBar *)jumpBar didCollapseToControl:(UIControl *)control collapsedRange:(NSRange)collapsedRange;
 
 /// Called when the editable search string is changed.
@@ -71,13 +71,16 @@
 /// The maximum width of a button in the bar.
 @property (nonatomic) CGFloat maximumStackButtonWidth;
 
-#pragma mark Handling Button Stack
+#pragma mark Handling Controls Stack
 
 /// The current stack size. This property is read only.
 @property (nonatomic, readonly) NSUInteger stackSize;
 
-/// Get the button at the specified stack index.
+/// Gets the control at the specified stack index.
 - (UIControl *)controlAtStackIndex:(NSUInteger)index;
+
+/// Gets the title of the control at the given stack index.
+- (NSString *)titleOfControlAtStackIndex:(NSUInteger)index;
 
 // TODO add image to be used always or when the button is under a certian dimension.
 /// Push a button into the stack adding it to the bar.
