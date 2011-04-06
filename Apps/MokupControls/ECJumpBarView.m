@@ -173,7 +173,7 @@ static void init(ECJumpBarView *self)
     self.cornerRadius = 3;
     self.borderColor = self.textColor;
     self.borderWidth = 1;
-    self->minimumStackButtonWidth = 30;
+    self->minimumStackButtonWidth = 40;
     self->maximumStackButtonWidth = 160;
     //
     self.layer.masksToBounds = YES;
@@ -264,6 +264,8 @@ static void init(ECJumpBarView *self)
     [button setTitle:title forState:UIControlStateNormal];
     button.titleLabel.font = self.font;
     button.titleLabel.shadowOffset = self.textShadowOffset;
+    button.titleLabel.lineBreakMode = UILineBreakModeTailTruncation;
+    button.titleEdgeInsets = UIEdgeInsetsMake(0, TEXT_PADDING, 0, BUTTON_ARROW_WIDTH + TEXT_PADDING);
     [button setTitleShadowColor:self.textShadowColor forState:UIControlStateNormal];
     [button setTitleColor:self.textColor forState:UIControlStateNormal];
     [button setBackgroundColor:self.buttonColor forState:UIControlStateNormal];
