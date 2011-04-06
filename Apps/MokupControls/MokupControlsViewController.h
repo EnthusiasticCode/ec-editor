@@ -8,20 +8,17 @@
 
 #import <UIKit/UIKit.h>
 #import "ECMockupButton.h"
-#import "ECStackFilterBarController.h"
+#import "ECJumpBarView.h"
 
 
 @interface MokupControlsViewController : UIViewController {
     
-    UITextField *aTextField;
-    ECStackFilterBarController *stackFilterBarController;
-    
+    ECJumpBarView *jumpBar;
 }
 
 @property (nonatomic, retain) IBOutlet ECMockupButton *aButton;
-@property (nonatomic, retain) IBOutlet UITextField *aTextField;
-@property (nonatomic, retain) IBOutlet ECStackFilterBarController *stackFilterBarController;
+@property (nonatomic, retain) IBOutlet ECJumpBarView *jumpBar;
 
-- (IBAction)doSomething:(id)sender;
+- (IBAction)pushToJumpBar:(id)sender;
 
 @end

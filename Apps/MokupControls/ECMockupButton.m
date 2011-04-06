@@ -125,6 +125,12 @@
     [self.layer setNeedsDisplay];
 }
 
+- (void)setFrame:(CGRect)frame
+{
+    [super setFrame:frame];
+    self.arrowSizes = arrowSizes;
+}
+
 - (void)setBounds:(CGRect)bounds
 {
     [super setBounds:bounds];

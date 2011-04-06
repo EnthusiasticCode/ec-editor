@@ -12,14 +12,12 @@
 
 @implementation MokupControlsViewController
 @synthesize aButton;
-@synthesize aTextField;
-@synthesize stackFilterBarController;
+@synthesize jumpBar;
 
 - (void)dealloc
 {
     [aButton release];
-    [aTextField release];
-    [stackFilterBarController release];
+    [jumpBar release];
     [super dealloc];
 }
 
@@ -37,63 +35,16 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
-//    UIColor *darkColor = [UIColor colorWithHue:0 saturation:0 brightness:0.01 alpha:1];
-    UIColor *shadowColor = [UIColor colorWithHue:0 saturation:0 brightness:0.8 alpha:0.3];
-//    CGFontRef font = CGFontCreateWithFontName((CFStringRef)@"Helvetica-Bold");
-    
-//    CALayer *testLayer = [CALayer layer];
-//    testLayer.frame = CGRectMake(50, 50, 100, 100);
-//    testLayer.masksToBounds = YES;
-//    testLayer.opaque = NO;
-//    testLayer.cornerRadius = 3;
-//    testLayer.borderWidth = 1;
-//    testLayer.borderColor = darkColor.CGColor;
-//    
-//    CATextLayer *testText = [CATextLayer layer];
-//    testText.frame = CGRectMake(50, 90, 100, 100);
-//    testText.alignmentMode = kCAAlignmentCenter;
-//    testText.string = @"Button";
-//    testText.foregroundColor = darkColor.CGColor;
-//    testText.font = font;
-//    testText.fontSize = 16;
-//    testText.shadowColor = shadowColor.CGColor;
-//    testText.shadowOffset = CGSizeMake(0, 1);
-//    testText.shadowOpacity = 1;
-//    testText.shadowRadius = 0;
-//    
-//    [self.view.layer addSublayer:testLayer];
-//    [self.view.layer addSublayer:testText];
-    
-//    ECMockupLayer *mLayer = [ECMockupLayer layer];
-//    mLayer.rightArrowSize = 10;
-//    mLayer.cornerRadius = 3;
-//    mLayer.borderColor = darkColor.CGColor;
-//    mLayer.frame = CGRectMake(100, 8, 79, 29);
-//    mLayer.borderWidth = 1;
-//    [self.view.layer addSublayer:mLayer];
-//    [mLayer setNeedsDisplay];
-    
+
     aButton.arrowSizes = UIEdgeInsetsMake(0, 10, 0, 0);
     
-//    aTextField.layer.cornerRadius = 3;
-//    aTextField.layer.borderColor = darkColor.CGColor;
-//    aTextField.layer.borderWidth = 1;
-    
-    aTextField.layer.shadowColor = shadowColor.CGColor;
-    aTextField.layer.shadowOffset = CGSizeMake(0, 1);
-    aTextField.layer.shadowRadius = 0;
-    aTextField.layer.shadowOpacity = 1;
 }
 
 - (void)viewDidUnload
 {
     [self setAButton:nil];
-    [self setATextField:nil];
-    [self setStackFilterBarController:nil];
+    [self setJumpBar:nil];
     [super viewDidUnload];
-    // Release any retained subviews of the main view.
-    // e.g. self.myOutlet = nil;
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
@@ -102,9 +53,7 @@
     return YES;
 }
 
-- (IBAction)doSomething:(id)sender {
-//    [sender setSelected:![sender isSelected]];
-    [stackFilterBarController pushStateButtonWithDescription:@"Prova"];
+- (IBAction)pushToJumpBar:(id)sender {
+    [jumpBar pushButtonWithTitle:@"Project"];
 }
-
 @end
