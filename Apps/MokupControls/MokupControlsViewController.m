@@ -44,9 +44,43 @@
     jumpBar.delegate = self;
     
     
-    imageView.image = [UIImage imageWithSize:(CGSize){ 100, 100 } block:^(CGContextRef ctx, CGRect rect) {
-        [[UIColor redColor] setFill];
-        CGContextFillEllipseInRect(ctx, rect);
+    imageView.image = [UIImage imageWithSize:imageView.bounds.size block:^(CGContextRef ctx, CGRect rect) {
+        [[UIColor blackColor] setFill];
+        
+        CGFloat line = ceilf(rect.size.height / 7.0);
+        CGFloat corner = ceilf(rect.size.height / 4.0);
+        CGRect innerRect = CGRectInset(rect, line, line);
+        
+        // Top line
+        CGContextFillRect(ctx, (CGRect){ 
+            rect.origin, 
+            { rect.size.width - corner, line } 
+        });
+        // Left line
+        CGContextFillRect(ctx, (CGRect){ 
+            { rect.origin.x, innerRect.origin. y }, 
+            { line, rect.size.height } 
+        });
+        // Right line
+        CGContextFillRect(ctx, (CGRect){ 
+            { innerRect.origin.x + innerRect.size.width, rect.origin.y + corner }, 
+            { line, rect.size.height - corner } 
+        });
+        // Bottom line
+        CGContextFillRect(ctx, (CGRect){ 
+            { innerRect.origin.x, innerRect.origin.y + innerRect.size.height }, 
+            { innerRect.size.width, line } 
+        });
+        
+        
+        // Corner
+        CGFloat innerCorner = ceilf(corner * 1.3);
+        CGContextMoveToPoint(ctx, rect.origin.x + rect.size.width - corner, rect.origin.y);
+        CGContextAddLineToPoint(ctx, rect.origin.x + rect.size.width, rect.origin.y + corner);
+        CGContextAddLineToPoint(ctx, innerRect.origin.x + innerRect.size.width, rect.origin.y + innerCorner);
+        CGContextAddLineToPoint(ctx, rect.origin.x + rect.size.width - innerCorner, rect.origin.y + line);
+        CGContextClosePath(ctx);
+        CGContextFillPath(ctx);
     }];
 }
 
