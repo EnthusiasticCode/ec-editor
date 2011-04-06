@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		CD2B2A24134B7944006C5648 /* ECStackFilterBarController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD2B2A23134B7944006C5648 /* ECStackFilterBarController.m */; };
 		CD2B2A28134BB615006C5648 /* ECJumpBar.m in Sources */ = {isa = PBXBuildFile; fileRef = CD2B2A27134BB615006C5648 /* ECJumpBar.m */; };
+		CD36F9BA134CCCF000E9ECEE /* UIImage+BlockDrawing.m in Sources */ = {isa = PBXBuildFile; fileRef = CD36F9B9134CCCF000E9ECEE /* UIImage+BlockDrawing.m */; };
 		CD7CC5E21349D7E300870E13 /* ECMockupButton.m in Sources */ = {isa = PBXBuildFile; fileRef = CD7CC5E11349D7E300870E13 /* ECMockupButton.m */; };
 		CDACD8A81349C57B0055B7F3 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CDACD8A71349C57B0055B7F3 /* QuartzCore.framework */; };
 		CDC501AC134B2A94006CCBD7 /* ECMockupLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = CDC501AB134B2A94006CCBD7 /* ECMockupLayer.m */; };
@@ -27,6 +28,8 @@
 		CD2B2A23134B7944006C5648 /* ECStackFilterBarController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECStackFilterBarController.m; sourceTree = "<group>"; };
 		CD2B2A26134BB615006C5648 /* ECJumpBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECJumpBar.h; sourceTree = "<group>"; };
 		CD2B2A27134BB615006C5648 /* ECJumpBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECJumpBar.m; sourceTree = "<group>"; };
+		CD36F9B8134CCCF000E9ECEE /* UIImage+BlockDrawing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+BlockDrawing.h"; sourceTree = "<group>"; };
+		CD36F9B9134CCCF000E9ECEE /* UIImage+BlockDrawing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+BlockDrawing.m"; sourceTree = "<group>"; };
 		CD7CC5E01349D7E300870E13 /* ECMockupButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECMockupButton.h; sourceTree = "<group>"; };
 		CD7CC5E11349D7E300870E13 /* ECMockupButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECMockupButton.m; sourceTree = "<group>"; };
 		CDACD8A71349C57B0055B7F3 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
@@ -105,6 +108,8 @@
 				CD2B2A23134B7944006C5648 /* ECStackFilterBarController.m */,
 				CD2B2A26134BB615006C5648 /* ECJumpBar.h */,
 				CD2B2A27134BB615006C5648 /* ECJumpBar.m */,
+				CD36F9B8134CCCF000E9ECEE /* UIImage+BlockDrawing.h */,
+				CD36F9B9134CCCF000E9ECEE /* UIImage+BlockDrawing.m */,
 			);
 			path = MokupControls;
 			sourceTree = "<group>";
@@ -186,6 +191,7 @@
 				CDC501AC134B2A94006CCBD7 /* ECMockupLayer.m in Sources */,
 				CD2B2A24134B7944006C5648 /* ECStackFilterBarController.m in Sources */,
 				CD2B2A28134BB615006C5648 /* ECJumpBar.m in Sources */,
+				CD36F9BA134CCCF000E9ECEE /* UIImage+BlockDrawing.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -9,6 +9,7 @@
 #import "MokupControlsViewController.h"
 #import <QuartzCore/QuartzCore.h>
 #import "ECMockupLayer.h"
+#import "UIImage+BlockDrawing.h"
 
 @implementation MokupControlsViewController
 @synthesize aButton;
@@ -42,23 +43,11 @@
     
     jumpBar.delegate = self;
     
-    //
-    CGRect bitmapRect = CGRectMake(0, 0, 100, 100);
-    UIGraphicsBeginImageContext(bitmapRect.size);
-
-    CGContextRef c = UIGraphicsGetCurrentContext();
-    [[UIColor redColor] setFill];
-    CGContextFillEllipseInRect(c, bitmapRect);
     
-    CGImageRef bitmap = CGBitmapContextCreateImage(c);
-    
-    UIGraphicsEndImageContext();
-    
-    //
-    UIImage *image = [UIImage imageWithCGImage:bitmap];
-    CGImageRelease(bitmap);
-    
-    imageView.image = image;
+    imageView.image = [UIImage imageWithSize:(CGSize){ 100, 100 } block:^(CGContextRef ctx, CGRect rect) {
+        [[UIColor redColor] setFill];
+        CGContextFillEllipseInRect(ctx, rect);
+    }];
 }
 
 - (void)viewDidUnload
