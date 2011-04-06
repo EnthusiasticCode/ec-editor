@@ -55,18 +55,23 @@
 }
 
 - (IBAction)pushToJumpBar:(id)sender {
-    [jumpBar pushButtonWithTitle:[NSString stringWithFormat:@"%dProject", jumpBar.stackSize]];
+    [jumpBar pushControlWithTitle:[NSString stringWithFormat:@"%dProject", jumpBar.stackSize]];
 }
 
 #pragma mark Jump Bar Delegation
 
 - (void)jumpBarButtonAction:(id)sender
 {
-    [jumpBar popButtonsDownThruIndex:[sender tag]];
+    [jumpBar popControlsDownThruIndex:[sender tag]];
 }
 
-- (void)jumpBar:(ECJumpBar *)jumpBar didPushButton:(UIControl *)button atStackIndex:(NSUInteger)index
+- (void)jumpBar:(ECJumpBar *)jumpBar didPushControl:(UIControl *)control atStackIndex:(NSUInteger)index
 {
-    [button addTarget:self action:@selector(jumpBarButtonAction:) forControlEvents:UIControlEventTouchUpInside];
+    [control addTarget:self action:@selector(jumpBarButtonAction:) forControlEvents:UIControlEventTouchUpInside];
+}
+
+- (void)jumpBar:(ECJumpBar *)jumpBar didCollapseToControl:(UIControl *)control collapsedRange:(NSRange)collapsedRange
+{
+
 }
 @end

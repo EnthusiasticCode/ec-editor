@@ -21,16 +21,14 @@
     UIControl *collapsedButton;
     NSRange collapsedRange;
     
-    BOOL delegateHasDidPushButtonAtStackIndex;
-    BOOL delegateHasDidPopButtonAtStackIndex;
-    BOOL delegateHasDidCollapseToButtonCollapsedRange;
+    BOOL delegateHasDidPushControlAtStackIndex;
+    BOOL delegateHasDidPopControlAtStackIndex;
+    BOOL delegateHasDidCollapseToControlCollapsedRange;
     BOOL delegateHasChangedSearchStringTo;
 }
 
 - (void)collapseButtonStackToFitButtonCount:(NSUInteger)maxCount;
 - (void)searchFieldAction:(id)sender;
-
-- (UIControl *)createStackButtonWithTitle:(NSString *)title;
 
 @end
 
@@ -56,9 +54,9 @@
 - (void)setDelegate:(id<ECJumpBarDelegate>)aDelegate
 {
     delegate = aDelegate;
-    delegateHasDidPushButtonAtStackIndex = [delegate respondsToSelector:@selector(jumpBar:didPushButton:atStackIndex:)];
-    delegateHasDidPopButtonAtStackIndex = [delegate respondsToSelector:@selector(jumpBar:didPopButton:atStackIndex:)];
-    delegateHasDidCollapseToButtonCollapsedRange = [delegate respondsToSelector:@selector(jumpBar:didCollapseToButton:collapsedRange:)];
+    delegateHasDidPushControlAtStackIndex = [delegate respondsToSelector:@selector(jumpBar:didPushControl:atStackIndex:)];
+    delegateHasDidPopControlAtStackIndex = [delegate respondsToSelector:@selector(jumpBar:didPopControl:atStackIndex:)];
+    delegateHasDidCollapseToControlCollapsedRange = [delegate respondsToSelector:@selector(jumpBar:didCollapseToControl:collapsedRange:)];
     delegateHasChangedSearchStringTo = [delegate respondsToSelector:@selector(jumpBar:changedSearchStringTo:)];
 }
 
@@ -295,17 +293,17 @@ static void init(ECJumpBar *self)
 #pragma mark -
 #pragma mark Public Methods
 
-- (UIControl *)buttonAtStackIndex:(NSUInteger)index
+- (UIControl *)controlAtStackIndex:(NSUInteger)index
 {
     if (index >= [buttonStack count])
         return nil;
     return [buttonStack objectAtIndex:index];
 }
 
-- (void)pushButtonWithTitle:(NSString *)title
+- (void)pushControlWithTitle:(NSString *)title
 {    
     // Generate new button
-    UIControl *button = [self createStackButtonWithTitle:title];
+    UIControl *button = [self createStackControlWithTitle:title];
     
     NSUInteger index = [buttonStack count];
     button.tag = index;
@@ -326,26 +324,26 @@ static void init(ECJumpBar *self)
     [buttonStack addObject:button];
     
     // Informing delegate
-    if (delegateHasDidPushButtonAtStackIndex)
+    if (delegateHasDidPushControlAtStackIndex)
     {
-        [delegate jumpBar:self didPushButton:button atStackIndex:index];
+        [delegate jumpBar:self didPushControl:button atStackIndex:index];
     }
     
     [self setNeedsLayout];
 }
 
-- (void)popButton
+- (void)popControl
 {
     UIControl *button = (UIControl *)[buttonStack lastObject];
     if (button) 
     {
         button.hidden = YES;
         [button removeFromSuperview];
-        if (delegateHasDidPopButtonAtStackIndex) 
+        if (delegateHasDidPopControlAtStackIndex) 
         {
             NSUInteger index = [buttonStack indexOfObject:button];
             [buttonStack removeObjectAtIndex:index];
-            [delegate jumpBar:self didPopButton:button atStackIndex:index];
+            [delegate jumpBar:self didPopControl:button atStackIndex:index];
         }
         else 
         {
@@ -354,21 +352,21 @@ static void init(ECJumpBar *self)
     }
 }
 
-- (void)popButtonsDownThruIndex:(NSUInteger)index
+- (void)popControlsDownThruIndex:(NSUInteger)index
 {
     NSUInteger count = [buttonStack count];
     if (count && count > index) 
     {
         count -= index;
         while (count--)
-            [self popButton];
+            [self popControl];
     }
 }
 
 #pragma mark -
 #pragma mark Private Methods
 
-- (UIControl *)createStackButtonWithTitle:(NSString *)title
+- (UIControl *)createStackControlWithTitle:(NSString *)title
 {
     ECMockupButton *button = [ECMockupButton buttonWithType:UIButtonTypeCustom];
     button.autoresizingMask = UIViewAutoresizingFlexibleHeight;
@@ -400,7 +398,7 @@ static void init(ECJumpBar *self)
     }
     
     if (!collapsedButton)
-        collapsedButton = [[self createStackButtonWithTitle:@"..."] retain];
+        collapsedButton = [[self createStackControlWithTitle:@"..."] retain];
     
     NSRange collapse;
     collapse.location = maxCount / 2 - 1;
@@ -411,9 +409,9 @@ static void init(ECJumpBar *self)
     collapsedRange = collapse;
     collapsedButton.tag = collapsedRange.location + collapsedRange.length;
     
-    if (delegateHasDidCollapseToButtonCollapsedRange) 
+    if (delegateHasDidCollapseToControlCollapsedRange) 
     {
-        [delegate jumpBar:self didCollapseToButton:collapsedButton collapsedRange:collapsedRange];
+        [delegate jumpBar:self didCollapseToControl:collapsedButton collapsedRange:collapsedRange];
     }
 }
 
