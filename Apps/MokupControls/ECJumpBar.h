@@ -12,12 +12,15 @@
 
 @protocol ECJumpBarDelegate <NSObject>
 
+/// Called whrn a button is pushed to the stack.
+- (void)jumpBar:(ECJumpBar *)jumpBar didPushButton:(UIControl *)button atStackIndex:(NSUInteger)index;
+
 // TODO may need 'will' to actually be able to retrieve the button
 /// Called when a button in the stack is popped. This method is called multiple time if more than one button are popped at once.
-- (void)jumpBar:(ECJumpBar *)jumpBar didPopButtonAtStackIndex:(NSUInteger)index;
+- (void)jumpBar:(ECJumpBar *)jumpBar didPopButton:(UIControl *)button atStackIndex:(NSUInteger)index;
 
 /// Called when there are too many buttons in the jump bar and they collapse.
-- (void)jumpBar:(ECJumpBar *)jumpBar didCollapseFromIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex;
+- (void)jumpBar:(ECJumpBar *)jumpBar didCollapseToButton:(UIControl *)button fromIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex;
 
 /// Called when the editable search string is changed.
 - (void)jumpBar:(ECJumpBar *)jumpBar changedSearchStringTo:(NSString *)searchString;
@@ -77,11 +80,11 @@
 @property (nonatomic, readonly) NSUInteger stackSize;
 
 /// Get the button at the specified stack index.
-- (UIButton *)buttonAtStackIndex:(NSUInteger)index;
+- (UIControl *)buttonAtStackIndex:(NSUInteger)index;
 
 // TODO add image to be used always or when the button is under a certian dimension.
 /// Push a button into the stack adding it to the bar.
-- (UIButton *)pushButtonWithTitle:(NSString *)title;
+- (void)pushButtonWithTitle:(NSString *)title;
 
 /// Pop the last inserted button from the stack, removing it from the bar.
 - (void)popButton;

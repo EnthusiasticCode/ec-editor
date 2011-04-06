@@ -18,10 +18,14 @@
     NSMutableArray *buttonStack;
     UITextField *searchField;
     
-    BOOL delegateHasTapAtStackIndex;
+    BOOL delegateHasDidPushButtonAtStackIndex;
     BOOL delegateHasDidPopButtonAtStackIndex;
+    BOOL delegateHasDidCollapseToButtonFromIndexToIndex;
     BOOL delegateHasChangedSearchStringTo;
 }
+
+- (void)searchFieldAction:(id)sender;
+
 @end
 
 @implementation ECJumpBar
@@ -47,7 +51,9 @@
 - (void)setDelegate:(id<ECJumpBarDelegate>)aDelegate
 {
     delegate = aDelegate;
-    delegateHasDidPopButtonAtStackIndex = [delegate respondsToSelector:@selector(jumpBar:didPopButtonAtStackIndex:)];
+    delegateHasDidPushButtonAtStackIndex = [delegate respondsToSelector:@selector(jumpBar:didPushButton:atStackIndex:)];
+    delegateHasDidPopButtonAtStackIndex = [delegate respondsToSelector:@selector(jumpBar:didPopButton:atStackIndex:)];
+    delegateHasDidCollapseToButtonFromIndexToIndex = [delegate respondsToSelector:@selector(jumpBar:didCollapseToButton:fromIndex:toIndex:)];
     delegateHasChangedSearchStringTo = [delegate respondsToSelector:@selector(jumpBar:changedSearchStringTo:)];
 }
 
@@ -159,6 +165,7 @@ static void init(ECJumpBar *self)
     self->searchField.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
     self->searchField.borderStyle = UITextBorderStyleNone;
     self->searchField.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    [self->searchField addTarget:self action:@selector(searchFieldAction:) forControlEvents:UIControlEventEditingChanged];
     self.minimumSearchFieldWidth = 0.2;
     [self addSubview:self->searchField];
     [self->searchField release];
@@ -250,14 +257,14 @@ static void init(ECJumpBar *self)
 #pragma mark -
 #pragma mark Public Methods
 
-- (UIButton *)buttonAtStackIndex:(NSUInteger)index
+- (UIControl *)buttonAtStackIndex:(NSUInteger)index
 {
     if (index >= [buttonStack count])
         return nil;
     return [buttonStack objectAtIndex:index];
 }
 
-- (UIButton *)pushButtonWithTitle:(NSString *)title
+- (void)pushButtonWithTitle:(NSString *)title
 {    
     // Generate new button
     ECMockupButton *button = [ECMockupButton buttonWithType:UIButtonTypeCustom];
@@ -271,7 +278,9 @@ static void init(ECJumpBar *self)
     [button setBackgroundColor:self.buttonColor forState:UIControlStateNormal];
     [button setBackgroundColor:self.buttonHighlightColor forState:UIControlStateHighlighted];
     button.arrowSizes = UIEdgeInsetsMake(0, 0, 0, BUTTON_ARROW_WIDTH);
-    button.tag = [buttonStack count];
+    
+    NSUInteger index = [buttonStack count];
+    button.tag = index;
     
     // Add button to view
     if ([buttonStack count])
@@ -290,9 +299,13 @@ static void init(ECJumpBar *self)
         buttonStack = [[NSMutableArray alloc] initWithCapacity:maximumButtonStackSize];
     [buttonStack addObject:button];
     
-    [self setNeedsLayout];
+    // Informing delegate
+    if (delegateHasDidPushButtonAtStackIndex)
+    {
+        [delegate jumpBar:self didPushButton:button atStackIndex:index];
+    }
     
-    return button;
+    [self setNeedsLayout];
 }
 
 - (void)popButton
@@ -306,7 +319,7 @@ static void init(ECJumpBar *self)
         {
             NSUInteger index = [buttonStack indexOfObject:button];
             [buttonStack removeObjectAtIndex:index];
-            [delegate jumpBar:self didPopButtonAtStackIndex:index];
+            [delegate jumpBar:self didPopButton:button atStackIndex:index];
         }
         else 
         {
@@ -323,6 +336,17 @@ static void init(ECJumpBar *self)
         count -= index;
         while (count--)
             [self popButton];
+    }
+}
+
+#pragma mark -
+#pragma mark Private Methods
+
+- (void)searchFieldAction:(id)sender
+{
+    if (delegateHasChangedSearchStringTo) 
+    {
+        [delegate jumpBar:self changedSearchStringTo:[sender text]];
     }
 }
 
