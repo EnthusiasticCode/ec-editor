@@ -11,7 +11,7 @@
 #import "ECJumpBar.h"
 
 
-@interface MokupControlsViewController : UIViewController {
+@interface MokupControlsViewController : UIViewController <ECJumpBarDelegate> {
     
     ECJumpBar *jumpBar;
 }
@@ -20,5 +20,7 @@
 @property (nonatomic, retain) IBOutlet ECJumpBar *jumpBar;
 
 - (IBAction)pushToJumpBar:(id)sender;
+
+- (void)jumpBarButtonAction:(id)sender;
 
 @end

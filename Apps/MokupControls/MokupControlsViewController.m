@@ -38,6 +38,7 @@
 
     aButton.arrowSizes = UIEdgeInsetsMake(0, 10, 0, 0);
     
+    jumpBar.delegate = self;
 }
 
 - (void)viewDidUnload
@@ -55,5 +56,17 @@
 
 - (IBAction)pushToJumpBar:(id)sender {
     [jumpBar pushButtonWithTitle:[NSString stringWithFormat:@"%dProject", jumpBar.stackSize]];
+}
+
+#pragma mark Jump Bar Delegation
+
+- (void)jumpBarButtonAction:(id)sender
+{
+    [jumpBar popButtonsDownThruIndex:[sender tag]];
+}
+
+- (void)jumpBar:(ECJumpBar *)jumpBar didPushButton:(UIControl *)button atStackIndex:(NSUInteger)index
+{
+    [button addTarget:self action:@selector(jumpBarButtonAction:) forControlEvents:UIControlEventTouchUpInside];
 }
 @end

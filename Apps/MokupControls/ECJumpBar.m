@@ -265,6 +265,7 @@ static void init(ECJumpBar *self)
         {
             // Layout collapse button
             [self insertSubview:collapsedButton aboveSubview:button];
+            collapsedButton.hidden = NO;
             collapsedButton.frame = (CGRect){ origin, buttonSize };
             origin.x += diff;
             button.hidden = YES;
@@ -394,7 +395,7 @@ static void init(ECJumpBar *self)
     {
         collapsedRange.length = collapsedRange.location = 0;
         if (collapsedButton)
-            [collapsedButton removeFromSuperview];
+            collapsedButton.hidden = YES;
         return;
     }
     
@@ -408,6 +409,8 @@ static void init(ECJumpBar *self)
         return;
     
     collapsedRange = collapse;
+    collapsedButton.tag = collapsedRange.location + collapsedRange.length;
+    
     if (delegateHasDidCollapseToButtonCollapsedRange) 
     {
         [delegate jumpBar:self didCollapseToButton:collapsedButton collapsedRange:collapsedRange];
