@@ -13,14 +13,14 @@
 @protocol ECJumpBarDelegate <NSObject>
 
 /// Called when the user tap a button in the button stack.
-- (void)jumpBarView:(ECJumpBar *)jumpBarView tapAtStackIndex:(NSUInteger)index;
+- (void)jumpBar:(ECJumpBar *)jumpBar tapAtStackIndex:(NSUInteger)index;
 
 // TODO may need 'will' to actually be able to retrieve the button
 /// Called when a button in the stack is popped. This method is called multiple time if more than one button are popped at once.
-- (void)jumpBarView:(ECJumpBar *)jumpBarView didPopButtonAtStackIndex:(NSUInteger)index;
+- (void)jumpBar:(ECJumpBar *)jumpBar didPopButtonAtStackIndex:(NSUInteger)index;
 
 /// Called when the editable search string is changed.
-- (void)jumpBarView:(ECJumpBar *)jumpBarView changedSearchStringTo:(NSString *)searchString;
+- (void)jumpBar:(ECJumpBar *)jumpBar changedSearchStringTo:(NSString *)searchString;
 
 @end
 

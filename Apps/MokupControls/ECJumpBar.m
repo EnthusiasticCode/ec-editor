@@ -47,9 +47,9 @@
 - (void)setDelegate:(id<ECJumpBarDelegate>)aDelegate
 {
     delegate = aDelegate;
-    delegateHasTapAtStackIndex = [delegate respondsToSelector:@selector(jumpBarView:tapAtStackIndex:)];
-    delegateHasDidPopButtonAtStackIndex = [delegate respondsToSelector:@selector(jumpBarView:didPopButtonAtStackIndex:)];
-    delegateHasChangedSearchStringTo = [delegate respondsToSelector:@selector(jumpBarView:changedSearchStringTo:)];
+    delegateHasTapAtStackIndex = [delegate respondsToSelector:@selector(jumpBar:tapAtStackIndex:)];
+    delegateHasDidPopButtonAtStackIndex = [delegate respondsToSelector:@selector(jumpBar:didPopButtonAtStackIndex:)];
+    delegateHasChangedSearchStringTo = [delegate respondsToSelector:@selector(jumpBar:changedSearchStringTo:)];
 }
 
 - (void)setCornerRadius:(CGFloat)radius
@@ -142,7 +142,7 @@
 {
     searchField.text = aString;
     if (delegateHasChangedSearchStringTo)
-        [delegate jumpBarView:self changedSearchStringTo:aString];
+        [delegate jumpBar:self changedSearchStringTo:aString];
 }
 
 - (NSString *)searchString
@@ -301,7 +301,7 @@ static void init(ECJumpBar *self)
         {
             NSUInteger index = [buttonStack indexOfObject:button];
             [buttonStack removeObjectAtIndex:index];
-            [delegate jumpBarView:self didPopButtonAtStackIndex:index];
+            [delegate jumpBar:self didPopButtonAtStackIndex:index];
         }
         else 
         {
