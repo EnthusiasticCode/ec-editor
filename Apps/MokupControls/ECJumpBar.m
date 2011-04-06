@@ -224,19 +224,19 @@ static void init(ECJumpBar *self)
     
     // Calculte button size
     CGSize buttonSize = size;
-    buttonSize.width = maxTotWidth / [buttonStack count];
+    buttonSize.width = (maxTotWidth - BUTTON_ARROW_WIDTH - TEXT_PADDING) / [buttonStack count];
     if (buttonSize.width < minimumStackButtonWidth)
         buttonSize.width = minimumStackButtonWidth;
     else if (buttonSize.width > maximumStackButtonWidth)
         buttonSize.width = maximumStackButtonWidth;
-    buttonSize.width = ceilf(buttonSize.width);
+    buttonSize.width = ceilf(buttonSize.width) + BUTTON_ARROW_WIDTH + TEXT_PADDING;
     
     // Layout buttons
+    CGFloat diff = buttonSize.width - BUTTON_ARROW_WIDTH - TEXT_PADDING;
     for (UIControl *button in buttonStack) 
     {
         button.frame = (CGRect){ origin, buttonSize };
-        origin.x += buttonSize.width - BUTTON_ARROW_WIDTH - TEXT_PADDING;
-        size.width -= buttonSize.width;
+        origin.x += diff;
     }
     
     // Layout search field
@@ -271,6 +271,7 @@ static void init(ECJumpBar *self)
     [button setBackgroundColor:self.buttonColor forState:UIControlStateNormal];
     [button setBackgroundColor:self.buttonHighlightColor forState:UIControlStateHighlighted];
     button.arrowSizes = UIEdgeInsetsMake(0, 0, 0, BUTTON_ARROW_WIDTH);
+    button.tag = [buttonStack count];
     
     // Add button to view
     if ([buttonStack count])
