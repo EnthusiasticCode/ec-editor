@@ -185,7 +185,7 @@ static void init(ECJumpBar *self)
     self.cornerRadius = 3;
     self.borderColor = self.textColor;
     self.borderWidth = 1;
-    self->minimumStackButtonWidth = 80;
+    self->minimumStackButtonWidth = 50;
     self->maximumStackButtonWidth = 160;
     //
     self.layer.masksToBounds = YES;
@@ -241,7 +241,10 @@ static void init(ECJumpBar *self)
     // Calculte button size
     NSUInteger buttonStackCount = [buttonStack count];
     CGSize buttonSize = size;
-    buttonSize.width = maxTotWidth / (buttonStackCount - collapsedRange.length + 1);
+    if (collapsedRange.length)
+        buttonSize.width = maxTotWidth / (buttonStackCount - collapsedRange.length + 1);
+    else
+        buttonSize.width = maxTotWidth / buttonStackCount;
     if (buttonSize.width < minimumStackButtonWidth)
         buttonSize.width = minimumStackButtonWidth;
     else if (buttonSize.width > maximumStackButtonWidth)
