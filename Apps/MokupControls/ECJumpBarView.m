@@ -80,7 +80,8 @@
     [font release];
     font = [aFont retain];
     searchField.font = font;
-    // TODO buttons
+    for (ECMockupButton *button in buttonStack)
+        button.titleLabel.font = font;
 }
 
 - (void)setTextColor:(UIColor *)aColor
@@ -88,7 +89,8 @@
     [textColor release];
     textColor = [aColor retain];
     searchField.textColor = textColor;
-    // TODO buttons
+    for (ECMockupButton *button in buttonStack)
+        [button setTitleColor:textColor forState:UIControlStateNormal];
 }
 
 - (void)setTextShadowColor:(UIColor *)aColor
@@ -106,14 +108,16 @@
         searchField.layer.shadowColor = NULL;
         searchField.layer.shadowOpacity = 0;
     }
-    // TODO buttons
+    for (ECMockupButton *button in buttonStack)
+        [button setTitleShadowColor:textShadowColor forState:UIControlStateNormal];
 }
 
 - (void)setTextShadowOffset:(CGSize)anOffset
 {
     textShadowOffset = anOffset;
     searchField.layer.shadowOffset = textShadowOffset;
-    // TODO buttons
+    for (ECMockupButton *button in buttonStack)
+        button.titleLabel.shadowOffset = textShadowOffset;
 }
 
 - (void)setBorderColor:(UIColor *)aColor
@@ -121,14 +125,16 @@
     [borderColor release];
     borderColor = [aColor retain];
     self.layer.borderColor = borderColor.CGColor;
-    // TODO buttons
+    for (ECMockupButton *button in buttonStack)
+        button.borderColor = borderColor;
 }
 
 - (void)setBorderWidth:(CGFloat)width
 {
     borderWidth = width;
     self.layer.borderWidth = width;
-    // TODO buttons
+//    for (ECMockupButton *button in buttonStack)
+//        button.borderWidth = borderWidth
 }
 
 - (void)setSearchString:(NSString *)aString
