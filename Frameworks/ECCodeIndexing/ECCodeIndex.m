@@ -151,7 +151,7 @@
     pluginClasses = [NSMutableArray array];
     classes = malloc(sizeof(Class) * numClasses);
     objc_getClassList(classes, numClasses);
-    for (int i = 0; i < numClasses; i++)
+    for (int i = 0; i < numClasses; ++i)
     {
         if (class_getSuperclass(classes[i]) != Nil) // class is not a base class
             if (class_conformsToProtocol(classes[i], @protocol(ECCodeIndexPlugin)))

@@ -180,7 +180,7 @@
         if (CGRectEqualToRect(buffer[i], rect))
         {
             memmove(&buffer[i], &buffer[i + 1], (count - i) * sizeof(CGRect));
-            count--;
+            --count;
             bounds = CGRectNull;
             return;
         }

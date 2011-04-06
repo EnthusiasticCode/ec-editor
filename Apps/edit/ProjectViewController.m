@@ -113,8 +113,13 @@
     if (!file)
     {
         file = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"File"] autorelease];
+        UILabel *label = [[UILabel alloc] init];
+        label.tag = 1;
+        [file.contentView addSubview:label];
+        label.frame = file.contentView.bounds;
     }
-    file.textLabel.text = [[self filesInSubfolder:[self tableView:nil titleForHeaderInSection:indexPath.section]] objectAtIndex:(indexPath.row)];
+    UILabel *label = (UILabel *)[file.contentView viewWithTag:1];
+    label.text = [[self filesInSubfolder:[self tableView:nil titleForHeaderInSection:indexPath.section]] objectAtIndex:(indexPath.row)];
     return file;
 }
 

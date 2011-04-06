@@ -63,7 +63,7 @@
 {
     NSUInteger chunkCount = [_completionChunks count];
     NSUInteger *chunkHashes =  malloc(chunkCount * sizeof(NSUInteger));
-    for (NSUInteger i = 0; i < chunkCount; i++)
+    for (NSUInteger i = 0; i < chunkCount; ++i)
     {
         chunkHashes[i] = [[_completionChunks objectAtIndex:i] hash];
     }
