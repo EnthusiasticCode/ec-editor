@@ -6,7 +6,7 @@
 //  Copyright 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import "FileViewController.h"
+#import "FileController.h"
 #import <ECUIKit/ECEditCodeView.h>
 #import <ECCodeIndexing/ECCodeUnit.h>
 #import <ECCodeIndexing/ECCodeCompletionString.h>
@@ -14,7 +14,7 @@
 #import <ECCodeIndexing/ECCodeToken.h>
 #import <ECCodeIndexing/ECCodeCursor.h>
 
-@interface FileViewController ()
+@interface FileController ()
 {
 @private
     NSDictionary *textStyles_;
@@ -22,7 +22,7 @@
 }
 @end
 
-@implementation FileViewController
+@implementation FileController
 
 @synthesize codeView;
 @synthesize scrollView;

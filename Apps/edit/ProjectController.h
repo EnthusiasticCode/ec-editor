@@ -7,16 +7,13 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "FileBrowser.h"
-@class ProjectViewController;
-@class FileViewController;
-@class ECCodeView;
+#import <ECUIKit/ECRelationalTableView.h>
+@class FileController;
 @class ECCodeIndex;
 @class Project;
 
-@interface ProjectController : UIViewController <FileBrowser, FileBrowserDelegate>
-@property (nonatomic, retain) IBOutlet ProjectViewController *projectViewController;
-@property (nonatomic, retain) IBOutlet FileViewController *fileViewController;
+@interface ProjectController : UIViewController <ECRelationalTableViewDataSource, ECRelationalTableViewDelegate>
+@property (nonatomic, retain) NSArray *extensionsToShow;
 @property (nonatomic, retain) Project *project;
 @property (nonatomic, retain) ECCodeIndex *codeIndex;
 

@@ -36,6 +36,8 @@ typedef enum {
 // Item gets various attributes set automatically based on table (separators) and data source (accessory views, editing controls)
 - (ECRelationalTableViewCell *)relationalTableView:(ECRelationalTableView *)relationalTableView cellForItemAtIndexPath:(NSIndexPath *)indexPath;
 
+- (NSArray *)relationalTableView:(ECRelationalTableView *)relationalTableView relatedIndexPathsForItemAtIndexPath:(NSIndexPath *)indexPath;
+
 @optional
 
 - (NSUInteger)numberOfAreasInTableView:(ECRelationalTableView *)relationalTableView;              // Default is 1 if not implemented
@@ -155,6 +157,7 @@ typedef enum {
 - (NSArray *)indexPathsForItemsInRect:(CGRect)rect;
 
 - (ECRelationalTableViewCell *)cellForItemAtIndexPath:(NSIndexPath *)indexPath;
+- (NSArray *)relatedIndexPathsForItemAtIndexPath:(NSIndexPath *)indexPath;
 - (NSArray *)visibleCells;
 - (NSArray *)indexPathsForVisibleItems;
 

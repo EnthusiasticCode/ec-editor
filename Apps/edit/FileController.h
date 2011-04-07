@@ -10,7 +10,7 @@
 #import <ECUIKit/ECEditCodeView.h>
 #import <ECCodeIndexing/ECCodeUnit.h>
 
-@interface FileViewController : UIViewController
+@interface FileController : UIViewController
 
 @property (nonatomic, retain) IBOutlet ECEditCodeView *codeView;
 @property (nonatomic, retain) IBOutlet UIScrollView *scrollView;

@@ -6,17 +6,16 @@
 //  Copyright 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import "RootViewController.h"
+#import "RootController.h"
 #import <ECFoundation/NSFileManager(ECAdditions).h>
 
-@interface RootViewController ()
+@interface RootController ()
 @property (nonatomic, retain) NSFileManager *fileManager;
 @property (nonatomic, retain) NSString *folder;
 @end
 
-@implementation RootViewController
+@implementation RootController
 
-@synthesize delegate = delegate_;
 @synthesize fileManager = fileManager_;
 @synthesize folder = folder_;
 
@@ -24,7 +23,7 @@
 {
     return [NSFileManager defaultManager];
 }
-
+/*
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -33,12 +32,14 @@
     }
     return self;
 }
-
+*/
 - (void)dealloc
 {
+    self.fileManager = nil;
+    self.folder = nil;
     [super dealloc];
 }
-
+/*
 - (void)didReceiveMemoryWarning
 {
     // Releases the view if it doesn't have a superview.
@@ -61,7 +62,7 @@
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;
 }
-
+*/
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
     // Return YES for supported orientations
@@ -99,7 +100,6 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     NSString *projectFile = [[self contentsOfFolder] objectAtIndex:indexPath.row];
-    [self.delegate fileBrowser:self didSelectFileAtPath:[self.folder stringByAppendingPathComponent:projectFile]];
 }
 
 @end

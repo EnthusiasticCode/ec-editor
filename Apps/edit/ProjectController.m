@@ -6,45 +6,42 @@
 //  Copyright 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import "ProjectViewController.h"
-#import "FileViewController.h"
+#import "FileController.h"
 #import "ProjectController.h"
 #import "Project.h"
-#import <ECUIKit/ECEditCodeView.h>
 #import <ECCodeIndexing/ECCodeIndex.h>
 #import <ECCodeIndexing/ECCodeUnit.h>
-#import <ECCodeIndexing/ECCodeCompletionString.h>
-#import <ECCodeIndexing/ECCodeDiagnostic.h>
-#import <ECCodeIndexing/ECCodeToken.h>
-#import <ECCodeIndexing/ECCodeCursor.h>
+#import <ECFoundation/NSFileManager(ECAdditions).h>
+
+@interface ProjectController ()
+@property (nonatomic, retain) NSFileManager *fileManager;
+@property (nonatomic, retain) NSString *folder;
+- (NSArray *)filesInSubfolder:(NSString *)subfolder;
+@end
 
 @implementation ProjectController
 
-@synthesize delegate = delegate_;
-@synthesize projectViewController = projectViewController_;
-@synthesize fileViewController = fileViewController_;
 @synthesize project = project_;
 @synthesize codeIndex = codeIndex_;
-
-- (NSString *)folder
-{
-    return self.projectViewController.folder;
-}
+@synthesize fileManager = fileManager_;
+@synthesize folder = folder_;
+@synthesize extensionsToShow = extensionsToShow_;
 
 - (NSFileManager *)fileManager
 {
-    return self.projectViewController.fileManager;
+    return [NSFileManager defaultManager];
 }
 
 - (void)dealloc
 {
-    self.projectViewController = nil;
-    self.fileViewController = nil;
+    self.folder = nil;
+    self.fileManager = nil;
+    self.extensionsToShow = nil;
     self.project = nil;
     self.codeIndex = nil;
     [super dealloc];
 }
-
+/*
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -52,8 +49,8 @@
         // Custom initialization
     }
     return self;
-}
-
+}*/
+/*
 - (void)didReceiveMemoryWarning
 {
     // Releases the view if it doesn't have a superview.
@@ -61,60 +58,110 @@
     
     // Release any cached data, images, etc that aren't in use.
 }
+*/
 
+/*
+ // Implement loadView to create a view hierarchy programmatically, without using a nib.
+ - (void)loadView
+ {
+ }
+ */
+
+/*
+// Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+}
+*/
+/*
 - (void)viewDidUnload
 {
     [super viewDidUnload];
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;
 }
-
-// Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
-- (void)viewDidLoad
-{
-    [super viewDidLoad];
-}
-
+*/
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
     // Return YES for supported orientations
 	return YES;
 }
 
-- (void)loadProject:(NSString *)projectRoot
+- (NSArray *)contentsOfFolder
 {
-    self.project = [Project projectWithRootDirectory:projectRoot];
-    self.codeIndex = [[[ECCodeIndex alloc] init] autorelease];
-    self.projectViewController.extensionsToShow = [[self.codeIndex extensionToLanguageMap] allKeys];
+    NSDirectoryEnumerationOptions options = NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsPackageDescendants;
+    return [self.fileManager subpathsOfDirectoryAtPath:self.folder withExtensions:nil options:options skipFiles:YES skipDirectories:NO error:(NSError **)NULL];
 }
 
-- (void)loadFile:(NSString *)file
+- (NSArray *)filesInSubfolder:(NSString *)subfolder
 {
-    ECCodeUnit *codeUnit = [self.codeIndex unitForFile:file];
-    [self.fileViewController loadFile:file withCodeUnit:codeUnit];
-    [self.projectViewController.view removeFromSuperview];
-    [self.view addSubview:self.fileViewController.view];
-    self.fileViewController.view.frame = self.view.bounds;
+    NSDirectoryEnumerationOptions options = NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsPackageDescendants;
+    return [self.fileManager contentsOfDirectoryAtPath:[self.folder stringByAppendingPathComponent:subfolder] withExtensions:self.extensionsToShow options:options skipFiles:NO skipDirectories:YES error:(NSError **)NULL];
 }
 
 - (void)browseFolder:(NSString *)folder
 {
-    if (![self.project.rootDirectory isEqual:folder])
-        [self loadProject:folder];
-    [self.projectViewController browseFolder:folder];
-    [self.fileViewController.view removeFromSuperview];
-    [self.view addSubview:self.projectViewController.view];
-    self.projectViewController.view.frame = self.view.bounds;
+    self.folder = folder;
 }
 
-- (NSArray *)contentsOfFolder
+- (NSUInteger)numberOfAreasInTableView:(ECRelationalTableView *)relationalTableView
 {
-    return [self.projectViewController contentsOfFolder];
+    return [[self contentsOfFolder] count];
 }
 
-- (void)fileBrowser:(id<FileBrowser>)fileBrowser didSelectFileAtPath:(NSString *)path
+- (NSString *)relationalTableView:(ECRelationalTableView *)relationalTableView titleForHeaderInArea:(NSUInteger)area
 {
-    [self.delegate fileBrowser:self didSelectFileAtPath:path];
+    return [[self contentsOfFolder] objectAtIndex:area];
+}
+
+- (ECRelationalTableViewCell *)relationalTableView:(ECRelationalTableView *)relationalTableView cellForItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    ECRelationalTableViewCell *file = [[[ECRelationalTableViewCell alloc] init] autorelease];
+    UILabel *label = [[[UILabel alloc] init] autorelease];
+    label.text = [[self filesInSubfolder:[self relationalTableView:nil titleForHeaderInArea:indexPath.area]] objectAtIndex:(indexPath.item)];
+    [file addSubview:label];
+    label.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    label.frame = file.bounds;
+    label.backgroundColor = [UIColor redColor];
+    return file;
+}
+
+- (NSUInteger)relationalTableView:(ECRelationalTableView *)relationalTableView numberOfItemsAtLevel:(NSUInteger)level inArea:(NSUInteger)area
+{
+    NSArray *links = [self filesInSubfolder:[self relationalTableView:nil titleForHeaderInArea:area]];
+    return [links count];
+}
+
+- (void)relationalTableView:(ECRelationalTableView *)relationalTableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    NSString *subfolder = [self relationalTableView:nil titleForHeaderInArea:indexPath.area];
+    NSString *file = [[self filesInSubfolder:subfolder] objectAtIndex:indexPath.row];
+    [self loadFile:[subfolder stringByAppendingPathComponent:file]];
+}
+
+- (NSInteger)tableView:(UITableView *)tableView indentationLevelForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    NSString *subfolder = [self relationalTableView:nil titleForHeaderInArea:indexPath.area];
+    NSString *file = [[self filesInSubfolder:subfolder] objectAtIndex:indexPath.row];
+    NSString *absoluteFilePath = [[self.folder stringByAppendingPathComponent:subfolder] stringByAppendingPathComponent:file];
+    return ([[absoluteFilePath pathExtension] isEqualToString:@"h"]) ? 0 : 1;
+}
+
+- (void)loadProject:(NSString *)projectRoot
+{
+    self.project = [Project projectWithRootDirectory:projectRoot];
+    self.codeIndex = [[[ECCodeIndex alloc] init] autorelease];
+    self.extensionsToShow = [[self.codeIndex extensionToLanguageMap] allKeys];
+}
+
+- (void)loadFile:(NSString *)file
+{
+//    ECCodeUnit *codeUnit = [self.codeIndex unitForFile:file];
+//    [self.fileController loadFile:file withCodeUnit:codeUnit];
+//    [self.view removeFromSuperview];
+//    [self.view addSubview:self.fileController.view];
+//    self.fileController.view.frame = self.view.bounds;
 }
 
 @end

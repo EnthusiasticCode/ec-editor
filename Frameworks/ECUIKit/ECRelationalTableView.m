@@ -16,6 +16,7 @@
         unsigned int dataSourceNumberOfLevelsInArea:1;
         unsigned int dataSourceNumberOfItemsAtLevelInArea:1;
         unsigned int dataSourceCellForItemAtIndexPath:1;
+        unsigned int dataSourceRelatedIndexPathsForItemAtIndexPath:1;
         unsigned int dataSourceNumberOfAreasInTableView:1;
         unsigned int dataSourceTitleForHeaderInArea:1;
         unsigned int dataSourceTitleForFooterInArea:1;
@@ -41,7 +42,7 @@
 //        unsigned int defaultShowsHorizontalScrollIndicator:1;
 //        unsigned int defaultShowsVerticalScrollIndicator:1;
 //        unsigned int hideScrollIndicators:1;
-        unsigned int needsLayoutSubviews:1
+        unsigned int needsLayoutSubviews:1;
     } flags_;
 }
 @property (nonatomic, retain) UIScrollView *scrollView;
@@ -49,6 +50,7 @@
 - (void)recalculatePaddedCellSizeAndContentWidthInCells;
 - (void)recalculatePaddedAreaHeaderSize;
 @property (nonatomic, retain) NSMutableArray *areas;
+@property (nonatomic, retain) NSMutableDictionary *relatedIndexPaths;
 @end
 
 @implementation ECRelationalTableView
@@ -79,6 +81,7 @@
 @synthesize itemWrapDirection = itemWrapDirection_;
 @synthesize levelGrowthDirection = levelGrowthDirection_;
 @synthesize areas = areas_;
+@synthesize relatedIndexPaths = relatedIndexPaths_;
 
 - (void)setDelegate:(id<ECRelationalTableViewDelegate>)delegate
 {
@@ -105,6 +108,7 @@
     flags_.dataSourceNumberOfLevelsInArea = [dataSource respondsToSelector:@selector(relationalTableView:numberOfLevelsInArea:)];
     flags_.dataSourceNumberOfItemsAtLevelInArea = [dataSource respondsToSelector:@selector(relationalTableView:numberOfItemsAtLevel:inArea:)];
     flags_.dataSourceCellForItemAtIndexPath = [dataSource respondsToSelector:@selector(relationalTableView:cellForItemAtIndexPath:)];
+    flags_.dataSourceRelatedIndexPathsForItemAtIndexPath = [dataSource respondsToSelector:@selector(relationalTableView:relatedIndexPathsForItemAtIndexPath:)];
     flags_.dataSourceNumberOfAreasInTableView = [dataSource respondsToSelector:@selector(numberOfAreasInTableView:)];
     flags_.dataSourceTitleForHeaderInArea = [dataSource respondsToSelector:@selector(relationalTableView:titleForHeaderInArea:)];
     flags_.dataSourceTitleForFooterInArea = [dataSource respondsToSelector:@selector(relationalTableView:titleForFooterInArea:)];
@@ -222,6 +226,7 @@ static id init(ECRelationalTableView *self)
     if (flags_.dataSourceNumberOfAreasInTableView)
         numAreas = [self.dataSource numberOfAreasInTableView:self];
     self.areas = [NSMutableArray arrayWithCapacity:numAreas];
+    self.relatedIndexPaths = [NSMutableDictionary dictionary];
     for (NSUInteger i = 0; i < numAreas; ++i)
     {
         NSUInteger numLevels = 1;
@@ -238,11 +243,15 @@ static id init(ECRelationalTableView *self)
             {
                 NSIndexPath *indexPath = [NSIndexPath indexPathForItem:k atLevel:j inArea:i];
                 [items addObject:[self.dataSource relationalTableView:self cellForItemAtIndexPath:indexPath]];
+                if (flags_.dataSourceRelatedIndexPathsForItemAtIndexPath)
+                    [self.relatedIndexPaths setObject:[self.dataSource relationalTableView:self relatedIndexPathsForItemAtIndexPath:indexPath] forKey:indexPath];
             }
             [levels addObject:items];
         }
         [self.areas addObject:levels];
     }
+    if (![self.relatedIndexPaths count])
+        self.relatedIndexPaths = nil;
     flags_.needsLayoutSubviews = YES;
 }
 
@@ -316,6 +325,11 @@ static id init(ECRelationalTableView *self)
 - (ECRelationalTableViewCell *)cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
     return [[[self.areas objectAtIndex:indexPath.area] objectAtIndex:indexPath.level] objectAtIndex:indexPath.item];
+}
+
+- (NSArray *)relatedIndexPathsForItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    return [self.relatedIndexPaths objectForKey:indexPath];
 }
 
 - (void)layoutSubviews

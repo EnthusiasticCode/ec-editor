@@ -18,11 +18,10 @@
 		B7E5CF951348C20B00A4C65A /* ECClangCodeUnit.m in Sources */ = {isa = PBXBuildFile; fileRef = B7E5CF901348C20B00A4C65A /* ECClangCodeUnit.m */; };
 		B7E5CF961348C20B00A4C65A /* libclang.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B7E5CF921348C20B00A4C65A /* libclang.dylib */; };
 		CDEBF21613489A8E00CE2285 /* AppController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDEBF20913489A8E00CE2285 /* AppController.m */; };
-		CDEBF21713489A8E00CE2285 /* FileViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDEBF20D13489A8E00CE2285 /* FileViewController.m */; };
+		CDEBF21713489A8E00CE2285 /* FileController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDEBF20D13489A8E00CE2285 /* FileController.m */; };
 		CDEBF21813489A8E00CE2285 /* Project.m in Sources */ = {isa = PBXBuildFile; fileRef = CDEBF20F13489A8E00CE2285 /* Project.m */; };
 		CDEBF21913489A8E00CE2285 /* ProjectController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDEBF21113489A8E00CE2285 /* ProjectController.m */; };
-		CDEBF21A13489A8E00CE2285 /* ProjectViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDEBF21313489A8E00CE2285 /* ProjectViewController.m */; };
-		CDEBF21B13489A8E00CE2285 /* RootViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDEBF21513489A8E00CE2285 /* RootViewController.m */; };
+		CDEBF21B13489A8E00CE2285 /* RootController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDEBF21513489A8E00CE2285 /* RootController.m */; };
 		CDEBF24013489AF800CE2285 /* ECHashing.m in Sources */ = {isa = PBXBuildFile; fileRef = CDEBF23A13489AF800CE2285 /* ECHashing.m */; };
 		CDEBF24113489AF800CE2285 /* MurmurHash3.c in Sources */ = {isa = PBXBuildFile; fileRef = CDEBF23B13489AF800CE2285 /* MurmurHash3.c */; };
 		CDEBF24213489AF800CE2285 /* NSFileManager(ECAdditions).m in Sources */ = {isa = PBXBuildFile; fileRef = CDEBF23E13489AF800CE2285 /* NSFileManager(ECAdditions).m */; };
@@ -55,12 +54,11 @@
 		CDEBF2AD13489BE800CE2285 /* ECTextRange.m in Sources */ = {isa = PBXBuildFile; fileRef = CDEBF29A13489BE800CE2285 /* ECTextRange.m */; };
 		CDEBF2AE13489BE800CE2285 /* ECTextStyle.m in Sources */ = {isa = PBXBuildFile; fileRef = CDEBF29C13489BE800CE2285 /* ECTextStyle.m */; };
 		CDEFF96E1348BD5E006FEFCC /* edit-main.m in Sources */ = {isa = PBXBuildFile; fileRef = CDEFF95C1348BD5E006FEFCC /* edit-main.m */; };
-		CDEFF96F1348BD5E006FEFCC /* FileViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CDEFF95E1348BD5E006FEFCC /* FileViewController.xib */; };
+		CDEFF96F1348BD5E006FEFCC /* FileController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CDEFF95E1348BD5E006FEFCC /* FileController.xib */; };
 		CDEFF9701348BD5E006FEFCC /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = CDEFF9601348BD5E006FEFCC /* InfoPlist.strings */; };
 		CDEFF9711348BD5E006FEFCC /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = CDEFF9621348BD5E006FEFCC /* MainWindow.xib */; };
-		CDEFF9721348BD5E006FEFCC /* ProjectController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CDEFF9641348BD5E006FEFCC /* ProjectController.xib */; };
-		CDEFF9731348BD5E006FEFCC /* ProjectViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CDEFF9661348BD5E006FEFCC /* ProjectViewController.xib */; };
-		CDEFF9741348BD5E006FEFCC /* RootViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CDEFF9681348BD5E006FEFCC /* RootViewController.xib */; };
+		CDEFF9731348BD5E006FEFCC /* ProjectController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CDEFF9661348BD5E006FEFCC /* ProjectController.xib */; };
+		CDEFF9741348BD5E006FEFCC /* RootController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CDEFF9681348BD5E006FEFCC /* RootController.xib */; };
 		CDEFF9751348BD5E006FEFCC /* Project.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = CDEFF96B1348BD5E006FEFCC /* Project.xcdatamodeld */; };
 /* End PBXBuildFile section */
 
@@ -84,18 +82,14 @@
 		B7E5CF921348C20B00A4C65A /* libclang.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libclang.dylib; path = Frameworks/ECCodeIndexing/libclang.dylib; sourceTree = "<group>"; };
 		CDEBF20813489A8E00CE2285 /* AppController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppController.h; path = Apps/edit/AppController.h; sourceTree = SOURCE_ROOT; };
 		CDEBF20913489A8E00CE2285 /* AppController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppController.m; path = Apps/edit/AppController.m; sourceTree = SOURCE_ROOT; };
-		CDEBF20A13489A8E00CE2285 /* FileBrowser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileBrowser.h; path = Apps/edit/FileBrowser.h; sourceTree = SOURCE_ROOT; };
-		CDEBF20B13489A8E00CE2285 /* FileBrowserDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileBrowserDelegate.h; path = Apps/edit/FileBrowserDelegate.h; sourceTree = SOURCE_ROOT; };
-		CDEBF20C13489A8E00CE2285 /* FileViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileViewController.h; path = Apps/edit/FileViewController.h; sourceTree = SOURCE_ROOT; };
-		CDEBF20D13489A8E00CE2285 /* FileViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FileViewController.m; path = Apps/edit/FileViewController.m; sourceTree = SOURCE_ROOT; };
+		CDEBF20C13489A8E00CE2285 /* FileController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileController.h; path = Apps/edit/FileController.h; sourceTree = SOURCE_ROOT; };
+		CDEBF20D13489A8E00CE2285 /* FileController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FileController.m; path = Apps/edit/FileController.m; sourceTree = SOURCE_ROOT; };
 		CDEBF20E13489A8E00CE2285 /* Project.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Project.h; path = Apps/edit/Project.h; sourceTree = SOURCE_ROOT; };
 		CDEBF20F13489A8E00CE2285 /* Project.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Project.m; path = Apps/edit/Project.m; sourceTree = SOURCE_ROOT; };
 		CDEBF21013489A8E00CE2285 /* ProjectController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProjectController.h; path = Apps/edit/ProjectController.h; sourceTree = SOURCE_ROOT; };
 		CDEBF21113489A8E00CE2285 /* ProjectController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ProjectController.m; path = Apps/edit/ProjectController.m; sourceTree = SOURCE_ROOT; };
-		CDEBF21213489A8E00CE2285 /* ProjectViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProjectViewController.h; path = Apps/edit/ProjectViewController.h; sourceTree = SOURCE_ROOT; };
-		CDEBF21313489A8E00CE2285 /* ProjectViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ProjectViewController.m; path = Apps/edit/ProjectViewController.m; sourceTree = SOURCE_ROOT; };
-		CDEBF21413489A8E00CE2285 /* RootViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RootViewController.h; path = Apps/edit/RootViewController.h; sourceTree = SOURCE_ROOT; };
-		CDEBF21513489A8E00CE2285 /* RootViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RootViewController.m; path = Apps/edit/RootViewController.m; sourceTree = SOURCE_ROOT; };
+		CDEBF21413489A8E00CE2285 /* RootController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RootController.h; path = Apps/edit/RootController.h; sourceTree = SOURCE_ROOT; };
+		CDEBF21513489A8E00CE2285 /* RootController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RootController.m; path = Apps/edit/RootController.m; sourceTree = SOURCE_ROOT; };
 		CDEBF23913489AF800CE2285 /* ECHashing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECHashing.h; path = Frameworks/ECFoundation/ECHashing.h; sourceTree = "<group>"; };
 		CDEBF23A13489AF800CE2285 /* ECHashing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECHashing.m; path = Frameworks/ECFoundation/ECHashing.m; sourceTree = "<group>"; };
 		CDEBF23B13489AF800CE2285 /* MurmurHash3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = MurmurHash3.c; path = Frameworks/ECFoundation/MurmurHash3.c; sourceTree = "<group>"; };
@@ -166,12 +160,11 @@
 		CDEBF29C13489BE800CE2285 /* ECTextStyle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECTextStyle.m; path = Frameworks/ECUIKit/ECTextStyle.m; sourceTree = "<group>"; };
 		CDEFF95B1348BD5E006FEFCC /* edit-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "edit-Info.plist"; path = "Apps/edit/edit-Info.plist"; sourceTree = SOURCE_ROOT; };
 		CDEFF95C1348BD5E006FEFCC /* edit-main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "edit-main.m"; path = "Apps/edit/edit-main.m"; sourceTree = SOURCE_ROOT; };
-		CDEFF95F1348BD5E006FEFCC /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = FileViewController.xib; sourceTree = "<group>"; };
+		CDEFF95F1348BD5E006FEFCC /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = FileController.xib; sourceTree = "<group>"; };
 		CDEFF9611348BD5E006FEFCC /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = InfoPlist.strings; sourceTree = "<group>"; };
 		CDEFF9631348BD5E006FEFCC /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = MainWindow.xib; sourceTree = "<group>"; };
-		CDEFF9651348BD5E006FEFCC /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = ProjectController.xib; sourceTree = "<group>"; };
-		CDEFF9671348BD5E006FEFCC /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = ProjectViewController.xib; sourceTree = "<group>"; };
-		CDEFF9691348BD5E006FEFCC /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = RootViewController.xib; sourceTree = "<group>"; };
+		CDEFF9671348BD5E006FEFCC /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = ProjectController.xib; sourceTree = "<group>"; };
+		CDEFF9691348BD5E006FEFCC /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = RootController.xib; sourceTree = "<group>"; };
 		CDEFF96C1348BD5E006FEFCC /* Project.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Project.xcdatamodel; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -244,18 +237,14 @@
 			children = (
 				CDEBF20813489A8E00CE2285 /* AppController.h */,
 				CDEBF20913489A8E00CE2285 /* AppController.m */,
-				CDEBF20A13489A8E00CE2285 /* FileBrowser.h */,
-				CDEBF20B13489A8E00CE2285 /* FileBrowserDelegate.h */,
-				CDEBF20C13489A8E00CE2285 /* FileViewController.h */,
-				CDEBF20D13489A8E00CE2285 /* FileViewController.m */,
-				CDEBF20E13489A8E00CE2285 /* Project.h */,
-				CDEBF20F13489A8E00CE2285 /* Project.m */,
+				CDEBF21413489A8E00CE2285 /* RootController.h */,
+				CDEBF21513489A8E00CE2285 /* RootController.m */,
 				CDEBF21013489A8E00CE2285 /* ProjectController.h */,
 				CDEBF21113489A8E00CE2285 /* ProjectController.m */,
-				CDEBF21213489A8E00CE2285 /* ProjectViewController.h */,
-				CDEBF21313489A8E00CE2285 /* ProjectViewController.m */,
-				CDEBF21413489A8E00CE2285 /* RootViewController.h */,
-				CDEBF21513489A8E00CE2285 /* RootViewController.m */,
+				CDEBF20C13489A8E00CE2285 /* FileController.h */,
+				CDEBF20D13489A8E00CE2285 /* FileController.m */,
+				CDEBF20E13489A8E00CE2285 /* Project.h */,
+				CDEBF20F13489A8E00CE2285 /* Project.m */,
 			);
 			name = Application;
 			path = Source;
@@ -418,12 +407,11 @@
 		CDEFF95D1348BD5E006FEFCC /* en.lproj */ = {
 			isa = PBXGroup;
 			children = (
-				CDEFF95E1348BD5E006FEFCC /* FileViewController.xib */,
 				CDEFF9601348BD5E006FEFCC /* InfoPlist.strings */,
 				CDEFF9621348BD5E006FEFCC /* MainWindow.xib */,
-				CDEFF9641348BD5E006FEFCC /* ProjectController.xib */,
-				CDEFF9661348BD5E006FEFCC /* ProjectViewController.xib */,
-				CDEFF9681348BD5E006FEFCC /* RootViewController.xib */,
+				CDEFF9681348BD5E006FEFCC /* RootController.xib */,
+				CDEFF9661348BD5E006FEFCC /* ProjectController.xib */,
+				CDEFF95E1348BD5E006FEFCC /* FileController.xib */,
 			);
 			name = en.lproj;
 			path = Apps/edit;
@@ -485,12 +473,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CDEFF96F1348BD5E006FEFCC /* FileViewController.xib in Resources */,
+				CDEFF96F1348BD5E006FEFCC /* FileController.xib in Resources */,
 				CDEFF9701348BD5E006FEFCC /* InfoPlist.strings in Resources */,
 				CDEFF9711348BD5E006FEFCC /* MainWindow.xib in Resources */,
-				CDEFF9721348BD5E006FEFCC /* ProjectController.xib in Resources */,
-				CDEFF9731348BD5E006FEFCC /* ProjectViewController.xib in Resources */,
-				CDEFF9741348BD5E006FEFCC /* RootViewController.xib in Resources */,
+				CDEFF9731348BD5E006FEFCC /* ProjectController.xib in Resources */,
+				CDEFF9741348BD5E006FEFCC /* RootController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -502,11 +489,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				CDEBF21613489A8E00CE2285 /* AppController.m in Sources */,
-				CDEBF21713489A8E00CE2285 /* FileViewController.m in Sources */,
+				CDEBF21713489A8E00CE2285 /* FileController.m in Sources */,
 				CDEBF21813489A8E00CE2285 /* Project.m in Sources */,
 				CDEBF21913489A8E00CE2285 /* ProjectController.m in Sources */,
-				CDEBF21A13489A8E00CE2285 /* ProjectViewController.m in Sources */,
-				CDEBF21B13489A8E00CE2285 /* RootViewController.m in Sources */,
+				CDEBF21B13489A8E00CE2285 /* RootController.m in Sources */,
 				CDEBF24013489AF800CE2285 /* ECHashing.m in Sources */,
 				CDEBF24113489AF800CE2285 /* MurmurHash3.c in Sources */,
 				CDEBF24213489AF800CE2285 /* NSFileManager(ECAdditions).m in Sources */,
@@ -549,12 +535,12 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
-		CDEFF95E1348BD5E006FEFCC /* FileViewController.xib */ = {
+		CDEFF95E1348BD5E006FEFCC /* FileController.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
 				CDEFF95F1348BD5E006FEFCC /* en */,
 			);
-			name = FileViewController.xib;
+			name = FileController.xib;
 			sourceTree = "<group>";
 		};
 		CDEFF9601348BD5E006FEFCC /* InfoPlist.strings */ = {
@@ -573,28 +559,20 @@
 			name = MainWindow.xib;
 			sourceTree = "<group>";
 		};
-		CDEFF9641348BD5E006FEFCC /* ProjectController.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				CDEFF9651348BD5E006FEFCC /* en */,
-			);
-			name = ProjectController.xib;
-			sourceTree = "<group>";
-		};
-		CDEFF9661348BD5E006FEFCC /* ProjectViewController.xib */ = {
+		CDEFF9661348BD5E006FEFCC /* ProjectController.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
 				CDEFF9671348BD5E006FEFCC /* en */,
 			);
-			name = ProjectViewController.xib;
+			name = ProjectController.xib;
 			sourceTree = "<group>";
 		};
-		CDEFF9681348BD5E006FEFCC /* RootViewController.xib */ = {
+		CDEFF9681348BD5E006FEFCC /* RootController.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
 				CDEFF9691348BD5E006FEFCC /* en */,
 			);
-			name = RootViewController.xib;
+			name = RootController.xib;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */

@@ -7,9 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "FileBrowser.h"
-#import "FileBrowserDelegate.h"
 
-@interface RootViewController : UIViewController <UITableViewDataSource, UITableViewDelegate, FileBrowser>
-
+@interface RootController : UIViewController <UITableViewDataSource, UITableViewDelegate>
+- (void)browseFolder:(NSString *)folder;
 @end
