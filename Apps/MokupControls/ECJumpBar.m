@@ -11,11 +11,9 @@
 #import <QuartzCore/QuartzCore.h>
 
 #define BUTTON_ARROW_WIDTH 10
-#define TEXT_PADDING 8
 
 @interface ECJumpBar () {
 @private
-    NSMutableArray *buttonStack;
     UITextField *searchField;
     
     UIControl *collapsedButton;
@@ -50,6 +48,8 @@
 @synthesize buttonHighlightColor;
 @synthesize borderColor;
 @synthesize borderWidth;
+@synthesize textInsets;
+//@synthesize controlMargin;
 
 - (void)setDelegate:(id<ECJumpBarDelegate>)aDelegate
 {
@@ -81,7 +81,7 @@
 
 - (NSUInteger)stackSize
 {
-    return [buttonStack count];
+    return [controlsStack count];
 }
 
 - (void)setFont:(UIFont *)aFont
@@ -89,7 +89,7 @@
     [font release];
     font = [aFont retain];
     searchField.font = font;
-    for (ECMockupButton *button in buttonStack)
+    for (ECMockupButton *button in controlsStack)
         button.titleLabel.font = font;
 }
 
@@ -98,7 +98,7 @@
     [textColor release];
     textColor = [aColor retain];
     searchField.textColor = textColor;
-    for (ECMockupButton *button in buttonStack)
+    for (ECMockupButton *button in controlsStack)
         [button setTitleColor:textColor forState:UIControlStateNormal];
 }
 
@@ -117,7 +117,7 @@
         searchField.layer.shadowColor = NULL;
         searchField.layer.shadowOpacity = 0;
     }
-    for (ECMockupButton *button in buttonStack)
+    for (ECMockupButton *button in controlsStack)
         [button setTitleShadowColor:textShadowColor forState:UIControlStateNormal];
 }
 
@@ -125,7 +125,7 @@
 {
     textShadowOffset = anOffset;
     searchField.layer.shadowOffset = textShadowOffset;
-    for (ECMockupButton *button in buttonStack)
+    for (ECMockupButton *button in controlsStack)
         button.titleLabel.shadowOffset = textShadowOffset;
 }
 
@@ -134,7 +134,7 @@
     [borderColor release];
     borderColor = [aColor retain];
     self.layer.borderColor = borderColor.CGColor;
-    for (ECMockupButton *button in buttonStack)
+    for (ECMockupButton *button in controlsStack)
         button.borderColor = borderColor;
 }
 
@@ -185,6 +185,8 @@ static void init(ECJumpBar *self)
     self.borderWidth = 1;
     self->minimumStackButtonWidth = 50;
     self->maximumStackButtonWidth = 160;
+    self->textInsets = UIEdgeInsetsMake(0, 8, 0, 0);
+//    self->controlMargin = UIEdgeInsetsMake(0, -15, 0, 0);
     //
     self.layer.masksToBounds = YES;
 }
@@ -214,7 +216,7 @@ static void init(ECJumpBar *self)
     self.buttonColor = nil;
     self.buttonHighlightColor = nil;
     self.borderColor = nil;
-    [buttonStack release];
+    [controlsStack release];
     [collapsedButton release];
     [super dealloc];
 }
@@ -224,6 +226,7 @@ static void init(ECJumpBar *self)
     CGRect bounds = self.bounds;
     CGPoint origin = bounds.origin;
     CGSize size = bounds.size;
+    CGFloat textPadding = textInsets.left + textInsets.right;
     
     // Calculate maximum usable width for buttons
     CGFloat maxTotWidth = size.width;
@@ -231,13 +234,13 @@ static void init(ECJumpBar *self)
         maxTotWidth *= (1.0 - minimumSearchFieldWidth);
     else
         maxTotWidth -= minimumSearchFieldWidth;
-    maxTotWidth -= BUTTON_ARROW_WIDTH + TEXT_PADDING;
+    maxTotWidth -= BUTTON_ARROW_WIDTH + textPadding;
     
     // Collaspe elements
     [self collapseButtonStackToFitButtonCount:maxTotWidth / minimumStackButtonWidth];
     
     // Calculte button size
-    NSUInteger buttonStackCount = [buttonStack count];
+    NSUInteger buttonStackCount = [controlsStack count];
     CGSize buttonSize = size;
     if (collapsedRange.length)
         buttonSize.width = maxTotWidth / (buttonStackCount - collapsedRange.length + 1);
@@ -247,18 +250,18 @@ static void init(ECJumpBar *self)
         buttonSize.width = minimumStackButtonWidth;
     else if (buttonSize.width > maximumStackButtonWidth)
         buttonSize.width = maximumStackButtonWidth;
-    buttonSize.width = ceilf(buttonSize.width) + BUTTON_ARROW_WIDTH + TEXT_PADDING;
+    buttonSize.width = ceilf(buttonSize.width) + BUTTON_ARROW_WIDTH + textPadding;
     
     // Layout buttons
     UIControl *button;
-    CGFloat diff = buttonSize.width - BUTTON_ARROW_WIDTH - TEXT_PADDING;
+    CGFloat diff = buttonSize.width - BUTTON_ARROW_WIDTH - textPadding;
     NSUInteger collapseEnd = collapsedRange.location + collapsedRange.length;
     if (collapsedRange.length == 0) {
         collapsedButton.hidden = YES;
     }
     for (NSUInteger i = 0; i < buttonStackCount; ++i) 
     {
-        button = (UIControl *)[buttonStack objectAtIndex:i];
+        button = (UIControl *)[controlsStack objectAtIndex:i];
         if (collapsedRange.length > 0 && i == collapsedRange.location)
         {
             // Layout collapse button
@@ -284,9 +287,9 @@ static void init(ECJumpBar *self)
     
     // Layout search field
     if (buttonStackCount)
-        origin.x += BUTTON_ARROW_WIDTH + TEXT_PADDING;
-    origin.x += TEXT_PADDING;
-    size.width = bounds.size.width - origin.x - TEXT_PADDING;
+        origin.x += BUTTON_ARROW_WIDTH + textPadding;
+    origin.x += textInsets.left;
+    size.width = bounds.size.width - origin.x - textPadding;
     searchField.frame = (CGRect){ origin, size };
 }
 
@@ -295,16 +298,16 @@ static void init(ECJumpBar *self)
 
 - (UIControl *)controlAtStackIndex:(NSUInteger)index
 {
-    if (index >= [buttonStack count])
+    if (index >= [controlsStack count])
         return nil;
-    return [buttonStack objectAtIndex:index];
+    return [controlsStack objectAtIndex:index];
 }
 
 - (NSString *)titleOfControlAtStackIndex:(NSUInteger)index
 {
-    if (index >= [buttonStack count])
+    if (index >= [controlsStack count])
         return nil;
-    return [[buttonStack objectAtIndex:index] title];
+    return [[controlsStack objectAtIndex:index] title];
 }
 
 - (void)pushControlWithTitle:(NSString *)title
@@ -312,13 +315,13 @@ static void init(ECJumpBar *self)
     // Generate new button
     UIControl *button = [self createStackControlWithTitle:title];
     
-    NSUInteger index = [buttonStack count];
+    NSUInteger index = [controlsStack count];
     button.tag = index;
     
     // Add button to view
-    if ([buttonStack count])
+    if ([controlsStack count])
     {
-        [self insertSubview:button belowSubview:[buttonStack lastObject]];
+        [self insertSubview:button belowSubview:[controlsStack lastObject]];
     }
     else
     {
@@ -326,9 +329,9 @@ static void init(ECJumpBar *self)
     }
     
     // Add button to stack
-    if (!buttonStack)
-        buttonStack = [[NSMutableArray alloc] initWithCapacity:10];
-    [buttonStack addObject:button];
+    if (!controlsStack)
+        controlsStack = [[NSMutableArray alloc] initWithCapacity:10];
+    [controlsStack addObject:button];
     
     // Informing delegate
     if (delegateHasDidPushControlAtStackIndex)
@@ -341,27 +344,27 @@ static void init(ECJumpBar *self)
 
 - (void)popControl
 {
-    UIControl *button = (UIControl *)[buttonStack lastObject];
+    UIControl *button = (UIControl *)[controlsStack lastObject];
     if (button) 
     {
         button.hidden = YES;
         [button removeFromSuperview];
         if (delegateHasDidPopControlAtStackIndex) 
         {
-            NSUInteger index = [buttonStack indexOfObject:button];
-            [buttonStack removeObjectAtIndex:index];
+            NSUInteger index = [controlsStack indexOfObject:button];
+            [controlsStack removeObjectAtIndex:index];
             [delegate jumpBar:self didPopControl:button atStackIndex:index];
         }
         else 
         {
-            [buttonStack removeObject:button];
+            [controlsStack removeObject:button];
         }
     }
 }
 
 - (void)popControlsDownThruIndex:(NSUInteger)index
 {
-    NSUInteger count = [buttonStack count];
+    NSUInteger count = [controlsStack count];
     if (count && count > index) 
     {
         count -= index;
@@ -386,16 +389,16 @@ static void init(ECJumpBar *self)
     [button setBackgroundColor:self.buttonColor forState:UIControlStateNormal];
     [button setBackgroundColor:self.buttonHighlightColor forState:UIControlStateHighlighted];
     button.arrowSizes = UIEdgeInsetsMake(0, 0, 0, BUTTON_ARROW_WIDTH);
-    if ([buttonStack count])
-        button.titleEdgeInsets = UIEdgeInsetsMake(0, TEXT_PADDING + BUTTON_ARROW_WIDTH, 0, BUTTON_ARROW_WIDTH);
+    if ([controlsStack count])
+        button.titleEdgeInsets = UIEdgeInsetsMake(0, textInsets.left + BUTTON_ARROW_WIDTH, 0, BUTTON_ARROW_WIDTH);
     else
-        button.titleEdgeInsets = UIEdgeInsetsMake(0, TEXT_PADDING, 0, BUTTON_ARROW_WIDTH);
+        button.titleEdgeInsets = UIEdgeInsetsMake(0, textInsets.left, 0, BUTTON_ARROW_WIDTH);
     return button;
 }
 
 - (void)collapseButtonStackToFitButtonCount:(NSUInteger)maxCount
 {
-    NSUInteger buttonStackCount = [buttonStack count];
+    NSUInteger buttonStackCount = [controlsStack count];
     if (maxCount == 0 || buttonStackCount <= maxCount)
     {
         collapsedRange.length = collapsedRange.location = 0;

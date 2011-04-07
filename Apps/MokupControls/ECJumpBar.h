@@ -27,7 +27,11 @@
 
 @end
 
-@interface ECJumpBar : UIView
+@interface ECJumpBar : UIView {
+@protected
+    /// Array used to store controls pushed to the receiver.
+    NSMutableArray *controlsStack;
+}
 
 @property (nonatomic, assign) id<ECJumpBarDelegate> delegate;
 
@@ -59,6 +63,13 @@
 
 /// Width of borders.
 @property (nonatomic) CGFloat borderWidth;
+
+/// Insets of texts in the receiver.
+@property (nonatomic) UIEdgeInsets textInsets;
+
+// TODO activate this
+/// Margin of stack controls in the receiver.
+//@property (nonatomic) UIEdgeInsets controlMargin;
 
 #pragma mark Visual Constraints
 

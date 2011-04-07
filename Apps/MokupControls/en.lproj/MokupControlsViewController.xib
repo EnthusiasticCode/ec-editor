@@ -128,7 +128,7 @@
 						<bool key="IBUIUserInteractionEnabled">NO</bool>
 						<string key="targetRuntimeIdentifier">IBIPadFramework</string>
 					</object>
-					<object class="IBUIImageView" id="880603177">
+					<object class="IBUIImageView" id="216143310">
 						<reference key="NSNextResponder" ref="766721923"/>
 						<int key="NSvFlags">292</int>
 						<string key="NSFrame">{{349, 201}, {128, 128}}</string>
@@ -200,7 +200,7 @@
 					<object class="IBCocoaTouchOutletConnection" key="connection">
 						<string key="label">imageView2</string>
 						<reference key="source" ref="841351856"/>
-						<reference key="destination" ref="880603177"/>
+						<reference key="destination" ref="216143310"/>
 					</object>
 					<int key="connectionID">50</int>
 				</object>
@@ -234,7 +234,7 @@
 							<reference ref="280406243"/>
 							<reference ref="397759123"/>
 							<reference ref="293836585"/>
-							<reference ref="880603177"/>
+							<reference ref="216143310"/>
 						</object>
 						<reference key="parent" ref="0"/>
 					</object>
@@ -260,7 +260,7 @@
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">48</int>
-						<reference key="object" ref="880603177"/>
+						<reference key="object" ref="216143310"/>
 						<reference key="parent" ref="766721923"/>
 					</object>
 				</object>
