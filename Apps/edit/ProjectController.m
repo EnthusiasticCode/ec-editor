@@ -100,11 +100,6 @@
     return [self.fileManager contentsOfDirectoryAtPath:[self.folder stringByAppendingPathComponent:subfolder] withExtensions:self.extensionsToShow options:options skipFiles:NO skipDirectories:YES error:(NSError **)NULL];
 }
 
-- (void)browseFolder:(NSString *)folder
-{
-    self.folder = folder;
-}
-
 - (NSUInteger)numberOfAreasInTableView:(ECRelationalTableView *)relationalTableView
 {
     return [[self contentsOfFolder] count];
@@ -133,11 +128,11 @@
     return [links count];
 }
 
-- (void)relationalTableView:(ECRelationalTableView *)relationalTableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+- (void)relationalTableView:(ECRelationalTableView *)relationalTableView didSelectItemAtIndexPath:(NSIndexPath *)indexPath;
 {
     NSString *subfolder = [self relationalTableView:nil titleForHeaderInArea:indexPath.area];
-    NSString *file = [[self filesInSubfolder:subfolder] objectAtIndex:indexPath.row];
-    [self loadFile:[subfolder stringByAppendingPathComponent:file]];
+    NSString *file = [[self filesInSubfolder:subfolder] objectAtIndex:indexPath.item];
+    [self loadFile:[self.folder stringByAppendingPathComponent:[subfolder stringByAppendingPathComponent:file]]];
 }
 
 - (NSInteger)tableView:(UITableView *)tableView indentationLevelForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -150,6 +145,7 @@
 
 - (void)loadProject:(NSString *)projectRoot
 {
+    self.folder = projectRoot;
     self.project = [Project projectWithRootDirectory:projectRoot];
     self.codeIndex = [[[ECCodeIndex alloc] init] autorelease];
     self.extensionsToShow = [[self.codeIndex extensionToLanguageMap] allKeys];
@@ -157,11 +153,10 @@
 
 - (void)loadFile:(NSString *)file
 {
-//    ECCodeUnit *codeUnit = [self.codeIndex unitForFile:file];
-//    [self.fileController loadFile:file withCodeUnit:codeUnit];
-//    [self.view removeFromSuperview];
-//    [self.view addSubview:self.fileController.view];
-//    self.fileController.view.frame = self.view.bounds;
+    ECCodeUnit *codeUnit = [self.codeIndex unitForFile:file];
+    FileController *fileController = [[[FileController alloc] initWithNibName:@"FileController" bundle:[NSBundle mainBundle]] autorelease];
+    [fileController loadFile:file withCodeUnit:codeUnit];
+    [self.navigationController pushViewController:fileController animated:YES];
 }
 
 @end

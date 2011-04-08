@@ -43,6 +43,7 @@
 //        unsigned int defaultShowsVerticalScrollIndicator:1;
 //        unsigned int hideScrollIndicators:1;
         unsigned int needsLayoutSubviews:1;
+        unsigned int needsReloadData:1;
     } flags_;
 }
 @property (nonatomic, retain) UIScrollView *scrollView;
@@ -51,6 +52,11 @@
 - (void)recalculatePaddedAreaHeaderSize;
 @property (nonatomic, retain) NSMutableArray *areas;
 @property (nonatomic, retain) NSMutableDictionary *relatedIndexPaths;
+- (void)handleGesture:(UIGestureRecognizer *)gestureRecognizer;
+- (CGRect)rectForHeaderInAreaRect:(CGRect)areaRect;
+- (CGRect)rectForFooterInAreaRect:(CGRect)areaRect;
+- (CGRect)rectForLevel:(NSUInteger)level inArea:(NSUInteger)area inAreaRect:(CGRect)areaRect;
+- (CGRect)rectForItem:(NSUInteger)item inLevelRect:(CGRect)levelRect;
 @end
 
 @implementation ECRelationalTableView
@@ -171,8 +177,12 @@ static id init(ECRelationalTableView *self)
     self->cellInsets_ = UIEdgeInsetsMake(20.0, 20.0, 20.0, 20.0);
     self->levelInsets_ = UIEdgeInsetsMake(10.0, 0.0, 10.0, 0.0);
     self->areaHeaderHeight_ = 20.0;
+    self->flags_.needsLayoutSubviews = YES;
+    self->flags_.needsReloadData = YES;
     [self recalculatePaddedCellSizeAndContentWidthInCells];
     [self recalculatePaddedAreaHeaderSize];
+    UITapGestureRecognizer *tapGestureRecognizer = [[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleGesture:)] autorelease];
+    [self addGestureRecognizer:tapGestureRecognizer];
     return self;
 }
 
@@ -242,7 +252,8 @@ static id init(ECRelationalTableView *self)
             for (NSUInteger k = 0; k < numItems; ++k)
             {
                 NSIndexPath *indexPath = [NSIndexPath indexPathForItem:k atLevel:j inArea:i];
-                [items addObject:[self.dataSource relationalTableView:self cellForItemAtIndexPath:indexPath]];
+                if (flags_.dataSourceCellForItemAtIndexPath)
+                    [items addObject:[self.dataSource relationalTableView:self cellForItemAtIndexPath:indexPath]];
                 if (flags_.dataSourceRelatedIndexPathsForItemAtIndexPath)
                     [self.relatedIndexPaths setObject:[self.dataSource relationalTableView:self relatedIndexPathsForItemAtIndexPath:indexPath] forKey:indexPath];
             }
@@ -253,6 +264,7 @@ static id init(ECRelationalTableView *self)
     if (![self.relatedIndexPaths count])
         self.relatedIndexPaths = nil;
     flags_.needsLayoutSubviews = YES;
+    flags_.needsReloadData = NO;
 }
 
 - (NSUInteger)numberOfAreas
@@ -288,17 +300,21 @@ static id init(ECRelationalTableView *self)
     return CGRectMake(x, y, width, height);
 }
 
-- (CGRect)rectForHeaderInArea:(NSUInteger)area
+- (CGRect)rectForHeaderInAreaRect:(CGRect)areaRect
 {
-    CGRect areaRect = [self rectForArea:area];
     CGFloat x = areaRect.origin.x + self.areaHeaderInsets.left;
     CGFloat y = areaRect.origin.y + self.areaHeaderInsets.top;
     return (CGRect){ (CGPoint){x, y} , self.paddedAreaHeaderSize };
 }
 
-- (CGRect)rectForLevel:(NSUInteger)level inArea:(NSUInteger)area
+- (CGRect)rectForHeaderInArea:(NSUInteger)area
 {
     CGRect areaRect = [self rectForArea:area];
+    return [self rectForHeaderInAreaRect:areaRect];
+}
+
+- (CGRect)rectForLevel:(NSUInteger)level inArea:(NSUInteger)area inAreaRect:(CGRect)areaRect
+{
     CGFloat x = areaRect.origin.x + self.levelInsets.left;
     CGFloat y = areaRect.origin.y + self.areaHeaderInsets.top + self.paddedAreaHeaderSize.height + self.areaHeaderInsets.bottom;
     y += (self.levelInsets.top + self.levelInsets.bottom) * level;
@@ -306,20 +322,31 @@ static id init(ECRelationalTableView *self)
         y += [self heightInCellsForContentAtLevel:i inArea:area];
     y += self.levelInsets.top;
     CGFloat width = self.bounds.size.width - self.tableInsets.left - self.tableInsets.right - self.levelInsets.left - self.levelInsets.right;
-    CGFloat height = [self heightInCellsForContentAtLevel:level inArea:area];
+    CGFloat height = [self heightInCellsForContentAtLevel:level inArea:area] * self.paddedCellSize.height;
     return CGRectMake(x, y, width, height);
+}
+
+- (CGRect)rectForLevel:(NSUInteger)level inArea:(NSUInteger)area
+{
+    CGRect areaRect = [self rectForArea:area];
+    return [self rectForLevel:level inArea:area inAreaRect:areaRect];
+}
+
+- (CGRect)rectForItem:(NSUInteger)item inLevelRect:(CGRect)levelRect
+{
+    CGFloat x = levelRect.origin.x + self.cellInsets.left;
+    CGFloat y = levelRect.origin.y + self.cellInsets.top;
+    NSUInteger row = item / self.contentWidthInCells;
+    NSUInteger column = item % self.contentWidthInCells;
+    x += column * self.paddedCellSize.width;
+    y += row * self.paddedCellSize.height;
+    return (CGRect){ (CGPoint){x, y}, self.cellSize};
 }
 
 - (CGRect)rectForItemAtIndexPath:(NSIndexPath *)indexPath
 {
     CGRect levelRect = [self rectForLevel:indexPath.level inArea:indexPath.area];
-    CGFloat x = levelRect.origin.x + self.cellInsets.left;
-    CGFloat y = levelRect.origin.y + self.cellInsets.top;
-    NSUInteger row = indexPath.item / self.contentWidthInCells;
-    NSUInteger column = indexPath.item % self.contentWidthInCells;
-    x += column * self.paddedCellSize.width;
-    y += row * self.paddedCellSize.height;
-    return (CGRect){ (CGPoint){x, y}, self.cellSize};
+    return [self rectForItem:indexPath.item inLevelRect:levelRect];
 }
 
 - (ECRelationalTableViewCell *)cellForItemAtIndexPath:(NSIndexPath *)indexPath
@@ -336,6 +363,8 @@ static id init(ECRelationalTableView *self)
 {
     if (!flags_.needsLayoutSubviews)
         return;
+    if (flags_.needsReloadData)
+        [self reloadData];
     NSUInteger numAreas = [self numberOfAreas];
     for (NSUInteger i = 0; i < numAreas; ++i)
     {
@@ -367,6 +396,51 @@ static id init(ECRelationalTableView *self)
     CGRect lastAreaFrame = [self rectForArea:numAreas - 1];
     self.scrollView.contentSize = CGSizeMake(self.bounds.size.width, lastAreaFrame.origin.y + lastAreaFrame.size.height + self.tableInsets.bottom);
     flags_.needsLayoutSubviews = NO;
+}
+
+- (NSIndexPath *)indexPathForItemAtPoint:(CGPoint)point
+{
+    CGPoint contentOffset = [self.scrollView contentOffset];
+    point.x += contentOffset.x;
+    point.y += contentOffset.y;
+    for (NSUInteger i = 0; i < [self numberOfAreas]; ++i)
+    {
+        CGRect areaRect = CGRectZero;
+        areaRect = [self rectForArea:i];
+        if (!CGRectContainsPoint(areaRect, point))
+            continue;
+        for (NSUInteger j = 0; j < [self numberOfLevelsInArea:i]; ++j)
+        {
+            CGRect levelRect = CGRectZero;
+            levelRect = [self rectForLevel:j inArea:i inAreaRect:areaRect];
+            if (!CGRectContainsPoint(levelRect, point))
+                continue;
+            for (NSUInteger k = 0; k < [self numberOfItemsAtLevel:j inArea:i]; )
+            {
+                CGRect itemRect = CGRectZero;
+                itemRect = [self rectForItem:k inLevelRect:levelRect];
+                if (CGRectContainsPoint(itemRect, point))
+                    return [NSIndexPath indexPathForItem:k atLevel:j inArea:i];
+                if (itemRect.origin.y > point.y)
+                    break;
+                if (point.y > itemRect.origin.y + itemRect.size.height)
+                    k += [self contentWidthInCells];
+                else
+                    ++k;
+            }
+        }
+    }
+    return nil;
+}
+
+- (void)handleGesture:(UIGestureRecognizer *)gestureRecognizer
+{
+    if(!flags_.delegateDidSelectItem)
+        return;
+    if (![gestureRecognizer state] == UIGestureRecognizerStateEnded)
+        return;
+    NSIndexPath *indexPath = [self indexPathForItemAtPoint:[gestureRecognizer locationInView:self]];
+    [self.delegate relationalTableView:self didSelectItemAtIndexPath:indexPath];
 }
 
 @end

@@ -24,8 +24,10 @@
 
 @implementation FileController
 
-@synthesize codeView;
-@synthesize scrollView;
+@synthesize codeView = codeView_;
+@synthesize scrollView = scrollView_;
+@synthesize file = file_;
+@synthesize codeUnit = codeUnit_;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -41,7 +43,9 @@
     [textStyles_ release];
     [diagnosticOverlayStyles_ release];
     self.codeView = nil;
-    [scrollView release];
+    self.scrollView = nil;
+    self.file = nil;
+    self.codeUnit = nil;
     [super dealloc];
 }
 
@@ -104,29 +108,9 @@
     //    
     //    [self.codeView addTextOverlayStyle:yellowMark forTextRange:[ECTextRange textRangeWithRange:(NSRange){9, 15}] alternative:NO];
     //    [self.codeView addTextOverlayStyle:errorMark forTextRange:[ECTextRange textRangeWithRange:(NSRange){9, 15}] alternative:NO];
-
-}
-
-
-- (void)viewDidUnload
-{
-    [super viewDidUnload];
-    // Release any retained subviews of the main view.
-    // e.g. self.myOutlet = nil;
-    self.scrollView = nil;
-    self.codeView = nil;
-}
-
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
-{
-    // Return YES for supported orientations
-	return YES;
-}
-
-- (void)loadFile:(NSString *)file withCodeUnit:(ECCodeUnit *)codeUnit
-{
-    codeView.text = [NSString stringWithContentsOfFile:file encoding:NSUTF8StringEncoding error:nil];
-    for (ECCodeToken *token in [codeUnit tokensInRange:NSMakeRange(0, [self.codeView.text length]) withCursors:YES])
+    
+    self.codeView.text = [NSString stringWithContentsOfFile:self.file encoding:NSUTF8StringEncoding error:nil];
+    for (ECCodeToken *token in [self.codeUnit tokensInRange:NSMakeRange(0, [self.codeView.text length]) withCursors:YES])
     {
         switch (token.kind)
         {
@@ -157,9 +141,9 @@
                 break;
         }
     }
-    [codeView sizeToFit];
-    scrollView.contentSize = codeView.bounds.size;
-    for (ECCodeDiagnostic *diagnostic in [codeUnit diagnostics])
+    [self.codeView sizeToFit];
+    self.scrollView.contentSize = self.codeView.bounds.size;
+    for (ECCodeDiagnostic *diagnostic in [self.codeUnit diagnostics])
     {
         //        switch (diagnostic.severity) {
         //            case ECCodeDiagnosticSeverityWarning:
@@ -175,6 +159,27 @@
         //                break;
         //        }
     }
+}
+
+- (void)viewDidUnload
+{
+    [super viewDidUnload];
+    // Release any retained subviews of the main view.
+    // e.g. self.myOutlet = nil;
+    self.scrollView = nil;
+    self.codeView = nil;
+}
+
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
+{
+    // Return YES for supported orientations
+	return YES;
+}
+
+- (void)loadFile:(NSString *)file withCodeUnit:(ECCodeUnit *)codeUnit
+{
+    self.file = file;
+    self.codeUnit = codeUnit;
 }
 
 @end

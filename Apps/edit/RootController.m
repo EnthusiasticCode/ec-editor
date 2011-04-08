@@ -8,6 +8,7 @@
 
 #import "RootController.h"
 #import <ECFoundation/NSFileManager(ECAdditions).h>
+#import "ProjectController.h"
 
 @interface RootController ()
 @property (nonatomic, retain) NSFileManager *fileManager;
@@ -99,7 +100,10 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSString *projectFile = [[self contentsOfFolder] objectAtIndex:indexPath.row];
+    NSString *projectFolder = [self.folder stringByAppendingPathComponent:[[self contentsOfFolder] objectAtIndex:indexPath.row]];
+    ProjectController *projectController = [[[ProjectController alloc] initWithNibName:@"ProjectController" bundle:[NSBundle mainBundle]] autorelease];
+    [projectController loadProject:projectFolder];
+    [self.navigationController pushViewController:projectController animated:YES];
 }
 
 @end

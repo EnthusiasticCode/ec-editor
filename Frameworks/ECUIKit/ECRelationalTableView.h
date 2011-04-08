@@ -36,9 +36,9 @@ typedef enum {
 // Item gets various attributes set automatically based on table (separators) and data source (accessory views, editing controls)
 - (ECRelationalTableViewCell *)relationalTableView:(ECRelationalTableView *)relationalTableView cellForItemAtIndexPath:(NSIndexPath *)indexPath;
 
-- (NSArray *)relationalTableView:(ECRelationalTableView *)relationalTableView relatedIndexPathsForItemAtIndexPath:(NSIndexPath *)indexPath;
-
 @optional
+
+- (NSArray *)relationalTableView:(ECRelationalTableView *)relationalTableView relatedIndexPathsForItemAtIndexPath:(NSIndexPath *)indexPath;
 
 - (NSUInteger)numberOfAreasInTableView:(ECRelationalTableView *)relationalTableView;              // Default is 1 if not implemented
 
@@ -109,7 +109,7 @@ typedef enum {
 
 @end
 
-@interface ECRelationalTableView : UIView
+@interface ECRelationalTableView : UIView <UIGestureRecognizerDelegate>
 @property (nonatomic, assign) IBOutlet id<ECRelationalTableViewDelegate> delegate;
 @property (nonatomic, assign) IBOutlet id<ECRelationalTableViewDataSource> dataSource;
 @property (nonatomic) UIEdgeInsets tableInsets;
