@@ -10,14 +10,8 @@
 #import "ECDocument.h"
 @class NSManagedObjectContext;
 
-
-@interface ECPersistentDocument : ECDocument {
-@private
-    
-}
+@interface ECPersistentDocument : ECDocument
 - (BOOL)configurePersistentStoreCoordinatorForURL:(NSURL *)url ofType:(NSString *)fileType modelConfiguration:(NSString *)configuration storeOptions:(NSDictionary *)storeOptions error:(NSError **)error;
 - (NSManagedObjectContext *)managedObjectContext;
 - (id)managedObjectModel;
-
-
 @end

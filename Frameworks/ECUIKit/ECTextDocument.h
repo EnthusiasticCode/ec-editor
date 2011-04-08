@@ -10,10 +10,6 @@
 #import "ECDocument.h"
 
 
-@interface ECTextDocument : ECDocument {
-@private
-    
-}
+@interface ECTextDocument : ECDocument
 @property (nonatomic, copy) NSString *text;
-
 @end

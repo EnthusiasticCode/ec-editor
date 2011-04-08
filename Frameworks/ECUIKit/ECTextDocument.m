@@ -11,14 +11,14 @@
 
 @implementation ECTextDocument
 
-@synthesize text = _text;
+@synthesize text = text_;
 
 - (void)setText:(NSString *)text
 {
-    if (![_text isEqualToString:text])
+    if (![text_ isEqualToString:text])
         self.documentEdited = YES;
-    [_text autorelease];
-    _text = [text retain];
+    [text_ autorelease];
+    text_ = [text retain];
 }
 
 - (void)dealloc
@@ -27,9 +27,9 @@
     [super dealloc];
 }
 
-- (id)initWithType:(NSString *)fileType error:(NSError **)error
+- (id)init
 {
-    self = [super initWithType:fileType error:error];
+    self = [super init];
     if (self)
         self.text = @"";
     return self;
@@ -45,16 +45,6 @@
 {
     [self.text writeToURL:fileURL atomically:NO encoding:NSUTF8StringEncoding error:error];
     return YES;
-}
-
-+ (NSArray *)readableTypes
-{
-    return [NSArray arrayWithObject:@"public.plain-text"];
-}
-
-+ (NSArray *)writableTypes
-{
-    return [NSArray arrayWithObject:@"public.plain-text"];
 }
 
 @end

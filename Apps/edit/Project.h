@@ -7,12 +7,9 @@
 //
 
 #import <Foundation/Foundation.h>
-@class NSManagedObjectContext;
-@class NSManagedObjectModel;
-@class NSPersistentStoreCoordinator;
+#import <CoreData/CoreData.h>
 
-
-@interface Project : NSObject
+@interface Project : NSManagedObject
 @property (nonatomic, readonly) NSManagedObjectContext *managedObjectContext;
 @property (nonatomic, readonly) NSManagedObjectModel *managedObjectModel;
 @property (nonatomic, readonly) NSPersistentStoreCoordinator *persistentStoreCoordinator;

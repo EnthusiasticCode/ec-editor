@@ -9,7 +9,6 @@
 #import "ECPersistentDocument.h"
 #import <CoreData/CoreData.h>
 
-
 @implementation ECPersistentDocument
 
 - (BOOL)readFromURL:(NSURL *)fileURL ofType:(NSString *)fileType error:(NSError **)error
