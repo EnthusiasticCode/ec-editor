@@ -53,7 +53,7 @@
         rect.origin.x += margin;
         rect.size.width -= margin * 2;
         
-        [[UIColor blackColor] setFill];
+        CGContextSetFillColorWithColor(ctx, [UIColor blackColor].CGColor);
         
         CGFloat line = ceilf(rect.size.height / 7.0);
         CGFloat corner = ceilf(rect.size.height / 4.0);
@@ -92,7 +92,7 @@
     }];
     
     imageView2.image = [UIImage imageWithSize:imageView2.bounds.size block:^(CGContextRef ctx, CGRect rect) {
-        [[UIColor blackColor] setFill];
+        CGContextSetFillColorWithColor(ctx, [UIColor blackColor].CGColor);
         
         CGFloat line = ceilf(rect.size.height / 7.0);
         CGFloat mid = ceilf(rect.size.height / 2.0);
@@ -152,7 +152,7 @@
         CGFloat bspaceOutter = orect.origin.y + ceilf(orect.size.height * 0.69);
         
         // Draw document
-        [[UIColor blackColor] setFill];
+        CGContextSetFillColorWithColor(ctx, [UIColor blackColor].CGColor);
         
         CGFloat line = ceilf(rect.size.height / 7.0);
         CGFloat corner = ceilf(rect.size.height / 4.0);
@@ -195,8 +195,8 @@
         CGContextFillPath(ctx);
         
         // Draw bookmark
-        [[UIColor blackColor] setStroke];
-        [[UIColor colorWithRed:64.0/255.0 green:92.0/255.0 blue:123.0/255.0 alpha:1] setFill];
+        CGContextSetStrokeColorWithColor(ctx, [UIColor blackColor].CGColor);
+        CGContextSetFillColorWithColor(ctx, [UIColor colorWithRed:64.0/255.0 green:92.0/255.0 blue:123.0/255.0 alpha:1].CGColor);
         CGContextSetLineWidth(ctx, 1);
 
         CGFloat bookmarkWidth = orect.origin.x + ceilf(orect.size.width * 0.39) + 0.5;

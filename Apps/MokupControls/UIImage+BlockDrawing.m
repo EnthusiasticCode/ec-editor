@@ -18,16 +18,20 @@
     if (CGSizeEqualToSize(size, CGSizeZero) || !block)
         return nil;
     
-    // Render bitmap with block
-    CGImageRef bitmap = NULL;
-    UIGraphicsBeginImageContext(size);
-    {
-        CGContextRef context = UIGraphicsGetCurrentContext();
-        block(context, CGRectMake(0, 0, size.width, size.height));        
-        bitmap = CGBitmapContextCreateImage(context);
-    }
-    UIGraphicsEndImageContext();
+    // Generating bitmap context
+    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+    CGContextRef context = CGBitmapContextCreate(NULL, size.width, size.height, 8, 4*size.width, colorSpace, kCGImageAlphaPremultipliedLast);
+    CGColorSpaceRelease(colorSpace);
     
+    // Render bitmap with block
+    CGContextScaleCTM(context, 1, -1);
+    CGContextTranslateCTM(context, 0, -size.height);
+    block(context, CGRectMake(0, 0, size.width, size.height));
+    
+    // Create bitmap
+    CGImageRef bitmap = CGBitmapContextCreateImage(context);
+    CGContextRelease(context);
+
     // Create new image
     UIImage *image = [UIImage imageWithCGImage:bitmap];
     CGImageRelease(bitmap);
