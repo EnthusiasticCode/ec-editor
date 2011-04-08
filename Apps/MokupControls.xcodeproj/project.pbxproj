@@ -11,6 +11,7 @@
 		CD2B2A28134BB615006C5648 /* ECJumpBar.m in Sources */ = {isa = PBXBuildFile; fileRef = CD2B2A27134BB615006C5648 /* ECJumpBar.m */; };
 		CD36F9BA134CCCF000E9ECEE /* UIImage+BlockDrawing.m in Sources */ = {isa = PBXBuildFile; fileRef = CD36F9B9134CCCF000E9ECEE /* UIImage+BlockDrawing.m */; };
 		CD7CC5E21349D7E300870E13 /* ECMockupButton.m in Sources */ = {isa = PBXBuildFile; fileRef = CD7CC5E11349D7E300870E13 /* ECMockupButton.m */; };
+		CD9F727B134F84AD001A2256 /* ECPopoverView.m in Sources */ = {isa = PBXBuildFile; fileRef = CD9F727A134F84AD001A2256 /* ECPopoverView.m */; };
 		CDACD8A81349C57B0055B7F3 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CDACD8A71349C57B0055B7F3 /* QuartzCore.framework */; };
 		CDC501AC134B2A94006CCBD7 /* ECMockupLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = CDC501AB134B2A94006CCBD7 /* ECMockupLayer.m */; };
 		CDEFF9331348BB8F006FEFCC /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CDEFF9321348BB8F006FEFCC /* UIKit.framework */; };
@@ -32,6 +33,8 @@
 		CD36F9B9134CCCF000E9ECEE /* UIImage+BlockDrawing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+BlockDrawing.m"; sourceTree = "<group>"; };
 		CD7CC5E01349D7E300870E13 /* ECMockupButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECMockupButton.h; sourceTree = "<group>"; };
 		CD7CC5E11349D7E300870E13 /* ECMockupButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECMockupButton.m; sourceTree = "<group>"; };
+		CD9F7279134F84AD001A2256 /* ECPopoverView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECPopoverView.h; sourceTree = "<group>"; };
+		CD9F727A134F84AD001A2256 /* ECPopoverView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECPopoverView.m; sourceTree = "<group>"; };
 		CDACD8A71349C57B0055B7F3 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		CDC501AA134B2A94006CCBD7 /* ECMockupLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECMockupLayer.h; sourceTree = "<group>"; };
 		CDC501AB134B2A94006CCBD7 /* ECMockupLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECMockupLayer.m; sourceTree = "<group>"; };
@@ -110,6 +113,8 @@
 				CD2B2A27134BB615006C5648 /* ECJumpBar.m */,
 				CD36F9B8134CCCF000E9ECEE /* UIImage+BlockDrawing.h */,
 				CD36F9B9134CCCF000E9ECEE /* UIImage+BlockDrawing.m */,
+				CD9F7279134F84AD001A2256 /* ECPopoverView.h */,
+				CD9F727A134F84AD001A2256 /* ECPopoverView.m */,
 			);
 			path = MokupControls;
 			sourceTree = "<group>";
@@ -192,6 +197,7 @@
 				CD2B2A24134B7944006C5648 /* ECStackFilterBarController.m in Sources */,
 				CD2B2A28134BB615006C5648 /* ECJumpBar.m in Sources */,
 				CD36F9BA134CCCF000E9ECEE /* UIImage+BlockDrawing.m in Sources */,
+				CD9F727B134F84AD001A2256 /* ECPopoverView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
