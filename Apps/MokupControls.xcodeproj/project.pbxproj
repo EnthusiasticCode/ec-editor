@@ -7,18 +7,37 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CD2B2A24134B7944006C5648 /* ECStackFilterBarController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD2B2A23134B7944006C5648 /* ECStackFilterBarController.m */; };
+		CD2B2A28134BB615006C5648 /* ECJumpBar.m in Sources */ = {isa = PBXBuildFile; fileRef = CD2B2A27134BB615006C5648 /* ECJumpBar.m */; };
+		CD36F9BA134CCCF000E9ECEE /* UIImage+BlockDrawing.m in Sources */ = {isa = PBXBuildFile; fileRef = CD36F9B9134CCCF000E9ECEE /* UIImage+BlockDrawing.m */; };
+		CD7CC5E21349D7E300870E13 /* ECMockupButton.m in Sources */ = {isa = PBXBuildFile; fileRef = CD7CC5E11349D7E300870E13 /* ECMockupButton.m */; };
+		CD9F727B134F84AD001A2256 /* ECPopoverView.m in Sources */ = {isa = PBXBuildFile; fileRef = CD9F727A134F84AD001A2256 /* ECPopoverView.m */; };
+		CDACD8A81349C57B0055B7F3 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CDACD8A71349C57B0055B7F3 /* QuartzCore.framework */; };
+		CDC501AC134B2A94006CCBD7 /* ECMockupLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = CDC501AB134B2A94006CCBD7 /* ECMockupLayer.m */; };
 		CDEFF9331348BB8F006FEFCC /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CDEFF9321348BB8F006FEFCC /* UIKit.framework */; };
 		CDEFF9351348BB8F006FEFCC /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CDEFF9341348BB8F006FEFCC /* Foundation.framework */; };
 		CDEFF9371348BB8F006FEFCC /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CDEFF9361348BB8F006FEFCC /* CoreGraphics.framework */; };
 		CDEFF93D1348BB8F006FEFCC /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = CDEFF93B1348BB8F006FEFCC /* InfoPlist.strings */; };
 		CDEFF9401348BB8F006FEFCC /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = CDEFF93F1348BB8F006FEFCC /* main.m */; };
-		CDEFF9431348BB8F006FEFCC /* MokupControlsAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = CDEFF9421348BB8F006FEFCC /* MokupControlsAppDelegate.m */; };
 		CDEFF9461348BB8F006FEFCC /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = CDEFF9441348BB8F006FEFCC /* MainWindow.xib */; };
 		CDEFF9491348BB8F006FEFCC /* MokupControlsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDEFF9481348BB8F006FEFCC /* MokupControlsViewController.m */; };
 		CDEFF94C1348BB8F006FEFCC /* MokupControlsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CDEFF94A1348BB8F006FEFCC /* MokupControlsViewController.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		CD2B2A22134B7944006C5648 /* ECStackFilterBarController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECStackFilterBarController.h; sourceTree = "<group>"; };
+		CD2B2A23134B7944006C5648 /* ECStackFilterBarController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECStackFilterBarController.m; sourceTree = "<group>"; };
+		CD2B2A26134BB615006C5648 /* ECJumpBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECJumpBar.h; sourceTree = "<group>"; };
+		CD2B2A27134BB615006C5648 /* ECJumpBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECJumpBar.m; sourceTree = "<group>"; };
+		CD36F9B8134CCCF000E9ECEE /* UIImage+BlockDrawing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+BlockDrawing.h"; sourceTree = "<group>"; };
+		CD36F9B9134CCCF000E9ECEE /* UIImage+BlockDrawing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+BlockDrawing.m"; sourceTree = "<group>"; };
+		CD7CC5E01349D7E300870E13 /* ECMockupButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECMockupButton.h; sourceTree = "<group>"; };
+		CD7CC5E11349D7E300870E13 /* ECMockupButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECMockupButton.m; sourceTree = "<group>"; };
+		CD9F7279134F84AD001A2256 /* ECPopoverView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECPopoverView.h; sourceTree = "<group>"; };
+		CD9F727A134F84AD001A2256 /* ECPopoverView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECPopoverView.m; sourceTree = "<group>"; };
+		CDACD8A71349C57B0055B7F3 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		CDC501AA134B2A94006CCBD7 /* ECMockupLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECMockupLayer.h; sourceTree = "<group>"; };
+		CDC501AB134B2A94006CCBD7 /* ECMockupLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECMockupLayer.m; sourceTree = "<group>"; };
 		CDEFF92E1348BB8F006FEFCC /* MokupControls.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MokupControls.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CDEFF9321348BB8F006FEFCC /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		CDEFF9341348BB8F006FEFCC /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -27,8 +46,6 @@
 		CDEFF93C1348BB8F006FEFCC /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		CDEFF93E1348BB8F006FEFCC /* MokupControls-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MokupControls-Prefix.pch"; sourceTree = "<group>"; };
 		CDEFF93F1348BB8F006FEFCC /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		CDEFF9411348BB8F006FEFCC /* MokupControlsAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MokupControlsAppDelegate.h; sourceTree = "<group>"; };
-		CDEFF9421348BB8F006FEFCC /* MokupControlsAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MokupControlsAppDelegate.m; sourceTree = "<group>"; };
 		CDEFF9451348BB8F006FEFCC /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainWindow.xib; sourceTree = "<group>"; };
 		CDEFF9471348BB8F006FEFCC /* MokupControlsViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MokupControlsViewController.h; sourceTree = "<group>"; };
 		CDEFF9481348BB8F006FEFCC /* MokupControlsViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MokupControlsViewController.m; sourceTree = "<group>"; };
@@ -40,6 +57,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CDACD8A81349C57B0055B7F3 /* QuartzCore.framework in Frameworks */,
 				CDEFF9331348BB8F006FEFCC /* UIKit.framework in Frameworks */,
 				CDEFF9351348BB8F006FEFCC /* Foundation.framework in Frameworks */,
 				CDEFF9371348BB8F006FEFCC /* CoreGraphics.framework in Frameworks */,
@@ -69,6 +87,7 @@
 		CDEFF9311348BB8F006FEFCC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				CDACD8A71349C57B0055B7F3 /* QuartzCore.framework */,
 				CDEFF9321348BB8F006FEFCC /* UIKit.framework */,
 				CDEFF9341348BB8F006FEFCC /* Foundation.framework */,
 				CDEFF9361348BB8F006FEFCC /* CoreGraphics.framework */,
@@ -79,13 +98,23 @@
 		CDEFF9381348BB8F006FEFCC /* MokupControls */ = {
 			isa = PBXGroup;
 			children = (
-				CDEFF9411348BB8F006FEFCC /* MokupControlsAppDelegate.h */,
-				CDEFF9421348BB8F006FEFCC /* MokupControlsAppDelegate.m */,
 				CDEFF9441348BB8F006FEFCC /* MainWindow.xib */,
 				CDEFF9471348BB8F006FEFCC /* MokupControlsViewController.h */,
 				CDEFF9481348BB8F006FEFCC /* MokupControlsViewController.m */,
 				CDEFF94A1348BB8F006FEFCC /* MokupControlsViewController.xib */,
 				CDEFF9391348BB8F006FEFCC /* Supporting Files */,
+				CD7CC5E01349D7E300870E13 /* ECMockupButton.h */,
+				CD7CC5E11349D7E300870E13 /* ECMockupButton.m */,
+				CDC501AA134B2A94006CCBD7 /* ECMockupLayer.h */,
+				CDC501AB134B2A94006CCBD7 /* ECMockupLayer.m */,
+				CD2B2A22134B7944006C5648 /* ECStackFilterBarController.h */,
+				CD2B2A23134B7944006C5648 /* ECStackFilterBarController.m */,
+				CD2B2A26134BB615006C5648 /* ECJumpBar.h */,
+				CD2B2A27134BB615006C5648 /* ECJumpBar.m */,
+				CD36F9B8134CCCF000E9ECEE /* UIImage+BlockDrawing.h */,
+				CD36F9B9134CCCF000E9ECEE /* UIImage+BlockDrawing.m */,
+				CD9F7279134F84AD001A2256 /* ECPopoverView.h */,
+				CD9F727A134F84AD001A2256 /* ECPopoverView.m */,
 			);
 			path = MokupControls;
 			sourceTree = "<group>";
@@ -162,8 +191,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				CDEFF9401348BB8F006FEFCC /* main.m in Sources */,
-				CDEFF9431348BB8F006FEFCC /* MokupControlsAppDelegate.m in Sources */,
 				CDEFF9491348BB8F006FEFCC /* MokupControlsViewController.m in Sources */,
+				CD7CC5E21349D7E300870E13 /* ECMockupButton.m in Sources */,
+				CDC501AC134B2A94006CCBD7 /* ECMockupLayer.m in Sources */,
+				CD2B2A24134B7944006C5648 /* ECStackFilterBarController.m in Sources */,
+				CD2B2A28134BB615006C5648 /* ECJumpBar.m in Sources */,
+				CD36F9BA134CCCF000E9ECEE /* UIImage+BlockDrawing.m in Sources */,
+				CD9F727B134F84AD001A2256 /* ECPopoverView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -239,6 +273,7 @@
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MokupControls/MokupControls-Prefix.pch";
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = "MokupControls/MokupControls-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
@@ -252,6 +287,7 @@
 				COPY_PHASE_STRIP = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MokupControls/MokupControls-Prefix.pch";
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = "MokupControls/MokupControls-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				VALIDATE_PRODUCT = YES;
@@ -278,6 +314,7 @@
 				CDEFF9511348BB8F006FEFCC /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
