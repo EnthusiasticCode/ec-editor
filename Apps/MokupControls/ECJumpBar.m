@@ -25,7 +25,6 @@
     BOOL delegateHasChangedSearchStringTo;
 }
 
-- (void)collapseButtonStackToFitButtonCount:(NSUInteger)maxCount;
 - (void)searchFieldAction:(id)sender;
 
 @end
@@ -186,9 +185,14 @@ static void init(ECJumpBar *self)
     self->minimumStackButtonWidth = 50;
     self->maximumStackButtonWidth = 160;
     self->textInsets = UIEdgeInsetsMake(0, 8, 0, 0);
-//    self->controlMargin = UIEdgeInsetsMake(0, -15, 0, 0);
     //
     self.layer.masksToBounds = YES;
+    //
+    CGPoint origin = self.bounds.origin;
+    CGSize size = self.bounds.size;
+    origin.x += self->textInsets.left;
+    size.width -= self->textInsets.left + self->textInsets.right;
+    self->searchField.frame = (CGRect){ origin, size };
 }
 
 - (id)initWithFrame:(CGRect)frame
@@ -224,8 +228,8 @@ static void init(ECJumpBar *self)
 - (void)layoutSubviews
 {
     CGRect bounds = self.bounds;
-    CGPoint origin = bounds.origin;
-    CGSize size = bounds.size;
+    __block CGPoint origin = bounds.origin;
+    __block CGSize size = bounds.size;
     CGFloat textPadding = textInsets.left + textInsets.right;
     
     // Calculate maximum usable width for buttons
@@ -237,10 +241,35 @@ static void init(ECJumpBar *self)
     maxTotWidth -= BUTTON_ARROW_WIDTH + textPadding;
     
     // Collaspe elements
-    [self collapseButtonStackToFitButtonCount:maxTotWidth / minimumStackButtonWidth];
+    NSUInteger buttonStackCount = [controlsStack count];
+    NSUInteger maxCount = maxTotWidth / minimumStackButtonWidth;
+    if (maxCount == 0 || buttonStackCount <= maxCount)
+    {
+        collapsedRange.length = collapsedRange.location = 0;
+        if (collapsedButton)
+            collapsedButton.hidden = YES;
+    }
+    else
+    {
+        if (!collapsedButton)
+            collapsedButton = [[self createStackControlWithTitle:@"..."] retain];
+        
+        NSRange collapse;
+        collapse.location = maxCount / 2 - 1;
+        collapse.length = buttonStackCount - maxCount + 1;
+        if (!NSEqualRanges(collapse, collapsedRange))
+        {
+            collapsedRange = collapse;
+            collapsedButton.tag = collapsedRange.location + collapsedRange.length;
+            
+            if (delegateHasDidCollapseToControlCollapsedRange) 
+            {
+                [delegate jumpBar:self didCollapseToControl:collapsedButton collapsedRange:collapsedRange];
+            }
+        }
+    }
     
     // Calculte button size
-    NSUInteger buttonStackCount = [controlsStack count];
     CGSize buttonSize = size;
     if (collapsedRange.length)
         buttonSize.width = maxTotWidth / (buttonStackCount - collapsedRange.length + 1);
@@ -253,44 +282,59 @@ static void init(ECJumpBar *self)
     buttonSize.width = ceilf(buttonSize.width) + BUTTON_ARROW_WIDTH + textPadding;
     
     // Layout buttons
-    UIControl *button;
     CGFloat diff = buttonSize.width - BUTTON_ARROW_WIDTH - textPadding;
     NSUInteger collapseEnd = collapsedRange.location + collapsedRange.length;
-    if (collapsedRange.length == 0) {
+    // Hide collapse button if required
+    if (collapsedRange.length == 0) 
+    {
         collapsedButton.hidden = YES;
     }
-    for (NSUInteger i = 0; i < buttonStackCount; ++i) 
+    else
     {
-        button = (UIControl *)[controlsStack objectAtIndex:i];
-        if (collapsedRange.length > 0 && i == collapsedRange.location)
-        {
-            // Layout collapse button
-            [self insertSubview:collapsedButton aboveSubview:button];
-            collapsedButton.hidden = NO;
-            collapsedButton.frame = (CGRect){ origin, buttonSize };
-            origin.x += diff;
-            button.hidden = YES;
-        }
-        else if (i < collapsedRange.location || i >= collapseEnd)
-        {
-            // Layout other buttons
-            button.hidden = NO;
-            button.frame = (CGRect){ origin, buttonSize };
-            origin.x += diff;
-        }
-        else
-        {
-            // Hide button
-            button.hidden = YES;
-        }
+        collapsedButton.frame = [[controlsStack objectAtIndex:collapsedRange.location] frame];
     }
     
-    // Layout search field
-    if (buttonStackCount)
-        origin.x += BUTTON_ARROW_WIDTH + textPadding;
-    origin.x += textInsets.left;
-    size.width = bounds.size.width - origin.x - textPadding;
-    searchField.frame = (CGRect){ origin, size };
+    [UIView animateWithDuration:0.25 delay:0 options:(UIViewAnimationOptionCurveEaseIn | UIViewAnimationOptionBeginFromCurrentState |  UIViewAnimationOptionAllowUserInteraction | UIViewAnimationOptionLayoutSubviews) animations:^(void) {
+        UIControl *button;
+        for (NSUInteger i = 0; i < buttonStackCount; ++i) 
+        {
+            button = (UIControl *)[controlsStack objectAtIndex:i];
+            if (collapsedRange.length > 0 && i == collapsedRange.location)
+            {
+                // Layout collapse button
+                [self insertSubview:collapsedButton aboveSubview:button];
+                CGRect collapsedRect = (CGRect){ origin, buttonSize };
+                collapsedButton.hidden = NO;
+                collapsedButton.frame = collapsedRect;
+                //
+                do
+                {
+                    button.frame = collapsedRect;
+                } while (++i < collapseEnd && (button = (UIControl *)[controlsStack objectAtIndex:i]));
+                origin.x += diff;
+                --i;
+            }
+            else if (i < collapsedRange.location || i >= collapseEnd)
+            {
+                // Layout other buttons
+                button.hidden = NO;
+                button.frame = (CGRect){ origin, buttonSize };
+                origin.x += diff;
+            }
+        }
+        
+        // Layout search field
+        if (buttonStackCount)
+            origin.x += BUTTON_ARROW_WIDTH + textPadding;
+        origin.x += textInsets.left;
+        size.width = bounds.size.width - origin.x - textPadding;
+        searchField.frame = (CGRect){ origin, size };
+    } completion:^(BOOL finished) {
+        for (NSUInteger i = collapsedRange.location; i < collapseEnd; ++i) 
+        {
+            [[controlsStack objectAtIndex:i] setHidden:YES];
+        }
+    }];
 }
 
 #pragma mark -
@@ -311,15 +355,24 @@ static void init(ECJumpBar *self)
 }
 
 - (void)pushControlWithTitle:(NSString *)title
-{    
+{
+    NSUInteger controlsStackCount = [controlsStack count];
+    
     // Generate new button
     UIControl *button = [self createStackControlWithTitle:title];
     
-    NSUInteger index = [controlsStack count];
+    // Set initial frame
+    if (controlsStack)
+        button.frame = [[controlsStack lastObject] frame];
+    else
+        button.frame = CGRectMake(-maximumStackButtonWidth, 0, maximumStackButtonWidth, self.bounds.size.height);
+    
+    // Set convinience informations in tag
+    NSUInteger index = controlsStackCount;
     button.tag = index;
     
     // Add button to view
-    if ([controlsStack count])
+    if (controlsStackCount)
     {
         [self insertSubview:button belowSubview:[controlsStack lastObject]];
     }
@@ -394,35 +447,6 @@ static void init(ECJumpBar *self)
     else
         button.titleEdgeInsets = UIEdgeInsetsMake(0, textInsets.left, 0, BUTTON_ARROW_WIDTH);
     return button;
-}
-
-- (void)collapseButtonStackToFitButtonCount:(NSUInteger)maxCount
-{
-    NSUInteger buttonStackCount = [controlsStack count];
-    if (maxCount == 0 || buttonStackCount <= maxCount)
-    {
-        collapsedRange.length = collapsedRange.location = 0;
-        if (collapsedButton)
-            collapsedButton.hidden = YES;
-        return;
-    }
-    
-    if (!collapsedButton)
-        collapsedButton = [[self createStackControlWithTitle:@"..."] retain];
-    
-    NSRange collapse;
-    collapse.location = maxCount / 2 - 1;
-    collapse.length = buttonStackCount - maxCount + 1;
-    if (NSEqualRanges(collapse, collapsedRange))
-        return;
-    
-    collapsedRange = collapse;
-    collapsedButton.tag = collapsedRange.location + collapsedRange.length;
-    
-    if (delegateHasDidCollapseToControlCollapsedRange) 
-    {
-        [delegate jumpBar:self didCollapseToControl:collapsedButton collapsedRange:collapsedRange];
-    }
 }
 
 - (void)searchFieldAction:(id)sender

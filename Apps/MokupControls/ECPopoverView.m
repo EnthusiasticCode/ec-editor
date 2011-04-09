@@ -83,7 +83,7 @@ void CGContextAddRoundedRect(CGContextRef context, CGRect rect, CGFloat radius)
 static void init(ECPopoverView *self)
 {
     self.arrowSize = 30;
-    self.arrowPosition = 0.5;
+    self.arrowPosition = 0;
     
     self.arrowDirection = UIPopoverArrowDirectionUp;
     self.backgroundColor = nil;
@@ -128,7 +128,7 @@ static void init(ECPopoverView *self)
         CGFloat rotation = M_PI_4;
         CGFloat arrowSize_2 = arrowSize / 2.0;
         CGFloat arrowInset = inset;
-        if (arrowDirection & UIPopoverArrowDirectionUp || arrowDirection & UIPopoverArrowDirectionDown) 
+        if (arrowDirection <= UIPopoverArrowDirectionDown) 
         {
             rect.size.height -= arrowSize_2;
             if (arrowDirection & UIPopoverArrowDirectionDown)
