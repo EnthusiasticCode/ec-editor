@@ -11,6 +11,7 @@
 @class ECJumpBar;
 
 @protocol ECJumpBarDelegate <NSObject>
+@optional
 
 /// Called when a control is pushed to the stack.
 - (void)jumpBar:(ECJumpBar *)jumpBar didPushControl:(UIControl *)control atStackIndex:(NSUInteger)index;

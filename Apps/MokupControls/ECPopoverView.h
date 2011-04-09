@@ -11,6 +11,12 @@
 
 @interface ECPopoverView : UIView
 
-@property (nonatomic, readonly) UIPopoverArrowDirection arrowDirection;
+@property (nonatomic) UIPopoverArrowDirection arrowDirection;
+
+@property (nonatomic) CGFloat arrowPosition;
+
+@property (nonatomic) CGFloat arrowSize;
+
+@property (nonatomic, readonly) CGRect contentRect;
 
 @end

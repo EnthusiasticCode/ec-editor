@@ -8,6 +8,8 @@
 
 #import "ECPopoverView.h"
 #import "UIImage+BlockDrawing.h"
+#import <QuartzCore/QuartzCore.h>
+#import <math.h>
 
 void CGPathAddRoundedRect(CGMutablePathRef path, CGAffineTransform *transform, CGRect rect, CGFloat radius)
 {
@@ -67,33 +69,24 @@ void CGContextAddRoundedRect(CGContextRef context, CGRect rect, CGFloat radius)
 
 @implementation ECPopoverView
 
-static UIImage *defaultFillImage = nil;
+#pragma mark -
+#pragma mark Properties
+
+@synthesize arrowDirection;
+@synthesize arrowPosition;
+@synthesize arrowSize;
+@synthesize contentRect;
 
 #pragma mark -
 #pragma mark UIView Methods
 
 static void init(ECPopoverView *self)
 {
-    if (!defaultFillImage)
-    {
-        defaultFillImage = [[[UIImage imageWithSize:(CGSize){ 11, 11 } block:^(CGContextRef ctx, CGRect rect) {
-            CGMutablePathRef path = CGPathCreateMutable();
-            CGPathAddRoundedRect(path, NULL, rect, 3);
-            
-            CGContextSetFillColorWithColor(ctx, [UIColor colorWithWhite:0.5 alpha:0.3].CGColor);
-            CGContextAddPath(ctx, path);
-            CGContextFillPath(ctx);
-            
-            CGContextSetFillColorWithColor(ctx, [UIColor colorWithHue:0 saturation:0 brightness:0.1 alpha:1].CGColor);
-            CGContextTranslateCTM(ctx, 2, 2);
-            CGContextScaleCTM(ctx, 2.0/3.0, 2.0/3.0);
-            CGContextAddPath(ctx, path);
-            CGContextFillPath(ctx);
-            
-            CGPathRelease(path);
-        }] stretchableImageWithLeftCapWidth:5 topCapHeight:5] retain];
-    }
-
+    self.arrowSize = 30;
+    self.arrowPosition = 0.5;
+    
+    self.arrowDirection = UIPopoverArrowDirectionUp;
+    self.backgroundColor = nil;
 }
 
 - (id)initWithFrame:(CGRect)frame
@@ -120,9 +113,95 @@ static void init(ECPopoverView *self)
 
 - (void)drawRect:(CGRect)rect
 {
-//    CGContextRef context = UIGraphicsGetCurrentContext();
-//    CGContextDrawImage(context, rect, defaultFillImage.CGImage);
-    [defaultFillImage drawInRect:rect];
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    
+    CGMutablePathRef path = CGPathCreateMutable();
+    
+    const CGFloat inset = 2.0;
+    rect = CGRectInset(rect, inset, inset);
+
+    // Adding arrow
+    if (arrowDirection > 0 && arrowDirection < UIPopoverArrowDirectionAny) 
+    {
+        CGRect arrowRect = CGRectMake(0, 0, arrowSize, arrowSize);
+        CGPoint position;
+        CGFloat rotation = M_PI_4;
+        CGFloat arrowSize_2 = arrowSize / 2.0;
+        CGFloat arrowInset = inset;
+        if (arrowDirection & UIPopoverArrowDirectionUp || arrowDirection & UIPopoverArrowDirectionDown) 
+        {
+            rect.size.height -= arrowSize_2;
+            if (arrowDirection & UIPopoverArrowDirectionDown)
+            {
+                arrowInset = rect.size.height - arrowSize_2 * M_SQRT2 - inset * 2;
+            }
+            else 
+            {
+                rect.origin.y += arrowSize_2;
+            }
+            if (arrowPosition < 1.0)
+                position = CGPointMake(rect.size.width * arrowPosition, arrowInset);
+            else if (arrowPosition >= rect.size.width)
+                position = CGPointMake(rect.size.width - arrowSize * M_SQRT2 - inset * 2, arrowInset);
+        }
+        else
+        {
+            rotation = -M_PI_4;
+            rect.size.width -= arrowSize_2;
+            if (arrowDirection & UIPopoverArrowDirectionRight) 
+            {
+                arrowInset = rect.size.width - arrowSize_2 * M_SQRT2 - inset * 2;
+            }
+            else
+            {
+                rect.origin.x += arrowSize_2;
+            }
+            if (arrowPosition < 1.0)
+                position = CGPointMake(arrowInset, rect.size.height * arrowPosition);
+            else if (arrowPosition >= rect.size.height)
+                position = CGPointMake(arrowInset, rect.size.height - arrowSize * M_SQRT2 - inset * 2);
+        }
+        CGAffineTransform arrowTransform = CGAffineTransformConcat(CGAffineTransformMakeRotation(rotation), CGAffineTransformMakeTranslation(position.x, position.y));
+        CGPathAddRoundedRect(path, &arrowTransform, arrowRect, 3);
+    }
+
+    
+    // Adding main rect
+    CGPathAddRoundedRect(path, NULL, rect, 3);
+    
+    // Filling outiline
+    CGContextSetStrokeColorWithColor(context, [UIColor colorWithRed:88.0/255.0 green:89.0/255.0 blue:91.0/255.0 alpha:0.3].CGColor);
+    CGContextSetLineWidth(context, inset * 2);
+    CGContextAddPath(context, path);
+    CGContextStrokePath(context);
+    
+    // Fill main color
+    CGContextSetFillColorWithColor(context, [UIColor colorWithRed:26.0/255.0 green:26.0/255.0 blue:26.0/255.0 alpha:1].CGColor);
+    CGContextAddPath(context, path);
+    CGContextFillPath(context);
+    
+    // Calculate content rect
+    contentRect = CGRectInset(rect, 4, 4);
+    [self setNeedsLayout];
+//    CGContextSetFillColorWithColor(context, self.superview.backgroundColor.CGColor);
+//    CGContextAddRoundedRect(context, contentRect, 2);
+//    CGContextFillPath(context);
+//    
+//    rect = CGRectInset(contentRect, 1, 1);
+//    CGContextSetStrokeColorWithColor(context, [UIColor colorWithHue:0 saturation:0 brightness:0.7 alpha:0.5].CGColor);
+//    CGContextAddRoundedRect(context, rect, 2);
+//    CGContextSetLineWidth(context, 2);
+//    CGContextStrokePath(context);
+    
+    CGPathRelease(path);
+}
+
+- (void)layoutSubviews
+{
+    for (UIView *sub in self.subviews) 
+    {
+        sub.frame = contentRect;
+    }
 }
 
 @end
