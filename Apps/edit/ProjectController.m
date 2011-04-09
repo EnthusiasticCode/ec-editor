@@ -6,8 +6,9 @@
 //  Copyright 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import "FileController.h"
 #import "ProjectController.h"
+#import "FileController.h"
+#import "AppController.h"
 #import "Project.h"
 #import <ECCodeIndexing/ECCodeIndex.h>
 #import <ECCodeIndexing/ECCodeUnit.h>
@@ -21,11 +22,14 @@
 
 @implementation ProjectController
 
+@synthesize extensionsToShow = extensionsToShow_;
 @synthesize project = project_;
 @synthesize codeIndex = codeIndex_;
+@synthesize editButton = editButton_;
+@synthesize doneButton = doneButton_;
+@synthesize tableView = tableView_;
 @synthesize fileManager = fileManager_;
 @synthesize folder = folder_;
-@synthesize extensionsToShow = extensionsToShow_;
 
 - (NSFileManager *)fileManager
 {
@@ -36,6 +40,9 @@
 {
     self.folder = nil;
     self.fileManager = nil;
+    self.tableView = nil;
+    self.editButton = nil;
+    self.doneButton = nil;
     self.extensionsToShow = nil;
     self.project = nil;
     self.codeIndex = nil;
@@ -67,13 +74,14 @@
  }
  */
 
-/*
+
 // Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    self.navigationItem.rightBarButtonItem = self.editButton;
 }
-*/
+
 /*
 - (void)viewDidUnload
 {
@@ -130,23 +138,31 @@
 
 - (void)relationalTableView:(ECRelationalTableView *)relationalTableView didSelectItemAtIndexPath:(NSIndexPath *)indexPath;
 {
+    if (!indexPath)
+        return;
     NSString *subfolder = [self relationalTableView:nil titleForHeaderInArea:indexPath.area];
     NSString *file = [[self filesInSubfolder:subfolder] objectAtIndex:indexPath.item];
     [self loadFile:[self.folder stringByAppendingPathComponent:[subfolder stringByAppendingPathComponent:file]]];
 }
 
-- (NSInteger)tableView:(UITableView *)tableView indentationLevelForRowAtIndexPath:(NSIndexPath *)indexPath
+- (void)edit:(id)sender
 {
-    NSString *subfolder = [self relationalTableView:nil titleForHeaderInArea:indexPath.area];
-    NSString *file = [[self filesInSubfolder:subfolder] objectAtIndex:indexPath.row];
-    NSString *absoluteFilePath = [[self.folder stringByAppendingPathComponent:subfolder] stringByAppendingPathComponent:file];
-    return ([[absoluteFilePath pathExtension] isEqualToString:@"h"]) ? 0 : 1;
+    [self.tableView setEditing:YES animated:YES];
+    self.navigationItem.rightBarButtonItem = self.doneButton;
+}
+
+- (void)done:(id)sender
+{
+    [self.tableView setEditing:NO animated:YES];
+    self.navigationItem.rightBarButtonItem = self.editButton;
 }
 
 - (void)loadProject:(NSString *)projectRoot
 {
     self.folder = projectRoot;
     self.project = [Project projectWithRootDirectory:projectRoot];
+    self.title = self.project.name;
+    NSLog(@"%@", self.editButton);
     self.codeIndex = [[[ECCodeIndex alloc] init] autorelease];
     self.extensionsToShow = [[self.codeIndex extensionToLanguageMap] allKeys];
 }
@@ -154,7 +170,7 @@
 - (void)loadFile:(NSString *)file
 {
     ECCodeUnit *codeUnit = [self.codeIndex unitForFile:file];
-    FileController *fileController = [[[FileController alloc] initWithNibName:@"FileController" bundle:[NSBundle mainBundle]] autorelease];
+    FileController *fileController = ((AppController *)self.navigationController).fileController;
     [fileController loadFile:file withCodeUnit:codeUnit];
     [self.navigationController pushViewController:fileController animated:YES];
 }

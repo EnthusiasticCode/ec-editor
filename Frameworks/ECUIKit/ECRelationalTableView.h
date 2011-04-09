@@ -134,6 +134,10 @@ typedef enum {
 @property (nonatomic) NSLocaleLanguageDirection itemWrapDirection;
 @property (nonatomic) NSLocaleLanguageDirection levelGrowthDirection;
 
+// Editing
+
+- (void)setEditing:(BOOL)editing animated:(BOOL)animated;
+
 // Data
 
 - (void)reloadData;
@@ -176,10 +180,6 @@ typedef enum {
 - (void)insertItemsAtIndexPaths:(NSArray *)indexPaths withItemAnimation:(ECRelationalTableViewItemAnimation)animation;
 - (void)deleteItemsAtIndexPaths:(NSArray *)indexPaths withItemAnimation:(ECRelationalTableViewItemAnimation)animation;
 - (void)reloadItemsAtIndexPaths:(NSArray *)indexPaths withItemAnimation:(ECRelationalTableViewItemAnimation)animation;
-
-// Editing
-
-- (void)setEditing:(BOOL)editing animated:(BOOL)animated;
 
 // Selection
 

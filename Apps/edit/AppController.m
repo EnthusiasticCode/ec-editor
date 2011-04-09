@@ -12,16 +12,22 @@
 @implementation AppController
 
 @synthesize window = window_;
+@synthesize rootController = rootController_;
+@synthesize projectController = projectController_;
+@synthesize fileController = fileController_;
 
 - (void)dealloc
 {
+    self.rootController = nil;
+    self.projectController = nil;
+    self.fileController = nil;
     self.window = nil;
     [super dealloc];
 }
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    [(RootController *)self.topViewController browseFolder:[self applicationDocumentsDirectory]];
+    [self.rootController browseFolder:[self applicationDocumentsDirectory]];
     [self.window makeKeyAndVisible];
     return YES;
 }

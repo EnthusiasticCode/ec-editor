@@ -89,6 +89,16 @@
 @synthesize areas = areas_;
 @synthesize relatedIndexPaths = relatedIndexPaths_;
 
+- (void)setEditing:(BOOL)editing animated:(BOOL)animated
+{
+    
+}
+
+- (void)setEditing:(BOOL)editing
+{
+    [self setEditing:editing animated:NO];
+}
+
 - (void)setDelegate:(id<ECRelationalTableViewDelegate>)delegate
 {
     if (delegate == delegate_)
@@ -176,6 +186,7 @@ static id init(ECRelationalTableView *self)
     self->tableInsets_ = UIEdgeInsetsMake(10.0, 10.0, 10.0, 10.0);
     self->cellInsets_ = UIEdgeInsetsMake(20.0, 20.0, 20.0, 20.0);
     self->levelInsets_ = UIEdgeInsetsMake(10.0, 0.0, 10.0, 0.0);
+    self->areaHeaderInsets_ = UIEdgeInsetsMake(5.0, 0.0, 5.0, 0.0);
     self->areaHeaderHeight_ = 20.0;
     self->flags_.needsLayoutSubviews = YES;
     self->flags_.needsReloadData = YES;
@@ -304,7 +315,9 @@ static id init(ECRelationalTableView *self)
 {
     CGFloat x = areaRect.origin.x + self.areaHeaderInsets.left;
     CGFloat y = areaRect.origin.y + self.areaHeaderInsets.top;
-    return (CGRect){ (CGPoint){x, y} , self.paddedAreaHeaderSize };
+    CGFloat width = self.paddedAreaHeaderSize.width - self.areaHeaderInsets.left - self.areaHeaderInsets.right;
+    CGFloat height = self.paddedAreaHeaderSize.height - self.areaHeaderInsets.top - self.areaHeaderInsets.bottom;
+    return (CGRect){ (CGPoint){x, y} , (CGSize){width, height}};
 }
 
 - (CGRect)rectForHeaderInArea:(NSUInteger)area

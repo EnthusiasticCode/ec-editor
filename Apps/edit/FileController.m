@@ -108,7 +108,10 @@
     //    
     //    [self.codeView addTextOverlayStyle:yellowMark forTextRange:[ECTextRange textRangeWithRange:(NSRange){9, 15}] alternative:NO];
     //    [self.codeView addTextOverlayStyle:errorMark forTextRange:[ECTextRange textRangeWithRange:(NSRange){9, 15}] alternative:NO];
-    
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
     self.codeView.text = [NSString stringWithContentsOfFile:self.file encoding:NSUTF8StringEncoding error:nil];
     for (ECCodeToken *token in [self.codeUnit tokensInRange:NSMakeRange(0, [self.codeView.text length]) withCursors:YES])
     {
@@ -180,6 +183,7 @@
 {
     self.file = file;
     self.codeUnit = codeUnit;
+    self.title = [file lastPathComponent];
 }
 
 @end
