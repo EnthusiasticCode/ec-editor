@@ -515,6 +515,8 @@ static void init(ECJumpBar *self)
 {
     ECMockupButton *button = [ECMockupButton buttonWithType:UIButtonTypeCustom];
     button.autoresizingMask = UIViewAutoresizingFlexibleHeight;
+    button.contentMode = UIViewContentModeScaleToFill;
+    button.contentStretch = CGRectMake(0.5, 0.5, 0, 0);
     [button setTitle:title forState:UIControlStateNormal];
     button.titleLabel.font = self.font;
     button.titleLabel.shadowOffset = self.textShadowOffset;
