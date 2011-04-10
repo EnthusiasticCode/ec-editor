@@ -112,27 +112,27 @@ typedef enum {
 @interface ECRelationalTableView : UIView <UIGestureRecognizerDelegate>
 @property (nonatomic, assign) IBOutlet id<ECRelationalTableViewDelegate> delegate;
 @property (nonatomic, assign) IBOutlet id<ECRelationalTableViewDataSource> dataSource;
-@property (nonatomic) UIEdgeInsets tableInsets;
-@property (nonatomic) UIEdgeInsets cellInsets;
-@property (nonatomic) UIEdgeInsets levelInsets;
-@property (nonatomic) UIEdgeInsets areaHeaderInsets;
-@property (nonatomic) UIEdgeInsets areaFooterInsets;
-@property (nonatomic) CGSize cellSize;
-@property (nonatomic, readonly) CGSize paddedCellSize;
-@property (nonatomic, readonly) NSUInteger contentWidthInCells;
-@property (nonatomic) CGFloat areaHeaderHeight;
-@property (nonatomic, readonly) CGSize paddedAreaHeaderSize;
-@property (nonatomic) CGFloat areaFooterHeight;
-@property (nonatomic, readonly) CGSize paddedAreaFooterSize;
 @property (nonatomic, retain) UIView *backgroundView;
 @property (nonatomic, retain) UIView *tableHeaderView;
 @property (nonatomic, retain) UIView *tableFooterView;
+@property (nonatomic) UIEdgeInsets tableInsets;
+@property (nonatomic) CGSize cellSize;
+@property (nonatomic) UIEdgeInsets cellInsets;
+@property (nonatomic, readonly) CGSize paddedCellSize;
+@property (nonatomic, readonly) NSUInteger contentWidthInCells;
+@property (nonatomic) UIEdgeInsets levelInsets;
+@property (nonatomic) CGFloat levelSeparatorHeight;
+@property (nonatomic) UIEdgeInsets levelSeparatorInsets;
+@property (nonatomic, readonly) CGSize paddedLevelSeparatorSize;
+@property (nonatomic) CGFloat areaHeaderHeight;
+@property (nonatomic) UIEdgeInsets areaHeaderInsets;
+@property (nonatomic, readonly) CGSize paddedAreaHeaderSize;
+@property (nonatomic) CGFloat areaFooterHeight;
+@property (nonatomic) UIEdgeInsets areaFooterInsets;
+@property (nonatomic, readonly) CGSize paddedAreaFooterSize;
+@property (nonatomic) BOOL wrapsItems;
 @property (nonatomic, getter = isEditing) BOOL editing;
 @property (nonatomic) BOOL allowsSelection;
-@property (nonatomic) BOOL allowsSelectionDuringEditing;
-@property (nonatomic) NSLocaleLanguageDirection itemGrowthDirection;
-@property (nonatomic) NSLocaleLanguageDirection itemWrapDirection;
-@property (nonatomic) NSLocaleLanguageDirection levelGrowthDirection;
 
 // Editing
 

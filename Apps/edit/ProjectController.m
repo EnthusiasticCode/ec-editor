@@ -162,7 +162,6 @@
     self.folder = projectRoot;
     self.project = [Project projectWithRootDirectory:projectRoot];
     self.title = self.project.name;
-    NSLog(@"%@", self.editButton);
     self.codeIndex = [[[ECCodeIndex alloc] init] autorelease];
     self.extensionsToShow = [[self.codeIndex extensionToLanguageMap] allKeys];
 }
