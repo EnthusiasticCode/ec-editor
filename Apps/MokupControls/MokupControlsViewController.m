@@ -238,14 +238,14 @@
 }
 
 - (IBAction)pushToJumpBar:(id)sender {
-    [jumpBar pushControlWithTitle:[NSString stringWithFormat:@"%dProject", jumpBar.stackSize]];
+    [jumpBar pushControlWithTitle:[NSString stringWithFormat:@"%dProject", jumpBar.stackSize] animated:YES];
 }
 
 #pragma mark Jump Bar Delegation
 
 - (void)jumpBarButtonAction:(id)sender
 {
-    [jumpBar popControlsDownThruIndex:[sender tag]];
+    [jumpBar popControlsDownThruIndex:[sender tag] animated:YES];
 }
 
 - (void)jumpBar:(ECJumpBar *)jumpBar didPushControl:(UIControl *)control atStackIndex:(NSUInteger)index

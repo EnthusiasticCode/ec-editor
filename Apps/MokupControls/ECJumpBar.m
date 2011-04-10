@@ -19,6 +19,9 @@
     UIControl *collapsedButton;
     NSRange collapsedRange;
     
+    BOOL animatePush;
+    BOOL animatePop;
+    
     BOOL delegateHasDidPushControlAtStackIndex;
     BOOL delegateHasDidPopControlAtStackIndex;
     BOOL delegateHasDidCollapseToControlCollapsedRange;
@@ -168,7 +171,7 @@ static void init(ECJumpBar *self)
     self->searchField.borderStyle = UITextBorderStyleNone;
     self->searchField.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     [self->searchField addTarget:self action:@selector(searchFieldAction:) forControlEvents:UIControlEventEditingChanged];
-    self.minimumSearchFieldWidth = 0.2;
+    self.minimumSearchFieldWidth = 0.5;
     [self addSubview:self->searchField];
     [self->searchField release];
     self->searchField.text = @"Search";
@@ -229,7 +232,7 @@ static void init(ECJumpBar *self)
 {
     CGRect bounds = self.bounds;
     __block CGPoint origin = bounds.origin;
-    __block CGSize size = bounds.size;
+    CGSize size = bounds.size;
     CGFloat textPadding = textInsets.left + textInsets.right;
     
     // Calculate maximum usable width for buttons
@@ -241,9 +244,11 @@ static void init(ECJumpBar *self)
     maxTotWidth -= BUTTON_ARROW_WIDTH + textPadding;
     
     // Collaspe elements
-    NSUInteger buttonStackCount = [controlsStack count];
+    // TODO should be done outside layout
+    NSUInteger controlsStackCount = [controlsStack count];
     NSUInteger maxCount = maxTotWidth / minimumStackButtonWidth;
-    if (maxCount == 0 || buttonStackCount <= maxCount)
+    NSRange oldCollapse = collapsedRange;
+    if (maxCount == 0 || controlsStackCount <= maxCount)
     {
         collapsedRange.length = collapsedRange.location = 0;
         if (collapsedButton)
@@ -252,11 +257,15 @@ static void init(ECJumpBar *self)
     else
     {
         if (!collapsedButton)
+        {
             collapsedButton = [[self createStackControlWithTitle:@"..."] retain];
+            collapsedButton.hidden = YES;
+            collapsedButton.alpha = 0;
+        }
         
         NSRange collapse;
         collapse.location = maxCount / 2 - 1;
-        collapse.length = buttonStackCount - maxCount + 1;
+        collapse.length = controlsStackCount - maxCount + 1;
         if (!NSEqualRanges(collapse, collapsedRange))
         {
             collapsedRange = collapse;
@@ -270,71 +279,116 @@ static void init(ECJumpBar *self)
     }
     
     // Calculte button size
-    CGSize buttonSize = size;
+    CGSize controlSize = size;
     if (collapsedRange.length)
-        buttonSize.width = maxTotWidth / (buttonStackCount - collapsedRange.length + 1);
+        controlSize.width = maxTotWidth / (controlsStackCount - collapsedRange.length + 1);
     else
-        buttonSize.width = maxTotWidth / buttonStackCount;
-    if (buttonSize.width < minimumStackButtonWidth)
-        buttonSize.width = minimumStackButtonWidth;
-    else if (buttonSize.width > maximumStackButtonWidth)
-        buttonSize.width = maximumStackButtonWidth;
-    buttonSize.width = ceilf(buttonSize.width) + BUTTON_ARROW_WIDTH + textPadding;
+        controlSize.width = maxTotWidth / controlsStackCount;
+    if (controlSize.width < minimumStackButtonWidth)
+        controlSize.width = minimumStackButtonWidth;
+    else if (controlSize.width > maximumStackButtonWidth)
+        controlSize.width = maximumStackButtonWidth;
+    controlSize.width = ceilf(controlSize.width) + BUTTON_ARROW_WIDTH + textPadding;
+    
+    // Hide collapse button if required
+    if (collapsedRange.length > 0)
+    {
+        UIControl *firstToCollapse = (UIControl *)[controlsStack objectAtIndex:collapsedRange.location];
+        collapsedButton.frame = [firstToCollapse frame];
+        [self insertSubview:collapsedButton aboveSubview:firstToCollapse];
+    }
     
     // Layout buttons
-    CGFloat diff = buttonSize.width - BUTTON_ARROW_WIDTH - textPadding;
+    CGFloat diff = controlSize.width - BUTTON_ARROW_WIDTH - textPadding;
     NSUInteger collapseEnd = collapsedRange.location + collapsedRange.length;
-    // Hide collapse button if required
-    if (collapsedRange.length == 0) 
+    // TODO! 1-resize buttons 2-push in
+    __block UIControl *control = nil;
+    void (^actualLayout)() = ^{
+        NSUInteger i = 0;
+        // Layout pre collapse controls
+        for (; i < collapsedRange.location; ++i) 
+        {
+            control = (UIControl *)[controlsStack objectAtIndex:i];
+            control.hidden = NO;
+            control.alpha = 1.0;
+            control.frame = (CGRect){ origin, controlSize };
+            origin.x += diff;
+        }
+        // Layout collapse control and collapse 
+        if (collapsedRange.length > 0)
+        {
+            CGRect collapsedRect = (CGRect){ origin, controlSize };
+            collapsedButton.hidden = NO;
+            collapsedButton.alpha = 1.0;                
+            collapsedButton.frame = collapsedRect;
+            //
+            while (i < collapseEnd 
+                   && (control = (UIControl *)[controlsStack objectAtIndex:i])) 
+            {
+                control.frame = collapsedRect;
+                ++i;
+            }
+        }
+        else
+        {
+            collapsedButton.alpha = 0.0;
+        }
+        // Layout post collapse controls
+        NSUInteger controlsStackActualCount = controlsStackCount - (NSUInteger)animatePush;
+        for (; i < controlsStackActualCount; ++i) 
+        {
+            control = (UIControl *)[controlsStack objectAtIndex:i];
+            control.hidden = NO;
+            control.alpha = 1.0;
+            control.frame = (CGRect){ origin, controlSize };
+            origin.x += diff;
+        }
+        // Layout search field
+        CGPoint searchOrigin = origin;
+        if (controlsStackActualCount > 0)
+            searchOrigin.x += BUTTON_ARROW_WIDTH + textPadding;
+        searchOrigin.x += textInsets.left;
+        searchField.frame = (CGRect){ searchOrigin, { bounds.size.width - searchOrigin.x - textPadding, size.height } };
+    };
+    
+    if (animatePush || animatePop)
     {
-        collapsedButton.hidden = YES;
+        [UIView animateWithDuration:0.15 delay:0 options:(UIViewAnimationOptionCurveEaseInOut | UIViewAnimationOptionAllowUserInteraction | UIViewAnimationOptionBeginFromCurrentState | UIViewAnimationOptionLayoutSubviews) animations:actualLayout completion:^(BOOL finished) {
+            // Hide collapsed buttons
+            if (collapsedRange.length == 0) 
+            {
+                collapsedButton.hidden = YES;
+            }
+            else for (NSUInteger i = collapsedRange.location; i < collapseEnd; ++i) 
+            {
+                [[controlsStack objectAtIndex:i] setHidden:YES];
+            }
+            // Animate pushed button
+            if (animatePush) 
+            {
+                // Prepare pushed control frame
+                UIControl *pushed = (UIControl *)[controlsStack lastObject];
+                if (control)
+                    pushed.frame = control.frame;
+                else
+                    pushed.frame = CGRectMake(-maximumStackButtonWidth, 0, maximumStackButtonWidth, self.bounds.size.height);
+                // Animate into position
+                [UIView animateWithDuration:0.15 delay:0 options:UIViewAnimationCurveEaseOut | UIViewAnimationOptionAllowUserInteraction animations:^(void) {
+                    pushed.alpha = 1.0;
+                    pushed.frame = (CGRect){ origin, controlSize };
+                    searchField.frame = (CGRect){ 
+                        { origin.x + textInsets.left + textPadding + BUTTON_ARROW_WIDTH, origin.y }, 
+                        { bounds.size.width - origin.x - textPadding, size.height } };
+                } completion:nil];
+                animatePush = NO;
+            }
+            animatePop = NO;
+        }];
     }
     else
     {
-        collapsedButton.frame = [[controlsStack objectAtIndex:collapsedRange.location] frame];
+        actualLayout();
     }
-    
-    [UIView animateWithDuration:0.25 delay:0 options:(UIViewAnimationOptionCurveEaseIn | UIViewAnimationOptionBeginFromCurrentState |  UIViewAnimationOptionAllowUserInteraction | UIViewAnimationOptionLayoutSubviews) animations:^(void) {
-        UIControl *button;
-        for (NSUInteger i = 0; i < buttonStackCount; ++i) 
-        {
-            button = (UIControl *)[controlsStack objectAtIndex:i];
-            if (collapsedRange.length > 0 && i == collapsedRange.location)
-            {
-                // Layout collapse button
-                [self insertSubview:collapsedButton aboveSubview:button];
-                CGRect collapsedRect = (CGRect){ origin, buttonSize };
-                collapsedButton.hidden = NO;
-                collapsedButton.frame = collapsedRect;
-                //
-                do
-                {
-                    button.frame = collapsedRect;
-                } while (++i < collapseEnd && (button = (UIControl *)[controlsStack objectAtIndex:i]));
-                origin.x += diff;
-                --i;
-            }
-            else if (i < collapsedRange.location || i >= collapseEnd)
-            {
-                // Layout other buttons
-                button.hidden = NO;
-                button.frame = (CGRect){ origin, buttonSize };
-                origin.x += diff;
-            }
-        }
-        
-        // Layout search field
-        if (buttonStackCount)
-            origin.x += BUTTON_ARROW_WIDTH + textPadding;
-        origin.x += textInsets.left;
-        size.width = bounds.size.width - origin.x - textPadding;
-        searchField.frame = (CGRect){ origin, size };
-    } completion:^(BOOL finished) {
-        for (NSUInteger i = collapsedRange.location; i < collapseEnd; ++i) 
-        {
-            [[controlsStack objectAtIndex:i] setHidden:YES];
-        }
-    }];
 }
 
 #pragma mark -
@@ -354,75 +408,103 @@ static void init(ECJumpBar *self)
     return [[controlsStack objectAtIndex:index] title];
 }
 
-- (void)pushControlWithTitle:(NSString *)title
+- (void)pushControlWithTitle:(NSString *)title animated:(BOOL)animated
 {
+    animatePush = animated;
     NSUInteger controlsStackCount = [controlsStack count];
     
-    // Generate new button
-    UIControl *button = [self createStackControlWithTitle:title];
-    
-    // Set initial frame
-    if (controlsStack)
-        button.frame = [[controlsStack lastObject] frame];
-    else
-        button.frame = CGRectMake(-maximumStackButtonWidth, 0, maximumStackButtonWidth, self.bounds.size.height);
+    // Generate new control
+    UIControl *control = [self createStackControlWithTitle:title];
+    if (animatePush) 
+    {
+        control.hidden = YES;
+        control.alpha = 0.0;
+        UIControl *last = (UIControl *)[controlsStack lastObject];
+        if (last)
+            control.frame = last.frame;
+        else
+            control.frame = CGRectMake(-maximumStackButtonWidth, 0, maximumStackButtonWidth, self.bounds.size.height);
+    }
     
     // Set convinience informations in tag
     NSUInteger index = controlsStackCount;
-    button.tag = index;
-    
-    // Add button to view
-    if (controlsStackCount)
-    {
-        [self insertSubview:button belowSubview:[controlsStack lastObject]];
-    }
-    else
-    {
-        [self insertSubview:button aboveSubview:searchField];
-    }
+    control.tag = index;
     
     // Add button to stack
     if (!controlsStack)
         controlsStack = [[NSMutableArray alloc] initWithCapacity:10];
-    [controlsStack addObject:button];
+    [controlsStack addObject:control];
+    
+    // Add button to view
+    if (controlsStackCount)
+    {
+        [self insertSubview:control belowSubview:[controlsStack objectAtIndex:controlsStackCount - 1]];
+    }
+    else
+    {
+        [self insertSubview:control aboveSubview:searchField];
+    }
     
     // Informing delegate
     if (delegateHasDidPushControlAtStackIndex)
     {
-        [delegate jumpBar:self didPushControl:button atStackIndex:index];
+        [delegate jumpBar:self didPushControl:control atStackIndex:index];
     }
     
-    [self setNeedsLayout];
+    [self layoutIfNeeded];
 }
 
-- (void)popControl
+- (void)popControlAnimated:(BOOL)animated
 {
-    UIControl *button = (UIControl *)[controlsStack lastObject];
-    if (button) 
+    UIControl *control = (UIControl *)[controlsStack lastObject];
+    if (control) 
     {
-        button.hidden = YES;
-        [button removeFromSuperview];
+        // Remove control from view hierarchy
+        animatePop = animated;
+        if (animatePop) 
+        {
+            CGRect newFrame;
+            NSUInteger controlsStackCount = [controlsStack count];
+            if (controlsStackCount > 1)
+                newFrame = [[controlsStack objectAtIndex:controlsStackCount - 2] frame];
+            else
+                newFrame = CGRectMake(-maximumStackButtonWidth, 0, maximumStackButtonWidth, self.bounds.size.height);
+            // Animate out
+            [UIView animateWithDuration:0.15 delay:0 options:UIViewAnimationCurveEaseIn | UIViewAnimationOptionAllowUserInteraction animations:^(void) {
+                control.alpha = 0.0;
+                control.frame = newFrame;
+            } completion:^(BOOL finished) {
+                control.hidden = YES;
+                [control removeFromSuperview];
+            }];
+        }
+        else
+        {
+            control.hidden = YES;
+            [control removeFromSuperview];
+        }
+        // Notify delegate and remove from internal stack
         if (delegateHasDidPopControlAtStackIndex) 
         {
-            NSUInteger index = [controlsStack indexOfObject:button];
+            NSUInteger index = [controlsStack indexOfObject:control];
             [controlsStack removeObjectAtIndex:index];
-            [delegate jumpBar:self didPopControl:button atStackIndex:index];
+            [delegate jumpBar:self didPopControl:control atStackIndex:index];
         }
         else 
         {
-            [controlsStack removeObject:button];
+            [controlsStack removeObject:control];
         }
     }
 }
 
-- (void)popControlsDownThruIndex:(NSUInteger)index
+- (void)popControlsDownThruIndex:(NSUInteger)index animated:(BOOL)animated
 {
     NSUInteger count = [controlsStack count];
     if (count && count > index) 
     {
         count -= index;
         while (count--)
-            [self popControl];
+            [self popControlAnimated:animated];
     }
 }
 
