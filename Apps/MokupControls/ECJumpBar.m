@@ -247,7 +247,6 @@ static void init(ECJumpBar *self)
     // TODO should be done outside layout
     NSUInteger controlsStackCount = [controlsStack count];
     NSUInteger maxCount = maxTotWidth / minimumStackButtonWidth;
-    NSRange oldCollapse = collapsedRange;
     if (maxCount == 0 || controlsStackCount <= maxCount)
     {
         collapsedRange.length = collapsedRange.location = 0;
@@ -300,49 +299,38 @@ static void init(ECJumpBar *self)
     
     // Layout buttons
     CGFloat diff = controlSize.width - BUTTON_ARROW_WIDTH - textPadding;
-    NSUInteger collapseEnd = collapsedRange.location + collapsedRange.length;
-    // TODO! 1-resize buttons 2-push in
-    __block UIControl *control = nil;
     void (^actualLayout)() = ^{
-        NSUInteger i = 0;
-        // Layout pre collapse controls
-        for (; i < collapsedRange.location; ++i) 
-        {
-            control = (UIControl *)[controlsStack objectAtIndex:i];
-            control.hidden = NO;
-            control.alpha = 1.0;
-            control.frame = (CGRect){ origin, controlSize };
-            origin.x += diff;
-        }
-        // Layout collapse control and collapse 
-        if (collapsedRange.length > 0)
-        {
-            CGRect collapsedRect = (CGRect){ origin, controlSize };
-            collapsedButton.hidden = NO;
-            collapsedButton.alpha = 1.0;                
-            collapsedButton.frame = collapsedRect;
-            //
-            while (i < collapseEnd 
-                   && (control = (UIControl *)[controlsStack objectAtIndex:i])) 
-            {
-                control.frame = collapsedRect;
-                ++i;
-            }
-        }
-        else
-        {
-            collapsedButton.alpha = 0.0;
-        }
-        // Layout post collapse controls
+        __block CGRect collapsedRect = CGRectZero;
         NSUInteger controlsStackActualCount = controlsStackCount - (NSUInteger)animatePush;
-        for (; i < controlsStackActualCount; ++i) 
-        {
-            control = (UIControl *)[controlsStack objectAtIndex:i];
-            control.hidden = NO;
-            control.alpha = 1.0;
-            control.frame = (CGRect){ origin, controlSize };
-            origin.x += diff;
-        }
+        [controlsStack enumerateObjectsUsingBlock:^(UIControl *control, NSUInteger i, BOOL *stop) {
+            // Exit if pushing
+            if (i == controlsStackActualCount)
+            {
+                *stop = YES;
+            }
+            // Layout collapsed controls
+            else if (NSLocationInRange(i, collapsedRange))
+            {
+                // Layout collapse control
+                if (i == collapsedRange.location)
+                {
+                    collapsedRect = (CGRect){ origin, controlSize };
+                    collapsedButton.hidden = NO;
+                    collapsedButton.alpha = 1.0;                
+                    collapsedButton.frame = collapsedRect;
+                    origin.x += diff;
+                }
+                control.frame = collapsedRect;
+            }
+            // Layout non-collapsed controls
+            else
+            {
+                control.hidden = NO;
+                control.alpha = 1.0;
+                control.frame = (CGRect){ origin, controlSize };
+                origin.x += diff;
+            }
+        }];
         // Layout search field
         CGPoint searchOrigin = origin;
         if (controlsStackActualCount > 0)
@@ -359,21 +347,19 @@ static void init(ECJumpBar *self)
             {
                 collapsedButton.hidden = YES;
             }
-            else for (NSUInteger i = collapsedRange.location; i < collapseEnd; ++i) 
+            else
             {
-                [[controlsStack objectAtIndex:i] setHidden:YES];
+                [controlsStack enumerateObjectsAtIndexes:[NSIndexSet indexSetWithIndexesInRange:collapsedRange] options:0 usingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+                    [obj setHidden:YES];
+                }];
             }
             // Animate pushed button
             if (animatePush) 
             {
                 // Prepare pushed control frame
                 UIControl *pushed = (UIControl *)[controlsStack lastObject];
-                if (control)
-                    pushed.frame = control.frame;
-                else
-                    pushed.frame = CGRectMake(-maximumStackButtonWidth, 0, maximumStackButtonWidth, self.bounds.size.height);
                 // Animate into position
-                [UIView animateWithDuration:0.15 delay:0 options:UIViewAnimationCurveEaseOut | UIViewAnimationOptionAllowUserInteraction animations:^(void) {
+                [UIView animateWithDuration:0.15 delay:0 options:UIViewAnimationCurveEaseOut | UIViewAnimationOptionAllowUserInteraction | UIViewAnimationOptionLayoutSubviews animations:^(void) {
                     pushed.alpha = 1.0;
                     pushed.frame = (CGRect){ origin, controlSize };
                     searchField.frame = (CGRect){ 
