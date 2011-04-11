@@ -231,8 +231,6 @@
         group = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"Group"] autorelease];
         itemView = [[[ECItemView alloc] init] autorelease];
         itemView.dataSource = self;
-        [itemView reloadData];
-        itemView.tag = 1;
         [group.contentView addSubview:itemView];
         itemView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
         itemView.frame = group.contentView.bounds;

@@ -21,8 +21,15 @@
 @property (nonatomic) UIEdgeInsets viewInsets;
 @property (nonatomic) CGRect itemFrame;
 @property (nonatomic) UIEdgeInsets itemInsets;
+@property (nonatomic, getter = isEditing) BOOL editing;
+- (void)setEditing:(BOOL)editing animated:(BOOL)animated;
 - (void)reloadData;
 - (NSInteger)numberOfItems;
 - (CGRect)rectForItem:(NSInteger)item;
 - (NSInteger)itemAtPoint:(CGPoint)point;
+- (void)beginUpdates;
+- (void)endUpdates;
+- (void)insertItems:(NSIndexSet *)items;
+- (void)deleteItems:(NSIndexSet *)items;
+- (void)reloadItems:(NSIndexSet *)items;
 @end

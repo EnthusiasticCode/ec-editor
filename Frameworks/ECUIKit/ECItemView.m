@@ -11,8 +11,14 @@
 @interface ECItemView ()
 {
     @private
+    BOOL _needsReloadData;
     NSMutableArray *_items;
     NSInteger _numberOfItems;
+    NSInteger _isBatchUpdating;
+    NSMutableIndexSet *_itemsToInsert;
+    NSMutableIndexSet *_itemsToDelete;
+    NSMutableIndexSet *_itemsToReload;
+    BOOL _isAnimating;
 }
 - (NSInteger)_contentWidthInCells;
 - (NSInteger)_contentHeightInCells;
@@ -20,10 +26,47 @@
 
 @implementation ECItemView
 
+#pragma mark -
+#pragma mark Properties and initialization
+
 @synthesize dataSource = _dataSource;
 @synthesize viewInsets = _viewInsets;
 @synthesize itemFrame = _itemFrame;
 @synthesize itemInsets = _itemInsets;
+@synthesize editing = _editing;
+
+- (void)setEditing:(BOOL)editing
+{
+    [self setEditing:editing animated:NO];
+}
+
+- (void)setEditing:(BOOL)editing animated:(BOOL)animated
+{
+    if (editing == _editing)
+    return;
+    [self willChangeValueForKey:@"editing"];
+    [self setNeedsLayout];
+    _editing = editing;
+    if (animated && !_isBatchUpdating)
+    {
+        if (!_isAnimating)
+            [UIView animateWithDuration:0.5 delay:0.0 options:UIViewAnimationOptionAllowUserInteraction animations:^{
+                [self layoutIfNeeded];
+            } completion:^(BOOL finished){
+                if (finished)
+                    _isAnimating = NO;
+            }];
+        else
+            [UIView animateWithDuration:0.5 delay:0.0 options:UIViewAnimationOptionAllowUserInteraction | UIViewAnimationOptionBeginFromCurrentState | UIViewAnimationOptionCurveEaseOut animations:^{
+                [self layoutIfNeeded];
+            }completion:^(BOOL finished){
+                if (finished)
+                    _isAnimating = NO;
+            }];
+        _isAnimating = YES;
+    }
+    [self didChangeValueForKey:@"editing"];   
+}
 
 - (void)dealloc
 {
@@ -38,6 +81,7 @@ static id init(ECItemView *self)
     self->_viewInsets = UIEdgeInsetsMake(5.0, 5.0, 5.0, 5.0);
     self->_itemInsets = UIEdgeInsetsMake(5.0, 5.0, 5.0, 5.0);
     self->_itemFrame = CGRectMake(0.0, 0.0, 100.0, 100.0);
+    self->_needsReloadData = YES;
     self->_numberOfItems = 0;
     return self;
 }
@@ -58,6 +102,9 @@ static id init(ECItemView *self)
     return init(self);
 }
 
+#pragma mark -
+#pragma mark Private methods
+
 - (NSInteger)_contentWidthInCells
 {
     return (NSInteger)((UIEdgeInsetsInsetRect(self.bounds, _viewInsets)).size.width / _itemFrame.size.width);
@@ -68,8 +115,15 @@ static id init(ECItemView *self)
     return (NSInteger)(_numberOfItems / [self _contentWidthInCells]);
 }
 
+#pragma mark -
+#pragma mark UIView
+
 - (void)layoutSubviews
 {
+    if (_needsReloadData)
+        [self reloadData];
+    if (_isBatchUpdating)
+        [NSException raise:NSInternalInconsistencyException format:@"beginUpdates without corresponding endUpdates"];
     __block CGRect frame = CGRectZero;
     [_items enumerateObjectsUsingBlock:^(ECItemViewCell *cell, NSUInteger index, BOOL *stop) {
         frame = [self rectForItem:index];
@@ -77,6 +131,9 @@ static id init(ECItemView *self)
             cell.frame = frame;
     }];
 }
+
+#pragma mark -
+#pragma mark Public methods
 
 - (void)reloadData
 {
@@ -92,7 +149,6 @@ static id init(ECItemView *self)
     for (i = 0; i < [_dataSource numberOfItemsInItemView:self]; ++i)
     {
         cell = [_dataSource itemView:self cellForItem:i];
-        cell.tag = i;
         [self addSubview:cell];
         [_items addObject:cell];
     }
@@ -129,6 +185,71 @@ static id init(ECItemView *self)
             ++i;
     }
     return -1;
+}
+
+- (void)beginUpdates
+{
+    ++_isBatchUpdating;
+    [self setNeedsLayout];
+    if (_needsReloadData)
+        [self reloadData];
+    _itemsToInsert = [NSMutableIndexSet indexSet];
+    _itemsToDelete = [NSMutableIndexSet indexSet];
+    _itemsToReload = [NSMutableIndexSet indexSet];
+}
+
+- (void)endUpdates
+{
+    --_isBatchUpdating;
+    if (_isBatchUpdating < 0)
+        [NSException raise:NSInternalInconsistencyException format:@"endUpdates called too many times"];
+    _numberOfItems += [_itemsToInsert count];
+    _numberOfItems -= [_itemsToDelete count];
+    if (_numberOfItems != [_dataSource numberOfItemsInItemView:self])
+        [NSException raise:NSInternalInconsistencyException format:@"numberOfItems != old numberOfItems +insertedItems -deletedItems"];
+    ECItemViewCell *cell;
+    NSInteger offset = 0;
+    for (NSInteger index = 0; index < _numberOfItems; ++index)
+    {
+        if ([_itemsToDelete containsIndex:index])
+        {
+            cell = [_items objectAtIndex:index + offset];
+            [cell removeFromSuperview];
+            [_items removeObjectAtIndex:index + offset];
+            --offset;
+        }
+        if ([_itemsToInsert containsIndex:index])
+        {
+            cell = [_dataSource itemView:self cellForItem:index];
+            [self addSubview:cell];
+            [_items insertObject:cell atIndex:index];
+            ++offset;
+        }
+        if ([_itemsToReload containsIndex:index])
+        {
+            cell = [_items objectAtIndex:index + offset];
+            [cell removeFromSuperview];
+            [_items removeObjectAtIndex:index + offset];
+            cell = [_dataSource itemView:self cellForItem:index];
+            [self addSubview:cell];
+            [_items insertObject:cell atIndex:index];
+        }
+    }
+}
+
+- (void)insertItems:(NSIndexSet *)items
+{
+    [_itemsToInsert addIndexes:items];
+}
+
+- (void)deleteItems:(NSIndexSet *)items
+{
+    [_itemsToDelete addIndexes:items];
+}
+
+- (void)reloadItems:(NSIndexSet *)items
+{
+    [_itemsToReload addIndexes:items];
 }
 
 @end
