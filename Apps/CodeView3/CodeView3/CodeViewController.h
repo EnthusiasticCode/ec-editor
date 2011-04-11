@@ -19,4 +19,7 @@
 @property (nonatomic, retain) IBOutlet UIScrollView *scrollView;
 
 - (IBAction)loadTestFileToCodeView:(id)sender;
+
+- (void)updateLayout;
+
 @end

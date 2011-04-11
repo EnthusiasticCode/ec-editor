@@ -860,7 +860,7 @@ static void init(ECCodeView3 *self)
 //        [delegate editCodeView:self textChangedInRange:range];
 //    }
     
-//    textLayer.string = text;
+    [self invalidateFramesetter];
     
     // TODO if needed, fix paragraph styles
     

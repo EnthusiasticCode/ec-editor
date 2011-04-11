@@ -39,13 +39,6 @@
 
 #pragma mark - View lifecycle
 
-/*
-// Implement loadView to create a view hierarchy programmatically, without using a nib.
-- (void)loadView
-{
-}
-*/
-
 // Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
 - (void)viewDidLoad
 {
@@ -54,7 +47,7 @@
     codeView.autosizeHeigthToFitTextOnBoundsChange = YES;
     codeView.contentMode = UIViewContentModeRedraw;
     [codeView setText:[[NSMutableAttributedString alloc] initWithString:@"int main(params)\n{\n\treturn 0;\n}"] applyDefaultAttributes:YES];
-    [codeView setFrame:self.view.bounds autosizeHeightToFitText:YES];
+    [self updateLayout];
 }
 
 
@@ -74,16 +67,31 @@
 - (IBAction)loadTestFileToCodeView:(id)sender 
 {
     NSURL *dir = [NSURL URLWithString:@"../Documents" relativeToURL:[[NSBundle mainBundle] bundleURL]];
-    NSDirectoryEnumerator *enumerator = [[NSFileManager defaultManager] enumeratorAtURL:dir includingPropertiesForKeys:nil options:0 errorHandler:nil];
+    NSDirectoryEnumerator *enumerator = [[NSFileManager defaultManager] enumeratorAtPath:[dir path]];
     NSInteger tag = [sender tag];
+    NSString *s;
     for (NSURL *url in enumerator) {
-        if (tag-- > 0) {
+        s = [url lastPathComponent];
+        if (![s isEqualToString:@".DS_Store"] && tag-- <= 0) {
             NSStringEncoding enc;
-            NSMutableAttributedString *string = [[NSMutableAttributedString alloc] initWithString:[NSString stringWithContentsOfURL:url usedEncoding:&enc error:NULL]];
+            url = [dir URLByAppendingPathComponent:[url lastPathComponent]];
+            s = [NSString stringWithContentsOfURL:url usedEncoding:&enc error:NULL];
+            NSMutableAttributedString *string = [[NSMutableAttributedString alloc] initWithString:s];
             [codeView setText:string applyDefaultAttributes:YES];
             [string release];
+            [sender setTitle:[url lastPathComponent]];
+            [self updateLayout];
             break;
         }
     }
 }
+
+#pragma mark Stuff
+
+- (void)updateLayout
+{
+    [codeView setFrame:self.view.bounds autosizeHeightToFitText:YES];
+    [scrollView setContentSize:codeView.bounds.size];
+}
+
 @end
