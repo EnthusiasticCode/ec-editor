@@ -12,12 +12,9 @@
 
 
 @synthesize window=_window;
-@synthesize codeView;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    [codeView setText:[[NSMutableAttributedString alloc] initWithString:@"int main(params)\n{\n\treturn 0;\n}"] applyDefaultAttributes:YES];
-    [codeView setFrame:self.window.bounds autosizeHeightToFitText:YES];
     [self.window makeKeyAndVisible];
     return YES;
 }
@@ -64,7 +61,6 @@
 - (void)dealloc
 {
     [_window release];
-    [codeView release];
     [super dealloc];
 }
 

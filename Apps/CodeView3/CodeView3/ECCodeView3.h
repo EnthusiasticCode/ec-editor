@@ -14,6 +14,7 @@
 @protocol ECCodeViewDelegate <NSObject>
 @optional
     // TODO request colors after debounce in scrolling?
+// -resizes
 @end
 
 @interface ECCodeView3 : UIView <UIKeyInput, UITextInputTraits, UITextInput>
@@ -31,6 +32,9 @@
 
 /// The text insets from the view's border.
 @property (nonatomic) UIEdgeInsets textInsets;
+
+/// Indicates if the frame/bounds should be automatically resized to fit the entire text.
+@property (nonatomic) BOOL autosizeHeigthToFitTextOnBoundsChange;
 
 /// Set the frame of the receiver autoresizing it's height to fit the entire text if so specified.
 - (void)setFrame:(CGRect)frame autosizeHeightToFitText:(BOOL)autosizeHeight;

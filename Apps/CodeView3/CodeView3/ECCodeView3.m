@@ -63,8 +63,8 @@
 @synthesize delegate;
 @synthesize textInsets;
 @synthesize defaultTextStyle;
-
 @synthesize frameRect;
+@synthesize autosizeHeigthToFitTextOnBoundsChange;
 
 - (void)setDelegate:(id<ECCodeViewDelegate>)aDelegate
 {
@@ -110,8 +110,7 @@
 
 - (void)setFrame:(CGRect)frame
 {
-    self.frameRect = (CGRect){ CGPointZero, frame.size };
-    [super setFrame:frame];
+    [self setFrame:frame autosizeHeightToFitText:self.autosizeHeigthToFitTextOnBoundsChange];
 }
 
 - (void)setFrame:(CGRect)frame autosizeHeightToFitText:(BOOL)autosizeHeight
@@ -128,7 +127,8 @@
         //
         frame.size = fitSize;
     }
-    [self setFrame:frame];
+    self.frameRect = (CGRect){ CGPointZero, frame.size };
+    [super setFrame:frame];
 }
 
 #pragma mark Private properties
