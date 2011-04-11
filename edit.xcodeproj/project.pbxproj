@@ -12,7 +12,9 @@
 		B70D64C0132A2581008DDEA4 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B70D64BF132A2581008DDEA4 /* CoreGraphics.framework */; };
 		B70D6573132A277C008DDEA4 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B70D6572132A277C008DDEA4 /* CoreText.framework */; };
 		B70D6575132A279C008DDEA4 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B70D6574132A279C008DDEA4 /* CoreData.framework */; };
+		B747E8A51353970A00076727 /* ECItemViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B747E8A41353970A00076727 /* ECItemViewCell.m */; };
 		B7A04CA9134F68BD00B72575 /* File.m in Sources */ = {isa = PBXBuildFile; fileRef = B7A04CA8134F68BD00B72575 /* File.m */; };
+		B7A04D0913537FA100B72575 /* ECItemView.m in Sources */ = {isa = PBXBuildFile; fileRef = B7A04D0813537FA100B72575 /* ECItemView.m */; };
 		B7DBA580132A3281004C0E1D /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7DBA57F132A3281004C0E1D /* QuartzCore.framework */; };
 		B7E5CF931348C20B00A4C65A /* ECClangCodeCursor.m in Sources */ = {isa = PBXBuildFile; fileRef = B7E5CF8C1348C20B00A4C65A /* ECClangCodeCursor.m */; };
 		B7E5CF941348C20B00A4C65A /* ECClangCodeIndex.m in Sources */ = {isa = PBXBuildFile; fileRef = B7E5CF8E1348C20B00A4C65A /* ECClangCodeIndex.m */; };
@@ -44,8 +46,6 @@
 		CDEBF2A213489BE800CE2285 /* ECLineMarksView.m in Sources */ = {isa = PBXBuildFile; fileRef = CDEBF28113489BE800CE2285 /* ECLineMarksView.m */; };
 		CDEBF2A313489BE800CE2285 /* ECPersistentDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = CDEBF28313489BE800CE2285 /* ECPersistentDocument.m */; };
 		CDEBF2A413489BE800CE2285 /* ECRectSet.m in Sources */ = {isa = PBXBuildFile; fileRef = CDEBF28513489BE800CE2285 /* ECRectSet.m */; };
-		CDEBF2A513489BE800CE2285 /* ECRelationalTableView.m in Sources */ = {isa = PBXBuildFile; fileRef = CDEBF28713489BE800CE2285 /* ECRelationalTableView.m */; };
-		CDEBF2A613489BE800CE2285 /* ECRelationalTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = CDEBF28B13489BE800CE2285 /* ECRelationalTableViewCell.m */; };
 		CDEBF2A713489BE800CE2285 /* ECSelectionHandleView.m in Sources */ = {isa = PBXBuildFile; fileRef = CDEBF28E13489BE800CE2285 /* ECSelectionHandleView.m */; };
 		CDEBF2A813489BE800CE2285 /* ECTextDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = CDEBF29013489BE800CE2285 /* ECTextDocument.m */; };
 		CDEBF2A913489BE800CE2285 /* ECTextLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = CDEBF29213489BE800CE2285 /* ECTextLayer.m */; };
@@ -71,9 +71,12 @@
 		B70D6572132A277C008DDEA4 /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
 		B70D6574132A279C008DDEA4 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		B70D6649132A28AB008DDEA4 /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Developer/Library/Frameworks/SenTestingKit.framework; sourceTree = SDKROOT; };
-		B7993BF9134CC922007C8747 /* ECRelationalTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECRelationalTableViewCell.h; path = Frameworks/ECUIKit/ECRelationalTableViewCell.h; sourceTree = "<group>"; };
+		B747E8A31353970A00076727 /* ECItemViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECItemViewCell.h; path = Frameworks/ECUIKit/ECItemViewCell.h; sourceTree = "<group>"; };
+		B747E8A41353970A00076727 /* ECItemViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECItemViewCell.m; path = Frameworks/ECUIKit/ECItemViewCell.m; sourceTree = "<group>"; };
 		B7A04CA7134F68BD00B72575 /* File.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = File.h; path = Apps/edit/File.h; sourceTree = SOURCE_ROOT; };
 		B7A04CA8134F68BD00B72575 /* File.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = File.m; path = Apps/edit/File.m; sourceTree = SOURCE_ROOT; };
+		B7A04D0713537FA100B72575 /* ECItemView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECItemView.h; path = Frameworks/ECUIKit/ECItemView.h; sourceTree = "<group>"; };
+		B7A04D0813537FA100B72575 /* ECItemView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECItemView.m; path = Frameworks/ECUIKit/ECItemView.m; sourceTree = "<group>"; };
 		B7DBA57F132A3281004C0E1D /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		B7E5CF8B1348C20B00A4C65A /* ECClangCodeCursor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECClangCodeCursor.h; path = Frameworks/ECCodeIndexing/ECClangCodeCursor.h; sourceTree = "<group>"; };
 		B7E5CF8C1348C20B00A4C65A /* ECClangCodeCursor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECClangCodeCursor.m; path = Frameworks/ECCodeIndexing/ECClangCodeCursor.m; sourceTree = "<group>"; };
@@ -142,9 +145,6 @@
 		CDEBF28313489BE800CE2285 /* ECPersistentDocument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECPersistentDocument.m; path = Frameworks/ECUIKit/ECPersistentDocument.m; sourceTree = "<group>"; };
 		CDEBF28413489BE800CE2285 /* ECRectSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECRectSet.h; path = Frameworks/ECUIKit/ECRectSet.h; sourceTree = "<group>"; };
 		CDEBF28513489BE800CE2285 /* ECRectSet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECRectSet.m; path = Frameworks/ECUIKit/ECRectSet.m; sourceTree = "<group>"; };
-		CDEBF28613489BE800CE2285 /* ECRelationalTableView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECRelationalTableView.h; path = Frameworks/ECUIKit/ECRelationalTableView.h; sourceTree = "<group>"; };
-		CDEBF28713489BE800CE2285 /* ECRelationalTableView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; name = ECRelationalTableView.m; path = Frameworks/ECUIKit/ECRelationalTableView.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
-		CDEBF28B13489BE800CE2285 /* ECRelationalTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECRelationalTableViewCell.m; path = Frameworks/ECUIKit/ECRelationalTableViewCell.m; sourceTree = "<group>"; };
 		CDEBF28D13489BE800CE2285 /* ECSelectionHandleView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECSelectionHandleView.h; path = Frameworks/ECUIKit/ECSelectionHandleView.h; sourceTree = "<group>"; };
 		CDEBF28E13489BE800CE2285 /* ECSelectionHandleView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECSelectionHandleView.m; path = Frameworks/ECUIKit/ECSelectionHandleView.m; sourceTree = "<group>"; };
 		CDEBF28F13489BE800CE2285 /* ECTextDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECTextDocument.h; path = Frameworks/ECUIKit/ECTextDocument.h; sourceTree = "<group>"; };
@@ -388,10 +388,10 @@
 		CDEBF2BF13489E0100CE2285 /* Relational Table */ = {
 			isa = PBXGroup;
 			children = (
-				CDEBF28613489BE800CE2285 /* ECRelationalTableView.h */,
-				CDEBF28713489BE800CE2285 /* ECRelationalTableView.m */,
-				B7993BF9134CC922007C8747 /* ECRelationalTableViewCell.h */,
-				CDEBF28B13489BE800CE2285 /* ECRelationalTableViewCell.m */,
+				B7A04D0713537FA100B72575 /* ECItemView.h */,
+				B7A04D0813537FA100B72575 /* ECItemView.m */,
+				B747E8A31353970A00076727 /* ECItemViewCell.h */,
+				B747E8A41353970A00076727 /* ECItemViewCell.m */,
 			);
 			name = "Relational Table";
 			sourceTree = "<group>";
@@ -519,8 +519,6 @@
 				CDEBF2A213489BE800CE2285 /* ECLineMarksView.m in Sources */,
 				CDEBF2A313489BE800CE2285 /* ECPersistentDocument.m in Sources */,
 				CDEBF2A413489BE800CE2285 /* ECRectSet.m in Sources */,
-				CDEBF2A513489BE800CE2285 /* ECRelationalTableView.m in Sources */,
-				CDEBF2A613489BE800CE2285 /* ECRelationalTableViewCell.m in Sources */,
 				CDEBF2A713489BE800CE2285 /* ECSelectionHandleView.m in Sources */,
 				CDEBF2A813489BE800CE2285 /* ECTextDocument.m in Sources */,
 				CDEBF2A913489BE800CE2285 /* ECTextLayer.m in Sources */,
@@ -535,6 +533,8 @@
 				B7E5CF941348C20B00A4C65A /* ECClangCodeIndex.m in Sources */,
 				B7E5CF951348C20B00A4C65A /* ECClangCodeUnit.m in Sources */,
 				B7A04CA9134F68BD00B72575 /* File.m in Sources */,
+				B7A04D0913537FA100B72575 /* ECItemView.m in Sources */,
+				B747E8A51353970A00076727 /* ECItemViewCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

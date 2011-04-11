@@ -138,14 +138,20 @@
     return indexPaths;
 }
 
+- (NSString *)nameOfFile:(NSInteger)file inGroup:(NSInteger)group inFolder:(NSInteger)folder
+{
+    NSString *subfolder = [self tableView:nil titleForHeaderInSection:folder];
+    NSString *fileSubPath = [[self filesInSubfolder:subfolder] objectAtIndex:file];
+    return [self.folder stringByAppendingPathComponent:[subfolder stringByAppendingPathComponent:fileSubPath]];
+}
 #pragma mark -
 #pragma mark UIGestureRecognizer
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch
 {
-    if ([touch locationInView:self.tableView].y > 500.0)
-        return NO;
-    return YES;
+    if (self.isEditing)
+        return YES;
+    return NO;
 }
 
 - (void)handlePan:(UIGestureRecognizer *)panRecognizer
@@ -164,7 +170,7 @@
 - (void)edit:(id)sender
 {
     [self.tableView beginUpdates];
-    [self.tableView insertRowsAtIndexPaths:[self indexPathsForNewGroupPlaceholders] withRowAnimation:UITableViewRowAnimationMiddle];
+    [self.tableView insertRowsAtIndexPaths:[self indexPathsForNewGroupPlaceholders] withRowAnimation:UITableViewRowAnimationFade];
     [self.tableView setEditing:YES animated:YES];
     self.isEditing = YES;
     [self.tableView endUpdates];
@@ -174,7 +180,7 @@
 - (void)done:(id)sender
 {
     [self.tableView beginUpdates];
-    [self.tableView deleteRowsAtIndexPaths:[self indexPathsForNewGroupPlaceholders] withRowAnimation:UITableViewRowAnimationMiddle];
+    [self.tableView deleteRowsAtIndexPaths:[self indexPathsForNewGroupPlaceholders] withRowAnimation:UITableViewRowAnimationFade];
     [self.tableView setEditing:NO animated:YES];
     self.isEditing = NO;
     [self.tableView endUpdates];
@@ -219,21 +225,24 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     UITableViewCell *group = [tableView dequeueReusableCellWithIdentifier:@"Group"];
+    ECItemView *itemView;
     if (!group)
     {
         group = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"Group"] autorelease];
-        UILabel *label = [[[UILabel alloc] init] autorelease];
-        label.tag = 1;
-        [group.contentView addSubview:label];
-        label.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
-        label.frame = group.contentView.bounds;
+        itemView = [[[ECItemView alloc] init] autorelease];
+        itemView.dataSource = self;
+        [itemView reloadData];
+        itemView.tag = 1;
+        [group.contentView addSubview:itemView];
+        itemView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
+        itemView.frame = group.contentView.bounds;
     }
-    UILabel *label = (UILabel *)[group.contentView viewWithTag:1];
-    NSArray *files = [self filesInSubfolder:[self tableView:nil titleForHeaderInSection:indexPath.section]];
-    label.text = [files componentsJoinedByString:@"\n"];
-    if (self.isEditing && !(indexPath.row % 2))
-        label.text = @"";
-    label.numberOfLines = [files count];
+//    itemView = (ECItemView *)[group.contentView viewWithTag:1];
+//    NSArray *files = [self filesInSubfolder:[self tableView:nil titleForHeaderInSection:indexPath.section]];
+//    label.text = [files componentsJoinedByString:@"\n"];
+//    if (self.isEditing && !(indexPath.row % 2))
+//        label.text = @"";
+//    label.numberOfLines = [files count];
     return group;
 }
 
@@ -245,17 +254,19 @@
 #pragma mark -
 #pragma mark UITableViewDelegate
 
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+#pragma mark -
+#pragma mark ECItemViewDataSource
+
+- (NSInteger)numberOfItemsInItemView:(ECItemView *)itemView
 {
-    if (!indexPath)
-        return;
-    NSString *subfolder = [self tableView:nil titleForHeaderInSection:indexPath.section];
-    NSString *fileSubPath = [[self filesInSubfolder:subfolder] objectAtIndex:indexPath.row];
-    NSString *file = [self.folder stringByAppendingPathComponent:[subfolder stringByAppendingPathComponent:fileSubPath]];
-    ECCodeUnit *codeUnit = [self.codeIndex unitForFile:file];
-    FileController *fileController = ((AppController *)self.navigationController).fileController;
-    [fileController loadFile:file withCodeUnit:codeUnit];
-    [self.navigationController pushViewController:fileController animated:YES];
+    return 5;
+}
+
+- (ECItemViewCell *)itemView:(ECItemView *)itemView cellForItem:(NSInteger)item
+{
+    ECItemViewCell *cell = [[[ECItemViewCell alloc] init] autorelease];
+    cell.backgroundColor = [UIColor redColor];
+    return cell;
 }
 
 @end

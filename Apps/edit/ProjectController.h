@@ -7,11 +7,12 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <ECUIKit/ECItemView.h>
 @class FileController;
 @class ECCodeIndex;
 @class Project;
 
-@interface ProjectController : UIViewController <UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate>
+@interface ProjectController : UIViewController <UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate, ECItemViewDataSource>
 @property (nonatomic, retain) NSArray *extensionsToShow;
 @property (nonatomic, retain) Project *project;
 @property (nonatomic, retain) ECCodeIndex *codeIndex;
