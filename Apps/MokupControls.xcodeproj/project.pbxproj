@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CD064DDF1352F3DB009DAD82 /* UIColor+StyleColors.m in Sources */ = {isa = PBXBuildFile; fileRef = CD064DDE1352F3DB009DAD82 /* UIColor+StyleColors.m */; };
 		CD4394BA1352E8FA005239B6 /* ECButton.m in Sources */ = {isa = PBXBuildFile; fileRef = CD4394B31352E8FA005239B6 /* ECButton.m */; };
 		CD4394BB1352E8FA005239B6 /* ECJumpBar.m in Sources */ = {isa = PBXBuildFile; fileRef = CD4394B51352E8FA005239B6 /* ECJumpBar.m */; };
 		CD4394BC1352E8FA005239B6 /* ECPopoverView.m in Sources */ = {isa = PBXBuildFile; fileRef = CD4394B71352E8FA005239B6 /* ECPopoverView.m */; };
@@ -23,6 +24,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		CD064DDD1352F3DB009DAD82 /* UIColor+StyleColors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+StyleColors.h"; sourceTree = "<group>"; };
+		CD064DDE1352F3DB009DAD82 /* UIColor+StyleColors.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+StyleColors.m"; sourceTree = "<group>"; };
 		CD4394B21352E8FA005239B6 /* ECButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECButton.h; sourceTree = "<group>"; };
 		CD4394B31352E8FA005239B6 /* ECButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECButton.m; sourceTree = "<group>"; };
 		CD4394B41352E8FA005239B6 /* ECJumpBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECJumpBar.h; sourceTree = "<group>"; };
@@ -72,6 +75,8 @@
 				CD4394B71352E8FA005239B6 /* ECPopoverView.m */,
 				CD4394B81352E8FA005239B6 /* UIImage+BlockDrawing.h */,
 				CD4394B91352E8FA005239B6 /* UIImage+BlockDrawing.m */,
+				CD064DDD1352F3DB009DAD82 /* UIColor+StyleColors.h */,
+				CD064DDE1352F3DB009DAD82 /* UIColor+StyleColors.m */,
 			);
 			name = "ECUIKit part";
 			path = ../../Frameworks/ECUIKit;
@@ -195,6 +200,7 @@
 				CD4394BB1352E8FA005239B6 /* ECJumpBar.m in Sources */,
 				CD4394BC1352E8FA005239B6 /* ECPopoverView.m in Sources */,
 				CD4394BD1352E8FA005239B6 /* UIImage+BlockDrawing.m in Sources */,
+				CD064DDF1352F3DB009DAD82 /* UIColor+StyleColors.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
