@@ -42,7 +42,7 @@
 
 //
 
-@property (nonatomic, readonly) CTFramesetterRef framesetter;
+@property (readonly) CTFramesetterRef framesetter;
 
 - (void)invalidateFramesetter;
 
@@ -136,24 +136,21 @@ static void init(ECCodeView3 *self)
 
 - (id)initWithFrame:(CGRect)frame
 {
+    init(self);
     self = [super initWithFrame:frame];
     if (self) {
-        init(self);
+        // TODO or textinsets are not set before setFrame
     }
     return self;
 }
 
 - (id)initWithCoder:(NSCoder *)coder {
+    init(self);
     self = [super initWithCoder:coder];
     if (self) {
-        init(self);
+        // TODO or textinsets are not set before setFrame
     }
     return self;
-}
-
-+ (Class)layerClass
-{
-    return [CATiledLayer class];
 }
 
 #pragma mark -
@@ -734,7 +731,7 @@ static void init(ECCodeView3 *self)
 }
 
 #pragma mark -
-#pragma mark Drawing and layout
+#pragma mark Rendering and layout
 
 - (void)layoutSubviews
 {
@@ -777,24 +774,48 @@ static void init(ECCodeView3 *self)
 {
     CGContextRef context = UIGraphicsGetCurrentContext();
     
+    // Avoid drawing tiles not beginning at x == 0
+    // This should never happen because tiles should always have width == bouns width
+    if (rect.origin.x)
+        return;
+    
     // Draw text
+    __block NSUInteger lastRenderedFrameIndex = 0;
     CGContextSaveGState(context);
     {
         CGContextScaleCTM(context, 1, -1);
         CGContextTranslateCTM(context, textInsets.left, -textInsets.top);
         CGContextSetTextPosition(context, 0, 0);
         CGContextSetTextMatrix(context, CGAffineTransformIdentity);
+        
+        __block CGFloat lastWidth = 0, width, ascent, descent;
         [self enumerateFramesIntersectingRect:rect withBlock:^(CTFrameRef frame, NSUInteger idx, BOOL *stop) {
-            __block CGFloat lastWidth = 0, width, ascent, descent;
             ECCTFrameEnumerateLinesWithBlock(frame, ^(CTLineRef line, CFIndex index, _Bool *stop) {
                 width = CTLineGetTypographicBounds(line, &ascent, &descent, NULL);
                 CGContextTranslateCTM(context, -lastWidth, -ascent - descent);
                 lastWidth = width;
                 CTLineDraw(line, context);
             });
+            lastRenderedFrameIndex = idx;
         }];
     }
     CGContextRestoreGState(context);
+    
+    // Require drawing of next frame as well
+    // TODO put on a different queue?
+    [[NSOperationQueue mainQueue] addOperationWithBlock:^(void) {
+        // TODO may require locking of frames array
+        [self generateFramesUpToIndex:lastRenderedFrameIndex + 1];
+    }];
+    
+    // DEBUG    
+    [[UIColor blueColor] setStroke];
+    CGContextSetLineWidth(context, 2);
+    CGContextStrokeRect(context, frameRect);
+
+    [[UIColor redColor] setStroke];
+    CGContextSetLineWidth(context, 4);
+    CGContextStrokeRect(context, rect);
 }
 
 #pragma mark -
@@ -912,9 +933,11 @@ static void init(ECCodeView3 *self)
     if (CGRectEqualToRect(rect, frameRect))
         return;
     
-    frameRect = rect;
+    CGSize size = rect.size;
+    size.width -= textInsets.left + textInsets.right;
+    
+    frameRect = (CGRect){ rect.origin, size };
     [frames removeAllObjects];
-    [(CATiledLayer *)self.layer setTileSize:rect.size];
 }
 
 - (void)generateFramesUpToIndex:(NSUInteger)index
@@ -923,16 +946,24 @@ static void init(ECCodeView3 *self)
     CTFramesetterRef fs = self.framesetter;
     
     CTFrameRef frame;
-    CFRange frameStringRange = CTFrameGetStringRange((CTFrameRef)[frames lastObject]);
+    CFRange frameStringRange = CTFrameGetVisibleStringRange((CTFrameRef)[frames lastObject]);
     frameStringRange.length = 0;
+    
     CGMutablePathRef path = CGPathCreateMutable();
-    CGPathAddRect(path, NULL, self.frameRect);
+    CGPathAddRect(path, NULL, frameRect);
+    
+    NSUInteger textLength = [text length];
+    
     for (NSUInteger i = [frames count]; i < index; ++i)
     {
+        // Check if no more frames are needed
+        // TODO CTFrameGetVisibleStringRange(frame).length == 0 may be more desirable
+        if (frameStringRange.location >= textLength)
+            break;
         frame = CTFramesetterCreateFrame(fs, frameStringRange, path, NULL);
         if (!frame)
             break;
-        frameStringRange.location += CTFrameGetStringRange(frame).length;
+        frameStringRange.location += CTFrameGetVisibleStringRange(frame).length;
         [frames addObject:(id)frame];
         CFRelease(frame);
     }
@@ -942,7 +973,7 @@ static void init(ECCodeView3 *self)
 - (void)enumerateFramesIntersectingRect:(CGRect)rect withBlock:(void (^)(CTFrameRef, NSUInteger, BOOL *))block
 {
     NSUInteger first = rect.origin.y / frameRect.size.height;
-    NSUInteger count = rect.size.height / frameRect.size.height + 1;
+    NSUInteger count = MAX(rect.size.height / frameRect.size.height, 1);
     
     [self generateFramesUpToIndex:(first + count)];
     
