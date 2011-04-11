@@ -115,6 +115,7 @@
 
 - (void)setFrame:(CGRect)frame autosizeHeightToFitText:(BOOL)autosizeHeight
 {
+    self.frameRect = (CGRect){ CGPointZero, frame.size };
     if (autosizeHeight) 
     {
         CFRange fitRange;
@@ -127,7 +128,6 @@
         //
         frame.size = fitSize;
     }
-    self.frameRect = (CGRect){ CGPointZero, frame.size };
     [super setFrame:frame];
 }
 
@@ -759,6 +759,11 @@ static void init(ECCodeView3 *self)
 #pragma mark -
 #pragma mark Rendering and layout
 
++ (Class)layerClass
+{
+    return [CATiledLayer class];
+}
+
 - (void)layoutSubviews
 {
     // Create and layout selection layer
@@ -805,34 +810,43 @@ static void init(ECCodeView3 *self)
     if (rect.origin.x)
         return;
     
-    // Draw text
-    __block NSUInteger lastRenderedFrameIndex = 0;
-    CGContextSaveGState(context);
-    {
-        CGContextScaleCTM(context, 1, -1);
-        CGContextTranslateCTM(context, textInsets.left, -textInsets.top);
-        CGContextSetTextPosition(context, 0, 0);
-        CGContextSetTextMatrix(context, CGAffineTransformIdentity);
-        
-        __block CGFloat lastWidth = 0, width, ascent, descent;
-        [self enumerateFramesIntersectingRect:rect withBlock:^(CTFrameRef frame, NSUInteger idx, BOOL *stop) {
-            ECCTFrameEnumerateLinesWithBlock(frame, ^(CTLineRef line, CFIndex index, _Bool *stop) {
-                width = CTLineGetTypographicBounds(line, &ascent, &descent, NULL);
-                CGContextTranslateCTM(context, -lastWidth, -ascent - descent);
-                lastWidth = width;
-                CTLineDraw(line, context);
-            });
-            lastRenderedFrameIndex = idx;
-        }];
-    }
-    CGContextRestoreGState(context);
+//    @synchronized (frames) {
+        // Draw text
+        __block NSUInteger lastRenderedFrameIndex = 0;
+        CGContextSaveGState(context);
+        {
+            CGContextScaleCTM(context, 1, -1);
+            CGContextSetTextPosition(context, 0, 0);
+            CGContextSetTextMatrix(context, CGAffineTransformIdentity);
+            
+            __block CGFloat lastWidth = 0, width, ascent, descent;
+            [self enumerateFramesIntersectingRect:rect withBlock:^(CTFrameRef frame, NSUInteger idx, BOOL *stop) {
+//                CGContextSaveGState(context);
+                CGContextTranslateCTM(context, textInsets.left, rect.origin.y ? -rect.origin.y : -textInsets.top);
+                ECCTFrameEnumerateLinesWithBlock(frame, ^(CTLineRef line, CFIndex index, _Bool *stop) {
+                    width = CTLineGetTypographicBounds(line, &ascent, &descent, NULL);
+                    CGContextTranslateCTM(context, -lastWidth, -ascent - descent);
+                    lastWidth = width;
+                    CTLineDraw(line, context);
+                });
+                lastRenderedFrameIndex = idx;
+//                CGContextRestoreGState(context);
+            }];
+        }
+        CGContextRestoreGState(context);
+//    }
     
     // Require drawing of next frame as well
     // TODO put on a different queue?
-    [[NSOperationQueue mainQueue] addOperationWithBlock:^(void) {
-        // TODO may require locking of frames array
-        [self generateFramesUpToIndex:lastRenderedFrameIndex + 1];
-    }];
+//    [[NSOperationQueue mainQueue] addOperationWithBlock:^(void) {
+//        // TODO may require locking of frames array
+//        [self generateFramesUpToIndex:lastRenderedFrameIndex + 1];
+//    }];
+    
+    // DEBUG
+    [[UIColor redColor] setStroke];
+    CGContextSetLineWidth(context, 4);
+    CGContextStrokeRect(context, rect);
 }
 
 #pragma mark -
@@ -950,6 +964,8 @@ static void init(ECCodeView3 *self)
     if (CGRectEqualToRect(rect, frameRect))
         return;
     
+    [(CATiledLayer *)self.layer setTileSize:rect.size];
+    
     CGSize size = rect.size;
     size.width -= textInsets.left + textInsets.right;
     
@@ -964,6 +980,7 @@ static void init(ECCodeView3 *self)
     
     CTFrameRef frame;
     CFRange frameStringRange = CTFrameGetVisibleStringRange((CTFrameRef)[frames lastObject]);
+    frameStringRange.location += frameStringRange.length;
     frameStringRange.length = 0;
     
     CGMutablePathRef path = CGPathCreateMutable();
