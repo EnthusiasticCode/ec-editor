@@ -38,15 +38,4 @@ CGRect ECCTFrameGetUsedRect(CTFrameRef frame, _Bool constrainedWidth);
 typedef void (^lineElementBlock)(CTLineRef line, CFIndex index, _Bool *stop);
 void ECCTFrameEnumerateLinesWithBlock(CTFrameRef frame, lineElementBlock block);
 
-#pragma mark Mutli array functions
-
-/// Fill the array with frames created from the given framesetter and all with the same path.
-/// All frames before the given stringIndex will be generated if not already present or if force is set to YES.
-/// The frame containing the given string index will be generated containing all remaining characters up through string index or untill it's full if fillLastFrame is YES.
-/// The return value is the index in the array at which the frame containing the given string index can be found or -1 if an error occured.
-CFIndex ECCTFrameArrayFillFramesUpThroughStringIndex(CFMutableArrayRef frames, CFIndex stringIndex, CTFramesetterRef framesetter, CGPathRef path, _Bool fillLastFrame, _Bool force);
-
-/// Gets the frame containing the given string index in the frame array.
-CTFrameRef ECCTFrameArrayGetFrameContainingStringIndex(CFArrayRef frames, CFIndex stringIndex);
-
 

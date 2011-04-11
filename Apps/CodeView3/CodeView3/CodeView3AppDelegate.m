@@ -12,10 +12,11 @@
 
 
 @synthesize window=_window;
+@synthesize codeView;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    // Override point for customization after application launch.
+    codeView.text = @"int main(params)\n{\n\treturn 0;\n}";
     [self.window makeKeyAndVisible];
     return YES;
 }
@@ -62,6 +63,7 @@
 - (void)dealloc
 {
     [_window release];
+    [codeView release];
     [super dealloc];
 }
 

@@ -20,10 +20,8 @@
     NSRange markedRange;
     
     // Core text support ivars
-    BOOL framesetterInvalid;
     CTFramesetterRef _framesetter;
     NSMutableArray *frames;
-    CGPathRef framePath;
 }
 
 /// Return the length of the text minus the hidden tailing new line.
@@ -46,7 +44,15 @@
 
 @property (nonatomic, readonly) CTFramesetterRef framesetter;
 
+- (void)invalidateFramesetter;
+
+@property (nonatomic) CGRect frameRect;
+
+- (void)generateFramesUpToIndex:(NSUInteger)index;
+- (void)enumerateFramesIntersectingRect:(CGRect)rect withBlock:(void(^)(CTFrameRef frame, NSUInteger idx, BOOL *stop))block;
+
 - (CTFrameRef)frameContainingTextIndex:(NSUInteger)index frameOffset:(CGFloat *)offset;
+//- (void)enumerateFramesContainingTextRange:(NSRange)range withBlock:(void(^)(CTFrameRef frame))block;
 
 @end
 
@@ -58,6 +64,8 @@
 @synthesize delegate;
 @synthesize textInsets;
 @synthesize defaultTextStyle;
+
+@synthesize frameRect;
 
 - (void)setDelegate:(id<ECCodeViewDelegate>)aDelegate
 {
@@ -85,20 +93,16 @@
     [self afterTextChangeInRange:[ECTextRange textRangeWithRange:range]];
 }
 
-- (CTFramesetterRef)framesetter
+- (void)setBounds:(CGRect)bounds
 {
-    if (!_framesetter || framesetterInvalid) 
-    {
-        if (_framesetter)
-            CFRelease(_framesetter);
-        _framesetter = CTFramesetterCreateWithAttributedString((CFAttributedStringRef)text);
-        
-        // TODO!!! may need to use CF
-        [frames removeAllObjects];
-        
-        framesetterInvalid = NO;
-    }
-    return _framesetter;
+    self.frameRect = bounds;
+    [super setBounds:bounds];
+}
+
+- (void)setFrame:(CGRect)frame
+{
+    self.frameRect = (CGRect){ CGPointZero, frame.size };
+    [super setFrame:frame];
 }
 
 #pragma mark Private properties
@@ -124,10 +128,9 @@ static void init(ECCodeView3 *self)
 {
     // TODO release frames
     [frames release];
-    if (_framesetter)
-        CFRelease(_framesetter);
     [selection release];
     [text release];
+    [self invalidateFramesetter];
     [super dealloc];
 }
 
@@ -772,19 +775,196 @@ static void init(ECCodeView3 *self)
 
 - (void)drawRect:(CGRect)rect
 {
+    CGContextRef context = UIGraphicsGetCurrentContext();
     
+    // Draw text
+    CGContextSaveGState(context);
+    {
+        CGContextScaleCTM(context, 1, -1);
+        CGContextTranslateCTM(context, textInsets.left, -textInsets.top);
+        CGContextSetTextPosition(context, 0, 0);
+        CGContextSetTextMatrix(context, CGAffineTransformIdentity);
+        [self enumerateFramesIntersectingRect:rect withBlock:^(CTFrameRef frame, NSUInteger idx, BOOL *stop) {
+            __block CGFloat lastWidth = 0, width, ascent, descent;
+            ECCTFrameEnumerateLinesWithBlock(frame, ^(CTLineRef line, CFIndex index, _Bool *stop) {
+                width = CTLineGetTypographicBounds(line, &ascent, &descent, NULL);
+                CGContextTranslateCTM(context, -lastWidth, -ascent - descent);
+                lastWidth = width;
+                CTLineDraw(line, context);
+            });
+        }];
+    }
+    CGContextRestoreGState(context);
+}
+
+#pragma mark -
+#pragma mark Private methods
+
+- (void)beforeTextChange
+{
+    // TODO hide any non required subview and call setNeedsLayout
+    
+    // TODO setSolidCaret
+    
+    [self unmarkText];
+    
+    [inputDelegate textWillChange:self];
+    
+    [text beginEditing];
+}
+
+- (void)afterTextChangeInRange:(UITextRange *)range
+{
+    [text endEditing];
+    
+//    if (delegateHasTextChangedInRange)
+//    {
+//        [delegate editCodeView:self textChangedInRange:range];
+//    }
+    
+//    textLayer.string = text;
+    
+    // TODO if needed, fix paragraph styles
+    
+//    if (self.needsDisplayOnTextChange)
+//    {
+//        [self setNeedsDisplay];
+//    }
+}
+
+- (void)setSelectedTextRange:(ECTextRange *)newSelection notifyDelegate:(BOOL)shouldNotify
+{
+    if (selection == newSelection)
+        return;
+    
+    if (newSelection && selection && [newSelection isEqual:selection])
+        return;
+    
+    // TODO selectionDirtyRect 
+    
+    //    if (newSelection && (![newSelection isEmpty])) // TODO or solid caret
+    //        [self setNeedsDisplayInRange:newSelection];
+    
+    if (shouldNotify)
+        [inputDelegate selectionWillChange:self];
+    
+    [selection release];
+    selection = [newSelection retain];
+    
+    if (shouldNotify)
+        [inputDelegate selectionDidChange:self];
+    
+    [self setNeedsLayout];
+}
+
+- (void)setSelectedIndex:(NSUInteger)index
+{
+    ECTextRange *range = [[ECTextRange alloc] initWithRange:(NSRange){index, 0}];
+    [self setSelectedTextRange:range notifyDelegate:NO];
+    [range release];
+}
+
+- (void)setSelectedTextFromPoint:(CGPoint)fromPoint toPoint:(CGPoint)toPoint
+{
+    UITextPosition *startPosition = [self closestPositionToPoint:fromPoint];
+    UITextPosition *endPosition;
+    if (CGPointEqualToPoint(toPoint, fromPoint))
+        endPosition = startPosition;
+    else
+        endPosition = [self closestPositionToPoint:toPoint];
+    
+    ECTextRange *range = [[ECTextRange alloc] initWithStart:(ECTextPosition *)startPosition end:(ECTextPosition *)endPosition];
+    
+    [self setSelectedTextRange:range];
+    
+    [range release];
 }
 
 #pragma mark -
 #pragma mark Core Text Support Methods
 
+- (CTFramesetterRef)framesetter
+{
+    if (!_framesetter) 
+    {
+        if (_framesetter)
+            CFRelease(_framesetter);
+        _framesetter = CTFramesetterCreateWithAttributedString((CFAttributedStringRef)text);
+        
+        // TODO!!! may need to use CF
+        // TODO should remove only frames after the acutal change in text
+        [frames removeAllObjects];
+    }
+    return _framesetter;
+}
+
+- (void)invalidateFramesetter
+{
+    if (_framesetter) 
+    {
+        CFRelease(_framesetter);
+        _framesetter = NULL;
+    }
+}
+
+- (void)setFrameRect:(CGRect)rect
+{
+    if (CGRectEqualToRect(rect, frameRect))
+        return;
+    
+    frameRect = rect;
+    [frames removeAllObjects];
+    [(CATiledLayer *)self.layer setTileSize:rect.size];
+}
+
+- (void)generateFramesUpToIndex:(NSUInteger)index
+{
+    // This property call will also remove all frames if required
+    CTFramesetterRef fs = self.framesetter;
+    
+    CTFrameRef frame;
+    CFRange frameStringRange = CTFrameGetStringRange((CTFrameRef)[frames lastObject]);
+    frameStringRange.length = 0;
+    CGMutablePathRef path = CGPathCreateMutable();
+    CGPathAddRect(path, NULL, self.frameRect);
+    for (NSUInteger i = [frames count]; i < index; ++i)
+    {
+        frame = CTFramesetterCreateFrame(fs, frameStringRange, path, NULL);
+        if (!frame)
+            break;
+        frameStringRange.location += CTFrameGetStringRange(frame).length;
+        [frames addObject:(id)frame];
+        CFRelease(frame);
+    }
+    CGPathRelease(path);
+}
+
+- (void)enumerateFramesIntersectingRect:(CGRect)rect withBlock:(void (^)(CTFrameRef, NSUInteger, BOOL *))block
+{
+    NSUInteger first = rect.origin.y / frameRect.size.height;
+    NSUInteger count = rect.size.height / frameRect.size.height + 1;
+    
+    [self generateFramesUpToIndex:(first + count)];
+    
+    NSUInteger framesCount = [frames count];
+    BOOL stop = NO;
+    while (first < framesCount && count--) 
+    {
+        block((CTFrameRef)[frames objectAtIndex:first], first, &stop);
+        if (stop)
+            break;
+        ++first;
+    }
+}
+
 - (CTFrameRef)frameContainingTextIndex:(NSUInteger)index frameOffset:(CGFloat *)offset
 {
-    CFIndex i = ECCTFrameArrayFillFramesUpThroughStringIndex((CFMutableArrayRef)frames, index, self.framesetter, framePath, YES, NO);
-    CTFrameRef frame = (CTFrameRef)[frames objectAtIndex:i];
-    if (offset)
-        *offset = CGPathGetPathBoundingBox(framePath).size.height * i;
-    return frame;
+//    CFIndex i = ECCTFrameArrayFillFramesUpThroughStringIndex((CFMutableArrayRef)frames, index, self.framesetter, framePath, YES, NO);
+//    CTFrameRef frame = (CTFrameRef)[frames objectAtIndex:i];
+//    if (offset)
+//        *offset = CGPathGetPathBoundingBox(framePath).size.height * i;
+//    return frame;
+    return NULL;
 }
 
 @end
