@@ -60,15 +60,17 @@
 @property (nonatomic, retain) ECRelationalTableViewCell *cellBeingDragged;
 @property (nonatomic, retain) NSIndexPath *dragSource;
 @property (nonatomic, retain) NSIndexPath *dragDestination;
+@property (nonatomic, retain) NSIndexPath *lastDragDestination;
+@property (nonatomic) BOOL dragDestinationExists;
 - (void)recalculatePaddedCellSizeAndContentWidthInCells;
 - (void)recalculatePaddedLevelSeparatorSize;
 - (void)recalculatePaddedAreaHeaderSize;
-
 - (CGRect)rectForHeaderInAreaRect:(CGRect)areaRect;
 - (CGRect)rectForFooterInAreaRect:(CGRect)areaRect;
 - (CGRect)rectForLevel:(NSUInteger)level inArea:(NSUInteger)area inAreaRect:(CGRect)areaRect;
 - (CGRect)rectForLevelSeparatorInLevelRect:(CGRect)levelRect isTopSeparator:(BOOL)isTopSeparator;
 - (CGRect)rectForItem:(NSUInteger)item inLevelRect:(CGRect)levelRect;
+- (NSIndexPath *)proposedIndexPathForItemAtPoint:(CGPoint)point exists:(BOOL *)exists;
 - (void)handleTapGesture:(UIGestureRecognizer *)tapGestureRecognizer;
 - (void)handleCellPanGesture:(UIGestureRecognizer *)panGestureRecognizer;
 @end
@@ -105,6 +107,8 @@
 @synthesize cellBeingDragged = cellBeingDragged_;
 @synthesize dragSource = dragSource_;
 @synthesize dragDestination = dragDestination_;
+@synthesize lastDragDestination = lastDragDestination_;
+@synthesize dragDestinationExists = dragDestinationExists_;
 
 - (void)setTableInsets:(UIEdgeInsets)tableInsets
 {
@@ -286,6 +290,7 @@
     self.cellBeingDragged = nil;
     self.dragSource = nil;
     self.dragDestination = nil;
+    self.lastDragDestination = nil;
     [super dealloc];
 }
 
@@ -309,7 +314,7 @@ static id init(ECRelationalTableView *self)
     [self recalculatePaddedLevelSeparatorSize];
     [self recalculatePaddedAreaHeaderSize];
     UITapGestureRecognizer *tapGestureRecognizer = [[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTapGesture:)] autorelease];
-    [self.rootView addGestureRecognizer:tapGestureRecognizer];
+    [self addGestureRecognizer:tapGestureRecognizer];
     return self;
 }
 
@@ -602,9 +607,16 @@ static id init(ECRelationalTableView *self)
             for (NSUInteger k = 0; k < numItems; ++k)
             {
                 NSIndexPath *itemIndexPath = [NSIndexPath indexPathForItem:k atLevel:j inArea:i];
-                ECRelationalTableViewCell *cell = [self cellForItemAtIndexPath:itemIndexPath];
+                ECRelationalTableViewCell *cell;
+                if (flags_.isEditing && [self.dragDestination isEqual:itemIndexPath])
+                    cell = self.cellBeingDragged;
+                else
+                    cell= [self cellForItemAtIndexPath:itemIndexPath];
                 [self.rootView addSubview:cell];
-                cell.frame = [self rectForItem:k inLevelRect:levelRect];
+                if (flags_.isEditing && self.dragSource.area == i && self.dragSource.level == j && self.dragSource.item <= k)
+                    cell.frame = [self rectForItem:k - 1 inLevelRect:levelRect];
+                else
+                    cell.frame = [self rectForItem:k inLevelRect:levelRect];
             }
             if (numItems)
             {
@@ -660,6 +672,12 @@ static id init(ECRelationalTableView *self)
     return nil;
 }
 
+- (NSIndexPath *)proposedIndexPathForItemAtPoint:(CGPoint)point exists:(BOOL *)exists
+{
+    *exists = YES;
+    return [self indexPathForItemAtPoint:point];
+}
+
 - (void)handleTapGesture:(UIGestureRecognizer *)tapGestureRecognizer
 {
     if (!flags_.delegateDidSelectItem)
@@ -676,6 +694,7 @@ static id init(ECRelationalTableView *self)
 {
     if (!flags_.isEditing)
         return;
+    CGPoint locationInView;
     switch ([panGestureRecognizer state]) {
         case UIGestureRecognizerStateBegan:
             flags_.isDragging = YES;
@@ -684,12 +703,31 @@ static id init(ECRelationalTableView *self)
             break;
             
         case UIGestureRecognizerStateChanged:
-            self.cellBeingDragged.center = [panGestureRecognizer locationInView:self];
+            locationInView = [panGestureRecognizer locationInView:self];
+            self.cellBeingDragged.center = locationInView;
+            self.dragDestination = [self proposedIndexPathForItemAtPoint:locationInView exists:&dragDestinationExists_];
+            if (self.dragDestination == self.lastDragDestination)
+                break;
+            self.lastDragDestination = self.dragDestination;
+            flags_.needsLayoutSubviews = YES;
+            [self setNeedsLayout];
+            [UIView animateWithDuration:0.5 animations:^{
+                [self layoutIfNeeded];
+            }];
             break;
             
         case UIGestureRecognizerStateEnded:
             flags_.isDragging = NO;
             self.cellBeingDragged = nil;
+            self.dragSource = nil;
+            self.dragDestination = nil;
+            self.lastDragDestination = nil;
+            self.dragDestinationExists = NO;
+            flags_.needsLayoutSubviews = YES;
+            [self setNeedsLayout];
+            [UIView animateWithDuration:0.5 animations:^{
+                [self layoutIfNeeded];
+            }];
             break;
             
         default:
