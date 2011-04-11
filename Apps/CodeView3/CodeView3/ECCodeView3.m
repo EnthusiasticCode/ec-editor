@@ -12,8 +12,6 @@
 #import "ECCoreText.h"
 
 @interface ECCodeView3 () {
-    NSMutableAttributedString *text;
-    
     // Text input support ivars
     ECTextRange *selection;
     CALayer *selectionLayer;
@@ -61,6 +59,7 @@
 #pragma mark -
 #pragma mark Properties
 
+@synthesize text;
 @synthesize delegate;
 @synthesize textInsets;
 @synthesize defaultTextStyle;
@@ -73,22 +72,32 @@
     // TODO compute if delegate responds to selectors.
 }
 
-- (void)setText:(NSString *)string
+- (void)setText:(NSMutableAttributedString *)string
 {
-    NSUInteger textLength = self.textLength;
-    NSRange range = (NSRange){ 0, textLength };
+    [self setText:string applyDefaultAttributes:NO];
+}
+
+- (void)setText:(NSMutableAttributedString *)string applyDefaultAttributes:(BOOL)defaultAttributes
+{
+    NSRange range = (NSRange){ 0, [string length] };
     [self beforeTextChange];
     {
-        if (string)
+        [text release];
+        NSAttributedString *tailingNewLine = [[NSAttributedString alloc] initWithString:@"\n" attributes:self.defaultTextStyle.CTAttributes];
+        if (string && [string length])
         {
-            NSAttributedString *attrString = [[NSAttributedString alloc] initWithString:string attributes:self.defaultTextStyle.CTAttributes];
-            [text replaceCharactersInRange:range withAttributedString:attrString];
-            [attrString release];
+            text = [string retain];
+            [text appendAttributedString:tailingNewLine];
+            if (defaultAttributes) 
+            {
+                [text setAttributes:self.defaultTextStyle.CTAttributes range:range];
+            }
         }
-        else if (textLength > 0)
+        else
         {
-            [text deleteCharactersInRange:range];
+            text = [tailingNewLine mutableCopy];
         }
+        [tailingNewLine release];
     }
     [self afterTextChangeInRange:[ECTextRange textRangeWithRange:range]];
 }
@@ -103,6 +112,23 @@
 {
     self.frameRect = (CGRect){ CGPointZero, frame.size };
     [super setFrame:frame];
+}
+
+- (void)setFrame:(CGRect)frame autosizeHeightToFitText:(BOOL)autosizeHeight
+{
+    if (autosizeHeight) 
+    {
+        CFRange fitRange;
+        CGRect bounds = UIEdgeInsetsInsetRect(frame, self.textInsets);
+        bounds.size.height = CGFLOAT_MAX;
+        CGSize fitSize = CTFramesetterSuggestFrameSizeWithConstraints(self.framesetter, (CFRange){0, 0}, NULL, bounds.size, &fitRange);
+        // TODO Fix this fix
+        fitSize.width = frame.size.width;
+        fitSize.height = ceilf(fitSize.height + 50);
+        //
+        frame.size = fitSize;
+    }
+    [self setFrame:frame];
 }
 
 #pragma mark Private properties
@@ -807,15 +833,6 @@ static void init(ECCodeView3 *self)
         // TODO may require locking of frames array
         [self generateFramesUpToIndex:lastRenderedFrameIndex + 1];
     }];
-    
-    // DEBUG    
-    [[UIColor blueColor] setStroke];
-    CGContextSetLineWidth(context, 2);
-    CGContextStrokeRect(context, frameRect);
-
-    [[UIColor redColor] setStroke];
-    CGContextSetLineWidth(context, 4);
-    CGContextStrokeRect(context, rect);
 }
 
 #pragma mark -

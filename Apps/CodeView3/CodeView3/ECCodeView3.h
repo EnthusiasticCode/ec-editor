@@ -20,13 +20,22 @@
 
 @property (nonatomic, assign) id <ECCodeViewDelegate> delegate;
 
+#pragma mark Provide Text Content and Properties
+
 /// The text displayed by the code view.
-@property (nonatomic, copy) NSString *text;
+/// This text has to be a \c NSMutableAttributedString and will be retained to avoid potential expensive copies of large strings. 
+@property (nonatomic, retain) NSMutableAttributedString *text;
+
+/// Set the text of the code view applying the default text attributes to it if required.
+- (void)setText:(NSMutableAttributedString *)string applyDefaultAttributes:(BOOL)defaultAttributes;
 
 /// The text insets from the view's border.
 @property (nonatomic) UIEdgeInsets textInsets;
 
-#pragma mark Text style API
+/// Set the frame of the receiver autoresizing it's height to fit the entire text if so specified.
+- (void)setFrame:(CGRect)frame autosizeHeightToFitText:(BOOL)autosizeHeight;
+
+#pragma mark Text Style API
 
 /// The text style used for newly added text.
 @property (nonatomic, retain) ECTextStyle *defaultTextStyle;
@@ -37,7 +46,7 @@
 /// For every range in the ranges array, the corresponding style will be applied.
 - (void)setTextStyles:(NSArray *)styles toTextRanges:(NSArray *)ranges;
 
-#pragma mark UITextInput properties
+#pragma mark UITextInput Properties
 
 /// An input delegate that is notified when text changes or when the selection changes.
 @property (nonatomic, assign) id<UITextInputDelegate> inputDelegate;

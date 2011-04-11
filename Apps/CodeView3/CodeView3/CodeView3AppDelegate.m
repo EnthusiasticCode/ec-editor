@@ -16,7 +16,8 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    codeView.text = @"int main(params)\n{\n\treturn 0;\n}";
+    [codeView setText:[[NSMutableAttributedString alloc] initWithString:@"int main(params)\n{\n\treturn 0;\n}"] applyDefaultAttributes:YES];
+    [codeView setFrame:self.window.bounds autosizeHeightToFitText:YES];
     [self.window makeKeyAndVisible];
     return YES;
 }
