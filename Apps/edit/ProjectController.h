@@ -11,7 +11,7 @@
 @class ECCodeIndex;
 @class Project;
 
-@interface ProjectController : UIViewController <UITableViewDataSource, UITableViewDelegate>
+@interface ProjectController : UIViewController <UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate>
 @property (nonatomic, retain) NSArray *extensionsToShow;
 @property (nonatomic, retain) Project *project;
 @property (nonatomic, retain) ECCodeIndex *codeIndex;
@@ -22,5 +22,4 @@
 - (IBAction)edit:(id)sender;
 - (IBAction)done:(id)sender;
 - (void)loadProject:(NSString *)projectRoot;
-- (void)loadFile:(NSString *)file;
 @end

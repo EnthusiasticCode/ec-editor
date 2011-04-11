@@ -15,9 +15,23 @@
 #import <ECFoundation/NSFileManager(ECAdditions).h>
 
 @interface ProjectController ()
+{
+    @private
+    UIPanGestureRecognizer *tableViewPanRecognizer_;
+    
+}
 @property (nonatomic, retain) NSFileManager *fileManager;
 @property (nonatomic, retain) NSString *folder;
+@property (nonatomic) BOOL isEditing;
+- (NSArray *)contentsOfFolder;
 - (NSArray *)filesInSubfolder:(NSString *)subfolder;
+- (NSInteger)numberOfFolders;
+- (NSInteger)numberOfGroupsInFolder:(NSInteger)folder;
+- (NSInteger)numberOfFilesInGroup:(NSInteger)group inFolder:(NSInteger)folder;
+- (NSString *)nameOfFile:(NSInteger)file inGroup:(NSInteger)group inFolder:(NSInteger)folder;
+- (NSArray *)indexPathsForNewGroupPlaceholders;
+- (void)handlePan:(UIGestureRecognizer *)panRecognizer;
+- (void)handleTap:(UIGestureRecognizer *)tapRecognizer;
 @end
 
 @implementation ProjectController
@@ -30,6 +44,7 @@
 @synthesize tableView = tableView_;
 @synthesize fileManager = fileManager_;
 @synthesize folder = folder_;
+@synthesize isEditing = isEditing_;
 
 - (NSFileManager *)fileManager
 {
@@ -53,6 +68,19 @@
 {
     [super viewDidLoad];
     self.navigationItem.rightBarButtonItem = self.editButton;
+    self.tableView.allowsSelection = NO;
+    self.tableView.allowsSelectionDuringEditing = NO;
+    for (UIGestureRecognizer *recognizer in [self.tableView gestureRecognizers])
+    {
+        if ([recognizer isKindOfClass:[UIPanGestureRecognizer class]])
+            tableViewPanRecognizer_ = (UIPanGestureRecognizer *)recognizer;
+    }
+    UIPanGestureRecognizer *panGestureRecognizer = [[[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handlePan:)] autorelease];
+    panGestureRecognizer.enabled = YES;
+    panGestureRecognizer.delegate = self;
+    [self.tableView addGestureRecognizer:panGestureRecognizer];
+    UITapGestureRecognizer *tapGestureRecognizer = [[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTap:)] autorelease];
+    [self.tableView addGestureRecognizer:tapGestureRecognizer];
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
@@ -60,6 +88,9 @@
     // Return YES for supported orientations
 	return YES;
 }
+
+#pragma mark -
+#pragma mark Private methods
 
 - (NSArray *)contentsOfFolder
 {
@@ -73,56 +104,80 @@
     return [self.fileManager contentsOfDirectoryAtPath:[self.folder stringByAppendingPathComponent:subfolder] withExtensions:self.extensionsToShow options:options skipFiles:NO skipDirectories:YES error:(NSError **)NULL];
 }
 
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+- (NSInteger)numberOfFolders
 {
     return [[self contentsOfFolder] count];
 }
 
-- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
+- (NSInteger)numberOfGroupsInFolder:(NSInteger)folder
 {
-    return [[self contentsOfFolder] objectAtIndex:section];
+    if (self.isEditing)
+        return 3;
+    return 1;
 }
 
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+- (NSInteger)numberOfFilesInGroup:(NSInteger)group inFolder:(NSInteger)folder
 {
-    UITableViewCell *file = [tableView dequeueReusableCellWithIdentifier:@"File"];
-    if (!file)
+    return [[self filesInSubfolder:[self tableView:nil titleForHeaderInSection:group]] count];
+}
+
+- (NSArray *)indexPathsForNewGroupPlaceholders
+{
+    NSMutableArray *indexPaths = [NSMutableArray array];
+    for (NSInteger i = 0; i < [self numberOfFolders]; ++i)
     {
-        file = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"File"] autorelease];
-        UILabel *label = [[[UILabel alloc] init] autorelease];
-        label.tag = 1;
-        [file.contentView addSubview:label];
-        label.frame = file.contentView.bounds;
+//        NSInteger numGroups = [self numberOfGroupsInFolder:i];
+//        if (numGroups)
+//            for (NSInteger j = 0; j < numGroups; ++j)
+//                [indexPaths addObject:[NSIndexPath indexPathForRow:j * 2 inSection:i]];
+//        else
+//            [indexPaths addObject:[NSIndexPath indexPathForRow:0 inSection:i]];
+        [indexPaths addObject:[NSIndexPath indexPathForRow:0 inSection:i]];
+        [indexPaths addObject:[NSIndexPath indexPathForRow:2 inSection:i]];
     }
-    UILabel *label = (UILabel *)[file.contentView viewWithTag:1];
-    label.text = [[self filesInSubfolder:[self tableView:nil titleForHeaderInSection:indexPath.section]] objectAtIndex:(indexPath.row)];
-    return file;
+    return indexPaths;
 }
 
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+#pragma mark -
+#pragma mark UIGestureRecognizer
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch
 {
-    NSArray *links = [self filesInSubfolder:[self tableView:nil titleForHeaderInSection:section]];
-    return [links count];
+    if ([touch locationInView:self.tableView].y > 500.0)
+        return NO;
+    return YES;
 }
 
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+- (void)handlePan:(UIGestureRecognizer *)panRecognizer
 {
-    if (!indexPath)
-        return;
-    NSString *subfolder = [self tableView:nil titleForHeaderInSection:indexPath.section];
-    NSString *file = [[self filesInSubfolder:subfolder] objectAtIndex:indexPath.row];
-    [self loadFile:[self.folder stringByAppendingPathComponent:[subfolder stringByAppendingPathComponent:file]]];
+    NSLog(@"handlePan");
 }
+
+- (void)handleTap:(UIGestureRecognizer *)tapRecognizer
+{
+    NSLog(@"handleTap");
+}
+
+#pragma mark -
+#pragma mark Public methods
 
 - (void)edit:(id)sender
 {
+    [self.tableView beginUpdates];
+    [self.tableView insertRowsAtIndexPaths:[self indexPathsForNewGroupPlaceholders] withRowAnimation:UITableViewRowAnimationMiddle];
     [self.tableView setEditing:YES animated:YES];
+    self.isEditing = YES;
+    [self.tableView endUpdates];
     self.navigationItem.rightBarButtonItem = self.doneButton;
 }
 
 - (void)done:(id)sender
 {
+    [self.tableView beginUpdates];
+    [self.tableView deleteRowsAtIndexPaths:[self indexPathsForNewGroupPlaceholders] withRowAnimation:UITableViewRowAnimationMiddle];
     [self.tableView setEditing:NO animated:YES];
+    self.isEditing = NO;
+    [self.tableView endUpdates];
     self.navigationItem.rightBarButtonItem = self.editButton;
 }
 
@@ -135,8 +190,68 @@
     self.extensionsToShow = [[self.codeIndex extensionToLanguageMap] allKeys];
 }
 
-- (void)loadFile:(NSString *)file
+#pragma mark -
+#pragma mark UITableViewDataSource
+
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
+    return [self numberOfFolders];
+}
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
+    return [self numberOfGroupsInFolder:section];
+}
+
+- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
+{
+    return [[self contentsOfFolder] objectAtIndex:section];
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (self.isEditing && !(indexPath.row % 2))
+        return 30.0;
+    NSArray *files = [self filesInSubfolder:[self tableView:nil titleForHeaderInSection:indexPath.section]];
+    return 50.0 + [files count] * 20.0;
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    UITableViewCell *group = [tableView dequeueReusableCellWithIdentifier:@"Group"];
+    if (!group)
+    {
+        group = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"Group"] autorelease];
+        UILabel *label = [[[UILabel alloc] init] autorelease];
+        label.tag = 1;
+        [group.contentView addSubview:label];
+        label.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
+        label.frame = group.contentView.bounds;
+    }
+    UILabel *label = (UILabel *)[group.contentView viewWithTag:1];
+    NSArray *files = [self filesInSubfolder:[self tableView:nil titleForHeaderInSection:indexPath.section]];
+    label.text = [files componentsJoinedByString:@"\n"];
+    if (self.isEditing && !(indexPath.row % 2))
+        label.text = @"";
+    label.numberOfLines = [files count];
+    return group;
+}
+
+- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    return NO;
+}
+
+#pragma mark -
+#pragma mark UITableViewDelegate
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (!indexPath)
+        return;
+    NSString *subfolder = [self tableView:nil titleForHeaderInSection:indexPath.section];
+    NSString *fileSubPath = [[self filesInSubfolder:subfolder] objectAtIndex:indexPath.row];
+    NSString *file = [self.folder stringByAppendingPathComponent:[subfolder stringByAppendingPathComponent:fileSubPath]];
     ECCodeUnit *codeUnit = [self.codeIndex unitForFile:file];
     FileController *fileController = ((AppController *)self.navigationController).fileController;
     [fileController loadFile:file withCodeUnit:codeUnit];
