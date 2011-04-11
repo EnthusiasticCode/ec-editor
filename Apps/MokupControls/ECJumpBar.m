@@ -272,7 +272,9 @@ static void init(ECJumpBar *self)
             
             if (delegateHasDidCollapseToControlCollapsedRange) 
             {
-                [delegate jumpBar:self didCollapseToControl:collapsedButton collapsedRange:collapsedRange];
+                [[NSOperationQueue mainQueue] addOperationWithBlock:^(void) {
+                    [delegate jumpBar:self didCollapseToControl:collapsedButton collapsedRange:collapsedRange];
+                }];
             }
         }
     }
@@ -339,20 +341,25 @@ static void init(ECJumpBar *self)
         searchField.frame = (CGRect){ searchOrigin, { bounds.size.width - searchOrigin.x - textPadding, size.height } };
     };
     
+    void (^actualLayoutCleanup)() = ^ {
+        // Hide collapsed buttons
+        if (collapsedRange.length == 0) 
+        {
+            collapsedButton.hidden = YES;
+        }
+        else
+        {
+            [controlsStack enumerateObjectsAtIndexes:[NSIndexSet indexSetWithIndexesInRange:collapsedRange] options:0 usingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+                [obj setHidden:YES];
+            }];
+        }
+    };
+    
     if (animatePush || animatePop)
     {
         [UIView animateWithDuration:0.15 delay:0 options:(UIViewAnimationOptionCurveEaseInOut | UIViewAnimationOptionAllowUserInteraction | UIViewAnimationOptionBeginFromCurrentState | UIViewAnimationOptionLayoutSubviews) animations:actualLayout completion:^(BOOL finished) {
-            // Hide collapsed buttons
-            if (collapsedRange.length == 0) 
-            {
-                collapsedButton.hidden = YES;
-            }
-            else
-            {
-                [controlsStack enumerateObjectsAtIndexes:[NSIndexSet indexSetWithIndexesInRange:collapsedRange] options:0 usingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-                    [obj setHidden:YES];
-                }];
-            }
+            // Cleanup
+            actualLayoutCleanup();
             // Animate pushed button
             if (animatePush) 
             {
@@ -374,6 +381,7 @@ static void init(ECJumpBar *self)
     else
     {
         actualLayout();
+        actualLayoutCleanup();
     }
 }
 
