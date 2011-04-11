@@ -6,8 +6,8 @@
 //  Copyright 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import "SourceFile.h"
+#import "File.h"
 
-@implementation SourceFile
+@implementation File
 
 @end

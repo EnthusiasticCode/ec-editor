@@ -12,7 +12,7 @@
 		B70D64C0132A2581008DDEA4 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B70D64BF132A2581008DDEA4 /* CoreGraphics.framework */; };
 		B70D6573132A277C008DDEA4 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B70D6572132A277C008DDEA4 /* CoreText.framework */; };
 		B70D6575132A279C008DDEA4 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B70D6574132A279C008DDEA4 /* CoreData.framework */; };
-		B7A04CA9134F68BD00B72575 /* SourceFile.m in Sources */ = {isa = PBXBuildFile; fileRef = B7A04CA8134F68BD00B72575 /* SourceFile.m */; };
+		B7A04CA9134F68BD00B72575 /* File.m in Sources */ = {isa = PBXBuildFile; fileRef = B7A04CA8134F68BD00B72575 /* File.m */; };
 		B7DBA580132A3281004C0E1D /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7DBA57F132A3281004C0E1D /* QuartzCore.framework */; };
 		B7E5CF931348C20B00A4C65A /* ECClangCodeCursor.m in Sources */ = {isa = PBXBuildFile; fileRef = B7E5CF8C1348C20B00A4C65A /* ECClangCodeCursor.m */; };
 		B7E5CF941348C20B00A4C65A /* ECClangCodeIndex.m in Sources */ = {isa = PBXBuildFile; fileRef = B7E5CF8E1348C20B00A4C65A /* ECClangCodeIndex.m */; };
@@ -72,8 +72,8 @@
 		B70D6574132A279C008DDEA4 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		B70D6649132A28AB008DDEA4 /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Developer/Library/Frameworks/SenTestingKit.framework; sourceTree = SDKROOT; };
 		B7993BF9134CC922007C8747 /* ECRelationalTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECRelationalTableViewCell.h; path = Frameworks/ECUIKit/ECRelationalTableViewCell.h; sourceTree = "<group>"; };
-		B7A04CA7134F68BD00B72575 /* SourceFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SourceFile.h; path = Apps/edit/SourceFile.h; sourceTree = SOURCE_ROOT; };
-		B7A04CA8134F68BD00B72575 /* SourceFile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SourceFile.m; path = Apps/edit/SourceFile.m; sourceTree = SOURCE_ROOT; };
+		B7A04CA7134F68BD00B72575 /* File.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = File.h; path = Apps/edit/File.h; sourceTree = SOURCE_ROOT; };
+		B7A04CA8134F68BD00B72575 /* File.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = File.m; path = Apps/edit/File.m; sourceTree = SOURCE_ROOT; };
 		B7DBA57F132A3281004C0E1D /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		B7E5CF8B1348C20B00A4C65A /* ECClangCodeCursor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECClangCodeCursor.h; path = Frameworks/ECCodeIndexing/ECClangCodeCursor.h; sourceTree = "<group>"; };
 		B7E5CF8C1348C20B00A4C65A /* ECClangCodeCursor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECClangCodeCursor.m; path = Frameworks/ECCodeIndexing/ECClangCodeCursor.m; sourceTree = "<group>"; };
@@ -248,8 +248,8 @@
 				CDEBF20D13489A8E00CE2285 /* FileController.m */,
 				CDEBF20E13489A8E00CE2285 /* Project.h */,
 				CDEBF20F13489A8E00CE2285 /* Project.m */,
-				B7A04CA7134F68BD00B72575 /* SourceFile.h */,
-				B7A04CA8134F68BD00B72575 /* SourceFile.m */,
+				B7A04CA7134F68BD00B72575 /* File.h */,
+				B7A04CA8134F68BD00B72575 /* File.m */,
 			);
 			name = Application;
 			path = Source;
@@ -534,7 +534,7 @@
 				B7E5CF931348C20B00A4C65A /* ECClangCodeCursor.m in Sources */,
 				B7E5CF941348C20B00A4C65A /* ECClangCodeIndex.m in Sources */,
 				B7E5CF951348C20B00A4C65A /* ECClangCodeUnit.m in Sources */,
-				B7A04CA9134F68BD00B72575 /* SourceFile.m in Sources */,
+				B7A04CA9134F68BD00B72575 /* File.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

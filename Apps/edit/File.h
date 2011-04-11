@@ -10,6 +10,6 @@
 #import <CoreData/CoreData.h>
 #import <ECUIKit/ECTextDocument.h>
 
-@interface SourceFile : NSManagedObject
+@interface File : NSManagedObject
 
 @end
