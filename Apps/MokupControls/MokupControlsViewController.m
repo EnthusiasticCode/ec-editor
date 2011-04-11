@@ -8,7 +8,6 @@
 
 #import "MokupControlsViewController.h"
 #import <QuartzCore/QuartzCore.h>
-#import "ECMockupLayer.h"
 #import "UIImage+BlockDrawing.h"
 
 @implementation MokupControlsViewController
