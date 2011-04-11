@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "ECMockupButton.h"
+#import "ECButton.h"
 #import "ECJumpBar.h"
 
 
@@ -19,7 +19,7 @@
     UIImageView *projectImageView;
 }
 
-@property (nonatomic, retain) IBOutlet ECMockupButton *aButton;
+@property (nonatomic, retain) IBOutlet ECButton *aButton;
 @property (nonatomic, retain) IBOutlet ECJumpBar *jumpBar;
 
 @property (nonatomic, retain) IBOutlet UIImageView *imageView;

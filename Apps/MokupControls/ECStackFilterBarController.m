@@ -79,7 +79,7 @@
     if (!buttonStack)
         buttonStack = [[NSMutableArray alloc] initWithCapacity:10];
     
-    ECMockupButton *button = [ECMockupButton buttonWithType:UIButtonTypeCustom];
+    ECButton *button = [ECButton buttonWithType:UIButtonTypeCustom];
     [button setTitle:description forState:UIControlStateNormal];
     button.titleLabel.font = [UIFont fontWithName:@"Helvetica-Bold" size:15];
     button.titleLabel.shadowOffset = CGSizeMake(0, 1);
@@ -109,7 +109,7 @@
     // Insert in view
     if ([buttonStack count]) 
     {
-        [self.view insertSubview:button belowSubview:(ECMockupButton *)[buttonStack lastObject]];
+        [self.view insertSubview:button belowSubview:(ECButton *)[buttonStack lastObject]];
     }
     else
     {

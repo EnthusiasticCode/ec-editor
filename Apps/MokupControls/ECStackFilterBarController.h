@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "ECMockupButton.h"
+#import "ECButton.h"
 
 
 @interface ECStackFilterBarController : UIViewController {

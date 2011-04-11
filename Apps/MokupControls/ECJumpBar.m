@@ -7,7 +7,7 @@
 //
 
 #import "ECJumpBar.h"
-#import "ECMockupButton.h"
+#import "ECButton.h"
 #import <QuartzCore/QuartzCore.h>
 
 #define BUTTON_ARROW_WIDTH 10
@@ -91,7 +91,7 @@
     [font release];
     font = [aFont retain];
     searchField.font = font;
-    for (ECMockupButton *button in controlsStack)
+    for (ECButton *button in controlsStack)
         button.titleLabel.font = font;
 }
 
@@ -100,7 +100,7 @@
     [textColor release];
     textColor = [aColor retain];
     searchField.textColor = textColor;
-    for (ECMockupButton *button in controlsStack)
+    for (ECButton *button in controlsStack)
         [button setTitleColor:textColor forState:UIControlStateNormal];
 }
 
@@ -119,7 +119,7 @@
         searchField.layer.shadowColor = NULL;
         searchField.layer.shadowOpacity = 0;
     }
-    for (ECMockupButton *button in controlsStack)
+    for (ECButton *button in controlsStack)
         [button setTitleShadowColor:textShadowColor forState:UIControlStateNormal];
 }
 
@@ -127,7 +127,7 @@
 {
     textShadowOffset = anOffset;
     searchField.layer.shadowOffset = textShadowOffset;
-    for (ECMockupButton *button in controlsStack)
+    for (ECButton *button in controlsStack)
         button.titleLabel.shadowOffset = textShadowOffset;
 }
 
@@ -136,7 +136,7 @@
     [borderColor release];
     borderColor = [aColor retain];
     self.layer.borderColor = borderColor.CGColor;
-    for (ECMockupButton *button in controlsStack)
+    for (ECButton *button in controlsStack)
         button.borderColor = borderColor;
 }
 
@@ -507,7 +507,7 @@ static void init(ECJumpBar *self)
 
 - (UIControl *)createStackControlWithTitle:(NSString *)title
 {
-    ECMockupButton *button = [ECMockupButton buttonWithType:UIButtonTypeCustom];
+    ECButton *button = [ECButton buttonWithType:UIButtonTypeCustom];
     button.autoresizingMask = UIViewAutoresizingFlexibleHeight;
     button.contentMode = UIViewContentModeScaleToFill;
     button.contentStretch = CGRectMake(0.5, 0.5, 0, 0);
