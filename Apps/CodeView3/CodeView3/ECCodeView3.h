@@ -7,6 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "ECTextRange.h"
+#import "ECTextPosition.h"
+#import "ECTextStyle.h"
 
 @protocol ECCodeViewDelegate <NSObject>
 @optional
@@ -22,6 +25,17 @@
 
 /// The text insets from the view's border.
 @property (nonatomic) UIEdgeInsets textInsets;
+
+#pragma mark Text style API
+
+/// The text style used for newly added text.
+@property (nonatomic, retain) ECTextStyle *defaultTextStyle;
+
+/// Set the given style to the text range.
+- (void)setTextStyle:(ECTextStyle *)style toTextRange:(ECTextRange *)range;
+
+/// For every range in the ranges array, the corresponding style will be applied.
+- (void)setTextStyles:(NSArray *)styles toTextRanges:(NSArray *)ranges;
 
 #pragma mark UITextInput properties
 

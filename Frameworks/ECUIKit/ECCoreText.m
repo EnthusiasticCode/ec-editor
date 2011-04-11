@@ -278,3 +278,76 @@ CGRect ECCTFrameGetUsedRect(CTFrameRef frame, _Bool constrainedWidth)
     CGRect result = CGRectMake(minX, minY, MAX(0, maxX - minX), MAX(0, maxY - minY));
     return result;
 }
+
+void ECCTFrameEnumerateLinesWithBlock(CTFrameRef frame, lineElementBlock block)
+{
+    CFArrayRef lines = CTFrameGetLines(frame);
+    CFIndex linesCount = CFArrayGetCount(lines);
+    _Bool stop = NO;
+    for (CFIndex i = 0; i < linesCount; ++i)
+    {
+        block((CTLineRef)CFArrayGetValueAtIndex(lines, i), i, &stop);
+        if (stop)
+            break;
+    }
+}
+
+CFIndex ECCTFrameArrayFillFramesUpThroughStringIndex(CFMutableArrayRef frames, CFIndex stringIndex, CTFramesetterRef framesetter, CGPathRef path, _Bool fillLastFrame, _Bool force)
+{
+    // TODO make thread safe
+    CTFrameRef frame;
+    CFRange frameStringRange = CFRangeMake(0, 0);
+    CFIndex framesCount = CFArrayGetCount(frames);
+    if (force)
+    {
+        CFArrayRemoveAllValues(frames);
+    }
+    else for (CFIndex i = 0; i < framesCount; ++i)
+    {
+        frame = CFArrayGetValueAtIndex(frames, i);
+        frameStringRange = CTFrameGetStringRange(frame);
+        if (frameStringRange.location > stringIndex)
+            return -1;
+        if (stringIndex < frameStringRange.location + frameStringRange.length) 
+            return i;
+    }
+    // Calculate string range to render
+    if (frameStringRange.length)
+    {
+        frameStringRange.location += frameStringRange.length;
+        frameStringRange.length = fillLastFrame ? 0 : stringIndex - frameStringRange.location;
+    }
+    // Check if not already present in existing frames
+    while (stringIndex >= frameStringRange.location)
+    {
+        frame = CTFramesetterCreateFrame(framesetter, frameStringRange, path, NULL);
+        if (!frame)
+            return -1;
+        frameStringRange = CTFrameGetStringRange(frame);
+        if (frameStringRange.location == 0 && frameStringRange.length == 0)
+        {
+            CFRelease(frame);
+            return -1;
+        }
+        frameStringRange.location += frameStringRange.length;
+        frameStringRange.length = fillLastFrame ? 0 : stringIndex - frameStringRange.location;
+        CFArrayAppendValue(frames, frame);
+        CFRelease(frame);
+    }
+    return CFArrayGetCount(frames) - 1;
+}
+
+CTFrameRef ECCTFrameArrayGetFrameContainingStringIndex(CFArrayRef frames, CFIndex stringIndex)
+{
+    CTFrameRef frame;
+    CFRange stringRange;
+    CFIndex count = CFArrayGetCount(frames);
+    for (CFIndex i = 0; i < count; ++i)
+    {
+        frame = CFArrayGetValueAtIndex(frames, i);
+        stringRange = CTFrameGetStringRange(frame);
+        if (stringRange.location <= stringIndex && stringRange.location + stringRange.length > stringIndex)
+            return frame;
+    }
+    return NULL;
+}
