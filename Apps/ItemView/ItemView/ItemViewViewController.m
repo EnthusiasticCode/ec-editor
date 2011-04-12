@@ -83,4 +83,11 @@
     [itemView reloadItems:[NSIndexSet indexSetWithIndex:item]];
     [itemView endUpdates];
 }
+
+- (BOOL)itemView:(ECItemView *)itemView canDragItem:(NSInteger)item inView:(UIView **)view
+{
+    UIView *rootView = self.view;
+    *view = rootView;
+    return YES;
+}
 @end

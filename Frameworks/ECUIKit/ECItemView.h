@@ -10,15 +10,23 @@
 #import "ECItemViewCell.h"
 @class ECItemView;
 
+/// Describes the interface for providing an item view with items to display.
 @protocol ECItemViewDataSource
 @required
+/// Returns the number of items in the item view.
 - (NSInteger)numberOfItemsInItemView:(ECItemView *)itemView;
+/// Returns the cell for an item. This must not return the same cell for two different items.
 - (ECItemViewCell *)itemView:(ECItemView *)itemView cellForItem:(NSInteger)item;
 @end
 
+/// Describes the interface for dynamically altering the behavious and appearance of an item view.
 @protocol ECItemViewDelegate <NSObject>
 @optional
+/// Called when the user selects an item.
 - (void)itemView:(ECItemView *)itemView didSelectItem:(NSInteger)item;
+/// Called when the user attempts to initiate a drag operation.
+/// If a superview of the item view is specified, the drag operation will be limited to that view instead of the item view.
+- (BOOL)itemView:(ECItemView *)itemView canDragItem:(NSInteger)item inView:(UIView **)view;
 @end
 
 @interface ECItemView : UIView <UIGestureRecognizerDelegate>
@@ -28,6 +36,7 @@
 @property (nonatomic) CGRect itemFrame;
 @property (nonatomic) UIEdgeInsets itemInsets;
 @property (nonatomic) BOOL allowsSelection;
+@property (nonatomic) BOOL allowsDragging;
 @property (nonatomic, getter = isEditing) BOOL editing;
 - (void)setEditing:(BOOL)editing animated:(BOOL)animated;
 - (void)reloadData;
