@@ -141,13 +141,6 @@
 #pragma mark -
 #pragma mark FramesetterInfo
 
-@protocol FramesetterInfoDelegate <NSObject>
-@required
-/// Called when a FramesetterInfo require to create it's framesetter.
-/// The implementer should call generateFramesetterWithString:preferredFrameSize: on the given framesetterInfo.
-- (void)framesetterInfoRequireGeneration:(FramesetterInfo *)framesetterInfo;
-@end
-
 @interface FramesetterInfo : NSObject <FrameInfoDelegate> {
 @private
     /// Hold a reference to the framesetter connected with this info block. 
@@ -161,9 +154,6 @@
     // TODO editing data and string attributes cache
 }
 
-/// The delegate (TODO or datasource?) for this FramesetterInfo.
-@property (assign) id<FramesetterInfoDelegate> delegate;
-
 @property CGSize framesPreferredSize;
 
 /// The string range in the content text that this framesetter is handling.
@@ -173,13 +163,13 @@
 /// framses originated accordingly with previous framesetters.
 @property (readonly) CGSize actualSize;
 
-- (id)initWithDelegate:(id<FramesetterInfoDelegate>)del;
-
 /// Release the framesetter but keep cached rendering informations available.
 - (void)releaseFramesetter;
 
 /// Release any previous framesetter and generate a new one from the given string.
 - (void)generateFramesetterWithString:(NSAttributedString *)string preferredFrameSize:(CGSize)size;
+
+- (void)enumerateAllFrameInfoUsingBlock:(void(^)(FrameInfo *frameInfo, NSUInteger idx, BOOL *stop))block;
 
 - (void)enumerateFrameInfoIntersectingRect:(CGRect)rect usingBlock:(void(^)(FrameInfo *frameInfo, BOOL *stop))block;
 
@@ -187,13 +177,12 @@
 
 @implementation FramesetterInfo
 
-@synthesize delegate, framesPreferredSize, stringRange, actualSize;
+@synthesize framesPreferredSize, stringRange, actualSize;
 
-- (id)initWithDelegate:(id<FramesetterInfoDelegate>)del
+- (id)init
 {
     if ((self = [super init])) 
     {
-        delegate = del;
         frames = [NSMutableArray new];
     }
     return self;
@@ -244,29 +233,16 @@
     }
 }
 
-- (void)frameInfoRequireGeneration:(FrameInfo *)frameInfo
+- (void)enumerateAllFrameInfoUsingBlock:(void (^)(FrameInfo *, NSUInteger, BOOL *))block
 {
-    if (!delegate) 
-    {
-        [NSException raise:@"Invalid delegate" format:@"Delegate should be set to a valid instance and implement FramesetterInfoDelegate."];
-    }
-    // TODO probably better not a while loop?
-    while (!framesetter) 
-    {
-        [delegate framesetterInfoRequireGeneration:self];
-    }
-    
-    // TODO manage editing here?
-    [frameInfo generateWithFramesetter:framesetter 
-                           stringRange:frameInfo.generationStringRange 
-                             boundRect:frameInfo.generationRect];
+    [frames enumerateObjectsUsingBlock:block];
 }
 
 @end
 
 
 #pragma mark Class continuations
-@interface ECMutableTextFileRenderer () <FramesetterInfoDelegate> {
+@interface ECMutableTextFileRenderer () {
 @private
     // TODO use a cache of frameWidth -> info dictionary
 //    NSCache *widthCache;
@@ -275,6 +251,8 @@
     
     NSAttributedString *string;
 }
+
+@property (readonly) CGSize framePreferredSize;
 
 - (void)invalidateAllFramesetters;
 
@@ -303,6 +281,11 @@
     [self invalidateAllFramesetters];
 }
 
+- (CGSize)framePreferredSize
+{
+    return CGSizeMake(frameWidth, framePreferredHeight);
+}
+
 #pragma mark -
 #pragma mark Initialization
 
@@ -319,11 +302,6 @@
 #pragma mark -
 #pragma mark Framesetters and frame generation
 
-- (void)framesetterInfoRequireGeneration:(FramesetterInfo *)framesetterInfo
-{
-    [framesetterInfo generateFramesetterWithString:string preferredFrameSize:CGSizeMake(frameWidth, framePreferredHeight)];
-}
-
 - (void)invalidateAllFramesetters
 {
     
@@ -334,8 +312,8 @@
 
 - (void)cacheRenderingInformationsUpThroughRect:(CGRect)rect andKeepFramesIntersectingRect:(BOOL)keep
 {
-    CGFloat keepFromPoint = CGFLOAT_MAX;
-    CGFloat cacheUpToPoint = CGFLOAT_MAX;
+    CGFloat keepFromY = CGFLOAT_MAX;
+    CGFloat cacheUpToY = CGFLOAT_MAX;
     // If no rect specified, generate cache for all text
     if (CGRectIsEmpty(rect) || CGRectIsNull(rect)) 
     {
@@ -343,19 +321,47 @@
     }
     else
     {
-        keepFromPoint = keep ? rect.origin.y : CGFLOAT_MAX;
-        cacheUpToPoint = rect.origin.y + rect.size.height;
+        keepFromY = keep ? rect.origin.y : CGFLOAT_MAX;
+        cacheUpToY = rect.origin.y + rect.size.height;
     }
     // Check for already present cache informations
     CGFloat coveredHeight = 0;
+    NSUInteger lastStringIndex = 0;
     for (FramesetterInfo *framesetterInfo in framesetters) 
     {
         coveredHeight += framesetterInfo.actualSize.height;
+        lastStringIndex += framesetterInfo.stringRange.length;
     }
     // Generate missing informations
-    if (coveredHeight < cacheUpToPoint) 
+    NSAttributedString *subAttributedString;
+    NSUInteger stringLength = [string length];
+    NSUInteger stringLengthLimit = framesetterStringLengthLimit ? framesetterStringLengthLimit : stringLength;
+    while (coveredHeight < cacheUpToY && lastStringIndex < stringLength)
     {
+        // Get next string piece to render
+        NSRange nextStringRange = NSMakeRange(lastStringIndex, stringLengthLimit);
+        subAttributedString = [string attributedSubstringFromRange:nextStringRange];
         
+        // Generate new framesetter
+        FramesetterInfo *framesetterInfo = [[FramesetterInfo alloc] init];
+        [framesetterInfo generateFramesetterWithString:subAttributedString preferredFrameSize:self.framePreferredSize];
+        
+        // Releasing all non kept frames
+        __block CGFloat currentFrameY = coveredHeight;
+        [framesetterInfo enumerateAllFrameInfoUsingBlock:^(FrameInfo *frameInfo, NSUInteger idx, BOOL *stop) {
+            if (!keep || currentFrameY < keepFromY)
+            {
+                [frameInfo releaseFrame];
+            }
+        }];
+        
+        // Computing new global advancement
+        coveredHeight += framesetterInfo.actualSize.height;
+        lastStringIndex += framesetterInfo.stringRange.length;
+        
+        // TODO not keep framesetter?
+        [framesetters addObject:framesetterInfo];
+        [framesetterInfo release];
     }
 }
 
