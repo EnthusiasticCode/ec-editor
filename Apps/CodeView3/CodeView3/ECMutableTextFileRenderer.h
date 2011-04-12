@@ -23,6 +23,11 @@
 
 - (void)setString:(NSAttributedString *)string;
 
+/// Indicates if the caching of rendering informations should happen lazely or
+/// immediatly after a content is set. Defaults is NO making caching mandatory
+/// after content change.
+@property BOOL lazyCaching;
+
 #pragma mark Modifying Rendering Behaviours
 
 /// Define the maximum length for a framesetter's string. If the loaded text is 
