@@ -15,16 +15,7 @@
 #pragma mark -
 #pragma mark FrameInfo
 
-@protocol FrameInfoDelegate <NSObject>
-@required
-/// Called when the FrameInfo need to generate it's frame. The implmenter
-/// should call generateWithFramesetter:stringRange:boundRect:.
-- (void)frameInfoRequireGeneration:(FrameInfo *)frameInfo;
-@end
-
 @interface FrameInfo : NSObject
-
-@property (assign) id<FrameInfoDelegate> delegate;
 
 /// Hold a reference to the frame connected with this info block.
 /// This reference may be NULL is the frame has been released due to no use.
@@ -45,8 +36,6 @@
 /// bottom of the last rendered one.
 @property (readonly) CGSize actualSize;
 
-- (id)initWithDelegate:(id<FrameInfoDelegate>)del;
-
 /// Release the frame but keeps cached rendering informations available.
 - (void)releaseFrame;
 
@@ -54,36 +43,13 @@
 
 - (void)enumerateAllLinesUsingBlock:(void(^)(CTLineRef line, CFIndex idx, BOOL *stop))block;
 
-- (void)enumerateLinesIntersectingRect:(CGRect)rect usingBlock:(void(^)(CTLineRef line, BOOL *stop))block;
+- (void)enumerateLinesIntersectingRect:(CGRect)rect usingBlock:(void(^)(CTLineRef line, CGRect lineBounds, BOOL *stop))block;
 
 @end
 
 @implementation FrameInfo
 
-@synthesize delegate, frame, generationRect, generationStringRange, actualStringRange, actualSize;
-
-- (id)initWithDelegate:(id<FrameInfoDelegate>)del
-{
-    if ((self = [super init])) 
-    {
-        delegate = del;
-    }
-    return self;
-}
-
-- (CTFrameRef)frame
-{
-    if (!delegate) 
-    {
-        [NSException raise:@"Invalid delegate" format:@"Delegate should be set to a valid instance and implement FrameInfoDelegate."];
-    }
-    // TODO probably better not a while loop?
-    while (!frame)
-    {
-        [delegate frameInfoRequireGeneration:self];
-    }
-    return frame;
-}
+@synthesize frame, generationRect, generationStringRange, actualStringRange, actualSize;
 
 - (void)dealloc
 {
@@ -136,12 +102,45 @@
     }
 }
 
+- (void)enumerateLinesIntersectingRect:(CGRect)rect usingBlock:(void (^)(CTLineRef, CGRect, BOOL *))block
+{
+    // Parameters sanity check
+    if (CGRectIsNull(rect) || CGRectIsEmpty(rect)) 
+    {
+        rect = CGRectMake(0, 0, CGFLOAT_MAX, CGFLOAT_MAX);
+    }
+    CGFloat rectEnd = rect.origin.y + rect.size.height;
+    
+    BOOL stop = NO;
+    CGFloat currentY = 0;
+    CFArrayRef lines = CTFrameGetLines(self.frame);
+    CFIndex lineCount = CFArrayGetCount(lines);
+    CGFloat width, ascent, descent;
+    for (CFIndex i = 0; i < lineCount; ++i) 
+    {
+        CTLineRef line = CFArrayGetValueAtIndex(lines, i);
+        width = CTLineGetTypographicBounds(line, &ascent, &descent, NULL);
+        if (currentY >= rect.origin.y) 
+        {
+            // Break if past the required rect
+            if (currentY >= rectEnd)
+                break;
+            //
+            CGRect bounds = CGRectMake(0, currentY, width, ascent + descent);
+            block(line, bounds, &stop);
+            if (stop) break;
+            
+            currentY += bounds.size.height;
+        }
+    }
+}
+
 @end
 
 #pragma mark -
 #pragma mark FramesetterInfo
 
-@interface FramesetterInfo : NSObject <FrameInfoDelegate> {
+@interface FramesetterInfo : NSObject {
 @private
     /// Hold a reference to the framesetter connected with this info block. 
     /// This reference may be NULL if cleaning required the framesetter to be
@@ -162,6 +161,9 @@
 /// Get the actual rendered size of the union of the framesetter's generated
 /// framses originated accordingly with previous framesetters.
 @property (readonly) CGSize actualSize;
+
+/// Indicate if the framesetter associated with this \c FramesetterInfo reuires to be generated.
+@property (readonly) BOOL needsFramesetterGeneration;
 
 /// Release the framesetter but keep cached rendering informations available.
 - (void)releaseFramesetter;
@@ -195,6 +197,11 @@
     [super dealloc];
 }
 
+- (BOOL)needsFramesetterGeneration
+{
+    return framesetter == NULL;
+}
+
 - (void)releaseFramesetter
 {
     if (framesetter)
@@ -219,7 +226,7 @@
     FrameInfo *frameInfo;
     while (stringRange.length != stringLength) 
     {
-        frameInfo = [[FrameInfo alloc] initWithDelegate:self];
+        frameInfo = [FrameInfo new];
         [frameInfo generateWithFramesetter:framesetter stringRange:frameRange boundRect:frameRect];
         
         frameRange.location += frameInfo.actualStringRange.length;
@@ -238,6 +245,43 @@
     [frames enumerateObjectsUsingBlock:block];
 }
 
+- (void)enumerateFrameInfoIntersectingRect:(CGRect)rect usingBlock:(void (^)(FrameInfo *, BOOL *))block
+{
+    // Parameters sanity check
+    if (CGRectIsNull(rect) || CGRectIsEmpty(rect)) 
+    {
+        rect = CGRectMake(0, 0, CGFLOAT_MAX, CGFLOAT_MAX);
+    }
+    CGFloat rectEnd = rect.origin.y + rect.size.height;
+    
+    BOOL stop = NO;
+    CGFloat currentY = 0;
+    for (FrameInfo *frameInfo in frames) 
+    {
+        if (currentY >= rect.origin.y) 
+        {
+            // Break if past the required rect
+            if (currentY >= rectEnd)
+                break;
+            // Generate frames if needed
+            if (frameInfo.frame == NULL)
+            {
+                [frameInfo generateWithFramesetter:framesetter stringRange:frameInfo.generationStringRange boundRect:frameInfo.generationRect];
+            }
+            // Apply block
+            block(frameInfo, &stop);
+            if (stop) break;
+            
+            currentY += frameInfo.actualSize.height;
+        }
+    }
+}
+
+- (void)frameInfoRequireGeneration:(FrameInfo *)frameInfo
+{
+    
+}
+
 @end
 
 
@@ -254,13 +298,15 @@
 
 @property (readonly) CGSize framePreferredSize;
 
-- (void)invalidateAllFramesetters;
-
 /// Sequentially cache all rendering informations up through the given rect by
 /// generating them if not already present and keeping actual rendered frames
 /// for the specified rect if keep is YES.
 - (void)cacheRenderingInformationsUpThroughRect:(CGRect)rect andKeepFramesIntersectingRect:(BOOL)keep;
 
+/// Apply the given block to all framesetters that intersect the given rect.
+/// If CGRectNull is passed, all framesetters info will be enumerated.
+/// Prior entering the block, the enumerator makes sure that the framesetter 
+/// has been generated.
 - (void)enumerateFramesetterInfoIntersectingRect:(CGRect)rect usingBlock:(void(^)(FramesetterInfo *framesetterInfo, BOOL *stop))block;
 @end
 
@@ -278,7 +324,13 @@
     [string release];
     string = [aString retain];
     
-    [self invalidateAllFramesetters];
+    [framesetters removeAllObjects];
+    if (!lazyCaching) 
+    {
+        [[NSOperationQueue mainQueue] addOperationWithBlock:^(void) {
+            [self cacheRenderingInformationsUpThroughRect:CGRectNull andKeepFramesIntersectingRect:NO];
+        }];
+    }
 }
 
 - (CGSize)framePreferredSize
@@ -297,14 +349,6 @@
         frameWidth = 768;
     }
     return self;
-}
-
-#pragma mark -
-#pragma mark Framesetters and frame generation
-
-- (void)invalidateAllFramesetters
-{
-    
 }
 
 #pragma mark -
@@ -365,20 +409,63 @@
     }
 }
 
-- (void)drawTextInBounds:(CGRect)bounds inContext:(CGContextRef)context
+- (void)drawTextInRect:(CGRect)rect inContext:(CGContextRef)context
 {
-    [self cacheRenderingInformationsUpThroughRect:bounds andKeepFramesIntersectingRect:YES];
+    if (lazyCaching) 
+    {
+        [self cacheRenderingInformationsUpThroughRect:rect andKeepFramesIntersectingRect:YES];
+    }
     
-    __block CGFloat width, ascent, descent;
-    [self enumerateFramesetterInfoIntersectingRect:bounds usingBlock:^(FramesetterInfo *framesetterInfo, BOOL *stop) {
-        [framesetterInfo enumerateFrameInfoIntersectingRect:bounds usingBlock:^(FrameInfo *frameInfo, BOOL *stop) {
-            [frameInfo enumerateLinesIntersectingRect:bounds usingBlock:^(CTLineRef line, BOOL *stop) {
-                width = CTLineGetTypographicBounds(line, &ascent, &descent, NULL);
+    __block CGRect framesetterRect = rect, frameRect = rect;
+    [self enumerateFramesetterInfoIntersectingRect:rect usingBlock:^(FramesetterInfo *framesetterInfo, BOOL *stop) {
+        [framesetterInfo enumerateFrameInfoIntersectingRect:framesetterRect usingBlock:^(FrameInfo *frameInfo, BOOL *stop) {
+            [frameInfo enumerateLinesIntersectingRect:frameRect usingBlock:^(CTLineRef line, CGRect lineBounds, BOOL *stop) {
                 CTLineDraw(line, context);
                 // TODO use + or - depending on context flipped
-                CGContextTranslateCTM(context, -width, -ascent -descent);
+                CGContextTranslateCTM(context, lineBounds.size.width, -lineBounds.size.height);
             }];
+            frameRect.origin.y += frameInfo.actualSize.height;
         }];
+        framesetterRect.origin.y += framesetterInfo.actualSize.height;
+        frameRect = framesetterRect;
     }];
+}
+
+- (void)enumerateFramesetterInfoIntersectingRect:(CGRect)rect usingBlock:(void (^)(FramesetterInfo *, BOOL *))block
+{
+    // Just checking, cache should already be present
+    [self cacheRenderingInformationsUpThroughRect:rect andKeepFramesIntersectingRect:NO];
+    
+    // Parameters sanity check
+    if (CGRectIsNull(rect) || CGRectIsEmpty(rect)) 
+    {
+        rect = CGRectMake(0, 0, CGFLOAT_MAX, CGFLOAT_MAX);
+    }
+    CGFloat rectEnd = rect.origin.y + rect.size.height;
+    
+    // Search and enumerate framesetter infos
+    BOOL stop = NO;
+    CGFloat currentY = 0;
+    for (FramesetterInfo *framesetterInfo in framesetters) 
+    {
+        if (currentY >= rect.origin.y) 
+        {
+            // Break if past the required rect
+            if (currentY >= rectEnd)
+                break;
+            // Generate framesetter if needed
+            if (framesetterInfo.needsFramesetterGeneration) 
+            {
+                NSRange subStringRange = NSMakeRange(framesetterInfo.stringRange.location, framesetterInfo.stringRange.length);
+                NSAttributedString *subString = [string attributedSubstringFromRange:subStringRange];
+                [framesetterInfo generateFramesetterWithString:subString preferredFrameSize:self.framePreferredSize];
+            }
+            // Apply block
+            block(framesetterInfo, &stop);
+            if (stop) break;
+            
+            currentY += framesetterInfo.actualSize.height;
+        }
+    }
 }
 @end

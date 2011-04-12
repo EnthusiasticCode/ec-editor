@@ -19,7 +19,7 @@
 #pragma mark Manage Text Content
 
 // TODO use http://developer.apple.com/library/mac/#documentation/Cocoa/Reference/Foundation/Classes/NSFileHandle_Class/Reference/Reference.html instead
-@property (nonatomic, retain) NSInputStream *inputStream;
+//@property (nonatomic, retain) NSInputStream *inputStream;
 
 - (void)setString:(NSAttributedString *)string;
 
@@ -55,6 +55,6 @@
 /// The given context will not be modified prior rendering. Lines will be drawn
 /// with the current context transformation and it will be left at the beginning
 /// of the next non redered line.
-- (void)drawTextInBounds:(CGRect)bounds inContext:(CGContextRef)context;
+- (void)drawTextInRect:(CGRect)rect inContext:(CGContextRef)context;
 
 @end
