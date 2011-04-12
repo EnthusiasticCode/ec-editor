@@ -327,9 +327,9 @@
     [framesetters removeAllObjects];
     if (!lazyCaching) 
     {
-        [[NSOperationQueue mainQueue] addOperationWithBlock:^(void) {
+//        [[NSOperationQueue mainQueue] addOperationWithBlock:^(void) {
             [self cacheRenderingInformationsUpThroughRect:CGRectNull andKeepFramesIntersectingRect:NO];
-        }];
+//        }];
     }
 }
 
@@ -344,11 +344,18 @@
 - (id)init {
     if ((self = [super init])) 
     {
+        framesetters = [NSMutableArray new];
         framesetterStringLengthLimit = 0;
         framePreferredHeight = 1024;
         frameWidth = 768;
     }
     return self;
+}
+
+- (void)dealloc
+{
+    [framesetters release];
+    [super dealloc];
 }
 
 #pragma mark -
@@ -411,6 +418,10 @@
 
 - (void)drawTextInRect:(CGRect)rect inContext:(CGContextRef)context
 {
+    // TODO check for rendering ok
+    if (!string)
+        return;
+    
     if (lazyCaching) 
     {
         [self cacheRenderingInformationsUpThroughRect:rect andKeepFramesIntersectingRect:YES];
@@ -420,9 +431,10 @@
     [self enumerateFramesetterInfoIntersectingRect:rect usingBlock:^(FramesetterInfo *framesetterInfo, BOOL *stop) {
         [framesetterInfo enumerateFrameInfoIntersectingRect:framesetterRect usingBlock:^(FrameInfo *frameInfo, BOOL *stop) {
             [frameInfo enumerateLinesIntersectingRect:frameRect usingBlock:^(CTLineRef line, CGRect lineBounds, BOOL *stop) {
+                CGContextTranslateCTM(context, 0, -lineBounds.size.height);
                 CTLineDraw(line, context);
                 // TODO use + or - depending on context flipped
-                CGContextTranslateCTM(context, lineBounds.size.width, -lineBounds.size.height);
+                CGContextTranslateCTM(context, -lineBounds.size.width, 0);
             }];
             frameRect.origin.y += frameInfo.actualSize.height;
         }];

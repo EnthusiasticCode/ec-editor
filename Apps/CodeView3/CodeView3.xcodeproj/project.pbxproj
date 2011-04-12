@@ -31,6 +31,7 @@
 		CD887DCE1353119600332BAC /* ECCodeView3.m in Sources */ = {isa = PBXBuildFile; fileRef = CD887DCD1353119600332BAC /* ECCodeView3.m */; };
 		CD887DD21353AD9300332BAC /* CodeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD887DD11353AD9200332BAC /* CodeViewController.m */; };
 		CD887DD513543DF400332BAC /* ECMutableTextFileRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = CD887DD413543DF300332BAC /* ECMutableTextFileRenderer.m */; };
+		CD887DD81354C14600332BAC /* ECCodeView4.m in Sources */ = {isa = PBXBuildFile; fileRef = CD887DD71354C14600332BAC /* ECCodeView4.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -75,8 +76,10 @@
 		CD887DCD1353119600332BAC /* ECCodeView3.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeView3.m; sourceTree = "<group>"; };
 		CD887DD01353AD9200332BAC /* CodeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CodeViewController.h; sourceTree = "<group>"; };
 		CD887DD11353AD9200332BAC /* CodeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CodeViewController.m; sourceTree = "<group>"; };
-		CD887DD313543DF300332BAC /* ECMutableTextFileRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; path = ECMutableTextFileRenderer.h; sourceTree = "<group>"; };
+		CD887DD313543DF300332BAC /* ECMutableTextFileRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECMutableTextFileRenderer.h; sourceTree = "<group>"; };
 		CD887DD413543DF300332BAC /* ECMutableTextFileRenderer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECMutableTextFileRenderer.m; sourceTree = "<group>"; };
+		CD887DD61354C14600332BAC /* ECCodeView4.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeView4.h; sourceTree = "<group>"; };
+		CD887DD71354C14600332BAC /* ECCodeView4.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeView4.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -138,6 +141,8 @@
 				CD887DCD1353119600332BAC /* ECCodeView3.m */,
 				CD887DD313543DF300332BAC /* ECMutableTextFileRenderer.h */,
 				CD887DD413543DF300332BAC /* ECMutableTextFileRenderer.m */,
+				CD887DD61354C14600332BAC /* ECCodeView4.h */,
+				CD887DD71354C14600332BAC /* ECCodeView4.m */,
 			);
 			path = CodeView3;
 			sourceTree = "<group>";
@@ -269,6 +274,7 @@
 				CD887DCE1353119600332BAC /* ECCodeView3.m in Sources */,
 				CD887DD21353AD9300332BAC /* CodeViewController.m in Sources */,
 				CD887DD513543DF400332BAC /* ECMutableTextFileRenderer.m in Sources */,
+				CD887DD81354C14600332BAC /* ECCodeView4.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

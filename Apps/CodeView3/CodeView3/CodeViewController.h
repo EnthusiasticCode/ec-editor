@@ -7,15 +7,15 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "ECCodeView3.h"
+#import "ECCodeView4.h"
 
 @interface CodeViewController : UIViewController {
     
     UIScrollView *scrollView;
-    ECCodeView3 *codeView;
+    ECCodeView4 *codeView;
 }
 
-@property (nonatomic, retain) IBOutlet ECCodeView3 *codeView;
+@property (nonatomic, retain) IBOutlet ECCodeView4 *codeView;
 @property (nonatomic, retain) IBOutlet UIScrollView *scrollView;
 
 - (IBAction)loadTestFileToCodeView:(id)sender;

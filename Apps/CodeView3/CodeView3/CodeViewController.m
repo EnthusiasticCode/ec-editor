@@ -44,9 +44,14 @@
 {
     [super viewDidLoad];
     
-    codeView.autosizeHeigthToFitTextOnBoundsChange = YES;
-    codeView.contentMode = UIViewContentModeRedraw;
-    [codeView setText:[[NSMutableAttributedString alloc] initWithString:@"int main(params)\n{\n\treturn 0;\n}"] applyDefaultAttributes:YES];
+//    codeView.autosizeHeigthToFitTextOnBoundsChange = YES;
+//    codeView.contentMode = UIViewContentModeRedraw;
+//    [codeView setText:[[NSMutableAttributedString alloc] initWithString:@"int main(params)\n{\n\treturn 0;\n}"] applyDefaultAttributes:YES];
+    
+    NSAttributedString *str = [[NSAttributedString alloc] initWithString:@"int main(params)\n{\n\treturn 0;\n}"];
+    [codeView setText:str];
+    [str release];
+    
     [self updateLayout];
 }
 
@@ -77,7 +82,7 @@
             url = [dir URLByAppendingPathComponent:[url lastPathComponent]];
             s = [NSString stringWithContentsOfURL:url usedEncoding:&enc error:NULL];
             NSMutableAttributedString *string = [[NSMutableAttributedString alloc] initWithString:s];
-            [codeView setText:string applyDefaultAttributes:YES];
+//            [codeView setText:string applyDefaultAttributes:YES];
             [string release];
             [sender setTitle:[url lastPathComponent]];
             [self updateLayout];
@@ -90,7 +95,7 @@
 
 - (void)updateLayout
 {
-    [codeView setFrame:self.view.bounds autosizeHeightToFitText:YES];
+//    [codeView setFrame:self.view.bounds autosizeHeightToFitText:YES];
     [scrollView setContentSize:codeView.bounds.size];
 }
 
