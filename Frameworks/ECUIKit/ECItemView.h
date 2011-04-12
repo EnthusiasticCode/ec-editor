@@ -26,7 +26,13 @@
 - (void)itemView:(ECItemView *)itemView didSelectItem:(NSInteger)item;
 /// Called when the user attempts to initiate a drag operation.
 /// If a superview of the item view is specified, the drag operation will be limited to that view instead of the item view.
-- (BOOL)itemView:(ECItemView *)itemView canDragItem:(NSInteger)item inView:(UIView **)view;
+- (BOOL)itemView:(ECItemView *)itemView shouldDragItem:(NSInteger)item inView:(UIView **)view;
+/// Called when the user attempts to end a drag operation in an item view.
+/// Return YES to finalize the operation, or NO to cancel it.
+- (BOOL)itemView:(ECItemView *)itemView canDropItem:(NSInteger)item inTargetItemView:(ECItemView *)targetItemView;
+/// Called after the drag operation completes.
+/// The item is removed from the source item view, and added in the target item view, at the specified index.
+- (void)itemView:(ECItemView *)itemView didDropItem:(NSInteger)item inTargetItemView:(ECItemView *)targetItemView atIndex:(NSInteger)index;
 @end
 
 @interface ECItemView : UIView <UIGestureRecognizerDelegate>

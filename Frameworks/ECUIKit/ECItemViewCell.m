@@ -10,4 +10,10 @@
 
 @implementation ECItemViewCell
 
+// always return no so it never receives touches
+- (BOOL)pointInside:(CGPoint)point withEvent:(UIEvent *)event
+{
+    return NO;
+}
+
 @end

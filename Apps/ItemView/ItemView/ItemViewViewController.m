@@ -84,10 +84,16 @@
     [itemView endUpdates];
 }
 
-- (BOOL)itemView:(ECItemView *)itemView canDragItem:(NSInteger)item inView:(UIView **)view
+- (BOOL)itemView:(ECItemView *)itemView shouldDragItem:(NSInteger)item inView:(UIView **)view
 {
     UIView *rootView = self.view;
     *view = rootView;
     return YES;
 }
+
+- (BOOL)itemView:(ECItemView *)itemView canDropItem:(NSInteger)item inTargetItemView:(ECItemView *)targetItemView
+{
+    return YES;
+}
+
 @end
