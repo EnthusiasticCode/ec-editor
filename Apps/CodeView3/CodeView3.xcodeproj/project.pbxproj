@@ -30,6 +30,7 @@
 		CD887DCB1353107F00332BAC /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD887DCA1353107F00332BAC /* CoreText.framework */; };
 		CD887DCE1353119600332BAC /* ECCodeView3.m in Sources */ = {isa = PBXBuildFile; fileRef = CD887DCD1353119600332BAC /* ECCodeView3.m */; };
 		CD887DD21353AD9300332BAC /* CodeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD887DD11353AD9200332BAC /* CodeViewController.m */; };
+		CD887DD513543DF400332BAC /* ECMutableTextFileRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = CD887DD413543DF300332BAC /* ECMutableTextFileRenderer.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -74,6 +75,8 @@
 		CD887DCD1353119600332BAC /* ECCodeView3.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeView3.m; sourceTree = "<group>"; };
 		CD887DD01353AD9200332BAC /* CodeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CodeViewController.h; sourceTree = "<group>"; };
 		CD887DD11353AD9200332BAC /* CodeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CodeViewController.m; sourceTree = "<group>"; };
+		CD887DD313543DF300332BAC /* ECMutableTextFileRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; path = ECMutableTextFileRenderer.h; sourceTree = "<group>"; };
+		CD887DD413543DF300332BAC /* ECMutableTextFileRenderer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECMutableTextFileRenderer.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -133,6 +136,8 @@
 				CD887D8613530DDF00332BAC /* Supporting Files */,
 				CD887DCC1353119600332BAC /* ECCodeView3.h */,
 				CD887DCD1353119600332BAC /* ECCodeView3.m */,
+				CD887DD313543DF300332BAC /* ECMutableTextFileRenderer.h */,
+				CD887DD413543DF300332BAC /* ECMutableTextFileRenderer.m */,
 			);
 			path = CodeView3;
 			sourceTree = "<group>";
@@ -263,6 +268,7 @@
 				CD887DC71353105300332BAC /* ECCoreText.m in Sources */,
 				CD887DCE1353119600332BAC /* ECCodeView3.m in Sources */,
 				CD887DD21353AD9300332BAC /* CodeViewController.m in Sources */,
+				CD887DD513543DF400332BAC /* ECMutableTextFileRenderer.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

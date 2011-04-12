@@ -48,6 +48,7 @@
 
 - (void)generateFramesUpToIndex:(NSUInteger)index;
 - (void)enumerateFramesIntersectingRect:(CGRect)rect withBlock:(void(^)(CTFrameRef frame, NSUInteger idx, BOOL *stop))block;
+- (void)enumerateLinesIntersectingRect:(CGRect)rect usingBlock:(void(^)(CTLineRef line, BOOL *stop))block;
 
 - (CTFrameRef)frameContainingTextIndex:(NSUInteger)index frameOffset:(CGFloat *)offset;
 //- (void)enumerateFramesContainingTextRange:(NSRange)range withBlock:(void(^)(CTFrameRef frame))block;
@@ -1020,6 +1021,50 @@ static void init(ECCodeView3 *self)
             break;
         ++first;
     }
+}
+
+- (void)enumerateLinesIntersectingRect:(CGRect)rect usingBlock:(void (^)(CTLineRef, BOOL *))block
+{
+    NSUInteger firstFrame = rect.origin.y / frameRect.size.height;
+    NSUInteger countFrames = rect.size.height / frameRect.size.height + 1;
+    
+    [self generateFramesUpToIndex:(firstFrame + countFrames)];
+    
+    BOOL stop = NO;
+    NSUInteger framesCount = [frames count];
+    CTFrameRef frame;
+    CGRect frameBounds;
+    CFArrayRef lines;
+    CTLineRef line;
+    CFIndex lineCount;
+    CGPoint *origins = NULL;
+    NSUInteger originsCount = 0;
+    CGFloat lineWidth, lineAscent, lineDescent;
+    while (firstFrame < framesCount && countFrames--) 
+    {
+        frame = (CTFrameRef)[frames objectAtIndex:firstFrame];
+        lines = CTFrameGetLines(frame);
+        lineCount = CFArrayGetCount(lines);
+        //
+        if (lineCount > originsCount) 
+        {
+            free(origins);
+            origins = malloc(sizeof(CGPoint) * lineCount);
+            originsCount = lineCount;
+        }
+        CTFrameGetLineOrigins(frame, (CFRange){ 0, lineCount }, origins);
+        //
+        frameBounds = CGPathGetPathBoundingBox(CTFrameGetPath(frame));
+        //
+        for (CFIndex i = 0; i < lineCount; ++i) 
+        {
+            line = CFArrayGetValueAtIndex(lines, i);
+            lineWidth = CTLineGetTypographicBounds(line, &lineAscent, &lineDescent, NULL);
+            // TODO!!! actually you need to start form the very first frame...
+        }
+        ++firstFrame;
+    }
+    free(origins);
 }
 
 - (CTFrameRef)frameContainingTextIndex:(NSUInteger)index frameOffset:(CGFloat *)offset
