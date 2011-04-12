@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "ECItemView.h"
 
-@interface ItemViewViewController : UIViewController <ECItemViewDataSource> {
+@interface ItemViewViewController : UIViewController <ECItemViewDataSource, ECItemViewDelegate> {
     
     ECItemView *itemViewA;
     ECItemView *itemViewB;

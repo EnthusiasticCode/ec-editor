@@ -11,6 +11,7 @@
 @interface ECItemView ()
 {
     @private
+    BOOL _delegateDidSelectItem;
     BOOL _needsReloadData;
     NSMutableArray *_items;
     NSInteger _numberOfItems;
@@ -19,9 +20,13 @@
     NSMutableIndexSet *_itemsToDelete;
     NSMutableIndexSet *_itemsToReload;
     BOOL _isAnimating;
+    UITapGestureRecognizer *_tapRecognizer;
+    BOOL _isDragging;
+    NSMutableArray *_itemsWhileDragging;
 }
 - (NSInteger)_contentWidthInCells;
 - (NSInteger)_contentHeightInCells;
+- (void)handleTap:(UITapGestureRecognizer *)tapRecognizer;
 @end
 
 @implementation ECItemView
@@ -30,10 +35,32 @@
 #pragma mark Properties and initialization
 
 @synthesize dataSource = _dataSource;
+@synthesize delegate = _delegate;
 @synthesize viewInsets = _viewInsets;
 @synthesize itemFrame = _itemFrame;
 @synthesize itemInsets = _itemInsets;
+@synthesize allowsSelection = _allowsSelection;
 @synthesize editing = _editing;
+
+- (void)setDelegate:(id<ECItemViewDelegate>)delegate
+{
+    if (delegate == _delegate)
+        return;
+    [self willChangeValueForKey:@"delegate"];
+    _delegate = delegate;
+    _delegateDidSelectItem = [delegate respondsToSelector:@selector(itemView:didSelectItem:)];
+    [self didChangeValueForKey:@"delegate"];
+}
+
+- (void)setAllowsSelection:(BOOL)allowsSelection
+{
+    if (allowsSelection == _allowsSelection)
+        return;
+    [self willChangeValueForKey:@"allowsSelection"];
+    _allowsSelection = allowsSelection;
+    _tapRecognizer.enabled = allowsSelection;
+    [self didChangeValueForKey:@"allowsSelection"];
+}
 
 - (void)setEditing:(BOOL)editing
 {
@@ -43,7 +70,7 @@
 - (void)setEditing:(BOOL)editing animated:(BOOL)animated
 {
     if (editing == _editing)
-    return;
+        return;
     [self willChangeValueForKey:@"editing"];
     [self setNeedsLayout];
     _editing = editing;
@@ -71,7 +98,9 @@
 - (void)dealloc
 {
     self.dataSource = nil;
+    self.delegate = nil;
     [_items release];
+    [_tapRecognizer release];
     [super dealloc];
 }
 
@@ -83,6 +112,9 @@ static id init(ECItemView *self)
     self->_itemFrame = CGRectMake(0.0, 0.0, 100.0, 100.0);
     self->_needsReloadData = YES;
     self->_numberOfItems = 0;
+    self->_allowsSelection = YES;
+    self->_tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTap:)];
+    [self addGestureRecognizer:self->_tapRecognizer];
     return self;
 }
 
@@ -125,11 +157,17 @@ static id init(ECItemView *self)
     if (_isBatchUpdating)
         [NSException raise:NSInternalInconsistencyException format:@"beginUpdates without corresponding endUpdates"];
     __block CGRect frame = CGRectZero;
-    [_items enumerateObjectsUsingBlock:^(ECItemViewCell *cell, NSUInteger index, BOOL *stop) {
+    void (^layoutItem)(ECItemViewCell *cell, NSUInteger index, BOOL *stop) = ^(ECItemViewCell *cell, NSUInteger index, BOOL *stop){
         frame = [self rectForItem:index];
         if (!CGRectEqualToRect(frame, cell.frame))
             cell.frame = frame;
-    }];
+    };
+    if (_isDragging)
+        [UIView animateWithDuration:0.25 delay:0.0 options:UIViewAnimationCurveEaseOut | UIViewAnimationOptionAllowUserInteraction | UIViewAnimationOptionBeginFromCurrentState animations:^(void) {
+            [_items enumerateObjectsUsingBlock:layoutItem];
+        } completion:NULL];
+    else
+        [_items enumerateObjectsUsingBlock:layoutItem];
 }
 
 #pragma mark -
@@ -288,6 +326,27 @@ static id init(ECItemView *self)
 - (void)reloadItems:(NSIndexSet *)items
 {
     [_itemsToReload addIndexes:items];
+}
+
+#pragma mark -
+#pragma mark UIGestureRecognizer
+
+- (void)handleTap:(UITapGestureRecognizer *)tapRecognizer
+{
+    if (_editing)
+        return;
+    NSInteger itemIndex = [self itemAtPoint:[tapRecognizer locationInView:self]];
+    if (itemIndex == -1)
+        return;
+    if (_delegateDidSelectItem)
+        [_delegate itemView:self didSelectItem:itemIndex];
+}
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch
+{
+    if ([self itemAtPoint:[touch locationInView:self]] != -1)
+        return YES;
+    return NO;
 }
 
 @end

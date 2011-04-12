@@ -16,11 +16,18 @@
 - (ECItemViewCell *)itemView:(ECItemView *)itemView cellForItem:(NSInteger)item;
 @end
 
-@interface ECItemView : UIView
+@protocol ECItemViewDelegate <NSObject>
+@optional
+- (void)itemView:(ECItemView *)itemView didSelectItem:(NSInteger)item;
+@end
+
+@interface ECItemView : UIView <UIGestureRecognizerDelegate>
 @property (nonatomic, assign) IBOutlet id<ECItemViewDataSource> dataSource;
+@property (nonatomic, assign) IBOutlet id<ECItemViewDelegate> delegate;
 @property (nonatomic) UIEdgeInsets viewInsets;
 @property (nonatomic) CGRect itemFrame;
 @property (nonatomic) UIEdgeInsets itemInsets;
+@property (nonatomic) BOOL allowsSelection;
 @property (nonatomic, getter = isEditing) BOOL editing;
 - (void)setEditing:(BOOL)editing animated:(BOOL)animated;
 - (void)reloadData;

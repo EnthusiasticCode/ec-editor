@@ -76,4 +76,11 @@
     [self.itemViewA reloadItems:[NSIndexSet indexSetWithIndex:4]];
     [self.itemViewA endUpdates];
 }
+
+- (void)itemView:(ECItemView *)itemView didSelectItem:(NSInteger)item
+{
+    [itemView beginUpdates];
+    [itemView reloadItems:[NSIndexSet indexSetWithIndex:item]];
+    [itemView endUpdates];
+}
 @end
