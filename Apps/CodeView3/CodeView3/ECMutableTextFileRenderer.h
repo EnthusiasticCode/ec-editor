@@ -18,9 +18,10 @@
 
 #pragma mark Manage Text Content
 
+// TODO use http://developer.apple.com/library/mac/#documentation/Cocoa/Reference/Foundation/Classes/NSFileHandle_Class/Reference/Reference.html instead
 @property (nonatomic, retain) NSInputStream *inputStream;
 
-@property (nonatomic, assign) NSAttributedString *string;
+- (void)setString:(NSAttributedString *)string;
 
 #pragma mark Modifying Rendering Behaviours
 
@@ -35,7 +36,7 @@
 /// A frame reaches the double of this property, it will be divided into two;
 /// if it reaches the half of this property, it will be merged with another
 /// frame. Set this value to CGFLOAT_MAX to have only one frame.
-/// Default value is 1024. Non integer numbers will be truncated.
+/// Default value is 1024.
 @property CGFloat framePreferredHeight;
 
 /// The required rendering frame width. The width will not be automatically
