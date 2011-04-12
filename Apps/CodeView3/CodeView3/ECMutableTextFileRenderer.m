@@ -116,22 +116,22 @@
     CFArrayRef lines = CTFrameGetLines(self.frame);
     CFIndex lineCount = CFArrayGetCount(lines);
     CGFloat width, ascent, descent;
+    CGRect bounds;
     for (CFIndex i = 0; i < lineCount; ++i) 
     {
         CTLineRef line = CFArrayGetValueAtIndex(lines, i);
         width = CTLineGetTypographicBounds(line, &ascent, &descent, NULL);
-        if (currentY >= rect.origin.y) 
+        bounds = CGRectMake(0, currentY, width, ascent + descent);
+        if (currentY + bounds.size.height > rect.origin.y) 
         {
             // Break if past the required rect
             if (currentY >= rectEnd)
                 break;
             //
-            CGRect bounds = CGRectMake(0, currentY, width, ascent + descent);
             block(line, bounds, &stop);
             if (stop) break;
-            
-            currentY += bounds.size.height;
         }
+        currentY += bounds.size.height;
     }
 }
 
@@ -173,7 +173,7 @@
 
 - (void)enumerateAllFrameInfoUsingBlock:(void(^)(FrameInfo *frameInfo, NSUInteger idx, BOOL *stop))block;
 
-- (void)enumerateFrameInfoIntersectingRect:(CGRect)rect usingBlock:(void(^)(FrameInfo *frameInfo, BOOL *stop))block;
+- (void)enumerateFrameInfoIntersectingRect:(CGRect)rect usingBlock:(void(^)(FrameInfo *frameInfo, CGRect relativeRect, BOOL *stop))block;
 
 @end
 
@@ -245,7 +245,7 @@
     [frames enumerateObjectsUsingBlock:block];
 }
 
-- (void)enumerateFrameInfoIntersectingRect:(CGRect)rect usingBlock:(void (^)(FrameInfo *, BOOL *))block
+- (void)enumerateFrameInfoIntersectingRect:(CGRect)rect usingBlock:(void (^)(FrameInfo *, CGRect, BOOL *))block
 {
     // Parameters sanity check
     if (CGRectIsNull(rect) || CGRectIsEmpty(rect)) 
@@ -256,9 +256,18 @@
     
     BOOL stop = NO;
     CGFloat currentY = 0;
+    FrameInfo *lastFrameInfo = nil;
+    CGRect relativeRect = rect;
     for (FrameInfo *frameInfo in frames) 
     {
-        if (currentY >= rect.origin.y) 
+        // Calculate relative block
+        if (lastFrameInfo) 
+        {
+            relativeRect.origin.y -= lastFrameInfo.actualSize.height;
+        }
+        lastFrameInfo = frameInfo;
+        // Check if to apply to this framesetter
+        if (currentY + frameInfo.actualSize.height > rect.origin.y) 
         {
             // Break if past the required rect
             if (currentY >= rectEnd)
@@ -269,11 +278,11 @@
                 [frameInfo generateWithFramesetter:framesetter stringRange:frameInfo.generationStringRange boundRect:frameInfo.generationRect];
             }
             // Apply block
-            block(frameInfo, &stop);
+            block(frameInfo, relativeRect, &stop);
             if (stop) break;
-            
-            currentY += frameInfo.actualSize.height;
         }
+        // Advance to next frame beginning
+        currentY += frameInfo.actualSize.height;
     }
 }
 
@@ -309,7 +318,7 @@
 /// If CGRectNull is passed, all framesetters info will be enumerated.
 /// Prior entering the block, the enumerator makes sure that the framesetter 
 /// has been generated.
-- (void)enumerateFramesetterInfoIntersectingRect:(CGRect)rect usingBlock:(void(^)(FramesetterInfo *framesetterInfo, BOOL *stop))block;
+- (void)enumerateFramesetterInfoIntersectingRect:(CGRect)rect usingBlock:(void(^)(FramesetterInfo *framesetterInfo, CGRect relativeRect, BOOL *stop))block;
 @end
 
 #pragma mark -
@@ -418,7 +427,7 @@
     }
 }
 
-- (void)enumerateFramesetterInfoIntersectingRect:(CGRect)rect usingBlock:(void (^)(FramesetterInfo *, BOOL *))block
+- (void)enumerateFramesetterInfoIntersectingRect:(CGRect)rect usingBlock:(void (^)(FramesetterInfo *, CGRect, BOOL *))block
 {
     // Just checking, cache should already be present
     [self cacheRenderingInformationsUpThroughRect:rect andKeepFramesIntersectingRect:NO];
@@ -433,9 +442,20 @@
     // Search and enumerate framesetter infos
     BOOL stop = NO;
     CGFloat currentY = 0;
+    CGFloat currentEnd;
+    FramesetterInfo *lastFramesetterInfo = nil;
+    CGRect relativeRect = rect;
     for (FramesetterInfo *framesetterInfo in framesetters) 
     {
-        if (currentY >= rect.origin.y) 
+        // Calculate relative block
+        if (lastFramesetterInfo) 
+        {
+            relativeRect.origin.y -= lastFramesetterInfo.actualSize.height;
+        }
+        lastFramesetterInfo = framesetterInfo;
+        // Check if to apply to this framesetter
+        currentEnd = currentY + framesetterInfo.actualSize.height;
+        if (currentEnd > rect.origin.y) 
         {
             // Break if past the required rect
             if (currentY >= rectEnd)
@@ -449,11 +469,11 @@
                 [framesetterInfo generateFramesetterWithString:subString preferredFrameSize:self.framePreferredSize];
             }
             // Apply block
-            block(framesetterInfo, &stop);
+            block(framesetterInfo, relativeRect, &stop);
             if (stop) break;
-            
-            currentY += framesetterInfo.actualSize.height;
         }
+        // Advance to next framesetter beginning
+        currentY += framesetterInfo.actualSize.height;
     }
 }
 
@@ -468,19 +488,15 @@
         [self cacheRenderingInformationsUpThroughRect:rect andKeepFramesIntersectingRect:YES];
     }
     
-    __block CGRect framesetterRect = rect, frameRect = rect;
-    [self enumerateFramesetterInfoIntersectingRect:rect usingBlock:^(FramesetterInfo *framesetterInfo, BOOL *stop) {
-        [framesetterInfo enumerateFrameInfoIntersectingRect:framesetterRect usingBlock:^(FrameInfo *frameInfo, BOOL *stop) {
-            [frameInfo enumerateLinesIntersectingRect:frameRect usingBlock:^(CTLineRef line, CGRect lineBounds, BOOL *stop) {
+    [self enumerateFramesetterInfoIntersectingRect:rect usingBlock:^(FramesetterInfo *framesetterInfo, CGRect relativeRect, BOOL *stop) {
+        [framesetterInfo enumerateFrameInfoIntersectingRect:relativeRect usingBlock:^(FrameInfo *frameInfo, CGRect relativeRect, BOOL *stop) {
+            [frameInfo enumerateLinesIntersectingRect:relativeRect usingBlock:^(CTLineRef line, CGRect lineBounds, BOOL *stop) {
                 CGContextTranslateCTM(context, 0, -lineBounds.size.height);
                 CTLineDraw(line, context);
                 // TODO use + or - depending on context flipped
                 CGContextTranslateCTM(context, -lineBounds.size.width, 0);
             }];
-            frameRect.size.height -= frameInfo.actualSize.height;
         }];
-        framesetterRect.size.height -= framesetterInfo.actualSize.height;
-        frameRect = framesetterRect;
     }];
 }
 

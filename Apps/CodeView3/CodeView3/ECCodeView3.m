@@ -100,7 +100,7 @@
 - (void)setFrame:(CGRect)frame autosizeHeightToFitText:(BOOL)autosizeHeight
 {
     renderer.frameWidth = frame.size.width - textInsets.left - textInsets.right;
-    renderer.framePreferredHeight = 50; //frame.size.height;
+    renderer.framePreferredHeight = frame.size.height;
     [(CATiledLayer *)self.layer setTileSize:frame.size];
     if (autosizeHeight) 
     {
@@ -797,7 +797,7 @@ static void init(ECCodeView3 *self)
     CGContextSaveGState(context);
     {
         CGContextScaleCTM(context, 1, -1);
-        CGContextTranslateCTM(context, textInsets.left, -textInsets.top);
+        CGContextTranslateCTM(context, textInsets.left, rect.origin.y ? -rect.origin.y : -textInsets.top);
         [renderer drawTextInRect:rect inContext:context];
     }
     CGContextRestoreGState(context);
