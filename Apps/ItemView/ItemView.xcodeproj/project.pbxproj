@@ -1,0 +1,307 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		B706EFB713545CE000E03DDF /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B706EFB613545CE000E03DDF /* UIKit.framework */; };
+		B706EFB913545CE000E03DDF /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B706EFB813545CE000E03DDF /* Foundation.framework */; };
+		B706EFBB13545CE000E03DDF /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B706EFBA13545CE000E03DDF /* CoreGraphics.framework */; };
+		B706EFC113545CE000E03DDF /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = B706EFBF13545CE000E03DDF /* InfoPlist.strings */; };
+		B706EFC413545CE000E03DDF /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = B706EFC313545CE000E03DDF /* main.m */; };
+		B706EFC713545CE000E03DDF /* ItemViewAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = B706EFC613545CE000E03DDF /* ItemViewAppDelegate.m */; };
+		B706EFCA13545CE000E03DDF /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = B706EFC813545CE000E03DDF /* MainWindow.xib */; };
+		B706EFCD13545CE000E03DDF /* ItemViewViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B706EFCC13545CE000E03DDF /* ItemViewViewController.m */; };
+		B706EFD013545CE000E03DDF /* ItemViewViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B706EFCE13545CE000E03DDF /* ItemViewViewController.xib */; };
+		B706EFDB13545D2000E03DDF /* ECItemView.m in Sources */ = {isa = PBXBuildFile; fileRef = B706EFD813545D2000E03DDF /* ECItemView.m */; };
+		B706EFDC13545D2000E03DDF /* ECItemViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B706EFDA13545D2000E03DDF /* ECItemViewCell.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		B706EFB213545CE000E03DDF /* ItemView.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ItemView.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B706EFB613545CE000E03DDF /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		B706EFB813545CE000E03DDF /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		B706EFBA13545CE000E03DDF /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		B706EFBE13545CE000E03DDF /* ItemView-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ItemView-Info.plist"; sourceTree = "<group>"; };
+		B706EFC013545CE000E03DDF /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		B706EFC213545CE000E03DDF /* ItemView-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ItemView-Prefix.pch"; sourceTree = "<group>"; };
+		B706EFC313545CE000E03DDF /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		B706EFC513545CE000E03DDF /* ItemViewAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ItemViewAppDelegate.h; sourceTree = "<group>"; };
+		B706EFC613545CE000E03DDF /* ItemViewAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ItemViewAppDelegate.m; sourceTree = "<group>"; };
+		B706EFC913545CE000E03DDF /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainWindow.xib; sourceTree = "<group>"; };
+		B706EFCB13545CE000E03DDF /* ItemViewViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ItemViewViewController.h; sourceTree = "<group>"; };
+		B706EFCC13545CE000E03DDF /* ItemViewViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ItemViewViewController.m; sourceTree = "<group>"; };
+		B706EFCF13545CE000E03DDF /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/ItemViewViewController.xib; sourceTree = "<group>"; };
+		B706EFD713545D2000E03DDF /* ECItemView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECItemView.h; path = ../../Frameworks/ECUIKit/ECItemView.h; sourceTree = "<group>"; };
+		B706EFD813545D2000E03DDF /* ECItemView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECItemView.m; path = ../../Frameworks/ECUIKit/ECItemView.m; sourceTree = "<group>"; };
+		B706EFD913545D2000E03DDF /* ECItemViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECItemViewCell.h; path = ../../Frameworks/ECUIKit/ECItemViewCell.h; sourceTree = "<group>"; };
+		B706EFDA13545D2000E03DDF /* ECItemViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECItemViewCell.m; path = ../../Frameworks/ECUIKit/ECItemViewCell.m; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		B706EFAF13545CE000E03DDF /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B706EFB713545CE000E03DDF /* UIKit.framework in Frameworks */,
+				B706EFB913545CE000E03DDF /* Foundation.framework in Frameworks */,
+				B706EFBB13545CE000E03DDF /* CoreGraphics.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		B706EFA713545CE000E03DDF = {
+			isa = PBXGroup;
+			children = (
+				B706EFD613545CFB00E03DDF /* ECUIKit */,
+				B706EFBC13545CE000E03DDF /* ItemView */,
+				B706EFB513545CE000E03DDF /* Frameworks */,
+				B706EFB313545CE000E03DDF /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		B706EFB313545CE000E03DDF /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				B706EFB213545CE000E03DDF /* ItemView.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B706EFB513545CE000E03DDF /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				B706EFB613545CE000E03DDF /* UIKit.framework */,
+				B706EFB813545CE000E03DDF /* Foundation.framework */,
+				B706EFBA13545CE000E03DDF /* CoreGraphics.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		B706EFBC13545CE000E03DDF /* ItemView */ = {
+			isa = PBXGroup;
+			children = (
+				B706EFC513545CE000E03DDF /* ItemViewAppDelegate.h */,
+				B706EFC613545CE000E03DDF /* ItemViewAppDelegate.m */,
+				B706EFC813545CE000E03DDF /* MainWindow.xib */,
+				B706EFCB13545CE000E03DDF /* ItemViewViewController.h */,
+				B706EFCC13545CE000E03DDF /* ItemViewViewController.m */,
+				B706EFCE13545CE000E03DDF /* ItemViewViewController.xib */,
+				B706EFBD13545CE000E03DDF /* Supporting Files */,
+			);
+			path = ItemView;
+			sourceTree = "<group>";
+		};
+		B706EFBD13545CE000E03DDF /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				B706EFBE13545CE000E03DDF /* ItemView-Info.plist */,
+				B706EFBF13545CE000E03DDF /* InfoPlist.strings */,
+				B706EFC213545CE000E03DDF /* ItemView-Prefix.pch */,
+				B706EFC313545CE000E03DDF /* main.m */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		B706EFD613545CFB00E03DDF /* ECUIKit */ = {
+			isa = PBXGroup;
+			children = (
+				B706EFD713545D2000E03DDF /* ECItemView.h */,
+				B706EFD813545D2000E03DDF /* ECItemView.m */,
+				B706EFD913545D2000E03DDF /* ECItemViewCell.h */,
+				B706EFDA13545D2000E03DDF /* ECItemViewCell.m */,
+			);
+			name = ECUIKit;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		B706EFB113545CE000E03DDF /* ItemView */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B706EFD313545CE000E03DDF /* Build configuration list for PBXNativeTarget "ItemView" */;
+			buildPhases = (
+				B706EFAE13545CE000E03DDF /* Sources */,
+				B706EFAF13545CE000E03DDF /* Frameworks */,
+				B706EFB013545CE000E03DDF /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ItemView;
+			productName = ItemView;
+			productReference = B706EFB213545CE000E03DDF /* ItemView.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		B706EFA913545CE000E03DDF /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = B706EFAC13545CE000E03DDF /* Build configuration list for PBXProject "ItemView" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = B706EFA713545CE000E03DDF;
+			productRefGroup = B706EFB313545CE000E03DDF /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				B706EFB113545CE000E03DDF /* ItemView */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		B706EFB013545CE000E03DDF /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B706EFC113545CE000E03DDF /* InfoPlist.strings in Resources */,
+				B706EFCA13545CE000E03DDF /* MainWindow.xib in Resources */,
+				B706EFD013545CE000E03DDF /* ItemViewViewController.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		B706EFAE13545CE000E03DDF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B706EFC413545CE000E03DDF /* main.m in Sources */,
+				B706EFC713545CE000E03DDF /* ItemViewAppDelegate.m in Sources */,
+				B706EFCD13545CE000E03DDF /* ItemViewViewController.m in Sources */,
+				B706EFDB13545D2000E03DDF /* ECItemView.m in Sources */,
+				B706EFDC13545D2000E03DDF /* ECItemViewCell.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		B706EFBF13545CE000E03DDF /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				B706EFC013545CE000E03DDF /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		B706EFC813545CE000E03DDF /* MainWindow.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				B706EFC913545CE000E03DDF /* en */,
+			);
+			name = MainWindow.xib;
+			sourceTree = "<group>";
+		};
+		B706EFCE13545CE000E03DDF /* ItemViewViewController.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				B706EFCF13545CE000E03DDF /* en */,
+			);
+			name = ItemViewViewController.xib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		B706EFD113545CE000E03DDF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_UNIVERSAL_IPHONE_OS)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = DEBUG;
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = com.apple.compilers.llvmgcc42;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 2;
+			};
+			name = Debug;
+		};
+		B706EFD213545CE000E03DDF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_UNIVERSAL_IPHONE_OS)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_VERSION = com.apple.compilers.llvmgcc42;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
+				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 2;
+			};
+			name = Release;
+		};
+		B706EFD413545CE000E03DDF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "ItemView/ItemView-Prefix.pch";
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				INFOPLIST_FILE = "ItemView/ItemView-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		B706EFD513545CE000E03DDF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "ItemView/ItemView-Prefix.pch";
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				INFOPLIST_FILE = "ItemView/ItemView-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				VALIDATE_PRODUCT = YES;
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		B706EFAC13545CE000E03DDF /* Build configuration list for PBXProject "ItemView" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B706EFD113545CE000E03DDF /* Debug */,
+				B706EFD213545CE000E03DDF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B706EFD313545CE000E03DDF /* Build configuration list for PBXNativeTarget "ItemView" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B706EFD413545CE000E03DDF /* Debug */,
+				B706EFD513545CE000E03DDF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = B706EFA913545CE000E03DDF /* Project object */;
+}

@@ -146,14 +146,15 @@ static id init(ECItemView *self)
         oldCell = [self viewWithTag:i];
         [oldCell removeFromSuperview];
     }
-    for (i = 0; i < [_dataSource numberOfItemsInItemView:self]; ++i)
+    _numberOfItems = [_dataSource numberOfItemsInItemView:self];
+    for (i = 0; i < _numberOfItems; ++i)
     {
         cell = [_dataSource itemView:self cellForItem:i];
         [self addSubview:cell];
         [_items addObject:cell];
     }
-    _numberOfItems = i;
     [self setNeedsLayout];
+    _needsReloadData = NO;
 }
 
 - (NSInteger)numberOfItems
@@ -207,14 +208,18 @@ static id init(ECItemView *self)
     _numberOfItems -= [_itemsToDelete count];
     if (_numberOfItems != [_dataSource numberOfItemsInItemView:self])
         [NSException raise:NSInternalInconsistencyException format:@"numberOfItems != old numberOfItems +insertedItems -deletedItems"];
-    ECItemViewCell *cell;
     NSInteger offset = 0;
+    NSMutableArray *cellsToInsert = [NSMutableArray arrayWithCapacity:[_itemsToInsert count]];
+    NSMutableArray *cellsToDelete = [NSMutableArray arrayWithCapacity:[_itemsToDelete count]];
+    NSMutableArray *cellsToLoad = [NSMutableArray arrayWithCapacity:[_itemsToReload count]];
+    NSMutableArray *cellsToUnload = [NSMutableArray arrayWithCapacity:[_itemsToReload count]];
     for (NSInteger index = 0; index < _numberOfItems; ++index)
     {
+        ECItemViewCell *cell;
         if ([_itemsToDelete containsIndex:index])
         {
             cell = [_items objectAtIndex:index + offset];
-            [cell removeFromSuperview];
+            [cellsToDelete addObject:cell];
             [_items removeObjectAtIndex:index + offset];
             --offset;
         }
@@ -222,19 +227,52 @@ static id init(ECItemView *self)
         {
             cell = [_dataSource itemView:self cellForItem:index];
             [self addSubview:cell];
+            CGRect rect = [self rectForItem:index];
+            cell.center = CGPointMake(CGRectGetMidX(rect), CGRectGetMidY(rect));
+            cell.alpha = 0.0;
+            [cellsToInsert addObject:cell];
             [_items insertObject:cell atIndex:index];
             ++offset;
         }
         if ([_itemsToReload containsIndex:index])
         {
             cell = [_items objectAtIndex:index + offset];
-            [cell removeFromSuperview];
+            [cellsToUnload addObject:cell];
             [_items removeObjectAtIndex:index + offset];
             cell = [_dataSource itemView:self cellForItem:index];
             [self addSubview:cell];
+            cell.frame = [self rectForItem:index];
+            cell.alpha = 0.0;
+            [cellsToLoad addObject:cell];
             [_items insertObject:cell atIndex:index];
         }
     }
+    [UIView animateWithDuration:3.0 animations:^(void) {
+        for (ECItemViewCell *cell in cellsToInsert) {
+            cell.bounds = UIEdgeInsetsInsetRect(_itemFrame, _itemInsets);
+            cell.alpha = 1.0;
+        }
+        for (ECItemViewCell *cell in cellsToDelete) {
+            cell.bounds = CGRectZero;
+            cell.alpha = 0.0;
+        }
+        for (ECItemViewCell *cell in cellsToLoad) {
+            cell.alpha = 1.0;
+        }
+        for (ECItemViewCell *cell in cellsToUnload ) {
+            cell.alpha = 0.0;
+        }
+        [self layoutIfNeeded];
+    } completion:^(BOOL finished) {
+        for (ECItemViewCell *cell in cellsToDelete)
+        {
+            [cell removeFromSuperview];
+        }
+        for (ECItemViewCell *cell in cellsToUnload)
+        {
+            [cell removeFromSuperview];
+        }
+    }];
 }
 
 - (void)insertItems:(NSIndexSet *)items

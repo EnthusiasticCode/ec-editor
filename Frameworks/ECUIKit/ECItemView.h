@@ -17,7 +17,7 @@
 @end
 
 @interface ECItemView : UIView
-@property (nonatomic, assign) id<ECItemViewDataSource> dataSource;
+@property (nonatomic, assign) IBOutlet id<ECItemViewDataSource> dataSource;
 @property (nonatomic) UIEdgeInsets viewInsets;
 @property (nonatomic) CGRect itemFrame;
 @property (nonatomic) UIEdgeInsets itemInsets;
