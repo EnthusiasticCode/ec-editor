@@ -14,13 +14,14 @@
 #pragma mark Creation of Text Renderers
 
 /// Create a new instance of text file rendered with a width and height for frames.
-+ (ECMutableTextFileRenderer *)textFileRendererWithFramesWidth:(CGFloat)width preferredHeight:(CGFloat)preferredHeight;
+//+ (ECMutableTextFileRenderer *)textFileRendererWithFramesWidth:(CGFloat)width preferredHeight:(CGFloat)preferredHeight;
 
 #pragma mark Manage Text Content
 
 // TODO use http://developer.apple.com/library/mac/#documentation/Cocoa/Reference/Foundation/Classes/NSFileHandle_Class/Reference/Reference.html instead
 //@property (nonatomic, retain) NSInputStream *inputStream;
 
+// TODO remove this method and substitute with datasource
 - (void)setString:(NSAttributedString *)string;
 
 /// Indicates if the caching of rendering informations should happen lazely or
@@ -49,12 +50,17 @@
 /// Default is 768. This parameter can be set to CGFLOAT_MAX to not limit width.
 @property CGFloat frameWidth;
 
-#pragma mark Rendering Content
+#pragma mark Rendering Content and Rendering Information
 
 /// Renders the content text contained in the given bounds to the specified context.
 /// The given context will not be modified prior rendering. Lines will be drawn
 /// with the current context transformation and it will be left at the beginning
 /// of the next non redered line.
 - (void)drawTextInRect:(CGRect)rect inContext:(CGContextRef)context;
+
+/// Returns the total size of the rendered content.
+/// The content will be completelly cached if guessed is NO. Otherwise a guessed,
+/// imprecise size will be returned.
+- (CGSize)renderedTextSizeAllowGuessedResult:(BOOL)guessed;
 
 @end

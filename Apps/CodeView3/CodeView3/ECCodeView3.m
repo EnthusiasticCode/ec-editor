@@ -8,8 +8,7 @@
 
 #import "ECCodeView3.h"
 #import <QuartzCore/QuartzCore.h>
-#import <CoreText/CoreText.h>
-#import "ECCoreText.h"
+#import "ECMutableTextFileRenderer.h"
 
 @interface ECCodeView3 () {
     // Text input support ivars
@@ -17,9 +16,7 @@
     CALayer *selectionLayer;
     NSRange markedRange;
     
-    // Core text support ivars
-    CTFramesetterRef _framesetter;
-    NSMutableArray *frames;
+    ECMutableTextFileRenderer *renderer;
 }
 
 /// Return the length of the text minus the hidden tailing new line.
@@ -38,21 +35,6 @@
 /// Helper method to set the selection starting from two points.
 - (void)setSelectedTextFromPoint:(CGPoint)fromPoint toPoint:(CGPoint)toPoint;
 
-//
-
-@property (readonly) CTFramesetterRef framesetter;
-
-- (void)invalidateFramesetter;
-
-@property (nonatomic) CGRect frameRect;
-
-- (void)generateFramesUpToIndex:(NSUInteger)index;
-- (void)enumerateFramesIntersectingRect:(CGRect)rect withBlock:(void(^)(CTFrameRef frame, NSUInteger idx, BOOL *stop))block;
-- (void)enumerateLinesIntersectingRect:(CGRect)rect usingBlock:(void(^)(CTLineRef line, BOOL *stop))block;
-
-- (CTFrameRef)frameContainingTextIndex:(NSUInteger)index frameOffset:(CGFloat *)offset;
-//- (void)enumerateFramesContainingTextRange:(NSRange)range withBlock:(void(^)(CTFrameRef frame))block;
-
 @end
 
 @implementation ECCodeView3
@@ -64,7 +46,6 @@
 @synthesize delegate;
 @synthesize textInsets;
 @synthesize defaultTextStyle;
-@synthesize frameRect;
 @synthesize autosizeHeigthToFitTextOnBoundsChange;
 
 - (void)setDelegate:(id<ECCodeViewDelegate>)aDelegate
@@ -105,7 +86,9 @@
 
 - (void)setBounds:(CGRect)bounds
 {
-    self.frameRect = bounds;
+    renderer.frameWidth = UIEdgeInsetsInsetRect(bounds, textInsets).size.width;
+    renderer.framePreferredHeight = bounds.size.height;
+    [(CATiledLayer *)self.layer setTileSize:bounds.size];
     [super setBounds:bounds];
 }
 
@@ -116,17 +99,14 @@
 
 - (void)setFrame:(CGRect)frame autosizeHeightToFitText:(BOOL)autosizeHeight
 {
-    self.frameRect = (CGRect){ CGPointZero, frame.size };
+    renderer.frameWidth = frame.size.width - textInsets.left - textInsets.right;
+    renderer.framePreferredHeight = 50; //frame.size.height;
+    [(CATiledLayer *)self.layer setTileSize:frame.size];
     if (autosizeHeight) 
     {
-        CFRange fitRange;
-        CGRect bounds = UIEdgeInsetsInsetRect(frame, self.textInsets);
-        bounds.size.height = CGFLOAT_MAX;
-        CGSize fitSize = CTFramesetterSuggestFrameSizeWithConstraints(self.framesetter, (CFRange){0, 0}, NULL, bounds.size, &fitRange);
-        // TODO Fix this fix
+        CGSize fitSize = [renderer renderedTextSizeAllowGuessedResult:YES];
         fitSize.width = frame.size.width;
         fitSize.height = ceilf(fitSize.height + 50);
-        //
         frame.size = fitSize;
     }
     [super setFrame:frame];
@@ -143,9 +123,13 @@
 #pragma mark -
 #pragma mark UIView Methods
 
+static void preinit(ECCodeView3 *self)
+{
+    self->renderer = [ECMutableTextFileRenderer new];
+}
+
 static void init(ECCodeView3 *self)
 {
-    self->frames = [NSMutableArray new];
     self.defaultTextStyle = [ECTextStyle textStyleWithName:@"Plain text" font:[UIFont fontWithName:@"Courier New" size:16.0] color:[UIColor blackColor]];
     self.textInsets = UIEdgeInsetsMake(10, 10, 10, 10);
     self->text = [[NSMutableAttributedString alloc] initWithString:@"\n" attributes:self->defaultTextStyle.CTAttributes];
@@ -153,29 +137,27 @@ static void init(ECCodeView3 *self)
 
 - (void)dealloc
 {
-    // TODO release frames
-    [frames release];
     [selection release];
     [text release];
-    [self invalidateFramesetter];
+    [renderer release];
     [super dealloc];
 }
 
 - (id)initWithFrame:(CGRect)frame
 {
-    init(self);
+    preinit(self);
     self = [super initWithFrame:frame];
     if (self) {
-        // TODO or textinsets are not set before setFrame
+        init(self);
     }
     return self;
 }
 
 - (id)initWithCoder:(NSCoder *)coder {
-    init(self);
+    preinit(self);
     self = [super initWithCoder:coder];
     if (self) {
-        // TODO or textinsets are not set before setFrame
+        init(self);
     }
     return self;
 }
@@ -565,36 +547,36 @@ static void init(ECCodeView3 *self)
 
         // TODO!!! chech if make sense
         CGFloat frameOffset;
-        CTFrameRef frame = [self frameContainingTextIndex:pos frameOffset:&frameOffset];
-        
-        CFArrayRef lines = CTFrameGetLines(frame);
-        CFIndex lineCount = CFArrayGetCount(lines);
-        CFIndex lineIndex = ECCTFrameGetLineContainingStringIndex(frame, pos, (CFRange){0, lineCount}, NULL);
-        CFIndex newIndex = lineIndex + offset;
-        CTLineRef line = CFArrayGetValueAtIndex(lines, lineIndex);
-        
-        if (newIndex < 0 || newIndex >= lineCount)
-            return nil;
-        
-        if (newIndex == lineIndex)
-            return position;
-        
-        CGFloat xPosn = CTLineGetOffsetForStringIndex(line, pos, NULL) + frameOffset;
-        CGPoint origins[1];
-        CTFrameGetLineOrigins(frame, (CFRange){lineIndex, 1}, origins);
-        xPosn = xPosn + origins[0].x; // X-coordinate in layout space
-        
-        CTFrameGetLineOrigins(frame, (CFRange){newIndex, 1}, origins);
-        xPosn = xPosn - origins[0].x; // X-coordinate in new line's local coordinates
-        
-        CFIndex newStringIndex = CTLineGetStringIndexForPosition(CFArrayGetValueAtIndex(lines, newIndex), (CGPoint){xPosn, 0});
-        
-        if (newStringIndex == kCFNotFound)
-            return nil;
-        
-        if(newStringIndex < 0)
-            newStringIndex = 0;
-        result = newStringIndex;
+//        CTFrameRef frame = [self frameContainingTextIndex:pos frameOffset:&frameOffset];
+//        
+//        CFArrayRef lines = CTFrameGetLines(frame);
+//        CFIndex lineCount = CFArrayGetCount(lines);
+//        CFIndex lineIndex = ECCTFrameGetLineContainingStringIndex(frame, pos, (CFRange){0, lineCount}, NULL);
+//        CFIndex newIndex = lineIndex + offset;
+//        CTLineRef line = CFArrayGetValueAtIndex(lines, lineIndex);
+//        
+//        if (newIndex < 0 || newIndex >= lineCount)
+//            return nil;
+//        
+//        if (newIndex == lineIndex)
+//            return position;
+//        
+//        CGFloat xPosn = CTLineGetOffsetForStringIndex(line, pos, NULL) + frameOffset;
+//        CGPoint origins[1];
+//        CTFrameGetLineOrigins(frame, (CFRange){lineIndex, 1}, origins);
+//        xPosn = xPosn + origins[0].x; // X-coordinate in layout space
+//        
+//        CTFrameGetLineOrigins(frame, (CFRange){newIndex, 1}, origins);
+//        xPosn = xPosn - origins[0].x; // X-coordinate in new line's local coordinates
+//        
+//        CFIndex newStringIndex = CTLineGetStringIndexForPosition(CFArrayGetValueAtIndex(lines, newIndex), (CGPoint){xPosn, 0});
+//        
+//        if (newStringIndex == kCFNotFound)
+//            return nil;
+//        
+//        if(newStringIndex < 0)
+//            newStringIndex = 0;
+//        result = newStringIndex;
     } 
     else 
     {
@@ -682,8 +664,9 @@ static void init(ECCodeView3 *self)
 {
     NSUInteger pos = ((ECTextPosition *)position).index;
     CGFloat frameOffset;
-    CTFrameRef frame = [self frameContainingTextIndex:pos frameOffset:&frameOffset];
-    CGRect carretRect = ECCTFrameGetBoundRectOfLinesForStringRange(frame, (CFRange){pos, 0});
+//    CTFrameRef frame = [self frameContainingTextIndex:pos frameOffset:&frameOffset];
+//    CGRect carretRect = ECCTFrameGetBoundRectOfLinesForStringRange(frame, (CFRange){pos, 0});
+    CGRect carretRect = CGRectZero;
     carretRect.origin.x += frameOffset;
     // TODO parametrize caret rect sizes
     carretRect.origin.x -= 1.0;
@@ -738,18 +721,18 @@ static void init(ECCodeView3 *self)
     NSMutableDictionary *uiStyles = [ctStyles mutableCopy];
     [uiStyles autorelease];
     
-    CTFontRef ctFont = (CTFontRef)[ctStyles objectForKey:(id)kCTFontAttributeName];
-    if (ctFont) 
-    {
-        CFStringRef fontName = CTFontCopyPostScriptName(ctFont);
-        UIFont *uif = [UIFont fontWithName:(id)fontName size:CTFontGetSize(ctFont)];
-        CFRelease(fontName);
-        [uiStyles setObject:uif forKey:UITextInputTextFontKey];
-    }
-    
-    CGColorRef cgColor = (CGColorRef)[ctStyles objectForKey:(id)kCTForegroundColorAttributeName];
-    if (cgColor)
-        [uiStyles setObject:[UIColor colorWithCGColor:cgColor] forKey:UITextInputTextColorKey];
+//    CTFontRef ctFont = (CTFontRef)[ctStyles objectForKey:(id)kCTFontAttributeName];
+//    if (ctFont) 
+//    {
+//        CFStringRef fontName = CTFontCopyPostScriptName(ctFont);
+//        UIFont *uif = [UIFont fontWithName:(id)fontName size:CTFontGetSize(ctFont)];
+//        CFRelease(fontName);
+//        [uiStyles setObject:uif forKey:UITextInputTextFontKey];
+//    }
+//    
+//    CGColorRef cgColor = (CGColorRef)[ctStyles objectForKey:(id)kCTForegroundColorAttributeName];
+//    if (cgColor)
+//        [uiStyles setObject:[UIColor colorWithCGColor:cgColor] forKey:UITextInputTextColorKey];
     
     if (self.backgroundColor)
         [uiStyles setObject:self.backgroundColor forKey:UITextInputTextBackgroundColorKey];
@@ -811,38 +794,13 @@ static void init(ECCodeView3 *self)
     if (rect.origin.x)
         return;
     
-//    @synchronized (frames) {
-        // Draw text
-        __block NSUInteger lastRenderedFrameIndex = 0;
-        CGContextSaveGState(context);
-        {
-            CGContextScaleCTM(context, 1, -1);
-            CGContextSetTextPosition(context, 0, 0);
-            CGContextSetTextMatrix(context, CGAffineTransformIdentity);
-            
-            __block CGFloat lastWidth = 0, width, ascent, descent;
-            [self enumerateFramesIntersectingRect:rect withBlock:^(CTFrameRef frame, NSUInteger idx, BOOL *stop) {
-//                CGContextSaveGState(context);
-                CGContextTranslateCTM(context, textInsets.left, rect.origin.y ? -rect.origin.y : -textInsets.top);
-                ECCTFrameEnumerateLinesWithBlock(frame, ^(CTLineRef line, CFIndex index, _Bool *stop) {
-                    width = CTLineGetTypographicBounds(line, &ascent, &descent, NULL);
-                    CGContextTranslateCTM(context, -lastWidth, -ascent - descent);
-                    lastWidth = width;
-                    CTLineDraw(line, context);
-                });
-                lastRenderedFrameIndex = idx;
-//                CGContextRestoreGState(context);
-            }];
-        }
-        CGContextRestoreGState(context);
-//    }
-    
-    // Require drawing of next frame as well
-    // TODO put on a different queue?
-//    [[NSOperationQueue mainQueue] addOperationWithBlock:^(void) {
-//        // TODO may require locking of frames array
-//        [self generateFramesUpToIndex:lastRenderedFrameIndex + 1];
-//    }];
+    CGContextSaveGState(context);
+    {
+        CGContextScaleCTM(context, 1, -1);
+        CGContextTranslateCTM(context, textInsets.left, -textInsets.top);
+        [renderer drawTextInRect:rect inContext:context];
+    }
+    CGContextRestoreGState(context);
     
     // DEBUG
     [[UIColor redColor] setStroke];
@@ -875,7 +833,8 @@ static void init(ECCodeView3 *self)
 //        [delegate editCodeView:self textChangedInRange:range];
 //    }
     
-    [self invalidateFramesetter];
+    // TODO update only some frames!!
+    [renderer setString:text];
     
     // TODO if needed, fix paragraph styles
     
@@ -931,150 +890,6 @@ static void init(ECCodeView3 *self)
     [self setSelectedTextRange:range];
     
     [range release];
-}
-
-#pragma mark -
-#pragma mark Core Text Support Methods
-
-- (CTFramesetterRef)framesetter
-{
-    if (!_framesetter) 
-    {
-        if (_framesetter)
-            CFRelease(_framesetter);
-        _framesetter = CTFramesetterCreateWithAttributedString((CFAttributedStringRef)text);
-        
-        // TODO!!! may need to use CF
-        // TODO should remove only frames after the acutal change in text
-        [frames removeAllObjects];
-    }
-    return _framesetter;
-}
-
-- (void)invalidateFramesetter
-{
-    if (_framesetter) 
-    {
-        CFRelease(_framesetter);
-        _framesetter = NULL;
-    }
-}
-
-- (void)setFrameRect:(CGRect)rect
-{
-    if (CGRectEqualToRect(rect, frameRect))
-        return;
-    
-    [(CATiledLayer *)self.layer setTileSize:rect.size];
-    
-    CGSize size = rect.size;
-    size.width -= textInsets.left + textInsets.right;
-    
-    frameRect = (CGRect){ rect.origin, size };
-    [frames removeAllObjects];
-}
-
-- (void)generateFramesUpToIndex:(NSUInteger)index
-{
-    // This property call will also remove all frames if required
-    CTFramesetterRef fs = self.framesetter;
-    
-    CTFrameRef frame;
-    CFRange frameStringRange = CTFrameGetVisibleStringRange((CTFrameRef)[frames lastObject]);
-    frameStringRange.location += frameStringRange.length;
-    frameStringRange.length = 0;
-    
-    CGMutablePathRef path = CGPathCreateMutable();
-    CGPathAddRect(path, NULL, frameRect);
-    
-    NSUInteger textLength = [text length];
-    
-    for (NSUInteger i = [frames count]; i < index; ++i)
-    {
-        // Check if no more frames are needed
-        // TODO CTFrameGetVisibleStringRange(frame).length == 0 may be more desirable
-        if (frameStringRange.location >= textLength)
-            break;
-        frame = CTFramesetterCreateFrame(fs, frameStringRange, path, NULL);
-        if (!frame)
-            break;
-        frameStringRange.location += CTFrameGetVisibleStringRange(frame).length;
-        [frames addObject:(id)frame];
-        CFRelease(frame);
-    }
-    CGPathRelease(path);
-}
-
-- (void)enumerateFramesIntersectingRect:(CGRect)rect withBlock:(void (^)(CTFrameRef, NSUInteger, BOOL *))block
-{
-    NSUInteger first = rect.origin.y / frameRect.size.height;
-    NSUInteger count = MAX(rect.size.height / frameRect.size.height, 1);
-    
-    [self generateFramesUpToIndex:(first + count)];
-    
-    NSUInteger framesCount = [frames count];
-    BOOL stop = NO;
-    while (first < framesCount && count--) 
-    {
-        block((CTFrameRef)[frames objectAtIndex:first], first, &stop);
-        if (stop)
-            break;
-        ++first;
-    }
-}
-
-- (void)enumerateLinesIntersectingRect:(CGRect)rect usingBlock:(void (^)(CTLineRef, BOOL *))block
-{
-    NSUInteger firstFrame = rect.origin.y / frameRect.size.height;
-    NSUInteger countFrames = rect.size.height / frameRect.size.height + 1;
-    
-    [self generateFramesUpToIndex:(firstFrame + countFrames)];
-    
-    BOOL stop = NO;
-    NSUInteger framesCount = [frames count];
-    CTFrameRef frame;
-    CGRect frameBounds;
-    CFArrayRef lines;
-    CTLineRef line;
-    CFIndex lineCount;
-    CGPoint *origins = NULL;
-    NSUInteger originsCount = 0;
-    CGFloat lineWidth, lineAscent, lineDescent;
-    while (firstFrame < framesCount && countFrames--) 
-    {
-        frame = (CTFrameRef)[frames objectAtIndex:firstFrame];
-        lines = CTFrameGetLines(frame);
-        lineCount = CFArrayGetCount(lines);
-        //
-        if (lineCount > originsCount) 
-        {
-            free(origins);
-            origins = malloc(sizeof(CGPoint) * lineCount);
-            originsCount = lineCount;
-        }
-        CTFrameGetLineOrigins(frame, (CFRange){ 0, lineCount }, origins);
-        //
-        frameBounds = CGPathGetPathBoundingBox(CTFrameGetPath(frame));
-        //
-        for (CFIndex i = 0; i < lineCount; ++i) 
-        {
-            line = CFArrayGetValueAtIndex(lines, i);
-            lineWidth = CTLineGetTypographicBounds(line, &lineAscent, &lineDescent, NULL);
-            // TODO!!! actually you need to start form the very first frame...
-        }
-        ++firstFrame;
-    }
-    free(origins);
-}
-
-- (CTFrameRef)frameContainingTextIndex:(NSUInteger)index frameOffset:(CGFloat *)offset
-{
-//    CFIndex i = ECCTFrameArrayFillFramesUpThroughStringIndex((CFMutableArrayRef)frames, index, self.framesetter, framePath, YES, NO);
-//    CTFrameRef frame = (CTFrameRef)[frames objectAtIndex:i];
-//    if (offset)
-//        *offset = CGPathGetPathBoundingBox(framePath).size.height * i;
-//    return frame;
-    return NULL;
 }
 
 @end

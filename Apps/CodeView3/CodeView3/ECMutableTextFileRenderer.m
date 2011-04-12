@@ -285,7 +285,9 @@
 @end
 
 
-#pragma mark Class continuations
+#pragma mark -
+#pragma mark ECMutableTextFileRenderer 
+
 @interface ECMutableTextFileRenderer () {
 @private
     // TODO use a cache of frameWidth -> info dictionary
@@ -310,7 +312,8 @@
 - (void)enumerateFramesetterInfoIntersectingRect:(CGRect)rect usingBlock:(void(^)(FramesetterInfo *framesetterInfo, BOOL *stop))block;
 @end
 
-#pragma mark ECMutableTextFileRenderer Implementation
+#pragma mark -
+
 @implementation ECMutableTextFileRenderer
 
 #pragma mark Properties
@@ -338,7 +341,6 @@
     return CGSizeMake(frameWidth, framePreferredHeight);
 }
 
-#pragma mark -
 #pragma mark Initialization
 
 - (id)init {
@@ -358,7 +360,6 @@
     [super dealloc];
 }
 
-#pragma mark -
 #pragma mark Rendering and cacheing
 
 - (void)cacheRenderingInformationsUpThroughRect:(CGRect)rect andKeepFramesIntersectingRect:(BOOL)keep
@@ -390,6 +391,7 @@
     while (coveredHeight < cacheUpToY && lastStringIndex < stringLength)
     {
         // Get next string piece to render
+        // TODO call datasource here instead of copy string
         NSRange nextStringRange = NSMakeRange(lastStringIndex, stringLengthLimit);
         subAttributedString = [string attributedSubstringFromRange:nextStringRange];
         
@@ -414,33 +416,6 @@
         [framesetters addObject:framesetterInfo];
         [framesetterInfo release];
     }
-}
-
-- (void)drawTextInRect:(CGRect)rect inContext:(CGContextRef)context
-{
-    // TODO check for rendering ok
-    if (!string)
-        return;
-    
-    if (lazyCaching) 
-    {
-        [self cacheRenderingInformationsUpThroughRect:rect andKeepFramesIntersectingRect:YES];
-    }
-    
-    __block CGRect framesetterRect = rect, frameRect = rect;
-    [self enumerateFramesetterInfoIntersectingRect:rect usingBlock:^(FramesetterInfo *framesetterInfo, BOOL *stop) {
-        [framesetterInfo enumerateFrameInfoIntersectingRect:framesetterRect usingBlock:^(FrameInfo *frameInfo, BOOL *stop) {
-            [frameInfo enumerateLinesIntersectingRect:frameRect usingBlock:^(CTLineRef line, CGRect lineBounds, BOOL *stop) {
-                CGContextTranslateCTM(context, 0, -lineBounds.size.height);
-                CTLineDraw(line, context);
-                // TODO use + or - depending on context flipped
-                CGContextTranslateCTM(context, -lineBounds.size.width, 0);
-            }];
-            frameRect.origin.y += frameInfo.actualSize.height;
-        }];
-        framesetterRect.origin.y += framesetterInfo.actualSize.height;
-        frameRect = framesetterRect;
-    }];
 }
 
 - (void)enumerateFramesetterInfoIntersectingRect:(CGRect)rect usingBlock:(void (^)(FramesetterInfo *, BOOL *))block
@@ -468,6 +443,7 @@
             // Generate framesetter if needed
             if (framesetterInfo.needsFramesetterGeneration) 
             {
+                // TODO call datasource here instead of copy string
                 NSRange subStringRange = NSMakeRange(framesetterInfo.stringRange.location, framesetterInfo.stringRange.length);
                 NSAttributedString *subString = [string attributedSubstringFromRange:subStringRange];
                 [framesetterInfo generateFramesetterWithString:subString preferredFrameSize:self.framePreferredSize];
@@ -480,4 +456,69 @@
         }
     }
 }
+
+- (void)drawTextInRect:(CGRect)rect inContext:(CGContextRef)context
+{
+    // TODO check for rendering ok
+    if (!string)
+        return;
+    
+    if (lazyCaching) 
+    {
+        [self cacheRenderingInformationsUpThroughRect:rect andKeepFramesIntersectingRect:YES];
+    }
+    
+    __block CGRect framesetterRect = rect, frameRect = rect;
+    [self enumerateFramesetterInfoIntersectingRect:rect usingBlock:^(FramesetterInfo *framesetterInfo, BOOL *stop) {
+        [framesetterInfo enumerateFrameInfoIntersectingRect:framesetterRect usingBlock:^(FrameInfo *frameInfo, BOOL *stop) {
+            [frameInfo enumerateLinesIntersectingRect:frameRect usingBlock:^(CTLineRef line, CGRect lineBounds, BOOL *stop) {
+                CGContextTranslateCTM(context, 0, -lineBounds.size.height);
+                CTLineDraw(line, context);
+                // TODO use + or - depending on context flipped
+                CGContextTranslateCTM(context, -lineBounds.size.width, 0);
+            }];
+            frameRect.size.height -= frameInfo.actualSize.height;
+        }];
+        framesetterRect.size.height -= framesetterInfo.actualSize.height;
+        frameRect = framesetterRect;
+    }];
+}
+
+- (CGSize)renderedTextSizeAllowGuessedResult:(BOOL)guessed
+{
+    if (!string)
+        return CGSizeZero;
+        
+    if (!guessed)
+        [self cacheRenderingInformationsUpThroughRect:CGRectNull andKeepFramesIntersectingRect:NO];
+
+    // Calculate actual size from frames already cached
+    NSUInteger coveredString = 0;
+    CGSize renderSize = CGSizeZero, framesetterInfoSize;
+    for (FramesetterInfo *framesetterInfo in framesetters) 
+    {
+        framesetterInfoSize = framesetterInfo.actualSize;
+        renderSize.width = MAX(renderSize.width, framesetterInfoSize.width);
+        renderSize.height += framesetterInfoSize.height;
+        
+        coveredString += framesetterInfo.stringRange.length;
+    }
+    
+    // If not covering all content, guess rest
+    NSUInteger stringLength = [string length];
+    if (coveredString < stringLength) 
+    {
+        // TODO should guess in a lower profile fashon
+        CFRange fitRange;
+        NSRange remaininRange = NSMakeRange(coveredString, stringLength - coveredString);
+        CTFramesetterRef remain = CTFramesetterCreateWithAttributedString((CFAttributedStringRef)[string attributedSubstringFromRange:remaininRange]);
+        CGSize suggestedSize = CTFramesetterSuggestFrameSizeWithConstraints(remain, (CFRange){ 0, 0 }, NULL, (CGSize){ frameWidth, CGFLOAT_MAX }, &fitRange);
+        CFRelease(remain);
+        
+        renderSize.height += suggestedSize.height;
+    }
+    
+    return renderSize;
+}
+
 @end
