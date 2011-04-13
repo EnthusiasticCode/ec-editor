@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 
 
-@interface ECCodeView4 : UIView
+@interface ECCodeView4 : UIScrollView
 
 @property (nonatomic, retain) NSAttributedString *text;
 

@@ -17,6 +17,8 @@
     NSRange markedRange;
     
     ECMutableTextFileRenderer *renderer;
+    NSMutableArray *tilesOffset;
+    NSCondition *tileOffsetsCondition;
 }
 
 /// Return the length of the text minus the hidden tailing new line.
@@ -88,7 +90,7 @@
 {
     renderer.frameWidth = UIEdgeInsetsInsetRect(bounds, textInsets).size.width;
     renderer.framePreferredHeight = bounds.size.height;
-    [(CATiledLayer *)self.layer setTileSize:bounds.size];
+//    [(CATiledLayer *)self.layer setTileSize:bounds.size];
     [super setBounds:bounds];
 }
 
@@ -101,7 +103,7 @@
 {
     renderer.frameWidth = frame.size.width - textInsets.left - textInsets.right;
     renderer.framePreferredHeight = frame.size.height;
-    [(CATiledLayer *)self.layer setTileSize:frame.size];
+//    [(CATiledLayer *)self.layer setTileSize:frame.size];
     if (autosizeHeight) 
     {
         CGSize fitSize = [renderer renderedTextSizeAllowGuessedResult:YES];
@@ -125,14 +127,27 @@
 
 static void preinit(ECCodeView3 *self)
 {
+    self->tilesOffset = [NSMutableArray new];
+    [self->tilesOffset addObject:[NSNumber numberWithFloat:0]];
+    self->tileOffsetsCondition = [NSCondition new];
     self->renderer = [ECMutableTextFileRenderer new];
 }
 
 static void init(ECCodeView3 *self)
 {
     self.defaultTextStyle = [ECTextStyle textStyleWithName:@"Plain text" font:[UIFont fontWithName:@"Courier New" size:16.0] color:[UIColor blackColor]];
-    self.textInsets = UIEdgeInsetsMake(10, 10, 10, 10);
+    self.textInsets = UIEdgeInsetsMake(0, 0, 0, 0);
     self->text = [[NSMutableAttributedString alloc] initWithString:@"\n" attributes:self->defaultTextStyle.CTAttributes];
+    
+//    [self->tilesOffset addObject:[NSNumber numberWithFloat:self->textInsets.top]];
+    
+    // DEBUG
+    CGSize tile = self.bounds.size;
+    tile.height = 50;
+    [(CATiledLayer *)self.layer setTileSize:tile];
+    
+    // TODO prendere max screen size e metterlo in entrambe width e height
+//    [(CATiledLayer *)self.layer setTileSize:[UIScreen mainScreen].bounds.size];
 }
 
 - (void)dealloc
@@ -795,17 +810,40 @@ static void init(ECCodeView3 *self)
         return;
     
     CGContextSaveGState(context);
+    [tileOffsetsCondition lock];
     {
         CGContextScaleCTM(context, 1, -1);
-        CGContextTranslateCTM(context, textInsets.left, rect.origin.y ? -rect.origin.y : -textInsets.top);
-        [renderer drawTextInRect:rect inContext:context];
+        
+        CGFloat tileHeight = [(CATiledLayer *)self.layer tileSize].height;
+        NSUInteger tileIndex = rect.origin.y / tileHeight;
+        NSUInteger tries = 3;
+        while (tileIndex >= [tilesOffset count] && tries--)
+            [tileOffsetsCondition waitUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
+        if (tileIndex >= [tilesOffset count])
+        {
+            [tileOffsetsCondition unlock];
+            return;
+        }
+        CGFloat offset = [[tilesOffset objectAtIndex:tileIndex] floatValue];
+        CGContextTranslateCTM(context, textInsets.left, -offset);
+        
+//        CGRect requestRect = rect;
+//        requestRect.size.height -= offset;        
+        
+        CGSize renderedSize = [renderer drawTextInRect:rect inContext:context];
+        
+        [tilesOffset insertObject:[NSNumber numberWithFloat:renderedSize.height] atIndex:(tileIndex + 1)];
+        [tileOffsetsCondition signal];
     }
+    [tileOffsetsCondition unlock];
     CGContextRestoreGState(context);
     
     // DEBUG
     [[UIColor redColor] setStroke];
     CGContextSetLineWidth(context, 4);
-    CGContextStrokeRect(context, rect);
+    CGContextMoveToPoint(context, 0, rect.origin.y);
+    CGContextAddLineToPoint(context, 10, rect.origin.y);
+    CGContextStrokePath(context);
 }
 
 #pragma mark -

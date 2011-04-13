@@ -10,10 +10,17 @@
 #import <QuartzCore/QuartzCore.h>
 #import "ECMutableTextFileRenderer.h"
 
+@interface TextTileView : UIView 
+@end
+
+
+#define TILES_COUNT (3)
 
 @interface ECCodeView4 () {
 @private
     ECMutableTextFileRenderer *renderer;
+    
+    TextTileView* tiles[TILES_COUNT];
 }
 @end
 
@@ -29,7 +36,10 @@
     [text release];
     text = [string retain];
     [renderer setString:text];
-    [self setNeedsDisplayInRect:self.bounds];
+    
+    self.contentSize = [renderer renderedTextSizeAllowGuessedResult:YES];
+    
+    [self setNeedsDisplay];
 }
 
 - (void)setBounds:(CGRect)bounds
@@ -88,27 +98,9 @@ static void init(ECCodeView4 *self)
 #pragma mark -
 #pragma mark Rendering Methods
 
-+ (Class)layerClass
+- (void)layoutSubviews
 {
-    return [CATiledLayer class];
-}
-
-- (void)drawRect:(CGRect)rect
-{
-    CGContextRef context = UIGraphicsGetCurrentContext();
-    //
-    if (rect.origin.x > 0)
-        return;
-    //
-    CGContextSaveGState(context);
-    CGContextScaleCTM(context, 1, -1);
-    CGContextTranslateCTM(context, textInsets.left, -textInsets.top);
-    [renderer drawTextInRect:rect inContext:context];
-    CGContextRestoreGState(context);
-    //
-    [[UIColor redColor] setStroke];
-    CGContextSetLineWidth(context, 4);
-    CGContextStrokeRect(context, rect);
+    
 }
 
 @end

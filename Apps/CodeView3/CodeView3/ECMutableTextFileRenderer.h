@@ -24,11 +24,6 @@
 // TODO remove this method and substitute with datasource
 - (void)setString:(NSAttributedString *)string;
 
-/// Indicates if the caching of rendering informations should happen lazely or
-/// immediatly after a content is set. Defaults is NO making caching mandatory
-/// after content change.
-@property BOOL lazyCaching;
-
 #pragma mark Modifying Rendering Behaviours
 
 /// Define the maximum length for a framesetter's string. If the loaded text is 
@@ -52,15 +47,24 @@
 
 #pragma mark Rendering Content and Rendering Information
 
+/// Indicates if the caching of rendering informations should happen lazely or
+/// immediatly after a content is set. Defaults is NO making caching mandatory
+/// after content change.
+@property BOOL lazyCaching;
+
 /// Renders the content text contained in the given bounds to the specified context.
 /// The given context will not be modified prior rendering. Lines will be drawn
 /// with the current context transformation and it will be left at the beginning
 /// of the next non redered line.
-- (void)drawTextInRect:(CGRect)rect inContext:(CGContextRef)context;
+- (CGSize)drawTextInRect:(CGRect)rect inContext:(CGContextRef)context;
 
 /// Returns the total size of the rendered content.
 /// The content will be completelly cached if guessed is NO. Otherwise a guessed,
 /// imprecise size will be returned.
 - (CGSize)renderedTextSizeAllowGuessedResult:(BOOL)guessed;
+
+// TODO this function that will re-generate framesetters and all in given rect keeping in mind to update rest of cache if needed
+//- (void)updateCacheForTextInRect:(CGRect)rect;
+// -(void)updateCacheForTextRange:(NSRange)range;
 
 @end

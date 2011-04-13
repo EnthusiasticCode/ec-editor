@@ -46,7 +46,7 @@
     
     codeView.autosizeHeigthToFitTextOnBoundsChange = YES;
     codeView.contentMode = UIViewContentModeRedraw;
-    NSMutableAttributedString *str = [[NSMutableAttributedString alloc] initWithString:@"int main(params)\n{\n\treturn 0;\n}"];
+    NSMutableAttributedString *str = [[NSMutableAttributedString alloc] initWithString:@"int main(params)\n{ somethinghere\n\treturn 0;\n}"];
     [codeView setText:str applyDefaultAttributes:YES];
     [str release];
     

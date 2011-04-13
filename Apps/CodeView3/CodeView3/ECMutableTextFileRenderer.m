@@ -442,7 +442,6 @@
     // Search and enumerate framesetter infos
     BOOL stop = NO;
     CGFloat currentY = 0;
-    CGFloat currentEnd;
     FramesetterInfo *lastFramesetterInfo = nil;
     CGRect relativeRect = rect;
     for (FramesetterInfo *framesetterInfo in framesetters) 
@@ -454,8 +453,7 @@
         }
         lastFramesetterInfo = framesetterInfo;
         // Check if to apply to this framesetter
-        currentEnd = currentY + framesetterInfo.actualSize.height;
-        if (currentEnd > rect.origin.y) 
+        if (currentY + framesetterInfo.actualSize.height > rect.origin.y) 
         {
             // Break if past the required rect
             if (currentY >= rectEnd)
@@ -477,7 +475,7 @@
     }
 }
 
-- (void)drawTextInRect:(CGRect)rect inContext:(CGContextRef)context
+- (CGSize)drawTextInRect:(CGRect)rect inContext:(CGContextRef)context
 {
     // TODO check for rendering ok
     if (!string)
@@ -488,16 +486,26 @@
         [self cacheRenderingInformationsUpThroughRect:rect andKeepFramesIntersectingRect:YES];
     }
     
+    __block CGSize drawnSize = CGSizeZero;
+    __block CGRect lastLineBounds = CGRectZero;
     [self enumerateFramesetterInfoIntersectingRect:rect usingBlock:^(FramesetterInfo *framesetterInfo, CGRect relativeRect, BOOL *stop) {
+//        CGContextTranslateCTM(context, 0, -relativeRect.origin.y);
         [framesetterInfo enumerateFrameInfoIntersectingRect:relativeRect usingBlock:^(FrameInfo *frameInfo, CGRect relativeRect, BOOL *stop) {
             [frameInfo enumerateLinesIntersectingRect:relativeRect usingBlock:^(CTLineRef line, CGRect lineBounds, BOOL *stop) {
                 CGContextTranslateCTM(context, 0, -lineBounds.size.height);
                 CTLineDraw(line, context);
                 // TODO use + or - depending on context flipped
                 CGContextTranslateCTM(context, -lineBounds.size.width, 0);
+                
+                drawnSize.height += lineBounds.size.height;
+                lastLineBounds = lineBounds;
             }];
+//            [frameInfo releaseFrame];
         }];
     }];
+    
+    drawnSize.height -= lastLineBounds.size.height;
+    return drawnSize;
 }
 
 - (CGSize)renderedTextSizeAllowGuessedResult:(BOOL)guessed
