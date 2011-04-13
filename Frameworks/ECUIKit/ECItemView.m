@@ -7,6 +7,7 @@
 //
 
 #import "ECItemView.h"
+#import "UIView+ConcurrentAnimation.h"
 
 @interface ECItemView ()
 {
@@ -31,6 +32,9 @@
     NSInteger _previousDragDestination;
     NSMutableArray *_itemsWhileDragging;
     UIView *_viewToDragIn;
+    void (^_layoutItem)(ECItemViewCell *cell, NSUInteger index, BOOL *stop);
+    void (^_enterEditingAnimation)(void);
+    void (^_exitEditingAnimation)(void);
 }
 - (NSInteger)_contentWidthInCells;
 - (NSInteger)_contentHeightInCells;
@@ -49,6 +53,9 @@
 @end
 
 @implementation ECItemView
+
+static const CGFloat ECItemViewShortAnimationDuration = 0.15;
+static const CGFloat ECItemViewLongAnimationDuration = 5.0;
 
 #pragma mark -
 #pragma mark Properties and initialization
@@ -107,24 +114,11 @@
     [self willChangeValueForKey:@"editing"];
     [self setNeedsLayout];
     _editing = editing;
-    if (animated && !_isBatchUpdating)
-    {
-        if (!_isAnimating)
-            [UIView animateWithDuration:0.5 delay:0.0 options:UIViewAnimationOptionAllowUserInteraction animations:^{
-                [self layoutIfNeeded];
-            } completion:^(BOOL finished){
-                if (finished)
-                    _isAnimating = NO;
-            }];
+    if (animated)
+        if (editing)
+            [UIView animateConcurrentlyToAnimationsWithFlag:&_isAnimating duration:ECItemViewShortAnimationDuration animations:_enterEditingAnimation completion:NULL];
         else
-            [UIView animateWithDuration:0.5 delay:0.0 options:UIViewAnimationOptionAllowUserInteraction | UIViewAnimationOptionBeginFromCurrentState | UIViewAnimationOptionCurveEaseOut animations:^{
-                [self layoutIfNeeded];
-            }completion:^(BOOL finished){
-                if (finished)
-                    _isAnimating = NO;
-            }];
-        _isAnimating = YES;
-    }
+            [UIView animateConcurrentlyToAnimationsWithFlag:&_isAnimating duration:ECItemViewShortAnimationDuration animations:_exitEditingAnimation completion:NULL];
     [self didChangeValueForKey:@"editing"];   
 }
 
@@ -135,7 +129,27 @@
     [_items release];
     [_tapRecognizer release];
     [_dragRecognizer release];
+    [_layoutItem release];
+    [_enterEditingAnimation release];
+    [_exitEditingAnimation release];
     [super dealloc];
+}
+
+- (void)setupAnimations
+{
+    _layoutItem = [^(ECItemViewCell *cell, NSUInteger index, BOOL *stop){
+        if (_isDragging && cell == _draggedItem)
+            return;
+        CGPoint center = [self _centerForItem:index];
+        if (!CGPointEqualToPoint(center, cell.center))
+            cell.center = center;
+    } copy];
+    _enterEditingAnimation = [^{
+        [self layoutIfNeeded];
+    } copy];
+    _exitEditingAnimation = [^{
+        [self layoutIfNeeded];
+    } copy];
 }
 
 static id init(ECItemView *self)
@@ -155,6 +169,7 @@ static id init(ECItemView *self)
     self->_dragRecognizer.cancelsTouchesInView = NO;
     self->_dragRecognizer.delegate = self;
     [self addGestureRecognizer:self->_dragRecognizer];
+    [self setupAnimations];
     return self;
 }
 
@@ -193,20 +208,12 @@ static id init(ECItemView *self)
         [self reloadData];
     if (_isBatchUpdating)
         [NSException raise:NSInternalInconsistencyException format:@"beginUpdates without corresponding endUpdates"];
-    __block CGPoint center = CGPointZero;
-    void (^layoutItem)(ECItemViewCell *cell, NSUInteger index, BOOL *stop) = ^(ECItemViewCell *cell, NSUInteger index, BOOL *stop){
-        if (_isDragging && cell == _draggedItem)
-            return;
-        center = [self _centerForItem:index];
-        if (!CGPointEqualToPoint(center, cell.center))
-            cell.center = center;
-    };
     if (_isDragging)
-        [UIView animateWithDuration:0.25 delay:0.0 options:UIViewAnimationCurveEaseOut | UIViewAnimationOptionAllowUserInteraction | UIViewAnimationOptionBeginFromCurrentState animations:^(void) {
-            [_itemsWhileDragging enumerateObjectsUsingBlock:layoutItem];
+        [UIView animateConcurrentlyToAnimationsWithFlag:&_isAnimating duration:ECItemViewShortAnimationDuration animations:^(void) {
+            [_itemsWhileDragging enumerateObjectsUsingBlock:_layoutItem];
         } completion:NULL];
     else
-        [_items enumerateObjectsUsingBlock:layoutItem];
+        [_items enumerateObjectsUsingBlock:_layoutItem];
 }
 
 #pragma mark -
@@ -350,7 +357,8 @@ static id init(ECItemView *self)
             [_items insertObject:cell atIndex:index];
         }
     }
-    [UIView animateWithDuration:3.0 animations:^(void) {
+    [UIView animateConcurrentlyToAnimationsWithFlag:&_isAnimating duration:ECItemViewLongAnimationDuration animations:^(void) {
+//    [UIView animateWithDuration:ECItemViewShortAnimationDuration animations:^(void) {
         for (ECItemViewCell *cell in cellsToInsert) {
             cell.bounds = UIEdgeInsetsInsetRect(_itemFrame, _itemInsets);
             cell.alpha = 1.0;
@@ -483,7 +491,7 @@ static id init(ECItemView *self)
         }
         [_items removeObjectAtIndex:_draggedItemIndex];
         [_items insertObject:_draggedItem atIndex:dragDestination];
-        [UIView animateWithDuration:0.25 animations:^(void) {
+        [UIView animateWithDuration:ECItemViewShortAnimationDuration animations:^(void) {
             _draggedItem.center = [self convertPoint:[self _centerForItem:dragDestination] toView:_viewToDragIn];
         } completion:^(BOOL finished) {
             [self addSubview:_draggedItem];
@@ -507,7 +515,7 @@ static id init(ECItemView *self)
     [_itemsWhileDragging release];
     _itemsWhileDragging = _items;
     [self setNeedsLayout];
-    [UIView animateWithDuration:0.25 animations:^(void) {
+    [UIView animateWithDuration:ECItemViewShortAnimationDuration animations:^(void) {
         [self layoutIfNeeded];
     }];
     _isDragging = NO;
@@ -523,7 +531,7 @@ static id init(ECItemView *self)
     [_items insertObject:cell atIndex:dragDestination];
     ++_numberOfItems;
     [self addSubview:cell];
-    [UIView animateWithDuration:0.25 animations:^(void) {
+    [UIView animateWithDuration:ECItemViewShortAnimationDuration animations:^(void) {
         _draggedItem.center = [self convertPoint:[self _centerForItem:dragDestination] toView:_viewToDragIn];
     } completion:^(BOOL finished) {
         [self addSubview:_draggedItem];
@@ -536,10 +544,10 @@ static id init(ECItemView *self)
     [_itemsWhileDragging release];
     _itemsWhileDragging = _items;
     [self setNeedsLayout];
-    [UIView animateWithDuration:0.25 animations:^(void) {
+    [UIView animateWithDuration:ECItemViewShortAnimationDuration animations:^(void) {
         [self layoutIfNeeded];
     }];
-    [UIView animateWithDuration:0.25 animations:^(void) {
+    [UIView animateWithDuration:ECItemViewShortAnimationDuration animations:^(void) {
         _draggedItem.center = [self convertPoint:[self _centerForItem:_draggedItemIndex] toView:_viewToDragIn];
     } completion:^(BOOL finished) {
         [self addSubview:_draggedItem];
@@ -575,7 +583,6 @@ static id init(ECItemView *self)
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch
 {
-    NSLog(@"should receive");
     if ([self itemAtPoint:[touch locationInView:self]] != -1)
         return YES;
     return NO;
@@ -596,14 +603,6 @@ static id init(ECItemView *self)
         if (![self isDescendantOfView:_viewToDragIn])
             _viewToDragIn = self;
     return shouldBegin;
-}
-
-- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
-{
-    NSLog(@"should recognize simultaneously");
-    if ([otherGestureRecognizer.delegate class] == [ECItemView class])
-        return YES;
-    return NO;
 }
 
 @end

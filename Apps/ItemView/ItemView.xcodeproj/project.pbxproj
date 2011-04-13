@@ -18,6 +18,7 @@
 		B706EFD013545CE000E03DDF /* ItemViewViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B706EFCE13545CE000E03DDF /* ItemViewViewController.xib */; };
 		B706EFDB13545D2000E03DDF /* ECItemView.m in Sources */ = {isa = PBXBuildFile; fileRef = B706EFD813545D2000E03DDF /* ECItemView.m */; };
 		B706EFDC13545D2000E03DDF /* ECItemViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B706EFDA13545D2000E03DDF /* ECItemViewCell.m */; };
+		B706F0271355971F00E03DDF /* UIView+ConcurrentAnimation.m in Sources */ = {isa = PBXBuildFile; fileRef = B706F0261355971F00E03DDF /* UIView+ConcurrentAnimation.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -39,6 +40,8 @@
 		B706EFD813545D2000E03DDF /* ECItemView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECItemView.m; path = ../../Frameworks/ECUIKit/ECItemView.m; sourceTree = "<group>"; };
 		B706EFD913545D2000E03DDF /* ECItemViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECItemViewCell.h; path = ../../Frameworks/ECUIKit/ECItemViewCell.h; sourceTree = "<group>"; };
 		B706EFDA13545D2000E03DDF /* ECItemViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECItemViewCell.m; path = ../../Frameworks/ECUIKit/ECItemViewCell.m; sourceTree = "<group>"; };
+		B706F0251355971F00E03DDF /* UIView+ConcurrentAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIView+ConcurrentAnimation.h"; path = "../../Frameworks/ECUIKit/UIView+ConcurrentAnimation.h"; sourceTree = "<group>"; };
+		B706F0261355971F00E03DDF /* UIView+ConcurrentAnimation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIView+ConcurrentAnimation.m"; path = "../../Frameworks/ECUIKit/UIView+ConcurrentAnimation.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -115,6 +118,8 @@
 				B706EFD813545D2000E03DDF /* ECItemView.m */,
 				B706EFD913545D2000E03DDF /* ECItemViewCell.h */,
 				B706EFDA13545D2000E03DDF /* ECItemViewCell.m */,
+				B706F0251355971F00E03DDF /* UIView+ConcurrentAnimation.h */,
+				B706F0261355971F00E03DDF /* UIView+ConcurrentAnimation.m */,
 			);
 			name = ECUIKit;
 			sourceTree = "<group>";
@@ -184,6 +189,7 @@
 				B706EFCD13545CE000E03DDF /* ItemViewViewController.m in Sources */,
 				B706EFDB13545D2000E03DDF /* ECItemView.m in Sources */,
 				B706EFDC13545D2000E03DDF /* ECItemViewCell.m in Sources */,
+				B706F0271355971F00E03DDF /* UIView+ConcurrentAnimation.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -300,6 +306,7 @@
 				B706EFD513545CE000E03DDF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
