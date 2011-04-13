@@ -42,6 +42,7 @@
 - (void)_handleDrag:(UIPanGestureRecognizer *)dragRecognizer;
 - (void)_beginDrag:(UIPanGestureRecognizer *)dragRecognizer;
 - (void)_continueDrag:(UIPanGestureRecognizer *)dragRecognizer;
+- (void)_continueDragFromOtherView:(UIPanGestureRecognizer *)dragRecognizer;
 - (void)_endDrag:(UIPanGestureRecognizer *)dragRecognizer;
 - (void)_cancelDrag:(UIPanGestureRecognizer *)dragRecognizer;
 - (NSInteger)_receiveDroppedCell:(ECItemViewCell *)cell fromDrag:(UIPanGestureRecognizer *)dragRecognizer;
@@ -432,6 +433,28 @@ static id init(ECItemView *self)
     [self setNeedsLayout];
 }
 
+- (void)_continueDragFromOtherView:(UIPanGestureRecognizer *)dragRecognizer
+{
+    if (!_isDragging)
+    {
+        _isDragging = YES;
+        _itemsWhileDragging = [_items mutableCopy];
+        _draggedItemIndex = -1;
+        _draggedItem = (ECItemViewCell *)[NSNull null];
+        _previousDragDestination = -1;
+    }
+    [self _continueDrag:dragRecognizer];
+//    NSInteger dragDestination = [self _paddedItemAtPoint:[dragRecognizer locationInView:self]];
+//    if (dragDestination == _previousDragDestination)
+//        return;
+//    if (_previousDragDestination != -1)
+//        [_itemsWhileDragging removeObjectAtIndex:_previousDragDestination];
+//    if (dragDestination != -1)
+//        [_itemsWhileDragging insertObject:[NSNull null] atIndex:dragDestination];
+//    _previousDragDestination = dragDestination;
+//    [self setNeedsLayout];
+}
+
 - (void)_endDrag:(UIPanGestureRecognizer *)dragRecognizer
 {
     ECItemView *targetView = (ECItemView *)[_viewToDragIn hitTest:[dragRecognizer locationInView:_viewToDragIn] withEvent:nil];
@@ -477,6 +500,7 @@ static id init(ECItemView *self)
             return;
         }
         [_items removeObjectAtIndex:_draggedItemIndex];
+        --_numberOfItems;
         if (_delegateDidDropItem)
             [_delegate itemView:self didDropItem:_draggedItemIndex inTargetItemView:targetView atIndex:dragDestination];
     }
@@ -491,10 +515,14 @@ static id init(ECItemView *self)
 
 - (NSInteger)_receiveDroppedCell:(ECItemViewCell *)cell fromDrag:(UIPanGestureRecognizer *)dragRecognizer
 {
+    _isDragging = NO;
+    [_itemsWhileDragging release];
     NSInteger dragDestination = [self _paddedItemAtPoint:[dragRecognizer locationInView:self]];
     if (dragDestination == -1)
         return -1;
     [_items insertObject:cell atIndex:dragDestination];
+    ++_numberOfItems;
+    [self addSubview:cell];
     [UIView animateWithDuration:0.25 animations:^(void) {
         _draggedItem.center = [self convertPoint:[self _centerForItem:dragDestination] toView:_viewToDragIn];
     } completion:^(BOOL finished) {
@@ -536,7 +564,8 @@ static id init(ECItemView *self)
             [self _continueDrag:dragRecognizer];
             return;
         }
-        [targetView _continueDrag:dragRecognizer];   
+        [targetView _continueDrag:dragRecognizer];
+        [self _continueDrag:dragRecognizer];
     }
     else if ([dragRecognizer state] == UIGestureRecognizerStateEnded)
         [self _endDrag:dragRecognizer];
