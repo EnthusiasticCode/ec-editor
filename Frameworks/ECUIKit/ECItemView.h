@@ -45,21 +45,22 @@ extern const NSUInteger ECItemViewItemNotFound;
 - (NSUInteger)columns;
 - (NSUInteger)rows;
 
-- (void)beginUpdates;
-- (void)endUpdates;
-
-- (void)addItem:(UIView *)item;
-- (void)insertItem:(UIView *)item atIndex:(NSUInteger)index;
-- (void)removeLastItem;
-- (void)removeItemAtIndex:(NSUInteger)index;
-- (void)replaceItemAtIndex:(NSUInteger)index withItem:(UIView *)item;
-
-- (void)addItemsFromArray:(NSArray *)otherArray;
-- (void)exchangeItemAtIndex:(NSUInteger)index1 withItemAtIndex:(NSUInteger)index2;
-- (void)removeAllItems;
-
-- (void)insertItems:(NSArray *)items atIndexes:(NSIndexSet *)indexes;
-- (void)removeItemsAtIndexes:(NSIndexSet *)indexes;
-- (void)replaceItemsAtIndexes:(NSIndexSet *)indexes withItems:(NSArray *)items;
+// NYI
+//- (void)beginUpdates;
+//- (void)endUpdates;
+//
+//- (void)addItem:(UIView *)item;
+//- (void)insertItem:(UIView *)item atIndex:(NSUInteger)index;
+//- (void)removeLastItem;
+//- (void)removeItemAtIndex:(NSUInteger)index;
+//- (void)replaceItemAtIndex:(NSUInteger)index withItem:(UIView *)item;
+//
+//- (void)addItemsFromArray:(NSArray *)otherArray;
+//- (void)exchangeItemAtIndex:(NSUInteger)index1 withItemAtIndex:(NSUInteger)index2;
+//- (void)removeAllItems;
+//
+//- (void)insertItems:(NSArray *)items atIndexes:(NSIndexSet *)indexes;
+//- (void)removeItemsAtIndexes:(NSIndexSet *)indexes;
+//- (void)replaceItemsAtIndexes:(NSIndexSet *)indexes withItems:(NSArray *)items;
 
 @end

@@ -338,7 +338,7 @@ static const CGFloat ECItemViewLongAnimationDuration = 5.0;
     return [self _itemAtPoint:point includingPadding:NO];
 }
 
-- (void)beginUpdates
+/*- (void)beginUpdates
 {
     if (!_isBatchUpdating)
     {
@@ -354,7 +354,7 @@ static const CGFloat ECItemViewLongAnimationDuration = 5.0;
     if (!_isBatchUpdating)
         [NSException raise:NSInternalInconsistencyException format:@"endUpdates without corresponding beginUpdates"];
     --_isBatchUpdating;
-/*    NSUInteger offset = 0;
+    NSUInteger offset = 0;
     NSMutableArray *cellsToInsert = [NSMutableArray arrayWithCapacity:[_itemsToInsert count]];
     NSMutableArray *cellsToDelete = [NSMutableArray arrayWithCapacity:[_itemsToDelete count]];
     NSMutableArray *cellsToLoad = [NSMutableArray arrayWithCapacity:[_itemsToReload count]];
@@ -419,14 +419,14 @@ static const CGFloat ECItemViewLongAnimationDuration = 5.0;
         {
             [cell removeFromSuperview];
         }
-    }];*/
+    }];
     if (!_isBatchUpdating)
     {
         [_itemsToInsert release];
         [_itemsToDelete release];
         [_itemsToReload release];
     }
-}
+}*/
 
 #pragma mark -
 #pragma mark UIGestureRecognizer
@@ -449,7 +449,6 @@ static const CGFloat ECItemViewLongAnimationDuration = 5.0;
     _draggedItemContainer = [[ECItemViewDragContainer alloc] initWithView:[_items objectAtIndex:_draggedItemIndex]];
     _currentDragDestination = _draggedItemIndex;
     [_viewToDragIn addSubview:_draggedItemContainer];
-    [_viewToDragIn bringSubviewToFront:_draggedItemContainer];
     _draggedItemContainer.center = [dragRecognizer locationInView:_viewToDragIn];
 }
 
@@ -466,16 +465,16 @@ static const CGFloat ECItemViewLongAnimationDuration = 5.0;
 - (BOOL)_endDrag:(UIPanGestureRecognizer *)dragRecognizer
 {
     ECItemView *targetView = [self _targetForDrop:dragRecognizer];
-    if (![_delegate itemView:self canDropItem:_draggedItemIndex inTargetItemView:targetView])
-    {
-        return NO;
-    }
     NSUInteger dragDestination = [targetView _indexOfDropAtPoint:[dragRecognizer locationInView:targetView]];
     if (dragDestination == ECItemViewItemNotFound)
     {
         return NO;
     }
-    [_items removeObjectAtIndex:_draggedItemIndex]; // NOTE: could be wrong index depending on whether it was dropped in the same item view or not
+    if (![_delegate itemView:self canDropItem:_draggedItemIndex inTargetItemView:targetView])
+    {
+        return NO;
+    }
+    [_items removeObjectAtIndex:_draggedItemIndex];
     [targetView _receiveDroppedItemContainer:_draggedItemContainer forItem:dragDestination];
     if (_delegateDidDropItem)
         [_delegate itemView:self didDropItem:_draggedItemIndex inTargetItemView:targetView atIndex:dragDestination];
