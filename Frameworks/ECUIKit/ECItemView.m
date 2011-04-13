@@ -497,9 +497,9 @@ static const CGFloat ECItemViewLongAnimationDuration = 5.0;
         _isDragging = NO;
         [_draggedItemContainer release];
         _draggedItemContainer = nil;
+        _currentDragDestination = ECItemViewItemNotFound;
+        [self setNeedsLayout];
     }];
-    _currentDragDestination = ECItemViewItemNotFound;
-    [self setNeedsLayout];
 }
 
 - (ECItemView *)_targetForDrop:(UIPanGestureRecognizer *)dragRecognizer
@@ -544,9 +544,9 @@ static const CGFloat ECItemViewLongAnimationDuration = 5.0;
         [self addSubview:itemContainer.view];
         itemContainer.view.center = [self _centerForItem:item];
         [itemContainer release];
+        _currentDragDestination = ECItemViewItemNotFound;
+        [self setNeedsLayout];
     }];
-    _currentDragDestination = ECItemViewItemNotFound;
-    [self setNeedsLayout];
 }
 
 - (void)_handleDrag:(UIPanGestureRecognizer *)dragRecognizer
