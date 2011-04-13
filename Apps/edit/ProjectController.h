@@ -12,7 +12,7 @@
 @class ECCodeIndex;
 @class Project;
 
-@interface ProjectController : UIViewController <UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate, ECItemViewDataSource>
+@interface ProjectController : UIViewController <UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate>
 @property (nonatomic, retain) NSArray *extensionsToShow;
 @property (nonatomic, retain) Project *project;
 @property (nonatomic, retain) ECCodeIndex *codeIndex;

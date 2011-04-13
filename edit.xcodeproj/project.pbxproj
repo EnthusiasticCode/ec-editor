@@ -7,12 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B706F05A13563ECB00E03DDF /* UIColor+StyleColors.m in Sources */ = {isa = PBXBuildFile; fileRef = B706F05513563ECB00E03DDF /* UIColor+StyleColors.m */; };
+		B706F05B13563ECB00E03DDF /* UIImage+BlockDrawing.m in Sources */ = {isa = PBXBuildFile; fileRef = B706F05713563ECB00E03DDF /* UIImage+BlockDrawing.m */; };
+		B706F05C13563ECB00E03DDF /* UIView+ConcurrentAnimation.m in Sources */ = {isa = PBXBuildFile; fileRef = B706F05913563ECB00E03DDF /* UIView+ConcurrentAnimation.m */; };
 		B70D64BC132A2581008DDEA4 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B70D64BB132A2581008DDEA4 /* UIKit.framework */; };
 		B70D64BE132A2581008DDEA4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B70D64BD132A2581008DDEA4 /* Foundation.framework */; };
 		B70D64C0132A2581008DDEA4 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B70D64BF132A2581008DDEA4 /* CoreGraphics.framework */; };
 		B70D6573132A277C008DDEA4 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B70D6572132A277C008DDEA4 /* CoreText.framework */; };
 		B70D6575132A279C008DDEA4 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B70D6574132A279C008DDEA4 /* CoreData.framework */; };
-		B747E8A51353970A00076727 /* ECItemViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B747E8A41353970A00076727 /* ECItemViewCell.m */; };
 		B7A04CA9134F68BD00B72575 /* File.m in Sources */ = {isa = PBXBuildFile; fileRef = B7A04CA8134F68BD00B72575 /* File.m */; };
 		B7A04D0913537FA100B72575 /* ECItemView.m in Sources */ = {isa = PBXBuildFile; fileRef = B7A04D0813537FA100B72575 /* ECItemView.m */; };
 		B7DBA580132A3281004C0E1D /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7DBA57F132A3281004C0E1D /* QuartzCore.framework */; };
@@ -64,6 +66,12 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		B706F05413563ECB00E03DDF /* UIColor+StyleColors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIColor+StyleColors.h"; path = "Frameworks/ECUIKit/UIColor+StyleColors.h"; sourceTree = "<group>"; };
+		B706F05513563ECB00E03DDF /* UIColor+StyleColors.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIColor+StyleColors.m"; path = "Frameworks/ECUIKit/UIColor+StyleColors.m"; sourceTree = "<group>"; };
+		B706F05613563ECB00E03DDF /* UIImage+BlockDrawing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIImage+BlockDrawing.h"; path = "Frameworks/ECUIKit/UIImage+BlockDrawing.h"; sourceTree = "<group>"; };
+		B706F05713563ECB00E03DDF /* UIImage+BlockDrawing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIImage+BlockDrawing.m"; path = "Frameworks/ECUIKit/UIImage+BlockDrawing.m"; sourceTree = "<group>"; };
+		B706F05813563ECB00E03DDF /* UIView+ConcurrentAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIView+ConcurrentAnimation.h"; path = "Frameworks/ECUIKit/UIView+ConcurrentAnimation.h"; sourceTree = "<group>"; };
+		B706F05913563ECB00E03DDF /* UIView+ConcurrentAnimation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIView+ConcurrentAnimation.m"; path = "Frameworks/ECUIKit/UIView+ConcurrentAnimation.m"; sourceTree = "<group>"; };
 		B70D64B7132A2581008DDEA4 /* edit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = edit.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B70D64BB132A2581008DDEA4 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		B70D64BD132A2581008DDEA4 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -71,8 +79,6 @@
 		B70D6572132A277C008DDEA4 /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
 		B70D6574132A279C008DDEA4 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		B70D6649132A28AB008DDEA4 /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Developer/Library/Frameworks/SenTestingKit.framework; sourceTree = SDKROOT; };
-		B747E8A31353970A00076727 /* ECItemViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECItemViewCell.h; path = Frameworks/ECUIKit/ECItemViewCell.h; sourceTree = "<group>"; };
-		B747E8A41353970A00076727 /* ECItemViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECItemViewCell.m; path = Frameworks/ECUIKit/ECItemViewCell.m; sourceTree = "<group>"; };
 		B7A04CA7134F68BD00B72575 /* File.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = File.h; path = Apps/edit/File.h; sourceTree = SOURCE_ROOT; };
 		B7A04CA8134F68BD00B72575 /* File.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = File.m; path = Apps/edit/File.m; sourceTree = SOURCE_ROOT; };
 		B7A04D0713537FA100B72575 /* ECItemView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECItemView.h; path = Frameworks/ECUIKit/ECItemView.h; sourceTree = "<group>"; };
@@ -189,6 +195,19 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		B706F05313563EB100E03DDF /* UIKit Additions */ = {
+			isa = PBXGroup;
+			children = (
+				B706F05413563ECB00E03DDF /* UIColor+StyleColors.h */,
+				B706F05513563ECB00E03DDF /* UIColor+StyleColors.m */,
+				B706F05613563ECB00E03DDF /* UIImage+BlockDrawing.h */,
+				B706F05713563ECB00E03DDF /* UIImage+BlockDrawing.m */,
+				B706F05813563ECB00E03DDF /* UIView+ConcurrentAnimation.h */,
+				B706F05913563ECB00E03DDF /* UIView+ConcurrentAnimation.m */,
+			);
+			name = "UIKit Additions";
+			sourceTree = "<group>";
+		};
 		B70D64A4132A24FF008DDEA4 = {
 			isa = PBXGroup;
 			children = (
@@ -313,11 +332,12 @@
 		CDEBF27513489BD400CE2285 /* ECUIKit */ = {
 			isa = PBXGroup;
 			children = (
+				B706F05313563EB100E03DDF /* UIKit Additions */,
+				CDEBF2BC13489DCA00CE2285 /* Core Additions */,
 				CDEBF2C013489EC100CE2285 /* Text Layer */,
 				CDEBF2BE13489DDA00CE2285 /* Text */,
 				CDEBF2BD13489DD200CE2285 /* Document */,
-				CDEBF2BF13489E0100CE2285 /* Relational Table */,
-				CDEBF2BC13489DCA00CE2285 /* Core Additions */,
+				CDEBF2BF13489E0100CE2285 /* Item View */,
 				CDEBF2BB13489DC100CE2285 /* Code Scroll View */,
 				CDEBF2B913489DBA00CE2285 /* Code View */,
 			);
@@ -385,15 +405,13 @@
 			name = Text;
 			sourceTree = "<group>";
 		};
-		CDEBF2BF13489E0100CE2285 /* Relational Table */ = {
+		CDEBF2BF13489E0100CE2285 /* Item View */ = {
 			isa = PBXGroup;
 			children = (
 				B7A04D0713537FA100B72575 /* ECItemView.h */,
 				B7A04D0813537FA100B72575 /* ECItemView.m */,
-				B747E8A31353970A00076727 /* ECItemViewCell.h */,
-				B747E8A41353970A00076727 /* ECItemViewCell.m */,
 			);
-			name = "Relational Table";
+			name = "Item View";
 			sourceTree = "<group>";
 		};
 		CDEBF2C013489EC100CE2285 /* Text Layer */ = {
@@ -534,7 +552,9 @@
 				B7E5CF951348C20B00A4C65A /* ECClangCodeUnit.m in Sources */,
 				B7A04CA9134F68BD00B72575 /* File.m in Sources */,
 				B7A04D0913537FA100B72575 /* ECItemView.m in Sources */,
-				B747E8A51353970A00076727 /* ECItemViewCell.m in Sources */,
+				B706F05A13563ECB00E03DDF /* UIColor+StyleColors.m in Sources */,
+				B706F05B13563ECB00E03DDF /* UIImage+BlockDrawing.m in Sources */,
+				B706F05C13563ECB00E03DDF /* UIView+ConcurrentAnimation.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

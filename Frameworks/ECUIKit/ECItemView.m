@@ -150,6 +150,9 @@ static const CGFloat ECItemViewLongAnimationDuration = 5.0;
     if (items == _items)
         return;
     [self willChangeValueForKey:@"items"];
+    for (UIView *item in _items)
+        if ([item superview] == self)
+            [item removeFromSuperview];
     [_items release];
     _items = [items mutableCopy];
     for (UIView *item in _items) {
@@ -212,6 +215,7 @@ static const CGFloat ECItemViewLongAnimationDuration = 5.0;
     _viewInsets = UIEdgeInsetsMake(5.0, 5.0, 5.0, 5.0);
     _itemInsets = UIEdgeInsetsMake(5.0, 5.0, 5.0, 5.0);
     _itemBounds = CGRectMake(0.0, 0.0, 100.0, 100.0);
+    self.clipsToBounds = YES;
     _animatesChanges = YES;
     _allowsSelection = YES;
     _allowsDragging = YES;

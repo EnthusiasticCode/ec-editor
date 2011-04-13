@@ -230,13 +230,21 @@
     {
         group = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"Group"] autorelease];
         itemView = [[[ECItemView alloc] init] autorelease];
-        itemView.dataSource = self;
+        itemView.tag = 1;
         [group.contentView addSubview:itemView];
         itemView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
         itemView.frame = group.contentView.bounds;
     }
-//    itemView = (ECItemView *)[group.contentView viewWithTag:1];
-//    NSArray *files = [self filesInSubfolder:[self tableView:nil titleForHeaderInSection:indexPath.section]];
+    itemView = (ECItemView *)[group.contentView viewWithTag:1];
+    NSArray *files = [self filesInSubfolder:[self tableView:nil titleForHeaderInSection:indexPath.section]];
+    NSMutableArray *labels = [NSMutableArray arrayWithCapacity:[files count]];
+    for (NSString *file in files)
+    {
+        UILabel *label = [[[UILabel alloc] init] autorelease];
+        label.text = file;
+        [labels addObject:label];
+    }
+    itemView.items = labels;
 //    label.text = [files componentsJoinedByString:@"\n"];
 //    if (self.isEditing && !(indexPath.row % 2))
 //        label.text = @"";
@@ -251,20 +259,5 @@
 
 #pragma mark -
 #pragma mark UITableViewDelegate
-
-#pragma mark -
-#pragma mark ECItemViewDataSource
-
-- (NSInteger)numberOfItemsInItemView:(ECItemView *)itemView
-{
-    return 5;
-}
-
-- (ECItemViewCell *)itemView:(ECItemView *)itemView cellForItem:(NSInteger)item
-{
-    ECItemViewCell *cell = [[[ECItemViewCell alloc] init] autorelease];
-    cell.backgroundColor = [UIColor redColor];
-    return cell;
-}
 
 @end
