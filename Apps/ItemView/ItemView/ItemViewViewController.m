@@ -48,6 +48,7 @@
 {
     UIView *cell = [[[UIView alloc] init] autorelease];
     cell.backgroundColor = [UIColor colorWithRed:1.0/(rand() % 5 + 1) green:1.0/(rand() % 5 + 1) blue:1.0/(rand() % 5 + 1) alpha:1.0];
+    cell.clipsToBounds = YES;
     return cell;
 }
 

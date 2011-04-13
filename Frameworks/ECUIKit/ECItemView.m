@@ -488,15 +488,16 @@ static const CGFloat ECItemViewLongAnimationDuration = 5.0;
 
 - (void)_cancelDrag:(UIPanGestureRecognizer *)dragRecognizer
 {
-    [UIView animateWithDuration:ECItemViewShortAnimationDuration animations:^(void) {
+    [UIView animateConcurrentlyToAnimationsWithFlag:&_isAnimating duration:ECItemViewShortAnimationDuration animations:^(void) {
         _draggedItemContainer.center = [self convertPoint:[self _centerForItem:_draggedItemIndex] toView:_viewToDragIn];
     } completion:^(BOOL finished) {
         [self addSubview:_draggedItemContainer.view];
+        _draggedItemContainer.view.center = [self _centerForItem:_draggedItemIndex];
         _draggedItemIndex = ECItemViewItemNotFound;
         _isDragging = NO;
+        [_draggedItemContainer release];
+        _draggedItemContainer = nil;
     }];
-    [_draggedItemContainer release];
-    _draggedItemContainer = nil;
     _currentDragDestination = ECItemViewItemNotFound;
     [self setNeedsLayout];
 }
@@ -535,11 +536,13 @@ static const CGFloat ECItemViewLongAnimationDuration = 5.0;
 {
     if (item == ECItemViewItemNotFound)
         return;
-    CGPoint center = [self convertPoint:[self _centerForItem:item] toView:_viewToDragIn];
-    [UIView animateWithDuration:ECItemViewShortAnimationDuration animations:^(void) {
-        _draggedItemContainer.center = center;
+    [itemContainer retain];
+    [UIView animateConcurrentlyToAnimationsWithFlag:&_isAnimating duration:ECItemViewShortAnimationDuration animations:^(void) {
+        itemContainer.center = [self convertPoint:[self _centerForItem:item] toView:[itemContainer superview]];
     } completion:^(BOOL finished) {
         [self addSubview:itemContainer.view];
+        itemContainer.view.center = [self _centerForItem:item];
+        [itemContainer release];
     }];
     [_items insertObject:itemContainer.view atIndex:item];
     _currentDragDestination = ECItemViewItemNotFound;
@@ -565,8 +568,6 @@ static const CGFloat ECItemViewLongAnimationDuration = 5.0;
     else if ([dragRecognizer state] == UIGestureRecognizerStateEnded)
         if (![self _endDrag:dragRecognizer])
             [self _cancelDrag:dragRecognizer];
-    else
-        [self _cancelDrag:dragRecognizer];
 }
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch
