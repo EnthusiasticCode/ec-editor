@@ -478,11 +478,11 @@ static const CGFloat ECItemViewLongAnimationDuration = 5.0;
     [targetView _receiveDroppedItemContainer:_draggedItemContainer forItem:dragDestination];
     if (_delegateDidDropItem)
         [_delegate itemView:self didDropItem:_draggedItemIndex inTargetItemView:targetView atIndex:dragDestination];
-    [self setNeedsLayout];
     _draggedItemIndex = ECItemViewItemNotFound;
     _isDragging = NO;
     [_draggedItemContainer release];
     _draggedItemContainer = nil;
+    [self setNeedsLayout];
     return YES;
 }
 
@@ -540,11 +540,11 @@ static const CGFloat ECItemViewLongAnimationDuration = 5.0;
     [UIView animateConcurrentlyToAnimationsWithFlag:&_isAnimating duration:ECItemViewShortAnimationDuration animations:^(void) {
         itemContainer.center = [self convertPoint:[self _centerForItem:item] toView:[itemContainer superview]];
     } completion:^(BOOL finished) {
+        [_items insertObject:itemContainer.view atIndex:item];
         [self addSubview:itemContainer.view];
         itemContainer.view.center = [self _centerForItem:item];
         [itemContainer release];
     }];
-    [_items insertObject:itemContainer.view atIndex:item];
     _currentDragDestination = ECItemViewItemNotFound;
     [self setNeedsLayout];
 }
