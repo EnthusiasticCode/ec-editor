@@ -19,23 +19,21 @@
     [super dealloc];
 }
 
-- (void)didReceiveMemoryWarning
-{
-    // Releases the view if it doesn't have a superview.
-    [super didReceiveMemoryWarning];
-    
-    // Release any cached data, images, etc that aren't in use.
-}
-
 #pragma mark - View lifecycle
 
-/*
 // Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    NSMutableArray *itemsA = [[[NSMutableArray alloc] initWithCapacity:5] autorelease];
+    for (NSUInteger i = 0; i < 5; ++i)
+        [itemsA addObject:[self randomColorCell]];
+    NSMutableArray *itemsB = [[[NSMutableArray alloc] initWithCapacity:9] autorelease];
+    for (NSUInteger i = 0; i < 9; ++i)
+        [itemsB addObject:[self randomColorCell]];
+    self.itemViewA.items = itemsA;
+    self.itemViewB.items = itemsB;
 }
-*/
 
 - (void)viewDidUnload
 {
@@ -46,52 +44,37 @@
     // e.g. self.myOutlet = nil;
 }
 
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
+- (UIView *)randomColorCell
 {
-    // Return YES for supported orientations
-    return YES;
-}
-
-- (NSInteger)numberOfItemsInItemView:(ECItemView *)itemView
-{
-    if (itemView == itemViewA)
-        return 5;
-    if (itemView == itemViewB)
-        return 9;
-    return 0;
-}
-
-- (ECItemViewCell *)itemView:(ECItemView *)itemView cellForItem:(NSInteger)item
-{
-    ECItemViewCell *cell = [[[ECItemViewCell alloc] init] autorelease];
-//    cell.backgroundColor = [UIColor redColor];
+    UIView *cell = [[[UIView alloc] init] autorelease];
     cell.backgroundColor = [UIColor colorWithRed:1.0/(rand() % 5 + 1) green:1.0/(rand() % 5 + 1) blue:1.0/(rand() % 5 + 1) alpha:1.0];
     return cell;
 }
 
-- (IBAction)batchUpdates:(id)sender {
+- (IBAction)batchUpdates:(id)sender
+{
     [self.itemViewA beginUpdates];
-    [self.itemViewA insertItems:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(1, 2)]];
-    [self.itemViewA deleteItems:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(2, 2)]];
-    [self.itemViewA reloadItems:[NSIndexSet indexSetWithIndex:4]];
+    [self.itemViewA insertItem:[self randomColorCell] atIndex:1];
+    [self.itemViewA insertItem:[self randomColorCell] atIndex:2];
+    [self.itemViewA removeItemAtIndex:4];
+    [self.itemViewA removeItemAtIndex:5];
+    [self.itemViewA replaceItemAtIndex:3 withItem:[self randomColorCell]];
     [self.itemViewA endUpdates];
 }
 
-- (void)itemView:(ECItemView *)itemView didSelectItem:(NSInteger)item
+- (void)itemView:(ECItemView *)itemView didSelectItem:(NSUInteger)item
 {
-    [itemView beginUpdates];
-    [itemView reloadItems:[NSIndexSet indexSetWithIndex:item]];
-    [itemView endUpdates];
+    [itemView replaceItemAtIndex:item withItem:[self randomColorCell]];
 }
 
-- (BOOL)itemView:(ECItemView *)itemView shouldDragItem:(NSInteger)item inView:(UIView **)view
+- (BOOL)itemView:(ECItemView *)itemView shouldDragItem:(NSUInteger)item inView:(UIView **)view
 {
     UIView *rootView = self.view;
     *view = rootView;
     return YES;
 }
 
-- (BOOL)itemView:(ECItemView *)itemView canDropItem:(NSInteger)item inTargetItemView:(ECItemView *)targetItemView
+- (BOOL)itemView:(ECItemView *)itemView canDropItem:(NSUInteger)item inTargetItemView:(ECItemView *)targetItemView
 {
     return YES;
 }

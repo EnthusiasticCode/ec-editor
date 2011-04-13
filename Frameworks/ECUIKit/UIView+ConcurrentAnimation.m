@@ -13,7 +13,7 @@
 
 + (void)animateConcurrentlyToAnimationsWithFlag:(BOOL *)animatingFlag duration:(NSTimeInterval)duration animations:(void (^)(void))animations completion:(void (^)(BOOL))completion;
 {
-    if (!animatingFlag)
+    if (!*animatingFlag)
         [self animateWithDuration:duration delay:0.0 options:UIViewAnimationOptionAllowUserInteraction animations:animations completion:^(BOOL finished) {
             if (finished)
                 *animatingFlag = NO;

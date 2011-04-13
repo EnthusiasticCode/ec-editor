@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "ECItemView.h"
 
-@interface ItemViewViewController : UIViewController <ECItemViewDataSource, ECItemViewDelegate> {
+@interface ItemViewViewController : UIViewController <ECItemViewDelegate> {
     
     ECItemView *itemViewA;
     ECItemView *itemViewB;
@@ -17,5 +17,5 @@
 @property (nonatomic, retain) IBOutlet ECItemView *itemViewA;
 @property (nonatomic, retain) IBOutlet ECItemView *itemViewB;
 - (IBAction)batchUpdates:(id)sender;
-
+- (UIView *)randomColorCell;
 @end
