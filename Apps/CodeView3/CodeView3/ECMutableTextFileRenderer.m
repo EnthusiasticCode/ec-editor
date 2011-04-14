@@ -493,7 +493,7 @@
                 CTLineDraw(line, context);
                 CGContextTranslateCTM(context, -lineBounds.size.width, 0);                
             }];
-//            [frameInfo releaseFrame];
+            [frameInfo releaseFrame];
         }];
     }];
 }
@@ -506,8 +506,8 @@
     if (CGRectIsEmpty(rect) || CGRectIsInfinite(rect))
         rect = CGRectNull;
         
-    __block NSUInteger coveredString = 0;
-    __block CGSize renderSize = CGSizeZero;
+    NSUInteger coveredString = 0;
+    CGSize renderSize = CGSizeZero;
     
     // Cache if neccessary
     if (!guessed || !CGRectIsNull(rect))
@@ -518,16 +518,19 @@
     
     if (!guessed)
     {
-        // actual calculation
+        __block NSUInteger actualCovered = 0;
+        __block CGSize actualSize = CGSizeZero;
         [self enumerateFramesetterInfoIntersectingRect:rect usingBlock:^(FramesetterInfo *framesetterInfo, CGRect relativeRect, BOOL *stop) {
             [framesetterInfo enumerateFrameInfoIntersectingRect:relativeRect usingBlock:^(FrameInfo *frameInfo, CGRect relativeRect, BOOL *stop) {
                 [frameInfo enumerateLinesIntersectingRect:relativeRect usingBlock:^(CTLineRef line, CGRect lineBounds, BOOL *stop) {
-                    coveredString += CTLineGetStringRange(line).length;
-                    renderSize.width = MAX(renderSize.width, lineBounds.size.width);
-                    renderSize.height += lineBounds.size.height;
+                    actualCovered += CTLineGetStringRange(line).length;
+                    actualSize.width = MAX(actualSize.width, lineBounds.size.width);
+                    actualSize.height += lineBounds.size.height;
                 }];
             }];
         }];
+        coveredString = actualCovered;
+        renderSize = actualSize;
     }
     else
     {

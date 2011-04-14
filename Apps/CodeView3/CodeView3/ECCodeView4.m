@@ -216,12 +216,21 @@ static void init(ECCodeView4 *self)
     tileViewPool[selected].textRect = (CGRect){ origin, size };
     tileHeights[tileIndex] = tileViewPool[selected].bounds.size.height;
     
+    // Adjust content size
+    // TODO this fix doesn't kick in fast enought
+    if (tileHeights[tileIndex] == 0) 
+    {
+        self.contentSize = CGSizeMake(self.contentSize.width, origin.y);
+        tileCount = tileIndex;
+        return nil;
+    }
+    
     return tileViewPool[selected];
 }
 
 - (void)layoutSubviews
 {
-    [super layoutSubviews];
+//    [super layoutSubviews];
     
     if (tileCount == 0)
         return;
@@ -230,33 +239,32 @@ static void init(ECCodeView4 *self)
     CGRect contentRect = self.bounds;
     
     // Find first visible tile index
-    CGFloat firstY = 0, firstEnd;
-    NSUInteger firstIndex = 0;
-    for (; firstIndex < tileCount; ++firstIndex)
+    CGFloat start = 0, end;
+    NSUInteger index = 0;
+    for (; index < tileCount; ++index)
     {
-        firstEnd = firstY + tileHeights[firstIndex];
-        if (firstEnd > contentRect.origin.y)
+        end = start + tileHeights[index];
+        if (end > contentRect.origin.y)
             break;
-        firstY = firstEnd;
+        start = end;
     }
-    if (firstIndex == tileCount)
+    if (index == tileCount)
     {
-        firstIndex = firstY = 0;
+        index = start = 0;
     }
     
     // Layout first visible tile
-    TextTileView *firstTile = [self viewForTileIndex:firstIndex];
-    firstTile.hidden = NO;
-    firstTile.center = CGPointMake(CGRectGetMidX(contentRect), firstY + tileHeights[firstIndex] / 2.0);
-    firstEnd = firstY + firstTile.textRect.size.height;
+    TextTileView *firstTile = [self viewForTileIndex:index];
+    firstTile.center = CGPointMake(CGRectGetMidX(contentRect), start + tileHeights[index] / 2.0);
+    end = start + firstTile.bounds.size.height;
     
     // Find second visible tile if any
-    NSUInteger secondIndex = firstIndex + 1;
-    if (firstEnd < CGRectGetMaxY(contentRect) && secondIndex < tileCount)
+    index++;
+    if (index < tileCount)
     {
-        TextTileView *secondTile = [self viewForTileIndex:secondIndex];
-        secondTile.hidden = NO;
-        secondTile.center = CGPointMake(CGRectGetMidX(contentRect), firstEnd + tileHeights[secondIndex] / 2.0);
+        TextTileView *secondTile = [self viewForTileIndex:index];
+        secondTile.center = CGPointMake(CGRectGetMidX(contentRect), end + tileHeights[index] / 2.0);
+        end += tileHeights[index];
     }
 }
 
