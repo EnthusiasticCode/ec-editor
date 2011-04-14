@@ -14,31 +14,64 @@
 #pragma mark -
 #pragma mark TextTileView
 
-@interface TextTileView : UIView
+@interface TextTileView : UIView {
+@private
+    ECMutableTextFileRenderer *renderer;
+}
+
+- (id)initWithTextRenderer:(ECMutableTextFileRenderer *)aRenderer;
 
 @property (nonatomic) NSUInteger tileIndex;
 
-@property (getter = isDirty) BOOL dirty;
+@property (nonatomic) CGRect textRect;
 
 @end
 
 @implementation TextTileView
 
-@synthesize tileIndex, dirty;
+@synthesize tileIndex, textRect;
+
+- (void)setTextRect:(CGRect)rect
+{
+    textRect = rect;
+    CGSize renderSize = [renderer renderedSizeForTextRect:rect allowGuessedResult:NO];
+    [self setBounds:(CGRect){ CGPointZero, renderSize }];
+    [self setNeedsDisplay];
+}
+
+- (id)initWithTextRenderer:(ECMutableTextFileRenderer *)aRenderer
+{
+    if ((self = [super init]))
+    {
+        self.opaque = YES;
+        self.clearsContextBeforeDrawing = YES;
+        renderer = aRenderer;
+    }
+    return self;
+}
+
+- (void)drawRect:(CGRect)rect
+{
+    // TODO draw in deferred queue
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    CGContextScaleCTM(context, 1, -1);
+    [renderer drawTextInRect:textRect inContext:context];
+}
 
 @end
 
 #pragma mark -
 #pragma mark ECCodeView4
 
-#define TILEPOOL_COUNT (3)
+#define TILEVIEWPOOL_SIZE (3)
 
 @interface ECCodeView4 () {
 @private
     ECMutableTextFileRenderer *renderer;
     
-    TextTileView* tilePool[TILEPOOL_COUNT];
-    CGSize *tileSizes;
+    TextTileView* tileViewPool[TILEVIEWPOOL_SIZE];
+    CGFloat *tileHeights;
+    NSUInteger tileCount;
 }
 
 - (TextTileView *)viewForTileIndex:(NSUInteger)tileIndex;
@@ -59,20 +92,7 @@
     [renderer setString:text];
     
     self.contentSize = [renderer renderedSizeForTextRect:CGRectNull allowGuessedResult:YES];
-    
-    [self setNeedsDisplay];
-}
-
-- (void)setBounds:(CGRect)bounds
-{
-    [(CATiledLayer *)self.layer setTileSize:bounds.size];
-    [super setBounds:bounds];
-}
-
-- (void)setFrame:(CGRect)frame
-{
-    [(CATiledLayer *)self.layer setTileSize:frame.size];
-    [super setFrame:frame];
+    [self setNeedsLayout];
 }
 
 #pragma mark -
@@ -87,7 +107,9 @@ static void init(ECCodeView4 *self)
 {
     self->renderer = [ECMutableTextFileRenderer new];
     self->renderer.frameWidth = UIEdgeInsetsInsetRect(self.bounds, self->textInsets).size.width;
+    // TODO pref height max(bounds.widht, bound.height) or screen
     self->renderer.framePreferredHeight = self.bounds.size.height;
+    self->renderer.lazyCaching = YES;
 }
 
 - (id)initWithFrame:(CGRect)frame
@@ -112,6 +134,9 @@ static void init(ECCodeView4 *self)
 
 - (void)dealloc
 {
+    free(tileHeights);
+    for (int i = 0; i < TILEVIEWPOOL_SIZE; ++i)
+        [tileViewPool[i] release];
     [renderer release];
     [super dealloc];
 }
@@ -121,30 +146,89 @@ static void init(ECCodeView4 *self)
 
 - (TextTileView *)viewForTileIndex:(NSUInteger)tileIndex
 {
-    int selected = 0;
-    //
-    for (int i = 0; i < TILEPOOL_COUNT; ++i) 
+    if (tileIndex >= tileCount)
+        return nil;
+    
+    int selected = -1;
+    // Select free tile
+    for (int i = 0; i < TILEVIEWPOOL_SIZE; ++i) 
     {
-        if (tilePool[i] && [tilePool[i] tileIndex] == tileIndex)
+        if (tileViewPool[i])
         {
-            return tilePool[i];
+            // Tile already present and ready
+            if ([tileViewPool[i] tileIndex] == tileIndex)
+            {
+                return tileViewPool[i];
+            }
+            // Select from hidden tiles
+            if ([tileViewPool[i] isHidden])
+            {
+                // If still no selection just select this as a candidate
+                if (selected >= 0)
+                    continue;
+                // Select only if better than previous
+                if (abs([tileViewPool[i] tileIndex] - tileIndex) <= 1) 
+                    continue;
+            }
         }
         selected = i;
     }
+    
     // Generate new tile
-    if (tilePool[selected] == nil)
+    if (!tileViewPool[selected]) 
     {
-        tilePool[selected] = [TextTileView new];
-        [tilePool[selected] setTileIndex:tileIndex];
+        tileViewPool[selected] = [[TextTileView alloc] initWithTextRenderer:renderer];
+        // TODO remove from self when not displayed
+        [self addSubview:tileViewPool[selected]];
     }
     
-    return tilePool[selected];
+    tileViewPool[selected].tileIndex = tileIndex;
+    
+    // Calculate tile text rect
+    CGPoint origin = CGPointZero;
+    CGSize size = self.bounds.size;
+    for (int i = 0; i < tileIndex; ++i)
+        origin.y += tileHeights[i];
+    tileViewPool[selected].textRect = (CGRect){ origin, size };
+    tileHeights[tileIndex] = tileViewPool[selected].bounds.size.height;
+    
+    return tileViewPool[selected];
 }
 
 - (void)layoutSubviews
 {
-    if (!tileSizes)
+    [super layoutSubviews];
+    
+    if (tileCount == 0)
         return;
+    
+    // Scrolled content rect
+    CGRect contentRect = self.bounds;
+    
+    // Find first visible tile index
+    CGFloat firstY = 0, firstEnd;
+    NSUInteger firstIndex = 0;
+    for (; firstIndex < tileCount; ++firstIndex)
+    {
+        firstEnd = firstY + tileHeights[firstIndex];
+        if (firstEnd > contentRect.origin.y)
+            break;
+        firstY = firstEnd;
+    }
+    
+    // Layout first visible tile
+    TextTileView *firstTile = [self viewForTileIndex:firstIndex];
+    firstTile.hidden = NO;
+    firstTile.center = CGPointMake(CGRectGetMidX(contentRect), firstY + tileHeights[firstIndex] / 2.0);
+    
+    // Find second visible tile if any
+    NSUInteger secondIndex = firstIndex + 1;
+    if (firstEnd < CGRectGetMaxY(contentRect) && secondIndex < tileCount)
+    {
+        TextTileView *secondTile = [self viewForTileIndex:secondIndex];
+        secondTile.hidden = NO;
+        secondTile.center = CGPointMake(CGRectGetMidX(contentRect), firstEnd + tileHeights[secondIndex] / 2.0);
+    }
 }
 
 @end

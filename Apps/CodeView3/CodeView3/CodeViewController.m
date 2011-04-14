@@ -11,7 +11,6 @@
 
 @implementation CodeViewController
 @synthesize codeView;
-@synthesize scrollView;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -24,7 +23,6 @@
 
 - (void)dealloc
 {
-    [scrollView release];
     [codeView release];
     [super dealloc];
 }
@@ -44,13 +42,10 @@
 {
     [super viewDidLoad];
     
-    codeView.autosizeHeigthToFitTextOnBoundsChange = YES;
     codeView.contentMode = UIViewContentModeRedraw;
     NSMutableAttributedString *str = [[NSMutableAttributedString alloc] initWithString:@"int main(params)\n{ somethinghere\n\treturn 0;\n}"];
-    [codeView setText:str applyDefaultAttributes:YES];
+    codeView.text = str;
     [str release];
-    
-    [self updateLayout];
 }
 
 
@@ -80,21 +75,13 @@
             url = [dir URLByAppendingPathComponent:[url lastPathComponent]];
             s = [NSString stringWithContentsOfURL:url usedEncoding:&enc error:NULL];
             NSMutableAttributedString *string = [[NSMutableAttributedString alloc] initWithString:s];
-            [codeView setText:string applyDefaultAttributes:YES];
+            codeView.text = string;
             [string release];
             [sender setTitle:[url lastPathComponent]];
             [self updateLayout];
             break;
         }
     }
-}
-
-#pragma mark Stuff
-
-- (void)updateLayout
-{
-    [codeView setFrame:self.view.bounds autosizeHeightToFitText:YES];
-    [scrollView setContentSize:codeView.bounds.size];
 }
 
 @end

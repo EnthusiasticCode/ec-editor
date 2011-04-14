@@ -487,12 +487,10 @@
     }
     
     [self enumerateFramesetterInfoIntersectingRect:rect usingBlock:^(FramesetterInfo *framesetterInfo, CGRect relativeRect, BOOL *stop) {
-//        CGContextTranslateCTM(context, 0, -relativeRect.origin.y);
         [framesetterInfo enumerateFrameInfoIntersectingRect:relativeRect usingBlock:^(FrameInfo *frameInfo, CGRect relativeRect, BOOL *stop) {
             [frameInfo enumerateLinesIntersectingRect:relativeRect usingBlock:^(CTLineRef line, CGRect lineBounds, BOOL *stop) {
                 CGContextTranslateCTM(context, 0, -lineBounds.size.height);
                 CTLineDraw(line, context);
-                // TODO use + or - depending on context flipped
                 CGContextTranslateCTM(context, -lineBounds.size.width, 0);                
             }];
 //            [frameInfo releaseFrame];
