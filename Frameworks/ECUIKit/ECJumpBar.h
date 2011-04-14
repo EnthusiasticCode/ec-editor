@@ -96,13 +96,13 @@
 
 // TODO add image to be used always or when the button is under a certian dimension.
 /// Push a button into the stack adding it to the bar.
-- (void)pushControlWithTitle:(NSString *)title;
+- (void)pushControlWithTitle:(NSString *)title animated:(BOOL)animated;
 
 /// Pop the last inserted button from the stack, removing it from the bar.
-- (void)popControl;
+- (void)popControlAnimated:(BOOL)animated;
 
 /// Pop a number of buttons to leave the stack with all buttons with index lower than the one specified.
-- (void)popControlsDownThruIndex:(NSUInteger)index;
+- (void)popControlsDownThruIndex:(NSUInteger)index animated:(BOOL)animated;
 
 #pragma mark Handling Search String
 

@@ -6,11 +6,11 @@
 //  Copyright 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import "ECMockupButton.h"
+#import "ECButton.h"
 #import <QuartzCore/QuartzCore.h>
 
 
-@implementation ECMockupButton
+@implementation ECButton
 
 #pragma mark -
 #pragma mark Properties
@@ -167,7 +167,7 @@
 #pragma mark -
 #pragma mark UIButton Methods
 
-static void init(ECMockupButton *self)
+static void init(ECButton *self)
 {
     self.borderColor = [UIColor colorWithHue:0 saturation:0 brightness:0.01 alpha:1];
     self.arrowSizes = UIEdgeInsetsZero;

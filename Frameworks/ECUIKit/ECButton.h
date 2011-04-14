@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface ECMockupButton : UIButton {
+@interface ECButton : UIButton {
     NSMutableArray *backgroundColors;
     CGMutablePathRef buttonPath;
 }
