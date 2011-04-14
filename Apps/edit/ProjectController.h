@@ -7,20 +7,22 @@
 //
 
 #import <UIKit/UIKit.h>
-#import <ECUIKit/ECItemView.h>
+#import <ECUIKit/ECRelationalTableView.h>
+
 @class FileController;
 @class ECCodeIndex;
 @class Project;
 
-@interface ProjectController : UIViewController <UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate, ECItemViewDelegate>
+@interface ProjectController : UIViewController <ECRelationalTableViewDataSource, ECRelationalTableViewDelegate, UIGestureRecognizerDelegate>
 @property (nonatomic, retain) NSArray *extensionsToShow;
 @property (nonatomic, retain) Project *project;
 @property (nonatomic, retain) ECCodeIndex *codeIndex;
 @property (nonatomic, retain) IBOutlet UIBarButtonItem *editButton;
 @property (nonatomic, retain) IBOutlet UIBarButtonItem *doneButton;
-@property (nonatomic, retain) IBOutlet UITableView *tableView;
+@property (nonatomic, retain) IBOutlet ECRelationalTableView *tableView;
 
 - (IBAction)edit:(id)sender;
 - (IBAction)done:(id)sender;
 - (void)loadProject:(NSString *)projectRoot;
+- (void)loadFile:(NSString *)file;
 @end

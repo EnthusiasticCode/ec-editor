@@ -8,6 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface RootController : UIViewController <UITableViewDataSource, UITableViewDelegate>
+@interface RootController : UITableViewController
 - (void)browseFolder:(NSString *)folder;
 @end

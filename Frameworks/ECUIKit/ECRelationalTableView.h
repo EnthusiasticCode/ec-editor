@@ -21,7 +21,7 @@ typedef enum {
 @required
 
 // Returns the number of items at a given depth in the area
-- (NSUInteger)relationalTableView:(ECRelationalTableView *)relationalTableView numberOfItemsAtLevel:(NSUInteger)level inArea:(NSUInteger)area;
+- (NSUInteger)relationalTableView:(ECRelationalTableView *)relationalTableView numberOfItemsInGroup:(NSUInteger)group inArea:(NSUInteger)area;
 
 // Item gets various attributes set automatically based on table (separators) and data source (accessory views, editing controls)
 - (ECRelationalTableViewCell *)relationalTableView:(ECRelationalTableView *)relationalTableView cellForItemAtIndexPath:(NSIndexPath *)indexPath;
@@ -33,10 +33,9 @@ typedef enum {
 - (NSUInteger)numberOfAreasInTableView:(ECRelationalTableView *)relationalTableView;              // Default is 1 if not implemented
 
 // Returns the maximum depth of items in the area, defaults to 1
-- (NSUInteger)relationalTableView:(ECRelationalTableView *)relationalTableView numberOfLevelsInArea:(NSUInteger)area;
+- (NSUInteger)relationalTableView:(ECRelationalTableView *)relationalTableView numberOfGroupsInArea:(NSUInteger)area;
 
 - (NSString *)relationalTableView:(ECRelationalTableView *)relationalTableView titleForHeaderInArea:(NSUInteger)area;    // fixed font style. use custom view (UILabel) if you want something different
-- (NSString *)relationalTableView:(ECRelationalTableView *)relationalTableView titleForFooterInArea:(NSUInteger)area;
 
 // Editing
 
@@ -79,9 +78,9 @@ typedef enum {
 @property (nonatomic) UIEdgeInsets tableInsets;
 @property (nonatomic) CGSize cellSize;
 @property (nonatomic) UIEdgeInsets cellInsets;
-@property (nonatomic) UIEdgeInsets levelInsets;
-@property (nonatomic) UIEdgeInsets levelSeparatorInsets;
-@property (nonatomic) UIEdgeInsets areaHeaderInsets;
+@property (nonatomic) UIEdgeInsets groupInsets;
+@property (nonatomic) UIEdgeInsets groupSeparatorInsets;
+@property (nonatomic) UIEdgeInsets headerInsets;
 @property (nonatomic) BOOL allowsSelection;
 
 // Editing
@@ -93,61 +92,63 @@ typedef enum {
 
 // Info
 - (NSUInteger)columns;
-- (NSUInteger)rowsAtLevel:(NSUInteger)level inArea:(NSUInteger)area;
+- (NSUInteger)rowsInGroup:(NSUInteger)group inArea:(NSUInteger)area;
 
 - (NSUInteger)numberOfAreas;
-- (NSUInteger)numberOfLevelsInArea:(NSUInteger)area;
-- (NSUInteger)numberOfItemsAtLevel:(NSUInteger)level inArea:(NSUInteger)area;
+- (NSUInteger)numberOfGroupsInArea:(NSUInteger)area;
+- (NSUInteger)numberOfItemsInGroup:(NSUInteger)group inArea:(NSUInteger)area;
 
+// Geometry
 - (CGRect)rectForArea:(NSUInteger)area;
 - (CGRect)rectForHeaderInArea:(NSUInteger)area;
-- (CGRect)rectForLevel:(NSUInteger)level inArea:(NSUInteger)area;
+- (CGRect)rectForGroup:(NSUInteger)group inArea:(NSUInteger)area;
 - (CGRect)rectForItemAtIndexPath:(NSIndexPath *)indexPath;
 
+// Index paths
 - (NSIndexPath *)indexPathForItemAtPoint:(CGPoint)point;
 - (NSIndexPath *)indexPathForCell:(ECRelationalTableViewCell *)cell;
 - (NSArray *)indexPathsForItemsInRect:(CGRect)rect;
-
 - (ECRelationalTableViewCell *)cellForItemAtIndexPath:(NSIndexPath *)indexPath;
+
 - (NSArray *)relatedIndexPathsForItemAtIndexPath:(NSIndexPath *)indexPath;
+
 - (NSArray *)visibleCells;
 - (NSArray *)indexPathsForVisibleItems;
 
+// Scrolling
 - (void)scrollToItemAtIndexPath:(NSIndexPath *)indexPath atScrollPosition:(ECRelationalTableViewScrollPosition)scrollPosition animated:(BOOL)animated;
 - (void)scrollToNearestSelectedItemAtScrollPosition:(ECRelationalTableViewScrollPosition)scrollPosition animated:(BOOL)animated;
 
 // Item insertion/deletion/reloading.
-
-- (void)beginUpdates;   // allow multiple insert/delete of items and areas to be animated simultaneously. Nestable
-- (void)endUpdates;     // only call insert/delete/reload calls or change the editing state inside an update block.  otherwise things like item count, etc. may be invalid.
+- (void)beginUpdates;
+- (void)endUpdates;
 
 - (void)insertAreas:(NSIndexSet *)areas;
 - (void)deleteAreas:(NSIndexSet *)areas;
 - (void)reloadAreas:(NSIndexSet *)areas;
 
-- (void)insertLevelsAtIndexPaths:(NSArray *)indexPaths;
-- (void)deleteLevelsAtIndexPaths:(NSArray *)indexPaths;
-- (void)reloadLevelsAtIndexPaths:(NSArray *)indexPaths;
+- (void)insertGroupsAtIndexPaths:(NSArray *)indexPaths;
+- (void)deleteGroupsAtIndexPaths:(NSArray *)indexPaths;
+- (void)reloadGroupsAtIndexPaths:(NSArray *)indexPaths;
 
 - (void)insertItemsAtIndexPaths:(NSArray *)indexPaths;
 - (void)deleteItemsAtIndexPaths:(NSArray *)indexPaths;
 - (void)reloadItemsAtIndexPaths:(NSArray *)indexPaths;
 
 // Selection
+- (NSIndexPath *)indexPathForSelectedItem;
 
-- (NSIndexPath *)indexPathForSelectedItem;                                       // return nil or index path representing area and item of selection.
-
-// Selects and deselects items. These methods will not call the delegate methods (-tableView:willSelectItemAtIndexPath: or tableView:didSelectItemAtIndexPath:), nor will it send out a notification.
 - (void)selectItemAtIndexPath:(NSIndexPath *)indexPath animated:(BOOL)animated scrollPosition:(ECRelationalTableViewScrollPosition)scrollPosition;
 - (void)deselectItemAtIndexPath:(NSIndexPath *)indexPath animated:(BOOL)animated;
 
-- (ECRelationalTableViewCell *)dequeueReusableCellWithIdentifier:(NSString *)identifier;  // Used by the delegate to acquire an already allocated cell, in lieu of allocating a new one.
+// Recycling
+- (ECRelationalTableViewCell *)dequeueReusableCellWithIdentifier:(NSString *)identifier;
 
 @end
 
 @interface NSIndexPath (ECRelationalTableView)
-+ (NSIndexPath *)indexPathForItem:(NSUInteger)item atLevel:(NSUInteger)level inArea:(NSUInteger)area;
++ (NSIndexPath *)indexPathForItem:(NSUInteger)item inGroup:(NSUInteger)group inArea:(NSUInteger)area;
 @property (nonatomic, readonly) NSUInteger area;
-@property (nonatomic, readonly) NSUInteger level;
+@property (nonatomic, readonly) NSUInteger group;
 @property (nonatomic, readonly) NSUInteger item;
 @end

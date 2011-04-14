@@ -8,19 +8,20 @@
 
 #import "ECRelationalTableView.h"
 #import "ECRelationalTableViewCell.h"
-//#import "UIView+ConcurrentAnimations.h"
+#import "UIView+ConcurrentAnimation.h"
+
+const CGFloat ECRelationalTableViewShortAnimationDuration = 0.15;
 
 @interface ECRelationalTableView ()
 {
     @private
     struct {
-        unsigned int dataSourceNumberOfItemsAtLevelInArea:1;
+        unsigned int dataSourceNumberOfItemsInGroupInArea:1;
         unsigned int dataSourceCellForItemAtIndexPath:1;
         unsigned int dataSourceRelatedIndexPathsForItemAtIndexPath:1;
         unsigned int dataSourceNumberOfAreasInTableView:1;
-        unsigned int dataSourceNumberOfLevelsInArea:1;
+        unsigned int dataSourceNumberOfGroupsInArea:1;
         unsigned int dataSourceTitleForHeaderInArea:1;
-        unsigned int dataSourceTitleForFooterInArea:1;
         unsigned int dataSourceCanEditItem:1;
         unsigned int dataSourceCanMoveItem:1;
         unsigned int dataSourceMoveItem:1;
@@ -30,40 +31,54 @@
         unsigned int delegateDidDeselectItem:1;
         unsigned int delegateTargetIndexPathForMoveFromItem:1;
     } _flags;
-    BOOL _needsReloadData;
     BOOL _isAnimating;
+    CGFloat _headerHeight;
+    CGFloat _groupSeparatorHeight;
+    CGFloat _groupPlaceholderHeight;
+    UIEdgeInsets _groupPlaceholderInsets;
+    NSMutableArray *_areas;
+    NSMutableArray *_headers;
 }
-- (CGRect)rectForHeaderInAreaRect:(CGRect)areaRect;
-- (CGRect)rectForFooterInAreaRect:(CGRect)areaRect;
-- (CGRect)rectForLevel:(NSUInteger)level inArea:(NSUInteger)area inAreaRect:(CGRect)areaRect;
-- (CGRect)rectForTopLevelSeparatorInAreaRect:(CGRect)areaRect;
-- (CGRect)rectForBottomLevelSeparatorInAreaRect:(CGRect)areaRect;
-- (CGRect)rectForLevelSeparatorBelowLevelRect:(CGRect)levelRect;
-- (CGRect)rectForItem:(NSUInteger)item inLevelRect:(CGRect)levelRect;
-- (NSIndexPath *)proposedIndexPathForItemAtPoint:(CGPoint)point exists:(BOOL *)exists;
-- (void)handleTapGesture:(UIGestureRecognizer *)tapGestureRecognizer;
-- (void)handleCellPanGesture:(UIGestureRecognizer *)panGestureRecognizer;
+- (void)_setup;
+- (CGFloat)_heightForGroup:(NSUInteger)group inArea:(NSUInteger)area;
+- (CGRect)_rectForHeaderInAreaRect:(CGRect)areaRect;
+- (CGRect)_rectForGroup:(NSUInteger)group inArea:(NSUInteger)area inAreaRect:(CGRect)areaRect;
+//- (CGRect)rectForGroupSeparatorAboveGroupRect:(CGRect)groupRect;
+//- (CGRect)rectForGroupSeparatorBelowGroupRect:(CGRect)groupRect;
+//- (CGRect)rectForGroupPlaceholderAboveGroupRect:(CGRect)groupRect;
+//- (CGRect)rectForGroupPlaceholderBelowGroupRect:(CGRect)groupRect;
+- (CGRect)_rectForItem:(NSUInteger)item inGroupRect:(CGRect)groupRect includeInsets:(BOOL)includeInsets;
+- (CGPoint)_centerForHeaderInAreaRect:(CGRect)areaRect;
+- (CGPoint)_centerForItemAtIndexPath:(NSIndexPath *)indexPath;
+- (NSIndexPath *)_indexPathForItemAtPoint:(CGPoint)point includeInsets:(BOOL)includeInsets;
+//- (NSIndexPath *)proposedIndexPathForItemAtPoint:(CGPoint)point exists:(BOOL *)exists;
+- (void)_handleTapGesture:(UIGestureRecognizer *)tapGestureRecognizer;
+//- (void)handleCellPanGesture:(UIGestureRecognizer *)panGestureRecognizer;
 @end
+
+#pragma mark -
 
 @implementation ECRelationalTableView
 
-@synthesize delegate = _delegate;
+#pragma mark Properties and initialization
+
+@synthesize delegate = __delegate;
 @synthesize dataSource = _dataSource;
 @synthesize tableInsets = _tableInsets;
 @synthesize cellSize = _cellSize;
 @synthesize cellInsets = _cellInsets;
-@synthesize levelInsets = _levelInsets;
-@synthesize levelSeparatorInsets = _levelSeparatorInsets;
-@synthesize areaHeaderInsets = _areaHeaderInsets;
+@synthesize groupInsets = _groupInsets;
+@synthesize groupSeparatorInsets = _groupSeparatorInsets;
+@synthesize headerInsets = _headerInsets;
 @synthesize allowsSelection = _allowsSelection;
 @synthesize editing = _isEditing;
 
 - (void)setDelegate:(id<ECRelationalTableViewDelegate>)delegate
 {
-    if (delegate == _delegate)
+    if (delegate == __delegate)
         return;
     [self willChangeValueForKey:@"delegate"];
-    _delegate = delegate;
+    __delegate = delegate;
     _flags.delegateWillSelectItem = [delegate respondsToSelector:@selector(relationalTableView:willSelectItemAtIndexPath:)];
     _flags.delegateWillDeselectItem = [delegate respondsToSelector:@selector(relationalTableView:willDeselectItemAtIndexPath:)];
     _flags.delegateDidSelectItem = [delegate respondsToSelector:@selector(relationalTableView:didSelectItemAtIndexPath:)];
@@ -78,13 +93,12 @@
         return;
     [self willChangeValueForKey:@"dataSource"];
     _dataSource = dataSource;
-    _flags.dataSourceNumberOfLevelsInArea = [dataSource respondsToSelector:@selector(relationalTableView:numberOfLevelsInArea:)];
-    _flags.dataSourceNumberOfItemsAtLevelInArea = [dataSource respondsToSelector:@selector(relationalTableView:numberOfItemsAtLevel:inArea:)];
+    _flags.dataSourceNumberOfGroupsInArea = [dataSource respondsToSelector:@selector(relationalTableView:numberOfGroupsInArea:)];
+    _flags.dataSourceNumberOfItemsInGroupInArea = [dataSource respondsToSelector:@selector(relationalTableView:numberOfItemsInGroup:inArea:)];
     _flags.dataSourceCellForItemAtIndexPath = [dataSource respondsToSelector:@selector(relationalTableView:cellForItemAtIndexPath:)];
     _flags.dataSourceRelatedIndexPathsForItemAtIndexPath = [dataSource respondsToSelector:@selector(relationalTableView:relatedIndexPathsForItemAtIndexPath:)];
     _flags.dataSourceNumberOfAreasInTableView = [dataSource respondsToSelector:@selector(numberOfAreasInTableView:)];
     _flags.dataSourceTitleForHeaderInArea = [dataSource respondsToSelector:@selector(relationalTableView:titleForHeaderInArea:)];
-    _flags.dataSourceTitleForFooterInArea = [dataSource respondsToSelector:@selector(relationalTableView:titleForFooterInArea:)];
     _flags.dataSourceCanEditItem = [dataSource respondsToSelector:@selector(relationalTableView:canEditItemAtIndexPath:)];
     _flags.dataSourceCanMoveItem = [dataSource respondsToSelector:@selector(relationalTableView:canMoveItemAtIndexPath:)];
     _flags.dataSourceMoveItem = [dataSource respondsToSelector:@selector(relationalTableView:moveItemAtIndexPath:toIndexPath:)];
@@ -108,30 +122,13 @@
     [self willChangeValueForKey:@"editing"];
     [self setNeedsLayout];
     _isEditing = editing;
-    self.canCancelContentTouches = !editing;
     if (animated)
-    { // do concurrently
-//        [UIView animateWithDuration:0.0 animations:^(void) {
-//            [self layoutIfNeeded];
-//        }];
+    {
+        [UIView animateConcurrentlyToAnimationsWithFlag:&_isAnimating duration:ECRelationalTableViewShortAnimationDuration animations:^(void) {
+            [self layoutIfNeeded];
+        } completion:NULL];
     }
     [self didChangeValueForKey:@"editing"];   
-}
-- (void)dealloc
-{
-    [super dealloc];
-}
-
-static id init(ECRelationalTableView *self)
-{
-    self->_cellSize = CGSizeMake(120.0, 30.0);
-    self->_tableInsets = UIEdgeInsetsMake(10.0, 10.0, 10.0, 10.0);
-    self->_cellInsets = UIEdgeInsetsMake(20.0, 20.0, 20.0, 20.0);
-    self->_levelInsets = UIEdgeInsetsMake(10.0, 0.0, 10.0, 0.0);
-    self->_areaHeaderInsets = UIEdgeInsetsMake(5.0, 0.0, 5.0, 0.0);
-    UITapGestureRecognizer *tapGestureRecognizer = [[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTapGesture:)] autorelease];
-    [self addGestureRecognizer:tapGestureRecognizer];
-    return self;
 }
 
 - (id)initWithFrame:(CGRect)frame
@@ -141,7 +138,8 @@ static id init(ECRelationalTableView *self)
         return nil;
     self.userInteractionEnabled = YES;
     self.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
-    return init(self);
+    [self _setup];
+    return self;
 }
 
 - (id)initWithCoder:(NSCoder *)decoder
@@ -149,307 +147,121 @@ static id init(ECRelationalTableView *self)
     self = [super initWithCoder:decoder];
     if (!self)
         return nil;
-    return init(self);
+    [self _setup];
+    return self;
 }
 
-- (NSUInteger)columns
+- (void)dealloc
 {
-    return self.contentWidthInCells;
+    [_areas release];
+    [_headers release];
+    [super dealloc];
 }
 
-- (NSUInteger)rowsAtLevel:(NSUInteger)level inArea:(NSUInteger)area
+#pragma mark -
+#pragma mark Private methods
+
+- (void)_setup
 {
-    NSUInteger numCells = [self numberOfItemsAtLevel:level inArea:area];
-    return ceil((CGFloat)numCells / (CGFloat)self.contentWidthInCells);
+    _tableInsets = UIEdgeInsetsMake(10.0, 10.0, 10.0, 10.0);
+    _cellSize = CGSizeMake(180.0, 80.0);
+    _cellInsets = UIEdgeInsetsMake(20.0, 20.0, 20.0, 20.0);
+    _groupInsets = UIEdgeInsetsMake(10.0, 0.0, 10.0, 0.0);
+    _groupSeparatorInsets = UIEdgeInsetsZero;
+    _headerInsets = UIEdgeInsetsMake(20.0, 10.0, 20.0, 10.0);
+    _headerHeight = 60.0;
+    _groupSeparatorHeight = 30.0;
+    _groupPlaceholderHeight = 80.0;
+    _groupPlaceholderInsets = UIEdgeInsetsZero;
+    UITapGestureRecognizer *tapGestureRecognizer = [[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(_handleTapGesture:)] autorelease];
+    [self addGestureRecognizer:tapGestureRecognizer];
+    //    UIPanGestureRecognizer *cellPanGestureRecognizer = [[[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handleCellPanGesture:)] autorelease];
+    //    [self addGestureRecognizer:cellPanGestureRecognizer];
 }
 
-- (void)reloadData
+- (CGFloat)_heightForGroup:(NSUInteger)group inArea:(NSUInteger)area
 {
-    NSUInteger numAreas = 1;
-    if (_flags.dataSourceNumberOfAreasInTableView)
-        numAreas = [_dataSource numberOfAreasInTableView:self];
-    self.items = [NSMutableArray arrayWithCapacity:numAreas];
-    self.areaHeaders = [NSMutableArray arrayWithCapacity:numAreas];
-    self.levelSeparators = [NSMutableArray array];
-    self.relatedIndexPaths = [NSMutableDictionary dictionary];
-    for (NSUInteger i = 0; i < numAreas; ++i)
+    CGFloat height = 0;
+    height += [self rowsInGroup:group inArea:area] * _cellSize.height;
+    height += _groupInsets.top + _groupInsets.bottom;
+    height += _groupSeparatorHeight;
+    return height;
+}
+
+- (CGRect)_rectForHeaderInAreaRect:(CGRect)areaRect
+{
+    CGFloat x = areaRect.origin.x;
+    CGFloat y = areaRect.origin.y;
+    CGFloat width = areaRect.size.width;
+    CGFloat height = _headerHeight;
+    return UIEdgeInsetsInsetRect(CGRectMake(x, y, width, height), _headerInsets);
+}
+
+- (CGRect)_rectForGroup:(NSUInteger)group inArea:(NSUInteger)area inAreaRect:(CGRect)areaRect
+{
+    CGFloat x = areaRect.origin.x;
+    CGFloat y = areaRect.origin.y + _headerHeight;
+    for (NSUInteger i = 0; i < group; ++i)
     {
-        UIView *header = nil;
-        if (_flags.delegateViewForHeaderInArea)
-            header = [_delegate relationalTableView:self viewForHeaderInArea:i];
-        else
-        {
-            header = [[[UILabel alloc] init] autorelease];
-            header.backgroundColor = [UIColor grayColor];
-            if (_flags.dataSourceTitleForHeaderInArea)
-                ((UILabel *)header).text = [_dataSource relationalTableView:self titleForHeaderInArea:i];
-        }
-        [self.areaHeaders addObject:header];
-        NSUInteger numLevels = 1;
-        if (_flags.dataSourceNumberOfLevelsInArea)
-            numLevels = [_dataSource relationalTableView:self numberOfLevelsInArea:i];
-        NSMutableArray *levels = [NSMutableArray arrayWithCapacity:numLevels];
-        for (NSUInteger j = 0; j < numLevels; ++j)
-        {
-            // 2 separators per level: top and bottom
-            for (NSUInteger separator = 0; separator < 2; ++separator)
-            {
-                UIView *levelSeparator = [[[UIView alloc] init] autorelease];
-                levelSeparator.backgroundColor = [UIColor blackColor];
-                [self.levelSeparators addObject:levelSeparator];
-            }
-            NSUInteger numItems = 0;
-            if (_flags.dataSourceNumberOfItemsAtLevelInArea)
-                numItems = [_dataSource relationalTableView:self numberOfItemsAtLevel:j inArea:i];
-            NSMutableArray *itemsInLevel = [NSMutableArray arrayWithCapacity:numItems];
-            for (NSUInteger k = 0; k < numItems; ++k)
-            {
-                NSIndexPath *indexPath = [NSIndexPath indexPathForItem:k atLevel:j inArea:i];
-                ECRelationalTableViewCell *cell = nil;
-                if (_flags.dataSourceCellForItemAtIndexPath)
-                    cell = [_dataSource relationalTableView:self cellForItemAtIndexPath:indexPath];
-                if (!cell)
-                    continue;
-                UIPanGestureRecognizer *cellPanGestureRecognizer = [[[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handleCellPanGesture:)] autorelease];
-                [cell addGestureRecognizer:cellPanGestureRecognizer];
-                cell.exclusiveTouch = YES;
-                [itemsInLevel addObject:cell];
-                if (_flags.dataSourceRelatedIndexPathsForItemAtIndexPath)
-                    [self.relatedIndexPaths setObject:[_dataSource relationalTableView:self relatedIndexPathsForItemAtIndexPath:indexPath] forKey:indexPath];
-            }
-            [levels addObject:itemsInLevel];
-        }
-        [self.items addObject:levels];
+        y += [self _heightForGroup:i inArea:area];
     }
-    if (![self.relatedIndexPaths count])
-        self.relatedIndexPaths = nil;
-    _flags.needsReloadData = NO;
+    CGFloat width = areaRect.size.width;
+    CGFloat height = [self _heightForGroup:group inArea:area];
+    return UIEdgeInsetsInsetRect(CGRectMake(x, y, width, height), _groupInsets);
 }
 
-- (NSUInteger)numberOfAreas
+- (CGRect)_rectForItem:(NSUInteger)item inGroupRect:(CGRect)groupRect includeInsets:(BOOL)includeInsets
 {
-    return [self.items count];
+    CGFloat x = groupRect.origin.x;
+    CGFloat y = groupRect.origin.y;
+    NSUInteger row = item / [self columns];
+    NSUInteger column = item % [self columns];
+    x += column * _cellSize.width;
+    y += row * _cellSize.height;
+    CGRect rect = CGRectMake(x, y, _cellSize.width, _cellSize.height);
+    if (!includeInsets)
+       rect = UIEdgeInsetsInsetRect(rect, _cellInsets);
+    return rect;
 }
 
-- (NSUInteger)numberOfLevelsInArea:(NSUInteger)area
+- (CGPoint)_centerForHeaderInAreaRect:(CGRect)areaRect
 {
-    return [[self.items objectAtIndex:area] count];
+    CGRect rect = [self _rectForHeaderInAreaRect:areaRect];
+    return CGPointMake(CGRectGetMidX(rect), CGRectGetMidY(rect));
 }
 
-- (NSUInteger)numberOfItemsAtLevel:(NSUInteger)level inArea:(NSUInteger)area
+- (CGPoint)_centerForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    return [[[self.items objectAtIndex:area] objectAtIndex:level] count];
+    CGRect rect = [self rectForItemAtIndexPath:indexPath];
+    return CGPointMake(CGRectGetMidX(rect), CGRectGetMidY(rect));
 }
 
-- (CGRect)rectForArea:(NSUInteger)area
+- (NSIndexPath *)_indexPathForItemAtPoint:(CGPoint)point includeInsets:(BOOL)includeInsets
 {
-    CGFloat areaHeaderHeight = self.paddedAreaHeaderSize.height;
-    CGFloat cellHeight = self.paddedCellSize.height;
-    CGFloat levelSeparatorHeight = self.paddedLevelSeparatorSize.height;
-    UIEdgeInsets tableInsets = _tableInsets;
-    CGFloat x = tableInsets.left;
-    CGFloat y = tableInsets.top;
-    y +=  areaHeaderHeight * area;
-    for (NSUInteger i = 0; i < area; ++i)
-        for (NSUInteger j = 0; j < [self numberOfLevelsInArea:i]; ++j)
-        {
-            // if the table is not editing, the is no separator after the last level
-            if (j == 0 && !_isEditing)
-                y -= levelSeparatorHeight;
-            // if the table is editing, there is a separator before each level
-            if (_isEditing)
-                y += levelSeparatorHeight;
-            y += [self rowsAtLevel:j inArea:i] * cellHeight;
-            y += _levelInsets.top + _levelInsets.bottom;
-            y += levelSeparatorHeight;
-        }
-    CGFloat width = self.bounds.size.width - tableInsets.left - tableInsets.right;
-    CGFloat height = areaHeaderHeight;
-    for (NSUInteger j = 0; j < [self numberOfLevelsInArea:area]; ++j)
-    {
-        // if the table is not editing, the is no separator after the last level
-        if (j == 0 && !_isEditing)
-            height -= levelSeparatorHeight;
-        // if the table is editing, there is a separator before each level
-        if (_isEditing)
-            height += levelSeparatorHeight;
-        height += [self rowsAtLevel:j inArea:area] * cellHeight;
-        height += _levelInsets.top + _levelInsets.bottom;
-        height += levelSeparatorHeight;
-    }
-    return CGRectMake(x, y, width, height);
-}
-
-- (CGRect)rectForHeaderInAreaRect:(CGRect)areaRect
-{
-    CGFloat x = areaRect.origin.x + _areaHeaderInsets.left;
-    CGFloat y = areaRect.origin.y + _areaHeaderInsets.top;
-    CGFloat width = self.paddedAreaHeaderSize.width - _areaHeaderInsets.left - _areaHeaderInsets.right;
-    CGFloat height = self.paddedAreaHeaderSize.height - _areaHeaderInsets.top - _areaHeaderInsets.bottom;
-    return (CGRect){ (CGPoint){x, y} , (CGSize){width, height}};
-}
-
-- (CGRect)rectForHeaderInArea:(NSUInteger)area
-{
-    CGRect areaRect = [self rectForArea:area];
-    return [self rectForHeaderInAreaRect:areaRect];
-}
-
-- (CGRect)rectForLevel:(NSUInteger)level inArea:(NSUInteger)area inAreaRect:(CGRect)areaRect
-{
-    CGFloat x = areaRect.origin.x + _levelInsets.left;
-    CGFloat y = areaRect.origin.y + _areaHeaderInsets.top + self.paddedAreaHeaderSize.height + _areaHeaderInsets.bottom;
-    y += (_levelInsets.top + _levelInsets.bottom) * level;
-    for (NSUInteger i = 0; i < level; ++i)
-    {
-        y += [self rowsAtLevel:i inArea:area];
-        y += paddedLevelSeparatorSize_.height;
-    }
-    y += _levelInsets.top;
-    CGFloat width = self.bounds.size.width - _tableInsets.left - _tableInsets.right - _levelInsets.left - _levelInsets.right;
-    CGFloat height = [self rowsAtLevel:level inArea:area] * self.paddedCellSize.height;
-    return CGRectMake(x, y, width, height);
-}
-
-- (CGRect)rectForLevel:(NSUInteger)level inArea:(NSUInteger)area
-{
-    CGRect areaRect = [self rectForArea:area];
-    return [self rectForLevel:level inArea:area inAreaRect:areaRect];
-}
-
-- (CGRect)rectForLevelSeparatorInLevelRect:(CGRect)levelRect isTopSeparator:(BOOL)isTopSeparator
-{
-    CGFloat x = levelRect.origin.x + _levelSeparatorInsets.left;
-    CGFloat y;
-    if (isTopSeparator)
-        y = levelRect.origin.y + _levelSeparatorInsets.top;
-    else
-        y = levelRect.origin.y + levelRect.size.height - _levelSeparatorInsets.bottom;
-    CGFloat height = self.levelSeparatorHeight;
-    CGFloat width = self.paddedLevelSeparatorSize.width - _levelSeparatorInsets.left - _levelSeparatorInsets.right;
-    return CGRectMake(x, y, width, height);
-}
-
-- (CGRect)rectForItem:(NSUInteger)item inLevelRect:(CGRect)levelRect
-{
-    CGFloat x = levelRect.origin.x + _cellInsets.left;
-    CGFloat y = levelRect.origin.y + _cellInsets.top;
-    NSUInteger row = item / self.contentWidthInCells;
-    NSUInteger column = item % self.contentWidthInCells;
-    x += column * self.paddedCellSize.width;
-    y += row * self.paddedCellSize.height;
-    return (CGRect){ (CGPoint){x, y}, _cellSize};
-}
-
-- (CGRect)rectForItemAtIndexPath:(NSIndexPath *)indexPath
-{
-    CGRect levelRect = [self rectForLevel:indexPath.level inArea:indexPath.area];
-    return [self rectForItem:indexPath.item inLevelRect:levelRect];
-}
-
-- (ECRelationalTableViewCell *)cellForItemAtIndexPath:(NSIndexPath *)indexPath
-{
-    if (!indexPath)
-        return nil;
-    return [[[self.items objectAtIndex:indexPath.area] objectAtIndex:indexPath.level] objectAtIndex:indexPath.item];
-}
-
-- (NSArray *)relatedIndexPathsForItemAtIndexPath:(NSIndexPath *)indexPath
-{
-    return [self.relatedIndexPaths objectForKey:indexPath];
-}
-
-- (void)layoutSubviews
-{
-    if (_flags.needsReloadData)
-        [self reloadData];
-    NSUInteger numAreas = [self numberOfAreas];
-    UIView *header;
-    UIView *levelSeparator;
-    NSUInteger levelSeparatorIndex = 0;
-    for (NSUInteger i = 0; i < numAreas; ++i)
-    {
-        CGRect areaRect = [self rectForArea:i];
-        header = [self.areaHeaders objectAtIndex:i];
-        if (![header superview])
-            [self.rootView addSubview:header];
-        header.frame = [self rectForHeaderInAreaRect:areaRect];
-        NSUInteger numLevels = [self numberOfLevelsInArea:i];
-        for (NSUInteger j = 0; j < numLevels; ++j)
-        {
-            CGRect levelRect = [self rectForLevel:j inArea:i inAreaRect:areaRect];
-            NSUInteger numItems = [self numberOfItemsAtLevel:j inArea:i];
-            if (numItems)
-            {
-                levelSeparator = [self.levelSeparators objectAtIndex:levelSeparatorIndex];
-                if (![levelSeparator superview])
-                    [self.rootView addSubview:levelSeparator];
-                levelSeparator.frame = [self rectForLevelSeparatorInLevelRect:levelRect isTopSeparator:YES];
-                if (!_isEditing)
-                    levelSeparator.alpha = 0.0;
-                else
-                    levelSeparator.alpha = 1.0;
-            }
-            ++levelSeparatorIndex;
-            for (NSUInteger k = 0; k < numItems; ++k)
-            {
-                NSIndexPath *itemIndexPath = [NSIndexPath indexPathForItem:k atLevel:j inArea:i];
-                ECRelationalTableViewCell *cell;
-                if (_isEditing && [self.dragDestination isEqual:itemIndexPath])
-                    cell = self.cellBeingDragged;
-                else
-                    cell= [self cellForItemAtIndexPath:itemIndexPath];
-                [self.rootView addSubview:cell];
-                if (_isEditing && self.dragSource.area == i && self.dragSource.level == j && self.dragSource.item <= k)
-                    cell.frame = [self rectForItem:k - 1 inLevelRect:levelRect];
-                else
-                    cell.frame = [self rectForItem:k inLevelRect:levelRect];
-            }
-            if (numItems)
-            {
-                levelSeparator = [self.levelSeparators objectAtIndex:levelSeparatorIndex];
-                if (![levelSeparator superview])
-                    [self.rootView addSubview:levelSeparator];
-                levelSeparator.frame = [self rectForLevelSeparatorInLevelRect:levelRect isTopSeparator:NO];
-                if (j == numLevels - 1 && !_isEditing)
-                    levelSeparator.alpha = 0.0;
-                else if (j == numLevels - 1)
-                    levelSeparator.alpha = 1.0;
-            }
-            ++levelSeparatorIndex;
-        }
-    }
-    CGRect lastAreaFrame = [self rectForArea:numAreas - 1];
-    self.contentSize = CGSizeMake(self.bounds.size.width, lastAreaFrame.origin.y + lastAreaFrame.size.height + _tableInsets.bottom);
-}
-
-- (NSIndexPath *)indexPathForItemAtPoint:(CGPoint)point
-{
-    CGPoint contentOffset = [self contentOffset];
-    point.x += contentOffset.x;
-    point.y += contentOffset.y;
+    point.x += self.contentOffset.x;
+    point.y += self.contentOffset.y;
     for (NSUInteger i = 0; i < [self numberOfAreas]; ++i)
     {
         CGRect areaRect = CGRectZero;
         areaRect = [self rectForArea:i];
         if (!CGRectContainsPoint(areaRect, point))
             continue;
-        for (NSUInteger j = 0; j < [self numberOfLevelsInArea:i]; ++j)
+        for (NSUInteger j = 0; j < [self numberOfGroupsInArea:i]; ++j)
         {
-            CGRect levelRect = CGRectZero;
-            levelRect = [self rectForLevel:j inArea:i inAreaRect:areaRect];
-            if (!CGRectContainsPoint(levelRect, point))
+            CGRect groupRect = CGRectZero;
+            groupRect = [self _rectForGroup:j inArea:i inAreaRect:areaRect];
+            if (!CGRectContainsPoint(groupRect, point))
                 continue;
-            for (NSUInteger k = 0; k < [self numberOfItemsAtLevel:j inArea:i]; )
+            for (NSUInteger k = 0; k < [self numberOfItemsInGroup:j inArea:i]; )
             {
                 CGRect itemRect = CGRectZero;
-                itemRect = [self rectForItem:k inLevelRect:levelRect];
+                itemRect = [self _rectForItem:k inGroupRect:groupRect includeInsets:includeInsets];
                 if (CGRectContainsPoint(itemRect, point))
-                    return [NSIndexPath indexPathForItem:k atLevel:j inArea:i];
+                    return [NSIndexPath indexPathForItem:k inGroup:j inArea:i];
                 if (itemRect.origin.y > point.y)
                     break;
                 if (point.y > itemRect.origin.y + itemRect.size.height)
-                    k += [self contentWidthInCells];
+                    k += [self columns];
                 else
                     ++k;
             }
@@ -458,13 +270,7 @@ static id init(ECRelationalTableView *self)
     return nil;
 }
 
-- (NSIndexPath *)proposedIndexPathForItemAtPoint:(CGPoint)point exists:(BOOL *)exists
-{
-    *exists = YES;
-    return [self indexPathForItemAtPoint:point];
-}
-
-- (void)handleTapGesture:(UIGestureRecognizer *)tapGestureRecognizer
+- (void)_handleTapGesture:(UIGestureRecognizer *)tapGestureRecognizer
 {
     if (!_flags.delegateDidSelectItem)
         return;
@@ -473,9 +279,215 @@ static id init(ECRelationalTableView *self)
     if (![tapGestureRecognizer state] == UIGestureRecognizerStateEnded)
         return;
     NSIndexPath *indexPath = [self indexPathForItemAtPoint:[tapGestureRecognizer locationInView:self]];
-    [_delegate relationalTableView:self didSelectItemAtIndexPath:indexPath];
+    [__delegate relationalTableView:self didSelectItemAtIndexPath:indexPath];
 }
 
+#pragma mark -
+#pragma mark Data
+
+- (void)reloadData
+{
+    NSUInteger numAreas = 1;
+    if (_flags.dataSourceNumberOfAreasInTableView)
+        numAreas = [_dataSource numberOfAreasInTableView:self];
+    [_areas release];
+    _areas = [[NSMutableArray alloc] init];
+    [_headers release];
+    _headers = [[NSMutableArray alloc] init];
+    for (NSUInteger i = 0; i < numAreas; ++i)
+    {
+        NSUInteger numGroups = 1;
+        if (_flags.dataSourceNumberOfGroupsInArea)
+            numGroups = [_dataSource relationalTableView:self numberOfGroupsInArea:i];
+        NSMutableArray *groups = [NSMutableArray arrayWithCapacity:numGroups];
+        for (NSUInteger j = 0; j < numGroups; ++j)
+        {
+            NSUInteger numItems = 0;
+            if (_flags.dataSourceNumberOfItemsInGroupInArea)
+                numItems = [_dataSource relationalTableView:self numberOfItemsInGroup:j inArea:i];
+            NSMutableArray *itemsInGroup = [NSMutableArray arrayWithCapacity:numItems];
+            for (NSUInteger k = 0; k < numItems; ++k)
+            {
+                NSIndexPath *indexPath = [NSIndexPath indexPathForItem:k inGroup:j inArea:i];
+                ECRelationalTableViewCell *cell = nil;
+                if (_flags.dataSourceCellForItemAtIndexPath)
+                    cell = [_dataSource relationalTableView:self cellForItemAtIndexPath:indexPath];
+                if (!cell)
+                    continue;
+                [self addSubview:cell];
+                [itemsInGroup addObject:cell];
+            }
+            [groups addObject:itemsInGroup];
+        }
+        [_areas addObject:groups];
+    }
+    for (NSUInteger i = 0; i < numAreas; ++i)
+    {
+        UILabel *header = [[[UILabel alloc] init] autorelease];
+        [self addSubview:header];
+        header.frame = [self rectForHeaderInArea:i];
+        header.backgroundColor = [UIColor blueColor];
+        if (_flags.dataSourceTitleForHeaderInArea)
+            header.text = [_dataSource relationalTableView:self titleForHeaderInArea:i];
+        [_headers addObject:header];
+    }
+    [self setNeedsLayout];
+}
+
+#pragma mark -
+#pragma mark Info
+
+- (NSUInteger)columns
+{
+    CGFloat netWidth = self.bounds.size.width - _tableInsets.left - _tableInsets.right - _groupInsets.left - _groupInsets.right;
+    return netWidth / _cellSize.width;
+}
+
+- (NSUInteger)rowsInGroup:(NSUInteger)group inArea:(NSUInteger)area
+{
+    NSUInteger numCells = [self numberOfItemsInGroup:group inArea:area];
+    return ceil((CGFloat)numCells / (CGFloat)[self columns]);
+}
+
+- (NSUInteger)numberOfAreas
+{
+    return [_areas count];
+}
+
+- (NSUInteger)numberOfGroupsInArea:(NSUInteger)area
+{
+    return [[_areas objectAtIndex:area] count];
+}
+
+- (NSUInteger)numberOfItemsInGroup:(NSUInteger)group inArea:(NSUInteger)area
+{
+    return [[[_areas objectAtIndex:area] objectAtIndex:group] count];
+}
+
+#pragma mark -
+#pragma mark Geometry
+
+- (CGRect)rectForArea:(NSUInteger)area
+{        
+    CGFloat x = 0;
+    CGFloat y = 0;
+    if (area)
+    {
+        CGRect previousAreaRect = [self rectForArea:area - 1];
+        y = previousAreaRect.origin.y + previousAreaRect.size.height;
+    }
+    CGFloat width = self.bounds.size.width;
+    CGFloat height = _headerHeight;
+    NSUInteger numGroups = [self numberOfGroupsInArea:area];
+    for (NSUInteger j = 0; j < numGroups; ++j)
+    {
+        if (_isEditing && j == 0)
+            height += _groupPlaceholderHeight;
+        height += [self _heightForGroup:j inArea:area];
+        if (_isEditing)
+            height += _groupPlaceholderHeight;
+        else if (j != numGroups - 1)
+            height += _groupSeparatorHeight;
+    }
+    return UIEdgeInsetsInsetRect(CGRectMake(x, y, width, height), _tableInsets);
+}
+
+- (CGRect)rectForHeaderInArea:(NSUInteger)area
+{
+    CGRect areaRect = [self rectForArea:area];
+    return [self _rectForHeaderInAreaRect:areaRect];
+}
+
+- (CGRect)rectForGroup:(NSUInteger)group inArea:(NSUInteger)area
+{
+    CGRect areaRect = [self rectForArea:area];
+    return [self _rectForGroup:group inArea:area inAreaRect:areaRect];
+}
+
+- (CGRect)rectForItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    CGRect groupRect = [self rectForGroup:indexPath.group inArea:indexPath.area];
+    return [self _rectForItem:indexPath.item inGroupRect:groupRect includeInsets:NO];
+}
+
+#pragma mark -
+#pragma mark Index paths
+
+- (NSIndexPath *)indexPathForItemAtPoint:(CGPoint)point
+{
+    return [self _indexPathForItemAtPoint:point includeInsets:NO];
+}
+
+- (ECRelationalTableViewCell *)cellForItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (!indexPath)
+        return nil;
+    return [[[_areas objectAtIndex:indexPath.area] objectAtIndex:indexPath.group] objectAtIndex:indexPath.item];
+}
+
+#pragma mark -
+#pragma mark UIView
+
+- (void)layoutSubviews
+{
+    NSUInteger numAreas = [_areas count];
+    if (!numAreas)
+        return;
+//    UIView *groupSeparator;
+//    NSUInteger groupSeparatorIndex = 0;
+    for (NSUInteger i = 0; i < numAreas; ++i)
+    {
+        CGRect areaRect = [self rectForArea:i];
+        UIView *header = [_headers objectAtIndex:i];
+        header.center = [self _centerForHeaderInAreaRect:areaRect];
+        NSUInteger numGroups = [self numberOfGroupsInArea:i];
+        for (NSUInteger j = 0; j < numGroups; ++j)
+        {
+            CGRect groupRect = [self _rectForGroup:j inArea:i inAreaRect:areaRect];
+            NSUInteger numItems = [self numberOfItemsInGroup:j inArea:i];
+//            if (numItems)
+//            {
+//                groupSeparator = [self.groupSeparators objectAtIndex:groupSeparatorIndex];
+//                if (![groupSeparator superview])
+//                    [self addSubview:groupSeparator];
+//                groupSeparator.frame = [self rectForGroupSeparatorInGroupRect:groupRect isTopSeparator:YES];
+//                if (!_isEditing)
+//                    groupSeparator.alpha = 0.0;
+//                else
+//                    groupSeparator.alpha = 1.0;
+//            }
+//            ++groupSeparatorIndex;
+            for (NSUInteger k = 0; k < numItems; ++k)
+            {
+                NSIndexPath *itemIndexPath = [NSIndexPath indexPathForItem:k inGroup:j inArea:i];
+                ECRelationalTableViewCell *cell = [self cellForItemAtIndexPath:itemIndexPath];
+                cell.frame = [self _rectForItem:k inGroupRect:groupRect includeInsets:NO];
+            }
+//            if (numItems)
+//            {
+//                groupSeparator = [self.groupSeparators objectAtIndex:groupSeparatorIndex];
+//                if (![groupSeparator superview])
+//                    [self addSubview:groupSeparator];
+//                groupSeparator.frame = [self rectForGroupSeparatorInGroupRect:groupRect isTopSeparator:NO];
+//                if (j == numGroups - 1 && !_isEditing)
+//                    groupSeparator.alpha = 0.0;
+//                else if (j == numGroups - 1)
+//                    groupSeparator.alpha = 1.0;
+//            }
+//            ++groupSeparatorIndex;
+        }
+    }
+    CGRect lastAreaFrame = [self rectForArea:numAreas - 1];
+    self.contentSize = CGSizeMake(self.bounds.size.width, lastAreaFrame.origin.y + lastAreaFrame.size.height + _tableInsets.bottom);
+}
+/*
+- (NSIndexPath *)proposedIndexPathForItemAtPoint:(CGPoint)point exists:(BOOL *)exists
+{
+    *exists = YES;
+    return [self indexPathForItemAtPoint:point];
+}
+*/
+/*
 - (void)handleCellPanGesture:(UIGestureRecognizer *)panGestureRecognizer
 {
     if (!_isEditing)
@@ -529,8 +541,10 @@ static id init(ECRelationalTableView *self)
         return [self cellForItemAtIndexPath:indexPath];
     return [super hitTest:point withEvent:event];
 }
-
+*/
 @end
+
+#pragma mark -
 
 @implementation NSIndexPath (ECRelationalTableView)
 
@@ -539,7 +553,7 @@ static id init(ECRelationalTableView *self)
     return [self indexAtPosition:0];
 }
 
-- (NSUInteger)level
+- (NSUInteger)group
 {
     return [self indexAtPosition:1];
 }
@@ -549,9 +563,9 @@ static id init(ECRelationalTableView *self)
     return [self indexAtPosition:2];
 }
 
-+ (NSIndexPath *)indexPathForItem:(NSUInteger)item atLevel:(NSUInteger)level inArea:(NSUInteger)area
++ (NSIndexPath *)indexPathForItem:(NSUInteger)item inGroup:(NSUInteger)group inArea:(NSUInteger)area
 {
-    return [self indexPathWithIndexes:(NSUInteger[3]){area, level, item} length:3];
+    return [self indexPathWithIndexes:(NSUInteger[3]){area, group, item} length:3];
 }
 
 @end
