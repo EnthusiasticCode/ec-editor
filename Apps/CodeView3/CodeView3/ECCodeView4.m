@@ -130,19 +130,23 @@
 
 - (void)setFrame:(CGRect)frame
 {
-    CGSize renderSize = [renderer renderedSizeForTextRect:CGRectNull allowGuessedResult:YES];
-    self.contentSize = renderSize;
-    
-    free(tileHeights);
-    tileCount = ceilf(renderSize.height / self.bounds.size.height);
-    tileHeights = (CGFloat *)malloc(sizeof(CGFloat) * tileCount);
-    memset(tileHeights, 0, sizeof(CGFloat) * tileCount);
-    
-    renderer.frameWidth = UIEdgeInsetsInsetRect(frame, self->textInsets).size.width;
-    for (NSInteger i = 0; i < TILEVIEWPOOL_SIZE; ++i)
+    if (text) 
     {
-        [tileViewPool[i] invalidate];
+        CGSize renderSize = [renderer renderedSizeForTextRect:CGRectNull allowGuessedResult:YES];
+        self.contentSize = renderSize;
+        
+        free(tileHeights);
+        tileCount = ceilf(renderSize.height / frame.size.height);
+        tileHeights = (CGFloat *)malloc(sizeof(CGFloat) * tileCount);
+        memset(tileHeights, 0, sizeof(CGFloat) * tileCount);
+        
+        renderer.frameWidth = UIEdgeInsetsInsetRect(frame, self->textInsets).size.width;
+        for (NSInteger i = 0; i < TILEVIEWPOOL_SIZE; ++i)
+        {
+            [tileViewPool[i] invalidate];
+        }
     }
+    
     [super setFrame:frame];
     [self setNeedsLayout];
 }
