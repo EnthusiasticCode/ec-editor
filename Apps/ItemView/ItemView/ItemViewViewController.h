@@ -13,9 +13,11 @@
     
     ECItemView *itemViewA;
     ECItemView *itemViewB;
+    ECItemView *itemViewC;
 }
 @property (nonatomic, retain) IBOutlet ECItemView *itemViewA;
 @property (nonatomic, retain) IBOutlet ECItemView *itemViewB;
+@property (nonatomic, retain) IBOutlet ECItemView *itemViewC;
 - (IBAction)batchUpdates:(id)sender;
 - (UIView *)randomColorCell;
 @end

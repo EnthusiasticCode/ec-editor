@@ -11,11 +11,13 @@
 @implementation ItemViewViewController
 @synthesize itemViewA;
 @synthesize itemViewB;
+@synthesize itemViewC;
 
 - (void)dealloc
 {
     [itemViewA release];
     [itemViewB release];
+    [itemViewC release];
     [super dealloc];
 }
 
@@ -31,14 +33,20 @@
     NSMutableArray *itemsB = [[[NSMutableArray alloc] initWithCapacity:9] autorelease];
     for (NSUInteger i = 0; i < 9; ++i)
         [itemsB addObject:[self randomColorCell]];
+    NSMutableArray *itemsC = [[[NSMutableArray alloc] initWithCapacity:13] autorelease];
+    for (NSUInteger i = 0; i < 13; ++i)
+        [itemsC addObject:[self randomColorCell]];
     self.itemViewA.items = itemsA;
     self.itemViewB.items = itemsB;
+    self.itemViewC.items = itemsC;
+    ((UIScrollView *)self.view).contentSize = CGSizeMake(1500.0, 1500.0);
 }
 
 - (void)viewDidUnload
 {
     [self setItemViewA:nil];
     [self setItemViewB:nil];
+    [self setItemViewC:nil];
     [super viewDidUnload];
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;
@@ -54,18 +62,18 @@
 
 - (IBAction)batchUpdates:(id)sender
 {
-    [self.itemViewA beginUpdates];
-    [self.itemViewA insertItem:[self randomColorCell] atIndex:1];
-    [self.itemViewA insertItem:[self randomColorCell] atIndex:2];
-    [self.itemViewA removeItemAtIndex:4];
-    [self.itemViewA removeItemAtIndex:5];
-    [self.itemViewA replaceItemAtIndex:3 withItem:[self randomColorCell]];
-    [self.itemViewA endUpdates];
+//    [self.itemViewA beginUpdates];
+//    [self.itemViewA insertItem:[self randomColorCell] atIndex:1];
+//    [self.itemViewA insertItem:[self randomColorCell] atIndex:2];
+//    [self.itemViewA removeItemAtIndex:4];
+//    [self.itemViewA removeItemAtIndex:5];
+//    [self.itemViewA replaceItemAtIndex:3 withItem:[self randomColorCell]];
+//    [self.itemViewA endUpdates];
 }
 
 - (void)itemView:(ECItemView *)itemView didSelectItem:(NSUInteger)item
 {
-    [itemView replaceItemAtIndex:item withItem:[self randomColorCell]];
+//    [itemView replaceItemAtIndex:item withItem:[self randomColorCell]];
 }
 
 - (BOOL)itemView:(ECItemView *)itemView shouldDragItem:(NSUInteger)item inView:(UIView **)view

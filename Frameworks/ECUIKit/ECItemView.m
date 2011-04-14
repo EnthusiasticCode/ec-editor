@@ -92,6 +92,9 @@ const NSUInteger ECItemViewItemNotFound = NSUIntegerMax;
     NSUInteger _currentDragDestination;
     ECItemView *_currentDragTarget;
     UIView *_viewToDragIn;
+    UIEdgeInsets _scrollingHotspots;
+    CGFloat _scrollSpeed;
+    NSTimer *_scrollTimer;
     void (^_layoutItem)(UIView *item, NSUInteger index, BOOL *stop);
     void (^_enterEditingAnimation)(void);
     void (^_exitEditingAnimation)(void);
@@ -111,6 +114,7 @@ const NSUInteger ECItemViewItemNotFound = NSUIntegerMax;
 - (ECItemView *)_targetForDrop:(UIPanGestureRecognizer *)dragRecognizer;
 - (NSUInteger)_indexOfDropAtPoint:(CGPoint)point;
 - (void)_receiveDroppedItemContainer:(ECItemViewDragContainer *)itemContainer forItem:(NSUInteger)item;
+- (void)_handleTimer:(NSTimer *)timer;
 @end
 
 #pragma mark -
@@ -228,6 +232,8 @@ static const CGFloat ECItemViewLongAnimationDuration = 5.0;
     _currentDragDestination = ECItemViewItemNotFound;
     _currentDragTarget = self;
     _draggedItemIndex = ECItemViewItemNotFound;
+    _scrollingHotspots = UIEdgeInsetsMake(100.0, 100.0, 100.0, 100.0);
+    _scrollSpeed = 20.0;
     _layoutItem = [^(UIView *cell, NSUInteger index, BOOL *stop){
         if (index == _draggedItemIndex)
             return;
@@ -459,6 +465,49 @@ static const CGFloat ECItemViewLongAnimationDuration = 5.0;
 - (void)_continueDrag:(UIPanGestureRecognizer *) dragRecognizer
 {
     _draggedItemContainer.center = [dragRecognizer locationInView:_viewToDragIn];
+    if ([_viewToDragIn respondsToSelector:@selector(setContentOffset:animated:)] && [_viewToDragIn respondsToSelector:@selector(contentOffset)])
+    {
+        if (CGRectContainsPoint(_viewToDragIn.bounds, _draggedItemContainer.center) && !CGRectContainsPoint(UIEdgeInsetsInsetRect(_viewToDragIn.bounds, _scrollingHotspots), _draggedItemContainer.center))
+        {
+            if (!_scrollTimer)
+            {
+                _scrollTimer = [NSTimer timerWithTimeInterval:1.0/60.0 target:self selector:@selector(_handleTimer:) userInfo:[[^(void) {
+                    CGPoint offset = [(UIScrollView *)_viewToDragIn contentOffset];
+                    CGPoint center = _draggedItemContainer.center;
+                    if (_draggedItemContainer.center.x < _viewToDragIn.bounds.origin.x + _scrollingHotspots.left && _viewToDragIn.bounds.origin.x > 0.0)
+                    {
+                        offset.x -= _scrollSpeed;
+                        center.x -= _scrollSpeed;
+                    }
+                    else if (_draggedItemContainer.center.x > _viewToDragIn.bounds.origin.x + _viewToDragIn.bounds.size.width - _scrollingHotspots.right && _viewToDragIn.bounds.origin.x < ((UIScrollView *)_viewToDragIn).contentSize.width - _viewToDragIn.bounds.size.width)
+                    {
+                        offset.x += _scrollSpeed;
+                        center.x += _scrollSpeed;
+                    }
+                    if (_draggedItemContainer.center.y < _viewToDragIn.bounds.origin.y + _scrollingHotspots.top && _viewToDragIn.bounds.origin.y > 0.0)
+                    {
+                        offset.y -= _scrollSpeed;
+                        center.y -= _scrollSpeed;
+                    }
+                    else if (_draggedItemContainer.center.y > _viewToDragIn.bounds.origin.y + _viewToDragIn.bounds.size.height - _scrollingHotspots.bottom && _viewToDragIn.bounds.origin.y < ((UIScrollView *)_viewToDragIn).contentSize.height - _viewToDragIn.bounds.size.height)
+                    {
+                        offset.y += _scrollSpeed;
+                        center.y += _scrollSpeed;
+                    }
+                    [(UIScrollView *)_viewToDragIn setContentOffset:offset animated:NO];
+//                    [UIView animateConcurrentlyToAnimationsWithFlag:&_isAnimating duration:ECItemViewShortAnimationDuration animations:^(void) {
+                        _draggedItemContainer.center = center;
+//                    } completion:NULL];
+                } copy] autorelease] repeats:YES];
+                [[NSRunLoop mainRunLoop] addTimer:_scrollTimer forMode:NSDefaultRunLoopMode];
+            }
+        }
+        else if (_scrollTimer)
+        {
+            [_scrollTimer invalidate];
+            _scrollTimer = nil;
+        }
+    }
     NSUInteger dragDestination = [self _indexOfDropAtPoint:[dragRecognizer locationInView:self]];
     if (dragDestination == _currentDragDestination)
         return;
@@ -468,6 +517,11 @@ static const CGFloat ECItemViewLongAnimationDuration = 5.0;
 
 - (BOOL)_endDrag:(UIPanGestureRecognizer *)dragRecognizer
 {
+    if (_scrollTimer)
+    {
+        [_scrollTimer invalidate];
+        _scrollTimer = nil;
+    }
     ECItemView *targetView = [self _targetForDrop:dragRecognizer];
     NSUInteger dragDestination = [targetView _indexOfDropAtPoint:[dragRecognizer locationInView:targetView]];
     if (dragDestination == ECItemViewItemNotFound)
@@ -492,6 +546,11 @@ static const CGFloat ECItemViewLongAnimationDuration = 5.0;
 
 - (void)_cancelDrag:(UIPanGestureRecognizer *)dragRecognizer
 {
+    if (_scrollTimer)
+    {
+        [_scrollTimer invalidate];
+        _scrollTimer = nil;
+    }
     [UIView animateConcurrentlyToAnimationsWithFlag:&_isAnimating duration:ECItemViewShortAnimationDuration animations:^(void) {
         _draggedItemContainer.center = [self convertPoint:[self _centerForItem:_draggedItemIndex] toView:_viewToDragIn];
     } completion:^(BOOL finished) {
@@ -596,6 +655,11 @@ static const CGFloat ECItemViewLongAnimationDuration = 5.0;
         if (![self isDescendantOfView:_viewToDragIn])
             _viewToDragIn = self;
     return shouldBegin;
+}
+
+- (void)_handleTimer:(NSTimer *)timer
+{
+    ((void(^)(void))[timer userInfo])();
 }
 
 @end
