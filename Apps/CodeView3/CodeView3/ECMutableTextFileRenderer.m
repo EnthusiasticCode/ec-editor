@@ -170,7 +170,7 @@
 - (void)releaseFramesetter;
 
 /// Remove every cache data of frames effectivelly invalidating every frame info.
-- (void)invalidateAllFrameInfo;
+- (void)invalidateCache;
 
 /// Release any previous framesetter and generate a new one from the given string.
 - (void)generateFramesetterWithString:(NSAttributedString *)string preferredFrameSize:(CGSize)size;
@@ -220,7 +220,7 @@
     }
 }
 
-- (void)invalidateAllFrameInfo
+- (void)invalidateCache
 {
     [frames removeAllObjects];
     actualSize = CGSizeZero;
@@ -228,8 +228,9 @@
 
 - (void)generateFramesetterWithString:(NSAttributedString *)string preferredFrameSize:(CGSize)size
 {
-    [self releaseFramesetter];
-    framesetter = CTFramesetterCreateWithAttributedString((CFAttributedStringRef)string);
+//    [self releaseFramesetter];
+    if (!framesetter)
+        framesetter = CTFramesetterCreateWithAttributedString((CFAttributedStringRef)string);
     
     NSUInteger stringLength = [string length];
     CFRange frameRange = CFRangeMake(0, 0);
@@ -363,7 +364,7 @@
     frameWidth = width;
     for (FramesetterInfo *framesetterInfo in framesetters) 
     {
-        [framesetterInfo invalidateAllFrameInfo];
+        [framesetterInfo invalidateCache];
     }
 }
 
@@ -414,7 +415,7 @@
             // TODO call datasource here instead of copy string
             subAttributedString = [string attributedSubstringFromRange:nextStringRange];
             
-            // Generate new framesetter
+            // update framesetter
             [framesetterInfo generateFramesetterWithString:subAttributedString preferredFrameSize:self.framePreferredSize];
             
             // Releasing all non kept frames
@@ -492,8 +493,7 @@
             if (framesetterInfo.needsFramesetterGeneration) 
             {
                 // TODO call datasource here instead of copy string
-                NSRange subStringRange = NSMakeRange(framesetterInfo.stringRange.location, framesetterInfo.stringRange.length);
-                NSAttributedString *subString = [string attributedSubstringFromRange:subStringRange];
+                NSAttributedString *subString = [string attributedSubstringFromRange:framesetterInfo.stringRange];
                 [framesetterInfo generateFramesetterWithString:subString preferredFrameSize:self.framePreferredSize];
             }
             // Apply block
@@ -568,6 +568,15 @@
         CGSize framesetterInfoSize;
         for (FramesetterInfo *framesetterInfo in framesetters) 
         {
+            if (!framesetterInfo.isCached) 
+            {
+                NSAttributedString *subString = [string attributedSubstringFromRange:framesetterInfo.stringRange];
+                [framesetterInfo generateFramesetterWithString:subString preferredFrameSize:self.framePreferredSize];
+                [framesetterInfo enumerateAllFrameInfoUsingBlock:^(FrameInfo *frameInfo, NSUInteger idx, BOOL *stop) {
+                    [frameInfo releaseFrame];
+                }];
+            }
+            
             framesetterInfoSize = framesetterInfo.actualSize;
             renderSize.width = MAX(renderSize.width, framesetterInfoSize.width);
             renderSize.height += framesetterInfoSize.height;

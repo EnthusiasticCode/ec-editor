@@ -57,6 +57,7 @@
 - (void)invalidate
 {
     tileIndex = -2;
+    self.hidden = YES;
 }
 
 - (void)drawRect:(CGRect)rect
@@ -113,6 +114,7 @@
     [renderer setString:text];
     
     CGSize renderSize = [renderer renderedSizeForTextRect:CGRectNull allowGuessedResult:YES];
+    renderSize.width = self.bounds.size.width;
     self.contentSize = renderSize;
     
     free(tileHeights);
@@ -132,7 +134,9 @@
 {
     if (text) 
     {
+        renderer.frameWidth = UIEdgeInsetsInsetRect(frame, self->textInsets).size.width;
         CGSize renderSize = [renderer renderedSizeForTextRect:CGRectNull allowGuessedResult:YES];
+        renderSize.width = frame.size.width;
         self.contentSize = renderSize;
         
         free(tileHeights);
@@ -140,7 +144,6 @@
         tileHeights = (CGFloat *)malloc(sizeof(CGFloat) * tileCount);
         memset(tileHeights, 0, sizeof(CGFloat) * tileCount);
         
-        renderer.frameWidth = UIEdgeInsetsInsetRect(frame, self->textInsets).size.width;
         for (NSInteger i = 0; i < TILEVIEWPOOL_SIZE; ++i)
         {
             [tileViewPool[i] invalidate];
@@ -148,7 +151,7 @@
     }
     
     [super setFrame:frame];
-    [self setNeedsLayout];
+//    [self setNeedsLayout];
 }
 
 #pragma mark -
@@ -283,6 +286,8 @@ static void init(ECCodeView4 *self)
     
     // Layout first visible tile
     TextTileView *firstTile = [self viewForTileIndex:index];
+    [self sendSubviewToBack:firstTile];
+    firstTile.hidden = NO;
     firstTile.center = CGPointMake(CGRectGetMidX(contentRect), start + tileHeights[index] / 2.0);
     end = start + firstTile.bounds.size.height;
     
@@ -291,8 +296,9 @@ static void init(ECCodeView4 *self)
     if (index < tileCount)
     {
         TextTileView *secondTile = [self viewForTileIndex:index];
+        [self sendSubviewToBack:secondTile];
+        secondTile.hidden = NO;
         secondTile.center = CGPointMake(CGRectGetMidX(contentRect), end + tileHeights[index] / 2.0);
-        end += tileHeights[index];
     }
 }
 
