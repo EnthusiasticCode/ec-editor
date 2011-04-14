@@ -475,7 +475,7 @@
     }
 }
 
-- (CGSize)drawTextInRect:(CGRect)rect inContext:(CGContextRef)context
+- (void)drawTextInRect:(CGRect)rect inContext:(CGContextRef)context
 {
     // TODO check for rendering ok
     if (!string)
@@ -486,8 +486,6 @@
         [self cacheRenderingInformationsUpThroughRect:rect andKeepFramesIntersectingRect:YES];
     }
     
-    __block CGSize drawnSize = CGSizeZero;
-    __block CGRect lastLineBounds = CGRectZero;
     [self enumerateFramesetterInfoIntersectingRect:rect usingBlock:^(FramesetterInfo *framesetterInfo, CGRect relativeRect, BOOL *stop) {
 //        CGContextTranslateCTM(context, 0, -relativeRect.origin.y);
         [framesetterInfo enumerateFrameInfoIntersectingRect:relativeRect usingBlock:^(FrameInfo *frameInfo, CGRect relativeRect, BOOL *stop) {
@@ -495,51 +493,54 @@
                 CGContextTranslateCTM(context, 0, -lineBounds.size.height);
                 CTLineDraw(line, context);
                 // TODO use + or - depending on context flipped
-                CGContextTranslateCTM(context, -lineBounds.size.width, 0);
-                
-                drawnSize.height += lineBounds.size.height;
-                lastLineBounds = lineBounds;
+                CGContextTranslateCTM(context, -lineBounds.size.width, 0);                
             }];
 //            [frameInfo releaseFrame];
         }];
     }];
-    
-    drawnSize.height -= lastLineBounds.size.height;
-    return drawnSize;
 }
 
-- (CGSize)renderedTextSizeAllowGuessedResult:(BOOL)guessed
+- (CGSize)renderedSizeForTextRect:(CGRect)rect allowGuessedResult:(BOOL)guessed
 {
     if (!string)
         return CGSizeZero;
+    
+    if (CGRectIsEmpty(rect) || CGRectIsInfinite(rect))
+        rect = CGRectNull;
         
-    if (!guessed)
-        [self cacheRenderingInformationsUpThroughRect:CGRectNull andKeepFramesIntersectingRect:NO];
-
-    // Calculate actual size from frames already cached
-    NSUInteger coveredString = 0;
-    CGSize renderSize = CGSizeZero, framesetterInfoSize;
-    for (FramesetterInfo *framesetterInfo in framesetters) 
+    __block NSUInteger coveredString = 0;
+    __block CGSize renderSize = CGSizeZero;
+    if (!guessed || !CGRectIsNull(rect))
     {
-        framesetterInfoSize = framesetterInfo.actualSize;
-        renderSize.width = MAX(renderSize.width, framesetterInfoSize.width);
-        renderSize.height += framesetterInfoSize.height;
-        
-        coveredString += framesetterInfo.stringRange.length;
+        [self cacheRenderingInformationsUpThroughRect:rect 
+                        andKeepFramesIntersectingRect:!CGRectIsNull(rect)];
     }
     
+    [self enumerateFramesetterInfoIntersectingRect:rect usingBlock:^(FramesetterInfo *framesetterInfo, CGRect relativeRect, BOOL *stop) {
+        [framesetterInfo enumerateFrameInfoIntersectingRect:relativeRect usingBlock:^(FrameInfo *frameInfo, CGRect relativeRect, BOOL *stop) {
+            [frameInfo enumerateLinesIntersectingRect:relativeRect usingBlock:^(CTLineRef line, CGRect lineBounds, BOOL *stop) {
+                coveredString += CTLineGetStringRange(line).length;
+                renderSize.width = MAX(renderSize.width, lineBounds.size.width);
+                renderSize.height += lineBounds.size.height;
+            }];
+        }];
+    }];
+    
     // If not covering all content, guess rest
-    NSUInteger stringLength = [string length];
-    if (coveredString < stringLength) 
-    {
-        // TODO should guess in a lower profile fashon
-        CFRange fitRange;
-        NSRange remaininRange = NSMakeRange(coveredString, stringLength - coveredString);
-        CTFramesetterRef remain = CTFramesetterCreateWithAttributedString((CFAttributedStringRef)[string attributedSubstringFromRange:remaininRange]);
-        CGSize suggestedSize = CTFramesetterSuggestFrameSizeWithConstraints(remain, (CFRange){ 0, 0 }, NULL, (CGSize){ frameWidth, CGFLOAT_MAX }, &fitRange);
-        CFRelease(remain);
-        
-        renderSize.height += suggestedSize.height;
+    if (guessed && CGRectIsNull(rect)) 
+    {    
+        NSUInteger stringLength = [string length];
+        if (coveredString < stringLength) 
+        {
+            // TODO should guess in a lower profile fashon
+            CFRange fitRange;
+            NSRange remaininRange = NSMakeRange(coveredString, stringLength - coveredString);
+            CTFramesetterRef remain = CTFramesetterCreateWithAttributedString((CFAttributedStringRef)[string attributedSubstringFromRange:remaininRange]);
+            CGSize suggestedSize = CTFramesetterSuggestFrameSizeWithConstraints(remain, (CFRange){ 0, 0 }, NULL, (CGSize){ frameWidth, CGFLOAT_MAX }, &fitRange);
+            CFRelease(remain);
+            
+            renderSize.height += suggestedSize.height;
+        }
     }
     
     return renderSize;

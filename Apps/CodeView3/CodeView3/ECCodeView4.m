@@ -10,18 +10,39 @@
 #import <QuartzCore/QuartzCore.h>
 #import "ECMutableTextFileRenderer.h"
 
-@interface TextTileView : UIView 
+
+#pragma mark -
+#pragma mark TextTileView
+
+@interface TextTileView : UIView
+
+@property (nonatomic) NSUInteger tileIndex;
+
+@property (getter = isDirty) BOOL dirty;
+
 @end
 
+@implementation TextTileView
 
-#define TILES_COUNT (3)
+@synthesize tileIndex, dirty;
+
+@end
+
+#pragma mark -
+#pragma mark ECCodeView4
+
+#define TILEPOOL_COUNT (3)
 
 @interface ECCodeView4 () {
 @private
     ECMutableTextFileRenderer *renderer;
     
-    TextTileView* tiles[TILES_COUNT];
+    TextTileView* tilePool[TILEPOOL_COUNT];
+    CGSize *tileSizes;
 }
+
+- (TextTileView *)viewForTileIndex:(NSUInteger)tileIndex;
+
 @end
 
 @implementation ECCodeView4
@@ -37,7 +58,7 @@
     text = [string retain];
     [renderer setString:text];
     
-    self.contentSize = [renderer renderedTextSizeAllowGuessedResult:YES];
+    self.contentSize = [renderer renderedSizeForTextRect:CGRectNull allowGuessedResult:YES];
     
     [self setNeedsDisplay];
 }
@@ -98,9 +119,32 @@ static void init(ECCodeView4 *self)
 #pragma mark -
 #pragma mark Rendering Methods
 
+- (TextTileView *)viewForTileIndex:(NSUInteger)tileIndex
+{
+    int selected = 0;
+    //
+    for (int i = 0; i < TILEPOOL_COUNT; ++i) 
+    {
+        if (tilePool[i] && [tilePool[i] tileIndex] == tileIndex)
+        {
+            return tilePool[i];
+        }
+        selected = i;
+    }
+    // Generate new tile
+    if (tilePool[selected] == nil)
+    {
+        tilePool[selected] = [TextTileView new];
+        [tilePool[selected] setTileIndex:tileIndex];
+    }
+    
+    return tilePool[selected];
+}
+
 - (void)layoutSubviews
 {
-    
+    if (!tileSizes)
+        return;
 }
 
 @end

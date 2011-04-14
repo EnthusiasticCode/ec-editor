@@ -106,7 +106,7 @@
 //    [(CATiledLayer *)self.layer setTileSize:frame.size];
     if (autosizeHeight) 
     {
-        CGSize fitSize = [renderer renderedTextSizeAllowGuessedResult:YES];
+        CGSize fitSize = [renderer renderedSizeForTextRect:CGRectNull allowGuessedResult:YES];
         fitSize.width = frame.size.width;
         fitSize.height = ceilf(fitSize.height + 50);
         frame.size = fitSize;
@@ -830,7 +830,8 @@ static void init(ECCodeView3 *self)
 //        CGRect requestRect = rect;
 //        requestRect.size.height -= offset;        
         
-        CGSize renderedSize = [renderer drawTextInRect:rect inContext:context];
+        CGSize renderedSize = [renderer renderedSizeForTextRect:rect allowGuessedResult:NO];
+        [renderer drawTextInRect:rect inContext:context];
         
         [tilesOffset insertObject:[NSNumber numberWithFloat:renderedSize.height] atIndex:(tileIndex + 1)];
         [tileOffsetsCondition signal];

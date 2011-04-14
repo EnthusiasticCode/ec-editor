@@ -56,12 +56,13 @@
 /// The given context will not be modified prior rendering. Lines will be drawn
 /// with the current context transformation and it will be left at the beginning
 /// of the next non redered line.
-- (CGSize)drawTextInRect:(CGRect)rect inContext:(CGContextRef)context;
+- (void)drawTextInRect:(CGRect)rect inContext:(CGContextRef)context;
 
-/// Returns the total size of the rendered content.
+/// Returns the actual size of rendered text with integral number of lines in the
+/// given text rect. \c CGRectInfinite can be used to retrieve the entire text render size.
 /// The content will be completelly cached if guessed is NO. Otherwise a guessed,
-/// imprecise size will be returned.
-- (CGSize)renderedTextSizeAllowGuessedResult:(BOOL)guessed;
+/// imprecise size will be returned with infinite request rect.
+- (CGSize)renderedSizeForTextRect:(CGRect)rect allowGuessedResult:(BOOL)guessed;
 
 // TODO this function that will re-generate framesetters and all in given rect keeping in mind to update rest of cache if needed
 //- (void)updateCacheForTextInRect:(CGRect)rect;
