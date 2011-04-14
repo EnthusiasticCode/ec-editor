@@ -15,17 +15,7 @@ typedef enum {
     ECRelationalTableViewScrollPositionTop,    
     ECRelationalTableViewScrollPositionMiddle,   
     ECRelationalTableViewScrollPositionBottom
-} ECRelationalTableViewScrollPosition;            // scroll so item of interest is completely visible at top/center/bottom of view
-
-typedef enum {
-    ECRelationalTableViewItemAnimationFade,
-    ECRelationalTableViewItemAnimationRight,       // slide in from right (or out to right)
-    ECRelationalTableViewItemAnimationLeft,
-    ECRelationalTableViewItemAnimationTop,
-    ECRelationalTableViewItemAnimationBottom,
-    ECRelationalTableViewItemAnimationNone,        // available in iPhone 3.0
-    ECRelationalTableViewItemAnimationMiddle,      // available in iPhone 3.2.  attempts to keep item centered in the space it will/did occupy
-} ECRelationalTableViewItemAnimation;
+} ECRelationalTableViewScrollPosition;
 
 @protocol ECRelationalTableViewDataSource <NSObject>
 @required
@@ -58,11 +48,6 @@ typedef enum {
 // Allows the reorder accessory view to optionally be shown for a particular item. By default, the reorder control will be shown only if the datasource implements -relationalTableView:moveItemAtIndexPath:toIndexPath:
 - (BOOL)relationalTableView:(ECRelationalTableView *)relationalTableView canMoveItemAtIndexPath:(NSIndexPath *)indexPath;
 
-// Data manipulation - insert and delete support
-
-// After a item has the minus or plus button invoked (based on the ECRelationalTableViewItemEditingStyle for the item), the dataSource must commit the change
-- (void)relationalTableView:(ECRelationalTableView *)relationalTableView commitEditingStyle:(ECRelationalTableViewItemEditingStyle)editingStyle forItemAtIndexPath:(NSIndexPath *)indexPath;
-
 // Data manipulation - reorder / moving support
 
 - (void)relationalTableView:(ECRelationalTableView *)relationalTableView moveItemAtIndexPath:(NSIndexPath *)sourceIndexPath toIndexPath:(NSIndexPath *)destinationIndexPath;
@@ -70,22 +55,7 @@ typedef enum {
 @end
 
 @protocol ECRelationalTableViewDelegate <NSObject, UIScrollViewDelegate>
-
 @optional
-
-// Display customization
-
-- (void)relationalTableView:(ECRelationalTableView *)relationalTableView willDisplayCell:(ECRelationalTableViewCell *)cell forItemAtIndexPath:(NSIndexPath *)indexPath;
-
-// Area header & footer information. Views are preferred over title should you decide to provide both
-
-- (UIView *)relationalTableView:(ECRelationalTableView *)relationalTableView viewForHeaderInArea:(NSUInteger)area;   // custom view for header. will be adjusted to default or specified header height
-- (UIView *)relationalTableView:(ECRelationalTableView *)relationalTableView viewForFooterInArea:(NSUInteger)area;   // custom view for footer. will be adjusted to default or specified footer height
-
-// Accessories (disclosures). 
-
-- (UITableViewCellAccessoryType)tableView:(UITableView *)tableView accessoryTypeForItemWithIndexPath:(NSIndexPath *)indexPath;
-- (void)tableView:(UITableView *)tableView accessoryButtonTappedForItemWithIndexPath:(NSIndexPath *)indexPath;
 
 // Selection
 
@@ -96,12 +66,6 @@ typedef enum {
 - (void)relationalTableView:(ECRelationalTableView *)relationalTableView didSelectItemAtIndexPath:(NSIndexPath *)indexPath;
 - (void)relationalTableView:(ECRelationalTableView *)relationalTableView didDeselectItemAtIndexPath:(NSIndexPath *)indexPath;
 
-// Editing
-
-// Allows customization of the editingStyle for a particular item located at 'indexPath'. If not implemented, all editable items will have ECRelationalTableViewItemEditingStyleDelete set for them when the table has editing property set to YES.
-- (ECRelationalTableViewItemEditingStyle)relationalTableView:(ECRelationalTableView *)relationalTableView editingStyleForItemAtIndexPath:(NSIndexPath *)indexPath;
-- (NSString *)relationalTableView:(ECRelationalTableView *)relationalTableView titleForDeleteConfirmationButtonForItemAtIndexPath:(NSIndexPath *)indexPath;
-
 // Moving/reordering
 
 // Allows customization of the target item for a particular item as it is being moved/reordered
@@ -109,50 +73,34 @@ typedef enum {
 
 @end
 
-@interface ECRelationalTableView : UIView <UIGestureRecognizerDelegate>
+@interface ECRelationalTableView : UIScrollView <UIGestureRecognizerDelegate>
 @property (nonatomic, assign) IBOutlet id<ECRelationalTableViewDelegate> delegate;
 @property (nonatomic, assign) IBOutlet id<ECRelationalTableViewDataSource> dataSource;
-@property (nonatomic, retain) UIView *backgroundView;
-@property (nonatomic, retain) UIView *tableHeaderView;
-@property (nonatomic, retain) UIView *tableFooterView;
 @property (nonatomic) UIEdgeInsets tableInsets;
 @property (nonatomic) CGSize cellSize;
 @property (nonatomic) UIEdgeInsets cellInsets;
-@property (nonatomic, readonly) CGSize paddedCellSize;
-@property (nonatomic, readonly) NSUInteger contentWidthInCells;
 @property (nonatomic) UIEdgeInsets levelInsets;
-@property (nonatomic) CGFloat levelSeparatorHeight;
 @property (nonatomic) UIEdgeInsets levelSeparatorInsets;
-@property (nonatomic, readonly) CGSize paddedLevelSeparatorSize;
-@property (nonatomic) CGFloat areaHeaderHeight;
 @property (nonatomic) UIEdgeInsets areaHeaderInsets;
-@property (nonatomic, readonly) CGSize paddedAreaHeaderSize;
-@property (nonatomic) CGFloat areaFooterHeight;
-@property (nonatomic) UIEdgeInsets areaFooterInsets;
-@property (nonatomic, readonly) CGSize paddedAreaFooterSize;
-@property (nonatomic) BOOL wrapsItems;
-@property (nonatomic, getter = isEditing) BOOL editing;
 @property (nonatomic) BOOL allowsSelection;
 
 // Editing
-
+@property (nonatomic, getter = isEditing) BOOL editing;
 - (void)setEditing:(BOOL)editing animated:(BOOL)animated;
 
 // Data
-
 - (void)reloadData;
 
 // Info
-
-- (NSUInteger)heightInCellsForContentAtLevel:(NSUInteger)level inArea:(NSUInteger)area;
+- (NSUInteger)columns;
+- (NSUInteger)rowsAtLevel:(NSUInteger)level inArea:(NSUInteger)area;
 
 - (NSUInteger)numberOfAreas;
 - (NSUInteger)numberOfLevelsInArea:(NSUInteger)area;
 - (NSUInteger)numberOfItemsAtLevel:(NSUInteger)level inArea:(NSUInteger)area;
 
-- (CGRect)rectForArea:(NSUInteger)area;                                    // includes header, footer and all items
+- (CGRect)rectForArea:(NSUInteger)area;
 - (CGRect)rectForHeaderInArea:(NSUInteger)area;
-- (CGRect)rectForFooterInArea:(NSUInteger)area;
 - (CGRect)rectForLevel:(NSUInteger)level inArea:(NSUInteger)area;
 - (CGRect)rectForItemAtIndexPath:(NSIndexPath *)indexPath;
 
@@ -173,13 +121,17 @@ typedef enum {
 - (void)beginUpdates;   // allow multiple insert/delete of items and areas to be animated simultaneously. Nestable
 - (void)endUpdates;     // only call insert/delete/reload calls or change the editing state inside an update block.  otherwise things like item count, etc. may be invalid.
 
-- (void)insertAreas:(NSIndexSet *)areas withItemAnimation:(ECRelationalTableViewItemAnimation)animation;
-- (void)deleteAreas:(NSIndexSet *)areas withItemAnimation:(ECRelationalTableViewItemAnimation)animation;
-- (void)reloadAreas:(NSIndexSet *)areas withItemAnimation:(ECRelationalTableViewItemAnimation)animation;
+- (void)insertAreas:(NSIndexSet *)areas;
+- (void)deleteAreas:(NSIndexSet *)areas;
+- (void)reloadAreas:(NSIndexSet *)areas;
 
-- (void)insertItemsAtIndexPaths:(NSArray *)indexPaths withItemAnimation:(ECRelationalTableViewItemAnimation)animation;
-- (void)deleteItemsAtIndexPaths:(NSArray *)indexPaths withItemAnimation:(ECRelationalTableViewItemAnimation)animation;
-- (void)reloadItemsAtIndexPaths:(NSArray *)indexPaths withItemAnimation:(ECRelationalTableViewItemAnimation)animation;
+- (void)insertLevelsAtIndexPaths:(NSArray *)indexPaths;
+- (void)deleteLevelsAtIndexPaths:(NSArray *)indexPaths;
+- (void)reloadLevelsAtIndexPaths:(NSArray *)indexPaths;
+
+- (void)insertItemsAtIndexPaths:(NSArray *)indexPaths;
+- (void)deleteItemsAtIndexPaths:(NSArray *)indexPaths;
+- (void)reloadItemsAtIndexPaths:(NSArray *)indexPaths;
 
 // Selection
 
