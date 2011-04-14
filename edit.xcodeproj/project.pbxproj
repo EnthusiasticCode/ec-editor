@@ -24,6 +24,7 @@
 		B7E5CF941348C20B00A4C65A /* ECClangCodeIndex.m in Sources */ = {isa = PBXBuildFile; fileRef = B7E5CF8E1348C20B00A4C65A /* ECClangCodeIndex.m */; };
 		B7E5CF951348C20B00A4C65A /* ECClangCodeUnit.m in Sources */ = {isa = PBXBuildFile; fileRef = B7E5CF901348C20B00A4C65A /* ECClangCodeUnit.m */; };
 		B7E5CF961348C20B00A4C65A /* libclang.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B7E5CF921348C20B00A4C65A /* libclang.dylib */; };
+		B7F6B86F1357B43D00971F44 /* libclang.dylib in Resources */ = {isa = PBXBuildFile; fileRef = B7E5CF921348C20B00A4C65A /* libclang.dylib */; };
 		CDEBF21613489A8E00CE2285 /* AppController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDEBF20913489A8E00CE2285 /* AppController.m */; };
 		CDEBF21713489A8E00CE2285 /* FileController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDEBF20D13489A8E00CE2285 /* FileController.m */; };
 		CDEBF21813489A8E00CE2285 /* Project.m in Sources */ = {isa = PBXBuildFile; fileRef = CDEBF20F13489A8E00CE2285 /* Project.m */; };
@@ -514,6 +515,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B7F6B86F1357B43D00971F44 /* libclang.dylib in Resources */,
 				CDEFF96F1348BD5E006FEFCC /* FileController.xib in Resources */,
 				CDEFF9701348BD5E006FEFCC /* InfoPlist.strings in Resources */,
 				CDEFF9711348BD5E006FEFCC /* MainWindow.xib in Resources */,
