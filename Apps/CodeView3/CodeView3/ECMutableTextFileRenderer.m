@@ -19,22 +19,22 @@
 
 /// Hold a reference to the frame connected with this info block.
 /// This reference may be NULL is the frame has been released due to no use.
-@property (readonly) CTFrameRef frame;
+@property (nonatomic, readonly) CTFrameRef frame;
 
 /// Rect used to render the frame. This rect should have his width equal
 /// to the frameWidth property.
-@property (readonly) CGRect generationRect;
+@property (nonatomic, readonly) CGRect generationRect;
 
 /// The string range used to render the frame.
-@property (readonly) CFRange generationStringRange;
+@property (nonatomic, readonly) CFRange generationStringRange;
 
 /// The effective string range rendered int the frame.
-@property (readonly) CFRange actualStringRange;
+@property (nonatomic, readonly) CFRange actualStringRange;
 
 /// Contains the actual size of this frame. Width may be smaler than rect's
 /// one and height is calculated from the top of the first line to the 
 /// bottom of the last rendered one.
-@property (readonly) CGSize actualSize;
+@property (nonatomic, readonly) CGSize actualSize;
 
 /// Release the frame but keeps cached rendering informations available.
 - (void)releaseFrame;
@@ -153,20 +153,24 @@
     // TODO editing data and string attributes cache
 }
 
-@property CGSize framesPreferredSize;
-
 /// The string range in the content text that this framesetter is handling.
-@property (readonly) CFRange stringRange;
+@property (nonatomic, readonly) NSRange stringRange;
 
 /// Get the actual rendered size of the union of the framesetter's generated
 /// framses originated accordingly with previous framesetters.
-@property (readonly) CGSize actualSize;
+@property (nonatomic, readonly) CGSize actualSize;
 
 /// Indicate if the framesetter associated with this \c FramesetterInfo reuires to be generated.
-@property (readonly) BOOL needsFramesetterGeneration;
+@property (nonatomic, readonly) BOOL needsFramesetterGeneration;
+
+/// Indicate it the informations in the framesetter info cache are valid.
+@property (nonatomic, readonly) BOOL isCached;
 
 /// Release the framesetter but keep cached rendering informations available.
 - (void)releaseFramesetter;
+
+/// Remove every cache data of frames effectivelly invalidating every frame info.
+- (void)invalidateAllFrameInfo;
 
 /// Release any previous framesetter and generate a new one from the given string.
 - (void)generateFramesetterWithString:(NSAttributedString *)string preferredFrameSize:(CGSize)size;
@@ -179,7 +183,7 @@
 
 @implementation FramesetterInfo
 
-@synthesize framesPreferredSize, stringRange, actualSize;
+@synthesize stringRange, actualSize;
 
 - (id)init
 {
@@ -192,14 +196,19 @@
 
 - (void)dealloc
 {
-    [self releaseFramesetter];
     [frames release];
+    [self releaseFramesetter];
     [super dealloc];
 }
 
 - (BOOL)needsFramesetterGeneration
 {
     return framesetter == NULL;
+}
+
+- (BOOL)isCached
+{
+    return actualSize.height != 0 && [frames count] != 0;
 }
 
 - (void)releaseFramesetter
@@ -211,16 +220,22 @@
     }
 }
 
+- (void)invalidateAllFrameInfo
+{
+    [frames removeAllObjects];
+    actualSize = CGSizeZero;
+}
+
 - (void)generateFramesetterWithString:(NSAttributedString *)string preferredFrameSize:(CGSize)size
 {
     [self releaseFramesetter];
     framesetter = CTFramesetterCreateWithAttributedString((CFAttributedStringRef)string);
-    framesPreferredSize = size;
     
     NSUInteger stringLength = [string length];
-    CFRange frameRange = stringRange = CFRangeMake(0, 0);
-    CGRect frameRect = (CGRect){ CGPointZero, framesPreferredSize };
+    CFRange frameRange = CFRangeMake(0, 0);
+    CGRect frameRect = (CGRect){ CGPointZero, size };
     actualSize = CGSizeZero;
+    stringRange = NSMakeRange(0, 0);
     
     [frames removeAllObjects];
     FrameInfo *frameInfo;
@@ -286,11 +301,6 @@
     }
 }
 
-- (void)frameInfoRequireGeneration:(FrameInfo *)frameInfo
-{
-    
-}
-
 @end
 
 
@@ -339,15 +349,22 @@
     [framesetters removeAllObjects];
     if (!lazyCaching) 
     {
-//        [[NSOperationQueue mainQueue] addOperationWithBlock:^(void) {
-            [self cacheRenderingInformationsUpThroughRect:CGRectNull andKeepFramesIntersectingRect:NO];
-//        }];
+        [self cacheRenderingInformationsUpThroughRect:CGRectNull andKeepFramesIntersectingRect:NO];
     }
 }
 
 - (CGSize)framePreferredSize
 {
     return CGSizeMake(frameWidth, framePreferredHeight);
+}
+
+- (void)setFrameWidth:(CGFloat)width
+{
+    frameWidth = width;
+    for (FramesetterInfo *framesetterInfo in framesetters) 
+    {
+        [framesetterInfo invalidateAllFrameInfo];
+    }
 }
 
 #pragma mark Initialization
@@ -385,37 +402,50 @@
         keepFromY = keep ? rect.origin.y : CGFLOAT_MAX;
         cacheUpToY = rect.origin.y + rect.size.height;
     }
-    // Check for already present cache informations
+    
     CGFloat coveredHeight = 0;
     NSUInteger lastStringIndex = 0;
+    
+    void (^cacheFramesetter)(FramesetterInfo*, NSRange) = ^(FramesetterInfo* framesetterInfo, NSRange nextStringRange) {
+        NSAttributedString *subAttributedString;
+        if (!framesetterInfo.isCached)
+        {
+            // Get next string piece to render
+            // TODO call datasource here instead of copy string
+            subAttributedString = [string attributedSubstringFromRange:nextStringRange];
+            
+            // Generate new framesetter
+            [framesetterInfo generateFramesetterWithString:subAttributedString preferredFrameSize:self.framePreferredSize];
+            
+            // Releasing all non kept frames
+            __block CGFloat currentFrameY = coveredHeight;
+            [framesetterInfo enumerateAllFrameInfoUsingBlock:^(FrameInfo *frameInfo, NSUInteger idx, BOOL *stop) {
+                if (!keep || currentFrameY < keepFromY)
+                {
+                    [frameInfo releaseFrame];
+                }
+                currentFrameY += frameInfo.actualSize.height;
+            }];
+        }
+    };
+    
+    // Check for already present cache informations
     for (FramesetterInfo *framesetterInfo in framesetters) 
     {
+        cacheFramesetter(framesetterInfo, framesetterInfo.stringRange);
+        
+        // Computing new global advancement
         coveredHeight += framesetterInfo.actualSize.height;
         lastStringIndex += framesetterInfo.stringRange.length;
     }
+    
     // Generate missing informations
-    NSAttributedString *subAttributedString;
     NSUInteger stringLength = [string length];
     NSUInteger stringLengthLimit = framesetterStringLengthLimit ? framesetterStringLengthLimit : stringLength;
     while (coveredHeight < cacheUpToY && lastStringIndex < stringLength)
     {
-        // Get next string piece to render
-        // TODO call datasource here instead of copy string
-        NSRange nextStringRange = NSMakeRange(lastStringIndex, stringLengthLimit);
-        subAttributedString = [string attributedSubstringFromRange:nextStringRange];
-        
-        // Generate new framesetter
         FramesetterInfo *framesetterInfo = [[FramesetterInfo alloc] init];
-        [framesetterInfo generateFramesetterWithString:subAttributedString preferredFrameSize:self.framePreferredSize];
-        
-        // Releasing all non kept frames
-        __block CGFloat currentFrameY = coveredHeight;
-        [framesetterInfo enumerateAllFrameInfoUsingBlock:^(FrameInfo *frameInfo, NSUInteger idx, BOOL *stop) {
-            if (!keep || currentFrameY < keepFromY)
-            {
-                [frameInfo releaseFrame];
-            }
-        }];
+        cacheFramesetter(framesetterInfo, NSMakeRange(lastStringIndex, stringLengthLimit));
         
         // Computing new global advancement
         coveredHeight += framesetterInfo.actualSize.height;

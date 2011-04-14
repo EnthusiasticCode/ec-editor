@@ -30,7 +30,7 @@
 /// longer than this parameter, multiple framesetters will be created.
 /// Default to 0, will not attempt to cut the loaded text and generate only one 
 /// framesetter.
-@property NSUInteger framesetterStringLengthLimit;
+@property (nonatomic) NSUInteger framesetterStringLengthLimit;
 
 /// The preferred height for a redering frame. This value will be used to split
 /// redered text. Frame height might increase during editing of the text, if
@@ -38,19 +38,19 @@
 /// if it reaches the half of this property, it will be merged with another
 /// frame. Set this value to CGFLOAT_MAX to have only one frame.
 /// Default value is 1024.
-@property CGFloat framePreferredHeight;
+@property (nonatomic) CGFloat framePreferredHeight;
 
 /// The required rendering frame width. The width will not be automatically
 /// adjusted. Set this parameter to make the rendered text wrap.
 /// Default is 768. This parameter can be set to CGFLOAT_MAX to not limit width.
-@property CGFloat frameWidth;
+@property (nonatomic) CGFloat frameWidth;
 
 #pragma mark Rendering Content and Rendering Information
 
 /// Indicates if the caching of rendering informations should happen lazely or
 /// immediatly after a content is set. Defaults is NO making caching mandatory
 /// after content change.
-@property BOOL lazyCaching;
+@property (nonatomic) BOOL lazyCaching;
 
 /// Renders the content text contained in the given bounds to the specified context.
 /// The given context will not be modified prior rendering. Lines will be drawn

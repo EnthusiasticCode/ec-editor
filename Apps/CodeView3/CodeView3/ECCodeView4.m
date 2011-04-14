@@ -21,9 +21,11 @@
 
 - (id)initWithTextRenderer:(ECMutableTextFileRenderer *)aRenderer;
 
-@property (nonatomic) NSUInteger tileIndex;
+@property (nonatomic) NSInteger tileIndex;
 
 @property (nonatomic) CGRect textRect;
+
+- (void)invalidate;
 
 @end
 
@@ -50,6 +52,11 @@
         renderer = aRenderer;
     }
     return self;
+}
+
+- (void)invalidate
+{
+    tileIndex = -2;
 }
 
 - (void)drawRect:(CGRect)rect
@@ -113,13 +120,30 @@
     tileHeights = (CGFloat *)malloc(sizeof(CGFloat) * tileCount);
     memset(tileHeights, 0, sizeof(CGFloat) * tileCount);
     
-    for (int i = 0; i < TILEVIEWPOOL_SIZE; ++i)
+    for (NSInteger i = 0; i < TILEVIEWPOOL_SIZE; ++i)
     {
-        [tileViewPool[i] removeFromSuperview];
-        [tileViewPool[i] release];
-        tileViewPool[i] = nil;
+        [tileViewPool[i] invalidate];
     }
     
+    [self setNeedsLayout];
+}
+
+- (void)setFrame:(CGRect)frame
+{
+    CGSize renderSize = [renderer renderedSizeForTextRect:CGRectNull allowGuessedResult:YES];
+    self.contentSize = renderSize;
+    
+    free(tileHeights);
+    tileCount = ceilf(renderSize.height / self.bounds.size.height);
+    tileHeights = (CGFloat *)malloc(sizeof(CGFloat) * tileCount);
+    memset(tileHeights, 0, sizeof(CGFloat) * tileCount);
+    
+    renderer.frameWidth = UIEdgeInsetsInsetRect(frame, self->textInsets).size.width;
+    for (NSInteger i = 0; i < TILEVIEWPOOL_SIZE; ++i)
+    {
+        [tileViewPool[i] invalidate];
+    }
+    [super setFrame:frame];
     [self setNeedsLayout];
 }
 
@@ -163,7 +187,7 @@ static void init(ECCodeView4 *self)
 - (void)dealloc
 {
     free(tileHeights);
-    for (int i = 0; i < TILEVIEWPOOL_SIZE; ++i)
+    for (NSInteger i = 0; i < TILEVIEWPOOL_SIZE; ++i)
         [tileViewPool[i] release];
     [renderer release];
     [super dealloc];
@@ -177,9 +201,9 @@ static void init(ECCodeView4 *self)
     if (tileIndex >= tileCount)
         return nil;
     
-    int selected = -1;
+    NSInteger selected = -1;
     // Select free tile
-    for (int i = 0; i < TILEVIEWPOOL_SIZE; ++i) 
+    for (NSInteger i = 0; i < TILEVIEWPOOL_SIZE; ++i) 
     {
         if (tileViewPool[i])
         {
@@ -211,7 +235,7 @@ static void init(ECCodeView4 *self)
     // Calculate tile text rect
     CGPoint origin = CGPointZero;
     CGSize size = self.bounds.size;
-    for (int i = 0; i < tileIndex; ++i)
+    for (NSInteger i = 0; i < tileIndex; ++i)
         origin.y += tileHeights[i];
     tileViewPool[selected].textRect = (CGRect){ origin, size };
     tileHeights[tileIndex] = tileViewPool[selected].bounds.size.height;
