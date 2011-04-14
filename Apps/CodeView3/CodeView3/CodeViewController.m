@@ -78,7 +78,6 @@
             codeView.text = string;
             [string release];
             [sender setTitle:[url lastPathComponent]];
-            [self updateLayout];
             break;
         }
     }

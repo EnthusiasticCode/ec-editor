@@ -508,21 +508,40 @@
         
     __block NSUInteger coveredString = 0;
     __block CGSize renderSize = CGSizeZero;
+    
+    // Cache if neccessary
     if (!guessed || !CGRectIsNull(rect))
     {
         [self cacheRenderingInformationsUpThroughRect:rect 
                         andKeepFramesIntersectingRect:!CGRectIsNull(rect)];
     }
     
-    [self enumerateFramesetterInfoIntersectingRect:rect usingBlock:^(FramesetterInfo *framesetterInfo, CGRect relativeRect, BOOL *stop) {
-        [framesetterInfo enumerateFrameInfoIntersectingRect:relativeRect usingBlock:^(FrameInfo *frameInfo, CGRect relativeRect, BOOL *stop) {
-            [frameInfo enumerateLinesIntersectingRect:relativeRect usingBlock:^(CTLineRef line, CGRect lineBounds, BOOL *stop) {
-                coveredString += CTLineGetStringRange(line).length;
-                renderSize.width = MAX(renderSize.width, lineBounds.size.width);
-                renderSize.height += lineBounds.size.height;
+    if (!guessed)
+    {
+        // actual calculation
+        [self enumerateFramesetterInfoIntersectingRect:rect usingBlock:^(FramesetterInfo *framesetterInfo, CGRect relativeRect, BOOL *stop) {
+            [framesetterInfo enumerateFrameInfoIntersectingRect:relativeRect usingBlock:^(FrameInfo *frameInfo, CGRect relativeRect, BOOL *stop) {
+                [frameInfo enumerateLinesIntersectingRect:relativeRect usingBlock:^(CTLineRef line, CGRect lineBounds, BOOL *stop) {
+                    coveredString += CTLineGetStringRange(line).length;
+                    renderSize.width = MAX(renderSize.width, lineBounds.size.width);
+                    renderSize.height += lineBounds.size.height;
+                }];
             }];
         }];
-    }];
+    }
+    else
+    {
+        // Accumulate already present framesetters info
+        CGSize framesetterInfoSize;
+        for (FramesetterInfo *framesetterInfo in framesetters) 
+        {
+            framesetterInfoSize = framesetterInfo.actualSize;
+            renderSize.width = MAX(renderSize.width, framesetterInfoSize.width);
+            renderSize.height += framesetterInfoSize.height;
+            
+            coveredString += framesetterInfo.stringRange.length;
+        }
+    }
     
     // If not covering all content, guess rest
     if (guessed && CGRectIsNull(rect)) 
