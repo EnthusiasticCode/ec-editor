@@ -629,8 +629,12 @@ static const CGFloat ECItemViewLongAnimationDuration = 5.0;
         [self _continueDrag:dragRecognizer];
     }
     else if ([dragRecognizer state] == UIGestureRecognizerStateEnded)
+    {
         if (![self _endDrag:dragRecognizer])
             [self _cancelDrag:dragRecognizer];
+    }
+    else if ([dragRecognizer state] == UIGestureRecognizerStateCancelled)
+        [self _cancelDrag:dragRecognizer];
 }
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch

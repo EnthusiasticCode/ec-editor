@@ -18,6 +18,7 @@
 {
     @private
     UIPanGestureRecognizer *tableViewPanRecognizer_;
+    NSMutableDictionary *_itemViews;
     
 }
 @property (nonatomic, retain) NSFileManager *fileManager;
@@ -61,6 +62,7 @@
     self.extensionsToShow = nil;
     self.project = nil;
     self.codeIndex = nil;
+    [_itemViews release];
     [super dealloc];
 }
 
@@ -81,6 +83,7 @@
     [self.tableView addGestureRecognizer:panGestureRecognizer];
     UITapGestureRecognizer *tapGestureRecognizer = [[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTap:)] autorelease];
     [self.tableView addGestureRecognizer:tapGestureRecognizer];
+    _itemViews = [[NSMutableDictionary alloc] init];
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
@@ -229,13 +232,18 @@
     if (!group)
     {
         group = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"Group"] autorelease];
-        itemView = [[[ECItemView alloc] init] autorelease];
-        itemView.tag = 1;
-        [group.contentView addSubview:itemView];
-        itemView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
-        itemView.frame = group.contentView.bounds;
     }
-    itemView = (ECItemView *)[group.contentView viewWithTag:1];
+    [[group viewWithTag:1] removeFromSuperview];
+    if ([_itemViews objectForKey:indexPath])
+    {
+        [group.contentView addSubview:[_itemViews objectForKey:indexPath]];
+        return group;
+    }
+    itemView = [[[ECItemView alloc] init] autorelease];
+    itemView.tag = 1;
+    itemView.delegate = self;
+    itemView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
+    itemView.frame = group.contentView.bounds;
     NSArray *files = [self filesInSubfolder:[self tableView:nil titleForHeaderInSection:indexPath.section]];
     NSMutableArray *labels = [NSMutableArray arrayWithCapacity:[files count]];
     for (NSString *file in files)
@@ -245,10 +253,8 @@
         [labels addObject:label];
     }
     itemView.items = labels;
-//    label.text = [files componentsJoinedByString:@"\n"];
-//    if (self.isEditing && !(indexPath.row % 2))
-//        label.text = @"";
-//    label.numberOfLines = [files count];
+    [_itemViews setObject:itemView forKey:indexPath];
+    [group.contentView addSubview:itemView];
     return group;
 }
 
@@ -260,4 +266,31 @@
 #pragma mark -
 #pragma mark UITableViewDelegate
 
+- (void)itemView:(ECItemView *)itemView didSelectItem:(NSUInteger)item
+{
+//    NSString *subfolder = [self tableView:nil titleForHeaderInSection:[self.tableView indexPathForCell:(UITableViewCell *)[itemView superview]].section];
+//    NSLog(@"%@", subfolder);
+//    NSString *fileSubPath = [[self filesInSubfolder:subfolder] objectAtIndex:item];
+//    NSString *file = [self.folder stringByAppendingPathComponent:[subfolder stringByAppendingPathComponent:fileSubPath]];
+//    ECCodeUnit *codeUnit = [self.codeIndex unitForFile:file];
+//    FileController *fileController = ((AppController *)self.navigationController).fileController;
+//    [fileController loadFile:file withCodeUnit:codeUnit];
+//    [self.navigationController pushViewController:fileController animated:YES];
+}
+
+- (BOOL)itemView:(ECItemView *)itemView shouldDragItem:(NSUInteger)item inView:(UIView **)view
+{
+    *view = self.tableView;
+    return YES;
+}
+
+- (BOOL)itemView:(ECItemView *)itemView canDropItem:(NSUInteger)item inTargetItemView:(ECItemView *)targetItemView
+{
+    return YES;
+}
+
+- (void)itemView:(ECItemView *)itemView didDropItem:(NSUInteger)item inTargetItemView:(ECItemView *)targetItemView atIndex:(NSUInteger)index
+{
+    
+}
 @end
