@@ -20,6 +20,12 @@
 @synthesize target = _target;
 @synthesize action = _action;
 
+- (void)dealloc
+{
+    [_stack release];
+    [super dealloc];
+}
+
 - (id)initWithTarget:(id)target action:(SEL)action size:(NSUInteger)size
 {
     self = [super init];

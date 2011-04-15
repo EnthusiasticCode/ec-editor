@@ -26,6 +26,7 @@
 {
     [_spelling release];
     [_file release];
+    [cursor_ release];
     [super dealloc];
 }
 

@@ -40,6 +40,16 @@
 @synthesize extent = extent_;
 @synthesize unifiedSymbolResolution = unifiedSymbolResolution_;
 
+- (void)dealloc
+{
+    [language_ release];
+    [detailedKind_ release];
+    [spelling_ release];
+    [file_ release];
+    [unifiedSymbolResolution_ release];
+    [super dealloc];
+}
+
 - (id)initWithLanguage:(NSString *)language kind:(ECCodeCursorKind)kind detailedKind:(NSString *)detailedKind spelling:(NSString *)spelling file:(NSString *)file offset:(NSUInteger)offset extent:(NSRange)extent unifiedSymbolResolution:(NSString *)unifiedSymbolResolution
 {
     self = [super init];

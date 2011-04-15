@@ -25,9 +25,9 @@
     
     if (font)
     {
-        // TODO check for leak?
         CTFontRef CTFont = CTFontCreateWithName((CFStringRef)font.familyName, font.pointSize, &CGAffineTransformIdentity);
         [CTAttributes setObject:(id)CTFont forKey:(id)kCTFontAttributeName];
+        CFRelease(CTFont);
     }
     else
     {
