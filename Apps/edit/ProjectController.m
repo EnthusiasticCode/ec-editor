@@ -86,13 +86,18 @@
 
 - (ECRelationalTableViewCell *)relationalTableView:(ECRelationalTableView *)relationalTableView cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    ECRelationalTableViewCell *file = [[[ECRelationalTableViewCell alloc] init] autorelease];
-    UILabel *label = [[[UILabel alloc] init] autorelease];
-    label.text = [[self filesInSubfolder:[self relationalTableView:nil titleForHeaderInArea:indexPath.area]] objectAtIndex:(indexPath.item)];
-    [file addSubview:label];
-    label.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-    label.frame = file.bounds;
-    label.backgroundColor = [UIColor redColor];
+    ECRelationalTableViewCell *file = [self.tableView dequeueReusableCell];
+    if (!file)
+    {
+        file = [[[ECRelationalTableViewCell alloc] init] autorelease];
+        UILabel *label = [[[UILabel alloc] init] autorelease];
+        label.tag = 1;
+        label.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+        label.frame = UIEdgeInsetsInsetRect(file.bounds, UIEdgeInsetsMake(2.0, 2.0, 2.0, 2.0));
+        label.backgroundColor = [UIColor greenColor];
+        [file addSubview:label];
+    }
+    ((UILabel *)[file viewWithTag:1]).text = [[self filesInSubfolder:[self relationalTableView:nil titleForHeaderInArea:indexPath.area]] objectAtIndex:(indexPath.item)];
     return file;
 }
 

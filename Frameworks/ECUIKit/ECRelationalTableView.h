@@ -142,7 +142,7 @@ typedef enum {
 - (void)deselectItemAtIndexPath:(NSIndexPath *)indexPath animated:(BOOL)animated;
 
 // Recycling
-- (ECRelationalTableViewCell *)dequeueReusableCellWithIdentifier:(NSString *)identifier;
+- (ECRelationalTableViewCell *)dequeueReusableCell;
 
 @end
 

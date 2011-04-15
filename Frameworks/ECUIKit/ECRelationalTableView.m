@@ -8,9 +8,14 @@
 
 #import "ECRelationalTableView.h"
 #import "ECRelationalTableViewCell.h"
-#import "UIView+ConcurrentAnimation.h"
+#import <ECUIKit/UIView+ConcurrentAnimation.h>
+#import <ECFoundation/ECStackCache.h>
 
 const CGFloat ECRelationalTableViewShortAnimationDuration = 0.15;
+const NSUInteger ECRelationalTableViewCellBufferSize = 10;
+const NSUInteger ECRelationalTableViewHeaderBufferSize = 5;
+const NSUInteger ECRelationalTableViewGroupSeparatorBufferSize = 20;
+const NSUInteger ECRelationalTableViewGroupPlaceholderBufferSize = 20;
 
 @interface ECRelationalTableView ()
 {
@@ -37,9 +42,21 @@ const CGFloat ECRelationalTableViewShortAnimationDuration = 0.15;
     CGFloat _groupPlaceholderHeight;
     UIEdgeInsets _groupPlaceholderInsets;
     NSMutableArray *_areas;
-    NSMutableArray *_headers;
+    NSMutableArray *_headerTitles;
+    ECStackCache *_headerCache;
+    ECStackCache *_groupSeparatorCache;
+    ECStackCache *_groupPlaceholderCache;
+    ECStackCache *_cellCache;
+//    NSMutableDictionary *_visibleCells;
 }
 - (void)_setup;
+- (UIView *)_blankHeader:(ECStackCache *)cache;
+- (UIView *)_groupSeparator:(ECStackCache *)cache;
+- (UIView *)_groupPlaceholder:(ECStackCache *)cache;
+- (ECRelationalTableViewCell *)_blankCell:(ECStackCache *)cache;
+- (CGRect)_headerBounds;
+- (CGRect)_groupSeparatorBounds;
+- (CGRect)_groupPlaceholderBounds;
 - (CGFloat)_heightForGroup:(NSUInteger)group inArea:(NSUInteger)area;
 - (CGRect)_rectForHeaderInAreaRect:(CGRect)areaRect;
 - (CGRect)_rectForGroup:(NSUInteger)group inArea:(NSUInteger)area inAreaRect:(CGRect)areaRect;
@@ -154,7 +171,11 @@ const CGFloat ECRelationalTableViewShortAnimationDuration = 0.15;
 - (void)dealloc
 {
     [_areas release];
-    [_headers release];
+    [_headerTitles release];
+    [_headerCache release];
+    [_groupSeparatorCache release];
+    [_groupPlaceholderCache release];
+    [_cellCache release];
     [super dealloc];
 }
 
@@ -173,10 +194,61 @@ const CGFloat ECRelationalTableViewShortAnimationDuration = 0.15;
     _groupSeparatorHeight = 30.0;
     _groupPlaceholderHeight = 80.0;
     _groupPlaceholderInsets = UIEdgeInsetsZero;
+    _headerCache = [[ECStackCache alloc] initWithTarget:self action:@selector(_blankHeader:) size:ECRelationalTableViewHeaderBufferSize];
+    _groupSeparatorCache = [[ECStackCache alloc] initWithTarget:self action:@selector(_groupSeparator:) size:ECRelationalTableViewGroupSeparatorBufferSize];
+    _groupPlaceholderCache =[[ECStackCache alloc] initWithTarget:self action:@selector(_groupPlaceholder:) size:ECRelationalTableViewGroupPlaceholderBufferSize];
+    _cellCache = [[ECStackCache alloc] initWithTarget:self action:@selector(_blankCell:) size:ECRelationalTableViewCellBufferSize];
     UITapGestureRecognizer *tapGestureRecognizer = [[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(_handleTapGesture:)] autorelease];
     [self addGestureRecognizer:tapGestureRecognizer];
     //    UIPanGestureRecognizer *cellPanGestureRecognizer = [[[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handleCellPanGesture:)] autorelease];
     //    [self addGestureRecognizer:cellPanGestureRecognizer];
+}
+
+- (CGRect)_headerBounds
+{
+    return CGRectMake(0.0, 0.0, self.bounds.size.width - _tableInsets.left - _tableInsets.right - _headerInsets.left - _headerInsets.right, _headerHeight);
+}
+
+- (UIView *)_blankHeader:(ECStackCache *)cache
+{
+    UILabel *header = [[[UILabel alloc] init] autorelease];
+    header.backgroundColor = [UIColor blueColor];
+    header.bounds = [self _headerBounds];
+    return header;
+}
+
+- (CGRect)_groupSeparatorBounds
+{
+    return CGRectMake(0.0, 0.0, self.bounds.size.width - _tableInsets.left - _tableInsets.right - _groupSeparatorInsets.left - _groupSeparatorInsets.right, _groupSeparatorHeight);
+}
+
+- (UIView *)_groupSeparator:(ECStackCache *)cache
+{
+    UIView *groupSeparator = [[[UIView alloc] init] autorelease];
+    groupSeparator.backgroundColor = [UIColor blackColor];
+    groupSeparator.bounds = [self _groupSeparatorBounds];
+    return groupSeparator;
+}
+
+- (CGRect)_groupPlaceholderBounds
+{
+    return CGRectMake(0.0, 0.0, self.bounds.size.width - _tableInsets.left - _tableInsets.right - _groupPlaceholderInsets.left - _groupPlaceholderInsets.right, _groupPlaceholderHeight);
+}
+
+- (UIView *)_groupPlaceholder:(ECStackCache *)cache
+{
+    UIView *groupPlaceholder = [[[UIView alloc] init] autorelease];
+    groupPlaceholder.backgroundColor = [UIColor blackColor];
+    groupPlaceholder.bounds = [self _groupPlaceholderBounds];
+    return groupPlaceholder;
+}
+
+- (ECRelationalTableViewCell *)_blankCell:(ECStackCache *)cache
+{
+    ECRelationalTableViewCell *cell = [[[ECRelationalTableViewCell alloc] init] autorelease];
+    cell.backgroundColor = [UIColor redColor];
+    cell.bounds = CGRectMake(0.0, 0.0, _cellSize.width, _cellSize.height);
+    return cell;
 }
 
 - (CGFloat)_heightForGroup:(NSUInteger)group inArea:(NSUInteger)area
@@ -190,11 +262,9 @@ const CGFloat ECRelationalTableViewShortAnimationDuration = 0.15;
 
 - (CGRect)_rectForHeaderInAreaRect:(CGRect)areaRect
 {
-    CGFloat x = areaRect.origin.x;
-    CGFloat y = areaRect.origin.y;
-    CGFloat width = areaRect.size.width;
-    CGFloat height = _headerHeight;
-    return UIEdgeInsetsInsetRect(CGRectMake(x, y, width, height), _headerInsets);
+    CGRect rect = [self _headerBounds];
+    rect.origin.y = areaRect.origin.y;
+    return UIEdgeInsetsInsetRect(rect, _headerInsets);
 }
 
 - (CGRect)_rectForGroup:(NSUInteger)group inArea:(NSUInteger)area inAreaRect:(CGRect)areaRect
@@ -292,10 +362,14 @@ const CGFloat ECRelationalTableViewShortAnimationDuration = 0.15;
         numAreas = [_dataSource numberOfAreasInTableView:self];
     [_areas release];
     _areas = [[NSMutableArray alloc] init];
-    [_headers release];
-    _headers = [[NSMutableArray alloc] init];
+    [_headerTitles release];
+    _headerTitles = [[NSMutableArray alloc] init];
     for (NSUInteger i = 0; i < numAreas; ++i)
     {
+        NSString *headerTitle = @"";
+        if (_flags.dataSourceTitleForHeaderInArea)
+            headerTitle = [_dataSource relationalTableView:self titleForHeaderInArea:i];
+        [_headerTitles addObject:headerTitle];
         NSUInteger numGroups = 1;
         if (_flags.dataSourceNumberOfGroupsInArea)
             numGroups = [_dataSource relationalTableView:self numberOfGroupsInArea:i];
@@ -320,16 +394,6 @@ const CGFloat ECRelationalTableViewShortAnimationDuration = 0.15;
             [groups addObject:itemsInGroup];
         }
         [_areas addObject:groups];
-    }
-    for (NSUInteger i = 0; i < numAreas; ++i)
-    {
-        UILabel *header = [[[UILabel alloc] init] autorelease];
-        [self addSubview:header];
-        header.frame = [self rectForHeaderInArea:i];
-        header.backgroundColor = [UIColor blueColor];
-        if (_flags.dataSourceTitleForHeaderInArea)
-            header.text = [_dataSource relationalTableView:self titleForHeaderInArea:i];
-        [_headers addObject:header];
     }
     [self setNeedsLayout];
 }
@@ -426,6 +490,16 @@ const CGFloat ECRelationalTableViewShortAnimationDuration = 0.15;
 }
 
 #pragma mark -
+#pragma mark Recycling
+
+- (ECRelationalTableViewCell *)dequeueReusableCell
+{
+    if (![_cellCache count])
+        return nil;
+    return [_cellCache pop];
+}
+
+#pragma mark -
 #pragma mark UIView
 
 - (void)layoutSubviews
@@ -438,7 +512,10 @@ const CGFloat ECRelationalTableViewShortAnimationDuration = 0.15;
     for (NSUInteger i = 0; i < numAreas; ++i)
     {
         CGRect areaRect = [self rectForArea:i];
-        UIView *header = [_headers objectAtIndex:i];
+        UILabel *header = [_headerCache pop];
+        if ([header superview] != self)
+            [self addSubview:header];
+        header.text = [_headerTitles objectAtIndex:i];
         header.center = [self _centerForHeaderInAreaRect:areaRect];
         NSUInteger numGroups = [self numberOfGroupsInArea:i];
         for (NSUInteger j = 0; j < numGroups; ++j)
