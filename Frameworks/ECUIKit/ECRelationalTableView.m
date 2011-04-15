@@ -41,6 +41,7 @@ const NSUInteger ECRelationalTableViewGroupPlaceholderBufferSize = 20;
     CGFloat _groupSeparatorHeight;
     CGFloat _groupPlaceholderHeight;
     UIEdgeInsets _groupPlaceholderInsets;
+    NSMutableArray *_areas;
     NSMutableArray *_headerTitles;
     ECStackCache *_headerCache;
     ECStackCache *_groupSeparatorCache;
@@ -165,6 +166,7 @@ const NSUInteger ECRelationalTableViewGroupPlaceholderBufferSize = 20;
 
 - (void)dealloc
 {
+    [_areas release];
     [_headerTitles release];
     [_headerCache release];
     [_groupSeparatorCache release];
@@ -277,7 +279,11 @@ const NSUInteger ECRelationalTableViewGroupPlaceholderBufferSize = 20;
 
 - (void)reloadData
 {
-    NSUInteger numAreas = [self numberOfAreas];
+    NSUInteger numAreas = 1;
+    if (_flags.dataSourceNumberOfAreasInTableView)
+        numAreas = [_dataSource numberOfAreasInTableView:self];
+    [_areas release];
+    _areas = [[NSMutableArray alloc] init];
     [_headerTitles release];
     _headerTitles = [[NSMutableArray alloc] init];
     for (NSUInteger i = 0; i < numAreas; ++i)
@@ -286,6 +292,18 @@ const NSUInteger ECRelationalTableViewGroupPlaceholderBufferSize = 20;
         if (_flags.dataSourceTitleForHeaderInArea)
             headerTitle = [_dataSource relationalTableView:self titleForHeaderInArea:i];
         [_headerTitles addObject:headerTitle];
+        NSUInteger numGroups = 1;
+        if (_flags.dataSourceNumberOfGroupsInArea)
+            numGroups = [_dataSource relationalTableView:self numberOfGroupsInArea:i];
+        NSMutableArray *groups = [NSMutableArray arrayWithCapacity:numGroups];
+        for (NSUInteger j = 0; j < numGroups; ++j)
+        {
+            NSUInteger numItems = 0;
+            if (_flags.dataSourceNumberOfItemsInGroupInArea)
+                numItems = [_dataSource relationalTableView:self numberOfItemsInGroup:j inArea:i];
+            [groups addObject:[NSNumber numberWithUnsignedInteger:numItems]];
+        }
+        [_areas addObject:groups];
     }
     [self setNeedsLayout];
 }
@@ -307,23 +325,17 @@ const NSUInteger ECRelationalTableViewGroupPlaceholderBufferSize = 20;
 
 - (NSUInteger)numberOfAreas
 {
-    if (!_flags.dataSourceNumberOfAreasInTableView)
-        return 1;
-    return [_dataSource numberOfAreasInTableView:self];
+    return [_areas count];
 }
 
 - (NSUInteger)numberOfGroupsInArea:(NSUInteger)area
 {
-    if (!_flags.dataSourceNumberOfGroupsInArea)
-        return 1;
-    return [_dataSource relationalTableView:self numberOfGroupsInArea:area];
+    return [[_areas objectAtIndex:area] count];
 }
 
 - (NSUInteger)numberOfItemsInGroup:(NSUInteger)group inArea:(NSUInteger)area
 {
-    if (!_flags.dataSourceNumberOfItemsInGroupInArea)
-        return 0;
-    return [_dataSource relationalTableView:self numberOfItemsInGroup:group inArea:area];
+    return [[[_areas objectAtIndex:area] objectAtIndex:group] unsignedIntegerValue];
 }
 
 #pragma mark -
