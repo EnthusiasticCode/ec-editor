@@ -79,7 +79,11 @@ typedef enum {
 @property (nonatomic) CGSize cellSize;
 @property (nonatomic) UIEdgeInsets cellInsets;
 @property (nonatomic) UIEdgeInsets groupInsets;
+@property (nonatomic) CGFloat groupSeparatorHeight;
 @property (nonatomic) UIEdgeInsets groupSeparatorInsets;
+@property (nonatomic) CGFloat groupPlaceholderHeight;
+@property (nonatomic) UIEdgeInsets groupPlaceholderInsets;
+@property (nonatomic) CGFloat headerHeight;
 @property (nonatomic) UIEdgeInsets headerInsets;
 @property (nonatomic) BOOL allowsSelection;
 
@@ -148,7 +152,9 @@ typedef enum {
 
 @interface NSIndexPath (ECRelationalTableView)
 + (NSIndexPath *)indexPathForItem:(NSUInteger)item inGroup:(NSUInteger)group inArea:(NSUInteger)area;
++ (NSIndexPath *)indexPathForPosition:(NSUInteger)position inArea:(NSUInteger)area;
 @property (nonatomic, readonly) NSUInteger area;
 @property (nonatomic, readonly) NSUInteger group;
 @property (nonatomic, readonly) NSUInteger item;
+@property (nonatomic, readonly) NSUInteger position;
 @end

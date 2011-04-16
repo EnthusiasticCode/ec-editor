@@ -47,9 +47,9 @@
 {
     if (![_stack count])
         return [_target performSelector:_action withObject:self];
-    id object = [_stack lastObject];
+    id object = [[_stack lastObject] retain];
     [_stack removeLastObject];
-    return object;
+    return [object autorelease];
 }
 
 - (void)push:(id)object;

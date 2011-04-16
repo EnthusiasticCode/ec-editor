@@ -37,10 +37,6 @@ const NSUInteger ECRelationalTableViewGroupPlaceholderBufferSize = 20;
         unsigned int delegateTargetIndexPathForMoveFromItem:1;
     } _flags;
     BOOL _isAnimating;
-    CGFloat _headerHeight;
-    CGFloat _groupSeparatorHeight;
-    CGFloat _groupPlaceholderHeight;
-    UIEdgeInsets _groupPlaceholderInsets;
     NSMutableArray *_areas;
     NSMutableArray *_headerTitles;
     ECStackCache *_headerCache;
@@ -48,6 +44,9 @@ const NSUInteger ECRelationalTableViewGroupPlaceholderBufferSize = 20;
     ECStackCache *_groupPlaceholderCache;
     ECStackCache *_cellCache;
     NSMutableDictionary *_visibleCells;
+    NSMutableDictionary *_visibleHeaders;
+    NSMutableDictionary *_visibleSeparators;
+    NSMutableDictionary *_visiblePlaceholders;
 }
 - (void)_setup;
 - (UIView *)_blankHeader:(ECStackCache *)cache;
@@ -57,16 +56,21 @@ const NSUInteger ECRelationalTableViewGroupPlaceholderBufferSize = 20;
 - (CGRect)_groupSeparatorBounds;
 - (CGRect)_groupPlaceholderBounds;
 - (CGFloat)_heightForGroup:(NSUInteger)group inArea:(NSUInteger)area;
-//- (CGRect)rectForGroupSeparatorAboveGroupRect:(CGRect)groupRect;
-//- (CGRect)rectForGroupSeparatorBelowGroupRect:(CGRect)groupRect;
-//- (CGRect)rectForGroupPlaceholderAboveGroupRect:(CGRect)groupRect;
-//- (CGRect)rectForGroupPlaceholderBelowGroupRect:(CGRect)groupRect;
+- (CGRect)_rectForGroupSeparatorAtIndexPath:(NSIndexPath *)indexPath;
+- (CGRect)_rectForGroupPlaceholderAtIndexPath:(NSIndexPath *)indexPath;
 - (CGPoint)_centerForHeaderInArea:(NSUInteger)area;
+- (CGPoint)_centerForGroupSeparatorAtIndexPath:(NSIndexPath *)indexPath;
+- (CGPoint)_centerForGroupPlaceholderAtIndexPath:(NSIndexPath *)indexPath;
 - (CGPoint)_centerForItemAtIndexPath:(NSIndexPath *)indexPath;
+- (NSIndexSet *)_indexesForVisibleAreas;
+- (NSIndexSet *)_indexesForVisibleHeaders;
+- (NSArray *)_indexPathsForVisibleGroups;
+- (NSArray *)_indexPathsForVisibleGroupSeparators;
+- (NSArray *)_indexPathsForVisibleGroupPlaceholders;
 - (NSIndexPath *)_indexPathForItemAtPoint:(CGPoint)point includeInsets:(BOOL)includeInsets;
-//- (NSIndexPath *)proposedIndexPathForItemAtPoint:(CGPoint)point exists:(BOOL *)exists;
+- (NSIndexPath *)_proposedIndexPathForItemAtPoint:(CGPoint)point exists:(BOOL *)exists;
 - (void)_handleTapGesture:(UIGestureRecognizer *)tapGestureRecognizer;
-//- (void)handleCellPanGesture:(UIGestureRecognizer *)panGestureRecognizer;
+- (void)_handlePanGesture:(UIGestureRecognizer *)panGestureRecognizer;
 @end
 
 #pragma mark -
@@ -81,7 +85,11 @@ const NSUInteger ECRelationalTableViewGroupPlaceholderBufferSize = 20;
 @synthesize cellSize = _cellSize;
 @synthesize cellInsets = _cellInsets;
 @synthesize groupInsets = _groupInsets;
+@synthesize groupSeparatorHeight = _groupSeparatorHeight;
 @synthesize groupSeparatorInsets = _groupSeparatorInsets;
+@synthesize groupPlaceholderHeight = _groupPlaceholderHeight;
+@synthesize groupPlaceholderInsets = _groupPlaceholderInsets;
+@synthesize headerHeight = _headerHeight;
 @synthesize headerInsets = _headerInsets;
 @synthesize allowsSelection = _allowsSelection;
 @synthesize editing = _isEditing;
@@ -135,12 +143,12 @@ const NSUInteger ECRelationalTableViewGroupPlaceholderBufferSize = 20;
     [self willChangeValueForKey:@"editing"];
     [self setNeedsLayout];
     _isEditing = editing;
-    if (animated)
-    {
-        [UIView animateConcurrentlyToAnimationsWithFlag:&_isAnimating duration:ECRelationalTableViewShortAnimationDuration animations:^(void) {
-            [self layoutIfNeeded];
-        } completion:NULL];
-    }
+//    if (animated)
+//    {
+//        [UIView animateConcurrentlyToAnimationsWithFlag:&_isAnimating duration:ECRelationalTableViewShortAnimationDuration animations:^(void) {
+//            [self layoutIfNeeded];
+//        } completion:NULL];
+//    }
     [self didChangeValueForKey:@"editing"];   
 }
 
@@ -246,8 +254,79 @@ const NSUInteger ECRelationalTableViewGroupPlaceholderBufferSize = 20;
     CGFloat height = 0;
     height += [self rowsInGroup:group inArea:area] * _cellSize.height;
     height += _groupInsets.top + _groupInsets.bottom;
-    height += _groupSeparatorHeight;
     return height;
+}
+
+- (CGRect)_rectForGroupSeparatorAtIndexPath:(NSIndexPath *)indexPath
+{
+    static NSUInteger cachedArea = NSUIntegerMax;
+    static NSUInteger cachedPosition = NSUIntegerMax;
+    static CGRect cachedSeparatorRect;
+    if (cachedArea == indexPath.area && cachedPosition == indexPath.position)
+        return cachedSeparatorRect;
+    CGFloat y = 0;
+    if (cachedArea == indexPath.area)
+    {
+        y = cachedSeparatorRect.origin.y;
+        NSRange separatorRange;
+        if (cachedPosition < indexPath.position)
+            separatorRange = NSMakeRange( cachedPosition, indexPath.position - cachedPosition);
+        else
+            separatorRange = NSMakeRange(indexPath.position, cachedPosition - indexPath.position);
+        NSRange groupsBetweenSeparatorsRange = NSMakeRange(separatorRange.location + 1, separatorRange.length - 1);
+        for (NSUInteger i = groupsBetweenSeparatorsRange.location; i < groupsBetweenSeparatorsRange.location + groupsBetweenSeparatorsRange.length; ++i)
+            y += [self _heightForGroup:i inArea:indexPath.area];
+        y += (separatorRange.length - 1) * _groupSeparatorHeight;
+    }
+    else
+    {
+        y = [self rectForArea:indexPath.area].origin.y;
+        for (NSUInteger i = 0; i < indexPath.position; ++i)
+            y += [self _heightForGroup:i inArea:indexPath.area];
+        if (indexPath.position > 1)
+            y += (indexPath.position - 1) * _groupSeparatorHeight;
+    }
+    cachedArea = indexPath.area;
+    cachedPosition = indexPath.position;
+    cachedSeparatorRect = [self _groupSeparatorBounds];
+    cachedSeparatorRect.origin.y = y;
+    return cachedSeparatorRect;
+}
+
+- (CGRect)_rectForGroupPlaceholderAtIndexPath:(NSIndexPath *)indexPath
+{
+    static NSUInteger cachedArea = NSUIntegerMax;
+    static NSUInteger cachedPosition = NSUIntegerMax;
+    static CGRect cachedPlaceholderRect;
+    if (cachedArea == indexPath.area && cachedPosition == indexPath.position)
+        return cachedPlaceholderRect;
+    CGFloat y = 0;
+    if (cachedArea == indexPath.area)
+    {
+        y = cachedPlaceholderRect.origin.y;
+        NSRange placeholderRange;
+        if (cachedPosition < indexPath.position)
+            placeholderRange = NSMakeRange( cachedPosition, indexPath.position - cachedPosition);
+        else
+            placeholderRange = NSMakeRange(indexPath.position, cachedPosition - indexPath.position);
+        NSRange groupsBetweenPlaceholdersRange = NSMakeRange(placeholderRange.location, placeholderRange.length - 1);
+        for (NSUInteger i = groupsBetweenPlaceholdersRange.location; i < groupsBetweenPlaceholdersRange.location + groupsBetweenPlaceholdersRange.length; ++i)
+            y += [self _heightForGroup:i inArea:indexPath.area];
+        y += (placeholderRange.length - 1) * _groupPlaceholderHeight;
+    }
+    else
+    {
+        y = [self rectForArea:indexPath.area].origin.y;
+        for (NSUInteger i = 0; i < indexPath.position; ++i)
+            y += [self _heightForGroup:i inArea:indexPath.area];
+        if (indexPath.position > 1)
+            y += (indexPath.position - 1) * _groupPlaceholderHeight;
+    }
+    cachedArea = indexPath.area;
+    cachedPosition = indexPath.position;
+    cachedPlaceholderRect = [self _groupPlaceholderBounds];
+    cachedPlaceholderRect.origin.y = y;
+    return cachedPlaceholderRect;
 }
 
 - (CGPoint)_centerForHeaderInArea:(NSUInteger)area
@@ -256,11 +335,85 @@ const NSUInteger ECRelationalTableViewGroupPlaceholderBufferSize = 20;
     return CGPointMake(CGRectGetMidX(rect), CGRectGetMidY(rect));
 }
 
+- (CGPoint)_centerForGroupSeparatorAtIndexPath:(NSIndexPath *)indexPath
+{
+    CGRect rect = [self _rectForGroupSeparatorAtIndexPath:indexPath];
+    return CGPointMake(CGRectGetMidX(rect), CGRectGetMidY(rect));    
+}
+
+- (CGPoint)_centerForGroupPlaceholderAtIndexPath:(NSIndexPath *)indexPath
+{
+    CGRect rect = [self _rectForGroupPlaceholderAtIndexPath:indexPath];
+    return CGPointMake(CGRectGetMidX(rect), CGRectGetMidY(rect));
+}
+
 - (CGPoint)_centerForItemAtIndexPath:(NSIndexPath *)indexPath
 {
     CGRect rect = [self rectForItemAtIndexPath:indexPath];
     return CGPointMake(CGRectGetMidX(rect), CGRectGetMidY(rect));
 }
+
+- (NSIndexSet *)_indexesForVisibleAreas
+{
+    NSMutableIndexSet *indexes = [NSMutableIndexSet indexSetWithIndexesInRange:NSMakeRange(0, [self numberOfAreas])];
+    return [indexes indexesPassingTest:^BOOL(NSUInteger idx, BOOL *stop) {
+        return CGRectIntersectsRect(self.bounds, [self rectForArea:idx]);
+    }];
+}
+
+- (NSIndexSet *)_indexesForVisibleHeaders
+{
+    NSMutableIndexSet *indexes = [NSMutableIndexSet indexSetWithIndexesInRange:NSMakeRange(0, [self numberOfAreas])];
+    return [indexes indexesPassingTest:^BOOL(NSUInteger idx, BOOL *stop) {
+        return CGRectIntersectsRect(self.bounds, [self rectForHeaderInArea:idx]);
+    }];
+}
+
+- (NSArray *)_indexPathsForVisibleGroups
+{
+    NSIndexSet *indexes = [self _indexesForVisibleAreas];
+    NSMutableArray *indexPaths = [NSMutableArray array];
+    [indexes enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
+        NSUInteger numGroups = [self numberOfGroupsInArea:idx];
+        for (NSUInteger i = 0; i < numGroups; ++i)
+            if (CGRectIntersectsRect(self.bounds, [self rectForGroup:i inArea:idx]))
+                [indexPaths addObject:[NSIndexPath indexPathForPosition:i inArea:idx]];
+    }];
+    return indexPaths;
+}
+
+- (NSArray *)_indexPathsForVisibleGroupSeparators
+{
+    NSIndexSet *indexes = [self _indexesForVisibleAreas];
+    NSMutableArray *indexPaths = [NSMutableArray array];
+    [indexes enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
+        NSUInteger numGroups = [self numberOfGroupsInArea:idx];
+        for (NSUInteger i = 0; i < numGroups - 1; ++i)
+        {
+            NSIndexPath *indexPath = [NSIndexPath indexPathForPosition:i inArea:idx];
+            if (CGRectIntersectsRect(self.bounds, [self _rectForGroupSeparatorAtIndexPath:indexPath]))
+                [indexPaths addObject:indexPath];
+        }
+    }];
+    return indexPaths;
+}
+
+- (NSArray *)_indexPathsForVisibleGroupPlaceholders
+{
+    NSIndexSet *indexes = [self _indexesForVisibleAreas];
+    NSMutableArray *indexPaths = [NSMutableArray array];
+    [indexes enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
+        NSUInteger numGroups = [self numberOfGroupsInArea:idx];
+        for (NSUInteger i = 0; i < numGroups + 1; ++i)
+        {
+            NSIndexPath *indexPath = [NSIndexPath indexPathForPosition:i inArea:idx];
+            if (CGRectIntersectsRect(self.bounds, [self _rectForGroupSeparatorAtIndexPath:indexPath]))
+                [indexPaths addObject:indexPath];
+        }
+    }];
+    return indexPaths;
+}
+
 
 - (void)_handleTapGesture:(UIGestureRecognizer *)tapGestureRecognizer
 {
@@ -544,8 +697,8 @@ const NSUInteger ECRelationalTableViewGroupPlaceholderBufferSize = 20;
     for (NSUInteger i = 0; i < numAreas; ++i)
     {
         UILabel *header = [_headerCache pop];
-        if ([header superview] != self)
-            [self addSubview:header];
+//        if ([header superview] != self)
+//            [self addSubview:header];
         header.text = [_headerTitles objectAtIndex:i];
         header.center = [self _centerForHeaderInArea:i];
 //        NSUInteger numGroups = [self numberOfGroupsInArea:i];
@@ -583,17 +736,28 @@ const NSUInteger ECRelationalTableViewGroupPlaceholderBufferSize = 20;
     for (NSIndexPath *indexPath in [self indexPathsForVisibleItems])
     {
         ECRelationalTableViewCell *cell = [_visibleCells objectForKey:indexPath];
-        if (!cell)
+        if (cell)
+            [_visibleCells removeObjectForKey:indexPath];
+        else
+        {
             cell = [self cellForItemAtIndexPath:indexPath];
-        [newVisibleItems setObject:cell forKey:indexPath];
-        if ([cell superview] != self)
             [self addSubview:cell];
+        }
+        [newVisibleItems setObject:cell forKey:indexPath];
         cell.center = [self _centerForItemAtIndexPath:indexPath];
+    }
+    NSLog(@"cells visible: %u", [newVisibleItems count]);
+    NSLog(@"cells remaining: %u", [_visibleCells count]);
+    for (ECRelationalTableViewCell *cell in [_visibleCells allValues])
+    {
+        [cell removeFromSuperview];
+        [_cellCache push:cell];
     }
     [_visibleCells release];
     _visibleCells = newVisibleItems;
     CGRect lastAreaFrame = [self rectForArea:numAreas - 1];
     self.contentSize = CGSizeMake(self.bounds.size.width, lastAreaFrame.origin.y + lastAreaFrame.size.height + _tableInsets.bottom);
+    NSLog(@"subviews:%u", [[self subviews] count]);
 }
 /*
 - (NSIndexPath *)proposedIndexPathForItemAtPoint:(CGPoint)point exists:(BOOL *)exists
@@ -678,9 +842,19 @@ const NSUInteger ECRelationalTableViewGroupPlaceholderBufferSize = 20;
     return [self indexAtPosition:2];
 }
 
+- (NSUInteger)position
+{
+    return [self indexAtPosition:1];
+}
+
 + (NSIndexPath *)indexPathForItem:(NSUInteger)item inGroup:(NSUInteger)group inArea:(NSUInteger)area
 {
     return [self indexPathWithIndexes:(NSUInteger[3]){area, group, item} length:3];
+}
+
++ (NSIndexPath *)indexPathForPosition:(NSUInteger)position inArea:(NSUInteger)area
+{
+    return [self indexPathWithIndexes:(NSUInteger[2]){area, position} length:2];
 }
 
 @end
