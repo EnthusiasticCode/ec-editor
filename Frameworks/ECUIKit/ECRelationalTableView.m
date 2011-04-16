@@ -195,7 +195,7 @@ const NSUInteger ECRelationalTableViewGroupPlaceholderBufferSize = 20;
 - (void)_setup
 {
     _tableInsets = UIEdgeInsetsMake(10.0, 10.0, 10.0, 10.0);
-    _cellSize = CGSizeMake(180.0, 80.0);
+    _cellSize = CGSizeMake(170.0, 80.0);
     _cellInsets = UIEdgeInsetsMake(20.0, 20.0, 20.0, 20.0);
     _groupInsets = UIEdgeInsetsMake(10.0, 0.0, 10.0, 0.0);
     _groupSeparatorInsets = UIEdgeInsetsZero;
@@ -217,7 +217,7 @@ const NSUInteger ECRelationalTableViewGroupPlaceholderBufferSize = 20;
 
 - (CGRect)_headerBounds
 {
-    return CGRectMake(0.0, 0.0, self.bounds.size.width - _tableInsets.left - _tableInsets.right - _headerInsets.left - _headerInsets.right, _headerHeight);
+    return CGRectMake(0.0, 0.0, self.bounds.size.width - _tableInsets.left - _tableInsets.right - _headerInsets.left - _headerInsets.right, _headerHeight - _headerInsets.top - _headerInsets.bottom);
 }
 
 - (UIView *)_blankHeader:(ECStackCache *)cache
@@ -230,7 +230,7 @@ const NSUInteger ECRelationalTableViewGroupPlaceholderBufferSize = 20;
 
 - (CGRect)_groupSeparatorBounds
 {
-    return CGRectMake(0.0, 0.0, self.bounds.size.width - _tableInsets.left - _tableInsets.right - _groupSeparatorInsets.left - _groupSeparatorInsets.right, _groupSeparatorHeight);
+    return CGRectMake(0.0, 0.0, self.bounds.size.width - _tableInsets.left - _tableInsets.right - _groupSeparatorInsets.left - _groupSeparatorInsets.right, _groupSeparatorHeight - _groupSeparatorInsets.top - _groupSeparatorInsets.bottom);
 }
 
 - (UIView *)_groupSeparator:(ECStackCache *)cache
@@ -243,7 +243,7 @@ const NSUInteger ECRelationalTableViewGroupPlaceholderBufferSize = 20;
 
 - (CGRect)_groupPlaceholderBounds
 {
-    return CGRectMake(0.0, 0.0, self.bounds.size.width - _tableInsets.left - _tableInsets.right - _groupPlaceholderInsets.left - _groupPlaceholderInsets.right, _groupPlaceholderHeight);
+    return CGRectMake(0.0, 0.0, self.bounds.size.width - _tableInsets.left - _tableInsets.right - _groupPlaceholderInsets.left - _groupPlaceholderInsets.right, _groupPlaceholderHeight - _groupPlaceholderInsets.top - _groupPlaceholderInsets.bottom);
 }
 
 - (UIView *)_groupPlaceholder:(ECStackCache *)cache
@@ -294,6 +294,7 @@ const NSUInteger ECRelationalTableViewGroupPlaceholderBufferSize = 20;
     cachedArea = indexPath.area;
     cachedPosition = indexPath.position;
     cachedSeparatorRect = [self _groupSeparatorBounds];
+    cachedSeparatorRect.origin.x = _tableInsets.left + _groupSeparatorInsets.left;
     cachedSeparatorRect.origin.y = y;
     return cachedSeparatorRect;
 }
@@ -330,6 +331,7 @@ const NSUInteger ECRelationalTableViewGroupPlaceholderBufferSize = 20;
     cachedArea = indexPath.area;
     cachedPosition = indexPath.position;
     cachedPlaceholderRect = [self _groupPlaceholderBounds];
+    cachedPlaceholderRect.origin.x = _tableInsets.left + _groupPlaceholderInsets.left;
     cachedPlaceholderRect.origin.y = y;
     return cachedPlaceholderRect;
 }
@@ -536,6 +538,7 @@ const NSUInteger ECRelationalTableViewGroupPlaceholderBufferSize = 20;
 {
     CGRect areaRect = [self rectForArea:area];
     CGRect rect = [self _headerBounds];
+    rect.origin.x = areaRect.origin.x + _headerInsets.left;
     rect.origin.y = areaRect.origin.y;
     return UIEdgeInsetsInsetRect(rect, _headerInsets);
 }
@@ -605,8 +608,6 @@ const NSUInteger ECRelationalTableViewGroupPlaceholderBufferSize = 20;
 
 - (NSIndexPath *)indexPathForItemAtPoint:(CGPoint)point
 {
-    point.x += self.contentOffset.x;
-    point.y += self.contentOffset.y;
     for (NSUInteger i = 0; i < [self numberOfAreas]; ++i)
     {
         CGRect areaRect = CGRectZero;
@@ -642,8 +643,8 @@ const NSUInteger ECRelationalTableViewGroupPlaceholderBufferSize = 20;
     if (!indexPath || !_flags.dataSourceCellForItemAtIndexPath)
         return nil;
     ECRelationalTableViewCell * cell = [_dataSource relationalTableView:self cellForItemAtIndexPath:indexPath];
-    CGRect rect = CGRectMake(0.0, 0.0, _cellSize.width, _cellSize.height);
-    cell.bounds = UIEdgeInsetsInsetRect(rect, _cellInsets);
+    CGRect rect = CGRectMake(0.0, 0.0, _cellSize.width - _cellInsets.left - _cellInsets.right, _cellSize.height - _cellInsets.top - _cellInsets.bottom);
+    cell.bounds = rect;
     return cell;
 }
 
