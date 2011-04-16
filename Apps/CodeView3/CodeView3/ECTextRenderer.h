@@ -19,19 +19,31 @@
 /// the given line count.
 - (NSAttributedString *)textRenderer:(ECTextRenderer *)sender stringAtLineRange:(NSRange)lineRange;
 
+@optional
 /// When implemented, this delegate method should return the total number 
 /// of lines in the input text. Lines that exceed the given maximum length
-/// of characters shold be considered as multiple lines.
-- (NSUInteger)textRenderer:(ECTextRenderer *)sender stimatedTextLineCountOfLength:(NSUInteger)maximumLineLength;
+/// of characters shold be considered as multiple lines. If this method
+/// returns 0 a different estime will be used.
+- (NSUInteger)textRenderer:(ECTextRenderer *)sender estimatedTextLineCountOfLength:(NSUInteger)maximumLineLength;
 
 @end
 
+@protocol ECTextRendererDelegate <NSObject>
+@optional
+
+/// Called when the renderer update a part of its content.
+- (void)textRenderer:(ECTextRenderer *)sender didChangeRenderForTextWithinRect:(CGRect)originalRect toRect:(CGRect)newRect;
+
+@end
 
 /// A class that present a text retrieved by a datasource ready to be drawn
 /// fully or partially. The user of an instance of this class should 
 /// consider as if an etire text wrapped at the given wrap width is 
 /// ready to be rendered.
 @interface ECTextRenderer : NSObject
+
+/// A delegate that will recevie notifications from the text renderer.
+@property (nonatomic, assign) id <ECTextRendererDelegate> delegate;
 
 #pragma mark Managing Text Input Data
 
