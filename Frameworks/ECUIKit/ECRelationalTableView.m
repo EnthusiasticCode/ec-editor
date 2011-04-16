@@ -69,6 +69,10 @@ const NSUInteger ECRelationalTableViewGroupPlaceholderBufferSize = 20;
 - (NSArray *)_indexPathsForVisibleGroupPlaceholders;
 - (NSIndexPath *)_indexPathForItemAtPoint:(CGPoint)point includeInsets:(BOOL)includeInsets;
 - (NSIndexPath *)_proposedIndexPathForItemAtPoint:(CGPoint)point exists:(BOOL *)exists;
+- (void)_layoutHeaders;
+- (void)_layoutGroupSeparators;
+- (void)_layoutGroupPlaceholders;
+- (void)_layoutCells;
 - (void)_handleTapGesture:(UIGestureRecognizer *)tapGestureRecognizer;
 - (void)_handlePanGesture:(UIGestureRecognizer *)panGestureRecognizer;
 @end
@@ -458,6 +462,8 @@ const NSUInteger ECRelationalTableViewGroupPlaceholderBufferSize = 20;
         }
         [_areas addObject:groups];
     }
+    CGRect lastAreaFrame = [self rectForArea:[self numberOfAreas] - 1];
+    self.contentSize = CGSizeMake(self.bounds.size.width, lastAreaFrame.origin.y + lastAreaFrame.size.height + _tableInsets.bottom);
     [self setNeedsLayout];
 }
 
@@ -687,51 +693,83 @@ const NSUInteger ECRelationalTableViewGroupPlaceholderBufferSize = 20;
 #pragma mark -
 #pragma mark UIView
 
-- (void)layoutSubviews
+- (void)_layoutHeaders
 {
-    NSUInteger numAreas = [self numberOfAreas];
-    if (!numAreas)
-        return;
-//    UIView *groupSeparator;
-//    NSUInteger groupSeparatorIndex = 0;
-    for (NSUInteger i = 0; i < numAreas; ++i)
+    NSMutableDictionary *newVisibleHeaders = [[NSMutableDictionary alloc] init];
+    [[self _indexesForVisibleHeaders] enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
+        UILabel *header = [_visibleHeaders objectForKey:[NSNumber numberWithUnsignedInteger:idx]];
+        if (header)
+            [_visibleHeaders removeObjectForKey:[NSNumber numberWithUnsignedInteger:idx]];
+        else
+        {
+            header = [_headerCache pop];
+            [self addSubview:header];
+            header.center = [self _centerForHeaderInArea:idx];
+            header.text = [_headerTitles objectAtIndex:idx];
+        }
+        [newVisibleHeaders setObject:header forKey:[NSNumber numberWithUnsignedInteger:idx]];
+    }];
+    for (UILabel *header in [_visibleHeaders allValues])
     {
-        UILabel *header = [_headerCache pop];
-//        if ([header superview] != self)
-//            [self addSubview:header];
-        header.text = [_headerTitles objectAtIndex:i];
-        header.center = [self _centerForHeaderInArea:i];
-//        NSUInteger numGroups = [self numberOfGroupsInArea:i];
-//        for (NSUInteger j = 0; j < numGroups; ++j)
-//        {
-//            CGRect groupRect = [self _rectForGroup:j inArea:i inAreaRect:areaRect];
-//            NSUInteger numItems = [self numberOfItemsInGroup:j inArea:i];
-//            if (numItems)
-//            {
-//                groupSeparator = [self.groupSeparators objectAtIndex:groupSeparatorIndex];
-//                if (![groupSeparator superview])
-//                    [self addSubview:groupSeparator];
-//                groupSeparator.frame = [self rectForGroupSeparatorInGroupRect:groupRect isTopSeparator:YES];
-//                if (!_isEditing)
-//                    groupSeparator.alpha = 0.0;
-//                else
-//                    groupSeparator.alpha = 1.0;
-//            }
-//            ++groupSeparatorIndex;
-//            if (numItems)
-//            {
-//                groupSeparator = [self.groupSeparators objectAtIndex:groupSeparatorIndex];
-//                if (![groupSeparator superview])
-//                    [self addSubview:groupSeparator];
-//                groupSeparator.frame = [self rectForGroupSeparatorInGroupRect:groupRect isTopSeparator:NO];
-//                if (j == numGroups - 1 && !_isEditing)
-//                    groupSeparator.alpha = 0.0;
-//                else if (j == numGroups - 1)
-//                    groupSeparator.alpha = 1.0;
-//            }
-//            ++groupSeparatorIndex;
-//        }
+        [header removeFromSuperview];
+        [_headerCache push:header];
     }
+    [_visibleHeaders release];
+    _visibleHeaders = newVisibleHeaders;
+}
+
+- (void)_layoutGroupSeparators
+{
+    NSMutableDictionary *newVisibleGroupSeparators = [[NSMutableDictionary alloc] init];
+    for (NSIndexPath *indexPath in [self _indexPathsForVisibleGroupSeparators])
+    {
+        UIView *separator = [_visibleSeparators objectForKey:indexPath];
+        if (separator)
+            [_visibleSeparators removeObjectForKey:indexPath];
+        else
+        {
+            separator = [_groupSeparatorCache pop];
+            [self addSubview:separator];
+            separator.center = [self _centerForGroupSeparatorAtIndexPath:indexPath];
+        }
+        [newVisibleGroupSeparators setObject:separator forKey:indexPath];
+    }
+    for (UIView *separator in [_visibleSeparators allValues])
+    {
+        [separator removeFromSuperview];
+        [_groupSeparatorCache push:separator];
+    }
+    [_visibleSeparators release];
+    _visibleSeparators = newVisibleGroupSeparators;
+}
+
+- (void)_layoutGroupPlaceholders
+{
+    NSMutableDictionary *newVisibleGroupPlaceholders = [[NSMutableDictionary alloc] init];
+    for (NSIndexPath *indexPath in [self _indexPathsForVisibleGroupPlaceholders])
+    {
+        UIView *placeholder = [_visiblePlaceholders objectForKey:indexPath];
+        if (placeholder)
+            [_visiblePlaceholders removeObjectForKey:indexPath];
+        else
+        {
+            placeholder = [_groupPlaceholderCache pop];
+            [self addSubview:placeholder];
+            placeholder.center = [self _centerForGroupPlaceholderAtIndexPath:indexPath];
+        }
+        [newVisibleGroupPlaceholders setObject:placeholder forKey:indexPath];
+    }
+    for (UIView *placeholder in [_visiblePlaceholders allValues])
+    {
+        [placeholder removeFromSuperview];
+        [_groupPlaceholderCache push:placeholder];
+    }
+    [_visiblePlaceholders release];
+    _visiblePlaceholders = newVisibleGroupPlaceholders;
+}
+
+- (void)_layoutCells
+{
     NSMutableDictionary *newVisibleItems = [[NSMutableDictionary alloc] init];
     for (NSIndexPath *indexPath in [self indexPathsForVisibleItems])
     {
@@ -742,12 +780,11 @@ const NSUInteger ECRelationalTableViewGroupPlaceholderBufferSize = 20;
         {
             cell = [self cellForItemAtIndexPath:indexPath];
             [self addSubview:cell];
+            cell.center = [self _centerForItemAtIndexPath:indexPath];
         }
         [newVisibleItems setObject:cell forKey:indexPath];
-        cell.center = [self _centerForItemAtIndexPath:indexPath];
     }
-    NSLog(@"cells visible: %u", [newVisibleItems count]);
-    NSLog(@"cells remaining: %u", [_visibleCells count]);
+    NSLog(@"%u misses", [_visibleCells count]);
     for (ECRelationalTableViewCell *cell in [_visibleCells allValues])
     {
         [cell removeFromSuperview];
@@ -755,9 +792,16 @@ const NSUInteger ECRelationalTableViewGroupPlaceholderBufferSize = 20;
     }
     [_visibleCells release];
     _visibleCells = newVisibleItems;
-    CGRect lastAreaFrame = [self rectForArea:numAreas - 1];
-    self.contentSize = CGSizeMake(self.bounds.size.width, lastAreaFrame.origin.y + lastAreaFrame.size.height + _tableInsets.bottom);
-    NSLog(@"subviews:%u", [[self subviews] count]);
+}
+
+- (void)layoutSubviews
+{
+    [self _layoutHeaders];
+    if (!_isEditing)
+        [self _layoutGroupSeparators];
+    else
+        [self _layoutGroupPlaceholders];
+    [self _layoutCells];
 }
 /*
 - (NSIndexPath *)proposedIndexPathForItemAtPoint:(CGPoint)point exists:(BOOL *)exists
