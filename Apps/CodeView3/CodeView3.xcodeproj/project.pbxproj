@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CD83D6C813599126008307A6 /* ECTextRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = CD83D6C713599126008307A6 /* ECTextRenderer.m */; };
 		CD887D8013530DDF00332BAC /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD887D7F13530DDF00332BAC /* UIKit.framework */; };
 		CD887D8213530DDF00332BAC /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD887D8113530DDF00332BAC /* Foundation.framework */; };
 		CD887D8413530DDF00332BAC /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD887D8313530DDF00332BAC /* CoreGraphics.framework */; };
@@ -35,6 +36,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		CD83D6C613599126008307A6 /* ECTextRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECTextRenderer.h; sourceTree = "<group>"; };
+		CD83D6C713599126008307A6 /* ECTextRenderer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECTextRenderer.m; sourceTree = "<group>"; };
 		CD887D7B13530DDF00332BAC /* CodeView3.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CodeView3.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CD887D7F13530DDF00332BAC /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		CD887D8113530DDF00332BAC /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -143,6 +146,8 @@
 				CD887DD413543DF300332BAC /* ECMutableTextFileRenderer.m */,
 				CD887DD61354C14600332BAC /* ECCodeView4.h */,
 				CD887DD71354C14600332BAC /* ECCodeView4.m */,
+				CD83D6C613599126008307A6 /* ECTextRenderer.h */,
+				CD83D6C713599126008307A6 /* ECTextRenderer.m */,
 			);
 			path = CodeView3;
 			sourceTree = "<group>";
@@ -275,6 +280,7 @@
 				CD887DD21353AD9300332BAC /* CodeViewController.m in Sources */,
 				CD887DD513543DF400332BAC /* ECMutableTextFileRenderer.m in Sources */,
 				CD887DD81354C14600332BAC /* ECCodeView4.m in Sources */,
+				CD83D6C813599126008307A6 /* ECTextRenderer.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
