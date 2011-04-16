@@ -10,6 +10,7 @@
 #import "ECRelationalTableViewCell.h"
 #import <ECUIKit/UIView+ConcurrentAnimation.h>
 #import <ECFoundation/ECStackCache.h>
+#import <ECFoundation/NSIndexPath+FixedIsEqual.h>
 
 const CGFloat ECRelationalTableViewShortAnimationDuration = 0.15;
 const NSUInteger ECRelationalTableViewCellBufferSize = 10;
@@ -775,7 +776,9 @@ const NSUInteger ECRelationalTableViewGroupPlaceholderBufferSize = 20;
     {
         ECRelationalTableViewCell *cell = [_visibleCells objectForKey:indexPath];
         if (cell)
+        {
             [_visibleCells removeObjectForKey:indexPath];
+        }
         else
         {
             cell = [self cellForItemAtIndexPath:indexPath];
@@ -784,7 +787,6 @@ const NSUInteger ECRelationalTableViewGroupPlaceholderBufferSize = 20;
         }
         [newVisibleItems setObject:cell forKey:indexPath];
     }
-    NSLog(@"%u misses", [_visibleCells count]);
     for (ECRelationalTableViewCell *cell in [_visibleCells allValues])
     {
         [cell removeFromSuperview];
@@ -859,7 +861,6 @@ const NSUInteger ECRelationalTableViewGroupPlaceholderBufferSize = 20;
     NSIndexPath *indexPath = nil;
     if (_isEditing)
         indexPath = [self indexPathForItemAtPoint:point];
-    NSLog(@"%@", indexPath);
     if (indexPath)
         return [self cellForItemAtIndexPath:indexPath];
     return [super hitTest:point withEvent:event];

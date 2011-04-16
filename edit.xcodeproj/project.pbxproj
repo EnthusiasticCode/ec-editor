@@ -10,6 +10,7 @@
 		B706F05A13563ECB00E03DDF /* UIColor+StyleColors.m in Sources */ = {isa = PBXBuildFile; fileRef = B706F05513563ECB00E03DDF /* UIColor+StyleColors.m */; };
 		B706F05B13563ECB00E03DDF /* UIImage+BlockDrawing.m in Sources */ = {isa = PBXBuildFile; fileRef = B706F05713563ECB00E03DDF /* UIImage+BlockDrawing.m */; };
 		B706F05C13563ECB00E03DDF /* UIView+ConcurrentAnimation.m in Sources */ = {isa = PBXBuildFile; fileRef = B706F05913563ECB00E03DDF /* UIView+ConcurrentAnimation.m */; };
+		B7096DF7135A1EAB0082F859 /* NSIndexPath+FixedIsEqual.m in Sources */ = {isa = PBXBuildFile; fileRef = B7096DF6135A1EAB0082F859 /* NSIndexPath+FixedIsEqual.m */; };
 		B70D64BC132A2581008DDEA4 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B70D64BB132A2581008DDEA4 /* UIKit.framework */; };
 		B70D64BE132A2581008DDEA4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B70D64BD132A2581008DDEA4 /* Foundation.framework */; };
 		B70D64C0132A2581008DDEA4 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B70D64BF132A2581008DDEA4 /* CoreGraphics.framework */; };
@@ -75,6 +76,8 @@
 		B706F05713563ECB00E03DDF /* UIImage+BlockDrawing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIImage+BlockDrawing.m"; path = "Frameworks/ECUIKit/UIImage+BlockDrawing.m"; sourceTree = "<group>"; };
 		B706F05813563ECB00E03DDF /* UIView+ConcurrentAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIView+ConcurrentAnimation.h"; path = "Frameworks/ECUIKit/UIView+ConcurrentAnimation.h"; sourceTree = "<group>"; };
 		B706F05913563ECB00E03DDF /* UIView+ConcurrentAnimation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIView+ConcurrentAnimation.m"; path = "Frameworks/ECUIKit/UIView+ConcurrentAnimation.m"; sourceTree = "<group>"; };
+		B7096DF5135A1EAB0082F859 /* NSIndexPath+FixedIsEqual.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSIndexPath+FixedIsEqual.h"; sourceTree = "<group>"; };
+		B7096DF6135A1EAB0082F859 /* NSIndexPath+FixedIsEqual.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSIndexPath+FixedIsEqual.m"; sourceTree = "<group>"; };
 		B70D64B7132A2581008DDEA4 /* edit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = edit.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B70D64BB132A2581008DDEA4 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		B70D64BD132A2581008DDEA4 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -299,6 +302,8 @@
 			children = (
 				B75B873A135840070098E7E2 /* ECHashing.h */,
 				B75B873B135840070098E7E2 /* ECHashing.m */,
+				B7096DF5135A1EAB0082F859 /* NSIndexPath+FixedIsEqual.h */,
+				B7096DF6135A1EAB0082F859 /* NSIndexPath+FixedIsEqual.m */,
 				B75B873C135840070098E7E2 /* ECStackCache.h */,
 				B75B873D135840070098E7E2 /* ECStackCache.m */,
 				B75B873E135840070098E7E2 /* MurmurHash3.c */,
@@ -583,6 +588,7 @@
 				B75B87731358401B0098E7E2 /* ECCodeSymbol.m in Sources */,
 				B75B87741358401B0098E7E2 /* ECCodeToken.m in Sources */,
 				B75B87751358401B0098E7E2 /* ECCodeUnit.m in Sources */,
+				B7096DF7135A1EAB0082F859 /* NSIndexPath+FixedIsEqual.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

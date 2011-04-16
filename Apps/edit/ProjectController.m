@@ -87,7 +87,6 @@
 - (ECRelationalTableViewCell *)relationalTableView:(ECRelationalTableView *)relationalTableView cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
     static NSUInteger counter = 0;
-    NSLog(@"called %u times", counter);
     ++counter;
     ECRelationalTableViewCell *file = [self.tableView dequeueReusableCell];
     if (!file)
