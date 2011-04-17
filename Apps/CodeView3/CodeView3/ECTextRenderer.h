@@ -17,7 +17,7 @@
 /// An implementer of this method should return a string from the input
 /// text that start at the given line location and that contain maximum
 /// the given line count.
-- (NSAttributedString *)textRenderer:(ECTextRenderer *)sender stringAtLineRange:(NSRange)lineRange;
+- (NSAttributedString *)textRenderer:(ECTextRenderer *)sender stringInLineRange:(NSRange *)lineRange;
 
 @optional
 /// When implemented, this delegate method should return the total number 
@@ -42,36 +42,37 @@
 /// ready to be rendered.
 @interface ECTextRenderer : NSObject
 
+#pragma mark Managing Text Input Data
+
 /// A delegate that will recevie notifications from the text renderer.
 @property (nonatomic, assign) id <ECTextRendererDelegate> delegate;
-
-#pragma mark Managing Text Input Data
 
 /// The datasource to retrieve the text to render. It has to conform to
 /// \c ECTextRendererDatasource protocol.
 @property (nonatomic, assign) id <ECTextRendererDatasource> datasource;
 
-/// Defines the maximum number of lines to use for one segment of input.
+/// Defines the preferred number of lines to use for one segment of input.
 /// If this property is non-zero, input strings from the datasource will
 /// be requested in segments when needed. This will reduce the ammount of 
 /// text read and rendered at a time to improve speed and memory 
 /// performance. Default value is 0.
-@property (nonatomic) NSUInteger maximumLineCountPerSegment;
+@property (nonatomic) NSUInteger preferredLineCountPerSegment;
 
 /// Invalidate the content making the renderer call back to its datasource
 /// to refresh required strings.
 - (void)invalidateAllText;
 
-/// Invalidate a particular section of the content making the renderer call 
-/// back to its datasource to refresh a portion of rendered text when 
-/// needed.
-- (void)invalidateTextInRange:(NSRange)stringRange;
+/// Invalidate a particular section of the content indicating how it changed.
+/// This method will eventually make the renderer call back to it's datasource
+/// to retrieve the modified content.
+/// The original range can have length of 0 to indicate an insertion before the 
+/// line; the new range can as well have a length of 0 to indicate deletion.
+- (void)updateTextInLineRange:(NSRange)originalRange toLineRange:(NSRange)newRange;
 
 #pragma mark Cacheing Behaviours
 
 /// Indicates if the caching of rendering informations should happen lazely 
-/// or immediatly after a content is set. Defaults is NO making caching
-/// mandatory after content change.
+/// or immediatly after a datasource is set. Defaults is YES.
 @property (nonatomic) BOOL lazyCaching;
 
 /// Use this method to clear the rendered cache if memory usage start to be 
