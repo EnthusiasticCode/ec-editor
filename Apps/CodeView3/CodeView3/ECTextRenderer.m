@@ -269,12 +269,13 @@
 @interface ECTextRenderer () {
 @private
     NSMutableArray *textSegments;
+    TextSegment *lastTextSegment;
     
     BOOL delegateHasTextRendererDidChangeRenderForTextWithinRectToRect;
     BOOL datasourceHasTextRendererEstimatedTextLineCountOfLength;
 }
 
-- (void)cacheTextSegment:(TextSegment *)segment withTextLineRange:(NSRange)range;
+- (void)generateIfNeededTextSegment:(TextSegment *)segment withTextLineRange:(NSRange)range;
 
 @end
 
@@ -328,16 +329,21 @@
 
 #pragma mark Private Methods
 
-- (void)cacheTextSegment:(TextSegment *)segment withTextLineRange:(NSRange)range
+- (void)generateIfNeededTextSegment:(TextSegment *)segment withTextLineRange:(NSRange)range
 {
     if (!segment.requireGeneration)
         return;
     
+    NSUInteger originalRangeLength = range.length;
     NSAttributedString *string = [datasource textRenderer:self stringInLineRange:&range];
-    if (string) 
-    {
-        [segment generateWithString:string havingLineCount:range.length];
-    }
+    if (!string || range.length == 0 || [string length] == 0)
+        return; // TODO throw?
+    
+    [segment generateWithString:string havingLineCount:range.length];
+    
+    // TODO receive message from delegate instead?
+    if (range.length != originalRangeLength)
+        lastTextSegment = segment;
 }
 
 #pragma mark Public Methods
@@ -345,24 +351,27 @@
 - (void)invalidateAllText
 {
     [textSegments removeAllObjects];
+    lastTextSegment = nil;
     
     if (!lazyCaching) 
     {
+        TextSegment *segment = nil;
         NSRange currentLineRange = NSMakeRange(0, preferredLineCountPerSegment);
         NSUInteger stringLocation = 0;
         NSAttributedString *string;
         while ((string = [datasource textRenderer:self stringInLineRange:&currentLineRange])) 
         {
-            TextSegment *segment = [TextSegment new];
-            [segment generateWithString:string 
-                                    havingLineCount:currentLineRange.length];
+            segment = [TextSegment new];
+            segment.renderWrapWidth = wrapWidth;
+            [segment generateWithString:string havingLineCount:currentLineRange.length];
             
             [textSegments addObject:segment];
             [segment release];
             
-            currentLineRange.location += preferredLineCountPerSegment;
+            currentLineRange.location += currentLineRange.length;
             stringLocation += [string length];
         }
+        lastTextSegment = segment;
     }
 }
 
@@ -381,13 +390,14 @@
             segmentRange.length += (newIntersec.length - origInsersect.length);
             segment.lineCount = segmentRange.length;
             // TODO if lineCount > 1.5 * preferred -> split or merge if * 0.5
+            // and remember to set proper lastTextSegment
             if (lazyCaching) 
             {
                 [segment removeFramesetterAndFrames];
             }
             else
             {
-                [self cacheTextSegment:segment withTextLineRange:segmentRange];
+                [self generateIfNeededTextSegment:segment withTextLineRange:segmentRange];
             }
         }
         
@@ -425,7 +435,7 @@
             break;
         
         currentLineRange.length = segment.lineCount;
-        [self cacheTextSegment:segment withTextLineRange:currentLineRange];
+        [self generateIfNeededTextSegment:segment withTextLineRange:currentLineRange];
         currentLineRange.location += currentLineRange.length;
         
         currentRect.origin.y -= lastSegmentEnd;
@@ -510,6 +520,7 @@
     {
         rect = CGRectInfinite;
     }
+    CGFloat rectEnd = CGRectGetMaxY(rect);
     
     // Setup rendering transformations
     CGContextSetTextMatrix(context, CGAffineTransformIdentity);
@@ -517,14 +528,34 @@
     CGContextScaleCTM(context, 1, -1);
     
     // Enumerate used text segments
+    TextSegment *segment = nil;
+    NSUInteger currentSegmentIndex = 0;
     CGFloat lastSegmentEnd = 0, currentRectEnd;
     CGRect currentRect = rect;
     NSRange currentLineRange = NSMakeRange(0, 0);
-    for (TextSegment *segment in textSegments)
+    while (lastSegmentEnd < rectEnd)
     {
-        // Generate if needed
+        // Exit if reached the last segment
+        if (lastTextSegment && lastTextSegment == segment)
+            return;
+        
+        // Generate segment if needed
+        if ([textSegments count] <= currentSegmentIndex) 
+        {
+            segment = [TextSegment new];
+            segment.renderWrapWidth = wrapWidth;
+            currentLineRange.length = preferredLineCountPerSegment;
+            
+            [textSegments addObject:segment];
+            [segment release];
+        }
+        else
+        {
+            segment = [textSegments objectAtIndex:currentSegmentIndex];
+            currentLineRange.length = segment.lineCount;
+        }
+        [self generateIfNeededTextSegment:segment withTextLineRange:currentLineRange];
         currentLineRange.length = segment.lineCount;
-        [self cacheTextSegment:segment withTextLineRange:currentLineRange];
         currentLineRange.location += currentLineRange.length;
         
         // Adjust rect to current segment relative coordinates
@@ -555,6 +586,9 @@
             CTLineDraw(line, context);
             CGContextTranslateCTM(context, -lineBound.size.width, 0);
         }];
+        
+        // Next segment
+        currentSegmentIndex++;
     }
 }
 

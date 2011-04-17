@@ -110,6 +110,8 @@
         [tileViewPool[i] invalidate];
     }
     
+    self.frame = self.frame;
+    
     [self setNeedsLayout];
 }
 
@@ -140,29 +142,37 @@
                    stringInLineRange:(NSRange *)lineRange
 {
     NSArray *lines = [[text string] componentsSeparatedByString:@"\n"];
-    NSUInteger end = (*lineRange).location + (*lineRange).length;
+    if (!lines || [lines count] == 0)
+        return nil;
+    
+    NSUInteger end = (*lineRange).length;
+    if (end)
+        end += (*lineRange).location;
 
     __block NSRange charRange = NSMakeRange(0, 0);
+    __block NSUInteger lineCount = 0;
     [lines enumerateObjectsUsingBlock:^(NSString *str, NSUInteger idx, BOOL *stop) {
         if (idx < (*lineRange).location) 
         {
             charRange.location += [str length] + 1;
         }
-        else if (idx < end)
+        else if (end == 0 || idx < end)
         {
             charRange.length += [str length] + 1;
+            lineCount++;
         }
         else
         {
             *stop = YES;
         }
     }];
+    charRange.length--;
+    (*lineRange).length = lineCount;
     
     if (charRange.length == [text length]) 
     {
         return text;
     }
-    charRange.length--;
     return [text attributedSubstringFromRange:charRange];
 }
 
@@ -252,11 +262,13 @@ static void init(ECCodeView4 *self)
     if (!tileViewPool[selected]) 
     {
         tileViewPool[selected] = [[TextTileView alloc] initWithTextRenderer:renderer];
+        tileViewPool[selected].backgroundColor = [UIColor whiteColor];
         // TODO remove from self when not displayed
         [self addSubview:tileViewPool[selected]];
     }
     
     tileViewPool[selected].tileIndex = tileIndex;
+    tileViewPool[selected].bounds = (CGRect){ CGPointZero, self.frame.size };
     
     return tileViewPool[selected];
 }
