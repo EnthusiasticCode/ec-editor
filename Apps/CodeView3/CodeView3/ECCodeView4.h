@@ -7,9 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "ECTextRendererDatasource.h"
 
 
-@interface ECCodeView4 : UIScrollView
+@interface ECCodeView4 : UIScrollView <ECTextRendererDatasource>
 
 @property (nonatomic, retain) NSAttributedString *text;
 

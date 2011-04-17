@@ -83,6 +83,8 @@
 		CD887DD413543DF300332BAC /* ECMutableTextFileRenderer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECMutableTextFileRenderer.m; sourceTree = "<group>"; };
 		CD887DD61354C14600332BAC /* ECCodeView4.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeView4.h; sourceTree = "<group>"; };
 		CD887DD71354C14600332BAC /* ECCodeView4.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeView4.m; sourceTree = "<group>"; };
+		CD9C0DF1135B37DA0082FCD7 /* ECTextRendererDatasource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECTextRendererDatasource.h; sourceTree = "<group>"; };
+		CD9C0DF3135B381D0082FCD7 /* ECTextRendererDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECTextRendererDelegate.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -146,8 +148,7 @@
 				CD887DD413543DF300332BAC /* ECMutableTextFileRenderer.m */,
 				CD887DD61354C14600332BAC /* ECCodeView4.h */,
 				CD887DD71354C14600332BAC /* ECCodeView4.m */,
-				CD83D6C613599126008307A6 /* ECTextRenderer.h */,
-				CD83D6C713599126008307A6 /* ECTextRenderer.m */,
+				CD9C0DF4135B383C0082FCD7 /* Text Renderer */,
 			);
 			path = CodeView3;
 			sourceTree = "<group>";
@@ -201,6 +202,17 @@
 				CD887DAE13530FFC00332BAC /* ECTextLayer.m */,
 			);
 			name = Usati;
+			sourceTree = "<group>";
+		};
+		CD9C0DF4135B383C0082FCD7 /* Text Renderer */ = {
+			isa = PBXGroup;
+			children = (
+				CD9C0DF1135B37DA0082FCD7 /* ECTextRendererDatasource.h */,
+				CD9C0DF3135B381D0082FCD7 /* ECTextRendererDelegate.h */,
+				CD83D6C613599126008307A6 /* ECTextRenderer.h */,
+				CD83D6C713599126008307A6 /* ECTextRenderer.m */,
+			);
+			name = "Text Renderer";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
