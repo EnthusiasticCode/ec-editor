@@ -269,6 +269,7 @@ static void init(ECCodeView4 *self)
     
     tileViewPool[selected].tileIndex = tileIndex;
     tileViewPool[selected].bounds = (CGRect){ CGPointZero, self.frame.size };
+    [tileViewPool[selected] setNeedsDisplay];
     
     return tileViewPool[selected];
 }
@@ -279,6 +280,7 @@ static void init(ECCodeView4 *self)
     
     // Scrolled content rect
     CGRect contentRect = self.bounds;
+    CGFloat halfHeight = contentRect.size.height / 2.0;
     
     // Find first visible tile index
     NSUInteger index = contentRect.origin.y / contentRect.size.height;
@@ -288,7 +290,7 @@ static void init(ECCodeView4 *self)
     TextTileView *firstTile = [self viewForTileIndex:index];
     [self sendSubviewToBack:firstTile];
     firstTile.hidden = NO;
-    firstTile.center = CGPointMake(CGRectGetMidX(contentRect), firstTileEnd / 2.0);
+    firstTile.center = CGPointMake(CGRectGetMidX(contentRect), firstTileEnd - halfHeight);
     
     // Layout second visible tile if needed
     if (firstTileEnd < CGRectGetMaxY(contentRect)) 
@@ -297,7 +299,7 @@ static void init(ECCodeView4 *self)
         TextTileView *secondTile = [self viewForTileIndex:index];
         [self sendSubviewToBack:secondTile];
         secondTile.hidden = NO;
-        secondTile.center = CGPointMake(CGRectGetMidX(contentRect), ((index + 1) * contentRect.size.height) / 2.0);
+        secondTile.center = CGPointMake(CGRectGetMidX(contentRect), firstTileEnd + halfHeight);
     }
 }
 
