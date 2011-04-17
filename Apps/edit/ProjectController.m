@@ -118,6 +118,11 @@
     [self loadFile:[self.folder stringByAppendingPathComponent:[subfolder stringByAppendingPathComponent:file]]];
 }
 
+- (BOOL)relationalTableView:(ECRelationalTableView *)relationalTableView canMoveItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    return YES;
+}
+
 - (void)edit:(id)sender
 {
     [self.tableView setEditing:YES animated:YES];
