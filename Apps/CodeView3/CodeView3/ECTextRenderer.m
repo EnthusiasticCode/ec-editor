@@ -56,12 +56,12 @@
         CFArrayRef lines = CTFrameGetLines(frame);
         CFIndex lineCount = CFArrayGetCount(lines);
         CTLineRef line;
-        CGFloat ascent, descent;
+        CGFloat ascent, descent, leading;
         for (CFIndex i = 0; i < lineCount; ++i)
         {
             line = CFArrayGetValueAtIndex(lines, i);
-            CTLineGetTypographicBounds(line, &ascent, &descent, NULL);
-            height += ascent + descent;
+            CTLineGetTypographicBounds(line, &ascent, &descent, &leading);
+            height += ascent + descent + leading;
         }
     }
     return self;
@@ -143,7 +143,7 @@
 /// The block to apply will receive the line and its bounds relative to the first rendered
 /// line in this segment.
 - (void)enumerateLinesIntersectingRect:(CGRect)rect 
-                            usingBlock:(void(^)(CTLineRef line, CGRect lineBound, BOOL *stop))block;
+                            usingBlock:(void(^)(CTLineRef line, CGRect lineBound, CGFloat baseline, BOOL *stop))block;
 
 /// Release framesetters and frames to reduce space consumption. To release the frame
 /// this method will actually clear the framse cache.
@@ -229,7 +229,7 @@
 }
 
 - (void)enumerateLinesIntersectingRect:(CGRect)rect 
-                            usingBlock:(void (^)(CTLineRef, CGRect, BOOL *))block
+                            usingBlock:(void (^)(CTLineRef, CGRect, CGFloat, BOOL *))block
 {
     if (CGRectIsNull(rect) || CGRectIsEmpty(rect)) 
     {
@@ -241,20 +241,20 @@
     CGFloat currentY = 0;
     CFArrayRef lines = CTFrameGetLines(self.frameForCurrentWidth.frame);
     CFIndex count = CFArrayGetCount(lines);
-    CGFloat width, ascent, descent;
+    CGFloat width, ascent, descent, leading;
     CGRect bounds;
     for (CFIndex i = 0; i < count; ++i) 
     {
         CTLineRef line = CFArrayGetValueAtIndex(lines, i);
-        width = CTLineGetTypographicBounds(line, &ascent, &descent, NULL);
-        bounds = CGRectMake(0, currentY, width, ascent + descent);
+        width = CTLineGetTypographicBounds(line, &ascent, &descent, &leading);
+        bounds = CGRectMake(0, currentY, width, ascent + descent + leading);
         if (currentY + bounds.size.height > rect.origin.y) 
         {
             // Break if past the required rect
             if (currentY >= rectEnd)
                 break;
             //
-            block(line, bounds, &stop);
+            block(line, bounds, ascent, &stop);
             if (stop) break;
         }
         currentY += bounds.size.height;
@@ -452,7 +452,7 @@
         if (rect.origin.y > lastSegmentEnd)
             continue;
         
-        [segment enumerateLinesIntersectingRect:currentRect usingBlock:^(CTLineRef line, CGRect lineBound, BOOL *stop) {
+        [segment enumerateLinesIntersectingRect:currentRect usingBlock:^(CTLineRef line, CGRect lineBound, CGFloat baseline, BOOL *stop) {
             result.size.width = MAX(result.size.width, lineBound.size.width);
             result.size.height += lineBound.size.height;
             
@@ -482,9 +482,9 @@
                 if (string) 
                 {
                     CTLineRef line = CTLineCreateWithAttributedString((CFAttributedStringRef)string);
-                    CGFloat width, ascent, descent;
-                    width = CTLineGetTypographicBounds(line, &ascent, &descent, NULL);
-                    meanLineHeight = ascent + descent;
+                    CGFloat width, ascent, descent, leading;
+                    width = CTLineGetTypographicBounds(line, &ascent, &descent, &leading);
+                    meanLineHeight = ascent + descent + leading;
                     maxCharsForLine = wrapWidth * CTLineGetGlyphCount(line) / width;
                     CFRelease(line);
                 }
@@ -575,16 +575,16 @@
             continue;
         
         // Draw needed lines from this segment
-        [segment enumerateLinesIntersectingRect:currentRect usingBlock:^(CTLineRef line, CGRect lineBound, BOOL *stop) {
+        [segment enumerateLinesIntersectingRect:currentRect usingBlock:^(CTLineRef line, CGRect lineBound, CGFloat baseline, BOOL *stop) {
             // Require adjustment in rendering for first partial line
             if (lineBound.origin.y < currentRect.origin.y) 
             {
                 CGContextTranslateCTM(context, 0, currentRect.origin.y - lineBound.origin.y);
             }
             // Positioning and rendering
-            CGContextTranslateCTM(context, 0, -lineBound.size.height);
+            CGContextTranslateCTM(context, 0, -baseline);
             CTLineDraw(line, context);
-            CGContextTranslateCTM(context, -lineBound.size.width, 0);
+            CGContextTranslateCTM(context, -lineBound.size.width, -lineBound.size.height+baseline);
         }];
         
         // Next segment
