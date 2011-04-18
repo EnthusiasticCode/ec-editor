@@ -19,100 +19,25 @@
 //    > frame info cache: that cache wrap sizes to frame infos;
 //    > actual size: cache the actual size of rendered text.
 
-#pragma mark -
-#pragma mark TextSegmentFrame
-
-@interface TextSegmentFrame : NSObject //<NSDiscardableContent>
-
-@property (nonatomic, readonly) CTFrameRef frame;
-
-@property (nonatomic, readonly) CGFloat wrapWidth;
-
-@property (nonatomic, readonly) CGFloat height;
-
-- (id)initWithFramesetter:(CTFramesetterRef)framesetter wrapWidth:(CGFloat)width;
-
-@end
-
-@implementation TextSegmentFrame
-
-@synthesize frame, wrapWidth, height;
-
-- (id)initWithFramesetter:(CTFramesetterRef)framesetter wrapWidth:(CGFloat)width
-{
-    if ((self = [super init]) && framesetter)
-    {
-        // Create path
-        wrapWidth = width;
-        CGMutablePathRef path = CGPathCreateMutable();
-        CGPathAddRect(path, NULL, (CGRect){ CGPointZero, { width, CGFLOAT_MAX } });
-        
-        // Create frame
-        frame = CTFramesetterCreateFrame(framesetter, (CFRange){ 0, 0 }, path, NULL);
-        CGPathRelease(path);
-        
-        // Calculate actual height
-        height = 0;
-        CFArrayRef lines = CTFrameGetLines(frame);
-        CFIndex lineCount = CFArrayGetCount(lines);
-        CTLineRef line;
-        CGFloat ascent, descent, leading;
-        for (CFIndex i = 0; i < lineCount; ++i)
-        {
-            line = CFArrayGetValueAtIndex(lines, i);
-            CTLineGetTypographicBounds(line, &ascent, &descent, &leading);
-            height += ascent + descent + leading;
-        }
-    }
-    return self;
-}
-
-- (void)dealloc
-{
-    if (frame) 
-    {
-        CFRelease(frame);
-    }
-    [super dealloc];
-}
-
-//- (BOOL)beginContentAccess
-//{
-//    return frame != NULL;
-//}
-//
-//- (void)endContentAccess
-//{
-//    
-//}
-//
-//- (void)discardContentIfPossible
-//{
-//    if (frame) 
-//    {
-//        CFRelease(frame);
-//        frame = NULL;
-//    }
-//}
-//
-//- (BOOL)isContentDiscarded
-//{
-//    return frame == NULL;
-//}
-
-@end
 
 #pragma mark -
 #pragma mark TextSegment
+
+#define HEIGHT_CACHE_SIZE (3)
 
 @interface TextSegment : NSObject {
 @private
     // The framesetter for thi segment
     CTFramesetterRef framesetter;
+    CTFrameRef *frameCache;
     
-    // A map of wrap width -> TextSegmentFrame
-    NSCache *widthFramesCache;
+    // Cache of heights for wrap widths
+    struct { CGFloat wrapWidth; CGFloat height; } heightCache[HEIGHT_CACHE_SIZE];
 }
+
+- (id)initWithFrameCache:(CTFrameRef *)cache;
+
+@property (nonatomic, readonly) CTFrameRef frame;
 
 /// Count of string lines used to generate the segment's framesetter.
 @property (nonatomic) NSUInteger lineCount;
@@ -128,26 +53,23 @@
 /// wrap width.
 @property (nonatomic, readonly) CGFloat renderHeight;
 
-/// Retrieve from cache or generate the frame that cover the entire framesetter's string.
-@property (nonatomic, readonly) TextSegmentFrame *frameForCurrentWidth;
-
 /// A readonly property that returns true if the text segment requires generation.
 @property (nonatomic, readonly) BOOL requireGeneration;
 
 /// Generate a new framesetter and setup the stringRange and lineRange propety.
-- (void)generateWithString:(NSAttributedString *)string 
-                       havingLineCount:(NSUInteger)lineCount;
+- (void)generateWithString:(NSAttributedString *)string havingLineCount:(NSUInteger)lineCount;
 
 /// Enumerate all the rendered lines in the text segment that intersect the given rect. 
 /// The rect should be relative to this segment coordinates.
 /// The block to apply will receive the line and its bounds relative to the first rendered
 /// line in this segment.
 - (void)enumerateLinesIntersectingRect:(CGRect)rect 
-                            usingBlock:(void(^)(CTLineRef line, CGRect lineBound, CGFloat baseline, BOOL *stop))block;
+                            usingBlock:(void(^)(CTLineRef line, CGRect lineBound, CGFloat baseline, BOOL *stop))block 
+                               reverse:(BOOL)reverse;
 
 /// Release framesetters and frames to reduce space consumption. To release the frame
 /// this method will actually clear the framse cache.
-- (void)removeFramesetterAndFrames;
+- (void)removeFramesetter;
 
 @end
 
@@ -155,34 +77,70 @@
 
 #pragma mark TextSegment Properties
 
-@synthesize lineCount, stringLength, renderWrapWidth;
+@synthesize frame, lineCount, stringLength, renderWrapWidth;
+
+- (CTFrameRef)frame
+{
+    if (*frameCache && frame == *frameCache)
+        return *frameCache;
+    
+    // Release old cache
+    if (*frameCache)
+        CFRelease(*frameCache);
+    
+    // Create path
+    CGMutablePathRef path = CGPathCreateMutable();
+    CGPathAddRect(path, NULL, (CGRect){ CGPointZero, { renderWrapWidth, CGFLOAT_MAX } });
+    
+    // Create frame
+    frame = CTFramesetterCreateFrame(framesetter, (CFRange){ 0, 0 }, path, NULL);
+    CGPathRelease(path);
+    
+    // Update cache and return
+    *frameCache = frame;
+    return frame;
+}
 
 - (void)setRenderWrapWidth:(CGFloat)width
 {
     if (renderWrapWidth != width) 
     {
         renderWrapWidth = width;
-        [widthFramesCache removeAllObjects];
+        frame = NULL;
     }
-}
-
-- (TextSegmentFrame *)frameForCurrentWidth
-{
-    NSNumber *wrapWidth = [NSNumber numberWithFloat:renderWrapWidth];
-    TextSegmentFrame *segmentFrame = [widthFramesCache objectForKey:wrapWidth];
-    if (!segmentFrame) 
-    {
-        if (!framesetter)
-            return nil;
-        segmentFrame = [[TextSegmentFrame alloc] initWithFramesetter:framesetter wrapWidth:renderWrapWidth];
-        [widthFramesCache setObject:segmentFrame forKey:wrapWidth];
-    }
-    return segmentFrame;
 }
 
 - (CGFloat)renderHeight
 {
-    return self.frameForCurrentWidth.height;
+    // Get height cache entry to update
+    int cacheIdx = 0;
+    for (int i = 0; i < HEIGHT_CACHE_SIZE; ++i) 
+    {
+        if (heightCache[i].wrapWidth == renderWrapWidth)
+        {
+            return heightCache[i].height;
+        }
+        else if (heightCache[i].wrapWidth == 0)
+        {
+            cacheIdx = i;
+        }
+    }
+    
+    // Calculate actual height
+    heightCache[cacheIdx].wrapWidth = renderWrapWidth;
+    heightCache[cacheIdx].height = 0;
+    CFArrayRef lines = CTFrameGetLines(self.frame);
+    CFIndex count = CFArrayGetCount(lines);
+    CTLineRef line;
+    CGFloat ascent, descent, leading;
+    for (CFIndex i = 0; i < count; ++i)
+    {
+        line = CFArrayGetValueAtIndex(lines, i);
+        CTLineGetTypographicBounds(line, &ascent, &descent, &leading);
+        heightCache[cacheIdx].height += ascent + descent + leading;
+    }
+    
+    return heightCache[cacheIdx].height;
 }
 
 - (BOOL)requireGeneration
@@ -192,44 +150,43 @@
 
 #pragma mark TextSegment Methods
 
-- (id)init 
+- (id)initWithFrameCache:(CTFrameRef *)cache
 {
     if ((self = [super init])) 
     {
-        widthFramesCache = [NSCache new];
+        frameCache = cache;
     }
     return self;
 }
 
 - (void)dealloc
 {
-    [self removeFramesetterAndFrames];
-    [widthFramesCache release];
+    [self removeFramesetter];
     [super dealloc];
 }
 
-- (void)removeFramesetterAndFrames
+- (void)removeFramesetter
 {
     if (framesetter)
     {
         CFRelease(framesetter);
         framesetter = NULL;
     }
-    [widthFramesCache removeAllObjects];
+    frame = NULL;
 }
 
-// TODO make a delegate to be sure to call this method if framsetter is NULL
-- (void)generateWithString:(NSAttributedString *)string 
-                       havingLineCount:(NSUInteger)count
+- (void)generateWithString:(NSAttributedString *)string havingLineCount:(NSUInteger)count
 {
-    [self removeFramesetterAndFrames];
+    [self removeFramesetter];
     framesetter = CTFramesetterCreateWithAttributedString((CFAttributedStringRef)string);
     stringLength = [string length];
     lineCount = count;
+    frame = NULL;
 }
 
 - (void)enumerateLinesIntersectingRect:(CGRect)rect 
-                            usingBlock:(void (^)(CTLineRef, CGRect, CGFloat, BOOL *))block
+                            usingBlock:(void (^)(CTLineRef, CGRect, CGFloat, BOOL *))block 
+                               reverse:(BOOL)reverse
 {
     if (CGRectIsNull(rect) || CGRectIsEmpty(rect)) 
     {
@@ -239,10 +196,11 @@
     
     BOOL stop = NO;
     CGFloat currentY = 0;
-    CFArrayRef lines = CTFrameGetLines(self.frameForCurrentWidth.frame);
+    CFArrayRef lines = CTFrameGetLines(self.frame);
     CFIndex count = CFArrayGetCount(lines);
     CGFloat width, ascent, descent, leading;
     CGRect bounds;
+    // TODO!!! do reverse mode
     for (CFIndex i = 0; i < count; ++i) 
     {
         CTLineRef line = CFArrayGetValueAtIndex(lines, i);
@@ -268,6 +226,8 @@
 
 @interface ECTextRenderer () {
 @private
+    CTFrameRef globalFrame;
+    
     NSMutableArray *textSegments;
     TextSegment *lastTextSegment;
     
@@ -324,6 +284,10 @@
 - (void)dealloc
 {
     [textSegments release];
+    if (globalFrame) 
+    {
+        CFRelease(globalFrame);
+    }
     [super dealloc];
 }
 
@@ -361,7 +325,7 @@
         NSAttributedString *string;
         while ((string = [datasource textRenderer:self stringInLineRange:&currentLineRange])) 
         {
-            segment = [TextSegment new];
+            segment = [[TextSegment alloc] initWithFrameCache:&globalFrame];
             segment.renderWrapWidth = wrapWidth;
             [segment generateWithString:string havingLineCount:currentLineRange.length];
             
@@ -393,7 +357,7 @@
             // and remember to set proper lastTextSegment
             if (lazyCaching) 
             {
-                [segment removeFramesetterAndFrames];
+                [segment removeFramesetter];
             }
             else
             {
@@ -409,7 +373,13 @@
 {
     for (TextSegment *segment in textSegments) 
     {
-        [segment removeFramesetterAndFrames];
+        [segment removeFramesetter];
+    }
+    
+    if (globalFrame) 
+    {
+        CFRelease(globalFrame);
+        globalFrame = NULL;
     }
 }
 
@@ -465,7 +435,7 @@
                 meanLineHeight = lineBound.size.height;
             }
             maxCharsForLine = MAX(maxCharsForLine, CTLineGetGlyphCount(line));
-        }];
+        } reverse:NO];
     }
     
     // Guess remaining result
@@ -510,6 +480,9 @@
     return result;
 }
 
+// TODO keep a single frame cached for all segment. if needed by this function
+// use it. keep alway and only the last used frame. if the cached one is in the
+// middle of the requested rect, draw backward.
 - (void)drawTextWithinRect:(CGRect)rect inContext:(CGContextRef)context
 {
     // Sanitize input
@@ -542,7 +515,7 @@
         // Generate segment if needed
         if ([textSegments count] <= currentSegmentIndex) 
         {
-            segment = [TextSegment new];
+            segment = [[TextSegment alloc] initWithFrameCache:&globalFrame];
             segment.renderWrapWidth = wrapWidth;
             currentLineRange.length = preferredLineCountPerSegment;
             
@@ -585,7 +558,7 @@
             CGContextTranslateCTM(context, 0, -baseline);
             CTLineDraw(line, context);
             CGContextTranslateCTM(context, -lineBound.size.width, -lineBound.size.height+baseline);
-        }];
+        } reverse:NO];
         
         // Next segment
         currentSegmentIndex++;

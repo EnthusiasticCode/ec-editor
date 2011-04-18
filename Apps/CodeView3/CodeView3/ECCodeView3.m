@@ -525,87 +525,88 @@ static void init(ECCodeView3 *self)
                              inDirection:(UITextLayoutDirection)direction 
                                   offset:(NSInteger)offset
 {
-    if (offset == 0)
-        return position;
-    
-    NSUInteger pos = [(ECTextPosition *)position index];
-    NSUInteger result;
-    
-    if (direction == UITextStorageDirectionForward 
-        || direction == UITextStorageDirectionBackward) 
-    {
-        if (direction == UITextStorageDirectionBackward)
-            offset = -offset;
-        
-        if (offset < 0 && (NSUInteger)(-offset) >= pos)
-            result = 0;
-        else
-            result = pos + offset;
-    } 
-    else if (direction == UITextLayoutDirectionLeft 
-             || direction == UITextLayoutDirectionRight) 
-    {
-        if (direction == UITextLayoutDirectionLeft)
-            offset = -offset;
-        
-        // TODO should move considering typography characters
-        if (offset < 0 && (NSUInteger)(-offset) >= pos)
-            result = 0;
-        else
-            result = pos + offset;
-    } 
-    else if (direction == UITextLayoutDirectionUp 
-             || direction == UITextLayoutDirectionDown) 
-    {
-        if (direction == UITextLayoutDirectionUp)
-            offset = -offset;
-
-        // TODO!!! chech if make sense
-        CGFloat frameOffset;
-//        CTFrameRef frame = [self frameContainingTextIndex:pos frameOffset:&frameOffset];
+//    if (offset == 0)
+//        return position;
+//    
+//    NSUInteger pos = [(ECTextPosition *)position index];
+//    NSUInteger result;
+//    
+//    if (direction == UITextStorageDirectionForward 
+//        || direction == UITextStorageDirectionBackward) 
+//    {
+//        if (direction == UITextStorageDirectionBackward)
+//            offset = -offset;
 //        
-//        CFArrayRef lines = CTFrameGetLines(frame);
-//        CFIndex lineCount = CFArrayGetCount(lines);
-//        CFIndex lineIndex = ECCTFrameGetLineContainingStringIndex(frame, pos, (CFRange){0, lineCount}, NULL);
-//        CFIndex newIndex = lineIndex + offset;
-//        CTLineRef line = CFArrayGetValueAtIndex(lines, lineIndex);
+//        if (offset < 0 && (NSUInteger)(-offset) >= pos)
+//            result = 0;
+//        else
+//            result = pos + offset;
+//    } 
+//    else if (direction == UITextLayoutDirectionLeft 
+//             || direction == UITextLayoutDirectionRight) 
+//    {
+//        if (direction == UITextLayoutDirectionLeft)
+//            offset = -offset;
 //        
-//        if (newIndex < 0 || newIndex >= lineCount)
-//            return nil;
-//        
-//        if (newIndex == lineIndex)
-//            return position;
-//        
-//        CGFloat xPosn = CTLineGetOffsetForStringIndex(line, pos, NULL) + frameOffset;
-//        CGPoint origins[1];
-//        CTFrameGetLineOrigins(frame, (CFRange){lineIndex, 1}, origins);
-//        xPosn = xPosn + origins[0].x; // X-coordinate in layout space
-//        
-//        CTFrameGetLineOrigins(frame, (CFRange){newIndex, 1}, origins);
-//        xPosn = xPosn - origins[0].x; // X-coordinate in new line's local coordinates
-//        
-//        CFIndex newStringIndex = CTLineGetStringIndexForPosition(CFArrayGetValueAtIndex(lines, newIndex), (CGPoint){xPosn, 0});
-//        
-//        if (newStringIndex == kCFNotFound)
-//            return nil;
-//        
-//        if(newStringIndex < 0)
-//            newStringIndex = 0;
-//        result = newStringIndex;
-    } 
-    else 
-    {
-        // Direction unimplemented
-        return position;
-    }
-    
-    NSUInteger textLength = [self textLength];
-    if (result > textLength)
-        result = textLength;
-    
-    ECTextPosition *resultPosition = [[[ECTextPosition alloc] initWithIndex:result] autorelease];
-    
-    return resultPosition;
+//        // TODO should move considering typography characters
+//        if (offset < 0 && (NSUInteger)(-offset) >= pos)
+//            result = 0;
+//        else
+//            result = pos + offset;
+//    } 
+//    else if (direction == UITextLayoutDirectionUp 
+//             || direction == UITextLayoutDirectionDown) 
+//    {
+////        if (direction == UITextLayoutDirectionUp)
+////            offset = -offset;
+//
+//        // TODO!!! chech if make sense
+////        CGFloat frameOffset;
+////        CTFrameRef frame = [self frameContainingTextIndex:pos frameOffset:&frameOffset];
+////        
+////        CFArrayRef lines = CTFrameGetLines(frame);
+////        CFIndex lineCount = CFArrayGetCount(lines);
+////        CFIndex lineIndex = ECCTFrameGetLineContainingStringIndex(frame, pos, (CFRange){0, lineCount}, NULL);
+////        CFIndex newIndex = lineIndex + offset;
+////        CTLineRef line = CFArrayGetValueAtIndex(lines, lineIndex);
+////        
+////        if (newIndex < 0 || newIndex >= lineCount)
+////            return nil;
+////        
+////        if (newIndex == lineIndex)
+////            return position;
+////        
+////        CGFloat xPosn = CTLineGetOffsetForStringIndex(line, pos, NULL) + frameOffset;
+////        CGPoint origins[1];
+////        CTFrameGetLineOrigins(frame, (CFRange){lineIndex, 1}, origins);
+////        xPosn = xPosn + origins[0].x; // X-coordinate in layout space
+////        
+////        CTFrameGetLineOrigins(frame, (CFRange){newIndex, 1}, origins);
+////        xPosn = xPosn - origins[0].x; // X-coordinate in new line's local coordinates
+////        
+////        CFIndex newStringIndex = CTLineGetStringIndexForPosition(CFArrayGetValueAtIndex(lines, newIndex), (CGPoint){xPosn, 0});
+////        
+////        if (newStringIndex == kCFNotFound)
+////            return nil;
+////        
+////        if(newStringIndex < 0)
+////            newStringIndex = 0;
+////        result = newStringIndex;
+//    } 
+//    else 
+//    {
+//        // Direction unimplemented
+//        return position;
+//    }
+//    
+////    NSUInteger textLength = [self textLength];
+////    if (result > textLength)
+////        result = textLength;
+//    
+////    ECTextPosition *resultPosition = [[[ECTextPosition alloc] initWithIndex:result] autorelease];
+//    
+////    return resultPosition;
+    return nil;
 }
 
 - (UITextPosition *)beginningOfDocument
@@ -677,16 +678,17 @@ static void init(ECCodeView3 *self)
 
 - (CGRect)caretRectForPosition:(UITextPosition *)position
 {
-    NSUInteger pos = ((ECTextPosition *)position).index;
-    CGFloat frameOffset;
-//    CTFrameRef frame = [self frameContainingTextIndex:pos frameOffset:&frameOffset];
-//    CGRect carretRect = ECCTFrameGetBoundRectOfLinesForStringRange(frame, (CFRange){pos, 0});
-    CGRect carretRect = CGRectZero;
-    carretRect.origin.x += frameOffset;
-    // TODO parametrize caret rect sizes
-    carretRect.origin.x -= 1.0;
-    carretRect.size.width = 2.0;
-    return carretRect;
+//    NSUInteger pos = ((ECTextPosition *)position).index;
+//    CGFloat frameOffset;
+////    CTFrameRef frame = [self frameContainingTextIndex:pos frameOffset:&frameOffset];
+////    CGRect carretRect = ECCTFrameGetBoundRectOfLinesForStringRange(frame, (CFRange){pos, 0});
+//    CGRect carretRect = CGRectZero;
+//    carretRect.origin.x += frameOffset;
+//    // TODO parametrize caret rect sizes
+//    carretRect.origin.x -= 1.0;
+//    carretRect.size.width = 2.0;
+//    return carretRect;
+    return CGRectZero;
 }
 
 - (UITextPosition *)closestPositionToPoint:(CGPoint)point
