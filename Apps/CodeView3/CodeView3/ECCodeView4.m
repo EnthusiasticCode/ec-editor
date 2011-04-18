@@ -10,6 +10,7 @@
 #import <QuartzCore/QuartzCore.h>
 #import "ECTextRenderer.h"
 
+#define TILEVIEWPOOL_SIZE (3)
 
 #pragma mark -
 #pragma mark TextTileView
@@ -96,8 +97,6 @@
 #pragma mark -
 #pragma mark ECCodeView4
 
-#define TILEVIEWPOOL_SIZE (3)
-
 @interface ECCodeView4 () {
 @private
     ECTextRenderer *renderer;
@@ -109,28 +108,26 @@
 
 @end
 
+
 @implementation ECCodeView4
 
-#pragma mark -
 #pragma mark Properties
 
 @synthesize text, textInsets;
 
-- (void)setText:(NSAttributedString *)string
+- (void)setTextDatasource:(id<ECTextRendererDatasource>)datasource
 {
-    [text release];
-    text = [string retain];
-    [renderer invalidateAllText];
-    
-    for (NSInteger i = 0; i < TILEVIEWPOOL_SIZE; ++i)
+    if (datasource != self) 
     {
-        [tileViewPool[i] invalidate];
+        [text release];
+        text = nil;
     }
-    
-    // TODO clean this
-    self.frame = self.frame;
-    
-    [self setNeedsLayout];
+    renderer.datasource = datasource;
+}
+
+- (id<ECTextRendererDatasource>)textDatasource
+{
+    return renderer.datasource;
 }
 
 - (void)setTextInsets:(UIEdgeInsets)insets
@@ -145,16 +142,13 @@
 
 - (void)setFrame:(CGRect)frame
 {
-    if (text) 
+    renderer.wrapWidth = UIEdgeInsetsInsetRect(frame, self->textInsets).size.width;
+    self.contentSize = CGSizeMake(frame.size.width, renderer.estimatedHeight + textInsets.top + textInsets.bottom);
+    
+    for (NSInteger i = 0; i < TILEVIEWPOOL_SIZE; ++i)
     {
-        renderer.wrapWidth = UIEdgeInsetsInsetRect(frame, self->textInsets).size.width;
-        self.contentSize = CGSizeMake(frame.size.width, renderer.estimatedHeight + textInsets.top + textInsets.bottom);
-        
-        for (NSInteger i = 0; i < TILEVIEWPOOL_SIZE; ++i)
-        {
-            [tileViewPool[i] invalidate];
-            tileViewPool[i].bounds = (CGRect){ CGPointZero, frame.size };
-        }
+        [tileViewPool[i] invalidate];
+        tileViewPool[i].bounds = (CGRect){ CGPointZero, frame.size };
     }
     
     [super setFrame:frame];
@@ -170,73 +164,22 @@
     [super setBackgroundColor:color];
 }
 
-#pragma mark -
-#pragma mark DEBUG Text Renderer Datasource
-
-- (NSAttributedString *)textRenderer:(ECTextRenderer *)sender stringInLineRange:(NSRange *)lineRange
-{
-    NSArray *lines = [[text string] componentsSeparatedByString:@"\n"];
-    if (!lines || [lines count] == 0 || [lines count] <= (*lineRange).location)
-        return nil;
-    
-    NSUInteger end = (*lineRange).length;
-    if (end)
-        end += (*lineRange).location;
-
-    __block NSRange charRange = NSMakeRange(0, 0);
-    __block NSUInteger lineCount = 0;
-    [lines enumerateObjectsUsingBlock:^(NSString *str, NSUInteger idx, BOOL *stop) {
-        if (idx < (*lineRange).location) 
-        {
-            charRange.location += [str length] + 1;
-        }
-        else if (end == 0 || idx < end)
-        {
-            charRange.length += [str length] + 1;
-            lineCount++;
-        }
-        else
-        {
-            *stop = YES;
-        }
-    }];
-    charRange.length--;
-    (*lineRange).length = lineCount;
-    
-    if (charRange.length == [text length]) 
-    {
-        return text;
-    }
-    return [text attributedSubstringFromRange:charRange];
-}
-
-- (NSUInteger)textRenderer:(ECTextRenderer *)sender estimatedTextLineCountOfLength:(NSUInteger)maximumLineLength
-{
-    NSArray *lines = [[text string] componentsSeparatedByString:@"\n"];
-    
-    __block NSUInteger lineCount = 0;
-    [lines enumerateObjectsUsingBlock:^(NSString *str, NSUInteger idx, BOOL *stop) {
-        lineCount += ([str length] / maximumLineLength) + 1;
-    }];
-    
-    return lineCount;
-}
-
-#pragma mark -
 #pragma mark NSObject Methods
 
 static void preinit(ECCodeView4 *self)
 {
+    self->renderer = [ECTextRenderer new];
+    self->renderer.lazyCaching = YES;
+    self->renderer.preferredLineCountPerSegment = 500;
+    self->renderer.datasource = self;
+    
     self->textInsets = UIEdgeInsetsMake(10, 10, 10, 10);
 }
 
 static void init(ECCodeView4 *self)
 {
-    self->renderer = [ECTextRenderer new];
+    
     self->renderer.wrapWidth = UIEdgeInsetsInsetRect(self.bounds, self->textInsets).size.width;
-    self->renderer.lazyCaching = YES;
-    self->renderer.preferredLineCountPerSegment = 500;
-    self->renderer.datasource = self;
     [self->renderer addObserver:self forKeyPath:@"estimatedHeight" options:NSKeyValueObservingOptionNew context:nil];
 }
 
@@ -348,6 +291,84 @@ static void init(ECCodeView4 *self)
         secondTile.hidden = NO;
         secondTile.center = CGPointMake(CGRectGetMidX(contentRect), firstTileEnd + halfHeight);
     }
+}
+
+#pragma mark -
+#pragma mark Text Renderer String Datasource
+
+- (void)setText:(NSAttributedString *)string
+{
+    if (self.textDatasource != self)
+    {
+        [NSException raise:NSInternalInconsistencyException format:@"Trying to set codeview text with textDelegate not self."];
+        return;
+    }
+    
+    // Set text
+    [text release];
+    text = [string retain];
+    [renderer invalidateAllText];
+        
+    // Update tiles
+    CGRect bounds = self.bounds;
+    renderer.wrapWidth = UIEdgeInsetsInsetRect(bounds, self->textInsets).size.width;
+    self.contentSize = CGSizeMake(bounds.size.width, renderer.estimatedHeight + textInsets.top + textInsets.bottom);
+    for (NSInteger i = 0; i < TILEVIEWPOOL_SIZE; ++i)
+    {
+        [tileViewPool[i] invalidate];
+        tileViewPool[i].bounds = (CGRect){ CGPointZero, bounds.size };
+    }
+    
+    [self setNeedsLayout];
+}
+
+- (NSAttributedString *)textRenderer:(ECTextRenderer *)sender stringInLineRange:(NSRange *)lineRange
+{
+    NSArray *lines = [[text string] componentsSeparatedByString:@"\n"];
+    if (!lines || [lines count] == 0 || [lines count] <= (*lineRange).location)
+        return nil;
+    
+    NSUInteger end = (*lineRange).length;
+    if (end)
+        end += (*lineRange).location;
+    
+    __block NSRange charRange = NSMakeRange(0, 0);
+    __block NSUInteger lineCount = 0;
+    [lines enumerateObjectsUsingBlock:^(NSString *str, NSUInteger idx, BOOL *stop) {
+        if (idx < (*lineRange).location) 
+        {
+            charRange.location += [str length] + 1;
+        }
+        else if (end == 0 || idx < end)
+        {
+            charRange.length += [str length] + 1;
+            lineCount++;
+        }
+        else
+        {
+            *stop = YES;
+        }
+    }];
+    charRange.length--;
+    (*lineRange).length = lineCount;
+    
+    if (charRange.length == [text length]) 
+    {
+        return text;
+    }
+    return [text attributedSubstringFromRange:charRange];
+}
+
+- (NSUInteger)textRenderer:(ECTextRenderer *)sender estimatedTextLineCountOfLength:(NSUInteger)maximumLineLength
+{
+    NSArray *lines = [[text string] componentsSeparatedByString:@"\n"];
+    
+    __block NSUInteger lineCount = 0;
+    [lines enumerateObjectsUsingBlock:^(NSString *str, NSUInteger idx, BOOL *stop) {
+        lineCount += ([str length] / maximumLineLength) + 1;
+    }];
+    
+    return lineCount;
 }
 
 @end
