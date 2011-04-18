@@ -45,7 +45,7 @@
 /// line; the new range can as well have a length of 0 to indicate deletion.
 - (void)updateTextInLineRange:(NSRange)originalRange toLineRange:(NSRange)newRange;
 
-#pragma mark Cacheing Behaviours
+#pragma mark Caching Behaviours
 
 /// Indicates if the caching of rendering informations should happen lazely 
 /// or immediatly after a datasource is set. Defaults is YES.
@@ -60,6 +60,10 @@
 /// The width to use to wrap the text. Changing this property will make the
 /// renderer to invalidate it's content.
 @property (nonatomic) CGFloat wrapWidth;
+
+/// Returns the estimated height for the current content at the current wrap
+/// width. A user can observe this property to receive updates on the estimation.
+@property (nonatomic, readonly) CGFloat estimatedHeight;
 
 /// Given a rect in the rendered text space, this method return a centered
 /// and resized to fit an integral number of lines present in that original

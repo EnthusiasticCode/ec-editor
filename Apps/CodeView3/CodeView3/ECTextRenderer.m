@@ -244,7 +244,7 @@
 
 #pragma mark Properties
 
-@synthesize delegate, datasource, preferredLineCountPerSegment, lazyCaching, wrapWidth;
+@synthesize delegate, datasource, preferredLineCountPerSegment, lazyCaching, wrapWidth, estimatedHeight;
 
 - (void)setDelegate:(id<ECTextRendererDelegate>)aDelegate
 {
@@ -262,11 +262,25 @@
 
 - (void)setWrapWidth:(CGFloat)width
 {
-    wrapWidth = width;
-    for (TextSegment *segment in textSegments) 
+    if (wrapWidth != width) 
     {
-        segment.renderWrapWidth = width;
+        wrapWidth = width;
+        for (TextSegment *segment in textSegments) 
+        {
+            segment.renderWrapWidth = width;
+        }
+        estimatedHeight = 0;
     }
+}
+
+- (CGFloat)estimatedHeight
+{
+    if (estimatedHeight == 0) 
+    {
+        estimatedHeight = [self rectForIntegralNumberOfTextLinesWithinRect:CGRectInfinite allowGuessedResult:YES].size.height;
+    }
+    
+    return estimatedHeight;
 }
 
 #pragma mark NSObject Methods
@@ -316,6 +330,8 @@
 {
     [textSegments removeAllObjects];
     lastTextSegment = nil;
+    // TODO inform kvo?
+    estimatedHeight = 0;
     
     if (!lazyCaching) 
     {
@@ -353,7 +369,7 @@
             newIntersec = NSIntersectionRange(newRange, segmentRange);
             segmentRange.length += (newIntersec.length - origInsersect.length);
             segment.lineCount = segmentRange.length;
-            // TODO if lineCount > 1.5 * preferred -> split or merge if * 0.5
+            // TODO!!! if lineCount > 1.5 * preferred -> split or merge if * 0.5
             // and remember to set proper lastTextSegment
             if (lazyCaching) 
             {
@@ -367,6 +383,8 @@
         
         currentLineLocation += segmentRange.length;
     }
+    // TODO inform kvo?
+    estimatedHeight = 0;
 }
 
 - (void)clearCache
@@ -562,6 +580,15 @@
         
         // Next segment
         currentSegmentIndex++;
+    }
+    
+    // Update estimated height
+    if (lastSegmentEnd > estimatedHeight 
+        || (lastTextSegment == segment && lastSegmentEnd != estimatedHeight)) 
+    {
+        [self willChangeValueForKey:@"estimatedHeight"];
+        estimatedHeight = lastSegmentEnd;
+        [self didChangeValueForKey:@"estimatedHeight"];
     }
 }
 

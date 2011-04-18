@@ -110,6 +110,7 @@
         [tileViewPool[i] invalidate];
     }
     
+    // TODO clean this
     self.frame = self.frame;
     
     [self setNeedsLayout];
@@ -120,9 +121,7 @@
     if (text) 
     {
         renderer.wrapWidth = UIEdgeInsetsInsetRect(frame, self->textInsets).size.width;
-        CGRect renderRect = [renderer rectForIntegralNumberOfTextLinesWithinRect:CGRectInfinite allowGuessedResult:YES];
-        renderRect.size.width = frame.size.width;
-        self.contentSize = renderRect.size;
+        self.contentSize = CGSizeMake(frame.size.width, renderer.estimatedHeight);
         
         for (NSInteger i = 0; i < TILEVIEWPOOL_SIZE; ++i)
         {
@@ -132,7 +131,6 @@
     }
     
     [super setFrame:frame];
-//    [self setNeedsLayout];
 }
 
 #pragma mark -
@@ -202,6 +200,7 @@ static void init(ECCodeView4 *self)
     self->renderer.wrapWidth = UIEdgeInsetsInsetRect(self.bounds, self->textInsets).size.width;
     self->renderer.lazyCaching = YES;
     self->renderer.datasource = self;
+    [self->renderer addObserver:self forKeyPath:@"estimatedHeight" options:NSKeyValueObservingOptionNew context:nil];
 }
 
 - (id)initWithFrame:(CGRect)frame
@@ -230,6 +229,16 @@ static void init(ECCodeView4 *self)
         [tileViewPool[i] release];
     [renderer release];
     [super dealloc];
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    if (object == renderer) 
+    {
+        CGFloat height = [[change valueForKey:NSKeyValueChangeNewKey] floatValue];
+        self.contentSize = CGSizeMake(self.bounds.size.width, height);
+        return;
+    }
 }
 
 #pragma mark -
