@@ -65,8 +65,7 @@
 /// line in this segment. It also recive an offset from the origin y of the bounds
 /// at wich the baseline is positioned.
 - (void)enumerateLinesIntersectingRect:(CGRect)rect 
-                            usingBlock:(void(^)(CTLineRef line, CGRect lineBound, CGFloat baselineOffset, BOOL *stop))block 
-                               reverse:(BOOL)reverse;
+                            usingBlock:(void(^)(CTLineRef line, CGRect lineBound, CGFloat baselineOffset, BOOL *stop))block;
 
 /// Release framesetters and frames to reduce space consumption. To release the frame
 /// this method will actually clear the framse cache.
@@ -185,9 +184,9 @@
     frame = NULL;
 }
 
+// TODO!!! do reverse mode
 - (void)enumerateLinesIntersectingRect:(CGRect)rect 
                             usingBlock:(void (^)(CTLineRef, CGRect, CGFloat, BOOL *))block 
-                               reverse:(BOOL)reverse
 {
     if (CGRectIsNull(rect) || CGRectIsEmpty(rect)) 
     {
@@ -201,7 +200,6 @@
     CFIndex count = CFArrayGetCount(lines);
     CGFloat width, ascent, descent, leading;
     CGRect bounds;
-    // TODO!!! do reverse mode
     for (CFIndex i = 0; i < count; ++i) 
     {
         CTLineRef line = CFArrayGetValueAtIndex(lines, i);
@@ -232,7 +230,7 @@
     NSMutableArray *textSegments;
     TextSegment *lastTextSegment;
     
-    BOOL delegateHasTextRendererDidChangeRenderForTextWithinRectToRect;
+    BOOL delegateHasTextRendererInvalidateRenderInRect;
     BOOL datasourceHasTextRendererEstimatedTextLineCountOfLength;
 }
 
@@ -253,7 +251,7 @@
 - (void)setDelegate:(id<ECTextRendererDelegate>)aDelegate
 {
     delegate = aDelegate;
-    delegateHasTextRendererDidChangeRenderForTextWithinRectToRect = [delegate respondsToSelector:@selector(textRenderer:didChangeRenderForTextWithinRect:toRect:)];
+    delegateHasTextRendererInvalidateRenderInRect = [delegate respondsToSelector:@selector(textRenderer:invalidateRenderInRect:)];
 }
 
 - (void)setDatasource:(id<ECTextRendererDatasource>)aDatasource
@@ -338,8 +336,6 @@
 {
     [textSegments removeAllObjects];
     lastTextSegment = nil;
-    // TODO inform kvo?
-    estimatedHeight = 0;
     
     if (!lazyCaching) 
     {
@@ -361,10 +357,22 @@
         }
         lastTextSegment = segment;
     }
+    
+    if (delegateHasTextRendererInvalidateRenderInRect) 
+    {
+        CGRect changedRect = CGRectMake(0, 0, wrapWidth, estimatedHeight);
+        [delegate textRenderer:self invalidateRenderInRect:changedRect];
+    }
+    
+    // TODO inform kvo?
+    estimatedHeight = 0;
 }
 
 - (void)updateTextInLineRange:(NSRange)originalRange toLineRange:(NSRange)newRange
 {
+    CGFloat currentY = 0;
+    CGRect changedRect = CGRectNull, currentRect;
+    
     NSUInteger currentLineLocation = 0;
     NSRange segmentRange, origInsersect, newIntersec;
     for (TextSegment *segment in textSegments) 
@@ -374,9 +382,16 @@
         origInsersect = NSIntersectionRange(originalRange, segmentRange);
         if (origInsersect.length > 0)
         {
+            // Compute change intersection
             newIntersec = NSIntersectionRange(newRange, segmentRange);
             segmentRange.length += (newIntersec.length - origInsersect.length);
             segment.lineCount = segmentRange.length;
+            
+            // Update dirty rect
+            currentRect = CGRectMake(0, currentY, wrapWidth, segment.renderHeight);
+            changedRect = CGRectUnion(changedRect, currentRect);
+            currentY += currentRect.size.height;
+            
             // TODO!!! if lineCount > 1.5 * preferred -> split or merge if * 0.5
             // and remember to set proper lastTextSegment
             if (lazyCaching) 
@@ -391,6 +406,12 @@
         
         currentLineLocation += segmentRange.length;
     }
+    
+    if (delegateHasTextRendererInvalidateRenderInRect) 
+    {
+        [delegate textRenderer:self invalidateRenderInRect:changedRect];
+    }
+    
     // TODO inform kvo?
     estimatedHeight = 0;
 }
@@ -425,6 +446,7 @@
     NSRange currentLineRange = NSMakeRange(0, 0);
     CGRect currentRect = rect;
     CGFloat currentRectEnd;
+    // TODO this should be more like the draw function for non guessed requests
     for (TextSegment *segment in textSegments)
     {
         if (guessed && segment.requireGeneration)
@@ -461,7 +483,7 @@
                 meanLineHeight = lineBound.size.height;
             }
             maxCharsForLine = MAX(maxCharsForLine, CTLineGetGlyphCount(line));
-        } reverse:NO];
+        }];
     }
     
     // Guess remaining result
@@ -594,7 +616,7 @@
             CGContextTranslateCTM(context, 0, -baseline);
             CTLineDraw(line, context);
             CGContextTranslateCTM(context, -lineBound.size.width, -lineBound.size.height+baseline);
-        } reverse:NO];
+        }];
     }
     
     // Update estimated height

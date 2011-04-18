@@ -14,6 +14,6 @@
 @optional
 
 /// Called when the renderer update a part of its content.
-- (void)textRenderer:(ECTextRenderer *)sender didChangeRenderForTextWithinRect:(CGRect)originalRect toRect:(CGRect)newRect;
+- (void)textRenderer:(ECTextRenderer *)sender invalidateRenderInRect:(CGRect)rect;
 
 @end
