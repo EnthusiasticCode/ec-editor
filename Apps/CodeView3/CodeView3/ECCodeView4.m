@@ -113,21 +113,17 @@
 
 #pragma mark Properties
 
-@synthesize text, textInsets;
+@synthesize text, datasource, textInsets;
 
-- (void)setTextDatasource:(id<ECTextRendererDatasource>)datasource
+- (void)setDatasource:(id<ECCodeViewDatasource>)aDatasource
 {
+    datasource = aDatasource;
     if (datasource != self) 
     {
         [text release];
         text = nil;
     }
     renderer.datasource = datasource;
-}
-
-- (id<ECTextRendererDatasource>)textDatasource
-{
-    return renderer.datasource;
 }
 
 - (void)setTextInsets:(UIEdgeInsets)insets
@@ -171,7 +167,8 @@ static void preinit(ECCodeView4 *self)
     self->renderer = [ECTextRenderer new];
     self->renderer.lazyCaching = YES;
     self->renderer.preferredLineCountPerSegment = 500;
-    self->renderer.datasource = self;
+    
+    self.datasource = self;
     
     self->textInsets = UIEdgeInsetsMake(10, 10, 10, 10);
 }
@@ -298,7 +295,7 @@ static void init(ECCodeView4 *self)
 
 - (void)setText:(NSAttributedString *)string
 {
-    if (self.textDatasource != self)
+    if (datasource != self)
     {
         [NSException raise:NSInternalInconsistencyException format:@"Trying to set codeview text with textDelegate not self."];
         return;

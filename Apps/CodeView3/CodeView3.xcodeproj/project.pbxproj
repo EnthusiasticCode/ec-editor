@@ -83,6 +83,7 @@
 		CD887DD413543DF300332BAC /* ECMutableTextFileRenderer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECMutableTextFileRenderer.m; sourceTree = "<group>"; };
 		CD887DD61354C14600332BAC /* ECCodeView4.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeView4.h; sourceTree = "<group>"; };
 		CD887DD71354C14600332BAC /* ECCodeView4.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeView4.m; sourceTree = "<group>"; };
+		CD9A5D47135C9FB70037E0BE /* ECCodeViewDatasource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeViewDatasource.h; sourceTree = "<group>"; };
 		CD9C0DF1135B37DA0082FCD7 /* ECTextRendererDatasource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECTextRendererDatasource.h; sourceTree = "<group>"; };
 		CD9C0DF3135B381D0082FCD7 /* ECTextRendererDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECTextRendererDelegate.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -146,8 +147,7 @@
 				CD887DCD1353119600332BAC /* ECCodeView3.m */,
 				CD887DD313543DF300332BAC /* ECMutableTextFileRenderer.h */,
 				CD887DD413543DF300332BAC /* ECMutableTextFileRenderer.m */,
-				CD887DD61354C14600332BAC /* ECCodeView4.h */,
-				CD887DD71354C14600332BAC /* ECCodeView4.m */,
+				CD9A5D45135C9F9A0037E0BE /* CodeView4 */,
 				CD9C0DF4135B383C0082FCD7 /* Text Renderer */,
 			);
 			path = CodeView3;
@@ -202,6 +202,16 @@
 				CD887DAE13530FFC00332BAC /* ECTextLayer.m */,
 			);
 			name = Usati;
+			sourceTree = "<group>";
+		};
+		CD9A5D45135C9F9A0037E0BE /* CodeView4 */ = {
+			isa = PBXGroup;
+			children = (
+				CD9A5D47135C9FB70037E0BE /* ECCodeViewDatasource.h */,
+				CD887DD61354C14600332BAC /* ECCodeView4.h */,
+				CD887DD71354C14600332BAC /* ECCodeView4.m */,
+			);
+			name = CodeView4;
 			sourceTree = "<group>";
 		};
 		CD9C0DF4135B383C0082FCD7 /* Text Renderer */ = {
