@@ -19,17 +19,20 @@
     ECTextRenderer *renderer;
 }
 
-- (id)initWithTextRenderer:(ECTextRenderer *)aRenderer;
-
 @property (nonatomic) NSInteger tileIndex;
+
+@property (nonatomic) UIEdgeInsets textInsets;
+
+- (id)initWithTextRenderer:(ECTextRenderer *)aRenderer;
 
 - (void)invalidate;
 
 @end
 
+
 @implementation TextTileView
 
-@synthesize tileIndex;
+@synthesize tileIndex, textInsets;
 
 - (id)initWithTextRenderer:(ECTextRenderer *)aRenderer
 {
@@ -59,10 +62,24 @@
     [self.backgroundColor setFill];
     CGContextFillRect(context, rect);
     
+    // Drawing text
     CGContextSaveGState(context);
     {
         CGPoint textOffset = CGPointMake(0, rect.size.height * tileIndex);
-        [renderer drawTextWithinRect:(CGRect){ textOffset, rect.size } inContext:context];
+        CGSize textSize = rect.size;
+        if (tileIndex == 0) 
+        {
+            textSize.height -= textInsets.top;
+            CGContextTranslateCTM(context, textInsets.left, textInsets.top);
+        }
+        else
+        {
+            textOffset.y -= textInsets.top;
+            CGContextTranslateCTM(context, textInsets.left, 0);
+        }
+        CGRect textRect = (CGRect){ textOffset, rect.size };
+        
+        [renderer drawTextWithinRect:textRect inContext:context];
     }
     CGContextRestoreGState(context);
     
@@ -116,12 +133,22 @@
     [self setNeedsLayout];
 }
 
+- (void)setTextInsets:(UIEdgeInsets)insets
+{
+    textInsets = insets;
+    for (NSInteger i = 0; i < TILEVIEWPOOL_SIZE; ++i)
+    {
+        [tileViewPool[i] setTextInsets:insets];
+        [tileViewPool[i] setNeedsDisplay];
+    }
+}
+
 - (void)setFrame:(CGRect)frame
 {
     if (text) 
     {
         renderer.wrapWidth = UIEdgeInsetsInsetRect(frame, self->textInsets).size.width;
-        self.contentSize = CGSizeMake(frame.size.width, renderer.estimatedHeight);
+        self.contentSize = CGSizeMake(frame.size.width, renderer.estimatedHeight + textInsets.top + textInsets.bottom);
         
         for (NSInteger i = 0; i < TILEVIEWPOOL_SIZE; ++i)
         {
@@ -131,6 +158,16 @@
     }
     
     [super setFrame:frame];
+}
+
+- (void)setBackgroundColor:(UIColor *)color
+{
+    for (NSInteger i = 0; i < TILEVIEWPOOL_SIZE; ++i)
+    {
+        [tileViewPool[i] setBackgroundColor:color];
+        [tileViewPool[i] setNeedsDisplay];
+    }
+    [super setBackgroundColor:color];
 }
 
 #pragma mark -
@@ -236,7 +273,7 @@ static void init(ECCodeView4 *self)
     if (object == renderer) 
     {
         CGFloat height = [[change valueForKey:NSKeyValueChangeNewKey] floatValue];
-        self.contentSize = CGSizeMake(self.bounds.size.width, height);
+        self.contentSize = CGSizeMake(self.bounds.size.width, height + textInsets.top + textInsets.bottom);
         return;
     }
 }
@@ -271,7 +308,8 @@ static void init(ECCodeView4 *self)
     if (!tileViewPool[selected]) 
     {
         tileViewPool[selected] = [[TextTileView alloc] initWithTextRenderer:renderer];
-        tileViewPool[selected].backgroundColor = [UIColor whiteColor];
+        tileViewPool[selected].backgroundColor = self.backgroundColor;
+        tileViewPool[selected].textInsets = textInsets;
         // TODO remove from self when not displayed
         [self addSubview:tileViewPool[selected]];
     }
