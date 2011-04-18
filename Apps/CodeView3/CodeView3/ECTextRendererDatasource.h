@@ -10,7 +10,7 @@
 
 @class ECTextRenderer;
 
-@protocol ECTextRendererDatasource <NSObject>
+@protocol ECTextRendererDataSource <NSObject>
 @required
 
 /// An implementer of this method should return a string from the input

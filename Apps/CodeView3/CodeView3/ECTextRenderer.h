@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import <QuartzCore/QuartzCore.h>
-#import "ECTextRendererDatasource.h"
+#import "ECTextRendererDataSource.h"
 #import "ECTextRendererDelegate.h"
 
 
@@ -25,7 +25,7 @@
 
 /// The datasource to retrieve the text to render. It has to conform to
 /// \c ECTextRendererDatasource protocol.
-@property (nonatomic, assign) id <ECTextRendererDatasource> datasource;
+@property (nonatomic, assign) id <ECTextRendererDataSource> datasource;
 
 /// Defines the preferred number of lines to use for one segment of input.
 /// If this property is non-zero, input strings from the datasource will

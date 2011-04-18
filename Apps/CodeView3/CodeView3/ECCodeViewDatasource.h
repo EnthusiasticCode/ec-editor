@@ -7,13 +7,21 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "ECTextRendererDatasource.h"
+#import "ECTextRendererDataSource.h"
 
 
 @class ECCodeView4;
 
-@protocol ECCodeViewDatasource <ECTextRendererDatasource>
+@protocol ECCodeViewDataSource <ECTextRendererDataSource>
+@required
+
+/// When implemented, indicate if the given \c CodeView can send editing messages
+/// to the implementer.
+- (BOOL)canBeEditedByCodeView:(ECCodeView4 *)sender;
+
 @optional
+
+#pragma mark Returning Overlay Content
 
 /// When implemented return a dictionary with \c ECOverlayStyle as key to 
 /// \c NSIndexSet as values representing the ranges of string to apply the style to.

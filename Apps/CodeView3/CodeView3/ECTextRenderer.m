@@ -254,7 +254,7 @@
     delegateHasTextRendererInvalidateRenderInRect = [delegate respondsToSelector:@selector(textRenderer:invalidateRenderInRect:)];
 }
 
-- (void)setDatasource:(id<ECTextRendererDatasource>)aDatasource
+- (void)setDatasource:(id<ECTextRendererDataSource>)aDatasource
 {
     datasource = aDatasource;
     datasourceHasTextRendererEstimatedTextLineCountOfLength = [datasource respondsToSelector:@selector(textRenderer:estimatedTextLineCountOfLength:)];

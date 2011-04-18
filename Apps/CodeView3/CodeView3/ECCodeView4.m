@@ -115,7 +115,7 @@
 
 @synthesize text, datasource, textInsets;
 
-- (void)setDatasource:(id<ECCodeViewDatasource>)aDatasource
+- (void)setDatasource:(id<ECCodeViewDataSource>)aDatasource
 {
     datasource = aDatasource;
     if (datasource != self) 

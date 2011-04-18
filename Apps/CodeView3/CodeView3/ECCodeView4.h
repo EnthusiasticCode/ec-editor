@@ -7,16 +7,16 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "ECCodeViewDatasource.h"
+#import "ECCodeViewDataSource.h"
 
 
-@interface ECCodeView4 : UIScrollView <ECCodeViewDatasource>
+@interface ECCodeView4 : UIScrollView <ECCodeViewDataSource>
 
 #pragma mark Managing Text Content
 
 /// The datasource for the text displayed by the code view. Default is self.
 /// If this datasource is not self, the text property will have no effect.
-@property (nonatomic, assign) id<ECCodeViewDatasource> datasource;
+@property (nonatomic, assign) id<ECCodeViewDataSource> datasource;
 
 /// Set the text fot the control. This property is only used if textDatasource
 /// is the code view itself.
