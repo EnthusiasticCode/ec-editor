@@ -62,9 +62,10 @@
 /// Enumerate all the rendered lines in the text segment that intersect the given rect. 
 /// The rect should be relative to this segment coordinates.
 /// The block to apply will receive the line and its bounds relative to the first rendered
-/// line in this segment.
+/// line in this segment. It also recive an offset from the origin y of the bounds
+/// at wich the baseline is positioned.
 - (void)enumerateLinesIntersectingRect:(CGRect)rect 
-                            usingBlock:(void(^)(CTLineRef line, CGRect lineBound, CGFloat baseline, BOOL *stop))block 
+                            usingBlock:(void(^)(CTLineRef line, CGRect lineBound, CGFloat baselineOffset, BOOL *stop))block 
                                reverse:(BOOL)reverse;
 
 /// Release framesetters and frames to reduce space consumption. To release the frame
@@ -235,7 +236,10 @@
     BOOL datasourceHasTextRendererEstimatedTextLineCountOfLength;
 }
 
-- (void)generateIfNeededTextSegment:(TextSegment *)segment withTextLineRange:(NSRange)range;
+/// Generate a segment with the given line range if not already generated.
+/// Return YES if segment is usable or NO if it should not be used and removed
+/// from the segment array.
+- (BOOL)generateIfNeededTextSegment:(TextSegment *)segment withTextLineRange:(NSRange)range;
 
 @end
 
@@ -307,21 +311,25 @@
 
 #pragma mark Private Methods
 
-- (void)generateIfNeededTextSegment:(TextSegment *)segment withTextLineRange:(NSRange)range
+- (BOOL)generateIfNeededTextSegment:(TextSegment *)segment withTextLineRange:(NSRange)range
 {
     if (!segment.requireGeneration)
-        return;
+        return YES;
     
     NSUInteger originalRangeLength = range.length;
     NSAttributedString *string = [datasource textRenderer:self stringInLineRange:&range];
     if (!string || range.length == 0 || [string length] == 0)
-        return; // TODO throw?
+    {
+        return NO;
+    }
     
     [segment generateWithString:string havingLineCount:range.length];
     
     // TODO receive message from delegate instead?
     if (range.length != originalRangeLength)
         lastTextSegment = segment;
+    
+    return YES;
 }
 
 #pragma mark Public Methods
@@ -545,15 +553,25 @@
             segment = [textSegments objectAtIndex:currentSegmentIndex];
             currentLineRange.length = segment.lineCount;
         }
-        [self generateIfNeededTextSegment:segment withTextLineRange:currentLineRange];
+        
+        // Next segment
+        currentSegmentIndex++;
+        
+        // Generate segment if needed and remove it if invalid
+        if (![self generateIfNeededTextSegment:segment withTextLineRange:currentLineRange])
+        {
+            [textSegments removeObject:segment];
+            lastTextSegment = [textSegments lastObject];
+            break;
+        }
         currentLineRange.length = segment.lineCount;
         currentLineRange.location += currentLineRange.length;
         
         // Adjust rect to current segment relative coordinates
-        currentRect.origin.y -= lastSegmentEnd;
+        currentRect.origin.y = rect.origin.y - lastSegmentEnd;
         if (currentRect.origin.y < 0)
         {
-            currentRect.size.height += currentRect.origin.y;
+            currentRect.size.height = rect.size.height + currentRect.origin.y;
             currentRect.origin.y = 0;
         }
         currentRectEnd = CGRectGetMaxY(currentRect);
@@ -577,9 +595,6 @@
             CTLineDraw(line, context);
             CGContextTranslateCTM(context, -lineBound.size.width, -lineBound.size.height+baseline);
         } reverse:NO];
-        
-        // Next segment
-        currentSegmentIndex++;
     }
     
     // Update estimated height

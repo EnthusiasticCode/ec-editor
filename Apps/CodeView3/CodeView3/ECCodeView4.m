@@ -136,11 +136,10 @@
 #pragma mark -
 #pragma mark DEBUG Text Renderer Datasource
 
-- (NSAttributedString *)textRenderer:(ECTextRenderer *)sender 
-                   stringInLineRange:(NSRange *)lineRange
+- (NSAttributedString *)textRenderer:(ECTextRenderer *)sender stringInLineRange:(NSRange *)lineRange
 {
     NSArray *lines = [[text string] componentsSeparatedByString:@"\n"];
-    if (!lines || [lines count] == 0)
+    if (!lines || [lines count] == 0 || [lines count] <= (*lineRange).location)
         return nil;
     
     NSUInteger end = (*lineRange).length;
@@ -199,6 +198,7 @@ static void init(ECCodeView4 *self)
     self->renderer = [ECTextRenderer new];
     self->renderer.wrapWidth = UIEdgeInsetsInsetRect(self.bounds, self->textInsets).size.width;
     self->renderer.lazyCaching = YES;
+    self->renderer.preferredLineCountPerSegment = 500;
     self->renderer.datasource = self;
     [self->renderer addObserver:self forKeyPath:@"estimatedHeight" options:NSKeyValueObservingOptionNew context:nil];
 }
