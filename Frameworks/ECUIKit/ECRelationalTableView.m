@@ -58,7 +58,7 @@ const NSUInteger ECRelationalTableViewGroupPlaceholderBufferSize = 20;
     NSMutableDictionary *_visibleSeparators;
     NSMutableDictionary *_visiblePlaceholders;
     UITapGestureRecognizer *_tapGestureRecognizer;
-    UIPanGestureRecognizer *_panGestureRecognizer;
+    UILongPressGestureRecognizer *_longPressGestureRecognizer;
     BOOL _isDragging;
     ECRelationalTableViewCell *_draggedItem;
     NSIndexPath *_draggedItemIndexPath;
@@ -83,6 +83,7 @@ const NSUInteger ECRelationalTableViewGroupPlaceholderBufferSize = 20;
 - (NSArray *)_indexPathsForVisibleGroups;
 - (NSArray *)_indexPathsForVisibleGroupSeparators;
 - (NSArray *)_indexPathsForVisibleGroupPlaceholders;
+- (ECRelationalTableViewCell *)loadCellForItemAtIndexPath:(NSIndexPath *)indexPath;
 - (NSIndexPath *)_indexPathForItemAtPoint:(CGPoint)point includeInsets:(BOOL)includeInsets;
 - (NSIndexPath *)_proposedIndexPathForItemAtPoint:(CGPoint)point exists:(BOOL *)exists;
 - (void)_layoutHeaders;
@@ -90,11 +91,11 @@ const NSUInteger ECRelationalTableViewGroupPlaceholderBufferSize = 20;
 - (void)_layoutGroupPlaceholders;
 - (void)_layoutCells;
 - (void)_handleTapGesture:(UITapGestureRecognizer *)tapGestureRecognizer;
-- (void)_handlePanGesture:(UIPanGestureRecognizer *)panGestureRecognizer;
-- (void)_beginDrag:(UIPanGestureRecognizer *)dragRecognizer;
-- (void)_continueDrag:(UIPanGestureRecognizer *)dragRecognizer;
-- (void)_endDrag:(UIPanGestureRecognizer *)dragRecognizer;
-- (void)_cancelDrag:(UIPanGestureRecognizer *)dragRecognizer;
+- (void)_handlePanGesture:(UILongPressGestureRecognizer *)longPressGestureRecognizer;
+- (void)_beginDrag:(UILongPressGestureRecognizer *)dragRecognizer;
+- (void)_continueDrag:(UILongPressGestureRecognizer *)dragRecognizer;
+- (void)_endDrag:(UILongPressGestureRecognizer *)dragRecognizer;
+- (void)_cancelDrag:(UILongPressGestureRecognizer *)dragRecognizer;
 @end
 
 #pragma mark -
@@ -209,7 +210,7 @@ const NSUInteger ECRelationalTableViewGroupPlaceholderBufferSize = 20;
     [_visiblePlaceholders release];
     [_visibleCells release];
     [_tapGestureRecognizer release];
-    [_panGestureRecognizer release];
+    [_longPressGestureRecognizer release];
     [_draggedItem release];
     [_draggedItemIndexPath release];
     [_dragDestinationIndexPath release];
@@ -239,9 +240,10 @@ const NSUInteger ECRelationalTableViewGroupPlaceholderBufferSize = 20;
     _tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(_handleTapGesture:)];
     _tapGestureRecognizer.delegate = self;
     [self addGestureRecognizer:_tapGestureRecognizer];
-    _panGestureRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(_handlePanGesture:)];
-    _panGestureRecognizer.delegate = self;
-    [self addGestureRecognizer:_panGestureRecognizer];
+    _longPressGestureRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(_handlePanGesture:)];
+    _longPressGestureRecognizer.minimumPressDuration = 0.5;
+    _longPressGestureRecognizer.delegate = self;
+    [self addGestureRecognizer:_longPressGestureRecognizer];
     UIScrollView *scrollView = [[[UIScrollView alloc] init] autorelease];
     _flags.superGestureRecognizerShouldBegin = [scrollView respondsToSelector:@selector(gestureRecognizerShouldBegin:)];
     _flags.superGestureRecognizerShouldRecognizeSimultaneously = [scrollView respondsToSelector:@selector(gestureRecognizer:shouldRecognizeSimultaneouslyWithGestureRecognizer:)];
@@ -517,12 +519,7 @@ const NSUInteger ECRelationalTableViewGroupPlaceholderBufferSize = 20;
 
 - (NSUInteger)numberOfItemsInGroup:(NSUInteger)group inArea:(NSUInteger)area
 {
-    NSUInteger numItems = [[[_areas objectAtIndex:area] objectAtIndex:group] unsignedIntegerValue];
-    if (_draggedItemIndexPath.group == group && _draggedItemIndexPath.area == area)
-        --numItems;
-    if (_dragDestinationIndexPath.group == group && _dragDestinationIndexPath.area == area)
-        ++numItems;
-    return numItems;
+    return [[[_areas objectAtIndex:area] objectAtIndex:group] unsignedIntegerValue];
 }
 
 #pragma mark -
@@ -598,15 +595,6 @@ const NSUInteger ECRelationalTableViewGroupPlaceholderBufferSize = 20;
     static CGRect cachedItemRect;
     if (!indexPath)
         return CGRectZero;
-    if (_isDragging)
-    {
-        NSUInteger item = indexPath.item;
-        if (indexPath.group == _draggedItemIndexPath.group && indexPath.area == _draggedItemIndexPath.area)
-            --item;
-        if (indexPath.group == _dragDestinationIndexPath.group && indexPath.area == _dragDestinationIndexPath.area)
-            ++item;
-        indexPath = [NSIndexPath indexPathForItem:item inGroup:indexPath.group inArea:indexPath.area];
-    }
     if (indexPath.item == cachedItem && indexPath.group == cachedGroup && indexPath.area == cachedArea)
         return cachedItemRect;
     CGFloat x = 0;
@@ -691,7 +679,7 @@ const NSUInteger ECRelationalTableViewGroupPlaceholderBufferSize = 20;
     return nil;
 }
 
-- (ECRelationalTableViewCell *)cellForItemAtIndexPath:(NSIndexPath *)indexPath
+- (ECRelationalTableViewCell *)loadCellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
     if (!indexPath || !_flags.dataSourceCellForItemAtIndexPath)
         return nil;
@@ -699,6 +687,13 @@ const NSUInteger ECRelationalTableViewGroupPlaceholderBufferSize = 20;
     CGRect rect = CGRectMake(0.0, 0.0, _cellSize.width - _cellInsets.left - _cellInsets.right, _cellSize.height - _cellInsets.top - _cellInsets.bottom);
     cell.bounds = rect;
     return cell;
+}
+
+- (ECRelationalTableViewCell *)cellForItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (!indexPath)
+        return nil;
+    return [_visibleCells objectForKey:indexPath];
 }
 
 - (NSArray *)visibleCells
@@ -732,9 +727,6 @@ const NSUInteger ECRelationalTableViewGroupPlaceholderBufferSize = 20;
             }
         }
     }
-    if (_isDragging)
-        if (![indexPaths containsObject:_draggedItemIndexPath])
-            [indexPaths addObject:_draggedItemIndexPath];
     return indexPaths;
 }
 
@@ -762,9 +754,9 @@ const NSUInteger ECRelationalTableViewGroupPlaceholderBufferSize = 20;
         {
             header = [_headerCache pop];
             [self addSubview:header];
-            header.center = [self _centerForHeaderInArea:idx];
             header.text = [_headerTitles objectAtIndex:idx];
         }
+        header.center = [self _centerForHeaderInArea:idx];
         [newVisibleHeaders setObject:header forKey:[NSNumber numberWithUnsignedInteger:idx]];
     }];
     for (UILabel *header in [_visibleHeaders allValues])
@@ -788,8 +780,8 @@ const NSUInteger ECRelationalTableViewGroupPlaceholderBufferSize = 20;
         {
             separator = [_groupSeparatorCache pop];
             [self addSubview:separator];
-            separator.center = [self _centerForGroupSeparatorAtIndexPath:indexPath];
         }
+        separator.center = [self _centerForGroupSeparatorAtIndexPath:indexPath];
         [newVisibleGroupSeparators setObject:separator forKey:indexPath];
     }
     for (UIView *separator in [_visibleSeparators allValues])
@@ -813,8 +805,8 @@ const NSUInteger ECRelationalTableViewGroupPlaceholderBufferSize = 20;
         {
             placeholder = [_groupPlaceholderCache pop];
             [self addSubview:placeholder];
-            placeholder.center = [self _centerForGroupPlaceholderAtIndexPath:indexPath];
         }
+        placeholder.center = [self _centerForGroupPlaceholderAtIndexPath:indexPath];
         [newVisibleGroupPlaceholders setObject:placeholder forKey:indexPath];
     }
     for (UIView *placeholder in [_visiblePlaceholders allValues])
@@ -838,10 +830,10 @@ const NSUInteger ECRelationalTableViewGroupPlaceholderBufferSize = 20;
         }
         else
         {
-            cell = [self cellForItemAtIndexPath:indexPath];
+            cell = [self loadCellForItemAtIndexPath:indexPath];
             [self addSubview:cell];
-            cell.center = [self _centerForItemAtIndexPath:indexPath];
         }
+        cell.center = [self _centerForItemAtIndexPath:indexPath];
         [newVisibleItems setObject:cell forKey:indexPath];
     }
     for (ECRelationalTableViewCell *cell in [_visibleCells allValues])
@@ -873,11 +865,17 @@ const NSUInteger ECRelationalTableViewGroupPlaceholderBufferSize = 20;
             return YES;
         else
             return NO;
-    if (gestureRecognizer == _panGestureRecognizer)
+    if (gestureRecognizer == _longPressGestureRecognizer)
         if (_isEditing && [self indexPathForItemAtPoint:[touch locationInView:self]])
             return YES;
         else
+        {
             return NO;
+        }
+    if ([gestureRecognizer isKindOfClass:[UITapGestureRecognizer class]] && !_isEditing && [self indexPathForItemAtPoint:[touch locationInView:self]])
+        return NO;
+    if ([gestureRecognizer isKindOfClass:[UILongPressGestureRecognizer class]] && _isEditing && [self indexPathForItemAtPoint:[touch locationInView:self]])
+        return NO;
     if (_flags.superGestureRecognizerShouldReceiveTouch)
         return [super gestureRecognizer:gestureRecognizer shouldReceiveTouch:touch];
     return YES;
@@ -885,7 +883,7 @@ const NSUInteger ECRelationalTableViewGroupPlaceholderBufferSize = 20;
 
 - (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer
 {
-    if (gestureRecognizer == _panGestureRecognizer)
+    if (gestureRecognizer == _longPressGestureRecognizer)
         if (_flags.dataSourceCanMoveItem && [self indexPathForItemAtPoint:[gestureRecognizer locationInView:self]] && [_dataSource relationalTableView:self canMoveItemAtIndexPath:[self indexPathForItemAtPoint:[gestureRecognizer locationInView:self]]])
             return YES;
         else
@@ -894,7 +892,6 @@ const NSUInteger ECRelationalTableViewGroupPlaceholderBufferSize = 20;
         return [super gestureRecognizerShouldBegin:gestureRecognizer];
     return YES;
 }
-
 
 - (void)_handleTapGesture:(UITapGestureRecognizer *)tapGestureRecognizer
 {
@@ -908,40 +905,43 @@ const NSUInteger ECRelationalTableViewGroupPlaceholderBufferSize = 20;
     [__delegate relationalTableView:self didSelectItemAtIndexPath:indexPath];
 }
 
-- (void)_handlePanGesture:(UIPanGestureRecognizer *)panGestureRecognizer
+- (void)_handlePanGesture:(UILongPressGestureRecognizer *)longPressGestureRecognizer
 {
-    if ([panGestureRecognizer state] == UIGestureRecognizerStateBegan)
-        [self _beginDrag:panGestureRecognizer];
-    else if ([panGestureRecognizer state] == UIGestureRecognizerStateChanged)
-        [self _continueDrag:panGestureRecognizer];
-    else if ([panGestureRecognizer state] == UIGestureRecognizerStateEnded)
-        [self _endDrag:panGestureRecognizer];
+    if ([longPressGestureRecognizer state] == UIGestureRecognizerStateBegan)
+        [self _beginDrag:longPressGestureRecognizer];
+    else if ([longPressGestureRecognizer state] == UIGestureRecognizerStateChanged)
+        [self _continueDrag:longPressGestureRecognizer];
+    else if ([longPressGestureRecognizer state] == UIGestureRecognizerStateEnded)
+        [self _endDrag:longPressGestureRecognizer];
     else
-        [self _cancelDrag:panGestureRecognizer];
+        [self _cancelDrag:longPressGestureRecognizer];
 }
 
-- (void)_beginDrag:(UIPanGestureRecognizer *)dragRecognizer
+- (void)_beginDrag:(UILongPressGestureRecognizer *)dragRecognizer
 {
     _isDragging = YES;
     _draggedItemIndexPath = [[self indexPathForItemAtPoint:[dragRecognizer locationInView:self]] retain];
     _draggedItem = [[self cellForItemAtIndexPath:_draggedItemIndexPath] retain];
     _draggedItem.center = [dragRecognizer locationInView:self];
-    NSLog(@"%@:%@", _draggedItemIndexPath, _draggedItem);
 }
 
-- (void)_continueDrag:(UIPanGestureRecognizer *)dragRecognizer
+- (void)_continueDrag:(UILongPressGestureRecognizer *)dragRecognizer
 {
     _draggedItem.center = [dragRecognizer locationInView:self];
+    _dragDestinationIndexPath = [self indexPathForItemAtPoint:[dragRecognizer locationInView:self]];
+    [self setNeedsLayout];
+    [UIView animateConcurrentlyToAnimationsWithFlag:&_isAnimating duration:ECRelationalTableViewShortAnimationDuration animations:^(void) {
+        [self layoutIfNeeded];
+    } completion:NULL];
 }
 
-- (void)_endDrag:(UIPanGestureRecognizer *)dragRecognizer
+- (void)_endDrag:(UILongPressGestureRecognizer *)dragRecognizer
 {
     [self _cancelDrag:dragRecognizer];
 }
 
-- (void)_cancelDrag:(UIPanGestureRecognizer *)dragRecognizer
+- (void)_cancelDrag:(UILongPressGestureRecognizer *)dragRecognizer
 {
-    NSLog(@"%@:%@", _draggedItemIndexPath, _draggedItem);
     _isDragging = NO;
     _draggedItem.center = [self _centerForItemAtIndexPath:_draggedItemIndexPath];
     [_draggedItemIndexPath release];
@@ -950,67 +950,6 @@ const NSUInteger ECRelationalTableViewGroupPlaceholderBufferSize = 20;
     _draggedItem = nil;
 }
 
-/*
-- (NSIndexPath *)proposedIndexPathForItemAtPoint:(CGPoint)point exists:(BOOL *)exists
-{
-    *exists = YES;
-    return [self indexPathForItemAtPoint:point];
-}
-*/
-/*
-- (void)handleCellPanGesture:(UIGestureRecognizer *)panGestureRecognizer
-{
-    if (!_isEditing)
-        return;
-    CGPoint locationInView;
-    switch ([panGestureRecognizer state]) {
-        case UIGestureRecognizerStateBegan:
-            _flags.isDragging = YES;
-            self.dragSource = [self indexPathForItemAtPoint:[panGestureRecognizer locationInView:self]];
-            self.cellBeingDragged = [self cellForItemAtIndexPath:self.dragSource];
-            break;
-            
-        case UIGestureRecognizerStateChanged:
-            locationInView = [panGestureRecognizer locationInView:self];
-            self.cellBeingDragged.center = locationInView;
-            self.dragDestination = [self proposedIndexPathForItemAtPoint:locationInView exists:&dragDestinationExists_];
-            if (self.dragDestination == self.lastDragDestination)
-                break;
-            self.lastDragDestination = self.dragDestination;
-            [self setNeedsLayout];
-            [UIView animateWithDuration:0.5 animations:^{
-                [self layoutIfNeeded];
-            }];
-            break;
-            
-        case UIGestureRecognizerStateEnded:
-            _flags.isDragging = NO;
-            self.cellBeingDragged = nil;
-            self.dragSource = nil;
-            self.dragDestination = nil;
-            self.lastDragDestination = nil;
-            self.dragDestinationExists = NO;
-            [self setNeedsLayout];
-            [UIView animateWithDuration:0.5 animations:^{
-                [self layoutIfNeeded];
-            }];
-            break;
-            
-        default:
-            break;
-    }
-}
-
-- (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event
-{
-    NSIndexPath *indexPath = nil;
-    if (_isEditing)
-        indexPath = [self indexPathForItemAtPoint:point];
-    if (indexPath)
-        return [self cellForItemAtIndexPath:indexPath];
-    return [super hitTest:point withEvent:event];
-}
-*/
 @end
 
 #pragma mark -
