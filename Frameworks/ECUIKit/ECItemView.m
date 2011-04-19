@@ -62,6 +62,9 @@ const NSUInteger ECItemViewGroupPlaceholderBufferSize = 20;
     ECItemViewCell *_draggedItem;
     NSIndexPath *_draggedItemIndexPath;
     NSIndexPath *_dragDestinationIndexPath;
+    NSTimer *_scrollTimer;
+    CGFloat _scrollSpeed;
+    UIEdgeInsets _scrollingHotspots;
 }
 - (void)_setup;
 
@@ -92,6 +95,7 @@ const NSUInteger ECItemViewGroupPlaceholderBufferSize = 20;
 - (void)_continueDrag:(UILongPressGestureRecognizer *)dragRecognizer;
 - (void)_endDrag:(UILongPressGestureRecognizer *)dragRecognizer;
 - (void)_cancelDrag:(UILongPressGestureRecognizer *)dragRecognizer;
+- (void)_handleTimer:(NSTimer *)timer;
 @end
 
 #pragma mark -
@@ -214,6 +218,8 @@ const NSUInteger ECItemViewGroupPlaceholderBufferSize = 20;
     _flags.superGestureRecognizerShouldBegin = [scrollView respondsToSelector:@selector(gestureRecognizerShouldBegin:)];
     _flags.superGestureRecognizerShouldRecognizeSimultaneously = [scrollView respondsToSelector:@selector(gestureRecognizer:shouldRecognizeSimultaneouslyWithGestureRecognizer:)];
     _flags.superGestureRecognizerShouldReceiveTouch = [scrollView respondsToSelector:@selector(gestureRecognizer:shouldReceiveTouch:)];
+    _scrollSpeed = 30.0;
+    _scrollingHotspots = UIEdgeInsetsMake(100.0, 0.0, 100.0, 0.0);
 }
 
 - (id)initWithFrame:(CGRect)frame
@@ -253,6 +259,7 @@ const NSUInteger ECItemViewGroupPlaceholderBufferSize = 20;
     [_draggedItem release];
     [_draggedItemIndexPath release];
     [_dragDestinationIndexPath release];
+    [_scrollTimer invalidate];
     [super dealloc];
 }
 
@@ -794,8 +801,12 @@ const NSUInteger ECItemViewGroupPlaceholderBufferSize = 20;
             cell = [self _loadCellForItemAtIndexPath:indexPath];
             [self addSubview:cell];
         }
-        cell.frame = UIEdgeInsetsInsetRect([self rectForItemAtIndexPath:indexPath], _cellInsets);
         [newVisibleItems setObject:cell forKey:indexPath];
+        if (_isDragging && _draggedItemIndexPath && indexPath.group == _draggedItemIndexPath.group && indexPath.area == _draggedItemIndexPath.area && indexPath.item > _draggedItemIndexPath.item)
+            indexPath = [NSIndexPath indexPathForItem:indexPath.item - 1 inGroup:indexPath.group inArea:indexPath.area];
+        if (_isDragging && _dragDestinationIndexPath && indexPath.group == _dragDestinationIndexPath.group && indexPath.area == _dragDestinationIndexPath.area && indexPath.item >= _dragDestinationIndexPath.item)
+            indexPath = [NSIndexPath indexPathForItem:indexPath.item + 1 inGroup:indexPath.group inArea:indexPath.area];
+        cell.frame = UIEdgeInsetsInsetRect([self rectForItemAtIndexPath:indexPath], _cellInsets);
     }
     for (ECItemViewCell *cell in [_visibleCells allValues])
     {
@@ -887,6 +898,7 @@ const NSUInteger ECItemViewGroupPlaceholderBufferSize = 20;
 {
     _isDragging = YES;
     _draggedItemIndexPath = [[self indexPathForItemAtPoint:[dragRecognizer locationInView:self]] retain];
+    _dragDestinationIndexPath = [_draggedItemIndexPath retain];
     _draggedItem = [self cellForItemAtIndexPath:_draggedItemIndexPath];
     _draggedItem.center = [dragRecognizer locationInView:self];
 }
@@ -894,7 +906,24 @@ const NSUInteger ECItemViewGroupPlaceholderBufferSize = 20;
 - (void)_continueDrag:(UILongPressGestureRecognizer *)dragRecognizer
 {
     _draggedItem.center = [dragRecognizer locationInView:self];
-    _dragDestinationIndexPath = [self indexPathForItemAtPoint:[dragRecognizer locationInView:self]];
+    if (CGRectContainsPoint(self.bounds, _draggedItem.center) && !CGRectContainsPoint(UIEdgeInsetsInsetRect(self.bounds, _scrollingHotspots), _draggedItem.center))
+    {
+        if (!_scrollTimer)
+        {
+            _scrollTimer = [NSTimer timerWithTimeInterval:1.0/60.0 target:self selector:@selector(_handleTimer:) userInfo:nil repeats:YES];
+            [[NSRunLoop mainRunLoop] addTimer:_scrollTimer forMode:NSDefaultRunLoopMode];
+        }
+    }
+    else if (_scrollTimer)
+    {
+        [_scrollTimer invalidate];
+        _scrollTimer = nil;
+    }
+    NSIndexPath *indexPath = [self indexPathForItemAtPoint:[dragRecognizer locationInView:self]];
+    if ([indexPath isEqual:_draggedItemIndexPath])
+        return;
+    [_dragDestinationIndexPath release];
+    _dragDestinationIndexPath = [indexPath retain];
     [self setNeedsLayout];
     [UIView animateConcurrentlyToAnimationsWithFlag:&_isAnimating duration:ECItemViewShortAnimationDuration animations:^(void) {
         [self layoutIfNeeded];
@@ -909,11 +938,37 @@ const NSUInteger ECItemViewGroupPlaceholderBufferSize = 20;
 - (void)_cancelDrag:(UILongPressGestureRecognizer *)dragRecognizer
 {
     _isDragging = NO;
-    _draggedItem.frame = UIEdgeInsetsInsetRect([self rectForItemAtIndexPath:_draggedItemIndexPath], _cellInsets);
+    [_scrollTimer invalidate];
+    _scrollTimer = nil;
+    [self setNeedsLayout];
+    [UIView animateConcurrentlyToAnimationsWithFlag:&_isAnimating duration:ECItemViewShortAnimationDuration animations:^(void) {
+        _draggedItem.frame = UIEdgeInsetsInsetRect([self rectForItemAtIndexPath:_draggedItemIndexPath], _cellInsets);
+        [self layoutIfNeeded];
+    } completion:NULL];
     [_draggedItemIndexPath release];
     _draggedItemIndexPath = nil;
+    [_dragDestinationIndexPath release];
+    _dragDestinationIndexPath = nil;
     _draggedItem = nil;
 }
+
+- (void)_handleTimer:(NSTimer *)timer
+{
+    CGPoint offset = [self contentOffset];
+    CGPoint center = _draggedItem.center;
+    if (_draggedItem.center.y < self.bounds.origin.y + _scrollingHotspots.top && self.bounds.origin.y > 0.0)
+    {
+        offset.y -= _scrollSpeed;
+        center.y -= _scrollSpeed;
+    }
+    else if (_draggedItem.center.y > self.bounds.origin.y + self.bounds.size.height - _scrollingHotspots.bottom && self.bounds.origin.y < self.contentSize.height - self.bounds.size.height)
+    {
+        offset.y += _scrollSpeed;
+        center.y += _scrollSpeed;
+    }
+    [self setContentOffset:offset animated:NO];
+    _draggedItem.center = center;
+ }
 
 @end
 
