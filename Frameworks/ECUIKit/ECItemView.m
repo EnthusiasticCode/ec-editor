@@ -784,6 +784,8 @@ const NSUInteger ECItemViewGroupPlaceholderBufferSize = 20;
     NSMutableDictionary *newVisibleItems = [[NSMutableDictionary alloc] init];
     for (NSIndexPath *indexPath in [self indexPathsForVisibleItems])
     {
+        if (_isDragging && [indexPath isEqual:_draggedItemIndexPath])
+            continue;
         ECItemViewCell *cell = [_visibleCells objectForKey:indexPath];
         if (cell)
             [_visibleCells removeObjectForKey:indexPath];
@@ -797,6 +799,11 @@ const NSUInteger ECItemViewGroupPlaceholderBufferSize = 20;
     }
     for (ECItemViewCell *cell in [_visibleCells allValues])
     {
+        if (_isDragging && cell == _draggedItem)
+        {
+            [newVisibleItems setObject:cell forKey:_draggedItemIndexPath];
+            continue;
+        }
         [cell removeFromSuperview];
         [_cellCache push:cell];
     }
@@ -880,7 +887,7 @@ const NSUInteger ECItemViewGroupPlaceholderBufferSize = 20;
 {
     _isDragging = YES;
     _draggedItemIndexPath = [[self indexPathForItemAtPoint:[dragRecognizer locationInView:self]] retain];
-    _draggedItem = [[self cellForItemAtIndexPath:_draggedItemIndexPath] retain];
+    _draggedItem = [self cellForItemAtIndexPath:_draggedItemIndexPath];
     _draggedItem.center = [dragRecognizer locationInView:self];
 }
 
@@ -902,10 +909,9 @@ const NSUInteger ECItemViewGroupPlaceholderBufferSize = 20;
 - (void)_cancelDrag:(UILongPressGestureRecognizer *)dragRecognizer
 {
     _isDragging = NO;
-    _draggedItem.frame = [self rectForItemAtIndexPath:_draggedItemIndexPath];
+    _draggedItem.frame = UIEdgeInsetsInsetRect([self rectForItemAtIndexPath:_draggedItemIndexPath], _cellInsets);
     [_draggedItemIndexPath release];
     _draggedItemIndexPath = nil;
-    [_draggedItem release];
     _draggedItem = nil;
 }
 
