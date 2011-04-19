@@ -168,12 +168,26 @@ const NSUInteger ECRelationalTableViewGroupPlaceholderBufferSize = 20;
     [self willChangeValueForKey:@"editing"];
     [self setNeedsLayout];
     _isEditing = editing;
-//    if (animated)
-//    {
-//        [UIView animateConcurrentlyToAnimationsWithFlag:&_isAnimating duration:ECRelationalTableViewShortAnimationDuration animations:^(void) {
-//            [self layoutIfNeeded];
-//        } completion:NULL];
-//    }
+    if (editing)
+    {
+        for (UIView *separator in [_visibleSeparators allValues])
+            [separator removeFromSuperview];
+        [_visibleSeparators removeAllObjects];
+    }
+    else
+    {
+        for (UIView *placeholder in [_visiblePlaceholders allValues])
+            [placeholder removeFromSuperview];
+        [_visiblePlaceholders removeAllObjects];
+    }
+    if (animated)
+    {
+        [UIView animateConcurrentlyToAnimationsWithFlag:&_isAnimating duration:ECRelationalTableViewShortAnimationDuration animations:^(void) {
+            [self layoutIfNeeded];
+        } completion:NULL];
+    }
+    CGRect lastAreaFrame = [self rectForArea:[self numberOfAreas] - 1];
+    self.contentSize = CGSizeMake(self.bounds.size.width, lastAreaFrame.origin.y + lastAreaFrame.size.height + _tableInsets.bottom);
     [self didChangeValueForKey:@"editing"];   
 }
 
@@ -350,18 +364,19 @@ const NSUInteger ECRelationalTableViewGroupPlaceholderBufferSize = 20;
             placeholderRange = NSMakeRange( cachedPosition, indexPath.position - cachedPosition);
         else
             placeholderRange = NSMakeRange(indexPath.position, cachedPosition - indexPath.position);
-        NSRange groupsBetweenPlaceholdersRange = NSMakeRange(placeholderRange.location, placeholderRange.length - 1);
-        for (NSUInteger i = groupsBetweenPlaceholdersRange.location; i < groupsBetweenPlaceholdersRange.location + groupsBetweenPlaceholdersRange.length; ++i)
+        for (NSUInteger i = placeholderRange.location; i < placeholderRange.location + placeholderRange.length; ++i)
             y += [self _heightForGroup:i inArea:indexPath.area];
-        y += (placeholderRange.length - 1) * _groupPlaceholderHeight;
+        y += (placeholderRange.length) * _groupPlaceholderHeight;
     }
     else
     {
-        y = [self rectForArea:indexPath.area].origin.y;
+        y = [self rectForArea:indexPath.area].origin.y + _headerHeight;
         for (NSUInteger i = 0; i < indexPath.position; ++i)
+        {
             y += [self _heightForGroup:i inArea:indexPath.area];
-        if (indexPath.position > 1)
-            y += (indexPath.position - 1) * _groupPlaceholderHeight;
+        }
+        if (indexPath.position > 0)
+            y += (indexPath.position) * _groupPlaceholderHeight;
     }
     cachedArea = indexPath.area;
     cachedPosition = indexPath.position;
@@ -536,7 +551,7 @@ const NSUInteger ECRelationalTableViewGroupPlaceholderBufferSize = 20;
     if (area)
     {
         CGRect previousAreaRect = [self rectForArea:area - 1];
-        y = previousAreaRect.origin.y + previousAreaRect.size.height;
+        y = previousAreaRect.origin.y + previousAreaRect.size.height + _tableInsets.top + _tableInsets.bottom;
     }
     CGFloat width = self.bounds.size.width;
     CGFloat height = _headerHeight;
@@ -575,9 +590,15 @@ const NSUInteger ECRelationalTableViewGroupPlaceholderBufferSize = 20;
     CGRect areaRect = [self rectForArea:area];
     CGFloat x = areaRect.origin.x;
     CGFloat y = areaRect.origin.y + _headerHeight;
+    if (_isEditing)
+        y += _groupPlaceholderHeight;
     for (NSUInteger i = 0; i < group; ++i)
     {
         y += [self _heightForGroup:i inArea:area];
+        if (_isEditing)
+            y += _groupPlaceholderHeight;
+        else
+            y += _groupSeparatorHeight;
     }
     CGFloat width = areaRect.size.width;
     CGFloat height = [self _heightForGroup:group inArea:area];
