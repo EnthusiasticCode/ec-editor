@@ -803,7 +803,14 @@ static void init(ECCodeView4 *self)
     //    carretRect.origin.x -= 1.0;
     //    carretRect.size.width = 2.0;
     //    return carretRect;
-    return CGRectZero;
+    
+    NSUInteger pos = ((ECTextPosition *)position).index;
+    CGRect carretRect = [renderer boundsForStringRange:(NSRange){pos, 0}];
+    
+    carretRect.origin.x -= 1.0;
+    carretRect.size.width = 2.0;
+    
+    return carretRect;
 }
 
 - (UITextPosition *)closestPositionToPoint:(CGPoint)point
@@ -819,7 +826,11 @@ static void init(ECCodeView4 *self)
     //    if (index >= textLength)
     //        index = textLength;
     //    return [[[ECTextPosition alloc] initWithIndex:(NSUInteger)index] autorelease];
-    return nil;
+    
+    point.x -= textInsets.left;
+    point.y -= textInsets.top;
+    NSUInteger location = [renderer closestStringLocationToPoint:point withinStringRange:[(ECTextRange *)range range]];
+    return [[[ECTextPosition alloc] initWithIndex:location] autorelease];;
 }
 
 - (UITextRange *)characterRangeAtPoint:(CGPoint)point

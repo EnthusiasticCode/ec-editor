@@ -81,10 +81,14 @@
 
 #pragma mark Retreiving Geometry to Text Mapping
 
-- (NSUInteger)closestPositionToPoint:(CGPoint)point withinStringRange:(NSRange)range;
+/// Returns the closest string location to the given graphical point relative
+/// to the rendered text space where the first line is at 0, 0.
+/// A limit of character in which to search in is also used to limit the results.
+- (NSUInteger)closestStringLocationToPoint:(CGPoint)point withinStringRange:(NSRange)range;
 
-- (CGRect)boundsOfLinesForStringRange:(NSRange)range;
-
-// TODO enumerate lines in string index
+/// Returns the bounding rect for all the characters in the given range of text.
+/// If the range is in a single line, the bounding box of of the range is returned;
+/// otherwhise it will be a bounding box of the union of lines interested by the range.
+- (CGRect)boundsForStringRange:(NSRange)range;
 
 @end
