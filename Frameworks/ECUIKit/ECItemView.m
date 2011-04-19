@@ -504,44 +504,25 @@ const NSUInteger ECItemViewGroupSeparatorBufferSize = 20;
 
 - (NSArray *)_indexPathsForVisibleGroupSeparators
 {
-    NSIndexSet *indexes = [self _indexesForVisibleAreas];
     NSMutableArray *indexPaths = [NSMutableArray array];
-    [indexes enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
-        NSUInteger numGroups = [self numberOfGroupsInArea:idx];
-        for (NSUInteger i = 0; i < numGroups - 1; ++i)
-        {
-            NSIndexPath *indexPath = [NSIndexPath indexPathForPosition:i inArea:idx];
-            if (CGRectIntersectsRect(self.bounds, [self _rectForGroupSeparatorAtIndexPath:indexPath]))
-                [indexPaths addObject:indexPath];
-        }
-    }];
+    for (NSIndexPath *indexPath in [self _indexPathsForVisibleGroups])
+        if (CGRectIntersectsRect(self.bounds, [self _rectForGroupSeparatorAtIndexPath:indexPath]))
+            [indexPaths addObject:indexPath];
     return indexPaths;
 }
 
 - (NSArray *)indexPathsForVisibleItems
 {
-    CGRect bounds = self.bounds;
     NSMutableArray *indexPaths = [NSMutableArray array];
-    NSUInteger numAreas = [self numberOfAreas];
-    for (NSUInteger i = 0; i < numAreas; ++i)
+    for (NSIndexPath *groupIndexPath in [self _indexPathsForVisibleGroups])
     {
-        CGRect areaRect = [self rectForArea:i];
-        if (!CGRectIntersectsRect(bounds, areaRect))
-            continue;
-        NSUInteger numGroups = [self numberOfGroupsInArea:i];
-        for (NSUInteger j = 0; j < numGroups; ++j)
+        NSUInteger numItems = [self numberOfItemsInGroup:groupIndexPath.position inArea:groupIndexPath.area];
+        for (NSUInteger k = 0; k < numItems; ++k)
         {
-            CGRect groupRect = [self rectForGroup:j inArea:i];
-            if (!CGRectIntersectsRect(bounds, groupRect))
+            CGRect itemRect = [self rectForItemAtIndexPath:[NSIndexPath indexPathForItem:k inGroup:groupIndexPath.position inArea:groupIndexPath.area]];
+            if (!CGRectIntersectsRect(self.bounds, itemRect))
                 continue;
-            NSUInteger numItems = [self numberOfItemsInGroup:j inArea:i];
-            for (NSUInteger k = 0; k < numItems; ++k)
-            {
-                CGRect itemRect = [self rectForItemAtIndexPath:[NSIndexPath indexPathForItem:k inGroup:j inArea:i]];
-                if (!CGRectIntersectsRect(bounds, itemRect))
-                    continue;
-                [indexPaths addObject:[NSIndexPath indexPathForItem:k inGroup:j inArea:i]];
-            }
+            [indexPaths addObject:[NSIndexPath indexPathForItem:k inGroup:groupIndexPath.position inArea:groupIndexPath.area]];
         }
     }
     return indexPaths;
