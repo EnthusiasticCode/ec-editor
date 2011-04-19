@@ -7,6 +7,7 @@
 //
 
 #import "ECTextRenderer.h"
+#import <CoreText/CoreText.h>
 
 // Internal working notes: (outdated)
 // - The renderer keeps an array of ordered framesetter informations:
@@ -70,8 +71,11 @@ typedef struct {
 /// The block to apply will receive the line and its bounds relative to the first rendered
 /// line in this segment. It also recive an offset from the origin y of the bounds
 /// at wich the baseline is positioned.
-- (void)enumerateLinesIntersectingRect:(CGRect)rect 
-                            usingBlock:(void(^)(CTLineRef line, CGRect lineBound, CGFloat baselineOffset, BOOL *stop))block;
+- (void)enumerateLinesIntersectingRect:(CGRect)rect usingBlock:(void(^)(CTLineRef line, CGRect lineBound, CGFloat baselineOffset, BOOL *stop))block;
+
+/// Enumerate all the lines in the text segment within the given segment-relative 
+/// string range. The block will also receive the relative line string range.
+- (void)enumerateLinesInStringRange:(NSRange)range usingBlock:(void(^)(CTLineRef line, CGRect lineBounds, NSRange lineStringRange, BOOL *stop))block;
 
 /// Release framesetters and frames to reduce space consumption. To release the frame
 /// this method will actually clear the framse cache.
@@ -204,12 +208,14 @@ typedef struct {
     CGFloat rectEnd = CGRectGetMaxY(rect);
     
     BOOL stop = NO;
-    CGFloat currentY = 0;
     CFArrayRef lines = CTFrameGetLines(self.frame);
     CFIndex count = CFArrayGetCount(lines);
+    
+    CGFloat currentY = 0;
     CGFloat width, ascent, descent, leading;
     CGRect bounds;
-    for (CFIndex i = 0; i < count; ++i) 
+    
+    for (CFIndex i = 0; i < count; ++i)
     {
         CTLineRef line = CFArrayGetValueAtIndex(lines, i);
         width = CTLineGetTypographicBounds(line, &ascent, &descent, &leading);
@@ -223,6 +229,33 @@ typedef struct {
             block(line, bounds, ascent, &stop);
             if (stop) break;
         }
+        currentY += bounds.size.height;
+    }
+}
+
+- (void)enumerateLinesInStringRange:(NSRange)range usingBlock:(void (^)(CTLineRef, CGRect, NSRange, BOOL *))block
+{
+    BOOL stop = NO;
+    CFArrayRef lines = CTFrameGetLines(self.frame);
+    CFIndex count = CFArrayGetCount(lines);
+    
+    CGFloat currentY = 0;
+    CGFloat width, ascent, descent, leading;
+    CGRect bounds;
+    
+    CFRange stringRange;
+    
+    for (CFIndex i = 0; i < count; ++i)
+    {
+        CTLineRef line = CFArrayGetValueAtIndex(lines, i);
+        width = CTLineGetTypographicBounds(line, &ascent, &descent, &leading);
+        bounds = CGRectMake(0, currentY, width, ascent + descent + leading);
+        
+        stringRange = CTLineGetStringRange(line);
+        
+        block(line, bounds, (NSRange){ stringRange.location, stringRange.length }, &stop);
+
+        if (stop) break;
         currentY += bounds.size.height;
     }
 }
@@ -249,6 +282,8 @@ typedef struct {
 - (BOOL)generateIfNeededTextSegment:(TextSegment *)segment withTextLineRange:(NSRange)range;
 
 - (void)generateTextSegmentsAndEnumerateUsingBlock:(void(^)(TextSegment *segment, NSUInteger idx, NSUInteger lineOffset, NSUInteger stringOffset, CGFloat positionOffset, BOOL *stop))block;
+
+- (void)enumerateLinesIntersectingRect:(CGRect)rect usingBlock:(void(^)(CTLineRef line, CGRect lineBound, CGFloat baselineOffset, BOOL *stop))block;
 
 @end
 
@@ -479,9 +514,19 @@ typedef struct {
     }];
 }
 
-- (NSUInteger)closestPositionToPoint:(CGPoint)point withinRange:(NSRange)range
+- (NSUInteger)closestPositionToPoint:(CGPoint)point withinStringRange:(NSRange)queryStringRange
 {
-    
+    NSUInteger queryStringRangeEnd = queryStringRange.location + queryStringRange.length;
+    [self generateTextSegmentsAndEnumerateUsingBlock:^(TextSegment *segment, NSUInteger idx, NSUInteger lineOffset, NSUInteger stringOffset, CGFloat positionOffset, BOOL *stop) {
+        // Skip segment if before required string range
+        if (stringOffset + segment.stringLength <= queryStringRange.location)
+            return;
+        
+        // Get relative point position to current semgnet
+        CGPoint segmentRelativePoint = point;
+        segmentRelativePoint.y -= positionOffset;
+        
+    }];
 }
 
 - (CGRect)boundsOfLinesForStringRange:(NSRange)range

@@ -8,7 +8,6 @@
 
 #import <Foundation/Foundation.h>
 #import <QuartzCore/QuartzCore.h>
-#import <CoreText/CoreText.h>
 #import "ECTextRendererDataSource.h"
 #import "ECTextRendererDelegate.h"
 
@@ -82,9 +81,7 @@
 
 #pragma mark Retreiving Geometry to Text Mapping
 
-- (NSUInteger)closestPositionToPoint:(CGPoint)point withinRange:(NSRange)range;
-
-- (void)enumerateLinesIntersectingRect:(CGRect)rect usingBlock:(void(^)(CTLineRef line, CGRect lineBound, CGFloat baselineOffset, BOOL *stop))block;
+- (NSUInteger)closestPositionToPoint:(CGPoint)point withinStringRange:(NSRange)range;
 
 - (CGRect)boundsOfLinesForStringRange:(NSRange)range;
 
