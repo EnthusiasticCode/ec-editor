@@ -1016,13 +1016,11 @@ const NSUInteger ECItemViewGroupPlaceholderBufferSize = 20;
     _isDragging = NO;
     [_scrollTimer invalidate];
     _scrollTimer = nil;
-    [self setNeedsLayout];
     _dragDestinationIndexPath = [self _proposedIndexPathForItemAtPoint:[dragRecognizer locationInView:self] exists:NULL];
     if (_flags.dataSourceMoveItem)
         [_dataSource itemView:self moveItemAtIndexPath:_draggedItemIndexPath toIndexPath:_dragDestinationIndexPath];
     [UIView animateConcurrentlyToAnimationsWithFlag:&_isAnimating duration:ECItemViewShortAnimationDuration animations:^(void) {
         _draggedItem.frame = UIEdgeInsetsInsetRect([self rectForItemAtIndexPath:_dragDestinationIndexPath], _cellInsets);
-        [self layoutIfNeeded];
     } completion:NULL];
     [_draggedItemIndexPath release];
     _draggedItemIndexPath = nil;

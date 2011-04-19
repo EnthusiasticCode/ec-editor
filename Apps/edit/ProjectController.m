@@ -17,6 +17,8 @@
 @interface ProjectController ()
 @property (nonatomic, retain) NSFileManager *fileManager;
 @property (nonatomic, retain) NSString *folder;
+@property (nonatomic, retain) NSMutableDictionary *files;
+- (NSArray *)contentsOfFolder;
 - (NSArray *)filesInSubfolder:(NSString *)subfolder;
 @end
 
@@ -30,6 +32,7 @@
 @synthesize tableView = tableView_;
 @synthesize fileManager = fileManager_;
 @synthesize folder = folder_;
+@synthesize files = files_;
 
 - (NSFileManager *)fileManager
 {
@@ -46,6 +49,7 @@
     self.extensionsToShow = nil;
     self.project = nil;
     self.codeIndex = nil;
+    self.files = nil;
     [super dealloc];
 }
 
@@ -53,6 +57,9 @@
 {
     [super viewDidLoad];
     self.navigationItem.rightBarButtonItem = self.editButton;
+    self.files = [NSMutableDictionary dictionary];
+    for (NSString *subfolder in [self contentsOfFolder])
+        [self.files setObject:[NSMutableArray arrayWithArray:[self filesInSubfolder:subfolder]] forKey:subfolder];
     [self.tableView reloadData];
 }
 
@@ -76,12 +83,12 @@
 
 - (NSUInteger)numberOfAreasInTableView:(ECItemView *)itemView
 {
-    return [[self contentsOfFolder] count];
+    return [self.files count];
 }
 
 - (NSString *)itemView:(ECItemView *)itemView titleForHeaderInArea:(NSUInteger)area
 {
-    return [[self contentsOfFolder] objectAtIndex:area];
+    return [[self.files allKeys] objectAtIndex:area];
 }
 
 - (ECItemViewCell *)itemView:(ECItemView *)itemView cellForItemAtIndexPath:(NSIndexPath *)indexPath
@@ -99,28 +106,35 @@
         label.backgroundColor = [UIColor greenColor];
         [file addSubview:label];
     }
-    ((UILabel *)[file viewWithTag:1]).text = [[self filesInSubfolder:[self itemView:nil titleForHeaderInArea:indexPath.area]] objectAtIndex:(indexPath.item)];
+    ((UILabel *)[file viewWithTag:1]).text = [[[self.files allValues] objectAtIndex:indexPath.area] objectAtIndex:indexPath.item];
     return file;
 }
 
 - (NSUInteger)itemView:(ECItemView *)itemView numberOfItemsInGroup:(NSUInteger)group inArea:(NSUInteger)area
 {
-    NSArray *links = [self filesInSubfolder:[self itemView:nil titleForHeaderInArea:area]];
-    return [links count];
+    return [[[self.files allValues] objectAtIndex:area] count];
 }
 
 - (void)itemView:(ECItemView *)itemView didSelectItemAtIndexPath:(NSIndexPath *)indexPath;
 {
     if (!indexPath)
         return;
-    NSString *subfolder = [self itemView:nil titleForHeaderInArea:indexPath.area];
-    NSString *file = [[self filesInSubfolder:subfolder] objectAtIndex:indexPath.item];
+    NSString *subfolder = [[self.files allKeys] objectAtIndex:indexPath.area];
+    NSString *file = [[[self.files allValues] objectAtIndex:indexPath.area] objectAtIndex:indexPath.item];
     [self loadFile:[self.folder stringByAppendingPathComponent:[subfolder stringByAppendingPathComponent:file]]];
 }
 
 - (BOOL)itemView:(ECItemView *)itemView canMoveItemAtIndexPath:(NSIndexPath *)indexPath
 {
     return YES;
+}
+
+- (void)itemView:(ECItemView *)itemView moveItemAtIndexPath:(NSIndexPath *)sourceIndexPath toIndexPath:(NSIndexPath *)destinationIndexPath
+{
+    NSString *file = [[[[self.files allValues] objectAtIndex:sourceIndexPath.area] objectAtIndex:sourceIndexPath.item] retain];
+    [[[self.files allValues] objectAtIndex:sourceIndexPath.area] removeObjectAtIndex:sourceIndexPath.item];
+    [[[self.files allValues] objectAtIndex:destinationIndexPath.area] insertObject:file atIndex:destinationIndexPath.item];
+    [file release];
 }
 
 - (void)edit:(id)sender
