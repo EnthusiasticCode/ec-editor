@@ -191,7 +191,7 @@
 					<bool key="EncodedWithXMLCoder">YES</bool>
 					<string>ProjectController</string>
 					<string>UIResponder</string>
-					<string>ECRelationalTableView</string>
+					<string>ECItemView</string>
 					<string>{{514, 109}, {768, 1024}}</string>
 					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
@@ -216,7 +216,7 @@
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
 				<bool key="EncodedWithXMLCoder">YES</bool>
 				<object class="IBPartialClassDescription">
-					<string key="className">ECRelationalTableView</string>
+					<string key="className">ECItemView</string>
 					<string key="superclassName">UIScrollView</string>
 					<object class="NSMutableDictionary" key="outlets">
 						<bool key="EncodedWithXMLCoder">YES</bool>
@@ -252,7 +252,7 @@
 					</object>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">./Classes/ECRelationalTableView.h</string>
+						<string key="minorKey">./Classes/ECItemView.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
@@ -302,7 +302,7 @@
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>UIBarButtonItem</string>
 							<string>UIBarButtonItem</string>
-							<string>UITableView</string>
+							<string>ECItemView</string>
 						</object>
 					</object>
 					<object class="NSMutableDictionary" key="toOneOutletInfosByName">
@@ -325,7 +325,7 @@
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">tableView</string>
-								<string key="candidateClassName">UITableView</string>
+								<string key="candidateClassName">ECItemView</string>
 							</object>
 						</object>
 					</object>

@@ -35,9 +35,8 @@
 		B75B87751358401B0098E7E2 /* ECCodeUnit.m in Sources */ = {isa = PBXBuildFile; fileRef = B75B87641358401B0098E7E2 /* ECCodeUnit.m */; };
 		B75B87761358401B0098E7E2 /* libclang.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B75B87681358401B0098E7E2 /* libclang.dylib */; };
 		B7A04CA9134F68BD00B72575 /* File.m in Sources */ = {isa = PBXBuildFile; fileRef = B7A04CA8134F68BD00B72575 /* File.m */; };
-		B7A04D0913537FA100B72575 /* ECItemView.m in Sources */ = {isa = PBXBuildFile; fileRef = B7A04D0813537FA100B72575 /* ECItemView.m */; };
-		B7D279DA135750C900E662FB /* ECRelationalTableView.m in Sources */ = {isa = PBXBuildFile; fileRef = B7D279D7135750C900E662FB /* ECRelationalTableView.m */; };
-		B7D279DB135750C900E662FB /* ECRelationalTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B7D279D9135750C900E662FB /* ECRelationalTableViewCell.m */; };
+		B7D279DA135750C900E662FB /* ECItemView.m in Sources */ = {isa = PBXBuildFile; fileRef = B7D279D7135750C900E662FB /* ECItemView.m */; };
+		B7D279DB135750C900E662FB /* ECItemViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B7D279D9135750C900E662FB /* ECItemViewCell.m */; };
 		B7DBA580132A3281004C0E1D /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7DBA57F132A3281004C0E1D /* QuartzCore.framework */; };
 		CDEBF21613489A8E00CE2285 /* AppController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDEBF20913489A8E00CE2285 /* AppController.m */; };
 		CDEBF21713489A8E00CE2285 /* FileController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDEBF20D13489A8E00CE2285 /* FileController.m */; };
@@ -130,12 +129,10 @@
 		B75B87681358401B0098E7E2 /* libclang.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libclang.dylib; sourceTree = "<group>"; };
 		B7A04CA7134F68BD00B72575 /* File.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = File.h; path = Apps/edit/File.h; sourceTree = SOURCE_ROOT; };
 		B7A04CA8134F68BD00B72575 /* File.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = File.m; path = Apps/edit/File.m; sourceTree = SOURCE_ROOT; };
-		B7A04D0713537FA100B72575 /* ECItemView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECItemView.h; path = Frameworks/ECUIKit/ECItemView.h; sourceTree = "<group>"; };
-		B7A04D0813537FA100B72575 /* ECItemView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECItemView.m; path = Frameworks/ECUIKit/ECItemView.m; sourceTree = "<group>"; };
-		B7D279D6135750C900E662FB /* ECRelationalTableView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECRelationalTableView.h; path = Frameworks/ECUIKit/ECRelationalTableView.h; sourceTree = "<group>"; };
-		B7D279D7135750C900E662FB /* ECRelationalTableView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECRelationalTableView.m; path = Frameworks/ECUIKit/ECRelationalTableView.m; sourceTree = "<group>"; };
-		B7D279D8135750C900E662FB /* ECRelationalTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECRelationalTableViewCell.h; path = Frameworks/ECUIKit/ECRelationalTableViewCell.h; sourceTree = "<group>"; };
-		B7D279D9135750C900E662FB /* ECRelationalTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECRelationalTableViewCell.m; path = Frameworks/ECUIKit/ECRelationalTableViewCell.m; sourceTree = "<group>"; };
+		B7D279D6135750C900E662FB /* ECItemView.h */ = {isa = PBXFileReference; fileEncoding = 4; name = ECItemView.h; path = Frameworks/ECUIKit/ECItemView.h; sourceTree = "<group>"; };
+		B7D279D7135750C900E662FB /* ECItemView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECItemView.m; path = Frameworks/ECUIKit/ECItemView.m; sourceTree = "<group>"; };
+		B7D279D8135750C900E662FB /* ECItemViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; name = ECItemViewCell.h; path = Frameworks/ECUIKit/ECItemViewCell.h; sourceTree = "<group>"; };
+		B7D279D9135750C900E662FB /* ECItemViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECItemViewCell.m; path = Frameworks/ECUIKit/ECItemViewCell.m; sourceTree = "<group>"; };
 		B7DBA57F132A3281004C0E1D /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		CDEBF20813489A8E00CE2285 /* AppController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppController.h; path = Apps/edit/AppController.h; sourceTree = SOURCE_ROOT; };
 		CDEBF20913489A8E00CE2285 /* AppController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppController.m; path = Apps/edit/AppController.m; sourceTree = SOURCE_ROOT; };
@@ -286,17 +283,6 @@
 			path = Source;
 			sourceTree = "<group>";
 		};
-		B7D279D41357503900E662FB /* Relational Table View */ = {
-			isa = PBXGroup;
-			children = (
-				B7D279D6135750C900E662FB /* ECRelationalTableView.h */,
-				B7D279D7135750C900E662FB /* ECRelationalTableView.m */,
-				B7D279D8135750C900E662FB /* ECRelationalTableViewCell.h */,
-				B7D279D9135750C900E662FB /* ECRelationalTableViewCell.m */,
-			);
-			name = "Relational Table View";
-			sourceTree = "<group>";
-		};
 		CDEBF23813489AB900CE2285 /* ECFoundation */ = {
 			isa = PBXGroup;
 			children = (
@@ -367,7 +353,6 @@
 				CDEBF2BE13489DDA00CE2285 /* Text */,
 				CDEBF2BD13489DD200CE2285 /* Document */,
 				CDEBF2BF13489E0100CE2285 /* Item View */,
-				B7D279D41357503900E662FB /* Relational Table View */,
 				CDEBF2BB13489DC100CE2285 /* Code Scroll View */,
 				CDEBF2B913489DBA00CE2285 /* Code View */,
 			);
@@ -438,8 +423,10 @@
 		CDEBF2BF13489E0100CE2285 /* Item View */ = {
 			isa = PBXGroup;
 			children = (
-				B7A04D0713537FA100B72575 /* ECItemView.h */,
-				B7A04D0813537FA100B72575 /* ECItemView.m */,
+				B7D279D6135750C900E662FB /* ECItemView.h */,
+				B7D279D7135750C900E662FB /* ECItemView.m */,
+				B7D279D8135750C900E662FB /* ECItemViewCell.h */,
+				B7D279D9135750C900E662FB /* ECItemViewCell.m */,
 			);
 			name = "Item View";
 			sourceTree = "<group>";
@@ -565,12 +552,11 @@
 				CDEFF96E1348BD5E006FEFCC /* edit-main.m in Sources */,
 				CDEFF9751348BD5E006FEFCC /* Project.xcdatamodeld in Sources */,
 				B7A04CA9134F68BD00B72575 /* File.m in Sources */,
-				B7A04D0913537FA100B72575 /* ECItemView.m in Sources */,
 				B706F05A13563ECB00E03DDF /* UIColor+StyleColors.m in Sources */,
 				B706F05B13563ECB00E03DDF /* UIImage+BlockDrawing.m in Sources */,
 				B706F05C13563ECB00E03DDF /* UIView+ConcurrentAnimation.m in Sources */,
-				B7D279DA135750C900E662FB /* ECRelationalTableView.m in Sources */,
-				B7D279DB135750C900E662FB /* ECRelationalTableViewCell.m in Sources */,
+				B7D279DA135750C900E662FB /* ECItemView.m in Sources */,
+				B7D279DB135750C900E662FB /* ECItemViewCell.m in Sources */,
 				B75B8743135840070098E7E2 /* ECHashing.m in Sources */,
 				B75B8744135840070098E7E2 /* ECStackCache.m in Sources */,
 				B75B8745135840070098E7E2 /* MurmurHash3.c in Sources */,

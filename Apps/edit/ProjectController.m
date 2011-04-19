@@ -74,24 +74,24 @@
     return [self.fileManager contentsOfDirectoryAtPath:[self.folder stringByAppendingPathComponent:subfolder] withExtensions:self.extensionsToShow options:options skipFiles:NO skipDirectories:YES error:(NSError **)NULL];
 }
 
-- (NSUInteger)numberOfAreasInTableView:(ECRelationalTableView *)relationalTableView
+- (NSUInteger)numberOfAreasInTableView:(ECItemView *)itemView
 {
     return [[self contentsOfFolder] count];
 }
 
-- (NSString *)relationalTableView:(ECRelationalTableView *)relationalTableView titleForHeaderInArea:(NSUInteger)area
+- (NSString *)itemView:(ECItemView *)itemView titleForHeaderInArea:(NSUInteger)area
 {
     return [[self contentsOfFolder] objectAtIndex:area];
 }
 
-- (ECRelationalTableViewCell *)relationalTableView:(ECRelationalTableView *)relationalTableView cellForItemAtIndexPath:(NSIndexPath *)indexPath
+- (ECItemViewCell *)itemView:(ECItemView *)itemView cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
     static NSUInteger counter = 0;
     ++counter;
-    ECRelationalTableViewCell *file = [self.tableView dequeueReusableCell];
+    ECItemViewCell *file = [self.tableView dequeueReusableCell];
     if (!file)
     {
-        file = [[[ECRelationalTableViewCell alloc] init] autorelease];
+        file = [[[ECItemViewCell alloc] init] autorelease];
         UILabel *label = [[[UILabel alloc] init] autorelease];
         label.tag = 1;
         label.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
@@ -99,26 +99,26 @@
         label.backgroundColor = [UIColor greenColor];
         [file addSubview:label];
     }
-    ((UILabel *)[file viewWithTag:1]).text = [[self filesInSubfolder:[self relationalTableView:nil titleForHeaderInArea:indexPath.area]] objectAtIndex:(indexPath.item)];
+    ((UILabel *)[file viewWithTag:1]).text = [[self filesInSubfolder:[self itemView:nil titleForHeaderInArea:indexPath.area]] objectAtIndex:(indexPath.item)];
     return file;
 }
 
-- (NSUInteger)relationalTableView:(ECRelationalTableView *)relationalTableView numberOfItemsInGroup:(NSUInteger)group inArea:(NSUInteger)area
+- (NSUInteger)itemView:(ECItemView *)itemView numberOfItemsInGroup:(NSUInteger)group inArea:(NSUInteger)area
 {
-    NSArray *links = [self filesInSubfolder:[self relationalTableView:nil titleForHeaderInArea:area]];
+    NSArray *links = [self filesInSubfolder:[self itemView:nil titleForHeaderInArea:area]];
     return [links count];
 }
 
-- (void)relationalTableView:(ECRelationalTableView *)relationalTableView didSelectItemAtIndexPath:(NSIndexPath *)indexPath;
+- (void)itemView:(ECItemView *)itemView didSelectItemAtIndexPath:(NSIndexPath *)indexPath;
 {
     if (!indexPath)
         return;
-    NSString *subfolder = [self relationalTableView:nil titleForHeaderInArea:indexPath.area];
+    NSString *subfolder = [self itemView:nil titleForHeaderInArea:indexPath.area];
     NSString *file = [[self filesInSubfolder:subfolder] objectAtIndex:indexPath.item];
     [self loadFile:[self.folder stringByAppendingPathComponent:[subfolder stringByAppendingPathComponent:file]]];
 }
 
-- (BOOL)relationalTableView:(ECRelationalTableView *)relationalTableView canMoveItemAtIndexPath:(NSIndexPath *)indexPath
+- (BOOL)itemView:(ECItemView *)itemView canMoveItemAtIndexPath:(NSIndexPath *)indexPath
 {
     return YES;
 }

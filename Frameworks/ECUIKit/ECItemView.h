@@ -1,66 +1,156 @@
 //
 //  ECItemView.h
-//  edit
+//  edit-single-project-ungrouped
 //
-//  Created by Uri Baghin on 4/11/11.
+//  Created by Uri Baghin on 3/31/11.
 //  Copyright 2011 __MyCompanyName__. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
+#import "ECItemViewCell.h"
 @class ECItemView;
 
-extern const NSUInteger ECItemViewItemNotFound;
+typedef enum {
+    ECItemViewScrollPositionNone,        
+    ECItemViewScrollPositionTop,    
+    ECItemViewScrollPositionMiddle,   
+    ECItemViewScrollPositionBottom
+} ECItemViewScrollPosition;
 
-/// Describes the interface for dynamically altering the behavious and appearance of an item view.
-@protocol ECItemViewDelegate <NSObject>
+@protocol ECItemViewDataSource <NSObject>
+@required
+
+// Returns the number of items at a given depth in the area
+- (NSUInteger)itemView:(ECItemView *)itemView numberOfItemsInGroup:(NSUInteger)group inArea:(NSUInteger)area;
+
+// Item gets various attributes set automatically based on table (separators) and data source (accessory views, editing controls)
+- (ECItemViewCell *)itemView:(ECItemView *)itemView cellForItemAtIndexPath:(NSIndexPath *)indexPath;
+
 @optional
-/// Called when the user selects an item.
-- (void)itemView:(ECItemView *)itemView didSelectItem:(NSUInteger)item;
-/// Called when the user attempts to initiate a drag operation.
-/// If a superview of the item view is specified, the drag operation will be limited to that view instead of the item view.
-- (BOOL)itemView:(ECItemView *)itemView shouldDragItem:(NSUInteger)item inView:(UIView **)view;
-/// Called when the user attempts to end a drag operation in an item view.
-/// Return YES to finalize the operation, or NO to cancel it.
-- (BOOL)itemView:(ECItemView *)itemView canDropItem:(NSUInteger)item inTargetItemView:(ECItemView *)targetItemView;
-/// Called after the drag operation completes.
-/// The item is removed from the source item view, and added in the target item view, at the specified index.
-- (void)itemView:(ECItemView *)itemView didDropItem:(NSUInteger)item inTargetItemView:(ECItemView *)targetItemView atIndex:(NSUInteger)index;
+
+- (NSUInteger)numberOfAreasInTableView:(ECItemView *)itemView;              // Default is 1 if not implemented
+
+// Returns the maximum depth of items in the area, defaults to 1
+- (NSUInteger)itemView:(ECItemView *)itemView numberOfGroupsInArea:(NSUInteger)area;
+
+- (NSString *)itemView:(ECItemView *)itemView titleForHeaderInArea:(NSUInteger)area;    // fixed font style. use custom view (UILabel) if you want something different
+
+// Editing
+
+// Individual items can opt out of having the -editing property set for them. If not implemented, all items are assumed to be editable.
+- (BOOL)itemView:(ECItemView *)itemView canEditItemAtIndexPath:(NSIndexPath *)indexPath;
+
+// Moving/reordering
+
+// Allows the reorder accessory view to optionally be shown for a particular item. By default, the reorder control will be shown only if the datasource implements -itemView:moveItemAtIndexPath:toIndexPath:
+- (BOOL)itemView:(ECItemView *)itemView canMoveItemAtIndexPath:(NSIndexPath *)indexPath;
+
+// Data manipulation - reorder / moving support
+
+- (void)itemView:(ECItemView *)itemView moveItemAtIndexPath:(NSIndexPath *)sourceIndexPath toIndexPath:(NSIndexPath *)destinationIndexPath;
+
 @end
 
-@interface ECItemView : UIView <UIGestureRecognizerDelegate>
+@protocol ECItemViewDelegate <NSObject, UIScrollViewDelegate>
+@optional
+
+// Selection
+
+// Called before the user changes the selection. Return a new indexPath, or nil, to change the proposed selection.
+- (NSIndexPath *)itemView:(ECItemView *)itemView willSelectItemAtIndexPath:(NSIndexPath *)indexPath;
+- (NSIndexPath *)itemView:(ECItemView *)itemView willDeselectItemAtIndexPath:(NSIndexPath *)indexPath;
+// Called after the user changes the selection.
+- (void)itemView:(ECItemView *)itemView didSelectItemAtIndexPath:(NSIndexPath *)indexPath;
+- (void)itemView:(ECItemView *)itemView didDeselectItemAtIndexPath:(NSIndexPath *)indexPath;
+
+// Moving/reordering
+
+// Allows customization of the target item for a particular item as it is being moved/reordered
+- (NSIndexPath *)itemView:(ECItemView *)itemView targetIndexPathForMoveFromItemAtIndexPath:(NSIndexPath *)sourceIndexPath toProposedIndexPath:(NSIndexPath *)proposedDestinationIndexPath;
+
+@end
+
+@interface ECItemView : UIScrollView <UIGestureRecognizerDelegate>
 @property (nonatomic, assign) IBOutlet id<ECItemViewDelegate> delegate;
-@property (nonatomic, copy) NSArray *items;
-
-@property (nonatomic) UIEdgeInsets viewInsets;
-@property (nonatomic) CGRect itemBounds;
-@property (nonatomic) UIEdgeInsets itemInsets;
-@property (nonatomic) BOOL animatesChanges;
-
+@property (nonatomic, assign) IBOutlet id<ECItemViewDataSource> dataSource;
+@property (nonatomic) UIEdgeInsets tableInsets;
+@property (nonatomic) CGSize cellSize;
+@property (nonatomic) UIEdgeInsets cellInsets;
+@property (nonatomic) UIEdgeInsets groupInsets;
+@property (nonatomic) CGFloat groupSeparatorHeight;
+@property (nonatomic) UIEdgeInsets groupSeparatorInsets;
+@property (nonatomic) CGFloat groupPlaceholderHeight;
+@property (nonatomic) UIEdgeInsets groupPlaceholderInsets;
+@property (nonatomic) CGFloat headerHeight;
+@property (nonatomic) UIEdgeInsets headerInsets;
 @property (nonatomic) BOOL allowsSelection;
-@property (nonatomic) BOOL allowsDragging;
+
+// Editing
 @property (nonatomic, getter = isEditing) BOOL editing;
+- (void)setEditing:(BOOL)editing animated:(BOOL)animated;
 
-- (CGRect)rectForItem:(NSUInteger)item;
-- (NSUInteger)itemAtPoint:(CGPoint)point;
+// Data
+- (void)reloadData;
+
+// Info
 - (NSUInteger)columns;
-- (NSUInteger)rows;
+- (NSUInteger)rowsInGroup:(NSUInteger)group inArea:(NSUInteger)area;
 
-// NYI
-//- (void)beginUpdates;
-//- (void)endUpdates;
-//
-//- (void)addItem:(UIView *)item;
-//- (void)insertItem:(UIView *)item atIndex:(NSUInteger)index;
-//- (void)removeLastItem;
-//- (void)removeItemAtIndex:(NSUInteger)index;
-//- (void)replaceItemAtIndex:(NSUInteger)index withItem:(UIView *)item;
-//
-//- (void)addItemsFromArray:(NSArray *)otherArray;
-//- (void)exchangeItemAtIndex:(NSUInteger)index1 withItemAtIndex:(NSUInteger)index2;
-//- (void)removeAllItems;
-//
-//- (void)insertItems:(NSArray *)items atIndexes:(NSIndexSet *)indexes;
-//- (void)removeItemsAtIndexes:(NSIndexSet *)indexes;
-//- (void)replaceItemsAtIndexes:(NSIndexSet *)indexes withItems:(NSArray *)items;
+- (NSUInteger)numberOfAreas;
+- (NSUInteger)numberOfGroupsInArea:(NSUInteger)area;
+- (NSUInteger)numberOfItemsInGroup:(NSUInteger)group inArea:(NSUInteger)area;
 
+// Geometry
+- (CGRect)rectForArea:(NSUInteger)area;
+- (CGRect)rectForHeaderInArea:(NSUInteger)area;
+- (CGRect)rectForGroup:(NSUInteger)group inArea:(NSUInteger)area;
+- (CGRect)rectForItemAtIndexPath:(NSIndexPath *)indexPath;
+
+// Index paths
+- (NSIndexPath *)indexPathForItemAtPoint:(CGPoint)point;
+- (NSIndexPath *)indexPathForCell:(ECItemViewCell *)cell;
+- (NSArray *)indexPathsForItemsInRect:(CGRect)rect;
+- (ECItemViewCell *)cellForItemAtIndexPath:(NSIndexPath *)indexPath;
+
+- (NSArray *)visibleCells;
+- (NSArray *)indexPathsForVisibleItems;
+
+// Scrolling
+- (void)scrollToItemAtIndexPath:(NSIndexPath *)indexPath atScrollPosition:(ECItemViewScrollPosition)scrollPosition animated:(BOOL)animated;
+- (void)scrollToNearestSelectedItemAtScrollPosition:(ECItemViewScrollPosition)scrollPosition animated:(BOOL)animated;
+
+// Item insertion/deletion/reloading.
+- (void)beginUpdates;
+- (void)endUpdates;
+
+- (void)insertAreas:(NSIndexSet *)areas;
+- (void)deleteAreas:(NSIndexSet *)areas;
+- (void)reloadAreas:(NSIndexSet *)areas;
+
+- (void)insertGroupsAtIndexPaths:(NSArray *)indexPaths;
+- (void)deleteGroupsAtIndexPaths:(NSArray *)indexPaths;
+- (void)reloadGroupsAtIndexPaths:(NSArray *)indexPaths;
+
+- (void)insertItemsAtIndexPaths:(NSArray *)indexPaths;
+- (void)deleteItemsAtIndexPaths:(NSArray *)indexPaths;
+- (void)reloadItemsAtIndexPaths:(NSArray *)indexPaths;
+
+// Selection
+- (NSIndexPath *)indexPathForSelectedItem;
+
+- (void)selectItemAtIndexPath:(NSIndexPath *)indexPath animated:(BOOL)animated scrollPosition:(ECItemViewScrollPosition)scrollPosition;
+- (void)deselectItemAtIndexPath:(NSIndexPath *)indexPath animated:(BOOL)animated;
+
+// Recycling
+- (ECItemViewCell *)dequeueReusableCell;
+
+@end
+
+@interface NSIndexPath (ECItemView)
++ (NSIndexPath *)indexPathForItem:(NSUInteger)item inGroup:(NSUInteger)group inArea:(NSUInteger)area;
++ (NSIndexPath *)indexPathForPosition:(NSUInteger)position inArea:(NSUInteger)area;
+@property (nonatomic, readonly) NSUInteger area;
+@property (nonatomic, readonly) NSUInteger group;
+@property (nonatomic, readonly) NSUInteger item;
+@property (nonatomic, readonly) NSUInteger position;
 @end
