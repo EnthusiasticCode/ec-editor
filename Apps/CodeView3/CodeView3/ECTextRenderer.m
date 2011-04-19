@@ -400,7 +400,7 @@ typedef struct {
     }
 }
 
-#pragma mark Public Methods
+#pragma mark Public Outtake Methods
 
 - (void)enumerateLinesIntersectingRect:(CGRect)rect usingBlock:(void (^)(CTLineRef, CGRect, CGFloat, BOOL *))block
 {
@@ -462,16 +462,126 @@ typedef struct {
     // Draw needed lines from this segment
     [self enumerateLinesIntersectingRect:rect usingBlock:^(CTLineRef line, CGRect lineBound, CGFloat baseline, BOOL *stop) {
         // Require adjustment in rendering for first partial line
-//        if (lineBound.origin.y < rect.origin.y) 
-//        {
-//            CGContextTranslateCTM(context, 0, rect.origin.y - lineBound.origin.y);
-//        }
+        if (lineBound.origin.y < rect.origin.y) 
+        {
+            CGContextTranslateCTM(context, 0, rect.origin.y - lineBound.origin.y);
+        }
         // Positioning and rendering
         CGContextTranslateCTM(context, 0, -baseline);
         CTLineDraw(line, context);
         CGContextTranslateCTM(context, -lineBound.size.width, -lineBound.size.height+baseline);
     }];
 }
+
+- (NSUInteger)closestPositionToPoint:(CGPoint)point withinRange:(NSRange)range
+{
+    
+}
+
+- (CGRect)boundsOfLinesForStringRange:(NSRange)range
+{
+    
+}
+
+- (CGRect)rectForIntegralNumberOfTextLinesWithinRect:(CGRect)rect allowGuessedResult:(BOOL)guessed
+{
+    __block CGRect result = CGRectZero;
+    __block CGFloat meanLineHeight = 0;
+    __block NSUInteger maxCharsForLine = 0;
+    
+    if (CGRectIsNull(rect) || CGRectIsEmpty(rect)) 
+    {
+        rect = CGRectInfinite;
+    }
+    
+    // Count for existing segments
+    CGFloat lastSegmentEnd = 0;
+    NSRange currentLineRange = NSMakeRange(0, 0);
+    CGRect currentRect = rect;
+    CGFloat currentRectEnd;
+    // TODO this should be more like the draw function for non guessed requests
+    for (TextSegment *segment in textSegments)
+    {
+        if (guessed && segment.requireGeneration)
+            break;
+        
+        currentLineRange.length = segment.lineCount;
+        [self generateIfNeededTextSegment:segment withTextLineRange:currentLineRange];
+        currentLineRange.location += currentLineRange.length;
+        
+        currentRect.origin.y -= lastSegmentEnd;
+        if (currentRect.origin.y < 0) 
+        {
+            currentRect.size.height += currentRect.origin.y;
+            currentRect.origin.y = 0;
+        }
+        currentRectEnd = CGRectGetMaxY(currentRect);
+        if (currentRectEnd <= 0)
+            return result;
+        
+        lastSegmentEnd += segment.renderHeight;
+        if (rect.origin.y > lastSegmentEnd)
+            continue;
+        
+        [segment enumerateLinesIntersectingRect:currentRect usingBlock:^(CTLineRef line, CGRect lineBound, CGFloat baseline, BOOL *stop) {
+            result.size.width = MAX(result.size.width, lineBound.size.width);
+            result.size.height += lineBound.size.height;
+            
+            if (meanLineHeight > 0) 
+            {
+                meanLineHeight = (meanLineHeight + lineBound.size.height) / 2.0;
+            }
+            else
+            {
+                meanLineHeight = lineBound.size.height;
+            }
+            maxCharsForLine = MAX(maxCharsForLine, CTLineGetGlyphCount(line));
+        }];
+    }
+    
+    // Guess remaining result
+    if (guessed && lastSegmentEnd < CGRectGetMaxY(rect)) 
+    {
+        // Create datasource enabled guess
+        if (datasourceHasTextRendererEstimatedTextLineCountOfLength) 
+        {
+            // Ensure to have a mean line height or generate it
+            if (meanLineHeight == 0) 
+            {
+                NSRange tempRange = NSMakeRange(0, 1);
+                NSAttributedString *string = [datasource textRenderer:self stringInLineRange:&tempRange];
+                if (string) 
+                {
+                    CTLineRef line = CTLineCreateWithAttributedString((CFAttributedStringRef)string);
+                    CGFloat width, ascent, descent, leading;
+                    width = CTLineGetTypographicBounds(line, &ascent, &descent, &leading);
+                    meanLineHeight = ascent + descent + leading;
+                    maxCharsForLine = wrapWidth * CTLineGetGlyphCount(line) / width;
+                    CFRelease(line);
+                }
+                else
+                {
+                    // TODO use ctfontgetascent?
+                    meanLineHeight = 13.0;
+                    maxCharsForLine = wrapWidth / 10.0;
+                }
+            }
+            
+            // Estime
+            NSUInteger totalLines = [datasource textRenderer:self estimatedTextLineCountOfLength:maxCharsForLine];
+            totalLines -= currentLineRange.location;
+            result.size.height += totalLines * meanLineHeight;
+        }
+        else
+        {
+            // TODO CTFramesetterSuggestFrameSizeWithConstraints
+        }
+    }
+    
+    return result;
+}
+
+#pragma mark Public Intake Methods
 
 - (void)updateAllText
 {
@@ -570,114 +680,6 @@ typedef struct {
         CFRelease(globalCache.frame);
         globalCache.frame = NULL;
     }
-}
-
-- (CGRect)rectForIntegralNumberOfTextLinesWithinRect:(CGRect)rect allowGuessedResult:(BOOL)guessed
-{
-    __block CGRect result = CGRectZero;
-    __block CGFloat meanLineHeight = 0;
-    __block NSUInteger maxCharsForLine = 0;
-    
-    if (CGRectIsNull(rect) || CGRectIsEmpty(rect)) 
-    {
-        rect = CGRectInfinite;
-    }
-
-    // Count for existing segments
-    CGFloat lastSegmentEnd = 0;
-    NSRange currentLineRange = NSMakeRange(0, 0);
-    CGRect currentRect = rect;
-    CGFloat currentRectEnd;
-    // TODO this should be more like the draw function for non guessed requests
-    for (TextSegment *segment in textSegments)
-    {
-        if (guessed && segment.requireGeneration)
-            break;
-        
-        currentLineRange.length = segment.lineCount;
-        [self generateIfNeededTextSegment:segment withTextLineRange:currentLineRange];
-        currentLineRange.location += currentLineRange.length;
-        
-        currentRect.origin.y -= lastSegmentEnd;
-        if (currentRect.origin.y < 0) 
-        {
-            currentRect.size.height += currentRect.origin.y;
-            currentRect.origin.y = 0;
-        }
-        currentRectEnd = CGRectGetMaxY(currentRect);
-        if (currentRectEnd <= 0)
-            return result;
-        
-        lastSegmentEnd += segment.renderHeight;
-        if (rect.origin.y > lastSegmentEnd)
-            continue;
-        
-        [segment enumerateLinesIntersectingRect:currentRect usingBlock:^(CTLineRef line, CGRect lineBound, CGFloat baseline, BOOL *stop) {
-            result.size.width = MAX(result.size.width, lineBound.size.width);
-            result.size.height += lineBound.size.height;
-            
-            if (meanLineHeight > 0) 
-            {
-                meanLineHeight = (meanLineHeight + lineBound.size.height) / 2.0;
-            }
-            else
-            {
-                meanLineHeight = lineBound.size.height;
-            }
-            maxCharsForLine = MAX(maxCharsForLine, CTLineGetGlyphCount(line));
-        }];
-    }
-    
-    // Guess remaining result
-    if (guessed && lastSegmentEnd < CGRectGetMaxY(rect)) 
-    {
-        // Create datasource enabled guess
-        if (datasourceHasTextRendererEstimatedTextLineCountOfLength) 
-        {
-            // Ensure to have a mean line height or generate it
-            if (meanLineHeight == 0) 
-            {
-                NSRange tempRange = NSMakeRange(0, 1);
-                NSAttributedString *string = [datasource textRenderer:self stringInLineRange:&tempRange];
-                if (string) 
-                {
-                    CTLineRef line = CTLineCreateWithAttributedString((CFAttributedStringRef)string);
-                    CGFloat width, ascent, descent, leading;
-                    width = CTLineGetTypographicBounds(line, &ascent, &descent, &leading);
-                    meanLineHeight = ascent + descent + leading;
-                    maxCharsForLine = wrapWidth * CTLineGetGlyphCount(line) / width;
-                    CFRelease(line);
-                }
-                else
-                {
-                    // TODO use ctfontgetascent?
-                    meanLineHeight = 13.0;
-                    maxCharsForLine = wrapWidth / 10.0;
-                }
-            }
-            
-            // Estime
-            NSUInteger totalLines = [datasource textRenderer:self estimatedTextLineCountOfLength:maxCharsForLine];
-            totalLines -= currentLineRange.location;
-            result.size.height += totalLines * meanLineHeight;
-        }
-        else
-        {
-            // TODO CTFramesetterSuggestFrameSizeWithConstraints
-        }
-    }
-    
-    return result;
-}
-
-- (NSUInteger)closestPositionToPoint:(CGPoint)point withinRange:(NSRange)range
-{
-    
-}
-
-- (CGRect)boundsOfLinesForStringRange:(NSRange)range
-{
-    
 }
 
 @end
