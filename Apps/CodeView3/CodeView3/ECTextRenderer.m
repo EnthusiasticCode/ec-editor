@@ -525,6 +525,7 @@ typedef struct {
 - (NSUInteger)closestPositionToPoint:(CGPoint)point withinStringRange:(NSRange)queryStringRange
 {
     __block NSUInteger result = 0;
+    __block CTLineRef lastLine = NULL;
     [self generateTextSegmentsAndEnumerateUsingBlock:^(TextSegment *segment, NSUInteger idx, NSUInteger lineOffset, NSUInteger stringOffset, CGFloat positionOffset, BOOL *stop) {
         // Skip segment if before required string range
         if (stringOffset + segment.stringLength <= queryStringRange.location)
@@ -537,6 +538,8 @@ typedef struct {
         segmentRelativeStringRange.location -= stringOffset;
         
         [segment enumerateLinesInStringRange:segmentRelativeStringRange usingBlock:^(CTLineRef line, CGRect lineBounds, NSRange lineStringRange, BOOL *innerStop) {
+            lastLine = line;
+            
             // Skip lines before point
             if (segmentRelativePoint.y >= lineBounds.origin.y + lineBounds.size.height)
                 return;
@@ -549,12 +552,34 @@ typedef struct {
         if (*stop)
             result += stringOffset;
     }];
+    // TODO!!! use lastline to compute result in case of 0
     return result;
 }
 
-- (CGRect)boundsOfLinesForStringRange:(NSRange)range
+- (CGRect)boundsOfLinesForStringRange:(NSRange)queryStringRange
 {
-    
+    __block CGRect result = CGRectNull;
+    [self generateTextSegmentsAndEnumerateUsingBlock:^(TextSegment *segment, NSUInteger idx, NSUInteger lineOffset, NSUInteger stringOffset, CGFloat positionOffset, BOOL *stop) {
+        // Skip segment if before required string range
+        if (stringOffset + segment.stringLength <= queryStringRange.location)
+            return;
+        
+        // Get relative positions to current semgnet
+        __block NSRange segmentRelativeStringRange = queryStringRange;
+        segmentRelativeStringRange.location -= stringOffset;
+        
+        [segment enumerateLinesInStringRange:segmentRelativeStringRange usingBlock:^(CTLineRef line, CGRect lineBounds, NSRange lineStringRange, BOOL *stop) {
+            lineBounds.origin.y += positionOffset;
+            result = CGRectUnion(result, lineBounds);
+            
+            segmentRelativeStringRange.location += lineStringRange.length;
+        }];
+        
+        // Exit if finished
+        if (segmentRelativeStringRange.location + stringOffset >= queryStringRange.location + queryStringRange.length)
+            *stop = YES;
+    }];
+    return result;
 }
 
 - (CGRect)rectForIntegralNumberOfTextLinesWithinRect:(CGRect)rect allowGuessedResult:(BOOL)guessed
