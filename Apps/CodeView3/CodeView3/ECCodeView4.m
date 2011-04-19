@@ -788,7 +788,9 @@ static void init(ECCodeView4 *self)
 {
     //    CGRect r = ECCTFrameGetBoundRectOfLinesForStringRange(self->textLayer.CTFrame, [(ECTextRange *)range CFRange]);
     //    return r;
-    return CGRectZero;
+    
+    CGRect r = [renderer boundsForStringRange:[(ECTextRange *)range range] limitToFirstLine:YES];
+    return r;
 }
 
 - (CGRect)caretRectForPosition:(UITextPosition *)position
@@ -805,7 +807,7 @@ static void init(ECCodeView4 *self)
     //    return carretRect;
     
     NSUInteger pos = ((ECTextPosition *)position).index;
-    CGRect carretRect = [renderer boundsForStringRange:(NSRange){pos, 0}];
+    CGRect carretRect = [renderer boundsForStringRange:(NSRange){pos, 0} limitToFirstLine:YES];
     
     carretRect.origin.x -= 1.0;
     carretRect.size.width = 2.0;

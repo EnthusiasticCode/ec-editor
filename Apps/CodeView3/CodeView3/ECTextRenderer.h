@@ -89,6 +89,6 @@
 /// Returns the bounding rect for all the characters in the given range of text.
 /// If the range is in a single line, the bounding box of of the range is returned;
 /// otherwhise it will be a bounding box of the union of lines interested by the range.
-- (CGRect)boundsForStringRange:(NSRange)range;
+- (CGRect)boundsForStringRange:(NSRange)range limitToFirstLine:(BOOL)limit;
 
 @end

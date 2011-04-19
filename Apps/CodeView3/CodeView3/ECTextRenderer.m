@@ -556,7 +556,7 @@ typedef struct {
     return result;
 }
 
-- (CGRect)boundsForStringRange:(NSRange)queryStringRange
+- (CGRect)boundsForStringRange:(NSRange)queryStringRange limitToFirstLine:(BOOL)limit
 {
     __block CGRect result = CGRectNull;
     [self generateTextSegmentsAndEnumerateUsingBlock:^(TextSegment *segment, NSUInteger idx, NSUInteger lineOffset, NSUInteger stringOffset, CGFloat positionOffset, BOOL *stop) {
@@ -570,7 +570,7 @@ typedef struct {
         NSUInteger segmentRelativeStringRangeEnd = segmentRelativeStringRange.location + segmentRelativeStringRange.length;
         
         __block NSUInteger stringEnd = stringOffset;
-        [segment enumerateLinesInStringRange:segmentRelativeStringRange usingBlock:^(CTLineRef line, CGRect lineBounds, NSRange lineStringRange, BOOL *stop) {
+        [segment enumerateLinesInStringRange:segmentRelativeStringRange usingBlock:^(CTLineRef line, CGRect lineBounds, NSRange lineStringRange, BOOL *innserStop) {
             lineBounds.origin.y += positionOffset;
             
             // Query range start inside this line
@@ -590,6 +590,9 @@ typedef struct {
             result = CGRectUnion(result, lineBounds);
             
             stringEnd += lineStringRange.length;
+            
+            if (limit)
+                *stop = *innserStop = YES;
         }];
         
         // Exit if finished
