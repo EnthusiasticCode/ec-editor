@@ -36,6 +36,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		CD55961E135DC42A0058B30F /* ECCodeViewDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeViewDelegate.h; sourceTree = "<group>"; };
 		CD83D6C613599126008307A6 /* ECTextRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECTextRenderer.h; sourceTree = "<group>"; };
 		CD83D6C713599126008307A6 /* ECTextRenderer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECTextRenderer.m; sourceTree = "<group>"; };
 		CD887D7B13530DDF00332BAC /* CodeView3.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CodeView3.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -208,6 +209,7 @@
 			isa = PBXGroup;
 			children = (
 				CD9A5D47135C9FB70037E0BE /* ECCodeViewDatasource.h */,
+				CD55961E135DC42A0058B30F /* ECCodeViewDelegate.h */,
 				CD887DD61354C14600332BAC /* ECCodeView4.h */,
 				CD887DD71354C14600332BAC /* ECCodeView4.m */,
 			);

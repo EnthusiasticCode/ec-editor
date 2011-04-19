@@ -15,9 +15,22 @@
 @protocol ECCodeViewDataSource <ECTextRendererDataSource>
 @required
 
-/// When implemented, indicate if the given \c CodeView can send editing messages
-/// to the implementer.
-- (BOOL)canBeEditedByCodeView:(ECCodeView4 *)sender;
+/// When implemented return the length of the text in the datasource.
+- (NSUInteger)textLength;
+
+/// Return the substring in the given range.
+- (NSString *)codeView:(ECCodeView4 *)codeView stringInRange:(NSRange)range;
+
+@optional
+
+/// Returns a value that indicate if the codeview can edit the datasource
+/// in the specified text range.
+- (BOOL)codeView:(ECCodeView4 *)codeView canEditTextInRange:(NSRange)range;
+
+/// Commit a change for the given range with the given string.
+/// The datasource is responsible for calling one of the update methods of the 
+/// renderer after the text has been changed.
+- (void)codeView:(ECCodeView4 *)codeView commitString:(NSString *)string forTextInRange:(NSRange)range;
 
 @optional
 

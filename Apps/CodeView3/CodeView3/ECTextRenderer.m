@@ -7,7 +7,6 @@
 //
 
 #import "ECTextRenderer.h"
-#import <CoreText/CoreText.h>
 
 // Internal working notes: (outdated)
 // - The renderer keeps an array of ordered framesetter informations:
@@ -239,6 +238,8 @@
 /// from the segment array.
 - (BOOL)generateIfNeededTextSegment:(TextSegment *)segment withTextLineRange:(NSRange)range;
 
+- (void)generateTextSegmentsAndEnumerateUsingBlock:(void(^)(TextSegment *segment, BOOL *stop))block;
+
 @end
 
 
@@ -259,7 +260,7 @@
     datasource = aDatasource;
     datasourceHasTextRendererEstimatedTextLineCountOfLength = [datasource respondsToSelector:@selector(textRenderer:estimatedTextLineCountOfLength:)];
     
-    [self invalidateAllText];
+    [self updateAllText];
 }
 
 - (void)setWrapWidth:(CGFloat)width
@@ -330,9 +331,62 @@
     return YES;
 }
 
+- (void)generateTextSegmentsAndEnumerateUsingBlock:(void (^)(TextSegment *, BOOL *))block
+{
+    BOOL stop = NO;
+    TextSegment *segment = nil;
+    NSUInteger currentSegmentIndex = 0;
+    CGFloat lastSegmentEnd = 0;
+    NSRange currentLineRange = NSMakeRange(0, 0);
+    do
+    {
+        // Generate segment if needed
+        if ([textSegments count] <= currentSegmentIndex) 
+        {
+            segment = [[TextSegment alloc] initWithFrameCache:&globalFrame];
+            segment.renderWrapWidth = wrapWidth;
+            currentLineRange.length = preferredLineCountPerSegment;
+            
+            [textSegments addObject:segment];
+            [segment release];
+        }
+        else
+        {
+            segment = [textSegments objectAtIndex:currentSegmentIndex];
+            currentLineRange.length = segment.lineCount;
+        }
+        
+        // Next segment
+        currentSegmentIndex++;
+        
+        // Generate segment if needed and remove it if invalid
+        if (![self generateIfNeededTextSegment:segment withTextLineRange:currentLineRange])
+        {
+            [textSegments removeObject:segment];
+            lastTextSegment = [textSegments lastObject];
+            break;
+        }
+        currentLineRange.length = segment.lineCount;
+        currentLineRange.location += currentLineRange.length;
+        
+        // Apply block
+        block(segment, &stop);
+        
+    } while (!stop && lastTextSegment && lastTextSegment == segment);
+    
+    // Update estimated height
+    if (lastSegmentEnd > estimatedHeight 
+        || (lastTextSegment == segment && lastSegmentEnd != estimatedHeight)) 
+    {
+        [self willChangeValueForKey:@"estimatedHeight"];
+        estimatedHeight = lastSegmentEnd;
+        [self didChangeValueForKey:@"estimatedHeight"];
+    }
+}
+
 #pragma mark Public Methods
 
-- (void)invalidateAllText
+- (void)updateAllText
 {
     [textSegments removeAllObjects];
     lastTextSegment = nil;
@@ -528,37 +582,26 @@
     return result;
 }
 
-// TODO keep a single frame cached for all segment. if needed by this function
-// use it. keep alway and only the last used frame. if the cached one is in the
-// middle of the requested rect, draw backward.
-- (void)drawTextWithinRect:(CGRect)rect inContext:(CGContextRef)context
+- (void)enumerateLinesIntersectingRect:(CGRect)rect usingBlock:(void (^)(CTLineRef, CGRect, CGFloat, BOOL *))block
 {
-    // Sanitize input
-    if (!context)
-        return;
-    
     if (CGRectIsNull(rect) || CGRectIsEmpty(rect)) 
     {
         rect = CGRectInfinite;
     }
     CGFloat rectEnd = CGRectGetMaxY(rect);
     
-    // Setup rendering transformations
-    CGContextSetTextMatrix(context, CGAffineTransformIdentity);
-    CGContextSetTextPosition(context, 0, 0);
-    CGContextScaleCTM(context, 1, -1);
-    
     // Enumerate used text segments
     TextSegment *segment = nil;
     NSUInteger currentSegmentIndex = 0;
-    CGFloat lastSegmentEnd = 0, currentRectEnd;
+    CGFloat lastSegmentEnd = 0, currentSegmentOffset;
     CGRect currentRect = rect;
     NSRange currentLineRange = NSMakeRange(0, 0);
+    
     while (lastSegmentEnd < rectEnd)
     {
         // Exit if reached the last segment
         if (lastTextSegment && lastTextSegment == segment)
-            return;
+            break;
         
         // Generate segment if needed
         if ([textSegments count] <= currentSegmentIndex) 
@@ -596,26 +639,19 @@
             currentRect.size.height = rect.size.height + currentRect.origin.y;
             currentRect.origin.y = 0;
         }
-        currentRectEnd = CGRectGetMaxY(currentRect);
-        if (currentRectEnd <= 0)
-            return;
+        if (CGRectGetMaxY(currentRect) <= 0)
+            break;
         
         // Skip not intersected segments
+        currentSegmentOffset = lastSegmentEnd;
         lastSegmentEnd += segment.renderHeight;
         if (rect.origin.y > lastSegmentEnd)
             continue;
         
-        // Draw needed lines from this segment
-        [segment enumerateLinesIntersectingRect:currentRect usingBlock:^(CTLineRef line, CGRect lineBound, CGFloat baseline, BOOL *stop) {
-            // Require adjustment in rendering for first partial line
-            if (lineBound.origin.y < currentRect.origin.y) 
-            {
-                CGContextTranslateCTM(context, 0, currentRect.origin.y - lineBound.origin.y);
-            }
-            // Positioning and rendering
-            CGContextTranslateCTM(context, 0, -baseline);
-            CTLineDraw(line, context);
-            CGContextTranslateCTM(context, -lineBound.size.width, -lineBound.size.height+baseline);
+        // Enumerate needed lines from this segment
+        [segment enumerateLinesIntersectingRect:currentRect usingBlock:^(CTLineRef line, CGRect lineBound, CGFloat baselineOffset, BOOL *stop) {
+            lineBound.origin.y += currentSegmentOffset;
+            block(line, lineBound, baselineOffset, stop);
         }];
     }
     
@@ -627,6 +663,44 @@
         estimatedHeight = lastSegmentEnd;
         [self didChangeValueForKey:@"estimatedHeight"];
     }
+}
+
+// TODO keep a single frame cached for all segment. if needed by this function
+// use it. keep alway and only the last used frame. if the cached one is in the
+// middle of the requested rect, draw backward.
+- (void)drawTextWithinRect:(CGRect)rect inContext:(CGContextRef)context
+{
+    // Sanitize input
+    if (!context)
+        return;
+    
+    // Setup rendering transformations
+    CGContextSetTextMatrix(context, CGAffineTransformIdentity);
+    CGContextSetTextPosition(context, 0, 0);
+    CGContextScaleCTM(context, 1, -1);
+    
+    // Draw needed lines from this segment
+    [self enumerateLinesIntersectingRect:rect usingBlock:^(CTLineRef line, CGRect lineBound, CGFloat baseline, BOOL *stop) {
+        // Require adjustment in rendering for first partial line
+        if (lineBound.origin.y < rect.origin.y) 
+        {
+            CGContextTranslateCTM(context, 0, rect.origin.y - lineBound.origin.y);
+        }
+        // Positioning and rendering
+        CGContextTranslateCTM(context, 0, -baseline);
+        CTLineDraw(line, context);
+        CGContextTranslateCTM(context, -lineBound.size.width, -lineBound.size.height+baseline);
+    }];
+}
+
+- (NSUInteger)closestPositionToPoint:(CGPoint)point withinRange:(NSRange)range
+{
+    
+}
+
+- (CGRect)boundsOfLinesForStringRange:(NSRange)range
+{
+    
 }
 
 @end

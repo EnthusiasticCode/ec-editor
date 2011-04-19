@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import <QuartzCore/QuartzCore.h>
+#import <CoreText/CoreText.h>
 #import "ECTextRendererDataSource.h"
 #import "ECTextRendererDelegate.h"
 
@@ -36,7 +37,7 @@
 
 /// Invalidate the content making the renderer call back to its datasource
 /// to refresh required strings.
-- (void)invalidateAllText;
+- (void)updateAllText;
 
 /// Invalidate a particular section of the content indicating how it changed.
 /// This method will eventually make the renderer call back to it's datasource
@@ -78,5 +79,15 @@
 /// will be drawn with the current context transformation and context will
 /// be left at the beginning of the next non redered line.
 - (void)drawTextWithinRect:(CGRect)rect inContext:(CGContextRef)context;
+
+#pragma mark Retreiving Geometry to Text Mapping
+
+- (NSUInteger)closestPositionToPoint:(CGPoint)point withinRange:(NSRange)range;
+
+- (void)enumerateLinesIntersectingRect:(CGRect)rect usingBlock:(void(^)(CTLineRef line, CGRect lineBound, CGFloat baselineOffset, BOOL *stop))block;
+
+- (CGRect)boundsOfLinesForStringRange:(NSRange)range;
+
+// TODO enumerate lines in string index
 
 @end
