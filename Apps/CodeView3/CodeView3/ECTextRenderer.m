@@ -425,23 +425,29 @@ typedef struct {
         // Adjust rect to current segment relative coordinates
         CGRect currentRect = rect;
         currentRect.origin.y -= positionOffset;
-        if (currentRect.origin.y < 0)
-        {
-            currentRect.size.height += currentRect.origin.y;
-            currentRect.origin.y = 0;
-        }
-        if (CGRectGetMaxY(currentRect) <= 0)
-        {
-            *stop = YES;
-            return;
-        }
+//        if (currentRect.origin.y < 0)
+//        {
+//            currentRect.size.height += currentRect.origin.y;
+//            currentRect.origin.y = 0;
+//        }
+//        if (CGRectGetMaxY(currentRect) <= 0)
+//        {
+//            *stop = YES;
+//            return;
+//        }
         
         // Enumerate needed lines from this segment
+        __block CGFloat lastLineEnd = rect.origin.y;
         [segment enumerateLinesIntersectingRect:currentRect usingBlock:^(CTLineRef line, CGRect lineBound, CGFloat baselineOffset, BOOL *stopInner) {
             lineBound.origin.y += positionOffset;
+            lastLineEnd += lineBound.size.height;
             block(line, lineBound, baselineOffset, stopInner);
             *stop = *stopInner;
         }];
+        
+        // Stop if last line esceed the input rect
+        if (lastLineEnd >= rectEnd)
+            *stop = YES;
     }];
 }
 
