@@ -73,14 +73,13 @@ typedef enum {
 @interface ECItemView : UIScrollView <UIGestureRecognizerDelegate>
 @property (nonatomic, assign) IBOutlet id<ECItemViewDelegate> delegate;
 @property (nonatomic, assign) IBOutlet id<ECItemViewDataSource> dataSource;
-@property (nonatomic) UIEdgeInsets tableInsets;
 @property (nonatomic) CGSize cellSize;
 @property (nonatomic) UIEdgeInsets cellInsets;
 @property (nonatomic) UIEdgeInsets groupInsets;
 @property (nonatomic) CGFloat groupSeparatorHeight;
 @property (nonatomic) UIEdgeInsets groupSeparatorInsets;
-@property (nonatomic) CGFloat groupPlaceholderHeight;
-@property (nonatomic) UIEdgeInsets groupPlaceholderInsets;
+@property (nonatomic) CGFloat groupSeparatorEditingHeight;
+@property (nonatomic) UIEdgeInsets groupSeparatorEditingInsets;
 @property (nonatomic) CGFloat headerHeight;
 @property (nonatomic) UIEdgeInsets headerInsets;
 @property (nonatomic) BOOL allowsSelection;

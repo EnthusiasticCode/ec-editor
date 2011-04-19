@@ -16,7 +16,6 @@ const CGFloat ECItemViewShortAnimationDuration = 0.15;
 const NSUInteger ECItemViewCellBufferSize = 10;
 const NSUInteger ECItemViewHeaderBufferSize = 5;
 const NSUInteger ECItemViewGroupSeparatorBufferSize = 20;
-const NSUInteger ECItemViewGroupPlaceholderBufferSize = 20;
 
 @interface UIScrollView (MethodsInUIGestureRecognizerDelegateProtocolAppleCouldntBotherDeclaring)
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch;
@@ -54,12 +53,10 @@ const NSUInteger ECItemViewGroupPlaceholderBufferSize = 20;
     NSMutableArray *_headerTitles;
     ECStackCache *_headerCache;
     ECStackCache *_groupSeparatorCache;
-    ECStackCache *_groupPlaceholderCache;
     ECStackCache *_cellCache;
     NSMutableDictionary *_visibleCells;
     NSMutableDictionary *_visibleHeaders;
     NSMutableDictionary *_visibleSeparators;
-    NSMutableDictionary *_visiblePlaceholders;
     UITapGestureRecognizer *_tapGestureRecognizer;
     UILongPressGestureRecognizer *_longPressGestureRecognizer;
     BOOL _isDragging;
@@ -74,23 +71,19 @@ const NSUInteger ECItemViewGroupPlaceholderBufferSize = 20;
 
 - (UIView *)_blankHeader:(ECStackCache *)cache;
 - (UIView *)_groupSeparator:(ECStackCache *)cache;
-- (UIView *)_groupPlaceholder:(ECStackCache *)cache;
 - (ECItemViewCell *)_loadCellForItemAtIndexPath:(NSIndexPath *)indexPath;
 - (CGFloat)_heightForGroup:(NSUInteger)group inArea:(NSUInteger)area;
 - (CGRect)_rectForGroupSeparatorAtIndexPath:(NSIndexPath *)indexPath;
-- (CGRect)_rectForGroupPlaceholderAtIndexPath:(NSIndexPath *)indexPath;
 
 - (NSIndexSet *)_indexesForVisibleAreas;
 - (NSIndexSet *)_indexesForVisibleHeaders;
 - (NSArray *)_indexPathsForVisibleGroups;
 - (NSArray *)_indexPathsForVisibleGroupSeparators;
-- (NSArray *)_indexPathsForVisibleGroupPlaceholders;
 
 - (NSIndexPath *)_proposedIndexPathForItemAtPoint:(CGPoint)point exists:(BOOL *)exists;
 
 - (void)_layoutHeaders;
 - (void)_layoutGroupSeparators;
-- (void)_layoutGroupPlaceholders;
 - (void)_layoutCells;
 
 - (void)_handleTapGesture:(UITapGestureRecognizer *)tapGestureRecognizer;
@@ -110,14 +103,13 @@ const NSUInteger ECItemViewGroupPlaceholderBufferSize = 20;
 
 @synthesize delegate = __delegate;
 @synthesize dataSource = _dataSource;
-@synthesize tableInsets = _tableInsets;
 @synthesize cellSize = _cellSize;
 @synthesize cellInsets = _cellInsets;
 @synthesize groupInsets = _groupInsets;
 @synthesize groupSeparatorHeight = _groupSeparatorHeight;
 @synthesize groupSeparatorInsets = _groupSeparatorInsets;
-@synthesize groupPlaceholderHeight = _groupPlaceholderHeight;
-@synthesize groupPlaceholderInsets = _groupPlaceholderInsets;
+@synthesize groupSeparatorEditingHeight = _groupSeparatorEditingHeight;
+@synthesize groupSeparatorEditingInsets = _groupSeparatorEditingInsets;
 @synthesize headerHeight = _headerHeight;
 @synthesize headerInsets = _headerInsets;
 @synthesize allowsSelection = _allowsSelection;
@@ -175,18 +167,6 @@ const NSUInteger ECItemViewGroupPlaceholderBufferSize = 20;
     [self willChangeValueForKey:@"editing"];
     [self setNeedsLayout];
     _isEditing = editing;
-    if (editing)
-    {
-        for (UIView *separator in [_visibleSeparators allValues])
-            [separator removeFromSuperview];
-        [_visibleSeparators removeAllObjects];
-    }
-    else
-    {
-        for (UIView *placeholder in [_visiblePlaceholders allValues])
-            [placeholder removeFromSuperview];
-        [_visiblePlaceholders removeAllObjects];
-    }
     if (animated)
     {
         [UIView animateConcurrentlyToAnimationsWithFlag:&_isAnimating duration:ECItemViewShortAnimationDuration animations:^(void) {
@@ -200,19 +180,17 @@ const NSUInteger ECItemViewGroupPlaceholderBufferSize = 20;
 
 - (void)_setup
 {
-    _tableInsets = UIEdgeInsetsMake(10.0, 10.0, 10.0, 10.0);
     _cellSize = CGSizeMake(170.0, 80.0);
     _cellInsets = UIEdgeInsetsMake(20.0, 20.0, 20.0, 20.0);
     _groupInsets = UIEdgeInsetsMake(10.0, 0.0, 10.0, 0.0);
+    _groupSeparatorHeight = 30.0;
     _groupSeparatorInsets = UIEdgeInsetsZero;
+    _groupSeparatorEditingHeight = 90.0;
+    _groupSeparatorEditingInsets = UIEdgeInsetsZero;
     _headerInsets = UIEdgeInsetsMake(20.0, 10.0, 20.0, 10.0);
     _headerHeight = 60.0;
-    _groupSeparatorHeight = 30.0;
-    _groupPlaceholderHeight = 80.0;
-    _groupPlaceholderInsets = UIEdgeInsetsZero;
     _headerCache = [[ECStackCache alloc] initWithTarget:self action:@selector(_blankHeader:) size:ECItemViewHeaderBufferSize];
     _groupSeparatorCache = [[ECStackCache alloc] initWithTarget:self action:@selector(_groupSeparator:) size:ECItemViewGroupSeparatorBufferSize];
-    _groupPlaceholderCache =[[ECStackCache alloc] initWithTarget:self action:@selector(_groupPlaceholder:) size:ECItemViewGroupPlaceholderBufferSize];
     _cellCache = [[ECStackCache alloc] initWithTarget:nil action:NULL size:ECItemViewCellBufferSize];
     _visibleCells = [[NSMutableDictionary alloc] init];
     _tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(_handleTapGesture:)];
@@ -256,11 +234,9 @@ const NSUInteger ECItemViewGroupPlaceholderBufferSize = 20;
     [_headerTitles release];
     [_headerCache release];
     [_groupSeparatorCache release];
-    [_groupPlaceholderCache release];
     [_cellCache release];
     [_visibleHeaders release];
     [_visibleSeparators release];
-    [_visiblePlaceholders release];
     [_visibleCells release];
     [_tapGestureRecognizer release];
     [_longPressGestureRecognizer release];
@@ -321,13 +297,6 @@ const NSUInteger ECItemViewGroupPlaceholderBufferSize = 20;
     return groupSeparator;
 }
 
-- (UIView *)_groupPlaceholder:(ECStackCache *)cache
-{
-    UIView *groupPlaceholder = [[[UIView alloc] init] autorelease];
-    groupPlaceholder.backgroundColor = [UIColor blackColor];
-    return groupPlaceholder;
-}
-
 - (ECItemViewCell *)_loadCellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
     if (!indexPath || !_flags.dataSourceCellForItemAtIndexPath)
@@ -341,7 +310,7 @@ const NSUInteger ECItemViewGroupPlaceholderBufferSize = 20;
 
 - (NSUInteger)columns
 {
-    CGFloat netWidth = self.bounds.size.width - _tableInsets.left - _tableInsets.right - _groupInsets.left - _groupInsets.right;
+    CGFloat netWidth = self.bounds.size.width - _groupInsets.left - _groupInsets.right;
     return netWidth / _cellSize.width;
 }
 
@@ -386,15 +355,7 @@ const NSUInteger ECItemViewGroupPlaceholderBufferSize = 20;
     CGFloat height = _headerHeight;
     NSUInteger numGroups = [self numberOfGroupsInArea:area];
     for (NSUInteger j = 0; j < numGroups; ++j)
-    {
-        if (_isEditing && j == 0)
-            height += _groupPlaceholderHeight;
         height += [self _heightForGroup:j inArea:area];
-        if (_isEditing)
-            height += _groupPlaceholderHeight;
-        else if (j != numGroups - 1)
-            height += _groupSeparatorHeight;
-    }
     cachedArea = area;
     cachedAreaRect = CGRectMake(x, y, width, height);
     return cachedAreaRect;
@@ -405,84 +366,37 @@ const NSUInteger ECItemViewGroupPlaceholderBufferSize = 20;
     CGFloat height = 0;
     height += [self rowsInGroup:group inArea:area] * _cellSize.height;
     height += _groupInsets.top + _groupInsets.bottom;
+    if (_isEditing)
+        height += _groupSeparatorEditingHeight;
+    else
+        height += _groupSeparatorHeight;
     return height;
 }
 
 - (CGRect)_rectForGroupSeparatorAtIndexPath:(NSIndexPath *)indexPath
 {
-    static NSUInteger cachedArea = NSUIntegerMax;
-    static NSUInteger cachedPosition = NSUIntegerMax;
-    static CGRect cachedSeparatorRect;
-    if (cachedArea == indexPath.area && cachedPosition == indexPath.position)
-        return cachedSeparatorRect;
-    CGFloat y = 0;
-    if (cachedArea == indexPath.area)
+    CGRect groupRect = [self rectForGroup:indexPath.position inArea:indexPath.area];
+    CGFloat x = groupRect.origin.x + _groupInsets.left;
+    CGFloat y = groupRect.origin.y + groupRect.size.height - _groupInsets.bottom;
+    CGFloat width = groupRect.size.width - _groupInsets.left - _groupInsets.right;
+    CGFloat height;
+    if (_isEditing)
     {
-        y = cachedSeparatorRect.origin.y;
-        NSRange separatorRange;
-        if (cachedPosition < indexPath.position)
-            separatorRange = NSMakeRange( cachedPosition, indexPath.position - cachedPosition);
-        else
-            separatorRange = NSMakeRange(indexPath.position, cachedPosition - indexPath.position);
-        NSRange groupsBetweenSeparatorsRange = NSMakeRange(separatorRange.location + 1, separatorRange.length - 1);
-        for (NSUInteger i = groupsBetweenSeparatorsRange.location; i < groupsBetweenSeparatorsRange.location + groupsBetweenSeparatorsRange.length; ++i)
-            y += [self _heightForGroup:i inArea:indexPath.area];
-        y += (separatorRange.length - 1) * _groupSeparatorHeight;
+        y -= _groupSeparatorEditingHeight;
+        height = _groupSeparatorEditingHeight;
     }
     else
     {
-        y = [self rectForArea:indexPath.area].origin.y;
-        for (NSUInteger i = 0; i < indexPath.position; ++i)
-            y += [self _heightForGroup:i inArea:indexPath.area];
-        if (indexPath.position > 1)
-            y += (indexPath.position - 1) * _groupSeparatorHeight;
+        y -= _groupSeparatorHeight;
+        height = _groupSeparatorHeight;
     }
-    cachedArea = indexPath.area;
-    cachedPosition = indexPath.position;
-    cachedSeparatorRect = CGRectMake(_tableInsets.left, y, self.bounds.size.width - _tableInsets.left - _tableInsets.right - _groupSeparatorInsets.left - _groupSeparatorInsets.right, _groupSeparatorHeight);
-    return cachedSeparatorRect;
-}
-
-- (CGRect)_rectForGroupPlaceholderAtIndexPath:(NSIndexPath *)indexPath
-{
-    static NSUInteger cachedArea = NSUIntegerMax;
-    static NSUInteger cachedPosition = NSUIntegerMax;
-    static CGRect cachedPlaceholderRect;
-    if (cachedArea == indexPath.area && cachedPosition == indexPath.position)
-        return cachedPlaceholderRect;
-    CGFloat y = 0;
-    if (cachedArea == indexPath.area)
-    {
-        y = cachedPlaceholderRect.origin.y;
-        NSRange placeholderRange;
-        if (cachedPosition < indexPath.position)
-            placeholderRange = NSMakeRange( cachedPosition, indexPath.position - cachedPosition);
-        else
-            placeholderRange = NSMakeRange(indexPath.position, cachedPosition - indexPath.position);
-        for (NSUInteger i = placeholderRange.location; i < placeholderRange.location + placeholderRange.length; ++i)
-            y += [self _heightForGroup:i inArea:indexPath.area];
-        y += (placeholderRange.length) * _groupPlaceholderHeight;
-    }
-    else
-    {
-        y = [self rectForArea:indexPath.area].origin.y + _headerHeight;
-        for (NSUInteger i = 0; i < indexPath.position; ++i)
-        {
-            y += [self _heightForGroup:i inArea:indexPath.area];
-        }
-        if (indexPath.position > 0)
-            y += (indexPath.position) * _groupPlaceholderHeight;
-    }
-    cachedArea = indexPath.area;
-    cachedPosition = indexPath.position;
-    cachedPlaceholderRect = CGRectMake(_tableInsets.left, y, self.bounds.size.width - _tableInsets.left - _tableInsets.right - _groupPlaceholderInsets.left - _groupPlaceholderInsets.right, _groupPlaceholderHeight);
-    return cachedPlaceholderRect;
+    return CGRectMake(x, y, width, height);
 }
 
 - (CGRect)rectForHeaderInArea:(NSUInteger)area
 {
     CGRect areaRect = [self rectForArea:area];
-    return CGRectMake(areaRect.origin.x, areaRect.origin.y, self.bounds.size.width - _tableInsets.left - _tableInsets.right - _headerInsets.left - _headerInsets.right, _headerHeight);
+    return CGRectMake(areaRect.origin.x, areaRect.origin.y, self.bounds.size.width - _headerInsets.left - _headerInsets.right, _headerHeight);
 }
 
 - (CGRect)rectForGroup:(NSUInteger)group inArea:(NSUInteger)area
@@ -495,13 +409,11 @@ const NSUInteger ECItemViewGroupPlaceholderBufferSize = 20;
     CGRect areaRect = [self rectForArea:area];
     CGFloat x = areaRect.origin.x;
     CGFloat y = areaRect.origin.y + _headerHeight;
-    if (_isEditing)
-        y += _groupPlaceholderHeight;
     for (NSUInteger i = 0; i < group; ++i)
     {
         y += [self _heightForGroup:i inArea:area];
         if (_isEditing)
-            y += _groupPlaceholderHeight;
+            y += _groupSeparatorEditingHeight;
         else
             y += _groupSeparatorHeight;
     }
@@ -591,22 +503,6 @@ const NSUInteger ECItemViewGroupPlaceholderBufferSize = 20;
     [indexes enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
         NSUInteger numGroups = [self numberOfGroupsInArea:idx];
         for (NSUInteger i = 0; i < numGroups - 1; ++i)
-        {
-            NSIndexPath *indexPath = [NSIndexPath indexPathForPosition:i inArea:idx];
-            if (CGRectIntersectsRect(self.bounds, [self _rectForGroupSeparatorAtIndexPath:indexPath]))
-                [indexPaths addObject:indexPath];
-        }
-    }];
-    return indexPaths;
-}
-
-- (NSArray *)_indexPathsForVisibleGroupPlaceholders
-{
-    NSIndexSet *indexes = [self _indexesForVisibleAreas];
-    NSMutableArray *indexPaths = [NSMutableArray array];
-    [indexes enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
-        NSUInteger numGroups = [self numberOfGroupsInArea:idx];
-        for (NSUInteger i = 0; i < numGroups + 1; ++i)
         {
             NSIndexPath *indexPath = [NSIndexPath indexPathForPosition:i inArea:idx];
             if (CGRectIntersectsRect(self.bounds, [self _rectForGroupSeparatorAtIndexPath:indexPath]))
@@ -754,9 +650,8 @@ const NSUInteger ECItemViewGroupPlaceholderBufferSize = 20;
                 *exists = NO;
             return [NSIndexPath indexPathForItem:numItems inGroup:j inArea:i];
         }
-        NSUInteger numPlaceholders = numGroups + 1;
-        for (NSUInteger j = 0; j < numPlaceholders; ++j)
-            if (CGRectContainsPoint([self _rectForGroupPlaceholderAtIndexPath:[NSIndexPath indexPathForPosition:j inArea:i]], point))
+        for (NSUInteger j = 0; j < numGroups; ++j)
+            if (CGRectContainsPoint([self _rectForGroupSeparatorAtIndexPath:[NSIndexPath indexPathForPosition:j inArea:i]], point))
             {
                 if (exists)
                     *exists = NO;
@@ -838,32 +733,6 @@ const NSUInteger ECItemViewGroupPlaceholderBufferSize = 20;
     _visibleSeparators = newVisibleGroupSeparators;
 }
 
-- (void)_layoutGroupPlaceholders
-{
-    NSMutableDictionary *newVisibleGroupPlaceholders = [[NSMutableDictionary alloc] init];
-    for (NSIndexPath *indexPath in [self _indexPathsForVisibleGroupPlaceholders])
-    {
-        UIView *placeholder = [_visiblePlaceholders objectForKey:indexPath];
-        if (placeholder)
-            [_visiblePlaceholders removeObjectForKey:indexPath];
-        else
-        {
-            placeholder = [_groupPlaceholderCache pop];
-            [self addSubview:placeholder];
-            [self sendSubviewToBack:placeholder];
-        }
-        placeholder.frame = UIEdgeInsetsInsetRect([self _rectForGroupPlaceholderAtIndexPath:indexPath], _groupPlaceholderInsets);
-        [newVisibleGroupPlaceholders setObject:placeholder forKey:indexPath];
-    }
-    for (UIView *placeholder in [_visiblePlaceholders allValues])
-    {
-        [placeholder removeFromSuperview];
-        [_groupPlaceholderCache push:placeholder];
-    }
-    [_visiblePlaceholders release];
-    _visiblePlaceholders = newVisibleGroupPlaceholders;
-}
-
 - (void)_layoutCells
 {
     NSMutableDictionary *newVisibleItems = [[NSMutableDictionary alloc] init];
@@ -904,10 +773,7 @@ const NSUInteger ECItemViewGroupPlaceholderBufferSize = 20;
 - (void)layoutSubviews
 {
     [self _layoutHeaders];
-    if (!_isEditing)
-        [self _layoutGroupSeparators];
-    else
-        [self _layoutGroupPlaceholders];
+    [self _layoutGroupSeparators];
     [self _layoutCells];
 }
 
