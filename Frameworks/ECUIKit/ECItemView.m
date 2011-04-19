@@ -38,12 +38,16 @@ const NSUInteger ECItemViewGroupPlaceholderBufferSize = 20;
         unsigned int dataSourceTitleForHeaderInArea:1;
         unsigned int dataSourceCanEditItem:1;
         unsigned int dataSourceCanMoveItem:1;
+        unsigned int dataSourceDeleteItem:1;
         unsigned int dataSourceMoveItem:1;
+        unsigned int dataSourceInsertGroup:1;
+        unsigned int dataSourceDeleteGroup:1;
+        unsigned int dataSourceMoveGroup:1;
+        unsigned int dataSourceMoveArea:1;
         unsigned int delegateWillSelectItem:1;
         unsigned int delegateWillDeselectItem:1;
         unsigned int delegateDidSelectItem:1;
         unsigned int delegateDidDeselectItem:1;
-        unsigned int delegateTargetIndexPathForMoveFromItem:1;
     } _flags;
     BOOL _isAnimating;
     NSMutableArray *_areas;
@@ -129,7 +133,6 @@ const NSUInteger ECItemViewGroupPlaceholderBufferSize = 20;
     _flags.delegateWillDeselectItem = [delegate respondsToSelector:@selector(itemView:willDeselectItemAtIndexPath:)];
     _flags.delegateDidSelectItem = [delegate respondsToSelector:@selector(itemView:didSelectItemAtIndexPath:)];
     _flags.delegateDidDeselectItem = [delegate respondsToSelector:@selector(itemView:didDeselectItemAtIndexPath:)];
-    _flags.delegateTargetIndexPathForMoveFromItem = [delegate respondsToSelector:@selector(itemView:targetIndexPathForMoveFromItemAtIndexPath:toProposedIndexPath:)];
     [self didChangeValueForKey:@"delegate"];
 }
 
@@ -146,7 +149,12 @@ const NSUInteger ECItemViewGroupPlaceholderBufferSize = 20;
     _flags.dataSourceTitleForHeaderInArea = [dataSource respondsToSelector:@selector(itemView:titleForHeaderInArea:)];
     _flags.dataSourceCanEditItem = [dataSource respondsToSelector:@selector(itemView:canEditItemAtIndexPath:)];
     _flags.dataSourceCanMoveItem = [dataSource respondsToSelector:@selector(itemView:canMoveItemAtIndexPath:)];
+    _flags.dataSourceDeleteItem = [dataSource respondsToSelector:@selector(itemView:deleteItemAtIndexPath:)];
     _flags.dataSourceMoveItem = [dataSource respondsToSelector:@selector(itemView:moveItemAtIndexPath:toIndexPath:)];
+    _flags.dataSourceInsertGroup = [dataSource respondsToSelector:@selector(itemView:insertGroupAtIndexPath:)];
+    _flags.dataSourceDeleteGroup = [dataSource respondsToSelector:@selector(itemView:deleteGroupAtIndexPath:)];
+    _flags.dataSourceMoveGroup = [dataSource respondsToSelector:@selector(itemView:moveGroupAtIndexPath:toIndexPath:)];
+    _flags.dataSourceMoveArea = [dataSource respondsToSelector:@selector(itemView:moveAreaAtIndexPath:toIndexPath:)];
     [self didChangeValueForKey:@"dataSource"];
 }
 
@@ -731,7 +739,8 @@ const NSUInteger ECItemViewGroupPlaceholderBufferSize = 20;
                 itemRect = [self rectForItemAtIndexPath:[NSIndexPath indexPathForItem:k inGroup:j inArea:i]];
                 if (CGRectContainsPoint(itemRect, point))
                 {
-                    *exists = YES;
+                    if (exists)
+                        *exists = YES;
                     return [NSIndexPath indexPathForItem:k inGroup:j inArea:i];
                 }
                 if (itemRect.origin.y > point.y)
@@ -741,18 +750,21 @@ const NSUInteger ECItemViewGroupPlaceholderBufferSize = 20;
                 else
                     ++k;
             }
-            *exists = NO;
+            if (exists)
+                *exists = NO;
             return [NSIndexPath indexPathForItem:numItems inGroup:j inArea:i];
         }
         NSUInteger numPlaceholders = numGroups + 1;
         for (NSUInteger j = 0; j < numPlaceholders; ++j)
             if (CGRectContainsPoint([self _rectForGroupPlaceholderAtIndexPath:[NSIndexPath indexPathForPosition:j inArea:i]], point))
             {
-                *exists = NO;
+                if (exists)
+                    *exists = NO;
                 return [NSIndexPath indexPathForItem:0 inGroup:j inArea:i];
             }
     }
-    *exists = NO;
+    if (exists)
+        *exists = NO;
     return nil;
 }
 
@@ -1005,8 +1017,11 @@ const NSUInteger ECItemViewGroupPlaceholderBufferSize = 20;
     [_scrollTimer invalidate];
     _scrollTimer = nil;
     [self setNeedsLayout];
+    _dragDestinationIndexPath = [self _proposedIndexPathForItemAtPoint:[dragRecognizer locationInView:self] exists:NULL];
+    if (_flags.dataSourceMoveItem)
+        [_dataSource itemView:self moveItemAtIndexPath:_draggedItemIndexPath toIndexPath:_dragDestinationIndexPath];
     [UIView animateConcurrentlyToAnimationsWithFlag:&_isAnimating duration:ECItemViewShortAnimationDuration animations:^(void) {
-        _draggedItem.frame = UIEdgeInsetsInsetRect([self rectForItemAtIndexPath:_draggedItemIndexPath], _cellInsets);
+        _draggedItem.frame = UIEdgeInsetsInsetRect([self rectForItemAtIndexPath:_dragDestinationIndexPath], _cellInsets);
         [self layoutIfNeeded];
     } completion:NULL];
     [_draggedItemIndexPath release];

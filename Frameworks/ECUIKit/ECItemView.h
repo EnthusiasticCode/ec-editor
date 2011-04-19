@@ -47,7 +47,12 @@ typedef enum {
 
 // Data manipulation - reorder / moving support
 
+- (void)itemView:(ECItemView *)itemView deleteItemAtIndexPath:(NSIndexPath *)indexPath;
 - (void)itemView:(ECItemView *)itemView moveItemAtIndexPath:(NSIndexPath *)sourceIndexPath toIndexPath:(NSIndexPath *)destinationIndexPath;
+- (void)itemView:(ECItemView *)itemView insertGroupAtIndexPath:(NSIndexPath *)indexPath;
+- (void)itemView:(ECItemView *)itemView deleteGroupAtIndexPath:(NSIndexPath *)indexPath;
+- (void)itemView:(ECItemView *)itemView moveGroupAtIndexPath:(NSIndexPath *)sourceIndexPath toIndexPath:(NSIndexPath *)destinationIndexPath;
+- (void)itemView:(ECItemView *)itemView moveAreaAtIndexPath:(NSIndexPath *)sourceIndexPath toIndexPath:(NSIndexPath *)destinationIndexPath;
 
 @end
 
