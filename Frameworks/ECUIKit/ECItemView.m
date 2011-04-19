@@ -343,8 +343,9 @@ const NSUInteger ECItemViewGroupSeparatorBufferSize = 20;
     CGFloat x = 0;
     CGFloat y = 0;
     static NSUInteger cachedArea = NSUIntegerMax;
+    static BOOL cachedIsEditing;
     static CGRect cachedAreaRect;
-    if (area == cachedArea)
+    if (area == cachedArea && _isEditing == cachedIsEditing)
         return cachedAreaRect;
     if (area)
     {
@@ -357,6 +358,7 @@ const NSUInteger ECItemViewGroupSeparatorBufferSize = 20;
     for (NSUInteger j = 0; j < numGroups; ++j)
         height += [self _heightForGroup:j inArea:area];
     cachedArea = area;
+    cachedIsEditing = _isEditing;
     cachedAreaRect = CGRectMake(x, y, width, height);
     return cachedAreaRect;
 }
@@ -403,8 +405,9 @@ const NSUInteger ECItemViewGroupSeparatorBufferSize = 20;
 {
     static NSUInteger cachedGroup = NSUIntegerMax;
     static NSUInteger cachedArea = NSUIntegerMax;
+    static BOOL cachedIsEditing;
     static CGRect cachedGroupRect;
-    if (group == cachedGroup && area == cachedArea)
+    if (group == cachedGroup && area == cachedArea && _isEditing == cachedIsEditing)
         return cachedGroupRect;
     CGRect areaRect = [self rectForArea:area];
     CGFloat x = areaRect.origin.x;
@@ -421,6 +424,7 @@ const NSUInteger ECItemViewGroupSeparatorBufferSize = 20;
     CGFloat height = [self _heightForGroup:group inArea:area];
     cachedArea = area;
     cachedGroup = group;
+    cachedIsEditing = _isEditing;
     cachedGroupRect = CGRectMake(x, y, width, height);
     return cachedGroupRect;
 }
@@ -430,10 +434,11 @@ const NSUInteger ECItemViewGroupSeparatorBufferSize = 20;
     static NSUInteger cachedItem = NSUIntegerMax;
     static NSUInteger cachedGroup = NSUIntegerMax;
     static NSUInteger cachedArea = NSUIntegerMax;
+    static BOOL cachedIsEditing;
     static CGRect cachedItemRect;
     if (!indexPath)
         return CGRectZero;
-    if (indexPath.item == cachedItem && indexPath.group == cachedGroup && indexPath.area == cachedArea)
+    if (indexPath.item == cachedItem && indexPath.group == cachedGroup && indexPath.area == cachedArea && _isEditing == cachedIsEditing)
         return cachedItemRect;
     CGFloat x = 0;
     CGFloat y = 0;
@@ -461,6 +466,7 @@ const NSUInteger ECItemViewGroupSeparatorBufferSize = 20;
     cachedArea = indexPath.area;
     cachedGroup = indexPath.group;
     cachedItem = indexPath.item;
+    cachedIsEditing = _isEditing;
     return cachedItemRect;
 }
 
@@ -565,51 +571,11 @@ const NSUInteger ECItemViewGroupSeparatorBufferSize = 20;
 
 - (NSIndexPath *)indexPathForItemAtPoint:(CGPoint)point
 {
-    static CGPoint cachedPoint = (CGPoint){CGFLOAT_MAX, CGFLOAT_MAX};
-    static NSUInteger cachedArea;
-    static NSUInteger cachedGroup;
-    static NSUInteger cachedItem;
-    if (CGPointEqualToPoint(point, cachedPoint))
-        if (cachedArea == NSUIntegerMax)
-            return nil;
-        else
-            return [NSIndexPath indexPathForItem:cachedItem inGroup:cachedGroup inArea:cachedArea];
-    for (NSUInteger i = 0; i < [self numberOfAreas]; ++i)
-    {
-        CGRect areaRect = CGRectZero;
-        areaRect = [self rectForArea:i];
-        if (!CGRectContainsPoint(areaRect, point))
-            continue;
-        for (NSUInteger j = 0; j < [self numberOfGroupsInArea:i]; ++j)
-        {
-            CGRect groupRect = CGRectZero;
-            groupRect = [self rectForGroup:j inArea:i];
-            if (!CGRectContainsPoint(groupRect, point))
-                continue;
-            for (NSUInteger k = 0; k < [self numberOfItemsInGroup:j inArea:i]; )
-            {
-                CGRect itemRect = CGRectZero;
-                itemRect = [self rectForItemAtIndexPath:[NSIndexPath indexPathForItem:k inGroup:j inArea:i]];
-                if (CGRectContainsPoint(itemRect, point))
-                {
-                    cachedPoint = point;
-                    cachedArea = i;
-                    cachedGroup = j;
-                    cachedItem = k;
-                    return [NSIndexPath indexPathForItem:k inGroup:j inArea:i];
-                }
-                if (itemRect.origin.y > point.y)
-                    break;
-                if (point.y > itemRect.origin.y + itemRect.size.height)
-                    k += [self columns];
-                else
-                    ++k;
-            }
-        }
-    }
-    cachedPoint = point;
-    cachedArea = NSUIntegerMax;
-    return nil;
+    BOOL exists;
+    NSIndexPath *indexPath = [self _proposedIndexPathForItemAtPoint:point exists:&exists];
+    if (!exists)
+        return nil;
+    return indexPath;
 }
 
 - (NSIndexPath *)_proposedIndexPathForItemAtPoint:(CGPoint)point exists:(BOOL *)exists
