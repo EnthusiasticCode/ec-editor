@@ -68,9 +68,6 @@ const NSUInteger ECRelationalTableViewGroupPlaceholderBufferSize = 20;
 - (UIView *)_blankHeader:(ECStackCache *)cache;
 - (UIView *)_groupSeparator:(ECStackCache *)cache;
 - (UIView *)_groupPlaceholder:(ECStackCache *)cache;
-- (CGRect)_headerBounds;
-- (CGRect)_groupSeparatorBounds;
-- (CGRect)_groupPlaceholderBounds;
 - (CGFloat)_heightForGroup:(NSUInteger)group inArea:(NSUInteger)area;
 - (CGRect)_rectForGroupSeparatorAtIndexPath:(NSIndexPath *)indexPath;
 - (CGRect)_rectForGroupPlaceholderAtIndexPath:(NSIndexPath *)indexPath;
@@ -84,7 +81,6 @@ const NSUInteger ECRelationalTableViewGroupPlaceholderBufferSize = 20;
 - (NSArray *)_indexPathsForVisibleGroupSeparators;
 - (NSArray *)_indexPathsForVisibleGroupPlaceholders;
 - (ECRelationalTableViewCell *)loadCellForItemAtIndexPath:(NSIndexPath *)indexPath;
-- (NSIndexPath *)_indexPathForItemAtPoint:(CGPoint)point includeInsets:(BOOL)includeInsets;
 - (NSIndexPath *)_proposedIndexPathForItemAtPoint:(CGPoint)point exists:(BOOL *)exists;
 - (void)_layoutHeaders;
 - (void)_layoutGroupSeparators;
@@ -187,7 +183,7 @@ const NSUInteger ECRelationalTableViewGroupPlaceholderBufferSize = 20;
         } completion:NULL];
     }
     CGRect lastAreaFrame = [self rectForArea:[self numberOfAreas] - 1];
-    self.contentSize = CGSizeMake(self.bounds.size.width, lastAreaFrame.origin.y + lastAreaFrame.size.height + _tableInsets.bottom);
+    self.contentSize = CGSizeMake(self.bounds.size.width, lastAreaFrame.origin.y + lastAreaFrame.size.height);
     [self didChangeValueForKey:@"editing"];   
 }
 
@@ -264,42 +260,24 @@ const NSUInteger ECRelationalTableViewGroupPlaceholderBufferSize = 20;
     _flags.superGestureRecognizerShouldReceiveTouch = [scrollView respondsToSelector:@selector(gestureRecognizer:shouldReceiveTouch:)];
 }
 
-- (CGRect)_headerBounds
-{
-    return CGRectMake(0.0, 0.0, self.bounds.size.width - _tableInsets.left - _tableInsets.right - _headerInsets.left - _headerInsets.right, _headerHeight - _headerInsets.top - _headerInsets.bottom);
-}
-
 - (UIView *)_blankHeader:(ECStackCache *)cache
 {
     UILabel *header = [[[UILabel alloc] init] autorelease];
     header.backgroundColor = [UIColor blueColor];
-    header.bounds = [self _headerBounds];
     return header;
-}
-
-- (CGRect)_groupSeparatorBounds
-{
-    return CGRectMake(0.0, 0.0, self.bounds.size.width - _tableInsets.left - _tableInsets.right - _groupSeparatorInsets.left - _groupSeparatorInsets.right, _groupSeparatorHeight - _groupSeparatorInsets.top - _groupSeparatorInsets.bottom);
 }
 
 - (UIView *)_groupSeparator:(ECStackCache *)cache
 {
     UIView *groupSeparator = [[[UIView alloc] init] autorelease];
     groupSeparator.backgroundColor = [UIColor blackColor];
-    groupSeparator.bounds = [self _groupSeparatorBounds];
     return groupSeparator;
-}
-
-- (CGRect)_groupPlaceholderBounds
-{
-    return CGRectMake(0.0, 0.0, self.bounds.size.width - _tableInsets.left - _tableInsets.right - _groupPlaceholderInsets.left - _groupPlaceholderInsets.right, _groupPlaceholderHeight - _groupPlaceholderInsets.top - _groupPlaceholderInsets.bottom);
 }
 
 - (UIView *)_groupPlaceholder:(ECStackCache *)cache
 {
     UIView *groupPlaceholder = [[[UIView alloc] init] autorelease];
     groupPlaceholder.backgroundColor = [UIColor blackColor];
-    groupPlaceholder.bounds = [self _groupPlaceholderBounds];
     return groupPlaceholder;
 }
 
@@ -342,9 +320,7 @@ const NSUInteger ECRelationalTableViewGroupPlaceholderBufferSize = 20;
     }
     cachedArea = indexPath.area;
     cachedPosition = indexPath.position;
-    cachedSeparatorRect = [self _groupSeparatorBounds];
-    cachedSeparatorRect.origin.x = _tableInsets.left + _groupSeparatorInsets.left;
-    cachedSeparatorRect.origin.y = y;
+    cachedSeparatorRect = CGRectMake(_tableInsets.left, y, self.bounds.size.width - _tableInsets.left - _tableInsets.right - _groupSeparatorInsets.left - _groupSeparatorInsets.right, _groupSeparatorHeight);
     return cachedSeparatorRect;
 }
 
@@ -380,9 +356,7 @@ const NSUInteger ECRelationalTableViewGroupPlaceholderBufferSize = 20;
     }
     cachedArea = indexPath.area;
     cachedPosition = indexPath.position;
-    cachedPlaceholderRect = [self _groupPlaceholderBounds];
-    cachedPlaceholderRect.origin.x = _tableInsets.left + _groupPlaceholderInsets.left;
-    cachedPlaceholderRect.origin.y = y;
+    cachedPlaceholderRect = CGRectMake(_tableInsets.left, y, self.bounds.size.width - _tableInsets.left - _tableInsets.right - _groupPlaceholderInsets.left - _groupPlaceholderInsets.right, _groupPlaceholderHeight);
     return cachedPlaceholderRect;
 }
 
@@ -503,7 +477,7 @@ const NSUInteger ECRelationalTableViewGroupPlaceholderBufferSize = 20;
         [_areas addObject:groups];
     }
     CGRect lastAreaFrame = [self rectForArea:[self numberOfAreas] - 1];
-    self.contentSize = CGSizeMake(self.bounds.size.width, lastAreaFrame.origin.y + lastAreaFrame.size.height + _tableInsets.bottom);
+    self.contentSize = CGSizeMake(self.bounds.size.width, lastAreaFrame.origin.y + lastAreaFrame.size.height);
     [self setNeedsLayout];
 }
 
@@ -551,7 +525,7 @@ const NSUInteger ECRelationalTableViewGroupPlaceholderBufferSize = 20;
     if (area)
     {
         CGRect previousAreaRect = [self rectForArea:area - 1];
-        y = previousAreaRect.origin.y + previousAreaRect.size.height + _tableInsets.top + _tableInsets.bottom;
+        y = previousAreaRect.origin.y + previousAreaRect.size.height;
     }
     CGFloat width = self.bounds.size.width;
     CGFloat height = _headerHeight;
@@ -567,17 +541,14 @@ const NSUInteger ECRelationalTableViewGroupPlaceholderBufferSize = 20;
             height += _groupSeparatorHeight;
     }
     cachedArea = area;
-    cachedAreaRect = UIEdgeInsetsInsetRect(CGRectMake(x, y, width, height), _tableInsets);
+    cachedAreaRect = CGRectMake(x, y, width, height);
     return cachedAreaRect;
 }
 
 - (CGRect)rectForHeaderInArea:(NSUInteger)area
 {
     CGRect areaRect = [self rectForArea:area];
-    CGRect rect = [self _headerBounds];
-    rect.origin.x = areaRect.origin.x + _headerInsets.left;
-    rect.origin.y = areaRect.origin.y;
-    return UIEdgeInsetsInsetRect(rect, _headerInsets);
+    return CGRectMake(areaRect.origin.x, areaRect.origin.y, self.bounds.size.width - _tableInsets.left - _tableInsets.right - _headerInsets.left - _headerInsets.right, _headerHeight);
 }
 
 - (CGRect)rectForGroup:(NSUInteger)group inArea:(NSUInteger)area
@@ -604,7 +575,7 @@ const NSUInteger ECRelationalTableViewGroupPlaceholderBufferSize = 20;
     CGFloat height = [self _heightForGroup:group inArea:area];
     cachedArea = area;
     cachedGroup = group;
-    cachedGroupRect = UIEdgeInsetsInsetRect(CGRectMake(x, y, width, height), _groupInsets);
+    cachedGroupRect = CGRectMake(x, y, width, height);
     return cachedGroupRect;
 }
 
@@ -640,7 +611,6 @@ const NSUInteger ECRelationalTableViewGroupPlaceholderBufferSize = 20;
         x += column * _cellSize.width;
         y += row * _cellSize.height;
         cachedItemRect = CGRectMake(x, y, _cellSize.width, _cellSize.height);
-        cachedItemRect = UIEdgeInsetsInsetRect(cachedItemRect, _cellInsets);
     }
     cachedArea = indexPath.area;
     cachedGroup = indexPath.group;
@@ -705,8 +675,6 @@ const NSUInteger ECRelationalTableViewGroupPlaceholderBufferSize = 20;
     if (!indexPath || !_flags.dataSourceCellForItemAtIndexPath)
         return nil;
     ECRelationalTableViewCell * cell = [_dataSource relationalTableView:self cellForItemAtIndexPath:indexPath];
-    CGRect rect = CGRectMake(0.0, 0.0, _cellSize.width - _cellInsets.left - _cellInsets.right, _cellSize.height - _cellInsets.top - _cellInsets.bottom);
-    cell.bounds = rect;
     return cell;
 }
 
@@ -770,14 +738,17 @@ const NSUInteger ECRelationalTableViewGroupPlaceholderBufferSize = 20;
     [[self _indexesForVisibleHeaders] enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
         UILabel *header = [_visibleHeaders objectForKey:[NSNumber numberWithUnsignedInteger:idx]];
         if (header)
+        {
             [_visibleHeaders removeObjectForKey:[NSNumber numberWithUnsignedInteger:idx]];
+            header.center = [self _centerForHeaderInArea:idx];
+        }
         else
         {
             header = [_headerCache pop];
             [self addSubview:header];
             header.text = [_headerTitles objectAtIndex:idx];
+            header.frame = UIEdgeInsetsInsetRect([self rectForHeaderInArea:idx], _headerInsets);
         }
-        header.center = [self _centerForHeaderInArea:idx];
         [newVisibleHeaders setObject:header forKey:[NSNumber numberWithUnsignedInteger:idx]];
     }];
     for (UILabel *header in [_visibleHeaders allValues])
@@ -796,13 +767,16 @@ const NSUInteger ECRelationalTableViewGroupPlaceholderBufferSize = 20;
     {
         UIView *separator = [_visibleSeparators objectForKey:indexPath];
         if (separator)
+        {
             [_visibleSeparators removeObjectForKey:indexPath];
+            separator.center = [self _centerForGroupSeparatorAtIndexPath:indexPath];
+        }
         else
         {
             separator = [_groupSeparatorCache pop];
             [self addSubview:separator];
+            separator.frame = UIEdgeInsetsInsetRect([self _rectForGroupSeparatorAtIndexPath:indexPath], _groupSeparatorInsets);
         }
-        separator.center = [self _centerForGroupSeparatorAtIndexPath:indexPath];
         [newVisibleGroupSeparators setObject:separator forKey:indexPath];
     }
     for (UIView *separator in [_visibleSeparators allValues])
@@ -821,13 +795,16 @@ const NSUInteger ECRelationalTableViewGroupPlaceholderBufferSize = 20;
     {
         UIView *placeholder = [_visiblePlaceholders objectForKey:indexPath];
         if (placeholder)
+        {
             [_visiblePlaceholders removeObjectForKey:indexPath];
+            placeholder.center = [self _centerForGroupPlaceholderAtIndexPath:indexPath];
+        }
         else
         {
             placeholder = [_groupPlaceholderCache pop];
             [self addSubview:placeholder];
+            placeholder.frame = UIEdgeInsetsInsetRect([self _rectForGroupPlaceholderAtIndexPath:indexPath], _groupPlaceholderInsets);
         }
-        placeholder.center = [self _centerForGroupPlaceholderAtIndexPath:indexPath];
         [newVisibleGroupPlaceholders setObject:placeholder forKey:indexPath];
     }
     for (UIView *placeholder in [_visiblePlaceholders allValues])
@@ -848,13 +825,14 @@ const NSUInteger ECRelationalTableViewGroupPlaceholderBufferSize = 20;
         if (cell)
         {
             [_visibleCells removeObjectForKey:indexPath];
+            cell.center = [self _centerForItemAtIndexPath:indexPath];
         }
         else
         {
             cell = [self loadCellForItemAtIndexPath:indexPath];
+            cell.frame = UIEdgeInsetsInsetRect([self rectForItemAtIndexPath:indexPath], _cellInsets);
             [self addSubview:cell];
         }
-        cell.center = [self _centerForItemAtIndexPath:indexPath];
         [newVisibleItems setObject:cell forKey:indexPath];
     }
     for (ECRelationalTableViewCell *cell in [_visibleCells allValues])
