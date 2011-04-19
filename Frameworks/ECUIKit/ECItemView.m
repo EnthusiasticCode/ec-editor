@@ -608,6 +608,57 @@ const NSUInteger ECItemViewGroupPlaceholderBufferSize = 20;
     return indexPaths;
 }
 
+- (NSArray *)indexPathsForVisibleItems
+{
+    CGRect bounds = self.bounds;
+    NSMutableArray *indexPaths = [NSMutableArray array];
+    NSUInteger numAreas = [self numberOfAreas];
+    for (NSUInteger i = 0; i < numAreas; ++i)
+    {
+        CGRect areaRect = [self rectForArea:i];
+        if (!CGRectIntersectsRect(bounds, areaRect))
+            continue;
+        NSUInteger numGroups = [self numberOfGroupsInArea:i];
+        for (NSUInteger j = 0; j < numGroups; ++j)
+        {
+            CGRect groupRect = [self rectForGroup:j inArea:i];
+            if (!CGRectIntersectsRect(bounds, groupRect))
+                continue;
+            NSUInteger numItems = [self numberOfItemsInGroup:j inArea:i];
+            for (NSUInteger k = 0; k < numItems; ++k)
+            {
+                CGRect itemRect = [self rectForItemAtIndexPath:[NSIndexPath indexPathForItem:k inGroup:j inArea:i]];
+                if (!CGRectIntersectsRect(bounds, itemRect))
+                    continue;
+                [indexPaths addObject:[NSIndexPath indexPathForItem:k inGroup:j inArea:i]];
+            }
+        }
+    }
+    return indexPaths;
+}
+
+- (NSArray *)visibleCells
+{
+    return [_visibleCells allValues];
+}
+
+- (ECItemViewCell *)cellForItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (!indexPath)
+        return nil;
+    return [_visibleCells objectForKey:indexPath];
+}
+
+- (NSIndexPath *)indexPathForCell:(ECItemViewCell *)cell
+{
+    if (!cell)
+        return nil;
+    for (NSIndexPath *indexPath in [_visibleCells allKeys])
+        if ([_visibleCells objectForKey:indexPath] == cell)
+            return indexPath;
+    return nil;
+}
+
 - (NSIndexPath *)indexPathForItemAtPoint:(CGPoint)point
 {
     static CGPoint cachedPoint = (CGPoint){CGFLOAT_MAX, CGFLOAT_MAX};
@@ -657,46 +708,58 @@ const NSUInteger ECItemViewGroupPlaceholderBufferSize = 20;
     return nil;
 }
 
-- (ECItemViewCell *)cellForItemAtIndexPath:(NSIndexPath *)indexPath
+- (NSIndexPath *)_proposedIndexPathForItemAtPoint:(CGPoint)point exists:(BOOL *)exists
 {
-    if (!indexPath)
-        return nil;
-    return [_visibleCells objectForKey:indexPath];
-}
-
-- (NSArray *)visibleCells
-{
-    return [_visibleCells allValues];
-}
-
-- (NSArray *)indexPathsForVisibleItems
-{
-    CGRect bounds = self.bounds;
-    NSMutableArray *indexPaths = [NSMutableArray array];
     NSUInteger numAreas = [self numberOfAreas];
     for (NSUInteger i = 0; i < numAreas; ++i)
     {
-        CGRect areaRect = [self rectForArea:i];
-        if (!CGRectIntersectsRect(bounds, areaRect))
+        CGRect areaRect = CGRectZero;
+        areaRect = [self rectForArea:i];
+        if (!CGRectContainsPoint(areaRect, point))
             continue;
         NSUInteger numGroups = [self numberOfGroupsInArea:i];
         for (NSUInteger j = 0; j < numGroups; ++j)
         {
-            CGRect groupRect = [self rectForGroup:j inArea:i];
-            if (!CGRectIntersectsRect(bounds, groupRect))
+            CGRect groupRect = CGRectZero;
+            groupRect = [self rectForGroup:j inArea:i];
+            if (!CGRectContainsPoint(UIEdgeInsetsInsetRect(groupRect, _groupInsets), point))
                 continue;
             NSUInteger numItems = [self numberOfItemsInGroup:j inArea:i];
-            for (NSUInteger k = 0; k < numItems; ++k)
+            for (NSUInteger k = 0; k < numItems; )
             {
-                CGRect itemRect = [self rectForItemAtIndexPath:[NSIndexPath indexPathForItem:k inGroup:j inArea:i]];
-                if (!CGRectIntersectsRect(bounds, itemRect))
-                    continue;
-                [indexPaths addObject:[NSIndexPath indexPathForItem:k inGroup:j inArea:i]];
+                CGRect itemRect = CGRectZero;
+                itemRect = [self rectForItemAtIndexPath:[NSIndexPath indexPathForItem:k inGroup:j inArea:i]];
+                if (CGRectContainsPoint(itemRect, point))
+                {
+                    *exists = YES;
+                    return [NSIndexPath indexPathForItem:k inGroup:j inArea:i];
+                }
+                if (itemRect.origin.y > point.y)
+                    break;
+                if (point.y > itemRect.origin.y + itemRect.size.height)
+                    k += [self columns];
+                else
+                    ++k;
             }
+            *exists = NO;
+            return [NSIndexPath indexPathForItem:numItems inGroup:j inArea:i];
         }
+        NSUInteger numPlaceholders = numGroups + 1;
+        for (NSUInteger j = 0; j < numPlaceholders; ++j)
+            if (CGRectContainsPoint([self _rectForGroupPlaceholderAtIndexPath:[NSIndexPath indexPathForPosition:j inArea:i]], point))
+            {
+                *exists = NO;
+                return [NSIndexPath indexPathForItem:0 inGroup:j inArea:i];
+            }
     }
-    return indexPaths;
+    *exists = NO;
+    return nil;
 }
+
+#pragma mark -
+#pragma mark Item insertion/deletion/reloading
+
+
 
 #pragma mark -
 #pragma mark Recycling
@@ -722,6 +785,7 @@ const NSUInteger ECItemViewGroupPlaceholderBufferSize = 20;
         {
             header = [_headerCache pop];
             [self addSubview:header];
+            [self sendSubviewToBack:header];
             header.text = [_headerTitles objectAtIndex:idx];
         }
         header.frame = UIEdgeInsetsInsetRect([self rectForHeaderInArea:idx], _headerInsets);
@@ -748,6 +812,7 @@ const NSUInteger ECItemViewGroupPlaceholderBufferSize = 20;
         {
             separator = [_groupSeparatorCache pop];
             [self addSubview:separator];
+            [self sendSubviewToBack:separator];
         }
         separator.frame = UIEdgeInsetsInsetRect([self _rectForGroupSeparatorAtIndexPath:indexPath], _groupSeparatorInsets);
         [newVisibleGroupSeparators setObject:separator forKey:indexPath];
@@ -773,6 +838,7 @@ const NSUInteger ECItemViewGroupPlaceholderBufferSize = 20;
         {
             placeholder = [_groupPlaceholderCache pop];
             [self addSubview:placeholder];
+            [self sendSubviewToBack:placeholder];
         }
         placeholder.frame = UIEdgeInsetsInsetRect([self _rectForGroupPlaceholderAtIndexPath:indexPath], _groupPlaceholderInsets);
         [newVisibleGroupPlaceholders setObject:placeholder forKey:indexPath];
@@ -800,6 +866,7 @@ const NSUInteger ECItemViewGroupPlaceholderBufferSize = 20;
         {
             cell = [self _loadCellForItemAtIndexPath:indexPath];
             [self addSubview:cell];
+            [self sendSubviewToBack:cell];
         }
         [newVisibleItems setObject:cell forKey:indexPath];
         if (_isDragging && _draggedItemIndexPath && indexPath.group == _draggedItemIndexPath.group && indexPath.area == _draggedItemIndexPath.area && indexPath.item > _draggedItemIndexPath.item)
@@ -901,6 +968,7 @@ const NSUInteger ECItemViewGroupPlaceholderBufferSize = 20;
     _dragDestinationIndexPath = [_draggedItemIndexPath retain];
     _draggedItem = [self cellForItemAtIndexPath:_draggedItemIndexPath];
     _draggedItem.center = [dragRecognizer locationInView:self];
+    [self bringSubviewToFront:_draggedItem];
 }
 
 - (void)_continueDrag:(UILongPressGestureRecognizer *)dragRecognizer
@@ -913,6 +981,7 @@ const NSUInteger ECItemViewGroupPlaceholderBufferSize = 20;
             _scrollTimer = [NSTimer timerWithTimeInterval:1.0/60.0 target:self selector:@selector(_handleTimer:) userInfo:nil repeats:YES];
             [[NSRunLoop mainRunLoop] addTimer:_scrollTimer forMode:NSDefaultRunLoopMode];
         }
+        return;
     }
     else if (_scrollTimer)
     {
@@ -932,7 +1001,19 @@ const NSUInteger ECItemViewGroupPlaceholderBufferSize = 20;
 
 - (void)_endDrag:(UILongPressGestureRecognizer *)dragRecognizer
 {
-    [self _cancelDrag:dragRecognizer];
+    _isDragging = NO;
+    [_scrollTimer invalidate];
+    _scrollTimer = nil;
+    [self setNeedsLayout];
+    [UIView animateConcurrentlyToAnimationsWithFlag:&_isAnimating duration:ECItemViewShortAnimationDuration animations:^(void) {
+        _draggedItem.frame = UIEdgeInsetsInsetRect([self rectForItemAtIndexPath:_draggedItemIndexPath], _cellInsets);
+        [self layoutIfNeeded];
+    } completion:NULL];
+    [_draggedItemIndexPath release];
+    _draggedItemIndexPath = nil;
+    [_dragDestinationIndexPath release];
+    _dragDestinationIndexPath = nil;
+    _draggedItem = nil;
 }
 
 - (void)_cancelDrag:(UILongPressGestureRecognizer *)dragRecognizer

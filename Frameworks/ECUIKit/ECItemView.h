@@ -63,11 +63,6 @@ typedef enum {
 - (void)itemView:(ECItemView *)itemView didSelectItemAtIndexPath:(NSIndexPath *)indexPath;
 - (void)itemView:(ECItemView *)itemView didDeselectItemAtIndexPath:(NSIndexPath *)indexPath;
 
-// Moving/reordering
-
-// Allows customization of the target item for a particular item as it is being moved/reordered
-- (NSIndexPath *)itemView:(ECItemView *)itemView targetIndexPathForMoveFromItemAtIndexPath:(NSIndexPath *)sourceIndexPath toProposedIndexPath:(NSIndexPath *)proposedDestinationIndexPath;
-
 @end
 
 @interface ECItemView : UIScrollView <UIGestureRecognizerDelegate>
@@ -107,13 +102,12 @@ typedef enum {
 - (CGRect)rectForItemAtIndexPath:(NSIndexPath *)indexPath;
 
 // Index paths
-- (NSIndexPath *)indexPathForItemAtPoint:(CGPoint)point;
-- (NSIndexPath *)indexPathForCell:(ECItemViewCell *)cell;
-- (NSArray *)indexPathsForItemsInRect:(CGRect)rect;
-- (ECItemViewCell *)cellForItemAtIndexPath:(NSIndexPath *)indexPath;
-
-- (NSArray *)visibleCells;
 - (NSArray *)indexPathsForVisibleItems;
+- (NSArray *)visibleCells;
+- (ECItemViewCell *)cellForItemAtIndexPath:(NSIndexPath *)indexPath;
+- (NSIndexPath *)indexPathForCell:(ECItemViewCell *)cell;
+- (NSIndexPath *)indexPathForItemAtPoint:(CGPoint)point;
+- (NSArray *)indexPathsForItemsInRect:(CGRect)rect;
 
 // Scrolling
 - (void)scrollToItemAtIndexPath:(NSIndexPath *)indexPath atScrollPosition:(ECItemViewScrollPosition)scrollPosition animated:(BOOL)animated;
