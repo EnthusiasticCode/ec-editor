@@ -233,8 +233,10 @@ typedef struct {
     }
 }
 
-- (void)enumerateLinesInStringRange:(NSRange)range usingBlock:(void (^)(CTLineRef, CGRect, NSRange, BOOL *))block
+- (void)enumerateLinesInStringRange:(NSRange)queryRange usingBlock:(void (^)(CTLineRef, CGRect, NSRange, BOOL *))block
 {
+    NSUInteger queryRangeEnd = queryRange.location + queryRange.length;
+    
     BOOL stop = NO;
     CFArrayRef lines = CTFrameGetLines(self.frame);
     CFIndex count = CFArrayGetCount(lines);
@@ -248,14 +250,20 @@ typedef struct {
     for (CFIndex i = 0; i < count; ++i)
     {
         CTLineRef line = CFArrayGetValueAtIndex(lines, i);
+        
+        stringRange = CTLineGetStringRange(line);
+        if (stringRange.location >= queryRangeEnd)
+            return;
+        
         width = CTLineGetTypographicBounds(line, &ascent, &descent, &leading);
         bounds = CGRectMake(0, currentY, width, ascent + descent + leading);
         
-        stringRange = CTLineGetStringRange(line);
-        
-        block(line, bounds, (NSRange){ stringRange.location, stringRange.length }, &stop);
+        if (stringRange.location + stringRange.length > queryRange.location) 
+        {
+            block(line, bounds, (NSRange){ stringRange.location, stringRange.length }, &stop);
+            if (stop) break;
+        }
 
-        if (stop) break;
         currentY += bounds.size.height;
     }
 }
@@ -522,7 +530,7 @@ typedef struct {
         if (stringOffset + segment.stringLength <= queryStringRange.location)
             return;
         
-        // Get relative point position to current semgnet
+        // Get relative positions to current semgnet
         CGPoint segmentRelativePoint = point;
         segmentRelativePoint.y -= positionOffset;
         
