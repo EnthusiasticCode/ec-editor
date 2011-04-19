@@ -524,7 +524,7 @@ typedef struct {
 
 - (NSUInteger)closestPositionToPoint:(CGPoint)point withinStringRange:(NSRange)queryStringRange
 {
-    NSUInteger queryStringRangeEnd = queryStringRange.location + queryStringRange.length;
+    __block NSUInteger result = 0;
     [self generateTextSegmentsAndEnumerateUsingBlock:^(TextSegment *segment, NSUInteger idx, NSUInteger lineOffset, NSUInteger stringOffset, CGFloat positionOffset, BOOL *stop) {
         // Skip segment if before required string range
         if (stringOffset + segment.stringLength <= queryStringRange.location)
@@ -533,8 +533,23 @@ typedef struct {
         // Get relative positions to current semgnet
         CGPoint segmentRelativePoint = point;
         segmentRelativePoint.y -= positionOffset;
+        NSRange segmentRelativeStringRange = queryStringRange;
+        segmentRelativeStringRange.location -= stringOffset;
         
+        [segment enumerateLinesInStringRange:segmentRelativeStringRange usingBlock:^(CTLineRef line, CGRect lineBounds, NSRange lineStringRange, BOOL *innerStop) {
+            // Skip lines before point
+            if (segmentRelativePoint.y >= lineBounds.origin.y + lineBounds.size.height)
+                return;
+            
+            result = CTLineGetStringIndexForPosition(line, segmentRelativePoint);
+            *stop = *innerStop = YES;
+        }];
+        
+        // Prepare result
+        if (*stop)
+            result += stringOffset;
     }];
+    return result;
 }
 
 - (CGRect)boundsOfLinesForStringRange:(NSRange)range
