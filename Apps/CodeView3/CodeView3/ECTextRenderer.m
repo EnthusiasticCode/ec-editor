@@ -254,13 +254,13 @@ typedef struct {
         CTLineRef line = CFArrayGetValueAtIndex(lines, i);
         
         stringRange = CTLineGetStringRange(line);
-        if (stringRange.location > queryRangeEnd)
+        if (stringRange.location >= queryRangeEnd)
             return;
         
         width = CTLineGetTypographicBounds(line, &ascent, &descent, &leading);
         bounds = CGRectMake(0, currentY, width, ascent + descent + leading);
         
-        if (stringRange.location + stringRange.length >= queryRange.location) 
+        if (stringRange.location + stringRange.length > queryRange.location) 
         {
             block(line, bounds, (NSRange){ stringRange.location, stringRange.length }, &stop);
             if (stop) break;
@@ -550,12 +550,19 @@ typedef struct {
                 return;
             
             result = CTLineGetStringIndexForPosition(line, segmentRelativePoint);
+            if (result == lineStringRange.location + lineStringRange.length)
+                result--;
             *stop = *innerStop = YES;
         }];
         
         // Prepare result offset
         if (!*stop && lastLine)
+        {
             result = CTLineGetStringIndexForPosition(lastLine, point);
+            CFRange lastLineRange = CTLineGetStringRange(lastLine);
+            if (result == lastLineRange.location + lastLineRange.length)
+                result--;
+        }
         result += stringOffset;
     }];
     return result;
