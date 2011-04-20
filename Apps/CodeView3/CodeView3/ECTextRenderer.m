@@ -322,6 +322,7 @@ typedef struct {
 {
     if (wrapWidth != width) 
     {
+        globalCache.segment = nil;
         wrapWidth = width;
         for (TextSegment *segment in textSegments) 
         {

@@ -210,6 +210,9 @@
         tileViewPool[i].bounds = (CGRect){ CGPointZero, frame.size };
     }
     
+    // Reposition selection
+    [self setSelectedTextRange:selectionView.selection notifyDelegate:NO];
+    
     [super setFrame:frame];
 }
 
@@ -368,13 +371,13 @@ static void init(ECCodeView4 *self)
     }
     
     // Layout selection caret
-    if ([self isFirstResponder] && selectionView.selection.length == 0)
-    {
-        CGRect caretRect = [self caretRectForPosition:selectionView.selectionPosition];
-        selectionView.frame = caretRect;
-        selectionView.hidden = NO;
-        [self bringSubviewToFront:selectionView];
-    }
+//    if ([self isFirstResponder] && selectionView.selection.length == 0)
+//    {
+//        CGRect caretRect = [self caretRectForPosition:selectionView.selectionPosition];
+//        selectionView.frame = caretRect;
+//        selectionView.hidden = NO;
+//        [self bringSubviewToFront:selectionView];
+//    }
 }
 
 #pragma mark -
@@ -927,11 +930,9 @@ static void init(ECCodeView4 *self)
 
 - (void)setSelectedTextRange:(NSRange)newSelection notifyDelegate:(BOOL)shouldNotify
 {
-    if (NSEqualRanges(selectionView.selection, newSelection))
+    if (shouldNotify && NSEqualRanges(selectionView.selection, newSelection))
         return;
-    
-    // TODO selectionDirtyRect 
-    
+
     //    if (newSelection && (![newSelection isEmpty])) // TODO or solid caret
     //        [self setNeedsDisplayInRange:newSelection];
     
@@ -943,7 +944,15 @@ static void init(ECCodeView4 *self)
     if (shouldNotify)
         [inputDelegate selectionDidChange:self];
     
-    [self setNeedsLayout];
+    // Position selection view
+    // TODO multiselection
+    if ([self isFirstResponder] && selectionView.selection.length == 0)
+    {
+        CGRect caretRect = [self caretRectForPosition:selectionView.selectionPosition];
+        selectionView.frame = caretRect;
+        selectionView.hidden = NO;
+        [self bringSubviewToFront:selectionView];
+    }
 }
 
 - (void)setSelectedIndex:(NSUInteger)index
@@ -1023,6 +1032,10 @@ static void init(ECCodeView4 *self)
         [tileViewPool[i] invalidate];
         tileViewPool[i].bounds = (CGRect){ CGPointZero, bounds.size };
     }
+    
+    // Update selection
+    // TODO resume saved selection
+    [self setSelectedTextRange:(NSRange){ 0, 0 } notifyDelegate:NO];
     
     [self setNeedsLayout];
 }
