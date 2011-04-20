@@ -18,8 +18,8 @@
 
 - (void)setUpClass
 {
-    filePathA = [NSTemporaryDirectory() stringByAppendingPathComponent:@"a.txt"];
-    filePathB = [NSTemporaryDirectory() stringByAppendingPathComponent:@"b.txt"];
+    filePathA = [[NSTemporaryDirectory() stringByAppendingPathComponent:@"a.txt"] retain];
+    filePathB = [[NSTemporaryDirectory() stringByAppendingPathComponent:@"b.txt"] retain];
     [@"1234567890" writeToFile:filePathA atomically:NO encoding:NSUTF8StringEncoding error:NULL];
 }
 
