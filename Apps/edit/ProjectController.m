@@ -110,6 +110,11 @@
     return file;
 }
 
+- (NSUInteger)itemView:(ECItemView *)itemView numberOfGroupsInArea:(NSUInteger)area
+{
+    return ([[[self.files allValues] objectAtIndex:area] count] > 0);
+}
+
 - (NSUInteger)itemView:(ECItemView *)itemView numberOfItemsInGroup:(NSUInteger)group inArea:(NSUInteger)area
 {
     return [[[self.files allValues] objectAtIndex:area] count];

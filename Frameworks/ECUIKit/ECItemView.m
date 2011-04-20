@@ -174,6 +174,7 @@ const NSUInteger ECItemViewGroupSeparatorBufferSize = 20;
         } completion:NULL];
     }
     CGRect lastAreaFrame = [self rectForArea:[self numberOfAreas] - 1];
+    // TODO: when entering / exiting editing mode, keep scroll position stable
     self.contentSize = CGSizeMake(self.bounds.size.width, lastAreaFrame.origin.y + lastAreaFrame.size.height);
     [self didChangeValueForKey:@"editing"];   
 }
@@ -265,7 +266,7 @@ const NSUInteger ECItemViewGroupSeparatorBufferSize = 20;
         if (_flags.dataSourceTitleForHeaderInArea)
             headerTitle = [_dataSource itemView:self titleForHeaderInArea:i];
         [_headerTitles addObject:headerTitle];
-        NSUInteger numGroups = 1;
+        NSUInteger numGroups = 0;
         if (_flags.dataSourceNumberOfGroupsInArea)
             numGroups = [_dataSource itemView:self numberOfGroupsInArea:i];
         NSMutableArray *groups = [NSMutableArray arrayWithCapacity:numGroups];
@@ -342,11 +343,6 @@ const NSUInteger ECItemViewGroupSeparatorBufferSize = 20;
 {
     CGFloat x = 0;
     CGFloat y = 0;
-    static NSUInteger cachedArea = NSUIntegerMax;
-    static BOOL cachedIsEditing;
-    static CGRect cachedAreaRect;
-    if (area == cachedArea && _isEditing == cachedIsEditing)
-        return cachedAreaRect;
     if (area)
     {
         CGRect previousAreaRect = [self rectForArea:area - 1];
@@ -357,10 +353,7 @@ const NSUInteger ECItemViewGroupSeparatorBufferSize = 20;
     NSUInteger numGroups = [self numberOfGroupsInArea:area];
     for (NSUInteger j = 0; j < numGroups; ++j)
         height += [self _heightForGroup:j inArea:area];
-    cachedArea = area;
-    cachedIsEditing = _isEditing;
-    cachedAreaRect = CGRectMake(x, y, width, height);
-    return cachedAreaRect;
+    return CGRectMake(x, y, width, height);
 }
 
 - (CGFloat)_heightForGroup:(NSUInteger)group inArea:(NSUInteger)area
@@ -403,12 +396,6 @@ const NSUInteger ECItemViewGroupSeparatorBufferSize = 20;
 
 - (CGRect)rectForGroup:(NSUInteger)group inArea:(NSUInteger)area
 {
-    static NSUInteger cachedGroup = NSUIntegerMax;
-    static NSUInteger cachedArea = NSUIntegerMax;
-    static BOOL cachedIsEditing;
-    static CGRect cachedGroupRect;
-    if (group == cachedGroup && area == cachedArea && _isEditing == cachedIsEditing)
-        return cachedGroupRect;
     CGRect areaRect = [self rectForArea:area];
     CGFloat x = areaRect.origin.x;
     CGFloat y = areaRect.origin.y + _headerHeight;
@@ -422,52 +409,23 @@ const NSUInteger ECItemViewGroupSeparatorBufferSize = 20;
     }
     CGFloat width = areaRect.size.width;
     CGFloat height = [self _heightForGroup:group inArea:area];
-    cachedArea = area;
-    cachedGroup = group;
-    cachedIsEditing = _isEditing;
-    cachedGroupRect = CGRectMake(x, y, width, height);
-    return cachedGroupRect;
+    return CGRectMake(x, y, width, height);
 }
 
 - (CGRect)rectForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    static NSUInteger cachedItem = NSUIntegerMax;
-    static NSUInteger cachedGroup = NSUIntegerMax;
-    static NSUInteger cachedArea = NSUIntegerMax;
-    static BOOL cachedIsEditing;
-    static CGRect cachedItemRect;
     if (!indexPath)
         return CGRectZero;
-    if (indexPath.item == cachedItem && indexPath.group == cachedGroup && indexPath.area == cachedArea && _isEditing == cachedIsEditing)
-        return cachedItemRect;
     CGFloat x = 0;
     CGFloat y = 0;
-    if (indexPath.group == cachedGroup && indexPath.area == cachedArea)
-    {
-        NSInteger cachedItemRow = cachedItem / [self columns];
-        NSInteger cachedItemColumn = cachedItem % [self columns];
-        NSInteger itemRow = indexPath.item / [self columns];
-        NSInteger itemColumn = indexPath.item % [self columns];
-        x = cachedItemRect.origin.x + (itemColumn - cachedItemColumn) * _cellSize.width;
-        y = cachedItemRect.origin.y + (itemRow - cachedItemRow) * _cellSize.height;
-        cachedItemRect = CGRectMake(x, y, cachedItemRect.size.width, cachedItemRect.size.height);
-    }
-    else
-    {
-        CGRect groupRect = [self rectForGroup:indexPath.group inArea:indexPath.area];
-        x = groupRect.origin.x;
-        y = groupRect.origin.y;
-        NSUInteger row = indexPath.item / [self columns];
-        NSUInteger column = indexPath.item % [self columns];
-        x += column * _cellSize.width;
-        y += row * _cellSize.height;
-        cachedItemRect = CGRectMake(x, y, _cellSize.width, _cellSize.height);
-    }
-    cachedArea = indexPath.area;
-    cachedGroup = indexPath.group;
-    cachedItem = indexPath.item;
-    cachedIsEditing = _isEditing;
-    return cachedItemRect;
+    CGRect groupRect = [self rectForGroup:indexPath.group inArea:indexPath.area];
+    x = groupRect.origin.x;
+    y = groupRect.origin.y;
+    NSUInteger row = indexPath.item / [self columns];
+    NSUInteger column = indexPath.item % [self columns];
+    x += column * _cellSize.width;
+    y += row * _cellSize.height;
+    return CGRectMake(x, y, _cellSize.width, _cellSize.height);
 }
 
 #pragma mark -

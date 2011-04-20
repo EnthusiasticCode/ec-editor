@@ -30,7 +30,7 @@ typedef enum {
 
 - (NSUInteger)numberOfAreasInTableView:(ECItemView *)itemView;              // Default is 1 if not implemented
 
-// Returns the maximum depth of items in the area, defaults to 1
+// Returns the maximum depth of items in the area, defaults to 0
 - (NSUInteger)itemView:(ECItemView *)itemView numberOfGroupsInArea:(NSUInteger)area;
 
 - (NSString *)itemView:(ECItemView *)itemView titleForHeaderInArea:(NSUInteger)area;    // fixed font style. use custom view (UILabel) if you want something different
