@@ -97,17 +97,55 @@
 @end
 
 #pragma mark -
+#pragma mark TextSelectionView
+
+@interface TextSelectionView : UIView {
+@private
+    
+}
+
+@property (nonatomic) NSRange selection;
+@property (nonatomic, readonly) ECTextRange *selectionRange;
+@property (nonatomic, readonly) ECTextPosition *selectionPosition;
+
+@end
+
+
+@implementation TextSelectionView
+
+@synthesize selection;
+
+- (ECTextRange *)selectionRange
+{
+    return [[[ECTextRange alloc] initWithRange:selection] autorelease];
+}
+
+- (ECTextPosition *)selectionPosition
+{
+    return [[[ECTextPosition alloc] initWithIndex:selection.location] autorelease];
+}
+
+@end
+
+#pragma mark -
+#pragma mark -
 #pragma mark ECCodeView4
 
 @interface ECCodeView4 () {
 @private
+    // Tileing and rendering management
     ECTextRenderer *renderer;
-    
     TextTileView* tileViewPool[TILEVIEWPOOL_SIZE];
     
-    ECTextRange *selection;
+    // Text management
+    TextSelectionView *selectionView;
     NSRange markedRange;
     
+    // Recognizers
+    UITapGestureRecognizer *focusRecognizer;
+    UITapGestureRecognizer *tapRecognizer;
+    
+    // Flags
     BOOL dataSourceHasCodeCanEditTextInRange;
 }
 
@@ -117,13 +155,17 @@
 - (void)editDataSourceInRange:(NSRange)range withString:(NSString *)string;
 
 /// Support method to set the selection and notify the input delefate.
-- (void)setSelectedTextRange:(ECTextRange *)newSelection notifyDelegate:(BOOL)shouldNotify;
+- (void)setSelectedTextRange:(NSRange)newSelection notifyDelegate:(BOOL)shouldNotify;
 
 /// Convinience method to set the selection to an index location.
 - (void)setSelectedIndex:(NSUInteger)index;
 
 /// Helper method to set the selection starting from two points.
 - (void)setSelectedTextFromPoint:(CGPoint)fromPoint toPoint:(CGPoint)toPoint;
+
+// Gestures handlers
+- (void)handleGestureFocus:(UITapGestureRecognizer *)recognizer;
+- (void)handleGestureTap:(UITapGestureRecognizer *)recognizer;
 
 @end
 
@@ -200,6 +242,20 @@ static void init(ECCodeView4 *self)
     
     self->renderer.wrapWidth = UIEdgeInsetsInsetRect(self.bounds, self->textInsets).size.width;
     [self->renderer addObserver:self forKeyPath:@"estimatedHeight" options:NSKeyValueObservingOptionNew context:nil];
+    
+    // Adding selection view
+    self->selectionView = [TextSelectionView new];
+    [self->selectionView setHidden:YES];
+    [self->selectionView setBackgroundColor:[UIColor redColor]];
+    [self->selectionView setOpaque:YES];
+    [self addSubview:self->selectionView];
+    [self->selectionView release];
+    
+    // Adding focus recognizer
+    self->focusRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleGestureFocus:)];
+    [self->focusRecognizer setNumberOfTapsRequired:1];
+    [self addGestureRecognizer:self->focusRecognizer];
+    [self->focusRecognizer release];
 }
 
 - (id)initWithFrame:(CGRect)frame
@@ -310,6 +366,15 @@ static void init(ECCodeView4 *self)
         secondTile.hidden = NO;
         secondTile.center = CGPointMake(CGRectGetMidX(contentRect), firstTileEnd + halfHeight);
     }
+    
+    // Layout selection caret
+    if ([self isFirstResponder] && selectionView.selection.length == 0)
+    {
+        CGRect caretRect = [self caretRectForPosition:selectionView.selectionPosition];
+        selectionView.frame = caretRect;
+        selectionView.hidden = NO;
+        [self bringSubviewToFront:selectionView];
+    }
 }
 
 #pragma mark -
@@ -325,29 +390,26 @@ static void init(ECCodeView4 *self)
 {
     BOOL shouldBecomeFirstResponder = [super becomeFirstResponder];
     
-    //    // Lazy create recognizers
-    //    if (!tapRecognizer && shouldBecomeFirstResponder)
-    //    {
-    //        tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleGestureTap:)];
-    //        [self addGestureRecognizer:tapRecognizer];
-    //        [tapRecognizer release];
-    //        
-    //        // TODO initialize gesture recognizers
-    //    }
-    //    
-    //    // Activate recognizers
-    //    if (shouldBecomeFirstResponder)
-    //    {
-    //        focusRecognizer.enabled = NO;
-    //        tapRecognizer.enabled = YES;
-    //        //        doubleTapRecognizer.enabled = YES;
-    //        //        tapHoldRecognizer.enabled = YES;
-    //    }
+    // Lazy create recognizers
+    if (!tapRecognizer && shouldBecomeFirstResponder)
+    {
+        tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleGestureTap:)];
+        [self addGestureRecognizer:tapRecognizer];
+        [tapRecognizer release];
+        
+        // TODO initialize gesture recognizers
+    }
+    
+    // Activate recognizers
+    if (shouldBecomeFirstResponder)
+    {
+        focusRecognizer.enabled = NO;
+        tapRecognizer.enabled = YES;
+        //        doubleTapRecognizer.enabled = YES;
+        //        tapHoldRecognizer.enabled = YES;
+    }
     
     [self setNeedsLayout];
-    
-    if (selection)
-        [self setNeedsDisplay];
     
     return shouldBecomeFirstResponder;   
 }
@@ -356,21 +418,17 @@ static void init(ECCodeView4 *self)
 {
     BOOL shouldResignFirstResponder = [super resignFirstResponder];
     
-    //    if (![self isFirstResponder])
-    //    {
-    //        focusRecognizer.enabled = YES;
-    //        tapRecognizer.enabled = NO;
-    //        //        doubleTapRecognizer.enabled = NO;
-    //        //        tapHoldRecognizer.enabled = NO;
-    //        
-    //        // TODO remove thumbs
-    //    }
+    if (![self isFirstResponder])
+    {
+        focusRecognizer.enabled = YES;
+        tapRecognizer.enabled = NO;
+        //        doubleTapRecognizer.enabled = NO;
+        //        tapHoldRecognizer.enabled = NO;
+        
+        // TODO remove thumbs
+    }
     
     [self setNeedsLayout];
-    
-    // TODO clear selection layer
-    if (selection)
-        [self setNeedsDisplay];
     
     // TODO call delegate's endediting
     
@@ -388,24 +446,24 @@ static void init(ECCodeView4 *self)
 - (void)insertText:(NSString *)string
 {
     // Select insertion range
-    NSUInteger textLength = [datasource textLength];
-    NSRange insertRange;
-    if (!selection)
-    {
-        insertRange = (NSRange){ textLength, 0 };
-    }
-    else
-    {
-        NSUInteger s = ((ECTextPosition*)selection.start).index;
-        NSUInteger e = ((ECTextPosition*)selection.end).index;
-        if (s > textLength)
-            s = textLength;
-        if (e > textLength)
-            e = textLength;
-        if (e < s)
-            return;
-        insertRange = (NSRange){ s, e - s };
-    }
+//    NSUInteger textLength = [datasource textLength];
+    NSRange insertRange = selectionView.selection;
+//    if (!selection)
+//    {
+//        insertRange = (NSRange){ textLength, 0 };
+//    }
+//    else
+//    {
+//        NSUInteger s = ((ECTextPosition*)selection.start).index;
+//        NSUInteger e = ((ECTextPosition*)selection.end).index;
+//        if (s > textLength)
+//            s = textLength;
+//        if (e > textLength)
+//            e = textLength;
+//        if (e < s)
+//            return;
+//        insertRange = (NSRange){ s, e - s };
+//    }
     
     // TODO check if char is space and autocomplete
     
@@ -543,7 +601,7 @@ static void init(ECCodeView4 *self)
 
 - (UITextRange *)selectedTextRange
 {
-    return selection;
+    return selectionView.selectionRange;
 }
 
 - (void)setSelectedTextRange:(UITextRange *)selectedTextRange
@@ -552,7 +610,7 @@ static void init(ECCodeView4 *self)
     
     [self unmarkText];
     
-    [self setSelectedTextRange:(ECTextRange *)selectedTextRange notifyDelegate:YES];
+    [self setSelectedTextRange:[(ECTextRange *)selectedTextRange range] notifyDelegate:YES];
 }
 
 @synthesize markedTextStyle;
@@ -568,19 +626,20 @@ static void init(ECCodeView4 *self)
 - (void)setMarkedText:(NSString *)markedText selectedRange:(NSRange)selectedRange
 {
     NSRange replaceRange;
-    NSUInteger textLength = [self textLength];
+//    NSUInteger textLength = [self textLength];
     
     if (markedRange.length == 0)
     {
-        if (selection)
-        {
-            replaceRange = [selection range];
-        }
-        else
-        {
-            replaceRange.location = textLength;
-            replaceRange.length = 0;
-        }
+        replaceRange = selectionView.selection;
+//        if (selection)
+//        {
+//            replaceRange = [selection range];
+//        }
+//        else
+//        {
+//            replaceRange.location = textLength;
+//            replaceRange.length = 0;
+//        }
     }
     else
     {
@@ -603,9 +662,7 @@ static void init(ECCodeView4 *self)
     }
     
     [self willChangeValueForKey:@"markedTextRange"];
-    ECTextRange *newSelection = [[ECTextRange alloc] initWithRange:newSelectionRange];
-    [self setSelectedTextRange:newSelection notifyDelegate:NO];
-    [newSelection release];
+    [self setSelectedTextRange:newSelectionRange notifyDelegate:NO];
     markedRange = (NSRange){replaceRange.location, markedTextLength};
     [self didChangeValueForKey:@"markedTextRange"];
 }
@@ -809,6 +866,9 @@ static void init(ECCodeView4 *self)
     NSUInteger pos = ((ECTextPosition *)position).index;
     CGRect carretRect = [renderer boundsForStringRange:(NSRange){pos, 0} limitToFirstLine:YES];
     
+    carretRect.origin.x += textInsets.left;
+    carretRect.origin.y += textInsets.top;
+    
     carretRect.origin.x -= 1.0;
     carretRect.size.width = 2.0;
     
@@ -865,12 +925,9 @@ static void init(ECCodeView4 *self)
     }
 }
 
-- (void)setSelectedTextRange:(ECTextRange *)newSelection notifyDelegate:(BOOL)shouldNotify
+- (void)setSelectedTextRange:(NSRange)newSelection notifyDelegate:(BOOL)shouldNotify
 {
-    if (selection == newSelection)
-        return;
-    
-    if (newSelection && selection && [newSelection isEqual:selection])
+    if (NSEqualRanges(selectionView.selection, newSelection))
         return;
     
     // TODO selectionDirtyRect 
@@ -881,8 +938,7 @@ static void init(ECCodeView4 *self)
     if (shouldNotify)
         [inputDelegate selectionWillChange:self];
     
-    [selection release];
-    selection = [newSelection retain];
+    selectionView.selection = newSelection;
     
     if (shouldNotify)
         [inputDelegate selectionDidChange:self];
@@ -892,9 +948,7 @@ static void init(ECCodeView4 *self)
 
 - (void)setSelectedIndex:(NSUInteger)index
 {
-    ECTextRange *range = [[ECTextRange alloc] initWithRange:(NSRange){index, 0}];
-    [self setSelectedTextRange:range notifyDelegate:NO];
-    [range release];
+    [self setSelectedTextRange:(NSRange){index, 0} notifyDelegate:NO];
 }
 
 - (void)setSelectedTextFromPoint:(CGPoint)fromPoint toPoint:(CGPoint)toPoint
@@ -925,6 +979,21 @@ static void init(ECCodeView4 *self)
             [tileViewPool[i] setNeedsDisplay];
         }
     }
+}
+
+#pragma mark -
+#pragma mark Gesture Recognizers and Interaction
+
+- (void)handleGestureFocus:(UITapGestureRecognizer *)recognizer
+{
+    [self becomeFirstResponder];
+    [self handleGestureTap:recognizer];
+}
+
+- (void)handleGestureTap:(UITapGestureRecognizer *)recognizer
+{
+    CGPoint tapPoint = [recognizer locationInView:self];
+    [self setSelectedTextFromPoint:tapPoint toPoint:tapPoint];
 }
 
 #pragma mark -

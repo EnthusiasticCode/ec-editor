@@ -235,7 +235,9 @@ typedef struct {
 
 - (void)enumerateLinesInStringRange:(NSRange)queryRange usingBlock:(void (^)(CTLineRef, CGRect, NSRange, BOOL *))block
 {
-    NSUInteger queryRangeEnd = queryRange.location + queryRange.length;
+    NSUInteger queryRangeEnd = NSUIntegerMax;
+    if (queryRange.length > 0)
+        queryRangeEnd = queryRange.location + queryRange.length;
     
     BOOL stop = NO;
     CFArrayRef lines = CTFrameGetLines(self.frame);
