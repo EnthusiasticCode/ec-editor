@@ -35,15 +35,15 @@
     return self;
 }
 
-- (BOOL)readFromURL:(NSURL *)fileURL ofType:(NSString *)fileType error:(NSError **)error
+- (BOOL)readFromPath:(NSString *)path error:(NSError **)error
 {
-    self.text = [NSString stringWithContentsOfURL:fileURL encoding:NSUTF8StringEncoding error:error];
+    self.text = [NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:error];
     return YES;
 }
 
-- (BOOL)writeToURL:(NSURL *)fileURL ofType:(NSString *)fileType error:(NSError **)error
+- (BOOL)writeToPath:(NSString *)path error:(NSError **)error
 {
-    [self.text writeToURL:fileURL atomically:NO encoding:NSUTF8StringEncoding error:error];
+    [self.text writeToFile:path atomically:NO encoding:NSUTF8StringEncoding error:error];
     return YES;
 }
 

@@ -148,7 +148,6 @@
 		B70C5C1A135F20B4001C35A5 /* ECSelectionHandleView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECSelectionHandleView.m; sourceTree = "<group>"; };
 		B70C5C1B135F20B4001C35A5 /* ECTextDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECTextDocument.h; sourceTree = "<group>"; };
 		B70C5C1C135F20B4001C35A5 /* ECTextDocument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECTextDocument.m; sourceTree = "<group>"; };
-		B70C5C1D135F20B4001C35A5 /* ECTextDocumentTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECTextDocumentTest.m; sourceTree = "<group>"; };
 		B70C5C1E135F20B4001C35A5 /* ECTextLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECTextLayer.h; sourceTree = "<group>"; };
 		B70C5C1F135F20B4001C35A5 /* ECTextLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECTextLayer.m; sourceTree = "<group>"; };
 		B70C5C20135F20B4001C35A5 /* ECTextOverlayLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECTextOverlayLayer.h; sourceTree = "<group>"; };
@@ -343,7 +342,6 @@
 				B70C5C1A135F20B4001C35A5 /* ECSelectionHandleView.m */,
 				B70C5C1B135F20B4001C35A5 /* ECTextDocument.h */,
 				B70C5C1C135F20B4001C35A5 /* ECTextDocument.m */,
-				B70C5C1D135F20B4001C35A5 /* ECTextDocumentTest.m */,
 				B70C5C1E135F20B4001C35A5 /* ECTextLayer.h */,
 				B70C5C1F135F20B4001C35A5 /* ECTextLayer.m */,
 				B70C5C20135F20B4001C35A5 /* ECTextOverlayLayer.h */,
