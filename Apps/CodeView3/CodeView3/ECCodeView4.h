@@ -24,6 +24,12 @@
 /// Insets of the text.
 @property (nonatomic) UIEdgeInsets textInsets;
 
+/// Invalidate the text making the receiver redraw it.
+- (void)updateAllText;
+
+/// Invalidate a particular section of the text making the reveiver redraw it.
+- (void)updateTextInLineRange:(NSRange)originalRange toLineRange:(NSRange)newRange;
+
 #pragma mark UITextInput Properties
 
 /// An input delegate that is notified when text changes or when the selection changes.

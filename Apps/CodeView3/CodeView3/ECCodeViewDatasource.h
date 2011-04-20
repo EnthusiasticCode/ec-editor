@@ -29,7 +29,7 @@
 
 /// Commit a change for the given range with the given string.
 /// The datasource is responsible for calling one of the update methods of the 
-/// renderer after the text has been changed.
+/// codeview after the text has been changed.
 - (void)codeView:(ECCodeView4 *)codeView commitString:(NSString *)string forTextInRange:(NSRange)range;
 
 @optional

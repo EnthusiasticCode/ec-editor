@@ -133,6 +133,8 @@
 
 @interface ECCodeView4 () {
 @private
+    NSMutableAttributedString *text;
+    
     // Tileing and rendering management
     ECTextRenderer *renderer;
     TextTileView* tileViewPool[TILEVIEWPOOL_SIZE];
@@ -378,6 +380,16 @@ static void init(ECCodeView4 *self)
 //        selectionView.hidden = NO;
 //        [self bringSubviewToFront:selectionView];
 //    }
+}
+
+- (void)updateAllText
+{
+    [renderer updateAllText];
+}
+
+- (void)updateTextInLineRange:(NSRange)originalRange toLineRange:(NSRange)newRange
+{
+    [renderer updateTextInLineRange:originalRange toLineRange:newRange];
 }
 
 #pragma mark -
@@ -1006,7 +1018,7 @@ static void init(ECCodeView4 *self)
 }
 
 #pragma mark -
-#pragma mark Text Renderer String Datasource
+#pragma mark Text Renderer and CodeView String Datasource
 
 @synthesize text;
 
@@ -1040,6 +1052,9 @@ static void init(ECCodeView4 *self)
     [self setNeedsLayout];
 }
 
+
+#pragma mark CodeView Datasouce
+
 - (NSUInteger)textLength
 {
     return [text length];
@@ -1049,6 +1064,36 @@ static void init(ECCodeView4 *self)
 {
     return [[text string] substringWithRange:range];
 }
+
+- (BOOL)codeView:(ECCodeView4 *)codeView canEditTextInRange:(NSRange)range
+{
+    return codeView == self;
+}
+
+- (void)codeView:(ECCodeView4 *)codeView commitString:(NSString *)string forTextInRange:(NSRange)range
+{
+    // Original line range to modify
+//    NSArray *lines = [[text string] componentsSeparatedByString:@"\n"];
+//    if (!lines || [lines count] == 0 || [lines count] <= range.location)
+//        return;
+//    NSRange originalLineRange = NSMakeRange(0, 0);
+//    
+    
+    // Editing
+    [text beginEditing];
+    if (!string || [string length] == 0)
+        [text deleteCharactersInRange:range];
+    else
+        [text replaceCharactersInRange:range withString:string];
+    [text endEditing];
+    
+    // Modified line range
+//    lines = [[text string] componentsSeparatedByString:@"\n"];
+  
+    [codeView updateAllText];
+}
+
+#pragma mark TextRenderer Datasource
 
 - (NSAttributedString *)textRenderer:(ECTextRenderer *)sender stringInLineRange:(NSRange *)lineRange
 {
@@ -1080,6 +1125,7 @@ static void init(ECCodeView4 *self)
     charRange.length--;
     (*lineRange).length = lineCount;
     
+    // TODO!!! add tailing newline
     if (charRange.length == [text length]) 
     {
         return text;
