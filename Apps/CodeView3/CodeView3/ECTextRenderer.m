@@ -254,13 +254,13 @@ typedef struct {
         CTLineRef line = CFArrayGetValueAtIndex(lines, i);
         
         stringRange = CTLineGetStringRange(line);
-        if (stringRange.location >= queryRangeEnd)
+        if (stringRange.location > queryRangeEnd)
             return;
         
         width = CTLineGetTypographicBounds(line, &ascent, &descent, &leading);
         bounds = CGRectMake(0, currentY, width, ascent + descent + leading);
         
-        if (stringRange.location + stringRange.length > queryRange.location) 
+        if (stringRange.location + stringRange.length >= queryRange.location) 
         {
             block(line, bounds, (NSRange){ stringRange.location, stringRange.length }, &stop);
             if (stop) break;
@@ -566,7 +566,7 @@ typedef struct {
     __block CGRect result = CGRectNull;
     [self generateTextSegmentsAndEnumerateUsingBlock:^(TextSegment *segment, NSUInteger idx, NSUInteger lineOffset, NSUInteger stringOffset, CGFloat positionOffset, BOOL *stop) {
         // Skip segment if before required string range
-        if (stringOffset + segment.stringLength <= queryStringRange.location)
+        if (stringOffset + segment.stringLength < queryStringRange.location)
             return;
         
         // Get relative positions to current semgnet
@@ -586,7 +586,7 @@ typedef struct {
             }
             
             // Query range end inside this line
-            if (segmentRelativeStringRangeEnd < lineStringRange.location + lineStringRange.length) 
+            if (segmentRelativeStringRangeEnd <= lineStringRange.location + lineStringRange.length) 
             {
                 CGFloat offset = CTLineGetOffsetForStringIndex(line, segmentRelativeStringRangeEnd, NULL);
                 lineBounds.size.width = offset - lineBounds.origin.x;
