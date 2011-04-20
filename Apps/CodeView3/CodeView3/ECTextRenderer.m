@@ -537,7 +537,10 @@ typedef struct {
         CGPoint segmentRelativePoint = point;
         segmentRelativePoint.y -= positionOffset;
         NSRange segmentRelativeStringRange = queryStringRange;
-        segmentRelativeStringRange.location -= stringOffset;
+        if (queryStringRange.length > 0) 
+            segmentRelativeStringRange = NSIntersectionRange(queryStringRange, (NSRange){ stringOffset, segment.stringLength });
+        else if (queryStringRange.location >= stringOffset)
+            segmentRelativeStringRange.location -= stringOffset;
         
         [segment enumerateLinesInStringRange:segmentRelativeStringRange usingBlock:^(CTLineRef line, CGRect lineBounds, NSRange lineStringRange, BOOL *innerStop) {
             lastLine = line;
@@ -550,11 +553,11 @@ typedef struct {
             *stop = *innerStop = YES;
         }];
         
-        // Prepare result
-        if (*stop)
-            result += stringOffset;
+        // Prepare result offset
+        if (!*stop && lastLine)
+            result = CTLineGetStringIndexForPosition(lastLine, point);
+        result += stringOffset;
     }];
-    // TODO!!! use lastline to compute result in case of 0
     return result;
 }
 
