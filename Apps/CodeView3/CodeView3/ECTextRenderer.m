@@ -446,8 +446,6 @@ typedef struct {
     }
 }
 
-#pragma mark Public Outtake Methods
-
 - (void)enumerateLinesIntersectingRect:(CGRect)rect usingBlock:(void (^)(CTLineRef, CGRect, CGFloat, BOOL *))block
 {
     if (CGRectIsNull(rect) || CGRectIsEmpty(rect)) 
@@ -496,6 +494,8 @@ typedef struct {
             *stop = YES;
     }];
 }
+
+#pragma mark Public Outtake Methods
 
 // TODO keep a single frame cached for all segment. if needed by this function
 // use it. keep alway and only the last used frame. if the cached one is in the

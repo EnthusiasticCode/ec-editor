@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "ECCodeViewDataSource.h"
 
+
 @interface ECCodeView4 : UIScrollView <UIKeyInput, UITextInputTraits, UITextInput, ECCodeViewDataSource>
 
 /// The datasource for the text displayed by the code view. Default is self.

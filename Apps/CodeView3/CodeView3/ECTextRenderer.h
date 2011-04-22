@@ -91,4 +91,8 @@
 /// otherwhise it will be a bounding box of the union of lines interested by the range.
 - (CGRect)boundsForStringRange:(NSRange)range limitToFirstLine:(BOOL)limit;
 
+/// Provide a way to retrieve a relative position in a certian direction from a 
+/// given start location. This method will only compute layout oriented movements.
+//- (NSUInteger)stringLocationFromLocation:(NSUInteger)startLocation inDirection:(UITextLayoutDirection)direction offset:(NSInteger)offset;
+
 @end

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CD0BEDA413604B8B004A67FC /* ECCodePosition.m in Sources */ = {isa = PBXBuildFile; fileRef = CD0BEDA313604B8B004A67FC /* ECCodePosition.m */; };
 		CD83D6C813599126008307A6 /* ECTextRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = CD83D6C713599126008307A6 /* ECTextRenderer.m */; };
 		CD887D8013530DDF00332BAC /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD887D7F13530DDF00332BAC /* UIKit.framework */; };
 		CD887D8213530DDF00332BAC /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD887D8113530DDF00332BAC /* Foundation.framework */; };
@@ -36,6 +37,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		CD0BEDA213604B8B004A67FC /* ECCodePosition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodePosition.h; sourceTree = "<group>"; };
+		CD0BEDA313604B8B004A67FC /* ECCodePosition.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodePosition.m; sourceTree = "<group>"; };
 		CD55961E135DC42A0058B30F /* ECCodeViewDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeViewDelegate.h; sourceTree = "<group>"; };
 		CD83D6C613599126008307A6 /* ECTextRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECTextRenderer.h; sourceTree = "<group>"; };
 		CD83D6C713599126008307A6 /* ECTextRenderer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECTextRenderer.m; sourceTree = "<group>"; };
@@ -212,6 +215,8 @@
 				CD55961E135DC42A0058B30F /* ECCodeViewDelegate.h */,
 				CD887DD61354C14600332BAC /* ECCodeView4.h */,
 				CD887DD71354C14600332BAC /* ECCodeView4.m */,
+				CD0BEDA213604B8B004A67FC /* ECCodePosition.h */,
+				CD0BEDA313604B8B004A67FC /* ECCodePosition.m */,
 			);
 			name = CodeView4;
 			sourceTree = "<group>";
@@ -305,6 +310,7 @@
 				CD887DD513543DF400332BAC /* ECMutableTextFileRenderer.m in Sources */,
 				CD887DD81354C14600332BAC /* ECCodeView4.m in Sources */,
 				CD83D6C813599126008307A6 /* ECTextRenderer.m in Sources */,
+				CD0BEDA413604B8B004A67FC /* ECCodePosition.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
