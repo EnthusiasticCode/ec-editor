@@ -34,6 +34,7 @@
 		CD887DD21353AD9300332BAC /* CodeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD887DD11353AD9200332BAC /* CodeViewController.m */; };
 		CD887DD513543DF400332BAC /* ECMutableTextFileRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = CD887DD413543DF300332BAC /* ECMutableTextFileRenderer.m */; };
 		CD887DD81354C14600332BAC /* ECCodeView4.m in Sources */ = {isa = PBXBuildFile; fileRef = CD887DD71354C14600332BAC /* ECCodeView4.m */; };
+		CDF744DF1362D8AC004997DD /* ECCodeStringDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = CDF744DE1362D8AC004997DD /* ECCodeStringDataSource.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -90,6 +91,8 @@
 		CD9A5D47135C9FB70037E0BE /* ECCodeViewDatasource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeViewDatasource.h; sourceTree = "<group>"; };
 		CD9C0DF1135B37DA0082FCD7 /* ECTextRendererDatasource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECTextRendererDatasource.h; sourceTree = "<group>"; };
 		CD9C0DF3135B381D0082FCD7 /* ECTextRendererDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECTextRendererDelegate.h; sourceTree = "<group>"; };
+		CDF744DD1362D8AC004997DD /* ECCodeStringDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeStringDataSource.h; sourceTree = "<group>"; };
+		CDF744DE1362D8AC004997DD /* ECCodeStringDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeStringDataSource.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -153,6 +156,8 @@
 				CD887DD413543DF300332BAC /* ECMutableTextFileRenderer.m */,
 				CD9A5D45135C9F9A0037E0BE /* CodeView4 */,
 				CD9C0DF4135B383C0082FCD7 /* Text Renderer */,
+				CDF744DD1362D8AC004997DD /* ECCodeStringDataSource.h */,
+				CDF744DE1362D8AC004997DD /* ECCodeStringDataSource.m */,
 			);
 			path = CodeView3;
 			sourceTree = "<group>";
@@ -311,6 +316,7 @@
 				CD887DD81354C14600332BAC /* ECCodeView4.m in Sources */,
 				CD83D6C813599126008307A6 /* ECTextRenderer.m in Sources */,
 				CD0BEDA413604B8B004A67FC /* ECCodePosition.m in Sources */,
+				CDF744DF1362D8AC004997DD /* ECCodeStringDataSource.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

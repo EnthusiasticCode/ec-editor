@@ -140,8 +140,6 @@
     TextTileView* tileViewPool[TILEVIEWPOOL_SIZE];
     
     // Text management
-    ECCodeRange selection;
-    
     TextSelectionView *selectionView;
     NSRange markedRange;
     
@@ -235,7 +233,7 @@
 static void preinit(ECCodeView4 *self)
 {
     self->renderer = [ECTextRenderer new];
-    self->renderer.delegate = self;
+    self->renderer.delegate = (id<ECTextRendererDelegate>)self;
     self->renderer.lazyCaching = YES;
     self->renderer.preferredLineCountPerSegment = 500;
     
