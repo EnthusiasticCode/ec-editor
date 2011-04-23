@@ -41,8 +41,6 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-
-    aButton.arrowSizes = UIEdgeInsetsMake(0, 10, 0, 0);
     
     jumpBar.delegate = self;
     

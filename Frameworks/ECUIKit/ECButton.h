@@ -8,16 +8,26 @@
 
 #import <UIKit/UIKit.h>
 
-@interface ECButton : UIButton {
-    NSMutableArray *backgroundColors;
-    CGMutablePathRef buttonPath;
-}
+@interface ECButton : UIControl
 
-@property (nonatomic) UIEdgeInsets arrowSizes;
+@property (nonatomic) CGFloat borderWidth;
 
-@property (nonatomic, retain) UIColor *borderColor;
+@property (nonatomic) CGFloat cornerRadius;
+
+@property (nonatomic) CGFloat leftArrowSize;
+@property (nonatomic) CGFloat rightArrowSize;
 
 - (void)setBackgroundColor:(UIColor *)color forState:(UIControlState)state;
 - (UIColor *)backgroundColorForState:(UIControlState)state;
+
+- (void)setBorderColor:(UIColor *)color forState:(UIControlState)state;
+- (UIColor *)borderColorForState:(UIControlState)state;
+
+@property (nonatomic, readonly) UILabel *titleLabel;
+
+@property (nonatomic) UIEdgeInsets titleInsets;
+
+- (void)setTitle:(NSString *)title forState:(UIControlState)state;
+- (NSString *)titleForState:(UIControlState)state;
 
 @end

@@ -47,6 +47,7 @@
 		CDEFF9471348BB8F006FEFCC /* MokupControlsViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MokupControlsViewController.h; sourceTree = "<group>"; };
 		CDEFF9481348BB8F006FEFCC /* MokupControlsViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MokupControlsViewController.m; sourceTree = "<group>"; };
 		CDEFF94B1348BB8F006FEFCC /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MokupControlsViewController.xib; sourceTree = "<group>"; };
+		CDF744D2136231E3004997DD /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -102,6 +103,7 @@
 		CDEFF9311348BB8F006FEFCC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				CDF744D2136231E3004997DD /* CoreText.framework */,
 				CDACD8A71349C57B0055B7F3 /* QuartzCore.framework */,
 				CDEFF9321348BB8F006FEFCC /* UIKit.framework */,
 				CDEFF9341348BB8F006FEFCC /* Foundation.framework */,
