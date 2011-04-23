@@ -61,6 +61,7 @@
 		B70C5C5F135F2495001C35A5 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B70C5C5E135F2495001C35A5 /* QuartzCore.framework */; };
 		B70C5C60135F24D9001C35A5 /* libclang.dylib in Resources */ = {isa = PBXBuildFile; fileRef = B70C5BF1135F20B4001C35A5 /* libclang.dylib */; };
 		B70C5C6B135F4D93001C35A5 /* ECCodeIndexingTest.m in Sources */ = {isa = PBXBuildFile; fileRef = B70C5C6A135F4D93001C35A5 /* ECCodeIndexingTest.m */; };
+		B70C5C751362F16A001C35A5 /* editTests.m in Sources */ = {isa = PBXBuildFile; fileRef = B70C5C741362F16A001C35A5 /* editTests.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -170,6 +171,7 @@
 		B70C5C5C135F247A001C35A5 /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
 		B70C5C5E135F2495001C35A5 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		B70C5C6A135F4D93001C35A5 /* ECCodeIndexingTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECCodeIndexingTest.m; path = ../../Frameworks/ECCodeIndexing/ECCodeIndexingTest.m; sourceTree = "<group>"; };
+		B70C5C741362F16A001C35A5 /* editTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = editTests.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -224,6 +226,7 @@
 		B70C5B69135F144E001C35A5 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				B70C5C741362F16A001C35A5 /* editTests.m */,
 				B70C5B94135F1702001C35A5 /* ECTextDocumentTest.m */,
 				B70C5C6A135F4D93001C35A5 /* ECCodeIndexingTest.m */,
 				B70C5B6A135F144E001C35A5 /* Supporting Files */,
@@ -471,6 +474,7 @@
 				B70C5C5A135F20B4001C35A5 /* UIImage+BlockDrawing.m in Sources */,
 				B70C5C5B135F20B4001C35A5 /* UIView+ConcurrentAnimation.m in Sources */,
 				B70C5C6B135F4D93001C35A5 /* ECCodeIndexingTest.m in Sources */,
+				B70C5C751362F16A001C35A5 /* editTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
