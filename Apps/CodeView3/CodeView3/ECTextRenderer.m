@@ -35,10 +35,8 @@
 @property (nonatomic, readonly) ECDictionaryCache *framesettersCache;
 @property (nonatomic, readonly) ECDictionaryCache *framesCache;
 
-/// Generate a segment with the given line range if not already generated.
-/// Return YES if segment is usable or NO if it should not be used and removed
-/// from the segment array.
-- (BOOL)generateIfNeededTextSegment:(TextSegment *)segment withTextLineRange:(NSRange)range;
+
+- (CTFramesetterRef)createFramesetterForTextSegment:(TextSegment *)segment lineCount:(NSUInteger *)lines stringLenght:(NSUInteger *)length;
 
 - (void)generateTextSegmentsAndEnumerateUsingBlock:(void(^)(TextSegment *segment, NSUInteger idx, NSUInteger lineOffset, NSUInteger stringOffset, CGFloat positionOffset, BOOL *stop))block;
 
@@ -54,8 +52,6 @@
 
 @interface TextSegment : NSObject {
 @private
-    CTFramesetterRef framesetter; // TODO!!! remove, use cache instead
-    
     ECTextRenderer *parentRenderer;
     
     // Cache of heights for wrap widths
@@ -64,7 +60,9 @@
 
 - (id)initWithTextRenderer:(ECTextRenderer *)renderer;
 
+@property (nonatomic, readonly) CTFramesetterRef framesetter;
 @property (nonatomic, readonly) CTFrameRef frame;
+@property (nonatomic, readonly, getter = isValid) BOOL valid;
 
 /// Count of string lines used to generate the segment's framesetter.
 @property (nonatomic) NSUInteger lineCount;
@@ -80,12 +78,6 @@
 /// wrap width.
 @property (nonatomic, readonly) CGFloat renderHeight;
 
-/// A readonly property that returns true if the text segment requires generation.
-@property (nonatomic, readonly) BOOL requireGeneration;
-
-/// Generate a new framesetter and setup the stringRange and lineRange propety.
-- (void)generateWithString:(NSAttributedString *)string havingLineCount:(NSUInteger)lineCount;
-
 /// Enumerate all the rendered lines in the text segment that intersect the given rect. 
 /// The rect should be relative to this segment coordinates.
 /// The block to apply will receive the line and its bounds relative to the first rendered
@@ -97,10 +89,6 @@
 /// string range. The block will also receive the relative line string range.
 - (void)enumerateLinesInStringRange:(NSRange)range usingBlock:(void(^)(CTLineRef line, CGRect lineBounds, NSRange lineStringRange, BOOL *stop))block;
 
-/// Release framesetters and frames to reduce space consumption. To release the frame
-/// this method will actually clear the framse cache.
-- (void)removeFramesetter;
-
 @end
 
 
@@ -108,7 +96,29 @@
 
 #pragma mark TextSegment Properties
 
-@synthesize lineCount, stringLength, renderWrapWidth;
+@synthesize valid, lineCount, stringLength, renderWrapWidth;
+
+- (CTFramesetterRef)framesetter
+{
+    CTFramesetterRef f = (CTFramesetterRef)[parentRenderer.framesettersCache objectForKey:self];
+    
+    if (!f) 
+    {
+        f = [parentRenderer createFramesetterForTextSegment:self lineCount:&lineCount stringLenght:&stringLength];
+        
+        // Cache
+        if (f) 
+        {
+            [parentRenderer.framesettersCache setObject:(id)f forKey:self];
+            CFRelease(f);
+        }
+        
+        // Remove frame
+        [parentRenderer.framesCache removeObjectForKey:self];
+    }
+    
+    return f;
+}
 
 - (CTFrameRef)frame
 {
@@ -121,7 +131,8 @@
         CGPathAddRect(path, NULL, (CGRect){ CGPointZero, { renderWrapWidth, CGFLOAT_MAX } });
         
         // Create frame
-        f = CTFramesetterCreateFrame(framesetter, (CFRange){ 0, 0 }, path, NULL);
+        // TODO!!! add some NULL check
+        f = CTFramesetterCreateFrame(self.framesetter, (CFRange){ 0, 0 }, path, NULL);
         CGPathRelease(path);
         
         // Update cache and return
@@ -176,11 +187,6 @@
     return heightCache[cacheIdx].height;
 }
 
-- (BOOL)requireGeneration
-{
-    return framesetter == NULL;
-}
-
 #pragma mark TextSegment Methods
 
 - (id)initWithTextRenderer:(ECTextRenderer *)renderer
@@ -189,32 +195,9 @@
     if ((self = [super init])) 
     {
         parentRenderer = renderer;
+        valid = self.framesetter != NULL;
     }
     return self;
-}
-
-- (void)dealloc
-{
-    [self removeFramesetter];
-    [super dealloc];
-}
-
-- (void)removeFramesetter
-{
-    if (framesetter)
-    {
-        CFRelease(framesetter);
-        framesetter = NULL;
-    }
-}
-
-- (void)generateWithString:(NSAttributedString *)string havingLineCount:(NSUInteger)count
-{
-    [self removeFramesetter];
-    framesetter = CTFramesetterCreateWithAttributedString((CFAttributedStringRef)string);
-    stringLength = [string length];
-    lineCount = count;
-    [parentRenderer.framesCache removeObjectForKey:self];
 }
 
 // TODO!!! do reverse mode
@@ -310,7 +293,7 @@
 #pragma mark Properties
 
 @synthesize framesettersCache, framesCache;
-@synthesize delegate, datasource, preferredLineCountPerSegment, lazyCaching, wrapWidth, estimatedHeight;
+@synthesize delegate, datasource, preferredLineCountPerSegment, wrapWidth, estimatedHeight;
 
 - (void)setDelegate:(id<ECTextRendererDelegate>)aDelegate
 {
@@ -356,7 +339,6 @@
 {
     if ((self = [super init])) 
     {
-        lazyCaching = YES;
         textSegments = [NSMutableArray new];
         framesettersCache = [[ECDictionaryCache alloc] initWithCountLimit:5];
         framesCache = [[ECDictionaryCache alloc] initWithCountLimit:2];
@@ -374,25 +356,34 @@
 
 #pragma mark Private Methods
 
-- (BOOL)generateIfNeededTextSegment:(TextSegment *)segment withTextLineRange:(NSRange)range
+- (CTFramesetterRef)createFramesetterForTextSegment:(TextSegment *)requestSegment lineCount:(NSUInteger *)lines stringLenght:(NSUInteger *)length
 {
-    if (!segment.requireGeneration)
-        return YES;
+    CTFramesetterRef framesetter = NULL;
+    NSRange lineRange = NSMakeRange(0, 0);
     
-    NSUInteger originalRangeLength = range.length;
-    NSAttributedString *string = [datasource textRenderer:self stringInLineRange:&range];
-    if (!string || range.length == 0 || [string length] == 0)
+    // Source text line offset for requested segment
+    for (TextSegment *segment in textSegments) 
     {
-        return NO;
+        if (segment == requestSegment)
+            break;
+        lineRange.location += segment.lineCount;
     }
     
-    [segment generateWithString:string havingLineCount:range.length];
+    // Source text string for requested segment
+    lineRange.length = requestSegment.lineCount ? requestSegment.lineCount : preferredLineCountPerSegment;
+    NSAttributedString *string = [datasource textRenderer:self stringInLineRange:&lineRange];
+    if (!string || lineRange.length == 0 || [string length] == 0)
+        return NULL;
     
-    // TODO receive message from delegate instead?
-    if (range.length != originalRangeLength)
-        lastTextSegment = segment;
+    framesetter = CTFramesetterCreateWithAttributedString((CFAttributedStringRef)string);
     
-    return YES;
+    if (lines)
+        *lines = lineRange.length;
+    
+    if (length)
+        *length = [string length];
+    
+    return framesetter;
 }
 
 - (void)generateTextSegmentsAndEnumerateUsingBlock:(void (^)(TextSegment *, NSUInteger, NSUInteger, NSUInteger, CGFloat, BOOL *))block
@@ -413,7 +404,12 @@
         {
             segment = [[TextSegment alloc] initWithTextRenderer:self];
             segment.renderWrapWidth = wrapWidth;
-            currentLineRange.length = preferredLineCountPerSegment;
+            if (!segment.isValid) 
+            {
+                [segment release];
+                lastTextSegment = [textSegments lastObject];
+                break;
+            }
             
             [textSegments addObject:segment];
             [segment release];
@@ -421,16 +417,8 @@
         else
         {
             segment = [textSegments objectAtIndex:currentIndex];
-            currentLineRange.length = segment.lineCount;
         }
-        
-        // Generate segment if needed and remove it if invalid
-        if (![self generateIfNeededTextSegment:segment withTextLineRange:currentLineRange])
-        {
-            [textSegments removeObject:segment];
-            lastTextSegment = [textSegments lastObject];
-            break;
-        }
+        currentLineRange.length = segment.lineCount;
         
         // Apply block
         block(segment, currentIndex, currentLineRange.location, currentStringOffset, currentPositionOffset, &stop);
@@ -632,11 +620,10 @@
     // TODO this should be more like the draw function for non guessed requests
     for (TextSegment *segment in textSegments)
     {
-        if (guessed && segment.requireGeneration)
-            break;
+//        if (guessed && [framesettersCache objectForKey:segment] == nil)
+//            break;
         
         currentLineRange.length = segment.lineCount;
-        [self generateIfNeededTextSegment:segment withTextLineRange:currentLineRange];
         currentLineRange.location += currentLineRange.length;
         
         currentRect.origin.y -= lastSegmentEnd;
@@ -715,29 +702,9 @@
 
 - (void)updateAllText
 {
+    [self clearCache];
     [textSegments removeAllObjects];
     lastTextSegment = nil;
-    
-    if (!lazyCaching) 
-    {
-        TextSegment *segment = nil;
-        NSRange currentLineRange = NSMakeRange(0, preferredLineCountPerSegment);
-        NSUInteger stringLocation = 0;
-        NSAttributedString *string;
-        while ((string = [datasource textRenderer:self stringInLineRange:&currentLineRange])) 
-        {
-            segment = [[TextSegment alloc] initWithTextRenderer:self];
-            segment.renderWrapWidth = wrapWidth;
-            [segment generateWithString:string havingLineCount:currentLineRange.length];
-            
-            [textSegments addObject:segment];
-            [segment release];
-            
-            currentLineRange.location += currentLineRange.length;
-            stringLocation += [string length];
-        }
-        lastTextSegment = segment;
-    }
     
     if (delegateHasTextRendererInvalidateRenderInRect) 
     {
@@ -775,14 +742,7 @@
             
             // TODO!!! if lineCount > 1.5 * preferred -> split or merge if * 0.5
             // and remember to set proper lastTextSegment
-            if (lazyCaching) 
-            {
-                [segment removeFramesetter];
-            }
-            else
-            {
-                [self generateIfNeededTextSegment:segment withTextLineRange:segmentRange];
-            }
+            [framesettersCache removeObjectForKey:segment];
         }
         
         currentLineLocation += segmentRange.length;
@@ -799,11 +759,6 @@
 
 - (void)clearCache
 {
-    for (TextSegment *segment in textSegments) 
-    {
-        [segment removeFramesetter];
-    }
-    
     [framesettersCache removeAllObjects];
     [framesCache removeAllObjects];
 }

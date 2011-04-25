@@ -47,10 +47,6 @@
 
 #pragma mark Caching Behaviours
 
-/// Indicates if the caching of rendering informations should happen lazely 
-/// or immediatly after a datasource is set. Defaults is YES.
-@property (nonatomic) BOOL lazyCaching;
-
 /// Use this method to clear the rendered cache if memory usage start to be 
 /// a problem.
 - (void)clearCache;
