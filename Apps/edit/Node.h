@@ -8,13 +8,13 @@
 
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
-@class Folder, Project;
+@class Project;
 
 @interface Node : NSManagedObject
 @property (nonatomic, retain) NSNumber *customPosition;
 @property (nonatomic, retain) NSString *path;
 @property (nonatomic, retain) NSString *name;
+@property (nonatomic, retain) NSNumber *tag;
 @property (nonatomic, retain) NSSet *nameWords;
-@property (nonatomic, retain) Folder *folder;
 @property (nonatomic, retain) Project *project;
 @end

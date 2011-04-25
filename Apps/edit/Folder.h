@@ -11,7 +11,9 @@
 #import "Node.h"
 
 @interface Folder : Node
-@property (nonatomic, retain) NSNumber * collapsed;
-@property (nonatomic, retain) NSSet* nodes;
-@property (nonatomic, retain) NSSet* groups;
+@property (nonatomic, retain) NSNumber *collapsed;
+@property (nonatomic, retain) NSSet *groups;
+@property (nonatomic, retain) NSSet *files;
+@property (nonatomic, retain) NSSet *subfolders;
+@property (nonatomic, retain) Folder *parent;
 @end

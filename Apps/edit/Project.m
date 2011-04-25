@@ -7,16 +7,48 @@
 //
 
 #import "Project.h"
+#import "Node.h"
+#import "Tab.h"
 #import "Target.h"
 
 @implementation Project
-@dynamic tag;
-@dynamic defaultType;
 @dynamic nodes;
 @dynamic tabs;
 @dynamic targets;
 
-- (void)addTabsObject:(NSManagedObject *)value
+- (void)addNodesObject:(Node *)value
+{
+    NSSet *changedObjects = [[NSSet alloc] initWithObjects:&value count:1];
+    [self willChangeValueForKey:@"nodes" withSetMutation:NSKeyValueUnionSetMutation usingObjects:changedObjects];
+    [[self primitiveValueForKey:@"nodes"] addObject:value];
+    [self didChangeValueForKey:@"nodes" withSetMutation:NSKeyValueUnionSetMutation usingObjects:changedObjects];
+    [changedObjects release];
+}
+
+- (void)removeNodesObject:(Node *)value
+{
+    NSSet *changedObjects = [[NSSet alloc] initWithObjects:&value count:1];
+    [self willChangeValueForKey:@"nodes" withSetMutation:NSKeyValueMinusSetMutation usingObjects:changedObjects];
+    [[self primitiveValueForKey:@"nodes"] removeObject:value];
+    [self didChangeValueForKey:@"nodes" withSetMutation:NSKeyValueMinusSetMutation usingObjects:changedObjects];
+    [changedObjects release];
+}
+
+- (void)addNodes:(NSSet *)value
+{
+    [self willChangeValueForKey:@"nodes" withSetMutation:NSKeyValueUnionSetMutation usingObjects:value];
+    [[self primitiveValueForKey:@"nodes"] unionSet:value];
+    [self didChangeValueForKey:@"nodes" withSetMutation:NSKeyValueUnionSetMutation usingObjects:value];
+}
+
+- (void)removeNodes:(NSSet *)value
+{
+    [self willChangeValueForKey:@"nodes" withSetMutation:NSKeyValueMinusSetMutation usingObjects:value];
+    [[self primitiveValueForKey:@"nodes"] minusSet:value];
+    [self didChangeValueForKey:@"nodes" withSetMutation:NSKeyValueMinusSetMutation usingObjects:value];
+}
+
+- (void)addTabsObject:(Tab *)value
 {
     NSSet *changedObjects = [[NSSet alloc] initWithObjects:&value count:1];
     [self willChangeValueForKey:@"tabs" withSetMutation:NSKeyValueUnionSetMutation usingObjects:changedObjects];
@@ -25,7 +57,7 @@
     [changedObjects release];
 }
 
-- (void)removeTabsObject:(NSManagedObject *)value
+- (void)removeTabsObject:(Tab *)value
 {
     NSSet *changedObjects = [[NSSet alloc] initWithObjects:&value count:1];
     [self willChangeValueForKey:@"tabs" withSetMutation:NSKeyValueMinusSetMutation usingObjects:changedObjects];

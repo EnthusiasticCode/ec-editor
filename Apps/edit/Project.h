@@ -8,12 +8,10 @@
 
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
-#import "Node.h"
+#import "Folder.h"
 
-@interface Project : Node
-@property (nonatomic, retain) NSNumber *tag;
-@property (nonatomic, retain) NSString *defaultType;
-@property (nonatomic, retain) Node *nodes;
+@interface Project : Folder
+@property (nonatomic, retain) NSSet *nodes;
 @property (nonatomic, retain) NSSet *tabs;
 @property (nonatomic, retain) NSSet *targets;
 @end

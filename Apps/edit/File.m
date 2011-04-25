@@ -8,18 +8,20 @@
 
 #import "File.h"
 #import "Bookmark.h"
-#import "UndoItem.h"
+#import "Folder.h"
+#import "Group.h"
 #import "HistoryItem.h"
 #import "Target.h"
+#import "UndoItem.h"
 
 @implementation File
 @dynamic type;
-@dynamic tag;
 @dynamic group;
 @dynamic bookmarks;
 @dynamic undoItems;
 @dynamic historyItems;
 @dynamic targets;
+@dynamic folder;
 
 - (void)addBookmarksObject:(Bookmark *)value
 {

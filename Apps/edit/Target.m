@@ -7,6 +7,7 @@
 //
 
 #import "Target.h"
+#import "File.h"
 #import "Project.h"
 
 @implementation Target
@@ -14,7 +15,7 @@
 @dynamic sourceFiles;
 @dynamic project;
 
-- (void)addSourceFilesObject:(NSManagedObject *)value
+- (void)addSourceFilesObject:(File *)value
 {
     NSSet *changedObjects = [[NSSet alloc] initWithObjects:&value count:1];
     [self willChangeValueForKey:@"sourceFiles" withSetMutation:NSKeyValueUnionSetMutation usingObjects:changedObjects];
@@ -23,7 +24,7 @@
     [changedObjects release];
 }
 
-- (void)removeSourceFilesObject:(NSManagedObject *)value
+- (void)removeSourceFilesObject:(File *)value
 {
     NSSet *changedObjects = [[NSSet alloc] initWithObjects:&value count:1];
     [self willChangeValueForKey:@"sourceFiles" withSetMutation:NSKeyValueMinusSetMutation usingObjects:changedObjects];

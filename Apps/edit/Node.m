@@ -7,15 +7,15 @@
 //
 
 #import "Node.h"
-#import "Folder.h"
 #import "NameWord.h"
+#import "Project.h"
 
 @implementation Node
 @dynamic customPosition;
 @dynamic path;
 @dynamic name;
+@dynamic tag;
 @dynamic nameWords;
-@dynamic folder;
 @dynamic project;
 
 - (void)addNameWordsObject:(NameWord *)value

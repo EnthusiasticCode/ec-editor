@@ -8,10 +8,11 @@
 
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
+@class File;
 
 @interface UndoItem : NSManagedObject
 @property (nonatomic, retain) id range;
-@property (nonatomic, retain) NSString * string;
-@property (nonatomic, retain) NSNumber * index;
-@property (nonatomic, retain) NSManagedObject * file;
+@property (nonatomic, retain) NSString *string;
+@property (nonatomic, retain) NSNumber *index;
+@property (nonatomic, retain) File *file;
 @end

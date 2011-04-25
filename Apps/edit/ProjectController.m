@@ -6,50 +6,27 @@
 //  Copyright 2011 __MyCompanyName__. All rights reserved.
 //
 
+#import <CoreData/CoreData.h>
 #import "ProjectController.h"
 #import "FileController.h"
 #import "AppController.h"
 #import "Project.h"
-#import <ECCodeIndexing/ECCodeIndex.h>
-#import <ECCodeIndexing/ECCodeUnit.h>
-#import <ECFoundation/NSFileManager(ECAdditions).h>
-
-@interface ProjectController ()
-@property (nonatomic, retain) NSFileManager *fileManager;
-@property (nonatomic, retain) NSString *folder;
-@property (nonatomic, retain) NSMutableDictionary *files;
-- (NSArray *)contentsOfFolder;
-- (NSArray *)filesInSubfolder:(NSString *)subfolder;
-@end
 
 @implementation ProjectController
 
-@synthesize extensionsToShow = extensionsToShow_;
-@synthesize project = project_;
-@synthesize codeIndex = codeIndex_;
-@synthesize editButton = editButton_;
-@synthesize doneButton = doneButton_;
-@synthesize tableView = tableView_;
-@synthesize fileManager = fileManager_;
-@synthesize folder = folder_;
-@synthesize files = files_;
-
-- (NSFileManager *)fileManager
-{
-    return [NSFileManager defaultManager];
-}
+@synthesize managedObjectContext = _managedObjectContext;
+@synthesize project = _project;
+@synthesize editButton = _editButton;
+@synthesize doneButton = _doneButton;
+@synthesize tableView = _tableView;
 
 - (void)dealloc
 {
-    self.folder = nil;
-    self.fileManager = nil;
     self.tableView = nil;
     self.editButton = nil;
     self.doneButton = nil;
-    self.extensionsToShow = nil;
     self.project = nil;
-    self.codeIndex = nil;
-    self.files = nil;
+    self.managedObjectContext = nil;
     [super dealloc];
 }
 
@@ -57,33 +34,17 @@
 {
     [super viewDidLoad];
     self.navigationItem.rightBarButtonItem = self.editButton;
-    self.files = [NSMutableDictionary dictionary];
-    for (NSString *subfolder in [self contentsOfFolder])
-        [self.files setObject:[NSMutableArray arrayWithArray:[self filesInSubfolder:subfolder]] forKey:subfolder];
     [self.tableView reloadData];
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
-    // Return YES for supported orientations
 	return YES;
-}
-
-- (NSArray *)contentsOfFolder
-{
-    NSDirectoryEnumerationOptions options = NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsPackageDescendants;
-    return [self.fileManager subpathsOfDirectoryAtPath:self.folder withExtensions:nil options:options skipFiles:YES skipDirectories:NO error:(NSError **)NULL];
-}
-
-- (NSArray *)filesInSubfolder:(NSString *)subfolder
-{
-    NSDirectoryEnumerationOptions options = NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsPackageDescendants;
-    return [self.fileManager contentsOfDirectoryAtPath:[self.folder stringByAppendingPathComponent:subfolder] withExtensions:self.extensionsToShow options:options skipFiles:NO skipDirectories:YES error:(NSError **)NULL];
 }
 
 - (NSUInteger)numberOfAreasInTableView:(ECItemView *)itemView
 {
-    return [self.files count];
+    return;
 }
 
 - (NSString *)itemView:(ECItemView *)itemView titleForHeaderInArea:(NSUInteger)area

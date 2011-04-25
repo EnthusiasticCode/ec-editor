@@ -9,14 +9,14 @@
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
 #import "Node.h"
-@class Group;
+@class Group, Folder;
 
 @interface File : Node
 @property (nonatomic, retain) NSString *type;
-@property (nonatomic, retain) NSNumber *tag;
 @property (nonatomic, retain) Group *group;
 @property (nonatomic, retain) NSSet *bookmarks;
 @property (nonatomic, retain) NSSet *undoItems;
 @property (nonatomic, retain) NSSet *historyItems;
 @property (nonatomic, retain) NSSet *targets;
+@property (nonatomic, retain) Folder *folder;
 @end
