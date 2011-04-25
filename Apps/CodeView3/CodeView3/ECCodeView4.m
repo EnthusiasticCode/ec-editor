@@ -244,7 +244,6 @@ static void preinit(ECCodeView4 *self)
 
 static void init(ECCodeView4 *self)
 {
-    
     self->renderer.wrapWidth = UIEdgeInsetsInsetRect(self.bounds, self->textInsets).size.width;
     [self->renderer addObserver:self forKeyPath:@"estimatedHeight" options:NSKeyValueObservingOptionNew context:nil];
     

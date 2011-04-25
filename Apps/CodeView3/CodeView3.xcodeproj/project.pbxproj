@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		CD0BEDA413604B8B004A67FC /* ECCodePosition.m in Sources */ = {isa = PBXBuildFile; fileRef = CD0BEDA313604B8B004A67FC /* ECCodePosition.m */; };
+		CD0CEF5913657DAB00CCF627 /* ECDictionaryCache.m in Sources */ = {isa = PBXBuildFile; fileRef = CD0CEF5813657DAB00CCF627 /* ECDictionaryCache.m */; };
 		CD83D6C813599126008307A6 /* ECTextRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = CD83D6C713599126008307A6 /* ECTextRenderer.m */; };
 		CD887D8013530DDF00332BAC /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD887D7F13530DDF00332BAC /* UIKit.framework */; };
 		CD887D8213530DDF00332BAC /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD887D8113530DDF00332BAC /* Foundation.framework */; };
@@ -40,6 +41,8 @@
 /* Begin PBXFileReference section */
 		CD0BEDA213604B8B004A67FC /* ECCodePosition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodePosition.h; sourceTree = "<group>"; };
 		CD0BEDA313604B8B004A67FC /* ECCodePosition.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodePosition.m; sourceTree = "<group>"; };
+		CD0CEF5713657DAB00CCF627 /* ECDictionaryCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECDictionaryCache.h; sourceTree = "<group>"; };
+		CD0CEF5813657DAB00CCF627 /* ECDictionaryCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECDictionaryCache.m; sourceTree = "<group>"; };
 		CD55961E135DC42A0058B30F /* ECCodeViewDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeViewDelegate.h; sourceTree = "<group>"; };
 		CD83D6C613599126008307A6 /* ECTextRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECTextRenderer.h; sourceTree = "<group>"; };
 		CD83D6C713599126008307A6 /* ECTextRenderer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECTextRenderer.m; sourceTree = "<group>"; };
@@ -111,6 +114,16 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		CD0CEF5513657D2E00CCF627 /* ECFoundation */ = {
+			isa = PBXGroup;
+			children = (
+				CD0CEF5713657DAB00CCF627 /* ECDictionaryCache.h */,
+				CD0CEF5813657DAB00CCF627 /* ECDictionaryCache.m */,
+			);
+			name = ECFoundation;
+			path = ../../../Frameworks/ECFoundation;
+			sourceTree = "<group>";
+		};
 		CD887D7013530DDF00332BAC = {
 			isa = PBXGroup;
 			children = (
@@ -143,6 +156,7 @@
 		CD887D8513530DDF00332BAC /* CodeView3 */ = {
 			isa = PBXGroup;
 			children = (
+				CD0CEF5513657D2E00CCF627 /* ECFoundation */,
 				CD887DA113530F5A00332BAC /* ECUIKit imports */,
 				CD887D8E13530DDF00332BAC /* CodeView3AppDelegate.h */,
 				CD887D8F13530DDF00332BAC /* CodeView3AppDelegate.m */,
@@ -317,6 +331,7 @@
 				CD83D6C813599126008307A6 /* ECTextRenderer.m in Sources */,
 				CD0BEDA413604B8B004A67FC /* ECCodePosition.m in Sources */,
 				CDF744DF1362D8AC004997DD /* ECCodeStringDataSource.m in Sources */,
+				CD0CEF5913657DAB00CCF627 /* ECDictionaryCache.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

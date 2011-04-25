@@ -8,6 +8,7 @@
 
 #import "ECTextRenderer.h"
 #import <CoreText/CoreText.h>
+#import "ECDictionaryCache.h"
 
 // Internal working notes: (outdated)
 // - The renderer keeps an array of ordered framesetter informations:
@@ -22,10 +23,29 @@
 
 @class TextSegment;
 
-typedef struct {
-    TextSegment *segment;
-    CTFrameRef frame;
-} FrameCache;
+@interface ECTextRenderer () {
+@private
+    NSMutableArray *textSegments;
+    TextSegment *lastTextSegment;
+    
+    BOOL delegateHasTextRendererInvalidateRenderInRect;
+    BOOL datasourceHasTextRendererEstimatedTextLineCountOfLength;
+}
+
+@property (nonatomic, readonly) ECDictionaryCache *framesettersCache;
+@property (nonatomic, readonly) ECDictionaryCache *framesCache;
+
+/// Generate a segment with the given line range if not already generated.
+/// Return YES if segment is usable or NO if it should not be used and removed
+/// from the segment array.
+- (BOOL)generateIfNeededTextSegment:(TextSegment *)segment withTextLineRange:(NSRange)range;
+
+- (void)generateTextSegmentsAndEnumerateUsingBlock:(void(^)(TextSegment *segment, NSUInteger idx, NSUInteger lineOffset, NSUInteger stringOffset, CGFloat positionOffset, BOOL *stop))block;
+
+- (void)enumerateLinesIntersectingRect:(CGRect)rect usingBlock:(void(^)(CTLineRef line, CGRect lineBound, CGFloat baselineOffset, BOOL *stop))block;
+
+@end
+
 
 #pragma mark -
 #pragma mark TextSegment
@@ -34,15 +54,15 @@ typedef struct {
 
 @interface TextSegment : NSObject {
 @private
-    // The framesetter for thi segment
-    CTFramesetterRef framesetter;
-    FrameCache *cache;
+    CTFramesetterRef framesetter; // TODO!!! remove, use cache instead
+    
+    ECTextRenderer *parentRenderer;
     
     // Cache of heights for wrap widths
     struct { CGFloat wrapWidth; CGFloat height; } heightCache[HEIGHT_CACHE_SIZE];
 }
 
-- (id)initWithFrameCache:(FrameCache *)cache;
+- (id)initWithTextRenderer:(ECTextRenderer *)renderer;
 
 @property (nonatomic, readonly) CTFrameRef frame;
 
@@ -83,33 +103,32 @@ typedef struct {
 
 @end
 
+
 @implementation TextSegment
 
 #pragma mark TextSegment Properties
 
-@synthesize frame, lineCount, stringLength, renderWrapWidth;
+@synthesize lineCount, stringLength, renderWrapWidth;
 
 - (CTFrameRef)frame
 {
-    if (cache->frame && cache->segment == self)
-        return cache->frame;
+    CTFrameRef f = (CTFrameRef)[parentRenderer.framesCache objectForKey:self];
     
-    // Release old cache
-    if (cache->frame)
-        CFRelease(cache->frame);
-    
-    // Create path
-    CGMutablePathRef path = CGPathCreateMutable();
-    CGPathAddRect(path, NULL, (CGRect){ CGPointZero, { renderWrapWidth, CGFLOAT_MAX } });
-    
-    // Create frame
-    frame = CTFramesetterCreateFrame(framesetter, (CFRange){ 0, 0 }, path, NULL);
-    CGPathRelease(path);
-    
-    // Update cache and return
-    cache->segment = self;
-    cache->frame = frame;
-    return frame;
+    if (!f)
+    {
+        // Create path
+        CGMutablePathRef path = CGPathCreateMutable();
+        CGPathAddRect(path, NULL, (CGRect){ CGPointZero, { renderWrapWidth, CGFLOAT_MAX } });
+        
+        // Create frame
+        f = CTFramesetterCreateFrame(framesetter, (CFRange){ 0, 0 }, path, NULL);
+        CGPathRelease(path);
+        
+        // Update cache and return
+        [parentRenderer.framesCache setObject:(id)f forKey:self];
+        CFRelease(f);
+    }
+    return f;
 }
 
 - (void)setRenderWrapWidth:(CGFloat)width
@@ -117,7 +136,7 @@ typedef struct {
     if (renderWrapWidth != width) 
     {
         renderWrapWidth = width;
-        frame = NULL;
+        [parentRenderer.framesCache removeObjectForKey:self];
     }
 }
 
@@ -140,7 +159,8 @@ typedef struct {
     // Calculate actual height
     heightCache[cacheIdx].wrapWidth = renderWrapWidth;
     heightCache[cacheIdx].height = 0;
-    CFArrayRef lines = CTFrameGetLines(self.frame);
+    CTFrameRef frame = CFRetain(self.frame);
+    CFArrayRef lines = CTFrameGetLines(frame);
     CFIndex count = CFArrayGetCount(lines);
     CTLineRef line;
     CGFloat ascent, descent, leading;
@@ -150,6 +170,8 @@ typedef struct {
         CTLineGetTypographicBounds(line, &ascent, &descent, &leading);
         heightCache[cacheIdx].height += ascent + descent + leading;
     }
+    
+    CFRelease(frame);
     
     return heightCache[cacheIdx].height;
 }
@@ -161,19 +183,18 @@ typedef struct {
 
 #pragma mark TextSegment Methods
 
-- (id)initWithFrameCache:(FrameCache *)aCache
+- (id)initWithTextRenderer:(ECTextRenderer *)renderer
 {
+    // TODO throw if renderer == nil
     if ((self = [super init])) 
     {
-        cache = aCache;
+        parentRenderer = renderer;
     }
     return self;
 }
 
 - (void)dealloc
 {
-    if (cache->segment == self)
-        cache->segment = nil;
     [self removeFramesetter];
     [super dealloc];
 }
@@ -185,7 +206,6 @@ typedef struct {
         CFRelease(framesetter);
         framesetter = NULL;
     }
-    frame = NULL;
 }
 
 - (void)generateWithString:(NSAttributedString *)string havingLineCount:(NSUInteger)count
@@ -194,7 +214,7 @@ typedef struct {
     framesetter = CTFramesetterCreateWithAttributedString((CFAttributedStringRef)string);
     stringLength = [string length];
     lineCount = count;
-    frame = NULL;
+    [parentRenderer.framesCache removeObjectForKey:self];
 }
 
 // TODO!!! do reverse mode
@@ -208,7 +228,8 @@ typedef struct {
     CGFloat rectEnd = CGRectGetMaxY(rect);
     
     BOOL stop = NO;
-    CFArrayRef lines = CTFrameGetLines(self.frame);
+    CTFrameRef frame = CFRetain(self.frame);
+    CFArrayRef lines = CTFrameGetLines(frame);
     CFIndex count = CFArrayGetCount(lines);
     
     CGFloat currentY = 0;
@@ -231,6 +252,8 @@ typedef struct {
         }
         currentY += bounds.size.height;
     }
+    
+    CFRelease(frame);
 }
 
 - (void)enumerateLinesInStringRange:(NSRange)queryRange usingBlock:(void (^)(CTLineRef, CGRect, NSRange, BOOL *))block
@@ -240,7 +263,8 @@ typedef struct {
         queryRangeEnd = queryRange.location + queryRange.length;
     
     BOOL stop = NO;
-    CFArrayRef lines = CTFrameGetLines(self.frame);
+    CTFrameRef frame = CFRetain(self.frame);
+    CFArrayRef lines = CTFrameGetLines(frame);
     CFIndex count = CFArrayGetCount(lines);
     
     CGFloat currentY = 0;
@@ -255,7 +279,10 @@ typedef struct {
         
         stringRange = CTLineGetStringRange(line);
         if (stringRange.location >= queryRangeEnd)
+        {
+            CFRelease(frame);
             return;
+        }
         
         width = CTLineGetTypographicBounds(line, &ascent, &descent, &leading);
         bounds = CGRectMake(0, currentY, width, ascent + descent + leading);
@@ -268,40 +295,21 @@ typedef struct {
 
         currentY += bounds.size.height;
     }
+    
+    CFRelease(frame);
 }
 
 @end
 
 #pragma mark -
-#pragma mark ECTextRenderer
-
-@interface ECTextRenderer () {
-@private
-    FrameCache globalCache;
-    
-    NSMutableArray *textSegments;
-    TextSegment *lastTextSegment;
-    
-    BOOL delegateHasTextRendererInvalidateRenderInRect;
-    BOOL datasourceHasTextRendererEstimatedTextLineCountOfLength;
-}
-
-/// Generate a segment with the given line range if not already generated.
-/// Return YES if segment is usable or NO if it should not be used and removed
-/// from the segment array.
-- (BOOL)generateIfNeededTextSegment:(TextSegment *)segment withTextLineRange:(NSRange)range;
-
-- (void)generateTextSegmentsAndEnumerateUsingBlock:(void(^)(TextSegment *segment, NSUInteger idx, NSUInteger lineOffset, NSUInteger stringOffset, CGFloat positionOffset, BOOL *stop))block;
-
-- (void)enumerateLinesIntersectingRect:(CGRect)rect usingBlock:(void(^)(CTLineRef line, CGRect lineBound, CGFloat baselineOffset, BOOL *stop))block;
-
-@end
+#pragma mark ECTextRenderer Implementation
 
 
 @implementation ECTextRenderer
 
 #pragma mark Properties
 
+@synthesize framesettersCache, framesCache;
 @synthesize delegate, datasource, preferredLineCountPerSegment, lazyCaching, wrapWidth, estimatedHeight;
 
 - (void)setDelegate:(id<ECTextRendererDelegate>)aDelegate
@@ -322,7 +330,7 @@ typedef struct {
 {
     if (wrapWidth != width) 
     {
-        globalCache.segment = nil;
+        [framesCache removeAllObjects];
         wrapWidth = width;
         for (TextSegment *segment in textSegments) 
         {
@@ -350,6 +358,8 @@ typedef struct {
     {
         lazyCaching = YES;
         textSegments = [NSMutableArray new];
+        framesettersCache = [[ECDictionaryCache alloc] initWithCountLimit:5];
+        framesCache = [[ECDictionaryCache alloc] initWithCountLimit:2];
     }
     return self;
 }
@@ -357,10 +367,8 @@ typedef struct {
 - (void)dealloc
 {
     [textSegments release];
-    if (globalCache.frame) 
-    {
-        CFRelease(globalCache.frame);
-    }
+    [framesCache release];
+    [framesettersCache release];
     [super dealloc];
 }
 
@@ -403,7 +411,7 @@ typedef struct {
         // Generate segment if needed
         if ([textSegments count] <= currentIndex) 
         {
-            segment = [[TextSegment alloc] initWithFrameCache:&globalCache];
+            segment = [[TextSegment alloc] initWithTextRenderer:self];
             segment.renderWrapWidth = wrapWidth;
             currentLineRange.length = preferredLineCountPerSegment;
             
@@ -469,16 +477,6 @@ typedef struct {
         // Adjust rect to current segment relative coordinates
         CGRect currentRect = rect;
         currentRect.origin.y -= positionOffset;
-//        if (currentRect.origin.y < 0)
-//        {
-//            currentRect.size.height += currentRect.origin.y;
-//            currentRect.origin.y = 0;
-//        }
-//        if (CGRectGetMaxY(currentRect) <= 0)
-//        {
-//            *stop = YES;
-//            return;
-//        }
         
         // Enumerate needed lines from this segment
         __block CGFloat lastLineEnd = rect.origin.y;
@@ -728,7 +726,7 @@ typedef struct {
         NSAttributedString *string;
         while ((string = [datasource textRenderer:self stringInLineRange:&currentLineRange])) 
         {
-            segment = [[TextSegment alloc] initWithFrameCache:&globalCache];
+            segment = [[TextSegment alloc] initWithTextRenderer:self];
             segment.renderWrapWidth = wrapWidth;
             [segment generateWithString:string havingLineCount:currentLineRange.length];
             
@@ -806,12 +804,8 @@ typedef struct {
         [segment removeFramesetter];
     }
     
-    globalCache.segment = nil;
-    if (globalCache.frame) 
-    {
-        CFRelease(globalCache.frame);
-        globalCache.frame = NULL;
-    }
+    [framesettersCache removeAllObjects];
+    [framesCache removeAllObjects];
 }
 
 @end
