@@ -167,6 +167,9 @@
         }
     }
     
+    if (!valid)
+        return 0;
+    
     // Calculate actual height
     heightCache[cacheIdx].wrapWidth = renderWrapWidth;
     heightCache[cacheIdx].height = 0;
@@ -200,10 +203,12 @@
     return self;
 }
 
-// TODO!!! do reverse mode
 - (void)enumerateLinesIntersectingRect:(CGRect)rect 
                             usingBlock:(void (^)(CTLineRef, CGRect, CGFloat, BOOL *))block 
 {
+    if (!valid)
+        return;
+    
     if (CGRectIsNull(rect) || CGRectIsEmpty(rect)) 
     {
         rect = CGRectInfinite;
@@ -241,6 +246,9 @@
 
 - (void)enumerateLinesInStringRange:(NSRange)queryRange usingBlock:(void (^)(CTLineRef, CGRect, NSRange, BOOL *))block
 {
+    if (!valid)
+        return;
+    
     NSUInteger queryRangeEnd = NSUIntegerMax;
     if (queryRange.length > 0)
         queryRangeEnd = queryRange.location + queryRange.length;
@@ -483,9 +491,6 @@
 
 #pragma mark Public Outtake Methods
 
-// TODO keep a single frame cached for all segment. if needed by this function
-// use it. keep alway and only the last used frame. if the cached one is in the
-// middle of the requested rect, draw backward.
 - (void)drawTextWithinRect:(CGRect)rect inContext:(CGContextRef)context
 {
     // Sanitize input
@@ -506,8 +511,24 @@
         }
         // Positioning and rendering
         CGContextTranslateCTM(context, 0, -baseline);
-        CTLineDraw(line, context);
-        CGContextTranslateCTM(context, -lineBound.size.width, -lineBound.size.height+baseline);
+
+        CFArrayRef runs = CTLineGetGlyphRuns(line);
+        CFIndex runCount = CFArrayGetCount(runs);
+        CTRunRef run;
+        NSDictionary *runAttributes;
+        for (CFIndex i = 0; i < runCount; ++i) 
+        {
+            run = CFArrayGetValueAtIndex(runs, i);
+            runAttributes = (NSDictionary *)CTRunGetAttributes(run);
+            if (runAttributes) 
+            {
+                // Apply custom attributes
+                // TODO actual render custom attributes
+            }
+            CTRunDraw(run, context, (CFRange){ 0, 0 });
+        }
+
+        CGContextTranslateCTM(context, 0, -lineBound.size.height+baseline);
     }];
 }
 

@@ -32,12 +32,4 @@
 /// codeview after the text has been changed.
 - (void)codeView:(ECCodeView4 *)codeView commitString:(NSString *)string forTextInRange:(NSRange)range;
 
-@optional
-
-#pragma mark Returning Overlay Content
-
-/// When implemented return a dictionary with \c ECOverlayStyle as key to 
-/// \c NSIndexSet as values representing the ranges of string to apply the style to.
-- (NSDictionary *)codeView:(ECCodeView4 *)sender overlaysForTextRange:(NSRange)range;
-
 @end
