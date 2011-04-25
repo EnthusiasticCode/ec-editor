@@ -2,129 +2,82 @@
 //  Project.m
 //  edit
 //
-//  Created by Uri Baghin on 1/21/11.
-//  Copyright 2011 __MyCompanyName__. All rights reserved.
+//  Created by Uri Baghin on 4/25/11.
+//  Copyright (c) 2011 __MyCompanyName__. All rights reserved.
 //
 
 #import "Project.h"
-#import <CoreData/CoreData.h>
-
+#import "Target.h"
 
 @implementation Project
+@dynamic tag;
+@dynamic defaultType;
+@dynamic nodes;
+@dynamic tabs;
+@dynamic targets;
 
-
-@synthesize managedObjectModel;
-@synthesize managedObjectContext;
-@synthesize persistentStoreCoordinator;
-@synthesize rootDirectory = _rootDirectory;
-@synthesize name = _name;
-
-- (void)dealloc
+- (void)addTabsObject:(NSManagedObject *)value
 {
-    // Saves changes in the application's managed object context before the application terminates.
-    NSError *error = nil;
-    if (managedObjectContext) {
-        if ([managedObjectContext hasChanges] && ![managedObjectContext save:&error])
-        {
-            /*
-             Replace this implementation with code to handle the error appropriately.
-             
-             abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development. If it is not possible to recover from the error, display an alert panel that instructs the user to quit the application by pressing the Home button.
-             */
-//            NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
-//            abort();
-        } 
-    }
-    [_rootDirectory release];
-    [_name release];
-    [managedObjectContext release];
-    [managedObjectModel release];
-    [persistentStoreCoordinator release];
-    [super dealloc];
+    NSSet *changedObjects = [[NSSet alloc] initWithObjects:&value count:1];
+    [self willChangeValueForKey:@"tabs" withSetMutation:NSKeyValueUnionSetMutation usingObjects:changedObjects];
+    [[self primitiveValueForKey:@"tabs"] addObject:value];
+    [self didChangeValueForKey:@"tabs" withSetMutation:NSKeyValueUnionSetMutation usingObjects:changedObjects];
+    [changedObjects release];
 }
 
-- (id)initWithRootDirectory:(NSString *)rootDirectory
+- (void)removeTabsObject:(NSManagedObject *)value
 {
-    self = [super init];
-    if (self)
-    {
-        _name = [[rootDirectory lastPathComponent] retain];
-        _rootDirectory = [rootDirectory retain];
-    }
-    return self;
+    NSSet *changedObjects = [[NSSet alloc] initWithObjects:&value count:1];
+    [self willChangeValueForKey:@"tabs" withSetMutation:NSKeyValueMinusSetMutation usingObjects:changedObjects];
+    [[self primitiveValueForKey:@"tabs"] removeObject:value];
+    [self didChangeValueForKey:@"tabs" withSetMutation:NSKeyValueMinusSetMutation usingObjects:changedObjects];
+    [changedObjects release];
 }
 
-+ (id)projectWithRootDirectory:(NSString *)rootDirectory
+- (void)addTabs:(NSSet *)value
 {
-    id project = [self alloc];
-    project = [project initWithRootDirectory:rootDirectory];
-    return [project autorelease];
+    [self willChangeValueForKey:@"tabs" withSetMutation:NSKeyValueUnionSetMutation usingObjects:value];
+    [[self primitiveValueForKey:@"tabs"] unionSet:value];
+    [self didChangeValueForKey:@"tabs" withSetMutation:NSKeyValueUnionSetMutation usingObjects:value];
 }
 
-#pragma mark -
-#pragma mark Core Data template
-
-/**
- Returns the managed object context for the application.
- If the context doesn't already exist, it is created and bound to the persistent store coordinator for the application.
- */
-- (NSManagedObjectContext *)managedObjectContext
+- (void)removeTabs:(NSSet *)value
 {
-    if (managedObjectContext)
-        return managedObjectContext;
-    
-    NSPersistentStoreCoordinator *coordinator = [self persistentStoreCoordinator];
-    if (coordinator)
-    {
-        managedObjectContext = [[NSManagedObjectContext alloc] init];
-        [managedObjectContext setPersistentStoreCoordinator:coordinator];
-    }
-    return managedObjectContext;
+    [self willChangeValueForKey:@"tabs" withSetMutation:NSKeyValueMinusSetMutation usingObjects:value];
+    [[self primitiveValueForKey:@"tabs"] minusSet:value];
+    [self didChangeValueForKey:@"tabs" withSetMutation:NSKeyValueMinusSetMutation usingObjects:value];
 }
 
-/**
- Returns the managed object model for the application.
- If the model doesn't already exist, it is created by merging all of the models found in the application bundle.
- */
-- (NSManagedObjectModel *)managedObjectModel
+- (void)addTargetsObject:(Target *)value
 {
-    if (managedObjectModel)
-        return managedObjectModel;
-    managedObjectModel = [[NSManagedObjectModel mergedModelFromBundles:nil] retain];    
-    return managedObjectModel;
+    NSSet *changedObjects = [[NSSet alloc] initWithObjects:&value count:1];
+    [self willChangeValueForKey:@"targets" withSetMutation:NSKeyValueUnionSetMutation usingObjects:changedObjects];
+    [[self primitiveValueForKey:@"targets"] addObject:value];
+    [self didChangeValueForKey:@"targets" withSetMutation:NSKeyValueUnionSetMutation usingObjects:changedObjects];
+    [changedObjects release];
 }
 
-/**
- Returns the persistent store coordinator for the application.
- If the coordinator doesn't already exist, it is created and the application's store added to it.
- */
-- (NSPersistentStoreCoordinator *)persistentStoreCoordinator
+- (void)removeTargetsObject:(Target *)value
 {
-    
-    if (persistentStoreCoordinator)
-        return persistentStoreCoordinator;
-    
-    NSString *storePath = [self.rootDirectory stringByAppendingPathComponent:[self.name stringByAppendingPathExtension:@"sqlite"]];
-    
-    NSError *error = nil;
-    persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:[self managedObjectModel]];
-    if (![persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:[NSURL fileURLWithPath:storePath] options:nil error:&error])
-    {
-        /*
-         Replace this implementation with code to handle the error appropriately.
-         
-         abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development. If it is not possible to recover from the error, display an alert panel that instructs the user to quit the application by pressing the Home button.
-         
-         Typical reasons for an error here include:
-         * The persistent store is not accessible
-         * The schema for the persistent store is incompatible with current managed object model
-         Check the error message to determine what the actual problem was.
-         */
-//        NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
-//        abort();
-    }    
-    
-    return persistentStoreCoordinator;
+    NSSet *changedObjects = [[NSSet alloc] initWithObjects:&value count:1];
+    [self willChangeValueForKey:@"targets" withSetMutation:NSKeyValueMinusSetMutation usingObjects:changedObjects];
+    [[self primitiveValueForKey:@"targets"] removeObject:value];
+    [self didChangeValueForKey:@"targets" withSetMutation:NSKeyValueMinusSetMutation usingObjects:changedObjects];
+    [changedObjects release];
+}
+
+- (void)addTargets:(NSSet *)value
+{
+    [self willChangeValueForKey:@"targets" withSetMutation:NSKeyValueUnionSetMutation usingObjects:value];
+    [[self primitiveValueForKey:@"targets"] unionSet:value];
+    [self didChangeValueForKey:@"targets" withSetMutation:NSKeyValueUnionSetMutation usingObjects:value];
+}
+
+- (void)removeTargets:(NSSet *)value
+{
+    [self willChangeValueForKey:@"targets" withSetMutation:NSKeyValueMinusSetMutation usingObjects:value];
+    [[self primitiveValueForKey:@"targets"] minusSet:value];
+    [self didChangeValueForKey:@"targets" withSetMutation:NSKeyValueMinusSetMutation usingObjects:value];
 }
 
 @end

@@ -11,6 +11,15 @@
 		B706F05B13563ECB00E03DDF /* UIImage+BlockDrawing.m in Sources */ = {isa = PBXBuildFile; fileRef = B706F05713563ECB00E03DDF /* UIImage+BlockDrawing.m */; };
 		B706F05C13563ECB00E03DDF /* UIView+ConcurrentAnimation.m in Sources */ = {isa = PBXBuildFile; fileRef = B706F05913563ECB00E03DDF /* UIView+ConcurrentAnimation.m */; };
 		B7096DF7135A1EAB0082F859 /* NSIndexPath+FixedIsEqual.m in Sources */ = {isa = PBXBuildFile; fileRef = B7096DF6135A1EAB0082F859 /* NSIndexPath+FixedIsEqual.m */; };
+		B70C5C8C1365F22E001C35A5 /* Target.m in Sources */ = {isa = PBXBuildFile; fileRef = B70C5C8B1365F22E001C35A5 /* Target.m */; };
+		B70C5C8F1365F22E001C35A5 /* Folder.m in Sources */ = {isa = PBXBuildFile; fileRef = B70C5C8E1365F22E001C35A5 /* Folder.m */; };
+		B70C5C951365F22E001C35A5 /* Bookmark.m in Sources */ = {isa = PBXBuildFile; fileRef = B70C5C941365F22E001C35A5 /* Bookmark.m */; };
+		B70C5C981365F22F001C35A5 /* UndoItem.m in Sources */ = {isa = PBXBuildFile; fileRef = B70C5C971365F22F001C35A5 /* UndoItem.m */; };
+		B70C5C9B1365F22F001C35A5 /* NameWord.m in Sources */ = {isa = PBXBuildFile; fileRef = B70C5C9A1365F22F001C35A5 /* NameWord.m */; };
+		B70C5C9E1365F22F001C35A5 /* Tab.m in Sources */ = {isa = PBXBuildFile; fileRef = B70C5C9D1365F22F001C35A5 /* Tab.m */; };
+		B70C5CA41365F22F001C35A5 /* Group.m in Sources */ = {isa = PBXBuildFile; fileRef = B70C5CA31365F22F001C35A5 /* Group.m */; };
+		B70C5CA71365F22F001C35A5 /* Node.m in Sources */ = {isa = PBXBuildFile; fileRef = B70C5CA61365F22F001C35A5 /* Node.m */; };
+		B70C5CAA1365F22F001C35A5 /* HistoryItem.m in Sources */ = {isa = PBXBuildFile; fileRef = B70C5CA91365F22F001C35A5 /* HistoryItem.m */; };
 		B70D64BC132A2581008DDEA4 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B70D64BB132A2581008DDEA4 /* UIKit.framework */; };
 		B70D64BE132A2581008DDEA4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B70D64BD132A2581008DDEA4 /* Foundation.framework */; };
 		B70D64C0132A2581008DDEA4 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B70D64BF132A2581008DDEA4 /* CoreGraphics.framework */; };
@@ -77,6 +86,24 @@
 		B706F05913563ECB00E03DDF /* UIView+ConcurrentAnimation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIView+ConcurrentAnimation.m"; path = "Frameworks/ECUIKit/UIView+ConcurrentAnimation.m"; sourceTree = "<group>"; };
 		B7096DF5135A1EAB0082F859 /* NSIndexPath+FixedIsEqual.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSIndexPath+FixedIsEqual.h"; sourceTree = "<group>"; };
 		B7096DF6135A1EAB0082F859 /* NSIndexPath+FixedIsEqual.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSIndexPath+FixedIsEqual.m"; sourceTree = "<group>"; };
+		B70C5C8A1365F22E001C35A5 /* Target.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Target.h; sourceTree = "<group>"; };
+		B70C5C8B1365F22E001C35A5 /* Target.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Target.m; sourceTree = "<group>"; };
+		B70C5C8D1365F22E001C35A5 /* Folder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Folder.h; sourceTree = "<group>"; };
+		B70C5C8E1365F22E001C35A5 /* Folder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Folder.m; sourceTree = "<group>"; };
+		B70C5C931365F22E001C35A5 /* Bookmark.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Bookmark.h; sourceTree = "<group>"; };
+		B70C5C941365F22E001C35A5 /* Bookmark.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Bookmark.m; sourceTree = "<group>"; };
+		B70C5C961365F22F001C35A5 /* UndoItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UndoItem.h; sourceTree = "<group>"; };
+		B70C5C971365F22F001C35A5 /* UndoItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UndoItem.m; sourceTree = "<group>"; };
+		B70C5C991365F22F001C35A5 /* NameWord.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NameWord.h; sourceTree = "<group>"; };
+		B70C5C9A1365F22F001C35A5 /* NameWord.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NameWord.m; sourceTree = "<group>"; };
+		B70C5C9C1365F22F001C35A5 /* Tab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Tab.h; sourceTree = "<group>"; };
+		B70C5C9D1365F22F001C35A5 /* Tab.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Tab.m; sourceTree = "<group>"; };
+		B70C5CA21365F22F001C35A5 /* Group.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Group.h; sourceTree = "<group>"; };
+		B70C5CA31365F22F001C35A5 /* Group.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Group.m; sourceTree = "<group>"; };
+		B70C5CA51365F22F001C35A5 /* Node.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Node.h; sourceTree = "<group>"; };
+		B70C5CA61365F22F001C35A5 /* Node.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Node.m; sourceTree = "<group>"; };
+		B70C5CA81365F22F001C35A5 /* HistoryItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HistoryItem.h; sourceTree = "<group>"; };
+		B70C5CA91365F22F001C35A5 /* HistoryItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HistoryItem.m; sourceTree = "<group>"; };
 		B70D64B7132A2581008DDEA4 /* edit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = edit.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B70D64BB132A2581008DDEA4 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		B70D64BD132A2581008DDEA4 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -127,23 +154,23 @@
 		B75B87661358401B0098E7E2 /* ECCodeUnitPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeUnitPlugin.h; sourceTree = "<group>"; };
 		B75B87671358401B0098E7E2 /* Index.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Index.h; sourceTree = "<group>"; };
 		B75B87681358401B0098E7E2 /* libclang.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libclang.dylib; sourceTree = "<group>"; };
-		B7A04CA7134F68BD00B72575 /* File.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = File.h; path = Apps/edit/File.h; sourceTree = SOURCE_ROOT; };
-		B7A04CA8134F68BD00B72575 /* File.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = File.m; path = Apps/edit/File.m; sourceTree = SOURCE_ROOT; };
-		B7D279D6135750C900E662FB /* ECItemView.h */ = {isa = PBXFileReference; fileEncoding = 4; name = ECItemView.h; path = Frameworks/ECUIKit/ECItemView.h; sourceTree = "<group>"; };
+		B7A04CA7134F68BD00B72575 /* File.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = File.h; sourceTree = "<group>"; };
+		B7A04CA8134F68BD00B72575 /* File.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = File.m; sourceTree = "<group>"; };
+		B7D279D6135750C900E662FB /* ECItemView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECItemView.h; path = Frameworks/ECUIKit/ECItemView.h; sourceTree = "<group>"; };
 		B7D279D7135750C900E662FB /* ECItemView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECItemView.m; path = Frameworks/ECUIKit/ECItemView.m; sourceTree = "<group>"; };
-		B7D279D8135750C900E662FB /* ECItemViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; name = ECItemViewCell.h; path = Frameworks/ECUIKit/ECItemViewCell.h; sourceTree = "<group>"; };
+		B7D279D8135750C900E662FB /* ECItemViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECItemViewCell.h; path = Frameworks/ECUIKit/ECItemViewCell.h; sourceTree = "<group>"; };
 		B7D279D9135750C900E662FB /* ECItemViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECItemViewCell.m; path = Frameworks/ECUIKit/ECItemViewCell.m; sourceTree = "<group>"; };
 		B7DBA57F132A3281004C0E1D /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
-		CDEBF20813489A8E00CE2285 /* AppController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppController.h; path = Apps/edit/AppController.h; sourceTree = SOURCE_ROOT; };
-		CDEBF20913489A8E00CE2285 /* AppController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppController.m; path = Apps/edit/AppController.m; sourceTree = SOURCE_ROOT; };
-		CDEBF20C13489A8E00CE2285 /* FileController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileController.h; path = Apps/edit/FileController.h; sourceTree = SOURCE_ROOT; };
-		CDEBF20D13489A8E00CE2285 /* FileController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FileController.m; path = Apps/edit/FileController.m; sourceTree = SOURCE_ROOT; };
-		CDEBF20E13489A8E00CE2285 /* Project.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Project.h; path = Apps/edit/Project.h; sourceTree = SOURCE_ROOT; };
-		CDEBF20F13489A8E00CE2285 /* Project.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Project.m; path = Apps/edit/Project.m; sourceTree = SOURCE_ROOT; };
-		CDEBF21013489A8E00CE2285 /* ProjectController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProjectController.h; path = Apps/edit/ProjectController.h; sourceTree = SOURCE_ROOT; };
-		CDEBF21113489A8E00CE2285 /* ProjectController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ProjectController.m; path = Apps/edit/ProjectController.m; sourceTree = SOURCE_ROOT; };
-		CDEBF21413489A8E00CE2285 /* RootController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RootController.h; path = Apps/edit/RootController.h; sourceTree = SOURCE_ROOT; };
-		CDEBF21513489A8E00CE2285 /* RootController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RootController.m; path = Apps/edit/RootController.m; sourceTree = SOURCE_ROOT; };
+		CDEBF20813489A8E00CE2285 /* AppController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppController.h; sourceTree = "<group>"; };
+		CDEBF20913489A8E00CE2285 /* AppController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppController.m; sourceTree = "<group>"; };
+		CDEBF20C13489A8E00CE2285 /* FileController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileController.h; sourceTree = "<group>"; };
+		CDEBF20D13489A8E00CE2285 /* FileController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileController.m; sourceTree = "<group>"; };
+		CDEBF20E13489A8E00CE2285 /* Project.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Project.h; sourceTree = "<group>"; };
+		CDEBF20F13489A8E00CE2285 /* Project.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Project.m; sourceTree = "<group>"; };
+		CDEBF21013489A8E00CE2285 /* ProjectController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProjectController.h; sourceTree = "<group>"; };
+		CDEBF21113489A8E00CE2285 /* ProjectController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProjectController.m; sourceTree = "<group>"; };
+		CDEBF21413489A8E00CE2285 /* RootController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RootController.h; sourceTree = "<group>"; };
+		CDEBF21513489A8E00CE2285 /* RootController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RootController.m; sourceTree = "<group>"; };
 		CDEBF27613489BE800CE2285 /* ECCodeScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECCodeScrollView.h; path = Frameworks/ECUIKit/ECCodeScrollView.h; sourceTree = "<group>"; };
 		CDEBF27713489BE800CE2285 /* ECCodeScrollView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECCodeScrollView.m; path = Frameworks/ECUIKit/ECCodeScrollView.m; sourceTree = "<group>"; };
 		CDEBF27813489BE800CE2285 /* ECCodeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECCodeView.h; path = Frameworks/ECUIKit/ECCodeView.h; sourceTree = "<group>"; };
@@ -266,6 +293,28 @@
 		B70D650D132A260C008DDEA4 /* Application */ = {
 			isa = PBXGroup;
 			children = (
+				CDEBF20E13489A8E00CE2285 /* Project.h */,
+				CDEBF20F13489A8E00CE2285 /* Project.m */,
+				B7A04CA7134F68BD00B72575 /* File.h */,
+				B7A04CA8134F68BD00B72575 /* File.m */,
+				B70C5CA81365F22F001C35A5 /* HistoryItem.h */,
+				B70C5CA91365F22F001C35A5 /* HistoryItem.m */,
+				B70C5CA51365F22F001C35A5 /* Node.h */,
+				B70C5CA61365F22F001C35A5 /* Node.m */,
+				B70C5CA21365F22F001C35A5 /* Group.h */,
+				B70C5CA31365F22F001C35A5 /* Group.m */,
+				B70C5C9C1365F22F001C35A5 /* Tab.h */,
+				B70C5C9D1365F22F001C35A5 /* Tab.m */,
+				B70C5C991365F22F001C35A5 /* NameWord.h */,
+				B70C5C9A1365F22F001C35A5 /* NameWord.m */,
+				B70C5C961365F22F001C35A5 /* UndoItem.h */,
+				B70C5C971365F22F001C35A5 /* UndoItem.m */,
+				B70C5C931365F22E001C35A5 /* Bookmark.h */,
+				B70C5C941365F22E001C35A5 /* Bookmark.m */,
+				B70C5C8D1365F22E001C35A5 /* Folder.h */,
+				B70C5C8E1365F22E001C35A5 /* Folder.m */,
+				B70C5C8A1365F22E001C35A5 /* Target.h */,
+				B70C5C8B1365F22E001C35A5 /* Target.m */,
 				CDEBF20813489A8E00CE2285 /* AppController.h */,
 				CDEBF20913489A8E00CE2285 /* AppController.m */,
 				CDEBF21413489A8E00CE2285 /* RootController.h */,
@@ -274,13 +323,9 @@
 				CDEBF21113489A8E00CE2285 /* ProjectController.m */,
 				CDEBF20C13489A8E00CE2285 /* FileController.h */,
 				CDEBF20D13489A8E00CE2285 /* FileController.m */,
-				CDEBF20E13489A8E00CE2285 /* Project.h */,
-				CDEBF20F13489A8E00CE2285 /* Project.m */,
-				B7A04CA7134F68BD00B72575 /* File.h */,
-				B7A04CA8134F68BD00B72575 /* File.m */,
 			);
 			name = Application;
-			path = Source;
+			path = Apps/edit;
 			sourceTree = "<group>";
 		};
 		CDEBF23813489AB900CE2285 /* ECFoundation */ = {
@@ -575,6 +620,15 @@
 				B75B87741358401B0098E7E2 /* ECCodeToken.m in Sources */,
 				B75B87751358401B0098E7E2 /* ECCodeUnit.m in Sources */,
 				B7096DF7135A1EAB0082F859 /* NSIndexPath+FixedIsEqual.m in Sources */,
+				B70C5C8C1365F22E001C35A5 /* Target.m in Sources */,
+				B70C5C8F1365F22E001C35A5 /* Folder.m in Sources */,
+				B70C5C951365F22E001C35A5 /* Bookmark.m in Sources */,
+				B70C5C981365F22F001C35A5 /* UndoItem.m in Sources */,
+				B70C5C9B1365F22F001C35A5 /* NameWord.m in Sources */,
+				B70C5C9E1365F22F001C35A5 /* Tab.m in Sources */,
+				B70C5CA41365F22F001C35A5 /* Group.m in Sources */,
+				B70C5CA71365F22F001C35A5 /* Node.m in Sources */,
+				B70C5CAA1365F22F001C35A5 /* HistoryItem.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
