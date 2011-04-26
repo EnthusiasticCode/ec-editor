@@ -55,33 +55,35 @@
     NSUInteger lineIndex, stringLength = [str length];
     NSRange stringRange = NSMakeRange(0, 0);
 
+    // Calculate string range location for query line range location
     for (lineIndex = 0; lineIndex < lineRange->location; ++lineIndex)
         stringRange.location = NSMaxRange([str lineRangeForRange:(NSRange){ stringRange.location, 0 }]);
     
     if (stringRange.location >= stringLength)
         return nil;
     
-    NSUInteger limit = NSMaxRange(*lineRange);
-    for (lineIndex = lineRange->location; lineIndex < limit && stringRange.length < stringLength; ++lineIndex)
+    // Calculate string range lenght for query line range length
+    stringRange.length = stringRange.location;
+    for (lineIndex = 0; lineIndex < lineRange->length && stringRange.length < stringLength; ++lineIndex)
         stringRange.length = NSMaxRange([str lineRangeForRange:(NSRange){ stringRange.length, 0 }]);
-
-    lineRange->length = lineIndex - lineRange->location;
-    
-    if (stringRange.length == stringLength) 
-    {
-        return string;
-    }
-    
     stringRange.length -= stringRange.location;
+
+    // Assign return read count of lines
+    lineRange->length = lineIndex;
+    
+    // Return requested substring
+    if (stringRange.length == stringLength) 
+        return string;
     
     return [string attributedSubstringFromRange:stringRange];
 }
 
 - (NSUInteger)textRenderer:(ECTextRenderer *)sender estimatedTextLineCountOfLength:(NSUInteger)maximumLineLength
 {
+    CGFloat max = maximumLineLength;
     __block NSUInteger count = 0;
     [[string string] enumerateLinesUsingBlock:^(NSString *line, BOOL *stop) {
-        count += ceilf([line length] / maximumLineLength);
+        count += ceilf((float)[line length] / max);
     }];
     return count;
 }
