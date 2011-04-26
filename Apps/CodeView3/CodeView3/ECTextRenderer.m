@@ -33,14 +33,24 @@
     BOOL datasourceHasTextRendererEstimatedTextLineCountOfLength;
 }
 
+/// Text renderer framesetter's cache shared among all text segments
 @property (nonatomic, readonly) ECDictionaryCache *framesettersCache;
+
+/// Text renderer frame's cache shared among all text segments
 @property (nonatomic, readonly) ECDictionaryCache *framesCache;
 
-
+/// Create the specified segment's framesetter. Lines and lenght are output parameter, pass NULL if not interested.
+/// This function is supposed to be used by a text segment to generate it's framesetter if not present in cache.
+/// The function can return NULL if the source string has no text for the given segment.
 - (CTFramesetterRef)createFramesetterForTextSegment:(TextSegment *)segment lineCount:(NSUInteger *)lines stringLenght:(NSUInteger *)length;
 
+/// Enumerate throught text segments creating them if not yet present. This function
+/// guarantee to enumerate throught all the text segments that cover the entire
+/// source text.
 - (void)generateTextSegmentsAndEnumerateUsingBlock:(void(^)(TextSegment *segment, NSUInteger idx, NSUInteger lineOffset, NSUInteger stringOffset, CGFloat positionOffset, BOOL *stop))block;
 
+/// Convenience function to enumerate throught all lines (indipendent from text segment)
+/// contained in the given rect relative to the rendered text space.
 - (void)enumerateLinesIntersectingRect:(CGRect)rect usingBlock:(void(^)(CTLineRef line, CGRect lineBound, CGFloat baselineOffset, BOOL *stop))block;
 
 @end
