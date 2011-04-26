@@ -207,8 +207,6 @@
 				CD887DB413530FFC00332BAC /* ECTextPosition.m */,
 				CD887DB513530FFC00332BAC /* ECTextRange.h */,
 				CD887DB613530FFC00332BAC /* ECTextRange.m */,
-				CD887DB713530FFC00332BAC /* ECTextStyle.h */,
-				CD887DB813530FFC00332BAC /* ECTextStyle.m */,
 			);
 			name = "ECUIKit imports";
 			path = ../../../Frameworks/ECUIKit;
@@ -217,6 +215,8 @@
 		CD887DCF13531D1300332BAC /* Usati */ = {
 			isa = PBXGroup;
 			children = (
+				CD887DB713530FFC00332BAC /* ECTextStyle.h */,
+				CD887DB813530FFC00332BAC /* ECTextStyle.m */,
 				CD887DA513530FFC00332BAC /* ECCodeView.h */,
 				CD887DA613530FFC00332BAC /* ECCodeView.m */,
 				CD887DA713530FFC00332BAC /* ECEditCodeView.h */,

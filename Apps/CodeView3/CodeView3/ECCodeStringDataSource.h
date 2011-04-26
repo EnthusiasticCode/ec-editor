@@ -7,10 +7,13 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "ECCodeViewDatasource.h"
+#import "ECTextStyle.h"
 
+@interface ECCodeStringDataSource : NSObject <ECCodeViewDataSource>
 
-@interface ECCodeStringDataSource : NSObject {
-    
-}
+@property (nonatomic, retain) NSString *string;
+
+@property (nonatomic, retain) ECTextStyle *defaultTextStyle;
 
 @end

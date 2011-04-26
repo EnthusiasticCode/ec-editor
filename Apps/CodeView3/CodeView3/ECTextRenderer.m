@@ -9,6 +9,7 @@
 #import "ECTextRenderer.h"
 #import <CoreText/CoreText.h>
 #import "ECDictionaryCache.h"
+#import "ECTextStyle.h"
 
 // Internal working notes: (outdated)
 // - The renderer keeps an array of ordered framesetter informations:
@@ -131,7 +132,6 @@
         CGPathAddRect(path, NULL, (CGRect){ CGPointZero, { renderWrapWidth, CGFLOAT_MAX } });
         
         // Create frame
-        // TODO!!! add some NULL check
         f = CTFramesetterCreateFrame(self.framesetter, (CFRange){ 0, 0 }, path, NULL);
         CGPathRelease(path);
         
@@ -497,6 +497,8 @@
     if (!context)
         return;
     
+    CGContextRetain(context);
+    
     // Setup rendering transformations
     CGContextSetTextMatrix(context, CGAffineTransformIdentity);
     CGContextSetTextPosition(context, 0, 0);
@@ -530,6 +532,8 @@
 
         CGContextTranslateCTM(context, 0, -lineBound.size.height+baseline);
     }];
+    
+    CGContextRelease(context);
 }
 
 - (NSUInteger)closestStringLocationToPoint:(CGPoint)point withinStringRange:(NSRange)queryStringRange
@@ -764,6 +768,7 @@
             // TODO!!! if lineCount > 1.5 * preferred -> split or merge if * 0.5
             // and remember to set proper lastTextSegment
             [framesettersCache removeObjectForKey:segment];
+            [framesCache removeObjectForKey:segment];
         }
         
         currentLineLocation += segmentRange.length;

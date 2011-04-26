@@ -9,14 +9,21 @@
 #import "ECTextStyle.h"
 #import <CoreText/CoreText.h>
 
+
+const NSString *ECTSBackgroundColorAttributeName = @"ECTextStyleBackgroundAttribute";
+
+
+@interface ECTextStyle () {
+@private
+    NSMutableDictionary *CTAttributes;
+}
+@end
+
 @implementation ECTextStyle
 
 #pragma mark Properties
 
-@synthesize name;
-@synthesize font;
-@synthesize foregroundColor;
-@synthesize CTAttributes;
+@synthesize name, font, foregroundColor, backgroundColor, underlineColor, underlineStyle, CTAttributes;
 
 - (void)setFont:(UIFont *)aFont
 {
@@ -25,9 +32,9 @@
     
     if (font)
     {
-        // TODO check for leak?
-        CTFontRef CTFont = CTFontCreateWithName((CFStringRef)font.familyName, font.pointSize, &CGAffineTransformIdentity);
+        CTFontRef CTFont = CTFontCreateWithName((CFStringRef)font.fontName, font.pointSize, NULL);
         [CTAttributes setObject:(id)CTFont forKey:(id)kCTFontAttributeName];
+        CFRelease(CTFont);
     }
     else
     {
@@ -47,6 +54,50 @@
     else
     {
         [CTAttributes removeObjectForKey:(id)kCTForegroundColorAttributeName];
+    }
+}
+
+- (void)setBackgroundColor:(UIColor *)aBackgroundColor
+{
+    [backgroundColor release];
+    backgroundColor = [aBackgroundColor retain];
+    
+    if (backgroundColor) 
+    {
+        [CTAttributes setObject:(id)backgroundColor.CGColor forKey:ECTSBackgroundColorAttributeName];
+    }
+    else
+    {
+        [CTAttributes removeObjectForKey:ECTSBackgroundColorAttributeName];
+    }
+}
+
+- (void)setUnderlineColor:(UIColor *)aUnderlineColor
+{
+    [underlineColor release];
+    underlineColor = [aUnderlineColor retain];
+    
+    if (underlineColor) 
+    {
+        [CTAttributes setObject:(id)underlineColor.CGColor forKey:(id)kCTUnderlineColorAttributeName];
+    }
+    else
+    {
+        [CTAttributes removeObjectForKey:(id)kCTUnderlineColorAttributeName];
+    }
+}
+
+- (void)setUnderlineStyle:(ECUnderlineStyle)aUnderlineStyle
+{
+    underlineStyle = aUnderlineStyle;
+    
+    if (underlineStyle & 0xFF) 
+    {
+        [CTAttributes setObject:[NSNumber numberWithInt:underlineStyle] forKey:(id)kCTUnderlineStyleAttributeName];
+    }
+    else
+    {
+        [CTAttributes removeObjectForKey:(id)kCTUnderlineStyleAttributeName];
     }
 }
 
@@ -75,6 +126,8 @@
     [name release];
     [font release];
     [foregroundColor release];
+    [backgroundColor release];
+    [underlineColor release];
     [CTAttributes release];
     [super dealloc];
 }
