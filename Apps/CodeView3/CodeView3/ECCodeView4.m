@@ -11,6 +11,7 @@
 #import "ECTextRenderer.h"
 #import "ECTextPosition.h"
 #import "ECTextRange.h"
+#import "ECCodeStringDataSource.h"
 
 #define TILEVIEWPOOL_SIZE (3)
 
@@ -148,6 +149,7 @@
     UITapGestureRecognizer *tapRecognizer;
     
     // Flags
+    ECCodeStringDataSource *defaultDatasource;
     BOOL dataSourceHasCodeCanEditTextInRange;
 }
 
@@ -182,12 +184,13 @@
 {
     datasource = aDatasource;
     
+    if (datasource != defaultDatasource) 
+    {
+        [defaultDatasource release];
+    }
+    
     dataSourceHasCodeCanEditTextInRange = [datasource respondsToSelector:@selector(codeView:canEditTextInRange:)];
     
-    if (datasource != self) 
-    {
-        self.text = nil;
-    }
     renderer.datasource = datasource;
 }
 
@@ -233,16 +236,19 @@
 static void preinit(ECCodeView4 *self)
 {
     self->renderer = [ECTextRenderer new];
-    self->renderer.delegate = (id<ECTextRendererDelegate>)self;
     self->renderer.preferredLineCountPerSegment = 500;
-    
-    self.datasource = self;
     
     self->textInsets = UIEdgeInsetsMake(10, 10, 10, 10);
 }
 
 static void init(ECCodeView4 *self)
 {
+    if (!self->datasource)
+    {
+        self->defaultDatasource = [ECCodeStringDataSource new];
+        self.datasource = self->defaultDatasource;
+    }
+    
     self->renderer.wrapWidth = UIEdgeInsetsInsetRect(self.bounds, self->textInsets).size.width;
     [self->renderer addObserver:self forKeyPath:@"estimatedHeight" options:NSKeyValueObservingOptionNew context:nil];
     
@@ -286,6 +292,7 @@ static void init(ECCodeView4 *self)
     for (NSInteger i = 0; i < TILEVIEWPOOL_SIZE; ++i)
         [tileViewPool[i] release];
     [renderer release];
+    [defaultDatasource release];
     [super dealloc];
 }
 
@@ -798,7 +805,7 @@ static void init(ECCodeView4 *self)
 
 - (UITextPosition *)endOfDocument
 {
-    ECTextPosition *p = [[[ECTextPosition alloc] initWithIndex:[self textLength]] autorelease];
+    ECTextPosition *p = [[[ECTextPosition alloc] initWithIndex:[datasource textLength]] autorelease];
     return p;
 }
 
@@ -1014,21 +1021,28 @@ static void init(ECCodeView4 *self)
 #pragma mark -
 #pragma mark Text Renderer and CodeView String Datasource
 
-@synthesize text;
-
-- (void)setText:(NSAttributedString *)string
+- (NSString *)text
 {
-    if (datasource != self)
+    if (![datasource isKindOfClass:[ECCodeStringDataSource class]])
+    {
+        return nil;
+    }
+    
+    return [(ECCodeStringDataSource *)datasource string];
+}
+
+- (void)setText:(NSString *)string
+{
+    if (![datasource isKindOfClass:[ECCodeStringDataSource class]])
     {
         [NSException raise:NSInternalInconsistencyException format:@"Trying to set codeview text with textDelegate not self."];
         return;
     }
     
     // Set text
-    [text release];
-    text = [string retain];
+    [(ECCodeStringDataSource *)datasource setString:string];
     [renderer updateAllText];
-        
+
     // Update tiles
     CGRect bounds = self.bounds;
     renderer.wrapWidth = UIEdgeInsetsInsetRect(bounds, self->textInsets).size.width;
@@ -1046,97 +1060,5 @@ static void init(ECCodeView4 *self)
     [self setNeedsLayout];
 }
 
-
-#pragma mark CodeView Datasouce
-
-- (NSUInteger)textLength
-{
-    return [text length];
-}
-
-- (NSString *)codeView:(ECCodeView4 *)codeView stringInRange:(NSRange)range
-{
-    return [[text string] substringWithRange:range];
-}
-
-- (BOOL)codeView:(ECCodeView4 *)codeView canEditTextInRange:(NSRange)range
-{
-    return codeView == self;
-}
-
-- (void)codeView:(ECCodeView4 *)codeView commitString:(NSString *)string forTextInRange:(NSRange)range
-{
-    // Original line range to modify
-//    NSArray *lines = [[text string] componentsSeparatedByString:@"\n"];
-//    if (!lines || [lines count] == 0 || [lines count] <= range.location)
-//        return;
-//    NSRange originalLineRange = NSMakeRange(0, 0);
-//    
-    
-    // Editing
-    [text beginEditing];
-    if (!string || [string length] == 0)
-        [text deleteCharactersInRange:range];
-    else
-        [text replaceCharactersInRange:range withString:string];
-    [text endEditing];
-    
-    // Modified line range
-//    lines = [[text string] componentsSeparatedByString:@"\n"];
-  
-    [codeView updateAllText];
-}
-
-#pragma mark TextRenderer Datasource
-
-- (NSAttributedString *)textRenderer:(ECTextRenderer *)sender stringInLineRange:(NSRange *)lineRange
-{
-    NSArray *lines = [[text string] componentsSeparatedByString:@"\n"];
-    if (!lines || [lines count] == 0 || [lines count] <= (*lineRange).location)
-        return nil;
-    
-    NSUInteger end = (*lineRange).length;
-    if (end)
-        end += (*lineRange).location;
-    
-    __block NSRange charRange = NSMakeRange(0, 0);
-    __block NSUInteger lineCount = 0;
-    [lines enumerateObjectsUsingBlock:^(NSString *str, NSUInteger idx, BOOL *stop) {
-        if (idx < (*lineRange).location) 
-        {
-            charRange.location += [str length] + 1;
-        }
-        else if (end == 0 || idx < end)
-        {
-            charRange.length += [str length] + 1;
-            lineCount++;
-        }
-        else
-        {
-            *stop = YES;
-        }
-    }];
-    charRange.length--;
-    (*lineRange).length = lineCount;
-    
-    // TODO!!! add tailing newline
-    if (charRange.length == [text length]) 
-    {
-        return text;
-    }
-    return [text attributedSubstringFromRange:charRange];
-}
-
-- (NSUInteger)textRenderer:(ECTextRenderer *)sender estimatedTextLineCountOfLength:(NSUInteger)maximumLineLength
-{
-    NSArray *lines = [[text string] componentsSeparatedByString:@"\n"];
-    
-    __block NSUInteger lineCount = 0;
-    [lines enumerateObjectsUsingBlock:^(NSString *str, NSUInteger idx, BOOL *stop) {
-        lineCount += ([str length] / maximumLineLength) + 1;
-    }];
-    
-    return lineCount;
-}
 
 @end

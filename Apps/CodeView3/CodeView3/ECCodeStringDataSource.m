@@ -14,8 +14,6 @@
     NSMutableAttributedString *string;
 }
 
-- (void)updateLinesLenghts;
-
 @end
 
 @implementation ECCodeStringDataSource
@@ -31,7 +29,6 @@
 {
     [string release];
     string = [[NSMutableAttributedString alloc] initWithString:aString attributes:defaultTextStyle.CTAttributes];
-    [self updateLinesLenghts];
 }
 
 #pragma makr NSObject Methods
@@ -39,7 +36,7 @@
 - (id)init {
     if ((self = [super init])) 
     {
-        defaultTextStyle = [ECTextStyle textStyleWithName:@"default" font:[UIFont fontWithName:@"Courier New" size:12] color:nil];
+        defaultTextStyle = [[ECTextStyle textStyleWithName:@"default" font:[UIFont fontWithName:@"Courier New" size:12] color:nil] retain];
     }
     return self;
 }
@@ -55,35 +52,27 @@
 - (NSAttributedString *)textRenderer:(ECTextRenderer *)sender stringInLineRange:(NSRange *)lineRange
 {
     NSString *str = [string string];
+    NSUInteger lineIndex, stringLength = [str length];
+    NSRange stringRange = NSMakeRange(0, 0);
+
+    for (lineIndex = 0; lineIndex < lineRange->location; ++lineIndex)
+        stringRange.location = NSMaxRange([str lineRangeForRange:(NSRange){ stringRange.location, 0 }]);
     
-    __block NSRange stringRange = NSMakeRange(0, 0), lineStringRange = NSMakeRange(0, 0);
-    __block NSUInteger lineIndex = 0, lineCount = 0;
-    [str enumerateLinesUsingBlock:^(NSString *line, BOOL *stop) {
-        lineStringRange = [str lineRangeForRange:(NSRange){ lineStringRange.location, [line length] }];
-        if (lineIndex >= lineRange->location) 
-        {
-            if (lineRange->length && lineCount >= lineRange->length) 
-            {
-                *stop = YES;
-            }
-            else
-            {
-                stringRange.length += lineStringRange.length;
-                lineCount++;
-            }
-        }
-        else
-        {
-            stringRange.location += lineStringRange.length;
-        }
-        lineStringRange.location += lineStringRange.length;
-        lineIndex++;
-    }];
+    if (stringRange.location >= stringLength)
+        return nil;
     
-    if (stringRange.location + stringRange.length == [str length]) 
+    NSUInteger limit = NSMaxRange(*lineRange);
+    for (lineIndex = lineRange->location; lineIndex < limit && stringRange.length < stringLength; ++lineIndex)
+        stringRange.length = NSMaxRange([str lineRangeForRange:(NSRange){ stringRange.length, 0 }]);
+
+    lineRange->length = lineIndex - lineRange->location;
+    
+    if (stringRange.length == stringLength) 
     {
         return string;
     }
+    
+    stringRange.length -= stringRange.location;
     
     return [string attributedSubstringFromRange:stringRange];
 }

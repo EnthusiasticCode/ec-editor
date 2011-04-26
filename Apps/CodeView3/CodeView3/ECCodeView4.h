@@ -10,7 +10,7 @@
 #import "ECCodeViewDataSource.h"
 
 
-@interface ECCodeView4 : UIScrollView <UIKeyInput, UITextInputTraits, UITextInput, ECCodeViewDataSource>
+@interface ECCodeView4 : UIScrollView <UIKeyInput, UITextInputTraits, UITextInput>
 
 /// The datasource for the text displayed by the code view. Default is self.
 /// If this datasource is not self, the text property will have no effect.
@@ -20,7 +20,7 @@
 
 /// Set the text fot the control. This property is only used if textDatasource
 /// is the code view itself.
-@property (nonatomic, retain) NSAttributedString *text;
+@property (nonatomic, retain) NSString *text;
 
 /// Insets of the text.
 @property (nonatomic) UIEdgeInsets textInsets;

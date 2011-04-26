@@ -43,9 +43,7 @@
     [super viewDidLoad];
     
     codeView.contentMode = UIViewContentModeRedraw;
-    NSMutableAttributedString *str = [[NSMutableAttributedString alloc] initWithString:@"int main(params)\n{ somethinghere\n\treturn 0;\n}"];
-    codeView.text = str;
-    [str release];
+    codeView.text = @"int main(params)\n{ somethinghere\n\treturn 0;\n}";
 }
 
 
@@ -74,9 +72,7 @@
             NSStringEncoding enc;
             url = [dir URLByAppendingPathComponent:[url lastPathComponent]];
             s = [NSString stringWithContentsOfURL:url usedEncoding:&enc error:NULL];
-            NSMutableAttributedString *string = [[NSMutableAttributedString alloc] initWithString:s];
-            codeView.text = string;
-            [string release];
+            codeView.text = s;
             [sender setTitle:[url lastPathComponent]];
             break;
         }
