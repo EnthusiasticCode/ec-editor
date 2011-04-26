@@ -7,12 +7,16 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <CoreData/CoreData.h>
+#import "ECManagedObject.h"
+@class Folder, File;
 
-@class Folder;
-
-@interface Group : NSManagedObject
+@interface Group : ECManagedObject
 @property (nonatomic, retain) NSNumber * index;
 @property (nonatomic, retain) NSSet* items;
 @property (nonatomic, retain) Folder * area;
+- (void)addItemsObject:(File *)value;
+- (void)removeItemsObject:(File *)value;
+- (void)addItems:(NSSet *)value;
+- (void)removeItems:(NSSet *)value;
+- (NSArray *)sortedItems;
 @end

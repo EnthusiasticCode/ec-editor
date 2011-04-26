@@ -7,11 +7,11 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <CoreData/CoreData.h>
+#import "ECManagedObject.h"
 @class Project;
 
-@interface Node : NSManagedObject
-@property (nonatomic, retain) NSNumber *customPosition;
+@interface Node : ECManagedObject
+@property (nonatomic, retain) NSNumber *index;
 @property (nonatomic, retain) NSString *path;
 @property (nonatomic, retain) NSString *name;
 @property (nonatomic, retain) NSNumber *tag;

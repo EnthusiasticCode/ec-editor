@@ -7,10 +7,10 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <CoreData/CoreData.h>
+#import "ECManagedObject.h"
 @class File;
 
-@interface UndoItem : NSManagedObject
+@interface UndoItem : ECManagedObject
 @property (nonatomic, retain) id range;
 @property (nonatomic, retain) NSString *string;
 @property (nonatomic, retain) NSNumber *index;

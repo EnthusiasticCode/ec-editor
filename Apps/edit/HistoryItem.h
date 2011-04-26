@@ -7,11 +7,10 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <CoreData/CoreData.h>
-
+#import "ECManagedObject.h"
 @class File, Tab;
 
-@interface HistoryItem : NSManagedObject
+@interface HistoryItem : ECManagedObject
 @property (nonatomic, retain) id selection;
 @property (nonatomic, retain) id position;
 @property (nonatomic, retain) NSNumber *index;

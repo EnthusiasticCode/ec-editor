@@ -6,11 +6,11 @@
 //  Copyright (c) 2011 __MyCompanyName__. All rights reserved.
 //
 
+#import <ECFoundation/NSFileManager(ECAdditions).h>
 #import "Folder.h"
 #import "File.h"
 #import "Folder.h"
 #import "Group.h"
-
 
 @implementation Folder
 @dynamic collapsed;
@@ -113,6 +113,56 @@
     [self willChangeValueForKey:@"subfolders" withSetMutation:NSKeyValueMinusSetMutation usingObjects:value];
     [[self primitiveValueForKey:@"subfolders"] minusSet:value];
     [self didChangeValueForKey:@"subfolders" withSetMutation:NSKeyValueMinusSetMutation usingObjects:value];
+}
+
+- (void)scanForNewFiles
+{
+    NSFileManager *fileManager = [[[NSFileManager alloc] init] autorelease];
+    NSDirectoryEnumerationOptions options = NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsPackageDescendants;
+    NSArray *filePaths = [fileManager contentsOfDirectoryAtPath:self.path withExtensions:nil options:options skipFiles:NO skipDirectories:YES error:NULL];
+    NSMutableDictionary *fileDictionary = [NSMutableDictionary dictionary];
+    for (File *file in self.files)
+        [fileDictionary setObject:file forKey:file.name];
+    NSMutableArray *newFiles = [NSMutableArray array];
+    for (NSString *filePath in filePaths)
+        if (![fileDictionary objectForKey:filePath])
+        {
+            File *file = [NSEntityDescription insertNewObjectForEntityForName:@"File" inManagedObjectContext:[self managedObjectContext]];
+            file.folder = self;
+            file.name = filePath;
+            file.path = [self.path stringByAppendingPathComponent:filePath];
+            [newFiles addObject:file];
+        }
+    if ([newFiles count])
+    {
+        Group *newGroup = [NSEntityDescription insertNewObjectForEntityForName:@"Group" inManagedObjectContext:[self managedObjectContext]];
+        newGroup.area = self;
+        [newGroup addItems:[NSSet setWithArray:newFiles]];
+    }
+    NSArray *subfolderPaths = [fileManager contentsOfDirectoryAtPath:self.path withExtensions:nil options:options skipFiles:YES skipDirectories:NO error:NULL];
+    NSMutableDictionary *subfolderDictionary = [NSMutableDictionary dictionary];
+    for (Folder *folder in self.subfolders)
+        [subfolderDictionary setObject:folder forKey:folder.name];
+    for (NSString *subfolderPath in subfolderPaths)
+        if (![subfolderDictionary objectForKey:subfolderPath])
+        {
+            Folder *folder = [NSEntityDescription insertNewObjectForEntityForName:@"Folder" inManagedObjectContext:[self managedObjectContext]];
+            folder.parent = self;
+            folder.name = subfolderPath;
+            folder.path = [self.path stringByAppendingPathComponent:subfolderPath];
+        }
+    for (Folder *folder in self.subfolders)
+        [folder scanForNewFiles];
+}
+
+- (NSArray *)sortedSubfolders
+{
+    return [[self mutableArrayValueForKey:@"subfolders"] copy];
+}
+
+- (NSArray *)sortedGroups
+{
+    return [[self mutableArrayValueForKey:@"groups"] copy];
 }
 
 @end

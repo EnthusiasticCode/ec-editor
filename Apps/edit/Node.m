@@ -11,7 +11,7 @@
 #import "Project.h"
 
 @implementation Node
-@dynamic customPosition;
+@dynamic index;
 @dynamic path;
 @dynamic name;
 @dynamic tag;

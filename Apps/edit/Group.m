@@ -47,4 +47,9 @@
     [self didChangeValueForKey:@"items" withSetMutation:NSKeyValueMinusSetMutation usingObjects:value];
 }
 
+- (NSArray *)sortedItems
+{
+    return [[self mutableArrayValueForKey:@"items"] copy];
+}
+
 @end

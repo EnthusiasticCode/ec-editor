@@ -8,13 +8,14 @@
 
 #import "Tab.h"
 #import "Project.h"
+#import "HistoryItem.h"
 
 @implementation Tab
-@dynamic customPosition;
+@dynamic index;
 @dynamic project;
 @dynamic historyItems;
 
-- (void)addHistoryItemsObject:(NSManagedObject *)value
+- (void)addHistoryItemsObject:(HistoryItem *)value
 {
     NSSet *changedObjects = [[NSSet alloc] initWithObjects:&value count:1];
     [self willChangeValueForKey:@"historyItems" withSetMutation:NSKeyValueUnionSetMutation usingObjects:changedObjects];
@@ -23,7 +24,7 @@
     [changedObjects release];
 }
 
-- (void)removeHistoryItemsObject:(NSManagedObject *)value
+- (void)removeHistoryItemsObject:(HistoryItem *)value
 {
     NSSet *changedObjects = [[NSSet alloc] initWithObjects:&value count:1];
     [self willChangeValueForKey:@"historyItems" withSetMutation:NSKeyValueMinusSetMutation usingObjects:changedObjects];

@@ -27,7 +27,6 @@
 @synthesize codeView = codeView_;
 @synthesize scrollView = scrollView_;
 @synthesize file = file_;
-@synthesize codeUnit = codeUnit_;
 
 - (void)dealloc
 {
@@ -36,7 +35,6 @@
     self.codeView = nil;
     self.scrollView = nil;
     self.file = nil;
-    self.codeUnit = nil;
     [super dealloc];
 }
 
@@ -84,56 +82,56 @@
 
 - (void)viewWillAppear:(BOOL)animated
 {
-    self.codeView.text = [NSString stringWithContentsOfFile:self.file encoding:NSUTF8StringEncoding error:nil];
-    for (ECCodeToken *token in [self.codeUnit tokensInRange:NSMakeRange(0, [self.codeView.text length]) withCursors:YES])
-    {
-        switch (token.kind)
-        {
-            case ECCodeTokenKindKeyword:
-                [self.codeView setTextStyle:[textStyles_ objectForKey:@"Keyword"] toTextRange:[ECTextRange textRangeWithRange:token.extent]];
-                break;
-            case ECCodeTokenKindComment:
-                [self.codeView setTextStyle:[textStyles_ objectForKey:@"Comment"] toTextRange:[ECTextRange textRangeWithRange:token.extent]];
-                break;
-            case ECCodeTokenKindLiteral:
-                [self.codeView setTextStyle:[textStyles_ objectForKey:@"Literal"] toTextRange:[ECTextRange textRangeWithRange:token.extent]];
-                break;
-            default:
-                switch (token.cursor.kind)
-            {
-                case ECCodeCursorDeclaration:
-                    [self.codeView setTextStyle:[textStyles_ objectForKey:@"Declaration"] toTextRange:[ECTextRange textRangeWithRange:token.extent]];
-                    break;
-                case ECCodeCursorReference:
-                    [self.codeView setTextStyle:[textStyles_ objectForKey:@"Reference"] toTextRange:[ECTextRange textRangeWithRange:token.extent]];
-                    break;
-                case ECCodeCursorPreprocessing:
-                    [self.codeView setTextStyle:[textStyles_ objectForKey:@"Preprocessing"] toTextRange:[ECTextRange textRangeWithRange:token.extent]];
-                    break;
-                default:
-                    break;
-            }
-                break;
-        }
-    }
-    [self.codeView sizeToFit];
-    self.scrollView.contentSize = self.codeView.bounds.size;
-    for (ECCodeDiagnostic *diagnostic in [self.codeUnit diagnostics])
-    {
-        //        switch (diagnostic.severity) {
-        //            case ECCodeDiagnosticSeverityWarning:
-        //                [self.codeView addTextOverlayStyle:[diagnosticOverlayStyles_ objectForKey:@"Warning"] forTextRange:[ECTextRange textRangeWithRange:(NSRange){diagnostic.offset, diagnostic.offset + 20}] alternative:NO];
-        //                break;
-        //                
-        //            case ECCodeDiagnosticSeverityError:
-        //            case ECCodeDiagnosticSeverityFatal:
-        //                [self.codeView addTextOverlayStyle:[diagnosticOverlayStyles_ objectForKey:@"Error"] forTextRange:[ECTextRange textRangeWithRange:NSMakeRange(diagnostic.offset, diagnostic.offset + 20)] alternative:NO];
-        //                break;
-        //                
-        //            default:
-        //                break;
-        //        }
-    }
+//    self.codeView.text = [NSString stringWithContentsOfFile:self.file encoding:NSUTF8StringEncoding error:nil];
+//    for (ECCodeToken *token in [self.codeUnit tokensInRange:NSMakeRange(0, [self.codeView.text length]) withCursors:YES])
+//    {
+//        switch (token.kind)
+//        {
+//            case ECCodeTokenKindKeyword:
+//                [self.codeView setTextStyle:[textStyles_ objectForKey:@"Keyword"] toTextRange:[ECTextRange textRangeWithRange:token.extent]];
+//                break;
+//            case ECCodeTokenKindComment:
+//                [self.codeView setTextStyle:[textStyles_ objectForKey:@"Comment"] toTextRange:[ECTextRange textRangeWithRange:token.extent]];
+//                break;
+//            case ECCodeTokenKindLiteral:
+//                [self.codeView setTextStyle:[textStyles_ objectForKey:@"Literal"] toTextRange:[ECTextRange textRangeWithRange:token.extent]];
+//                break;
+//            default:
+//                switch (token.cursor.kind)
+//            {
+//                case ECCodeCursorDeclaration:
+//                    [self.codeView setTextStyle:[textStyles_ objectForKey:@"Declaration"] toTextRange:[ECTextRange textRangeWithRange:token.extent]];
+//                    break;
+//                case ECCodeCursorReference:
+//                    [self.codeView setTextStyle:[textStyles_ objectForKey:@"Reference"] toTextRange:[ECTextRange textRangeWithRange:token.extent]];
+//                    break;
+//                case ECCodeCursorPreprocessing:
+//                    [self.codeView setTextStyle:[textStyles_ objectForKey:@"Preprocessing"] toTextRange:[ECTextRange textRangeWithRange:token.extent]];
+//                    break;
+//                default:
+//                    break;
+//            }
+//                break;
+//        }
+//    }
+//    [self.codeView sizeToFit];
+//    self.scrollView.contentSize = self.codeView.bounds.size;
+//    for (ECCodeDiagnostic *diagnostic in [self.codeUnit diagnostics])
+//    {
+//        //        switch (diagnostic.severity) {
+//        //            case ECCodeDiagnosticSeverityWarning:
+//        //                [self.codeView addTextOverlayStyle:[diagnosticOverlayStyles_ objectForKey:@"Warning"] forTextRange:[ECTextRange textRangeWithRange:(NSRange){diagnostic.offset, diagnostic.offset + 20}] alternative:NO];
+//        //                break;
+//        //                
+//        //            case ECCodeDiagnosticSeverityError:
+//        //            case ECCodeDiagnosticSeverityFatal:
+//        //                [self.codeView addTextOverlayStyle:[diagnosticOverlayStyles_ objectForKey:@"Error"] forTextRange:[ECTextRange textRangeWithRange:NSMakeRange(diagnostic.offset, diagnostic.offset + 20)] alternative:NO];
+//        //                break;
+//        //                
+//        //            default:
+//        //                break;
+//        //        }
+//    }
 }
 
 - (void)viewDidUnload
@@ -151,10 +149,9 @@
 	return YES;
 }
 
-- (void)loadFile:(NSString *)file withCodeUnit:(ECCodeUnit *)codeUnit
+- (void)loadFile:(NSString *)file
 {
     self.file = file;
-    self.codeUnit = codeUnit;
     self.title = [file lastPathComponent];
 }
 

@@ -7,12 +7,12 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <CoreData/CoreData.h>
+#import "ECManagedObject.h"
 
 @class Project;
 
-@interface Tab : NSManagedObject
-@property (nonatomic, retain) NSNumber * customPosition;
+@interface Tab : ECManagedObject
+@property (nonatomic, retain) NSNumber * index;
 @property (nonatomic, retain) Project * project;
 @property (nonatomic, retain) NSSet* historyItems;
 @end

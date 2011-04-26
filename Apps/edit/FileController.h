@@ -8,15 +8,13 @@
 
 #import <UIKit/UIKit.h>
 #import <ECUIKit/ECEditCodeView.h>
-#import <ECCodeIndexing/ECCodeUnit.h>
 
 @interface FileController : UIViewController
 
 @property (nonatomic, retain) IBOutlet ECEditCodeView *codeView;
 @property (nonatomic, retain) IBOutlet UIScrollView *scrollView;
 @property (nonatomic, retain) NSString *file;
-@property (nonatomic, retain) ECCodeUnit *codeUnit;
 
-- (void)loadFile:(NSString *)file withCodeUnit:(ECCodeUnit *)codeUnit;
+- (void)loadFile:(NSString *)file;
 
 @end

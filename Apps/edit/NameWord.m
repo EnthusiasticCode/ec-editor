@@ -7,12 +7,13 @@
 //
 
 #import "NameWord.h"
+#import "Node.h"
 
 @implementation NameWord
 @dynamic normalizedWord;
 @dynamic nodes;
 
-- (void)addNodesObject:(NSManagedObject *)value
+- (void)addNodesObject:(Node *)value
 {
     NSSet *changedObjects = [[NSSet alloc] initWithObjects:&value count:1];
     [self willChangeValueForKey:@"nodes" withSetMutation:NSKeyValueUnionSetMutation usingObjects:changedObjects];
@@ -21,7 +22,7 @@
     [changedObjects release];
 }
 
-- (void)removeNodesObject:(NSManagedObject *)value
+- (void)removeNodesObject:(Node *)value
 {
     NSSet *changedObjects = [[NSSet alloc] initWithObjects:&value count:1];
     [self willChangeValueForKey:@"nodes" withSetMutation:NSKeyValueMinusSetMutation usingObjects:changedObjects];

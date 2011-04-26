@@ -7,10 +7,10 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <CoreData/CoreData.h>
+#import "ECManagedObject.h"
 @class Project;
 
-@interface Target : NSManagedObject
+@interface Target : ECManagedObject
 @property (nonatomic, retain) NSString * name;
 @property (nonatomic, retain) NSSet* sourceFiles;
 @property (nonatomic, retain) Project * project;

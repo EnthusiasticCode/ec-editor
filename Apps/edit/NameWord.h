@@ -7,9 +7,9 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <CoreData/CoreData.h>
+#import "ECManagedObject.h"
 
-@interface NameWord : NSManagedObject
+@interface NameWord : ECManagedObject
 @property (nonatomic, retain) NSString * normalizedWord;
 @property (nonatomic, retain) NSSet* nodes;
 @end

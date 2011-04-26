@@ -69,6 +69,8 @@ const NSUInteger ECItemViewGroupSeparatorBufferSize = 20;
 }
 - (void)_setup;
 
+- (void)_updateContentSize;
+
 - (UIView *)_blankHeader:(ECStackCache *)cache;
 - (UIView *)_groupSeparator:(ECStackCache *)cache;
 - (ECItemViewCell *)_loadCellForItemAtIndexPath:(NSIndexPath *)indexPath;
@@ -173,9 +175,8 @@ const NSUInteger ECItemViewGroupSeparatorBufferSize = 20;
             [self layoutIfNeeded];
         } completion:NULL];
     }
-    CGRect lastAreaFrame = [self rectForArea:[self numberOfAreas] - 1];
     // TODO: when entering / exiting editing mode, keep scroll position stable
-    self.contentSize = CGSizeMake(self.bounds.size.width, lastAreaFrame.origin.y + lastAreaFrame.size.height);
+    [self _updateContentSize];
     [self didChangeValueForKey:@"editing"];   
 }
 
@@ -251,6 +252,17 @@ const NSUInteger ECItemViewGroupSeparatorBufferSize = 20;
 #pragma mark -
 #pragma mark Data
 
+- (void)_updateContentSize
+{
+    if (![self numberOfAreas])
+    {
+        self.contentSize = CGSizeMake(0.0, 0.0);
+        return;
+    }
+    CGRect lastAreaFrame = [self rectForArea:[self numberOfAreas] - 1];
+    self.contentSize = CGSizeMake(self.bounds.size.width, lastAreaFrame.origin.y + lastAreaFrame.size.height);
+}
+
 - (void)reloadData
 {
     NSUInteger numAreas = 1;
@@ -279,8 +291,7 @@ const NSUInteger ECItemViewGroupSeparatorBufferSize = 20;
         }
         [_areas addObject:groups];
     }
-    CGRect lastAreaFrame = [self rectForArea:[self numberOfAreas] - 1];
-    self.contentSize = CGSizeMake(self.bounds.size.width, lastAreaFrame.origin.y + lastAreaFrame.size.height);
+    [self _updateContentSize];
     [self setNeedsLayout];
 }
 
