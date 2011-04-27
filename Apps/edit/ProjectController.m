@@ -191,7 +191,6 @@
         [self.project scanForNewFiles];
     }
     self.title = self.project.name;
-    NSLog(@"%@", self.project);
 }
 
 - (void)loadFile:(NSString *)file

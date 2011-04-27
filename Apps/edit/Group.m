@@ -49,7 +49,7 @@
 
 - (NSArray *)sortedItems
 {
-    return [[self mutableArrayValueForKey:@"items"] copy];
+    return [[self copyForOrderedKey:@"items"] autorelease];
 }
 
 @end

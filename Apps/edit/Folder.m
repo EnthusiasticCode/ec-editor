@@ -157,12 +157,12 @@
 
 - (NSArray *)sortedSubfolders
 {
-    return [[self mutableArrayValueForKey:@"subfolders"] copy];
+    return [[self copyForOrderedKey:@"subfolders"] autorelease];
 }
 
 - (NSArray *)sortedGroups
 {
-    return [[self mutableArrayValueForKey:@"groups"] copy];
+    return [[self copyForOrderedKey:@"groups"] autorelease];
 }
 
 @end
