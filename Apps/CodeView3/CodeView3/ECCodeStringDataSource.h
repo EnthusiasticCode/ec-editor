@@ -23,8 +23,13 @@
 /// with the provided one.
 - (void)addTextStyle:(ECTextStyle *)textStyle toStringRange:(NSRange)range;
 
+/// Remove all styles types specified in the given text style from the range of text.
 - (void)removeTextStyle:(ECTextStyle *)textStyle fromStringRange:(NSRange)range;
+
+/// Remove all text styles from the given range replacing them with the default style.
 - (void)removeAllTextStylesFromRange:(NSRange)range;
+
+/// Remove all text styles replacing them with the default style.
 - (void)removeAllTextStyles;
 
 @end

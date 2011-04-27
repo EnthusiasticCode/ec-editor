@@ -142,4 +142,36 @@
     }
 }
 
+#pragma mark Text Styling Methods
+
+- (void)addTextStyle:(ECTextStyle *)textStyle toStringRange:(NSRange)range
+{
+    if (!textStyle || NSMaxRange(range) > [string length])
+        return;
+    
+    [string addAttributes:textStyle.CTAttributes range:range];
+}
+
+- (void)removeTextStyle:(ECTextStyle *)textStyle fromStringRange:(NSRange)range
+{
+    if (!textStyle || NSMaxRange(range) > [string length])
+        return;
+    
+    for (NSString *attr in textStyle.CTAttributes)
+        [string removeAttribute:attr range:range];
+}
+
+- (void)removeAllTextStylesFromRange:(NSRange)range
+{
+    if (NSMaxRange(range) > [string length])
+        return;
+    
+    [string setAttributes:defaultTextStyle.CTAttributes range:range];
+}
+
+- (void)removeAllTextStyles
+{
+    [string setAttributes:defaultTextStyle.CTAttributes range:(NSRange){0, [string length]}];
+}
+
 @end
