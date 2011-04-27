@@ -20,11 +20,11 @@
 		CDCD1CB2136860E000A6DA9E /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CDCD1CB1136860E000A6DA9E /* CoreText.framework */; };
 		CDCD1CB71368611C00A6DA9E /* ECDictionaryCache.m in Sources */ = {isa = PBXBuildFile; fileRef = CDCD1CB61368611C00A6DA9E /* ECDictionaryCache.m */; };
 		CDCD1CC71368614000A6DA9E /* ECCodeStringDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = CDCD1CB91368614000A6DA9E /* ECCodeStringDataSource.m */; };
-		CDCD1CC81368614000A6DA9E /* ECCodeView4.m in Sources */ = {isa = PBXBuildFile; fileRef = CDCD1CBB1368614000A6DA9E /* ECCodeView4.m */; };
 		CDCD1CC91368614000A6DA9E /* ECTextPosition.m in Sources */ = {isa = PBXBuildFile; fileRef = CDCD1CBE1368614000A6DA9E /* ECTextPosition.m */; };
 		CDCD1CCA1368614000A6DA9E /* ECTextRange.m in Sources */ = {isa = PBXBuildFile; fileRef = CDCD1CC01368614000A6DA9E /* ECTextRange.m */; };
 		CDCD1CCB1368614000A6DA9E /* ECTextRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = CDCD1CC21368614000A6DA9E /* ECTextRenderer.m */; };
 		CDCD1CCC1368614000A6DA9E /* ECTextStyle.m in Sources */ = {isa = PBXBuildFile; fileRef = CDCD1CC61368614000A6DA9E /* ECTextStyle.m */; };
+		CDCD1CE31368684300A6DA9E /* ECCodeView.m in Sources */ = {isa = PBXBuildFile; fileRef = CDCD1CE21368684300A6DA9E /* ECCodeView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -49,8 +49,6 @@
 		CDCD1CB61368611C00A6DA9E /* ECDictionaryCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECDictionaryCache.m; sourceTree = "<group>"; };
 		CDCD1CB81368614000A6DA9E /* ECCodeStringDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeStringDataSource.h; sourceTree = "<group>"; };
 		CDCD1CB91368614000A6DA9E /* ECCodeStringDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeStringDataSource.m; sourceTree = "<group>"; };
-		CDCD1CBA1368614000A6DA9E /* ECCodeView4.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeView4.h; sourceTree = "<group>"; };
-		CDCD1CBB1368614000A6DA9E /* ECCodeView4.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeView4.m; sourceTree = "<group>"; };
 		CDCD1CBC1368614000A6DA9E /* ECCodeViewDatasource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeViewDatasource.h; sourceTree = "<group>"; };
 		CDCD1CBD1368614000A6DA9E /* ECTextPosition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECTextPosition.h; sourceTree = "<group>"; };
 		CDCD1CBE1368614000A6DA9E /* ECTextPosition.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECTextPosition.m; sourceTree = "<group>"; };
@@ -62,6 +60,8 @@
 		CDCD1CC41368614000A6DA9E /* ECTextRendererDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECTextRendererDelegate.h; sourceTree = "<group>"; };
 		CDCD1CC51368614000A6DA9E /* ECTextStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECTextStyle.h; sourceTree = "<group>"; };
 		CDCD1CC61368614000A6DA9E /* ECTextStyle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECTextStyle.m; sourceTree = "<group>"; };
+		CDCD1CE11368684300A6DA9E /* ECCodeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeView.h; sourceTree = "<group>"; };
+		CDCD1CE21368684300A6DA9E /* ECCodeView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -149,10 +149,10 @@
 		CDCD1CB41368610300A6DA9E /* ECUIKit */ = {
 			isa = PBXGroup;
 			children = (
+				CDCD1CE11368684300A6DA9E /* ECCodeView.h */,
+				CDCD1CE21368684300A6DA9E /* ECCodeView.m */,
 				CDCD1CB81368614000A6DA9E /* ECCodeStringDataSource.h */,
 				CDCD1CB91368614000A6DA9E /* ECCodeStringDataSource.m */,
-				CDCD1CBA1368614000A6DA9E /* ECCodeView4.h */,
-				CDCD1CBB1368614000A6DA9E /* ECCodeView4.m */,
 				CDCD1CBC1368614000A6DA9E /* ECCodeViewDatasource.h */,
 				CDCD1CBD1368614000A6DA9E /* ECTextPosition.h */,
 				CDCD1CBE1368614000A6DA9E /* ECTextPosition.m */,
@@ -235,11 +235,11 @@
 				CDCD1CA21368607300A6DA9E /* RootViewController.m in Sources */,
 				CDCD1CB71368611C00A6DA9E /* ECDictionaryCache.m in Sources */,
 				CDCD1CC71368614000A6DA9E /* ECCodeStringDataSource.m in Sources */,
-				CDCD1CC81368614000A6DA9E /* ECCodeView4.m in Sources */,
 				CDCD1CC91368614000A6DA9E /* ECTextPosition.m in Sources */,
 				CDCD1CCA1368614000A6DA9E /* ECTextRange.m in Sources */,
 				CDCD1CCB1368614000A6DA9E /* ECTextRenderer.m in Sources */,
 				CDCD1CCC1368614000A6DA9E /* ECTextStyle.m in Sources */,
+				CDCD1CE31368684300A6DA9E /* ECCodeView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

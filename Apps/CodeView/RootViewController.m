@@ -10,7 +10,7 @@
 
 #import "DetailViewController.h"
 
-#import "ECCodeView4.h"
+#import "ECCodeView.h"
 
 @implementation RootViewController
 		

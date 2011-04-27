@@ -7,13 +7,12 @@
 //
 
 #import <UIKit/UIKit.h>
-#import <ECUIKit/ECEditCodeView.h>
+#import <ECUIKit/ECCodeView.h>
 #import <ECCodeIndexing/ECCodeUnit.h>
 
 @interface FileController : UIViewController
 
-@property (nonatomic, retain) IBOutlet ECEditCodeView *codeView;
-@property (nonatomic, retain) IBOutlet UIScrollView *scrollView;
+@property (nonatomic, retain) IBOutlet ECCodeView *codeView;
 @property (nonatomic, retain) NSString *file;
 @property (nonatomic, retain) ECCodeUnit *codeUnit;
 

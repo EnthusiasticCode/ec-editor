@@ -1,66 +1,45 @@
 //
 //  ECCodeView.h
-//  edit
+//  CodeView3
 //
-//  Created by Nicola Peduzzi on 21/01/11.
+//  Created by Nicola Peduzzi on 12/04/11.
 //  Copyright 2011 __MyCompanyName__. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
-#import "ECTextLayer.h"
-#import "ECTextStyle.h"
-#import "ECTextOverlayStyle.h"
-#import "ECTextRange.h"
-#import "ECTextPosition.h"
+#import "ECCodeViewDataSource.h"
 
-@interface ECCodeView : UIView {
-@protected
-    // TODO create a setNeedsTextRendering and make this layer private
-    ECTextLayer *textLayer;
-    NSMutableAttributedString *text;
-}
 
-/// The text displayed by the code view.
-@property (nonatomic, copy) NSString *text;
+@interface ECCodeView : UIScrollView <UIKeyInput, UITextInputTraits, UITextInput>
 
-/// Return the length of the text, this method should return the same value as [text length];
-@property (nonatomic, readonly) NSUInteger textLength;
+/// The datasource for the text displayed by the code view. Default is self.
+/// If this datasource is not self, the text property will have no effect.
+@property (nonatomic, assign) id<ECCodeViewDataSource> datasource;
 
-/// The text insets from the view's border.
+#pragma mark Managing Text Content
+
+/// Set the text fot the control. This property is only used if textDatasource
+/// is the code view itself.
+@property (nonatomic, retain) NSString *text;
+
+/// Insets of the text.
 @property (nonatomic) UIEdgeInsets textInsets;
 
-/// Marks the receiver’s text as needing to be redrawn.
-- (void)setNeedsTextRendering;
+/// Invalidate the text making the receiver redraw it.
+- (void)updateAllText;
 
-/// Indicates if the view should be refreshed when text changes.
-@property BOOL needsDisplayOnTextChange;
+/// Invalidate a particular section of the text making the reveiver redraw it.
+- (void)updateTextInLineRange:(NSRange)originalRange toLineRange:(NSRange)newRange;
 
-#pragma mark Text style API
+#pragma mark UITextInput Properties
 
-/// The text style used for newly added text.
-@property (nonatomic, retain) ECTextStyle *defaultTextStyle;
+/// An input delegate that is notified when text changes or when the selection changes.
+@property (nonatomic, assign) id<UITextInputDelegate> inputDelegate;
 
-/// Set the given style to the text range.
-- (void)setTextStyle:(ECTextStyle *)style toTextRange:(ECTextRange *)range;
+/// An input tokenizer that provides information about the granularity of text units.
+@property (nonatomic, readonly) id<UITextInputTokenizer> tokenizer;
 
-/// For every range in the ranges array, the corresponding style will be applied.
-- (void)setTextStyles:(NSArray *)styles toTextRanges:(NSArray *)ranges;
-
-#pragma mark Text overlay API
-
-/// Add a layer as a text overlay. The layer will be retained by the view and will be resized to match the text layer frame. The name of the layer will be used as key to access the layer from other methods such as \c removeTextOverlayLayerWithKey:. If the layer has no name a key will be generated and returned by the method.
-- (NSString *)addTextOverlayLayer:(CALayer *)layer;
-
-/// Add a text overlay layer to the specified text range. If this function is called multiple times with the same style (styles having the same name), the given range will be added to the already existing layer. The style's name will be used as key to retrieve the layer in methods as \c removeTextOverlayLayerWithKey:.
-- (void)addTextOverlayLayerWithStyle:(ECTextOverlayStyle *)style forTextRange:(ECTextRange *)range;
-
-/// Remove text overlay layer with the given style.
-- (void)removeTextOverlayLayerWithStyle:(ECTextOverlayStyle *)style;
-
-/// Remove text overlay layer with the given key.
-- (void)removeTextOverlayLayerWithKey:(NSString *)key;
-
-/// Remove all text overlays.
-- (void)removeAllTextOverlays;
+/// A dictionary of attributes that describes how marked text should be drawn.
+@property (nonatomic, copy) NSDictionary *markedTextStyle;
 
 @end

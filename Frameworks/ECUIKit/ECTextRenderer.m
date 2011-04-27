@@ -279,7 +279,7 @@
         CTLineRef line = CFArrayGetValueAtIndex(lines, i);
         
         stringRange = CTLineGetStringRange(line);
-        if (stringRange.location >= queryRangeEnd)
+        if ((NSUInteger)stringRange.location >= queryRangeEnd)
         {
             CFRelease(frame);
             return;
@@ -288,7 +288,7 @@
         width = CTLineGetTypographicBounds(line, &ascent, &descent, &leading);
         bounds = CGRectMake(0, currentY, width, ascent + descent + leading);
         
-        if (stringRange.location + stringRange.length > queryRange.location) 
+        if ((NSUInteger)(stringRange.location + stringRange.length) > queryRange.location) 
         {
             block(line, bounds, (NSRange){ stringRange.location, stringRange.length }, &stop);
             if (stop) break;
@@ -593,7 +593,7 @@
 
 - (NSUInteger)closestStringLocationToPoint:(CGPoint)point withinStringRange:(NSRange)queryStringRange
 {
-    __block NSUInteger result = 0;
+    __block CFIndex result = 0;
     __block CTLineRef lastLine = NULL;
     [self generateTextSegmentsAndEnumerateUsingBlock:^(TextSegment *segment, NSUInteger idx, NSUInteger lineOffset, NSUInteger stringOffset, CGFloat positionOffset, BOOL *stop) {
         // Skip segment if before required string range
@@ -617,7 +617,7 @@
                 return;
             
             result = CTLineGetStringIndexForPosition(line, segmentRelativePoint);
-            if (result == lineStringRange.location + lineStringRange.length)
+            if (result == (CFIndex)(lineStringRange.location + lineStringRange.length))
                 result--;
             *stop = *innerStop = YES;
         }];
@@ -732,7 +732,7 @@
             {
                 meanLineHeight = lineBound.size.height;
             }
-            maxCharsForLine = MAX(maxCharsForLine, CTLineGetGlyphCount(line));
+            maxCharsForLine = MAX((CFIndex)maxCharsForLine, CTLineGetGlyphCount(line));
         }];
     }
     

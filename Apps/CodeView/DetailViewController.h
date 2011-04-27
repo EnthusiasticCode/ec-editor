@@ -8,11 +8,11 @@
 
 #import <UIKit/UIKit.h>
 
-@class ECCodeView4;
+@class ECCodeView;
 
 @interface DetailViewController : UIViewController <UIPopoverControllerDelegate, UISplitViewControllerDelegate> {
 
-    ECCodeView4 *_codeView;
+    ECCodeView *_codeView;
 }
 
 
@@ -22,6 +22,6 @@
 
 @property (nonatomic, retain) IBOutlet UILabel *detailDescriptionLabel;
 
-@property (nonatomic, retain) IBOutlet ECCodeView4 *codeView;
+@property (nonatomic, retain) IBOutlet ECCodeView *codeView;
 
 @end

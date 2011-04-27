@@ -8,7 +8,6 @@
 
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
-#import <ECUIKit/ECTextDocument.h>
 
 @interface File : NSManagedObject
 
