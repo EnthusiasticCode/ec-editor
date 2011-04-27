@@ -32,3 +32,10 @@ CFIndex ECCTFrameGetClosestStringIndexInRangeToPoint(CTFrameRef frame, CFRange s
 
 /// Calculate the actual used rectangle that fits the given frame.
 CGRect ECCTFrameGetUsedRect(CTFrameRef frame, _Bool constrainedWidth);
+
+#pragma mark Enumeration
+
+typedef void (^lineElementBlock)(CTLineRef line, CFIndex index, _Bool *stop);
+void ECCTFrameEnumerateLinesWithBlock(CTFrameRef frame, lineElementBlock block);
+
+

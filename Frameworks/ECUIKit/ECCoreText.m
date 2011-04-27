@@ -278,3 +278,16 @@ CGRect ECCTFrameGetUsedRect(CTFrameRef frame, _Bool constrainedWidth)
     CGRect result = CGRectMake(minX, minY, MAX(0, maxX - minX), MAX(0, maxY - minY));
     return result;
 }
+
+void ECCTFrameEnumerateLinesWithBlock(CTFrameRef frame, lineElementBlock block)
+{
+    CFArrayRef lines = CTFrameGetLines(frame);
+    CFIndex linesCount = CFArrayGetCount(lines);
+    _Bool stop = NO;
+    for (CFIndex i = 0; i < linesCount; ++i)
+    {
+        block((CTLineRef)CFArrayGetValueAtIndex(lines, i), i, &stop);
+        if (stop)
+            break;
+    }
+}
