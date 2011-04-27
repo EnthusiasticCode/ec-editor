@@ -7,45 +7,79 @@
 //
 
 #import "Project.h"
-#import "Node.h"
+#import "File.h"
+#import "Folder.h"
 #import "Tab.h"
 #import "Target.h"
 
 @implementation Project
-@dynamic nodes;
+@dynamic projectFiles;
+@dynamic projectFolders;
 @dynamic tabs;
 @dynamic targets;
 
-- (void)addNodesObject:(Node *)value
+- (void)addProjectFilesObject:(File *)value
 {
     NSSet *changedObjects = [[NSSet alloc] initWithObjects:&value count:1];
-    [self willChangeValueForKey:@"nodes" withSetMutation:NSKeyValueUnionSetMutation usingObjects:changedObjects];
-    [[self primitiveValueForKey:@"nodes"] addObject:value];
-    [self didChangeValueForKey:@"nodes" withSetMutation:NSKeyValueUnionSetMutation usingObjects:changedObjects];
+    [self willChangeValueForKey:@"projectFiles" withSetMutation:NSKeyValueUnionSetMutation usingObjects:changedObjects];
+    [[self primitiveValueForKey:@"projectFiles"] addObject:value];
+    [self didChangeValueForKey:@"projectFiles" withSetMutation:NSKeyValueUnionSetMutation usingObjects:changedObjects];
     [changedObjects release];
 }
 
-- (void)removeNodesObject:(Node *)value
+- (void)removeProjectFilesObject:(File *)value
 {
     NSSet *changedObjects = [[NSSet alloc] initWithObjects:&value count:1];
-    [self willChangeValueForKey:@"nodes" withSetMutation:NSKeyValueMinusSetMutation usingObjects:changedObjects];
-    [[self primitiveValueForKey:@"nodes"] removeObject:value];
-    [self didChangeValueForKey:@"nodes" withSetMutation:NSKeyValueMinusSetMutation usingObjects:changedObjects];
+    [self willChangeValueForKey:@"projectFiles" withSetMutation:NSKeyValueMinusSetMutation usingObjects:changedObjects];
+    [[self primitiveValueForKey:@"projectFiles"] removeObject:value];
+    [self didChangeValueForKey:@"projectFiles" withSetMutation:NSKeyValueMinusSetMutation usingObjects:changedObjects];
     [changedObjects release];
 }
 
-- (void)addNodes:(NSSet *)value
+- (void)addProjectFiles:(NSSet *)value
 {
-    [self willChangeValueForKey:@"nodes" withSetMutation:NSKeyValueUnionSetMutation usingObjects:value];
-    [[self primitiveValueForKey:@"nodes"] unionSet:value];
-    [self didChangeValueForKey:@"nodes" withSetMutation:NSKeyValueUnionSetMutation usingObjects:value];
+    [self willChangeValueForKey:@"projectFiles" withSetMutation:NSKeyValueUnionSetMutation usingObjects:value];
+    [[self primitiveValueForKey:@"projectFiles"] unionSet:value];
+    [self didChangeValueForKey:@"projectFiles" withSetMutation:NSKeyValueUnionSetMutation usingObjects:value];
 }
 
-- (void)removeNodes:(NSSet *)value
+- (void)removeProjectFiles:(NSSet *)value
 {
-    [self willChangeValueForKey:@"nodes" withSetMutation:NSKeyValueMinusSetMutation usingObjects:value];
-    [[self primitiveValueForKey:@"nodes"] minusSet:value];
-    [self didChangeValueForKey:@"nodes" withSetMutation:NSKeyValueMinusSetMutation usingObjects:value];
+    [self willChangeValueForKey:@"projectFiles" withSetMutation:NSKeyValueMinusSetMutation usingObjects:value];
+    [[self primitiveValueForKey:@"projectFiles"] minusSet:value];
+    [self didChangeValueForKey:@"projectFiles" withSetMutation:NSKeyValueMinusSetMutation usingObjects:value];
+}
+
+- (void)addProjectFoldersObject:(Folder *)value
+{
+    NSSet *changedObjects = [[NSSet alloc] initWithObjects:&value count:1];
+    [self willChangeValueForKey:@"projectFolders" withSetMutation:NSKeyValueUnionSetMutation usingObjects:changedObjects];
+    [[self primitiveValueForKey:@"projectFolders"] addObject:value];
+    [self didChangeValueForKey:@"projectFolders" withSetMutation:NSKeyValueUnionSetMutation usingObjects:changedObjects];
+    [changedObjects release];
+}
+
+- (void)removeProjectFoldersObject:(Folder *)value
+{
+    NSSet *changedObjects = [[NSSet alloc] initWithObjects:&value count:1];
+    [self willChangeValueForKey:@"projectFolders" withSetMutation:NSKeyValueMinusSetMutation usingObjects:changedObjects];
+    [[self primitiveValueForKey:@"projectFolders"] removeObject:value];
+    [self didChangeValueForKey:@"projectFolders" withSetMutation:NSKeyValueMinusSetMutation usingObjects:changedObjects];
+    [changedObjects release];
+}
+
+- (void)addProjectFolders:(NSSet *)value
+{
+    [self willChangeValueForKey:@"projectFolders" withSetMutation:NSKeyValueUnionSetMutation usingObjects:value];
+    [[self primitiveValueForKey:@"projectFolders"] unionSet:value];
+    [self didChangeValueForKey:@"projectFolders" withSetMutation:NSKeyValueUnionSetMutation usingObjects:value];
+}
+
+- (void)removeProjectFolders:(NSSet *)value
+{
+    [self willChangeValueForKey:@"projectFolders" withSetMutation:NSKeyValueMinusSetMutation usingObjects:value];
+    [[self primitiveValueForKey:@"projectFolders"] minusSet:value];
+    [self didChangeValueForKey:@"projectFolders" withSetMutation:NSKeyValueMinusSetMutation usingObjects:value];
 }
 
 - (void)addTabsObject:(Tab *)value

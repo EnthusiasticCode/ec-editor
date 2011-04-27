@@ -163,6 +163,7 @@ static NSString *ECManagedObjectIndex = @"index";
     NSFetchRequest *fetchRequest = [self fetchRequestForOrderedKey:key];
     NSPredicate *predicate = [fetchRequest predicate];
     predicate = [NSCompoundPredicate andPredicateWithSubpredicates:[NSArray arrayWithObjects:predicate, [NSPredicate predicateWithFormat:@"%K == %u", ECManagedObjectIndex, index], nil]];
+    [fetchRequest setPredicate:predicate];
     return [[[self managedObjectContext] executeFetchRequest:fetchRequest error:NULL] objectAtIndex:0];
 }
 

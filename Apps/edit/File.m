@@ -11,6 +11,7 @@
 #import "Folder.h"
 #import "Group.h"
 #import "HistoryItem.h"
+#import "Project.h"
 #import "Target.h"
 #import "UndoItem.h"
 
@@ -22,6 +23,7 @@
 @dynamic historyItems;
 @dynamic targets;
 @dynamic folder;
+@dynamic project;
 
 - (void)addBookmarksObject:(Bookmark *)value
 {

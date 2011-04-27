@@ -9,10 +9,12 @@
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
 #import "Node.h"
+@class Project;
 
 @interface Folder : Node
 @property (nonatomic, retain) NSNumber *collapsed;
 @property (nonatomic, retain) NSSet *groups;
+@property (nonatomic, retain) Project *project;
 @property (nonatomic, retain) NSSet *files;
 @property (nonatomic, retain) NSSet *subfolders;
 @property (nonatomic, retain) Folder *parent;

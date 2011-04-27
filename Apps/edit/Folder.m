@@ -11,10 +11,12 @@
 #import "File.h"
 #import "Folder.h"
 #import "Group.h"
+#import "Project.h"
 
 @implementation Folder
 @dynamic collapsed;
 @dynamic groups;
+@dynamic project;
 @dynamic files;
 @dynamic subfolders;
 @dynamic parent;

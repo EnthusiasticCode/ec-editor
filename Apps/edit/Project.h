@@ -11,7 +11,8 @@
 #import "Folder.h"
 
 @interface Project : Folder
-@property (nonatomic, retain) NSSet *nodes;
+@property (nonatomic, retain) NSSet* projectFiles;
+@property (nonatomic, retain) NSSet* projectFolders;
 @property (nonatomic, retain) NSSet *tabs;
 @property (nonatomic, retain) NSSet *targets;
 @end

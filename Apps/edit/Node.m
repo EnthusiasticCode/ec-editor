@@ -8,7 +8,6 @@
 
 #import "Node.h"
 #import "NameWord.h"
-#import "Project.h"
 
 @implementation Node
 @dynamic index;
@@ -16,7 +15,6 @@
 @dynamic name;
 @dynamic tag;
 @dynamic nameWords;
-@dynamic project;
 
 - (void)addNameWordsObject:(NameWord *)value
 {
