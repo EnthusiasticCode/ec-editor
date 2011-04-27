@@ -7,6 +7,7 @@
 //
 
 #import "CodeViewController.h"
+#import "ECCodeStringDataSource.h"
 
 
 @implementation CodeViewController
@@ -44,6 +45,22 @@
     
     codeView.contentMode = UIViewContentModeRedraw;
     codeView.text = @"int main(params)\n{ somethinghere\n\treturn 0;\n}";
+    
+    
+    ECTextStyle *bgStyle = [ECTextStyle new];
+    bgStyle.backgroundColor = [UIColor greenColor];
+//    bgStyle.underlineColor = [UIColor redColor];
+//    bgStyle.underlineStyle = ECUnderlineStyleSingle | ECUnderlinePatternDot;
+    bgStyle.foregroundColor = [UIColor redColor];
+    bgStyle.frontCustomOverlay = ^(CGContextRef context, CGRect rect) {
+        rect = CGRectInset(rect, 0.5, 0.5);
+        CGContextSetStrokeColorWithColor(context, [UIColor redColor].CGColor);
+        CGContextStrokeRect(context, rect);
+    };
+    
+    [(ECCodeStringDataSource *)codeView.datasource addTextStyle:bgStyle toStringRange:(NSRange){4, 19}];
+    
+    [bgStyle release];
 }
 
 

@@ -9,6 +9,8 @@
 #import <UIKit/UIKit.h>
 
 const NSString *ECTSBackgroundColorAttributeName;
+const NSString *ECTSFrontCustomOverlayAttributeName;
+const NSString *ECTSBackCustomOverlayAttributeName;
 
 typedef enum {
     ECUnderlineStyleNone = 0x00,
@@ -21,6 +23,8 @@ typedef enum {
     ECUnderlinePatternDashDot = 0x0300,
     ECUnderlinePatternDashDotDot = 0x0400
 } ECUnderlineStyle;
+
+typedef void (^ECTextStyleCustomOverlayBlock)(CGContextRef context, CGRect rect);
 
 /// A text style represent attributes to be applied to a string.
 @interface ECTextStyle : NSObject
@@ -46,6 +50,10 @@ typedef enum {
 
 /// Gets a dictionary of core text compatible attributed string's attributes.
 @property (nonatomic, readonly) NSDictionary *CTAttributes;
+
+@property (nonatomic, copy) ECTextStyleCustomOverlayBlock backCustomOverlay;
+
+@property (nonatomic, copy) ECTextStyleCustomOverlayBlock frontCustomOverlay;
 
 /// Initialize a new style with a name.
 - (id)initWithName:(NSString *)aName;

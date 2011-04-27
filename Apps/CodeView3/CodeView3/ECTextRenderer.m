@@ -524,20 +524,65 @@
         // Positioning and rendering
         CGContextTranslateCTM(context, 0, -baseline);
 
+        CGRect runRect = lineBound;
+        runRect.origin.y = - lineBound.size.height + baseline;
+        CGFloat runWidth;
+        
         CFArrayRef runs = CTLineGetGlyphRuns(line);
         CFIndex runCount = CFArrayGetCount(runs);
         CTRunRef run;
+        
         NSDictionary *runAttributes;
+        ECTextStyleCustomOverlayBlock block;
         for (CFIndex i = 0; i < runCount; ++i) 
         {
             run = CFArrayGetValueAtIndex(runs, i);
-            runAttributes = (NSDictionary *)CTRunGetAttributes(run);
-            if (runAttributes) 
+            
+            // Get run width
+            runWidth = CTRunGetTypographicBounds(run, (CFRange){0, 0}, NULL, NULL, NULL);
+            runRect.size.width = runWidth;
+            
+            // Get run attributes but not for last run in line (new line character)
+            if (i == runCount - 1) 
             {
-                // Apply custom attributes
-                // TODO actual render custom attributes
+                runAttributes = nil;
             }
+            else
+            {
+                runAttributes = (NSDictionary *)CTRunGetAttributes(run);
+            }
+            
+            // Apply custom back attributes
+            if (runAttributes)
+            {
+                CGColorRef backgroundColor = (CGColorRef)[runAttributes objectForKey:ECTSBackgroundColorAttributeName];
+                if (backgroundColor) 
+                {
+                    CGContextSetFillColorWithColor(context, backgroundColor);
+                    CGContextFillRect(context, runRect);
+                }
+                block = [runAttributes objectForKey:ECTSBackCustomOverlayAttributeName];
+                if (block) 
+                {
+                    CGContextSaveGState(context);
+                    block(context, runRect);
+                    CGContextRestoreGState(context);
+                }
+            }
+            
+            // Draw run
             CTRunDraw(run, context, (CFRange){ 0, 0 });
+            
+            // Apply custom front attributes
+            if (runAttributes && (block = [runAttributes objectForKey:ECTSFrontCustomOverlayAttributeName])) 
+            {
+                CGContextSaveGState(context);
+                block(context, runRect);
+                CGContextRestoreGState(context);
+            }
+            
+            // Advance run origin
+            runRect.origin.x += runWidth;
         }
 
         CGContextTranslateCTM(context, 0, -lineBound.size.height+baseline);

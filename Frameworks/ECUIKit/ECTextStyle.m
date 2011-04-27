@@ -11,6 +11,8 @@
 
 
 const NSString *ECTSBackgroundColorAttributeName = @"ECTextStyleBackgroundAttribute";
+const NSString *ECTSFrontCustomOverlayAttributeName = @"ECTextStyleFrontCustomOverlayAttribute";
+const NSString *ECTSBackCustomOverlayAttributeName = @"ECTextStyleBackCustomOverlayAttribute";
 
 
 @interface ECTextStyle () {
@@ -23,7 +25,7 @@ const NSString *ECTSBackgroundColorAttributeName = @"ECTextStyleBackgroundAttrib
 
 #pragma mark Properties
 
-@synthesize name, font, foregroundColor, backgroundColor, underlineColor, underlineStyle, CTAttributes;
+@synthesize name, font, foregroundColor, backgroundColor, underlineColor, underlineStyle, backCustomOverlay, frontCustomOverlay, CTAttributes;
 
 - (void)setFont:(UIFont *)aFont
 {
@@ -100,6 +102,37 @@ const NSString *ECTSBackgroundColorAttributeName = @"ECTextStyleBackgroundAttrib
         [CTAttributes removeObjectForKey:(id)kCTUnderlineStyleAttributeName];
     }
 }
+
+- (void)setFrontCustomOverlay:(ECTextStyleCustomOverlayBlock)block
+{
+    [frontCustomOverlay release];
+    frontCustomOverlay = [block copy];
+    
+    if (frontCustomOverlay) 
+    {
+        [CTAttributes setObject:frontCustomOverlay forKey:ECTSFrontCustomOverlayAttributeName];
+    }
+    else
+    {
+        [CTAttributes removeObjectForKey:ECTSFrontCustomOverlayAttributeName];
+    }
+}
+
+- (void)setBackCustomOverlay:(ECTextStyleCustomOverlayBlock)block
+{
+    [backCustomOverlay release];
+    backCustomOverlay = [block copy];
+    
+    if (backCustomOverlay) 
+    {
+        [CTAttributes setObject:backCustomOverlay forKey:ECTSBackCustomOverlayAttributeName];
+    }
+    else
+    {
+        [CTAttributes removeObjectForKey:ECTSBackCustomOverlayAttributeName];
+    }
+}
+
 
 #pragma mark Public methods
 
