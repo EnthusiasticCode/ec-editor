@@ -11,9 +11,9 @@
 
 @interface ECManagedObject : NSManagedObject
 - (NSArray *)valueForOrderedKey:(NSString *)key;
+- (NSMutableArray *)mutableArrayValueForOrderedKey:(NSString *)key;
 - (NSArray *)copyForOrderedKey:(NSString *)key;
 - (NSMutableArray *)mutableCopyForOrderedKey:(NSString *)key;
-- (NSMutableArray *)mutableArrayValueForOrderedKey:(NSString *)key;
 - (NSUInteger)countForOrderedKey:(NSString *)key;
 - (id)objectAtIndex:(NSUInteger)index forOrderedKey:(NSString *)key;
 - (void)addObject:(id)object forOrderedKey:(NSString *)key;

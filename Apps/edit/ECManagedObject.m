@@ -195,23 +195,23 @@ static void shiftIndicesOfObjectsRight(NSArray *objects)
 
 - (NSArray *)valueForOrderedKey:(NSString *)key
 {
-    NSFetchRequest *fetchRequest = [self fetchRequestForOrderedKey:key];
-    return [[self managedObjectContext] executeFetchRequest:fetchRequest error:NULL];
-}
-
-- (NSArray *)copyForOrderedKey:(NSString *)key
-{
-    return [[self valueForOrderedKey:key] copy];
-}
-
-- (NSMutableArray *)mutableCopyForOrderedKey:(NSString *)key
-{
-    return [[self valueForOrderedKey:key] mutableCopy];
+    return [ECManagedObjectProxy proxyForManagedObject:self key:key];
 }
 
 - (NSMutableArray *)mutableArrayValueForOrderedKey:(NSString *)key
 {
     return [ECManagedObjectProxy proxyForManagedObject:self key:key];
+}
+
+- (NSArray *)copyForOrderedKey:(NSString *)key
+{
+    NSFetchRequest *fetchRequest = [self fetchRequestForOrderedKey:key];
+    return [[[self managedObjectContext] executeFetchRequest:fetchRequest error:NULL] retain];
+}
+
+- (NSMutableArray *)mutableCopyForOrderedKey:(NSString *)key
+{
+    return [[[self copyForOrderedKey:key] autorelease] mutableCopy];
 }
 
 - (NSUInteger)countForOrderedKey:(NSString *)key
