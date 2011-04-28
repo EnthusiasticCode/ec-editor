@@ -266,6 +266,16 @@ const NSUInteger ECItemViewGroupSeparatorBufferSize = 20;
 
 - (void)reloadData
 {
+    for (UIView *cell in [_visibleCells allValues])
+        [cell removeFromSuperview];
+    [_visibleCells removeAllObjects];
+    for (UIView *header in [_visibleHeaders allValues])
+        [header removeFromSuperview];
+    [_visibleHeaders removeAllObjects];
+    for (UIView *separator in [_visibleSeparators allValues])
+        [separator removeFromSuperview];
+    [_visibleSeparators removeAllObjects];
+    
     NSUInteger numAreas = 1;
     if (_flags.dataSourceNumberOfAreasInTableView)
         numAreas = [_dataSource numberOfAreasInTableView:self];
@@ -810,6 +820,7 @@ const NSUInteger ECItemViewGroupSeparatorBufferSize = 20;
     [_dragDestinationIndexPath release];
     _dragDestinationIndexPath = nil;
     _draggedItem = nil;
+    [self reloadData];
 }
 
 - (void)_cancelDrag:(UILongPressGestureRecognizer *)dragRecognizer
