@@ -41,9 +41,9 @@
     [self removeObjects:value forOrderedKey:@"groups"];
 }
 
-- (NSArray *)orderedGroups
+- (NSMutableArray *)orderedGroups
 {
-    return [self valueForOrderedKey:@"groups"];
+    return [self mutableArrayValueForOrderedKey:@"groups"];
 }
 
 - (void)scanForNewFiles

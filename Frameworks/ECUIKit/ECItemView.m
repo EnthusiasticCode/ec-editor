@@ -573,6 +573,12 @@ const NSUInteger ECItemViewGroupSeparatorBufferSize = 20;
                 else
                     ++k;
             }
+            if (_draggedItemIndexPath.area == i && _draggedItemIndexPath.group == j)
+            {
+                if (exists)
+                    *exists = YES;
+                return [NSIndexPath indexPathForItem:numItems - 1 inGroup:j inArea:i];
+            }
             if (exists)
                 *exists = NO;
             return [NSIndexPath indexPathForItem:numItems inGroup:j inArea:i];
@@ -733,7 +739,7 @@ const NSUInteger ECItemViewGroupSeparatorBufferSize = 20;
 - (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer
 {
     if (gestureRecognizer == _longPressGestureRecognizer)
-        if (_flags.dataSourceCanMoveItem && [self indexPathForItemAtPoint:[gestureRecognizer locationInView:self]] && [_dataSource itemView:self canMoveItemAtIndexPath:[self indexPathForItemAtPoint:[gestureRecognizer locationInView:self]]])
+        if (_flags.dataSourceCanMoveItem && _flags.dataSourceMoveItem && [self indexPathForItemAtPoint:[gestureRecognizer locationInView:self]] && [_dataSource itemView:self canMoveItemAtIndexPath:[self indexPathForItemAtPoint:[gestureRecognizer locationInView:self]]])
             return YES;
         else
             return NO;
@@ -806,11 +812,21 @@ const NSUInteger ECItemViewGroupSeparatorBufferSize = 20;
 
 - (void)_endDrag:(UILongPressGestureRecognizer *)dragRecognizer
 {
+    BOOL proposedIndexPathExists;
+    NSIndexPath *proposedIndexPath = [self _proposedIndexPathForItemAtPoint:[dragRecognizer locationInView:self] exists:&proposedIndexPathExists];
+    if (!proposedIndexPath)
+        [self _cancelDrag:dragRecognizer];
+    if (!proposedIndexPathExists && !proposedIndexPath.item)
+        if (_flags.dataSourceInsertGroup)
+            [_dataSource itemView:self insertGroupAtIndexPath:[NSIndexPath indexPathForPosition:proposedIndexPath.group inArea:proposedIndexPath.area]];
+        else
+            [self _cancelDrag:dragRecognizer];
+    
     _isDragging = NO;
     [_scrollTimer invalidate];
     _scrollTimer = nil;
     [_dragDestinationIndexPath release];
-    _dragDestinationIndexPath = [self _proposedIndexPathForItemAtPoint:[dragRecognizer locationInView:self] exists:NULL];
+    _dragDestinationIndexPath = proposedIndexPath;
     if (_flags.dataSourceMoveItem)
         [_dataSource itemView:self moveItemAtIndexPath:_draggedItemIndexPath toIndexPath:_dragDestinationIndexPath];
     [UIView animateConcurrentlyToAnimationsWithFlag:&_isAnimating duration:ECItemViewShortAnimationDuration animations:^(void) {

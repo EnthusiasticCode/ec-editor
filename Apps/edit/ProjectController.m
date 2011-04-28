@@ -154,6 +154,12 @@
     }
 }
 
+- (void)itemView:(ECItemView *)itemView insertGroupAtIndexPath:(NSIndexPath *)indexPath;
+{
+    Group *group = [NSEntityDescription insertNewObjectForEntityForName:@"Group" inManagedObjectContext:self.managedObjectContext];
+    [[[self areaAtIndex:indexPath.area] orderedGroups] insertObject:group atIndex:indexPath.position];
+}
+
 - (void)edit:(id)sender
 {
     [self.tableView setEditing:YES animated:YES];

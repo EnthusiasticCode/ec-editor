@@ -241,6 +241,8 @@ static void shiftIndicesOfObjectsRight(NSArray *objects)
 {
     if ([[self valueForKey:key] containsObject:object])
         return [self moveObjectAtIndex:[((id<ECOrdering>)object).index unsignedIntegerValue] toIndex:index forOrderedKey:key];
+    if (index >= [self countForOrderedKey:key])
+        [self addObject:object forOrderedKey:key];
     NSFetchRequest *fetchRequest = [self fetchRequestForOrderedKey:key withAdditionalPredicate:[NSPredicate predicateWithFormat:@"%K >= %u", ECManagedObjectIndex, index]];
     NSArray *objectsToShift = [[self managedObjectContext] executeFetchRequest:fetchRequest error:NULL];
     shiftIndicesOfObjectsRight(objectsToShift);
