@@ -308,16 +308,16 @@ const NSUInteger ECItemViewGroupSeparatorBufferSize = 20;
 
 - (UIView *)_blankHeader:(ECStackCache *)cache
 {
-    UILabel *header = [[[UILabel alloc] init] autorelease];
+    UILabel *header = [[UILabel alloc] init];
     header.backgroundColor = [UIColor blueColor];
-    return header;
+    return [header autorelease];
 }
 
 - (UIView *)_groupSeparator:(ECStackCache *)cache
 {
-    UIView *groupSeparator = [[[UIView alloc] init] autorelease];
+    UIView *groupSeparator = [[UIView alloc] init];
     groupSeparator.backgroundColor = [UIColor blackColor];
-    return groupSeparator;
+    return [groupSeparator autorelease];
 }
 
 - (ECItemViewCell *)_loadCellForItemAtIndexPath:(NSIndexPath *)indexPath
@@ -762,7 +762,7 @@ const NSUInteger ECItemViewGroupSeparatorBufferSize = 20;
         [self _continueDrag:longPressGestureRecognizer];
     else if ([longPressGestureRecognizer state] == UIGestureRecognizerStateEnded)
         [self _endDrag:longPressGestureRecognizer];
-    else
+    else if ([longPressGestureRecognizer state] == UIGestureRecognizerStateCancelled)
         [self _cancelDrag:longPressGestureRecognizer];
 }
 
@@ -809,6 +809,7 @@ const NSUInteger ECItemViewGroupSeparatorBufferSize = 20;
     _isDragging = NO;
     [_scrollTimer invalidate];
     _scrollTimer = nil;
+    [_dragDestinationIndexPath release];
     _dragDestinationIndexPath = [self _proposedIndexPathForItemAtPoint:[dragRecognizer locationInView:self] exists:NULL];
     if (_flags.dataSourceMoveItem)
         [_dataSource itemView:self moveItemAtIndexPath:_draggedItemIndexPath toIndexPath:_dragDestinationIndexPath];
@@ -817,7 +818,6 @@ const NSUInteger ECItemViewGroupSeparatorBufferSize = 20;
     } completion:NULL];
     [_draggedItemIndexPath release];
     _draggedItemIndexPath = nil;
-    [_dragDestinationIndexPath release];
     _dragDestinationIndexPath = nil;
     _draggedItem = nil;
     [self reloadData];
