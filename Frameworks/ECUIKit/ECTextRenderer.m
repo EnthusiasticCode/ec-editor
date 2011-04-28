@@ -388,10 +388,14 @@
     }
     
     // Source text string for requested segment
+    BOOL endOfString = NO;
     lineRange.length = requestSegment.lineCount ? requestSegment.lineCount : preferredLineCountPerSegment;
-    NSAttributedString *string = [datasource textRenderer:self stringInLineRange:&lineRange];
+    NSAttributedString *string = [datasource textRenderer:self stringInLineRange:&lineRange endOfString:&endOfString];
     if (!string || lineRange.length == 0 || [string length] == 0)
         return NULL;
+    
+    if (endOfString)
+        lastTextSegment = requestSegment;
     
     framesetter = CTFramesetterCreateWithAttributedString((CFAttributedStringRef)string);
     
@@ -745,8 +749,9 @@
             // Ensure to have a mean line height or generate it
             if (meanLineHeight == 0) 
             {
+                BOOL isStringEnd = NO;
                 NSRange tempRange = NSMakeRange(0, 1);
-                NSAttributedString *string = [datasource textRenderer:self stringInLineRange:&tempRange];
+                NSAttributedString *string = [datasource textRenderer:self stringInLineRange:&tempRange endOfString:&isStringEnd];
                 if (string) 
                 {
                     CTLineRef line = CTLineCreateWithAttributedString((CFAttributedStringRef)string);

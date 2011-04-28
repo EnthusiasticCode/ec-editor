@@ -49,7 +49,7 @@
 
 #pragma mark Text Renderer DataSource Methods
 
-- (NSAttributedString *)textRenderer:(ECTextRenderer *)sender stringInLineRange:(NSRange *)lineRange
+- (NSAttributedString *)textRenderer:(ECTextRenderer *)sender stringInLineRange:(NSRange *)lineRange endOfString:(BOOL *)endOfString
 {
     NSString *str = [string string];
     NSUInteger lineIndex, stringLength = [str length];
@@ -71,9 +71,18 @@
     // Assign return read count of lines
     lineRange->length = lineIndex;
     
+    // Indicate if at end of string
+    *endOfString = NSMaxRange(stringRange) >= stringLength;
+    
     // Return requested substring
-    if (stringRange.length == stringLength) 
-        return string;
+    if (*endOfString) 
+    {
+        NSAttributedString *newLine = [[NSAttributedString alloc] initWithString:@"\n" attributes:defaultTextStyle.CTAttributes];
+        NSMutableAttributedString *result = (stringRange.length == stringLength) ? [string mutableCopy] : [[NSMutableAttributedString alloc] initWithAttributedString:[string attributedSubstringFromRange:stringRange]];
+        [result appendAttributedString:newLine];
+        [newLine release];
+        return [result autorelease];
+    }
     
     return [string attributedSubstringFromRange:stringRange];
 }
