@@ -25,6 +25,7 @@
 		B70D64C0132A2581008DDEA4 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B70D64BF132A2581008DDEA4 /* CoreGraphics.framework */; };
 		B70D6573132A277C008DDEA4 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B70D6572132A277C008DDEA4 /* CoreText.framework */; };
 		B70D6575132A279C008DDEA4 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B70D6574132A279C008DDEA4 /* CoreData.framework */; };
+		B72BE6351368C0F9009B0977 /* NSMutableArray+Shuffling.m in Sources */ = {isa = PBXBuildFile; fileRef = B72BE6341368C0F9009B0977 /* NSMutableArray+Shuffling.m */; };
 		B75B8743135840070098E7E2 /* ECHashing.m in Sources */ = {isa = PBXBuildFile; fileRef = B75B873B135840070098E7E2 /* ECHashing.m */; };
 		B75B8744135840070098E7E2 /* ECStackCache.m in Sources */ = {isa = PBXBuildFile; fileRef = B75B873D135840070098E7E2 /* ECStackCache.m */; };
 		B75B8745135840070098E7E2 /* MurmurHash3.c in Sources */ = {isa = PBXBuildFile; fileRef = B75B873E135840070098E7E2 /* MurmurHash3.c */; };
@@ -112,6 +113,8 @@
 		B70D6572132A277C008DDEA4 /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
 		B70D6574132A279C008DDEA4 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		B70D6649132A28AB008DDEA4 /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Developer/Library/Frameworks/SenTestingKit.framework; sourceTree = SDKROOT; };
+		B72BE6331368C0F9009B0977 /* NSMutableArray+Shuffling.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSMutableArray+Shuffling.h"; sourceTree = "<group>"; };
+		B72BE6341368C0F9009B0977 /* NSMutableArray+Shuffling.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSMutableArray+Shuffling.m"; sourceTree = "<group>"; };
 		B75B873A135840070098E7E2 /* ECHashing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECHashing.h; sourceTree = "<group>"; };
 		B75B873B135840070098E7E2 /* ECHashing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECHashing.m; sourceTree = "<group>"; };
 		B75B873C135840070098E7E2 /* ECStackCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECStackCache.h; sourceTree = "<group>"; };
@@ -347,6 +350,8 @@
 				B75B8740135840070098E7E2 /* NSFileManager(ECAdditions).h */,
 				B75B8741135840070098E7E2 /* NSFileManager(ECAdditions).m */,
 				B75B8742135840070098E7E2 /* pstdint.h */,
+				B72BE6331368C0F9009B0977 /* NSMutableArray+Shuffling.h */,
+				B72BE6341368C0F9009B0977 /* NSMutableArray+Shuffling.m */,
 			);
 			name = ECFoundation;
 			path = Frameworks/ECFoundation;
@@ -635,6 +640,7 @@
 				B70C5CA71365F22F001C35A5 /* Node.m in Sources */,
 				B70C5CAA1365F22F001C35A5 /* HistoryItem.m in Sources */,
 				B7C764F2136773A4009181DB /* ECManagedObject.m in Sources */,
+				B72BE6351368C0F9009B0977 /* NSMutableArray+Shuffling.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -687,6 +693,7 @@
 		B70D64AB132A24FF008DDEA4 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES;

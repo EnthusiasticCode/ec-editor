@@ -17,39 +17,27 @@
 
 - (void)addItemsObject:(File *)value
 {
-    NSSet *changedObjects = [[NSSet alloc] initWithObjects:&value count:1];
-    [self willChangeValueForKey:@"items" withSetMutation:NSKeyValueUnionSetMutation usingObjects:changedObjects];
-    [[self primitiveValueForKey:@"items"] addObject:value];
-    [self didChangeValueForKey:@"items" withSetMutation:NSKeyValueUnionSetMutation usingObjects:changedObjects];
-    [changedObjects release];
+    [self addObject:value forOrderedKey:@"items"];
 }
 
 - (void)removeItemsObject:(File *)value
 {
-    NSSet *changedObjects = [[NSSet alloc] initWithObjects:&value count:1];
-    [self willChangeValueForKey:@"items" withSetMutation:NSKeyValueMinusSetMutation usingObjects:changedObjects];
-    [[self primitiveValueForKey:@"items"] removeObject:value];
-    [self didChangeValueForKey:@"items" withSetMutation:NSKeyValueMinusSetMutation usingObjects:changedObjects];
-    [changedObjects release];
+    [self removeObject:value forOrderedKey:@"items"];
 }
 
 - (void)addItems:(NSSet *)value
 {
-    [self willChangeValueForKey:@"items" withSetMutation:NSKeyValueUnionSetMutation usingObjects:value];
-    [[self primitiveValueForKey:@"items"] unionSet:value];
-    [self didChangeValueForKey:@"items" withSetMutation:NSKeyValueUnionSetMutation usingObjects:value];
+    [self addObjects:value forOrderedKey:@"items"];
 }
 
 - (void)removeItems:(NSSet *)value
 {
-    [self willChangeValueForKey:@"items" withSetMutation:NSKeyValueMinusSetMutation usingObjects:value];
-    [[self primitiveValueForKey:@"items"] minusSet:value];
-    [self didChangeValueForKey:@"items" withSetMutation:NSKeyValueMinusSetMutation usingObjects:value];
+    [self removeObjects:value forOrderedKey:@"items"];
 }
 
-- (NSArray *)sortedItems
+- (NSArray *)orderedItems
 {
-    return [[self copyForOrderedKey:@"items"] autorelease];
+    return [self valueForOrderedKey:@"items"];
 }
 
 @end

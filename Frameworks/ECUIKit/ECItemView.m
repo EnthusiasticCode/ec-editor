@@ -202,10 +202,11 @@ const NSUInteger ECItemViewGroupSeparatorBufferSize = 20;
     _longPressGestureRecognizer.minimumPressDuration = 0.5;
     _longPressGestureRecognizer.delegate = self;
     [self addGestureRecognizer:_longPressGestureRecognizer];
-    UIScrollView *scrollView = [[[UIScrollView alloc] init] autorelease];
+    UIScrollView *scrollView = [[UIScrollView alloc] init];
     _flags.superGestureRecognizerShouldBegin = [scrollView respondsToSelector:@selector(gestureRecognizerShouldBegin:)];
     _flags.superGestureRecognizerShouldRecognizeSimultaneously = [scrollView respondsToSelector:@selector(gestureRecognizer:shouldRecognizeSimultaneouslyWithGestureRecognizer:)];
     _flags.superGestureRecognizerShouldReceiveTouch = [scrollView respondsToSelector:@selector(gestureRecognizer:shouldReceiveTouch:)];
+    [scrollView release];
     _scrollSpeed = 30.0;
     _scrollingHotspots = UIEdgeInsetsMake(100.0, 0.0, 100.0, 0.0);
 }

@@ -18,7 +18,6 @@
 @property (nonatomic, retain) NSSet *files;
 @property (nonatomic, retain) NSSet *subfolders;
 @property (nonatomic, retain) Folder *parent;
+- (NSArray *)orderedGroups;
 - (void)scanForNewFiles;
-- (NSArray *)sortedSubfolders;
-- (NSArray *)sortedGroups;
 @end

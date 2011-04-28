@@ -16,36 +16,4 @@
 @dynamic tag;
 @dynamic nameWords;
 
-- (void)addNameWordsObject:(NameWord *)value
-{
-    NSSet *changedObjects = [[NSSet alloc] initWithObjects:&value count:1];
-    [self willChangeValueForKey:@"nameWords" withSetMutation:NSKeyValueUnionSetMutation usingObjects:changedObjects];
-    [[self primitiveValueForKey:@"nameWords"] addObject:value];
-    [self didChangeValueForKey:@"nameWords" withSetMutation:NSKeyValueUnionSetMutation usingObjects:changedObjects];
-    [changedObjects release];
-}
-
-- (void)removeNameWordsObject:(NameWord *)value
-{
-    NSSet *changedObjects = [[NSSet alloc] initWithObjects:&value count:1];
-    [self willChangeValueForKey:@"nameWords" withSetMutation:NSKeyValueMinusSetMutation usingObjects:changedObjects];
-    [[self primitiveValueForKey:@"nameWords"] removeObject:value];
-    [self didChangeValueForKey:@"nameWords" withSetMutation:NSKeyValueMinusSetMutation usingObjects:changedObjects];
-    [changedObjects release];
-}
-
-- (void)addNameWords:(NSSet *)value
-{
-    [self willChangeValueForKey:@"nameWords" withSetMutation:NSKeyValueUnionSetMutation usingObjects:value];
-    [[self primitiveValueForKey:@"nameWords"] unionSet:value];
-    [self didChangeValueForKey:@"nameWords" withSetMutation:NSKeyValueUnionSetMutation usingObjects:value];
-}
-
-- (void)removeNameWords:(NSSet *)value
-{
-    [self willChangeValueForKey:@"nameWords" withSetMutation:NSKeyValueMinusSetMutation usingObjects:value];
-    [[self primitiveValueForKey:@"nameWords"] minusSet:value];
-    [self didChangeValueForKey:@"nameWords" withSetMutation:NSKeyValueMinusSetMutation usingObjects:value];
-}
-
 @end

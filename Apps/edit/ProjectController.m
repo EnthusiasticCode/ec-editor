@@ -55,6 +55,7 @@
 
 - (void)dealloc
 {
+    [self saveContext];
     self.tableView = nil;
     self.editButton = nil;
     self.doneButton = nil;
@@ -79,22 +80,22 @@
 
 - (Folder *)areaAtIndex:(NSUInteger)area
 {
-    return [[self.project sortedSubfolders] objectAtIndex:area];
+    return [[self.project orderedProjectFolders] objectAtIndex:area];
 }
 
 - (Group *)groupAtIndex:(NSUInteger)group inArea:(NSUInteger)area
 {
-    return [[[self areaAtIndex:area] sortedGroups] objectAtIndex:group];
+    return [[[self areaAtIndex:area] orderedGroups] objectAtIndex:group];
 }
 
 - (File *)itemAtIndex:(NSUInteger)item inGroup:(NSUInteger)group inArea:(NSUInteger)area
 {
-    return [[[self groupAtIndex:group inArea:area] sortedItems] objectAtIndex:item];
+    return [[[self groupAtIndex:group inArea:area] orderedItems] objectAtIndex:item];
 }
 
 - (NSUInteger)numberOfAreasInTableView:(ECItemView *)itemView
 {
-    return [self.project.subfolders count];
+    return [self.project countForOrderedKey:@"projectFolders"];
 }
 
 - (NSString *)itemView:(ECItemView *)itemView titleForHeaderInArea:(NSUInteger)area
@@ -110,12 +111,13 @@
     if (!file)
     {
         file = [[[ECItemViewCell alloc] init] autorelease];
-        UILabel *label = [[[UILabel alloc] init] autorelease];
+        UILabel *label = [[UILabel alloc] init];
         label.tag = 1;
         label.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
         label.frame = UIEdgeInsetsInsetRect(file.bounds, UIEdgeInsetsMake(2.0, 2.0, 2.0, 2.0));
         label.backgroundColor = [UIColor greenColor];
         [file addSubview:label];
+        [label release];
     }
     ((UILabel *)[file viewWithTag:1]).text = [self itemAtIndex:indexPath.item inGroup:indexPath.group inArea:indexPath.area].name;
     return file;
@@ -167,9 +169,10 @@
 {
     NSString *storePath = [projectRoot stringByAppendingPathComponent:@".ecproj"];
     NSURL *storeURL = [NSURL fileURLWithPath:storePath];
-    NSFileManager *fileManager = [[[NSFileManager alloc] init] autorelease];
+    NSFileManager *fileManager = [[NSFileManager alloc] init];
     if (![fileManager fileExistsAtPath:projectRoot])
         [fileManager createDirectoryAtPath:projectRoot withIntermediateDirectories:YES attributes:nil error:NULL];
+    [fileManager release];
     self.persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:[self managedObjectModel]];
     NSError *error;
     if (![self.persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeURL options:nil error:&error])
@@ -178,17 +181,20 @@
         NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
         abort();
     }
-    NSFetchRequest *projectFetchRequest = [[[NSFetchRequest alloc] init] autorelease];
+    NSFetchRequest *projectFetchRequest = [[NSFetchRequest alloc] init];
     [projectFetchRequest setEntity:[NSEntityDescription entityForName:@"Project" inManagedObjectContext:self.managedObjectContext]];
     NSArray *projects = [self.managedObjectContext executeFetchRequest:projectFetchRequest error:NULL];
+    [projectFetchRequest release];
     if ([projects count])
         self.project = [projects objectAtIndex:0];
     else
     {
-        self.project = [NSEntityDescription insertNewObjectForEntityForName:@"Project" inManagedObjectContext:self.managedObjectContext];
-        self.project.path = projectRoot;
-        self.project.name = [projectRoot lastPathComponent];
-        [self.project scanForNewFiles];
+        Project *project = [NSEntityDescription insertNewObjectForEntityForName:@"Project" inManagedObjectContext:self.managedObjectContext];
+        project.path = projectRoot;
+        project.name = [projectRoot lastPathComponent];
+        project.project = project;
+        [project scanForNewFiles];
+        self.project = project;
     }
     self.title = self.project.name;
 }
@@ -198,6 +204,11 @@
     FileController *fileController = ((AppController *)self.navigationController).fileController;
     [fileController loadFile:file];
     [self.navigationController pushViewController:fileController animated:YES];
+}
+
+- (void)saveContext
+{
+    [self.managedObjectContext save:NULL];
 }
 
 @end

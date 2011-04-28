@@ -16,9 +16,14 @@
 - (NSMutableArray *)mutableCopyForOrderedKey:(NSString *)key;
 - (NSUInteger)countForOrderedKey:(NSString *)key;
 - (id)objectAtIndex:(NSUInteger)index forOrderedKey:(NSString *)key;
-- (void)addObject:(id)anObject forOrderedKey:(NSString *)key;
-- (void)insertObject:(id)anObject atIndex:(NSUInteger)index forOrderedKey:(NSString *)key;
+- (void)addObject:(id)object forOrderedKey:(NSString *)key;
+- (void)removeObject:(id)object forOrderedKey:(NSString *)key;
+- (void)insertObject:(id)object atIndex:(NSUInteger)index forOrderedKey:(NSString *)key;
 - (void)removeLastObjectForOrderedKey:(NSString *)key;
 - (void)removeObjectAtIndex:(NSUInteger)index forOrderedKey:(NSString *)key;
-- (void)replaceObjectAtIndex:(NSUInteger)index withObject:(id)anObject forOrderedKey:(NSString *)key;
+- (void)replaceObjectAtIndex:(NSUInteger)index withObject:(id)object forOrderedKey:(NSString *)key;
+- (void)exchangeObjectAtIndex:(NSUInteger)idx1 withObjectAtIndex:(NSUInteger)idx2 forOrderedKey:(NSString *)key;
+- (void)moveObjectAtIndex:(NSUInteger)idx1 toIndex:(NSUInteger)idx2 forOrderedKey:(NSString *)key;
+- (void)addObjects:(NSSet *)objects forOrderedKey:(NSString *)key;
+- (void)removeObjects:(NSSet *)objects forOrderedKey:(NSString *)key;
 @end

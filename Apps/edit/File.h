@@ -20,4 +20,5 @@
 @property (nonatomic, retain) Project *project;
 @property (nonatomic, retain) NSSet *targets;
 @property (nonatomic, retain) Folder *folder;
+- (NSArray *)orderedUndoItems;
 @end

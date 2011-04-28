@@ -18,5 +18,5 @@
 - (void)removeItemsObject:(File *)value;
 - (void)addItems:(NSSet *)value;
 - (void)removeItems:(NSSet *)value;
-- (NSArray *)sortedItems;
+- (NSArray *)orderedItems;
 @end

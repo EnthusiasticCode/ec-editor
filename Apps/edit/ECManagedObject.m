@@ -7,8 +7,13 @@
 //
 
 #import "ECManagedObject.h"
+#import <ECFoundation/NSMutableArray+Shuffling.h>
 
 static NSString *ECManagedObjectIndex = @"index";
+
+@protocol ECOrdering <NSObject>
+@property (nonatomic, retain) NSNumber *index;
+@end
 
 @interface ECManagedObjectProxy : NSMutableArray
 @property (nonatomic, assign) ECManagedObject *managedObject;
@@ -55,14 +60,14 @@ static NSString *ECManagedObjectIndex = @"index";
     return [_managedObject objectAtIndex:index forOrderedKey:self.key];
 }
 
-- (void)addObject:(id)anObject
+- (void)addObject:(id)object
 {
-    [_managedObject addObject:anObject forOrderedKey:self.key];
+    [_managedObject addObject:object forOrderedKey:self.key];
 }
 
-- (void)insertObject:(id)anObject atIndex:(NSUInteger)index
+- (void)insertObject:(id)object atIndex:(NSUInteger)index
 {
-    [_managedObject insertObject:anObject atIndex:index forOrderedKey:self.key];
+    [_managedObject insertObject:object atIndex:index forOrderedKey:self.key];
 }
 
 - (void)removeLastObject
@@ -75,9 +80,19 @@ static NSString *ECManagedObjectIndex = @"index";
     [_managedObject removeObjectAtIndex:index forOrderedKey:self.key];
 }
 
-- (void)replaceObjectAtIndex:(NSUInteger)index withObject:(id)anObject
+- (void)replaceObjectAtIndex:(NSUInteger)index withObject:(id)object
 {
-    [_managedObject replaceObjectAtIndex:index withObject:anObject forOrderedKey:self.key];
+    [_managedObject replaceObjectAtIndex:index withObject:object forOrderedKey:self.key];
+}
+
+- (void)exchangeObjectAtIndex:(NSUInteger)idx1 withObjectAtIndex:(NSUInteger)idx2
+{
+    [_managedObject exchangeObjectAtIndex:idx1 withObjectAtIndex:idx2 forOrderedKey:self.key];
+}
+
+- (void)moveObjectAtIndex:(NSUInteger)idx1 toIndex:(NSUInteger)idx2
+{
+    [_managedObject moveObjectAtIndex:idx1 toIndex:idx2 forOrderedKey:self.key];
 }
 
 - (id)copyWithZone:(NSZone *)zone
@@ -95,6 +110,7 @@ static NSString *ECManagedObjectIndex = @"index";
 @interface ECManagedObject ()
 @property (nonatomic, retain) NSMutableDictionary *fetchRequestsForOrderedKeys;
 - (NSFetchRequest *)fetchRequestForOrderedKey:(NSString *)key;
+- (NSFetchRequest *)fetchRequestForOrderedKey:(NSString *)key withAdditionalPredicate:(NSPredicate *)predicate;
 @end
 
 @implementation ECManagedObject
@@ -119,15 +135,24 @@ static NSString *ECManagedObjectIndex = @"index";
     NSFetchRequest *fetchRequest = [self.fetchRequestsForOrderedKeys objectForKey:key];
     if (fetchRequest)
         return fetchRequest;
-    fetchRequest = [[[NSFetchRequest alloc] init] autorelease];
+    fetchRequest = [[NSFetchRequest alloc] init];
     NSRelationshipDescription *relationship = [[[self entity] relationshipsByName] objectForKey:key];
     [fetchRequest setEntity:[relationship destinationEntity]];
     NSString *inverseName = [[relationship inverseRelationship] name];
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"%K == %@", inverseName, self];
     [fetchRequest setPredicate:predicate];
-    NSSortDescriptor *sortDescriptor = [[[NSSortDescriptor alloc] initWithKey:ECManagedObjectIndex ascending:YES] autorelease];
+    NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:ECManagedObjectIndex ascending:YES];
     [fetchRequest setSortDescriptors:[NSArray arrayWithObject:sortDescriptor]];
+    [sortDescriptor release];
     [self.fetchRequestsForOrderedKeys setObject:fetchRequest forKey:key];
+    return [fetchRequest autorelease];
+}
+
+- (NSFetchRequest *)fetchRequestForOrderedKey:(NSString *)key withAdditionalPredicate:(NSPredicate *)predicate
+{
+    NSFetchRequest *fetchRequest = [self fetchRequestForOrderedKey:key];
+    predicate = [NSCompoundPredicate andPredicateWithSubpredicates:[NSArray arrayWithObjects:[fetchRequest predicate], predicate, nil]];
+    [fetchRequest setPredicate:predicate];
     return fetchRequest;
 }
 
@@ -160,11 +185,135 @@ static NSString *ECManagedObjectIndex = @"index";
 
 - (id)objectAtIndex:(NSUInteger)index forOrderedKey:(NSString *)key
 {
-    NSFetchRequest *fetchRequest = [self fetchRequestForOrderedKey:key];
-    NSPredicate *predicate = [fetchRequest predicate];
-    predicate = [NSCompoundPredicate andPredicateWithSubpredicates:[NSArray arrayWithObjects:predicate, [NSPredicate predicateWithFormat:@"%K == %u", ECManagedObjectIndex, index], nil]];
-    [fetchRequest setPredicate:predicate];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"%K == %u", ECManagedObjectIndex, index];
+    NSFetchRequest *fetchRequest = [self fetchRequestForOrderedKey:key withAdditionalPredicate:predicate];
     return [[[self managedObjectContext] executeFetchRequest:fetchRequest error:NULL] objectAtIndex:0];
+}
+
+- (void)addObject:(id)object forOrderedKey:(NSString *)key
+{
+    [self addObjects:[NSSet setWithObject:object] forOrderedKey:key];
+}
+
+- (void)removeObject:(id)object forOrderedKey:(NSString *)key
+{
+    [self removeObjects:[NSSet setWithObject:object] forOrderedKey:key];
+}
+
+- (void)insertObject:(id)object atIndex:(NSUInteger)index forOrderedKey:(NSString *)key
+{
+    NSFetchRequest *fetchRequest = [self fetchRequestForOrderedKey:key withAdditionalPredicate:[NSPredicate predicateWithFormat:@"%K >= %u", ECManagedObjectIndex, index]];
+    NSArray *objectsToShuffle = [[self managedObjectContext] executeFetchRequest:fetchRequest error:NULL];
+    NSSet *newObjects = [NSSet setWithObject:object];
+    [self willChangeValueForKey:key withSetMutation:NSKeyValueUnionSetMutation usingObjects:newObjects];
+    [[self primitiveValueForKey:key] addObject:object];
+    [self didChangeValueForKey:key withSetMutation:NSKeyValueUnionSetMutation usingObjects:newObjects];
+    ((id<ECOrdering>)object).index = [NSNumber numberWithUnsignedInteger:index];
+    ++index;
+    for (id<ECOrdering> objectToShuffle in objectsToShuffle)
+    {
+        objectToShuffle.index = [NSNumber numberWithUnsignedInteger:index];
+        ++index;
+    }
+}
+
+- (void)removeLastObjectForOrderedKey:(NSString *)key
+{
+    id lastObject = [self objectAtIndex:[self countForOrderedKey:key] - 1 forOrderedKey:key];
+    NSSet *removedObjects = [NSSet setWithObject:lastObject];
+    [self willChangeValueForKey:key withSetMutation:NSKeyValueMinusSetMutation usingObjects:removedObjects];
+    [[self primitiveValueForKey:key] removeObject:lastObject];
+    [self didChangeValueForKey:key withSetMutation:NSKeyValueMinusSetMutation usingObjects:removedObjects];
+}
+
+- (void)removeObjectAtIndex:(NSUInteger)index forOrderedKey:(NSString *)key
+{
+    [self removeObject:[self objectAtIndex:index forOrderedKey:key] forOrderedKey:key];
+}
+
+- (void)replaceObjectAtIndex:(NSUInteger)index withObject:(id)object forOrderedKey:(NSString *)key
+{
+    id oldObject = [[self objectAtIndex:index forOrderedKey:key] retain];
+    NSSet *addedObjects = [NSSet setWithObject:object];
+    NSSet *removedObjects = [NSSet setWithObject:oldObject];
+    [self willChangeValueForKey:key withSetMutation:NSKeyValueUnionSetMutation usingObjects:addedObjects];
+    [self willChangeValueForKey:key withSetMutation:NSKeyValueMinusSetMutation usingObjects:removedObjects];
+    [[self primitiveValueForKey:key] addObject:object];
+    [[self primitiveValueForKey:key] removeObject:oldObject];
+    [self didChangeValueForKey:key withSetMutation:NSKeyValueMinusSetMutation usingObjects:removedObjects];
+    [self didChangeValueForKey:key withSetMutation:NSKeyValueUnionSetMutation usingObjects:addedObjects];
+    ((id<ECOrdering>)object).index = ((id<ECOrdering>)oldObject).index;
+    [oldObject release];
+}
+
+- (void)exchangeObjectAtIndex:(NSUInteger)idx1 withObjectAtIndex:(NSUInteger)idx2 forOrderedKey:(NSString *)key
+{
+    id<ECOrdering> idx1Object = [self objectAtIndex:idx1 forOrderedKey:key];
+    id<ECOrdering> idx2Object = [self objectAtIndex:idx2 forOrderedKey:key];
+    NSNumber *oldIdx1 = [idx1Object.index copy];
+    idx1Object.index = idx2Object.index;
+    idx2Object.index = oldIdx1;
+    [oldIdx1 release];
+}
+
+- (void)moveObjectAtIndex:(NSUInteger)idx1 toIndex:(NSUInteger)idx2 forOrderedKey:(NSString *)key
+{
+    id object = [[self objectAtIndex:idx1 forOrderedKey:key] retain];
+    if (idx1 > idx2)
+    {
+        [self removeObjectAtIndex:idx1 forOrderedKey:key];
+        [self insertObject:object atIndex:idx2 forOrderedKey:key];
+    }
+    else
+    {
+        [self insertObject:object atIndex:idx2 forOrderedKey:key];
+        [self removeObjectAtIndex:idx1 forOrderedKey:key];
+    }
+    [object release];
+}
+
+- (void)addObjects:(NSSet *)objects forOrderedKey:(NSString *)key
+{
+    NSFetchRequest *fetchRequest = [self fetchRequestForOrderedKey:key withAdditionalPredicate:[NSPredicate predicateWithFormat:@"%K > -1", ECManagedObjectIndex]];
+    NSUInteger nextIndex = [[self managedObjectContext] countForFetchRequest:fetchRequest error:NULL];
+    for (id<ECOrdering> object in objects)
+    {
+        object.index = [NSNumber numberWithInt:nextIndex];
+        ++nextIndex;
+    }
+    NSMutableSet *intersection = [objects mutableCopy];
+    [intersection intersectSet:[self valueForKey:key]];
+    if ([intersection count])
+        [self removeObjects:intersection forOrderedKey:key];
+    [intersection release];
+    [self willChangeValueForKey:key withSetMutation:NSKeyValueUnionSetMutation usingObjects:objects];
+    [[self primitiveValueForKey:key] unionSet:objects];
+    [self didChangeValueForKey:key withSetMutation:NSKeyValueUnionSetMutation usingObjects:objects];
+}
+
+- (void)removeObjects:(NSSet *)objects forOrderedKey:(NSString *)key
+{
+    NSMutableSet *intersection = [objects mutableCopy];
+    [intersection intersectSet:[self valueForKey:key]];
+    if (![intersection count])
+    {
+        [intersection release];
+        return;
+    }
+    NSUInteger lowestDeletedIndex = NSUIntegerMax;
+    for (id<ECOrdering> object in intersection)
+        lowestDeletedIndex = MAX([object.index unsignedIntegerValue], lowestDeletedIndex);
+    [intersection release];
+    [self willChangeValueForKey:key withSetMutation:NSKeyValueMinusSetMutation usingObjects:objects];
+    [[self primitiveValueForKey:key] minusSet:objects];
+    [self didChangeValueForKey:key withSetMutation:NSKeyValueMinusSetMutation usingObjects:objects];
+    NSFetchRequest *fetchRequest = [self fetchRequestForOrderedKey:key withAdditionalPredicate:[NSPredicate predicateWithFormat:@"%K > %u", ECManagedObjectIndex, lowestDeletedIndex]];
+    NSArray *objectsToRearrange = [[self managedObjectContext] executeFetchRequest:fetchRequest error:NULL];
+    for (id<ECOrdering> object in objectsToRearrange)
+    {
+        object.index = [NSNumber numberWithUnsignedInteger:lowestDeletedIndex];
+        ++lowestDeletedIndex;
+    }
 }
 
 @end

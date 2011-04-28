@@ -15,4 +15,5 @@
 @property (nonatomic, retain) NSSet* projectFolders;
 @property (nonatomic, retain) NSSet *tabs;
 @property (nonatomic, retain) NSSet *targets;
+- (NSArray *)orderedProjectFolders;
 @end
