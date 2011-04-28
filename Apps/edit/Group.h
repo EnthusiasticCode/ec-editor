@@ -19,4 +19,5 @@
 - (void)addItems:(NSSet *)value;
 - (void)removeItems:(NSSet *)value;
 - (NSArray *)orderedItems;
+- (void)moveItemAtIndex:(NSUInteger)idx1 toIndex:(NSUInteger)idx2;
 @end

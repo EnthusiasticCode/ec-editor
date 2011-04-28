@@ -147,10 +147,11 @@
 
 - (void)itemView:(ECItemView *)itemView moveItemAtIndexPath:(NSIndexPath *)sourceIndexPath toIndexPath:(NSIndexPath *)destinationIndexPath
 {
-//    NSString *file = [[[[self.files allValues] objectAtIndex:sourceIndexPath.area] objectAtIndex:sourceIndexPath.item] retain];
-//    [[[self.files allValues] objectAtIndex:sourceIndexPath.area] removeObjectAtIndex:sourceIndexPath.item];
-//    [[[self.files allValues] objectAtIndex:destinationIndexPath.area] insertObject:file atIndex:destinationIndexPath.item];
-//    [file release];
+    if (sourceIndexPath.area == destinationIndexPath.area)
+    {
+        if (sourceIndexPath.group == destinationIndexPath.group)
+            [[self groupAtIndex:sourceIndexPath.group inArea:sourceIndexPath.area] moveItemAtIndex:sourceIndexPath.item toIndex:destinationIndexPath.item];
+    }
 }
 
 - (void)edit:(id)sender

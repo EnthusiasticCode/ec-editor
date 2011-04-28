@@ -12,8 +12,8 @@
 @interface ECManagedObject : NSManagedObject
 - (NSArray *)valueForOrderedKey:(NSString *)key;
 - (NSArray *)copyForOrderedKey:(NSString *)key;
-- (NSMutableArray *)mutableArrayValueForOrderedKey:(NSString *)key;
 - (NSMutableArray *)mutableCopyForOrderedKey:(NSString *)key;
+- (NSMutableArray *)mutableArrayValueForOrderedKey:(NSString *)key;
 - (NSUInteger)countForOrderedKey:(NSString *)key;
 - (id)objectAtIndex:(NSUInteger)index forOrderedKey:(NSString *)key;
 - (void)addObject:(id)object forOrderedKey:(NSString *)key;
@@ -26,4 +26,5 @@
 - (void)moveObjectAtIndex:(NSUInteger)idx1 toIndex:(NSUInteger)idx2 forOrderedKey:(NSString *)key;
 - (void)addObjects:(NSSet *)objects forOrderedKey:(NSString *)key;
 - (void)removeObjects:(NSSet *)objects forOrderedKey:(NSString *)key;
+- (NSArray *)subarrayWithRange:(NSRange)range forOrderedKey:(NSString *)key;
 @end

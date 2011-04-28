@@ -40,4 +40,9 @@
     return [self valueForOrderedKey:@"items"];
 }
 
+- (void)moveItemAtIndex:(NSUInteger)idx1 toIndex:(NSUInteger)idx2
+{
+    [self moveObjectAtIndex:idx1 toIndex:idx2 forOrderedKey:@"items"];
+}
+
 @end
