@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface ECButton : UIControl
+@interface ECButton : UIButton
 
 @property (nonatomic) CGFloat borderWidth;
 
@@ -22,12 +22,5 @@
 
 - (void)setBorderColor:(UIColor *)color forState:(UIControlState)state;
 - (UIColor *)borderColorForState:(UIControlState)state;
-
-@property (nonatomic, readonly) UILabel *titleLabel;
-
-@property (nonatomic) UIEdgeInsets titleInsets;
-
-- (void)setTitle:(NSString *)title forState:(UIControlState)state;
-- (NSString *)titleForState:(UIControlState)state;
 
 @end

@@ -15,10 +15,10 @@
 @private
     CGColorRef *backgroundColors;
     CGColorRef *borderColors;
-    NSString **titles;
 }
 
 @property (nonatomic) CGPathRef buttonPath;
+- (void)setButtonPath:(CGPathRef)buttonPath animated:(BOOL)animated;
 
 - (void)updateLayerPropertiesForCurrentState;
 
@@ -152,7 +152,6 @@ static CGPathRef createButtonShapePath(CGRect rect, CGFloat radius, CGFloat left
 #pragma mark Properties
 
 @synthesize cornerRadius, leftArrowSize, rightArrowSize;
-@synthesize titleLabel, titleInsets;
 
 - (CGPathRef)buttonPath
 {
@@ -161,13 +160,21 @@ static CGPathRef createButtonShapePath(CGRect rect, CGFloat radius, CGFloat left
 
 - (void)setButtonPath:(CGPathRef)buttonPath
 {
+    [self setButtonPath:buttonPath animated:NO];
+}
+
+- (void)setButtonPath:(CGPathRef)buttonPath animated:(BOOL)animated
+{
     CAShapeLayer *layer = (CAShapeLayer *)self.layer;
-    CABasicAnimation *animation = [CABasicAnimation animationWithKeyPath:@"path"];
-    animation.fromValue = (id)layer.path;
-    animation.toValue = (id)buttonPath;
-    animation.duration = 0.15;
-    animation.valueFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
-    [layer addAnimation:animation forKey:nil];
+    if (animated) 
+    {
+        CABasicAnimation *animation = [CABasicAnimation animationWithKeyPath:@"path"];
+        animation.fromValue = (id)layer.path;
+        animation.toValue = (id)buttonPath;
+        animation.duration = 0.15;
+        animation.valueFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
+        [layer addAnimation:animation forKey:nil];
+    }
     [layer setPath:buttonPath];
 }
 
@@ -237,7 +244,7 @@ static CGPathRef createButtonShapePath(CGRect rect, CGFloat radius, CGFloat left
     [super setFrame:frame];
     
     CGPathRef path = createButtonShapePath(self.bounds, self->cornerRadius, self->leftArrowSize, self->rightArrowSize);
-    self.buttonPath = path;
+    [self setButtonPath:path animated:YES];
     CGPathRelease(path);
 }
 
@@ -246,32 +253,17 @@ static CGPathRef createButtonShapePath(CGRect rect, CGFloat radius, CGFloat left
     [super setBounds:bounds];
     
     CGPathRef path = createButtonShapePath(self.bounds, self->cornerRadius, self->leftArrowSize, self->rightArrowSize);
-    self.buttonPath = path;
+    [self setButtonPath:path animated:YES];
     CGPathRelease(path);
 }
 
 #pragma mark -
 #pragma mark UIControl Methods
 
-static void init(ECButton *self)
+static void preinit(ECButton *self)
 {
     CAShapeLayer *layer = (CAShapeLayer *)self.layer;
-    
-    // Create title layer
-    self->titleLabel = [UILabel new];
-    self->titleLabel.textAlignment = UITextAlignmentCenter;
-    self->titleLabel.adjustsFontSizeToFitWidth = NO;
-    self->titleLabel.numberOfLines = 1;
-    self->titleLabel.lineBreakMode = UILineBreakModeMiddleTruncation;
-    self->titleLabel.font = [UIFont boldSystemFontOfSize:15];
-    self->titleLabel.backgroundColor = [UIColor clearColor];
-    self->titleLabel.shadowColor = [UIColor styleForegroundShadowColor];
-    self->titleLabel.shadowOffset = CGSizeMake(0, 1);
-    self->titleLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-    
-    // Title insets
-    self->titleInsets = UIEdgeInsetsMake(0, 10, 0, 10);
-    
+
     // Common properties
     self->cornerRadius = 3;
     self->leftArrowSize = 0;
@@ -286,7 +278,6 @@ static void init(ECButton *self)
     self->backgroundColors[STATE_SELECTED_IDX] = CGColorCreateCopy([UIColor colorWithRed:64.0/255.0 green:92.0/255.0 blue:123.0/255.0 alpha:1.0].CGColor);
     self->backgroundColors[STATE_APPLICATION_IDX] = NULL;
     self->backgroundColors[STATE_RESERVED_IDX] = NULL;
-    layer.backgroundColor = NULL;
     
     // Border colors
     self->borderColors = (CGColorRef *)malloc(sizeof(CGColorRef) * 6);
@@ -296,36 +287,30 @@ static void init(ECButton *self)
     self->borderColors[STATE_SELECTED_IDX] = CGColorCreateCopy(self->borderColors[STATE_NORMAL_IDX]);
     self->borderColors[STATE_APPLICATION_IDX] = NULL;
     self->borderColors[STATE_RESERVED_IDX] = NULL;
-    
-    // Titles
-    self->titles = (NSString **)malloc(sizeof(NSString *) * 6);
-    memset(self->titles, 0, sizeof(NSString *) * 6);
-    
-    [self updateLayerPropertiesForCurrentState];
 }
 
 - (id)initWithFrame:(CGRect)frame
 {
+    preinit(self);
     if ((self = [super initWithFrame:frame]))
     {
-        init(self);
+        [self updateLayerPropertiesForCurrentState];
     }
     return self;
 }
 
 - (id)initWithCoder:(NSCoder *)aDecoder
 {
+    preinit(self);
     if ((self = [super initWithCoder:aDecoder]))
     {
-        init(self);
+        [self updateLayerPropertiesForCurrentState];
     }
     return self;
 }
 
 - (void)dealloc
 {
-    [titleLabel release];
-    free(titles);
     free(backgroundColors);
     free(borderColors);
     [super dealloc];
@@ -349,14 +334,6 @@ static void init(ECButton *self)
         return nil;
     }
     return [super hitTest:point withEvent:event];
-}
-
-- (void)layoutSubviews
-{
-    CGRect bounds = self.bounds;
-//    CGFloat fontHeight = titleLabel.font.pointSize;
-//    titleLabel.frame = CGRectMake(leftArrowSize, (bounds.size.height - fontHeight) / 2.0, (bounds.size.width - leftArrowSize - rightArrowSize - 2 * self.borderWidth), fontHeight);
-    titleLabel.frame = UIEdgeInsetsInsetRect(bounds, titleInsets);
 }
 
 #pragma mark -
@@ -396,21 +373,6 @@ static void init(ECButton *self)
     return borderColors[index] ? [UIColor colorWithCGColor:borderColors[index]] : nil;
 }
 
-- (void)setTitle:(NSString *)title forState:(UIControlState)state
-{
-    NSUInteger index = stateToIndex(state);
-    [titles[index] release];
-    titles[index] = [title retain];
-
-    [self updateLayerPropertiesForCurrentState];
-}
-
-- (NSString *)titleForState:(UIControlState)state
-{
-    NSUInteger index = stateToIndex(state);
-    return titles[index];
-}
-
 #pragma mark -
 #pragma mark Private methods
 
@@ -420,22 +382,6 @@ static void init(ECButton *self)
     NSUInteger stateIndex = stateToIndex(self.state);
     layer.fillColor = backgroundColors[stateIndex];
     layer.strokeColor = borderColors[stateIndex];
-    
-    // Title
-    if (titles[stateIndex] == nil) 
-        stateIndex = STATE_NORMAL_IDX;
-    if (titles[stateIndex] == nil) 
-    {
-        [titleLabel removeFromSuperview];
-    }
-    else if (![titles[stateIndex] isEqualToString:titleLabel.text])
-    {
-        titleLabel.text = titles[stateIndex];
-//        CGRect bounds = self.bounds;
-//        CGFloat fontHeight = titleLabel.font.pointSize;
-//        titleLabel.frame = CGRectMake(leftArrowSize, floorf(bounds.size.height - fontHeight) / 2.0, floorf(bounds.size.width - leftArrowSize - rightArrowSize - 2 * self.borderWidth), fontHeight);
-        [self addSubview:titleLabel];
-    }
 }
 
 @end

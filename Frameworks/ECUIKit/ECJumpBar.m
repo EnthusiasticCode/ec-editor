@@ -515,8 +515,8 @@ static void init(ECJumpBar *self)
     button.titleLabel.font = self.font;
     button.titleLabel.shadowOffset = self.textShadowOffset;
     button.titleLabel.lineBreakMode = UILineBreakModeTailTruncation;
-//    [button setTitleShadowColor:self.textShadowColor forState:UIControlStateNormal];
-//    [button setTitleColor:self.textColor forState:UIControlStateNormal];
+    [button setTitleShadowColor:self.textShadowColor forState:UIControlStateNormal];
+    [button setTitleColor:self.textColor forState:UIControlStateNormal];
     [button setBackgroundColor:self.buttonColor forState:UIControlStateNormal];
     [button setBackgroundColor:self.buttonHighlightColor forState:UIControlStateHighlighted];
     button.rightArrowSize = BUTTON_ARROW_WIDTH;

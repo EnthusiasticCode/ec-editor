@@ -9,23 +9,13 @@
 #import "MokupControlsViewController.h"
 #import <QuartzCore/QuartzCore.h>
 #import "UIImage+BlockDrawing.h"
+#import "UIColor+StyleColors.h"
 
 @implementation MokupControlsViewController
-@synthesize aButton;
 @synthesize jumpBar;
 @synthesize imageView;
 @synthesize imageView2;
 @synthesize projectImageView;
-
-- (void)dealloc
-{
-    [aButton release];
-    [jumpBar release];
-    [imageView release];
-    [imageView2 release];
-    [projectImageView release];
-    [super dealloc];
-}
 
 - (void)didReceiveMemoryWarning
 {
@@ -42,7 +32,13 @@
 {
     [super viewDidLoad];
     
+    self.view.backgroundColor = [UIColor styleBackgroundColor];
+    
     jumpBar.delegate = self;
+    jumpBar.backgroundColor = [UIColor styleAlternateBackgroundColor];
+    jumpBar.textColor = [UIColor styleForegroundColor];
+    jumpBar.textShadowColor = [UIColor styleForegroundShadowColor];
+    jumpBar.buttonColor = [UIColor styleBackgroundColor];
     
     // Document icon
     imageView.image = [UIImage imageWithSize:imageView.bounds.size block:^(CGContextRef ctx, CGRect rect) {
@@ -220,7 +216,6 @@
 
 - (void)viewDidUnload
 {
-    [self setAButton:nil];
     [self setJumpBar:nil];
     [self setImageView:nil];
     [self setImageView2:nil];
@@ -243,6 +238,11 @@
 - (void)jumpBarButtonAction:(id)sender
 {
     [jumpBar popControlsDownThruIndex:[sender tag] animated:YES];
+}
+
+- (IBAction)doSomething:(id)sender {
+    CGFloat arrow = [sender leftArrowSize];
+    [sender setLeftArrowSize:arrow ? 0 : 10];
 }
 
 - (void)jumpBar:(ECJumpBar *)jumpBar didPushControl:(UIControl *)control atStackIndex:(NSUInteger)index
