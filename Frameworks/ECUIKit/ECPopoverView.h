@@ -11,12 +11,24 @@
 
 @interface ECPopoverView : UIView
 
+#pragma mark Style
+
+@property (nonatomic) CGFloat cornerRadius;
+
+#pragma mark Content
+
+@property (nonatomic) UIEdgeInsets contentInsets;
+
+@property (nonatomic) CGSize contentSize;
+
+@property (nonatomic, retain) UIView *contentView;
+
+#pragma mark Arrow
+
 @property (nonatomic) UIPopoverArrowDirection arrowDirection;
 
 @property (nonatomic) CGFloat arrowPosition;
 
 @property (nonatomic) CGFloat arrowSize;
-
-@property (nonatomic, readonly) CGRect contentRect;
 
 @end

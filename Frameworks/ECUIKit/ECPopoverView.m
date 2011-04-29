@@ -7,100 +7,147 @@
 //
 
 #import "ECPopoverView.h"
-#import "UIImage+BlockDrawing.h"
+#import "UIColor+StyleColors.h"
 #import <QuartzCore/QuartzCore.h>
 #import <math.h>
 
-void CGPathAddRoundedRect(CGMutablePathRef path, CGAffineTransform *transform, CGRect rect, CGFloat radius)
-{
-    CGRect innerRect = CGRectInset(rect, radius, radius);
-    
-    CGFloat inside_right = innerRect.origin.x + innerRect.size.width;
-    CGFloat outside_right = rect.origin.x + rect.size.width;
-    CGFloat inside_bottom = innerRect.origin.y + innerRect.size.height;
-    CGFloat outside_bottom = rect.origin.y + rect.size.height;
-    
-    CGFloat inside_top = innerRect.origin.y;
-    CGFloat outside_top = rect.origin.y;
-    CGFloat outside_left = rect.origin.x;
-    
-    CGPathMoveToPoint(path, transform, innerRect.origin.x, outside_top);
-    
-    CGPathAddLineToPoint(path, transform, inside_right, outside_top);
-    CGPathAddArcToPoint(path, transform, outside_right, outside_top, outside_right, inside_top, radius);
-    CGPathAddLineToPoint(path, transform, outside_right, inside_bottom);
-    CGPathAddArcToPoint(path, transform,  outside_right, outside_bottom, inside_right, outside_bottom, radius);
-    
-    CGPathAddLineToPoint(path, transform, innerRect.origin.x, outside_bottom);
-    CGPathAddArcToPoint(path, transform,  outside_left, outside_bottom, outside_left, inside_bottom, radius);
-    CGPathAddLineToPoint(path, transform, outside_left, inside_top);
-    CGPathAddArcToPoint(path, transform,  outside_left, outside_top, innerRect.origin.x, outside_top, radius);
-    
-    CGPathCloseSubpath(path);
+#define ARROW_CORNER_RADIUS 3
+
+@interface ECPopoverView () {
+@private
+    CAShapeLayer *arrowLayer;
+    CGFloat arrowOffset;
+    CGRect contentRect;
 }
 
-void CGContextAddRoundedRect(CGContextRef context, CGRect rect, CGFloat radius)
-{
-    CGRect innerRect = CGRectInset(rect, radius, radius);
-    
-    CGFloat inside_right = innerRect.origin.x + innerRect.size.width;
-    CGFloat outside_right = rect.origin.x + rect.size.width;
-    CGFloat inside_bottom = innerRect.origin.y + innerRect.size.height;
-    CGFloat outside_bottom = rect.origin.y + rect.size.height;
-    
-    CGFloat inside_top = innerRect.origin.y;
-    CGFloat outside_top = rect.origin.y;
-    CGFloat outside_left = rect.origin.x;
-    
-    CGContextMoveToPoint(context, innerRect.origin.x, outside_top);
-    
-    CGContextAddLineToPoint(context, inside_right, outside_top);
-    CGContextAddArcToPoint(context, outside_right, outside_top, outside_right, inside_top, radius);
-    CGContextAddLineToPoint(context, outside_right, inside_bottom);
-    CGContextAddArcToPoint(context,  outside_right, outside_bottom, inside_right, outside_bottom, radius);
-    
-    CGContextAddLineToPoint(context, innerRect.origin.x, outside_bottom);
-    CGContextAddArcToPoint(context,  outside_left, outside_bottom, outside_left, inside_bottom, radius);
-    CGContextAddLineToPoint(context, outside_left, inside_top);
-    CGContextAddArcToPoint(context,  outside_left, outside_top, innerRect.origin.x, outside_top, radius);
-    
-    CGContextClosePath(context);
-}
+- (void)layoutArrow;
+
+@end
+
 
 @implementation ECPopoverView
 
 #pragma mark -
 #pragma mark Properties
 
+@synthesize cornerRadius;
+
+@synthesize contentInsets;
+
 @synthesize arrowDirection;
 @synthesize arrowPosition;
 @synthesize arrowSize;
-@synthesize contentRect;
+
+- (void)setContentInsets:(UIEdgeInsets)insets
+{
+    contentInsets = insets;
+    contentRect = UIEdgeInsetsInsetRect(self.bounds, insets);
+    [self layoutIfNeeded];
+}
+
+- (CGSize)contentSize
+{
+    return contentRect.size;
+}
+
+- (void)setContentSize:(CGSize)size
+{
+    if (CGSizeEqualToSize(size, contentRect.size))
+        return;
+    
+    [self setBounds:(CGRect){ CGPointZero, {
+        size.width + contentInsets.left + contentInsets.right,
+        size.height + contentInsets.top + contentInsets.bottom
+    } }];
+}
+
+- (UIView *)contentView
+{
+    return [self.subviews objectAtIndex:0];
+}
+
+- (void)setContentView:(UIView *)contentView
+{
+    [self.contentView removeFromSuperview];
+    [self insertSubview:contentView atIndex:0];
+}
+
+- (void)setArrowPosition:(CGFloat)position
+{
+    if (position < 0 || position > 1) 
+        return;
+
+    arrowPosition = position;
+    [self layoutArrow];
+}
+
+- (void)setArrowDirection:(UIPopoverArrowDirection)direction
+{
+    if (arrowDirection == direction)
+        return;
+    
+    arrowDirection = direction;
+    [self layoutArrow];
+}
+
+- (void)setBounds:(CGRect)bounds
+{
+    [super setBounds:bounds];
+    contentRect = UIEdgeInsetsInsetRect(bounds, contentInsets);
+}
+
+- (void)setFrame:(CGRect)frame
+{
+    [super setFrame:frame];
+    contentRect = UIEdgeInsetsInsetRect(self.bounds, contentInsets);
+}
 
 #pragma mark -
 #pragma mark UIView Methods
 
+static void preinit(ECPopoverView *self)
+{
+    self->arrowSize = 30;
+    self->arrowPosition = 0.5;
+    self->arrowDirection = UIPopoverArrowDirectionUp;
+    self->arrowOffset = self->arrowSize / M_SQRT2 - ARROW_CORNER_RADIUS;
+    
+    self->cornerRadius = 5;
+    
+    self->contentInsets = UIEdgeInsetsMake(5, 5, 5, 5);
+}
+
 static void init(ECPopoverView *self)
 {
-    self.arrowSize = 30;
-    self.arrowPosition = 0;
+    CAShapeLayer *layer = (CAShapeLayer *)self.layer;
     
-    self.arrowDirection = UIPopoverArrowDirectionUp;
-    self.backgroundColor = nil;
+    self->arrowLayer = [CAShapeLayer new];
+    self->arrowLayer.path = [UIBezierPath bezierPathWithRoundedRect:CGRectMake(0, 0, self->arrowSize, self->arrowSize) cornerRadius:ARROW_CORNER_RADIUS].CGPath;
+    self->arrowLayer.transform = CATransform3DMakeRotation(M_PI_4, 0, 0, 1);
+    self->arrowLayer.backgroundColor = layer.backgroundColor;
+    
+    layer.path = [UIBezierPath bezierPathWithRoundedRect:self.bounds cornerRadius:self.cornerRadius].CGPath;
+    [layer insertSublayer:self->arrowLayer atIndex:0];
+    [self layoutArrow];
+    
+    self->contentRect = UIEdgeInsetsInsetRect(self.bounds, self->contentInsets);
 }
 
 - (id)initWithFrame:(CGRect)frame
 {
-    self = [super initWithFrame:frame];
-    if (self) {
+    preinit(self);
+    if ((self = [super initWithFrame:frame])) 
+    {
         init(self);
     }
     return self;
 }
 
-- (id)initWithCoder:(NSCoder *)coder {
-    self = [super initWithCoder:coder];
-    if (self) {
+- (id)initWithCoder:(NSCoder *)coder 
+{
+    preinit(self);
+    if ((self = [super initWithCoder:coder])) 
+    {
         init(self);
     }
     return self;
@@ -111,89 +158,9 @@ static void init(ECPopoverView *self)
     [super dealloc];
 }
 
-- (void)drawRect:(CGRect)rect
++ (Class)layerClass
 {
-    CGContextRef context = UIGraphicsGetCurrentContext();
-    
-    CGMutablePathRef path = CGPathCreateMutable();
-    
-    const CGFloat inset = 2.0;
-    rect = CGRectInset(rect, inset, inset);
-
-    // Adding arrow
-    if (arrowDirection > 0 && arrowDirection < UIPopoverArrowDirectionAny) 
-    {
-        CGRect arrowRect = CGRectMake(0, 0, arrowSize, arrowSize);
-        CGPoint position;
-        CGFloat rotation = M_PI_4;
-        CGFloat arrowSize_2 = arrowSize / 2.0;
-        CGFloat arrowInset = inset;
-        if (arrowDirection <= UIPopoverArrowDirectionDown) 
-        {
-            rect.size.height -= arrowSize_2;
-            if (arrowDirection & UIPopoverArrowDirectionDown)
-            {
-                arrowInset = rect.size.height - arrowSize_2 * M_SQRT2 - inset * 2;
-            }
-            else 
-            {
-                rect.origin.y += arrowSize_2;
-            }
-            if (arrowPosition < 1.0)
-                position = CGPointMake(rect.size.width * arrowPosition, arrowInset);
-            else if (arrowPosition >= rect.size.width)
-                position = CGPointMake(rect.size.width - arrowSize * M_SQRT2 - inset * 2, arrowInset);
-        }
-        else
-        {
-            rotation = -M_PI_4;
-            rect.size.width -= arrowSize_2;
-            if (arrowDirection & UIPopoverArrowDirectionRight) 
-            {
-                arrowInset = rect.size.width - arrowSize_2 * M_SQRT2 - inset * 2;
-            }
-            else
-            {
-                rect.origin.x += arrowSize_2;
-            }
-            if (arrowPosition < 1.0)
-                position = CGPointMake(arrowInset, rect.size.height * arrowPosition);
-            else if (arrowPosition >= rect.size.height)
-                position = CGPointMake(arrowInset, rect.size.height - arrowSize * M_SQRT2 - inset * 2);
-        }
-        CGAffineTransform arrowTransform = CGAffineTransformConcat(CGAffineTransformMakeRotation(rotation), CGAffineTransformMakeTranslation(position.x, position.y));
-        CGPathAddRoundedRect(path, &arrowTransform, arrowRect, 3);
-    }
-
-    
-    // Adding main rect
-    CGPathAddRoundedRect(path, NULL, rect, 3);
-    
-    // Filling outiline
-    CGContextSetStrokeColorWithColor(context, [UIColor colorWithRed:88.0/255.0 green:89.0/255.0 blue:91.0/255.0 alpha:0.3].CGColor);
-    CGContextSetLineWidth(context, inset * 2);
-    CGContextAddPath(context, path);
-    CGContextStrokePath(context);
-    
-    // Fill main color
-    CGContextSetFillColorWithColor(context, [UIColor colorWithRed:26.0/255.0 green:26.0/255.0 blue:26.0/255.0 alpha:1].CGColor);
-    CGContextAddPath(context, path);
-    CGContextFillPath(context);
-    
-    // Calculate content rect
-    contentRect = CGRectInset(rect, 4, 4);
-    [self setNeedsLayout];
-//    CGContextSetFillColorWithColor(context, self.superview.backgroundColor.CGColor);
-//    CGContextAddRoundedRect(context, contentRect, 2);
-//    CGContextFillPath(context);
-//    
-//    rect = CGRectInset(contentRect, 1, 1);
-//    CGContextSetStrokeColorWithColor(context, [UIColor colorWithHue:0 saturation:0 brightness:0.7 alpha:0.5].CGColor);
-//    CGContextAddRoundedRect(context, rect, 2);
-//    CGContextSetLineWidth(context, 2);
-//    CGContextStrokePath(context);
-    
-    CGPathRelease(path);
+    return [CAShapeLayer class];
 }
 
 - (void)layoutSubviews
@@ -202,6 +169,37 @@ static void init(ECPopoverView *self)
     {
         sub.frame = contentRect;
     }
+}
+
+- (void)layoutArrow
+{
+    if (arrowDirection == UIPopoverArrowDirectionUnknown) 
+    {
+        arrowLayer.hidden = YES;
+        return;
+    }
+    else
+    {
+        arrowLayer.hidden = NO;
+    }
+    
+    CGFloat offset = arrowOffset;
+    if (arrowDirection == UIPopoverArrowDirectionUp || arrowDirection == UIPopoverArrowDirectionLeft)
+        offset = -offset;
+    
+    CGFloat x, y;
+    if (arrowDirection == UIPopoverArrowDirectionUp || arrowDirection == UIPopoverArrowDirectionDown)
+    {
+        x = arrowPosition * (self.bounds.size.width - 2 * arrowSize) + arrowSize;
+        y = offset;
+    }
+    else
+    {
+        x = offset;
+        y = arrowPosition * (self.bounds.size.height - 2 * arrowSize) + arrowSize;
+    }
+    
+    arrowLayer.position = CGPointMake(x, y);
 }
 
 @end

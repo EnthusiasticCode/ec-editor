@@ -1,0 +1,364 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		CDCD1C861368607300A6DA9E /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CDCD1C851368607300A6DA9E /* UIKit.framework */; };
+		CDCD1C881368607300A6DA9E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CDCD1C871368607300A6DA9E /* Foundation.framework */; };
+		CDCD1C8A1368607300A6DA9E /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CDCD1C891368607300A6DA9E /* CoreGraphics.framework */; };
+		CDCD1C901368607300A6DA9E /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = CDCD1C8E1368607300A6DA9E /* InfoPlist.strings */; };
+		CDCD1C931368607300A6DA9E /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = CDCD1C921368607300A6DA9E /* main.m */; };
+		CDCD1C961368607300A6DA9E /* CodeViewAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = CDCD1C951368607300A6DA9E /* CodeViewAppDelegate.m */; };
+		CDCD1C991368607300A6DA9E /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = CDCD1C971368607300A6DA9E /* MainWindow.xib */; };
+		CDCD1C9C1368607300A6DA9E /* DetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDCD1C9B1368607300A6DA9E /* DetailViewController.m */; };
+		CDCD1C9F1368607300A6DA9E /* DetailView.xib in Resources */ = {isa = PBXBuildFile; fileRef = CDCD1C9D1368607300A6DA9E /* DetailView.xib */; };
+		CDCD1CA21368607300A6DA9E /* RootViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDCD1CA11368607300A6DA9E /* RootViewController.m */; };
+		CDCD1CB2136860E000A6DA9E /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CDCD1CB1136860E000A6DA9E /* CoreText.framework */; };
+		CDCD1CB71368611C00A6DA9E /* ECDictionaryCache.m in Sources */ = {isa = PBXBuildFile; fileRef = CDCD1CB61368611C00A6DA9E /* ECDictionaryCache.m */; };
+		CDCD1CC71368614000A6DA9E /* ECCodeStringDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = CDCD1CB91368614000A6DA9E /* ECCodeStringDataSource.m */; };
+		CDCD1CC91368614000A6DA9E /* ECTextPosition.m in Sources */ = {isa = PBXBuildFile; fileRef = CDCD1CBE1368614000A6DA9E /* ECTextPosition.m */; };
+		CDCD1CCA1368614000A6DA9E /* ECTextRange.m in Sources */ = {isa = PBXBuildFile; fileRef = CDCD1CC01368614000A6DA9E /* ECTextRange.m */; };
+		CDCD1CCB1368614000A6DA9E /* ECTextRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = CDCD1CC21368614000A6DA9E /* ECTextRenderer.m */; };
+		CDCD1CCC1368614000A6DA9E /* ECTextStyle.m in Sources */ = {isa = PBXBuildFile; fileRef = CDCD1CC61368614000A6DA9E /* ECTextStyle.m */; };
+		CDCD1CE31368684300A6DA9E /* ECCodeView.m in Sources */ = {isa = PBXBuildFile; fileRef = CDCD1CE21368684300A6DA9E /* ECCodeView.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		CDCD1C811368607300A6DA9E /* CodeView.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CodeView.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		CDCD1C851368607300A6DA9E /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		CDCD1C871368607300A6DA9E /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		CDCD1C891368607300A6DA9E /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		CDCD1C8D1368607300A6DA9E /* CodeView-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "CodeView-Info.plist"; sourceTree = "<group>"; };
+		CDCD1C8F1368607300A6DA9E /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		CDCD1C911368607300A6DA9E /* CodeView-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CodeView-Prefix.pch"; sourceTree = "<group>"; };
+		CDCD1C921368607300A6DA9E /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		CDCD1C941368607300A6DA9E /* CodeViewAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CodeViewAppDelegate.h; sourceTree = "<group>"; };
+		CDCD1C951368607300A6DA9E /* CodeViewAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CodeViewAppDelegate.m; sourceTree = "<group>"; };
+		CDCD1C981368607300A6DA9E /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainWindow.xib; sourceTree = "<group>"; };
+		CDCD1C9A1368607300A6DA9E /* DetailViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DetailViewController.h; sourceTree = "<group>"; };
+		CDCD1C9B1368607300A6DA9E /* DetailViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DetailViewController.m; sourceTree = "<group>"; };
+		CDCD1C9E1368607300A6DA9E /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/DetailView.xib; sourceTree = "<group>"; };
+		CDCD1CA01368607300A6DA9E /* RootViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RootViewController.h; sourceTree = "<group>"; };
+		CDCD1CA11368607300A6DA9E /* RootViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RootViewController.m; sourceTree = "<group>"; };
+		CDCD1CB1136860E000A6DA9E /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
+		CDCD1CB51368611C00A6DA9E /* ECDictionaryCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECDictionaryCache.h; sourceTree = "<group>"; };
+		CDCD1CB61368611C00A6DA9E /* ECDictionaryCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECDictionaryCache.m; sourceTree = "<group>"; };
+		CDCD1CB81368614000A6DA9E /* ECCodeStringDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeStringDataSource.h; sourceTree = "<group>"; };
+		CDCD1CB91368614000A6DA9E /* ECCodeStringDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeStringDataSource.m; sourceTree = "<group>"; };
+		CDCD1CBC1368614000A6DA9E /* ECCodeViewDatasource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeViewDatasource.h; sourceTree = "<group>"; };
+		CDCD1CBD1368614000A6DA9E /* ECTextPosition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECTextPosition.h; sourceTree = "<group>"; };
+		CDCD1CBE1368614000A6DA9E /* ECTextPosition.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECTextPosition.m; sourceTree = "<group>"; };
+		CDCD1CBF1368614000A6DA9E /* ECTextRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECTextRange.h; sourceTree = "<group>"; };
+		CDCD1CC01368614000A6DA9E /* ECTextRange.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECTextRange.m; sourceTree = "<group>"; };
+		CDCD1CC11368614000A6DA9E /* ECTextRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECTextRenderer.h; sourceTree = "<group>"; };
+		CDCD1CC21368614000A6DA9E /* ECTextRenderer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECTextRenderer.m; sourceTree = "<group>"; };
+		CDCD1CC31368614000A6DA9E /* ECTextRendererDatasource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECTextRendererDatasource.h; sourceTree = "<group>"; };
+		CDCD1CC41368614000A6DA9E /* ECTextRendererDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECTextRendererDelegate.h; sourceTree = "<group>"; };
+		CDCD1CC51368614000A6DA9E /* ECTextStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECTextStyle.h; sourceTree = "<group>"; };
+		CDCD1CC61368614000A6DA9E /* ECTextStyle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECTextStyle.m; sourceTree = "<group>"; };
+		CDCD1CE11368684300A6DA9E /* ECCodeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeView.h; sourceTree = "<group>"; };
+		CDCD1CE21368684300A6DA9E /* ECCodeView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeView.m; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		CDCD1C7E1368607300A6DA9E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CDCD1CB2136860E000A6DA9E /* CoreText.framework in Frameworks */,
+				CDCD1C861368607300A6DA9E /* UIKit.framework in Frameworks */,
+				CDCD1C881368607300A6DA9E /* Foundation.framework in Frameworks */,
+				CDCD1C8A1368607300A6DA9E /* CoreGraphics.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		CDCD1C761368607300A6DA9E = {
+			isa = PBXGroup;
+			children = (
+				CDCD1C8B1368607300A6DA9E /* CodeView */,
+				CDCD1C841368607300A6DA9E /* Frameworks */,
+				CDCD1C821368607300A6DA9E /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		CDCD1C821368607300A6DA9E /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				CDCD1C811368607300A6DA9E /* CodeView.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		CDCD1C841368607300A6DA9E /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				CDCD1CB1136860E000A6DA9E /* CoreText.framework */,
+				CDCD1C851368607300A6DA9E /* UIKit.framework */,
+				CDCD1C871368607300A6DA9E /* Foundation.framework */,
+				CDCD1C891368607300A6DA9E /* CoreGraphics.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		CDCD1C8B1368607300A6DA9E /* CodeView */ = {
+			isa = PBXGroup;
+			children = (
+				CDCD1CB3136860EC00A6DA9E /* ECFoundation */,
+				CDCD1CB41368610300A6DA9E /* ECUIKit */,
+				CDCD1C941368607300A6DA9E /* CodeViewAppDelegate.h */,
+				CDCD1C951368607300A6DA9E /* CodeViewAppDelegate.m */,
+				CDCD1C971368607300A6DA9E /* MainWindow.xib */,
+				CDCD1C9A1368607300A6DA9E /* DetailViewController.h */,
+				CDCD1C9B1368607300A6DA9E /* DetailViewController.m */,
+				CDCD1C9D1368607300A6DA9E /* DetailView.xib */,
+				CDCD1CA01368607300A6DA9E /* RootViewController.h */,
+				CDCD1CA11368607300A6DA9E /* RootViewController.m */,
+				CDCD1C8C1368607300A6DA9E /* Supporting Files */,
+			);
+			path = CodeView;
+			sourceTree = "<group>";
+		};
+		CDCD1C8C1368607300A6DA9E /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				CDCD1C8D1368607300A6DA9E /* CodeView-Info.plist */,
+				CDCD1C8E1368607300A6DA9E /* InfoPlist.strings */,
+				CDCD1C911368607300A6DA9E /* CodeView-Prefix.pch */,
+				CDCD1C921368607300A6DA9E /* main.m */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		CDCD1CB3136860EC00A6DA9E /* ECFoundation */ = {
+			isa = PBXGroup;
+			children = (
+				CDCD1CB51368611C00A6DA9E /* ECDictionaryCache.h */,
+				CDCD1CB61368611C00A6DA9E /* ECDictionaryCache.m */,
+			);
+			name = ECFoundation;
+			path = ../../Frameworks/ECFoundation;
+			sourceTree = "<group>";
+		};
+		CDCD1CB41368610300A6DA9E /* ECUIKit */ = {
+			isa = PBXGroup;
+			children = (
+				CDCD1CE11368684300A6DA9E /* ECCodeView.h */,
+				CDCD1CE21368684300A6DA9E /* ECCodeView.m */,
+				CDCD1CB81368614000A6DA9E /* ECCodeStringDataSource.h */,
+				CDCD1CB91368614000A6DA9E /* ECCodeStringDataSource.m */,
+				CDCD1CBC1368614000A6DA9E /* ECCodeViewDatasource.h */,
+				CDCD1CBD1368614000A6DA9E /* ECTextPosition.h */,
+				CDCD1CBE1368614000A6DA9E /* ECTextPosition.m */,
+				CDCD1CBF1368614000A6DA9E /* ECTextRange.h */,
+				CDCD1CC01368614000A6DA9E /* ECTextRange.m */,
+				CDCD1CC11368614000A6DA9E /* ECTextRenderer.h */,
+				CDCD1CC21368614000A6DA9E /* ECTextRenderer.m */,
+				CDCD1CC31368614000A6DA9E /* ECTextRendererDatasource.h */,
+				CDCD1CC41368614000A6DA9E /* ECTextRendererDelegate.h */,
+				CDCD1CC51368614000A6DA9E /* ECTextStyle.h */,
+				CDCD1CC61368614000A6DA9E /* ECTextStyle.m */,
+			);
+			name = ECUIKit;
+			path = ../../Frameworks/ECUIKit;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		CDCD1C801368607300A6DA9E /* CodeView */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CDCD1CA51368607300A6DA9E /* Build configuration list for PBXNativeTarget "CodeView" */;
+			buildPhases = (
+				CDCD1C7D1368607300A6DA9E /* Sources */,
+				CDCD1C7E1368607300A6DA9E /* Frameworks */,
+				CDCD1C7F1368607300A6DA9E /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = CodeView;
+			productName = CodeView;
+			productReference = CDCD1C811368607300A6DA9E /* CodeView.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		CDCD1C781368607300A6DA9E /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = CDCD1C7B1368607300A6DA9E /* Build configuration list for PBXProject "CodeView" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = CDCD1C761368607300A6DA9E;
+			productRefGroup = CDCD1C821368607300A6DA9E /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				CDCD1C801368607300A6DA9E /* CodeView */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		CDCD1C7F1368607300A6DA9E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CDCD1C901368607300A6DA9E /* InfoPlist.strings in Resources */,
+				CDCD1C991368607300A6DA9E /* MainWindow.xib in Resources */,
+				CDCD1C9F1368607300A6DA9E /* DetailView.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		CDCD1C7D1368607300A6DA9E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CDCD1C931368607300A6DA9E /* main.m in Sources */,
+				CDCD1C961368607300A6DA9E /* CodeViewAppDelegate.m in Sources */,
+				CDCD1C9C1368607300A6DA9E /* DetailViewController.m in Sources */,
+				CDCD1CA21368607300A6DA9E /* RootViewController.m in Sources */,
+				CDCD1CB71368611C00A6DA9E /* ECDictionaryCache.m in Sources */,
+				CDCD1CC71368614000A6DA9E /* ECCodeStringDataSource.m in Sources */,
+				CDCD1CC91368614000A6DA9E /* ECTextPosition.m in Sources */,
+				CDCD1CCA1368614000A6DA9E /* ECTextRange.m in Sources */,
+				CDCD1CCB1368614000A6DA9E /* ECTextRenderer.m in Sources */,
+				CDCD1CCC1368614000A6DA9E /* ECTextStyle.m in Sources */,
+				CDCD1CE31368684300A6DA9E /* ECCodeView.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		CDCD1C8E1368607300A6DA9E /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				CDCD1C8F1368607300A6DA9E /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		CDCD1C971368607300A6DA9E /* MainWindow.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				CDCD1C981368607300A6DA9E /* en */,
+			);
+			name = MainWindow.xib;
+			sourceTree = "<group>";
+		};
+		CDCD1C9D1368607300A6DA9E /* DetailView.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				CDCD1C9E1368607300A6DA9E /* en */,
+			);
+			name = DetailView.xib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		CDCD1CA31368607300A6DA9E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_UNIVERSAL_IPHONE_OS)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = DEBUG;
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = com.apple.compilers.llvmgcc42;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 2;
+			};
+			name = Debug;
+		};
+		CDCD1CA41368607300A6DA9E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_UNIVERSAL_IPHONE_OS)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_VERSION = com.apple.compilers.llvmgcc42;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
+				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 2;
+			};
+			name = Release;
+		};
+		CDCD1CA61368607300A6DA9E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "CodeView/CodeView-Prefix.pch";
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				INFOPLIST_FILE = "CodeView/CodeView-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		CDCD1CA71368607300A6DA9E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "CodeView/CodeView-Prefix.pch";
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				INFOPLIST_FILE = "CodeView/CodeView-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				VALIDATE_PRODUCT = YES;
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		CDCD1C7B1368607300A6DA9E /* Build configuration list for PBXProject "CodeView" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CDCD1CA31368607300A6DA9E /* Debug */,
+				CDCD1CA41368607300A6DA9E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CDCD1CA51368607300A6DA9E /* Build configuration list for PBXNativeTarget "CodeView" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CDCD1CA61368607300A6DA9E /* Debug */,
+				CDCD1CA71368607300A6DA9E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = CDCD1C781368607300A6DA9E /* Project object */;
+}

@@ -27,8 +27,8 @@
 
 - (id)initWithStart:(ECTextPosition*)aStart end:(ECTextPosition*)aEnd
 {
-    assert([aStart isKindOfClass:[ECTextPosition class]]);
-    assert([aEnd isKindOfClass:[ECTextPosition class]]);
+//    assert([aStart isKindOfClass:[ECTextPosition class]]);
+//    assert([aEnd isKindOfClass:[ECTextPosition class]]);
     if((self = [super init]))
     {
         start = [aStart retain];

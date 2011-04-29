@@ -19,7 +19,6 @@
     UIImageView *projectImageView;
 }
 
-@property (nonatomic, retain) IBOutlet ECButton *aButton;
 @property (nonatomic, retain) IBOutlet ECJumpBar *jumpBar;
 
 @property (nonatomic, retain) IBOutlet UIImageView *imageView;
@@ -28,5 +27,6 @@
 
 - (IBAction)pushToJumpBar:(id)sender;
 - (void)jumpBarButtonAction:(id)sender;
+- (IBAction)doSomething:(id)sender;
 
 @end

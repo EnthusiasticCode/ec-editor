@@ -91,8 +91,8 @@
     [font release];
     font = [aFont retain];
     searchField.font = font;
-    for (ECButton *button in controlsStack)
-        button.titleLabel.font = font;
+//    for (ECButton *button in controlsStack)
+//        button.titleLabel.font = font;
 }
 
 - (void)setTextColor:(UIColor *)aColor
@@ -100,8 +100,8 @@
     [textColor release];
     textColor = [aColor retain];
     searchField.textColor = textColor;
-    for (ECButton *button in controlsStack)
-        [button setTitleColor:textColor forState:UIControlStateNormal];
+//    for (ECButton *button in controlsStack)
+//        [button setTitleColor:textColor forState:UIControlStateNormal];
 }
 
 - (void)setTextShadowColor:(UIColor *)aColor
@@ -119,16 +119,16 @@
         searchField.layer.shadowColor = NULL;
         searchField.layer.shadowOpacity = 0;
     }
-    for (ECButton *button in controlsStack)
-        [button setTitleShadowColor:textShadowColor forState:UIControlStateNormal];
+//    for (ECButton *button in controlsStack)
+//        [button setTitleShadowColor:textShadowColor forState:UIControlStateNormal];
 }
 
 - (void)setTextShadowOffset:(CGSize)anOffset
 {
     textShadowOffset = anOffset;
     searchField.layer.shadowOffset = textShadowOffset;
-    for (ECButton *button in controlsStack)
-        button.titleLabel.shadowOffset = textShadowOffset;
+//    for (ECButton *button in controlsStack)
+//        button.titleLabel.shadowOffset = textShadowOffset;
 }
 
 - (void)setBorderColor:(UIColor *)aColor
@@ -136,16 +136,16 @@
     [borderColor release];
     borderColor = [aColor retain];
     self.layer.borderColor = borderColor.CGColor;
-    for (ECButton *button in controlsStack)
-        button.borderColor = borderColor;
+//    for (ECButton *button in controlsStack)
+//        button.borderColor = borderColor;
 }
 
 - (void)setBorderWidth:(CGFloat)width
 {
     borderWidth = width;
     self.layer.borderWidth = width;
-//    for (ECMockupButton *button in buttonStack)
-//        button.borderWidth = borderWidth
+    for (ECButton *button in controlsStack)
+        button.borderWidth = borderWidth;
 }
 
 - (void)setSearchString:(NSString *)aString
@@ -507,7 +507,7 @@ static void init(ECJumpBar *self)
 
 - (UIControl *)createStackControlWithTitle:(NSString *)title
 {
-    ECButton *button = [ECButton buttonWithType:UIButtonTypeCustom];
+    ECButton *button = [ECButton new];
     button.autoresizingMask = UIViewAutoresizingFlexibleHeight;
     button.contentMode = UIViewContentModeScaleToFill;
     button.contentStretch = CGRectMake(0.5, 0.5, 0, 0);
@@ -519,12 +519,8 @@ static void init(ECJumpBar *self)
     [button setTitleColor:self.textColor forState:UIControlStateNormal];
     [button setBackgroundColor:self.buttonColor forState:UIControlStateNormal];
     [button setBackgroundColor:self.buttonHighlightColor forState:UIControlStateHighlighted];
-    button.arrowSizes = UIEdgeInsetsMake(0, 0, 0, BUTTON_ARROW_WIDTH);
-    if ([controlsStack count])
-        button.titleEdgeInsets = UIEdgeInsetsMake(0, textInsets.left + BUTTON_ARROW_WIDTH, 0, BUTTON_ARROW_WIDTH);
-    else
-        button.titleEdgeInsets = UIEdgeInsetsMake(0, textInsets.left, 0, BUTTON_ARROW_WIDTH);
-    return button;
+    button.rightArrowSize = BUTTON_ARROW_WIDTH;
+    return [button autorelease];
 }
 
 - (void)searchFieldAction:(id)sender

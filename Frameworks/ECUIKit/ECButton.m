@@ -7,254 +7,329 @@
 //
 
 #import "ECButton.h"
+#import "UIColor+StyleColors.h"
 #import <QuartzCore/QuartzCore.h>
 
 
+@interface ECButton () {
+@private
+    CGColorRef *backgroundColors;
+    CGColorRef *borderColors;
+}
+
+@property (nonatomic) CGPathRef buttonPath;
+- (void)setButtonPath:(CGPathRef)buttonPath animated:(BOOL)animated;
+
+- (void)updateLayerPropertiesForCurrentState;
+
+@end
+
 @implementation ECButton
+
+#define STATE_NORMAL_IDX      0
+#define STATE_HIGHLIGHTED_IDX 1
+#define STATE_DISABLED_IDX    2
+#define STATE_SELECTED_IDX    3
+#define STATE_APPLICATION_IDX 4
+#define STATE_RESERVED_IDX    5
+
+static NSUInteger stateToIndex(UIControlState state)
+{
+    NSUInteger index = STATE_NORMAL_IDX;
+    if (state & UIControlStateHighlighted) {
+        index = STATE_HIGHLIGHTED_IDX;
+    }
+    else if (state & UIControlStateSelected) {
+        index = STATE_SELECTED_IDX;
+    }
+    else if (state & UIControlStateDisabled) {
+        index = STATE_DISABLED_IDX;
+    }
+    else if (state & UIControlStateApplication) {
+        index = STATE_APPLICATION_IDX;
+    }
+    else if (state & UIControlStateReserved) {
+        index = STATE_RESERVED_IDX;
+    }
+    return index;
+}
+
+static CGPathRef createButtonShapePath(CGRect rect, CGFloat radius, CGFloat leftArrow, CGFloat rightArrow) 
+{
+    rect = CGRectInset(rect, 0.5, 0.5);
+    
+    // No arrows rounded rect result
+    if (leftArrow == 0 && rightArrow == 0)
+    {
+        CGPathRef path = CGPathRetain([UIBezierPath bezierPathWithRoundedRect:rect cornerRadius:radius].CGPath);
+        return path;
+    }
+    
+    CGMutablePathRef path = CGPathCreateMutable();
+    
+    CGRect innerRect = CGRectInset(rect, radius, radius);
+    
+    CGFloat outside_right = rect.origin.x + rect.size.width;
+    CGFloat outside_bottom = rect.origin.y + rect.size.height;
+    CGFloat inside_left = innerRect.origin.x + leftArrow;
+    CGFloat inside_right = innerRect.origin.x + innerRect.size.width - rightArrow;
+    CGFloat inside_bottom = innerRect.origin.y + innerRect.size.height;
+    
+    CGFloat inside_top = innerRect.origin.y;
+    CGFloat outside_top = rect.origin.y;
+    CGFloat outside_left = rect.origin.x;
+    
+    //        CGFloat middle_width = outside_right / 2.0;
+    CGFloat middle_height = outside_bottom / 2.0;
+    
+    // TODO No top arrow for now
+    CGPathMoveToPoint(path, NULL, inside_left, outside_top);
+    CGPathAddLineToPoint(path, NULL, inside_right, outside_top);
+    
+    // Right arrow
+    if (rightArrow > 0) 
+    {
+        CGFloat arrow_size = rightArrow * 0.3;
+        CGFloat inside_arrow = inside_right + rightArrow + radius * 0.7;
+        CGFloat arrow_midtop = middle_height - radius / 2;
+        CGFloat arrow_midbottom = arrow_midtop + radius;
+        CGPathAddCurveToPoint(path, NULL,
+                              inside_right + arrow_size, outside_top, 
+                              inside_arrow, arrow_midtop, 
+                              inside_arrow, arrow_midtop);
+        CGPathAddCurveToPoint(path, NULL,
+                              outside_right, middle_height, 
+                              outside_right, middle_height, 
+                              inside_arrow, arrow_midbottom);
+        CGPathAddCurveToPoint(path, NULL,
+                              inside_arrow, arrow_midbottom, 
+                              inside_right + arrow_size, outside_bottom, 
+                              inside_right, outside_bottom);
+    }
+    else
+    {
+        CGPathAddArcToPoint(path, NULL, outside_right, outside_top, outside_right, inside_top, radius);
+        CGPathAddLineToPoint(path, NULL, outside_right, inside_bottom);
+        CGPathAddArcToPoint(path, NULL, outside_right, outside_bottom, inside_right, outside_bottom, radius);
+    }
+    
+    // TODO no bottom arrow
+    CGPathAddLineToPoint(path, NULL, inside_left, outside_bottom);
+    
+    // Left arrow
+    if (leftArrow > 0) 
+    {
+        CGFloat arrow_size = leftArrow * 0.3;
+        CGFloat inside_arrow = inside_left - leftArrow - radius * 0.7;
+        CGFloat arrow_midtop = middle_height - radius / 2;
+        CGFloat arrow_midbottom = arrow_midtop + radius;
+        CGPathAddCurveToPoint(path, NULL,
+                              inside_left - arrow_size, outside_bottom,
+                              inside_arrow, arrow_midbottom,
+                              inside_arrow, arrow_midbottom);
+        CGPathAddCurveToPoint(path, NULL,
+                              outside_left, middle_height, 
+                              outside_left, middle_height, 
+                              inside_arrow, arrow_midtop);
+        CGPathAddCurveToPoint(path, NULL, 
+                              inside_arrow, arrow_midtop, 
+                              inside_left - arrow_size, outside_top, 
+                              inside_left, outside_top);
+    }
+    else
+    {
+        CGPathAddArcToPoint(path, NULL, outside_left, outside_bottom, outside_left, inside_bottom, radius);
+        CGPathAddLineToPoint(path, NULL, outside_left, inside_top);
+        CGPathAddArcToPoint(path, NULL, outside_left, outside_top, inside_left, outside_top, radius);
+    }
+    
+    CGPathCloseSubpath(path);
+    
+    return path;
+}
 
 #pragma mark -
 #pragma mark Properties
 
-@synthesize arrowSizes;
-@synthesize borderColor;
+@synthesize cornerRadius, leftArrowSize, rightArrowSize;
 
-- (void)setArrowSizes:(UIEdgeInsets)sizes
+- (CGPathRef)buttonPath
 {
-    arrowSizes = sizes;
-    if (buttonPath) {
-        CGPathRelease(buttonPath);
-        buttonPath = NULL;
-    }
-    
-    CALayer *layer = self.layer;
-    if (UIEdgeInsetsEqualToEdgeInsets(arrowSizes, UIEdgeInsetsZero))
-    {
-        layer.masksToBounds = YES;
-        layer.opaque = NO;
-        layer.cornerRadius = 3;
-        layer.borderWidth = 1;
-        layer.borderColor = borderColor.CGColor;
-    }
-    else
-    {
-        layer.borderWidth = 0;
-        
-        buttonPath = CGPathCreateMutable();
-        
-        CGRect rect = CGRectInset(self.bounds, 0.5, 0.5);
-        
-        CGFloat radius = 3;
-        CGRect innerRect = CGRectInset(rect, radius, radius);
-        
-        CGFloat outside_right = rect.origin.x + rect.size.width;
-        CGFloat outside_bottom = rect.origin.y + rect.size.height;
-        CGFloat inside_left = innerRect.origin.x + arrowSizes.left;
-        CGFloat inside_right = innerRect.origin.x + innerRect.size.width - arrowSizes.right;
-        CGFloat inside_bottom = innerRect.origin.y + innerRect.size.height;
-        
-        CGFloat inside_top = innerRect.origin.y;
-        CGFloat outside_top = rect.origin.y;
-        CGFloat outside_left = rect.origin.x;
-        
-        //        CGFloat middle_width = outside_right / 2.0;
-        CGFloat middle_height = outside_bottom / 2.0;
-        
-        // TODO No top arrow for now
-        CGPathMoveToPoint(buttonPath, NULL, inside_left, outside_top);
-        CGPathAddLineToPoint(buttonPath, NULL, inside_right, outside_top);
-        
-        // Right arrow
-        if (arrowSizes.right > 0) 
-        {
-            CGFloat arrow_size = arrowSizes.right * 0.3;
-            CGFloat inside_arrow = inside_right + arrowSizes.right + radius * 0.7;
-            CGFloat arrow_midtop = middle_height - radius / 2;
-            CGFloat arrow_midbottom = arrow_midtop + radius;
-            CGPathAddCurveToPoint(buttonPath, NULL,
-                                  inside_right + arrow_size, outside_top, 
-                                  inside_arrow, arrow_midtop, 
-                                  inside_arrow, arrow_midtop);
-            CGPathAddCurveToPoint(buttonPath, NULL,
-                                  outside_right, middle_height, 
-                                  outside_right, middle_height, 
-                                  inside_arrow, arrow_midbottom);
-            CGPathAddCurveToPoint(buttonPath, NULL,
-                                  inside_arrow, arrow_midbottom, 
-                                  inside_right + arrow_size, outside_bottom, 
-                                  inside_right, outside_bottom);
-        }
-        else
-        {
-            CGPathAddArcToPoint(buttonPath, NULL, outside_right, outside_top, outside_right, inside_top, radius);
-            CGPathAddLineToPoint(buttonPath, NULL, outside_right, inside_bottom);
-            CGPathAddArcToPoint(buttonPath, NULL, outside_right, outside_bottom, inside_right, outside_bottom, radius);
-        }
-        
-        // TODO no bottom arrow
-        CGPathAddLineToPoint(buttonPath, NULL, inside_left, outside_bottom);
-        
-        // Left arrow
-        if (arrowSizes.left > 0) 
-        {
-            CGFloat arrow_size = arrowSizes.left * 0.3;
-            CGFloat inside_arrow = inside_left - arrowSizes.left - radius * 0.7;
-            CGFloat arrow_midtop = middle_height - radius / 2;
-            CGFloat arrow_midbottom = arrow_midtop + radius;
-            CGPathAddCurveToPoint(buttonPath, NULL,
-                                  inside_left - arrow_size, outside_bottom,
-                                  inside_arrow, arrow_midbottom,
-                                  inside_arrow, arrow_midbottom);
-            CGPathAddCurveToPoint(buttonPath, NULL,
-                                  outside_left, middle_height, 
-                                  outside_left, middle_height, 
-                                  inside_arrow, arrow_midtop);
-            CGPathAddCurveToPoint(buttonPath, NULL, 
-                                  inside_arrow, arrow_midtop, 
-                                  inside_left - arrow_size, outside_top, 
-                                  inside_left, outside_top);
-        }
-        else
-        {
-            CGPathAddArcToPoint(buttonPath, NULL, outside_left, outside_bottom, outside_left, inside_bottom, radius);
-            CGPathAddLineToPoint(buttonPath, NULL, outside_left, inside_top);
-            CGPathAddArcToPoint(buttonPath, NULL, outside_left, outside_top, inside_left, outside_top, radius);
-        }
-        
-        CGPathCloseSubpath(buttonPath);
-    }
-    [self.layer setNeedsDisplay];
+    return [(CAShapeLayer *)self.layer path];
 }
 
-- (void)setFrame:(CGRect)frame
+- (void)setButtonPath:(CGPathRef)buttonPath
 {
-    [super setFrame:frame];
-    self.arrowSizes = arrowSizes;
+    [self setButtonPath:buttonPath animated:NO];
 }
 
-- (void)setBounds:(CGRect)bounds
+- (void)setButtonPath:(CGPathRef)buttonPath animated:(BOOL)animated
 {
-    [super setBounds:bounds];
-    self.arrowSizes = arrowSizes;
+    CAShapeLayer *layer = (CAShapeLayer *)self.layer;
+    if (animated) 
+    {
+        CABasicAnimation *animation = [CABasicAnimation animationWithKeyPath:@"path"];
+        animation.fromValue = (id)layer.path;
+        animation.toValue = (id)buttonPath;
+        animation.duration = 0.15;
+        animation.valueFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
+        [layer addAnimation:animation forKey:nil];
+    }
+    [layer setPath:buttonPath];
+}
+
+- (CGFloat)borderWidth
+{
+    return [(CAShapeLayer *)self.layer lineWidth];
+}
+
+- (void)setBorderWidth:(CGFloat)borderWidth
+{
+    [(CAShapeLayer *)self.layer setLineWidth:borderWidth];
+}
+
+- (void)setCornerRadius:(CGFloat)radius
+{
+    if (radius != cornerRadius) 
+    {
+        cornerRadius = radius;
+        CGPathRef path = createButtonShapePath(self.bounds, cornerRadius, leftArrowSize, rightArrowSize);
+        self.buttonPath = path;
+        CGPathRelease(path);
+    }
+}
+
+- (void)setLeftArrowSize:(CGFloat)size
+{
+    if (size != leftArrowSize) 
+    {
+        leftArrowSize = size;
+        CGPathRef path = createButtonShapePath(self.bounds, cornerRadius, leftArrowSize, rightArrowSize);
+        self.buttonPath = path;
+        CGPathRelease(path);
+    }
+}
+
+- (void)setRightArrowSize:(CGFloat)size
+{
+    if (size != rightArrowSize) 
+    {
+        rightArrowSize = size;
+        CGPathRef path = createButtonShapePath(self.bounds, cornerRadius, leftArrowSize, rightArrowSize);
+        self.buttonPath = path;
+        CGPathRelease(path);
+    }
 }
 
 - (void)setHighlighted:(BOOL)highlighted
 {
     [super setHighlighted:highlighted];
-    if (buttonPath)
-    {
-        [self setNeedsDisplay];
-    }
+    [self updateLayerPropertiesForCurrentState];
 }
 
 - (void)setSelected:(BOOL)selected
 {
     [super setSelected:selected];
-    if (buttonPath)
-    {
-        [self setNeedsDisplay];
-    }
+    [self updateLayerPropertiesForCurrentState];
 }
 
 - (void)setEnabled:(BOOL)enabled
 {
     [super setEnabled:enabled];
-    if (buttonPath)
-    {
-        [self setNeedsDisplay];
-    }
+    [self updateLayerPropertiesForCurrentState];
+}
+
+- (void)setFrame:(CGRect)frame
+{
+    [super setFrame:frame];
+    
+    CGPathRef path = createButtonShapePath(self.bounds, self->cornerRadius, self->leftArrowSize, self->rightArrowSize);
+    [self setButtonPath:path animated:YES];
+    CGPathRelease(path);
+}
+
+- (void)setBounds:(CGRect)bounds
+{
+    [super setBounds:bounds];
+    
+    CGPathRef path = createButtonShapePath(self.bounds, self->cornerRadius, self->leftArrowSize, self->rightArrowSize);
+    [self setButtonPath:path animated:YES];
+    CGPathRelease(path);
 }
 
 #pragma mark -
-#pragma mark UIButton Methods
+#pragma mark UIControl Methods
 
-static void init(ECButton *self)
+static void preinit(ECButton *self)
 {
-    self.borderColor = [UIColor colorWithHue:0 saturation:0 brightness:0.01 alpha:1];
-    self.arrowSizes = UIEdgeInsetsZero;
+    CAShapeLayer *layer = (CAShapeLayer *)self.layer;
+
+    // Common properties
+    self->cornerRadius = 3;
+    self->leftArrowSize = 0;
+    self->rightArrowSize = 0;
+    self.borderWidth = 1;
     
-    self->backgroundColors = [[NSMutableArray arrayWithObjects:
-                              [NSNull null], 
-                              [UIColor colorWithRed:93.0/255.0 green:94.0/255.0 blue:94.0/255.0 alpha:1.0],
-                              [NSNull null],
-                              [UIColor colorWithRed:64.0/255.0 green:92.0/255.0 blue:123.0/255.0 alpha:1.0], nil] retain];
+    // Background colors
+    self->backgroundColors = (CGColorRef *)malloc(sizeof(CGColorRef) * 6);
+    self->backgroundColors[STATE_NORMAL_IDX] = layer.backgroundColor;
+    self->backgroundColors[STATE_HIGHLIGHTED_IDX] = CGColorCreateCopy([UIColor colorWithRed:93.0/255.0 green:94.0/255.0 blue:94.0/255.0 alpha:1.0].CGColor);
+    self->backgroundColors[STATE_DISABLED_IDX] = NULL;
+    self->backgroundColors[STATE_SELECTED_IDX] = CGColorCreateCopy([UIColor colorWithRed:64.0/255.0 green:92.0/255.0 blue:123.0/255.0 alpha:1.0].CGColor);
+    self->backgroundColors[STATE_APPLICATION_IDX] = NULL;
+    self->backgroundColors[STATE_RESERVED_IDX] = NULL;
+    
+    // Border colors
+    self->borderColors = (CGColorRef *)malloc(sizeof(CGColorRef) * 6);
+    self->borderColors[STATE_NORMAL_IDX] = CGColorCreateCopy([UIColor colorWithHue:0 saturation:0 brightness:0.01 alpha:1.0].CGColor);
+    self->borderColors[STATE_HIGHLIGHTED_IDX] = CGColorCreateCopy(self->borderColors[STATE_NORMAL_IDX]);
+    self->borderColors[STATE_DISABLED_IDX] = NULL;
+    self->borderColors[STATE_SELECTED_IDX] = CGColorCreateCopy(self->borderColors[STATE_NORMAL_IDX]);
+    self->borderColors[STATE_APPLICATION_IDX] = NULL;
+    self->borderColors[STATE_RESERVED_IDX] = NULL;
 }
 
 - (id)initWithFrame:(CGRect)frame
 {
+    preinit(self);
     if ((self = [super initWithFrame:frame]))
     {
-        init(self);
+        [self updateLayerPropertiesForCurrentState];
     }
     return self;
 }
 
 - (id)initWithCoder:(NSCoder *)aDecoder
 {
+    preinit(self);
     if ((self = [super initWithCoder:aDecoder]))
     {
-        init(self);
+        [self updateLayerPropertiesForCurrentState];
     }
     return self;
 }
 
 - (void)dealloc
 {
-    if (buttonPath) {
-        CGPathRelease(buttonPath);
-    }
-    self.borderColor = nil;
-    [backgroundColors release];
+    free(backgroundColors);
+    free(borderColors);
     [super dealloc];
 }
 
-- (void)drawRect:(CGRect)rect
++ (Class)layerClass
 {
-    if (buttonPath)
-    {
-        CGContextRef context = UIGraphicsGetCurrentContext();
-        
-        // Fill
-        UIColor *bgcolor;
-        if ((NSNull *)(bgcolor = [self backgroundColorForState:self.state]) != [NSNull null])
-        {
-            [bgcolor setFill];
-            CGContextAddPath(context, buttonPath);
-            CGContextFillPath(context);
-        }
-        
-        // Stroke
-        if (borderColor)
-        {
-            [borderColor setStroke];
-            CGContextAddPath(context, buttonPath);
-            CGContextStrokePath(context);
-        }
-    }
-}
-
-- (void)layoutSubviews 
-{
-    [super layoutSubviews];
-    
-    UIColor *bgcolor;
-    if (!buttonPath
-        && (NSNull *)(bgcolor = [self backgroundColorForState:self.state]) != [NSNull null])
-    {
-        self.layer.backgroundColor = bgcolor.CGColor;
-    }
-    else
-    {
-        self.layer.backgroundColor = NULL;
-    }
+    return [CAShapeLayer class];
 }
 
 - (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event
 {
     if (self.hidden)
         return nil;
-    if (buttonPath) 
+    
+    CGPathRef path = self.buttonPath;
+    if (path) 
     {
-        if (CGPathContainsPoint(buttonPath, NULL, point, NO))
+        if (CGPathContainsPoint(path, NULL, point, NO))
             return self;
         return nil;
     }
@@ -266,32 +341,47 @@ static void init(ECButton *self)
 
 - (void)setBackgroundColor:(UIColor *)color forState:(UIControlState)state
 {
-    NSUInteger index = 0;
-    if (state & UIControlStateHighlighted) {
-        index = 1;
-    }
-    else if (state & UIControlStateSelected) {
-        index = 3;
-    }
-    else if (state & UIControlStateDisabled) {
-        index = 2;
-    }
-    [backgroundColors replaceObjectAtIndex:index withObject:color];
+    NSUInteger index = stateToIndex(state);
+    if (backgroundColors[index])
+        CGColorRelease(backgroundColors[index]);
+    backgroundColors[index] = color ? CGColorCreateCopy(color.CGColor) : NULL;
+    
+    if (self.state == state)
+        [(CAShapeLayer *)self.layer setFillColor:backgroundColors[index]];
 }
 
 - (UIColor *)backgroundColorForState:(UIControlState)state
 {
-    NSUInteger index = 0;
-    if (state & UIControlStateHighlighted) {
-        index = 1;
-    }
-    else if (state & UIControlStateSelected) {
-        index = 3;
-    }
-    else if (state & UIControlStateDisabled) {
-        index = 2;
-    }
-    return [backgroundColors objectAtIndex:index];
+    NSUInteger index = stateToIndex(state);
+    return backgroundColors[index] ? [UIColor colorWithCGColor:backgroundColors[index]] : nil;
+}
+
+- (void)setBorderColor:(UIColor *)color forState:(UIControlState)state
+{
+    NSUInteger index = stateToIndex(state);
+    if (borderColors[index])
+        CGColorRelease(borderColors[index]);
+    borderColors[index] = color ? CGColorCreateCopy(color.CGColor) : NULL;
+    
+    if (self.state == state)
+        [(CAShapeLayer *)self.layer setStrokeColor:borderColors[index]];
+}
+
+- (UIColor *)borderColorForState:(UIControlState)state
+{
+    NSUInteger index = stateToIndex(state);
+    return borderColors[index] ? [UIColor colorWithCGColor:borderColors[index]] : nil;
+}
+
+#pragma mark -
+#pragma mark Private methods
+
+- (void)updateLayerPropertiesForCurrentState
+{
+    CAShapeLayer *layer = (CAShapeLayer *)self.layer;
+    NSUInteger stateIndex = stateToIndex(self.state);
+    layer.fillColor = backgroundColors[stateIndex];
+    layer.strokeColor = borderColors[stateIndex];
 }
 
 @end
