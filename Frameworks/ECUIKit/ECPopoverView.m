@@ -193,35 +193,32 @@ static void init(ECPopoverView *self)
         arrowLayer.hidden = NO;
     }
     
-    CGFloat offset = arrowMargin;
-    if (arrowDirection == UIPopoverArrowDirectionUp || arrowDirection == UIPopoverArrowDirectionLeft)
-        offset = -offset;
-    
-    CGFloat x, y;
-    if (arrowDirection == UIPopoverArrowDirectionUp || arrowDirection == UIPopoverArrowDirectionDown)
-    {
-        CGFloat position = arrowPosition;
-        if (position <= 1) 
-            position = arrowPosition * (self.bounds.size.width - 2 * arrowSize) + arrowSize;
-        else
-            position = MIN(MAX(position, arrowSize), (self.bounds.size.width - arrowSize));
-        
-        x = position;
-        y = offset;
-    }
+    //
+    CGFloat position = (arrowDirection <= UIPopoverArrowDirectionDown) ? self.bounds.size.width : self.bounds.size.height;
+    if (arrowPosition <= 1) 
+        position = arrowPosition * (position - 2 * arrowSize) + arrowSize;
     else
-    {
-        CGFloat position = arrowPosition;
-        if (position <= 1) 
-            position = arrowPosition * (self.bounds.size.height - 2 * arrowSize) + arrowSize;
-        else
-            position = MIN(MAX(position, arrowSize), (self.bounds.size.height - arrowSize));
-        
-        x = offset;
-        y = position;
-    }
+        position = MIN(MAX(arrowPosition, arrowSize), (position - arrowSize));
     
-    arrowLayer.position = CGPointMake(x, y);
+    //
+    switch (arrowDirection) 
+    {
+        case UIPopoverArrowDirectionRight:
+            arrowLayer.position = CGPointMake(self.bounds.size.width - ARROW_CORNER_RADIUS, position - arrowMargin - ARROW_CORNER_RADIUS);
+            break;
+            
+        case UIPopoverArrowDirectionDown:
+            arrowLayer.position = CGPointMake(position, self.bounds.size.height - arrowMargin - 2 * ARROW_CORNER_RADIUS);
+            break;
+            
+        case UIPopoverArrowDirectionLeft:
+            arrowLayer.position = CGPointMake(ARROW_CORNER_RADIUS, position - arrowMargin - ARROW_CORNER_RADIUS);
+            break;
+            
+        default:
+            arrowLayer.position = CGPointMake(position, -arrowMargin);
+            break;
+    }
 }
 
 @end

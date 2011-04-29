@@ -52,6 +52,9 @@
     CGFloat keyboardHeight;
     
     InstantGestureRecognizer *dismissRecognizer;
+    
+    BOOL delegateHasPopoverControllerShouldDismissPopover;
+    BOOL delegateHasPopoverControllerDidDismissPopover;
 }
 
 - (void)presentPopoverInView:(UIView *)view WithFrame:(CGRect)frame animated:(BOOL)animated;
@@ -151,6 +154,13 @@ static void init(ECPopoverController *self)
 @synthesize passthroughViews;
 @synthesize delegate;
 
+- (void)setDelegate:(id<UIPopoverControllerDelegate>)aDelegate
+{
+    delegate = aDelegate;
+    delegateHasPopoverControllerShouldDismissPopover = [delegate respondsToSelector:@selector(popoverControllerShouldDismissPopover:)];
+    delegateHasPopoverControllerDidDismissPopover = [delegate respondsToSelector:@selector(popoverControllerDidDismissPopover:)];
+}
+
 #pragma mark -
 #pragma mark Getting the Popover Attributes
 
@@ -205,7 +215,7 @@ static void init(ECPopoverController *self)
     {
         resultFrame = popoverView.bounds;
         resultFrame.origin.x = MAX(allowedRect.origin.x, arrowPoint.x - resultFrame.size.width / 2);
-        resultFrame.origin.y = rect.origin.y - resultFrame.size.height - popoverView.arrowSize;
+        resultFrame.origin.y = rect.origin.y - resultFrame.size.height - popoverView.arrowMargin;
         if (CGRectContainsRect(allowedRect, resultFrame)) 
         {
             popoverView.arrowDirection = UIPopoverArrowDirectionDown;
@@ -245,7 +255,7 @@ static void init(ECPopoverController *self)
     if (arrowDirections & UIPopoverArrowDirectionRight) 
     {
         resultFrame = popoverView.bounds;
-        resultFrame.origin.x = rect.origin.x - resultFrame.size.width - popoverView.arrowSize;
+        resultFrame.origin.x = rect.origin.x - resultFrame.size.width - popoverView.arrowMargin;
         resultFrame.origin.y = MIN(CGRectGetMaxY(allowedRect) - resultFrame.size.height, arrowPoint.y - resultFrame.size.height / 2);
         if (CGRectContainsRect(allowedRect, resultFrame)) 
         {
@@ -273,6 +283,9 @@ static void init(ECPopoverController *self)
 
 - (void)dismissPopoverAnimated:(BOOL)animated
 {
+    if (delegateHasPopoverControllerShouldDismissPopover && ![delegate popoverControllerShouldDismissPopover:(UIPopoverController *)self])
+        return;
+    
     if (animated) 
     {
         popoverView.layer.shouldRasterize = YES;
@@ -282,12 +295,18 @@ static void init(ECPopoverController *self)
             popoverView.layer.shouldRasterize = NO;
             [popoverView removeFromSuperview];
             popoverVisible = NO;
+            
+            if (delegateHasPopoverControllerDidDismissPopover)
+                [delegate popoverControllerDidDismissPopover:(UIPopoverController *)self];
         }];
     }
     else
     {
         [popoverView removeFromSuperview];
         popoverVisible = NO;
+        
+        if (delegateHasPopoverControllerDidDismissPopover)
+            [delegate popoverControllerDidDismissPopover:(UIPopoverController *)self];
     }
 }
 
