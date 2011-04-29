@@ -13,6 +13,7 @@
 
 @implementation MokupControlsViewController
 @synthesize jumpBar;
+@synthesize popoverContentViewController;
 @synthesize imageView;
 @synthesize imageView2;
 @synthesize projectImageView;
@@ -39,6 +40,8 @@
     jumpBar.textColor = [UIColor styleForegroundColor];
     jumpBar.textShadowColor = [UIColor styleForegroundShadowColor];
     jumpBar.buttonColor = [UIColor styleBackgroundColor];
+    
+    popoverController = [[ECPopoverController alloc] initWithContentViewController:popoverContentViewController];
     
     // Document icon
     imageView.image = [UIImage imageWithSize:imageView.bounds.size block:^(CGContextRef ctx, CGRect rect) {
@@ -216,10 +219,13 @@
 
 - (void)viewDidUnload
 {
+    [popoverController release];
+    
     [self setJumpBar:nil];
     [self setImageView:nil];
     [self setImageView2:nil];
     [self setProjectImageView:nil];
+    [self setPopoverContentViewController:nil];
     [super viewDidUnload];
 }
 
@@ -241,8 +247,9 @@
 }
 
 - (IBAction)doSomething:(id)sender {
-    CGFloat arrow = [sender leftArrowSize];
-    [sender setLeftArrowSize:arrow ? 0 : 10];
+    
+    [popoverController setPopoverContentSize:(CGSize){ 270, 300 }];
+    [popoverController presentPopoverFromRect:[sender frame] inView:self.view permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
 }
 
 - (void)jumpBar:(ECJumpBar *)jumpBar didPushControl:(UIControl *)control atStackIndex:(NSUInteger)index
@@ -253,5 +260,9 @@
 - (void)jumpBar:(ECJumpBar *)jumpBar didCollapseToControl:(UIControl *)control collapsedRange:(NSRange)collapsedRange
 {
 
+}
+- (void)dealloc {
+    [popoverContentViewController release];
+    [super dealloc];
 }
 @end

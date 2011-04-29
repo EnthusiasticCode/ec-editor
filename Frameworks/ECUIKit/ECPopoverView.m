@@ -16,7 +16,6 @@
 @interface ECPopoverView () {
 @private
     CAShapeLayer *arrowLayer;
-    CGFloat arrowOffset;
     CGRect contentRect;
 }
 
@@ -37,6 +36,7 @@
 @synthesize arrowDirection;
 @synthesize arrowPosition;
 @synthesize arrowSize;
+@synthesize arrowMargin;
 
 - (void)setContentInsets:(UIEdgeInsets)insets
 {
@@ -63,18 +63,18 @@
 
 - (UIView *)contentView
 {
-    return [self.subviews objectAtIndex:0];
+    return [self.subviews count] ? [self.subviews objectAtIndex:0] : nil;
 }
 
 - (void)setContentView:(UIView *)contentView
 {
     [self.contentView removeFromSuperview];
-    [self insertSubview:contentView atIndex:0];
+    [self addSubview:contentView];
 }
 
 - (void)setArrowPosition:(CGFloat)position
 {
-    if (position < 0 || position > 1) 
+    if (position < 0) 
         return;
 
     arrowPosition = position;
@@ -92,14 +92,23 @@
 
 - (void)setBounds:(CGRect)bounds
 {
-    [super setBounds:bounds];
+    [(CAShapeLayer *)self.layer setPath:[UIBezierPath bezierPathWithRoundedRect:bounds cornerRadius:cornerRadius].CGPath];
+
     contentRect = UIEdgeInsetsInsetRect(bounds, contentInsets);
+    [super setBounds:bounds];
 }
 
 - (void)setFrame:(CGRect)frame
 {
     [super setFrame:frame];
+    [(CAShapeLayer *)self.layer setPath:[UIBezierPath bezierPathWithRoundedRect:self.bounds cornerRadius:cornerRadius].CGPath];
     contentRect = UIEdgeInsetsInsetRect(self.bounds, contentInsets);
+}
+
+- (void)setBackgroundColor:(UIColor *)backgroundColor
+{
+    [(CAShapeLayer *)self.layer setFillColor:backgroundColor.CGColor];
+    arrowLayer.fillColor = backgroundColor.CGColor;
 }
 
 #pragma mark -
@@ -110,7 +119,7 @@ static void preinit(ECPopoverView *self)
     self->arrowSize = 30;
     self->arrowPosition = 0.5;
     self->arrowDirection = UIPopoverArrowDirectionUp;
-    self->arrowOffset = self->arrowSize / M_SQRT2 - ARROW_CORNER_RADIUS;
+    self->arrowMargin = self->arrowSize / M_SQRT2 - ARROW_CORNER_RADIUS;
     
     self->cornerRadius = 5;
     
@@ -124,13 +133,13 @@ static void init(ECPopoverView *self)
     self->arrowLayer = [CAShapeLayer new];
     self->arrowLayer.path = [UIBezierPath bezierPathWithRoundedRect:CGRectMake(0, 0, self->arrowSize, self->arrowSize) cornerRadius:ARROW_CORNER_RADIUS].CGPath;
     self->arrowLayer.transform = CATransform3DMakeRotation(M_PI_4, 0, 0, 1);
-    self->arrowLayer.backgroundColor = layer.backgroundColor;
     
-    layer.path = [UIBezierPath bezierPathWithRoundedRect:self.bounds cornerRadius:self.cornerRadius].CGPath;
     [layer insertSublayer:self->arrowLayer atIndex:0];
     [self layoutArrow];
     
     self->contentRect = UIEdgeInsetsInsetRect(self.bounds, self->contentInsets);
+    
+    self.backgroundColor = [UIColor styleForegroundColor];
 }
 
 - (id)initWithFrame:(CGRect)frame
@@ -183,20 +192,32 @@ static void init(ECPopoverView *self)
         arrowLayer.hidden = NO;
     }
     
-    CGFloat offset = arrowOffset;
+    CGFloat offset = arrowMargin;
     if (arrowDirection == UIPopoverArrowDirectionUp || arrowDirection == UIPopoverArrowDirectionLeft)
         offset = -offset;
     
     CGFloat x, y;
     if (arrowDirection == UIPopoverArrowDirectionUp || arrowDirection == UIPopoverArrowDirectionDown)
     {
-        x = arrowPosition * (self.bounds.size.width - 2 * arrowSize) + arrowSize;
+        CGFloat position = arrowPosition;
+        if (position <= 1) 
+            position = arrowPosition * (self.bounds.size.width - 2 * arrowSize) + arrowSize;
+        else
+            position = MIN(MAX(position, arrowSize), (self.bounds.size.width - arrowSize));
+        
+        x = position;
         y = offset;
     }
     else
     {
+        CGFloat position = arrowPosition;
+        if (position <= 1) 
+            position = arrowPosition * (self.bounds.size.height - 2 * arrowSize) + arrowSize;
+        else
+            position = MIN(MAX(position, arrowSize), (self.bounds.size.height - arrowSize));
+        
         x = offset;
-        y = arrowPosition * (self.bounds.size.height - 2 * arrowSize) + arrowSize;
+        y = position;
     }
     
     arrowLayer.position = CGPointMake(x, y);

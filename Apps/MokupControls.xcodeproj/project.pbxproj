@@ -19,7 +19,6 @@
 		CDEFF9371348BB8F006FEFCC /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CDEFF9361348BB8F006FEFCC /* CoreGraphics.framework */; };
 		CDEFF93D1348BB8F006FEFCC /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = CDEFF93B1348BB8F006FEFCC /* InfoPlist.strings */; };
 		CDEFF9401348BB8F006FEFCC /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = CDEFF93F1348BB8F006FEFCC /* main.m */; };
-		CDEFF9461348BB8F006FEFCC /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = CDEFF9441348BB8F006FEFCC /* MainWindow.xib */; };
 		CDEFF9491348BB8F006FEFCC /* MokupControlsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDEFF9481348BB8F006FEFCC /* MokupControlsViewController.m */; };
 		CDEFF94C1348BB8F006FEFCC /* MokupControlsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CDEFF94A1348BB8F006FEFCC /* MokupControlsViewController.xib */; };
 /* End PBXBuildFile section */
@@ -46,7 +45,6 @@
 		CDEFF93C1348BB8F006FEFCC /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		CDEFF93E1348BB8F006FEFCC /* MokupControls-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MokupControls-Prefix.pch"; sourceTree = "<group>"; };
 		CDEFF93F1348BB8F006FEFCC /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		CDEFF9451348BB8F006FEFCC /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainWindow.xib; sourceTree = "<group>"; };
 		CDEFF9471348BB8F006FEFCC /* MokupControlsViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MokupControlsViewController.h; sourceTree = "<group>"; };
 		CDEFF9481348BB8F006FEFCC /* MokupControlsViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MokupControlsViewController.m; sourceTree = "<group>"; };
 		CDEFF94B1348BB8F006FEFCC /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MokupControlsViewController.xib; sourceTree = "<group>"; };
@@ -121,7 +119,6 @@
 			isa = PBXGroup;
 			children = (
 				CD4394B11352E89F005239B6 /* ECUIKit part */,
-				CDEFF9441348BB8F006FEFCC /* MainWindow.xib */,
 				CDEFF9471348BB8F006FEFCC /* MokupControlsViewController.h */,
 				CDEFF9481348BB8F006FEFCC /* MokupControlsViewController.m */,
 				CDEFF94A1348BB8F006FEFCC /* MokupControlsViewController.xib */,
@@ -189,7 +186,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				CDEFF93D1348BB8F006FEFCC /* InfoPlist.strings in Resources */,
-				CDEFF9461348BB8F006FEFCC /* MainWindow.xib in Resources */,
 				CDEFF94C1348BB8F006FEFCC /* MokupControlsViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -221,14 +217,6 @@
 				CDEFF93C1348BB8F006FEFCC /* en */,
 			);
 			name = InfoPlist.strings;
-			sourceTree = "<group>";
-		};
-		CDEFF9441348BB8F006FEFCC /* MainWindow.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				CDEFF9451348BB8F006FEFCC /* en */,
-			);
-			name = MainWindow.xib;
 			sourceTree = "<group>";
 		};
 		CDEFF94A1348BB8F006FEFCC /* MokupControlsViewController.xib */ = {

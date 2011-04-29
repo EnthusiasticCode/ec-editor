@@ -31,4 +31,6 @@
 
 @property (nonatomic) CGFloat arrowSize;
 
+@property (nonatomic, readonly) CGFloat arrowMargin;
+
 @end

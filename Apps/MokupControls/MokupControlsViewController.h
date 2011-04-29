@@ -9,17 +9,23 @@
 #import <UIKit/UIKit.h>
 #import "ECButton.h"
 #import "ECJumpBar.h"
+#import "ECPopoverController.h"
 
 
 @interface MokupControlsViewController : UIViewController <ECJumpBarDelegate> {
     
     ECJumpBar *jumpBar;
+    UIViewController *popoverContentViewController;
     UIImageView *imageView;
     UIImageView *imageView2;
     UIImageView *projectImageView;
+    
+    ECPopoverController *popoverController;
 }
 
 @property (nonatomic, retain) IBOutlet ECJumpBar *jumpBar;
+
+@property (nonatomic, retain) IBOutlet UIViewController *popoverContentViewController;
 
 @property (nonatomic, retain) IBOutlet UIImageView *imageView;
 @property (nonatomic, retain) IBOutlet UIImageView *imageView2;
