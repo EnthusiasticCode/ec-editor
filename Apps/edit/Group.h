@@ -14,10 +14,5 @@
 @property (nonatomic, retain) NSNumber * index;
 @property (nonatomic, retain) NSSet* items;
 @property (nonatomic, retain) Folder * area;
-- (void)addItemsObject:(File *)value;
-- (void)removeItemsObject:(File *)value;
-- (void)addItems:(NSSet *)value;
-- (void)removeItems:(NSSet *)value;
-- (NSArray *)orderedItems;
-- (void)moveItemAtIndex:(NSUInteger)idx1 toIndex:(NSUInteger)idx2;
+- (NSMutableArray *)orderedItems;
 @end

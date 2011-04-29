@@ -13,6 +13,12 @@
 #import "Group.h"
 #import "Project.h"
 
+static NSString *FolderObservingContext = @"FolderObservingContext";
+
+@interface Folder ()
+- (void)_attachObservers;
+@end
+
 @implementation Folder
 @dynamic collapsed;
 @dynamic groups;
@@ -39,6 +45,45 @@
 - (void)removeGroups:(NSSet *)value
 {
     [self removeObjects:value forOrderedKey:@"groups"];
+}
+
+- (void)_attachObservers
+{
+    [self addObserver:self forKeyPath:@"files" options:NSKeyValueObservingOptionNew context:FolderObservingContext];
+}
+
+- (void)awakeFromFetch
+{
+    [super awakeFromFetch];
+    [self _attachObservers];
+}
+
+- (void)awakeFromInsert
+{
+    [super awakeFromInsert];
+    [self _attachObservers];
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    if (context != FolderObservingContext)
+        return [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+    if ([[change valueForKey:NSKeyValueChangeKindKey] intValue] != NSKeyValueChangeInsertion)
+        return;
+    NSSet *insertedObjects = [change valueForKey:NSKeyValueChangeNewKey];
+    if (![insertedObjects count])
+        return;
+    
+    NSFileManager *fileManager = [[NSFileManager alloc] init];
+    for (File *file in insertedObjects)
+    {
+        if (!file.path)
+            continue;
+        NSString *destinationPath = [self.path stringByAppendingPathComponent:file.name];
+        if (![file.path isEqual:destinationPath])
+            [fileManager moveItemAtPath:file.path toPath:[self.path stringByAppendingPathComponent:file.name] error:NULL];
+    }
+    [fileManager release];
 }
 
 - (NSMutableArray *)orderedGroups
@@ -69,7 +114,7 @@
     {
         Group *newGroup = [NSEntityDescription insertNewObjectForEntityForName:@"Group" inManagedObjectContext:[self managedObjectContext]];
         newGroup.area = self;
-        [newGroup addItems:[NSSet setWithArray:newFiles]];
+        [[newGroup mutableSetValueForKey:@"items"] addObjectsFromArray:newFiles];
     }
     NSArray *subfolderPaths = [fileManager contentsOfDirectoryAtPath:self.path withExtensions:nil options:options skipFiles:YES skipDirectories:NO error:NULL];
     NSMutableDictionary *subfolderDictionary = [NSMutableDictionary dictionary];

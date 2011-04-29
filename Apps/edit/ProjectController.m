@@ -133,7 +133,7 @@
     return [[self groupAtIndex:group inArea:area].items count];
 }
 
-- (void)itemView:(ECItemView *)itemView didSelectItemAtIndexPath:(NSIndexPath *)indexPath;
+- (void)itemView:(ECItemView *)itemView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
     if (!indexPath)
         return;
@@ -147,17 +147,22 @@
 
 - (void)itemView:(ECItemView *)itemView moveItemAtIndexPath:(NSIndexPath *)sourceIndexPath toIndexPath:(NSIndexPath *)destinationIndexPath
 {
-    if (sourceIndexPath.area == destinationIndexPath.area)
-    {
-        if (sourceIndexPath.group == destinationIndexPath.group)
-            [[self groupAtIndex:sourceIndexPath.group inArea:sourceIndexPath.area] moveItemAtIndex:sourceIndexPath.item toIndex:destinationIndexPath.item];
-    }
+    id item = [[[self groupAtIndex:sourceIndexPath.group inArea:sourceIndexPath.area] orderedItems] objectAtIndex:sourceIndexPath.item];
+    [[[self groupAtIndex:destinationIndexPath.group inArea:destinationIndexPath.area] orderedItems] insertObject:item atIndex:destinationIndexPath.item];
 }
 
-- (void)itemView:(ECItemView *)itemView insertGroupAtIndexPath:(NSIndexPath *)indexPath;
+- (void)itemView:(ECItemView *)itemView insertGroupAtIndexPath:(NSIndexPath *)indexPath
 {
     Group *group = [NSEntityDescription insertNewObjectForEntityForName:@"Group" inManagedObjectContext:self.managedObjectContext];
     [[[self areaAtIndex:indexPath.area] orderedGroups] insertObject:group atIndex:indexPath.position];
+}
+
+- (void)itemView:(ECItemView *)itemView deleteGroupAtIndexPath:(NSIndexPath *)indexPath
+{
+    Group *group = [[[self areaAtIndex:indexPath.area] orderedGroups] objectAtIndex:indexPath.position];
+    if ([[group items] count])
+        return;
+    [self.managedObjectContext deleteObject:group];
 }
 
 - (void)edit:(id)sender

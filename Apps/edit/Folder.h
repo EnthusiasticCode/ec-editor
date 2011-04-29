@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
 #import "Node.h"
+#import "File.h"
 @class Project;
 
 @interface Folder : Node

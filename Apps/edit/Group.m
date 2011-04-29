@@ -10,6 +10,12 @@
 #import "File.h"
 #import "Folder.h"
 
+static NSString *GroupObservingContext = @"GroupObservingContext";
+
+@interface Group ()
+- (void)_attachObservers;
+@end
+
 @implementation Group
 @dynamic index;
 @dynamic items;
@@ -35,14 +41,40 @@
     [self removeObjects:value forOrderedKey:@"items"];
 }
 
-- (NSArray *)orderedItems
+- (void)_attachObservers
 {
-    return [self valueForOrderedKey:@"items"];
+    [self addObserver:self forKeyPath:@"items" options:NSKeyValueObservingOptionNew context:GroupObservingContext];
 }
 
-- (void)moveItemAtIndex:(NSUInteger)idx1 toIndex:(NSUInteger)idx2
+- (void)awakeFromFetch
 {
-    [self moveObjectAtIndex:idx1 toIndex:idx2 forOrderedKey:@"items"];
+    [super awakeFromFetch];
+    [self _attachObservers];
+}
+
+- (void)awakeFromInsert
+{
+    [super awakeFromInsert];
+    [self _attachObservers];
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    if (context != GroupObservingContext)
+        return [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+    if ([[change valueForKey:NSKeyValueChangeKindKey] intValue] != NSKeyValueChangeInsertion)
+        return;
+    NSSet *insertedObjects = [change valueForKey:NSKeyValueChangeNewKey];
+    if (![insertedObjects count])
+        return;
+    for (File *file in insertedObjects)
+        if (file.folder != self.area)
+            [[self.area mutableSetValueForKey:@"files"] addObject:file];
+}
+
+- (NSMutableArray *)orderedItems
+{
+    return [self mutableArrayValueForOrderedKey:@"items"];
 }
 
 @end

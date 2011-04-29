@@ -543,12 +543,26 @@ const NSUInteger ECItemViewGroupSeparatorBufferSize = 20;
 {
     NSUInteger numAreas = [self numberOfAreas];
     for (NSUInteger i = 0; i < numAreas; ++i)
+        if (CGRectContainsPoint([self rectForHeaderInArea:i], point))
+        {
+            if (exists)
+                *exists = NO;
+            return [NSIndexPath indexPathForItem:0 inGroup:0 inArea:i];
+        }
+    for (NSUInteger i = 0; i < numAreas; ++i)
     {
         CGRect areaRect = CGRectZero;
         areaRect = [self rectForArea:i];
         if (!CGRectContainsPoint(areaRect, point))
             continue;
         NSUInteger numGroups = [self numberOfGroupsInArea:i];
+        for (NSUInteger j = 0; j < numGroups; ++j)
+            if (CGRectContainsPoint([self _rectForGroupSeparatorAtIndexPath:[NSIndexPath indexPathForPosition:j inArea:i]], point))
+            {
+                if (exists)
+                    *exists = NO;
+                return [NSIndexPath indexPathForItem:0 inGroup:j + 1 inArea:i];
+            }
         for (NSUInteger j = 0; j < numGroups; ++j)
         {
             CGRect groupRect = CGRectZero;
@@ -583,13 +597,6 @@ const NSUInteger ECItemViewGroupSeparatorBufferSize = 20;
                 *exists = NO;
             return [NSIndexPath indexPathForItem:numItems inGroup:j inArea:i];
         }
-        for (NSUInteger j = 0; j < numGroups; ++j)
-            if (CGRectContainsPoint([self _rectForGroupSeparatorAtIndexPath:[NSIndexPath indexPathForPosition:j inArea:i]], point))
-            {
-                if (exists)
-                    *exists = NO;
-                return [NSIndexPath indexPathForItem:0 inGroup:j inArea:i];
-            }
     }
     if (exists)
         *exists = NO;
@@ -818,7 +825,16 @@ const NSUInteger ECItemViewGroupSeparatorBufferSize = 20;
         [self _cancelDrag:dragRecognizer];
     if (!proposedIndexPathExists && !proposedIndexPath.item)
         if (_flags.dataSourceInsertGroup)
+        {
             [_dataSource itemView:self insertGroupAtIndexPath:[NSIndexPath indexPathForPosition:proposedIndexPath.group inArea:proposedIndexPath.area]];
+            if (_draggedItemIndexPath.area == proposedIndexPath.area && _draggedItemIndexPath.group >= proposedIndexPath.group)
+            {
+                NSIndexPath *adjustedDraggedItemIndexPath = [[NSIndexPath indexPathForItem:_draggedItemIndexPath.item inGroup:_draggedItemIndexPath.group + 1 inArea:_draggedItemIndexPath.area] retain];
+                [_draggedItemIndexPath release];
+                _draggedItemIndexPath = adjustedDraggedItemIndexPath;
+            }
+            
+        }
         else
             [self _cancelDrag:dragRecognizer];
     
@@ -829,6 +845,11 @@ const NSUInteger ECItemViewGroupSeparatorBufferSize = 20;
     _dragDestinationIndexPath = proposedIndexPath;
     if (_flags.dataSourceMoveItem)
         [_dataSource itemView:self moveItemAtIndexPath:_draggedItemIndexPath toIndexPath:_dragDestinationIndexPath];
+    if (_flags.dataSourceNumberOfItemsInGroupInArea)
+        if (![_dataSource itemView:self numberOfItemsInGroup:_draggedItemIndexPath.group inArea:_draggedItemIndexPath.area])
+            if (_flags.dataSourceDeleteGroup)
+                [_dataSource itemView:self deleteGroupAtIndexPath:[NSIndexPath indexPathForPosition:_draggedItemIndexPath.group inArea:_draggedItemIndexPath.area]];
+    [self reloadData];
     [UIView animateConcurrentlyToAnimationsWithFlag:&_isAnimating duration:ECItemViewShortAnimationDuration animations:^(void) {
         _draggedItem.frame = UIEdgeInsetsInsetRect([self rectForItemAtIndexPath:_dragDestinationIndexPath], _cellInsets);
     } completion:NULL];
@@ -836,7 +857,6 @@ const NSUInteger ECItemViewGroupSeparatorBufferSize = 20;
     _draggedItemIndexPath = nil;
     _dragDestinationIndexPath = nil;
     _draggedItem = nil;
-    [self reloadData];
 }
 
 - (void)_cancelDrag:(UILongPressGestureRecognizer *)dragRecognizer

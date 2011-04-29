@@ -164,7 +164,7 @@ static void shiftIndicesOfObjectsLeft(NSArray *objects)
 */
 static void shiftIndicesOfObjectsRight(NSArray *objects)
 {
-    if ([objects count] < 2)
+    if ([objects count] < 1)
         return;
     enumerateIndicesOfObjectsWithBlock(objects, ^NSNumber *(NSNumber *oldIndex) {
         return [NSNumber numberWithInteger:[oldIndex integerValue] + 1];
@@ -336,20 +336,19 @@ static void shiftIndicesOfObjectsRight(NSArray *objects)
     [intersection intersectSet:[self valueForKey:key]];
     if (![intersection count])
         return [intersection release];
-    NSUInteger lowestDeletedIndex = NSUIntegerMax;
-    for (id<ECOrdering> object in intersection)
-        lowestDeletedIndex = MAX([object.index unsignedIntegerValue], lowestDeletedIndex);
     [intersection release];
     [self willChangeValueForKey:key withSetMutation:NSKeyValueMinusSetMutation usingObjects:objects];
     [[self primitiveValueForKey:key] minusSet:objects];
     [self didChangeValueForKey:key withSetMutation:NSKeyValueMinusSetMutation usingObjects:objects];
-    NSFetchRequest *fetchRequest = [self fetchRequestForOrderedKey:key withAdditionalPredicate:[NSPredicate predicateWithFormat:@"%K > %u", ECManagedObjectIndex, lowestDeletedIndex]];
-    NSArray *objectsToRearrange = [[self managedObjectContext] executeFetchRequest:fetchRequest error:NULL];
+    NSArray *objectsToRearrange = [self copyForOrderedKey:key];
+    NSUInteger index = 0;
     for (id<ECOrdering> object in objectsToRearrange)
     {
-        object.index = [NSNumber numberWithUnsignedInteger:lowestDeletedIndex];
-        ++lowestDeletedIndex;
+        if ([object.index unsignedIntegerValue] != index)
+            object.index = [NSNumber numberWithUnsignedInteger:index];
+        ++index;
     }
+    [objectsToRearrange release];
 }
 
 - (NSArray *)subarrayWithRange:(NSRange)range forOrderedKey:(NSString *)key
