@@ -133,6 +133,7 @@ static void init(ECPopoverView *self)
     self->arrowLayer = [CAShapeLayer new];
     self->arrowLayer.path = [UIBezierPath bezierPathWithRoundedRect:CGRectMake(0, 0, self->arrowSize, self->arrowSize) cornerRadius:ARROW_CORNER_RADIUS].CGPath;
     self->arrowLayer.transform = CATransform3DMakeRotation(M_PI_4, 0, 0, 1);
+    self->arrowLayer.actions = [NSDictionary dictionaryWithObject:[NSNull null] forKey:@"position"];
     
     [layer insertSublayer:self->arrowLayer atIndex:0];
     [self layoutArrow];

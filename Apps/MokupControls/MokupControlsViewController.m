@@ -247,9 +247,9 @@
 }
 
 - (IBAction)doSomething:(id)sender {
-    
+    NSUInteger tag = [sender tag];
     [popoverController setPopoverContentSize:(CGSize){ 270, 300 }];
-    [popoverController presentPopoverFromRect:[sender frame] inView:self.view permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
+    [popoverController presentPopoverFromRect:[sender frame] inView:self.view permittedArrowDirections:tag ? tag :UIPopoverArrowDirectionAny animated:YES];
 }
 
 - (void)jumpBar:(ECJumpBar *)jumpBar didPushControl:(UIControl *)control atStackIndex:(NSUInteger)index

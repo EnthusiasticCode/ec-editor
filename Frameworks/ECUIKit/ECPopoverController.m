@@ -165,7 +165,7 @@ static void init(ECPopoverController *self)
 #pragma mark Presenting and Dismissing the Popover
 
 - (void)presentPopoverFromRect:(CGRect)rect inView:(UIView *)view permittedArrowDirections:(UIPopoverArrowDirection)arrowDirections animated:(BOOL)animated
-{
+{    
     CGRect allowedRect = view.window.bounds;
     // Removing status bar anyway
     allowedRect.origin.y += 20;
@@ -183,7 +183,7 @@ static void init(ECPopoverController *self)
     CGRect backupFrame = CGRectNull;
     CGRect resultFrame = CGRectZero;
         
-    if (arrowDirections | UIPopoverArrowDirectionUp) 
+    if (arrowDirections & UIPopoverArrowDirectionUp) 
     {
         resultFrame = popoverView.bounds;
         resultFrame.origin.x = MAX(allowedRect.origin.x, arrowPoint.x - resultFrame.size.width / 2);
@@ -201,28 +201,7 @@ static void init(ECPopoverController *self)
         }
     }
     
-    if (arrowDirections | UIPopoverArrowDirectionLeft) 
-    {
-        resultFrame = popoverView.bounds;
-        resultFrame.origin.x = CGRectGetMaxX(rect) + popoverView.arrowSize;
-        resultFrame.origin.y = MAX(allowedRect.origin.y, arrowPoint.y - resultFrame.size.height / 2);
-        if (CGRectContainsRect(allowedRect, resultFrame)) 
-        {
-            popoverView.arrowDirection = UIPopoverArrowDirectionLeft;
-            popoverView.arrowPosition = arrowPoint.y - resultFrame.origin.y;
-            [self presentPopoverInView:view WithFrame:resultFrame animated:animated];
-            return;
-        }
-        // TODO instead of check for null, check if intersection of this result frame > intersection with current backupframe
-        else if (CGRectIsNull(backupFrame))
-        {
-            popoverView.arrowDirection = UIPopoverArrowDirectionLeft;
-            popoverView.arrowPosition = arrowPoint.y - resultFrame.origin.y;
-            backupFrame = resultFrame;
-        }
-    }
-
-    if (arrowDirections | UIPopoverArrowDirectionDown) 
+    if (arrowDirections & UIPopoverArrowDirectionDown) 
     {
         resultFrame = popoverView.bounds;
         resultFrame.origin.x = MAX(allowedRect.origin.x, arrowPoint.x - resultFrame.size.width / 2);
@@ -242,7 +221,28 @@ static void init(ECPopoverController *self)
         }
     }
     
-    if (arrowDirections | UIPopoverArrowDirectionRight) 
+    if (arrowDirections & UIPopoverArrowDirectionLeft) 
+    {
+        resultFrame = popoverView.bounds;
+        resultFrame.origin.x = CGRectGetMaxX(rect) + popoverView.arrowMargin;
+        resultFrame.origin.y = MIN(CGRectGetMaxY(allowedRect) - resultFrame.size.height, arrowPoint.y - resultFrame.size.height / 2);
+        if (CGRectContainsRect(allowedRect, resultFrame)) 
+        {
+            popoverView.arrowDirection = UIPopoverArrowDirectionLeft;
+            popoverView.arrowPosition = arrowPoint.y - resultFrame.origin.y;
+            [self presentPopoverInView:view WithFrame:resultFrame animated:animated];
+            return;
+        }
+        // TODO instead of check for null, check if intersection of this result frame > intersection with current backupframe
+        else if (CGRectIsNull(backupFrame))
+        {
+            popoverView.arrowDirection = UIPopoverArrowDirectionLeft;
+            popoverView.arrowPosition = arrowPoint.y - resultFrame.origin.y;
+            backupFrame = resultFrame;
+        }
+    }
+    
+    if (arrowDirections & UIPopoverArrowDirectionRight) 
     {
         resultFrame = popoverView.bounds;
         resultFrame.origin.x = rect.origin.x - resultFrame.size.width - popoverView.arrowSize;
@@ -281,20 +281,21 @@ static void init(ECPopoverController *self)
         } completion:^(BOOL finished) {
             popoverView.layer.shouldRasterize = NO;
             [popoverView removeFromSuperview];
+            popoverVisible = NO;
         }];
     }
     else
     {
         [popoverView removeFromSuperview];
+        popoverVisible = NO;
     }
-    popoverVisible = NO;
 }
 
 #pragma mark -
 #pragma mark Private Methods
 
 - (void)presentPopoverInView:(UIView *)view WithFrame:(CGRect)frame animated:(BOOL)animated
-{
+{    
     [view addSubview:popoverView];
     popoverView.layer.shouldRasterize = YES;
     popoverView.alpha = 0;
