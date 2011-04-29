@@ -17,6 +17,7 @@
 @private
     CAShapeLayer *arrowLayer;
     CGFloat arrowOffset;
+    CGRect contentRect;
 }
 
 - (void)layoutArrow;
@@ -32,7 +33,6 @@
 @synthesize cornerRadius;
 
 @synthesize contentInsets;
-@synthesize contentRect;
 
 @synthesize arrowDirection;
 @synthesize arrowPosition;
@@ -43,6 +43,33 @@
     contentInsets = insets;
     contentRect = UIEdgeInsetsInsetRect(self.bounds, insets);
     [self layoutIfNeeded];
+}
+
+- (CGSize)contentSize
+{
+    return contentRect.size;
+}
+
+- (void)setContentSize:(CGSize)size
+{
+    if (CGSizeEqualToSize(size, contentRect.size))
+        return;
+    
+    [self setBounds:(CGRect){ CGPointZero, {
+        size.width + contentInsets.left + contentInsets.right,
+        size.height + contentInsets.top + contentInsets.bottom
+    } }];
+}
+
+- (UIView *)contentView
+{
+    return [self.subviews objectAtIndex:0];
+}
+
+- (void)setContentView:(UIView *)contentView
+{
+    [self.contentView removeFromSuperview];
+    [self insertSubview:contentView atIndex:0];
 }
 
 - (void)setArrowPosition:(CGFloat)position
@@ -61,6 +88,18 @@
     
     arrowDirection = direction;
     [self layoutArrow];
+}
+
+- (void)setBounds:(CGRect)bounds
+{
+    [super setBounds:bounds];
+    contentRect = UIEdgeInsetsInsetRect(bounds, contentInsets);
+}
+
+- (void)setFrame:(CGRect)frame
+{
+    [super setFrame:frame];
+    contentRect = UIEdgeInsetsInsetRect(self.bounds, contentInsets);
 }
 
 #pragma mark -
@@ -134,6 +173,16 @@ static void init(ECPopoverView *self)
 
 - (void)layoutArrow
 {
+    if (arrowDirection == UIPopoverArrowDirectionUnknown) 
+    {
+        arrowLayer.hidden = YES;
+        return;
+    }
+    else
+    {
+        arrowLayer.hidden = NO;
+    }
+    
     CGFloat offset = arrowOffset;
     if (arrowDirection == UIPopoverArrowDirectionUp || arrowDirection == UIPopoverArrowDirectionLeft)
         offset = -offset;

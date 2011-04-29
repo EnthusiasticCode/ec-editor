@@ -19,7 +19,9 @@
 
 @property (nonatomic) UIEdgeInsets contentInsets;
 
-@property (nonatomic, readonly) CGRect contentRect;
+@property (nonatomic) CGSize contentSize;
+
+@property (nonatomic, retain) UIView *contentView;
 
 #pragma mark Arrow
 

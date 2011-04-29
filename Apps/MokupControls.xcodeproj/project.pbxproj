@@ -12,6 +12,7 @@
 		CD4394BB1352E8FA005239B6 /* ECJumpBar.m in Sources */ = {isa = PBXBuildFile; fileRef = CD4394B51352E8FA005239B6 /* ECJumpBar.m */; };
 		CD4394BC1352E8FA005239B6 /* ECPopoverView.m in Sources */ = {isa = PBXBuildFile; fileRef = CD4394B71352E8FA005239B6 /* ECPopoverView.m */; };
 		CD4394BD1352E8FA005239B6 /* UIImage+BlockDrawing.m in Sources */ = {isa = PBXBuildFile; fileRef = CD4394B91352E8FA005239B6 /* UIImage+BlockDrawing.m */; };
+		CD8FA23C136AD9710071FBD3 /* ECPopoverController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD8FA23B136AD9710071FBD3 /* ECPopoverController.m */; };
 		CDACD8A81349C57B0055B7F3 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CDACD8A71349C57B0055B7F3 /* QuartzCore.framework */; };
 		CDEFF9331348BB8F006FEFCC /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CDEFF9321348BB8F006FEFCC /* UIKit.framework */; };
 		CDEFF9351348BB8F006FEFCC /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CDEFF9341348BB8F006FEFCC /* Foundation.framework */; };
@@ -34,6 +35,8 @@
 		CD4394B71352E8FA005239B6 /* ECPopoverView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECPopoverView.m; sourceTree = "<group>"; };
 		CD4394B81352E8FA005239B6 /* UIImage+BlockDrawing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+BlockDrawing.h"; sourceTree = "<group>"; };
 		CD4394B91352E8FA005239B6 /* UIImage+BlockDrawing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+BlockDrawing.m"; sourceTree = "<group>"; };
+		CD8FA23A136AD9710071FBD3 /* ECPopoverController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECPopoverController.h; sourceTree = "<group>"; };
+		CD8FA23B136AD9710071FBD3 /* ECPopoverController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECPopoverController.m; sourceTree = "<group>"; };
 		CDACD8A71349C57B0055B7F3 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		CDEFF92E1348BB8F006FEFCC /* MokupControls.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MokupControls.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CDEFF9321348BB8F006FEFCC /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
@@ -78,6 +81,8 @@
 				CD4394B91352E8FA005239B6 /* UIImage+BlockDrawing.m */,
 				CD064DDD1352F3DB009DAD82 /* UIColor+StyleColors.h */,
 				CD064DDE1352F3DB009DAD82 /* UIColor+StyleColors.m */,
+				CD8FA23A136AD9710071FBD3 /* ECPopoverController.h */,
+				CD8FA23B136AD9710071FBD3 /* ECPopoverController.m */,
 			);
 			name = "ECUIKit part";
 			path = ../../Frameworks/ECUIKit;
@@ -203,6 +208,7 @@
 				CD4394BC1352E8FA005239B6 /* ECPopoverView.m in Sources */,
 				CD4394BD1352E8FA005239B6 /* UIImage+BlockDrawing.m in Sources */,
 				CD064DDF1352F3DB009DAD82 /* UIColor+StyleColors.m in Sources */,
+				CD8FA23C136AD9710071FBD3 /* ECPopoverController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
