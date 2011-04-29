@@ -1,0 +1,611 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		B70C5B64135F144E001C35A5 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B70C5B63135F144E001C35A5 /* UIKit.framework */; };
+		B70C5B66135F144E001C35A5 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B70C5B65135F144E001C35A5 /* Foundation.framework */; };
+		B70C5B68135F144E001C35A5 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B70C5B67135F144E001C35A5 /* CoreGraphics.framework */; };
+		B70C5B6E135F144E001C35A5 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = B70C5B6C135F144E001C35A5 /* InfoPlist.strings */; };
+		B70C5B91135F14FD001C35A5 /* GHUnitIOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B70C5B90135F14FD001C35A5 /* GHUnitIOS.framework */; };
+		B70C5B93135F150A001C35A5 /* GHUnitIOSTestMain.m in Sources */ = {isa = PBXBuildFile; fileRef = B70C5B92135F150A001C35A5 /* GHUnitIOSTestMain.m */; };
+		B70C5B95135F1702001C35A5 /* ECTextDocumentTest.m in Sources */ = {isa = PBXBuildFile; fileRef = B70C5B94135F1702001C35A5 /* ECTextDocumentTest.m */; };
+		B70C5C30135F20B4001C35A5 /* ECClangCodeCursor.m in Sources */ = {isa = PBXBuildFile; fileRef = B70C5BD1135F20B4001C35A5 /* ECClangCodeCursor.m */; };
+		B70C5C31135F20B4001C35A5 /* ECClangCodeIndex.m in Sources */ = {isa = PBXBuildFile; fileRef = B70C5BD3135F20B4001C35A5 /* ECClangCodeIndex.m */; };
+		B70C5C32135F20B4001C35A5 /* ECClangCodeUnit.m in Sources */ = {isa = PBXBuildFile; fileRef = B70C5BD5135F20B4001C35A5 /* ECClangCodeUnit.m */; };
+		B70C5C33135F20B4001C35A5 /* ECCodeCompletionChunk.m in Sources */ = {isa = PBXBuildFile; fileRef = B70C5BD7135F20B4001C35A5 /* ECCodeCompletionChunk.m */; };
+		B70C5C34135F20B4001C35A5 /* ECCodeCompletionResult.m in Sources */ = {isa = PBXBuildFile; fileRef = B70C5BD9135F20B4001C35A5 /* ECCodeCompletionResult.m */; };
+		B70C5C35135F20B4001C35A5 /* ECCodeCompletionString.m in Sources */ = {isa = PBXBuildFile; fileRef = B70C5BDB135F20B4001C35A5 /* ECCodeCompletionString.m */; };
+		B70C5C36135F20B4001C35A5 /* ECCodeCursor.m in Sources */ = {isa = PBXBuildFile; fileRef = B70C5BDE135F20B4001C35A5 /* ECCodeCursor.m */; };
+		B70C5C37135F20B4001C35A5 /* ECCodeDiagnostic.m in Sources */ = {isa = PBXBuildFile; fileRef = B70C5BE1135F20B4001C35A5 /* ECCodeDiagnostic.m */; };
+		B70C5C38135F20B4001C35A5 /* ECCodeFixIt.m in Sources */ = {isa = PBXBuildFile; fileRef = B70C5BE3135F20B4001C35A5 /* ECCodeFixIt.m */; };
+		B70C5C39135F20B4001C35A5 /* ECCodeIndex.m in Sources */ = {isa = PBXBuildFile; fileRef = B70C5BE6135F20B4001C35A5 /* ECCodeIndex.m */; };
+		B70C5C3A135F20B4001C35A5 /* ECCodeSymbol.m in Sources */ = {isa = PBXBuildFile; fileRef = B70C5BE9135F20B4001C35A5 /* ECCodeSymbol.m */; };
+		B70C5C3B135F20B4001C35A5 /* ECCodeToken.m in Sources */ = {isa = PBXBuildFile; fileRef = B70C5BEB135F20B4001C35A5 /* ECCodeToken.m */; };
+		B70C5C3C135F20B4001C35A5 /* ECCodeUnit.m in Sources */ = {isa = PBXBuildFile; fileRef = B70C5BEE135F20B4001C35A5 /* ECCodeUnit.m */; };
+		B70C5C3D135F20B4001C35A5 /* libclang.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B70C5BF1135F20B4001C35A5 /* libclang.dylib */; };
+		B70C5C3E135F20B4001C35A5 /* ECHashing.m in Sources */ = {isa = PBXBuildFile; fileRef = B70C5BF4135F20B4001C35A5 /* ECHashing.m */; };
+		B70C5C3F135F20B4001C35A5 /* ECStackCache.m in Sources */ = {isa = PBXBuildFile; fileRef = B70C5BF6135F20B4001C35A5 /* ECStackCache.m */; };
+		B70C5C40135F20B4001C35A5 /* MurmurHash3.c in Sources */ = {isa = PBXBuildFile; fileRef = B70C5BF7135F20B4001C35A5 /* MurmurHash3.c */; };
+		B70C5C41135F20B4001C35A5 /* NSFileManager(ECAdditions).m in Sources */ = {isa = PBXBuildFile; fileRef = B70C5BFA135F20B4001C35A5 /* NSFileManager(ECAdditions).m */; };
+		B70C5C42135F20B4001C35A5 /* NSIndexPath+FixedIsEqual.m in Sources */ = {isa = PBXBuildFile; fileRef = B70C5BFC135F20B4001C35A5 /* NSIndexPath+FixedIsEqual.m */; };
+		B70C5C43135F20B4001C35A5 /* ECButton.m in Sources */ = {isa = PBXBuildFile; fileRef = B70C5C00135F20B4001C35A5 /* ECButton.m */; };
+		B70C5C44135F20B4001C35A5 /* ECCodeScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = B70C5C02135F20B4001C35A5 /* ECCodeScrollView.m */; };
+		B70C5C45135F20B4001C35A5 /* ECCodeView.m in Sources */ = {isa = PBXBuildFile; fileRef = B70C5C04135F20B4001C35A5 /* ECCodeView.m */; };
+		B70C5C46135F20B4001C35A5 /* ECCoreText.m in Sources */ = {isa = PBXBuildFile; fileRef = B70C5C06135F20B4001C35A5 /* ECCoreText.m */; };
+		B70C5C47135F20B4001C35A5 /* ECDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = B70C5C08135F20B4001C35A5 /* ECDocument.m */; };
+		B70C5C48135F20B4001C35A5 /* ECEditCodeView.m in Sources */ = {isa = PBXBuildFile; fileRef = B70C5C0A135F20B4001C35A5 /* ECEditCodeView.m */; };
+		B70C5C49135F20B4001C35A5 /* ECItemView.m in Sources */ = {isa = PBXBuildFile; fileRef = B70C5C0C135F20B4001C35A5 /* ECItemView.m */; };
+		B70C5C4A135F20B4001C35A5 /* ECItemViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B70C5C0E135F20B4001C35A5 /* ECItemViewCell.m */; };
+		B70C5C4B135F20B4001C35A5 /* ECJumpBar.m in Sources */ = {isa = PBXBuildFile; fileRef = B70C5C10135F20B4001C35A5 /* ECJumpBar.m */; };
+		B70C5C4C135F20B4001C35A5 /* ECLineMarksView.m in Sources */ = {isa = PBXBuildFile; fileRef = B70C5C12135F20B4001C35A5 /* ECLineMarksView.m */; };
+		B70C5C4D135F20B4001C35A5 /* ECPersistentDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = B70C5C14135F20B4001C35A5 /* ECPersistentDocument.m */; };
+		B70C5C4E135F20B4001C35A5 /* ECPopoverView.m in Sources */ = {isa = PBXBuildFile; fileRef = B70C5C16135F20B4001C35A5 /* ECPopoverView.m */; };
+		B70C5C4F135F20B4001C35A5 /* ECRectSet.m in Sources */ = {isa = PBXBuildFile; fileRef = B70C5C18135F20B4001C35A5 /* ECRectSet.m */; };
+		B70C5C50135F20B4001C35A5 /* ECSelectionHandleView.m in Sources */ = {isa = PBXBuildFile; fileRef = B70C5C1A135F20B4001C35A5 /* ECSelectionHandleView.m */; };
+		B70C5C51135F20B4001C35A5 /* ECTextDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = B70C5C1C135F20B4001C35A5 /* ECTextDocument.m */; };
+		B70C5C53135F20B4001C35A5 /* ECTextLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = B70C5C1F135F20B4001C35A5 /* ECTextLayer.m */; };
+		B70C5C54135F20B4001C35A5 /* ECTextOverlayLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = B70C5C21135F20B4001C35A5 /* ECTextOverlayLayer.m */; };
+		B70C5C55135F20B4001C35A5 /* ECTextOverlayStyle.m in Sources */ = {isa = PBXBuildFile; fileRef = B70C5C23135F20B4001C35A5 /* ECTextOverlayStyle.m */; };
+		B70C5C56135F20B4001C35A5 /* ECTextPosition.m in Sources */ = {isa = PBXBuildFile; fileRef = B70C5C25135F20B4001C35A5 /* ECTextPosition.m */; };
+		B70C5C57135F20B4001C35A5 /* ECTextRange.m in Sources */ = {isa = PBXBuildFile; fileRef = B70C5C27135F20B4001C35A5 /* ECTextRange.m */; };
+		B70C5C58135F20B4001C35A5 /* ECTextStyle.m in Sources */ = {isa = PBXBuildFile; fileRef = B70C5C29135F20B4001C35A5 /* ECTextStyle.m */; };
+		B70C5C59135F20B4001C35A5 /* UIColor+StyleColors.m in Sources */ = {isa = PBXBuildFile; fileRef = B70C5C2B135F20B4001C35A5 /* UIColor+StyleColors.m */; };
+		B70C5C5A135F20B4001C35A5 /* UIImage+BlockDrawing.m in Sources */ = {isa = PBXBuildFile; fileRef = B70C5C2D135F20B4001C35A5 /* UIImage+BlockDrawing.m */; };
+		B70C5C5B135F20B4001C35A5 /* UIView+ConcurrentAnimation.m in Sources */ = {isa = PBXBuildFile; fileRef = B70C5C2F135F20B4001C35A5 /* UIView+ConcurrentAnimation.m */; };
+		B70C5C5D135F247A001C35A5 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B70C5C5C135F247A001C35A5 /* CoreText.framework */; };
+		B70C5C5F135F2495001C35A5 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B70C5C5E135F2495001C35A5 /* QuartzCore.framework */; };
+		B70C5C60135F24D9001C35A5 /* libclang.dylib in Resources */ = {isa = PBXBuildFile; fileRef = B70C5BF1135F20B4001C35A5 /* libclang.dylib */; };
+		B70C5C6B135F4D93001C35A5 /* ECCodeIndexingTest.m in Sources */ = {isa = PBXBuildFile; fileRef = B70C5C6A135F4D93001C35A5 /* ECCodeIndexingTest.m */; };
+		B70C5C751362F16A001C35A5 /* editTests.m in Sources */ = {isa = PBXBuildFile; fileRef = B70C5C741362F16A001C35A5 /* editTests.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		B70C5B5F135F144E001C35A5 /* Tests.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Tests.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B70C5B63135F144E001C35A5 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		B70C5B65135F144E001C35A5 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		B70C5B67135F144E001C35A5 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		B70C5B6B135F144E001C35A5 /* Tests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Tests-Info.plist"; sourceTree = "<group>"; };
+		B70C5B6D135F144E001C35A5 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		B70C5B90135F14FD001C35A5 /* GHUnitIOS.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GHUnitIOS.framework; path = "../../../../Shared/Track/gh-unit/Project-IPhone/build/Framework/GHUnitIOS.framework"; sourceTree = "<group>"; };
+		B70C5B92135F150A001C35A5 /* GHUnitIOSTestMain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GHUnitIOSTestMain.m; path = "../../../../../Shared/Track/gh-unit/Project-IPhone/GHUnitIOSTestMain.m"; sourceTree = "<group>"; };
+		B70C5B94135F1702001C35A5 /* ECTextDocumentTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECTextDocumentTest.m; path = ../../Frameworks/ECUIKit/ECTextDocumentTest.m; sourceTree = "<group>"; };
+		B70C5BC5135F1BD1001C35A5 /* Tests-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Tests-Prefix.pch"; sourceTree = "<group>"; };
+		B70C5BD0135F20B4001C35A5 /* ECClangCodeCursor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECClangCodeCursor.h; sourceTree = "<group>"; };
+		B70C5BD1135F20B4001C35A5 /* ECClangCodeCursor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECClangCodeCursor.m; sourceTree = "<group>"; };
+		B70C5BD2135F20B4001C35A5 /* ECClangCodeIndex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECClangCodeIndex.h; sourceTree = "<group>"; };
+		B70C5BD3135F20B4001C35A5 /* ECClangCodeIndex.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECClangCodeIndex.m; sourceTree = "<group>"; };
+		B70C5BD4135F20B4001C35A5 /* ECClangCodeUnit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECClangCodeUnit.h; sourceTree = "<group>"; };
+		B70C5BD5135F20B4001C35A5 /* ECClangCodeUnit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECClangCodeUnit.m; sourceTree = "<group>"; };
+		B70C5BD6135F20B4001C35A5 /* ECCodeCompletionChunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeCompletionChunk.h; sourceTree = "<group>"; };
+		B70C5BD7135F20B4001C35A5 /* ECCodeCompletionChunk.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeCompletionChunk.m; sourceTree = "<group>"; };
+		B70C5BD8135F20B4001C35A5 /* ECCodeCompletionResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeCompletionResult.h; sourceTree = "<group>"; };
+		B70C5BD9135F20B4001C35A5 /* ECCodeCompletionResult.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeCompletionResult.m; sourceTree = "<group>"; };
+		B70C5BDA135F20B4001C35A5 /* ECCodeCompletionString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeCompletionString.h; sourceTree = "<group>"; };
+		B70C5BDB135F20B4001C35A5 /* ECCodeCompletionString.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeCompletionString.m; sourceTree = "<group>"; };
+		B70C5BDC135F20B4001C35A5 /* ECCodeCursor(Private).h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ECCodeCursor(Private).h"; sourceTree = "<group>"; };
+		B70C5BDD135F20B4001C35A5 /* ECCodeCursor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeCursor.h; sourceTree = "<group>"; };
+		B70C5BDE135F20B4001C35A5 /* ECCodeCursor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeCursor.m; sourceTree = "<group>"; };
+		B70C5BDF135F20B4001C35A5 /* ECCodeCursorPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeCursorPlugin.h; sourceTree = "<group>"; };
+		B70C5BE0135F20B4001C35A5 /* ECCodeDiagnostic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeDiagnostic.h; sourceTree = "<group>"; };
+		B70C5BE1135F20B4001C35A5 /* ECCodeDiagnostic.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeDiagnostic.m; sourceTree = "<group>"; };
+		B70C5BE2135F20B4001C35A5 /* ECCodeFixIt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeFixIt.h; sourceTree = "<group>"; };
+		B70C5BE3135F20B4001C35A5 /* ECCodeFixIt.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeFixIt.m; sourceTree = "<group>"; };
+		B70C5BE4135F20B4001C35A5 /* ECCodeIndex(Private).h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ECCodeIndex(Private).h"; sourceTree = "<group>"; };
+		B70C5BE5135F20B4001C35A5 /* ECCodeIndex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeIndex.h; sourceTree = "<group>"; };
+		B70C5BE6135F20B4001C35A5 /* ECCodeIndex.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeIndex.m; sourceTree = "<group>"; };
+		B70C5BE7135F20B4001C35A5 /* ECCodeIndexPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeIndexPlugin.h; sourceTree = "<group>"; };
+		B70C5BE8135F20B4001C35A5 /* ECCodeSymbol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeSymbol.h; sourceTree = "<group>"; };
+		B70C5BE9135F20B4001C35A5 /* ECCodeSymbol.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeSymbol.m; sourceTree = "<group>"; };
+		B70C5BEA135F20B4001C35A5 /* ECCodeToken.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeToken.h; sourceTree = "<group>"; };
+		B70C5BEB135F20B4001C35A5 /* ECCodeToken.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeToken.m; sourceTree = "<group>"; };
+		B70C5BEC135F20B4001C35A5 /* ECCodeUnit(Private).h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ECCodeUnit(Private).h"; sourceTree = "<group>"; };
+		B70C5BED135F20B4001C35A5 /* ECCodeUnit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeUnit.h; sourceTree = "<group>"; };
+		B70C5BEE135F20B4001C35A5 /* ECCodeUnit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeUnit.m; sourceTree = "<group>"; };
+		B70C5BEF135F20B4001C35A5 /* ECCodeUnitPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeUnitPlugin.h; sourceTree = "<group>"; };
+		B70C5BF0135F20B4001C35A5 /* Index.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Index.h; sourceTree = "<group>"; };
+		B70C5BF1135F20B4001C35A5 /* libclang.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libclang.dylib; sourceTree = "<group>"; };
+		B70C5BF3135F20B4001C35A5 /* ECHashing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECHashing.h; sourceTree = "<group>"; };
+		B70C5BF4135F20B4001C35A5 /* ECHashing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECHashing.m; sourceTree = "<group>"; };
+		B70C5BF5135F20B4001C35A5 /* ECStackCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECStackCache.h; sourceTree = "<group>"; };
+		B70C5BF6135F20B4001C35A5 /* ECStackCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECStackCache.m; sourceTree = "<group>"; };
+		B70C5BF7135F20B4001C35A5 /* MurmurHash3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = MurmurHash3.c; sourceTree = "<group>"; };
+		B70C5BF8135F20B4001C35A5 /* MurmurHash3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MurmurHash3.h; sourceTree = "<group>"; };
+		B70C5BF9135F20B4001C35A5 /* NSFileManager(ECAdditions).h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSFileManager(ECAdditions).h"; sourceTree = "<group>"; };
+		B70C5BFA135F20B4001C35A5 /* NSFileManager(ECAdditions).m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSFileManager(ECAdditions).m"; sourceTree = "<group>"; };
+		B70C5BFB135F20B4001C35A5 /* NSIndexPath+FixedIsEqual.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSIndexPath+FixedIsEqual.h"; sourceTree = "<group>"; };
+		B70C5BFC135F20B4001C35A5 /* NSIndexPath+FixedIsEqual.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSIndexPath+FixedIsEqual.m"; sourceTree = "<group>"; };
+		B70C5BFD135F20B4001C35A5 /* pstdint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pstdint.h; sourceTree = "<group>"; };
+		B70C5BFF135F20B4001C35A5 /* ECButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECButton.h; sourceTree = "<group>"; };
+		B70C5C00135F20B4001C35A5 /* ECButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECButton.m; sourceTree = "<group>"; };
+		B70C5C01135F20B4001C35A5 /* ECCodeScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeScrollView.h; sourceTree = "<group>"; };
+		B70C5C02135F20B4001C35A5 /* ECCodeScrollView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeScrollView.m; sourceTree = "<group>"; };
+		B70C5C03135F20B4001C35A5 /* ECCodeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeView.h; sourceTree = "<group>"; };
+		B70C5C04135F20B4001C35A5 /* ECCodeView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeView.m; sourceTree = "<group>"; };
+		B70C5C05135F20B4001C35A5 /* ECCoreText.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCoreText.h; sourceTree = "<group>"; };
+		B70C5C06135F20B4001C35A5 /* ECCoreText.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCoreText.m; sourceTree = "<group>"; };
+		B70C5C07135F20B4001C35A5 /* ECDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECDocument.h; sourceTree = "<group>"; };
+		B70C5C08135F20B4001C35A5 /* ECDocument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECDocument.m; sourceTree = "<group>"; };
+		B70C5C09135F20B4001C35A5 /* ECEditCodeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECEditCodeView.h; sourceTree = "<group>"; };
+		B70C5C0A135F20B4001C35A5 /* ECEditCodeView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECEditCodeView.m; sourceTree = "<group>"; };
+		B70C5C0B135F20B4001C35A5 /* ECItemView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECItemView.h; sourceTree = "<group>"; };
+		B70C5C0C135F20B4001C35A5 /* ECItemView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECItemView.m; sourceTree = "<group>"; };
+		B70C5C0D135F20B4001C35A5 /* ECItemViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECItemViewCell.h; sourceTree = "<group>"; };
+		B70C5C0E135F20B4001C35A5 /* ECItemViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECItemViewCell.m; sourceTree = "<group>"; };
+		B70C5C0F135F20B4001C35A5 /* ECJumpBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECJumpBar.h; sourceTree = "<group>"; };
+		B70C5C10135F20B4001C35A5 /* ECJumpBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECJumpBar.m; sourceTree = "<group>"; };
+		B70C5C11135F20B4001C35A5 /* ECLineMarksView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECLineMarksView.h; sourceTree = "<group>"; };
+		B70C5C12135F20B4001C35A5 /* ECLineMarksView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECLineMarksView.m; sourceTree = "<group>"; };
+		B70C5C13135F20B4001C35A5 /* ECPersistentDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECPersistentDocument.h; sourceTree = "<group>"; };
+		B70C5C14135F20B4001C35A5 /* ECPersistentDocument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECPersistentDocument.m; sourceTree = "<group>"; };
+		B70C5C15135F20B4001C35A5 /* ECPopoverView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECPopoverView.h; sourceTree = "<group>"; };
+		B70C5C16135F20B4001C35A5 /* ECPopoverView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECPopoverView.m; sourceTree = "<group>"; };
+		B70C5C17135F20B4001C35A5 /* ECRectSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECRectSet.h; sourceTree = "<group>"; };
+		B70C5C18135F20B4001C35A5 /* ECRectSet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECRectSet.m; sourceTree = "<group>"; };
+		B70C5C19135F20B4001C35A5 /* ECSelectionHandleView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECSelectionHandleView.h; sourceTree = "<group>"; };
+		B70C5C1A135F20B4001C35A5 /* ECSelectionHandleView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECSelectionHandleView.m; sourceTree = "<group>"; };
+		B70C5C1B135F20B4001C35A5 /* ECTextDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECTextDocument.h; sourceTree = "<group>"; };
+		B70C5C1C135F20B4001C35A5 /* ECTextDocument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECTextDocument.m; sourceTree = "<group>"; };
+		B70C5C1E135F20B4001C35A5 /* ECTextLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECTextLayer.h; sourceTree = "<group>"; };
+		B70C5C1F135F20B4001C35A5 /* ECTextLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECTextLayer.m; sourceTree = "<group>"; };
+		B70C5C20135F20B4001C35A5 /* ECTextOverlayLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECTextOverlayLayer.h; sourceTree = "<group>"; };
+		B70C5C21135F20B4001C35A5 /* ECTextOverlayLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECTextOverlayLayer.m; sourceTree = "<group>"; };
+		B70C5C22135F20B4001C35A5 /* ECTextOverlayStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECTextOverlayStyle.h; sourceTree = "<group>"; };
+		B70C5C23135F20B4001C35A5 /* ECTextOverlayStyle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECTextOverlayStyle.m; sourceTree = "<group>"; };
+		B70C5C24135F20B4001C35A5 /* ECTextPosition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECTextPosition.h; sourceTree = "<group>"; };
+		B70C5C25135F20B4001C35A5 /* ECTextPosition.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECTextPosition.m; sourceTree = "<group>"; };
+		B70C5C26135F20B4001C35A5 /* ECTextRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECTextRange.h; sourceTree = "<group>"; };
+		B70C5C27135F20B4001C35A5 /* ECTextRange.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECTextRange.m; sourceTree = "<group>"; };
+		B70C5C28135F20B4001C35A5 /* ECTextStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECTextStyle.h; sourceTree = "<group>"; };
+		B70C5C29135F20B4001C35A5 /* ECTextStyle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECTextStyle.m; sourceTree = "<group>"; };
+		B70C5C2A135F20B4001C35A5 /* UIColor+StyleColors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+StyleColors.h"; sourceTree = "<group>"; };
+		B70C5C2B135F20B4001C35A5 /* UIColor+StyleColors.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+StyleColors.m"; sourceTree = "<group>"; };
+		B70C5C2C135F20B4001C35A5 /* UIImage+BlockDrawing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+BlockDrawing.h"; sourceTree = "<group>"; };
+		B70C5C2D135F20B4001C35A5 /* UIImage+BlockDrawing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+BlockDrawing.m"; sourceTree = "<group>"; };
+		B70C5C2E135F20B4001C35A5 /* UIView+ConcurrentAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+ConcurrentAnimation.h"; sourceTree = "<group>"; };
+		B70C5C2F135F20B4001C35A5 /* UIView+ConcurrentAnimation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+ConcurrentAnimation.m"; sourceTree = "<group>"; };
+		B70C5C5C135F247A001C35A5 /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
+		B70C5C5E135F2495001C35A5 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		B70C5C6A135F4D93001C35A5 /* ECCodeIndexingTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECCodeIndexingTest.m; path = ../../Frameworks/ECCodeIndexing/ECCodeIndexingTest.m; sourceTree = "<group>"; };
+		B70C5C741362F16A001C35A5 /* editTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = editTests.m; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		B70C5B5C135F144E001C35A5 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B70C5C5F135F2495001C35A5 /* QuartzCore.framework in Frameworks */,
+				B70C5C5D135F247A001C35A5 /* CoreText.framework in Frameworks */,
+				B70C5B64135F144E001C35A5 /* UIKit.framework in Frameworks */,
+				B70C5B66135F144E001C35A5 /* Foundation.framework in Frameworks */,
+				B70C5B68135F144E001C35A5 /* CoreGraphics.framework in Frameworks */,
+				B70C5B91135F14FD001C35A5 /* GHUnitIOS.framework in Frameworks */,
+				B70C5C3D135F20B4001C35A5 /* libclang.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		B70C5B54135F144E001C35A5 = {
+			isa = PBXGroup;
+			children = (
+				B70C5BCE135F20B4001C35A5 /* Frameworks */,
+				B70C5B69135F144E001C35A5 /* Tests */,
+				B70C5B62135F144E001C35A5 /* Frameworks */,
+				B70C5B60135F144E001C35A5 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		B70C5B60135F144E001C35A5 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				B70C5B5F135F144E001C35A5 /* Tests.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B70C5B62135F144E001C35A5 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				B70C5C5E135F2495001C35A5 /* QuartzCore.framework */,
+				B70C5C5C135F247A001C35A5 /* CoreText.framework */,
+				B70C5B90135F14FD001C35A5 /* GHUnitIOS.framework */,
+				B70C5B63135F144E001C35A5 /* UIKit.framework */,
+				B70C5B65135F144E001C35A5 /* Foundation.framework */,
+				B70C5B67135F144E001C35A5 /* CoreGraphics.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		B70C5B69135F144E001C35A5 /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				B70C5C741362F16A001C35A5 /* editTests.m */,
+				B70C5B94135F1702001C35A5 /* ECTextDocumentTest.m */,
+				B70C5C6A135F4D93001C35A5 /* ECCodeIndexingTest.m */,
+				B70C5B6A135F144E001C35A5 /* Supporting Files */,
+			);
+			path = Tests;
+			sourceTree = "<group>";
+		};
+		B70C5B6A135F144E001C35A5 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				B70C5B92135F150A001C35A5 /* GHUnitIOSTestMain.m */,
+				B70C5B6B135F144E001C35A5 /* Tests-Info.plist */,
+				B70C5B6C135F144E001C35A5 /* InfoPlist.strings */,
+				B70C5BC5135F1BD1001C35A5 /* Tests-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		B70C5BCE135F20B4001C35A5 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				B70C5BCF135F20B4001C35A5 /* ECCodeIndexing */,
+				B70C5BF2135F20B4001C35A5 /* ECFoundation */,
+				B70C5BFE135F20B4001C35A5 /* ECUIKit */,
+			);
+			name = Frameworks;
+			path = ../Frameworks;
+			sourceTree = "<group>";
+		};
+		B70C5BCF135F20B4001C35A5 /* ECCodeIndexing */ = {
+			isa = PBXGroup;
+			children = (
+				B70C5BD0135F20B4001C35A5 /* ECClangCodeCursor.h */,
+				B70C5BD1135F20B4001C35A5 /* ECClangCodeCursor.m */,
+				B70C5BD2135F20B4001C35A5 /* ECClangCodeIndex.h */,
+				B70C5BD3135F20B4001C35A5 /* ECClangCodeIndex.m */,
+				B70C5BD4135F20B4001C35A5 /* ECClangCodeUnit.h */,
+				B70C5BD5135F20B4001C35A5 /* ECClangCodeUnit.m */,
+				B70C5BD6135F20B4001C35A5 /* ECCodeCompletionChunk.h */,
+				B70C5BD7135F20B4001C35A5 /* ECCodeCompletionChunk.m */,
+				B70C5BD8135F20B4001C35A5 /* ECCodeCompletionResult.h */,
+				B70C5BD9135F20B4001C35A5 /* ECCodeCompletionResult.m */,
+				B70C5BDA135F20B4001C35A5 /* ECCodeCompletionString.h */,
+				B70C5BDB135F20B4001C35A5 /* ECCodeCompletionString.m */,
+				B70C5BDC135F20B4001C35A5 /* ECCodeCursor(Private).h */,
+				B70C5BDD135F20B4001C35A5 /* ECCodeCursor.h */,
+				B70C5BDE135F20B4001C35A5 /* ECCodeCursor.m */,
+				B70C5BDF135F20B4001C35A5 /* ECCodeCursorPlugin.h */,
+				B70C5BE0135F20B4001C35A5 /* ECCodeDiagnostic.h */,
+				B70C5BE1135F20B4001C35A5 /* ECCodeDiagnostic.m */,
+				B70C5BE2135F20B4001C35A5 /* ECCodeFixIt.h */,
+				B70C5BE3135F20B4001C35A5 /* ECCodeFixIt.m */,
+				B70C5BE4135F20B4001C35A5 /* ECCodeIndex(Private).h */,
+				B70C5BE5135F20B4001C35A5 /* ECCodeIndex.h */,
+				B70C5BE6135F20B4001C35A5 /* ECCodeIndex.m */,
+				B70C5BE7135F20B4001C35A5 /* ECCodeIndexPlugin.h */,
+				B70C5BE8135F20B4001C35A5 /* ECCodeSymbol.h */,
+				B70C5BE9135F20B4001C35A5 /* ECCodeSymbol.m */,
+				B70C5BEA135F20B4001C35A5 /* ECCodeToken.h */,
+				B70C5BEB135F20B4001C35A5 /* ECCodeToken.m */,
+				B70C5BEC135F20B4001C35A5 /* ECCodeUnit(Private).h */,
+				B70C5BED135F20B4001C35A5 /* ECCodeUnit.h */,
+				B70C5BEE135F20B4001C35A5 /* ECCodeUnit.m */,
+				B70C5BEF135F20B4001C35A5 /* ECCodeUnitPlugin.h */,
+				B70C5BF0135F20B4001C35A5 /* Index.h */,
+				B70C5BF1135F20B4001C35A5 /* libclang.dylib */,
+			);
+			path = ECCodeIndexing;
+			sourceTree = "<group>";
+		};
+		B70C5BF2135F20B4001C35A5 /* ECFoundation */ = {
+			isa = PBXGroup;
+			children = (
+				B70C5BF3135F20B4001C35A5 /* ECHashing.h */,
+				B70C5BF4135F20B4001C35A5 /* ECHashing.m */,
+				B70C5BF5135F20B4001C35A5 /* ECStackCache.h */,
+				B70C5BF6135F20B4001C35A5 /* ECStackCache.m */,
+				B70C5BF7135F20B4001C35A5 /* MurmurHash3.c */,
+				B70C5BF8135F20B4001C35A5 /* MurmurHash3.h */,
+				B70C5BF9135F20B4001C35A5 /* NSFileManager(ECAdditions).h */,
+				B70C5BFA135F20B4001C35A5 /* NSFileManager(ECAdditions).m */,
+				B70C5BFB135F20B4001C35A5 /* NSIndexPath+FixedIsEqual.h */,
+				B70C5BFC135F20B4001C35A5 /* NSIndexPath+FixedIsEqual.m */,
+				B70C5BFD135F20B4001C35A5 /* pstdint.h */,
+			);
+			path = ECFoundation;
+			sourceTree = "<group>";
+		};
+		B70C5BFE135F20B4001C35A5 /* ECUIKit */ = {
+			isa = PBXGroup;
+			children = (
+				B70C5BFF135F20B4001C35A5 /* ECButton.h */,
+				B70C5C00135F20B4001C35A5 /* ECButton.m */,
+				B70C5C01135F20B4001C35A5 /* ECCodeScrollView.h */,
+				B70C5C02135F20B4001C35A5 /* ECCodeScrollView.m */,
+				B70C5C03135F20B4001C35A5 /* ECCodeView.h */,
+				B70C5C04135F20B4001C35A5 /* ECCodeView.m */,
+				B70C5C05135F20B4001C35A5 /* ECCoreText.h */,
+				B70C5C06135F20B4001C35A5 /* ECCoreText.m */,
+				B70C5C07135F20B4001C35A5 /* ECDocument.h */,
+				B70C5C08135F20B4001C35A5 /* ECDocument.m */,
+				B70C5C09135F20B4001C35A5 /* ECEditCodeView.h */,
+				B70C5C0A135F20B4001C35A5 /* ECEditCodeView.m */,
+				B70C5C0B135F20B4001C35A5 /* ECItemView.h */,
+				B70C5C0C135F20B4001C35A5 /* ECItemView.m */,
+				B70C5C0D135F20B4001C35A5 /* ECItemViewCell.h */,
+				B70C5C0E135F20B4001C35A5 /* ECItemViewCell.m */,
+				B70C5C0F135F20B4001C35A5 /* ECJumpBar.h */,
+				B70C5C10135F20B4001C35A5 /* ECJumpBar.m */,
+				B70C5C11135F20B4001C35A5 /* ECLineMarksView.h */,
+				B70C5C12135F20B4001C35A5 /* ECLineMarksView.m */,
+				B70C5C13135F20B4001C35A5 /* ECPersistentDocument.h */,
+				B70C5C14135F20B4001C35A5 /* ECPersistentDocument.m */,
+				B70C5C15135F20B4001C35A5 /* ECPopoverView.h */,
+				B70C5C16135F20B4001C35A5 /* ECPopoverView.m */,
+				B70C5C17135F20B4001C35A5 /* ECRectSet.h */,
+				B70C5C18135F20B4001C35A5 /* ECRectSet.m */,
+				B70C5C19135F20B4001C35A5 /* ECSelectionHandleView.h */,
+				B70C5C1A135F20B4001C35A5 /* ECSelectionHandleView.m */,
+				B70C5C1B135F20B4001C35A5 /* ECTextDocument.h */,
+				B70C5C1C135F20B4001C35A5 /* ECTextDocument.m */,
+				B70C5C1E135F20B4001C35A5 /* ECTextLayer.h */,
+				B70C5C1F135F20B4001C35A5 /* ECTextLayer.m */,
+				B70C5C20135F20B4001C35A5 /* ECTextOverlayLayer.h */,
+				B70C5C21135F20B4001C35A5 /* ECTextOverlayLayer.m */,
+				B70C5C22135F20B4001C35A5 /* ECTextOverlayStyle.h */,
+				B70C5C23135F20B4001C35A5 /* ECTextOverlayStyle.m */,
+				B70C5C24135F20B4001C35A5 /* ECTextPosition.h */,
+				B70C5C25135F20B4001C35A5 /* ECTextPosition.m */,
+				B70C5C26135F20B4001C35A5 /* ECTextRange.h */,
+				B70C5C27135F20B4001C35A5 /* ECTextRange.m */,
+				B70C5C28135F20B4001C35A5 /* ECTextStyle.h */,
+				B70C5C29135F20B4001C35A5 /* ECTextStyle.m */,
+				B70C5C2A135F20B4001C35A5 /* UIColor+StyleColors.h */,
+				B70C5C2B135F20B4001C35A5 /* UIColor+StyleColors.m */,
+				B70C5C2C135F20B4001C35A5 /* UIImage+BlockDrawing.h */,
+				B70C5C2D135F20B4001C35A5 /* UIImage+BlockDrawing.m */,
+				B70C5C2E135F20B4001C35A5 /* UIView+ConcurrentAnimation.h */,
+				B70C5C2F135F20B4001C35A5 /* UIView+ConcurrentAnimation.m */,
+			);
+			path = ECUIKit;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		B70C5B5E135F144E001C35A5 /* Tests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B70C5B80135F144E001C35A5 /* Build configuration list for PBXNativeTarget "Tests" */;
+			buildPhases = (
+				B70C5B5B135F144E001C35A5 /* Sources */,
+				B70C5B5C135F144E001C35A5 /* Frameworks */,
+				B70C5B5D135F144E001C35A5 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Tests;
+			productName = Tests;
+			productReference = B70C5B5F135F144E001C35A5 /* Tests.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		B70C5B56135F144E001C35A5 /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = B70C5B59135F144E001C35A5 /* Build configuration list for PBXProject "Tests" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = B70C5B54135F144E001C35A5;
+			productRefGroup = B70C5B60135F144E001C35A5 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				B70C5B5E135F144E001C35A5 /* Tests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		B70C5B5D135F144E001C35A5 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B70C5C60135F24D9001C35A5 /* libclang.dylib in Resources */,
+				B70C5B6E135F144E001C35A5 /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		B70C5B5B135F144E001C35A5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B70C5B93135F150A001C35A5 /* GHUnitIOSTestMain.m in Sources */,
+				B70C5B95135F1702001C35A5 /* ECTextDocumentTest.m in Sources */,
+				B70C5C30135F20B4001C35A5 /* ECClangCodeCursor.m in Sources */,
+				B70C5C31135F20B4001C35A5 /* ECClangCodeIndex.m in Sources */,
+				B70C5C32135F20B4001C35A5 /* ECClangCodeUnit.m in Sources */,
+				B70C5C33135F20B4001C35A5 /* ECCodeCompletionChunk.m in Sources */,
+				B70C5C34135F20B4001C35A5 /* ECCodeCompletionResult.m in Sources */,
+				B70C5C35135F20B4001C35A5 /* ECCodeCompletionString.m in Sources */,
+				B70C5C36135F20B4001C35A5 /* ECCodeCursor.m in Sources */,
+				B70C5C37135F20B4001C35A5 /* ECCodeDiagnostic.m in Sources */,
+				B70C5C38135F20B4001C35A5 /* ECCodeFixIt.m in Sources */,
+				B70C5C39135F20B4001C35A5 /* ECCodeIndex.m in Sources */,
+				B70C5C3A135F20B4001C35A5 /* ECCodeSymbol.m in Sources */,
+				B70C5C3B135F20B4001C35A5 /* ECCodeToken.m in Sources */,
+				B70C5C3C135F20B4001C35A5 /* ECCodeUnit.m in Sources */,
+				B70C5C3E135F20B4001C35A5 /* ECHashing.m in Sources */,
+				B70C5C3F135F20B4001C35A5 /* ECStackCache.m in Sources */,
+				B70C5C40135F20B4001C35A5 /* MurmurHash3.c in Sources */,
+				B70C5C41135F20B4001C35A5 /* NSFileManager(ECAdditions).m in Sources */,
+				B70C5C42135F20B4001C35A5 /* NSIndexPath+FixedIsEqual.m in Sources */,
+				B70C5C43135F20B4001C35A5 /* ECButton.m in Sources */,
+				B70C5C44135F20B4001C35A5 /* ECCodeScrollView.m in Sources */,
+				B70C5C45135F20B4001C35A5 /* ECCodeView.m in Sources */,
+				B70C5C46135F20B4001C35A5 /* ECCoreText.m in Sources */,
+				B70C5C47135F20B4001C35A5 /* ECDocument.m in Sources */,
+				B70C5C48135F20B4001C35A5 /* ECEditCodeView.m in Sources */,
+				B70C5C49135F20B4001C35A5 /* ECItemView.m in Sources */,
+				B70C5C4A135F20B4001C35A5 /* ECItemViewCell.m in Sources */,
+				B70C5C4B135F20B4001C35A5 /* ECJumpBar.m in Sources */,
+				B70C5C4C135F20B4001C35A5 /* ECLineMarksView.m in Sources */,
+				B70C5C4D135F20B4001C35A5 /* ECPersistentDocument.m in Sources */,
+				B70C5C4E135F20B4001C35A5 /* ECPopoverView.m in Sources */,
+				B70C5C4F135F20B4001C35A5 /* ECRectSet.m in Sources */,
+				B70C5C50135F20B4001C35A5 /* ECSelectionHandleView.m in Sources */,
+				B70C5C51135F20B4001C35A5 /* ECTextDocument.m in Sources */,
+				B70C5C53135F20B4001C35A5 /* ECTextLayer.m in Sources */,
+				B70C5C54135F20B4001C35A5 /* ECTextOverlayLayer.m in Sources */,
+				B70C5C55135F20B4001C35A5 /* ECTextOverlayStyle.m in Sources */,
+				B70C5C56135F20B4001C35A5 /* ECTextPosition.m in Sources */,
+				B70C5C57135F20B4001C35A5 /* ECTextRange.m in Sources */,
+				B70C5C58135F20B4001C35A5 /* ECTextStyle.m in Sources */,
+				B70C5C59135F20B4001C35A5 /* UIColor+StyleColors.m in Sources */,
+				B70C5C5A135F20B4001C35A5 /* UIImage+BlockDrawing.m in Sources */,
+				B70C5C5B135F20B4001C35A5 /* UIView+ConcurrentAnimation.m in Sources */,
+				B70C5C6B135F4D93001C35A5 /* ECCodeIndexingTest.m in Sources */,
+				B70C5C751362F16A001C35A5 /* editTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		B70C5B6C135F144E001C35A5 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				B70C5B6D135F144E001C35A5 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		B70C5B7E135F144E001C35A5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_UNIVERSAL_IPHONE_OS)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = DEBUG;
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = com.apple.compilers.llvmgcc42;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = ../Frameworks;
+				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
+				LD_RUNPATH_SEARCH_PATHS = "@loader_path/";
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"-all_load",
+				);
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 2;
+			};
+			name = Debug;
+		};
+		B70C5B7F135F144E001C35A5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_UNIVERSAL_IPHONE_OS)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_VERSION = com.apple.compilers.llvmgcc42;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = ../Frameworks;
+				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
+				LD_RUNPATH_SEARCH_PATHS = "@loader_path/";
+				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"-all_load",
+				);
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 2;
+			};
+			name = Release;
+		};
+		B70C5B81135F144E001C35A5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../../../../Shared/Track/gh-unit/Project-IPhone/build/Framework\"",
+				);
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Tests/Tests-Prefix.pch";
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				INFOPLIST_FILE = "Tests/Tests-Info.plist";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../Frameworks/ECCodeIndexing\"",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		B70C5B82135F144E001C35A5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../../../../Shared/Track/gh-unit/Project-IPhone/build/Framework\"",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Tests/Tests-Prefix.pch";
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				INFOPLIST_FILE = "Tests/Tests-Info.plist";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../Frameworks/ECCodeIndexing\"",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				VALIDATE_PRODUCT = YES;
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		B70C5B59135F144E001C35A5 /* Build configuration list for PBXProject "Tests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B70C5B7E135F144E001C35A5 /* Debug */,
+				B70C5B7F135F144E001C35A5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B70C5B80135F144E001C35A5 /* Build configuration list for PBXNativeTarget "Tests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B70C5B81135F144E001C35A5 /* Debug */,
+				B70C5B82135F144E001C35A5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = B70C5B56135F144E001C35A5 /* Project object */;
+}

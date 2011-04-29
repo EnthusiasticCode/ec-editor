@@ -1,119 +1,99 @@
 //
 //  ECItemView.m
-//  edit
+//  edit-single-project-ungrouped
 //
-//  Created by Uri Baghin on 4/11/11.
+//  Created by Uri Baghin on 3/31/11.
 //  Copyright 2011 __MyCompanyName__. All rights reserved.
 //
 
 #import "ECItemView.h"
-#import "UIView+ConcurrentAnimation.h"
+#import "ECItemViewCell.h"
+#import <ECUIKit/UIView+ConcurrentAnimation.h>
+#import <ECFoundation/ECStackCache.h>
+#import <ECFoundation/NSIndexPath+FixedIsEqual.h>
 
-const NSUInteger ECItemViewItemNotFound = NSUIntegerMax;
+const CGFloat ECItemViewShortAnimationDuration = 0.15;
+const NSUInteger ECItemViewCellBufferSize = 10;
+const NSUInteger ECItemViewHeaderBufferSize = 5;
+const NSUInteger ECItemViewGroupSeparatorBufferSize = 20;
 
-@interface ECItemViewDragContainer : UIView
-@property (nonatomic, retain) UIView *view;
-- (id)initWithView:(UIView *)view;
-+ (id)containerWithView:(UIView *)view;
+@interface UIScrollView (MethodsInUIGestureRecognizerDelegateProtocolAppleCouldntBotherDeclaring)
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch;
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer;
+- (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer;
 @end
-
-#pragma mark -
-
-@implementation ECItemViewDragContainer
-
-@synthesize view = _view;
-
-- (void)setView:(UIView *)view
-{
-    if (view == _view)
-        return;
-    [self willChangeValueForKey:@"view"];
-    if ([_view superview] == self)
-        [_view removeFromSuperview];        
-    [_view release];
-    _view = [view retain];
-    if (_view)
-    {
-        self.frame = _view.frame;
-        [self addSubview:_view];
-        _view.center = CGPointMake(CGRectGetMidX(self.bounds), CGRectGetMidY(self.bounds));
-    }
-}
-
-- (void)dealloc
-{
-    self.view = nil;
-    [super dealloc];
-}
-
-- (id)initWithView:(UIView *)view
-{
-    self = [super init];
-    if (!self)
-        return nil;
-    self.view = view;
-    return self;
-}
-
-- (BOOL)pointInside:(CGPoint)point withEvent:(UIEvent *)event
-{
-    return NO;
-}
-
-+ (id)containerWithView:(UIView *)view
-{
-    id container = [self alloc];
-    container = [container initWithView:view];
-    return [container autorelease];
-}
-
-@end
-
-#pragma mark -
 
 @interface ECItemView ()
 {
     @private
-    BOOL _delegateDidSelectItem;
-    BOOL _delegateShouldDragItem;
-    BOOL _delegateCanDropItem;
-    BOOL _delegateDidDropItem;
-    NSMutableArray *_items;
-    NSUInteger _isBatchUpdating;
-    NSMutableDictionary *_itemsToInsert;
-    NSMutableDictionary *_itemsToDelete;
-    NSMutableDictionary *_itemsToReload;
+    struct {
+        unsigned int superGestureRecognizerShouldBegin:1;
+        unsigned int superGestureRecognizerShouldRecognizeSimultaneously:1;
+        unsigned int superGestureRecognizerShouldReceiveTouch:1;
+        unsigned int dataSourceNumberOfItemsInGroupInArea:1;
+        unsigned int dataSourceCellForItemAtIndexPath:1;
+        unsigned int dataSourceNumberOfAreasInTableView:1;
+        unsigned int dataSourceNumberOfGroupsInArea:1;
+        unsigned int dataSourceTitleForHeaderInArea:1;
+        unsigned int dataSourceCanEditItem:1;
+        unsigned int dataSourceCanMoveItem:1;
+        unsigned int dataSourceDeleteItem:1;
+        unsigned int dataSourceMoveItem:1;
+        unsigned int dataSourceInsertGroup:1;
+        unsigned int dataSourceDeleteGroup:1;
+        unsigned int dataSourceMoveGroup:1;
+        unsigned int dataSourceMoveArea:1;
+        unsigned int delegateWillSelectItem:1;
+        unsigned int delegateWillDeselectItem:1;
+        unsigned int delegateDidSelectItem:1;
+        unsigned int delegateDidDeselectItem:1;
+    } _flags;
     BOOL _isAnimating;
-    UITapGestureRecognizer *_tapRecognizer;
-    UIPanGestureRecognizer *_dragRecognizer;
+    NSMutableArray *_areas;
+    NSMutableArray *_headerTitles;
+    ECStackCache *_headerCache;
+    ECStackCache *_groupSeparatorCache;
+    ECStackCache *_cellCache;
+    NSMutableDictionary *_visibleCells;
+    NSMutableDictionary *_visibleHeaders;
+    NSMutableDictionary *_visibleSeparators;
+    UITapGestureRecognizer *_tapGestureRecognizer;
+    UILongPressGestureRecognizer *_longPressGestureRecognizer;
     BOOL _isDragging;
-    ECItemViewDragContainer *_draggedItemContainer;
-    NSUInteger _draggedItemIndex;
-    NSUInteger _currentDragDestination;
-    ECItemView *_currentDragTarget;
-    UIView *_viewToDragIn;
-    UIEdgeInsets _scrollingHotspots;
-    CGFloat _scrollSpeed;
+    ECItemViewCell *_draggedItem;
+    NSIndexPath *_draggedItemIndexPath;
+    NSIndexPath *_dragDestinationIndexPath;
     NSTimer *_scrollTimer;
-    void (^_layoutItem)(UIView *item, NSUInteger index, BOOL *stop);
-    void (^_enterEditingAnimation)(void);
-    void (^_exitEditingAnimation)(void);
+    CGFloat _scrollSpeed;
+    UIEdgeInsets _scrollingHotspots;
 }
 - (void)_setup;
-- (NSUInteger)columns;
-- (NSUInteger)rows;
-- (NSUInteger)_itemAtPoint:(CGPoint)point includingPadding:(BOOL)includingPadding;
-- (CGRect)_paddedRectForItem:(NSUInteger)item;
-- (CGPoint)_centerForItem:(NSUInteger)item;
-- (void)_handleTap:(UITapGestureRecognizer *)tapRecognizer;
-- (void)_handleDrag:(UIPanGestureRecognizer *)dragRecognizer;
-- (void)_beginDrag:(UIPanGestureRecognizer *)dragRecognizer;
-- (void)_continueDrag:(UIPanGestureRecognizer *)dragRecognizer;
-- (BOOL)_endDrag:(UIPanGestureRecognizer *)dragRecognizer;
-- (void)_cancelDrag:(UIPanGestureRecognizer *)dragRecognizer;
-- (ECItemView *)_targetForDrop:(UIPanGestureRecognizer *)dragRecognizer;
-- (NSUInteger)_indexOfDropAtPoint:(CGPoint)point;
-- (void)_receiveDroppedItemContainer:(ECItemViewDragContainer *)itemContainer forItem:(NSUInteger)item;
+
+- (void)_updateContentSize;
+
+- (UIView *)_blankHeader:(ECStackCache *)cache;
+- (UIView *)_groupSeparator:(ECStackCache *)cache;
+- (ECItemViewCell *)_loadCellForItemAtIndexPath:(NSIndexPath *)indexPath;
+- (CGFloat)_heightForGroup:(NSUInteger)group inArea:(NSUInteger)area;
+- (CGRect)_rectForGroupSeparatorAtIndexPath:(NSIndexPath *)indexPath;
+
+- (NSIndexSet *)_indexesForVisibleAreas;
+- (NSIndexSet *)_indexesForVisibleHeaders;
+- (NSArray *)_indexPathsForVisibleGroups;
+- (NSArray *)_indexPathsForVisibleGroupSeparators;
+
+- (NSIndexPath *)_proposedIndexPathForItemAtPoint:(CGPoint)point exists:(BOOL *)exists;
+
+- (void)_layoutHeaders;
+- (void)_layoutGroupSeparators;
+- (void)_layoutCells;
+
+- (void)_handleTapGesture:(UITapGestureRecognizer *)tapGestureRecognizer;
+- (void)_handleLongPressGesture:(UILongPressGestureRecognizer *)longPressGestureRecognizer;
+- (void)_beginDrag:(UILongPressGestureRecognizer *)dragRecognizer;
+- (void)_continueDrag:(UILongPressGestureRecognizer *)dragRecognizer;
+- (void)_endDrag:(UILongPressGestureRecognizer *)dragRecognizer;
+- (void)_cancelDrag:(UILongPressGestureRecognizer *)dragRecognizer;
 - (void)_handleTimer:(NSTimer *)timer;
 @end
 
@@ -121,136 +101,114 @@ const NSUInteger ECItemViewItemNotFound = NSUIntegerMax;
 
 @implementation ECItemView
 
-static const CGFloat ECItemViewShortAnimationDuration = 0.15;
-static const CGFloat ECItemViewLongAnimationDuration = 5.0;
-
 #pragma mark Properties and initialization
 
-@synthesize delegate = _delegate;
-@synthesize items = _items;
-@synthesize viewInsets = _viewInsets;
-@synthesize itemBounds = _itemBounds;
-@synthesize itemInsets = _itemInsets;
-@synthesize animatesChanges = _animatesChanges;
+@synthesize delegate = __delegate;
+@synthesize dataSource = _dataSource;
+@synthesize cellSize = _cellSize;
+@synthesize cellInsets = _cellInsets;
+@synthesize groupInsets = _groupInsets;
+@synthesize groupSeparatorHeight = _groupSeparatorHeight;
+@synthesize groupSeparatorInsets = _groupSeparatorInsets;
+@synthesize groupSeparatorEditingHeight = _groupSeparatorEditingHeight;
+@synthesize groupSeparatorEditingInsets = _groupSeparatorEditingInsets;
+@synthesize headerHeight = _headerHeight;
+@synthesize headerInsets = _headerInsets;
 @synthesize allowsSelection = _allowsSelection;
-@synthesize allowsDragging = _allowsDragging;
 @synthesize editing = _isEditing;
 
 - (void)setDelegate:(id<ECItemViewDelegate>)delegate
 {
-    if (delegate == _delegate)
+    if (delegate == __delegate)
         return;
     [self willChangeValueForKey:@"delegate"];
-    _delegate = delegate;
-    _delegateDidSelectItem = [delegate respondsToSelector:@selector(itemView:didSelectItem:)];
-    _delegateShouldDragItem = [delegate respondsToSelector:@selector(itemView:shouldDragItem:inView:)];
-    _delegateCanDropItem = [delegate respondsToSelector:@selector(itemView:canDropItem:inTargetItemView:)];
-    _delegateDidDropItem = [delegate respondsToSelector:@selector(itemView:didDropItem:inTargetItemView:atIndex:)];
+    __delegate = delegate;
+    _flags.delegateWillSelectItem = [delegate respondsToSelector:@selector(itemView:willSelectItemAtIndexPath:)];
+    _flags.delegateWillDeselectItem = [delegate respondsToSelector:@selector(itemView:willDeselectItemAtIndexPath:)];
+    _flags.delegateDidSelectItem = [delegate respondsToSelector:@selector(itemView:didSelectItemAtIndexPath:)];
+    _flags.delegateDidDeselectItem = [delegate respondsToSelector:@selector(itemView:didDeselectItemAtIndexPath:)];
     [self didChangeValueForKey:@"delegate"];
 }
 
-- (void)setItems:(NSArray *)items
+- (void)setDataSource:(id<ECItemViewDataSource>)dataSource
 {
-    if (items == _items)
+    if (dataSource == _dataSource)
         return;
-    [self willChangeValueForKey:@"items"];
-    for (UIView *item in _items)
-        if ([item superview] == self)
-            [item removeFromSuperview];
-    [_items release];
-    _items = [items mutableCopy];
-    for (UIView *item in _items) {
-        [self addSubview:item];
-        item.bounds = UIEdgeInsetsInsetRect(_itemBounds, _itemInsets);
-    }
-    [self setNeedsLayout];
-    [self didChangeValueForKey:@"items"];
+    [self willChangeValueForKey:@"dataSource"];
+    _dataSource = dataSource;
+    _flags.dataSourceNumberOfGroupsInArea = [dataSource respondsToSelector:@selector(itemView:numberOfGroupsInArea:)];
+    _flags.dataSourceNumberOfItemsInGroupInArea = [dataSource respondsToSelector:@selector(itemView:numberOfItemsInGroup:inArea:)];
+    _flags.dataSourceCellForItemAtIndexPath = [dataSource respondsToSelector:@selector(itemView:cellForItemAtIndexPath:)];
+    _flags.dataSourceNumberOfAreasInTableView = [dataSource respondsToSelector:@selector(numberOfAreasInTableView:)];
+    _flags.dataSourceTitleForHeaderInArea = [dataSource respondsToSelector:@selector(itemView:titleForHeaderInArea:)];
+    _flags.dataSourceCanEditItem = [dataSource respondsToSelector:@selector(itemView:canEditItemAtIndexPath:)];
+    _flags.dataSourceCanMoveItem = [dataSource respondsToSelector:@selector(itemView:canMoveItemAtIndexPath:)];
+    _flags.dataSourceDeleteItem = [dataSource respondsToSelector:@selector(itemView:deleteItemAtIndexPath:)];
+    _flags.dataSourceMoveItem = [dataSource respondsToSelector:@selector(itemView:moveItemAtIndexPath:toIndexPath:)];
+    _flags.dataSourceInsertGroup = [dataSource respondsToSelector:@selector(itemView:insertGroupAtIndexPath:)];
+    _flags.dataSourceDeleteGroup = [dataSource respondsToSelector:@selector(itemView:deleteGroupAtIndexPath:)];
+    _flags.dataSourceMoveGroup = [dataSource respondsToSelector:@selector(itemView:moveGroupAtIndexPath:toIndexPath:)];
+    _flags.dataSourceMoveArea = [dataSource respondsToSelector:@selector(itemView:moveAreaAtIndexPath:toIndexPath:)];
+    [self didChangeValueForKey:@"dataSource"];
 }
 
-- (void)setAllowsSelection:(BOOL)allowsSelection
+- (BOOL)isEditing
 {
-    if (allowsSelection == _allowsSelection)
-        return;
-    [self willChangeValueForKey:@"allowsSelection"];
-    _allowsSelection = allowsSelection;
-    _tapRecognizer.enabled = allowsSelection;
-    [self didChangeValueForKey:@"allowsSelection"];
-}
-
-- (void)setAllowsDragging:(BOOL)allowsDragging
-{
-    if (allowsDragging == _allowsDragging)
-        return;
-    [self willChangeValueForKey:@"allowsDragging"];
-    _allowsDragging = allowsDragging;
-    _dragRecognizer.enabled = allowsDragging;
-    [self didChangeValueForKey:@"allowsDragging"];
+    return _isEditing;
 }
 
 - (void)setEditing:(BOOL)editing
+{
+    [self setEditing:editing animated:NO];
+}
+
+- (void)setEditing:(BOOL)editing animated:(BOOL)animated
 {
     if (editing == _isEditing)
         return;
     [self willChangeValueForKey:@"editing"];
     [self setNeedsLayout];
     _isEditing = editing;
-    if (_animatesChanges)
-        if (editing)
-            [UIView animateConcurrentlyToAnimationsWithFlag:&_isAnimating duration:ECItemViewShortAnimationDuration animations:_enterEditingAnimation completion:NULL];
-        else
-            [UIView animateConcurrentlyToAnimationsWithFlag:&_isAnimating duration:ECItemViewShortAnimationDuration animations:_exitEditingAnimation completion:NULL];
-    [self didChangeValueForKey:@"editing"];  
-}
-
-- (void)dealloc
-{
-    self.delegate = nil;
-    self.items = nil;
-    [_tapRecognizer release];
-    [_dragRecognizer release];
-    [_layoutItem release];
-    [_enterEditingAnimation release];
-    [_exitEditingAnimation release];
-    [super dealloc];
+    if (animated)
+    {
+        [UIView animateConcurrentlyToAnimationsWithFlag:&_isAnimating duration:ECItemViewShortAnimationDuration animations:^(void) {
+            [self layoutIfNeeded];
+        } completion:NULL];
+    }
+    // TODO: when entering / exiting editing mode, keep scroll position stable
+    [self _updateContentSize];
+    [self didChangeValueForKey:@"editing"];   
 }
 
 - (void)_setup
 {
-    _viewInsets = UIEdgeInsetsMake(5.0, 5.0, 5.0, 5.0);
-    _itemInsets = UIEdgeInsetsMake(5.0, 5.0, 5.0, 5.0);
-    _itemBounds = CGRectMake(0.0, 0.0, 100.0, 100.0);
-    self.clipsToBounds = YES;
-    _animatesChanges = YES;
-    _allowsSelection = YES;
-    _allowsDragging = YES;
-    _tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(_handleTap:)];
-    _tapRecognizer.delegate = self;
-    [self addGestureRecognizer:_tapRecognizer];
-    _dragRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(_handleDrag:)];
-    _dragRecognizer.delegate = self;
-    [self addGestureRecognizer:_dragRecognizer];
-    _currentDragDestination = ECItemViewItemNotFound;
-    _currentDragTarget = self;
-    _draggedItemIndex = ECItemViewItemNotFound;
-    _scrollingHotspots = UIEdgeInsetsMake(100.0, 100.0, 100.0, 100.0);
-    _scrollSpeed = 20.0;
-    _layoutItem = [^(UIView *cell, NSUInteger index, BOOL *stop){
-        if (index == _draggedItemIndex)
-            return;
-        if (index > _draggedItemIndex)
-            --index;
-        if (index >= _currentDragDestination)
-            ++index;
-        CGPoint center = [self _centerForItem:index];
-        if (!CGPointEqualToPoint(center, cell.center))
-            cell.center = center;
-    } copy];
-    _enterEditingAnimation = [^{
-        [self layoutIfNeeded];
-    } copy];
-    _exitEditingAnimation = [^{
-        [self layoutIfNeeded];
-    } copy];
+    _cellSize = CGSizeMake(170.0, 80.0);
+    _cellInsets = UIEdgeInsetsMake(20.0, 20.0, 20.0, 20.0);
+    _groupInsets = UIEdgeInsetsMake(10.0, 0.0, 10.0, 0.0);
+    _groupSeparatorHeight = 30.0;
+    _groupSeparatorInsets = UIEdgeInsetsZero;
+    _groupSeparatorEditingHeight = 90.0;
+    _groupSeparatorEditingInsets = UIEdgeInsetsZero;
+    _headerInsets = UIEdgeInsetsMake(20.0, 10.0, 20.0, 10.0);
+    _headerHeight = 60.0;
+    _headerCache = [[ECStackCache alloc] initWithTarget:self action:@selector(_blankHeader:) size:ECItemViewHeaderBufferSize];
+    _groupSeparatorCache = [[ECStackCache alloc] initWithTarget:self action:@selector(_groupSeparator:) size:ECItemViewGroupSeparatorBufferSize];
+    _cellCache = [[ECStackCache alloc] initWithTarget:nil action:NULL size:ECItemViewCellBufferSize];
+    _visibleCells = [[NSMutableDictionary alloc] init];
+    _tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(_handleTapGesture:)];
+    _tapGestureRecognizer.delegate = self;
+    [self addGestureRecognizer:_tapGestureRecognizer];
+    _longPressGestureRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(_handleLongPressGesture:)];
+    _longPressGestureRecognizer.minimumPressDuration = 0.5;
+    _longPressGestureRecognizer.delegate = self;
+    [self addGestureRecognizer:_longPressGestureRecognizer];
+    UIScrollView *scrollView = [[UIScrollView alloc] init];
+    _flags.superGestureRecognizerShouldBegin = [scrollView respondsToSelector:@selector(gestureRecognizerShouldBegin:)];
+    _flags.superGestureRecognizerShouldRecognizeSimultaneously = [scrollView respondsToSelector:@selector(gestureRecognizer:shouldRecognizeSimultaneouslyWithGestureRecognizer:)];
+    _flags.superGestureRecognizerShouldReceiveTouch = [scrollView respondsToSelector:@selector(gestureRecognizer:shouldReceiveTouch:)];
+    [scrollView release];
+    _scrollSpeed = 30.0;
+    _scrollingHotspots = UIEdgeInsetsMake(100.0, 0.0, 100.0, 0.0);
 }
 
 - (id)initWithFrame:(CGRect)frame
@@ -258,412 +216,718 @@ static const CGFloat ECItemViewLongAnimationDuration = 5.0;
     self = [super initWithFrame:frame];
     if (!self)
         return nil;
+    self.userInteractionEnabled = YES;
+    self.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
     [self _setup];
     return self;
 }
 
-- (id)initWithCoder:(NSCoder *)aDecoder
+- (id)initWithCoder:(NSCoder *)decoder
 {
-    self = [super initWithCoder:aDecoder];
+    self = [super initWithCoder:decoder];
     if (!self)
         return nil;
     [self _setup];
     return self;
 }
 
-#pragma mark -
-#pragma mark UIView
-
-- (void)layoutSubviews
+- (void)dealloc
 {
-    if (_isBatchUpdating)
-        [NSException raise:NSInternalInconsistencyException format:@"beginUpdates without corresponding endUpdates"];
-    if (_animatesChanges)
-        [UIView animateConcurrentlyToAnimationsWithFlag:&_isAnimating duration:ECItemViewShortAnimationDuration animations:^(void) {
-            [_items enumerateObjectsUsingBlock:_layoutItem];
-        } completion:NULL];
-    else
-        [_items enumerateObjectsUsingBlock:_layoutItem];
+    [_areas release];
+    [_headerTitles release];
+    [_headerCache release];
+    [_groupSeparatorCache release];
+    [_cellCache release];
+    [_visibleHeaders release];
+    [_visibleSeparators release];
+    [_visibleCells release];
+    [_tapGestureRecognizer release];
+    [_longPressGestureRecognizer release];
+    [_draggedItem release];
+    [_draggedItemIndexPath release];
+    [_dragDestinationIndexPath release];
+    [_scrollTimer invalidate];
+    [super dealloc];
 }
 
 #pragma mark -
-#pragma mark Public methods
+#pragma mark Data
+
+- (void)_updateContentSize
+{
+    if (![self numberOfAreas])
+    {
+        self.contentSize = CGSizeMake(0.0, 0.0);
+        return;
+    }
+    CGRect lastAreaFrame = [self rectForArea:[self numberOfAreas] - 1];
+    self.contentSize = CGSizeMake(self.bounds.size.width, lastAreaFrame.origin.y + lastAreaFrame.size.height);
+}
+
+- (void)reloadData
+{
+    for (UIView *cell in [_visibleCells allValues])
+        [cell removeFromSuperview];
+    [_visibleCells removeAllObjects];
+    for (UIView *header in [_visibleHeaders allValues])
+        [header removeFromSuperview];
+    [_visibleHeaders removeAllObjects];
+    for (UIView *separator in [_visibleSeparators allValues])
+        [separator removeFromSuperview];
+    [_visibleSeparators removeAllObjects];
+    
+    NSUInteger numAreas = 1;
+    if (_flags.dataSourceNumberOfAreasInTableView)
+        numAreas = [_dataSource numberOfAreasInTableView:self];
+    [_areas release];
+    _areas = [[NSMutableArray alloc] init];
+    [_headerTitles release];
+    _headerTitles = [[NSMutableArray alloc] init];
+    for (NSUInteger i = 0; i < numAreas; ++i)
+    {
+        NSString *headerTitle = @"";
+        if (_flags.dataSourceTitleForHeaderInArea)
+            headerTitle = [_dataSource itemView:self titleForHeaderInArea:i];
+        [_headerTitles addObject:headerTitle];
+        NSUInteger numGroups = 0;
+        if (_flags.dataSourceNumberOfGroupsInArea)
+            numGroups = [_dataSource itemView:self numberOfGroupsInArea:i];
+        NSMutableArray *groups = [NSMutableArray arrayWithCapacity:numGroups];
+        for (NSUInteger j = 0; j < numGroups; ++j)
+        {
+            NSUInteger numItems = 0;
+            if (_flags.dataSourceNumberOfItemsInGroupInArea)
+                numItems = [_dataSource itemView:self numberOfItemsInGroup:j inArea:i];
+            [groups addObject:[NSNumber numberWithUnsignedInteger:numItems]];
+        }
+        [_areas addObject:groups];
+    }
+    [self _updateContentSize];
+    [self setNeedsLayout];
+}
+
+- (UIView *)_blankHeader:(ECStackCache *)cache
+{
+    UILabel *header = [[UILabel alloc] init];
+    header.backgroundColor = [UIColor blueColor];
+    return [header autorelease];
+}
+
+- (UIView *)_groupSeparator:(ECStackCache *)cache
+{
+    UIView *groupSeparator = [[UIView alloc] init];
+    groupSeparator.backgroundColor = [UIColor blackColor];
+    return [groupSeparator autorelease];
+}
+
+- (ECItemViewCell *)_loadCellForItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (!indexPath || !_flags.dataSourceCellForItemAtIndexPath)
+        return nil;
+    ECItemViewCell * cell = [_dataSource itemView:self cellForItemAtIndexPath:indexPath];
+    return cell;
+}
+
+#pragma mark -
+#pragma mark Info
 
 - (NSUInteger)columns
 {
-    return (NSUInteger)((UIEdgeInsetsInsetRect(self.bounds, _viewInsets)).size.width / _itemBounds.size.width);
+    CGFloat netWidth = self.bounds.size.width - _groupInsets.left - _groupInsets.right;
+    return netWidth / _cellSize.width;
 }
 
-- (NSUInteger)rows
+- (NSUInteger)rowsInGroup:(NSUInteger)group inArea:(NSUInteger)area
 {
-    return (NSUInteger)([_items count] / [self columns]);
+    NSUInteger numCells = [self numberOfItemsInGroup:group inArea:area];
+    return ceil((CGFloat)numCells / (CGFloat)[self columns]);
 }
 
-- (CGRect)_paddedRectForItem:(NSUInteger)item
+- (NSUInteger)numberOfAreas
 {
-    CGRect rect = _itemBounds;
-    rect.origin.x += _viewInsets.left;
-    rect.origin.y += _viewInsets.top;
-    rect.origin.x += rect.size.width * (NSUInteger)(item % [self columns]);
-    rect.origin.y += rect.size.height * (NSUInteger)(item / [self columns]);
-    return rect;
+    return [_areas count];
 }
 
-- (CGRect)rectForItem:(NSUInteger)item
+- (NSUInteger)numberOfGroupsInArea:(NSUInteger)area
 {
-    CGRect rect = [self _paddedRectForItem:item];
-    return UIEdgeInsetsInsetRect(rect, _itemInsets);
+    return [[_areas objectAtIndex:area] count];
 }
 
-- (CGPoint)_centerForItem:(NSUInteger)item
+- (NSUInteger)numberOfItemsInGroup:(NSUInteger)group inArea:(NSUInteger)area
 {
-    CGRect rect = [self rectForItem:item];
-    return CGPointMake(CGRectGetMidX(rect), CGRectGetMidY(rect));
+    return [[[_areas objectAtIndex:area] objectAtIndex:group] unsignedIntegerValue];
 }
-
-- (NSUInteger)_itemAtPoint:(CGPoint)point includingPadding:(BOOL)includingPadding
-{
-    CGRect itemRect = CGRectZero;
-    NSUInteger numItems = [_items count];
-    for (NSUInteger i = 0; i < numItems;)
-    {
-        if (includingPadding)
-            itemRect = [self _paddedRectForItem:i];
-        else
-            itemRect = [self rectForItem:i];
-        if (CGRectContainsPoint(itemRect, point))
-            return i;
-        if (itemRect.origin.y > point.y)
-            break;
-        if (point.y > itemRect.origin.y + itemRect.size.height)
-            i += [self columns];
-        else
-            ++i;
-    }
-    return ECItemViewItemNotFound;
-}
-
-- (NSUInteger)itemAtPoint:(CGPoint)point
-{
-    return [self _itemAtPoint:point includingPadding:NO];
-}
-
-/*- (void)beginUpdates
-{
-    if (!_isBatchUpdating)
-    {
-        _itemsToInsert = [NSMutableDictionary dictionary];
-        _itemsToDelete = [NSMutableDictionary dictionary];
-        _itemsToReload = [NSMutableDictionary dictionary];
-    }
-    ++_isBatchUpdating;
-}
-
-- (void)endUpdates
-{
-    if (!_isBatchUpdating)
-        [NSException raise:NSInternalInconsistencyException format:@"endUpdates without corresponding beginUpdates"];
-    --_isBatchUpdating;
-    NSUInteger offset = 0;
-    NSMutableArray *cellsToInsert = [NSMutableArray arrayWithCapacity:[_itemsToInsert count]];
-    NSMutableArray *cellsToDelete = [NSMutableArray arrayWithCapacity:[_itemsToDelete count]];
-    NSMutableArray *cellsToLoad = [NSMutableArray arrayWithCapacity:[_itemsToReload count]];
-    NSMutableArray *cellsToUnload = [NSMutableArray arrayWithCapacity:[_itemsToReload count]];
-    for (NSUInteger index = 0; index < _numberOfItems; ++index)
-    {
-        UIView *cell;
-        if ([_itemsToDelete containsIndex:index])
-        {
-            cell = [_items objectAtIndex:index + offset];
-            [cellsToDelete addObject:cell];
-            [_items removeObjectAtIndex:index + offset];
-            --offset;
-        }
-        if ([_itemsToInsert containsIndex:index])
-        {
-            cell = [_dataSource itemView:self cellForItem:index];
-            [self addSubview:cell];
-            CGRect rect = [self rectForItem:index];
-            cell.center = CGPointMake(CGRectGetMidX(rect), CGRectGetMidY(rect));
-            cell.alpha = 0.0;
-            [cellsToInsert addObject:cell];
-            [_items insertObject:cell atIndex:index];
-            ++offset;
-        }
-        if ([_itemsToReload containsIndex:index])
-        {
-            cell = [_items objectAtIndex:index + offset];
-            [cellsToUnload addObject:cell];
-            [_items removeObjectAtIndex:index + offset];
-            cell = [_dataSource itemView:self cellForItem:index];
-            [self addSubview:cell];
-            cell.frame = [self rectForItem:index];
-            cell.alpha = 0.0;
-            [cellsToLoad addObject:cell];
-            [_items insertObject:cell atIndex:index];
-        }
-    }
-    [UIView animateConcurrentlyToAnimationsWithFlag:&_isAnimating duration:ECItemViewLongAnimationDuration animations:^(void) {
-//    [UIView animateWithDuration:ECItemViewShortAnimationDuration animations:^(void) {
-        for (UIView *cell in cellsToInsert) {
-            cell.bounds = UIEdgeInsetsInsetRect(_itemBounds, _itemInsets);
-            cell.alpha = 1.0;
-        }
-        for (UIView *cell in cellsToDelete) {
-            cell.bounds = CGRectZero;
-            cell.alpha = 0.0;
-        }
-        for (UIView *cell in cellsToLoad) {
-            cell.alpha = 1.0;
-        }
-        for (UIView *cell in cellsToUnload ) {
-            cell.alpha = 0.0;
-        }
-        [self layoutIfNeeded];
-    } completion:^(BOOL finished) {
-        for (UIView *cell in cellsToDelete)
-        {
-            [cell removeFromSuperview];
-        }
-        for (UIView *cell in cellsToUnload)
-        {
-            [cell removeFromSuperview];
-        }
-    }];
-    if (!_isBatchUpdating)
-    {
-        [_itemsToInsert release];
-        [_itemsToDelete release];
-        [_itemsToReload release];
-    }
-}*/
 
 #pragma mark -
-#pragma mark UIGestureRecognizer
+#pragma mark Geometry
 
-- (void)_handleTap:(UITapGestureRecognizer *)tapRecognizer
+- (CGRect)rectForArea:(NSUInteger)area
 {
+    CGFloat x = 0;
+    CGFloat y = 0;
+    if (area)
+    {
+        CGRect previousAreaRect = [self rectForArea:area - 1];
+        y = previousAreaRect.origin.y + previousAreaRect.size.height;
+    }
+    CGFloat width = self.bounds.size.width;
+    CGFloat height = _headerHeight;
+    NSUInteger numGroups = [self numberOfGroupsInArea:area];
+    for (NSUInteger j = 0; j < numGroups; ++j)
+        height += [self _heightForGroup:j inArea:area];
+    return CGRectMake(x, y, width, height);
+}
+
+- (CGFloat)_heightForGroup:(NSUInteger)group inArea:(NSUInteger)area
+{
+    CGFloat height = 0;
+    height += [self rowsInGroup:group inArea:area] * _cellSize.height;
+    height += _groupInsets.top + _groupInsets.bottom;
     if (_isEditing)
-        return;
-    NSUInteger itemIndex = [self itemAtPoint:[tapRecognizer locationInView:self]];
-    if (itemIndex == ECItemViewItemNotFound)
-        return;
-    if (_delegateDidSelectItem)
-        [_delegate itemView:self didSelectItem:itemIndex];
+        height += _groupSeparatorEditingHeight;
+    else
+        height += _groupSeparatorHeight;
+    return height;
 }
 
-- (void)_beginDrag:(UIPanGestureRecognizer *) dragRecognizer
+- (CGRect)_rectForGroupSeparatorAtIndexPath:(NSIndexPath *)indexPath
 {
-    _isDragging = YES;
-    _draggedItemIndex = [self itemAtPoint:[dragRecognizer locationInView:self]];
-    _draggedItemContainer = [[ECItemViewDragContainer alloc] initWithView:[_items objectAtIndex:_draggedItemIndex]];
-    _currentDragDestination = _draggedItemIndex;
-    [_viewToDragIn addSubview:_draggedItemContainer];
-    _draggedItemContainer.center = [dragRecognizer locationInView:_viewToDragIn];
+    CGRect groupRect = [self rectForGroup:indexPath.position inArea:indexPath.area];
+    CGFloat x = groupRect.origin.x + _groupInsets.left;
+    CGFloat y = groupRect.origin.y + groupRect.size.height - _groupInsets.bottom;
+    CGFloat width = groupRect.size.width - _groupInsets.left - _groupInsets.right;
+    CGFloat height;
+    if (_isEditing)
+    {
+        y -= _groupSeparatorEditingHeight;
+        height = _groupSeparatorEditingHeight;
+    }
+    else
+    {
+        y -= _groupSeparatorHeight;
+        height = _groupSeparatorHeight;
+    }
+    return CGRectMake(x, y, width, height);
 }
 
-- (void)_continueDrag:(UIPanGestureRecognizer *) dragRecognizer
+- (CGRect)rectForHeaderInArea:(NSUInteger)area
 {
-    _draggedItemContainer.center = [dragRecognizer locationInView:_viewToDragIn];
-    if ([_viewToDragIn respondsToSelector:@selector(setContentOffset:animated:)] && [_viewToDragIn respondsToSelector:@selector(contentOffset)])
-    {
-        if (CGRectContainsPoint(_viewToDragIn.bounds, _draggedItemContainer.center) && !CGRectContainsPoint(UIEdgeInsetsInsetRect(_viewToDragIn.bounds, _scrollingHotspots), _draggedItemContainer.center))
-        {
-            if (!_scrollTimer)
-            {
-                _scrollTimer = [NSTimer timerWithTimeInterval:1.0/60.0 target:self selector:@selector(_handleTimer:) userInfo:[[^(void) {
-                    CGPoint offset = [(UIScrollView *)_viewToDragIn contentOffset];
-                    CGPoint center = _draggedItemContainer.center;
-                    if (_draggedItemContainer.center.x < _viewToDragIn.bounds.origin.x + _scrollingHotspots.left && _viewToDragIn.bounds.origin.x > 0.0)
-                    {
-                        offset.x -= _scrollSpeed;
-                        center.x -= _scrollSpeed;
-                    }
-                    else if (_draggedItemContainer.center.x > _viewToDragIn.bounds.origin.x + _viewToDragIn.bounds.size.width - _scrollingHotspots.right && _viewToDragIn.bounds.origin.x < ((UIScrollView *)_viewToDragIn).contentSize.width - _viewToDragIn.bounds.size.width)
-                    {
-                        offset.x += _scrollSpeed;
-                        center.x += _scrollSpeed;
-                    }
-                    if (_draggedItemContainer.center.y < _viewToDragIn.bounds.origin.y + _scrollingHotspots.top && _viewToDragIn.bounds.origin.y > 0.0)
-                    {
-                        offset.y -= _scrollSpeed;
-                        center.y -= _scrollSpeed;
-                    }
-                    else if (_draggedItemContainer.center.y > _viewToDragIn.bounds.origin.y + _viewToDragIn.bounds.size.height - _scrollingHotspots.bottom && _viewToDragIn.bounds.origin.y < ((UIScrollView *)_viewToDragIn).contentSize.height - _viewToDragIn.bounds.size.height)
-                    {
-                        offset.y += _scrollSpeed;
-                        center.y += _scrollSpeed;
-                    }
-                    [(UIScrollView *)_viewToDragIn setContentOffset:offset animated:NO];
-//                    [UIView animateConcurrentlyToAnimationsWithFlag:&_isAnimating duration:ECItemViewShortAnimationDuration animations:^(void) {
-                        _draggedItemContainer.center = center;
-//                    } completion:NULL];
-                } copy] autorelease] repeats:YES];
-                [[NSRunLoop mainRunLoop] addTimer:_scrollTimer forMode:NSDefaultRunLoopMode];
-            }
-        }
-        else if (_scrollTimer)
-        {
-            [_scrollTimer invalidate];
-            _scrollTimer = nil;
-        }
-    }
-    NSUInteger dragDestination = [self _indexOfDropAtPoint:[dragRecognizer locationInView:self]];
-    if (dragDestination == _currentDragDestination)
-        return;
-    _currentDragDestination = dragDestination;
-    [self setNeedsLayout];
+    CGRect areaRect = [self rectForArea:area];
+    return CGRectMake(areaRect.origin.x, areaRect.origin.y, self.bounds.size.width - _headerInsets.left - _headerInsets.right, _headerHeight);
 }
 
-- (BOOL)_endDrag:(UIPanGestureRecognizer *)dragRecognizer
+- (CGRect)rectForGroup:(NSUInteger)group inArea:(NSUInteger)area
 {
-    if (_scrollTimer)
+    CGRect areaRect = [self rectForArea:area];
+    CGFloat x = areaRect.origin.x;
+    CGFloat y = areaRect.origin.y + _headerHeight;
+    for (NSUInteger i = 0; i < group; ++i)
     {
-        [_scrollTimer invalidate];
-        _scrollTimer = nil;
+        y += [self _heightForGroup:i inArea:area];
+        if (_isEditing)
+            y += _groupSeparatorEditingHeight;
+        else
+            y += _groupSeparatorHeight;
     }
-    ECItemView *targetView = [self _targetForDrop:dragRecognizer];
-    NSUInteger dragDestination = [targetView _indexOfDropAtPoint:[dragRecognizer locationInView:targetView]];
-    if (dragDestination == ECItemViewItemNotFound)
-    {
-        return NO;
-    }
-    if (![_delegate itemView:self canDropItem:_draggedItemIndex inTargetItemView:targetView])
-    {
-        return NO;
-    }
-    [_items removeObjectAtIndex:_draggedItemIndex];
-    [targetView _receiveDroppedItemContainer:_draggedItemContainer forItem:dragDestination];
-    if (_delegateDidDropItem)
-        [_delegate itemView:self didDropItem:_draggedItemIndex inTargetItemView:targetView atIndex:dragDestination];
-    _draggedItemIndex = ECItemViewItemNotFound;
-    _isDragging = NO;
-    [_draggedItemContainer release];
-    _draggedItemContainer = nil;
-    [self setNeedsLayout];
-    return YES;
+    CGFloat width = areaRect.size.width;
+    CGFloat height = [self _heightForGroup:group inArea:area];
+    return CGRectMake(x, y, width, height);
 }
 
-- (void)_cancelDrag:(UIPanGestureRecognizer *)dragRecognizer
+- (CGRect)rectForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (_scrollTimer)
-    {
-        [_scrollTimer invalidate];
-        _scrollTimer = nil;
-    }
-    [UIView animateConcurrentlyToAnimationsWithFlag:&_isAnimating duration:ECItemViewShortAnimationDuration animations:^(void) {
-        _draggedItemContainer.center = [self convertPoint:[self _centerForItem:_draggedItemIndex] toView:_viewToDragIn];
-    } completion:^(BOOL finished) {
-        [self addSubview:_draggedItemContainer.view];
-        _draggedItemContainer.view.center = [self _centerForItem:_draggedItemIndex];
-        _draggedItemIndex = ECItemViewItemNotFound;
-        _isDragging = NO;
-        [_draggedItemContainer release];
-        _draggedItemContainer = nil;
-        _currentDragDestination = ECItemViewItemNotFound;
-        [self setNeedsLayout];
+    if (!indexPath)
+        return CGRectZero;
+    CGFloat x = 0;
+    CGFloat y = 0;
+    CGRect groupRect = [self rectForGroup:indexPath.group inArea:indexPath.area];
+    x = groupRect.origin.x;
+    y = groupRect.origin.y;
+    NSUInteger row = indexPath.item / [self columns];
+    NSUInteger column = indexPath.item % [self columns];
+    x += column * _cellSize.width;
+    y += row * _cellSize.height;
+    return CGRectMake(x, y, _cellSize.width, _cellSize.height);
+}
+
+#pragma mark -
+#pragma mark Index paths
+
+- (NSIndexSet *)_indexesForVisibleAreas
+{
+    NSMutableIndexSet *indexes = [NSMutableIndexSet indexSetWithIndexesInRange:NSMakeRange(0, [self numberOfAreas])];
+    return [indexes indexesPassingTest:^BOOL(NSUInteger idx, BOOL *stop) {
+        return CGRectIntersectsRect(self.bounds, [self rectForArea:idx]);
     }];
 }
 
-- (ECItemView *)_targetForDrop:(UIPanGestureRecognizer *)dragRecognizer
+- (NSIndexSet *)_indexesForVisibleHeaders
 {
-    UIView *targetView = [_viewToDragIn hitTest:[dragRecognizer locationInView:_viewToDragIn] withEvent:nil];
-    if (![targetView isDescendantOfView:_viewToDragIn])
-        return self;
-    while ([targetView class] != [self class])
+    NSMutableIndexSet *indexes = [NSMutableIndexSet indexSetWithIndexesInRange:NSMakeRange(0, [self numberOfAreas])];
+    return [indexes indexesPassingTest:^BOOL(NSUInteger idx, BOOL *stop) {
+        return CGRectIntersectsRect(self.bounds, [self rectForHeaderInArea:idx]);
+    }];
+}
+
+- (NSArray *)_indexPathsForVisibleGroups
+{
+    NSIndexSet *indexes = [self _indexesForVisibleAreas];
+    NSMutableArray *indexPaths = [NSMutableArray array];
+    [indexes enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
+        NSUInteger numGroups = [self numberOfGroupsInArea:idx];
+        for (NSUInteger i = 0; i < numGroups; ++i)
+            if (CGRectIntersectsRect(self.bounds, [self rectForGroup:i inArea:idx]))
+                [indexPaths addObject:[NSIndexPath indexPathForPosition:i inArea:idx]];
+    }];
+    return indexPaths;
+}
+
+- (NSArray *)_indexPathsForVisibleGroupSeparators
+{
+    NSMutableArray *indexPaths = [NSMutableArray array];
+    for (NSIndexPath *indexPath in [self _indexPathsForVisibleGroups])
+        if (CGRectIntersectsRect(self.bounds, [self _rectForGroupSeparatorAtIndexPath:indexPath]))
+            [indexPaths addObject:indexPath];
+    return indexPaths;
+}
+
+- (NSArray *)indexPathsForVisibleItems
+{
+    NSMutableArray *indexPaths = [NSMutableArray array];
+    for (NSIndexPath *groupIndexPath in [self _indexPathsForVisibleGroups])
     {
-        if (targetView != _viewToDragIn)
+        NSUInteger numItems = [self numberOfItemsInGroup:groupIndexPath.position inArea:groupIndexPath.area];
+        for (NSUInteger k = 0; k < numItems; ++k)
         {
-            targetView = [targetView superview];
+            CGRect itemRect = [self rectForItemAtIndexPath:[NSIndexPath indexPathForItem:k inGroup:groupIndexPath.position inArea:groupIndexPath.area]];
+            if (!CGRectIntersectsRect(self.bounds, itemRect))
+                continue;
+            [indexPaths addObject:[NSIndexPath indexPathForItem:k inGroup:groupIndexPath.position inArea:groupIndexPath.area]];
+        }
+    }
+    return indexPaths;
+}
+
+- (NSArray *)visibleCells
+{
+    return [_visibleCells allValues];
+}
+
+- (ECItemViewCell *)cellForItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (!indexPath)
+        return nil;
+    return [_visibleCells objectForKey:indexPath];
+}
+
+- (NSIndexPath *)indexPathForCell:(ECItemViewCell *)cell
+{
+    if (!cell)
+        return nil;
+    for (NSIndexPath *indexPath in [_visibleCells allKeys])
+        if ([_visibleCells objectForKey:indexPath] == cell)
+            return indexPath;
+    return nil;
+}
+
+- (NSIndexPath *)indexPathForItemAtPoint:(CGPoint)point
+{
+    BOOL exists;
+    NSIndexPath *indexPath = [self _proposedIndexPathForItemAtPoint:point exists:&exists];
+    if (!exists)
+        return nil;
+    return indexPath;
+}
+
+- (NSIndexPath *)_proposedIndexPathForItemAtPoint:(CGPoint)point exists:(BOOL *)exists
+{
+    NSUInteger numAreas = [self numberOfAreas];
+    for (NSUInteger i = 0; i < numAreas; ++i)
+        if (CGRectContainsPoint([self rectForHeaderInArea:i], point))
+        {
+            if (exists)
+                *exists = NO;
+            return [NSIndexPath indexPathForItem:0 inGroup:0 inArea:i];
+        }
+    for (NSUInteger i = 0; i < numAreas; ++i)
+    {
+        CGRect areaRect = CGRectZero;
+        areaRect = [self rectForArea:i];
+        if (!CGRectContainsPoint(areaRect, point))
+            continue;
+        NSUInteger numGroups = [self numberOfGroupsInArea:i];
+        for (NSUInteger j = 0; j < numGroups; ++j)
+            if (CGRectContainsPoint([self _rectForGroupSeparatorAtIndexPath:[NSIndexPath indexPathForPosition:j inArea:i]], point))
+            {
+                if (exists)
+                    *exists = NO;
+                return [NSIndexPath indexPathForItem:0 inGroup:j + 1 inArea:i];
+            }
+        for (NSUInteger j = 0; j < numGroups; ++j)
+        {
+            CGRect groupRect = CGRectZero;
+            groupRect = [self rectForGroup:j inArea:i];
+            if (!CGRectContainsPoint(UIEdgeInsetsInsetRect(groupRect, _groupInsets), point))
+                continue;
+            NSUInteger numItems = [self numberOfItemsInGroup:j inArea:i];
+            for (NSUInteger k = 0; k < numItems; )
+            {
+                CGRect itemRect = CGRectZero;
+                itemRect = [self rectForItemAtIndexPath:[NSIndexPath indexPathForItem:k inGroup:j inArea:i]];
+                if (CGRectContainsPoint(itemRect, point))
+                {
+                    if (exists)
+                        *exists = YES;
+                    return [NSIndexPath indexPathForItem:k inGroup:j inArea:i];
+                }
+                if (itemRect.origin.y > point.y)
+                    break;
+                if (point.y > itemRect.origin.y + itemRect.size.height)
+                    k += [self columns];
+                else
+                    ++k;
+            }
+            if (_draggedItemIndexPath.area == i && _draggedItemIndexPath.group == j)
+            {
+                if (exists)
+                    *exists = YES;
+                return [NSIndexPath indexPathForItem:numItems - 1 inGroup:j inArea:i];
+            }
+            if (exists)
+                *exists = NO;
+            return [NSIndexPath indexPathForItem:numItems inGroup:j inArea:i];
+        }
+    }
+    if (exists)
+        *exists = NO;
+    return nil;
+}
+
+#pragma mark -
+#pragma mark Item insertion/deletion/reloading
+
+
+
+#pragma mark -
+#pragma mark Recycling
+
+- (ECItemViewCell *)dequeueReusableCell
+{
+    if (![_cellCache count])
+        return nil;
+    return [_cellCache pop];
+}
+
+#pragma mark -
+#pragma mark UIView
+
+- (void)_layoutHeaders
+{
+    NSMutableDictionary *newVisibleHeaders = [[NSMutableDictionary alloc] init];
+    [[self _indexesForVisibleHeaders] enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
+        UILabel *header = [_visibleHeaders objectForKey:[NSNumber numberWithUnsignedInteger:idx]];
+        if (header)
+            [_visibleHeaders removeObjectForKey:[NSNumber numberWithUnsignedInteger:idx]];
+        else
+        {
+            header = [_headerCache pop];
+            [self addSubview:header];
+            [self sendSubviewToBack:header];
+            header.text = [_headerTitles objectAtIndex:idx];
+        }
+        header.frame = UIEdgeInsetsInsetRect([self rectForHeaderInArea:idx], _headerInsets);
+        [newVisibleHeaders setObject:header forKey:[NSNumber numberWithUnsignedInteger:idx]];
+    }];
+    for (UILabel *header in [_visibleHeaders allValues])
+    {
+        [header removeFromSuperview];
+        [_headerCache push:header];
+    }
+    [_visibleHeaders release];
+    _visibleHeaders = newVisibleHeaders;
+}
+
+- (void)_layoutGroupSeparators
+{
+    NSMutableDictionary *newVisibleGroupSeparators = [[NSMutableDictionary alloc] init];
+    for (NSIndexPath *indexPath in [self _indexPathsForVisibleGroupSeparators])
+    {
+        UIView *separator = [_visibleSeparators objectForKey:indexPath];
+        if (separator)
+            [_visibleSeparators removeObjectForKey:indexPath];
+        else
+        {
+            separator = [_groupSeparatorCache pop];
+            [self addSubview:separator];
+            [self sendSubviewToBack:separator];
+        }
+        separator.frame = UIEdgeInsetsInsetRect([self _rectForGroupSeparatorAtIndexPath:indexPath], _groupSeparatorInsets);
+        [newVisibleGroupSeparators setObject:separator forKey:indexPath];
+    }
+    for (UIView *separator in [_visibleSeparators allValues])
+    {
+        [separator removeFromSuperview];
+        [_groupSeparatorCache push:separator];
+    }
+    [_visibleSeparators release];
+    _visibleSeparators = newVisibleGroupSeparators;
+}
+
+- (void)_layoutCells
+{
+    NSMutableDictionary *newVisibleItems = [[NSMutableDictionary alloc] init];
+    for (NSIndexPath *indexPath in [self indexPathsForVisibleItems])
+    {
+        if (_isDragging && [indexPath isEqual:_draggedItemIndexPath])
+            continue;
+        ECItemViewCell *cell = [_visibleCells objectForKey:indexPath];
+        if (cell)
+            [_visibleCells removeObjectForKey:indexPath];
+        else
+        {
+            cell = [self _loadCellForItemAtIndexPath:indexPath];
+            [self addSubview:cell];
+            [self sendSubviewToBack:cell];
+        }
+        [newVisibleItems setObject:cell forKey:indexPath];
+        if (_isDragging && _draggedItemIndexPath && indexPath.group == _draggedItemIndexPath.group && indexPath.area == _draggedItemIndexPath.area && indexPath.item > _draggedItemIndexPath.item)
+            indexPath = [NSIndexPath indexPathForItem:indexPath.item - 1 inGroup:indexPath.group inArea:indexPath.area];
+        if (_isDragging && _dragDestinationIndexPath && indexPath.group == _dragDestinationIndexPath.group && indexPath.area == _dragDestinationIndexPath.area && indexPath.item >= _dragDestinationIndexPath.item)
+            indexPath = [NSIndexPath indexPathForItem:indexPath.item + 1 inGroup:indexPath.group inArea:indexPath.area];
+        cell.frame = UIEdgeInsetsInsetRect([self rectForItemAtIndexPath:indexPath], _cellInsets);
+    }
+    for (ECItemViewCell *cell in [_visibleCells allValues])
+    {
+        if (_isDragging && cell == _draggedItem)
+        {
+            [newVisibleItems setObject:cell forKey:_draggedItemIndexPath];
             continue;
         }
-        return self;
+        [cell removeFromSuperview];
+        [_cellCache push:cell];
     }
-    return (ECItemView *)targetView;
+    [_visibleCells release];
+    _visibleCells = newVisibleItems;
 }
 
-- (NSUInteger)_indexOfDropAtPoint:(CGPoint)point
+- (void)layoutSubviews
 {
-    if (!CGRectContainsPoint(UIEdgeInsetsInsetRect(self.bounds, _viewInsets), point))
-        return ECItemViewItemNotFound;
-    NSUInteger index = [self _itemAtPoint:point includingPadding:YES];
-    if (index == ECItemViewItemNotFound)
-        if (_isDragging)
-            return [_items count] - 1;
-        else
-            return [_items count];
-    return index;
+    [self _layoutHeaders];
+    [self _layoutGroupSeparators];
+    [self _layoutCells];
 }
 
-- (void)_receiveDroppedItemContainer:(ECItemViewDragContainer *)itemContainer forItem:(NSUInteger)item
-{
-    if (item == ECItemViewItemNotFound)
-        return;
-    [itemContainer retain];
-    [UIView animateConcurrentlyToAnimationsWithFlag:&_isAnimating duration:ECItemViewShortAnimationDuration animations:^(void) {
-        itemContainer.center = [self convertPoint:[self _centerForItem:item] toView:[itemContainer superview]];
-    } completion:^(BOOL finished) {
-        [_items insertObject:itemContainer.view atIndex:item];
-        [self addSubview:itemContainer.view];
-        itemContainer.view.center = [self _centerForItem:item];
-        [itemContainer release];
-        _currentDragDestination = ECItemViewItemNotFound;
-        [self setNeedsLayout];
-    }];
-}
-
-- (void)_handleDrag:(UIPanGestureRecognizer *)dragRecognizer
-{
-    if ([dragRecognizer state] == UIGestureRecognizerStateBegan)
-        [self _beginDrag:dragRecognizer];
-    else if ([dragRecognizer state] == UIGestureRecognizerStateChanged)
-    {
-        ECItemView *targetView = [self _targetForDrop:dragRecognizer];
-        if (targetView != _currentDragTarget)
-        {
-            _currentDragTarget->_currentDragDestination = ECItemViewItemNotFound;
-            [_currentDragTarget setNeedsLayout];
-            _currentDragTarget = targetView;
-        }
-        [targetView _continueDrag:dragRecognizer];
-        [self _continueDrag:dragRecognizer];
-    }
-    else if ([dragRecognizer state] == UIGestureRecognizerStateEnded)
-    {
-        if (![self _endDrag:dragRecognizer])
-            [self _cancelDrag:dragRecognizer];
-    }
-    else if ([dragRecognizer state] == UIGestureRecognizerStateCancelled)
-        [self _cancelDrag:dragRecognizer];
-}
+#pragma mark -
+#pragma mark UIGestureRecognizerDelegate
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch
 {
-    if ([self itemAtPoint:[touch locationInView:self]] != ECItemViewItemNotFound)
-        return YES;
-    return NO;
+    if (gestureRecognizer == _tapGestureRecognizer)
+        if (!_isEditing && [self indexPathForItemAtPoint:[touch locationInView:self]])
+            return YES;
+        else
+            return NO;
+    if (gestureRecognizer == _longPressGestureRecognizer)
+        if (_isEditing && [self indexPathForItemAtPoint:[touch locationInView:self]])
+            return YES;
+        else
+        {
+            return NO;
+        }
+    if ([gestureRecognizer isKindOfClass:[UITapGestureRecognizer class]] && !_isEditing && [self indexPathForItemAtPoint:[touch locationInView:self]])
+        return NO;
+    if ([gestureRecognizer isKindOfClass:[UILongPressGestureRecognizer class]] && _isEditing && [self indexPathForItemAtPoint:[touch locationInView:self]])
+        return NO;
+    if (_flags.superGestureRecognizerShouldReceiveTouch)
+        return [super gestureRecognizer:gestureRecognizer shouldReceiveTouch:touch];
+    return YES;
 }
 
 - (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer
 {
-    if (gestureRecognizer == _tapRecognizer)
-        return YES;
-    if (!_delegateShouldDragItem || !_delegateCanDropItem)
-        return NO;
-    _viewToDragIn = nil;
-    NSUInteger item = [self itemAtPoint:[_dragRecognizer locationInView:self]];
-    if (item == ECItemViewItemNotFound)
-        return NO;
-    BOOL shouldBegin = [_delegate itemView:self shouldDragItem:item inView:&_viewToDragIn];
-    if (shouldBegin)
-        if (![self isDescendantOfView:_viewToDragIn])
-            _viewToDragIn = self;
-    return shouldBegin;
+    if (gestureRecognizer == _longPressGestureRecognizer)
+        if (_flags.dataSourceCanMoveItem && _flags.dataSourceMoveItem && [self indexPathForItemAtPoint:[gestureRecognizer locationInView:self]] && [_dataSource itemView:self canMoveItemAtIndexPath:[self indexPathForItemAtPoint:[gestureRecognizer locationInView:self]]])
+            return YES;
+        else
+            return NO;
+    if (_flags.superGestureRecognizerShouldBegin)
+        return [super gestureRecognizerShouldBegin:gestureRecognizer];
+    return YES;
+}
+
+- (void)_handleTapGesture:(UITapGestureRecognizer *)tapGestureRecognizer
+{
+    if (!_flags.delegateDidSelectItem)
+        return;
+    if (_isEditing)
+        return;
+    if (![tapGestureRecognizer state] == UIGestureRecognizerStateEnded)
+        return;
+    NSIndexPath *indexPath = [self indexPathForItemAtPoint:[tapGestureRecognizer locationInView:self]];
+    [__delegate itemView:self didSelectItemAtIndexPath:indexPath];
+}
+
+- (void)_handleLongPressGesture:(UILongPressGestureRecognizer *)longPressGestureRecognizer
+{
+    if ([longPressGestureRecognizer state] == UIGestureRecognizerStateBegan)
+        [self _beginDrag:longPressGestureRecognizer];
+    else if ([longPressGestureRecognizer state] == UIGestureRecognizerStateChanged)
+        [self _continueDrag:longPressGestureRecognizer];
+    else if ([longPressGestureRecognizer state] == UIGestureRecognizerStateEnded)
+        [self _endDrag:longPressGestureRecognizer];
+    else if ([longPressGestureRecognizer state] == UIGestureRecognizerStateCancelled)
+        [self _cancelDrag:longPressGestureRecognizer];
+}
+
+- (void)_beginDrag:(UILongPressGestureRecognizer *)dragRecognizer
+{
+    _isDragging = YES;
+    _draggedItemIndexPath = [[self indexPathForItemAtPoint:[dragRecognizer locationInView:self]] retain];
+    _dragDestinationIndexPath = [_draggedItemIndexPath retain];
+    _draggedItem = [self cellForItemAtIndexPath:_draggedItemIndexPath];
+    _draggedItem.center = [dragRecognizer locationInView:self];
+    [self bringSubviewToFront:_draggedItem];
+}
+
+- (void)_continueDrag:(UILongPressGestureRecognizer *)dragRecognizer
+{
+    _draggedItem.center = [dragRecognizer locationInView:self];
+    if (CGRectContainsPoint(self.bounds, _draggedItem.center) && !CGRectContainsPoint(UIEdgeInsetsInsetRect(self.bounds, _scrollingHotspots), _draggedItem.center))
+    {
+        if (!_scrollTimer)
+        {
+            _scrollTimer = [NSTimer timerWithTimeInterval:1.0/60.0 target:self selector:@selector(_handleTimer:) userInfo:nil repeats:YES];
+            [[NSRunLoop mainRunLoop] addTimer:_scrollTimer forMode:NSDefaultRunLoopMode];
+        }
+        return;
+    }
+    else if (_scrollTimer)
+    {
+        [_scrollTimer invalidate];
+        _scrollTimer = nil;
+    }
+    NSIndexPath *indexPath = [self indexPathForItemAtPoint:[dragRecognizer locationInView:self]];
+    if ([indexPath isEqual:_draggedItemIndexPath])
+        return;
+    [_dragDestinationIndexPath release];
+    _dragDestinationIndexPath = [indexPath retain];
+    [self setNeedsLayout];
+    [UIView animateConcurrentlyToAnimationsWithFlag:&_isAnimating duration:ECItemViewShortAnimationDuration animations:^(void) {
+        [self layoutIfNeeded];
+    } completion:NULL];
+}
+
+- (void)_endDrag:(UILongPressGestureRecognizer *)dragRecognizer
+{
+    BOOL proposedIndexPathExists;
+    NSIndexPath *proposedIndexPath = [self _proposedIndexPathForItemAtPoint:[dragRecognizer locationInView:self] exists:&proposedIndexPathExists];
+    if (!proposedIndexPath)
+        [self _cancelDrag:dragRecognizer];
+    if (!proposedIndexPathExists && !proposedIndexPath.item)
+        if (_flags.dataSourceInsertGroup)
+        {
+            [_dataSource itemView:self insertGroupAtIndexPath:[NSIndexPath indexPathForPosition:proposedIndexPath.group inArea:proposedIndexPath.area]];
+            if (_draggedItemIndexPath.area == proposedIndexPath.area && _draggedItemIndexPath.group >= proposedIndexPath.group)
+            {
+                NSIndexPath *adjustedDraggedItemIndexPath = [[NSIndexPath indexPathForItem:_draggedItemIndexPath.item inGroup:_draggedItemIndexPath.group + 1 inArea:_draggedItemIndexPath.area] retain];
+                [_draggedItemIndexPath release];
+                _draggedItemIndexPath = adjustedDraggedItemIndexPath;
+            }
+            
+        }
+        else
+            [self _cancelDrag:dragRecognizer];
+    
+    _isDragging = NO;
+    [_scrollTimer invalidate];
+    _scrollTimer = nil;
+    [_dragDestinationIndexPath release];
+    _dragDestinationIndexPath = proposedIndexPath;
+    if (_flags.dataSourceMoveItem)
+        [_dataSource itemView:self moveItemAtIndexPath:_draggedItemIndexPath toIndexPath:_dragDestinationIndexPath];
+    if (_flags.dataSourceNumberOfItemsInGroupInArea)
+        if (![_dataSource itemView:self numberOfItemsInGroup:_draggedItemIndexPath.group inArea:_draggedItemIndexPath.area])
+            if (_flags.dataSourceDeleteGroup)
+                [_dataSource itemView:self deleteGroupAtIndexPath:[NSIndexPath indexPathForPosition:_draggedItemIndexPath.group inArea:_draggedItemIndexPath.area]];
+    [self reloadData];
+    [UIView animateConcurrentlyToAnimationsWithFlag:&_isAnimating duration:ECItemViewShortAnimationDuration animations:^(void) {
+        _draggedItem.frame = UIEdgeInsetsInsetRect([self rectForItemAtIndexPath:_dragDestinationIndexPath], _cellInsets);
+    } completion:NULL];
+    [_draggedItemIndexPath release];
+    _draggedItemIndexPath = nil;
+    _dragDestinationIndexPath = nil;
+    _draggedItem = nil;
+}
+
+- (void)_cancelDrag:(UILongPressGestureRecognizer *)dragRecognizer
+{
+    _isDragging = NO;
+    [_scrollTimer invalidate];
+    _scrollTimer = nil;
+    [self setNeedsLayout];
+    [UIView animateConcurrentlyToAnimationsWithFlag:&_isAnimating duration:ECItemViewShortAnimationDuration animations:^(void) {
+        _draggedItem.frame = UIEdgeInsetsInsetRect([self rectForItemAtIndexPath:_draggedItemIndexPath], _cellInsets);
+        [self layoutIfNeeded];
+    } completion:NULL];
+    [_draggedItemIndexPath release];
+    _draggedItemIndexPath = nil;
+    [_dragDestinationIndexPath release];
+    _dragDestinationIndexPath = nil;
+    _draggedItem = nil;
 }
 
 - (void)_handleTimer:(NSTimer *)timer
 {
-    ((void(^)(void))[timer userInfo])();
+    CGPoint offset = [self contentOffset];
+    CGPoint center = _draggedItem.center;
+    if (_draggedItem.center.y < self.bounds.origin.y + _scrollingHotspots.top && self.bounds.origin.y > 0.0)
+    {
+        offset.y -= _scrollSpeed;
+        center.y -= _scrollSpeed;
+    }
+    else if (_draggedItem.center.y > self.bounds.origin.y + self.bounds.size.height - _scrollingHotspots.bottom && self.bounds.origin.y < self.contentSize.height - self.bounds.size.height)
+    {
+        offset.y += _scrollSpeed;
+        center.y += _scrollSpeed;
+    }
+    [self setContentOffset:offset animated:NO];
+    _draggedItem.center = center;
+ }
+
+@end
+
+#pragma mark -
+
+@implementation NSIndexPath (ECItemView)
+
+- (NSUInteger)area
+{
+    return [self indexAtPosition:0];
+}
+
+- (NSUInteger)group
+{
+    return [self indexAtPosition:1];
+}
+
+- (NSUInteger)item
+{
+    return [self indexAtPosition:2];
+}
+
+- (NSUInteger)position
+{
+    return [self indexAtPosition:1];
+}
+
++ (NSIndexPath *)indexPathForItem:(NSUInteger)item inGroup:(NSUInteger)group inArea:(NSUInteger)area
+{
+    return [self indexPathWithIndexes:(NSUInteger[3]){area, group, item} length:3];
+}
+
++ (NSIndexPath *)indexPathForPosition:(NSUInteger)position inArea:(NSUInteger)area
+{
+    return [self indexPathWithIndexes:(NSUInteger[2]){area, position} length:2];
 }
 
 @end
