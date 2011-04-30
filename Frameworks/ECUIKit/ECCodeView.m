@@ -23,7 +23,7 @@
     ECTextRenderer *renderer;
 }
 
-@property (nonatomic) NSUInteger tileIndex;
+@property (nonatomic) NSInteger tileIndex;
 
 @property (nonatomic) UIEdgeInsets textInsets;
 
@@ -51,13 +51,13 @@
 
 - (void)invalidate
 {
-    tileIndex = NSUIntegerMax;
+    tileIndex = -2;
     self.hidden = YES;
 }
 
 - (void)drawRect:(CGRect)rect
 {
-    if (tileIndex == NSUIntegerMax)
+    if (tileIndex < 0)
         return;
     
     // TODO draw "transparent" bg and thatn draw text in deferred queue
@@ -314,7 +314,7 @@ static void init(ECCodeView *self)
         if (tileViewPool[i])
         {
             // Tile already present and ready
-            if ([tileViewPool[i] tileIndex] == tileIndex)
+            if ([tileViewPool[i] tileIndex] == (NSInteger)tileIndex)
             {
                 return tileViewPool[i];
             }

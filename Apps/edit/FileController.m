@@ -8,13 +8,12 @@
 
 #import "FileController.h"
 
-#import <ECUIKit/ECCodeView.h>
 #import <ECUIKit/ECCodeStringDataSource.h>
 
 @implementation FileController
 
-@synthesize codeView = codeView_;
-@synthesize file = file_;
+@synthesize codeView;
+@synthesize file;
 
 - (void)dealloc
 {
@@ -26,6 +25,11 @@
 {
     self.codeView.text = [NSString stringWithContentsOfFile:self.file encoding:NSUTF8StringEncoding error:nil];
 //    ECCodeStringDataSource *codeSource = (ECCodeStringDataSource *)self.codeView.datasource;
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    [codeView setNeedsLayout];
 }
 
 - (void)viewDidUnload
@@ -42,10 +46,10 @@
 	return YES;
 }
 
-- (void)loadFile:(NSString *)file
+- (void)loadFile:(NSString *)aFile
 {
-    self.file = file;
-    self.title = [file lastPathComponent];
+    self.file = aFile;
+    self.title = [aFile lastPathComponent];
 }
 
 @end
