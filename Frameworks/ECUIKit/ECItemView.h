@@ -111,7 +111,6 @@ typedef enum {
 - (ECItemViewCell *)cellForItemAtIndexPath:(NSIndexPath *)indexPath;
 - (NSIndexPath *)indexPathForCell:(ECItemViewCell *)cell;
 - (NSIndexPath *)indexPathForItemAtPoint:(CGPoint)point;
-- (NSArray *)indexPathsForItemsInRect:(CGRect)rect;
 
 // Scrolling
 - (void)scrollToItemAtIndexPath:(NSIndexPath *)indexPath atScrollPosition:(ECItemViewScrollPosition)scrollPosition animated:(BOOL)animated;

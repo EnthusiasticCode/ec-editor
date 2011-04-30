@@ -11,6 +11,7 @@
 #import <ECUIKit/UIView+ConcurrentAnimation.h>
 #import <ECFoundation/ECStackCache.h>
 #import <ECFoundation/NSIndexPath+FixedIsEqual.h>
+#import <ECFoundation/ECMutableDictionary.h>
 
 const CGFloat ECItemViewShortAnimationDuration = 0.15;
 const NSUInteger ECItemViewCellBufferSize = 10;
@@ -54,9 +55,9 @@ const NSUInteger ECItemViewGroupSeparatorBufferSize = 20;
     ECStackCache *_headerCache;
     ECStackCache *_groupSeparatorCache;
     ECStackCache *_cellCache;
-    NSMutableDictionary *_visibleCells;
-    NSMutableDictionary *_visibleHeaders;
-    NSMutableDictionary *_visibleSeparators;
+    ECMutableDictionary *_visibleCells;
+    ECMutableDictionary *_visibleHeaders;
+    ECMutableDictionary *_visibleSeparators;
     UITapGestureRecognizer *_tapGestureRecognizer;
     UILongPressGestureRecognizer *_longPressGestureRecognizer;
     BOOL _isDragging;
@@ -77,10 +78,11 @@ const NSUInteger ECItemViewGroupSeparatorBufferSize = 20;
 - (CGFloat)_heightForGroup:(NSUInteger)group inArea:(NSUInteger)area;
 - (CGRect)_rectForGroupSeparatorAtIndexPath:(NSIndexPath *)indexPath;
 
-- (NSIndexSet *)_indexesForVisibleAreas;
-- (NSIndexSet *)_indexesForVisibleHeaders;
-- (NSArray *)_indexPathsForVisibleGroups;
-- (NSArray *)_indexPathsForVisibleGroupSeparators;
+- (NSIndexSet *)_indexesForAreasInRect:(CGRect)rect editing:(BOOL)editing;
+- (NSIndexSet *)_indexesForHeadersInRect:(CGRect)rect editing:(BOOL)editing;
+- (NSArray *)_indexPathsForGroupsInRect:(CGRect)rect editing:(BOOL)editing;
+- (NSArray *)_indexPathsForGroupSeparatorsInRect:(CGRect)rect editing:(BOOL)editing;
+- (NSArray *)_indexPathsForItemsInRect:(CGRect)rect editing:(BOOL)editing;
 
 - (NSIndexPath *)_proposedIndexPathForItemAtPoint:(CGPoint)point exists:(BOOL *)exists;
 
@@ -194,7 +196,6 @@ const NSUInteger ECItemViewGroupSeparatorBufferSize = 20;
     _headerCache = [[ECStackCache alloc] initWithTarget:self action:@selector(_blankHeader:) size:ECItemViewHeaderBufferSize];
     _groupSeparatorCache = [[ECStackCache alloc] initWithTarget:self action:@selector(_groupSeparator:) size:ECItemViewGroupSeparatorBufferSize];
     _cellCache = [[ECStackCache alloc] initWithTarget:nil action:NULL size:ECItemViewCellBufferSize];
-    _visibleCells = [[NSMutableDictionary alloc] init];
     _tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(_handleTapGesture:)];
     _tapGestureRecognizer.delegate = self;
     [self addGestureRecognizer:_tapGestureRecognizer];
@@ -453,7 +454,7 @@ const NSUInteger ECItemViewGroupSeparatorBufferSize = 20;
 #pragma mark -
 #pragma mark Index paths
 
-- (NSIndexSet *)_indexesForVisibleAreas
+- (NSIndexSet *)_indexesForAreasInRect:(CGRect)rect editing:(BOOL)editing
 {
     NSMutableIndexSet *indexes = [NSMutableIndexSet indexSetWithIndexesInRange:NSMakeRange(0, [self numberOfAreas])];
     return [indexes indexesPassingTest:^BOOL(NSUInteger idx, BOOL *stop) {
@@ -461,7 +462,7 @@ const NSUInteger ECItemViewGroupSeparatorBufferSize = 20;
     }];
 }
 
-- (NSIndexSet *)_indexesForVisibleHeaders
+- (NSIndexSet *)_indexesForHeadersInRect:(CGRect)rect editing:(BOOL)editing
 {
     NSMutableIndexSet *indexes = [NSMutableIndexSet indexSetWithIndexesInRange:NSMakeRange(0, [self numberOfAreas])];
     return [indexes indexesPassingTest:^BOOL(NSUInteger idx, BOOL *stop) {
@@ -469,9 +470,9 @@ const NSUInteger ECItemViewGroupSeparatorBufferSize = 20;
     }];
 }
 
-- (NSArray *)_indexPathsForVisibleGroups
+- (NSArray *)_indexPathsForGroupsInRect:(CGRect)rect editing:(BOOL)editing
 {
-    NSIndexSet *indexes = [self _indexesForVisibleAreas];
+    NSIndexSet *indexes = [self _indexesForAreasInRect:(CGRect)rect editing:(BOOL)editing];
     NSMutableArray *indexPaths = [NSMutableArray array];
     [indexes enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
         NSUInteger numGroups = [self numberOfGroupsInArea:idx];
@@ -482,19 +483,24 @@ const NSUInteger ECItemViewGroupSeparatorBufferSize = 20;
     return indexPaths;
 }
 
-- (NSArray *)_indexPathsForVisibleGroupSeparators
+- (NSArray *)_indexPathsForGroupSeparatorsInRect:(CGRect)rect editing:(BOOL)editing
 {
     NSMutableArray *indexPaths = [NSMutableArray array];
-    for (NSIndexPath *indexPath in [self _indexPathsForVisibleGroups])
+    for (NSIndexPath *indexPath in [self _indexPathsForGroupsInRect:(CGRect)rect editing:(BOOL)editing])
         if (CGRectIntersectsRect(self.bounds, [self _rectForGroupSeparatorAtIndexPath:indexPath]))
             [indexPaths addObject:indexPath];
     return indexPaths;
 }
 
+- (NSArray *)_indexPathsForItemsInRect:(CGRect)rect editing:(BOOL)editing
+{
+    
+}
+
 - (NSArray *)indexPathsForVisibleItems
 {
     NSMutableArray *indexPaths = [NSMutableArray array];
-    for (NSIndexPath *groupIndexPath in [self _indexPathsForVisibleGroups])
+    for (NSIndexPath *groupIndexPath in [self _indexPathsForGroupsInRect:[self bounds] editing:_isEditing])
     {
         NSUInteger numItems = [self numberOfItemsInGroup:groupIndexPath.position inArea:groupIndexPath.area];
         for (NSUInteger k = 0; k < numItems; ++k)
@@ -623,8 +629,8 @@ const NSUInteger ECItemViewGroupSeparatorBufferSize = 20;
 
 - (void)_layoutHeaders
 {
-    NSMutableDictionary *newVisibleHeaders = [[NSMutableDictionary alloc] init];
-    [[self _indexesForVisibleHeaders] enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
+    ECMutableDictionary *newVisibleHeaders = [[ECMutableDictionary alloc] init];
+    [[self _indexesForHeadersInRect:[self bounds] editing:_isEditing] enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
         UILabel *header = [_visibleHeaders objectForKey:[NSNumber numberWithUnsignedInteger:idx]];
         if (header)
             [_visibleHeaders removeObjectForKey:[NSNumber numberWithUnsignedInteger:idx]];
@@ -649,8 +655,8 @@ const NSUInteger ECItemViewGroupSeparatorBufferSize = 20;
 
 - (void)_layoutGroupSeparators
 {
-    NSMutableDictionary *newVisibleGroupSeparators = [[NSMutableDictionary alloc] init];
-    for (NSIndexPath *indexPath in [self _indexPathsForVisibleGroupSeparators])
+    ECMutableDictionary *newVisibleGroupSeparators = [[ECMutableDictionary alloc] init];
+    for (NSIndexPath *indexPath in [self _indexPathsForGroupSeparatorsInRect:[self bounds] editing:_isEditing])
     {
         UIView *separator = [_visibleSeparators objectForKey:indexPath];
         if (separator)
@@ -675,7 +681,7 @@ const NSUInteger ECItemViewGroupSeparatorBufferSize = 20;
 
 - (void)_layoutCells
 {
-    NSMutableDictionary *newVisibleItems = [[NSMutableDictionary alloc] init];
+    ECMutableDictionary *newVisibleItems = [[ECMutableDictionary alloc] init];
     for (NSIndexPath *indexPath in [self indexPathsForVisibleItems])
     {
         if (_isDragging && [indexPath isEqual:_draggedItemIndexPath])
