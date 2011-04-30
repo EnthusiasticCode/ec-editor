@@ -7,8 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-
-@class ECCodeView;
+#import "ECCodeView.h"
 
 @interface DetailViewController : UIViewController <UIPopoverControllerDelegate, UISplitViewControllerDelegate> {
 

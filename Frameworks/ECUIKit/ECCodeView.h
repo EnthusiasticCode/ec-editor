@@ -10,6 +10,12 @@
 #import "ECCodeViewDataSource.h"
 
 
+typedef enum {
+    ECCodeViewThumbnailsDisplayNone,
+    ECCodeViewThumbnailsDisplayAuto,
+    ECCodeViewThumbnailsDisplayAlways
+} ECCodeViewThumbnailsDisplayMode;
+
 @interface ECCodeView : UIScrollView <UIKeyInput, UITextInputTraits, UITextInput>
 
 /// The datasource for the text displayed by the code view. Default is self.
@@ -30,6 +36,21 @@
 
 /// Invalidate a particular section of the text making the reveiver redraw it.
 - (void)updateTextInLineRange:(NSRange)originalRange toLineRange:(NSRange)newRange;
+
+#pragma mark Generating and Retrieving Thumbnails
+
+/// Indicate if the receiver should produce thumbnail images. Default is NO.
+@property (getter = isProducingThumbnails) BOOL produceThumbnails;
+
+/// Set the thumbnails width. Default 100 points;
+@property CGFloat thumbnailsWidth;
+
+/// Get an array of ordered rendered text \c UIImage thumbnails.
+@property (readonly, copy) NSArray *thumbnails;
+
+/// Indicates how to show thumbnails inside the receiver. If produceThumbnails in NO
+/// this property has no effects.
+@property (nonatomic) ECCodeViewThumbnailsDisplayMode thumbnailsDisplayMode;
 
 #pragma mark UITextInput Properties
 

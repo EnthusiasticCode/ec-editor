@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CDB949BA136C3AF200870A98 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CDB949B9136C3AF200870A98 /* QuartzCore.framework */; };
 		CDCD1C861368607300A6DA9E /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CDCD1C851368607300A6DA9E /* UIKit.framework */; };
 		CDCD1C881368607300A6DA9E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CDCD1C871368607300A6DA9E /* Foundation.framework */; };
 		CDCD1C8A1368607300A6DA9E /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CDCD1C891368607300A6DA9E /* CoreGraphics.framework */; };
@@ -28,6 +29,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		CDB949B9136C3AF200870A98 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		CDCD1C811368607300A6DA9E /* CodeView.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CodeView.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CDCD1C851368607300A6DA9E /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		CDCD1C871368607300A6DA9E /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -69,6 +71,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CDB949BA136C3AF200870A98 /* QuartzCore.framework in Frameworks */,
 				CDCD1CB2136860E000A6DA9E /* CoreText.framework in Frameworks */,
 				CDCD1C861368607300A6DA9E /* UIKit.framework in Frameworks */,
 				CDCD1C881368607300A6DA9E /* Foundation.framework in Frameworks */,
@@ -99,6 +102,7 @@
 		CDCD1C841368607300A6DA9E /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				CDB949B9136C3AF200870A98 /* QuartzCore.framework */,
 				CDCD1CB1136860E000A6DA9E /* CoreText.framework */,
 				CDCD1C851368607300A6DA9E /* UIKit.framework */,
 				CDCD1C871368607300A6DA9E /* Foundation.framework */,
