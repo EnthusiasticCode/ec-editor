@@ -52,6 +52,9 @@
     CGFloat keyboardHeight;
     
     InstantGestureRecognizer *dismissRecognizer;
+    
+    BOOL delegateHasPopoverControllerShouldDismissPopover;
+    BOOL delegateHasPopoverControllerDidDismissPopover;
 }
 
 - (void)presentPopoverInView:(UIView *)view WithFrame:(CGRect)frame animated:(BOOL)animated;
@@ -71,8 +74,9 @@
 
 static void init(ECPopoverController *self)
 {
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardShown:) name:UIKeyboardDidShowNotification object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardHidden:) name:UIKeyboardDidHideNotification object:nil];
+    NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
+    [nc addObserver:self selector:@selector(keyboardShown:) name:UIKeyboardDidShowNotification object:nil];
+    [nc addObserver:self selector:@selector(keyboardHidden:) name:UIKeyboardDidHideNotification object:nil];
 }
 
 - (id)initWithContentViewController:(UIViewController *)viewController
@@ -114,12 +118,12 @@ static void init(ECPopoverController *self)
     {
         // TODO change with opacity animation
         [UIView transitionFromView:popoverView.contentView toView:contentViewController.view duration:ANIMATION_DURATION options:0 completion:^(BOOL finished) {
-           [self setPopoverContentSize:contentViewController.view.bounds.size animated:YES]; 
+           [self setPopoverContentSize:contentViewController.contentSizeForViewInPopover animated:YES]; 
         }];
     }
     else
     {
-        [self setPopoverContentSize:contentViewController.view.bounds.size animated:NO]; 
+        [self setPopoverContentSize:contentViewController.contentSizeForViewInPopover animated:NO]; 
         popoverView.contentView = contentViewController.view;
     }
 }
@@ -151,6 +155,13 @@ static void init(ECPopoverController *self)
 @synthesize passthroughViews;
 @synthesize delegate;
 
+- (void)setDelegate:(id<UIPopoverControllerDelegate>)aDelegate
+{
+    delegate = aDelegate;
+    delegateHasPopoverControllerShouldDismissPopover = [delegate respondsToSelector:@selector(popoverControllerShouldDismissPopover:)];
+    delegateHasPopoverControllerDidDismissPopover = [delegate respondsToSelector:@selector(popoverControllerDidDismissPopover:)];
+}
+
 #pragma mark -
 #pragma mark Getting the Popover Attributes
 
@@ -165,7 +176,7 @@ static void init(ECPopoverController *self)
 #pragma mark Presenting and Dismissing the Popover
 
 - (void)presentPopoverFromRect:(CGRect)rect inView:(UIView *)view permittedArrowDirections:(UIPopoverArrowDirection)arrowDirections animated:(BOOL)animated
-{
+{    
     CGRect allowedRect = view.window.bounds;
     // Removing status bar anyway
     allowedRect.origin.y += 20;
@@ -183,7 +194,7 @@ static void init(ECPopoverController *self)
     CGRect backupFrame = CGRectNull;
     CGRect resultFrame = CGRectZero;
         
-    if (arrowDirections | UIPopoverArrowDirectionUp) 
+    if (arrowDirections & UIPopoverArrowDirectionUp) 
     {
         resultFrame = popoverView.bounds;
         resultFrame.origin.x = MAX(allowedRect.origin.x, arrowPoint.x - resultFrame.size.width / 2);
@@ -201,32 +212,11 @@ static void init(ECPopoverController *self)
         }
     }
     
-    if (arrowDirections | UIPopoverArrowDirectionLeft) 
-    {
-        resultFrame = popoverView.bounds;
-        resultFrame.origin.x = CGRectGetMaxX(rect) + popoverView.arrowSize;
-        resultFrame.origin.y = MAX(allowedRect.origin.y, arrowPoint.y - resultFrame.size.height / 2);
-        if (CGRectContainsRect(allowedRect, resultFrame)) 
-        {
-            popoverView.arrowDirection = UIPopoverArrowDirectionLeft;
-            popoverView.arrowPosition = arrowPoint.y - resultFrame.origin.y;
-            [self presentPopoverInView:view WithFrame:resultFrame animated:animated];
-            return;
-        }
-        // TODO instead of check for null, check if intersection of this result frame > intersection with current backupframe
-        else if (CGRectIsNull(backupFrame))
-        {
-            popoverView.arrowDirection = UIPopoverArrowDirectionLeft;
-            popoverView.arrowPosition = arrowPoint.y - resultFrame.origin.y;
-            backupFrame = resultFrame;
-        }
-    }
-
-    if (arrowDirections | UIPopoverArrowDirectionDown) 
+    if (arrowDirections & UIPopoverArrowDirectionDown) 
     {
         resultFrame = popoverView.bounds;
         resultFrame.origin.x = MAX(allowedRect.origin.x, arrowPoint.x - resultFrame.size.width / 2);
-        resultFrame.origin.y = rect.origin.y - resultFrame.size.height - popoverView.arrowSize;
+        resultFrame.origin.y = rect.origin.y - resultFrame.size.height - popoverView.arrowMargin;
         if (CGRectContainsRect(allowedRect, resultFrame)) 
         {
             popoverView.arrowDirection = UIPopoverArrowDirectionDown;
@@ -242,10 +232,31 @@ static void init(ECPopoverController *self)
         }
     }
     
-    if (arrowDirections | UIPopoverArrowDirectionRight) 
+    if (arrowDirections & UIPopoverArrowDirectionLeft) 
     {
         resultFrame = popoverView.bounds;
-        resultFrame.origin.x = rect.origin.x - resultFrame.size.width - popoverView.arrowSize;
+        resultFrame.origin.x = CGRectGetMaxX(rect) + popoverView.arrowMargin;
+        resultFrame.origin.y = MIN(CGRectGetMaxY(allowedRect) - resultFrame.size.height, arrowPoint.y - resultFrame.size.height / 2);
+        if (CGRectContainsRect(allowedRect, resultFrame)) 
+        {
+            popoverView.arrowDirection = UIPopoverArrowDirectionLeft;
+            popoverView.arrowPosition = arrowPoint.y - resultFrame.origin.y;
+            [self presentPopoverInView:view WithFrame:resultFrame animated:animated];
+            return;
+        }
+        // TODO instead of check for null, check if intersection of this result frame > intersection with current backupframe
+        else if (CGRectIsNull(backupFrame))
+        {
+            popoverView.arrowDirection = UIPopoverArrowDirectionLeft;
+            popoverView.arrowPosition = arrowPoint.y - resultFrame.origin.y;
+            backupFrame = resultFrame;
+        }
+    }
+    
+    if (arrowDirections & UIPopoverArrowDirectionRight) 
+    {
+        resultFrame = popoverView.bounds;
+        resultFrame.origin.x = rect.origin.x - resultFrame.size.width - popoverView.arrowMargin;
         resultFrame.origin.y = MIN(CGRectGetMaxY(allowedRect) - resultFrame.size.height, arrowPoint.y - resultFrame.size.height / 2);
         if (CGRectContainsRect(allowedRect, resultFrame)) 
         {
@@ -273,6 +284,9 @@ static void init(ECPopoverController *self)
 
 - (void)dismissPopoverAnimated:(BOOL)animated
 {
+    if (delegateHasPopoverControllerShouldDismissPopover && ![delegate popoverControllerShouldDismissPopover:(UIPopoverController *)self])
+        return;
+    
     if (animated) 
     {
         popoverView.layer.shouldRasterize = YES;
@@ -281,20 +295,27 @@ static void init(ECPopoverController *self)
         } completion:^(BOOL finished) {
             popoverView.layer.shouldRasterize = NO;
             [popoverView removeFromSuperview];
+            popoverVisible = NO;
+            
+            if (delegateHasPopoverControllerDidDismissPopover)
+                [delegate popoverControllerDidDismissPopover:(UIPopoverController *)self];
         }];
     }
     else
     {
         [popoverView removeFromSuperview];
+        popoverVisible = NO;
+        
+        if (delegateHasPopoverControllerDidDismissPopover)
+            [delegate popoverControllerDidDismissPopover:(UIPopoverController *)self];
     }
-    popoverVisible = NO;
 }
 
 #pragma mark -
 #pragma mark Private Methods
 
 - (void)presentPopoverInView:(UIView *)view WithFrame:(CGRect)frame animated:(BOOL)animated
-{
+{    
     [view addSubview:popoverView];
     popoverView.layer.shouldRasterize = YES;
     popoverView.alpha = 0;
