@@ -21,13 +21,17 @@
 @interface TextTileView : UIView {
 @private
     ECTextRenderer *renderer;
+    NSOperationQueue *renderingQueue;
+    
+    UIImage *textImage;
+    NSUInteger renderGeneration;
 }
 
 @property (nonatomic) NSInteger tileIndex;
 
 @property (nonatomic) UIEdgeInsets textInsets;
 
-- (id)initWithTextRenderer:(ECTextRenderer *)aRenderer;
+- (id)initWithTextRenderer:(ECTextRenderer *)aRenderer renderingQueue:(NSOperationQueue *)queue;
 
 - (void)invalidate;
 
@@ -38,21 +42,43 @@
 
 @synthesize tileIndex, textInsets;
 
-- (id)initWithTextRenderer:(ECTextRenderer *)aRenderer
+- (id)initWithTextRenderer:(ECTextRenderer *)aRenderer renderingQueue:(NSOperationQueue *)queue
 {
     if ((self = [super init]))
     {
         self.opaque = YES;
         self.clearsContextBeforeDrawing = NO;
         renderer = aRenderer;
+        renderingQueue = queue;
     }
     return self;
+}
+
+- (void)dealloc
+{
+    [textImage release];
+    [super dealloc];
+}
+
+- (void)setTileIndex:(NSInteger)index
+{
+    if (index != tileIndex) 
+    {
+        [self invalidate];
+        tileIndex = index;
+    }
 }
 
 - (void)invalidate
 {
     tileIndex = -2;
     self.hidden = YES;
+    @synchronized(textImage)
+    {
+        [textImage release];
+        textImage = nil;
+        renderGeneration++;
+    }
 }
 
 - (void)drawRect:(CGRect)rect
@@ -60,32 +86,56 @@
     if (tileIndex < 0)
         return;
     
-    // TODO draw "transparent" bg and thatn draw text in deferred queue
-    CGContextRef context = UIGraphicsGetCurrentContext();
-    
-    [self.backgroundColor setFill];
-    CGContextFillRect(context, rect);
-    
-    // Drawing text
-    CGContextSaveGState(context);
+    @synchronized(textImage)
     {
-        CGPoint textOffset = CGPointMake(0, rect.size.height * tileIndex);
-        CGSize textSize = rect.size;
-        if (tileIndex == 0) 
+        if (textImage) 
         {
-            textSize.height -= textInsets.top;
-            CGContextTranslateCTM(context, textInsets.left, textInsets.top);
+            [textImage drawInRect:rect];
         }
         else
         {
-            textOffset.y -= textInsets.top;
-            CGContextTranslateCTM(context, textInsets.left, 0);
+            // Filling transparent background
+            [[UIColor redColor] setFill];
+            UIRectFill(rect);
+            
+            // Generating image
+            [renderingQueue addOperationWithBlock:^(void) {
+                UIGraphicsBeginImageContextWithOptions(rect.size, YES, 0);
+                CGContextRef imageContext = UIGraphicsGetCurrentContext();
+                {
+                    
+                    [self.backgroundColor setFill];
+                    CGContextFillRect(imageContext, rect);
+                    
+                    // Drawing text
+                    CGPoint textOffset = CGPointMake(0, rect.size.height * tileIndex);
+                    CGSize textSize = rect.size;
+                    if (tileIndex == 0) 
+                    {
+                        textSize.height -= textInsets.top;
+                        CGContextTranslateCTM(imageContext, textInsets.left, textInsets.top);
+                    }
+                    else
+                    {
+                        textOffset.y -= textInsets.top;
+                        CGContextTranslateCTM(imageContext, textInsets.left, 0);
+                    }
+                    CGRect textRect = (CGRect){ textOffset, rect.size };
+                    
+                    [renderer drawTextWithinRect:textRect inContext:imageContext];
+                }
+                @synchronized(textImage)
+                {
+                    textImage = [UIGraphicsGetImageFromCurrentImageContext() retain];
+                }
+                UIGraphicsEndImageContext();
+                
+                [[NSOperationQueue mainQueue] addOperationWithBlock:^(void) {
+                    [self setNeedsDisplay];
+                }];
+            }];   
         }
-        CGRect textRect = (CGRect){ textOffset, rect.size };
-        
-        [renderer drawTextWithinRect:textRect inContext:context];
     }
-    CGContextRestoreGState(context);
 }
 
 @end
@@ -122,12 +172,12 @@
 @end
 
 #pragma mark -
-#pragma mark -
 #pragma mark ECCodeView
 
 @interface ECCodeView () {
 @private
     NSMutableAttributedString *text;
+    NSOperationQueue *renderingQueue;
     
     // Tileing and rendering management
     ECTextRenderer *renderer;
@@ -232,6 +282,10 @@ static void preinit(ECCodeView *self)
     self->renderer.preferredLineCountPerSegment = 500;
     
     self->textInsets = UIEdgeInsetsMake(10, 10, 10, 10);
+    
+    // Creating rendering queue
+    self->renderingQueue = [NSOperationQueue new];
+    [self->renderingQueue setMaxConcurrentOperationCount:1];
 }
 
 static void init(ECCodeView *self)
@@ -331,7 +385,7 @@ static void init(ECCodeView *self)
     // Generate new tile
     if (!tileViewPool[selected]) 
     {
-        tileViewPool[selected] = [[TextTileView alloc] initWithTextRenderer:renderer];
+        tileViewPool[selected] = [[TextTileView alloc] initWithTextRenderer:renderer renderingQueue:renderingQueue];
         tileViewPool[selected].backgroundColor = self.backgroundColor;
         tileViewPool[selected].textInsets = textInsets;
         // TODO remove from self when not displayed
@@ -994,6 +1048,7 @@ static void init(ECCodeView *self)
     {
         for (int i = 0; i < TILEVIEWPOOL_SIZE; ++i) 
         {
+            [tileViewPool[i] invalidate];
             [tileViewPool[i] setNeedsDisplay];
         }
     }
