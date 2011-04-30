@@ -33,6 +33,6 @@
 
 - (IBAction)pushToJumpBar:(id)sender;
 - (void)jumpBarButtonAction:(id)sender;
-- (IBAction)doSomething:(id)sender;
+- (IBAction)showPopover:(id)sender;
 
 @end

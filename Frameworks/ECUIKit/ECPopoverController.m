@@ -74,8 +74,9 @@
 
 static void init(ECPopoverController *self)
 {
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardShown:) name:UIKeyboardDidShowNotification object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardHidden:) name:UIKeyboardDidHideNotification object:nil];
+    NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
+    [nc addObserver:self selector:@selector(keyboardShown:) name:UIKeyboardDidShowNotification object:nil];
+    [nc addObserver:self selector:@selector(keyboardHidden:) name:UIKeyboardDidHideNotification object:nil];
 }
 
 - (id)initWithContentViewController:(UIViewController *)viewController
@@ -117,12 +118,12 @@ static void init(ECPopoverController *self)
     {
         // TODO change with opacity animation
         [UIView transitionFromView:popoverView.contentView toView:contentViewController.view duration:ANIMATION_DURATION options:0 completion:^(BOOL finished) {
-           [self setPopoverContentSize:contentViewController.view.bounds.size animated:YES]; 
+           [self setPopoverContentSize:contentViewController.contentSizeForViewInPopover animated:YES]; 
         }];
     }
     else
     {
-        [self setPopoverContentSize:contentViewController.view.bounds.size animated:NO]; 
+        [self setPopoverContentSize:contentViewController.contentSizeForViewInPopover animated:NO]; 
         popoverView.contentView = contentViewController.view;
     }
 }

@@ -41,7 +41,18 @@
     jumpBar.textShadowColor = [UIColor styleForegroundShadowColor];
     jumpBar.buttonColor = [UIColor styleBackgroundColor];
     
+    popoverContentViewController.view.backgroundColor = [UIColor styleBackgroundColor];
+    popoverContentViewController.view.layer.cornerRadius = 3;
+    popoverContentViewController.contentSizeForViewInPopover = CGSizeMake(200, 300);
     popoverController = [[ECPopoverController alloc] initWithContentViewController:popoverContentViewController];
+    NSMutableArray *passthrough = [NSMutableArray array];
+    for (UIControl *control in self.view.subviews) 
+    {
+        if ([control isKindOfClass:[UIButton class]]) 
+            [passthrough addObject:control];
+    }
+    popoverController.passthroughViews = passthrough;
+    [passthrough release];
     
     // Document icon
     imageView.image = [UIImage imageWithSize:imageView.bounds.size block:^(CGContextRef ctx, CGRect rect) {
@@ -241,15 +252,15 @@
 
 #pragma mark Jump Bar Delegation
 
+- (IBAction)showPopover:(id)sender {
+    NSUInteger tag = [sender tag];
+//    [popoverController setPopoverContentSize:(CGSize){ 270, 300 }];
+    [popoverController presentPopoverFromRect:[sender frame] inView:self.view permittedArrowDirections:tag ? tag :UIPopoverArrowDirectionAny animated:YES];
+}
+
 - (void)jumpBarButtonAction:(id)sender
 {
     [jumpBar popControlsDownThruIndex:[sender tag] animated:YES];
-}
-
-- (IBAction)doSomething:(id)sender {
-    NSUInteger tag = [sender tag];
-    [popoverController setPopoverContentSize:(CGSize){ 270, 300 }];
-    [popoverController presentPopoverFromRect:[sender frame] inView:self.view permittedArrowDirections:tag ? tag :UIPopoverArrowDirectionAny animated:YES];
 }
 
 - (void)jumpBar:(ECJumpBar *)jumpBar didPushControl:(UIControl *)control atStackIndex:(NSUInteger)index
