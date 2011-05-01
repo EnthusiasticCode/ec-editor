@@ -621,17 +621,6 @@ static void init(ECCodeView *self)
 
 - (CGRect)caretRectForPosition:(UITextPosition *)position
 {
-    //    NSUInteger pos = ((ECTextPosition *)position).index;
-    //    CGFloat frameOffset;
-    ////    CTFrameRef frame = [self frameContainingTextIndex:pos frameOffset:&frameOffset];
-    ////    CGRect carretRect = ECCTFrameGetBoundRectOfLinesForStringRange(frame, (CFRange){pos, 0});
-    //    CGRect carretRect = CGRectZero;
-    //    carretRect.origin.x += frameOffset;
-    //    // TODO parametrize caret rect sizes
-    //    carretRect.origin.x -= 1.0;
-    //    carretRect.size.width = 2.0;
-    //    return carretRect;
-    
     NSUInteger pos = ((ECTextPosition *)position).index;
     CGRect carretRect = [renderer boundsForStringRange:(NSRange){pos, 0} limitToFirstLine:YES];
     
@@ -640,6 +629,15 @@ static void init(ECCodeView *self)
     
     carretRect.origin.x -= 1.0;
     carretRect.size.width = 2.0;
+    
+    CGFloat scale = self.contentScaleFactor;
+    if (scale != 1.0) 
+    {
+        carretRect.origin.x *= scale;
+        carretRect.origin.y *= scale;
+        carretRect.size.width *= scale;
+        carretRect.size.height *= scale;
+    }
     
     return carretRect;
 }
@@ -652,14 +650,16 @@ static void init(ECCodeView *self)
 - (UITextPosition *)closestPositionToPoint:(CGPoint)point 
                                withinRange:(UITextRange *)range
 {
-    //    NSUInteger textLength = [self textLength];
-    //    NSUInteger index = (NSUInteger)ECCTFrameGetClosestStringIndexInRangeToPoint(self->textLayer.CTFrame, ((ECTextRange *)range).CFRange, point);
-    //    if (index >= textLength)
-    //        index = textLength;
-    //    return [[[ECTextPosition alloc] initWithIndex:(NSUInteger)index] autorelease];
-    
     point.x -= textInsets.left;
     point.y -= textInsets.top;
+    
+    CGFloat scale = self.contentScaleFactor;
+    if (scale != 1.0)
+    {
+        point.x /= scale;
+        point.y /= scale;
+    }
+    
     NSUInteger location = [renderer closestStringLocationToPoint:point withinStringRange:[(ECTextRange *)range range]];
     return [[[ECTextPosition alloc] initWithIndex:location] autorelease];;
 }

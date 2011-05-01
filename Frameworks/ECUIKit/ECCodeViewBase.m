@@ -122,6 +122,8 @@
     if (tileIndex < 0)
         return;
     
+    CGFloat scale = parent.contentScaleFactor;
+    CGFloat invertScale = 1.0 / scale;
     CGRect rect = self.bounds;
     [parent.renderingQueue addOperationWithBlock:^(void) {
         // Rendering image
@@ -132,12 +134,13 @@
             [self.backgroundColor setFill];
             CGContextFillRect(imageContext, rect);
             
+            //
+            CGContextScaleCTM(imageContext, scale, scale);
+            
             // Drawing text
-            CGPoint textOffset = CGPointMake(0, rect.size.height * tileIndex);
-            CGSize textSize = rect.size;
+            CGPoint textOffset = CGPointMake(0, rect.size.height * tileIndex * invertScale);
             if (tileIndex == 0) 
             {
-                textSize.height -= textInsets.top;
                 CGContextTranslateCTM(imageContext, textInsets.left, textInsets.top);
             }
             else
@@ -145,9 +148,12 @@
                 textOffset.y -= textInsets.top;
                 CGContextTranslateCTM(imageContext, textInsets.left, 0);
             }
-            CGRect textRect = (CGRect){ textOffset, rect.size };
             
-            [parent.renderer drawTextWithinRect:textRect inContext:imageContext];
+            CGSize textSize = rect.size;
+            textSize.height *= invertScale;
+            textSize.width *= invertScale;
+            
+            [parent.renderer drawTextWithinRect:(CGRect){ textOffset, textSize } inContext:imageContext];
         }
         UIImage *image = [UIGraphicsGetImageFromCurrentImageContext() retain];
         UIGraphicsEndImageContext();
@@ -207,7 +213,7 @@
 - (void)setFrame:(CGRect)frame
 {
     renderer.wrapWidth = UIEdgeInsetsInsetRect(frame, self->textInsets).size.width;
-    self.contentSize = CGSizeMake(frame.size.width, renderer.estimatedHeight + textInsets.top + textInsets.bottom);
+    self.contentSize = CGSizeMake(frame.size.width, (renderer.estimatedHeight + textInsets.top + textInsets.bottom) * self.contentScaleFactor);
     
     for (NSInteger i = 0; i < TILEVIEWPOOL_SIZE; ++i)
     {
@@ -297,7 +303,7 @@ static void init(ECCodeViewBase *self)
     {
         CGFloat height = [[change valueForKey:NSKeyValueChangeNewKey] floatValue];
         CGFloat width = self.bounds.size.width;
-        self.contentSize = CGSizeMake(width, height + textInsets.top + textInsets.bottom);
+        self.contentSize = CGSizeMake(width, (height + textInsets.top + textInsets.bottom) * self.contentScaleFactor);
     }
 }
 
@@ -435,7 +441,7 @@ static void init(ECCodeViewBase *self)
     // Update tiles
     CGRect bounds = self.bounds;
     renderer.wrapWidth = UIEdgeInsetsInsetRect(bounds, self->textInsets).size.width;
-    self.contentSize = CGSizeMake(bounds.size.width, renderer.estimatedHeight + textInsets.top + textInsets.bottom);
+    self.contentSize = CGSizeMake(bounds.size.width, (renderer.estimatedHeight + textInsets.top + textInsets.bottom) * self.contentScaleFactor);
     for (NSInteger i = 0; i < TILEVIEWPOOL_SIZE; ++i)
     {
         [tileViewPool[i] invalidate];
