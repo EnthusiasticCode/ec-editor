@@ -45,6 +45,8 @@ typedef enum {
 
 @property (nonatomic) CGFloat navigatorWidth;
 
+@property (nonatomic, retain) UIColor *navigatorBackgroundColor;
+
 /// This method will generate (if needed) thumbnails for the entire source text
 /// to fit the given size and execute the given block once the generation is complete. 
 /// Use 0 as size's height to limit only the width of thumbnails.

@@ -237,7 +237,7 @@
 @end
 
 #pragma mark -
-#pragma mark ThumbnailsLayer
+#pragma mark NavigatorLayer
 
 @implementation NavigatorLayer
 
@@ -251,19 +251,26 @@
     return self;
 }
 
-- (void)drawInContext:(CGContextRef)context
-{
-    CGContextRetain(context);
-    [parent thumbnailsFittingTotalSize:(CGSize){ self.bounds.size.width, 0 } enumerateUsingBlock:^(UIImage *thumbnail, NSUInteger index, CGFloat yOffset, BOOL *stop) {
-        CGContextDrawImage(context, (CGRect){ { 0, yOffset }, thumbnail.size }, thumbnail.CGImage);
-    } completionBlock:^(void) {
-        CGContextRelease(context);
-    } synchronously:NO];
-}
-
 - (id<CAAction>)actionForKey:(NSString *)event
 {
     return nil;
+}
+
+- (void)updateThumbnails
+{
+    [parent thumbnailsFittingTotalSize:(CGSize){ self.bounds.size.width, 0 } enumerateUsingBlock:^(UIImage *thumbnail, NSUInteger index, CGFloat yOffset, BOOL *stop) {
+        
+        [[NSOperationQueue mainQueue] addOperationWithBlock:^(void) {
+            CALayer *layer;
+            if ([self.sublayers count] > index) 
+                layer = [self.sublayers objectAtIndex:index];
+            else while ([self.sublayers count] <= index && (layer = [CALayer layer]))
+                [self addSublayer:layer];
+            [layer setFrame:(CGRect){ { 0, yOffset }, thumbnail.size }];
+            [layer setContents:(id)thumbnail.CGImage];            
+        }];
+        
+    } completionBlock:nil synchronously:NO];
 }
 
 @end
@@ -297,7 +304,7 @@
 @synthesize datasource; 
 @synthesize textInsets;
 @synthesize renderingQueue, renderer;
-@synthesize navigatorDisplayMode, navigatorWidth, navigatorVisible;
+@synthesize navigatorDisplayMode, navigatorWidth, navigatorBackgroundColor, navigatorVisible;
 
 - (void)setDatasource:(id<ECCodeViewDataSource>)aDatasource
 {
@@ -368,6 +375,7 @@ static void preinit(ECCodeView *self)
     self->renderingQueue = [NSOperationQueue new];
     [self->renderingQueue setMaxConcurrentOperationCount:1];
     
+    self->navigatorBackgroundColor = [UIColor redColor];
     self->navigatorWidth = 200;
 }
 
@@ -427,11 +435,16 @@ static void init(ECCodeView *self)
     if (object == renderer) 
     {
         CGFloat height = [[change valueForKey:NSKeyValueChangeNewKey] floatValue];
-        self.contentSize = CGSizeMake(self.bounds.size.width, height + textInsets.top + textInsets.bottom);
+        CGFloat width = self.bounds.size.width;
+        self.contentSize = CGSizeMake(width, height + textInsets.top + textInsets.bottom);
         
         if (navigatorLayer) 
         {
-            navigatorLayer.bounds = CGRectMake(0, 0, navigatorWidth, height / self.bounds.size.height);
+            navigatorLayer.bounds = CGRectMake(0, 0, navigatorWidth, MAX(height * (navigatorWidth / width), self.bounds.size.height));
+            if (self.isNavigatorVisible) 
+            {
+                [navigatorLayer updateThumbnails];
+            }
         }
     }
 }
@@ -520,9 +533,11 @@ static void init(ECCodeView *self)
         {
             navigatorLayer = [[NavigatorLayer alloc] initWithCodeView:self];
             navigatorLayer.anchorPoint = CGPointMake(0, 0);
-            navigatorLayer.needsDisplayOnBoundsChange = YES;
+            navigatorLayer.backgroundColor = navigatorBackgroundColor.CGColor;
             [self.layer addSublayer:navigatorLayer];
+            navigatorLayer.bounds = CGRectMake(0, 0, navigatorWidth, MAX(self.contentSize.height * (navigatorWidth / contentRect.size.width), contentRect.size.height));
             [navigatorLayer release];
+            [navigatorLayer updateThumbnails];
         }
         navigatorLayer.position = CGPointMake(contentRect.size.width - navigatorWidth, contentRect.origin.y);
     }
@@ -1298,6 +1313,11 @@ static void init(ECCodeView *self)
             [self invalidateThumbnailForTileAtIndex:tileIndex];
         }
     }
+    
+    if (self.isNavigatorVisible && navigatorLayer) 
+    {
+        [navigatorLayer setNeedsDisplay];
+    }
 }
 
 #pragma mark -
@@ -1355,6 +1375,12 @@ static void init(ECCodeView *self)
     
     // Update thumbnails
     [self invalidateAllThumbnails];
+    
+    // Update navigator
+    if (navigatorLayer && self.isNavigatorVisible) 
+    {
+        [navigatorLayer updateThumbnails];
+    }
     
     // Update selection
     // TODO resume saved selection
