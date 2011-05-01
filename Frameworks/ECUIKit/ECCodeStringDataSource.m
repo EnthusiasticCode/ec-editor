@@ -131,13 +131,18 @@
         NSUInteger index = 0;
         NSRange fromLineRange = NSMakeRange(0, 0);
         NSUInteger toLineCount = 0, limit;
+        // From line location
         for (index = 0; index < range.location; ++fromLineRange.location)
             index = NSMaxRange([str lineRangeForRange:(NSRange){ index, 0 }]);
+        if (fromLineRange.location)
+            fromLineRange.location--;
+        // From line count
         limit = NSMaxRange(range);
-        for (index = range.location; index < limit; ++fromLineRange.length)
+        for (index = range.location; index <= limit; ++fromLineRange.length)
             index = NSMaxRange([str lineRangeForRange:(NSRange){ index, 0 }]);
+        // To line count
         limit = range.location + [commitString length];
-        for (index = range.location; index < limit; ++toLineCount)
+        for (index = range.location; index <= limit; ++toLineCount)
             index = NSMaxRange([str lineRangeForRange:(NSRange){ index, 0 }]);
         
         [string beginEditing];

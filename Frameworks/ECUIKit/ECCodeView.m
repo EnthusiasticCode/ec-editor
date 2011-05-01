@@ -218,28 +218,7 @@ static void init(ECCodeView *self)
 
 - (void)insertText:(NSString *)string
 {
-    // Select insertion range
-//    NSUInteger textLength = [datasource textLength];
     NSRange insertRange = selectionView.selection;
-//    if (!selection)
-//    {
-//        insertRange = (NSRange){ textLength, 0 };
-//    }
-//    else
-//    {
-//        NSUInteger s = ((ECTextPosition*)selection.start).index;
-//        NSUInteger e = ((ECTextPosition*)selection.end).index;
-//        if (s > textLength)
-//            s = textLength;
-//        if (e > textLength)
-//            e = textLength;
-//        if (e < s)
-//            return;
-//        insertRange = (NSRange){ s, e - s };
-//    }
-    
-    // TODO check if char is space and autocomplete
-    
     [self editDataSourceInRange:insertRange withString:string];
     [self setSelectedIndex:(insertRange.location + [string length])];
 }
