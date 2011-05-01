@@ -245,7 +245,7 @@ static void preinit(ECCodeViewBase *self)
     
     // Creating new renderer
     self->renderer = [ECTextRenderer new];
-    self->renderer.delegate = (id<ECTextRendererDelegate>)self;
+    self->renderer.delegate = self;
     self->renderer.preferredLineCountPerSegment = 500;
     
     // Creating rendering queue

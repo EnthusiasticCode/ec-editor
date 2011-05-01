@@ -65,7 +65,7 @@
 
 #pragma mark -
 
-@interface CodeInfoView : UIView {
+@interface CodeInfoView : UIView <ECTextRendererDelegate> {
 @private
     id<ECCodeViewDataSource> datasource;
     ECTextRenderer *renderer;
@@ -242,6 +242,11 @@
     [self setNavigatorVisible:!navigatorVisible animated:YES];
 }
 
+- (void)textRenderer:(ECTextRenderer *)sender invalidateRenderInRect:(CGRect)rect
+{
+    [navigatorView textRenderer:sender invalidateRenderInRect:rect];
+}
+
 @end
 
 #pragma mark -
@@ -387,6 +392,17 @@ static void init(ECCodeView *self)
     [navigatorBackgroundColor release];
     navigatorBackgroundColor = [color retain];
     infoView.navigatorBackgroundColor = color;
+}
+
+#pragma mark -
+#pragma mark Text Renderer Delegate
+
+- (void)textRenderer:(ECTextRenderer *)sender invalidateRenderInRect:(CGRect)rect
+{
+    [super textRenderer:sender invalidateRenderInRect:rect];
+    
+    if (self.navigatorVisible)
+        [infoView textRenderer:sender invalidateRenderInRect:rect];
 }
 
 #pragma mark -

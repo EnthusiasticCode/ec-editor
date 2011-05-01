@@ -10,7 +10,7 @@
 #import "ECTextRenderer.h"
 #import "ECCodeViewDataSource.h"
 
-@interface ECCodeViewBase : UIScrollView {
+@interface ECCodeViewBase : UIScrollView <ECTextRendererDelegate> {
 @protected
     id<ECCodeViewDataSource> datasource;
     ECTextRenderer *renderer;
