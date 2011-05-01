@@ -80,7 +80,13 @@
                          renderer:(ECTextRenderer *)aRenderer 
                    renderingQueue:(NSOperationQueue *)queue;
 
-@property (nonatomic) CGFloat parentWidth;
+#pragma mark Parent Layout
+
+@property (nonatomic) CGSize parentSize;
+
+@property (nonatomic) CGFloat parentContentOffsetRatio;
+
+#pragma mark Info View Layout and Style
 
 @property (nonatomic) CGFloat normalWidth;
 
@@ -97,6 +103,8 @@
 @property (nonatomic) CGFloat navigatorHideDelay;
 
 - (void)setNavigatorVisible:(BOOL)visible animated:(BOOL)animated;
+
+#pragma mark User Interaction
 
 - (void)handleTap:(UITapGestureRecognizer *)recognizer;
 
@@ -129,13 +137,13 @@
 
 @implementation CodeInfoView
 
-@synthesize parentWidth;
+@synthesize parentSize, parentContentOffsetRatio;
 @synthesize normalWidth, navigatorWidth;
 @synthesize navigatorInsets, navigatorVisible, navigatorBackgroundColor, navigatorHideDelay;
 
 - (id)initWithNavigatorDatasource:(id<ECCodeViewDataSource>)source renderer:(ECTextRenderer *)aRenderer renderingQueue:(NSOperationQueue *)queue
 {
-    parentWidth = [UIScreen mainScreen].bounds.size.width;
+    parentSize = [UIScreen mainScreen].bounds.size;
     normalWidth = 11;
     navigatorHideDelay = 1;
     navigatorInsets = UIEdgeInsetsMake(2, 2, 2, 2);
@@ -161,14 +169,24 @@
     [super dealloc];
 }
 
-- (void)setParentWidth:(CGFloat)width
+- (void)setParentSize:(CGSize)size
 {
-    if (width == parentWidth)
+    if (CGSizeEqualToSize(size, parentSize))
         return;
     
-    parentWidth = width;
+    parentSize = size;
     
-    navigatorView.contentScaleFactor = (navigatorWidth - navigatorInsets.left - navigatorInsets.right) / parentWidth;
+    navigatorView.contentScaleFactor = (navigatorWidth - navigatorInsets.left - navigatorInsets.right) / parentSize.width;
+}
+
+- (void)setParentContentOffsetRatio:(CGFloat)ratio
+{
+    if (ratio == parentContentOffsetRatio)
+        return;
+    
+    parentContentOffsetRatio = ratio;
+    
+    navigatorView.contentOffset = CGPointMake(0, ratio * (navigatorView.contentSize.height - self.bounds.size.height));
 }
 
 - (CGFloat)currentWidth
@@ -195,7 +213,7 @@
         frame = UIEdgeInsetsInsetRect(frame, navigatorInsets);
         navigatorView = [[ECCodeViewBase alloc] initWithFrame:frame renderer:renderer renderingQueue:renderingQueue];
         navigatorView.datasource = datasource;
-        navigatorView.contentScaleFactor = (navigatorWidth - navigatorInsets.left - navigatorInsets.right) / parentWidth;
+        navigatorView.contentScaleFactor = (navigatorWidth - navigatorInsets.left - navigatorInsets.right) / parentSize.width;
         navigatorView.backgroundColor = [UIColor whiteColor];
         navigatorView.scrollEnabled = NO;
     }
@@ -324,11 +342,11 @@ static void init(ECCodeView *self)
     if (infoViewVisible) 
     {
         CGRect infoFrame = self.bounds;
-        CGFloat infoWidth = infoView.currentWidth;
+        infoView.parentContentOffsetRatio = infoFrame.origin.y / (self.contentSize.height - infoFrame.size.height);
         
+        CGFloat infoWidth = infoView.currentWidth;
         infoFrame.origin.x = infoFrame.size.width - infoWidth;
         infoFrame.size.width = infoWidth;
-        
         infoView.frame = infoFrame;
     }
 }
@@ -350,7 +368,7 @@ static void init(ECCodeView *self)
             infoView = [[CodeInfoView alloc] initWithNavigatorDatasource:datasource renderer:renderer renderingQueue:renderingQueue];
             infoView.navigatorBackgroundColor = navigatorBackgroundColor;
             infoView.navigatorWidth = navigatorWidth;
-            infoView.parentWidth = self.bounds.size.width;
+            infoView.parentSize = self.bounds.size;
         }
         [self addSubview:infoView];
     }
