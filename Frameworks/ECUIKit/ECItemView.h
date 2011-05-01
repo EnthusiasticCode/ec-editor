@@ -7,7 +7,6 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "ECItemViewCell.h"
 @class ECItemView;
 
 typedef enum {
@@ -17,55 +16,81 @@ typedef enum {
     ECItemViewScrollPositionBottom
 } ECItemViewScrollPosition;
 
+@protocol ECItemViewElement <NSObject>
+@property (nonatomic, getter = isEditing) BOOL editing;
+- (void)setEditing:(BOOL)editing animated:(BOOL)animated;
+@end
+
 @protocol ECItemViewDataSource <NSObject>
-@required
 
-// Returns the number of items at a given depth in the area
-- (NSUInteger)itemView:(ECItemView *)itemView numberOfItemsInGroup:(NSUInteger)group inArea:(NSUInteger)area;
-
-// Item gets various attributes set automatically based on table (separators) and data source (accessory views, editing controls)
-- (ECItemViewCell *)itemView:(ECItemView *)itemView cellForItemAtIndexPath:(NSIndexPath *)indexPath;
+#pragma mark Data
 
 @optional
+/// The number of areas in the table view. defaults to 1 if the data source does not implement the method.
+- (NSUInteger)numberOfAreasInTableView:(ECItemView *)itemView;
 
-- (NSUInteger)numberOfAreasInTableView:(ECItemView *)itemView;              // Default is 1 if not implemented
+@required
+/// The number of groups in a given area.
+- (NSUInteger)itemView:(ECItemView *)itemView numberOfGroupsForAreaAtIndex:(NSUInteger)index;
 
-// Returns the maximum depth of items in the area, defaults to 0
-- (NSUInteger)itemView:(ECItemView *)itemView numberOfGroupsInArea:(NSUInteger)area;
+/// The number of items in a given group.
+- (NSUInteger)itemView:(ECItemView *)itemView numberOfItemsInGroupAtIndexPath:(NSIndexPath *)indexPath;
 
-- (NSString *)itemView:(ECItemView *)itemView titleForHeaderInArea:(NSUInteger)area;    // fixed font style. use custom view (UILabel) if you want something different
+/// The view that represents the item for the given index path.
+- (UIView<ECItemViewElement> *)itemView:(ECItemView *)itemView viewForItemAtIndexPath:(NSIndexPath *)indexPath;
 
-// Editing
+@optional
+/// The view to be displayed as the area header for the given area.
+- (UIView <ECItemViewElement>*)itemView:(ECItemView *)itemView viewForAreaHeaderAtIndex:(NSUInteger)index;
 
-// Individual items can opt out of having the -editing property set for them. If not implemented, all items are assumed to be editable.
+/// The view to be displayed as the group separator for the given index path.
+- (UIView <ECItemViewElement>*)itemView:(ECItemView *)itemView viewForGroupSeparatorAtIndexPath:(NSUInteger)indexPath;
+
+#pragma mark Editing
+
+/// Individual items can opt out of having the -editing property set for them. If not implemented, all items are assumed to be editable.
 - (BOOL)itemView:(ECItemView *)itemView canEditItemAtIndexPath:(NSIndexPath *)indexPath;
 
-// Moving/reordering
+/// Allows the delete accessory view to optionally be shown for a particular item. By default, the delete control will be shown only if the datasource implements -itemView:deleteItemAtIndexPath: and -itemView:deleteGroupAtIndexPath:.
+- (BOOL)itemView:(ECItemView *)itemView canDeleteItemAtIndexPath:(NSIndexPath *)indexPath;
 
-// Allows the reorder accessory view to optionally be shown for a particular item. By default, the reorder control will be shown only if the datasource implements -itemView:moveItemAtIndexPath:toIndexPath:
+/// Delete the item at the given index path.
+- (void)itemView:(ECItemView *)itemView deleteItemAtIndexPath:(NSIndexPath *)indexPath;
+
+#pragma mark Moving/Reordering
+
+/// Allows the reorder accessory view to optionally be shown for a particular item. By default, the reorder control will be shown only if the datasource implements -itemView:moveItemAtIndexPath:toIndexPath: and -itemView:deleteGroupAtIndexPath:.
 - (BOOL)itemView:(ECItemView *)itemView canMoveItemAtIndexPath:(NSIndexPath *)indexPath;
 
-// Data manipulation - reorder / moving support
-
-- (void)itemView:(ECItemView *)itemView deleteItemAtIndexPath:(NSIndexPath *)indexPath;
+/// Move the item from the source index path to the destination index path.
 - (void)itemView:(ECItemView *)itemView moveItemAtIndexPath:(NSIndexPath *)sourceIndexPath toIndexPath:(NSIndexPath *)destinationIndexPath;
+
+/// Insert a new group at the given index path.
 - (void)itemView:(ECItemView *)itemView insertGroupAtIndexPath:(NSIndexPath *)indexPath;
+
+/// Delete the group at the given index path.
 - (void)itemView:(ECItemView *)itemView deleteGroupAtIndexPath:(NSIndexPath *)indexPath;
+
+/// Move the group at the source index path to the destination index path.
 - (void)itemView:(ECItemView *)itemView moveGroupAtIndexPath:(NSIndexPath *)sourceIndexPath toIndexPath:(NSIndexPath *)destinationIndexPath;
-- (void)itemView:(ECItemView *)itemView moveAreaAtIndexPath:(NSIndexPath *)sourceIndexPath toIndexPath:(NSIndexPath *)destinationIndexPath;
+
+/// Move the area at the source index to the destination index.
+- (void)itemView:(ECItemView *)itemView moveAreaAtIndex:(NSUInteger)sourceIndex toIndex:(NSUInteger)destinationIndex;
 
 @end
 
 @protocol ECItemViewDelegate <NSObject, UIScrollViewDelegate>
+
+#pragma mark Selection
+
 @optional
-
-// Selection
-
-// Called before the user changes the selection. Return a new indexPath, or nil, to change the proposed selection.
-- (NSIndexPath *)itemView:(ECItemView *)itemView willSelectItemAtIndexPath:(NSIndexPath *)indexPath;
-- (NSIndexPath *)itemView:(ECItemView *)itemView willDeselectItemAtIndexPath:(NSIndexPath *)indexPath;
-// Called after the user changes the selection.
+/// Called before the user selects a previously unselected item.
+- (void)itemView:(ECItemView *)itemView willSelectItemAtIndexPath:(NSIndexPath *)indexPath;
+/// Called before the user deselects a previously selected item.
+- (void)itemView:(ECItemView *)itemView willDeselectItemAtIndexPath:(NSIndexPath *)indexPath;
+/// Called after the user selects a previously unselected item.
 - (void)itemView:(ECItemView *)itemView didSelectItemAtIndexPath:(NSIndexPath *)indexPath;
+/// Called after the user deselects a previously selected item.
 - (void)itemView:(ECItemView *)itemView didDeselectItemAtIndexPath:(NSIndexPath *)indexPath;
 
 @end
@@ -73,50 +98,53 @@ typedef enum {
 @interface ECItemView : UIScrollView <UIGestureRecognizerDelegate>
 @property (nonatomic, assign) IBOutlet id<ECItemViewDelegate> delegate;
 @property (nonatomic, assign) IBOutlet id<ECItemViewDataSource> dataSource;
-@property (nonatomic) CGSize cellSize;
-@property (nonatomic) UIEdgeInsets cellInsets;
+@property (nonatomic) CGFloat itemHeight;
+@property (nonatomic) NSUInteger itemsPerRow;
+@property (nonatomic) UIEdgeInsets itemInsets;
 @property (nonatomic) UIEdgeInsets groupInsets;
 @property (nonatomic) CGFloat groupSeparatorHeight;
 @property (nonatomic) UIEdgeInsets groupSeparatorInsets;
-@property (nonatomic) CGFloat groupSeparatorEditingHeight;
-@property (nonatomic) UIEdgeInsets groupSeparatorEditingInsets;
-@property (nonatomic) CGFloat headerHeight;
-@property (nonatomic) UIEdgeInsets headerInsets;
+@property (nonatomic) CGFloat areaHeaderHeight;
+@property (nonatomic) UIEdgeInsets areaHeaderInsets;
 @property (nonatomic) BOOL allowsSelection;
-
-// Editing
 @property (nonatomic, getter = isEditing) BOOL editing;
 - (void)setEditing:(BOOL)editing animated:(BOOL)animated;
 
-// Data
+#pragma mark Data
 - (void)reloadData;
 
-// Info
-- (NSUInteger)columns;
-- (NSUInteger)rowsInGroup:(NSUInteger)group inArea:(NSUInteger)area;
-
+#pragma mark Info
+- (NSUInteger)rowsInGroupAtIndexPath:(NSIndexPath *)indexPath;
 - (NSUInteger)numberOfAreas;
-- (NSUInteger)numberOfGroupsInArea:(NSUInteger)area;
-- (NSUInteger)numberOfItemsInGroup:(NSUInteger)group inArea:(NSUInteger)area;
+- (NSUInteger)numberOfGroupsForAreaAtIndex:(NSUInteger)index;
+- (NSUInteger)numberOfItemsInGroupAtIndexPath:(NSIndexPath *)indexPath;
 
-// Geometry
-- (CGRect)rectForArea:(NSUInteger)area;
-- (CGRect)rectForHeaderInArea:(NSUInteger)area;
-- (CGRect)rectForGroup:(NSUInteger)group inArea:(NSUInteger)area;
+#pragma mark Geometry
+- (CGRect)rectForAreaAtIndex:(NSUInteger)index;
+- (CGRect)rectForAreaHeaderAtIndex:(NSUInteger)index;
+- (CGRect)rectForGroupAtIndexPath:(NSIndexPath *)indexPath;
+- (CGRect)rectForGroupSeparatorAtIndexPath:(NSIndexPath *)indexPath;
 - (CGRect)rectForItemAtIndexPath:(NSIndexPath *)indexPath;
 
-// Index paths
+#pragma mark Index paths
+- (NSIndexSet *)indexesForVisibleAreaHeaders;
+- (NSArray *)visibleAreaHeaders;
+- (UIView<ECItemViewElement> *)areaHeaderAtIndex:(NSUInteger)index;
+- (NSUInteger)indexForAreaHeaderAtPoint:(CGPoint)point;
+- (NSArray *)indexPathsForVisibleGroupSeparators;
+- (NSArray *)visibleGroupSeparators;
+- (UIView<ECItemViewElement> *)groupSeparatorAtIndexPath:(NSIndexPath *)indexPath;
+- (NSIndexPath *)indexPathForGroupSeparatorAtPoint:(CGPoint)point;
 - (NSArray *)indexPathsForVisibleItems;
-- (NSArray *)visibleCells;
-- (ECItemViewCell *)cellForItemAtIndexPath:(NSIndexPath *)indexPath;
-- (NSIndexPath *)indexPathForCell:(ECItemViewCell *)cell;
+- (NSArray *)visibleItems;
+- (UIView<ECItemViewElement> *)itemAtIndexPath:(NSIndexPath *)indexPath;
 - (NSIndexPath *)indexPathForItemAtPoint:(CGPoint)point;
 
-// Scrolling
+#pragma mark Scrolling
 - (void)scrollToItemAtIndexPath:(NSIndexPath *)indexPath atScrollPosition:(ECItemViewScrollPosition)scrollPosition animated:(BOOL)animated;
 - (void)scrollToNearestSelectedItemAtScrollPosition:(ECItemViewScrollPosition)scrollPosition animated:(BOOL)animated;
 
-// Item insertion/deletion/reloading.
+#pragma mark Item insertion/deletion/reloading.
 - (void)beginUpdates;
 - (void)endUpdates;
 
@@ -132,14 +160,17 @@ typedef enum {
 - (void)deleteItemsAtIndexPaths:(NSArray *)indexPaths;
 - (void)reloadItemsAtIndexPaths:(NSArray *)indexPaths;
 
-// Selection
+#pragma mark Selection
 - (NSIndexPath *)indexPathForSelectedItem;
+- (NSArray *)indexPathsForSelectedItems;
 
 - (void)selectItemAtIndexPath:(NSIndexPath *)indexPath animated:(BOOL)animated scrollPosition:(ECItemViewScrollPosition)scrollPosition;
 - (void)deselectItemAtIndexPath:(NSIndexPath *)indexPath animated:(BOOL)animated;
 
-// Recycling
-- (ECItemViewCell *)dequeueReusableCell;
+#pragma mark Recycling
+- (UIView *)dequeueReusableItem;
+- (UIView *)dequeueReusableGroupSeparator;
+- (UIView *)dequeueReusableAreaHeader;
 
 @end
 

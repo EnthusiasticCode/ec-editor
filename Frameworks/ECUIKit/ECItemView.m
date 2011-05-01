@@ -7,16 +7,21 @@
 //
 
 #import "ECItemView.h"
-#import "ECItemViewCell.h"
+#import "UIView.h"
 #import <ECUIKit/UIView+ConcurrentAnimation.h>
 #import <ECFoundation/ECStackCache.h>
 #import <ECFoundation/NSIndexPath+FixedIsEqual.h>
 #import <ECFoundation/ECMutableDictionary.h>
 
-const CGFloat ECItemViewShortAnimationDuration = 0.15;
-const NSUInteger ECItemViewCellBufferSize = 10;
-const NSUInteger ECItemViewHeaderBufferSize = 5;
-const NSUInteger ECItemViewGroupSeparatorBufferSize = 20;
+static const CGFloat kECItemViewShortAnimationDuration = 0.15;
+static const NSUInteger kECItemViewAreaHeaderBufferSize = 5;
+static const NSUInteger kECItemViewGroupSeparatorBufferSize = 20;
+static const NSUInteger kECItemViewItemBufferSize = 10;
+static const NSString *kECItemViewAreaKey = @"area";
+static const NSString *kECItemViewAreaHeaderKey = @"areaHeader";
+static const NSString *kECItemViewGroupKey = @"group";
+static const NSString *kECItemViewGroupSeparatorKey = @"groupSeparator";
+static const NSString *kECItemViewItemKey = @"item";
 
 @interface UIScrollView (MethodsInUIGestureRecognizerDelegateProtocolAppleCouldntBotherDeclaring)
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch;
@@ -61,7 +66,7 @@ const NSUInteger ECItemViewGroupSeparatorBufferSize = 20;
     UITapGestureRecognizer *_tapGestureRecognizer;
     UILongPressGestureRecognizer *_longPressGestureRecognizer;
     BOOL _isDragging;
-    ECItemViewCell *_draggedItem;
+    UIView *_draggedItem;
     NSIndexPath *_draggedItemIndexPath;
     NSIndexPath *_dragDestinationIndexPath;
     NSTimer *_scrollTimer;
@@ -74,7 +79,7 @@ const NSUInteger ECItemViewGroupSeparatorBufferSize = 20;
 
 - (UIView *)_blankHeader:(ECStackCache *)cache;
 - (UIView *)_groupSeparator:(ECStackCache *)cache;
-- (ECItemViewCell *)_loadCellForItemAtIndexPath:(NSIndexPath *)indexPath;
+- (UIView *)_loadCellForItemAtIndexPath:(NSIndexPath *)indexPath;
 - (CGFloat)_heightForGroup:(NSUInteger)group inArea:(NSUInteger)area;
 - (CGRect)_rectForGroupSeparatorAtIndexPath:(NSIndexPath *)indexPath;
 
@@ -173,7 +178,7 @@ const NSUInteger ECItemViewGroupSeparatorBufferSize = 20;
     _isEditing = editing;
     if (animated)
     {
-        [UIView animateConcurrentlyToAnimationsWithFlag:&_isAnimating duration:ECItemViewShortAnimationDuration animations:^(void) {
+        [UIView animateConcurrentlyToAnimationsWithFlag:&_isAnimating duration:kECItemViewShortAnimationDuration animations:^(void) {
             [self layoutIfNeeded];
         } completion:NULL];
     }
@@ -193,9 +198,9 @@ const NSUInteger ECItemViewGroupSeparatorBufferSize = 20;
     _groupSeparatorEditingInsets = UIEdgeInsetsZero;
     _headerInsets = UIEdgeInsetsMake(20.0, 10.0, 20.0, 10.0);
     _headerHeight = 60.0;
-    _headerCache = [[ECStackCache alloc] initWithTarget:self action:@selector(_blankHeader:) size:ECItemViewHeaderBufferSize];
-    _groupSeparatorCache = [[ECStackCache alloc] initWithTarget:self action:@selector(_groupSeparator:) size:ECItemViewGroupSeparatorBufferSize];
-    _cellCache = [[ECStackCache alloc] initWithTarget:nil action:NULL size:ECItemViewCellBufferSize];
+    _headerCache = [[ECStackCache alloc] initWithTarget:self action:@selector(_blankHeader:) size:kECItemViewAreaHeaderBufferSize];
+    _groupSeparatorCache = [[ECStackCache alloc] initWithTarget:self action:@selector(_groupSeparator:) size:kECItemViewGroupSeparatorBufferSize];
+    _cellCache = [[ECStackCache alloc] initWithTarget:nil action:NULL size:kECItemViewItemBufferSize];
     _tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(_handleTapGesture:)];
     _tapGestureRecognizer.delegate = self;
     [self addGestureRecognizer:_tapGestureRecognizer];
@@ -321,11 +326,11 @@ const NSUInteger ECItemViewGroupSeparatorBufferSize = 20;
     return [groupSeparator autorelease];
 }
 
-- (ECItemViewCell *)_loadCellForItemAtIndexPath:(NSIndexPath *)indexPath
+- (UIView *)_loadCellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
     if (!indexPath || !_flags.dataSourceCellForItemAtIndexPath)
         return nil;
-    ECItemViewCell * cell = [_dataSource itemView:self cellForItemAtIndexPath:indexPath];
+    UIView * cell = [_dataSource itemView:self cellForItemAtIndexPath:indexPath];
     return cell;
 }
 
@@ -519,14 +524,14 @@ const NSUInteger ECItemViewGroupSeparatorBufferSize = 20;
     return [_visibleCells allValues];
 }
 
-- (ECItemViewCell *)cellForItemAtIndexPath:(NSIndexPath *)indexPath
+- (UIView *)cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
     if (!indexPath)
         return nil;
     return [_visibleCells objectForKey:indexPath];
 }
 
-- (NSIndexPath *)indexPathForCell:(ECItemViewCell *)cell
+- (NSIndexPath *)indexPathForCell:(UIView *)cell
 {
     if (!cell)
         return nil;
@@ -617,7 +622,7 @@ const NSUInteger ECItemViewGroupSeparatorBufferSize = 20;
 #pragma mark -
 #pragma mark Recycling
 
-- (ECItemViewCell *)dequeueReusableCell
+- (UIView *)dequeueReusableCell
 {
     if (![_cellCache count])
         return nil;
@@ -686,7 +691,7 @@ const NSUInteger ECItemViewGroupSeparatorBufferSize = 20;
     {
         if (_isDragging && [indexPath isEqual:_draggedItemIndexPath])
             continue;
-        ECItemViewCell *cell = [_visibleCells objectForKey:indexPath];
+        UIView *cell = [_visibleCells objectForKey:indexPath];
         if (cell)
             [_visibleCells removeObjectForKey:indexPath];
         else
@@ -702,7 +707,7 @@ const NSUInteger ECItemViewGroupSeparatorBufferSize = 20;
             indexPath = [NSIndexPath indexPathForItem:indexPath.item + 1 inGroup:indexPath.group inArea:indexPath.area];
         cell.frame = UIEdgeInsetsInsetRect([self rectForItemAtIndexPath:indexPath], _cellInsets);
     }
-    for (ECItemViewCell *cell in [_visibleCells allValues])
+    for (UIView *cell in [_visibleCells allValues])
     {
         if (_isDragging && cell == _draggedItem)
         {
@@ -818,7 +823,7 @@ const NSUInteger ECItemViewGroupSeparatorBufferSize = 20;
     [_dragDestinationIndexPath release];
     _dragDestinationIndexPath = [indexPath retain];
     [self setNeedsLayout];
-    [UIView animateConcurrentlyToAnimationsWithFlag:&_isAnimating duration:ECItemViewShortAnimationDuration animations:^(void) {
+    [UIView animateConcurrentlyToAnimationsWithFlag:&_isAnimating duration:kECItemViewShortAnimationDuration animations:^(void) {
         [self layoutIfNeeded];
     } completion:NULL];
 }
@@ -856,7 +861,7 @@ const NSUInteger ECItemViewGroupSeparatorBufferSize = 20;
             if (_flags.dataSourceDeleteGroup)
                 [_dataSource itemView:self deleteGroupAtIndexPath:[NSIndexPath indexPathForPosition:_draggedItemIndexPath.group inArea:_draggedItemIndexPath.area]];
     [self reloadData];
-    [UIView animateConcurrentlyToAnimationsWithFlag:&_isAnimating duration:ECItemViewShortAnimationDuration animations:^(void) {
+    [UIView animateConcurrentlyToAnimationsWithFlag:&_isAnimating duration:kECItemViewShortAnimationDuration animations:^(void) {
         _draggedItem.frame = UIEdgeInsetsInsetRect([self rectForItemAtIndexPath:_dragDestinationIndexPath], _cellInsets);
     } completion:NULL];
     [_draggedItemIndexPath release];
@@ -871,7 +876,7 @@ const NSUInteger ECItemViewGroupSeparatorBufferSize = 20;
     [_scrollTimer invalidate];
     _scrollTimer = nil;
     [self setNeedsLayout];
-    [UIView animateConcurrentlyToAnimationsWithFlag:&_isAnimating duration:ECItemViewShortAnimationDuration animations:^(void) {
+    [UIView animateConcurrentlyToAnimationsWithFlag:&_isAnimating duration:kECItemViewShortAnimationDuration animations:^(void) {
         _draggedItem.frame = UIEdgeInsetsInsetRect([self rectForItemAtIndexPath:_draggedItemIndexPath], _cellInsets);
         [self layoutIfNeeded];
     } completion:NULL];

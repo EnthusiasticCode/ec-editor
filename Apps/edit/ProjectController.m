@@ -103,14 +103,14 @@
     return [self areaAtIndex:area].name;
 }
 
-- (ECItemViewCell *)itemView:(ECItemView *)itemView cellForItemAtIndexPath:(NSIndexPath *)indexPath
+- (UIView *)itemView:(ECItemView *)itemView cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
     static NSUInteger counter = 0;
     ++counter;
-    ECItemViewCell *file = [self.tableView dequeueReusableCell];
+    UIView *file = [self.tableView dequeueReusableCell];
     if (!file)
     {
-        file = [[[ECItemViewCell alloc] init] autorelease];
+        file = [[[UIView alloc] init] autorelease];
         UILabel *label = [[UILabel alloc] init];
         label.tag = 1;
         label.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
