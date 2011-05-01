@@ -106,7 +106,7 @@
 {
     [super viewDidLoad];
     
-    self.codeView.thumbnailsDisplayMode = ECCodeViewThumbnailsDisplayAlways;
+    self.codeView.navigatorDisplayMode = ECCodeViewNavigatorDisplayAlways;
 }
 
 - (void)viewDidUnload

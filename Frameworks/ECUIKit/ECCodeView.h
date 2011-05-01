@@ -11,10 +11,10 @@
 
 
 typedef enum {
-    ECCodeViewThumbnailsDisplayNone,
-    ECCodeViewThumbnailsDisplayAuto,
-    ECCodeViewThumbnailsDisplayAlways
-} ECCodeViewThumbnailsDisplayMode;
+    ECCodeViewNavigatorDisplayNone,
+    ECCodeViewNavigatorDisplayAuto,
+    ECCodeViewNavigatorDisplayAlways
+} ECCodeViewNavigatorDisplayMode;
 
 @interface ECCodeView : UIScrollView <UIKeyInput, UITextInputTraits, UITextInput>
 
@@ -41,7 +41,9 @@ typedef enum {
 
 /// Indicates how to show thumbnails inside the receiver. If produceThumbnails in NO
 /// this property has no effects.
-@property (nonatomic) ECCodeViewThumbnailsDisplayMode thumbnailsDisplayMode;
+@property (nonatomic) ECCodeViewNavigatorDisplayMode navigatorDisplayMode;
+
+@property (nonatomic) CGFloat navigatorWidth;
 
 /// This method will generate (if needed) thumbnails for the entire source text
 /// to fit the given size and execute the given block once the generation is complete. 
@@ -52,6 +54,7 @@ typedef enum {
 /// the execution untill the thumbnails are created and the given block is finished.
 - (void)thumbnailsFittingTotalSize:(CGSize)size 
                enumerateUsingBlock:(void(^)(UIImage *thumbnail, NSUInteger index, CGFloat yOffset, BOOL *stop))block 
+                   completionBlock:(void(^)(void))completionBlock
                      synchronously:(BOOL)synchronous;
 
 #pragma mark UITextInput Properties

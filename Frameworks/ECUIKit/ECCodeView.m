@@ -19,6 +19,7 @@
 #pragma mark Interfaces
 
 @class TextTileView;
+@class NavigatorLayer;
 @class TextSelectionView;
 
 #pragma mark -
@@ -30,9 +31,10 @@
     // Tileing and rendering management
     TextTileView* tileViewPool[TILEVIEWPOOL_SIZE];
     
-    // Thumbnails
+    // Thumbnails and navigator
     NSMutableArray *thumbnailsCache;
-    CGSize *thumbnailsCachedSize;
+    CGSize thumbnailsCachedSize;
+    NavigatorLayer *navigatorLayer;
     
     // Text management
     TextSelectionView *selectionView;
@@ -47,6 +49,16 @@
     BOOL dataSourceHasCodeCanEditTextInRange;
 }
 
+/// Renderer used in the codeview.
+@property (nonatomic, readonly) ECTextRenderer *renderer;
+
+/// Queue where renderer should be used.
+@property (nonatomic, readonly) NSOperationQueue *renderingQueue;
+
+/// Tells if navigator is visible
+@property (nonatomic, readonly, getter = isNavigatorVisible) BOOL navigatorVisible;
+
+/// Get or create a tile for the given index.
 - (TextTileView *)viewForTileIndex:(NSUInteger)tileIndex;
 
 /// Method to be used before any text modification occurs.
@@ -64,10 +76,6 @@
 // Gestures handlers
 - (void)handleGestureFocus:(UITapGestureRecognizer *)recognizer;
 - (void)handleGestureTap:(UITapGestureRecognizer *)recognizer;
-
-// Sections required properties
-@property (nonatomic, readonly) ECTextRenderer *renderer;
-@property (nonatomic, readonly) NSOperationQueue *renderingQueue;
 
 /// Generate a thumbnail image of the given size for the tile at the specified index.
 - (UIImage *)thumbnailForTailAtIndex:(NSInteger)tileIndex 
@@ -93,6 +101,16 @@
 - (id)initWithCodeView:(ECCodeView *)codeView;
 - (void)invalidate;
 - (void)renderText;
+
+@end
+
+#pragma mark -
+@interface NavigatorLayer : CALayer {
+@private
+    ECCodeView *parent;
+}
+
+- (id)initWithCodeView:(ECCodeView *)codeView;
 
 @end
 
@@ -219,6 +237,38 @@
 @end
 
 #pragma mark -
+#pragma mark ThumbnailsLayer
+
+@implementation NavigatorLayer
+
+- (id)initWithCodeView:(ECCodeView *)codeView
+{
+    if ((self = [super init])) 
+    {
+        parent = codeView;
+        self.opaque = YES;
+    }
+    return self;
+}
+
+- (void)drawInContext:(CGContextRef)context
+{
+    CGContextRetain(context);
+    [parent thumbnailsFittingTotalSize:(CGSize){ self.bounds.size.width, 0 } enumerateUsingBlock:^(UIImage *thumbnail, NSUInteger index, CGFloat yOffset, BOOL *stop) {
+        CGContextDrawImage(context, (CGRect){ { 0, yOffset }, thumbnail.size }, thumbnail.CGImage);
+    } completionBlock:^(void) {
+        CGContextRelease(context);
+    } synchronously:NO];
+}
+
+- (id<CAAction>)actionForKey:(NSString *)event
+{
+    return nil;
+}
+
+@end
+
+#pragma mark -
 #pragma mark TextSelectionView
 
 @implementation TextSelectionView
@@ -247,7 +297,7 @@
 @synthesize datasource; 
 @synthesize textInsets;
 @synthesize renderingQueue, renderer;
-@synthesize thumbnailsDisplayMode;
+@synthesize navigatorDisplayMode, navigatorWidth, navigatorVisible;
 
 - (void)setDatasource:(id<ECCodeViewDataSource>)aDatasource
 {
@@ -300,6 +350,11 @@
     [super setBackgroundColor:color];
 }
 
+- (BOOL)isNavigatorVisible
+{
+    return navigatorDisplayMode == ECCodeViewNavigatorDisplayAlways || navigatorVisible;
+}
+
 #pragma mark NSObject Methods
 
 static void preinit(ECCodeView *self)
@@ -312,6 +367,8 @@ static void preinit(ECCodeView *self)
     // Creating rendering queue
     self->renderingQueue = [NSOperationQueue new];
     [self->renderingQueue setMaxConcurrentOperationCount:1];
+    
+    self->navigatorWidth = 200;
 }
 
 static void init(ECCodeView *self)
@@ -371,7 +428,11 @@ static void init(ECCodeView *self)
     {
         CGFloat height = [[change valueForKey:NSKeyValueChangeNewKey] floatValue];
         self.contentSize = CGSizeMake(self.bounds.size.width, height + textInsets.top + textInsets.bottom);
-        return;
+        
+        if (navigatorLayer) 
+        {
+            navigatorLayer.bounds = CGRectMake(0, 0, navigatorWidth, height / self.bounds.size.height);
+        }
     }
 }
 
@@ -428,8 +489,6 @@ static void init(ECCodeView *self)
 
 - (void)layoutSubviews
 {
-//    [super layoutSubviews];
-    
     // Scrolled content rect
     CGRect contentRect = self.bounds;
     CGFloat halfHeight = contentRect.size.height / 2.0;
@@ -454,24 +513,19 @@ static void init(ECCodeView *self)
         secondTile.center = CGPointMake(CGRectGetMidX(contentRect), firstTileEnd + halfHeight);
     }
     
-//    // Thumbnails
-//    if (self.isProducingThumbnails) 
-//    {
-//        //
-//        if (thumbnailsDisplayMode != ECCodeViewThumbnailsDisplayNone) 
-//        {
-//            if (!thumbnailLayer) 
-//            {
-//                // TODO!!! do calayer subview to draw thumbnails
-//                thumbnailLayer = [CALayer layer];
-////                thumbnailLayer.delegate = self;
-//                thumbnailLayer.opaque = YES;
-//                thumbnailLayer.needsDisplayOnBoundsChange = NO;
-//                [self.layer addSublayer:thumbnailLayer];
-//            }
-////            thumbnailLayer.frame = CGRectMake(contentRect.size.width - thumbnailsWidth, contentRect.origin.y, thumbnailsWidth, contentRect.size.height);
-//        }
-//    }
+    // Thumbnails
+    if (self.isNavigatorVisible) 
+    {
+        if (!navigatorLayer) 
+        {
+            navigatorLayer = [[NavigatorLayer alloc] initWithCodeView:self];
+            navigatorLayer.anchorPoint = CGPointMake(0, 0);
+            navigatorLayer.needsDisplayOnBoundsChange = YES;
+            [self.layer addSublayer:navigatorLayer];
+            [navigatorLayer release];
+        }
+        navigatorLayer.position = CGPointMake(contentRect.size.width - navigatorWidth, contentRect.origin.y);
+    }
 }
 
 - (void)updateAllText
@@ -489,6 +543,7 @@ static void init(ECCodeView *self)
 
 - (void)thumbnailsFittingTotalSize:(CGSize)size 
                enumerateUsingBlock:(void (^)(UIImage *, NSUInteger, CGFloat, BOOL*))block 
+                   completionBlock:(void(^)(void))completionBlock
                      synchronously:(BOOL)synchronous
 {
     // TODO parameters check and exception raising
@@ -501,7 +556,17 @@ static void init(ECCodeView *self)
     if (thumbnailSize.height == CGFLOAT_MAX)
         thumbnailSize.height = 0;
     
-    // TODO invalidate thumbnails if thumbnailSize != cached size
+    // Generate or clean thumbnails cache
+    if (!thumbnailsCache) 
+    {
+        thumbnailsCache = [[NSMutableArray alloc] initWithCapacity:self.contentSize.height / tileSize.height + 1];
+        thumbnailsCachedSize = thumbnailSize;
+    }
+    else if (!CGSizeEqualToSize(thumbnailSize, thumbnailsCachedSize)) 
+    {
+        [self invalidateAllThumbnails];
+        thumbnailsCachedSize = thumbnailSize;
+    }
     
     // Calculate single thumbnail scale
     CGFloat thumbnailScale;
@@ -557,15 +622,11 @@ static void init(ECCodeView *self)
                 tileIndex++;
             }
         }
-        
-        // At this point all the thumbnails are generated
-//        if (thumbnailsChanges) 
-//        {
-//            [[NSOperationQueue mainQueue] addOperationWithBlock:^(void) {
-//                [thumbnailLayer setNeedsDisplay];
-//            }];
-//        }
     }];
+    
+    // Add complition block
+    if (completionBlock)
+        [generateThumbnails setCompletionBlock:completionBlock];
     
     // Add to rendering queue
     [generateThumbnails setQueuePriority:NSOperationQueuePriorityLow];
@@ -624,27 +685,6 @@ static void init(ECCodeView *self)
         }
     }
 }
-
-//- (void)drawLayer:(CALayer *)layer inContext:(CGContextRef)ctx
-//{
-//    if (layer == thumbnailLayer) 
-//    {
-//        CGContextRetain(ctx);
-//        [renderingQueue addOperationWithBlock:^(void) {
-//            CGFloat offset = 0;
-//            for (UIImage *thumb in thumbnails) 
-//            {
-//                CGContextDrawImage(ctx, (CGRect){ CGPointMake(0, offset), thumb.size }, thumb.CGImage);
-//                offset += thumb.size.height;
-//            }
-//            CGContextRelease(ctx);
-//        }];
-//
-//        return;
-//    }
-//    
-//    [super drawLayer:layer inContext:ctx];
-//}
 
 #pragma mark -
 #pragma mark UIResponder methods
