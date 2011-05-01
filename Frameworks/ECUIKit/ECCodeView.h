@@ -39,18 +39,20 @@ typedef enum {
 
 #pragma mark Generating and Retrieving Thumbnails
 
-/// Indicate if the receiver should produce thumbnail images. Default is NO.
-@property (getter = isProducingThumbnails) BOOL produceThumbnails;
-
-/// Set the thumbnails width. Default 100 points;
-@property CGFloat thumbnailsWidth;
-
-/// Get an array of ordered rendered text \c UIImage thumbnails.
-@property (readonly, copy) NSArray *thumbnails;
-
 /// Indicates how to show thumbnails inside the receiver. If produceThumbnails in NO
 /// this property has no effects.
 @property (nonatomic) ECCodeViewThumbnailsDisplayMode thumbnailsDisplayMode;
+
+/// This method will generate (if needed) thumbnails for the entire source text
+/// to fit the given size and execute the given block once the generation is complete. 
+/// Use 0 as size's height to limit only the width of thumbnails.
+/// The given block can be executed in the main thread if so specified, otherwise
+/// it will be executed on a serial background queue.
+/// The function return immediatly if synchronous is NO, otherwise it will block
+/// the execution untill the thumbnails are created and the given block is finished.
+- (void)thumbnailsFittingTotalSize:(CGSize)size 
+               enumerateUsingBlock:(void(^)(UIImage *thumbnail, NSUInteger index, CGFloat yOffset, BOOL *stop))block 
+                     synchronously:(BOOL)synchronous;
 
 #pragma mark UITextInput Properties
 

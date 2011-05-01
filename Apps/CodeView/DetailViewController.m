@@ -106,7 +106,6 @@
 {
     [super viewDidLoad];
     
-    self.codeView.produceThumbnails = YES;
     self.codeView.thumbnailsDisplayMode = ECCodeViewThumbnailsDisplayAlways;
 }
 

@@ -31,9 +31,8 @@
     TextTileView* tileViewPool[TILEVIEWPOOL_SIZE];
     
     // Thumbnails
-    NSMutableArray *thumbnails;
-    CALayer *thumbnailLayer;
-    BOOL showThumbnails;
+    NSMutableArray *thumbnailsCache;
+    CGSize *thumbnailsCachedSize;
     
     // Text management
     TextSelectionView *selectionView;
@@ -70,8 +69,11 @@
 @property (nonatomic, readonly) ECTextRenderer *renderer;
 @property (nonatomic, readonly) NSOperationQueue *renderingQueue;
 
-
-- (UIImage *)thumbnailForTailAtIndex:(NSInteger)tileIndex;
+/// Generate a thumbnail image of the given size for the tile at the specified index.
+- (UIImage *)thumbnailForTailAtIndex:(NSInteger)tileIndex 
+                            withSize:(CGSize)thumbnailSize 
+                               scale:(CGFloat)thumbnailScale 
+                     backgroundColor:(UIColor *)thumbnailBackgroundColor;
 
 /// Remove all thumbnails forcing their recreation
 - (void)invalidateThumbnailForTileAtIndex:(NSInteger)tileIndex;
@@ -245,7 +247,7 @@
 @synthesize datasource; 
 @synthesize textInsets;
 @synthesize renderingQueue, renderer;
-@synthesize thumbnailsWidth, thumbnailsDisplayMode;
+@synthesize thumbnailsDisplayMode;
 
 - (void)setDatasource:(id<ECCodeViewDataSource>)aDatasource
 {
@@ -298,35 +300,6 @@
     [super setBackgroundColor:color];
 }
 
-- (BOOL)isProducingThumbnails
-{
-    @synchronized(self)
-    {
-        return thumbnails != nil;
-    }
-}
-
-- (void)setProduceThumbnails:(BOOL)produce
-{
-    @synchronized(self)
-    {
-        if (produce == (thumbnails != nil))
-            return;
-        
-        if (produce) 
-        {
-            thumbnails = [[NSMutableArray alloc] initWithCapacity:self.contentSize.height / self.bounds.size.height + 1];
-        }
-        else
-        {
-            [thumbnails release];
-            thumbnails = nil;
-            [thumbnailLayer removeFromSuperlayer];
-            thumbnailLayer = nil;
-        }
-    }
-}
-
 #pragma mark NSObject Methods
 
 static void preinit(ECCodeView *self)
@@ -339,8 +312,6 @@ static void preinit(ECCodeView *self)
     // Creating rendering queue
     self->renderingQueue = [NSOperationQueue new];
     [self->renderingQueue setMaxConcurrentOperationCount:1];
-    
-    self->thumbnailsWidth = 200;
 }
 
 static void init(ECCodeView *self)
@@ -389,7 +360,7 @@ static void init(ECCodeView *self)
         [tileViewPool[i] release];
     [renderer release];
     [renderingQueue release];
-    [thumbnails release];
+    [thumbnailsCache release];
     [defaultDatasource release];
     [super dealloc];
 }
@@ -483,56 +454,24 @@ static void init(ECCodeView *self)
         secondTile.center = CGPointMake(CGRectGetMidX(contentRect), firstTileEnd + halfHeight);
     }
     
-    // Thumbnails
-    if (self.isProducingThumbnails) 
-    {
-        //
-        if (thumbnailsDisplayMode != ECCodeViewThumbnailsDisplayNone) 
-        {
-            if (!thumbnailLayer) 
-            {
-                thumbnailLayer = [CALayer layer];
-//                thumbnailLayer.delegate = self;
-                thumbnailLayer.opaque = YES;
-                thumbnailLayer.needsDisplayOnBoundsChange = NO;
-                [self.layer addSublayer:thumbnailLayer];
-            }
-            thumbnailLayer.frame = CGRectMake(contentRect.size.width - thumbnailsWidth, contentRect.origin.y, thumbnailsWidth, contentRect.size.height);
-        }
-        
-        //
-        [renderingQueue addOperationWithBlock:^(void) {
-            __block BOOL changes = NO;
-            
-            // Replace invalidated thumbnails
-            [thumbnails enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-                if (obj == [NSNull null]) 
-                {
-                    changes = YES;
-                    [thumbnails replaceObjectAtIndex:idx withObject:[self thumbnailForTailAtIndex:idx]];
-                }
-            }];
-            
-            // Generate missing thumbnails
-            NSUInteger tileIndex = [thumbnails count];
-            CGFloat tileHeight = self.bounds.size.height;
-            while (tileIndex * tileHeight < self.contentSize.height) 
-            {
-                changes = YES;
-                UIImage *thumb = [self thumbnailForTailAtIndex:tileIndex];
-                [thumbnails addObject:thumb];
-                tileIndex++;
-            }
-            
-            //
-            if (changes) 
-            {
-                [[NSOperationQueue mainQueue] addOperationWithBlock:^(void) {
-                    [thumbnailLayer setNeedsDisplay];
-                }];
-            }
-        }];
-    }
+//    // Thumbnails
+//    if (self.isProducingThumbnails) 
+//    {
+//        //
+//        if (thumbnailsDisplayMode != ECCodeViewThumbnailsDisplayNone) 
+//        {
+//            if (!thumbnailLayer) 
+//            {
+//                // TODO!!! do calayer subview to draw thumbnails
+//                thumbnailLayer = [CALayer layer];
+////                thumbnailLayer.delegate = self;
+//                thumbnailLayer.opaque = YES;
+//                thumbnailLayer.needsDisplayOnBoundsChange = NO;
+//                [self.layer addSublayer:thumbnailLayer];
+//            }
+////            thumbnailLayer.frame = CGRectMake(contentRect.size.width - thumbnailsWidth, contentRect.origin.y, thumbnailsWidth, contentRect.size.height);
+//        }
+//    }
 }
 
 - (void)updateAllText
@@ -544,102 +483,152 @@ static void init(ECCodeView *self)
 {
     [renderer updateTextInLineRange:originalRange toLineRange:newRange];
 }
-//
-//- (void)setThumbnailAtTileIndex:(NSInteger)tileIndex withFullSizeImage:(UIImage *)textImage
-//{
-//    if (!self.isProducingThumbnails)
-//        return;
-//    
-//    // Create thumbnails array if not present
-//    @synchronized(self)
-//    {
-//        if (!thumbnails) 
-//            thumbnails = [[NSMutableArray alloc] initWithCapacity:3];
-//    }
-//    
-//    // Scale the image
-//    CGFloat imageWidth = textImage.size.width;
-//    if (imageWidth != thumbnailsWidth) 
-//    {
-//        CGFloat thumbnailHeight = textImage.size.height * (thumbnailsWidth / imageWidth);
-//        UIGraphicsBeginImageContextWithOptions(CGSizeMake(thumbnailsWidth, thumbnailHeight), YES, 0);
-//        
-//        CGContextRef c = UIGraphicsGetCurrentContext();
-//        CGContextScaleCTM(c, 1, -1);
-//        CGContextTranslateCTM(c, 0, -thumbnailHeight);
-//        
-//        [textImage drawInRect:CGRectMake(0, 0, thumbnailsWidth, thumbnailHeight)];
-//        textImage = UIGraphicsGetImageFromCurrentImageContext();
-//        UIGraphicsEndImageContext();
-//    }
-//    
-//    // Insert in thumbnails array
-//    @synchronized(thumbnails)
-//    {
-//        while ([thumbnails count] <= tileIndex) 
-//        {
-//            [thumbnails addObject:[NSNull null]];
-//        }
-//        [thumbnails replaceObjectAtIndex:tileIndex withObject:textImage];
-//    }
-//}
 
-- (UIImage *)thumbnailForTailAtIndex:(NSInteger)tileIndex
+#pragma mark -
+#pragma mark Thumbnails Methods
+
+- (void)thumbnailsFittingTotalSize:(CGSize)size 
+               enumerateUsingBlock:(void (^)(UIImage *, NSUInteger, CGFloat, BOOL*))block 
+                     synchronously:(BOOL)synchronous
 {
-    CGFloat tileHeight = self.bounds.size.height;
-    CGFloat tileWidht = self.bounds.size.width;
-    CGFloat thumbnailScale = thumbnailsWidth / tileWidht;
-    CGFloat thumbnailHeight = tileHeight * thumbnailScale;
+    // TODO parameters check and exception raising
     
-    UIGraphicsBeginImageContextWithOptions(CGSizeMake(thumbnailsWidth, thumbnailHeight), YES, 0);
-    CGContextRef imageContext = UIGraphicsGetCurrentContext();
+    // Caclulate single thumbnail size
+    CGSize tileSize = self.bounds.size;
+    CGSize thumbnailSize = size;
+    if (thumbnailSize.width > tileSize.width)
+        thumbnailSize.width = tileSize.width;
+    if (thumbnailSize.height == CGFLOAT_MAX)
+        thumbnailSize.height = 0;
     
-    [self.backgroundColor setFill];
-    CGContextFillRect(imageContext, CGContextGetClipBoundingBox(imageContext));
+    // TODO invalidate thumbnails if thumbnailSize != cached size
     
-    CGContextScaleCTM(imageContext, thumbnailScale, thumbnailScale);
-    [renderer drawTextWithinRect:CGRectMake(0, tileIndex * tileHeight, tileWidht, tileHeight) inContext:imageContext];
+    // Calculate single thumbnail scale
+    CGFloat thumbnailScale;
+    if (thumbnailSize.width > thumbnailSize.height) 
+    {
+        thumbnailScale = thumbnailSize.width / tileSize.width;
+        thumbnailSize.height = tileSize.height * thumbnailScale;
+    }
+    else
+    {
+        thumbnailScale = thumbnailSize.height / tileSize.height;
+        thumbnailSize.width = tileSize.width * thumbnailScale;
+    }
     
-    UIImage *result = UIGraphicsGetImageFromCurrentImageContext();
-    UIGraphicsEndImageContext();
+    NSBlockOperation *generateThumbnails = [NSBlockOperation blockOperationWithBlock:^(void) {
+        __block BOOL globalStop = NO;
+        __block CGFloat thumbnailYOffset = 0;
+        @synchronized(thumbnailsCache)
+        {
+            // Replace invalidated thumbnails
+            [thumbnailsCache enumerateObjectsUsingBlock:^(id obj, NSUInteger tileIndex, BOOL *stop) {
+                if (obj == [NSNull null]) 
+                {
+                    UIImage *thumb = [self thumbnailForTailAtIndex:tileIndex 
+                                                          withSize:thumbnailSize 
+                                                             scale:thumbnailScale 
+                                                   backgroundColor:nil];
+                    [thumbnailsCache replaceObjectAtIndex:tileIndex withObject:thumb];
+                    obj = thumb;
+                }
+                // Run enumerator
+                block(obj, tileIndex, thumbnailYOffset, stop);
+                globalStop = *stop;
+                
+                thumbnailYOffset += [(UIImage *)obj size].height;
+            }];
+            
+            // Generate missing thumbnails
+            NSUInteger tileIndex = [thumbnailsCache count];
+            while (!globalStop && tileIndex * tileSize.height < self.contentSize.height) 
+            {
+                UIImage *thumb = [self thumbnailForTailAtIndex:tileIndex 
+                                                      withSize:thumbnailSize 
+                                                         scale:thumbnailScale 
+                                               backgroundColor:nil];
+                [thumbnailsCache addObject:thumb];
+                
+                // Run enumerator
+                block(thumb, tileIndex, thumbnailYOffset, &globalStop);
+                
+                // Advancing
+                thumbnailYOffset += thumb.size.height;
+                tileIndex++;
+            }
+        }
+        
+        // At this point all the thumbnails are generated
+//        if (thumbnailsChanges) 
+//        {
+//            [[NSOperationQueue mainQueue] addOperationWithBlock:^(void) {
+//                [thumbnailLayer setNeedsDisplay];
+//            }];
+//        }
+    }];
     
-    return result;
+    // Add to rendering queue
+    [generateThumbnails setQueuePriority:NSOperationQueuePriorityLow];
+    [renderingQueue addOperation:generateThumbnails];
+    
+    if (synchronous) 
+    {
+        [generateThumbnails waitUntilFinished];
+    }
 }
 
-- (NSArray *)thumbnails
+- (UIImage *)thumbnailForTailAtIndex:(NSInteger)tileIndex 
+                            withSize:(CGSize)thumbnailSize 
+                               scale:(CGFloat)thumbnailScale 
+                     backgroundColor:(UIColor *)thumbnailBackgroundColor
 {
-    if (!self.isProducingThumbnails)
-        return nil;
+    // Create thumbnail image context
+    UIGraphicsBeginImageContextWithOptions(thumbnailSize, YES, 0);
+    CGContextRef imageContext = UIGraphicsGetCurrentContext();
     
-    return [thumbnails copy];
+    // Filling thumbnail background
+    if (!thumbnailBackgroundColor)
+        thumbnailBackgroundColor = self.backgroundColor;
+    [thumbnailBackgroundColor setFill];
+    CGContextFillRect(imageContext, CGContextGetClipBoundingBox(imageContext));
+    
+    // Drawing thumbnail text
+    CGSize tileSize = self.bounds.size;
+    CGContextScaleCTM(imageContext, thumbnailScale, thumbnailScale);
+    [renderer drawTextWithinRect:(CGRect){ {0, tileIndex * tileSize.height}, tileSize } inContext:imageContext];
+    
+    // Getting autoreleased result
+    UIImage *result = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    return result;
 }
 
 - (void)invalidateThumbnailForTileAtIndex:(NSInteger)tileIndex
 {
-    if (thumbnails && tileIndex < [thumbnails count]) 
+    if (thumbnailsCache && tileIndex < [thumbnailsCache count]) 
     {
-        @synchronized(thumbnails)
+        @synchronized(thumbnailsCache)
         {
-            [thumbnails replaceObjectAtIndex:tileIndex withObject:[NSNull null]];
+            [thumbnailsCache replaceObjectAtIndex:tileIndex withObject:[NSNull null]];
         }
     }
 }
 
 - (void)invalidateAllThumbnails
 {
-    if (thumbnails) 
+    if (thumbnailsCache) 
     {
-        @synchronized(thumbnails)
+        @synchronized(thumbnailsCache)
         {
-            [thumbnails removeAllObjects];
+            [thumbnailsCache removeAllObjects];
         }
     }
 }
 
-- (void)drawLayer:(CALayer *)layer inContext:(CGContextRef)ctx
-{
-    if (layer == thumbnailLayer) 
-    {
+//- (void)drawLayer:(CALayer *)layer inContext:(CGContextRef)ctx
+//{
+//    if (layer == thumbnailLayer) 
+//    {
 //        CGContextRetain(ctx);
 //        [renderingQueue addOperationWithBlock:^(void) {
 //            CGFloat offset = 0;
@@ -650,12 +639,12 @@ static void init(ECCodeView *self)
 //            }
 //            CGContextRelease(ctx);
 //        }];
-
-        return;
-    }
-    
-    [super drawLayer:layer inContext:ctx];
-}
+//
+//        return;
+//    }
+//    
+//    [super drawLayer:layer inContext:ctx];
+//}
 
 #pragma mark -
 #pragma mark UIResponder methods
@@ -1262,9 +1251,9 @@ static void init(ECCodeView *self)
         }
     }
     
-    if (thumbnails) 
+    if (thumbnailsCache) 
     {
-        for (NSInteger tileIndex = rect.origin.y / self.bounds.size.height; tileIndex < [thumbnails count]; ++tileIndex) 
+        for (NSInteger tileIndex = rect.origin.y / self.bounds.size.height; tileIndex < [thumbnailsCache count]; ++tileIndex) 
         {
             [self invalidateThumbnailForTileAtIndex:tileIndex];
         }
