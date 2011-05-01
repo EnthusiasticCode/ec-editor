@@ -103,7 +103,7 @@
         self.clearsContextBeforeDrawing = NO;
         
         textLayer = [CALayer layer];
-        textLayer.opacity = 0;
+        textLayer.hidden = YES;
         [self.layer addSublayer:textLayer];
         [textLayer setFrame:self.bounds];
         
@@ -164,10 +164,9 @@
             @synchronized(textLayer)
             {
                 [CATransaction begin];
-                [CATransaction setValue:[NSNumber numberWithFloat:0.25f]
-                                 forKey:kCATransactionAnimationDuration];
+                [CATransaction setDisableActions:YES];
                 textLayer.contents = (id)image.CGImage;
-                textLayer.opacity = 1;
+                textLayer.hidden = NO;
                 [CATransaction commit];
                 [image release];
             }
