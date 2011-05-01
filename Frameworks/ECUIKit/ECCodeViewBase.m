@@ -255,13 +255,13 @@ static void init(ECCodeViewBase *self)
     [self->renderer addObserver:self forKeyPath:@"estimatedHeight" options:NSKeyValueObservingOptionNew context:nil];
 }
 
-- (id)initWithRenderer:(ECTextRenderer *)aRenderer renderingQueue:(NSOperationQueue *)queue
+- (id)initWithFrame:(CGRect)frame renderer:(ECTextRenderer *)aRenderer renderingQueue:(NSOperationQueue *)queue
 {
     renderer = aRenderer;
     renderingQueue = queue;
     textInsets = UIEdgeInsetsMake(10, 10, 10, 10);
     
-    self = [super init];
+    self = [super initWithFrame:frame];
     if (self) {
         init(self);
     }

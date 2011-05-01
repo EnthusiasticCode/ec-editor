@@ -21,7 +21,7 @@
 
 #pragma mark Advanced Initialization
 
-- (id)initWithRenderer:(ECTextRenderer *)aRenderer renderingQueue:(NSOperationQueue *)queue;
+- (id)initWithFrame:(CGRect)frame renderer:(ECTextRenderer *)aRenderer renderingQueue:(NSOperationQueue *)queue;
 
 #pragma mark Providing Source Data
 

@@ -321,6 +321,9 @@
 
 - (void)setDatasource:(id<ECTextRendererDataSource>)aDatasource
 {
+    if (datasource == aDatasource)
+        return;
+    
     datasource = aDatasource;
     datasourceHasTextRendererEstimatedTextLineCountOfLength = [datasource respondsToSelector:@selector(textRenderer:estimatedTextLineCountOfLength:)];
     

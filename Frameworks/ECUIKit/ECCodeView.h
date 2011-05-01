@@ -9,14 +9,17 @@
 #import <UIKit/UIKit.h>
 #import "ECCodeViewBase.h"
 
-
-typedef enum {
-    ECCodeViewNavigatorDisplayNone,
-    ECCodeViewNavigatorDisplayAuto,
-    ECCodeViewNavigatorDisplayAlways
-} ECCodeViewNavigatorDisplayMode;
-
 @interface ECCodeView : ECCodeViewBase <UIKeyInput, UITextInputTraits, UITextInput>
+
+#pragma mark Managing the Navigator
+
+@property (nonatomic) CGFloat navigatorWidth;
+
+@property (nonatomic, retain) UIColor *navigatorBackgroundColor;
+
+@property (nonatomic, getter = isNavigatorVisible) BOOL navigatorVisible;
+
+@property (nonatomic) BOOL navigatorAutoVisible;
 
 #pragma mark UITextInput Properties
 

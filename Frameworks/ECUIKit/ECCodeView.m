@@ -14,17 +14,15 @@
 #pragma mark -
 #pragma mark Interfaces
 
-@class NavigatorLayer;
+@class CodeInfoView;
 @class TextSelectionView;
 
 #pragma mark -
 
 @interface ECCodeView () {
 @private
-    // Thumbnails and navigator
-    NSMutableArray *thumbnailsCache;
-    CGSize thumbnailsCachedSize;
-    NavigatorLayer *navigatorLayer;
+    // Navigator
+    CodeInfoView *infoView;
     
     // Text management
     TextSelectionView *selectionView;
@@ -34,6 +32,9 @@
     UITapGestureRecognizer *focusRecognizer;
     UITapGestureRecognizer *tapRecognizer;
 }
+
+/// Specify if the info view containing search marks and navigator should be visible.
+@property (nonatomic, getter = isInfoViewVisible) BOOL infoViewVisible;
 
 /// Method to be used before any text modification occurs.
 - (void)editDataSourceInRange:(NSRange)range withString:(NSString *)string;
@@ -51,15 +52,6 @@
 - (void)handleGestureFocus:(UITapGestureRecognizer *)recognizer;
 - (void)handleGestureTap:(UITapGestureRecognizer *)recognizer;
 
-/// Generate a thumbnail image of the given size for the tile at the specified index.
-- (UIImage *)thumbnailForTailAtIndex:(NSInteger)tileIndex 
-                            withSize:(CGSize)thumbnailSize 
-                               scale:(CGFloat)thumbnailScale 
-                     backgroundColor:(UIColor *)thumbnailBackgroundColor;
-
-/// Remove cached thumbnails for every color forcing their recreation
-- (void)invalidateThumbnailForTileAtIndex:(NSInteger)tileIndex;
-
 @end
 
 #pragma mark -
@@ -68,6 +60,45 @@
 @property (nonatomic) NSRange selection;
 @property (nonatomic, readonly) ECTextRange *selectionRange;
 @property (nonatomic, readonly) ECTextPosition *selectionPosition;
+
+@end
+
+#pragma mark -
+
+@interface CodeInfoView : UIView {
+@private
+    id<ECCodeViewDataSource> datasource;
+    ECTextRenderer *renderer;
+    NSOperationQueue *renderingQueue;
+    
+    ECCodeViewBase *navigatorView;
+    
+    UITapGestureRecognizer *tapRecognizer;
+}
+
+- (id)initWithNavigatorDatasource:(id<ECCodeViewDataSource>)source 
+                         renderer:(ECTextRenderer *)aRenderer 
+                   renderingQueue:(NSOperationQueue *)queue;
+
+@property (nonatomic) CGFloat normalWidth;
+
+@property (nonatomic) CGFloat navigatorWidth;
+
+@property (nonatomic, readonly) CGFloat currentWidth;
+
+@property (nonatomic) UIEdgeInsets navigatorInsets;
+
+@property (nonatomic, retain) UIColor *navigatorBackgroundColor;
+
+@property (nonatomic) CGFloat navigatorScale;
+
+@property (nonatomic, getter = isNavigatorVisible) BOOL navigatorVisible;
+
+@property (nonatomic) CGFloat navigatorHideDelay;
+
+- (void)setNavigatorVisible:(BOOL)visible animated:(BOOL)animated;
+
+- (void)handleTap:(UITapGestureRecognizer *)recognizer;
 
 @end
 
@@ -96,15 +127,139 @@
 #pragma mark -
 #pragma mark ECCodeView
 
+@implementation CodeInfoView
+
+@synthesize normalWidth, navigatorWidth;
+@synthesize navigatorInsets, navigatorVisible, navigatorBackgroundColor, navigatorScale, navigatorHideDelay;
+
+- (id)initWithNavigatorDatasource:(id<ECCodeViewDataSource>)source renderer:(ECTextRenderer *)aRenderer renderingQueue:(NSOperationQueue *)queue
+{
+    normalWidth = 11;
+    navigatorScale = 0.5;
+    navigatorHideDelay = 1;
+    navigatorInsets = UIEdgeInsetsMake(5, 2, 5, 2);
+    if ((self = [super init])) 
+    {
+        datasource = source;
+        renderer = aRenderer;
+        renderingQueue = queue;
+        
+        self.backgroundColor = [UIColor clearColor];
+        
+        tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTap:)];
+        [self addGestureRecognizer:tapRecognizer];
+        [tapRecognizer release];
+    }
+    return self;
+}
+
+- (void)dealloc
+{
+    [navigatorBackgroundColor release];
+    [navigatorView release];
+    [super dealloc];
+}
+
+- (CGFloat)currentWidth
+{
+    return navigatorVisible ? normalWidth + navigatorWidth : normalWidth;
+}
+
+- (void)setNavigatorScale:(CGFloat)scale
+{
+    if (scale == navigatorScale)
+        return;
+    
+    navigatorView.contentScaleFactor = scale;
+}
+
+- (void)setNavigatorVisible:(BOOL)visible
+{
+    [self setNavigatorVisible:visible animated:NO];
+}
+
+- (void)setNavigatorVisible:(BOOL)visible animated:(BOOL)animated
+{
+    if (visible == navigatorVisible)
+        return;
+    
+    navigatorVisible = visible;
+    
+    if (!navigatorView) 
+    {
+        CGRect frame = self.bounds;
+        frame.size.width = navigatorWidth;
+        frame = UIEdgeInsetsInsetRect(frame, navigatorInsets);
+        navigatorView = [[ECCodeViewBase alloc] initWithFrame:frame renderer:renderer renderingQueue:renderingQueue];
+        navigatorView.datasource = datasource;
+        navigatorView.contentScaleFactor = navigatorScale;
+        navigatorView.backgroundColor = [UIColor whiteColor];
+        navigatorView.scrollEnabled = NO;
+    }
+    
+    navigatorView.alpha = visible ? 0 : 1;
+    
+    if (visible) 
+    {
+        [self addSubview:navigatorView];
+    }
+    
+    [UIView animateWithDuration:0.25 delay:(visible ? 0 : navigatorHideDelay) options:(UIViewAnimationOptionAllowUserInteraction | UIViewAnimationOptionBeginFromCurrentState | UIViewAnimationOptionCurveEaseInOut) animations:^(void) {
+        CGRect newFrame = self.frame;
+        if (visible) 
+        {
+            self.backgroundColor = navigatorBackgroundColor;
+            newFrame.origin.x -= navigatorWidth;
+            newFrame.size.width += navigatorWidth;
+        }
+        else
+        {
+            navigatorView.alpha = 0;
+            self.backgroundColor = [UIColor clearColor];
+            newFrame.origin.x += navigatorWidth;
+            newFrame.size.width -= navigatorWidth;
+        }
+        self.frame = newFrame;
+    } completion:^(BOOL finished) {
+        if (visible) 
+        {
+            [UIView animateWithDuration:0.15 delay:0 options:UIViewAnimationOptionAllowUserInteraction animations:^(void) {
+                navigatorView.alpha = 1;
+            } completion:nil];
+        }
+        else
+        {
+            [navigatorView removeFromSuperview];
+        }
+    }];
+}
+
+- (void)handleTap:(UITapGestureRecognizer *)recognizer
+{
+    [self setNavigatorVisible:!navigatorVisible animated:YES];
+}
+
+@end
+
+#pragma mark -
+#pragma mark ECCodeView
+
 @implementation ECCodeView
 
+#pragma mark -
 #pragma mark Properties
+
+@synthesize infoViewVisible;
+@synthesize navigatorAutoVisible;
+@synthesize navigatorBackgroundColor;
+@synthesize navigatorWidth;
 
 #pragma mark NSObject Methods
 
 static void preinit(ECCodeView *self)
 {
-
+    self->navigatorBackgroundColor = [UIColor redColor];
+    self->navigatorWidth = 200;
 }
 
 static void init(ECCodeView *self)
@@ -122,6 +277,9 @@ static void init(ECCodeView *self)
     [self->focusRecognizer setNumberOfTapsRequired:1];
     [self addGestureRecognizer:self->focusRecognizer];
     [self->focusRecognizer release];
+    
+    
+    self.infoViewVisible = YES;
 }
 
 - (id)initWithFrame:(CGRect)frame
@@ -146,8 +304,86 @@ static void init(ECCodeView *self)
 
 - (void)dealloc
 {
-    [thumbnailsCache release];
+    [navigatorBackgroundColor release];
+    [infoView release];
     [super dealloc];
+}
+
+- (void)layoutSubviews
+{
+    [super layoutSubviews];
+    
+    if (infoViewVisible) 
+    {
+        CGRect infoFrame = self.bounds;
+        CGFloat infoWidth = infoView.currentWidth;
+        
+        infoFrame.origin.x = infoFrame.size.width - infoWidth;
+        infoFrame.size.width = infoWidth;
+        
+        infoView.frame = infoFrame;
+    }
+}
+
+#pragma mark -
+#pragma mark InfoView and Navigator methods
+
+- (void)setInfoViewVisible:(BOOL)visible
+{
+    if (visible == infoViewVisible)
+        return;
+    
+    infoViewVisible = visible;
+    
+    if (visible) 
+    {
+        if (!infoView)
+        {
+            infoView = [[CodeInfoView alloc] initWithNavigatorDatasource:datasource renderer:renderer renderingQueue:renderingQueue];
+            infoView.navigatorBackgroundColor = navigatorBackgroundColor;
+            infoView.navigatorWidth = navigatorWidth;
+            infoView.navigatorScale = navigatorWidth / self.bounds.size.width;
+        }
+        [self addSubview:infoView];
+    }
+    else
+    {
+        [infoView removeFromSuperview];
+    }
+}
+
+- (BOOL)isNavigatorVisible
+{
+    return infoView.navigatorVisible;
+}
+
+- (void)setNavigatorVisible:(BOOL)visible
+{
+    if (visible == infoView.navigatorVisible)
+        return;
+    
+    if (visible)
+    {
+        self.infoViewVisible = YES;
+        [infoView setNavigatorVisible:YES animated:YES];
+    }
+    else
+    {
+        [infoView setNavigatorVisible:NO animated:YES];
+    }
+}
+
+- (void)setNavigatorWidth:(CGFloat)width
+{
+    navigatorWidth = width;
+    infoView.navigatorWidth = width;
+}
+
+- (void)setNavigatorBackgroundColor:(UIColor *)color
+{
+    [navigatorBackgroundColor release];
+    navigatorBackgroundColor = [color retain];
+    infoView.navigatorBackgroundColor = color;
 }
 
 #pragma mark -
