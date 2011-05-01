@@ -106,7 +106,7 @@
 {
     [super viewDidLoad];
     
-    self.codeView.navigatorDisplayMode = ECCodeViewNavigatorDisplayAlways;
+    self.codeView.contentScaleFactor = 0.5;
 }
 
 - (void)viewDidUnload

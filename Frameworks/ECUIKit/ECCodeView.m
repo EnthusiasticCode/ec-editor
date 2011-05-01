@@ -8,17 +8,12 @@
 
 #import "ECCodeView.h"
 #import <QuartzCore/QuartzCore.h>
-#import "ECTextRenderer.h"
 #import "ECTextPosition.h"
 #import "ECTextRange.h"
-#import "ECCodeStringDataSource.h"
-
-#define TILEVIEWPOOL_SIZE (3)
 
 #pragma mark -
 #pragma mark Interfaces
 
-@class TextTileView;
 @class NavigatorLayer;
 @class TextSelectionView;
 
@@ -26,11 +21,6 @@
 
 @interface ECCodeView () {
 @private
-    NSMutableAttributedString *text;
-    
-    // Tileing and rendering management
-    TextTileView* tileViewPool[TILEVIEWPOOL_SIZE];
-    
     // Thumbnails and navigator
     NSMutableArray *thumbnailsCache;
     CGSize thumbnailsCachedSize;
@@ -43,23 +33,7 @@
     // Recognizers
     UITapGestureRecognizer *focusRecognizer;
     UITapGestureRecognizer *tapRecognizer;
-    
-    // Flags
-    ECCodeStringDataSource *defaultDatasource;
-    BOOL dataSourceHasCodeCanEditTextInRange;
 }
-
-/// Renderer used in the codeview.
-@property (nonatomic, readonly) ECTextRenderer *renderer;
-
-/// Queue where renderer should be used.
-@property (nonatomic, readonly) NSOperationQueue *renderingQueue;
-
-/// Tells if navigator is visible
-@property (nonatomic, readonly, getter = isNavigatorVisible) BOOL navigatorVisible;
-
-/// Get or create a tile for the given index.
-- (TextTileView *)viewForTileIndex:(NSUInteger)tileIndex;
 
 /// Method to be used before any text modification occurs.
 - (void)editDataSourceInRange:(NSRange)range withString:(NSString *)string;
@@ -89,32 +63,6 @@
 @end
 
 #pragma mark -
-@interface TextTileView : UIView {
-@private
-    ECCodeView *parent;
-    CALayer *textLayer;
-}
-
-@property (nonatomic) NSInteger tileIndex;
-@property (nonatomic) UIEdgeInsets textInsets;
-- (id)initWithCodeView:(ECCodeView *)codeView;
-- (void)invalidate;
-- (void)renderText;
-
-@end
-
-#pragma mark -
-@interface NavigatorLayer : CALayer {
-@private
-    ECCodeView *parent;
-}
-
-- (id)initWithCodeView:(ECCodeView *)codeView;
-- (void)updateThumbnails;
-
-@end
-
-#pragma mark -
 @interface TextSelectionView : UIView
 
 @property (nonatomic) NSRange selection;
@@ -125,175 +73,6 @@
 
 #pragma mark -
 #pragma mark Implementations
-
-#pragma mark -
-#pragma mark TextTileView
-
-@implementation TextTileView
-
-@synthesize tileIndex, textInsets;
-
-#pragma mark Properties
-
-- (void)setTileIndex:(NSInteger)index
-{
-    if (index != tileIndex) 
-    {
-        tileIndex = index;
-        [self renderText];
-    }
-}
-
-- (void)setBounds:(CGRect)bounds
-{
-    [super setBounds:bounds];
-    [textLayer setFrame:bounds];
-}
-
-- (void)setBackgroundColor:(UIColor *)color
-{
-    [super setBackgroundColor:color];
-    [self renderText];
-}
-
-#pragma mark Methods
-
-- (id)initWithCodeView:(ECCodeView *)codeView
-{
-    if ((self = [super init]))
-    {
-        parent = codeView;
-        
-        self.opaque = YES;
-        self.clearsContextBeforeDrawing = NO;
-        
-        textLayer = [CALayer layer];
-        textLayer.opacity = 0;
-        [self.layer addSublayer:textLayer];
-        [textLayer setFrame:self.bounds];
-        
-        [self invalidate];
-    }
-    return self;
-}
-
-- (void)invalidate
-{
-    tileIndex = -2;
-    self.hidden = YES;
-}
-
-- (void)renderText
-{
-    if (tileIndex < 0)
-        return;
-    
-    CGRect rect = self.bounds;
-    [parent.renderingQueue addOperationWithBlock:^(void) {
-        // Rendering image
-        UIGraphicsBeginImageContextWithOptions(rect.size, YES, 0);
-        CGContextRef imageContext = UIGraphicsGetCurrentContext();
-        {
-            
-            [self.backgroundColor setFill];
-            CGContextFillRect(imageContext, rect);
-            
-            // Drawing text
-            CGPoint textOffset = CGPointMake(0, rect.size.height * tileIndex);
-            CGSize textSize = rect.size;
-            if (tileIndex == 0) 
-            {
-                textSize.height -= textInsets.top;
-                CGContextTranslateCTM(imageContext, textInsets.left, textInsets.top);
-            }
-            else
-            {
-                textOffset.y -= textInsets.top;
-                CGContextTranslateCTM(imageContext, textInsets.left, 0);
-            }
-            CGRect textRect = (CGRect){ textOffset, rect.size };
-            
-            [parent.renderer drawTextWithinRect:textRect inContext:imageContext];
-        }
-        UIImage *image = [UIGraphicsGetImageFromCurrentImageContext() retain];
-        UIGraphicsEndImageContext();
-        
-        // Send rendered image to presentation layer
-        [[NSOperationQueue mainQueue] addOperationWithBlock:^(void) {
-            @synchronized(textLayer)
-            {
-                [CATransaction begin];
-                [CATransaction setValue:[NSNumber numberWithFloat:0.25f]
-                                 forKey:kCATransactionAnimationDuration];
-                textLayer.contents = (id)image.CGImage;
-                textLayer.opacity = 1;
-                [CATransaction commit];
-                [image release];
-            }
-        }];
-    }];
-}
-
-@end
-
-#pragma mark -
-#pragma mark NavigatorLayer
-
-@implementation NavigatorLayer
-
-- (id)initWithCodeView:(ECCodeView *)codeView
-{
-    if ((self = [super init])) 
-    {
-        parent = codeView;
-        self.opaque = YES;
-    }
-    return self;
-}
-
-- (id<CAAction>)actionForKey:(NSString *)event
-{
-    return nil;
-}
-
-- (void)updateThumbnails
-{
-    __block NSUInteger lastUsedLayer = 0;
-    [parent thumbnailsFittingTotalSize:(CGSize){ self.bounds.size.width, 0 } enumerateUsingBlock:^(UIImage *thumbnail, NSUInteger index, CGFloat yOffset, BOOL *stop) {
-        
-        [[NSOperationQueue mainQueue] addOperationWithBlock:^(void) {
-            @synchronized(self)
-            {
-                CALayer *layer;
-                if ([self.sublayers count] > index) 
-                    layer = [self.sublayers objectAtIndex:index];
-                else while ([self.sublayers count] <= index && (layer = [CALayer layer]))
-                    [self addSublayer:layer];
-                [layer setFrame:(CGRect){ { 0, yOffset }, thumbnail.size }];
-                [layer setContents:(id)thumbnail.CGImage];
-            }
-        }];
-        
-        lastUsedLayer = index;
-        
-    } completionBlock:^{
-        
-        @synchronized(self)
-        {
-            lastUsedLayer++;
-            NSInteger count = [self.sublayers count] - (NSInteger)lastUsedLayer;
-            if (count > 0) 
-            {
-                NSArray *removeArray = [self.sublayers subarrayWithRange:(NSRange){ lastUsedLayer, count }];
-                for (CALayer *l in removeArray)
-                    [l removeFromSuperlayer];
-            }
-        }
-        
-    } synchronously:NO];
-}
-
-@end
 
 #pragma mark -
 #pragma mark TextSelectionView
@@ -321,91 +100,15 @@
 
 #pragma mark Properties
 
-@synthesize datasource; 
-@synthesize textInsets;
-@synthesize renderingQueue, renderer;
-@synthesize navigatorDisplayMode, navigatorWidth, navigatorVisible;
-
-- (void)setDatasource:(id<ECCodeViewDataSource>)aDatasource
-{
-    datasource = aDatasource;
-    
-    if (datasource != defaultDatasource) 
-    {
-        [defaultDatasource release];
-    }
-    
-    dataSourceHasCodeCanEditTextInRange = [datasource respondsToSelector:@selector(codeView:canEditTextInRange:)];
-    
-    renderer.datasource = datasource;
-}
-
-- (void)setTextInsets:(UIEdgeInsets)insets
-{
-    textInsets = insets;
-    for (NSInteger i = 0; i < TILEVIEWPOOL_SIZE; ++i)
-    {
-        [tileViewPool[i] setTextInsets:insets];
-    }
-}
-
-- (void)setFrame:(CGRect)frame
-{
-    renderer.wrapWidth = UIEdgeInsetsInsetRect(frame, self->textInsets).size.width;
-    self.contentSize = CGSizeMake(frame.size.width, renderer.estimatedHeight + textInsets.top + textInsets.bottom);
-    
-    for (NSInteger i = 0; i < TILEVIEWPOOL_SIZE; ++i)
-    {
-        [tileViewPool[i] invalidate];
-        tileViewPool[i].bounds = (CGRect){ CGPointZero, frame.size };
-    }
-    
-    // Reposition selection
-    [self setSelectedTextRange:selectionView.selection notifyDelegate:NO];
-    
-    [super setFrame:frame];
-    
-    // Thumbnails and navigation
-    [self clearThumbnailsCache];
-    if (navigatorLayer && self.isNavigatorVisible) 
-        [navigatorLayer updateThumbnails];
-}
-
-- (void)setBackgroundColor:(UIColor *)color
-{
-    for (NSInteger i = 0; i < TILEVIEWPOOL_SIZE; ++i)
-    {
-        [tileViewPool[i] setBackgroundColor:color];
-    }
-    [super setBackgroundColor:color];
-}
-
-- (BOOL)isNavigatorVisible
-{
-    return navigatorDisplayMode == ECCodeViewNavigatorDisplayAlways || navigatorVisible;
-}
-
 #pragma mark NSObject Methods
 
 static void preinit(ECCodeView *self)
 {
-    self->renderer = [ECTextRenderer new];
-    self->renderer.preferredLineCountPerSegment = 500;
-    
-    self->textInsets = UIEdgeInsetsMake(10, 10, 10, 10);
-    
-    // Creating rendering queue
-    self->renderingQueue = [NSOperationQueue new];
-    [self->renderingQueue setMaxConcurrentOperationCount:1];
-    
-    self->navigatorWidth = 200;
+
 }
 
 static void init(ECCodeView *self)
-{    
-    self->renderer.wrapWidth = UIEdgeInsetsInsetRect(self.bounds, self->textInsets).size.width;
-    [self->renderer addObserver:self forKeyPath:@"estimatedHeight" options:NSKeyValueObservingOptionNew context:nil];
-    
+{
     // Adding selection view
     self->selectionView = [TextSelectionView new];
     [self->selectionView setHidden:YES];
@@ -443,291 +146,8 @@ static void init(ECCodeView *self)
 
 - (void)dealloc
 {
-    for (NSInteger i = 0; i < TILEVIEWPOOL_SIZE; ++i)
-        [tileViewPool[i] release];
-    [renderer release];
-    [renderingQueue release];
     [thumbnailsCache release];
-    [defaultDatasource release];
     [super dealloc];
-}
-
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
-{
-    if (object == renderer) 
-    {
-        CGFloat height = [[change valueForKey:NSKeyValueChangeNewKey] floatValue];
-        CGFloat width = self.bounds.size.width;
-        self.contentSize = CGSizeMake(width, height + textInsets.top + textInsets.bottom);
-        
-        if (navigatorLayer) 
-        {
-            navigatorLayer.bounds = CGRectMake(0, 0, navigatorWidth, MAX(height * (navigatorWidth / width), self.bounds.size.height));
-            if (self.isNavigatorVisible) 
-            {
-                [navigatorLayer updateThumbnails];
-            }
-        }
-    }
-}
-
-- (void)didMoveToSuperview
-{
-    if (!self->datasource)
-    {
-        self->defaultDatasource = [ECCodeStringDataSource new];
-        self.datasource = self->defaultDatasource;
-    }
-}
-
-#pragma mark -
-#pragma mark Rendering Methods
-
-- (TextTileView *)viewForTileIndex:(NSUInteger)tileIndex
-{
-    NSInteger selected = -1;
-    // Select free tile
-    for (NSInteger i = 0; i < TILEVIEWPOOL_SIZE; ++i) 
-    {
-        if (tileViewPool[i])
-        {
-            // Tile already present and ready
-            if ([tileViewPool[i] tileIndex] == (NSInteger)tileIndex)
-            {
-                return tileViewPool[i];
-            }
-            // If still no selection just select this as a candidate
-            if (selected >= 0)
-                continue;
-            // Select only if better than previous
-            if (abs([tileViewPool[i] tileIndex] - tileIndex) <= 1) 
-                continue;
-        }
-        selected = i;
-    }
-    
-    // Generate new tile
-    if (!tileViewPool[selected]) 
-    {
-        tileViewPool[selected] = [[TextTileView alloc] initWithCodeView:self];
-        tileViewPool[selected].backgroundColor = self.backgroundColor;
-        tileViewPool[selected].textInsets = textInsets;
-        // TODO remove from self when not displayed
-        [self addSubview:tileViewPool[selected]];
-    }
-    
-    tileViewPool[selected].bounds = (CGRect){ CGPointZero, self.frame.size };
-    tileViewPool[selected].tileIndex = tileIndex;
-    
-    return tileViewPool[selected];
-}
-
-- (void)layoutSubviews
-{
-    // Scrolled content rect
-    CGRect contentRect = self.bounds;
-    CGFloat halfHeight = contentRect.size.height / 2.0;
-    
-    // Find first visible tile index
-    NSUInteger index = contentRect.origin.y / contentRect.size.height;
-    
-    // Layout first visible tile
-    CGFloat firstTileEnd = (index + 1) * contentRect.size.height;
-    TextTileView *firstTile = [self viewForTileIndex:index];
-    [self sendSubviewToBack:firstTile];
-    firstTile.hidden = NO;
-    firstTile.center = CGPointMake(CGRectGetMidX(contentRect), firstTileEnd - halfHeight);
-    
-    // Layout second visible tile if needed
-    if (firstTileEnd < CGRectGetMaxY(contentRect)) 
-    {
-        index++;
-        TextTileView *secondTile = [self viewForTileIndex:index];
-        [self sendSubviewToBack:secondTile];
-        secondTile.hidden = NO;
-        secondTile.center = CGPointMake(CGRectGetMidX(contentRect), firstTileEnd + halfHeight);
-    }
-    
-    // Thumbnails
-    if (self.isNavigatorVisible) 
-    {
-        if (!navigatorLayer) 
-        {
-            navigatorLayer = [[NavigatorLayer alloc] initWithCodeView:self];
-            navigatorLayer.anchorPoint = CGPointMake(0, 0);
-            navigatorLayer.backgroundColor = self.backgroundColor.CGColor;
-            [self.layer addSublayer:navigatorLayer];
-            navigatorLayer.bounds = CGRectMake(0, 0, navigatorWidth, MAX(self.contentSize.height * (navigatorWidth / contentRect.size.width), contentRect.size.height));
-            [navigatorLayer release];
-            [navigatorLayer updateThumbnails];
-        }
-        
-        CGFloat navigationLayerPosition = contentRect.origin.y;
-        CGFloat navigationLayerHeight = navigatorLayer.bounds.size.height;
-        if (navigationLayerHeight > contentRect.size.height) 
-        {
-            navigationLayerPosition -= (contentRect.origin.y / (self.contentSize.height - contentRect.size.height)) * (navigationLayerHeight - contentRect.size.height);
-        }
-        navigatorLayer.position = CGPointMake(contentRect.size.width - navigatorWidth, navigationLayerPosition);
-    }
-}
-
-- (void)updateAllText
-{
-    [renderer updateAllText];
-}
-
-- (void)updateTextInLineRange:(NSRange)originalRange toLineRange:(NSRange)newRange
-{
-    [renderer updateTextInLineRange:originalRange toLineRange:newRange];
-}
-
-#pragma mark -
-#pragma mark Thumbnails Methods
-
-- (void)thumbnailsFittingTotalSize:(CGSize)size 
-               enumerateUsingBlock:(void (^)(UIImage *, NSUInteger, CGFloat, BOOL*))block 
-                   completionBlock:(void(^)(void))completionBlock
-                     synchronously:(BOOL)synchronous
-{
-    // TODO parameters check and exception raising
-    
-    // Caclulate single thumbnail size
-    CGSize tileSize = self.bounds.size;
-    CGSize thumbnailSize = size;
-    if (thumbnailSize.width > tileSize.width)
-        thumbnailSize.width = tileSize.width;
-    if (thumbnailSize.height == CGFLOAT_MAX)
-        thumbnailSize.height = 0;
-    
-    // Generate or clean thumbnails caches
-    if (!thumbnailsCache)
-    {
-        thumbnailsCache = [[NSMutableArray alloc] initWithCapacity:self.contentSize.height / tileSize.height + 1];
-        thumbnailsCachedSize = thumbnailSize;
-    }
-    else if (!CGSizeEqualToSize(thumbnailSize, thumbnailsCachedSize)) 
-    {
-        [self clearThumbnailsCache];
-        thumbnailsCachedSize = thumbnailSize;
-    }
-    
-    // Calculate single thumbnail scale
-    CGFloat thumbnailScale;
-    if (thumbnailSize.width > thumbnailSize.height) 
-    {
-        thumbnailScale = thumbnailSize.width / tileSize.width;
-        thumbnailSize.height = tileSize.height * thumbnailScale;
-    }
-    else
-    {
-        thumbnailScale = thumbnailSize.height / tileSize.height;
-        thumbnailSize.width = tileSize.width * thumbnailScale;
-    }
-    
-    NSBlockOperation *generateThumbnails = [NSBlockOperation blockOperationWithBlock:^(void) {
-        __block BOOL globalStop = NO;
-        __block CGFloat thumbnailYOffset = 0;
-        @synchronized(thumbnailsCache)
-        {
-            // Replace invalidated thumbnails
-            [thumbnailsCache enumerateObjectsUsingBlock:^(id obj, NSUInteger tileIndex, BOOL *stop) {
-                if (obj == [NSNull null]) 
-                {
-                    UIImage *thumb = [self thumbnailForTailAtIndex:tileIndex 
-                                                          withSize:thumbnailSize 
-                                                             scale:thumbnailScale 
-                                                   backgroundColor:nil];
-                    [thumbnailsCache replaceObjectAtIndex:tileIndex withObject:thumb];
-                    obj = thumb;
-                }
-                // Run enumerator
-                block(obj, tileIndex, thumbnailYOffset, stop);
-                globalStop = *stop;
-                
-                thumbnailYOffset += [(UIImage *)obj size].height;
-            }];
-            
-            // Generate missing thumbnails
-            NSUInteger tileIndex = [thumbnailsCache count];
-            while (!globalStop && tileIndex * tileSize.height < self.contentSize.height) 
-            {
-                UIImage *thumb = [self thumbnailForTailAtIndex:tileIndex 
-                                                      withSize:thumbnailSize 
-                                                         scale:thumbnailScale 
-                                               backgroundColor:nil];
-                [thumbnailsCache addObject:thumb];
-                
-                // Run enumerator
-                block(thumb, tileIndex, thumbnailYOffset, &globalStop);
-                
-                // Advancing
-                thumbnailYOffset += thumb.size.height;
-                tileIndex++;
-            }
-        }
-    }];
-    
-    // Add complition block
-    if (completionBlock)
-        [generateThumbnails setCompletionBlock:completionBlock];
-    
-    // Add to rendering queue
-    [generateThumbnails setQueuePriority:NSOperationQueuePriorityLow];
-    [renderingQueue addOperation:generateThumbnails];
-    
-    if (synchronous) 
-    {
-        [generateThumbnails waitUntilFinished];
-    }
-}
-
-- (UIImage *)thumbnailForTailAtIndex:(NSInteger)tileIndex 
-                            withSize:(CGSize)thumbnailSize 
-                               scale:(CGFloat)thumbnailScale 
-                     backgroundColor:(UIColor *)thumbnailBackgroundColor
-{
-    // Create thumbnail image context
-    UIGraphicsBeginImageContextWithOptions(thumbnailSize, YES, 0);
-    CGContextRef imageContext = UIGraphicsGetCurrentContext();
-    
-    // Filling thumbnail background
-    if (!thumbnailBackgroundColor)
-        thumbnailBackgroundColor = self.backgroundColor;
-    [thumbnailBackgroundColor setFill];
-    CGContextFillRect(imageContext, CGContextGetClipBoundingBox(imageContext));
-    
-    // Drawing thumbnail text
-    CGSize tileSize = self.bounds.size;
-    CGContextScaleCTM(imageContext, thumbnailScale, thumbnailScale);
-    [renderer drawTextWithinRect:(CGRect){ {0, tileIndex * tileSize.height}, tileSize } inContext:imageContext];
-    
-    // Getting autoreleased result
-    UIImage *result = UIGraphicsGetImageFromCurrentImageContext();
-    UIGraphicsEndImageContext();
-    return result;
-}
-
-- (void)invalidateThumbnailForTileAtIndex:(NSInteger)tileIndex
-{
-    if (thumbnailsCache && tileIndex < [thumbnailsCache count]) 
-    {
-        @synchronized(thumbnailsCache)
-        {
-            [thumbnailsCache replaceObjectAtIndex:tileIndex withObject:[NSNull null]]; 
-        }
-    }
-}
-
-- (void)clearThumbnailsCache
-{
-    if (thumbnailsCache) 
-    {
-        @synchronized(thumbnailsCache)
-        {
-            [thumbnailsCache removeAllObjects];
-        }
-    }
 }
 
 #pragma mark -
@@ -1323,33 +743,6 @@ static void init(ECCodeView *self)
 }
 
 #pragma mark -
-#pragma mark Text Renderer Delegate
-
-- (void)textRenderer:(ECTextRenderer *)sender invalidateRenderInRect:(CGRect)rect
-{
-    if (rect.origin.y <= CGRectGetMaxY(self.bounds)) 
-    {
-        for (int i = 0; i < TILEVIEWPOOL_SIZE; ++i) 
-        {
-            [tileViewPool[i] invalidate];
-        }
-    }
-    
-    if (thumbnailsCache) 
-    {
-        for (NSInteger tileIndex = rect.origin.y / self.bounds.size.height; tileIndex < [thumbnailsCache count]; ++tileIndex) 
-        {
-            [self invalidateThumbnailForTileAtIndex:tileIndex];
-        }
-    }
-    
-    if (self.isNavigatorVisible && navigatorLayer) 
-    {
-        [navigatorLayer setNeedsDisplay];
-    }
-}
-
-#pragma mark -
 #pragma mark Gesture Recognizers and Interaction
 
 - (void)handleGestureFocus:(UITapGestureRecognizer *)recognizer
@@ -1363,56 +756,5 @@ static void init(ECCodeView *self)
     CGPoint tapPoint = [recognizer locationInView:self];
     [self setSelectedTextFromPoint:tapPoint toPoint:tapPoint];
 }
-
-#pragma mark -
-#pragma mark Text Renderer and CodeView String Datasource
-
-- (NSString *)text
-{
-    if (![datasource isKindOfClass:[ECCodeStringDataSource class]])
-    {
-        return nil;
-    }
-    
-    return [(ECCodeStringDataSource *)datasource string];
-}
-
-- (void)setText:(NSString *)string
-{
-    // Will make sure that if no datasource have been set, a default one will be created.
-    [self didMoveToSuperview];
-    
-    if (![datasource isKindOfClass:[ECCodeStringDataSource class]])
-    {
-        [NSException raise:NSInternalInconsistencyException format:@"Trying to set codeview text with textDelegate not self."];
-        return;
-    }
-    
-    // Set text
-    [(ECCodeStringDataSource *)datasource setString:string];
-    [renderer updateAllText];
-
-    // Update tiles
-    CGRect bounds = self.bounds;
-    renderer.wrapWidth = UIEdgeInsetsInsetRect(bounds, self->textInsets).size.width;
-    self.contentSize = CGSizeMake(bounds.size.width, renderer.estimatedHeight + textInsets.top + textInsets.bottom);
-    for (NSInteger i = 0; i < TILEVIEWPOOL_SIZE; ++i)
-    {
-        [tileViewPool[i] invalidate];
-        tileViewPool[i].bounds = (CGRect){ CGPointZero, bounds.size };
-    }
-    
-    // Update selection
-    // TODO resume saved selection
-    [self setSelectedTextRange:(NSRange){ 0, 0 } notifyDelegate:NO];
-    
-    [self setNeedsLayout];
-    
-    // Update thumbnails and navigator
-    [self clearThumbnailsCache];
-    if (navigatorLayer && self.isNavigatorVisible) 
-        [navigatorLayer updateThumbnails];
-}
-
 
 @end

@@ -7,7 +7,7 @@
 //
 
 #import "ECCodeStringDataSource.h"
-#import "ECCodeView.h"
+#import "ECCodeViewBase.h"
 
 @interface ECCodeStringDataSource () {
 @private
@@ -104,17 +104,17 @@
     return [string length];
 }
 
-- (NSString *)codeView:(ECCodeView *)codeView stringInRange:(NSRange)range
+- (NSString *)codeView:(ECCodeViewBase *)codeView stringInRange:(NSRange)range
 {
     return [[string string] substringWithRange:range];
 }
 
-- (BOOL)codeView:(ECCodeView *)codeView canEditTextInRange:(NSRange)range
+- (BOOL)codeView:(ECCodeViewBase *)codeView canEditTextInRange:(NSRange)range
 {
     return YES;
 }
 
-- (void)codeView:(ECCodeView *)codeView commitString:(NSString *)commitString forTextInRange:(NSRange)range
+- (void)codeView:(ECCodeViewBase *)codeView commitString:(NSString *)commitString forTextInRange:(NSRange)range
 {
     NSString *str = [string string];
     NSUInteger strLength = [str length];
