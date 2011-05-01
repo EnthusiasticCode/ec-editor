@@ -43,9 +43,8 @@ typedef enum {
 /// this property has no effects.
 @property (nonatomic) ECCodeViewNavigatorDisplayMode navigatorDisplayMode;
 
+/// Specify the navigator's width. Default 200 points.
 @property (nonatomic) CGFloat navigatorWidth;
-
-@property (nonatomic, retain) UIColor *navigatorBackgroundColor;
 
 /// This method will generate (if needed) thumbnails for the entire source text
 /// to fit the given size and execute the given block once the generation is complete. 
@@ -58,6 +57,9 @@ typedef enum {
                enumerateUsingBlock:(void(^)(UIImage *thumbnail, NSUInteger index, CGFloat yOffset, BOOL *stop))block 
                    completionBlock:(void(^)(void))completionBlock
                      synchronously:(BOOL)synchronous;
+
+/// Remove all cached thumbnails.
+- (void)clearThumbnailsCache;
 
 #pragma mark UITextInput Properties
 
