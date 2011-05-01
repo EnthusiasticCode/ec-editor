@@ -22,12 +22,13 @@
 @interface ECCodeViewBase () {
 @private
     NSMutableAttributedString *text;
+    ECCodeStringDataSource *defaultDatasource;
     
     // Tileing and rendering management
     TextTileView* tileViewPool[TILEVIEWPOOL_SIZE];
     
-    //
-    ECCodeStringDataSource *defaultDatasource;
+    // Variable to indicate if renderer and rendering queue are owned by this codeview
+    BOOL ownsRenderer;
 }
 
 /// Renderer used in the codeview.
@@ -198,7 +199,8 @@
     
     dataSourceHasCodeCanEditTextInRange = [datasource respondsToSelector:@selector(codeView:canEditTextInRange:)];
     
-    renderer.datasource = datasource;
+    if (ownsRenderer)
+        renderer.datasource = datasource;
 }
 
 - (void)setTextInsets:(UIEdgeInsets)insets
@@ -212,7 +214,9 @@
 
 - (void)setFrame:(CGRect)frame
 {
-    renderer.wrapWidth = UIEdgeInsetsInsetRect(frame, self->textInsets).size.width;
+    if (ownsRenderer)
+        renderer.wrapWidth = UIEdgeInsetsInsetRect(frame, self->textInsets).size.width;
+    
     self.contentSize = CGSizeMake(frame.size.width, (renderer.estimatedHeight + textInsets.top + textInsets.bottom) * self.contentScaleFactor);
     
     for (NSInteger i = 0; i < TILEVIEWPOOL_SIZE; ++i)
@@ -237,6 +241,8 @@
 
 static void preinit(ECCodeViewBase *self)
 {
+    self->ownsRenderer = YES;
+    
     // Creating new renderer
     self->renderer = [ECTextRenderer new];
     self->renderer.delegate = (id<ECTextRendererDelegate>)self;
@@ -250,15 +256,17 @@ static void preinit(ECCodeViewBase *self)
 }
 
 static void init(ECCodeViewBase *self)
-{    
-    self->renderer.wrapWidth = UIEdgeInsetsInsetRect(self.bounds, self->textInsets).size.width;
+{
+    if (self->ownsRenderer)
+        self->renderer.wrapWidth = UIEdgeInsetsInsetRect(self.bounds, self->textInsets).size.width;
     [self->renderer addObserver:self forKeyPath:@"estimatedHeight" options:NSKeyValueObservingOptionNew context:nil];
 }
 
 - (id)initWithFrame:(CGRect)frame renderer:(ECTextRenderer *)aRenderer renderingQueue:(NSOperationQueue *)queue
 {
-    renderer = aRenderer;
-    renderingQueue = queue;
+    ownsRenderer = NO;
+    renderer = [aRenderer retain];
+    renderingQueue = [queue retain];
     textInsets = UIEdgeInsetsMake(10, 10, 10, 10);
     
     self = [super initWithFrame:frame];
@@ -388,12 +396,14 @@ static void init(ECCodeViewBase *self)
 
 - (void)updateAllText
 {
-    [renderer updateAllText];
+    if (ownsRenderer)
+        [renderer updateAllText];
 }
 
 - (void)updateTextInLineRange:(NSRange)originalRange toLineRange:(NSRange)newRange
 {
-    [renderer updateTextInLineRange:originalRange toLineRange:newRange];
+    if (ownsRenderer)
+        [renderer updateTextInLineRange:originalRange toLineRange:newRange];
 }
 
 
@@ -427,6 +437,9 @@ static void init(ECCodeViewBase *self)
 
 - (void)setText:(NSString *)string
 {
+    if (!ownsRenderer)
+        return;
+    
     // Will make sure that if no datasource have been set, a default one will be created.
     [self didMoveToSuperview];
     

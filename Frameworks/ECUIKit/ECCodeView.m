@@ -137,7 +137,7 @@
     normalWidth = 11;
     navigatorScale = 0.5;
     navigatorHideDelay = 1;
-    navigatorInsets = UIEdgeInsetsMake(5, 2, 5, 2);
+    navigatorInsets = UIEdgeInsetsMake(2, 2, 2, 2);
     if ((self = [super init])) 
     {
         datasource = source;
@@ -342,7 +342,7 @@ static void init(ECCodeView *self)
             infoView = [[CodeInfoView alloc] initWithNavigatorDatasource:datasource renderer:renderer renderingQueue:renderingQueue];
             infoView.navigatorBackgroundColor = navigatorBackgroundColor;
             infoView.navigatorWidth = navigatorWidth;
-            infoView.navigatorScale = navigatorWidth / self.bounds.size.width;
+            infoView.navigatorScale = (navigatorWidth - 4) / self.bounds.size.width;
         }
         [self addSubview:infoView];
     }
