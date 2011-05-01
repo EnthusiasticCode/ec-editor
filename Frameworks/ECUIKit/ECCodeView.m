@@ -80,6 +80,8 @@
                          renderer:(ECTextRenderer *)aRenderer 
                    renderingQueue:(NSOperationQueue *)queue;
 
+@property (nonatomic) CGFloat parentWidth;
+
 @property (nonatomic) CGFloat normalWidth;
 
 @property (nonatomic) CGFloat navigatorWidth;
@@ -89,8 +91,6 @@
 @property (nonatomic) UIEdgeInsets navigatorInsets;
 
 @property (nonatomic, retain) UIColor *navigatorBackgroundColor;
-
-@property (nonatomic) CGFloat navigatorScale;
 
 @property (nonatomic, getter = isNavigatorVisible) BOOL navigatorVisible;
 
@@ -129,13 +129,14 @@
 
 @implementation CodeInfoView
 
+@synthesize parentWidth;
 @synthesize normalWidth, navigatorWidth;
-@synthesize navigatorInsets, navigatorVisible, navigatorBackgroundColor, navigatorScale, navigatorHideDelay;
+@synthesize navigatorInsets, navigatorVisible, navigatorBackgroundColor, navigatorHideDelay;
 
 - (id)initWithNavigatorDatasource:(id<ECCodeViewDataSource>)source renderer:(ECTextRenderer *)aRenderer renderingQueue:(NSOperationQueue *)queue
 {
+    parentWidth = [UIScreen mainScreen].bounds.size.width;
     normalWidth = 11;
-    navigatorScale = 0.5;
     navigatorHideDelay = 1;
     navigatorInsets = UIEdgeInsetsMake(2, 2, 2, 2);
     if ((self = [super init])) 
@@ -160,17 +161,19 @@
     [super dealloc];
 }
 
+- (void)setParentWidth:(CGFloat)width
+{
+    if (width == parentWidth)
+        return;
+    
+    parentWidth = width;
+    
+    navigatorView.contentScaleFactor = (navigatorWidth - navigatorInsets.left - navigatorInsets.right) / parentWidth;
+}
+
 - (CGFloat)currentWidth
 {
     return navigatorVisible ? normalWidth + navigatorWidth : normalWidth;
-}
-
-- (void)setNavigatorScale:(CGFloat)scale
-{
-    if (scale == navigatorScale)
-        return;
-    
-    navigatorView.contentScaleFactor = scale;
 }
 
 - (void)setNavigatorVisible:(BOOL)visible
@@ -192,7 +195,7 @@
         frame = UIEdgeInsetsInsetRect(frame, navigatorInsets);
         navigatorView = [[ECCodeViewBase alloc] initWithFrame:frame renderer:renderer renderingQueue:renderingQueue];
         navigatorView.datasource = datasource;
-        navigatorView.contentScaleFactor = navigatorScale;
+        navigatorView.contentScaleFactor = (navigatorWidth - navigatorInsets.left - navigatorInsets.right) / parentWidth;
         navigatorView.backgroundColor = [UIColor whiteColor];
         navigatorView.scrollEnabled = NO;
     }
@@ -342,7 +345,7 @@ static void init(ECCodeView *self)
             infoView = [[CodeInfoView alloc] initWithNavigatorDatasource:datasource renderer:renderer renderingQueue:renderingQueue];
             infoView.navigatorBackgroundColor = navigatorBackgroundColor;
             infoView.navigatorWidth = navigatorWidth;
-            infoView.navigatorScale = (navigatorWidth - 4) / self.bounds.size.width;
+            infoView.parentWidth = self.bounds.size.width;
         }
         [self addSubview:infoView];
     }
