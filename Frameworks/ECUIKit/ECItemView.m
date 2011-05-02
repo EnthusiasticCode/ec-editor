@@ -55,6 +55,11 @@ static const NSString *kECItemViewItemKey = @"item";
     } _flags;
     NSMutableArray *_areas;
     NSMutableDictionary *_elementCaches;
+    NSUInteger _cachedAreaRectArea;
+    CGRect _cachedAreaRectRect;
+    NSUInteger _cachedGroupRectArea;
+    NSUInteger _cachedGroupRectGroup;
+    CGRect _cachedGroupRectRect;
     NSMutableDictionary *_visibleElements;
     BOOL _isAnimating;
     UITapGestureRecognizer *_tapGestureRecognizer;
@@ -206,6 +211,9 @@ static const NSString *kECItemViewItemKey = @"item";
     [_elementCaches setObject:[ECStackCache cacheWithTarget:nil action:NULL size:kECItemViewAreaHeaderBufferSize] forKey:kECItemViewAreaHeaderKey];
     [_elementCaches setObject:[ECStackCache cacheWithTarget:nil action:NULL size:kECItemViewGroupSeparatorBufferSize] forKey:kECItemViewGroupSeparatorKey];
     [_elementCaches setObject:[ECStackCache cacheWithTarget:nil action:NULL size:kECItemViewItemBufferSize] forKey:kECItemViewItemKey];
+    _cachedAreaRectArea = NSUIntegerMax;
+    _cachedGroupRectArea = NSUIntegerMax;
+    _cachedGroupRectGroup = NSUIntegerMax;
     _visibleElements = [[NSMutableDictionary alloc] init];
     [_visibleElements setObject:[NSMutableDictionary dictionary] forKey:kECItemViewAreaHeaderKey];
     [_visibleElements setObject:[NSMutableDictionary dictionary] forKey:kECItemViewGroupSeparatorKey];
@@ -341,12 +349,6 @@ static const NSString *kECItemViewItemKey = @"item";
     return ceil((CGFloat)numCells / self.itemsPerRow);
 }
 
-//- (NSUInteger)rowsInGroupAtIndexPath:(NSIndexPath *)indexPath
-//{
-//    NSUInteger numCells = [self numberOfItemsInGroupAtIndexPath:indexPath];
-//    return ceil((CGFloat)numCells / self.itemsPerRow);
-//}
-
 #pragma mark -
 #pragma mark Geometry
 
@@ -354,6 +356,8 @@ static const NSString *kECItemViewItemKey = @"item";
 {
     CGFloat x = 0;
     CGFloat y = 0;
+    if (area == _cachedAreaRectArea)
+        return _cachedAreaRectRect;
     if (area)
     {
         CGRect previousAreaRect = [self _rectForAreaAtIndex:area - 1];
@@ -364,7 +368,9 @@ static const NSString *kECItemViewItemKey = @"item";
     NSUInteger numGroups = [self _numberOfGroupsInAreaAtIndex:area];
     for (NSUInteger j = 0; j < numGroups; ++j)
         height += [self _heightForGroupAtIndex:j inArea:area];
-    return CGRectMake(x, y, width, height);
+    _cachedAreaRectArea = area;
+    _cachedAreaRectRect = CGRectMake(x, y, width, height);
+    return _cachedAreaRectRect;
 }
 
 - (CGRect)_rectForAreaAtIndexPath:(NSIndexPath *)indexPath
@@ -394,6 +400,8 @@ static const NSString *kECItemViewItemKey = @"item";
 
 - (CGRect)_rectForGroupAtIndex:(NSUInteger)group inArea:(NSUInteger)area;
 {
+    if (area == _cachedGroupRectArea && group == _cachedGroupRectArea)
+        return _cachedGroupRectRect;
     CGRect areaRect = [self _rectForAreaAtIndex:area];
     CGFloat x = areaRect.origin.x;
     CGFloat y = areaRect.origin.y + _areaHeaderHeight;
@@ -401,7 +409,10 @@ static const NSString *kECItemViewItemKey = @"item";
         y += [self _heightForGroupAtIndex:group inArea:area];
     CGFloat width = areaRect.size.width;
     CGFloat height = [self _heightForGroupAtIndex:group inArea:area];
-    return CGRectMake(x, y, width, height);
+    _cachedGroupRectArea = area;
+    _cachedGroupRectGroup = group;
+    _cachedGroupRectRect = CGRectMake(x, y, width, height);
+    return _cachedGroupRectRect;
 }
 
 - (CGRect)_rectForGroupAtIndexPath:(NSIndexPath *)indexPath
@@ -652,6 +663,9 @@ static const NSString *kECItemViewItemKey = @"item";
 //        _batchUpdatingStores = nil;
     }
     //    [_batchUpdatingStores removeLastObject];
+    _cachedAreaRectArea = NSUIntegerMax;
+    _cachedGroupRectArea = NSUIntegerMax;
+    _cachedGroupRectGroup = NSUIntegerMax;
     if (!numAreas)
         self.contentSize = CGSizeMake(0.0, 0.0);
     CGRect lastAreaFrame = [self _rectForAreaAtIndex:numAreas - 1];
