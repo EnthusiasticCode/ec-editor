@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "ECCodeViewBase.h"
 
-@interface ECCodeView : ECCodeViewBase <UIKeyInput, UITextInputTraits, UITextInput>
+@interface ECCodeView : ECCodeViewBase <UIKeyInput, UITextInputTraits, UITextInput, UIScrollViewDelegate>
 
 #pragma mark Managing the Navigator
 

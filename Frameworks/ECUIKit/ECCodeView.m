@@ -10,6 +10,7 @@
 #import <QuartzCore/QuartzCore.h>
 #import "ECTextPosition.h"
 #import "ECTextRange.h"
+#import "UIColor+StyleColors.h"
 
 #pragma mark -
 #pragma mark Interfaces
@@ -100,11 +101,11 @@
 
 @property (nonatomic, getter = isNavigatorVisible) BOOL navigatorVisible;
 
-@property (nonatomic) CGFloat navigatorHideDelay;
-
 - (void)setNavigatorVisible:(BOOL)visible animated:(BOOL)animated;
 
 #pragma mark User Interaction
+
+@property (nonatomic) CGFloat navigatorHideDelay;
 
 - (void)updateNavigator;
 
@@ -141,7 +142,8 @@
 
 @synthesize parentSize, parentContentOffsetRatio;
 @synthesize normalWidth, navigatorWidth;
-@synthesize navigatorInsets, navigatorVisible, navigatorBackgroundColor, navigatorHideDelay;
+@synthesize navigatorInsets, navigatorVisible, navigatorBackgroundColor;
+@synthesize navigatorHideDelay;
 
 - (id)initWithNavigatorDatasource:(id<ECCodeViewDataSource>)source renderer:(ECTextRenderer *)aRenderer renderingQueue:(NSOperationQueue *)queue
 {
@@ -213,8 +215,6 @@
     if (visible == navigatorVisible)
         return;
     
-    navigatorVisible = visible;
-    
     if (!navigatorView) 
     {
         CGRect frame = self.bounds;
@@ -228,43 +228,45 @@
         [self updateNavigator];
         CGFloat height = (navigatorView.contentSize.height - navigatorView.bounds.size.height);
         navigatorView.contentOffset = CGPointMake(0, height > 0 ? parentContentOffsetRatio * height : 0);
-    }
-    
-    navigatorView.alpha = visible ? 0 : 1;
-    
-    if (visible) 
-    {
+        
         [self addSubview:navigatorView];
     }
     
-    [UIView animateWithDuration:0.25 delay:(visible ? 0 : navigatorHideDelay) options:(UIViewAnimationOptionAllowUserInteraction | UIViewAnimationOptionBeginFromCurrentState | UIViewAnimationOptionCurveEaseInOut) animations:^(void) {
-        CGRect newFrame = self.frame;
-        if (visible) 
-        {
-            self.backgroundColor = navigatorBackgroundColor;
-            newFrame.origin.x -= navigatorWidth;
-            newFrame.size.width += navigatorWidth;
-        }
-        else
-        {
-            navigatorView.alpha = 0;
-            self.backgroundColor = [UIColor clearColor];
-            newFrame.origin.x += navigatorWidth;
-            newFrame.size.width -= navigatorWidth;
-        }
-        self.frame = newFrame;
-    } completion:^(BOOL finished) {
-        if (visible) 
-        {
-            [UIView animateWithDuration:0.15 delay:0 options:UIViewAnimationOptionAllowUserInteraction animations:^(void) {
+    if (animated)
+    {
+        navigatorView.alpha = visible ? 0 : 1;
+        [UIView animateWithDuration:0.25 delay:(visible ? 0 : navigatorHideDelay) options:(UIViewAnimationOptionAllowUserInteraction | UIViewAnimationOptionBeginFromCurrentState | UIViewAnimationOptionCurveEaseInOut) animations:^(void) {
+            if (visible) 
+            {
+                navigatorView.hidden = NO;
                 navigatorView.alpha = 1;
-            } completion:nil];
+                self.backgroundColor = navigatorBackgroundColor;
+            }
+            else
+            {
+                navigatorView.alpha = 0;
+                self.backgroundColor = [UIColor clearColor];
+            }
+        } completion:^(BOOL finished) {
+            navigatorView.hidden = !visible;
+            navigatorVisible = visible;
+        }];
+    }
+    else
+    {
+        navigatorVisible = visible;
+        if (navigatorVisible) 
+        {
+            navigatorView.alpha = 1;
+            navigatorView.hidden = NO;
+            self.backgroundColor = navigatorBackgroundColor;
         }
         else
         {
-            [navigatorView removeFromSuperview];
+            navigatorView.hidden = YES;
+            self.backgroundColor = [UIColor clearColor];
         }
-    }];
+    }
 }
 
 - (void)updateNavigator
@@ -320,7 +322,7 @@
 
 static void preinit(ECCodeView *self)
 {
-    self->navigatorBackgroundColor = self.backgroundColor;
+    self->navigatorBackgroundColor = [UIColor styleBackgroundColor];
     self->navigatorWidth = 200;
 }
 
@@ -340,7 +342,7 @@ static void init(ECCodeView *self)
     [self addGestureRecognizer:self->focusRecognizer];
     [self->focusRecognizer release];
     
-    
+    self.delegate = self;
     self.infoViewVisible = YES;
 }
 
@@ -446,6 +448,34 @@ static void init(ECCodeView *self)
     [navigatorBackgroundColor release];
     navigatorBackgroundColor = [color retain];
     infoView.navigatorBackgroundColor = color;
+}
+
+#pragma mark -
+#pragma mark UIScrollViewDelegate methods
+
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView
+{
+    if (navigatorAutoVisible)
+        [infoView setNavigatorVisible:YES animated:YES];
+}
+
+- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
+{
+    if (navigatorAutoVisible)
+        [infoView setNavigatorVisible:NO animated:YES];
+}
+
+- (BOOL)scrollViewShouldScrollToTop:(UIScrollView *)scrollView
+{
+    if (navigatorAutoVisible)
+        [infoView setNavigatorVisible:NO animated:NO];
+    return YES;
+}
+
+- (void)scrollViewDidScrollToTop:(UIScrollView *)scrollView
+{
+    if (navigatorAutoVisible)
+        [infoView setNavigatorVisible:NO animated:NO];
 }
 
 #pragma mark -

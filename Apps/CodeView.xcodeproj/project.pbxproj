@@ -27,6 +27,7 @@
 		CDCD1CCC1368614000A6DA9E /* ECTextStyle.m in Sources */ = {isa = PBXBuildFile; fileRef = CDCD1CC61368614000A6DA9E /* ECTextStyle.m */; };
 		CDCD1CE31368684300A6DA9E /* ECCodeView.m in Sources */ = {isa = PBXBuildFile; fileRef = CDCD1CE21368684300A6DA9E /* ECCodeView.m */; };
 		CDF9F22E136DC9BD00CB5945 /* ECCodeViewBase.m in Sources */ = {isa = PBXBuildFile; fileRef = CDF9F22D136DC9BD00CB5945 /* ECCodeViewBase.m */; };
+		CDF9F239136EA90800CB5945 /* UIColor+StyleColors.m in Sources */ = {isa = PBXBuildFile; fileRef = CDF9F238136EA90800CB5945 /* UIColor+StyleColors.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -67,6 +68,8 @@
 		CDCD1CE21368684300A6DA9E /* ECCodeView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeView.m; sourceTree = "<group>"; };
 		CDF9F22C136DC9BD00CB5945 /* ECCodeViewBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeViewBase.h; sourceTree = "<group>"; };
 		CDF9F22D136DC9BD00CB5945 /* ECCodeViewBase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeViewBase.m; sourceTree = "<group>"; };
+		CDF9F237136EA90800CB5945 /* UIColor+StyleColors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+StyleColors.h"; sourceTree = "<group>"; };
+		CDF9F238136EA90800CB5945 /* UIColor+StyleColors.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+StyleColors.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -156,6 +159,8 @@
 		CDCD1CB41368610300A6DA9E /* ECUIKit */ = {
 			isa = PBXGroup;
 			children = (
+				CDF9F237136EA90800CB5945 /* UIColor+StyleColors.h */,
+				CDF9F238136EA90800CB5945 /* UIColor+StyleColors.m */,
 				CDCD1CBC1368614000A6DA9E /* ECCodeViewDatasource.h */,
 				CDF9F22C136DC9BD00CB5945 /* ECCodeViewBase.h */,
 				CDF9F22D136DC9BD00CB5945 /* ECCodeViewBase.m */,
@@ -250,6 +255,7 @@
 				CDCD1CCC1368614000A6DA9E /* ECTextStyle.m in Sources */,
 				CDCD1CE31368684300A6DA9E /* ECCodeView.m in Sources */,
 				CDF9F22E136DC9BD00CB5945 /* ECCodeViewBase.m in Sources */,
+				CDF9F239136EA90800CB5945 /* UIColor+StyleColors.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
