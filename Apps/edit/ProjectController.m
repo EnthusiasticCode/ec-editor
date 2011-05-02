@@ -93,21 +93,32 @@
     return [[[self groupAtIndex:group inArea:area] orderedItems] objectAtIndex:item];
 }
 
-- (NSUInteger)numberOfAreasInTableView:(ECItemView *)itemView
+- (NSUInteger)numberOfAreasInItemView:(ECItemView *)itemView
 {
     return [self.project countForOrderedKey:@"projectFolders"];
 }
 
-- (NSString *)itemView:(ECItemView *)itemView titleForHeaderInArea:(NSUInteger)area
+- (UIView *)itemView:(ECItemView *)itemView viewForHeaderInArea:(NSUInteger)area
 {
-    return [self areaAtIndex:area].name;
+    UIView *folder = [self.tableView dequeueReusableAreaHeader];
+    if (!folder)
+    {
+        folder = [[[UIView alloc] init] autorelease];
+        UILabel *label = [[UILabel alloc] init];
+        label.tag = 1;
+        label.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+        label.frame = UIEdgeInsetsInsetRect(folder.bounds, UIEdgeInsetsMake(2.0, 2.0, 2.0, 2.0));
+        label.backgroundColor = [UIColor blueColor];
+        [folder addSubview:label];
+        [label release];
+    }
+    ((UILabel *)[folder viewWithTag:1]).text = [self areaAtIndex:area].name;
+    return folder;
 }
 
-- (UIView *)itemView:(ECItemView *)itemView cellForItemAtIndexPath:(NSIndexPath *)indexPath
+- (UIView *)itemView:(ECItemView *)itemView viewForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    static NSUInteger counter = 0;
-    ++counter;
-    UIView *file = [self.tableView dequeueReusableCell];
+    UIView *file = [self.tableView dequeueReusableItem];
     if (!file)
     {
         file = [[[UIView alloc] init] autorelease];

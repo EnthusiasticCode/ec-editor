@@ -26,8 +26,8 @@ typedef enum {
 #pragma mark Data
 
 @optional
-/// The number of areas in the table view. defaults to 1 if the data source does not implement the method.
-- (NSUInteger)numberOfAreasInTableView:(ECItemView *)itemView;
+/// The number of areas in the item view. defaults to 1 if the data source does not implement the method.
+- (NSUInteger)numberOfAreasInItemView:(ECItemView *)itemView;
 
 @required
 /// The number of groups in a given area.
@@ -44,7 +44,7 @@ typedef enum {
 - (UIView <ECItemViewElement>*)itemView:(ECItemView *)itemView viewForAreaHeaderAtIndex:(NSUInteger)index;
 
 /// The view to be displayed as the group separator for the given index path.
-- (UIView <ECItemViewElement>*)itemView:(ECItemView *)itemView viewForGroupSeparatorAtIndexPath:(NSUInteger)indexPath;
+- (UIView <ECItemViewElement>*)itemView:(ECItemView *)itemView viewForGroupSeparatorAtIndexPath:(NSIndexPath *)indexPath;
 
 #pragma mark Editing
 
@@ -127,10 +127,12 @@ typedef enum {
 - (CGRect)rectForItemAtIndexPath:(NSIndexPath *)indexPath;
 
 #pragma mark Index paths
+- (NSIndexSet *)indexesForVisibleAreas;
 - (NSIndexSet *)indexesForVisibleAreaHeaders;
 - (NSArray *)visibleAreaHeaders;
 - (UIView<ECItemViewElement> *)areaHeaderAtIndex:(NSUInteger)index;
 - (NSUInteger)indexForAreaHeaderAtPoint:(CGPoint)point;
+- (NSArray *)indexPathsForVisibleGroups;
 - (NSArray *)indexPathsForVisibleGroupSeparators;
 - (NSArray *)visibleGroupSeparators;
 - (UIView<ECItemViewElement> *)groupSeparatorAtIndexPath:(NSIndexPath *)indexPath;
@@ -168,9 +170,9 @@ typedef enum {
 - (void)deselectItemAtIndexPath:(NSIndexPath *)indexPath animated:(BOOL)animated;
 
 #pragma mark Recycling
-- (UIView *)dequeueReusableItem;
-- (UIView *)dequeueReusableGroupSeparator;
-- (UIView *)dequeueReusableAreaHeader;
+- (UIView<ECItemViewElement> *)dequeueReusableItem;
+- (UIView<ECItemViewElement> *)dequeueReusableGroupSeparator;
+- (UIView<ECItemViewElement> *)dequeueReusableAreaHeader;
 
 @end
 
