@@ -77,9 +77,10 @@
     UITapGestureRecognizer *tapRecognizer;
 }
 
-- (id)initWithNavigatorDatasource:(id<ECCodeViewDataSource>)source 
-                         renderer:(ECTextRenderer *)aRenderer 
-                   renderingQueue:(NSOperationQueue *)queue;
+- (id)initWithFrame:(CGRect)frame 
+navigatorDatasource:(id<ECCodeViewDataSource>)source 
+           renderer:(ECTextRenderer *)aRenderer 
+     renderingQueue:(NSOperationQueue *)queue;
 
 #pragma mark Parent Layout
 
@@ -142,12 +143,16 @@
 @synthesize normalWidth, navigatorWidth;
 @synthesize navigatorInsets, navigatorVisible, navigatorBackgroundColor;
 
-- (id)initWithNavigatorDatasource:(id<ECCodeViewDataSource>)source renderer:(ECTextRenderer *)aRenderer renderingQueue:(NSOperationQueue *)queue
+- (id)initWithFrame:(CGRect)frame navigatorDatasource:(id<ECCodeViewDataSource>)source renderer:(ECTextRenderer *)aRenderer renderingQueue:(NSOperationQueue *)queue
 {
     parentSize = [UIScreen mainScreen].bounds.size;
     normalWidth = 11;
     navigatorInsets = UIEdgeInsetsMake(2, 2, 2, 2);
-    if ((self = [super init])) 
+    
+    frame.origin.x += frame.size.width - normalWidth;
+    frame.size.width = normalWidth;
+    
+    if ((self = [super initWithFrame:frame])) 
     {
         datasource = source;
         renderer = aRenderer;
@@ -224,43 +229,45 @@
         [self updateNavigator];
         CGFloat height = (navigatorView.contentSize.height - navigatorView.bounds.size.height);
         navigatorView.contentOffset = CGPointMake(0, height > 0 ? parentContentOffsetRatio * height : 0);
-        
-        [self addSubview:navigatorView];
     }
+    
+    if (visible)
+        [self addSubview:navigatorView];
     
     if (animated)
     {
-        navigatorView.alpha = visible ? 0 : 1;
+        if (visible)
+            navigatorVisible = YES;
+        navigatorView.alpha = 0;
         [UIView animateWithDuration:0.25 delay:0 options:(UIViewAnimationOptionAllowUserInteraction | UIViewAnimationOptionBeginFromCurrentState | UIViewAnimationOptionCurveEaseInOut) animations:^(void) {
-            if (visible) 
-            {
-                navigatorView.hidden = NO;
-                navigatorView.alpha = 1;
-                self.backgroundColor = navigatorBackgroundColor;
-            }
-            else
-            {
-                navigatorView.alpha = 0;
-                self.backgroundColor = [UIColor clearColor];
-            }
+            self.backgroundColor = visible ? navigatorBackgroundColor : [UIColor clearColor];
         } completion:^(BOOL finished) {
-            navigatorView.hidden = !visible;
-            navigatorVisible = visible;
+            if (finished)
+            {
+                if (!visible) 
+                {
+                    navigatorVisible = NO;
+                    [navigatorView removeFromSuperview];
+                }
+                else
+                {
+                    navigatorView.alpha = 1;
+                }
+            }
         }];
     }
     else
     {
         navigatorVisible = visible;
-        if (navigatorVisible) 
+        if (visible) 
         {
             navigatorView.alpha = 1;
-            navigatorView.hidden = NO;
             self.backgroundColor = navigatorBackgroundColor;
         }
         else
         {
-            navigatorView.hidden = YES;
             self.backgroundColor = [UIColor clearColor];
+            [navigatorView removeFromSuperview];
         }
     }
 }
@@ -365,8 +372,6 @@ static void init(ECCodeView *self)
 
 - (void)layoutSubviews
 {
-    [super layoutSubviews];
-    
     if (infoViewVisible) 
     {
         CGRect infoFrame = self.bounds;
@@ -374,9 +379,13 @@ static void init(ECCodeView *self)
         
         CGFloat infoWidth = infoView.currentWidth;
         infoFrame.origin.x = infoFrame.size.width - infoWidth;
-        infoFrame.size.width = infoWidth;
+        infoFrame.size.width = infoWidth;        
         infoView.frame = infoFrame;
+        
+        [self sendSubviewToBack:infoView];
     }
+    
+    [super layoutSubviews];
 }
 
 #pragma mark -
@@ -393,7 +402,7 @@ static void init(ECCodeView *self)
     {
         if (!infoView)
         {
-            infoView = [[CodeInfoView alloc] initWithNavigatorDatasource:datasource renderer:renderer renderingQueue:renderingQueue];
+            infoView = [[CodeInfoView alloc] initWithFrame:self.bounds navigatorDatasource:datasource renderer:renderer renderingQueue:renderingQueue];
             infoView.navigatorBackgroundColor = navigatorBackgroundColor;
             infoView.navigatorWidth = navigatorWidth;
             infoView.parentSize = self.bounds.size;
@@ -740,84 +749,85 @@ static void init(ECCodeView *self)
                              inDirection:(UITextLayoutDirection)direction 
                                   offset:(NSInteger)offset
 {
-    if (offset == 0)
-        return position;
-    
-    NSUInteger pos = [(ECTextPosition *)position index];
-    NSUInteger result;
-    
-    if (direction == UITextStorageDirectionForward || direction == UITextStorageDirectionBackward) 
-    {
-        if (direction == UITextStorageDirectionBackward)
-            offset = -offset;
-        
-        if (offset < 0 && (NSUInteger)(-offset) >= pos)
-            result = 0;
-        else
-            result = pos + offset;
-    } 
-    else if (direction == UITextLayoutDirectionLeft || direction == UITextLayoutDirectionRight) 
-    {
-        if (direction == UITextLayoutDirectionLeft)
-            offset = -offset;
-        
-        // TODO should move considering typography characters
-        if (offset < 0 && (NSUInteger)(-offset) >= pos)
-            result = 0;
-        else
-            result = pos + offset;
-    } 
-    else if (direction == UITextLayoutDirectionUp || direction == UITextLayoutDirectionDown) 
-    {
-        if (direction == UITextLayoutDirectionUp)
-            offset = -offset;
-
-        // TODO!!! chech if make sense
-//        CGFloat frameOffset;
-//        CTFrameRef frame = [self frameContainingTextIndex:pos frameOffset:&frameOffset];
+//    if (offset == 0)
+//        return position;
+//    
+//    NSUInteger pos = [(ECTextPosition *)position index];
+//    NSUInteger result;
+//    
+//    if (direction == UITextStorageDirectionForward || direction == UITextStorageDirectionBackward) 
+//    {
+//        if (direction == UITextStorageDirectionBackward)
+//            offset = -offset;
 //        
-//        CFArrayRef lines = CTFrameGetLines(frame);
-//        CFIndex lineCount = CFArrayGetCount(lines);
-//        CFIndex lineIndex = ECCTFrameGetLineContainingStringIndex(frame, pos, (CFRange){0, lineCount}, NULL);
-//        CFIndex newIndex = lineIndex + offset;
-//        CTLineRef line = CFArrayGetValueAtIndex(lines, lineIndex);
+//        if (offset < 0 && (NSUInteger)(-offset) >= pos)
+//            result = 0;
+//        else
+//            result = pos + offset;
+//    } 
+//    else if (direction == UITextLayoutDirectionLeft || direction == UITextLayoutDirectionRight) 
+//    {
+//        if (direction == UITextLayoutDirectionLeft)
+//            offset = -offset;
 //        
-//        if (newIndex < 0 || newIndex >= lineCount)
-//            return nil;
-//        
-//        if (newIndex == lineIndex)
-//            return position;
-//        
-//        CGFloat xPosn = CTLineGetOffsetForStringIndex(line, pos, NULL) + frameOffset;
-//        CGPoint origins[1];
-//        CTFrameGetLineOrigins(frame, (CFRange){lineIndex, 1}, origins);
-//        xPosn = xPosn + origins[0].x; // X-coordinate in layout space
-//        
-//        CTFrameGetLineOrigins(frame, (CFRange){newIndex, 1}, origins);
-//        xPosn = xPosn - origins[0].x; // X-coordinate in new line's local coordinates
-//        
-//        CFIndex newStringIndex = CTLineGetStringIndexForPosition(CFArrayGetValueAtIndex(lines, newIndex), (CGPoint){xPosn, 0});
-//        
-//        if (newStringIndex == kCFNotFound)
-//            return nil;
-//        
-//        if(newStringIndex < 0)
-//            newStringIndex = 0;
-//        result = newStringIndex;
-    } 
-    else 
-    {
-        // Direction unimplemented
-        return position;
-    }
-    
-    NSUInteger textLength = [datasource textLength];
-    if (result > textLength)
-        result = textLength;
-    
-    ECTextPosition *resultPosition = [[[ECTextPosition alloc] initWithIndex:result] autorelease];
-    
-    return resultPosition;
+//        // TODO should move considering typography characters
+//        if (offset < 0 && (NSUInteger)(-offset) >= pos)
+//            result = 0;
+//        else
+//            result = pos + offset;
+//    } 
+//    else if (direction == UITextLayoutDirectionUp || direction == UITextLayoutDirectionDown) 
+//    {
+////        if (direction == UITextLayoutDirectionUp)
+////            offset = -offset;
+//
+//        // TODO!!! chech if make sense
+////        CGFloat frameOffset;
+////        CTFrameRef frame = [self frameContainingTextIndex:pos frameOffset:&frameOffset];
+////        
+////        CFArrayRef lines = CTFrameGetLines(frame);
+////        CFIndex lineCount = CFArrayGetCount(lines);
+////        CFIndex lineIndex = ECCTFrameGetLineContainingStringIndex(frame, pos, (CFRange){0, lineCount}, NULL);
+////        CFIndex newIndex = lineIndex + offset;
+////        CTLineRef line = CFArrayGetValueAtIndex(lines, lineIndex);
+////        
+////        if (newIndex < 0 || newIndex >= lineCount)
+////            return nil;
+////        
+////        if (newIndex == lineIndex)
+////            return position;
+////        
+////        CGFloat xPosn = CTLineGetOffsetForStringIndex(line, pos, NULL) + frameOffset;
+////        CGPoint origins[1];
+////        CTFrameGetLineOrigins(frame, (CFRange){lineIndex, 1}, origins);
+////        xPosn = xPosn + origins[0].x; // X-coordinate in layout space
+////        
+////        CTFrameGetLineOrigins(frame, (CFRange){newIndex, 1}, origins);
+////        xPosn = xPosn - origins[0].x; // X-coordinate in new line's local coordinates
+////        
+////        CFIndex newStringIndex = CTLineGetStringIndexForPosition(CFArrayGetValueAtIndex(lines, newIndex), (CGPoint){xPosn, 0});
+////        
+////        if (newStringIndex == kCFNotFound)
+////            return nil;
+////        
+////        if(newStringIndex < 0)
+////            newStringIndex = 0;
+////        result = newStringIndex;
+//    } 
+//    else 
+//    {
+//        // Direction unimplemented
+//        return position;
+//    }
+//    
+////    NSUInteger textLength = [datasource textLength];
+////    if (result > textLength)
+////        result = textLength;
+//    
+//    ECTextPosition *resultPosition = [[[ECTextPosition alloc] initWithIndex:result] autorelease];
+//    
+//    return resultPosition;
+    return nil;
 }
 
 - (UITextPosition *)beginningOfDocument
