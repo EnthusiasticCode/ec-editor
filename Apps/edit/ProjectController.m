@@ -7,6 +7,7 @@
 //
 
 #import <CoreData/CoreData.h>
+#import <ECUIKit/ECItemViewElement.h>
 #import "ProjectController.h"
 #import "FileController.h"
 #import "AppController.h"
@@ -111,12 +112,12 @@
     return [[self groupAtIndexPath:indexPath].items count];
 }
 
-- (UIView *)itemView:(ECItemView *)itemView viewForAreaHeaderAtIndexPath:(NSIndexPath *)indexPath
+- (ECItemViewElement *)itemView:(ECItemView *)itemView viewForAreaHeaderAtIndexPath:(NSIndexPath *)indexPath
 {
-    UIView *folder = [self.tableView dequeueReusableAreaHeader];
+    ECItemViewElement *folder = [self.tableView dequeueReusableAreaHeader];
     if (!folder)
     {
-        folder = [[[UIView alloc] init] autorelease];
+        folder = [[[ECItemViewElement alloc] init] autorelease];
         UILabel *label = [[UILabel alloc] init];
         label.tag = 1;
         label.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
@@ -129,12 +130,12 @@
     return folder;
 }
 
-- (UIView *)itemView:(ECItemView *)itemView viewForItemAtIndexPath:(NSIndexPath *)indexPath
+- (ECItemViewElement *)itemView:(ECItemView *)itemView viewForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    UIView *file = [self.tableView dequeueReusableItem];
+    ECItemViewElement *file = [self.tableView dequeueReusableItem];
     if (!file)
     {
-        file = [[[UIView alloc] init] autorelease];
+        file = [[[ECItemViewElement alloc] init] autorelease];
         UILabel *label = [[UILabel alloc] init];
         label.tag = 1;
         label.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;

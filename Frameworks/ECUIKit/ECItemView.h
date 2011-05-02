@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 @class ECItemView;
+@class ECItemViewElement;
 
 typedef enum {
     ECItemViewScrollPositionNone,        
@@ -15,11 +16,6 @@ typedef enum {
     ECItemViewScrollPositionMiddle,   
     ECItemViewScrollPositionBottom
 } ECItemViewScrollPosition;
-
-@protocol ECItemViewElement <NSObject>
-@property (nonatomic, getter = isEditing) BOOL editing;
-- (void)setEditing:(BOOL)editing animated:(BOOL)animated;
-@end
 
 @protocol ECItemViewDataSource <NSObject>
 
@@ -38,14 +34,14 @@ typedef enum {
 
 @optional
 /// The view to be displayed as the area header for the given area.
-- (UIView <ECItemViewElement>*)itemView:(ECItemView *)itemView viewForAreaHeaderAtIndexPath:(NSIndexPath *)indexPath;
+- (ECItemViewElement *)itemView:(ECItemView *)itemView viewForAreaHeaderAtIndexPath:(NSIndexPath *)indexPath;
 
 /// The view to be displayed as the group separator for the given index path.
-- (UIView <ECItemViewElement>*)itemView:(ECItemView *)itemView viewForGroupSeparatorAtIndexPath:(NSIndexPath *)indexPath;
+- (ECItemViewElement *)itemView:(ECItemView *)itemView viewForGroupSeparatorAtIndexPath:(NSIndexPath *)indexPath;
 
 @required
 /// The view that represents the item for the given index path.
-- (UIView<ECItemViewElement> *)itemView:(ECItemView *)itemView viewForItemAtIndexPath:(NSIndexPath *)indexPath;
+- (ECItemViewElement *)itemView:(ECItemView *)itemView viewForItemAtIndexPath:(NSIndexPath *)indexPath;
 
 #pragma mark Editing
 
@@ -129,16 +125,16 @@ typedef enum {
 - (NSArray *)indexPathsForVisibleAreas;
 - (NSArray *)indexPathsForVisibleAreaHeaders;
 - (NSArray *)visibleAreaHeaders;
-- (UIView<ECItemViewElement> *)areaHeaderAtIndexPath:(NSIndexPath *)indexPath;
+- (ECItemViewElement *)areaHeaderAtIndexPath:(NSIndexPath *)indexPath;
 - (NSIndexPath *)indexForAreaHeaderAtPoint:(CGPoint)point;
 - (NSArray *)indexPathsForVisibleGroups;
 - (NSArray *)indexPathsForVisibleGroupSeparators;
 - (NSArray *)visibleGroupSeparators;
-- (UIView<ECItemViewElement> *)groupSeparatorAtIndexPath:(NSIndexPath *)indexPath;
+- (ECItemViewElement *)groupSeparatorAtIndexPath:(NSIndexPath *)indexPath;
 - (NSIndexPath *)indexPathForGroupSeparatorAtPoint:(CGPoint)point;
 - (NSArray *)indexPathsForVisibleItems;
 - (NSArray *)visibleItems;
-- (UIView<ECItemViewElement> *)itemAtIndexPath:(NSIndexPath *)indexPath;
+- (ECItemViewElement *)itemAtIndexPath:(NSIndexPath *)indexPath;
 - (NSIndexPath *)indexPathForItemAtPoint:(CGPoint)point;
 
 #pragma mark Scrolling
@@ -169,9 +165,9 @@ typedef enum {
 - (void)deselectItemAtIndexPath:(NSIndexPath *)indexPath animated:(BOOL)animated;
 
 #pragma mark Recycling
-- (UIView<ECItemViewElement> *)dequeueReusableItem;
-- (UIView<ECItemViewElement> *)dequeueReusableGroupSeparator;
-- (UIView<ECItemViewElement> *)dequeueReusableAreaHeader;
+- (ECItemViewElement *)dequeueReusableItem;
+- (ECItemViewElement *)dequeueReusableGroupSeparator;
+- (ECItemViewElement *)dequeueReusableAreaHeader;
 
 @end
 
