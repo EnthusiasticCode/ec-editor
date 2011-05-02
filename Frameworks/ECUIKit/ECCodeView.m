@@ -225,6 +225,9 @@
         navigatorView.contentScaleFactor = (navigatorWidth - navigatorInsets.left - navigatorInsets.right) / parentSize.width;
         navigatorView.backgroundColor = [UIColor whiteColor];
         navigatorView.scrollEnabled = NO;
+        [self updateNavigator];
+        CGFloat height = (navigatorView.contentSize.height - navigatorView.bounds.size.height);
+        navigatorView.contentOffset = CGPointMake(0, height > 0 ? parentContentOffsetRatio * height : 0);
     }
     
     navigatorView.alpha = visible ? 0 : 1;
@@ -317,7 +320,7 @@
 
 static void preinit(ECCodeView *self)
 {
-    self->navigatorBackgroundColor = [UIColor redColor];
+    self->navigatorBackgroundColor = self.backgroundColor;
     self->navigatorWidth = 200;
 }
 
