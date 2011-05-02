@@ -271,9 +271,6 @@
 
 - (void)updateNavigator
 {    
-    if (!navigatorVisible)
-        return;
-    
     CGRect frame = self.bounds;
     frame.size.width = navigatorWidth;
     frame = UIEdgeInsetsInsetRect(frame, navigatorInsets);
@@ -463,19 +460,6 @@ static void init(ECCodeView *self)
 {
     if (navigatorAutoVisible)
         [infoView setNavigatorVisible:NO animated:YES];
-}
-
-- (BOOL)scrollViewShouldScrollToTop:(UIScrollView *)scrollView
-{
-    if (navigatorAutoVisible)
-        [infoView setNavigatorVisible:NO animated:NO];
-    return YES;
-}
-
-- (void)scrollViewDidScrollToTop:(UIScrollView *)scrollView
-{
-    if (navigatorAutoVisible)
-        [infoView setNavigatorVisible:NO animated:NO];
 }
 
 #pragma mark -
