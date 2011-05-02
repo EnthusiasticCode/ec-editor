@@ -219,7 +219,7 @@
         navigatorView = [[ECCodeViewBase alloc] initWithFrame:frame renderer:renderer renderingQueue:renderingQueue];
         navigatorView.datasource = datasource;
         navigatorView.contentScaleFactor = (navigatorWidth - navigatorInsets.left - navigatorInsets.right) / parentSize.width;
-        navigatorView.backgroundColor = [UIColor whiteColor];
+        navigatorView.backgroundColor = navigatorBackgroundColor;
         navigatorView.scrollEnabled = NO;
         [self updateNavigator];
         CGFloat height = (navigatorView.contentSize.height - navigatorView.bounds.size.height);
@@ -278,7 +278,8 @@
 
 - (void)handleTap:(UITapGestureRecognizer *)recognizer
 {
-    [self setNavigatorVisible:!navigatorVisible animated:YES];
+    // TODO manage search marks
+//    [self setNavigatorVisible:!navigatorVisible animated:YES];
 }
 
 @end
