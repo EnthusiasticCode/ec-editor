@@ -116,15 +116,12 @@ typedef enum {
 - (void)reloadData;
 
 #pragma mark Info
-- (NSUInteger)rowsInGroupAtIndexPath:(NSIndexPath *)indexPath;
 - (NSUInteger)numberOfAreas;
 - (NSUInteger)numberOfGroupsInAreaAtIndexPath:(NSIndexPath *)indexPath;
 - (NSUInteger)numberOfItemsInGroupAtIndexPath:(NSIndexPath *)indexPath;
 
 #pragma mark Geometry
-- (CGRect)rectForAreaAtIndexPath:(NSIndexPath *)indexPath;
 - (CGRect)rectForAreaHeaderAtIndexPath:(NSIndexPath *)indexPath;
-- (CGRect)rectForGroupAtIndexPath:(NSIndexPath *)indexPath;
 - (CGRect)rectForGroupSeparatorAtIndexPath:(NSIndexPath *)indexPath;
 - (CGRect)rectForItemAtIndexPath:(NSIndexPath *)indexPath;
 
@@ -133,7 +130,7 @@ typedef enum {
 - (NSArray *)indexPathsForVisibleAreaHeaders;
 - (NSArray *)visibleAreaHeaders;
 - (UIView<ECItemViewElement> *)areaHeaderAtIndexPath:(NSIndexPath *)indexPath;
-- (NSUInteger)indexForAreaHeaderAtPoint:(CGPoint)point;
+- (NSIndexPath *)indexForAreaHeaderAtPoint:(CGPoint)point;
 - (NSArray *)indexPathsForVisibleGroups;
 - (NSArray *)indexPathsForVisibleGroupSeparators;
 - (NSArray *)visibleGroupSeparators;
@@ -152,9 +149,9 @@ typedef enum {
 - (void)beginUpdates;
 - (void)endUpdates;
 
-- (void)insertAreas:(NSIndexSet *)areas;
-- (void)deleteAreas:(NSIndexSet *)areas;
-- (void)reloadAreas:(NSIndexSet *)areas;
+- (void)insertAreasAtIndexPaths:(NSArray *)indexPaths;
+- (void)deleteAreasAtIndexPaths:(NSArray *)indexPaths;
+- (void)reloadAreasAtIndexPaths:(NSArray *)indexPaths;
 
 - (void)insertGroupsAtIndexPaths:(NSArray *)indexPaths;
 - (void)deleteGroupsAtIndexPaths:(NSArray *)indexPaths;
