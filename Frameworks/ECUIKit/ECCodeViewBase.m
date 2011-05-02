@@ -307,11 +307,14 @@ static void init(ECCodeViewBase *self)
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
-    if (object == renderer) 
+    if (object == renderer)
     {
-        CGFloat height = [[change valueForKey:NSKeyValueChangeNewKey] floatValue];
-        CGFloat width = self.bounds.size.width;
-        self.contentSize = CGSizeMake(width, (height + textInsets.top + textInsets.bottom) * self.contentScaleFactor);
+        // Operating in the main queue because this message can be generated in the renderingQueue
+        [[NSOperationQueue mainQueue] addOperationWithBlock:^(void) {
+            CGFloat height = [[change valueForKey:NSKeyValueChangeNewKey] floatValue];
+            CGFloat width = self.bounds.size.width;
+            self.contentSize = CGSizeMake(width, (height + textInsets.top + textInsets.bottom) * self.contentScaleFactor);            
+        }];
     }
 }
 
