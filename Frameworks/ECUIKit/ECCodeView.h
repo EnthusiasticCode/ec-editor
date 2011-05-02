@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "ECCodeViewBase.h"
 
-@interface ECCodeView : ECCodeViewBase <UIKeyInput, UITextInputTraits, UITextInput, UIScrollViewDelegate>
+@interface ECCodeView : ECCodeViewBase <UIKeyInput, UITextInputTraits, UITextInput>
 
 #pragma mark Managing the Navigator
 
@@ -18,8 +18,6 @@
 @property (nonatomic, retain) UIColor *navigatorBackgroundColor;
 
 @property (nonatomic, getter = isNavigatorVisible) BOOL navigatorVisible;
-
-@property (nonatomic) BOOL navigatorAutoVisible;
 
 #pragma mark UITextInput Properties
 

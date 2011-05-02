@@ -105,8 +105,6 @@
 
 #pragma mark User Interaction
 
-@property (nonatomic) CGFloat navigatorHideDelay;
-
 - (void)updateNavigator;
 
 - (void)handleTap:(UITapGestureRecognizer *)recognizer;
@@ -143,13 +141,11 @@
 @synthesize parentSize, parentContentOffsetRatio;
 @synthesize normalWidth, navigatorWidth;
 @synthesize navigatorInsets, navigatorVisible, navigatorBackgroundColor;
-@synthesize navigatorHideDelay;
 
 - (id)initWithNavigatorDatasource:(id<ECCodeViewDataSource>)source renderer:(ECTextRenderer *)aRenderer renderingQueue:(NSOperationQueue *)queue
 {
     parentSize = [UIScreen mainScreen].bounds.size;
     normalWidth = 11;
-    navigatorHideDelay = 1;
     navigatorInsets = UIEdgeInsetsMake(2, 2, 2, 2);
     if ((self = [super init])) 
     {
@@ -217,7 +213,7 @@
     
     if (!navigatorView) 
     {
-        CGRect frame = self.bounds;
+        CGRect frame = (CGRect){ CGPointZero, parentSize };
         frame.size.width = navigatorWidth;
         frame = UIEdgeInsetsInsetRect(frame, navigatorInsets);
         navigatorView = [[ECCodeViewBase alloc] initWithFrame:frame renderer:renderer renderingQueue:renderingQueue];
@@ -235,7 +231,7 @@
     if (animated)
     {
         navigatorView.alpha = visible ? 0 : 1;
-        [UIView animateWithDuration:0.25 delay:(visible ? 0 : navigatorHideDelay) options:(UIViewAnimationOptionAllowUserInteraction | UIViewAnimationOptionBeginFromCurrentState | UIViewAnimationOptionCurveEaseInOut) animations:^(void) {
+        [UIView animateWithDuration:0.25 delay:0 options:(UIViewAnimationOptionAllowUserInteraction | UIViewAnimationOptionBeginFromCurrentState | UIViewAnimationOptionCurveEaseInOut) animations:^(void) {
             if (visible) 
             {
                 navigatorView.hidden = NO;
@@ -296,7 +292,6 @@
 #pragma mark Properties
 
 @synthesize infoViewVisible;
-@synthesize navigatorAutoVisible;
 @synthesize navigatorBackgroundColor;
 @synthesize navigatorWidth;
 
@@ -319,7 +314,7 @@
 
 static void preinit(ECCodeView *self)
 {
-    self->navigatorBackgroundColor = [UIColor styleBackgroundColor];
+    self->navigatorBackgroundColor = [[UIColor styleBackgroundColor] retain];
     self->navigatorWidth = 200;
 }
 
@@ -338,9 +333,6 @@ static void init(ECCodeView *self)
     [self->focusRecognizer setNumberOfTapsRequired:1];
     [self addGestureRecognizer:self->focusRecognizer];
     [self->focusRecognizer release];
-    
-    self.delegate = self;
-    self.infoViewVisible = YES;
 }
 
 - (id)initWithFrame:(CGRect)frame
@@ -427,6 +419,7 @@ static void init(ECCodeView *self)
     {
         self.infoViewVisible = YES;
         [infoView setNavigatorVisible:YES animated:YES];
+        [infoView updateNavigator];
     }
     else
     {
@@ -445,21 +438,6 @@ static void init(ECCodeView *self)
     [navigatorBackgroundColor release];
     navigatorBackgroundColor = [color retain];
     infoView.navigatorBackgroundColor = color;
-}
-
-#pragma mark -
-#pragma mark UIScrollViewDelegate methods
-
-- (void)scrollViewDidScroll:(UIScrollView *)scrollView
-{
-    if (navigatorAutoVisible)
-        [infoView setNavigatorVisible:YES animated:YES];
-}
-
-- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
-{
-    if (navigatorAutoVisible)
-        [infoView setNavigatorVisible:NO animated:YES];
 }
 
 #pragma mark -

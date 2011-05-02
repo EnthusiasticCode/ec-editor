@@ -106,7 +106,7 @@
 {
     [super viewDidLoad];
     
-    self.codeView.navigatorAutoVisible = YES;
+    self.codeView.delegate = self;
 }
 
 - (void)viewDidUnload
@@ -137,6 +137,18 @@
     [_detailDescriptionLabel release];
     [_codeView release];
     [super dealloc];
+}
+
+#pragma mark CodeView delegate
+
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView
+{
+    self.codeView.navigatorVisible = YES;
+}
+
+- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
+{
+    self.codeView.navigatorVisible = NO;
 }
 
 @end
