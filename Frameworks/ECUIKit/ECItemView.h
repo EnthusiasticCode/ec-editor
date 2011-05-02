@@ -31,23 +31,25 @@ typedef enum {
 
 @required
 /// The number of groups in a given area.
-- (NSUInteger)itemView:(ECItemView *)itemView numberOfGroupsForAreaAtIndex:(NSUInteger)index;
+- (NSUInteger)itemView:(ECItemView *)itemView numberOfGroupsInAreaAtIndexPath:(NSIndexPath *)indexPath;
 
 /// The number of items in a given group.
 - (NSUInteger)itemView:(ECItemView *)itemView numberOfItemsInGroupAtIndexPath:(NSIndexPath *)indexPath;
 
-/// The view that represents the item for the given index path.
-- (UIView<ECItemViewElement> *)itemView:(ECItemView *)itemView viewForItemAtIndexPath:(NSIndexPath *)indexPath;
-
 @optional
 /// The view to be displayed as the area header for the given area.
-- (UIView <ECItemViewElement>*)itemView:(ECItemView *)itemView viewForAreaHeaderAtIndex:(NSUInteger)index;
+- (UIView <ECItemViewElement>*)itemView:(ECItemView *)itemView viewForAreaHeaderAtIndexPath:(NSIndexPath *)indexPath;
 
 /// The view to be displayed as the group separator for the given index path.
 - (UIView <ECItemViewElement>*)itemView:(ECItemView *)itemView viewForGroupSeparatorAtIndexPath:(NSIndexPath *)indexPath;
 
+@required
+/// The view that represents the item for the given index path.
+- (UIView<ECItemViewElement> *)itemView:(ECItemView *)itemView viewForItemAtIndexPath:(NSIndexPath *)indexPath;
+
 #pragma mark Editing
 
+@optional
 /// Individual items can opt out of having the -editing property set for them. If not implemented, all items are assumed to be editable.
 - (BOOL)itemView:(ECItemView *)itemView canEditItemAtIndexPath:(NSIndexPath *)indexPath;
 
@@ -116,21 +118,21 @@ typedef enum {
 #pragma mark Info
 - (NSUInteger)rowsInGroupAtIndexPath:(NSIndexPath *)indexPath;
 - (NSUInteger)numberOfAreas;
-- (NSUInteger)numberOfGroupsForAreaAtIndex:(NSUInteger)index;
+- (NSUInteger)numberOfGroupsInAreaAtIndexPath:(NSIndexPath *)indexPath;
 - (NSUInteger)numberOfItemsInGroupAtIndexPath:(NSIndexPath *)indexPath;
 
 #pragma mark Geometry
-- (CGRect)rectForAreaAtIndex:(NSUInteger)index;
-- (CGRect)rectForAreaHeaderAtIndex:(NSUInteger)index;
+- (CGRect)rectForAreaAtIndexPath:(NSIndexPath *)indexPath;
+- (CGRect)rectForAreaHeaderAtIndexPath:(NSIndexPath *)indexPath;
 - (CGRect)rectForGroupAtIndexPath:(NSIndexPath *)indexPath;
 - (CGRect)rectForGroupSeparatorAtIndexPath:(NSIndexPath *)indexPath;
 - (CGRect)rectForItemAtIndexPath:(NSIndexPath *)indexPath;
 
 #pragma mark Index paths
-- (NSIndexSet *)indexesForVisibleAreas;
-- (NSIndexSet *)indexesForVisibleAreaHeaders;
+- (NSArray *)indexPathsForVisibleAreas;
+- (NSArray *)indexPathsForVisibleAreaHeaders;
 - (NSArray *)visibleAreaHeaders;
-- (UIView<ECItemViewElement> *)areaHeaderAtIndex:(NSUInteger)index;
+- (UIView<ECItemViewElement> *)areaHeaderAtIndexPath:(NSIndexPath *)indexPath;
 - (NSUInteger)indexForAreaHeaderAtPoint:(CGPoint)point;
 - (NSArray *)indexPathsForVisibleGroups;
 - (NSArray *)indexPathsForVisibleGroupSeparators;
@@ -179,6 +181,7 @@ typedef enum {
 @interface NSIndexPath (ECItemView)
 + (NSIndexPath *)indexPathForItem:(NSUInteger)item inGroup:(NSUInteger)group inArea:(NSUInteger)area;
 + (NSIndexPath *)indexPathForPosition:(NSUInteger)position inArea:(NSUInteger)area;
++ (NSIndexPath *)indexPathForArea:(NSUInteger)area;
 @property (nonatomic, readonly) NSUInteger area;
 @property (nonatomic, readonly) NSUInteger group;
 @property (nonatomic, readonly) NSUInteger item;

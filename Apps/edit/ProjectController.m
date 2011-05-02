@@ -16,9 +16,9 @@
 #import "File.h"
 
 @interface ProjectController ()
-- (Folder *)areaAtIndex:(NSUInteger)area;
-- (Group *)groupAtIndex:(NSUInteger)group inArea:(NSUInteger)area;
-- (File *)itemAtIndex:(NSUInteger)item inGroup:(NSUInteger)group inArea:(NSUInteger)area;
+- (Folder *)areaAtIndexPath:(NSIndexPath *)indexPath;
+- (Group *)groupAtIndexPath:(NSIndexPath *)indexPath;
+- (File *)itemAtIndexPath:(NSIndexPath *)indexPath;
 @end
 
 @implementation ProjectController
@@ -78,27 +78,40 @@
 	return YES;
 }
 
-- (Folder *)areaAtIndex:(NSUInteger)area
+- (Folder *)areaAtIndexPath:(NSIndexPath *)indexPath
 {
-    return [[self.project orderedProjectFolders] objectAtIndex:area];
+    return [[self.project orderedProjectFolders] objectAtIndex:indexPath.area];
 }
 
-- (Group *)groupAtIndex:(NSUInteger)group inArea:(NSUInteger)area
+- (Group *)groupAtIndexPath:(NSIndexPath *)indexPath
 {
-    return [[[self areaAtIndex:area] orderedGroups] objectAtIndex:group];
+    return [[[self areaAtIndexPath:indexPath] orderedGroups] objectAtIndex:indexPath.group];
 }
 
-- (File *)itemAtIndex:(NSUInteger)item inGroup:(NSUInteger)group inArea:(NSUInteger)area
+- (File *)itemAtIndexPath:(NSIndexPath *)indexPath
 {
-    return [[[self groupAtIndex:group inArea:area] orderedItems] objectAtIndex:item];
+    return [[[self groupAtIndexPath:indexPath] orderedItems] objectAtIndex:indexPath.item];
 }
+
+#pragma mark -
+#pragma mark ECItemView
 
 - (NSUInteger)numberOfAreasInItemView:(ECItemView *)itemView
 {
     return [self.project countForOrderedKey:@"projectFolders"];
 }
 
-- (UIView *)itemView:(ECItemView *)itemView viewForHeaderInArea:(NSUInteger)area
+- (NSUInteger)itemView:(ECItemView *)itemView numberOfGroupsInAreaAtIndexPath:(NSIndexPath *)indexPath
+{
+    return [[self areaAtIndexPath:indexPath].groups count];
+}
+
+- (NSUInteger)itemView:(ECItemView *)itemView numberOfItemsInGroupAtIndexPath:(NSIndexPath *)indexPath
+{
+    return [[self groupAtIndexPath:indexPath].items count];
+}
+
+- (UIView *)itemView:(ECItemView *)itemView viewForAreaHeaderAtIndexPath:(NSIndexPath *)indexPath
 {
     UIView *folder = [self.tableView dequeueReusableAreaHeader];
     if (!folder)
@@ -112,7 +125,7 @@
         [folder addSubview:label];
         [label release];
     }
-    ((UILabel *)[folder viewWithTag:1]).text = [self areaAtIndex:area].name;
+    ((UILabel *)[folder viewWithTag:1]).text = [self areaAtIndexPath:indexPath].name;
     return folder;
 }
 
@@ -130,25 +143,8 @@
         [file addSubview:label];
         [label release];
     }
-    ((UILabel *)[file viewWithTag:1]).text = [self itemAtIndex:indexPath.item inGroup:indexPath.group inArea:indexPath.area].name;
+    ((UILabel *)[file viewWithTag:1]).text = [self itemAtIndexPath:indexPath].name;
     return file;
-}
-
-- (NSUInteger)itemView:(ECItemView *)itemView numberOfGroupsInArea:(NSUInteger)area
-{
-    return [[self areaAtIndex:area].groups count];
-}
-
-- (NSUInteger)itemView:(ECItemView *)itemView numberOfItemsInGroup:(NSUInteger)group inArea:(NSUInteger)area
-{
-    return [[self groupAtIndex:group inArea:area].items count];
-}
-
-- (void)itemView:(ECItemView *)itemView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
-{
-    if (!indexPath)
-        return;
-    [self loadFile:[self itemAtIndex:indexPath.item inGroup:indexPath.group inArea:indexPath.area].path];
 }
 
 - (BOOL)itemView:(ECItemView *)itemView canMoveItemAtIndexPath:(NSIndexPath *)indexPath
@@ -158,23 +154,32 @@
 
 - (void)itemView:(ECItemView *)itemView moveItemAtIndexPath:(NSIndexPath *)sourceIndexPath toIndexPath:(NSIndexPath *)destinationIndexPath
 {
-    id item = [[[self groupAtIndex:sourceIndexPath.group inArea:sourceIndexPath.area] orderedItems] objectAtIndex:sourceIndexPath.item];
-    [[[self groupAtIndex:destinationIndexPath.group inArea:destinationIndexPath.area] orderedItems] insertObject:item atIndex:destinationIndexPath.item];
+    id item = [[[self groupAtIndexPath:sourceIndexPath] orderedItems] objectAtIndex:sourceIndexPath.item];
+    [[[self groupAtIndexPath:destinationIndexPath] orderedItems] insertObject:item atIndex:destinationIndexPath.item];
 }
 
 - (void)itemView:(ECItemView *)itemView insertGroupAtIndexPath:(NSIndexPath *)indexPath
 {
     Group *group = [NSEntityDescription insertNewObjectForEntityForName:@"Group" inManagedObjectContext:self.managedObjectContext];
-    [[[self areaAtIndex:indexPath.area] orderedGroups] insertObject:group atIndex:indexPath.position];
+    [[[self areaAtIndexPath:indexPath] orderedGroups] insertObject:group atIndex:indexPath.position];
 }
 
 - (void)itemView:(ECItemView *)itemView deleteGroupAtIndexPath:(NSIndexPath *)indexPath
 {
-    Group *group = [[[self areaAtIndex:indexPath.area] orderedGroups] objectAtIndex:indexPath.position];
+    Group *group = [[[self areaAtIndexPath:indexPath] orderedGroups] objectAtIndex:indexPath.position];
     if ([[group items] count])
         return;
     [self.managedObjectContext deleteObject:group];
 }
+
+- (void)itemView:(ECItemView *)itemView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (!indexPath)
+        return;
+    [self loadFile:[self itemAtIndexPath:indexPath].path];
+}
+
+#pragma mark -
 
 - (void)edit:(id)sender
 {
