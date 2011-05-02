@@ -100,13 +100,14 @@
     self.popoverController = nil;
 }
 
-/*
- // Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
+
+// Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    self.codeView.delegate = self;
 }
- */
 
 - (void)viewDidUnload
 {
@@ -136,6 +137,18 @@
     [_detailDescriptionLabel release];
     [_codeView release];
     [super dealloc];
+}
+
+#pragma mark CodeView delegate
+
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView
+{
+    self.codeView.navigatorVisible = YES;
+}
+
+- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
+{
+    self.codeView.navigatorVisible = NO;
 }
 
 @end
