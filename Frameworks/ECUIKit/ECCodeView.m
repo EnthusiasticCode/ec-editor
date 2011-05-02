@@ -65,7 +65,7 @@
 
 #pragma mark -
 
-@interface CodeInfoView : UIView <ECTextRendererDelegate> {
+@interface CodeInfoView : UIView {
 @private
     id<ECCodeViewDataSource> datasource;
     ECTextRenderer *renderer;
@@ -106,6 +106,8 @@
 
 #pragma mark User Interaction
 
+- (void)updateNavigator;
+
 - (void)handleTap:(UITapGestureRecognizer *)recognizer;
 
 @end
@@ -133,7 +135,7 @@
 @end
 
 #pragma mark -
-#pragma mark ECCodeView
+#pragma mark CodeInfoView
 
 @implementation CodeInfoView
 
@@ -176,6 +178,9 @@
     
     parentSize = size;
     
+    if (!navigatorVisible)
+        return;
+    
     navigatorView.contentScaleFactor = (navigatorWidth - navigatorInsets.left - navigatorInsets.right) / parentSize.width;
 }
 
@@ -186,7 +191,11 @@
     
     parentContentOffsetRatio = ratio;
     
-    navigatorView.contentOffset = CGPointMake(0, ratio * (navigatorView.contentSize.height - self.bounds.size.height));
+    if (!navigatorVisible)
+        return;
+    
+    CGFloat height = (navigatorView.contentSize.height - navigatorView.bounds.size.height);
+    navigatorView.contentOffset = CGPointMake(0, height > 0 ? parentContentOffsetRatio * height : 0);
 }
 
 - (CGFloat)currentWidth
@@ -255,14 +264,23 @@
     }];
 }
 
+- (void)updateNavigator
+{    
+    if (!navigatorVisible)
+        return;
+    
+    CGRect frame = self.bounds;
+    frame.size.width = navigatorWidth;
+    frame = UIEdgeInsetsInsetRect(frame, navigatorInsets);
+    
+    // Resetting the frame will trigger actual layout update
+    navigatorView.frame = frame;
+    [navigatorView setNeedsLayout];
+}
+
 - (void)handleTap:(UITapGestureRecognizer *)recognizer
 {
     [self setNavigatorVisible:!navigatorVisible animated:YES];
-}
-
-- (void)textRenderer:(ECTextRenderer *)sender invalidateRenderInRect:(CGRect)rect
-{
-    [navigatorView textRenderer:sender invalidateRenderInRect:rect];
 }
 
 @end
@@ -279,6 +297,21 @@
 @synthesize navigatorAutoVisible;
 @synthesize navigatorBackgroundColor;
 @synthesize navigatorWidth;
+
+- (void)setFrame:(CGRect)frame
+{
+    if (self.navigatorVisible) 
+        infoView.parentSize = frame.size;
+
+    [super setFrame:frame];    
+}
+
+- (void)setContentSize:(CGSize)contentSize
+{
+    [super setContentSize:contentSize];
+    
+    [infoView updateNavigator];
+}
 
 #pragma mark NSObject Methods
 
@@ -410,17 +443,6 @@ static void init(ECCodeView *self)
     [navigatorBackgroundColor release];
     navigatorBackgroundColor = [color retain];
     infoView.navigatorBackgroundColor = color;
-}
-
-#pragma mark -
-#pragma mark Text Renderer Delegate
-
-- (void)textRenderer:(ECTextRenderer *)sender invalidateRenderInRect:(CGRect)rect
-{
-    [super textRenderer:sender invalidateRenderInRect:rect];
-    
-    if (self.navigatorVisible)
-        [infoView textRenderer:sender invalidateRenderInRect:rect];
 }
 
 #pragma mark -
