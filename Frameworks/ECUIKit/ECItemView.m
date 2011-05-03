@@ -15,11 +15,11 @@ static const CGFloat kECItemViewShortAnimationDuration = 0.15;
 static const NSUInteger kECItemViewAreaHeaderBufferSize = 5;
 static const NSUInteger kECItemViewGroupSeparatorBufferSize = 20;
 static const NSUInteger kECItemViewItemBufferSize = 10;
-static const NSString *kECItemViewAreaKey = @"area";
-static const NSString *kECItemViewAreaHeaderKey = @"areaHeader";
-static const NSString *kECItemViewGroupKey = @"group";
-static const NSString *kECItemViewGroupSeparatorKey = @"groupSeparator";
-static const NSString *kECItemViewItemKey = @"item";
+const NSString *kECItemViewAreaKey = @"area";
+const NSString *kECItemViewAreaHeaderKey = @"areaHeader";
+const NSString *kECItemViewGroupKey = @"group";
+const NSString *kECItemViewGroupSeparatorKey = @"groupSeparator";
+const NSString *kECItemViewItemKey = @"item";
 
 @interface UIScrollView (MethodsInUIGestureRecognizerDelegateProtocolAppleCouldntBotherDeclaring)
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch;
@@ -65,11 +65,10 @@ static const NSString *kECItemViewItemKey = @"item";
     BOOL _isAnimating;
     UITapGestureRecognizer *_tapGestureRecognizer;
     UILongPressGestureRecognizer *_longPressGestureRecognizer;
+    ECItemViewElementKey _selectedElementsType;
+    NSMutableSet *_selectedElements;
     BOOL _isDragging;
-    ECItemViewElement *_draggedItem;
-    NSIndexPath *_draggedItemIndexPath;
-    NSIndexPath *_dragDestinationIndexPath;
-    BOOL _dragDestinationExists;
+    ECItemViewElement *_caret;
     NSTimer *_scrollTimer;
     CGFloat _scrollSpeed;
     UIEdgeInsets _scrollingHotspots;
@@ -100,7 +99,7 @@ static const NSString *kECItemViewItemKey = @"item";
 - (CGRect)_rectForItemAtIndex:(NSUInteger)item inGroup:(NSUInteger)group inArea:(NSUInteger)area;
 
 #pragma mark Index paths
-- (NSIndexPath *)_proposedIndexPathForItemAtPoint:(CGPoint)point exists:(BOOL *)exists;
+- (NSIndexPath *)_indexPathForElementAtPoint:(CGPoint)point type:(ECItemViewElementKey *)elementType;
 
 #pragma mark UIView
 - (void)_layoutAreaHeaders;
@@ -134,6 +133,7 @@ static const NSString *kECItemViewItemKey = @"item";
 @synthesize areaHeaderHeight = _areaHeaderHeight;
 @synthesize areaHeaderInsets = _areaHeaderInsets;
 @synthesize allowsSelection = _allowsSelection;
+@synthesize multipleSelection = _multipleSelection;
 @synthesize editing = _isEditing;
 
 - (void)setDelegate:(id<ECItemViewDelegate>)delegate
@@ -207,6 +207,7 @@ static const NSString *kECItemViewItemKey = @"item";
     _areaHeaderHeight = 60.0;
     _areaHeaderInsets = UIEdgeInsetsMake(20.0, 10.0, 20.0, 10.0);
     _allowsSelection = YES;
+    _multipleSelection = YES;
     _areas = [[NSMutableArray alloc] init];
     _elementCaches = [[NSMutableDictionary alloc] init];
     [_elementCaches setObject:[ECStackCache cacheWithTarget:nil action:NULL size:kECItemViewAreaHeaderBufferSize] forKey:kECItemViewAreaHeaderKey];
@@ -226,6 +227,8 @@ static const NSString *kECItemViewItemKey = @"item";
     _longPressGestureRecognizer.minimumPressDuration = 0.5;
     _longPressGestureRecognizer.delegate = self;
     [self addGestureRecognizer:_longPressGestureRecognizer];
+    _selectedElements = [[NSMutableSet alloc] init];
+    _caret = [[ECItemViewElement alloc] init];
     UIScrollView *scrollView = [[UIScrollView alloc] init];
     _flags.superGestureRecognizerShouldBegin = [scrollView respondsToSelector:@selector(gestureRecognizerShouldBegin:)];
     _flags.superGestureRecognizerShouldRecognizeSimultaneously = [scrollView respondsToSelector:@selector(gestureRecognizer:shouldRecognizeSimultaneouslyWithGestureRecognizer:)];
@@ -262,9 +265,8 @@ static const NSString *kECItemViewItemKey = @"item";
     [_visibleElements release];
     [_tapGestureRecognizer release];
     [_longPressGestureRecognizer release];
-    [_draggedItem release];
-    [_draggedItemIndexPath release];
-    [_dragDestinationIndexPath release];
+    [_selectedElements release];
+    [_caret release];
     [_scrollTimer invalidate];
     [super dealloc];
 }
@@ -590,33 +592,39 @@ static const NSString *kECItemViewItemKey = @"item";
     return nil;
 }
 
-- (NSIndexPath *)_proposedIndexPathForItemAtPoint:(CGPoint)point exists:(BOOL *)exists
+- (NSIndexPath *)_indexPathForElementAtPoint:(CGPoint)point type:(ECItemViewElementKey *)elementType
 {
-    if (exists)
-        *exists = NO;
-    NSIndexPath *areaHeader = [self indexForAreaHeaderAtPoint:point];
-    if (areaHeader)
-        return [NSIndexPath indexPathForItem:0 inGroup:0 inArea:areaHeader.area];
-    NSIndexPath *indexPath = [self indexPathForGroupSeparatorAtPoint:point];
+    NSIndexPath *indexPath;
+    indexPath = [self indexForAreaHeaderAtPoint:point];
     if (indexPath)
-        return [NSIndexPath indexPathForItem:0 inGroup:indexPath.position + 1 inArea:indexPath.position];
+    {
+        if (elementType)
+            *elementType = kECItemViewAreaHeaderKey;
+        return indexPath;
+    }
+    indexPath = [self indexPathForGroupSeparatorAtPoint:point];
+    if (indexPath)
+    {
+        if (elementType)
+            *elementType = kECItemViewGroupSeparatorKey;
+        return indexPath;
+    }
     indexPath = [self indexPathForItemAtPoint:point];
     if (indexPath)
     {
-        if (exists)
-            *exists = YES;
+        if (elementType)
+            *elementType = kECItemViewItemKey;
         return indexPath;
     }
     for (NSIndexPath *groupIndexPath in [self indexPathsForVisibleGroups])
         if (CGRectContainsPoint(UIEdgeInsetsInsetRect([self _rectForGroupAtIndexPath:groupIndexPath], _groupInsets), point))
-            if (groupIndexPath.area == _draggedItemIndexPath.area && groupIndexPath.position == _draggedItemIndexPath.group)
-            {
-                if (exists)
-                    *exists = YES;
-                return [NSIndexPath indexPathForItem:[self numberOfItemsInGroupAtIndexPath:groupIndexPath] - 1 inGroup:groupIndexPath.position inArea:groupIndexPath.area];
-            }
-            else
-                return [NSIndexPath indexPathForItem:[self numberOfItemsInGroupAtIndexPath:groupIndexPath] inGroup:groupIndexPath.position inArea:groupIndexPath.area];
+        {
+            if (elementType)
+                *elementType = kECItemViewGroupKey;
+            return indexPath;
+        }
+    if (elementType)
+        *elementType = nil;
     return nil;
 }
 
@@ -841,94 +849,82 @@ static const NSString *kECItemViewItemKey = @"item";
 
 - (void)_handleLongPressGesture:(UILongPressGestureRecognizer *)longPressGestureRecognizer
 {
-    if ([longPressGestureRecognizer state] == UIGestureRecognizerStateBegan)
-        [self _beginDrag:longPressGestureRecognizer];
-    else if ([longPressGestureRecognizer state] == UIGestureRecognizerStateChanged)
-        [self _continueDrag:longPressGestureRecognizer];
-    else if ([longPressGestureRecognizer state] == UIGestureRecognizerStateEnded)
-        [self _endDrag:longPressGestureRecognizer];
-    else if ([longPressGestureRecognizer state] == UIGestureRecognizerStateCancelled)
-        [self _cancelDrag:longPressGestureRecognizer];
+    switch ([longPressGestureRecognizer state])
+    {
+        case UIGestureRecognizerStateBegan:
+            [self _beginDrag:longPressGestureRecognizer];
+            break;
+        case UIGestureRecognizerStateChanged:
+            [self _continueDrag:longPressGestureRecognizer];
+            break;
+        case UIGestureRecognizerStateEnded:
+            [self _endDrag:longPressGestureRecognizer];
+        default:
+            [self _cancelDrag:longPressGestureRecognizer];
+    }
 }
 
 - (void)_beginDrag:(UILongPressGestureRecognizer *)dragRecognizer
 {
     _isDragging = YES;
-    _draggedItemIndexPath = [[self indexPathForItemAtPoint:[dragRecognizer locationInView:self]] retain];
-    _dragDestinationIndexPath = [_draggedItemIndexPath retain];
-    _draggedItem = [self itemAtIndexPath:_draggedItemIndexPath];
-    _draggedItem.center = [dragRecognizer locationInView:self];
-    [self bringSubviewToFront:_draggedItem];
 }
 
 - (void)_continueDrag:(UILongPressGestureRecognizer *)dragRecognizer
 {
-    _draggedItem.center = [dragRecognizer locationInView:self];
-    if (CGRectContainsPoint(self.bounds, _draggedItem.center) && !CGRectContainsPoint(UIEdgeInsetsInsetRect(self.bounds, _scrollingHotspots), _draggedItem.center))
+    CGPoint point = [dragRecognizer locationInView:self];
+    if (!_scrollTimer && CGRectContainsPoint(self.bounds, point) && !CGRectContainsPoint(UIEdgeInsetsInsetRect(self.bounds, _scrollingHotspots), point))
     {
-        if (!_scrollTimer)
-        {
-            _scrollTimer = [NSTimer timerWithTimeInterval:1.0/60.0 target:self selector:@selector(_handleTimer:) userInfo:nil repeats:YES];
-            [[NSRunLoop mainRunLoop] addTimer:_scrollTimer forMode:NSDefaultRunLoopMode];
-        }
-        return;
+        _scrollTimer = [NSTimer timerWithTimeInterval:1.0/60.0 target:self selector:@selector(_handleTimer:) userInfo:nil repeats:YES];
+        [[NSRunLoop mainRunLoop] addTimer:_scrollTimer forMode:NSDefaultRunLoopMode];
     }
-    else if (_scrollTimer)
+    else if (_scrollTimer && !CGRectContainsPoint(self.bounds, point) && CGRectContainsPoint(UIEdgeInsetsInsetRect(self.bounds, _scrollingHotspots), point))
     {
         [_scrollTimer invalidate];
         _scrollTimer = nil;
     }
-    NSIndexPath *indexPath = [self indexPathForItemAtPoint:[dragRecognizer locationInView:self]];
-    if ([indexPath isEqual:_draggedItemIndexPath])
-        return;
-    [_dragDestinationIndexPath release];
-    _dragDestinationIndexPath = [indexPath retain];
     [self setNeedsLayout];
-    [UIView animateConcurrentlyToAnimationsWithFlag:&_isAnimating duration:kECItemViewShortAnimationDuration animations:^(void) {
-        [self layoutIfNeeded];
-    } completion:NULL];
 }
 
 - (void)_endDrag:(UILongPressGestureRecognizer *)dragRecognizer
 {
-    BOOL proposedIndexPathExists;
-    NSIndexPath *proposedIndexPath = [self _proposedIndexPathForItemAtPoint:[dragRecognizer locationInView:self] exists:&proposedIndexPathExists];
-    if (!proposedIndexPath)
-        [self _cancelDrag:dragRecognizer];
-    if (!proposedIndexPathExists && !proposedIndexPath.item)
-        if (_flags.dataSourceInsertGroup)
-        {
-            [_dataSource itemView:self insertGroupAtIndexPath:[NSIndexPath indexPathForPosition:proposedIndexPath.group inArea:proposedIndexPath.area]];
-            if (_draggedItemIndexPath.area == proposedIndexPath.area && _draggedItemIndexPath.group >= proposedIndexPath.group)
-            {
-                NSIndexPath *adjustedDraggedItemIndexPath = [[NSIndexPath indexPathForItem:_draggedItemIndexPath.item inGroup:_draggedItemIndexPath.group + 1 inArea:_draggedItemIndexPath.area] retain];
-                [_draggedItemIndexPath release];
-                _draggedItemIndexPath = adjustedDraggedItemIndexPath;
-            }
-            
-        }
-        else
-            [self _cancelDrag:dragRecognizer];
-    
-    _isDragging = NO;
-    [_scrollTimer invalidate];
-    _scrollTimer = nil;
-    [_dragDestinationIndexPath release];
-    _dragDestinationIndexPath = proposedIndexPath;
-    if (_flags.dataSourceMoveItem)
-        [_dataSource itemView:self moveItemAtIndexPath:_draggedItemIndexPath toIndexPath:_dragDestinationIndexPath];
-    if (_flags.dataSourceNumberOfItemsInGroup)
-        if (![_dataSource itemView:self numberOfItemsInGroupAtIndexPath:_draggedItemIndexPath])
-            if (_flags.dataSourceDeleteGroup)
-                [_dataSource itemView:self deleteGroupAtIndexPath:[NSIndexPath indexPathForPosition:_draggedItemIndexPath.group inArea:_draggedItemIndexPath.area]];
-    [self reloadData];
-    [UIView animateConcurrentlyToAnimationsWithFlag:&_isAnimating duration:kECItemViewShortAnimationDuration animations:^(void) {
-        _draggedItem.frame = UIEdgeInsetsInsetRect([self rectForItemAtIndexPath:_dragDestinationIndexPath], _itemInsets);
-    } completion:NULL];
-    [_draggedItemIndexPath release];
-    _draggedItemIndexPath = nil;
-    _dragDestinationIndexPath = nil;
-    _draggedItem = nil;
+//    BOOL proposedIndexPathExists;
+//    NSIndexPath *proposedIndexPath = [self _proposedIndexPathForItemAtPoint:[dragRecognizer locationInView:self] exists:&proposedIndexPathExists];
+//    if (!proposedIndexPath)
+//        [self _cancelDrag:dragRecognizer];
+//    if (!proposedIndexPathExists && !proposedIndexPath.item)
+//        if (_flags.dataSourceInsertGroup)
+//        {
+//            [_dataSource itemView:self insertGroupAtIndexPath:[NSIndexPath indexPathForPosition:proposedIndexPath.group inArea:proposedIndexPath.area]];
+//            if (_draggedItemIndexPath.area == proposedIndexPath.area && _draggedItemIndexPath.group >= proposedIndexPath.group)
+//            {
+//                NSIndexPath *adjustedDraggedItemIndexPath = [[NSIndexPath indexPathForItem:_draggedItemIndexPath.item inGroup:_draggedItemIndexPath.group + 1 inArea:_draggedItemIndexPath.area] retain];
+//                [_draggedItemIndexPath release];
+//                _draggedItemIndexPath = adjustedDraggedItemIndexPath;
+//            }
+//            
+//        }
+//        else
+//            [self _cancelDrag:dragRecognizer];
+//    
+//    _isDragging = NO;
+//    [_scrollTimer invalidate];
+//    _scrollTimer = nil;
+//    [_dragDestinationIndexPath release];
+//    _dragDestinationIndexPath = proposedIndexPath;
+//    if (_flags.dataSourceMoveItem)
+//        [_dataSource itemView:self moveItemAtIndexPath:_draggedItemIndexPath toIndexPath:_dragDestinationIndexPath];
+//    if (_flags.dataSourceNumberOfItemsInGroup)
+//        if (![_dataSource itemView:self numberOfItemsInGroupAtIndexPath:_draggedItemIndexPath])
+//            if (_flags.dataSourceDeleteGroup)
+//                [_dataSource itemView:self deleteGroupAtIndexPath:[NSIndexPath indexPathForPosition:_draggedItemIndexPath.group inArea:_draggedItemIndexPath.area]];
+//    [self reloadData];
+//    [UIView animateConcurrentlyToAnimationsWithFlag:&_isAnimating duration:kECItemViewShortAnimationDuration animations:^(void) {
+//        _draggedItem.frame = UIEdgeInsetsInsetRect([self rectForItemAtIndexPath:_dragDestinationIndexPath], _itemInsets);
+//    } completion:NULL];
+//    [_draggedItemIndexPath release];
+//    _draggedItemIndexPath = nil;
+//    _dragDestinationIndexPath = nil;
+    //    _draggedItem = nil;
 }
 
 - (void)_cancelDrag:(UILongPressGestureRecognizer *)dragRecognizer
@@ -937,33 +933,18 @@ static const NSString *kECItemViewItemKey = @"item";
     [_scrollTimer invalidate];
     _scrollTimer = nil;
     [self setNeedsLayout];
-    [UIView animateConcurrentlyToAnimationsWithFlag:&_isAnimating duration:kECItemViewShortAnimationDuration animations:^(void) {
-        _draggedItem.frame = UIEdgeInsetsInsetRect([self rectForItemAtIndexPath:_draggedItemIndexPath], _itemInsets);
-        [self layoutIfNeeded];
-    } completion:NULL];
-    [_draggedItemIndexPath release];
-    _draggedItemIndexPath = nil;
-    [_dragDestinationIndexPath release];
-    _dragDestinationIndexPath = nil;
-    _draggedItem = nil;
 }
 
 - (void)_handleTimer:(NSTimer *)timer
 {
     CGPoint offset = [self contentOffset];
-    CGPoint center = _draggedItem.center;
-    if (_draggedItem.center.y < self.bounds.origin.y + _scrollingHotspots.top && self.bounds.origin.y > 0.0)
-    {
+    CGPoint point = [_longPressGestureRecognizer locationInView:self];
+    if (point.y < self.bounds.origin.y + _scrollingHotspots.top && self.bounds.origin.y > 0.0)
         offset.y -= _scrollSpeed;
-        center.y -= _scrollSpeed;
-    }
-    else if (_draggedItem.center.y > self.bounds.origin.y + self.bounds.size.height - _scrollingHotspots.bottom && self.bounds.origin.y < self.contentSize.height - self.bounds.size.height)
-    {
+    else if (point.y > self.bounds.origin.y + self.bounds.size.height - _scrollingHotspots.bottom && self.bounds.origin.y < self.contentSize.height - self.bounds.size.height)
         offset.y += _scrollSpeed;
-        center.y += _scrollSpeed;
-    }
     [self setContentOffset:offset animated:NO];
-    _draggedItem.center = center;
+    [self setNeedsLayout];
  }
 
 @end

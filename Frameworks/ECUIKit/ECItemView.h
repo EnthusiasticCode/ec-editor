@@ -17,6 +17,13 @@ typedef enum {
     ECItemViewScrollPositionBottom
 } ECItemViewScrollPosition;
 
+const NSString *kECItemViewAreaKey;
+const NSString *kECItemViewAreaHeaderKey;
+const NSString *kECItemViewGroupKey;
+const NSString *kECItemViewGroupSeparatorKey;
+const NSString *kECItemViewItemKey;
+typedef const NSString *ECItemViewElementKey;
+
 @protocol ECItemViewDataSource <NSObject>
 
 #pragma mark Data
@@ -105,6 +112,7 @@ typedef enum {
 @property (nonatomic) CGFloat areaHeaderHeight;
 @property (nonatomic) UIEdgeInsets areaHeaderInsets;
 @property (nonatomic) BOOL allowsSelection;
+@property (nonatomic) BOOL multipleSelection;
 @property (nonatomic, getter = isEditing) BOOL editing;
 - (void)setEditing:(BOOL)editing animated:(BOOL)animated;
 
@@ -163,6 +171,7 @@ typedef enum {
 
 - (void)selectItemAtIndexPath:(NSIndexPath *)indexPath animated:(BOOL)animated scrollPosition:(ECItemViewScrollPosition)scrollPosition;
 - (void)deselectItemAtIndexPath:(NSIndexPath *)indexPath animated:(BOOL)animated;
+- (void)deselectAllItemsAnimated:(BOOL)animated;
 
 #pragma mark Recycling
 - (ECItemViewElement *)dequeueReusableItem;
