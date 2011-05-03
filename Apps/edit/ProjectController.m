@@ -17,6 +17,9 @@
 #import "File.h"
 
 @interface ProjectController ()
+{
+    BOOL _tableViewNeedsReload;
+}
 - (Folder *)areaAtIndexPath:(NSIndexPath *)indexPath;
 - (Group *)groupAtIndexPath:(NSIndexPath *)indexPath;
 - (File *)itemAtIndexPath:(NSIndexPath *)indexPath;
@@ -71,7 +74,9 @@
 {
     [super viewDidLoad];
     self.navigationItem.rightBarButtonItem = self.editButton;
-    [self.tableView reloadData];
+    if (_tableViewNeedsReload)
+        [self.tableView reloadData];
+    [self.tableView deselectAllItemsAnimated:YES];
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
@@ -148,11 +153,6 @@
     return file;
 }
 
-- (BOOL)itemView:(ECItemView *)itemView canMoveItemAtIndexPath:(NSIndexPath *)indexPath
-{
-    return YES;
-}
-
 - (void)itemView:(ECItemView *)itemView moveItemAtIndexPath:(NSIndexPath *)sourceIndexPath toIndexPath:(NSIndexPath *)destinationIndexPath
 {
     id item = [[[self groupAtIndexPath:sourceIndexPath] orderedItems] objectAtIndex:sourceIndexPath.item];
@@ -175,7 +175,7 @@
 
 - (void)itemView:(ECItemView *)itemView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (!indexPath)
+    if (self.tableView.editing)
         return;
     [self loadFile:[self itemAtIndexPath:indexPath].path];
 }
@@ -191,6 +191,7 @@
 - (void)done:(id)sender
 {
     [self.tableView setEditing:NO animated:YES];
+    [self.tableView deselectAllItemsAnimated:YES];
     self.navigationItem.rightBarButtonItem = self.editButton;
 }
 
@@ -226,6 +227,7 @@
         self.project = project;
     }
     self.title = self.project.name;
+    _tableViewNeedsReload = YES;
 }
 
 - (void)loadFile:(NSString *)file

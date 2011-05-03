@@ -64,10 +64,12 @@ typedef const NSString *ECItemViewElementKey;
 
 #pragma mark Moving/Reordering
 
-/// Allows the reorder accessory view to optionally be shown for a particular item. By default, the reorder control will be shown only if the datasource implements -itemView:moveItemAtIndexPath:toIndexPath: and -itemView:deleteGroupAtIndexPath:.
+/// Allows the reorder accessory view to optionally be shown for a particular item. By default, moving is allowed for all items.
+/// Requires the data source to also implement  -itemView:moveItemAtIndexPath:toIndexPath:, -itemView:insertGroupAtIndexPath: -itemView:deleteGroupAtIndexPath:.
 - (BOOL)itemView:(ECItemView *)itemView canMoveItemAtIndexPath:(NSIndexPath *)indexPath;
 
 /// Move the item from the source index path to the destination index path.
+/// Requires the data source to also implement -itemView:insertGroupAtIndexPath: and -itemView:deleteGroupAtIndexPath:.
 - (void)itemView:(ECItemView *)itemView moveItemAtIndexPath:(NSIndexPath *)sourceIndexPath toIndexPath:(NSIndexPath *)destinationIndexPath;
 
 /// Insert a new group at the given index path.
@@ -167,7 +169,7 @@ typedef const NSString *ECItemViewElementKey;
 
 #pragma mark Selection
 - (NSIndexPath *)indexPathForSelectedItem;
-- (NSArray *)indexPathsForSelectedItems;
+- (NSSet *)indexPathsForSelectedItems;
 
 - (void)selectItemAtIndexPath:(NSIndexPath *)indexPath animated:(BOOL)animated scrollPosition:(ECItemViewScrollPosition)scrollPosition;
 - (void)deselectItemAtIndexPath:(NSIndexPath *)indexPath animated:(BOOL)animated;

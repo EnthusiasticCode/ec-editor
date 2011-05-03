@@ -683,6 +683,48 @@ const NSString *kECItemViewItemKey = @"item";
 }
 
 #pragma mark -
+#pragma mark Selection
+
+- (NSIndexPath *)indexPathForSelectedItem
+{
+    if (_selectedElementsType != kECItemViewItemKey)
+        return nil;
+    return [_selectedElements anyObject];
+}
+
+- (NSSet *)indexPathsForSelectedItems
+{
+    if (_selectedElementsType != kECItemViewItemKey)
+        return nil;
+    return [[_selectedElements copy] autorelease];
+}
+
+- (void)selectItemAtIndexPath:(NSIndexPath *)indexPath animated:(BOOL)animated scrollPosition:(ECItemViewScrollPosition)scrollPosition
+{
+    if (!indexPath || _selectedElementsType != kECItemViewItemKey)
+        return;
+    [_selectedElements addObject:indexPath];
+    [[self itemAtIndexPath:indexPath] setSelected:YES animated:YES];
+}
+
+- (void)deselectItemAtIndexPath:(NSIndexPath *)indexPath animated:(BOOL)animated
+{
+    if (!indexPath || _selectedElementsType != kECItemViewItemKey)
+        return;
+    [_selectedElements removeObject:indexPath];
+    [[self itemAtIndexPath:indexPath] setSelected:NO animated:YES];
+}
+
+- (void)deselectAllItemsAnimated:(BOOL)animated
+{
+    if (_selectedElementsType != kECItemViewItemKey)
+        return;
+    [_selectedElements removeAllObjects];
+    for (ECItemViewElement *item in [self visibleItems])
+        [item setSelected:NO animated:YES];
+}
+
+#pragma mark -
 #pragma mark Recycling
 
 - (ECItemViewElement *)dequeueReusableAreaHeader
@@ -776,6 +818,8 @@ const NSString *kECItemViewItemKey = @"item";
             item = [self _loadItemAtIndexPath:indexPath];
             if (!item)
                 continue;
+            if (_selectedElementsType == kECItemViewItemKey && [_selectedElements containsObject:indexPath])
+                item.selected = YES;
             [self addSubview:item];
             [self sendSubviewToBack:item];
         }
@@ -803,21 +847,12 @@ const NSString *kECItemViewItemKey = @"item";
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch
 {
     if (gestureRecognizer == _tapGestureRecognizer)
-        if (!_isEditing && [self indexPathForItemAtPoint:[touch locationInView:self]])
-            return YES;
-        else
-            return NO;
+        return YES;
     if (gestureRecognizer == _longPressGestureRecognizer)
-        if (_isEditing && [self indexPathForItemAtPoint:[touch locationInView:self]])
+        if (_isEditing)
             return YES;
         else
-        {
             return NO;
-        }
-    if ([gestureRecognizer isKindOfClass:[UITapGestureRecognizer class]] && !_isEditing && [self indexPathForItemAtPoint:[touch locationInView:self]])
-        return NO;
-    if ([gestureRecognizer isKindOfClass:[UILongPressGestureRecognizer class]] && _isEditing && [self indexPathForItemAtPoint:[touch locationInView:self]])
-        return NO;
     if (_flags.superGestureRecognizerShouldReceiveTouch)
         return [super gestureRecognizer:gestureRecognizer shouldReceiveTouch:touch];
     return YES;
@@ -825,8 +860,9 @@ const NSString *kECItemViewItemKey = @"item";
 
 - (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer
 {
+    NSIndexPath *indexPath;
     if (gestureRecognizer == _longPressGestureRecognizer)
-        if (_flags.dataSourceCanMoveItem && _flags.dataSourceMoveItem && [self indexPathForItemAtPoint:[gestureRecognizer locationInView:self]] && [_dataSource itemView:self canMoveItemAtIndexPath:[self indexPathForItemAtPoint:[gestureRecognizer locationInView:self]]])
+        if ((_flags.dataSourceMoveItem && ( indexPath = [self indexPathForItemAtPoint:[gestureRecognizer locationInView:self]])) && ((_flags.dataSourceCanMoveItem && [_dataSource itemView:self canMoveItemAtIndexPath:indexPath]) || !_flags.dataSourceCanMoveItem))
             return YES;
         else
             return NO;
@@ -837,10 +873,6 @@ const NSString *kECItemViewItemKey = @"item";
 
 - (void)_handleTapGesture:(UITapGestureRecognizer *)tapGestureRecognizer
 {
-    if (!_flags.delegateDidSelectItem)
-        return;
-    if (_isEditing)
-        return;
     if (![tapGestureRecognizer state] == UIGestureRecognizerStateEnded)
         return;
     NSIndexPath *indexPath = [self indexPathForItemAtPoint:[tapGestureRecognizer locationInView:self]];
