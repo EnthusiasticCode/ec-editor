@@ -64,10 +64,6 @@ typedef const NSString *ECItemViewElementKey;
 
 #pragma mark Moving/Reordering
 
-/// Allows the reorder accessory view to optionally be shown for a particular item. By default, moving is allowed for all items.
-/// Requires the data source to also implement  -itemView:moveItemAtIndexPath:toIndexPath:, -itemView:insertGroupAtIndexPath: -itemView:deleteGroupAtIndexPath:.
-- (BOOL)itemView:(ECItemView *)itemView canMoveItemAtIndexPath:(NSIndexPath *)indexPath;
-
 /// Move the item from the source index path to the destination index path.
 /// Requires the data source to also implement -itemView:insertGroupAtIndexPath: and -itemView:deleteGroupAtIndexPath:.
 - (void)itemView:(ECItemView *)itemView moveItemAtIndexPath:(NSIndexPath *)sourceIndexPath toIndexPath:(NSIndexPath *)destinationIndexPath;
@@ -91,10 +87,6 @@ typedef const NSString *ECItemViewElementKey;
 #pragma mark Selection
 
 @optional
-/// Called before the user selects a previously unselected item.
-- (void)itemView:(ECItemView *)itemView willSelectItemAtIndexPath:(NSIndexPath *)indexPath;
-/// Called before the user deselects a previously selected item.
-- (void)itemView:(ECItemView *)itemView willDeselectItemAtIndexPath:(NSIndexPath *)indexPath;
 /// Called after the user selects a previously unselected item.
 - (void)itemView:(ECItemView *)itemView didSelectItemAtIndexPath:(NSIndexPath *)indexPath;
 /// Called after the user deselects a previously selected item.
@@ -132,12 +124,10 @@ typedef const NSString *ECItemViewElementKey;
 - (CGRect)rectForItemAtIndexPath:(NSIndexPath *)indexPath;
 
 #pragma mark Index paths
-- (NSArray *)indexPathsForVisibleAreas;
 - (NSArray *)indexPathsForVisibleAreaHeaders;
 - (NSArray *)visibleAreaHeaders;
 - (ECItemViewElement *)areaHeaderAtIndexPath:(NSIndexPath *)indexPath;
 - (NSIndexPath *)indexForAreaHeaderAtPoint:(CGPoint)point;
-- (NSArray *)indexPathsForVisibleGroups;
 - (NSArray *)indexPathsForVisibleGroupSeparators;
 - (NSArray *)visibleGroupSeparators;
 - (ECItemViewElement *)groupSeparatorAtIndexPath:(NSIndexPath *)indexPath;

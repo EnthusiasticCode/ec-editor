@@ -76,7 +76,11 @@
     self.navigationItem.rightBarButtonItem = self.editButton;
     if (_tableViewNeedsReload)
         [self.tableView reloadData];
-    [self.tableView deselectAllItemsAnimated:YES];
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    [self.tableView deselectAllItemsAnimated:animated];
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
