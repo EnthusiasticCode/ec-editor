@@ -229,6 +229,7 @@ const NSString *kECItemViewItemKey = @"item";
     _selectedItems = [[NSMutableSet alloc] init];
     _draggedElements = [[NSMutableSet alloc] init];
     _caret = [[ECItemViewElement alloc] init];
+    _caret.backgroundColor = [UIColor redColor];
     UIScrollView *scrollView = [[UIScrollView alloc] init];
     _flags.superGestureRecognizerShouldBegin = [scrollView respondsToSelector:@selector(gestureRecognizerShouldBegin:)];
     _flags.superGestureRecognizerShouldRecognizeSimultaneously = [scrollView respondsToSelector:@selector(gestureRecognizer:shouldRecognizeSimultaneouslyWithGestureRecognizer:)];
@@ -850,7 +851,30 @@ const NSString *kECItemViewItemKey = @"item";
 
 - (void)_layoutCaret
 {
-    
+    if (!_isDragging)
+        return;
+    ECItemViewElementKey type = _caret.type;
+    NSIndexPath *indexPath = _caret.indexPath;
+    if (type == kECItemViewItemKey)
+    {
+        CGRect rect = [self rectForItemAtIndexPath:indexPath];
+        rect.size. width = 10;
+        rect.origin.x -= 5;
+        _caret.frame = rect;
+    }
+    else if (type == kECItemViewGroupKey)
+    {
+        CGRect rect = [self rectForItemAtIndexPath:[NSIndexPath indexPathForItem:[self numberOfItemsInGroupAtIndexPath:indexPath] inGroup:indexPath.group inArea:indexPath.area]];
+        rect.size. width = 10;
+        rect.origin.x -= 5;
+        _caret.frame = rect;
+    }
+    else if (type == kECItemViewAreaHeaderKey)
+        _caret.frame = [self rectForAreaHeaderAtIndexPath:indexPath];
+    else if (type == kECItemViewGroupSeparatorKey)
+        _caret.frame = [self rectForGroupSeparatorAtIndexPath:indexPath];
+    else
+        _caret.frame = CGRectZero;
 }
 
 - (void)layoutSubviews

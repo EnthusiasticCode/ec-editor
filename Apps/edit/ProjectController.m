@@ -139,6 +139,17 @@
     return folder;
 }
 
+- (ECItemViewElement *)itemView:(ECItemView *)itemView viewForGroupSeparatorAtIndexPath:(NSIndexPath *)indexPath
+{
+    ECItemViewElement *groupSeparator = [self.tableView dequeueReusableGroupSeparator];
+    if (!groupSeparator)
+    {
+        groupSeparator = [[[ECItemViewElement alloc] init] autorelease];
+        groupSeparator.backgroundColor = [UIColor blackColor];
+    }
+    return groupSeparator;
+}
+
 - (ECItemViewElement *)itemView:(ECItemView *)itemView viewForItemAtIndexPath:(NSIndexPath *)indexPath
 {
     ECItemViewElement *file = [self.tableView dequeueReusableItem];
