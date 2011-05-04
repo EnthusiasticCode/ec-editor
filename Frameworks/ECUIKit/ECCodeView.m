@@ -15,13 +15,17 @@
 #pragma mark -
 #pragma mark Interfaces
 
-@class CodeInfoView;
 @class TextSelectionView;
+@class TextDetailView;
+@class CodeInfoView;
 
 #pragma mark -
 
 @interface ECCodeView () {
 @private
+    // Details
+    TextDetailView *detailView;
+    
     // Navigator
     CodeInfoView *infoView;
     
@@ -61,6 +65,22 @@
 @property (nonatomic) NSRange selection;
 @property (nonatomic, readonly) ECTextRange *selectionRange;
 @property (nonatomic, readonly) ECTextPosition *selectionPosition;
+
+@end
+
+#pragma mark -
+
+@interface TextDetailView : UIView {
+@private
+    ECTextRenderer *renderer;
+    NSOperationQueue *renderingQueue;
+    
+    UIImage *detailImage;
+}
+
+- (id)initWithFrame:(CGRect)frame renderer:(ECTextRenderer *)aRenderer renderingQueue:(NSOperationQueue *)queue;
+
+- (void)detailTextAtPoint:(CGPoint)point magnification:(CGFloat)magnification;
 
 @end
 
@@ -130,6 +150,78 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
 - (ECTextPosition *)selectionPosition
 {
     return [[[ECTextPosition alloc] initWithIndex:selection.location] autorelease];
+}
+
+@end
+
+#pragma mark -
+#pragma mark TextDetailView
+
+@implementation TextDetailView
+
+- (id)initWithFrame:(CGRect)frame renderer:(ECTextRenderer *)aRenderer renderingQueue:(NSOperationQueue *)queue
+{
+    if ((self = [super initWithFrame:frame])) 
+    {
+        renderer = aRenderer;
+        renderingQueue = queue;
+    }
+    return self;
+}
+
+- (void)dealloc
+{
+    [detailImage release];
+    [super dealloc];
+}
+
+- (void)drawRect:(CGRect)rect
+{
+    [self.backgroundColor setFill];
+    UIRectFill(rect);
+    
+    @synchronized(detailImage)
+    {
+        [detailImage drawInRect:rect];
+    }
+}
+
+- (void)detailTextAtPoint:(CGPoint)point magnification:(CGFloat)magnification
+{
+    CGRect textRect = self.bounds;
+    
+    textRect.size.width /= magnification;
+    textRect.size.height /= magnification;
+    
+    textRect.origin.x = point.x - (textRect.size.width / 2);
+    textRect.origin.y = point.y - (textRect.size.height / 2);
+        
+    CGRect limitRect = (CGRect){ CGPointZero, { renderer.wrapWidth, renderer.estimatedHeight } };
+    if(!CGRectContainsRect(limitRect, textRect))
+    {
+        // TODO adjust textrect
+    }
+    
+    [renderingQueue addOperationWithBlock:^(void) {
+        UIGraphicsBeginImageContext(self.bounds.size);
+        // Prepare magnified context
+        CGContextRef imageContext = UIGraphicsGetCurrentContext();
+        CGContextScaleCTM(imageContext, magnification, magnification);
+        CGContextTranslateCTM(imageContext, -textRect.origin.x, 0);
+        // Render text
+        [renderer drawTextWithinRect:textRect inContext:imageContext];
+        // Get result image
+        @synchronized(detailImage)
+        {
+            [detailImage release];
+            detailImage = [UIGraphicsGetImageFromCurrentImageContext() retain];
+        }
+        UIGraphicsEndImageContext();
+        // Request rerendering
+        [[NSOperationQueue mainQueue] addOperationWithBlock:^(void) {
+            [self setNeedsDisplay];
+        }];
+    }];
 }
 
 @end
@@ -366,6 +458,7 @@ static void init(ECCodeView *self)
 - (void)dealloc
 {
     [navigatorBackgroundColor release];
+    [detailView release];
     [infoView release];
     [super dealloc];
 }
@@ -386,6 +479,12 @@ static void init(ECCodeView *self)
     }
     
     [super layoutSubviews];
+    
+    if (detailView) 
+    {
+        [self bringSubviewToFront:detailView];
+        detailView.center = CGPointMake(100, 100);
+    }
 }
 
 #pragma mark -
@@ -1035,6 +1134,18 @@ static void init(ECCodeView *self)
 {
     CGPoint tapPoint = [recognizer locationInView:self];
     [self setSelectedTextFromPoint:tapPoint toPoint:tapPoint];
+    
+    // DEBUG
+    if (!detailView) 
+    {
+        detailView = [[TextDetailView alloc] initWithFrame:CGRectMake(0, 0, 200, 100) renderer:renderer renderingQueue:renderingQueue];
+        detailView.backgroundColor = [UIColor greenColor];
+        [self addSubview:detailView];
+    }
+    tapPoint.x -= textInsets.left;
+    tapPoint.y -= textInsets.top;
+    [detailView detailTextAtPoint:tapPoint magnification:2];
+    [self setNeedsLayout];
 }
 
 @end
