@@ -1198,7 +1198,7 @@ static void init(ECCodeView *self)
             CGPoint offset = self.contentOffset;
             CGRect fromRect = (CGRect){ { tapPoint.x, CGRectGetMaxY(cursor) - offset.y }, cursor.size };
             [detailPopover presentPopoverFromRect:fromRect inView:self permittedArrowDirections:UIPopoverArrowDirectionDown animated:animatePopover];
-            
+
             // Scrolling up
             CGFloat topScroll = 50 - tapPoint.y + offset.y;
             if (topScroll > 0)

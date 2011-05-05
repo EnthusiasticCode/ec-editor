@@ -664,6 +664,7 @@
             {
                 CGFloat offset = CTLineGetOffsetForStringIndex(line, segmentRelativeStringRange.location, NULL);
                 lineBounds.origin.x = offset;
+                lineBounds.size.width -= offset;
             }
             
             // Query range end inside this line
