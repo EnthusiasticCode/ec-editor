@@ -164,8 +164,6 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
     {
         renderer = aRenderer;
         renderingQueue = queue;
-        
-        self.layer.borderWidth = 1;
     }
     return self;
 }
@@ -421,7 +419,12 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
         
         TextDetailView *detail = [[TextDetailView alloc] initWithFrame:CGRectMake(0, 0, 200, 40) renderer:renderer renderingQueue:renderingQueue];
         detail.backgroundColor = self.backgroundColor;
+        // TODO make this more efficient
+        detail.layer.cornerRadius = 3;
+        detail.layer.masksToBounds = YES;
+        
         detailPopover.popoverView.contentView = detail;
+        
         [detail release];
     }
 
@@ -1176,18 +1179,33 @@ static void init(ECCodeView *self)
             
         default:
         {
+            // Cursor position
             NSUInteger pos = [renderer closestStringLocationToPoint:textPoint withinStringRange:NSMakeRange(0, 0)];
             CGRect cursor = [renderer boundsForStringRange:(NSRange){pos, 0} limitToFirstLine:YES];
             textPoint.y = CGRectGetMidY(cursor);
             
+            // Create detail view magnified image
             TextDetailView *detailView = (TextDetailView *)self.detailPopover.popoverView.contentView;
             [detailView detailTextAtPoint:textPoint magnification:2];
             
-            CGRect fromRect = (CGRect){ { tapPoint.x, CGRectGetMaxY(cursor) }, cursor.size };
+            // Display popover
+            CGPoint offset = self.contentOffset;
+            CGRect fromRect = (CGRect){ { tapPoint.x, CGRectGetMaxY(cursor) - offset.y }, cursor.size };
             [detailPopover presentPopoverFromRect:fromRect inView:self permittedArrowDirections:UIPopoverArrowDirectionDown animated:animatePopover];
+            
+            // Scrolling up
+            tapPoint = [recognizer locationInView:nil];
+            CGFloat topScroll = 100 - tapPoint.y;
+            if (topScroll > 0) 
+            {
+                offset.y -= topScroll;
+                [self scrollRectToVisible:(CGRect){ {0, offset.y }, {1, 1} } animated:NO];
+                [self performSelector:@selector(handleGestureLongPress:) withObject:recognizer afterDelay:0.1];
+            }
+            
+            // TODO scrolling down
         }
     }
-    
 }
 
 @end
