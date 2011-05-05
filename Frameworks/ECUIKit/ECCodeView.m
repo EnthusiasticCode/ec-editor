@@ -239,7 +239,7 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
 {
     parentSize = [UIScreen mainScreen].bounds.size;
     normalWidth = 11;
-    navigatorInsets = UIEdgeInsetsMake(2, 2, 2, 2);
+    navigatorInsets = UIEdgeInsetsMake(5, 5, 5, 0);
     
     frame.origin.x += frame.size.width - normalWidth;
     frame.size.width = normalWidth;
@@ -321,6 +321,8 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
         [self updateNavigator];
         CGFloat height = (navigatorView.contentSize.height - navigatorView.bounds.size.height);
         navigatorView.contentOffset = CGPointMake(0, height > 0 ? parentContentOffsetRatio * height : 0);
+        // TODO make this more effcient (like 4 subviews at corners)
+        navigatorView.layer.cornerRadius = 3;
     }
     
     if (visible)
