@@ -22,10 +22,7 @@
 #pragma mark -
 
 @interface ECCodeView () {
-@private
-    // Details
-    TextDetailView *detailView;
-    
+@private    
     // Navigator
     CodeInfoView *infoView;
     
@@ -192,14 +189,20 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
 
 - (void)detailTextAtPoint:(CGPoint)point magnification:(CGFloat)magnification
 {
+    // Generate required text rect
     CGRect textRect = (CGRect){ point, self.bounds.size };
-    
     textRect.size.width /= magnification;
     textRect.size.height /= magnification;
-    
     textRect.origin.x -= (textRect.size.width / 2);
     textRect.origin.y -= (textRect.size.height / 2);
     
+    // Check to be contained in text bounds
+    if (textRect.origin.x < 0)
+        textRect.origin.x = 0;
+    else if (CGRectGetMaxX(textRect) > renderer.wrapWidth)
+        textRect.origin.x = renderer.wrapWidth - textRect.size.width;
+    
+    // Render magnified image
     [renderingQueue addOperationWithBlock:^(void) {
         UIGraphicsBeginImageContext(self.bounds.size);
         // Prepare magnified context
@@ -391,6 +394,7 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
 @synthesize infoViewVisible;
 @synthesize navigatorBackgroundColor;
 @synthesize navigatorWidth;
+@synthesize detailPopover;
 
 - (void)setFrame:(CGRect)frame
 {
@@ -405,6 +409,23 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
     [super setContentSize:contentSize];
     
     [infoView updateNavigator];
+}
+
+- (ECPopoverController *)detailPopover
+{
+    if (!detailPopover)
+    {
+        detailPopover = [[ECPopoverController alloc] initWithContentViewController:nil];
+        detailPopover.automaticDismiss = NO;
+        [detailPopover setPopoverContentSize:(CGSize){200, 40} animated:NO];
+        
+        TextDetailView *detail = [[TextDetailView alloc] initWithFrame:CGRectMake(0, 0, 200, 40) renderer:renderer renderingQueue:renderingQueue];
+        detail.backgroundColor = self.backgroundColor;
+        detailPopover.popoverView.contentView = detail;
+        [detail release];
+    }
+
+    return detailPopover;
 }
 
 #pragma mark NSObject Methods
@@ -455,8 +476,8 @@ static void init(ECCodeView *self)
 - (void)dealloc
 {
     [navigatorBackgroundColor release];
-    [detailView release];
     [infoView release];
+    [detailPopover release];
     [super dealloc];
 }
 
@@ -1140,29 +1161,31 @@ static void init(ECCodeView *self)
     CGPoint textPoint = tapPoint;
     textPoint.x -= textInsets.left;
     textPoint.y -= textInsets.top;
+    
+    BOOL animatePopover = NO;
+    
     switch (recognizer.state)
     {
         case UIGestureRecognizerStateEnded:
         case UIGestureRecognizerStateCancelled:
-            [detailView removeFromSuperview];
+            [detailPopover dismissPopoverAnimated:YES];
             break;
             
         case UIGestureRecognizerStateBegan:
-            if (!detailView) 
-            {
-                detailView = [[TextDetailView alloc] initWithFrame:CGRectMake(0, 0, 200, 100) renderer:renderer renderingQueue:renderingQueue];
-                detailView.backgroundColor = self.backgroundColor;
-            }
-            [self addSubview:detailView];
+            animatePopover = YES;
             
         default:
-            {
-                NSUInteger pos = [renderer closestStringLocationToPoint:textPoint withinStringRange:NSMakeRange(0, 0)];
-                CGRect cursor = [renderer boundsForStringRange:(NSRange){pos, 0} limitToFirstLine:YES];
-                textPoint.y = CGRectGetMidY(cursor);
-            }            
-            detailView.center = CGPointMake(tapPoint.x, tapPoint.y - detailView.bounds.size.height);
+        {
+            NSUInteger pos = [renderer closestStringLocationToPoint:textPoint withinStringRange:NSMakeRange(0, 0)];
+            CGRect cursor = [renderer boundsForStringRange:(NSRange){pos, 0} limitToFirstLine:YES];
+            textPoint.y = CGRectGetMidY(cursor);
+            
+            TextDetailView *detailView = (TextDetailView *)self.detailPopover.popoverView.contentView;
             [detailView detailTextAtPoint:textPoint magnification:2];
+            
+            CGRect fromRect = (CGRect){ { tapPoint.x, CGRectGetMaxY(cursor) }, cursor.size };
+            [detailPopover presentPopoverFromRect:fromRect inView:self permittedArrowDirections:UIPopoverArrowDirectionDown animated:animatePopover];
+        }
     }
     
 }

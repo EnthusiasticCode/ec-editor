@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "ECCodeViewBase.h"
+#import "ECPopoverController.h"
 
 @interface ECCodeView : ECCodeViewBase <UIKeyInput, UITextInputTraits, UITextInput>
 
@@ -18,6 +19,10 @@
 @property (nonatomic, retain) UIColor *navigatorBackgroundColor;
 
 @property (nonatomic, getter = isNavigatorVisible) BOOL navigatorVisible;
+
+#pragma mark Detail Looking glass
+
+@property (nonatomic, readonly) ECPopoverController *detailPopover;
 
 #pragma mark UITextInput Properties
 
