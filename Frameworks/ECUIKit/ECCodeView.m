@@ -36,6 +36,7 @@
     // Recognizers
     UITapGestureRecognizer *focusRecognizer;
     UITapGestureRecognizer *tapRecognizer;
+    UILongPressGestureRecognizer *longPressRecognizer;
 }
 
 /// Specify if the info view containing search marks and navigator should be visible.
@@ -56,6 +57,7 @@
 // Gestures handlers
 - (void)handleGestureFocus:(UITapGestureRecognizer *)recognizer;
 - (void)handleGestureTap:(UITapGestureRecognizer *)recognizer;
+- (void)handleGestureLongPress:(UILongPressGestureRecognizer *)recognizer;
 
 @end
 
@@ -165,6 +167,8 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
     {
         renderer = aRenderer;
         renderingQueue = queue;
+        
+        self.layer.borderWidth = 1;
     }
     return self;
 }
@@ -188,24 +192,18 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
 
 - (void)detailTextAtPoint:(CGPoint)point magnification:(CGFloat)magnification
 {
-    CGRect textRect = self.bounds;
+    CGRect textRect = (CGRect){ point, self.bounds.size };
     
     textRect.size.width /= magnification;
     textRect.size.height /= magnification;
     
-    textRect.origin.x = point.x - (textRect.size.width / 2);
-    textRect.origin.y = point.y - (textRect.size.height / 2);
-        
-    CGRect limitRect = (CGRect){ CGPointZero, { renderer.wrapWidth, renderer.estimatedHeight } };
-    if(!CGRectContainsRect(limitRect, textRect))
-    {
-        // TODO adjust textrect
-    }
+    textRect.origin.x -= (textRect.size.width / 2);
+    textRect.origin.y -= (textRect.size.height / 2);
     
     [renderingQueue addOperationWithBlock:^(void) {
         UIGraphicsBeginImageContext(self.bounds.size);
         // Prepare magnified context
-        CGContextRef imageContext = UIGraphicsGetCurrentContext();
+        CGContextRef imageContext = UIGraphicsGetCurrentContext();        
         CGContextScaleCTM(imageContext, magnification, magnification);
         CGContextTranslateCTM(imageContext, -textRect.origin.x, 0);
         // Render text
@@ -478,12 +476,6 @@ static void init(ECCodeView *self)
     }
     
     [super layoutSubviews];
-    
-    if (detailView) 
-    {
-        [self bringSubviewToFront:detailView];
-        detailView.center = CGPointMake(100, 100);
-    }
 }
 
 #pragma mark -
@@ -568,6 +560,10 @@ static void init(ECCodeView *self)
         [self addGestureRecognizer:tapRecognizer];
         [tapRecognizer release];
         
+        longPressRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleGestureLongPress:)];
+        [self addGestureRecognizer:longPressRecognizer];
+        [longPressRecognizer release];
+        
         // TODO initialize gesture recognizers
     }
     
@@ -576,6 +572,7 @@ static void init(ECCodeView *self)
     {
         focusRecognizer.enabled = NO;
         tapRecognizer.enabled = YES;
+        longPressRecognizer.enabled = YES;
         //        doubleTapRecognizer.enabled = YES;
         //        tapHoldRecognizer.enabled = YES;
     }
@@ -593,6 +590,7 @@ static void init(ECCodeView *self)
     {
         focusRecognizer.enabled = YES;
         tapRecognizer.enabled = NO;
+        longPressRecognizer.enabled = NO;
         //        doubleTapRecognizer.enabled = NO;
         //        tapHoldRecognizer.enabled = NO;
         
@@ -1133,18 +1131,40 @@ static void init(ECCodeView *self)
 {
     CGPoint tapPoint = [recognizer locationInView:self];
     [self setSelectedTextFromPoint:tapPoint toPoint:tapPoint];
-    
-    // DEBUG
-    if (!detailView) 
+
+}
+
+- (void)handleGestureLongPress:(UILongPressGestureRecognizer *)recognizer
+{
+    CGPoint tapPoint = [recognizer locationInView:self];
+    CGPoint textPoint = tapPoint;
+    textPoint.x -= textInsets.left;
+    textPoint.y -= textInsets.top;
+    switch (recognizer.state)
     {
-        detailView = [[TextDetailView alloc] initWithFrame:CGRectMake(0, 0, 200, 100) renderer:renderer renderingQueue:renderingQueue];
-        detailView.backgroundColor = [UIColor greenColor];
-        [self addSubview:detailView];
+        case UIGestureRecognizerStateEnded:
+        case UIGestureRecognizerStateCancelled:
+            [detailView removeFromSuperview];
+            break;
+            
+        case UIGestureRecognizerStateBegan:
+            if (!detailView) 
+            {
+                detailView = [[TextDetailView alloc] initWithFrame:CGRectMake(0, 0, 200, 100) renderer:renderer renderingQueue:renderingQueue];
+                detailView.backgroundColor = self.backgroundColor;
+            }
+            [self addSubview:detailView];
+            
+        default:
+            {
+                NSUInteger pos = [renderer closestStringLocationToPoint:textPoint withinStringRange:NSMakeRange(0, 0)];
+                CGRect cursor = [renderer boundsForStringRange:(NSRange){pos, 0} limitToFirstLine:YES];
+                textPoint.y = CGRectGetMidY(cursor);
+            }            
+            detailView.center = CGPointMake(tapPoint.x, tapPoint.y - detailView.bounds.size.height);
+            [detailView detailTextAtPoint:textPoint magnification:2];
     }
-    tapPoint.x -= textInsets.left;
-    tapPoint.y -= textInsets.top;
-    [detailView detailTextAtPoint:tapPoint magnification:2];
-    [self setNeedsLayout];
+    
 }
 
 @end
