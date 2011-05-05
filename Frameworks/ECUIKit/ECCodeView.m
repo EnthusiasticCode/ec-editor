@@ -1179,6 +1179,12 @@ static void init(ECCodeView *self)
             
         default:
         {
+            if (CGPointEqualToPoint(tapPoint, CGPointZero)) 
+            {
+                [detailPopover dismissPopoverAnimated:YES];
+                return;
+            }
+            
             // Cursor position
             NSUInteger pos = [renderer closestStringLocationToPoint:textPoint withinStringRange:NSMakeRange(0, 0)];
             CGRect cursor = [renderer boundsForStringRange:(NSRange){pos, 0} limitToFirstLine:YES];
@@ -1194,9 +1200,8 @@ static void init(ECCodeView *self)
             [detailPopover presentPopoverFromRect:fromRect inView:self permittedArrowDirections:UIPopoverArrowDirectionDown animated:animatePopover];
             
             // Scrolling up
-            tapPoint = [recognizer locationInView:nil];
-            CGFloat topScroll = 100 - tapPoint.y;
-            if (topScroll > 0) 
+            CGFloat topScroll = 50 - tapPoint.y + offset.y;
+            if (topScroll > 0)
             {
                 offset.y -= topScroll;
                 [self scrollRectToVisible:(CGRect){ {0, offset.y }, {1, 1} } animated:NO];

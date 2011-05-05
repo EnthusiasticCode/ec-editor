@@ -180,8 +180,8 @@ static void preinit(ECPopoverController *self)
 
 - (void)presentPopoverFromRect:(CGRect)rect inView:(UIView *)view permittedArrowDirections:(UIPopoverArrowDirection)arrowDirections animated:(BOOL)animated
 {
-    UIWindow *viewWindow = view.window;
-    CGRect allowedRect = viewWindow.bounds;
+    UIView *rootView = view.window.rootViewController.view;
+    CGRect allowedRect = rootView.bounds;
     // Removing status bar anyway
     allowedRect.origin.y += 20;
     allowedRect.size.height -= 20;
@@ -190,15 +190,13 @@ static void preinit(ECPopoverController *self)
     // Inset to give a little margin
     allowedRect = CGRectInset(allowedRect, 5, 5);
     // Transform to view's space
-    rect = [viewWindow convertRect:rect fromView:view];
     UIView *v = view;
     CGPoint viewOriging;
     do {
         viewOriging = v.frame.origin;
         rect.origin.x += viewOriging.x;
         rect.origin.y += viewOriging.y;
-    } while ((v = v.superview));
-
+    } while ((v = v.superview) && v != rootView);
     
     // Point where the arrow should point
     CGPoint arrowPoint = CGPointMake(CGRectGetMidX(rect), CGRectGetMidY(rect));
@@ -218,7 +216,7 @@ static void preinit(ECPopoverController *self)
             [self presentPopoverInView:view WithFrame:resultFrame animated:animated];
             return;
         }
-        else
+        else if (CGRectIsNull(backupFrame))
         {
             popoverView.arrowDirection = UIPopoverArrowDirectionDown;
             popoverView.arrowPosition = arrowPoint.x - resultFrame.origin.x;
@@ -327,8 +325,8 @@ static void preinit(ECPopoverController *self)
 #pragma mark Private Methods
 
 - (void)presentPopoverInView:(UIView *)view WithFrame:(CGRect)frame animated:(BOOL)animated
-{    
-    [view.window addSubview:popoverView];
+{
+    [view.window.rootViewController.view addSubview:popoverView];
     popoverView.frame = frame;
     if (animated)
     {
@@ -374,7 +372,8 @@ static void preinit(ECPopoverController *self)
 
 - (void)keyboardShown:(NSNotification *)aNotification
 {
-    keyboardHeight = [[[aNotification userInfo] objectForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue].size.height;
+    CGRect keyboardFrame = [[[aNotification userInfo] objectForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue];
+    keyboardHeight = abs(keyboardFrame.origin.x) > abs(keyboardFrame.origin.y) ? keyboardFrame.size.width : keyboardFrame.size.height;
 }
 
 - (void)keyboardHidden:(NSNotification *)aNotification
