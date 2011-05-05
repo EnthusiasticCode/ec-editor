@@ -327,7 +327,9 @@ static void preinit(ECPopoverController *self)
 - (void)presentPopoverInView:(UIView *)view WithFrame:(CGRect)frame animated:(BOOL)animated
 {
     [view.window.rootViewController.view addSubview:popoverView];
-    popoverView.frame = CGRectIntegral(frame);
+    frame.origin.x = roundf(frame.origin.x);
+    frame.origin.y = roundf(frame.origin.y);
+    popoverView.frame = frame;
     if (animated)
     {
         popoverView.layer.shouldRasterize = YES;

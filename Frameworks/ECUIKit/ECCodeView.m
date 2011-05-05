@@ -79,7 +79,9 @@
 
 - (id)initWithFrame:(CGRect)frame renderer:(ECTextRenderer *)aRenderer renderingQueue:(NSOperationQueue *)queue;
 
-- (void)detailTextAtPoint:(CGPoint)point magnification:(CGFloat)magnification;
+- (void)detailTextAtPoint:(CGPoint)point 
+            magnification:(CGFloat)magnification 
+   additionalDrawingBlock:(void(^)(CGContextRef context, CGPoint textOffset))block;
 
 @end
 
@@ -185,7 +187,7 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
     }
 }
 
-- (void)detailTextAtPoint:(CGPoint)point magnification:(CGFloat)magnification
+- (void)detailTextAtPoint:(CGPoint)point magnification:(CGFloat)magnification additionalDrawingBlock:(void(^)(CGContextRef, CGPoint))block
 {
     // Generate required text rect
     CGRect textRect = (CGRect){ point, self.bounds.size };
@@ -195,10 +197,10 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
     textRect.origin.y -= (textRect.size.height / 2);
     
     // Check to be contained in text bounds
-    if (textRect.origin.x < 0)
-        textRect.origin.x = 0;
-    else if (CGRectGetMaxX(textRect) > renderer.wrapWidth)
-        textRect.origin.x = renderer.wrapWidth - textRect.size.width;
+    if (textRect.origin.x < -10)
+        textRect.origin.x = -10;
+    else if (CGRectGetMaxX(textRect) > renderer.wrapWidth + 10)
+        textRect.origin.x = renderer.wrapWidth - textRect.size.width + 10;
     
     // Render magnified image
     [renderingQueue addOperationWithBlock:^(void) {
@@ -208,7 +210,12 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
         CGContextScaleCTM(imageContext, magnification, magnification);
         CGContextTranslateCTM(imageContext, -textRect.origin.x, 0);
         // Render text
+        CGContextSaveGState(imageContext);
         [renderer drawTextWithinRect:textRect inContext:imageContext];
+        CGContextRestoreGState(imageContext);
+        // Render additional drawings
+        if (block)
+            block(imageContext, textRect.origin);
         // Get result image
         @synchronized(detailImage)
         {
@@ -1028,7 +1035,7 @@ static void init(ECCodeView *self)
     carretRect.origin.y += textInsets.top;
     
     carretRect.origin.x -= 1.0;
-    carretRect.size.width = 2.0;
+    carretRect.size.width = 1.0;
     
     CGFloat scale = self.contentScaleFactor;
     if (scale != 1.0) 
@@ -1161,15 +1168,13 @@ static void init(ECCodeView *self)
 - (void)handleGestureLongPress:(UILongPressGestureRecognizer *)recognizer
 {
     CGPoint tapPoint = [recognizer locationInView:self];
-    CGPoint textPoint = tapPoint;
-    textPoint.x -= textInsets.left;
-    textPoint.y -= textInsets.top;
     
     BOOL animatePopover = NO;
     
     switch (recognizer.state)
     {
         case UIGestureRecognizerStateEnded:
+            [self setSelectedTextFromPoint:tapPoint toPoint:tapPoint];
         case UIGestureRecognizerStateCancelled:
             [detailPopover dismissPopoverAnimated:YES];
             break;
@@ -1181,22 +1186,35 @@ static void init(ECCodeView *self)
         {
             if (CGPointEqualToPoint(tapPoint, CGPointZero)) 
             {
+                [self setSelectedTextFromPoint:tapPoint toPoint:tapPoint];
                 [detailPopover dismissPopoverAnimated:YES];
                 return;
             }
             
-            // Cursor position
+            // Set selection
+            CGPoint textPoint = tapPoint;
+            textPoint.x -= textInsets.left;
+            textPoint.y -= textInsets.top;
             NSUInteger pos = [renderer closestStringLocationToPoint:textPoint withinStringRange:NSMakeRange(0, 0)];
-            CGRect cursor = [renderer boundsForStringRange:(NSRange){pos, 0} limitToFirstLine:YES];
-            textPoint.y = CGRectGetMidY(cursor);
+            selectionView.selection = (NSRange){pos, 0};
+            CGRect caretRect = [self caretRectForPosition:selectionView.selectionPosition];
+            selectionView.frame = caretRect;
+            selectionView.hidden = NO;
+            textPoint.y = caretRect.origin.y - textInsets.top + (caretRect.size.height / 2);
             
             // Create detail view magnified image
             TextDetailView *detailView = (TextDetailView *)self.detailPopover.popoverView.contentView;
-            [detailView detailTextAtPoint:textPoint magnification:2];
+            [detailView detailTextAtPoint:textPoint magnification:2 additionalDrawingBlock:^(CGContextRef context, CGPoint offset) {
+                CGRect detailCaretRect = caretRect;
+                detailCaretRect.origin.x -= textInsets.left;
+                detailCaretRect.origin.y -= offset.y + textInsets.top;
+                [selectionView.backgroundColor setFill];
+                UIRectFill(detailCaretRect);
+            }];
             
             // Display popover
             CGPoint offset = self.contentOffset;
-            CGRect fromRect = (CGRect){ { tapPoint.x, CGRectGetMaxY(cursor) - offset.y }, cursor.size };
+            CGRect fromRect = (CGRect){ { tapPoint.x, caretRect.origin.y - offset.y }, caretRect.size };
             [detailPopover presentPopoverFromRect:fromRect inView:self permittedArrowDirections:UIPopoverArrowDirectionDown animated:animatePopover];
 
             // Scrolling up
