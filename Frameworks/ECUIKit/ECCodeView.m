@@ -316,7 +316,7 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
         navigatorView = [[ECCodeViewBase alloc] initWithFrame:frame renderer:renderer renderingQueue:renderingQueue];
         navigatorView.datasource = datasource;
         navigatorView.contentScaleFactor = (navigatorWidth - navigatorInsets.left - navigatorInsets.right) / parentSize.width;
-        navigatorView.backgroundColor = navigatorBackgroundColor;
+        navigatorView.backgroundColor = [UIColor whiteColor];
         navigatorView.scrollEnabled = NO;
         [self updateNavigator];
         CGFloat height = (navigatorView.contentSize.height - navigatorView.bounds.size.height);
@@ -333,6 +333,7 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
         navigatorView.alpha = 0;
         [UIView animateWithDuration:0.25 delay:0 options:(UIViewAnimationOptionAllowUserInteraction | UIViewAnimationOptionBeginFromCurrentState | UIViewAnimationOptionCurveEaseInOut) animations:^(void) {
             self.backgroundColor = visible ? navigatorBackgroundColor : [UIColor clearColor];
+            navigatorView.alpha = visible;
         } completion:^(BOOL finished) {
             if (finished)
             {
@@ -340,10 +341,6 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
                 {
                     navigatorVisible = NO;
                     [navigatorView removeFromSuperview];
-                }
-                else
-                {
-                    navigatorView.alpha = 1;
                 }
             }
         }];
@@ -414,7 +411,7 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
 
 static void preinit(ECCodeView *self)
 {
-    self->navigatorBackgroundColor = [[UIColor styleBackgroundColor] retain];
+    self->navigatorBackgroundColor = [[UIColor styleForegroundColor] retain];
     self->navigatorWidth = 200;
 }
 
