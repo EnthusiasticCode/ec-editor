@@ -64,9 +64,9 @@ typedef const NSString *ECItemViewElementKey;
 
 #pragma mark Moving/Reordering
 
-/// Move the item from the source index path to the destination index path.
+/// Move the items from the source index paths to the destination index path.
 /// Requires the data source to also implement -itemView:insertGroupAtIndexPath: and -itemView:deleteGroupAtIndexPath:.
-- (void)itemView:(ECItemView *)itemView moveItemAtIndexPath:(NSIndexPath *)sourceIndexPath toIndexPath:(NSIndexPath *)destinationIndexPath;
+- (void)itemView:(ECItemView *)itemView moveItemsAtIndexPaths:(NSArray *)indexPaths toIndexPath:(NSIndexPath *)indexPath;
 
 /// Insert a new group at the given index path.
 - (void)itemView:(ECItemView *)itemView insertGroupAtIndexPath:(NSIndexPath *)indexPath;
@@ -74,11 +74,11 @@ typedef const NSString *ECItemViewElementKey;
 /// Delete the group at the given index path.
 - (void)itemView:(ECItemView *)itemView deleteGroupAtIndexPath:(NSIndexPath *)indexPath;
 
-/// Move the group at the source index path to the destination index path.
-- (void)itemView:(ECItemView *)itemView moveGroupAtIndexPath:(NSIndexPath *)sourceIndexPath toIndexPath:(NSIndexPath *)destinationIndexPath;
+/// Move the groups at the source index paths to the destination index path.
+- (void)itemView:(ECItemView *)itemView moveGroupsAtIndexPaths:(NSArray *)indexPaths toIndexPath:(NSIndexPath *)indexPath;
 
-/// Move the area at the source index to the destination index.
-- (void)itemView:(ECItemView *)itemView moveAreaAtIndex:(NSUInteger)sourceIndex toIndex:(NSUInteger)destinationIndex;
+/// Move the areas at the source index paths to the destination index paths.
+- (void)itemView:(ECItemView *)itemView moveAreasAtIndexPaths:(NSArray *)indexPaths toIndexPath:(NSIndexPath *)indexPath;
 
 @end
 
@@ -156,6 +156,10 @@ typedef const NSString *ECItemViewElementKey;
 - (void)insertItemsAtIndexPaths:(NSArray *)indexPaths;
 - (void)deleteItemsAtIndexPaths:(NSArray *)indexPaths;
 - (void)reloadItemsAtIndexPaths:(NSArray *)indexPaths;
+
+- (void)moveAreasAtIndexPaths:(NSArray *)indexPaths toIndexPath:(NSIndexPath *)indexPath;
+- (void)moveGroupsAtIndexPaths:(NSArray *)indexPaths toIndexPath:(NSIndexPath *)indexPath;
+- (void)moveItemsAtIndexPaths:(NSArray *)indexPaths toIndexPath:(NSIndexPath *)indexPath;
 
 #pragma mark Selection
 - (NSIndexPath *)indexPathForSelectedItem;

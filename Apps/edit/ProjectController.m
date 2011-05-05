@@ -168,10 +168,12 @@
     return file;
 }
 
-- (void)itemView:(ECItemView *)itemView moveItemAtIndexPath:(NSIndexPath *)sourceIndexPath toIndexPath:(NSIndexPath *)destinationIndexPath
+- (void)itemView:(ECItemView *)itemView moveItemsAtIndexPaths:(NSArray *)indexPaths toIndexPath:(NSIndexPath *)indexPath
 {
-    id item = [[[self groupAtIndexPath:sourceIndexPath] orderedItems] objectAtIndex:sourceIndexPath.item];
-    [[[self groupAtIndexPath:destinationIndexPath] orderedItems] insertObject:item atIndex:destinationIndexPath.item];
+    NSMutableArray *items = [NSMutableArray array];
+    for (NSIndexPath *item in indexPaths)
+        [items addObject:[[[self groupAtIndexPath:item] orderedItems] objectAtIndex:item.item]];
+    [[[self groupAtIndexPath:indexPath] orderedItems] insertObjects:items atIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(indexPath.item, [items count])]];
 }
 
 - (void)itemView:(ECItemView *)itemView insertGroupAtIndexPath:(NSIndexPath *)indexPath
