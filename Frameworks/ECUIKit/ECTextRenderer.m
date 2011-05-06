@@ -814,6 +814,8 @@
             if (offset < 0 && -offset > position)
                 break;
             
+            // TODO may require moving visually with graphene clusters.
+            result = position + offset;
             break;
         }
 
