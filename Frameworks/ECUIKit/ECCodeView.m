@@ -33,6 +33,7 @@
     // Recognizers
     UITapGestureRecognizer *focusRecognizer;
     UITapGestureRecognizer *tapRecognizer;
+    UITapGestureRecognizer *doubleTapRecognizer;
     UILongPressGestureRecognizer *longPressRecognizer;
 }
 
@@ -54,6 +55,7 @@
 // Gestures handlers
 - (void)handleGestureFocus:(UITapGestureRecognizer *)recognizer;
 - (void)handleGestureTap:(UITapGestureRecognizer *)recognizer;
+- (void)handleGestureDoubleTap:(UITapGestureRecognizer *)recognizer;
 - (void)handleGestureLongPress:(UILongPressGestureRecognizer *)recognizer;
 
 @end
@@ -62,7 +64,7 @@
 @interface TextSelectionView : UIView
 
 @property (nonatomic) NSRange selection;
-@property (nonatomic, readonly) ECTextRange *selectionRange;
+@property (nonatomic, assign) ECTextRange *selectionRange;
 @property (nonatomic, readonly) ECTextPosition *selectionPosition;
 
 @end
@@ -146,6 +148,11 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
 - (ECTextRange *)selectionRange
 {
     return [[[ECTextRange alloc] initWithRange:selection] autorelease];
+}
+
+- (void)setSelectionRange:(ECTextRange *)selectionRange
+{
+    selection = [selectionRange range];
 }
 
 - (ECTextPosition *)selectionPosition
@@ -591,6 +598,11 @@ static void init(ECCodeView *self)
         [self addGestureRecognizer:tapRecognizer];
         [tapRecognizer release];
         
+        doubleTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleGestureDoubleTap:)];
+        doubleTapRecognizer.numberOfTapsRequired = 2;
+        [self addGestureRecognizer:doubleTapRecognizer];
+        [doubleTapRecognizer release];
+        
         longPressRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleGestureLongPress:)];
         [self addGestureRecognizer:longPressRecognizer];
         [longPressRecognizer release];
@@ -603,9 +615,8 @@ static void init(ECCodeView *self)
     {
         focusRecognizer.enabled = NO;
         tapRecognizer.enabled = YES;
+        doubleTapRecognizer.enabled = YES;
         longPressRecognizer.enabled = YES;
-        //        doubleTapRecognizer.enabled = YES;
-        //        tapHoldRecognizer.enabled = YES;
     }
     
     [self setNeedsLayout];
@@ -621,11 +632,11 @@ static void init(ECCodeView *self)
     {
         focusRecognizer.enabled = YES;
         tapRecognizer.enabled = NO;
+        doubleTapRecognizer.enabled = NO;
         longPressRecognizer.enabled = NO;
-        //        doubleTapRecognizer.enabled = NO;
-        //        tapHoldRecognizer.enabled = NO;
         
-        // TODO remove thumbs
+        // Remove selection
+        selectionView.hidden = YES;
     }
     
     [self setNeedsLayout];
@@ -876,85 +887,36 @@ static void init(ECCodeView *self)
                              inDirection:(UITextLayoutDirection)direction 
                                   offset:(NSInteger)offset
 {
-//    if (offset == 0)
-//        return position;
-//    
-//    NSUInteger pos = [(ECTextPosition *)position index];
-//    NSUInteger result;
-//    
-//    if (direction == UITextStorageDirectionForward || direction == UITextStorageDirectionBackward) 
-//    {
-//        if (direction == UITextStorageDirectionBackward)
-//            offset = -offset;
-//        
-//        if (offset < 0 && (NSUInteger)(-offset) >= pos)
-//            result = 0;
-//        else
-//            result = pos + offset;
-//    } 
-//    else if (direction == UITextLayoutDirectionLeft || direction == UITextLayoutDirectionRight) 
-//    {
-//        if (direction == UITextLayoutDirectionLeft)
-//            offset = -offset;
-//        
-//        // TODO should move considering typography characters
-//        if (offset < 0 && (NSUInteger)(-offset) >= pos)
-//            result = 0;
-//        else
-//            result = pos + offset;
-//    } 
-//    else if (direction == UITextLayoutDirectionUp || direction == UITextLayoutDirectionDown) 
-//    {
-////        if (direction == UITextLayoutDirectionUp)
-////            offset = -offset;
-//
-//        // TODO!!! chech if make sense
-////        CGFloat frameOffset;
-////        CTFrameRef frame = [self frameContainingTextIndex:pos frameOffset:&frameOffset];
-////        
-////        CFArrayRef lines = CTFrameGetLines(frame);
-////        CFIndex lineCount = CFArrayGetCount(lines);
-////        CFIndex lineIndex = ECCTFrameGetLineContainingStringIndex(frame, pos, (CFRange){0, lineCount}, NULL);
-////        CFIndex newIndex = lineIndex + offset;
-////        CTLineRef line = CFArrayGetValueAtIndex(lines, lineIndex);
-////        
-////        if (newIndex < 0 || newIndex >= lineCount)
-////            return nil;
-////        
-////        if (newIndex == lineIndex)
-////            return position;
-////        
-////        CGFloat xPosn = CTLineGetOffsetForStringIndex(line, pos, NULL) + frameOffset;
-////        CGPoint origins[1];
-////        CTFrameGetLineOrigins(frame, (CFRange){lineIndex, 1}, origins);
-////        xPosn = xPosn + origins[0].x; // X-coordinate in layout space
-////        
-////        CTFrameGetLineOrigins(frame, (CFRange){newIndex, 1}, origins);
-////        xPosn = xPosn - origins[0].x; // X-coordinate in new line's local coordinates
-////        
-////        CFIndex newStringIndex = CTLineGetStringIndexForPosition(CFArrayGetValueAtIndex(lines, newIndex), (CGPoint){xPosn, 0});
-////        
-////        if (newStringIndex == kCFNotFound)
-////            return nil;
-////        
-////        if(newStringIndex < 0)
-////            newStringIndex = 0;
-////        result = newStringIndex;
-//    } 
-//    else 
-//    {
-//        // Direction unimplemented
-//        return position;
-//    }
-//    
-////    NSUInteger textLength = [datasource textLength];
-////    if (result > textLength)
-////        result = textLength;
-//    
-//    ECTextPosition *resultPosition = [[[ECTextPosition alloc] initWithIndex:result] autorelease];
-//    
-//    return resultPosition;
-    return nil;
+    if (offset == 0)
+        return position;
+    
+    NSUInteger pos = [(ECTextPosition *)position index];
+    NSUInteger result;
+    
+    if (direction == UITextStorageDirectionForward || direction == UITextStorageDirectionBackward) 
+    {
+        if (direction == UITextStorageDirectionBackward)
+            offset = -offset;
+        
+        if (offset < 0 && (NSUInteger)(-offset) >= pos)
+            result = 0;
+        else
+            result = pos + offset;
+    } 
+    else
+    {
+        result = [renderer positionFromPosition:pos inLayoutDirection:direction offset:offset];
+        if (result == NSUIntegerMax)
+            return nil;
+    }
+    
+    NSUInteger textLength = [datasource textLength];
+    if (result > textLength)
+        result = textLength;
+    
+    ECTextPosition *resultPosition = [[[ECTextPosition alloc] initWithIndex:result] autorelease];
+    
+    return resultPosition;
 }
 
 - (UITextPosition *)beginningOfDocument
@@ -1119,10 +1081,18 @@ static void init(ECCodeView *self)
     
     // Position selection view
     // TODO multiselection
-    if ([self isFirstResponder] && selectionView.selection.length == 0)
+    if ([self isFirstResponder])
     {
-        CGRect caretRect = [self caretRectForPosition:selectionView.selectionPosition];
-        selectionView.frame = caretRect;
+        CGRect selectionRect = CGRectNull;
+        if (selectionView.selection.length == 0) 
+        {
+            selectionRect = [self caretRectForPosition:selectionView.selectionPosition];
+        }
+        else
+        {
+            selectionRect = [renderer boundsForStringRange:newSelection limitToFirstLine:NO];
+        }
+        selectionView.frame = selectionRect;
         selectionView.hidden = NO;
         [self bringSubviewToFront:selectionView];
     }
@@ -1162,7 +1132,13 @@ static void init(ECCodeView *self)
 {
     CGPoint tapPoint = [recognizer locationInView:self];
     [self setSelectedTextFromPoint:tapPoint toPoint:tapPoint];
+}
 
+- (void)handleGestureDoubleTap:(UITapGestureRecognizer *)recognizer
+{
+    CGPoint tapPoint = [recognizer locationInView:self];
+    ECTextRange *sel = (ECTextRange *)[self.tokenizer rangeEnclosingPosition:[self closestPositionToPoint:tapPoint] withGranularity:UITextGranularityWord inDirection:UITextLayoutDirectionLeft];
+    [self setSelectedTextRange:sel];
 }
 
 - (void)handleGestureLongPress:(UILongPressGestureRecognizer *)recognizer

@@ -87,4 +87,6 @@
 /// otherwhise it will be a bounding box of the union of lines interested by the range.
 - (CGRect)boundsForStringRange:(NSRange)range limitToFirstLine:(BOOL)limit;
 
+- (NSUInteger)positionFromPosition:(NSUInteger)position inLayoutDirection:(UITextLayoutDirection)direction offset:(NSInteger)offset;
+
 @end
