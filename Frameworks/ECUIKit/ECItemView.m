@@ -105,6 +105,7 @@ const NSString *kECItemViewItemKey = @"item";
 - (CGRect)_rectForGroupAtIndex:(NSUInteger)group inArea:(NSUInteger)area;
 - (CGRect)_rectForGroupSeparatorAtIndex:(NSUInteger)group inArea:(NSUInteger)area;
 - (CGRect)_rectForItemAtIndex:(NSUInteger)item inGroup:(NSUInteger)group inArea:(NSUInteger)area;
+- (CGRect)_rectForElement:(ECItemViewElement *)element;
 
 #pragma mark Index paths
 - (NSIndexPath *)_indexPathForFirstVisibleItem;
@@ -139,12 +140,8 @@ const NSString *kECItemViewItemKey = @"item";
 @synthesize dataSource = _dataSource;
 @synthesize itemHeight = _itemHeight;
 @synthesize itemsPerRow = _itemsPerRow;
-@synthesize itemInsets = _itemInsets;
-@synthesize groupInsets = _groupInsets;
 @synthesize groupSeparatorHeight = _groupSeparatorHeight;
-@synthesize groupSeparatorInsets = _groupSeparatorInsets;
 @synthesize areaHeaderHeight = _areaHeaderHeight;
-@synthesize areaHeaderInsets = _areaHeaderInsets;
 @synthesize allowsSelection = _allowsSelection;
 @synthesize multipleSelection = _multipleSelection;
 @synthesize editing = _isEditing;
@@ -209,12 +206,8 @@ const NSString *kECItemViewItemKey = @"item";
 {
     _itemHeight = 100.0;
     _itemsPerRow = 4;
-    _itemInsets = UIEdgeInsetsMake(20.0, 20.0, 20.0, 20.0);
-    _groupInsets = UIEdgeInsetsMake(10.0, 0.0, 10.0, 0.0);
     _groupSeparatorHeight = 30.0;
-    _groupSeparatorInsets = UIEdgeInsetsZero;
     _areaHeaderHeight = 60.0;
-    _areaHeaderInsets = UIEdgeInsetsMake(20.0, 10.0, 20.0, 10.0);
     _allowsSelection = YES;
     _multipleSelection = YES;
     _areas = [[NSMutableArray alloc] init];
@@ -226,7 +219,6 @@ const NSString *kECItemViewItemKey = @"item";
     _cachedGroupRectArea = NSUIntegerMax;
     _cachedGroupRectGroup = NSUIntegerMax;
     _visibleElements = [[ECMutableArrayTree alloc] init];
-    _visibleElements.offset = [NSIndexPath indexPathForItem:0 inGroup:0 inArea:0];
     _tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(_handleTapGesture:)];
     _tapGestureRecognizer.delegate = self;
     [self addGestureRecognizer:_tapGestureRecognizer];
@@ -361,20 +353,68 @@ const NSString *kECItemViewItemKey = @"item";
 - (void)_syncVisibleElements
 {
     NSIndexPath *firstIndexPath = [self _indexPathForFirstVisibleItem];
-    NSIndexPath *lastIndexPath = [self _indexPathForLastVisibleItem];
+//    NSIndexPath *lastIndexPath = [self _indexPathForLastVisibleItem];
+    if (!_visibleElements.offset)
+    {
+        NSUInteger numAreas = [self numberOfAreas];
+        for (NSUInteger i = 0; i < numAreas; ++i)
+        {
+            NSIndexPath *newAreaIndexPath = [NSIndexPath indexPathForArea:i];
+            ECMutableArrayTree *newArea = [[[ECMutableArrayTree alloc] init] autorelease];
+            newArea.object = [self _loadAreaHeaderAtIndexPath:newAreaIndexPath];
+            [_visibleElements.children insertObject:newArea atIndex:0];
+            [self addSubview:newArea.object];
+            NSUInteger numGroups = [self numberOfGroupsInAreaAtIndexPath:newAreaIndexPath];
+            for (NSUInteger j = 0; j < numGroups; ++j)
+            {
+                NSIndexPath *newGroupIndexPath = [NSIndexPath indexPathForPosition:j inArea:i];
+                ECMutableArrayTree *newGroup = [[[ECMutableArrayTree alloc] init] autorelease];
+                newGroup.object = [self _loadGroupSeparatorAtIndexPath:newGroupIndexPath];
+                [newArea.children addObject:newGroup];
+                [self addSubview:newGroup.object];
+                NSUInteger numItems = [self numberOfItemsInGroupAtIndexPath:newGroupIndexPath];
+                for (NSUInteger k = 0; k < numItems; ++k)
+                {
+                    NSIndexPath *newItemIndexPath = [NSIndexPath indexPathForItem:k inGroup:j inArea:i];
+                    ECMutableArrayTree *newItem = [[[ECMutableArrayTree alloc] init] autorelease];
+                    newItem.object = [self _loadItemAtIndexPath:newItemIndexPath];
+                    [newGroup.children addObject:newItem];
+                    [self addSubview:newItem.object];
+                }
+            }
+        }
+    }
+    
+        /*
     if (_visibleElements.offset.area < firstIndexPath.area)
         for (NSUInteger i = firstIndexPath.area - 1; i != _visibleElements.offset.area - 1; --i)
-            [_visibleElements removeObjectAtIndexPath:[NSIndexPath indexPathForArea:i]];
+            [_visibleElements.children removeObjectAtIndex:i];
     else if (firstIndexPath.area < _visibleElements.offset.area)
         for (NSUInteger i = _visibleElements.offset.area - 1; i != firstIndexPath.area - 1; --i)
         {
             NSIndexPath *newAreaIndexPath = [NSIndexPath indexPathForArea:i];
-            [_visibleElements insertObject:[self _loadAreaHeaderAtIndexPath:newAreaIndexPath] atIndexPath:[NSIndexPath indexPathForArea:0]];
+            ECMutableArrayTree *newArea = [[[ECMutableArrayTree alloc] init] autorelease];
+            newArea.object = [self _loadAreaHeaderAtIndexPath:newAreaIndexPath];
+            [_visibleElements.children insertObject:newArea atIndex:0];
             NSUInteger numGroups = [self numberOfGroupsInAreaAtIndexPath:newAreaIndexPath];
-            for (NSUInteger j = 
-        }
-    
-        
+            for (NSUInteger j = 0; j < numGroups; ++j)
+            {
+                NSIndexPath *newGroupIndexPath = [NSIndexPath indexPathForPosition:j inArea:i];
+                ECMutableArrayTree *newGroup = [[[ECMutableArrayTree alloc] init] autorelease];
+                newGroup.object = [self _loadGroupSeparatorAtIndexPath:newGroupIndexPath];
+                [newArea.children addObject:newGroup];
+                NSUInteger numItems = [self numberOfItemsInGroupAtIndexPath:newGroupIndexPath];
+                for (NSUInteger k = 0; k < numItems; ++k)
+                {
+                    NSIndexPath *newItemIndexPath = [NSIndexPath indexPathForItem:k inGroup:j inArea:i];
+                    ECMutableArrayTree *newItem = [[[ECMutableArrayTree alloc] init] autorelease];
+                    newItem.object = [self _loadItemAtIndexPath:newItemIndexPath];
+                    [newGroup.children addObject:newItem];
+                }
+            }
+        }*/
+    _visibleElements.offset = firstIndexPath;
+    // TODO: unload items too, also consider same area offset, different group and item offsets
 }
 
 #pragma mark -
@@ -443,7 +483,7 @@ const NSString *kECItemViewItemKey = @"item";
 - (CGRect)_rectForAreaHeaderAtIndex:(NSUInteger)area
 {
     CGRect areaRect = [self _rectForAreaAtIndex:area];
-    return CGRectMake(areaRect.origin.x, areaRect.origin.y, self.bounds.size.width - _areaHeaderInsets.left - _areaHeaderInsets.right, _areaHeaderHeight);
+    return CGRectMake(areaRect.origin.x, areaRect.origin.y, areaRect.size.width, _areaHeaderHeight);
 }
 
 - (CGRect)rectForAreaHeaderAtIndexPath:(NSIndexPath *)indexPath
@@ -453,11 +493,7 @@ const NSString *kECItemViewItemKey = @"item";
 
 - (CGFloat)_heightForGroupAtIndex:(NSUInteger)group inArea:(NSUInteger)area
 {
-    CGFloat height = 0;
-    height += [self _rowsInGroup:group inArea:area] * _itemHeight;
-    height += _groupInsets.top + _groupInsets.bottom;
-    height += _groupSeparatorHeight;
-    return height;
+    return [self _rowsInGroup:group inArea:area] * _itemHeight + _groupSeparatorHeight;
 }
 
 - (CGRect)_rectForGroupAtIndex:(NSUInteger)group inArea:(NSUInteger)area;
@@ -485,9 +521,9 @@ const NSString *kECItemViewItemKey = @"item";
 - (CGRect)_rectForGroupSeparatorAtIndex:(NSUInteger)group inArea:(NSUInteger)area
 {
     CGRect groupRect = [self _rectForGroupAtIndex:group inArea:area];
-    CGFloat x = groupRect.origin.x + _groupInsets.left;
-    CGFloat y = groupRect.origin.y + groupRect.size.height - _groupInsets.bottom;
-    CGFloat width = groupRect.size.width - _groupInsets.left - _groupInsets.right;
+    CGFloat x = groupRect.origin.x;
+    CGFloat y = groupRect.origin.y + groupRect.size.height;
+    CGFloat width = groupRect.size.width;
     CGFloat height;
     y -= _groupSeparatorHeight;
     height = _groupSeparatorHeight;
@@ -508,7 +544,7 @@ const NSString *kECItemViewItemKey = @"item";
     y = groupRect.origin.y;
     NSUInteger row = item / _itemsPerRow;
     NSUInteger column = item % _itemsPerRow;
-    CGFloat itemWidth = (groupRect.size.width - _groupInsets.left - _groupInsets.right) / (CGFloat)_itemsPerRow;
+    CGFloat itemWidth = groupRect.size.width / (CGFloat)_itemsPerRow;
     x += column * itemWidth;
     y += row * _itemHeight;
     return CGRectMake(x, y, itemWidth, _itemHeight);
@@ -517,6 +553,19 @@ const NSString *kECItemViewItemKey = @"item";
 - (CGRect)rectForItemAtIndexPath:(NSIndexPath *)indexPath
 {
     return [self _rectForItemAtIndex:indexPath.item inGroup:indexPath.group inArea:indexPath.area];
+}
+
+- (CGRect)_rectForElement:(ECItemViewElement *)element
+{
+    if (!element.type || !element.indexPath)
+        return CGRectZero;
+    if (element.type == kECItemViewAreaHeaderKey)
+        return [self rectForAreaHeaderAtIndexPath:element.indexPath];
+    if (element.type == kECItemViewGroupSeparatorKey)
+        return [self rectForGroupSeparatorAtIndexPath:element.indexPath];
+    if (element.type == kECItemViewItemKey)
+        return [self rectForItemAtIndexPath:element.indexPath];
+    return CGRectZero;
 }
 
 #pragma mark -
@@ -583,7 +632,7 @@ const NSString *kECItemViewItemKey = @"item";
 
 - (ECArrayTree *)visibleElements
 {
-    return [_visibleElements copy];
+    return [[_visibleElements copy] autorelease];
 }
 
 - (NSArray *)_indexPathsForVisibleAreas
@@ -1018,7 +1067,8 @@ const NSString *kECItemViewItemKey = @"item";
 
 - (void)_layoutElements
 {
-    !!!
+    for (ECItemViewElement *element in [_visibleElements allObjects])
+        element.frame = [self _rectForElement:element];
 }
 
 - (void)_layoutCaret

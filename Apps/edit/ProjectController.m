@@ -123,14 +123,14 @@
 
 - (ECItemViewElement *)itemView:(ECItemView *)itemView viewForAreaHeaderAtIndexPath:(NSIndexPath *)indexPath
 {
-    ECItemViewElement *folder = [self.tableView dequeueReusableAreaHeader];
+    ECItemViewElement *folder = [self.tableView dequeueReusableElementForType:kECItemViewAreaHeaderKey];
     if (!folder)
     {
         folder = [[[ECItemViewElement alloc] init] autorelease];
         UILabel *label = [[UILabel alloc] init];
         label.tag = 1;
         label.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-        label.frame = UIEdgeInsetsInsetRect(folder.bounds, UIEdgeInsetsMake(2.0, 2.0, 2.0, 2.0));
+        label.frame = folder.bounds;
         label.backgroundColor = [UIColor blueColor];
         [folder addSubview:label];
         [label release];
@@ -141,7 +141,7 @@
 
 - (ECItemViewElement *)itemView:(ECItemView *)itemView viewForGroupSeparatorAtIndexPath:(NSIndexPath *)indexPath
 {
-    ECItemViewElement *groupSeparator = [self.tableView dequeueReusableGroupSeparator];
+    ECItemViewElement *groupSeparator = [self.tableView dequeueReusableElementForType:kECItemViewGroupSeparatorKey];
     if (!groupSeparator)
     {
         groupSeparator = [[[ECItemViewElement alloc] init] autorelease];
@@ -152,14 +152,14 @@
 
 - (ECItemViewElement *)itemView:(ECItemView *)itemView viewForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    ECItemViewElement *file = [self.tableView dequeueReusableItem];
+    ECItemViewElement *file = [self.tableView dequeueReusableElementForType:kECItemViewItemKey];
     if (!file)
     {
         file = [[[ECItemViewElement alloc] init] autorelease];
         UILabel *label = [[UILabel alloc] init];
         label.tag = 1;
         label.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-        label.frame = UIEdgeInsetsInsetRect(file.bounds, UIEdgeInsetsMake(2.0, 2.0, 2.0, 2.0));
+        label.frame = file.bounds;
         label.backgroundColor = [UIColor greenColor];
         [file addSubview:label];
         [label release];
