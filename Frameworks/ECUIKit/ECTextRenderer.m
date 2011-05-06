@@ -790,8 +790,12 @@
                 // Retrieve start position line index
                 [segment enumerateLinesInLineRange:segmentRelativeLineRange usingBlock:^(CTLineRef line, NSUInteger lineNumber, CGRect lineBounds, NSRange lineStringRange, BOOL *stopInner) {
                     positionX -= lineBounds.origin.x;
-                    // TODO there may be problems summing cfindex to nsuinteger
-                    requestPosition = CTLineGetStringIndexForPosition(line, (CGPoint){ positionX, 0 }) + stringOffset;
+                    if (positionX >= CGRectGetMaxX(lineBounds))
+                        requestPosition = NSMaxRange(lineStringRange) - 1;
+                    else
+                        // TODO there may be problems summing cfindex to nsuinteger
+                        requestPosition = CTLineGetStringIndexForPosition(line, (CGPoint){ positionX, 0 });
+                    requestPosition += stringOffset;
                     *stop = *stopInner = YES;
                 }];
             }];
@@ -806,6 +810,10 @@
             
         case UITextLayoutDirectionRight:
         {
+            // If offset will move outsite rendered text line range, return
+            if (offset < 0 && -offset > position)
+                break;
+            
             break;
         }
 
