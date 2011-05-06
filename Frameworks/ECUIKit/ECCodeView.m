@@ -981,17 +981,14 @@ static void init(ECCodeView *self)
 
 - (CGRect)firstRectForRange:(UITextRange *)range
 {
-    //    CGRect r = ECCTFrameGetBoundRectOfLinesForStringRange(self->textLayer.CTFrame, [(ECTextRange *)range CFRange]);
-    //    return r;
-    
-    CGRect r = [renderer boundsForStringRange:[(ECTextRange *)range range] limitToFirstLine:YES];
+    CGRect r = [renderer rectsForStringRange:[(ECTextRange *)range range] limitToFirstLine:YES].bounds;
     return r;
 }
 
 - (CGRect)caretRectForPosition:(UITextPosition *)position
 {
     NSUInteger pos = ((ECTextPosition *)position).index;
-    CGRect carretRect = [renderer boundsForStringRange:(NSRange){pos, 0} limitToFirstLine:YES];
+    CGRect carretRect = [renderer rectsForStringRange:(NSRange){pos, 0} limitToFirstLine:YES].bounds;
     
     carretRect.origin.x += textInsets.left;
     carretRect.origin.y += textInsets.top;
@@ -1090,7 +1087,9 @@ static void init(ECCodeView *self)
         }
         else
         {
-            selectionRect = [renderer boundsForStringRange:newSelection limitToFirstLine:NO];
+            selectionRect = [renderer rectsForStringRange:newSelection limitToFirstLine:NO].bounds;
+            selectionRect.origin.x += textInsets.left;
+            selectionRect.origin.y += textInsets.top;
         }
         selectionView.frame = selectionRect;
         selectionView.hidden = NO;

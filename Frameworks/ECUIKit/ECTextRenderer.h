@@ -10,6 +10,7 @@
 #import <QuartzCore/QuartzCore.h>
 #import "ECTextRendererDataSource.h"
 #import "ECTextRendererDelegate.h"
+#import "ECRectSet.h"
 
 
 /// A class that present a text retrieved by a datasource ready to be drawn
@@ -82,11 +83,13 @@
 /// A limit of character in which to search in is also used to limit the results.
 - (NSUInteger)closestStringLocationToPoint:(CGPoint)point withinStringRange:(NSRange)range;
 
-/// Returns the bounding rect for all the characters in the given range of text.
-/// If the range is in a single line, the bounding box of of the range is returned;
-/// otherwhise it will be a bounding box of the union of lines interested by the range.
-- (CGRect)boundsForStringRange:(NSRange)range limitToFirstLine:(BOOL)limit;
+/// Returns the rects for all the characters in the given range of rendered text.
+- (ECRectSet *)rectsForStringRange:(NSRange)range limitToFirstLine:(BOOL)limit;
 
+/// Move the given position in the given direction by the given offset visually.
+/// Returns the new index in the source text or NSUIntegerMax if no position 
+/// has been returned. In some cases the returned position may be greater than
+/// the source text lenght.
 - (NSUInteger)positionFromPosition:(NSUInteger)position inLayoutDirection:(UITextLayoutDirection)direction offset:(NSInteger)offset;
 
 @end

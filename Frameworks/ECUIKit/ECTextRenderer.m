@@ -691,9 +691,9 @@
     return result;
 }
 
-- (CGRect)boundsForStringRange:(NSRange)queryStringRange limitToFirstLine:(BOOL)limit
+- (ECRectSet *)rectsForStringRange:(NSRange)queryStringRange limitToFirstLine:(BOOL)limit
 {
-    __block CGRect result = CGRectNull;
+    ECMutableRectSet *result = [ECMutableRectSet rectSetWithCapacity:1];
     [self generateTextSegmentsAndEnumerateUsingBlock:^(TextSegment *segment, NSUInteger idx, NSUInteger lineOffset, NSUInteger stringOffset, CGFloat positionOffset, BOOL *stop) {
         // Skip segment if before required string range
         if (stringOffset + segment.stringLength < queryStringRange.location)
@@ -723,7 +723,7 @@
                 lineBounds.size.width = offset - lineBounds.origin.x;
             }
             
-            result = CGRectUnion(result, lineBounds);
+            [result addRect:lineBounds];
             
             stringEnd += lineStringRange.length;
             

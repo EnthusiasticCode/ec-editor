@@ -8,7 +8,7 @@
 
 #import <QuartzCore/QuartzCore.h>
 
-// TODO comment this
+/// An immutable collection of CGRect
 @interface ECRectSet : NSObject <NSCopying, NSMutableCopying> {
 @protected
     CGRect *buffer;
@@ -17,29 +17,45 @@
     NSUInteger capacity;
 }
 
-@property (nonatomic, readonly) CGRect bounds;
-@property (nonatomic, readonly) NSUInteger count;
+#pragma mark Create RectSets
 
 - (id)init;
 - (id)initWithRect:(CGRect)rect;
 - (id)initWithRects:(ECRectSet *)rects;
-- (void)enumerateRectsUsingBlock:(void (^)(CGRect rect, BOOL *stop))block;
-- (void)addRectsToContext:(CGContextRef)context;
-
 + (id)rectSet;
 + (id)rectSetWithRect:(CGRect)rect;
 
+#pragma mark Getting Set Informations
+
+/// Return the union of all the CGRect in the set.
+@property (nonatomic, readonly) CGRect bounds;
+
+/// Get the number of CGRect in the set.
+@property (nonatomic, readonly) NSUInteger count;
+
+#pragma mark Utility Methods on RectSet
+
+/// Enumerate all the CGRect in the set with the provided block.
+- (void)enumerateRectsUsingBlock:(void (^)(CGRect rect, BOOL *stop))block;
+
+/// Convinience function to add all the CGRect to a graphic context's path.
+- (void)addRectsToContext:(CGContextRef)context;
+
 @end
 
+/// Mutable version of \c ECRectSet
 @interface ECMutableRectSet : ECRectSet
 
+#pragma mark Create Mutable RectSet
+
 - (id)initWithCapacity:(NSUInteger)cap;
++ (id)rectSetWithCapacity:(NSUInteger)cap;
+
+#pragma mark Editing the Set Content
 
 - (void)addRect:(CGRect)rect;
 - (void)addRects:(ECRectSet *)rects;
 - (void)removeRect:(CGRect)rect;
 - (void)removeAllRects;
-
-+ (id)rectSetWithCapacity:(NSUInteger)cap;
 
 @end

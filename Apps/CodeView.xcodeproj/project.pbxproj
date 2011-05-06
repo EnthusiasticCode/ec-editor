@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		CD28E65B1372E57600ADD2FC /* ECPopoverController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD28E6581372E57500ADD2FC /* ECPopoverController.m */; };
 		CD28E65C1372E57600ADD2FC /* ECPopoverView.m in Sources */ = {isa = PBXBuildFile; fileRef = CD28E65A1372E57500ADD2FC /* ECPopoverView.m */; };
+		CD28E6661374317200ADD2FC /* ECRectSet.m in Sources */ = {isa = PBXBuildFile; fileRef = CD28E6651374317200ADD2FC /* ECRectSet.m */; };
 		CDB949BA136C3AF200870A98 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CDB949B9136C3AF200870A98 /* QuartzCore.framework */; };
 		CDCD1C861368607300A6DA9E /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CDCD1C851368607300A6DA9E /* UIKit.framework */; };
 		CDCD1C881368607300A6DA9E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CDCD1C871368607300A6DA9E /* Foundation.framework */; };
@@ -37,6 +38,8 @@
 		CD28E6581372E57500ADD2FC /* ECPopoverController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECPopoverController.m; sourceTree = "<group>"; };
 		CD28E6591372E57500ADD2FC /* ECPopoverView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECPopoverView.h; sourceTree = "<group>"; };
 		CD28E65A1372E57500ADD2FC /* ECPopoverView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECPopoverView.m; sourceTree = "<group>"; };
+		CD28E6641374317100ADD2FC /* ECRectSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECRectSet.h; sourceTree = "<group>"; };
+		CD28E6651374317200ADD2FC /* ECRectSet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECRectSet.m; sourceTree = "<group>"; };
 		CDB949B9136C3AF200870A98 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		CDCD1C811368607300A6DA9E /* CodeView.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CodeView.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CDCD1C851368607300A6DA9E /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
@@ -165,6 +168,8 @@
 		CDCD1CB41368610300A6DA9E /* ECUIKit */ = {
 			isa = PBXGroup;
 			children = (
+				CD28E6641374317100ADD2FC /* ECRectSet.h */,
+				CD28E6651374317200ADD2FC /* ECRectSet.m */,
 				CD28E6571372E57500ADD2FC /* ECPopoverController.h */,
 				CD28E6581372E57500ADD2FC /* ECPopoverController.m */,
 				CD28E6591372E57500ADD2FC /* ECPopoverView.h */,
@@ -182,10 +187,10 @@
 				CDCD1CBE1368614000A6DA9E /* ECTextPosition.m */,
 				CDCD1CBF1368614000A6DA9E /* ECTextRange.h */,
 				CDCD1CC01368614000A6DA9E /* ECTextRange.m */,
-				CDCD1CC11368614000A6DA9E /* ECTextRenderer.h */,
-				CDCD1CC21368614000A6DA9E /* ECTextRenderer.m */,
 				CDCD1CC31368614000A6DA9E /* ECTextRendererDatasource.h */,
 				CDCD1CC41368614000A6DA9E /* ECTextRendererDelegate.h */,
+				CDCD1CC11368614000A6DA9E /* ECTextRenderer.h */,
+				CDCD1CC21368614000A6DA9E /* ECTextRenderer.m */,
 				CDCD1CC51368614000A6DA9E /* ECTextStyle.h */,
 				CDCD1CC61368614000A6DA9E /* ECTextStyle.m */,
 			);
@@ -268,6 +273,7 @@
 				CDF9F239136EA90800CB5945 /* UIColor+StyleColors.m in Sources */,
 				CD28E65B1372E57600ADD2FC /* ECPopoverController.m in Sources */,
 				CD28E65C1372E57600ADD2FC /* ECPopoverView.m in Sources */,
+				CD28E6661374317200ADD2FC /* ECRectSet.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
