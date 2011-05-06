@@ -19,24 +19,6 @@
 }
 @end
 
-@interface ECArrayTreeNode : NSObject <NSCopying, NSMutableCopying>
-@property (nonatomic, retain) NSArray *children;
-@property (nonatomic, retain) id object;
-- (NSUInteger)count;
-- (NSUInteger)countAtDepth:(NSUInteger)depth;
-- (ECArrayTreeNode *)nodeAtIndexPath:(NSIndexPath *)indexPath;
-- (ECArrayTreeNode *)parentNodeOfIndexPath:(NSIndexPath *)indexPath;
-- (NSArray *)allObjects;
-- (NSArray *)objectsAtDepth:(NSUInteger)depth;
-+ (id)nodeWithObject:(id)object;
-@end
-
-@interface ECMutableArrayTreeNode : ECArrayTreeNode
-@property (nonatomic, retain) NSMutableArray *children;
-- (ECMutableArrayTreeNode *)nodeAtIndexPath:(NSIndexPath *)indexPath;
-- (ECMutableArrayTreeNode *)parentNodeOfIndexPath:(NSIndexPath *)indexPath;
-@end
-
 @implementation ECArrayTreeNode
 @synthesize children;
 @synthesize object;
@@ -104,6 +86,18 @@
     return array;
 }
 
+- (NSArray *)allIndexPaths
+{
+    // TODO: no way of walking the tree recursively while creating indexpaths since they're immutable and it would create a million of them
+    return nil;
+}
+
+- (NSArray *)indexPathsAtDepth:(NSUInteger)depth
+{
+    // TODO: no way of walking the tree recursively while creating indexpaths since they're immutable and it would create a million of them
+    return nil;
+}
+
 + (id)nodeWithObject:(id)object
 {
     id node = [self alloc];
@@ -156,10 +150,12 @@
 
 @interface ECArrayTree ()
 @property (nonatomic, retain) ECArrayTreeNode *rootNode;
+- (NSIndexPath *)_offsetIndexPath:(NSIndexPath *)indexPath;
 @end
 
 @implementation ECArrayTree
 
+@synthesize offset;
 @synthesize rootNode;
 
 - (ECArrayTreeNode *)rootNode
@@ -171,6 +167,7 @@
 
 - (void)dealloc
 {
+    self.offset = nil;
     self.rootNode = nil;
     [super dealloc];
 }
@@ -180,6 +177,23 @@
     id arrayTree = [self alloc];
     arrayTree = [arrayTree init];
     return [arrayTree autorelease];
+}
+
+- (NSIndexPath *)_offsetIndexPath:(NSIndexPath *)indexPath
+{
+    if (!self.offset || !indexPath)
+        return indexPath;
+    NSUInteger numIndexes = [indexPath length];
+    NSUInteger numOffsetIndexes = [self.offset length];
+    NSUInteger *offsetIndexes = malloc(numIndexes * sizeof(NSUInteger));
+    for (NSUInteger i = 0; i < numIndexes; ++i)
+        if (i < numOffsetIndexes)
+            offsetIndexes[i] = [indexPath indexAtPosition:i] - [self.offset indexAtPosition:i];
+        else
+            offsetIndexes[i] = [indexPath indexAtPosition:i];
+    NSIndexPath *offsetIndexPath = [NSIndexPath indexPathWithIndexes:offsetIndexes length:numIndexes];
+    free(offsetIndexes);
+    return offsetIndexPath;
 }
 
 - (NSUInteger)count
@@ -194,19 +208,19 @@
 
 - (NSUInteger)countForIndexPath:(NSIndexPath *)indexPath
 {
-    return [[self.rootNode nodeAtIndexPath:indexPath] count];
+    return [[self.rootNode nodeAtIndexPath:[self _offsetIndexPath:indexPath]] count];
 }
 
 - (NSUInteger)countAtDepth:(NSUInteger)depth forIndexPath:(NSIndexPath *)indexPath
 {
-    return [[self.rootNode nodeAtIndexPath:indexPath] countAtDepth:depth];
+    return [[self.rootNode nodeAtIndexPath:[self _offsetIndexPath:indexPath]] countAtDepth:depth];
 }
 
 - (id)objectAtIndexPath:(NSIndexPath *)indexPath
 {
     if (!indexPath)
         return self.rootNode.object;
-    return [[self.rootNode nodeAtIndexPath:indexPath] object];
+    return [[self.rootNode nodeAtIndexPath:[self _offsetIndexPath:indexPath]] object];
 }
 
 - (NSArray *)allObjects
@@ -221,12 +235,32 @@
 
 - (NSArray *)objectsForIndexPath:(NSIndexPath *)indexPath
 {
-    return [[self.rootNode nodeAtIndexPath:indexPath] allObjects];
+    return [[self.rootNode nodeAtIndexPath:[self _offsetIndexPath:indexPath]] allObjects];
 }
 
 - (NSArray *)objectsAtDepth:(NSUInteger)depth forIndexPath:(NSIndexPath *)indexPath
 {
-    return [[self.rootNode nodeAtIndexPath:indexPath] objectsAtDepth:depth];
+    return [[self.rootNode nodeAtIndexPath:[self _offsetIndexPath:indexPath]] objectsAtDepth:depth];
+}
+
+- (NSArray *)allIndexPaths
+{
+    return [self.rootNode allIndexPaths];
+}
+
+- (NSArray *)indexPathsAtDepth:(NSUInteger)depth
+{
+    return [self.rootNode indexPathsAtDepth:depth];
+}
+
+- (NSArray *)indexPathsForIndexPath:(NSIndexPath *)indexPath
+{
+    return [[self.rootNode nodeAtIndexPath:[self _offsetIndexPath:indexPath]] allObjects];
+}
+
+- (NSArray *)indexPathsAtDepth:(NSUInteger)depth forIndexPath:(NSIndexPath *)indexPath
+{
+    return [[self.rootNode nodeAtIndexPath:[self _offsetIndexPath:indexPath]] indexPathsAtDepth:depth];
 }
 
 - (id)copyWithZone:(NSZone *)zone
@@ -264,34 +298,43 @@
 
 - (void)insertObject:(id)object atIndexPath:(NSIndexPath *)indexPath
 {
+    indexPath = [self _offsetIndexPath:indexPath];
     [[[self.rootNode parentNodeOfIndexPath:indexPath] children] insertObject:[ECArrayTreeNode nodeWithObject:object] atIndex:[indexPath lastIndex]];
 }
 
 - (void)removeObjectAtIndexPath:(NSIndexPath *)indexPath
 {
+    indexPath = [self _offsetIndexPath:indexPath];
     [[[self.rootNode parentNodeOfIndexPath:indexPath] children] removeObjectAtIndex:[indexPath lastIndex]];
 }
 
 - (void)replaceObjectAtIndexPath:(NSIndexPath *)indexPath withObject:(id)object
 {
-    [[self.rootNode nodeAtIndexPath:indexPath] setObject:object];
+    [[self.rootNode nodeAtIndexPath:[self _offsetIndexPath:indexPath]] setObject:object];
 }
 
 - (void)addObject:(id)object toIndexPath:(NSIndexPath *)indexPath
 {
-    [[[self.rootNode parentNodeOfIndexPath:indexPath] children] addObject:[ECArrayTreeNode nodeWithObject:object]];
+    [[[self.rootNode parentNodeOfIndexPath:[self _offsetIndexPath:indexPath]] children] addObject:[ECArrayTreeNode nodeWithObject:object]];
 }
 
 - (void)removeLastObjectFromIndexPath:(NSIndexPath *)indexPath
 {
-    [[[self.rootNode parentNodeOfIndexPath:indexPath] children] removeLastObject];
+    [[[self.rootNode parentNodeOfIndexPath:[self _offsetIndexPath:indexPath]] children] removeLastObject];
+}
+
+- (void)removeAllObjects
+{
+    self.rootNode = [[[ECMutableArrayTree alloc] init] autorelease];
 }
 
 - (void)moveObjectsAtIndexPaths:(NSArray *)indexPaths toIndexPath:(NSIndexPath *)indexPath
 {
+    indexPath = [self _offsetIndexPath:indexPath];
     NSMutableArray *array = [NSMutableArray arrayWithCapacity:[indexPaths count]];
     for (NSIndexPath *nodeIndexPath in indexPaths)
     {
+        nodeIndexPath = [self _offsetIndexPath:nodeIndexPath];
         ECMutableArrayTreeNode *node = [self.rootNode parentNodeOfIndexPath:nodeIndexPath];
         [array addObject:[node.children objectAtIndex:[nodeIndexPath lastIndex]]];
         [node.children removeObjectAtIndex:[nodeIndexPath lastIndex]];

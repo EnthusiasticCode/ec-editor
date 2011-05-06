@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+@class ECArrayTree;
 @class ECItemView;
 @class ECItemViewElement;
 
@@ -124,18 +125,9 @@ typedef const NSString *ECItemViewElementKey;
 - (CGRect)rectForItemAtIndexPath:(NSIndexPath *)indexPath;
 
 #pragma mark Index paths
-- (NSArray *)indexPathsForVisibleAreaHeaders;
-- (NSArray *)visibleAreaHeaders;
-- (ECItemViewElement *)areaHeaderAtIndexPath:(NSIndexPath *)indexPath;
-- (NSIndexPath *)indexForAreaHeaderAtPoint:(CGPoint)point;
-- (NSArray *)indexPathsForVisibleGroupSeparators;
-- (NSArray *)visibleGroupSeparators;
-- (ECItemViewElement *)groupSeparatorAtIndexPath:(NSIndexPath *)indexPath;
-- (NSIndexPath *)indexPathForGroupSeparatorAtPoint:(CGPoint)point;
-- (NSArray *)indexPathsForVisibleItems;
-- (NSArray *)visibleItems;
-- (ECItemViewElement *)itemAtIndexPath:(NSIndexPath *)indexPath;
-- (NSIndexPath *)indexPathForItemAtPoint:(CGPoint)point;
+- (ECItemViewElement *)elementAtIndexPath:(NSIndexPath *)indexPath;
+- (ECItemViewElement *)elementAtPoint:(CGPoint)point;
+- (ECArrayTree *)visibleElements;
 
 #pragma mark Scrolling
 - (void)scrollToItemAtIndexPath:(NSIndexPath *)indexPath atScrollPosition:(ECItemViewScrollPosition)scrollPosition animated:(BOOL)animated;
@@ -170,9 +162,7 @@ typedef const NSString *ECItemViewElementKey;
 - (void)deselectAllItemsAnimated:(BOOL)animated;
 
 #pragma mark Recycling
-- (ECItemViewElement *)dequeueReusableItem;
-- (ECItemViewElement *)dequeueReusableGroupSeparator;
-- (ECItemViewElement *)dequeueReusableAreaHeader;
+- (ECItemViewElement *)dequeueReusableElementForType:(ECItemViewElementKey)type;
 
 @end
 

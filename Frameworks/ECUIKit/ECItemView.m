@@ -9,6 +9,7 @@
 #import "ECItemView.h"
 #import <ECUIKit/UIView+ConcurrentAnimation.h>
 #import <ECFoundation/ECStackCache.h>
+#import "ECArrayTree.h"
 #import "ECItemViewElement.h"
 
 static const CGFloat kECItemViewShortAnimationDuration = 0.15;
@@ -18,6 +19,9 @@ static const NSUInteger kECItemViewItemBufferSize = 10;
 static const NSString *kECItemViewBatchInsertsKey = @"inserts";
 static const NSString *kECItemViewBatchDeletesKey = @"deletes";
 static const NSString *kECItemViewBatchReloadsKey = @"reloads";
+static const NSUInteger kECItemViewAreaDepth = 1;
+static const NSUInteger kECItemViewGroupDepth = 2;
+static const NSUInteger kECItemViewItemDepth = 3;
 const NSString *kECItemViewAreaKey = @"area";
 const NSString *kECItemViewAreaHeaderKey = @"areaHeader";
 const NSString *kECItemViewGroupKey = @"group";
@@ -61,7 +65,7 @@ const NSString *kECItemViewItemKey = @"item";
     NSUInteger _cachedGroupRectArea;
     NSUInteger _cachedGroupRectGroup;
     CGRect _cachedGroupRectRect;
-    NSMutableDictionary *_visibleElements;
+    ECMutableArrayTree *_visibleElements;
     BOOL _isAnimating;
     UITapGestureRecognizer *_tapGestureRecognizer;
     UILongPressGestureRecognizer *_longPressGestureRecognizer;
@@ -81,10 +85,11 @@ const NSString *kECItemViewItemKey = @"item";
 - (void)_setup;
 
 #pragma mark Data
-- (void)_enumerateVisibleElementsWithBlock:(void(^)(ECItemViewElement *element))block;
+- (void)_reloadNumbers;
 - (ECItemViewElement *)_loadAreaHeaderAtIndexPath:(NSIndexPath *)indexPath;
 - (ECItemViewElement *)_loadGroupSeparatorAtIndexPath:(NSIndexPath *)indexPath;
 - (ECItemViewElement *)_loadItemAtIndexPath:(NSIndexPath *)indexPath;
+- (void)_syncVisibleElements;
 
 #pragma mark Info
 - (NSUInteger)_numberOfGroupsInAreaAtIndex:(NSUInteger)area;
@@ -102,8 +107,8 @@ const NSString *kECItemViewItemKey = @"item";
 - (CGRect)_rectForItemAtIndex:(NSUInteger)item inGroup:(NSUInteger)group inArea:(NSUInteger)area;
 
 #pragma mark Index paths
-- (NSArray *)_indexPathsForVisibleAreas;
-- (NSArray *)_indexPathsForVisibleGroups;
+- (NSIndexPath *)_indexPathForFirstVisibleItem;
+- (NSIndexPath *)_indexPathForLastVisibleItem;
 - (NSIndexPath *)_indexPathForElementType:(ECItemViewElementKey)elementType atPoint:(CGPoint)point resultType:(ECItemViewElementKey *)resultType;
 
 #pragma mark Item insertion/deletion/reloading
@@ -111,9 +116,7 @@ const NSString *kECItemViewItemKey = @"item";
 - (void)_wrapCallInBatchUpdatesBlockForSelector:(SEL)selector withObject:(id)object andObject:(id)anotherObject;
 
 #pragma mark UIView
-- (void)_layoutAreaHeaders;
-- (void)_layoutGroupSeparators;
-- (void)_layoutItems;
+- (void)_layoutElements;
 - (void)_layoutCaret;
 
 #pragma mark UIGestureRecognizer
@@ -197,9 +200,8 @@ const NSString *kECItemViewItemKey = @"item";
     [self willChangeValueForKey:@"editing"];
     [self setNeedsLayout];
     _isEditing = editing;
-    [self _enumerateVisibleElementsWithBlock:^(ECItemViewElement *element) {
+    for (ECItemViewElement *element in [_visibleElements allObjects])
         [element setEditing:editing animated:animated];
-    }];
     [self didChangeValueForKey:@"editing"];   
 }
 
@@ -223,10 +225,8 @@ const NSString *kECItemViewItemKey = @"item";
     _cachedAreaRectArea = NSUIntegerMax;
     _cachedGroupRectArea = NSUIntegerMax;
     _cachedGroupRectGroup = NSUIntegerMax;
-    _visibleElements = [[NSMutableDictionary alloc] init];
-    [_visibleElements setObject:[NSMutableDictionary dictionary] forKey:kECItemViewAreaHeaderKey];
-    [_visibleElements setObject:[NSMutableDictionary dictionary] forKey:kECItemViewGroupSeparatorKey];
-    [_visibleElements setObject:[NSMutableDictionary dictionary] forKey:kECItemViewItemKey];
+    _visibleElements = [[ECMutableArrayTree alloc] init];
+    _visibleElements.offset = [NSIndexPath indexPathForItem:0 inGroup:0 inArea:0];
     _tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(_handleTapGesture:)];
     _tapGestureRecognizer.delegate = self;
     [self addGestureRecognizer:_tapGestureRecognizer];
@@ -294,24 +294,38 @@ const NSString *kECItemViewItemKey = @"item";
 #pragma mark -
 #pragma mark Data
 
+- (void)_reloadNumbers
+{
+    NSUInteger numAreas = 1;
+    if (_flags.dataSourceNumberOfAreasInItemView)
+        numAreas = [_dataSource numberOfAreasInItemView:self];
+    [_areas release];
+    _areas = [[NSMutableArray alloc] init];
+    for (NSUInteger i = 0; i < numAreas; ++i)
+    {
+        NSUInteger numGroups = 0;
+        if (_flags.dataSourceNumberOfGroupsInArea)
+            numGroups = [_dataSource itemView:self numberOfGroupsInAreaAtIndexPath:[NSIndexPath indexPathWithIndex:i]];
+        NSMutableArray *groups = [NSMutableArray arrayWithCapacity:numGroups];
+        for (NSUInteger j = 0; j < numGroups; ++j)
+        {
+            NSUInteger numItems = 0;
+            if (_flags.dataSourceNumberOfItemsInGroup)
+                numItems = [_dataSource itemView:self numberOfItemsInGroupAtIndexPath:[NSIndexPath indexPathForPosition:j inArea:i]];
+            [groups addObject:[NSNumber numberWithUnsignedInteger:numItems]];
+        }
+        [_areas addObject:groups];
+    }
+}
+
 - (void)reloadData
 {
-    [self _enumerateVisibleElementsWithBlock:^(ECItemViewElement *element) {
+    for (ECItemViewElement *element in [_visibleElements allObjects])
         [element removeFromSuperview];
-    }];
-    [[_visibleElements objectForKey:kECItemViewAreaHeaderKey] removeAllObjects];
-    [[_visibleElements objectForKey:kECItemViewGroupSeparatorKey] removeAllObjects];
-    [[_visibleElements objectForKey:kECItemViewItemKey] removeAllObjects];
+    [_visibleElements removeAllObjects];
     [self beginUpdates];
     [self endUpdates];
     [self setNeedsLayout];
-}
-
-- (void)_enumerateVisibleElementsWithBlock:(void (^)(ECItemViewElement *))block
-{
-    for (NSDictionary *visibleElements in [_visibleElements allValues])
-        for (ECItemViewElement *element in [visibleElements allValues])
-            block(element);
 }
 
 - (ECItemViewElement *)_loadAreaHeaderAtIndexPath:(NSIndexPath *)indexPath
@@ -319,6 +333,8 @@ const NSString *kECItemViewItemKey = @"item";
     if (indexPath.area >= [_areas count] || !_flags.dataSourceViewForAreaHeader)
         return nil;
     ECItemViewElement *areaHeader = [_dataSource itemView:self viewForAreaHeaderAtIndexPath:indexPath];
+    areaHeader.type = kECItemViewAreaHeaderKey;
+    areaHeader.indexPath = indexPath;
     return areaHeader;
 }
 
@@ -327,6 +343,8 @@ const NSString *kECItemViewItemKey = @"item";
     if (!indexPath || !_flags.dataSourceViewForGroupSeparator)
         return nil;
     ECItemViewElement *groupSeparator = [_dataSource itemView:self viewForGroupSeparatorAtIndexPath:indexPath];
+    groupSeparator.type = kECItemViewGroupSeparatorKey;
+    groupSeparator.indexPath = indexPath;
     return groupSeparator;
 }
 
@@ -335,7 +353,28 @@ const NSString *kECItemViewItemKey = @"item";
     if (!indexPath || !_flags.dataSourceViewForItem)
         return nil;
     ECItemViewElement *item = [_dataSource itemView:self viewForItemAtIndexPath:indexPath];
+    item.type = kECItemViewItemKey;
+    item.indexPath = indexPath;
     return item;
+}
+
+- (void)_syncVisibleElements
+{
+    NSIndexPath *firstIndexPath = [self _indexPathForFirstVisibleItem];
+    NSIndexPath *lastIndexPath = [self _indexPathForLastVisibleItem];
+    if (_visibleElements.offset.area < firstIndexPath.area)
+        for (NSUInteger i = firstIndexPath.area - 1; i != _visibleElements.offset.area - 1; --i)
+            [_visibleElements removeObjectAtIndexPath:[NSIndexPath indexPathForArea:i]];
+    else if (firstIndexPath.area < _visibleElements.offset.area)
+        for (NSUInteger i = _visibleElements.offset.area - 1; i != firstIndexPath.area - 1; --i)
+        {
+            NSIndexPath *newAreaIndexPath = [NSIndexPath indexPathForArea:i];
+            [_visibleElements insertObject:[self _loadAreaHeaderAtIndexPath:newAreaIndexPath] atIndexPath:[NSIndexPath indexPathForArea:0]];
+            NSUInteger numGroups = [self numberOfGroupsInAreaAtIndexPath:newAreaIndexPath];
+            for (NSUInteger j = 
+        }
+    
+        
 }
 
 #pragma mark -
@@ -483,6 +522,70 @@ const NSString *kECItemViewItemKey = @"item";
 #pragma mark -
 #pragma mark Index paths
 
+- (NSIndexPath *)_indexPathForFirstVisibleItem
+{
+    NSUInteger numAreas = [self numberOfAreas];
+    for (NSUInteger i = 0; i < numAreas; ++i)
+        if (CGRectIntersectsRect(self.bounds, [self _rectForAreaAtIndex:i]))
+        {
+            NSUInteger numGroups = [self _numberOfGroupsInAreaAtIndex:i];
+            for (NSUInteger j = 0; j < numGroups; ++j)
+                if (CGRectIntersectsRect(self.bounds, [self _rectForGroupAtIndex:j inArea:i]))
+                {
+                    NSUInteger numItems = [self _numberOfItemsInGroup:j inArea:i];
+                    for (NSUInteger k = 0; k < numItems; ++k)
+                    {
+                        CGRect itemRect = [self _rectForItemAtIndex:k inGroup:j inArea:i];
+                        if (!CGRectIntersectsRect(self.bounds, itemRect))
+                            continue;
+                        return [NSIndexPath indexPathForItem:k inGroup:j inArea:i];
+                    }
+                }
+        }
+    return nil;
+}
+
+- (NSIndexPath *)_indexPathForLastVisibleItem
+{
+    NSUInteger numAreas = [self numberOfAreas];
+    for (NSUInteger i = numAreas - 1; i != NSUIntegerMax; --i)
+        if (CGRectIntersectsRect(self.bounds, [self _rectForAreaAtIndex:i]))
+        {
+            NSUInteger numGroups = [self _numberOfGroupsInAreaAtIndex:i];
+            for (NSUInteger j = numGroups; j != NSUIntegerMax; --j)
+                if (CGRectIntersectsRect(self.bounds, [self _rectForGroupAtIndex:j inArea:i]))
+                {
+                    NSUInteger numItems = [self _numberOfItemsInGroup:j inArea:i];
+                    for (NSUInteger k = numItems; k != NSUIntegerMax; --k)
+                    {
+                        CGRect itemRect = [self _rectForItemAtIndex:k inGroup:j inArea:i];
+                        if (!CGRectIntersectsRect(self.bounds, itemRect))
+                            continue;
+                        return [NSIndexPath indexPathForItem:k inGroup:j inArea:i];
+                    }
+                }
+        }
+    return nil;
+}
+
+- (ECItemViewElement *)elementAtIndexPath:(NSIndexPath *)indexPath
+{
+    return [_visibleElements objectAtIndexPath:indexPath];
+}
+
+- (ECItemViewElement *)elementAtPoint:(CGPoint)point
+{
+    for (ECItemViewElement *element in [_visibleElements allObjects])
+        if (CGRectContainsPoint(element.frame, point))
+            return element;
+    return nil;
+}
+
+- (ECArrayTree *)visibleElements
+{
+    return [_visibleElements copy];
+}
+
 - (NSArray *)_indexPathsForVisibleAreas
 {
     NSMutableArray *indexPaths = [NSMutableArray array];
@@ -494,37 +597,6 @@ const NSString *kECItemViewItemKey = @"item";
             [indexPaths addObject:indexPath];
         }
     return indexPaths;
-}
-
-- (NSArray *)indexPathsForVisibleAreaHeaders
-{
-    NSMutableArray *indexPaths = [NSMutableArray array];
-    NSUInteger numAreas = [self numberOfAreas];
-    for (NSUInteger i = 0; i < numAreas; ++i)
-        if (CGRectIntersectsRect(self.bounds, [self _rectForAreaHeaderAtIndex:i]))
-        {
-            NSIndexPath *indexPath = [NSIndexPath indexPathForArea:i];
-            [indexPaths addObject:indexPath];
-        }
-    return indexPaths;
-}
-
-- (NSArray *)visibleAreaHeaders
-{
-    return [[_visibleElements objectForKey:kECItemViewAreaHeaderKey] allValues];
-}
-
-- (ECItemViewElement *)areaHeaderAtIndexPath:(NSIndexPath *)indexPath
-{
-    return [[_visibleElements objectForKey:kECItemViewAreaHeaderKey] objectForKey:indexPath];
-}
-
-- (NSIndexPath *)indexForAreaHeaderAtPoint:(CGPoint)point
-{
-    for (NSIndexPath *indexPath in [[_visibleElements objectForKey:kECItemViewAreaHeaderKey] allKeys])
-        if (CGRectContainsPoint([[[_visibleElements objectForKey:kECItemViewAreaHeaderKey] objectForKey:indexPath] frame], point))
-            return indexPath;
-    return nil;
 }
 
 - (NSArray *)_indexPathsForVisibleGroups
@@ -543,41 +615,7 @@ const NSString *kECItemViewItemKey = @"item";
     return indexPaths;
 }
 
-- (NSArray *)indexPathsForVisibleGroupSeparators
-{
-    NSMutableArray *indexPaths = [NSMutableArray array];
-    for (NSIndexPath *areaIndexPath in [self _indexPathsForVisibleAreas])
-    {
-        NSUInteger numGroups = [self numberOfGroupsInAreaAtIndexPath:areaIndexPath];
-        for (NSUInteger i = 0; i < numGroups; ++i)
-            if (CGRectIntersectsRect(self.bounds, [self _rectForGroupSeparatorAtIndex:i inArea:areaIndexPath.area]))
-            {
-                NSIndexPath *indexPath = [NSIndexPath indexPathForPosition:i inArea:areaIndexPath.area];
-                [indexPaths addObject:indexPath];
-            }
-    }
-    return indexPaths;
-}
-
-- (NSArray *)visibleGroupSeparators
-{
-    return [[_visibleElements objectForKey:kECItemViewGroupSeparatorKey] allValues];
-}
-
-- (ECItemViewElement *)groupSeparatorAtIndexPath:(NSIndexPath *)indexPath
-{
-    return [[_visibleElements objectForKey:kECItemViewGroupSeparatorKey] objectForKey:indexPath];
-}
-
-- (NSIndexPath *)indexPathForGroupSeparatorAtPoint:(CGPoint)point
-{
-    for (NSIndexPath *indexPath in [[_visibleElements objectForKey:kECItemViewGroupSeparatorKey] allKeys])
-        if (CGRectContainsPoint([[[_visibleElements objectForKey:kECItemViewGroupSeparatorKey] objectForKey:indexPath] frame], point))
-            return indexPath;
-    return nil;
-}
-
-- (NSArray *)indexPathsForVisibleItems
+- (NSArray *)_indexPathsForVisibleItems
 {
     NSMutableArray *indexPaths = [NSMutableArray array];
     for (NSIndexPath *groupIndexPath in [self _indexPathsForVisibleGroups])
@@ -594,75 +632,21 @@ const NSString *kECItemViewItemKey = @"item";
     return indexPaths;
 }
 
-- (NSArray *)visibleItems
+- (NSArray *)indexPathsForVisibleElements
 {
-    return [[_visibleElements objectForKey:kECItemViewItemKey] allValues];
-}
-
-- (ECItemViewElement *)itemAtIndexPath:(NSIndexPath *)indexPath
-{
-    return [[_visibleElements objectForKey:kECItemViewItemKey] objectForKey:indexPath];
-}
-
-- (NSIndexPath *)indexPathForItemAtPoint:(CGPoint)point
-{
-    for (NSIndexPath *indexPath in [[_visibleElements objectForKey:kECItemViewItemKey] allKeys])
-        if (CGRectContainsPoint([[[_visibleElements objectForKey:kECItemViewItemKey] objectForKey:indexPath] frame], point))
-            return indexPath;
-    return nil;
+    NSMutableArray *array = [NSMutableArray arrayWithArray:[self _indexPathsForVisibleItems]];
+    [array addObjectsFromArray:[self _indexPathsForVisibleGroups]];
+    [array addObjectsFromArray:[self _indexPathsForVisibleAreas]];
+    return array;
 }
 
 - (NSIndexPath *)_indexPathForElementType:(ECItemViewElementKey)elementType atPoint:(CGPoint)point resultType:(ECItemViewElementKey *)resultType
 {
     // TODO: implement this with nested geometry hittesting instead of cycling frames, compare the two implementations with instruments
-    NSIndexPath *indexPath;
-    if (!elementType || elementType == kECItemViewItemKey)
-    {
-        indexPath = [self indexPathForItemAtPoint:point];
-        if (indexPath)
-        {
-            if (resultType)
-                *resultType = kECItemViewItemKey;
-            return indexPath;
-        }
-        indexPath = [self indexPathForGroupSeparatorAtPoint:point];
-        if (indexPath)
-        {
-            if (resultType)
-                *resultType = kECItemViewGroupSeparatorKey;
-            return indexPath;
-        }
-    }
-    if (!elementType || elementType == kECItemViewItemKey || elementType == kECItemViewGroupKey)
-    {
-        indexPath = [self indexForAreaHeaderAtPoint:point];
-        if (indexPath)
-        {
-            if (resultType)
-                *resultType = kECItemViewAreaHeaderKey;
-            return indexPath;
-        }
-        for (indexPath in [self _indexPathsForVisibleGroups])
-            if (CGRectContainsPoint(UIEdgeInsetsInsetRect([self _rectForGroupAtIndexPath:indexPath], _groupInsets), point))
-            {
-                if (resultType)
-                    *resultType = kECItemViewGroupKey;
-                return indexPath;
-            }
-    }
-    if (!elementType || elementType == kECItemViewAreaKey)
-    {
-        for (indexPath in [self _indexPathsForVisibleAreas])
-            if (CGRectContainsPoint([self _rectForAreaAtIndexPath:indexPath], point))
-            {
-                if (resultType)
-                    *resultType = kECItemViewAreaKey;
-                return indexPath;
-            }
-    }
+    ECItemViewElement *element = [self elementAtPoint:point];
     if (resultType)
-        *resultType = nil;
-    return nil;
+        *resultType = element.type;
+    return element.indexPath;
 }
 
 #pragma mark -
@@ -753,26 +737,7 @@ const NSString *kECItemViewItemKey = @"item";
     }];
     */
     
-    NSUInteger numAreas = 1;
-    if (_flags.dataSourceNumberOfAreasInItemView)
-        numAreas = [_dataSource numberOfAreasInItemView:self];
-    [_areas release];
-    _areas = [[NSMutableArray alloc] init];
-    for (NSUInteger i = 0; i < numAreas; ++i)
-    {
-        NSUInteger numGroups = 0;
-        if (_flags.dataSourceNumberOfGroupsInArea)
-            numGroups = [_dataSource itemView:self numberOfGroupsInAreaAtIndexPath:[NSIndexPath indexPathWithIndex:i]];
-        NSMutableArray *groups = [NSMutableArray arrayWithCapacity:numGroups];
-        for (NSUInteger j = 0; j < numGroups; ++j)
-        {
-            NSUInteger numItems = 0;
-            if (_flags.dataSourceNumberOfItemsInGroup)
-                numItems = [_dataSource itemView:self numberOfItemsInGroupAtIndexPath:[NSIndexPath indexPathForPosition:j inArea:i]];
-            [groups addObject:[NSNumber numberWithUnsignedInteger:numItems]];
-        }
-        [_areas addObject:groups];
-    }
+    [self _reloadNumbers];
     if (!_isBatchUpdating)
         for (NSDictionary *dictionary in [_batchUpdatingStores allValues])
             for (NSMutableSet *set in [dictionary allValues])
@@ -780,9 +745,9 @@ const NSString *kECItemViewItemKey = @"item";
     _cachedAreaRectArea = NSUIntegerMax;
     _cachedGroupRectArea = NSUIntegerMax;
     _cachedGroupRectGroup = NSUIntegerMax;
-    if (!numAreas)
+    if (![self numberOfAreas])
         self.contentSize = CGSizeMake(0.0, 0.0);
-    CGRect lastAreaFrame = [self _rectForAreaAtIndex:numAreas - 1];
+    CGRect lastAreaFrame = [self _rectForAreaAtIndex:[self numberOfAreas] - 1];
     self.contentSize = CGSizeMake(self.bounds.size.width, lastAreaFrame.origin.y + lastAreaFrame.size.height);
     [self setNeedsLayout];
 }
@@ -930,7 +895,7 @@ const NSString *kECItemViewItemKey = @"item";
     if (!indexPath)
         return;
     [_selectedItems addObject:indexPath];
-    [[self itemAtIndexPath:indexPath] setSelected:YES animated:YES];
+    [[_visibleElements objectAtIndexPath:indexPath] setSelected:YES animated:YES];
 }
 
 - (void)deselectItemAtIndexPath:(NSIndexPath *)indexPath animated:(BOOL)animated
@@ -938,127 +903,122 @@ const NSString *kECItemViewItemKey = @"item";
     if (!indexPath)
         return;
     [_selectedItems removeObject:indexPath];
-    [[self itemAtIndexPath:indexPath] setSelected:NO animated:YES];
+    [[_visibleElements objectAtIndexPath:indexPath] setSelected:NO animated:YES];
 }
 
 - (void)deselectAllItemsAnimated:(BOOL)animated
 {
     [_selectedItems removeAllObjects];
-    for (ECItemViewElement *item in [self visibleItems])
+    for (ECItemViewElement *item in [_visibleElements objectsAtDepth:kECItemViewItemDepth])
         [item setSelected:NO animated:YES];
 }
 
 #pragma mark -
 #pragma mark Recycling
 
-- (ECItemViewElement *)dequeueReusableAreaHeader
+- (ECItemViewElement *)dequeueReusableElementForType:(ECItemViewElementKey)type
 {
-    if (![[_elementCaches objectForKey:kECItemViewAreaHeaderKey] count])
+    if (![[_elementCaches objectForKey:type] count])
         return nil;
-    return [[_elementCaches objectForKey:kECItemViewAreaHeaderKey] pop];
-}
-
-- (ECItemViewElement *)dequeueReusableGroupSeparator
-{
-    if (![[_elementCaches objectForKey:kECItemViewGroupSeparatorKey] count])
-        return nil;
-    return [[_elementCaches objectForKey:kECItemViewGroupSeparatorKey] pop];
-}
-
-- (ECItemViewElement *)dequeueReusableItem
-{
-    // TODO reset properties before returning
-    if (![[_elementCaches objectForKey:kECItemViewItemKey] count])
-        return nil;
-    return [[_elementCaches objectForKey:kECItemViewItemKey] pop];
+    ECItemViewElement *element = [[_elementCaches objectForKey:type] pop];
+    element.selected = NO;
+    element.dragged = NO;
+    element.editing = NO;
+    element.indexPath = nil;
+    return element;
 }
 
 #pragma mark -
 #pragma mark UIView
 
-- (void)_layoutAreaHeaders
-{
-    NSMutableDictionary *newVisibleAreaHeaders = [NSMutableDictionary dictionary];
-    for (NSIndexPath *indexPath in [self indexPathsForVisibleAreaHeaders])
-    {
-        ECItemViewElement *header = [[_visibleElements objectForKey:kECItemViewAreaHeaderKey] objectForKey:indexPath];
-        if (header)
-            [[_visibleElements objectForKey:kECItemViewAreaHeaderKey] removeObjectForKey:indexPath];
-        else
-        {
-            header = [self _loadAreaHeaderAtIndexPath:indexPath];
-            if (!header)
-                return;
-            [self addSubview:header];
-            [self sendSubviewToBack:header];
-        }
-        header.frame = UIEdgeInsetsInsetRect([self rectForAreaHeaderAtIndexPath:indexPath], _areaHeaderInsets);
-        [newVisibleAreaHeaders setObject:header forKey:indexPath];
-    }
-    for (UILabel *header in [[_visibleElements objectForKey:kECItemViewAreaHeaderKey] allValues])
-    {
-        [header removeFromSuperview];
-        [[_elementCaches objectForKey:kECItemViewAreaHeaderKey] push:header];
-    }
-    [_visibleElements setObject:newVisibleAreaHeaders forKey:kECItemViewAreaHeaderKey];
-}
+//- (void)_layoutAreaHeaders
+//{
+//    NSMutableDictionary *newVisibleAreaHeaders = [NSMutableDictionary dictionary];
+//    for (NSIndexPath *indexPath in [self _indexPathsForVisibleAreas])
+//    {
+//        ECItemViewElement *header = [_visibleElements objectAtIndexPath:indexPath];
+//        if (header)
+//            [[_visibleElements objectForKey:kECItemViewAreaHeaderKey] removeObjectForKey:indexPath];
+//        else
+//        {
+//            header = [self _loadAreaHeaderAtIndexPath:indexPath];
+//            if (!header)
+//                return;
+//            [self addSubview:header];
+//            [self sendSubviewToBack:header];
+//        }
+//        header.frame = UIEdgeInsetsInsetRect([self rectForAreaHeaderAtIndexPath:indexPath], _areaHeaderInsets);
+//        [newVisibleAreaHeaders setObject:header forKey:indexPath];
+//    }
+//    for (UILabel *header in [[_visibleElements objectForKey:kECItemViewAreaHeaderKey] allValues])
+//    {
+//        [header removeFromSuperview];
+//        [[_elementCaches objectForKey:kECItemViewAreaHeaderKey] push:header];
+//    }
+//    [_visibleElements setObject:newVisibleAreaHeaders forKey:kECItemViewAreaHeaderKey];
+//}
+//
+//- (void)_layoutGroupSeparators
+//{
+//    NSMutableDictionary *newVisibleGroupSeparators = [NSMutableDictionary dictionary];
+//    for (NSIndexPath *indexPath in [self indexPathsForVisibleGroupSeparators])
+//    {
+//        ECItemViewElement *separator = [[_visibleElements objectForKey:kECItemViewGroupSeparatorKey] objectForKey:indexPath];
+//        if (separator)
+//            [[_visibleElements objectForKey:kECItemViewGroupSeparatorKey] removeObjectForKey:indexPath];
+//        else
+//        {
+//            separator = [self _loadGroupSeparatorAtIndexPath:indexPath];
+//            if (!separator)
+//                continue;
+//            [self addSubview:separator];
+//            [self sendSubviewToBack:separator];
+//        }
+//        separator.frame = UIEdgeInsetsInsetRect([self rectForGroupSeparatorAtIndexPath:indexPath], _groupSeparatorInsets);
+//        [newVisibleGroupSeparators setObject:separator forKey:indexPath];
+//    }
+//    for (ECItemViewElement *separator in [[_visibleElements objectForKey:kECItemViewGroupSeparatorKey] allValues])
+//    {
+//        [separator removeFromSuperview];
+//        [[_elementCaches objectForKey:kECItemViewGroupSeparatorKey] push:separator];
+//    }
+//    [_visibleElements setObject:newVisibleGroupSeparators forKey:kECItemViewGroupSeparatorKey];
+//}
+//
+//- (void)_layoutItems
+//{
+//    NSMutableDictionary *newVisibleItems = [NSMutableDictionary dictionary];
+//    for (NSIndexPath *indexPath in [self indexPathsForVisibleItems])
+//    {
+//        ECItemViewElement *item = [[_visibleElements objectForKey:kECItemViewItemKey] objectForKey:indexPath];
+//        if (item)
+//            [[_visibleElements objectForKey:kECItemViewItemKey] removeObjectForKey:indexPath];
+//        else
+//        {
+//            item = [self _loadItemAtIndexPath:indexPath];
+//            if (!item)
+//                continue;
+//            if (_draggedElementsType == kECItemViewItemKey && [_draggedElements containsObject:indexPath])
+//                item.selected = YES;
+//            if ([_selectedItems containsObject:indexPath])
+//                item.dragged = YES;
+//            [self addSubview:item];
+//            [self sendSubviewToBack:item];
+//        }
+//        item.frame = UIEdgeInsetsInsetRect([self rectForItemAtIndexPath:indexPath], _itemInsets);
+//        [newVisibleItems setObject:item forKey:indexPath];
+//    }
+//    for (ECItemViewElement *item in [[_visibleElements objectForKey:kECItemViewItemKey] allValues])
+//    {
+//        [item removeFromSuperview];
+//        [[_elementCaches objectForKey:kECItemViewItemKey] push:item];
+//    }
+//    [_visibleElements setObject:newVisibleItems forKey:kECItemViewItemKey];
+//}
 
-- (void)_layoutGroupSeparators
+- (void)_layoutElements
 {
-    NSMutableDictionary *newVisibleGroupSeparators = [NSMutableDictionary dictionary];
-    for (NSIndexPath *indexPath in [self indexPathsForVisibleGroupSeparators])
-    {
-        ECItemViewElement *separator = [[_visibleElements objectForKey:kECItemViewGroupSeparatorKey] objectForKey:indexPath];
-        if (separator)
-            [[_visibleElements objectForKey:kECItemViewGroupSeparatorKey] removeObjectForKey:indexPath];
-        else
-        {
-            separator = [self _loadGroupSeparatorAtIndexPath:indexPath];
-            if (!separator)
-                continue;
-            [self addSubview:separator];
-            [self sendSubviewToBack:separator];
-        }
-        separator.frame = UIEdgeInsetsInsetRect([self rectForGroupSeparatorAtIndexPath:indexPath], _groupSeparatorInsets);
-        [newVisibleGroupSeparators setObject:separator forKey:indexPath];
-    }
-    for (ECItemViewElement *separator in [[_visibleElements objectForKey:kECItemViewGroupSeparatorKey] allValues])
-    {
-        [separator removeFromSuperview];
-        [[_elementCaches objectForKey:kECItemViewGroupSeparatorKey] push:separator];
-    }
-    [_visibleElements setObject:newVisibleGroupSeparators forKey:kECItemViewGroupSeparatorKey];
-}
-
-- (void)_layoutItems
-{
-    NSMutableDictionary *newVisibleItems = [NSMutableDictionary dictionary];
-    for (NSIndexPath *indexPath in [self indexPathsForVisibleItems])
-    {
-        ECItemViewElement *item = [[_visibleElements objectForKey:kECItemViewItemKey] objectForKey:indexPath];
-        if (item)
-            [[_visibleElements objectForKey:kECItemViewItemKey] removeObjectForKey:indexPath];
-        else
-        {
-            item = [self _loadItemAtIndexPath:indexPath];
-            if (!item)
-                continue;
-            if (_draggedElementsType == kECItemViewItemKey && [_draggedElements containsObject:indexPath])
-                item.selected = YES;
-            if ([_selectedItems containsObject:indexPath])
-                item.dragged = YES;
-            [self addSubview:item];
-            [self sendSubviewToBack:item];
-        }
-        item.frame = UIEdgeInsetsInsetRect([self rectForItemAtIndexPath:indexPath], _itemInsets);
-        [newVisibleItems setObject:item forKey:indexPath];
-    }
-    for (ECItemViewElement *item in [[_visibleElements objectForKey:kECItemViewItemKey] allValues])
-    {
-        [item removeFromSuperview];
-        [[_elementCaches objectForKey:kECItemViewItemKey] push:item];
-    }
-    [_visibleElements setObject:newVisibleItems forKey:kECItemViewItemKey];
+    !!!
 }
 
 - (void)_layoutCaret
@@ -1091,9 +1051,8 @@ const NSString *kECItemViewItemKey = @"item";
 
 - (void)layoutSubviews
 {
-    [self _layoutAreaHeaders];
-    [self _layoutGroupSeparators];
-    [self _layoutItems];
+    [self _syncVisibleElements];
+    [self _layoutElements];
     [self _layoutCaret];
 }
 
@@ -1130,20 +1089,20 @@ const NSString *kECItemViewItemKey = @"item";
 {
     if (![tapGestureRecognizer state] == UIGestureRecognizerStateEnded)
         return;
-    NSIndexPath *indexPath = [self indexPathForItemAtPoint:[tapGestureRecognizer locationInView:self]];
-    if (!indexPath)
+    ECItemViewElement *element = [self elementAtPoint:[tapGestureRecognizer locationInView:self]];
+    if (element.type != kECItemViewItemKey)
         return;
-    if (![_selectedItems containsObject:indexPath])
+    if (![_selectedItems containsObject:element.indexPath])
     {
-        [self selectItemAtIndexPath:indexPath animated:YES scrollPosition:ECItemViewScrollPositionNone];
+        [self selectItemAtIndexPath:element.indexPath animated:YES scrollPosition:ECItemViewScrollPositionNone];
         if (_flags.delegateDidSelectItem)
-            [__delegate itemView:self didSelectItemAtIndexPath:indexPath];
+            [__delegate itemView:self didSelectItemAtIndexPath:element.indexPath];
     }
     else
     {
-        [self deselectItemAtIndexPath:indexPath animated:YES];
+        [self deselectItemAtIndexPath:element.indexPath animated:YES];
         if (_flags.delegateDidDeselectItem)
-            [__delegate itemView:self didDeselectItemAtIndexPath:indexPath];
+            [__delegate itemView:self didDeselectItemAtIndexPath:element.indexPath];
     }
 }
 
@@ -1241,7 +1200,7 @@ const NSString *kECItemViewItemKey = @"item";
     [_caret removeFromSuperview];
     for (NSIndexPath *indexPath in _draggedElements)
     {
-        ECItemViewElement *element = [[_visibleElements objectForKey:_draggedElementsType] objectForKey:indexPath];
+        ECItemViewElement *element = [_visibleElements objectAtIndexPath:indexPath];
         element.dragged = NO;
     }
     _draggedElementsType = nil;
