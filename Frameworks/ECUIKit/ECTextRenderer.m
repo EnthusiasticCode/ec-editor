@@ -468,6 +468,7 @@
     NSRange currentLineRange = NSMakeRange(0, 0);
     NSUInteger currentStringOffset = 0;
     CGFloat currentPositionOffset = 0;
+    // TODO add @synchronized (textSegments)?
     do
     {
         if (lastTextSegment && lastTextSegment == segment)

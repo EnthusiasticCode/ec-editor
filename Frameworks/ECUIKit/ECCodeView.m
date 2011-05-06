@@ -61,7 +61,10 @@
 @end
 
 #pragma mark -
-@interface TextSelectionView : UIView
+@interface TextSelectionView : UIView {
+@private
+    CABasicAnimation *blinkAnimation;
+}
 
 @property (nonatomic) NSRange selection;
 @property (nonatomic, assign) ECTextRange *selectionRange;
@@ -72,6 +75,8 @@
 
 @property (nonatomic, retain) UIColor *selectionColor;
 @property (nonatomic, retain) UIColor *caretColor;
+
+@property (nonatomic, getter = isBlinking) BOOL blink;
 
 @end
 
@@ -153,6 +158,7 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
 @synthesize selectionRects;
 @synthesize selectionColor;
 @synthesize caretColor;
+@synthesize blink;
 
 - (ECTextRange *)selectionRange
 {
@@ -161,7 +167,7 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
 
 - (void)setSelectionRange:(ECTextRange *)selectionRange
 {
-    selection = [selectionRange range];
+    self.selection = [selectionRange range];
 }
 
 - (ECTextPosition *)selectionPosition
@@ -169,8 +175,40 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
     return [[[ECTextPosition alloc] initWithIndex:selection.location] autorelease];
 }
 
+- (void)setBlink:(BOOL)doBlink
+{
+    if (blink == doBlink)
+        return;
+    
+    blink = doBlink;
+    
+    if (!blinkAnimation) 
+    {
+        blinkAnimation = [[CABasicAnimation animationWithKeyPath:@"opacity"] retain];
+        blinkAnimation.fromValue = [NSNumber numberWithFloat:1.0];
+        blinkAnimation.toValue = [NSNumber numberWithFloat:0.0];
+        blinkAnimation.repeatCount = CGFLOAT_MAX;
+        blinkAnimation.autoreverses = YES;
+        blinkAnimation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
+        blinkAnimation.duration = 0.6;
+    }
+    
+    if (blink) 
+    {
+        [self.layer addAnimation:blinkAnimation forKey:@"blink"];
+    }
+    else
+    {
+        [self.layer removeAnimationForKey:@"blink"];
+        self.layer.opacity = 1.0;
+    }
+}
+
 - (void)dealloc
 {
+    [blinkAnimation release];
+    [selectionColor release];
+    [caretColor release];
     [selectionRects release];
     [super dealloc];
 }
@@ -1113,7 +1151,6 @@ static void init(ECCodeView *self)
         [inputDelegate selectionDidChange:self];
     
     // Position selection view
-    // TODO multiselection
     if ([self isFirstResponder])
     {
         CGRect selectionRect = CGRectNull;
@@ -1121,6 +1158,7 @@ static void init(ECCodeView *self)
         {
             selectionRect = [self caretRectForPosition:selectionView.selectionPosition];
             selectionView.selectionRects = nil;
+            selectionView.blink = YES;
         }
         else
         {
@@ -1128,9 +1166,10 @@ static void init(ECCodeView *self)
             selectionRect = selectionView.selectionRects.bounds;
             selectionRect.origin.x += textInsets.left;
             selectionRect.origin.y += textInsets.top;
+            selectionView.blink = NO;
         }
-        selectionView.frame = selectionRect;
         selectionView.hidden = NO;
+        selectionView.frame = selectionRect;
         [self bringSubviewToFront:selectionView];
         [selectionView setNeedsDisplay];
     }
@@ -1191,6 +1230,7 @@ static void init(ECCodeView *self)
             [self setSelectedTextFromPoint:tapPoint toPoint:tapPoint];
         case UIGestureRecognizerStateCancelled:
             [detailPopover dismissPopoverAnimated:YES];
+            selectionView.blink = selectionView.selection.length == 0;
             break;
             
         case UIGestureRecognizerStateBegan:
@@ -1202,6 +1242,7 @@ static void init(ECCodeView *self)
             {
                 [self setSelectedTextFromPoint:tapPoint toPoint:tapPoint];
                 [detailPopover dismissPopoverAnimated:YES];
+                selectionView.blink = selectionView.selection.length == 0;
                 return;
             }
             
@@ -1214,6 +1255,7 @@ static void init(ECCodeView *self)
             CGRect caretRect = [self caretRectForPosition:selectionView.selectionPosition];
             selectionView.frame = caretRect;
             selectionView.hidden = NO;
+            selectionView.blink = NO;
             textPoint.y = caretRect.origin.y - textInsets.top + (caretRect.size.height / 2);
             
             // Create detail view magnified image
