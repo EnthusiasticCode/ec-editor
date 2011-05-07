@@ -120,11 +120,6 @@ typedef const NSString *ECItemViewElementKey;
 - (CGRect)rectForGroupSeparatorAtIndexPath:(NSIndexPath *)indexPath;
 - (CGRect)rectForItemAtIndexPath:(NSIndexPath *)indexPath;
 
-#pragma mark Index paths
-- (ECItemViewElement *)elementAtIndexPath:(NSIndexPath *)indexPath;
-- (ECItemViewElement *)elementAtPoint:(CGPoint)point;
-- (ECArrayTree *)visibleElements;
-
 #pragma mark Scrolling
 - (void)scrollToItemAtIndexPath:(NSIndexPath *)indexPath atScrollPosition:(ECItemViewScrollPosition)scrollPosition animated:(BOOL)animated;
 - (void)scrollToNearestSelectedItemAtScrollPosition:(ECItemViewScrollPosition)scrollPosition animated:(BOOL)animated;
@@ -133,21 +128,10 @@ typedef const NSString *ECItemViewElementKey;
 - (void)beginUpdates;
 - (void)endUpdates;
 
-- (void)insertAreasAtIndexPaths:(NSArray *)indexPaths;
-- (void)deleteAreasAtIndexPaths:(NSArray *)indexPaths;
-- (void)reloadAreasAtIndexPaths:(NSArray *)indexPaths;
-
-- (void)insertGroupsAtIndexPaths:(NSArray *)indexPaths;
-- (void)deleteGroupsAtIndexPaths:(NSArray *)indexPaths;
-- (void)reloadGroupsAtIndexPaths:(NSArray *)indexPaths;
-
-- (void)insertItemsAtIndexPaths:(NSArray *)indexPaths;
-- (void)deleteItemsAtIndexPaths:(NSArray *)indexPaths;
-- (void)reloadItemsAtIndexPaths:(NSArray *)indexPaths;
-
-- (void)moveAreasAtIndexPaths:(NSArray *)indexPaths toIndexPath:(NSIndexPath *)indexPath;
-- (void)moveGroupsAtIndexPaths:(NSArray *)indexPaths toIndexPath:(NSIndexPath *)indexPath;
-- (void)moveItemsAtIndexPaths:(NSArray *)indexPaths toIndexPath:(NSIndexPath *)indexPath;
+- (void)insertElementsOfType:(ECItemViewElementKey)type atIndexPaths:(NSArray *)indexPaths;
+- (void)deleteElementsOfType:(ECItemViewElementKey)type atIndexPaths:(NSArray *)indexPaths;
+- (void)reloadElementsOfType:(ECItemViewElementKey)type atIndexPaths:(NSArray *)indexPaths;
+- (void)moveElementsOfType:(ECItemViewElementKey)type atIndexPaths:(NSArray *)indexPaths toIndexPath:(NSIndexPath *)indexPath;
 
 #pragma mark Selection
 - (NSIndexPath *)indexPathForSelectedItem;
