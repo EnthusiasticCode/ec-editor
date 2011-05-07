@@ -8,29 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-//@interface ECArrayTree : NSObject <NSCopying, NSMutableCopying>
-//@property (nonatomic, retain) NSIndexPath *offset;
-//- (NSUInteger)count;
-//- (NSUInteger)countAtDepth:(NSUInteger)depth;
-//- (NSUInteger)countForIndexPath:(NSIndexPath *)indexPath;
-//- (NSUInteger)countAtDepth:(NSUInteger)depth forIndexPath:(NSIndexPath *)indexPath;
-//- (id)objectAtIndexPath:(NSIndexPath *)indexPath;
-//- (NSArray *)allObjects;
-//- (NSArray *)objectsForIndexPath:(NSIndexPath *)indexPath;
-//- (NSArray *)objectsAtDepth:(NSUInteger)depth;
-//- (NSArray *)objectsAtDepth:(NSUInteger)depth forIndexPath:(NSIndexPath *)indexPath;
-//- (NSArray *)allIndexPaths;
-//- (NSArray *)indexPathsForIndexPath:(NSIndexPath *)indexPath;
-//- (NSArray *)indexPathsAtDepth:(NSUInteger)depth;
-//- (NSArray *)indexPathsAtDepth:(NSUInteger)depth forIndexPath:(NSIndexPath *)indexPath;
-//+ (id)arrayTree;
-//@end
-//
-//@interface ECMutableArrayTree : ECArrayTree
-//@end
-
 @interface ECArrayTree : NSObject <NSCopying, NSMutableCopying>
-@property (nonatomic, retain) NSIndexPath *offset;
 @property (nonatomic, retain) NSArray *children;
 @property (nonatomic, retain) id object;
 - (NSUInteger)count;

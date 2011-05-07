@@ -164,10 +164,9 @@ typedef const NSString *ECItemViewElementKey;
 
 @interface NSIndexPath (ECItemView)
 + (NSIndexPath *)indexPathForItem:(NSUInteger)item inGroup:(NSUInteger)group inArea:(NSUInteger)area;
-+ (NSIndexPath *)indexPathForPosition:(NSUInteger)position inArea:(NSUInteger)area;
++ (NSIndexPath *)indexPathForGroup:(NSUInteger)group inArea:(NSUInteger)area;
 + (NSIndexPath *)indexPathForArea:(NSUInteger)area;
 @property (nonatomic, readonly) NSUInteger area;
 @property (nonatomic, readonly) NSUInteger group;
 @property (nonatomic, readonly) NSUInteger item;
-@property (nonatomic, readonly) NSUInteger position;
 @end

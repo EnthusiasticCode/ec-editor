@@ -179,12 +179,12 @@
 - (void)itemView:(ECItemView *)itemView insertGroupAtIndexPath:(NSIndexPath *)indexPath
 {
     Group *group = [NSEntityDescription insertNewObjectForEntityForName:@"Group" inManagedObjectContext:self.managedObjectContext];
-    [[[self areaAtIndexPath:indexPath] orderedGroups] insertObject:group atIndex:indexPath.position];
+    [[[self areaAtIndexPath:indexPath] orderedGroups] insertObject:group atIndex:indexPath.group];
 }
 
 - (void)itemView:(ECItemView *)itemView deleteGroupAtIndexPath:(NSIndexPath *)indexPath
 {
-    Group *group = [[[self areaAtIndexPath:indexPath] orderedGroups] objectAtIndex:indexPath.position];
+    Group *group = [[[self areaAtIndexPath:indexPath] orderedGroups] objectAtIndex:indexPath.group];
     if ([[group items] count])
         return;
     [self.managedObjectContext deleteObject:group];
