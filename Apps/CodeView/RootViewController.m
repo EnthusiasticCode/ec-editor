@@ -116,7 +116,7 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     // Navigation logic may go here. Create and push another view controller.
-    NSURL *dir = [NSURL URLWithString:@"../Documents" relativeToURL:[[NSBundle mainBundle] bundleURL]];
+    NSURL *dir = [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject];
     NSURL *file = [dir URLByAppendingPathComponent:[tableView cellForRowAtIndexPath:indexPath].textLabel.text];
     NSString *fileContent = [NSString stringWithContentsOfURL:file encoding:NSUTF8StringEncoding error:NULL];
     

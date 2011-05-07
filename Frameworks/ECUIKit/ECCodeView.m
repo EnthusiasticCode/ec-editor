@@ -8,130 +8,22 @@
 
 #import "ECCodeView.h"
 #import <QuartzCore/QuartzCore.h>
-#import "ECTextRenderer.h"
 #import "ECTextPosition.h"
 #import "ECTextRange.h"
-#import "ECCodeStringDataSource.h"
-
-#define TILEVIEWPOOL_SIZE (3)
+#import "UIColor+StyleColors.h"
 
 #pragma mark -
-#pragma mark TextTileView
+#pragma mark Interfaces
 
-@interface TextTileView : UIView {
-@private
-    ECTextRenderer *renderer;
-}
-
-@property (nonatomic) NSInteger tileIndex;
-
-@property (nonatomic) UIEdgeInsets textInsets;
-
-- (id)initWithTextRenderer:(ECTextRenderer *)aRenderer;
-
-- (void)invalidate;
-
-@end
-
-
-@implementation TextTileView
-
-@synthesize tileIndex, textInsets;
-
-- (id)initWithTextRenderer:(ECTextRenderer *)aRenderer
-{
-    if ((self = [super init]))
-    {
-        self.opaque = YES;
-        self.clearsContextBeforeDrawing = NO;
-        renderer = aRenderer;
-    }
-    return self;
-}
-
-- (void)invalidate
-{
-    tileIndex = -2;
-    self.hidden = YES;
-}
-
-- (void)drawRect:(CGRect)rect
-{
-    if (tileIndex < 0)
-        return;
-    
-    // TODO draw "transparent" bg and thatn draw text in deferred queue
-    CGContextRef context = UIGraphicsGetCurrentContext();
-    
-    [self.backgroundColor setFill];
-    CGContextFillRect(context, rect);
-    
-    // Drawing text
-    CGContextSaveGState(context);
-    {
-        CGPoint textOffset = CGPointMake(0, rect.size.height * tileIndex);
-        CGSize textSize = rect.size;
-        if (tileIndex == 0) 
-        {
-            textSize.height -= textInsets.top;
-            CGContextTranslateCTM(context, textInsets.left, textInsets.top);
-        }
-        else
-        {
-            textOffset.y -= textInsets.top;
-            CGContextTranslateCTM(context, textInsets.left, 0);
-        }
-        CGRect textRect = (CGRect){ textOffset, rect.size };
-        
-        [renderer drawTextWithinRect:textRect inContext:context];
-    }
-    CGContextRestoreGState(context);
-}
-
-@end
+@class CodeInfoView;
+@class TextSelectionView;
 
 #pragma mark -
-#pragma mark TextSelectionView
-
-@interface TextSelectionView : UIView {
-@private
-    
-}
-
-@property (nonatomic) NSRange selection;
-@property (nonatomic, readonly) ECTextRange *selectionRange;
-@property (nonatomic, readonly) ECTextPosition *selectionPosition;
-
-@end
-
-
-@implementation TextSelectionView
-
-@synthesize selection;
-
-- (ECTextRange *)selectionRange
-{
-    return [[[ECTextRange alloc] initWithRange:selection] autorelease];
-}
-
-- (ECTextPosition *)selectionPosition
-{
-    return [[[ECTextPosition alloc] initWithIndex:selection.location] autorelease];
-}
-
-@end
-
-#pragma mark -
-#pragma mark -
-#pragma mark ECCodeView
 
 @interface ECCodeView () {
 @private
-    NSMutableAttributedString *text;
-    
-    // Tileing and rendering management
-    ECTextRenderer *renderer;
-    TextTileView* tileViewPool[TILEVIEWPOOL_SIZE];
+    // Navigator
+    CodeInfoView *infoView;
     
     // Text management
     TextSelectionView *selectionView;
@@ -140,13 +32,10 @@
     // Recognizers
     UITapGestureRecognizer *focusRecognizer;
     UITapGestureRecognizer *tapRecognizer;
-    
-    // Flags
-    ECCodeStringDataSource *defaultDatasource;
-    BOOL dataSourceHasCodeCanEditTextInRange;
 }
 
-- (TextTileView *)viewForTileIndex:(NSUInteger)tileIndex;
+/// Specify if the info view containing search marks and navigator should be visible.
+@property (nonatomic, getter = isInfoViewVisible) BOOL infoViewVisible;
 
 /// Method to be used before any text modification occurs.
 - (void)editDataSourceInRange:(NSRange)range withString:(NSString *)string;
@@ -166,79 +55,272 @@
 
 @end
 
+#pragma mark -
+@interface TextSelectionView : UIView
+
+@property (nonatomic) NSRange selection;
+@property (nonatomic, readonly) ECTextRange *selectionRange;
+@property (nonatomic, readonly) ECTextPosition *selectionPosition;
+
+@end
+
+#pragma mark -
+
+@interface CodeInfoView : UIView {
+@private
+    id<ECCodeViewDataSource> datasource;
+    ECTextRenderer *renderer;
+    NSOperationQueue *renderingQueue;
+    
+    ECCodeViewBase *navigatorView;
+    
+    UITapGestureRecognizer *tapRecognizer;
+}
+
+- (id)initWithNavigatorDatasource:(id<ECCodeViewDataSource>)source 
+                         renderer:(ECTextRenderer *)aRenderer 
+                   renderingQueue:(NSOperationQueue *)queue;
+
+#pragma mark Parent Layout
+
+@property (nonatomic) CGSize parentSize;
+
+@property (nonatomic) CGFloat parentContentOffsetRatio;
+
+#pragma mark Info View Layout and Style
+
+@property (nonatomic) CGFloat normalWidth;
+
+@property (nonatomic) CGFloat navigatorWidth;
+
+@property (nonatomic, readonly) CGFloat currentWidth;
+
+@property (nonatomic) UIEdgeInsets navigatorInsets;
+
+@property (nonatomic, retain) UIColor *navigatorBackgroundColor;
+
+@property (nonatomic, getter = isNavigatorVisible) BOOL navigatorVisible;
+
+- (void)setNavigatorVisible:(BOOL)visible animated:(BOOL)animated;
+
+#pragma mark User Interaction
+
+- (void)updateNavigator;
+
+- (void)handleTap:(UITapGestureRecognizer *)recognizer;
+
+@end
+
+#pragma mark -
+#pragma mark Implementations
+
+#pragma mark -
+#pragma mark TextSelectionView
+
+@implementation TextSelectionView
+
+@synthesize selection;
+
+- (ECTextRange *)selectionRange
+{
+    return [[[ECTextRange alloc] initWithRange:selection] autorelease];
+}
+
+- (ECTextPosition *)selectionPosition
+{
+    return [[[ECTextPosition alloc] initWithIndex:selection.location] autorelease];
+}
+
+@end
+
+#pragma mark -
+#pragma mark CodeInfoView
+
+@implementation CodeInfoView
+
+@synthesize parentSize, parentContentOffsetRatio;
+@synthesize normalWidth, navigatorWidth;
+@synthesize navigatorInsets, navigatorVisible, navigatorBackgroundColor;
+
+- (id)initWithNavigatorDatasource:(id<ECCodeViewDataSource>)source renderer:(ECTextRenderer *)aRenderer renderingQueue:(NSOperationQueue *)queue
+{
+    parentSize = [UIScreen mainScreen].bounds.size;
+    normalWidth = 11;
+    navigatorInsets = UIEdgeInsetsMake(2, 2, 2, 2);
+    if ((self = [super init])) 
+    {
+        datasource = source;
+        renderer = aRenderer;
+        renderingQueue = queue;
+        
+        self.backgroundColor = [UIColor clearColor];
+        
+        tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTap:)];
+        [self addGestureRecognizer:tapRecognizer];
+        [tapRecognizer release];
+    }
+    return self;
+}
+
+- (void)dealloc
+{
+    [navigatorBackgroundColor release];
+    [navigatorView release];
+    [super dealloc];
+}
+
+- (void)setParentSize:(CGSize)size
+{
+    if (CGSizeEqualToSize(size, parentSize))
+        return;
+    
+    parentSize = size;
+    
+    if (!navigatorVisible)
+        return;
+    
+    navigatorView.contentScaleFactor = (navigatorWidth - navigatorInsets.left - navigatorInsets.right) / parentSize.width;
+}
+
+- (void)setParentContentOffsetRatio:(CGFloat)ratio
+{
+    if (ratio == parentContentOffsetRatio)
+        return;
+    
+    parentContentOffsetRatio = ratio;
+    
+    if (!navigatorVisible)
+        return;
+    
+    CGFloat height = (navigatorView.contentSize.height - navigatorView.bounds.size.height);
+    navigatorView.contentOffset = CGPointMake(0, height > 0 ? parentContentOffsetRatio * height : 0);
+}
+
+- (CGFloat)currentWidth
+{
+    return navigatorVisible ? normalWidth + navigatorWidth : normalWidth;
+}
+
+- (void)setNavigatorVisible:(BOOL)visible
+{
+    [self setNavigatorVisible:visible animated:NO];
+}
+
+- (void)setNavigatorVisible:(BOOL)visible animated:(BOOL)animated
+{
+    if (visible == navigatorVisible)
+        return;
+    
+    if (!navigatorView) 
+    {
+        CGRect frame = (CGRect){ CGPointZero, parentSize };
+        frame.size.width = navigatorWidth;
+        frame = UIEdgeInsetsInsetRect(frame, navigatorInsets);
+        navigatorView = [[ECCodeViewBase alloc] initWithFrame:frame renderer:renderer renderingQueue:renderingQueue];
+        navigatorView.datasource = datasource;
+        navigatorView.contentScaleFactor = (navigatorWidth - navigatorInsets.left - navigatorInsets.right) / parentSize.width;
+        navigatorView.backgroundColor = navigatorBackgroundColor;
+        navigatorView.scrollEnabled = NO;
+        [self updateNavigator];
+        CGFloat height = (navigatorView.contentSize.height - navigatorView.bounds.size.height);
+        navigatorView.contentOffset = CGPointMake(0, height > 0 ? parentContentOffsetRatio * height : 0);
+        
+        [self addSubview:navigatorView];
+    }
+    
+    if (animated)
+    {
+        navigatorView.alpha = visible ? 0 : 1;
+        [UIView animateWithDuration:0.25 delay:0 options:(UIViewAnimationOptionAllowUserInteraction | UIViewAnimationOptionBeginFromCurrentState | UIViewAnimationOptionCurveEaseInOut) animations:^(void) {
+            if (visible) 
+            {
+                navigatorView.hidden = NO;
+                navigatorView.alpha = 1;
+                self.backgroundColor = navigatorBackgroundColor;
+            }
+            else
+            {
+                navigatorView.alpha = 0;
+                self.backgroundColor = [UIColor clearColor];
+            }
+        } completion:^(BOOL finished) {
+            navigatorView.hidden = !visible;
+            navigatorVisible = visible;
+        }];
+    }
+    else
+    {
+        navigatorVisible = visible;
+        if (navigatorVisible) 
+        {
+            navigatorView.alpha = 1;
+            navigatorView.hidden = NO;
+            self.backgroundColor = navigatorBackgroundColor;
+        }
+        else
+        {
+            navigatorView.hidden = YES;
+            self.backgroundColor = [UIColor clearColor];
+        }
+    }
+}
+
+- (void)updateNavigator
+{    
+    CGRect frame = self.bounds;
+    frame.size.width = navigatorWidth;
+    frame = UIEdgeInsetsInsetRect(frame, navigatorInsets);
+    
+    // Resetting the frame will trigger actual layout update
+    navigatorView.frame = frame;
+    [navigatorView setNeedsLayout];
+}
+
+- (void)handleTap:(UITapGestureRecognizer *)recognizer
+{
+    // TODO manage search marks
+//    [self setNavigatorVisible:!navigatorVisible animated:YES];
+}
+
+@end
+
+#pragma mark -
+#pragma mark ECCodeView
 
 @implementation ECCodeView
 
+#pragma mark -
 #pragma mark Properties
 
-@synthesize datasource, textInsets;
-
-- (void)setDatasource:(id<ECCodeViewDataSource>)aDatasource
-{
-    datasource = aDatasource;
-    
-    if (datasource != defaultDatasource) 
-    {
-        [defaultDatasource release];
-    }
-    
-    dataSourceHasCodeCanEditTextInRange = [datasource respondsToSelector:@selector(codeView:canEditTextInRange:)];
-    
-    renderer.datasource = datasource;
-}
-
-- (void)setTextInsets:(UIEdgeInsets)insets
-{
-    textInsets = insets;
-    for (NSInteger i = 0; i < TILEVIEWPOOL_SIZE; ++i)
-    {
-        [tileViewPool[i] setTextInsets:insets];
-        [tileViewPool[i] setNeedsDisplay];
-    }
-}
+@synthesize infoViewVisible;
+@synthesize navigatorBackgroundColor;
+@synthesize navigatorWidth;
 
 - (void)setFrame:(CGRect)frame
 {
-    renderer.wrapWidth = UIEdgeInsetsInsetRect(frame, self->textInsets).size.width;
-    self.contentSize = CGSizeMake(frame.size.width, renderer.estimatedHeight + textInsets.top + textInsets.bottom);
-    
-    for (NSInteger i = 0; i < TILEVIEWPOOL_SIZE; ++i)
-    {
-        [tileViewPool[i] invalidate];
-        tileViewPool[i].bounds = (CGRect){ CGPointZero, frame.size };
-    }
-    
-    // Reposition selection
-    [self setSelectedTextRange:selectionView.selection notifyDelegate:NO];
-    
-    [super setFrame:frame];
+    if (self.navigatorVisible) 
+        infoView.parentSize = frame.size;
+
+    [super setFrame:frame];    
 }
 
-- (void)setBackgroundColor:(UIColor *)color
+- (void)setContentSize:(CGSize)contentSize
 {
-    for (NSInteger i = 0; i < TILEVIEWPOOL_SIZE; ++i)
-    {
-        [tileViewPool[i] setBackgroundColor:color];
-        [tileViewPool[i] setNeedsDisplay];
-    }
-    [super setBackgroundColor:color];
+    [super setContentSize:contentSize];
+    
+    [infoView updateNavigator];
 }
 
 #pragma mark NSObject Methods
 
 static void preinit(ECCodeView *self)
 {
-    self->renderer = [ECTextRenderer new];
-    self->renderer.preferredLineCountPerSegment = 500;
-    
-    self->textInsets = UIEdgeInsetsMake(10, 10, 10, 10);
+    self->navigatorBackgroundColor = [[UIColor styleBackgroundColor] retain];
+    self->navigatorWidth = 200;
 }
 
 static void init(ECCodeView *self)
-{    
-    self->renderer.wrapWidth = UIEdgeInsetsInsetRect(self.bounds, self->textInsets).size.width;
-    [self->renderer addObserver:self forKeyPath:@"estimatedHeight" options:NSKeyValueObservingOptionNew context:nil];
-    
+{
     // Adding selection view
     self->selectionView = [TextSelectionView new];
     [self->selectionView setHidden:YES];
@@ -276,121 +358,87 @@ static void init(ECCodeView *self)
 
 - (void)dealloc
 {
-    for (NSInteger i = 0; i < TILEVIEWPOOL_SIZE; ++i)
-        [tileViewPool[i] release];
-    [renderer release];
-    [defaultDatasource release];
+    [navigatorBackgroundColor release];
+    [infoView release];
     [super dealloc];
-}
-
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
-{
-    if (object == renderer) 
-    {
-        CGFloat height = [[change valueForKey:NSKeyValueChangeNewKey] floatValue];
-        self.contentSize = CGSizeMake(self.bounds.size.width, height + textInsets.top + textInsets.bottom);
-        return;
-    }
-}
-
-- (void)didMoveToSuperview
-{
-    if (!self->datasource)
-    {
-        self->defaultDatasource = [ECCodeStringDataSource new];
-        self.datasource = self->defaultDatasource;
-    }
-}
-
-#pragma mark -
-#pragma mark Rendering Methods
-
-- (TextTileView *)viewForTileIndex:(NSUInteger)tileIndex
-{
-    NSInteger selected = -1;
-    // Select free tile
-    for (NSInteger i = 0; i < TILEVIEWPOOL_SIZE; ++i) 
-    {
-        if (tileViewPool[i])
-        {
-            // Tile already present and ready
-            if ([tileViewPool[i] tileIndex] == (NSInteger)tileIndex)
-            {
-                return tileViewPool[i];
-            }
-            // If still no selection just select this as a candidate
-            if (selected >= 0)
-                continue;
-            // Select only if better than previous
-            if (abs([tileViewPool[i] tileIndex] - tileIndex) <= 1) 
-                continue;
-        }
-        selected = i;
-    }
-    
-    // Generate new tile
-    if (!tileViewPool[selected]) 
-    {
-        tileViewPool[selected] = [[TextTileView alloc] initWithTextRenderer:renderer];
-        tileViewPool[selected].backgroundColor = self.backgroundColor;
-        tileViewPool[selected].textInsets = textInsets;
-        // TODO remove from self when not displayed
-        [self addSubview:tileViewPool[selected]];
-    }
-    
-    tileViewPool[selected].tileIndex = tileIndex;
-    tileViewPool[selected].bounds = (CGRect){ CGPointZero, self.frame.size };
-    [tileViewPool[selected] setNeedsDisplay];
-    
-    return tileViewPool[selected];
 }
 
 - (void)layoutSubviews
 {
-//    [super layoutSubviews];
+    [super layoutSubviews];
     
-    // Scrolled content rect
-    CGRect contentRect = self.bounds;
-    CGFloat halfHeight = contentRect.size.height / 2.0;
-    
-    // Find first visible tile index
-    NSUInteger index = contentRect.origin.y / contentRect.size.height;
-    
-    // Layout first visible tile
-    CGFloat firstTileEnd = (index + 1) * contentRect.size.height;
-    TextTileView *firstTile = [self viewForTileIndex:index];
-    [self sendSubviewToBack:firstTile];
-    firstTile.hidden = NO;
-    firstTile.center = CGPointMake(CGRectGetMidX(contentRect), firstTileEnd - halfHeight);
-    
-    // Layout second visible tile if needed
-    if (firstTileEnd < CGRectGetMaxY(contentRect)) 
+    if (infoViewVisible) 
     {
-        index++;
-        TextTileView *secondTile = [self viewForTileIndex:index];
-        [self sendSubviewToBack:secondTile];
-        secondTile.hidden = NO;
-        secondTile.center = CGPointMake(CGRectGetMidX(contentRect), firstTileEnd + halfHeight);
+        CGRect infoFrame = self.bounds;
+        infoView.parentContentOffsetRatio = infoFrame.origin.y / (self.contentSize.height - infoFrame.size.height);
+        
+        CGFloat infoWidth = infoView.currentWidth;
+        infoFrame.origin.x = infoFrame.size.width - infoWidth;
+        infoFrame.size.width = infoWidth;
+        infoView.frame = infoFrame;
     }
+}
+
+#pragma mark -
+#pragma mark InfoView and Navigator methods
+
+- (void)setInfoViewVisible:(BOOL)visible
+{
+    if (visible == infoViewVisible)
+        return;
     
-    // Layout selection caret
-//    if ([self isFirstResponder] && selectionView.selection.length == 0)
-//    {
-//        CGRect caretRect = [self caretRectForPosition:selectionView.selectionPosition];
-//        selectionView.frame = caretRect;
-//        selectionView.hidden = NO;
-//        [self bringSubviewToFront:selectionView];
-//    }
+    infoViewVisible = visible;
+    
+    if (visible) 
+    {
+        if (!infoView)
+        {
+            infoView = [[CodeInfoView alloc] initWithNavigatorDatasource:datasource renderer:renderer renderingQueue:renderingQueue];
+            infoView.navigatorBackgroundColor = navigatorBackgroundColor;
+            infoView.navigatorWidth = navigatorWidth;
+            infoView.parentSize = self.bounds.size;
+        }
+        [self addSubview:infoView];
+    }
+    else
+    {
+        [infoView removeFromSuperview];
+    }
 }
 
-- (void)updateAllText
+- (BOOL)isNavigatorVisible
 {
-    [renderer updateAllText];
+    return infoView.navigatorVisible;
 }
 
-- (void)updateTextInLineRange:(NSRange)originalRange toLineRange:(NSRange)newRange
+- (void)setNavigatorVisible:(BOOL)visible
 {
-    [renderer updateTextInLineRange:originalRange toLineRange:newRange];
+    if (visible == infoView.navigatorVisible)
+        return;
+    
+    if (visible)
+    {
+        self.infoViewVisible = YES;
+        [infoView setNavigatorVisible:YES animated:YES];
+        [infoView updateNavigator];
+    }
+    else
+    {
+        [infoView setNavigatorVisible:NO animated:YES];
+    }
+}
+
+- (void)setNavigatorWidth:(CGFloat)width
+{
+    navigatorWidth = width;
+    infoView.navigatorWidth = width;
+}
+
+- (void)setNavigatorBackgroundColor:(UIColor *)color
+{
+    [navigatorBackgroundColor release];
+    navigatorBackgroundColor = [color retain];
+    infoView.navigatorBackgroundColor = color;
 }
 
 #pragma mark -
@@ -461,28 +509,7 @@ static void init(ECCodeView *self)
 
 - (void)insertText:(NSString *)string
 {
-    // Select insertion range
-//    NSUInteger textLength = [datasource textLength];
     NSRange insertRange = selectionView.selection;
-//    if (!selection)
-//    {
-//        insertRange = (NSRange){ textLength, 0 };
-//    }
-//    else
-//    {
-//        NSUInteger s = ((ECTextPosition*)selection.start).index;
-//        NSUInteger e = ((ECTextPosition*)selection.end).index;
-//        if (s > textLength)
-//            s = textLength;
-//        if (e > textLength)
-//            e = textLength;
-//        if (e < s)
-//            return;
-//        insertRange = (NSRange){ s, e - s };
-//    }
-    
-    // TODO check if char is space and autocomplete
-    
     [self editDataSourceInRange:insertRange withString:string];
     [self setSelectedIndex:(insertRange.location + [string length])];
 }
@@ -864,17 +891,6 @@ static void init(ECCodeView *self)
 
 - (CGRect)caretRectForPosition:(UITextPosition *)position
 {
-    //    NSUInteger pos = ((ECTextPosition *)position).index;
-    //    CGFloat frameOffset;
-    ////    CTFrameRef frame = [self frameContainingTextIndex:pos frameOffset:&frameOffset];
-    ////    CGRect carretRect = ECCTFrameGetBoundRectOfLinesForStringRange(frame, (CFRange){pos, 0});
-    //    CGRect carretRect = CGRectZero;
-    //    carretRect.origin.x += frameOffset;
-    //    // TODO parametrize caret rect sizes
-    //    carretRect.origin.x -= 1.0;
-    //    carretRect.size.width = 2.0;
-    //    return carretRect;
-    
     NSUInteger pos = ((ECTextPosition *)position).index;
     CGRect carretRect = [renderer boundsForStringRange:(NSRange){pos, 0} limitToFirstLine:YES];
     
@@ -883,6 +899,15 @@ static void init(ECCodeView *self)
     
     carretRect.origin.x -= 1.0;
     carretRect.size.width = 2.0;
+    
+    CGFloat scale = self.contentScaleFactor;
+    if (scale != 1.0) 
+    {
+        carretRect.origin.x *= scale;
+        carretRect.origin.y *= scale;
+        carretRect.size.width *= scale;
+        carretRect.size.height *= scale;
+    }
     
     return carretRect;
 }
@@ -895,14 +920,16 @@ static void init(ECCodeView *self)
 - (UITextPosition *)closestPositionToPoint:(CGPoint)point 
                                withinRange:(UITextRange *)range
 {
-    //    NSUInteger textLength = [self textLength];
-    //    NSUInteger index = (NSUInteger)ECCTFrameGetClosestStringIndexInRangeToPoint(self->textLayer.CTFrame, ((ECTextRange *)range).CFRange, point);
-    //    if (index >= textLength)
-    //        index = textLength;
-    //    return [[[ECTextPosition alloc] initWithIndex:(NSUInteger)index] autorelease];
-    
     point.x -= textInsets.left;
     point.y -= textInsets.top;
+    
+    CGFloat scale = self.contentScaleFactor;
+    if (scale != 1.0)
+    {
+        point.x /= scale;
+        point.y /= scale;
+    }
+    
     NSUInteger location = [renderer closestStringLocationToPoint:point withinStringRange:[(ECTextRange *)range range]];
     return [[[ECTextPosition alloc] initWithIndex:location] autorelease];;
 }
@@ -986,20 +1013,6 @@ static void init(ECCodeView *self)
 }
 
 #pragma mark -
-#pragma mark Text Renderer Delegate
-
-- (void)textRenderer:(ECTextRenderer *)sender invalidateRenderInRect:(CGRect)rect
-{
-    if (rect.origin.y <= CGRectGetMaxY(self.bounds)) 
-    {
-        for (int i = 0; i < TILEVIEWPOOL_SIZE; ++i) 
-        {
-            [tileViewPool[i] setNeedsDisplay];
-        }
-    }
-}
-
-#pragma mark -
 #pragma mark Gesture Recognizers and Interaction
 
 - (void)handleGestureFocus:(UITapGestureRecognizer *)recognizer
@@ -1013,51 +1026,5 @@ static void init(ECCodeView *self)
     CGPoint tapPoint = [recognizer locationInView:self];
     [self setSelectedTextFromPoint:tapPoint toPoint:tapPoint];
 }
-
-#pragma mark -
-#pragma mark Text Renderer and CodeView String Datasource
-
-- (NSString *)text
-{
-    if (![datasource isKindOfClass:[ECCodeStringDataSource class]])
-    {
-        return nil;
-    }
-    
-    return [(ECCodeStringDataSource *)datasource string];
-}
-
-- (void)setText:(NSString *)string
-{
-    // Will make sure that if no datasource have been set, a default one will be created.
-    [self didMoveToSuperview];
-    
-    if (![datasource isKindOfClass:[ECCodeStringDataSource class]])
-    {
-        [NSException raise:NSInternalInconsistencyException format:@"Trying to set codeview text with textDelegate not self."];
-        return;
-    }
-    
-    // Set text
-    [(ECCodeStringDataSource *)datasource setString:string];
-    [renderer updateAllText];
-
-    // Update tiles
-    CGRect bounds = self.bounds;
-    renderer.wrapWidth = UIEdgeInsetsInsetRect(bounds, self->textInsets).size.width;
-    self.contentSize = CGSizeMake(bounds.size.width, renderer.estimatedHeight + textInsets.top + textInsets.bottom);
-    for (NSInteger i = 0; i < TILEVIEWPOOL_SIZE; ++i)
-    {
-        [tileViewPool[i] invalidate];
-        tileViewPool[i].bounds = (CGRect){ CGPointZero, bounds.size };
-    }
-    
-    // Update selection
-    // TODO resume saved selection
-    [self setSelectedTextRange:(NSRange){ 0, 0 } notifyDelegate:NO];
-    
-    [self setNeedsLayout];
-}
-
 
 @end

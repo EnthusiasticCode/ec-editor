@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CDB949BA136C3AF200870A98 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CDB949B9136C3AF200870A98 /* QuartzCore.framework */; };
 		CDCD1C861368607300A6DA9E /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CDCD1C851368607300A6DA9E /* UIKit.framework */; };
 		CDCD1C881368607300A6DA9E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CDCD1C871368607300A6DA9E /* Foundation.framework */; };
 		CDCD1C8A1368607300A6DA9E /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CDCD1C891368607300A6DA9E /* CoreGraphics.framework */; };
@@ -25,9 +26,12 @@
 		CDCD1CCB1368614000A6DA9E /* ECTextRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = CDCD1CC21368614000A6DA9E /* ECTextRenderer.m */; };
 		CDCD1CCC1368614000A6DA9E /* ECTextStyle.m in Sources */ = {isa = PBXBuildFile; fileRef = CDCD1CC61368614000A6DA9E /* ECTextStyle.m */; };
 		CDCD1CE31368684300A6DA9E /* ECCodeView.m in Sources */ = {isa = PBXBuildFile; fileRef = CDCD1CE21368684300A6DA9E /* ECCodeView.m */; };
+		CDF9F22E136DC9BD00CB5945 /* ECCodeViewBase.m in Sources */ = {isa = PBXBuildFile; fileRef = CDF9F22D136DC9BD00CB5945 /* ECCodeViewBase.m */; };
+		CDF9F239136EA90800CB5945 /* UIColor+StyleColors.m in Sources */ = {isa = PBXBuildFile; fileRef = CDF9F238136EA90800CB5945 /* UIColor+StyleColors.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		CDB949B9136C3AF200870A98 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		CDCD1C811368607300A6DA9E /* CodeView.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CodeView.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CDCD1C851368607300A6DA9E /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		CDCD1C871368607300A6DA9E /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -62,6 +66,10 @@
 		CDCD1CC61368614000A6DA9E /* ECTextStyle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECTextStyle.m; sourceTree = "<group>"; };
 		CDCD1CE11368684300A6DA9E /* ECCodeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeView.h; sourceTree = "<group>"; };
 		CDCD1CE21368684300A6DA9E /* ECCodeView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeView.m; sourceTree = "<group>"; };
+		CDF9F22C136DC9BD00CB5945 /* ECCodeViewBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeViewBase.h; sourceTree = "<group>"; };
+		CDF9F22D136DC9BD00CB5945 /* ECCodeViewBase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeViewBase.m; sourceTree = "<group>"; };
+		CDF9F237136EA90800CB5945 /* UIColor+StyleColors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+StyleColors.h"; sourceTree = "<group>"; };
+		CDF9F238136EA90800CB5945 /* UIColor+StyleColors.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+StyleColors.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -69,6 +77,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CDB949BA136C3AF200870A98 /* QuartzCore.framework in Frameworks */,
 				CDCD1CB2136860E000A6DA9E /* CoreText.framework in Frameworks */,
 				CDCD1C861368607300A6DA9E /* UIKit.framework in Frameworks */,
 				CDCD1C881368607300A6DA9E /* Foundation.framework in Frameworks */,
@@ -99,6 +108,7 @@
 		CDCD1C841368607300A6DA9E /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				CDB949B9136C3AF200870A98 /* QuartzCore.framework */,
 				CDCD1CB1136860E000A6DA9E /* CoreText.framework */,
 				CDCD1C851368607300A6DA9E /* UIKit.framework */,
 				CDCD1C871368607300A6DA9E /* Foundation.framework */,
@@ -149,11 +159,15 @@
 		CDCD1CB41368610300A6DA9E /* ECUIKit */ = {
 			isa = PBXGroup;
 			children = (
+				CDF9F237136EA90800CB5945 /* UIColor+StyleColors.h */,
+				CDF9F238136EA90800CB5945 /* UIColor+StyleColors.m */,
+				CDCD1CBC1368614000A6DA9E /* ECCodeViewDatasource.h */,
+				CDF9F22C136DC9BD00CB5945 /* ECCodeViewBase.h */,
+				CDF9F22D136DC9BD00CB5945 /* ECCodeViewBase.m */,
 				CDCD1CE11368684300A6DA9E /* ECCodeView.h */,
 				CDCD1CE21368684300A6DA9E /* ECCodeView.m */,
 				CDCD1CB81368614000A6DA9E /* ECCodeStringDataSource.h */,
 				CDCD1CB91368614000A6DA9E /* ECCodeStringDataSource.m */,
-				CDCD1CBC1368614000A6DA9E /* ECCodeViewDatasource.h */,
 				CDCD1CBD1368614000A6DA9E /* ECTextPosition.h */,
 				CDCD1CBE1368614000A6DA9E /* ECTextPosition.m */,
 				CDCD1CBF1368614000A6DA9E /* ECTextRange.h */,
@@ -240,6 +254,8 @@
 				CDCD1CCB1368614000A6DA9E /* ECTextRenderer.m in Sources */,
 				CDCD1CCC1368614000A6DA9E /* ECTextStyle.m in Sources */,
 				CDCD1CE31368684300A6DA9E /* ECCodeView.m in Sources */,
+				CDF9F22E136DC9BD00CB5945 /* ECCodeViewBase.m in Sources */,
+				CDF9F239136EA90800CB5945 /* UIColor+StyleColors.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -318,6 +334,7 @@
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = "CodeView/CodeView-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				RUN_CLANG_STATIC_ANALYZER = YES;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -332,6 +349,7 @@
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = "CodeView/CodeView-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				RUN_CLANG_STATIC_ANALYZER = YES;
 				VALIDATE_PRODUCT = YES;
 				WRAPPER_EXTENSION = app;
 			};

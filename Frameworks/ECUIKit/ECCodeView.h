@@ -7,29 +7,17 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "ECCodeViewDataSource.h"
+#import "ECCodeViewBase.h"
 
+@interface ECCodeView : ECCodeViewBase <UIKeyInput, UITextInputTraits, UITextInput>
 
-@interface ECCodeView : UIScrollView <UIKeyInput, UITextInputTraits, UITextInput>
+#pragma mark Managing the Navigator
 
-/// The datasource for the text displayed by the code view. Default is self.
-/// If this datasource is not self, the text property will have no effect.
-@property (nonatomic, assign) id<ECCodeViewDataSource> datasource;
+@property (nonatomic) CGFloat navigatorWidth;
 
-#pragma mark Managing Text Content
+@property (nonatomic, retain) UIColor *navigatorBackgroundColor;
 
-/// Set the text fot the control. This property is only used if textDatasource
-/// is the code view itself.
-@property (nonatomic, retain) NSString *text;
-
-/// Insets of the text.
-@property (nonatomic) UIEdgeInsets textInsets;
-
-/// Invalidate the text making the receiver redraw it.
-- (void)updateAllText;
-
-/// Invalidate a particular section of the text making the reveiver redraw it.
-- (void)updateTextInLineRange:(NSRange)originalRange toLineRange:(NSRange)newRange;
+@property (nonatomic, getter = isNavigatorVisible) BOOL navigatorVisible;
 
 #pragma mark UITextInput Properties
 

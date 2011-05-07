@@ -321,6 +321,9 @@
 
 - (void)setDatasource:(id<ECTextRendererDataSource>)aDatasource
 {
+    if (datasource == aDatasource)
+        return;
+    
     datasource = aDatasource;
     datasourceHasTextRendererEstimatedTextLineCountOfLength = [datasource respondsToSelector:@selector(textRenderer:estimatedTextLineCountOfLength:)];
     
@@ -329,16 +332,16 @@
 
 - (void)setWrapWidth:(CGFloat)width
 {
-    if (wrapWidth != width) 
+    if (wrapWidth == width) 
+        return;
+
+    [framesCache removeAllObjects];
+    wrapWidth = width;
+    for (TextSegment *segment in textSegments) 
     {
-        [framesCache removeAllObjects];
-        wrapWidth = width;
-        for (TextSegment *segment in textSegments) 
-        {
-            segment.renderWrapWidth = width;
-        }
-        estimatedHeight = 0;
+        segment.renderWrapWidth = width;
     }
+    estimatedHeight = 0;
 }
 
 - (CGFloat)estimatedHeight
