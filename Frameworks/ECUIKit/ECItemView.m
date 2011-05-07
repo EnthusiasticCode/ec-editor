@@ -292,7 +292,7 @@ const NSString *kECItemViewItemKey = @"item";
         numAreas = [_dataSource numberOfAreasInItemView:self];
     [_areas release];
     _areas = [[NSMutableArray alloc] init];
-    for (NSUInteger i = [_visibleElements countAtDepth:kECItemViewAreaDepth]; i < numAreas; ++i)
+    for (NSUInteger i = 0; i < numAreas; ++i)
         [_visibleElements addObject:nil toIndexPath:nil];
     for (NSUInteger i = 0; i < numAreas; ++i)
     {
@@ -879,19 +879,27 @@ const NSString *kECItemViewItemKey = @"item";
         rect.origin.x -= 5;
         _caret.frame = rect;
     }
-    else if (type == kECItemViewGroupKey)
-    {
-        CGRect rect = [self rectForItemAtIndexPath:[NSIndexPath indexPathForItem:[self numberOfItemsInGroupAtIndexPath:indexPath] inGroup:indexPath.group inArea:indexPath.area]];
-        rect.size. width = 10;
-        rect.origin.x -= 5;
-        _caret.frame = rect;
-    }
     else if (type == kECItemViewAreaHeaderKey)
         _caret.frame = [self rectForAreaHeaderAtIndexPath:indexPath];
     else if (type == kECItemViewGroupSeparatorKey)
         _caret.frame = [self rectForGroupSeparatorAtIndexPath:indexPath];
+    else if (type == kECItemViewAreaKey)
+    {
+        CGRect rect = [self _rectForAreaAtIndexPath:indexPath];
+        rect.size.height = 10;
+        rect.origin.y -= 5;
+        _caret.frame = rect;
+    }
+    else if (type == kECItemViewGroupKey)
+    {
+        CGRect rect = [self _rectForGroupAtIndexPath:indexPath];
+        rect.size.height = 10;
+        rect.origin.y -= 5;
+        _caret.frame = rect;
+    }
     else
         _caret.frame = CGRectZero;
+    [self bringSubviewToFront:_caret];
 }
 
 - (void)layoutSubviews
@@ -998,9 +1006,33 @@ const NSString *kECItemViewItemKey = @"item";
 
 - (void)_continueDrag
 {
-    NSLog(@"%@", _draggedElementsType);
-    _caret.indexPath = [self _indexPathForElementAtPoint:_dragPoint type:&_draggedElementsType];
-    NSLog(@"returned %@ for %@", _caret.indexPath, _draggedElementsType);
+    if (_draggedElementsType == kECItemViewAreaKey)
+    {
+        _caret.indexPath = [self _indexPathForElementAtPoint:_dragPoint type:&_draggedElementsType];
+    }
+    else if (_draggedElementsType == kECItemViewGroupKey)
+    {
+        ECItemViewElementKey type = nil;
+        NSIndexPath *indexPath = [self _indexPathForElementAtPoint:_dragPoint type:&type];
+        if (type == kECItemViewAreaHeaderKey)
+            type = kECItemViewAreaKey;
+        else
+            type = kECItemViewGroupKey;
+        _caret.indexPath = indexPath;
+        _caret.type = type;
+    }
+    else
+    {
+        ECItemViewElementKey type = nil;
+        NSIndexPath *indexPath = [self _indexPathForElementAtPoint:_dragPoint type:&type];
+        if (type == kECItemViewGroupKey)
+        {
+            type = kECItemViewItemKey;
+            indexPath = [NSIndexPath indexPathForItem:[self numberOfItemsInGroupAtIndexPath:indexPath] inGroup:indexPath.group inArea:indexPath.area];
+        }
+        _caret.indexPath = indexPath;
+        _caret.type = type;
+    }
     if (!_scrollTimer && CGRectContainsPoint(self.bounds, _dragPoint) && !CGRectContainsPoint(UIEdgeInsetsInsetRect(self.bounds, _scrollingHotspots), _dragPoint))
     {
         _scrollTimer = [NSTimer timerWithTimeInterval:1.0/60.0 target:self selector:@selector(_handleTimer:) userInfo:nil repeats:YES];
@@ -1016,36 +1048,48 @@ const NSString *kECItemViewItemKey = @"item";
 
 - (void)_endDrag
 {
-    NSIndexPath *caretIndexPath = _caret.indexPath;
-    ECItemViewElementKey caretType = _caret.type;
     NSArray *draggedElements = [_draggedElements allObjects];
+    ECItemViewElementKey type = nil;
+    NSIndexPath *indexPath = [self _indexPathForElementAtPoint:_dragPoint type:&type];
     if (_draggedElementsType == kECItemViewItemKey)
     {
-        if (caretType == kECItemViewItemKey)
+        if (type == kECItemViewItemKey)
         {
-            [_dataSource itemView:self moveItemsAtIndexPaths:draggedElements toIndexPath:caretIndexPath];
-            [self moveItemsAtIndexPaths:draggedElements toIndexPath:caretIndexPath];
-        }
-        else if (caretType == kECItemViewGroupKey)
-        {
-            NSIndexPath *indexPath = [NSIndexPath indexPathForItem:[self numberOfItemsInGroupAtIndexPath:caretIndexPath] inGroup:caretIndexPath.group inArea:caretIndexPath.area];
             [_dataSource itemView:self moveItemsAtIndexPaths:draggedElements toIndexPath:indexPath];
-            [self moveItemsAtIndexPaths:draggedElements toIndexPath:indexPath];
+            [self moveElementsOfType:kECItemViewItemKey atIndexPaths:draggedElements toIndexPath:indexPath];
         }
-        else
+        else if (type == kECItemViewGroupKey)
+        {
+            indexPath = [NSIndexPath indexPathForItem:[self numberOfItemsInGroupAtIndexPath:indexPath] inGroup:indexPath.group inArea:indexPath.area];
+            [_dataSource itemView:self moveItemsAtIndexPaths:draggedElements toIndexPath:indexPath];
+            [self moveElementsOfType:kECItemViewItemKey atIndexPaths:draggedElements toIndexPath:indexPath];
+        }
+        else if (type == kECItemViewAreaHeaderKey || type == kECItemViewGroupSeparatorKey)
         {
             [self beginUpdates];
-            [self deleteItemsAtIndexPaths:[_draggedElements allObjects]];
-            NSIndexPath *newGroupIndexPath = nil;
-            if (_caret.type == kECItemViewGroupSeparatorKey)
-                newGroupIndexPath = [NSIndexPath indexPathForItem:0 inGroup:caretIndexPath.group + 1 inArea:caretIndexPath.area];
+            [self deleteElementsOfType:kECItemViewItemKey atIndexPaths:draggedElements];
+            if (type == kECItemViewGroupSeparatorKey)
+                indexPath = [NSIndexPath indexPathForGroup:indexPath.group + 1 inArea:indexPath.area];
             else
-                newGroupIndexPath = [NSIndexPath indexPathForItem:0 inGroup:0 inArea:caretIndexPath.area];
-            [_dataSource itemView:self insertGroupAtIndexPath:newGroupIndexPath];
-            [_dataSource itemView:self moveItemsAtIndexPaths:draggedElements toIndexPath:newGroupIndexPath];
-            [self insertGroupsAtIndexPaths:[NSArray arrayWithObject:newGroupIndexPath]];
+                indexPath = [NSIndexPath indexPathForGroup:0 inArea:indexPath.area];
+            [_dataSource itemView:self insertGroupAtIndexPath:indexPath];
+            [_dataSource itemView:self moveItemsAtIndexPaths:draggedElements toIndexPath:[NSIndexPath indexPathForItem:0 inGroup:indexPath.group inArea:indexPath.area]];
+            [self insertElementsOfType:kECItemViewItemKey atIndexPaths:[NSArray arrayWithObject:indexPath]];
             [self endUpdates];
         }
+    }
+    else if (_draggedElementsType == kECItemViewGroupKey)
+    {
+        if (!_flags.dataSourceMoveGroup)
+            return;
+        if (type == kECItemViewAreaKey || type == kECItemViewAreaHeaderKey)
+        {
+            if (indexPath.area == 0)
+                return;
+            indexPath = [NSIndexPath indexPathForGroup:[self _numberOfGroupsInAreaAtIndex:indexPath.area - 1] inArea:indexPath.area - 1];
+        }
+        [_dataSource itemView:self moveGroupsAtIndexPaths:draggedElements toIndexPath:indexPath];
+        [self moveElementsOfType:kECItemViewGroupKey atIndexPaths:draggedElements toIndexPath:indexPath];
     }
 }
 
@@ -1063,6 +1107,8 @@ const NSString *kECItemViewItemKey = @"item";
     [_scrollTimer invalidate];
     _scrollTimer = nil;
     [self setNeedsLayout];
+    // TODO: remove this reloadData when batch updates are implemented
+    [self reloadData];
 }
 
 - (void)_handleTimer:(NSTimer *)timer
