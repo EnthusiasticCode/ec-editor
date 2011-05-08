@@ -10,7 +10,7 @@
 		B706F05A13563ECB00E03DDF /* UIColor+StyleColors.m in Sources */ = {isa = PBXBuildFile; fileRef = B706F05513563ECB00E03DDF /* UIColor+StyleColors.m */; };
 		B706F05B13563ECB00E03DDF /* UIImage+BlockDrawing.m in Sources */ = {isa = PBXBuildFile; fileRef = B706F05713563ECB00E03DDF /* UIImage+BlockDrawing.m */; };
 		B706F05C13563ECB00E03DDF /* UIView+ConcurrentAnimation.m in Sources */ = {isa = PBXBuildFile; fileRef = B706F05913563ECB00E03DDF /* UIView+ConcurrentAnimation.m */; };
-		B7096DF7135A1EAB0082F859 /* NSIndexPath+FixedIsEqual.m in Sources */ = {isa = PBXBuildFile; fileRef = B7096DF6135A1EAB0082F859 /* NSIndexPath+FixedIsEqual.m */; };
+		B70B1FEE136F2399002D17F1 /* ECItemViewElement.m in Sources */ = {isa = PBXBuildFile; fileRef = B70B1FED136F2399002D17F1 /* ECItemViewElement.m */; };
 		B70C5C8C1365F22E001C35A5 /* Target.m in Sources */ = {isa = PBXBuildFile; fileRef = B70C5C8B1365F22E001C35A5 /* Target.m */; };
 		B70C5C8F1365F22E001C35A5 /* Folder.m in Sources */ = {isa = PBXBuildFile; fileRef = B70C5C8E1365F22E001C35A5 /* Folder.m */; };
 		B70C5C951365F22E001C35A5 /* Bookmark.m in Sources */ = {isa = PBXBuildFile; fileRef = B70C5C941365F22E001C35A5 /* Bookmark.m */; };
@@ -29,6 +29,11 @@
 		B72BE641136B3E53009B0977 /* ECDictionaryCache.m in Sources */ = {isa = PBXBuildFile; fileRef = B72BE640136B3E53009B0977 /* ECDictionaryCache.m */; };
 		B72BE649136B3E7F009B0977 /* ECCodeStringDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = B72BE643136B3E7E009B0977 /* ECCodeStringDataSource.m */; };
 		B72BE64A136B3E7F009B0977 /* ECTextRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = B72BE646136B3E7F009B0977 /* ECTextRenderer.m */; };
+		B74C66251375E24800CC92D3 /* ECCodeViewBase.m in Sources */ = {isa = PBXBuildFile; fileRef = B74C661E1375E24800CC92D3 /* ECCodeViewBase.m */; };
+		B74C66261375E24800CC92D3 /* ECJumpBar.m in Sources */ = {isa = PBXBuildFile; fileRef = B74C66201375E24800CC92D3 /* ECJumpBar.m */; };
+		B74C66271375E24800CC92D3 /* ECPopoverController.m in Sources */ = {isa = PBXBuildFile; fileRef = B74C66221375E24800CC92D3 /* ECPopoverController.m */; };
+		B74C66281375E24800CC92D3 /* ECPopoverView.m in Sources */ = {isa = PBXBuildFile; fileRef = B74C66241375E24800CC92D3 /* ECPopoverView.m */; };
+		B74C662B1375E24C00CC92D3 /* ECButton.m in Sources */ = {isa = PBXBuildFile; fileRef = B74C662A1375E24C00CC92D3 /* ECButton.m */; };
 		B75B8743135840070098E7E2 /* ECHashing.m in Sources */ = {isa = PBXBuildFile; fileRef = B75B873B135840070098E7E2 /* ECHashing.m */; };
 		B75B8744135840070098E7E2 /* ECStackCache.m in Sources */ = {isa = PBXBuildFile; fileRef = B75B873D135840070098E7E2 /* ECStackCache.m */; };
 		B75B8745135840070098E7E2 /* MurmurHash3.c in Sources */ = {isa = PBXBuildFile; fileRef = B75B873E135840070098E7E2 /* MurmurHash3.c */; };
@@ -47,11 +52,10 @@
 		B75B87741358401B0098E7E2 /* ECCodeToken.m in Sources */ = {isa = PBXBuildFile; fileRef = B75B87621358401B0098E7E2 /* ECCodeToken.m */; };
 		B75B87751358401B0098E7E2 /* ECCodeUnit.m in Sources */ = {isa = PBXBuildFile; fileRef = B75B87641358401B0098E7E2 /* ECCodeUnit.m */; };
 		B75B87761358401B0098E7E2 /* libclang.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B75B87681358401B0098E7E2 /* libclang.dylib */; };
-		B7916CE2136C078500BDAEED /* ECMutableDictionary.m in Sources */ = {isa = PBXBuildFile; fileRef = B7916CE1136C078500BDAEED /* ECMutableDictionary.m */; };
 		B7A04CA9134F68BD00B72575 /* File.m in Sources */ = {isa = PBXBuildFile; fileRef = B7A04CA8134F68BD00B72575 /* File.m */; };
 		B7C764F2136773A4009181DB /* ECManagedObject.m in Sources */ = {isa = PBXBuildFile; fileRef = B7C764F1136773A4009181DB /* ECManagedObject.m */; };
 		B7D279DA135750C900E662FB /* ECItemView.m in Sources */ = {isa = PBXBuildFile; fileRef = B7D279D7135750C900E662FB /* ECItemView.m */; };
-		B7D279DB135750C900E662FB /* ECItemViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B7D279D9135750C900E662FB /* ECItemViewCell.m */; };
+		B7DAB3871372E17A00262D3C /* ECArrayTree.m in Sources */ = {isa = PBXBuildFile; fileRef = B7DAB3861372E17A00262D3C /* ECArrayTree.m */; };
 		B7DBA580132A3281004C0E1D /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7DBA57F132A3281004C0E1D /* QuartzCore.framework */; };
 		CDEBF21613489A8E00CE2285 /* AppController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDEBF20913489A8E00CE2285 /* AppController.m */; };
 		CDEBF21713489A8E00CE2285 /* FileController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDEBF20D13489A8E00CE2285 /* FileController.m */; };
@@ -80,8 +84,8 @@
 		B706F05713563ECB00E03DDF /* UIImage+BlockDrawing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIImage+BlockDrawing.m"; path = "Frameworks/ECUIKit/UIImage+BlockDrawing.m"; sourceTree = "<group>"; };
 		B706F05813563ECB00E03DDF /* UIView+ConcurrentAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIView+ConcurrentAnimation.h"; path = "Frameworks/ECUIKit/UIView+ConcurrentAnimation.h"; sourceTree = "<group>"; };
 		B706F05913563ECB00E03DDF /* UIView+ConcurrentAnimation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIView+ConcurrentAnimation.m"; path = "Frameworks/ECUIKit/UIView+ConcurrentAnimation.m"; sourceTree = "<group>"; };
-		B7096DF5135A1EAB0082F859 /* NSIndexPath+FixedIsEqual.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSIndexPath+FixedIsEqual.h"; sourceTree = "<group>"; };
-		B7096DF6135A1EAB0082F859 /* NSIndexPath+FixedIsEqual.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSIndexPath+FixedIsEqual.m"; sourceTree = "<group>"; };
+		B70B1FEC136F2399002D17F1 /* ECItemViewElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECItemViewElement.h; path = Frameworks/ECUIKit/ECItemViewElement.h; sourceTree = "<group>"; };
+		B70B1FED136F2399002D17F1 /* ECItemViewElement.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECItemViewElement.m; path = Frameworks/ECUIKit/ECItemViewElement.m; sourceTree = "<group>"; };
 		B70C5C8A1365F22E001C35A5 /* Target.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Target.h; sourceTree = "<group>"; };
 		B70C5C8B1365F22E001C35A5 /* Target.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Target.m; sourceTree = "<group>"; };
 		B70C5C8D1365F22E001C35A5 /* Folder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Folder.h; sourceTree = "<group>"; };
@@ -118,6 +122,16 @@
 		B72BE646136B3E7F009B0977 /* ECTextRenderer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECTextRenderer.m; path = Frameworks/ECUIKit/ECTextRenderer.m; sourceTree = "<group>"; };
 		B72BE647136B3E7F009B0977 /* ECTextRendererDatasource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECTextRendererDatasource.h; path = Frameworks/ECUIKit/ECTextRendererDatasource.h; sourceTree = "<group>"; };
 		B72BE648136B3E7F009B0977 /* ECTextRendererDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECTextRendererDelegate.h; path = Frameworks/ECUIKit/ECTextRendererDelegate.h; sourceTree = "<group>"; };
+		B74C661C1375E24800CC92D3 /* ECButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECButton.h; path = Frameworks/ECUIKit/ECButton.h; sourceTree = "<group>"; };
+		B74C661D1375E24800CC92D3 /* ECCodeViewBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECCodeViewBase.h; path = Frameworks/ECUIKit/ECCodeViewBase.h; sourceTree = "<group>"; };
+		B74C661E1375E24800CC92D3 /* ECCodeViewBase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECCodeViewBase.m; path = Frameworks/ECUIKit/ECCodeViewBase.m; sourceTree = "<group>"; };
+		B74C661F1375E24800CC92D3 /* ECJumpBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECJumpBar.h; path = Frameworks/ECUIKit/ECJumpBar.h; sourceTree = "<group>"; };
+		B74C66201375E24800CC92D3 /* ECJumpBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECJumpBar.m; path = Frameworks/ECUIKit/ECJumpBar.m; sourceTree = "<group>"; };
+		B74C66211375E24800CC92D3 /* ECPopoverController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECPopoverController.h; path = Frameworks/ECUIKit/ECPopoverController.h; sourceTree = "<group>"; };
+		B74C66221375E24800CC92D3 /* ECPopoverController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECPopoverController.m; path = Frameworks/ECUIKit/ECPopoverController.m; sourceTree = "<group>"; };
+		B74C66231375E24800CC92D3 /* ECPopoverView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECPopoverView.h; path = Frameworks/ECUIKit/ECPopoverView.h; sourceTree = "<group>"; };
+		B74C66241375E24800CC92D3 /* ECPopoverView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECPopoverView.m; path = Frameworks/ECUIKit/ECPopoverView.m; sourceTree = "<group>"; };
+		B74C662A1375E24C00CC92D3 /* ECButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECButton.m; path = Frameworks/ECUIKit/ECButton.m; sourceTree = "<group>"; };
 		B75B873A135840070098E7E2 /* ECHashing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECHashing.h; sourceTree = "<group>"; };
 		B75B873B135840070098E7E2 /* ECHashing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECHashing.m; sourceTree = "<group>"; };
 		B75B873C135840070098E7E2 /* ECStackCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECStackCache.h; sourceTree = "<group>"; };
@@ -161,16 +175,14 @@
 		B75B87661358401B0098E7E2 /* ECCodeUnitPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeUnitPlugin.h; sourceTree = "<group>"; };
 		B75B87671358401B0098E7E2 /* Index.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Index.h; sourceTree = "<group>"; };
 		B75B87681358401B0098E7E2 /* libclang.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libclang.dylib; sourceTree = "<group>"; };
-		B7916CE0136C078500BDAEED /* ECMutableDictionary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECMutableDictionary.h; sourceTree = "<group>"; };
-		B7916CE1136C078500BDAEED /* ECMutableDictionary.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECMutableDictionary.m; sourceTree = "<group>"; };
 		B7A04CA7134F68BD00B72575 /* File.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = File.h; sourceTree = "<group>"; };
 		B7A04CA8134F68BD00B72575 /* File.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = File.m; sourceTree = "<group>"; };
 		B7C764F0136773A4009181DB /* ECManagedObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECManagedObject.h; sourceTree = "<group>"; };
 		B7C764F1136773A4009181DB /* ECManagedObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECManagedObject.m; sourceTree = "<group>"; };
 		B7D279D6135750C900E662FB /* ECItemView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECItemView.h; path = Frameworks/ECUIKit/ECItemView.h; sourceTree = "<group>"; };
 		B7D279D7135750C900E662FB /* ECItemView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECItemView.m; path = Frameworks/ECUIKit/ECItemView.m; sourceTree = "<group>"; };
-		B7D279D8135750C900E662FB /* ECItemViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECItemViewCell.h; path = Frameworks/ECUIKit/ECItemViewCell.h; sourceTree = "<group>"; };
-		B7D279D9135750C900E662FB /* ECItemViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECItemViewCell.m; path = Frameworks/ECUIKit/ECItemViewCell.m; sourceTree = "<group>"; };
+		B7DAB3851372E17A00262D3C /* ECArrayTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECArrayTree.h; sourceTree = "<group>"; };
+		B7DAB3861372E17A00262D3C /* ECArrayTree.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECArrayTree.m; sourceTree = "<group>"; };
 		B7DBA57F132A3281004C0E1D /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		CDEBF20813489A8E00CE2285 /* AppController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppController.h; sourceTree = "<group>"; };
 		CDEBF20913489A8E00CE2285 /* AppController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppController.m; sourceTree = "<group>"; };
@@ -328,8 +340,6 @@
 				B72BE640136B3E53009B0977 /* ECDictionaryCache.m */,
 				B75B873A135840070098E7E2 /* ECHashing.h */,
 				B75B873B135840070098E7E2 /* ECHashing.m */,
-				B7096DF5135A1EAB0082F859 /* NSIndexPath+FixedIsEqual.h */,
-				B7096DF6135A1EAB0082F859 /* NSIndexPath+FixedIsEqual.m */,
 				B75B873C135840070098E7E2 /* ECStackCache.h */,
 				B75B873D135840070098E7E2 /* ECStackCache.m */,
 				B75B873E135840070098E7E2 /* MurmurHash3.c */,
@@ -339,8 +349,8 @@
 				B75B8742135840070098E7E2 /* pstdint.h */,
 				B72BE6331368C0F9009B0977 /* NSMutableArray+Shuffling.h */,
 				B72BE6341368C0F9009B0977 /* NSMutableArray+Shuffling.m */,
-				B7916CE0136C078500BDAEED /* ECMutableDictionary.h */,
-				B7916CE1136C078500BDAEED /* ECMutableDictionary.m */,
+				B7DAB3851372E17A00262D3C /* ECArrayTree.h */,
+				B7DAB3861372E17A00262D3C /* ECArrayTree.m */,
 			);
 			name = ECFoundation;
 			path = Frameworks/ECFoundation;
@@ -404,6 +414,16 @@
 		CDEBF2B913489DBA00CE2285 /* Code View */ = {
 			isa = PBXGroup;
 			children = (
+				B74C662A1375E24C00CC92D3 /* ECButton.m */,
+				B74C661C1375E24800CC92D3 /* ECButton.h */,
+				B74C661D1375E24800CC92D3 /* ECCodeViewBase.h */,
+				B74C661E1375E24800CC92D3 /* ECCodeViewBase.m */,
+				B74C661F1375E24800CC92D3 /* ECJumpBar.h */,
+				B74C66201375E24800CC92D3 /* ECJumpBar.m */,
+				B74C66211375E24800CC92D3 /* ECPopoverController.h */,
+				B74C66221375E24800CC92D3 /* ECPopoverController.m */,
+				B74C66231375E24800CC92D3 /* ECPopoverView.h */,
+				B74C66241375E24800CC92D3 /* ECPopoverView.m */,
 				B72BE642136B3E7E009B0977 /* ECCodeStringDataSource.h */,
 				B72BE643136B3E7E009B0977 /* ECCodeStringDataSource.m */,
 				B72BE644136B3E7E009B0977 /* ECCodeViewDatasource.h */,
@@ -453,8 +473,8 @@
 			children = (
 				B7D279D6135750C900E662FB /* ECItemView.h */,
 				B7D279D7135750C900E662FB /* ECItemView.m */,
-				B7D279D8135750C900E662FB /* ECItemViewCell.h */,
-				B7D279D9135750C900E662FB /* ECItemViewCell.m */,
+				B70B1FEC136F2399002D17F1 /* ECItemViewElement.h */,
+				B70B1FED136F2399002D17F1 /* ECItemViewElement.m */,
 			);
 			name = "Item View";
 			sourceTree = "<group>";
@@ -561,7 +581,6 @@
 				B706F05B13563ECB00E03DDF /* UIImage+BlockDrawing.m in Sources */,
 				B706F05C13563ECB00E03DDF /* UIView+ConcurrentAnimation.m in Sources */,
 				B7D279DA135750C900E662FB /* ECItemView.m in Sources */,
-				B7D279DB135750C900E662FB /* ECItemViewCell.m in Sources */,
 				B75B8743135840070098E7E2 /* ECHashing.m in Sources */,
 				B75B8744135840070098E7E2 /* ECStackCache.m in Sources */,
 				B75B8745135840070098E7E2 /* MurmurHash3.c in Sources */,
@@ -579,7 +598,6 @@
 				B75B87731358401B0098E7E2 /* ECCodeSymbol.m in Sources */,
 				B75B87741358401B0098E7E2 /* ECCodeToken.m in Sources */,
 				B75B87751358401B0098E7E2 /* ECCodeUnit.m in Sources */,
-				B7096DF7135A1EAB0082F859 /* NSIndexPath+FixedIsEqual.m in Sources */,
 				B70C5C8C1365F22E001C35A5 /* Target.m in Sources */,
 				B70C5C8F1365F22E001C35A5 /* Folder.m in Sources */,
 				B70C5C951365F22E001C35A5 /* Bookmark.m in Sources */,
@@ -594,7 +612,13 @@
 				B72BE641136B3E53009B0977 /* ECDictionaryCache.m in Sources */,
 				B72BE649136B3E7F009B0977 /* ECCodeStringDataSource.m in Sources */,
 				B72BE64A136B3E7F009B0977 /* ECTextRenderer.m in Sources */,
-				B7916CE2136C078500BDAEED /* ECMutableDictionary.m in Sources */,
+				B70B1FEE136F2399002D17F1 /* ECItemViewElement.m in Sources */,
+				B7DAB3871372E17A00262D3C /* ECArrayTree.m in Sources */,
+				B74C66251375E24800CC92D3 /* ECCodeViewBase.m in Sources */,
+				B74C66261375E24800CC92D3 /* ECJumpBar.m in Sources */,
+				B74C66271375E24800CC92D3 /* ECPopoverController.m in Sources */,
+				B74C66281375E24800CC92D3 /* ECPopoverView.m in Sources */,
+				B74C662B1375E24C00CC92D3 /* ECButton.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

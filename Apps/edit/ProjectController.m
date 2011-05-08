@@ -7,6 +7,7 @@
 //
 
 #import <CoreData/CoreData.h>
+#import <ECUIKit/ECItemViewElement.h>
 #import "ProjectController.h"
 #import "FileController.h"
 #import "AppController.h"
@@ -16,9 +17,12 @@
 #import "File.h"
 
 @interface ProjectController ()
-- (Folder *)areaAtIndex:(NSUInteger)area;
-- (Group *)groupAtIndex:(NSUInteger)group inArea:(NSUInteger)area;
-- (File *)itemAtIndex:(NSUInteger)item inGroup:(NSUInteger)group inArea:(NSUInteger)area;
+{
+    BOOL _tableViewNeedsReload;
+}
+- (Folder *)areaAtIndexPath:(NSIndexPath *)indexPath;
+- (Group *)groupAtIndexPath:(NSIndexPath *)indexPath;
+- (File *)itemAtIndexPath:(NSIndexPath *)indexPath;
 @end
 
 @implementation ProjectController
@@ -70,7 +74,13 @@
 {
     [super viewDidLoad];
     self.navigationItem.rightBarButtonItem = self.editButton;
-    [self.tableView reloadData];
+    if (_tableViewNeedsReload)
+        [self.tableView reloadData];
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    [self.tableView deselectAllItemsAnimated:animated];
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
@@ -78,92 +88,116 @@
 	return YES;
 }
 
-- (Folder *)areaAtIndex:(NSUInteger)area
+- (Folder *)areaAtIndexPath:(NSIndexPath *)indexPath
 {
-    return [[self.project orderedProjectFolders] objectAtIndex:area];
+    return [[self.project orderedProjectFolders] objectAtIndex:indexPath.area];
 }
 
-- (Group *)groupAtIndex:(NSUInteger)group inArea:(NSUInteger)area
+- (Group *)groupAtIndexPath:(NSIndexPath *)indexPath
 {
-    return [[[self areaAtIndex:area] orderedGroups] objectAtIndex:group];
+    return [[[self areaAtIndexPath:indexPath] orderedGroups] objectAtIndex:indexPath.group];
 }
 
-- (File *)itemAtIndex:(NSUInteger)item inGroup:(NSUInteger)group inArea:(NSUInteger)area
+- (File *)itemAtIndexPath:(NSIndexPath *)indexPath
 {
-    return [[[self groupAtIndex:group inArea:area] orderedItems] objectAtIndex:item];
+    return [[[self groupAtIndexPath:indexPath] orderedItems] objectAtIndex:indexPath.item];
 }
 
-- (NSUInteger)numberOfAreasInTableView:(ECItemView *)itemView
+#pragma mark -
+#pragma mark ECItemView
+
+- (NSUInteger)numberOfAreasInItemView:(ECItemView *)itemView
 {
     return [self.project countForOrderedKey:@"projectFolders"];
 }
 
-- (NSString *)itemView:(ECItemView *)itemView titleForHeaderInArea:(NSUInteger)area
+- (NSUInteger)itemView:(ECItemView *)itemView numberOfGroupsInAreaAtIndexPath:(NSIndexPath *)indexPath
 {
-    return [self areaAtIndex:area].name;
+    return [[self areaAtIndexPath:indexPath].groups count];
 }
 
-- (ECItemViewCell *)itemView:(ECItemView *)itemView cellForItemAtIndexPath:(NSIndexPath *)indexPath
+- (NSUInteger)itemView:(ECItemView *)itemView numberOfItemsInGroupAtIndexPath:(NSIndexPath *)indexPath
 {
-    static NSUInteger counter = 0;
-    ++counter;
-    ECItemViewCell *file = [self.tableView dequeueReusableCell];
-    if (!file)
+    return [[self groupAtIndexPath:indexPath].items count];
+}
+
+- (ECItemViewElement *)itemView:(ECItemView *)itemView viewForAreaHeaderAtIndexPath:(NSIndexPath *)indexPath
+{
+    ECItemViewElement *folder = [self.tableView dequeueReusableElementForType:kECItemViewAreaHeaderKey];
+    if (!folder)
     {
-        file = [[[ECItemViewCell alloc] init] autorelease];
+        folder = [[[ECItemViewElement alloc] init] autorelease];
         UILabel *label = [[UILabel alloc] init];
         label.tag = 1;
         label.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-        label.frame = UIEdgeInsetsInsetRect(file.bounds, UIEdgeInsetsMake(2.0, 2.0, 2.0, 2.0));
+        label.frame = folder.bounds;
+        label.backgroundColor = [UIColor blueColor];
+        [folder addSubview:label];
+        [label release];
+    }
+    ((UILabel *)[folder viewWithTag:1]).text = [self areaAtIndexPath:indexPath].name;
+    return folder;
+}
+
+- (ECItemViewElement *)itemView:(ECItemView *)itemView viewForGroupSeparatorAtIndexPath:(NSIndexPath *)indexPath
+{
+    ECItemViewElement *groupSeparator = [self.tableView dequeueReusableElementForType:kECItemViewGroupSeparatorKey];
+    if (!groupSeparator)
+    {
+        groupSeparator = [[[ECItemViewElement alloc] init] autorelease];
+        groupSeparator.backgroundColor = [UIColor blackColor];
+    }
+    return groupSeparator;
+}
+
+- (ECItemViewElement *)itemView:(ECItemView *)itemView viewForItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    ECItemViewElement *file = [self.tableView dequeueReusableElementForType:kECItemViewItemKey];
+    if (!file)
+    {
+        file = [[[ECItemViewElement alloc] init] autorelease];
+        UILabel *label = [[UILabel alloc] init];
+        label.tag = 1;
+        label.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+        label.frame = file.bounds;
         label.backgroundColor = [UIColor greenColor];
         [file addSubview:label];
         [label release];
     }
-    ((UILabel *)[file viewWithTag:1]).text = [self itemAtIndex:indexPath.item inGroup:indexPath.group inArea:indexPath.area].name;
+    ((UILabel *)[file viewWithTag:1]).text = [self itemAtIndexPath:indexPath].name;
     return file;
 }
 
-- (NSUInteger)itemView:(ECItemView *)itemView numberOfGroupsInArea:(NSUInteger)area
+- (void)itemView:(ECItemView *)itemView moveItemsAtIndexPaths:(NSArray *)indexPaths toIndexPath:(NSIndexPath *)indexPath
 {
-    return [[self areaAtIndex:area].groups count];
-}
-
-- (NSUInteger)itemView:(ECItemView *)itemView numberOfItemsInGroup:(NSUInteger)group inArea:(NSUInteger)area
-{
-    return [[self groupAtIndex:group inArea:area].items count];
-}
-
-- (void)itemView:(ECItemView *)itemView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
-{
-    if (!indexPath)
-        return;
-    [self loadFile:[self itemAtIndex:indexPath.item inGroup:indexPath.group inArea:indexPath.area].path];
-}
-
-- (BOOL)itemView:(ECItemView *)itemView canMoveItemAtIndexPath:(NSIndexPath *)indexPath
-{
-    return YES;
-}
-
-- (void)itemView:(ECItemView *)itemView moveItemAtIndexPath:(NSIndexPath *)sourceIndexPath toIndexPath:(NSIndexPath *)destinationIndexPath
-{
-    id item = [[[self groupAtIndex:sourceIndexPath.group inArea:sourceIndexPath.area] orderedItems] objectAtIndex:sourceIndexPath.item];
-    [[[self groupAtIndex:destinationIndexPath.group inArea:destinationIndexPath.area] orderedItems] insertObject:item atIndex:destinationIndexPath.item];
+    NSMutableArray *items = [NSMutableArray array];
+    for (NSIndexPath *item in indexPaths)
+        [items addObject:[[[self groupAtIndexPath:item] orderedItems] objectAtIndex:item.item]];
+    [[[self groupAtIndexPath:indexPath] orderedItems] insertObjects:items atIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(indexPath.item, [items count])]];
 }
 
 - (void)itemView:(ECItemView *)itemView insertGroupAtIndexPath:(NSIndexPath *)indexPath
 {
     Group *group = [NSEntityDescription insertNewObjectForEntityForName:@"Group" inManagedObjectContext:self.managedObjectContext];
-    [[[self areaAtIndex:indexPath.area] orderedGroups] insertObject:group atIndex:indexPath.position];
+    [[[self areaAtIndexPath:indexPath] orderedGroups] insertObject:group atIndex:indexPath.group];
 }
 
 - (void)itemView:(ECItemView *)itemView deleteGroupAtIndexPath:(NSIndexPath *)indexPath
 {
-    Group *group = [[[self areaAtIndex:indexPath.area] orderedGroups] objectAtIndex:indexPath.position];
+    Group *group = [[[self areaAtIndexPath:indexPath] orderedGroups] objectAtIndex:indexPath.group];
     if ([[group items] count])
         return;
     [self.managedObjectContext deleteObject:group];
 }
+
+- (void)itemView:(ECItemView *)itemView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (self.tableView.editing)
+        return;
+    [self loadFile:[self itemAtIndexPath:indexPath].path];
+}
+
+#pragma mark -
 
 - (void)edit:(id)sender
 {
@@ -174,6 +208,7 @@
 - (void)done:(id)sender
 {
     [self.tableView setEditing:NO animated:YES];
+    [self.tableView deselectAllItemsAnimated:YES];
     self.navigationItem.rightBarButtonItem = self.editButton;
 }
 
@@ -209,6 +244,7 @@
         self.project = project;
     }
     self.title = self.project.name;
+    _tableViewNeedsReload = YES;
 }
 
 - (void)loadFile:(NSString *)file
