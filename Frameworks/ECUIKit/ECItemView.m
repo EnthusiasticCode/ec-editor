@@ -776,101 +776,125 @@ const NSString *kECItemViewItemKey = @"item";
         
     };
     
-    NSInteger areaOffset = 0;
-    NSInteger groupOffset;
-    NSInteger itemOffset;
-    BOOL didDeleteArea;
-    BOOL didInsertArea;
-    BOOL didReloadArea;
-    BOOL didDeleteGroup;
-    BOOL didInsertGroup;
-    BOOL didReloadGroup;
-    BOOL didDeleteItem;
-    NSIndexPath *indexPath;
-    
-    NSUInteger numAreas = [self numberOfAreas];
-    for (NSUInteger area = 0; area < numAreas; ++area)
     {
-        didDeleteArea = NO;
-        didInsertArea = NO;
-        didReloadArea = NO;
-        groupOffset = 0;
-        indexPath = [NSIndexPath indexPathForArea:area];
-        if ([[[_batchUpdatingStores objectForKey:kECItemViewBatchDeletesKey] objectForKey:kECItemViewAreaKey] containsObject:indexPath])
+        NSIndexPath *indexPath;
+        NSInteger areaOffset = 0;    
+        NSUInteger numAreas = [self numberOfAreas];
+        for (NSUInteger area = 0; area < numAreas; ++area)
         {
-            deleteArea(area + areaOffset);
-            --areaOffset;
-            didDeleteArea = YES;
-        }
-        if ([[[_batchUpdatingStores objectForKey:kECItemViewBatchInsertsKey] objectForKey:kECItemViewAreaKey] containsObject:indexPath])
-        {
-            insertArea(area);
-            ++areaOffset;
-            didInsertArea = YES;
-        }
-        if (!didDeleteArea && [[[_batchUpdatingStores objectForKey:kECItemViewBatchReloadsKey] objectForKey:kECItemViewAreaKey] containsObject:indexPath])
-        {
-            unloadArea(area + areaOffset);
-            loadArea(area);
-            didReloadArea = YES;
-        }
-        NSUInteger numGroups = [self _numberOfGroupsInAreaAtIndex:area + areaOffset];
-        for (NSUInteger group = 0; group < numGroups; ++group)
-        {
-            didDeleteGroup = NO;
-            didInsertGroup = NO;
-            didReloadGroup = NO;
-            itemOffset = 0;
-            indexPath = [NSIndexPath indexPathForGroup:group inArea:area];
-            if (!didDeleteArea && [[[_batchUpdatingStores objectForKey:kECItemViewBatchDeletesKey] objectForKey:kECItemViewGroupKey] containsObject:indexPath])
+            BOOL didDeleteArea = NO;
+            BOOL didInsertArea = NO;
+            BOOL didReloadArea = NO;
+            NSUInteger groupOffset = 0;
+            indexPath = [NSIndexPath indexPathForArea:area];
+            if ([[[_batchUpdatingStores objectForKey:kECItemViewBatchDeletesKey] objectForKey:kECItemViewAreaKey] containsObject:indexPath])
             {
-                deleteGroupInArea(group + groupOffset, area + areaOffset);
-                --groupOffset;
-                didDeleteGroup = YES;
+                deleteArea(area + areaOffset);
+                --areaOffset;
+                didDeleteArea = YES;
             }
-            if (!didInsertArea && [[[_batchUpdatingStores objectForKey:kECItemViewBatchInsertsKey] objectForKey:kECItemViewGroupKey] containsObject:indexPath])
+            if ([[[_batchUpdatingStores objectForKey:kECItemViewBatchInsertsKey] objectForKey:kECItemViewAreaKey] containsObject:indexPath])
             {
-                insertGroupInArea(group, area);
-                ++groupOffset;
-                didInsertGroup = YES;
+                insertArea(area);
+                ++areaOffset;
+                didInsertArea = YES;
             }
-            if (!didDeleteArea && !didReloadArea && !didDeleteGroup && [[[_batchUpdatingStores objectForKey:kECItemViewBatchReloadsKey] objectForKey:kECItemViewGroupKey] containsObject:indexPath])
+            if (!didDeleteArea && [[[_batchUpdatingStores objectForKey:kECItemViewBatchReloadsKey] objectForKey:kECItemViewAreaKey] containsObject:indexPath])
             {
-                unloadGroupInArea(group + groupOffset, area + areaOffset);
-                loadGroupInArea(group, area);
-                didReloadGroup = YES;
+                unloadArea(area + areaOffset);
+                loadArea(area);
+                didReloadArea = YES;
             }
-            NSUInteger numItems = [self _numberOfItemsInGroup:group + groupOffset inArea:area + areaOffset];
-            for (NSUInteger item = 0; item < numItems; ++item)
+            NSUInteger numGroups = [self _numberOfGroupsInAreaAtIndex:area + areaOffset];
+            for (NSUInteger group = 0; group < numGroups; ++group)
             {
-                didDeleteItem = NO;
-                indexPath = [NSIndexPath indexPathForItem:item inGroup:group inArea:area];
-                if (!didDeleteArea && !didDeleteGroup && [[[_batchUpdatingStores objectForKey:kECItemViewBatchDeletesKey] objectForKey:kECItemViewItemKey] containsObject:indexPath])
+                BOOL didDeleteGroup = NO;
+                BOOL didInsertGroup = NO;
+                BOOL didReloadGroup = NO;
+                NSUInteger itemOffset = 0;
+                indexPath = [NSIndexPath indexPathForGroup:group inArea:area];
+                if (!didDeleteArea && [[[_batchUpdatingStores objectForKey:kECItemViewBatchDeletesKey] objectForKey:kECItemViewGroupKey] containsObject:indexPath])
                 {
-                    deleteItemInGroupInArea(item + itemOffset, group + groupOffset, area + areaOffset);
-                    --itemOffset;
-                    didDeleteItem = YES;
+                    deleteGroupInArea(group + groupOffset, area + areaOffset);
+                    --groupOffset;
+                    didDeleteGroup = YES;
                 }
-                if (!didInsertArea && !didInsertGroup && [[[_batchUpdatingStores objectForKey:kECItemViewBatchInsertsKey] objectForKey:kECItemViewItemKey] containsObject:indexPath])
+                if (!didInsertArea && [[[_batchUpdatingStores objectForKey:kECItemViewBatchInsertsKey] objectForKey:kECItemViewGroupKey] containsObject:indexPath])
                 {
-                    insertItemInGroupInArea(item, group, area);
-                    ++itemOffset;
+                    insertGroupInArea(group, area);
+                    ++groupOffset;
+                    didInsertGroup = YES;
                 }
-                if (!didDeleteArea && !didReloadArea && !didDeleteGroup && !didReloadGroup && !didDeleteItem && [[[_batchUpdatingStores objectForKey:kECItemViewBatchReloadsKey] objectForKey:kECItemViewItemKey] containsObject:indexPath])
+                if (!didDeleteArea && !didReloadArea && !didDeleteGroup && [[[_batchUpdatingStores objectForKey:kECItemViewBatchReloadsKey] objectForKey:kECItemViewGroupKey] containsObject:indexPath])
                 {
-                    unloadItemInGroupInArea(item + itemOffset, group + groupOffset, area + areaOffset);
-                    loadItemInGroupInArea(item, group, area);
+                    unloadGroupInArea(group + groupOffset, area + areaOffset);
+                    loadGroupInArea(group, area);
+                    didReloadGroup = YES;
+                }
+                NSUInteger numItems = [self _numberOfItemsInGroup:group + groupOffset inArea:area + areaOffset];
+                for (NSUInteger item = 0; item < numItems; ++item)
+                {
+                    BOOL didDeleteItem = NO;
+                    indexPath = [NSIndexPath indexPathForItem:item inGroup:group inArea:area];
+                    if (!didDeleteArea && !didDeleteGroup && [[[_batchUpdatingStores objectForKey:kECItemViewBatchDeletesKey] objectForKey:kECItemViewItemKey] containsObject:indexPath])
+                    {
+                        deleteItemInGroupInArea(item + itemOffset, group + groupOffset, area + areaOffset);
+                        --itemOffset;
+                        didDeleteItem = YES;
+                    }
+                    if (!didInsertArea && !didInsertGroup && [[[_batchUpdatingStores objectForKey:kECItemViewBatchInsertsKey] objectForKey:kECItemViewItemKey] containsObject:indexPath])
+                    {
+                        insertItemInGroupInArea(item, group, area);
+                        ++itemOffset;
+                    }
+                    if (!didDeleteArea && !didReloadArea && !didDeleteGroup && !didReloadGroup && !didDeleteItem && [[[_batchUpdatingStores objectForKey:kECItemViewBatchReloadsKey] objectForKey:kECItemViewItemKey] containsObject:indexPath])
+                    {
+                        unloadItemInGroupInArea(item + itemOffset, group + groupOffset, area + areaOffset);
+                        loadItemInGroupInArea(item, group, area);
+                    }
+                }
+                NSUInteger extraInserts = 0;
+                BOOL extraInsert = YES;
+                while (extraInsert)
+                {
+                    indexPath = [NSIndexPath indexPathForItem:numItems + extraInserts inGroup:group inArea:area];
+                    if (!didInsertArea && !didInsertGroup && [[[_batchUpdatingStores objectForKey:kECItemViewBatchInsertsKey] objectForKey:kECItemViewItemKey] containsObject:indexPath])
+                        insertItemInGroupInArea(numItems + extraInserts, group, area);
+                    else
+                        extraInsert = NO;
+                    ++extraInserts;
                 }
             }
+            NSUInteger extraInserts = 0;
+            BOOL extraInsert = YES;
+            while (extraInsert)
+            {
+                indexPath = [NSIndexPath indexPathForGroup:numGroups + extraInserts inArea:area];
+                if (!didInsertArea && [[[_batchUpdatingStores objectForKey:kECItemViewBatchInsertsKey] objectForKey:kECItemViewGroupKey] containsObject:indexPath])
+                    insertGroupInArea(numGroups + extraInserts, area);
+                else
+                    extraInsert = NO;
+                ++extraInserts;
+            }
+        }
+        NSUInteger extraInserts = 0;
+        BOOL extraInsert = YES;
+        while (extraInsert)
+        {
+            indexPath = [NSIndexPath indexPathForArea:numAreas + extraInserts];
+            if ([[[_batchUpdatingStores objectForKey:kECItemViewBatchInsertsKey] objectForKey:kECItemViewItemKey] containsObject:indexPath])
+                insertArea(numAreas + extraInserts);
+            else
+                extraInsert = NO;
+            ++extraInserts;
         }
     }
-    
     for (ECItemViewElement *element in itemsToDelete)
         [element removeFromSuperview];
-    for (NSIndexPath *insertIndexPath in [itemsToInsert allKeys])
+    for (NSIndexPath *indexPath in [itemsToInsert allKeys])
     {
-        ECItemViewElement *element = [itemsToInsert objectForKey:insertIndexPath];
-        element.frame = [self rectForItemAtIndexPath:insertIndexPath];
+        ECItemViewElement *element = [itemsToInsert objectForKey:indexPath];
+        element.frame = [self rectForItemAtIndexPath:indexPath];
         [self addSubview:element];
     }
     [UIView animateWithDuration:2.0 animations:^(void) {
@@ -1078,17 +1102,18 @@ const NSString *kECItemViewItemKey = @"item";
 - (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer
 {
     if (gestureRecognizer == _longPressGestureRecognizer)
-        if (!_flags.dataSourceMoveItem)
-            return NO;
+    {
+        ECItemViewElementKey type = nil;
+        [self _indexPathForElementAtPoint:[gestureRecognizer locationInView:self] type:&type];
+        if (type == kECItemViewItemKey)
+            return _flags.dataSourceMoveItem;
+        else if (type == kECItemViewAreaHeaderKey)
+            return _flags.dataSourceMoveArea;
+        else if (type == kECItemViewGroupSeparatorKey)
+            return _flags.dataSourceMoveGroup;
         else
-        {
-            ECItemViewElementKey type = nil;
-            [self _indexPathForElementAtPoint:[gestureRecognizer locationInView:self] type:&type];
-            if (type == kECItemViewAreaKey || type == kECItemViewGroupKey)
-                return NO;
-            else
-                return YES;
-        }
+            return NO;
+    }
     if (_flags.superGestureRecognizerShouldBegin)
         return [super gestureRecognizerShouldBegin:gestureRecognizer];
     return YES;
@@ -1204,16 +1229,20 @@ const NSString *kECItemViewItemKey = @"item";
     NSIndexPath *indexPath = [self _indexPathForElementAtPoint:_dragPoint type:&type];
     if (_draggedElementsType == kECItemViewItemKey)
     {
+        NSUInteger offset = 0;
+        for (NSIndexPath *draggedIndexPath in draggedElements)
+            if (draggedIndexPath.area == indexPath.area && draggedIndexPath.group == indexPath.group && draggedIndexPath.item < indexPath.item)
+                ++offset;
         if (type == kECItemViewItemKey)
         {
             [_dataSource itemView:self moveItemsAtIndexPaths:draggedElements toIndexPath:indexPath];
-            [self moveElementsOfType:kECItemViewItemKey atIndexPaths:draggedElements toIndexPath:indexPath];
+            [self moveElementsOfType:kECItemViewItemKey atIndexPaths:draggedElements toIndexPath:[NSIndexPath indexPathForItem:indexPath.item - offset inGroup:indexPath.group inArea:indexPath.area]];
         }
         else if (type == kECItemViewGroupKey)
         {
             indexPath = [NSIndexPath indexPathForItem:[self numberOfItemsInGroupAtIndexPath:indexPath] inGroup:indexPath.group inArea:indexPath.area];
             [_dataSource itemView:self moveItemsAtIndexPaths:draggedElements toIndexPath:indexPath];
-            [self moveElementsOfType:kECItemViewItemKey atIndexPaths:draggedElements toIndexPath:indexPath];
+            [self moveElementsOfType:kECItemViewItemKey atIndexPaths:draggedElements toIndexPath:[NSIndexPath indexPathForItem:indexPath.item - offset inGroup:indexPath.group inArea:indexPath.area]];
         }
         else if (type == kECItemViewAreaHeaderKey || type == kECItemViewGroupSeparatorKey)
         {
@@ -1225,22 +1254,9 @@ const NSString *kECItemViewItemKey = @"item";
                 indexPath = [NSIndexPath indexPathForGroup:0 inArea:indexPath.area];
             [_dataSource itemView:self insertGroupAtIndexPath:indexPath];
             [_dataSource itemView:self moveItemsAtIndexPaths:draggedElements toIndexPath:[NSIndexPath indexPathForItem:0 inGroup:indexPath.group inArea:indexPath.area]];
-            [self insertElementsOfType:kECItemViewItemKey atIndexPaths:[NSArray arrayWithObject:indexPath]];
+            [self insertElementsOfType:kECItemViewItemKey atIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForItem:indexPath.item - offset inGroup:indexPath.group inArea:indexPath.area]]];
             [self endUpdates];
         }
-    }
-    else if (_draggedElementsType == kECItemViewGroupKey)
-    {
-        if (!_flags.dataSourceMoveGroup)
-            return;
-        if (type == kECItemViewAreaKey || type == kECItemViewAreaHeaderKey)
-        {
-            if (indexPath.area == 0)
-                return;
-            indexPath = [NSIndexPath indexPathForGroup:[self _numberOfGroupsInAreaAtIndex:indexPath.area - 1] inArea:indexPath.area - 1];
-        }
-        [_dataSource itemView:self moveGroupsAtIndexPaths:draggedElements toIndexPath:indexPath];
-        [self moveElementsOfType:kECItemViewGroupKey atIndexPaths:draggedElements toIndexPath:indexPath];
     }
 }
 
@@ -1249,6 +1265,7 @@ const NSString *kECItemViewItemKey = @"item";
     _isDragging = NO;
     [_caret removeFromSuperview];
     // TODO: do not do this if cancel is called after a successful drag
+    // TODO: clear selected items if they were dragged ? (the indexPaths point to the wrong items)
 //    for (NSIndexPath *indexPath in _draggedElements)
 //    {
 //        ECItemViewElement *element = [_elements objectAtIndexPath:indexPath];
