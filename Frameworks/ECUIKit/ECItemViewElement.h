@@ -11,7 +11,6 @@
 
 @interface ECItemViewElement : UIView
 @property (nonatomic, assign) ECItemViewElementKey type;
-@property (nonatomic, retain) NSIndexPath *indexPath;
 @property (nonatomic, getter = isEditing) BOOL editing;
 @property (nonatomic, getter = isSelected) BOOL selected;
 @property (nonatomic, getter = isDragged) BOOL dragged;

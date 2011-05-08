@@ -11,7 +11,6 @@
 @implementation ECItemViewElement
 
 @synthesize type = _type;
-@synthesize indexPath = _indexPath;
 @synthesize editing = _isEditing;
 @synthesize selected = _isSelected;
 @synthesize dragged = _isDragged;
