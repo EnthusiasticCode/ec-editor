@@ -1227,6 +1227,12 @@ const NSString *kECItemViewItemKey = @"item";
     NSArray *draggedElements = [_draggedElements allObjects];
     ECItemViewElementKey type = nil;
     NSIndexPath *indexPath = [self _indexPathForElementAtPoint:_dragPoint type:&type];
+    NSIndexPath *previousItemIndexPath = [NSIndexPath indexPathForItem:indexPath.item - 1 inGroup:indexPath.group inArea:indexPath.area];
+    while ([_draggedElements containsObject:previousItemIndexPath] && indexPath.item)
+    {
+        indexPath = previousItemIndexPath;
+        previousItemIndexPath = [NSIndexPath indexPathForItem:indexPath.item - 1 inGroup:indexPath.group inArea:indexPath.area];
+    }
     if (_draggedElementsType == kECItemViewItemKey)
     {
         NSUInteger offset = 0;
@@ -1235,14 +1241,15 @@ const NSString *kECItemViewItemKey = @"item";
                 ++offset;
         if (type == kECItemViewItemKey)
         {
+            indexPath = [NSIndexPath indexPathForItem:indexPath.item - offset inGroup:indexPath.group inArea:indexPath.area];
             [_dataSource itemView:self moveItemsAtIndexPaths:draggedElements toIndexPath:indexPath];
-            [self moveElementsOfType:kECItemViewItemKey atIndexPaths:draggedElements toIndexPath:[NSIndexPath indexPathForItem:indexPath.item - offset inGroup:indexPath.group inArea:indexPath.area]];
+            [self moveElementsOfType:kECItemViewItemKey atIndexPaths:draggedElements toIndexPath:indexPath];
         }
         else if (type == kECItemViewGroupKey)
         {
-            indexPath = [NSIndexPath indexPathForItem:[self numberOfItemsInGroupAtIndexPath:indexPath] inGroup:indexPath.group inArea:indexPath.area];
+            indexPath = [NSIndexPath indexPathForItem:[self numberOfItemsInGroupAtIndexPath:indexPath] - offset inGroup:indexPath.group inArea:indexPath.area];
             [_dataSource itemView:self moveItemsAtIndexPaths:draggedElements toIndexPath:indexPath];
-            [self moveElementsOfType:kECItemViewItemKey atIndexPaths:draggedElements toIndexPath:[NSIndexPath indexPathForItem:indexPath.item - offset inGroup:indexPath.group inArea:indexPath.area]];
+            [self moveElementsOfType:kECItemViewItemKey atIndexPaths:draggedElements toIndexPath:indexPath];
         }
         else if (type == kECItemViewAreaHeaderKey || type == kECItemViewGroupSeparatorKey)
         {
@@ -1254,7 +1261,7 @@ const NSString *kECItemViewItemKey = @"item";
                 indexPath = [NSIndexPath indexPathForGroup:0 inArea:indexPath.area];
             [_dataSource itemView:self insertGroupAtIndexPath:indexPath];
             [_dataSource itemView:self moveItemsAtIndexPaths:draggedElements toIndexPath:[NSIndexPath indexPathForItem:0 inGroup:indexPath.group inArea:indexPath.area]];
-            [self insertElementsOfType:kECItemViewItemKey atIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForItem:indexPath.item - offset inGroup:indexPath.group inArea:indexPath.area]]];
+            [self insertElementsOfType:kECItemViewGroupKey atIndexPaths:[NSArray arrayWithObject:indexPath]];
             [self endUpdates];
         }
     }
