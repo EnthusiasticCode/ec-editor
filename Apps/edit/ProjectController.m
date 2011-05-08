@@ -173,21 +173,20 @@
     NSMutableArray *items = [NSMutableArray array];
     for (NSIndexPath *item in indexPaths)
         [items addObject:[[[self groupAtIndexPath:item] orderedItems] objectAtIndex:item.item]];
-    [[[self groupAtIndexPath:indexPath] orderedItems] insertObjects:items atIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(indexPath.item, [items count])]];
-}
-
-- (void)itemView:(ECItemView *)itemView insertGroupAtIndexPath:(NSIndexPath *)indexPath
-{
-    Group *group = [NSEntityDescription insertNewObjectForEntityForName:@"Group" inManagedObjectContext:self.managedObjectContext];
-    [[[self areaAtIndexPath:indexPath] orderedGroups] insertObject:group atIndex:indexPath.group];
-}
-
-- (void)itemView:(ECItemView *)itemView deleteGroupAtIndexPath:(NSIndexPath *)indexPath
-{
-    Group *group = [[[self areaAtIndexPath:indexPath] orderedGroups] objectAtIndex:indexPath.group];
-    if ([[group items] count])
-        return;
-    [self.managedObjectContext deleteObject:group];
+    if ([indexPath length] > 2)
+        [[[self groupAtIndexPath:indexPath] orderedItems] insertObjects:items atIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(indexPath.item, [items count])]];
+    else
+    {
+        Group *group = [NSEntityDescription insertNewObjectForEntityForName:@"Group" inManagedObjectContext:self.managedObjectContext];
+        [[[self areaAtIndexPath:indexPath] orderedGroups] insertObject:group atIndex:indexPath.group];
+        [[[self groupAtIndexPath:indexPath] orderedItems] insertObjects:items atIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, [items count])]];
+    }
+    [[self.project orderedProjectFolders] enumerateObjectsUsingBlock:^(id projectFolder, NSUInteger projectFolderIndex, BOOL *outerStop) {
+        [[projectFolder orderedGroups] enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(id group, NSUInteger groupIndex, BOOL *innerStop) {
+            if (![[group items] count])
+                [self.managedObjectContext deleteObject:group];
+        }];
+    }];
 }
 
 - (void)itemView:(ECItemView *)itemView didSelectItemAtIndexPath:(NSIndexPath *)indexPath

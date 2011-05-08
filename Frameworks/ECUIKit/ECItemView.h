@@ -66,14 +66,9 @@ typedef const NSString *ECItemViewElementKey;
 #pragma mark Moving/Reordering
 
 /// Move the items from the source index paths to the destination index path.
-/// Requires the data source to also implement -itemView:insertGroupAtIndexPath: and -itemView:deleteGroupAtIndexPath:.
+/// If the items are to be moved in a new group, the indexPath will only have 2 indexes.
+/// If a group is empty after the move, it should be deleted.
 - (void)itemView:(ECItemView *)itemView moveItemsAtIndexPaths:(NSArray *)indexPaths toIndexPath:(NSIndexPath *)indexPath;
-
-/// Insert a new group at the given index path.
-- (void)itemView:(ECItemView *)itemView insertGroupAtIndexPath:(NSIndexPath *)indexPath;
-
-/// Delete the group at the given index path.
-- (void)itemView:(ECItemView *)itemView deleteGroupAtIndexPath:(NSIndexPath *)indexPath;
 
 /// Move the groups at the source index paths to the destination index path.
 - (void)itemView:(ECItemView *)itemView moveGroupsAtIndexPaths:(NSArray *)indexPaths toIndexPath:(NSIndexPath *)indexPath;
