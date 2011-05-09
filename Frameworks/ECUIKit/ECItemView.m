@@ -51,8 +51,6 @@ const NSString *kECItemViewItemKey = @"item";
         unsigned int dataSourceCanDeleteItem:1;
         unsigned int dataSourceDeleteItem:1;
         unsigned int dataSourceMoveItem:1;
-        unsigned int dataSourceInsertGroup:1;
-        unsigned int dataSourceDeleteGroup:1;
         unsigned int dataSourceMoveGroup:1;
         unsigned int dataSourceMoveArea:1;
         unsigned int delegateDidSelectItem:1;
@@ -171,8 +169,6 @@ const NSString *kECItemViewItemKey = @"item";
     _flags.dataSourceCanDeleteItem = [dataSource respondsToSelector:@selector(itemView:canDeleteItemAtIndexPath:)];
     _flags.dataSourceDeleteItem = [dataSource respondsToSelector:@selector(itemView:deleteItemAtIndexPath:)];
     _flags.dataSourceMoveItem = [dataSource respondsToSelector:@selector(itemView:moveItemsAtIndexPaths:toIndexPath:)];
-    _flags.dataSourceInsertGroup = [dataSource respondsToSelector:@selector(itemView:insertGroupAtIndexPath:)];
-    _flags.dataSourceDeleteGroup = [dataSource respondsToSelector:@selector(itemView:deleteGroupAtIndexPath:)];
     _flags.dataSourceMoveGroup = [dataSource respondsToSelector:@selector(itemView:moveGroupsAtIndexPaths:toIndexPath:)];
     _flags.dataSourceMoveArea = [dataSource respondsToSelector:@selector(itemView:moveAreasAtIndexPaths:toIndexPath:)];
     [self didChangeValueForKey:@"dataSource"];
@@ -785,7 +781,8 @@ const NSString *kECItemViewItemKey = @"item";
             BOOL didDeleteArea = NO;
             BOOL didInsertArea = NO;
             BOOL didReloadArea = NO;
-            NSUInteger groupOffset = 0;
+            NSInteger groupOffset = 0;
+            NSUInteger emptyGroups = 0;
             indexPath = [NSIndexPath indexPathForArea:area];
             if ([[[_batchUpdatingStores objectForKey:kECItemViewBatchDeletesKey] objectForKey:kECItemViewAreaKey] containsObject:indexPath])
             {
@@ -805,13 +802,15 @@ const NSString *kECItemViewItemKey = @"item";
                 loadArea(area);
                 didReloadArea = YES;
             }
+            if (didDeleteArea || didReloadArea)
+                continue;
             NSUInteger numGroups = [self _numberOfGroupsInAreaAtIndex:area + areaOffset];
             for (NSUInteger group = 0; group < numGroups; ++group)
             {
                 BOOL didDeleteGroup = NO;
                 BOOL didInsertGroup = NO;
                 BOOL didReloadGroup = NO;
-                NSUInteger itemOffset = 0;
+                NSInteger itemOffset = 0;
                 indexPath = [NSIndexPath indexPathForGroup:group inArea:area];
                 if (!didDeleteArea && [[[_batchUpdatingStores objectForKey:kECItemViewBatchDeletesKey] objectForKey:kECItemViewGroupKey] containsObject:indexPath])
                 {
@@ -821,7 +820,7 @@ const NSString *kECItemViewItemKey = @"item";
                 }
                 if (!didInsertArea && [[[_batchUpdatingStores objectForKey:kECItemViewBatchInsertsKey] objectForKey:kECItemViewGroupKey] containsObject:indexPath])
                 {
-                    insertGroupInArea(group, area);
+                    insertGroupInArea(group - emptyGroups , area);
                     ++groupOffset;
                     didInsertGroup = YES;
                 }
@@ -831,6 +830,8 @@ const NSString *kECItemViewItemKey = @"item";
                     loadGroupInArea(group, area);
                     didReloadGroup = YES;
                 }
+                if (didDeleteGroup || didReloadGroup)
+                    continue;
                 NSUInteger numItems = [self _numberOfItemsInGroup:group + groupOffset inArea:area + areaOffset];
                 for (NSUInteger item = 0; item < numItems; ++item)
                 {
@@ -844,7 +845,7 @@ const NSString *kECItemViewItemKey = @"item";
                     }
                     if (!didInsertArea && !didInsertGroup && [[[_batchUpdatingStores objectForKey:kECItemViewBatchInsertsKey] objectForKey:kECItemViewItemKey] containsObject:indexPath])
                     {
-                        insertItemInGroupInArea(item, group, area);
+                        insertItemInGroupInArea(item, group - emptyGroups, area);
                         ++itemOffset;
                     }
                     if (!didDeleteArea && !didReloadArea && !didDeleteGroup && !didReloadGroup && !didDeleteItem && [[[_batchUpdatingStores objectForKey:kECItemViewBatchReloadsKey] objectForKey:kECItemViewItemKey] containsObject:indexPath])
@@ -859,10 +860,16 @@ const NSString *kECItemViewItemKey = @"item";
                 {
                     indexPath = [NSIndexPath indexPathForItem:numItems + extraInserts inGroup:group inArea:area];
                     if (!didInsertArea && !didInsertGroup && [[[_batchUpdatingStores objectForKey:kECItemViewBatchInsertsKey] objectForKey:kECItemViewItemKey] containsObject:indexPath])
-                        insertItemInGroupInArea(numItems + extraInserts, group, area);
+                        insertItemInGroupInArea(numItems + extraInserts, group - emptyGroups, area);
                     else
                         extraInsert = NO;
                     ++extraInserts;
+                }
+                if (![self _numberOfItemsInGroup:group + groupOffset inArea:area + areaOffset])
+                {
+                    deleteGroupInArea(group + groupOffset, area + areaOffset);
+                    --groupOffset;
+                    ++emptyGroups;
                 }
             }
             NSUInteger extraInserts = 0;
@@ -889,6 +896,7 @@ const NSString *kECItemViewItemKey = @"item";
             ++extraInserts;
         }
     }
+    NSLog(@"%@", groupSeparatorsToDelete);
     _cachedAreaRectArea = NSUIntegerMax;
     _cachedGroupRectArea = NSUIntegerMax;
     _cachedGroupRectGroup = NSUIntegerMax;

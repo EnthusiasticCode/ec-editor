@@ -116,8 +116,9 @@ typedef const NSString *ECItemViewElementKey;
 - (CGRect)rectForItemAtIndexPath:(NSIndexPath *)indexPath;
 
 #pragma mark Scrolling
-- (void)scrollToItemAtIndexPath:(NSIndexPath *)indexPath atScrollPosition:(ECItemViewScrollPosition)scrollPosition animated:(BOOL)animated;
-- (void)scrollToNearestSelectedItemAtScrollPosition:(ECItemViewScrollPosition)scrollPosition animated:(BOOL)animated;
+// Not yet implemented
+//- (void)scrollToItemAtIndexPath:(NSIndexPath *)indexPath atScrollPosition:(ECItemViewScrollPosition)scrollPosition animated:(BOOL)animated;
+//- (void)scrollToNearestSelectedItemAtScrollPosition:(ECItemViewScrollPosition)scrollPosition animated:(BOOL)animated;
 
 #pragma mark Item insertion/deletion/reloading.
 - (void)beginUpdates;
