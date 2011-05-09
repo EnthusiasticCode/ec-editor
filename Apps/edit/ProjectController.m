@@ -59,7 +59,6 @@
 
 - (void)dealloc
 {
-    [self saveContext];
     self.tableView = nil;
     self.editButton = nil;
     self.doneButton = nil;
@@ -255,7 +254,12 @@
 
 - (void)saveContext
 {
-    [self.managedObjectContext save:NULL];
+    NSError *error;
+    if (![self.managedObjectContext save:&error])
+    {
+        NSLog(@"Unresolved error in saving context %@, %@", error, [error userInfo]);
+        abort();
+    }
 }
 
 @end

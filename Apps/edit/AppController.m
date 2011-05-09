@@ -8,6 +8,7 @@
 
 #import "AppController.h"
 #import "RootController.h"
+#import "ProjectController.h"
 
 @implementation AppController
 
@@ -30,6 +31,11 @@
     [self.rootController browseFolder:[self applicationDocumentsDirectory]];
     [self.window makeKeyAndVisible];
     return YES;
+}
+
+- (void)applicationWillResignActive:(UIApplication *)application
+{
+    [self.projectController saveContext];
 }
 
 - (NSString *)applicationDocumentsDirectory
