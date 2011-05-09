@@ -22,7 +22,7 @@
 
 #pragma mark Detail Looking glass
 
-@property (nonatomic, readonly) ECPopoverController *detailPopover;
+//@property (nonatomic, readonly) ECPopoverController *detailPopover;
 
 #pragma mark UITextInput Properties
 

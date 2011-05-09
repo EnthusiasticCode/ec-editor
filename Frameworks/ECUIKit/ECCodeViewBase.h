@@ -19,9 +19,18 @@
     BOOL dataSourceHasCodeCanEditTextInRange;
 }
 
-#pragma mark Advanced Initialization
+#pragma mark Advanced Initialization and Configuration
 
+/// Initialize a codeview with external renderer and rendering queue.
+/// The codeview initialized with this method will be set to not own the 
+/// renderer and will use it only as a consumer.
 - (id)initWithFrame:(CGRect)frame renderer:(ECTextRenderer *)aRenderer renderingQueue:(NSOperationQueue *)queue;
+
+/// Renderer used in the codeview.
+@property (nonatomic, readonly) ECTextRenderer *renderer;
+
+/// Queue where renderer should be used.
+@property (nonatomic, retain) NSOperationQueue *renderingQueue;
 
 #pragma mark Providing Source Data
 

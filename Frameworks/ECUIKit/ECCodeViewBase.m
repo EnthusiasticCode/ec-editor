@@ -31,12 +31,6 @@
     BOOL ownsRenderer;
 }
 
-/// Renderer used in the codeview.
-@property (nonatomic, readonly) ECTextRenderer *renderer;
-
-/// Queue where renderer should be used.
-@property (nonatomic, readonly) NSOperationQueue *renderingQueue;
-
 /// Get or create a tile for the given index.
 - (TextTileView *)viewForTileIndex:(NSUInteger)tileIndex;
 
