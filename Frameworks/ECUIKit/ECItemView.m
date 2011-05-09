@@ -13,6 +13,7 @@
 #import "ECItemViewElement.h"
 
 static const CGFloat kECItemViewShortAnimationDuration = 0.15;
+static const CGFloat kECItemViewLongAnimationDuration = 0.75;
 static const NSUInteger kECItemViewAreaHeaderBufferSize = 5;
 static const NSUInteger kECItemViewGroupSeparatorBufferSize = 20;
 static const NSUInteger kECItemViewItemBufferSize = 10;
@@ -896,30 +897,56 @@ const NSString *kECItemViewItemKey = @"item";
             ++extraInserts;
         }
     }
-    NSLog(@"%@", groupSeparatorsToDelete);
     _cachedAreaRectArea = NSUIntegerMax;
     _cachedGroupRectArea = NSUIntegerMax;
     _cachedGroupRectGroup = NSUIntegerMax;
-    for (ECItemViewElement *element in itemsToDelete)
-        [element removeFromSuperview];
     for (NSIndexPath *indexPath in [itemsToInsert allKeys])
     {
         ECItemViewElement *element = [itemsToInsert objectForKey:indexPath];
         element.frame = [self rectForItemAtIndexPath:indexPath];
+        element.transform = CGAffineTransformMakeScale(0.1, 0.1);
+        element.alpha = 0.0;
         [self addSubview:element];
         [self sendSubviewToBack:element];
     }
-    for (ECItemViewElement *element in groupSeparatorsToDelete)
-        [element removeFromSuperview];
     for (NSIndexPath *indexPath in [groupSeparatorsToInsert allKeys])
     {
         ECItemViewElement *element = [groupSeparatorsToInsert objectForKey:indexPath];
         element.frame = [self rectForGroupSeparatorAtIndexPath:indexPath];
+        element.transform = CGAffineTransformMakeScale(0.1, 0.1);
+        element.alpha = 0.0;
         [self addSubview:element];
         [self sendSubviewToBack:element];
     }
-    [UIView animateWithDuration:2.0 animations:^(void) {
+    [UIView animateWithDuration:kECItemViewLongAnimationDuration animations:^(void) {
+        for (NSIndexPath *indexPath in itemsToInsert)
+        {
+            ECItemViewElement *element = [itemsToInsert objectForKey:indexPath];
+            element.transform = CGAffineTransformMakeScale(1.0, 1.0);
+            element.alpha = 1.0;
+        }
+        for (NSIndexPath *indexPath in [groupSeparatorsToInsert allKeys])
+        {
+            ECItemViewElement *element = [groupSeparatorsToInsert objectForKey:indexPath];
+            element.transform = CGAffineTransformMakeScale(1.0, 1.0);
+            element.alpha = 1.0;
+        }
+        for (ECItemViewElement *element in itemsToDelete)
+        {
+            element.transform = CGAffineTransformMakeScale(0.1, 0.1);
+            element.alpha = 0.0;
+        }
+        for (ECItemViewElement *element in groupSeparatorsToDelete)
+        {
+            element.transform = CGAffineTransformMakeScale(0.1, 0.1);
+            element.alpha = 0.0;
+        }
         [self _layoutElements];
+    } completion:^(BOOL finished) {
+        for (ECItemViewElement *element in groupSeparatorsToDelete)
+            [element removeFromSuperview];
+        for (ECItemViewElement *element in itemsToDelete)
+            [element removeFromSuperview];
     }];
     if (!_isBatchUpdating)
         for (NSDictionary *dictionary in [_batchUpdatingStores allValues])
