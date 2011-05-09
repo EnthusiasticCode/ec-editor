@@ -2,45 +2,95 @@
 //  Project.m
 //  edit
 //
-//  Created by Uri Baghin on 4/25/11.
-//  Copyright (c) 2011 __MyCompanyName__. All rights reserved.
+//  Created by Uri Baghin on 5/9/11.
+//  Copyright 2011 __MyCompanyName__. All rights reserved.
 //
 
 #import "Project.h"
-#import "File.h"
-#import "Folder.h"
-#import "Tab.h"
-#import "Target.h"
+#import <CoreData/CoreData.h>
 
 @implementation Project
-@dynamic projectFiles;
-@dynamic projectFolders;
-@dynamic tabs;
-@dynamic targets;
 
-- (void)addProjectFoldersObject:(Folder *)value
+@synthesize bundle = _bundle;
+@synthesize name = _name;
+@synthesize fileManager = _fileManager;
+@synthesize managedObjectContext = _managedObjectContext;
+@synthesize managedObjectModel = _managedObjectModel;
+@synthesize persistentStoreCoordinator = _persistentStoreCoordinator;
+
+- (NSFileManager *)fileManager
 {
-    [self addObject:value forOrderedKey:@"projectFolders"];
+    if (!_fileManager)
+        _fileManager = [[NSFileManager alloc] init];
+    return _fileManager;
 }
 
-- (void)removeProjectFoldersObject:(Folder *)value
+- (NSManagedObjectContext *)managedObjectContext
 {
-    [self removeObject:value forOrderedKey:@"projectFolders"];
+    if (_managedObjectContext != nil)
+        return _managedObjectContext;
+    NSPersistentStoreCoordinator *coordinator = [self persistentStoreCoordinator];
+    if (coordinator != nil)
+    {
+        _managedObjectContext = [[NSManagedObjectContext alloc] init];
+        [_managedObjectContext setPersistentStoreCoordinator:coordinator];
+    }
+    return _managedObjectContext;
 }
 
-- (void)addProjectFolders:(NSSet *)value
+- (NSManagedObjectModel *)managedObjectModel
 {
-    [self addObjects:value forOrderedKey:@"projectFolders"];
+    if (_managedObjectModel != nil)
+        return _managedObjectModel;
+    NSURL *modelURL = [[NSBundle mainBundle] URLForResource:@"Project" withExtension:@"momd"];
+    _managedObjectModel = [[NSManagedObjectModel alloc] initWithContentsOfURL:modelURL];    
+    return _managedObjectModel;
 }
 
-- (void)removeProjectFolders:(NSSet *)value
+- (void)dealloc
 {
-    [self addObjects:value forOrderedKey:@"projectFolders"];
+    self.bundle = nil;
+    self.managedObjectContext = nil;
+    self.persistentStoreCoordinator = nil;
+    self.managedObjectModel = nil;
+    [super dealloc];
 }
 
-- (NSArray *)orderedProjectFolders
+- (id)initWithBundle:(NSString *)bundle
 {
-    return [self valueForOrderedKey:@"projectFolders"];
+    self = [super init];
+    if (!self)
+        return nil;
+    self.bundle = bundle;
+    NSString *storePath = [bundle stringByAppendingPathComponent:@"project.ecproj"];
+    NSURL *storeURL = [NSURL fileURLWithPath:storePath];
+    if (![self.fileManager fileExistsAtPath:bundle])
+        [self.fileManager createDirectoryAtPath:bundle withIntermediateDirectories:YES attributes:nil error:NULL];
+    self.persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:[self managedObjectModel]];
+    NSError *error;
+    if (![self.persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeURL options:nil error:&error])
+    {
+        //Replace this implementation with code to handle the error appropriately.
+        NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
+        abort();
+    }
+    self.name = [bundle lastPathComponent];
+    return self;
+}
+
+- (void)saveContext
+{
+    NSError *error;
+    if (![self.managedObjectContext save:&error])
+    {
+        NSLog(@"Unresolved error in saving context %@, %@", error, [error userInfo]);
+        abort();
+    }
+}
+
+- (NSArray *)nodesInProjectRoot
+{
+    return nil;
 }
 
 @end

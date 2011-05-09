@@ -2,17 +2,20 @@
 //  Tab.h
 //  edit
 //
-//  Created by Uri Baghin on 4/25/11.
+//  Created by Uri Baghin on 5/10/11.
 //  Copyright (c) 2011 __MyCompanyName__. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
+#import <CoreData/CoreData.h>
 #import "ECManagedObject.h"
 
-@class Project;
+@class HistoryItem;
 
-@interface Tab : ECManagedObject
+@interface Tab : ECManagedObject {
+@private
+}
 @property (nonatomic, retain) NSNumber * index;
-@property (nonatomic, retain) Project * project;
 @property (nonatomic, retain) NSSet* historyItems;
+
 @end

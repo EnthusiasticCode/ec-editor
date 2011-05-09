@@ -11,15 +11,6 @@
 		B706F05B13563ECB00E03DDF /* UIImage+BlockDrawing.m in Sources */ = {isa = PBXBuildFile; fileRef = B706F05713563ECB00E03DDF /* UIImage+BlockDrawing.m */; };
 		B706F05C13563ECB00E03DDF /* UIView+ConcurrentAnimation.m in Sources */ = {isa = PBXBuildFile; fileRef = B706F05913563ECB00E03DDF /* UIView+ConcurrentAnimation.m */; };
 		B70B1FEE136F2399002D17F1 /* ECItemViewElement.m in Sources */ = {isa = PBXBuildFile; fileRef = B70B1FED136F2399002D17F1 /* ECItemViewElement.m */; };
-		B70C5C8C1365F22E001C35A5 /* Target.m in Sources */ = {isa = PBXBuildFile; fileRef = B70C5C8B1365F22E001C35A5 /* Target.m */; };
-		B70C5C8F1365F22E001C35A5 /* Folder.m in Sources */ = {isa = PBXBuildFile; fileRef = B70C5C8E1365F22E001C35A5 /* Folder.m */; };
-		B70C5C951365F22E001C35A5 /* Bookmark.m in Sources */ = {isa = PBXBuildFile; fileRef = B70C5C941365F22E001C35A5 /* Bookmark.m */; };
-		B70C5C981365F22F001C35A5 /* UndoItem.m in Sources */ = {isa = PBXBuildFile; fileRef = B70C5C971365F22F001C35A5 /* UndoItem.m */; };
-		B70C5C9B1365F22F001C35A5 /* NameWord.m in Sources */ = {isa = PBXBuildFile; fileRef = B70C5C9A1365F22F001C35A5 /* NameWord.m */; };
-		B70C5C9E1365F22F001C35A5 /* Tab.m in Sources */ = {isa = PBXBuildFile; fileRef = B70C5C9D1365F22F001C35A5 /* Tab.m */; };
-		B70C5CA41365F22F001C35A5 /* Group.m in Sources */ = {isa = PBXBuildFile; fileRef = B70C5CA31365F22F001C35A5 /* Group.m */; };
-		B70C5CA71365F22F001C35A5 /* Node.m in Sources */ = {isa = PBXBuildFile; fileRef = B70C5CA61365F22F001C35A5 /* Node.m */; };
-		B70C5CAA1365F22F001C35A5 /* HistoryItem.m in Sources */ = {isa = PBXBuildFile; fileRef = B70C5CA91365F22F001C35A5 /* HistoryItem.m */; };
 		B70D64BC132A2581008DDEA4 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B70D64BB132A2581008DDEA4 /* UIKit.framework */; };
 		B70D64BE132A2581008DDEA4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B70D64BD132A2581008DDEA4 /* Foundation.framework */; };
 		B70D64C0132A2581008DDEA4 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B70D64BF132A2581008DDEA4 /* CoreGraphics.framework */; };
@@ -34,6 +25,14 @@
 		B74C66271375E24800CC92D3 /* ECPopoverController.m in Sources */ = {isa = PBXBuildFile; fileRef = B74C66221375E24800CC92D3 /* ECPopoverController.m */; };
 		B74C66281375E24800CC92D3 /* ECPopoverView.m in Sources */ = {isa = PBXBuildFile; fileRef = B74C66241375E24800CC92D3 /* ECPopoverView.m */; };
 		B74C662B1375E24C00CC92D3 /* ECButton.m in Sources */ = {isa = PBXBuildFile; fileRef = B74C662A1375E24C00CC92D3 /* ECButton.m */; };
+		B74C66371378595300CC92D3 /* Project.m in Sources */ = {isa = PBXBuildFile; fileRef = B74C66361378595300CC92D3 /* Project.m */; };
+		B74C663A13789BDA00CC92D3 /* Tab.m in Sources */ = {isa = PBXBuildFile; fileRef = B74C663913789BDA00CC92D3 /* Tab.m */; };
+		B74C663D13789BDA00CC92D3 /* Bookmark.m in Sources */ = {isa = PBXBuildFile; fileRef = B74C663C13789BDA00CC92D3 /* Bookmark.m */; };
+		B74C664013789BDA00CC92D3 /* UndoItem.m in Sources */ = {isa = PBXBuildFile; fileRef = B74C663F13789BDA00CC92D3 /* UndoItem.m */; };
+		B74C664313789BDA00CC92D3 /* NameWord.m in Sources */ = {isa = PBXBuildFile; fileRef = B74C664213789BDA00CC92D3 /* NameWord.m */; };
+		B74C664613789BDA00CC92D3 /* File.m in Sources */ = {isa = PBXBuildFile; fileRef = B74C664513789BDA00CC92D3 /* File.m */; };
+		B74C664913789BDA00CC92D3 /* Node.m in Sources */ = {isa = PBXBuildFile; fileRef = B74C664813789BDA00CC92D3 /* Node.m */; };
+		B74C664C13789BDA00CC92D3 /* HistoryItem.m in Sources */ = {isa = PBXBuildFile; fileRef = B74C664B13789BDA00CC92D3 /* HistoryItem.m */; };
 		B75B8743135840070098E7E2 /* ECHashing.m in Sources */ = {isa = PBXBuildFile; fileRef = B75B873B135840070098E7E2 /* ECHashing.m */; };
 		B75B8744135840070098E7E2 /* ECStackCache.m in Sources */ = {isa = PBXBuildFile; fileRef = B75B873D135840070098E7E2 /* ECStackCache.m */; };
 		B75B8745135840070098E7E2 /* MurmurHash3.c in Sources */ = {isa = PBXBuildFile; fileRef = B75B873E135840070098E7E2 /* MurmurHash3.c */; };
@@ -52,14 +51,12 @@
 		B75B87741358401B0098E7E2 /* ECCodeToken.m in Sources */ = {isa = PBXBuildFile; fileRef = B75B87621358401B0098E7E2 /* ECCodeToken.m */; };
 		B75B87751358401B0098E7E2 /* ECCodeUnit.m in Sources */ = {isa = PBXBuildFile; fileRef = B75B87641358401B0098E7E2 /* ECCodeUnit.m */; };
 		B75B87761358401B0098E7E2 /* libclang.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B75B87681358401B0098E7E2 /* libclang.dylib */; };
-		B7A04CA9134F68BD00B72575 /* File.m in Sources */ = {isa = PBXBuildFile; fileRef = B7A04CA8134F68BD00B72575 /* File.m */; };
 		B7C764F2136773A4009181DB /* ECManagedObject.m in Sources */ = {isa = PBXBuildFile; fileRef = B7C764F1136773A4009181DB /* ECManagedObject.m */; };
 		B7D279DA135750C900E662FB /* ECItemView.m in Sources */ = {isa = PBXBuildFile; fileRef = B7D279D7135750C900E662FB /* ECItemView.m */; };
 		B7DAB3871372E17A00262D3C /* ECArrayTree.m in Sources */ = {isa = PBXBuildFile; fileRef = B7DAB3861372E17A00262D3C /* ECArrayTree.m */; };
 		B7DBA580132A3281004C0E1D /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7DBA57F132A3281004C0E1D /* QuartzCore.framework */; };
 		CDEBF21613489A8E00CE2285 /* AppController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDEBF20913489A8E00CE2285 /* AppController.m */; };
 		CDEBF21713489A8E00CE2285 /* FileController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDEBF20D13489A8E00CE2285 /* FileController.m */; };
-		CDEBF21813489A8E00CE2285 /* Project.m in Sources */ = {isa = PBXBuildFile; fileRef = CDEBF20F13489A8E00CE2285 /* Project.m */; };
 		CDEBF21913489A8E00CE2285 /* ProjectController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDEBF21113489A8E00CE2285 /* ProjectController.m */; };
 		CDEBF21B13489A8E00CE2285 /* RootController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDEBF21513489A8E00CE2285 /* RootController.m */; };
 		CDEBF29E13489BE800CE2285 /* ECCodeView.m in Sources */ = {isa = PBXBuildFile; fileRef = CDEBF27913489BE800CE2285 /* ECCodeView.m */; };
@@ -86,24 +83,6 @@
 		B706F05913563ECB00E03DDF /* UIView+ConcurrentAnimation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIView+ConcurrentAnimation.m"; path = "Frameworks/ECUIKit/UIView+ConcurrentAnimation.m"; sourceTree = "<group>"; };
 		B70B1FEC136F2399002D17F1 /* ECItemViewElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECItemViewElement.h; path = Frameworks/ECUIKit/ECItemViewElement.h; sourceTree = "<group>"; };
 		B70B1FED136F2399002D17F1 /* ECItemViewElement.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECItemViewElement.m; path = Frameworks/ECUIKit/ECItemViewElement.m; sourceTree = "<group>"; };
-		B70C5C8A1365F22E001C35A5 /* Target.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Target.h; sourceTree = "<group>"; };
-		B70C5C8B1365F22E001C35A5 /* Target.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Target.m; sourceTree = "<group>"; };
-		B70C5C8D1365F22E001C35A5 /* Folder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Folder.h; sourceTree = "<group>"; };
-		B70C5C8E1365F22E001C35A5 /* Folder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Folder.m; sourceTree = "<group>"; };
-		B70C5C931365F22E001C35A5 /* Bookmark.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Bookmark.h; sourceTree = "<group>"; };
-		B70C5C941365F22E001C35A5 /* Bookmark.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Bookmark.m; sourceTree = "<group>"; };
-		B70C5C961365F22F001C35A5 /* UndoItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UndoItem.h; sourceTree = "<group>"; };
-		B70C5C971365F22F001C35A5 /* UndoItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UndoItem.m; sourceTree = "<group>"; };
-		B70C5C991365F22F001C35A5 /* NameWord.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NameWord.h; sourceTree = "<group>"; };
-		B70C5C9A1365F22F001C35A5 /* NameWord.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NameWord.m; sourceTree = "<group>"; };
-		B70C5C9C1365F22F001C35A5 /* Tab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Tab.h; sourceTree = "<group>"; };
-		B70C5C9D1365F22F001C35A5 /* Tab.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Tab.m; sourceTree = "<group>"; };
-		B70C5CA21365F22F001C35A5 /* Group.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Group.h; sourceTree = "<group>"; };
-		B70C5CA31365F22F001C35A5 /* Group.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Group.m; sourceTree = "<group>"; };
-		B70C5CA51365F22F001C35A5 /* Node.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Node.h; sourceTree = "<group>"; };
-		B70C5CA61365F22F001C35A5 /* Node.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Node.m; sourceTree = "<group>"; };
-		B70C5CA81365F22F001C35A5 /* HistoryItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HistoryItem.h; sourceTree = "<group>"; };
-		B70C5CA91365F22F001C35A5 /* HistoryItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HistoryItem.m; sourceTree = "<group>"; };
 		B70D64B7132A2581008DDEA4 /* edit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = edit.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B70D64BB132A2581008DDEA4 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		B70D64BD132A2581008DDEA4 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -132,6 +111,22 @@
 		B74C66231375E24800CC92D3 /* ECPopoverView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECPopoverView.h; path = Frameworks/ECUIKit/ECPopoverView.h; sourceTree = "<group>"; };
 		B74C66241375E24800CC92D3 /* ECPopoverView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECPopoverView.m; path = Frameworks/ECUIKit/ECPopoverView.m; sourceTree = "<group>"; };
 		B74C662A1375E24C00CC92D3 /* ECButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECButton.m; path = Frameworks/ECUIKit/ECButton.m; sourceTree = "<group>"; };
+		B74C66351378595300CC92D3 /* Project.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Project.h; sourceTree = "<group>"; };
+		B74C66361378595300CC92D3 /* Project.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Project.m; sourceTree = "<group>"; };
+		B74C663813789BDA00CC92D3 /* Tab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Tab.h; sourceTree = "<group>"; };
+		B74C663913789BDA00CC92D3 /* Tab.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Tab.m; sourceTree = "<group>"; };
+		B74C663B13789BDA00CC92D3 /* Bookmark.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Bookmark.h; sourceTree = "<group>"; };
+		B74C663C13789BDA00CC92D3 /* Bookmark.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Bookmark.m; sourceTree = "<group>"; };
+		B74C663E13789BDA00CC92D3 /* UndoItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UndoItem.h; sourceTree = "<group>"; };
+		B74C663F13789BDA00CC92D3 /* UndoItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UndoItem.m; sourceTree = "<group>"; };
+		B74C664113789BDA00CC92D3 /* NameWord.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NameWord.h; sourceTree = "<group>"; };
+		B74C664213789BDA00CC92D3 /* NameWord.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NameWord.m; sourceTree = "<group>"; };
+		B74C664413789BDA00CC92D3 /* File.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = File.h; sourceTree = "<group>"; };
+		B74C664513789BDA00CC92D3 /* File.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = File.m; sourceTree = "<group>"; };
+		B74C664713789BDA00CC92D3 /* Node.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Node.h; sourceTree = "<group>"; };
+		B74C664813789BDA00CC92D3 /* Node.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Node.m; sourceTree = "<group>"; };
+		B74C664A13789BDA00CC92D3 /* HistoryItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HistoryItem.h; sourceTree = "<group>"; };
+		B74C664B13789BDA00CC92D3 /* HistoryItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HistoryItem.m; sourceTree = "<group>"; };
 		B75B873A135840070098E7E2 /* ECHashing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECHashing.h; sourceTree = "<group>"; };
 		B75B873B135840070098E7E2 /* ECHashing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECHashing.m; sourceTree = "<group>"; };
 		B75B873C135840070098E7E2 /* ECStackCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECStackCache.h; sourceTree = "<group>"; };
@@ -175,8 +170,6 @@
 		B75B87661358401B0098E7E2 /* ECCodeUnitPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeUnitPlugin.h; sourceTree = "<group>"; };
 		B75B87671358401B0098E7E2 /* Index.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Index.h; sourceTree = "<group>"; };
 		B75B87681358401B0098E7E2 /* libclang.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libclang.dylib; sourceTree = "<group>"; };
-		B7A04CA7134F68BD00B72575 /* File.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = File.h; sourceTree = "<group>"; };
-		B7A04CA8134F68BD00B72575 /* File.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = File.m; sourceTree = "<group>"; };
 		B7C764F0136773A4009181DB /* ECManagedObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECManagedObject.h; sourceTree = "<group>"; };
 		B7C764F1136773A4009181DB /* ECManagedObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECManagedObject.m; sourceTree = "<group>"; };
 		B7D279D6135750C900E662FB /* ECItemView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECItemView.h; path = Frameworks/ECUIKit/ECItemView.h; sourceTree = "<group>"; };
@@ -188,8 +181,6 @@
 		CDEBF20913489A8E00CE2285 /* AppController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppController.m; sourceTree = "<group>"; };
 		CDEBF20C13489A8E00CE2285 /* FileController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileController.h; sourceTree = "<group>"; };
 		CDEBF20D13489A8E00CE2285 /* FileController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileController.m; sourceTree = "<group>"; };
-		CDEBF20E13489A8E00CE2285 /* Project.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Project.h; sourceTree = "<group>"; };
-		CDEBF20F13489A8E00CE2285 /* Project.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Project.m; sourceTree = "<group>"; };
 		CDEBF21013489A8E00CE2285 /* ProjectController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProjectController.h; sourceTree = "<group>"; };
 		CDEBF21113489A8E00CE2285 /* ProjectController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProjectController.m; sourceTree = "<group>"; };
 		CDEBF21413489A8E00CE2285 /* RootController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RootController.h; sourceTree = "<group>"; };
@@ -296,30 +287,24 @@
 		B70D650D132A260C008DDEA4 /* Application */ = {
 			isa = PBXGroup;
 			children = (
+				B74C66351378595300CC92D3 /* Project.h */,
+				B74C66361378595300CC92D3 /* Project.m */,
 				B7C764F0136773A4009181DB /* ECManagedObject.h */,
 				B7C764F1136773A4009181DB /* ECManagedObject.m */,
-				CDEBF20E13489A8E00CE2285 /* Project.h */,
-				CDEBF20F13489A8E00CE2285 /* Project.m */,
-				B7A04CA7134F68BD00B72575 /* File.h */,
-				B7A04CA8134F68BD00B72575 /* File.m */,
-				B70C5CA81365F22F001C35A5 /* HistoryItem.h */,
-				B70C5CA91365F22F001C35A5 /* HistoryItem.m */,
-				B70C5CA51365F22F001C35A5 /* Node.h */,
-				B70C5CA61365F22F001C35A5 /* Node.m */,
-				B70C5CA21365F22F001C35A5 /* Group.h */,
-				B70C5CA31365F22F001C35A5 /* Group.m */,
-				B70C5C9C1365F22F001C35A5 /* Tab.h */,
-				B70C5C9D1365F22F001C35A5 /* Tab.m */,
-				B70C5C991365F22F001C35A5 /* NameWord.h */,
-				B70C5C9A1365F22F001C35A5 /* NameWord.m */,
-				B70C5C961365F22F001C35A5 /* UndoItem.h */,
-				B70C5C971365F22F001C35A5 /* UndoItem.m */,
-				B70C5C931365F22E001C35A5 /* Bookmark.h */,
-				B70C5C941365F22E001C35A5 /* Bookmark.m */,
-				B70C5C8D1365F22E001C35A5 /* Folder.h */,
-				B70C5C8E1365F22E001C35A5 /* Folder.m */,
-				B70C5C8A1365F22E001C35A5 /* Target.h */,
-				B70C5C8B1365F22E001C35A5 /* Target.m */,
+				B74C664A13789BDA00CC92D3 /* HistoryItem.h */,
+				B74C664B13789BDA00CC92D3 /* HistoryItem.m */,
+				B74C664713789BDA00CC92D3 /* Node.h */,
+				B74C664813789BDA00CC92D3 /* Node.m */,
+				B74C664413789BDA00CC92D3 /* File.h */,
+				B74C664513789BDA00CC92D3 /* File.m */,
+				B74C664113789BDA00CC92D3 /* NameWord.h */,
+				B74C664213789BDA00CC92D3 /* NameWord.m */,
+				B74C663E13789BDA00CC92D3 /* UndoItem.h */,
+				B74C663F13789BDA00CC92D3 /* UndoItem.m */,
+				B74C663B13789BDA00CC92D3 /* Bookmark.h */,
+				B74C663C13789BDA00CC92D3 /* Bookmark.m */,
+				B74C663813789BDA00CC92D3 /* Tab.h */,
+				B74C663913789BDA00CC92D3 /* Tab.m */,
 				CDEBF20813489A8E00CE2285 /* AppController.h */,
 				CDEBF20913489A8E00CE2285 /* AppController.m */,
 				CDEBF21413489A8E00CE2285 /* RootController.h */,
@@ -565,7 +550,6 @@
 			files = (
 				CDEBF21613489A8E00CE2285 /* AppController.m in Sources */,
 				CDEBF21713489A8E00CE2285 /* FileController.m in Sources */,
-				CDEBF21813489A8E00CE2285 /* Project.m in Sources */,
 				CDEBF21913489A8E00CE2285 /* ProjectController.m in Sources */,
 				CDEBF21B13489A8E00CE2285 /* RootController.m in Sources */,
 				CDEBF29E13489BE800CE2285 /* ECCodeView.m in Sources */,
@@ -576,7 +560,6 @@
 				CDEBF2AE13489BE800CE2285 /* ECTextStyle.m in Sources */,
 				CDEFF96E1348BD5E006FEFCC /* edit-main.m in Sources */,
 				CDEFF9751348BD5E006FEFCC /* Project.xcdatamodeld in Sources */,
-				B7A04CA9134F68BD00B72575 /* File.m in Sources */,
 				B706F05A13563ECB00E03DDF /* UIColor+StyleColors.m in Sources */,
 				B706F05B13563ECB00E03DDF /* UIImage+BlockDrawing.m in Sources */,
 				B706F05C13563ECB00E03DDF /* UIView+ConcurrentAnimation.m in Sources */,
@@ -598,15 +581,6 @@
 				B75B87731358401B0098E7E2 /* ECCodeSymbol.m in Sources */,
 				B75B87741358401B0098E7E2 /* ECCodeToken.m in Sources */,
 				B75B87751358401B0098E7E2 /* ECCodeUnit.m in Sources */,
-				B70C5C8C1365F22E001C35A5 /* Target.m in Sources */,
-				B70C5C8F1365F22E001C35A5 /* Folder.m in Sources */,
-				B70C5C951365F22E001C35A5 /* Bookmark.m in Sources */,
-				B70C5C981365F22F001C35A5 /* UndoItem.m in Sources */,
-				B70C5C9B1365F22F001C35A5 /* NameWord.m in Sources */,
-				B70C5C9E1365F22F001C35A5 /* Tab.m in Sources */,
-				B70C5CA41365F22F001C35A5 /* Group.m in Sources */,
-				B70C5CA71365F22F001C35A5 /* Node.m in Sources */,
-				B70C5CAA1365F22F001C35A5 /* HistoryItem.m in Sources */,
 				B7C764F2136773A4009181DB /* ECManagedObject.m in Sources */,
 				B72BE6351368C0F9009B0977 /* NSMutableArray+Shuffling.m in Sources */,
 				B72BE641136B3E53009B0977 /* ECDictionaryCache.m in Sources */,
@@ -619,6 +593,14 @@
 				B74C66271375E24800CC92D3 /* ECPopoverController.m in Sources */,
 				B74C66281375E24800CC92D3 /* ECPopoverView.m in Sources */,
 				B74C662B1375E24C00CC92D3 /* ECButton.m in Sources */,
+				B74C66371378595300CC92D3 /* Project.m in Sources */,
+				B74C663A13789BDA00CC92D3 /* Tab.m in Sources */,
+				B74C663D13789BDA00CC92D3 /* Bookmark.m in Sources */,
+				B74C664013789BDA00CC92D3 /* UndoItem.m in Sources */,
+				B74C664313789BDA00CC92D3 /* NameWord.m in Sources */,
+				B74C664613789BDA00CC92D3 /* File.m in Sources */,
+				B74C664913789BDA00CC92D3 /* Node.m in Sources */,
+				B74C664C13789BDA00CC92D3 /* HistoryItem.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -9,6 +9,7 @@
 #import "AppController.h"
 #import "RootController.h"
 #import "ProjectController.h"
+#import "Project.h"
 
 @implementation AppController
 
@@ -35,7 +36,7 @@
 
 - (void)applicationWillResignActive:(UIApplication *)application
 {
-    [self.projectController saveContext];
+    [self.projectController.project saveContext];
 }
 
 - (NSString *)applicationDocumentsDirectory
