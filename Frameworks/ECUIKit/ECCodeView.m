@@ -1363,14 +1363,21 @@ static void init(ECCodeView *self)
 
 - (void)handleGestureLongPress:(UILongPressGestureRecognizer *)recognizer
 {
-    CGPoint tapPoint = [recognizer locationInView:self];
+    BOOL multiTouch = NO;
+    CGPoint tapPoint = [recognizer locationOfTouch:0 inView:self];
+    CGPoint secondTapPoint = tapPoint;
+    if ([recognizer numberOfTouches] > 1) 
+    {
+        secondTapPoint = [recognizer locationOfTouch:1 inView:self];
+        multiTouch = YES;
+    }
     
     BOOL animatePopover = NO;
     
     switch (recognizer.state)
     {
         case UIGestureRecognizerStateEnded:
-            [self setSelectedTextFromPoint:tapPoint toPoint:tapPoint];
+            [self setSelectedTextFromPoint:tapPoint toPoint:secondTapPoint];
         case UIGestureRecognizerStateCancelled:
             selectionView.magnify = NO;
             break;
@@ -1384,14 +1391,18 @@ static void init(ECCodeView *self)
             {
                 selectionView.magnify = NO;
                 // TODO fix this?
-                [self setSelectedTextFromPoint:tapPoint toPoint:tapPoint];
+                [self setSelectedTextFromPoint:tapPoint toPoint:secondTapPoint];
                 return;
             }
             
             // Set selection
-            [selectionView setSelectionAtPoint:tapPoint magnificationRatio:2 animated:animatePopover];
+            if (multiTouch) 
+                [self setSelectedTextFromPoint:tapPoint toPoint:secondTapPoint];
+            else
+                [selectionView setSelectionAtPoint:tapPoint magnificationRatio:2 animated:animatePopover];
 
             // Scrolling up
+            // TODO get top point offset if mutlitouch
             CGPoint offset = self.contentOffset;
             CGFloat topScroll = 50 - tapPoint.y + offset.y;
             if (topScroll > 0)
