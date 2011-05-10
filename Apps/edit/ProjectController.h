@@ -18,6 +18,7 @@
 - (IBAction)edit:(id)sender;
 - (IBAction)done:(id)sender;
 - (void)loadProject:(NSString *)projectRoot;
+- (void)loadNode:(Node *)node;
 - (void)loadFile:(NSString *)file;
 - (void)addNodesAtPath:(NSString *)path toNode:(Node *)node;
 - (void)addAllNodesInProjectRoot;

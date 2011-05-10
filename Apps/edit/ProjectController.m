@@ -8,7 +8,9 @@
 
 #import <CoreData/CoreData.h>
 #import "ProjectController.h"
+#import "GroupController.h"
 #import "Project.h"
+#import "Node.h"
 #import "FileController.h"
 #import "AppController.h"
 
@@ -69,7 +71,7 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    [self loadFile:[[[self.project nodesInProjectRoot] objectAtIndex:indexPath.row] path]];
+    [self loadNode:[[self.project nodesInProjectRoot] objectAtIndex:indexPath.row]];
 }
 
 #pragma mark -
@@ -95,6 +97,18 @@
     [self addAllNodesInProjectRoot];
 }
 
+- (void)loadNode:(Node *)node
+{
+    if (![node.type isEqualToString:@"Group"])
+        [self loadFile:[(File *)node path]];
+    else
+    {
+        GroupController *groupController = [[[GroupController alloc] init] autorelease];
+        groupController.group = node;
+        [self.navigationController pushViewController:groupController animated:YES];
+    }
+}
+
 - (void)loadFile:(NSString *)file
 {
     FileController *fileController = ((AppController *)self.navigationController).fileController;
@@ -109,9 +123,9 @@
     for (NSString *subPath in subPaths)
     {
         BOOL isDirectory;
-        [self.fileManager fileExistsAtPath:path isDirectory:&isDirectory];
+        [self.fileManager fileExistsAtPath:[path stringByAppendingPathComponent:subPath] isDirectory:&isDirectory];
         if (isDirectory)
-            [subNodes setObject:[node addNodeWithName:path type:@"Group"] forKey:path];
+            [subNodes setObject:[node addNodeWithName:subPath type:@"Group"] forKey:subPath];
         else
             [node addFileWithPath:[path stringByAppendingPathComponent:subPath]];
     }
@@ -126,7 +140,7 @@
     for (NSString *path in paths)
     {
         BOOL isDirectory;
-        [self.fileManager fileExistsAtPath:path isDirectory:&isDirectory];
+        [self.fileManager fileExistsAtPath:[self.projectRoot stringByAppendingPathComponent:path] isDirectory:&isDirectory];
         if (isDirectory)
             [nodes setObject:[self.project addNodeWithName:path type:@"Group"] forKey:path];
         else
