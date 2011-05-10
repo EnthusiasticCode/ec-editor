@@ -73,6 +73,17 @@
     }
 }
 
+- (CGRect)topLeftRect
+{
+    // TODO check for proper return
+    return count ? buffer[0] : CGRectNull;
+}
+
+- (CGRect)bottomRightRect
+{
+    return count ? buffer[count - 1] : CGRectNull;
+}
+
 - (void)addRectsToContext:(CGContextRef)context
 {
     CGContextAddRects(context, buffer, count);

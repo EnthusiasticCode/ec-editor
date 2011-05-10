@@ -41,6 +41,12 @@
 /// Convinience function to add all the CGRect to a graphic context's path.
 - (void)addRectsToContext:(CGContextRef)context;
 
+/// Get, if presemt, the rect in the set that is at the top left.
+- (CGRect)topLeftRect;
+
+/// Get, if present, the rect in the set that is at the bottom right.
+- (CGRect)bottomRightRect;
+
 @end
 
 /// Mutable version of \c ECRectSet

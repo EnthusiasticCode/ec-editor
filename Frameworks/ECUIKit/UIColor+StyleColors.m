@@ -14,7 +14,7 @@
 + (UIColor *)styleBackgroundColor
 {
 //    return [UIColor colorWithRed:77.0/255.0 green:77.0/255.0 blue:77.0/255.0 alpha:1.0];
-    return [UIColor colorWithHue:0 saturation:0 brightness:0.89 alpha:1.0];
+    return [UIColor colorWithWhite:0.89 alpha:1.0];
 }
 
 + (UIColor *)styleBackgroundShadowColor
@@ -38,6 +38,11 @@
 {
 //    return [UIColor colorWithRed:205.0/255.0 green:202.0/255.0 blue:200.0/255.0 alpha:0.3];
     return [[UIColor whiteColor] colorWithAlphaComponent:0.3];
+}
+
++ (UIColor *)styleThemeColorOne
+{
+    return [UIColor colorWithRed:98.0/255.0 green:157.0/255.0 blue:222.0/255.0 alpha:1.0];
 }
 
 @end

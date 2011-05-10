@@ -35,6 +35,7 @@
     UITapGestureRecognizer *tapRecognizer;
     UITapGestureRecognizer *doubleTapRecognizer;
     UILongPressGestureRecognizer *longPressRecognizer;
+    UILongPressGestureRecognizer *longDoublePressRecognizer;
 }
 
 /// Specify if the info view containing search marks and navigator should be visible.
@@ -83,6 +84,8 @@
     ECCodeView *parent;
     CABasicAnimation *blinkAnimation;
     ECRectSet *selectionRects;
+    
+    UIView *leftKnob, *rightKnob;
 }
 
 - (id)initWithFrame:(CGRect)frame codeView:(ECCodeView *)codeView;
@@ -92,8 +95,8 @@
 @property (nonatomic) NSRange selection;
 @property (nonatomic, assign) ECTextRange *selectionRange;
 @property (nonatomic, readonly) ECTextPosition *selectionPosition;
-@property (nonatomic) CGPoint selectionPoint;
-- (void)setSelectionPoint:(CGPoint)point magnificationRatio:(CGFloat)magnificationRatio animated:(BOOL)animated;
+
+- (void)setSelectionAtPoint:(CGPoint)point magnificationRatio:(CGFloat)magnificationRatio animated:(BOOL)animated;
 
 #pragma mark Selection Styles
 
@@ -261,15 +264,43 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
     {
         frame = [parent caretRectForPosition:self.selectionPosition];
         self.blink = YES;
+        [leftKnob removeFromSuperview];
+        [rightKnob removeFromSuperview];
     }
     else
     {
         [selectionRects release];
         selectionRects = [[parent.renderer rectsForStringRange:selection limitToFirstLine:NO] retain];
         frame = selectionRects.bounds;
+        self.blink = NO;
+        
+        // Left knob
+        if (!leftKnob) 
+        {
+            leftKnob = [[UIView alloc] initWithFrame:(CGRect){ CGPointZero, { 10, 10 } }];
+            leftKnob.backgroundColor = caretColor;
+        }
+        CGRect knobRect = [selectionRects topLeftRect];
+        knobRect.origin.x -= frame.origin.x;
+        knobRect.origin.y -= frame.origin.y;
+        leftKnob.center = knobRect.origin;
+        [self addSubview:leftKnob];
+        
+        // Right knob
+        if (!rightKnob) 
+        {
+            rightKnob = [[UIView alloc] initWithFrame:(CGRect){ CGPointZero, { 10, 10 } }];
+            rightKnob.backgroundColor = caretColor;
+        }
+        knobRect = [selectionRects bottomRightRect];
+        knobRect.origin.x -= frame.origin.x;
+        knobRect.origin.y -= frame.origin.y;
+        rightKnob.center = CGPointMake(CGRectGetMaxX(knobRect), CGRectGetMaxY(knobRect));
+        [self addSubview:rightKnob];
+        
+        // Adjust selection frame
         frame.origin.x += parent.textInsets.left;
         frame.origin.y += parent.textInsets.top;
-        self.blink = NO;
     }
     self.frame = frame;
     
@@ -291,18 +322,6 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
 - (ECTextPosition *)selectionPosition
 {
     return [[[ECTextPosition alloc] initWithIndex:selection.location] autorelease];
-}
-
-- (CGPoint)selectionPoint
-{
-    CGRect selBounds = [parent.renderer rectsForStringRange:selection limitToFirstLine:YES].bounds;
-    CGPoint selPoint = CGPointMake(CGRectGetMidX(selBounds), CGRectGetMidY(selBounds));
-    return selPoint;
-}
-
-- (void)setSelectionPoint:(CGPoint)point
-{
-    [self setSelectionPoint:point magnificationRatio:0 animated:NO];
 }
 
 #pragma mark Blinking
@@ -340,7 +359,7 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
 
 @synthesize magnify, magnificationPopover;
 
-- (void)setSelectionPoint:(CGPoint)point magnificationRatio:(CGFloat)magnificationRatio animated:(BOOL)animated
+- (void)setSelectionAtPoint:(CGPoint)point magnificationRatio:(CGFloat)magnificationRatio animated:(BOOL)animated
 {
     UIEdgeInsets parentTextInsets = parent.textInsets;
     
@@ -391,7 +410,7 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
     if (magnify == doMagnify)
         return;
     
-    [self setSelectionPoint:self.frame.origin magnificationRatio:doMagnify ? 2 : 0 animated:YES];
+    [self setSelectionAtPoint:self.frame.origin magnificationRatio:doMagnify ? 2 : 0 animated:YES];
 }
 
 - (ECPopoverController *)magnificationPopover
@@ -439,6 +458,8 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
     [caretColor release];
     
     [selectionRects release];
+    [leftKnob release];
+    [rightKnob release];
     
     [magnificationPopover release];
     
@@ -662,8 +683,8 @@ static void init(ECCodeView *self)
 {
     // Adding selection view
     self->selectionView = [[TextSelectionView alloc] initWithFrame:CGRectZero codeView:self];
-    [self->selectionView setCaretColor:[UIColor redColor]];
-    [self->selectionView setSelectionColor:[UIColor colorWithWhite:0.5 alpha:0.5]];
+    [self->selectionView setCaretColor:[UIColor styleThemeColorOne]];
+    [self->selectionView setSelectionColor:[[UIColor styleThemeColorOne] colorWithAlphaComponent:0.3]];
     [self->selectionView setOpaque:NO];
     [self->selectionView setHidden:YES];
     [self addSubview:self->selectionView];
@@ -812,6 +833,11 @@ static void init(ECCodeView *self)
         [self addGestureRecognizer:longPressRecognizer];
         [longPressRecognizer release];
         
+        longDoublePressRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleGestureLongPress:)];
+        longDoublePressRecognizer.numberOfTouchesRequired = 2;
+        [self addGestureRecognizer:longDoublePressRecognizer];
+        [longDoublePressRecognizer release];
+        
         // TODO initialize gesture recognizers
     }
     
@@ -822,6 +848,7 @@ static void init(ECCodeView *self)
         tapRecognizer.enabled = YES;
         doubleTapRecognizer.enabled = YES;
         longPressRecognizer.enabled = YES;
+        longDoublePressRecognizer.enabled = YES;
     }
     
     [self setNeedsLayout];
@@ -839,6 +866,7 @@ static void init(ECCodeView *self)
         tapRecognizer.enabled = NO;
         doubleTapRecognizer.enabled = NO;
         longPressRecognizer.enabled = NO;
+        longDoublePressRecognizer.enabled = NO;
         
         // Remove selection
         selectionView.hidden = YES;
@@ -1361,7 +1389,7 @@ static void init(ECCodeView *self)
             }
             
             // Set selection
-            [selectionView setSelectionPoint:tapPoint magnificationRatio:2 animated:animatePopover];
+            [selectionView setSelectionAtPoint:tapPoint magnificationRatio:2 animated:animatePopover];
 
             // Scrolling up
             CGPoint offset = self.contentOffset;
