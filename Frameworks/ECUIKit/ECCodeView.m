@@ -11,6 +11,7 @@
 #import "ECTextPosition.h"
 #import "ECTextRange.h"
 #import "UIColor+StyleColors.h"
+#import "NSTimer+block.h"
 
 #pragma mark -
 #pragma mark Interfaces
@@ -82,8 +83,10 @@
 @interface TextSelectionView : UIView {
 @private
     ECCodeView *parent;
-    CABasicAnimation *blinkAnimation;
     ECRectSet *selectionRects;
+    
+    CABasicAnimation *blinkAnimation;
+    NSTimer *blinkDelayTimer;
     
     UIView *leftKnob, *rightKnob;
     UILongPressGestureRecognizer *leftKnobRecognizer, *rightKnobRecognizer;
@@ -260,17 +263,25 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
         return;
     
     selection = range;
+    self.blink = NO;
     
     // Set new selection frame
     CGRect frame;
     if (selection.length == 0) 
     {
         frame = [parent caretRectForPosition:self.selectionPosition];
-        self.blink = YES;
         [leftKnob removeFromSuperview];
         leftKnobRecognizer.enabled = NO;
         [rightKnob removeFromSuperview];
         rightKnobRecognizer.enabled = NO;
+        
+        // Start blinking after the selection change has stopped
+        if (blinkDelayTimer)
+            [blinkDelayTimer invalidate];
+        blinkDelayTimer = [NSTimer scheduledTimerWithTimeInterval:0.25 usingBlock:^(void) {
+            self.blink = YES;
+            blinkDelayTimer = nil;
+        } repeats:NO];
     }
     else
     {
@@ -281,7 +292,6 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
         frame = selectionRects.bounds;
         frame.origin.x += parentTextInsets.left;
         frame.origin.y += parentTextInsets.top;
-        self.blink = NO;
         
         // Left knob
         if (!leftKnob) 
@@ -472,7 +482,7 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
             textPoint.y = rightKnob.center.y;
         textPoint.y -= [selectionRects bottomRightRect].size.height / 2;
     }
-    else
+    else // leftKnob
     {
         if (textPoint.y >= rightKnob.center.y)
             textPoint.y = leftKnob.center.y;
@@ -1475,6 +1485,8 @@ static void init(ECCodeView *self)
             }
             
             // TODO scrolling down
+            
+            // TODO scroll with knobs
         }
     }
 }
