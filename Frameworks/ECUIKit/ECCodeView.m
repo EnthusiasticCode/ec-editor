@@ -1299,7 +1299,7 @@ static void init(ECCodeView *self)
     carretRect.origin.y += textInsets.top;
     
     carretRect.origin.x -= 1.0;
-    carretRect.size.width = 1.0;
+    carretRect.size.width = 2.0;
     
     CGFloat scale = self.contentScaleFactor;
     if (scale != 1.0) 
