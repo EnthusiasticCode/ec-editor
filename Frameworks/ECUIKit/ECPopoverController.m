@@ -7,9 +7,8 @@
 //
 
 #import <QuartzCore/QuartzCore.h>
-#import "ECPopoverController.h"
-#import "ECPopoverView.h"
 #import <UIKit/UIGestureRecognizerSubclass.h>
+#import "ECPopoverController.h"
 
 #pragma mark -
 #pragma makr Custom Gesture Recognizer
@@ -48,7 +47,6 @@
 
 @interface ECPopoverController () {
 @private
-    ECPopoverView *popoverView;
     CGFloat keyboardHeight;
     
     InstantGestureRecognizer *dismissRecognizer;
@@ -69,25 +67,27 @@
 
 @implementation ECPopoverController
 
+@synthesize popoverView;
+@synthesize automaticDismiss;
+
 #pragma mark -
 #pragma mark Initializing the Popover
 
-static void init(ECPopoverController *self)
+static void preinit(ECPopoverController *self)
 {
     NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
     [nc addObserver:self selector:@selector(keyboardShown:) name:UIKeyboardDidShowNotification object:nil];
     [nc addObserver:self selector:@selector(keyboardHidden:) name:UIKeyboardDidHideNotification object:nil];
+    
+    self->automaticDismiss = YES;
 }
 
 - (id)initWithContentViewController:(UIViewController *)viewController
 {
+    preinit(self);
     if ((self = [super init])) 
     {
         popoverView = [ECPopoverView new];
-        
-        dismissRecognizer = [[InstantGestureRecognizer alloc] initWithTarget:self action:@selector(dismissHandler:)];
-        dismissRecognizer.enabled = NO;
-        
         [self setContentViewController:viewController animated:NO];
     }
     return self;
@@ -113,6 +113,9 @@ static void init(ECPopoverController *self)
 
 - (void)setContentViewController:(UIViewController *)viewController animated:(BOOL)animated
 {
+    if (contentViewController == viewController)
+        return;
+    
     contentViewController = viewController;
     if (animated) 
     {
@@ -176,8 +179,9 @@ static void init(ECPopoverController *self)
 #pragma mark Presenting and Dismissing the Popover
 
 - (void)presentPopoverFromRect:(CGRect)rect inView:(UIView *)view permittedArrowDirections:(UIPopoverArrowDirection)arrowDirections animated:(BOOL)animated
-{    
-    CGRect allowedRect = view.window.bounds;
+{
+    UIView *rootView = view.window.rootViewController.view;
+    CGRect allowedRect = rootView.bounds;
     // Removing status bar anyway
     allowedRect.origin.y += 20;
     allowedRect.size.height -= 20;
@@ -186,36 +190,24 @@ static void init(ECPopoverController *self)
     // Inset to give a little margin
     allowedRect = CGRectInset(allowedRect, 5, 5);
     // Transform to view's space
-    allowedRect = [view convertRect:allowedRect fromView:view.window];
+    UIView *v = view;
+    CGPoint viewOriging;
+    do {
+        viewOriging = v.frame.origin;
+        rect.origin.x += viewOriging.x;
+        rect.origin.y += viewOriging.y;
+    } while ((v = v.superview) && v != rootView);
     
     // Point where the arrow should point
     CGPoint arrowPoint = CGPointMake(CGRectGetMidX(rect), CGRectGetMidY(rect));
     
     CGRect backupFrame = CGRectNull;
     CGRect resultFrame = CGRectZero;
-        
-    if (arrowDirections & UIPopoverArrowDirectionUp) 
-    {
-        resultFrame = popoverView.bounds;
-        resultFrame.origin.x = MAX(allowedRect.origin.x, arrowPoint.x - resultFrame.size.width / 2);
-        resultFrame.origin.y = CGRectGetMaxY(rect) + popoverView.arrowMargin;
-        popoverView.arrowDirection = UIPopoverArrowDirectionUp;
-        popoverView.arrowPosition = arrowPoint.x - resultFrame.origin.x;
-        if (CGRectContainsRect(allowedRect, resultFrame)) 
-        {
-            [self presentPopoverInView:view WithFrame:resultFrame animated:animated];
-            return;
-        }
-        else
-        {
-            backupFrame = resultFrame;
-        }
-    }
     
     if (arrowDirections & UIPopoverArrowDirectionDown) 
     {
         resultFrame = popoverView.bounds;
-        resultFrame.origin.x = MAX(allowedRect.origin.x, arrowPoint.x - resultFrame.size.width / 2);
+        resultFrame.origin.x = MAX(allowedRect.origin.x, MIN(CGRectGetMaxX(allowedRect) - resultFrame.size.width, arrowPoint.x - resultFrame.size.width / 2));
         resultFrame.origin.y = rect.origin.y - resultFrame.size.height - popoverView.arrowMargin;
         if (CGRectContainsRect(allowedRect, resultFrame)) 
         {
@@ -249,6 +241,24 @@ static void init(ECPopoverController *self)
         {
             popoverView.arrowDirection = UIPopoverArrowDirectionLeft;
             popoverView.arrowPosition = arrowPoint.y - resultFrame.origin.y;
+            backupFrame = resultFrame;
+        }
+    }
+    
+    if (arrowDirections & UIPopoverArrowDirectionUp) 
+    {
+        resultFrame = popoverView.bounds;
+        resultFrame.origin.x = MAX(allowedRect.origin.x, MIN(CGRectGetMaxX(allowedRect) - resultFrame.size.width, arrowPoint.x - resultFrame.size.width / 2));
+        resultFrame.origin.y = CGRectGetMaxY(rect) + popoverView.arrowMargin;
+        popoverView.arrowDirection = UIPopoverArrowDirectionUp;
+        popoverView.arrowPosition = arrowPoint.x - resultFrame.origin.x;
+        if (CGRectContainsRect(allowedRect, resultFrame)) 
+        {
+            [self presentPopoverInView:view WithFrame:resultFrame animated:animated];
+            return;
+        }
+        else if (CGRectIsNull(backupFrame))
+        {
             backupFrame = resultFrame;
         }
     }
@@ -315,13 +325,15 @@ static void init(ECPopoverController *self)
 #pragma mark Private Methods
 
 - (void)presentPopoverInView:(UIView *)view WithFrame:(CGRect)frame animated:(BOOL)animated
-{    
-    [view addSubview:popoverView];
-    popoverView.layer.shouldRasterize = YES;
-    popoverView.alpha = 0;
+{
+    [view.window.rootViewController.view addSubview:popoverView];
+    frame.origin.x = roundf(frame.origin.x);
+    frame.origin.y = roundf(frame.origin.y);
     popoverView.frame = frame;
     if (animated)
     {
+        popoverView.layer.shouldRasterize = YES;
+        popoverView.alpha = 0;
         [UIView animateWithDuration:ANIMATION_DURATION animations:^(void) {
             popoverView.alpha = 1;
         } completion:^(BOOL finished) {
@@ -334,14 +346,18 @@ static void init(ECPopoverController *self)
     }
     popoverVisible = YES;
     
-    [view.window addGestureRecognizer:dismissRecognizer];
-    dismissRecognizer.enabled = YES;
+    if (automaticDismiss) 
+    {
+        if (!dismissRecognizer)
+            dismissRecognizer = [[InstantGestureRecognizer alloc] initWithTarget:self action:@selector(dismissHandler:)];
+        [view.window addGestureRecognizer:dismissRecognizer];
+    }
 }
 
 - (void)dismissHandler:(UIGestureRecognizer *)recognizer
 {
-    CGPoint pointInView = [recognizer locationInView:contentViewController.view];
-    if ([contentViewController.view pointInside:pointInView withEvent:nil])
+    CGPoint pointInView = [recognizer locationInView:popoverView];
+    if ([popoverView pointInside:pointInView withEvent:nil])
         return;
     
     for (UIView *view in passthroughViews) 
@@ -354,12 +370,12 @@ static void init(ECPopoverController *self)
     [self dismissPopoverAnimated:YES];
     
     [recognizer.view removeGestureRecognizer:dismissRecognizer];
-    dismissRecognizer.enabled = NO;
 }
 
 - (void)keyboardShown:(NSNotification *)aNotification
 {
-    keyboardHeight = [[[aNotification userInfo] objectForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue].size.height;
+    CGRect keyboardFrame = [[[aNotification userInfo] objectForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue];
+    keyboardHeight = abs(keyboardFrame.origin.x) > abs(keyboardFrame.origin.y) ? keyboardFrame.size.width : keyboardFrame.size.height;
 }
 
 - (void)keyboardHidden:(NSNotification *)aNotification

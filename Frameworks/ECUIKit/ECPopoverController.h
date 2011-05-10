@@ -7,9 +7,13 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "ECPopoverView.h"
 
 
+/// Replace the \c UIPopoverController with a popovercontroller that is customizable.
 @interface ECPopoverController : NSObject
+
+#pragma mark UIPopoverController Methods
 
 - (id)initWithContentViewController:(UIViewController *)viewController;
 
@@ -32,5 +36,14 @@
 - (void)presentPopoverFromBarButtonItem:(UIBarButtonItem *)item permittedArrowDirections:(UIPopoverArrowDirection)arrowDirections animated:(BOOL)animated;
 
 - (void)dismissPopoverAnimated:(BOOL)animated;
+
+#pragma mark Customizable Popover
+
+@property (nonatomic, readonly) ECPopoverView *popoverView;
+
+#pragma mark Advanced Behaviours
+
+/// If YES (default), the user will be able to dismiss the popover by tapping anyehere outside it and passthroughViews views.
+@property (nonatomic, getter = isAutomaticDismiss) BOOL automaticDismiss;
 
 @end

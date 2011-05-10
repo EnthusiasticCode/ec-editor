@@ -151,4 +151,10 @@
     self.codeView.navigatorVisible = NO;
 }
 
+- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate
+{
+    if (!decelerate)
+        self.codeView.navigatorVisible = NO;
+}
+
 @end

@@ -141,6 +141,8 @@ const NSString *ECTSBackCustomOverlayAttributeName = @"ECTextStyleBackCustomOver
     if ((self = [super init]))
     {
         CTAttributes = [[NSMutableDictionary alloc] init];
+        // Adding default ligature attribute
+        [CTAttributes setObject:[NSNumber numberWithInt:0] forKey:(id)kCTLigatureAttributeName];
     }
     return self;
 }

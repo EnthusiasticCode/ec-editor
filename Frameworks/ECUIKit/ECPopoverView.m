@@ -11,8 +11,6 @@
 #import <QuartzCore/QuartzCore.h>
 #import <math.h>
 
-#define ARROW_CORNER_RADIUS 3
-
 @interface ECPopoverView () {
 @private
     CAShapeLayer *arrowLayer;
@@ -37,6 +35,7 @@
 @synthesize arrowPosition;
 @synthesize arrowSize;
 @synthesize arrowMargin;
+@synthesize arrowCornerRadius;
 
 - (void)setContentInsets:(UIEdgeInsets)insets
 {
@@ -116,10 +115,11 @@
 
 static void preinit(ECPopoverView *self)
 {
-    self->arrowSize = 30;
+    self->arrowSize = 25;
+    self->arrowCornerRadius = 2;
     self->arrowPosition = 0.5;
     self->arrowDirection = UIPopoverArrowDirectionUp;
-    self->arrowMargin = self->arrowSize / M_SQRT2 - ARROW_CORNER_RADIUS;
+    self->arrowMargin = self->arrowSize / M_SQRT2 - self->arrowCornerRadius;
     
     self->cornerRadius = 5;
     
@@ -131,7 +131,7 @@ static void init(ECPopoverView *self)
     CAShapeLayer *layer = (CAShapeLayer *)self.layer;
     
     self->arrowLayer = [CAShapeLayer new];
-    self->arrowLayer.path = [UIBezierPath bezierPathWithRoundedRect:CGRectMake(0, 0, self->arrowSize, self->arrowSize) cornerRadius:ARROW_CORNER_RADIUS].CGPath;
+    self->arrowLayer.path = [UIBezierPath bezierPathWithRoundedRect:CGRectMake(0, 0, self->arrowSize, self->arrowSize) cornerRadius:self->arrowCornerRadius].CGPath;
     self->arrowLayer.transform = CATransform3DMakeRotation(M_PI_4, 0, 0, 1);
     self->arrowLayer.actions = [NSDictionary dictionaryWithObject:[NSNull null] forKey:@"position"];
     
@@ -204,15 +204,15 @@ static void init(ECPopoverView *self)
     switch (arrowDirection) 
     {
         case UIPopoverArrowDirectionRight:
-            arrowLayer.position = CGPointMake(self.bounds.size.width - ARROW_CORNER_RADIUS, position - arrowMargin - ARROW_CORNER_RADIUS);
+            arrowLayer.position = CGPointMake(self.bounds.size.width - self->arrowCornerRadius, position - arrowMargin - arrowCornerRadius);
             break;
             
         case UIPopoverArrowDirectionDown:
-            arrowLayer.position = CGPointMake(position, self.bounds.size.height - arrowMargin - 2 * ARROW_CORNER_RADIUS);
+            arrowLayer.position = CGPointMake(position, self.bounds.size.height - arrowMargin - 2 * arrowCornerRadius);
             break;
             
         case UIPopoverArrowDirectionLeft:
-            arrowLayer.position = CGPointMake(ARROW_CORNER_RADIUS, position - arrowMargin - ARROW_CORNER_RADIUS);
+            arrowLayer.position = CGPointMake(arrowCornerRadius, position - arrowMargin - arrowCornerRadius);
             break;
             
         default:

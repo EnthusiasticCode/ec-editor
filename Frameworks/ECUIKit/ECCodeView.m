@@ -11,17 +11,19 @@
 #import "ECTextPosition.h"
 #import "ECTextRange.h"
 #import "UIColor+StyleColors.h"
+#import "NSTimer+block.h"
 
 #pragma mark -
 #pragma mark Interfaces
 
-@class CodeInfoView;
 @class TextSelectionView;
+@class TextMagnificationView;
+@class CodeInfoView;
 
 #pragma mark -
 
 @interface ECCodeView () {
-@private
+@private    
     // Navigator
     CodeInfoView *infoView;
     
@@ -32,6 +34,9 @@
     // Recognizers
     UITapGestureRecognizer *focusRecognizer;
     UITapGestureRecognizer *tapRecognizer;
+    UITapGestureRecognizer *doubleTapRecognizer;
+    UILongPressGestureRecognizer *longPressRecognizer;
+    UILongPressGestureRecognizer *longDoublePressRecognizer;
 }
 
 /// Specify if the info view containing search marks and navigator should be visible.
@@ -52,15 +57,64 @@
 // Gestures handlers
 - (void)handleGestureFocus:(UITapGestureRecognizer *)recognizer;
 - (void)handleGestureTap:(UITapGestureRecognizer *)recognizer;
+- (void)handleGestureDoubleTap:(UITapGestureRecognizer *)recognizer;
+- (void)handleGestureLongPress:(UILongPressGestureRecognizer *)recognizer;
 
 @end
 
 #pragma mark -
-@interface TextSelectionView : UIView
+
+@interface TextMagnificationView : UIView {
+@private
+    ECCodeView *parent;
+    UIImage *detailImage;
+}
+
+- (id)initWithFrame:(CGRect)frame codeView:(ECCodeView *)codeView;
+
+- (void)detailTextAtPoint:(CGPoint)point 
+            magnification:(CGFloat)magnification 
+   additionalDrawingBlock:(void(^)(CGContextRef context, CGPoint textOffset))block;
+
+@end
+
+#pragma mark -
+
+@interface TextSelectionView : UIView {
+@private
+    ECCodeView *parent;
+    ECRectSet *selectionRects;
+    
+    CABasicAnimation *blinkAnimation;
+    NSTimer *blinkDelayTimer;
+    
+    UIView *leftKnob, *rightKnob;
+    UILongPressGestureRecognizer *leftKnobRecognizer, *rightKnobRecognizer;
+}
+
+- (id)initWithFrame:(CGRect)frame codeView:(ECCodeView *)codeView;
+
+#pragma mark Managin the Selection
 
 @property (nonatomic) NSRange selection;
-@property (nonatomic, readonly) ECTextRange *selectionRange;
+@property (nonatomic, assign) ECTextRange *selectionRange;
 @property (nonatomic, readonly) ECTextPosition *selectionPosition;
+
+- (void)setSelectionAtPoint:(CGPoint)point magnificationRatio:(CGFloat)magnificationRatio animated:(BOOL)animated;
+
+#pragma mark Selection Styles
+
+@property (nonatomic, retain) UIColor *selectionColor;
+@property (nonatomic, retain) UIColor *caretColor;
+@property (nonatomic, getter = isBlinking) BOOL blink;
+
+#pragma mark Magnification
+
+@property (nonatomic, getter = isMagnifying) BOOL magnify;
+@property (nonatomic, readonly) ECPopoverController *magnificationPopover;
+@property (nonatomic, readonly) TextMagnificationView *magnificationView;
+
+- (void)handleKnobGesture:(UILongPressGestureRecognizer *)recognizer;
 
 @end
 
@@ -77,9 +131,10 @@
     UITapGestureRecognizer *tapRecognizer;
 }
 
-- (id)initWithNavigatorDatasource:(id<ECCodeViewDataSource>)source 
-                         renderer:(ECTextRenderer *)aRenderer 
-                   renderingQueue:(NSOperationQueue *)queue;
+- (id)initWithFrame:(CGRect)frame 
+navigatorDatasource:(id<ECCodeViewDataSource>)source 
+           renderer:(ECTextRenderer *)aRenderer 
+     renderingQueue:(NSOperationQueue *)queue;
 
 #pragma mark Parent Layout
 
@@ -115,20 +170,392 @@
 #pragma mark Implementations
 
 #pragma mark -
+#pragma mark TextMagnificationView
+
+@implementation TextMagnificationView
+
+- (id)initWithFrame:(CGRect)frame codeView:(ECCodeView *)codeView
+{
+    if ((self = [super initWithFrame:frame])) 
+    {
+        parent = codeView;
+    }
+    return self;
+}
+
+- (void)dealloc
+{
+    [detailImage release];
+    [super dealloc];
+}
+
+- (void)drawRect:(CGRect)rect
+{
+    [self.backgroundColor setFill];
+    UIRectFill(rect);
+    
+    @synchronized(detailImage)
+    {
+        [detailImage drawInRect:rect];
+    }
+}
+
+- (void)detailTextAtPoint:(CGPoint)point magnification:(CGFloat)magnification additionalDrawingBlock:(void(^)(CGContextRef, CGPoint))block
+{
+    // Generate required text rect
+    CGRect textRect = (CGRect){ point, self.bounds.size };
+    textRect.size.width /= magnification;
+    textRect.size.height /= magnification;
+    textRect.origin.x -= (textRect.size.width / 2);
+    textRect.origin.y -= (textRect.size.height / 2);
+    
+    // Check to be contained in text bounds
+    if (textRect.origin.x < -10)
+        textRect.origin.x = -10;
+    else if (CGRectGetMaxX(textRect) > parent.renderer.wrapWidth + 10)
+        textRect.origin.x = parent.renderer.wrapWidth - textRect.size.width + 10;
+    
+    // Render magnified image
+    [parent.renderingQueue addOperationWithBlock:^(void) {
+        UIGraphicsBeginImageContext(self.bounds.size);
+        // Prepare magnified context
+        CGContextRef imageContext = UIGraphicsGetCurrentContext();        
+        CGContextScaleCTM(imageContext, magnification, magnification);
+        CGContextTranslateCTM(imageContext, -textRect.origin.x, 0);
+        // Render text
+        CGContextSaveGState(imageContext);
+        [parent.renderer drawTextWithinRect:textRect inContext:imageContext];
+        CGContextRestoreGState(imageContext);
+        // Render additional drawings
+        if (block)
+            block(imageContext, textRect.origin);
+        // Get result image
+        @synchronized(detailImage)
+        {
+            [detailImage release];
+            detailImage = [UIGraphicsGetImageFromCurrentImageContext() retain];
+        }
+        UIGraphicsEndImageContext();
+        // Request rerendering
+        [[NSOperationQueue mainQueue] addOperationWithBlock:^(void) {
+            [self setNeedsDisplay];
+        }];
+    }];
+}
+
+@end
+
+#pragma mark -
 #pragma mark TextSelectionView
 
 @implementation TextSelectionView
 
+#pragma mark Properties
+
 @synthesize selection;
+@synthesize selectionColor;
+@synthesize caretColor;
+@synthesize blink;
+
+- (void)setSelection:(NSRange)range
+{
+    if (NSEqualRanges(range, selection))
+        return;
+    
+    selection = range;
+    self.blink = NO;
+    
+    // Set new selection frame
+    CGRect frame;
+    if (selection.length == 0) 
+    {
+        frame = [parent caretRectForPosition:self.selectionPosition];
+        [leftKnob removeFromSuperview];
+        leftKnobRecognizer.enabled = NO;
+        [rightKnob removeFromSuperview];
+        rightKnobRecognizer.enabled = NO;
+        
+        // Start blinking after the selection change has stopped
+        if (blinkDelayTimer)
+            [blinkDelayTimer invalidate];
+        blinkDelayTimer = [NSTimer scheduledTimerWithTimeInterval:0.25 usingBlock:^(void) {
+            self.blink = YES;
+            blinkDelayTimer = nil;
+        } repeats:NO];
+    }
+    else
+    {
+        UIEdgeInsets parentTextInsets = parent.textInsets;
+        
+        [selectionRects release];
+        selectionRects = [[parent.renderer rectsForStringRange:selection limitToFirstLine:NO] retain];
+        frame = selectionRects.bounds;
+        frame.origin.x += parentTextInsets.left;
+        frame.origin.y += parentTextInsets.top;
+        
+        // Left knob
+        if (!leftKnob) 
+        {
+            leftKnob = [[UIView alloc] initWithFrame:(CGRect){ CGPointZero, { 10, 10 } }];
+            leftKnob.backgroundColor = caretColor;
+        }
+        CGRect knobRect = [selectionRects topLeftRect];
+        knobRect.origin.x += parentTextInsets.left;
+        knobRect.origin.y += parentTextInsets.top;
+        leftKnob.center = knobRect.origin;
+        [parent addSubview:leftKnob];
+        if (!leftKnobRecognizer) 
+        {
+            leftKnobRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleKnobGesture:)];
+            leftKnobRecognizer.minimumPressDuration = 0;
+            [leftKnob addGestureRecognizer:leftKnobRecognizer];
+            [leftKnobRecognizer release];
+        }
+        leftKnobRecognizer.enabled = YES;
+        
+        // Right knob
+        if (!rightKnob) 
+        {
+            rightKnob = [[UIView alloc] initWithFrame:(CGRect){ CGPointZero, { 10, 10 } }];
+            rightKnob.backgroundColor = caretColor;
+        }
+        knobRect = [selectionRects bottomRightRect];
+        knobRect.origin.x += parentTextInsets.left;
+        knobRect.origin.y += parentTextInsets.top;
+        rightKnob.center = CGPointMake(CGRectGetMaxX(knobRect), CGRectGetMaxY(knobRect));
+        [parent addSubview:rightKnob];
+        if (!rightKnobRecognizer) 
+        {
+            rightKnobRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleKnobGesture:)];
+            rightKnobRecognizer.minimumPressDuration = 0;
+            [rightKnob addGestureRecognizer:rightKnobRecognizer];
+            [rightKnobRecognizer release];
+        }
+        rightKnobRecognizer.enabled = YES;
+    }
+    self.frame = frame;
+    
+    // TODO change magnification
+    
+    [self setNeedsDisplay];
+}
 
 - (ECTextRange *)selectionRange
 {
     return [[[ECTextRange alloc] initWithRange:selection] autorelease];
 }
 
+- (void)setSelectionRange:(ECTextRange *)selectionRange
+{
+    self.selection = [selectionRange range];
+}
+
 - (ECTextPosition *)selectionPosition
 {
     return [[[ECTextPosition alloc] initWithIndex:selection.location] autorelease];
+}
+
+#pragma mark Blinking
+
+- (void)setBlink:(BOOL)doBlink
+{
+    if (blink == doBlink)
+        return;
+    
+    blink = doBlink;
+    
+    if (!blinkAnimation) 
+    {
+        blinkAnimation = [[CABasicAnimation animationWithKeyPath:@"opacity"] retain];
+        blinkAnimation.fromValue = [NSNumber numberWithFloat:1.0];
+        blinkAnimation.toValue = [NSNumber numberWithFloat:0.0];
+        blinkAnimation.repeatCount = CGFLOAT_MAX;
+        blinkAnimation.autoreverses = YES;
+        blinkAnimation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
+        blinkAnimation.duration = 0.6;
+    }
+    
+    if (blink) 
+    {
+        [self.layer addAnimation:blinkAnimation forKey:@"blink"];
+    }
+    else
+    {
+        [self.layer removeAnimationForKey:@"blink"];
+        self.layer.opacity = 1.0;
+    }
+}
+
+#pragma mark Magnification
+
+@synthesize magnify, magnificationPopover;
+
+- (void)setSelectionAtPoint:(CGPoint)point magnificationRatio:(CGFloat)magnificationRatio animated:(BOOL)animated
+{
+    UIEdgeInsets parentTextInsets = parent.textInsets;
+    
+    CGPoint textPoint = point;
+    textPoint.x -= parentTextInsets.left;
+    textPoint.y -= parentTextInsets.top;
+    
+    self.selection = NSMakeRange([parent.renderer closestStringLocationToPoint:textPoint withinStringRange:(NSRange){0, 0}], 0);
+    
+    if (magnificationRatio == 0) 
+    {
+        if (magnify) 
+        {
+            magnify = NO;
+            self.blink = selection.length == 0;
+            [self.magnificationPopover dismissPopoverAnimated:animated];
+        }
+    }
+    else
+    {
+        magnify = YES;
+        self.blink = NO;
+        
+        // Get magnification point
+        CGRect caret = self.frame;
+        textPoint.y = CGRectGetMidY(caret) - parentTextInsets.top;
+        
+        // Set magnification
+        [self.magnificationView detailTextAtPoint:textPoint magnification:magnificationRatio additionalDrawingBlock:^(CGContextRef context, CGPoint textOffset) {
+            // todo draw know?
+            CGRect detailCaretRect = caret;
+            detailCaretRect.origin.x -= parentTextInsets.left;
+            detailCaretRect.origin.y -= parentTextInsets.top + textOffset.y;
+            [caretColor setFill];
+            UIRectFill(detailCaretRect);
+            // TODO draw selection
+        }];
+        
+        // Present magnification popover
+        caret.origin.x = point.x;
+        caret.origin.y -= parent.contentOffset.y;
+        [self.magnificationPopover presentPopoverFromRect:caret inView:parent permittedArrowDirections:UIPopoverArrowDirectionDown animated:animated];
+    }
+}
+
+- (void)setMagnify:(BOOL)doMagnify
+{
+    if (magnify == doMagnify)
+        return;
+    
+    [self setSelectionAtPoint:self.frame.origin magnificationRatio:doMagnify ? 2 : 0 animated:YES];
+}
+
+- (ECPopoverController *)magnificationPopover
+{
+    if (!magnificationPopover) 
+    {
+        magnificationPopover = [[ECPopoverController alloc] initWithContentViewController:nil];
+        magnificationPopover.automaticDismiss = NO;
+        [magnificationPopover setPopoverContentSize:(CGSize){200, 40} animated:NO];
+        
+        TextMagnificationView *detail = [[TextMagnificationView alloc] initWithFrame:CGRectMake(0, 0, 200, 40) codeView:parent];
+        detail.backgroundColor = parent.backgroundColor;
+        // TODO make this more efficient
+        detail.layer.cornerRadius = 3;
+        detail.layer.masksToBounds = YES;
+        
+        magnificationPopover.popoverView.contentView = detail;
+        
+        [detail release];
+    }
+    return magnificationPopover;
+}
+
+- (TextMagnificationView *)magnificationView
+{
+    return (TextMagnificationView *)self.magnificationPopover.popoverView.contentView;
+}
+
+- (void)handleKnobGesture:(UILongPressGestureRecognizer *)recognizer
+{    
+    UIEdgeInsets parentTextInsets = parent.textInsets;
+    CGPoint textPoint = [recognizer locationInView:parent];
+    
+    // Adding knob offset
+    if (recognizer.view == rightKnob)
+    {
+        if (textPoint.y <= leftKnob.center.y)
+            textPoint.y = rightKnob.center.y;
+        textPoint.y -= [selectionRects bottomRightRect].size.height / 2;
+    }
+    else // leftKnob
+    {
+        if (textPoint.y >= rightKnob.center.y)
+            textPoint.y = leftKnob.center.y;
+        textPoint.y += [selectionRects topLeftRect].size.height / 2;
+    }
+    textPoint.x -= parentTextInsets.left;
+    textPoint.y -= parentTextInsets.top;
+    
+    // Retrieving position
+    NSUInteger pos = [parent.renderer closestStringLocationToPoint:textPoint withinStringRange:(NSRange){0, 0}];
+    
+    // Changing selection
+    if (recognizer.view == rightKnob) 
+    {   
+        if (pos > selection.location) 
+        {
+            self.selection = NSMakeRange(selection.location, pos - selection.location);
+        }
+    }
+    else // leftKnob
+    {
+        if (pos < NSMaxRange(selection)) 
+        {
+            self.selection = NSMakeRange(pos, NSMaxRange(selection) - pos);
+        }
+    }
+}
+
+#pragma mark UIView Methods
+
+- (id)initWithFrame:(CGRect)frame codeView:(ECCodeView *)codeView
+{
+    if ((self = [super initWithFrame:frame])) 
+    {
+        parent = codeView;
+    }
+    return self;
+}
+
+- (void)dealloc
+{
+    [blinkAnimation release];
+    
+    [selectionColor release];
+    [caretColor release];
+    
+    [selectionRects release];
+    [leftKnob release];
+    [rightKnob release];
+    
+    [magnificationPopover release];
+    
+    [super dealloc];
+}
+
+- (void)drawRect:(CGRect)rect
+{
+    if (selection.length > 0) 
+    {
+        CGContextRef context = UIGraphicsGetCurrentContext();
+        [selectionColor setFill];
+        
+        CGPoint rectsOrigin = selectionRects.bounds.origin;
+        CGContextTranslateCTM(context, -rectsOrigin.x, -rectsOrigin.y);
+        
+        [selectionRects addRectsToContext:context];
+        CGContextFillPath(context);
+    }
+    else
+    {
+        [caretColor setFill];
+        UIRectFill(rect);
+    }
 }
 
 @end
@@ -142,12 +569,16 @@
 @synthesize normalWidth, navigatorWidth;
 @synthesize navigatorInsets, navigatorVisible, navigatorBackgroundColor;
 
-- (id)initWithNavigatorDatasource:(id<ECCodeViewDataSource>)source renderer:(ECTextRenderer *)aRenderer renderingQueue:(NSOperationQueue *)queue
+- (id)initWithFrame:(CGRect)frame navigatorDatasource:(id<ECCodeViewDataSource>)source renderer:(ECTextRenderer *)aRenderer renderingQueue:(NSOperationQueue *)queue
 {
     parentSize = [UIScreen mainScreen].bounds.size;
     normalWidth = 11;
-    navigatorInsets = UIEdgeInsetsMake(2, 2, 2, 2);
-    if ((self = [super init])) 
+    navigatorInsets = UIEdgeInsetsMake(5, 5, 5, 0);
+    
+    frame.origin.x += frame.size.width - normalWidth;
+    frame.size.width = normalWidth;
+    
+    if ((self = [super initWithFrame:frame])) 
     {
         datasource = source;
         renderer = aRenderer;
@@ -219,48 +650,49 @@
         navigatorView = [[ECCodeViewBase alloc] initWithFrame:frame renderer:renderer renderingQueue:renderingQueue];
         navigatorView.datasource = datasource;
         navigatorView.contentScaleFactor = (navigatorWidth - navigatorInsets.left - navigatorInsets.right) / parentSize.width;
-        navigatorView.backgroundColor = navigatorBackgroundColor;
+        navigatorView.backgroundColor = [UIColor whiteColor];
         navigatorView.scrollEnabled = NO;
         [self updateNavigator];
         CGFloat height = (navigatorView.contentSize.height - navigatorView.bounds.size.height);
         navigatorView.contentOffset = CGPointMake(0, height > 0 ? parentContentOffsetRatio * height : 0);
-        
-        [self addSubview:navigatorView];
+        // TODO make this more effcient (like 4 subviews at corners)
+        navigatorView.layer.cornerRadius = 3;
     }
+    
+    if (visible)
+        [self addSubview:navigatorView];
     
     if (animated)
     {
-        navigatorView.alpha = visible ? 0 : 1;
+        if (visible)
+            navigatorVisible = YES;
+        navigatorView.alpha = 0;
         [UIView animateWithDuration:0.25 delay:0 options:(UIViewAnimationOptionAllowUserInteraction | UIViewAnimationOptionBeginFromCurrentState | UIViewAnimationOptionCurveEaseInOut) animations:^(void) {
-            if (visible) 
-            {
-                navigatorView.hidden = NO;
-                navigatorView.alpha = 1;
-                self.backgroundColor = navigatorBackgroundColor;
-            }
-            else
-            {
-                navigatorView.alpha = 0;
-                self.backgroundColor = [UIColor clearColor];
-            }
+            self.backgroundColor = visible ? navigatorBackgroundColor : [UIColor clearColor];
+            navigatorView.alpha = visible;
         } completion:^(BOOL finished) {
-            navigatorView.hidden = !visible;
-            navigatorVisible = visible;
+            if (finished)
+            {
+                if (!visible) 
+                {
+                    navigatorVisible = NO;
+                    [navigatorView removeFromSuperview];
+                }
+            }
         }];
     }
     else
     {
         navigatorVisible = visible;
-        if (navigatorVisible) 
+        if (visible) 
         {
             navigatorView.alpha = 1;
-            navigatorView.hidden = NO;
             self.backgroundColor = navigatorBackgroundColor;
         }
         else
         {
-            navigatorView.hidden = YES;
             self.backgroundColor = [UIColor clearColor];
+            [navigatorView removeFromSuperview];
         }
     }
 }
@@ -315,17 +747,18 @@
 
 static void preinit(ECCodeView *self)
 {
-    self->navigatorBackgroundColor = [[UIColor styleBackgroundColor] retain];
+    self->navigatorBackgroundColor = [[UIColor styleForegroundColor] retain];
     self->navigatorWidth = 200;
 }
 
 static void init(ECCodeView *self)
 {
     // Adding selection view
-    self->selectionView = [TextSelectionView new];
+    self->selectionView = [[TextSelectionView alloc] initWithFrame:CGRectZero codeView:self];
+    [self->selectionView setCaretColor:[UIColor styleThemeColorOne]];
+    [self->selectionView setSelectionColor:[[UIColor styleThemeColorOne] colorWithAlphaComponent:0.3]];
+    [self->selectionView setOpaque:NO];
     [self->selectionView setHidden:YES];
-    [self->selectionView setBackgroundColor:[UIColor redColor]];
-    [self->selectionView setOpaque:YES];
     [self addSubview:self->selectionView];
     [self->selectionView release];
     
@@ -365,8 +798,6 @@ static void init(ECCodeView *self)
 
 - (void)layoutSubviews
 {
-    [super layoutSubviews];
-    
     if (infoViewVisible) 
     {
         CGRect infoFrame = self.bounds;
@@ -374,9 +805,13 @@ static void init(ECCodeView *self)
         
         CGFloat infoWidth = infoView.currentWidth;
         infoFrame.origin.x = infoFrame.size.width - infoWidth;
-        infoFrame.size.width = infoWidth;
+        infoFrame.size.width = infoWidth;        
         infoView.frame = infoFrame;
+        
+        [self sendSubviewToBack:infoView];
     }
+    
+    [super layoutSubviews];
 }
 
 #pragma mark -
@@ -393,7 +828,7 @@ static void init(ECCodeView *self)
     {
         if (!infoView)
         {
-            infoView = [[CodeInfoView alloc] initWithNavigatorDatasource:datasource renderer:renderer renderingQueue:renderingQueue];
+            infoView = [[CodeInfoView alloc] initWithFrame:self.bounds navigatorDatasource:datasource renderer:renderer renderingQueue:renderingQueue];
             infoView.navigatorBackgroundColor = navigatorBackgroundColor;
             infoView.navigatorWidth = navigatorWidth;
             infoView.parentSize = self.bounds.size;
@@ -461,6 +896,20 @@ static void init(ECCodeView *self)
         [self addGestureRecognizer:tapRecognizer];
         [tapRecognizer release];
         
+        doubleTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleGestureDoubleTap:)];
+        doubleTapRecognizer.numberOfTapsRequired = 2;
+        [self addGestureRecognizer:doubleTapRecognizer];
+        [doubleTapRecognizer release];
+        
+        longPressRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleGestureLongPress:)];
+        [self addGestureRecognizer:longPressRecognizer];
+        [longPressRecognizer release];
+        
+        longDoublePressRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleGestureLongPress:)];
+        longDoublePressRecognizer.numberOfTouchesRequired = 2;
+        [self addGestureRecognizer:longDoublePressRecognizer];
+        [longDoublePressRecognizer release];
+        
         // TODO initialize gesture recognizers
     }
     
@@ -469,8 +918,9 @@ static void init(ECCodeView *self)
     {
         focusRecognizer.enabled = NO;
         tapRecognizer.enabled = YES;
-        //        doubleTapRecognizer.enabled = YES;
-        //        tapHoldRecognizer.enabled = YES;
+        doubleTapRecognizer.enabled = YES;
+        longPressRecognizer.enabled = YES;
+        longDoublePressRecognizer.enabled = YES;
     }
     
     [self setNeedsLayout];
@@ -486,10 +936,12 @@ static void init(ECCodeView *self)
     {
         focusRecognizer.enabled = YES;
         tapRecognizer.enabled = NO;
-        //        doubleTapRecognizer.enabled = NO;
-        //        tapHoldRecognizer.enabled = NO;
+        doubleTapRecognizer.enabled = NO;
+        longPressRecognizer.enabled = NO;
+        longDoublePressRecognizer.enabled = NO;
         
-        // TODO remove thumbs
+        // Remove selection
+        selectionView.hidden = YES;
     }
     
     [self setNeedsLayout];
@@ -756,59 +1208,11 @@ static void init(ECCodeView *self)
         else
             result = pos + offset;
     } 
-    else if (direction == UITextLayoutDirectionLeft || direction == UITextLayoutDirectionRight) 
+    else
     {
-        if (direction == UITextLayoutDirectionLeft)
-            offset = -offset;
-        
-        // TODO should move considering typography characters
-        if (offset < 0 && (NSUInteger)(-offset) >= pos)
-            result = 0;
-        else
-            result = pos + offset;
-    } 
-    else if (direction == UITextLayoutDirectionUp || direction == UITextLayoutDirectionDown) 
-    {
-        if (direction == UITextLayoutDirectionUp)
-            offset = -offset;
-
-        // TODO!!! chech if make sense
-//        CGFloat frameOffset;
-//        CTFrameRef frame = [self frameContainingTextIndex:pos frameOffset:&frameOffset];
-//        
-//        CFArrayRef lines = CTFrameGetLines(frame);
-//        CFIndex lineCount = CFArrayGetCount(lines);
-//        CFIndex lineIndex = ECCTFrameGetLineContainingStringIndex(frame, pos, (CFRange){0, lineCount}, NULL);
-//        CFIndex newIndex = lineIndex + offset;
-//        CTLineRef line = CFArrayGetValueAtIndex(lines, lineIndex);
-//        
-//        if (newIndex < 0 || newIndex >= lineCount)
-//            return nil;
-//        
-//        if (newIndex == lineIndex)
-//            return position;
-//        
-//        CGFloat xPosn = CTLineGetOffsetForStringIndex(line, pos, NULL) + frameOffset;
-//        CGPoint origins[1];
-//        CTFrameGetLineOrigins(frame, (CFRange){lineIndex, 1}, origins);
-//        xPosn = xPosn + origins[0].x; // X-coordinate in layout space
-//        
-//        CTFrameGetLineOrigins(frame, (CFRange){newIndex, 1}, origins);
-//        xPosn = xPosn - origins[0].x; // X-coordinate in new line's local coordinates
-//        
-//        CFIndex newStringIndex = CTLineGetStringIndexForPosition(CFArrayGetValueAtIndex(lines, newIndex), (CGPoint){xPosn, 0});
-//        
-//        if (newStringIndex == kCFNotFound)
-//            return nil;
-//        
-//        if(newStringIndex < 0)
-//            newStringIndex = 0;
-//        result = newStringIndex;
-    } 
-    else 
-    {
-        // Direction unimplemented
-        return position;
+        result = [renderer positionFromPosition:pos inLayoutDirection:direction offset:offset];
+        if (result == NSUIntegerMax)
+            return nil;
     }
     
     NSUInteger textLength = [datasource textLength];
@@ -882,17 +1286,14 @@ static void init(ECCodeView *self)
 
 - (CGRect)firstRectForRange:(UITextRange *)range
 {
-    //    CGRect r = ECCTFrameGetBoundRectOfLinesForStringRange(self->textLayer.CTFrame, [(ECTextRange *)range CFRange]);
-    //    return r;
-    
-    CGRect r = [renderer boundsForStringRange:[(ECTextRange *)range range] limitToFirstLine:YES];
+    CGRect r = [renderer rectsForStringRange:[(ECTextRange *)range range] limitToFirstLine:YES].bounds;
     return r;
 }
 
 - (CGRect)caretRectForPosition:(UITextPosition *)position
 {
     NSUInteger pos = ((ECTextPosition *)position).index;
-    CGRect carretRect = [renderer boundsForStringRange:(NSRange){pos, 0} limitToFirstLine:YES];
+    CGRect carretRect = [renderer rectsForStringRange:(NSRange){pos, 0} limitToFirstLine:YES].bounds;
     
     carretRect.origin.x += textInsets.left;
     carretRect.origin.y += textInsets.top;
@@ -975,17 +1376,15 @@ static void init(ECCodeView *self)
     if (shouldNotify)
         [inputDelegate selectionWillChange:self];
     
+    // Will automatically resize and position the selection view
     selectionView.selection = newSelection;
     
     if (shouldNotify)
         [inputDelegate selectionDidChange:self];
     
     // Position selection view
-    // TODO multiselection
-    if ([self isFirstResponder] && selectionView.selection.length == 0)
+    if ([self isFirstResponder])
     {
-        CGRect caretRect = [self caretRectForPosition:selectionView.selectionPosition];
-        selectionView.frame = caretRect;
         selectionView.hidden = NO;
         [self bringSubviewToFront:selectionView];
     }
@@ -1025,6 +1424,71 @@ static void init(ECCodeView *self)
 {
     CGPoint tapPoint = [recognizer locationInView:self];
     [self setSelectedTextFromPoint:tapPoint toPoint:tapPoint];
+}
+
+- (void)handleGestureDoubleTap:(UITapGestureRecognizer *)recognizer
+{
+    CGPoint tapPoint = [recognizer locationInView:self];
+    ECTextRange *sel = (ECTextRange *)[self.tokenizer rangeEnclosingPosition:[self closestPositionToPoint:tapPoint] withGranularity:UITextGranularityWord inDirection:UITextLayoutDirectionLeft];
+    [self setSelectedTextRange:sel];
+}
+
+- (void)handleGestureLongPress:(UILongPressGestureRecognizer *)recognizer
+{
+    BOOL multiTouch = NO;
+    CGPoint tapPoint = [recognizer locationOfTouch:0 inView:self];
+    CGPoint secondTapPoint = tapPoint;
+    if ([recognizer numberOfTouches] > 1) 
+    {
+        secondTapPoint = [recognizer locationOfTouch:1 inView:self];
+        multiTouch = YES;
+    }
+    
+    BOOL animatePopover = NO;
+    
+    switch (recognizer.state)
+    {
+        case UIGestureRecognizerStateEnded:
+            [self setSelectedTextFromPoint:tapPoint toPoint:secondTapPoint];
+        case UIGestureRecognizerStateCancelled:
+            selectionView.magnify = NO;
+            break;
+            
+        case UIGestureRecognizerStateBegan:
+            animatePopover = YES;
+            
+        default:
+        {
+            if (CGPointEqualToPoint(tapPoint, CGPointZero)) 
+            {
+                selectionView.magnify = NO;
+                // TODO fix this?
+                [self setSelectedTextFromPoint:tapPoint toPoint:secondTapPoint];
+                return;
+            }
+            
+            // Set selection
+            if (multiTouch) 
+                [self setSelectedTextFromPoint:tapPoint toPoint:secondTapPoint];
+            else
+                [selectionView setSelectionAtPoint:tapPoint magnificationRatio:2 animated:animatePopover];
+
+            // Scrolling up
+            // TODO get top point offset if mutlitouch
+            CGPoint offset = self.contentOffset;
+            CGFloat topScroll = 50 - tapPoint.y + offset.y;
+            if (topScroll > 0)
+            {
+                offset.y -= topScroll;
+                [self scrollRectToVisible:(CGRect){ {0, offset.y }, {1, 1} } animated:NO];
+                [self performSelector:@selector(handleGestureLongPress:) withObject:recognizer afterDelay:0.1];
+            }
+            
+            // TODO scrolling down
+            
+            // TODO scroll with knobs
+        }
+    }
 }
 
 @end

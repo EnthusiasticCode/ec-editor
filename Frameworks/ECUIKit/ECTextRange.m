@@ -17,7 +17,11 @@
 
 - (NSRange)range
 {
-    return (NSRange){start.index, end.index - start.index};
+    NSUInteger s = start.index;
+    NSUInteger e = end.index;
+    if (s > e) 
+        return (NSRange){e, s - e};
+    return (NSRange){s, e - s};
 }
 
 - (CFRange)CFRange
