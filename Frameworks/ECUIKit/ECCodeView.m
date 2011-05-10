@@ -86,6 +86,7 @@
     ECRectSet *selectionRects;
     
     UIView *leftKnob, *rightKnob;
+    UILongPressGestureRecognizer *leftKnobRecognizer, *rightKnobRecognizer;
 }
 
 - (id)initWithFrame:(CGRect)frame codeView:(ECCodeView *)codeView;
@@ -109,6 +110,8 @@
 @property (nonatomic, getter = isMagnifying) BOOL magnify;
 @property (nonatomic, readonly) ECPopoverController *magnificationPopover;
 @property (nonatomic, readonly) TextMagnificationView *magnificationView;
+
+- (void)handleKnobGesture:(UILongPressGestureRecognizer *)recognizer;
 
 @end
 
@@ -265,13 +268,19 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
         frame = [parent caretRectForPosition:self.selectionPosition];
         self.blink = YES;
         [leftKnob removeFromSuperview];
+        leftKnobRecognizer.enabled = NO;
         [rightKnob removeFromSuperview];
+        rightKnobRecognizer.enabled = NO;
     }
     else
     {
+        UIEdgeInsets parentTextInsets = parent.textInsets;
+        
         [selectionRects release];
         selectionRects = [[parent.renderer rectsForStringRange:selection limitToFirstLine:NO] retain];
         frame = selectionRects.bounds;
+        frame.origin.x += parentTextInsets.left;
+        frame.origin.y += parentTextInsets.top;
         self.blink = NO;
         
         // Left knob
@@ -281,10 +290,18 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
             leftKnob.backgroundColor = caretColor;
         }
         CGRect knobRect = [selectionRects topLeftRect];
-        knobRect.origin.x -= frame.origin.x;
-        knobRect.origin.y -= frame.origin.y;
+        knobRect.origin.x += parentTextInsets.left;
+        knobRect.origin.y += parentTextInsets.top;
         leftKnob.center = knobRect.origin;
-        [self addSubview:leftKnob];
+        [parent addSubview:leftKnob];
+        if (!leftKnobRecognizer) 
+        {
+            leftKnobRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleKnobGesture:)];
+            leftKnobRecognizer.minimumPressDuration = 0;
+            [leftKnob addGestureRecognizer:leftKnobRecognizer];
+            [leftKnobRecognizer release];
+        }
+        leftKnobRecognizer.enabled = YES;
         
         // Right knob
         if (!rightKnob) 
@@ -293,14 +310,18 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
             rightKnob.backgroundColor = caretColor;
         }
         knobRect = [selectionRects bottomRightRect];
-        knobRect.origin.x -= frame.origin.x;
-        knobRect.origin.y -= frame.origin.y;
+        knobRect.origin.x += parentTextInsets.left;
+        knobRect.origin.y += parentTextInsets.top;
         rightKnob.center = CGPointMake(CGRectGetMaxX(knobRect), CGRectGetMaxY(knobRect));
-        [self addSubview:rightKnob];
-        
-        // Adjust selection frame
-        frame.origin.x += parent.textInsets.left;
-        frame.origin.y += parent.textInsets.top;
+        [parent addSubview:rightKnob];
+        if (!rightKnobRecognizer) 
+        {
+            rightKnobRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleKnobGesture:)];
+            rightKnobRecognizer.minimumPressDuration = 0;
+            [rightKnob addGestureRecognizer:rightKnobRecognizer];
+            [rightKnobRecognizer release];
+        }
+        rightKnobRecognizer.enabled = YES;
     }
     self.frame = frame;
     
@@ -437,6 +458,31 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
 - (TextMagnificationView *)magnificationView
 {
     return (TextMagnificationView *)self.magnificationPopover.popoverView.contentView;
+}
+
+- (void)handleKnobGesture:(UILongPressGestureRecognizer *)recognizer
+{    
+    UIEdgeInsets parentTextInsets = parent.textInsets;
+    CGPoint textPoint = [recognizer locationInView:parent];
+    textPoint.x -= parentTextInsets.left;
+    textPoint.y -= parentTextInsets.top;
+    
+    NSUInteger pos = [parent.renderer closestStringLocationToPoint:textPoint withinStringRange:(NSRange){0, 0}];
+    
+    if (recognizer.view == rightKnob) 
+    {
+        if (pos > selection.location) 
+        {
+            self.selection = NSMakeRange(selection.location, pos - selection.location);
+        }
+    }
+    else // leftKnob
+    {
+        if (pos < NSMaxRange(selection)) 
+        {
+            self.selection = NSMakeRange(pos, NSMaxRange(selection) - pos);
+        }
+    }
 }
 
 #pragma mark UIView Methods
