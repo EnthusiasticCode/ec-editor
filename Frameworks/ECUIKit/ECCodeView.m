@@ -263,6 +263,11 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
         return;
     
     selection = range;
+    if (blinkDelayTimer)
+    {
+        [blinkDelayTimer invalidate];
+        blinkDelayTimer = nil;
+    }
     self.blink = NO;
     
     // Set new selection frame
@@ -276,8 +281,6 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
         rightKnobRecognizer.enabled = NO;
         
         // Start blinking after the selection change has stopped
-        if (blinkDelayTimer)
-            [blinkDelayTimer invalidate];
         blinkDelayTimer = [NSTimer scheduledTimerWithTimeInterval:0.25 usingBlock:^(void) {
             self.blink = YES;
             blinkDelayTimer = nil;
