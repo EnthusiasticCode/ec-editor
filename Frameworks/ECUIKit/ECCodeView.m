@@ -464,13 +464,29 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
 {    
     UIEdgeInsets parentTextInsets = parent.textInsets;
     CGPoint textPoint = [recognizer locationInView:parent];
+    
+    // Adding knob offset
+    if (recognizer.view == rightKnob)
+    {
+        if (textPoint.y <= leftKnob.center.y)
+            textPoint.y = rightKnob.center.y;
+        textPoint.y -= [selectionRects bottomRightRect].size.height / 2;
+    }
+    else
+    {
+        if (textPoint.y >= rightKnob.center.y)
+            textPoint.y = leftKnob.center.y;
+        textPoint.y += [selectionRects topLeftRect].size.height / 2;
+    }
     textPoint.x -= parentTextInsets.left;
     textPoint.y -= parentTextInsets.top;
     
+    // Retrieving position
     NSUInteger pos = [parent.renderer closestStringLocationToPoint:textPoint withinStringRange:(NSRange){0, 0}];
     
+    // Changing selection
     if (recognizer.view == rightKnob) 
-    {
+    {   
         if (pos > selection.location) 
         {
             self.selection = NSMakeRange(selection.location, pos - selection.location);
