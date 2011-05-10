@@ -7,22 +7,30 @@
 //
 
 #import <CoreData/CoreData.h>
-#import <ECUIKit/ECItemViewElement.h>
 #import "ProjectController.h"
 #import "Project.h"
 #import "FileController.h"
 #import "AppController.h"
-#import "File.h"
 
 @implementation ProjectController
 
+@synthesize fileManager = _fileManager;
 @synthesize project = _project;
+@synthesize projectRoot = _projectRoot;
 @synthesize editButton = _editButton;
 @synthesize doneButton = _doneButton;
 @synthesize tableView = _tableView;
 
+- (NSFileManager *)fileManager
+{
+    if (!_fileManager)
+        _fileManager = [[NSFileManager alloc] init];
+    return _fileManager;
+}
+
 - (void)dealloc
 {
+    self.fileManager = nil;
     self.editButton = nil;
     self.doneButton = nil;
     self.project = nil;
@@ -59,7 +67,7 @@
     return cell;
 }
 
-- (void)itemView:(ECItemView *)itemView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     [self loadFile:[[[self.project nodesInProjectRoot] objectAtIndex:indexPath.row] path]];
 }
@@ -83,6 +91,8 @@
     NSString *bundle = [[projectRoot stringByAppendingPathComponent:[projectRoot lastPathComponent]] stringByAppendingPathExtension:@"ecproj"];
     self.project = [[[Project alloc] initWithBundle:bundle] autorelease];
     self.title = self.project.name;
+    self.projectRoot = projectRoot;
+    [self addAllNodesInProjectRoot];
 }
 
 - (void)loadFile:(NSString *)file
@@ -90,6 +100,40 @@
     FileController *fileController = ((AppController *)self.navigationController).fileController;
     [fileController loadFile:file];
     [self.navigationController pushViewController:fileController animated:YES];
+}
+
+- (void)addNodesAtPath:(NSString *)path toNode:(Node *)node
+{
+    NSArray *subPaths = [self.fileManager contentsOfDirectoryAtPath:path error:NULL];
+    NSMutableDictionary *subNodes = [NSMutableDictionary dictionaryWithCapacity:[subPaths count]];
+    for (NSString *subPath in subPaths)
+    {
+        BOOL isDirectory;
+        [self.fileManager fileExistsAtPath:path isDirectory:&isDirectory];
+        if (isDirectory)
+            [subNodes setObject:[node addNodeWithName:path type:@"Group"] forKey:path];
+        else
+            [node addFileWithPath:[path stringByAppendingPathComponent:subPath]];
+    }
+    for (NSString *subPath in [subNodes allKeys])
+        [self addNodesAtPath:[path stringByAppendingPathComponent:subPath] toNode:[subNodes objectForKey:subPath]];
+}
+
+- (void)addAllNodesInProjectRoot
+{
+    NSArray *paths = [self.fileManager contentsOfDirectoryAtPath:self.projectRoot error:NULL];
+    NSMutableDictionary *nodes = [NSMutableDictionary dictionaryWithCapacity:[paths count]];
+    for (NSString *path in paths)
+    {
+        BOOL isDirectory;
+        [self.fileManager fileExistsAtPath:path isDirectory:&isDirectory];
+        if (isDirectory)
+            [nodes setObject:[self.project addNodeWithName:path type:@"Group"] forKey:path];
+        else
+            [self.project addFileWithPath:[self.projectRoot stringByAppendingPathComponent:path]];
+    }
+    for (NSString *path in [nodes allKeys])
+        [self addNodesAtPath:[self.projectRoot stringByAppendingPathComponent:path] toNode:[nodes objectForKey:path]];
 }
 
 @end

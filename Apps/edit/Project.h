@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@class NSManagedObjectContext, NSManagedObjectModel, NSPersistentStoreCoordinator;
+@class Node, File, NSManagedObjectContext, NSManagedObjectModel, NSPersistentStoreCoordinator;
 
 @interface Project : NSObject
 @property (nonatomic, retain) NSString *bundle;
@@ -20,4 +20,6 @@
 - (id)initWithBundle:(NSString *)bundle;
 - (void)saveContext;
 - (NSArray *)nodesInProjectRoot;
+- (Node *)addNodeWithName:(NSString *)name type:(NSString *)type;
+- (File *)addFileWithPath:(NSString *)path;
 @end

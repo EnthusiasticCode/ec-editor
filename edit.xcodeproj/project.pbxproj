@@ -26,13 +26,15 @@
 		B74C66281375E24800CC92D3 /* ECPopoverView.m in Sources */ = {isa = PBXBuildFile; fileRef = B74C66241375E24800CC92D3 /* ECPopoverView.m */; };
 		B74C662B1375E24C00CC92D3 /* ECButton.m in Sources */ = {isa = PBXBuildFile; fileRef = B74C662A1375E24C00CC92D3 /* ECButton.m */; };
 		B74C66371378595300CC92D3 /* Project.m in Sources */ = {isa = PBXBuildFile; fileRef = B74C66361378595300CC92D3 /* Project.m */; };
-		B74C663A13789BDA00CC92D3 /* Tab.m in Sources */ = {isa = PBXBuildFile; fileRef = B74C663913789BDA00CC92D3 /* Tab.m */; };
-		B74C663D13789BDA00CC92D3 /* Bookmark.m in Sources */ = {isa = PBXBuildFile; fileRef = B74C663C13789BDA00CC92D3 /* Bookmark.m */; };
-		B74C664013789BDA00CC92D3 /* UndoItem.m in Sources */ = {isa = PBXBuildFile; fileRef = B74C663F13789BDA00CC92D3 /* UndoItem.m */; };
-		B74C664313789BDA00CC92D3 /* NameWord.m in Sources */ = {isa = PBXBuildFile; fileRef = B74C664213789BDA00CC92D3 /* NameWord.m */; };
-		B74C664613789BDA00CC92D3 /* File.m in Sources */ = {isa = PBXBuildFile; fileRef = B74C664513789BDA00CC92D3 /* File.m */; };
-		B74C664913789BDA00CC92D3 /* Node.m in Sources */ = {isa = PBXBuildFile; fileRef = B74C664813789BDA00CC92D3 /* Node.m */; };
-		B74C664C13789BDA00CC92D3 /* HistoryItem.m in Sources */ = {isa = PBXBuildFile; fileRef = B74C664B13789BDA00CC92D3 /* HistoryItem.m */; };
+		B74C665813793AA400CC92D3 /* CDHistoryItem.m in Sources */ = {isa = PBXBuildFile; fileRef = B74C665713793AA400CC92D3 /* CDHistoryItem.m */; };
+		B74C665B13793AA400CC92D3 /* CDFile.m in Sources */ = {isa = PBXBuildFile; fileRef = B74C665A13793AA400CC92D3 /* CDFile.m */; };
+		B74C665E13793AA400CC92D3 /* CDTab.m in Sources */ = {isa = PBXBuildFile; fileRef = B74C665D13793AA400CC92D3 /* CDTab.m */; };
+		B74C666113793AA400CC92D3 /* CDBookmark.m in Sources */ = {isa = PBXBuildFile; fileRef = B74C666013793AA400CC92D3 /* CDBookmark.m */; };
+		B74C666413793AA400CC92D3 /* CDNameWord.m in Sources */ = {isa = PBXBuildFile; fileRef = B74C666313793AA400CC92D3 /* CDNameWord.m */; };
+		B74C666713793AA400CC92D3 /* CDNode.m in Sources */ = {isa = PBXBuildFile; fileRef = B74C666613793AA400CC92D3 /* CDNode.m */; };
+		B74C666A13793AA400CC92D3 /* CDUndoItem.m in Sources */ = {isa = PBXBuildFile; fileRef = B74C666913793AA400CC92D3 /* CDUndoItem.m */; };
+		B74C667513793AE900CC92D3 /* Node.m in Sources */ = {isa = PBXBuildFile; fileRef = B74C667413793AE900CC92D3 /* Node.m */; };
+		B74C66F71379651C00CC92D3 /* File.m in Sources */ = {isa = PBXBuildFile; fileRef = B74C66F61379651B00CC92D3 /* File.m */; };
 		B75B8743135840070098E7E2 /* ECHashing.m in Sources */ = {isa = PBXBuildFile; fileRef = B75B873B135840070098E7E2 /* ECHashing.m */; };
 		B75B8744135840070098E7E2 /* ECStackCache.m in Sources */ = {isa = PBXBuildFile; fileRef = B75B873D135840070098E7E2 /* ECStackCache.m */; };
 		B75B8745135840070098E7E2 /* MurmurHash3.c in Sources */ = {isa = PBXBuildFile; fileRef = B75B873E135840070098E7E2 /* MurmurHash3.c */; };
@@ -113,20 +115,24 @@
 		B74C662A1375E24C00CC92D3 /* ECButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECButton.m; path = Frameworks/ECUIKit/ECButton.m; sourceTree = "<group>"; };
 		B74C66351378595300CC92D3 /* Project.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Project.h; sourceTree = "<group>"; };
 		B74C66361378595300CC92D3 /* Project.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Project.m; sourceTree = "<group>"; };
-		B74C663813789BDA00CC92D3 /* Tab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Tab.h; sourceTree = "<group>"; };
-		B74C663913789BDA00CC92D3 /* Tab.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Tab.m; sourceTree = "<group>"; };
-		B74C663B13789BDA00CC92D3 /* Bookmark.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Bookmark.h; sourceTree = "<group>"; };
-		B74C663C13789BDA00CC92D3 /* Bookmark.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Bookmark.m; sourceTree = "<group>"; };
-		B74C663E13789BDA00CC92D3 /* UndoItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UndoItem.h; sourceTree = "<group>"; };
-		B74C663F13789BDA00CC92D3 /* UndoItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UndoItem.m; sourceTree = "<group>"; };
-		B74C664113789BDA00CC92D3 /* NameWord.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NameWord.h; sourceTree = "<group>"; };
-		B74C664213789BDA00CC92D3 /* NameWord.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NameWord.m; sourceTree = "<group>"; };
-		B74C664413789BDA00CC92D3 /* File.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = File.h; sourceTree = "<group>"; };
-		B74C664513789BDA00CC92D3 /* File.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = File.m; sourceTree = "<group>"; };
-		B74C664713789BDA00CC92D3 /* Node.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Node.h; sourceTree = "<group>"; };
-		B74C664813789BDA00CC92D3 /* Node.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Node.m; sourceTree = "<group>"; };
-		B74C664A13789BDA00CC92D3 /* HistoryItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HistoryItem.h; sourceTree = "<group>"; };
-		B74C664B13789BDA00CC92D3 /* HistoryItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HistoryItem.m; sourceTree = "<group>"; };
+		B74C665613793AA400CC92D3 /* CDHistoryItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDHistoryItem.h; sourceTree = "<group>"; };
+		B74C665713793AA400CC92D3 /* CDHistoryItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CDHistoryItem.m; sourceTree = "<group>"; };
+		B74C665913793AA400CC92D3 /* CDFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDFile.h; sourceTree = "<group>"; };
+		B74C665A13793AA400CC92D3 /* CDFile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CDFile.m; sourceTree = "<group>"; };
+		B74C665C13793AA400CC92D3 /* CDTab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDTab.h; sourceTree = "<group>"; };
+		B74C665D13793AA400CC92D3 /* CDTab.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CDTab.m; sourceTree = "<group>"; };
+		B74C665F13793AA400CC92D3 /* CDBookmark.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDBookmark.h; sourceTree = "<group>"; };
+		B74C666013793AA400CC92D3 /* CDBookmark.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CDBookmark.m; sourceTree = "<group>"; };
+		B74C666213793AA400CC92D3 /* CDNameWord.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDNameWord.h; sourceTree = "<group>"; };
+		B74C666313793AA400CC92D3 /* CDNameWord.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CDNameWord.m; sourceTree = "<group>"; };
+		B74C666513793AA400CC92D3 /* CDNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDNode.h; sourceTree = "<group>"; };
+		B74C666613793AA400CC92D3 /* CDNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CDNode.m; sourceTree = "<group>"; };
+		B74C666813793AA400CC92D3 /* CDUndoItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDUndoItem.h; sourceTree = "<group>"; };
+		B74C666913793AA400CC92D3 /* CDUndoItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CDUndoItem.m; sourceTree = "<group>"; };
+		B74C667313793AE900CC92D3 /* Node.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Node.h; sourceTree = "<group>"; };
+		B74C667413793AE900CC92D3 /* Node.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Node.m; sourceTree = "<group>"; };
+		B74C66F51379651B00CC92D3 /* File.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = File.h; sourceTree = "<group>"; };
+		B74C66F61379651B00CC92D3 /* File.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = File.m; sourceTree = "<group>"; };
 		B75B873A135840070098E7E2 /* ECHashing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECHashing.h; sourceTree = "<group>"; };
 		B75B873B135840070098E7E2 /* ECHashing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECHashing.m; sourceTree = "<group>"; };
 		B75B873C135840070098E7E2 /* ECStackCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECStackCache.h; sourceTree = "<group>"; };
@@ -289,22 +295,12 @@
 			children = (
 				B74C66351378595300CC92D3 /* Project.h */,
 				B74C66361378595300CC92D3 /* Project.m */,
+				B74C667313793AE900CC92D3 /* Node.h */,
+				B74C667413793AE900CC92D3 /* Node.m */,
+				B74C66F51379651B00CC92D3 /* File.h */,
+				B74C66F61379651B00CC92D3 /* File.m */,
 				B7C764F0136773A4009181DB /* ECManagedObject.h */,
 				B7C764F1136773A4009181DB /* ECManagedObject.m */,
-				B74C664A13789BDA00CC92D3 /* HistoryItem.h */,
-				B74C664B13789BDA00CC92D3 /* HistoryItem.m */,
-				B74C664713789BDA00CC92D3 /* Node.h */,
-				B74C664813789BDA00CC92D3 /* Node.m */,
-				B74C664413789BDA00CC92D3 /* File.h */,
-				B74C664513789BDA00CC92D3 /* File.m */,
-				B74C664113789BDA00CC92D3 /* NameWord.h */,
-				B74C664213789BDA00CC92D3 /* NameWord.m */,
-				B74C663E13789BDA00CC92D3 /* UndoItem.h */,
-				B74C663F13789BDA00CC92D3 /* UndoItem.m */,
-				B74C663B13789BDA00CC92D3 /* Bookmark.h */,
-				B74C663C13789BDA00CC92D3 /* Bookmark.m */,
-				B74C663813789BDA00CC92D3 /* Tab.h */,
-				B74C663913789BDA00CC92D3 /* Tab.m */,
 				CDEBF20813489A8E00CE2285 /* AppController.h */,
 				CDEBF20913489A8E00CE2285 /* AppController.m */,
 				CDEBF21413489A8E00CE2285 /* RootController.h */,
@@ -481,6 +477,20 @@
 			isa = PBXGroup;
 			children = (
 				CDEFF96B1348BD5E006FEFCC /* Project.xcdatamodeld */,
+				B74C666813793AA400CC92D3 /* CDUndoItem.h */,
+				B74C666913793AA400CC92D3 /* CDUndoItem.m */,
+				B74C666513793AA400CC92D3 /* CDNode.h */,
+				B74C666613793AA400CC92D3 /* CDNode.m */,
+				B74C666213793AA400CC92D3 /* CDNameWord.h */,
+				B74C666313793AA400CC92D3 /* CDNameWord.m */,
+				B74C665F13793AA400CC92D3 /* CDBookmark.h */,
+				B74C666013793AA400CC92D3 /* CDBookmark.m */,
+				B74C665C13793AA400CC92D3 /* CDTab.h */,
+				B74C665D13793AA400CC92D3 /* CDTab.m */,
+				B74C665913793AA400CC92D3 /* CDFile.h */,
+				B74C665A13793AA400CC92D3 /* CDFile.m */,
+				B74C665613793AA400CC92D3 /* CDHistoryItem.h */,
+				B74C665713793AA400CC92D3 /* CDHistoryItem.m */,
 			);
 			name = Models;
 			path = Apps/edit;
@@ -594,13 +604,15 @@
 				B74C66281375E24800CC92D3 /* ECPopoverView.m in Sources */,
 				B74C662B1375E24C00CC92D3 /* ECButton.m in Sources */,
 				B74C66371378595300CC92D3 /* Project.m in Sources */,
-				B74C663A13789BDA00CC92D3 /* Tab.m in Sources */,
-				B74C663D13789BDA00CC92D3 /* Bookmark.m in Sources */,
-				B74C664013789BDA00CC92D3 /* UndoItem.m in Sources */,
-				B74C664313789BDA00CC92D3 /* NameWord.m in Sources */,
-				B74C664613789BDA00CC92D3 /* File.m in Sources */,
-				B74C664913789BDA00CC92D3 /* Node.m in Sources */,
-				B74C664C13789BDA00CC92D3 /* HistoryItem.m in Sources */,
+				B74C665813793AA400CC92D3 /* CDHistoryItem.m in Sources */,
+				B74C665B13793AA400CC92D3 /* CDFile.m in Sources */,
+				B74C665E13793AA400CC92D3 /* CDTab.m in Sources */,
+				B74C666113793AA400CC92D3 /* CDBookmark.m in Sources */,
+				B74C666413793AA400CC92D3 /* CDNameWord.m in Sources */,
+				B74C666713793AA400CC92D3 /* CDNode.m in Sources */,
+				B74C666A13793AA400CC92D3 /* CDUndoItem.m in Sources */,
+				B74C667513793AE900CC92D3 /* Node.m in Sources */,
+				B74C66F71379651C00CC92D3 /* File.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

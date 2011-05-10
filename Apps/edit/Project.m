@@ -8,6 +8,8 @@
 
 #import "Project.h"
 #import <CoreData/CoreData.h>
+#import "Node.h"
+#import "File.h"
 
 @implementation Project
 
@@ -50,6 +52,7 @@
 - (void)dealloc
 {
     self.bundle = nil;
+    self.fileManager = nil;
     self.managedObjectContext = nil;
     self.persistentStoreCoordinator = nil;
     self.managedObjectModel = nil;
@@ -90,7 +93,27 @@
 
 - (NSArray *)nodesInProjectRoot
 {
-    return nil;
+    NSFetchRequest *fetchRequest = [[[NSFetchRequest alloc] init] autorelease];
+    [fetchRequest setEntity:[NSEntityDescription entityForName:@"Node" inManagedObjectContext:self.managedObjectContext]];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"%K == %@", @"parent", nil];
+    [fetchRequest setPredicate:predicate];
+    return [self.managedObjectContext executeFetchRequest:fetchRequest error:NULL];
+}
+
+- (Node *)addNodeWithName:(NSString *)name type:(NSString *)type
+{
+    Node *node = [NSEntityDescription insertNewObjectForEntityForName:@"Node" inManagedObjectContext:[self managedObjectContext]];
+    node.name = name;
+    node.type = type;
+    return node;
+}
+
+- (File *)addFileWithPath:(NSString *)path
+{
+    File *file = [NSEntityDescription insertNewObjectForEntityForName:@"File" inManagedObjectContext:[self managedObjectContext]];
+    file.path = path;
+    file.name = [path lastPathComponent];
+    return file;
 }
 
 @end
