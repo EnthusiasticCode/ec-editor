@@ -7,20 +7,19 @@
 //
 
 #import <UIKit/UIKit.h>
-#import <ECUIKit/ECItemView.h>
-@class Project, NSManagedObjectContext, NSManagedObjectModel, NSPersistentStoreCoordinator;
+@class Project, Node;
 
-@interface ProjectController : UIViewController <ECItemViewDataSource, ECItemViewDelegate>
-@property (nonatomic, retain) NSManagedObjectContext *managedObjectContext;
-@property (nonatomic, retain) NSManagedObjectModel *managedObjectModel;
-@property (nonatomic, retain) NSPersistentStoreCoordinator *persistentStoreCoordinator;
+@interface ProjectController : UITableViewController
+@property (nonatomic, retain) NSFileManager *fileManager;
 @property (nonatomic, retain) Project *project;
+@property (nonatomic, retain) NSString *projectRoot;
 @property (nonatomic, retain) IBOutlet UIBarButtonItem *editButton;
 @property (nonatomic, retain) IBOutlet UIBarButtonItem *doneButton;
-@property (nonatomic, retain) IBOutlet ECItemView *tableView;
-- (void)saveContext;
 - (IBAction)edit:(id)sender;
 - (IBAction)done:(id)sender;
 - (void)loadProject:(NSString *)projectRoot;
+- (void)loadNode:(Node *)node;
 - (void)loadFile:(NSString *)file;
+- (void)addNodesAtPath:(NSString *)path toNode:(Node *)node;
+- (void)addAllNodesInProjectRoot;
 @end

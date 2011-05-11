@@ -7,65 +7,35 @@
 //
 
 #import <CoreData/CoreData.h>
-#import <ECUIKit/ECItemViewElement.h>
 #import "ProjectController.h"
+#import "GroupController.h"
+#import "Project.h"
+#import "Node.h"
 #import "FileController.h"
 #import "AppController.h"
-#import "Project.h"
-#import "Folder.h"
-#import "Group.h"
-#import "File.h"
-
-@interface ProjectController ()
-{
-    BOOL _tableViewNeedsReload;
-}
-- (Folder *)areaAtIndexPath:(NSIndexPath *)indexPath;
-- (Group *)groupAtIndexPath:(NSIndexPath *)indexPath;
-- (File *)itemAtIndexPath:(NSIndexPath *)indexPath;
-@end
 
 @implementation ProjectController
 
-@synthesize managedObjectContext = _managedObjectContext;
-@synthesize managedObjectModel = _managedObjectModel;
-@synthesize persistentStoreCoordinator = _persistentStoreCoordinator;
+@synthesize fileManager = _fileManager;
 @synthesize project = _project;
+@synthesize projectRoot = _projectRoot;
 @synthesize editButton = _editButton;
 @synthesize doneButton = _doneButton;
 @synthesize tableView = _tableView;
 
-- (NSManagedObjectContext *)managedObjectContext
+- (NSFileManager *)fileManager
 {
-    if (_managedObjectContext != nil)
-        return _managedObjectContext;
-    NSPersistentStoreCoordinator *coordinator = [self persistentStoreCoordinator];
-    if (coordinator != nil)
-    {
-        _managedObjectContext = [[NSManagedObjectContext alloc] init];
-        [_managedObjectContext setPersistentStoreCoordinator:coordinator];
-    }
-    return _managedObjectContext;
-}
-
-- (NSManagedObjectModel *)managedObjectModel
-{
-    if (_managedObjectModel != nil)
-        return _managedObjectModel;
-    NSURL *modelURL = [[NSBundle mainBundle] URLForResource:@"Project" withExtension:@"momd"];
-    _managedObjectModel = [[NSManagedObjectModel alloc] initWithContentsOfURL:modelURL];    
-    return _managedObjectModel;
+    if (!_fileManager)
+        _fileManager = [[NSFileManager alloc] init];
+    return _fileManager;
 }
 
 - (void)dealloc
 {
-    self.tableView = nil;
+    self.fileManager = nil;
     self.editButton = nil;
     self.doneButton = nil;
     self.project = nil;
-    self.managedObjectContext = nil;
-    self.persistentStoreCoordinator = nil;
-    self.managedObjectModel = nil;
     [super dealloc];
 }
 
@@ -73,13 +43,6 @@
 {
     [super viewDidLoad];
     self.navigationItem.rightBarButtonItem = self.editButton;
-    if (_tableViewNeedsReload)
-        [self.tableView reloadData];
-}
-
-- (void)viewDidAppear:(BOOL)animated
-{
-    [self.tableView deselectAllItemsAnimated:animated];
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
@@ -87,112 +50,28 @@
 	return YES;
 }
 
-- (Folder *)areaAtIndexPath:(NSIndexPath *)indexPath
-{
-    return [[self.project orderedProjectFolders] objectAtIndex:indexPath.area];
-}
-
-- (Group *)groupAtIndexPath:(NSIndexPath *)indexPath
-{
-    return [[[self areaAtIndexPath:indexPath] orderedGroups] objectAtIndex:indexPath.group];
-}
-
-- (File *)itemAtIndexPath:(NSIndexPath *)indexPath
-{
-    return [[[self groupAtIndexPath:indexPath] orderedItems] objectAtIndex:indexPath.item];
-}
-
 #pragma mark -
-#pragma mark ECItemView
+#pragma mark UITableView
 
-- (NSUInteger)numberOfAreasInItemView:(ECItemView *)itemView
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return [self.project countForOrderedKey:@"projectFolders"];
+    return [[self.project.rootNode children] count];
 }
 
-- (NSUInteger)itemView:(ECItemView *)itemView numberOfGroupsInAreaAtIndexPath:(NSIndexPath *)indexPath
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return [[self areaAtIndexPath:indexPath].groups count];
-}
-
-- (NSUInteger)itemView:(ECItemView *)itemView numberOfItemsInGroupAtIndexPath:(NSIndexPath *)indexPath
-{
-    return [[self groupAtIndexPath:indexPath].items count];
-}
-
-- (ECItemViewElement *)itemView:(ECItemView *)itemView viewForAreaHeaderAtIndexPath:(NSIndexPath *)indexPath
-{
-    ECItemViewElement *folder = [self.tableView dequeueReusableElementForType:kECItemViewAreaHeaderKey];
-    if (!folder)
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Cell"];
+    if (!cell)
     {
-        folder = [[[ECItemViewElement alloc] init] autorelease];
-        UILabel *label = [[UILabel alloc] init];
-        label.tag = 1;
-        label.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-        label.frame = folder.bounds;
-        label.backgroundColor = [UIColor blueColor];
-        [folder addSubview:label];
-        [label release];
+        cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"Cell"] autorelease];
     }
-    ((UILabel *)[folder viewWithTag:1]).text = [self areaAtIndexPath:indexPath].name;
-    return folder;
+    cell.textLabel.text = [[[self.project.rootNode orderedChildren] objectAtIndex:indexPath.row] name];
+    return cell;
 }
 
-- (ECItemViewElement *)itemView:(ECItemView *)itemView viewForGroupSeparatorAtIndexPath:(NSIndexPath *)indexPath
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    ECItemViewElement *groupSeparator = [self.tableView dequeueReusableElementForType:kECItemViewGroupSeparatorKey];
-    if (!groupSeparator)
-    {
-        groupSeparator = [[[ECItemViewElement alloc] init] autorelease];
-        groupSeparator.backgroundColor = [UIColor blackColor];
-    }
-    return groupSeparator;
-}
-
-- (ECItemViewElement *)itemView:(ECItemView *)itemView viewForItemAtIndexPath:(NSIndexPath *)indexPath
-{
-    ECItemViewElement *file = [self.tableView dequeueReusableElementForType:kECItemViewItemKey];
-    if (!file)
-    {
-        file = [[[ECItemViewElement alloc] init] autorelease];
-        UILabel *label = [[UILabel alloc] init];
-        label.tag = 1;
-        label.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-        label.frame = file.bounds;
-        label.backgroundColor = [UIColor greenColor];
-        [file addSubview:label];
-        [label release];
-    }
-    ((UILabel *)[file viewWithTag:1]).text = [self itemAtIndexPath:indexPath].name;
-    return file;
-}
-
-- (void)itemView:(ECItemView *)itemView moveItemsAtIndexPaths:(NSArray *)indexPaths toIndexPath:(NSIndexPath *)indexPath
-{
-    NSMutableArray *items = [NSMutableArray array];
-    for (NSIndexPath *item in indexPaths)
-        [items addObject:[[[self groupAtIndexPath:item] orderedItems] objectAtIndex:item.item]];
-    if ([indexPath length] > 2)
-        [[[self groupAtIndexPath:indexPath] orderedItems] insertObjects:items atIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(indexPath.item, [items count])]];
-    else
-    {
-        Group *group = [NSEntityDescription insertNewObjectForEntityForName:@"Group" inManagedObjectContext:self.managedObjectContext];
-        [[[self areaAtIndexPath:indexPath] orderedGroups] insertObject:group atIndex:indexPath.group];
-        [[[self groupAtIndexPath:indexPath] orderedItems] insertObjects:items atIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, [items count])]];
-    }
-    [[self.project orderedProjectFolders] enumerateObjectsUsingBlock:^(id projectFolder, NSUInteger projectFolderIndex, BOOL *outerStop) {
-        [[projectFolder orderedGroups] enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(id group, NSUInteger groupIndex, BOOL *innerStop) {
-            if (![[group items] count])
-                [self.managedObjectContext deleteObject:group];
-        }];
-    }];
-}
-
-- (void)itemView:(ECItemView *)itemView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
-{
-    if (self.tableView.editing)
-        return;
-    [self loadFile:[self itemAtIndexPath:indexPath].path];
+    [self loadNode:[[self.project.rootNode orderedChildren] objectAtIndex:indexPath.row]];
 }
 
 #pragma mark -
@@ -206,43 +85,28 @@
 - (void)done:(id)sender
 {
     [self.tableView setEditing:NO animated:YES];
-    [self.tableView deselectAllItemsAnimated:YES];
     self.navigationItem.rightBarButtonItem = self.editButton;
 }
 
 - (void)loadProject:(NSString *)projectRoot
 {
-    NSString *storePath = [projectRoot stringByAppendingPathComponent:@".ecproj"];
-    NSURL *storeURL = [NSURL fileURLWithPath:storePath];
-    NSFileManager *fileManager = [[NSFileManager alloc] init];
-    if (![fileManager fileExistsAtPath:projectRoot])
-        [fileManager createDirectoryAtPath:projectRoot withIntermediateDirectories:YES attributes:nil error:NULL];
-    [fileManager release];
-    self.persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:[self managedObjectModel]];
-    NSError *error;
-    if (![self.persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeURL options:nil error:&error])
-    {
-        //Replace this implementation with code to handle the error appropriately.
-        NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
-        abort();
-    }
-    NSFetchRequest *projectFetchRequest = [[NSFetchRequest alloc] init];
-    [projectFetchRequest setEntity:[NSEntityDescription entityForName:@"Project" inManagedObjectContext:self.managedObjectContext]];
-    NSArray *projects = [self.managedObjectContext executeFetchRequest:projectFetchRequest error:NULL];
-    [projectFetchRequest release];
-    if ([projects count])
-        self.project = [projects objectAtIndex:0];
+    NSString *bundle = [[projectRoot stringByAppendingPathComponent:[projectRoot lastPathComponent]] stringByAppendingPathExtension:@"ecproj"];
+    self.project = [[[Project alloc] initWithBundle:bundle] autorelease];
+    self.title = self.project.name;
+    self.projectRoot = projectRoot;
+    [self addAllNodesInProjectRoot];
+}
+
+- (void)loadNode:(Node *)node
+{
+    if (![node.type isEqualToString:@"Group"])
+        [self loadFile:[(File *)node path]];
     else
     {
-        Project *project = [NSEntityDescription insertNewObjectForEntityForName:@"Project" inManagedObjectContext:self.managedObjectContext];
-        project.path = projectRoot;
-        project.name = [projectRoot lastPathComponent];
-        project.project = project;
-        [project scanForNewFiles];
-        self.project = project;
+        GroupController *groupController = [[[GroupController alloc] init] autorelease];
+        groupController.group = node;
+        [self.navigationController pushViewController:groupController animated:YES];
     }
-    self.title = self.project.name;
-    _tableViewNeedsReload = YES;
 }
 
 - (void)loadFile:(NSString *)file
@@ -252,14 +116,26 @@
     [self.navigationController pushViewController:fileController animated:YES];
 }
 
-- (void)saveContext
+- (void)addNodesAtPath:(NSString *)path toNode:(Node *)node
 {
-    NSError *error;
-    if (![self.managedObjectContext save:&error])
+    NSArray *subPaths = [self.fileManager contentsOfDirectoryAtPath:path error:NULL];
+    NSMutableDictionary *subNodes = [NSMutableDictionary dictionaryWithCapacity:[subPaths count]];
+    for (NSString *subPath in subPaths)
     {
-        NSLog(@"Unresolved error in saving context %@, %@", error, [error userInfo]);
-        abort();
+        BOOL isDirectory;
+        [self.fileManager fileExistsAtPath:[path stringByAppendingPathComponent:subPath] isDirectory:&isDirectory];
+        if (isDirectory)
+            [subNodes setObject:[node addNodeWithName:subPath type:@"Group"] forKey:subPath];
+        else
+            [node addFileWithPath:[path stringByAppendingPathComponent:subPath]];
     }
+    for (NSString *subPath in [subNodes allKeys])
+        [self addNodesAtPath:[path stringByAppendingPathComponent:subPath] toNode:[subNodes objectForKey:subPath]];
+}
+
+- (void)addAllNodesInProjectRoot
+{
+    [self addNodesAtPath:self.projectRoot toNode:self.project.rootNode];
 }
 
 @end

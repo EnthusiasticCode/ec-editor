@@ -1,15 +1,16 @@
 //
-//  Bookmark.m
+//  CDBookmark.m
 //  edit
 //
-//  Created by Uri Baghin on 4/25/11.
+//  Created by Uri Baghin on 5/10/11.
 //  Copyright (c) 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import "Bookmark.h"
+#import "CDBookmark.h"
+#import "CDFile.h"
 
 
-@implementation Bookmark
+@implementation CDBookmark
 @dynamic range;
 @dynamic note;
 @dynamic file;
