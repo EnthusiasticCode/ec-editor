@@ -49,7 +49,7 @@
     return file;
 }
 
-- (NSArray *)orderedNodes
+- (NSArray *)orderedChildren
 {
     return [self valueForOrderedKey:@"children"];
 }

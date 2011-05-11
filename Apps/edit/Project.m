@@ -11,6 +11,11 @@
 #import "Node.h"
 #import "File.h"
 
+@interface Project ()
+@property (nonatomic, retain) Node *rootNode;
+- (Node *)_findRootNode;
+@end
+
 @implementation Project
 
 @synthesize bundle = _bundle;
@@ -19,6 +24,7 @@
 @synthesize managedObjectContext = _managedObjectContext;
 @synthesize managedObjectModel = _managedObjectModel;
 @synthesize persistentStoreCoordinator = _persistentStoreCoordinator;
+@synthesize rootNode = _rootNode;
 
 - (NSFileManager *)fileManager
 {
@@ -78,6 +84,8 @@
         abort();
     }
     self.name = [bundle lastPathComponent];
+    self.rootNode = [self _findRootNode];
+    [self saveContext];
     return self;
 }
 
@@ -91,29 +99,23 @@
     }
 }
 
-- (NSArray *)nodesInProjectRoot
+- (Node *)_findRootNode
 {
     NSFetchRequest *fetchRequest = [[[NSFetchRequest alloc] init] autorelease];
     [fetchRequest setEntity:[NSEntityDescription entityForName:@"Node" inManagedObjectContext:self.managedObjectContext]];
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"%K == %@", @"parent", nil];
     [fetchRequest setPredicate:predicate];
-    return [self.managedObjectContext executeFetchRequest:fetchRequest error:NULL];
-}
-
-- (Node *)addNodeWithName:(NSString *)name type:(NSString *)type
-{
-    Node *node = [NSEntityDescription insertNewObjectForEntityForName:@"Node" inManagedObjectContext:[self managedObjectContext]];
-    node.name = name;
-    node.type = type;
-    return node;
-}
-
-- (File *)addFileWithPath:(NSString *)path
-{
-    File *file = [NSEntityDescription insertNewObjectForEntityForName:@"File" inManagedObjectContext:[self managedObjectContext]];
-    file.path = path;
-    file.name = [path lastPathComponent];
-    return file;
+    NSArray *rootNodes = [self.managedObjectContext executeFetchRequest:fetchRequest error:NULL];
+    if ([rootNodes count] > 1)
+        abort(); // core data file broken, all nodes except the root node should have a parent
+    else if ([rootNodes count] == 1)
+        return [rootNodes objectAtIndex:0];
+    else
+    {
+        Node *rootNode = [NSEntityDescription insertNewObjectForEntityForName:@"Node" inManagedObjectContext:self.managedObjectContext];
+        rootNode.name = @"";
+        return rootNode;
+    }
 }
 
 @end

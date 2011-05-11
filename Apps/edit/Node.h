@@ -13,5 +13,5 @@
 @interface Node : CDNode
 - (Node *)addNodeWithName:(NSString *)name type:(NSString *)type;
 - (File *)addFileWithPath:(NSString *)path;
-- (NSArray *)orderedNodes;
+- (NSArray *)orderedChildren;
 @end

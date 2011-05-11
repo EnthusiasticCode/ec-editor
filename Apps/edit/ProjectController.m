@@ -55,7 +55,7 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return [[self.project nodesInProjectRoot] count];
+    return [[self.project.rootNode children] count];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -65,13 +65,13 @@
     {
         cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"Cell"] autorelease];
     }
-    cell.textLabel.text = [[[self.project nodesInProjectRoot] objectAtIndex:indexPath.row] name];
+    cell.textLabel.text = [[[self.project.rootNode orderedChildren] objectAtIndex:indexPath.row] name];
     return cell;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    [self loadNode:[[self.project nodesInProjectRoot] objectAtIndex:indexPath.row]];
+    [self loadNode:[[self.project.rootNode orderedChildren] objectAtIndex:indexPath.row]];
 }
 
 #pragma mark -
@@ -135,19 +135,7 @@
 
 - (void)addAllNodesInProjectRoot
 {
-    NSArray *paths = [self.fileManager contentsOfDirectoryAtPath:self.projectRoot error:NULL];
-    NSMutableDictionary *nodes = [NSMutableDictionary dictionaryWithCapacity:[paths count]];
-    for (NSString *path in paths)
-    {
-        BOOL isDirectory;
-        [self.fileManager fileExistsAtPath:[self.projectRoot stringByAppendingPathComponent:path] isDirectory:&isDirectory];
-        if (isDirectory)
-            [nodes setObject:[self.project addNodeWithName:path type:@"Group"] forKey:path];
-        else
-            [self.project addFileWithPath:[self.projectRoot stringByAppendingPathComponent:path]];
-    }
-    for (NSString *path in [nodes allKeys])
-        [self addNodesAtPath:[self.projectRoot stringByAppendingPathComponent:path] toNode:[nodes objectForKey:path]];
+    [self addNodesAtPath:self.projectRoot toNode:self.project.rootNode];
 }
 
 @end

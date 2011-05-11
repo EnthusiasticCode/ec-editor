@@ -17,9 +17,7 @@
 @property (nonatomic, retain) NSManagedObjectContext *managedObjectContext;
 @property (nonatomic, retain) NSManagedObjectModel *managedObjectModel;
 @property (nonatomic, retain) NSPersistentStoreCoordinator *persistentStoreCoordinator;
+@property (nonatomic, retain, readonly) Node *rootNode;
 - (id)initWithBundle:(NSString *)bundle;
 - (void)saveContext;
-- (NSArray *)nodesInProjectRoot;
-- (Node *)addNodeWithName:(NSString *)name type:(NSString *)type;
-- (File *)addFileWithPath:(NSString *)path;
 @end

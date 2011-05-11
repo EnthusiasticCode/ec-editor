@@ -27,13 +27,13 @@
     {
         cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"Cell"] autorelease];
     }
-    cell.textLabel.text = [[[self.group orderedNodes] objectAtIndex:indexPath.row] name];
+    cell.textLabel.text = [[[self.group orderedChildren] objectAtIndex:indexPath.row] name];
     return cell;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    [self loadNode:[[self.group orderedNodes] objectAtIndex:indexPath.row]];
+    [self loadNode:[[self.group orderedChildren] objectAtIndex:indexPath.row]];
 }
 
 - (void)loadNode:(Node *)node
