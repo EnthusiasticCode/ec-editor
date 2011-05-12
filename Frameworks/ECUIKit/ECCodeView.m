@@ -13,6 +13,8 @@
 #import "UIColor+StyleColors.h"
 #import "NSTimer+block.h"
 
+#define CARET_WIDTH 2
+
 #pragma mark -
 #pragma mark Interfaces
 
@@ -80,6 +82,18 @@
 
 #pragma mark -
 
+@interface TextSelectionKnobView : UIView
+
+@property (nonatomic) UITextLayoutDirection knobDirection;
+@property (nonatomic) CGFloat knobDiameter;
+
+@property (nonatomic) CGRect caretRect;
+@property (nonatomic, retain) UIColor *caretColor;
+
+@end
+
+#pragma mark -
+
 @interface TextSelectionView : UIView {
 @private
     ECCodeView *parent;
@@ -88,7 +102,7 @@
     CABasicAnimation *blinkAnimation;
     NSTimer *blinkDelayTimer;
     
-    UIView *leftKnob, *rightKnob;
+    TextSelectionKnobView *leftKnob, *rightKnob;
     UILongPressGestureRecognizer *leftKnobRecognizer, *rightKnobRecognizer;
 }
 
@@ -99,8 +113,6 @@
 @property (nonatomic) NSRange selection;
 @property (nonatomic, assign) ECTextRange *selectionRange;
 @property (nonatomic, readonly) ECTextPosition *selectionPosition;
-
-- (void)setSelectionAtPoint:(CGPoint)point magnificationRatio:(CGFloat)magnificationRatio animated:(BOOL)animated;
 
 #pragma mark Selection Styles
 
@@ -113,6 +125,8 @@
 @property (nonatomic, getter = isMagnifying) BOOL magnify;
 @property (nonatomic, readonly) ECPopoverController *magnificationPopover;
 @property (nonatomic, readonly) TextMagnificationView *magnificationView;
+
+- (void)setMagnify:(BOOL)doMagnify fromRect:(CGRect)rect ratio:(BOOL)ratio animated:(BOOL)animated;
 
 - (void)handleKnobGesture:(UILongPressGestureRecognizer *)recognizer;
 
@@ -246,6 +260,66 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
 @end
 
 #pragma mark -
+#pragma mark TextSelectionKnobView
+
+@implementation TextSelectionKnobView
+
+@synthesize knobDirection, knobDiameter;
+@synthesize caretRect, caretColor;
+
+- (void)setCaretRect:(CGRect)rect
+{
+    caretRect = rect;
+    
+    // Set frame considering knob direction
+    rect.size.width = knobDiameter;
+    rect.origin.x -= knobDiameter / 2;
+    rect.size.height += knobDiameter;
+    if (knobDirection == UITextLayoutDirectionLeft || knobDirection == UITextLayoutDirectionUp) 
+    {
+        rect.origin.y -= knobDiameter;
+    }
+    self.frame = rect;
+}
+
+- (id)initWithFrame:(CGRect)frame
+{
+    if ((self = [super initWithFrame:frame])) 
+    {
+        knobDiameter = 10;
+        self.backgroundColor = [UIColor clearColor];
+    }
+    return self;
+}
+
+- (void)dealloc
+{
+    [caretColor release];
+    [super dealloc];
+}
+
+- (void)drawRect:(CGRect)rect
+{
+    [caretColor setFill];
+    
+    // Draw caret
+    CGRect caret = caretRect;
+    caret.origin.x = CGRectGetMidX(self.bounds) - CARET_WIDTH / 2;
+    caret.origin.y = 0;
+    if (knobDirection == UITextLayoutDirectionLeft)
+        caret.origin.y += knobDiameter;
+    UIRectFill(caret);
+    
+    // Draw knob
+    CGRect knobRect = CGRectMake(0, 0, knobDiameter, knobDiameter);
+    if (knobDirection == UITextLayoutDirectionRight)
+        knobRect.origin.y += caretRect.size.height;
+    [[UIBezierPath bezierPathWithRoundedRect:knobRect cornerRadius:1] fill];
+}
+
+@end
+
+#pragma mark -
 #pragma mark TextSelectionView
 
 @implementation TextSelectionView
@@ -263,6 +337,11 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
         return;
     
     selection = range;
+    if (blinkDelayTimer)
+    {
+        [blinkDelayTimer invalidate];
+        blinkDelayTimer = nil;
+    }
     self.blink = NO;
     
     // Set new selection frame
@@ -276,8 +355,6 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
         rightKnobRecognizer.enabled = NO;
         
         // Start blinking after the selection change has stopped
-        if (blinkDelayTimer)
-            [blinkDelayTimer invalidate];
         blinkDelayTimer = [NSTimer scheduledTimerWithTimeInterval:0.25 usingBlock:^(void) {
             self.blink = YES;
             blinkDelayTimer = nil;
@@ -296,13 +373,16 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
         // Left knob
         if (!leftKnob) 
         {
-            leftKnob = [[UIView alloc] initWithFrame:(CGRect){ CGPointZero, { 10, 10 } }];
-            leftKnob.backgroundColor = caretColor;
+            leftKnob = [TextSelectionKnobView new];
+            leftKnob.caretColor = caretColor;
+            leftKnob.knobDirection = UITextLayoutDirectionLeft;
         }
+        // TODO!!! set knob 'caret'
         CGRect knobRect = [selectionRects topLeftRect];
         knobRect.origin.x += parentTextInsets.left;
         knobRect.origin.y += parentTextInsets.top;
-        leftKnob.center = knobRect.origin;
+        knobRect.size.width = CARET_WIDTH;
+        leftKnob.caretRect = knobRect;
         [parent addSubview:leftKnob];
         if (!leftKnobRecognizer) 
         {
@@ -316,13 +396,15 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
         // Right knob
         if (!rightKnob) 
         {
-            rightKnob = [[UIView alloc] initWithFrame:(CGRect){ CGPointZero, { 10, 10 } }];
-            rightKnob.backgroundColor = caretColor;
+            rightKnob = [TextSelectionKnobView new];
+            rightKnob.caretColor = caretColor;
+            rightKnob.knobDirection = UITextLayoutDirectionRight;
         }
         knobRect = [selectionRects bottomRightRect];
-        knobRect.origin.x += parentTextInsets.left;
+        knobRect.origin.x = CGRectGetMaxX(knobRect) + parentTextInsets.left;
         knobRect.origin.y += parentTextInsets.top;
-        rightKnob.center = CGPointMake(CGRectGetMaxX(knobRect), CGRectGetMaxY(knobRect));
+        knobRect.size.width = CARET_WIDTH;
+        rightKnob.caretRect = knobRect;
         [parent addSubview:rightKnob];
         if (!rightKnobRecognizer) 
         {
@@ -334,8 +416,6 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
         rightKnobRecognizer.enabled = YES;
     }
     self.frame = frame;
-    
-    // TODO change magnification
     
     [self setNeedsDisplay];
 }
@@ -390,58 +470,62 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
 
 @synthesize magnify, magnificationPopover;
 
-- (void)setSelectionAtPoint:(CGPoint)point magnificationRatio:(CGFloat)magnificationRatio animated:(BOOL)animated
-{
-    UIEdgeInsets parentTextInsets = parent.textInsets;
-    
-    CGPoint textPoint = point;
-    textPoint.x -= parentTextInsets.left;
-    textPoint.y -= parentTextInsets.top;
-    
-    self.selection = NSMakeRange([parent.renderer closestStringLocationToPoint:textPoint withinStringRange:(NSRange){0, 0}], 0);
-    
-    if (magnificationRatio == 0) 
-    {
-        if (magnify) 
-        {
-            magnify = NO;
-            self.blink = selection.length == 0;
-            [self.magnificationPopover dismissPopoverAnimated:animated];
-        }
-    }
-    else
-    {
-        magnify = YES;
-        self.blink = NO;
-        
-        // Get magnification point
-        CGRect caret = self.frame;
-        textPoint.y = CGRectGetMidY(caret) - parentTextInsets.top;
-        
-        // Set magnification
-        [self.magnificationView detailTextAtPoint:textPoint magnification:magnificationRatio additionalDrawingBlock:^(CGContextRef context, CGPoint textOffset) {
-            // todo draw know?
-            CGRect detailCaretRect = caret;
-            detailCaretRect.origin.x -= parentTextInsets.left;
-            detailCaretRect.origin.y -= parentTextInsets.top + textOffset.y;
-            [caretColor setFill];
-            UIRectFill(detailCaretRect);
-            // TODO draw selection
-        }];
-        
-        // Present magnification popover
-        caret.origin.x = point.x;
-        caret.origin.y -= parent.contentOffset.y;
-        [self.magnificationPopover presentPopoverFromRect:caret inView:parent permittedArrowDirections:UIPopoverArrowDirectionDown animated:animated];
-    }
-}
-
 - (void)setMagnify:(BOOL)doMagnify
 {
     if (magnify == doMagnify)
         return;
     
-    [self setSelectionAtPoint:self.frame.origin magnificationRatio:doMagnify ? 2 : 0 animated:YES];
+    [self setMagnify:doMagnify fromRect:self.frame ratio:2 animated:YES];
+}
+
+- (void)setMagnify:(BOOL)doMagnify fromRect:(CGRect)rect ratio:(BOOL)ratio animated:(BOOL)animated
+{
+    magnify = doMagnify;
+    
+    if (!magnify) 
+    {
+        self.blink = selection.length == 0;
+        [self.magnificationPopover dismissPopoverAnimated:animated];
+    }
+    else
+    {
+        // Stop blinking
+        if (blinkDelayTimer)
+        {
+            [blinkDelayTimer invalidate];
+            blinkDelayTimer = nil;
+        }
+        self.blink = NO;
+        
+        // Magnify at the center of given rect
+        UIEdgeInsets parentTextInsets = parent.textInsets;
+        CGPoint textPoint = CGPointMake(CGRectGetMidX(rect), CGRectGetMidY(rect));
+        textPoint.x -= parentTextInsets.left;
+        textPoint.y -= parentTextInsets.top;
+        [self.magnificationView detailTextAtPoint:textPoint magnification:ratio additionalDrawingBlock:^(CGContextRef context, CGPoint textOffset) {
+            if (selection.length == 0) 
+            {
+                // Draw caret
+                CGRect detailCaretRect = self.frame;
+                detailCaretRect.origin.x -= parentTextInsets.left;
+                detailCaretRect.origin.y -= parentTextInsets.top + textOffset.y;
+                [caretColor setFill];
+                UIRectFill(detailCaretRect);    
+            }
+            else
+            {
+                // Draw selection
+                [selectionColor setFill];
+                CGContextTranslateCTM(context, 0, -textOffset.y);
+                [selectionRects addRectsToContext:context];
+                CGContextFillPath(context);
+            }
+        }];
+        
+        // Show popover
+        rect.origin.y -= parent.contentOffset.y;
+        [self.magnificationPopover presentPopoverFromRect:rect inView:parent permittedArrowDirections:UIPopoverArrowDirectionDown animated:animated];
+    }
 }
 
 - (ECPopoverController *)magnificationPopover
@@ -450,6 +534,7 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
     {
         magnificationPopover = [[ECPopoverController alloc] initWithContentViewController:nil];
         magnificationPopover.automaticDismiss = NO;
+        // TODO size with proportional text line height
         [magnificationPopover setPopoverContentSize:(CGSize){200, 40} animated:NO];
         
         TextMagnificationView *detail = [[TextMagnificationView alloc] initWithFrame:CGRectMake(0, 0, 200, 40) codeView:parent];
@@ -478,15 +563,17 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
     // Adding knob offset
     if (recognizer.view == rightKnob)
     {
-        if (textPoint.y <= leftKnob.center.y)
-            textPoint.y = rightKnob.center.y;
-        textPoint.y -= [selectionRects bottomRightRect].size.height / 2;
+        if (textPoint.y <= CGRectGetMidY(leftKnob.caretRect))
+            textPoint.y = CGRectGetMidY(rightKnob.caretRect);
+        else if (textPoint.y > CGRectGetMaxY(rightKnob.caretRect))
+            textPoint.y -= MIN(rightKnob.caretRect.size.height, rightKnob.knobDiameter);
     }
     else // leftKnob
     {
-        if (textPoint.y >= rightKnob.center.y)
-            textPoint.y = leftKnob.center.y;
-        textPoint.y += [selectionRects topLeftRect].size.height / 2;
+        if (textPoint.y >= CGRectGetMidY(rightKnob.caretRect))
+            textPoint.y = CGRectGetMidY(leftKnob.caretRect);
+        else if (textPoint.y < leftKnob.caretRect.origin.y)
+            textPoint.y += MIN(leftKnob.caretRect.size.height, leftKnob.knobDiameter);
     }
     textPoint.x -= parentTextInsets.left;
     textPoint.y -= parentTextInsets.top;
@@ -507,6 +594,26 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
         if (pos < NSMaxRange(selection)) 
         {
             self.selection = NSMakeRange(pos, NSMaxRange(selection) - pos);
+        }
+    }
+    
+    // Magnification
+    BOOL animatePopover = NO;
+    
+    switch (recognizer.state)
+    {
+        case UIGestureRecognizerStateEnded:
+        case UIGestureRecognizerStateCancelled:
+            self.magnify = NO;
+            break;
+            
+        case UIGestureRecognizerStateBegan:
+            animatePopover = YES;
+            
+        default:
+        {
+            [self setMagnify:YES fromRect:[(TextSelectionKnobView *)recognizer.view caretRect] ratio:2 animated:animatePopover];
+            // TODO scroll with knobs
         }
     }
 }
@@ -1469,9 +1576,17 @@ static void init(ECCodeView *self)
             
             // Set selection
             if (multiTouch) 
+            {
                 [self setSelectedTextFromPoint:tapPoint toPoint:secondTapPoint];
+            }
             else
-                [selectionView setSelectionAtPoint:tapPoint magnificationRatio:2 animated:animatePopover];
+            {
+                CGPoint textPoint = tapPoint;
+                textPoint.x -= textInsets.left;
+                textPoint.y -= textInsets.top;
+                selectionView.selection = NSMakeRange([renderer closestStringLocationToPoint:textPoint withinStringRange:(NSRange){0, 0}], 0);
+                [selectionView setMagnify:YES fromRect:selectionView.frame ratio:2 animated:animatePopover];
+            }
 
             // Scrolling up
             // TODO get top point offset if mutlitouch
