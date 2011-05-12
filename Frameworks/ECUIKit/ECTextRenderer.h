@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import <QuartzCore/QuartzCore.h>
+#import <UIKit/UIKit.h>
 #import "ECTextRendererDataSource.h"
 #import "ECTextRendererDelegate.h"
 #import "ECRectSet.h"

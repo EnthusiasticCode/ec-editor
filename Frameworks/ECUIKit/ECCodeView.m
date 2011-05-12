@@ -302,15 +302,13 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
 {
     [caretColor setFill];
     
-    CGContextRef context = UIGraphicsGetCurrentContext();
-    
     // Draw caret
     CGRect caret = caretRect;
     caret.origin.x = CGRectGetMidX(self.bounds) - CARET_WIDTH / 2;
     caret.origin.y = 0;
     if (knobDirection == UITextLayoutDirectionLeft)
         caret.origin.y += knobDiameter;
-    CGContextFillRect(context, caret);
+    UIRectFill(caret);
     
     // Draw knob
     CGRect knobRect = CGRectMake(0, 0, knobDiameter, knobDiameter);
@@ -517,6 +515,10 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
             else
             {
                 // Draw selection
+                [selectionColor setFill];
+                CGContextTranslateCTM(context, 0, -textOffset.y);
+                [selectionRects addRectsToContext:context];
+                CGContextFillPath(context);
             }
         }];
         
