@@ -11,7 +11,7 @@
 
 @interface NSTimer (NSTimer_block)
 
-+ (NSTimer *)timerWithTimeInterval:(NSTimeInterval)ti usingBlock:(void(^)(void))block repeats:(BOOL)yesOrNo;
-+ (NSTimer *)scheduledTimerWithTimeInterval:(NSTimeInterval)ti usingBlock:(void(^)(void))block repeats:(BOOL)yesOrNo;
++ (NSTimer *)timerWithTimeInterval:(NSTimeInterval)ti usingBlock:(void(^)(NSTimer *timer))block repeats:(BOOL)yesOrNo;
++ (NSTimer *)scheduledTimerWithTimeInterval:(NSTimeInterval)ti usingBlock:(void(^)(NSTimer *timer))block repeats:(BOOL)yesOrNo;
 
 @end

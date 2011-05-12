@@ -33,6 +33,9 @@
     TextSelectionView *selectionView;
     NSRange markedRange;
     
+    // Touch scrolling timer
+    NSTimer *touchScrollTimer;
+    
     // Recognizers
     UITapGestureRecognizer *focusRecognizer;
     UITapGestureRecognizer *tapRecognizer;
@@ -55,6 +58,10 @@
 
 /// Helper method to set the selection starting from two points.
 - (void)setSelectedTextFromPoint:(CGPoint)fromPoint toPoint:(CGPoint)toPoint;
+
+/// Given a touch point on the top or bottom of the codeview, this method
+/// scroll the content faster as the point approaches the receiver's bounds.
+- (void)autoScrollForTouchAtPoint:(CGPoint)point;
 
 // Gestures handlers
 - (void)handleGestureFocus:(UITapGestureRecognizer *)recognizer;
@@ -355,7 +362,7 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
         rightKnobRecognizer.enabled = NO;
         
         // Start blinking after the selection change has stopped
-        blinkDelayTimer = [NSTimer scheduledTimerWithTimeInterval:0.25 usingBlock:^(void) {
+        blinkDelayTimer = [NSTimer scheduledTimerWithTimeInterval:0.25 usingBlock:^(NSTimer *timer) {
             self.blink = YES;
             blinkDelayTimer = nil;
         } repeats:NO];
@@ -558,7 +565,8 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
 - (void)handleKnobGesture:(UILongPressGestureRecognizer *)recognizer
 {    
     UIEdgeInsets parentTextInsets = parent.textInsets;
-    CGPoint textPoint = [recognizer locationInView:parent];
+    CGPoint tapPoint = [recognizer locationInView:parent];
+    CGPoint textPoint = tapPoint;
     
     // Adding knob offset
     if (recognizer.view == rightKnob)
@@ -613,7 +621,10 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
         default:
         {
             [self setMagnify:YES fromRect:[(TextSelectionKnobView *)recognizer.view caretRect] ratio:2 animated:animatePopover];
-            // TODO scroll with knobs
+            
+            // Scrolling
+            tapPoint.y -= parent.contentOffset.y;
+            [parent autoScrollForTouchAtPoint:tapPoint];
         }
     }
 }
@@ -1518,6 +1529,50 @@ static void init(ECCodeView *self)
     [range release];
 }
 
+- (void)autoScrollForTouchAtPoint:(CGPoint)point
+{
+    CGRect bounds = self.bounds;
+    
+    // Stop old scrolling 
+    if (touchScrollTimer) 
+    {
+        [touchScrollTimer invalidate];
+        touchScrollTimer = nil;
+    }
+    
+    // Get scrolling speed and direction
+    CGFloat scrollingOffset = 0;
+    // TODO parametrize scrolling area
+    if (point.y < 50) 
+    {
+        scrollingOffset = point.y - 50;
+    }
+    else if (point.y > CGRectGetMaxY(bounds) - 50)
+    {
+        scrollingOffset = point.y - (CGRectGetMaxY(bounds) - 50);
+    }
+    
+    // Schedule new scrolling timer if needed
+    if (scrollingOffset != 0) 
+    {
+        touchScrollTimer = [NSTimer scheduledTimerWithTimeInterval:1.0/ 60.0 usingBlock:^(NSTimer *timer) {
+            CGFloat contentOffset = self.contentOffset.y;
+            
+            // Invalidate timer if reaging content limits
+            if (contentOffset <= 0 || contentOffset >= (self.contentSize.height - self.bounds.size.height)) 
+            {
+                [touchScrollTimer invalidate];
+                touchScrollTimer = nil;
+            }
+            else
+            {
+                contentOffset += scrollingOffset;
+                [self scrollRectToVisible:CGRectMake(0, contentOffset, 1, 1) animated:NO];
+            }
+        } repeats:YES];
+    }
+}
+
 #pragma mark -
 #pragma mark Gesture Recognizers and Interaction
 
@@ -1589,19 +1644,17 @@ static void init(ECCodeView *self)
             }
 
             // Scrolling up
-            // TODO get top point offset if mutlitouch
-            CGPoint offset = self.contentOffset;
-            CGFloat topScroll = 50 - tapPoint.y + offset.y;
-            if (topScroll > 0)
-            {
-                offset.y -= topScroll;
-                [self scrollRectToVisible:(CGRect){ {0, offset.y }, {1, 1} } animated:NO];
-                [self performSelector:@selector(handleGestureLongPress:) withObject:recognizer afterDelay:0.1];
-            }
-            
-            // TODO scrolling down
-            
-            // TODO scroll with knobs
+//            // TODO get top point offset if mutlitouch
+//            CGPoint offset = self.contentOffset;
+//            CGFloat topScroll = 50 - tapPoint.y + offset.y;
+//            if (topScroll > 0)
+//            {
+//                offset.y -= topScroll;
+//                [self scrollRectToVisible:(CGRect){ {0, offset.y }, {1, 1} } animated:NO];
+//                [self performSelector:@selector(handleGestureLongPress:) withObject:recognizer afterDelay:0.1];
+//            }
+            tapPoint.y -= self.contentOffset.y;
+            [self autoScrollForTouchAtPoint:tapPoint];
         }
     }
 }
