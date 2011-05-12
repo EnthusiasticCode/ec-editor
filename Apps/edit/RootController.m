@@ -18,8 +18,10 @@
 
 @implementation RootController
 
-@synthesize fileManager = fileManager_;
-@synthesize folder = folder_;
+@synthesize addProjectButton = _addProjectButton;
+@synthesize addProjectController = _addProjectController;
+@synthesize fileManager = _fileManager;
+@synthesize folder = _folder;
 
 - (NSFileManager *)fileManager
 {
@@ -30,7 +32,16 @@
 {
     self.fileManager = nil;
     self.folder = nil;
+    self.addProjectButton = nil;
+    self.addProjectController = nil;
     [super dealloc];
+}
+
+- (void)viewDidLoad
+{
+    self.navigationItem.rightBarButtonItem = self.addProjectButton;
+    self.addProjectController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
+    self.addProjectController.modalPresentationStyle = UIModalPresentationFormSheet;
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
@@ -73,6 +84,11 @@
     ProjectController *projectController = ((AppController *)self.navigationController).projectController;
     [projectController loadProject:projectFolder];
     [self.navigationController pushViewController:projectController animated:YES];
+}
+
+- (void)addProject:(id)sender
+{
+    [self presentModalViewController:self.addProjectController animated:YES];
 }
 
 @end
