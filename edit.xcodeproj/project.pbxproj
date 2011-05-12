@@ -10,7 +10,6 @@
 		B706F05A13563ECB00E03DDF /* UIColor+StyleColors.m in Sources */ = {isa = PBXBuildFile; fileRef = B706F05513563ECB00E03DDF /* UIColor+StyleColors.m */; };
 		B706F05B13563ECB00E03DDF /* UIImage+BlockDrawing.m in Sources */ = {isa = PBXBuildFile; fileRef = B706F05713563ECB00E03DDF /* UIImage+BlockDrawing.m */; };
 		B706F05C13563ECB00E03DDF /* UIView+ConcurrentAnimation.m in Sources */ = {isa = PBXBuildFile; fileRef = B706F05913563ECB00E03DDF /* UIView+ConcurrentAnimation.m */; };
-		B70B1FEE136F2399002D17F1 /* ECItemViewElement.m in Sources */ = {isa = PBXBuildFile; fileRef = B70B1FED136F2399002D17F1 /* ECItemViewElement.m */; };
 		B70D64BC132A2581008DDEA4 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B70D64BB132A2581008DDEA4 /* UIKit.framework */; };
 		B70D64BE132A2581008DDEA4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B70D64BD132A2581008DDEA4 /* Foundation.framework */; };
 		B70D64C0132A2581008DDEA4 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B70D64BF132A2581008DDEA4 /* CoreGraphics.framework */; };
@@ -36,6 +35,8 @@
 		B74C667513793AE900CC92D3 /* Node.m in Sources */ = {isa = PBXBuildFile; fileRef = B74C667413793AE900CC92D3 /* Node.m */; };
 		B74C66F71379651C00CC92D3 /* File.m in Sources */ = {isa = PBXBuildFile; fileRef = B74C66F61379651B00CC92D3 /* File.m */; };
 		B74C66FA1379800400CC92D3 /* GroupController.m in Sources */ = {isa = PBXBuildFile; fileRef = B74C66F91379800300CC92D3 /* GroupController.m */; };
+		B74C6718137A8E0D00CC92D3 /* AddProjectController.m in Sources */ = {isa = PBXBuildFile; fileRef = B74C6716137A8E0C00CC92D3 /* AddProjectController.m */; };
+		B74C6719137A8E0D00CC92D3 /* AddProjectController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B74C6717137A8E0D00CC92D3 /* AddProjectController.xib */; };
 		B75B8743135840070098E7E2 /* ECHashing.m in Sources */ = {isa = PBXBuildFile; fileRef = B75B873B135840070098E7E2 /* ECHashing.m */; };
 		B75B8744135840070098E7E2 /* ECStackCache.m in Sources */ = {isa = PBXBuildFile; fileRef = B75B873D135840070098E7E2 /* ECStackCache.m */; };
 		B75B8745135840070098E7E2 /* MurmurHash3.c in Sources */ = {isa = PBXBuildFile; fileRef = B75B873E135840070098E7E2 /* MurmurHash3.c */; };
@@ -55,7 +56,6 @@
 		B75B87751358401B0098E7E2 /* ECCodeUnit.m in Sources */ = {isa = PBXBuildFile; fileRef = B75B87641358401B0098E7E2 /* ECCodeUnit.m */; };
 		B75B87761358401B0098E7E2 /* libclang.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B75B87681358401B0098E7E2 /* libclang.dylib */; };
 		B7C764F2136773A4009181DB /* ECManagedObject.m in Sources */ = {isa = PBXBuildFile; fileRef = B7C764F1136773A4009181DB /* ECManagedObject.m */; };
-		B7D279DA135750C900E662FB /* ECItemView.m in Sources */ = {isa = PBXBuildFile; fileRef = B7D279D7135750C900E662FB /* ECItemView.m */; };
 		B7DAB3871372E17A00262D3C /* ECArrayTree.m in Sources */ = {isa = PBXBuildFile; fileRef = B7DAB3861372E17A00262D3C /* ECArrayTree.m */; };
 		B7DBA580132A3281004C0E1D /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7DBA57F132A3281004C0E1D /* QuartzCore.framework */; };
 		CDEBF21613489A8E00CE2285 /* AppController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDEBF20913489A8E00CE2285 /* AppController.m */; };
@@ -84,8 +84,6 @@
 		B706F05713563ECB00E03DDF /* UIImage+BlockDrawing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIImage+BlockDrawing.m"; path = "Frameworks/ECUIKit/UIImage+BlockDrawing.m"; sourceTree = "<group>"; };
 		B706F05813563ECB00E03DDF /* UIView+ConcurrentAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIView+ConcurrentAnimation.h"; path = "Frameworks/ECUIKit/UIView+ConcurrentAnimation.h"; sourceTree = "<group>"; };
 		B706F05913563ECB00E03DDF /* UIView+ConcurrentAnimation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIView+ConcurrentAnimation.m"; path = "Frameworks/ECUIKit/UIView+ConcurrentAnimation.m"; sourceTree = "<group>"; };
-		B70B1FEC136F2399002D17F1 /* ECItemViewElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECItemViewElement.h; path = Frameworks/ECUIKit/ECItemViewElement.h; sourceTree = "<group>"; };
-		B70B1FED136F2399002D17F1 /* ECItemViewElement.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECItemViewElement.m; path = Frameworks/ECUIKit/ECItemViewElement.m; sourceTree = "<group>"; };
 		B70D64B7132A2581008DDEA4 /* edit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = edit.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B70D64BB132A2581008DDEA4 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		B70D64BD132A2581008DDEA4 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -136,6 +134,9 @@
 		B74C66F61379651B00CC92D3 /* File.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = File.m; sourceTree = "<group>"; };
 		B74C66F81379800300CC92D3 /* GroupController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GroupController.h; sourceTree = "<group>"; };
 		B74C66F91379800300CC92D3 /* GroupController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GroupController.m; sourceTree = "<group>"; };
+		B74C6715137A8E0C00CC92D3 /* AddProjectController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddProjectController.h; sourceTree = "<group>"; };
+		B74C6716137A8E0C00CC92D3 /* AddProjectController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AddProjectController.m; sourceTree = "<group>"; };
+		B74C6717137A8E0D00CC92D3 /* AddProjectController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AddProjectController.xib; sourceTree = "<group>"; };
 		B75B873A135840070098E7E2 /* ECHashing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECHashing.h; sourceTree = "<group>"; };
 		B75B873B135840070098E7E2 /* ECHashing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECHashing.m; sourceTree = "<group>"; };
 		B75B873C135840070098E7E2 /* ECStackCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECStackCache.h; sourceTree = "<group>"; };
@@ -181,8 +182,6 @@
 		B75B87681358401B0098E7E2 /* libclang.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libclang.dylib; sourceTree = "<group>"; };
 		B7C764F0136773A4009181DB /* ECManagedObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECManagedObject.h; sourceTree = "<group>"; };
 		B7C764F1136773A4009181DB /* ECManagedObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECManagedObject.m; sourceTree = "<group>"; };
-		B7D279D6135750C900E662FB /* ECItemView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECItemView.h; path = Frameworks/ECUIKit/ECItemView.h; sourceTree = "<group>"; };
-		B7D279D7135750C900E662FB /* ECItemView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECItemView.m; path = Frameworks/ECUIKit/ECItemView.m; sourceTree = "<group>"; };
 		B7DAB3851372E17A00262D3C /* ECArrayTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECArrayTree.h; sourceTree = "<group>"; };
 		B7DAB3861372E17A00262D3C /* ECArrayTree.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECArrayTree.m; sourceTree = "<group>"; };
 		B7DBA57F132A3281004C0E1D /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
@@ -308,6 +307,8 @@
 				CDEBF20913489A8E00CE2285 /* AppController.m */,
 				CDEBF21413489A8E00CE2285 /* RootController.h */,
 				CDEBF21513489A8E00CE2285 /* RootController.m */,
+				B74C6715137A8E0C00CC92D3 /* AddProjectController.h */,
+				B74C6716137A8E0C00CC92D3 /* AddProjectController.m */,
 				CDEBF21013489A8E00CE2285 /* ProjectController.h */,
 				CDEBF21113489A8E00CE2285 /* ProjectController.m */,
 				B74C66F81379800300CC92D3 /* GroupController.h */,
@@ -390,7 +391,6 @@
 				B706F05313563EB100E03DDF /* UIKit Additions */,
 				CDEBF2BC13489DCA00CE2285 /* Core Additions */,
 				CDEBF2BE13489DDA00CE2285 /* Text */,
-				CDEBF2BF13489E0100CE2285 /* Item View */,
 				CDEBF2BB13489DC100CE2285 /* Code Scroll View */,
 				CDEBF2B913489DBA00CE2285 /* Code View */,
 			);
@@ -454,23 +454,13 @@
 			name = Text;
 			sourceTree = "<group>";
 		};
-		CDEBF2BF13489E0100CE2285 /* Item View */ = {
-			isa = PBXGroup;
-			children = (
-				B7D279D6135750C900E662FB /* ECItemView.h */,
-				B7D279D7135750C900E662FB /* ECItemView.m */,
-				B70B1FEC136F2399002D17F1 /* ECItemViewElement.h */,
-				B70B1FED136F2399002D17F1 /* ECItemViewElement.m */,
-			);
-			name = "Item View";
-			sourceTree = "<group>";
-		};
 		CDEFF95D1348BD5E006FEFCC /* en.lproj */ = {
 			isa = PBXGroup;
 			children = (
 				CDEFF9601348BD5E006FEFCC /* InfoPlist.strings */,
 				CDEFF9621348BD5E006FEFCC /* MainWindow.xib */,
 				CDEFF9681348BD5E006FEFCC /* RootController.xib */,
+				B74C6717137A8E0D00CC92D3 /* AddProjectController.xib */,
 				CDEFF9661348BD5E006FEFCC /* ProjectController.xib */,
 				CDEFF95E1348BD5E006FEFCC /* FileController.xib */,
 			);
@@ -553,6 +543,7 @@
 				CDEFF9711348BD5E006FEFCC /* MainWindow.xib in Resources */,
 				CDEFF9731348BD5E006FEFCC /* ProjectController.xib in Resources */,
 				CDEFF9741348BD5E006FEFCC /* RootController.xib in Resources */,
+				B74C6719137A8E0D00CC92D3 /* AddProjectController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -578,7 +569,6 @@
 				B706F05A13563ECB00E03DDF /* UIColor+StyleColors.m in Sources */,
 				B706F05B13563ECB00E03DDF /* UIImage+BlockDrawing.m in Sources */,
 				B706F05C13563ECB00E03DDF /* UIView+ConcurrentAnimation.m in Sources */,
-				B7D279DA135750C900E662FB /* ECItemView.m in Sources */,
 				B75B8743135840070098E7E2 /* ECHashing.m in Sources */,
 				B75B8744135840070098E7E2 /* ECStackCache.m in Sources */,
 				B75B8745135840070098E7E2 /* MurmurHash3.c in Sources */,
@@ -601,7 +591,6 @@
 				B72BE641136B3E53009B0977 /* ECDictionaryCache.m in Sources */,
 				B72BE649136B3E7F009B0977 /* ECCodeStringDataSource.m in Sources */,
 				B72BE64A136B3E7F009B0977 /* ECTextRenderer.m in Sources */,
-				B70B1FEE136F2399002D17F1 /* ECItemViewElement.m in Sources */,
 				B7DAB3871372E17A00262D3C /* ECArrayTree.m in Sources */,
 				B74C66251375E24800CC92D3 /* ECCodeViewBase.m in Sources */,
 				B74C66261375E24800CC92D3 /* ECJumpBar.m in Sources */,
@@ -619,6 +608,7 @@
 				B74C667513793AE900CC92D3 /* Node.m in Sources */,
 				B74C66F71379651C00CC92D3 /* File.m in Sources */,
 				B74C66FA1379800400CC92D3 /* GroupController.m in Sources */,
+				B74C6718137A8E0D00CC92D3 /* AddProjectController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
