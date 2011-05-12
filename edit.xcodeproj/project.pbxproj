@@ -58,6 +58,7 @@
 		B7D279DA135750C900E662FB /* ECItemView.m in Sources */ = {isa = PBXBuildFile; fileRef = B7D279D7135750C900E662FB /* ECItemView.m */; };
 		B7DAB3871372E17A00262D3C /* ECArrayTree.m in Sources */ = {isa = PBXBuildFile; fileRef = B7DAB3861372E17A00262D3C /* ECArrayTree.m */; };
 		B7DBA580132A3281004C0E1D /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7DBA57F132A3281004C0E1D /* QuartzCore.framework */; };
+		CD677496137BCE3B00AA37CE /* Inconsolata.otf in Resources */ = {isa = PBXBuildFile; fileRef = CD677495137BCE3B00AA37CE /* Inconsolata.otf */; };
 		CDEBF21613489A8E00CE2285 /* AppController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDEBF20913489A8E00CE2285 /* AppController.m */; };
 		CDEBF21713489A8E00CE2285 /* FileController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDEBF20D13489A8E00CE2285 /* FileController.m */; };
 		CDEBF21913489A8E00CE2285 /* ProjectController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDEBF21113489A8E00CE2285 /* ProjectController.m */; };
@@ -186,6 +187,7 @@
 		B7DAB3851372E17A00262D3C /* ECArrayTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECArrayTree.h; sourceTree = "<group>"; };
 		B7DAB3861372E17A00262D3C /* ECArrayTree.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECArrayTree.m; sourceTree = "<group>"; };
 		B7DBA57F132A3281004C0E1D /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		CD677495137BCE3B00AA37CE /* Inconsolata.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = Inconsolata.otf; path = Apps/CodeView/Inconsolata.otf; sourceTree = SOURCE_ROOT; };
 		CDEBF20813489A8E00CE2285 /* AppController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppController.h; sourceTree = "<group>"; };
 		CDEBF20913489A8E00CE2285 /* AppController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppController.m; sourceTree = "<group>"; };
 		CDEBF20C13489A8E00CE2285 /* FileController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileController.h; sourceTree = "<group>"; };
@@ -285,6 +287,7 @@
 		B70D64F9132A25F4008DDEA4 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				CD677495137BCE3B00AA37CE /* Inconsolata.otf */,
 				CDEFF95B1348BD5E006FEFCC /* edit-Info.plist */,
 				CDEFF95C1348BD5E006FEFCC /* edit-main.m */,
 				CDEFF95D1348BD5E006FEFCC /* en.lproj */,
@@ -553,6 +556,7 @@
 				CDEFF9711348BD5E006FEFCC /* MainWindow.xib in Resources */,
 				CDEFF9731348BD5E006FEFCC /* ProjectController.xib in Resources */,
 				CDEFF9741348BD5E006FEFCC /* RootController.xib in Resources */,
+				CD677496137BCE3B00AA37CE /* Inconsolata.otf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
