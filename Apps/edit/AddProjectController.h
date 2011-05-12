@@ -8,6 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface AddProjectController : UITableViewController <NSNetServiceBrowserDelegate>
+@interface AddProjectController : UITableViewController <NSNetServiceBrowserDelegate, NSNetServiceDelegate>
 
 @end

@@ -37,6 +37,7 @@
 		B74C66FA1379800400CC92D3 /* GroupController.m in Sources */ = {isa = PBXBuildFile; fileRef = B74C66F91379800300CC92D3 /* GroupController.m */; };
 		B74C6718137A8E0D00CC92D3 /* AddProjectController.m in Sources */ = {isa = PBXBuildFile; fileRef = B74C6716137A8E0C00CC92D3 /* AddProjectController.m */; };
 		B74C6719137A8E0D00CC92D3 /* AddProjectController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B74C6717137A8E0D00CC92D3 /* AddProjectController.xib */; };
+		B74C673C137BC07600CC92D3 /* NSTimer+block.m in Sources */ = {isa = PBXBuildFile; fileRef = B74C673B137BC07600CC92D3 /* NSTimer+block.m */; };
 		B75B8743135840070098E7E2 /* ECHashing.m in Sources */ = {isa = PBXBuildFile; fileRef = B75B873B135840070098E7E2 /* ECHashing.m */; };
 		B75B8744135840070098E7E2 /* ECStackCache.m in Sources */ = {isa = PBXBuildFile; fileRef = B75B873D135840070098E7E2 /* ECStackCache.m */; };
 		B75B8745135840070098E7E2 /* MurmurHash3.c in Sources */ = {isa = PBXBuildFile; fileRef = B75B873E135840070098E7E2 /* MurmurHash3.c */; };
@@ -137,6 +138,8 @@
 		B74C6715137A8E0C00CC92D3 /* AddProjectController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddProjectController.h; sourceTree = "<group>"; };
 		B74C6716137A8E0C00CC92D3 /* AddProjectController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AddProjectController.m; sourceTree = "<group>"; };
 		B74C6717137A8E0D00CC92D3 /* AddProjectController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AddProjectController.xib; sourceTree = "<group>"; };
+		B74C673A137BC07600CC92D3 /* NSTimer+block.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSTimer+block.h"; sourceTree = "<group>"; };
+		B74C673B137BC07600CC92D3 /* NSTimer+block.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSTimer+block.m"; sourceTree = "<group>"; };
 		B75B873A135840070098E7E2 /* ECHashing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECHashing.h; sourceTree = "<group>"; };
 		B75B873B135840070098E7E2 /* ECHashing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECHashing.m; sourceTree = "<group>"; };
 		B75B873C135840070098E7E2 /* ECStackCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECStackCache.h; sourceTree = "<group>"; };
@@ -323,6 +326,8 @@
 		CDEBF23813489AB900CE2285 /* ECFoundation */ = {
 			isa = PBXGroup;
 			children = (
+				B74C673A137BC07600CC92D3 /* NSTimer+block.h */,
+				B74C673B137BC07600CC92D3 /* NSTimer+block.m */,
 				B72BE63F136B3E53009B0977 /* ECDictionaryCache.h */,
 				B72BE640136B3E53009B0977 /* ECDictionaryCache.m */,
 				B75B873A135840070098E7E2 /* ECHashing.h */,
@@ -609,6 +614,7 @@
 				B74C66F71379651C00CC92D3 /* File.m in Sources */,
 				B74C66FA1379800400CC92D3 /* GroupController.m in Sources */,
 				B74C6718137A8E0D00CC92D3 /* AddProjectController.m in Sources */,
+				B74C673C137BC07600CC92D3 /* NSTimer+block.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

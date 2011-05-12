@@ -19,17 +19,6 @@
 @synthesize foundServers;
 @synthesize sshBrowser;
 
-- (id)initWithStyle:(UITableViewStyle)style
-{
-    self = [super initWithStyle:style];
-    if (self) {
-        self.foundServers = [NSMutableArray array];
-        self.sshBrowser = [[[NSNetServiceBrowser alloc] init] autorelease];
-        [self.sshBrowser setDelegate:self];
-    }
-    return self;
-}
-
 - (void)dealloc
 {
     self.foundServers = nil;
@@ -50,7 +39,10 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    [self.sshBrowser searchForServicesOfType:@"_sftp-ssh._tcp" inDomain:@""];
+    self.foundServers = [NSMutableArray array];
+    self.sshBrowser = [[[NSNetServiceBrowser alloc] init] autorelease];
+    [self.sshBrowser setDelegate:self];
+    [self.sshBrowser searchForServicesOfType:@"_ssh._tcp" inDomain:@""];
 }
 
 - (void)viewDidUnload
@@ -141,6 +133,16 @@
 
 #pragma mark - NSNetServiceBrowser delegate
 
+- (void)netServiceBrowserWillSearch:(NSNetServiceBrowser *)aNetServiceBrowser
+{
+    NSLog(@"will search");
+}
+
+- (void)netServiceBrowserDidStopSearch:(NSNetServiceBrowser *)aNetServiceBrowser
+{
+    NSLog(@"did stop search");
+}
+
 - (void)netServiceBrowser:(NSNetServiceBrowser *)browser didNotSearch:(NSDictionary *)errorDict
 {
     [self handleError:[errorDict objectForKey:NSNetServicesErrorCode]];
@@ -149,8 +151,14 @@
 - (void)netServiceBrowser:(NSNetServiceBrowser *)browser didFindService:(NSNetService *)aNetService moreComing:(BOOL)moreComing
 {
     [self.foundServers addObject:aNetService];
+    [aNetService resolveWithTimeout:0.0];
     if(!moreComing)
         [self.tableView reloadData];
+}
+
+- (void)netServiceDidResolveAddress:(NSNetService *)sender
+{
+    [self.tableView reloadData];
 }
 
 - (void)netServiceBrowser:(NSNetServiceBrowser *)browser didRemoveService:(NSNetService *)aNetService moreComing:(BOOL)moreComing
