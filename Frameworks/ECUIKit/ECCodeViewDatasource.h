@@ -18,7 +18,8 @@
 /// When implemented return the length of the text in the datasource.
 - (NSUInteger)textLength;
 
-/// Return the substring in the given range.
+/// Return the substring in the given range. Used to implement
+/// \c UITextInput methods.
 - (NSString *)codeView:(ECCodeViewBase *)codeView stringInRange:(NSRange)range;
 
 @optional
