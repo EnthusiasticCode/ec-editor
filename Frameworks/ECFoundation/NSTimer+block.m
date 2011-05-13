@@ -11,21 +11,21 @@
 
 @implementation NSTimer (NSTimer_block)
 
-+ (NSTimer *)timerWithTimeInterval:(NSTimeInterval)ti usingBlock:(void(^)(void))block repeats:(BOOL)yesOrNo
++ (NSTimer *)timerWithTimeInterval:(NSTimeInterval)ti usingBlock:(void(^)(NSTimer *timer))block repeats:(BOOL)yesOrNo
 {
     return [NSTimer timerWithTimeInterval:ti target:[NSTimer class] selector:@selector(executeTimerUserInfoAsBlock:) userInfo:[block copy] repeats:yesOrNo];
 }
 
-+ (NSTimer *)scheduledTimerWithTimeInterval:(NSTimeInterval)ti usingBlock:(void(^)(void))block repeats:(BOOL)yesOrNo
++ (NSTimer *)scheduledTimerWithTimeInterval:(NSTimeInterval)ti usingBlock:(void(^)(NSTimer *timer))block repeats:(BOOL)yesOrNo
 {
     return [NSTimer scheduledTimerWithTimeInterval:ti target:[NSTimer class] selector:@selector(executeTimerUserInfoAsBlock:) userInfo:[block copy] repeats:yesOrNo];
 }
 
 + (void)executeTimerUserInfoAsBlock:(NSTimer *)timer
 {
-    void (^block)(void) = [timer userInfo];
+    void (^block)(NSTimer *) = [timer userInfo];
     if (block)
-        block();
+        block(timer);
 }
 
 @end
