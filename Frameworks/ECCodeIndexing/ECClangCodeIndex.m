@@ -6,7 +6,7 @@
 //  Copyright 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import "Index.h"
+#import <clang-c/Index.h>
 #import "ECClangCodeIndex.h"
 #import "ECClangCodeUnit.h"
 

@@ -7,7 +7,7 @@
 //
 
 #import "ECClangCodeCursor.h"
-#import "Index.h"
+#import <clang-c/Index.h>
 
 @interface ECClangCodeCursor ()
 {
