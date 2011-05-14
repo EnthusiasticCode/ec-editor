@@ -133,6 +133,12 @@
     return [result autorelease];
 }
 
+- (NSUInteger)textRenderer:(ECTextRenderer *)sender estimatedTextLineCountOfLength:(NSUInteger)maximumLineLength
+{
+    // TODO implement this metohd? or remove completelly the need of it, useless: the renderer resize itself anyway.
+    return fileLength / maximumLineLength;
+}
+
 #pragma mark Private Methods
 
 - (unsigned long long)lineOffsetForLine:(NSUInteger *)line
