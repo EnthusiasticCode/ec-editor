@@ -44,7 +44,12 @@
     fileHandle = [[NSFileHandle fileHandleForReadingAtPath:path] retain];
     [fileHandle seekToEndOfFile];
     fileLength = [fileHandle offsetInFile];
-    [lineOffsetsDictionary removeAllObjects];
+    
+    if (!lineOffsetsDictionary)
+        lineOffsetsDictionary = [[NSMutableDictionary dictionaryWithCapacity:10] retain];
+    else
+        [lineOffsetsDictionary removeAllObjects];
+    [lineOffsetsDictionary setObject:[NSNumber numberWithUnsignedLongLong:0] forKey:[NSNumber numberWithUnsignedInteger:0]];
 }
 
 - (NSString *)lineDelimiter
@@ -55,7 +60,7 @@
 - (void)setLineDelimiter:(NSString *)lineDelimiter
 {
     [lineDelimiterData release];
-    lineDelimiterData = [lineDelimiter dataUsingEncoding:NSUTF8StringEncoding];
+    lineDelimiterData = [[lineDelimiter dataUsingEncoding:NSUTF8StringEncoding] retain];
 }
 
 #pragma mark Initialization and Deallocation
@@ -65,7 +70,8 @@
     if ((self = [super init])) 
     {
         chunkSize = 10;
-        defaultTextStyle = [[ECTextStyle textStyleWithName:@"default" font:[UIFont fontWithName:@"Inconsolata" size:15] color:nil] retain];
+        self.lineDelimiter = @"\n";
+        self.defaultTextStyle = [ECTextStyle textStyleWithName:@"default" font:[UIFont fontWithName:@"Inconsolata" size:15] color:nil];
     }
     return self;
 }
@@ -102,17 +108,23 @@
 
 - (NSAttributedString *)textRenderer:(ECTextRenderer *)sender stringInLineRange:(NSRange *)lineRange endOfString:(BOOL *)endOfString
 {
+    // Position file at the beginning of the requested line range
     NSUInteger location = lineRange->location;
     unsigned long long lineRangeLocationOffset = [self lineOffsetForLine:&location];
-    
-    [fileHandle seekToFileOffset:lineRangeLocationOffset];
     if (location != lineRange->location)
         return nil;
     
+    // Get the last readable line
     NSUInteger end = NSMaxRange(*lineRange);
     unsigned long long lineRangeEndOffset = [self lineOffsetForLine:&end];
-    NSData *textData = [fileHandle readDataOfLength:(NSUInteger)(lineRangeEndOffset - lineRangeLocationOffset)];
     
+    // Read requested data from file
+    [fileHandle seekToFileOffset:lineRangeLocationOffset];
+    NSData *textData = [fileHandle readDataOfLength:(NSUInteger)(lineRangeEndOffset - lineRangeLocationOffset)];
+        
+    // Prepare return
+    if (endOfString && end != NSMaxRange(*lineRange))
+        *endOfString = YES;
     lineRange->length = end - location;
     NSString *string = [[NSString alloc] initWithData:textData encoding:NSUTF8StringEncoding];
     NSAttributedString *result = [[NSAttributedString alloc] initWithString:string attributes:defaultTextStyle.CTAttributes];
@@ -125,9 +137,6 @@
 
 - (unsigned long long)lineOffsetForLine:(NSUInteger *)line
 {
-    if (lineOffsetsDictionary)
-        lineOffsetsDictionary = [NSMutableDictionary dictionaryWithCapacity:10];
-    
     NSNumber *lineNumber = [NSNumber numberWithUnsignedInteger:*line];
     NSNumber *cachedOffset = [lineOffsetsDictionary objectForKey:lineNumber];
     if (cachedOffset) 
@@ -156,7 +165,7 @@
         // Seek to line
         unsigned long long lineOffset = fileOffset;
         NSAutoreleasePool *pool = [NSAutoreleasePool new];
-        while (lineCount <= *line && fileOffset < fileLength) 
+        while (lineCount < *line && fileOffset < fileLength) 
         {
             NSData *chunk = [fileHandle readDataOfLength:chunkSize];
             NSUInteger chunkLength = [chunk length];
@@ -175,7 +184,7 @@
             lineOffset = fileLength - 1;
         
         // Cache result
-        [lineOffsetsDictionary setObject:lineNumber forKey:[NSNumber numberWithUnsignedLongLong:lineOffset]];
+        [lineOffsetsDictionary setObject:[NSNumber numberWithUnsignedLongLong:lineOffset] forKey:lineNumber];
         
         *line = lineCount;
         return lineOffset;

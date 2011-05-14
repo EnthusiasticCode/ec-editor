@@ -181,6 +181,17 @@
 @synthesize textInsets;
 @synthesize renderingQueue, renderer;
 
+- (id<ECCodeViewDataSource>)datasource
+{
+    if (!datasource)
+    {
+        if (!defaultDatasource)
+            defaultDatasource = [ECCodeStringDataSource new];
+        self.datasource = defaultDatasource;
+    }
+    return datasource;
+}
+
 - (void)setDatasource:(id<ECCodeViewDataSource>)aDatasource
 {
     datasource = aDatasource;
@@ -312,15 +323,6 @@ static void init(ECCodeViewBase *self)
     }
 }
 
-- (void)didMoveToSuperview
-{
-    if (!self->datasource)
-    {
-        self->defaultDatasource = [ECCodeStringDataSource new];
-        self.datasource = self->defaultDatasource;
-    }
-}
-
 #pragma mark -
 #pragma mark Rendering Methods
 
@@ -423,7 +425,7 @@ static void init(ECCodeViewBase *self)
 
 - (NSString *)text
 {
-    if (![datasource isKindOfClass:[ECCodeStringDataSource class]])
+    if (![self.datasource isKindOfClass:[ECCodeStringDataSource class]])
     {
         return nil;
     }
@@ -439,7 +441,7 @@ static void init(ECCodeViewBase *self)
     // Will make sure that if no datasource have been set, a default one will be created.
     [self didMoveToSuperview];
     
-    if (![datasource isKindOfClass:[ECCodeStringDataSource class]])
+    if (![self.datasource isKindOfClass:[ECCodeStringDataSource class]])
     {
         [NSException raise:NSInternalInconsistencyException format:@"Trying to set codeview text with textDelegate not self."];
         return;

@@ -100,12 +100,15 @@
     self.popoverController = nil;
 }
 
-
 // Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     
+    if (!codeViewDataSource)
+        codeViewDataSource = [ECCodeFileDataSource new];
+    
+    self.codeView.datasource = codeViewDataSource;
     self.codeView.delegate = self;
 }
 
@@ -131,6 +134,8 @@
 
 - (void)dealloc
 {
+    [codeViewDataSource release];
+    
     [_myPopoverController release];
     [_toolbar release];
     [_detailItem release];
