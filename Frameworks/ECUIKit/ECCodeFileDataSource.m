@@ -121,15 +121,24 @@
     // Read requested data from file
     [fileHandle seekToFileOffset:lineRangeLocationOffset];
     NSData *textData = [fileHandle readDataOfLength:(NSUInteger)(lineRangeEndOffset - lineRangeLocationOffset)];
-        
+
     // Prepare return
-    unsigned long long fileOffset = [fileHandle offsetInFile];
-    if (endOfString && fileOffset >= fileLength)
-        *endOfString = YES;
     lineRange->length = end - location;
-    NSString *string = [[NSString alloc] initWithData:textData encoding:NSUTF8StringEncoding];
-    NSAttributedString *result = [[NSAttributedString alloc] initWithString:string attributes:defaultTextStyle.CTAttributes];
+    NSString *string = [[NSString alloc] initWithData:textData encoding:NSUTF8StringEncoding];    
+    NSMutableAttributedString *result = [[NSMutableAttributedString alloc] initWithString:string attributes:defaultTextStyle.CTAttributes];
     [string release];
+    
+    // Determine end of file/string and append tailing new line
+    unsigned long long fileOffset = [fileHandle offsetInFile];
+    if (fileOffset >= fileLength)
+    {
+        NSAttributedString *lineDelimiter = [[NSAttributedString alloc] initWithString:self.lineDelimiter attributes:defaultTextStyle.CTAttributes];
+        [result appendAttributedString:lineDelimiter];
+        [lineDelimiter release];
+        
+        if (endOfString)
+            *endOfString = YES;
+    }
     
     return [result autorelease];
 }
