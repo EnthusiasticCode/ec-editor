@@ -30,6 +30,7 @@
 #pragma mark Properties
 
 @synthesize defaultTextStyle;
+@synthesize stylizeBlock;
 @synthesize chunkSize;
 @synthesize path;
 
@@ -127,6 +128,10 @@
     NSString *string = [[NSString alloc] initWithData:textData encoding:NSUTF8StringEncoding];    
     NSMutableAttributedString *result = [[NSMutableAttributedString alloc] initWithString:string attributes:defaultTextStyle.CTAttributes];
     [string release];
+    
+    // Apply custom styles
+    if (stylizeBlock)
+        stylizeBlock(self, result, NSMakeRange(lineRangeLocationOffset, (NSUInteger)(lineRangeEndOffset - lineRangeLocationOffset)));
     
     // Determine end of file/string and append tailing new line
     unsigned long long fileOffset = [fileHandle offsetInFile];

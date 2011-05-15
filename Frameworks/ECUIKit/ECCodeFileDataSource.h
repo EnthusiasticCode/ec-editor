@@ -10,6 +10,9 @@
 #import "ECCodeViewDatasource.h"
 #import "ECTextStyle.h"
 
+@class ECCodeFileDataSource;
+
+typedef void(^StylizeFilePartStringBlock)(ECCodeFileDataSource *dataSource, NSMutableAttributedString *string, NSRange rangeInFile);
 
 @interface ECCodeFileDataSource : NSObject <ECCodeViewDataSource>
 
@@ -22,6 +25,12 @@
 /// Chunk of data bytes to read. Default is 10.
 @property (nonatomic) NSUInteger chunkSize;
 
+/// The default text style to apply to a read string
 @property (nonatomic, retain) ECTextStyle *defaultTextStyle;
+
+/// A block that will be used on every attributed string returned by the
+/// datasource. The block should set some custom style on the given 
+/// attributed string.
+@property (nonatomic, copy) StylizeFilePartStringBlock stylizeBlock;
 
 @end
