@@ -946,7 +946,7 @@ static void init(ECCodeView *self)
     {
         if (!infoView)
         {
-            infoView = [[CodeInfoView alloc] initWithFrame:self.bounds navigatorDatasource:datasource renderer:renderer renderingQueue:renderingQueue];
+            infoView = [[CodeInfoView alloc] initWithFrame:self.bounds navigatorDatasource:self.datasource renderer:renderer renderingQueue:renderingQueue];
             infoView.navigatorBackgroundColor = navigatorBackgroundColor;
             infoView.navigatorWidth = navigatorWidth;
             infoView.parentSize = self.bounds.size;
@@ -1074,7 +1074,7 @@ static void init(ECCodeView *self)
 
 - (BOOL)hasText
 {
-    return [datasource textLength] > 0;
+    return [self.datasource textLength] > 0;
 }
 
 - (void)insertText:(NSString *)string
@@ -1173,7 +1173,7 @@ static void init(ECCodeView *self)
     if (e <= s)
         result = @"";
     else
-        result = [datasource codeView:self stringInRange:(NSRange){s, e - s}];
+        result = [self.datasource codeView:self stringInRange:(NSRange){s, e - s}];
     
     return result;
 }
@@ -1189,7 +1189,7 @@ static void init(ECCodeView *self)
     if (e < s)
         return;
     
-    NSUInteger textLength = [datasource textLength];
+    NSUInteger textLength = [self.datasource textLength];
     if (s > textLength)
         s = textLength;
     
@@ -1333,7 +1333,7 @@ static void init(ECCodeView *self)
             return nil;
     }
     
-    NSUInteger textLength = [datasource textLength];
+    NSUInteger textLength = [self.datasource textLength];
     if (result > textLength)
         result = textLength;
     
@@ -1350,7 +1350,7 @@ static void init(ECCodeView *self)
 
 - (UITextPosition *)endOfDocument
 {
-    ECTextPosition *p = [[[ECTextPosition alloc] initWithIndex:[datasource textLength]] autorelease];
+    ECTextPosition *p = [[[ECTextPosition alloc] initWithIndex:[self.datasource textLength]] autorelease];
     return p;
 }
 
@@ -1457,7 +1457,7 @@ static void init(ECCodeView *self)
 {
     ECTextPosition *pos = (ECTextPosition *)[self closestPositionToPoint:point];
     
-    NSRange r = [[datasource codeView:self stringInRange:(NSRange){ pos.index, 1 }] rangeOfComposedCharacterSequenceAtIndex:0];
+    NSRange r = [[self.datasource codeView:self stringInRange:(NSRange){ pos.index, 1 }] rangeOfComposedCharacterSequenceAtIndex:0];
     
     if (r.location == NSNotFound)
         return nil;
@@ -1471,13 +1471,13 @@ static void init(ECCodeView *self)
 - (void)editDataSourceInRange:(NSRange)range withString:(NSString *)string
 {
     if (dataSourceHasCodeCanEditTextInRange
-        && [datasource codeView:self canEditTextInRange:range]) 
+        && [self.datasource codeView:self canEditTextInRange:range]) 
     {
         [self unmarkText];
         
         [inputDelegate textWillChange:self];
         
-        [datasource codeView:self commitString:string forTextInRange:range];
+        [self.datasource codeView:self commitString:string forTextInRange:range];
         
         [inputDelegate textDidChange:self];
     }
