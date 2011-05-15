@@ -123,7 +123,8 @@
     NSData *textData = [fileHandle readDataOfLength:(NSUInteger)(lineRangeEndOffset - lineRangeLocationOffset)];
         
     // Prepare return
-    if (endOfString && end != NSMaxRange(*lineRange))
+    unsigned long long fileOffset = [fileHandle offsetInFile];
+    if (endOfString && fileOffset >= fileLength)
         *endOfString = YES;
     lineRange->length = end - location;
     NSString *string = [[NSString alloc] initWithData:textData encoding:NSUTF8StringEncoding];
@@ -171,23 +172,36 @@
         // Seek to line
         unsigned long long lineOffset = fileOffset;
         NSAutoreleasePool *pool = [NSAutoreleasePool new];
+        NSData *chunk;
+        NSUInteger chunkLength;
+        NSRange newLineRange;
         while (lineCount < *line && fileOffset < fileLength) 
         {
-            NSData *chunk = [fileHandle readDataOfLength:chunkSize];
-            NSUInteger chunkLength = [chunk length];
-            NSRange newLineRange = [chunk rangeOfData:lineDelimiterData options:0 range:(NSRange){0, chunkLength}];
-            if (newLineRange.location != NSNotFound) 
+            chunk = [fileHandle readDataOfLength:chunkSize];
+            chunkLength = [chunk length];
+            
+            newLineRange.location = 0;
+            newLineRange.length = chunkLength;
+            while (newLineRange.length && (newLineRange = [chunk rangeOfData:lineDelimiterData options:0 range:newLineRange]).location != NSNotFound) 
             {
                 lineCount++;
                 lineOffset = fileOffset + NSMaxRange(newLineRange);
+                
+                newLineRange.location++;
+                newLineRange.length = chunkLength - newLineRange.location;
             }
+            
             fileOffset += chunkLength;
         }
         [pool drain];
         
         // TODO cache that every line after this are after eof?
-        if (fileOffset >= fileLength)
-            lineOffset = fileLength - 1;
+        // Adding last line of file
+        if (fileOffset >= fileLength && lineOffset < fileLength)
+        {
+            lineOffset = fileLength;
+            lineCount++;
+        }
         
         // Cache result
         [lineOffsetsDictionary setObject:[NSNumber numberWithUnsignedLongLong:lineOffset] forKey:lineNumber];
