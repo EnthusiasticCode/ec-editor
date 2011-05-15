@@ -1000,7 +1000,7 @@ static void init(ECCodeView *self)
 - (BOOL)canBecomeFirstResponder
 {
     // TODO should return depending on edit enabled state
-    return YES;
+    return dataSourceHasCodeCanEditTextInRange;
 }
 
 - (BOOL)becomeFirstResponder
