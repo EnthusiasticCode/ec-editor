@@ -21,6 +21,8 @@
 /// have actually been return.
 /// endOfString is an output parameter that should be set to YES if the 
 /// requested line range contains the end of the source string.
+/// The returned string should contain an additional new line at the end of
+/// the source text for optimal rendering.
 - (NSAttributedString *)textRenderer:(ECTextRenderer *)sender stringInLineRange:(NSRange *)lineRange endOfString:(BOOL *)endOfString;
 
 @optional

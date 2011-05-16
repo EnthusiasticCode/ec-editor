@@ -12,6 +12,7 @@
 		CD28E6661374317200ADD2FC /* ECRectSet.m in Sources */ = {isa = PBXBuildFile; fileRef = CD28E6651374317200ADD2FC /* ECRectSet.m */; };
 		CD67747B1379DBEB00AA37CE /* Inconsolata.otf in Resources */ = {isa = PBXBuildFile; fileRef = CD67747A1379DBEB00AA37CE /* Inconsolata.otf */; };
 		CDA3F5C71379BBC400E72D46 /* NSTimer+block.m in Sources */ = {isa = PBXBuildFile; fileRef = CDA3F5C61379BBC400E72D46 /* NSTimer+block.m */; };
+		CDA9216F137D945000AE1BBF /* ECCodeFileDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = CDA9216E137D945000AE1BBF /* ECCodeFileDataSource.m */; };
 		CDB949BA136C3AF200870A98 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CDB949B9136C3AF200870A98 /* QuartzCore.framework */; };
 		CDCD1C861368607300A6DA9E /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CDCD1C851368607300A6DA9E /* UIKit.framework */; };
 		CDCD1C881368607300A6DA9E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CDCD1C871368607300A6DA9E /* Foundation.framework */; };
@@ -45,6 +46,8 @@
 		CD67747A1379DBEB00AA37CE /* Inconsolata.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Inconsolata.otf; sourceTree = "<group>"; };
 		CDA3F5C51379BBC300E72D46 /* NSTimer+block.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSTimer+block.h"; sourceTree = "<group>"; };
 		CDA3F5C61379BBC400E72D46 /* NSTimer+block.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSTimer+block.m"; sourceTree = "<group>"; };
+		CDA9216D137D945000AE1BBF /* ECCodeFileDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeFileDataSource.h; sourceTree = "<group>"; };
+		CDA9216E137D945000AE1BBF /* ECCodeFileDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeFileDataSource.m; sourceTree = "<group>"; };
 		CDB949B9136C3AF200870A98 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		CDCD1C811368607300A6DA9E /* CodeView.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CodeView.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CDCD1C851368607300A6DA9E /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
@@ -102,6 +105,17 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		CDA92170137D949800AE1BBF /* Concrete data sources */ = {
+			isa = PBXGroup;
+			children = (
+				CDCD1CB81368614000A6DA9E /* ECCodeStringDataSource.h */,
+				CDCD1CB91368614000A6DA9E /* ECCodeStringDataSource.m */,
+				CDA9216D137D945000AE1BBF /* ECCodeFileDataSource.h */,
+				CDA9216E137D945000AE1BBF /* ECCodeFileDataSource.m */,
+			);
+			name = "Concrete data sources";
+			sourceTree = "<group>";
+		};
 		CDCD1C761368607300A6DA9E = {
 			isa = PBXGroup;
 			children = (
@@ -189,8 +203,7 @@
 				CDF9F22D136DC9BD00CB5945 /* ECCodeViewBase.m */,
 				CDCD1CE11368684300A6DA9E /* ECCodeView.h */,
 				CDCD1CE21368684300A6DA9E /* ECCodeView.m */,
-				CDCD1CB81368614000A6DA9E /* ECCodeStringDataSource.h */,
-				CDCD1CB91368614000A6DA9E /* ECCodeStringDataSource.m */,
+				CDA92170137D949800AE1BBF /* Concrete data sources */,
 				CDCD1CBD1368614000A6DA9E /* ECTextPosition.h */,
 				CDCD1CBE1368614000A6DA9E /* ECTextPosition.m */,
 				CDCD1CBF1368614000A6DA9E /* ECTextRange.h */,
@@ -284,6 +297,7 @@
 				CD28E65C1372E57600ADD2FC /* ECPopoverView.m in Sources */,
 				CD28E6661374317200ADD2FC /* ECRectSet.m in Sources */,
 				CDA3F5C71379BBC400E72D46 /* NSTimer+block.m in Sources */,
+				CDA9216F137D945000AE1BBF /* ECCodeFileDataSource.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

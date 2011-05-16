@@ -118,9 +118,11 @@
     // Navigation logic may go here. Create and push another view controller.
     NSURL *dir = [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject];
     NSURL *file = [dir URLByAppendingPathComponent:[tableView cellForRowAtIndexPath:indexPath].textLabel.text];
-    NSString *fileContent = [NSString stringWithContentsOfURL:file encoding:NSUTF8StringEncoding error:NULL];
     
-    detailViewController.codeView.text = fileContent;
+//    NSString *fileContent = [NSString stringWithContentsOfURL:file encoding:NSUTF8StringEncoding error:NULL];
+//    detailViewController.codeView.text = fileContent;
+    [(ECCodeFileDataSource *)detailViewController.codeView.datasource setPath:[file path]];
+    [detailViewController.codeView updateAllText];
 }
 
 - (void)didReceiveMemoryWarning

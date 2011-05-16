@@ -8,10 +8,12 @@
 
 #import <UIKit/UIKit.h>
 #import "ECCodeView.h"
+#import "ECCodeFileDataSource.h"
 
 @interface DetailViewController : UIViewController <UIPopoverControllerDelegate, UISplitViewControllerDelegate, UIScrollViewDelegate> {
 
     ECCodeView *_codeView;
+    ECCodeFileDataSource *codeViewDataSource;
 }
 
 

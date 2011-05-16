@@ -12,7 +12,6 @@
 
 @interface ECCodeViewBase : UIScrollView <ECTextRendererDelegate> {
 @protected
-    id<ECCodeViewDataSource> datasource;
     ECTextRenderer *renderer;
     NSOperationQueue *renderingQueue;
     UIEdgeInsets textInsets;
