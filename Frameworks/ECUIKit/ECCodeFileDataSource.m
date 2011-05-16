@@ -16,12 +16,20 @@
     
     NSData *lineDelimiterData;
     NSMutableDictionary *lineOffsetsDictionary;
+    
+    NSMutableAttributedString *editableString;
+    struct {
+        unsigned long long location, lenght;
+    } editableStringFileRange;
+    BOOL editableStringIsDirty;
 }
 
 /// Returns the offset of the beginning of the given line in the file.
 /// This methods uses lineDelimiterData to determin the end of a line
 /// and caches line offsets in lineOffsetsDicionary;
 - (unsigned long long)lineOffsetForLine:(NSUInteger *)line;
+
+- (void)openInputFile;
 
 @end
 
@@ -32,25 +40,16 @@
 @synthesize defaultTextStyle;
 @synthesize stylizeBlock;
 @synthesize chunkSize;
-@synthesize path;
+@synthesize inputFileURL;
 
-- (void)setPath:(NSString *)filePath
+- (void)setInputFileURL:(NSURL *)inputURL
 {
     [fileHandle release];
-    [path release];
+    [inputFileURL release];
     
-    path = [filePath retain];
+    inputFileURL = [inputURL retain];
     
-    // Resetting file cursors
-    fileHandle = [[NSFileHandle fileHandleForReadingAtPath:path] retain];
-    [fileHandle seekToEndOfFile];
-    fileLength = [fileHandle offsetInFile];
-    
-    if (!lineOffsetsDictionary)
-        lineOffsetsDictionary = [[NSMutableDictionary dictionaryWithCapacity:10] retain];
-    else
-        [lineOffsetsDictionary removeAllObjects];
-    [lineOffsetsDictionary setObject:[NSNumber numberWithUnsignedLongLong:0] forKey:[NSNumber numberWithUnsignedInteger:0]];
+    [self openInputFile];
 }
 
 - (NSString *)lineDelimiter
@@ -70,7 +69,7 @@
 {
     if ((self = [super init])) 
     {
-        chunkSize = 10;
+        chunkSize = 1024;
         self.lineDelimiter = @"\n";
         self.defaultTextStyle = [ECTextStyle textStyleWithName:@"default" font:[UIFont fontWithName:@"Inconsolata" size:15] color:nil];
     }
@@ -79,11 +78,68 @@
 
 - (void)dealloc
 {
+    [self flush];
+    
     [lineOffsetsDictionary release];
     [lineDelimiterData release];
     [fileHandle release];
-    [path release];
+    [inputFileURL release];
+    
+    [editableString release];
+    
     [super dealloc];
+}
+
+#pragma mark Public Methods
+
+- (void)flush
+{
+    if (!editableStringIsDirty)
+        return;
+    
+    NSURL *tempFileURL = [[NSURL URLWithString:NSTemporaryDirectory()] URLByAppendingPathComponent:[inputFileURL lastPathComponent]];
+    NSAutoreleasePool *pool = [NSAutoreleasePool new];
+    {
+        // Get temporary file
+        NSFileHandle *tempFile = [NSFileHandle fileHandleForWritingToURL:tempFileURL error:NULL];
+        
+        // Writing data
+        // TODO see if pool should be moved inside loop
+        NSData *writeData;
+        NSUInteger writeDataSize;
+        unsigned long long writeBytesCount = editableStringFileRange.location;
+        [fileHandle seekToFileOffset:0];
+        // Head
+        while (writeBytesCount) 
+        {
+            writeDataSize = MIN((NSUInteger)writeBytesCount, chunkSize);
+            writeData = [fileHandle readDataOfLength:writeDataSize];
+            [tempFile writeData:writeData];
+            writeBytesCount -= writeDataSize;
+        }
+        // Changed
+        writeData = [[editableString string] dataUsingEncoding:NSUTF8StringEncoding];
+        [tempFile writeData:writeData];
+        writeBytesCount = fileLength - (editableStringFileRange.location + editableStringFileRange.lenght);
+        editableStringFileRange.lenght = [writeData length];
+        // Tail
+        while (writeBytesCount) 
+        {
+            writeDataSize = MIN((NSUInteger)writeBytesCount, chunkSize);
+            writeData = [fileHandle readDataOfLength:writeDataSize];
+            [tempFile writeData:writeData];
+            writeBytesCount -= writeDataSize;
+        }
+    }
+    [pool drain];
+    
+    // Move file into position
+//    [tempFile closeFile];
+    [fileHandle release];
+    [[NSFileManager defaultManager] moveItemAtURL:tempFileURL toURL:inputFileURL error:NULL];
+    [self openInputFile];
+    
+    editableStringIsDirty = NO;
 }
 
 #pragma mark CodeView Data Source Methods
@@ -124,28 +180,32 @@
     NSData *textData = [fileHandle readDataOfLength:(NSUInteger)(lineRangeEndOffset - lineRangeLocationOffset)];
 
     // Prepare return
+    [self flush];
     lineRange->length = end - location;
-    NSString *string = [[NSString alloc] initWithData:textData encoding:NSUTF8StringEncoding];    
-    NSMutableAttributedString *result = [[NSMutableAttributedString alloc] initWithString:string attributes:defaultTextStyle.CTAttributes];
+    NSString *string = [[NSString alloc] initWithData:textData encoding:NSUTF8StringEncoding];
+    [editableString release];
+    editableString = [[NSMutableAttributedString alloc] initWithString:string attributes:defaultTextStyle.CTAttributes];
     [string release];
+    editableStringFileRange.location = lineRangeLocationOffset;
+    editableStringFileRange.lenght = lineRangeEndOffset - lineRangeLocationOffset;
+    editableStringIsDirty = NO;
     
     // Apply custom styles
     if (stylizeBlock)
-        stylizeBlock(self, result, NSMakeRange(lineRangeLocationOffset, (NSUInteger)(lineRangeEndOffset - lineRangeLocationOffset)));
+        stylizeBlock(self, editableString, NSMakeRange(lineRangeLocationOffset, (NSUInteger)(editableStringFileRange.lenght)));
     
     // Determine end of file/string and append tailing new line
-    unsigned long long fileOffset = [fileHandle offsetInFile];
-    if (fileOffset >= fileLength)
+    if ([fileHandle offsetInFile] >= fileLength)
     {
         NSAttributedString *lineDelimiter = [[NSAttributedString alloc] initWithString:self.lineDelimiter attributes:defaultTextStyle.CTAttributes];
-        [result appendAttributedString:lineDelimiter];
+        [editableString appendAttributedString:lineDelimiter];
         [lineDelimiter release];
         
         if (endOfString)
             *endOfString = YES;
     }
     
-    return [result autorelease];
+    return editableString;
 }
 
 - (NSUInteger)textRenderer:(ECTextRenderer *)sender estimatedTextLineCountOfLength:(NSUInteger)maximumLineLength
@@ -155,6 +215,19 @@
 }
 
 #pragma mark Private Methods
+
+- (void)openInputFile
+{
+    fileHandle = [[NSFileHandle fileHandleForReadingFromURL:inputFileURL error:NULL] retain];
+    [fileHandle seekToEndOfFile];
+    fileLength = [fileHandle offsetInFile];
+    
+    if (!lineOffsetsDictionary)
+        lineOffsetsDictionary = [[NSMutableDictionary dictionaryWithCapacity:10] retain];
+    else
+        [lineOffsetsDictionary removeAllObjects];
+    [lineOffsetsDictionary setObject:[NSNumber numberWithUnsignedLongLong:0] forKey:[NSNumber numberWithUnsignedInteger:0]];
+}
 
 - (unsigned long long)lineOffsetForLine:(NSUInteger *)line
 {
