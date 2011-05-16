@@ -102,7 +102,6 @@
 		B7199D62137DD7EF008072D9 /* libLLVMX86Utils.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7199D1D137DD7EE008072D9 /* libLLVMX86Utils.a */; };
 		B7199D63137DD7EF008072D9 /* libLLVMXCoreCodeGen.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7199D1E137DD7EE008072D9 /* libLLVMXCoreCodeGen.a */; };
 		B7199D64137DD7EF008072D9 /* libLLVMXCoreInfo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7199D1F137DD7EE008072D9 /* libLLVMXCoreInfo.a */; };
-		B7199D66137DD80C008072D9 /* libstdc++.6.0.9.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B7199D65137DD80C008072D9 /* libstdc++.6.0.9.dylib */; };
 		B72BE6351368C0F9009B0977 /* NSMutableArray+Shuffling.m in Sources */ = {isa = PBXBuildFile; fileRef = B72BE6341368C0F9009B0977 /* NSMutableArray+Shuffling.m */; };
 		B72BE641136B3E53009B0977 /* ECDictionaryCache.m in Sources */ = {isa = PBXBuildFile; fileRef = B72BE640136B3E53009B0977 /* ECDictionaryCache.m */; };
 		B72BE649136B3E7F009B0977 /* ECCodeStringDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = B72BE643136B3E7E009B0977 /* ECCodeStringDataSource.m */; };
@@ -267,7 +266,6 @@
 		B7199D1D137DD7EE008072D9 /* libLLVMX86Utils.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libLLVMX86Utils.a; sourceTree = "<group>"; };
 		B7199D1E137DD7EE008072D9 /* libLLVMXCoreCodeGen.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libLLVMXCoreCodeGen.a; sourceTree = "<group>"; };
 		B7199D1F137DD7EE008072D9 /* libLLVMXCoreInfo.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libLLVMXCoreInfo.a; sourceTree = "<group>"; };
-		B7199D65137DD80C008072D9 /* libstdc++.6.0.9.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = "libstdc++.6.0.9.dylib"; sourceTree = "<group>"; };
 		B72BE6331368C0F9009B0977 /* NSMutableArray+Shuffling.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSMutableArray+Shuffling.h"; sourceTree = "<group>"; };
 		B72BE6341368C0F9009B0977 /* NSMutableArray+Shuffling.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSMutableArray+Shuffling.m"; sourceTree = "<group>"; };
 		B72BE63F136B3E53009B0977 /* ECDictionaryCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECDictionaryCache.h; sourceTree = "<group>"; };
@@ -491,7 +489,6 @@
 				B7199D62137DD7EF008072D9 /* libLLVMX86Utils.a in Frameworks */,
 				B7199D63137DD7EF008072D9 /* libLLVMXCoreCodeGen.a in Frameworks */,
 				B7199D64137DD7EF008072D9 /* libLLVMXCoreInfo.a in Frameworks */,
-				B7199D66137DD80C008072D9 /* libstdc++.6.0.9.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -590,7 +587,6 @@
 		B771FFCA137C814100E6A057 /* clang */ = {
 			isa = PBXGroup;
 			children = (
-				B7199D65137DD80C008072D9 /* libstdc++.6.0.9.dylib */,
 				B7199CDB137DD7EE008072D9 /* libLLVMAlphaCodeGen.a */,
 				B7199CDC137DD7EE008072D9 /* libLLVMAlphaInfo.a */,
 				B7199CDD137DD7EE008072D9 /* libLLVMAnalysis.a */,
@@ -1079,6 +1075,7 @@
 				INFOPLIST_FILE = "Apps/edit/edit-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
 				LIBRARY_SEARCH_PATHS = "";
+				OTHER_LDFLAGS = "-lstdc++";
 				PRODUCT_NAME = edit;
 				TARGETED_DEVICE_FAMILY = 2;
 			};
@@ -1091,6 +1088,7 @@
 				INFOPLIST_FILE = "Apps/edit/edit-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
 				LIBRARY_SEARCH_PATHS = "";
+				OTHER_LDFLAGS = "-lstdc++";
 				PRODUCT_NAME = edit;
 				TARGETED_DEVICE_FAMILY = 2;
 			};
