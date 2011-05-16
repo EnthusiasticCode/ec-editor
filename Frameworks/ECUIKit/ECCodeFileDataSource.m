@@ -7,6 +7,10 @@
 //
 
 #import "ECCodeFileDataSource.h"
+//#import <objc/runtime.h>
+
+
+//static const char *StringOffsetKey = "StringOffset";
 
 
 @interface ECCodeFileDataSource () {
@@ -159,7 +163,15 @@
     return [[[NSString alloc] initWithData:stringData encoding:NSUTF8StringEncoding] autorelease];
 }
 
-// TODO editing methods
+- (BOOL)codeView:(ECCodeViewBase *)codeView canEditTextInRange:(NSRange)range
+{
+    return YES;
+}
+
+- (void)codeView:(ECCodeViewBase *)codeView commitString:(NSString *)string forTextInRange:(NSRange)range
+{
+    
+}
 
 #pragma mark Text Renderer Data Source Methods
 
@@ -229,12 +241,18 @@
     [lineOffsetsDictionary setObject:[NSNumber numberWithUnsignedLongLong:0] forKey:[NSNumber numberWithUnsignedInteger:0]];
 }
 
-- (unsigned long long)lineOffsetForLine:(NSUInteger *)line
+- (unsigned long long)lineOffsetForLine:(NSUInteger *)line //stringOffset:(NSUInteger *)stringOffset
 {
     NSNumber *lineNumber = [NSNumber numberWithUnsignedInteger:*line];
     NSNumber *cachedOffset = [lineOffsetsDictionary objectForKey:lineNumber];
     if (cachedOffset) 
     {
+//        if (stringOffset) 
+//        {
+//            // Using associative reference to get saved stirng offset
+//            NSNumber *stringOffsetNumber = objc_getAssociatedObject(cachedOffset, StringOffsetKey);
+//            *stringOffset = [stringOffsetNumber unsignedIntegerValue];
+//        }
         return [cachedOffset unsignedLongLongValue];
     }
     else
@@ -253,13 +271,18 @@
         
         // Seek as closest as possible to required line
         NSUInteger lineCount = [closestKey unsignedIntegerValue];
-        unsigned long long fileOffset = [[lineOffsetsDictionary objectForKey:closestKey] unsignedLongLongValue];
+        NSNumber *closestOffset = [lineOffsetsDictionary objectForKey:closestKey];
+        unsigned long long fileOffset = [closestOffset unsignedLongLongValue];
         [fileHandle seekToFileOffset:fileOffset];
+        
+        // Getting closest string offset
+//        NSUInteger utf8Offset = [objc_getAssociatedObject(closestOffset, StringOffsetKey) unsignedIntegerValue];
         
         // Seek to line
         unsigned long long lineOffset = fileOffset;
         NSAutoreleasePool *pool = [NSAutoreleasePool new];
         NSData *chunk;
+//        NSString *chunkString;
         NSUInteger chunkLength;
         NSRange newLineRange;
         while (lineCount < *line && fileOffset < fileLength) 
@@ -279,6 +302,8 @@
             }
             
             fileOffset += chunkLength;
+            
+            // TODO get utf8Offset
         }
         [pool drain];
         

@@ -1449,7 +1449,8 @@ static void init(ECCodeView *self)
         point.y /= scale;
     }
     
-    NSUInteger location = [renderer closestStringLocationToPoint:point withinStringRange:[(ECTextRange *)range range]];
+    NSUInteger location = [renderer closestStringLocationToPoint:point 
+                                               withinStringRange:range ? [(ECTextRange *)range range] : (NSRange){0, 0}];
     return [[[ECTextPosition alloc] initWithIndex:location] autorelease];;
 }
 

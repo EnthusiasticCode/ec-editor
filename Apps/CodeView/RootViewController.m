@@ -121,7 +121,7 @@
     
 //    NSString *fileContent = [NSString stringWithContentsOfURL:file encoding:NSUTF8StringEncoding error:NULL];
 //    detailViewController.codeView.text = fileContent;
-    [(ECCodeFileDataSource *)detailViewController.codeView.datasource setPath:[file path]];
+    [(ECCodeFileDataSource *)detailViewController.codeView.datasource setInputFileURL:file];
     [detailViewController.codeView updateAllText];
 }
 
