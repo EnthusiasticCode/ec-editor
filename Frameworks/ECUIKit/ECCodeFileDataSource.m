@@ -7,10 +7,6 @@
 //
 
 #import "ECCodeFileDataSource.h"
-//#import <objc/runtime.h>
-
-
-//static const char *StringOffsetKey = "StringOffset";
 
 
 @interface ECCodeFileDataSource () {
@@ -163,15 +159,15 @@
     return [[[NSString alloc] initWithData:stringData encoding:NSUTF8StringEncoding] autorelease];
 }
 
-- (BOOL)codeView:(ECCodeViewBase *)codeView canEditTextInRange:(NSRange)range
-{
-    return YES;
-}
-
-- (void)codeView:(ECCodeViewBase *)codeView commitString:(NSString *)string forTextInRange:(NSRange)range
-{
-    
-}
+//- (BOOL)codeView:(ECCodeViewBase *)codeView canEditTextInRange:(NSRange)range
+//{
+//    return YES;
+//}
+//
+//- (void)codeView:(ECCodeViewBase *)codeView commitString:(NSString *)string forTextInRange:(NSRange)range
+//{
+//    
+//}
 
 #pragma mark Text Renderer Data Source Methods
 
@@ -241,18 +237,12 @@
     [lineOffsetsDictionary setObject:[NSNumber numberWithUnsignedLongLong:0] forKey:[NSNumber numberWithUnsignedInteger:0]];
 }
 
-- (unsigned long long)lineOffsetForLine:(NSUInteger *)line //stringOffset:(NSUInteger *)stringOffset
+- (unsigned long long)lineOffsetForLine:(NSUInteger *)line
 {
     NSNumber *lineNumber = [NSNumber numberWithUnsignedInteger:*line];
     NSNumber *cachedOffset = [lineOffsetsDictionary objectForKey:lineNumber];
     if (cachedOffset) 
     {
-//        if (stringOffset) 
-//        {
-//            // Using associative reference to get saved stirng offset
-//            NSNumber *stringOffsetNumber = objc_getAssociatedObject(cachedOffset, StringOffsetKey);
-//            *stringOffset = [stringOffsetNumber unsignedIntegerValue];
-//        }
         return [cachedOffset unsignedLongLongValue];
     }
     else
@@ -275,35 +265,34 @@
         unsigned long long fileOffset = [closestOffset unsignedLongLongValue];
         [fileHandle seekToFileOffset:fileOffset];
         
-        // Getting closest string offset
-//        NSUInteger utf8Offset = [objc_getAssociatedObject(closestOffset, StringOffsetKey) unsignedIntegerValue];
-        
         // Seek to line
         unsigned long long lineOffset = fileOffset;
         NSAutoreleasePool *pool = [NSAutoreleasePool new];
-        NSData *chunk;
-//        NSString *chunkString;
-        NSUInteger chunkLength;
-        NSRange newLineRange;
-        while (lineCount < *line && fileOffset < fileLength) 
         {
-            chunk = [fileHandle readDataOfLength:chunkSize];
-            chunkLength = [chunk length];
-            
-            newLineRange.location = 0;
-            newLineRange.length = chunkLength;
-            while (newLineRange.length && (newLineRange = [chunk rangeOfData:lineDelimiterData options:0 range:newLineRange]).location != NSNotFound) 
+            NSRange newLineRange;
+            NSData *chunk;
+            NSUInteger chunkLength = 0;
+            while (lineCount < *line && fileOffset < fileLength) 
             {
-                lineCount++;
-                lineOffset = fileOffset + NSMaxRange(newLineRange);
+                fileOffset += chunkLength;
                 
-                newLineRange.location++;
-                newLineRange.length = chunkLength - newLineRange.location;
+                chunk = [fileHandle readDataOfLength:chunkSize];
+                chunkLength = [chunk length];
+                
+                newLineRange.location = 0;
+                newLineRange.length = chunkLength;
+                while (newLineRange.length && (newLineRange = [chunk rangeOfData:lineDelimiterData options:0 range:newLineRange]).location != NSNotFound) 
+                {
+                    lineCount++;
+                    lineOffset = fileOffset + newLineRange.location;
+                    
+                    if (lineCount >= *line)
+                        break;
+                    
+                    newLineRange.location += newLineRange.length;
+                    newLineRange.length = chunkLength - newLineRange.location;
+                }
             }
-            
-            fileOffset += chunkLength;
-            
-            // TODO get utf8Offset
         }
         [pool drain];
         
@@ -316,7 +305,8 @@
         }
         
         // Cache result
-        [lineOffsetsDictionary setObject:[NSNumber numberWithUnsignedLongLong:lineOffset] forKey:lineNumber];
+        cachedOffset = [NSNumber numberWithUnsignedLongLong:lineOffset];
+        [lineOffsetsDictionary setObject:cachedOffset forKey:lineNumber];
         
         *line = lineCount;
         return lineOffset;
