@@ -157,7 +157,7 @@ static inline Class preferredByteArrayClass(void) {
 #else
     NSNumber *number = [[NSNumber alloc] initWithUnsignedInt:bits];
 #endif
-    NSDictionary *userInfo = [[NSDictionary alloc] initWithObjects:&number forKeys:&HFControllerChangedPropertiesKey count:1];
+    NSDictionary *userInfo = [[NSDictionary alloc] initWithObjectsAndKeys:number, HFControllerChangedPropertiesKey, nil];
     [number release];
     [[NSNotificationCenter defaultCenter] postNotificationName:HFControllerDidChangePropertiesNotification object:self userInfo:userInfo];
     [userInfo release];
@@ -487,7 +487,7 @@ static inline Class preferredByteArrayClass(void) {
     double maxLines = DBL_MAX;
     FOREACH(HFRepresenter*, rep, representers) {
         UIView *view = [rep view];
-        double repMaxLines = [rep maximumAvailableLinesForViewHeight:NSHeight([view frame])];
+        double repMaxLines = [rep maximumAvailableLinesForViewHeight:view.frame.size.height];
         if (repMaxLines != DBL_MAX) {
             /* bytesPerLine may be ULONG_MAX.  We want to compute the smaller of maxBytesForViewSize and ceil(repMaxLines) * bytesPerLine.  If the latter expression overflows, the smaller is the former. */
             NSUInteger repMaxLinesUInt = (NSUInteger)ceil(repMaxLines);
@@ -512,10 +512,10 @@ static inline Class preferredByteArrayClass(void) {
         proposedNewDisplayRange.location -= proposedNewDisplayRange.location % bytesPerLine;
         proposedNewDisplayRange.length = MIN(HFMaxRange(maxRangeSet) - proposedNewDisplayRange.location, maxBytesForViewSize);
         if (maxBytesForViewSize % bytesPerLine != 0) {
-            NSLog(@"Bad max bytes: %lu (%lu)", maxBytesForViewSize, bytesPerLine);
+            NSLog(@"Bad max bytes: %u (%u)", maxBytesForViewSize, bytesPerLine);
         }
         if ((HFMaxRange(maxRangeSet) - proposedNewDisplayRange.location) % bytesPerLine != 0) {
-            NSLog(@"Bad max range minus: %llu (%lu)", HFMaxRange(maxRangeSet) - proposedNewDisplayRange.location, bytesPerLine);
+            NSLog(@"Bad max range minus: %llu (%u)", HFMaxRange(maxRangeSet) - proposedNewDisplayRange.location, bytesPerLine);
         }
         
         long double lastLine = HFULToFP([self totalLineCount]);
@@ -719,7 +719,7 @@ static inline Class preferredByteArrayClass(void) {
         remainingProperties &= ~HFControllerDisplayedLineRange;
     }
     if (remainingProperties) {
-        NSLog(@"Unknown properties: %lx", remainingProperties);
+        NSLog(@"Unknown properties: %u", remainingProperties);
     }
     END_TRANSACTION();
 }
@@ -1246,9 +1246,6 @@ static BOOL rangesAreInAscendingOrder(NSEnumerator *rangeEnumerator) {
         [self _updateDisplayedRange];
         END_TRANSACTION();
     }
-    else {
-        NSBeep();
-    }
 }
 
 - (void)_commandInsertByteArrays:(NSArray *)byteArrays inRanges:(NSArray *)ranges withSelectionAction:(SelectionAction_t)selectionAction {
@@ -1502,8 +1499,8 @@ static BOOL rangesAreInAscendingOrder(NSEnumerator *rangeEnumerator) {
 }
 
 - (void)deleteSelection {
-    if ([self inOverwriteMode] || ! [self isEditable]) {
-        NSBeep();
+    if ([self inOverwriteMode] || ! [self editable]) {
+//        NSBeep();
     }
     else {
         [self _commandDeleteRanges:[HFRangeWrapper organizeAndMergeRanges:selectedContentsRanges]];
@@ -1516,7 +1513,7 @@ static BOOL rangesAreInAscendingOrder(NSEnumerator *rangeEnumerator) {
     EXPECT_CLASS(newArray, HFByteArray);
     HFRange entireRange = HFRangeMake(0, [self contentsLength]);
     if ([self inOverwriteMode] && [newArray length] != entireRange.length) {
-        NSBeep();
+//        NSBeep();
     }
     else {
         [self _commandInsertByteArrays:[NSArray arrayWithObject:newArray] inRanges:[HFRangeWrapper withRanges:&entireRange count:1] withSelectionAction:ePreserveSelection];
@@ -1624,7 +1621,7 @@ static BOOL rangesAreInAscendingOrder(NSEnumerator *rangeEnumerator) {
     proposedRangeToOverwrite.location -= previousBytes;
     if (! HFRangeIsSubrangeOfRange(proposedRangeToOverwrite, HFRangeMake(0, byteArrayLength))) {
         /* The user tried to overwrite past the end */
-        NSBeep();
+//        NSBeep();
         return NO;
     }
     
@@ -1683,7 +1680,7 @@ static BOOL rangesAreInAscendingOrder(NSEnumerator *rangeEnumerator) {
 - (void)deleteDirection:(HFControllerMovementDirection)direction {
     HFASSERT(direction == HFControllerDirectionLeft || direction == HFControllerDirectionRight);
     if ([self inOverwriteMode]) {
-        NSBeep();
+//        NSBeep();
         return;
     }
     unsigned long long minSelection = [self _minimumSelectionLocation];

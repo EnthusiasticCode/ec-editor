@@ -31,7 +31,7 @@
 
 - (void)_updateProgress:(NSTimer *)timer {
     USE(timer);
-    double value;
+    float value;
     unsigned long long localCurrentProgress = currentProgress;
     if (maxProgress == 0 || localCurrentProgress == 0) {
         value = 0;
@@ -41,7 +41,7 @@
     }
     if (value != lastSetValue) {
         lastSetValue = value;
-        [progressIndicator setDoubleValue:lastSetValue];
+        [progressIndicator setProgress:lastSetValue];
         if (delegate && [delegate respondsToSelector:@selector(progressTracker:didChangeProgressTo:)]) {
             [delegate progressTracker:self didChangeProgressTo:lastSetValue];
         }
@@ -55,7 +55,6 @@
     [currentRunLoop addTimer:progressTimer forMode:NSDefaultRunLoopMode];
 //    [currentRunLoop addTimer:progressTimer forMode:NSModalPanelRunLoopMode];
     [self _updateProgress:nil];
-    [progressIndicator startAnimation:self];
 }
 
 - (void)endTrackingProgress {
@@ -63,7 +62,6 @@
     [progressTimer invalidate];
     [progressTimer release];
     progressTimer = nil;
-    [progressIndicator stopAnimation:self];
 }
 
 - (void)requestCancel:(id)sender {

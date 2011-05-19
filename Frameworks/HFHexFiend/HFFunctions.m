@@ -23,15 +23,11 @@ UIImage *HFImageNamed(NSString *name) {
             NSLog(@"Unable to find image named %@.tiff", name);
         }
         else {
-            image = [[UIImage alloc] initByReferencingFile:imagePath];
-            if (image == nil || ! [image isValid]) {
+            image = [[UIImage alloc] initWithContentsOfFile:imagePath];
+            if (image == nil) {
                 NSLog(@"Couldn't load image at path %@", imagePath);
                 [image release];
                 image = nil;
-            }
-            else {
-                [image setName:name];
-                [image setScalesWhenResized:YES];
             }
         }
     }
@@ -265,7 +261,7 @@ BOOL HFStringEncodingIsSupersetOfASCII(NSStringEncoding encoding) {
 	case kCFStringEncodingEBCDIC_US: return NO;
 	case kCFStringEncodingEBCDIC_CP037: return NO;
         default:
-            NSLog(@"Unknown string encoding %lu in %s", encoding, __FUNCTION__);
+            NSLog(@"Unknown string encoding %u in %s", encoding, __FUNCTION__);
             return NO;
     }
 }

@@ -13,8 +13,8 @@
 
 - initWithCoder:(NSCoder *)coder {
     if ((self = [super initWithCoder:coder])) {
-	[self setImage:HFImageNamed(@"HFCancelOff")];
-	[self setAlternateImage:HFImageNamed(@"HFCancelOn")];
+	[self setImage:HFImageNamed(@"HFCancelOff") forState:UIControlStateNormal];
+    [self setImage:HFImageNamed(@"HFCancelOn") forState:UIControlStateHighlighted];
     }
     return self;
 }

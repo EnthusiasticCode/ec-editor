@@ -196,7 +196,7 @@ bail:;
         HFRange newFirstRange = HFRangeMake(firstRange.location + length, firstRange.length - length);
         [remainingTargetRanges replaceObjectAtIndex:0 withObject:[HFRangeWrapper withRange:newFirstRange]];
     }
-    LOG_IO NSLog(@"Read {%llu, %lu}", [self sourceLocationForTargetLocation:firstRange.location], entry->length);
+    LOG_IO NSLog(@"Read {%llu, %u}", [self sourceLocationForTargetLocation:firstRange.location], entry->length);
     [file readBytes:buffer length:entry->length from:[self sourceLocationForTargetLocation:firstRange.location]];
     if (progressTracker) HFAtomicAdd64(entry->length, (volatile int64_t *)(&progressTracker->currentProgress));
     return entry;
@@ -226,7 +226,7 @@ bail:;
         [remainingTargetRanges replaceObjectAtIndex:0 withObject:[HFRangeWrapper withRange:newFirstRange]];
     }
     
-    LOG_IO NSLog(@"Read {%llu, %lu}", sourceLocation, entry->length);
+    LOG_IO NSLog(@"Read {%llu, %u}", sourceLocation, entry->length);
     [context->file readBytes:buffer length:length from:sourceLocation];
     if (context->progressTracker) HFAtomicAdd64(entry->length, (volatile int64_t *)(&context->progressTracker->currentProgress));
     
@@ -297,7 +297,7 @@ bail:;
             entry->offset = [self targetLocationForSourceLocation:left];
             entry->bytes = [context allocateMemoryOfLength:entry->length];
             entry->source = left;
-            LOG_IO NSLog(@"Read {%llu, %lu}", left, entry->length);
+            LOG_IO NSLog(@"Read {%llu, %u}", left, entry->length);
             [context->file readBytes:entry->bytes length:entry->length from:left];
             if (context->progressTracker) HFAtomicAdd64(entry->length, (volatile int64_t *)(&context->progressTracker->currentProgress));
             [context->queue addObject:entry];

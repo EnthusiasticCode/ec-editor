@@ -89,12 +89,6 @@
 		B7C8161113846DBF00800493 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/DetailView.xib; sourceTree = "<group>"; };
 		B7C8161313846DBF00800493 /* RootViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RootViewController.h; sourceTree = "<group>"; };
 		B7C8161413846DBF00800493 /* RootViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RootViewController.m; sourceTree = "<group>"; };
-		B7C8162F13846E6000800493 /* BTree_Test_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BTree_Test_Prefix.pch; sourceTree = "<group>"; };
-		B7C8163013846E6000800493 /* NaiveArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NaiveArray.h; sourceTree = "<group>"; };
-		B7C8163113846E6000800493 /* NaiveArray.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NaiveArray.m; sourceTree = "<group>"; };
-		B7C8163213846E6000800493 /* TreeEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TreeEntry.h; sourceTree = "<group>"; };
-		B7C8163313846E6000800493 /* TreeEntry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TreeEntry.m; sourceTree = "<group>"; };
-		B7C8163413846E6000800493 /* test_btree_main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = test_btree_main.m; sourceTree = "<group>"; };
 		B7C8163513846E6000800493 /* HFBTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HFBTree.h; sourceTree = "<group>"; };
 		B7C8163613846E6000800493 /* HFBTree.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HFBTree.m; sourceTree = "<group>"; };
 		B7C8163713846E6000800493 /* HexFiend_2_Framework_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HexFiend_2_Framework_Prefix.pch; sourceTree = "<group>"; };
@@ -296,24 +290,10 @@
 		B7C8162D13846E6000800493 /* BTree */ = {
 			isa = PBXGroup;
 			children = (
-				B7C8162E13846E6000800493 /* BTree_Testing */,
 				B7C8163513846E6000800493 /* HFBTree.h */,
 				B7C8163613846E6000800493 /* HFBTree.m */,
 			);
 			path = BTree;
-			sourceTree = "<group>";
-		};
-		B7C8162E13846E6000800493 /* BTree_Testing */ = {
-			isa = PBXGroup;
-			children = (
-				B7C8162F13846E6000800493 /* BTree_Test_Prefix.pch */,
-				B7C8163013846E6000800493 /* NaiveArray.h */,
-				B7C8163113846E6000800493 /* NaiveArray.m */,
-				B7C8163213846E6000800493 /* TreeEntry.h */,
-				B7C8163313846E6000800493 /* TreeEntry.m */,
-				B7C8163413846E6000800493 /* test_btree_main.m */,
-			);
-			path = BTree_Testing;
 			sourceTree = "<group>";
 		};
 		B7C816D91384758C00800493 /* HexFiend */ = {

@@ -34,13 +34,12 @@ static void returnReadError(NSError **error) {
 }
 
 static void returnFTruncateError(NSError **error) {
-    const NSInteger HF_NSFileWriteVolumeReadOnlyError = 642 /* NSFileWriteVolumeReadOnlyError, only on SnowLeopard and later */;
     if (error) {
 	int posixCode = errno;
 	NSInteger cocoaCode = 0;
 	switch (posixCode) {
-	    case ENOSPC:	cocoaCode = NSFileWriteOutOfSpaceError; break;
-	    case EROFS:		if (HFIsRunningOnLeopardOrLater()) cocoaCode = HF_NSFileWriteVolumeReadOnlyError; break;
+	    case ENOSPC:    cocoaCode = NSFileWriteOutOfSpaceError; break;
+	    case EROFS:	    cocoaCode = NSFileWriteVolumeReadOnlyError; break;
 	}
 	if (cocoaCode != 0) {
 	    *error = [NSError errorWithDomain:NSCocoaErrorDomain code:cocoaCode userInfo:nil];	

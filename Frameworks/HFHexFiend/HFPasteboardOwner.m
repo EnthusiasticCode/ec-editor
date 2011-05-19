@@ -22,14 +22,12 @@ NSString *const HFPrivateByteArrayPboardType = @"HFPrivateByteArrayPboardType";
     }
 }
 
-- initWithPasteboard:(UIPasteboard *)pboard forByteArray:(HFByteArray *)array withTypes:(NSArray *)types {
+- initWithPasteboard:(UIPasteboard *)pboard forByteArray:(HFByteArray *)array {
     REQUIRE_NOT_NULL(pboard);
     REQUIRE_NOT_NULL(array);
-    REQUIRE_NOT_NULL(types);
     [super init];
     byteArray = [array retain];
     pasteboard = pboard;
-    [pasteboard declareTypes:types owner:self];
     
     // get notified when we're about to write a file, so that if they're overwriting a file backing part of our byte array, we can properly clear or preserve our pasteboard
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changeInFileNotification:) name:HFPrepareForChangeInFileNotification object:nil];
@@ -37,8 +35,8 @@ NSString *const HFPrivateByteArrayPboardType = @"HFPrivateByteArrayPboardType";
     return self;
 }
 
-+ ownPasteboard:(UIPasteboard *)pboard forByteArray:(HFByteArray *)array withTypes:(NSArray *)types {
-    return [[[self alloc] initWithPasteboard:pboard forByteArray:array withTypes:types] autorelease];
++ ownPasteboard:(UIPasteboard *)pboard forByteArray:(HFByteArray *)array {
+    return [[[self alloc] initWithPasteboard:pboard forByteArray:array] autorelease];
 }
 
 - (void)tearDownPasteboardReferenceIfExists {
@@ -66,7 +64,7 @@ NSString *const HFPrivateByteArrayPboardType = @"HFPrivateByteArrayPboardType";
 
 + (HFByteArray *)unpackByteArrayFromPasteboard:(UIPasteboard *)pasteboard {
     REQUIRE_NOT_NULL(pasteboard);
-    HFByteArray *result = [self _unpackByteArrayFromDictionary:[pasteboard propertyListForType:HFPrivateByteArrayPboardType]];
+    HFByteArray *result = [self _unpackByteArrayFromDictionary:[pasteboard valueForPasteboardType:HFPrivateByteArrayPboardType]];
     return result;
 }
 
@@ -81,11 +79,11 @@ NSString *const HFPrivateByteArrayPboardType = @"HFPrivateByteArrayPboardType";
     NSString * const names[] = {UIPasteboardNameGeneral, UIPasteboardNameFind};
     NSUInteger i;
     for (i=0; i < sizeof names / sizeof *names; i++) {
-        UIPasteboard *pboard = [UIPasteboard pasteboardWithName:names[i]];
+        UIPasteboard *pboard = [UIPasteboard pasteboardWithName:names[i] create:YES];
         HFByteArray *byteArray = [self unpackByteArrayFromPasteboard:pboard];
         if (byteArray && ! [byteArray clearDependenciesOnRanges:changedRanges inFile:fileReference]) {
             /* This pasteboard no longer works */
-            [pboard declareTypes:[NSArray array] owner:nil];
+            //[pboard declareTypes:[NSArray array] owner:nil];
         }
     }
 }
@@ -169,14 +167,14 @@ NSString *const HFPrivateByteArrayPboardType = @"HFPrivateByteArrayPboardType";
     unsigned long long availableAmount = [byteArray length];
     unsigned long long amountToCopy = [self amountToCopyForDataLength:availableAmount stringLength:[self stringLengthForDataLength:availableAmount]];
     if (amountToCopy > 0) {
-        if (! [NSBundle loadNibNamed:@"HFModalProgress" owner:self] || ! progressTrackingWindow) {
-            [NSException raise:NSInternalInconsistencyException format:@"Unable to load nib named %@", @"HFModalProgress"];
-        }
+//        if (! [NSBundle loadNibNamed:@"HFModalProgress" owner:self] || ! progressTrackingWindow) {
+//            [NSException raise:NSInternalInconsistencyException format:@"Unable to load nib named %@", @"HFModalProgress"];
+//        }
 	backgroundCopyOperationFinished = NO;
 	didStartModalSessionForBackgroundCopyOperation = NO;
         dataAmountToCopy = amountToCopy;
-        unsigned long long stringAmountToCopy = [self stringLengthForDataLength:amountToCopy];
-        [progressTrackingDescriptionTextField setStringValue:HFDescribeByteCountWithPrefixAndSuffix("Copying ", stringAmountToCopy, " to the clipboard")];
+//        unsigned long long stringAmountToCopy = [self stringLengthForDataLength:amountToCopy];
+//        [progressTrackingDescriptionTextField setStringValue:HFDescribeByteCountWithPrefixAndSuffix("Copying ", stringAmountToCopy, " to the clipboard")];
         [progressTracker setProgressIndicator:progressTrackingIndicator];
         [progressTracker beginTrackingProgress];
         [NSThread detachNewThreadSelector:@selector(backgroundMoveDataToPasteboard:) toTarget:self withObject:type];
@@ -185,7 +183,7 @@ NSString *const HFPrivateByteArrayPboardType = @"HFPrivateByteArrayPboardType";
 //	    [[NSRunLoop currentRunLoop] runMode:NSModalPanelRunLoopMode beforeDate:[NSDate distantFuture]];
 	}
         [progressTracker endTrackingProgress];
-        [progressTrackingWindow close];
+//        [progressTrackingWindow close];
         [progressTrackingWindow release];
         progressTrackingWindow = nil;
         result = ! progressTracker->cancelRequested;
@@ -224,11 +222,11 @@ NSString *const HFPrivateByteArrayPboardType = @"HFPrivateByteArrayPboardType";
 			      [NSNumber numberWithUnsignedLong:(unsigned long)byteArray], @"HFByteArray",
 			      [[self class] uuid], @"HFUUID",
 			      nil];
-	[pboard setPropertyList:dict forType:type];
+	[pboard setValue:dict forPasteboardType:type];
     }
     else {
 	if (! [self moveDataWithProgressReportingToPasteboard:pboard forType:type]) {
-            [pboard setData:[NSData data] forType:type];
+            [pboard setData:[NSData data] forPasteboardType:type];
         }
     }
 }
@@ -251,15 +249,16 @@ NSString *const HFPrivateByteArrayPboardType = @"HFPrivateByteArrayPboardType";
 - (unsigned long long)amountToCopyForDataLength:(unsigned long long)numBytes stringLength:(unsigned long long)stringLength {
     unsigned long long dataLengthResult, stringLengthResult;
     NSInteger alertReturn = NSIntegerMax;
-    const unsigned long long copyOption1 = MAXIMUM_PASTEBOARD_SIZE_TO_EXPORT;
-    const unsigned long long copyOption2 = MINIMUM_PASTEBOARD_SIZE_TO_WARN_ABOUT;
-    NSString *option1String = HFDescribeByteCount(copyOption1);
-    NSString *option2String = HFDescribeByteCount(copyOption2);
-    NSString* dataSizeDescription = HFDescribeByteCount(stringLength);
+//    const unsigned long long copyOption1 = MAXIMUM_PASTEBOARD_SIZE_TO_EXPORT;
+//    const unsigned long long copyOption2 = MINIMUM_PASTEBOARD_SIZE_TO_WARN_ABOUT;
+//    NSString *option1String = HFDescribeByteCount(copyOption1);
+//    NSString *option2String = HFDescribeByteCount(copyOption2);
+//    NSString* dataSizeDescription = HFDescribeByteCount(stringLength);
     if (stringLength >= MAXIMUM_PASTEBOARD_SIZE_TO_EXPORT) {
-	NSString *option1 = [@"Copy " stringByAppendingString:option1String];
-	NSString *option2 = [@"Copy " stringByAppendingString:option2String];
-	alertReturn = NSRunAlertPanel(@"Large Clipboard", @"The copied data would occupy %@ if written to the clipboard.  This is larger than the system clipboard supports.  Do you want to copy only part of the data?", @"Cancel",  option1, option2, dataSizeDescription);
+//	NSString *option1 = [@"Copy " stringByAppendingString:option1String];
+//	NSString *option2 = [@"Copy " stringByAppendingString:option2String];
+//	alertReturn = NSRunAlertPanel(@"Large Clipboard", @"The copied data would occupy %@ if written to the clipboard.  This is larger than the system clipboard supports.  Do you want to copy only part of the data?", @"Cancel",  option1, option2, dataSizeDescription);
+    alertReturn = 0;
         switch (alertReturn) {
 //            case NSAlertDefaultReturn:
             default:
@@ -275,9 +274,10 @@ NSString *const HFPrivateByteArrayPboardType = @"HFPrivateByteArrayPboardType";
         
     }
     else if (stringLength >= MINIMUM_PASTEBOARD_SIZE_TO_WARN_ABOUT) {
-	NSString *option1 = [@"Copy " stringByAppendingString:HFDescribeByteCount(stringLength)];
-	NSString *option2 = [@"Copy " stringByAppendingString:HFDescribeByteCount(copyOption2)];
-	alertReturn = NSRunAlertPanel(@"Large Clipboard", @"The copied data would occupy %@ if written to the clipboard.  Performing this copy may take a long time.  Do you want to copy only part of the data?", @"Cancel",  option1, option2, dataSizeDescription);
+//	NSString *option1 = [@"Copy " stringByAppendingString:HFDescribeByteCount(stringLength)];
+//	NSString *option2 = [@"Copy " stringByAppendingString:HFDescribeByteCount(copyOption2)];
+//	alertReturn = NSRunAlertPanel(@"Large Clipboard", @"The copied data would occupy %@ if written to the clipboard.  Performing this copy may take a long time.  Do you want to copy only part of the data?", @"Cancel",  option1, option2, dataSizeDescription);
+    alertReturn = 0;
         switch (alertReturn) {
 //            case NSAlertDefaultReturn:
             default:

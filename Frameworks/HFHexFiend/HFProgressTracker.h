@@ -37,7 +37,7 @@
     unsigned long long maxProgress;
     UIProgressView *progressIndicator;
     NSTimer *progressTimer;
-    double lastSetValue;
+    float lastSetValue;
     NSDictionary *userInfo;
     id delegate;
 }
