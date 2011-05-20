@@ -118,50 +118,6 @@
     }
 }
 
-- (BOOL)_debugIsEqual:(HFByteArray *)v {
-    REQUIRE_NOT_NULL(v);
-    if (! [v isKindOfClass:[HFByteArray class]]) return NO;
-    HFByteArray* obj = v;
-    unsigned long long length = [self length];
-    if (length != [obj length]) {
-        printf("Lengths differ: %llu versus %llu\n", length, [obj length]);
-        abort();
-        return NO;
-    }
-    
-    unsigned long long offset;
-    unsigned char buffer1[1024];
-    unsigned char buffer2[sizeof buffer1 / sizeof *buffer1];
-    for (offset = 0; offset < length; offset += sizeof buffer1) {
-        memset(buffer1, 0, sizeof buffer1);
-        memset(buffer2, 0, sizeof buffer2);
-        size_t amountToGrab = sizeof buffer1;
-        if (amountToGrab > length - offset) amountToGrab = ll2l(length - offset);
-        [self copyBytes:buffer1 range:HFRangeMake(offset, amountToGrab)];
-        [obj copyBytes:buffer2 range:HFRangeMake(offset, amountToGrab)];
-        size_t i;
-        for (i=0; i < amountToGrab; i++) {
-            if (buffer1[i] != buffer2[i]) {
-                printf("Inconsistency found at %llu (%02x versus %02x)\n", i + offset, buffer1[i], buffer2[i]);
-                abort();
-                return NO;
-            }
-        }
-    }
-    return YES;
-}
-
-- (BOOL)_debugIsEqualToData:(NSData *)val {
-    REQUIRE_NOT_NULL(val);
-    HFByteArray *byteArray = [[NSClassFromString(@"HFFullMemoryByteArray") alloc] init];
-    HFByteSlice *byteSlice = [[HFFullMemoryByteSlice alloc] initWithData:val];
-    [byteArray insertByteSlice:byteSlice inRange:HFRangeMake(0, 0)];
-    [byteSlice release];
-    BOOL result = [self _debugIsEqual:byteArray];
-    [byteArray release];
-    return result;
-}
-
 - (void)incrementChangeLockCounter {
     [self willChangeValueForKey:@"changesAreLocked"];
     if (HFAtomicIncrement(&changeLockCounter, NO) == 0) {

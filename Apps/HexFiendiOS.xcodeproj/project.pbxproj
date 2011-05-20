@@ -40,8 +40,6 @@
 		B7C81750138475DB00800493 /* HFFileByteSlice.m in Sources */ = {isa = PBXBuildFile; fileRef = B7C8165113846E6000800493 /* HFFileByteSlice.m */; };
 		B7C81751138475DB00800493 /* HFFileReference.h in Headers */ = {isa = PBXBuildFile; fileRef = B7C8165213846E6000800493 /* HFFileReference.h */; };
 		B7C81752138475DB00800493 /* HFFileReference.m in Sources */ = {isa = PBXBuildFile; fileRef = B7C8165313846E6000800493 /* HFFileReference.m */; };
-		B7C81753138475DB00800493 /* HFFullMemoryByteArray.h in Headers */ = {isa = PBXBuildFile; fileRef = B7C8165413846E6000800493 /* HFFullMemoryByteArray.h */; };
-		B7C81754138475DB00800493 /* HFFullMemoryByteArray.m in Sources */ = {isa = PBXBuildFile; fileRef = B7C8165513846E6000800493 /* HFFullMemoryByteArray.m */; };
 		B7C81755138475DB00800493 /* HFFullMemoryByteSlice.h in Headers */ = {isa = PBXBuildFile; fileRef = B7C8165613846E6000800493 /* HFFullMemoryByteSlice.h */; };
 		B7C81756138475DB00800493 /* HFFullMemoryByteSlice.m in Sources */ = {isa = PBXBuildFile; fileRef = B7C8165713846E6000800493 /* HFFullMemoryByteSlice.m */; };
 		B7C81757138475DB00800493 /* HFFunctions_Private.h in Headers */ = {isa = PBXBuildFile; fileRef = B7C8165813846E6000800493 /* HFFunctions_Private.h */; };
@@ -97,8 +95,6 @@
 		B7C8165113846E6000800493 /* HFFileByteSlice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HFFileByteSlice.m; sourceTree = "<group>"; };
 		B7C8165213846E6000800493 /* HFFileReference.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HFFileReference.h; sourceTree = "<group>"; };
 		B7C8165313846E6000800493 /* HFFileReference.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HFFileReference.m; sourceTree = "<group>"; };
-		B7C8165413846E6000800493 /* HFFullMemoryByteArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HFFullMemoryByteArray.h; sourceTree = "<group>"; };
-		B7C8165513846E6000800493 /* HFFullMemoryByteArray.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HFFullMemoryByteArray.m; sourceTree = "<group>"; };
 		B7C8165613846E6000800493 /* HFFullMemoryByteSlice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HFFullMemoryByteSlice.h; sourceTree = "<group>"; };
 		B7C8165713846E6000800493 /* HFFullMemoryByteSlice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HFFullMemoryByteSlice.m; sourceTree = "<group>"; };
 		B7C8165813846E6000800493 /* HFFunctions_Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HFFunctions_Private.h; sourceTree = "<group>"; };
@@ -216,8 +212,6 @@
 				B7C8165113846E6000800493 /* HFFileByteSlice.m */,
 				B7C8165213846E6000800493 /* HFFileReference.h */,
 				B7C8165313846E6000800493 /* HFFileReference.m */,
-				B7C8165413846E6000800493 /* HFFullMemoryByteArray.h */,
-				B7C8165513846E6000800493 /* HFFullMemoryByteArray.m */,
 				B7C8165613846E6000800493 /* HFFullMemoryByteSlice.h */,
 				B7C8165713846E6000800493 /* HFFullMemoryByteSlice.m */,
 				B7C8165813846E6000800493 /* HFFunctions_Private.h */,
@@ -276,7 +270,6 @@
 				B7C81746138475DB00800493 /* HFByteSliceFileOperationQueueEntry.h in Headers */,
 				B7C8174F138475DB00800493 /* HFFileByteSlice.h in Headers */,
 				B7C81751138475DB00800493 /* HFFileReference.h in Headers */,
-				B7C81753138475DB00800493 /* HFFullMemoryByteArray.h in Headers */,
 				B7C81755138475DB00800493 /* HFFullMemoryByteSlice.h in Headers */,
 				B7C81757138475DB00800493 /* HFFunctions_Private.h in Headers */,
 				B7C81758138475DB00800493 /* HFFunctions.h in Headers */,
@@ -388,7 +381,6 @@
 				B7C8174E138475DB00800493 /* HFFastMemchr.m in Sources */,
 				B7C81750138475DB00800493 /* HFFileByteSlice.m in Sources */,
 				B7C81752138475DB00800493 /* HFFileReference.m in Sources */,
-				B7C81754138475DB00800493 /* HFFullMemoryByteArray.m in Sources */,
 				B7C81756138475DB00800493 /* HFFullMemoryByteSlice.m in Sources */,
 				B7C81759138475DB00800493 /* HFFunctions.m in Sources */,
 				B7C81765138475DB00800493 /* HFObjectGraph.m in Sources */,
