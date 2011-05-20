@@ -38,8 +38,8 @@ static void returnFTruncateError(NSError **error) {
 	int posixCode = errno;
 	NSInteger cocoaCode = 0;
 	switch (posixCode) {
-	    case ENOSPC:    cocoaCode = NSFileWriteOutOfSpaceError; break;
-	    case EROFS:	    cocoaCode = NSFileWriteVolumeReadOnlyError; break;
+	    case ENOSPC:	cocoaCode = NSFileWriteOutOfSpaceError; break;
+	    case EROFS:		cocoaCode = NSFileWriteVolumeReadOnlyError; break;
 	}
 	if (cocoaCode != 0) {
 	    *error = [NSError errorWithDomain:NSCocoaErrorDomain code:cocoaCode userInfo:nil];	

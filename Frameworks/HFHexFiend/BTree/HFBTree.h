@@ -5,7 +5,7 @@
 //  Created by Peter Ammon on 2/6/09.
 //
 
-#import <UIKit/UIKit.h>
+#import <Foundation/Foundation.h>
 
 typedef unsigned long long HFBTreeIndex;
 

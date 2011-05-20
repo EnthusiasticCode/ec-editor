@@ -6,7 +6,7 @@
 //  Copyright 2007 ridiculous_fish. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+#import <Foundation/Foundation.h>
 
 @class HFByteSlice, HFProgressTracker, HFFileReference;
 

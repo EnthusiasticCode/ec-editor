@@ -6,7 +6,7 @@
 //  Copyright 2008 ridiculous_fish. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+#import <Foundation/Foundation.h>
 
 /*! @class HFFileReference
     @brief A reference to an open file.

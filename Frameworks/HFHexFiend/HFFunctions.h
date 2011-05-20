@@ -1,5 +1,6 @@
 /* Functions and convenience methods for working with HFTypes */
 
+#import <Foundation/Foundation.h>
 #import <HexFiend/HFTypes.h>
 #import <libkern/OSAtomic.h>
 
@@ -270,11 +271,6 @@ static inline long double HFULToFP(unsigned long long val) {
     assert(HFFPToUL(result) == val);
     return result;
 }
-
-/*! Convenience to return information about a CGAffineTransform for logging. */
-//static inline NSString *HFDescribeAffineTransform(CGAffineTransform t) {
-//    return [NSString stringWithFormat:@"%f %f 0\n%f %f 0\n%f %f 1", t.a, t.b, t.c, t.d, t.tx, t.ty];
-//}
 
 /*! Returns 1 + floor(log base 10 of val).  If val is 0, returns 1. */
 static inline NSUInteger HFCountDigitsBase10(unsigned long long val) {

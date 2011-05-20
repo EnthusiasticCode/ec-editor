@@ -6,7 +6,7 @@
 //  Copyright 2008 ridiculous_fish. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+#import <Foundation/Foundation.h>
 
 /*!
 @class HFProgressTracker
@@ -22,8 +22,6 @@
   
   On the client side, you can set a delegate. progressTracker: didChangeProgressTo: is called on your delegate at regular intervals in the main thread, as the progress changes.  Likewise, progressTrackerDidFinish: is called on the main thread after noteFinished: is called.
   
-  There is also a progressIndicator property, which if set to an UIProgressView will cause it to be updated regularly.
-  
   To use HFProgressTracker as a client:
   
   
@@ -35,9 +33,8 @@
     volatile int cancelRequested;
     @private
     unsigned long long maxProgress;
-    UIProgressView *progressIndicator;
     NSTimer *progressTimer;
-    float lastSetValue;
+    double lastSetValue;
     NSDictionary *userInfo;
     id delegate;
 }
@@ -53,12 +50,6 @@
 */
 - (void)setUserInfo:(NSDictionary *)info;
 - (NSDictionary *)userInfo;
-
-/*!
-  The progressIndicator property allows an UIProgressView to be associated with the HFProgressTracker.  The progress indicator should have values in the range 0 to 1, and it will be updated with the fraction currentProgress / maxProgress.
-*/
-- (void)setProgressIndicator:(UIProgressView *)indicator;
-- (UIProgressView *)progressIndicator;
 
 /*!
   Called to indicate you want to begin tracking the progress, which means that the progress indicator will be updated, and the delegate callbacks may fire.

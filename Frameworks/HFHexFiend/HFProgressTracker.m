@@ -7,7 +7,6 @@
 //
 
 #import <HexFiend/HFProgressTracker.h>
-#include <pthread.h>
 
 @implementation HFProgressTracker
 
@@ -19,19 +18,9 @@
     return maxProgress;
 }
 
-- (void)setProgressIndicator:(UIProgressView *)indicator {
-    [indicator retain];
-    [progressIndicator release];
-    progressIndicator = indicator;
-}
-
-- (UIProgressView *)progressIndicator {
-    return progressIndicator;
-}
-
 - (void)_updateProgress:(NSTimer *)timer {
     USE(timer);
-    float value;
+    double value;
     unsigned long long localCurrentProgress = currentProgress;
     if (maxProgress == 0 || localCurrentProgress == 0) {
         value = 0;
@@ -41,7 +30,6 @@
     }
     if (value != lastSetValue) {
         lastSetValue = value;
-        [progressIndicator setProgress:lastSetValue];
         if (delegate && [delegate respondsToSelector:@selector(progressTracker:didChangeProgressTo:)]) {
             [delegate progressTracker:self didChangeProgressTo:lastSetValue];
         }
@@ -53,7 +41,6 @@
     NSRunLoop *currentRunLoop = [NSRunLoop currentRunLoop];
     progressTimer = [[NSTimer timerWithTimeInterval:1 / 30. target:self selector:@selector(_updateProgress:) userInfo:nil repeats:YES] retain];
     [currentRunLoop addTimer:progressTimer forMode:NSDefaultRunLoopMode];
-//    [currentRunLoop addTimer:progressTimer forMode:NSModalPanelRunLoopMode];
     [self _updateProgress:nil];
 }
 
@@ -71,7 +58,6 @@
 }
 
 - (void)dealloc {
-    [progressIndicator release];
     [progressTimer invalidate];
     [progressTimer release];
     progressTimer = nil;
@@ -89,7 +75,7 @@
 
 - (void)noteFinished:(id)sender {
     if (delegate != nil) {   
-        if (! pthread_main_np()) { // [NSThread isMainThread] is not available on Tiger
+        if (! [NSThread isMainThread]) { // [NSThread isMainThread] is not available on Tiger
             [self performSelectorOnMainThread:@selector(noteFinished:) withObject:sender waitUntilDone:NO];
         }
         else {

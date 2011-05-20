@@ -1,5 +1,4 @@
 #import <HexFiend/HFFunctions.h>
-#import <HexFiend/HFController.h>
 #import <fcntl.h>
 
 #ifndef NDEBUG
@@ -13,26 +12,6 @@
 #if USE_CHUD
 #import <CHUD/CHUD.h>
 #endif
-
-UIImage *HFImageNamed(NSString *name) {
-    HFASSERT(name != NULL);
-    UIImage *image = [UIImage imageNamed:name];
-    if (image == NULL) {
-        NSString *imagePath = [[NSBundle bundleForClass:[HFController class]] pathForResource:name ofType:@"tiff"];
-        if (! imagePath) {
-            NSLog(@"Unable to find image named %@.tiff", name);
-        }
-        else {
-            image = [[UIImage alloc] initWithContentsOfFile:imagePath];
-            if (image == nil) {
-                NSLog(@"Couldn't load image at path %@", imagePath);
-                [image release];
-                image = nil;
-            }
-        }
-    }
-    return image;
-}
 
 @implementation HFRangeWrapper
 
@@ -261,7 +240,7 @@ BOOL HFStringEncodingIsSupersetOfASCII(NSStringEncoding encoding) {
 	case kCFStringEncodingEBCDIC_US: return NO;
 	case kCFStringEncodingEBCDIC_CP037: return NO;
         default:
-            NSLog(@"Unknown string encoding %u in %s", encoding, __FUNCTION__);
+            NSLog(@"Unknown string encoding %lu in %s", (unsigned long)encoding, __FUNCTION__);
             return NO;
     }
 }
