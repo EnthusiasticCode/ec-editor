@@ -42,7 +42,7 @@ static void computeFileOperations(HFByteArray *self, HFFileReference *reference,
     unsigned long long totalLength = [self length];
 #endif
     unsigned long long currentOffset = 0;
-    FOREACH(HFByteSlice *, slice, [self byteSlices]) {
+    for (HFByteSlice *slice in [self byteSlices]) {
         unsigned long long length = [slice length];
         HFRange sourceRange = [slice sourceRangeForFile:reference];
         HFRange targetRange = HFRangeMake(currentOffset, length);
@@ -153,7 +153,7 @@ static void computeDependencies(HFByteArray *self, HFObjectGraph *graph, NSArray
     REQUIRE_NOT_NULL(self);
     HFASSERT([targetSortedOperations isEqual:[targetSortedOperations sortedArrayUsingFunction:compareFileOperationTargetRanges context:self]]);
     NSUInteger targetSortedOperationsCount = [targetSortedOperations count];
-    FOREACH(HFByteSliceFileOperation *, sourceOperation, targetSortedOperations) {
+    for (HFByteSliceFileOperation *sourceOperation in targetSortedOperations) {
         /* "B is a dependency of A" means that B's source range overlaps A's target range. For each operation B, find all the target ranges A its source range overlaps */
         HFRange sourceRange = [sourceOperation sourceRange];
         HFASSERT(sourceRange.length > 0);
@@ -184,7 +184,7 @@ static HFObjectGraph *createAcyclicGraphFromStronglyConnectedComponents(NSArray 
     for (i=0; i < max; i++) {
 	HFByteSliceFileOperation *chain = [chains objectAtIndex:i];
 	NSArray *component = [stronglyConnectedComponents objectAtIndex:i];
-	FOREACH(HFByteSliceFileOperation *, operation, component) {
+    for (HFByteSliceFileOperation *operation in component) {
 	    EXPECT_CLASS(operation, HFByteSliceFileOperation);
 	    HFASSERT(CFDictionaryGetValue(operationToContainingChain, operation) == NULL);
 	    CFDictionarySetValue(operationToContainingChain, operation, chain);
@@ -194,7 +194,7 @@ static HFObjectGraph *createAcyclicGraphFromStronglyConnectedComponents(NSArray 
     /* Now add dependencies between chains */
     for (i=0; i < max; i++) {
 	NSArray *component = [stronglyConnectedComponents objectAtIndex:i];
-	FOREACH(HFByteSliceFileOperation *, operation, component) {
+    for (HFByteSliceFileOperation *operation in component) {
 	    EXPECT_CLASS(operation, HFByteSliceFileOperation);
 	    HFByteSliceFileOperation *operationChain = (HFByteSliceFileOperation *)CFDictionaryGetValue(operationToContainingChain, operation);
 	    HFASSERT(operationChain != NULL);
@@ -242,7 +242,7 @@ static void verifyDependencies(HFByteArray *self, HFObjectGraph *graph, NSArray 
 
 static void verifyStronglyConnectedComponents(NSArray *stronglyConnectedComponents) {
     NSMutableSet *allComponentsSet = [[NSMutableSet alloc] init];
-    FOREACH(NSArray *, component, stronglyConnectedComponents) {
+    for (NSArray *component in stronglyConnectedComponents) {
 	NSSet *componentSet = [[NSSet alloc] initWithArray:component];
 	HFASSERT(! [allComponentsSet intersectsSet:componentSet]);
 	[allComponentsSet unionSet:componentSet];
@@ -253,8 +253,8 @@ static void verifyStronglyConnectedComponents(NSArray *stronglyConnectedComponen
 
 static void verifyEveryObjectInExactlyOneConnectedComponent(NSArray *components, NSArray *operations) {
     NSMutableArray *remaining = [NSMutableArray arrayWithArray:operations];
-    FOREACH(NSArray *, component, components) {
-	FOREACH(HFByteSliceFileOperation *, operation, component) {
+    for (NSArray *component in components) {
+    for (HFByteSliceFileOperation *operation in component) {
 	    EXPECT_CLASS(operation, HFByteSliceFileOperation);
 	    NSUInteger arrayIndex = [remaining indexOfObjectIdenticalTo:operation];
 	    HFASSERT(arrayIndex != NSNotFound);
@@ -312,7 +312,7 @@ static void verifyEveryObjectInExactlyOneConnectedComponent(NSArray *components,
     
     /* Step 2 */
     /* Estimate the cost of each of our ops */
-    FOREACH(HFByteSliceFileOperation *, op, allOperations) {
+    for (HFByteSliceFileOperation *op in allOperations) {
         totalCost += [op costToWrite];
     }
     [progressTracker setMaxProgress:totalCost];
@@ -334,7 +334,7 @@ static void verifyEveryObjectInExactlyOneConnectedComponent(NSArray *components,
     verifyStronglyConnectedComponents(stronglyConnectedComponents);
     verifyEveryObjectInExactlyOneConnectedComponent(stronglyConnectedComponents, internal);
 #endif
-    FOREACH(NSArray *, stronglyConnectedComponent, stronglyConnectedComponents) {
+    for (NSArray *stronglyConnectedComponent in stronglyConnectedComponents) {
 	[chains addObject:[HFByteSliceFileOperation chainedOperationWithInternalOperations:stronglyConnectedComponent]];
     }
     
@@ -348,7 +348,7 @@ static void verifyEveryObjectInExactlyOneConnectedComponent(NSArray *components,
     /* Step 6 */
     NSArray *topologicallySortedChains = [acyclicGraph topologicallySortObjects:chains];
     if ([topologicallySortedChains count] > 0) {
-	FOREACH(HFByteSliceFileOperation *, chainOp, topologicallySortedChains) {
+    for (HFByteSliceFileOperation *chainOp in topologicallySortedChains) {
 	    HFByteSliceWriteError writeError = [chainOp writeToFile:reference trackingProgress:progressTracker error:error];
 	    if (writeError == HFWriteCancelled) {
 		goto cancelled;
@@ -363,7 +363,7 @@ static void verifyEveryObjectInExactlyOneConnectedComponent(NSArray *components,
     
     /* Step 7 - write external ops */
     if ([external count] > 0) {
-        FOREACH(HFByteSliceFileOperation *, op2, external) {
+        for (HFByteSliceFileOperation *op2 in external) {
 	    HFByteSliceWriteError writeError = [op2 writeToFile:reference trackingProgress:progressTracker error:error];
 	    if (writeError == HFWriteCancelled) {
 		goto cancelled;
@@ -404,12 +404,12 @@ cancelled:;
     
     NSMutableArray *resultRanges = [NSMutableArray arrayWithCapacity:[external count] + [internal count]];
     
-    FOREACH(HFByteSliceFileOperation *, op, external) {
+    for (HFByteSliceFileOperation *op in external) {
 	[resultRanges addObject:[HFRangeWrapper withRange:[op targetRange]]];
     }
     [external release];
     
-    FOREACH(HFByteSliceFileOperation *, op2, internal) {
+    for (HFByteSliceFileOperation *op2 in internal) {
 	[resultRanges addObject:[HFRangeWrapper withRange:[op2 targetRange]]];    
     }
     [internal release];
@@ -447,7 +447,7 @@ static HFByteArray *constructNewSlices(HFByteSlice *slice, HFRange rangeInFile, 
     unsigned long long memoryRequiredForCopying = 0;
     
     //see how much we will need to copy, while simultaneously getting the range posts (beginning and ending)
-    FOREACH(HFRangeWrapper *, dirtyRangeWrapper, dirtyRanges) {
+    for (HFRangeWrapper *dirtyRangeWrapper in dirtyRanges) {
 	HFRange dirtyRange = [dirtyRangeWrapper HFRange];
 	memoryRequiredForCopying = HFSum(memoryRequiredForCopying, HFIntersectionRange(dirtyRange, rangeInFile).length);
 	rangeIndexes[rangeIndex++] = dirtyRange.location;
