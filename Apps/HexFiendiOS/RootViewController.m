@@ -55,7 +55,7 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    self.detailViewController.detailItem = [[self filesInDocumentsDirectory] objectAtIndex:indexPath.row];
+    self.detailViewController.detailItem = [[self applicationDocumentsDirectory] stringByAppendingPathComponent:[[self filesInDocumentsDirectory] objectAtIndex:indexPath.row]];
 }
 
 - (NSString *)applicationDocumentsDirectory

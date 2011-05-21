@@ -10,8 +10,13 @@
 
 #import "RootViewController.h"
 
+#import "HexFiendDataSource.h"
+
+#import "ECCodeView.h"
+
 @interface DetailViewController ()
 @property (nonatomic, retain) UIPopoverController *popoverController;
+@property (nonatomic, retain) HexFiendDataSource *dataSource;
 - (void)configureView;
 @end
 
@@ -24,6 +29,8 @@
 @synthesize detailDescriptionLabel=_detailDescriptionLabel;
 
 @synthesize popoverController=_myPopoverController;
+
+@synthesize dataSource=_dataSource;
 
 #pragma mark - Managing the detail item
 
@@ -48,28 +55,8 @@
 - (void)configureView
 {
     // Update the user interface for the detail item.
-
-    self.detailDescriptionLabel.text = [self.detailItem description];
-}
-
-- (void)viewWillAppear:(BOOL)animated
-{
-    [super viewWillAppear:animated];
-}
-
-- (void)viewDidAppear:(BOOL)animated
-{
-    [super viewDidAppear:animated];
-}
-
-- (void)viewWillDisappear:(BOOL)animated
-{
-	[super viewWillDisappear:animated];
-}
-
-- (void)viewDidDisappear:(BOOL)animated
-{
-	[super viewDidDisappear:animated];
+    self.dataSource.file = self.detailItem;
+    [self.detailDescriptionLabel updateAllText];
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
@@ -98,13 +85,12 @@
     self.popoverController = nil;
 }
 
-/*
- // Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    self.dataSource = [[HexFiendDataSource alloc] init];
+    self.detailDescriptionLabel.datasource = self.dataSource;
 }
- */
 
 - (void)viewDidUnload
 {
@@ -113,6 +99,7 @@
 	// Release any retained subviews of the main view.
 	// e.g. self.myOutlet = nil;
 	self.popoverController = nil;
+    self.dataSource = nil;
 }
 
 #pragma mark - Memory management
@@ -131,6 +118,7 @@
     [_toolbar release];
     [_detailItem release];
     [_detailDescriptionLabel release];
+    self.dataSource = nil;
     [super dealloc];
 }
 

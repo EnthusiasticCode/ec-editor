@@ -37,6 +37,8 @@
 		B756435A1387A9AB000BA6B9 /* ECCodeStringDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = B75643571387A9AB000BA6B9 /* ECCodeStringDataSource.m */; };
 		B756435B1387A9AB000BA6B9 /* ECRectSet.m in Sources */ = {isa = PBXBuildFile; fileRef = B75643591387A9AB000BA6B9 /* ECRectSet.m */; };
 		B756435E1387A9B7000BA6B9 /* ECTextStyle.m in Sources */ = {isa = PBXBuildFile; fileRef = B756435D1387A9B7000BA6B9 /* ECTextStyle.m */; };
+		B75643611387AB0A000BA6B9 /* HexFiendDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = B75643601387AB0A000BA6B9 /* HexFiendDataSource.m */; };
+		B7564375138820E4000BA6B9 /* UIColor+StyleColors.m in Sources */ = {isa = PBXBuildFile; fileRef = B7564374138820E3000BA6B9 /* UIColor+StyleColors.m */; };
 		B7C815F913846DBF00800493 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7C815F813846DBF00800493 /* UIKit.framework */; };
 		B7C815FB13846DBF00800493 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7C815FA13846DBF00800493 /* Foundation.framework */; };
 		B7C815FD13846DBF00800493 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7C815FC13846DBF00800493 /* CoreGraphics.framework */; };
@@ -80,6 +82,11 @@
 		B75643591387A9AB000BA6B9 /* ECRectSet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECRectSet.m; sourceTree = "<group>"; };
 		B756435C1387A9B7000BA6B9 /* ECTextStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECTextStyle.h; sourceTree = "<group>"; };
 		B756435D1387A9B7000BA6B9 /* ECTextStyle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECTextStyle.m; sourceTree = "<group>"; };
+		B756435F1387AB0A000BA6B9 /* HexFiendDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HexFiendDataSource.h; sourceTree = "<group>"; };
+		B75643601387AB0A000BA6B9 /* HexFiendDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HexFiendDataSource.m; sourceTree = "<group>"; };
+		B75643621387AB70000BA6B9 /* ECCodeViewDatasource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeViewDatasource.h; sourceTree = "<group>"; };
+		B7564373138820E3000BA6B9 /* UIColor+StyleColors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+StyleColors.h"; sourceTree = "<group>"; };
+		B7564374138820E3000BA6B9 /* UIColor+StyleColors.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+StyleColors.m"; sourceTree = "<group>"; };
 		B7C815F413846DBF00800493 /* HexFiendiOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HexFiendiOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B7C815F813846DBF00800493 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		B7C815FA13846DBF00800493 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -128,7 +135,6 @@
 		B7C8167B13846E6000800493 /* HFSharedMemoryByteSlice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HFSharedMemoryByteSlice.h; sourceTree = "<group>"; };
 		B7C8167C13846E6000800493 /* HFSharedMemoryByteSlice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HFSharedMemoryByteSlice.m; sourceTree = "<group>"; };
 		B7C8168F13846E6000800493 /* HFTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HFTypes.h; sourceTree = "<group>"; };
-		B7C816DB1384758C00800493 /* HexFiend-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "HexFiend-Prefix.pch"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -150,6 +156,9 @@
 		B75643031387A245000BA6B9 /* ECUIKit */ = {
 			isa = PBXGroup;
 			children = (
+				B7564373138820E3000BA6B9 /* UIColor+StyleColors.h */,
+				B7564374138820E3000BA6B9 /* UIColor+StyleColors.m */,
+				B75643621387AB70000BA6B9 /* ECCodeViewDatasource.h */,
 				B756435C1387A9B7000BA6B9 /* ECTextStyle.h */,
 				B756435D1387A9B7000BA6B9 /* ECTextStyle.m */,
 				B75643561387A9AB000BA6B9 /* ECCodeStringDataSource.h */,
@@ -196,7 +205,6 @@
 				B75643031387A245000BA6B9 /* ECUIKit */,
 				B7C8162B13846E3300800493 /* HexFiend Framework */,
 				B7C815FE13846DBF00800493 /* HexFiendiOS */,
-				B7C816D91384758C00800493 /* HexFiend */,
 				B7C815F713846DBF00800493 /* Frameworks */,
 				B7C815F513846DBF00800493 /* Products */,
 			);
@@ -228,6 +236,8 @@
 				B7C8160713846DBF00800493 /* HexFiendiOSAppDelegate.h */,
 				B7C8160813846DBF00800493 /* HexFiendiOSAppDelegate.m */,
 				B7C8160A13846DBF00800493 /* MainWindow.xib */,
+				B756435F1387AB0A000BA6B9 /* HexFiendDataSource.h */,
+				B75643601387AB0A000BA6B9 /* HexFiendDataSource.m */,
 				B7C8160D13846DBF00800493 /* DetailViewController.h */,
 				B7C8160E13846DBF00800493 /* DetailViewController.m */,
 				B7C8161013846DBF00800493 /* DetailView.xib */,
@@ -297,22 +307,6 @@
 				B7C8163613846E6000800493 /* HFBTree.m */,
 			);
 			path = BTree;
-			sourceTree = "<group>";
-		};
-		B7C816D91384758C00800493 /* HexFiend */ = {
-			isa = PBXGroup;
-			children = (
-				B7C816DA1384758C00800493 /* Supporting Files */,
-			);
-			path = HexFiend;
-			sourceTree = "<group>";
-		};
-		B7C816DA1384758C00800493 /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				B7C816DB1384758C00800493 /* HexFiend-Prefix.pch */,
-			);
-			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -407,6 +401,8 @@
 				B756435A1387A9AB000BA6B9 /* ECCodeStringDataSource.m in Sources */,
 				B756435B1387A9AB000BA6B9 /* ECRectSet.m in Sources */,
 				B756435E1387A9B7000BA6B9 /* ECTextStyle.m in Sources */,
+				B75643611387AB0A000BA6B9 /* HexFiendDataSource.m in Sources */,
+				B7564375138820E4000BA6B9 /* UIColor+StyleColors.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

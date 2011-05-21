@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+@class ECCodeView;
 
 @interface DetailViewController : UIViewController <UIPopoverControllerDelegate, UISplitViewControllerDelegate> {
 
@@ -17,6 +18,6 @@
 
 @property (nonatomic, retain) id detailItem;
 
-@property (nonatomic, retain) IBOutlet UILabel *detailDescriptionLabel;
+@property (nonatomic, retain) IBOutlet ECCodeView *detailDescriptionLabel;
 
 @end
