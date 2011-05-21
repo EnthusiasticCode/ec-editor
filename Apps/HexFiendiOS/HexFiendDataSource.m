@@ -133,19 +133,21 @@ static const NSUInteger blockSize = 0x2000;
 
 - (HFRange)byteRangeForLineRange:(NSRange *)range
 {
-    NSUInteger lastLineInRange = range->location + range->length;
-    if (lastLineInRange + 1 >= [self.lineCache count])
+    NSUInteger firstLineOutOfRange = range->location + range->length;
+    NSLog(@"entry length: %u", range->length);
+    if (firstLineOutOfRange >= [self.lineCache count])
     {
         NSUInteger line;
-        for (line = [self.lineCache count]; line < lastLineInRange + 1; ++line)
+        for (line = [self.lineCache count]; line < firstLineOutOfRange; ++line)
             if (![self cacheLine])
                 break;
-        --line;
+        [self cacheLine];
+        firstLineOutOfRange = line;
         range->length = line - range->location;
-        lastLineInRange = range->location + range->length;
     }
+    NSLog(@"exit length: %u", range->length);
     unsigned long long byteLocation = [[[self.lineCache objectAtIndex:range->location] objectAtIndex:0] unsignedLongLongValue];
-    unsigned long long byteLength = [[[self.lineCache objectAtIndex:lastLineInRange + 1] objectAtIndex:0] unsignedLongLongValue] - byteLocation - 1;
+    unsigned long long byteLength = [[[self.lineCache objectAtIndex:firstLineOutOfRange] objectAtIndex:0] unsignedLongLongValue] - byteLocation - 1;
     return HFRangeMake(byteLocation, byteLength);
 }
 
