@@ -6,13 +6,14 @@
 //  Copyright 2008 ridiculous_fish. All rights reserved.
 //
 
-#import <HexFiend/HFBTreeByteArray.h>
-#import <HexFiend/HFFileReference.h>
-#import <HexFiend/HFProgressTracker.h>
-#import <HexFiend/HFByteSlice.h>
-#import <HexFiend/HFByteSliceFileOperation.h>
-#import <HexFiend/HFObjectGraph.h>
-#import <HexFiend/HFSharedMemoryByteSlice.h>
+#import "HFBTreeByteArray.h"
+#import "HFFileReference.h"
+#import "HFProgressTracker.h"
+#import "HFByteSlice.h"
+#import "HFByteSliceFileOperation.h"
+#import "HFObjectGraph.h"
+#import "HFSharedMemoryByteSlice.h"
+#import "HexFiend_Private.h"
 
 static inline BOOL invalidRange(HFRange range) { return range.location == ULLONG_MAX && range.length == ULLONG_MAX; }
 

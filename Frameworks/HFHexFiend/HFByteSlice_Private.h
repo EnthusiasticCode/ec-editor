@@ -1,4 +1,4 @@
-#import <HexFiend/HFByteSlice.h>
+#import "HFByteSlice.h"
 
 @interface HFByteSlice (HFByteSlice_Private)
 

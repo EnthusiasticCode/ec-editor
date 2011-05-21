@@ -6,10 +6,11 @@
 //  Copyright 2009 ridiculous_fish. All rights reserved.
 //
 
-#import <HexFiend/HFByteArray_Internal.h>
-#import <HexFiend/HFByteSlice.h>
-#import <HexFiend/HFBTreeByteArray.h>
-#import <HexFiend/HFBTree.h>
+#import "HFByteArray_Internal.h"
+#import "HFByteSlice.h"
+#import "HFBTreeByteArray.h"
+#import "HFBTree.h"
+#import "HexFiend_Private.h"
 
 @implementation HFBTreeByteArray
 

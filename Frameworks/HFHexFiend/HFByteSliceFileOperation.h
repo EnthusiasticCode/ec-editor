@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "HFTypes.h"
 
 @class HFByteSlice, HFFileReference, HFProgressTracker;
 

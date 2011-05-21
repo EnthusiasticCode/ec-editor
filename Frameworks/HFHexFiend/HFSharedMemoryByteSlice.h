@@ -6,7 +6,7 @@
 //  Copyright 2008 ridiculous_fish. All rights reserved.
 //
 
-#import <HexFiend/HFByteSlice.h>
+#import "HFByteSlice.h"
 
 /*! @class HFSharedMemoryByteSlice
     @brief A subclass of HFByteSlice for working with data stored in memory.

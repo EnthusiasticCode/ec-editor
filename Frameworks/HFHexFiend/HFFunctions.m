@@ -1,5 +1,6 @@
-#import <HexFiend/HFFunctions.h>
+#import "HFFunctions.h"
 #import <fcntl.h>
+#import "HexFiend_Private.h"
 
 #ifndef NDEBUG
 //#define USE_CHUD 1

@@ -6,11 +6,12 @@
 //  Copyright 2008 ridiculous_fish. All rights reserved.
 //
 
-#import <HexFiend/HFFileReference.h>
+#import "HFFileReference.h"
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <fcntl.h>
 #include <unistd.h>
+#import "HexFiend_Private.h"
 
 #define USE_STAT64 0
 

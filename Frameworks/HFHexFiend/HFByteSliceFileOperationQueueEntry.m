@@ -6,8 +6,9 @@
 //  Copyright 2008 ridiculous_fish. All rights reserved.
 //
 
-#import <HexFiend/HFByteSliceFileOperationQueueEntry.h>
+#import "HFByteSliceFileOperationQueueEntry.h"
 #include <malloc/malloc.h>
+#import "HexFiend_Private.h"
 
 #define SOFT_MAX_PER_BUFFER (512 * 1024)
 

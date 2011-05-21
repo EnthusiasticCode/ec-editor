@@ -6,8 +6,9 @@
 //  Copyright 2008 ridiculous_fish. All rights reserved.
 //
 
-#import <HexFiend/HFByteArray_Internal.h>
-#import <HexFiend/HFProgressTracker.h>
+#import "HFByteArray_Internal.h"
+#import "HFProgressTracker.h"
+#import "HexFiend_Private.h"
 
 unsigned char* boyer_moore_helper(const unsigned char * restrict haystack, const unsigned char * restrict needle, unsigned long haystack_length, unsigned long needle_length, const unsigned long * restrict char_jump, const unsigned long * restrict match_jump) {
     unsigned long ua, ub;

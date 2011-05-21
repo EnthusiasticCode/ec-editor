@@ -6,7 +6,8 @@
 //  Copyright 2008 ridiculous_fish. All rights reserved.
 //
 
-#import <HexFiend/HFObjectGraph.h>
+#import "HFObjectGraph.h"
+#import "HexFiend_Private.h"
 
 
 @implementation HFObjectGraph

@@ -1,4 +1,4 @@
-#import <HexFiend/HFFunctions_Private.h>
+#import "HFFunctions_Private.h"
 
 
 #if defined(__ppc__) || defined(__ppc64__)

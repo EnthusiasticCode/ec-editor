@@ -1,7 +1,7 @@
 /* Functions and convenience methods for working with HFTypes */
 
 #import <Foundation/Foundation.h>
-#import <HexFiend/HFTypes.h>
+#import "HFTypes.h"
 #import <libkern/OSAtomic.h>
 
 #define HFZeroRange (HFRange){0, 0}

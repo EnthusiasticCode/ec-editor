@@ -1,4 +1,4 @@
-#import <HexFiend/HFByteArray.h>
+#import "HFByteArray.h"
 
 @interface HFByteArray (HFInternal)
 

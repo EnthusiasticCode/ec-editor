@@ -6,12 +6,13 @@
 //  Copyright 2008 ridiculous_fish. All rights reserved.
 //
 
-#import <HexFiend/HFByteSliceFileOperation.h>
-#import <HexFiend/HFByteSlice.h>
-#import <HexFiend/HFProgressTracker.h>
-#import <HexFiend/HFFileReference.h>
-#import <HexFiend/HFByteSliceFileOperationQueueEntry.h>
+#import "HFByteSliceFileOperation.h"
+#import "HFByteSlice.h"
+#import "HFProgressTracker.h"
+#import "HFFileReference.h"
+#import "HFByteSliceFileOperationQueueEntry.h"
 #include <malloc/malloc.h>
+#import "HexFiend_Private.h"
 
 enum {
     eTypeIdentity = 1,

@@ -7,6 +7,7 @@
 //
 
 #import "HFBTree.h"
+#import "HexFiend_Private.h"
 #include <malloc/malloc.h>
 
 #define FIXUP_LENGTHS 0

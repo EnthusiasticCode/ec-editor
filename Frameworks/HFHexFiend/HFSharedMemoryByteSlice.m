@@ -6,8 +6,9 @@
 //  Copyright 2008 ridiculous_fish. All rights reserved.
 //
 
-#import <HexFiend/HFByteSlice_Private.h>
-#import <HexFiend/HFSharedMemoryByteSlice.h>
+#import "HFByteSlice_Private.h"
+#import "HFSharedMemoryByteSlice.h"
+#import "HexFiend_Private.h"
 
 #define MAX_FAST_PATH_SIZE (1 << 13)
 

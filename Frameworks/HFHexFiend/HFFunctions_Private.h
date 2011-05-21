@@ -1,4 +1,5 @@
 #import <Foundation/Foundation.h>
+#import <libkern/OSAtomic.h>
 
 @class HFController;
 

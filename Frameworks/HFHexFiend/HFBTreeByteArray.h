@@ -6,7 +6,7 @@
 //  Copyright 2009 ridiculous_fish. All rights reserved.
 //
 
-#import <HexFiend/HFByteArray.h>
+#import "HFByteArray.h"
 
 @class HFBTree;
 

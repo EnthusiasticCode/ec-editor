@@ -6,8 +6,8 @@
 //  Copyright 2007 ridiculous_fish. All rights reserved.
 //
 
-#import <HexFiend/HFByteSlice.h>
-
+#import "HFByteSlice.h"
+#import "HexFiend_Private.h"
 
 @implementation HFByteSlice
 

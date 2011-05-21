@@ -13,8 +13,11 @@
 @interface RootViewController : UITableViewController {
 
 }
-
 		
 @property (nonatomic, retain) IBOutlet DetailViewController *detailViewController;
+@property (nonatomic, retain) NSFileManager *fileManager;
+
+- (NSString *)applicationDocumentsDirectory;
+- (NSArray *)filesInDocumentsDirectory;
 
 @end
