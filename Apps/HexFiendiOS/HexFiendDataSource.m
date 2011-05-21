@@ -11,7 +11,9 @@
 #import "HFBTreeByteArray.h"
 #import "HFFileReference.h"
 #import "HFFileByteSlice.h"
+#import "HFSharedMemoryByteSlice.h"
 #import "HFFunctions.h"
+#import "ECCodeView.h"
 
 @interface HexFiendDataSource ()
 {
@@ -28,7 +30,7 @@
 - (HFRange)byteRangeForLineRange:(NSRange *)range;
 - (HFRange)byteRangeForUTF8Range:(NSRange *)range;
 - (unsigned long long)byteOffsetForUTF8Offset:(unsigned long long)offset;
-- (unsigned long long)byteOffsetForUTF8Offset:(unsigned long long)offset inLineRange:(NSRange)lineRange;
+- (unsigned long long)byteOffsetForUTF8Offset:(unsigned long long)offset inLineRange:(NSRange)lineRange line:(NSUInteger *)line;
 - (BOOL)cacheLine;
 @end
 
@@ -85,7 +87,7 @@ static const NSUInteger blockSize = 0x2000;
     }
     while (cacheLineCurrentByteOffset < length)
     {
-        if (cacheLineCurrentByteOffset >= cacheLineCurrentBlockRange.location + cacheLineCurrentBlockRange.length)
+        if (cacheLineCurrentByteOffset >= cacheLineCurrentBlockRange.location + cacheLineCurrentBlockRange.length || cacheLineCurrentByteOffset < cacheLineCurrentBlockRange.location)
         {
             cacheLineCurrentBlockRange.location = cacheLineCurrentByteOffset;
             unsigned long long oldLength = cacheLineCurrentBlockRange.length;
@@ -134,18 +136,17 @@ static const NSUInteger blockSize = 0x2000;
 - (HFRange)byteRangeForLineRange:(NSRange *)range
 {
     NSUInteger firstLineOutOfRange = range->location + range->length;
-    NSLog(@"entry length: %u", range->length);
     if (firstLineOutOfRange >= [self.lineCache count])
     {
         NSUInteger line;
-        for (line = [self.lineCache count]; line < firstLineOutOfRange; ++line)
+        NSUInteger lineCount = [self.lineCache count];
+        for (line = lineCount; line < firstLineOutOfRange; ++line)
             if (![self cacheLine])
                 break;
         [self cacheLine];
         firstLineOutOfRange = line;
         range->length = line - range->location;
     }
-    NSLog(@"exit length: %u", range->length);
     unsigned long long byteLocation = [[[self.lineCache objectAtIndex:range->location] objectAtIndex:0] unsignedLongLongValue];
     unsigned long long byteLength = [[[self.lineCache objectAtIndex:firstLineOutOfRange] objectAtIndex:0] unsignedLongLongValue] - byteLocation - 1;
     return HFRangeMake(byteLocation, byteLength);
@@ -153,31 +154,39 @@ static const NSUInteger blockSize = 0x2000;
 
 - (HFRange)byteRangeForUTF8Range:(NSRange *)range
 {
-    unsigned long long lastCharacterInRange = range->location + range->length;
-    while (lastCharacterInRange + 1 > [[[self.lineCache lastObject] objectAtIndex:1] unsignedLongLongValue])
+    unsigned long long firstCharacterOutOfRange = range->location + range->length;
+    while (firstCharacterOutOfRange > [[[self.lineCache lastObject] objectAtIndex:1] unsignedLongLongValue])
         if (![self cacheLine])
         {
-            range->length = [[[self.lineCache lastObject] objectAtIndex:1] unsignedLongLongValue] - 1 - range->location;
-            lastCharacterInRange = range->location + range->length;
+            range->length = [[[self.lineCache lastObject] objectAtIndex:1] unsignedLongLongValue] - range->location;
+            firstCharacterOutOfRange = range->location + range->length;
         }
     unsigned long long byteLocation = [self byteOffsetForUTF8Offset:range->location];
-    unsigned long long byteLength = [self byteOffsetForUTF8Offset:lastCharacterInRange] - byteLocation;
+    unsigned long long byteLength = [self byteOffsetForUTF8Offset:firstCharacterOutOfRange] - byteLocation;
     return HFRangeMake(byteLocation, byteLength);
 }
 
 - (unsigned long long)byteOffsetForUTF8Offset:(unsigned long long)offset
 {
-    return [self byteOffsetForUTF8Offset:offset inLineRange:NSMakeRange(0, [self.lineCache count])];
+    return [self byteOffsetForUTF8Offset:offset inLineRange:NSMakeRange(0, [self.lineCache count]) line:NULL];
 }
 
-- (unsigned long long)byteOffsetForUTF8Offset:(unsigned long long)offset inLineRange:(NSRange)lineRange
+- (unsigned long long)byteOffsetForUTF8Offset:(unsigned long long)offset inLineRange:(NSRange)lineRange line:(NSUInteger *)line
 {
     unsigned long long firstLineOffset = [[[self.lineCache objectAtIndex:lineRange.location] objectAtIndex:1] unsignedLongLongValue];
-    if (offset > firstLineOffset)
+    if (offset < firstLineOffset)
         [NSException raise:NSInvalidArgumentException format:@"Invalid line range."];
+    else if (offset == firstLineOffset)
+    {
+        if (line)
+            *line = lineRange.location;
+        return [[[self.lineCache objectAtIndex:lineRange.location] objectAtIndex:0] unsignedLongLongValue];
+    }
     unsigned long long secondLineOffset = [[[self.lineCache objectAtIndex:lineRange.location + 1] objectAtIndex:1] unsignedLongLongValue];
     if ( secondLineOffset > offset)
     {
+        if (line)
+            *line = lineRange.location;
         unsigned long long currentByteOffset = [[[self.lineCache objectAtIndex:lineRange.location] objectAtIndex:0] unsignedLongLongValue];
         unsigned char *byte = malloc(sizeof(unsigned char));
         for (unsigned long long currentOffset = firstLineOffset; currentOffset < secondLineOffset; ++currentOffset)
@@ -202,7 +211,7 @@ static const NSUInteger blockSize = 0x2000;
         lineRange = NSMakeRange(lineRange.location, lineRange.length / 2);
     else
         lineRange = NSMakeRange(lineRange.location + lineRange.length / 2, lineRange.length - lineRange.length / 2);
-    return [self byteOffsetForUTF8Offset:offset inLineRange:lineRange];
+    return [self byteOffsetForUTF8Offset:offset inLineRange:lineRange line:line];
 }
 
 - (NSUInteger)textLength
@@ -228,7 +237,32 @@ static const NSUInteger blockSize = 0x2000;
 {
     if (!self.file || !range.length)
         return nil;
-    return (NSString *)[self stringInByteRange:[self byteRangeForUTF8Range:&range]];
+    return [[self stringInByteRange:[self byteRangeForUTF8Range:&range]] string];
+}
+
+- (BOOL)codeView:(ECCodeViewBase *)codeView canEditTextInRange:(NSRange)range
+{
+    if (self.file)
+        return YES;
+    else
+        return NO;
+}
+
+- (void)codeView:(ECCodeViewBase *)codeView commitString:(NSString *)string forTextInRange:(NSRange)range
+{
+    if (!self.file)
+        return;
+    NSUInteger line = 0;
+    [self byteOffsetForUTF8Offset:range.location inLineRange:NSMakeRange(0, [self.lineCache count]) line:&line];
+    [self.byteArray insertByteSlice:[[HFSharedMemoryByteSlice alloc] initWithData:[NSMutableData dataWithData:[string dataUsingEncoding:NSUTF8StringEncoding]]] inRange:[self byteRangeForUTF8Range:&range]];
+    NSUInteger lineCount = [self.lineCache count];
+    for (; line <= lineCount; ++line)
+        [self.lineCache removeLastObject];
+    cacheLineCurrentByteOffset = [[[self.lineCache lastObject] objectAtIndex:0] unsignedLongLongValue];
+    cacheLineCurrentLineByteOffset = cacheLineCurrentByteOffset;
+    cacheLineCurrentUTF8Offset = [[[self.lineCache lastObject] objectAtIndex:1] unsignedLongLongValue];
+    cacheLineCurrentLineUTF8Offset = cacheLineCurrentUTF8Offset;
+    [codeView updateAllText];
 }
 
 @end
