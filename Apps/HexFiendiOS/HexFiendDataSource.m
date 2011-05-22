@@ -78,6 +78,11 @@ static const NSUInteger blockSize = 0x2000;
     unsigned long long length = [self.byteArray length];
     if ([[[self.lineCache lastObject] objectAtIndex:0] unsignedLongLongValue] == length)
         return NO;
+    if (cacheLineCurrentByteOffset >= length)
+    {
+        [self.lineCache addObject:[NSArray arrayWithObjects:[NSNumber numberWithUnsignedLongLong:cacheLineCurrentByteOffset], [NSNumber numberWithUnsignedLongLong:cacheLineCurrentLineUTF8Offset], nil]];
+        return YES;
+    }
     if (!cacheLineCurrentBlock)
     {
         cacheLineCurrentBlockRange.location = 0;
@@ -107,8 +112,6 @@ static const NSUInteger blockSize = 0x2000;
             ++cacheLineCurrentUTF8Offset;
             cacheLineCurrentLineByteOffset = cacheLineCurrentByteOffset;
             cacheLineCurrentLineUTF8Offset = cacheLineCurrentUTF8Offset;
-            if (cacheLineCurrentByteOffset == length)
-                [self.lineCache addObject:[NSArray arrayWithObjects:[NSNumber numberWithUnsignedLongLong:cacheLineCurrentByteOffset], [NSNumber numberWithUnsignedLongLong:cacheLineCurrentLineUTF8Offset], nil]];
             return YES;
         }
         if (currentByte >> 7 == 0)
@@ -139,14 +142,15 @@ static const NSUInteger blockSize = 0x2000;
     if (firstLineOutOfRange >= [self.lineCache count])
     {
         NSUInteger line;
-        NSUInteger lineCount = [self.lineCache count];
-        for (line = lineCount; line < firstLineOutOfRange; ++line)
+        for (line = [self.lineCache count]; line <= firstLineOutOfRange; ++line)
             if (![self cacheLine])
                 break;
-        [self cacheLine];
-        firstLineOutOfRange = line;
-        range->length = line - range->location;
+        firstLineOutOfRange = line - 1;
+        range->length = firstLineOutOfRange - range->location;
     }
+    NSLog(@"%@", self.lineCache);
+    NSLog(@"%u", [self.lineCache count]);
+    NSLog(@"firstLineOutOfRange: %u", firstLineOutOfRange);
     unsigned long long byteLocation = [[[self.lineCache objectAtIndex:range->location] objectAtIndex:0] unsignedLongLongValue];
     unsigned long long byteLength = [[[self.lineCache objectAtIndex:firstLineOutOfRange] objectAtIndex:0] unsignedLongLongValue] - byteLocation - 1;
     return HFRangeMake(byteLocation, byteLength);
@@ -256,12 +260,13 @@ static const NSUInteger blockSize = 0x2000;
     [self byteOffsetForUTF8Offset:range.location inLineRange:NSMakeRange(0, [self.lineCache count]) line:&line];
     [self.byteArray insertByteSlice:[[HFSharedMemoryByteSlice alloc] initWithData:[NSMutableData dataWithData:[string dataUsingEncoding:NSUTF8StringEncoding]]] inRange:[self byteRangeForUTF8Range:&range]];
     NSUInteger lineCount = [self.lineCache count];
-    for (; line <= lineCount; ++line)
+    for (; line + 1 < lineCount; ++line)
         [self.lineCache removeLastObject];
     cacheLineCurrentByteOffset = [[[self.lineCache lastObject] objectAtIndex:0] unsignedLongLongValue];
     cacheLineCurrentLineByteOffset = cacheLineCurrentByteOffset;
     cacheLineCurrentUTF8Offset = [[[self.lineCache lastObject] objectAtIndex:1] unsignedLongLongValue];
     cacheLineCurrentLineUTF8Offset = cacheLineCurrentUTF8Offset;
+    [self.lineCache removeLastObject];
     [codeView updateAllText];
 }
 
