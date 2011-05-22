@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CD136DB81382C7BB004F9C5D /* NSData+UTF8.m in Sources */ = {isa = PBXBuildFile; fileRef = CD136DB71382C7BB004F9C5D /* NSData+UTF8.m */; };
 		CD28E65B1372E57600ADD2FC /* ECPopoverController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD28E6581372E57500ADD2FC /* ECPopoverController.m */; };
 		CD28E65C1372E57600ADD2FC /* ECPopoverView.m in Sources */ = {isa = PBXBuildFile; fileRef = CD28E65A1372E57500ADD2FC /* ECPopoverView.m */; };
 		CD28E6661374317200ADD2FC /* ECRectSet.m in Sources */ = {isa = PBXBuildFile; fileRef = CD28E6651374317200ADD2FC /* ECRectSet.m */; };
@@ -37,6 +38,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		CD136DB61382C7BB004F9C5D /* NSData+UTF8.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+UTF8.h"; sourceTree = "<group>"; };
+		CD136DB71382C7BB004F9C5D /* NSData+UTF8.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+UTF8.m"; sourceTree = "<group>"; };
 		CD28E6571372E57500ADD2FC /* ECPopoverController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECPopoverController.h; sourceTree = "<group>"; };
 		CD28E6581372E57500ADD2FC /* ECPopoverController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECPopoverController.m; sourceTree = "<group>"; };
 		CD28E6591372E57500ADD2FC /* ECPopoverView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECPopoverView.h; sourceTree = "<group>"; };
@@ -182,6 +185,8 @@
 				CDCD1CB61368611C00A6DA9E /* ECDictionaryCache.m */,
 				CDA3F5C51379BBC300E72D46 /* NSTimer+block.h */,
 				CDA3F5C61379BBC400E72D46 /* NSTimer+block.m */,
+				CD136DB61382C7BB004F9C5D /* NSData+UTF8.h */,
+				CD136DB71382C7BB004F9C5D /* NSData+UTF8.m */,
 			);
 			name = ECFoundation;
 			path = ../../Frameworks/ECFoundation;
@@ -298,6 +303,7 @@
 				CD28E6661374317200ADD2FC /* ECRectSet.m in Sources */,
 				CDA3F5C71379BBC400E72D46 /* NSTimer+block.m in Sources */,
 				CDA9216F137D945000AE1BBF /* ECCodeFileDataSource.m in Sources */,
+				CD136DB81382C7BB004F9C5D /* NSData+UTF8.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

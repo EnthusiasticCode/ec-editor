@@ -7,6 +7,7 @@
 //
 
 #import "ECCodeFileDataSource.h"
+#import "NSData+UTF8.h"
 
 
 @interface ECCodeFileDataSource () {
@@ -17,11 +18,13 @@
     NSData *lineDelimiterData;
     NSMutableDictionary *lineOffsetsDictionary;
     
-    NSMutableAttributedString *editableString;
     struct {
-        unsigned long long location, lenght;
-    } editableStringFileRange;
-    BOOL editableStringIsDirty;
+        NSMutableAttributedString *string;
+        struct {
+            unsigned long long location, lenght;
+        } fileRange;
+        BOOL dirty;
+    } editable;
 }
 
 /// Returns the offset of the beginning of the given line in the file.
@@ -85,7 +88,7 @@
     [fileHandle release];
     [inputFileURL release];
     
-    [editableString release];
+    [editable.string release];
     
     [super dealloc];
 }
@@ -94,7 +97,7 @@
 
 - (void)flush
 {
-    if (!editableStringIsDirty)
+    if (!editable.dirty)
         return;
     
     NSURL *tempFileURL = [[NSURL URLWithString:NSTemporaryDirectory()] URLByAppendingPathComponent:[inputFileURL lastPathComponent]];
@@ -107,7 +110,7 @@
         // TODO see if pool should be moved inside loop
         NSData *writeData;
         NSUInteger writeDataSize;
-        unsigned long long writeBytesCount = editableStringFileRange.location;
+        unsigned long long writeBytesCount = editable.fileRange.location;
         [fileHandle seekToFileOffset:0];
         // Head
         while (writeBytesCount) 
@@ -118,10 +121,10 @@
             writeBytesCount -= writeDataSize;
         }
         // Changed
-        writeData = [[editableString string] dataUsingEncoding:NSUTF8StringEncoding];
+        writeData = [[editable.string string] dataUsingEncoding:NSUTF8StringEncoding];
         [tempFile writeData:writeData];
-        writeBytesCount = fileLength - (editableStringFileRange.location + editableStringFileRange.lenght);
-        editableStringFileRange.lenght = [writeData length];
+        writeBytesCount = fileLength - (editable.fileRange.location + editable.fileRange.lenght);
+        editable.fileRange.lenght = [writeData length];
         // Tail
         while (writeBytesCount) 
         {
@@ -139,7 +142,7 @@
     [[NSFileManager defaultManager] moveItemAtURL:tempFileURL toURL:inputFileURL error:NULL];
     [self openInputFile];
     
-    editableStringIsDirty = NO;
+    editable.dirty = NO;
 }
 
 #pragma mark CodeView Data Source Methods
@@ -159,15 +162,15 @@
     return [[[NSString alloc] initWithData:stringData encoding:NSUTF8StringEncoding] autorelease];
 }
 
-//- (BOOL)codeView:(ECCodeViewBase *)codeView canEditTextInRange:(NSRange)range
-//{
-//    return YES;
-//}
-//
-//- (void)codeView:(ECCodeViewBase *)codeView commitString:(NSString *)string forTextInRange:(NSRange)range
-//{
-//    
-//}
+- (BOOL)codeView:(ECCodeViewBase *)codeView canEditTextInRange:(NSRange)range
+{
+    return YES;
+}
+
+- (void)codeView:(ECCodeViewBase *)codeView commitString:(NSString *)string forTextInRange:(NSRange)range
+{
+    
+}
 
 #pragma mark Text Renderer Data Source Methods
 
@@ -191,29 +194,28 @@
     [self flush];
     lineRange->length = end - location;
     NSString *string = [[NSString alloc] initWithData:textData encoding:NSUTF8StringEncoding];
-    [editableString release];
-    editableString = [[NSMutableAttributedString alloc] initWithString:string attributes:defaultTextStyle.CTAttributes];
+    [editable.string release];
+    editable.string = [[NSMutableAttributedString alloc] initWithString:string attributes:defaultTextStyle.CTAttributes];
     [string release];
-    editableStringFileRange.location = lineRangeLocationOffset;
-    editableStringFileRange.lenght = lineRangeEndOffset - lineRangeLocationOffset;
-    editableStringIsDirty = NO;
+    editable.fileRange.location = lineRangeLocationOffset;
+    editable.fileRange.lenght = lineRangeEndOffset - lineRangeLocationOffset;
     
     // Apply custom styles
     if (stylizeBlock)
-        stylizeBlock(self, editableString, NSMakeRange(lineRangeLocationOffset, (NSUInteger)(editableStringFileRange.lenght)));
+        stylizeBlock(self, editable.string, NSMakeRange(lineRangeLocationOffset, (NSUInteger)(editable.fileRange.lenght)));
     
     // Determine end of file/string and append tailing new line
     if ([fileHandle offsetInFile] >= fileLength)
     {
         NSAttributedString *lineDelimiter = [[NSAttributedString alloc] initWithString:self.lineDelimiter attributes:defaultTextStyle.CTAttributes];
-        [editableString appendAttributedString:lineDelimiter];
+        [editable.string appendAttributedString:lineDelimiter];
         [lineDelimiter release];
         
         if (endOfString)
             *endOfString = YES;
     }
     
-    return editableString;
+    return editable.string;
 }
 
 - (NSUInteger)textRenderer:(ECTextRenderer *)sender estimatedTextLineCountOfLength:(NSUInteger)maximumLineLength
