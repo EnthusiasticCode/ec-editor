@@ -18,7 +18,7 @@
 
 #pragma mark Offset Cache Element
 
-@interface ECCodeByteArrayDataSourceFileOffset : NSObject
+@interface FileTriOffset : NSObject
 
 @property (nonatomic) NSUInteger line;
 @property (nonatomic) NSUInteger character;
@@ -28,13 +28,13 @@
 
 @end
 
-@implementation ECCodeByteArrayDataSourceFileOffset
+@implementation FileTriOffset
 
 @synthesize line, character, byte;
 
 + (id)fileOffsetWithLine:(NSUInteger)l character:(NSUInteger)c byte:(unsigned long long)b
 {
-    ECCodeByteArrayDataSourceFileOffset *result = [self new];
+    FileTriOffset *result = [self new];
     result.line = l;
     result.character = c;
     result.byte = b;
@@ -48,10 +48,10 @@
 
 - (BOOL)isEqual:(id)object
 {
-    if (![object isKindOfClass:[ECCodeByteArrayDataSourceFileOffset class]])
+    if (![object isKindOfClass:[FileTriOffset class]])
         return NO;
     
-    ECCodeByteArrayDataSourceFileOffset *offset = (ECCodeByteArrayDataSourceFileOffset *)object;
+    FileTriOffset *offset = (FileTriOffset *)object;
     return offset.line == line && offset.character == character && offset.byte == byte;
 }
 
@@ -65,13 +65,13 @@
     HFByteArray *byteArray;
     
     NSMutableArray *offsetCache;
-    ECCodeByteArrayDataSourceFileOffset *eofOffset;
+    FileTriOffset *eofOffset;
 }
 
 /// Returns the offset of the beginning of the given line in the file.
 /// This methods uses lineDelimiter to determin the end of a line
 /// and caches line offsets in offsetCache;
-- (ECCodeByteArrayDataSourceFileOffset *)offsetForLine:(NSUInteger)line;
+- (FileTriOffset *)offsetForLine:(NSUInteger)line;
 
 @end
 
@@ -85,13 +85,13 @@
 
 - (void)setFileURL:(NSURL *)url
 {
+    [self writeToFile];
+    
     [fileURL release];
     fileURL = [url retain];
     
-    [self writeToFile];
-    
     [byteArray release];
-    byteArray = [HFByteArray new];
+    byteArray = [HFBTreeByteArray new];
     
     // Read the file
     // TODO manage error
@@ -106,6 +106,7 @@
         offsetCache = [NSMutableArray new];
     else
         [offsetCache removeAllObjects];
+    [offsetCache addObject:[FileTriOffset fileOffsetWithLine:0 character:0 byte:0]];
     eofOffset = nil;
 }
 
@@ -172,11 +173,14 @@
 
 - (NSAttributedString *)textRenderer:(ECTextRenderer *)sender stringInLineRange:(NSRange *)lineRange endOfString:(BOOL *)endOfString
 {
-    ECCodeByteArrayDataSourceFileOffset *startOffset = [self offsetForLine:lineRange->location];
+    if (!fileURL)
+        return nil;
+    
+    FileTriOffset *startOffset = [self offsetForLine:lineRange->location];
     if (startOffset.line != lineRange->location)
         return nil;
     
-    ECCodeByteArrayDataSourceFileOffset *endOffset = [self offsetForLine:NSMaxRange(*lineRange)];
+    FileTriOffset *endOffset = [self offsetForLine:NSMaxRange(*lineRange)];
     
     // Read and generate string from file
     NSUInteger stringByteLenght = endOffset.byte - startOffset.byte;
@@ -191,6 +195,8 @@
     
     // Stylize string
     NSMutableAttributedString *resultString = [[NSMutableAttributedString alloc] initWithString:string attributes:defaultTextStyle.CTAttributes];
+    [string release];
+    
     if (stylizeBlock)
         stylizeBlock(self, resultString, NSMakeRange(startOffset.character, endOffset.character - startOffset.character));
     
@@ -205,7 +211,7 @@
         [newLine release];
     }
     
-    return resultString;
+    return [resultString autorelease];
 }
 
 - (NSUInteger)textRenderer:(ECTextRenderer *)sender estimatedTextLineCountOfLength:(NSUInteger)maximumLineLength
@@ -216,14 +222,14 @@
 
 #pragma mark Private Methods
 
-- (ECCodeByteArrayDataSourceFileOffset *)offsetForLine:(NSUInteger)line
+- (FileTriOffset *)offsetForLine:(NSUInteger)line
 {
     // Check for end of file
     if (eofOffset && eofOffset.line >= line) 
         return eofOffset;
     
     // Cache search
-    NSUInteger cachedIndex = [offsetCache indexOfObjectPassingTest:^BOOL(ECCodeByteArrayDataSourceFileOffset *offset, NSUInteger idx, BOOL *stop) {
+    NSUInteger cachedIndex = [offsetCache indexOfObjectPassingTest:^BOOL(FileTriOffset *offset, NSUInteger idx, BOOL *stop) {
         return offset.line == line;
     }];
     if (cachedIndex != NSNotFound) 
@@ -231,13 +237,13 @@
     
     // Search for closest match
     __block NSUInteger closestIndex = NSNotFound;
-    [offsetCache enumerateObjectsUsingBlock:^(ECCodeByteArrayDataSourceFileOffset *offset, NSUInteger idx, BOOL *stop) {
+    [offsetCache enumerateObjectsUsingBlock:^(FileTriOffset *offset, NSUInteger idx, BOOL *stop) {
         if (offset.line > line) 
             *stop = YES;
         else
             closestIndex = idx;
     }];
-    ECCodeByteArrayDataSourceFileOffset *closestOffset = nil;
+    FileTriOffset *closestOffset = nil;
     if (closestIndex != NSNotFound)
         closestOffset = [offsetCache objectAtIndex:closestIndex];
     
@@ -247,16 +253,17 @@
     unsigned long long resultByte = closestOffset.byte;
     // Chunk
     unsigned long long fileLength = [byteArray length];
+    unsigned long long fileOffset = resultByte;
     char *chunk = (char *)malloc(chunkSize + 1);
     chunk[0] = 0;
-    char *chunkLineStart;
+    char *chunkLineStart = chunk;
     // Chunk range
     HFRange fileRange = (HFRange){0, 0};
     // Delimiter
     const char *delimiter = [lineDelimiter UTF8String];
     NSUInteger delimiterLenght = [lineDelimiter lengthOfBytesUsingEncoding:NSUTF8StringEncoding];
     // Seek to line
-    while (resultLine < line && resultByte < fileLength) 
+    while (resultLine < line && fileOffset < fileLength) 
     {
         // Update UTF8 offset
         resultCharacter += mbstowcs(NULL, chunk, chunkSize);
@@ -275,15 +282,21 @@
             if (resultLine >= line)
                 break;
         }
+        fileOffset += fileRange.length;
     }
     // Add last offet
+    if (!chunkLineStart)
+    {
+        resultLine++;
+        chunkLineStart = chunk + MIN(chunkSize, fileLength - resultByte);
+    }
     *chunkLineStart = 0;
     resultCharacter += mbstowcs(NULL, chunk, chunkSize);
     resultByte += chunkLineStart - chunk;
     free(chunk);
     
     // Generate and cache result obect
-    ECCodeByteArrayDataSourceFileOffset *resultOffset = [ECCodeByteArrayDataSourceFileOffset fileOffsetWithLine:resultLine character:resultCharacter byte:resultByte];
+    FileTriOffset *resultOffset = [FileTriOffset fileOffsetWithLine:resultLine character:resultCharacter byte:resultByte];
     [offsetCache addObject:resultOffset];
     
     // Check for EOF

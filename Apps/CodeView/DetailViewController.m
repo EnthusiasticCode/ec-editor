@@ -106,7 +106,7 @@
     [super viewDidLoad];
     
     if (!codeViewDataSource)
-        codeViewDataSource = [ECCodeFileDataSource new];
+        codeViewDataSource = [ECCodeByteArrayDataSource new];
     
     self.codeView.datasource = codeViewDataSource;
     self.codeView.delegate = self;

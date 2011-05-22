@@ -15,40 +15,44 @@
 
 #define USE_STAT64 0
 
-static void returnReadError(NSError **error) {
+static BOOL returnReadError(NSError **error) {
     if (error) {
-	int posixCode = errno;
-	NSInteger cocoaCode = 0;
-	switch (posixCode) {
-	    case ENOENT:	cocoaCode = NSFileReadNoSuchFileError; break;
-	    case EPERM:
-	    case EACCES:	cocoaCode = NSFileReadNoPermissionError; break;
-	    case ENAMETOOLONG:  cocoaCode = NSFileReadInvalidFileNameError; break;
-	}
-	if (cocoaCode != 0) {
-	    *error = [NSError errorWithDomain:NSCocoaErrorDomain code:cocoaCode userInfo:nil];	
-	}
-	else {
-	    *error = [NSError errorWithDomain:NSPOSIXErrorDomain code:posixCode userInfo:nil];
-	}
+        int posixCode = errno;
+        NSInteger cocoaCode = 0;
+        switch (posixCode) {
+            case ENOENT:	cocoaCode = NSFileReadNoSuchFileError; break;
+            case EPERM:
+            case EACCES:	cocoaCode = NSFileReadNoPermissionError; break;
+            case ENAMETOOLONG:  cocoaCode = NSFileReadInvalidFileNameError; break;
+        }
+        if (cocoaCode != 0) {
+            *error = [NSError errorWithDomain:NSCocoaErrorDomain code:cocoaCode userInfo:nil];	
+        }
+        else {
+            *error = [NSError errorWithDomain:NSPOSIXErrorDomain code:posixCode userInfo:nil];
+        }
+        return YES;
     }
+    return NO;
 }
 
-static void returnFTruncateError(NSError **error) {
+static BOOL returnFTruncateError(NSError **error) {
     if (error) {
-	int posixCode = errno;
-	NSInteger cocoaCode = 0;
-	switch (posixCode) {
-	    case ENOSPC:	cocoaCode = NSFileWriteOutOfSpaceError; break;
-	    case EROFS:		cocoaCode = NSFileWriteVolumeReadOnlyError; break;
-	}
-	if (cocoaCode != 0) {
-	    *error = [NSError errorWithDomain:NSCocoaErrorDomain code:cocoaCode userInfo:nil];	
-	}
-	else {
-	    *error = [NSError errorWithDomain:NSPOSIXErrorDomain code:posixCode userInfo:nil];
-	}
+        int posixCode = errno;
+        NSInteger cocoaCode = 0;
+        switch (posixCode) {
+            case ENOSPC:	cocoaCode = NSFileWriteOutOfSpaceError; break;
+            case EROFS:		cocoaCode = NSFileWriteVolumeReadOnlyError; break;
+        }
+        if (cocoaCode != 0) {
+            *error = [NSError errorWithDomain:NSCocoaErrorDomain code:cocoaCode userInfo:nil];	
+        }
+        else {
+            *error = [NSError errorWithDomain:NSPOSIXErrorDomain code:posixCode userInfo:nil];
+        }
+        return YES;
     }
+    return NO;
 }
 
 @implementation HFFileReference
@@ -90,15 +94,19 @@ static void returnFTruncateError(NSError **error) {
 }
 
 - initWithPath:(NSString *)path error:(NSError **)error {
-    [super init];
-    isWritable = NO;
-    return [self sharedInitWithPath:path error:error];
+    if((self = [super init])) {
+        isWritable = NO;
+        [self sharedInitWithPath:path error:error];
+    }
+    return self;
 }
 
 - initWritableWithPath:(NSString *)path error:(NSError **)error{
-    [super init];
-    isWritable = YES;
-    return [self sharedInitWithPath:path error:error];
+    if((self = [super init])) {
+        isWritable = YES;
+        [self sharedInitWithPath:path error:error];
+    }
+    return self;
 }
 
 - initWithPath:(NSString *)path {
