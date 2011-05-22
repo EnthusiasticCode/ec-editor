@@ -124,8 +124,8 @@ static const NSUInteger blockSize = 0x2000;
             cacheLineCurrentByteOffset += 4;
         ++cacheLineCurrentUTF8Offset;
     }
-    abort();
-    return NO;
+    [self.lineCache addObject:[NSArray arrayWithObjects:[NSNumber numberWithUnsignedLongLong:cacheLineCurrentLineByteOffset], [NSNumber numberWithUnsignedLongLong:cacheLineCurrentLineUTF8Offset], nil]];
+    return YES;
 }
 
 - (NSAttributedString *)stringInByteRange:(HFRange)range
@@ -258,6 +258,7 @@ static const NSUInteger blockSize = 0x2000;
         return;
     NSUInteger line = 0;
     [self byteOffsetForUTF8Offset:range.location inLineRange:NSMakeRange(0, [self.lineCache count]) line:&line];
+    NSLog(@"inserting %@ at %u, %u", string, range.location, range.length);
     [self.byteArray insertByteSlice:[[HFSharedMemoryByteSlice alloc] initWithData:[NSMutableData dataWithData:[string dataUsingEncoding:NSUTF8StringEncoding]]] inRange:[self byteRangeForUTF8Range:&range]];
     NSUInteger lineCount = [self.lineCache count];
     for (; line + 1 < lineCount; ++line)
