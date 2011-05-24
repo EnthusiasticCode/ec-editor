@@ -42,8 +42,8 @@
     while (searchRange.length > 0 && (lineRange = [self rangeOfData:lineDelimiterData options:0 range:searchRange]).location != NSNotFound)
     {
         lineCount++;
-        lineRange.location = NSMaxRange(lineRange);
-        lineRange.length = dataLength - lineRange.location;
+        searchRange.location = NSMaxRange(lineRange);
+        searchRange.length = dataLength - searchRange.location;
     }
     
     return lineCount;

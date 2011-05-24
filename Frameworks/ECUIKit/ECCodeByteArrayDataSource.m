@@ -29,6 +29,8 @@
 
 + (id)fileOffsetWithLine:(NSUInteger)l character:(NSUInteger)c byte:(unsigned long long)b;
 
+- (id)initWithLine:(NSUInteger)l character:(NSUInteger)c byte:(unsigned long long)b;
+- (id)fileOffsetByAddingLines:(NSInteger)l characters:(NSInteger)c bytes:(long long)b;
 @end
 
 @implementation FileTriOffset
@@ -37,17 +39,29 @@
 
 + (id)fileOffsetWithLine:(NSUInteger)l character:(NSUInteger)c byte:(unsigned long long)b
 {
-    FileTriOffset *result = [self new];
-    result.line = l;
-    result.character = c;
-    result.byte = b;
-    return [result autorelease];
+    return [[[self alloc] initWithLine:l character:c byte:b] autorelease];
+}
+
+- (id)initWithLine:(NSUInteger)l character:(NSUInteger)c byte:(unsigned long long)b
+{
+    if ((self = [super init])) 
+    {
+        line = l;
+        character = c;
+        byte = b;
+    }
+    return self;
+}
+
+- (id)fileOffsetByAddingLines:(NSInteger)l characters:(NSInteger)c bytes:(long long)b
+{
+    return [[[FileTriOffset alloc] initWithLine:(line + l) character:(character + c) byte:(byte + b)] autorelease];
 }
 
 // TODO delete all this unused methods
 - (id)copyWithZone:(NSZone *)zone
 {
-    return [[FileTriOffset allocWithZone:zone] init];
+    return [[FileTriOffset allocWithZone:zone] initWithLine:line character:character byte:byte];
 }
 
 - (NSUInteger)hash
@@ -77,12 +91,11 @@
     FileTriOffset *eofOffset;
     
     struct {
-        // Offset after the last committed position
-        FileTriOffset *nextOffset;
-        
-        // Mutable data retained by a byte slice used to store subsequent editing
-        NSMutableData *data;
+        // Offset before and after the last committed position
+        FileTriOffset *prevOffset, *nextOffset;
     } lastEdited;
+    
+    NSMutableData *editData;
 }
 
 /// Returns the offset of the beginning of the given line in the file.
@@ -149,7 +162,9 @@
     [byteArray release];
     [offsetCache release];
     
+    [lastEdited.prevOffset release];
     [lastEdited.nextOffset release];
+    [editData release];
     
     [fileURL release];
     [lineDelimiter release];
@@ -163,6 +178,7 @@
 
 - (void)writeToFile
 {
+    // TODO manage edit data, release
     // TODO manage progress tracking and errors
     if (fileURL)
         [byteArray writeToFile:fileURL trackingProgress:nil error:NULL];
@@ -206,73 +222,102 @@
     
     // Cached subsequent edit check
     FileTriOffset *startOffset;
-    if (lastEdited.nextOffset.character == range.location)
+    if (lastEdited.nextOffset && lastEdited.nextOffset.character == range.location)
     {
         startOffset = lastEdited.nextOffset;
     }
+    else if (lastEdited.prevOffset && lastEdited.prevOffset.character == range.location)
+    {
+        startOffset = lastEdited.prevOffset;
+    }
     else
     {
-        lastEdited.data = nil;
         startOffset = [self offsetForCharacter:range.location];
     }
     
     // Fast way to detect editing in position
+    NSUInteger rangeEnd = NSMaxRange(range);
     FileTriOffset *endOffset;
-    if (startOffset.character == NSMaxRange(range))
+    if (startOffset.character == rangeEnd)
     {
         endOffset = startOffset;
     }
+    else if (lastEdited.nextOffset && lastEdited.nextOffset.character == rangeEnd)
+    {
+        endOffset = lastEdited.nextOffset;
+    }
     else
     {
-        endOffset = [self offsetForCharacter:NSMaxRange(range)];
+        endOffset = [self offsetForCharacter:rangeEnd];
     }
     
-    //
-    HFRange fileRange = HFRangeMake(startOffset.byte, endOffset.byte - startOffset.byte);
-    NSData *stringData = nil;
+    // Edit deltas
+    NSInteger fromCharacterCount = (NSInteger)(endOffset.character - startOffset.character);
+    NSInteger fromByteCount = (NSInteger)(endOffset.byte - startOffset.byte);
     NSRange fromLineRange = NSMakeRange(startOffset.line, endOffset.line - startOffset.line + 1);
     NSRange toLineRange = NSMakeRange(startOffset.line, 1);
-    if (!string || [string length] == 0) 
-    {
-        lastEdited.data = nil;
-        [byteArray deleteBytesInRange:fileRange];
-    }
-    else
+    
+    // Edit string informations
+    NSData *stringData = nil;
+    NSUInteger stringDataLength = 0;
+    NSUInteger stringLenght = [string length];
+    // Edited range in bytes
+    HFRange fileRange = HFRangeMake(startOffset.byte, endOffset.byte - startOffset.byte);
+    if (stringLenght != 0)
     {
         // Get data to enter
         stringData = [string dataUsingEncoding:NSUTF8StringEncoding];
-        if (!lastEdited.data) 
-            lastEdited.data = [NSMutableData dataWithCapacity:[stringData length]];
+        stringDataLength = [stringData length];
+        if (!editData) 
+            editData = [[NSMutableData dataWithCapacity:stringDataLength] retain];
 
         // Adding string to mutable data
-        NSUInteger lastEditedDataOffset = [lastEdited.data length];
-        [lastEdited.data appendData:stringData];
+        NSUInteger lastEditedDataOffset = [editData length];
+        [editData appendData:stringData];
         
         // Insert slice with proper offset
-        HFSharedMemoryByteSlice *slice = [[HFSharedMemoryByteSlice alloc] initWithData:lastEdited.data offset:lastEditedDataOffset length:[stringData length]];
+        HFSharedMemoryByteSlice *slice = [[HFSharedMemoryByteSlice alloc] initWithData:editData offset:lastEditedDataOffset length:stringDataLength];
         [byteArray insertByteSlice:slice inRange:fileRange];
         [slice release];
 
         // Set proper toLineRange
         toLineRange.length = [stringData UTF8LineCountUsingLineDelimiter:lineDelimiter];
         
-        // Cacheing next offset
+        // Cacheing offsets
         if (startOffset != lastEdited.nextOffset) 
         {
             [lastEdited.nextOffset release];
-            lastEdited.nextOffset = [startOffset retain];            
+            lastEdited.nextOffset = [startOffset copy];
         }
-        lastEdited.nextOffset.line += toLineRange.length - 1;
-        lastEdited.nextOffset.character += [string length];
-        lastEdited.nextOffset.byte += [stringData length];
+        [lastEdited.prevOffset release];
+        lastEdited.prevOffset = lastEdited.nextOffset;
+        lastEdited.nextOffset = [[startOffset fileOffsetByAddingLines:(toLineRange.length - 1) 
+                                                           characters:stringLenght 
+                                                                bytes:stringDataLength] retain];
+    }
+    else // delete
+    {
+        [byteArray deleteBytesInRange:fileRange];
+        
+        if (startOffset != lastEdited.prevOffset) 
+        {
+            [lastEdited.prevOffset release];
+            lastEdited.prevOffset = [startOffset copy];
+        }
+        [lastEdited.nextOffset release];
+        lastEdited.nextOffset = lastEdited.prevOffset;
+        // TODO !!! caclulate proper line diff, only copy if not at char 0
+        lastEdited.prevOffset = [[startOffset fileOffsetByAddingLines:0 
+                                                           characters:-1
+                                                                bytes:-1] retain];
     }
     
     // Update eof offset
     if (eofOffset)
     {
         eofOffset.line -= (NSInteger)(fromLineRange.length) - (NSInteger)(toLineRange.length);
-        eofOffset.character -= (NSInteger)(endOffset.character - startOffset.character) - (NSInteger)([string length]);
-        eofOffset.byte -= (NSInteger)(endOffset.byte - startOffset.byte) - (NSInteger)([stringData length]);
+        eofOffset.character -= fromCharacterCount - (NSInteger)(stringLenght);
+        eofOffset.byte -= fromByteCount - (NSInteger)(stringDataLength);
     }
  
     [codeView updateTextInLineRange:fromLineRange toLineRange:toLineRange];
