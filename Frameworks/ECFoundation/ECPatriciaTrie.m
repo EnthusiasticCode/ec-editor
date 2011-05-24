@@ -14,7 +14,7 @@
 #define ECASSERT(x)
 #endif
 
-#define ALPHABET_SIZE 38
+#define ALPHABET_SIZE 39
 
 @interface ECPatriciaTrie ()
 {
@@ -22,9 +22,9 @@
 }
 @property (nonatomic, assign) ECPatriciaTrie *parent;
 @property (nonatomic, retain) NSString *key;
-//static unsigned char _characterForIndex(NSUInteger index);
 static NSUInteger _indexForCharacter(unsigned char character);
 static BOOL _characterIsEndOfWord(NSUInteger characterIndex, NSString *string);
+- (NSUInteger)_criticalCharacterInKey:(NSString *)key;
 - (void)_enumerateNodesWithBlock:(void(^)(ECPatriciaTrie *node))block options:(ECPatriciaTrieEnumerationOptions)options;
 - (ECPatriciaTrie *)_deepestDescendantForKey:(NSString *)key;
 - (void)_setObject:(id)object forKey:(NSString *)key;
@@ -55,32 +55,20 @@ static BOOL _characterIsEndOfWord(NSUInteger characterIndex, NSString *string);
     return self;
 }
 
-//unsigned char _characterForIndex(NSUInteger index)
-//{
-//    if (index == 0)
-//        return ':';
-//    if (index == 1)
-//        return '_';
-//    if (index <= 11)
-//        return index + 46;
-//    if (index < ALPHABET_SIZE)
-//        return index + 85;
-//    [NSException raise:NSInvalidArgumentException format:@"Passed a string that is not a valid identifier or method signature as key to ECPatriciaTrie"];
-//    return -1;
-//}
-
 NSUInteger _indexForCharacter(unsigned char character)
 {
-    if (character == ':')
+    if (character == '@')
         return 0;
-    if (character == '_')
+    if (character == ':')
         return 1;
+    if (character == '_')
+        return 2;
     if (character >= '0' && character <= '9')
-        return character - 46;
+        return character - 45;
     if (character >= 'a' && character <='z')
-        return character - 85;
+        return character - 84;
     if (character >= 'A' && character <= 'Z')
-        return character - 53;
+        return character - 52;
     [NSException raise:NSInvalidArgumentException format:@"Passed a string that is not a valid identifier or method signature as key to ECPatriciaTrie"];
     return -1;
 }
@@ -97,6 +85,15 @@ BOOL _characterIsEndOfWord(NSUInteger characterIndex, NSString *string)
     return NO;
 }
 
+- (NSUInteger)_criticalCharacterInKey:(NSString *)key
+{
+    NSUInteger criticalCharacter;
+    NSUInteger shortestKeyLenght = MIN([key length], [self.key length]);
+    for (criticalCharacter = [self.parent.key length]; criticalCharacter < shortestKeyLenght; ++criticalCharacter)
+        if (tolower([key characterAtIndex:criticalCharacter]) != tolower([self.key characterAtIndex:criticalCharacter]))
+            break;
+    return criticalCharacter;
+}
 - (void)_enumerateNodesWithBlock:(void (^)(ECPatriciaTrie *))block options:(ECPatriciaTrieEnumerationOptions)options
 {
     ECASSERT(block);
@@ -151,7 +148,9 @@ BOOL _characterIsEndOfWord(NSUInteger characterIndex, NSString *string)
 - (ECPatriciaTrie *)_deepestDescendantForKey:(NSString *)key
 {
     ECASSERT(key);
-    NSUInteger criticalCharacter = [self.key length];
+    NSUInteger criticalCharacter = [self _criticalCharacterInKey:key];
+    if (criticalCharacter < [self.key length])
+        return self;
     ECPatriciaTrie *child = nil;
     if (criticalCharacter < [key length])
         child = _children[_indexForCharacter([key characterAtIndex:criticalCharacter])];
@@ -163,18 +162,14 @@ BOOL _characterIsEndOfWord(NSUInteger characterIndex, NSString *string)
 - (void)_setObject:(id)object forKey:(NSString *)key
 {
     ECASSERT(key);
-    NSUInteger criticalCharacter = [self.key length];
-    ECASSERT(criticalCharacter >= [key length]);
-    if (criticalCharacter < [key length])
-    {
+    NSUInteger criticalCharacter = [self _criticalCharacterInKey:key];
+    if (criticalCharacter == [key length])
         if (object)
-            [self _insertNodeForKey:key].object = object;
-        return;
-    }
+            return [self setObject:object];
+        else
+            return [self _remove];
     if (object)
-        self.object = object;
-    else
-        [self _remove];
+        [self _insertNodeForKey:key].object = object;
 }
 
 - (void)_remove
@@ -220,16 +215,12 @@ BOOL _characterIsEndOfWord(NSUInteger characterIndex, NSString *string)
 - (ECPatriciaTrie *)_insertNodeForKey:(NSString *)key
 {
     ECASSERT(key);
-    NSUInteger criticalCharacter;
-    NSUInteger numCharacters = [self.key length];
-    for (criticalCharacter = 0; criticalCharacter < numCharacters; ++criticalCharacter)
-        if ([self.key characterAtIndex:criticalCharacter] != [key characterAtIndex:criticalCharacter])
-            break;
+    NSUInteger criticalCharacter = [self _criticalCharacterInKey:key];
     ECPatriciaTrie *child = [[ECPatriciaTrie alloc] init];
     child.key = key;
-    child.parent = self;
-    if (criticalCharacter == numCharacters)
+    if (criticalCharacter == [self.key length])
     {
+        child.parent = self;
         _children[_indexForCharacter([key characterAtIndex:criticalCharacter])] = child;
         return child;
     }
@@ -242,6 +233,7 @@ BOOL _characterIsEndOfWord(NSUInteger characterIndex, NSString *string)
     NSUInteger parentCriticalIndex = [self.parent.key length];
     self.parent->_children[_indexForCharacter([key characterAtIndex:parentCriticalIndex])] = parent;
     self.parent = parent;
+    child.parent = parent;
     return child;
 }
 

@@ -7,13 +7,18 @@
 //
 
 #import <UIKit/UIKit.h>
-#import <ECUIKit/ECCodeView.h>
+#import "ECCodeView.h"
 
-@interface FileController : UIViewController
+@interface FileController : UIViewController {
+    UIBarButtonItem *completionButton;
+}
+
 
 @property (nonatomic, retain) IBOutlet ECCodeView *codeView;
 @property (nonatomic, retain) NSString *file;
+@property (nonatomic, retain) IBOutlet UIBarButtonItem *completionButton;
 
 - (void)loadFile:(NSString *)file;
+- (IBAction)complete:(id)sender;
 
 @end

@@ -12,17 +12,33 @@
 #import "ECCodeUnit.h"
 #import "ECCodeToken.h"
 #import "ECCodeCursor.h"
+#import "ECCodeCompletionResult.h"
+#import "ECCodeCompletionString.h"
+#import "ECCodeCompletionChunk.h"
+
 #import "ECCodeStringDataSource.h"
 #import "ECTextStyle.h"
+#import "ECTextRange.h"
+
+#import "ECPatriciaTrie.h"
+
+@interface FileController ()
+@property (nonatomic, retain) ECCodeUnit *unit;
+@end
 
 @implementation FileController
 
 @synthesize codeView;
 @synthesize file;
+@synthesize completionButton;
+
+@synthesize unit;
 
 - (void)dealloc
 {
     self.file = nil;
+    self.unit = nil;
+    [completionButton release];
     [super dealloc];
 }
 
@@ -31,14 +47,14 @@
     self.codeView.text = [NSString stringWithContentsOfFile:self.file encoding:NSUTF8StringEncoding error:nil];
     ECCodeStringDataSource *codeSource = (ECCodeStringDataSource *)self.codeView.datasource;
     ECCodeIndex *index = [[[ECCodeIndex alloc] init] autorelease];
-    ECCodeUnit *unit = [index unitForFile:self.file];
+    self.unit = [index unitForFile:self.file];
     ECTextStyle *keywordStyle = [ECTextStyle textStyleWithName:@"Keyword" font:nil color:[UIColor blueColor]];
     ECTextStyle *commentStyle = [ECTextStyle textStyleWithName:@"Comment" font:nil color:[UIColor greenColor]];
     ECTextStyle *referenceStyle = [ECTextStyle textStyleWithName:@"Reference" font:nil color:[UIColor purpleColor]];
     ECTextStyle *literalStyle = [ECTextStyle textStyleWithName:@"Literal" font:nil color:[UIColor redColor]];
     ECTextStyle *declarationStyle = [ECTextStyle textStyleWithName:@"Declaration" font:nil color:[UIColor brownColor]];
     ECTextStyle *preprocessingStyle = [ECTextStyle textStyleWithName:@"Preprocessing" font:nil color:[UIColor orangeColor]];
-    for (ECCodeToken *token in [unit tokensWithCursors:YES])
+    for (ECCodeToken *token in [self.unit tokensWithCursors:YES])
     {
         switch (token.kind)
         {
@@ -76,8 +92,14 @@
     [codeView setNeedsLayout];
 }
 
+- (void)viewDidLoad
+{
+    self.navigationItem.rightBarButtonItem = self.completionButton;
+}
+
 - (void)viewDidUnload
 {
+    [self setCompletionButton:nil];
     [super viewDidUnload];
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;
@@ -94,6 +116,17 @@
 {
     self.file = aFile;
     self.title = [aFile lastPathComponent];
+}
+
+- (IBAction)complete:(id)sender {
+    NSArray *array = [self.unit completionsWithSelection:[(ECTextRange *)[self.codeView selectedTextRange] range]];
+    ECPatriciaTrie *trie = [[[ECPatriciaTrie alloc] init] autorelease];
+    for (ECCodeCompletionString *string in array)
+        [trie setObject:string forKey:[string firstChunk].string];
+    NSLog(@"%u", [trie count]);
+    NSArray *groups = [trie nodesForKeysStartingWithString:@"" options:ECPatriciaTrieEnumerationOptionsSkipDescendants | ECPatriciaTrieEnumerationOptionsSkipNotEndOfWord];
+    for (ECPatriciaTrie *node in groups)
+        NSLog(@"%@", node.key);
 }
 
 @end
