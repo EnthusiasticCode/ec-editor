@@ -19,19 +19,34 @@
     
     NSUInteger length = 0;
     const char *bytes = (const char*)[self bytes];
-    char c;
     for (NSUInteger i = 0; i < bytesCount; ++i) 
     {
-        c = bytes[i];
-        while ((c & 0x80) && (c & 0x40)) 
-        {
-            ++i;
-            c <<= 1;
-        }
-        ++length;
+        if (bytes[i] < 0x80)
+            length++;
     }
     
     return length;
+}
+
+- (NSUInteger)UTF8LineCountUsingLineDelimiter:(NSString *)lineDelimiter
+{
+    NSData *lineDelimiterData = [lineDelimiter dataUsingEncoding:NSUTF8StringEncoding];
+    
+    NSUInteger dataLength = [self length];
+    if (dataLength == 0)
+        return 0;
+    
+    NSUInteger lineCount = 1;
+    NSRange searchRange = NSMakeRange(0, dataLength);
+    NSRange lineRange;
+    while (searchRange.length > 0 && (lineRange = [self rangeOfData:lineDelimiterData options:0 range:searchRange]).location != NSNotFound)
+    {
+        lineCount++;
+        lineRange.location = NSMaxRange(lineRange);
+        lineRange.length = dataLength - lineRange.location;
+    }
+    
+    return lineCount;
 }
 
 @end

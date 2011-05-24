@@ -8,6 +8,7 @@
 
 #import "ECCodeByteArrayDataSource.h"
 
+#import "ECCodeViewBase.h"
 #import "ECTextStyle.h"
 
 #import "HFFunctions.h"
@@ -18,7 +19,7 @@
 
 #pragma mark Offset Cache Element
 
-@interface FileTriOffset : NSObject
+@interface FileTriOffset : NSObject <NSCopying>
 
 @property (nonatomic) NSUInteger line;
 @property (nonatomic) NSUInteger character;
@@ -39,6 +40,11 @@
     result.character = c;
     result.byte = b;
     return [result autorelease];
+}
+
+- (id)copyWithZone:(NSZone *)zone
+{
+    return [[FileTriOffset allocWithZone:zone] init];
 }
 
 - (NSUInteger)hash
@@ -72,6 +78,8 @@
 /// This methods uses lineDelimiter to determin the end of a line
 /// and caches line offsets in offsetCache;
 - (FileTriOffset *)offsetForLine:(NSUInteger)line;
+
+- (FileTriOffset *)offsetForCharacter:(NSUInteger)character;
 
 @end
 
@@ -143,31 +151,80 @@
 - (void)writeToFile
 {
     // TODO manage progress tracking and errors
-    [byteArray writeToFile:fileURL trackingProgress:nil error:NULL];
+    if (fileURL)
+        [byteArray writeToFile:fileURL trackingProgress:nil error:NULL];
 }
 
 #pragma mark CodeView Data Source Methods
 
 - (NSUInteger)textLength
 {
-    // TODO return UTF8 length when available
-    return [byteArray length];
+    return eofOffset ? eofOffset.character : [byteArray length];
 }
 
 - (NSString *)codeView:(ECCodeViewBase *)codeView stringInRange:(NSRange)range
 {
-    abort();
+    if (!fileURL)
+        return nil;
+    
+    FileTriOffset *startOffset = [self offsetForCharacter:range.location];
+    FileTriOffset *endOffset = [self offsetForCharacter:NSMaxRange(range)];
+    HFRange fileRange = HFRangeMake(startOffset.byte, endOffset.byte - startOffset.byte);
+    
+    char *stringBuffer = (char *)malloc(fileRange.length);
+    [byteArray copyBytes:(unsigned char *)stringBuffer range:fileRange];
+    
+    NSString *result = [[NSString alloc] initWithBytesNoCopy:stringBuffer length:fileRange.length encoding:NSUTF8StringEncoding freeWhenDone:YES];
+    if (!result)
+        free(stringBuffer);
+    
+    return [result autorelease];
 }
 
-//- (BOOL)codeView:(ECCodeViewBase *)codeView canEditTextInRange:(NSRange)range
-//{
-//    return YES;
-//}
-//
-//- (void)codeView:(ECCodeViewBase *)codeView commitString:(NSString *)string forTextInRange:(NSRange)range
-//{
-//    
-//}
+- (BOOL)codeView:(ECCodeViewBase *)codeView canEditTextInRange:(NSRange)range
+{
+    return YES;
+}
+
+- (void)codeView:(ECCodeViewBase *)codeView commitString:(NSString *)string forTextInRange:(NSRange)range
+{
+    if (!fileURL)
+        return;
+    
+    // TODO cache subsequent calls to subsequent caracters
+    FileTriOffset *startOffset = [self offsetForCharacter:range.location];
+    FileTriOffset *endOffset = [self offsetForCharacter:NSMaxRange(range)];
+    HFRange fileRange = HFRangeMake(startOffset.byte, endOffset.byte - startOffset.byte);
+    
+    // TODO save undo?
+    NSData *stringData = nil;
+    NSRange fromLineRange = NSMakeRange(startOffset.line, endOffset.line - startOffset.line + 1);
+    NSRange toLineRange = NSMakeRange(startOffset.line, 1);
+    if (!string || [string length] == 0) 
+    {
+        [byteArray deleteBytesInRange:fileRange];
+    }
+    else
+    {
+        // TODO buffer subsequent changes, commit to byteslice only when changeing in a different location
+        stringData = [string dataUsingEncoding:NSUTF8StringEncoding];
+        HFSharedMemoryByteSlice *slice = [[HFSharedMemoryByteSlice alloc] initWithUnsharedData:stringData];
+        [byteArray insertByteSlice:slice inRange:fileRange];
+        [slice release];
+        
+        // TODO set proper toLineRange
+    }
+    
+    // Update eof offset
+    if (eofOffset)
+    {
+        eofOffset.line -= (NSInteger)(fromLineRange.length) - (NSInteger)(toLineRange.length);
+        eofOffset.character -= (NSInteger)(endOffset.character - startOffset.character) - (NSInteger)([string length]);
+        eofOffset.byte -= (NSInteger)(endOffset.byte - startOffset.byte) - (NSInteger)([stringData length]);
+    }
+ 
+    [codeView updateTextInLineRange:fromLineRange toLineRange:toLineRange];
+}
 
 #pragma mark Text Renderer Data Source Methods
 
@@ -225,7 +282,7 @@
 - (FileTriOffset *)offsetForLine:(NSUInteger)line
 {
     // Check for end of file
-    if (eofOffset && eofOffset.line >= line) 
+    if (eofOffset && line >= eofOffset.line) 
         return eofOffset;
     
     // Cache search
@@ -297,11 +354,136 @@
     
     // Generate and cache result obect
     FileTriOffset *resultOffset = [FileTriOffset fileOffsetWithLine:resultLine character:resultCharacter byte:resultByte];
-    [offsetCache addObject:resultOffset];
+    [offsetCache insertObject:resultOffset atIndex:(closestIndex == NSNotFound ? 0 : closestIndex + 1)];
     
     // Check for EOF
     if (resultByte >= fileLength) 
         eofOffset = resultOffset;
+    
+    return resultOffset;
+}
+
+// TODO reduce code duplication
+- (FileTriOffset *)offsetForCharacter:(NSUInteger)character
+{
+    // TODO handle special case of cacheing, cache last and next
+    
+    // Check for end of file
+    if (eofOffset && character >= eofOffset.character)
+        return eofOffset;
+    
+    // Cache search
+    NSUInteger cachedIndex = [offsetCache indexOfObjectPassingTest:^BOOL(FileTriOffset *offset, NSUInteger idx, BOOL *stop) {
+        return offset.character == character;
+    }];
+    if (cachedIndex != NSNotFound) 
+        return [offsetCache objectAtIndex:cachedIndex];
+    
+    // Search for closest match
+    __block NSUInteger closestIndex = NSNotFound;
+    [offsetCache enumerateObjectsUsingBlock:^(FileTriOffset *offset, NSUInteger idx, BOOL *stop) {
+        if (offset.character > character) 
+            *stop = YES;
+        else
+            closestIndex = idx;
+    }];
+    FileTriOffset *closestOffset = nil;
+    if (closestIndex != NSNotFound)
+        closestOffset = [offsetCache objectAtIndex:closestIndex];
+    
+    // Results
+    NSUInteger resultLine = closestOffset.line;
+    NSUInteger resultCharacter = closestOffset.character;
+    unsigned long long resultByte = closestOffset.byte;
+    // Chunk
+    unsigned long long fileLength = [byteArray length];
+    unsigned long long fileOffset = resultByte;
+    NSUInteger characterOffset = resultCharacter;
+    NSUInteger lineLenght;
+    char *chunk = (char *)malloc(chunkSize + 1);
+    chunk[0] = 0;
+    char *chunkLineStart = chunk, *chunkLineEnd = NULL;
+    char chunkSwap;
+    // Chunk range
+    HFRange fileRange = (HFRange){0, 0};
+    // Delimiter
+    const char *delimiter = [lineDelimiter UTF8String];
+    NSUInteger delimiterLenght = [lineDelimiter lengthOfBytesUsingEncoding:NSUTF8StringEncoding];
+    // Seek to character
+    while (characterOffset < character && fileOffset < fileLength) 
+    {
+        // Update UTF8 offset
+        characterOffset += mbstowcs(NULL, chunk, chunkSize);
+        resultCharacter = characterOffset;
+        // Read new chunk
+        resultByte += fileRange.length;
+        fileRange = HFRangeMake(resultByte, MIN(chunkSize, fileLength - resultByte));
+        [byteArray copyBytes:(unsigned char *)chunk range:fileRange];
+        chunk[fileRange.length] = 0;
+        // Check for lines in chunk
+        chunkLineStart = chunk;
+        while(chunkLineStart - chunk < fileRange.length 
+              && (chunkLineEnd = strstr(chunkLineStart, delimiter)) != NULL)
+        {
+            chunkLineEnd += delimiterLenght;
+            chunkSwap = *chunkLineEnd;
+            *chunkLineEnd = 0;
+            lineLenght = mbstowcs(NULL, chunkLineStart, 0);
+            *chunkLineEnd = chunkSwap;
+            // Inside the correct line, seeking to requested character
+            if (resultCharacter + lineLenght >= character)
+            {
+                // Moving to character
+                while (resultCharacter < character) 
+                {
+                    do {
+                        chunkLineStart++;
+                    } while (*chunkLineStart >= 0x80);
+                    resultCharacter++;
+                }
+                // Adding bytes, chunkLineStart has been moved just after the required character
+                resultByte += chunkLineStart - chunk;
+                break;
+            }
+            resultLine++;
+            chunkLineStart = chunkLineEnd;
+            resultCharacter += lineLenght;
+        }
+        fileOffset += fileRange.length;
+    }
+    
+    // Add last offet for missing tailing new line
+    if (!chunkLineEnd)
+    {
+        lineLenght = mbstowcs(NULL, chunkLineStart, 0);
+        if (resultCharacter + lineLenght >= character) 
+        {
+            while (resultCharacter < character) 
+            {
+                do {
+                    chunkLineStart++;
+                } while (*chunkLineStart >= 0x80);
+                resultCharacter++;
+            }
+            resultByte += chunkLineStart - chunk;
+        }
+        else
+        {
+            // TODO!!! bug, if proceeding from a cached line in the same line (but different char) this line will add an unexisting line
+            resultLine++;
+            chunkLineEnd = chunk + MIN(chunkSize, fileLength - resultByte);
+            resultByte += chunkLineEnd - chunk;
+        }
+    }
+    free(chunk);
+    
+    // Generate and cache result obect
+    FileTriOffset *resultOffset = [FileTriOffset fileOffsetWithLine:resultLine character:resultCharacter byte:resultByte];
+    //[offsetCache insertObject:resultOffset atIndex:(closestIndex == NSNotFound ? 0 : closestIndex + 1)];
+    
+    // Check for EOF
+//    if (resultByte >= fileLength) 
+//        eofOffset = resultOffset;
     
     return resultOffset;
 }

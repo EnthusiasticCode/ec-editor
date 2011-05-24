@@ -13,4 +13,6 @@
 
 - (NSUInteger)UTF8Length;
 
+- (NSUInteger)UTF8LineCountUsingLineDelimiter:(NSString *)lineDelimiter;
+
 @end
