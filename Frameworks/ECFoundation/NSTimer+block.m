@@ -13,12 +13,12 @@
 
 + (NSTimer *)timerWithTimeInterval:(NSTimeInterval)ti usingBlock:(void(^)(NSTimer *timer))block repeats:(BOOL)yesOrNo
 {
-    return [NSTimer timerWithTimeInterval:ti target:[NSTimer class] selector:@selector(executeTimerUserInfoAsBlock:) userInfo:[block copy] repeats:yesOrNo];
+    return [NSTimer timerWithTimeInterval:ti target:[NSTimer class] selector:@selector(executeTimerUserInfoAsBlock:) userInfo:[[block copy] autorelease] repeats:yesOrNo];
 }
 
 + (NSTimer *)scheduledTimerWithTimeInterval:(NSTimeInterval)ti usingBlock:(void(^)(NSTimer *timer))block repeats:(BOOL)yesOrNo
 {
-    return [NSTimer scheduledTimerWithTimeInterval:ti target:[NSTimer class] selector:@selector(executeTimerUserInfoAsBlock:) userInfo:[block copy] repeats:yesOrNo];
+    return [NSTimer scheduledTimerWithTimeInterval:ti target:[NSTimer class] selector:@selector(executeTimerUserInfoAsBlock:) userInfo:[[block copy] autorelease] repeats:yesOrNo];
 }
 
 + (void)executeTimerUserInfoAsBlock:(NSTimer *)timer

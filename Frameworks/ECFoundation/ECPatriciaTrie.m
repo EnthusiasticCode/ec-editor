@@ -42,6 +42,8 @@ static BOOL _skipNodeForOptions(ECPatriciaTrie *node, ECPatriciaTrieEnumerationO
 
 - (void)dealloc
 {
+    for (NSUInteger i = 0; i < ALPHABET_SIZE; ++i)
+        [_children[i] release];
     self.key = nil;
     self.object = nil;
     [super dealloc];
