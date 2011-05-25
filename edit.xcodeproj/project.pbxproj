@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B706EE47138D55D200DA822C /* CompletionController.m in Sources */ = {isa = PBXBuildFile; fileRef = B706EE45138D55D200DA822C /* CompletionController.m */; };
+		B706EE48138D55D200DA822C /* CompletionController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B706EE46138D55D200DA822C /* CompletionController.xib */; };
 		B706F05A13563ECB00E03DDF /* UIColor+StyleColors.m in Sources */ = {isa = PBXBuildFile; fileRef = B706F05513563ECB00E03DDF /* UIColor+StyleColors.m */; };
 		B706F05B13563ECB00E03DDF /* UIImage+BlockDrawing.m in Sources */ = {isa = PBXBuildFile; fileRef = B706F05713563ECB00E03DDF /* UIImage+BlockDrawing.m */; };
 		B706F05C13563ECB00E03DDF /* UIView+ConcurrentAnimation.m in Sources */ = {isa = PBXBuildFile; fileRef = B706F05913563ECB00E03DDF /* UIView+ConcurrentAnimation.m */; };
@@ -167,6 +169,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		B706EE44138D55D200DA822C /* CompletionController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CompletionController.h; sourceTree = "<group>"; };
+		B706EE45138D55D200DA822C /* CompletionController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CompletionController.m; sourceTree = "<group>"; };
+		B706EE46138D55D200DA822C /* CompletionController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CompletionController.xib; sourceTree = "<group>"; };
 		B706F05413563ECB00E03DDF /* UIColor+StyleColors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIColor+StyleColors.h"; path = "Frameworks/ECUIKit/UIColor+StyleColors.h"; sourceTree = "<group>"; };
 		B706F05513563ECB00E03DDF /* UIColor+StyleColors.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIColor+StyleColors.m"; path = "Frameworks/ECUIKit/UIColor+StyleColors.m"; sourceTree = "<group>"; };
 		B706F05613563ECB00E03DDF /* UIImage+BlockDrawing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIImage+BlockDrawing.h"; path = "Frameworks/ECUIKit/UIImage+BlockDrawing.h"; sourceTree = "<group>"; };
@@ -582,6 +587,8 @@
 				B74C66F91379800300CC92D3 /* GroupController.m */,
 				CDEBF20C13489A8E00CE2285 /* FileController.h */,
 				CDEBF20D13489A8E00CE2285 /* FileController.m */,
+				B706EE44138D55D200DA822C /* CompletionController.h */,
+				B706EE45138D55D200DA822C /* CompletionController.m */,
 			);
 			name = Application;
 			path = Apps/edit;
@@ -827,6 +834,7 @@
 				B74C6717137A8E0D00CC92D3 /* AddProjectController.xib */,
 				CDEFF9661348BD5E006FEFCC /* ProjectController.xib */,
 				CDEFF95E1348BD5E006FEFCC /* FileController.xib */,
+				B706EE46138D55D200DA822C /* CompletionController.xib */,
 			);
 			name = en.lproj;
 			path = Apps/edit;
@@ -909,6 +917,7 @@
 				CDEFF9741348BD5E006FEFCC /* RootController.xib in Resources */,
 				B74C6719137A8E0D00CC92D3 /* AddProjectController.xib in Resources */,
 				B74C674E137C2F9900CC92D3 /* Inconsolata.otf in Resources */,
+				B706EE48138D55D200DA822C /* CompletionController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -976,6 +985,7 @@
 				B74C6718137A8E0D00CC92D3 /* AddProjectController.m in Sources */,
 				B74C673C137BC07600CC92D3 /* NSTimer+block.m in Sources */,
 				B7086D33138BCA28001F2ECE /* ECPatriciaTrie.m in Sources */,
+				B706EE47138D55D200DA822C /* CompletionController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

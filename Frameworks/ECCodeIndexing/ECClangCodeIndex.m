@@ -29,7 +29,7 @@
     self = [super init];
     if (!self)
         return nil;
-    self.index = clang_createIndex(0, 0);
+    self.index = clang_createIndex(0, 1);
     return self;
 }
 

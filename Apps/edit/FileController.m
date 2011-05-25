@@ -22,6 +22,8 @@
 
 #import "ECPatriciaTrie.h"
 
+#import "CompletionController.h"
+
 @interface FileController ()
 @property (nonatomic, retain) ECCodeUnit *unit;
 @end
@@ -31,6 +33,8 @@
 @synthesize codeView;
 @synthesize file;
 @synthesize completionButton;
+@synthesize popoverController;
+@synthesize completionController;
 
 @synthesize unit;
 
@@ -39,6 +43,8 @@
     self.file = nil;
     self.unit = nil;
     [completionButton release];
+    [popoverController release];
+    [completionController release];
     [super dealloc];
 }
 
@@ -94,12 +100,21 @@
 
 - (void)viewDidLoad
 {
+    [super viewDidLoad];
     self.navigationItem.rightBarButtonItem = self.completionButton;
+    self.popoverController = [[[UIPopoverController alloc] initWithContentViewController:self.completionController] autorelease];
+    self.popoverController.popoverContentSize = CGSizeMake(400.0, 500.0);
+    self.completionController.resultSelectedBlock = ^(ECCodeCompletionString *result) {
+        [self.codeView insertText:[result firstChunk].string];
+        [self.popoverController dismissPopoverAnimated:YES];
+    };
 }
 
 - (void)viewDidUnload
 {
     [self setCompletionButton:nil];
+    [self setPopoverController:nil];
+    [self setCompletionController:nil];
     [super viewDidUnload];
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;
@@ -123,9 +138,9 @@
     ECPatriciaTrie *trie = [[[ECPatriciaTrie alloc] init] autorelease];
     for (ECCodeCompletionString *string in array)
         [trie setObject:string forKey:[string firstChunk].string];
-    NSArray *groups = [trie nodesForKeysStartingWithString:@"" options:ECPatriciaTrieEnumerationOptionsSkipNotEndOfWord | ECPatriciaTrieEnumerationOptionsStopAtShallowestMatch];
-    for (ECPatriciaTrie *node in groups)
-        NSLog(@"%@ -> %@", node, node.key);
+    self.completionController.results = trie;
+    self.completionController.match = @"";
+    [self.popoverController presentPopoverFromBarButtonItem:self.completionButton permittedArrowDirections:0 animated:YES];
 }
 
 @end

@@ -139,7 +139,7 @@ BOOL _skipNodeForOptions(ECPatriciaTrie *node, ECPatriciaTrieEnumerationOptions 
 
 - (NSUInteger)nodeCountWithOptions:(ECPatriciaTrieEnumerationOptions)options
 {
-    __block NSUInteger count;
+    __block NSUInteger count = 0;
     [self _enumerateNodesWithBlock:^(ECPatriciaTrie *child) {
         ++count;
     } options:options];
@@ -148,19 +148,16 @@ BOOL _skipNodeForOptions(ECPatriciaTrie *node, ECPatriciaTrieEnumerationOptions 
 
 - (id)objectForKey:(NSString *)key
 {
-    ECASSERT(key);
     return [self nodeForKey:key].object;
 }
 
 - (void)setObject:(id)object forKey:(NSString *)key
 {
-    ECASSERT(key);
     [[self _deepestDescendantForKey:key] _setObject:object forKey:key];
 }
 
 - (ECPatriciaTrie *)_deepestDescendantForKey:(NSString *)key
 {
-    ECASSERT(key);
     NSUInteger criticalCharacter = [self _criticalCharacterInKey:key];
     if (criticalCharacter < [self.key length])
         return self;
@@ -174,7 +171,6 @@ BOOL _skipNodeForOptions(ECPatriciaTrie *node, ECPatriciaTrieEnumerationOptions 
 
 - (void)_setObject:(id)object forKey:(NSString *)key
 {
-    ECASSERT(key);
     NSUInteger criticalCharacter = [self _criticalCharacterInKey:key];
     if (criticalCharacter == [key length])
         if (object)
@@ -253,7 +249,6 @@ BOOL _skipNodeForOptions(ECPatriciaTrie *node, ECPatriciaTrieEnumerationOptions 
 
 - (ECPatriciaTrie *)nodeForKey:(NSString *)key
 {
-    ECASSERT(key);
     if ([self.key isEqualToString:key])
         return self;
     NSUInteger criticalCharacter = [self.key length];
