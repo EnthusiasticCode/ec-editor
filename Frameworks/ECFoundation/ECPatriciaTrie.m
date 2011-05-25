@@ -25,6 +25,7 @@
 static NSUInteger _indexForCharacter(unsigned char character);
 static BOOL _characterIsEndOfWord(NSUInteger characterIndex, NSString *string);
 - (NSUInteger)_criticalCharacterInKey:(NSString *)key;
+static BOOL _skipNodeForOptions(ECPatriciaTrie *node, ECPatriciaTrieEnumerationOptions options);
 - (void)_enumerateNodesWithBlock:(void(^)(ECPatriciaTrie *node))block options:(ECPatriciaTrieEnumerationOptions)options;
 - (ECPatriciaTrie *)_deepestDescendantForKey:(NSString *)key;
 - (void)_setObject:(id)object forKey:(NSString *)key;
@@ -44,15 +45,6 @@ static BOOL _characterIsEndOfWord(NSUInteger characterIndex, NSString *string);
     self.key = nil;
     self.object = nil;
     [super dealloc];
-}
-
-- (id)init
-{
-    self = [super init];
-    if (!self)
-        return nil;
-    self.endOfWord = YES;
-    return self;
 }
 
 NSUInteger _indexForCharacter(unsigned char character)
@@ -77,7 +69,7 @@ BOOL _characterIsEndOfWord(NSUInteger characterIndex, NSString *string)
 {
     ECASSERT(characterIndex < [string length]);
     if (characterIndex == [string length] - 1)
-        return YES;
+        return NO;
     unsigned char character = [string characterAtIndex:characterIndex];
     unsigned char nextCharacter = [string characterAtIndex:characterIndex + 1];
     if (character >= 'a' && character <= 'z' && (nextCharacter < 'a' || nextCharacter > 'z'))
@@ -94,28 +86,47 @@ BOOL _characterIsEndOfWord(NSUInteger characterIndex, NSString *string)
             break;
     return criticalCharacter;
 }
+
+BOOL _skipNodeForOptions(ECPatriciaTrie *node, ECPatriciaTrieEnumerationOptions options)
+{
+    ECASSERT(node);
+    if (!options)
+        return NO;
+    if (options & ECPatriciaTrieEnumerationOptionsSkipEndOfWord && node.endOfWord)
+        return YES;;
+    if (options & ECPatriciaTrieEnumerationOptionsSkipNotEndOfWord && !node.endOfWord)
+        return YES;
+    if (options & ECPatriciaTrieEnumerationOptionsSkipWithObject && node.object)
+        return YES;
+    if (options & ECPatriciaTrieEnumerationOptionsSkipWithoutObject && !node.object)
+        return YES;
+    return NO;
+}
+
 - (void)_enumerateNodesWithBlock:(void (^)(ECPatriciaTrie *))block options:(ECPatriciaTrieEnumerationOptions)options
 {
     ECASSERT(block);
     if (!(options & ECPatriciaTrieEnumerationOptionsSkipRoot))
-        block(self);
+        if (!_skipNodeForOptions(self, options))
+        {
+            block(self);
+            if (options & ECPatriciaTrieEnumerationOptionsStopAtShallowestMatch)
+                return;
+        }
     for (NSUInteger i = 0; i < ALPHABET_SIZE; ++i)
     {
         ECPatriciaTrie *child = _children[i];
         if (!child)
             continue;
-        if (options & ECPatriciaTrieEnumerationOptionsSkipEndOfWord && child.endOfWord)
-            continue;
-        if (options & ECPatriciaTrieEnumerationOptionsSkipNotEndOfWord && !child.endOfWord)
-            continue;
-        if (options & ECPatriciaTrieEnumerationOptionsSkipWithObject && child.object)
-            continue;
-        if (options & ECPatriciaTrieEnumerationOptionsSkipWithoutObject && !child.object)
-            continue;
-        block(child);
+        if (!_skipNodeForOptions(child, options))
+        {
+            block(child);
+            if (options & ECPatriciaTrieEnumerationOptionsStopAtShallowestMatch)
+                continue;
+        }
         if (options & ECPatriciaTrieEnumerationOptionsSkipDescendants)
             continue;
-        [child _enumerateNodesWithBlock:block options:options];
+        [child _enumerateNodesWithBlock:block options:options | ECPatriciaTrieEnumerationOptionsSkipRoot];
     }
 }
 
@@ -218,6 +229,7 @@ BOOL _characterIsEndOfWord(NSUInteger characterIndex, NSString *string)
     NSUInteger criticalCharacter = [self _criticalCharacterInKey:key];
     ECPatriciaTrie *child = [[ECPatriciaTrie alloc] init];
     child.key = key;
+    child.endOfWord = YES;
     if (criticalCharacter == [self.key length])
     {
         child.parent = self;
@@ -267,6 +279,22 @@ BOOL _characterIsEndOfWord(NSUInteger characterIndex, NSString *string)
         [array addObject:child];
     } options:options];
     return array;
+}
+
+- (void)enumerateObjectsForKeysStartingWithString:(NSString *)string withBlock:(void (^)(id))block options:(ECPatriciaTrieEnumerationOptions)options
+{
+    if (!block)
+        return;
+    [[self _deepestDescendantForKey:string] _enumerateNodesWithBlock:^(ECPatriciaTrie *child) {
+        block(child.object);
+    } options:options | ECPatriciaTrieEnumerationOptionsSkipWithoutObject];
+}
+
+- (void)enumerateNodesForKeysStartingWithString:(NSString *)string withBlock:(void (^)(ECPatriciaTrie *))block options:(ECPatriciaTrieEnumerationOptions)options
+{
+    if (!block)
+        return;
+    [[self _deepestDescendantForKey:string] _enumerateNodesWithBlock:block options:options];
 }
 
 @end

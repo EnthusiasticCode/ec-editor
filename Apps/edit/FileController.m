@@ -123,10 +123,9 @@
     ECPatriciaTrie *trie = [[[ECPatriciaTrie alloc] init] autorelease];
     for (ECCodeCompletionString *string in array)
         [trie setObject:string forKey:[string firstChunk].string];
-    NSLog(@"%u", [trie count]);
-    NSArray *groups = [trie nodesForKeysStartingWithString:@"" options:ECPatriciaTrieEnumerationOptionsSkipDescendants | ECPatriciaTrieEnumerationOptionsSkipNotEndOfWord];
+    NSArray *groups = [trie nodesForKeysStartingWithString:@"" options:ECPatriciaTrieEnumerationOptionsSkipNotEndOfWord | ECPatriciaTrieEnumerationOptionsStopAtShallowestMatch];
     for (ECPatriciaTrie *node in groups)
-        NSLog(@"%@", node.key);
+        NSLog(@"%@ -> %@", node, node.key);
 }
 
 @end

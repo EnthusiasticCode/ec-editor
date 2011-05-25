@@ -16,6 +16,7 @@ enum
     ECPatriciaTrieEnumerationOptionsSkipWithoutObject = 8,
     ECPatriciaTrieEnumerationOptionsSkipDescendants = 16,
     ECPatriciaTrieEnumerationOptionsSkipRoot = 32,
+    ECPatriciaTrieEnumerationOptionsStopAtShallowestMatch = 64,
 };
 
 typedef NSUInteger ECPatriciaTrieEnumerationOptions;
@@ -33,5 +34,7 @@ typedef NSUInteger ECPatriciaTrieEnumerationOptions;
 - (ECPatriciaTrie *)nodeForKey:(NSString *)key;
 - (NSArray *)objectsForKeysStartingWithString:(NSString *)string options:(ECPatriciaTrieEnumerationOptions)options;
 - (NSArray *)nodesForKeysStartingWithString:(NSString *)string options:(ECPatriciaTrieEnumerationOptions)options;
+- (void)enumerateObjectsForKeysStartingWithString:(NSString *)string withBlock:(void(^)(id object))block options:(ECPatriciaTrieEnumerationOptions)options;
+- (void)enumerateNodesForKeysStartingWithString:(NSString *)string withBlock:(void(^)(ECPatriciaTrie *node))block options:(ECPatriciaTrieEnumerationOptions)options;
 
 @end
