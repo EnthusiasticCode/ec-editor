@@ -262,8 +262,8 @@ static ECCodeCompletionResult *completionResultFromClangCompletionResult(CXCompl
         [self release];
         return nil;
     }
-    int parameter_count = 10;
-    const char const *parameters[] = {"-ObjC", "-nostdinc", "-nobuiltininc", "-I/Developer/usr/lib/clang/2.0/include", "-I/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator4.3.sdk/usr/include", "-F/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator4.3.sdk/System/Library/Frameworks", "-isysroot=/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator4.3.sdk/", "-DTARGET_OS_IPHONE=1", "-UTARGET_OS_MAC", "-miphoneos-version-min=4.3"};
+    int parameter_count = 11;
+    const char const *parameters[] = {"-ObjC", "-fobjc-nonfragile-abi", "-nostdinc", "-nobuiltininc", "-I/Developer/usr/lib/clang/2.0/include", "-I/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator4.3.sdk/usr/include", "-F/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator4.3.sdk/System/Library/Frameworks", "-isysroot=/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator4.3.sdk/", "-DTARGET_OS_IPHONE=1", "-UTARGET_OS_MAC", "-miphoneos-version-min=4.3"};
     self.index = index;
     self.translationUnit = clang_parseTranslationUnit(index, [file fileSystemRepresentation], parameters, parameter_count, 0, 0, CXTranslationUnit_PrecompiledPreamble | CXTranslationUnit_CacheCompletionResults);
     self.source = clang_getFile(self.translationUnit, [file fileSystemRepresentation]);
@@ -299,9 +299,11 @@ static ECCodeCompletionResult *completionResultFromClangCompletionResult(CXCompl
     clang_getInstantiationLocation(selectionLocation, NULL, &line, &column, NULL);
     CXCodeCompleteResults *clangCompletions = clang_codeCompleteAt(self.translationUnit, [self.file fileSystemRepresentation], line, column, NULL, 0, clang_defaultCodeCompleteOptions());
     NSMutableArray *completions = [[NSMutableArray alloc] init];
+    NSLog(@"number of completions in code unit from clang: %u", clangCompletions->NumResults);
     for (unsigned i = 0; i < clangCompletions->NumResults; ++i)
-        [completions addObject:completionResultFromClangCompletionResult(clangCompletions->Results[i]).completionString];
+        [completions addObject:completionResultFromClangCompletionResult(clangCompletions->Results[i])];
     clang_disposeCodeCompleteResults(clangCompletions);
+    NSLog(@"number of completions in code unit returned: %u", [completions count]);
     return [completions autorelease];
 }
 

@@ -8,28 +8,28 @@
 
 #import <Foundation/Foundation.h>
 
-typedef enum ECCodeCompletionChunkKind
+typedef enum
 {
-    ECCodeCompletionChunkKindOptional = 1,
-    ECCodeCompletionChunkKindTypedText = 2,
-    ECCodeCompletionChunkKindText = 3,
-    ECCodeCompletionChunkKindPlaceHolder = 4,
-    ECCodeCompletionChunkKindInformative = 5,
-    ECCodeCompletionChunkKindCurrentParameter = 6,
-    ECCodeCompletionChunkKindLeftParenthesis = 7,
-    ECCodeCompletionChunkKindRightParenthesis = 8,
-    ECCodeCompletionChunkKindLeftBracket = 9,
-    ECCodeCompletionChunkKindRightBracket = 10,
-    ECCodeCompletionChunkKindLeftBrace = 11,
-    ECCodeCompletionChunkKindRightBrace = 12,
-    ECCodeCompletionChunkKindLeftAngleBracket = 13,
-    ECCodeCompletionChunkKindRightAngleBracket = 14,
-    ECCodeCompletionChunkKindComma = 15,
-    ECCodeCompletionChunkKindResultType = 16,
-    ECCodeCompletionChunkKindSemicolon = 17,
-    ECCodeCompletionChunkKindColon = 18,
-    ECCodeCompletionChunkKindHorizontalSpace = 19,
-    ECCodeCompletionChunkKindVerticalSpace = 20,
+    ECCodeCompletionChunkKindOptional,
+    ECCodeCompletionChunkKindTypedText,
+    ECCodeCompletionChunkKindText,
+    ECCodeCompletionChunkKindPlaceHolder,
+    ECCodeCompletionChunkKindInformative,
+    ECCodeCompletionChunkKindCurrentParameter,
+    ECCodeCompletionChunkKindLeftParenthesis,
+    ECCodeCompletionChunkKindRightParenthesis,
+    ECCodeCompletionChunkKindLeftBracket,
+    ECCodeCompletionChunkKindRightBracket,
+    ECCodeCompletionChunkKindLeftBrace,
+    ECCodeCompletionChunkKindRightBrace,
+    ECCodeCompletionChunkKindLeftAngleBracket,
+    ECCodeCompletionChunkKindRightAngleBracket,
+    ECCodeCompletionChunkKindComma,
+    ECCodeCompletionChunkKindResultType,
+    ECCodeCompletionChunkKindColon,
+    ECCodeCompletionChunkKindSemicolon,
+    ECCodeCompletionChunkKindHorizontalSpace,
+    ECCodeCompletionChunkKindVerticalSpace,
 } ECCodeCompletionChunkKind;
 
 @interface ECCodeCompletionChunk : NSObject

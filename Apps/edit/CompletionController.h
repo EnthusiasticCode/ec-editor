@@ -8,10 +8,10 @@
 
 #import <UIKit/UIKit.h>
 @class ECPatriciaTrie;
-@class ECCodeCompletionString;
+@class ECCodeCompletionResult;
 
 @interface CompletionController : UITableViewController
 @property (nonatomic, retain) NSString *match;
 @property (nonatomic, retain) ECPatriciaTrie *results;
-@property (nonatomic, copy) void(^resultSelectedBlock)(ECCodeCompletionString *result);
+@property (nonatomic, copy) void(^resultSelectedBlock)(ECCodeCompletionResult *result);
 @end

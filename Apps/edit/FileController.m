@@ -103,9 +103,9 @@
     [super viewDidLoad];
     self.navigationItem.rightBarButtonItem = self.completionButton;
     self.popoverController = [[[UIPopoverController alloc] initWithContentViewController:self.completionController] autorelease];
-    self.popoverController.popoverContentSize = CGSizeMake(400.0, 500.0);
-    self.completionController.resultSelectedBlock = ^(ECCodeCompletionString *result) {
-        [self.codeView insertText:[result firstChunk].string];
+    self.popoverController.popoverContentSize = CGSizeMake(800.0, 500.0);
+    self.completionController.resultSelectedBlock = ^(ECCodeCompletionResult *result) {
+        [self.codeView insertText:[result.completionString typedText]];
         [self.popoverController dismissPopoverAnimated:YES];
     };
 }
@@ -136,8 +136,9 @@
 - (IBAction)complete:(id)sender {
     NSArray *array = [self.unit completionsWithSelection:[(ECTextRange *)[self.codeView selectedTextRange] range]];
     ECPatriciaTrie *trie = [[[ECPatriciaTrie alloc] init] autorelease];
-    for (ECCodeCompletionString *string in array)
-        [trie setObject:string forKey:[string firstChunk].string];
+    NSLog(@"number of results in file controller: %u", [array count]);
+    for (ECCodeCompletionResult *result in array)
+        [trie setObject:result forKey:[result.completionString typedText]];
     self.completionController.results = trie;
     self.completionController.match = @"";
     [self.popoverController presentPopoverFromBarButtonItem:self.completionButton permittedArrowDirections:0 animated:YES];

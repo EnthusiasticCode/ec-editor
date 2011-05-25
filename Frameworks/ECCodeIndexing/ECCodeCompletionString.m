@@ -42,10 +42,12 @@
     return [string autorelease];
 }
 
-- (ECCodeCompletionChunk *)firstChunk
+- (NSString *)typedText
 {
-    if (_completionChunks && [_completionChunks count])
-        return [_completionChunks objectAtIndex:0];
+    for (ECCodeCompletionChunk *chunk in _completionChunks)
+        if (chunk.kind == ECCodeCompletionChunkKindTypedText)
+            return chunk.string;
+    [NSException raise:NSInternalInconsistencyException format:@"ECCodeCompletionString without a TypedText chunk."];
     return nil;
 }
 

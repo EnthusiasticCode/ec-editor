@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 @class ECCodeCursor;
 
-typedef enum ECCodeTokenKind
+typedef enum
 {
     ECCodeTokenKindPunctuation = 1,
     ECCodeTokenKindKeyword = 2,

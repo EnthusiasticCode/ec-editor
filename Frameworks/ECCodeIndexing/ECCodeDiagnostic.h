@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-typedef enum ECCodeDiagnosticSeverity
+typedef enum
 {
     ECCodeDiagnosticSeverityIgnored = 0,
     ECCodeDiagnosticSeverityNote = 1,

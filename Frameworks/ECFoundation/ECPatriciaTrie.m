@@ -76,6 +76,8 @@ BOOL _characterIsEndOfWord(NSUInteger characterIndex, NSString *string)
     unsigned char nextCharacter = [string characterAtIndex:characterIndex + 1];
     if (character >= 'a' && character <= 'z' && (nextCharacter < 'a' || nextCharacter > 'z'))
         return YES;
+    if (character == '_' && nextCharacter != '_')
+        return YES;
     return NO;
 }
 
@@ -232,6 +234,8 @@ BOOL _skipNodeForOptions(ECPatriciaTrie *node, ECPatriciaTrieEnumerationOptions 
     {
         child.parent = self;
         _children[_indexForCharacter([key characterAtIndex:criticalCharacter])] = child;
+        if (_characterIsEndOfWord(criticalCharacter, key))
+            self.endOfWord = YES;
         return child;
     }
     ECPatriciaTrie *parent = [[ECPatriciaTrie alloc] init];

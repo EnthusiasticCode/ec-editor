@@ -17,6 +17,6 @@
 
 - (id)initWithCompletionChunks:(NSArray *)completionChunks;
 + (id)stringWithCompletionChunks:(NSArray *)completionChunks;
-- (ECCodeCompletionChunk *)firstChunk;
+- (NSString *)typedText;
 
 @end
