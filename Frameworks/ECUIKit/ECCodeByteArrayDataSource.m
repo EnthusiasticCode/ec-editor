@@ -78,6 +78,11 @@
     return offset.line == line && offset.character == character && offset.byte == byte;
 }
 
+- (NSString *)description
+{
+    return [NSString stringWithFormat:@"offset line:%u char:%u byte:%u", line, character, byte];
+}
+
 @end
 
 #pragma mark -
@@ -284,6 +289,8 @@
         toLineRange.length = [stringData UTF8LineCountUsingLineDelimiter:lineDelimiter];
         
         // Cacheing offsets
+        // TODO !!! validate this in limit cases when new offset line may be wrong
+        // limit case when writing a char at the beginning of a line, the nextoffset will have wrong line number
         if (startOffset != lastEdited.nextOffset) 
         {
             [lastEdited.nextOffset release];
@@ -299,18 +306,29 @@
     {
         [byteArray deleteBytesInRange:fileRange];
         
-        if (startOffset != lastEdited.prevOffset) 
+        if (startOffset.line != endOffset.line) 
         {
             [lastEdited.prevOffset release];
-            lastEdited.prevOffset = [startOffset copy];
+            lastEdited.prevOffset = nil;
+            [lastEdited.nextOffset release];
+            lastEdited.nextOffset = nil;
         }
-        [lastEdited.nextOffset release];
-        lastEdited.nextOffset = lastEdited.prevOffset;
-        // TODO !!! caclulate proper line diff, only copy if not at char 0
-        lastEdited.prevOffset = [[startOffset fileOffsetByAddingLines:0 
-                                                           characters:-1
-                                                                bytes:-1] retain];
+        else
+        {
+            if (startOffset != lastEdited.prevOffset) 
+            {
+                [lastEdited.prevOffset release];
+                lastEdited.prevOffset = [startOffset copy];
+            }
+            [lastEdited.nextOffset release];
+            lastEdited.nextOffset = lastEdited.prevOffset;
+            lastEdited.prevOffset = [[startOffset fileOffsetByAddingLines:0 
+                                                               characters:-1
+                                                                    bytes:-1] retain];
+        }
     }
+    
+//    NSLog(@"\nprev %@, \nnext %@\n", lastEdited.prevOffset, lastEdited.nextOffset);
     
     // Update eof offset
     if (eofOffset)
