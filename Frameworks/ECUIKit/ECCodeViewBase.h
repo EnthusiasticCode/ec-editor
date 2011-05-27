@@ -10,6 +10,10 @@
 #import "ECTextRenderer.h"
 #import "ECCodeViewDataSource.h"
 
+@protocol ECCodeViewBaseDelegate <UIScrollViewDelegate>
+@end
+
+
 @interface ECCodeViewBase : UIScrollView <ECTextRendererDelegate> {
 @protected
     ECTextRenderer *renderer;
@@ -17,6 +21,8 @@
     UIEdgeInsets textInsets;
     BOOL dataSourceHasCodeCanEditTextInRange;
 }
+
+@property (nonatomic, assign) id<ECCodeViewBaseDelegate> delegate;
 
 #pragma mark Advanced Initialization and Configuration
 

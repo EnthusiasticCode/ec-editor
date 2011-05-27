@@ -527,8 +527,6 @@
     // Seek to character
     while (characterOffset < character && fileOffset < fileLength) 
     {
-        // Update UTF8 offset
-        characterOffset += mbstowcs(NULL, chunk, chunkSize);
         resultCharacter = characterOffset;
         // Read new chunk
         resultByte += fileRange.length;
@@ -564,6 +562,8 @@
             chunkLineStart = chunkLineEnd;
             resultCharacter += lineLenght;
         }
+        // Update offsets
+        characterOffset += mbstowcs(NULL, chunk, chunkSize);
         fileOffset += fileRange.length;
     }
     

@@ -177,7 +177,7 @@
 
 #pragma mark Properties
 
-@synthesize datasource; 
+@synthesize delegate, datasource; 
 @synthesize textInsets;
 @synthesize renderingQueue, renderer;
 

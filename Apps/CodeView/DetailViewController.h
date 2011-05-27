@@ -10,7 +10,7 @@
 #import "ECCodeView.h"
 #import "ECCodeByteArrayDataSource.h"
 
-@interface DetailViewController : UIViewController <UIPopoverControllerDelegate, UISplitViewControllerDelegate, UIScrollViewDelegate> {
+@interface DetailViewController : UIViewController <UIPopoverControllerDelegate, UISplitViewControllerDelegate, ECCodeViewDelegate> {
 
     ECCodeView *_codeView;
     ECCodeByteArrayDataSource *codeViewDataSource;

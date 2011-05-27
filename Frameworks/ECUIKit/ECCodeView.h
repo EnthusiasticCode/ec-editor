@@ -10,7 +10,22 @@
 #import "ECCodeViewBase.h"
 #import "ECPopoverController.h"
 
+@class ECCodeView;
+
+@protocol ECCodeViewDelegate <ECCodeViewBaseDelegate>
+
+@optional
+
+/// This function is called by an \c ECCodeView when the user require a complition
+/// of a word or partial filter word in the text.
+- (void)codeView:(ECCodeView *)codeView completionRequestAtTextLocation:(NSUInteger)location withFilterWord:(NSString *)filter;
+
+@end
+
+
 @interface ECCodeView : ECCodeViewBase <UIKeyInput, UITextInputTraits, UITextInput>
+
+@property (nonatomic, assign) id<ECCodeViewDelegate> delegate;
 
 #pragma mark Managing the Navigator
 

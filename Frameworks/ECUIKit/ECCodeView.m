@@ -36,6 +36,9 @@
     // Touch scrolling timer
     NSTimer *touchScrollTimer;
     
+    // Delegate flags
+    BOOL delegateHasCompletionRequestAtTextLocationWithFilterWord;
+    
     // Recognizers
     UITapGestureRecognizer *focusRecognizer;
     UITapGestureRecognizer *tapRecognizer;
@@ -842,9 +845,17 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
 #pragma mark -
 #pragma mark Properties
 
+@synthesize delegate;
 @synthesize infoViewVisible;
 @synthesize navigatorBackgroundColor;
 @synthesize navigatorWidth;
+
+- (void)setDelegate:(id<ECCodeViewDelegate>)aDelegate
+{
+    delegate = aDelegate;
+    
+    delegateHasCompletionRequestAtTextLocationWithFilterWord = [delegate respondsToSelector:@selector(codeView:completionRequestAtTextLocation:withFilterWord:)];
+}
 
 - (void)setFrame:(CGRect)frame
 {
@@ -1644,16 +1655,7 @@ static void init(ECCodeView *self)
                 [selectionView setMagnify:YES fromRect:selectionView.frame ratio:2 animated:animatePopover];
             }
 
-            // Scrolling up
-//            // TODO get top point offset if mutlitouch
-//            CGPoint offset = self.contentOffset;
-//            CGFloat topScroll = 50 - tapPoint.y + offset.y;
-//            if (topScroll > 0)
-//            {
-//                offset.y -= topScroll;
-//                [self scrollRectToVisible:(CGRect){ {0, offset.y }, {1, 1} } animated:NO];
-//                [self performSelector:@selector(handleGestureLongPress:) withObject:recognizer afterDelay:0.1];
-//            }
+            // Scrolling
             tapPoint.y -= self.contentOffset.y;
             [self autoScrollForTouchAtPoint:tapPoint];
         }
