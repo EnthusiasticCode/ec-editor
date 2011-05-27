@@ -299,11 +299,9 @@ static ECCodeCompletionResult *completionResultFromClangCompletionResult(CXCompl
     clang_getInstantiationLocation(selectionLocation, NULL, &line, &column, NULL);
     CXCodeCompleteResults *clangCompletions = clang_codeCompleteAt(self.translationUnit, [self.file fileSystemRepresentation], line, column, NULL, 0, clang_defaultCodeCompleteOptions());
     NSMutableArray *completions = [[NSMutableArray alloc] init];
-    NSLog(@"number of completions in code unit from clang: %u", clangCompletions->NumResults);
     for (unsigned i = 0; i < clangCompletions->NumResults; ++i)
         [completions addObject:completionResultFromClangCompletionResult(clangCompletions->Results[i])];
     clang_disposeCodeCompleteResults(clangCompletions);
-    NSLog(@"number of completions in code unit returned: %u", [completions count]);
     return [completions autorelease];
 }
 

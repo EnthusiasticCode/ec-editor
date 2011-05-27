@@ -23,7 +23,7 @@
 @property (nonatomic, assign) ECPatriciaTrie *parent;
 @property (nonatomic, retain) NSString *key;
 static NSUInteger _indexForCharacter(unsigned char character);
-static BOOL _characterIsEndOfWord(NSUInteger characterIndex, NSString *string);
+static BOOL _characterIsStartOfWord(NSUInteger characterIndex, NSString *string);
 - (NSUInteger)_criticalCharacterInKey:(NSString *)key;
 static BOOL _skipNodeForOptions(ECPatriciaTrie *node, ECPatriciaTrieEnumerationOptions options);
 - (void)_enumerateNodesWithBlock:(void(^)(ECPatriciaTrie *node))block options:(ECPatriciaTrieEnumerationOptions)options;
@@ -67,16 +67,18 @@ NSUInteger _indexForCharacter(unsigned char character)
     return -1;
 }
 
-BOOL _characterIsEndOfWord(NSUInteger characterIndex, NSString *string)
+BOOL _characterIsStartOfWord(NSUInteger characterIndex, NSString *string)
 {
     ECASSERT(characterIndex < [string length]);
-    if (characterIndex == [string length] - 1)
-        return NO;
-    unsigned char character = [string characterAtIndex:characterIndex];
-    unsigned char nextCharacter = [string characterAtIndex:characterIndex + 1];
-    if (character >= 'a' && character <= 'z' && (nextCharacter < 'a' || nextCharacter > 'z'))
+    if (!characterIndex)
         return YES;
-    if (character == '_' && nextCharacter != '_')
+    unsigned char character = [string characterAtIndex:characterIndex];
+    unsigned char previousCharacter = [string characterAtIndex:characterIndex - 1];
+    if (character >= 'A' && character <= 'Z' && previousCharacter >= 'a' && previousCharacter <= 'z')
+        return YES;
+    if (character != '_' && previousCharacter == '_')
+        return YES;
+    if (character != '@' && previousCharacter == '@')
         return YES;
     return NO;
 }
@@ -175,7 +177,11 @@ BOOL _skipNodeForOptions(ECPatriciaTrie *node, ECPatriciaTrieEnumerationOptions 
 {
     if ([[key lowercaseString] isEqualToString:[self.key lowercaseString]])
         if (object)
-            return [self setObject:object];
+        {
+            self.object = object;
+            self.endOfWord = YES;
+            return;
+        }
         else
             return [self _remove];
     if (object)
@@ -201,11 +207,11 @@ BOOL _skipNodeForOptions(ECPatriciaTrie *node, ECPatriciaTrieEnumerationOptions 
     NSUInteger indexInParent = _indexForCharacter([self.key characterAtIndex:parentCriticalCharacter]);
     if (!numChildren)
     {
-        if (_characterIsEndOfWord(parentCriticalCharacter, self.key))
+        if (_characterIsStartOfWord(parentCriticalCharacter, self.key))
         {
             BOOL isEndOfWord = NO;
             for (NSUInteger i = 0; i < ALPHABET_SIZE; ++i)
-                if (_characterIsEndOfWord(parentCriticalCharacter, self.parent->_children[i].key))
+                if (_characterIsStartOfWord(parentCriticalCharacter, self.parent->_children[i].key))
                 {
                     isEndOfWord = YES;
                     break;
@@ -233,7 +239,7 @@ BOOL _skipNodeForOptions(ECPatriciaTrie *node, ECPatriciaTrieEnumerationOptions 
         child.endOfWord = YES;
         child.parent = self;
         _children[_indexForCharacter([key characterAtIndex:criticalCharacter])] = child;
-        if (_characterIsEndOfWord(criticalCharacter, key))
+        if (_characterIsStartOfWord(criticalCharacter, key))
             self.endOfWord = YES;
         return child;
     }
@@ -241,7 +247,7 @@ BOOL _skipNodeForOptions(ECPatriciaTrie *node, ECPatriciaTrieEnumerationOptions 
     parent.key = [self.key substringToIndex:criticalCharacter];
     parent.parent = self.parent;
     parent->_children[_indexForCharacter([self.key characterAtIndex:criticalCharacter])] = self;
-    parent.endOfWord = _characterIsEndOfWord(criticalCharacter, self.key);
+    parent.endOfWord = YES;
     NSUInteger parentCriticalIndex = [self.parent.key length];
     self.parent->_children[_indexForCharacter([key characterAtIndex:parentCriticalIndex])] = parent;
     self.parent = parent;
@@ -250,7 +256,7 @@ BOOL _skipNodeForOptions(ECPatriciaTrie *node, ECPatriciaTrieEnumerationOptions 
         ECPatriciaTrie *child = [[ECPatriciaTrie alloc] init];
         child.key = key;
         child.endOfWord = YES;
-        parent.endOfWord = parent.endOfWord || _characterIsEndOfWord(criticalCharacter, key);
+        parent.endOfWord = _characterIsStartOfWord(criticalCharacter, self.key) || _characterIsStartOfWord(criticalCharacter, key);
         parent->_children[_indexForCharacter([key characterAtIndex:criticalCharacter])] = child;
         child.parent = parent;
         return child;

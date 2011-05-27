@@ -33,7 +33,6 @@ static const ECPatriciaTrieEnumerationOptions _options = ECPatriciaTrieEnumerati
         return;
     [_results release];
     _results = [results retain];
-    NSLog(@"number of results in completion controller: %u", [results count]);
     [self _filterResults];
     [self.tableView reloadData];
 }
