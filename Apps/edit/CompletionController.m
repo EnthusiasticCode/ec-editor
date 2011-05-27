@@ -13,9 +13,7 @@
 #import "ECCodeCompletionString.h"
 #import "ECCodeCompletionChunk.h"
 
-// skipping non-endofwords is much better, but gives too many results, especially starting with _ and __. maybe add a special case for _?
 static const ECPatriciaTrieEnumerationOptions _options = ECPatriciaTrieEnumerationOptionsSkipRoot | ECPatriciaTrieEnumerationOptionsSkipNotEndOfWord | ECPatriciaTrieEnumerationOptionsStopAtShallowestMatch;
-//static const ECPatriciaTrieEnumerationOptions _options = ECPatriciaTrieEnumerationOptionsSkipRoot | ECPatriciaTrieEnumerationOptionsStopAtShallowestMatch;
 
 @interface CompletionController ()
 @property (nonatomic, retain) NSArray *filteredResults;

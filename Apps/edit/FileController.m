@@ -136,7 +136,6 @@
 - (IBAction)complete:(id)sender {
     NSArray *array = [self.unit completionsWithSelection:[(ECTextRange *)[self.codeView selectedTextRange] range]];
     ECPatriciaTrie *trie = [[[ECPatriciaTrie alloc] init] autorelease];
-    NSLog(@"number of results in file controller: %u", [array count]);
     for (ECCodeCompletionResult *result in array)
         [trie setObject:result forKey:[result.completionString typedText]];
     self.completionController.results = trie;
