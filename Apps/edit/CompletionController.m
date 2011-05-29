@@ -80,11 +80,73 @@ static const ECPatriciaTrieEnumerationOptions _options = ECPatriciaTrieEnumerati
     
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     if (cell == nil) {
-        cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier] autorelease];
+        cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier] autorelease];
     }
 
     ECPatriciaTrie *node = [self.filteredResults objectAtIndex:indexPath.row];
     cell.textLabel.text = node.key;
+    if (node.object)
+    {
+        NSMutableString *string = [NSMutableString string];
+        for (ECCodeCompletionChunk *chunk in [[node.object completionString] completionChunks])
+            [string appendString:chunk.string];
+        cell.detailTextLabel.text = string;
+        NSString *iconResource = nil;
+        switch ([node.object cursorKind]) {
+            case ECCodeCursorKindObjCClassRef:
+            case ECCodeCursorKindObjCSuperClassRef:
+            case ECCodeCursorKindClassDecl:
+                iconResource = @"CodeAssistantClass";
+                break;
+            case ECCodeCursorKindObjCCategoryDecl:
+            case ECCodeCursorKindObjCCategoryImplDecl:
+                iconResource = @"CodeAssistantClassExtension";
+                break;
+            case ECCodeCursorKindVarDecl:
+                iconResource = @"CodeAssistantVariable";
+                break;
+            case ECCodeCursorKindUnionDecl:
+                iconResource = @"CodeAssistantUnion";
+                break;
+            case ECCodeCursorKindObjCProtocolRef:
+            case ECCodeCursorKindObjCProtocolDecl:
+                iconResource = @"CodeAssistantProtocol";
+                break;
+            case ECCodeCursorKindObjCPropertyDecl:
+                iconResource = @"CodeAssistantProperty";
+                break;
+            case ECCodeCursorKindPreprocessingDirective:
+            case ECCodeCursorKindMacroDefinition:
+            case ECCodeCursorKindMacroInstantiation:
+                iconResource = @"CodeAssistantMacro";
+                break;
+            case ECCodeCursorKindEnumDecl:
+                iconResource = @"CodeAssistantEnum";
+                break;
+            case ECCodeCursorKindEnumConstantDecl:
+                iconResource = @"CodeAssistantEnumConst";
+                break;
+            case ECCodeCursorKindFunctionDecl:
+            case ECCodeCursorKindFunctionTemplate:
+                iconResource = @"CodeAssistantFunction";
+                break;
+            case ECCodeCursorKindTypeRef:
+                iconResource = @"CodeAssistantType";
+                break;
+            case ECCodeCursorKindFieldDecl:
+                iconResource = @"CodeAssistantField";
+                break;
+            default:
+                break;
+        }
+        if (iconResource)
+            cell.imageView.image = [UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:iconResource ofType:@"tiff"]];
+    }
+    else
+    {
+        cell.detailTextLabel.text = nil;
+        cell.imageView.image = nil;
+    }
     if (![node nodeCountWithOptions:_options])
         cell.accessoryType = UITableViewCellAccessoryNone;
     else

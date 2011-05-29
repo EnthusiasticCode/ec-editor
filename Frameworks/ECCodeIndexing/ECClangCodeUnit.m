@@ -82,24 +82,8 @@ static ECCodeCursor *cursorFromClangCursor(CXCursor clangCursor)
         default:
             language = @"Unknown";
     }
-    ECCodeCursorKind kind = ECCodeCursorUnknown;
     enum CXCursorKind clangKind = clang_getCursorKind(clangCursor);
-    if (clang_isDeclaration(clangKind))
-        kind = ECCodeCursorDeclaration;
-    if (clang_isExpression(clangKind))
-        kind = ECCodeCursorExpression;
-    if (clang_isInvalid(clangKind))
-        kind = ECCodeCursorInvalid;
-    if (clang_isPreprocessing(clangKind))
-        kind = ECCodeCursorPreprocessing;
-    if (clang_isReference(clangKind))
-        kind = ECCodeCursorReference;
-    if (clang_isStatement(clangKind))
-        kind = ECCodeCursorStatement;
-    if (clang_isTranslationUnit(clangKind))
-        kind = ECCodeCursorUnit;
-    if (clang_isUnexposed(clangKind))
-        kind = ECCodeCursorUnexposed;
+    ECCodeCursorKind kind = clangKind;
     NSString *detailedKind;
     CXString clangKindSpelling = clang_getCursorKindSpelling(clangKind);
     detailedKind = [NSString stringWithUTF8String:clang_getCString(clangKindSpelling)];

@@ -9,6 +9,23 @@
 /* Begin PBXBuildFile section */
 		B706EE47138D55D200DA822C /* CompletionController.m in Sources */ = {isa = PBXBuildFile; fileRef = B706EE45138D55D200DA822C /* CompletionController.m */; };
 		B706EE48138D55D200DA822C /* CompletionController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B706EE46138D55D200DA822C /* CompletionController.xib */; };
+		B706EE64139277BE00DA822C /* CodeAssistantClass.tiff in Resources */ = {isa = PBXBuildFile; fileRef = B706EE53139277BD00DA822C /* CodeAssistantClass.tiff */; };
+		B706EE65139277BE00DA822C /* CodeAssistantClassExtension.tiff in Resources */ = {isa = PBXBuildFile; fileRef = B706EE54139277BD00DA822C /* CodeAssistantClassExtension.tiff */; };
+		B706EE66139277BE00DA822C /* CodeAssistantConst.tiff in Resources */ = {isa = PBXBuildFile; fileRef = B706EE55139277BD00DA822C /* CodeAssistantConst.tiff */; };
+		B706EE67139277BE00DA822C /* CodeAssistantEnum.tiff in Resources */ = {isa = PBXBuildFile; fileRef = B706EE56139277BD00DA822C /* CodeAssistantEnum.tiff */; };
+		B706EE68139277BE00DA822C /* CodeAssistantEnumConst.tiff in Resources */ = {isa = PBXBuildFile; fileRef = B706EE57139277BD00DA822C /* CodeAssistantEnumConst.tiff */; };
+		B706EE69139277BE00DA822C /* CodeAssistantField.tiff in Resources */ = {isa = PBXBuildFile; fileRef = B706EE58139277BD00DA822C /* CodeAssistantField.tiff */; };
+		B706EE6A139277BE00DA822C /* CodeAssistantFunction.tiff in Resources */ = {isa = PBXBuildFile; fileRef = B706EE59139277BD00DA822C /* CodeAssistantFunction.tiff */; };
+		B706EE6B139277BE00DA822C /* CodeAssistantGlobal.tiff in Resources */ = {isa = PBXBuildFile; fileRef = B706EE5A139277BD00DA822C /* CodeAssistantGlobal.tiff */; };
+		B706EE6C139277BE00DA822C /* CodeAssistantLocal.tiff in Resources */ = {isa = PBXBuildFile; fileRef = B706EE5B139277BD00DA822C /* CodeAssistantLocal.tiff */; };
+		B706EE6D139277BE00DA822C /* CodeAssistantMacro.tiff in Resources */ = {isa = PBXBuildFile; fileRef = B706EE5C139277BD00DA822C /* CodeAssistantMacro.tiff */; };
+		B706EE6E139277BE00DA822C /* CodeAssistantMember.tiff in Resources */ = {isa = PBXBuildFile; fileRef = B706EE5D139277BD00DA822C /* CodeAssistantMember.tiff */; };
+		B706EE6F139277BE00DA822C /* CodeAssistantProperty.tiff in Resources */ = {isa = PBXBuildFile; fileRef = B706EE5E139277BE00DA822C /* CodeAssistantProperty.tiff */; };
+		B706EE70139277BE00DA822C /* CodeAssistantProtocol.tiff in Resources */ = {isa = PBXBuildFile; fileRef = B706EE5F139277BE00DA822C /* CodeAssistantProtocol.tiff */; };
+		B706EE71139277BE00DA822C /* CodeAssistantStruct.tiff in Resources */ = {isa = PBXBuildFile; fileRef = B706EE60139277BE00DA822C /* CodeAssistantStruct.tiff */; };
+		B706EE72139277BE00DA822C /* CodeAssistantType.tiff in Resources */ = {isa = PBXBuildFile; fileRef = B706EE61139277BE00DA822C /* CodeAssistantType.tiff */; };
+		B706EE73139277BE00DA822C /* CodeAssistantUnion.tiff in Resources */ = {isa = PBXBuildFile; fileRef = B706EE62139277BE00DA822C /* CodeAssistantUnion.tiff */; };
+		B706EE74139277BE00DA822C /* CodeAssistantVariable.tiff in Resources */ = {isa = PBXBuildFile; fileRef = B706EE63139277BE00DA822C /* CodeAssistantVariable.tiff */; };
 		B706F05A13563ECB00E03DDF /* UIColor+StyleColors.m in Sources */ = {isa = PBXBuildFile; fileRef = B706F05513563ECB00E03DDF /* UIColor+StyleColors.m */; };
 		B706F05B13563ECB00E03DDF /* UIImage+BlockDrawing.m in Sources */ = {isa = PBXBuildFile; fileRef = B706F05713563ECB00E03DDF /* UIImage+BlockDrawing.m */; };
 		B706F05C13563ECB00E03DDF /* UIView+ConcurrentAnimation.m in Sources */ = {isa = PBXBuildFile; fileRef = B706F05913563ECB00E03DDF /* UIView+ConcurrentAnimation.m */; };
@@ -133,7 +150,6 @@
 		B75B8744135840070098E7E2 /* ECStackCache.m in Sources */ = {isa = PBXBuildFile; fileRef = B75B873D135840070098E7E2 /* ECStackCache.m */; };
 		B75B8745135840070098E7E2 /* MurmurHash3.c in Sources */ = {isa = PBXBuildFile; fileRef = B75B873E135840070098E7E2 /* MurmurHash3.c */; };
 		B75B8746135840070098E7E2 /* NSFileManager(ECAdditions).m in Sources */ = {isa = PBXBuildFile; fileRef = B75B8741135840070098E7E2 /* NSFileManager(ECAdditions).m */; };
-		B75B87691358401B0098E7E2 /* ECClangCodeCursor.m in Sources */ = {isa = PBXBuildFile; fileRef = B75B87481358401B0098E7E2 /* ECClangCodeCursor.m */; };
 		B75B876A1358401B0098E7E2 /* ECClangCodeIndex.m in Sources */ = {isa = PBXBuildFile; fileRef = B75B874A1358401B0098E7E2 /* ECClangCodeIndex.m */; };
 		B75B876B1358401B0098E7E2 /* ECClangCodeUnit.m in Sources */ = {isa = PBXBuildFile; fileRef = B75B874C1358401B0098E7E2 /* ECClangCodeUnit.m */; };
 		B75B876C1358401B0098E7E2 /* ECCodeCompletionChunk.m in Sources */ = {isa = PBXBuildFile; fileRef = B75B874E1358401B0098E7E2 /* ECCodeCompletionChunk.m */; };
@@ -172,6 +188,23 @@
 		B706EE44138D55D200DA822C /* CompletionController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CompletionController.h; sourceTree = "<group>"; };
 		B706EE45138D55D200DA822C /* CompletionController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CompletionController.m; sourceTree = "<group>"; };
 		B706EE46138D55D200DA822C /* CompletionController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CompletionController.xib; sourceTree = "<group>"; };
+		B706EE53139277BD00DA822C /* CodeAssistantClass.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = CodeAssistantClass.tiff; path = Apps/edit/CodeAssistantClass.tiff; sourceTree = SOURCE_ROOT; };
+		B706EE54139277BD00DA822C /* CodeAssistantClassExtension.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = CodeAssistantClassExtension.tiff; path = Apps/edit/CodeAssistantClassExtension.tiff; sourceTree = SOURCE_ROOT; };
+		B706EE55139277BD00DA822C /* CodeAssistantConst.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = CodeAssistantConst.tiff; path = Apps/edit/CodeAssistantConst.tiff; sourceTree = SOURCE_ROOT; };
+		B706EE56139277BD00DA822C /* CodeAssistantEnum.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = CodeAssistantEnum.tiff; path = Apps/edit/CodeAssistantEnum.tiff; sourceTree = SOURCE_ROOT; };
+		B706EE57139277BD00DA822C /* CodeAssistantEnumConst.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = CodeAssistantEnumConst.tiff; path = Apps/edit/CodeAssistantEnumConst.tiff; sourceTree = SOURCE_ROOT; };
+		B706EE58139277BD00DA822C /* CodeAssistantField.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = CodeAssistantField.tiff; path = Apps/edit/CodeAssistantField.tiff; sourceTree = SOURCE_ROOT; };
+		B706EE59139277BD00DA822C /* CodeAssistantFunction.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = CodeAssistantFunction.tiff; path = Apps/edit/CodeAssistantFunction.tiff; sourceTree = SOURCE_ROOT; };
+		B706EE5A139277BD00DA822C /* CodeAssistantGlobal.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = CodeAssistantGlobal.tiff; path = Apps/edit/CodeAssistantGlobal.tiff; sourceTree = SOURCE_ROOT; };
+		B706EE5B139277BD00DA822C /* CodeAssistantLocal.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = CodeAssistantLocal.tiff; path = Apps/edit/CodeAssistantLocal.tiff; sourceTree = SOURCE_ROOT; };
+		B706EE5C139277BD00DA822C /* CodeAssistantMacro.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = CodeAssistantMacro.tiff; path = Apps/edit/CodeAssistantMacro.tiff; sourceTree = SOURCE_ROOT; };
+		B706EE5D139277BD00DA822C /* CodeAssistantMember.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = CodeAssistantMember.tiff; path = Apps/edit/CodeAssistantMember.tiff; sourceTree = SOURCE_ROOT; };
+		B706EE5E139277BE00DA822C /* CodeAssistantProperty.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = CodeAssistantProperty.tiff; path = Apps/edit/CodeAssistantProperty.tiff; sourceTree = SOURCE_ROOT; };
+		B706EE5F139277BE00DA822C /* CodeAssistantProtocol.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = CodeAssistantProtocol.tiff; path = Apps/edit/CodeAssistantProtocol.tiff; sourceTree = SOURCE_ROOT; };
+		B706EE60139277BE00DA822C /* CodeAssistantStruct.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = CodeAssistantStruct.tiff; path = Apps/edit/CodeAssistantStruct.tiff; sourceTree = SOURCE_ROOT; };
+		B706EE61139277BE00DA822C /* CodeAssistantType.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = CodeAssistantType.tiff; path = Apps/edit/CodeAssistantType.tiff; sourceTree = SOURCE_ROOT; };
+		B706EE62139277BE00DA822C /* CodeAssistantUnion.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = CodeAssistantUnion.tiff; path = Apps/edit/CodeAssistantUnion.tiff; sourceTree = SOURCE_ROOT; };
+		B706EE63139277BE00DA822C /* CodeAssistantVariable.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = CodeAssistantVariable.tiff; path = Apps/edit/CodeAssistantVariable.tiff; sourceTree = SOURCE_ROOT; };
 		B706F05413563ECB00E03DDF /* UIColor+StyleColors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIColor+StyleColors.h"; path = "Frameworks/ECUIKit/UIColor+StyleColors.h"; sourceTree = "<group>"; };
 		B706F05513563ECB00E03DDF /* UIColor+StyleColors.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIColor+StyleColors.m"; path = "Frameworks/ECUIKit/UIColor+StyleColors.m"; sourceTree = "<group>"; };
 		B706F05613563ECB00E03DDF /* UIImage+BlockDrawing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIImage+BlockDrawing.h"; path = "Frameworks/ECUIKit/UIImage+BlockDrawing.h"; sourceTree = "<group>"; };
@@ -332,8 +365,6 @@
 		B75B8740135840070098E7E2 /* NSFileManager(ECAdditions).h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSFileManager(ECAdditions).h"; sourceTree = "<group>"; };
 		B75B8741135840070098E7E2 /* NSFileManager(ECAdditions).m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSFileManager(ECAdditions).m"; sourceTree = "<group>"; };
 		B75B8742135840070098E7E2 /* pstdint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pstdint.h; sourceTree = "<group>"; };
-		B75B87471358401B0098E7E2 /* ECClangCodeCursor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECClangCodeCursor.h; sourceTree = "<group>"; };
-		B75B87481358401B0098E7E2 /* ECClangCodeCursor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECClangCodeCursor.m; sourceTree = "<group>"; };
 		B75B87491358401B0098E7E2 /* ECClangCodeIndex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECClangCodeIndex.h; sourceTree = "<group>"; };
 		B75B874A1358401B0098E7E2 /* ECClangCodeIndex.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECClangCodeIndex.m; sourceTree = "<group>"; };
 		B75B874B1358401B0098E7E2 /* ECClangCodeUnit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECClangCodeUnit.h; sourceTree = "<group>"; };
@@ -555,6 +586,23 @@
 		B70D64F9132A25F4008DDEA4 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				B706EE53139277BD00DA822C /* CodeAssistantClass.tiff */,
+				B706EE54139277BD00DA822C /* CodeAssistantClassExtension.tiff */,
+				B706EE55139277BD00DA822C /* CodeAssistantConst.tiff */,
+				B706EE56139277BD00DA822C /* CodeAssistantEnum.tiff */,
+				B706EE57139277BD00DA822C /* CodeAssistantEnumConst.tiff */,
+				B706EE58139277BD00DA822C /* CodeAssistantField.tiff */,
+				B706EE59139277BD00DA822C /* CodeAssistantFunction.tiff */,
+				B706EE5A139277BD00DA822C /* CodeAssistantGlobal.tiff */,
+				B706EE5B139277BD00DA822C /* CodeAssistantLocal.tiff */,
+				B706EE5C139277BD00DA822C /* CodeAssistantMacro.tiff */,
+				B706EE5D139277BD00DA822C /* CodeAssistantMember.tiff */,
+				B706EE5E139277BE00DA822C /* CodeAssistantProperty.tiff */,
+				B706EE5F139277BE00DA822C /* CodeAssistantProtocol.tiff */,
+				B706EE60139277BE00DA822C /* CodeAssistantStruct.tiff */,
+				B706EE61139277BE00DA822C /* CodeAssistantType.tiff */,
+				B706EE62139277BE00DA822C /* CodeAssistantUnion.tiff */,
+				B706EE63139277BE00DA822C /* CodeAssistantVariable.tiff */,
 				B74C674D137C2F9900CC92D3 /* Inconsolata.otf */,
 				CDEFF95B1348BD5E006FEFCC /* edit-Info.plist */,
 				CDEFF95C1348BD5E006FEFCC /* edit-main.m */,
@@ -719,8 +767,6 @@
 		CDEBF24313489AFE00CE2285 /* ECCodeIndexing */ = {
 			isa = PBXGroup;
 			children = (
-				B75B87471358401B0098E7E2 /* ECClangCodeCursor.h */,
-				B75B87481358401B0098E7E2 /* ECClangCodeCursor.m */,
 				B75B87491358401B0098E7E2 /* ECClangCodeIndex.h */,
 				B75B874A1358401B0098E7E2 /* ECClangCodeIndex.m */,
 				B75B874B1358401B0098E7E2 /* ECClangCodeUnit.h */,
@@ -918,6 +964,23 @@
 				B74C6719137A8E0D00CC92D3 /* AddProjectController.xib in Resources */,
 				B74C674E137C2F9900CC92D3 /* Inconsolata.otf in Resources */,
 				B706EE48138D55D200DA822C /* CompletionController.xib in Resources */,
+				B706EE64139277BE00DA822C /* CodeAssistantClass.tiff in Resources */,
+				B706EE65139277BE00DA822C /* CodeAssistantClassExtension.tiff in Resources */,
+				B706EE66139277BE00DA822C /* CodeAssistantConst.tiff in Resources */,
+				B706EE67139277BE00DA822C /* CodeAssistantEnum.tiff in Resources */,
+				B706EE68139277BE00DA822C /* CodeAssistantEnumConst.tiff in Resources */,
+				B706EE69139277BE00DA822C /* CodeAssistantField.tiff in Resources */,
+				B706EE6A139277BE00DA822C /* CodeAssistantFunction.tiff in Resources */,
+				B706EE6B139277BE00DA822C /* CodeAssistantGlobal.tiff in Resources */,
+				B706EE6C139277BE00DA822C /* CodeAssistantLocal.tiff in Resources */,
+				B706EE6D139277BE00DA822C /* CodeAssistantMacro.tiff in Resources */,
+				B706EE6E139277BE00DA822C /* CodeAssistantMember.tiff in Resources */,
+				B706EE6F139277BE00DA822C /* CodeAssistantProperty.tiff in Resources */,
+				B706EE70139277BE00DA822C /* CodeAssistantProtocol.tiff in Resources */,
+				B706EE71139277BE00DA822C /* CodeAssistantStruct.tiff in Resources */,
+				B706EE72139277BE00DA822C /* CodeAssistantType.tiff in Resources */,
+				B706EE73139277BE00DA822C /* CodeAssistantUnion.tiff in Resources */,
+				B706EE74139277BE00DA822C /* CodeAssistantVariable.tiff in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -947,7 +1010,6 @@
 				B75B8744135840070098E7E2 /* ECStackCache.m in Sources */,
 				B75B8745135840070098E7E2 /* MurmurHash3.c in Sources */,
 				B75B8746135840070098E7E2 /* NSFileManager(ECAdditions).m in Sources */,
-				B75B87691358401B0098E7E2 /* ECClangCodeCursor.m in Sources */,
 				B75B876A1358401B0098E7E2 /* ECClangCodeIndex.m in Sources */,
 				B75B876B1358401B0098E7E2 /* ECClangCodeUnit.m in Sources */,
 				B75B876C1358401B0098E7E2 /* ECCodeCompletionChunk.m in Sources */,

@@ -74,20 +74,12 @@
                 [codeSource addTextStyle:literalStyle toStringRange:token.extent];
                 break;
             default:
-                switch (token.cursor.kind)
-                {
-                    case ECCodeCursorDeclaration:
-                        [codeSource addTextStyle:declarationStyle toStringRange:token.extent];
-                        break;
-                    case ECCodeCursorReference:
-                        [codeSource addTextStyle:referenceStyle toStringRange:token.extent];
-                        break;
-                    case ECCodeCursorPreprocessing:
-                        [codeSource addTextStyle:preprocessingStyle toStringRange:token.extent];
-                        break;
-                    default:
-                        break;
-                }
+                if (token.cursor.kind >= ECCodeCursorKindFirstDecl && token.cursor.kind <= ECCodeCursorKindLastDecl)
+                    [codeSource addTextStyle:declarationStyle toStringRange:token.extent];
+                else if (token.cursor.kind >= ECCodeCursorKindFirstRef && token.cursor.kind <= ECCodeCursorKindLastRef)
+                    [codeSource addTextStyle:referenceStyle toStringRange:token.extent];
+                else if (token.cursor.kind >= ECCodeCursorKindFirstPreprocessing && token.cursor.kind <= ECCodeCursorKindLastPreprocessing)
+                    [codeSource addTextStyle:preprocessingStyle toStringRange:token.extent];
                 break;
         }
     }

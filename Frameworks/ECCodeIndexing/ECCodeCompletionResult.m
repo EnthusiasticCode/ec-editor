@@ -24,7 +24,7 @@
     [super dealloc];
 }
 
-- (id)initWithCursorKind:(int)cursorKind completionString:(ECCodeCompletionString *)completionString
+- (id)initWithCursorKind:(ECCodeCursorKind)cursorKind completionString:(ECCodeCompletionString *)completionString
 {
     self = [super init];
     if (self)
@@ -41,7 +41,7 @@
     return [self initWithCursorKind:0 completionString:completionString];
 }
 
-+ (id)resultWithCursorKind:(int)cursorKind completionString:(ECCodeCompletionString *)completionString
++ (id)resultWithCursorKind:(ECCodeCursorKind)cursorKind completionString:(ECCodeCompletionString *)completionString
 {
     id result = [self alloc];
     result = [result initWithCursorKind:cursorKind completionString:completionString];
