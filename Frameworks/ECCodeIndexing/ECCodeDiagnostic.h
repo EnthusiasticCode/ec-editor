@@ -18,9 +18,6 @@ typedef enum
 } ECCodeDiagnosticSeverity;
 
 @interface ECCodeDiagnostic : NSObject
-{
-    NSUInteger _hash;
-}
 @property (nonatomic, readonly) ECCodeDiagnosticSeverity severity;
 @property (nonatomic, readonly, copy) NSString *file;
 @property (nonatomic, readonly) NSUInteger offset;

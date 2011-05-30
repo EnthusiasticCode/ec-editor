@@ -11,6 +11,9 @@
 #import <ECFoundation/ECHashing.h>
 
 @interface ECCodeCompletionString ()
+{
+    NSUInteger _hash;
+}
 - (NSUInteger)computeHash;
 @end
 

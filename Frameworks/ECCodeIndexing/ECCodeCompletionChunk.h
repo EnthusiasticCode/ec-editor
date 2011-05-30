@@ -33,16 +33,10 @@ typedef enum
 } ECCodeCompletionChunkKind;
 
 @interface ECCodeCompletionChunk : NSObject
-{
-    NSUInteger _hash;
-}
 @property (nonatomic, readonly) ECCodeCompletionChunkKind kind;
 @property (nonatomic, readonly, copy) NSString *string;
 
 - (id)initWithKind:(ECCodeCompletionChunkKind)kind string:(NSString *)string;
-- (id)initWithString:(NSString *)string;
-
 + (id)chunkWithKind:(ECCodeCompletionChunkKind)kind string:(NSString *)string;
-+ (id)chunkWithString:(NSString *)string;
 
 @end

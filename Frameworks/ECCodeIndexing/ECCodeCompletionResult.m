@@ -10,6 +10,9 @@
 #import <ECFoundation/ECHashing.h>
 
 @interface ECCodeCompletionResult ()
+{
+    NSUInteger _hash;
+}
 - (NSUInteger)computeHash;
 @end
 
@@ -36,21 +39,11 @@
     return self;
 }
 
-- (id)initWithCompletionString:(ECCodeCompletionString *)completionString
-{
-    return [self initWithCursorKind:0 completionString:completionString];
-}
-
 + (id)resultWithCursorKind:(ECCodeCursorKind)cursorKind completionString:(ECCodeCompletionString *)completionString
 {
     id result = [self alloc];
     result = [result initWithCursorKind:cursorKind completionString:completionString];
     return [result autorelease];
-}
-
-+ (id)resultWithCompletionString:(ECCodeCompletionString *)completionString
-{
-    return [self resultWithCursorKind:0 completionString:completionString];
 }
 
 - (id)copyWithZone:(NSZone *)zone

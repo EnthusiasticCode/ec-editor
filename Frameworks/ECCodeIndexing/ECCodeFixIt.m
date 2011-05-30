@@ -10,6 +10,9 @@
 #import <ECFoundation/ECHashing.h>
 
 @interface ECCodeFixIt ()
+{
+    NSUInteger _hash;
+}
 - (NSUInteger)computeHash;
 @end
 

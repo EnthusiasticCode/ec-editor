@@ -159,7 +159,6 @@
 		B75B87701358401B0098E7E2 /* ECCodeDiagnostic.m in Sources */ = {isa = PBXBuildFile; fileRef = B75B87581358401B0098E7E2 /* ECCodeDiagnostic.m */; };
 		B75B87711358401B0098E7E2 /* ECCodeFixIt.m in Sources */ = {isa = PBXBuildFile; fileRef = B75B875A1358401B0098E7E2 /* ECCodeFixIt.m */; };
 		B75B87721358401B0098E7E2 /* ECCodeIndex.m in Sources */ = {isa = PBXBuildFile; fileRef = B75B875C1358401B0098E7E2 /* ECCodeIndex.m */; };
-		B75B87731358401B0098E7E2 /* ECCodeSymbol.m in Sources */ = {isa = PBXBuildFile; fileRef = B75B87601358401B0098E7E2 /* ECCodeSymbol.m */; };
 		B75B87741358401B0098E7E2 /* ECCodeToken.m in Sources */ = {isa = PBXBuildFile; fileRef = B75B87621358401B0098E7E2 /* ECCodeToken.m */; };
 		B75B87751358401B0098E7E2 /* ECCodeUnit.m in Sources */ = {isa = PBXBuildFile; fileRef = B75B87641358401B0098E7E2 /* ECCodeUnit.m */; };
 		B7C764F2136773A4009181DB /* ECManagedObject.m in Sources */ = {isa = PBXBuildFile; fileRef = B7C764F1136773A4009181DB /* ECManagedObject.m */; };
@@ -377,8 +376,6 @@
 		B75B87521358401B0098E7E2 /* ECCodeCompletionString.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeCompletionString.m; sourceTree = "<group>"; };
 		B75B87531358401B0098E7E2 /* ECCodeCursor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeCursor.h; sourceTree = "<group>"; };
 		B75B87541358401B0098E7E2 /* ECCodeCursor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeCursor.m; sourceTree = "<group>"; };
-		B75B87551358401B0098E7E2 /* ECCodeCursor(Private).h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ECCodeCursor(Private).h"; sourceTree = "<group>"; };
-		B75B87561358401B0098E7E2 /* ECCodeCursorPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeCursorPlugin.h; sourceTree = "<group>"; };
 		B75B87571358401B0098E7E2 /* ECCodeDiagnostic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeDiagnostic.h; sourceTree = "<group>"; };
 		B75B87581358401B0098E7E2 /* ECCodeDiagnostic.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeDiagnostic.m; sourceTree = "<group>"; };
 		B75B87591358401B0098E7E2 /* ECCodeFixIt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeFixIt.h; sourceTree = "<group>"; };
@@ -387,8 +384,6 @@
 		B75B875C1358401B0098E7E2 /* ECCodeIndex.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeIndex.m; sourceTree = "<group>"; };
 		B75B875D1358401B0098E7E2 /* ECCodeIndex(Private).h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ECCodeIndex(Private).h"; sourceTree = "<group>"; };
 		B75B875E1358401B0098E7E2 /* ECCodeIndexPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeIndexPlugin.h; sourceTree = "<group>"; };
-		B75B875F1358401B0098E7E2 /* ECCodeSymbol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeSymbol.h; sourceTree = "<group>"; };
-		B75B87601358401B0098E7E2 /* ECCodeSymbol.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeSymbol.m; sourceTree = "<group>"; };
 		B75B87611358401B0098E7E2 /* ECCodeToken.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeToken.h; sourceTree = "<group>"; };
 		B75B87621358401B0098E7E2 /* ECCodeToken.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeToken.m; sourceTree = "<group>"; };
 		B75B87631358401B0098E7E2 /* ECCodeUnit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeUnit.h; sourceTree = "<group>"; };
@@ -767,10 +762,6 @@
 		CDEBF24313489AFE00CE2285 /* ECCodeIndexing */ = {
 			isa = PBXGroup;
 			children = (
-				B75B87491358401B0098E7E2 /* ECClangCodeIndex.h */,
-				B75B874A1358401B0098E7E2 /* ECClangCodeIndex.m */,
-				B75B874B1358401B0098E7E2 /* ECClangCodeUnit.h */,
-				B75B874C1358401B0098E7E2 /* ECClangCodeUnit.m */,
 				B75B874D1358401B0098E7E2 /* ECCodeCompletionChunk.h */,
 				B75B874E1358401B0098E7E2 /* ECCodeCompletionChunk.m */,
 				B75B874F1358401B0098E7E2 /* ECCodeCompletionResult.h */,
@@ -779,24 +770,24 @@
 				B75B87521358401B0098E7E2 /* ECCodeCompletionString.m */,
 				B75B87531358401B0098E7E2 /* ECCodeCursor.h */,
 				B75B87541358401B0098E7E2 /* ECCodeCursor.m */,
-				B75B87551358401B0098E7E2 /* ECCodeCursor(Private).h */,
-				B75B87561358401B0098E7E2 /* ECCodeCursorPlugin.h */,
 				B75B87571358401B0098E7E2 /* ECCodeDiagnostic.h */,
 				B75B87581358401B0098E7E2 /* ECCodeDiagnostic.m */,
 				B75B87591358401B0098E7E2 /* ECCodeFixIt.h */,
 				B75B875A1358401B0098E7E2 /* ECCodeFixIt.m */,
+				B75B87611358401B0098E7E2 /* ECCodeToken.h */,
+				B75B87621358401B0098E7E2 /* ECCodeToken.m */,
 				B75B875B1358401B0098E7E2 /* ECCodeIndex.h */,
 				B75B875C1358401B0098E7E2 /* ECCodeIndex.m */,
 				B75B875D1358401B0098E7E2 /* ECCodeIndex(Private).h */,
 				B75B875E1358401B0098E7E2 /* ECCodeIndexPlugin.h */,
-				B75B875F1358401B0098E7E2 /* ECCodeSymbol.h */,
-				B75B87601358401B0098E7E2 /* ECCodeSymbol.m */,
-				B75B87611358401B0098E7E2 /* ECCodeToken.h */,
-				B75B87621358401B0098E7E2 /* ECCodeToken.m */,
 				B75B87631358401B0098E7E2 /* ECCodeUnit.h */,
 				B75B87641358401B0098E7E2 /* ECCodeUnit.m */,
 				B75B87651358401B0098E7E2 /* ECCodeUnit(Private).h */,
 				B75B87661358401B0098E7E2 /* ECCodeUnitPlugin.h */,
+				B75B87491358401B0098E7E2 /* ECClangCodeIndex.h */,
+				B75B874A1358401B0098E7E2 /* ECClangCodeIndex.m */,
+				B75B874B1358401B0098E7E2 /* ECClangCodeUnit.h */,
+				B75B874C1358401B0098E7E2 /* ECClangCodeUnit.m */,
 			);
 			name = ECCodeIndexing;
 			path = Frameworks/ECCodeIndexing;
@@ -1019,7 +1010,6 @@
 				B75B87701358401B0098E7E2 /* ECCodeDiagnostic.m in Sources */,
 				B75B87711358401B0098E7E2 /* ECCodeFixIt.m in Sources */,
 				B75B87721358401B0098E7E2 /* ECCodeIndex.m in Sources */,
-				B75B87731358401B0098E7E2 /* ECCodeSymbol.m in Sources */,
 				B75B87741358401B0098E7E2 /* ECCodeToken.m in Sources */,
 				B75B87751358401B0098E7E2 /* ECCodeUnit.m in Sources */,
 				B7C764F2136773A4009181DB /* ECManagedObject.m in Sources */,

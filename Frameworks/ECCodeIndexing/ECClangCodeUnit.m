@@ -84,10 +84,6 @@ static ECCodeCursor *cursorFromClangCursor(CXCursor clangCursor)
     }
     enum CXCursorKind clangKind = clang_getCursorKind(clangCursor);
     ECCodeCursorKind kind = clangKind;
-    NSString *detailedKind;
-    CXString clangKindSpelling = clang_getCursorKindSpelling(clangKind);
-    detailedKind = [NSString stringWithUTF8String:clang_getCString(clangKindSpelling)];
-    clang_disposeString(clangKindSpelling);
     NSString *spelling;
     CXString clangSpelling = clang_getCursorSpelling(clangCursor);
     spelling = [NSString stringWithUTF8String:clang_getCString(clangSpelling)];
@@ -103,7 +99,7 @@ static ECCodeCursor *cursorFromClangCursor(CXCursor clangCursor)
     CXString clangUSR = clang_getCursorUSR(clangCursor);
     unifiedSymbolResolution = [NSString stringWithUTF8String:clang_getCString(clangUSR)];
     clang_disposeString(clangUSR);
-    return [ECCodeCursor cursorWithLanguage:language kind:kind detailedKind:detailedKind spelling:spelling file:file offset:offset extent:extent unifiedSymbolResolution:unifiedSymbolResolution];
+    return [ECCodeCursor cursorWithLanguage:language kind:kind spelling:spelling file:file offset:offset extent:extent unifiedSymbolResolution:unifiedSymbolResolution];
 }
 
 static ECCodeToken *tokenFromClangToken(CXTranslationUnit translationUnit, CXToken clangToken, BOOL attachCursor, CXCursor clangTokenCursor)

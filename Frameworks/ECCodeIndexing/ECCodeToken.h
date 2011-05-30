@@ -11,17 +11,14 @@
 
 typedef enum
 {
-    ECCodeTokenKindPunctuation = 1,
-    ECCodeTokenKindKeyword = 2,
-    ECCodeTokenKindIdentifier = 3,
-    ECCodeTokenKindLiteral = 4,
-    ECCodeTokenKindComment = 5
+    ECCodeTokenKindPunctuation,
+    ECCodeTokenKindKeyword,
+    ECCodeTokenKindIdentifier,
+    ECCodeTokenKindLiteral,
+    ECCodeTokenKindComment,
 } ECCodeTokenKind;
 
 @interface ECCodeToken : NSObject
-{
-    NSUInteger _hash;
-}
 @property (nonatomic, readonly) ECCodeTokenKind kind;
 @property (nonatomic, readonly, copy) NSString *spelling;
 @property (nonatomic, readonly, copy) NSString *file;

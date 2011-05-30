@@ -57,6 +57,8 @@
 
 - (void)dealloc
 {
+    self.name = nil;
+    self.rootNode = nil;
     self.bundle = nil;
     self.fileManager = nil;
     self.managedObjectContext = nil;

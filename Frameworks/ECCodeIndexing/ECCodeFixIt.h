@@ -9,9 +9,6 @@
 #import <Foundation/Foundation.h>
 
 @interface ECCodeFixIt : NSObject
-{
-    NSUInteger _hash;
-}
 @property (nonatomic, readonly, copy) NSString *string;
 @property (nonatomic, readonly, copy) NSString *file;
 @property (nonatomic, readonly) NSRange replacementRange;

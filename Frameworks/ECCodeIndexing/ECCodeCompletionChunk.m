@@ -10,6 +10,9 @@
 #import <ECFoundation/ECHashing.h>
 
 @interface ECCodeCompletionChunk ()
+{
+    NSUInteger _hash;
+}
 - (NSUInteger)computeHash;
 @end
 
@@ -36,21 +39,11 @@
     return self;
 }
 
-- (id)initWithString:(NSString *)string
-{
-    return [self initWithKind:ECCodeCompletionChunkKindTypedText string:string];
-}
-
 + (id)chunkWithKind:(ECCodeCompletionChunkKind)kind string:(NSString *)string
 {
     id chunk = [self alloc];
     chunk = [chunk initWithKind:kind string:string];
     return [chunk autorelease];
-}
-
-+ (id)chunkWithString:(NSString *)string
-{
-    return [self chunkWithKind:ECCodeCompletionChunkKindTypedText string:string];
 }
 
 - (id)copyWithZone:(NSZone *)zone

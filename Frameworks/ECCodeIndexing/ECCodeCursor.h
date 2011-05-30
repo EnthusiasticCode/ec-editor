@@ -7,11 +7,10 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "ECCodeUnit.h"
+@class ECCodeUnit;
 
 typedef enum
 {
-    ECCodeCursorKindUnknown                       = 0,
     /* Declarations */
     /**
      * \brief A declaration whose specific kind is not exposed via this
@@ -31,10 +30,7 @@ typedef enum
     ECCodeCursorKindClassDecl                     = 4,
     /** \brief An enumeration. */
     ECCodeCursorKindEnumDecl                      = 5,
-    /**
-     * \brief A field (in C) or non-static data member (in C++) in a
-     * struct, union, or C++ class.
-     */
+    /** \brief A field (in C) or non-static data member (in C++) in a struct, union, or C++ class. */
     ECCodeCursorKindFieldDecl                     = 6,
     /** \brief An enumerator constant. */
     ECCodeCursorKindEnumConstantDecl              = 7,
@@ -122,8 +118,7 @@ typedef enum
     ECCodeCursorKindTypeRef                       = 43,
     ECCodeCursorKindCXXBaseSpecifier              = 44,
     /** 
-     * \brief A reference to a class template, function template, template
-     * template parameter, or class template partial specialization.
+     * \brief A reference to a class template, function template, template template parameter, or class template partial specialization.
      */
     ECCodeCursorKindTemplateRef                   = 45,
     /**
@@ -300,12 +295,13 @@ typedef enum
 @property (nonatomic, readonly, retain) ECCodeUnit *codeUnit;
 @property (nonatomic, readonly, copy) NSString *language;
 @property (nonatomic, readonly) ECCodeCursorKind kind;
-@property (nonatomic, readonly, copy) NSString *detailedKind;
 @property (nonatomic, readonly, copy) NSString *spelling;
 @property (nonatomic, readonly, copy) NSString *file;
 @property (nonatomic, readonly) NSUInteger offset;
 @property (nonatomic, readonly) NSRange extent;
 @property (nonatomic, readonly, copy) NSString *unifiedSymbolResolution;
-- (id)initWithLanguage:(NSString *)language kind:(ECCodeCursorKind)kind detailedKind:(NSString *)detailedKind spelling:(NSString *)spelling file:(NSString *)file offset:(NSUInteger)offset extent:(NSRange)extent unifiedSymbolResolution:(NSString *)unifiedSymbolResolution;
-+ (id)cursorWithLanguage:(NSString *)language kind:(ECCodeCursorKind)kind detailedKind:(NSString *)detailedKind spelling:(NSString *)spelling file:(NSString *)file offset:(NSUInteger)offset extent:(NSRange)extent unifiedSymbolResolution:(NSString *)unifiedSymbolResolution;
+
+- (id)initWithLanguage:(NSString *)language kind:(ECCodeCursorKind)kind spelling:(NSString *)spelling file:(NSString *)file offset:(NSUInteger)offset extent:(NSRange)extent unifiedSymbolResolution:(NSString *)unifiedSymbolResolution;
++ (id)cursorWithLanguage:(NSString *)language kind:(ECCodeCursorKind)kind spelling:(NSString *)spelling file:(NSString *)file offset:(NSUInteger)offset extent:(NSRange)extent unifiedSymbolResolution:(NSString *)unifiedSymbolResolution;
+
 @end

@@ -8,11 +8,8 @@
 
 #import <Foundation/Foundation.h>
 @class ECCodeCompletionChunk;
-/*! Object representing any possible completion. */
+
 @interface ECCodeCompletionString : NSObject
-{
-    NSUInteger _hash;
-}
 @property (nonatomic, readonly, copy) NSArray *completionChunks;
 
 - (id)initWithCompletionChunks:(NSArray *)completionChunks;
