@@ -12,20 +12,33 @@
 
 @class ECCodeView;
 
-@protocol ECCodeViewDelegate <ECCodeViewBaseDelegate>
-
+@protocol ECCodeViewDataSource <ECCodeViewBaseDataSource>
 @optional
 
-/// This function is called by an \c ECCodeView when the user require a complition
-/// of a word or partial filter word in the text.
-- (void)codeView:(ECCodeView *)codeView completionRequestAtTextLocation:(NSUInteger)location withFilterWord:(NSString *)filter;
+/// Returns a value that indicate if the codeview can edit the datasource
+/// in the specified text range.
+- (BOOL)codeView:(ECCodeView *)codeView canEditTextInRange:(NSRange)range;
+
+/// Commit a change for the given range with the given string.
+/// The datasource is responsible for calling one of the update methods of the 
+/// codeview after the text has been changed.
+- (void)codeView:(ECCodeView *)codeView commitString:(NSString *)string forTextInRange:(NSRange)range;
+
+/// If implemented, indicate that the data source support complition of words.
+/// The view controller returned from this method will be presented to the user
+/// when a complition will be requested.
+/// The method receive a range of the string to complete.
+/// This method is supposed to use codeView:stringInRange: to retrieve the part
+/// of text to complete. An action in the view controller should call
+/// codeView:commitString:forTextInRange: to actually complete the word.
+- (UIViewController *)codeView:(ECCodeView *)codeView viewControllerForComplitionAtTextInRange:(NSRange)range;
 
 @end
 
 
 @interface ECCodeView : ECCodeViewBase <UIKeyInput, UITextInputTraits, UITextInput>
 
-@property (nonatomic, assign) id<ECCodeViewDelegate> delegate;
+@property (nonatomic, assign) id<ECCodeViewDataSource> datasource;
 
 #pragma mark Managing the Navigator
 

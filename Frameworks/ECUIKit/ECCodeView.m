@@ -36,7 +36,8 @@
     // Touch scrolling timer
     NSTimer *touchScrollTimer;
     
-    // Delegate flags
+    // Delegate and datasource flags
+    BOOL dataSourceHasCodeCanEditTextInRange;
     BOOL delegateHasCompletionRequestAtTextLocationWithFilterWord;
     
     // Recognizers
@@ -845,17 +846,9 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
 #pragma mark -
 #pragma mark Properties
 
-@synthesize delegate;
 @synthesize infoViewVisible;
 @synthesize navigatorBackgroundColor;
 @synthesize navigatorWidth;
-
-- (void)setDelegate:(id<ECCodeViewDelegate>)aDelegate
-{
-    delegate = aDelegate;
-    
-    delegateHasCompletionRequestAtTextLocationWithFilterWord = [delegate respondsToSelector:@selector(codeView:completionRequestAtTextLocation:withFilterWord:)];
-}
 
 - (void)setFrame:(CGRect)frame
 {
@@ -870,6 +863,15 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
     [super setContentSize:contentSize];
     
     [infoView updateNavigator];
+}
+
+@dynamic datasource;
+
+- (void)setDatasource:(id<ECCodeViewDataSource>)aDatasource
+{
+    [super setDatasource:aDatasource];
+    
+    dataSourceHasCodeCanEditTextInRange = [self.datasource respondsToSelector:@selector(codeView:canEditTextInRange:)];
 }
 
 #pragma mark NSObject Methods

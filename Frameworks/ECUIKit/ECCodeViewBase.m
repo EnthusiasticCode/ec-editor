@@ -177,11 +177,11 @@
 
 #pragma mark Properties
 
-@synthesize delegate, datasource; 
+@synthesize datasource; 
 @synthesize textInsets;
 @synthesize renderingQueue, renderer;
 
-- (id<ECCodeViewDataSource>)datasource
+- (id<ECCodeViewBaseDataSource>)datasource
 {
     if (!datasource)
     {
@@ -200,8 +200,6 @@
     {
         [defaultDatasource release];
     }
-    
-    dataSourceHasCodeCanEditTextInRange = [datasource respondsToSelector:@selector(codeView:canEditTextInRange:)];
     
     if (ownsRenderer)
         renderer.datasource = datasource;

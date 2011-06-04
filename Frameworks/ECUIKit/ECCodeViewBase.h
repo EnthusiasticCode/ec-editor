@@ -8,9 +8,19 @@
 
 #import <UIKit/UIKit.h>
 #import "ECTextRenderer.h"
-#import "ECCodeViewDataSource.h"
 
-@protocol ECCodeViewBaseDelegate <UIScrollViewDelegate>
+@class ECCodeViewBase;
+
+@protocol ECCodeViewBaseDataSource <ECTextRendererDataSource>
+@required
+
+/// When implemented return the length of the text in the datasource.
+- (NSUInteger)textLength;
+
+/// Return the substring in the given range. Used to implement
+/// \c UITextInput methods.
+- (NSString *)codeView:(ECCodeViewBase *)codeView stringInRange:(NSRange)range;
+
 @end
 
 
@@ -19,10 +29,7 @@
     ECTextRenderer *renderer;
     NSOperationQueue *renderingQueue;
     UIEdgeInsets textInsets;
-    BOOL dataSourceHasCodeCanEditTextInRange;
 }
-
-@property (nonatomic, assign) id<ECCodeViewBaseDelegate> delegate;
 
 #pragma mark Advanced Initialization and Configuration
 
@@ -41,7 +48,7 @@
 
 /// The datasource for the text displayed by the code view. Default is self.
 /// If this datasource is not self, the text property will have no effect.
-@property (nonatomic, assign) id<ECCodeViewDataSource> datasource;
+@property (nonatomic, assign) id<ECCodeViewBaseDataSource> datasource;
 
 #pragma mark Managing Text Content
 

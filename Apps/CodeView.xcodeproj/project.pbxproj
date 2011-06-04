@@ -126,15 +126,12 @@
 		CDCD1CB61368611C00A6DA9E /* ECDictionaryCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECDictionaryCache.m; sourceTree = "<group>"; };
 		CDCD1CB81368614000A6DA9E /* ECCodeStringDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeStringDataSource.h; sourceTree = "<group>"; };
 		CDCD1CB91368614000A6DA9E /* ECCodeStringDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeStringDataSource.m; sourceTree = "<group>"; };
-		CDCD1CBC1368614000A6DA9E /* ECCodeViewDatasource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeViewDatasource.h; sourceTree = "<group>"; };
 		CDCD1CBD1368614000A6DA9E /* ECTextPosition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECTextPosition.h; sourceTree = "<group>"; };
 		CDCD1CBE1368614000A6DA9E /* ECTextPosition.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECTextPosition.m; sourceTree = "<group>"; };
 		CDCD1CBF1368614000A6DA9E /* ECTextRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECTextRange.h; sourceTree = "<group>"; };
 		CDCD1CC01368614000A6DA9E /* ECTextRange.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECTextRange.m; sourceTree = "<group>"; };
 		CDCD1CC11368614000A6DA9E /* ECTextRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECTextRenderer.h; sourceTree = "<group>"; };
 		CDCD1CC21368614000A6DA9E /* ECTextRenderer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECTextRenderer.m; sourceTree = "<group>"; };
-		CDCD1CC31368614000A6DA9E /* ECTextRendererDatasource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECTextRendererDatasource.h; sourceTree = "<group>"; };
-		CDCD1CC41368614000A6DA9E /* ECTextRendererDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECTextRendererDelegate.h; sourceTree = "<group>"; };
 		CDCD1CC51368614000A6DA9E /* ECTextStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECTextStyle.h; sourceTree = "<group>"; };
 		CDCD1CC61368614000A6DA9E /* ECTextStyle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECTextStyle.m; sourceTree = "<group>"; };
 		CDCD1CE11368684300A6DA9E /* ECCodeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeView.h; sourceTree = "<group>"; };
@@ -309,7 +306,6 @@
 				CD28E65A1372E57500ADD2FC /* ECPopoverView.m */,
 				CDF9F237136EA90800CB5945 /* UIColor+StyleColors.h */,
 				CDF9F238136EA90800CB5945 /* UIColor+StyleColors.m */,
-				CDCD1CBC1368614000A6DA9E /* ECCodeViewDatasource.h */,
 				CDF9F22C136DC9BD00CB5945 /* ECCodeViewBase.h */,
 				CDF9F22D136DC9BD00CB5945 /* ECCodeViewBase.m */,
 				CDCD1CE11368684300A6DA9E /* ECCodeView.h */,
@@ -319,8 +315,6 @@
 				CDCD1CBE1368614000A6DA9E /* ECTextPosition.m */,
 				CDCD1CBF1368614000A6DA9E /* ECTextRange.h */,
 				CDCD1CC01368614000A6DA9E /* ECTextRange.m */,
-				CDCD1CC31368614000A6DA9E /* ECTextRendererDatasource.h */,
-				CDCD1CC41368614000A6DA9E /* ECTextRendererDelegate.h */,
 				CDCD1CC11368614000A6DA9E /* ECTextRenderer.h */,
 				CDCD1CC21368614000A6DA9E /* ECTextRenderer.m */,
 				CDCD1CC51368614000A6DA9E /* ECTextStyle.h */,
