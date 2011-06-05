@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "ECCodeViewDatasource.h"
+#import "ECCodeView.h"
 #import "ECTextStyle.h"
 
 @class ECCodeFileDataSource;
