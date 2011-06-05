@@ -48,9 +48,9 @@
 
 @property (nonatomic, getter = isNavigatorVisible) BOOL navigatorVisible;
 
-#pragma mark Detail Looking glass
+#pragma mark Complition
 
-//@property (nonatomic, readonly) ECPopoverController *detailPopover;
+- (void)showComplitionPopoverAtCursor;
 
 #pragma mark UITextInput Properties
 

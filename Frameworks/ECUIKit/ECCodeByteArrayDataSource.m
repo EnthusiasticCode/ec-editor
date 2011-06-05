@@ -101,6 +101,8 @@
     } lastEdited;
     
     NSMutableData *editData;
+    
+    UITableViewController *complitionController;
 }
 
 /// Returns the offset of the beginning of the given line in the file.
@@ -175,6 +177,8 @@
     [lineDelimiter release];
     [defaultTextStyle release];
     [stylizeBlock release];
+    
+    [complitionController release];
     
     [super dealloc];
 }
@@ -339,6 +343,20 @@
     }
  
     [codeView updateTextInLineRange:fromLineRange toLineRange:toLineRange];
+}
+
+// TODO!!! DEBUG only
+- (UIViewController *)codeView:(ECCodeView *)codeView viewControllerForComplitionAtTextInRange:(NSRange)range
+{
+    if (!complitionController)
+        complitionController = [[UITableViewController alloc] initWithNibName:@"ComplitionController" bundle:nil];
+    
+    // TODO fake some complition
+    NSString *complitionFilter = [self codeView:codeView stringInRange:range];
+    NSLog(@"Filter filter: %@\n", complitionFilter);
+    complitionController.contentSizeForViewInPopover = CGSizeMake(300, 400);
+    
+    return complitionController;
 }
 
 #pragma mark Text Renderer Data Source Methods

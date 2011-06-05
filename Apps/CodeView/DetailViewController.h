@@ -25,4 +25,6 @@
 
 @property (nonatomic, retain) IBOutlet ECCodeView *codeView;
 
+- (IBAction)completeAtCursor:(id)sender;
+
 @end

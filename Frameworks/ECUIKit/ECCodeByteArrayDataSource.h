@@ -14,6 +14,8 @@
 
 typedef void(^StylizeFilePartStringBlock)(ECCodeByteArrayDataSource *dataSource, NSMutableAttributedString *string, NSRange stringRange);
 
+
+// TODO!!! create a model for text editing and create a single datasource with interchangable models
 @interface ECCodeByteArrayDataSource : NSObject <ECCodeViewDataSource>
 
 #pragma mark Providing Data Input

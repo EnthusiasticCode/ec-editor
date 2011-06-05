@@ -162,4 +162,7 @@
         self.codeView.navigatorVisible = NO;
 }
 
+- (IBAction)completeAtCursor:(id)sender {
+    [self.codeView showComplitionPopoverAtCursor];
+}
 @end
