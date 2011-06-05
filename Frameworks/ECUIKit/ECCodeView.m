@@ -31,10 +31,16 @@
     
     // Text management
     TextSelectionView *selectionView;
+    ECPopoverController *complitionPopover;
     NSRange markedRange;
     
     // Touch scrolling timer
     NSTimer *touchScrollTimer;
+    
+    // Delegate and datasource flags
+    BOOL dataSourceHasCodeCanEditTextInRange;
+    BOOL dataSourceHasViewControllerForComplitionAtTextInRange;
+    BOOL delegateHasCompletionRequestAtTextLocationWithFilterWord;
     
     // Recognizers
     UITapGestureRecognizer *focusRecognizer;
@@ -62,6 +68,8 @@
 /// Given a touch point on the top or bottom of the codeview, this method
 /// scroll the content faster as the point approaches the receiver's bounds.
 - (void)autoScrollForTouchAtPoint:(CGPoint)point;
+
+- (void)showComplitionForTextInRange:(NSRange)textRange;
 
 // Gestures handlers
 - (void)handleGestureFocus:(UITapGestureRecognizer *)recognizer;
@@ -861,6 +869,16 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
     [infoView updateNavigator];
 }
 
+@dynamic datasource;
+
+- (void)setDatasource:(id<ECCodeViewDataSource>)aDatasource
+{
+    [super setDatasource:aDatasource];
+    
+    dataSourceHasCodeCanEditTextInRange = [self.datasource respondsToSelector:@selector(codeView:canEditTextInRange:)];
+    dataSourceHasViewControllerForComplitionAtTextInRange = [self.datasource respondsToSelector:@selector(codeView:viewControllerForComplitionAtTextInRange:)];
+}
+
 #pragma mark NSObject Methods
 
 static void preinit(ECCodeView *self)
@@ -911,6 +929,7 @@ static void init(ECCodeView *self)
 {
     [navigatorBackgroundColor release];
     [infoView release];
+    [complitionPopover release];
     [super dealloc];
 }
 
@@ -992,6 +1011,51 @@ static void init(ECCodeView *self)
     [navigatorBackgroundColor release];
     navigatorBackgroundColor = [color retain];
     infoView.navigatorBackgroundColor = color;
+}
+
+#pragma mark -
+#pragma mark Complition
+
+- (void)showComplitionPopoverAtCursor
+{
+    if (![self isFirstResponder])
+        return;
+    
+    NSRange complitionRange = selectionView.selection;
+    if (complitionRange.length == 0) 
+    {
+        ECTextPosition *cursorPosition = selectionView.selectionPosition;
+        ECTextPosition *wordStart = (ECTextPosition *)[self.tokenizer positionFromPosition:cursorPosition toBoundary:UITextGranularityWord inDirection:UITextStorageDirectionBackward];
+        
+        if (!wordStart)
+            wordStart = cursorPosition;
+        
+        complitionRange = NSMakeRange(wordStart.index, cursorPosition.index - wordStart.index);
+    }
+    
+    [self showComplitionForTextInRange:complitionRange];
+}
+
+- (void)showComplitionForTextInRange:(NSRange)textRange
+{
+    if (!dataSourceHasViewControllerForComplitionAtTextInRange)
+        return;
+    
+    if (!complitionPopover)
+    {
+        complitionPopover = [[ECPopoverController alloc] initWithContentViewController:nil];
+        complitionPopover.automaticDismiss = YES;
+    }
+    
+    complitionPopover.contentViewController = [self.datasource codeView:self viewControllerForComplitionAtTextInRange:textRange];
+    
+    // TODO something is complitionPopover.contentViewController is nil
+    
+    CGRect textRect = [renderer rectsForStringRange:textRange limitToFirstLine:YES].bounds;
+    textRect.origin.y += textInsets.top;
+    textRect.origin.x += textRect.size.width - 1 + textInsets.left;
+    textRect.size.width = 2;
+    [complitionPopover presentPopoverFromRect:textRect inView:self permittedArrowDirections:UIPopoverArrowDirectionUp | UIPopoverArrowDirectionDown animated:YES];
 }
 
 #pragma mark -
@@ -1644,16 +1708,7 @@ static void init(ECCodeView *self)
                 [selectionView setMagnify:YES fromRect:selectionView.frame ratio:2 animated:animatePopover];
             }
 
-            // Scrolling up
-//            // TODO get top point offset if mutlitouch
-//            CGPoint offset = self.contentOffset;
-//            CGFloat topScroll = 50 - tapPoint.y + offset.y;
-//            if (topScroll > 0)
-//            {
-//                offset.y -= topScroll;
-//                [self scrollRectToVisible:(CGRect){ {0, offset.y }, {1, 1} } animated:NO];
-//                [self performSelector:@selector(handleGestureLongPress:) withObject:recognizer afterDelay:0.1];
-//            }
+            // Scrolling
             tapPoint.y -= self.contentOffset.y;
             [self autoScrollForTouchAtPoint:tapPoint];
         }

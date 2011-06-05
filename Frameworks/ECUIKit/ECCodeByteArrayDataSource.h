@@ -1,25 +1,27 @@
 //
-//  ECCodeFileDataSource.h
+//  ECCodeByteArrayDataSource.h
 //  CodeView
 //
-//  Created by Nicola Peduzzi on 13/05/11.
+//  Created by Nicola Peduzzi on 22/05/11.
 //  Copyright 2011 __MyCompanyName__. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
 #import "ECCodeView.h"
-#import "ECTextStyle.h"
 
-@class ECCodeFileDataSource;
+@class ECTextStyle;
+@class ECCodeByteArrayDataSource;
 
-typedef void(^StylizeFilePartStringBlock)(ECCodeFileDataSource *dataSource, NSMutableAttributedString *string, NSRange rangeInFile);
+typedef void(^StylizeFilePartStringBlock)(ECCodeByteArrayDataSource *dataSource, NSMutableAttributedString *string, NSRange stringRange);
 
-@interface ECCodeFileDataSource : NSObject <ECCodeViewDataSource>
+
+// TODO!!! create a model for text editing and create a single datasource with interchangable models
+@interface ECCodeByteArrayDataSource : NSObject <ECCodeViewDataSource>
 
 #pragma mark Providing Data Input
 
 /// The file URL that the datasource is reading from.
-@property (nonatomic, retain) NSURL *inputFileURL;
+@property (nonatomic, retain) NSURL *fileURL;
 
 /// Gets or set the line delimiter. Default is @"\n".
 @property (nonatomic, copy) NSString *lineDelimiter;
@@ -40,6 +42,6 @@ typedef void(^StylizeFilePartStringBlock)(ECCodeFileDataSource *dataSource, NSMu
 #pragma mark Managing File
 
 /// Save any current changes to disk.
-- (void)flush;
+- (void)writeToFile;
 
 @end

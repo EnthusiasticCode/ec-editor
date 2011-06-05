@@ -115,8 +115,8 @@
 
 static void preinit(ECPopoverView *self)
 {
-    self->arrowSize = 25;
-    self->arrowCornerRadius = 2;
+    self->arrowSize = 20;
+    self->arrowCornerRadius = 1;
     self->arrowPosition = 0.5;
     self->arrowDirection = UIPopoverArrowDirectionUp;
     self->arrowMargin = self->arrowSize / M_SQRT2 - self->arrowCornerRadius;

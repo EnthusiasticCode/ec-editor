@@ -106,7 +106,7 @@
     [super viewDidLoad];
     
     if (!codeViewDataSource)
-        codeViewDataSource = [ECCodeFileDataSource new];
+        codeViewDataSource = [ECCodeByteArrayDataSource new];
     
     self.codeView.datasource = codeViewDataSource;
     self.codeView.delegate = self;
@@ -162,4 +162,7 @@
         self.codeView.navigatorVisible = NO;
 }
 
+- (IBAction)completeAtCursor:(id)sender {
+    [self.codeView showComplitionPopoverAtCursor];
+}
 @end

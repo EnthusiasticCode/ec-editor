@@ -7,10 +7,29 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CD136DB81382C7BB004F9C5D /* NSData+UTF8.m in Sources */ = {isa = PBXBuildFile; fileRef = CD136DB71382C7BB004F9C5D /* NSData+UTF8.m */; };
 		CD28E65B1372E57600ADD2FC /* ECPopoverController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD28E6581372E57500ADD2FC /* ECPopoverController.m */; };
 		CD28E65C1372E57600ADD2FC /* ECPopoverView.m in Sources */ = {isa = PBXBuildFile; fileRef = CD28E65A1372E57500ADD2FC /* ECPopoverView.m */; };
 		CD28E6661374317200ADD2FC /* ECRectSet.m in Sources */ = {isa = PBXBuildFile; fileRef = CD28E6651374317200ADD2FC /* ECRectSet.m */; };
+		CD57841B138941880065F27E /* HFBTree.m in Sources */ = {isa = PBXBuildFile; fileRef = CD5783FA138941880065F27E /* HFBTree.m */; };
+		CD57841C138941880065F27E /* HFBTreeByteArray.m in Sources */ = {isa = PBXBuildFile; fileRef = CD5783FD138941880065F27E /* HFBTreeByteArray.m */; };
+		CD57841D138941880065F27E /* HFByteArray_FileWriting.m in Sources */ = {isa = PBXBuildFile; fileRef = CD5783FE138941880065F27E /* HFByteArray_FileWriting.m */; };
+		CD57841E138941880065F27E /* HFByteArray_FindReplace.m in Sources */ = {isa = PBXBuildFile; fileRef = CD5783FF138941880065F27E /* HFByteArray_FindReplace.m */; };
+		CD57841F138941880065F27E /* HFByteArray.m in Sources */ = {isa = PBXBuildFile; fileRef = CD578402138941880065F27E /* HFByteArray.m */; };
+		CD578420138941880065F27E /* HFByteSlice.m in Sources */ = {isa = PBXBuildFile; fileRef = CD578405138941880065F27E /* HFByteSlice.m */; };
+		CD578421138941880065F27E /* HFByteSliceFileOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = CD578407138941880065F27E /* HFByteSliceFileOperation.m */; };
+		CD578422138941880065F27E /* HFByteSliceFileOperationQueueEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = CD578409138941880065F27E /* HFByteSliceFileOperationQueueEntry.m */; };
+		CD578423138941880065F27E /* HFFastMemchr.m in Sources */ = {isa = PBXBuildFile; fileRef = CD57840A138941880065F27E /* HFFastMemchr.m */; };
+		CD578424138941880065F27E /* HFFileByteSlice.m in Sources */ = {isa = PBXBuildFile; fileRef = CD57840C138941880065F27E /* HFFileByteSlice.m */; };
+		CD578425138941880065F27E /* HFFileReference.m in Sources */ = {isa = PBXBuildFile; fileRef = CD57840E138941880065F27E /* HFFileReference.m */; };
+		CD578426138941880065F27E /* HFFullMemoryByteSlice.m in Sources */ = {isa = PBXBuildFile; fileRef = CD578410138941880065F27E /* HFFullMemoryByteSlice.m */; };
+		CD578427138941880065F27E /* HFFunctions.m in Sources */ = {isa = PBXBuildFile; fileRef = CD578413138941880065F27E /* HFFunctions.m */; };
+		CD578428138941880065F27E /* HFObjectGraph.m in Sources */ = {isa = PBXBuildFile; fileRef = CD578415138941880065F27E /* HFObjectGraph.m */; };
+		CD578429138941880065F27E /* HFProgressTracker.m in Sources */ = {isa = PBXBuildFile; fileRef = CD578417138941880065F27E /* HFProgressTracker.m */; };
+		CD57842A138941880065F27E /* HFSharedMemoryByteSlice.m in Sources */ = {isa = PBXBuildFile; fileRef = CD578419138941880065F27E /* HFSharedMemoryByteSlice.m */; };
+		CD57842D138941BD0065F27E /* ECCodeByteArrayDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = CD57842C138941BD0065F27E /* ECCodeByteArrayDataSource.m */; };
 		CD67747B1379DBEB00AA37CE /* Inconsolata.otf in Resources */ = {isa = PBXBuildFile; fileRef = CD67747A1379DBEB00AA37CE /* Inconsolata.otf */; };
+		CD7CB9A3139A87CA001C5F2A /* ComplitionController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CD7CB9A2139A87CA001C5F2A /* ComplitionController.xib */; };
 		CDA3F5C71379BBC400E72D46 /* NSTimer+block.m in Sources */ = {isa = PBXBuildFile; fileRef = CDA3F5C61379BBC400E72D46 /* NSTimer+block.m */; };
 		CDA9216F137D945000AE1BBF /* ECCodeFileDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = CDA9216E137D945000AE1BBF /* ECCodeFileDataSource.m */; };
 		CDB949BA136C3AF200870A98 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CDB949B9136C3AF200870A98 /* QuartzCore.framework */; };
@@ -37,13 +56,52 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		CD136DB61382C7BB004F9C5D /* NSData+UTF8.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+UTF8.h"; sourceTree = "<group>"; };
+		CD136DB71382C7BB004F9C5D /* NSData+UTF8.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+UTF8.m"; sourceTree = "<group>"; };
 		CD28E6571372E57500ADD2FC /* ECPopoverController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECPopoverController.h; sourceTree = "<group>"; };
 		CD28E6581372E57500ADD2FC /* ECPopoverController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECPopoverController.m; sourceTree = "<group>"; };
 		CD28E6591372E57500ADD2FC /* ECPopoverView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECPopoverView.h; sourceTree = "<group>"; };
 		CD28E65A1372E57500ADD2FC /* ECPopoverView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECPopoverView.m; sourceTree = "<group>"; };
 		CD28E6641374317100ADD2FC /* ECRectSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECRectSet.h; sourceTree = "<group>"; };
 		CD28E6651374317200ADD2FC /* ECRectSet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECRectSet.m; sourceTree = "<group>"; };
+		CD5783F9138941880065F27E /* HFBTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HFBTree.h; sourceTree = "<group>"; };
+		CD5783FA138941880065F27E /* HFBTree.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HFBTree.m; sourceTree = "<group>"; };
+		CD5783FB138941880065F27E /* HexFiend_Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HexFiend_Private.h; sourceTree = "<group>"; };
+		CD5783FC138941880065F27E /* HFBTreeByteArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HFBTreeByteArray.h; sourceTree = "<group>"; };
+		CD5783FD138941880065F27E /* HFBTreeByteArray.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HFBTreeByteArray.m; sourceTree = "<group>"; };
+		CD5783FE138941880065F27E /* HFByteArray_FileWriting.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HFByteArray_FileWriting.m; sourceTree = "<group>"; };
+		CD5783FF138941880065F27E /* HFByteArray_FindReplace.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HFByteArray_FindReplace.m; sourceTree = "<group>"; };
+		CD578400138941880065F27E /* HFByteArray_Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HFByteArray_Internal.h; sourceTree = "<group>"; };
+		CD578401138941880065F27E /* HFByteArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HFByteArray.h; sourceTree = "<group>"; };
+		CD578402138941880065F27E /* HFByteArray.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HFByteArray.m; sourceTree = "<group>"; };
+		CD578403138941880065F27E /* HFByteSlice_Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HFByteSlice_Private.h; sourceTree = "<group>"; };
+		CD578404138941880065F27E /* HFByteSlice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HFByteSlice.h; sourceTree = "<group>"; };
+		CD578405138941880065F27E /* HFByteSlice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HFByteSlice.m; sourceTree = "<group>"; };
+		CD578406138941880065F27E /* HFByteSliceFileOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HFByteSliceFileOperation.h; sourceTree = "<group>"; };
+		CD578407138941880065F27E /* HFByteSliceFileOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HFByteSliceFileOperation.m; sourceTree = "<group>"; };
+		CD578408138941880065F27E /* HFByteSliceFileOperationQueueEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HFByteSliceFileOperationQueueEntry.h; sourceTree = "<group>"; };
+		CD578409138941880065F27E /* HFByteSliceFileOperationQueueEntry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HFByteSliceFileOperationQueueEntry.m; sourceTree = "<group>"; };
+		CD57840A138941880065F27E /* HFFastMemchr.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HFFastMemchr.m; sourceTree = "<group>"; };
+		CD57840B138941880065F27E /* HFFileByteSlice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HFFileByteSlice.h; sourceTree = "<group>"; };
+		CD57840C138941880065F27E /* HFFileByteSlice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HFFileByteSlice.m; sourceTree = "<group>"; };
+		CD57840D138941880065F27E /* HFFileReference.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HFFileReference.h; sourceTree = "<group>"; };
+		CD57840E138941880065F27E /* HFFileReference.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HFFileReference.m; sourceTree = "<group>"; };
+		CD57840F138941880065F27E /* HFFullMemoryByteSlice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HFFullMemoryByteSlice.h; sourceTree = "<group>"; };
+		CD578410138941880065F27E /* HFFullMemoryByteSlice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HFFullMemoryByteSlice.m; sourceTree = "<group>"; };
+		CD578411138941880065F27E /* HFFunctions_Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HFFunctions_Private.h; sourceTree = "<group>"; };
+		CD578412138941880065F27E /* HFFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HFFunctions.h; sourceTree = "<group>"; };
+		CD578413138941880065F27E /* HFFunctions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HFFunctions.m; sourceTree = "<group>"; };
+		CD578414138941880065F27E /* HFObjectGraph.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HFObjectGraph.h; sourceTree = "<group>"; };
+		CD578415138941880065F27E /* HFObjectGraph.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HFObjectGraph.m; sourceTree = "<group>"; };
+		CD578416138941880065F27E /* HFProgressTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HFProgressTracker.h; sourceTree = "<group>"; };
+		CD578417138941880065F27E /* HFProgressTracker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HFProgressTracker.m; sourceTree = "<group>"; };
+		CD578418138941880065F27E /* HFSharedMemoryByteSlice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HFSharedMemoryByteSlice.h; sourceTree = "<group>"; };
+		CD578419138941880065F27E /* HFSharedMemoryByteSlice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HFSharedMemoryByteSlice.m; sourceTree = "<group>"; };
+		CD57841A138941880065F27E /* HFTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HFTypes.h; sourceTree = "<group>"; };
+		CD57842B138941BD0065F27E /* ECCodeByteArrayDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeByteArrayDataSource.h; sourceTree = "<group>"; };
+		CD57842C138941BD0065F27E /* ECCodeByteArrayDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeByteArrayDataSource.m; sourceTree = "<group>"; };
 		CD67747A1379DBEB00AA37CE /* Inconsolata.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Inconsolata.otf; sourceTree = "<group>"; };
+		CD7CB9A2139A87CA001C5F2A /* ComplitionController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ComplitionController.xib; sourceTree = "<group>"; };
 		CDA3F5C51379BBC300E72D46 /* NSTimer+block.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSTimer+block.h"; sourceTree = "<group>"; };
 		CDA3F5C61379BBC400E72D46 /* NSTimer+block.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSTimer+block.m"; sourceTree = "<group>"; };
 		CDA9216D137D945000AE1BBF /* ECCodeFileDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeFileDataSource.h; sourceTree = "<group>"; };
@@ -70,15 +128,12 @@
 		CDCD1CB61368611C00A6DA9E /* ECDictionaryCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECDictionaryCache.m; sourceTree = "<group>"; };
 		CDCD1CB81368614000A6DA9E /* ECCodeStringDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeStringDataSource.h; sourceTree = "<group>"; };
 		CDCD1CB91368614000A6DA9E /* ECCodeStringDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeStringDataSource.m; sourceTree = "<group>"; };
-		CDCD1CBC1368614000A6DA9E /* ECCodeViewDatasource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeViewDatasource.h; sourceTree = "<group>"; };
 		CDCD1CBD1368614000A6DA9E /* ECTextPosition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECTextPosition.h; sourceTree = "<group>"; };
 		CDCD1CBE1368614000A6DA9E /* ECTextPosition.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECTextPosition.m; sourceTree = "<group>"; };
 		CDCD1CBF1368614000A6DA9E /* ECTextRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECTextRange.h; sourceTree = "<group>"; };
 		CDCD1CC01368614000A6DA9E /* ECTextRange.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECTextRange.m; sourceTree = "<group>"; };
 		CDCD1CC11368614000A6DA9E /* ECTextRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECTextRenderer.h; sourceTree = "<group>"; };
 		CDCD1CC21368614000A6DA9E /* ECTextRenderer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECTextRenderer.m; sourceTree = "<group>"; };
-		CDCD1CC31368614000A6DA9E /* ECTextRendererDatasource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECTextRendererDatasource.h; sourceTree = "<group>"; };
-		CDCD1CC41368614000A6DA9E /* ECTextRendererDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECTextRendererDelegate.h; sourceTree = "<group>"; };
 		CDCD1CC51368614000A6DA9E /* ECTextStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECTextStyle.h; sourceTree = "<group>"; };
 		CDCD1CC61368614000A6DA9E /* ECTextStyle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECTextStyle.m; sourceTree = "<group>"; };
 		CDCD1CE11368684300A6DA9E /* ECCodeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeView.h; sourceTree = "<group>"; };
@@ -105,6 +160,56 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		CD5783F6138941550065F27E /* HexFiend framework */ = {
+			isa = PBXGroup;
+			children = (
+				CD5783F8138941880065F27E /* BTree */,
+				CD5783FB138941880065F27E /* HexFiend_Private.h */,
+				CD5783FC138941880065F27E /* HFBTreeByteArray.h */,
+				CD5783FD138941880065F27E /* HFBTreeByteArray.m */,
+				CD5783FE138941880065F27E /* HFByteArray_FileWriting.m */,
+				CD5783FF138941880065F27E /* HFByteArray_FindReplace.m */,
+				CD578400138941880065F27E /* HFByteArray_Internal.h */,
+				CD578401138941880065F27E /* HFByteArray.h */,
+				CD578402138941880065F27E /* HFByteArray.m */,
+				CD578403138941880065F27E /* HFByteSlice_Private.h */,
+				CD578404138941880065F27E /* HFByteSlice.h */,
+				CD578405138941880065F27E /* HFByteSlice.m */,
+				CD578406138941880065F27E /* HFByteSliceFileOperation.h */,
+				CD578407138941880065F27E /* HFByteSliceFileOperation.m */,
+				CD578408138941880065F27E /* HFByteSliceFileOperationQueueEntry.h */,
+				CD578409138941880065F27E /* HFByteSliceFileOperationQueueEntry.m */,
+				CD57840A138941880065F27E /* HFFastMemchr.m */,
+				CD57840B138941880065F27E /* HFFileByteSlice.h */,
+				CD57840C138941880065F27E /* HFFileByteSlice.m */,
+				CD57840D138941880065F27E /* HFFileReference.h */,
+				CD57840E138941880065F27E /* HFFileReference.m */,
+				CD57840F138941880065F27E /* HFFullMemoryByteSlice.h */,
+				CD578410138941880065F27E /* HFFullMemoryByteSlice.m */,
+				CD578411138941880065F27E /* HFFunctions_Private.h */,
+				CD578412138941880065F27E /* HFFunctions.h */,
+				CD578413138941880065F27E /* HFFunctions.m */,
+				CD578414138941880065F27E /* HFObjectGraph.h */,
+				CD578415138941880065F27E /* HFObjectGraph.m */,
+				CD578416138941880065F27E /* HFProgressTracker.h */,
+				CD578417138941880065F27E /* HFProgressTracker.m */,
+				CD578418138941880065F27E /* HFSharedMemoryByteSlice.h */,
+				CD578419138941880065F27E /* HFSharedMemoryByteSlice.m */,
+				CD57841A138941880065F27E /* HFTypes.h */,
+			);
+			name = "HexFiend framework";
+			path = ../../Frameworks/HFHexFiend;
+			sourceTree = "<group>";
+		};
+		CD5783F8138941880065F27E /* BTree */ = {
+			isa = PBXGroup;
+			children = (
+				CD5783F9138941880065F27E /* HFBTree.h */,
+				CD5783FA138941880065F27E /* HFBTree.m */,
+			);
+			path = BTree;
+			sourceTree = "<group>";
+		};
 		CDA92170137D949800AE1BBF /* Concrete data sources */ = {
 			isa = PBXGroup;
 			children = (
@@ -112,6 +217,8 @@
 				CDCD1CB91368614000A6DA9E /* ECCodeStringDataSource.m */,
 				CDA9216D137D945000AE1BBF /* ECCodeFileDataSource.h */,
 				CDA9216E137D945000AE1BBF /* ECCodeFileDataSource.m */,
+				CD57842B138941BD0065F27E /* ECCodeByteArrayDataSource.h */,
+				CD57842C138941BD0065F27E /* ECCodeByteArrayDataSource.m */,
 			);
 			name = "Concrete data sources";
 			sourceTree = "<group>";
@@ -148,6 +255,7 @@
 		CDCD1C8B1368607300A6DA9E /* CodeView */ = {
 			isa = PBXGroup;
 			children = (
+				CD5783F6138941550065F27E /* HexFiend framework */,
 				CDCD1CB3136860EC00A6DA9E /* ECFoundation */,
 				CDCD1CB41368610300A6DA9E /* ECUIKit */,
 				CDCD1C941368607300A6DA9E /* CodeViewAppDelegate.h */,
@@ -159,6 +267,7 @@
 				CDCD1CA01368607300A6DA9E /* RootViewController.h */,
 				CDCD1CA11368607300A6DA9E /* RootViewController.m */,
 				CDCD1C8C1368607300A6DA9E /* Supporting Files */,
+				CD7CB9A2139A87CA001C5F2A /* ComplitionController.xib */,
 			);
 			path = CodeView;
 			sourceTree = "<group>";
@@ -182,6 +291,8 @@
 				CDCD1CB61368611C00A6DA9E /* ECDictionaryCache.m */,
 				CDA3F5C51379BBC300E72D46 /* NSTimer+block.h */,
 				CDA3F5C61379BBC400E72D46 /* NSTimer+block.m */,
+				CD136DB61382C7BB004F9C5D /* NSData+UTF8.h */,
+				CD136DB71382C7BB004F9C5D /* NSData+UTF8.m */,
 			);
 			name = ECFoundation;
 			path = ../../Frameworks/ECFoundation;
@@ -198,7 +309,6 @@
 				CD28E65A1372E57500ADD2FC /* ECPopoverView.m */,
 				CDF9F237136EA90800CB5945 /* UIColor+StyleColors.h */,
 				CDF9F238136EA90800CB5945 /* UIColor+StyleColors.m */,
-				CDCD1CBC1368614000A6DA9E /* ECCodeViewDatasource.h */,
 				CDF9F22C136DC9BD00CB5945 /* ECCodeViewBase.h */,
 				CDF9F22D136DC9BD00CB5945 /* ECCodeViewBase.m */,
 				CDCD1CE11368684300A6DA9E /* ECCodeView.h */,
@@ -208,8 +318,6 @@
 				CDCD1CBE1368614000A6DA9E /* ECTextPosition.m */,
 				CDCD1CBF1368614000A6DA9E /* ECTextRange.h */,
 				CDCD1CC01368614000A6DA9E /* ECTextRange.m */,
-				CDCD1CC31368614000A6DA9E /* ECTextRendererDatasource.h */,
-				CDCD1CC41368614000A6DA9E /* ECTextRendererDelegate.h */,
 				CDCD1CC11368614000A6DA9E /* ECTextRenderer.h */,
 				CDCD1CC21368614000A6DA9E /* ECTextRenderer.m */,
 				CDCD1CC51368614000A6DA9E /* ECTextStyle.h */,
@@ -270,6 +378,7 @@
 				CDCD1C991368607300A6DA9E /* MainWindow.xib in Resources */,
 				CDCD1C9F1368607300A6DA9E /* DetailView.xib in Resources */,
 				CD67747B1379DBEB00AA37CE /* Inconsolata.otf in Resources */,
+				CD7CB9A3139A87CA001C5F2A /* ComplitionController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -298,6 +407,24 @@
 				CD28E6661374317200ADD2FC /* ECRectSet.m in Sources */,
 				CDA3F5C71379BBC400E72D46 /* NSTimer+block.m in Sources */,
 				CDA9216F137D945000AE1BBF /* ECCodeFileDataSource.m in Sources */,
+				CD136DB81382C7BB004F9C5D /* NSData+UTF8.m in Sources */,
+				CD57841B138941880065F27E /* HFBTree.m in Sources */,
+				CD57841C138941880065F27E /* HFBTreeByteArray.m in Sources */,
+				CD57841D138941880065F27E /* HFByteArray_FileWriting.m in Sources */,
+				CD57841E138941880065F27E /* HFByteArray_FindReplace.m in Sources */,
+				CD57841F138941880065F27E /* HFByteArray.m in Sources */,
+				CD578420138941880065F27E /* HFByteSlice.m in Sources */,
+				CD578421138941880065F27E /* HFByteSliceFileOperation.m in Sources */,
+				CD578422138941880065F27E /* HFByteSliceFileOperationQueueEntry.m in Sources */,
+				CD578423138941880065F27E /* HFFastMemchr.m in Sources */,
+				CD578424138941880065F27E /* HFFileByteSlice.m in Sources */,
+				CD578425138941880065F27E /* HFFileReference.m in Sources */,
+				CD578426138941880065F27E /* HFFullMemoryByteSlice.m in Sources */,
+				CD578427138941880065F27E /* HFFunctions.m in Sources */,
+				CD578428138941880065F27E /* HFObjectGraph.m in Sources */,
+				CD578429138941880065F27E /* HFProgressTracker.m in Sources */,
+				CD57842A138941880065F27E /* HFSharedMemoryByteSlice.m in Sources */,
+				CD57842D138941BD0065F27E /* ECCodeByteArrayDataSource.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

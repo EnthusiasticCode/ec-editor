@@ -8,12 +8,12 @@
 
 #import <UIKit/UIKit.h>
 #import "ECCodeView.h"
-#import "ECCodeFileDataSource.h"
+#import "ECCodeByteArrayDataSource.h"
 
 @interface DetailViewController : UIViewController <UIPopoverControllerDelegate, UISplitViewControllerDelegate, UIScrollViewDelegate> {
 
     ECCodeView *_codeView;
-    ECCodeFileDataSource *codeViewDataSource;
+    ECCodeByteArrayDataSource *codeViewDataSource;
 }
 
 
@@ -24,5 +24,7 @@
 @property (nonatomic, retain) IBOutlet UILabel *detailDescriptionLabel;
 
 @property (nonatomic, retain) IBOutlet ECCodeView *codeView;
+
+- (IBAction)completeAtCursor:(id)sender;
 
 @end

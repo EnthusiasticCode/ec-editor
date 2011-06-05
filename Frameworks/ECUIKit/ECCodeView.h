@@ -10,7 +10,35 @@
 #import "ECCodeViewBase.h"
 #import "ECPopoverController.h"
 
+@class ECCodeView;
+
+@protocol ECCodeViewDataSource <ECCodeViewBaseDataSource>
+@optional
+
+/// Returns a value that indicate if the codeview can edit the datasource
+/// in the specified text range.
+- (BOOL)codeView:(ECCodeView *)codeView canEditTextInRange:(NSRange)range;
+
+/// Commit a change for the given range with the given string.
+/// The datasource is responsible for calling one of the update methods of the 
+/// codeview after the text has been changed.
+- (void)codeView:(ECCodeView *)codeView commitString:(NSString *)string forTextInRange:(NSRange)range;
+
+/// If implemented, indicate that the data source support complition of words.
+/// The view controller returned from this method will be presented to the user
+/// when a complition will be requested.
+/// The method receive a range of the string to complete.
+/// This method is supposed to use codeView:stringInRange: to retrieve the part
+/// of text to complete. An action in the view controller should call
+/// codeView:commitString:forTextInRange: to actually complete the word.
+- (UIViewController *)codeView:(ECCodeView *)codeView viewControllerForComplitionAtTextInRange:(NSRange)range;
+
+@end
+
+
 @interface ECCodeView : ECCodeViewBase <UIKeyInput, UITextInputTraits, UITextInput>
+
+@property (nonatomic, assign) id<ECCodeViewDataSource> datasource;
 
 #pragma mark Managing the Navigator
 
@@ -20,9 +48,9 @@
 
 @property (nonatomic, getter = isNavigatorVisible) BOOL navigatorVisible;
 
-#pragma mark Detail Looking glass
+#pragma mark Complition
 
-//@property (nonatomic, readonly) ECPopoverController *detailPopover;
+- (void)showComplitionPopoverAtCursor;
 
 #pragma mark UITextInput Properties
 
