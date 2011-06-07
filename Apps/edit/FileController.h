@@ -7,23 +7,17 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "ECCodeView.h"
 @class CompletionController;
+@class File;
+@class ECCodeView;
 
-@interface FileController : UIViewController {
-    UIBarButtonItem *completionButton;
-    UIPopoverController *popoverController;
-    CompletionController *completionController;
-}
-
+@interface FileController : UIViewController
 
 @property (nonatomic, retain) IBOutlet ECCodeView *codeView;
-@property (nonatomic, retain) NSString *file;
+@property (nonatomic, retain) File *file;
 @property (nonatomic, retain) IBOutlet UIBarButtonItem *completionButton;
-@property (nonatomic, retain) IBOutlet UIPopoverController *popoverController;
-@property (nonatomic, retain) IBOutlet CompletionController *completionController;
 
-- (void)loadFile:(NSString *)file;
+- (void)loadFile:(File *)file;
 - (IBAction)complete:(id)sender;
 
 @end

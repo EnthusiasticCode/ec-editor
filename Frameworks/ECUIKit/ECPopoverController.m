@@ -207,7 +207,8 @@ static void preinit(ECPopoverController *self)
     if (arrowDirections & UIPopoverArrowDirectionDown) 
     {
         resultFrame = popoverView.bounds;
-        resultFrame.origin.x = MAX(allowedRect.origin.x, MIN(CGRectGetMaxX(allowedRect) - resultFrame.size.width, arrowPoint.x - resultFrame.size.width / 2));
+        CGFloat minOrigin = MIN(CGRectGetMaxX(allowedRect) - resultFrame.size.width, arrowPoint.x - resultFrame.size.width / 2);
+        resultFrame.origin.x = MAX(allowedRect.origin.x, minOrigin);
         resultFrame.origin.y = rect.origin.y - resultFrame.size.height - popoverView.arrowMargin;
         if (CGRectContainsRect(allowedRect, resultFrame)) 
         {
@@ -248,7 +249,8 @@ static void preinit(ECPopoverController *self)
     if (arrowDirections & UIPopoverArrowDirectionUp) 
     {
         resultFrame = popoverView.bounds;
-        resultFrame.origin.x = MAX(allowedRect.origin.x, MIN(CGRectGetMaxX(allowedRect) - resultFrame.size.width, arrowPoint.x - resultFrame.size.width / 2));
+        CGFloat minOrigin = MIN(CGRectGetMaxX(allowedRect) - resultFrame.size.width, arrowPoint.x - resultFrame.size.width / 2);
+        resultFrame.origin.x = MAX(allowedRect.origin.x, minOrigin);
         resultFrame.origin.y = CGRectGetMaxY(rect) + popoverView.arrowMargin;
         popoverView.arrowDirection = UIPopoverArrowDirectionUp;
         popoverView.arrowPosition = arrowPoint.x - resultFrame.origin.x;

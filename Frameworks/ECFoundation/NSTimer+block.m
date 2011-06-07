@@ -11,6 +11,13 @@
 
 @implementation NSTimer (NSTimer_block)
 
++ (void)executeTimerUserInfoAsBlock:(NSTimer *)timer
+{
+    void (^block)(NSTimer *) = [timer userInfo];
+    if (block)
+        block(timer);
+}
+
 + (NSTimer *)timerWithTimeInterval:(NSTimeInterval)ti usingBlock:(void(^)(NSTimer *timer))block repeats:(BOOL)yesOrNo
 {
     return [NSTimer timerWithTimeInterval:ti target:[NSTimer class] selector:@selector(executeTimerUserInfoAsBlock:) userInfo:[[block copy] autorelease] repeats:yesOrNo];
@@ -19,13 +26,6 @@
 + (NSTimer *)scheduledTimerWithTimeInterval:(NSTimeInterval)ti usingBlock:(void(^)(NSTimer *timer))block repeats:(BOOL)yesOrNo
 {
     return [NSTimer scheduledTimerWithTimeInterval:ti target:[NSTimer class] selector:@selector(executeTimerUserInfoAsBlock:) userInfo:[[block copy] autorelease] repeats:yesOrNo];
-}
-
-+ (void)executeTimerUserInfoAsBlock:(NSTimer *)timer
-{
-    void (^block)(NSTimer *) = [timer userInfo];
-    if (block)
-        block(timer);
 }
 
 @end

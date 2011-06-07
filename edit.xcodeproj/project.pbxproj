@@ -164,6 +164,24 @@
 		B7C764F2136773A4009181DB /* ECManagedObject.m in Sources */ = {isa = PBXBuildFile; fileRef = B7C764F1136773A4009181DB /* ECManagedObject.m */; };
 		B7DAB3871372E17A00262D3C /* ECArrayTree.m in Sources */ = {isa = PBXBuildFile; fileRef = B7DAB3861372E17A00262D3C /* ECArrayTree.m */; };
 		B7DBA580132A3281004C0E1D /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7DBA57F132A3281004C0E1D /* QuartzCore.framework */; };
+		B7F0335E139E6BAF00FDC353 /* ECCodeByteArrayDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = B7F0335B139E6BAE00FDC353 /* ECCodeByteArrayDataSource.m */; };
+		B7F0335F139E6BAF00FDC353 /* ECCodeFileDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = B7F0335D139E6BAF00FDC353 /* ECCodeFileDataSource.m */; };
+		B7F03384139E76FE00FDC353 /* HFBTree.m in Sources */ = {isa = PBXBuildFile; fileRef = B7F03363139E76FE00FDC353 /* HFBTree.m */; };
+		B7F03385139E76FE00FDC353 /* HFBTreeByteArray.m in Sources */ = {isa = PBXBuildFile; fileRef = B7F03366139E76FE00FDC353 /* HFBTreeByteArray.m */; };
+		B7F03386139E76FE00FDC353 /* HFByteArray_FileWriting.m in Sources */ = {isa = PBXBuildFile; fileRef = B7F03367139E76FE00FDC353 /* HFByteArray_FileWriting.m */; };
+		B7F03387139E76FE00FDC353 /* HFByteArray_FindReplace.m in Sources */ = {isa = PBXBuildFile; fileRef = B7F03368139E76FE00FDC353 /* HFByteArray_FindReplace.m */; };
+		B7F03388139E76FE00FDC353 /* HFByteArray.m in Sources */ = {isa = PBXBuildFile; fileRef = B7F0336B139E76FE00FDC353 /* HFByteArray.m */; };
+		B7F03389139E76FE00FDC353 /* HFByteSlice.m in Sources */ = {isa = PBXBuildFile; fileRef = B7F0336E139E76FE00FDC353 /* HFByteSlice.m */; };
+		B7F0338A139E76FE00FDC353 /* HFByteSliceFileOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = B7F03370139E76FE00FDC353 /* HFByteSliceFileOperation.m */; };
+		B7F0338B139E76FE00FDC353 /* HFByteSliceFileOperationQueueEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = B7F03372139E76FE00FDC353 /* HFByteSliceFileOperationQueueEntry.m */; };
+		B7F0338C139E76FE00FDC353 /* HFFastMemchr.m in Sources */ = {isa = PBXBuildFile; fileRef = B7F03373139E76FE00FDC353 /* HFFastMemchr.m */; };
+		B7F0338D139E76FE00FDC353 /* HFFileByteSlice.m in Sources */ = {isa = PBXBuildFile; fileRef = B7F03375139E76FE00FDC353 /* HFFileByteSlice.m */; };
+		B7F0338E139E76FE00FDC353 /* HFFileReference.m in Sources */ = {isa = PBXBuildFile; fileRef = B7F03377139E76FE00FDC353 /* HFFileReference.m */; };
+		B7F0338F139E76FE00FDC353 /* HFFullMemoryByteSlice.m in Sources */ = {isa = PBXBuildFile; fileRef = B7F03379139E76FE00FDC353 /* HFFullMemoryByteSlice.m */; };
+		B7F03390139E76FE00FDC353 /* HFFunctions.m in Sources */ = {isa = PBXBuildFile; fileRef = B7F0337C139E76FE00FDC353 /* HFFunctions.m */; };
+		B7F03391139E76FE00FDC353 /* HFObjectGraph.m in Sources */ = {isa = PBXBuildFile; fileRef = B7F0337E139E76FE00FDC353 /* HFObjectGraph.m */; };
+		B7F03392139E76FE00FDC353 /* HFProgressTracker.m in Sources */ = {isa = PBXBuildFile; fileRef = B7F03380139E76FE00FDC353 /* HFProgressTracker.m */; };
+		B7F03393139E76FE00FDC353 /* HFSharedMemoryByteSlice.m in Sources */ = {isa = PBXBuildFile; fileRef = B7F03382139E76FE00FDC353 /* HFSharedMemoryByteSlice.m */; };
 		CDEBF21613489A8E00CE2285 /* AppController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDEBF20913489A8E00CE2285 /* AppController.m */; };
 		CDEBF21713489A8E00CE2285 /* FileController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDEBF20D13489A8E00CE2285 /* FileController.m */; };
 		CDEBF21913489A8E00CE2285 /* ProjectController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDEBF21113489A8E00CE2285 /* ProjectController.m */; };
@@ -312,11 +330,8 @@
 		B72BE640136B3E53009B0977 /* ECDictionaryCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECDictionaryCache.m; sourceTree = "<group>"; };
 		B72BE642136B3E7E009B0977 /* ECCodeStringDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECCodeStringDataSource.h; path = Frameworks/ECUIKit/ECCodeStringDataSource.h; sourceTree = "<group>"; };
 		B72BE643136B3E7E009B0977 /* ECCodeStringDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECCodeStringDataSource.m; path = Frameworks/ECUIKit/ECCodeStringDataSource.m; sourceTree = "<group>"; };
-		B72BE644136B3E7E009B0977 /* ECCodeViewDatasource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECCodeViewDatasource.h; path = Frameworks/ECUIKit/ECCodeViewDatasource.h; sourceTree = "<group>"; };
 		B72BE645136B3E7E009B0977 /* ECTextRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECTextRenderer.h; path = Frameworks/ECUIKit/ECTextRenderer.h; sourceTree = "<group>"; };
 		B72BE646136B3E7F009B0977 /* ECTextRenderer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECTextRenderer.m; path = Frameworks/ECUIKit/ECTextRenderer.m; sourceTree = "<group>"; };
-		B72BE647136B3E7F009B0977 /* ECTextRendererDatasource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECTextRendererDatasource.h; path = Frameworks/ECUIKit/ECTextRendererDatasource.h; sourceTree = "<group>"; };
-		B72BE648136B3E7F009B0977 /* ECTextRendererDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECTextRendererDelegate.h; path = Frameworks/ECUIKit/ECTextRendererDelegate.h; sourceTree = "<group>"; };
 		B74C661C1375E24800CC92D3 /* ECButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECButton.h; path = Frameworks/ECUIKit/ECButton.h; sourceTree = "<group>"; };
 		B74C661D1375E24800CC92D3 /* ECCodeViewBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECCodeViewBase.h; path = Frameworks/ECUIKit/ECCodeViewBase.h; sourceTree = "<group>"; };
 		B74C661E1375E24800CC92D3 /* ECCodeViewBase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECCodeViewBase.m; path = Frameworks/ECUIKit/ECCodeViewBase.m; sourceTree = "<group>"; };
@@ -395,6 +410,44 @@
 		B7DAB3851372E17A00262D3C /* ECArrayTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECArrayTree.h; sourceTree = "<group>"; };
 		B7DAB3861372E17A00262D3C /* ECArrayTree.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECArrayTree.m; sourceTree = "<group>"; };
 		B7DBA57F132A3281004C0E1D /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		B7F0335A139E6BAE00FDC353 /* ECCodeByteArrayDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECCodeByteArrayDataSource.h; path = Frameworks/ECUIKit/ECCodeByteArrayDataSource.h; sourceTree = "<group>"; };
+		B7F0335B139E6BAE00FDC353 /* ECCodeByteArrayDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECCodeByteArrayDataSource.m; path = Frameworks/ECUIKit/ECCodeByteArrayDataSource.m; sourceTree = "<group>"; };
+		B7F0335C139E6BAF00FDC353 /* ECCodeFileDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECCodeFileDataSource.h; path = Frameworks/ECUIKit/ECCodeFileDataSource.h; sourceTree = "<group>"; };
+		B7F0335D139E6BAF00FDC353 /* ECCodeFileDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECCodeFileDataSource.m; path = Frameworks/ECUIKit/ECCodeFileDataSource.m; sourceTree = "<group>"; };
+		B7F03362139E76FE00FDC353 /* HFBTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HFBTree.h; sourceTree = "<group>"; };
+		B7F03363139E76FE00FDC353 /* HFBTree.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HFBTree.m; sourceTree = "<group>"; };
+		B7F03364139E76FE00FDC353 /* HexFiend_Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HexFiend_Private.h; sourceTree = "<group>"; };
+		B7F03365139E76FE00FDC353 /* HFBTreeByteArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HFBTreeByteArray.h; sourceTree = "<group>"; };
+		B7F03366139E76FE00FDC353 /* HFBTreeByteArray.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HFBTreeByteArray.m; sourceTree = "<group>"; };
+		B7F03367139E76FE00FDC353 /* HFByteArray_FileWriting.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HFByteArray_FileWriting.m; sourceTree = "<group>"; };
+		B7F03368139E76FE00FDC353 /* HFByteArray_FindReplace.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HFByteArray_FindReplace.m; sourceTree = "<group>"; };
+		B7F03369139E76FE00FDC353 /* HFByteArray_Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HFByteArray_Internal.h; sourceTree = "<group>"; };
+		B7F0336A139E76FE00FDC353 /* HFByteArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HFByteArray.h; sourceTree = "<group>"; };
+		B7F0336B139E76FE00FDC353 /* HFByteArray.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HFByteArray.m; sourceTree = "<group>"; };
+		B7F0336C139E76FE00FDC353 /* HFByteSlice_Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HFByteSlice_Private.h; sourceTree = "<group>"; };
+		B7F0336D139E76FE00FDC353 /* HFByteSlice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HFByteSlice.h; sourceTree = "<group>"; };
+		B7F0336E139E76FE00FDC353 /* HFByteSlice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HFByteSlice.m; sourceTree = "<group>"; };
+		B7F0336F139E76FE00FDC353 /* HFByteSliceFileOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HFByteSliceFileOperation.h; sourceTree = "<group>"; };
+		B7F03370139E76FE00FDC353 /* HFByteSliceFileOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HFByteSliceFileOperation.m; sourceTree = "<group>"; };
+		B7F03371139E76FE00FDC353 /* HFByteSliceFileOperationQueueEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HFByteSliceFileOperationQueueEntry.h; sourceTree = "<group>"; };
+		B7F03372139E76FE00FDC353 /* HFByteSliceFileOperationQueueEntry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HFByteSliceFileOperationQueueEntry.m; sourceTree = "<group>"; };
+		B7F03373139E76FE00FDC353 /* HFFastMemchr.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HFFastMemchr.m; sourceTree = "<group>"; };
+		B7F03374139E76FE00FDC353 /* HFFileByteSlice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HFFileByteSlice.h; sourceTree = "<group>"; };
+		B7F03375139E76FE00FDC353 /* HFFileByteSlice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HFFileByteSlice.m; sourceTree = "<group>"; };
+		B7F03376139E76FE00FDC353 /* HFFileReference.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HFFileReference.h; sourceTree = "<group>"; };
+		B7F03377139E76FE00FDC353 /* HFFileReference.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HFFileReference.m; sourceTree = "<group>"; };
+		B7F03378139E76FE00FDC353 /* HFFullMemoryByteSlice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HFFullMemoryByteSlice.h; sourceTree = "<group>"; };
+		B7F03379139E76FE00FDC353 /* HFFullMemoryByteSlice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HFFullMemoryByteSlice.m; sourceTree = "<group>"; };
+		B7F0337A139E76FE00FDC353 /* HFFunctions_Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HFFunctions_Private.h; sourceTree = "<group>"; };
+		B7F0337B139E76FE00FDC353 /* HFFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HFFunctions.h; sourceTree = "<group>"; };
+		B7F0337C139E76FE00FDC353 /* HFFunctions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HFFunctions.m; sourceTree = "<group>"; };
+		B7F0337D139E76FE00FDC353 /* HFObjectGraph.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HFObjectGraph.h; sourceTree = "<group>"; };
+		B7F0337E139E76FE00FDC353 /* HFObjectGraph.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HFObjectGraph.m; sourceTree = "<group>"; };
+		B7F0337F139E76FE00FDC353 /* HFProgressTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HFProgressTracker.h; sourceTree = "<group>"; };
+		B7F03380139E76FE00FDC353 /* HFProgressTracker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HFProgressTracker.m; sourceTree = "<group>"; };
+		B7F03381139E76FE00FDC353 /* HFSharedMemoryByteSlice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HFSharedMemoryByteSlice.h; sourceTree = "<group>"; };
+		B7F03382139E76FE00FDC353 /* HFSharedMemoryByteSlice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HFSharedMemoryByteSlice.m; sourceTree = "<group>"; };
+		B7F03383139E76FE00FDC353 /* HFTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HFTypes.h; sourceTree = "<group>"; };
 		CDEBF20813489A8E00CE2285 /* AppController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppController.h; sourceTree = "<group>"; };
 		CDEBF20913489A8E00CE2285 /* AppController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppController.m; sourceTree = "<group>"; };
 		CDEBF20C13489A8E00CE2285 /* FileController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileController.h; sourceTree = "<group>"; };
@@ -545,6 +598,7 @@
 		B70D64A4132A24FF008DDEA4 = {
 			isa = PBXGroup;
 			children = (
+				B7F03360139E76DC00FDC353 /* HFHexFiend */,
 				CDEBF27513489BD400CE2285 /* ECUIKit */,
 				CDEBF24313489AFE00CE2285 /* ECCodeIndexing */,
 				CDEBF23813489AB900CE2285 /* ECFoundation */,
@@ -732,6 +786,56 @@
 			path = usr/lib;
 			sourceTree = SDKROOT;
 		};
+		B7F03360139E76DC00FDC353 /* HFHexFiend */ = {
+			isa = PBXGroup;
+			children = (
+				B7F03361139E76FE00FDC353 /* BTree */,
+				B7F03364139E76FE00FDC353 /* HexFiend_Private.h */,
+				B7F03365139E76FE00FDC353 /* HFBTreeByteArray.h */,
+				B7F03366139E76FE00FDC353 /* HFBTreeByteArray.m */,
+				B7F03367139E76FE00FDC353 /* HFByteArray_FileWriting.m */,
+				B7F03368139E76FE00FDC353 /* HFByteArray_FindReplace.m */,
+				B7F03369139E76FE00FDC353 /* HFByteArray_Internal.h */,
+				B7F0336A139E76FE00FDC353 /* HFByteArray.h */,
+				B7F0336B139E76FE00FDC353 /* HFByteArray.m */,
+				B7F0336C139E76FE00FDC353 /* HFByteSlice_Private.h */,
+				B7F0336D139E76FE00FDC353 /* HFByteSlice.h */,
+				B7F0336E139E76FE00FDC353 /* HFByteSlice.m */,
+				B7F0336F139E76FE00FDC353 /* HFByteSliceFileOperation.h */,
+				B7F03370139E76FE00FDC353 /* HFByteSliceFileOperation.m */,
+				B7F03371139E76FE00FDC353 /* HFByteSliceFileOperationQueueEntry.h */,
+				B7F03372139E76FE00FDC353 /* HFByteSliceFileOperationQueueEntry.m */,
+				B7F03373139E76FE00FDC353 /* HFFastMemchr.m */,
+				B7F03374139E76FE00FDC353 /* HFFileByteSlice.h */,
+				B7F03375139E76FE00FDC353 /* HFFileByteSlice.m */,
+				B7F03376139E76FE00FDC353 /* HFFileReference.h */,
+				B7F03377139E76FE00FDC353 /* HFFileReference.m */,
+				B7F03378139E76FE00FDC353 /* HFFullMemoryByteSlice.h */,
+				B7F03379139E76FE00FDC353 /* HFFullMemoryByteSlice.m */,
+				B7F0337A139E76FE00FDC353 /* HFFunctions_Private.h */,
+				B7F0337B139E76FE00FDC353 /* HFFunctions.h */,
+				B7F0337C139E76FE00FDC353 /* HFFunctions.m */,
+				B7F0337D139E76FE00FDC353 /* HFObjectGraph.h */,
+				B7F0337E139E76FE00FDC353 /* HFObjectGraph.m */,
+				B7F0337F139E76FE00FDC353 /* HFProgressTracker.h */,
+				B7F03380139E76FE00FDC353 /* HFProgressTracker.m */,
+				B7F03381139E76FE00FDC353 /* HFSharedMemoryByteSlice.h */,
+				B7F03382139E76FE00FDC353 /* HFSharedMemoryByteSlice.m */,
+				B7F03383139E76FE00FDC353 /* HFTypes.h */,
+			);
+			name = HFHexFiend;
+			path = Frameworks/HFHexFiend;
+			sourceTree = "<group>";
+		};
+		B7F03361139E76FE00FDC353 /* BTree */ = {
+			isa = PBXGroup;
+			children = (
+				B7F03362139E76FE00FDC353 /* HFBTree.h */,
+				B7F03363139E76FE00FDC353 /* HFBTree.m */,
+			);
+			path = BTree;
+			sourceTree = "<group>";
+		};
 		CDEBF23813489AB900CE2285 /* ECFoundation */ = {
 			isa = PBXGroup;
 			children = (
@@ -808,6 +912,10 @@
 		CDEBF2B913489DBA00CE2285 /* Code View */ = {
 			isa = PBXGroup;
 			children = (
+				B7F0335A139E6BAE00FDC353 /* ECCodeByteArrayDataSource.h */,
+				B7F0335B139E6BAE00FDC353 /* ECCodeByteArrayDataSource.m */,
+				B7F0335C139E6BAF00FDC353 /* ECCodeFileDataSource.h */,
+				B7F0335D139E6BAF00FDC353 /* ECCodeFileDataSource.m */,
 				B74C662A1375E24C00CC92D3 /* ECButton.m */,
 				B74C661C1375E24800CC92D3 /* ECButton.h */,
 				B74C661D1375E24800CC92D3 /* ECCodeViewBase.h */,
@@ -820,11 +928,8 @@
 				B74C66241375E24800CC92D3 /* ECPopoverView.m */,
 				B72BE642136B3E7E009B0977 /* ECCodeStringDataSource.h */,
 				B72BE643136B3E7E009B0977 /* ECCodeStringDataSource.m */,
-				B72BE644136B3E7E009B0977 /* ECCodeViewDatasource.h */,
 				B72BE645136B3E7E009B0977 /* ECTextRenderer.h */,
 				B72BE646136B3E7F009B0977 /* ECTextRenderer.m */,
-				B72BE647136B3E7F009B0977 /* ECTextRendererDatasource.h */,
-				B72BE648136B3E7F009B0977 /* ECTextRendererDelegate.h */,
 				CDEBF27813489BE800CE2285 /* ECCodeView.h */,
 				CDEBF27913489BE800CE2285 /* ECCodeView.m */,
 			);
@@ -1038,6 +1143,24 @@
 				B74C673C137BC07600CC92D3 /* NSTimer+block.m in Sources */,
 				B7086D33138BCA28001F2ECE /* ECPatriciaTrie.m in Sources */,
 				B706EE47138D55D200DA822C /* CompletionController.m in Sources */,
+				B7F0335E139E6BAF00FDC353 /* ECCodeByteArrayDataSource.m in Sources */,
+				B7F0335F139E6BAF00FDC353 /* ECCodeFileDataSource.m in Sources */,
+				B7F03384139E76FE00FDC353 /* HFBTree.m in Sources */,
+				B7F03385139E76FE00FDC353 /* HFBTreeByteArray.m in Sources */,
+				B7F03386139E76FE00FDC353 /* HFByteArray_FileWriting.m in Sources */,
+				B7F03387139E76FE00FDC353 /* HFByteArray_FindReplace.m in Sources */,
+				B7F03388139E76FE00FDC353 /* HFByteArray.m in Sources */,
+				B7F03389139E76FE00FDC353 /* HFByteSlice.m in Sources */,
+				B7F0338A139E76FE00FDC353 /* HFByteSliceFileOperation.m in Sources */,
+				B7F0338B139E76FE00FDC353 /* HFByteSliceFileOperationQueueEntry.m in Sources */,
+				B7F0338C139E76FE00FDC353 /* HFFastMemchr.m in Sources */,
+				B7F0338D139E76FE00FDC353 /* HFFileByteSlice.m in Sources */,
+				B7F0338E139E76FE00FDC353 /* HFFileReference.m in Sources */,
+				B7F0338F139E76FE00FDC353 /* HFFullMemoryByteSlice.m in Sources */,
+				B7F03390139E76FE00FDC353 /* HFFunctions.m in Sources */,
+				B7F03391139E76FE00FDC353 /* HFObjectGraph.m in Sources */,
+				B7F03392139E76FE00FDC353 /* HFProgressTracker.m in Sources */,
+				B7F03393139E76FE00FDC353 /* HFSharedMemoryByteSlice.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

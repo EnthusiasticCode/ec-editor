@@ -9,8 +9,9 @@
 #import <Foundation/Foundation.h>
 #import "CDFile.h"
 
-@interface File : CDFile {
-    
-}
+#import "ECCodeView.h"
+
+@interface File : CDFile <ECCodeViewDataSource>
+
 
 @end

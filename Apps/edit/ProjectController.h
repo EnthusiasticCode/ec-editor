@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-@class Project, Node;
+@class Project, Node, File;
 
 @interface ProjectController : UITableViewController
 @property (nonatomic, retain) NSFileManager *fileManager;
@@ -19,7 +19,7 @@
 - (IBAction)done:(id)sender;
 - (void)loadProject:(NSString *)projectRoot;
 - (void)loadNode:(Node *)node;
-- (void)loadFile:(NSString *)file;
+- (void)loadFile:(File *)file;
 - (void)addNodesAtPath:(NSString *)path toNode:(Node *)node;
 - (void)addAllNodesInProjectRoot;
 @end

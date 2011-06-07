@@ -31,7 +31,7 @@
     
     // Text management
     TextSelectionView *selectionView;
-    ECPopoverController *complitionPopover;
+    ECPopoverController *completionPopover;
     NSRange markedRange;
     
     // Touch scrolling timer
@@ -39,7 +39,7 @@
     
     // Delegate and datasource flags
     BOOL dataSourceHasCodeCanEditTextInRange;
-    BOOL dataSourceHasViewControllerForComplitionAtTextInRange;
+    BOOL dataSourceHasViewControllerForCompletionAtTextInRange;
     BOOL delegateHasCompletionRequestAtTextLocationWithFilterWord;
     
     // Recognizers
@@ -69,7 +69,7 @@
 /// scroll the content faster as the point approaches the receiver's bounds.
 - (void)autoScrollForTouchAtPoint:(CGPoint)point;
 
-- (void)showComplitionForTextInRange:(NSRange)textRange;
+- (void)showCompletionForTextInRange:(NSRange)textRange;
 
 // Gestures handlers
 - (void)handleGestureFocus:(UITapGestureRecognizer *)recognizer;
@@ -876,7 +876,7 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
     [super setDatasource:aDatasource];
     
     dataSourceHasCodeCanEditTextInRange = [self.datasource respondsToSelector:@selector(codeView:canEditTextInRange:)];
-    dataSourceHasViewControllerForComplitionAtTextInRange = [self.datasource respondsToSelector:@selector(codeView:viewControllerForComplitionAtTextInRange:)];
+    dataSourceHasViewControllerForCompletionAtTextInRange = [self.datasource respondsToSelector:@selector(codeView:viewControllerForCompletionAtTextInRange:)];
 }
 
 #pragma mark NSObject Methods
@@ -929,7 +929,7 @@ static void init(ECCodeView *self)
 {
     [navigatorBackgroundColor release];
     [infoView release];
-    [complitionPopover release];
+    [completionPopover release];
     [super dealloc];
 }
 
@@ -1014,15 +1014,15 @@ static void init(ECCodeView *self)
 }
 
 #pragma mark -
-#pragma mark Complition
+#pragma mark Completion
 
-- (void)showComplitionPopoverAtCursor
+- (void)showCompletionPopoverAtCursor
 {
     if (![self isFirstResponder])
         return;
     
-    NSRange complitionRange = selectionView.selection;
-    if (complitionRange.length == 0) 
+    NSRange completionRange = selectionView.selection;
+    if (completionRange.length == 0) 
     {
         ECTextPosition *cursorPosition = selectionView.selectionPosition;
         ECTextPosition *wordStart = (ECTextPosition *)[self.tokenizer positionFromPosition:cursorPosition toBoundary:UITextGranularityWord inDirection:UITextStorageDirectionBackward];
@@ -1030,32 +1030,32 @@ static void init(ECCodeView *self)
         if (!wordStart)
             wordStart = cursorPosition;
         
-        complitionRange = NSMakeRange(wordStart.index, cursorPosition.index - wordStart.index);
+        completionRange = NSMakeRange(wordStart.index, cursorPosition.index - wordStart.index);
     }
     
-    [self showComplitionForTextInRange:complitionRange];
+    [self showCompletionForTextInRange:completionRange];
 }
 
-- (void)showComplitionForTextInRange:(NSRange)textRange
+- (void)showCompletionForTextInRange:(NSRange)textRange
 {
-    if (!dataSourceHasViewControllerForComplitionAtTextInRange)
+    if (!dataSourceHasViewControllerForCompletionAtTextInRange)
         return;
     
-    if (!complitionPopover)
+    if (!completionPopover)
     {
-        complitionPopover = [[ECPopoverController alloc] initWithContentViewController:nil];
-        complitionPopover.automaticDismiss = YES;
+        completionPopover = [[ECPopoverController alloc] initWithContentViewController:nil];
+        completionPopover.automaticDismiss = YES;
     }
     
-    complitionPopover.contentViewController = [self.datasource codeView:self viewControllerForComplitionAtTextInRange:textRange];
+    completionPopover.contentViewController = [self.datasource codeView:self viewControllerForCompletionAtTextInRange:textRange];
     
-    // TODO something is complitionPopover.contentViewController is nil
+    // TODO something is completionPopover.contentViewController is nil
     
     CGRect textRect = [renderer rectsForStringRange:textRange limitToFirstLine:YES].bounds;
     textRect.origin.y += textInsets.top;
     textRect.origin.x += textRect.size.width - 1 + textInsets.left;
     textRect.size.width = 2;
-    [complitionPopover presentPopoverFromRect:textRect inView:self permittedArrowDirections:UIPopoverArrowDirectionUp | UIPopoverArrowDirectionDown animated:YES];
+    [completionPopover presentPopoverFromRect:textRect inView:self permittedArrowDirections:UIPopoverArrowDirectionUp | UIPopoverArrowDirectionDown animated:YES];
 }
 
 #pragma mark -

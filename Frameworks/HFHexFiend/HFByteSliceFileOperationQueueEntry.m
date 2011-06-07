@@ -10,7 +10,7 @@
 #include <malloc/malloc.h>
 #import "HexFiend_Private.h"
 
-#define SOFT_MAX_PER_BUFFER (512 * 1024)
+#define SOFT_MAX_PER_BUFFER (512U * 1024U)
 
 @implementation HFByteSliceFileOperationQueueEntry
 

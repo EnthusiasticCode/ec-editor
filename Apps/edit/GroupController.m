@@ -39,7 +39,7 @@
 - (void)loadNode:(Node *)node
 {
     if (![node.type isEqualToString:@"Group"])
-        [((AppController *)self.navigationController).projectController loadFile:[(File *)node path]];
+        [((AppController *)self.navigationController).projectController loadFile:(File *)node];
     else
     {
         GroupController *groupController = [[[GroupController alloc] init] autorelease];

@@ -197,7 +197,7 @@
 
 - (NSUInteger)textLength
 {
-    return eofOffset ? eofOffset.character : [byteArray length];
+    return eofOffset ? eofOffset.character : (NSUInteger)[byteArray length];
 }
 
 - (NSString *)codeView:(ECCodeViewBase *)codeView stringInRange:(NSRange)range
@@ -209,10 +209,10 @@
     FileTriOffset *endOffset = [self offsetForCharacter:NSMaxRange(range)];
     HFRange fileRange = HFRangeMake(startOffset.byte, endOffset.byte - startOffset.byte);
     
-    char *stringBuffer = (char *)malloc(fileRange.length);
+    char *stringBuffer = (char *)malloc((unsigned long)fileRange.length);
     [byteArray copyBytes:(unsigned char *)stringBuffer range:fileRange];
     
-    NSString *result = [[NSString alloc] initWithBytesNoCopy:stringBuffer length:fileRange.length encoding:NSUTF8StringEncoding freeWhenDone:YES];
+    NSString *result = [[NSString alloc] initWithBytesNoCopy:stringBuffer length:(NSUInteger)fileRange.length encoding:NSUTF8StringEncoding freeWhenDone:YES];
     if (!result)
         free(stringBuffer);
     
@@ -373,7 +373,7 @@
     FileTriOffset *endOffset = [self offsetForLine:NSMaxRange(*lineRange)];
     
     // Read and generate string from file
-    NSUInteger stringByteLenght = endOffset.byte - startOffset.byte;
+    NSUInteger stringByteLenght = (NSUInteger)(endOffset.byte - startOffset.byte);
     char *stringByteBuffer = (char *)malloc(stringByteLenght);
     [byteArray copyBytes:(unsigned char *)stringByteBuffer range:(HFRange){ startOffset.byte, stringByteLenght }];
     NSString *string = [[NSString alloc] initWithBytesNoCopy:stringByteBuffer length:stringByteLenght encoding:NSUTF8StringEncoding freeWhenDone:YES];
@@ -464,7 +464,7 @@
         chunk[fileRange.length] = 0;
         // Check for lines in chunk
         chunkLineStart = chunk;
-        while(chunkLineStart - chunk < fileRange.length 
+        while(chunkLineStart - chunk < (int)fileRange.length 
               && (chunkLineStart = strstr(chunkLineStart, delimiter)) != NULL)
         {
             resultLine++;
@@ -553,7 +553,7 @@
         chunk[fileRange.length] = 0;
         // Check for lines in chunk
         chunkLineStart = chunk;
-        while(chunkLineStart - chunk < fileRange.length 
+        while(chunkLineStart - chunk < (int)fileRange.length 
               && (chunkLineEnd = strstr(chunkLineStart, delimiter)) != NULL)
         {
             chunkLineEnd += delimiterLenght;

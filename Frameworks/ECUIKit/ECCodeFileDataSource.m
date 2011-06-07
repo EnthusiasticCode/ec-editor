@@ -149,7 +149,7 @@
 
 - (NSUInteger)textLength
 {
-    return fileLength;
+    return (NSUInteger)fileLength;
 }
 
 - (NSString *)codeView:(ECCodeViewBase *)codeView stringInRange:(NSRange)range
@@ -202,7 +202,7 @@
     
     // Apply custom styles
     if (stylizeBlock)
-        stylizeBlock(self, editable.string, NSMakeRange(lineRangeLocationOffset, (NSUInteger)(editable.fileRange.lenght)));
+        stylizeBlock(self, editable.string, NSMakeRange((NSUInteger)lineRangeLocationOffset, (NSUInteger)(editable.fileRange.lenght)));
     
     // Determine end of file/string and append tailing new line
     if ([fileHandle offsetInFile] >= fileLength)
@@ -221,7 +221,7 @@
 - (NSUInteger)textRenderer:(ECTextRenderer *)sender estimatedTextLineCountOfLength:(NSUInteger)maximumLineLength
 {
     // TODO implement this metohd? or remove completelly the need of it, useless: the renderer resize itself anyway.
-    return fileLength / maximumLineLength;
+    return (NSUInteger)fileLength / maximumLineLength;
 }
 
 #pragma mark Private Methods

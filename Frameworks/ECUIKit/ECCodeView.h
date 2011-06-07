@@ -24,14 +24,14 @@
 /// codeview after the text has been changed.
 - (void)codeView:(ECCodeView *)codeView commitString:(NSString *)string forTextInRange:(NSRange)range;
 
-/// If implemented, indicate that the data source support complition of words.
+/// If implemented, indicate that the data source support completion of words.
 /// The view controller returned from this method will be presented to the user
-/// when a complition will be requested.
+/// when a completion will be requested.
 /// The method receive a range of the string to complete.
 /// This method is supposed to use codeView:stringInRange: to retrieve the part
 /// of text to complete. An action in the view controller should call
 /// codeView:commitString:forTextInRange: to actually complete the word.
-- (UIViewController *)codeView:(ECCodeView *)codeView viewControllerForComplitionAtTextInRange:(NSRange)range;
+- (UIViewController *)codeView:(ECCodeView *)codeView viewControllerForCompletionAtTextInRange:(NSRange)range;
 
 @end
 
@@ -48,9 +48,9 @@
 
 @property (nonatomic, getter = isNavigatorVisible) BOOL navigatorVisible;
 
-#pragma mark Complition
+#pragma mark Completion
 
-- (void)showComplitionPopoverAtCursor;
+- (void)showCompletionPopoverAtCursor;
 
 #pragma mark UITextInput Properties
 

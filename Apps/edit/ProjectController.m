@@ -100,7 +100,7 @@
 - (void)loadNode:(Node *)node
 {
     if (![node.type isEqualToString:@"Group"])
-        [self loadFile:[(File *)node path]];
+        [self loadFile:(File *)node];
     else
     {
         GroupController *groupController = [[[GroupController alloc] init] autorelease];
@@ -109,7 +109,7 @@
     }
 }
 
-- (void)loadFile:(NSString *)file
+- (void)loadFile:(File *)file
 {
     FileController *fileController = ((AppController *)self.navigationController).fileController;
     [fileController loadFile:file];

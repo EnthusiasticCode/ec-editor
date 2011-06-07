@@ -198,7 +198,10 @@ static void init(ECPopoverView *self)
     if (arrowPosition <= 1) 
         position = arrowPosition * (position - 2 * arrowSize) + arrowSize;
     else
-        position = MIN(MAX(arrowPosition, arrowSize), (position - arrowSize));
+    {
+        CGFloat maxPosition = MAX(arrowPosition, arrowSize);
+        position = MIN(maxPosition, (position - arrowSize));
+    }
     
     //
     switch (arrowDirection) 

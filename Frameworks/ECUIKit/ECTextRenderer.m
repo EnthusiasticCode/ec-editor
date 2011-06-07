@@ -325,7 +325,7 @@
     
     for (CFIndex i = queryRange.location; i < count; ++i)
     {
-        if (i >= queryRangeEnd) 
+        if (i >= (CFIndex)queryRangeEnd) 
         {
             CFRelease(frame);
             return;
@@ -652,7 +652,7 @@
 {
     __block CFIndex result = 0;
     __block CTLineRef lastLine = NULL;
-    [self generateTextSegmentsAndEnumerateUsingBlock:^(TextSegment *segment, NSUInteger idx, NSUInteger lineOffset, NSUInteger stringOffset, CGFloat positionOffset, BOOL *stop) {
+    [self generateTextSegmentsAndEnumerateUsingBlock:^(TextSegment *segment, NSUInteger outerIdx, NSUInteger lineOffset, NSUInteger stringOffset, CGFloat positionOffset, BOOL *stop) {
         // Skip segment if before required string range
         if (stringOffset + segment.stringLength <= queryStringRange.location)
             return;
@@ -666,7 +666,7 @@
         else if (queryStringRange.location >= stringOffset)
             segmentRelativeStringRange.location -= stringOffset;
         
-        [segment enumerateLinesInStringRange:segmentRelativeStringRange usingBlock:^(CTLineRef line, NSUInteger idx, CGRect lineBounds, NSRange lineStringRange, BOOL *innerStop) {
+        [segment enumerateLinesInStringRange:segmentRelativeStringRange usingBlock:^(CTLineRef line, NSUInteger innerIdx, CGRect lineBounds, NSRange lineStringRange, BOOL *innerStop) {
             lastLine = line;
             
             // Skip lines before point
@@ -695,7 +695,7 @@
 - (ECRectSet *)rectsForStringRange:(NSRange)queryStringRange limitToFirstLine:(BOOL)limit
 {
     ECMutableRectSet *result = [ECMutableRectSet rectSetWithCapacity:1];
-    [self generateTextSegmentsAndEnumerateUsingBlock:^(TextSegment *segment, NSUInteger idx, NSUInteger lineOffset, NSUInteger stringOffset, CGFloat positionOffset, BOOL *stop) {
+    [self generateTextSegmentsAndEnumerateUsingBlock:^(TextSegment *segment, NSUInteger outerIdx, NSUInteger lineOffset, NSUInteger stringOffset, CGFloat positionOffset, BOOL *stop) {
         // Skip segment if before required string range
         if (stringOffset + segment.stringLength < queryStringRange.location)
             return;
@@ -706,7 +706,7 @@
         NSUInteger segmentRelativeStringRangeEnd = segmentRelativeStringRange.location + segmentRelativeStringRange.length;
         
         __block NSUInteger stringEnd = stringOffset;
-        [segment enumerateLinesInStringRange:segmentRelativeStringRange usingBlock:^(CTLineRef line, NSUInteger idx, CGRect lineBounds, NSRange lineStringRange, BOOL *innserStop) {
+        [segment enumerateLinesInStringRange:segmentRelativeStringRange usingBlock:^(CTLineRef line, NSUInteger innerIdx, CGRect lineBounds, NSRange lineStringRange, BOOL *innserStop) {
             lineBounds.origin.y += positionOffset;
             
             // Query range start inside this line
@@ -754,7 +754,7 @@
             // TODO extract this to a convinience method - lineIndexForPosition:
             __block CGFloat positionX = 0;
             __block NSUInteger positionLine = NSUIntegerMax;
-            [self generateTextSegmentsAndEnumerateUsingBlock:^(TextSegment *segment, NSUInteger idx, NSUInteger lineOffset, NSUInteger stringOffset, CGFloat positionOffset, BOOL *stop) {
+            [self generateTextSegmentsAndEnumerateUsingBlock:^(TextSegment *segment, NSUInteger outerIdx, NSUInteger lineOffset, NSUInteger stringOffset, CGFloat positionOffset, BOOL *stop) {
                 // Skip segment if before required string range
                 if (stringOffset + segment.stringLength < position)
                     return;
@@ -764,8 +764,8 @@
                 segmentRelativeStringRange.location -= stringOffset;
                 
                 // Retrieve start position line index
-                [segment enumerateLinesInStringRange:segmentRelativeStringRange usingBlock:^(CTLineRef line, NSUInteger idx, CGRect lineBounds, NSRange lineStringRange, BOOL *innserStop) {
-                    positionLine = idx;
+                [segment enumerateLinesInStringRange:segmentRelativeStringRange usingBlock:^(CTLineRef line, NSUInteger innerIdx, CGRect lineBounds, NSRange lineStringRange, BOOL *innserStop) {
+                    positionLine = innerIdx;
                     
                     positionX = CTLineGetOffsetForStringIndex(line, (position - stringOffset), NULL);
                     positionX += lineBounds.origin.x;
@@ -774,7 +774,7 @@
                 }];
             }];
             // If offset will move outsite rendered text line range, return
-            if (offset < 0 && -offset > positionLine)
+            if (offset < 0 && -offset > (NSInteger)positionLine)
                 break;
             // Look for new position
             NSUInteger requestLine = positionLine + offset;
@@ -812,7 +812,7 @@
         case UITextLayoutDirectionRight:
         {
             // If offset will move outsite rendered text line range, return
-            if (offset < 0 && -offset > position)
+            if (offset < 0 && -offset > (NSInteger)position)
                 break;
             
             // TODO may require moving visually with graphene clusters.

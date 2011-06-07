@@ -285,7 +285,7 @@ static inline NSUInteger HFCountDigitsBase10(unsigned long long val) {
             high = mid;
         }
     }
-    return MAX(1, low);
+    return MAX(1LU, low);
 }
 
 /*! Returns 1 + floor(log base 16 of val).  If val is 0, returns 1.  This works by computing the log base 2 based on the number of leading zeros, and then dividing by 4. */
