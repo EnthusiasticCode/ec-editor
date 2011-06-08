@@ -96,9 +96,6 @@ static void preinit(ECPopoverController *self)
 - (void)dealloc
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-    [popoverView release];
-    [dismissRecognizer release];
-    [super dealloc];
 }
 
 #pragma mark -

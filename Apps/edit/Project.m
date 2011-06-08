@@ -55,18 +55,6 @@
     return _managedObjectModel;
 }
 
-- (void)dealloc
-{
-    self.name = nil;
-    self.rootNode = nil;
-    self.bundle = nil;
-    self.fileManager = nil;
-    self.managedObjectContext = nil;
-    self.persistentStoreCoordinator = nil;
-    self.managedObjectModel = nil;
-    [super dealloc];
-}
-
 - (id)initWithBundle:(NSString *)bundle
 {
     self = [super init];
@@ -77,7 +65,7 @@
     NSURL *storeURL = [NSURL fileURLWithPath:storePath];
     if (![self.fileManager fileExistsAtPath:bundle])
         [self.fileManager createDirectoryAtPath:bundle withIntermediateDirectories:YES attributes:nil error:NULL];
-    self.persistentStoreCoordinator = [[[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:[self managedObjectModel]] autorelease];
+    self.persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:[self managedObjectModel]];
     NSError *error;
     if (![self.persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeURL options:nil error:&error])
     {
@@ -103,7 +91,7 @@
 
 - (Node *)_findRootNode
 {
-    NSFetchRequest *fetchRequest = [[[NSFetchRequest alloc] init] autorelease];
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
     [fetchRequest setEntity:[NSEntityDescription entityForName:@"Node" inManagedObjectContext:self.managedObjectContext]];
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"%K == %@", @"parent", nil];
     [fetchRequest setPredicate:predicate];

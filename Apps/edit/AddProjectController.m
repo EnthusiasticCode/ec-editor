@@ -19,13 +19,6 @@
 @synthesize foundServers;
 @synthesize sshBrowser;
 
-- (void)dealloc
-{
-    self.foundServers = nil;
-    self.sshBrowser = nil;
-    [super dealloc];
-}
-
 - (void)didReceiveMemoryWarning
 {
     // Releases the view if it doesn't have a superview.
@@ -40,7 +33,7 @@
 {
     [super viewDidLoad];
     self.foundServers = [NSMutableArray array];
-    self.sshBrowser = [[[NSNetServiceBrowser alloc] init] autorelease];
+    self.sshBrowser = [[NSNetServiceBrowser alloc] init];
     [self.sshBrowser setDelegate:self];
     [self.sshBrowser searchForServicesOfType:@"_ssh._tcp" inDomain:@""];
 }
@@ -111,7 +104,7 @@
     
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     if (cell == nil) {
-        cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier] autorelease];
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
     }
     
     if (indexPath.section == 0)

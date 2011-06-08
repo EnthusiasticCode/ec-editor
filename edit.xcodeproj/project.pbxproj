@@ -1210,7 +1210,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_UNIVERSAL_IPHONE_OS)";
-				CLANG_ARC_MIGRATION = precheck;
+				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer: Uri Baghin (CHBDVM6AD2)";
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -1239,7 +1239,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_UNIVERSAL_IPHONE_OS)";
-				CLANG_ARC_MIGRATION = precheck;
+				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer: Uri Baghin (CHBDVM6AD2)";
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
@@ -1266,6 +1266,7 @@
 		B70D64D6132A2581008DDEA4 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
 				HEADER_SEARCH_PATHS = Frameworks;
 				INFOPLIST_FILE = "Apps/edit/edit-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
@@ -1279,6 +1280,7 @@
 		B70D64D7132A2581008DDEA4 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
 				HEADER_SEARCH_PATHS = Frameworks;
 				INFOPLIST_FILE = "Apps/edit/edit-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 4.3;

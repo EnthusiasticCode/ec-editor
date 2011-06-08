@@ -21,11 +21,6 @@
 
 @synthesize completionChunks = _completionChunks;
 
-- (void)dealloc
-{
-    [_completionChunks release];
-    [super dealloc];
-}
 
 - (id)initWithCompletionChunks:(NSArray *)completionChunks
 {
@@ -42,7 +37,7 @@
 {
     id string = [self alloc];
     string = [string initWithCompletionChunks:completionChunks];
-    return [string autorelease];
+    return string;
 }
 
 - (NSString *)typedText
@@ -56,7 +51,7 @@
 
 - (id)copyWithZone:(NSZone *)zone
 {
-    return [self retain];
+    return self;
 }
 
 - (NSUInteger)hash

@@ -31,8 +31,7 @@ static const ECPatriciaTrieEnumerationOptions _options = ECPatriciaTrieEnumerati
 {
     if (results == _results)
         return;
-    [_results release];
-    _results = [results retain];
+    _results = results;
     [self _filterResults];
     [self.tableView reloadData];
 }
@@ -41,19 +40,9 @@ static const ECPatriciaTrieEnumerationOptions _options = ECPatriciaTrieEnumerati
 {
     if ([match isEqualToString:_match])
         return;
-    [_match release];
-    _match = [match retain];
+    _match = match;
     [self _filterResults];
     [self.tableView reloadData];
-}
-
-- (void)dealloc
-{
-    self.results = nil;
-    self.match = nil;
-    self.filteredResults = nil;
-    self.resultSelectedBlock = nil;
-    [super dealloc];
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
@@ -80,7 +69,7 @@ static const ECPatriciaTrieEnumerationOptions _options = ECPatriciaTrieEnumerati
     
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     if (cell == nil) {
-        cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier] autorelease];
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
     }
 
     ECPatriciaTrie *node = [self.filteredResults objectAtIndex:indexPath.row];

@@ -47,23 +47,20 @@
 
 - (void)setInputFileURL:(NSURL *)inputURL
 {
-    [fileHandle release];
-    [inputFileURL release];
-    
-    inputFileURL = [inputURL retain];
+    fileHandle = nil;
+    inputFileURL = inputURL;
     
     [self openInputFile];
 }
 
 - (NSString *)lineDelimiter
 {
-    return lineDelimiterData ? [[[NSString alloc] initWithData:lineDelimiterData encoding:NSUTF8StringEncoding] autorelease] : nil; 
+    return lineDelimiterData ? [[NSString alloc] initWithData:lineDelimiterData encoding:NSUTF8StringEncoding] : nil; 
 }
 
 - (void)setLineDelimiter:(NSString *)lineDelimiter
 {
-    [lineDelimiterData release];
-    lineDelimiterData = [[lineDelimiter dataUsingEncoding:NSUTF8StringEncoding] retain];
+    lineDelimiterData = [lineDelimiter dataUsingEncoding:NSUTF8StringEncoding];
 }
 
 #pragma mark Initialization and Deallocation
@@ -82,15 +79,6 @@
 - (void)dealloc
 {
     [self flush];
-    
-    [lineOffsetsDictionary release];
-    [lineDelimiterData release];
-    [fileHandle release];
-    [inputFileURL release];
-    
-    [editableString release];
-    
-    [super dealloc];
 }
 
 #pragma mark Public Methods
@@ -101,7 +89,7 @@
         return;
     
     NSURL *tempFileURL = [[NSURL URLWithString:NSTemporaryDirectory()] URLByAppendingPathComponent:[inputFileURL lastPathComponent]];
-    NSAutoreleasePool *pool = [NSAutoreleasePool new];
+    @autoreleasepool
     {
         // Get temporary file
         NSFileHandle *tempFile = [NSFileHandle fileHandleForWritingToURL:tempFileURL error:NULL];
@@ -134,11 +122,9 @@
             writeBytesCount -= writeDataSize;
         }
     }
-    [pool drain];
     
     // Move file into position
 //    [tempFile closeFile];
-    [fileHandle release];
     [[NSFileManager defaultManager] moveItemAtURL:tempFileURL toURL:inputFileURL error:NULL];
     [self openInputFile];
     
@@ -159,7 +145,7 @@
     
     [fileHandle seekToFileOffset:range.location];
     NSData *stringData = [fileHandle readDataOfLength:range.length];
-    return [[[NSString alloc] initWithData:stringData encoding:NSUTF8StringEncoding] autorelease];
+    return [[NSString alloc] initWithData:stringData encoding:NSUTF8StringEncoding];
 }
 
 - (BOOL)codeView:(ECCodeViewBase *)codeView canEditTextInRange:(NSRange)range
@@ -194,9 +180,7 @@
     [self flush];
     lineRange->length = end - location;
     NSString *string = [[NSString alloc] initWithData:textData encoding:NSUTF8StringEncoding];
-    [editableString release];
     editableString = [[NSMutableAttributedString alloc] initWithString:string attributes:defaultTextStyle.CTAttributes];
-    [string release];
     editable.fileRange.location = lineRangeLocationOffset;
     editable.fileRange.lenght = lineRangeEndOffset - lineRangeLocationOffset;
     
@@ -209,7 +193,6 @@
     {
         NSAttributedString *lineDelimiter = [[NSAttributedString alloc] initWithString:self.lineDelimiter attributes:defaultTextStyle.CTAttributes];
         [editableString appendAttributedString:lineDelimiter];
-        [lineDelimiter release];
         
         if (endOfString)
             *endOfString = YES;
@@ -228,12 +211,12 @@
 
 - (void)openInputFile
 {
-    fileHandle = [[NSFileHandle fileHandleForReadingFromURL:inputFileURL error:NULL] retain];
+    fileHandle = [NSFileHandle fileHandleForReadingFromURL:inputFileURL error:NULL];
     [fileHandle seekToEndOfFile];
     fileLength = [fileHandle offsetInFile];
     
     if (!lineOffsetsDictionary)
-        lineOffsetsDictionary = [[NSMutableDictionary dictionaryWithCapacity:10] retain];
+        lineOffsetsDictionary = [NSMutableDictionary dictionaryWithCapacity:10];
     else
         [lineOffsetsDictionary removeAllObjects];
     [lineOffsetsDictionary setObject:[NSNumber numberWithUnsignedLongLong:0] forKey:[NSNumber numberWithUnsignedInteger:0]];
@@ -269,7 +252,7 @@
         
         // Seek to line
         unsigned long long lineOffset = fileOffset;
-        NSAutoreleasePool *pool = [NSAutoreleasePool new];
+        @autoreleasepool
         {
             NSRange newLineRange;
             NSData *chunk;
@@ -296,7 +279,6 @@
                 }
             }
         }
-        [pool drain];
         
         // TODO cache that every line after this are after eof?
         // Adding last line of file

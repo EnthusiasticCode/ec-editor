@@ -19,7 +19,6 @@
     [self willChangeValueForKey:@"nodes" withSetMutation:NSKeyValueUnionSetMutation usingObjects:changedObjects];
     [[self primitiveValueForKey:@"nodes"] addObject:value];
     [self didChangeValueForKey:@"nodes" withSetMutation:NSKeyValueUnionSetMutation usingObjects:changedObjects];
-    [changedObjects release];
 }
 
 - (void)removeNodesObject:(CDNode *)value {
@@ -27,7 +26,6 @@
     [self willChangeValueForKey:@"nodes" withSetMutation:NSKeyValueMinusSetMutation usingObjects:changedObjects];
     [[self primitiveValueForKey:@"nodes"] removeObject:value];
     [self didChangeValueForKey:@"nodes" withSetMutation:NSKeyValueMinusSetMutation usingObjects:changedObjects];
-    [changedObjects release];
 }
 
 - (void)addNodes:(NSSet *)value {    

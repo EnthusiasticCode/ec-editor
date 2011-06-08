@@ -46,11 +46,11 @@
 - (void)setObject:(id)obj forKey:(id)key
 {
     while (currentInsert >= [entries count])
-        [entries addObject:[[[ECDictionaryCacheEntry alloc] init] autorelease]];
+        [entries addObject:[[ECDictionaryCacheEntry alloc] init]];
     // Insert new entry
     ECDictionaryCacheEntry *entry = [entries objectAtIndex:currentInsert];
     entry.cachedKey = key;
-    entry.cachedObject = [obj retain];
+    entry.cachedObject = obj;
     // Insert point for next insert
     currentInsert++;
     if (currentInsert >= countLimit) 

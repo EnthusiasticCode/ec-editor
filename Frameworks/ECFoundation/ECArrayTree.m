@@ -23,13 +23,6 @@
 @synthesize children;
 @synthesize object;
 
-- (void)dealloc
-{
-    self.children = nil;
-    self.object = nil;
-    [super dealloc];
-}
-
 - (NSUInteger)count
 {
     NSUInteger count = self.object ? 1 : 0;
@@ -103,7 +96,7 @@
     id node = [self alloc];
     node = [node init];
     [node setObject:object];
-    return [node autorelease];
+    return node;
 }
 
 - (id)copyWithZone:(NSZone *)zone
@@ -116,9 +109,9 @@
     ECMutableArrayTree *node = [ECMutableArrayTree nodeWithObject:self.object];
     NSMutableArray *array = [NSMutableArray arrayWithCapacity:[self.children count]];
     for (ECArrayTree *child in self.children)
-        [array addObject:[[child mutableCopyWithZone:zone] autorelease]];
+        [array addObject:[child mutableCopyWithZone:zone]];
     node.children = array;
-    return [node retain];
+    return node;
 }
 
 @end

@@ -69,7 +69,6 @@ static BOOL returnFTruncateError(NSError **error) {
     }
     if (fileDescriptor < 0) {
         returnReadError(error);
-        [self release];
         return nil;
     }
 #if USE_STAT64
@@ -84,7 +83,6 @@ static BOOL returnFTruncateError(NSError **error) {
         returnReadError(error);
         close(fileDescriptor);
         NSLog(@"Unable to fstat64 file %@. %s.", path, strerror(err));
-        [self release];
         return nil;
     }
     fileLength = sb.st_size;
@@ -153,14 +151,8 @@ static BOOL returnFTruncateError(NSError **error) {
     }
 }
 
-- (void)finalize {
-    [self close];
-    [super finalize];
-}
-
 - (void)dealloc {
     [self close];
-    [super dealloc];
 }
 
 - (unsigned long long)length {

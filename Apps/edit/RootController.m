@@ -28,14 +28,6 @@
     return [NSFileManager defaultManager];
 }
 
-- (void)dealloc
-{
-    self.fileManager = nil;
-    self.folder = nil;
-    self.addProjectButton = nil;
-    self.addProjectController = nil;
-    [super dealloc];
-}
 
 - (void)viewDidLoad
 {
@@ -65,7 +57,7 @@
     UITableViewCell *file = [tableView dequeueReusableCellWithIdentifier:@"File"];
     if (!file)
     {
-        file = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"File"] autorelease];
+        file = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"File"];
     }
     file.textLabel.text = [[[self contentsOfFolder] objectAtIndex:(indexPath.row)] lastPathComponent];
     return file;

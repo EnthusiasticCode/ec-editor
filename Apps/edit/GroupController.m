@@ -25,7 +25,7 @@
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Cell"];
     if (!cell)
     {
-        cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"Cell"] autorelease];
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"Cell"];
     }
     cell.textLabel.text = [[[self.group orderedChildren] objectAtIndex:indexPath.row] name];
     return cell;
@@ -42,7 +42,7 @@
         [((AppController *)self.navigationController).projectController loadFile:(File *)node];
     else
     {
-        GroupController *groupController = [[[GroupController alloc] init] autorelease];
+        GroupController *groupController = [[GroupController alloc] init];
         groupController.group = node;
         [self.navigationController pushViewController:groupController animated:YES];
     }

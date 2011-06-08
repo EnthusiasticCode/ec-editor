@@ -26,13 +26,6 @@
 @synthesize extent = _extent;
 @synthesize cursor = cursor_;
 
-- (void)dealloc
-{
-    [_spelling release];
-    [_file release];
-    [cursor_ release];
-    [super dealloc];
-}
 
 - (id)initWithKind:(ECCodeTokenKind)kind spelling:(NSString *)spelling file:(NSString *)file offset:(NSUInteger )offset extent:(NSRange)extent cursor:(ECCodeCursor *)cursor
 {
@@ -44,7 +37,7 @@
         _file = [file copy];
         _offset = offset;
         _extent = extent;
-        cursor_ = [cursor retain];
+        cursor_ = cursor;
         _hash = [self computeHash];
     }
     return self;
@@ -54,7 +47,7 @@
 {
     id token = [self alloc];
     token = [token initWithKind:kind spelling:spelling file:file offset:offset extent:extent cursor:cursor];
-    return [token autorelease];
+    return token;
 }
 
 - (NSString *)description
@@ -64,7 +57,7 @@
 
 - (id)copyWithZone:(NSZone *)zone
 {
-    return [self retain];
+    return self;
 }
 
 - (NSUInteger)hash

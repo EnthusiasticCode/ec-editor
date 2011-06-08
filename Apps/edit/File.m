@@ -42,7 +42,6 @@
         NSURL *url = [[NSURL alloc] initFileURLWithPath:self.path];
         _byteArrayDataSource = [[ECCodeByteArrayDataSource alloc] init];
         _byteArrayDataSource.fileURL = url;
-        [url release];
     }
     return _byteArrayDataSource;
 }
@@ -58,7 +57,7 @@
 {
     if (!_unit && self.byteArrayDataSource)
     {
-        ECCodeIndex *index = [[[ECCodeIndex alloc] init] autorelease];
+        ECCodeIndex *index = [[ECCodeIndex alloc] init];
         self.unit = [index unitForFile:self.path];
 //        ECTextStyle *keywordStyle = [ECTextStyle textStyleWithName:@"Keyword" font:nil color:[UIColor blueColor]];
 //        ECTextStyle *commentStyle = [ECTextStyle textStyleWithName:@"Comment" font:nil color:[UIColor greenColor]];
@@ -139,7 +138,7 @@
 - (UIViewController *)codeView:(ECCodeView *)codeView viewControllerForcompletionAtTextInRange:(NSRange)range
 {
     NSArray *array = [self.unit completionsWithSelection:range];
-    ECPatriciaTrie *trie = [[[ECPatriciaTrie alloc] init] autorelease];
+    ECPatriciaTrie *trie = [[ECPatriciaTrie alloc] init];
     for (ECCodeCompletionResult *result in array)
         [trie setObject:result forKey:[result.completionString typedText]];
     self.completionController.results = trie;

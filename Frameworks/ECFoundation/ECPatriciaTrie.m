@@ -40,15 +40,6 @@ static BOOL _skipNodeForOptions(ECPatriciaTrie *node, ECPatriciaTrieEnumerationO
 @synthesize object = _object;
 @synthesize endOfWord = _isEndOfWord;
 
-- (void)dealloc
-{
-    for (NSUInteger i = 0; i < ALPHABET_SIZE; ++i)
-        [_children[i] release];
-    self.key = nil;
-    self.object = nil;
-    [super dealloc];
-}
-
 NSUInteger _indexForCharacter(unsigned char character)
 {
     if (character == '@')
@@ -225,7 +216,6 @@ BOOL _skipNodeForOptions(ECPatriciaTrie *node, ECPatriciaTrieEnumerationOptions 
         self.parent->_children[indexInParent] = child;
         child.parent = self.parent;
     }
-    [self release];
 }
 
 - (ECPatriciaTrie *)_insertNodeForKey:(NSString *)key

@@ -21,7 +21,7 @@
 + (HFRangeWrapper *)withRange:(HFRange)range {
     HFRangeWrapper *result = [[self alloc] init];
     result->range = range;
-    return [result autorelease];
+    return result;
 }
 
 + (NSArray *)withRanges:(const HFRange *)ranges count:(NSUInteger)count {
@@ -46,7 +46,7 @@
 
 - (id)copyWithZone:(NSZone *)zone {
     USE(zone);
-    return [self retain];
+    return self;
 }
 
 - (NSString *)description {
@@ -305,7 +305,7 @@ NSString *HFHexStringFromData(NSData *data) {
         charBuffer[charIndex++] = hex2char(byte >> 4);
         charBuffer[charIndex++] = hex2char(byte & 0xF);
     }
-    return [[[NSString alloc] initWithBytesNoCopy:charBuffer length:stringLength encoding:NSASCIIStringEncoding freeWhenDone:YES] autorelease];
+    return [[NSString alloc] initWithBytesNoCopy:charBuffer length:stringLength encoding:NSASCIIStringEncoding freeWhenDone:YES];
 }
 
 void HFSetFDShouldCache(int fd, BOOL shouldCache) {
@@ -378,7 +378,7 @@ NSString *HFDescribeByteCountWithPrefixAndSuffix(const char *stringPrefix, unsig
     char* resultPointer = NULL;
     int numChars = asprintf(&resultPointer, "%s%llu%s %s%s%s", stringPrefix, dividend, remainderBuff, suffixes[i].suffix, "s" + !needsPlural, stringSuffix);
     if (numChars < 0) return NULL;
-    return [[[NSString alloc] initWithBytesNoCopy:resultPointer length:numChars encoding:NSASCIIStringEncoding freeWhenDone:YES] autorelease];
+    return [[NSString alloc] initWithBytesNoCopy:resultPointer length:numChars encoding:NSASCIIStringEncoding freeWhenDone:YES];
 }
 
 

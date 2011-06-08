@@ -38,15 +38,6 @@
 #pragma mark -
 #pragma mark Initialization and deallocation
 
-- (void)dealloc
-{
-    self.pluginsByLanguage = nil;
-    self.languageToExtensionMap = nil;
-    self.extensionToLanguageMap = nil;
-    self.codeUnitPointers = nil;
-    self.filePointers = nil;
-    [super dealloc];
-}
 
 - (id)init
 {
@@ -55,7 +46,6 @@
         return nil;
     if (![self loadPlugins])
     {
-        [self release];
         return nil;
     }
     self.codeUnitPointers = [NSMutableDictionary dictionary];
@@ -180,7 +170,6 @@
                 continue;
             [extensionToLanguageMap setObject:[pluginExtensionToLanguageMappingDictionary objectForKey:extension] forKey:extension];
         }
-        [plugin release];
     }
     self.pluginsByLanguage = pluginsByLanguage;
     self.languageToExtensionMap = languageToExtensionMap;

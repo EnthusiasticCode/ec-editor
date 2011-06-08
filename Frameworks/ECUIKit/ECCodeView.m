@@ -212,11 +212,6 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
     return self;
 }
 
-- (void)dealloc
-{
-    [detailImage release];
-    [super dealloc];
-}
 
 - (void)drawRect:(CGRect)rect
 {
@@ -261,8 +256,7 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
         // Get result image
         @synchronized(detailImage)
         {
-            [detailImage release];
-            detailImage = [UIGraphicsGetImageFromCurrentImageContext() retain];
+            detailImage = UIGraphicsGetImageFromCurrentImageContext();
         }
         UIGraphicsEndImageContext();
         // Request rerendering
@@ -307,11 +301,6 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
     return self;
 }
 
-- (void)dealloc
-{
-    [caretColor release];
-    [super dealloc];
-}
 
 - (void)drawRect:(CGRect)rect
 {
@@ -379,8 +368,7 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
     {
         UIEdgeInsets parentTextInsets = parent.textInsets;
         
-        [selectionRects release];
-        selectionRects = [[parent.renderer rectsForStringRange:selection limitToFirstLine:NO] retain];
+        selectionRects = [parent.renderer rectsForStringRange:selection limitToFirstLine:NO];
         frame = selectionRects.bounds;
         frame.origin.x += parentTextInsets.left;
         frame.origin.y += parentTextInsets.top;
@@ -404,7 +392,6 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
             leftKnobRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleKnobGesture:)];
             leftKnobRecognizer.minimumPressDuration = 0;
             [leftKnob addGestureRecognizer:leftKnobRecognizer];
-            [leftKnobRecognizer release];
         }
         leftKnobRecognizer.enabled = YES;
         
@@ -426,7 +413,6 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
             rightKnobRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleKnobGesture:)];
             rightKnobRecognizer.minimumPressDuration = 0;
             [rightKnob addGestureRecognizer:rightKnobRecognizer];
-            [rightKnobRecognizer release];
         }
         rightKnobRecognizer.enabled = YES;
     }
@@ -437,7 +423,7 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
 
 - (ECTextRange *)selectionRange
 {
-    return [[[ECTextRange alloc] initWithRange:selection] autorelease];
+    return [[ECTextRange alloc] initWithRange:selection];
 }
 
 - (void)setSelectionRange:(ECTextRange *)selectionRange
@@ -447,7 +433,7 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
 
 - (ECTextPosition *)selectionPosition
 {
-    return [[[ECTextPosition alloc] initWithIndex:selection.location] autorelease];
+    return [[ECTextPosition alloc] initWithIndex:selection.location];
 }
 
 #pragma mark Blinking
@@ -461,7 +447,7 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
     
     if (!blinkAnimation) 
     {
-        blinkAnimation = [[CABasicAnimation animationWithKeyPath:@"opacity"] retain];
+        blinkAnimation = [CABasicAnimation animationWithKeyPath:@"opacity"];
         blinkAnimation.fromValue = [NSNumber numberWithFloat:1.0];
         blinkAnimation.toValue = [NSNumber numberWithFloat:0.0];
         blinkAnimation.repeatCount = CGFLOAT_MAX;
@@ -560,7 +546,6 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
         
         magnificationPopover.popoverView.contentView = detail;
         
-        [detail release];
     }
     return magnificationPopover;
 }
@@ -648,21 +633,6 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
     return self;
 }
 
-- (void)dealloc
-{
-    [blinkAnimation release];
-    
-    [selectionColor release];
-    [caretColor release];
-    
-    [selectionRects release];
-    [leftKnob release];
-    [rightKnob release];
-    
-    [magnificationPopover release];
-    
-    [super dealloc];
-}
 
 - (void)drawRect:(CGRect)rect
 {
@@ -714,17 +684,10 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
         
         tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTap:)];
         [self addGestureRecognizer:tapRecognizer];
-        [tapRecognizer release];
     }
     return self;
 }
 
-- (void)dealloc
-{
-    [navigatorBackgroundColor release];
-    [navigatorView release];
-    [super dealloc];
-}
 
 - (void)setParentSize:(CGSize)size
 {
@@ -883,7 +846,7 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
 
 static void preinit(ECCodeView *self)
 {
-    self->navigatorBackgroundColor = [[UIColor styleForegroundColor] retain];
+    self->navigatorBackgroundColor = [UIColor styleForegroundColor];
     self->navigatorWidth = 200;
 }
 
@@ -896,13 +859,11 @@ static void init(ECCodeView *self)
     [self->selectionView setOpaque:NO];
     [self->selectionView setHidden:YES];
     [self addSubview:self->selectionView];
-    [self->selectionView release];
     
     // Adding focus recognizer
     self->focusRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleGestureFocus:)];
     [self->focusRecognizer setNumberOfTapsRequired:1];
     [self addGestureRecognizer:self->focusRecognizer];
-    [self->focusRecognizer release];
 }
 
 - (id)initWithFrame:(CGRect)frame
@@ -925,13 +886,6 @@ static void init(ECCodeView *self)
     return self;
 }
 
-- (void)dealloc
-{
-    [navigatorBackgroundColor release];
-    [infoView release];
-    [completionPopover release];
-    [super dealloc];
-}
 
 - (void)layoutSubviews
 {
@@ -1008,8 +962,7 @@ static void init(ECCodeView *self)
 
 - (void)setNavigatorBackgroundColor:(UIColor *)color
 {
-    [navigatorBackgroundColor release];
-    navigatorBackgroundColor = [color retain];
+    navigatorBackgroundColor = color;
     infoView.navigatorBackgroundColor = color;
 }
 
@@ -1076,21 +1029,17 @@ static void init(ECCodeView *self)
     {
         tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleGestureTap:)];
         [self addGestureRecognizer:tapRecognizer];
-        [tapRecognizer release];
         
         doubleTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleGestureDoubleTap:)];
         doubleTapRecognizer.numberOfTapsRequired = 2;
         [self addGestureRecognizer:doubleTapRecognizer];
-        [doubleTapRecognizer release];
         
         longPressRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleGestureLongPress:)];
         [self addGestureRecognizer:longPressRecognizer];
-        [longPressRecognizer release];
         
         longDoublePressRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleGestureLongPress:)];
         longDoublePressRecognizer.numberOfTouchesRequired = 2;
         [self addGestureRecognizer:longDoublePressRecognizer];
-        [longDoublePressRecognizer release];
         
         // TODO initialize gesture recognizers
     }
@@ -1297,7 +1246,7 @@ static void init(ECCodeView *self)
     if (markedRange.length == 0)
         return nil;
     
-    return [[[ECTextRange alloc] initWithRange:markedRange] autorelease];
+    return [[ECTextRange alloc] initWithRange:markedRange];
 }
 
 - (void)setMarkedText:(NSString *)markedText selectedRange:(NSRange)selectedRange
@@ -1361,7 +1310,7 @@ static void init(ECCodeView *self)
 - (UITextRange *)textRangeFromPosition:(UITextPosition *)fromPosition 
                             toPosition:(UITextPosition *)toPosition
 {
-    return [[[ECTextRange alloc] initWithStart:(ECTextPosition *)fromPosition end:(ECTextPosition *)toPosition] autorelease];
+    return [[ECTextRange alloc] initWithStart:(ECTextPosition *)fromPosition end:(ECTextPosition *)toPosition];
 }
 
 - (UITextPosition *)positionFromPosition:(UITextPosition *)position 
@@ -1401,20 +1350,20 @@ static void init(ECCodeView *self)
     if (result > textLength)
         result = textLength;
     
-    ECTextPosition *resultPosition = [[[ECTextPosition alloc] initWithIndex:result] autorelease];
+    ECTextPosition *resultPosition = [[ECTextPosition alloc] initWithIndex:result];
     
     return resultPosition;
 }
 
 - (UITextPosition *)beginningOfDocument
 {
-    ECTextPosition *p = [[[ECTextPosition alloc] initWithIndex:0] autorelease];
+    ECTextPosition *p = [[ECTextPosition alloc] initWithIndex:0];
     return p;
 }
 
 - (UITextPosition *)endOfDocument
 {
-    ECTextPosition *p = [[[ECTextPosition alloc] initWithIndex:[self.datasource textLength]] autorelease];
+    ECTextPosition *p = [[ECTextPosition alloc] initWithIndex:[self.datasource textLength]];
     return p;
 }
 
@@ -1515,7 +1464,7 @@ static void init(ECCodeView *self)
     
     NSUInteger location = [renderer closestStringLocationToPoint:point 
                                                withinStringRange:range ? [(ECTextRange *)range range] : (NSRange){0, 0}];
-    return [[[ECTextPosition alloc] initWithIndex:location] autorelease];;
+    return [[ECTextPosition alloc] initWithIndex:location];;
 }
 
 - (UITextRange *)characterRangeAtPoint:(CGPoint)point
@@ -1527,7 +1476,7 @@ static void init(ECCodeView *self)
     if (r.location == NSNotFound)
         return nil;
     
-    return [[[ECTextRange alloc] initWithRange:r] autorelease];
+    return [[ECTextRange alloc] initWithRange:r];
 }
 
 #pragma mark -
@@ -1591,7 +1540,6 @@ static void init(ECCodeView *self)
     
     [self setSelectedTextRange:range];
     
-    [range release];
 }
 
 - (void)autoScrollForTouchAtPoint:(CGPoint)point

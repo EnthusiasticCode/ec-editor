@@ -22,11 +22,6 @@
 @synthesize cursorKind = _cursorKind;
 @synthesize completionString = _completionString;
 
-- (void)dealloc
-{
-    [_completionString release];
-    [super dealloc];
-}
 
 - (id)initWithCursorKind:(ECCodeCursorKind)cursorKind completionString:(ECCodeCompletionString *)completionString
 {
@@ -44,12 +39,12 @@
 {
     id result = [self alloc];
     result = [result initWithCursorKind:cursorKind completionString:completionString];
-    return [result autorelease];
+    return result;
 }
 
 - (id)copyWithZone:(NSZone *)zone
 {
-    return [self retain];
+    return self;
 }
 
 - (NSUInteger)hash

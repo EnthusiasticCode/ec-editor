@@ -313,7 +313,6 @@ static void preinit(ECButton *self)
 {
     free(backgroundColors);
     free(borderColors);
-    [super dealloc];
 }
 
 + (Class)layerClass

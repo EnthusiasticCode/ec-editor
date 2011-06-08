@@ -33,12 +33,6 @@
         [self removeObserversFromFile:fileObject];
     }
     [self.index removeTranslationUnitForFile:self.file];
-    [index_ release];
-    [file_ release];
-    [language_ release];
-    [plugin_ release];
-    [filePointers_ release];
-    [super dealloc];
 }
 
 - (id)initWithIndex:(ECCodeIndex *)index file:(NSString *)file language:(NSString *)language plugin:(id<ECCodeUnitPlugin>)plugin
@@ -48,14 +42,13 @@
         return nil;
     if (!plugin || !language || !file || !index)
     {
-        [self release];
         return nil;
     }
-    index_ = [index retain];
+    index_ = index;
     file_ = [file copy];
     language_ = [language copy];
-    plugin_ = [plugin retain];
-    filePointers_ = [[NSMutableDictionary dictionary] retain];
+    plugin_ = plugin;
+    filePointers_ = [NSMutableDictionary dictionary];
     return self;
 }
 
@@ -63,7 +56,7 @@
 {
     id codeUnit = [self alloc];
     codeUnit = [codeUnit initWithIndex:index file:file language:language plugin:plugin];
-    return [codeUnit autorelease];
+    return codeUnit;
 }
 
 - (BOOL)isDependentOnFile:(NSString *)file

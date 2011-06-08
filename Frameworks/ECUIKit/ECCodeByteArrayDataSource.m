@@ -39,7 +39,7 @@
 
 + (id)fileOffsetWithLine:(NSUInteger)l character:(NSUInteger)c byte:(unsigned long long)b
 {
-    return [[[self alloc] initWithLine:l character:c byte:b] autorelease];
+    return [[self alloc] initWithLine:l character:c byte:b];
 }
 
 - (id)initWithLine:(NSUInteger)l character:(NSUInteger)c byte:(unsigned long long)b
@@ -55,7 +55,7 @@
 
 - (id)fileOffsetByAddingLines:(NSInteger)l characters:(NSInteger)c bytes:(long long)b
 {
-    return [[[FileTriOffset alloc] initWithLine:(line + l) character:(character + c) byte:(byte + b)] autorelease];
+    return [[FileTriOffset alloc] initWithLine:(line + l) character:(character + c) byte:(byte + b)];
 }
 
 // TODO delete all this unused methods
@@ -122,10 +122,8 @@
 {
     [self writeToFile];
     
-    [fileURL release];
-    fileURL = [url retain];
+    fileURL = url;
     
-    [byteArray release];
     byteArray = [HFBTreeByteArray new];
     
     // Read the file
@@ -133,8 +131,6 @@
     HFFileReference *fileReference = [[HFFileReference alloc] initWritableWithPath:[fileURL path] error:NULL];
     HFFileByteSlice *fileByteSlice = [[HFFileByteSlice alloc] initWithFile:fileReference];
     [byteArray insertByteSlice:fileByteSlice inRange:(HFRange){0, 0}];
-    [fileByteSlice release];
-    [fileReference release];
     
     // Flush caches
     if (!offsetCache)
@@ -161,22 +157,6 @@
 - (void)dealloc
 {
     [self writeToFile];
-    
-    [byteArray release];
-    [offsetCache release];
-    
-    [lastEditedPrevOffset release];
-    [lastEditedNextOffset release];
-    [editData release];
-    
-    [fileURL release];
-    [lineDelimiter release];
-    [defaultTextStyle release];
-    [stylizeBlock release];
-    
-    [complitionController release];
-    
-    [super dealloc];
 }
 
 #pragma mark Public Methods
@@ -212,7 +192,7 @@
     if (!result)
         free(stringBuffer);
     
-    return [result autorelease];
+    return result;
 }
 
 - (BOOL)codeView:(ECCodeViewBase *)codeView canEditTextInRange:(NSRange)range
@@ -274,7 +254,7 @@
         stringData = [string dataUsingEncoding:NSUTF8StringEncoding];
         stringDataLength = [stringData length];
         if (!editData) 
-            editData = [[NSMutableData dataWithCapacity:stringDataLength] retain];
+            editData = [NSMutableData dataWithCapacity:stringDataLength];
 
         // Adding string to mutable data
         NSUInteger lastEditedDataOffset = [editData length];
@@ -283,7 +263,6 @@
         // Insert slice with proper offset
         HFSharedMemoryByteSlice *slice = [[HFSharedMemoryByteSlice alloc] initWithData:editData offset:lastEditedDataOffset length:stringDataLength];
         [byteArray insertByteSlice:slice inRange:fileRange];
-        [slice release];
 
         // Set proper toLineRange
         toLineRange.length = [stringData UTF8LineCountUsingLineDelimiter:lineDelimiter];
@@ -293,14 +272,12 @@
         // limit case when writing a char at the beginning of a line, the nextoffset will have wrong line number
         if (startOffset != lastEditedNextOffset) 
         {
-            [lastEditedNextOffset release];
             lastEditedNextOffset = [startOffset copy];
         }
-        [lastEditedPrevOffset release];
         lastEditedPrevOffset = lastEditedNextOffset;
-        lastEditedNextOffset = [[startOffset fileOffsetByAddingLines:(toLineRange.length - 1) 
+        lastEditedNextOffset = [startOffset fileOffsetByAddingLines:(toLineRange.length - 1) 
                                                            characters:stringLenght 
-                                                                bytes:stringDataLength] retain];
+                                                                bytes:stringDataLength];
     }
     else // delete
     {
@@ -308,23 +285,19 @@
         
         if (startOffset.line != endOffset.line) 
         {
-            [lastEditedPrevOffset release];
             lastEditedPrevOffset = nil;
-            [lastEditedNextOffset release];
             lastEditedNextOffset = nil;
         }
         else
         {
             if (startOffset != lastEditedPrevOffset) 
             {
-                [lastEditedPrevOffset release];
                 lastEditedPrevOffset = [startOffset copy];
             }
-            [lastEditedNextOffset release];
             lastEditedNextOffset = lastEditedPrevOffset;
-            lastEditedPrevOffset = [[startOffset fileOffsetByAddingLines:0 
+            lastEditedPrevOffset = [startOffset fileOffsetByAddingLines:0 
                                                                characters:-1
-                                                                    bytes:-1] retain];
+                                                                    bytes:-1];
         }
     }
     
@@ -381,7 +354,6 @@
     
     // Stylize string
     NSMutableAttributedString *resultString = [[NSMutableAttributedString alloc] initWithString:string attributes:defaultTextStyle.CTAttributes];
-    [string release];
     
     if (stylizeBlock)
         stylizeBlock(self, resultString, NSMakeRange(startOffset.character, endOffset.character - startOffset.character));
@@ -394,10 +366,9 @@
         
         NSAttributedString *newLine = [[NSAttributedString alloc] initWithString:lineDelimiter attributes:defaultTextStyle.CTAttributes];
         [resultString appendAttributedString:newLine];
-        [newLine release];
     }
     
-    return [resultString autorelease];
+    return resultString;
 }
 
 - (NSUInteger)textRenderer:(ECTextRenderer *)sender estimatedTextLineCountOfLength:(NSUInteger)maximumLineLength

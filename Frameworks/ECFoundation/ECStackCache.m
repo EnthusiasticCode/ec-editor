@@ -20,11 +20,6 @@
 @synthesize target = _target;
 @synthesize action = _action;
 
-- (void)dealloc
-{
-    [_stack release];
-    [super dealloc];
-}
 
 - (id)initWithTarget:(id)target action:(SEL)action size:(NSUInteger)size
 {
@@ -47,9 +42,9 @@
 {
     if (![_stack count])
         return [_target performSelector:_action withObject:self];
-    id object = [[_stack lastObject] retain];
+    id object = [_stack lastObject];
     [_stack removeLastObject];
-    return [object autorelease];
+    return object;
 }
 
 - (void)push:(id)object;
@@ -63,7 +58,7 @@
 {
     id cache = [self alloc];
     cache = [cache initWithTarget:target action:action size:size];
-    return [cache autorelease];
+    return cache;
 }
 
 @end

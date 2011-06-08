@@ -59,7 +59,6 @@
 - (void)dealloc
 {
     free(buffer);
-    [super dealloc];
 }
 
 - (void)enumerateRectsUsingBlock:(void (^)(CGRect, BOOL *))block
@@ -115,12 +114,12 @@
 
 + (id)rectSet
 {
-    return [[[self alloc] init] autorelease];
+    return [[self alloc] init];
 }
 
 + (id)rectSetWithRect:(CGRect)rect
 {
-    return [[[self alloc] initWithRect:rect] autorelease];
+    return [[self alloc] initWithRect:rect];
 }
 
 @end
@@ -189,7 +188,7 @@
 
 + (id)rectSetWithCapacity:(NSUInteger)cap
 {
-    return [[[self alloc] initWithCapacity:cap] autorelease];
+    return [[self alloc] initWithCapacity:cap];
 }
 
 @end

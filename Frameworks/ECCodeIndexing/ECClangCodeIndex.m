@@ -21,7 +21,6 @@
 - (void)dealloc
 {
     clang_disposeIndex(self.index);
-    [super dealloc];
 }
 
 - (id)init

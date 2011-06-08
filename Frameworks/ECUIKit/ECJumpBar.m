@@ -88,8 +88,7 @@
 
 - (void)setFont:(UIFont *)aFont
 {
-    [font release];
-    font = [aFont retain];
+    font = aFont;
     searchField.font = font;
 //    for (ECButton *button in controlsStack)
 //        button.titleLabel.font = font;
@@ -97,8 +96,7 @@
 
 - (void)setTextColor:(UIColor *)aColor
 {
-    [textColor release];
-    textColor = [aColor retain];
+    textColor = aColor;
     searchField.textColor = textColor;
 //    for (ECButton *button in controlsStack)
 //        [button setTitleColor:textColor forState:UIControlStateNormal];
@@ -106,8 +104,7 @@
 
 - (void)setTextShadowColor:(UIColor *)aColor
 {
-    [textShadowColor release];
-    textShadowColor = [aColor retain];
+    textShadowColor = aColor;
     if (textShadowColor) 
     {
         searchField.layer.shadowColor = textShadowColor.CGColor;
@@ -133,8 +130,7 @@
 
 - (void)setBorderColor:(UIColor *)aColor
 {
-    [borderColor release];
-    borderColor = [aColor retain];
+    borderColor = aColor;
     self.layer.borderColor = borderColor.CGColor;
 //    for (ECButton *button in controlsStack)
 //        button.borderColor = borderColor;
@@ -173,7 +169,6 @@ static void init(ECJumpBar *self)
     [self->searchField addTarget:self action:@selector(searchFieldAction:) forControlEvents:UIControlEventEditingChanged];
     self.minimumSearchFieldWidth = 0.5;
     [self addSubview:self->searchField];
-    [self->searchField release];
     self->searchField.text = @"Search";
     //
     self.font = [UIFont fontWithName:@"Helvetica-Bold" size:16];
@@ -215,19 +210,6 @@ static void init(ECJumpBar *self)
     return self;
 }
 
-- (void)dealloc
-{
-    self.font = nil;
-    self.textColor = nil;
-    self.textShadowColor = nil;
-    self.buttonColor = nil;
-    self.buttonHighlightColor = nil;
-    self.borderColor = nil;
-    [controlsStack release];
-    [collapsedButton release];
-    [super dealloc];
-}
-
 - (void)layoutSubviews
 {
     CGRect bounds = self.bounds;
@@ -257,7 +239,7 @@ static void init(ECJumpBar *self)
     {
         if (!collapsedButton)
         {
-            collapsedButton = [[self createStackControlWithTitle:@"..."] retain];
+            collapsedButton = [self createStackControlWithTitle:@"..."];
             collapsedButton.hidden = YES;
             collapsedButton.alpha = 0;
         }
@@ -520,7 +502,7 @@ static void init(ECJumpBar *self)
     [button setBackgroundColor:self.buttonColor forState:UIControlStateNormal];
     [button setBackgroundColor:self.buttonHighlightColor forState:UIControlStateHighlighted];
     button.rightArrowSize = BUTTON_ARROW_WIDTH;
-    return [button autorelease];
+    return button;
 }
 
 - (void)searchFieldAction:(id)sender
