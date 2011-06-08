@@ -39,7 +39,7 @@
 
 #pragma mark Customizable Popover
 
-@property (nonatomic, readonly) ECPopoverView *popoverView;
+@property (nonatomic, readonly, strong) ECPopoverView *popoverView;
 
 #pragma mark Advanced Behaviours
 

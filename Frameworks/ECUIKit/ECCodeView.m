@@ -139,8 +139,8 @@
 #pragma mark Magnification
 
 @property (nonatomic, getter = isMagnifying) BOOL magnify;
-@property (nonatomic, readonly) ECPopoverController *magnificationPopover;
-@property (nonatomic, readonly) TextMagnificationView *magnificationView;
+@property (nonatomic, readonly, strong) ECPopoverController *magnificationPopover;
+@property (nonatomic, readonly, strong) TextMagnificationView *magnificationView;
 
 - (void)setMagnify:(BOOL)doMagnify fromRect:(CGRect)rect ratio:(BOOL)ratio animated:(BOOL)animated;
 
