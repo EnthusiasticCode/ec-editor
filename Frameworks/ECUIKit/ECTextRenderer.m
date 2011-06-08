@@ -34,10 +34,10 @@
 }
 
 /// Text renderer framesetter's cache shared among all text segments
-@property (nonatomic, strong) ECDictionaryCache *framesettersCache;
+@property (nonatomic, readonly, strong) ECDictionaryCache *framesettersCache;
 
 /// Text renderer frame's cache shared among all text segments
-@property (nonatomic, strong) ECDictionaryCache *framesCache;
+@property (nonatomic, readonly, strong) ECDictionaryCache *framesCache;
 
 /// Create the specified segment's framesetter. Lines and lenght are output parameter, pass NULL if not interested.
 /// This function is supposed to be used by a text segment to generate it's framesetter if not present in cache.
@@ -359,7 +359,7 @@
 
 #pragma mark Properties
 
-@synthesize framesettersCache, framesCache = _framesCache;
+@synthesize framesettersCache, framesCache;
 @synthesize delegate, datasource, preferredLineCountPerSegment, wrapWidth, estimatedHeight;
 
 - (void)setDelegate:(id<ECTextRendererDelegate>)aDelegate
@@ -384,7 +384,7 @@
     if (wrapWidth == width) 
         return;
 
-    [self.framesCache removeAllObjects];
+    [framesCache removeAllObjects];
     wrapWidth = width;
     for (TextSegment *segment in textSegments) 
     {
@@ -411,7 +411,7 @@
     {
         textSegments = [NSMutableArray new];
         framesettersCache = [[ECDictionaryCache alloc] initWithCountLimit:5];
-        self.framesCache = [[ECDictionaryCache alloc] initWithCountLimit:2];
+        framesCache = [[ECDictionaryCache alloc] initWithCountLimit:2];
     }
     return self;
 }
@@ -959,7 +959,7 @@
             // TODO!!! if lineCount > 1.5 * preferred -> split or merge if * 0.5
             // and remember to set proper lastTextSegment
             [framesettersCache removeObjectForKey:segment];
-            [self.framesCache removeObjectForKey:segment];
+            [framesCache removeObjectForKey:segment];
         }
         
         currentLineLocation += segmentRange.length;
@@ -977,7 +977,7 @@
 - (void)clearCache
 {
     [framesettersCache removeAllObjects];
-    [self.framesCache removeAllObjects];
+    [framesCache removeAllObjects];
 }
 
 @end

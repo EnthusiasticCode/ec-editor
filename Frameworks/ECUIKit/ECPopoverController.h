@@ -17,9 +17,9 @@
 
 - (id)initWithContentViewController:(UIViewController *)viewController;
 
-@property (nonatomic, assign) id <UIPopoverControllerDelegate> delegate;
+@property (nonatomic, weak) id <UIPopoverControllerDelegate> delegate;
 
-@property (nonatomic, retain) UIViewController *contentViewController;
+@property (nonatomic, strong) UIViewController *contentViewController;
 - (void)setContentViewController:(UIViewController *)viewController animated:(BOOL)animated;
 
 @property (nonatomic) CGSize popoverContentSize;

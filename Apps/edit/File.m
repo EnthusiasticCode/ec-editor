@@ -24,9 +24,9 @@
 #import "ECPatriciaTrie.h"
 
 @interface File ()
-@property (nonatomic, retain) ECCodeByteArrayDataSource *byteArrayDataSource;
-@property (nonatomic, retain) IBOutlet CompletionController *completionController;
-@property (nonatomic, retain) ECCodeUnit *unit;
+@property (nonatomic, strong) ECCodeByteArrayDataSource *byteArrayDataSource;
+@property (nonatomic, strong) IBOutlet CompletionController *completionController;
+@property (nonatomic, strong) ECCodeUnit *unit;
 @end
 
 @implementation File

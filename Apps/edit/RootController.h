@@ -9,8 +9,8 @@
 #import <UIKit/UIKit.h>
 
 @interface RootController : UITableViewController
-@property (nonatomic, retain) IBOutlet UIBarButtonItem *addProjectButton;
-@property (nonatomic, retain) IBOutlet UIViewController *addProjectController;
+@property (nonatomic, strong) IBOutlet UIBarButtonItem *addProjectButton;
+@property (nonatomic, strong) IBOutlet UIViewController *addProjectController;
 - (void)browseFolder:(NSString *)folder;
 - (IBAction)addProject:(id)sender;
 @end

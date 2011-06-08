@@ -24,7 +24,7 @@ typedef enum
 @property (nonatomic, readonly, copy) NSString *file;
 @property (nonatomic, readonly) NSUInteger offset;
 @property (nonatomic, readonly) NSRange extent;
-@property (nonatomic, readonly, retain) ECCodeCursor *cursor;
+@property (nonatomic, readonly, strong) ECCodeCursor *cursor;
 
 - (id)initWithKind:(ECCodeTokenKind)kind spelling:(NSString *)spelling file:(NSString *)file offset:(NSUInteger )offset extent:(NSRange)extent cursor:(ECCodeCursor *)cursor;
 + (id)tokenWithKind:(ECCodeTokenKind)kind spelling:(NSString *)spelling file:(NSString *)file offset:(NSUInteger )offset extent:(NSRange)extent cursor:(ECCodeCursor *)cursor;

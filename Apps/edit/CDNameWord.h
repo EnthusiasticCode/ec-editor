@@ -15,7 +15,7 @@
 @interface CDNameWord : ECManagedObject {
 @private
 }
-@property (nonatomic, retain) NSString * normalizedWord;
-@property (nonatomic, retain) NSSet* nodes;
+@property (nonatomic, strong) NSString * normalizedWord;
+@property (nonatomic, strong) NSSet* nodes;
 
 @end

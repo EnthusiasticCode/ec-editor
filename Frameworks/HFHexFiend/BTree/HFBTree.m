@@ -159,8 +159,8 @@ static HFBTreeNode *mutable_copy_node(HFBTreeNode *node, TreeDepth_t depth, HFBT
         HFBTreeNode *newParentValue = btree_insert_returning_retained_value_for_parent(self, entry, offset);
         if (newParentValue) {
             HFBTreeBranch *newRoot = [[HFBTreeBranch alloc] init];
-            newRoot->children[0] = root; //transfer our retain
-            newRoot->children[1] = newParentValue; //transfer the retain we got from the function
+            newRoot->children[0] = root;
+            newRoot->children[1] = newParentValue;
             newRoot->subtreeLength = HFSum(root->subtreeLength, newParentValue->subtreeLength);
             root = newRoot;
             depth++;
@@ -360,7 +360,6 @@ FORCE_STATIC_INLINE HFBTreeNode *add_child_to_node_possibly_creating_split(HFBTr
     memcpy(allEntries, node->children, BTREE_ORDER * sizeof *node->children);
     allEntries[BTREE_ORDER] = nil;
     
-    /* insert_value_into_array applies a retain, so allEntries owns a retain on its values */
     insert_value_into_array(value, insertionLocation, allEntries, BTREE_ORDER + 1);
     HFBTreeNode *newNode = [[[node class] alloc] init];
     

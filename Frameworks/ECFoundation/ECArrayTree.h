@@ -9,8 +9,8 @@
 #import <Foundation/Foundation.h>
 
 @interface ECArrayTree : NSObject <NSCopying, NSMutableCopying>
-@property (nonatomic, retain) NSArray *children;
-@property (nonatomic, retain) id object;
+@property (nonatomic, strong) NSArray *children;
+@property (nonatomic, strong) id object;
 - (NSUInteger)count;
 - (NSUInteger)countAtDepth:(NSUInteger)depth;
 - (ECArrayTree *)nodeAtIndexPath:(NSIndexPath *)indexPath;
@@ -22,7 +22,7 @@
 @end
 
 @interface ECMutableArrayTree : ECArrayTree
-@property (nonatomic, retain) NSMutableArray *children;
+@property (nonatomic, strong) NSMutableArray *children;
 - (ECMutableArrayTree *)nodeAtIndexPath:(NSIndexPath *)indexPath;
 - (ECMutableArrayTree *)parentNodeOfIndexPath:(NSIndexPath *)indexPath;
 - (void)insertObject:(id)object atIndexPath:(NSIndexPath *)indexPath;

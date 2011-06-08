@@ -24,8 +24,8 @@ const NSString *ECClangCodeUnitOptionCXIndex = @"CXIndex";
 @property (nonatomic) CXIndex index;
 @property (nonatomic) CXTranslationUnit translationUnit;
 @property (nonatomic) CXFile source;
-@property (nonatomic, retain) NSString *file;
-@property (nonatomic, retain) NSString *language;
+@property (nonatomic, strong) NSString *file;
+@property (nonatomic, strong) NSString *language;
 @end
 
 #pragma mark -

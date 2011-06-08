@@ -15,13 +15,13 @@
 @interface CDNode : ECManagedObject {
 @private
 }
-@property (nonatomic, retain) NSNumber * collapsed;
-@property (nonatomic, retain) NSNumber * tag;
-@property (nonatomic, retain) NSString * type;
-@property (nonatomic, retain) NSString * name;
-@property (nonatomic, retain) NSNumber * index;
-@property (nonatomic, retain) CDNode * parent;
-@property (nonatomic, retain) NSSet* children;
-@property (nonatomic, retain) NSSet* nameWords;
+@property (nonatomic, strong) NSNumber * collapsed;
+@property (nonatomic, strong) NSNumber * tag;
+@property (nonatomic, strong) NSString * type;
+@property (nonatomic, strong) NSString * name;
+@property (nonatomic, strong) NSNumber * index;
+@property (nonatomic, strong) CDNode * parent;
+@property (nonatomic, strong) NSSet* children;
+@property (nonatomic, strong) NSSet* nameWords;
 
 @end

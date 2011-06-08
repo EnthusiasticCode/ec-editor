@@ -12,8 +12,8 @@
 #import "ProjectController.h"
 
 @interface RootController ()
-@property (nonatomic, retain) NSFileManager *fileManager;
-@property (nonatomic, retain) NSString *folder;
+@property (nonatomic, strong) NSFileManager *fileManager;
+@property (nonatomic, strong) NSString *folder;
 @end
 
 @implementation RootController

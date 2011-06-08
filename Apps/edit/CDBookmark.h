@@ -15,8 +15,8 @@
 @interface CDBookmark : ECManagedObject {
 @private
 }
-@property (nonatomic, retain) id range;
-@property (nonatomic, retain) NSString * note;
-@property (nonatomic, retain) CDFile * file;
+@property (nonatomic, strong) id range;
+@property (nonatomic, strong) NSString * note;
+@property (nonatomic, strong) CDFile * file;
 
 @end

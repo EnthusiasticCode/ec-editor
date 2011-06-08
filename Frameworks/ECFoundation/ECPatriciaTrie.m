@@ -20,8 +20,8 @@
 {
     ECPatriciaTrie *_children[ALPHABET_SIZE];
 }
-@property (nonatomic, assign) ECPatriciaTrie *parent;
-@property (nonatomic, retain) NSString *key;
+@property (nonatomic, weak) ECPatriciaTrie *parent;
+@property (nonatomic, strong) NSString *key;
 static NSUInteger _indexForCharacter(unsigned char character);
 static BOOL _characterIsStartOfWord(NSUInteger characterIndex, NSString *string);
 - (NSUInteger)_criticalCharacterInKey:(NSString *)key;

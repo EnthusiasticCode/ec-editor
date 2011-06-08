@@ -38,13 +38,13 @@
 
 @interface ECCodeView : ECCodeViewBase <UIKeyInput, UITextInputTraits, UITextInput>
 
-@property (nonatomic, assign) id<ECCodeViewDataSource> datasource;
+@property (nonatomic, weak) id<ECCodeViewDataSource> datasource;
 
 #pragma mark Managing the Navigator
 
 @property (nonatomic) CGFloat navigatorWidth;
 
-@property (nonatomic, retain) UIColor *navigatorBackgroundColor;
+@property (nonatomic, strong) UIColor *navigatorBackgroundColor;
 
 @property (nonatomic, getter = isNavigatorVisible) BOOL navigatorVisible;
 
@@ -55,7 +55,7 @@
 #pragma mark UITextInput Properties
 
 /// An input delegate that is notified when text changes or when the selection changes.
-@property (nonatomic, assign) id<UITextInputDelegate> inputDelegate;
+@property (nonatomic, weak) id<UITextInputDelegate> inputDelegate;
 
 /// An input tokenizer that provides information about the granularity of text units.
 @property (nonatomic, readonly) id<UITextInputTokenizer> tokenizer;

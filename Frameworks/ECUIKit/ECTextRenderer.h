@@ -57,11 +57,11 @@
 #pragma mark Managing Text Input Data
 
 /// A delegate that will recevie notifications from the text renderer.
-@property (nonatomic, assign) id <ECTextRendererDelegate> delegate;
+@property (nonatomic, weak) id <ECTextRendererDelegate> delegate;
 
 /// The datasource to retrieve the text to render. It has to conform to
 /// \c ECTextRendererDatasource protocol.
-@property (nonatomic, assign) id <ECTextRendererDataSource> datasource;
+@property (nonatomic, weak) id <ECTextRendererDataSource> datasource;
 
 /// Defines the preferred number of lines to use for one segment of input.
 /// If this property is non-zero, input strings from the datasource will

@@ -48,6 +48,7 @@
     UITapGestureRecognizer *doubleTapRecognizer;
     UILongPressGestureRecognizer *longPressRecognizer;
     UILongPressGestureRecognizer *longDoublePressRecognizer;
+    __strong UITextInputStringTokenizer *tokenizer;
 }
 
 /// Specify if the info view containing search marks and navigator should be visible.
@@ -103,7 +104,7 @@
 @property (nonatomic) CGFloat knobDiameter;
 
 @property (nonatomic) CGRect caretRect;
-@property (nonatomic, retain) UIColor *caretColor;
+@property (nonatomic, strong) UIColor *caretColor;
 
 @end
 
@@ -126,13 +127,13 @@
 #pragma mark Managin the Selection
 
 @property (nonatomic) NSRange selection;
-@property (nonatomic, assign) ECTextRange *selectionRange;
+@property (nonatomic, weak) ECTextRange *selectionRange;
 @property (nonatomic, readonly) ECTextPosition *selectionPosition;
 
 #pragma mark Selection Styles
 
-@property (nonatomic, retain) UIColor *selectionColor;
-@property (nonatomic, retain) UIColor *caretColor;
+@property (nonatomic, strong) UIColor *selectionColor;
+@property (nonatomic, strong) UIColor *caretColor;
 @property (nonatomic, getter = isBlinking) BOOL blink;
 
 #pragma mark Magnification
@@ -181,7 +182,7 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
 
 @property (nonatomic) UIEdgeInsets navigatorInsets;
 
-@property (nonatomic, retain) UIColor *navigatorBackgroundColor;
+@property (nonatomic, strong) UIColor *navigatorBackgroundColor;
 
 @property (nonatomic, getter = isNavigatorVisible) BOOL navigatorVisible;
 

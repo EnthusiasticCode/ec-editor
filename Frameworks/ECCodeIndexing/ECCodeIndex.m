@@ -17,8 +17,8 @@
 @property (nonatomic, copy) NSDictionary *pluginsByLanguage;
 @property (nonatomic, copy) NSDictionary *languageToExtensionMap;
 @property (nonatomic, copy) NSDictionary *extensionToLanguageMap;
-@property (nonatomic, retain) NSMutableDictionary *codeUnitPointers;
-@property (nonatomic, retain) NSMutableDictionary *filePointers;
+@property (nonatomic, strong) NSMutableDictionary *codeUnitPointers;
+@property (nonatomic, strong) NSMutableDictionary *filePointers;
 - (BOOL)loadPlugins;
 - (id<ECCodeIndexPlugin>)pluginForLanguage:(NSString *)language;
 - (void)addObserversForUnitsToFile:(NSObject<ECCodeIndexingFileObserving> *)fileObject;

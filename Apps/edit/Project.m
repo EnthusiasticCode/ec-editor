@@ -12,7 +12,7 @@
 #import "File.h"
 
 @interface Project ()
-@property (nonatomic, retain) Node *rootNode;
+@property (nonatomic, strong) Node *rootNode;
 - (Node *)_findRootNode;
 @end
 

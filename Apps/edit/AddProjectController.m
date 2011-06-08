@@ -9,8 +9,8 @@
 #import "AddProjectController.h"
 
 @interface AddProjectController ()
-@property (nonatomic, retain) NSMutableArray *foundServers;
-@property (nonatomic, retain) NSNetServiceBrowser *sshBrowser;
+@property (nonatomic, strong) NSMutableArray *foundServers;
+@property (nonatomic, strong) NSNetServiceBrowser *sshBrowser;
 - (void)handleError:(NSNumber *)error;
 @end
 

@@ -42,19 +42,19 @@
 @property (nonatomic, readonly) ECTextRenderer *renderer;
 
 /// Queue where renderer should be used.
-@property (nonatomic, retain) NSOperationQueue *renderingQueue;
+@property (nonatomic, strong) NSOperationQueue *renderingQueue;
 
 #pragma mark Providing Source Data
 
 /// The datasource for the text displayed by the code view. Default is self.
 /// If this datasource is not self, the text property will have no effect.
-@property (nonatomic, assign) id<ECCodeViewBaseDataSource> datasource;
+@property (nonatomic, weak) id<ECCodeViewBaseDataSource> datasource;
 
 #pragma mark Managing Text Content
 
 /// Set the text fot the control. This property is only used if textDatasource
 /// is the code view itself.
-@property (nonatomic, retain) NSString *text;
+@property (nonatomic, strong) NSString *text;
 
 /// Insets of the text.
 @property (nonatomic) UIEdgeInsets textInsets;

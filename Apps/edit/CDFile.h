@@ -15,9 +15,9 @@
 @interface CDFile : CDNode {
 @private
 }
-@property (nonatomic, retain) NSString * path;
-@property (nonatomic, retain) NSSet* undoItems;
-@property (nonatomic, retain) NSSet* bookmarks;
-@property (nonatomic, retain) NSSet* historyItems;
+@property (nonatomic, strong) NSString * path;
+@property (nonatomic, strong) NSSet* undoItems;
+@property (nonatomic, strong) NSSet* bookmarks;
+@property (nonatomic, strong) NSSet* historyItems;
 
 @end

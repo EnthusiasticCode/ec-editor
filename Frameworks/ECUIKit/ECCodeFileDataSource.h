@@ -19,7 +19,7 @@ typedef void(^StylizeFilePartStringBlock)(ECCodeFileDataSource *dataSource, NSMu
 #pragma mark Providing Data Input
 
 /// The file URL that the datasource is reading from.
-@property (nonatomic, retain) NSURL *inputFileURL;
+@property (nonatomic, strong) NSURL *inputFileURL;
 
 /// Gets or set the line delimiter. Default is @"\n".
 @property (nonatomic, copy) NSString *lineDelimiter;
@@ -30,7 +30,7 @@ typedef void(^StylizeFilePartStringBlock)(ECCodeFileDataSource *dataSource, NSMu
 #pragma mark Styling Text
 
 /// The default text style to apply to a read string
-@property (nonatomic, retain) ECTextStyle *defaultTextStyle;
+@property (nonatomic, strong) ECTextStyle *defaultTextStyle;
 
 /// A block that will be used on every attributed string returned by the
 /// datasource. The block should set some custom style on the given 

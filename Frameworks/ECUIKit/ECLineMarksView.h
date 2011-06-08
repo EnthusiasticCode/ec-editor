@@ -29,7 +29,7 @@ typedef void (^DrawMarkBlock)(CGContextRef ctx, CGRect rct, UIColor *clr);
     UITapGestureRecognizer *tapMarkRecognizer;
 }
 
-@property (nonatomic, assign) id<ECLineMarksViewDelegate> delegate;
+@property (nonatomic, weak) id<ECLineMarksViewDelegate> delegate;
 
 @property (nonatomic, copy) DrawMarkBlock drawMarkBlock;
 @property (nonatomic) CGSize markSize;

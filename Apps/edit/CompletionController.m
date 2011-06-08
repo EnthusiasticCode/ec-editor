@@ -16,7 +16,7 @@
 static const ECPatriciaTrieEnumerationOptions _options = ECPatriciaTrieEnumerationOptionsSkipRoot | ECPatriciaTrieEnumerationOptionsSkipNotEndOfWord | ECPatriciaTrieEnumerationOptionsStopAtShallowestMatch;
 
 @interface CompletionController ()
-@property (nonatomic, retain) NSArray *filteredResults;
+@property (nonatomic, strong) NSArray *filteredResults;
 - (void)_filterResults;
 @end
 

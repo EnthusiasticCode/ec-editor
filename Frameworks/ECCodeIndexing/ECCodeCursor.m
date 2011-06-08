@@ -15,7 +15,7 @@
     @private
     NSUInteger hash_;
 }
-@property (nonatomic, retain) ECCodeUnit *codeUnit;
+@property (nonatomic, strong) ECCodeUnit *codeUnit;
 @end
 
 @implementation ECCodeCursor

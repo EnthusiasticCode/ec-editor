@@ -11,8 +11,8 @@
 
 /// Protocol objects passed as files to track must conform to.
 @protocol ECCodeIndexingFileObserving
-@property (nonatomic, retain) NSString *file;
-@property (nonatomic, retain) NSString *unsavedContent;
+@property (nonatomic, strong) NSString *file;
+@property (nonatomic, strong) NSString *unsavedContent;
 @end
 
 /// Class that encapsulates interaction with parsing and indexing libraries to provide language related non file specific functionality such as symbol resolution and refactoring.

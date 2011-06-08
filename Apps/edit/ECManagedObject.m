@@ -12,11 +12,11 @@
 static NSString *ECManagedObjectIndex = @"index";
 
 @protocol ECOrdering <NSObject>
-@property (nonatomic, retain) NSNumber *index;
+@property (nonatomic, strong) NSNumber *index;
 @end
 
 @interface ECManagedObjectProxy : NSMutableArray
-@property (nonatomic, assign) ECManagedObject *managedObject;
+@property (nonatomic, weak) ECManagedObject *managedObject;
 @property (nonatomic, copy) NSString *key;
 - (id)initWithManagedObject:(ECManagedObject *)managedObject key:(NSString *)key;
 + (id)proxyForManagedObject:(ECManagedObject *)managedObject key:(NSString *)key;
