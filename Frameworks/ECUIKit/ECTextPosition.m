@@ -14,7 +14,7 @@
 
 - (id)initWithIndex:(NSUInteger)idx
 {
-    [super init];
+    self = [super init];
     index = idx;
     return self;
 }

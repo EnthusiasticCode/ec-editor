@@ -210,7 +210,7 @@ static void init(ECJumpBar *self)
 - (id)initWithCoder:(NSCoder *)aDecoder
 {
     // TODO think better
-    [super initWithCoder:aDecoder];
+    self = [super initWithCoder:aDecoder];
     init(self);
     return self;
 }

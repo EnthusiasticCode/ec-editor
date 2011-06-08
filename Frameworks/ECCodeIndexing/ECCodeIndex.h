@@ -29,9 +29,9 @@
 - (NSArray *)observedFiles;
 /// Attempts to add KVO observers to the given file to track changes to it.
 /// If a file with the same file is already being tracked, returns NO. No observers are added to the file in that case.
-- (BOOL)addObserversToFile:(id<ECCodeIndexingFileObserving>)fileObject;
+- (BOOL)addObserversToFile:(NSObject<ECCodeIndexingFileObserving> *)fileObject;
 /// Removes all previously added KVO observers from the given file.
-- (void)removeObserversFromFile:(id<ECCodeIndexingFileObserving>)fileObject;
+- (void)removeObserversFromFile:(NSObject<ECCodeIndexingFileObserving> *)fileObject;
 /// Returns a code unit for the given file, with the given language.
 - (ECCodeUnit *)unitForFile:(NSString *)file withLanguage:(NSString *)language;
 /// Returns a code unit for the given file, with the default language as detected from the file.

@@ -193,13 +193,13 @@
     return [self.pluginsByLanguage objectForKey:language];
 }
 
-- (void)addObserversForUnitsToFile:(id<ECCodeIndexingFileObserving>)fileObject
+- (void)addObserversForUnitsToFile:(NSObject<ECCodeIndexingFileObserving> *)fileObject
 {
     for (ECCodeUnit *unit in [self.codeUnitPointers allValues])
         [unit addObserversToFile:fileObject];
 }
 
-- (void)removeObserversForUnitsFromFile:(id<ECCodeIndexingFileObserving>)fileObject
+- (void)removeObserversForUnitsFromFile:(NSObject<ECCodeIndexingFileObserving> *)fileObject
 {
     for (ECCodeUnit *unit in [self.codeUnitPointers allValues])
         [unit removeObserversFromFile:fileObject];

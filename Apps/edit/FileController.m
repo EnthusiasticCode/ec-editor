@@ -24,10 +24,10 @@
     [super dealloc];
 }
 
-- (void)viewWillAppear:(BOOL)animated
+- (void)viewDidAppear:(BOOL)animated
 {
-    [super viewWillAppear:animated];
     [codeView setNeedsLayout];
+    [super viewDidAppear:animated];
 }
 
 - (void)viewDidLoad

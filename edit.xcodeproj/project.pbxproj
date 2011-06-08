@@ -52,7 +52,6 @@
 		B7199CD6137DD7D9008072D9 /* libclangStaticAnalyzerCheckers.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7199CC4137DD7D9008072D9 /* libclangStaticAnalyzerCheckers.a */; };
 		B7199CD7137DD7D9008072D9 /* libclangStaticAnalyzerCore.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7199CC5137DD7D9008072D9 /* libclangStaticAnalyzerCore.a */; };
 		B7199CD8137DD7D9008072D9 /* libclangStaticAnalyzerFrontend.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7199CC6137DD7D9008072D9 /* libclangStaticAnalyzerFrontend.a */; };
-		B7199CD9137DD7D9008072D9 /* libclangTooling.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7199CC7137DD7D9008072D9 /* libclangTooling.a */; };
 		B7199D20137DD7EE008072D9 /* libLLVMAlphaCodeGen.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7199CDB137DD7EE008072D9 /* libLLVMAlphaCodeGen.a */; };
 		B7199D21137DD7EE008072D9 /* libLLVMAlphaInfo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7199CDC137DD7EE008072D9 /* libLLVMAlphaInfo.a */; };
 		B7199D22137DD7EE008072D9 /* libLLVMAnalysis.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7199CDD137DD7EE008072D9 /* libLLVMAnalysis.a */; };
@@ -254,7 +253,6 @@
 		B7199CC4137DD7D9008072D9 /* libclangStaticAnalyzerCheckers.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libclangStaticAnalyzerCheckers.a; sourceTree = "<group>"; };
 		B7199CC5137DD7D9008072D9 /* libclangStaticAnalyzerCore.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libclangStaticAnalyzerCore.a; sourceTree = "<group>"; };
 		B7199CC6137DD7D9008072D9 /* libclangStaticAnalyzerFrontend.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libclangStaticAnalyzerFrontend.a; sourceTree = "<group>"; };
-		B7199CC7137DD7D9008072D9 /* libclangTooling.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libclangTooling.a; sourceTree = "<group>"; };
 		B7199CDB137DD7EE008072D9 /* libLLVMAlphaCodeGen.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libLLVMAlphaCodeGen.a; sourceTree = "<group>"; };
 		B7199CDC137DD7EE008072D9 /* libLLVMAlphaInfo.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libLLVMAlphaInfo.a; sourceTree = "<group>"; };
 		B7199CDD137DD7EE008072D9 /* libLLVMAnalysis.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libLLVMAnalysis.a; sourceTree = "<group>"; };
@@ -506,7 +504,6 @@
 				B7199CD6137DD7D9008072D9 /* libclangStaticAnalyzerCheckers.a in Frameworks */,
 				B7199CD7137DD7D9008072D9 /* libclangStaticAnalyzerCore.a in Frameworks */,
 				B7199CD8137DD7D9008072D9 /* libclangStaticAnalyzerFrontend.a in Frameworks */,
-				B7199CD9137DD7D9008072D9 /* libclangTooling.a in Frameworks */,
 				B7199D20137DD7EE008072D9 /* libLLVMAlphaCodeGen.a in Frameworks */,
 				B7199D21137DD7EE008072D9 /* libLLVMAlphaInfo.a in Frameworks */,
 				B7199D22137DD7EE008072D9 /* libLLVMAnalysis.a in Frameworks */,
@@ -780,7 +777,6 @@
 				B7199CC4137DD7D9008072D9 /* libclangStaticAnalyzerCheckers.a */,
 				B7199CC5137DD7D9008072D9 /* libclangStaticAnalyzerCore.a */,
 				B7199CC6137DD7D9008072D9 /* libclangStaticAnalyzerFrontend.a */,
-				B7199CC7137DD7D9008072D9 /* libclangTooling.a */,
 			);
 			name = clang;
 			path = usr/lib;
@@ -1214,6 +1210,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_UNIVERSAL_IPHONE_OS)";
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer: Uri Baghin (CHBDVM6AD2)";
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
@@ -1226,6 +1223,7 @@
 				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
 				GCC_WARN_SHADOW = YES;
 				GCC_WARN_SIGN_COMPARE = YES;
+				GCC_WARN_STRICT_SELECTOR_MATCH = YES;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
@@ -1241,6 +1239,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_UNIVERSAL_IPHONE_OS)";
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer: Uri Baghin (CHBDVM6AD2)";
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -1252,6 +1251,7 @@
 				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
 				GCC_WARN_SHADOW = YES;
 				GCC_WARN_SIGN_COMPARE = YES;
+				GCC_WARN_STRICT_SELECTOR_MATCH = YES;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;

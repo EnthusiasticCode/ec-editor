@@ -10,8 +10,6 @@
 #import "HexFiend_Private.h"
 #include <malloc/malloc.h>
 
-#define FIXUP_LENGTHS 0
-
 #define BTREE_BRANCH_ORDER 10
 #define BTREE_LEAF_ORDER 10
 
@@ -38,10 +36,8 @@ static TreeEntry *btree_search(HFBTree *tree, HFBTreeIndex offset, HFBTreeIndex 
 static id btree_insert_returning_retained_value_for_parent(HFBTree *tree, TreeEntry *entry, HFBTreeIndex offset);
 static BOOL btree_remove(HFBTree *tree, HFBTreeIndex offset);
 static void btree_recursive_check_integrity(HFBTree *tree, HFBTreeNode *branchOrLeaf, TreeDepth_t depth, HFBTreeNode **linkHelper);
-static HFBTreeIndex btree_recursive_fixup_cached_lengths(HFBTree *tree, HFBTreeNode *branchOrLeaf);
 static HFBTreeIndex btree_recursive_check_integrity_of_cached_lengths(HFBTreeNode *branchOrLeaf);
 static BOOL btree_are_cached_lengths_correct(HFBTreeNode *branchOrLeaf, HFBTreeIndex *outLength);
-static NSUInteger btree_entry_count(HFBTreeNode *branchOrLeaf);
 static ChildIndex_t count_node_values(HFBTreeNode *node);
 static HFBTreeIndex sum_child_lengths(const id *children, const BOOL isLeaf);
 static HFBTreeNode *mutable_copy_node(HFBTreeNode *node, TreeDepth_t depth, HFBTreeNode **linkingHelper);
@@ -97,7 +93,7 @@ static HFBTreeNode *mutable_copy_node(HFBTreeNode *node, TreeDepth_t depth, HFBT
     return self;
 }
 
-- (void)release {
+- (oneway void)release {
     NSUInteger result = HFAtomicDecrement(&rc, NO);
     if (result == (NSUInteger)(-1)) {
         [self dealloc];
@@ -162,7 +158,7 @@ static HFBTreeNode *mutable_copy_node(HFBTreeNode *node, TreeDepth_t depth, HFBT
 @implementation HFBTree
 
 - (id)init {
-    [super init];
+    self = [super init];
     depth = BAD_DEPTH;
     root = nil;
     return self;
@@ -225,13 +221,6 @@ static HFBTreeNode *mutable_copy_node(HFBTreeNode *node, TreeDepth_t depth, HFBT
             depth++;
             HFASSERT(depth <= MAX_DEPTH);
         }
-#if FIXUP_LENGTHS
-        HFBTreeIndex outLength = -1;
-        if (! btree_are_cached_lengths_correct(root, &outLength)) {
-            puts("Fixed up length after insertion");
-            btree_recursive_fixup_cached_lengths(self, root);
-        }
-#endif
     }
 }
 
@@ -248,9 +237,6 @@ static HFBTreeNode *mutable_copy_node(HFBTreeNode *node, TreeDepth_t depth, HFBT
 
 - (void)removeEntryAtOffset:(HFBTreeIndex)offset {
     HFASSERT(root != nil);
-#if FIXUP_LENGTHS
-    const NSUInteger beforeCount = btree_entry_count(root);
-#endif
     BOOL deleteRoot = btree_remove(self, offset);
     if (deleteRoot) {
         HFASSERT(count_node_values(root) <= 1);
@@ -259,22 +245,6 @@ static HFBTreeNode *mutable_copy_node(HFBTreeNode *node, TreeDepth_t depth, HFBT
         root = newRoot;
         depth--;
     }
-#if FIXUP_LENGTHS
-    const NSUInteger afterCount = btree_entry_count(root);
-    if (beforeCount != afterCount + 1) {
-        NSLog(@"Bad counts: before %lu, after %lu", beforeCount, afterCount);
-    }
-    HFBTreeIndex outLength = -1;
-    static NSUInteger fixupCount;
-    if (! btree_are_cached_lengths_correct(root, &outLength)) {
-        fixupCount++;
-        printf("Fixed up length after deletion (%lu)\n", (unsigned long)fixupCount);
-        btree_recursive_fixup_cached_lengths(self, root);
-    }
-    else {
-        //printf("Length post-deletion was OK! (%lu)\n", fixupCount);
-    }
-#endif
 }
 
 - (id)mutableCopyWithZone:(NSZone *)zone {
@@ -982,49 +952,6 @@ static BOOL btree_are_cached_lengths_correct(HFBTreeNode *branchOrLeaf, HFBTreeI
     }
     if (outLength) *outLength = length;
     return length == branchOrLeaf->subtreeLength;
-}
-
-static NSUInteger btree_entry_count(HFBTreeNode *branchOrLeaf) {
-    NSUInteger result = 0;
-    if (branchOrLeaf == nil) {
-        // do nothing
-    }
-    else if (IS_LEAF(branchOrLeaf)) {
-        HFBTreeLeaf *leaf = CHECK_CAST(branchOrLeaf, HFBTreeLeaf);
-        for (ChildIndex_t i=0; i < BTREE_LEAF_ORDER; i++) {
-            if (! leaf->children[i]) break;
-            result++;
-        }        
-    }
-    else {
-        HFBTreeBranch *branch = CHECK_CAST(branchOrLeaf, HFBTreeBranch);
-        for (ChildIndex_t i=0; i < BTREE_LEAF_ORDER; i++) {
-            if (! branch->children[i]) break;
-            result += btree_entry_count(branch->children[i]);
-        }
-    }
-    return result;
-}
-
-static HFBTreeIndex btree_recursive_fixup_cached_lengths(HFBTree *tree, HFBTreeNode *branchOrLeaf) {
-    HFBTreeIndex result = 0;
-    if (IS_LEAF(branchOrLeaf)) {
-        HFBTreeLeaf *leaf = CHECK_CAST(branchOrLeaf, HFBTreeLeaf);
-        for (ChildIndex_t i = 0; i < BTREE_LEAF_ORDER; i++) {
-            if (! leaf->children[i]) break;
-            result = HFSum(result, HFBTreeLength(leaf->children[i]));
-        }
-    }
-    else {
-        HFBTreeBranch *branch = CHECK_CAST(branchOrLeaf, HFBTreeBranch);
-        for (ChildIndex_t i = 0; i < BTREE_BRANCH_ORDER; i++) {
-            if (! branch->children[i]) break;
-            btree_recursive_fixup_cached_lengths(tree, branch->children[i]);
-            result = HFSum(result, CHECK_CAST(branch->children[i], HFBTreeNode)->subtreeLength);
-        }
-    }
-    branchOrLeaf->subtreeLength = result;
-    return result;
 }
 
 FORCE_STATIC_INLINE void btree_apply_function_to_entries(HFBTree *tree, HFBTreeIndex offset, BOOL (*func)(id, HFBTreeIndex, void *), void *userInfo) {

@@ -16,7 +16,7 @@
 
 @property (readonly) NSUInteger index;
 
-- initWithIndex:(NSUInteger)idx;
+- (id)initWithIndex:(NSUInteger)idx;
 - (NSComparisonResult)compare:other;
 
 @end

@@ -77,7 +77,7 @@
     NSURL *storeURL = [NSURL fileURLWithPath:storePath];
     if (![self.fileManager fileExistsAtPath:bundle])
         [self.fileManager createDirectoryAtPath:bundle withIntermediateDirectories:YES attributes:nil error:NULL];
-    self.persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:[self managedObjectModel]];
+    self.persistentStoreCoordinator = [[[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:[self managedObjectModel]] autorelease];
     NSError *error;
     if (![self.persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeURL options:nil error:&error])
     {

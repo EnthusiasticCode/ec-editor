@@ -83,7 +83,7 @@ static ECCodeCursor *cursorFromClangCursor(CXCursor clangCursor)
             language = @"Unknown";
     }
     enum CXCursorKind clangKind = clang_getCursorKind(clangCursor);
-    ECCodeCursorKind kind = clangKind;
+    ECCodeCursorKind kind = (ECCodeCursorKind)clangKind;
     NSString *spelling;
     CXString clangSpelling = clang_getCursorSpelling(clangCursor);
     spelling = [NSString stringWithUTF8String:clang_getCString(clangSpelling)];
@@ -200,7 +200,7 @@ static ECCodeCompletionChunk *chunkFromClangCompletionString(CXCompletionString 
     CXString clangString = clang_getCompletionChunkText(clangCompletionString, index);
     NSString *string = [NSString stringWithUTF8String:clang_getCString(clangString)];
     clang_disposeString(clangString);
-    return [ECCodeCompletionChunk chunkWithKind:clang_getCompletionChunkKind(clangCompletionString, index) string:string];
+    return [ECCodeCompletionChunk chunkWithKind:(ECCodeCompletionChunkKind)clang_getCompletionChunkKind(clangCompletionString, index) string:string];
 }
 
 static ECCodeCompletionString *completionStringFromClangCompletionString(CXCompletionString clangCompletionString)
@@ -215,7 +215,7 @@ static ECCodeCompletionString *completionStringFromClangCompletionString(CXCompl
 static ECCodeCompletionResult *completionResultFromClangCompletionResult(CXCompletionResult clangCompletionResult)
 {
     ECCodeCompletionString *completionString = completionStringFromClangCompletionString(clangCompletionResult.CompletionString);
-    return [ECCodeCompletionResult resultWithCursorKind:clangCompletionResult.CursorKind completionString:completionString];
+    return [ECCodeCompletionResult resultWithCursorKind:(ECCodeCursorKind)clangCompletionResult.CursorKind completionString:completionString];
 }
 
 @implementation ECClangCodeUnit

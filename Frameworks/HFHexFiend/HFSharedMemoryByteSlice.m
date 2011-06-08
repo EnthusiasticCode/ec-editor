@@ -16,8 +16,8 @@
 
 @implementation HFSharedMemoryByteSlice
 
-- initWithUnsharedData:(NSData *)unsharedData {
-    [super init];
+- (id)initWithUnsharedData:(NSData *)unsharedData {
+    self = [super init];
     REQUIRE_NOT_NULL(unsharedData);
     NSUInteger dataLength = [unsharedData length];
     NSUInteger inlineAmount = MIN(dataLength, MAX_TAIL_LENGTH);
@@ -35,13 +35,13 @@
 }
 
 // retains, does not copy
-- initWithData:(NSMutableData *)dat {
+- (id)initWithData:(NSMutableData *)dat {
     REQUIRE_NOT_NULL(dat);
     return [self initWithData:dat offset:0 length:[dat length]];
 }
 
-- initWithData:(NSMutableData *)dat offset:(NSUInteger)off length:(NSUInteger)len {
-    [super init];
+- (id)initWithData:(NSMutableData *)dat offset:(NSUInteger)off length:(NSUInteger)len {
+    self = [super init];
     REQUIRE_NOT_NULL(dat);
     HFASSERT(off + len >= off); //check for overflow
     HFASSERT(off + len <= [dat length]);
@@ -51,8 +51,8 @@
     return self;
 }
 
-- initWithSharedData:(NSMutableData *)dat offset:(NSUInteger)off length:(NSUInteger)len tail:(const void *)tail tailLength:(NSUInteger)tailLen {
-    [super init];
+- (id)initWithSharedData:(NSMutableData *)dat offset:(NSUInteger)off length:(NSUInteger)len tail:(const void *)tail tailLength:(NSUInteger)tailLen {
+    self = [super init];
     if (off || len) REQUIRE_NOT_NULL(dat);
     if (tailLen) REQUIRE_NOT_NULL(tail);
     HFASSERT(tailLen <= MAX_TAIL_LENGTH);
@@ -133,7 +133,7 @@
     return result;
 }
 
-- byteSliceByAppendingSlice:(HFByteSlice *)slice {
+- (id)byteSliceByAppendingSlice:(HFByteSlice *)slice {
     REQUIRE_NOT_NULL(slice);
     const unsigned long long sliceLength = [slice length];
     if (sliceLength == 0) return self;

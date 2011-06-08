@@ -50,7 +50,7 @@
 - (CompletionController *)completionController
 {
     if (!_completionController && self.unit)
-        _completionController = [[UIViewController alloc] initWithNibName:@"CompletionController" bundle:[NSBundle mainBundle]];
+        _completionController = [[CompletionController alloc] initWithNibName:@"CompletionController" bundle:[NSBundle mainBundle]];
     return _completionController;
 }
 

@@ -89,7 +89,7 @@
     return YES;
 }
 
-- copyWithZone:(NSZone *)z
+- (id)copyWithZone:(NSZone *)z
 {
     if (NSShouldRetainWithZone(self, z))
     {

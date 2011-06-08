@@ -57,7 +57,7 @@ static BOOL returnFTruncateError(NSError **error) {
 
 @implementation HFFileReference
 
-- sharedInitWithPath:(NSString *)path error:(NSError **)error {
+- (id)initInternalWithPath:(NSString *)path error:(NSError **)error {
     int result;
     REQUIRE_NOT_NULL(path);
     const char* p = [path fileSystemRepresentation];
@@ -68,9 +68,9 @@ static BOOL returnFTruncateError(NSError **error) {
         fileDescriptor = open(p, O_RDONLY, 0);
     }
     if (fileDescriptor < 0) {
-	returnReadError(error);
+        returnReadError(error);
         [self release];
-	return nil;
+        return nil;
     }
 #if USE_STAT64
     struct stat64 sb;
@@ -93,27 +93,27 @@ static BOOL returnFTruncateError(NSError **error) {
     return self;
 }
 
-- initWithPath:(NSString *)path error:(NSError **)error {
+- (id)initWithPath:(NSString *)path error:(NSError **)error {
     if((self = [super init])) {
         isWritable = NO;
-        [self sharedInitWithPath:path error:error];
+        self = [self initInternalWithPath:path error:error];
     }
     return self;
 }
 
-- initWritableWithPath:(NSString *)path error:(NSError **)error{
+- (id)initWritableWithPath:(NSString *)path error:(NSError **)error{
     if((self = [super init])) {
         isWritable = YES;
-        [self sharedInitWithPath:path error:error];
+        self = [self initInternalWithPath:path error:error];
     }
     return self;
 }
 
-- initWithPath:(NSString *)path {
+- (id)initWithPath:(NSString *)path {
     return [self initWithPath:path error:NULL];
 }
 
-- initWritableWithPath:(NSString *)path {
+- (id)initWritableWithPath:(NSString *)path {
     return [self initWritableWithPath:path error:NULL];
 }
 
