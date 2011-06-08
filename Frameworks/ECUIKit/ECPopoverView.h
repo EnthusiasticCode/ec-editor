@@ -21,7 +21,7 @@
 
 @property (nonatomic) CGSize contentSize;
 
-@property (nonatomic, retain) UIView *contentView;
+@property (nonatomic, strong) UIView *contentView;
 
 #pragma mark Arrow
 

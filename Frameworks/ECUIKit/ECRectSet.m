@@ -59,7 +59,6 @@
 - (void)dealloc
 {
     free(buffer);
-    [super dealloc];
 }
 
 - (void)enumerateRectsUsingBlock:(void (^)(CGRect, BOOL *))block
@@ -91,28 +90,12 @@
 
 - (id)copyWithZone:(NSZone *)zone
 {
-    if (NSShouldRetainWithZone(self, zone))
-    {
-        return [self retain];
-    }
-    else
-    {
-        ECRectSet *result = [[ECRectSet allocWithZone:zone] initWithRects:self];
-        return result;
-    }
+    return self;
 }
 
 - (id)mutableCopyWithZone:(NSZone *)zone
 {
-    if (NSShouldRetainWithZone(self, zone))
-    {
-        return [self retain];
-    }
-    else
-    {
-        ECMutableRectSet *result = [[ECMutableRectSet allocWithZone:zone] initWithRects:self];
-        return result;
-    }
+    return [[ECMutableRectSet alloc] initWithRects:self];
 }
 
 //- (NSUInteger)countByEnumeratingWithState:(NSFastEnumerationState *)state objects:(id *)stackbuf count:(NSUInteger)len
@@ -131,12 +114,12 @@
 
 + (id)rectSet
 {
-    return [[[self alloc] init] autorelease];
+    return [[self alloc] init];
 }
 
 + (id)rectSetWithRect:(CGRect)rect
 {
-    return [[[self alloc] initWithRect:rect] autorelease];
+    return [[self alloc] initWithRect:rect];
 }
 
 @end
@@ -205,7 +188,7 @@
 
 + (id)rectSetWithCapacity:(NSUInteger)cap
 {
-    return [[[self alloc] initWithCapacity:cap] autorelease];
+    return [[self alloc] initWithCapacity:cap];
 }
 
 @end

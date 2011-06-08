@@ -27,7 +27,6 @@
 
 - (void)setString:(NSString *)aString
 {
-    [string release];
     string = [[NSMutableAttributedString alloc] initWithString:aString attributes:defaultTextStyle.CTAttributes];
 }
 
@@ -36,15 +35,9 @@
 - (id)init {
     if ((self = [super init])) 
     {
-        defaultTextStyle = [[ECTextStyle textStyleWithName:@"default" font:[UIFont fontWithName:@"Inconsolata" size:15] color:nil] retain];
+        defaultTextStyle = [ECTextStyle textStyleWithName:@"default" font:[UIFont fontWithName:@"Inconsolata" size:15] color:nil];
     }
     return self;
-}
-
-- (void)dealloc
-{
-    [string release];
-    [super dealloc];
 }
 
 #pragma mark Text Renderer DataSource Methods
@@ -80,8 +73,7 @@
         NSAttributedString *newLine = [[NSAttributedString alloc] initWithString:@"\n" attributes:defaultTextStyle.CTAttributes];
         NSMutableAttributedString *result = (stringRange.length == stringLength) ? [string mutableCopy] : [[NSMutableAttributedString alloc] initWithAttributedString:[string attributedSubstringFromRange:stringRange]];
         [result appendAttributedString:newLine];
-        [newLine release];
-        return [result autorelease];
+        return result;
     }
     
     return [string attributedSubstringFromRange:stringRange];

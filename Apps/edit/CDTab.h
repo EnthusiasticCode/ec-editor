@@ -15,7 +15,7 @@
 @interface CDTab : ECManagedObject {
 @private
 }
-@property (nonatomic, retain) NSNumber * index;
-@property (nonatomic, retain) NSSet* historyItems;
+@property (nonatomic, strong) NSNumber * index;
+@property (nonatomic, strong) NSSet* historyItems;
 
 @end

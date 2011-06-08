@@ -60,12 +60,6 @@ static inline id init(ECLineMarksView *self)
     }
 }
 
-- (void)dealloc
-{
-    [tapMarkRecognizer release];
-    [marks release];
-    [super dealloc];
-}
 
 - (void)drawRect:(CGRect)rect
 {

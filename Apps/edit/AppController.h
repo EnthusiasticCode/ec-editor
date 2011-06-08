@@ -12,9 +12,9 @@
 @class FileController;
 
 @interface AppController : UINavigationController <UIApplicationDelegate>
-@property (nonatomic, retain) IBOutlet UIWindow *window;
-@property (nonatomic, retain) IBOutlet RootController *rootController;
-@property (nonatomic, retain) IBOutlet ProjectController *projectController;
-@property (nonatomic, retain) IBOutlet FileController *fileController;
+@property (nonatomic, strong) IBOutlet UIWindow *window;
+@property (nonatomic, strong) IBOutlet RootController *rootController;
+@property (nonatomic, strong) IBOutlet ProjectController *projectController;
+@property (nonatomic, strong) IBOutlet FileController *fileController;
 - (NSString *)applicationDocumentsDirectory;
 @end

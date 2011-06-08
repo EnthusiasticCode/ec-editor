@@ -10,7 +10,7 @@
 
 
 @interface HFByteSliceFileOperationQueueEntry : NSObject {
-	@public
+@public
 	NSUInteger length;
 	unsigned long long offset; //target location
 	unsigned char *bytes;
@@ -22,7 +22,7 @@
 @class HFFileReference, HFProgressTracker;
 
 @interface HFByteSliceFileOperationContext : NSObject {
-	@public
+@public
 	NSUInteger softMaxAllocatedMemory;
 	NSUInteger totalAllocatedMemory;
 	//the following ivars are not retained

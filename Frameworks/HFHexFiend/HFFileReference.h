@@ -9,12 +9,12 @@
 #import <Foundation/Foundation.h>
 
 /*! @class HFFileReference
-    @brief A reference to an open file.
-    
-    HFFileReference encapsulates a reference to an open file.  Multiple instances of HFFileByteSlice may share an HFFileReference, so that the file only needs to be opened once.
-    
-    All HFFileReferences use non-caching IO (F_NOCACHE is set).
-*/
+ @brief A reference to an open file.
+ 
+ HFFileReference encapsulates a reference to an open file.  Multiple instances of HFFileByteSlice may share an HFFileReference, so that the file only needs to be opened once.
+ 
+ All HFFileReferences use non-caching IO (F_NOCACHE is set).
+ */
 @interface HFFileReference : NSObject {
     int fileDescriptor;
     dev_t device;
@@ -34,18 +34,18 @@
 - (void)close;
 
 /*! Reads from the file into a local memory buffer.  The sum of the length and the offset must not exceed the length of the file.
-    @param buff The buffer to read into.
-    @param length The number of bytes to read.
-    @param offset The offset in the file to read.
-*/
+ @param buff The buffer to read into.
+ @param length The number of bytes to read.
+ @param offset The offset in the file to read.
+ */
 - (void)readBytes:(unsigned char *)buff length:(NSUInteger)length from:(unsigned long long)offset;
 
 /*! Writes data to the file, which must have been opened writable.
-   @param buff The data to write.
-   @param length The number of bytes to write.
-   @param offset The offset in the file to write to.
-   @return 0 on success, or an errno-style error code on failure
-*/
+ @param buff The data to write.
+ @param length The number of bytes to write.
+ @param offset The offset in the file to write to.
+ @return 0 on success, or an errno-style error code on failure
+ */
 - (int)writeBytes:(const unsigned char *)buff length:(NSUInteger)length to:(unsigned long long)offset;
 
 /*! Returns the length of the file, as a 64 bit unsigned long long. */

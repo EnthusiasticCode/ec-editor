@@ -12,11 +12,11 @@
 static NSString *ECManagedObjectIndex = @"index";
 
 @protocol ECOrdering <NSObject>
-@property (nonatomic, retain) NSNumber *index;
+@property (nonatomic, strong) NSNumber *index;
 @end
 
 @interface ECManagedObjectProxy : NSMutableArray
-@property (nonatomic, assign) ECManagedObject *managedObject;
+@property (nonatomic, weak) ECManagedObject *managedObject;
 @property (nonatomic, copy) NSString *key;
 - (id)initWithManagedObject:(ECManagedObject *)managedObject key:(NSString *)key;
 + (id)proxyForManagedObject:(ECManagedObject *)managedObject key:(NSString *)key;
@@ -27,11 +27,6 @@ static NSString *ECManagedObjectIndex = @"index";
 @synthesize managedObject = _managedObject;
 @synthesize key = _key;
 
-- (void)dealloc
-{
-    self.key = nil;
-    [super dealloc];
-}
 
 - (id)initWithManagedObject:(ECManagedObject *)managedObject key:(NSString *)key
 {
@@ -47,7 +42,7 @@ static NSString *ECManagedObjectIndex = @"index";
 {
     id proxy = [self alloc];
     proxy = [proxy initWithManagedObject:managedObject key:key];
-    return [proxy autorelease];
+    return proxy;
 }
 
 - (NSUInteger)count
@@ -181,8 +176,7 @@ static void shiftIndicesOfObjectsRight(NSArray *objects)
     [fetchRequest setPredicate:predicate];
     NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:ECManagedObjectIndex ascending:YES];
     [fetchRequest setSortDescriptors:[NSArray arrayWithObject:sortDescriptor]];
-    [sortDescriptor release];
-    return [fetchRequest autorelease];
+    return fetchRequest;
 }
 
 - (NSFetchRequest *)fetchRequestForOrderedKey:(NSString *)key withAdditionalPredicate:(NSPredicate *)predicate
@@ -206,12 +200,12 @@ static void shiftIndicesOfObjectsRight(NSArray *objects)
 - (NSArray *)copyForOrderedKey:(NSString *)key
 {
     NSFetchRequest *fetchRequest = [self fetchRequestForOrderedKey:key];
-    return [[[self managedObjectContext] executeFetchRequest:fetchRequest error:NULL] retain];
+    return [[self managedObjectContext] executeFetchRequest:fetchRequest error:NULL];
 }
 
 - (NSMutableArray *)mutableCopyForOrderedKey:(NSString *)key
 {
-    return [[[self copyForOrderedKey:key] autorelease] mutableCopy];
+    return [[self copyForOrderedKey:key] mutableCopy];
 }
 
 - (NSUInteger)countForOrderedKey:(NSString *)key
@@ -269,7 +263,7 @@ static void shiftIndicesOfObjectsRight(NSArray *objects)
 
 - (void)replaceObjectAtIndex:(NSUInteger)index withObject:(id)object forOrderedKey:(NSString *)key
 {
-    id oldObject = [[self objectAtIndex:index forOrderedKey:key] retain];
+    id oldObject = [self objectAtIndex:index forOrderedKey:key];
     NSSet *addedObjects = [NSSet setWithObject:object];
     NSSet *removedObjects = [NSSet setWithObject:oldObject];
     [self willChangeValueForKey:key withSetMutation:NSKeyValueUnionSetMutation usingObjects:addedObjects];
@@ -279,7 +273,6 @@ static void shiftIndicesOfObjectsRight(NSArray *objects)
     [self didChangeValueForKey:key withSetMutation:NSKeyValueMinusSetMutation usingObjects:removedObjects];
     [self didChangeValueForKey:key withSetMutation:NSKeyValueUnionSetMutation usingObjects:addedObjects];
     ((id<ECOrdering>)object).index = ((id<ECOrdering>)oldObject).index;
-    [oldObject release];
 }
 
 - (void)exchangeObjectAtIndex:(NSUInteger)idx1 withObjectAtIndex:(NSUInteger)idx2 forOrderedKey:(NSString *)key
@@ -289,7 +282,6 @@ static void shiftIndicesOfObjectsRight(NSArray *objects)
     NSNumber *oldIdx1 = [idx1Object.index copy];
     idx1Object.index = idx2Object.index;
     idx2Object.index = oldIdx1;
-    [oldIdx1 release];
 }
 
 - (void)moveObjectAtIndex:(NSUInteger)idx1 toIndex:(NSUInteger)idx2 forOrderedKey:(NSString *)key
@@ -324,7 +316,6 @@ static void shiftIndicesOfObjectsRight(NSArray *objects)
     [intersection intersectSet:[self valueForKey:key]];
     if ([intersection count])
         [self removeObjects:intersection forOrderedKey:key];
-    [intersection release];
     [self willChangeValueForKey:key withSetMutation:NSKeyValueUnionSetMutation usingObjects:objects];
     [[self primitiveValueForKey:key] unionSet:objects];
     [self didChangeValueForKey:key withSetMutation:NSKeyValueUnionSetMutation usingObjects:objects];
@@ -335,8 +326,7 @@ static void shiftIndicesOfObjectsRight(NSArray *objects)
     NSMutableSet *intersection = [objects mutableCopy];
     [intersection intersectSet:[self valueForKey:key]];
     if (![intersection count])
-        return [intersection release];
-    [intersection release];
+        return;
     [self willChangeValueForKey:key withSetMutation:NSKeyValueMinusSetMutation usingObjects:objects];
     [[self primitiveValueForKey:key] minusSet:objects];
     [self didChangeValueForKey:key withSetMutation:NSKeyValueMinusSetMutation usingObjects:objects];
@@ -348,7 +338,6 @@ static void shiftIndicesOfObjectsRight(NSArray *objects)
             object.index = [NSNumber numberWithUnsignedInteger:index];
         ++index;
     }
-    [objectsToRearrange release];
 }
 
 - (NSArray *)subarrayWithRange:(NSRange)range forOrderedKey:(NSString *)key

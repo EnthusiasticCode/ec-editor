@@ -21,11 +21,6 @@
 @synthesize kind = _kind;
 @synthesize string = _string;
 
-- (void)dealloc
-{
-    [_string release];
-    [super dealloc];
-}
 
 - (id)initWithKind:(ECCodeCompletionChunkKind)kind string:(NSString *)string
 {
@@ -43,12 +38,12 @@
 {
     id chunk = [self alloc];
     chunk = [chunk initWithKind:kind string:string];
-    return [chunk autorelease];
+    return chunk;
 }
 
 - (id)copyWithZone:(NSZone *)zone
 {
-    return [self retain];
+    return self;
 }
 
 - (NSUInteger)hash

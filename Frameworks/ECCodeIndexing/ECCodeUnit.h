@@ -13,11 +13,11 @@
 /// Class that encapsulates interaction with parsing and indexing libraries to provide language related file-specific functionality such as syntax aware highlighting, diagnostics and completions.
 @interface ECCodeUnit : NSObject
 /// The code index that generated the code unit.
-@property (nonatomic, readonly, retain) ECCodeIndex *index;
+@property (nonatomic, readonly, strong) ECCodeIndex *index;
 /// The file of the file the unit is attached to.
-@property (nonatomic, readonly, retain) NSString *file;
+@property (nonatomic, readonly, strong) NSString *file;
 /// The language the unit is using to interpret the file's contents.
-@property (nonatomic, readonly, retain) NSString *language;
+@property (nonatomic, readonly, strong) NSString *language;
 /// Whether or not the files the units is depending on have unsaved content.
 @property (nonatomic, readonly) BOOL filesHaveUnsavedContent;
 /// Returns whether the unit depends on the file at the given file or not.

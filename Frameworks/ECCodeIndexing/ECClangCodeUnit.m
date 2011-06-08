@@ -24,8 +24,8 @@ const NSString *ECClangCodeUnitOptionCXIndex = @"CXIndex";
 @property (nonatomic) CXIndex index;
 @property (nonatomic) CXTranslationUnit translationUnit;
 @property (nonatomic) CXFile source;
-@property (nonatomic, retain) NSString *file;
-@property (nonatomic, retain) NSString *language;
+@property (nonatomic, strong) NSString *file;
+@property (nonatomic, strong) NSString *language;
 @end
 
 #pragma mark -
@@ -228,8 +228,6 @@ static ECCodeCompletionResult *completionResultFromClangCompletionResult(CXCompl
 
 - (void)dealloc {
     clang_disposeTranslationUnit(self.translationUnit);
-    self.file = nil;
-    [super dealloc];
 }
 
 - (id)initWithFile:(NSString *)file index:(CXIndex)index language:(NSString *)language
@@ -239,7 +237,6 @@ static ECCodeCompletionResult *completionResultFromClangCompletionResult(CXCompl
         return nil;
     if (!index)
     {
-        [self release];
         return nil;
     }
     int parameter_count = 11;
@@ -255,7 +252,7 @@ static ECCodeCompletionResult *completionResultFromClangCompletionResult(CXCompl
 {
     id codeUnit = [self alloc];
     codeUnit = [codeUnit initWithFile:file index:index language:language];
-    return [codeUnit autorelease];
+    return codeUnit;
 }
 
 - (BOOL)isDependentOnFile:(NSString *)file
@@ -282,7 +279,7 @@ static ECCodeCompletionResult *completionResultFromClangCompletionResult(CXCompl
     for (unsigned i = 0; i < clangCompletions->NumResults; ++i)
         [completions addObject:completionResultFromClangCompletionResult(clangCompletions->Results[i])];
     clang_disposeCodeCompleteResults(clangCompletions);
-    return [completions autorelease];
+    return completions;
 }
 
 - (NSArray *)diagnostics

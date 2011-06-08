@@ -11,13 +11,13 @@
 @class Node, File, NSManagedObjectContext, NSManagedObjectModel, NSPersistentStoreCoordinator;
 
 @interface Project : NSObject
-@property (nonatomic, retain) NSString *bundle;
-@property (nonatomic, retain) NSString *name;
-@property (nonatomic, retain) NSFileManager *fileManager;
-@property (nonatomic, retain) NSManagedObjectContext *managedObjectContext;
-@property (nonatomic, retain) NSManagedObjectModel *managedObjectModel;
-@property (nonatomic, retain) NSPersistentStoreCoordinator *persistentStoreCoordinator;
-@property (nonatomic, retain, readonly) Node *rootNode;
+@property (nonatomic, strong) NSString *bundle;
+@property (nonatomic, strong) NSString *name;
+@property (nonatomic, strong) NSFileManager *fileManager;
+@property (nonatomic, strong) NSManagedObjectContext *managedObjectContext;
+@property (nonatomic, strong) NSManagedObjectModel *managedObjectModel;
+@property (nonatomic, strong) NSPersistentStoreCoordinator *persistentStoreCoordinator;
+@property (nonatomic, strong, readonly) Node *rootNode;
 - (id)initWithBundle:(NSString *)bundle;
 - (void)saveContext;
 @end

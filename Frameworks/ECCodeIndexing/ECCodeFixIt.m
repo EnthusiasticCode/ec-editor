@@ -22,12 +22,6 @@
 @synthesize file = _file;
 @synthesize replacementRange = _replacementRange;
 
-- (void)dealloc
-{
-    [_string release];
-    [_file release];
-    [super dealloc];
-}
 
 - (id)initWithString:(NSString *)string file:(NSString *)file replacementRange:(NSRange)replacementRange
 {
@@ -46,12 +40,12 @@
 {
     id fixIt = [self alloc];
     fixIt = [fixIt initWithString:string file:file replacementRange:replacementRange];
-    return [fixIt autorelease];
+    return fixIt;
 }
 
 - (id)copyWithZone:(NSZone *)zone
 {
-    return [self retain];
+    return self;
 }
 
 - (NSUInteger)hash

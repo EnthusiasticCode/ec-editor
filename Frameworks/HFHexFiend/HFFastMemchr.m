@@ -36,7 +36,7 @@ static unsigned char* altivec_memchr(const unsigned char* haystack, unsigned cha
     return NULL;
     
 foundResult:
-        ;
+    ;
     /* some byte has the result - look in groups of 4 to find which it is */
     unsigned numWords = 4;
     while (numWords--) {
@@ -92,7 +92,7 @@ static unsigned char* sse_memchr(const unsigned char* haystack, unsigned char ne
     return NULL;
     
 foundResult:
-        ;
+    ;
     /* some byte has the result - find the LSB of maskedBits */
     haystack += __builtin_ffs(maskedBits) - 1;
     return (unsigned char*)haystack;
@@ -125,7 +125,7 @@ static unsigned char* int_memchr(const unsigned char* haystack, unsigned char ne
         if (((val >> 16) & 0xFF) == needle) return 2 + (unsigned char*)haystack;
         if (((val >> 24) & 0xFF) == needle) return 3 + (unsigned char*)haystack;
 #endif
-	
+        
         haystack += 4;
     }
     

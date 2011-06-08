@@ -20,8 +20,8 @@
 {
     ECPatriciaTrie *_children[ALPHABET_SIZE];
 }
-@property (nonatomic, assign) ECPatriciaTrie *parent;
-@property (nonatomic, retain) NSString *key;
+@property (nonatomic, weak) ECPatriciaTrie *parent;
+@property (nonatomic, strong) NSString *key;
 static NSUInteger _indexForCharacter(unsigned char character);
 static BOOL _characterIsStartOfWord(NSUInteger characterIndex, NSString *string);
 - (NSUInteger)_criticalCharacterInKey:(NSString *)key;
@@ -39,15 +39,6 @@ static BOOL _skipNodeForOptions(ECPatriciaTrie *node, ECPatriciaTrieEnumerationO
 @synthesize key = _key;
 @synthesize object = _object;
 @synthesize endOfWord = _isEndOfWord;
-
-- (void)dealloc
-{
-    for (NSUInteger i = 0; i < ALPHABET_SIZE; ++i)
-        [_children[i] release];
-    self.key = nil;
-    self.object = nil;
-    [super dealloc];
-}
 
 NSUInteger _indexForCharacter(unsigned char character)
 {
@@ -225,7 +216,6 @@ BOOL _skipNodeForOptions(ECPatriciaTrie *node, ECPatriciaTrieEnumerationOptions 
         self.parent->_children[indexInParent] = child;
         child.parent = self.parent;
     }
-    [self release];
 }
 
 - (ECPatriciaTrie *)_insertNodeForKey:(NSString *)key

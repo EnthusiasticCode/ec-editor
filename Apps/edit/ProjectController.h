@@ -10,11 +10,11 @@
 @class Project, Node, File;
 
 @interface ProjectController : UITableViewController
-@property (nonatomic, retain) NSFileManager *fileManager;
-@property (nonatomic, retain) Project *project;
-@property (nonatomic, retain) NSString *projectRoot;
-@property (nonatomic, retain) IBOutlet UIBarButtonItem *editButton;
-@property (nonatomic, retain) IBOutlet UIBarButtonItem *doneButton;
+@property (nonatomic, strong) NSFileManager *fileManager;
+@property (nonatomic, strong) Project *project;
+@property (nonatomic, strong) NSString *projectRoot;
+@property (nonatomic, strong) IBOutlet UIBarButtonItem *editButton;
+@property (nonatomic, strong) IBOutlet UIBarButtonItem *doneButton;
 - (IBAction)edit:(id)sender;
 - (IBAction)done:(id)sender;
 - (void)loadProject:(NSString *)projectRoot;

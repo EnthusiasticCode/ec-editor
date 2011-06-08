@@ -12,7 +12,7 @@
 
 - (void)moveObjectAtIndex:(NSUInteger)idx1 toIndex:(NSUInteger)idx2
 {
-    id object = [[self objectAtIndex:idx1] retain];
+    id object = [self objectAtIndex:idx1];
     if (idx1 > idx2)
     {
         [self removeObjectAtIndex:idx1];
@@ -23,7 +23,6 @@
         [self insertObject:object atIndex:idx2];
         [self removeObjectAtIndex:idx1];
     }
-    [object release];
 }
 
 @end

@@ -10,7 +10,7 @@
 
 
 @interface HFObjectGraph : NSObject {
-    __strong CFMutableDictionaryRef graph;
+    CFMutableDictionaryRef graph;
     NSMutableArray *containedObjects;
 }
 

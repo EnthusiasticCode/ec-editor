@@ -15,10 +15,10 @@
 @interface CDHistoryItem : ECManagedObject {
 @private
 }
-@property (nonatomic, retain) id selection;
-@property (nonatomic, retain) id position;
-@property (nonatomic, retain) NSNumber * index;
-@property (nonatomic, retain) CDTab * tab;
-@property (nonatomic, retain) CDFile * file;
+@property (nonatomic, strong) id selection;
+@property (nonatomic, strong) id position;
+@property (nonatomic, strong) NSNumber * index;
+@property (nonatomic, strong) CDTab * tab;
+@property (nonatomic, strong) CDFile * file;
 
 @end

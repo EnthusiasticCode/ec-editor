@@ -17,8 +17,8 @@
 @property (nonatomic, copy) NSDictionary *pluginsByLanguage;
 @property (nonatomic, copy) NSDictionary *languageToExtensionMap;
 @property (nonatomic, copy) NSDictionary *extensionToLanguageMap;
-@property (nonatomic, retain) NSMutableDictionary *codeUnitPointers;
-@property (nonatomic, retain) NSMutableDictionary *filePointers;
+@property (nonatomic, strong) NSMutableDictionary *codeUnitPointers;
+@property (nonatomic, strong) NSMutableDictionary *filePointers;
 - (BOOL)loadPlugins;
 - (id<ECCodeIndexPlugin>)pluginForLanguage:(NSString *)language;
 - (void)addObserversForUnitsToFile:(NSObject<ECCodeIndexingFileObserving> *)fileObject;
@@ -38,15 +38,6 @@
 #pragma mark -
 #pragma mark Initialization and deallocation
 
-- (void)dealloc
-{
-    self.pluginsByLanguage = nil;
-    self.languageToExtensionMap = nil;
-    self.extensionToLanguageMap = nil;
-    self.codeUnitPointers = nil;
-    self.filePointers = nil;
-    [super dealloc];
-}
 
 - (id)init
 {
@@ -55,7 +46,6 @@
         return nil;
     if (![self loadPlugins])
     {
-        [self release];
         return nil;
     }
     self.codeUnitPointers = [NSMutableDictionary dictionary];
@@ -149,7 +139,7 @@
     Class *classes = NULL;
     NSMutableArray *pluginClasses;
     pluginClasses = [NSMutableArray array];
-    classes = malloc(sizeof(Class) * numClasses);
+    classes = (__unsafe_unretained Class *)malloc(sizeof(Class) * numClasses);
     objc_getClassList(classes, numClasses);
     for (int i = 0; i < numClasses; ++i)
     {
@@ -180,7 +170,6 @@
                 continue;
             [extensionToLanguageMap setObject:[pluginExtensionToLanguageMappingDictionary objectForKey:extension] forKey:extension];
         }
-        [plugin release];
     }
     self.pluginsByLanguage = pluginsByLanguage;
     self.languageToExtensionMap = languageToExtensionMap;

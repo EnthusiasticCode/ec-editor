@@ -21,11 +21,6 @@
     return self;
 }
 
-- (void)dealloc {
-    [btree release];
-    [super dealloc];
-}
-
 - (unsigned long long)length {
     return [btree length];
 }
@@ -83,8 +78,8 @@ static BOOL copy_bytes(id entry, HFBTreeIndex offset, void *userInfo) {
     HFASSERT(range.length <= NSUIntegerMax);
     HFASSERT(HFMaxRange(range) <= [self length]);
     if (range.length > 0) {
-	struct HFBTreeByteArrayCopyInfo_t copyInfo = {.dst = dst, .remainingLength = ll2l(range.length), .startingOffset = range.location};
-	[btree applyFunction:copy_bytes toEntriesStartingAtOffset:range.location withUserInfo:&copyInfo];
+        struct HFBTreeByteArrayCopyInfo_t copyInfo = {.dst = dst, .remainingLength = ll2l(range.length), .startingOffset = range.location};
+        [btree applyFunction:copy_bytes toEntriesStartingAtOffset:range.location withUserInfo:&copyInfo];
     }
 }
 
@@ -170,7 +165,7 @@ static inline HFByteSlice *findInitialSlice(HFBTree *btree, HFRange *inoutArrayR
             [btree removeEntryAtOffset:beginningOffset];
             
             [btree insertEntry:right atOffset:beginningOffset];
-
+            
             /* Try the fast appending path */
             HFByteSlice *joinedSlice = [left byteSliceByAppendingSlice:slice];
             if (joinedSlice) {
@@ -239,7 +234,7 @@ static inline HFByteSlice *findInitialSlice(HFBTree *btree, HFRange *inoutArrayR
 
 - (void)insertByteSlice:(HFByteSlice *)slice inRange:(HFRange)lrange {
     [self incrementGenerationOrRaiseIfLockedForSelector:_cmd];
-
+    
     if (lrange.length > 0) {
         [self deleteBytesInRange:lrange];
     }
@@ -250,16 +245,15 @@ static inline HFByteSlice *findInitialSlice(HFBTree *btree, HFRange *inoutArrayR
 
 - (id)mutableCopyWithZone:(NSZone *)zone {
     HFBTreeByteArray *result = [[[self class] alloc] init];
-    [result->btree release];
     result->btree = [btree mutableCopy];
     return result;
 }
 
 - (id)subarrayWithRange:(HFRange)range {
     if (range.location == 0 && range.length == [self length]) {
-        return [[self mutableCopy] autorelease];
+        return [self mutableCopy];
     }
-    HFBTreeByteArray *result = [[[[self class] alloc] init] autorelease];
+    HFBTreeByteArray *result = [[[self class] alloc] init];
     HFRange remainingRange = range;
     unsigned long long offsetInResult = 0;
     while (remainingRange.length > 0) {

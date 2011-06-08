@@ -13,7 +13,7 @@
 /// Preferred size of the cache.
 @property (nonatomic) NSUInteger cacheSize;
 /// Target of the message to send if the cache is empty and an object is requested.
-@property (nonatomic, assign) id target;
+@property (nonatomic, weak) id target;
 /// Selector of the message to send if the cache is emtpy and an object is requested.
 /// The signature must be - (id)generateObjectForCache:(ECStackCache *)cache;
 @property (nonatomic) SEL action;

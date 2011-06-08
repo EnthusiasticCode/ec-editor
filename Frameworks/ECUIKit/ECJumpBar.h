@@ -34,7 +34,7 @@
     NSMutableArray *controlsStack;
 }
 
-@property (nonatomic, assign) id<ECJumpBarDelegate> delegate;
+@property (nonatomic, weak) id<ECJumpBarDelegate> delegate;
 
 #pragma mark Visual Styles
 
@@ -42,25 +42,25 @@
 @property (nonatomic) CGFloat cornerRadius;
 
 /// The font used for button's titles and search text.
-@property (nonatomic, retain) UIFont *font;
+@property (nonatomic, strong) UIFont *font;
 
 /// The color of the text.
-@property (nonatomic, retain) UIColor *textColor;
+@property (nonatomic, strong) UIColor *textColor;
 
 /// The color applied to the text in buttons and search text.
-@property (nonatomic, retain) UIColor *textShadowColor;
+@property (nonatomic, strong) UIColor *textShadowColor;
 
 /// The offset to be applied for button and search text shadow.
 @property (nonatomic) CGSize textShadowOffset;
 
 /// The color of buttons in normal state.
-@property (nonatomic, retain) UIColor *buttonColor;
+@property (nonatomic, strong) UIColor *buttonColor;
 
 /// The color of buttons in highlight state.
-@property (nonatomic, retain) UIColor *buttonHighlightColor;
+@property (nonatomic, strong) UIColor *buttonHighlightColor;
 
 /// The color of borders.
-@property (nonatomic, retain) UIColor *borderColor;
+@property (nonatomic, strong) UIColor *borderColor;
 
 /// Width of borders.
 @property (nonatomic) CGFloat borderWidth;
@@ -107,7 +107,7 @@
 #pragma mark Handling Search String
 
 /// The search string.
-@property (nonatomic, retain) NSString *searchString;
+@property (nonatomic, strong) NSString *searchString;
 
 #pragma mark Generating Stack Controls
 

@@ -15,9 +15,9 @@
 @interface CDUndoItem : ECManagedObject {
 @private
 }
-@property (nonatomic, retain) id range;
-@property (nonatomic, retain) NSString * string;
-@property (nonatomic, retain) NSNumber * index;
-@property (nonatomic, retain) CDFile * file;
+@property (nonatomic, strong) id range;
+@property (nonatomic, strong) NSString * string;
+@property (nonatomic, strong) NSNumber * index;
+@property (nonatomic, strong) CDFile * file;
 
 @end

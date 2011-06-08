@@ -23,7 +23,6 @@
     [self willChangeValueForKey:@"undoItems" withSetMutation:NSKeyValueUnionSetMutation usingObjects:changedObjects];
     [[self primitiveValueForKey:@"undoItems"] addObject:value];
     [self didChangeValueForKey:@"undoItems" withSetMutation:NSKeyValueUnionSetMutation usingObjects:changedObjects];
-    [changedObjects release];
 }
 
 - (void)removeUndoItemsObject:(CDUndoItem *)value {
@@ -31,7 +30,6 @@
     [self willChangeValueForKey:@"undoItems" withSetMutation:NSKeyValueMinusSetMutation usingObjects:changedObjects];
     [[self primitiveValueForKey:@"undoItems"] removeObject:value];
     [self didChangeValueForKey:@"undoItems" withSetMutation:NSKeyValueMinusSetMutation usingObjects:changedObjects];
-    [changedObjects release];
 }
 
 - (void)addUndoItems:(NSSet *)value {    
@@ -52,7 +50,6 @@
     [self willChangeValueForKey:@"bookmarks" withSetMutation:NSKeyValueUnionSetMutation usingObjects:changedObjects];
     [[self primitiveValueForKey:@"bookmarks"] addObject:value];
     [self didChangeValueForKey:@"bookmarks" withSetMutation:NSKeyValueUnionSetMutation usingObjects:changedObjects];
-    [changedObjects release];
 }
 
 - (void)removeBookmarksObject:(CDBookmark *)value {
@@ -60,7 +57,6 @@
     [self willChangeValueForKey:@"bookmarks" withSetMutation:NSKeyValueMinusSetMutation usingObjects:changedObjects];
     [[self primitiveValueForKey:@"bookmarks"] removeObject:value];
     [self didChangeValueForKey:@"bookmarks" withSetMutation:NSKeyValueMinusSetMutation usingObjects:changedObjects];
-    [changedObjects release];
 }
 
 - (void)addBookmarks:(NSSet *)value {    
@@ -81,7 +77,6 @@
     [self willChangeValueForKey:@"historyItems" withSetMutation:NSKeyValueUnionSetMutation usingObjects:changedObjects];
     [[self primitiveValueForKey:@"historyItems"] addObject:value];
     [self didChangeValueForKey:@"historyItems" withSetMutation:NSKeyValueUnionSetMutation usingObjects:changedObjects];
-    [changedObjects release];
 }
 
 - (void)removeHistoryItemsObject:(CDHistoryItem *)value {
@@ -89,7 +84,6 @@
     [self willChangeValueForKey:@"historyItems" withSetMutation:NSKeyValueMinusSetMutation usingObjects:changedObjects];
     [[self primitiveValueForKey:@"historyItems"] removeObject:value];
     [self didChangeValueForKey:@"historyItems" withSetMutation:NSKeyValueMinusSetMutation usingObjects:changedObjects];
-    [changedObjects release];
 }
 
 - (void)addHistoryItems:(NSSet *)value {    

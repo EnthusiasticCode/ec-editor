@@ -11,7 +11,7 @@
 @class ECCodeCompletionResult;
 
 @interface CompletionController : UITableViewController
-@property (nonatomic, retain) NSString *match;
-@property (nonatomic, retain) ECPatriciaTrie *results;
+@property (nonatomic, strong) NSString *match;
+@property (nonatomic, strong) ECPatriciaTrie *results;
 @property (nonatomic, copy) void(^resultSelectedBlock)(ECCodeCompletionResult *result);
 @end

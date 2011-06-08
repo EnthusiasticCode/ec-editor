@@ -26,15 +26,6 @@
 @synthesize sourceRanges = _sourceRanges;
 @synthesize fixIts = _fixIts;
 
-- (void)dealloc
-{
-    [_file release];
-    [_spelling release];
-    [_category release];
-    [_sourceRanges release];
-    [_fixIts release];
-    [super dealloc];
-}
 
 - (id)initWithSeverity:(ECCodeDiagnosticSeverity)severity file:(NSString *)file offset:(NSUInteger)offset spelling:(NSString *)spelling category:(NSString *)category sourceRanges:(NSArray *)sourceRanges fixIts:(NSArray *)fixIts
 {
@@ -57,7 +48,7 @@
 {
     id diagnostic = [self alloc];
     diagnostic = [diagnostic initWithSeverity:severity file:file offset:offset spelling:spelling category:category sourceRanges:sourceRanges fixIts:fixIts];
-    return [diagnostic autorelease];
+    return diagnostic;
 }
 
 - (NSString *)description
@@ -67,7 +58,7 @@
 
 - (id)copyWithZone:(NSZone *)zone
 {
-    return [self retain];
+    return self;
 }
 
 - (NSUInteger)hash

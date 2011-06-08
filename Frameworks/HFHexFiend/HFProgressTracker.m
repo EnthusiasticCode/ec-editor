@@ -40,7 +40,7 @@
 - (void)beginTrackingProgress {
     HFASSERT(progressTimer == NULL);
     NSRunLoop *currentRunLoop = [NSRunLoop currentRunLoop];
-    progressTimer = [[NSTimer timerWithTimeInterval:1 / 30. target:self selector:@selector(_updateProgress:) userInfo:nil repeats:YES] retain];
+    progressTimer = [NSTimer timerWithTimeInterval:1 / 30. target:self selector:@selector(_updateProgress:) userInfo:nil repeats:YES];
     [currentRunLoop addTimer:progressTimer forMode:NSDefaultRunLoopMode];
     [self _updateProgress:nil];
 }
@@ -48,7 +48,6 @@
 - (void)endTrackingProgress {
     HFASSERT(progressTimer != NULL);
     [progressTimer invalidate];
-    [progressTimer release];
     progressTimer = nil;
 }
 
@@ -60,10 +59,6 @@
 
 - (void)dealloc {
     [progressTimer invalidate];
-    [progressTimer release];
-    progressTimer = nil;
-    [userInfo release];
-    [super dealloc];
 }
 
 - (void)setDelegate:(id)val {
@@ -88,8 +83,6 @@
 }
 
 - (void)setUserInfo:(NSDictionary *)info {
-    [info retain];
-    [userInfo release];
     userInfo = info;
 }
 

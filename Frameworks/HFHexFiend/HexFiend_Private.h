@@ -53,7 +53,7 @@
 /* Create a stack or dynamic array of the given size.  This memory is NOT scanned and is NOT collected!  Anything you put in here must have external references! */
 #define NEW_ARRAY(type, name, number) \
     type name ## static_ [256];\
-    type * name = ((number) <= 256 ? name ## static_ : check_malloc((number) * sizeof(type)))
+    __strong type * name = ((number) <= 256 ? name ## static_ : (__unsafe_unretained type*)check_malloc((number) * sizeof(type)))
     
 #define FREE_ARRAY(name) \
     if (name != name ## static_) free(name)

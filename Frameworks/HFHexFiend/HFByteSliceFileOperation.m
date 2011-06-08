@@ -42,13 +42,8 @@ enum {
     REQUIRE_NOT_NULL(val);
     HFASSERT([val length] == range.length);
     HFASSERT(HFSumDoesNotOverflow(range.location, range.length));
-    slice = [val retain];
+    slice = val;
     return self;
-}
-
-- (void)dealloc {
-    [slice release];
-    [super dealloc];
 }
 
 @end
@@ -141,15 +136,9 @@ bail:;
     HFASSERT(HFSumDoesNotOverflow(source.location, source.length));
     HFASSERT(HFSumDoesNotOverflow(target.location, target.length));
     remainingTargetRanges = [[NSMutableArray alloc] initWithObjects:[HFRangeWrapper withRange:targetRange], nil];
-    slice = [val retain];
+    slice = val;
     sourceRange = source;
     return self;
-}
-
-- (void)dealloc {
-    [remainingTargetRanges release];
-    [slice release];
-    [super dealloc];
 }
 
 - (HFRange)sourceRange {
@@ -232,7 +221,6 @@ bail:;
     if (context->progressTracker) HFAtomicAdd64(entry->length, (volatile int64_t *)(&context->progressTracker->currentProgress));
     
     [context->queue addObject:entry];
-    [entry release];
 }
 
 - (NSUInteger)amountOfOverlapForEntry:(HFByteSliceFileOperationQueueEntry *)overlap {
@@ -302,7 +290,6 @@ bail:;
             [context->file readBytes:entry->bytes length:entry->length from:left];
             if (context->progressTracker) HFAtomicAdd64(entry->length, (volatile int64_t *)(&context->progressTracker->currentProgress));
             [context->queue addObject:entry];
-            [entry release];
             
             /* Now we have to remove this range.  We may have zero, one, or two fragments to add */
             HFASSERT(left >= partialSourceRange.location);
@@ -433,37 +420,29 @@ bail:;
     result = HFWriteSuccess;
     
 bail:;
-    [incompleteOperations release];
-    [queue release];
-    [context release];
     if (progressTracker && progressTracker->cancelRequested) result = HFWriteCancelled;
     return result;	
 }
 #undef CHECK_CANCEL
-
-- (void)dealloc {
-    [internalOperations release];
-    [super dealloc];
-}
 
 @end
 
 @implementation HFByteSliceFileOperation
 
 + identityOperationWithByteSlice:(HFByteSlice *)slice targetRange:(HFRange)range {
-    return [[[HFByteSliceFileOperationIdentity alloc] initWithByteSlice:slice targetRange:range] autorelease];
+    return [[HFByteSliceFileOperationIdentity alloc] initWithByteSlice:slice targetRange:range];
 }
 
 + externalOperationWithByteSlice:(HFByteSlice *)slice targetRange:(HFRange)range {
-    return [[[HFByteSliceFileOperationExternal alloc] initWithByteSlice:slice targetRange:range] autorelease];
+    return [[HFByteSliceFileOperationExternal alloc] initWithByteSlice:slice targetRange:range];
 }
 
 + internalOperationWithByteSlice:(HFByteSlice *)slice sourceRange:(HFRange)source targetRange:(HFRange)target {
-    return [[[HFByteSliceFileOperationInternal alloc] initWithByteSlice:slice sourceRange:source targetRange:target] autorelease];
+    return [[HFByteSliceFileOperationInternal alloc] initWithByteSlice:slice sourceRange:source targetRange:target];
 }
 
 + chainedOperationWithInternalOperations:(NSArray *)internalOperations {
-    return [[[HFByteSliceFileOperationChained alloc] initWithInternalOperations:internalOperations] autorelease];
+    return [[HFByteSliceFileOperationChained alloc] initWithInternalOperations:internalOperations];
 }
 
 - (id)initWithTargetRange:(HFRange)range {
@@ -471,10 +450,6 @@ bail:;
     HFASSERT(! [self isMemberOfClass:[HFByteSliceFileOperation class]]);
     targetRange = range;
     return self;
-}
-
-- (void)dealloc {
-    [super dealloc];
 }
 
 - (HFRange)sourceRange {

@@ -34,10 +34,10 @@
 }
 
 /// Text renderer framesetter's cache shared among all text segments
-@property (nonatomic, readonly) ECDictionaryCache *framesettersCache;
+@property (nonatomic, readonly, strong) ECDictionaryCache *framesettersCache;
 
 /// Text renderer frame's cache shared among all text segments
-@property (nonatomic, readonly) ECDictionaryCache *framesCache;
+@property (nonatomic, readonly, strong) ECDictionaryCache *framesCache;
 
 /// Create the specified segment's framesetter. Lines and lenght are output parameter, pass NULL if not interested.
 /// This function is supposed to be used by a text segment to generate it's framesetter if not present in cache.
@@ -113,7 +113,7 @@
 
 - (CTFramesetterRef)framesetter
 {
-    CTFramesetterRef f = (CTFramesetterRef)[parentRenderer.framesettersCache objectForKey:self];
+    CTFramesetterRef f = (CTFramesetterRef)objc_unretainedPointer([parentRenderer.framesettersCache objectForKey:self]);
     
     if (!f) 
     {
@@ -122,7 +122,7 @@
         // Cache
         if (f) 
         {
-            [parentRenderer.framesettersCache setObject:(id)f forKey:self];
+            [parentRenderer.framesettersCache setObject:objc_unretainedObject(f) forKey:self];
             CFRelease(f);
         }
         
@@ -135,7 +135,7 @@
 
 - (CTFrameRef)frame
 {
-    CTFrameRef f = (CTFrameRef)[parentRenderer.framesCache objectForKey:self];
+    CTFrameRef f = (CTFrameRef)objc_unretainedPointer([parentRenderer.framesCache objectForKey:self]);
     
     if (!f)
     {
@@ -148,7 +148,7 @@
         CGPathRelease(path);
         
         // Update cache and return
-        [parentRenderer.framesCache setObject:(id)f forKey:self];
+        [parentRenderer.framesCache setObject:objc_unretainedObject(f) forKey:self];
         CFRelease(f);
     }
     return f;
@@ -416,14 +416,6 @@
     return self;
 }
 
-- (void)dealloc
-{
-    [textSegments release];
-    [framesCache release];
-    [framesettersCache release];
-    [super dealloc];
-}
-
 #pragma mark Private Methods
 
 - (CTFramesetterRef)createFramesetterForTextSegment:(TextSegment *)requestSegment lineCount:(NSUInteger *)lines stringLenght:(NSUInteger *)length
@@ -449,7 +441,7 @@
     if (endOfString)
         lastTextSegment = requestSegment;
     
-    framesetter = CTFramesetterCreateWithAttributedString((CFAttributedStringRef)string);
+    framesetter = CTFramesetterCreateWithAttributedString((CFAttributedStringRef)objc_unretainedPointer(string));
     
     if (lines)
         *lines = lineRange.length;
@@ -481,13 +473,11 @@
             segment.renderWrapWidth = wrapWidth;
             if (!segment.isValid) 
             {
-                [segment release];
                 lastTextSegment = [textSegments lastObject];
                 break;
             }
             
             [textSegments addObject:segment];
-            [segment release];
         }
         else
         {
@@ -606,13 +596,13 @@
             }
             else
             {
-                runAttributes = (NSDictionary *)CTRunGetAttributes(run);
+                runAttributes = (NSDictionary *)objc_unretainedObject(CTRunGetAttributes(run));
             }
             
             // Apply custom back attributes
             if (runAttributes)
             {
-                CGColorRef backgroundColor = (CGColorRef)[runAttributes objectForKey:ECTSBackgroundColorAttributeName];
+                CGColorRef backgroundColor = (CGColorRef)objc_unretainedPointer([runAttributes objectForKey:ECTSBackgroundColorAttributeName]);
                 if (backgroundColor) 
                 {
                     CGContextSetFillColorWithColor(context, backgroundColor);
@@ -895,7 +885,7 @@
                 NSAttributedString *string = [datasource textRenderer:self stringInLineRange:&tempRange endOfString:&isStringEnd];
                 if (string) 
                 {
-                    CTLineRef line = CTLineCreateWithAttributedString((CFAttributedStringRef)string);
+                    CTLineRef line = CTLineCreateWithAttributedString((CFAttributedStringRef)objc_unretainedPointer(string));
                     CGFloat width, ascent, descent, leading;
                     width = CTLineGetTypographicBounds(line, &ascent, &descent, &leading);
                     meanLineHeight = ascent + descent + leading;

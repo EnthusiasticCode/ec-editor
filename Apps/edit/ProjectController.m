@@ -30,14 +30,6 @@
     return _fileManager;
 }
 
-- (void)dealloc
-{
-    self.fileManager = nil;
-    self.editButton = nil;
-    self.doneButton = nil;
-    self.project = nil;
-    [super dealloc];
-}
 
 - (void)viewDidLoad
 {
@@ -63,7 +55,7 @@
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Cell"];
     if (!cell)
     {
-        cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"Cell"] autorelease];
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"Cell"];
     }
     cell.textLabel.text = [[[self.project.rootNode orderedChildren] objectAtIndex:indexPath.row] name];
     return cell;
@@ -91,7 +83,7 @@
 - (void)loadProject:(NSString *)projectRoot
 {
     NSString *bundle = [[projectRoot stringByAppendingPathComponent:[projectRoot lastPathComponent]] stringByAppendingPathExtension:@"ecproj"];
-    self.project = [[[Project alloc] initWithBundle:bundle] autorelease];
+    self.project = [[Project alloc] initWithBundle:bundle];
     self.title = self.project.name;
     self.projectRoot = projectRoot;
     [self addAllNodesInProjectRoot];
@@ -103,7 +95,7 @@
         [self loadFile:(File *)node];
     else
     {
-        GroupController *groupController = [[[GroupController alloc] init] autorelease];
+        GroupController *groupController = [[GroupController alloc] init];
         groupController.group = node;
         [self.navigationController pushViewController:groupController animated:YES];
     }

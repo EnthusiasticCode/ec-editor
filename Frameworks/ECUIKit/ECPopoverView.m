@@ -163,11 +163,6 @@ static void init(ECPopoverView *self)
     return self;
 }
 
-- (void)dealloc
-{
-    [super dealloc];
-}
-
 + (Class)layerClass
 {
     return [CAShapeLayer class];

@@ -35,8 +35,8 @@
 //    assert([aEnd isKindOfClass:[ECTextPosition class]]);
     if((self = [super init]))
     {
-        start = [aStart retain];
-        end = [aEnd retain];
+        start = aStart;
+        end = aEnd;
     }
     return self;
 }
@@ -48,7 +48,7 @@
     
     if (characterRange.length == 0)
     {
-        en = [st retain];
+        en = st;
     }
     else 
     {
@@ -57,25 +57,17 @@
     
     self = [self initWithStart:st end:en];
     
-    [st release];
-    [en release];
     
     return self;
 }
 
-- (void)dealloc
-{
-    [start release];
-    [end release];
-    [super dealloc];
-}
 
 - (ECTextRange*)rangeIncludingPosition:(ECTextPosition*)p
 {
     if ([p compare:start] == NSOrderedAscending)
-        return [[[[self class] alloc] initWithStart:p end:end] autorelease];
+        return [[[self class] alloc] initWithStart:p end:end];
     if ([p compare:end] == NSOrderedDescending)
-        return [[[[self class] alloc] initWithStart:start end:p] autorelease];
+        return [[[self class] alloc] initWithStart:start end:p];
     
     return self;
 }
@@ -91,22 +83,7 @@
 
 - (id)copyWithZone:(NSZone *)z
 {
-    if (NSShouldRetainWithZone(self, z))
-    {
-        return [self retain];
-    }
-    else
-    {
-        ECTextPosition *st = [start copyWithZone:z];
-        ECTextPosition *en = [end copyWithZone:z];
-        
-        ECTextRange *r = [[ECTextRange allocWithZone:z] initWithStart:st end:en];
-        
-        [st release];
-        [en release];
-        
-        return r;
-    }
+    return self;
 }
 
 - (BOOL)isEmpty
@@ -134,7 +111,7 @@
 
 + (id)textRangeWithRange:(NSRange)range
 {
-    return [[[self alloc] initWithRange:range] autorelease];
+    return [[self alloc] initWithRange:range];
 }
 
 @end

@@ -7,50 +7,50 @@
 #define HFZeroRange (HFRange){0, 0}
 
 /*!
-  Makes an HFRange.  An HFRange is like an NSRange except it uses unsigned long longs.
-*/
+ Makes an HFRange.  An HFRange is like an NSRange except it uses unsigned long longs.
+ */
 static inline HFRange HFRangeMake(unsigned long long loc, unsigned long long len) {
     return (HFRange){loc, len};
 }
 
 /*!
-  Returns true if a given location is within a given HFRange.
-*/
+ Returns true if a given location is within a given HFRange.
+ */
 static inline BOOL HFLocationInRange(unsigned long long location, HFRange range) {
     return location >= range.location && location - range.location < range.length;
 }
 
 /*!
-  Like NSRangeToString but for HFRanges
-*/
+ Like NSRangeToString but for HFRanges
+ */
 static inline NSString* HFRangeToString(HFRange range) {
     return [NSString stringWithFormat:@"{%llu, %llu}", range.location, range.length];
 }
 
 /*!
-  Converts a given HFFPRange to a string.
-*/
+ Converts a given HFFPRange to a string.
+ */
 static inline NSString* HFFPRangeToString(HFFPRange range) {
     return [NSString stringWithFormat:@"{%Lf, %Lf}", range.location, range.length];
 }
 
 /*!
-  Returns true if two HFRanges are equal.
-*/
+ Returns true if two HFRanges are equal.
+ */
 static inline BOOL HFRangeEqualsRange(HFRange a, HFRange b) {
     return a.location == b.location && a.length == b.length;
 }
 
 /*!
-  Returns true if a + b does not overflow an unsigned long long.
-*/
+ Returns true if a + b does not overflow an unsigned long long.
+ */
 static inline BOOL HFSumDoesNotOverflow(unsigned long long a, unsigned long long b) {
     return a + b >= a;
 }
 
 /*!
-  Returns true if a * b does not overflow an unsigned long long.
-*/
+ Returns true if a * b does not overflow an unsigned long long.
+ */
 static inline BOOL HFProductDoesNotOverflow(unsigned long long a, unsigned long long b) {
     if (b == 0) return YES;
     unsigned long long result = a * b;
@@ -58,8 +58,8 @@ static inline BOOL HFProductDoesNotOverflow(unsigned long long a, unsigned long 
 }
 
 /*!
-  Returns a * b as an NSUInteger.  This asserts on overflow, unless NDEBUG is defined.
-*/
+ Returns a * b as an NSUInteger.  This asserts on overflow, unless NDEBUG is defined.
+ */
 static inline NSUInteger HFProductInt(NSUInteger a, NSUInteger b) {
     NSUInteger result = a * b;
     assert(a == 0 || result / a == b); //detect overflow
@@ -67,16 +67,16 @@ static inline NSUInteger HFProductInt(NSUInteger a, NSUInteger b) {
 }
 
 /*!
-  Returns a + b as an NSUInteger.  This asserts on overflow unless NDEBUG is defined.
-*/
+ Returns a + b as an NSUInteger.  This asserts on overflow unless NDEBUG is defined.
+ */
 static inline NSUInteger HFSumInt(NSUInteger a, NSUInteger b) {
 	assert(a + b >= a);
 	return a + b;
 }
 
 /*!
-  Returns a * b as an unsigned long long.  This asserts on overflow, unless NDEBUG is defined.
-*/
+ Returns a * b as an unsigned long long.  This asserts on overflow, unless NDEBUG is defined.
+ */
 static inline unsigned long long HFProductULL(unsigned long long a, unsigned long long b) {
     unsigned long long result = a * b;
     assert(HFProductDoesNotOverflow(a, b)); //detect overflow
@@ -84,16 +84,16 @@ static inline unsigned long long HFProductULL(unsigned long long a, unsigned lon
 }
 
 /*!
-  Returns a + b as an unsigned long long.  This asserts on overflow, unless NDEBUG is defined.
-*/
+ Returns a + b as an unsigned long long.  This asserts on overflow, unless NDEBUG is defined.
+ */
 static inline unsigned long long HFSum(unsigned long long a, unsigned long long b) {
     assert(HFSumDoesNotOverflow(a, b));
     return a + b;
 }
 
 /*!
-  Returns a - b as an unsigned long long.  This asserts on underflow (if b > a), unless NDEBUG is defined.
-*/
+ Returns a - b as an unsigned long long.  This asserts on underflow (if b > a), unless NDEBUG is defined.
+ */
 static inline unsigned long long HFSubtract(unsigned long long a, unsigned long long b) {
     assert(a >= b);
     return a - b;
@@ -101,7 +101,7 @@ static inline unsigned long long HFSubtract(unsigned long long a, unsigned long 
 
 /*!
  Returns the smallest multiple of B strictly larger than A.
-*/
+ */
 static inline unsigned long long HFRoundUpToNextMultiple(unsigned long long a, unsigned long long b) {
     assert(b > 0);
     return HFSum(a, b - a % b);
@@ -186,10 +186,10 @@ static inline BOOL HFRangeExtendsPastRange(HFRange a, HFRange b) {
 static inline HFRange HFIntersectionRange(HFRange range1, HFRange range2) {
     unsigned long long minend = HFRangeExtendsPastRange(range2, range1) ? range1.location + range1.length : range2.location + range2.length;
     if (range2.location <= range1.location && range1.location - range2.location < range2.length) {
-	return HFRangeMake(range1.location, minend - range1.location);
+        return HFRangeMake(range1.location, minend - range1.location);
     }
     else if (range1.location <= range2.location && range2.location - range1.location < range1.length) {
-	return HFRangeMake(range2.location, minend - range2.location);
+        return HFRangeMake(range2.location, minend - range2.location);
     }
     return HFRangeMake(0, 0);
 }
@@ -308,13 +308,13 @@ static inline unsigned long ll2l(unsigned long long val) { assert(val <= NSUInte
 /*! Returns an unsigned long long, which must be no more than ULLONG_MAX, as an unsigned long. */
 static inline CGFloat ld2f(long double val) {
 #if ! NDEBUG
-     if (isfinite(val)) {
+    if (isfinite(val)) {
         assert(val <= CGFLOAT_MAX);
         assert(val >= -CGFLOAT_MAX);
         if ((val > 0 && val < CGFLOAT_MIN) || (val < 0 && val > -CGFLOAT_MIN)) {
             NSLog(@"Warning - conversion of long double %Lf to CGFloat will result in the non-normal CGFloat %f", val, (CGFloat)val);
         }
-     }
+    }
 #endif
     return (CGFloat)val;
 }
@@ -332,10 +332,10 @@ static inline NSUInteger HFDivideULRoundingUp(NSUInteger a, NSUInteger b) {
 }
 
 /*! @brief An object wrapper for the HFRange type.
-
-  A simple class responsible for holding an immutable HFRange as an object.  Methods that logically work on multiple HFRanges usually take or return arrays of HFRangeWrappers. */
+ 
+ A simple class responsible for holding an immutable HFRange as an object.  Methods that logically work on multiple HFRanges usually take or return arrays of HFRangeWrappers. */
 @interface HFRangeWrapper : NSObject {
-    @public
+@public
     HFRange range;
 }
 

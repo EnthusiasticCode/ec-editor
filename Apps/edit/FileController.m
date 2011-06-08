@@ -16,13 +16,6 @@
 @synthesize file;
 @synthesize completionButton;
 
-- (void)dealloc
-{
-    self.file = nil;
-    self.codeView = nil;
-    [completionButton release];
-    [super dealloc];
-}
 
 - (void)viewDidAppear:(BOOL)animated
 {

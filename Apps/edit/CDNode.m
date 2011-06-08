@@ -27,7 +27,6 @@
     [self willChangeValueForKey:@"children" withSetMutation:NSKeyValueUnionSetMutation usingObjects:changedObjects];
     [[self primitiveValueForKey:@"children"] addObject:value];
     [self didChangeValueForKey:@"children" withSetMutation:NSKeyValueUnionSetMutation usingObjects:changedObjects];
-    [changedObjects release];
 }
 
 - (void)removeChildrenObject:(CDNode *)value {
@@ -35,7 +34,6 @@
     [self willChangeValueForKey:@"children" withSetMutation:NSKeyValueMinusSetMutation usingObjects:changedObjects];
     [[self primitiveValueForKey:@"children"] removeObject:value];
     [self didChangeValueForKey:@"children" withSetMutation:NSKeyValueMinusSetMutation usingObjects:changedObjects];
-    [changedObjects release];
 }
 
 - (void)addChildren:(NSSet *)value {    
@@ -56,7 +54,6 @@
     [self willChangeValueForKey:@"nameWords" withSetMutation:NSKeyValueUnionSetMutation usingObjects:changedObjects];
     [[self primitiveValueForKey:@"nameWords"] addObject:value];
     [self didChangeValueForKey:@"nameWords" withSetMutation:NSKeyValueUnionSetMutation usingObjects:changedObjects];
-    [changedObjects release];
 }
 
 - (void)removeNameWordsObject:(CDNameWord *)value {
@@ -64,7 +61,6 @@
     [self willChangeValueForKey:@"nameWords" withSetMutation:NSKeyValueMinusSetMutation usingObjects:changedObjects];
     [[self primitiveValueForKey:@"nameWords"] removeObject:value];
     [self didChangeValueForKey:@"nameWords" withSetMutation:NSKeyValueMinusSetMutation usingObjects:changedObjects];
-    [changedObjects release];
 }
 
 - (void)addNameWords:(NSSet *)value {    

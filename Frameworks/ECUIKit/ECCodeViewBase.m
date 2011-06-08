@@ -150,7 +150,7 @@
             
             [parent.renderer drawTextWithinRect:(CGRect){ textOffset, textSize } inContext:imageContext];
         }
-        UIImage *image = [UIGraphicsGetImageFromCurrentImageContext() retain];
+        UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
         UIGraphicsEndImageContext();
         
         // Send rendered image to presentation layer
@@ -159,10 +159,9 @@
             {
                 [CATransaction begin];
                 [CATransaction setDisableActions:YES];
-                textLayer.contents = (id)image.CGImage;
+                textLayer.contents = objc_unretainedObject(image.CGImage);
                 textLayer.hidden = NO;
                 [CATransaction commit];
-                [image release];
             }
         }];
     }];
@@ -195,12 +194,6 @@
 - (void)setDatasource:(id<ECCodeViewDataSource>)aDatasource
 {
     datasource = aDatasource;
-    
-    if (datasource != defaultDatasource) 
-    {
-        [defaultDatasource release];
-    }
-    
     if (ownsRenderer)
         renderer.datasource = datasource;
 }
@@ -267,8 +260,8 @@ static void init(ECCodeViewBase *self)
 - (id)initWithFrame:(CGRect)frame renderer:(ECTextRenderer *)aRenderer renderingQueue:(NSOperationQueue *)queue
 {
     ownsRenderer = NO;
-    renderer = [aRenderer retain];
-    renderingQueue = [queue retain];
+    renderer = aRenderer;
+    renderingQueue = queue;
     textInsets = UIEdgeInsetsMake(10, 10, 10, 10);
     
     self = [super initWithFrame:frame];
@@ -296,16 +289,6 @@ static void init(ECCodeViewBase *self)
         init(self);
     }
     return self;
-}
-
-- (void)dealloc
-{
-    for (NSInteger i = 0; i < TILEVIEWPOOL_SIZE; ++i)
-        [tileViewPool[i] release];
-    [renderer release];
-    [renderingQueue release];
-    [defaultDatasource release];
-    [super dealloc];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context

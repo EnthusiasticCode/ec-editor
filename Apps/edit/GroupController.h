@@ -11,6 +11,6 @@
 @class Node;
 
 @interface GroupController : UITableViewController
-@property (nonatomic, retain) Node *group;
+@property (nonatomic, strong) Node *group;
 - (void)loadNode:(Node *)node;
 @end

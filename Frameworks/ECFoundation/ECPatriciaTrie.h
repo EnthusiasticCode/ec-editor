@@ -22,9 +22,9 @@ enum
 typedef NSUInteger ECPatriciaTrieEnumerationOptions;
 
 @interface ECPatriciaTrie : NSObject
-@property (nonatomic, assign, readonly) ECPatriciaTrie *parent;
-@property (nonatomic, retain, readonly) NSString *key;
-@property (nonatomic, retain) id object;
+@property (nonatomic, weak, readonly) ECPatriciaTrie *parent;
+@property (nonatomic, strong, readonly) NSString *key;
+@property (nonatomic, strong) id object;
 @property (nonatomic, getter = isEndOfWord) BOOL endOfWord;
 
 - (NSUInteger)count;

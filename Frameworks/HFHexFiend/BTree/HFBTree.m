@@ -35,8 +35,6 @@ typedef unsigned int TreeDepth_t;
 static TreeEntry *btree_search(HFBTree *tree, HFBTreeIndex offset, HFBTreeIndex *outBeginningOffset);
 static id btree_insert_returning_retained_value_for_parent(HFBTree *tree, TreeEntry *entry, HFBTreeIndex offset);
 static BOOL btree_remove(HFBTree *tree, HFBTreeIndex offset);
-static void btree_recursive_check_integrity(HFBTree *tree, HFBTreeNode *branchOrLeaf, TreeDepth_t depth, HFBTreeNode **linkHelper);
-static HFBTreeIndex btree_recursive_check_integrity_of_cached_lengths(HFBTreeNode *branchOrLeaf);
 static BOOL btree_are_cached_lengths_correct(HFBTreeNode *branchOrLeaf, HFBTreeIndex *outLength);
 static ChildIndex_t count_node_values(HFBTreeNode *node);
 static HFBTreeIndex sum_child_lengths(const id *children, const BOOL isLeaf);
@@ -77,8 +75,7 @@ static HFBTreeNode *mutable_copy_node(HFBTreeNode *node, TreeDepth_t depth, HFBT
 @end
 
 @interface HFBTreeNode : NSObject {
-    @public
-    NSUInteger rc;
+@public
     HFBTreeIndex subtreeLength;
     HFBTreeNode *left, *right;
     id children[BTREE_ORDER];
@@ -87,30 +84,6 @@ static HFBTreeNode *mutable_copy_node(HFBTreeNode *node, TreeDepth_t depth, HFBT
 @end
 
 @implementation HFBTreeNode
-
-- (id)retain {
-    HFAtomicIncrement(&rc, NO);
-    return self;
-}
-
-- (oneway void)release {
-    NSUInteger result = HFAtomicDecrement(&rc, NO);
-    if (result == (NSUInteger)(-1)) {
-        [self dealloc];
-    }
-}
-
-- (NSUInteger)retainCount {
-    return 1 + rc;
-}
-
-- (void)dealloc {
-    for (ChildIndex_t i=0; i < BTREE_BRANCH_ORDER; i++) {
-        if (! children[i]) break;
-        [children[i] release];
-    }
-    [super dealloc];
-}
 
 - (NSString *)shortDescription {
     return [NSString stringWithFormat:@"<%@: %p (%llu)>", [self class], self, subtreeLength];
@@ -164,32 +137,6 @@ static HFBTreeNode *mutable_copy_node(HFBTreeNode *node, TreeDepth_t depth, HFBT
     return self;
 }
 
-- (void)dealloc {
-    [root release];
-    [super dealloc];
-}
-
-#if HFTEST_BTREES
-- (void)checkIntegrityOfCachedLengths {
-    if (root == nil) {
-        /* nothing */
-    }
-    else {
-        btree_recursive_check_integrity_of_cached_lengths(root);
-    }
-}
-
-- (void)checkIntegrityOfBTreeStructure {
-    if (depth == BAD_DEPTH) {
-        HFASSERT(root == nil);
-    }
-    else {
-        HFBTreeNode *linkHelper[MAX_DEPTH + 1] = {};
-        btree_recursive_check_integrity(self, root, depth, linkHelper);
-    }
-}
-#endif
-
 - (HFBTreeIndex)length {
     if (root == nil) return 0;
     return ((HFBTreeNode *)root)->subtreeLength;
@@ -203,8 +150,7 @@ static HFBTreeNode *mutable_copy_node(HFBTreeNode *node, TreeDepth_t depth, HFBT
         HFASSERT([self length] == 0);
         HFASSERT(depth == BAD_DEPTH);
         HFBTreeLeaf *leaf = [[HFBTreeLeaf alloc] init];
-//        printf("Leaf size: %lu\n", malloc_size(leaf));
-        leaf->children[0] = [entry retain];
+        leaf->children[0] = entry;
         leaf->subtreeLength = HFBTreeLength(entry);
         root = leaf;
         depth = 0;
@@ -213,9 +159,8 @@ static HFBTreeNode *mutable_copy_node(HFBTreeNode *node, TreeDepth_t depth, HFBT
         HFBTreeNode *newParentValue = btree_insert_returning_retained_value_for_parent(self, entry, offset);
         if (newParentValue) {
             HFBTreeBranch *newRoot = [[HFBTreeBranch alloc] init];
-//            printf("Branch size: %lu\n", malloc_size(newRoot));
-            newRoot->children[0] = root; //transfer our retain
-            newRoot->children[1] = newParentValue; //transfer the retain we got from the function
+            newRoot->children[0] = root;
+            newRoot->children[1] = newParentValue;
             newRoot->subtreeLength = HFSum(root->subtreeLength, newParentValue->subtreeLength);
             root = newRoot;
             depth++;
@@ -230,7 +175,6 @@ static HFBTreeNode *mutable_copy_node(HFBTreeNode *node, TreeDepth_t depth, HFBT
 }
 
 - (void)removeAllEntries {
-    [root release];
     root = nil;
     depth = BAD_DEPTH;
 }
@@ -240,9 +184,7 @@ static HFBTreeNode *mutable_copy_node(HFBTreeNode *node, TreeDepth_t depth, HFBT
     BOOL deleteRoot = btree_remove(self, offset);
     if (deleteRoot) {
         HFASSERT(count_node_values(root) <= 1);
-        id newRoot = [root->children[0] retain]; //may be nil!
-        [root release];
-        root = newRoot;
+        root = root->children[0]; //may be nil!
         depth--;
     }
 }
@@ -250,7 +192,7 @@ static HFBTreeNode *mutable_copy_node(HFBTreeNode *node, TreeDepth_t depth, HFBT
 - (id)mutableCopyWithZone:(NSZone *)zone {
     HFBTree *result = [[[self class] alloc] init];
     result->depth = depth;
-    HFBTreeNode *linkingHelper[MAX_DEPTH + 1];
+    __autoreleasing HFBTreeNode *linkingHelper[MAX_DEPTH + 1];
     bzero(linkingHelper, (1 + depth) * sizeof *linkingHelper);
     result->root = mutable_copy_node(root, depth, linkingHelper);
     return result;
@@ -310,7 +252,7 @@ FORCE_STATIC_INLINE id child_containing_offset(HFBTreeNode *node, HFBTreeIndex o
 FORCE_STATIC_INLINE ChildIndex_t index_for_child_at_offset(HFBTreeNode *node, HFBTreeIndex offset, const BOOL isLeaf) {
     ChildIndex_t childIndex;
     HFBTreeIndex previousSum = 0;
-    id *const children = node->children;
+    __strong id *const children = node->children;
     for (childIndex = 0; childIndex < BTREE_ORDER; childIndex++) {
         if (previousSum == offset) break;
         HFASSERT(children[childIndex] != nil);
@@ -326,7 +268,7 @@ FORCE_STATIC_INLINE ChildIndex_t index_for_child_at_offset(HFBTreeNode *node, HF
 FORCE_STATIC_INLINE ChildIndex_t child_index_for_insertion_at_offset(HFBTreeBranch *branch, HFBTreeIndex insertionOffset, HFBTreeIndex *outPriorCombinedOffset) {
     ChildIndex_t indexForInsertion;
     HFBTreeIndex priorCombinedOffset = 0;
-    id *const children = branch->children;
+    __strong id *const children = branch->children;
     for (indexForInsertion = 0; indexForInsertion < BTREE_BRANCH_ORDER; indexForInsertion++) {
         if (! children[indexForInsertion]) break;
         HFBTreeNode *childNode = CHECK_CAST(children[indexForInsertion], HFBTreeNode);
@@ -361,7 +303,7 @@ FORCE_STATIC_INLINE ChildIndex_t child_index_for_deletion_at_offset(HFBTreeBranc
     return indexForDeletion;
 }
 
-FORCE_STATIC_INLINE void insert_value_into_array(id value, NSUInteger insertionIndex, id *array, NSUInteger arrayCount) {
+FORCE_STATIC_INLINE void insert_value_into_array(id value, NSUInteger insertionIndex, __strong id *array, NSUInteger arrayCount) {
     HFASSERT(insertionIndex <= arrayCount);
     HFASSERT(arrayCount > 0);
     NSUInteger pushingIndex = arrayCount - 1;
@@ -369,22 +311,21 @@ FORCE_STATIC_INLINE void insert_value_into_array(id value, NSUInteger insertionI
         array[pushingIndex] = array[pushingIndex - 1];
         pushingIndex--;
     }
-    array[insertionIndex] = [value retain];
+    array[insertionIndex] = value;
 }
 
 
-FORCE_STATIC_INLINE void remove_value_from_array(NSUInteger removalIndex, id *array, NSUInteger arrayCount) {
+FORCE_STATIC_INLINE void remove_value_from_array(NSUInteger removalIndex, __strong id *array, NSUInteger arrayCount) {
     HFASSERT(removalIndex < arrayCount);
     HFASSERT(arrayCount > 0);
     HFASSERT(array[removalIndex] != nil);
-    [array[removalIndex] release];
     for (NSUInteger pullingIndex = removalIndex + 1; pullingIndex < arrayCount; pullingIndex++) {
         array[pullingIndex - 1] = array[pullingIndex];
     }
     array[arrayCount - 1] = nil;
 }
 
-static void split_array(const restrict id *values, ChildIndex_t valueCount, restrict id *left, restrict id *right, ChildIndex_t leftArraySizeForClearing) {
+static void split_array(const restrict id *values, ChildIndex_t valueCount, __strong restrict id *left, __strong restrict id *right, ChildIndex_t leftArraySizeForClearing) {
     const ChildIndex_t midPoint = valueCount/2;
     ChildIndex_t inputIndex = 0, outputIndex = 0;
     while (inputIndex < midPoint) {
@@ -419,7 +360,6 @@ FORCE_STATIC_INLINE HFBTreeNode *add_child_to_node_possibly_creating_split(HFBTr
     memcpy(allEntries, node->children, BTREE_ORDER * sizeof *node->children);
     allEntries[BTREE_ORDER] = nil;
     
-    /* insert_value_into_array applies a retain, so allEntries owns a retain on its values */
     insert_value_into_array(value, insertionLocation, allEntries, BTREE_ORDER + 1);
     HFBTreeNode *newNode = [[[node class] alloc] init];
     
@@ -446,24 +386,20 @@ FORCE_STATIC_INLINE HFBTreeNode *add_child_to_node_possibly_creating_split(HFBTr
     return newNode;
 }
 
-FORCE_STATIC_INLINE void add_values_to_array(const id * restrict srcValues, NSUInteger amountToCopy, id * restrict targetValues, NSUInteger amountToPush) {
+FORCE_STATIC_INLINE void add_values_to_array(const id * restrict srcValues, NSUInteger amountToCopy, __strong id * restrict targetValues, NSUInteger amountToPush) {
     // a pushed value at index X goes to index X + amountToCopy
     NSUInteger pushIndex = amountToPush;
     while (pushIndex--) {
         targetValues[amountToCopy + pushIndex] = targetValues[pushIndex];
     }
     for (NSUInteger i = 0; i < amountToCopy; i++) {
-        targetValues[i] = [srcValues[i] retain];
+        targetValues[i] = srcValues[i];
     }
 }
 
-FORCE_STATIC_INLINE void remove_values_from_array(id * restrict array, NSUInteger amountToRemove, NSUInteger totalArrayLength) {
+FORCE_STATIC_INLINE void remove_values_from_array(__strong id * restrict array, NSUInteger amountToRemove, NSUInteger totalArrayLength) {
     HFASSERT(totalArrayLength >= amountToRemove);
-    /* Release existing values */
     NSUInteger i;
-    for (i=0; i < amountToRemove; i++) {
-        [array[i] release];
-    }
     /* Move remaining values */
     for (i=amountToRemove; i < totalArrayLength; i++) {
         array[i - amountToRemove] = array[i];
@@ -525,7 +461,6 @@ FORCE_STATIC_INLINE BOOL rebalance_node_by_distributing_to_neighbors(HFBTreeNode
         }
         /* Even though we've essentially orphaned ourself, we need to force ourselves consistent (by making ourselves empty) because our parent still references us, and we don't want to make our parent inconsistent. */
         for (ChildIndex_t childIndex = 0; node->children[childIndex] != nil; childIndex++) {
-            [node->children[childIndex] release];
             node->children[childIndex] = nil;
         }
         node->subtreeLength = 0;
@@ -645,7 +580,7 @@ FORCE_STATIC_INLINE BOOL remove_value_from_node_with_possible_rebalance(HFBTreeN
     }
     HFASSERT(childMultiplicity == 1);
 #endif
-
+    
     if (childCount < BTREE_LEAF_MINIMUM_VALUE_COUNT && ! isRootNode) {
         /* We have too few items; try to rebalance (this will always be possible except from the root node) */
         deleteInputNode = rebalance_node_after_deletion(node, childCount, isLeaf, modifiedLeftNeighbor, modifiedRightNeighbor);
@@ -672,7 +607,7 @@ FORCE_STATIC_INLINE void update_node_having_changed_size_of_child(HFBTreeNode *n
 }
 
 struct SubtreeInfo_t {
-    HFBTreeBranch *branch;
+    __unsafe_unretained HFBTreeBranch *branch;
     ChildIndex_t childIndex; //childIndex is the index of the child of branch, not branch's index in its parent
 };
 
@@ -701,7 +636,7 @@ static HFBTreeLeaf *btree_descend(HFBTree *tree, struct SubtreeInfo_t *outDescen
 }
 
 struct LeafInfo_t {
-    HFBTreeLeaf *leaf;
+    __unsafe_unretained HFBTreeLeaf *leaf;
     ChildIndex_t entryIndex;
     HFBTreeIndex offsetOfEntryInTree;
 };
@@ -758,7 +693,6 @@ static id btree_insert_returning_retained_value_for_parent(HFBTree *tree, TreeEn
             /* Since we copied some stuff out from under ourselves, subtract its length */
             branch->subtreeLength -= retainedValueToInsertIntoParentBranch->subtreeLength;
             HFBTreeNode *newRetainedValueToInsertIntoParentBranch = add_child_to_node_possibly_creating_split(branch, retainedValueToInsertIntoParentBranch, childIndex + 1, NO);
-            [retainedValueToInsertIntoParentBranch release];
             retainedValueToInsertIntoParentBranch = newRetainedValueToInsertIntoParentBranch;
         }
     }
@@ -785,7 +719,7 @@ static BOOL btree_remove(HFBTree *tree, HFBTreeIndex deletionOffset) {
     }
     HFASSERT(childIndex < BTREE_LEAF_ORDER);
     HFASSERT(previousOffsetSum == subtreeOffset);
-        
+    
     TreeDepth_t depth = tree->depth;
     HFASSERT(depth != BAD_DEPTH);
     BOOL modifiedLeft = NO, modifiedRight = NO;
@@ -798,7 +732,7 @@ static BOOL btree_remove(HFBTree *tree, HFBTreeIndex deletionOffset) {
         BOOL rightNeighborNeedsUpdating = modifiedRight && (branchChildIndex + 1 == BTREE_BRANCH_ORDER || branch->children[branchChildIndex + 1] == NULL); //same goes for right
         if (leftNeighborNeedsUpdating) {
             HFASSERT(branch->left != NULL);
-//            NSLog(@"Updating lefty %p", branch->left);
+            //            NSLog(@"Updating lefty %p", branch->left);
             update_node_having_changed_size_of_child(branch->left, NO);
         }
 #if ! NDEBUG
@@ -806,7 +740,7 @@ static BOOL btree_remove(HFBTree *tree, HFBTreeIndex deletionOffset) {
 #endif        
         if (rightNeighborNeedsUpdating) {
             HFASSERT(branch->right != NULL);
-//            NSLog(@"Updating righty %p", branch->right);
+            //            NSLog(@"Updating righty %p", branch->right);
             update_node_having_changed_size_of_child(branch->right, NO);
         }
 #if ! NDEBUG
@@ -819,7 +753,7 @@ static BOOL btree_remove(HFBTree *tree, HFBTreeIndex deletionOffset) {
             deleteNode = remove_value_from_node_with_possible_rebalance(branch, branchChildIndex, depth==0/*isRootNode*/, NO, &modifiedLeft, &modifiedRight);
         }
         else {
-        //    update_node_having_changed_size_of_child(branch, NO);
+            //    update_node_having_changed_size_of_child(branch, NO);
             // no need to delete parent nodes, so leave deleteNode as NO
         }
         /* Our parent may have to modify its left or right neighbor if we had to modify our left or right neighbor or if one of our children modified a neighbor that is not also a child of us. */
@@ -850,7 +784,7 @@ static HFBTreeNode *mutable_copy_node(HFBTreeNode *node, TreeDepth_t depth, HFBT
     }
     
     /* Leave us for our future right neighbor to find */
-    linkingHelper[0] = (void *)result;
+    linkingHelper[0] = result;
     
     HFBTreeIndex index;
     for (index = 0; index < BTREE_ORDER; index++) {
@@ -860,69 +794,9 @@ static HFBTreeNode *mutable_copy_node(HFBTreeNode *node, TreeDepth_t depth, HFBT
             result->children[index] = mutable_copy_node(child, depth - 1, linkingHelper + 1);
         }
         else {
-            result->children[index] = [(TreeEntry *)child retain];
+            result->children[index] = (TreeEntry *)child;
         }
     }
-    return result;
-}
-
-#if ! NDEBUG
-static BOOL non_nulls_are_grouped_at_start(const id *ptr, NSUInteger count) {
-    BOOL hasSeenNull = NO;
-    for (NSUInteger i=0; i < count; i++) {
-        BOOL ptrIsNull = (ptr[i] == nil);
-        hasSeenNull = hasSeenNull || ptrIsNull;
-        if (hasSeenNull && ! ptrIsNull) {
-            return NO;
-        }
-    }
-    return YES;
-}
-#endif
-
-static void btree_recursive_check_integrity(HFBTree *tree, HFBTreeNode *branchOrLeaf, TreeDepth_t depth, HFBTreeNode **linkHelper) {
-    HFASSERT(linkHelper[0] == branchOrLeaf->left);
-    if (linkHelper[0]) HFASSERT(linkHelper[0]->right == branchOrLeaf);
-    linkHelper[0] = branchOrLeaf;
-    
-    if (depth == 0) {
-        HFBTreeLeaf *leaf = CHECK_CAST(branchOrLeaf, HFBTreeLeaf);
-        HFASSERT(non_nulls_are_grouped_at_start(leaf->children, BTREE_LEAF_ORDER));
-    }
-    else {
-        HFBTreeBranch *branch = CHECK_CAST(branchOrLeaf, HFBTreeBranch);
-        HFASSERT(non_nulls_are_grouped_at_start(branch->children, BTREE_BRANCH_ORDER));
-        for (ChildIndex_t i = 0; i < BTREE_BRANCH_ORDER; i++) {
-            if (! branch->children[i]) break;
-            btree_recursive_check_integrity(tree, branch->children[i], depth - 1, linkHelper + 1);
-        }
-    }
-    ChildIndex_t childCount = count_node_values(branchOrLeaf);
-    if (depth < tree->depth) { // only the root may have fewer than BTREE_NODE_MINIMUM_VALUE_COUNT
-        HFASSERT(childCount >= BTREE_NODE_MINIMUM_VALUE_COUNT);
-    }
-    HFASSERT(childCount <= BTREE_ORDER);
-}
-
-static HFBTreeIndex btree_recursive_check_integrity_of_cached_lengths(HFBTreeNode *branchOrLeaf) {
-    HFBTreeIndex result = 0;
-    if (IS_LEAF(branchOrLeaf)) {
-        HFBTreeLeaf *leaf = CHECK_CAST(branchOrLeaf, HFBTreeLeaf);
-        for (ChildIndex_t i = 0; i < BTREE_LEAF_ORDER; i++) {
-            if (! leaf->children[i]) break;
-            result = HFSum(result, HFBTreeLength(leaf->children[i]));
-        }
-    }
-    else {
-        HFBTreeBranch *branch = CHECK_CAST(branchOrLeaf, HFBTreeBranch);
-        for (ChildIndex_t i = 0; i < BTREE_BRANCH_ORDER; i++) {
-            if (branch->children[i]) {
-                HFBTreeIndex subtreeLength = btree_recursive_check_integrity_of_cached_lengths(branch->children[i]);
-                result = HFSum(result, subtreeLength);
-            }
-        }
-    }
-    HFASSERT(result == branchOrLeaf->subtreeLength);
     return result;
 }
 
@@ -977,12 +851,12 @@ FORCE_STATIC_INLINE void btree_apply_function_to_entries(HFBTree *tree, HFBTreeI
 - (NSEnumerator *)entryEnumerator {
     if (! root) return [[NSArray array] objectEnumerator];
     HFBTreeLeaf *leaf = btree_find_leaf(self, 0).leaf;
-    return [[[HFBTreeEnumerator alloc] initWithLeaf:leaf] autorelease];
+    return [[HFBTreeEnumerator alloc] initWithLeaf:leaf];
 }
 
 
 static BOOL add_to_array(id entry, HFBTreeIndex offset __attribute__((unused)), void *array) {
-    [(id)array addObject:entry];
+    [(NSMutableArray *)objc_unretainedObject(array) addObject:entry];
     return YES;
 }
 
@@ -992,7 +866,7 @@ static BOOL add_to_array(id entry, HFBTreeIndex offset __attribute__((unused)), 
     unsigned int depthIndex = depth;
     while (depthIndex--) treeCapacity *= BTREE_ORDER;
     NSMutableArray *result = [NSMutableArray arrayWithCapacity: treeCapacity/2]; //assume we're half full
-    btree_apply_function_to_entries(self, 0, add_to_array, result);
+    btree_apply_function_to_entries(self, 0, &add_to_array, (void *)objc_unretainedPointer(result));
     return result;
 }
 

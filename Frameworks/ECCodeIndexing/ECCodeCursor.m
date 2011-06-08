@@ -15,7 +15,7 @@
     @private
     NSUInteger hash_;
 }
-@property (nonatomic, retain) ECCodeUnit *codeUnit;
+@property (nonatomic, strong) ECCodeUnit *codeUnit;
 @end
 
 @implementation ECCodeCursor
@@ -29,14 +29,6 @@
 @synthesize extent = extent_;
 @synthesize unifiedSymbolResolution = unifiedSymbolResolution_;
 
-- (void)dealloc
-{
-    [language_ release];
-    [spelling_ release];
-    [file_ release];
-    [unifiedSymbolResolution_ release];
-    [super dealloc];
-}
 
 - (id)initWithLanguage:(NSString *)language kind:(ECCodeCursorKind)kind spelling:(NSString *)spelling file:(NSString *)file offset:(NSUInteger)offset extent:(NSRange)extent unifiedSymbolResolution:(NSString *)unifiedSymbolResolution
 {
@@ -57,12 +49,12 @@
 {
     id cursor = [self alloc];
     cursor = [cursor initWithLanguage:language kind:kind spelling:spelling file:file offset:offset extent:extent unifiedSymbolResolution:unifiedSymbolResolution];
-    return [cursor autorelease];
+    return cursor;
 }
 
 - (id)copyWithZone:(NSZone *)zone
 {
-    return [self retain];
+    return self;
 }
 
 - (NSUInteger)hash

@@ -34,16 +34,16 @@ typedef void (^ECTextStyleCustomOverlayBlock)(CGContextRef context, CGRect rect)
 
 /// The font to use for this style.
 // TODO specify family, attributes instead
-@property (nonatomic, retain) UIFont *font;
+@property (nonatomic, strong) UIFont *font;
 
 /// The font color to use for this style.
-@property (nonatomic, retain) UIColor *foregroundColor;
+@property (nonatomic, strong) UIColor *foregroundColor;
 
 /// The font background color for the font.
-@property (nonatomic, retain) UIColor *backgroundColor;
+@property (nonatomic, strong) UIColor *backgroundColor;
 
 // The underline color for the font.
-@property (nonatomic, retain) UIColor *underlineColor;
+@property (nonatomic, strong) UIColor *underlineColor;
 
 // The style of underline
 @property (nonatomic) ECUnderlineStyle underlineStyle;
