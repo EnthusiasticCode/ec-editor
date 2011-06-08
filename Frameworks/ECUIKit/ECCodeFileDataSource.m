@@ -18,8 +18,8 @@
     NSData *lineDelimiterData;
     NSMutableDictionary *lineOffsetsDictionary;
     
+    NSMutableAttributedString *editableString;
     struct {
-        NSMutableAttributedString *string;
         struct {
             unsigned long long location, lenght;
         } fileRange;
@@ -88,7 +88,7 @@
     [fileHandle release];
     [inputFileURL release];
     
-    [editable.string release];
+    [editableString release];
     
     [super dealloc];
 }
@@ -121,7 +121,7 @@
             writeBytesCount -= writeDataSize;
         }
         // Changed
-        writeData = [[editable.string string] dataUsingEncoding:NSUTF8StringEncoding];
+        writeData = [[editableString string] dataUsingEncoding:NSUTF8StringEncoding];
         [tempFile writeData:writeData];
         writeBytesCount = fileLength - (editable.fileRange.location + editable.fileRange.lenght);
         editable.fileRange.lenght = [writeData length];
@@ -194,28 +194,28 @@
     [self flush];
     lineRange->length = end - location;
     NSString *string = [[NSString alloc] initWithData:textData encoding:NSUTF8StringEncoding];
-    [editable.string release];
-    editable.string = [[NSMutableAttributedString alloc] initWithString:string attributes:defaultTextStyle.CTAttributes];
+    [editableString release];
+    editableString = [[NSMutableAttributedString alloc] initWithString:string attributes:defaultTextStyle.CTAttributes];
     [string release];
     editable.fileRange.location = lineRangeLocationOffset;
     editable.fileRange.lenght = lineRangeEndOffset - lineRangeLocationOffset;
     
     // Apply custom styles
     if (stylizeBlock)
-        stylizeBlock(self, editable.string, NSMakeRange((NSUInteger)lineRangeLocationOffset, (NSUInteger)(editable.fileRange.lenght)));
+        stylizeBlock(self, editableString, NSMakeRange((NSUInteger)lineRangeLocationOffset, (NSUInteger)(editable.fileRange.lenght)));
     
     // Determine end of file/string and append tailing new line
     if ([fileHandle offsetInFile] >= fileLength)
     {
         NSAttributedString *lineDelimiter = [[NSAttributedString alloc] initWithString:self.lineDelimiter attributes:defaultTextStyle.CTAttributes];
-        [editable.string appendAttributedString:lineDelimiter];
+        [editableString appendAttributedString:lineDelimiter];
         [lineDelimiter release];
         
         if (endOfString)
             *endOfString = YES;
     }
     
-    return editable.string;
+    return editableString;
 }
 
 - (NSUInteger)textRenderer:(ECTextRenderer *)sender estimatedTextLineCountOfLength:(NSUInteger)maximumLineLength

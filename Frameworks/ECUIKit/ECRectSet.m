@@ -91,28 +91,12 @@
 
 - (id)copyWithZone:(NSZone *)zone
 {
-    if (NSShouldRetainWithZone(self, zone))
-    {
-        return [self retain];
-    }
-    else
-    {
-        ECRectSet *result = [[ECRectSet allocWithZone:zone] initWithRects:self];
-        return result;
-    }
+    return self;
 }
 
 - (id)mutableCopyWithZone:(NSZone *)zone
 {
-    if (NSShouldRetainWithZone(self, zone))
-    {
-        return [self retain];
-    }
-    else
-    {
-        ECMutableRectSet *result = [[ECMutableRectSet allocWithZone:zone] initWithRects:self];
-        return result;
-    }
+    return [[ECMutableRectSet alloc] initWithRects:self];
 }
 
 //- (NSUInteger)countByEnumeratingWithState:(NSFastEnumerationState *)state objects:(id *)stackbuf count:(NSUInteger)len

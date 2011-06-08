@@ -8,14 +8,19 @@
 
 #import "ECDictionaryCache.h"
 
-typedef struct {
-    id key;
-    id object;
-} ECDictionaryCacheEntry;
+@interface ECDictionaryCacheEntry : NSObject
+@property (nonatomic, strong) id cachedKey;
+@property (nonatomic, strong) id cachedObject;
+@end
+
+@implementation ECDictionaryCacheEntry
+@synthesize cachedKey;
+@synthesize cachedObject;
+@end
 
 @interface ECDictionaryCache () {
 @private
-    ECDictionaryCacheEntry *entries;
+    NSMutableArray *entries;
     NSUInteger currentInsert;
 }
 @end
@@ -23,23 +28,6 @@ typedef struct {
 @implementation ECDictionaryCache
 
 @synthesize countLimit;
-
-- (void)setCountLimit:(NSUInteger)limit
-{
-    if (limit > 0 && limit != countLimit) 
-    {
-        if (limit < countLimit) 
-        {
-            for (NSUInteger i = limit; i < countLimit; ++i) 
-            {
-                [entries[i].object release];
-            }
-        }
-        countLimit = limit;
-        entries = (ECDictionaryCacheEntry *)realloc(entries, sizeof(ECDictionaryCacheEntry) * limit);
-        // TODO memset
-    }
-}
 
 - (id)initWithCountLimit:(NSUInteger)limit
 {
@@ -50,28 +38,19 @@ typedef struct {
             limit = 1;
         }
         countLimit = limit;
-        entries = (ECDictionaryCacheEntry *)malloc(sizeof(ECDictionaryCacheEntry) * limit);
-        memset(entries, 0, sizeof(ECDictionaryCacheEntry) * limit);
+        entries = [NSMutableArray arrayWithCapacity:limit];
     }
     return self;
 }
 
-- (void)dealloc
-{
-    free(entries);
-    [super dealloc];
-}
-
 - (void)setObject:(id)obj forKey:(id)key
 {
-    // Release previous entry
-    if (entries[currentInsert].object)
-    {
-        [entries[currentInsert].object release];
-    }
+    while (currentInsert >= [entries count])
+        [entries addObject:[[[ECDictionaryCacheEntry alloc] init] autorelease]];
     // Insert new entry
-    entries[currentInsert].key = key;
-    entries[currentInsert].object = [obj retain];
+    ECDictionaryCacheEntry *entry = [entries objectAtIndex:currentInsert];
+    entry.cachedKey = key;
+    entry.cachedObject = [obj retain];
     // Insert point for next insert
     currentInsert++;
     if (currentInsert >= countLimit) 
@@ -80,37 +59,29 @@ typedef struct {
 
 - (id)objectForKey:(id)key
 {
-    for (NSUInteger i = 0; i < countLimit; ++i) 
-    {
-        if (entries[i].key == key) 
-        {
-            return entries[i].object;
-        }
-    }
+    for (ECDictionaryCacheEntry *entry in entries)
+        if (entry.cachedKey == key)
+            return entry.cachedObject;
     return nil;
 }
 
 - (void)removeObjectForKey:(id)key
 {
-    for (NSUInteger i = 0; i < countLimit; ++i) 
-    {
-        if (entries[i].key == key) 
+    for (ECDictionaryCacheEntry *entry in entries)
+        if (entry.cachedKey == key)
         {
-            [entries[i].object release];
-            entries[i].object = nil;
-            entries[i].key = nil;
+            entry.cachedKey = nil;
+            entry.cachedObject = nil;
             return;
         }
-    }
 }
 
 - (void)removeAllObjects
 {
-    for (NSUInteger i = 0; i < countLimit; ++i) 
+    for (ECDictionaryCacheEntry *entry in entries)
     {
-        [entries[i].object release];
-        entries[i].object = nil;
-        entries[i].key = nil;
+        entry.cachedKey = nil;
+        entry.cachedObject = nil;
     }
     currentInsert = 0;
 }

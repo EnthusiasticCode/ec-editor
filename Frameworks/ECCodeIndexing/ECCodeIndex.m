@@ -149,7 +149,7 @@
     Class *classes = NULL;
     NSMutableArray *pluginClasses;
     pluginClasses = [NSMutableArray array];
-    classes = malloc(sizeof(Class) * numClasses);
+    classes = (__unsafe_unretained Class *)malloc(sizeof(Class) * numClasses);
     objc_getClassList(classes, numClasses);
     for (int i = 0; i < numClasses; ++i)
     {

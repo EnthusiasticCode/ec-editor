@@ -169,8 +169,8 @@ static CGPathRef createButtonShapePath(CGRect rect, CGFloat radius, CGFloat left
     if (animated) 
     {
         CABasicAnimation *animation = [CABasicAnimation animationWithKeyPath:@"path"];
-        animation.fromValue = (id)layer.path;
-        animation.toValue = (id)buttonPath;
+        animation.fromValue = objc_unretainedObject(layer.path);
+        animation.toValue = objc_unretainedObject(buttonPath);
         animation.duration = 0.15;
         animation.valueFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
         [layer addAnimation:animation forKey:nil];

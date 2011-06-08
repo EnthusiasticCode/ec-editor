@@ -21,15 +21,7 @@
 
 - (id)copyWithZone:(NSZone *)zone
 {
-    if (NSShouldRetainWithZone(self, zone))
-    {
-        return [self retain];
-    }
-    else
-    {
-        ECTextPosition *result = [[ECTextPosition allocWithZone:zone] initWithIndex:index];
-        return result;
-    }
+    return self;
 }
 
 - (NSComparisonResult)compare:(id)other

@@ -83,8 +83,8 @@ static BOOL copy_bytes(id entry, HFBTreeIndex offset, void *userInfo) {
     HFASSERT(range.length <= NSUIntegerMax);
     HFASSERT(HFMaxRange(range) <= [self length]);
     if (range.length > 0) {
-	struct HFBTreeByteArrayCopyInfo_t copyInfo = {.dst = dst, .remainingLength = ll2l(range.length), .startingOffset = range.location};
-	[btree applyFunction:copy_bytes toEntriesStartingAtOffset:range.location withUserInfo:&copyInfo];
+        struct HFBTreeByteArrayCopyInfo_t copyInfo = {.dst = dst, .remainingLength = ll2l(range.length), .startingOffset = range.location};
+        [btree applyFunction:copy_bytes toEntriesStartingAtOffset:range.location withUserInfo:&copyInfo];
     }
 }
 
@@ -170,7 +170,7 @@ static inline HFByteSlice *findInitialSlice(HFBTree *btree, HFRange *inoutArrayR
             [btree removeEntryAtOffset:beginningOffset];
             
             [btree insertEntry:right atOffset:beginningOffset];
-
+            
             /* Try the fast appending path */
             HFByteSlice *joinedSlice = [left byteSliceByAppendingSlice:slice];
             if (joinedSlice) {
@@ -239,7 +239,7 @@ static inline HFByteSlice *findInitialSlice(HFBTree *btree, HFRange *inoutArrayR
 
 - (void)insertByteSlice:(HFByteSlice *)slice inRange:(HFRange)lrange {
     [self incrementGenerationOrRaiseIfLockedForSelector:_cmd];
-
+    
     if (lrange.length > 0) {
         [self deleteBytesInRange:lrange];
     }

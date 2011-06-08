@@ -123,12 +123,12 @@ static void topologicallySort(HFObjectGraph *self, id object, NSMutableArray *re
     NSUInteger i, dependencyCount = [dependencies count];
     if (dependencyCount > 0) {
         CFSetAddValue(pending, object);
-        NEW_ARRAY(id, dependencyArray, dependencyCount);
+        NEW_ARRAY(void *, dependencyArray, dependencyCount);
         CFSetGetValues((CFSetRef)dependencies, (const void **)dependencyArray);
         for (i=0; i < dependencyCount; i++) {
             HFASSERT(!CFSetContainsValue(pending, dependencyArray[i]));
             if (! CFSetContainsValue(visited, dependencyArray[i])) {
-                topologicallySort(self, dependencyArray[i], result, pending, visited);
+                topologicallySort(self, objc_unretainedObject(dependencyArray[i]), result, pending, visited);
                 HFASSERT(CFSetContainsValue(visited, dependencyArray[i]));
                 HFASSERT(!CFSetContainsValue(pending, dependencyArray[i]));
             }

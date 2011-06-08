@@ -91,22 +91,7 @@
 
 - (id)copyWithZone:(NSZone *)z
 {
-    if (NSShouldRetainWithZone(self, z))
-    {
-        return [self retain];
-    }
-    else
-    {
-        ECTextPosition *st = [start copyWithZone:z];
-        ECTextPosition *en = [end copyWithZone:z];
-        
-        ECTextRange *r = [[ECTextRange allocWithZone:z] initWithStart:st end:en];
-        
-        [st release];
-        [en release];
-        
-        return r;
-    }
+    return self;
 }
 
 - (BOOL)isEmpty

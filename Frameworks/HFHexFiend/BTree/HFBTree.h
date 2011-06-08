@@ -11,8 +11,6 @@ typedef unsigned long long HFBTreeIndex;
 
 @class HFBTreeNode;
 
-#define HFTEST_BTREES 1
-
 @interface HFBTree : NSObject <NSMutableCopying> {
     unsigned int depth;
     HFBTreeNode *root;
@@ -23,11 +21,6 @@ typedef unsigned long long HFBTreeIndex;
 - (id)entryContainingOffset:(HFBTreeIndex)offset beginningOffset:(HFBTreeIndex *)outBeginningOffset;
 - (void)removeEntryAtOffset:(HFBTreeIndex)offset;
 - (void)removeAllEntries;
-
-#if HFTEST_BTREES
-- (void)checkIntegrityOfCachedLengths;
-- (void)checkIntegrityOfBTreeStructure;
-#endif
 
 - (NSEnumerator *)entryEnumerator;
 - (NSArray *)allEntries;

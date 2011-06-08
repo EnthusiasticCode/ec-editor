@@ -122,7 +122,7 @@
         // Cache
         if (f) 
         {
-            [parentRenderer.framesettersCache setObject:(id)f forKey:self];
+            [parentRenderer.framesettersCache setObject:objc_unretainedObject(f) forKey:self];
             CFRelease(f);
         }
         
@@ -148,7 +148,7 @@
         CGPathRelease(path);
         
         // Update cache and return
-        [parentRenderer.framesCache setObject:(id)f forKey:self];
+        [parentRenderer.framesCache setObject:objc_unretainedObject(f) forKey:self];
         CFRelease(f);
     }
     return f;

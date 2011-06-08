@@ -61,7 +61,7 @@
 // TODO delete all this unused methods
 - (id)copyWithZone:(NSZone *)zone
 {
-    return [[FileTriOffset allocWithZone:zone] initWithLine:line character:character byte:byte];
+    return [[FileTriOffset alloc] initWithLine:line character:character byte:byte];
 }
 
 - (NSUInteger)hash
@@ -94,11 +94,7 @@
     
     NSMutableArray *offsetCache;
     FileTriOffset *eofOffset;
-    
-    struct {
-        // Offset before and after the last committed position
-        FileTriOffset *prevOffset, *nextOffset;
-    } lastEdited;
+    FileTriOffset *lastEditedPrevOffset, *lastEditedNextOffset;    
     
     NSMutableData *editData;
     
@@ -169,8 +165,8 @@
     [byteArray release];
     [offsetCache release];
     
-    [lastEdited.prevOffset release];
-    [lastEdited.nextOffset release];
+    [lastEditedPrevOffset release];
+    [lastEditedNextOffset release];
     [editData release];
     
     [fileURL release];
@@ -231,13 +227,13 @@
     
     // Cached subsequent edit check
     FileTriOffset *startOffset;
-    if (lastEdited.nextOffset && lastEdited.nextOffset.character == range.location)
+    if (lastEditedNextOffset && lastEditedNextOffset.character == range.location)
     {
-        startOffset = lastEdited.nextOffset;
+        startOffset = lastEditedNextOffset;
     }
-    else if (lastEdited.prevOffset && lastEdited.prevOffset.character == range.location)
+    else if (lastEditedPrevOffset && lastEditedPrevOffset.character == range.location)
     {
-        startOffset = lastEdited.prevOffset;
+        startOffset = lastEditedPrevOffset;
     }
     else
     {
@@ -251,9 +247,9 @@
     {
         endOffset = startOffset;
     }
-    else if (lastEdited.nextOffset && lastEdited.nextOffset.character == rangeEnd)
+    else if (lastEditedNextOffset && lastEditedNextOffset.character == rangeEnd)
     {
-        endOffset = lastEdited.nextOffset;
+        endOffset = lastEditedNextOffset;
     }
     else
     {
@@ -295,14 +291,14 @@
         // Cacheing offsets
         // TODO !!! validate this in limit cases when new offset line may be wrong
         // limit case when writing a char at the beginning of a line, the nextoffset will have wrong line number
-        if (startOffset != lastEdited.nextOffset) 
+        if (startOffset != lastEditedNextOffset) 
         {
-            [lastEdited.nextOffset release];
-            lastEdited.nextOffset = [startOffset copy];
+            [lastEditedNextOffset release];
+            lastEditedNextOffset = [startOffset copy];
         }
-        [lastEdited.prevOffset release];
-        lastEdited.prevOffset = lastEdited.nextOffset;
-        lastEdited.nextOffset = [[startOffset fileOffsetByAddingLines:(toLineRange.length - 1) 
+        [lastEditedPrevOffset release];
+        lastEditedPrevOffset = lastEditedNextOffset;
+        lastEditedNextOffset = [[startOffset fileOffsetByAddingLines:(toLineRange.length - 1) 
                                                            characters:stringLenght 
                                                                 bytes:stringDataLength] retain];
     }
@@ -312,27 +308,27 @@
         
         if (startOffset.line != endOffset.line) 
         {
-            [lastEdited.prevOffset release];
-            lastEdited.prevOffset = nil;
-            [lastEdited.nextOffset release];
-            lastEdited.nextOffset = nil;
+            [lastEditedPrevOffset release];
+            lastEditedPrevOffset = nil;
+            [lastEditedNextOffset release];
+            lastEditedNextOffset = nil;
         }
         else
         {
-            if (startOffset != lastEdited.prevOffset) 
+            if (startOffset != lastEditedPrevOffset) 
             {
-                [lastEdited.prevOffset release];
-                lastEdited.prevOffset = [startOffset copy];
+                [lastEditedPrevOffset release];
+                lastEditedPrevOffset = [startOffset copy];
             }
-            [lastEdited.nextOffset release];
-            lastEdited.nextOffset = lastEdited.prevOffset;
-            lastEdited.prevOffset = [[startOffset fileOffsetByAddingLines:0 
+            [lastEditedNextOffset release];
+            lastEditedNextOffset = lastEditedPrevOffset;
+            lastEditedPrevOffset = [[startOffset fileOffsetByAddingLines:0 
                                                                characters:-1
                                                                     bytes:-1] retain];
         }
     }
     
-//    NSLog(@"\nprev %@, \nnext %@\n", lastEdited.prevOffset, lastEdited.nextOffset);
+//    NSLog(@"\nprev %@, \nnext %@\n", lastEditedPrevOffset, lastEditedNextOffset);
     
     // Update eof offset
     if (eofOffset)
