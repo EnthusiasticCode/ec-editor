@@ -26,6 +26,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    self.codeView.datasource = self.file;
     self.navigationItem.rightBarButtonItem = self.completionButton;
 }
 
@@ -48,7 +49,6 @@
 {
     self.file = aFile;
     self.title = [aFile.path lastPathComponent];
-    self.codeView.datasource = aFile;
 }
 
 - (IBAction)complete:(id)sender {
