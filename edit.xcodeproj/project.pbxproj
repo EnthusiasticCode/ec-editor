@@ -161,7 +161,6 @@
 		B75B87741358401B0098E7E2 /* ECCodeToken.m in Sources */ = {isa = PBXBuildFile; fileRef = B75B87621358401B0098E7E2 /* ECCodeToken.m */; };
 		B75B87751358401B0098E7E2 /* ECCodeUnit.m in Sources */ = {isa = PBXBuildFile; fileRef = B75B87641358401B0098E7E2 /* ECCodeUnit.m */; };
 		B7C764F2136773A4009181DB /* ECManagedObject.m in Sources */ = {isa = PBXBuildFile; fileRef = B7C764F1136773A4009181DB /* ECManagedObject.m */; };
-		B7DAB3871372E17A00262D3C /* ECArrayTree.m in Sources */ = {isa = PBXBuildFile; fileRef = B7DAB3861372E17A00262D3C /* ECArrayTree.m */; };
 		B7DBA580132A3281004C0E1D /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7DBA57F132A3281004C0E1D /* QuartzCore.framework */; };
 		B7F0335E139E6BAF00FDC353 /* ECCodeByteArrayDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = B7F0335B139E6BAE00FDC353 /* ECCodeByteArrayDataSource.m */; };
 		B7F0335F139E6BAF00FDC353 /* ECCodeFileDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = B7F0335D139E6BAF00FDC353 /* ECCodeFileDataSource.m */; };
@@ -405,8 +404,6 @@
 		B75B87661358401B0098E7E2 /* ECCodeUnitPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeUnitPlugin.h; sourceTree = "<group>"; };
 		B7C764F0136773A4009181DB /* ECManagedObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECManagedObject.h; sourceTree = "<group>"; };
 		B7C764F1136773A4009181DB /* ECManagedObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECManagedObject.m; sourceTree = "<group>"; };
-		B7DAB3851372E17A00262D3C /* ECArrayTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECArrayTree.h; sourceTree = "<group>"; };
-		B7DAB3861372E17A00262D3C /* ECArrayTree.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECArrayTree.m; sourceTree = "<group>"; };
 		B7DBA57F132A3281004C0E1D /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		B7F0335A139E6BAE00FDC353 /* ECCodeByteArrayDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECCodeByteArrayDataSource.h; path = Frameworks/ECUIKit/ECCodeByteArrayDataSource.h; sourceTree = "<group>"; };
 		B7F0335B139E6BAE00FDC353 /* ECCodeByteArrayDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECCodeByteArrayDataSource.m; path = Frameworks/ECUIKit/ECCodeByteArrayDataSource.m; sourceTree = "<group>"; };
@@ -850,8 +847,6 @@
 				B75B8742135840070098E7E2 /* pstdint.h */,
 				B72BE6331368C0F9009B0977 /* NSMutableArray+Shuffling.h */,
 				B72BE6341368C0F9009B0977 /* NSMutableArray+Shuffling.m */,
-				B7DAB3851372E17A00262D3C /* ECArrayTree.h */,
-				B7DAB3861372E17A00262D3C /* ECArrayTree.m */,
 				B7086D31138BCA28001F2ECE /* ECPatriciaTrie.h */,
 				B7086D32138BCA28001F2ECE /* ECPatriciaTrie.m */,
 			);
@@ -1118,7 +1113,6 @@
 				B72BE641136B3E53009B0977 /* ECDictionaryCache.m in Sources */,
 				B72BE649136B3E7F009B0977 /* ECCodeStringDataSource.m in Sources */,
 				B72BE64A136B3E7F009B0977 /* ECTextRenderer.m in Sources */,
-				B7DAB3871372E17A00262D3C /* ECArrayTree.m in Sources */,
 				B74C66251375E24800CC92D3 /* ECCodeViewBase.m in Sources */,
 				B74C66261375E24800CC92D3 /* ECJumpBar.m in Sources */,
 				B74C66271375E24800CC92D3 /* ECPopoverController.m in Sources */,

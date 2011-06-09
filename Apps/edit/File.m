@@ -135,7 +135,7 @@
     return [self.byteArrayDataSource codeView:codeView commitString:string forTextInRange:range];
 }
 
-- (UIViewController *)codeView:(ECCodeView *)codeView viewControllerForcompletionAtTextInRange:(NSRange)range
+- (UIViewController *)codeView:(ECCodeView *)codeView viewControllerForCompletionAtTextInRange:(NSRange)range
 {
     NSArray *array = [self.unit completionsWithSelection:range];
     ECPatriciaTrie *trie = [[ECPatriciaTrie alloc] init];

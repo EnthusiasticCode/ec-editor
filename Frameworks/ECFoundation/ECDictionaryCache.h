@@ -11,7 +11,7 @@
 
 @interface ECDictionaryCache : NSObject
 
-@property (nonatomic) NSUInteger countLimit;
+@property (nonatomic, readonly) NSUInteger countLimit;
 
 - (id)initWithCountLimit:(NSUInteger)limit;
 

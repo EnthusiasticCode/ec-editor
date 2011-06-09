@@ -25,6 +25,4 @@
 - (id)pop;
 /// Caches an object if the cache is not full.
 - (void)push:(id)object;
-/// Returns an autoreleased cache initialized with the given parameters
-+ (id)cacheWithTarget:(id)target action:(SEL)action size:(NSUInteger)size;
 @end

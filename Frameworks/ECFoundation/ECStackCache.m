@@ -54,11 +54,4 @@
     [_stack addObject:object];
 }
 
-+ (id)cacheWithTarget:(id)target action:(SEL)action size:(NSUInteger)size
-{
-    id cache = [self alloc];
-    cache = [cache initWithTarget:target action:action size:size];
-    return cache;
-}
-
 @end
