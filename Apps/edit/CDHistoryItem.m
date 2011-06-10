@@ -2,7 +2,7 @@
 //  CDHistoryItem.m
 //  edit
 //
-//  Created by Uri Baghin on 5/10/11.
+//  Created by Uri Baghin on 6/10/11.
 //  Copyright (c) 2011 __MyCompanyName__. All rights reserved.
 //
 
@@ -12,12 +12,9 @@
 
 
 @implementation CDHistoryItem
-@dynamic selection;
 @dynamic position;
-@dynamic index;
-@dynamic tab;
+@dynamic selection;
 @dynamic file;
-
-
+@dynamic tab;
 
 @end

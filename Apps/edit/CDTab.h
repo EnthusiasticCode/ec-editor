@@ -2,20 +2,26 @@
 //  CDTab.h
 //  edit
 //
-//  Created by Uri Baghin on 5/10/11.
+//  Created by Uri Baghin on 6/10/11.
 //  Copyright (c) 2011 __MyCompanyName__. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
-#import "ECManagedObject.h"
 
 @class CDHistoryItem;
 
-@interface CDTab : ECManagedObject {
+@interface CDTab : NSManagedObject {
 @private
 }
-@property (nonatomic, strong) NSNumber * index;
-@property (nonatomic, strong) NSSet* historyItems;
+@property (nonatomic) int32_t index;
+@property (nonatomic, retain) NSSet *historyItems;
+@end
+
+@interface CDTab (CoreDataGeneratedAccessors)
+- (void)addHistoryItemsObject:(CDHistoryItem *)value;
+- (void)removeHistoryItemsObject:(CDHistoryItem *)value;
+- (void)addHistoryItems:(NSSet *)value;
+- (void)removeHistoryItems:(NSSet *)value;
 
 @end

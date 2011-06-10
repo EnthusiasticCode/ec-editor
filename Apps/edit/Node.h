@@ -6,12 +6,17 @@
 //  Copyright 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
 #import "CDNode.h"
 @class File;
 
+typedef enum
+{
+    NodeTypeFile = 0,
+    NodeTypeFolder = 1,
+    NodeTypeGroup = 2,
+} NodeType;
+
 @interface Node : CDNode
-- (Node *)addNodeWithName:(NSString *)name type:(NSString *)type;
+- (Node *)addNodeWithName:(NSString *)name type:(NodeType)type;
 - (File *)addFileWithPath:(NSString *)path;
-- (NSArray *)orderedChildren;
 @end

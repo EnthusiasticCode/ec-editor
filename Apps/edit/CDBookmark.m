@@ -2,7 +2,7 @@
 //  CDBookmark.m
 //  edit
 //
-//  Created by Uri Baghin on 5/10/11.
+//  Created by Uri Baghin on 6/10/11.
 //  Copyright (c) 2011 __MyCompanyName__. All rights reserved.
 //
 
@@ -11,9 +11,8 @@
 
 
 @implementation CDBookmark
-@dynamic range;
 @dynamic note;
+@dynamic range;
 @dynamic file;
-
 
 @end

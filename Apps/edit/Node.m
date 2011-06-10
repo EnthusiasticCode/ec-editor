@@ -11,27 +11,7 @@
 
 @implementation Node
 
-- (void)addChildrenObject:(CDNode *)value
-{
-    [self addObject:value forOrderedKey:@"children"];
-}
-
-- (void)removeChildrenObject:(CDNode *)value
-{
-    [self removeObject:value forOrderedKey:@"children"];
-}
-
-- (void)addChildren:(NSSet *)value
-{
-    [self addObjects:value forOrderedKey:@"children"];
-}
-
-- (void)removeChildren:(NSSet *)value
-{
-    [self removeObjects:value forOrderedKey:@"children"];
-}
-
-- (Node *)addNodeWithName:(NSString *)name type:(NSString *)type
+- (Node *)addNodeWithName:(NSString *)name type:(NodeType)type
 {
     Node *node = [NSEntityDescription insertNewObjectForEntityForName:@"Node" inManagedObjectContext:[self managedObjectContext]];
     node.name = name;
@@ -44,14 +24,10 @@
 {
     File *file = [NSEntityDescription insertNewObjectForEntityForName:@"File" inManagedObjectContext:[self managedObjectContext]];
     file.path = path;
+    file.type = NodeTypeFile;
     file.name = [path lastPathComponent];
     file.parent = self;
     return file;
-}
-
-- (NSArray *)orderedChildren
-{
-    return [self valueForOrderedKey:@"children"];
 }
 
 @end

@@ -8,12 +8,6 @@
 
 #import "ECPatriciaTrie.h"
 
-#ifndef NDEBUG
-#define ECASSERT(x) assert(x)
-#else
-#define ECASSERT(x)
-#endif
-
 #define ALPHABET_SIZE 39
 
 @interface ECPatriciaTrie ()
@@ -86,7 +80,7 @@ BOOL _characterIsStartOfWord(NSUInteger characterIndex, NSString *string)
 
 BOOL _skipNodeForOptions(ECPatriciaTrie *node, ECPatriciaTrieEnumerationOptions options)
 {
-    ECASSERT(node);
+    REQUIRE_NOT_NULL(node);
     if (!options)
         return NO;
     if (options & ECPatriciaTrieEnumerationOptionsSkipEndOfWord && node.endOfWord)
@@ -102,7 +96,7 @@ BOOL _skipNodeForOptions(ECPatriciaTrie *node, ECPatriciaTrieEnumerationOptions 
 
 - (void)_enumerateNodesWithBlock:(void (^)(ECPatriciaTrie *))block options:(ECPatriciaTrieEnumerationOptions)options
 {
-    ECASSERT(block);
+    REQUIRE_NOT_NULL(block);
     if (!(options & ECPatriciaTrieEnumerationOptionsSkipRoot))
         if (!_skipNodeForOptions(self, options))
         {
@@ -220,7 +214,7 @@ BOOL _skipNodeForOptions(ECPatriciaTrie *node, ECPatriciaTrieEnumerationOptions 
 
 - (ECPatriciaTrie *)_insertNodeForKey:(NSString *)key
 {
-    ECASSERT(key);
+    REQUIRE_NOT_NULL(key);
     NSUInteger criticalCharacter = [self _criticalCharacterInKey:key];
     if (criticalCharacter == [self.key length])
     {

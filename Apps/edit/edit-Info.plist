@@ -28,8 +28,6 @@
 	<string>1.0</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
-	<key>NSMainNibFile</key>
-	<string>MainWindow</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Inconsolata.otf</string>
@@ -47,5 +45,7 @@
 	<array/>
 	<key>UTImportedTypeDeclarations</key>
 	<array/>
+	<key>UIMainStoryboardFile</key>
+	<string>MainStoryboard</string>
 </dict>
 </plist>
