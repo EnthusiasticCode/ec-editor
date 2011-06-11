@@ -7,13 +7,17 @@
 //
 
 #import "ProjectsController.h"
+#import "RootController.h"
 #import <ECFoundation/NSFileManager(ECAdditions).h>
 #import "FilesController.h"
 
 static const NSString *DefaultReuseIdentifier = @"Default";
 
+static const NSString *FilesSegueIdentifier = @"Files";
+
 @interface ProjectsController ()
 @property (nonatomic, strong) NSFileManager *fileManager;
+- (NSString *)_rootFolder;
 - (NSArray *)_contentsOfRootFolder;
 @end
 
@@ -35,9 +39,14 @@ static const NSString *DefaultReuseIdentifier = @"Default";
 	return YES;
 }
 
+- (NSString *)_rootFolder
+{
+    return [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject];
+}
+
 - (NSArray *)_contentsOfRootFolder
 {
-    return [self.fileManager contentsOfDirectoryAtPath:[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject] withExtensions:nil options:NSDirectoryEnumerationSkipsHiddenFiles skipFiles:YES skipDirectories:NO error:NULL];
+    return [self.fileManager contentsOfDirectoryAtPath:[self _rootFolder] withExtensions:nil options:NSDirectoryEnumerationSkipsHiddenFiles skipFiles:YES skipDirectories:NO error:NULL];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -56,12 +65,14 @@ static const NSString *DefaultReuseIdentifier = @"Default";
     return [[self _contentsOfRootFolder] count];
 }
 
-//- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
-//{
-//    NSString *projectFolder = [self.folder stringByAppendingPathComponent:[[self contentsOfFolder] objectAtIndex:indexPath.row]];
-//    FilesController *projectController = ((AppController *)self.navigationController).projectController;
-//    [projectController loadProject:projectFolder];
-//    [self.navigationController pushViewController:projectController animated:YES];
-//}
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+{
+    NSString *identifier = segue.identifier;
+    if ([identifier isEqualToString:(NSString *)FilesSegueIdentifier])
+    {
+        [segue.destinationViewController loadProject:[[self _rootFolder] stringByAppendingPathComponent:[[self _contentsOfRootFolder] objectAtIndex:[self.tableView indexPathForSelectedRow].row]]];
+    }
+    [self.rootController prepareForSegue:segue sender:sender];
+}
 
 @end

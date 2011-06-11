@@ -15,7 +15,6 @@
 
 @property (nonatomic, strong) IBOutlet ECCodeView *codeView;
 @property (nonatomic, strong) File *file;
-@property (nonatomic, strong) IBOutlet UIBarButtonItem *completionButton;
 
 - (void)loadFile:(File *)file;
 - (IBAction)complete:(id)sender;

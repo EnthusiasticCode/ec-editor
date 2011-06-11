@@ -14,7 +14,6 @@
 
 @synthesize codeView;
 @synthesize file;
-@synthesize completionButton;
 
 
 - (void)viewDidAppear:(BOOL)animated
@@ -27,16 +26,6 @@
 {
     [super viewDidLoad];
     self.codeView.datasource = self.file;
-    self.navigationItem.rightBarButtonItem = self.completionButton;
-}
-
-- (void)viewDidUnload
-{
-    [self setCompletionButton:nil];
-    [super viewDidUnload];
-    // Release any retained subviews of the main view.
-    // e.g. self.myOutlet = nil;
-    self.codeView = nil;
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation

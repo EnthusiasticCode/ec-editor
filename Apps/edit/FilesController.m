@@ -13,6 +13,9 @@
 #import "Node.h"
 #import "File.h"
 #import "FileController.h"
+#import "RootController.h"
+
+static const NSString *DefaultIdentifier = @"Default";
 
 static const NSString *FileSegueIdentifier = @"File";
 
@@ -46,19 +49,14 @@ static const NSString *FileSegueIdentifier = @"File";
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Cell"];
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:(NSString *)DefaultIdentifier];
     if (!cell)
     {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"Cell"];
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:(NSString *)DefaultIdentifier];
     }
     cell.textLabel.text = [[self.project.rootNode.children objectAtIndex:indexPath.row] name];
     return cell;
 }
-
-//- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
-//{
-//    [self loadNode:[[self.project.rootNode orderedChildren] objectAtIndex:indexPath.row]];
-//}
 
 #pragma mark -
 
@@ -70,13 +68,6 @@ static const NSString *FileSegueIdentifier = @"File";
     self.projectRoot = projectRoot;
     [self addAllNodesInProjectRoot];
 }
-
-//- (void)loadFile:(File *)file
-//{
-//    FileController *fileController = ((AppController *)self.navigationController).fileController;
-//    [fileController loadFile:file];
-//    [self.navigationController pushViewController:fileController animated:YES];
-//}
 
 - (void)addNodesAtPath:(NSString *)path toNode:(Node *)node
 {
@@ -98,6 +89,16 @@ static const NSString *FileSegueIdentifier = @"File";
 - (void)addAllNodesInProjectRoot
 {
     [self addNodesAtPath:self.projectRoot toNode:self.project.rootNode];
+}
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+{
+    NSString *identifier = segue.identifier;
+    if ([identifier isEqualToString:(NSString *)FileSegueIdentifier])
+    {
+        [segue.destinationViewController loadFile:[[self.project.rootNode children] objectAtIndex:[self.tableView indexPathForSelectedRow].row]];
+    }
+    [self.rootController prepareForSegue:segue sender:sender];
 }
 
 @end

@@ -104,6 +104,8 @@
     {
         Node *rootNode = [NSEntityDescription insertNewObjectForEntityForName:@"Node" inManagedObjectContext:self.managedObjectContext];
         rootNode.name = @"";
+        rootNode.type = NodeTypeFolder;
+        rootNode.path = @"../";
         return rootNode;
     }
 }

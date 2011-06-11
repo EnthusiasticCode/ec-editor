@@ -16,6 +16,7 @@ static const CGFloat RootControllerAnimationDuration = 0.25;
 
 static const NSString *ProjectsSegueIdentifier = @"Projects";
 static const NSString *FilesSegueIdentifier = @"Files";
+static const NSString *FileSegueIdentifier = @"File";
 
 @interface RootController ()
 {
@@ -99,6 +100,12 @@ static NSInteger _indexOfSidebarSegue(NSString *segueIdentifier)
             customSegue.options = ECStoryboardSegueAnimationOptionEnterTop | ECStoryboardSegueAnimationOptionExitBottom;
         _activeSidebarSegueIdentifier = identifier;
         self.sidebarView = [segue.destinationViewController view];
+    }
+    else if ([identifier isEqualToString:(NSString *)FileSegueIdentifier])
+    {
+        ECStoryboardSegue *customSegue = (ECStoryboardSegue *)segue;
+        customSegue.exitingView = self.mainView;
+        self.mainView = [segue.destinationViewController view];
     }
 }
 

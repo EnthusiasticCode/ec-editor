@@ -8,7 +8,7 @@
             <entry key="com.apple.syncservices.IdentityProperties" value=""/>
         </userInfo>
     </entity>
-    <entity name="File" representedClassName="CDFile" parentEntity="Node">
+    <entity name="File" representedClassName="File" parentEntity="Node">
         <relationship name="bookmarks" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Bookmark" inverseName="file" inverseEntity="Bookmark" indexed="YES"/>
         <relationship name="historyItems" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="HistoryItem" inverseName="file" inverseEntity="HistoryItem" indexed="YES"/>
         <relationship name="undoItems" optional="YES" toMany="YES" deletionRule="Cascade" ordered="YES" destinationEntity="UndoItem" inverseName="file" inverseEntity="UndoItem" indexed="YES"/>
@@ -32,7 +32,7 @@
             <entry key="com.apple.syncservices.IdentityProperties" value=""/>
         </userInfo>
     </entity>
-    <entity name="Node" representedClassName="CDNode">
+    <entity name="Node" representedClassName="Node">
         <attribute name="collapsed" attributeType="Boolean" defaultValueString="NO"/>
         <attribute name="name" attributeType="String"/>
         <attribute name="path" optional="YES" attributeType="String"/>
