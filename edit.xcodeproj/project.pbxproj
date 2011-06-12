@@ -35,7 +35,7 @@
 		B70D6575132A279C008DDEA4 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B70D6574132A279C008DDEA4 /* CoreData.framework */; };
 		B715122C13A2408900D54F5B /* Node.m in Sources */ = {isa = PBXBuildFile; fileRef = B715122B13A2408900D54F5B /* Node.m */; };
 		B715124A13A26FBB00D54F5B /* RootController.m in Sources */ = {isa = PBXBuildFile; fileRef = B715124913A26FBB00D54F5B /* RootController.m */; };
-		B715124D13A27AB100D54F5B /* ECStoryboardSegue.m in Sources */ = {isa = PBXBuildFile; fileRef = B715124C13A27AB100D54F5B /* ECStoryboardSegue.m */; };
+		B715124D13A27AB100D54F5B /* ECStoryboardTripleSplitSidebarSegue.m in Sources */ = {isa = PBXBuildFile; fileRef = B715124C13A27AB100D54F5B /* ECStoryboardTripleSplitSidebarSegue.m */; };
 		B715125013A2876400D54F5B /* UIView+ConcurrentAnimation.m in Sources */ = {isa = PBXBuildFile; fileRef = B715124F13A2876400D54F5B /* UIView+ConcurrentAnimation.m */; };
 		B7199CC8137DD7D9008072D9 /* libclang.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7199CB6137DD7D9008072D9 /* libclang.a */; };
 		B7199CC9137DD7D9008072D9 /* libclangAnalysis.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7199CB7137DD7D9008072D9 /* libclangAnalysis.a */; };
@@ -157,6 +157,8 @@
 		B75B87721358401B0098E7E2 /* ECCodeIndex.m in Sources */ = {isa = PBXBuildFile; fileRef = B75B875C1358401B0098E7E2 /* ECCodeIndex.m */; };
 		B75B87741358401B0098E7E2 /* ECCodeToken.m in Sources */ = {isa = PBXBuildFile; fileRef = B75B87621358401B0098E7E2 /* ECCodeToken.m */; };
 		B75B87751358401B0098E7E2 /* ECCodeUnit.m in Sources */ = {isa = PBXBuildFile; fileRef = B75B87641358401B0098E7E2 /* ECCodeUnit.m */; };
+		B7803AE513A3D68D0077F7A1 /* ECTripleSplitViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B7803AE413A3D68D0077F7A1 /* ECTripleSplitViewController.m */; };
+		B7803AE913A41E040077F7A1 /* ECStoryboardTripleSplitMainSegue.m in Sources */ = {isa = PBXBuildFile; fileRef = B7803AE813A41E040077F7A1 /* ECStoryboardTripleSplitMainSegue.m */; };
 		B7D5D1D313A117B10013911A /* MainStoryboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B7D5D1D213A117B10013911A /* MainStoryboard.storyboard */; };
 		B7DBA580132A3281004C0E1D /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7DBA57F132A3281004C0E1D /* QuartzCore.framework */; };
 		B7F0335E139E6BAF00FDC353 /* ECCodeByteArrayDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = B7F0335B139E6BAE00FDC353 /* ECCodeByteArrayDataSource.m */; };
@@ -177,6 +179,8 @@
 		B7F03391139E76FE00FDC353 /* HFObjectGraph.m in Sources */ = {isa = PBXBuildFile; fileRef = B7F0337E139E76FE00FDC353 /* HFObjectGraph.m */; };
 		B7F03392139E76FE00FDC353 /* HFProgressTracker.m in Sources */ = {isa = PBXBuildFile; fileRef = B7F03380139E76FE00FDC353 /* HFProgressTracker.m */; };
 		B7F03393139E76FE00FDC353 /* HFSharedMemoryByteSlice.m in Sources */ = {isa = PBXBuildFile; fileRef = B7F03382139E76FE00FDC353 /* HFSharedMemoryByteSlice.m */; };
+		B7F4EDC213A49B300003DEF1 /* MenuController.m in Sources */ = {isa = PBXBuildFile; fileRef = B7F4EDC113A49B300003DEF1 /* MenuController.m */; };
+		B7F4EDC613A49E300003DEF1 /* ECStoryboardTripleSplitMenuSegue.m in Sources */ = {isa = PBXBuildFile; fileRef = B7F4EDC513A49E300003DEF1 /* ECStoryboardTripleSplitMenuSegue.m */; };
 		CDEBF21613489A8E00CE2285 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = CDEBF20913489A8E00CE2285 /* AppDelegate.m */; };
 		CDEBF21713489A8E00CE2285 /* FileController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDEBF20D13489A8E00CE2285 /* FileController.m */; };
 		CDEBF21913489A8E00CE2285 /* FilesController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDEBF21113489A8E00CE2285 /* FilesController.m */; };
@@ -230,8 +234,8 @@
 		B715122B13A2408900D54F5B /* Node.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Node.m; sourceTree = "<group>"; };
 		B715124813A26FBB00D54F5B /* RootController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RootController.h; sourceTree = "<group>"; };
 		B715124913A26FBB00D54F5B /* RootController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RootController.m; sourceTree = "<group>"; };
-		B715124B13A27AB000D54F5B /* ECStoryboardSegue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECStoryboardSegue.h; path = Frameworks/ECUIKit/ECStoryboardSegue.h; sourceTree = SOURCE_ROOT; };
-		B715124C13A27AB100D54F5B /* ECStoryboardSegue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECStoryboardSegue.m; path = Frameworks/ECUIKit/ECStoryboardSegue.m; sourceTree = SOURCE_ROOT; };
+		B715124B13A27AB000D54F5B /* ECStoryboardTripleSplitSidebarSegue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECStoryboardTripleSplitSidebarSegue.h; path = Frameworks/ECUIKit/ECStoryboardTripleSplitSidebarSegue.h; sourceTree = SOURCE_ROOT; };
+		B715124C13A27AB100D54F5B /* ECStoryboardTripleSplitSidebarSegue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECStoryboardTripleSplitSidebarSegue.m; path = Frameworks/ECUIKit/ECStoryboardTripleSplitSidebarSegue.m; sourceTree = SOURCE_ROOT; };
 		B715124E13A2876400D54F5B /* UIView+ConcurrentAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIView+ConcurrentAnimation.h"; path = "Frameworks/ECUIKit/UIView+ConcurrentAnimation.h"; sourceTree = "<group>"; };
 		B715124F13A2876400D54F5B /* UIView+ConcurrentAnimation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIView+ConcurrentAnimation.m"; path = "Frameworks/ECUIKit/UIView+ConcurrentAnimation.m"; sourceTree = "<group>"; };
 		B7199CB6137DD7D9008072D9 /* libclang.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libclang.a; sourceTree = "<group>"; };
@@ -392,6 +396,10 @@
 		B75B87641358401B0098E7E2 /* ECCodeUnit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeUnit.m; sourceTree = "<group>"; };
 		B75B87651358401B0098E7E2 /* ECCodeUnit(Private).h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ECCodeUnit(Private).h"; sourceTree = "<group>"; };
 		B75B87661358401B0098E7E2 /* ECCodeUnitPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeUnitPlugin.h; sourceTree = "<group>"; };
+		B7803AE313A3D68D0077F7A1 /* ECTripleSplitViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECTripleSplitViewController.h; path = Frameworks/ECUIKit/ECTripleSplitViewController.h; sourceTree = "<group>"; };
+		B7803AE413A3D68D0077F7A1 /* ECTripleSplitViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECTripleSplitViewController.m; path = Frameworks/ECUIKit/ECTripleSplitViewController.m; sourceTree = "<group>"; };
+		B7803AE713A41E040077F7A1 /* ECStoryboardTripleSplitMainSegue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECStoryboardTripleSplitMainSegue.h; path = Frameworks/ECUIKit/ECStoryboardTripleSplitMainSegue.h; sourceTree = "<group>"; };
+		B7803AE813A41E040077F7A1 /* ECStoryboardTripleSplitMainSegue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECStoryboardTripleSplitMainSegue.m; path = Frameworks/ECUIKit/ECStoryboardTripleSplitMainSegue.m; sourceTree = "<group>"; };
 		B7D5D1D213A117B10013911A /* MainStoryboard.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = MainStoryboard.storyboard; sourceTree = "<group>"; };
 		B7DBA57F132A3281004C0E1D /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		B7F0335A139E6BAE00FDC353 /* ECCodeByteArrayDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECCodeByteArrayDataSource.h; path = Frameworks/ECUIKit/ECCodeByteArrayDataSource.h; sourceTree = "<group>"; };
@@ -432,6 +440,10 @@
 		B7F03381139E76FE00FDC353 /* HFSharedMemoryByteSlice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HFSharedMemoryByteSlice.h; sourceTree = "<group>"; };
 		B7F03382139E76FE00FDC353 /* HFSharedMemoryByteSlice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HFSharedMemoryByteSlice.m; sourceTree = "<group>"; };
 		B7F03383139E76FE00FDC353 /* HFTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HFTypes.h; sourceTree = "<group>"; };
+		B7F4EDC013A49B300003DEF1 /* MenuController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MenuController.h; sourceTree = "<group>"; };
+		B7F4EDC113A49B300003DEF1 /* MenuController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MenuController.m; sourceTree = "<group>"; };
+		B7F4EDC413A49E300003DEF1 /* ECStoryboardTripleSplitMenuSegue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECStoryboardTripleSplitMenuSegue.h; path = Frameworks/ECUIKit/ECStoryboardTripleSplitMenuSegue.h; sourceTree = "<group>"; };
+		B7F4EDC513A49E300003DEF1 /* ECStoryboardTripleSplitMenuSegue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECStoryboardTripleSplitMenuSegue.m; path = Frameworks/ECUIKit/ECStoryboardTripleSplitMenuSegue.m; sourceTree = "<group>"; };
 		CDEBF20813489A8E00CE2285 /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		CDEBF20913489A8E00CE2285 /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		CDEBF20C13489A8E00CE2285 /* FileController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileController.h; sourceTree = "<group>"; };
@@ -588,8 +600,6 @@
 				B707755213A2AFFA00CE9AE3 /* ECCore */,
 				B7F03360139E76DC00FDC353 /* HFHexFiend */,
 				CDEBF27513489BD400CE2285 /* ECUIKit */,
-				B715124B13A27AB000D54F5B /* ECStoryboardSegue.h */,
-				B715124C13A27AB100D54F5B /* ECStoryboardSegue.m */,
 				CDEBF24313489AFE00CE2285 /* ECCodeIndexing */,
 				CDEBF23813489AB900CE2285 /* ECFoundation */,
 				B70D650D132A260C008DDEA4 /* Application */,
@@ -650,6 +660,8 @@
 				CDEBF20913489A8E00CE2285 /* AppDelegate.m */,
 				B715124813A26FBB00D54F5B /* RootController.h */,
 				B715124913A26FBB00D54F5B /* RootController.m */,
+				B7F4EDC013A49B300003DEF1 /* MenuController.h */,
+				B7F4EDC113A49B300003DEF1 /* MenuController.m */,
 				CDEBF21413489A8E00CE2285 /* ProjectsController.h */,
 				CDEBF21513489A8E00CE2285 /* ProjectsController.m */,
 				B74C6715137A8E0C00CC92D3 /* NewProjectController.h */,
@@ -833,6 +845,21 @@
 			path = BTree;
 			sourceTree = "<group>";
 		};
+		B7F4EDC713A49E6D0003DEF1 /* TripleSplitViewController */ = {
+			isa = PBXGroup;
+			children = (
+				B7803AE313A3D68D0077F7A1 /* ECTripleSplitViewController.h */,
+				B7803AE413A3D68D0077F7A1 /* ECTripleSplitViewController.m */,
+				B7F4EDC413A49E300003DEF1 /* ECStoryboardTripleSplitMenuSegue.h */,
+				B7F4EDC513A49E300003DEF1 /* ECStoryboardTripleSplitMenuSegue.m */,
+				B715124B13A27AB000D54F5B /* ECStoryboardTripleSplitSidebarSegue.h */,
+				B715124C13A27AB100D54F5B /* ECStoryboardTripleSplitSidebarSegue.m */,
+				B7803AE713A41E040077F7A1 /* ECStoryboardTripleSplitMainSegue.h */,
+				B7803AE813A41E040077F7A1 /* ECStoryboardTripleSplitMainSegue.m */,
+			);
+			name = TripleSplitViewController;
+			sourceTree = "<group>";
+		};
 		CDEBF23813489AB900CE2285 /* ECFoundation */ = {
 			isa = PBXGroup;
 			children = (
@@ -896,6 +923,7 @@
 				CDEBF2BE13489DDA00CE2285 /* Text */,
 				CDEBF2BB13489DC100CE2285 /* Code Scroll View */,
 				CDEBF2B913489DBA00CE2285 /* Code View */,
+				B7F4EDC713A49E6D0003DEF1 /* TripleSplitViewController */,
 			);
 			name = ECUIKit;
 			sourceTree = "<group>";
@@ -1126,8 +1154,12 @@
 				B7F03393139E76FE00FDC353 /* HFSharedMemoryByteSlice.m in Sources */,
 				B715122C13A2408900D54F5B /* Node.m in Sources */,
 				B715124A13A26FBB00D54F5B /* RootController.m in Sources */,
-				B715124D13A27AB100D54F5B /* ECStoryboardSegue.m in Sources */,
+				B715124D13A27AB100D54F5B /* ECStoryboardTripleSplitSidebarSegue.m in Sources */,
 				B715125013A2876400D54F5B /* UIView+ConcurrentAnimation.m in Sources */,
+				B7803AE513A3D68D0077F7A1 /* ECTripleSplitViewController.m in Sources */,
+				B7803AE913A41E040077F7A1 /* ECStoryboardTripleSplitMainSegue.m in Sources */,
+				B7F4EDC213A49B300003DEF1 /* MenuController.m in Sources */,
+				B7F4EDC613A49E300003DEF1 /* ECStoryboardTripleSplitMenuSegue.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

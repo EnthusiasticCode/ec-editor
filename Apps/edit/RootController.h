@@ -7,13 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "ECTripleSplitViewController.h"
 
-@interface RootController : UIViewController
-@property (nonatomic, strong) IBOutlet UIView *menuView;
-@property (nonatomic, strong) IBOutlet UIView *sidebarView;
-@property (nonatomic, strong) IBOutlet UIView *mainView;
-@property (nonatomic, getter = isSidebarHidden) BOOL sidebarHidden;
-- (void)setSidebarHidden:(BOOL)sidebarHidden animated:(BOOL)animated;
-- (IBAction)hideSidebar:(id)sender;
-- (IBAction)showSidebar:(id)sender;
+@interface RootController : ECTripleSplitViewController
+
 @end

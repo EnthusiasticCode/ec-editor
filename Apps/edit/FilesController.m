@@ -8,7 +8,6 @@
 
 #import <CoreData/CoreData.h>
 #import "FilesController.h"
-#import "ECStoryboardSegue.h"
 #import "Project.h"
 #import "Node.h"
 #import "File.h"
