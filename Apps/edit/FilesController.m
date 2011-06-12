@@ -63,7 +63,6 @@ static const NSString *FileSegueIdentifier = @"File";
 {
     NSString *bundle = [[projectRoot stringByAppendingPathComponent:[projectRoot lastPathComponent]] stringByAppendingPathExtension:@"ecproj"];
     self.project = [[Project alloc] initWithBundle:bundle];
-    self.title = self.project.name;
     self.projectRoot = projectRoot;
     [self addAllNodesInProjectRoot];
 }

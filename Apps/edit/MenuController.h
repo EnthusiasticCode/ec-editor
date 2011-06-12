@@ -7,8 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "ECTripleSplitViewController.h"
 
-@interface MenuController : UIViewController
+@interface MenuController : UIViewController <ECTripleSplitViewControllerDelegate>
 - (IBAction)hideSidebar:(id)sender;
 - (IBAction)showSidebar:(id)sender;
 @end

@@ -11,10 +11,15 @@
 @class ECTripleSplitViewController;
 
 @protocol ECTripleSplitViewControllerDelegate <NSObject>
-- (void)tripleSplitViewControllerWillHideSidebar:(ECTripleSplitViewController *)tripleSplitViewController;
+@optional
 - (void)tripleSplitViewController:(ECTripleSplitViewController *)tripleSplitViewController willShowMenuController:(UIViewController *)viewController;
+- (void)tripleSplitViewController:(ECTripleSplitViewController *)tripleSplitViewController didShowMenuController:(UIViewController *)viewController;
 - (void)tripleSplitViewController:(ECTripleSplitViewController *)tripleSplitViewController willShowSidebarController:(UIViewController *)viewController;
+- (void)tripleSplitViewController:(ECTripleSplitViewController *)tripleSplitViewController didShowSidebarController:(UIViewController *)viewController;
 - (void)tripleSplitViewController:(ECTripleSplitViewController *)tripleSplitViewController willShowMainController:(UIViewController *)viewController;
+- (void)tripleSplitViewController:(ECTripleSplitViewController *)tripleSplitViewController didShowMainController:(UIViewController *)viewController;
+- (void)tripleSplitViewControllerWillHideSidebar:(ECTripleSplitViewController *)tripleSplitViewController;
+- (void)tripleSplitViewControllerDidHideSidebar:(ECTripleSplitViewController *)tripleSplitViewController;
 @end
 
 @interface ECTripleSplitViewController : UIViewController

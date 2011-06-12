@@ -38,6 +38,17 @@ static const CGFloat ECTripleSplitViewControllerAnimationDuration = 0.15;
     UIView *_menuView;
     UIView *_sidebarView;
     UIView *_mainView;
+    struct
+    {
+        unsigned int delegateWillShowMenu:1;
+        unsigned int delegateDidShowMenu:1;
+        unsigned int delegateWillShowSidebar:1;
+        unsigned int delegateDidShowSidebar:1;
+        unsigned int delegateWillShowMain:1;
+        unsigned int delegateDidShowMain:1;
+        unsigned int delegateWillHideSidebar:1;
+        unsigned int delegateDidHideSidebar:1;
+    } _flags;
 }
 @property (nonatomic, strong) void (^_layoutBlock)(void);
 - (void)setup;
@@ -79,6 +90,21 @@ static const CGFloat ECTripleSplitViewControllerAnimationDuration = 0.15;
     _sidebarWidth = 200.0;
 }
 
+- (void)setDelegate:(id<ECTripleSplitViewControllerDelegate>)delegate
+{
+    if (delegate == _delegate)
+        return;
+    _delegate = delegate;
+    _flags.delegateWillShowMenu = [delegate respondsToSelector:@selector(tripleSplitViewController:willShowMenuController:)];
+    _flags.delegateDidShowMenu = [delegate respondsToSelector:@selector(tripleSplitViewController:didShowMenuController:)];
+    _flags.delegateWillShowSidebar = [delegate respondsToSelector:@selector(tripleSplitViewController:willShowSidebarController:)];
+    _flags.delegateDidShowSidebar = [delegate respondsToSelector:@selector(tripleSplitViewController:didShowSidebarController:)];
+    _flags.delegateWillShowMain = [delegate respondsToSelector:@selector(tripleSplitViewController:willShowMainController:)];
+    _flags.delegateDidShowMain = [delegate respondsToSelector:@selector(tripleSplitViewController:didShowMainController:)];
+    _flags.delegateWillHideSidebar = [delegate respondsToSelector:@selector(tripleSplitViewControllerWillHideSidebar:)];
+    _flags.delegateDidHideSidebar = [delegate respondsToSelector:@selector(tripleSplitViewControllerDidHideSidebar:)];
+}
+
 - (void)setMenuController:(UIViewController *)menuController
 {
     [self setMenuController:menuController withTransition:nil];
@@ -88,16 +114,23 @@ static const CGFloat ECTripleSplitViewControllerAnimationDuration = 0.15;
 {
     if (menuController == _menuController)
         return;
+    if (_flags.delegateWillShowMenu)
+        [self.delegate tripleSplitViewController:self willShowMenuController:menuController];
     _menuController.tripleSplitViewController = nil;
     _menuController = menuController;
     menuController.tripleSplitViewController = self;
-    if (!_menuView)
-        return;
-    [_menuView.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
-    [_menuView addSubview:menuController.view];
-    menuController.view.frame = _menuView.bounds;
-    if (transition)
-        [_menuView.layer addAnimation:transition forKey:(NSString *)ECTripleSplitViewControllerTransitionKey];
+    if (_menuView)
+    {
+        [menuController viewWillAppear:(transition != nil)];
+        [_menuView.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
+        [_menuView addSubview:menuController.view];
+        menuController.view.frame = _menuView.bounds;
+        if (transition)
+            [_menuView.layer addAnimation:transition forKey:(NSString *)ECTripleSplitViewControllerTransitionKey];
+        [menuController viewDidAppear:(transition != nil)];
+    }
+    if (_flags.delegateDidShowMenu)
+        [self.delegate tripleSplitViewController:self didShowMenuController:menuController];
 }
 
 - (void)setSidebarController:(UIViewController *)sidebarController
@@ -109,16 +142,23 @@ static const CGFloat ECTripleSplitViewControllerAnimationDuration = 0.15;
 {
     if (sidebarController == _sidebarController)
         return;
+    if (_flags.delegateWillShowSidebar)
+        [self.delegate tripleSplitViewController:self willShowSidebarController:sidebarController];
     _sidebarController.tripleSplitViewController = nil;
     _sidebarController = sidebarController;
     sidebarController.tripleSplitViewController = self;
-    if (!_sidebarView)
-        return;
-    [_sidebarView.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
-    [_sidebarView addSubview:sidebarController.view];
-    sidebarController.view.frame = _sidebarView.bounds;
-    if (transition)
-        [_sidebarView.layer addAnimation:transition forKey:(NSString *)ECTripleSplitViewControllerTransitionKey];
+    if (_sidebarView)
+    {
+        [sidebarController viewWillAppear:(transition != nil)];
+        [_sidebarView.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
+        [_sidebarView addSubview:sidebarController.view];
+        sidebarController.view.frame = _sidebarView.bounds;
+        if (transition)
+            [_sidebarView.layer addAnimation:transition forKey:(NSString *)ECTripleSplitViewControllerTransitionKey];
+        [sidebarController viewDidAppear:(transition != nil)];
+    }
+    if (_flags.delegateDidShowSidebar)
+        [self.delegate tripleSplitViewController:self didShowSidebarController:sidebarController];
 }
 
 - (void)setMainController:(UIViewController *)mainController
@@ -130,16 +170,23 @@ static const CGFloat ECTripleSplitViewControllerAnimationDuration = 0.15;
 {
     if (mainController == _mainController)
         return;
+    if (_flags.delegateWillShowMain)
+        [self.delegate tripleSplitViewController:self willShowMainController:mainController];
     _mainController.tripleSplitViewController = nil;
     _mainController = mainController;
     mainController.tripleSplitViewController = self;
-    if (!_mainView)
-        return;
-    [_mainView.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
-    [_mainView addSubview:mainController.view];
-    mainController.view.frame = _mainView.bounds;
-    if (transition)
-        [_mainView.layer addAnimation:transition forKey:(NSString *)ECTripleSplitViewControllerTransitionKey];
+    if (_mainView)
+    {
+        [mainController viewWillAppear:(transition != nil)];
+        [_mainView.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
+        [_mainView addSubview:mainController.view];
+        mainController.view.frame = _mainView.bounds;
+        if (transition)
+            [_mainView.layer addAnimation:transition forKey:(NSString *)ECTripleSplitViewControllerTransitionKey];
+        [mainController viewDidAppear:(transition != nil)];
+    }
+    if (_flags.delegateDidShowMain)
+        [self.delegate tripleSplitViewController:self didShowMainController:mainController];
 }
 
 - (void)setMenuWidth:(CGFloat)menuWidth
@@ -167,6 +214,10 @@ static const CGFloat ECTripleSplitViewControllerAnimationDuration = 0.15;
 {
     if (sidebarHidden == _sidebarHidden)
         return;
+    if (sidebarHidden && _flags.delegateWillHideSidebar)
+        [self.delegate tripleSplitViewControllerWillHideSidebar:self];
+    if (!sidebarHidden && _flags.delegateWillShowSidebar)
+        [self.delegate tripleSplitViewController:self willShowSidebarController:self.sidebarController];
     _sidebarHidden = sidebarHidden;
     if (sidebarHidden)
     {
@@ -210,6 +261,10 @@ static const CGFloat ECTripleSplitViewControllerAnimationDuration = 0.15;
             self._layoutBlock();
         [self.sidebarController viewDidAppear:animated];
     }
+    if (sidebarHidden && _flags.delegateDidHideSidebar)
+        [self.delegate tripleSplitViewControllerDidHideSidebar:self];
+    if (!sidebarHidden && _flags.delegateDidShowSidebar)
+        [self.delegate tripleSplitViewController:self didShowSidebarController:self.sidebarController];
 }
 
 - (void (^)(void))_layoutBlock
@@ -227,8 +282,10 @@ static const CGFloat ECTripleSplitViewControllerAnimationDuration = 0.15;
                 [self.view addSubview:_menuView];
                 if (self.menuController)
                 {
+                    [self.menuController viewWillAppear:NO];
                     [_menuView addSubview:self.menuController.view];
                     self.menuController.view.frame = _menuView.bounds;
+                    [self.menuController viewDidAppear:NO];
                 }
             }
             _menuView.frame = menuFrame;
@@ -241,8 +298,10 @@ static const CGFloat ECTripleSplitViewControllerAnimationDuration = 0.15;
                     [self.view addSubview:_sidebarView];
                     if (self.sidebarController)
                     {
+                        [self.sidebarController viewWillAppear:NO];
                         [_sidebarView addSubview:self.sidebarController.view];
                         self.sidebarController.view.frame = _sidebarView.bounds;
+                        [self.sidebarController viewDidAppear:NO];
                     }
                 }
                 _sidebarView.frame = sidebarFrame;
@@ -254,8 +313,10 @@ static const CGFloat ECTripleSplitViewControllerAnimationDuration = 0.15;
                 [self.view addSubview:_mainView];
                 if (self.mainController)
                 {
+                    [self.mainController viewWillAppear:NO];
                     [_mainView addSubview:self.mainController.view];
                     self.mainController.view.frame = _mainView.bounds;
+                    [self.mainController viewDidAppear:NO];
                 }
             }
             _mainView.frame = mainFrame;
