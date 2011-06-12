@@ -10,6 +10,10 @@
 #import "RootController.h"
 #import <ECFoundation/NSFileManager(ECAdditions).h>
 #import "FilesController.h"
+#import "ECStoryboardTripleSplitSidebarSegue.h"
+#import <QuartzCore/QuartzCore.h>
+
+static const CGFloat TransitionDuration = 0.15;
 
 static const NSString *DefaultReuseIdentifier = @"Default";
 
@@ -71,6 +75,11 @@ static const NSString *FilesSegueIdentifier = @"Files";
     if ([identifier isEqualToString:(NSString *)FilesSegueIdentifier])
     {
         [segue.destinationViewController loadProject:[[self _rootFolder] stringByAppendingPathComponent:[[self _contentsOfRootFolder] objectAtIndex:[self.tableView indexPathForSelectedRow].row]]];
+        CATransition *transition = [CATransition animation];
+        transition.duration = TransitionDuration;
+        transition.type = kCATransitionPush;
+        transition.subtype = kCATransitionFromTop;
+        [(ECStoryboardTripleSplitSidebarSegue *)segue setTransition:transition];
     }
     [self.rootController prepareForSegue:segue sender:sender];
 }
