@@ -163,6 +163,6 @@ unsigned char *HFFastMemchr(const unsigned char *haystack, unsigned char needle,
 #elif defined(__i386__) || defined(__x86_64__)
     return sse_memchr(haystack, needle, length);
 #else
-#error UNKNOWN ARCHITECTURE
+    return int_memchr(haystack, needle, length);
 #endif
 }
