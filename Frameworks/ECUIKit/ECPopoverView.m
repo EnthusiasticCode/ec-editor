@@ -306,7 +306,7 @@ static void init(ECPopoverView *self)
         }
         else
         {
-            CGFloat currentX = outside_left + localArrowPosition + arrowLength;
+            CGFloat currentX = outside_right - localArrowPosition + arrowLength;
             CGPathAddLineToPoint(path, NULL, currentX, outside_bottom);
             CGAffineTransform currentTransform = CGAffineTransformMakeTranslation(currentX, outside_bottom);
             currentTransform = CGAffineTransformRotate(currentTransform, -M_PI_4);
@@ -344,7 +344,7 @@ static void init(ECPopoverView *self)
         }
         else
         {
-            CGFloat currentY = outside_top + localArrowPosition + arrowLength;
+            CGFloat currentY = outside_bottom - localArrowPosition + arrowLength;
             CGPathAddLineToPoint(path, NULL, outside_left, currentY);
             CGAffineTransform currentTransform = CGAffineTransformMakeTranslation(outside_left, currentY);
             currentTransform = CGAffineTransformRotate(currentTransform, M_PI_4);
