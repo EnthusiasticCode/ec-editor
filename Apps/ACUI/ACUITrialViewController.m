@@ -74,7 +74,7 @@
         popoverController = [[ECPopoverController alloc] initWithContentViewController:popoverContentController];
     }
     
-    [popoverController presentPopoverFromRect:[sender frame] inView:self.view permittedArrowDirections:UIPopoverArrowDirectionAny animated:NO];
+    [popoverController presentPopoverFromRect:[sender frame] inView:self.view permittedArrowDirections:UIPopoverArrowDirectionLeft animated:YES];
 }
 
 @end

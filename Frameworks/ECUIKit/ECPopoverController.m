@@ -189,11 +189,13 @@ static void preinit(ECPopoverController *self)
     // Transform to view's space
     UIView *v = view;
     CGPoint viewOriging;
-    do {
+    while (v != rootView)
+    {
         viewOriging = v.frame.origin;
         rect.origin.x += viewOriging.x;
         rect.origin.y += viewOriging.y;
-    } while ((v = v.superview) && v != rootView);
+        v = v.superview;
+    }
     
     // Point where the arrow should point
     CGPoint arrowPoint = CGPointMake(CGRectGetMidX(rect), CGRectGetMidY(rect));
