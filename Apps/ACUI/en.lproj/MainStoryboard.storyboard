@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="1.0" toolsVersion="1864" systemVersion="10J869" targetRuntime="iOS.CocoaTouch.iPad" nextObjectID="65" propertyAccessControl="none" initialViewController="40">
+    <dependencies>
+        <development defaultVersion="4200" identifier="xcode"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="865"/>
+    </dependencies>
+    <scenes>
+        <scene sceneID="46">
+            <objects>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="45" userLabel="First Responder" sceneMemberID="firstRespodner"/>
+                <viewController id="39" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="55">
+                        <rect key="frame" x="0.0" y="64" width="768" height="960"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                    </view>
+                    <navigationItem key="navigationItem" title="Prova" id="42">
+                        <barButtonItem key="leftBarButtonItem" systemItem="undo" id="50"/>
+                        <barButtonItem key="rightBarButtonItem" systemItem="edit" id="49">
+                            <connections>
+                                <segue destination="57" kind="push" id="63"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                    <simulatedMetricsInferredSentinel key="simulatedStatusBarMetrics"/>
+                    <simulatedMetricsInferredSentinel key="simulatedTopBarMetrics"/>
+                    <simulatedMetricsInferredSentinel key="simulatedBottomBarMetrics"/>
+                    <simulatedMetricsInferredSentinel key="simulatedOrientationMetrics"/>
+                    <simulatedMetricsInferredSentinel key="simulatedDestinationMetrics"/>
+                </viewController>
+            </objects>
+            <point key="canvasLocation" x="839" y="-732"/>
+        </scene>
+        <scene sceneID="48">
+            <objects>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="47" userLabel="First Responder" sceneMemberID="firstRespodner"/>
+                <navigationController id="40" customClass="ECJumpNavigationController" sceneMemberID="viewController">
+                    <simulatedMetricsInferredSentinel key="simulatedStatusBarMetrics"/>
+                    <simulatedMetricsInferredSentinel key="simulatedTopBarMetrics"/>
+                    <simulatedMetricsInferredSentinel key="simulatedBottomBarMetrics"/>
+                    <simulatedMetricsInferredSentinel key="simulatedOrientationMetrics"/>
+                    <simulatedMetricsInferredSentinel key="simulatedDestinationMetrics"/>
+                    <navigationBar key="navigationBar" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" id="41" customClass="ECJumpNavigationBar">
+                        <autoresizingMask key="autoresizingMask"/>
+                        <color key="tintColor" white="0.80241935483870963" alpha="1" colorSpace="calibratedWhite"/>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="39" kind="relationship" relationship="rootViewController" id="44"/>
+                    </connections>
+                </navigationController>
+            </objects>
+            <point key="canvasLocation" x="-143" y="-732"/>
+        </scene>
+        <scene sceneID="60">
+            <objects>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="59" userLabel="First Responder" sceneMemberID="firstRespodner"/>
+                <viewController id="57" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="58">
+                        <rect key="frame" x="0.0" y="64" width="768" height="960"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <subviews/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                    </view>
+                    <navigationItem key="navigationItem" title="Prova/Due" id="64"/>
+                    <simulatedMetricsInferredSentinel key="simulatedStatusBarMetrics"/>
+                    <simulatedMetricsInferredSentinel key="simulatedTopBarMetrics"/>
+                    <simulatedMetricsInferredSentinel key="simulatedBottomBarMetrics"/>
+                    <simulatedMetricsInferredSentinel key="simulatedOrientationMetrics"/>
+                    <simulatedMetricsInferredSentinel key="simulatedDestinationMetrics"/>
+                </viewController>
+            </objects>
+            <point key="canvasLocation" x="1809" y="-732"/>
+        </scene>
+    </scenes>
+    <classes>
+        <class className="ECJumpBar" superclassName="UIView">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/ECJumpBar.h"/>
+            <relationships/>
+        </class>
+        <class className="ECJumpNavigationBar" superclassName="UINavigationBar">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/ECJumpNavigationBar.h"/>
+            <relationships>
+                <relationship kind="outlet" name="jumpBar" candidateClass="ECJumpBar"/>
+            </relationships>
+        </class>
+        <class className="ECJumpNavigationController" superclassName="UINavigationController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/ECJumpNavigationController.h"/>
+            <relationships>
+                <relationship kind="action" name="pushToJumpBarDEBUG:"/>
+                <relationship kind="outlet" name="jumpBar" candidateClass="ECJumpBar"/>
+            </relationships>
+        </class>
+    </classes>
+</document>
