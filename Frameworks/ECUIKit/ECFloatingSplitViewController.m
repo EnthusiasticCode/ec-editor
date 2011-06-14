@@ -51,6 +51,10 @@ static const CGFloat ECFloatingSplitViewControllerAnimationDuration = 0.15;
 @property (nonatomic, strong) void (^_layoutBlock)(void);
 - (void)_setup;
 - (void)_layoutSubviewsWithAnimation:(BOOL)animated;
+- (UIView *)_sidebarView;
+- (CGRect)_sidebarFrame;
+- (UIView *)_mainView;
+- (CGRect)_mainFrame;
 - (void)_swipe:(id)sender;
 @end
 
@@ -188,7 +192,7 @@ static const CGFloat ECFloatingSplitViewControllerAnimationDuration = 0.15;
         {
             [UIView animateWithDuration:ECFloatingSplitViewControllerAnimationDuration animations:^{
                 CGRect frame = _sidebarView.frame;
-                frame.origin.x = self.sidebarOnRight ? self.view.frame.size.width : -frame.size.width;
+                frame.origin.x += frame.size.width * (self.sidebarOnRight ? 1 : -1);
                 _sidebarView.frame = frame;
                 self._layoutBlock();
             } completion:^(BOOL finished) {
@@ -209,8 +213,10 @@ static const CGFloat ECFloatingSplitViewControllerAnimationDuration = 0.15;
         [self.sidebarController viewWillAppear:animated];
         if (animated)
         {
-            _sidebarView = [[UIView alloc] initWithFrame:CGRectMake(self.sidebarOnRight ? self.view.frame.size.width : 0.0, 0.0, 0.0, self.view.frame.size.height)];
-            _sidebarView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+            _sidebarView = [self _sidebarView];
+            CGRect frame = _sidebarView.frame;
+            frame.origin.x += frame.size.width * (self.sidebarOnRight ? 1 : -1);
+            _sidebarView.frame = frame;
             [self.view addSubview:_sidebarView];
             if (self.sidebarController)
             {
@@ -259,14 +265,11 @@ static const CGFloat ECFloatingSplitViewControllerAnimationDuration = 0.15;
 {
     if (!__layoutBlock)
         __layoutBlock = [^{
-            CGRect frame = self.view.frame;
-            CGRect sidebarFrame = CGRectMake(self.sidebarOnRight ? frame.size.width - self.sidebarWidth : 0.0, 0.0, self.sidebarWidth, frame.size.height);
-            CGRect mainFrame = CGRectMake((self.sidebarFloating || self.sidebarHidden || self.sidebarOnRight) ? 0.0 : self.sidebarWidth, 0.0, frame.size.width - ((self.sidebarFloating || self.sidebarHidden) ? 0.0 : self.sidebarWidth), frame.size.height);
             if (!self.sidebarHidden)
             {
                 if (!_sidebarView)
                 {
-                    _sidebarView = [[UIView alloc] initWithFrame:sidebarFrame];
+                    _sidebarView = [self _sidebarView];
                     _sidebarView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
                     [self.view addSubview:_sidebarView];
                     if (self.sidebarController)
@@ -277,12 +280,12 @@ static const CGFloat ECFloatingSplitViewControllerAnimationDuration = 0.15;
                         [self.sidebarController viewDidAppear:NO];
                     }
                 }
-                _sidebarView.frame = sidebarFrame;
+                else
+                    _sidebarView.frame = [self _sidebarFrame];
             }
             if (!_mainView)
             {
-                _mainView = [[UIView alloc] initWithFrame:mainFrame];
-                _mainView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+                _mainView = [self _mainView];
                 [self.view addSubview:_mainView];
                 [self.view sendSubviewToBack:_mainView];
                 if (self.mainController)
@@ -293,7 +296,8 @@ static const CGFloat ECFloatingSplitViewControllerAnimationDuration = 0.15;
                     [self.mainController viewDidAppear:NO];
                 }
             }
-            _mainView.frame = mainFrame;
+            else
+                _mainView.frame = [self _mainFrame];
         } copy];
     return __layoutBlock;
 }
@@ -304,6 +308,36 @@ static const CGFloat ECFloatingSplitViewControllerAnimationDuration = 0.15;
         [UIView animateWithDuration:ECFloatingSplitViewControllerAnimationDuration animations:self._layoutBlock];
     else
         self._layoutBlock();
+}
+
+- (UIView *)_sidebarView
+{
+    UIView *sidebar = [[UIView alloc] initWithFrame:[self _sidebarFrame]];
+    sidebar.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    sidebar.layer.cornerRadius = 5.0;
+    sidebar.layer.shadowColor = [UIColor blackColor].CGColor;
+    sidebar.layer.shadowOffset = CGSizeMake(0.0, 1.0);
+    sidebar.layer.shadowOpacity = 1.0;
+    sidebar.layer.shadowRadius = 5.0;
+    sidebar.backgroundColor = [UIColor redColor];
+    return sidebar;
+}
+
+- (CGRect)_sidebarFrame
+{
+    return CGRectMake(self.sidebarOnRight ? self.view.frame.size.width - self.sidebarWidth : 0.0, 0.0, self.sidebarWidth, self.view.frame.size.height);
+}
+
+- (UIView *)_mainView
+{
+    UIView *main = [[UIView alloc] initWithFrame:[self _mainFrame]];
+    main.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    return main;
+}
+
+- (CGRect)_mainFrame
+{
+    return CGRectMake((self.sidebarFloating || self.sidebarHidden || self.sidebarOnRight) ? 0.0 : self.sidebarWidth, 0.0, self.view.frame.size.width - ((self.sidebarFloating || self.sidebarHidden) ? 0.0 : self.sidebarWidth), self.view.frame.size.height);
 }
 
 - (void)_swipe:(id)sender
