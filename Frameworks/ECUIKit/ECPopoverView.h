@@ -29,9 +29,9 @@
 
 @property (nonatomic) CGFloat arrowPosition;
 
-@property (nonatomic) CGFloat arrowSize;
+@property (nonatomic) CGFloat arrowSize UI_APPEARANCE_SELECTOR;
 
-@property (nonatomic) CGFloat arrowCornerRadius;
+@property (nonatomic) CGFloat arrowCornerRadius UI_APPEARANCE_SELECTOR;
 
 @property (nonatomic, readonly) CGFloat arrowMargin;
 

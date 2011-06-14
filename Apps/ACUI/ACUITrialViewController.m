@@ -15,6 +15,7 @@
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
         // Custom initialization
+        
     }
     return self;
 }
@@ -72,6 +73,8 @@
     if (!popoverController)
     {
         popoverController = [[ECPopoverController alloc] initWithContentViewController:popoverContentController];
+        [[ECPopoverView appearance] setBackgroundColor:[UIColor redColor]];
+//        [[ECPopoverView appearance] setArrowCornerRadius:3];
     }
     
     [popoverController presentPopoverFromRect:[sender frame] inView:self.view permittedArrowDirections:UIPopoverArrowDirectionLeft animated:YES];
