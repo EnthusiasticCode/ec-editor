@@ -7,9 +7,7 @@
 //
 
 #import "ECPopoverView.h"
-#import "UIColor+StyleColors.h"
 #import <QuartzCore/QuartzCore.h>
-#import <math.h>
 
 @interface ECPopoverView () {
 @private
@@ -124,6 +122,8 @@ static void preinit(ECPopoverView *self)
     self->cornerRadius = 5;
     
     self->contentInsets = UIEdgeInsetsMake(5, 5, 5, 5);
+    
+    self.backgroundColor = [UIColor darkGrayColor];
 }
 
 static void init(ECPopoverView *self)
@@ -139,8 +139,6 @@ static void init(ECPopoverView *self)
     [self layoutArrow];
     
     self->contentRect = UIEdgeInsetsInsetRect(self.bounds, self->contentInsets);
-    
-    self.backgroundColor = [UIColor styleForegroundColor];
 }
 
 - (id)initWithFrame:(CGRect)frame
@@ -161,11 +159,6 @@ static void init(ECPopoverView *self)
         init(self);
     }
     return self;
-}
-
-- (void)dealloc
-{
-    [super dealloc];
 }
 
 + (Class)layerClass

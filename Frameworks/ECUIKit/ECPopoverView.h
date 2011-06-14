@@ -9,19 +9,19 @@
 #import <UIKit/UIKit.h>
 
 
-@interface ECPopoverView : UIView
+@interface ECPopoverView : UIView <UIAppearanceContainer>
 
 #pragma mark Style
 
-@property (nonatomic) CGFloat cornerRadius;
+@property (nonatomic) CGFloat cornerRadius UI_APPEARANCE_SELECTOR;
 
 #pragma mark Content
 
-@property (nonatomic) UIEdgeInsets contentInsets;
+@property (nonatomic) UIEdgeInsets contentInsets UI_APPEARANCE_SELECTOR;
 
 @property (nonatomic) CGSize contentSize;
 
-@property (nonatomic, retain) UIView *contentView;
+@property (nonatomic, strong) UIView *contentView;
 
 #pragma mark Arrow
 
