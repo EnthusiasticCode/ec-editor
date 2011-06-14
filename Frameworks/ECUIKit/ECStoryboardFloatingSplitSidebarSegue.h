@@ -9,6 +9,6 @@
 #import <UIKit/UIKit.h>
 @class CATransition;
 
-@interface ECStoryboardTripleSplitSidebarSegue : UIStoryboardSegue
+@interface ECStoryboardFloatingSplitSidebarSegue : UIStoryboardSegue
 @property (nonatomic, strong) CATransition *transition; 
 @end

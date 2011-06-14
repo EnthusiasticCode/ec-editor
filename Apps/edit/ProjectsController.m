@@ -10,7 +10,7 @@
 #import "RootController.h"
 #import <ECFoundation/NSFileManager(ECAdditions).h>
 #import "FilesController.h"
-#import "ECStoryboardTripleSplitSidebarSegue.h"
+#import "ECStoryboardFloatingSplitSidebarSegue.h"
 #import <QuartzCore/QuartzCore.h>
 
 static const CGFloat TransitionDuration = 0.15;
@@ -79,7 +79,7 @@ static const NSString *FilesSegueIdentifier = @"Files";
         transition.duration = TransitionDuration;
         transition.type = kCATransitionPush;
         transition.subtype = kCATransitionFromTop;
-        [(ECStoryboardTripleSplitSidebarSegue *)segue setTransition:transition];
+        [(ECStoryboardFloatingSplitSidebarSegue *)segue setTransition:transition];
     }
     [self.rootController prepareForSegue:segue sender:sender];
 }

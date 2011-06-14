@@ -8,14 +8,14 @@
 
 #import "RootController.h"
 
-static const NSString *MenuControllerIdentifier = @"Menu";
+static const NSString *SidebarControllerIdentifier = @"Sidebar";
 
 @implementation RootController
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    [self setMenuController:[self.storyboard instantiateViewControllerWithIdentifier:(NSString *)MenuControllerIdentifier]];
+    [self setSidebarController:[self.storyboard instantiateViewControllerWithIdentifier:(NSString *)SidebarControllerIdentifier]];
 }
 
 @end

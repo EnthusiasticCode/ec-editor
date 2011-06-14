@@ -7,8 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "ECTripleSplitViewController.h"
+#import "ECFloatingSplitViewController.h"
 
-@interface RootController : ECTripleSplitViewController
+@interface RootController : ECFloatingSplitViewController
 
 @end

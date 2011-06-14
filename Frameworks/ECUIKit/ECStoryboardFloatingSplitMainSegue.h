@@ -1,5 +1,5 @@
 //
-//  ECStoryboardTripleSplitMenuSegue.h
+//  ECStoryboardFloatingSplitMainSegue.h
 //  edit
 //
 //  Created by Uri Baghin on 6/12/11.
@@ -9,6 +9,6 @@
 #import <UIKit/UIKit.h>
 @class CATransition;
 
-@interface ECStoryboardTripleSplitMenuSegue : UIStoryboardSegue
+@interface ECStoryboardFloatingSplitMainSegue : UIStoryboardSegue
 @property (nonatomic, strong) CATransition *transition; 
 @end
