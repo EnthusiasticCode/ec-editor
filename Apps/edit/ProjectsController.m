@@ -12,6 +12,8 @@
 #import "FilesController.h"
 #import "ECStoryboardFloatingSplitSidebarSegue.h"
 #import <QuartzCore/QuartzCore.h>
+#import "Client.h"
+#import "Project.h"
 
 static const CGFloat TransitionDuration = 0.15;
 
@@ -27,7 +29,6 @@ static const NSString *FilesSegueIdentifier = @"Files";
 
 @implementation ProjectsController
 
-@synthesize rootController = _rootController;
 @synthesize fileManager = _fileManager;
 
 - (NSFileManager *)fileManager
@@ -60,7 +61,7 @@ static const NSString *FilesSegueIdentifier = @"Files";
     {
         file = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:(NSString *)DefaultReuseIdentifier];
     }
-    file.textLabel.text = [[[self _contentsOfRootFolder] objectAtIndex:(indexPath.row)] lastPathComponent];
+    file.textLabel.text = [[self _contentsOfRootFolder] objectAtIndex:(indexPath.row)];
     return file;
 }
 
@@ -69,19 +70,11 @@ static const NSString *FilesSegueIdentifier = @"Files";
     return [[self _contentsOfRootFolder] count];
 }
 
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSString *identifier = segue.identifier;
-    if ([identifier isEqualToString:(NSString *)FilesSegueIdentifier])
-    {
-        [segue.destinationViewController loadProject:[[self _rootFolder] stringByAppendingPathComponent:[[self _contentsOfRootFolder] objectAtIndex:[self.tableView indexPathForSelectedRow].row]]];
-        CATransition *transition = [CATransition animation];
-        transition.duration = TransitionDuration;
-        transition.type = kCATransitionPush;
-        transition.subtype = kCATransitionFromTop;
-        [(ECStoryboardFloatingSplitSidebarSegue *)segue setTransition:transition];
-    }
-    [self.rootController prepareForSegue:segue sender:sender];
+    NSString *projectDirectory = [[self _contentsOfRootFolder] objectAtIndex:(indexPath.row)];
+    NSString *bundle = [[[self._rootFolder stringByAppendingPathComponent:projectDirectory] stringByAppendingPathComponent:projectDirectory] stringByAppendingPathExtension:@"ecproj"];
+    [Client sharedClient].currentProject = [[Project alloc] initWithBundle:bundle];
 }
 
 @end

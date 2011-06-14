@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="1.0" toolsVersion="1864" systemVersion="10J869" targetRuntime="iOS.CocoaTouch.iPad" nextObjectID="77" propertyAccessControl="none" initialViewController="51">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="1.0" toolsVersion="1864" systemVersion="10J869" targetRuntime="iOS.CocoaTouch.iPad" nextObjectID="78" propertyAccessControl="none" initialViewController="51">
     <dependencies>
         <development defaultVersion="4200" identifier="xcode"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="865"/>
@@ -62,9 +62,6 @@
                                 </view>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <fontDescription key="fontDescription" type="system" size="system"/>
-                                <connections>
-                                    <segue destination="33" kind="custom" identifier="File" customClass="ECStoryboardFloatingSplitMainSegue" id="40"/>
-                                </connections>
                             </tableViewCell>
                         </prototypes>
                         <connections>
@@ -133,10 +130,9 @@
         <scene sceneID="72">
             <objects>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="71" userLabel="First Responder" sceneMemberID="firstRespodner"/>
-                <tabBarController storyboardIdentifier="Sidebar" title="Sidebar" id="59" sceneMemberID="viewController">
+                <tabBarController storyboardIdentifier="Sidebar" title="Sidebar" id="59" customClass="SidebarController" sceneMemberID="viewController">
                     <simulatedMetricsInferredSentinel key="simulatedStatusBarMetrics"/>
                     <simulatedMetricsInferredSentinel key="simulatedTopBarMetrics"/>
-                    <simulatedTabBarMetrics key="simulatedBottomBarMetrics"/>
                     <simulatedMetricsInferredSentinel key="simulatedOrientationMetrics"/>
                     <simulatedMetricsInferredSentinel key="simulatedDestinationMetrics"/>
                     <tabBar key="tabBar" contentMode="scaleToFill" id="60">
@@ -145,8 +141,8 @@
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                     </tabBar>
                     <connections>
-                        <segue destination="27" kind="relationship" relationship="viewControllers" id="73"/>
                         <segue destination="16" kind="relationship" relationship="viewControllers" id="75"/>
+                        <segue destination="27" kind="relationship" relationship="viewControllers" id="77"/>
                     </connections>
                 </tabBarController>
             </objects>
@@ -187,6 +183,10 @@
         </class>
         <class className="RootController" superclassName="ECFloatingSplitViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/RootController.h"/>
+            <relationships/>
+        </class>
+        <class className="SidebarController" superclassName="UITabBarController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/SidebarController.h"/>
             <relationships/>
         </class>
     </classes>

@@ -10,9 +10,5 @@
 @class Project, Node, File, RootController;
 
 @interface FilesController : UITableViewController
-@property (nonatomic, weak) RootController *rootController;
-@property (nonatomic, strong) NSFileManager *fileManager;
-@property (nonatomic, strong) Project *project;
-@property (nonatomic, strong) NSString *projectRoot;
-- (void)loadProject:(NSString *)projectRoot;
+
 @end

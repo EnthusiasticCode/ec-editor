@@ -9,11 +9,11 @@
 #import "FileController.h"
 #import "ECCodeView.h"
 #import "File.h"
+#import "Client.h"
 
 @implementation FileController
 
 @synthesize codeView;
-@synthesize file;
 
 
 - (void)viewDidAppear:(BOOL)animated
@@ -25,19 +25,13 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    self.codeView.datasource = self.file;
+    self.codeView.datasource = [Client sharedClient].currentFile;
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
     // Return YES for supported orientations
 	return YES;
-}
-
-- (void)loadFile:(File *)aFile
-{
-    self.file = aFile;
-    self.title = [aFile.path lastPathComponent];
 }
 
 - (IBAction)complete:(id)sender {

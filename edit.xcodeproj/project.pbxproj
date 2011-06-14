@@ -155,10 +155,12 @@
 		B75B87721358401B0098E7E2 /* ECCodeIndex.m in Sources */ = {isa = PBXBuildFile; fileRef = B75B875C1358401B0098E7E2 /* ECCodeIndex.m */; };
 		B75B87741358401B0098E7E2 /* ECCodeToken.m in Sources */ = {isa = PBXBuildFile; fileRef = B75B87621358401B0098E7E2 /* ECCodeToken.m */; };
 		B75B87751358401B0098E7E2 /* ECCodeUnit.m in Sources */ = {isa = PBXBuildFile; fileRef = B75B87641358401B0098E7E2 /* ECCodeUnit.m */; };
+		B75DBA4D13A80C8600C12630 /* SidebarController.m in Sources */ = {isa = PBXBuildFile; fileRef = B75DBA4C13A80C8500C12630 /* SidebarController.m */; };
 		B7803AE513A3D68D0077F7A1 /* ECFloatingSplitViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B7803AE413A3D68D0077F7A1 /* ECFloatingSplitViewController.m */; };
 		B7803AE913A41E040077F7A1 /* ECStoryboardFloatingSplitMainSegue.m in Sources */ = {isa = PBXBuildFile; fileRef = B7803AE813A41E040077F7A1 /* ECStoryboardFloatingSplitMainSegue.m */; };
 		B79D505D13A7A1970018852E /* Group.m in Sources */ = {isa = PBXBuildFile; fileRef = B79D505C13A7A1970018852E /* Group.m */; };
 		B79D506113A7A1A30018852E /* Folder.m in Sources */ = {isa = PBXBuildFile; fileRef = B79D506013A7A1A30018852E /* Folder.m */; };
+		B79D506B13A7CECF0018852E /* Client.m in Sources */ = {isa = PBXBuildFile; fileRef = B79D506A13A7CECE0018852E /* Client.m */; };
 		B7D5D1D313A117B10013911A /* MainStoryboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B7D5D1D213A117B10013911A /* MainStoryboard.storyboard */; };
 		B7DBA580132A3281004C0E1D /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7DBA57F132A3281004C0E1D /* QuartzCore.framework */; };
 		B7F0335E139E6BAF00FDC353 /* ECCodeByteArrayDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = B7F0335B139E6BAE00FDC353 /* ECCodeByteArrayDataSource.m */; };
@@ -390,6 +392,8 @@
 		B75B87641358401B0098E7E2 /* ECCodeUnit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeUnit.m; sourceTree = "<group>"; };
 		B75B87651358401B0098E7E2 /* ECCodeUnit(Private).h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ECCodeUnit(Private).h"; sourceTree = "<group>"; };
 		B75B87661358401B0098E7E2 /* ECCodeUnitPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeUnitPlugin.h; sourceTree = "<group>"; };
+		B75DBA4B13A80C8500C12630 /* SidebarController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SidebarController.h; sourceTree = "<group>"; };
+		B75DBA4C13A80C8500C12630 /* SidebarController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SidebarController.m; sourceTree = "<group>"; };
 		B7803AE313A3D68D0077F7A1 /* ECFloatingSplitViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECFloatingSplitViewController.h; path = Frameworks/ECUIKit/ECFloatingSplitViewController.h; sourceTree = "<group>"; };
 		B7803AE413A3D68D0077F7A1 /* ECFloatingSplitViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECFloatingSplitViewController.m; path = Frameworks/ECUIKit/ECFloatingSplitViewController.m; sourceTree = "<group>"; };
 		B7803AE713A41E040077F7A1 /* ECStoryboardFloatingSplitMainSegue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECStoryboardFloatingSplitMainSegue.h; path = Frameworks/ECUIKit/ECStoryboardFloatingSplitMainSegue.h; sourceTree = "<group>"; };
@@ -398,6 +402,8 @@
 		B79D505C13A7A1970018852E /* Group.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Group.m; sourceTree = "<group>"; };
 		B79D505F13A7A1A30018852E /* Folder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Folder.h; sourceTree = "<group>"; };
 		B79D506013A7A1A30018852E /* Folder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Folder.m; sourceTree = "<group>"; };
+		B79D506913A7CECE0018852E /* Client.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Client.h; sourceTree = "<group>"; };
+		B79D506A13A7CECE0018852E /* Client.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Client.m; sourceTree = "<group>"; };
 		B7D5D1D213A117B10013911A /* MainStoryboard.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = MainStoryboard.storyboard; sourceTree = "<group>"; };
 		B7DBA57F132A3281004C0E1D /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		B7F0335A139E6BAE00FDC353 /* ECCodeByteArrayDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECCodeByteArrayDataSource.h; path = Frameworks/ECUIKit/ECCodeByteArrayDataSource.h; sourceTree = "<group>"; };
@@ -645,6 +651,8 @@
 		B70D650D132A260C008DDEA4 /* Application */ = {
 			isa = PBXGroup;
 			children = (
+				B79D506913A7CECE0018852E /* Client.h */,
+				B79D506A13A7CECE0018852E /* Client.m */,
 				CDEBF20813489A8E00CE2285 /* AppDelegate.h */,
 				CDEBF20913489A8E00CE2285 /* AppDelegate.m */,
 				B79D506213A7ACE20018852E /* Models */,
@@ -804,6 +812,8 @@
 			children = (
 				B715124813A26FBB00D54F5B /* RootController.h */,
 				B715124913A26FBB00D54F5B /* RootController.m */,
+				B75DBA4B13A80C8500C12630 /* SidebarController.h */,
+				B75DBA4C13A80C8500C12630 /* SidebarController.m */,
 				CDEBF21413489A8E00CE2285 /* ProjectsController.h */,
 				CDEBF21513489A8E00CE2285 /* ProjectsController.m */,
 				B74C6715137A8E0C00CC92D3 /* NewProjectController.h */,
@@ -1164,6 +1174,8 @@
 				B7803AE913A41E040077F7A1 /* ECStoryboardFloatingSplitMainSegue.m in Sources */,
 				B79D505D13A7A1970018852E /* Group.m in Sources */,
 				B79D506113A7A1A30018852E /* Folder.m in Sources */,
+				B79D506B13A7CECF0018852E /* Client.m in Sources */,
+				B75DBA4D13A80C8600C12630 /* SidebarController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

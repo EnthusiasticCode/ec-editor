@@ -10,5 +10,5 @@
 @class RootController;
 
 @interface ProjectsController : UITableViewController
-@property (nonatomic, weak) RootController *rootController;
+
 @end
