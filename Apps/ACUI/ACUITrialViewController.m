@@ -9,7 +9,6 @@
 #import "ACUITrialViewController.h"
 
 @implementation ACUITrialViewController
-@synthesize popoverContentController;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -47,7 +46,6 @@
 
 - (void)viewDidUnload
 {
-    [self setPopoverContentController:nil];
     [super viewDidUnload];
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;
@@ -63,10 +61,18 @@
 
 - (IBAction)showPopover:(id)sender 
 {
-    popoverContentController.contentSizeForViewInPopover = CGSizeMake(200, 300);
+    if (!popoverContentController)
+    {
+        popoverContentController = [[UIViewController alloc] init];
+        popoverContentController.contentSizeForViewInPopover = CGSizeMake(200, 300);
+        popoverContentController.view = [[UIView alloc] initWithFrame:(CGRect){200, 300}];
+        popoverContentController.view.backgroundColor = [UIColor whiteColor];
+    }
     
     if (!popoverController)
+    {
         popoverController = [[ECPopoverController alloc] initWithContentViewController:popoverContentController];
+    }
     
     [popoverController presentPopoverFromRect:[sender frame] inView:self.view permittedArrowDirections:UIPopoverArrowDirectionAny animated:NO];
 }

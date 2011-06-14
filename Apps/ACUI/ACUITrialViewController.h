@@ -14,7 +14,6 @@
     UIViewController *popoverContentController;
 }
 
-
-@property (nonatomic, strong) IBOutlet UIViewController *popoverContentController;
 - (IBAction)showPopover:(id)sender;
+
 @end

@@ -282,6 +282,7 @@
 		CD19242713A147EE00A47E38 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ARC_MIGRATION = precheck;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ACUI/ACUI-Prefix.pch";
 				INFOPLIST_FILE = "ACUI/ACUI-Info.plist";
@@ -293,6 +294,7 @@
 		CD19242813A147EE00A47E38 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ARC_MIGRATION = precheck;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ACUI/ACUI-Prefix.pch";
 				INFOPLIST_FILE = "ACUI/ACUI-Info.plist";
