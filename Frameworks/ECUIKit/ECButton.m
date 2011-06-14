@@ -7,7 +7,6 @@
 //
 
 #import "ECButton.h"
-#import "UIColor+StyleColors.h"
 #import <QuartzCore/QuartzCore.h>
 
 
@@ -148,8 +147,7 @@ static CGPathRef createButtonShapePath(CGRect rect, CGFloat radius, CGFloat left
     return path;
 }
 
-#pragma mark -
-#pragma mark Properties
+#pragma mark - Properties
 
 @synthesize cornerRadius, leftArrowSize, rightArrowSize;
 
@@ -166,15 +164,15 @@ static CGPathRef createButtonShapePath(CGRect rect, CGFloat radius, CGFloat left
 - (void)setButtonPath:(CGPathRef)buttonPath animated:(BOOL)animated
 {
     CAShapeLayer *layer = (CAShapeLayer *)self.layer;
-    if (animated) 
-    {
-        CABasicAnimation *animation = [CABasicAnimation animationWithKeyPath:@"path"];
-        animation.fromValue = (id)layer.path;
-        animation.toValue = (id)buttonPath;
-        animation.duration = 0.15;
-        animation.valueFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
-        [layer addAnimation:animation forKey:nil];
-    }
+//    if (animated) 
+//    {
+//        CABasicAnimation *animation = [CABasicAnimation animationWithKeyPath:@"path"];
+//        animation.fromValue = (id)layer.path;
+//        animation.toValue = (id)buttonPath;
+//        animation.duration = 0.15;
+//        animation.valueFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
+//        [layer addAnimation:animation forKey:nil];
+//    }
     [layer setPath:buttonPath];
 }
 
@@ -257,8 +255,7 @@ static CGPathRef createButtonShapePath(CGRect rect, CGFloat radius, CGFloat left
     CGPathRelease(path);
 }
 
-#pragma mark -
-#pragma mark UIControl Methods
+#pragma mark - UIControl Methods
 
 static void preinit(ECButton *self)
 {
@@ -313,7 +310,6 @@ static void preinit(ECButton *self)
 {
     free(backgroundColors);
     free(borderColors);
-    [super dealloc];
 }
 
 + (Class)layerClass
@@ -336,8 +332,7 @@ static void preinit(ECButton *self)
     return [super hitTest:point withEvent:event];
 }
 
-#pragma mark -
-#pragma mark Public methods
+#pragma mark - Public methods
 
 - (void)setBackgroundColor:(UIColor *)color forState:(UIControlState)state
 {
@@ -373,8 +368,7 @@ static void preinit(ECButton *self)
     return borderColors[index] ? [UIColor colorWithCGColor:borderColors[index]] : nil;
 }
 
-#pragma mark -
-#pragma mark Private methods
+#pragma mark - Private methods
 
 - (void)updateLayerPropertiesForCurrentState
 {
