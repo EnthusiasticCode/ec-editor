@@ -15,6 +15,4 @@
 @property (nonatomic, strong) Project *project;
 @property (nonatomic, strong) NSString *projectRoot;
 - (void)loadProject:(NSString *)projectRoot;
-- (void)addNodesAtPath:(NSString *)path toNode:(Node *)node;
-- (void)addAllNodesInProjectRoot;
 @end

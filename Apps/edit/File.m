@@ -31,6 +31,10 @@
 
 @implementation File
 
+@dynamic bookmarks;
+@dynamic historyItems;
+@dynamic undoItems;
+
 @synthesize byteArrayDataSource = _byteArrayDataSource;
 @synthesize completionController = _completionController;
 @synthesize unit = _unit;

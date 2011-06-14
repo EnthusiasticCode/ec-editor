@@ -8,16 +8,10 @@
 
 #import <Foundation/Foundation.h>
 
-@class Node, File, NSManagedObjectContext, NSManagedObjectModel, NSPersistentStoreCoordinator;
-
 @interface Project : NSObject
-@property (nonatomic, strong) NSString *bundle;
-@property (nonatomic, strong) NSString *name;
-@property (nonatomic, strong) NSFileManager *fileManager;
-@property (nonatomic, strong) NSManagedObjectContext *managedObjectContext;
-@property (nonatomic, strong) NSManagedObjectModel *managedObjectModel;
-@property (nonatomic, strong) NSPersistentStoreCoordinator *persistentStoreCoordinator;
-@property (nonatomic, strong, readonly) Node *rootNode;
-- (id)initWithBundle:(NSString *)bundle;
+@property (nonatomic, strong, readonly) NSString *bundlePath;
+@property (nonatomic, strong, readonly) NSString *name;
+- (id)initWithBundle:(NSString *)bundlePath;
 - (void)saveContext;
+- (NSOrderedSet *)children;
 @end

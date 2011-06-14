@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model name="" userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="837" systemVersion="10J869" minimumToolsVersion="Automatic" macOSVersion="Automatic" iOSVersion="Automatic">
-    <entity name="Bookmark" representedClassName="CDBookmark">
+    <entity name="Bookmark" representedClassName="Bookmark">
         <attribute name="note" optional="YES" attributeType="String"/>
         <attribute name="range" attributeType="Transformable"/>
         <relationship name="file" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="File" inverseName="bookmarks" inverseEntity="File" indexed="YES"/>
@@ -16,7 +16,7 @@
             <entry key="com.apple.syncservices.IdentityProperties" value=""/>
         </userInfo>
     </entity>
-    <entity name="HistoryItem" representedClassName="CDHistoryItem">
+    <entity name="HistoryItem" representedClassName="HistoryItem">
         <attribute name="position" optional="YES" attributeType="Transformable"/>
         <attribute name="selection" optional="YES" attributeType="Transformable"/>
         <relationship name="file" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="File" inverseName="historyItems" inverseEntity="File" indexed="YES"/>
@@ -25,7 +25,7 @@
             <entry key="com.apple.syncservices.IdentityProperties" value=""/>
         </userInfo>
     </entity>
-    <entity name="NameWord" representedClassName="CDNameWord">
+    <entity name="NameWord" representedClassName="NameWord">
         <attribute name="normalizedWord" attributeType="String"/>
         <relationship name="nodes" toMany="YES" minCount="1" deletionRule="Deny" destinationEntity="Node" inverseName="nameWords" inverseEntity="Node" indexed="YES"/>
         <userInfo>
@@ -45,14 +45,14 @@
             <entry key="com.apple.syncservices.IdentityProperties" value=""/>
         </userInfo>
     </entity>
-    <entity name="Tab" representedClassName="CDTab">
+    <entity name="Tab" representedClassName="Tab">
         <attribute name="index" attributeType="Integer 32" defaultValueString="-1" indexed="YES"/>
         <relationship name="historyItems" toMany="YES" minCount="1" deletionRule="Cascade" ordered="YES" destinationEntity="HistoryItem" inverseName="tab" inverseEntity="HistoryItem" indexed="YES"/>
         <userInfo>
             <entry key="com.apple.syncservices.IdentityProperties" value=""/>
         </userInfo>
     </entity>
-    <entity name="UndoItem" representedClassName="CDUndoItem">
+    <entity name="UndoItem" representedClassName="UndoItem">
         <attribute name="range" attributeType="Transformable"/>
         <attribute name="string" attributeType="String"/>
         <relationship name="file" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="File" inverseName="undoItems" inverseEntity="File" indexed="YES"/>
