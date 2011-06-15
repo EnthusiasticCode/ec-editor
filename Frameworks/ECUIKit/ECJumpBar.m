@@ -348,7 +348,7 @@ static void init(ECJumpBar *self)
     
     if (animatePush || animatePop)
     {
-        [UIView animateWithDuration:0.15 delay:0 options:(UIViewAnimationOptionCurveEaseInOut | UIViewAnimationOptionAllowUserInteraction | UIViewAnimationOptionBeginFromCurrentState | UIViewAnimationOptionLayoutSubviews) animations:actualLayout completion:^(BOOL finished) {
+        [UIView animateWithDuration:0.10 delay:0 options:(UIViewAnimationOptionCurveEaseInOut | UIViewAnimationOptionAllowUserInteraction | UIViewAnimationOptionBeginFromCurrentState) animations:actualLayout completion:^(BOOL finished) {
             // Cleanup
             actualLayoutCleanup();
             // Animate pushed button

@@ -48,6 +48,9 @@
     UIColor *darkColor = [UIColor colorWithWhite:0.16 alpha:1.0];
     UIColor *shadowColor = [UIColor whiteColor];
     
+    // JumpBar configuration
+    jumpBar.delegate = self;
+    
     id jumpBarAppearance = [ECJumpBar appearance];
     
     [jumpBarAppearance setFont:[UIFont fontWithName:@"Helvetica-Bold" size:14]];
@@ -74,6 +77,26 @@
 	return YES;
 }
 
+#pragma mark - JumpBar Delegate Methods
+
+- (void)popJumpBarControl:(id)sender
+{
+    [jumpBar popControlsDownThruIndex:[sender tag] animated:YES];
+}
+
+#pragma mark -
+
+- (void)jumpBar:(ECJumpBar *)jumpBar didPushControl:(UIControl *)control atStackIndex:(NSUInteger)index
+{
+    [control addTarget:self action:@selector(popJumpBarControl:) forControlEvents:UIControlEventTouchUpInside];
+}
+
+- (void)jumpBar:(ECJumpBar *)jumpBar didCollapseToControl:(UIControl *)control collapsedRange:(NSRange)collapsedRange
+{
+    control.tag = NSMaxRange(collapsedRange);
+    [control addTarget:self action:@selector(showPopover:) forControlEvents:UIControlEventTouchUpInside];
+}
+
 #pragma mark - Trial Methods
 
 - (IBAction)showPopover:(id)sender 
@@ -95,7 +118,16 @@
 //        [[ECPopoverView appearance] setArrowCornerRadius:3];
     }
     
-    [popoverController presentPopoverFromRect:[sender frame] inView:self.view permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
+    UIView *supview = sender;
+    CGRect senderFrame = [sender frame]; // [sender convertRect:[sender frame] toView:self.view];
+    CGPoint supOrigin;
+    while ((supview = [supview superview]) && supview != self.view)
+    {
+        supOrigin = [supview frame].origin;
+        senderFrame.origin.x += supOrigin.x;
+        senderFrame.origin.y += supOrigin.y;
+    }
+    [popoverController presentPopoverFromRect:senderFrame inView:self.view permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
 }
 
 - (IBAction)pushToJumpBar:(id)sender {

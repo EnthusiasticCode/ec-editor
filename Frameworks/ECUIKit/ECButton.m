@@ -8,6 +8,7 @@
 
 #import "ECButton.h"
 #import <QuartzCore/QuartzCore.h>
+#import <objc/runtime.h>
 
 
 @interface ECButton () {
@@ -164,15 +165,16 @@ static CGPathRef createButtonShapePath(CGRect rect, CGFloat radius, CGFloat left
 - (void)setButtonPath:(CGPathRef)buttonPath animated:(BOOL)animated
 {
     CAShapeLayer *layer = (CAShapeLayer *)self.layer;
-//    if (animated) 
-//    {
-//        CABasicAnimation *animation = [CABasicAnimation animationWithKeyPath:@"path"];
-//        animation.fromValue = (id)layer.path;
-//        animation.toValue = (id)buttonPath;
-//        animation.duration = 0.15;
-//        animation.valueFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
-//        [layer addAnimation:animation forKey:nil];
-//    }
+    if (animated) 
+    {
+        CABasicAnimation *animation = [CABasicAnimation animationWithKeyPath:@"path"];
+        animation.fromValue = objc_unretainedObject(layer.path);
+        animation.toValue = objc_unretainedObject(buttonPath);
+        // TODO this time should be equal to external animation time
+        animation.duration = 0.10;
+        animation.valueFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
+        [layer addAnimation:animation forKey:@"path"];
+    }
     [layer setPath:buttonPath];
 }
 

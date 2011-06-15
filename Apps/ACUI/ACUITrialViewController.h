@@ -11,7 +11,7 @@
 #import "ECButton.h"
 #import "ECJumpBar.h"
 
-@interface ACUITrialViewController : UIViewController {
+@interface ACUITrialViewController : UIViewController <ECJumpBarDelegate> {
     ECPopoverController *popoverController;
     UIViewController *popoverContentController;
 }
