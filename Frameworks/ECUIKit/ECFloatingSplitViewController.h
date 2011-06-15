@@ -10,15 +10,24 @@
 @class CATransition;
 @class ECFloatingSplitViewController;
 
+typedef enum
+{
+    ECFloatingSplitViewControllerSidebarEdgeTop,
+    ECFloatingSplitViewControllerSidebarEdgeBottom,
+    ECFloatingSplitViewControllerSidebarEdgeLeft,
+    ECFloatingSplitViewControllerSidebarEdgeRight,
+} ECFloatingSplitViewControllerSidebarEdge;
+
 @interface ECFloatingSplitViewController : UIViewController
 @property (nonatomic, strong) IBOutlet UIViewController *sidebarController;
 @property (nonatomic, strong) IBOutlet UIViewController *mainController;
 @property (nonatomic) CGFloat sidebarWidth;
 - (void)setSidebarWidth:(CGFloat)sidebarWidth animated:(BOOL)animated;
+@property (nonatomic) ECFloatingSplitViewControllerSidebarEdge sidebarEdge;
+- (void)setSidebarEdge:(ECFloatingSplitViewControllerSidebarEdge)sidebarEdge animated:(BOOL)animated;
+@property (nonatomic) BOOL sidebarLocked;
 @property (nonatomic, getter = isSidebarHidden) BOOL sidebarHidden;
 - (void)setSidebarHidden:(BOOL)sidebarHidden animated:(BOOL)animated;
-@property (nonatomic, getter = isSidebarOnRight) BOOL sidebarOnRight;
-- (void)setSidebarOnRight:(BOOL)sidebarOnRight animated:(BOOL)animated;
 @property (nonatomic, getter = isSidebarFloating) BOOL sidebarFloating;
 - (void)setSidebarFloating:(BOOL)sidebarFloating animated:(BOOL)animated;
 - (void)setSidebarController:(UIViewController *)sidebarController withTransition:(CATransition *)transition;
