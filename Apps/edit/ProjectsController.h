@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-@class RootController;
+@class EditorController;
 
 @interface ProjectsController : UITableViewController
 

@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-@class Project, Node, File, RootController;
+@class Project, Node, File, EditorController;
 
 @interface FilesController : UITableViewController
 

@@ -12,7 +12,7 @@
 #import "Node.h"
 #import "File.h"
 #import "FileController.h"
-#import "RootController.h"
+#import "EditorController.h"
 #import "Client.h"
 
 static const NSString *DefaultIdentifier = @"Default";

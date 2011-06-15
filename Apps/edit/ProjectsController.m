@@ -7,7 +7,7 @@
 //
 
 #import "ProjectsController.h"
-#import "RootController.h"
+#import "EditorController.h"
 #import <ECFoundation/NSFileManager(ECAdditions).h>
 #import "FilesController.h"
 #import "ECStoryboardFloatingSplitSidebarSegue.h"
@@ -40,7 +40,6 @@ static const NSString *FilesSegueIdentifier = @"Files";
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
-    // Return YES for supported orientations
 	return YES;
 }
 

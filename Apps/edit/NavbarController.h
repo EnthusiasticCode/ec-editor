@@ -1,13 +1,13 @@
 //
-//  RootController.h
+//  NavbarController.h
 //  edit
 //
 //  Created by Uri Baghin on 6/15/11.
 //  Copyright 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import "ECFloatingSplitViewController.h"
+#import <UIKit/UIKit.h>
 
-@interface RootController : ECFloatingSplitViewController
+@interface NavbarController : UIViewController
 
 @end

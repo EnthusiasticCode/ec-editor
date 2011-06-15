@@ -34,7 +34,7 @@
 		B70D6573132A277C008DDEA4 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B70D6572132A277C008DDEA4 /* CoreText.framework */; };
 		B70D6575132A279C008DDEA4 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B70D6574132A279C008DDEA4 /* CoreData.framework */; };
 		B715122C13A2408900D54F5B /* Node.m in Sources */ = {isa = PBXBuildFile; fileRef = B715122B13A2408900D54F5B /* Node.m */; };
-		B715124A13A26FBB00D54F5B /* RootController.m in Sources */ = {isa = PBXBuildFile; fileRef = B715124913A26FBB00D54F5B /* RootController.m */; };
+		B715124A13A26FBB00D54F5B /* EditorController.m in Sources */ = {isa = PBXBuildFile; fileRef = B715124913A26FBB00D54F5B /* EditorController.m */; };
 		B715124D13A27AB100D54F5B /* ECStoryboardFloatingSplitSidebarSegue.m in Sources */ = {isa = PBXBuildFile; fileRef = B715124C13A27AB100D54F5B /* ECStoryboardFloatingSplitSidebarSegue.m */; };
 		B715125013A2876400D54F5B /* UIView+ConcurrentAnimation.m in Sources */ = {isa = PBXBuildFile; fileRef = B715124F13A2876400D54F5B /* UIView+ConcurrentAnimation.m */; };
 		B7199CC8137DD7D9008072D9 /* libclang.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7199CB6137DD7D9008072D9 /* libclang.a */; };
@@ -161,6 +161,8 @@
 		B79D505D13A7A1970018852E /* Group.m in Sources */ = {isa = PBXBuildFile; fileRef = B79D505C13A7A1970018852E /* Group.m */; };
 		B79D506113A7A1A30018852E /* Folder.m in Sources */ = {isa = PBXBuildFile; fileRef = B79D506013A7A1A30018852E /* Folder.m */; };
 		B79D506B13A7CECF0018852E /* Client.m in Sources */ = {isa = PBXBuildFile; fileRef = B79D506A13A7CECE0018852E /* Client.m */; };
+		B7BAF62113A9232F001B0B34 /* RootController.m in Sources */ = {isa = PBXBuildFile; fileRef = B7BAF62013A9232F001B0B34 /* RootController.m */; };
+		B7BAF62413A9236A001B0B34 /* NavbarController.m in Sources */ = {isa = PBXBuildFile; fileRef = B7BAF62313A9236A001B0B34 /* NavbarController.m */; };
 		B7D5D1D313A117B10013911A /* MainStoryboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B7D5D1D213A117B10013911A /* MainStoryboard.storyboard */; };
 		B7DBA580132A3281004C0E1D /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7DBA57F132A3281004C0E1D /* QuartzCore.framework */; };
 		B7F0335E139E6BAF00FDC353 /* ECCodeByteArrayDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = B7F0335B139E6BAE00FDC353 /* ECCodeByteArrayDataSource.m */; };
@@ -232,8 +234,8 @@
 		B70D6649132A28AB008DDEA4 /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Developer/Library/Frameworks/SenTestingKit.framework; sourceTree = SDKROOT; };
 		B715122A13A2408900D54F5B /* Node.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Node.h; sourceTree = "<group>"; };
 		B715122B13A2408900D54F5B /* Node.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Node.m; sourceTree = "<group>"; };
-		B715124813A26FBB00D54F5B /* RootController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RootController.h; sourceTree = "<group>"; };
-		B715124913A26FBB00D54F5B /* RootController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RootController.m; sourceTree = "<group>"; };
+		B715124813A26FBB00D54F5B /* EditorController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EditorController.h; sourceTree = "<group>"; };
+		B715124913A26FBB00D54F5B /* EditorController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EditorController.m; sourceTree = "<group>"; };
 		B715124B13A27AB000D54F5B /* ECStoryboardFloatingSplitSidebarSegue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECStoryboardFloatingSplitSidebarSegue.h; path = Frameworks/ECUIKit/ECStoryboardFloatingSplitSidebarSegue.h; sourceTree = SOURCE_ROOT; };
 		B715124C13A27AB100D54F5B /* ECStoryboardFloatingSplitSidebarSegue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECStoryboardFloatingSplitSidebarSegue.m; path = Frameworks/ECUIKit/ECStoryboardFloatingSplitSidebarSegue.m; sourceTree = SOURCE_ROOT; };
 		B715124E13A2876400D54F5B /* UIView+ConcurrentAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIView+ConcurrentAnimation.h"; path = "Frameworks/ECUIKit/UIView+ConcurrentAnimation.h"; sourceTree = "<group>"; };
@@ -404,6 +406,10 @@
 		B79D506013A7A1A30018852E /* Folder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Folder.m; sourceTree = "<group>"; };
 		B79D506913A7CECE0018852E /* Client.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Client.h; sourceTree = "<group>"; };
 		B79D506A13A7CECE0018852E /* Client.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Client.m; sourceTree = "<group>"; };
+		B7BAF61F13A9232F001B0B34 /* RootController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RootController.h; sourceTree = "<group>"; };
+		B7BAF62013A9232F001B0B34 /* RootController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RootController.m; sourceTree = "<group>"; };
+		B7BAF62213A9236A001B0B34 /* NavbarController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NavbarController.h; sourceTree = "<group>"; };
+		B7BAF62313A9236A001B0B34 /* NavbarController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NavbarController.m; sourceTree = "<group>"; };
 		B7D5D1D213A117B10013911A /* MainStoryboard.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = MainStoryboard.storyboard; sourceTree = "<group>"; };
 		B7DBA57F132A3281004C0E1D /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		B7F0335A139E6BAE00FDC353 /* ECCodeByteArrayDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECCodeByteArrayDataSource.h; path = Frameworks/ECUIKit/ECCodeByteArrayDataSource.h; sourceTree = "<group>"; };
@@ -810,8 +816,12 @@
 		B79D506313A7B2410018852E /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
-				B715124813A26FBB00D54F5B /* RootController.h */,
-				B715124913A26FBB00D54F5B /* RootController.m */,
+				B7BAF61F13A9232F001B0B34 /* RootController.h */,
+				B7BAF62013A9232F001B0B34 /* RootController.m */,
+				B7BAF62213A9236A001B0B34 /* NavbarController.h */,
+				B7BAF62313A9236A001B0B34 /* NavbarController.m */,
+				B715124813A26FBB00D54F5B /* EditorController.h */,
+				B715124913A26FBB00D54F5B /* EditorController.m */,
 				B75DBA4B13A80C8500C12630 /* SidebarController.h */,
 				B75DBA4C13A80C8500C12630 /* SidebarController.m */,
 				CDEBF21413489A8E00CE2285 /* ProjectsController.h */,
@@ -1167,7 +1177,7 @@
 				B7F03392139E76FE00FDC353 /* HFProgressTracker.m in Sources */,
 				B7F03393139E76FE00FDC353 /* HFSharedMemoryByteSlice.m in Sources */,
 				B715122C13A2408900D54F5B /* Node.m in Sources */,
-				B715124A13A26FBB00D54F5B /* RootController.m in Sources */,
+				B715124A13A26FBB00D54F5B /* EditorController.m in Sources */,
 				B715124D13A27AB100D54F5B /* ECStoryboardFloatingSplitSidebarSegue.m in Sources */,
 				B715125013A2876400D54F5B /* UIView+ConcurrentAnimation.m in Sources */,
 				B7803AE513A3D68D0077F7A1 /* ECFloatingSplitViewController.m in Sources */,
@@ -1176,6 +1186,8 @@
 				B79D506113A7A1A30018852E /* Folder.m in Sources */,
 				B79D506B13A7CECF0018852E /* Client.m in Sources */,
 				B75DBA4D13A80C8600C12630 /* SidebarController.m in Sources */,
+				B7BAF62113A9232F001B0B34 /* RootController.m in Sources */,
+				B7BAF62413A9236A001B0B34 /* NavbarController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
