@@ -9,6 +9,7 @@
 #import "ACUITrialViewController.h"
 
 @implementation ACUITrialViewController
+@synthesize jumpBar;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -41,10 +42,27 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    UIColor *brightColor = [UIColor colorWithWhite:0.90 alpha:1.0];
+    UIColor *highlightColor = [UIColor colorWithWhite:0.70 alpha:1.0];
+    UIColor *darkColor = [UIColor colorWithWhite:0.16 alpha:1.0];
+    UIColor *shadowColor = [UIColor whiteColor];
+    
+    id jumpBarAppearance = [ECJumpBar appearance];
+    
+    [jumpBarAppearance setFont:[UIFont fontWithName:@"Helvetica-Bold" size:14]];
+    
+    [jumpBarAppearance setTextColor:darkColor];
+    [jumpBarAppearance setTextShadowColor:shadowColor];
+    [jumpBarAppearance setTextShadowOffset:CGSizeMake(0, 1)];
+    
+    [jumpBarAppearance setButtonColor:brightColor];
+    [jumpBarAppearance setButtonHighlightColor:highlightColor];
 }
 
 - (void)viewDidUnload
 {
+    [self setJumpBar:nil];
     [super viewDidUnload];
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;
@@ -78,6 +96,10 @@
     }
     
     [popoverController presentPopoverFromRect:[sender frame] inView:self.view permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
+}
+
+- (IBAction)pushToJumpBar:(id)sender {
+    [jumpBar pushControlWithTitle:@"Project" animated:YES];
 }
 
 @end

@@ -28,7 +28,7 @@
 
 @end
 
-@interface ECJumpBar : UIView {
+@interface ECJumpBar : UIView <UIAppearanceContainer> {
 @protected
     /// Array used to store controls pushed to the receiver.
     NSMutableArray *controlsStack;
@@ -39,34 +39,34 @@
 #pragma mark Visual Styles
 
 /// The corner radius 
-@property (nonatomic) CGFloat cornerRadius;
+@property (nonatomic) CGFloat cornerRadius UI_APPEARANCE_SELECTOR;
 
 /// The font used for button's titles and search text.
-@property (nonatomic, retain) UIFont *font;
+@property (nonatomic, retain) UIFont *font UI_APPEARANCE_SELECTOR;
 
 /// The color of the text.
-@property (nonatomic, retain) UIColor *textColor;
+@property (nonatomic, retain) UIColor *textColor UI_APPEARANCE_SELECTOR;
 
 /// The color applied to the text in buttons and search text.
-@property (nonatomic, retain) UIColor *textShadowColor;
+@property (nonatomic, retain) UIColor *textShadowColor UI_APPEARANCE_SELECTOR;
 
 /// The offset to be applied for button and search text shadow.
-@property (nonatomic) CGSize textShadowOffset;
+@property (nonatomic) CGSize textShadowOffset UI_APPEARANCE_SELECTOR;
 
 /// The color of buttons in normal state.
-@property (nonatomic, retain) UIColor *buttonColor;
+@property (nonatomic, retain) UIColor *buttonColor UI_APPEARANCE_SELECTOR;
 
 /// The color of buttons in highlight state.
-@property (nonatomic, retain) UIColor *buttonHighlightColor;
+@property (nonatomic, retain) UIColor *buttonHighlightColor UI_APPEARANCE_SELECTOR;
 
 /// The color of borders.
-@property (nonatomic, retain) UIColor *borderColor;
+@property (nonatomic, retain) UIColor *borderColor UI_APPEARANCE_SELECTOR;
 
 /// Width of borders.
-@property (nonatomic) CGFloat borderWidth;
+@property (nonatomic) CGFloat borderWidth UI_APPEARANCE_SELECTOR;
 
 /// Insets of texts in the receiver.
-@property (nonatomic) UIEdgeInsets textInsets;
+@property (nonatomic) UIEdgeInsets textInsets UI_APPEARANCE_SELECTOR;
 
 // TODO activate this
 /// Margin of stack controls in the receiver.

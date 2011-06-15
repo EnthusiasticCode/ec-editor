@@ -262,7 +262,7 @@ static void preinit(ECButton *self)
     CAShapeLayer *layer = (CAShapeLayer *)self.layer;
 
     // Common properties
-    self->cornerRadius = 5;
+    self->cornerRadius = 3;
     self->leftArrowSize = 0;
     self->rightArrowSize = 0;
     self.borderWidth = 1;
@@ -270,9 +270,9 @@ static void preinit(ECButton *self)
     // Background colors
     self->backgroundColors = (CGColorRef *)malloc(sizeof(CGColorRef) * 6);
     self->backgroundColors[STATE_NORMAL_IDX] = layer.backgroundColor;
-    self->backgroundColors[STATE_HIGHLIGHTED_IDX] = CGColorCreateCopy([UIColor colorWithWhite:0.8 alpha:1.0].CGColor);
+    self->backgroundColors[STATE_HIGHLIGHTED_IDX] = CGColorCreateCopy([UIColor colorWithWhite:0.7 alpha:1.0].CGColor);
     self->backgroundColors[STATE_DISABLED_IDX] = NULL;
-    self->backgroundColors[STATE_SELECTED_IDX] = CGColorCreateCopy([UIColor colorWithWhite:0.8 alpha:1.0].CGColor);
+    self->backgroundColors[STATE_SELECTED_IDX] = CGColorCreateCopy([UIColor colorWithWhite:0.7 alpha:1.0].CGColor);
     self->backgroundColors[STATE_APPLICATION_IDX] = NULL;
     self->backgroundColors[STATE_RESERVED_IDX] = NULL;
     

@@ -157,7 +157,7 @@
 
 #pragma mark - UIView Methods
 
-static void init(ECJumpBar *self)
+static void preinit(ECJumpBar *self)
 {
     self->searchField = [[UITextField alloc] initWithFrame:CGRectZero];
     self->searchField.backgroundColor = nil;
@@ -166,21 +166,28 @@ static void init(ECJumpBar *self)
     self->searchField.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     [self->searchField addTarget:self action:@selector(searchFieldAction:) forControlEvents:UIControlEventEditingChanged];
     self.minimumSearchFieldWidth = 0.5;
-    [self addSubview:self->searchField];
     self->searchField.text = @"Search";
     //
-    self.font = [UIFont fontWithName:@"Helvetica-Bold" size:16];
-    self.textColor = [UIColor colorWithHue:0 saturation:0 brightness:0.01 alpha:1];
-    self.textShadowColor = [UIColor colorWithHue:0 saturation:0 brightness:0.8 alpha:0.3];
-    self.textShadowOffset = CGSizeMake(0, 1);
-    self.buttonColor = [UIColor colorWithHue:0 saturation:0 brightness:0.23 alpha:1];
-    self.buttonHighlightColor = [UIColor colorWithRed:93.0/255.0 green:94.0/255.0 blue:94.0/255.0 alpha:1.0];
-    self.cornerRadius = 3;
-    self.borderColor = self.textColor;
-    self.borderWidth = 1;
+    //self.font = [UIFont fontWithName:@"Helvetica-Bold" size:16];
+
     self->minimumStackButtonWidth = 50;
     self->maximumStackButtonWidth = 160;
     self->textInsets = UIEdgeInsetsMake(0, 8, 0, 0);
+}
+
+static void init(ECJumpBar *self)
+{
+    // TODO how to make properties default?
+//    self.textColor = [UIColor colorWithHue:0 saturation:0 brightness:0.01 alpha:1];
+//    self.textShadowColor = [UIColor colorWithHue:0 saturation:0 brightness:0.8 alpha:0.3];
+//    self.textShadowOffset = CGSizeMake(0, 1);
+//    self.buttonColor = [UIColor colorWithHue:0 saturation:0 brightness:0.23 alpha:1];
+//    self.buttonHighlightColor = [UIColor colorWithRed:93.0/255.0 green:94.0/255.0 blue:94.0/255.0 alpha:1.0];
+    self.cornerRadius = 3;
+    self.borderColor = [UIColor colorWithWhite:0.16 alpha:1.0];
+    self.borderWidth = 1;
+    //
+    [self addSubview:self->searchField];
     //
     self.layer.masksToBounds = YES;
     //
@@ -193,6 +200,7 @@ static void init(ECJumpBar *self)
 
 - (id)initWithFrame:(CGRect)frame
 {
+    preinit(self);
     if ((self = [super initWithFrame:frame]))
     {
         init(self);
@@ -202,7 +210,7 @@ static void init(ECJumpBar *self)
 
 - (id)initWithCoder:(NSCoder *)aDecoder
 {
-    // TODO think better
+    preinit(self);
     if ((self = [super initWithCoder:aDecoder]))
     {
         init(self);
@@ -320,6 +328,7 @@ static void init(ECJumpBar *self)
         if (controlsStackActualCount > 0)
             searchOrigin.x += BUTTON_ARROW_WIDTH + textPadding;
         searchOrigin.x += textInsets.left;
+        searchOrigin.y += 1;
         searchField.frame = (CGRect){ searchOrigin, { bounds.size.width - searchOrigin.x - textPadding, size.height } };
     };
     

@@ -9,12 +9,16 @@
 #import <UIKit/UIKit.h>
 #import "ECPopoverController.h"
 #import "ECButton.h"
+#import "ECJumpBar.h"
 
 @interface ACUITrialViewController : UIViewController {
     ECPopoverController *popoverController;
     UIViewController *popoverContentController;
 }
 
+@property (nonatomic, strong) IBOutlet ECJumpBar *jumpBar;
+
 - (IBAction)showPopover:(id)sender;
+- (IBAction)pushToJumpBar:(id)sender;
 
 @end
