@@ -10,21 +10,11 @@
 @class CATransition;
 @class ECFloatingSplitViewController;
 
-@protocol ECFloatingSplitViewControllerDelegate <NSObject>
-@optional
-- (void)floatingSplitViewController:(ECFloatingSplitViewController *)floatingSplitViewController willShowSidebarController:(UIViewController *)viewController;
-- (void)floatingSplitViewController:(ECFloatingSplitViewController *)floatingSplitViewController didShowSidebarController:(UIViewController *)viewController;
-- (void)floatingSplitViewController:(ECFloatingSplitViewController *)floatingSplitViewController willShowMainController:(UIViewController *)viewController;
-- (void)floatingSplitViewController:(ECFloatingSplitViewController *)floatingSplitViewController didShowMainController:(UIViewController *)viewController;
-- (void)floatingSplitViewControllerWillHideSidebar:(ECFloatingSplitViewController *)floatingSplitViewController;
-- (void)floatingSplitViewControllerDidHideSidebar:(ECFloatingSplitViewController *)floatingSplitViewController;
-@end
-
 @interface ECFloatingSplitViewController : UIViewController
-@property (nonatomic, weak) IBOutlet id<ECFloatingSplitViewControllerDelegate> delegate;
 @property (nonatomic, strong) IBOutlet UIViewController *sidebarController;
 @property (nonatomic, strong) IBOutlet UIViewController *mainController;
 @property (nonatomic) CGFloat sidebarWidth;
+- (void)setSidebarWidth:(CGFloat)sidebarWidth animated:(BOOL)animated;
 @property (nonatomic, getter = isSidebarHidden) BOOL sidebarHidden;
 - (void)setSidebarHidden:(BOOL)sidebarHidden animated:(BOOL)animated;
 @property (nonatomic, getter = isSidebarOnRight) BOOL sidebarOnRight;

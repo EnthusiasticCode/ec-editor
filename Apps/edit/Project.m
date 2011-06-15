@@ -127,6 +127,7 @@
         NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
         [fetchRequest setEntity:[NSEntityDescription entityForName:@"Node" inManagedObjectContext:self._managedObjectContext]];
         NSPredicate *predicate = [NSPredicate predicateWithFormat:@"%K == %@", @"parent", node];
+        predicate = [NSCompoundPredicate andPredicateWithSubpredicates:[NSArray arrayWithObjects:predicate, [NSPredicate predicateWithFormat:@"%K == %@", @"path", [path stringByAppendingPathComponent:subPath]], nil]];
         [fetchRequest setPredicate:predicate];
         NSUInteger count = [self._managedObjectContext countForFetchRequest:fetchRequest error:NULL];
         if (!count)
@@ -145,7 +146,7 @@
 
 - (void)_addAllNodesInProjectRoot
 {
-    [self _addNodesAtPath:[self.bundlePath stringByAppendingPathComponent:self._rootNode.path] toNode:self._rootNode];
+    [self _addNodesAtPath:[self.bundlePath stringByDeletingLastPathComponent] toNode:self._rootNode];
 }
 
 - (NSOrderedSet *)children

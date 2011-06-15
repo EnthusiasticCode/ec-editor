@@ -38,36 +38,27 @@ static const CGFloat ECFloatingSplitViewControllerAnimationDuration = 0.15;
     UIView *_sidebarView;
     UIView *_mainView;
     UISwipeGestureRecognizer *_swipeGestureRecognizer;
-    struct
-    {
-        unsigned int delegateWillShowSidebar:1;
-        unsigned int delegateDidShowSidebar:1;
-        unsigned int delegateWillShowMain:1;
-        unsigned int delegateDidShowMain:1;
-        unsigned int delegateWillHideSidebar:1;
-        unsigned int delegateDidHideSidebar:1;
-    } _flags;
 }
-@property (nonatomic, strong) void (^_layoutBlock)(void);
 - (void)_setup;
 - (void)_layoutSubviewsWithAnimation:(BOOL)animated;
-- (UIView *)_sidebarView;
-- (CGRect)_sidebarFrame;
-- (UIView *)_mainView;
-- (CGRect)_mainFrame;
+- (void)_layoutSubviewsWithinFrame:(CGRect)frame;
+- (void)_addSidebarViewWithSidebarHidden:(BOOL)sidebarHidden;
+- (void)_removeSidebarView;
+- (CGRect)_sidebarFrameWithinFrame:(CGRect)frame sidebarHidden:(BOOL)sidebarHidden;
+- (void)_addMainViewWithSidebarHidden:(BOOL)sidebarHidden;
+- (void)_removeMainView;
+- (CGRect)_mainFrameWithinFrame:(CGRect)frame sidebarHidden:(BOOL)sidebarHidden;
 - (void)_swipe:(id)sender;
 @end
 
 @implementation ECFloatingSplitViewController
 
-@synthesize delegate = _delegate;
 @synthesize sidebarController = _sidebarController;
 @synthesize mainController = _mainController;
 @synthesize sidebarWidth = _sidebarWidth;
 @synthesize sidebarHidden = _sidebarHidden;
 @synthesize sidebarOnRight = _sidebarOnRight;
 @synthesize sidebarFloating = _sidebarFloating;
-@synthesize _layoutBlock = __layoutBlock;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -94,19 +85,6 @@ static const CGFloat ECFloatingSplitViewControllerAnimationDuration = 0.15;
     _sidebarWidth = 200.0;
 }
 
-- (void)setDelegate:(id<ECFloatingSplitViewControllerDelegate>)delegate
-{
-    if (delegate == _delegate)
-        return;
-    _delegate = delegate;
-    _flags.delegateWillShowSidebar = [delegate respondsToSelector:@selector(floatingSplitViewController:willShowSidebarController:)];
-    _flags.delegateDidShowSidebar = [delegate respondsToSelector:@selector(floatingSplitViewController:didShowSidebarController:)];
-    _flags.delegateWillShowMain = [delegate respondsToSelector:@selector(floatingSplitViewController:willShowMainController:)];
-    _flags.delegateDidShowMain = [delegate respondsToSelector:@selector(floatingSplitViewController:didShowMainController:)];
-    _flags.delegateWillHideSidebar = [delegate respondsToSelector:@selector(floatingSplitViewControllerWillHideSidebar:)];
-    _flags.delegateDidHideSidebar = [delegate respondsToSelector:@selector(floatingSplitViewControllerDidHideSidebar:)];
-}
-
 - (void)setSidebarController:(UIViewController *)sidebarController
 {
     [self setSidebarController:sidebarController withTransition:nil];
@@ -116,23 +94,23 @@ static const CGFloat ECFloatingSplitViewControllerAnimationDuration = 0.15;
 {
     if (sidebarController == _sidebarController)
         return;
-    if (_flags.delegateWillShowSidebar)
-        [self.delegate floatingSplitViewController:self willShowSidebarController:sidebarController];
+    [_sidebarController willMoveToParentViewController:nil];
     _sidebarController.floatingSplitViewController = nil;
+    [_sidebarController.view removeFromSuperview];
+    [_sidebarController removeFromParentViewController];
     _sidebarController = sidebarController;
+    [self addChildViewController:sidebarController];
     sidebarController.floatingSplitViewController = self;
     if (_sidebarView)
     {
         [sidebarController viewWillAppear:(transition != nil)];
-        [_sidebarView.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
         [_sidebarView addSubview:sidebarController.view];
         sidebarController.view.frame = _sidebarView.bounds;
         if (transition)
             [_sidebarView.layer addAnimation:transition forKey:(NSString *)ECFloatingSplitViewControllerTransitionKey];
         [sidebarController viewDidAppear:(transition != nil)];
     }
-    if (_flags.delegateDidShowSidebar)
-        [self.delegate floatingSplitViewController:self didShowSidebarController:sidebarController];
+    [sidebarController didMoveToParentViewController:self];
 }
 
 - (void)setMainController:(UIViewController *)mainController
@@ -144,31 +122,36 @@ static const CGFloat ECFloatingSplitViewControllerAnimationDuration = 0.15;
 {
     if (mainController == _mainController)
         return;
-    if (_flags.delegateWillShowMain)
-        [self.delegate floatingSplitViewController:self willShowMainController:mainController];
+    [_mainController willMoveToParentViewController:nil];
     _mainController.floatingSplitViewController = nil;
+    [_mainController.view removeFromSuperview];
+    [_mainController removeFromParentViewController];
     _mainController = mainController;
+    [self addChildViewController:mainController];
     mainController.floatingSplitViewController = self;
     if (_mainView)
     {
         [mainController viewWillAppear:(transition != nil)];
-        [_mainView.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
         [_mainView addSubview:mainController.view];
         mainController.view.frame = _mainView.bounds;
         if (transition)
             [_mainView.layer addAnimation:transition forKey:(NSString *)ECFloatingSplitViewControllerTransitionKey];
         [mainController viewDidAppear:(transition != nil)];
     }
-    if (_flags.delegateDidShowMain)
-        [self.delegate floatingSplitViewController:self didShowMainController:mainController];
+    [mainController didMoveToParentViewController:self];
 }
 
 - (void)setSidebarWidth:(CGFloat)sidebarWidth
 {
+    [self setSidebarWidth:sidebarWidth animated:NO];
+}
+
+- (void)setSidebarWidth:(CGFloat)sidebarWidth animated:(BOOL)animated
+{
     if (sidebarWidth == _sidebarWidth)
         return;
     _sidebarWidth = sidebarWidth;
-    [self _layoutSubviewsWithAnimation:NO];
+    [self _layoutSubviewsWithAnimation:animated];
 }
 
 - (void)setSidebarHidden:(BOOL)sidebarHidden
@@ -180,59 +163,28 @@ static const CGFloat ECFloatingSplitViewControllerAnimationDuration = 0.15;
 {
     if (sidebarHidden == _sidebarHidden)
         return;
-    if (sidebarHidden && _flags.delegateWillHideSidebar)
-        [self.delegate floatingSplitViewControllerWillHideSidebar:self];
-    if (!sidebarHidden && _flags.delegateWillShowSidebar)
-        [self.delegate floatingSplitViewController:self willShowSidebarController:self.sidebarController];
     _sidebarHidden = sidebarHidden;
     if (sidebarHidden)
     {
-        [self.sidebarController viewWillDisappear:animated];
         if (animated)
         {
             [UIView animateWithDuration:ECFloatingSplitViewControllerAnimationDuration animations:^{
-                CGRect frame = _sidebarView.frame;
-                frame.origin.x += frame.size.width * (self.sidebarOnRight ? 1 : -1);
-                _sidebarView.frame = frame;
-                self._layoutBlock();
+                [self _layoutSubviewsWithAnimation:NO];
             } completion:^(BOOL finished) {
-                [self.sidebarController.view removeFromSuperview];
-                [_sidebarView removeFromSuperview];
+                [self _removeSidebarView];
             }];
         }
         else
         {
-            [self.sidebarController.view removeFromSuperview];
-            [_sidebarView removeFromSuperview];
-            self._layoutBlock();
+            [self _removeSidebarView];
+            [self _layoutSubviewsWithAnimation:NO];
         }
-        [self.sidebarController viewDidDisappear:animated];
     }
     else
     {
-        [self.sidebarController viewWillAppear:animated];
-        if (animated)
-        {
-            _sidebarView = [self _sidebarView];
-            CGRect frame = _sidebarView.frame;
-            frame.origin.x += frame.size.width * (self.sidebarOnRight ? 1 : -1);
-            _sidebarView.frame = frame;
-            [self.view addSubview:_sidebarView];
-            if (self.sidebarController)
-            {
-                [_sidebarView addSubview:self.sidebarController.view];
-                self.sidebarController.view.frame = _sidebarView.bounds;
-            }
-            [UIView animateWithDuration:ECFloatingSplitViewControllerAnimationDuration animations:self._layoutBlock];
-        }
-        else
-            self._layoutBlock();
-        [self.sidebarController viewDidAppear:animated];
+        [self _addSidebarViewWithSidebarHidden:YES];
+        [self _layoutSubviewsWithAnimation:animated];
     }
-    if (sidebarHidden && _flags.delegateDidHideSidebar)
-        [self.delegate floatingSplitViewControllerDidHideSidebar:self];
-    if (!sidebarHidden && _flags.delegateDidShowSidebar)
-        [self.delegate floatingSplitViewController:self didShowSidebarController:self.sidebarController];
 }
 
 - (void)setSidebarOnRight:(BOOL)sidebarOnRight
@@ -261,83 +213,84 @@ static const CGFloat ECFloatingSplitViewControllerAnimationDuration = 0.15;
     [self _layoutSubviewsWithAnimation:animated];
 }
 
-- (void (^)(void))_layoutBlock
-{
-    if (!__layoutBlock)
-        __layoutBlock = [^{
-            if (!self.sidebarHidden)
-            {
-                if (!_sidebarView)
-                {
-                    _sidebarView = [self _sidebarView];
-                    _sidebarView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-                    [self.view addSubview:_sidebarView];
-                    if (self.sidebarController)
-                    {
-                        [self.sidebarController viewWillAppear:NO];
-                        [_sidebarView addSubview:self.sidebarController.view];
-                        self.sidebarController.view.frame = _sidebarView.bounds;
-                        [self.sidebarController viewDidAppear:NO];
-                    }
-                }
-                else
-                    _sidebarView.frame = [self _sidebarFrame];
-            }
-            if (!_mainView)
-            {
-                _mainView = [self _mainView];
-                [self.view addSubview:_mainView];
-                [self.view sendSubviewToBack:_mainView];
-                if (self.mainController)
-                {
-                    [self.mainController viewWillAppear:NO];
-                    [_mainView addSubview:self.mainController.view];
-                    self.mainController.view.frame = _mainView.bounds;
-                    [self.mainController viewDidAppear:NO];
-                }
-            }
-            else
-                _mainView.frame = [self _mainFrame];
-        } copy];
-    return __layoutBlock;
-}
-
 - (void)_layoutSubviewsWithAnimation:(BOOL)animated
 {
     if (animated)
-        [UIView animateWithDuration:ECFloatingSplitViewControllerAnimationDuration animations:self._layoutBlock];
+        [UIView animateWithDuration:ECFloatingSplitViewControllerAnimationDuration animations:^(void) {
+            [self _layoutSubviewsWithinFrame:self.view.bounds];
+        }];
     else
-        self._layoutBlock();
+        [self _layoutSubviewsWithinFrame:self.view.bounds];
 }
 
-- (UIView *)_sidebarView
+- (void)_layoutSubviewsWithinFrame:(CGRect)frame
 {
-    UIView *sidebar = [[UIView alloc] initWithFrame:[self _sidebarFrame]];
-    sidebar.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-    sidebar.layer.cornerRadius = 5.0;
-    sidebar.layer.shadowColor = [UIColor blackColor].CGColor;
-    sidebar.layer.shadowOffset = CGSizeMake(0.0, 1.0);
-    sidebar.layer.shadowOpacity = 1.0;
-    sidebar.layer.shadowRadius = 5.0;
-    sidebar.backgroundColor = [UIColor redColor];
-    return sidebar;
+    _sidebarView.frame = [self _sidebarFrameWithinFrame:frame sidebarHidden:self.sidebarHidden];
+    _mainView.frame = [self _mainFrameWithinFrame:frame sidebarHidden:self.sidebarHidden];
 }
 
-- (CGRect)_sidebarFrame
+- (void)_addSidebarViewWithSidebarHidden:(BOOL)sidebarHidden
 {
-    return CGRectMake(self.sidebarOnRight ? self.view.frame.size.width - self.sidebarWidth : 0.0, 0.0, self.sidebarWidth, self.view.frame.size.height);
+    ECASSERT(_sidebarView == nil);
+    _sidebarView = [[UIView alloc] initWithFrame:[self _sidebarFrameWithinFrame:self.view.bounds sidebarHidden:sidebarHidden]];
+    _sidebarView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    _sidebarView.layer.cornerRadius = 5.0;
+    _sidebarView.layer.shadowColor = [UIColor blackColor].CGColor;
+    _sidebarView.layer.shadowOffset = CGSizeMake(0.0, 1.0);
+    _sidebarView.layer.shadowOpacity = 1.0;
+    _sidebarView.layer.shadowRadius = 5.0;
+    [self.view addSubview:_sidebarView];
+    if (self.sidebarController)
+    {
+        [self.sidebarController viewWillAppear:NO];
+        [_sidebarView addSubview:self.sidebarController.view];
+        self.sidebarController.view.frame = _sidebarView.bounds;
+        [self.sidebarController viewDidAppear:NO];
+    }
 }
 
-- (UIView *)_mainView
+- (void)_removeSidebarView
 {
-    UIView *main = [[UIView alloc] initWithFrame:[self _mainFrame]];
-    main.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-    return main;
+    [self.sidebarController viewWillDisappear:NO];
+    [self.sidebarController.view removeFromSuperview];
+    [_sidebarView removeFromSuperview];
+    _sidebarView = nil;
+    [self.sidebarController viewDidDisappear:YES];
 }
 
-- (CGRect)_mainFrame
+- (CGRect)_sidebarFrameWithinFrame:(CGRect)frame sidebarHidden:(BOOL)sidebarHidden
 {
-    return CGRectMake((self.sidebarFloating || self.sidebarHidden || self.sidebarOnRight) ? 0.0 : self.sidebarWidth, 0.0, self.view.frame.size.width - ((self.sidebarFloating || self.sidebarHidden) ? 0.0 : self.sidebarWidth), self.view.frame.size.height);
+    return CGRectMake((self.sidebarOnRight ? frame.size.width - self.sidebarWidth : 0.0) + (sidebarHidden ? self.sidebarWidth * (self.sidebarOnRight ? 1 : -1) : 0.0), 0.0, self.sidebarWidth, frame.size.height);
+}
+
+- (void)_addMainViewWithSidebarHidden:(BOOL)sidebarHidden
+{
+    ECASSERT(_mainView == nil);
+    _mainView = [[UIView alloc] initWithFrame:[self _mainFrameWithinFrame:self.view.bounds sidebarHidden:sidebarHidden]];
+    _mainView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    [self.view addSubview:_mainView];
+    [self.view sendSubviewToBack:_mainView];
+    if (self.mainController)
+    {
+        [self.mainController viewWillAppear:NO];
+        [_mainView addSubview:self.mainController.view];
+        self.mainController.view.frame = _mainView.bounds;
+        [self.mainController viewDidAppear:NO];
+    }
+}
+
+- (void)_removeMainView
+{
+    [self.mainController viewWillDisappear:NO];
+    [self.sidebarController.view removeFromSuperview];
+    [_mainView removeFromSuperview];
+    _mainView = nil;
+    [self.mainController viewDidDisappear:NO];
+}
+
+- (CGRect)_mainFrameWithinFrame:(CGRect)frame sidebarHidden:(BOOL)sidebarHidden
+{
+    return CGRectMake((self.sidebarFloating || sidebarHidden || self.sidebarOnRight) ? 0.0 : self.sidebarWidth, 0.0, frame.size.width - ((self.sidebarFloating || sidebarHidden) ? 0.0 : self.sidebarWidth), frame.size.height);
 }
 
 - (void)_swipe:(id)sender
@@ -355,22 +308,17 @@ static const CGFloat ECFloatingSplitViewControllerAnimationDuration = 0.15;
     _swipeGestureRecognizer.numberOfTouchesRequired = 1;
     _swipeGestureRecognizer.direction = (self.sidebarHidden ^ self.sidebarOnRight) ? UISwipeGestureRecognizerDirectionRight : UISwipeGestureRecognizerDirectionLeft;
     [self.view addGestureRecognizer:_swipeGestureRecognizer];
+    [self _addSidebarViewWithSidebarHidden:self.sidebarHidden];
+    [self _addMainViewWithSidebarHidden:self.sidebarHidden];
     [self _layoutSubviewsWithAnimation:NO];
 }
 
 - (void)viewDidUnload
 {
     _swipeGestureRecognizer = nil;
-    _sidebarView = nil;
-    _mainView = nil;
+    [self _removeSidebarView];
+    [self _removeMainView];
     [super viewDidUnload];
-}
-
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
-    [self.sidebarController didReceiveMemoryWarning];
-    [self.mainController didReceiveMemoryWarning];
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation
@@ -380,52 +328,18 @@ static const CGFloat ECFloatingSplitViewControllerAnimationDuration = 0.15;
 
 - (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
 {
-	[self.sidebarController willRotateToInterfaceOrientation:toInterfaceOrientation duration:duration];
-    [self.mainController willRotateToInterfaceOrientation:toInterfaceOrientation duration:duration];
-}
-
-
-- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
-{
-	[self.sidebarController didRotateFromInterfaceOrientation:fromInterfaceOrientation];
-    [self.mainController didRotateFromInterfaceOrientation:fromInterfaceOrientation];
-}
-
-
-- (void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
-{
-	[self.sidebarController willAnimateRotationToInterfaceOrientation:toInterfaceOrientation duration:duration];
-    [self.mainController willAnimateRotationToInterfaceOrientation:toInterfaceOrientation duration:duration];
-	[self _layoutSubviewsWithAnimation:YES];
+    CGRect frame;
+    if (UIInterfaceOrientationIsLandscape(self.interfaceOrientation) != UIInterfaceOrientationIsLandscape(toInterfaceOrientation))
+        frame = CGRectMake(0.0, 0.0, self.view.bounds.size.height, self.view.bounds.size.width);
+    else
+        frame = self.view.bounds;
+    [self _layoutSubviewsWithinFrame:frame];
 }
 
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    [self.sidebarController viewWillAppear:animated];
-    [self.mainController viewWillAppear:animated];
     [self _layoutSubviewsWithAnimation:NO];
-}
-
-- (void)viewDidAppear:(BOOL)animated
-{
-    [super viewDidAppear:animated];
-    [self.sidebarController viewDidAppear:animated];
-    [self.mainController viewDidAppear:animated];
-}
-
-- (void)viewWillDisappear:(BOOL)animated
-{
-    [super viewWillDisappear:animated];
-    [self.sidebarController viewWillDisappear:animated];
-    [self.mainController viewWillDisappear:animated];
-}
-
-- (void)viewDidDisappear:(BOOL)animated
-{
-    [super viewDidDisappear:animated];
-    [self.sidebarController viewDidDisappear:animated];
-    [self.mainController viewDidDisappear:animated];
 }
 
 @end
