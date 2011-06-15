@@ -37,9 +37,10 @@ static const NSString *ProjectsIdentifier = @"Projects";
 
 - (void)_setup
 {
-    self.sidebarEdge = ECFloatingSplitViewControllerSidebarEdgeTop;
-    self.sidebarWidth = 50.0;
-    self.sidebarLocked = YES;
+    self.sidebarEdge = ECFloatingSplitViewControllerSidebarEdgeLeft;
+    self.sidebarWidth = 200.0;
+    self.sidebarFloating = YES;
+//    self.sidebarLocked = YES;
 }
 
 - (void)viewDidLoad

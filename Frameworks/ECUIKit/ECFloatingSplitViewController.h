@@ -20,7 +20,9 @@ typedef enum
 
 @interface ECFloatingSplitViewController : UIViewController
 @property (nonatomic, strong) IBOutlet UIViewController *sidebarController;
+- (void)setSidebarController:(UIViewController *)sidebarController withTransition:(CATransition *)transition;
 @property (nonatomic, strong) IBOutlet UIViewController *mainController;
+- (void)setMainController:(UIViewController *)mainController withTransition:(CATransition *)transition;
 @property (nonatomic) CGFloat sidebarWidth;
 - (void)setSidebarWidth:(CGFloat)sidebarWidth animated:(BOOL)animated;
 @property (nonatomic) ECFloatingSplitViewControllerSidebarEdge sidebarEdge;
@@ -30,8 +32,6 @@ typedef enum
 - (void)setSidebarHidden:(BOOL)sidebarHidden animated:(BOOL)animated;
 @property (nonatomic, getter = isSidebarFloating) BOOL sidebarFloating;
 - (void)setSidebarFloating:(BOOL)sidebarFloating animated:(BOOL)animated;
-- (void)setSidebarController:(UIViewController *)sidebarController withTransition:(CATransition *)transition;
-- (void)setMainController:(UIViewController *)mainController withTransition:(CATransition *)transition;
 @end
 
 @interface UIViewController (ECFloatingSplitViewController)

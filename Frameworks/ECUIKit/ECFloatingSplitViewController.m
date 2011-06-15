@@ -157,6 +157,8 @@ static const CGFloat ECFloatingSplitViewControllerAnimationDuration = 0.15;
     if (sidebarWidth == _sidebarWidth)
         return;
     _sidebarWidth = sidebarWidth;
+    if (!self.isViewLoaded)
+        return;
     [self _layoutSubviewsWithAnimation:animated];
 }
 
@@ -169,6 +171,11 @@ static const CGFloat ECFloatingSplitViewControllerAnimationDuration = 0.15;
 {
     if (sidebarEdge == _sidebarEdge)
         return;
+    if (!self.isViewLoaded)
+    {
+        _sidebarEdge = sidebarEdge;
+        return;
+    }
     BOOL sidebarWasVisible = !self.sidebarHidden;
     if (sidebarWasVisible)
         [self setSidebarHidden:YES animated:animated];
@@ -183,6 +190,9 @@ static const CGFloat ECFloatingSplitViewControllerAnimationDuration = 0.15;
 {
     if (sidebarLocked == _sidebarLocked)
         return;
+    _sidebarLocked = sidebarLocked;
+    if (!self.isViewLoaded)
+        return;    
     if (sidebarLocked)
         [self _removeSwipeRecognizer];
     else
@@ -199,6 +209,8 @@ static const CGFloat ECFloatingSplitViewControllerAnimationDuration = 0.15;
     if (sidebarHidden == _sidebarHidden)
         return;
     _sidebarHidden = sidebarHidden;
+    if (!self.isViewLoaded)
+        return;
     _swipeGestureRecognizer.direction = [self _nextSwipeDirection];
     if (!sidebarHidden)
     {
@@ -231,6 +243,8 @@ static const CGFloat ECFloatingSplitViewControllerAnimationDuration = 0.15;
     if (sidebarFloating == _sidebarFloating)
         return;
     _sidebarFloating = sidebarFloating;
+    if (!self.isViewLoaded)
+        return;
     [self _layoutSubviewsWithAnimation:animated];
 }
 
@@ -386,8 +400,6 @@ static const CGFloat ECFloatingSplitViewControllerAnimationDuration = 0.15;
 
 - (void)_addSwipeRecognizer
 {
-    if (!self.isViewLoaded)
-        return;
     _swipeGestureRecognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(_swipe:)];
     _swipeGestureRecognizer.numberOfTouchesRequired = 1;
     _swipeGestureRecognizer.direction = [self _nextSwipeDirection];
@@ -396,8 +408,6 @@ static const CGFloat ECFloatingSplitViewControllerAnimationDuration = 0.15;
 
 - (void)_removeSwipeRecognizer
 {
-    if (!self.isViewLoaded)
-        return;
     [self.view removeGestureRecognizer:_swipeGestureRecognizer];
     _swipeGestureRecognizer = nil;
 }

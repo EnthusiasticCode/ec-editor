@@ -888,7 +888,7 @@
 			path = BTree;
 			sourceTree = "<group>";
 		};
-		B7F4EDC713A49E6D0003DEF1 /* TripleSplitViewController */ = {
+		B7F4EDC713A49E6D0003DEF1 /* FloatingSplitViewController */ = {
 			isa = PBXGroup;
 			children = (
 				B7803AE313A3D68D0077F7A1 /* ECFloatingSplitViewController.h */,
@@ -898,7 +898,7 @@
 				B7803AE713A41E040077F7A1 /* ECStoryboardFloatingSplitMainSegue.h */,
 				B7803AE813A41E040077F7A1 /* ECStoryboardFloatingSplitMainSegue.m */,
 			);
-			name = TripleSplitViewController;
+			name = FloatingSplitViewController;
 			sourceTree = "<group>";
 		};
 		CDEBF23813489AB900CE2285 /* ECFoundation */ = {
@@ -964,7 +964,7 @@
 				CDEBF2BE13489DDA00CE2285 /* Text */,
 				CDEBF2BB13489DC100CE2285 /* Code Scroll View */,
 				CDEBF2B913489DBA00CE2285 /* Code View */,
-				B7F4EDC713A49E6D0003DEF1 /* TripleSplitViewController */,
+				B7F4EDC713A49E6D0003DEF1 /* FloatingSplitViewController */,
 			);
 			name = ECUIKit;
 			sourceTree = "<group>";
