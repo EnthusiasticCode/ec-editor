@@ -88,7 +88,7 @@ static CGPathRef createButtonShapePath(CGRect rect, CGFloat radius, CGFloat left
     // Right arrow
     if (rightArrow > 0) 
     {
-        CGFloat arrow_size = rightArrow * 0.3;
+        CGFloat arrow_size = rightArrow * 0.4;
         CGFloat inside_arrow = inside_right + rightArrow + radius * 0.7;
         CGFloat arrow_midtop = middle_height - radius / 2;
         CGFloat arrow_midbottom = arrow_midtop + radius;
@@ -118,7 +118,7 @@ static CGPathRef createButtonShapePath(CGRect rect, CGFloat radius, CGFloat left
     // Left arrow
     if (leftArrow > 0) 
     {
-        CGFloat arrow_size = leftArrow * 0.3;
+        CGFloat arrow_size = leftArrow * 0.4;
         CGFloat inside_arrow = inside_left - leftArrow - radius * 0.7;
         CGFloat arrow_midtop = middle_height - radius / 2;
         CGFloat arrow_midbottom = arrow_midtop + radius;
@@ -262,7 +262,7 @@ static void preinit(ECButton *self)
     CAShapeLayer *layer = (CAShapeLayer *)self.layer;
 
     // Common properties
-    self->cornerRadius = 3;
+    self->cornerRadius = 5;
     self->leftArrowSize = 0;
     self->rightArrowSize = 0;
     self.borderWidth = 1;
@@ -270,15 +270,15 @@ static void preinit(ECButton *self)
     // Background colors
     self->backgroundColors = (CGColorRef *)malloc(sizeof(CGColorRef) * 6);
     self->backgroundColors[STATE_NORMAL_IDX] = layer.backgroundColor;
-    self->backgroundColors[STATE_HIGHLIGHTED_IDX] = CGColorCreateCopy([UIColor colorWithRed:93.0/255.0 green:94.0/255.0 blue:94.0/255.0 alpha:1.0].CGColor);
+    self->backgroundColors[STATE_HIGHLIGHTED_IDX] = CGColorCreateCopy([UIColor colorWithWhite:0.8 alpha:1.0].CGColor);
     self->backgroundColors[STATE_DISABLED_IDX] = NULL;
-    self->backgroundColors[STATE_SELECTED_IDX] = CGColorCreateCopy([UIColor colorWithRed:64.0/255.0 green:92.0/255.0 blue:123.0/255.0 alpha:1.0].CGColor);
+    self->backgroundColors[STATE_SELECTED_IDX] = CGColorCreateCopy([UIColor colorWithWhite:0.8 alpha:1.0].CGColor);
     self->backgroundColors[STATE_APPLICATION_IDX] = NULL;
     self->backgroundColors[STATE_RESERVED_IDX] = NULL;
     
     // Border colors
     self->borderColors = (CGColorRef *)malloc(sizeof(CGColorRef) * 6);
-    self->borderColors[STATE_NORMAL_IDX] = CGColorCreateCopy([UIColor colorWithHue:0 saturation:0 brightness:0.01 alpha:1.0].CGColor);
+    self->borderColors[STATE_NORMAL_IDX] = CGColorCreateCopy([UIColor colorWithWhite:0.16 alpha:1.0].CGColor);
     self->borderColors[STATE_HIGHLIGHTED_IDX] = CGColorCreateCopy(self->borderColors[STATE_NORMAL_IDX]);
     self->borderColors[STATE_DISABLED_IDX] = NULL;
     self->borderColors[STATE_SELECTED_IDX] = CGColorCreateCopy(self->borderColors[STATE_NORMAL_IDX]);

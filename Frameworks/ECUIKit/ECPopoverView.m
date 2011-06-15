@@ -119,8 +119,6 @@ static void preinit(ECPopoverView *self)
     self->cornerRadius = 5;
     
     self->contentInsets = UIEdgeInsetsMake(5, 5, 5, 5);
-    
-    self.backgroundColor = [UIColor darkGrayColor];
 }
 
 static void init(ECPopoverView *self)

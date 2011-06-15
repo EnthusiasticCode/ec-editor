@@ -37,13 +37,11 @@
 }
 */
 
-/*
 // Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
 - (void)viewDidLoad
 {
     [super viewDidLoad];
 }
-*/
 
 - (void)viewDidUnload
 {
@@ -73,11 +71,13 @@
     if (!popoverController)
     {
         popoverController = [[ECPopoverController alloc] initWithContentViewController:popoverContentController];
-        [[ECPopoverView appearance] setBackgroundColor:[UIColor redColor]];
+        popoverController.popoverView.backgroundColor = [UIColor colorWithWhite:0.16 alpha:1.0];
+        popoverController.popoverView.arrowMargin = popoverController.popoverView.arrowMargin + 1;
+//        [[ECPopoverView appearance] setBackgroundColor:[UIColor redColor]];
 //        [[ECPopoverView appearance] setArrowCornerRadius:3];
     }
     
-    [popoverController presentPopoverFromRect:[sender frame] inView:self.view permittedArrowDirections:UIPopoverArrowDirectionLeft animated:YES];
+    [popoverController presentPopoverFromRect:[sender frame] inView:self.view permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
 }
 
 @end

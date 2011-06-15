@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "ECPopoverController.h"
+#import "ECButton.h"
 
 @interface ACUITrialViewController : UIViewController {
     ECPopoverController *popoverController;

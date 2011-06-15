@@ -33,6 +33,6 @@
 
 @property (nonatomic) CGFloat arrowCornerRadius UI_APPEARANCE_SELECTOR;
 
-@property (nonatomic, readonly) CGFloat arrowMargin;
+@property (nonatomic) CGFloat arrowMargin;
 
 @end
