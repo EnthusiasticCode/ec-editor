@@ -9,8 +9,8 @@
 #import <Foundation/Foundation.h>
 #import <ECCodeIndexing/ECCodeUnitPlugin.h>
 
-extern NSString *ECClangCodeUnitOptionLanguage;
-extern NSString *ECClangCodeUnitOptionCXIndex;
+extern NSString *const ECClangCodeUnitOptionLanguage;
+extern NSString *const ECClangCodeUnitOptionCXIndex;
 
 @interface ECClangCodeUnit : NSObject <ECCodeUnitPlugin>
 - (id)initWithFile:(NSString *)file index:(CXIndex)index language:(NSString *)language;

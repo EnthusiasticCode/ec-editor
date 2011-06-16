@@ -29,7 +29,7 @@ static const void *ECFloatingSplitViewControllerAssociatedObjectKey;
 
 @end
 
-static const NSString *ECFloatingSplitViewControllerTransitionKey = @"ECFloatingSplitViewControllerTransitionKey";
+static NSString *const ECFloatingSplitViewControllerTransitionKey = @"ECFloatingSplitViewControllerTransitionKey";
 
 static const CGFloat ECFloatingSplitViewControllerAnimationDuration = 0.15;
 
@@ -113,7 +113,7 @@ static void _init(ECFloatingSplitViewController *self)
         [_sidebarView addSubview:sidebarController.view];
         sidebarController.view.frame = _sidebarView.bounds;
         if (transition)
-            [_sidebarView.layer addAnimation:transition forKey:(NSString *)ECFloatingSplitViewControllerTransitionKey];
+            [_sidebarView.layer addAnimation:transition forKey:ECFloatingSplitViewControllerTransitionKey];
         [sidebarController viewDidAppear:(transition != nil)];
     }
     [sidebarController didMoveToParentViewController:self];
@@ -141,7 +141,7 @@ static void _init(ECFloatingSplitViewController *self)
         [_mainView addSubview:mainController.view];
         mainController.view.frame = _mainView.bounds;
         if (transition)
-            [_mainView.layer addAnimation:transition forKey:(NSString *)ECFloatingSplitViewControllerTransitionKey];
+            [_mainView.layer addAnimation:transition forKey:ECFloatingSplitViewControllerTransitionKey];
         [mainController viewDidAppear:(transition != nil)];
     }
     [mainController didMoveToParentViewController:self];

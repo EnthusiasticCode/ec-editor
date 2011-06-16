@@ -10,9 +10,9 @@
 #import <CoreText/CoreText.h>
 
 
-const NSString *ECTSBackgroundColorAttributeName = @"ECTextStyleBackgroundAttribute";
-const NSString *ECTSFrontCustomOverlayAttributeName = @"ECTextStyleFrontCustomOverlayAttribute";
-const NSString *ECTSBackCustomOverlayAttributeName = @"ECTextStyleBackCustomOverlayAttribute";
+NSString *const ECTSBackgroundColorAttributeName = @"ECTextStyleBackgroundAttribute";
+NSString *const ECTSFrontCustomOverlayAttributeName = @"ECTextStyleFrontCustomOverlayAttribute";
+NSString *const ECTSBackCustomOverlayAttributeName = @"ECTextStyleBackCustomOverlayAttribute";
 
 
 @interface ECTextStyle () {

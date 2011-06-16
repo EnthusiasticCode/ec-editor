@@ -17,8 +17,8 @@
 #import <ECCodeIndexing/ECCodeCompletionChunk.h>
 #import <ECCodeIndexing/ECCodeCursor.h>
 
-const NSString *ECClangCodeUnitOptionLanguage = @"Language";
-const NSString *ECClangCodeUnitOptionCXIndex = @"CXIndex";
+NSString *const ECClangCodeUnitOptionLanguage = @"Language";
+NSString *const ECClangCodeUnitOptionCXIndex = @"CXIndex";
 
 @interface ECClangCodeUnit ()
 @property (nonatomic) CXIndex index;

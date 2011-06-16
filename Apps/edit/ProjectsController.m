@@ -17,9 +17,9 @@
 
 static const CGFloat TransitionDuration = 0.15;
 
-static const NSString *DefaultReuseIdentifier = @"Default";
+static NSString *const DefaultReuseIdentifier = @"Default";
 
-static const NSString *FilesSegueIdentifier = @"Files";
+static NSString *const FilesSegueIdentifier = @"Files";
 
 @interface ProjectsController ()
 @property (nonatomic, strong) NSFileManager *fileManager;
@@ -55,10 +55,10 @@ static const NSString *FilesSegueIdentifier = @"Files";
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    UITableViewCell *file = [tableView dequeueReusableCellWithIdentifier:(NSString *)DefaultReuseIdentifier];
+    UITableViewCell *file = [tableView dequeueReusableCellWithIdentifier:DefaultReuseIdentifier];
     if (!file)
     {
-        file = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:(NSString *)DefaultReuseIdentifier];
+        file = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:DefaultReuseIdentifier];
     }
     file.textLabel.text = [[self _contentsOfRootFolder] objectAtIndex:(indexPath.row)];
     return file;

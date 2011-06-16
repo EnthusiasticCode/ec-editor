@@ -11,6 +11,10 @@
 #import "File.h"
 #import "Client.h"
 
+@interface FileController ()
+- (void)handleFileChangedNotification:(NSNotification *)notification;
+@end
+
 @implementation FileController
 
 @synthesize codeView;
@@ -25,7 +29,19 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleFileChangedNotification:) name:ClientCurrentFileChangedNotification object:nil];
     self.codeView.datasource = [Client sharedClient].currentFile;
+}
+
+- (void)viewDidUnload
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    [super viewDidUnload];
+}
+
+- (void)handleFileChangedNotification:(NSNotification *)notification
+{
+    self.codeView.datasource = [notification.userInfo objectForKey:ClientNewFileKey];
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation

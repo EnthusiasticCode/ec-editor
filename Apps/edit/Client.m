@@ -9,12 +9,12 @@
 #import "Client.h"
 #import "Project.h"
 
-const NSString *ClientCurrentProjectChangedNotification = @"ClientCurrentProjectChangedNotification";
-const NSString *ClientCurrentFileChangedNotification = @"ClientCurrentFileChangedNotification";
-const NSString *ClientOldProjectKey = @"ClientOldProjectKey";
-const NSString *ClientNewProjectKey = @"ClientNewProjectKey";
-const NSString *ClientOldFileKey = @"ClientOldFileKey";
-const NSString *ClientNewFileKey = @"ClientNewFileKey";
+NSString *const ClientCurrentProjectChangedNotification = @"ClientCurrentProjectChangedNotification";
+NSString *const ClientCurrentFileChangedNotification = @"ClientCurrentFileChangedNotification";
+NSString *const ClientOldProjectKey = @"ClientOldProjectKey";
+NSString *const ClientNewProjectKey = @"ClientNewProjectKey";
+NSString *const ClientOldFileKey = @"ClientOldFileKey";
+NSString *const ClientNewFileKey = @"ClientNewFileKey";
 
 @implementation Client
 
@@ -25,7 +25,7 @@ const NSString *ClientNewFileKey = @"ClientNewFileKey";
 {
     if (currentProject == _currentProject)
         return;
-    [[NSNotificationCenter defaultCenter] postNotificationName:(NSString *)ClientCurrentProjectChangedNotification object:self userInfo:[NSDictionary dictionaryWithObjectsAndKeys:_currentProject, ClientOldProjectKey, currentProject, ClientNewProjectKey, nil]];
+    [[NSNotificationCenter defaultCenter] postNotificationName:ClientCurrentProjectChangedNotification object:self userInfo:[NSDictionary dictionaryWithObjectsAndKeys:_currentProject, ClientOldProjectKey, currentProject, ClientNewProjectKey, nil]];
     _currentProject = currentProject;
 }
 
@@ -33,7 +33,7 @@ const NSString *ClientNewFileKey = @"ClientNewFileKey";
 {
     if (currentFile == _currentFile)
         return;
-    [[NSNotificationCenter defaultCenter] postNotificationName:(NSString *)ClientCurrentFileChangedNotification object:self userInfo:[NSDictionary dictionaryWithObjectsAndKeys:_currentFile, ClientOldFileKey, currentFile, ClientNewFileKey, nil]];
+    [[NSNotificationCenter defaultCenter] postNotificationName:ClientCurrentFileChangedNotification object:self userInfo:[NSDictionary dictionaryWithObjectsAndKeys:_currentFile, ClientOldFileKey, currentFile, ClientNewFileKey, nil]];
     _currentFile = currentFile;
 }
 

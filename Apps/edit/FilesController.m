@@ -15,9 +15,9 @@
 #import "EditorController.h"
 #import "Client.h"
 
-static const NSString *DefaultIdentifier = @"Default";
+static NSString *const DefaultIdentifier = @"Default";
 
-static const NSString *FileSegueIdentifier = @"File";
+static NSString *const FileSegueIdentifier = @"File";
 
 @implementation FilesController
 
@@ -36,13 +36,19 @@ static const NSString *FileSegueIdentifier = @"File";
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:(NSString *)DefaultIdentifier];
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:DefaultIdentifier];
     if (!cell)
     {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:(NSString *)DefaultIdentifier];
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:DefaultIdentifier];
     }
     cell.textLabel.text = [[[[Client sharedClient].currentProject children] objectAtIndex:indexPath.row] name];
     return cell;
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    Project *project = [Client sharedClient].currentProject;
+    [Client sharedClient].currentFile = [[project children] objectAtIndex:indexPath.row];
 }
 
 @end

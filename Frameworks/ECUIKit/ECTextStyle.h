@@ -8,9 +8,9 @@
 
 #import <UIKit/UIKit.h>
 
-const NSString *ECTSBackgroundColorAttributeName;
-const NSString *ECTSFrontCustomOverlayAttributeName;
-const NSString *ECTSBackCustomOverlayAttributeName;
+NSString *const ECTSBackgroundColorAttributeName;
+NSString *const ECTSFrontCustomOverlayAttributeName;
+NSString *const ECTSBackCustomOverlayAttributeName;
 
 typedef enum {
     ECUnderlineStyleNone = 0x00,

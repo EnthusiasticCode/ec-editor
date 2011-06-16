@@ -8,7 +8,8 @@
 
 #import "EditorController.h"
 
-static const NSString *SidebarControllerIdentifier = @"Sidebar";
+static NSString *const SidebarControllerIdentifier = @"Sidebar";
+static NSString *const FileControllerIdentifier = @"File";
 
 @interface EditorController ()
 - (void)_setup;
@@ -42,7 +43,8 @@ static const NSString *SidebarControllerIdentifier = @"Sidebar";
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    [self setSidebarController:[self.storyboard instantiateViewControllerWithIdentifier:(NSString *)SidebarControllerIdentifier]];
+    self.sidebarController = [self.storyboard instantiateViewControllerWithIdentifier:SidebarControllerIdentifier];
+    self.mainController = [self.storyboard instantiateViewControllerWithIdentifier:FileControllerIdentifier];
 }
 
 @end

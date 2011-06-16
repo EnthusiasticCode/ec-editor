@@ -9,12 +9,12 @@
 #import <Foundation/Foundation.h>
 @class Project, File;
 
-const NSString *ClientCurrentProjectChangedNotification;
-const NSString *ClientCurrentFileChangedNotification;
-const NSString *ClientOldProjectKey;
-const NSString *ClientNewProjectKey;
-const NSString *ClientOldFileKey;
-const NSString *ClientNewFileKey;
+NSString *const ClientCurrentProjectChangedNotification;
+NSString *const ClientCurrentFileChangedNotification;
+NSString *const ClientOldProjectKey;
+NSString *const ClientNewProjectKey;
+NSString *const ClientOldFileKey;
+NSString *const ClientNewFileKey;
 
 @interface Client : NSObject
 @property (nonatomic, strong) Project *currentProject;

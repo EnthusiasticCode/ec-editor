@@ -8,8 +8,8 @@
 
 #import "RootController.h"
 
-static const NSString *NavbarIdentifier = @"Navbar";
-static const NSString *ProjectsIdentifier = @"Projects";
+static NSString *const NavbarIdentifier = @"Navbar";
+static NSString *const ProjectsIdentifier = @"Projects";
 
 @interface RootController ()
 - (void)_setup;
@@ -46,8 +46,8 @@ static const NSString *ProjectsIdentifier = @"Projects";
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    self.sidebarController = [self.storyboard instantiateViewControllerWithIdentifier:(NSString *)NavbarIdentifier];
-    self.mainController = [self.storyboard instantiateViewControllerWithIdentifier:(NSString *)ProjectsIdentifier];
+    self.sidebarController = [self.storyboard instantiateViewControllerWithIdentifier:NavbarIdentifier];
+    self.mainController = [self.storyboard instantiateViewControllerWithIdentifier:ProjectsIdentifier];
 }
 
 @end
