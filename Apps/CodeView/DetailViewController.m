@@ -35,8 +35,7 @@
 - (void)setDetailItem:(id)newDetailItem
 {
     if (_detailItem != newDetailItem) {
-        [_detailItem release];
-        _detailItem = [newDetailItem retain];
+        _detailItem = newDetailItem;
         
         // Update the view.
         [self configureView];
@@ -86,7 +85,6 @@
     NSMutableArray *items = [[self.toolbar items] mutableCopy];
     [items insertObject:barButtonItem atIndex:0];
     [self.toolbar setItems:items animated:YES];
-    [items release];
     self.popoverController = pc;
 }
 
@@ -96,7 +94,6 @@
     NSMutableArray *items = [[self.toolbar items] mutableCopy];
     [items removeObjectAtIndex:0];
     [self.toolbar setItems:items animated:YES];
-    [items release];
     self.popoverController = nil;
 }
 
@@ -132,18 +129,6 @@
 	// Release any cached data, images, etc that aren't in use.
 }
 
-- (void)dealloc
-{
-    [codeViewDataSource release];
-    
-    [_myPopoverController release];
-    [_toolbar release];
-    [_detailItem release];
-    [_detailDescriptionLabel release];
-    [_codeView release];
-    [super dealloc];
-}
-
 #pragma mark CodeView delegate
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
@@ -163,6 +148,6 @@
 }
 
 - (IBAction)completeAtCursor:(id)sender {
-    [self.codeView showComplitionPopoverAtCursor];
+    [self.codeView showCompletionPopoverAtCursor];
 }
 @end
