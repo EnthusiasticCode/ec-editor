@@ -9,22 +9,14 @@
 #import "ECFloatingSplitViewController.h"
 #import <QuartzCore/QuartzCore.h>
 
-static const void *ECFloatingSplitViewControllerAssociatedObjectKey;
-
-@interface UIViewController (ECFloatingSplitViewControllerInternal)
-@property (nonatomic, weak) ECFloatingSplitViewController *floatingSplitViewController;
-@end
-
-@implementation UIViewController (ECFloatingSplitViewControllerInternal)
+@implementation UIViewController (ECFloatingSplitViewController)
 
 - (ECFloatingSplitViewController *)floatingSplitViewController
 {
-    return objc_getAssociatedObject(self, ECFloatingSplitViewControllerAssociatedObjectKey);
-}
-
-- (void)setFloatingSplitViewController:(ECFloatingSplitViewController *)floatingSplitViewController
-{
-    objc_setAssociatedObject(self, ECFloatingSplitViewControllerAssociatedObjectKey, floatingSplitViewController, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    UIViewController *ancestor = self.parentViewController;
+    while (ancestor && ![ancestor isKindOfClass:[ECFloatingSplitViewController class]])
+        ancestor = [ancestor parentViewController];
+    return (ECFloatingSplitViewController *)ancestor;
 }
 
 @end
@@ -101,12 +93,10 @@ static void _init(ECFloatingSplitViewController *self)
     if (sidebarController == _sidebarController)
         return;
     [_sidebarController willMoveToParentViewController:nil];
-    _sidebarController.floatingSplitViewController = nil;
     [_sidebarController.view removeFromSuperview];
     [_sidebarController removeFromParentViewController];
     _sidebarController = sidebarController;
     [self addChildViewController:sidebarController];
-    sidebarController.floatingSplitViewController = self;
     if (_sidebarView)
     {
         [sidebarController viewWillAppear:(transition != nil)];
@@ -129,12 +119,10 @@ static void _init(ECFloatingSplitViewController *self)
     if (mainController == _mainController)
         return;
     [_mainController willMoveToParentViewController:nil];
-    _mainController.floatingSplitViewController = nil;
     [_mainController.view removeFromSuperview];
     [_mainController removeFromParentViewController];
     _mainController = mainController;
     [self addChildViewController:mainController];
-    mainController.floatingSplitViewController = self;
     if (_mainView)
     {
         [mainController viewWillAppear:(transition != nil)];

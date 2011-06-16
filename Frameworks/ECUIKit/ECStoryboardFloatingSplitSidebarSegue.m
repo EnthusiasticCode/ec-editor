@@ -15,10 +15,7 @@
 
 - (void)perform
 {
-    UIViewController *ancestor = self.sourceViewController;
-    while (![ancestor floatingSplitViewController] && [ancestor parentViewController])
-        ancestor = [ancestor parentViewController];
-    [[ancestor floatingSplitViewController] setSidebarController:self.destinationViewController withTransition:self.transition];
+    [[self.sourceViewController floatingSplitViewController] setSidebarController:self.destinationViewController withTransition:self.transition];
 }
 
 @end
