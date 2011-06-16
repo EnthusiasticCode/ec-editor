@@ -171,19 +171,16 @@ static void _init(ECFloatingSplitViewController *self)
 {
     if (sidebarEdge == _sidebarEdge)
         return;
-    if (!self.isViewLoaded)
+    if (!self.isViewLoaded || self.sidebarHidden)
     {
         _sidebarEdge = sidebarEdge;
+        [self _setupMainViewAutoresizing];
         return;
     }
-    BOOL sidebarWasVisible = !self.sidebarHidden;
-    if (sidebarWasVisible)
-        [self setSidebarHidden:YES animated:animated];
+    [self setSidebarHidden:YES animated:animated];
     _sidebarEdge = sidebarEdge;
-    [self _setupSidebarViewAutoresizing];
     [self _setupMainViewAutoresizing];
-    if (sidebarWasVisible)
-        [self setSidebarHidden:NO animated:animated];
+    [self setSidebarHidden:NO animated:animated];
 }
 
 - (void)setSidebarLocked:(BOOL)sidebarLocked
@@ -242,10 +239,16 @@ static void _init(ECFloatingSplitViewController *self)
 {
     if (sidebarFloating == _sidebarFloating)
         return;
-    _sidebarFloating = sidebarFloating;
-    if (!self.isViewLoaded)
+    if (!self.isViewLoaded || self.sidebarHidden)
+    {
+        _sidebarFloating = sidebarFloating;
+        [self _setupMainViewAutoresizing];
         return;
-    [self _layoutSubviewsWithAnimation:animated];
+    }
+    [self setSidebarHidden:YES animated:animated];
+    _sidebarFloating = sidebarFloating;
+    [self _setupMainViewAutoresizing];
+    [self setSidebarHidden:NO animated:animated];
 }
 
 - (void)_layoutSubviewsWithAnimation:(BOOL)animated
@@ -271,11 +274,14 @@ static void _init(ECFloatingSplitViewController *self)
     ECASSERT(_sidebarView == nil);
     _sidebarView = [[UIView alloc] initWithFrame:[self _sidebarFrameWithinFrame:self.view.bounds sidebarHidden:sidebarHidden]];
     [self _setupSidebarViewAutoresizing];
-    _sidebarView.layer.cornerRadius = 5.0;
-    _sidebarView.layer.shadowColor = [UIColor blackColor].CGColor;
-    _sidebarView.layer.shadowOffset = CGSizeMake(0.0, 1.0);
-    _sidebarView.layer.shadowOpacity = 1.0;
-    _sidebarView.layer.shadowRadius = 5.0;
+    if (self.sidebarFloating)
+    {
+        _sidebarView.layer.cornerRadius = 5.0;
+        _sidebarView.layer.shadowColor = [UIColor blackColor].CGColor;
+        _sidebarView.layer.shadowOffset = CGSizeMake(0.0, 1.0);
+        _sidebarView.layer.shadowOpacity = 1.0;
+        _sidebarView.layer.shadowRadius = 5.0;
+    }
     [self.view addSubview:_sidebarView];
     if (self.sidebarController)
     {
