@@ -179,9 +179,6 @@ static void preinit(ECPopoverController *self)
 {
     UIView *rootView = view.window.rootViewController.view;
     CGRect allowedRect = rootView.bounds;
-    // Removing status bar anyway
-    allowedRect.origin.y += 20;
-    allowedRect.size.height -= 20;
     // Remove keyboard
     allowedRect.size.height -= keyboardHeight;
     // Inset to give a little margin
@@ -189,11 +186,13 @@ static void preinit(ECPopoverController *self)
     // Transform to view's space
     UIView *v = view;
     CGPoint viewOriging;
-    do {
+    while (v != rootView)
+    {
         viewOriging = v.frame.origin;
         rect.origin.x += viewOriging.x;
         rect.origin.y += viewOriging.y;
-    } while ((v = v.superview) && v != rootView);
+        v = v.superview;
+    }
     
     // Point where the arrow should point
     CGPoint arrowPoint = CGPointMake(CGRectGetMidX(rect), CGRectGetMidY(rect));
@@ -204,8 +203,7 @@ static void preinit(ECPopoverController *self)
     if (arrowDirections & UIPopoverArrowDirectionDown) 
     {
         resultFrame = popoverView.bounds;
-        CGFloat minOrigin = MIN(CGRectGetMaxX(allowedRect) - resultFrame.size.width, arrowPoint.x - resultFrame.size.width / 2);
-        resultFrame.origin.x = MAX(allowedRect.origin.x, minOrigin);
+        resultFrame.origin.x = MAX(allowedRect.origin.x, MIN(CGRectGetMaxX(allowedRect) - resultFrame.size.width, arrowPoint.x - resultFrame.size.width / 2));
         resultFrame.origin.y = rect.origin.y - resultFrame.size.height - popoverView.arrowMargin;
         if (CGRectContainsRect(allowedRect, resultFrame)) 
         {
@@ -226,7 +224,7 @@ static void preinit(ECPopoverController *self)
     {
         resultFrame = popoverView.bounds;
         resultFrame.origin.x = CGRectGetMaxX(rect) + popoverView.arrowMargin;
-        resultFrame.origin.y = MIN(CGRectGetMaxY(allowedRect) - resultFrame.size.height, arrowPoint.y - resultFrame.size.height / 2);
+        resultFrame.origin.y = MAX(allowedRect.origin.y ,MIN(CGRectGetMaxY(allowedRect) - resultFrame.size.height, arrowPoint.y - resultFrame.size.height / 2));
         if (CGRectContainsRect(allowedRect, resultFrame)) 
         {
             popoverView.arrowDirection = UIPopoverArrowDirectionLeft;
