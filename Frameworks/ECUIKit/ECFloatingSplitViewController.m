@@ -39,7 +39,7 @@ static const CGFloat ECFloatingSplitViewControllerAnimationDuration = 0.15;
     UIView *_mainView;
     UISwipeGestureRecognizer *_swipeGestureRecognizer;
 }
-- (void)_setup;
+static void _init(ECFloatingSplitViewController *self);
 - (void)_layoutSubviewsWithAnimation:(BOOL)animated;
 - (void)_layoutSubviewsWithinFrame:(CGRect)frame;
 - (void)_addSidebarViewWithSidebarHidden:(BOOL)sidebarHidden;
@@ -71,7 +71,7 @@ static const CGFloat ECFloatingSplitViewControllerAnimationDuration = 0.15;
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (!self)
         return nil;
-    [self _setup];
+    _init(self);
     return self;
 }
 
@@ -80,15 +80,15 @@ static const CGFloat ECFloatingSplitViewControllerAnimationDuration = 0.15;
     self = [super initWithCoder:aDecoder];
     if (!self)
         return nil;
-    [self _setup];
+    _init(self);
     return self;
 }
 
-- (void)_setup
+static void _init(ECFloatingSplitViewController *self)
 {
-    _sidebarEdge = ECFloatingSplitViewControllerSidebarEdgeLeft;
-    _sidebarFloating = YES;
-    _sidebarWidth = 200.0;
+    self->_sidebarEdge = ECFloatingSplitViewControllerSidebarEdgeLeft;
+    self->_sidebarFloating = YES;
+    self->_sidebarWidth = 200.0;
 }
 
 - (void)setSidebarController:(UIViewController *)sidebarController

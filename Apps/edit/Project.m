@@ -83,7 +83,6 @@
     self.name = [bundlePath lastPathComponent];
     self._rootNode = [self _findRootNode];
     [self _addAllNodesInProjectRoot];
-    [self saveContext];
     return self;
 }
 
