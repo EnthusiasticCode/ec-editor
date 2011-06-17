@@ -13,6 +13,7 @@
 
 + (UIColor *)styleBackgroundColor;
 + (UIColor *)styleBackgroundShadowColor;
++ (UIColor *)styleHighlightColor;
 + (UIColor *)styleAlternateBackgroundColor;
 + (UIColor *)styleForegroundColor;
 + (UIColor *)styleForegroundShadowColor;

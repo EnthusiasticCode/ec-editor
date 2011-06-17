@@ -13,13 +13,17 @@
 
 + (UIColor *)styleBackgroundColor
 {
-//    return [UIColor colorWithRed:77.0/255.0 green:77.0/255.0 blue:77.0/255.0 alpha:1.0];
-    return [UIColor colorWithWhite:0.89 alpha:1.0];
+    return [UIColor colorWithWhite:0.90 alpha:1.0];
 }
 
 + (UIColor *)styleBackgroundShadowColor
 {
-    return [UIColor colorWithRed:88.0/255.0 green:89.0/255.0 blue:91.0/255.0 alpha:0.3];
+    return [UIColor whiteColor];
+}
+
++ (UIColor *)styleHighlightColor
+{
+    return [UIColor colorWithWhite:0.70 alpha:1.0];
 }
 
 + (UIColor *)styleAlternateBackgroundColor
@@ -30,8 +34,7 @@
 
 + (UIColor *)styleForegroundColor
 {
-//    return [UIColor colorWithRed:26.0/255.0 green:26.0/255.0 blue:26.0/255.0 alpha:1.0];
-    return [UIColor colorWithHue:0 saturation:0 brightness:0.1 alpha:1.0];
+    return [UIColor colorWithWhite:0.16 alpha:1.0];
 }
 
 + (UIColor *)styleForegroundShadowColor

@@ -7,6 +7,7 @@
 //
 
 #import "ACNavigationController.h"
+#import "UIColor+StyleColors.h"
 
 
 @implementation ACNavigationController
@@ -38,20 +39,15 @@
 {
     [super viewDidLoad];
     
-    UIColor *brightColor = [UIColor colorWithWhite:0.90 alpha:1.0];
-    UIColor *highlightColor = [UIColor colorWithWhite:0.70 alpha:1.0];
-    UIColor *darkColor = [UIColor colorWithWhite:0.16 alpha:1.0];
-    UIColor *shadowColor = [UIColor whiteColor];
-    
     // Setup jumpbar
     jumpBar.delegate = self;
     [jumpBar setFont:[UIFont fontWithName:@"Helvetica-Bold" size:14]];
-    [jumpBar setTextColor:darkColor];
-    [jumpBar setTextShadowColor:shadowColor];
+    [jumpBar setTextColor:[UIColor styleForegroundColor]];
+    [jumpBar setTextShadowColor:[UIColor styleBackgroundShadowColor]];
     [jumpBar setTextShadowOffset:CGSizeMake(0, 1)];
     
-    [jumpBar setButtonColor:brightColor];
-    [jumpBar setButtonHighlightColor:highlightColor];
+    [jumpBar setButtonColor:[UIColor styleBackgroundColor]];
+    [jumpBar setButtonHighlightColor:[UIColor styleHighlightColor]];
 }
 
 - (void)viewDidUnload
