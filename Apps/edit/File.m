@@ -25,7 +25,7 @@
 
 @interface File ()
 @property (nonatomic, strong) ECCodeByteArrayDataSource *byteArrayDataSource;
-@property (nonatomic, strong) IBOutlet CompletionController *completionController;
+@property (nonatomic, strong) CompletionController *completionController;
 @property (nonatomic, strong) ECCodeUnit *unit;
 @end
 
@@ -43,7 +43,7 @@
 {
     if (!_byteArrayDataSource && self.path)
     {
-        NSURL *url = [[NSURL alloc] initFileURLWithPath:self.path];
+        NSURL *url = [NSURL fileURLWithPath:[self absolutePath]];
         _byteArrayDataSource = [[ECCodeByteArrayDataSource alloc] init];
         _byteArrayDataSource.fileURL = url;
     }

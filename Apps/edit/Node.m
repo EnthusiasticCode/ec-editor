@@ -20,6 +20,11 @@
 @dynamic nameWords;
 @dynamic parent;
 
+- (NSString *)absolutePath
+{
+    return [[[[[self.managedObjectContext.persistentStoreCoordinator.persistentStores objectAtIndex:0] URL] URLByAppendingPathComponent:@".."] URLByAppendingPathComponent:self.path] URLByStandardizingPath].path;
+}
+
 - (Node *)addNodeWithName:(NSString *)name type:(NodeType)type
 {
     Node *node;
