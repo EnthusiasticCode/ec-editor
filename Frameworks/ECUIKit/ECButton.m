@@ -7,8 +7,8 @@
 //
 
 #import "ECButton.h"
-#import "UIColor+StyleColors.h"
 #import <QuartzCore/QuartzCore.h>
+#import <objc/runtime.h>
 
 
 @interface ECButton () {
@@ -89,7 +89,7 @@ static CGPathRef createButtonShapePath(CGRect rect, CGFloat radius, CGFloat left
     // Right arrow
     if (rightArrow > 0) 
     {
-        CGFloat arrow_size = rightArrow * 0.3;
+        CGFloat arrow_size = rightArrow * 0.4;
         CGFloat inside_arrow = inside_right + rightArrow + radius * 0.7;
         CGFloat arrow_midtop = middle_height - radius / 2;
         CGFloat arrow_midbottom = arrow_midtop + radius;
@@ -119,7 +119,7 @@ static CGPathRef createButtonShapePath(CGRect rect, CGFloat radius, CGFloat left
     // Left arrow
     if (leftArrow > 0) 
     {
-        CGFloat arrow_size = leftArrow * 0.3;
+        CGFloat arrow_size = leftArrow * 0.4;
         CGFloat inside_arrow = inside_left - leftArrow - radius * 0.7;
         CGFloat arrow_midtop = middle_height - radius / 2;
         CGFloat arrow_midbottom = arrow_midtop + radius;
@@ -148,8 +148,7 @@ static CGPathRef createButtonShapePath(CGRect rect, CGFloat radius, CGFloat left
     return path;
 }
 
-#pragma mark -
-#pragma mark Properties
+#pragma mark - Properties
 
 @synthesize cornerRadius, leftArrowSize, rightArrowSize;
 
@@ -171,9 +170,10 @@ static CGPathRef createButtonShapePath(CGRect rect, CGFloat radius, CGFloat left
         CABasicAnimation *animation = [CABasicAnimation animationWithKeyPath:@"path"];
         animation.fromValue = objc_unretainedObject(layer.path);
         animation.toValue = objc_unretainedObject(buttonPath);
-        animation.duration = 0.15;
+        // TODO this time should be equal to external animation time
+        animation.duration = 0.10;
         animation.valueFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
-        [layer addAnimation:animation forKey:nil];
+        [layer addAnimation:animation forKey:@"path"];
     }
     [layer setPath:buttonPath];
 }
@@ -257,8 +257,7 @@ static CGPathRef createButtonShapePath(CGRect rect, CGFloat radius, CGFloat left
     CGPathRelease(path);
 }
 
-#pragma mark -
-#pragma mark UIControl Methods
+#pragma mark - UIControl Methods
 
 static void preinit(ECButton *self)
 {
@@ -273,15 +272,15 @@ static void preinit(ECButton *self)
     // Background colors
     self->backgroundColors = (CGColorRef *)malloc(sizeof(CGColorRef) * 6);
     self->backgroundColors[STATE_NORMAL_IDX] = layer.backgroundColor;
-    self->backgroundColors[STATE_HIGHLIGHTED_IDX] = CGColorCreateCopy([UIColor colorWithRed:93.0/255.0 green:94.0/255.0 blue:94.0/255.0 alpha:1.0].CGColor);
+    self->backgroundColors[STATE_HIGHLIGHTED_IDX] = CGColorCreateCopy([UIColor colorWithWhite:0.7 alpha:1.0].CGColor);
     self->backgroundColors[STATE_DISABLED_IDX] = NULL;
-    self->backgroundColors[STATE_SELECTED_IDX] = CGColorCreateCopy([UIColor colorWithRed:64.0/255.0 green:92.0/255.0 blue:123.0/255.0 alpha:1.0].CGColor);
+    self->backgroundColors[STATE_SELECTED_IDX] = CGColorCreateCopy([UIColor colorWithWhite:0.7 alpha:1.0].CGColor);
     self->backgroundColors[STATE_APPLICATION_IDX] = NULL;
     self->backgroundColors[STATE_RESERVED_IDX] = NULL;
     
     // Border colors
     self->borderColors = (CGColorRef *)malloc(sizeof(CGColorRef) * 6);
-    self->borderColors[STATE_NORMAL_IDX] = CGColorCreateCopy([UIColor colorWithHue:0 saturation:0 brightness:0.01 alpha:1.0].CGColor);
+    self->borderColors[STATE_NORMAL_IDX] = CGColorCreateCopy([UIColor colorWithWhite:0.16 alpha:1.0].CGColor);
     self->borderColors[STATE_HIGHLIGHTED_IDX] = CGColorCreateCopy(self->borderColors[STATE_NORMAL_IDX]);
     self->borderColors[STATE_DISABLED_IDX] = NULL;
     self->borderColors[STATE_SELECTED_IDX] = CGColorCreateCopy(self->borderColors[STATE_NORMAL_IDX]);
@@ -335,8 +334,7 @@ static void preinit(ECButton *self)
     return [super hitTest:point withEvent:event];
 }
 
-#pragma mark -
-#pragma mark Public methods
+#pragma mark - Public methods
 
 - (void)setBackgroundColor:(UIColor *)color forState:(UIControlState)state
 {
@@ -372,8 +370,7 @@ static void preinit(ECButton *self)
     return borderColors[index] ? [UIColor colorWithCGColor:borderColors[index]] : nil;
 }
 
-#pragma mark -
-#pragma mark Private methods
+#pragma mark - Private methods
 
 - (void)updateLayerPropertiesForCurrentState
 {

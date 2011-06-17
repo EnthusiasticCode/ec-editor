@@ -1,31 +1,20 @@
 //
-//  CodeViewAppDelegate.m
-//  CodeView
+//  ACUIAppDelegate.m
+//  ACUI
 //
-//  Created by Nicola Peduzzi on 27/04/11.
+//  Created by Nicola Peduzzi on 09/06/11.
 //  Copyright 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import "CodeViewAppDelegate.h"
+#import "ACUIAppDelegate.h"
 
-#import "RootViewController.h"
+@implementation ACUIAppDelegate
 
-@implementation CodeViewAppDelegate
-
-
-@synthesize window=_window;
-
-@synthesize splitViewController=_splitViewController;
-
-@synthesize rootViewController=_rootViewController;
-
-@synthesize detailViewController=_detailViewController;
+@synthesize window = _window;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     // Override point for customization after application launch.
-    // Add the split view controller's view to the window and display.
-    self.window.rootViewController = self.splitViewController;
     [self.window makeKeyAndVisible];
     return YES;
 }

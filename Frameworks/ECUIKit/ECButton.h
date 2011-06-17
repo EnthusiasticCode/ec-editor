@@ -8,11 +8,11 @@
 
 #import <UIKit/UIKit.h>
 
-@interface ECButton : UIButton
+@interface ECButton : UIButton <UIAppearanceContainer>
 
 @property (nonatomic) CGFloat borderWidth;
 
-@property (nonatomic) CGFloat cornerRadius;
+@property (nonatomic) CGFloat cornerRadius UI_APPEARANCE_SELECTOR;
 
 @property (nonatomic) CGFloat leftArrowSize;
 @property (nonatomic) CGFloat rightArrowSize;

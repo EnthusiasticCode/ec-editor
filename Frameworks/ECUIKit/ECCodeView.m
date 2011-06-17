@@ -1316,7 +1316,7 @@ static void init(ECCodeView *self)
 - (UITextPosition *)positionFromPosition:(UITextPosition *)position 
                                   offset:(NSInteger)offset
 {
-    return [self positionFromPosition:position inDirection:UITextStorageDirectionForward offset:offset];
+    return [self positionFromPosition:position inDirection:(UITextLayoutDirection)UITextStorageDirectionForward offset:offset];
 }
 
 - (UITextPosition *)positionFromPosition:(UITextPosition *)position 

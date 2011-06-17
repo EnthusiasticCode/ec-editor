@@ -90,11 +90,13 @@
 
 - (id)copyWithZone:(NSZone *)zone
 {
-    return self;
+    // TODO check if proper ARC
+    return [[ECRectSet alloc] initWithRects:self];
 }
 
 - (id)mutableCopyWithZone:(NSZone *)zone
 {
+    // TODO check if proper ARC
     return [[ECMutableRectSet alloc] initWithRects:self];
 }
 

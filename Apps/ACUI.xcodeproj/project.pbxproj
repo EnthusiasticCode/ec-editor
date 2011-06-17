@@ -1,0 +1,330 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		CD19240913A147EE00A47E38 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD19240813A147EE00A47E38 /* UIKit.framework */; };
+		CD19240B13A147EE00A47E38 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD19240A13A147EE00A47E38 /* Foundation.framework */; };
+		CD19240D13A147EE00A47E38 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD19240C13A147EE00A47E38 /* CoreGraphics.framework */; };
+		CD19241313A147EE00A47E38 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = CD19241113A147EE00A47E38 /* InfoPlist.strings */; };
+		CD19241513A147EE00A47E38 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = CD19241413A147EE00A47E38 /* main.m */; };
+		CD19241913A147EE00A47E38 /* ACUIAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = CD19241813A147EE00A47E38 /* ACUIAppDelegate.m */; };
+		CD19241C13A147EE00A47E38 /* MainStoryboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CD19241A13A147EE00A47E38 /* MainStoryboard.storyboard */; };
+		CD6973F513A15026005D68D9 /* ECJumpBar.m in Sources */ = {isa = PBXBuildFile; fileRef = CD6973F213A15026005D68D9 /* ECJumpBar.m */; };
+		CD6973F613A15026005D68D9 /* ECRectSet.m in Sources */ = {isa = PBXBuildFile; fileRef = CD6973F413A15026005D68D9 /* ECRectSet.m */; };
+		CD6973F913A15081005D68D9 /* ECButton.m in Sources */ = {isa = PBXBuildFile; fileRef = CD6973F813A15081005D68D9 /* ECButton.m */; };
+		CD6973FB13A153B3005D68D9 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD6973FA13A153B3005D68D9 /* QuartzCore.framework */; };
+		CD6973FD13A153B9005D68D9 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD6973FC13A153B9005D68D9 /* CoreText.framework */; };
+		CDAD700413A7BBDC00C0B9B4 /* ECPopoverController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDAD700113A7BBDC00C0B9B4 /* ECPopoverController.m */; };
+		CDAD700513A7BBDC00C0B9B4 /* ECPopoverView.m in Sources */ = {isa = PBXBuildFile; fileRef = CDAD700313A7BBDC00C0B9B4 /* ECPopoverView.m */; };
+		CDD823F013A7BF770014CEE0 /* ACUITrialViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDD823EF13A7BF770014CEE0 /* ACUITrialViewController.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		CD19240413A147ED00A47E38 /* ACUI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ACUI.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		CD19240813A147EE00A47E38 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		CD19240A13A147EE00A47E38 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		CD19240C13A147EE00A47E38 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		CD19241013A147EE00A47E38 /* ACUI-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ACUI-Info.plist"; sourceTree = "<group>"; };
+		CD19241213A147EE00A47E38 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		CD19241413A147EE00A47E38 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		CD19241613A147EE00A47E38 /* ACUI-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ACUI-Prefix.pch"; sourceTree = "<group>"; };
+		CD19241713A147EE00A47E38 /* ACUIAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ACUIAppDelegate.h; sourceTree = "<group>"; };
+		CD19241813A147EE00A47E38 /* ACUIAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ACUIAppDelegate.m; sourceTree = "<group>"; };
+		CD19241B13A147EE00A47E38 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/MainStoryboard.storyboard; sourceTree = "<group>"; };
+		CD6973F113A15026005D68D9 /* ECJumpBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECJumpBar.h; sourceTree = "<group>"; };
+		CD6973F213A15026005D68D9 /* ECJumpBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECJumpBar.m; sourceTree = "<group>"; };
+		CD6973F313A15026005D68D9 /* ECRectSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECRectSet.h; sourceTree = "<group>"; };
+		CD6973F413A15026005D68D9 /* ECRectSet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECRectSet.m; sourceTree = "<group>"; };
+		CD6973F713A15081005D68D9 /* ECButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECButton.h; sourceTree = "<group>"; };
+		CD6973F813A15081005D68D9 /* ECButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECButton.m; sourceTree = "<group>"; };
+		CD6973FA13A153B3005D68D9 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		CD6973FC13A153B9005D68D9 /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
+		CDAD700013A7BBDC00C0B9B4 /* ECPopoverController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECPopoverController.h; sourceTree = "<group>"; };
+		CDAD700113A7BBDC00C0B9B4 /* ECPopoverController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECPopoverController.m; sourceTree = "<group>"; };
+		CDAD700213A7BBDC00C0B9B4 /* ECPopoverView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECPopoverView.h; sourceTree = "<group>"; };
+		CDAD700313A7BBDC00C0B9B4 /* ECPopoverView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECPopoverView.m; sourceTree = "<group>"; };
+		CDD823EE13A7BF770014CEE0 /* ACUITrialViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACUITrialViewController.h; sourceTree = "<group>"; };
+		CDD823EF13A7BF770014CEE0 /* ACUITrialViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACUITrialViewController.m; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		CD19240113A147ED00A47E38 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CD6973FD13A153B9005D68D9 /* CoreText.framework in Frameworks */,
+				CD6973FB13A153B3005D68D9 /* QuartzCore.framework in Frameworks */,
+				CD19240913A147EE00A47E38 /* UIKit.framework in Frameworks */,
+				CD19240B13A147EE00A47E38 /* Foundation.framework in Frameworks */,
+				CD19240D13A147EE00A47E38 /* CoreGraphics.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		CD1923F913A147ED00A47E38 = {
+			isa = PBXGroup;
+			children = (
+				CD19240E13A147EE00A47E38 /* ACUI */,
+				CD19240713A147EE00A47E38 /* Frameworks */,
+				CD19240513A147ED00A47E38 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		CD19240513A147ED00A47E38 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				CD19240413A147ED00A47E38 /* ACUI.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		CD19240713A147EE00A47E38 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				CD6973FC13A153B9005D68D9 /* CoreText.framework */,
+				CD6973FA13A153B3005D68D9 /* QuartzCore.framework */,
+				CD19240813A147EE00A47E38 /* UIKit.framework */,
+				CD19240A13A147EE00A47E38 /* Foundation.framework */,
+				CD19240C13A147EE00A47E38 /* CoreGraphics.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		CD19240E13A147EE00A47E38 /* ACUI */ = {
+			isa = PBXGroup;
+			children = (
+				CD6973EF13A14FE6005D68D9 /* ECUIKit */,
+				CD19241713A147EE00A47E38 /* ACUIAppDelegate.h */,
+				CD19241813A147EE00A47E38 /* ACUIAppDelegate.m */,
+				CDD823EE13A7BF770014CEE0 /* ACUITrialViewController.h */,
+				CDD823EF13A7BF770014CEE0 /* ACUITrialViewController.m */,
+				CD19241A13A147EE00A47E38 /* MainStoryboard.storyboard */,
+				CD19240F13A147EE00A47E38 /* Supporting Files */,
+			);
+			path = ACUI;
+			sourceTree = "<group>";
+		};
+		CD19240F13A147EE00A47E38 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				CD19241013A147EE00A47E38 /* ACUI-Info.plist */,
+				CD19241113A147EE00A47E38 /* InfoPlist.strings */,
+				CD19241413A147EE00A47E38 /* main.m */,
+				CD19241613A147EE00A47E38 /* ACUI-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		CD6973EF13A14FE6005D68D9 /* ECUIKit */ = {
+			isa = PBXGroup;
+			children = (
+				CDAD700013A7BBDC00C0B9B4 /* ECPopoverController.h */,
+				CDAD700113A7BBDC00C0B9B4 /* ECPopoverController.m */,
+				CDAD700213A7BBDC00C0B9B4 /* ECPopoverView.h */,
+				CDAD700313A7BBDC00C0B9B4 /* ECPopoverView.m */,
+				CD6973F713A15081005D68D9 /* ECButton.h */,
+				CD6973F813A15081005D68D9 /* ECButton.m */,
+				CD6973F113A15026005D68D9 /* ECJumpBar.h */,
+				CD6973F213A15026005D68D9 /* ECJumpBar.m */,
+				CD6973F313A15026005D68D9 /* ECRectSet.h */,
+				CD6973F413A15026005D68D9 /* ECRectSet.m */,
+			);
+			name = ECUIKit;
+			path = ../../Frameworks/ECUIKit;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		CD19240313A147ED00A47E38 /* ACUI */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CD19242613A147EE00A47E38 /* Build configuration list for PBXNativeTarget "ACUI" */;
+			buildPhases = (
+				CD19240013A147ED00A47E38 /* Sources */,
+				CD19240113A147ED00A47E38 /* Frameworks */,
+				CD19240213A147ED00A47E38 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ACUI;
+			productName = ACUI;
+			productReference = CD19240413A147ED00A47E38 /* ACUI.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		CD1923FB13A147ED00A47E38 /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = CD1923FE13A147ED00A47E38 /* Build configuration list for PBXProject "ACUI" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = CD1923F913A147ED00A47E38;
+			productRefGroup = CD19240513A147ED00A47E38 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				CD19240313A147ED00A47E38 /* ACUI */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		CD19240213A147ED00A47E38 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CD19241313A147EE00A47E38 /* InfoPlist.strings in Resources */,
+				CD19241C13A147EE00A47E38 /* MainStoryboard.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		CD19240013A147ED00A47E38 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CD19241513A147EE00A47E38 /* main.m in Sources */,
+				CD19241913A147EE00A47E38 /* ACUIAppDelegate.m in Sources */,
+				CD6973F513A15026005D68D9 /* ECJumpBar.m in Sources */,
+				CD6973F613A15026005D68D9 /* ECRectSet.m in Sources */,
+				CD6973F913A15081005D68D9 /* ECButton.m in Sources */,
+				CDAD700413A7BBDC00C0B9B4 /* ECPopoverController.m in Sources */,
+				CDAD700513A7BBDC00C0B9B4 /* ECPopoverView.m in Sources */,
+				CDD823F013A7BF770014CEE0 /* ACUITrialViewController.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		CD19241113A147EE00A47E38 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				CD19241213A147EE00A47E38 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		CD19241A13A147EE00A47E38 /* MainStoryboard.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				CD19241B13A147EE00A47E38 /* en */,
+			);
+			name = MainStoryboard.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		CD19242413A147EE00A47E38 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 2;
+			};
+			name = Debug;
+		};
+		CD19242513A147EE00A47E38 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 2;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		CD19242713A147EE00A47E38 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ARC_MIGRATION = precheck;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "ACUI/ACUI-Prefix.pch";
+				INFOPLIST_FILE = "ACUI/ACUI-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		CD19242813A147EE00A47E38 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ARC_MIGRATION = precheck;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "ACUI/ACUI-Prefix.pch";
+				INFOPLIST_FILE = "ACUI/ACUI-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		CD1923FE13A147ED00A47E38 /* Build configuration list for PBXProject "ACUI" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CD19242413A147EE00A47E38 /* Debug */,
+				CD19242513A147EE00A47E38 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CD19242613A147EE00A47E38 /* Build configuration list for PBXNativeTarget "ACUI" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CD19242713A147EE00A47E38 /* Debug */,
+				CD19242813A147EE00A47E38 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = CD1923FB13A147ED00A47E38 /* Project object */;
+}

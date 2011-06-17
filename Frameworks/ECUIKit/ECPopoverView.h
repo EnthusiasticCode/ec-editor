@@ -9,15 +9,15 @@
 #import <UIKit/UIKit.h>
 
 
-@interface ECPopoverView : UIView
+@interface ECPopoverView : UIView <UIAppearanceContainer>
 
 #pragma mark Style
 
-@property (nonatomic) CGFloat cornerRadius;
+@property (nonatomic) CGFloat cornerRadius UI_APPEARANCE_SELECTOR;
 
 #pragma mark Content
 
-@property (nonatomic) UIEdgeInsets contentInsets;
+@property (nonatomic) UIEdgeInsets contentInsets UI_APPEARANCE_SELECTOR;
 
 @property (nonatomic) CGSize contentSize;
 
@@ -29,10 +29,10 @@
 
 @property (nonatomic) CGFloat arrowPosition;
 
-@property (nonatomic) CGFloat arrowSize;
+@property (nonatomic) CGFloat arrowSize UI_APPEARANCE_SELECTOR;
 
-@property (nonatomic) CGFloat arrowCornerRadius;
+@property (nonatomic) CGFloat arrowCornerRadius UI_APPEARANCE_SELECTOR;
 
-@property (nonatomic, readonly) CGFloat arrowMargin;
+@property (nonatomic) CGFloat arrowMargin;
 
 @end
