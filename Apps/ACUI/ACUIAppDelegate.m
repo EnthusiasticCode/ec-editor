@@ -16,6 +16,7 @@
 {
     // Override point for customization after application launch.
     [self.window makeKeyAndVisible];
+    [self.window.rootViewController performSegueWithIdentifier:@"rootSegue" sender:nil];
     return YES;
 }
 

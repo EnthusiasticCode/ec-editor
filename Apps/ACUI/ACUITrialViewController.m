@@ -77,6 +77,10 @@
 	return YES;
 }
 
+- (void)performSegueWithIdentifier:(NSString *)identifier sender:(id)sender
+{
+}
+
 #pragma mark - JumpBar Delegate Methods
 
 - (void)popJumpBarControl:(id)sender

@@ -82,6 +82,16 @@ static void preinit(ECPopoverController *self)
     self->automaticDismiss = YES;
 }
 
+- (id)init
+{
+    preinit(self);
+    if ((self = [super init]))
+    {
+        popoverView = [ECPopoverView new];
+    }
+    return self;
+}
+
 - (id)initWithContentViewController:(UIViewController *)viewController
 {
     preinit(self);
