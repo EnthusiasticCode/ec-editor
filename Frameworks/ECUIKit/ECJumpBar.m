@@ -328,7 +328,6 @@ static void init(ECJumpBar *self)
         if (controlsStackActualCount > 0)
             searchOrigin.x += BUTTON_ARROW_WIDTH + textPadding;
         searchOrigin.x += textInsets.left;
-        searchOrigin.y += 1;
         searchField.frame = (CGRect){ searchOrigin, { bounds.size.width - searchOrigin.x - textPadding, size.height } };
     };
     

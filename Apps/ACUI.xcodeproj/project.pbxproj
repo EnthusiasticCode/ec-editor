@@ -15,7 +15,7 @@
 		CD19241913A147EE00A47E38 /* ACUIAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = CD19241813A147EE00A47E38 /* ACUIAppDelegate.m */; };
 		CD19241C13A147EE00A47E38 /* MainStoryboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CD19241A13A147EE00A47E38 /* MainStoryboard.storyboard */; };
 		CD4755E113ABBF7E00BB92F6 /* ACNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD4755E013ABBF7E00BB92F6 /* ACNavigationController.m */; };
-		CD4755E613ABD77600BB92F6 /* ACNavigationSegue.m in Sources */ = {isa = PBXBuildFile; fileRef = CD4755E513ABD77600BB92F6 /* ACNavigationSegue.m */; };
+		CD4755E613ABD77600BB92F6 /* ACNavigationPushSegue.m in Sources */ = {isa = PBXBuildFile; fileRef = CD4755E513ABD77600BB92F6 /* ACNavigationPushSegue.m */; };
 		CD6973F513A15026005D68D9 /* ECJumpBar.m in Sources */ = {isa = PBXBuildFile; fileRef = CD6973F213A15026005D68D9 /* ECJumpBar.m */; };
 		CD6973F613A15026005D68D9 /* ECRectSet.m in Sources */ = {isa = PBXBuildFile; fileRef = CD6973F413A15026005D68D9 /* ECRectSet.m */; };
 		CD6973F913A15081005D68D9 /* ECButton.m in Sources */ = {isa = PBXBuildFile; fileRef = CD6973F813A15081005D68D9 /* ECButton.m */; };
@@ -40,8 +40,8 @@
 		CD19241B13A147EE00A47E38 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/MainStoryboard.storyboard; sourceTree = "<group>"; };
 		CD4755DF13ABBF7E00BB92F6 /* ACNavigationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACNavigationController.h; sourceTree = "<group>"; };
 		CD4755E013ABBF7E00BB92F6 /* ACNavigationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACNavigationController.m; sourceTree = "<group>"; };
-		CD4755E413ABD77600BB92F6 /* ACNavigationSegue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACNavigationSegue.h; sourceTree = "<group>"; };
-		CD4755E513ABD77600BB92F6 /* ACNavigationSegue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACNavigationSegue.m; sourceTree = "<group>"; };
+		CD4755E413ABD77600BB92F6 /* ACNavigationPushSegue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACNavigationPushSegue.h; sourceTree = "<group>"; };
+		CD4755E513ABD77600BB92F6 /* ACNavigationPushSegue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACNavigationPushSegue.m; sourceTree = "<group>"; };
 		CD6973F113A15026005D68D9 /* ECJumpBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECJumpBar.h; sourceTree = "<group>"; };
 		CD6973F213A15026005D68D9 /* ECJumpBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECJumpBar.m; sourceTree = "<group>"; };
 		CD6973F313A15026005D68D9 /* ECRectSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECRectSet.h; sourceTree = "<group>"; };
@@ -135,8 +135,8 @@
 			children = (
 				CD4755DF13ABBF7E00BB92F6 /* ACNavigationController.h */,
 				CD4755E013ABBF7E00BB92F6 /* ACNavigationController.m */,
-				CD4755E413ABD77600BB92F6 /* ACNavigationSegue.h */,
-				CD4755E513ABD77600BB92F6 /* ACNavigationSegue.m */,
+				CD4755E413ABD77600BB92F6 /* ACNavigationPushSegue.h */,
+				CD4755E513ABD77600BB92F6 /* ACNavigationPushSegue.m */,
 			);
 			name = AC;
 			sourceTree = "<group>";
@@ -227,7 +227,7 @@
 				CDAD700513A7BBDC00C0B9B4 /* ECPopoverView.m in Sources */,
 				CDD823F013A7BF770014CEE0 /* ACUITrialViewController.m in Sources */,
 				CD4755E113ABBF7E00BB92F6 /* ACNavigationController.m in Sources */,
-				CD4755E613ABD77600BB92F6 /* ACNavigationSegue.m in Sources */,
+				CD4755E613ABD77600BB92F6 /* ACNavigationPushSegue.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

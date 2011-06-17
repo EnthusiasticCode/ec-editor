@@ -34,19 +34,24 @@
     // Release any cached data, images, etc that aren't in use.
 }
 
-/*
-// Implement loadView to create a view hierarchy programmatically, without using a nib.
-- (void)loadView
-{
-}
-*/
-
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     
-    // TODO!!! move away from here
-//    [self performSegueWithIdentifier:@"rootSegue" sender:self];
+    UIColor *brightColor = [UIColor colorWithWhite:0.90 alpha:1.0];
+    UIColor *highlightColor = [UIColor colorWithWhite:0.70 alpha:1.0];
+    UIColor *darkColor = [UIColor colorWithWhite:0.16 alpha:1.0];
+    UIColor *shadowColor = [UIColor whiteColor];
+    
+    // Setup jumpbar
+    jumpBar.delegate = self;
+    [jumpBar setFont:[UIFont fontWithName:@"Helvetica-Bold" size:14]];
+    [jumpBar setTextColor:darkColor];
+    [jumpBar setTextShadowColor:shadowColor];
+    [jumpBar setTextShadowOffset:CGSizeMake(0, 1)];
+    
+    [jumpBar setButtonColor:brightColor];
+    [jumpBar setButtonHighlightColor:highlightColor];
 }
 
 - (void)viewDidUnload
