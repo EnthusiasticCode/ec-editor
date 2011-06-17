@@ -46,6 +46,39 @@
         NSURL *url = [NSURL fileURLWithPath:[self absolutePath]];
         _byteArrayDataSource = [[ECCodeByteArrayDataSource alloc] init];
         _byteArrayDataSource.fileURL = url;
+        ECCodeUnit *unit = self.unit;
+        ECTextStyle *keywordStyle = [ECTextStyle textStyleWithName:@"Keyword" font:nil color:[UIColor blueColor]];
+        ECTextStyle *commentStyle = [ECTextStyle textStyleWithName:@"Comment" font:nil color:[UIColor greenColor]];
+        ECTextStyle *referenceStyle = [ECTextStyle textStyleWithName:@"Reference" font:nil color:[UIColor purpleColor]];
+        ECTextStyle *literalStyle = [ECTextStyle textStyleWithName:@"Literal" font:nil color:[UIColor redColor]];
+        ECTextStyle *declarationStyle = [ECTextStyle textStyleWithName:@"Declaration" font:nil color:[UIColor brownColor]];
+        ECTextStyle *preprocessingStyle = [ECTextStyle textStyleWithName:@"Preprocessing" font:nil color:[UIColor orangeColor]];
+        self.byteArrayDataSource.stylizeBlock = ^(ECCodeByteArrayDataSource *dataSource, NSMutableAttributedString *string, NSRange stringRange)
+        {
+            for (ECCodeToken *token in [unit tokensInRange:stringRange withCursors:YES])
+            {
+                switch (token.kind)
+                {
+                    case ECCodeTokenKindKeyword:
+                        [string addAttributes:keywordStyle.CTAttributes range:token.extent];
+                        break;
+                    case ECCodeTokenKindComment:
+                        [string addAttributes:commentStyle.CTAttributes range:token.extent];
+                        break;
+                    case ECCodeTokenKindLiteral:
+                        [string addAttributes:literalStyle.CTAttributes range:token.extent];
+                        break;
+                    default:
+                        if (token.cursor.kind >= ECCodeCursorKindFirstDecl && token.cursor.kind <= ECCodeCursorKindLastDecl)
+                            [string addAttributes:declarationStyle.CTAttributes range:token.extent];
+                        else if (token.cursor.kind >= ECCodeCursorKindFirstRef && token.cursor.kind <= ECCodeCursorKindLastRef)
+                            [string addAttributes:referenceStyle.CTAttributes range:token.extent];
+                        else if (token.cursor.kind >= ECCodeCursorKindFirstPreprocessing && token.cursor.kind <= ECCodeCursorKindLastPreprocessing)
+                            [string addAttributes:preprocessingStyle.CTAttributes range:token.extent];
+                        break;
+                }
+            }
+        };
     }
     return _byteArrayDataSource;
 }
@@ -62,39 +95,7 @@
     if (!_unit && self.byteArrayDataSource)
     {
         ECCodeIndex *index = [[ECCodeIndex alloc] init];
-        self.unit = [index unitForFile:self.path];
-//        ECTextStyle *keywordStyle = [ECTextStyle textStyleWithName:@"Keyword" font:nil color:[UIColor blueColor]];
-//        ECTextStyle *commentStyle = [ECTextStyle textStyleWithName:@"Comment" font:nil color:[UIColor greenColor]];
-//        ECTextStyle *referenceStyle = [ECTextStyle textStyleWithName:@"Reference" font:nil color:[UIColor purpleColor]];
-//        ECTextStyle *literalStyle = [ECTextStyle textStyleWithName:@"Literal" font:nil color:[UIColor redColor]];
-//        ECTextStyle *declarationStyle = [ECTextStyle textStyleWithName:@"Declaration" font:nil color:[UIColor brownColor]];
-//        ECTextStyle *preprocessingStyle = [ECTextStyle textStyleWithName:@"Preprocessing" font:nil color:[UIColor orangeColor]];
-//        self.byteArrayDataSource.stylizeBlock = ^(ECCodeByteArrayDataSource *dataSource, NSMutableAttributedString *string, NSRange stringRange)
-//        {
-//            for (ECCodeToken *token in [self.unit tokensInRange:stringRange withCursors:YES])
-//            {
-//                switch (token.kind)
-//                {
-//                    case ECCodeTokenKindKeyword:
-//                        [self.byteArrayDataSource addTextStyle:keywordStyle toStringRange:token.extent];
-//                        break;
-//                    case ECCodeTokenKindComment:
-//                        [self.byteArrayDataSource addTextStyle:commentStyle toStringRange:token.extent];
-//                        break;
-//                    case ECCodeTokenKindLiteral:
-//                        [self.byteArrayDataSource addTextStyle:literalStyle toStringRange:token.extent];
-//                        break;
-//                    default:
-//                        if (token.cursor.kind >= ECCodeCursorKindFirstDecl && token.cursor.kind <= ECCodeCursorKindLastDecl)
-//                            [self.byteArrayDataSource addTextStyle:declarationStyle toStringRange:token.extent];
-//                        else if (token.cursor.kind >= ECCodeCursorKindFirstRef && token.cursor.kind <= ECCodeCursorKindLastRef)
-//                            [self.byteArrayDataSource addTextStyle:referenceStyle toStringRange:token.extent];
-//                        else if (token.cursor.kind >= ECCodeCursorKindFirstPreprocessing && token.cursor.kind <= ECCodeCursorKindLastPreprocessing)
-//                            [self.byteArrayDataSource addTextStyle:preprocessingStyle toStringRange:token.extent];
-//                        break;
-//                }
-//            }
-//        };
+        _unit = [index unitForFile:[self absolutePath]];
     }
     return _unit;
 }
