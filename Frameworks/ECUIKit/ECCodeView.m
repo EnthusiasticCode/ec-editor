@@ -239,7 +239,6 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
         textRect.origin.x = -10;
     else if (CGRectGetMaxX(textRect) > parent.renderer.wrapWidth + 10)
         textRect.origin.x = parent.renderer.wrapWidth - textRect.size.width + 10;
-    
     // Render magnified image
     [parent.renderingQueue addOperationWithBlock:^(void) {
         UIGraphicsBeginImageContext(self.bounds.size);

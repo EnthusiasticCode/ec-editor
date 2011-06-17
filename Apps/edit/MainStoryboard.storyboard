@@ -87,16 +87,16 @@
                 <viewController storyboardIdentifier="File" title="File" id="33" customClass="FileController" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="34">
                         <rect key="frame" x="0.0" y="20" width="768" height="1004"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" id="49" customClass="ECCodeView">
                                 <rect key="frame" x="0.0" y="0.0" width="768" height="1004"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <subviews/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <color key="backgroundColor" red="1" green="0.0" blue="0.01085100634" alpha="1" colorSpace="calibratedRGB"/>
                             </view>
                         </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
                     <simulatedMetricsInferredSentinel key="simulatedStatusBarMetrics"/>
                     <simulatedMetricsInferredSentinel key="simulatedTopBarMetrics"/>
@@ -116,7 +116,7 @@
                 <viewController storyboardIdentifier="Editor" title="Editor" id="51" customClass="EditorController" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="52">
                         <rect key="frame" x="0.0" y="20" width="768" height="1004"/>
-                        <autoresizingMask key="autoresizingMask"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
@@ -155,7 +155,7 @@
                 <viewController storyboardIdentifier="Root" title="Root" id="78" customClass="RootController" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="79">
                         <rect key="frame" x="0.0" y="20" width="768" height="1004"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
@@ -174,7 +174,7 @@
                 <viewController storyboardIdentifier="Navbar" title="Navbar" id="82" customClass="NavbarController" sceneMemberID="viewController">
                     <view key="view" clipsSubviews="YES" contentMode="scaleToFill" id="83">
                         <rect key="frame" x="0.0" y="20" width="768" height="1004"/>
-                        <autoresizingMask key="autoresizingMask"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews/>
                         <color key="backgroundColor" red="0.2337981143" green="0.26680023629999999" blue="0.77040816329999995" alpha="1" colorSpace="calibratedRGB"/>
                     </view>

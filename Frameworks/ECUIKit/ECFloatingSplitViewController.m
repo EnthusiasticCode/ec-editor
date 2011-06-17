@@ -35,11 +35,9 @@ static void _init(ECFloatingSplitViewController *self);
 - (void)_layoutSubviewsWithAnimation:(BOOL)animated;
 - (void)_layoutSubviewsWithinFrame:(CGRect)frame;
 - (void)_addSidebarViewWithSidebarHidden:(BOOL)sidebarHidden;
-- (void)_setupSidebarViewAutoresizing;
 - (void)_removeSidebarView;
 - (CGRect)_sidebarFrameWithinFrame:(CGRect)frame sidebarHidden:(BOOL)sidebarHidden;
 - (void)_addMainViewWithSidebarHidden:(BOOL)sidebarHidden;
-- (void)_setupMainViewAutoresizing;
 - (void)_removeMainView;
 - (CGRect)_mainFrameWithinFrame:(CGRect)frame sidebarHidden:(BOOL)sidebarHidden;
 - (void)_addSwipeRecognizer;
@@ -162,12 +160,10 @@ static void _init(ECFloatingSplitViewController *self)
     if (!self.isViewLoaded || self.sidebarHidden)
     {
         _sidebarEdge = sidebarEdge;
-        [self _setupMainViewAutoresizing];
         return;
     }
     [self setSidebarHidden:YES animated:animated];
     _sidebarEdge = sidebarEdge;
-    [self _setupMainViewAutoresizing];
     [self setSidebarHidden:NO animated:animated];
 }
 
@@ -230,12 +226,10 @@ static void _init(ECFloatingSplitViewController *self)
     if (!self.isViewLoaded || self.sidebarHidden)
     {
         _sidebarFloating = sidebarFloating;
-        [self _setupMainViewAutoresizing];
         return;
     }
     [self setSidebarHidden:YES animated:animated];
     _sidebarFloating = sidebarFloating;
-    [self _setupMainViewAutoresizing];
     [self setSidebarHidden:NO animated:animated];
 }
 
@@ -261,7 +255,6 @@ static void _init(ECFloatingSplitViewController *self)
 {
     ECASSERT(_sidebarView == nil);
     _sidebarView = [[UIView alloc] initWithFrame:[self _sidebarFrameWithinFrame:self.view.bounds sidebarHidden:sidebarHidden]];
-    [self _setupSidebarViewAutoresizing];
     if (self.sidebarFloating)
     {
         _sidebarView.layer.cornerRadius = 5.0;
@@ -277,21 +270,6 @@ static void _init(ECFloatingSplitViewController *self)
         [_sidebarView addSubview:self.sidebarController.view];
         self.sidebarController.view.frame = _sidebarView.bounds;
         [self.sidebarController viewDidAppear:NO];
-    }
-}
-
-- (void)_setupSidebarViewAutoresizing
-{
-    switch (self.sidebarEdge)
-    {
-        case ECFloatingSplitViewControllerSidebarEdgeTop:
-        case ECFloatingSplitViewControllerSidebarEdgeBottom:
-            _sidebarView.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-            break;
-        case ECFloatingSplitViewControllerSidebarEdgeLeft:
-        case ECFloatingSplitViewControllerSidebarEdgeRight:
-            _sidebarView.autoresizingMask = UIViewAutoresizingFlexibleHeight;
-            break;
     }
 }
 
@@ -329,7 +307,6 @@ static void _init(ECFloatingSplitViewController *self)
 {
     ECASSERT(_mainView == nil);
     _mainView = [[UIView alloc] initWithFrame:[self _mainFrameWithinFrame:self.view.bounds sidebarHidden:sidebarHidden]];
-    [self _setupMainViewAutoresizing];
     [self.view addSubview:_mainView];
     [self.view sendSubviewToBack:_mainView];
     if (self.mainController)
@@ -338,25 +315,6 @@ static void _init(ECFloatingSplitViewController *self)
         [_mainView addSubview:self.mainController.view];
         self.mainController.view.frame = _mainView.bounds;
         [self.mainController viewDidAppear:NO];
-    }
-}
-
-- (void)_setupMainViewAutoresizing
-{
-    switch (self.sidebarEdge)
-    {
-        case ECFloatingSplitViewControllerSidebarEdgeTop:
-            _mainView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleBottomMargin;
-            break;
-        case ECFloatingSplitViewControllerSidebarEdgeBottom:
-            _mainView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleTopMargin;
-            break;
-        case ECFloatingSplitViewControllerSidebarEdgeLeft:
-            _mainView.autoresizingMask = UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleHeight;
-            break;
-        case ECFloatingSplitViewControllerSidebarEdgeRight:
-            _mainView.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleHeight;
-            break;
     }
 }
 
@@ -437,6 +395,7 @@ static void _init(ECFloatingSplitViewController *self)
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    self.view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     if (!self.sidebarLocked)
         [self _addSwipeRecognizer];
     [self _addSidebarViewWithSidebarHidden:self.sidebarHidden];
@@ -451,6 +410,11 @@ static void _init(ECFloatingSplitViewController *self)
     [self _removeSidebarView];
     [self _removeMainView];
     [super viewDidUnload];
+}
+
+- (void)viewWillLayoutSubviews
+{
+    [self _layoutSubviewsWithAnimation:NO];
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation
