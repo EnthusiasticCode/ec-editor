@@ -27,6 +27,7 @@
 @property (nonatomic, strong) ECCodeByteArrayDataSource *byteArrayDataSource;
 @property (nonatomic, strong) CompletionController *completionController;
 @property (nonatomic, strong) ECCodeUnit *unit;
+static NSRange intersectionOfRangeRelativeToRange(NSRange range, NSRange inRange);
 @end
 
 @implementation File
@@ -60,21 +61,21 @@
                 switch (token.kind)
                 {
                     case ECCodeTokenKindKeyword:
-                        [string addAttributes:keywordStyle.CTAttributes range:token.extent];
+                        [string addAttributes:keywordStyle.CTAttributes range:intersectionOfRangeRelativeToRange(token.extent, stringRange)];
                         break;
                     case ECCodeTokenKindComment:
-                        [string addAttributes:commentStyle.CTAttributes range:token.extent];
+                        [string addAttributes:commentStyle.CTAttributes range:intersectionOfRangeRelativeToRange(token.extent, stringRange)];
                         break;
                     case ECCodeTokenKindLiteral:
-                        [string addAttributes:literalStyle.CTAttributes range:token.extent];
+                        [string addAttributes:literalStyle.CTAttributes range:intersectionOfRangeRelativeToRange(token.extent, stringRange)];
                         break;
                     default:
                         if (token.cursor.kind >= ECCodeCursorKindFirstDecl && token.cursor.kind <= ECCodeCursorKindLastDecl)
-                            [string addAttributes:declarationStyle.CTAttributes range:token.extent];
+                            [string addAttributes:declarationStyle.CTAttributes range:intersectionOfRangeRelativeToRange(token.extent, stringRange)];
                         else if (token.cursor.kind >= ECCodeCursorKindFirstRef && token.cursor.kind <= ECCodeCursorKindLastRef)
-                            [string addAttributes:referenceStyle.CTAttributes range:token.extent];
+                            [string addAttributes:referenceStyle.CTAttributes range:intersectionOfRangeRelativeToRange(token.extent, stringRange)];
                         else if (token.cursor.kind >= ECCodeCursorKindFirstPreprocessing && token.cursor.kind <= ECCodeCursorKindLastPreprocessing)
-                            [string addAttributes:preprocessingStyle.CTAttributes range:token.extent];
+                            [string addAttributes:preprocessingStyle.CTAttributes range:intersectionOfRangeRelativeToRange(token.extent, stringRange)];
                         break;
                 }
             }
@@ -149,6 +150,15 @@
     self.completionController.results = trie;
     self.completionController.match = @"";
     return self.completionController;
+}
+
+#pragma mark - Private methods
+
+static NSRange intersectionOfRangeRelativeToRange(NSRange range, NSRange inRange)
+{
+    NSRange intersectionRange = NSIntersectionRange(range, inRange);
+    intersectionRange.location -= inRange.location;
+    return intersectionRange;
 }
 
 @end
