@@ -112,7 +112,7 @@
         Node *_rootNode = [NSEntityDescription insertNewObjectForEntityForName:@"Node" inManagedObjectContext:self._managedObjectContext];
         _rootNode.name = @"";
         _rootNode.type = NodeTypeFolder;
-        _rootNode.path = @"../";
+        _rootNode.path = @"../../";
         return _rootNode;
     }
 }

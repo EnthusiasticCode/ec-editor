@@ -25,16 +25,18 @@ NSString *const ClientNewFileKey = @"ClientNewFileKey";
 {
     if (currentProject == _currentProject)
         return;
-    [[NSNotificationCenter defaultCenter] postNotificationName:ClientCurrentProjectChangedNotification object:self userInfo:[NSDictionary dictionaryWithObjectsAndKeys:_currentProject, ClientOldProjectKey, currentProject, ClientNewProjectKey, nil]];
+    Project *oldProject = _currentProject;
     _currentProject = currentProject;
+    [[NSNotificationCenter defaultCenter] postNotificationName:ClientCurrentProjectChangedNotification object:self userInfo:[NSDictionary dictionaryWithObjectsAndKeys:oldProject, ClientOldProjectKey, currentProject, ClientNewProjectKey, nil]];
 }
 
 - (void)setCurrentFile:(File *)currentFile
 {
     if (currentFile == _currentFile)
         return;
-    [[NSNotificationCenter defaultCenter] postNotificationName:ClientCurrentFileChangedNotification object:self userInfo:[NSDictionary dictionaryWithObjectsAndKeys:_currentFile, ClientOldFileKey, currentFile, ClientNewFileKey, nil]];
+    File *oldFile = _currentFile;
     _currentFile = currentFile;
+    [[NSNotificationCenter defaultCenter] postNotificationName:ClientCurrentFileChangedNotification object:self userInfo:[NSDictionary dictionaryWithObjectsAndKeys:oldFile, ClientOldFileKey, currentFile, ClientNewFileKey, nil]];
 }
 
 + (Client *)sharedClient

@@ -26,6 +26,7 @@ typedef enum
 @property (nonatomic, strong) NSSet *nameWords;
 @property (nonatomic, strong) Node *parent;
 - (NSString *)absolutePath;
+- (NSInteger)depth;
 - (Node *)addNodeWithName:(NSString *)name type:(NodeType)type;
 @end
 

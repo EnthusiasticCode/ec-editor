@@ -33,7 +33,7 @@
         </userInfo>
     </entity>
     <entity name="Node" representedClassName="Node">
-        <attribute name="collapsed" attributeType="Boolean" defaultValueString="NO"/>
+        <attribute name="collapsed" attributeType="Boolean" defaultValueString="YES"/>
         <attribute name="name" attributeType="String"/>
         <attribute name="path" optional="YES" attributeType="String"/>
         <attribute name="tag" attributeType="Integer 32" defaultValueString="0"/>

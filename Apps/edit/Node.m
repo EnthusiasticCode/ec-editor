@@ -22,7 +22,19 @@
 
 - (NSString *)absolutePath
 {
-    return [[[[[self.managedObjectContext.persistentStoreCoordinator.persistentStores objectAtIndex:0] URL] URLByAppendingPathComponent:@".."] URLByAppendingPathComponent:self.path] URLByStandardizingPath].path;
+    return [[[[self.managedObjectContext.persistentStoreCoordinator.persistentStores objectAtIndex:0] URL] URLByAppendingPathComponent:self.path] URLByStandardizingPath].path;
+}
+
+- (NSInteger)depth
+{
+    NSInteger depth = -1;
+    Node *ancestor = self;
+    while (ancestor.parent)
+    {
+        depth++;
+        ancestor = ancestor.parent;
+    }
+    return depth;
 }
 
 - (Node *)addNodeWithName:(NSString *)name type:(NodeType)type
