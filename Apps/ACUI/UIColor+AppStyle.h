@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 
 
-@interface UIColor (StyleColors)
+@interface UIColor (AppStyle)
 
 + (UIColor *)styleBackgroundColor;
 + (UIColor *)styleBackgroundShadowColor;

@@ -10,15 +10,34 @@
 
 @implementation ACThemeView
 
-@synthesize borderColor, borderInsets;
+@synthesize backgroundInternalColor, borderColor, borderInsets, cornerRadius;
+
+- (id)initWithFrame:(CGRect)frame
+{
+    if ((self = [super initWithFrame:frame]))
+    {
+        // TODO contentMode redraw instead?
+        self.contentStretch = CGRectMake(0.5, 0.5, 0, 0);
+        cornerRadius = 3;
+    }
+    return self;
+}
 
 - (void)drawRect:(CGRect)rect
 {
     [self.backgroundColor setFill];
     UIRectFill(rect);
     
+    UIBezierPath *border = [UIBezierPath bezierPathWithRoundedRect:UIEdgeInsetsInsetRect(rect, borderInsets) cornerRadius:cornerRadius];
+    
+    if (backgroundInternalColor)
+    {
+        [backgroundInternalColor setFill];
+        [border fill];
+    }
+    
     [borderColor setStroke];
-    [[UIBezierPath bezierPathWithRoundedRect:UIEdgeInsetsInsetRect(rect, borderInsets) cornerRadius:5] stroke];
+    [border stroke];
 }
 
 @end

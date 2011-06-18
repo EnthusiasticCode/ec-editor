@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="1.0" toolsVersion="1864" systemVersion="10J869" targetRuntime="iOS.CocoaTouch.iPad" nextObjectID="187" propertyAccessControl="none" initialViewController="71">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="1.0" toolsVersion="1864" systemVersion="10J869" targetRuntime="iOS.CocoaTouch.iPad" nextObjectID="188" propertyAccessControl="none" initialViewController="71">
     <dependencies>
         <development defaultVersion="4200" identifier="xcode"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="865"/>
@@ -91,26 +91,4 @@
             <point key="canvasLocation" x="1684" y="-733"/>
         </scene>
     </scenes>
-    <classes>
-        <class className="ACNavigationController" superclassName="UIViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/ACNavigationController.h"/>
-            <relationships>
-                <relationship kind="outlet" name="buttonEdit" candidateClass="ECButton"/>
-                <relationship kind="outlet" name="buttonTools" candidateClass="ECButton"/>
-                <relationship kind="outlet" name="jumpBar" candidateClass="ECJumpBar"/>
-            </relationships>
-        </class>
-        <class className="ACProjectTableController" superclassName="UITableViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/ACProjectTableController.h"/>
-            <relationships/>
-        </class>
-        <class className="ECButton" superclassName="UIButton">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/ECButton.h"/>
-            <relationships/>
-        </class>
-        <class className="ECJumpBar" superclassName="UIView">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/ECJumpBar.h"/>
-            <relationships/>
-        </class>
-    </classes>
 </document>

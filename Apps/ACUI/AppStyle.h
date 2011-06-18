@@ -8,3 +8,4 @@
 
 #import "UIFont+AppStyle.h"
 #import "UIColor+AppStyle.h"
+#import "UIImage+AppStyle.h"

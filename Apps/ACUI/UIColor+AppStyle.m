@@ -9,43 +9,53 @@
 #import "UIColor+AppStyle.h"
 
 
-@implementation UIColor (StyleColors)
+@implementation UIColor (AppStyle)
+
+#define RETURN_CACHED_COLOR(nam,clr)  \
+        static UIColor *_##nam = nil; \
+        if (!_##nam) _##nam = clr;    \
+        return _##nam
 
 + (UIColor *)styleBackgroundColor
 {
-    return [UIColor colorWithWhite:0.90 alpha:1.0];
+    RETURN_CACHED_COLOR(styleBackgroundColor, 
+                        [UIColor colorWithWhite:0.90 alpha:1.0]);
 }
 
 + (UIColor *)styleBackgroundShadowColor
 {
-    return [UIColor whiteColor];
+    RETURN_CACHED_COLOR(styleBackgroundShadowColor, 
+                        [UIColor whiteColor]);
 }
 
 + (UIColor *)styleHighlightColor
 {
-    return [UIColor colorWithWhite:0.70 alpha:1.0];
+    RETURN_CACHED_COLOR(styleHighlightColor, 
+                        [UIColor colorWithWhite:0.70 alpha:1.0]);
 }
 
 + (UIColor *)styleAlternateBackgroundColor
 {
-//    return [UIColor colorWithRed:62.0/255.0 green:60.0/255.0 blue:60.0/255.0 alpha:1.0];
-    return [UIColor colorWithRed:204.0/255.0 green:204.0/255.0 blue:204.0/255.0 alpha:1.0];
+    RETURN_CACHED_COLOR(styleAlternateBackgroundColor, 
+                        [UIColor colorWithWhite:0.80 alpha:1.0]);
 }
 
 + (UIColor *)styleForegroundColor
 {
-    return [UIColor colorWithWhite:0.16 alpha:1.0];
+    RETURN_CACHED_COLOR(styleForegroundColor, 
+                        [UIColor colorWithWhite:0.16 alpha:1.0]);
 }
 
 + (UIColor *)styleForegroundShadowColor
 {
-//    return [UIColor colorWithRed:205.0/255.0 green:202.0/255.0 blue:200.0/255.0 alpha:0.3];
-    return [[UIColor whiteColor] colorWithAlphaComponent:0.3];
+    RETURN_CACHED_COLOR(styleForegroundShadowColor, 
+                        [UIColor whiteColor]);
 }
 
 + (UIColor *)styleThemeColorOne
 {
-    return [UIColor colorWithRed:98.0/255.0 green:157.0/255.0 blue:222.0/255.0 alpha:1.0];
+    RETURN_CACHED_COLOR(styleThemeColorOne, 
+                        [UIColor colorWithRed:98.0/255.0 green:157.0/255.0 blue:222.0/255.0 alpha:1.0]);
 }
 
 @end

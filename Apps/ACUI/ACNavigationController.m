@@ -43,7 +43,7 @@
     jumpBar.delegate = self;
     [jumpBar setFont:[UIFont styleFontWithSize:14]];
     [jumpBar setTextColor:[UIColor styleForegroundColor]];
-    [jumpBar setTextShadowColor:[UIColor styleBackgroundShadowColor]];
+    [jumpBar setTextShadowColor:[UIColor styleForegroundShadowColor]];
     [jumpBar setTextShadowOffset:CGSizeMake(0, 1)];
     
     [jumpBar setButtonColor:[UIColor styleBackgroundColor]];

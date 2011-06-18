@@ -10,8 +10,12 @@
 
 @interface ACThemeView : UIView
 
+@property (nonatomic, strong) UIColor *backgroundInternalColor;
+
 @property (nonatomic, strong) UIColor *borderColor;
 
 @property (nonatomic) UIEdgeInsets borderInsets;
+
+@property (nonatomic) CGFloat cornerRadius;
 
 @end

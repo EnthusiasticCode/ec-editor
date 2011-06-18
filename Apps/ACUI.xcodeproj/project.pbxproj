@@ -23,6 +23,8 @@
 		CD6973FD13A153B9005D68D9 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD6973FC13A153B9005D68D9 /* CoreText.framework */; };
 		CD6AB29C13ACF6EC00DA8A14 /* UIColor+AppStyle.m in Sources */ = {isa = PBXBuildFile; fileRef = CD6AB29913ACF6EC00DA8A14 /* UIColor+AppStyle.m */; };
 		CD6AB29D13ACF6EC00DA8A14 /* UIFont+AppStyle.m in Sources */ = {isa = PBXBuildFile; fileRef = CD6AB29B13ACF6EC00DA8A14 /* UIFont+AppStyle.m */; };
+		CD6AB2A113ACFDE700DA8A14 /* UIImage+AppStyle.m in Sources */ = {isa = PBXBuildFile; fileRef = CD6AB2A013ACFDE700DA8A14 /* UIImage+AppStyle.m */; };
+		CD6AB2A413ACFE2100DA8A14 /* UIImage+BlockDrawing.m in Sources */ = {isa = PBXBuildFile; fileRef = CD6AB2A313ACFE2100DA8A14 /* UIImage+BlockDrawing.m */; };
 		CD8D782A13ABE4D500A391F4 /* ACProjectTableController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD8D782913ABE4D500A391F4 /* ACProjectTableController.m */; };
 		CDABE3EE13ABF26B006B53AE /* ACProjectTableCell.m in Sources */ = {isa = PBXBuildFile; fileRef = CDABE3ED13ABF26B006B53AE /* ACProjectTableCell.m */; };
 		CDABE3F113ABF3C2006B53AE /* ACThemeView.m in Sources */ = {isa = PBXBuildFile; fileRef = CDABE3F013ABF3C2006B53AE /* ACThemeView.m */; };
@@ -60,6 +62,10 @@
 		CD6AB29A13ACF6EC00DA8A14 /* UIFont+AppStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIFont+AppStyle.h"; sourceTree = "<group>"; };
 		CD6AB29B13ACF6EC00DA8A14 /* UIFont+AppStyle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIFont+AppStyle.m"; sourceTree = "<group>"; };
 		CD6AB29E13ACF73D00DA8A14 /* AppStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppStyle.h; sourceTree = "<group>"; };
+		CD6AB29F13ACFDE700DA8A14 /* UIImage+AppStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+AppStyle.h"; sourceTree = "<group>"; };
+		CD6AB2A013ACFDE700DA8A14 /* UIImage+AppStyle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+AppStyle.m"; sourceTree = "<group>"; };
+		CD6AB2A213ACFE2100DA8A14 /* UIImage+BlockDrawing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+BlockDrawing.h"; sourceTree = "<group>"; };
+		CD6AB2A313ACFE2100DA8A14 /* UIImage+BlockDrawing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+BlockDrawing.m"; sourceTree = "<group>"; };
 		CD8D782813ABE4D500A391F4 /* ACProjectTableController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACProjectTableController.h; sourceTree = "<group>"; };
 		CD8D782913ABE4D500A391F4 /* ACProjectTableController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACProjectTableController.m; sourceTree = "<group>"; };
 		CDABE3EC13ABF26B006B53AE /* ACProjectTableCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACProjectTableCell.h; sourceTree = "<group>"; };
@@ -161,6 +167,8 @@
 		CD6973EF13A14FE6005D68D9 /* ECUIKit */ = {
 			isa = PBXGroup;
 			children = (
+				CD6AB2A213ACFE2100DA8A14 /* UIImage+BlockDrawing.h */,
+				CD6AB2A313ACFE2100DA8A14 /* UIImage+BlockDrawing.m */,
 				CDAD700013A7BBDC00C0B9B4 /* ECPopoverController.h */,
 				CDAD700113A7BBDC00C0B9B4 /* ECPopoverController.m */,
 				CDAD700213A7BBDC00C0B9B4 /* ECPopoverView.h */,
@@ -184,6 +192,8 @@
 				CD6AB29913ACF6EC00DA8A14 /* UIColor+AppStyle.m */,
 				CD6AB29A13ACF6EC00DA8A14 /* UIFont+AppStyle.h */,
 				CD6AB29B13ACF6EC00DA8A14 /* UIFont+AppStyle.m */,
+				CD6AB29F13ACFDE700DA8A14 /* UIImage+AppStyle.h */,
+				CD6AB2A013ACFDE700DA8A14 /* UIImage+AppStyle.m */,
 			);
 			name = Style;
 			sourceTree = "<group>";
@@ -284,6 +294,8 @@
 				CDABE3F113ABF3C2006B53AE /* ACThemeView.m in Sources */,
 				CD6AB29C13ACF6EC00DA8A14 /* UIColor+AppStyle.m in Sources */,
 				CD6AB29D13ACF6EC00DA8A14 /* UIFont+AppStyle.m in Sources */,
+				CD6AB2A113ACFDE700DA8A14 /* UIImage+AppStyle.m in Sources */,
+				CD6AB2A413ACFE2100DA8A14 /* UIImage+BlockDrawing.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
