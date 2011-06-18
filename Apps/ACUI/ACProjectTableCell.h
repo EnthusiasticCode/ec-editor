@@ -8,6 +8,9 @@
 
 #import <UIKit/UIKit.h>
 
-@interface ACProjectTableCell : UITableViewCell
+@interface ACProjectTableCell : UITableViewCell {
+@private
+//    UIView *additionalAccessoryView;
+}
 
 @end

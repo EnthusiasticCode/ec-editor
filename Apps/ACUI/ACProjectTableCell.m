@@ -60,11 +60,25 @@ static NSCache *imagesCache = nil;
         //
         self.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
         self.accessoryView = [[UIImageView alloc] initWithImage:[UIImage styleDisclosureImage]];
-//        UIView *v = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 32, 32)];
-//        v.backgroundColor = [UIColor redColor];
-//        self.accessoryView = v;
+        
+        //
+//        additionalAccessoryView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 32, 32)];
+//        additionalAccessoryView.backgroundColor = [UIColor redColor];
+//        [self addSubview:additionalAccessoryView];
     }
     return self;
+}
+
+- (void)layoutSubviews
+{
+    [super layoutSubviews];
+    
+    // Repositioning accessory view to account for background insets
+    CGPoint accessoryViewCenter = self.accessoryView.center;
+    accessoryViewCenter.x -= 5;
+    self.accessoryView.center = accessoryViewCenter;
+    
+//    additionalAccessoryView.center = CGPointMake(100, 10);
 }
 
 //- (void)setSelected:(BOOL)selected animated:(BOOL)animated

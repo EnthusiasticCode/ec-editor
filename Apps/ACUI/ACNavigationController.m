@@ -48,6 +48,8 @@
     
     [jumpBar setButtonColor:[UIColor styleBackgroundColor]];
     [jumpBar setButtonHighlightColor:[UIColor styleHighlightColor]];
+    
+    [jumpBar setSearchString:@"Projects"];
 }
 
 - (void)viewDidUnload
