@@ -56,6 +56,13 @@ static NSCache *imagesCache = nil;
             [imagesCache setObject:image forKey:[UIColor styleForegroundColor]];
         }
         self.imageView.image = image;
+        
+        //
+        self.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+        self.accessoryView = [[UIImageView alloc] initWithImage:[UIImage styleDisclosureImage]];
+//        UIView *v = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 32, 32)];
+//        v.backgroundColor = [UIColor redColor];
+//        self.accessoryView = v;
     }
     return self;
 }

@@ -112,4 +112,46 @@
     }];
 }
 
++ (UIImage *)styleDisclosureImage
+{
+    static UIImage *_styleDisclosureImage = nil;
+    if (!_styleDisclosureImage)
+    {
+        _styleDisclosureImage = [UIImage imageWithSize:(CGSize){ 9, 14 } block:^(CGContextRef ctx, CGRect rect) {
+            // Account for shadow
+            rect.size.height -= 1;
+            
+            // (x,y) is the tip of the arrow
+            CGFloat x = CGRectGetMaxX(rect) - 2;
+            CGFloat y = CGRectGetMidY(rect);
+            const CGFloat R = 4.5;
+            // Create 
+            CGMutablePathRef path = CGPathCreateMutable();
+            CGPathMoveToPoint(path, NULL, x-R, y-R);
+            CGPathAddLineToPoint(path, NULL, x, y);
+            CGPathAddLineToPoint(path, NULL, x-R, y+R);
+            // Set properties
+            CGContextSetLineCap(ctx, kCGLineCapSquare);
+            CGContextSetLineJoin(ctx, kCGLineJoinMiter);
+            CGContextSetLineWidth(ctx, 3);
+            // Draw shadow
+            CGContextSetStrokeColorWithColor(ctx, [UIColor styleForegroundShadowColor].CGColor);
+            CGContextSaveGState(ctx);
+            {
+                CGContextTranslateCTM(ctx, 0, 1);
+                CGContextAddPath(ctx, path);
+                CGContextStrokePath(ctx);
+            }
+            CGContextRestoreGState(ctx);
+            // Draw body
+            CGContextSetStrokeColorWithColor(ctx, [UIColor styleForegroundColor].CGColor);
+            CGContextAddPath(ctx, path);
+            CGContextStrokePath(ctx);
+            //
+            CGPathRelease(path);
+        }];
+    }
+    return _styleDisclosureImage;
+}
+
 @end

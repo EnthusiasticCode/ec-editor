@@ -11,5 +11,6 @@
 @interface UIImage (AppStyle)
 
 + (UIImage *)styleProjectImageWithSize:(CGSize)size labelColor:(UIColor *)labelColor;
++ (UIImage *)styleDisclosureImage;
 
 @end
