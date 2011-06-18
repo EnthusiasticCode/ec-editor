@@ -21,10 +21,11 @@
 		CD6973F913A15081005D68D9 /* ECButton.m in Sources */ = {isa = PBXBuildFile; fileRef = CD6973F813A15081005D68D9 /* ECButton.m */; };
 		CD6973FB13A153B3005D68D9 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD6973FA13A153B3005D68D9 /* QuartzCore.framework */; };
 		CD6973FD13A153B9005D68D9 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD6973FC13A153B9005D68D9 /* CoreText.framework */; };
+		CD6AB29C13ACF6EC00DA8A14 /* UIColor+AppStyle.m in Sources */ = {isa = PBXBuildFile; fileRef = CD6AB29913ACF6EC00DA8A14 /* UIColor+AppStyle.m */; };
+		CD6AB29D13ACF6EC00DA8A14 /* UIFont+AppStyle.m in Sources */ = {isa = PBXBuildFile; fileRef = CD6AB29B13ACF6EC00DA8A14 /* UIFont+AppStyle.m */; };
 		CD8D782A13ABE4D500A391F4 /* ACProjectTableController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD8D782913ABE4D500A391F4 /* ACProjectTableController.m */; };
 		CDABE3EE13ABF26B006B53AE /* ACProjectTableCell.m in Sources */ = {isa = PBXBuildFile; fileRef = CDABE3ED13ABF26B006B53AE /* ACProjectTableCell.m */; };
 		CDABE3F113ABF3C2006B53AE /* ACThemeView.m in Sources */ = {isa = PBXBuildFile; fileRef = CDABE3F013ABF3C2006B53AE /* ACThemeView.m */; };
-		CDABE3F413ABF730006B53AE /* UIColor+StyleColors.m in Sources */ = {isa = PBXBuildFile; fileRef = CDABE3F313ABF730006B53AE /* UIColor+StyleColors.m */; };
 		CDAD700413A7BBDC00C0B9B4 /* ECPopoverController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDAD700113A7BBDC00C0B9B4 /* ECPopoverController.m */; };
 		CDAD700513A7BBDC00C0B9B4 /* ECPopoverView.m in Sources */ = {isa = PBXBuildFile; fileRef = CDAD700313A7BBDC00C0B9B4 /* ECPopoverView.m */; };
 		CDD823F013A7BF770014CEE0 /* ACUITrialViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDD823EF13A7BF770014CEE0 /* ACUITrialViewController.m */; };
@@ -54,14 +55,17 @@
 		CD6973F813A15081005D68D9 /* ECButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECButton.m; sourceTree = "<group>"; };
 		CD6973FA13A153B3005D68D9 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		CD6973FC13A153B9005D68D9 /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
+		CD6AB29813ACF6EC00DA8A14 /* UIColor+AppStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+AppStyle.h"; sourceTree = "<group>"; };
+		CD6AB29913ACF6EC00DA8A14 /* UIColor+AppStyle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+AppStyle.m"; sourceTree = "<group>"; };
+		CD6AB29A13ACF6EC00DA8A14 /* UIFont+AppStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIFont+AppStyle.h"; sourceTree = "<group>"; };
+		CD6AB29B13ACF6EC00DA8A14 /* UIFont+AppStyle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIFont+AppStyle.m"; sourceTree = "<group>"; };
+		CD6AB29E13ACF73D00DA8A14 /* AppStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppStyle.h; sourceTree = "<group>"; };
 		CD8D782813ABE4D500A391F4 /* ACProjectTableController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACProjectTableController.h; sourceTree = "<group>"; };
 		CD8D782913ABE4D500A391F4 /* ACProjectTableController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACProjectTableController.m; sourceTree = "<group>"; };
 		CDABE3EC13ABF26B006B53AE /* ACProjectTableCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACProjectTableCell.h; sourceTree = "<group>"; };
 		CDABE3ED13ABF26B006B53AE /* ACProjectTableCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACProjectTableCell.m; sourceTree = "<group>"; };
 		CDABE3EF13ABF3C2006B53AE /* ACThemeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACThemeView.h; sourceTree = "<group>"; };
 		CDABE3F013ABF3C2006B53AE /* ACThemeView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACThemeView.m; sourceTree = "<group>"; };
-		CDABE3F213ABF730006B53AE /* UIColor+StyleColors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+StyleColors.h"; sourceTree = "<group>"; };
-		CDABE3F313ABF730006B53AE /* UIColor+StyleColors.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+StyleColors.m"; sourceTree = "<group>"; };
 		CDAD700013A7BBDC00C0B9B4 /* ECPopoverController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECPopoverController.h; sourceTree = "<group>"; };
 		CDAD700113A7BBDC00C0B9B4 /* ECPopoverController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECPopoverController.m; sourceTree = "<group>"; };
 		CDAD700213A7BBDC00C0B9B4 /* ECPopoverView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECPopoverView.h; sourceTree = "<group>"; };
@@ -147,6 +151,7 @@
 			children = (
 				CDABE3EF13ABF3C2006B53AE /* ACThemeView.h */,
 				CDABE3F013ABF3C2006B53AE /* ACThemeView.m */,
+				CD6AB29413ACF5E700DA8A14 /* Style */,
 				CD8D782C13ABE6BD00A391F4 /* Navigation */,
 				CD8D782D13ABE6C500A391F4 /* Projects */,
 			);
@@ -156,8 +161,6 @@
 		CD6973EF13A14FE6005D68D9 /* ECUIKit */ = {
 			isa = PBXGroup;
 			children = (
-				CDABE3F213ABF730006B53AE /* UIColor+StyleColors.h */,
-				CDABE3F313ABF730006B53AE /* UIColor+StyleColors.m */,
 				CDAD700013A7BBDC00C0B9B4 /* ECPopoverController.h */,
 				CDAD700113A7BBDC00C0B9B4 /* ECPopoverController.m */,
 				CDAD700213A7BBDC00C0B9B4 /* ECPopoverView.h */,
@@ -171,6 +174,18 @@
 			);
 			name = ECUIKit;
 			path = ../../Frameworks/ECUIKit;
+			sourceTree = "<group>";
+		};
+		CD6AB29413ACF5E700DA8A14 /* Style */ = {
+			isa = PBXGroup;
+			children = (
+				CD6AB29E13ACF73D00DA8A14 /* AppStyle.h */,
+				CD6AB29813ACF6EC00DA8A14 /* UIColor+AppStyle.h */,
+				CD6AB29913ACF6EC00DA8A14 /* UIColor+AppStyle.m */,
+				CD6AB29A13ACF6EC00DA8A14 /* UIFont+AppStyle.h */,
+				CD6AB29B13ACF6EC00DA8A14 /* UIFont+AppStyle.m */,
+			);
+			name = Style;
 			sourceTree = "<group>";
 		};
 		CD8D782C13ABE6BD00A391F4 /* Navigation */ = {
@@ -267,7 +282,8 @@
 				CD8D782A13ABE4D500A391F4 /* ACProjectTableController.m in Sources */,
 				CDABE3EE13ABF26B006B53AE /* ACProjectTableCell.m in Sources */,
 				CDABE3F113ABF3C2006B53AE /* ACThemeView.m in Sources */,
-				CDABE3F413ABF730006B53AE /* UIColor+StyleColors.m in Sources */,
+				CD6AB29C13ACF6EC00DA8A14 /* UIColor+AppStyle.m in Sources */,
+				CD6AB29D13ACF6EC00DA8A14 /* UIFont+AppStyle.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

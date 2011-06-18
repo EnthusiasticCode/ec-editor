@@ -9,7 +9,7 @@
 #import "ACProjectTableCell.h"
 #import "ACThemeView.h"
 
-#import "UIColor+StyleColors.h"
+#import "AppStyle.h"
 
 
 @implementation ACProjectTableCell

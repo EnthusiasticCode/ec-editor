@@ -7,7 +7,7 @@
 //
 
 #import "ACNavigationController.h"
-#import "UIColor+StyleColors.h"
+#import "AppStyle.h"
 
 
 @implementation ACNavigationController
@@ -41,7 +41,7 @@
     
     // Setup jumpbar
     jumpBar.delegate = self;
-    [jumpBar setFont:[UIFont fontWithName:@"Helvetica-Bold" size:14]];
+    [jumpBar setFont:[UIFont styleFontWithSize:14]];
     [jumpBar setTextColor:[UIColor styleForegroundColor]];
     [jumpBar setTextShadowColor:[UIColor styleBackgroundShadowColor]];
     [jumpBar setTextShadowOffset:CGSizeMake(0, 1)];
