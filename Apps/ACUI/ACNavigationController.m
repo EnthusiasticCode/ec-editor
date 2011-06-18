@@ -39,9 +39,12 @@
 {
     [super viewDidLoad];
     
-    // Left button
+    // Tools button
     [buttonTools setImage:[UIImage styleAddImage] forState:UIControlStateNormal];
     buttonTools.adjustsImageWhenHighlighted = NO;
+    
+    // Edit button
+    [buttonEdit setBackgroundColor:[UIColor styleThemeColorOne] forState:UIControlStateSelected];
     
     // Setup jumpbar
     jumpBar.delegate = self;
@@ -125,4 +128,25 @@
     return topViewController;
 }
 
+#pragma mark - Bar Methods
+
+- (void)setEditing:(BOOL)editing animated:(BOOL)animated
+{
+    [super setEditing:editing animated:animated];
+    buttonEdit.selected = editing;
+    
+    [[self.childViewControllers lastObject] setEditing:editing animated:animated];
+}
+
+- (IBAction)toggleTools:(id)sender
+{
+//    if (!popoverController)
+//        popoverController = [ECPopoverController new];
+}
+
+- (IBAction)toggleEditing:(id)sender
+{
+    BOOL editing = !self.isEditing;
+    [self setEditing:editing animated:YES];
+}
 @end

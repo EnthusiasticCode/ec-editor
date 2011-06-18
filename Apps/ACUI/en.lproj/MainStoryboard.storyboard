@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="1.0" toolsVersion="1864" systemVersion="10J869" targetRuntime="iOS.CocoaTouch.iPad" nextObjectID="188" propertyAccessControl="none" initialViewController="71">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="1.0" toolsVersion="1864" systemVersion="10J869" targetRuntime="iOS.CocoaTouch.iPad" nextObjectID="190" propertyAccessControl="none" initialViewController="71">
     <dependencies>
         <development defaultVersion="4200" identifier="xcode"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="865"/>
@@ -27,6 +27,9 @@
                                     <color key="titleColor" white="0.16" alpha="1" colorSpace="calibratedWhite"/>
                                     <color key="titleShadowColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
+                                <connections>
+                                    <action selector="toggleTools:" destination="71" eventType="touchUpInside" id="189"/>
+                                </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="134" customClass="ECButton">
                                 <rect key="frame" x="686" y="7" width="75" height="30"/>
@@ -42,6 +45,9 @@
                                     <color key="titleColor" white="0.16" alpha="1" colorSpace="calibratedWhite"/>
                                     <color key="titleShadowColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
+                                <connections>
+                                    <action selector="toggleEditing:" destination="71" eventType="touchUpInside" id="188"/>
+                                </connections>
                             </button>
                             <view contentMode="scaleToFill" id="133" customClass="ECJumpBar">
                                 <rect key="frame" x="89" y="7" width="590" height="30"/>

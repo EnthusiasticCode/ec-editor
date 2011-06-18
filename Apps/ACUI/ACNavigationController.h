@@ -29,4 +29,9 @@
 - (UIViewController *)popViewControllerAnimated:(BOOL)animated;
 //- (NSArray *)popToViewController:(UIViewController *)viewController animated:(BOOL)animated;
 
+#pragma mark Bar Methods
+
+- (IBAction)toggleTools:(id)sender;
+- (IBAction)toggleEditing:(id)sender;
+
 @end
