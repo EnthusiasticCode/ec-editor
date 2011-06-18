@@ -10,6 +10,7 @@
 
 @interface ACProjectTableCell : UITableViewCell {
 @private
+    BOOL editingInternal;
 //    UIView *additionalAccessoryView;
 }
 

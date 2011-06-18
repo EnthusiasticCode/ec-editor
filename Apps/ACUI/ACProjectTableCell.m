@@ -15,6 +15,11 @@ static NSCache *imagesCache = nil;
 
 @implementation ACProjectTableCell
 
+- (BOOL)isEditing
+{
+    return editingInternal;
+}
+
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
     if ((self = [super initWithStyle:style reuseIdentifier:reuseIdentifier]))
@@ -35,8 +40,7 @@ static NSCache *imagesCache = nil;
         self.selectedBackgroundView = selectedThemeView;
         
         //
-        self.indentationLevel = 1;
-        self.indentationWidth = 5;
+        self.textLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
 
         // TODO why this make the textlabel background disapear?
         self.textLabel.backgroundColor = [UIColor blueColor];
@@ -56,36 +60,77 @@ static NSCache *imagesCache = nil;
             [imagesCache setObject:image forKey:[UIColor styleForegroundColor]];
         }
         self.imageView.image = image;
+        [self.imageView sizeToFit];
         
         //
         self.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
         self.accessoryView = [[UIImageView alloc] initWithImage:[UIImage styleDisclosureImage]];
+        [self addSubview:self.accessoryView];
         
         //
 //        additionalAccessoryView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 32, 32)];
 //        additionalAccessoryView.backgroundColor = [UIColor redColor];
 //        [self addSubview:additionalAccessoryView];
+        
+        // Editing
+
     }
     return self;
 }
 
 - (void)layoutSubviews
 {
-    [super layoutSubviews];
+    CGRect bounds = self.bounds;
+    CGFloat middleY = CGRectGetMidY(bounds);
     
-    // Repositioning accessory view to account for background insets
-    CGPoint accessoryViewCenter = self.accessoryView.center;
-    accessoryViewCenter.x -= 14;
-    self.accessoryView.center = accessoryViewCenter;
+    //
+    CGFloat imageCenter = editingInternal ? 33 : 30;
+    CGFloat textPosition = 60;
+    CGFloat accessoryCenter = editingInternal ? bounds.size.width + 20.5 : bounds.size.width - 30.5;
     
-//    additionalAccessoryView.center = CGPointMake(100, 10);
+    //
+    self.backgroundView.frame = bounds;
+    self.selectedBackgroundView.frame = bounds;
+    
+    //
+    self.imageView.center = CGPointMake(imageCenter, middleY);
+    
+    //
+    self.textLabel.frame = CGRectMake(textPosition, 0, bounds.size.width - 120, bounds.size.height);
+    
+    // 
+    self.accessoryView.center = CGPointMake(accessoryCenter, middleY - .5);
 }
 
-//- (void)setSelected:(BOOL)selected animated:(BOOL)animated
-//{
-//    [super setSelected:selected animated:animated];
-//
-//    // Configure the view for the selected state
-//}
+- (void)setEditing:(BOOL)editing animated:(BOOL)animated
+{
+    editingInternal = editing;
+    
+    if (!editing)
+    {
+        [self addSubview:self.accessoryView];
+        [self.editingAccessoryView removeFromSuperview];
+    }
+    void (^finalizeEditingIn)() = ^() {
+        [self.accessoryView removeFromSuperview];
+        [self addSubview:self.editingAccessoryView];
+    };
+    
+    if (animated)
+    {
+        [UIView animateWithDuration:0.10 animations:^(){
+            [self layoutSubviews];
+        } completion:^(BOOL finished) {
+            if (editing) 
+                finalizeEditingIn();
+        }];
+    }
+    else
+    {
+        [self layoutSubviews];
+        if (editing)
+            finalizeEditingIn();
+    }
+}
 
 @end

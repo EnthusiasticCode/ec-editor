@@ -62,9 +62,6 @@
 /// The color of borders.
 @property (nonatomic, retain) UIColor *borderColor UI_APPEARANCE_SELECTOR;
 
-/// Width of borders.
-@property (nonatomic) CGFloat borderWidth UI_APPEARANCE_SELECTOR;
-
 /// Insets of texts in the receiver.
 @property (nonatomic) UIEdgeInsets textInsets UI_APPEARANCE_SELECTOR;
 

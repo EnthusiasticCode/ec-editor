@@ -48,9 +48,7 @@
 @synthesize buttonColor;
 @synthesize buttonHighlightColor;
 @synthesize borderColor;
-@synthesize borderWidth;
 @synthesize textInsets;
-//@synthesize controlMargin;
 
 - (void)setDelegate:(id<ECJumpBarDelegate>)aDelegate
 {
@@ -135,14 +133,6 @@
 //        button.borderColor = borderColor;
 }
 
-- (void)setBorderWidth:(CGFloat)width
-{
-    borderWidth = width;
-    self.layer.borderWidth = width;
-    for (ECButton *button in controlsStack)
-        button.borderWidth = borderWidth;
-}
-
 - (void)setSearchString:(NSString *)aString
 {
     searchField.text = aString;
@@ -185,7 +175,7 @@ static void init(ECJumpBar *self)
 //    self.buttonHighlightColor = [UIColor colorWithRed:93.0/255.0 green:94.0/255.0 blue:94.0/255.0 alpha:1.0];
     self.cornerRadius = 3;
     self.borderColor = [UIColor colorWithWhite:0.16 alpha:1.0];
-    self.borderWidth = 1;
+    self.layer.borderWidth = 1;
     //
     [self addSubview:self->searchField];
     //

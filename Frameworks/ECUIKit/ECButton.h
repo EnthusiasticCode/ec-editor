@@ -10,8 +10,6 @@
 
 @interface ECButton : UIButton <UIAppearanceContainer>
 
-@property (nonatomic) CGFloat borderWidth;
-
 @property (nonatomic) CGFloat cornerRadius UI_APPEARANCE_SELECTOR;
 
 @property (nonatomic) CGFloat leftArrowSize;

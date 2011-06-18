@@ -17,10 +17,9 @@
     CGColorRef *borderColors;
 }
 
-@property (nonatomic) CGPathRef buttonPath;
-- (void)setButtonPath:(CGPathRef)buttonPath animated:(BOOL)animated;
+@property (nonatomic) CGMutablePathRef buttonPath;
 
-- (void)updateLayerPropertiesForCurrentState;
+- (void)updateButtonPath;
 
 @end
 
@@ -54,18 +53,16 @@ static NSUInteger stateToIndex(UIControlState state)
     return index;
 }
 
-static CGPathRef createButtonShapePath(CGRect rect, CGFloat radius, CGFloat leftArrow, CGFloat rightArrow) 
+static void createButtonShapePath(CGMutablePathRef path, CGRect rect, CGFloat radius, CGFloat leftArrow, CGFloat rightArrow) 
 {
     rect = CGRectInset(rect, 0.5, 0.5);
     
     // No arrows rounded rect result
     if (leftArrow == 0 && rightArrow == 0)
     {
-        CGPathRef path = CGPathRetain([UIBezierPath bezierPathWithRoundedRect:rect cornerRadius:radius].CGPath);
-        return path;
+        CGPathAddPath(path, NULL, [UIBezierPath bezierPathWithRoundedRect:rect cornerRadius:radius].CGPath);
+        return;
     }
-    
-    CGMutablePathRef path = CGPathCreateMutable();
     
     CGRect innerRect = CGRectInset(rect, radius, radius);
     
@@ -144,44 +141,12 @@ static CGPathRef createButtonShapePath(CGRect rect, CGFloat radius, CGFloat left
     }
     
     CGPathCloseSubpath(path);
-    
-    return path;
 }
 
 #pragma mark - Properties
 
 @synthesize cornerRadius, leftArrowSize, rightArrowSize;
-
-- (CGPathRef)buttonPath
-{
-    return [(CAShapeLayer *)self.layer path];
-}
-
-- (void)setButtonPath:(CGPathRef)buttonPath
-{
-    [self setButtonPath:buttonPath animated:NO];
-}
-
-- (void)setButtonPath:(CGPathRef)buttonPath animated:(BOOL)animated
-{
-    CAShapeLayer *layer = (CAShapeLayer *)self.layer;
-    if (animated) 
-    {
-        CABasicAnimation *animation = [CABasicAnimation animationWithKeyPath:@"path"];
-        animation.fromValue = objc_unretainedObject(layer.path);
-        animation.toValue = objc_unretainedObject(buttonPath);
-        // TODO this time should be equal to external animation time
-        animation.duration = 0.10;
-        animation.valueFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
-        [layer addAnimation:animation forKey:@"path"];
-    }
-    [layer setPath:buttonPath];
-}
-
-- (CGFloat)borderWidth
-{
-    return [(CAShapeLayer *)self.layer lineWidth];
-}
+@synthesize buttonPath;
 
 - (void)setBorderWidth:(CGFloat)borderWidth
 {
@@ -193,9 +158,7 @@ static CGPathRef createButtonShapePath(CGRect rect, CGFloat radius, CGFloat left
     if (radius != cornerRadius) 
     {
         cornerRadius = radius;
-        CGPathRef path = createButtonShapePath(self.bounds, cornerRadius, leftArrowSize, rightArrowSize);
-        self.buttonPath = path;
-        CGPathRelease(path);
+        [self updateButtonPath];
     }
 }
 
@@ -204,9 +167,7 @@ static CGPathRef createButtonShapePath(CGRect rect, CGFloat radius, CGFloat left
     if (size != leftArrowSize) 
     {
         leftArrowSize = size;
-        CGPathRef path = createButtonShapePath(self.bounds, cornerRadius, leftArrowSize, rightArrowSize);
-        self.buttonPath = path;
-        CGPathRelease(path);
+        [self updateButtonPath];
     }
 }
 
@@ -215,54 +176,50 @@ static CGPathRef createButtonShapePath(CGRect rect, CGFloat radius, CGFloat left
     if (size != rightArrowSize) 
     {
         rightArrowSize = size;
-        CGPathRef path = createButtonShapePath(self.bounds, cornerRadius, leftArrowSize, rightArrowSize);
-        self.buttonPath = path;
-        CGPathRelease(path);
+        [self updateButtonPath];
     }
 }
 
 - (void)setHighlighted:(BOOL)highlighted
 {
     [super setHighlighted:highlighted];
-    [self updateLayerPropertiesForCurrentState];
+    [self setNeedsDisplay];
 }
 
 - (void)setSelected:(BOOL)selected
 {
     [super setSelected:selected];
-    [self updateLayerPropertiesForCurrentState];
+    [self setNeedsDisplay];
 }
 
 - (void)setEnabled:(BOOL)enabled
 {
     [super setEnabled:enabled];
-    [self updateLayerPropertiesForCurrentState];
+    [self setNeedsDisplay];
 }
 
-- (void)setFrame:(CGRect)frame
-{
-    [super setFrame:frame];
-    
-    CGPathRef path = createButtonShapePath(self.bounds, self->cornerRadius, self->leftArrowSize, self->rightArrowSize);
-    [self setButtonPath:path animated:YES];
-    CGPathRelease(path);
-}
-
-- (void)setBounds:(CGRect)bounds
-{
-    [super setBounds:bounds];
-    
-    CGPathRef path = createButtonShapePath(self.bounds, self->cornerRadius, self->leftArrowSize, self->rightArrowSize);
-    [self setButtonPath:path animated:YES];
-    CGPathRelease(path);
-}
+//- (void)setFrame:(CGRect)frame
+//{
+//    [super setFrame:frame];
+//    
+//    CGPathRef path = createButtonShapePath(self.bounds, self->cornerRadius, self->leftArrowSize, self->rightArrowSize);
+//    [self setButtonPath:path animated:YES];
+//    CGPathRelease(path);
+//}
+//
+//- (void)setBounds:(CGRect)bounds
+//{
+//    [super setBounds:bounds];
+//    
+//    CGPathRef path = createButtonShapePath(self.bounds, self->cornerRadius, self->leftArrowSize, self->rightArrowSize);
+//    [self setButtonPath:path animated:YES];
+//    CGPathRelease(path);
+//}
 
 #pragma mark - UIControl Methods
 
 static void preinit(ECButton *self)
 {
-    CAShapeLayer *layer = (CAShapeLayer *)self.layer;
-
     // Common properties
     self->cornerRadius = 3;
     self->leftArrowSize = 0;
@@ -271,7 +228,7 @@ static void preinit(ECButton *self)
     
     // Background colors
     self->backgroundColors = (CGColorRef *)malloc(sizeof(CGColorRef) * 6);
-    self->backgroundColors[STATE_NORMAL_IDX] = layer.backgroundColor;
+    self->backgroundColors[STATE_NORMAL_IDX] = CGColorCreateCopy([UIColor colorWithWhite:0.9 alpha:1.0].CGColor);
     self->backgroundColors[STATE_HIGHLIGHTED_IDX] = CGColorCreateCopy([UIColor colorWithWhite:0.7 alpha:1.0].CGColor);
     self->backgroundColors[STATE_DISABLED_IDX] = NULL;
     self->backgroundColors[STATE_SELECTED_IDX] = CGColorCreateCopy([UIColor colorWithWhite:0.7 alpha:1.0].CGColor);
@@ -288,12 +245,18 @@ static void preinit(ECButton *self)
     self->borderColors[STATE_RESERVED_IDX] = NULL;
 }
 
+static void init(ECButton *self)
+{
+    self.contentStretch = CGRectMake(0.5, 0.5, 0, 0);
+    [self updateButtonPath];
+}
+
 - (id)initWithFrame:(CGRect)frame
 {
     preinit(self);
     if ((self = [super initWithFrame:frame]))
     {
-        [self updateLayerPropertiesForCurrentState];
+        init(self);
     }
     return self;
 }
@@ -303,20 +266,17 @@ static void preinit(ECButton *self)
     preinit(self);
     if ((self = [super initWithCoder:aDecoder]))
     {
-        [self updateLayerPropertiesForCurrentState];
+        init(self);
     }
     return self;
 }
 
 - (void)dealloc
 {
+    if (buttonPath)
+        CGPathRelease(buttonPath);
     free(backgroundColors);
     free(borderColors);
-}
-
-+ (Class)layerClass
-{
-    return [CAShapeLayer class];
 }
 
 - (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event
@@ -332,6 +292,21 @@ static void preinit(ECButton *self)
         return nil;
     }
     return [super hitTest:point withEvent:event];
+}
+
+- (void)drawRect:(CGRect)rect
+{
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    
+    NSUInteger stateIndex = stateToIndex(self.state);
+    CGContextSetFillColorWithColor(context, backgroundColors[stateIndex]);
+    CGContextSetStrokeColorWithColor(context, borderColors[stateIndex]);
+    
+    CGContextAddPath(context, buttonPath);
+    CGContextFillPath(context);
+    
+    CGContextAddPath(context, buttonPath);
+    CGContextStrokePath(context);
 }
 
 #pragma mark - Public methods
@@ -372,12 +347,13 @@ static void preinit(ECButton *self)
 
 #pragma mark - Private methods
 
-- (void)updateLayerPropertiesForCurrentState
+- (void)updateButtonPath
 {
-    CAShapeLayer *layer = (CAShapeLayer *)self.layer;
-    NSUInteger stateIndex = stateToIndex(self.state);
-    layer.fillColor = backgroundColors[stateIndex];
-    layer.strokeColor = borderColors[stateIndex];
+    if (buttonPath)
+        CGPathRelease(buttonPath);
+    
+    buttonPath = CGPathCreateMutable();
+    createButtonShapePath(buttonPath, self.bounds, cornerRadius, leftArrowSize, rightArrowSize);
 }
 
 @end
