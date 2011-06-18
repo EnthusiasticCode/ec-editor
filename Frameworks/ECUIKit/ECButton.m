@@ -53,17 +53,18 @@ static NSUInteger stateToIndex(UIControlState state)
     return index;
 }
 
-static void createButtonShapePath(CGMutablePathRef path, CGRect rect, CGFloat radius, CGFloat leftArrow, CGFloat rightArrow) 
+static void createButtonShapePath(CGMutablePathRef path, CGRect rect, CGFloat radius, UIRectCorner corners, CGFloat leftArrow, CGFloat rightArrow) 
 {
     rect = CGRectInset(rect, 0.5, 0.5);
     
     // No arrows rounded rect result
     if (leftArrow == 0 && rightArrow == 0)
     {
-        CGPathAddPath(path, NULL, [UIBezierPath bezierPathWithRoundedRect:rect cornerRadius:radius].CGPath);
+        CGPathAddPath(path, NULL, [UIBezierPath bezierPathWithRoundedRect:rect byRoundingCorners:corners cornerRadii:(CGSize){ radius, radius }].CGPath);
         return;
     }
     
+    // TODO account for corners to round
     CGRect innerRect = CGRectInset(rect, radius, radius);
     
     CGFloat outside_right = rect.origin.x + rect.size.width;
@@ -145,7 +146,7 @@ static void createButtonShapePath(CGMutablePathRef path, CGRect rect, CGFloat ra
 
 #pragma mark - Properties
 
-@synthesize cornerRadius, leftArrowSize, rightArrowSize;
+@synthesize cornerRadius, cornersToRound, leftArrowSize, rightArrowSize;
 @synthesize buttonPath;
 
 - (void)setBorderWidth:(CGFloat)borderWidth
@@ -222,6 +223,7 @@ static void preinit(ECButton *self)
 {
     // Common properties
     self->cornerRadius = 3;
+    self->cornersToRound = UIRectCornerAllCorners;
     self->leftArrowSize = 0;
     self->rightArrowSize = 0;
     self.borderWidth = 1;
@@ -353,7 +355,7 @@ static void init(ECButton *self)
         CGPathRelease(buttonPath);
     
     buttonPath = CGPathCreateMutable();
-    createButtonShapePath(buttonPath, self.bounds, cornerRadius, leftArrowSize, rightArrowSize);
+    createButtonShapePath(buttonPath, self.bounds, cornerRadius, cornersToRound, leftArrowSize, rightArrowSize);
 }
 
 @end

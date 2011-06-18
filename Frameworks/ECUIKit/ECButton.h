@@ -12,8 +12,10 @@
 
 @property (nonatomic) CGFloat cornerRadius UI_APPEARANCE_SELECTOR;
 
-@property (nonatomic) CGFloat leftArrowSize;
-@property (nonatomic) CGFloat rightArrowSize;
+@property (nonatomic) UIRectCorner cornersToRound UI_APPEARANCE_SELECTOR;
+
+@property (nonatomic) CGFloat leftArrowSize UI_APPEARANCE_SELECTOR;
+@property (nonatomic) CGFloat rightArrowSize UI_APPEARANCE_SELECTOR;
 
 - (void)setBackgroundColor:(UIColor *)color forState:(UIControlState)state;
 - (UIColor *)backgroundColorForState:(UIControlState)state;
