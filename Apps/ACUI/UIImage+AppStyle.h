@@ -12,5 +12,6 @@
 
 + (UIImage *)styleProjectImageWithSize:(CGSize)size labelColor:(UIColor *)labelColor;
 + (UIImage *)styleDisclosureImage;
++ (UIImage *)styleAddImage;
 
 @end

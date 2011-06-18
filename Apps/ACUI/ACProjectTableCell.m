@@ -75,7 +75,7 @@ static NSCache *imagesCache = nil;
     
     // Repositioning accessory view to account for background insets
     CGPoint accessoryViewCenter = self.accessoryView.center;
-    accessoryViewCenter.x -= 5;
+    accessoryViewCenter.x -= 14;
     self.accessoryView.center = accessoryViewCenter;
     
 //    additionalAccessoryView.center = CGPointMake(100, 10);

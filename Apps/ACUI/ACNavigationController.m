@@ -39,6 +39,10 @@
 {
     [super viewDidLoad];
     
+    // Left button
+    [buttonTools setImage:[UIImage styleAddImage] forState:UIControlStateNormal];
+    buttonTools.adjustsImageWhenHighlighted = NO;
+    
     // Setup jumpbar
     jumpBar.delegate = self;
     [jumpBar setFont:[UIFont styleFontWithSize:14]];

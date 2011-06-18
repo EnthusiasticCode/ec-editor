@@ -154,4 +154,47 @@
     return _styleDisclosureImage;
 }
 
++ (UIImage *)styleAddImage
+{
+    static UIImage *_styleAddImage = nil;
+    if (!_styleAddImage)
+    {
+        _styleAddImage = [UIImage imageWithSize:(CGSize){ 14, 15 } block:^(CGContextRef ctx, CGRect rect) {
+            // Accounting for shadow
+            rect.size.height -= 1;
+            
+            CGMutablePathRef path = CGPathCreateMutable();
+            
+            CGFloat centerX = CGRectGetMidX(rect);
+            CGFloat centerY = CGRectGetMidY(rect);
+            
+            CGPathMoveToPoint(path, NULL, rect.origin.x, centerY);
+            CGPathAddLineToPoint(path, NULL, CGRectGetMaxX(rect), centerY);
+            
+            CGPathMoveToPoint(path, NULL, centerX, rect.origin.y);
+            CGPathAddLineToPoint(path, NULL, centerX, CGRectGetMaxY(rect));
+            
+            CGContextSetLineCap(ctx, kCGLineCapButt);
+            CGContextSetLineJoin(ctx, kCGLineJoinMiter);
+            CGContextSetLineWidth(ctx, 4);
+            
+            CGContextSetStrokeColorWithColor(ctx, [UIColor styleForegroundShadowColor].CGColor);
+            CGContextSaveGState(ctx);
+            {
+                CGContextTranslateCTM(ctx, 0, 1);
+                CGContextAddPath(ctx, path);
+                CGContextStrokePath(ctx);
+            }
+            CGContextRestoreGState(ctx);
+            
+            CGContextSetStrokeColorWithColor(ctx, [UIColor styleForegroundColor].CGColor);
+            CGContextAddPath(ctx, path);
+            CGContextStrokePath(ctx);
+            
+            CGPathRelease(path);
+        }];
+    }
+    return _styleAddImage;
+}
+
 @end
