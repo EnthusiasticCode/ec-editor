@@ -8,12 +8,21 @@
 
 #import "ACProjectTableCell.h"
 #import "ACThemeView.h"
-
 #import "AppStyle.h"
 
 static NSCache *imagesCache = nil;
 
+
+@interface ACProjectTableCell () {
+@private
+    BOOL editingInternal;
+}
+@end
+
+
 @implementation ACProjectTableCell
+
+@synthesize deleteButton;
 
 - (BOOL)isEditing
 {
@@ -68,18 +77,25 @@ static NSCache *imagesCache = nil;
         [self addSubview:self.accessoryView];
         
         //
-//        additionalAccessoryView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 32, 32)];
-//        additionalAccessoryView.backgroundColor = [UIColor redColor];
-//        [self addSubview:additionalAccessoryView];
+        self.showsReorderControl = YES;
         
-        // Editing
-
+        //
+        deleteButton = [ECButton new];
+        deleteButton.cornersToRound = UIRectCornerTopRight | UIRectCornerBottomRight;
+        deleteButton.titleLabel.font = [UIFont styleFontWithSize:14];
+        deleteButton.titleLabel.shadowOffset = CGSizeMake(0, 1);
+        [deleteButton setTitleColor:[UIColor styleForegroundColor] forState:UIControlStateNormal];
+        [deleteButton setTitleShadowColor:[UIColor styleForegroundShadowColor] forState:UIControlStateNormal];
+//        [deleteButton setBackgroundColor:[UIColor styleDeleteColor] forState:UIControlStateNormal];
+        [deleteButton setTitle:@"prova" forState:UIControlStateNormal];
     }
     return self;
 }
 
 - (void)layoutSubviews
 {
+//    [super layoutSubviews];
+    
     CGRect bounds = self.bounds;
     CGFloat middleY = CGRectGetMidY(bounds);
     
@@ -100,20 +116,30 @@ static NSCache *imagesCache = nil;
     
     // 
     self.accessoryView.center = CGPointMake(accessoryCenter, middleY - .5);
+    
+    // 
+    deleteButton.frame = CGRectMake(bounds.size.width - 82, 4, 82 - 7, bounds.size.height - 8);
+    
+//    NSLog(@"-");
+//    for (UIView *view in self.subviews) {
+//        NSLog(@"%@", [view class]);
+//    }
 }
 
 - (void)setEditing:(BOOL)editing animated:(BOOL)animated
 {
+//    [super setEditing:editing animated:NO];
+
     editingInternal = editing;
     
     if (!editing)
     {
         [self addSubview:self.accessoryView];
-        [self.editingAccessoryView removeFromSuperview];
+//        [deleteButton removeFromSuperview];
     }
     void (^finalizeEditingIn)() = ^() {
         [self.accessoryView removeFromSuperview];
-        [self addSubview:self.editingAccessoryView];
+//        [self addSubview:deleteButton];
     };
     
     if (animated)
@@ -127,7 +153,7 @@ static NSCache *imagesCache = nil;
     }
     else
     {
-        [self layoutSubviews];
+        [self setNeedsLayout];
         if (editing)
             finalizeEditingIn();
     }

@@ -18,5 +18,6 @@
 + (UIColor *)styleForegroundColor;
 + (UIColor *)styleForegroundShadowColor;
 + (UIColor *)styleThemeColorOne;
++ (UIColor *)styleDeleteColor;
 
 @end

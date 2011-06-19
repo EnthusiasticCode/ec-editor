@@ -7,11 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "ECButton.h"
 
-@interface ACProjectTableCell : UITableViewCell {
-@private
-    BOOL editingInternal;
-//    UIView *additionalAccessoryView;
-}
+@interface ACProjectTableCell : UITableViewCell
+
+@property (nonatomic, readonly, strong) ECButton *deleteButton;
 
 @end

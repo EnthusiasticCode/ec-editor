@@ -58,4 +58,10 @@
                         [UIColor colorWithRed:98.0/255.0 green:157.0/255.0 blue:222.0/255.0 alpha:1.0]);
 }
 
++ (UIColor *)styleDeleteColor
+{
+    RETURN_CACHED_COLOR(styleDeleteColor, 
+                        [UIColor colorWithRed:200.0/255.0 green:8.0/255.0 blue:21.0/255.0 alpha:1.0]);
+}
+
 @end

@@ -149,11 +149,6 @@ static void createButtonShapePath(CGMutablePathRef path, CGRect rect, CGFloat ra
 @synthesize cornerRadius, cornersToRound, leftArrowSize, rightArrowSize;
 @synthesize buttonPath;
 
-- (void)setBorderWidth:(CGFloat)borderWidth
-{
-    [(CAShapeLayer *)self.layer setLineWidth:borderWidth];
-}
-
 - (void)setCornerRadius:(CGFloat)radius
 {
     if (radius != cornerRadius) 
@@ -226,7 +221,6 @@ static void preinit(ECButton *self)
     self->cornersToRound = UIRectCornerAllCorners;
     self->leftArrowSize = 0;
     self->rightArrowSize = 0;
-    self.borderWidth = 1;
     
     // Background colors
     self->backgroundColors = (CGColorRef *)malloc(sizeof(CGColorRef) * 6);
@@ -250,7 +244,8 @@ static void preinit(ECButton *self)
 static void init(ECButton *self)
 {
     self.contentStretch = CGRectMake(0.5, 0.5, 0, 0);
-    [self updateButtonPath];
+    if (!CGRectIsEmpty(self.bounds))
+        [self updateButtonPath];
 }
 
 - (id)initWithFrame:(CGRect)frame
@@ -298,6 +293,9 @@ static void init(ECButton *self)
 
 - (void)drawRect:(CGRect)rect
 {
+    if (!buttonPath)
+        [self updateButtonPath];
+    
     CGContextRef context = UIGraphicsGetCurrentContext();
     
     NSUInteger stateIndex = stateToIndex(self.state);
@@ -321,7 +319,7 @@ static void init(ECButton *self)
     backgroundColors[index] = color ? CGColorCreateCopy(color.CGColor) : NULL;
     
     if (self.state == state)
-        [(CAShapeLayer *)self.layer setFillColor:backgroundColors[index]];
+        [self setNeedsDisplay];
 }
 
 - (UIColor *)backgroundColorForState:(UIControlState)state
@@ -338,7 +336,7 @@ static void init(ECButton *self)
     borderColors[index] = color ? CGColorCreateCopy(color.CGColor) : NULL;
     
     if (self.state == state)
-        [(CAShapeLayer *)self.layer setStrokeColor:borderColors[index]];
+        [self setNeedsDisplay];
 }
 
 - (UIColor *)borderColorForState:(UIControlState)state
