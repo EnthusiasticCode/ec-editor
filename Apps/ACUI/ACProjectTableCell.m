@@ -13,21 +13,16 @@
 static NSCache *imagesCache = nil;
 
 
-@interface ACProjectTableCell () {
-@private
-    BOOL editingInternal;
-}
-@end
-
+//@interface ACProjectTableCell () {
+//@private
+//    BOOL editingInternal;
+//}
+//@end
+//
 
 @implementation ACProjectTableCell
 
 @synthesize deleteButton;
-
-- (BOOL)isEditing
-{
-    return editingInternal;
-}
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
@@ -77,6 +72,7 @@ static NSCache *imagesCache = nil;
         [self addSubview:self.accessoryView];
         
         //
+//        self.editingAccessoryView = [[UIImageView alloc] initWithImage:[UIImage styleDisclosureImage]];
         self.showsReorderControl = YES;
         
         //
@@ -88,75 +84,36 @@ static NSCache *imagesCache = nil;
         [deleteButton setTitleShadowColor:[UIColor styleForegroundShadowColor] forState:UIControlStateNormal];
 //        [deleteButton setBackgroundColor:[UIColor styleDeleteColor] forState:UIControlStateNormal];
         [deleteButton setTitle:@"prova" forState:UIControlStateNormal];
+        
+//        self.editingAccessoryView = deleteButton;
     }
     return self;
 }
 
 - (void)layoutSubviews
 {
-//    [super layoutSubviews];
+    [super layoutSubviews];
+    
+    BOOL editing = self.isEditing;
     
     CGRect bounds = self.bounds;
     CGFloat middleY = CGRectGetMidY(bounds);
     
-    //
-    CGFloat imageCenter = editingInternal ? 33 : 30;
-    CGFloat textPosition = 60;
-    CGFloat accessoryCenter = editingInternal ? bounds.size.width + 20.5 : bounds.size.width - 30.5;
+    self.contentView.frame = CGRectInset(bounds, 5, 0);
     
-    //
-    self.backgroundView.frame = bounds;
-    self.selectedBackgroundView.frame = bounds;
+    self.accessoryView.center = CGPointMake(bounds.size.width - (editing ? 0 : 35.5), middleY + .5);
     
-    //
-    self.imageView.center = CGPointMake(imageCenter, middleY);
-    
-    //
-    self.textLabel.frame = CGRectMake(textPosition, 0, bounds.size.width - 120, bounds.size.height);
-    
-    // 
-    self.accessoryView.center = CGPointMake(accessoryCenter, middleY - .5);
-    
-    // 
-    deleteButton.frame = CGRectMake(bounds.size.width - 82, 4, 82 - 7, bounds.size.height - 8);
-    
-//    NSLog(@"-");
-//    for (UIView *view in self.subviews) {
-//        NSLog(@"%@", [view class]);
-//    }
-}
-
-- (void)setEditing:(BOOL)editing animated:(BOOL)animated
-{
-//    [super setEditing:editing animated:NO];
-
-    editingInternal = editing;
-    
-    if (!editing)
+    NSLog(@"-");
+    for (UIView *view in self.subviews)
     {
-        [self addSubview:self.accessoryView];
-//        [deleteButton removeFromSuperview];
+        NSLog(@"%@", [view class]);
+        if ([view isKindOfClass:NSClassFromString(@"UITableViewCellReorderControl")]) { //UITableViewCellEditControl
+            // TODO also change image
+            view.center = CGPointMake(bounds.size.width - 35, middleY);
+        }
     }
-    void (^finalizeEditingIn)() = ^() {
-        [self.accessoryView removeFromSuperview];
-//        [self addSubview:deleteButton];
-    };
     
-    if (animated)
-    {
-        [UIView animateWithDuration:0.10 animations:^(){
-            [self layoutSubviews];
-        } completion:^(BOOL finished) {
-            if (editing) 
-                finalizeEditingIn();
-        }];
-    }
-    else
-    {
-        [self setNeedsLayout];
-        if (editing)
-            finalizeEditingIn();
-    }
+    self.editingAccessoryView.frame = CGRectMake(0, 0, 100, 100);
 }
 
 @end
