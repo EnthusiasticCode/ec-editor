@@ -72,12 +72,13 @@
 {
     [super setBackgroundColor:backgroundColor];
     
+    // TODO this objc_unretainedObject([backgroundColor colorWithAlphaComponent:0].CGColor) may cause problems?
     leftFadeLayer.colors = [NSArray arrayWithObjects:
                             objc_unretainedObject(backgroundColor.CGColor),
                             objc_unretainedObject([backgroundColor colorWithAlphaComponent:0].CGColor), nil];
     rightFadeLayer.colors = [NSArray arrayWithObjects:
-                             objc_unretainedObject([UIColor clearColor].CGColor),
-                             objc_unretainedObject([backgroundColor colorWithAlphaComponent:0].CGColor), nil];
+                             objc_unretainedObject([backgroundColor colorWithAlphaComponent:0].CGColor),
+                             objc_unretainedObject(backgroundColor.CGColor), nil];
 }
 
 #pragma mark - View Lifecicle
