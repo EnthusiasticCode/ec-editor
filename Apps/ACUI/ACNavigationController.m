@@ -11,6 +11,7 @@
 
 
 @implementation ACNavigationController
+@synthesize tabBar;
 
 #pragma mark - Properties
 
@@ -39,6 +40,9 @@
 {
     [super viewDidLoad];
     
+    // Setup present APIs to use this controller as reference.
+    self.definesPresentationContext = YES;
+    
     // Tools button
     [buttonTools setImage:[UIImage styleAddImage] forState:UIControlStateNormal];
     buttonTools.adjustsImageWhenHighlighted = NO;
@@ -57,13 +61,23 @@
     [jumpBar setButtonHighlightColor:[UIColor styleHighlightColor]];
     
     [jumpBar setSearchString:@"Projects"];
+    
+    // Setup tab bar
+    tabBar.delegate = self;
+    tabBar.backgroundColor = [UIColor styleForegroundColor];
+    
+    [tabBar addTabButtonWithTitle:@"One" animated:NO];
+    [tabBar addTabButtonWithTitle:@"Two" animated:NO];
+    
+    // General appearance
+//    [[UILabel appearanceWhenContainedIn:[ECButton class], nil] setFont:[UIFont styleFontWithSize:14]]; TODO not present jet
 }
 
 - (void)viewDidUnload
 {
+    [self setJumpBar:nil];
+    [self setTabBar:nil];
     [super viewDidUnload];
-    // Release any retained subviews of the main view.
-    // e.g. self.myOutlet = nil;
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
@@ -76,28 +90,31 @@
 - (void)pushViewController:(UIViewController *)viewController animated:(BOOL)animated
 {
     CGRect viewFrame = self.view.bounds;
-    viewFrame.origin.y += 44;
-    viewFrame.size.height -= 44;
+    viewFrame.origin.y += 100;
+    viewFrame.size.height -= 100;
     
     UIViewController *topViewController = [self.childViewControllers lastObject];
     [self addChildViewController:viewController];
     if (animated)
     {
-        [self transitionFromViewController:topViewController toViewController:viewController duration:1 options:UIViewAnimationOptionCurveEaseInOut animations:^(void) {
-            // TODO
-        } completion:^(BOOL finished) {
-            [viewController didMoveToParentViewController:self];
-        }];
+        [self transitionFromViewController:topViewController 
+                          toViewController:viewController 
+                                  duration:1 
+                                   options:UIViewAnimationOptionTransitionNone 
+                                animations:nil completion:^(BOOL finished) {
+                                    [viewController didMoveToParentViewController:self];
+                                }];
     }
     else
     {
+        // TODO souldn't be used like this?
         [topViewController.view removeFromSuperview];
         [self.view addSubview:viewController.view];
         viewController.view.frame = viewFrame;
         [viewController didMoveToParentViewController:self];
     }
 }
-
+//- (void)viewWillLayoutSubviews check this out
 - (UIViewController *)popViewControllerAnimated:(BOOL)animated
 {
     CGRect viewFrame = self.view.bounds;
@@ -149,4 +166,27 @@
     BOOL editing = !self.isEditing;
     [self setEditing:editing animated:YES];
 }
+
+#pragma mark - TabBarDelegate Methods Implementation
+
+- (BOOL)tabBar:(ECTabBar *)tabBar willAddTabButton:(ECButton *)tabButton atIndex:(NSUInteger)tabIndex
+{
+    static UIColor *tabButtonHighlightedColor = nil;
+    if (!tabButtonHighlightedColor)
+        tabButtonHighlightedColor = [UIColor colorWithWhite:0.25 alpha:1];
+    
+    // Styling tab button
+    [tabButton setBackgroundColor:[UIColor styleForegroundColor] forState:UIControlStateNormal];
+    [tabButton setBackgroundColor:tabButtonHighlightedColor forState:UIControlStateHighlighted];
+    [tabButton setBackgroundColor:[UIColor styleBackgroundColor] forState:UIControlStateSelected];
+    
+    [tabButton setBorderColor:[UIColor styleBackgroundColor] forState:UIControlStateNormal];
+    
+    [tabButton setTitleColor:[UIColor styleBackgroundColor] forState:UIControlStateNormal];
+    [tabButton setTitleColor:[UIColor styleForegroundColor] forState:UIControlStateSelected];
+    
+    [tabButton.titleLabel setFont:[UIFont styleFontWithSize:14]];
+    return YES;
+}
+
 @end

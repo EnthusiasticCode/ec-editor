@@ -31,6 +31,7 @@
 		CDAD700413A7BBDC00C0B9B4 /* ECPopoverController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDAD700113A7BBDC00C0B9B4 /* ECPopoverController.m */; };
 		CDAD700513A7BBDC00C0B9B4 /* ECPopoverView.m in Sources */ = {isa = PBXBuildFile; fileRef = CDAD700313A7BBDC00C0B9B4 /* ECPopoverView.m */; };
 		CDD823F013A7BF770014CEE0 /* ACUITrialViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDD823EF13A7BF770014CEE0 /* ACUITrialViewController.m */; };
+		CDF9846013B25DB7007429D4 /* ECTabBar.m in Sources */ = {isa = PBXBuildFile; fileRef = CDF9845F13B25DB7007429D4 /* ECTabBar.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -78,6 +79,8 @@
 		CDAD700313A7BBDC00C0B9B4 /* ECPopoverView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECPopoverView.m; sourceTree = "<group>"; };
 		CDD823EE13A7BF770014CEE0 /* ACUITrialViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACUITrialViewController.h; sourceTree = "<group>"; };
 		CDD823EF13A7BF770014CEE0 /* ACUITrialViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACUITrialViewController.m; sourceTree = "<group>"; };
+		CDF9845E13B25DB7007429D4 /* ECTabBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECTabBar.h; sourceTree = "<group>"; };
+		CDF9845F13B25DB7007429D4 /* ECTabBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECTabBar.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -179,6 +182,8 @@
 				CD6973F213A15026005D68D9 /* ECJumpBar.m */,
 				CD6973F313A15026005D68D9 /* ECRectSet.h */,
 				CD6973F413A15026005D68D9 /* ECRectSet.m */,
+				CDF9845E13B25DB7007429D4 /* ECTabBar.h */,
+				CDF9845F13B25DB7007429D4 /* ECTabBar.m */,
 			);
 			name = ECUIKit;
 			path = ../../Frameworks/ECUIKit;
@@ -296,6 +301,7 @@
 				CD6AB29D13ACF6EC00DA8A14 /* UIFont+AppStyle.m in Sources */,
 				CD6AB2A113ACFDE700DA8A14 /* UIImage+AppStyle.m in Sources */,
 				CD6AB2A413ACFE2100DA8A14 /* UIImage+BlockDrawing.m in Sources */,
+				CDF9846013B25DB7007429D4 /* ECTabBar.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

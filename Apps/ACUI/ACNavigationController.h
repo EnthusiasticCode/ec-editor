@@ -10,11 +10,13 @@
 #import "ECJumpBar.h"
 #import "ECButton.h"
 #import "ECPopoverController.h"
+#import "ECTabBar.h"
 
 
-@interface ACNavigationController : UIViewController <ECJumpBarDelegate> {
+@interface ACNavigationController : UIViewController <ECJumpBarDelegate, ECTabBarDelegate> {
 @private
     ECPopoverController *popoverController;
+    ECTabBar *tabBar;
 }
 
 #pragma mark Navigation Tools
@@ -28,6 +30,11 @@
 - (void)pushViewController:(UIViewController *)viewController animated:(BOOL)animated;
 - (UIViewController *)popViewControllerAnimated:(BOOL)animated;
 //- (NSArray *)popToViewController:(UIViewController *)viewController animated:(BOOL)animated;
+
+#pragma mark Tab Navigation
+
+@property (nonatomic, strong) IBOutlet ECTabBar *tabBar;
+
 
 #pragma mark Bar Methods
 

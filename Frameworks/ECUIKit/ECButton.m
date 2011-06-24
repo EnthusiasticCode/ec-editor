@@ -234,9 +234,9 @@ static void preinit(ECButton *self)
     // Border colors
     self->borderColors = (CGColorRef *)malloc(sizeof(CGColorRef) * 6);
     self->borderColors[STATE_NORMAL_IDX] = CGColorCreateCopy([UIColor colorWithWhite:0.16 alpha:1.0].CGColor);
-    self->borderColors[STATE_HIGHLIGHTED_IDX] = CGColorCreateCopy(self->borderColors[STATE_NORMAL_IDX]);
+    self->borderColors[STATE_HIGHLIGHTED_IDX] = NULL;
     self->borderColors[STATE_DISABLED_IDX] = NULL;
-    self->borderColors[STATE_SELECTED_IDX] = CGColorCreateCopy(self->borderColors[STATE_NORMAL_IDX]);
+    self->borderColors[STATE_SELECTED_IDX] = NULL;
     self->borderColors[STATE_APPLICATION_IDX] = NULL;
     self->borderColors[STATE_RESERVED_IDX] = NULL;
 }
@@ -300,7 +300,7 @@ static void init(ECButton *self)
     
     NSUInteger stateIndex = stateToIndex(self.state);
     CGContextSetFillColorWithColor(context, backgroundColors[stateIndex]);
-    CGContextSetStrokeColorWithColor(context, borderColors[stateIndex]);
+    CGContextSetStrokeColorWithColor(context, borderColors[stateIndex] ? borderColors[stateIndex] : borderColors[0]);
     
     CGContextAddPath(context, buttonPath);
     CGContextFillPath(context);

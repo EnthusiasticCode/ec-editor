@@ -103,10 +103,10 @@ static NSCache *imagesCache = nil;
     
     self.accessoryView.center = CGPointMake(bounds.size.width - (editing ? 0 : 35.5), middleY + .5);
     
-    NSLog(@"-");
+//    NSLog(@"-");
     for (UIView *view in self.subviews)
     {
-        NSLog(@"%@", [view class]);
+//        NSLog(@"%@", [view class]);
         if ([view isKindOfClass:NSClassFromString(@"UITableViewCellReorderControl")]) { //UITableViewCellEditControl
             // TODO also change image
             view.center = CGPointMake(bounds.size.width - 35, middleY);
