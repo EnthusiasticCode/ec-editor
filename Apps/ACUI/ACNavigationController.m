@@ -68,6 +68,7 @@
     
     [tabBar addTabButtonWithTitle:@"One" animated:NO];
     [tabBar addTabButtonWithTitle:@"Two" animated:NO];
+    [tabBar addTabButtonWithTitle:@"Three" animated:NO];
     
     // General appearance
 //    [[UILabel appearanceWhenContainedIn:[ECButton class], nil] setFont:[UIFont styleFontWithSize:14]]; TODO not present jet

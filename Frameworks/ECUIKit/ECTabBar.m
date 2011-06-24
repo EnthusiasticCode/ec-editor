@@ -68,6 +68,18 @@
     return [tabButtons count];
 }
 
+- (void)setBackgroundColor:(UIColor *)backgroundColor
+{
+    [super setBackgroundColor:backgroundColor];
+    
+    leftFadeLayer.colors = [NSArray arrayWithObjects:
+                            objc_unretainedObject(backgroundColor.CGColor),
+                            objc_unretainedObject([backgroundColor colorWithAlphaComponent:0].CGColor), nil];
+    rightFadeLayer.colors = [NSArray arrayWithObjects:
+                             objc_unretainedObject([UIColor clearColor].CGColor),
+                             objc_unretainedObject([backgroundColor colorWithAlphaComponent:0].CGColor), nil];
+}
+
 #pragma mark - View Lifecicle
 
 static void updateFadeViews(ECTabBar *self)
@@ -76,27 +88,31 @@ static void updateFadeViews(ECTabBar *self)
     if (!self->leftFadeLayer)
     {
         self->leftFadeLayer = [CAGradientLayer layer];
-        [self.layer addSublayer:self->leftFadeLayer];
+        self->leftFadeLayer.anchorPoint = CGPointMake(0, 0);
+        self->leftFadeLayer.bounds = CGRectMake(0, 0, 20, self.frame.size.height);
+        self->leftFadeLayer.actions = [NSDictionary dictionaryWithObject:[NSNull null] forKey:@"position"];
+        self->leftFadeLayer.startPoint = CGPointMake(0, .5);
+        self->leftFadeLayer.endPoint = CGPointMake(1, .5);
+        self->leftFadeLayer.opacity = 0;
     }
-    self->leftFadeLayer.colors = [NSArray arrayWithObjects:
-                                  objc_unretainedObject(self.backgroundColor.CGColor),
-                                  objc_unretainedObject([UIColor clearColor].CGColor), nil];
     
     // Update right fade layer
     if (!self->rightFadeLayer)
     {
         self->rightFadeLayer = [CAGradientLayer layer];
-        [self.layer addSublayer:self->rightFadeLayer];
+        self->rightFadeLayer.anchorPoint = CGPointMake(0, 0);
+        self->rightFadeLayer.bounds = CGRectMake(0, 0, 20, self.frame.size.height);
+        self->rightFadeLayer.actions = [NSDictionary dictionaryWithObject:[NSNull null] forKey:@"position"];
+        self->rightFadeLayer.startPoint = CGPointMake(0, .5);
+        self->rightFadeLayer.endPoint = CGPointMake(1, .5);
+        self->rightFadeLayer.opacity = 0;
     }
-    self->rightFadeLayer.colors = [NSArray arrayWithObjects:
-                                  objc_unretainedObject([UIColor clearColor].CGColor),
-                                   objc_unretainedObject(self.backgroundColor.CGColor), nil];
 }
 
 static void preinit(ECTabBar *self)
 {
     self->selectedTabIndex = NSNotFound;
-    self->tabButtonSize = CGSizeMake(100, 0);
+    self->tabButtonSize = CGSizeMake(300, 0);
     self->tabButtonInsets = UIEdgeInsetsMake(5, 5, 5, 5);
 }
 
@@ -108,6 +124,10 @@ static void init(ECTabBar *self)
         self->buttonAddTab.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
         [self->buttonAddTab setTitle:@"Add" forState:UIControlStateNormal];
     }
+    
+    //
+    [self setShowsVerticalScrollIndicator:NO];
+    [self setShowsHorizontalScrollIndicator:NO];
     
     //
     updateFadeViews(self);
@@ -149,6 +169,32 @@ static void init(ECTabBar *self)
         button.frame = UIEdgeInsetsInsetRect(buttonFrame, tabButtonInsets);
         buttonFrame.origin.x += buttonFrame.size.width;
     }
+    
+    // Show fading layers
+    if (bounds.origin.x > 0)
+    {
+        [self.layer addSublayer:leftFadeLayer];
+        leftFadeLayer.position = bounds.origin;
+        leftFadeLayer.opacity = 1;
+    }
+    else
+    {
+        leftFadeLayer.opacity = 0;
+        [leftFadeLayer removeFromSuperlayer];
+    }
+    
+    CGFloat maxBounds = CGRectGetMaxX(bounds);
+    if (maxBounds < self.contentSize.width)
+    {
+        [self.layer addSublayer:rightFadeLayer];
+        rightFadeLayer.position = CGPointMake(CGRectGetMaxX(bounds) - rightFadeLayer.bounds.size.width, bounds.origin.y);
+        rightFadeLayer.opacity = 1;
+    }
+    else
+    {
+        rightFadeLayer.opacity = 0;
+        [rightFadeLayer removeFromSuperlayer];
+    }
 }
 
 #pragma mark - Creation of New Tabs
@@ -159,21 +205,24 @@ static void init(ECTabBar *self)
         tabButtons = [NSMutableArray new];
     
     // TODO use a +tabButtonClass
+    NSUInteger newTabButtonIndex = [tabButtons count];
     ECButton *newTabButton = [ECButton new];
     [newTabButton setTitle:title forState:UIControlStateNormal];
     [newTabButton addTarget:self action:@selector(tabButtonAction:) forControlEvents:UIControlEventTouchUpInside];
     
     if (delegateFlags.hasWillAddTabButtonAtIndex 
-        && ![delegate tabBar:self willAddTabButton:newTabButton atIndex:[tabButtons count]])
+        && ![delegate tabBar:self willAddTabButton:newTabButton atIndex:newTabButtonIndex])
         return;
     
+    // Add the button and resize content
     [tabButtons addObject:newTabButton];
+    self.contentSize = CGSizeMake(tabButtonSize.width * (newTabButtonIndex + 1), self.frame.size.height);
     
     // TODO animate
     [self addSubview:newTabButton];
     
     if (delegateFlags.hasDidAddTabButtonAtIndex)
-        [delegate tabBar:self didAddTabButtonAtIndex:[tabButtons count] - 1];
+        [delegate tabBar:self didAddTabButtonAtIndex:newTabButtonIndex];
 }
 
 #pragma mark -
