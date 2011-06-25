@@ -247,6 +247,21 @@ static void init(ECTabBar *self)
 
 #pragma mark - Managing Tabs
 
+- (void)setSelectedTabIndex:(NSUInteger)index
+{
+    if (selectedTabIndex == index || index >= [tabButtons count])
+        return;
+    
+    if (selectedTabIndex != NSNotFound)
+        [[tabButtons objectAtIndex:selectedTabIndex] setSelected:NO];
+    
+    selectedTabIndex = index;
+    
+    [[tabButtons objectAtIndex:selectedTabIndex] setSelected:YES];
+    
+    // TODO scroll to completely visible
+}
+
 - (void)addTabButtonWithTitle:(NSString *)title animated:(BOOL)animated
 {
     if (!tabButtons)
@@ -255,6 +270,12 @@ static void init(ECTabBar *self)
     // TODO use a +tabButtonClass
     NSUInteger newTabButtonIndex = [tabButtons count];
     UIButton *newTabButton = [UIButton new];
+    
+    CGRect buttonFrame = (CGRect) { CGPointZero, tabButtonSize };
+    if (buttonFrame.size.height == 0)
+        buttonFrame.size.height = self.frame.size.height;
+    newTabButton.frame = UIEdgeInsetsInsetRect(buttonFrame, buttonsInsets);
+    
     [newTabButton setTitle:title forState:UIControlStateNormal];
     [newTabButton addTarget:self action:@selector(tabButtonAction:) forControlEvents:UIControlEventTouchUpInside];
     
@@ -276,19 +297,38 @@ static void init(ECTabBar *self)
         [delegate tabBar:self didAddTabButtonAtIndex:newTabButtonIndex];
 }
 
-- (void)setSelectedTabIndex:(NSUInteger)index
+- (UIButton *)tabAtIndex:(NSUInteger)index
 {
-    if (selectedTabIndex == index || index >= [tabButtons count])
+    if (index >= [tabButtons count])
+        return nil;
+    
+    return [tabButtons objectAtIndex:index];
+}
+
+- (NSUInteger)indexOfTab:(UIButton *)tabButton
+{
+    return [tabButtons indexOfObject:tabButton];
+}
+
+- (void)removeTabAtIndex:(NSUInteger)index animated:(BOOL)animated
+{
+    if (index >= [tabButtons count])
         return;
     
-    if (selectedTabIndex != NSNotFound)
-        [[tabButtons objectAtIndex:selectedTabIndex] setSelected:NO];
-    
-    selectedTabIndex = index;
-    
-    [[tabButtons objectAtIndex:selectedTabIndex] setSelected:YES];
-    
-    // TODO scroll to completely visible
+    if (animated)
+    {
+        
+    }
+    else
+    {
+        [[tabButtons objectAtIndex:index] removeFromSuperview];
+        [tabButtons removeObjectAtIndex:index];
+        [self setNeedsLayout];
+        
+        CGSize contentSize = self.contentSize;
+        contentSize.width -= tabButtonSize.width;
+        self.contentSize = contentSize;
+    }
 }
 
 #pragma mark -

@@ -173,14 +173,24 @@
 
 #pragma mark - TabBarDelegate Methods Implementation
 
+- (void)closeTabButtonAction:(id)sender
+{
+    NSUInteger tabIndex = [tabBar indexOfTab:(UIButton *)[sender superview]];
+    [tabBar removeTabAtIndex:tabIndex animated:NO];
+    
+    // TODO also remove controller
+}
+
 - (BOOL)tabBar:(ECTabBar *)tabBar willAddTabButton:(UIButton *)tabButton atIndex:(NSUInteger)tabIndex
 {    
-//    static UIImage *tabCloseImage = nil;
-//    if (!tabCloseImage)
-//        tabCloseImage = [UIImage styleCloseImageWithColor:[UIColor styleBackgroundColor] outlineColor:nil];
-//    
-//    [tabButton setImage:tabCloseImage forState:UIControlStateNormal];
-//    tabButton.adjustsImageWhenHighlighted = NO;
+    UIButton *closeButton = [UIButton new];
+    CGRect frame = tabButton.bounds;
+    frame.origin.x = frame.size.width - 35;
+    frame.size.width = 35;
+    closeButton.frame = frame;
+    [closeButton addTarget:self action:@selector(closeTabButtonAction:) forControlEvents:UIControlEventTouchUpInside];
+    
+    [tabButton addSubview:closeButton];
     
     // TODO no appearance proxy for this?
     [tabButton.titleLabel setFont:[UIFont styleFontWithSize:14]];
