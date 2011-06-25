@@ -68,7 +68,8 @@
     addTabButton.adjustsImageWhenHighlighted = NO;
     
     UIButton *closeTabBarButton = [UIButton new];
-    [closeTabBarButton setTitle:@"^" forState:UIControlStateNormal];
+    [closeTabBarButton setImage:[UIImage styleDisclosureArrowImageWithOrientation:UIImageOrientationUp color:[UIColor styleBackgroundColor]] forState:UIControlStateNormal];
+    closeTabBarButton.adjustsImageWhenHighlighted = NO;
 
     tabBar.additionalControls = [NSArray arrayWithObjects:addTabButton, closeTabBarButton, nil];
     

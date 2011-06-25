@@ -20,7 +20,10 @@
 + (UIImage *)styleProjectImageWithSize:(CGSize)size labelColor:(UIColor *)labelColor;
 
 /// Table disclosure arrow with style foreground color and shadow. This image is cached.
-+ (UIImage *)styleDisclosureImage;
++ (UIImage *)styleTableDisclosureImage;
+
+/// Image of a triangle poinging in the direction of its orientation.
++ (UIImage *)styleDisclosureArrowImageWithOrientation:(UIImageOrientation)orientation color:(UIColor *)color;
 
 /// Image of a + with style foreground color and shadow.
 + (UIImage *)styleAddImageWithColor:(UIColor *)color shadowColor:(UIColor *)shadowColor;

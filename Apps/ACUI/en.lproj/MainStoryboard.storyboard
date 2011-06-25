@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="1.0" toolsVersion="1881" systemVersion="10K540" targetRuntime="iOS.CocoaTouch.iPad" nextObjectID="193" propertyAccessControl="none" initialViewController="71">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="1.0" toolsVersion="1881" systemVersion="10K540" targetRuntime="iOS.CocoaTouch.iPad" nextObjectID="196" propertyAccessControl="none" initialViewController="71">
     <dependencies>
         <development defaultVersion="4200" identifier="xcode"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="876"/>
@@ -109,18 +109,15 @@
             <relationships>
                 <relationship kind="action" name="toggleEditing:"/>
                 <relationship kind="action" name="toggleTools:"/>
-                <relationship kind="outlet" name="buttonEdit" candidateClass="ECButton"/>
-                <relationship kind="outlet" name="buttonTools" candidateClass="ECButton"/>
+                <relationship kind="outlet" name="buttonEdit" candidateClass="UIButton"/>
+                <relationship kind="outlet" name="buttonTools" candidateClass="UIButton"/>
                 <relationship kind="outlet" name="jumpBar" candidateClass="ECJumpBar"/>
                 <relationship kind="outlet" name="tabBar" candidateClass="ECTabBar"/>
+                <relationship kind="outlet" name="testImage" candidateClass="UIImageView"/>
             </relationships>
         </class>
         <class className="ACProjectTableController" superclassName="UITableViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/ACProjectTableController.h"/>
-            <relationships/>
-        </class>
-        <class className="ECButton" superclassName="UIButton">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/ECButton.h"/>
             <relationships/>
         </class>
         <class className="ECJumpBar" superclassName="UIView">

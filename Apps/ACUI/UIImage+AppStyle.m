@@ -226,7 +226,7 @@
     }];
 }
 
-+ (UIImage *)styleDisclosureImage
++ (UIImage *)styleTableDisclosureImage
 {
     static UIImage *_styleDisclosureImage = nil;
     if (!_styleDisclosureImage)
@@ -266,6 +266,38 @@
         }];
     }
     return _styleDisclosureImage;
+}
+
++ (UIImage *)styleDisclosureArrowImageWithOrientation:(UIImageOrientation)orientation color:(UIColor *)color
+{
+    CGSize imageSize = (CGSize){ 14, 9 };
+    if (orientation == UIImageOrientationLeft || orientation == UIImageOrientationRight)
+        imageSize = (CGSize){ 9, 14 };
+    return [UIImage imageWithSize:imageSize block:^(CGContextRef ctx, CGRect rect) {
+        CGAffineTransform transform;
+        switch (orientation) {
+            case UIImageOrientationUp: transform = CGAffineTransformTranslate(CGAffineTransformMakeRotation(M_PI), -14, -9); break;
+            case UIImageOrientationLeft: transform = CGAffineTransformTranslate(CGAffineTransformMakeRotation(M_PI_2), 0, -9); break;
+            case UIImageOrientationRight: transform = CGAffineTransformTranslate(CGAffineTransformMakeRotation(-M_PI_2), -14, 0); break;
+            default: transform = CGAffineTransformIdentity; break;
+        }
+        
+        CGMutablePathRef path = CGPathCreateMutable();
+        
+        // Create path
+        CGPathMoveToPoint(path, &transform, 0, 0);
+        CGPathAddLineToPoint(path, &transform, 6, 8);
+        CGPathAddArcToPoint(path, &transform, 7, 9, 8, 8, 1);
+        CGPathAddLineToPoint(path, &transform, 15, 0);
+        CGPathCloseSubpath(path);
+        
+        // Draw
+        CGContextSetFillColorWithColor(ctx, color.CGColor);
+        CGContextAddPath(ctx, path);
+        CGContextFillPath(ctx);
+        
+        CGPathRelease(path);
+    }];
 }
 
 + (UIImage *)styleAddImageWithColor:(UIColor *)color shadowColor:(UIColor *)shadowColor

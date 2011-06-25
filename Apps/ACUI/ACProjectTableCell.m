@@ -66,7 +66,7 @@ static NSCache *imagesCache = nil;
         
         //
         self.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-        self.accessoryView = [[UIImageView alloc] initWithImage:[UIImage styleDisclosureImage]];
+        self.accessoryView = [[UIImageView alloc] initWithImage:[UIImage styleTableDisclosureImage]];
         [self addSubview:self.accessoryView];
         
         //
