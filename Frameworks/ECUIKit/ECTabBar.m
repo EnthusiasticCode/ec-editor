@@ -232,8 +232,7 @@ static void init(ECTabBar *self)
     }
     
     // Show right fading layer
-    CGFloat maxBounds = CGRectGetMaxX(bounds) - rightMargin;
-    if (maxBounds < self.contentSize.width)
+    if (CGRectGetMaxX(bounds) < self.contentSize.width)
     {
         [self.layer addSublayer:rightFadeLayer];
         rightFadeLayer.position = CGPointMake(CGRectGetMaxX(bounds) - rightFadeLayer.bounds.size.width - rightMargin, bounds.origin.y);
@@ -265,7 +264,10 @@ static void init(ECTabBar *self)
     
     // Add the button and resize content
     [tabButtons addObject:newTabButton];
-    self.contentSize = CGSizeMake(tabButtonSize.width * (newTabButtonIndex + 1) + 7, self.frame.size.height);
+    CGFloat fixedContentSize = 7;
+    if (additionalButtonsContainerView)
+        fixedContentSize += additionalButtonsContainerView.frame.size.width;
+    self.contentSize = CGSizeMake(tabButtonSize.width * (newTabButtonIndex + 1) + fixedContentSize, self.frame.size.height);
     
     // TODO animate
     [self addSubview:newTabButton];
