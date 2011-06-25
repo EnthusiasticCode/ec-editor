@@ -311,6 +311,8 @@ static void init(ECTabBar *self)
         && ![delegate tabBar:self willRemoveTabButtonAtIndex:index])
         return;
     
+    selectedTabIndex = NSNotFound;
+    
     if (animated)
     {
         UIButton *buttonToRemove = [tabButtons objectAtIndex:index];
