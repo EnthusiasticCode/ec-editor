@@ -65,6 +65,7 @@
     
     // Setup tab bar
     tabBar.delegate = self;
+    tabBar.alwaysBounceHorizontal = YES;
     tabBar.backgroundColor = [UIColor styleForegroundColor];
     
     UIButton *addTabButton = [UIButton new];
@@ -82,8 +83,6 @@
     [tabBar addTabButtonWithTitle:@"Two" animated:NO];
     [tabBar addTabButtonWithTitle:@"Three" animated:NO];
     
-    [self toggleTabBar:nil];
-    
     // Tab gesture recognizer
     tabGestureRecognizer = [[ECSwipeGestureRecognizer alloc] initWithTarget:self action:@selector(toggleTabBar:)];
     tabGestureRecognizer.numberOfTouchesRequired = 3;
@@ -95,6 +94,9 @@
     contentScrollView.pagingEnabled = YES;
     contentScrollView.showsVerticalScrollIndicator = NO;
     contentScrollView.showsHorizontalScrollIndicator = NO;
+    
+    // TODO!!! doing this makes the app crash when selecting a tab (try with zombie enabled)
+//    [self toggleTabBar:nil];
 }
 
 - (void)viewDidUnload
