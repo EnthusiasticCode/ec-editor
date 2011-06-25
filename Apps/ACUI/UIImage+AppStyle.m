@@ -197,4 +197,35 @@
     return _styleAddImage;
 }
 
++ (UIImage *)styleCloseImageWithColor:(UIColor *)color outlineColor:(UIColor *)outlineColor
+{
+    return [UIImage imageWithSize:(CGSize){16, 16} block:^(CGContextRef ctx, CGRect rect) {
+        CGMutablePathRef path = CGPathCreateMutable();
+        CGRect innerRect = CGRectInset(rect, 3, 3);
+        
+        CGPathMoveToPoint(path, NULL, innerRect.origin.x, innerRect.origin.y);
+        CGPathAddLineToPoint(path, NULL, CGRectGetMaxX(innerRect), CGRectGetMaxY(innerRect));
+        CGPathMoveToPoint(path, NULL, CGRectGetMaxX(innerRect), innerRect.origin.y);
+        CGPathAddLineToPoint(path, NULL, innerRect.origin.x, CGRectGetMaxY(innerRect));
+        
+        CGContextSetLineCap(ctx, kCGLineCapRound);
+        CGContextSetLineJoin(ctx, kCGLineJoinMiter);
+        
+        if (outlineColor)
+        {
+            CGContextSetLineWidth(ctx, 4);
+            CGContextSetStrokeColorWithColor(ctx, outlineColor.CGColor);
+            CGContextAddPath(ctx, path);
+            CGContextStrokePath(ctx);
+        }
+        
+        CGContextSetLineWidth(ctx, 3);
+        CGContextSetStrokeColorWithColor(ctx, color.CGColor);
+        CGContextAddPath(ctx, path);
+        CGContextStrokePath(ctx);
+        
+        CGPathRelease(path);
+    }];
+}
+
 @end

@@ -13,5 +13,6 @@
 + (UIImage *)styleProjectImageWithSize:(CGSize)size labelColor:(UIColor *)labelColor;
 + (UIImage *)styleDisclosureImage;
 + (UIImage *)styleAddImage;
++ (UIImage *)styleCloseImageWithColor:(UIColor *)color outlineColor:(UIColor *)outlineColor;
 
 @end

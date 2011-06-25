@@ -198,6 +198,13 @@
     if (!tabButtonHighlightedColor)
         tabButtonHighlightedColor = [UIColor colorWithWhite:0.25 alpha:1];
     
+    static UIImage *tabCloseImage = nil;
+    if (!tabCloseImage)
+        tabCloseImage = [UIImage styleCloseImageWithColor:[UIColor styleBackgroundColor] outlineColor:nil];
+    
+    [tabButton setImage:tabCloseImage forState:UIControlStateNormal];
+    tabButton.adjustsImageWhenHighlighted = NO;
+    
     // Styling tab button
     [tabButton setBackgroundColor:[UIColor styleForegroundColor] forState:UIControlStateNormal];
     [tabButton setBackgroundColor:tabButtonHighlightedColor forState:UIControlStateHighlighted];
