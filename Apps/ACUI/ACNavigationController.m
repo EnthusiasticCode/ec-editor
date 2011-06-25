@@ -44,7 +44,7 @@
     self.definesPresentationContext = YES;
     
     // Tools button
-    [buttonTools setImage:[UIImage styleAddImage] forState:UIControlStateNormal];
+    [buttonTools setImage:[UIImage styleAddImageWithColor:[UIColor styleForegroundColor] shadowColor:[UIColor whiteColor]] forState:UIControlStateNormal];
     buttonTools.adjustsImageWhenHighlighted = NO;
     
     // Setup jumpbar
@@ -64,7 +64,8 @@
     tabBar.backgroundColor = [UIColor styleForegroundColor];
     
     UIButton *addTabButton = [UIButton new];
-    [addTabButton setTitle:@"+" forState:UIControlStateNormal];
+    [addTabButton setImage:[UIImage styleAddImageWithColor:[UIColor styleBackgroundColor] shadowColor:nil] forState:UIControlStateNormal];
+    addTabButton.adjustsImageWhenHighlighted = NO;
     
     UIButton *closeTabBarButton = [UIButton new];
     [closeTabBarButton setTitle:@"^" forState:UIControlStateNormal];

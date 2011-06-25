@@ -13,21 +13,20 @@
 /// Create a resizable image with a rounded rectangle of corner radius 3, a border
 /// of 1 pixel insetted as specified. The arrow size can make the image have an
 /// arrow either on the right if positive or left if negative.
-/// This image is NOT cached.
 + (UIImage *)styleBackgroundImageWithColor:(UIColor *)color borderColor:(UIColor *)borderColor insets:(UIEdgeInsets)borderInsets arrowSize:(CGFloat)arrowSize;
 
 /// Icon of a document with a bookmark label used to represent projects with style 
-/// foreground color and shadow. This image is NOT cached.
+/// foreground color and shadow.
 + (UIImage *)styleProjectImageWithSize:(CGSize)size labelColor:(UIColor *)labelColor;
 
 /// Table disclosure arrow with style foreground color and shadow. This image is cached.
 + (UIImage *)styleDisclosureImage;
 
-/// Image of a + with style foreground color and shadow. This image is cached.
-+ (UIImage *)styleAddImage;
+/// Image of a + with style foreground color and shadow.
++ (UIImage *)styleAddImageWithColor:(UIColor *)color shadowColor:(UIColor *)shadowColor;
 
 /// Image of an X. This image can have a required background and outline color. 
-/// The outline will look like a border. This image is NOT cached.
+/// The outline will look like a border.
 + (UIImage *)styleCloseImageWithColor:(UIColor *)color outlineColor:(UIColor *)outlineColor;
 
 @end

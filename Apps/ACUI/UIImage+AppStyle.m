@@ -268,31 +268,31 @@
     return _styleDisclosureImage;
 }
 
-+ (UIImage *)styleAddImage
++ (UIImage *)styleAddImageWithColor:(UIColor *)color shadowColor:(UIColor *)shadowColor
 {
-    static UIImage *_styleAddImage = nil;
-    if (!_styleAddImage)
-    {
-        _styleAddImage = [UIImage imageWithSize:(CGSize){ 14, 15 } block:^(CGContextRef ctx, CGRect rect) {
-            // Accounting for shadow
+    return [UIImage imageWithSize:(CGSize){ 14, shadowColor ? 15 : 14 } block:^(CGContextRef ctx, CGRect rect) {
+        // Accounting for shadow
+        if (shadowColor)
             rect.size.height -= 1;
-            
-            CGMutablePathRef path = CGPathCreateMutable();
-            
-            CGFloat centerX = CGRectGetMidX(rect);
-            CGFloat centerY = CGRectGetMidY(rect);
-            
-            CGPathMoveToPoint(path, NULL, rect.origin.x, centerY);
-            CGPathAddLineToPoint(path, NULL, CGRectGetMaxX(rect), centerY);
-            
-            CGPathMoveToPoint(path, NULL, centerX, rect.origin.y);
-            CGPathAddLineToPoint(path, NULL, centerX, CGRectGetMaxY(rect));
-            
-            CGContextSetLineCap(ctx, kCGLineCapButt);
-            CGContextSetLineJoin(ctx, kCGLineJoinMiter);
-            CGContextSetLineWidth(ctx, 4);
-            
-            CGContextSetStrokeColorWithColor(ctx, [UIColor styleForegroundShadowColor].CGColor);
+        
+        CGMutablePathRef path = CGPathCreateMutable();
+        
+        CGFloat centerX = CGRectGetMidX(rect);
+        CGFloat centerY = CGRectGetMidY(rect);
+        
+        CGPathMoveToPoint(path, NULL, rect.origin.x, centerY);
+        CGPathAddLineToPoint(path, NULL, CGRectGetMaxX(rect), centerY);
+        
+        CGPathMoveToPoint(path, NULL, centerX, rect.origin.y);
+        CGPathAddLineToPoint(path, NULL, centerX, CGRectGetMaxY(rect));
+        
+        CGContextSetLineCap(ctx, kCGLineCapButt);
+        CGContextSetLineJoin(ctx, kCGLineJoinMiter);
+        CGContextSetLineWidth(ctx, 4);
+        
+        if (shadowColor)
+        {
+            CGContextSetStrokeColorWithColor(ctx, shadowColor.CGColor);
             CGContextSaveGState(ctx);
             {
                 CGContextTranslateCTM(ctx, 0, 1);
@@ -300,15 +300,14 @@
                 CGContextStrokePath(ctx);
             }
             CGContextRestoreGState(ctx);
-            
-            CGContextSetStrokeColorWithColor(ctx, [UIColor styleForegroundColor].CGColor);
-            CGContextAddPath(ctx, path);
-            CGContextStrokePath(ctx);
-            
-            CGPathRelease(path);
-        }];
-    }
-    return _styleAddImage;
+        }
+        
+        CGContextSetStrokeColorWithColor(ctx, color.CGColor);
+        CGContextAddPath(ctx, path);
+        CGContextStrokePath(ctx);
+        
+        CGPathRelease(path);
+    }];
 }
 
 + (UIImage *)styleCloseImageWithColor:(UIColor *)color outlineColor:(UIColor *)outlineColor
