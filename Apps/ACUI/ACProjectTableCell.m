@@ -22,8 +22,6 @@ static NSCache *imagesCache = nil;
 
 @implementation ACProjectTableCell
 
-@synthesize deleteButton;
-
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
     if ((self = [super initWithStyle:style reuseIdentifier:reuseIdentifier]))
@@ -76,14 +74,14 @@ static NSCache *imagesCache = nil;
         self.showsReorderControl = YES;
         
         //
-        deleteButton = [ECButton new];
-        deleteButton.cornersToRound = UIRectCornerTopRight | UIRectCornerBottomRight;
-        deleteButton.titleLabel.font = [UIFont styleFontWithSize:14];
-        deleteButton.titleLabel.shadowOffset = CGSizeMake(0, 1);
-        [deleteButton setTitleColor:[UIColor styleForegroundColor] forState:UIControlStateNormal];
-        [deleteButton setTitleShadowColor:[UIColor styleForegroundShadowColor] forState:UIControlStateNormal];
-//        [deleteButton setBackgroundColor:[UIColor styleDeleteColor] forState:UIControlStateNormal];
-        [deleteButton setTitle:@"prova" forState:UIControlStateNormal];
+//        deleteButton = [ECButton new];
+//        deleteButton.cornersToRound = UIRectCornerTopRight | UIRectCornerBottomRight;
+//        deleteButton.titleLabel.font = [UIFont styleFontWithSize:14];
+//        deleteButton.titleLabel.shadowOffset = CGSizeMake(0, 1);
+//        [deleteButton setTitleColor:[UIColor styleForegroundColor] forState:UIControlStateNormal];
+//        [deleteButton setTitleShadowColor:[UIColor styleForegroundShadowColor] forState:UIControlStateNormal];
+////        [deleteButton setBackgroundColor:[UIColor styleDeleteColor] forState:UIControlStateNormal];
+//        [deleteButton setTitle:@"prova" forState:UIControlStateNormal];
         
 //        self.editingAccessoryView = deleteButton;
     }

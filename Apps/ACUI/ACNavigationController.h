@@ -8,7 +8,6 @@
 
 #import <UIKit/UIKit.h>
 #import "ECJumpBar.h"
-#import "ECButton.h"
 #import "ECPopoverController.h"
 #import "ECTabBar.h"
 
@@ -22,8 +21,8 @@
 #pragma mark Navigation Tools
 
 @property (nonatomic, strong) IBOutlet ECJumpBar *jumpBar;
-@property (nonatomic, strong) IBOutlet ECButton *buttonTools;
-@property (nonatomic, strong) IBOutlet ECButton *buttonEdit; // TODO remember to use setEdit:animated: and editing of uiviewcontroller
+@property (nonatomic, strong) IBOutlet UIButton *buttonTools;
+@property (nonatomic, strong) IBOutlet UIButton *buttonEdit; // TODO remember to use setEdit:animated: and editing of uiviewcontroller
 
 #pragma mark Navigation Methods
 

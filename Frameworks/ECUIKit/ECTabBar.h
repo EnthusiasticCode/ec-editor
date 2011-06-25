@@ -7,14 +7,13 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "ECButton.h"
 
 @class ECTabBar;
 
 @protocol ECTabBarDelegate <UIScrollViewDelegate>
 @optional
 
-- (BOOL)tabBar:(ECTabBar *)tabBar willAddTabButton:(ECButton *)tabButton atIndex:(NSUInteger)tabIndex;
+- (BOOL)tabBar:(ECTabBar *)tabBar willAddTabButton:(UIButton *)tabButton atIndex:(NSUInteger)tabIndex;
 - (void)tabBar:(ECTabBar *)tabBar didAddTabButtonAtIndex:(NSUInteger)index;
 
 - (BOOL)tabBar:(ECTabBar *)tabBar willSelectTabAtIndex:(NSUInteger)index;
@@ -28,7 +27,7 @@
 /// ECTabBar present a view with buttons to choose tab as well as options to 
 /// create more tabs and closing the one existing. Tabs can be scrolled outside
 /// the view bounds and reorganized.
-@interface ECTabBar : UIScrollView
+@interface ECTabBar : UIScrollView <UIAppearanceContainer>
 
 @property (nonatomic, weak) id<ECTabBarDelegate> delegate;
 
@@ -48,8 +47,8 @@
 @property (nonatomic) NSUInteger selectedTabIndex;
 
 - (void)addTabButtonWithTitle:(NSString *)title animated:(BOOL)animated;
-- (ECButton *)tabAtIndex:(NSUInteger)index;
-- (NSUInteger)indexOfTab:(ECButton *)tabButton;
+- (UIButton *)tabAtIndex:(NSUInteger)index;
+- (NSUInteger)indexOfTab:(UIButton *)tabButton;
 - (void)removeTabAtIndex:(NSUInteger)index animated:(BOOL)animated;
 
 #pragma mark Showing and Hiding the Tab Bar

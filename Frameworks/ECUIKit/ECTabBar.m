@@ -201,7 +201,7 @@ static void init(ECTabBar *self)
         buttonFrame.size.height = bounds.size.height;
     
     // Layout tab button
-    for (ECButton *button in tabButtons)
+    for (UIButton *button in tabButtons)
     {
         button.frame = UIEdgeInsetsInsetRect(buttonFrame, buttonsInsets);
         buttonFrame.origin.x += buttonFrame.size.width;
@@ -255,7 +255,7 @@ static void init(ECTabBar *self)
     
     // TODO use a +tabButtonClass
     NSUInteger newTabButtonIndex = [tabButtons count];
-    ECButton *newTabButton = [ECButton new];
+    UIButton *newTabButton = [UIButton new];
     [newTabButton setTitle:title forState:UIControlStateNormal];
     [newTabButton addTarget:self action:@selector(tabButtonAction:) forControlEvents:UIControlEventTouchUpInside];
     

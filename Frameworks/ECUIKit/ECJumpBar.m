@@ -7,7 +7,6 @@
 //
 
 #import "ECJumpBar.h"
-#import "ECButton.h"
 #import <QuartzCore/QuartzCore.h>
 
 #define BUTTON_ARROW_WIDTH 10
@@ -485,7 +484,7 @@ static void init(ECJumpBar *self)
 
 - (UIControl *)createStackControlWithTitle:(NSString *)title
 {
-    ECButton *button = [ECButton new];
+    UIButton *button = [UIButton new];
     button.autoresizingMask = UIViewAutoresizingFlexibleHeight;
     button.contentMode = UIViewContentModeScaleToFill;
     button.contentStretch = CGRectMake(0.5, 0.5, 0, 0);
@@ -495,9 +494,9 @@ static void init(ECJumpBar *self)
     button.titleLabel.lineBreakMode = UILineBreakModeTailTruncation;
     [button setTitleShadowColor:self.textShadowColor forState:UIControlStateNormal];
     [button setTitleColor:self.textColor forState:UIControlStateNormal];
-    [button setBackgroundColor:self.buttonColor forState:UIControlStateNormal];
-    [button setBackgroundColor:self.buttonHighlightColor forState:UIControlStateHighlighted];
-    button.rightArrowSize = BUTTON_ARROW_WIDTH;
+//    [button setBackgroundColor:self.buttonColor forState:UIControlStateNormal];
+//    [button setBackgroundColor:self.buttonHighlightColor forState:UIControlStateHighlighted];
+//    button.rightArrowSize = BUTTON_ARROW_WIDTH;
     return button;
 }
 

@@ -47,9 +47,6 @@
     [buttonTools setImage:[UIImage styleAddImage] forState:UIControlStateNormal];
     buttonTools.adjustsImageWhenHighlighted = NO;
     
-    // Edit button
-    [buttonEdit setBackgroundColor:[UIColor styleThemeColorOne] forState:UIControlStateSelected];
-    
     // Setup jumpbar
     jumpBar.delegate = self;
     [jumpBar setFont:[UIFont styleFontWithSize:14]];
@@ -66,34 +63,18 @@
     tabBar.delegate = self;
     tabBar.backgroundColor = [UIColor styleForegroundColor];
     
-    ECButton *addTabButton = [ECButton new];
+    UIButton *addTabButton = [UIButton new];
     [addTabButton setTitle:@"+" forState:UIControlStateNormal];
-    [addTabButton setBackgroundColor:[UIColor styleForegroundColor] forState:UIControlStateNormal];
-    [addTabButton setBackgroundColor:[UIColor colorWithWhite:0.25 alpha:1] forState:UIControlStateHighlighted];
-    [addTabButton setBackgroundColor:[UIColor styleBackgroundColor] forState:UIControlStateSelected];    
-    [addTabButton setBorderColor:[UIColor styleBackgroundColor] forState:UIControlStateNormal];
-    [addTabButton setTitleColor:[UIColor styleBackgroundColor] forState:UIControlStateNormal];
-    [addTabButton setTitleColor:[UIColor styleForegroundColor] forState:UIControlStateSelected];
-    [addTabButton.titleLabel setFont:[UIFont styleFontWithSize:14]];
     
-    ECButton *closeTabBarButton = [ECButton new];
+    UIButton *closeTabBarButton = [UIButton new];
     [closeTabBarButton setTitle:@"^" forState:UIControlStateNormal];
-    [closeTabBarButton setBackgroundColor:[UIColor styleForegroundColor] forState:UIControlStateNormal];
-    [closeTabBarButton setBackgroundColor:[UIColor colorWithWhite:0.25 alpha:1] forState:UIControlStateHighlighted];
-    [closeTabBarButton setBackgroundColor:[UIColor styleBackgroundColor] forState:UIControlStateSelected];    
-    [closeTabBarButton setBorderColor:[UIColor styleBackgroundColor] forState:UIControlStateNormal];
-    [closeTabBarButton setTitleColor:[UIColor styleBackgroundColor] forState:UIControlStateNormal];
-    [closeTabBarButton setTitleColor:[UIColor styleForegroundColor] forState:UIControlStateSelected];
-    [closeTabBarButton.titleLabel setFont:[UIFont styleFontWithSize:14]];
-    
+
     tabBar.additionalControls = [NSArray arrayWithObjects:addTabButton, closeTabBarButton, nil];
     
     [tabBar addTabButtonWithTitle:@"One" animated:NO];
     [tabBar addTabButtonWithTitle:@"Two" animated:NO];
     [tabBar addTabButtonWithTitle:@"Three" animated:NO];
-    
-    // General appearance
-//    [[UILabel appearanceWhenContainedIn:[ECButton class], nil] setFont:[UIFont styleFontWithSize:14]]; TODO not present jet
+
 }
 
 - (void)viewDidUnload
@@ -192,29 +173,16 @@
 
 #pragma mark - TabBarDelegate Methods Implementation
 
-- (BOOL)tabBar:(ECTabBar *)tabBar willAddTabButton:(ECButton *)tabButton atIndex:(NSUInteger)tabIndex
-{
-    static UIColor *tabButtonHighlightedColor = nil;
-    if (!tabButtonHighlightedColor)
-        tabButtonHighlightedColor = [UIColor colorWithWhite:0.25 alpha:1];
+- (BOOL)tabBar:(ECTabBar *)tabBar willAddTabButton:(UIButton *)tabButton atIndex:(NSUInteger)tabIndex
+{    
+//    static UIImage *tabCloseImage = nil;
+//    if (!tabCloseImage)
+//        tabCloseImage = [UIImage styleCloseImageWithColor:[UIColor styleBackgroundColor] outlineColor:nil];
+//    
+//    [tabButton setImage:tabCloseImage forState:UIControlStateNormal];
+//    tabButton.adjustsImageWhenHighlighted = NO;
     
-    static UIImage *tabCloseImage = nil;
-    if (!tabCloseImage)
-        tabCloseImage = [UIImage styleCloseImageWithColor:[UIColor styleBackgroundColor] outlineColor:nil];
-    
-    [tabButton setImage:tabCloseImage forState:UIControlStateNormal];
-    tabButton.adjustsImageWhenHighlighted = NO;
-    
-    // Styling tab button
-    [tabButton setBackgroundColor:[UIColor styleForegroundColor] forState:UIControlStateNormal];
-    [tabButton setBackgroundColor:tabButtonHighlightedColor forState:UIControlStateHighlighted];
-    [tabButton setBackgroundColor:[UIColor styleBackgroundColor] forState:UIControlStateSelected];
-    
-    [tabButton setBorderColor:[UIColor styleBackgroundColor] forState:UIControlStateNormal];
-    
-    [tabButton setTitleColor:[UIColor styleBackgroundColor] forState:UIControlStateNormal];
-    [tabButton setTitleColor:[UIColor styleForegroundColor] forState:UIControlStateSelected];
-    
+    // TODO no appearance proxy for this?
     [tabButton.titleLabel setFont:[UIFont styleFontWithSize:14]];
     return YES;
 }

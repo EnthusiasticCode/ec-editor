@@ -12,6 +12,120 @@
 
 @implementation UIImage (AppStyle)
 
++ (UIImage *)styleBackgroundImageWithColor:(UIColor *)color 
+                               borderColor:(UIColor *)borderColor 
+                                    insets:(UIEdgeInsets)borderInsets 
+                                 arrowSize:(CGFloat)arrowSize
+{
+    CGFloat radius = 3;
+    CGSize imageSize = CGSizeMake(3 + 2 + 3 + abs(arrowSize) + borderInsets.left + borderInsets.right, 3 + 2 + 3 + borderInsets.top + borderInsets.bottom);
+    CGFloat leftArrow = (arrowSize < 0. ? -arrowSize : 0);
+    CGFloat rightArrow = (arrowSize > 0. ? arrowSize : 0); 
+    return [[UIImage imageWithSize:imageSize block:^(CGContextRef ctx, CGRect rect) {
+        CGMutablePathRef path = CGPathCreateMutable();
+        
+        rect = UIEdgeInsetsInsetRect(rect, borderInsets);
+        rect = CGRectInset(rect, .5, .5);
+        
+        // Build path
+        if (arrowSize != 0.)
+        {
+            CGPathAddPath(path, NULL, [UIBezierPath bezierPathWithRoundedRect:rect cornerRadius:radius].CGPath);
+        }
+        else
+        {            
+            CGRect innerRect = CGRectInset(rect, radius, radius);
+            
+            CGFloat outside_right = rect.origin.x + rect.size.width;
+            CGFloat outside_bottom = rect.origin.y + rect.size.height;
+            CGFloat inside_left = innerRect.origin.x + leftArrow;
+            CGFloat inside_right = innerRect.origin.x + innerRect.size.width - rightArrow;
+            CGFloat inside_bottom = innerRect.origin.y + innerRect.size.height;
+            
+            CGFloat inside_top = innerRect.origin.y;
+            CGFloat outside_top = rect.origin.y;
+            CGFloat outside_left = rect.origin.x;
+            
+            //        CGFloat middle_width = outside_right / 2.0;
+            CGFloat middle_height = outside_bottom / 2.0;
+            
+            // TODO No top arrow for now
+            CGPathMoveToPoint(path, NULL, inside_left, outside_top);
+            CGPathAddLineToPoint(path, NULL, inside_right, outside_top);
+            
+            // Right arrow
+            if (rightArrow > 0) 
+            {
+                CGFloat arrow_size = rightArrow * 0.4;
+                CGFloat inside_arrow = inside_right + rightArrow + radius * 0.7;
+                CGFloat arrow_midtop = middle_height - radius / 2;
+                CGFloat arrow_midbottom = arrow_midtop + radius;
+                CGPathAddCurveToPoint(path, NULL,
+                                      inside_right + arrow_size, outside_top, 
+                                      inside_arrow, arrow_midtop, 
+                                      inside_arrow, arrow_midtop);
+                CGPathAddCurveToPoint(path, NULL,
+                                      outside_right, middle_height, 
+                                      outside_right, middle_height, 
+                                      inside_arrow, arrow_midbottom);
+                CGPathAddCurveToPoint(path, NULL,
+                                      inside_arrow, arrow_midbottom, 
+                                      inside_right + arrow_size, outside_bottom, 
+                                      inside_right, outside_bottom);
+            }
+            else
+            {
+                CGPathAddArcToPoint(path, NULL, outside_right, outside_top, outside_right, inside_top, radius);
+                CGPathAddLineToPoint(path, NULL, outside_right, inside_bottom);
+                CGPathAddArcToPoint(path, NULL, outside_right, outside_bottom, inside_right, outside_bottom, radius);
+            }
+            
+            // TODO no bottom arrow
+            CGPathAddLineToPoint(path, NULL, inside_left, outside_bottom);
+            
+            // Left arrow
+            if (leftArrow > 0) 
+            {
+                CGFloat arrow_size = leftArrow * 0.4;
+                CGFloat inside_arrow = inside_left - leftArrow - radius * 0.7;
+                CGFloat arrow_midtop = middle_height - radius / 2;
+                CGFloat arrow_midbottom = arrow_midtop + radius;
+                CGPathAddCurveToPoint(path, NULL,
+                                      inside_left - arrow_size, outside_bottom,
+                                      inside_arrow, arrow_midbottom,
+                                      inside_arrow, arrow_midbottom);
+                CGPathAddCurveToPoint(path, NULL,
+                                      outside_left, middle_height, 
+                                      outside_left, middle_height, 
+                                      inside_arrow, arrow_midtop);
+                CGPathAddCurveToPoint(path, NULL, 
+                                      inside_arrow, arrow_midtop, 
+                                      inside_left - arrow_size, outside_top, 
+                                      inside_left, outside_top);
+            }
+            else
+            {
+                CGPathAddArcToPoint(path, NULL, outside_left, outside_bottom, outside_left, inside_bottom, radius);
+                CGPathAddLineToPoint(path, NULL, outside_left, inside_top);
+                CGPathAddArcToPoint(path, NULL, outside_left, outside_top, inside_left, outside_top, radius);
+            }
+            
+            CGPathCloseSubpath(path);
+        }
+        
+        // Draw
+        CGContextSetFillColorWithColor(ctx, color.CGColor);
+        CGContextAddPath(ctx, path);
+        CGContextFillPath(ctx);
+        
+        CGContextSetStrokeColorWithColor(ctx, borderColor.CGColor);
+        CGContextAddPath(ctx, path);
+        CGContextStrokePath(ctx);        
+        
+        CGPathRelease(path);
+    }] resizableImageWithCapInsets:UIEdgeInsetsMake(borderInsets.top + 3, borderInsets.left + 3 + leftArrow, borderInsets.bottom + 3, borderInsets.right + 3 + rightArrow)];
+}
+
 + (UIImage *)styleProjectImageWithSize:(CGSize)size labelColor:(UIColor *)labelColor
 {
     return [UIImage imageWithSize:size block:^(CGContextRef ctx, CGRect rect) {
