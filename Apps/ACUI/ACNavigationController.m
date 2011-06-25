@@ -47,11 +47,6 @@
     // Setup present APIs to use this controller as reference.
     self.definesPresentationContext = YES;
     
-    // Setup content scroll view
-    contentScrollView.pagingEnabled = YES;
-    contentScrollView.showsVerticalScrollIndicator = NO;
-    contentScrollView.showsHorizontalScrollIndicator = NO;
-    
     // Tools button
     [buttonTools setImage:[UIImage styleAddImageWithColor:[UIColor styleForegroundColor] shadowColor:[UIColor whiteColor]] forState:UIControlStateNormal];
     buttonTools.adjustsImageWhenHighlighted = NO;
@@ -87,12 +82,19 @@
     [tabBar addTabButtonWithTitle:@"Two" animated:NO];
     [tabBar addTabButtonWithTitle:@"Three" animated:NO];
     
+    [self toggleTabBar:nil];
+    
     // Tab gesture recognizer
     tabGestureRecognizer = [[ECSwipeGestureRecognizer alloc] initWithTarget:self action:@selector(toggleTabBar:)];
     tabGestureRecognizer.numberOfTouchesRequired = 3;
     tabGestureRecognizer.numberOfTouchesRequiredImmediatlyOrFailAfterInterval = .05;
     tabGestureRecognizer.direction = UISwipeGestureRecognizerDirectionUp | UISwipeGestureRecognizerDirectionDown;
     [self.view addGestureRecognizer:tabGestureRecognizer];
+    
+    // Setup content scroll view
+    contentScrollView.pagingEnabled = YES;
+    contentScrollView.showsVerticalScrollIndicator = NO;
+    contentScrollView.showsHorizontalScrollIndicator = NO;
 }
 
 - (void)viewDidUnload

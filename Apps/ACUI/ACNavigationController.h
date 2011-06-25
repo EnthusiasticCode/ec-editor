@@ -19,7 +19,6 @@
     ECTabBar *tabBar;
     
     ECSwipeGestureRecognizer *tabGestureRecognizer;
-    CGPoint tabGestureRecognizerLocation;
     UIScrollView *contentScrollView;
 }
 
