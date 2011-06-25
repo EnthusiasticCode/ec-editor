@@ -16,6 +16,9 @@
 - (BOOL)tabBar:(ECTabBar *)tabBar willAddTabButton:(UIButton *)tabButton atIndex:(NSUInteger)tabIndex;
 - (void)tabBar:(ECTabBar *)tabBar didAddTabButtonAtIndex:(NSUInteger)index;
 
+- (BOOL)tabBar:(ECTabBar *)tabBar willRemoveTabButtonAtIndex:(NSUInteger)tabIndex;
+- (void)tabBar:(ECTabBar *)tabBar didRemoveTabButtonAtIndex:(NSUInteger)tabIndex;
+
 - (BOOL)tabBar:(ECTabBar *)tabBar willSelectTabAtIndex:(NSUInteger)index;
 - (void)tabBar:(ECTabBar *)tabBar didSelectTabAtIndex:(NSUInteger)index;
 
@@ -47,9 +50,10 @@
 @property (nonatomic) NSUInteger selectedTabIndex;
 
 - (void)addTabButtonWithTitle:(NSString *)title animated:(BOOL)animated;
+- (void)removeTabAtIndex:(NSUInteger)index animated:(BOOL)animated;
+
 - (UIButton *)tabAtIndex:(NSUInteger)index;
 - (NSUInteger)indexOfTab:(UIButton *)tabButton;
-- (void)removeTabAtIndex:(NSUInteger)index animated:(BOOL)animated;
 
 #pragma mark Showing and Hiding the Tab Bar
 

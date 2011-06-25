@@ -23,9 +23,12 @@
     struct {
         unsigned int hasWillAddTabButtonAtIndex : 1;
         unsigned int hasDidAddTabButtonAtIndex : 1;
+        unsigned int hasWillRemoveTabButtonAtIndex : 1;
+        unsigned int hasDidRemoveTabButtonAtIndex : 1;
         unsigned int hasWillSelectTabAtIndex :1;
         unsigned int hasDidSelectTabAtIndex : 1;
         unsigned int hasWillMoveTabFromIndexToIndex : 1;
+        unsigned int reserved : 1;
     } delegateFlags;
 }
 
@@ -47,6 +50,8 @@
     
     delegateFlags.hasWillAddTabButtonAtIndex = [delegate respondsToSelector:@selector(tabBar:willAddTabButton:atIndex:)];
     delegateFlags.hasDidAddTabButtonAtIndex = [delegate respondsToSelector:@selector(tabBar:didAddTabButtonAtIndex:)];
+    delegateFlags.hasWillRemoveTabButtonAtIndex = [delegate respondsToSelector:@selector(tabBar:willRemoveTabButtonAtIndex:)];
+    delegateFlags.hasDidRemoveTabButtonAtIndex = [delegate respondsToSelector:@selector(tabBar:didRemoveTabButtonAtIndex:)];
     delegateFlags.hasWillSelectTabAtIndex = [delegate respondsToSelector:@selector(tabBar:willSelectTabAtIndex:)];
     delegateFlags.hasDidSelectTabAtIndex = [delegate respondsToSelector:@selector(tabBar:didSelectTabAtIndex:)];
     delegateFlags.hasWillMoveTabFromIndexToIndex = [delegate respondsToSelector:@selector(tabBar:willMoveTabFromIndex:toIndex:)];
@@ -297,6 +302,51 @@ static void init(ECTabBar *self)
         [delegate tabBar:self didAddTabButtonAtIndex:newTabButtonIndex];
 }
 
+- (void)removeTabAtIndex:(NSUInteger)index animated:(BOOL)animated
+{
+    if (index >= [tabButtons count])
+        return;
+    
+    if (delegateFlags.hasWillRemoveTabButtonAtIndex
+        && ![delegate tabBar:self willRemoveTabButtonAtIndex:index])
+        return;
+    
+    if (animated)
+    {
+        UIButton *buttonToRemove = [tabButtons objectAtIndex:index];
+        buttonToRemove.layer.shouldRasterize = YES;
+        [UIView animateWithDuration:.10 animations:^(void) {
+            buttonToRemove.alpha = 0;
+        } completion:^(BOOL finished) {
+            [buttonToRemove removeFromSuperview];
+            [tabButtons removeObjectAtIndex:index];
+            [UIView animateWithDuration:.15 animations:^(void) {
+                [self layoutSubviews];
+            } completion:^(BOOL finished) {
+                CGSize contentSize = self.contentSize;
+                contentSize.width -= tabButtonSize.width;
+                self.contentSize = contentSize;
+                
+                if (delegateFlags.hasDidRemoveTabButtonAtIndex)
+                    [delegate tabBar:self didRemoveTabButtonAtIndex:index];
+            }];
+        }];
+    }
+    else
+    {
+        [[tabButtons objectAtIndex:index] removeFromSuperview];
+        [tabButtons removeObjectAtIndex:index];
+        [self setNeedsLayout];
+        
+        CGSize contentSize = self.contentSize;
+        contentSize.width -= tabButtonSize.width;
+        self.contentSize = contentSize;
+        
+        if (delegateFlags.hasDidRemoveTabButtonAtIndex)
+            [delegate tabBar:self didRemoveTabButtonAtIndex:index];
+    }
+}
+
 - (UIButton *)tabAtIndex:(NSUInteger)index
 {
     if (index >= [tabButtons count])
@@ -308,27 +358,6 @@ static void init(ECTabBar *self)
 - (NSUInteger)indexOfTab:(UIButton *)tabButton
 {
     return [tabButtons indexOfObject:tabButton];
-}
-
-- (void)removeTabAtIndex:(NSUInteger)index animated:(BOOL)animated
-{
-    if (index >= [tabButtons count])
-        return;
-    
-    if (animated)
-    {
-        
-    }
-    else
-    {
-        [[tabButtons objectAtIndex:index] removeFromSuperview];
-        [tabButtons removeObjectAtIndex:index];
-        [self setNeedsLayout];
-        
-        CGSize contentSize = self.contentSize;
-        contentSize.width -= tabButtonSize.width;
-        self.contentSize = contentSize;
-    }
 }
 
 #pragma mark -

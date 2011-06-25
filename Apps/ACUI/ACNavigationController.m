@@ -176,7 +176,7 @@
 - (void)closeTabButtonAction:(id)sender
 {
     NSUInteger tabIndex = [tabBar indexOfTab:(UIButton *)[sender superview]];
-    [tabBar removeTabAtIndex:tabIndex animated:NO];
+    [tabBar removeTabAtIndex:tabIndex animated:YES];
     
     // TODO also remove controller
 }
