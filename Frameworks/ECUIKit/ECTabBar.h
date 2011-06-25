@@ -35,20 +35,19 @@
 #pragma mark Stylizing Tab Bar
 
 @property (nonatomic) CGSize tabButtonSize;
-@property (nonatomic) UIEdgeInsets tabButtonInsets;
+@property (nonatomic) UIEdgeInsets buttonsInsets;
 @property (nonatomic, strong) UIImage *closeTabImage;
 
-#pragma mark Creation of New Tabs
-
-@property (nonatomic, strong) ECButton *buttonAddTab;
-
-- (void)addTabButtonWithTitle:(NSString *)title animated:(BOOL)animated;
+/// An array containing controls to add at the right of the tab bar.
+@property (nonatomic, copy) NSArray *additionalControls;
+@property (nonatomic) CGSize additionalControlsDefaultSize;
 
 #pragma mark Managing Tabs
 
 @property (nonatomic, readonly) NSUInteger tabCount;
 @property (nonatomic) NSUInteger selectedTabIndex;
 
+- (void)addTabButtonWithTitle:(NSString *)title animated:(BOOL)animated;
 - (ECButton *)tabAtIndex:(NSUInteger)index;
 - (NSUInteger)indexOfTab:(ECButton *)tabButton;
 - (void)removeTabAtIndex:(NSUInteger)index animated:(BOOL)animated;

@@ -66,6 +66,28 @@
     tabBar.delegate = self;
     tabBar.backgroundColor = [UIColor styleForegroundColor];
     
+    ECButton *addTabButton = [ECButton new];
+    [addTabButton setTitle:@"+" forState:UIControlStateNormal];
+    [addTabButton setBackgroundColor:[UIColor styleForegroundColor] forState:UIControlStateNormal];
+    [addTabButton setBackgroundColor:[UIColor colorWithWhite:0.25 alpha:1] forState:UIControlStateHighlighted];
+    [addTabButton setBackgroundColor:[UIColor styleBackgroundColor] forState:UIControlStateSelected];    
+    [addTabButton setBorderColor:[UIColor styleBackgroundColor] forState:UIControlStateNormal];
+    [addTabButton setTitleColor:[UIColor styleBackgroundColor] forState:UIControlStateNormal];
+    [addTabButton setTitleColor:[UIColor styleForegroundColor] forState:UIControlStateSelected];
+    [addTabButton.titleLabel setFont:[UIFont styleFontWithSize:14]];
+    
+    ECButton *closeTabBarButton = [ECButton new];
+    [closeTabBarButton setTitle:@"^" forState:UIControlStateNormal];
+    [closeTabBarButton setBackgroundColor:[UIColor styleForegroundColor] forState:UIControlStateNormal];
+    [closeTabBarButton setBackgroundColor:[UIColor colorWithWhite:0.25 alpha:1] forState:UIControlStateHighlighted];
+    [closeTabBarButton setBackgroundColor:[UIColor styleBackgroundColor] forState:UIControlStateSelected];    
+    [closeTabBarButton setBorderColor:[UIColor styleBackgroundColor] forState:UIControlStateNormal];
+    [closeTabBarButton setTitleColor:[UIColor styleBackgroundColor] forState:UIControlStateNormal];
+    [closeTabBarButton setTitleColor:[UIColor styleForegroundColor] forState:UIControlStateSelected];
+    [closeTabBarButton.titleLabel setFont:[UIFont styleFontWithSize:14]];
+    
+    tabBar.additionalControls = [NSArray arrayWithObjects:addTabButton, closeTabBarButton, nil];
+    
     [tabBar addTabButtonWithTitle:@"One" animated:NO];
     [tabBar addTabButtonWithTitle:@"Two" animated:NO];
     [tabBar addTabButtonWithTitle:@"Three" animated:NO];

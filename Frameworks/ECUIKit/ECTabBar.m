@@ -18,6 +18,8 @@
     CAGradientLayer *leftFadeLayer;
     CAGradientLayer *rightFadeLayer;
     
+    UIView *additionalButtonsContainerView;
+    
     struct {
         unsigned int hasWillAddTabButtonAtIndex : 1;
         unsigned int hasDidAddTabButtonAtIndex : 1;
@@ -27,7 +29,6 @@
     } delegateFlags;
 }
 
-- (void)buttonAddTabAction:(id)sender;
 - (void)tabButtonAction:(id)sender;
 
 @end
@@ -36,7 +37,7 @@
 
 #pragma mark - Properties
 
-@synthesize tabButtonSize, tabButtonInsets;
+@synthesize tabButtonSize, buttonsInsets;
 @synthesize delegate;
 @synthesize selectedTabIndex;
 
@@ -49,16 +50,6 @@
     delegateFlags.hasWillSelectTabAtIndex = [delegate respondsToSelector:@selector(tabBar:willSelectTabAtIndex:)];
     delegateFlags.hasDidSelectTabAtIndex = [delegate respondsToSelector:@selector(tabBar:didSelectTabAtIndex:)];
     delegateFlags.hasWillMoveTabFromIndexToIndex = [delegate respondsToSelector:@selector(tabBar:willMoveTabFromIndex:toIndex:)];
-}
-
-@synthesize buttonAddTab;
-
-- (void)setButtonAddTab:(ECButton *)button
-{
-    [buttonAddTab removeFromSuperview];
-    buttonAddTab = button;
-    [buttonAddTab addTarget:self action:@selector(buttonAddTabAction:) forControlEvents:UIControlEventTouchUpInside];
-    [self addSubview:buttonAddTab];
 }
 
 @synthesize closeTabImage;
@@ -79,6 +70,57 @@
     rightFadeLayer.colors = [NSArray arrayWithObjects:
                              objc_unretainedObject([backgroundColor colorWithAlphaComponent:0].CGColor),
                              objc_unretainedObject(backgroundColor.CGColor), nil];
+    
+    additionalButtonsContainerView.backgroundColor = self.backgroundColor;
+}
+
+@synthesize additionalControls, additionalControlsDefaultSize;
+
+- (void)setAdditionalControls:(NSArray *)array
+{
+    additionalControls = array;
+    
+    if (!additionalControls)
+    {
+        [additionalButtonsContainerView removeFromSuperview];
+        additionalButtonsContainerView = nil;
+        return;
+    }
+    
+    if (!additionalButtonsContainerView)
+    {
+        additionalButtonsContainerView = [UIView new];
+        additionalButtonsContainerView.backgroundColor = self.backgroundColor;
+        [self addSubview:additionalButtonsContainerView];
+    }
+    else
+    {
+        for (UIView *view in additionalButtonsContainerView.subviews)
+        {
+            [view removeFromSuperview];
+        }
+    }
+    
+    CGRect viewFrame;
+    // TODO make a content inset instead?
+    CGPoint defaultOrigin = CGPointMake(7, 0);
+    CGSize defaultSize = CGSizeMake(additionalControlsDefaultSize.width, additionalControlsDefaultSize.height ? additionalControlsDefaultSize.height : self.frame.size.height);
+    for (UIView *view in additionalControls)
+    {
+        viewFrame = [view frame];
+        if (CGRectIsEmpty(viewFrame))
+            viewFrame.size = defaultSize;
+        
+        viewFrame.origin = defaultOrigin;
+        defaultOrigin.x += viewFrame.size.width;
+        
+        view.frame = UIEdgeInsetsInsetRect(viewFrame, buttonsInsets);
+        
+        [additionalButtonsContainerView addSubview:view];
+    }
+    
+    additionalButtonsContainerView.frame = (CGRect){ CGPointZero, CGSizeMake(defaultOrigin.x, self.frame.size.height) };
+    [self setNeedsLayout];
 }
 
 #pragma mark - View Lifecicle
@@ -114,18 +156,12 @@ static void preinit(ECTabBar *self)
 {
     self->selectedTabIndex = NSNotFound;
     self->tabButtonSize = CGSizeMake(300, 0);
-    self->tabButtonInsets = UIEdgeInsetsMake(5, 5, 5, 5);
+    self->buttonsInsets = UIEdgeInsetsMake(7, 0, 7, 7);
+    self->additionalControlsDefaultSize = CGSizeMake(41, 0);
 }
 
 static void init(ECTabBar *self)
 {
-    if (self->buttonAddTab == nil)
-    {
-        self.buttonAddTab = [ECButton new];
-        self->buttonAddTab.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-        [self->buttonAddTab setTitle:@"Add" forState:UIControlStateNormal];
-    }
-    
     //
     [self setShowsVerticalScrollIndicator:NO];
     [self setShowsHorizontalScrollIndicator:NO];
@@ -160,18 +196,29 @@ static void init(ECTabBar *self)
     CGRect bounds = self.bounds;
     
     // Determine button's size
-    CGRect buttonFrame = (CGRect) { CGPointZero, tabButtonSize };
+    CGRect buttonFrame = (CGRect) { CGPointMake(7, 0), tabButtonSize };
     if (buttonFrame.size.height == 0)
         buttonFrame.size.height = bounds.size.height;
     
     // Layout tab button
     for (ECButton *button in tabButtons)
     {
-        button.frame = UIEdgeInsetsInsetRect(buttonFrame, tabButtonInsets);
+        button.frame = UIEdgeInsetsInsetRect(buttonFrame, buttonsInsets);
         buttonFrame.origin.x += buttonFrame.size.width;
     }
     
-    // Show fading layers
+    // Layout additional buttons
+    CGFloat rightMargin = 0;
+    if (additionalButtonsContainerView)
+    {
+        CGRect containerFrame = additionalButtonsContainerView.frame;
+        additionalButtonsContainerView.frame = (CGRect){ CGPointMake(CGRectGetMaxX(bounds) - containerFrame.size.width, bounds.origin.y) ,containerFrame.size };
+        [self bringSubviewToFront:additionalButtonsContainerView];
+        
+        rightMargin = containerFrame.size.width;
+    }
+    
+    // Show left fading layer
     if (bounds.origin.x > 0)
     {
         [self.layer addSublayer:leftFadeLayer];
@@ -184,11 +231,12 @@ static void init(ECTabBar *self)
         [leftFadeLayer removeFromSuperlayer];
     }
     
-    CGFloat maxBounds = CGRectGetMaxX(bounds);
+    // Show right fading layer
+    CGFloat maxBounds = CGRectGetMaxX(bounds) - rightMargin;
     if (maxBounds < self.contentSize.width)
     {
         [self.layer addSublayer:rightFadeLayer];
-        rightFadeLayer.position = CGPointMake(CGRectGetMaxX(bounds) - rightFadeLayer.bounds.size.width, bounds.origin.y);
+        rightFadeLayer.position = CGPointMake(CGRectGetMaxX(bounds) - rightFadeLayer.bounds.size.width - rightMargin, bounds.origin.y);
         rightFadeLayer.opacity = 1;
     }
     else
@@ -198,7 +246,7 @@ static void init(ECTabBar *self)
     }
 }
 
-#pragma mark - Creation of New Tabs
+#pragma mark - Managing Tabs
 
 - (void)addTabButtonWithTitle:(NSString *)title animated:(BOOL)animated
 {
@@ -217,7 +265,7 @@ static void init(ECTabBar *self)
     
     // Add the button and resize content
     [tabButtons addObject:newTabButton];
-    self.contentSize = CGSizeMake(tabButtonSize.width * (newTabButtonIndex + 1), self.frame.size.height);
+    self.contentSize = CGSizeMake(tabButtonSize.width * (newTabButtonIndex + 1) + 7, self.frame.size.height);
     
     // TODO animate
     [self addSubview:newTabButton];
@@ -225,15 +273,6 @@ static void init(ECTabBar *self)
     if (delegateFlags.hasDidAddTabButtonAtIndex)
         [delegate tabBar:self didAddTabButtonAtIndex:newTabButtonIndex];
 }
-
-#pragma mark -
-
-- (void)buttonAddTabAction:(id)sender
-{
-    [self addTabButtonWithTitle:@"New Tab" animated:YES];
-}
-
-#pragma mark - Managing Tabs
 
 - (void)setSelectedTabIndex:(NSUInteger)index
 {
