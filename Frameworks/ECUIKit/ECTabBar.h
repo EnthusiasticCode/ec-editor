@@ -55,9 +55,4 @@
 - (UIButton *)tabAtIndex:(NSUInteger)index;
 - (NSUInteger)indexOfTab:(UIButton *)tabButton;
 
-#pragma mark Showing and Hiding the Tab Bar
-
-- (void)presentTabBarAnimated:(BOOL)animated;
-- (void)removeFromSuperviewAnimated:(BOOL)animated;
-
 @end

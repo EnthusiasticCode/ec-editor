@@ -24,6 +24,7 @@
 		CD6AB29D13ACF6EC00DA8A14 /* UIFont+AppStyle.m in Sources */ = {isa = PBXBuildFile; fileRef = CD6AB29B13ACF6EC00DA8A14 /* UIFont+AppStyle.m */; };
 		CD6AB2A113ACFDE700DA8A14 /* UIImage+AppStyle.m in Sources */ = {isa = PBXBuildFile; fileRef = CD6AB2A013ACFDE700DA8A14 /* UIImage+AppStyle.m */; };
 		CD6AB2A413ACFE2100DA8A14 /* UIImage+BlockDrawing.m in Sources */ = {isa = PBXBuildFile; fileRef = CD6AB2A313ACFE2100DA8A14 /* UIImage+BlockDrawing.m */; };
+		CD8BDAB713B6765400B553EB /* ECSwipeGestureRecognizer.m in Sources */ = {isa = PBXBuildFile; fileRef = CD8BDAB613B6765300B553EB /* ECSwipeGestureRecognizer.m */; };
 		CD8D782A13ABE4D500A391F4 /* ACProjectTableController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD8D782913ABE4D500A391F4 /* ACProjectTableController.m */; };
 		CDABE3EE13ABF26B006B53AE /* ACProjectTableCell.m in Sources */ = {isa = PBXBuildFile; fileRef = CDABE3ED13ABF26B006B53AE /* ACProjectTableCell.m */; };
 		CDABE3F113ABF3C2006B53AE /* ACThemeView.m in Sources */ = {isa = PBXBuildFile; fileRef = CDABE3F013ABF3C2006B53AE /* ACThemeView.m */; };
@@ -63,6 +64,8 @@
 		CD6AB2A013ACFDE700DA8A14 /* UIImage+AppStyle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+AppStyle.m"; sourceTree = "<group>"; };
 		CD6AB2A213ACFE2100DA8A14 /* UIImage+BlockDrawing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+BlockDrawing.h"; sourceTree = "<group>"; };
 		CD6AB2A313ACFE2100DA8A14 /* UIImage+BlockDrawing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+BlockDrawing.m"; sourceTree = "<group>"; };
+		CD8BDAB513B6765300B553EB /* ECSwipeGestureRecognizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECSwipeGestureRecognizer.h; sourceTree = "<group>"; };
+		CD8BDAB613B6765300B553EB /* ECSwipeGestureRecognizer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECSwipeGestureRecognizer.m; sourceTree = "<group>"; };
 		CD8D782813ABE4D500A391F4 /* ACProjectTableController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACProjectTableController.h; sourceTree = "<group>"; };
 		CD8D782913ABE4D500A391F4 /* ACProjectTableController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACProjectTableController.m; sourceTree = "<group>"; };
 		CDABE3EC13ABF26B006B53AE /* ACProjectTableCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACProjectTableCell.h; sourceTree = "<group>"; };
@@ -174,6 +177,8 @@
 				CD6973F413A15026005D68D9 /* ECRectSet.m */,
 				CDF9845E13B25DB7007429D4 /* ECTabBar.h */,
 				CDF9845F13B25DB7007429D4 /* ECTabBar.m */,
+				CD8BDAB513B6765300B553EB /* ECSwipeGestureRecognizer.h */,
+				CD8BDAB613B6765300B553EB /* ECSwipeGestureRecognizer.m */,
 			);
 			name = ECUIKit;
 			path = ../../Frameworks/ECUIKit;
@@ -290,6 +295,7 @@
 				CD6AB2A113ACFDE700DA8A14 /* UIImage+AppStyle.m in Sources */,
 				CD6AB2A413ACFE2100DA8A14 /* UIImage+BlockDrawing.m in Sources */,
 				CDF9846013B25DB7007429D4 /* ECTabBar.m in Sources */,
+				CD8BDAB713B6765400B553EB /* ECSwipeGestureRecognizer.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

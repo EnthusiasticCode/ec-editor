@@ -10,13 +10,20 @@
 #import "ECJumpBar.h"
 #import "ECPopoverController.h"
 #import "ECTabBar.h"
+#import "ECSwipeGestureRecognizer.h"
 
 
 @interface ACNavigationController : UIViewController <ECJumpBarDelegate, ECTabBarDelegate> {
 @private
     ECPopoverController *popoverController;
     ECTabBar *tabBar;
+    
+    ECSwipeGestureRecognizer *tabGestureRecognizer;
+    CGPoint tabGestureRecognizerLocation;
+    UIScrollView *contentScrollView;
 }
+
+@property (nonatomic, strong) IBOutlet UIScrollView *contentScrollView;
 
 #pragma mark Navigation Tools
 
@@ -39,5 +46,10 @@
 
 - (IBAction)toggleTools:(id)sender;
 - (IBAction)toggleEditing:(id)sender;
+
+#pragma mark Tab Bar Methods
+
+- (IBAction)toggleTabBar:(id)sender;
+- (IBAction)closeTabButtonAction:(id)sender;
 
 @end

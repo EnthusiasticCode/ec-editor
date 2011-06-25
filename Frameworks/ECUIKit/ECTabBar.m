@@ -381,5 +381,4 @@ static void init(ECTabBar *self)
         [delegate tabBar:self didSelectTabAtIndex:tabIndex];
 }
 
-
 @end

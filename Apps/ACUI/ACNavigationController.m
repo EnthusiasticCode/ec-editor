@@ -6,11 +6,13 @@
 //  Copyright 2011 __MyCompanyName__. All rights reserved.
 //
 
+#import <QuartzCore/QuartzCore.h>
 #import "ACNavigationController.h"
 #import "AppStyle.h"
 
 
 @implementation ACNavigationController
+@synthesize contentScrollView;
 @synthesize tabBar;
 
 #pragma mark - Properties
@@ -40,8 +42,15 @@
 {
     [super viewDidLoad];
     
+    // TODO create internal views if not connected in IB
+    
     // Setup present APIs to use this controller as reference.
     self.definesPresentationContext = YES;
+    
+    // Setup content scroll view
+    contentScrollView.pagingEnabled = YES;
+    contentScrollView.showsVerticalScrollIndicator = NO;
+    contentScrollView.showsHorizontalScrollIndicator = NO;
     
     // Tools button
     [buttonTools setImage:[UIImage styleAddImageWithColor:[UIColor styleForegroundColor] shadowColor:[UIColor whiteColor]] forState:UIControlStateNormal];
@@ -68,6 +77,7 @@
     addTabButton.adjustsImageWhenHighlighted = NO;
     
     UIButton *closeTabBarButton = [UIButton new];
+    [closeTabBarButton addTarget:self action:@selector(toggleTabBar:) forControlEvents:UIControlEventTouchUpInside];
     [closeTabBarButton setImage:[UIImage styleDisclosureArrowImageWithOrientation:UIImageOrientationUp color:[UIColor styleBackgroundColor]] forState:UIControlStateNormal];
     closeTabBarButton.adjustsImageWhenHighlighted = NO;
 
@@ -76,13 +86,21 @@
     [tabBar addTabButtonWithTitle:@"One" animated:NO];
     [tabBar addTabButtonWithTitle:@"Two" animated:NO];
     [tabBar addTabButtonWithTitle:@"Three" animated:NO];
-
+    
+    // Tab gesture recognizer
+    tabGestureRecognizer = [[ECSwipeGestureRecognizer alloc] initWithTarget:self action:@selector(toggleTabBar:)];
+    tabGestureRecognizer.numberOfTouchesRequired = 3;
+    tabGestureRecognizer.numberOfTouchesRequiredImmediatlyOrFailAfterInterval = .05;
+    tabGestureRecognizer.direction = UISwipeGestureRecognizerDirectionUp | UISwipeGestureRecognizerDirectionDown;
+    [self.view addGestureRecognizer:tabGestureRecognizer];
 }
 
 - (void)viewDidUnload
 {
     [self setJumpBar:nil];
     [self setTabBar:nil];
+    tabGestureRecognizer = nil;
+    [self setContentScrollView:nil];
     [super viewDidUnload];
 }
 
@@ -95,9 +113,12 @@
 
 - (void)pushViewController:(UIViewController *)viewController animated:(BOOL)animated
 {
-    CGRect viewFrame = self.view.bounds;
-    viewFrame.origin.y += 100;
-    viewFrame.size.height -= 100;
+    // Customize view controller's view's gesture recognizers
+    if ([viewController.view isKindOfClass:[UIScrollView class]])
+    {
+        UIScrollView *scrollView = (UIScrollView *)viewController.view;
+        [scrollView.panGestureRecognizer requireGestureRecognizerToFail:tabGestureRecognizer];
+    }
     
     UIViewController *topViewController = [self.childViewControllers lastObject];
     [self addChildViewController:viewController];
@@ -115,18 +136,14 @@
     {
         // TODO souldn't be used like this?
         [topViewController.view removeFromSuperview];
-        [self.view addSubview:viewController.view];
-        viewController.view.frame = viewFrame;
+        [contentScrollView addSubview:viewController.view];
+        viewController.view.frame = contentScrollView.bounds;
         [viewController didMoveToParentViewController:self];
     }
 }
 //- (void)viewWillLayoutSubviews check this out
 - (UIViewController *)popViewControllerAnimated:(BOOL)animated
-{
-    CGRect viewFrame = self.view.bounds;
-    viewFrame.origin.y += 44;
-    viewFrame.size.height -= 44;
-    
+{    
     NSUInteger childViewControllersCount = [self.childViewControllers count];
     if (childViewControllersCount < 2)
         return nil;
@@ -144,8 +161,8 @@
     }
     else
     {
-        [self.view addSubview:viewController.view];
-        viewController.view.frame = viewFrame;
+        [contentScrollView addSubview:viewController.view];
+        viewController.view.frame = contentScrollView.bounds;
         [topViewController removeFromParentViewController];
     }
     return topViewController;
@@ -175,14 +192,6 @@
 
 #pragma mark - TabBarDelegate Methods Implementation
 
-- (void)closeTabButtonAction:(id)sender
-{
-    NSUInteger tabIndex = [tabBar indexOfTab:(UIButton *)[sender superview]];
-    [tabBar removeTabAtIndex:tabIndex animated:YES];
-    
-    // TODO also remove controller
-}
-
 - (BOOL)tabBar:(ECTabBar *)tabBar willAddTabButton:(UIButton *)tabButton atIndex:(NSUInteger)tabIndex
 {    
     UIButton *closeButton = [UIButton new];
@@ -197,6 +206,49 @@
     // TODO no appearance proxy for this?
     [tabButton.titleLabel setFont:[UIFont styleFontWithSize:14]];
     return YES;
+}
+
+#pragma mark - 
+
+- (void)toggleTabBar:(id)sender
+{    
+    CGRect contentScrollViewFrame = contentScrollView.frame;
+    CGRect tabBarFrame = CGRectMake(0, 45, contentScrollViewFrame.size.width, 44);
+    if ([tabBar superview] != nil)
+    {
+        contentScrollViewFrame.size.height += tabBarFrame.size.height;
+        contentScrollViewFrame.origin.y -= tabBarFrame.size.height;
+        tabBarFrame.size.height = 0;
+        [UIView animateWithDuration:.1 animations:^(void) {
+            // TODO fix layout problems of tab buttons during animation?
+            tabBar.frame = tabBarFrame;
+            contentScrollView.frame = contentScrollViewFrame;
+        } completion:^(BOOL finished) {
+            [tabBar removeFromSuperview];
+        }];
+    }
+    else
+    {
+        tabBarFrame.size.height = 0;
+        tabBar.frame = tabBarFrame;
+        tabBarFrame.size.height = 44;
+        
+        [self.view addSubview:tabBar];
+        contentScrollViewFrame.size.height -= tabBarFrame.size.height;
+        contentScrollViewFrame.origin.y += tabBarFrame.size.height;
+        [UIView animateWithDuration:.1 animations:^(void) {
+            tabBar.frame = tabBarFrame;
+            contentScrollView.frame = contentScrollViewFrame;
+        }];
+    }
+}
+
+- (void)closeTabButtonAction:(id)sender
+{
+    NSUInteger tabIndex = [tabBar indexOfTab:(UIButton *)[sender superview]];
+    [tabBar removeTabAtIndex:tabIndex animated:YES];
+    
+    // TODO also remove controller
 }
 
 @end
