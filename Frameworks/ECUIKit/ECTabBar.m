@@ -33,6 +33,7 @@
 }
 
 - (void)tabButtonAction:(id)sender;
+- (void)moveTabAction:(UILongPressGestureRecognizer *)recognizer;
 
 @end
 
@@ -41,7 +42,7 @@
 #pragma mark - Properties
 
 @synthesize tabButtonSize, buttonsInsets;
-@synthesize delegate;
+@synthesize delegate, longPressGestureRecognizer;
 @synthesize selectedTabIndex;
 
 - (void)setDelegate:(id<ECTabBarDelegate>)aDelegate
@@ -167,6 +168,9 @@ static void preinit(ECTabBar *self)
 
 static void init(ECTabBar *self)
 {
+    self->longPressGestureRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(moveTabAction:)];
+    [self addGestureRecognizer:self->longPressGestureRecognizer];
+    
     //
     [self setShowsVerticalScrollIndicator:NO];
     [self setShowsHorizontalScrollIndicator:NO];
@@ -262,9 +266,16 @@ static void init(ECTabBar *self)
     
     selectedTabIndex = index;
     
-    [[tabButtons objectAtIndex:selectedTabIndex] setSelected:YES];
+    UIButton *selectedTab = [tabButtons objectAtIndex:selectedTabIndex];
+    [selectedTab setSelected:YES];
     
-    // TODO scroll to completely visible
+    // Scroll to fully show tab
+    CGRect selectedTabFrame = selectedTab.frame;
+    selectedTabFrame.origin.x -= buttonsInsets.left + 7;
+    selectedTabFrame.size.width += buttonsInsets.left + buttonsInsets.right + 7;
+    if (additionalButtonsContainerView)
+        selectedTabFrame.size.width += additionalButtonsContainerView.frame.size.width;
+    [self scrollRectToVisible:selectedTabFrame animated:YES];
 }
 
 - (void)addTabButtonWithTitle:(NSString *)title animated:(BOOL)animated
@@ -379,6 +390,20 @@ static void init(ECTabBar *self)
     
     if (delegateFlags.hasDidSelectTabAtIndex)
         [delegate tabBar:self didSelectTabAtIndex:tabIndex];
+}
+
+- (void)moveTabAction:(UILongPressGestureRecognizer *)recognizer
+{
+    switch (recognizer.state)
+    {
+        case UIGestureRecognizerStateBegan:
+        {
+            break;
+        }
+            
+        default:
+            break;
+    }
 }
 
 @end

@@ -82,6 +82,7 @@
     [tabBar addTabButtonWithTitle:@"One" animated:NO];
     [tabBar addTabButtonWithTitle:@"Two" animated:NO];
     [tabBar addTabButtonWithTitle:@"Three" animated:NO];
+    [tabBar addTabButtonWithTitle:@"Four" animated:NO];
     
     // Tab gesture recognizer
     tabGestureRecognizer = [[ECSwipeGestureRecognizer alloc] initWithTarget:self action:@selector(toggleTabBar:)];

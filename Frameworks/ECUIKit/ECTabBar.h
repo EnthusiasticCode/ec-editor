@@ -34,6 +34,9 @@
 
 @property (nonatomic, weak) id<ECTabBarDelegate> delegate;
 
+/// Access to the gesture recognizer used to move tabs.
+@property (nonatomic, readonly, strong) UILongPressGestureRecognizer *longPressGestureRecognizer;
+
 #pragma mark Stylizing Tab Bar
 
 @property (nonatomic) CGSize tabButtonSize;
