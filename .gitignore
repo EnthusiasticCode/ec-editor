@@ -14,5 +14,6 @@ xcuserdata/
 /ThirdParty/libssh2-for-iOS/bin
 /ThirdParty/libssh2-for-iOS/lib
 /ThirdParty/libssh2-for-iOS/src
+/ThirdParty/libssh2-for-iOS/include
 /ThirdParty/libssh2-for-iOS/libssh2-*
 /ThirdParty/libssh2-for-iOS/openssl-*

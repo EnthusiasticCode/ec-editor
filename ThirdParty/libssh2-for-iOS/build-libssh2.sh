@@ -39,8 +39,6 @@ else
 	echo "Using libssh2-${VERSION}.tar.gz"
 fi
 
-mkdir -p bin
-mkdir -p lib
 mkdir -p src
 
 for ARCH in ${ARCHS}
@@ -74,24 +72,16 @@ do
 	mkdir -p "${CURRENTPATH}/bin/${PLATFORM}${SDKVERSION}-${ARCH}.sdk"
 
 	LOG="${CURRENTPATH}/bin/${PLATFORM}${SDKVERSION}-${ARCH}.sdk/build-libssh2-${VERSION}.log"
-	echo ${CURRENTPATH}/bin/${PLATFORM}${SDKVERSION}-${ARCH}.sdk
 	
-	if [ $1 == "openssl" ];
-	then
-		./configure --host=${ARCH}-apple-darwin --prefix="${CURRENTPATH}/bin/${PLATFORM}${SDKVERSION}-${ARCH}.sdk" -with-openssl --with-libssl-prefix=${CURRENTPATH}/bin/${PLATFORM}${SDKVERSION}-${ARCH}.sdk --disable-shared --enable-static  >> "${LOG}" 2>&1
-	else
-		./configure --host=${ARCH}-apple-darwin --prefix="${CURRENTPATH}/bin/${PLATFORM}${SDKVERSION}-${ARCH}.sdk" --with-libgcrypt --with-libgcrypt-prefix=${CURRENTPATH}/bin/${PLATFORM}${SDKVERSION}-${ARCH}.sdk --disable-shared --enable-static  >> "${LOG}" 2>&1
-	fi
+  ./configure --host=${ARCH}-apple-darwin --prefix="${SDKROOT}/usr" -with-openssl --with-libssl-prefix="${SDKROOT}/usr" --disable-shared --enable-static  >> "${LOG}" 2>&1
 	
 	make >> "${LOG}" 2>&1
-	make install >> "${LOG}" 2>&1
+	echo "Installing into ${SDKROOT}/usr"
+	sudo make install >> "${LOG}" 2>&1
+	echo "Installed"
 	cd ${CURRENTPATH}
 	rm -rf src/libssh2-${VERSION}
 	
 done
 
-echo "Build library..."
-lipo -create ${CURRENTPATH}/bin/iPhoneSimulator${SDKVERSION}-i386.sdk/lib/libssh2.a ${CURRENTPATH}/bin/iPhoneOS${SDKVERSION}-armv6.sdk/lib/libssh2.a ${CURRENTPATH}/bin/iPhoneOS${SDKVERSION}-armv7.sdk/lib/libssh2.a -output ${CURRENTPATH}/lib/libssh2.a
-mkdir -p ${CURRENTPATH}/include/libssh2
-cp -R ${CURRENTPATH}/bin/iPhoneSimulator${SDKVERSION}-i386.sdk/include/libssh2* ${CURRENTPATH}/include/libssh2/
 echo "Building done."
