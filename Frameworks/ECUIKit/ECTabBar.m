@@ -108,8 +108,7 @@
     }
     
     CGRect viewFrame;
-    // TODO make a content inset instead?
-    CGPoint defaultOrigin = CGPointMake(7, 0);
+    CGPoint defaultOrigin = CGPointMake(self.contentInset.left, 0);
     CGSize defaultSize = CGSizeMake(additionalControlsDefaultSize.width, additionalControlsDefaultSize.height ? additionalControlsDefaultSize.height : self.frame.size.height);
     for (UIView *view in additionalControls)
     {
@@ -126,6 +125,11 @@
     }
     
     additionalButtonsContainerView.frame = (CGRect){ CGPointZero, CGSizeMake(defaultOrigin.x, self.frame.size.height) };
+    
+    UIEdgeInsets contentInset = self.contentInset;
+    contentInset.right = defaultOrigin.x;
+    self.contentInset = contentInset;
+    
     [self setNeedsLayout];
 }
 
@@ -168,6 +172,9 @@ static void preinit(ECTabBar *self)
 
 static void init(ECTabBar *self)
 {
+    self.contentInset = UIEdgeInsetsMake(0, 7, 0, 0);
+    
+    //
     self->longPressGestureRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(moveTabAction:)];
     [self addGestureRecognizer:self->longPressGestureRecognizer];
     
@@ -205,7 +212,7 @@ static void init(ECTabBar *self)
     CGRect bounds = self.bounds;
     
     // Determine button's size
-    CGRect buttonFrame = (CGRect) { CGPointMake(7, 0), tabButtonSize };
+    CGRect buttonFrame = (CGRect) { CGPointZero, tabButtonSize };
     if (buttonFrame.size.height == 0)
         buttonFrame.size.height = bounds.size.height;
     
@@ -271,10 +278,8 @@ static void init(ECTabBar *self)
     
     // Scroll to fully show tab
     CGRect selectedTabFrame = selectedTab.frame;
-    selectedTabFrame.origin.x -= buttonsInsets.left + 7;
-    selectedTabFrame.size.width += buttonsInsets.left + buttonsInsets.right + 7;
-    if (additionalButtonsContainerView)
-        selectedTabFrame.size.width += additionalButtonsContainerView.frame.size.width;
+    selectedTabFrame.origin.x -= buttonsInsets.left;
+    selectedTabFrame.size.width += buttonsInsets.left + buttonsInsets.right;
     [self scrollRectToVisible:selectedTabFrame animated:YES];
 }
 
@@ -301,10 +306,7 @@ static void init(ECTabBar *self)
     
     // Add the button and resize content
     [tabButtons addObject:newTabButton];
-    CGFloat fixedContentSize = 7;
-    if (additionalButtonsContainerView)
-        fixedContentSize += additionalButtonsContainerView.frame.size.width;
-    self.contentSize = CGSizeMake(tabButtonSize.width * (newTabButtonIndex + 1) + fixedContentSize, self.frame.size.height);
+    self.contentSize = CGSizeMake(tabButtonSize.width * (newTabButtonIndex + 1), self.frame.size.height);
     
     // TODO animate
     [self addSubview:newTabButton];
@@ -397,9 +399,15 @@ static void init(ECTabBar *self)
     switch (recognizer.state)
     {
         case UIGestureRecognizerStateBegan:
-        {
+            NSLog(@"Began at %u", (NSUInteger)(([recognizer locationInView:self].x) / tabButtonSize.width));
             break;
-        }
+            
+        case UIGestureRecognizerStateChanged:
+            break;
+            
+        case UIGestureRecognizerStateEnded:
+        case UIGestureRecognizerStateCancelled:
+            break;
             
         default:
             break;
