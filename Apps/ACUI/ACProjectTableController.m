@@ -83,7 +83,6 @@
     
 }
 
-
 /*
 // Override to support conditional editing of the table view.
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
@@ -128,6 +127,8 @@
      [self.navigationController pushViewController:detailViewController animated:YES];
      [detailViewController release];
      */
+
+    [self performSegueWithIdentifier:@"projectSegue" sender:self];
 }
 
 @end

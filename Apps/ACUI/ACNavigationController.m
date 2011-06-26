@@ -61,14 +61,13 @@
     [jumpBar setButtonColor:[UIColor styleBackgroundColor]];
     [jumpBar setButtonHighlightColor:[UIColor styleHighlightColor]];
     
-    [jumpBar setSearchString:@"Projects"];
-    
     // Setup tab bar
     if (!tabBar)
         tabBar = [[ECTabBar alloc] initWithFrame:CGRectMake(0, 45, self.view.bounds.size.width, 44)];
     tabBar.delegate = self;
     tabBar.alwaysBounceHorizontal = YES;
     tabBar.backgroundColor = [UIColor styleForegroundColor];
+    tabBar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
     
     UIButton *addTabButton = [UIButton new];
     [addTabButton setImage:[UIImage styleAddImageWithColor:[UIColor styleBackgroundColor] shadowColor:nil] forState:UIControlStateNormal];
@@ -126,24 +125,28 @@
     
     UIViewController *topViewController = [self.childViewControllers lastObject];
     [self addChildViewController:viewController];
-    if (animated)
+    if (animated && topViewController)
     {
-        [self transitionFromViewController:topViewController 
-                          toViewController:viewController 
-                                  duration:1 
-                                   options:UIViewAnimationOptionTransitionNone 
-                                animations:nil completion:^(BOOL finished) {
-                                    [viewController didMoveToParentViewController:self];
-                                }];
+        [contentScrollView addSubview:viewController.view];
+        viewController.view.frame = contentScrollView.bounds;
+        viewController.view.alpha = 0;
+        [UIView animateWithDuration:0.25 animations:^(void) {
+            topViewController.view.alpha = 0;
+            viewController.view.alpha = 1;
+        } completion:^(BOOL finished) {
+            [topViewController.view removeFromSuperview];
+            [viewController didMoveToParentViewController:self];            
+        }];
     }
     else
     {
-        // TODO souldn't be used like this?
         [topViewController.view removeFromSuperview];
         [contentScrollView addSubview:viewController.view];
         viewController.view.frame = contentScrollView.bounds;
         [viewController didMoveToParentViewController:self];
     }
+    
+    // Jump bar
 }
 //- (void)viewWillLayoutSubviews check this out
 - (UIViewController *)popViewControllerAnimated:(BOOL)animated
