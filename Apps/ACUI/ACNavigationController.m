@@ -63,7 +63,7 @@
     
     [jumpBar setSearchString:@"Projects"];
     
-    // Setup tab bar
+    // Setup tab bar    
     tabBar.delegate = self;
     tabBar.alwaysBounceHorizontal = YES;
     tabBar.backgroundColor = [UIColor styleForegroundColor];

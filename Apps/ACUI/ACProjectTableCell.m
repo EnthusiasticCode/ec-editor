@@ -7,7 +7,6 @@
 //
 
 #import "ACProjectTableCell.h"
-#import "ACThemeView.h"
 #import "AppStyle.h"
 
 static NSCache *imagesCache = nil;
@@ -26,21 +25,6 @@ static NSCache *imagesCache = nil;
 {
     if ((self = [super initWithStyle:style reuseIdentifier:reuseIdentifier]))
     {
-        // TODO make this more efficient
-        ACThemeView *themeView = [ACThemeView new];
-        themeView.borderColor = [UIColor styleForegroundColor];
-        themeView.borderInsets = UIEdgeInsetsMake(4.5, 7.5, 4.5, 7.5);
-        themeView.backgroundColor = [UIColor styleBackgroundColor];
-        self.backgroundView = themeView;
-        
-        //
-        ACThemeView *selectedThemeView = [ACThemeView new];
-        selectedThemeView.borderColor = [UIColor styleForegroundColor];
-        selectedThemeView.borderInsets = UIEdgeInsetsMake(4.5, 7.5, 4.5, 7.5);
-        selectedThemeView.backgroundColor = [UIColor styleBackgroundColor];
-        selectedThemeView.backgroundInternalColor = [UIColor styleHighlightColor];
-        self.selectedBackgroundView = selectedThemeView;
-        
         //
         self.textLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
 

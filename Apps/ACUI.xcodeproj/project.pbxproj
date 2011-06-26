@@ -28,7 +28,6 @@
 		CD8BDAB713B6765400B553EB /* ECSwipeGestureRecognizer.m in Sources */ = {isa = PBXBuildFile; fileRef = CD8BDAB613B6765300B553EB /* ECSwipeGestureRecognizer.m */; };
 		CD8D782A13ABE4D500A391F4 /* ACProjectTableController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD8D782913ABE4D500A391F4 /* ACProjectTableController.m */; };
 		CDABE3EE13ABF26B006B53AE /* ACProjectTableCell.m in Sources */ = {isa = PBXBuildFile; fileRef = CDABE3ED13ABF26B006B53AE /* ACProjectTableCell.m */; };
-		CDABE3F113ABF3C2006B53AE /* ACThemeView.m in Sources */ = {isa = PBXBuildFile; fileRef = CDABE3F013ABF3C2006B53AE /* ACThemeView.m */; };
 		CDAD700413A7BBDC00C0B9B4 /* ECPopoverController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDAD700113A7BBDC00C0B9B4 /* ECPopoverController.m */; };
 		CDAD700513A7BBDC00C0B9B4 /* ECPopoverView.m in Sources */ = {isa = PBXBuildFile; fileRef = CDAD700313A7BBDC00C0B9B4 /* ECPopoverView.m */; };
 		CDF9846013B25DB7007429D4 /* ECTabBar.m in Sources */ = {isa = PBXBuildFile; fileRef = CDF9845F13B25DB7007429D4 /* ECTabBar.m */; };
@@ -73,8 +72,6 @@
 		CD8D782913ABE4D500A391F4 /* ACProjectTableController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACProjectTableController.m; sourceTree = "<group>"; };
 		CDABE3EC13ABF26B006B53AE /* ACProjectTableCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACProjectTableCell.h; sourceTree = "<group>"; };
 		CDABE3ED13ABF26B006B53AE /* ACProjectTableCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACProjectTableCell.m; sourceTree = "<group>"; };
-		CDABE3EF13ABF3C2006B53AE /* ACThemeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACThemeView.h; sourceTree = "<group>"; };
-		CDABE3F013ABF3C2006B53AE /* ACThemeView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACThemeView.m; sourceTree = "<group>"; };
 		CDAD700013A7BBDC00C0B9B4 /* ECPopoverController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECPopoverController.h; sourceTree = "<group>"; };
 		CDAD700113A7BBDC00C0B9B4 /* ECPopoverController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECPopoverController.m; sourceTree = "<group>"; };
 		CDAD700213A7BBDC00C0B9B4 /* ECPopoverView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECPopoverView.h; sourceTree = "<group>"; };
@@ -167,8 +164,6 @@
 		CD4755E313ABD71200BB92F6 /* AC */ = {
 			isa = PBXGroup;
 			children = (
-				CDABE3EF13ABF3C2006B53AE /* ACThemeView.h */,
-				CDABE3F013ABF3C2006B53AE /* ACThemeView.m */,
 				CD6AB29413ACF5E700DA8A14 /* Style */,
 				CD8D782C13ABE6BD00A391F4 /* Navigation */,
 				CD8D782D13ABE6C500A391F4 /* Projects */,
@@ -303,7 +298,6 @@
 				CD4755E613ABD77600BB92F6 /* ACNavigationPushSegue.m in Sources */,
 				CD8D782A13ABE4D500A391F4 /* ACProjectTableController.m in Sources */,
 				CDABE3EE13ABF26B006B53AE /* ACProjectTableCell.m in Sources */,
-				CDABE3F113ABF3C2006B53AE /* ACThemeView.m in Sources */,
 				CD6AB29C13ACF6EC00DA8A14 /* UIColor+AppStyle.m in Sources */,
 				CD6AB29D13ACF6EC00DA8A14 /* UIFont+AppStyle.m in Sources */,
 				CD6AB2A113ACFDE700DA8A14 /* UIImage+AppStyle.m in Sources */,
