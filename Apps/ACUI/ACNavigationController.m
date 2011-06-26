@@ -63,7 +63,9 @@
     
     [jumpBar setSearchString:@"Projects"];
     
-    // Setup tab bar    
+    // Setup tab bar
+    if (!tabBar)
+        tabBar = [[ECTabBar alloc] initWithFrame:CGRectMake(0, 45, self.view.bounds.size.width, 44)];
     tabBar.delegate = self;
     tabBar.alwaysBounceHorizontal = YES;
     tabBar.backgroundColor = [UIColor styleForegroundColor];
@@ -95,9 +97,6 @@
     contentScrollView.pagingEnabled = YES;
     contentScrollView.showsVerticalScrollIndicator = NO;
     contentScrollView.showsHorizontalScrollIndicator = NO;
-    
-    // TODO!!! doing this makes the app crash when selecting a tab (try with zombie enabled)
-//    [self toggleTabBar:nil];
 }
 
 - (void)viewDidUnload
@@ -213,7 +212,7 @@
     return YES;
 }
 
-#pragma mark - 
+#pragma mark -
 
 - (void)toggleTabBar:(id)sender
 {    

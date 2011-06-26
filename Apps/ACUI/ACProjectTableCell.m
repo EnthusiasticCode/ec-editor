@@ -29,7 +29,7 @@ static NSCache *imagesCache = nil;
         self.textLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
 
         // TODO why this make the textlabel background disapear?
-        self.textLabel.backgroundColor = [UIColor blueColor];
+        self.textLabel.backgroundColor = [UIColor clearColor];
         self.textLabel.font = [UIFont styleFontWithSize:18];
         self.textLabel.textColor = [UIColor styleForegroundColor];
         self.textLabel.highlightedTextColor = [UIColor styleForegroundColor];
