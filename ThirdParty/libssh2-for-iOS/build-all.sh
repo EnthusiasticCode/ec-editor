@@ -18,6 +18,13 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 #
+
+if (! [ -e /Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/cpp ] )
+  then
+  echo "/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/cpp not found."
+  echo "Link cpp-version to cpp."
+  exit 1
+fi
 echo "Building openssl:"
 ./build-libssl.sh
 echo "Build libssh2:"
