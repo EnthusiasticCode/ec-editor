@@ -7,7 +7,6 @@
 //
 
 #import "ECJumpBar.h"
-#import "ECButton.h"
 #import <QuartzCore/QuartzCore.h>
 
 #define BUTTON_ARROW_WIDTH 10
@@ -48,9 +47,7 @@
 @synthesize buttonColor;
 @synthesize buttonHighlightColor;
 @synthesize borderColor;
-@synthesize borderWidth;
 @synthesize textInsets;
-//@synthesize controlMargin;
 
 - (void)setDelegate:(id<ECJumpBarDelegate>)aDelegate
 {
@@ -135,14 +132,6 @@
 //        button.borderColor = borderColor;
 }
 
-- (void)setBorderWidth:(CGFloat)width
-{
-    borderWidth = width;
-    self.layer.borderWidth = width;
-    for (ECButton *button in controlsStack)
-        button.borderWidth = borderWidth;
-}
-
 - (void)setSearchString:(NSString *)aString
 {
     searchField.text = aString;
@@ -185,7 +174,7 @@ static void init(ECJumpBar *self)
 //    self.buttonHighlightColor = [UIColor colorWithRed:93.0/255.0 green:94.0/255.0 blue:94.0/255.0 alpha:1.0];
     self.cornerRadius = 3;
     self.borderColor = [UIColor colorWithWhite:0.16 alpha:1.0];
-    self.borderWidth = 1;
+    self.layer.borderWidth = 1;
     //
     [self addSubview:self->searchField];
     //
@@ -328,7 +317,6 @@ static void init(ECJumpBar *self)
         if (controlsStackActualCount > 0)
             searchOrigin.x += BUTTON_ARROW_WIDTH + textPadding;
         searchOrigin.x += textInsets.left;
-        searchOrigin.y += 1;
         searchField.frame = (CGRect){ searchOrigin, { bounds.size.width - searchOrigin.x - textPadding, size.height } };
     };
     
@@ -496,7 +484,7 @@ static void init(ECJumpBar *self)
 
 - (UIControl *)createStackControlWithTitle:(NSString *)title
 {
-    ECButton *button = [ECButton new];
+    UIButton *button = [UIButton new];
     button.autoresizingMask = UIViewAutoresizingFlexibleHeight;
     button.contentMode = UIViewContentModeScaleToFill;
     button.contentStretch = CGRectMake(0.5, 0.5, 0, 0);
@@ -506,9 +494,9 @@ static void init(ECJumpBar *self)
     button.titleLabel.lineBreakMode = UILineBreakModeTailTruncation;
     [button setTitleShadowColor:self.textShadowColor forState:UIControlStateNormal];
     [button setTitleColor:self.textColor forState:UIControlStateNormal];
-    [button setBackgroundColor:self.buttonColor forState:UIControlStateNormal];
-    [button setBackgroundColor:self.buttonHighlightColor forState:UIControlStateHighlighted];
-    button.rightArrowSize = BUTTON_ARROW_WIDTH;
+//    [button setBackgroundColor:self.buttonColor forState:UIControlStateNormal];
+//    [button setBackgroundColor:self.buttonHighlightColor forState:UIControlStateHighlighted];
+//    button.rightArrowSize = BUTTON_ARROW_WIDTH;
     return button;
 }
 

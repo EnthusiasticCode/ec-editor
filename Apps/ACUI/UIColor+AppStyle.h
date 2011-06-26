@@ -9,13 +9,15 @@
 #import <UIKit/UIKit.h>
 
 
-@interface UIColor (StyleColors)
+@interface UIColor (AppStyle)
 
 + (UIColor *)styleBackgroundColor;
 + (UIColor *)styleBackgroundShadowColor;
++ (UIColor *)styleHighlightColor;
 + (UIColor *)styleAlternateBackgroundColor;
 + (UIColor *)styleForegroundColor;
 + (UIColor *)styleForegroundShadowColor;
 + (UIColor *)styleThemeColorOne;
++ (UIColor *)styleDeleteColor;
 
 @end

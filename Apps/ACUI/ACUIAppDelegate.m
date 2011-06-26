@@ -7,15 +7,40 @@
 //
 
 #import "ACUIAppDelegate.h"
+#import "AppStyle.h"
+#import "ECTabBar.h"
 
 @implementation ACUIAppDelegate
 
 @synthesize window = _window;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
-{
+{    
     // Override point for customization after application launch.
     [self.window makeKeyAndVisible];
+    [self.window.rootViewController performSegueWithIdentifier:@"rootSegue" sender:nil];
+    
+    // Customizing generic button
+    id buttonAppearance = [UIButton appearance];
+    [buttonAppearance setBackgroundImage:[UIImage styleBackgroundImageWithColor:[UIColor styleBackgroundColor] borderColor:[UIColor styleForegroundColor] insets:UIEdgeInsetsZero arrowSize:0] forState:UIControlStateNormal];
+    [buttonAppearance setBackgroundImage:[UIImage styleBackgroundImageWithColor:[UIColor styleHighlightColor] borderColor:[UIColor styleForegroundColor] insets:UIEdgeInsetsZero arrowSize:0] forState:UIControlStateHighlighted];
+    [buttonAppearance setBackgroundImage:[UIImage styleBackgroundImageWithColor:[UIColor styleThemeColorOne] borderColor:[UIColor styleForegroundColor] insets:UIEdgeInsetsZero arrowSize:0] forState:UIControlStateSelected];
+    
+    // Button inside tabbar
+    id buttonInTabBarAppearance = [UIButton appearanceWhenContainedIn:[ECTabBar class], nil];
+    [buttonInTabBarAppearance setBackgroundImage:[UIImage styleBackgroundImageWithColor:[UIColor styleForegroundColor] borderColor:[UIColor styleBackgroundColor] insets:UIEdgeInsetsZero arrowSize:0] forState:UIControlStateNormal];
+    [buttonInTabBarAppearance setBackgroundImage:[UIImage styleBackgroundImageWithColor:[UIColor colorWithWhite:0.25 alpha:1] borderColor:[UIColor styleBackgroundColor] insets:UIEdgeInsetsZero arrowSize:0] forState:UIControlStateHighlighted];
+    [buttonInTabBarAppearance setBackgroundImage:[UIImage styleBackgroundImageWithColor:[UIColor styleBackgroundColor] borderColor:[UIColor styleBackgroundColor] insets:UIEdgeInsetsZero arrowSize:0] forState:UIControlStateSelected];
+    [buttonInTabBarAppearance setTitleColor:[UIColor styleBackgroundColor] forState:UIControlStateNormal];
+    [buttonInTabBarAppearance setTitleColor:[UIColor styleForegroundColor] forState:UIControlStateSelected];
+    
+    // Close button of tabs
+    id closeButtonInTabBarAppearance = [UIButton appearanceWhenContainedIn:[UIButton class], [ECTabBar class], nil];
+    [closeButtonInTabBarAppearance setBackgroundImage:nil forState:UIControlStateNormal];
+    [closeButtonInTabBarAppearance setBackgroundImage:nil forState:UIControlStateHighlighted];
+    [closeButtonInTabBarAppearance setImage:[UIImage styleCloseImageWithColor:[UIColor styleBackgroundColor] outlineColor:[UIColor styleForegroundColor]] forState:UIControlStateNormal];
+    [closeButtonInTabBarAppearance setImage:[UIImage styleCloseImageWithColor:[UIColor styleForegroundColor] outlineColor:[UIColor styleBackgroundColor]] forState:UIControlStateHighlighted];
+    
     return YES;
 }
 
