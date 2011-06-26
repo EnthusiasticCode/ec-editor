@@ -49,7 +49,7 @@
 
 @synthesize tabButtonSize, buttonsInsets;
 @synthesize delegate, longPressGestureRecognizer;
-@synthesize selectedTabIndex;
+@synthesize selectedTabButton;
 
 - (void)setDelegate:(id<ECTabBarDelegate>)aDelegate
 {
@@ -171,7 +171,6 @@ static void updateFadeViews(ECTabBar *self)
 
 static void preinit(ECTabBar *self)
 {
-    self->selectedTabIndex = NSNotFound;
     self->tabButtonSize = CGSizeMake(300, 0);
     self->buttonsInsets = UIEdgeInsetsMake(7, 0, 7, 7);
     self->additionalControlsDefaultSize = CGSizeMake(41, 0);
@@ -224,11 +223,22 @@ static void init(ECTabBar *self)
         buttonFrame.size.height = bounds.size.height;
     
     // Layout tab button
+    NSUInteger buttonIndex = 0;
     for (UIButton *button in tabButtons)
     {
+        if (movedTab && buttonIndex == movedTabDestinationIndex && movedTabIndex > movedTabDestinationIndex)
+            buttonFrame.origin.x += buttonFrame.size.width;
+        
         if (button != movedTab)
+        {
             button.frame = UIEdgeInsetsInsetRect(buttonFrame, buttonsInsets);
-        buttonFrame.origin.x += buttonFrame.size.width;
+            buttonFrame.origin.x += buttonFrame.size.width;
+        }
+        
+        if (movedTab && buttonIndex == movedTabDestinationIndex && movedTabIndex <= movedTabDestinationIndex)
+            buttonFrame.origin.x += buttonFrame.size.width;
+        
+        ++buttonIndex;
     }
     
     // Layout additional buttons
@@ -271,21 +281,25 @@ static void init(ECTabBar *self)
 
 #pragma mark - Managing Tabs
 
+- (NSUInteger)selectedTabIndex
+{
+    return [tabButtons indexOfObject:selectedTabButton];
+}
+
 - (void)setSelectedTabIndex:(NSUInteger)index
 {
-    if (selectedTabIndex == index || index >= [tabButtons count])
+    if (index >= [tabButtons count])
         return;
     
-    if (selectedTabIndex != NSNotFound)
-        [[tabButtons objectAtIndex:selectedTabIndex] setSelected:NO];
+    if (index != NSNotFound)
+        [selectedTabButton setSelected:NO];
     
-    selectedTabIndex = index;
+    selectedTabButton = [tabButtons objectAtIndex:index];
     
-    UIButton *selectedTab = [tabButtons objectAtIndex:selectedTabIndex];
-    [selectedTab setSelected:YES];
+    [selectedTabButton setSelected:YES];
     
     // Scroll to fully show tab
-    CGRect selectedTabFrame = selectedTab.frame;
+    CGRect selectedTabFrame = selectedTabButton.frame;
     selectedTabFrame.origin.x -= buttonsInsets.left;
     selectedTabFrame.size.width += buttonsInsets.left + buttonsInsets.right;
     [self scrollRectToVisible:selectedTabFrame animated:YES];
@@ -331,8 +345,6 @@ static void init(ECTabBar *self)
     if (delegateFlags.hasWillRemoveTabButtonAtIndex
         && ![delegate tabBar:self willRemoveTabButtonAtIndex:index])
         return;
-    
-    selectedTabIndex = NSNotFound;
     
     if (animated)
     {
@@ -433,6 +445,7 @@ static void init(ECTabBar *self)
             [self bringSubviewToFront:movedTab];
             [UIView animateWithDuration:0.2 animations:^(void) {
                 [movedTab setTransform:CGAffineTransformMakeScale(1.25, 1.25)];
+                [movedTab setAlpha:0.75];
             }];
             
             break;
@@ -448,31 +461,42 @@ static void init(ECTabBar *self)
                 movedTabCenter.x = locationInView.x + movedTabOffsetFromCenter.x;
                 movedTab.center = movedTabCenter;
                 
+                // Select final destination
+                movedTabDestinationIndex = (NSUInteger)(locationInView.x / tabButtonSize.width);
+                if (movedTabDestinationIndex >= [tabButtons count])
+                    movedTabDestinationIndex = [tabButtons count] - 1;
+                [UIView animateWithDuration:0.2 animations:^(void) {
+                    [self layoutSubviews];
+                }];
+                
                 // Calculate scrolling offset
                 CGPoint contentOffset = self.contentOffset;
                 CGFloat scrollLocationInView = locationInView.x - contentOffset.x;
                 CGFloat scrollingOffset = 0;
-                if (scrollLocationInView < 30)
+                if (scrollLocationInView < 60)
                     scrollingOffset = -(scrollLocationInView);
-                else if (scrollLocationInView > self.frame.size.width - 30)
-                    scrollingOffset = scrollLocationInView - (self.frame.size.width - 30);
+                else if (scrollLocationInView > self.frame.size.width - 60)
+                    scrollingOffset = scrollLocationInView - (self.frame.size.width - 60);
                 
                 // Manual scrolling
                 [movedTabScrollTimer invalidate];
                 if (scrollingOffset != 0)
-                    movedTabScrollTimer = [NSTimer scheduledTimerWithTimeInterval:1./60. usingBlock:^(NSTimer *timer) {
-                        CGFloat contentOffsetX = self.contentOffset.x + scrollingOffset / 2;
-                        if (contentOffsetX <= 0 
-                            || contentOffsetX >= (self.contentSize.width - self.frame.size.width + self.contentInset.right))
+                    movedTabScrollTimer = [NSTimer scheduledTimerWithTimeInterval:1./100. usingBlock:^(NSTimer *timer) {
+                        CGFloat contentOffsetX = self.contentOffset.x;
+                        if ((scrollingOffset < 0 && contentOffsetX <= 0)
+                            || (scrollingOffset > 0 && contentOffsetX > (self.contentSize.width - self.frame.size.width + self.contentInset.right)))
                         {
                             [movedTabScrollTimer invalidate];
                             movedTabScrollTimer = nil;
                         }
                         else
                         {
+                            contentOffsetX += (scrollingOffset > 0 ? 5 : -5);
+                            
                             CGPoint center = movedTab.center;
                             center.x -= self.contentOffset.x;
 
+                            // TODO choose a better rect
                             [self scrollRectToVisible:CGRectMake(contentOffsetX, 0, self.frame.size.width - self.contentInset.right, 1) animated:NO];
                             
                             center.x += self.contentOffset.x;
@@ -492,17 +516,25 @@ static void init(ECTabBar *self)
                 [movedTabScrollTimer invalidate];
                 movedTabScrollTimer = nil;
                 
+                // Apply movement
+                if (movedTabIndex != movedTabDestinationIndex)
+                {
+                    [tabButtons removeObjectAtIndex:movedTabIndex];
+                    [tabButtons insertObject:movedTab atIndex:movedTabDestinationIndex];
+                }
+                
                 // Animate to position
+                UIButton *movedTabButton = movedTab;
                 [UIView animateWithDuration:0.2 animations:^(void) {
                     [movedTab setTransform:CGAffineTransformIdentity];
+                    [movedTab setAlpha:1.0];
+                    movedTab = nil;
                     [self layoutSubviews];
                 } completion:^(BOOL finished) {
                     [self sendSubviewToBack:movedTab];
                     
                     if (delegateFlags.hasDidMoveTabButtonFromIndexToIndex)
-                        [delegate tabBar:self didMoveTabButton:movedTab fromIndex:movedTabIndex toIndex:movedTabDestinationIndex];
-                    
-                    movedTab = nil;
+                        [delegate tabBar:self didMoveTabButton:movedTabButton fromIndex:movedTabIndex toIndex:movedTabDestinationIndex];
                 }];
             }
             break;
