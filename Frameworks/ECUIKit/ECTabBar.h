@@ -22,7 +22,8 @@
 - (BOOL)tabBar:(ECTabBar *)tabBar willSelectTabAtIndex:(NSUInteger)index;
 - (void)tabBar:(ECTabBar *)tabBar didSelectTabAtIndex:(NSUInteger)index;
 
-- (BOOL)tabBar:(ECTabBar *)tabBar willMoveTabFromIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex;
+- (BOOL)tabBar:(ECTabBar *)tabBar willMoveTabButton:(UIButton *)tabButton;
+- (void)tabBar:(ECTabBar *)tabBar didMoveTabButton:(UIButton *)tabButton fromIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex;
 
 @end
 

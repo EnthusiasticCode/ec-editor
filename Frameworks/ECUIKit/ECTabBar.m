@@ -9,6 +9,7 @@
 #import "ECTabBar.h"
 #import <QuartzCore/QuartzCore.h>
 #import "UIImage+BlockDrawing.h"
+#import "NSTimer+block.h"
 #import <objc/runtime.h>
 
 @interface ECTabBar () {
@@ -20,6 +21,11 @@
     
     UIView *additionalButtonsContainerView;
     
+    __weak UIButton *movedTab;
+    CGPoint movedTabOffsetFromCenter;
+    NSUInteger movedTabIndex, movedTabDestinationIndex;
+    NSTimer *movedTabScrollTimer;
+    
     struct {
         unsigned int hasWillAddTabButtonAtIndex : 1;
         unsigned int hasDidAddTabButtonAtIndex : 1;
@@ -27,8 +33,8 @@
         unsigned int hasDidRemoveTabButtonAtIndex : 1;
         unsigned int hasWillSelectTabAtIndex :1;
         unsigned int hasDidSelectTabAtIndex : 1;
-        unsigned int hasWillMoveTabFromIndexToIndex : 1;
-        unsigned int reserved : 1;
+        unsigned int hasWillMoveTabButton : 1;
+        unsigned int hasDidMoveTabButtonFromIndexToIndex : 1;
     } delegateFlags;
 }
 
@@ -55,7 +61,8 @@
     delegateFlags.hasDidRemoveTabButtonAtIndex = [delegate respondsToSelector:@selector(tabBar:didRemoveTabButtonAtIndex:)];
     delegateFlags.hasWillSelectTabAtIndex = [delegate respondsToSelector:@selector(tabBar:willSelectTabAtIndex:)];
     delegateFlags.hasDidSelectTabAtIndex = [delegate respondsToSelector:@selector(tabBar:didSelectTabAtIndex:)];
-    delegateFlags.hasWillMoveTabFromIndexToIndex = [delegate respondsToSelector:@selector(tabBar:willMoveTabFromIndex:toIndex:)];
+    delegateFlags.hasWillMoveTabButton = [delegate respondsToSelector:@selector(tabBar:willMoveTabButton:)];
+    delegateFlags.hasDidMoveTabButtonFromIndexToIndex = [delegate respondsToSelector:@selector(tabBar:didMoveTabButton:fromIndex:toIndex:)];
 }
 
 @synthesize closeTabImage;
@@ -219,7 +226,8 @@ static void init(ECTabBar *self)
     // Layout tab button
     for (UIButton *button in tabButtons)
     {
-        button.frame = UIEdgeInsetsInsetRect(buttonFrame, buttonsInsets);
+        if (button != movedTab)
+            button.frame = UIEdgeInsetsInsetRect(buttonFrame, buttonsInsets);
         buttonFrame.origin.x += buttonFrame.size.width;
     }
     
@@ -399,14 +407,104 @@ static void init(ECTabBar *self)
     switch (recognizer.state)
     {
         case UIGestureRecognizerStateBegan:
-            NSLog(@"Began at %u", (NSUInteger)(([recognizer locationInView:self].x) / tabButtonSize.width));
+        {
+            // Ignore long press in additional buttons
+            CGPoint locationInView = [recognizer locationInView:self];
+            if (additionalButtonsContainerView 
+                && locationInView.x - self.contentOffset.x >= self.frame.size.width - additionalButtonsContainerView.frame.size.width)
+            {
+                movedTab = nil;
+                return;
+            }
+            
+            // Get tab to move and forward to delegate to ask for permission
+            movedTabIndex = (NSUInteger)(locationInView.x / tabButtonSize.width);
+            movedTabDestinationIndex = movedTabIndex;
+            movedTab = [tabButtons objectAtIndex:movedTabIndex];
+            if (delegateFlags.hasWillMoveTabButton
+                && ![delegate tabBar:self willMoveTabButton:movedTab])
+            {
+                movedTab = nil;
+                return;
+            }
+            
+            // Record center offset and animate motion beginning
+            movedTabOffsetFromCenter = CGPointMake(movedTab.center.x - locationInView.x, 0);
+            [self bringSubviewToFront:movedTab];
+            [UIView animateWithDuration:0.2 animations:^(void) {
+                [movedTab setTransform:CGAffineTransformMakeScale(1.25, 1.25)];
+            }];
+            
             break;
+        }
             
         case UIGestureRecognizerStateChanged:
+            if (movedTab)
+            {
+                CGPoint locationInView = [recognizer locationInView:self];
+                
+                // Move tab horizontaly
+                CGPoint movedTabCenter = movedTab.center;
+                movedTabCenter.x = locationInView.x + movedTabOffsetFromCenter.x;
+                movedTab.center = movedTabCenter;
+                
+                // Calculate scrolling offset
+                CGPoint contentOffset = self.contentOffset;
+                CGFloat scrollLocationInView = locationInView.x - contentOffset.x;
+                CGFloat scrollingOffset = 0;
+                if (scrollLocationInView < 30)
+                    scrollingOffset = -(scrollLocationInView);
+                else if (scrollLocationInView > self.frame.size.width - 30)
+                    scrollingOffset = scrollLocationInView - (self.frame.size.width - 30);
+                
+                // Manual scrolling
+                [movedTabScrollTimer invalidate];
+                if (scrollingOffset != 0)
+                    movedTabScrollTimer = [NSTimer scheduledTimerWithTimeInterval:1./60. usingBlock:^(NSTimer *timer) {
+                        CGFloat contentOffsetX = self.contentOffset.x + scrollingOffset / 2;
+                        if (contentOffsetX <= 0 
+                            || contentOffsetX >= (self.contentSize.width - self.frame.size.width + self.contentInset.right))
+                        {
+                            [movedTabScrollTimer invalidate];
+                            movedTabScrollTimer = nil;
+                        }
+                        else
+                        {
+                            CGPoint center = movedTab.center;
+                            center.x -= self.contentOffset.x;
+
+                            [self scrollRectToVisible:CGRectMake(contentOffsetX, 0, self.frame.size.width - self.contentInset.right, 1) animated:NO];
+                            
+                            center.x += self.contentOffset.x;
+                            movedTab.center = center;
+                        }
+                    } repeats:YES];
+                else
+                    movedTabScrollTimer = nil;
+            }
             break;
             
         case UIGestureRecognizerStateEnded:
         case UIGestureRecognizerStateCancelled:
+            if (movedTab)
+            {
+                // Stop scrolling timer
+                [movedTabScrollTimer invalidate];
+                movedTabScrollTimer = nil;
+                
+                // Animate to position
+                [UIView animateWithDuration:0.2 animations:^(void) {
+                    [movedTab setTransform:CGAffineTransformIdentity];
+                    [self layoutSubviews];
+                } completion:^(BOOL finished) {
+                    [self sendSubviewToBack:movedTab];
+                    
+                    if (delegateFlags.hasDidMoveTabButtonFromIndexToIndex)
+                        [delegate tabBar:self didMoveTabButton:movedTab fromIndex:movedTabIndex toIndex:movedTabDestinationIndex];
+                    
+                    movedTab = nil;
+                }];
+            }
             break;
             
         default:

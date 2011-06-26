@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CD10B35913B73FEA00901780 /* NSTimer+block.m in Sources */ = {isa = PBXBuildFile; fileRef = CD10B35813B73FEA00901780 /* NSTimer+block.m */; };
 		CD19240913A147EE00A47E38 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD19240813A147EE00A47E38 /* UIKit.framework */; };
 		CD19240B13A147EE00A47E38 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD19240A13A147EE00A47E38 /* Foundation.framework */; };
 		CD19240D13A147EE00A47E38 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD19240C13A147EE00A47E38 /* CoreGraphics.framework */; };
@@ -34,6 +35,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		CD10B35713B73FEA00901780 /* NSTimer+block.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSTimer+block.h"; sourceTree = "<group>"; };
+		CD10B35813B73FEA00901780 /* NSTimer+block.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSTimer+block.m"; sourceTree = "<group>"; };
 		CD19240413A147ED00A47E38 /* ACUI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ACUI.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CD19240813A147EE00A47E38 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		CD19240A13A147EE00A47E38 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -96,6 +99,16 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		CD10B35513B73FCA00901780 /* ECFoundation */ = {
+			isa = PBXGroup;
+			children = (
+				CD10B35713B73FEA00901780 /* NSTimer+block.h */,
+				CD10B35813B73FEA00901780 /* NSTimer+block.m */,
+			);
+			name = ECFoundation;
+			path = ../../Frameworks/ECFoundation;
+			sourceTree = "<group>";
+		};
 		CD1923F913A147ED00A47E38 = {
 			isa = PBXGroup;
 			children = (
@@ -129,6 +142,7 @@
 		CD19240E13A147EE00A47E38 /* ACUI */ = {
 			isa = PBXGroup;
 			children = (
+				CD10B35513B73FCA00901780 /* ECFoundation */,
 				CD6973EF13A14FE6005D68D9 /* ECUIKit */,
 				CD19241713A147EE00A47E38 /* ACUIAppDelegate.h */,
 				CD19241813A147EE00A47E38 /* ACUIAppDelegate.m */,
@@ -296,6 +310,7 @@
 				CD6AB2A413ACFE2100DA8A14 /* UIImage+BlockDrawing.m in Sources */,
 				CDF9846013B25DB7007429D4 /* ECTabBar.m in Sources */,
 				CD8BDAB713B6765400B553EB /* ECSwipeGestureRecognizer.m in Sources */,
+				CD10B35913B73FEA00901780 /* NSTimer+block.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

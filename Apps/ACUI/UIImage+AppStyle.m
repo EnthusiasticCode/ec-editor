@@ -276,10 +276,10 @@
     return [UIImage imageWithSize:imageSize block:^(CGContextRef ctx, CGRect rect) {
         CGAffineTransform transform;
         switch (orientation) {
-            case UIImageOrientationUp: transform = CGAffineTransformTranslate(CGAffineTransformMakeRotation(M_PI), -14, -9); break;
-            case UIImageOrientationLeft: transform = CGAffineTransformTranslate(CGAffineTransformMakeRotation(M_PI_2), 0, -9); break;
-            case UIImageOrientationRight: transform = CGAffineTransformTranslate(CGAffineTransformMakeRotation(-M_PI_2), -14, 0); break;
-            default: transform = CGAffineTransformIdentity; break;
+            case UIImageOrientationUp: { transform = CGAffineTransformTranslate(CGAffineTransformMakeRotation(M_PI), -14, -9); break; }
+            case UIImageOrientationLeft: { transform = CGAffineTransformTranslate(CGAffineTransformMakeRotation(M_PI_2), 0, -9); break; }
+            case UIImageOrientationRight: { transform = CGAffineTransformTranslate(CGAffineTransformMakeRotation(-M_PI_2), -14, 0); break; }
+            default: { transform = CGAffineTransformIdentity; break; }
         }
         
         CGMutablePathRef path = CGPathCreateMutable();
