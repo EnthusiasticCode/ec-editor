@@ -40,16 +40,16 @@
 
 /// The minimum with of the search field. 
 /// If this number is lower than 1 it will be interpreted as a percentage of the receiver's width.
-@property (nonatomic) CGFloat minimumTextElementWidth;
+@property (nonatomic) CGFloat minimumTextElementWidth UI_APPEARANCE_SELECTOR;
 
 /// A margin to apply to jump elements and collapse element.
-@property (nonatomic) UIEdgeInsets jumpElementMargins;
+@property (nonatomic) UIEdgeInsets jumpElementMargins UI_APPEARANCE_SELECTOR;
 
 /// The minimum with of a button in the bar.
-@property (nonatomic) CGFloat minimumJumpElementWidth;
+@property (nonatomic) CGFloat minimumJumpElementWidth UI_APPEARANCE_SELECTOR;
 
 /// The maximum width of a button in the bar.
-@property (nonatomic) CGFloat maximumJumpElementWidth;
+@property (nonatomic) CGFloat maximumJumpElementWidth UI_APPEARANCE_SELECTOR;
 
 #pragma mark Fixed Elements
 

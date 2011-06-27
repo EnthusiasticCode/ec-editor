@@ -15,12 +15,13 @@
 + (UIImage *)styleBackgroundImageWithColor:(UIColor *)color 
                                borderColor:(UIColor *)borderColor 
                                     insets:(UIEdgeInsets)borderInsets 
-                                 arrowSize:(CGFloat)arrowSize
+                                 arrowSize:(CGSize)arrowSize
 {
     CGFloat radius = 3;
-    CGSize imageSize = CGSizeMake(3 + 2 + 3 + abs(arrowSize) + borderInsets.left + borderInsets.right, 3 + 2 + 3 + borderInsets.top + borderInsets.bottom);
-    CGFloat leftArrow = (arrowSize < 0. ? -arrowSize : 0);
-    CGFloat rightArrow = (arrowSize > 0. ? arrowSize : 0); 
+    CGFloat leftArrow = (arrowSize.width < 0. ? -arrowSize.width : 0);
+    CGFloat rightArrow = (arrowSize.width > 0. ? arrowSize.width : 0); 
+    CGSize imageSize = CGSizeMake(3 + 2 + 3 + leftArrow + rightArrow + borderInsets.left + borderInsets.right, 
+                                  arrowSize.height ? arrowSize.height : 3 + 2 + 3 + borderInsets.top + borderInsets.bottom);
     return [[UIImage imageWithSize:imageSize block:^(CGContextRef ctx, CGRect rect) {
         CGMutablePathRef path = CGPathCreateMutable();
         
@@ -28,7 +29,7 @@
         rect = CGRectInset(rect, .5, .5);
         
         // Build path
-        if (arrowSize != 0.)
+        if (arrowSize.width == 0.)
         {
             CGPathAddPath(path, NULL, [UIBezierPath bezierPathWithRoundedRect:rect cornerRadius:radius].CGPath);
         }
@@ -123,7 +124,10 @@
         CGContextStrokePath(ctx);        
         
         CGPathRelease(path);
-    }] resizableImageWithCapInsets:UIEdgeInsetsMake(borderInsets.top + 3, borderInsets.left + 3 + leftArrow, borderInsets.bottom + 3, borderInsets.right + 3 + rightArrow)];
+    }] resizableImageWithCapInsets:UIEdgeInsetsMake(arrowSize.height ? 0 : borderInsets.top + 3, 
+                                                    borderInsets.left + 3 + leftArrow, 
+                                                    arrowSize.height ? 0 : borderInsets.bottom + 3, 
+                                                    borderInsets.right + 3 + rightArrow)];
 }
 
 + (UIImage *)styleProjectImageWithSize:(CGSize)size labelColor:(UIColor *)labelColor

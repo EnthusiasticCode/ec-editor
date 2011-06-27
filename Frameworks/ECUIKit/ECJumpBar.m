@@ -9,11 +9,13 @@
 #import "ECJumpBar.h"
 #import <QuartzCore/QuartzCore.h>
 
-#define BUTTON_ARROW_WIDTH 10
 
-@interface ECJumpBar () {
-@private
+@implementation ECJumpBar {
     NSMutableArray *jumpElements;
+    
+    /// Variable keeping the current visible elements. It is updated only in the
+    /// pushJumpElementWithPathComponent:animated:.
+    NSIndexSet *visibleJumpElements;
     
     struct {
         unsigned int hasCreateElementForJumpPathComponentIndex : 1;
@@ -22,14 +24,6 @@
         unsigned int reserved : 1;
     } delegateFlags;
 }
-
-- (NSIndexSet *)visibleElementsIndexSet;
-- (void)layoutElementsWithIndexes:(NSIndexSet *)elementIndexes;
-
-@end
-
-
-@implementation ECJumpBar
 
 #pragma mark - Properties
 
@@ -94,91 +88,6 @@
     return collapseElement;
 }
 
-#pragma mark - UIView Methods
-
-static void preinit(ECJumpBar *self)
-{
-    self->jumpElements = [NSMutableArray new];
-    
-    self->minimumTextElementWidth = 0.5;
-    
-    self->minimumJumpElementWidth = 50;
-    self->maximumJumpElementWidth = 160;
-}
-
-static void init(ECJumpBar *self)
-{
-    self.layer.masksToBounds = YES;
-}
-
-- (id)initWithFrame:(CGRect)frame
-{
-    preinit(self);
-    if ((self = [super initWithFrame:frame]))
-    {
-        init(self);
-    }
-    return self;
-}
-
-- (id)initWithCoder:(NSCoder *)aDecoder
-{
-    preinit(self);
-    if ((self = [super initWithCoder:aDecoder]))
-    {
-        init(self);
-    }
-    return self;
-}
-
-- (void)layoutSubviews
-{
-    CGRect bounds = self.bounds;
-    NSIndexSet *visibleElements = [self visibleElementsIndexSet];
-    BOOL anyElement = ([visibleElements count] > 0);
-    
-    if (backgroundView)
-        backgroundView.frame = (CGRect){ CGPointZero, bounds.size };
-    
-    if (backElement)
-    {
-        if (anyElement)
-        {
-            backElement.hidden = NO;
-            backElement.frame = (CGRect){ CGPointZero, { backElement.frame.size.width, bounds.size.height } };
-        }
-        else
-        {
-            backElement.hidden = YES;
-        }
-    }
-    
-    [self layoutElementsWithIndexes:visibleElements];
-    
-    CGFloat lastElementEnd = anyElement ? roundf(CGRectGetMaxX([[jumpElements objectAtIndex:[visibleElements lastIndex]] frame])) : 0;
-    self.textElement.frame = CGRectMake(lastElementEnd, 0, bounds.size.width - lastElementEnd, bounds.size.height);
-}
-
-#pragma mark - Jump Element Related Methods
-
-- (UIView *)createDefaultElementForJumpPathComponent:(NSString *)pathComponent
-{
-    UIButton *button = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-    [button setTitle:pathComponent forState:UIControlStateNormal];
-    return button;
-}
-
-- (void)pushJumpElementsForPath:(NSString *)path animated:(BOOL)animated
-{
-    UIView *element = delegateFlags.hasCreateElementForJumpPathComponentIndex 
-    ? [delegate jumpBar:self createElementForJumpPathComponent:path index:[jumpElements count]]
-    : [self createDefaultElementForJumpPathComponent:path];
-    
-    [jumpElements addObject:element];
-    
-    [self setNeedsLayout];
-}
-
 #pragma mark - Private Methods
 
 - (NSIndexSet *)visibleElementsIndexSet
@@ -196,16 +105,16 @@ static void init(ECJumpBar *self)
     // TODO may require additional step if shouldResizeJumpElement is used
     
     CGFloat minElementWidth = minimumJumpElementWidth + jumpElementMargins.left + jumpElementMargins.right;
-
+    
     NSMutableIndexSet *visibleElementsIndexSet = [NSMutableIndexSet indexSet];
-
+    
     // Retrieve non-collapsed elements
     NSUInteger allowedElementCount = availableElementsSpace / minElementWidth;
     if (allowedElementCount < jumpElementsCount)
     {
         availableElementsSpace -= self.collapseElement.bounds.size.width + jumpElementMargins.left + jumpElementMargins.right;
         allowedElementCount = availableElementsSpace / minElementWidth;
-    
+        
         if (delegateFlags.hasCanCollapseJumpElementIndex)
         {
             __block NSUInteger elementsCount = 0;
@@ -270,14 +179,12 @@ static void init(ECJumpBar *self)
         availableElementsSpace -= backElement.bounds.size.width;
     if (shouldCollapse)
         availableElementsSpace -= self.collapseElement.bounds.size.width + jumpElementMargins.left + jumpElementMargins.right;
-    
-    // Calculate actual jump elments limit sizes
-    CGFloat minElementWidth = minimumJumpElementWidth + jumpElementMargins.left + jumpElementMargins.right;
-    CGFloat maxElementWidth = maximumJumpElementWidth + jumpElementMargins.left + jumpElementMargins.right;
-    
+        
     // Calculate first element frame
-    CGFloat elementWidth = MAX(minElementWidth, MIN(maxElementWidth, availableElementsSpace / (CGFloat)[elementIndexes count]));
-    __block CGRect elementFrame = (CGRect){
+    CGFloat elementWidth = roundf(MAX(minimumJumpElementWidth, 
+                                  MIN(maximumJumpElementWidth, 
+                                      (availableElementsSpace / (CGFloat)([elementIndexes count] + shouldCollapse) - jumpElementMargins.left - jumpElementMargins.right))));
+    __block CGRect elementFrame = (CGRect) {
         { (backElement ? backElement.bounds.size.width : 0) + jumpElementMargins.left },
         { elementWidth, boundsSize.height }
     };
@@ -297,7 +204,7 @@ static void init(ECJumpBar *self)
             collapseElementFrame.size.height = elementFrame.size.height;
             collapseElement.frame = collapseElementFrame;
             
-            elementFrame.origin.x += roundf(collapseElementFrame.size.width + jumpElementMargins.left + jumpElementMargins.right);
+            elementFrame.origin.x += (collapseElementFrame.size.width + jumpElementMargins.left + jumpElementMargins.right);
             
             findHole = NSNotFound;
         }
@@ -306,8 +213,94 @@ static void init(ECJumpBar *self)
         lastSubview = element;
         // Position jump element
         element.frame = elementFrame;
-        elementFrame.origin.x += roundf(elementFrame.size.width + jumpElementMargins.left + jumpElementMargins.right);
+        elementFrame.origin.x += (elementFrame.size.width + jumpElementMargins.left + jumpElementMargins.right);
     }];
+}
+
+#pragma mark - UIView Methods
+
+static void preinit(ECJumpBar *self)
+{
+    self->jumpElements = [NSMutableArray new];
+    
+    self->minimumTextElementWidth = 0.5;
+    
+    self->minimumJumpElementWidth = 80;
+    self->maximumJumpElementWidth = 160;
+}
+
+static void init(ECJumpBar *self)
+{
+    self.layer.masksToBounds = YES;
+}
+
+- (id)initWithFrame:(CGRect)frame
+{
+    preinit(self);
+    if ((self = [super initWithFrame:frame]))
+    {
+        init(self);
+    }
+    return self;
+}
+
+- (id)initWithCoder:(NSCoder *)aDecoder
+{
+    preinit(self);
+    if ((self = [super initWithCoder:aDecoder]))
+    {
+        init(self);
+    }
+    return self;
+}
+
+- (void)layoutSubviews
+{
+    CGRect bounds = self.bounds;
+    BOOL anyElement = ([visibleJumpElements count] > 0);
+    
+    if (backgroundView)
+        backgroundView.frame = (CGRect){ CGPointZero, bounds.size };
+    
+    if (backElement)
+    {
+        if (anyElement)
+        {
+            backElement.hidden = NO;
+            backElement.frame = (CGRect){ CGPointZero, { backElement.frame.size.width, bounds.size.height } };
+        }
+        else
+        {
+            backElement.hidden = YES;
+        }
+    }
+    
+    [self layoutElementsWithIndexes:visibleJumpElements];
+    
+    CGFloat lastElementEnd = anyElement ? (CGRectGetMaxX([[jumpElements objectAtIndex:[visibleJumpElements lastIndex]] frame])) : 0;
+    self.textElement.frame = CGRectMake(lastElementEnd, 0, bounds.size.width - lastElementEnd, bounds.size.height);
+}
+
+#pragma mark - Jump Element Related Methods
+
+- (UIView *)createDefaultElementForJumpPathComponent:(NSString *)pathComponent
+{
+    UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
+    [button setTitle:pathComponent forState:UIControlStateNormal];
+    return button;
+}
+
+- (void)pushJumpElementsForPath:(NSString *)path animated:(BOOL)animated
+{
+    UIView *element = delegateFlags.hasCreateElementForJumpPathComponentIndex 
+    ? [delegate jumpBar:self createElementForJumpPathComponent:path index:[jumpElements count]]
+    : [self createDefaultElementForJumpPathComponent:path];
+    
+    [jumpElements addObject:element];
+    
+    visibleJumpElements = [self visibleElementsIndexSet];
+    
+    [self setNeedsLayout];
 }
 
 @end
