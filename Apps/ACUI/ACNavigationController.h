@@ -51,4 +51,7 @@
 - (IBAction)toggleTabBar:(id)sender;
 - (IBAction)closeTabButtonAction:(id)sender;
 
+
+- (IBAction)tests:(id)sender;
+
 @end

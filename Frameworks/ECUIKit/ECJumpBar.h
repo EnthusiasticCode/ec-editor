@@ -13,102 +13,74 @@
 @protocol ECJumpBarDelegate <NSObject>
 @optional
 
-/// Called when a control is pushed to the stack.
-- (void)jumpBar:(ECJumpBar *)jumpBar didPushControl:(UIControl *)control atStackIndex:(NSUInteger)index;
+/// Create and return a view for the path component at the given index. 
+/// If this methods return nil, a UIButton will be used instead.
+- (UIView *)jumpBar:(ECJumpBar *)jumpBar createElementForJumpPathComponent:(NSString *)pathComponent index:(NSUInteger)componentIndex;
 
-// TODO may need 'will' to actually be able to retrieve the button
-/// Called when a control in the stack is popped. This method is called multiple time if more than one control are popped at once.
-- (void)jumpBar:(ECJumpBar *)jumpBar didPopControl:(UIControl *)control atStackIndex:(NSUInteger)index;
+/// Return the path component for the given element.
+/// If this methods return nil, the title or text property of the element will be used.
+- (NSString *)jumpBar:(ECJumpBar *)jumpBar pathComponentForJumpElement:(UIView *)jumpElement index:(NSUInteger)elementIndex;
 
-/// Called when there are too many controls in the jump bar and they collapse.
-- (void)jumpBar:(ECJumpBar *)jumpBar didCollapseToControl:(UIControl *)control collapsedRange:(NSRange)collapsedRange;
+// TODO see if use this method, it will introduce quite a lot of work
+//- (BOOL)jumpBar:(ECJumpBar *)jumpBar shouldResizeJumpElement:(UIView *)jumpElement index:(NSUInteger)elementIndex;
 
-/// Called when the editable search string is changed.
-- (void)jumpBar:(ECJumpBar *)jumpBar changedSearchStringTo:(NSString *)searchString;
+/// Return a value indicating if the given element can be collapsed.
+- (BOOL)jumpBar:(ECJumpBar *)jumpBar canCollapseJumpElement:(UIView *)jumpElement index:(NSUInteger)elementIndex;
 
 @end
 
-@interface ECJumpBar : UIView <UIAppearanceContainer> {
-@protected
-    /// Array used to store controls pushed to the receiver.
-    NSMutableArray *controlsStack;
-}
+@interface ECJumpBar : UIView <UIAppearanceContainer>
 
 @property (nonatomic, weak) id<ECJumpBarDelegate> delegate;
 
 #pragma mark Visual Styles
 
-/// The corner radius 
-@property (nonatomic) CGFloat cornerRadius UI_APPEARANCE_SELECTOR;
+/// A view used as the background.
+@property (nonatomic, strong) UIView *backgroundView;
 
-/// The font used for button's titles and search text.
-@property (nonatomic, strong) UIFont *font;
+/// The minimum with of the search field. 
+/// If this number is lower than 1 it will be interpreted as a percentage of the receiver's width.
+@property (nonatomic) CGFloat minimumTextElementWidth;
 
-/// The color of the text.
-@property (nonatomic, strong) UIColor *textColor;
-
-/// The color applied to the text in buttons and search text.
-@property (nonatomic, strong) UIColor *textShadowColor;
-
-/// The offset to be applied for button and search text shadow.
-@property (nonatomic) CGSize textShadowOffset UI_APPEARANCE_SELECTOR;
-
-/// The color of buttons in normal state.
-@property (nonatomic, strong) UIColor *buttonColor;
-
-/// The color of buttons in highlight state.
-@property (nonatomic, strong) UIColor *buttonHighlightColor;
-
-/// The color of borders.
-@property (nonatomic, strong) UIColor *borderColor;
-
-/// Insets of texts in the receiver.
-@property (nonatomic) UIEdgeInsets textInsets UI_APPEARANCE_SELECTOR;
-
-// TODO activate this
-/// Margin of stack controls in the receiver.
-//@property (nonatomic) UIEdgeInsets controlMargin;
-
-#pragma mark Visual Constraints
-
-/// The minimum with of the search field. If this number is lower than 1 it will be interpreted as a percentage of the receiver's width.
-@property (nonatomic) CGFloat minimumSearchFieldWidth;
+/// A margin to apply to jump elements and collapse element.
+@property (nonatomic) UIEdgeInsets jumpElementMargins;
 
 /// The minimum with of a button in the bar.
-@property (nonatomic) CGFloat minimumStackButtonWidth;
+@property (nonatomic) CGFloat minimumJumpElementWidth;
 
 /// The maximum width of a button in the bar.
-@property (nonatomic) CGFloat maximumStackButtonWidth;
+@property (nonatomic) CGFloat maximumJumpElementWidth;
 
-#pragma mark Handling Controls Stack
+#pragma mark Fixed Elements
 
-/// The current stack size. This property is read only.
-@property (nonatomic, readonly) NSUInteger stackSize;
+/// A view positioned at the left side of the bar, before any other element.
+/// Default to nil.
+@property (nonatomic, strong) UIView *backElement;
 
-/// Gets the control at the specified stack index.
-- (UIControl *)controlAtStackIndex:(NSUInteger)index;
+/// A \c UITextView used as text positioned in the remaining right space.
+@property (nonatomic, strong) UITextView *textElement;
 
-/// Gets the title of the control at the given stack index.
-- (NSString *)titleOfControlAtStackIndex:(NSUInteger)index;
+/// The element to use as a placeholder representing all collapsed elements.
+/// Default to an UIButton with "..." as title.
+@property (nonatomic, strong) UIView *collapseElement;
 
-// TODO add image to be used always or when the button is under a certian dimension.
-/// Push a button into the stack adding it to the bar.
-- (void)pushControlWithTitle:(NSString *)title animated:(BOOL)animated;
+#pragma mark Managing Jump Elements
 
-/// Pop the last inserted button from the stack, removing it from the bar.
-- (void)popControlAnimated:(BOOL)animated;
+/// Creates a default element for the given component in case the delegate
+/// method is not implemented.
+- (UIView *)createDefaultElementForJumpPathComponent:(NSString *)pathComponent;
 
-/// Pop a number of buttons to leave the stack with all buttons with index lower than the one specified.
-- (void)popControlsDownThruIndex:(NSUInteger)index animated:(BOOL)animated;
+/// The jump elements array.
+@property (nonatomic, readonly, strong) NSArray *jumpElements;
 
-#pragma mark Handling Search String
+/// Add an element to the end of the jump bar stack.
+- (void)pushJumpElementWithPathComponent:(NSString *)pathComponent animated:(BOOL)animated;
 
-/// The search string.
-@property (nonatomic, strong) NSString *searchString;
+#pragma mark Managing Elements via Jump Path
 
-#pragma mark Generating Stack Controls
+@property (nonatomic, copy) NSString *jumpPath;
+- (void)setJumpPath:(NSString *)jumpPath animated:(BOOL)animated;
 
-/// Override this method to make the jump bar use a custom \c UIControl as items in the stack.
-- (UIControl *)createStackControlWithTitle:(NSString *)title;
+- (void)pushJumpElementsForPath:(NSString* )path animated:(BOOL)animated;
 
 @end

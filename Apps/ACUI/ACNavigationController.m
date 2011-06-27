@@ -53,13 +53,6 @@
     
     // Setup jumpbar
     jumpBar.delegate = self;
-    [jumpBar setFont:[UIFont styleFontWithSize:14]];
-    [jumpBar setTextColor:[UIColor styleForegroundColor]];
-    [jumpBar setTextShadowColor:[UIColor styleForegroundShadowColor]];
-    [jumpBar setTextShadowOffset:CGSizeMake(0, 1)];
-    
-    [jumpBar setButtonColor:[UIColor styleBackgroundColor]];
-    [jumpBar setButtonHighlightColor:[UIColor styleHighlightColor]];
     
     // Setup tab bar
     if (!tabBar)
@@ -256,6 +249,11 @@
     [tabBar removeTabAtIndex:tabIndex animated:YES];
     
     // TODO also remove controller
+}
+
+- (IBAction)tests:(id)sender {
+    NSString *title = [NSString stringWithFormat:@"Path %u", [jumpBar.jumpElements count]];
+    [jumpBar pushJumpElementsForPath:title animated:YES];
 }
 
 @end
