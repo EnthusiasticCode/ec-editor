@@ -251,9 +251,34 @@
     // TODO also remove controller
 }
 
+#pragma mark - JumpBar Delegate Methods
+
+- (void)popJumpBar:(id)sender
+{
+    [jumpBar popJumpElementAnimated:YES];
+}
+
+- (UIView *)jumpBar:(ECJumpBar *)jumpBar createElementForJumpPathComponent:(NSString *)pathComponent index:(NSUInteger)componentIndex
+{
+    UIButton *button = [UIButton new];
+    [button setTitle:pathComponent forState:UIControlStateNormal];
+    
+    [button addTarget:self action:@selector(popJumpBar:) forControlEvents:UIControlEventTouchUpInside];
+    
+    return button;
+}
+
+- (NSString *)jumpBar:(ECJumpBar *)jumpBar pathComponentForJumpElement:(UIView *)jumpElement index:(NSUInteger)elementIndex
+{
+    return [(UIButton *)jumpElement currentTitle];
+}
+
+#pragma mark -
+
 - (IBAction)tests:(id)sender {
     NSString *title = [NSString stringWithFormat:@"Path %u", [jumpBar.jumpElements count]];
     [jumpBar pushJumpElementsForPath:title animated:YES];
 }
+
 
 @end

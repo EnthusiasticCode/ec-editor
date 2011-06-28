@@ -18,10 +18,8 @@
     NSIndexSet *visibleJumpElements;
     
     struct {
-        unsigned int hasCreateElementForJumpPathComponentIndex : 1;
-        unsigned int hasPathComponentForJumpElementIndex : 1;
         unsigned int hasCanCollapseJumpElementIndex : 1;
-        unsigned int reserved : 1;
+        unsigned int reserved : 3;
     } delegateFlags;
 }
 
@@ -33,8 +31,6 @@
 {
     delegate = aDelegate;
 
-    delegateFlags.hasCreateElementForJumpPathComponentIndex = [delegate respondsToSelector:@selector(jumpBar:createElementForJumpPathComponent:index:)];
-    delegateFlags.hasPathComponentForJumpElementIndex = [delegate respondsToSelector:@selector(jumpBar:pathComponentForJumpElement:index:)];
     delegateFlags.hasCanCollapseJumpElementIndex = [delegate respondsToSelector:@selector(jumpBar:canCollapseJumpElement:index:)];
 }
 
@@ -82,7 +78,7 @@
 {
     if (!collapseElement)
     {
-        collapseElement = [self createDefaultElementForJumpPathComponent:@"..."];
+        collapseElement = [delegate jumpBar:self createElementForJumpPathComponent:@"..." index:NSNotFound];
         collapseElement.frame = CGRectMake(0, 0, minimumJumpElementWidth, 0);
     }
     return collapseElement;
@@ -283,22 +279,96 @@ static void init(ECJumpBar *self)
 
 #pragma mark - Jump Element Related Methods
 
-- (UIView *)createDefaultElementForJumpPathComponent:(NSString *)pathComponent
-{
-    UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
-    [button setTitle:pathComponent forState:UIControlStateNormal];
-    return button;
-}
-
 - (void)pushJumpElementsForPath:(NSString *)path animated:(BOOL)animated
 {
-    UIView *element = delegateFlags.hasCreateElementForJumpPathComponentIndex 
-    ? [delegate jumpBar:self createElementForJumpPathComponent:path index:[jumpElements count]]
-    : [self createDefaultElementForJumpPathComponent:path];
+    // Create and add new
+    UIView *element = [delegate jumpBar:self createElementForJumpPathComponent:path index:[jumpElements count]];
+    if (!element)
+        return;
     
     [jumpElements addObject:element];
     
+    //
     visibleJumpElements = [self visibleElementsIndexSet];
+    NSUInteger jumpElementsCount = [jumpElements count];
+    NSMutableIndexSet *collapsedElements = [NSMutableIndexSet indexSetWithIndexesInRange:NSMakeRange(0, jumpElementsCount)];
+    [collapsedElements removeIndexes:visibleJumpElements];
+    
+    if (animated)
+    {
+        // Prepare elements for animation
+        element.alpha = 0;
+        if (jumpElementsCount == 1)
+        {
+            element.frame = CGRectMake(-maximumJumpElementWidth, 0, maximumJumpElementWidth, self.bounds.size.height);
+        }
+        if ([collapsedElements count] && !self.collapseElement.superview)
+        {
+            collapseElement.frame = [[jumpElements objectAtIndex:[collapsedElements firstIndex]] frame];
+            collapseElement.alpha = 0;
+        }
+        // Animate
+        __block CGRect elementFrame;
+        __block CGRect elementPreAnimationFrame;
+        [UIView animateWithDuration:0.10 animations:^(void) {
+            [self layoutSubviews];
+            if (jumpElementsCount > 1)
+            {
+                elementFrame = element.frame;
+                elementPreAnimationFrame = elementFrame;
+                elementPreAnimationFrame.origin.x -= elementFrame.size.width;
+                element.frame = elementPreAnimationFrame;
+                //
+                collapseElement.alpha = 1;
+                //
+                [jumpElements enumerateObjectsAtIndexes:collapsedElements options:0 usingBlock:^(UIView *e, NSUInteger idx, BOOL *stop) {
+                    e.frame = collapseElement.frame;
+                }];
+            }
+            else
+            {
+                element.alpha = 1;
+            }
+        } completion:^(BOOL finished) {
+            if (jumpElementsCount > 1)
+            {
+                element.frame = elementPreAnimationFrame;
+                [UIView animateWithDuration:0.15 animations:^(void) {
+                    element.alpha = 1;
+                    element.frame = elementFrame;
+                }];
+                // Remove collapsed elements from view hierarchy
+                [jumpElements enumerateObjectsAtIndexes:collapsedElements options:0 usingBlock:^(UIView *e, NSUInteger idx, BOOL *stop) {
+                    [e removeFromSuperview];
+                }];
+            }
+        }];
+    }
+    else
+    {
+        [self setNeedsLayout];
+        // Remove collapsed elements from view hierarchy
+        [jumpElements enumerateObjectsAtIndexes:collapsedElements options:0 usingBlock:^(UIView *element, NSUInteger idx, BOOL *stop) {
+            [element removeFromSuperview];
+        }];
+    }
+}
+
+- (void)popJumpElementAnimated:(BOOL)animated
+{
+    UIView *element = [jumpElements lastObject];
+    [jumpElements removeLastObject];
+    
+    //
+    visibleJumpElements = [self visibleElementsIndexSet];
+    NSUInteger jumpElementsCount = [jumpElements count];
+    NSMutableIndexSet *collapsedElements = [NSMutableIndexSet indexSetWithIndexesInRange:NSMakeRange(0, jumpElementsCount)];
+    [collapsedElements removeIndexes:visibleJumpElements];
+    
+    if (![collapsedElements count])
+        [collapseElement removeFromSuperview];
+    
+    [element removeFromSuperview];
     
     [self setNeedsLayout];
 }

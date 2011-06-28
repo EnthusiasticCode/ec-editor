@@ -11,15 +11,17 @@
 @class ECJumpBar;
 
 @protocol ECJumpBarDelegate <NSObject>
-@optional
+@required
 
 /// Create and return a view for the path component at the given index. 
-/// If this methods return nil, a UIButton will be used instead.
+/// If index is NSNotFound, the collapse element should be created.
 - (UIView *)jumpBar:(ECJumpBar *)jumpBar createElementForJumpPathComponent:(NSString *)pathComponent index:(NSUInteger)componentIndex;
 
 /// Return the path component for the given element.
 /// If this methods return nil, the title or text property of the element will be used.
 - (NSString *)jumpBar:(ECJumpBar *)jumpBar pathComponentForJumpElement:(UIView *)jumpElement index:(NSUInteger)elementIndex;
+
+@optional
 
 // TODO see if use this method, it will introduce quite a lot of work
 //- (BOOL)jumpBar:(ECJumpBar *)jumpBar shouldResizeJumpElement:(UIView *)jumpElement index:(NSUInteger)elementIndex;
@@ -31,7 +33,7 @@
 
 @interface ECJumpBar : UIView <UIAppearanceContainer>
 
-@property (nonatomic, weak) id<ECJumpBarDelegate> delegate;
+@property (nonatomic, weak) IBOutlet id<ECJumpBarDelegate> delegate;
 
 #pragma mark Visual Styles
 
@@ -66,15 +68,17 @@
 
 #pragma mark Managing Jump Elements
 
-/// Creates a default element for the given component in case the delegate
-/// method is not implemented.
-- (UIView *)createDefaultElementForJumpPathComponent:(NSString *)pathComponent;
-
 /// The jump elements array.
 @property (nonatomic, readonly, strong) NSArray *jumpElements;
 
 /// Add an element to the end of the jump bar stack.
 - (void)pushJumpElementWithPathComponent:(NSString *)pathComponent animated:(BOOL)animated;
+
+/// Remove the last jump element.
+- (void)popJumpElementAnimated:(BOOL)animated;
+
+/// Remove an element and all it's descending elements.
+- (void)popThroughJumpElement:(UIView *)element animated:(BOOL)animated;
 
 #pragma mark Managing Elements via Jump Path
 
