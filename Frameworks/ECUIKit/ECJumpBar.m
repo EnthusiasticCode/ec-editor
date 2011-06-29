@@ -288,7 +288,7 @@ static void init(ECJumpBar *self)
     
     [jumpElements addObject:element];
     
-    //
+    // Calculate visible and collapsed elements indexes
     visibleJumpElements = [self visibleElementsIndexSet];
     NSUInteger jumpElementsCount = [jumpElements count];
     NSMutableIndexSet *collapsedElements = [NSMutableIndexSet indexSetWithIndexesInRange:NSMakeRange(0, jumpElementsCount)];
@@ -310,7 +310,7 @@ static void init(ECJumpBar *self)
         // Animate
         __block CGRect elementFrame;
         __block CGRect elementPreAnimationFrame;
-        [UIView animateWithDuration:0.10 animations:^(void) {
+        [UIView animateWithDuration:0.15 animations:^(void) {
             [self layoutSubviews];
             if (jumpElementsCount > 1)
             {
@@ -359,18 +359,48 @@ static void init(ECJumpBar *self)
     UIView *element = [jumpElements lastObject];
     [jumpElements removeLastObject];
     
-    //
+    // Calculate visible and collapsed elements indexes
     visibleJumpElements = [self visibleElementsIndexSet];
     NSUInteger jumpElementsCount = [jumpElements count];
     NSMutableIndexSet *collapsedElements = [NSMutableIndexSet indexSetWithIndexesInRange:NSMakeRange(0, jumpElementsCount)];
     [collapsedElements removeIndexes:visibleJumpElements];
     
-    if (![collapsedElements count])
-        [collapseElement removeFromSuperview];
-    
-    [element removeFromSuperview];
-    
-    [self setNeedsLayout];
+    if (animated)
+    {
+        [UIView animateWithDuration:0.15 animations:^(void) {
+            element.alpha = 0;
+            CGRect elementFrame = element.frame;
+            elementFrame.origin.x -= elementFrame.size.width;
+            element.frame = elementFrame;
+            //
+//            CGRect textElementFrame = textElement.frame;
+//            textElementFrame.origin.x -= elementFrame.size.width + jumpElementMargins.left + jumpElementMargins.right;
+//            textElementFrame.size.width += elementFrame.size.width; // TODO triggers layout subview. why?
+//            textElement.frame = textElementFrame;
+        } completion:^(BOOL finished) {
+            [element removeFromSuperview];
+            [UIView animateWithDuration:0.15 animations:^(void) {
+                [self layoutSubviews];
+                if (![collapsedElements count])
+                    collapseElement.alpha = 0;
+            } completion:^(BOOL finished) {
+                if (![collapsedElements count])
+                {
+                    collapseElement.alpha = 1;
+                    [collapseElement removeFromSuperview];
+                }
+            }];
+        }];
+    }
+    else
+    {    
+        if (![collapsedElements count])
+            [collapseElement removeFromSuperview];
+        
+        [element removeFromSuperview];
+        
+        [self setNeedsLayout];
+    }
 }
 
 @end
