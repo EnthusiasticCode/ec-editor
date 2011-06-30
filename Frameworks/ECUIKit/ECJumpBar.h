@@ -44,6 +44,9 @@
 /// If this number is lower than 1 it will be interpreted as a percentage of the receiver's width.
 @property (nonatomic) CGFloat minimumTextElementWidth UI_APPEARANCE_SELECTOR;
 
+/// Insets to apply to text element's frame.
+@property (nonatomic) UIEdgeInsets textElementInsets UI_APPEARANCE_SELECTOR;
+
 /// A margin to apply to jump elements and collapse element.
 @property (nonatomic) UIEdgeInsets jumpElementMargins UI_APPEARANCE_SELECTOR;
 

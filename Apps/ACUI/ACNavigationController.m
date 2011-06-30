@@ -54,6 +54,9 @@
     // Setup jumpbar
     jumpBar.delegate = self;
     jumpBar.minimumTextElementWidth = 0.4;
+    jumpBar.textElement.placeholder = @"Filter";
+    jumpBar.textElement.leftView = [[UIImageView alloc] initWithImage:[UIImage styleCloseImageWithColor:[UIColor redColor] outlineColor:nil]];
+    jumpBar.textElement.leftViewMode = UITextFieldViewModeAlways;
     
     // Setup tab bar
     if (!tabBar)
@@ -262,9 +265,12 @@
 - (UIView *)jumpBar:(ECJumpBar *)jumpBar createElementForJumpPathComponent:(NSString *)pathComponent index:(NSUInteger)componentIndex
 {
     UIButton *button = [UIButton new];
-    [button setTitle:pathComponent forState:UIControlStateNormal];
-    
+    [button setTitle:pathComponent forState:UIControlStateNormal];    
     [button addTarget:self action:@selector(popJumpBar:) forControlEvents:UIControlEventTouchUpInside];
+    
+    // TODO move label settings in appearance when possble
+    button.titleLabel.font = [UIFont styleFontWithSize:14];
+    button.titleLabel.shadowOffset = CGSizeMake(0, 1);
     
     return button;
 }

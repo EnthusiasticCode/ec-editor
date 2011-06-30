@@ -31,9 +31,15 @@
     [buttonAppearance setBackgroundImage:[UIImage styleBackgroundImageWithColor:[UIColor styleBackgroundColor] borderColor:[UIColor styleForegroundColor]] forState:UIControlStateNormal];
     [buttonAppearance setBackgroundImage:[UIImage styleBackgroundImageWithColor:[UIColor styleHighlightColor] borderColor:[UIColor styleForegroundColor]] forState:UIControlStateHighlighted];
     [buttonAppearance setBackgroundImage:[UIImage styleBackgroundImageWithColor:[UIColor styleThemeColorOne] borderColor:[UIColor styleForegroundColor]] forState:UIControlStateSelected];
+    [buttonAppearance setAdjustsImageWhenHighlighted:NO];
+    [buttonAppearance setAdjustsImageWhenDisabled:YES];
+    [buttonAppearance setTitleColor:[UIColor styleForegroundColor] forState:UIControlStateNormal];
+    [buttonAppearance setTitleShadowColor:[UIColor styleForegroundShadowColor] forState:UIControlStateNormal];
     
     // Generic text field
-//    id textFieldAppearance = [UITextField appearance];
+    id textFieldAppearance = [UITextField appearance];
+    [textFieldAppearance setTextColor:[UIColor styleForegroundColor]];
+    [textFieldAppearance setFont:defaultFont];
     
     // Button inside tabbar
     id buttonInTabBarAppearance = [UIButton appearanceWhenContainedIn:[ECTabBar class], nil];
@@ -53,13 +59,16 @@
     // Jump bar
     id jumpBarAppearance = [ECJumpBar appearance];
     [jumpBarAppearance setJumpElementMargins:UIEdgeInsetsMake(0, -3, 0, -12)];
+    [jumpBarAppearance setTextElementInsets:UIEdgeInsetsMake(0, 5, 0, 5)];
     
     id buttonInJumpBarAppearance = [UIButton appearanceWhenContainedIn:[ECJumpBar class], nil];
     [buttonInJumpBarAppearance setBackgroundImage:[UIImage styleBackgroundImageWithColor:[UIColor styleBackgroundColor] borderColor:[UIColor styleForegroundColor] insets:UIEdgeInsetsZero arrowSize:CGSizeMake(10, 30) roundingCorners:UIRectCornerAllCorners] forState:UIControlStateNormal];
+    [buttonInJumpBarAppearance setBackgroundImage:[UIImage styleBackgroundImageWithColor:[UIColor styleHighlightColor] borderColor:[UIColor styleForegroundColor] insets:UIEdgeInsetsZero arrowSize:CGSizeMake(10, 30) roundingCorners:UIRectCornerAllCorners] forState:UIControlStateHighlighted];
     
     // TODO should be in the controller
     UIButton *backButton = [UIButton new];
     [backButton setBackgroundImage:[UIImage styleBackgroundImageWithColor:[UIColor styleBackgroundColor] borderColor:[UIColor styleForegroundColor] insets:UIEdgeInsetsZero arrowSize:CGSizeZero roundingCorners:UIRectCornerTopLeft | UIRectCornerBottomLeft] forState:UIControlStateNormal];
+    [backButton setBackgroundImage:[UIImage styleBackgroundImageWithColor:[UIColor styleHighlightColor] borderColor:[UIColor styleForegroundColor] insets:UIEdgeInsetsZero arrowSize:CGSizeZero roundingCorners:UIRectCornerTopLeft | UIRectCornerBottomLeft] forState:UIControlStateHighlighted];
     [backButton setImage:[UIImage styleDisclosureArrowImageWithOrientation:UIImageOrientationLeft color:[UIColor styleForegroundColor]] forState:UIControlStateNormal];
     backButton.frame = CGRectMake(0, 0, 40, 30);
     navigationController.jumpBar.backElement = backButton;

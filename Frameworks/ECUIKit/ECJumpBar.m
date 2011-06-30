@@ -52,7 +52,7 @@
     [self addSubview:backElement];
 }
 
-@synthesize textElement, minimumTextElementWidth;
+@synthesize textElement, minimumTextElementWidth, textElementInsets;
 
 - (UITextField *)textElement
 {
@@ -276,7 +276,7 @@ static void init(ECJumpBar *self)
     [self layoutElementsWithIndexes:visibleJumpElements];
     
     CGFloat lastElementEnd = anyElement ? (CGRectGetMaxX([[jumpElements objectAtIndex:[visibleJumpElements lastIndex]] frame])) : 0;
-    self.textElement.frame = CGRectMake(lastElementEnd, 0, bounds.size.width - lastElementEnd, bounds.size.height);
+    self.textElement.frame = UIEdgeInsetsInsetRect(CGRectMake(lastElementEnd, 0, bounds.size.width - lastElementEnd, bounds.size.height), textElementInsets);
 }
 
 #pragma mark - Jump Element Related Methods

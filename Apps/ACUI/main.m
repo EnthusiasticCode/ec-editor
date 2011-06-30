@@ -12,7 +12,9 @@
 
 int main(int argc, char *argv[])
 {
+    int res = 0;
     @autoreleasepool {
-        return UIApplicationMain(argc, argv, nil, NSStringFromClass([ACUIAppDelegate class]));
+        res = UIApplicationMain(argc, argv, nil, NSStringFromClass([ACUIAppDelegate class]));
     }
+    return res;
 }
