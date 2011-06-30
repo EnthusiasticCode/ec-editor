@@ -181,7 +181,7 @@
     // Calculate first element frame
     CGFloat elementWidth = roundf(MAX(minimumJumpElementWidth, 
                                   MIN(maximumJumpElementWidth, 
-                                      (availableElementsSpace / (CGFloat)([elementIndexes count] + shouldCollapse) - jumpElementMargins.left - jumpElementMargins.right))));
+                                      (availableElementsSpace / (CGFloat)[elementIndexes count] - jumpElementMargins.left - jumpElementMargins.right))));
     __block CGRect elementFrame = (CGRect) {
         { (backElement ? backElement.bounds.size.width : 0) + jumpElementMargins.left },
         { elementWidth, boundsSize.height }

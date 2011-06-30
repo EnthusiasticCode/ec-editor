@@ -143,8 +143,8 @@
 				CD6973EF13A14FE6005D68D9 /* ECUIKit */,
 				CD19241713A147EE00A47E38 /* ACUIAppDelegate.h */,
 				CD19241813A147EE00A47E38 /* ACUIAppDelegate.m */,
-				CD19241A13A147EE00A47E38 /* MainStoryboard.storyboard */,
-				CD4755E313ABD71200BB92F6 /* AC */,
+				CDB01FA213BCF18400794823 /* Resources */,
+				CD4755E313ABD71200BB92F6 /* Classes */,
 			);
 			path = ACUI;
 			sourceTree = "<group>";
@@ -161,14 +161,14 @@
 			path = ACUI;
 			sourceTree = "<group>";
 		};
-		CD4755E313ABD71200BB92F6 /* AC */ = {
+		CD4755E313ABD71200BB92F6 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
 				CD6AB29413ACF5E700DA8A14 /* Style */,
 				CD8D782C13ABE6BD00A391F4 /* Navigation */,
 				CD8D782D13ABE6C500A391F4 /* Projects */,
 			);
-			name = AC;
+			name = Classes;
 			sourceTree = "<group>";
 		};
 		CD6973EF13A14FE6005D68D9 /* ECUIKit */ = {
@@ -227,6 +227,14 @@
 				CDABE3ED13ABF26B006B53AE /* ACProjectTableCell.m */,
 			);
 			name = Projects;
+			sourceTree = "<group>";
+		};
+		CDB01FA213BCF18400794823 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				CD19241A13A147EE00A47E38 /* MainStoryboard.storyboard */,
+			);
+			name = Resources;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
