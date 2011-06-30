@@ -77,7 +77,8 @@
 #pragma mark Managing Jump Elements
 
 /// The jump elements array.
-@property (nonatomic, readonly, strong) NSArray *jumpElements;
+@property (nonatomic, strong) NSArray *jumpElements;
+- (void)setJumpElements:(NSArray *)array animated:(BOOL)animated;
 
 /// Add an element to the end of the jump bar stack.
 - (void)pushJumpElementWithPathComponent:(NSString *)pathComponent animated:(BOOL)animated;
@@ -97,7 +98,5 @@
 
 @property (nonatomic, copy) NSString *jumpPath;
 - (void)setJumpPath:(NSString *)jumpPath animated:(BOOL)animated;
-
-- (void)pushJumpElementsForPath:(NSString* )path animated:(BOOL)animated;
 
 @end

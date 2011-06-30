@@ -311,6 +311,7 @@ static void init(ECTabBar *self)
         tabButtons = [NSMutableArray new];
     
     // TODO use a +tabButtonClass
+    // TODO use reuse logic?
     NSUInteger newTabButtonIndex = [tabButtons count];
     UIButton *newTabButton = [UIButton new];
     

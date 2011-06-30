@@ -273,7 +273,7 @@
 {
     static NSString *elementIdentifier = @"jumpBarElement";
     
-    UIButton *button = [bar dequeueReusableJumpElementWithIdentifier:elementIdentifier];
+    UIButton *button = (UIButton *)[bar dequeueReusableJumpElementWithIdentifier:elementIdentifier];
     if (button == nil)
     {
         button = [UIButton new];
@@ -298,7 +298,9 @@
 
 - (IBAction)tests:(id)sender {
     NSString *title = [NSString stringWithFormat:@"Path %u", [jumpBar.jumpElements count]];
-    [jumpBar pushJumpElementsForPath:title animated:YES];
+    [jumpBar pushJumpElementWithPathComponent:title animated:YES];
+    
+    // [jumpBar setJumpPath:@"/Path 0/Path 1/Other 0/Other 1" animated:YES];
 }
 
 

@@ -76,6 +76,12 @@
 }
 
 @synthesize jumpElements, minimumJumpElementWidth, maximumJumpElementWidth, jumpElementMargins;
+
+- (void)setJumpElements:(NSArray *)array
+{
+    [self setJumpElements:array animated:NO];
+}
+
 @synthesize collapseElement;
 
 - (UIView *)collapseElement
@@ -315,7 +321,93 @@ static void init(ECJumpBar *self)
 
 #pragma mark - Jump Element Related Methods
 
-- (void)pushJumpElementsForPath:(NSString *)path animated:(BOOL)animated
+- (void)setJumpElements:(NSArray *)array animated:(BOOL)animated
+{
+    NSUInteger arrayCount = [array count];
+    NSUInteger jumpElementsCount = [jumpElements count];
+    
+    // Find uncommon elements
+    NSUInteger firstUncommonElementIndex = 0;
+    for (UIView *view in jumpElements)
+    {
+        if (arrayCount <= firstUncommonElementIndex 
+            || ![view isEqual:[array objectAtIndex:firstUncommonElementIndex]])
+            break;
+        firstUncommonElementIndex++;
+    }
+    NSArray *removedJumpElements = jumpElements;
+    if (firstUncommonElementIndex > 0)
+    {
+        array = [array subarrayWithRange:NSMakeRange(firstUncommonElementIndex, arrayCount - firstUncommonElementIndex)];
+        removedJumpElements = [jumpElements subarrayWithRange:NSMakeRange(firstUncommonElementIndex, jumpElementsCount - firstUncommonElementIndex)];
+    }
+    
+    // Mark all elements for reuse
+    if ([removedJumpElements count] > 0)
+    {
+        if (reuseJumpElements == nil)
+            reuseJumpElements = [NSMutableArray new];
+        
+        [reuseJumpElements addObjectsFromArray:removedJumpElements];
+    }
+    
+    // 
+    if (animated)
+    {
+        [UIView animateWithDuration:2 animations:^(void) {
+            if ([visibleJumpElements containsIndexesInRange:NSMakeRange(0, firstUncommonElementIndex + 1)])
+                collapseElement.alpha = 0;
+            for (UIView *element in removedJumpElements)
+            {
+                element.alpha = 0;
+            }
+            if (firstUncommonElementIndex == 0)
+                backElement.alpha = 0;
+        } completion:^(BOOL finished) {
+            // Prepare new elements for animation
+            CGRect elementFrame = firstUncommonElementIndex > 0 
+            ? [[jumpElements objectAtIndex:firstUncommonElementIndex - 1] frame] 
+            : CGRectMake(0, 0, minimumJumpElementWidth, self.bounds.size.height);
+            elementFrame.origin.x -= elementFrame.size.width;
+            for (UIView *element in array)
+            {
+                element.frame = elementFrame;
+            }
+            // Remove elements
+            for (UIView *element in removedJumpElements)
+            {
+                element.alpha = 1;
+                [element removeFromSuperview];
+            }
+            [jumpElements removeObjectsInArray:removedJumpElements];
+            // Add new objects
+            [jumpElements addObjectsFromArray:array];
+            visibleJumpElements = [self visibleElementsIndexSet];
+            for (UIView *element in array)
+            {
+                element.alpha = 0;
+            }
+            [UIView animateWithDuration:2 animations:^(void) {
+                collapseElement.alpha = 1;
+                [self layoutSubviews];
+                for (UIView *element in array)
+                {
+                    element.alpha = 1;
+                }
+                backElement.alpha = 1;
+            }];
+        }];
+    }
+    else
+    {
+        [jumpElements removeObjectsInArray:removedJumpElements];
+        [jumpElements addObjectsFromArray:array];
+        visibleJumpElements = [self visibleElementsIndexSet];
+        [self setNeedsLayout];
+    }
+}
+
+- (void)pushJumpElementWithPathComponent:(NSString *)path animated:(BOOL)animated
 {
     // Create and add new
     UIView *element = [delegate jumpBar:self elementForJumpPathComponent:path index:[jumpElements count]];
@@ -457,6 +549,52 @@ static void init(ECJumpBar *self)
     NSUInteger popCount = [jumpElements count] - elementIndex;
     while (popCount--)
         [self popJumpElementAnimated:animated];
+}
+
+#pragma mark - Jump Path Methods
+
+- (NSString *)jumpPath
+{
+    NSMutableString *path = [NSMutableString new];
+
+    [jumpElements enumerateObjectsUsingBlock:^(UIView *element, NSUInteger idx, BOOL *stop) {
+        [path appendFormat:@"/%@", [delegate jumpBar:self pathComponentForJumpElement:element index:idx]];
+    }];
+    
+    return path;
+}
+
+- (void)setJumpPath:(NSString *)jumpPath
+{
+    [self setJumpPath:jumpPath animated:NO];
+}
+
+- (void)setJumpPath:(NSString *)jumpPath animated:(BOOL)animated
+{
+    NSArray *pathComponents = [jumpPath componentsSeparatedByString:@"/"];
+    
+    NSUInteger jumpElementsCount = [jumpElements count];
+    NSUInteger elementIndex = 0;
+    NSMutableArray *elements = [NSMutableArray array];
+    for (NSString *component in pathComponents)
+    {
+        if ([component length] > 0)
+        {
+            if (elementIndex >= jumpElementsCount 
+                || ![component isEqualToString:[delegate jumpBar:self pathComponentForJumpElement:[jumpElements objectAtIndex:elementIndex] index:elementIndex]])
+            {
+                [elements addObject:[delegate jumpBar:self elementForJumpPathComponent:component index:elementIndex]];
+                jumpElementsCount = elementIndex;
+            }
+            else
+            {
+                [elements addObject:[jumpElements objectAtIndex:elementIndex]];
+            }
+            elementIndex++;
+        }
+    }
+    
+    [self setJumpElements:elements animated:animated];
 }
 
 @end
