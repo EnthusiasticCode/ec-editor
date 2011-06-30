@@ -54,20 +54,22 @@
 
 @synthesize textElement, minimumTextElementWidth;
 
-- (UITextView *)textElement
+- (UITextField *)textElement
 {
     if (!textElement)
     {
-        textElement = [UITextView new];
+        textElement = [UITextField new];
+        textElement.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
         [self addSubview:textElement];
     }
     return textElement;
 }
 
-- (void)setTextElement:(UITextView *)view
+- (void)setTextElement:(UITextField *)view
 {
     [textElement removeFromSuperview];
     textElement = view;
+    
     [self addSubview:textElement];
 }
 
@@ -300,6 +302,7 @@ static void init(ECJumpBar *self)
         element.alpha = 0;
         if (jumpElementsCount == 1)
         {
+            backElement.alpha = 0;
             element.frame = CGRectMake(-maximumJumpElementWidth, 0, maximumJumpElementWidth, self.bounds.size.height);
         }
         if ([collapsedElements count] && !self.collapseElement.superview)
@@ -327,6 +330,7 @@ static void init(ECJumpBar *self)
             }
             else
             {
+                backElement.alpha = 1;
                 element.alpha = 1;
             }
         } completion:^(BOOL finished) {
@@ -368,6 +372,9 @@ static void init(ECJumpBar *self)
     if (animated)
     {
         [UIView animateWithDuration:0.15 animations:^(void) {
+            if (jumpElementsCount == 0)
+                backElement.alpha = 0;
+            //
             element.alpha = 0;
             CGRect elementFrame = element.frame;
             elementFrame.origin.x -= elementFrame.size.width;
@@ -384,6 +391,7 @@ static void init(ECJumpBar *self)
                 if (![collapsedElements count])
                     collapseElement.alpha = 0;
             } completion:^(BOOL finished) {
+                backElement.alpha = 1;
                 if (![collapsedElements count])
                 {
                     collapseElement.alpha = 1;
@@ -401,6 +409,18 @@ static void init(ECJumpBar *self)
         
         [self setNeedsLayout];
     }
+}
+
+- (void)popThroughJumpElement:(UIView *)element animated:(BOOL)animated
+{
+    NSUInteger elementIndex = [jumpElements indexOfObject:element];
+    
+    if (elementIndex == NSNotFound)
+        return;
+    
+    NSUInteger popCount = [jumpElements count] - elementIndex;
+    while (popCount--)
+        [self popJumpElementAnimated:animated];
 }
 
 @end

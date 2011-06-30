@@ -60,7 +60,7 @@
 @property (nonatomic, strong) UIView *backElement;
 
 /// A \c UITextView used as text positioned in the remaining right space.
-@property (nonatomic, strong) UITextView *textElement;
+@property (nonatomic, strong) UITextField *textElement;
 
 /// The element to use as a placeholder representing all collapsed elements.
 /// Default to an UIButton with "..." as title.

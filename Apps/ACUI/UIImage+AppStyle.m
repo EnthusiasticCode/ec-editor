@@ -15,7 +15,8 @@
 + (UIImage *)styleBackgroundImageWithColor:(UIColor *)color 
                                borderColor:(UIColor *)borderColor 
                                     insets:(UIEdgeInsets)borderInsets 
-                                 arrowSize:(CGSize)arrowSize
+                                 arrowSize:(CGSize)arrowSize 
+                           roundingCorners:(UIRectCorner)cornersToRound
 {
     CGFloat radius = 3;
     CGFloat leftArrow = (arrowSize.width < 0. ? -arrowSize.width : 0);
@@ -31,7 +32,7 @@
         // Build path
         if (arrowSize.width == 0.)
         {
-            CGPathAddPath(path, NULL, [UIBezierPath bezierPathWithRoundedRect:rect cornerRadius:radius].CGPath);
+            CGPathAddPath(path, NULL, [UIBezierPath bezierPathWithRoundedRect:rect byRoundingCorners:cornersToRound cornerRadii:CGSizeMake(radius, radius)].CGPath);
         }
         else
         {            
@@ -128,6 +129,11 @@
                                                     borderInsets.left + 3 + leftArrow, 
                                                     arrowSize.height ? 0 : borderInsets.bottom + 3, 
                                                     borderInsets.right + 3 + rightArrow)];
+}
+
++ (UIImage *)styleBackgroundImageWithColor:(UIColor *)color borderColor:(UIColor *)borderColor
+{
+    return [UIImage styleBackgroundImageWithColor:color borderColor:borderColor insets:UIEdgeInsetsZero arrowSize:CGSizeZero roundingCorners:UIRectCornerAllCorners];
 }
 
 + (UIImage *)styleProjectImageWithSize:(CGSize)size labelColor:(UIColor *)labelColor

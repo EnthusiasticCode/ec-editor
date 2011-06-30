@@ -8,6 +8,7 @@
 
 #import "ACUIAppDelegate.h"
 #import "AppStyle.h"
+#import "ACNavigationController.h"
 #import "ECTabBar.h"
 #import "ECJumpBar.h"
 
@@ -16,22 +17,29 @@
 @synthesize window = _window;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
-{    
+{
+    UIFont *defaultFont = [UIFont styleFontWithSize:14];
+    
     // Override point for customization after application launch.
     [self.window makeKeyAndVisible];
-    [self.window.rootViewController performSegueWithIdentifier:@"rootSegue" sender:nil];
     
-    // Customizing generic button
+    ACNavigationController *navigationController = (ACNavigationController *)self.window.rootViewController;
+    [navigationController performSegueWithIdentifier:@"rootSegue" sender:nil];
+    
+    // Generic button
     id buttonAppearance = [UIButton appearance];
-    [buttonAppearance setBackgroundImage:[UIImage styleBackgroundImageWithColor:[UIColor styleBackgroundColor] borderColor:[UIColor styleForegroundColor] insets:UIEdgeInsetsZero arrowSize:CGSizeZero] forState:UIControlStateNormal];
-    [buttonAppearance setBackgroundImage:[UIImage styleBackgroundImageWithColor:[UIColor styleHighlightColor] borderColor:[UIColor styleForegroundColor] insets:UIEdgeInsetsZero arrowSize:CGSizeZero] forState:UIControlStateHighlighted];
-    [buttonAppearance setBackgroundImage:[UIImage styleBackgroundImageWithColor:[UIColor styleThemeColorOne] borderColor:[UIColor styleForegroundColor] insets:UIEdgeInsetsZero arrowSize:CGSizeZero] forState:UIControlStateSelected];
+    [buttonAppearance setBackgroundImage:[UIImage styleBackgroundImageWithColor:[UIColor styleBackgroundColor] borderColor:[UIColor styleForegroundColor]] forState:UIControlStateNormal];
+    [buttonAppearance setBackgroundImage:[UIImage styleBackgroundImageWithColor:[UIColor styleHighlightColor] borderColor:[UIColor styleForegroundColor]] forState:UIControlStateHighlighted];
+    [buttonAppearance setBackgroundImage:[UIImage styleBackgroundImageWithColor:[UIColor styleThemeColorOne] borderColor:[UIColor styleForegroundColor]] forState:UIControlStateSelected];
+    
+    // Generic text field
+//    id textFieldAppearance = [UITextField appearance];
     
     // Button inside tabbar
     id buttonInTabBarAppearance = [UIButton appearanceWhenContainedIn:[ECTabBar class], nil];
-    [buttonInTabBarAppearance setBackgroundImage:[UIImage styleBackgroundImageWithColor:[UIColor styleForegroundColor] borderColor:[UIColor styleBackgroundColor] insets:UIEdgeInsetsZero arrowSize:CGSizeZero] forState:UIControlStateNormal];
-    [buttonInTabBarAppearance setBackgroundImage:[UIImage styleBackgroundImageWithColor:[UIColor colorWithWhite:0.25 alpha:1] borderColor:[UIColor styleBackgroundColor] insets:UIEdgeInsetsZero arrowSize:CGSizeZero] forState:UIControlStateHighlighted];
-    [buttonInTabBarAppearance setBackgroundImage:[UIImage styleBackgroundImageWithColor:[UIColor styleBackgroundColor] borderColor:[UIColor styleBackgroundColor] insets:UIEdgeInsetsZero arrowSize:CGSizeZero] forState:UIControlStateSelected];
+    [buttonInTabBarAppearance setBackgroundImage:[UIImage styleBackgroundImageWithColor:[UIColor styleForegroundColor] borderColor:[UIColor styleBackgroundColor]] forState:UIControlStateNormal];
+    [buttonInTabBarAppearance setBackgroundImage:[UIImage styleBackgroundImageWithColor:[UIColor colorWithWhite:0.25 alpha:1] borderColor:[UIColor styleBackgroundColor]] forState:UIControlStateHighlighted];
+    [buttonInTabBarAppearance setBackgroundImage:[UIImage styleBackgroundImageWithColor:[UIColor styleBackgroundColor] borderColor:[UIColor styleBackgroundColor]] forState:UIControlStateSelected];
     [buttonInTabBarAppearance setTitleColor:[UIColor styleBackgroundColor] forState:UIControlStateNormal];
     [buttonInTabBarAppearance setTitleColor:[UIColor styleForegroundColor] forState:UIControlStateSelected];
     
@@ -44,10 +52,17 @@
     
     // Jump bar
     id jumpBarAppearance = [ECJumpBar appearance];
-    [jumpBarAppearance setJumpElementMargins:UIEdgeInsetsMake(0, 0, 0, -15)];
+    [jumpBarAppearance setJumpElementMargins:UIEdgeInsetsMake(0, -3, 0, -12)];
     
     id buttonInJumpBarAppearance = [UIButton appearanceWhenContainedIn:[ECJumpBar class], nil];
-    [buttonInJumpBarAppearance setBackgroundImage:[UIImage styleBackgroundImageWithColor:[UIColor styleBackgroundColor] borderColor:[UIColor styleForegroundColor] insets:UIEdgeInsetsZero arrowSize:CGSizeMake(10, 30)] forState:UIControlStateNormal];
+    [buttonInJumpBarAppearance setBackgroundImage:[UIImage styleBackgroundImageWithColor:[UIColor styleBackgroundColor] borderColor:[UIColor styleForegroundColor] insets:UIEdgeInsetsZero arrowSize:CGSizeMake(10, 30) roundingCorners:UIRectCornerAllCorners] forState:UIControlStateNormal];
+    
+    // TODO should be in the controller
+    UIButton *backButton = [UIButton new];
+    [backButton setBackgroundImage:[UIImage styleBackgroundImageWithColor:[UIColor styleBackgroundColor] borderColor:[UIColor styleForegroundColor] insets:UIEdgeInsetsZero arrowSize:CGSizeZero roundingCorners:UIRectCornerTopLeft | UIRectCornerBottomLeft] forState:UIControlStateNormal];
+    [backButton setImage:[UIImage styleDisclosureArrowImageWithOrientation:UIImageOrientationLeft color:[UIColor styleForegroundColor]] forState:UIControlStateNormal];
+    backButton.frame = CGRectMake(0, 0, 40, 30);
+    navigationController.jumpBar.backElement = backButton;
     
     return YES;
 }

@@ -53,6 +53,7 @@
     
     // Setup jumpbar
     jumpBar.delegate = self;
+    jumpBar.minimumTextElementWidth = 0.4;
     
     // Setup tab bar
     if (!tabBar)
@@ -255,7 +256,7 @@
 
 - (void)popJumpBar:(id)sender
 {
-    [jumpBar popJumpElementAnimated:YES];
+    [jumpBar popThroughJumpElement:sender animated:YES];
 }
 
 - (UIView *)jumpBar:(ECJumpBar *)jumpBar createElementForJumpPathComponent:(NSString *)pathComponent index:(NSUInteger)componentIndex

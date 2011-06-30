@@ -13,7 +13,13 @@
 /// Create a resizable image with a rounded rectangle of corner radius 3, a border
 /// of 1 pixel insetted as specified. The arrow size can make the image have an
 /// arrow either on the right if positive or left if negative.
-+ (UIImage *)styleBackgroundImageWithColor:(UIColor *)color borderColor:(UIColor *)borderColor insets:(UIEdgeInsets)borderInsets arrowSize:(CGSize)arrowSize;
++ (UIImage *)styleBackgroundImageWithColor:(UIColor *)color 
+                               borderColor:(UIColor *)borderColor 
+                                    insets:(UIEdgeInsets)borderInsets 
+                                 arrowSize:(CGSize)arrowSize
+                           roundingCorners:(UIRectCorner)cornersToRound;
+
++ (UIImage *)styleBackgroundImageWithColor:(UIColor *)color borderColor:(UIColor *)borderColor;
 
 /// Icon of a document with a bookmark label used to represent projects with style 
 /// foreground color and shadow.
