@@ -52,11 +52,18 @@
     buttonTools.adjustsImageWhenHighlighted = NO;
     
     // Setup jumpbar
+    // TODO text element may require subclass for leftViewRectForBounds: and alike
     jumpBar.delegate = self;
     jumpBar.minimumTextElementWidth = 0.4;
     jumpBar.textElement.placeholder = @"Filter";
     jumpBar.textElement.leftView = [[UIImageView alloc] initWithImage:[UIImage styleSymbolImageWithColor:[UIColor styleSymbolColorBlue] letter:@"M"]];
     jumpBar.textElement.leftViewMode = UITextFieldViewModeAlways;
+    jumpBar.textElement.autocorrectionType = UITextAutocorrectionTypeNo;
+    jumpBar.textElement.spellCheckingType = UITextSpellCheckingTypeNo;
+    jumpBar.textElement.autocapitalizationType = UITextAutocapitalizationTypeNone;
+    jumpBar.textElement.returnKeyType = UIReturnKeySearch;
+//    jumpBar.textElement.clearButtonMode = UITextFieldViewModeUnlessEditing;
+    jumpBar.backgroundView = [[UIImageView alloc] initWithImage:[UIImage styleBackgroundImageWithColor:[UIColor styleAlternateBackgroundColor] borderColor:[UIColor styleForegroundColor]]];
     
     // Setup tab bar
     if (!tabBar)

@@ -59,7 +59,7 @@
     // Jump bar
     id jumpBarAppearance = [ECJumpBar appearance];
     [jumpBarAppearance setJumpElementMargins:UIEdgeInsetsMake(0, -3, 0, -12)];
-    [jumpBarAppearance setTextElementInsets:UIEdgeInsetsMake(0, 5, 0, 5)];
+    [jumpBarAppearance setTextElementInsets:UIEdgeInsetsMake(0, 3, 0, 3)];
     
     id buttonInJumpBarAppearance = [UIButton appearanceWhenContainedIn:[ECJumpBar class], nil];
     [buttonInJumpBarAppearance setBackgroundImage:[UIImage styleBackgroundImageWithColor:[UIColor styleBackgroundColor] borderColor:[UIColor styleForegroundColor] insets:UIEdgeInsetsZero arrowSize:CGSizeMake(10, 30) roundingCorners:UIRectCornerAllCorners] forState:UIControlStateNormal];

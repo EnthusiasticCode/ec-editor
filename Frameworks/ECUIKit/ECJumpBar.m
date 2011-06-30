@@ -40,7 +40,8 @@
 {
     [backgroundView removeFromSuperview];
     backgroundView = view;
-    [self addSubview:backgroundView];
+    [self insertSubview:backgroundView atIndex:0];
+    self.backgroundColor = nil;
 }
 
 @synthesize backElement;
@@ -70,7 +71,7 @@
     [textElement removeFromSuperview];
     textElement = view;
     
-    [self addSubview:textElement];
+    [self insertSubview:textElement aboveSubview:backgroundView];
 }
 
 @synthesize jumpElements, minimumJumpElementWidth, maximumJumpElementWidth, jumpElementMargins;
@@ -315,6 +316,7 @@ static void init(ECJumpBar *self)
         __block CGRect elementPreAnimationFrame;
         [UIView animateWithDuration:0.15 animations:^(void) {
             [self layoutSubviews];
+            // TODO elements goes over those that will collapse, resulting in a unwanted line to be seen
             if (jumpElementsCount > 1)
             {
                 elementFrame = element.frame;
