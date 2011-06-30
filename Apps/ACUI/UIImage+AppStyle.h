@@ -41,4 +41,6 @@
 /// Produce a rounded rect 14x14 image with the given color and white letter over it.
 + (UIImage *)styleSymbolImageWithColor:(UIColor *)color letter:(NSString *)letter;
 
++ (UIImage *)styleSearchIcon;
+
 @end

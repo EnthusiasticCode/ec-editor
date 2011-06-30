@@ -413,4 +413,31 @@
     }];
 }
 
++ (UIImage *)styleSearchIcon
+{
+    static UIImage *_styleSearchIcon = nil;
+    if (!_styleSearchIcon)
+        _styleSearchIcon = [UIImage imageWithSize:CGSizeMake(16, 17) block:^(CGContextRef ctx, CGRect rect) {
+            rect.size.height -= 1;
+            
+            CGContextSetShadowWithColor(ctx, CGSizeMake(0, -1), 0, [UIColor whiteColor].CGColor);
+            CGContextBeginTransparencyLayer(ctx, NULL);
+            // 
+            CGContextSetStrokeColorWithColor(ctx, [UIColor styleForegroundColor].CGColor);
+            CGContextSetLineCap(ctx, kCGLineCapRound);
+            //
+            CGContextAddArc(ctx, rect.size.width - 6, 6, 5, 0, M_PI * 2, YES);
+            CGContextSetLineWidth(ctx, 2);
+            CGContextStrokePath(ctx);
+            //
+            CGContextMoveToPoint(ctx, 2, rect.size.height - 2);
+            CGContextAddLineToPoint(ctx, 4.8, rect.size.height - 4.8);
+            CGContextSetLineWidth(ctx, 4);
+            CGContextStrokePath(ctx);
+            //
+            CGContextEndTransparencyLayer(ctx);
+        }];
+    return _styleSearchIcon;
+}
+
 @end
