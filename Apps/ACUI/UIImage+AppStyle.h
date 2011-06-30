@@ -38,4 +38,7 @@
 /// The outline will look like a border.
 + (UIImage *)styleCloseImageWithColor:(UIColor *)color outlineColor:(UIColor *)outlineColor;
 
+/// Produce a rounded rect 14x14 image with the given color and white letter over it.
++ (UIImage *)styleSymbolImageWithColor:(UIColor *)color letter:(NSString *)letter;
+
 @end

@@ -383,4 +383,34 @@
     }];
 }
 
++ (UIImage *)styleSymbolImageWithColor:(UIColor *)color letter:(NSString *)letter
+{
+    return [UIImage imageWithSize:CGSizeMake(14, 14) block:^(CGContextRef ctx, CGRect rect) {
+        rect = CGRectInset(rect, .5, .5);
+        CGPathRef path = [UIBezierPath bezierPathWithRoundedRect:rect cornerRadius:2].CGPath;
+        
+        CGContextSetFillColorWithColor(ctx, [UIColor whiteColor].CGColor);
+        CGContextAddPath(ctx, path);
+        CGContextFillPath(ctx);
+        
+        CGContextSetFillColorWithColor(ctx, [color colorWithAlphaComponent:0.80].CGColor);
+        CGContextAddPath(ctx, path);
+        CGContextFillPath(ctx);
+        
+        CGContextSetStrokeColorWithColor(ctx, color.CGColor);
+        CGContextAddPath(ctx, path);
+        CGContextStrokePath(ctx);
+        
+        CGContextSetFillColorWithColor(ctx, [UIColor whiteColor].CGColor);
+        
+        CGContextSetLineWidth(ctx, 0.4);
+        CGContextSetTextDrawingMode(ctx, kCGTextFillStroke);
+        CGContextSelectFont(ctx, "Helvetica-Bold", 13, kCGEncodingMacRoman);
+        CGContextSetTextMatrix(ctx, CGAffineTransformMakeScale(1, -1));
+        CGContextSetTextPosition(ctx, 1.5, 11.5);
+        
+        CGContextShowText(ctx, [letter cStringUsingEncoding:NSUTF8StringEncoding], [letter lengthOfBytesUsingEncoding:NSUTF8StringEncoding]);
+    }];
+}
+
 @end

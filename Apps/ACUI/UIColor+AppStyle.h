@@ -20,4 +20,6 @@
 + (UIColor *)styleThemeColorOne;
 + (UIColor *)styleDeleteColor;
 
++ (UIColor *)styleSymbolColorBlue;
+
 @end

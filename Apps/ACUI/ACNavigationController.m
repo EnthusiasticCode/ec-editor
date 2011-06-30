@@ -55,7 +55,7 @@
     jumpBar.delegate = self;
     jumpBar.minimumTextElementWidth = 0.4;
     jumpBar.textElement.placeholder = @"Filter";
-    jumpBar.textElement.leftView = [[UIImageView alloc] initWithImage:[UIImage styleCloseImageWithColor:[UIColor redColor] outlineColor:nil]];
+    jumpBar.textElement.leftView = [[UIImageView alloc] initWithImage:[UIImage styleSymbolImageWithColor:[UIColor styleSymbolColorBlue] letter:@"M"]];
     jumpBar.textElement.leftViewMode = UITextFieldViewModeAlways;
     
     // Setup tab bar

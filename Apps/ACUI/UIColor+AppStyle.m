@@ -64,4 +64,11 @@
                         [UIColor colorWithRed:200.0/255.0 green:8.0/255.0 blue:21.0/255.0 alpha:1.0]);
 }
 
+
++ (UIColor *)styleSymbolColorBlue
+{
+    RETURN_CACHED_COLOR(styleSymbolColorBlue, 
+                        [UIColor colorWithRed:75.0/255.0 green:92.0/255.0 blue:179.0/255.0 alpha:1.0]);
+}
+
 @end
