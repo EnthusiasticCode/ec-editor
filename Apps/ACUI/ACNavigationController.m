@@ -211,12 +211,16 @@
     frame.size.width = 35;
     closeButton.frame = frame;
     [closeButton addTarget:self action:@selector(closeTabButtonAction:) forControlEvents:UIControlEventTouchUpInside];
-    
     [tabButton addSubview:closeButton];
     
     // TODO no appearance proxy for this?
     [tabButton.titleLabel setFont:[UIFont styleFontWithSize:14]];
     return YES;
+}
+
+- (void)tabBar:(ECTabBar *)bar didSelectTabAtIndex:(NSUInteger)index
+{
+    [jumpBar setJumpPath:[NSString stringWithFormat:@"/Path/To/%@", [[bar tabAtIndex:index] currentTitle]] animated:YES];
 }
 
 #pragma mark -
@@ -299,8 +303,6 @@
 - (IBAction)tests:(id)sender {
     NSString *title = [NSString stringWithFormat:@"Path %u", [jumpBar.jumpElements count]];
     [jumpBar pushJumpElementWithPathComponent:title animated:YES];
-    
-    // [jumpBar setJumpPath:@"/Path 0/Path 1/Other 0/Other 1" animated:YES];
 }
 
 

@@ -354,7 +354,7 @@ static void init(ECJumpBar *self)
     // 
     if (animated)
     {
-        [UIView animateWithDuration:2 animations:^(void) {
+        [UIView animateWithDuration:0.15 animations:^(void) {
             if ([visibleJumpElements containsIndexesInRange:NSMakeRange(0, firstUncommonElementIndex + 1)])
                 collapseElement.alpha = 0;
             for (UIView *element in removedJumpElements)
@@ -387,7 +387,7 @@ static void init(ECJumpBar *self)
             {
                 element.alpha = 0;
             }
-            [UIView animateWithDuration:2 animations:^(void) {
+            [UIView animateWithDuration:0.15 animations:^(void) {
                 collapseElement.alpha = 1;
                 [self layoutSubviews];
                 for (UIView *element in array)
