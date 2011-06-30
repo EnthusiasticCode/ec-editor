@@ -72,7 +72,7 @@
     [textElement removeFromSuperview];
     textElement = view;
     
-    [self insertSubview:textElement aboveSubview:backgroundView];
+    [self addSubview:textElement];
 }
 
 @synthesize jumpElements, minimumJumpElementWidth, maximumJumpElementWidth, jumpElementMargins;

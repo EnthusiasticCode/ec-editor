@@ -31,6 +31,7 @@
 		CDAD700413A7BBDC00C0B9B4 /* ECPopoverController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDAD700113A7BBDC00C0B9B4 /* ECPopoverController.m */; };
 		CDAD700513A7BBDC00C0B9B4 /* ECPopoverView.m in Sources */ = {isa = PBXBuildFile; fileRef = CDAD700313A7BBDC00C0B9B4 /* ECPopoverView.m */; };
 		CDB01FA613BCF8AC00794823 /* UIView+ReuseIdentifier.m in Sources */ = {isa = PBXBuildFile; fileRef = CDB01FA513BCF8AC00794823 /* UIView+ReuseIdentifier.m */; };
+		CDB01FAD13BD272300794823 /* ACJumpBarTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = CDB01FAC13BD272300794823 /* ACJumpBarTextField.m */; };
 		CDF9846013B25DB7007429D4 /* ECTabBar.m in Sources */ = {isa = PBXBuildFile; fileRef = CDF9845F13B25DB7007429D4 /* ECTabBar.m */; };
 /* End PBXBuildFile section */
 
@@ -79,6 +80,8 @@
 		CDAD700313A7BBDC00C0B9B4 /* ECPopoverView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECPopoverView.m; sourceTree = "<group>"; };
 		CDB01FA413BCF8AC00794823 /* UIView+ReuseIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+ReuseIdentifier.h"; sourceTree = "<group>"; };
 		CDB01FA513BCF8AC00794823 /* UIView+ReuseIdentifier.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+ReuseIdentifier.m"; sourceTree = "<group>"; };
+		CDB01FAB13BD272300794823 /* ACJumpBarTextField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACJumpBarTextField.h; sourceTree = "<group>"; };
+		CDB01FAC13BD272300794823 /* ACJumpBarTextField.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACJumpBarTextField.m; sourceTree = "<group>"; };
 		CDF9845E13B25DB7007429D4 /* ECTabBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECTabBar.h; sourceTree = "<group>"; };
 		CDF9845F13B25DB7007429D4 /* ECTabBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECTabBar.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -219,6 +222,8 @@
 				CD4755E013ABBF7E00BB92F6 /* ACNavigationController.m */,
 				CD4755E413ABD77600BB92F6 /* ACNavigationPushSegue.h */,
 				CD4755E513ABD77600BB92F6 /* ACNavigationPushSegue.m */,
+				CDB01FAB13BD272300794823 /* ACJumpBarTextField.h */,
+				CDB01FAC13BD272300794823 /* ACJumpBarTextField.m */,
 			);
 			name = Navigation;
 			sourceTree = "<group>";
@@ -319,6 +324,7 @@
 				CD8BDAB713B6765400B553EB /* ECSwipeGestureRecognizer.m in Sources */,
 				CD10B35913B73FEA00901780 /* NSTimer+block.m in Sources */,
 				CDB01FA613BCF8AC00794823 /* UIView+ReuseIdentifier.m in Sources */,
+				CDB01FAD13BD272300794823 /* ACJumpBarTextField.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

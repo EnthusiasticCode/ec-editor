@@ -7,8 +7,9 @@
 //
 
 #import <QuartzCore/QuartzCore.h>
-#import "ACNavigationController.h"
 #import "AppStyle.h"
+#import "ACNavigationController.h"
+#import "ACJumpBarTextField.h"
 
 
 @implementation ACNavigationController
@@ -55,13 +56,15 @@
     // TODO text element may require subclass for leftViewRectForBounds: and alike
     jumpBar.delegate = self;
     jumpBar.minimumTextElementWidth = 0.4;
+    jumpBar.textElement = [ACJumpBarTextField new];
+    jumpBar.textElement.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
     jumpBar.textElement.placeholder = @"Filter";
     jumpBar.textElement.autocorrectionType = UITextAutocorrectionTypeNo;
     jumpBar.textElement.spellCheckingType = UITextSpellCheckingTypeNo;
     jumpBar.textElement.autocapitalizationType = UITextAutocapitalizationTypeNone;
     jumpBar.textElement.returnKeyType = UIReturnKeySearch;
     jumpBar.textElement.leftView = [[UIImageView alloc] initWithImage:[UIImage styleSymbolImageWithColor:[UIColor styleSymbolColorBlue] letter:@"M"]];
-    jumpBar.textElement.leftViewMode = UITextFieldViewModeAlways;
+    jumpBar.textElement.leftViewMode = UITextFieldViewModeUnlessEditing;
     jumpBar.textElement.rightView = [[UIImageView alloc] initWithImage:[UIImage styleSearchIcon]];
     jumpBar.textElement.rightViewMode = UITextFieldViewModeAlways;
 //    jumpBar.textElement.clearButtonMode = UITextFieldViewModeUnlessEditing;
