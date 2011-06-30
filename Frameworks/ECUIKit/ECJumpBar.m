@@ -12,6 +12,7 @@
 
 @implementation ECJumpBar {
     NSMutableArray *jumpElements;
+    NSMutableArray *reuseJumpElements;
     
     /// Variable keeping the current visible elements. It is updated only in the
     /// pushJumpElementWithPathComponent:animated:.
@@ -81,7 +82,7 @@
 {
     if (!collapseElement)
     {
-        collapseElement = [delegate jumpBar:self createElementForJumpPathComponent:@"..." index:NSNotFound];
+        collapseElement = [delegate jumpBar:self elementForJumpPathComponent:@"..." index:NSNotFound];
         collapseElement.frame = CGRectMake(0, 0, minimumJumpElementWidth, 0);
     }
     return collapseElement;
@@ -216,6 +217,38 @@
     }];
 }
 
+#pragma mark - Element Reuse Methods
+
+- (void)enqueueReusableJumpElement:(UIView *)element
+{
+    if (element.reuseIdentifier == nil)
+        return;
+    
+    if (reuseJumpElements == nil)
+        reuseJumpElements = [NSMutableArray new];
+    
+    [reuseJumpElements addObject:element];
+}
+
+- (UIView *)dequeueReusableJumpElementWithIdentifier:(NSString *)identifier
+{
+    __block NSUInteger elementIdx = NSNotFound;
+    [reuseJumpElements enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(UIView *element, NSUInteger idx, BOOL *stop) {
+        if ([identifier isEqualToString:element.reuseIdentifier])
+        {
+            elementIdx = idx;
+            *stop = YES;
+        }
+    }];
+    
+    if (elementIdx == NSNotFound)
+        return nil;
+    
+    UIView *element = [reuseJumpElements objectAtIndex:elementIdx];
+    [reuseJumpElements removeObjectAtIndex:elementIdx];
+    return element;
+}
+
 #pragma mark - UIView Methods
 
 static void preinit(ECJumpBar *self)
@@ -285,7 +318,7 @@ static void init(ECJumpBar *self)
 - (void)pushJumpElementsForPath:(NSString *)path animated:(BOOL)animated
 {
     // Create and add new
-    UIView *element = [delegate jumpBar:self createElementForJumpPathComponent:path index:[jumpElements count]];
+    UIView *element = [delegate jumpBar:self elementForJumpPathComponent:path index:[jumpElements count]];
     if (!element)
         return;
     
@@ -364,6 +397,7 @@ static void init(ECJumpBar *self)
 {
     UIView *element = [jumpElements lastObject];
     [jumpElements removeLastObject];
+    [self enqueueReusableJumpElement:element];
     
     // Calculate visible and collapsed elements indexes
     visibleJumpElements = [self visibleElementsIndexSet];

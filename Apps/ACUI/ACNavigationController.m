@@ -269,15 +269,22 @@
     [jumpBar popThroughJumpElement:sender animated:YES];
 }
 
-- (UIView *)jumpBar:(ECJumpBar *)jumpBar createElementForJumpPathComponent:(NSString *)pathComponent index:(NSUInteger)componentIndex
+- (UIView *)jumpBar:(ECJumpBar *)bar elementForJumpPathComponent:(NSString *)pathComponent index:(NSUInteger)componentIndex
 {
-    UIButton *button = [UIButton new];
-    [button setTitle:pathComponent forState:UIControlStateNormal];    
-    [button addTarget:self action:@selector(popJumpBar:) forControlEvents:UIControlEventTouchUpInside];
+    static NSString *elementIdentifier = @"jumpBarElement";
     
-    // TODO move label settings in appearance when possble
-    button.titleLabel.font = [UIFont styleFontWithSize:14];
-    button.titleLabel.shadowOffset = CGSizeMake(0, 1);
+    UIButton *button = [bar dequeueReusableJumpElementWithIdentifier:elementIdentifier];
+    if (button == nil)
+    {
+        button = [UIButton new];
+        button.reuseIdentifier = elementIdentifier;
+        [button addTarget:self action:@selector(popJumpBar:) forControlEvents:UIControlEventTouchUpInside];
+        // TODO move label settings in appearance when possble
+        button.titleLabel.font = [UIFont styleFontWithSize:14];
+        button.titleLabel.shadowOffset = CGSizeMake(0, 1);
+    }
+    
+    [button setTitle:pathComponent forState:UIControlStateNormal];
     
     return button;
 }

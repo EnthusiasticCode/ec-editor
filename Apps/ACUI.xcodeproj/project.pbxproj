@@ -30,6 +30,7 @@
 		CDABE3EE13ABF26B006B53AE /* ACProjectTableCell.m in Sources */ = {isa = PBXBuildFile; fileRef = CDABE3ED13ABF26B006B53AE /* ACProjectTableCell.m */; };
 		CDAD700413A7BBDC00C0B9B4 /* ECPopoverController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDAD700113A7BBDC00C0B9B4 /* ECPopoverController.m */; };
 		CDAD700513A7BBDC00C0B9B4 /* ECPopoverView.m in Sources */ = {isa = PBXBuildFile; fileRef = CDAD700313A7BBDC00C0B9B4 /* ECPopoverView.m */; };
+		CDB01FA613BCF8AC00794823 /* UIView+ReuseIdentifier.m in Sources */ = {isa = PBXBuildFile; fileRef = CDB01FA513BCF8AC00794823 /* UIView+ReuseIdentifier.m */; };
 		CDF9846013B25DB7007429D4 /* ECTabBar.m in Sources */ = {isa = PBXBuildFile; fileRef = CDF9845F13B25DB7007429D4 /* ECTabBar.m */; };
 /* End PBXBuildFile section */
 
@@ -76,6 +77,8 @@
 		CDAD700113A7BBDC00C0B9B4 /* ECPopoverController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECPopoverController.m; sourceTree = "<group>"; };
 		CDAD700213A7BBDC00C0B9B4 /* ECPopoverView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECPopoverView.h; sourceTree = "<group>"; };
 		CDAD700313A7BBDC00C0B9B4 /* ECPopoverView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECPopoverView.m; sourceTree = "<group>"; };
+		CDB01FA413BCF8AC00794823 /* UIView+ReuseIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+ReuseIdentifier.h"; sourceTree = "<group>"; };
+		CDB01FA513BCF8AC00794823 /* UIView+ReuseIdentifier.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+ReuseIdentifier.m"; sourceTree = "<group>"; };
 		CDF9845E13B25DB7007429D4 /* ECTabBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECTabBar.h; sourceTree = "<group>"; };
 		CDF9845F13B25DB7007429D4 /* ECTabBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECTabBar.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -176,6 +179,8 @@
 			children = (
 				CD6AB2A213ACFE2100DA8A14 /* UIImage+BlockDrawing.h */,
 				CD6AB2A313ACFE2100DA8A14 /* UIImage+BlockDrawing.m */,
+				CDB01FA413BCF8AC00794823 /* UIView+ReuseIdentifier.h */,
+				CDB01FA513BCF8AC00794823 /* UIView+ReuseIdentifier.m */,
 				CDAD700013A7BBDC00C0B9B4 /* ECPopoverController.h */,
 				CDAD700113A7BBDC00C0B9B4 /* ECPopoverController.m */,
 				CDAD700213A7BBDC00C0B9B4 /* ECPopoverView.h */,
@@ -313,6 +318,7 @@
 				CDF9846013B25DB7007429D4 /* ECTabBar.m in Sources */,
 				CD8BDAB713B6765400B553EB /* ECSwipeGestureRecognizer.m in Sources */,
 				CD10B35913B73FEA00901780 /* NSTimer+block.m in Sources */,
+				CDB01FA613BCF8AC00794823 /* UIView+ReuseIdentifier.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

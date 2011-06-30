@@ -7,15 +7,20 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "UIView+ReuseIdentifier.h"
 
 @class ECJumpBar;
 
 @protocol ECJumpBarDelegate <NSObject>
 @required
 
-/// Create and return a view for the path component at the given index. 
-/// If index is NSNotFound, the collapse element should be created.
-- (UIView *)jumpBar:(ECJumpBar *)jumpBar createElementForJumpPathComponent:(NSString *)pathComponent index:(NSUInteger)componentIndex;
+/// Ask the delegate for an element with the given path component that will be displayed in
+/// the provided index. The delegate sould use dequeueReusableJumpElementWithIdentifier: to
+/// see if an element is already created like in UITableView.
+/// Use UIView's reuseIdentifier addition property to set the reuse identifier of a newly
+/// created element.
+/// If index is NSNotFound, the collapse element should be returned.
+- (UIView *)jumpBar:(ECJumpBar *)jumpBar elementForJumpPathComponent:(NSString *)pathComponent index:(NSUInteger)componentIndex;
 
 /// Return the path component for the given element.
 /// If this methods return nil, the title or text property of the element will be used.
@@ -82,6 +87,11 @@
 
 /// Remove an element and all it's descending elements.
 - (void)popThroughJumpElement:(UIView *)element animated:(BOOL)animated;
+
+#pragma mark Jump Elements Reuse
+
+/// Try to dequeue a previously used and popped element. This method may return nil.
+- (UIView *)dequeueReusableJumpElementWithIdentifier:(NSString *)identifier;
 
 #pragma mark Managing Elements via Jump Path
 
