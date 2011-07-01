@@ -357,26 +357,31 @@
     
     toolPanelView.autoresizingMask = UIViewAutoresizingFlexibleHeight | (toolPanelOnRight ? UIViewAutoresizingFlexibleLeftMargin : UIViewAutoresizingFlexibleRightMargin);
     
+    CALayer *toolPanelLayer = toolPanelView.layer;
     CGRect bounds = self.view.bounds;
-    CGFloat panelSize = 322;
+    CGFloat panelSize = 322 + toolPanelLayer.borderWidth;
     CGRect panelFrame = (CGRect){
-        (toolPanelOnRight ? (CGPoint){ bounds.size.width - panelSize, 0 } : CGPointZero),
+        (toolPanelOnRight 
+         ? (CGPoint){ bounds.size.width - panelSize + toolPanelLayer.borderWidth, 0 } 
+         : CGPointMake(toolPanelLayer.borderWidth, 0)),
         CGSizeMake(panelSize, bounds.size.height)
     };
     
     [self.view addSubview:toolPanelView];
-    CALayer *toolPanelLayer = toolPanelView.layer;
     
     // TODO add instant gesture recognizer to dismiss
     if (animated)
     {
         toolPanelLayer.shadowOpacity = 0;
+        toolPanelLayer.shouldRasterize = YES; // TODO check for performance 
         CGRect panelPreAnimationFrame = panelFrame;
         panelPreAnimationFrame.origin.x += toolPanelOnRight ? panelFrame.size.width : -panelFrame.size.width;
         toolPanelView.frame = panelPreAnimationFrame;
         [UIView animateWithDuration:0.10 delay:0 options:UIViewAnimationCurveEaseInOut animations:^(void) {
             toolPanelView.frame = panelFrame;
         } completion:^(BOOL finished) {
+            toolPanelLayer.shouldRasterize = NO;
+            //
             toolPanelLayer.shadowOffset = toolPanelOnRight ? CGSizeMake(-5, 0) : CGSizeMake(5, 0);
             toolPanelLayer.shadowOpacity = 0.3;
             //
@@ -398,17 +403,21 @@
     if (!toolPanelController || toolPanelView.superview == nil)
         return;
     
-    [self.view addGestureRecognizer:toolPanelDismissGestureRecognizer];
+    [self.view removeGestureRecognizer:toolPanelDismissGestureRecognizer];
     
-    toolPanelView.layer.shadowOpacity = 0;
+    CALayer *toolPanelLayer = toolPanelView.layer;
+    toolPanelLayer.shadowOpacity = 0;
     
     if (animated)
     {
+        // TODO check for performance 
+        toolPanelLayer.shouldRasterize = YES;
         CGRect panelFrame = toolPanelView.frame;
         panelFrame.origin.x += toolPanelOnRight ? panelFrame.size.width : -panelFrame.size.width;
         [UIView animateWithDuration:0.10 delay:0 options:UIViewAnimationCurveEaseInOut animations:^(void) {
             toolPanelView.frame = panelFrame;
         } completion:^(BOOL finished) {
+            toolPanelLayer.shouldRasterize = NO;
             [toolPanelView removeFromSuperview];
         }];
     }

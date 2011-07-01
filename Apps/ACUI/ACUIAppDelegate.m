@@ -9,6 +9,7 @@
 #import "ACUIAppDelegate.h"
 #import "AppStyle.h"
 #import "ACNavigationController.h"
+#import "ACTopBarView.h"
 #import "ACToolPanelController.h"
 #import "ECTabBar.h"
 #import "ECJumpBar.h"
@@ -27,42 +28,27 @@
     ACNavigationController *navigationController = (ACNavigationController *)self.window.rootViewController;
     [navigationController performSegueWithIdentifier:@"rootSegue" sender:nil];
     
-    // Generic button
-    id buttonAppearance = [UIButton appearance];
-    [buttonAppearance setBackgroundImage:[UIImage styleBackgroundImageWithColor:[UIColor styleBackgroundColor] borderColor:[UIColor styleForegroundColor]] forState:UIControlStateNormal];
-    [buttonAppearance setBackgroundImage:[UIImage styleBackgroundImageWithColor:[UIColor styleHighlightColor] borderColor:[UIColor styleForegroundColor]] forState:UIControlStateHighlighted];
-    [buttonAppearance setBackgroundImage:[UIImage styleBackgroundImageWithColor:[UIColor styleThemeColorOne] borderColor:[UIColor styleForegroundColor]] forState:UIControlStateSelected];
-    [buttonAppearance setAdjustsImageWhenHighlighted:NO];
-    [buttonAppearance setAdjustsImageWhenDisabled:YES];
-    [buttonAppearance setTitleColor:[UIColor styleForegroundColor] forState:UIControlStateNormal];
-    [buttonAppearance setTitleShadowColor:[UIColor styleForegroundShadowColor] forState:UIControlStateNormal];
-    
     // Generic text field
     id textFieldAppearance = [UITextField appearance];
     [textFieldAppearance setTextColor:[UIColor styleForegroundColor]];
     [textFieldAppearance setFont:defaultFont];
     
-    // Button inside tabbar
-    id buttonInTabBarAppearance = [UIButton appearanceWhenContainedIn:[ECTabBar class], nil];
-    [buttonInTabBarAppearance setBackgroundImage:[UIImage styleBackgroundImageWithColor:[UIColor styleForegroundColor] borderColor:[UIColor styleBackgroundColor]] forState:UIControlStateNormal];
-    [buttonInTabBarAppearance setBackgroundImage:[UIImage styleBackgroundImageWithColor:[UIColor colorWithWhite:0.25 alpha:1] borderColor:[UIColor styleBackgroundColor]] forState:UIControlStateHighlighted];
-    [buttonInTabBarAppearance setBackgroundImage:[UIImage styleBackgroundImageWithColor:[UIColor styleBackgroundColor] borderColor:[UIColor styleBackgroundColor]] forState:UIControlStateSelected];
-    [buttonInTabBarAppearance setTitleColor:[UIColor styleBackgroundColor] forState:UIControlStateNormal];
-    [buttonInTabBarAppearance setTitleColor:[UIColor styleForegroundColor] forState:UIControlStateSelected];
-    
-    // Close button of tabs
-    id closeButtonInTabBarAppearance = [UIButton appearanceWhenContainedIn:[UIButton class], [ECTabBar class], nil];
-    [closeButtonInTabBarAppearance setBackgroundImage:nil forState:UIControlStateNormal];
-    [closeButtonInTabBarAppearance setBackgroundImage:nil forState:UIControlStateHighlighted];
-    [closeButtonInTabBarAppearance setImage:[UIImage styleCloseImageWithColor:[UIColor styleBackgroundColor] outlineColor:[UIColor styleForegroundColor]] forState:UIControlStateNormal];
-    [closeButtonInTabBarAppearance setImage:[UIImage styleCloseImageWithColor:[UIColor styleForegroundColor] outlineColor:[UIColor styleBackgroundColor]] forState:UIControlStateHighlighted];
+    // Button in top bar
+    id buttonInTopBarAppearance = [UIButton appearanceWhenContainedIn:[ACTopBarView class], nil];
+    [buttonInTopBarAppearance setBackgroundImage:[UIImage styleBackgroundImageWithColor:[UIColor styleBackgroundColor] borderColor:[UIColor styleForegroundColor]] forState:UIControlStateNormal];
+    [buttonInTopBarAppearance setBackgroundImage:[UIImage styleBackgroundImageWithColor:[UIColor styleHighlightColor] borderColor:[UIColor styleForegroundColor]] forState:UIControlStateHighlighted];
+    [buttonInTopBarAppearance setBackgroundImage:[UIImage styleBackgroundImageWithColor:[UIColor styleThemeColorOne] borderColor:[UIColor styleForegroundColor]] forState:UIControlStateSelected];
+    [buttonInTopBarAppearance setAdjustsImageWhenHighlighted:NO];
+    [buttonInTopBarAppearance setAdjustsImageWhenDisabled:YES];
+    [buttonInTopBarAppearance setTitleColor:[UIColor styleForegroundColor] forState:UIControlStateNormal];
+    [buttonInTopBarAppearance setTitleShadowColor:[UIColor styleForegroundShadowColor] forState:UIControlStateNormal];
     
     // Jump bar
     id jumpBarAppearance = [ECJumpBar appearance];
     [jumpBarAppearance setJumpElementMargins:UIEdgeInsetsMake(0, -3, 0, -12)];
     [jumpBarAppearance setTextElementInsets:UIEdgeInsetsMake(0, 3, 0, 7)];
     
-    id buttonInJumpBarAppearance = [UIButton appearanceWhenContainedIn:[ECJumpBar class], nil];
+    id buttonInJumpBarAppearance = [UIButton appearanceWhenContainedIn:[ECJumpBar class], [ACTopBarView class], nil];
     [buttonInJumpBarAppearance setBackgroundImage:[UIImage styleBackgroundImageWithColor:[UIColor styleBackgroundColor] borderColor:[UIColor styleForegroundColor] insets:UIEdgeInsetsZero arrowSize:CGSizeMake(10, 30) roundingCorners:UIRectCornerAllCorners] forState:UIControlStateNormal];
     [buttonInJumpBarAppearance setBackgroundImage:[UIImage styleBackgroundImageWithColor:[UIColor styleHighlightColor] borderColor:[UIColor styleForegroundColor] insets:UIEdgeInsetsZero arrowSize:CGSizeMake(10, 30) roundingCorners:UIRectCornerAllCorners] forState:UIControlStateHighlighted];
     
@@ -79,6 +65,21 @@
     // TODO make this a button?
     navigationController.jumpBar.textElement.leftView = [[UIImageView alloc] initWithImage:[UIImage styleSymbolImageWithColor:[UIColor styleSymbolColorBlue] letter:@"M"]];
     navigationController.jumpBar.textElement.leftViewMode = UITextFieldViewModeUnlessEditing;
+    
+    // Button inside tabbar
+    id buttonInTabBarAppearance = [UIButton appearanceWhenContainedIn:[ECTabBar class], nil];
+    [buttonInTabBarAppearance setBackgroundImage:[UIImage styleBackgroundImageWithColor:[UIColor styleForegroundColor] borderColor:[UIColor styleBackgroundColor]] forState:UIControlStateNormal];
+    [buttonInTabBarAppearance setBackgroundImage:[UIImage styleBackgroundImageWithColor:[UIColor colorWithWhite:0.25 alpha:1] borderColor:[UIColor styleBackgroundColor]] forState:UIControlStateHighlighted];
+    [buttonInTabBarAppearance setBackgroundImage:[UIImage styleBackgroundImageWithColor:[UIColor styleBackgroundColor] borderColor:[UIColor styleBackgroundColor]] forState:UIControlStateSelected];
+    [buttonInTabBarAppearance setTitleColor:[UIColor styleBackgroundColor] forState:UIControlStateNormal];
+    [buttonInTabBarAppearance setTitleColor:[UIColor styleForegroundColor] forState:UIControlStateSelected];
+    
+    // Close button of tabs
+    id closeButtonInTabBarAppearance = [UIButton appearanceWhenContainedIn:[UIButton class], [ECTabBar class], nil];
+    [closeButtonInTabBarAppearance setBackgroundImage:nil forState:UIControlStateNormal];
+    [closeButtonInTabBarAppearance setBackgroundImage:nil forState:UIControlStateHighlighted];
+    [closeButtonInTabBarAppearance setImage:[UIImage styleCloseImageWithColor:[UIColor styleBackgroundColor] outlineColor:[UIColor styleForegroundColor]] forState:UIControlStateNormal];
+    [closeButtonInTabBarAppearance setImage:[UIImage styleCloseImageWithColor:[UIColor styleForegroundColor] outlineColor:[UIColor styleBackgroundColor]] forState:UIControlStateHighlighted];
     
     // Adding tool panel
     navigationController.toolPanelController = [[ACToolPanelController alloc] initWithNibName:@"ToolPanel" bundle:[NSBundle mainBundle]];

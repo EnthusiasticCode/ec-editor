@@ -36,6 +36,17 @@
 		CDB7768013BE2E91003CA99C /* ToolPanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = CDB7767F13BE2E91003CA99C /* ToolPanel.xib */; };
 		CDB7768513BE2EDF003CA99C /* ACToolPanelController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDB7768413BE2EDF003CA99C /* ACToolPanelController.m */; };
 		CDB7768813BE436A003CA99C /* ECInstantGestureRecognizer.m in Sources */ = {isa = PBXBuildFile; fileRef = CDB7768713BE436A003CA99C /* ECInstantGestureRecognizer.m */; };
+		CDB7769413BE5135003CA99C /* toolPanelHistoryActiveIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = CDB7768A13BE5135003CA99C /* toolPanelHistoryActiveIcon.png */; };
+		CDB7769513BE5135003CA99C /* toolPanelHistoryIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = CDB7768B13BE5135003CA99C /* toolPanelHistoryIcon.png */; };
+		CDB7769613BE5135003CA99C /* toolPanelNavigatorActiveIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = CDB7768C13BE5135003CA99C /* toolPanelNavigatorActiveIcon.png */; };
+		CDB7769713BE5135003CA99C /* toolPanelNavigatorIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = CDB7768D13BE5135003CA99C /* toolPanelNavigatorIcon.png */; };
+		CDB7769813BE5135003CA99C /* toolPanelSnippetsActiveIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = CDB7768E13BE5135003CA99C /* toolPanelSnippetsActiveIcon.png */; };
+		CDB7769913BE5135003CA99C /* toolPanelSnippetsIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = CDB7768F13BE5135003CA99C /* toolPanelSnippetsIcon.png */; };
+		CDB7769A13BE5135003CA99C /* toolPanelStarActiveIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = CDB7769013BE5135003CA99C /* toolPanelStarActiveIcon.png */; };
+		CDB7769B13BE5135003CA99C /* toolPanelStarIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = CDB7769113BE5135003CA99C /* toolPanelStarIcon.png */; };
+		CDB7769C13BE5135003CA99C /* toolPanelSymbolsActiveIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = CDB7769213BE5135003CA99C /* toolPanelSymbolsActiveIcon.png */; };
+		CDB7769D13BE5135003CA99C /* toolPanelSymbolsIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = CDB7769313BE5135003CA99C /* toolPanelSymbolsIcon.png */; };
+		CDB776A113BE531D003CA99C /* ACTopBarView.m in Sources */ = {isa = PBXBuildFile; fileRef = CDB776A013BE531D003CA99C /* ACTopBarView.m */; };
 		CDF9846013B25DB7007429D4 /* ECTabBar.m in Sources */ = {isa = PBXBuildFile; fileRef = CDF9845F13B25DB7007429D4 /* ECTabBar.m */; };
 /* End PBXBuildFile section */
 
@@ -93,6 +104,18 @@
 		CDB7768413BE2EDF003CA99C /* ACToolPanelController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACToolPanelController.m; sourceTree = "<group>"; };
 		CDB7768613BE436A003CA99C /* ECInstantGestureRecognizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECInstantGestureRecognizer.h; sourceTree = "<group>"; };
 		CDB7768713BE436A003CA99C /* ECInstantGestureRecognizer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECInstantGestureRecognizer.m; sourceTree = "<group>"; };
+		CDB7768A13BE5135003CA99C /* toolPanelHistoryActiveIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = toolPanelHistoryActiveIcon.png; sourceTree = "<group>"; };
+		CDB7768B13BE5135003CA99C /* toolPanelHistoryIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = toolPanelHistoryIcon.png; sourceTree = "<group>"; };
+		CDB7768C13BE5135003CA99C /* toolPanelNavigatorActiveIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = toolPanelNavigatorActiveIcon.png; sourceTree = "<group>"; };
+		CDB7768D13BE5135003CA99C /* toolPanelNavigatorIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = toolPanelNavigatorIcon.png; sourceTree = "<group>"; };
+		CDB7768E13BE5135003CA99C /* toolPanelSnippetsActiveIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = toolPanelSnippetsActiveIcon.png; sourceTree = "<group>"; };
+		CDB7768F13BE5135003CA99C /* toolPanelSnippetsIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = toolPanelSnippetsIcon.png; sourceTree = "<group>"; };
+		CDB7769013BE5135003CA99C /* toolPanelStarActiveIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = toolPanelStarActiveIcon.png; sourceTree = "<group>"; };
+		CDB7769113BE5135003CA99C /* toolPanelStarIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = toolPanelStarIcon.png; sourceTree = "<group>"; };
+		CDB7769213BE5135003CA99C /* toolPanelSymbolsActiveIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = toolPanelSymbolsActiveIcon.png; sourceTree = "<group>"; };
+		CDB7769313BE5135003CA99C /* toolPanelSymbolsIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = toolPanelSymbolsIcon.png; sourceTree = "<group>"; };
+		CDB7769F13BE531D003CA99C /* ACTopBarView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACTopBarView.h; sourceTree = "<group>"; };
+		CDB776A013BE531D003CA99C /* ACTopBarView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACTopBarView.m; sourceTree = "<group>"; };
 		CDF9845E13B25DB7007429D4 /* ECTabBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECTabBar.h; sourceTree = "<group>"; };
 		CDF9845F13B25DB7007429D4 /* ECTabBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECTabBar.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -239,6 +262,8 @@
 				CD4755E513ABD77600BB92F6 /* ACNavigationPushSegue.m */,
 				CDB01FAB13BD272300794823 /* ACJumpBarTextField.h */,
 				CDB01FAC13BD272300794823 /* ACJumpBarTextField.m */,
+				CDB7769F13BE531D003CA99C /* ACTopBarView.h */,
+				CDB776A013BE531D003CA99C /* ACTopBarView.m */,
 			);
 			name = Navigation;
 			sourceTree = "<group>";
@@ -257,6 +282,7 @@
 		CDB01FA213BCF18400794823 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				CDB7768913BE5135003CA99C /* Shared */,
 				CD19241A13A147EE00A47E38 /* MainStoryboard.storyboard */,
 				CDB7767F13BE2E91003CA99C /* ToolPanel.xib */,
 			);
@@ -279,6 +305,32 @@
 				CDB7768413BE2EDF003CA99C /* ACToolPanelController.m */,
 			);
 			name = Tools;
+			sourceTree = "<group>";
+		};
+		CDB7768913BE5135003CA99C /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				CDB7769E13BE513C003CA99C /* Tool Panel Icons */,
+			);
+			name = Shared;
+			path = Resources;
+			sourceTree = SOURCE_ROOT;
+		};
+		CDB7769E13BE513C003CA99C /* Tool Panel Icons */ = {
+			isa = PBXGroup;
+			children = (
+				CDB7768A13BE5135003CA99C /* toolPanelHistoryActiveIcon.png */,
+				CDB7768B13BE5135003CA99C /* toolPanelHistoryIcon.png */,
+				CDB7768C13BE5135003CA99C /* toolPanelNavigatorActiveIcon.png */,
+				CDB7768D13BE5135003CA99C /* toolPanelNavigatorIcon.png */,
+				CDB7768E13BE5135003CA99C /* toolPanelSnippetsActiveIcon.png */,
+				CDB7768F13BE5135003CA99C /* toolPanelSnippetsIcon.png */,
+				CDB7769013BE5135003CA99C /* toolPanelStarActiveIcon.png */,
+				CDB7769113BE5135003CA99C /* toolPanelStarIcon.png */,
+				CDB7769213BE5135003CA99C /* toolPanelSymbolsActiveIcon.png */,
+				CDB7769313BE5135003CA99C /* toolPanelSymbolsIcon.png */,
+			);
+			name = "Tool Panel Icons";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -331,6 +383,16 @@
 				CD19241313A147EE00A47E38 /* InfoPlist.strings in Resources */,
 				CD19241C13A147EE00A47E38 /* MainStoryboard.storyboard in Resources */,
 				CDB7768013BE2E91003CA99C /* ToolPanel.xib in Resources */,
+				CDB7769413BE5135003CA99C /* toolPanelHistoryActiveIcon.png in Resources */,
+				CDB7769513BE5135003CA99C /* toolPanelHistoryIcon.png in Resources */,
+				CDB7769613BE5135003CA99C /* toolPanelNavigatorActiveIcon.png in Resources */,
+				CDB7769713BE5135003CA99C /* toolPanelNavigatorIcon.png in Resources */,
+				CDB7769813BE5135003CA99C /* toolPanelSnippetsActiveIcon.png in Resources */,
+				CDB7769913BE5135003CA99C /* toolPanelSnippetsIcon.png in Resources */,
+				CDB7769A13BE5135003CA99C /* toolPanelStarActiveIcon.png in Resources */,
+				CDB7769B13BE5135003CA99C /* toolPanelStarIcon.png in Resources */,
+				CDB7769C13BE5135003CA99C /* toolPanelSymbolsActiveIcon.png in Resources */,
+				CDB7769D13BE5135003CA99C /* toolPanelSymbolsIcon.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -363,6 +425,7 @@
 				CDB01FB213BD2D5200794823 /* ACFileTableController.m in Sources */,
 				CDB7768513BE2EDF003CA99C /* ACToolPanelController.m in Sources */,
 				CDB7768813BE436A003CA99C /* ECInstantGestureRecognizer.m in Sources */,
+				CDB776A113BE531D003CA99C /* ACTopBarView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

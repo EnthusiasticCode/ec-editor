@@ -7,6 +7,7 @@
 //
 
 #import "ACToolPanelController.h"
+#import <QuartzCore/QuartzCore.h>
 
 
 @implementation ACToolPanelController
@@ -35,6 +36,12 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    // TODO make this more efficient
+    CALayer *viewLayer = self.view.layer;
+    viewLayer.cornerRadius = 4;
+    viewLayer.borderWidth = 2;
+    viewLayer.borderColor = [UIColor whiteColor].CGColor;
 }
 
 - (void)viewDidUnload
