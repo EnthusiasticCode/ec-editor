@@ -10,15 +10,40 @@
 #import "AppStyle.h"
 #import "ACNavigationController.h"
 #import "ACJumpBarTextField.h"
+#import "ECInstantGestureRecognizer.h"
 
 
-@implementation ACNavigationController
-@synthesize contentScrollView;
-@synthesize tabBar;
+@implementation ACNavigationController {
+@private
+    ECPopoverController *popoverController;
+    ECTabBar *tabBar;
+    
+    ECSwipeGestureRecognizer *tabGestureRecognizer;
+    UISwipeGestureRecognizer *toolPanelLeftGestureRecognizer, *toolPanelRightGestureRecognizer;
+    ECInstantGestureRecognizer *toolPanelDismissGestureRecognizer;
+    UIScrollView *contentScrollView;
+}
 
 #pragma mark - Properties
 
+@synthesize contentScrollView;
+@synthesize tabBar;
 @synthesize jumpBar, buttonEdit, buttonTools;
+@synthesize toolPanelController, toolPanelEnabled, toolPanelOnRight;
+
+- (void)setToolPanelEnabled:(BOOL)enabled
+{
+    if (enabled == toolPanelEnabled)
+        return;
+    
+    toolPanelEnabled = enabled;
+    
+    toolPanelLeftGestureRecognizer.enabled = enabled;
+    toolPanelRightGestureRecognizer.enabled = enabled;
+    
+    if (!toolPanelEnabled)
+        [self hideToolPanelAnimated:NO];
+}
 
 #pragma mark - View lifecycle
 
@@ -63,8 +88,6 @@
     jumpBar.textElement.spellCheckingType = UITextSpellCheckingTypeNo;
     jumpBar.textElement.autocapitalizationType = UITextAutocapitalizationTypeNone;
     jumpBar.textElement.returnKeyType = UIReturnKeySearch;
-    jumpBar.textElement.leftView = [[UIImageView alloc] initWithImage:[UIImage styleSymbolImageWithColor:[UIColor styleSymbolColorBlue] letter:@"M"]];
-    jumpBar.textElement.leftViewMode = UITextFieldViewModeUnlessEditing;
     jumpBar.textElement.rightView = [[UIImageView alloc] initWithImage:[UIImage styleSearchIcon]];
     jumpBar.textElement.rightViewMode = UITextFieldViewModeAlways;
 //    jumpBar.textElement.clearButtonMode = UITextFieldViewModeUnlessEditing;
@@ -105,12 +128,26 @@
     contentScrollView.pagingEnabled = YES;
     contentScrollView.showsVerticalScrollIndicator = NO;
     contentScrollView.showsHorizontalScrollIndicator = NO;
+    contentScrollView.panGestureRecognizer.minimumNumberOfTouches = 3;
+    contentScrollView.panGestureRecognizer.maximumNumberOfTouches = 3;
+    
+    // Tool panel gesture recognizer
+    toolPanelLeftGestureRecognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(handleToolPanelGesture:)];
+    toolPanelLeftGestureRecognizer.direction = UISwipeGestureRecognizerDirectionLeft;
+    toolPanelRightGestureRecognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(handleToolPanelGesture:)];
+    toolPanelRightGestureRecognizer.direction = UISwipeGestureRecognizerDirectionRight;
+    [self.view addGestureRecognizer:toolPanelLeftGestureRecognizer];
+    [self.view addGestureRecognizer:toolPanelRightGestureRecognizer];
+    toolPanelLeftGestureRecognizer.enabled = toolPanelEnabled;
+    toolPanelRightGestureRecognizer.enabled = toolPanelEnabled;
 }
 
 - (void)viewDidUnload
 {
     [self setJumpBar:nil];
     [self setTabBar:nil];
+    toolPanelLeftGestureRecognizer = nil;
+    toolPanelRightGestureRecognizer = nil;
     tabGestureRecognizer = nil;
     [self setContentScrollView:nil];
     [super viewDidUnload];
@@ -301,6 +338,112 @@
 - (NSString *)jumpBar:(ECJumpBar *)jumpBar pathComponentForJumpElement:(UIView *)jumpElement index:(NSUInteger)elementIndex
 {
     return [(UIButton *)jumpElement currentTitle];
+}
+
+#pragma mark - Tool Panel Management Methods
+
+- (void)showToolPanelAnimated:(BOOL)animated
+{
+    UIView *toolPanelView = toolPanelController.view;
+    if (!toolPanelController || toolPanelView.superview != nil)
+        return;
+    
+    if (!toolPanelDismissGestureRecognizer)
+    {
+        toolPanelDismissGestureRecognizer = [[ECInstantGestureRecognizer alloc] initWithTarget:self action:@selector(handleToolPanelGesture:)];
+        [toolPanelRightGestureRecognizer requireGestureRecognizerToFail:toolPanelLeftGestureRecognizer];
+        [toolPanelRightGestureRecognizer requireGestureRecognizerToFail:toolPanelRightGestureRecognizer];
+    }
+    
+    toolPanelView.autoresizingMask = UIViewAutoresizingFlexibleHeight | (toolPanelOnRight ? UIViewAutoresizingFlexibleLeftMargin : UIViewAutoresizingFlexibleRightMargin);
+    
+    CGRect bounds = self.view.bounds;
+    CGFloat panelSize = 322;
+    CGRect panelFrame = (CGRect){
+        (toolPanelOnRight ? (CGPoint){ bounds.size.width - panelSize, 0 } : CGPointZero),
+        CGSizeMake(panelSize, bounds.size.height)
+    };
+    
+    [self.view addSubview:toolPanelView];
+    CALayer *toolPanelLayer = toolPanelView.layer;
+    
+    // TODO add instant gesture recognizer to dismiss
+    if (animated)
+    {
+        toolPanelLayer.shadowOpacity = 0;
+        CGRect panelPreAnimationFrame = panelFrame;
+        panelPreAnimationFrame.origin.x += toolPanelOnRight ? panelFrame.size.width : -panelFrame.size.width;
+        toolPanelView.frame = panelPreAnimationFrame;
+        [UIView animateWithDuration:0.10 delay:0 options:UIViewAnimationCurveEaseInOut animations:^(void) {
+            toolPanelView.frame = panelFrame;
+        } completion:^(BOOL finished) {
+            toolPanelLayer.shadowOffset = toolPanelOnRight ? CGSizeMake(-5, 0) : CGSizeMake(5, 0);
+            toolPanelLayer.shadowOpacity = 0.3;
+            //
+            [self.view addGestureRecognizer:toolPanelDismissGestureRecognizer];
+        }];
+    }
+    else
+    {
+        toolPanelView.frame = panelFrame;
+        toolPanelLayer.shadowOffset = toolPanelOnRight ? CGSizeMake(-5, 0) : CGSizeMake(5, 0);
+        toolPanelLayer.shadowOpacity = 0.3;
+        [self.view addGestureRecognizer:toolPanelDismissGestureRecognizer];
+    }
+}
+
+- (void)hideToolPanelAnimated:(BOOL)animated
+{
+    UIView *toolPanelView = toolPanelController.view;
+    if (!toolPanelController || toolPanelView.superview == nil)
+        return;
+    
+    [self.view addGestureRecognizer:toolPanelDismissGestureRecognizer];
+    
+    toolPanelView.layer.shadowOpacity = 0;
+    
+    if (animated)
+    {
+        CGRect panelFrame = toolPanelView.frame;
+        panelFrame.origin.x += toolPanelOnRight ? panelFrame.size.width : -panelFrame.size.width;
+        [UIView animateWithDuration:0.10 delay:0 options:UIViewAnimationCurveEaseInOut animations:^(void) {
+            toolPanelView.frame = panelFrame;
+        } completion:^(BOOL finished) {
+            [toolPanelView removeFromSuperview];
+        }];
+    }
+    else
+    {
+        [toolPanelView removeFromSuperview];
+    }
+}
+
+#pragma mark -
+
+- (void)handleToolPanelGesture:(UIGestureRecognizer *)recognizer
+{
+    if (recognizer == toolPanelLeftGestureRecognizer)
+    {
+        if (toolPanelOnRight)
+            [self showToolPanelAnimated:YES];
+        else
+            [self hideToolPanelAnimated:YES];
+    }
+    else if (recognizer == toolPanelRightGestureRecognizer)
+    {
+        if (!toolPanelOnRight)
+            [self showToolPanelAnimated:YES];
+        else
+            [self hideToolPanelAnimated:YES];
+    }
+    else if (recognizer == toolPanelDismissGestureRecognizer)
+    {
+        CGPoint location = [recognizer locationInView:toolPanelController.view];
+        if ([toolPanelController.view pointInside:location withEvent:nil])
+            return;
+        [self hideToolPanelAnimated:YES];
+        [recognizer.view removeGestureRecognizer:recognizer];
+    }
 }
 
 #pragma mark -

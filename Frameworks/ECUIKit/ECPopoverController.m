@@ -7,38 +7,8 @@
 //
 
 #import <QuartzCore/QuartzCore.h>
-#import <UIKit/UIGestureRecognizerSubclass.h>
 #import "ECPopoverController.h"
-
-#pragma mark -
-#pragma makr Custom Gesture Recognizer
-
-@interface InstantGestureRecognizer : UIGestureRecognizer
-@end
-
-@implementation InstantGestureRecognizer
-
-- (id)initWithTarget:(id)target action:(SEL)action
-{
-    if ((self = [super initWithTarget:target action:action])) 
-    {
-        self.cancelsTouchesInView = NO;
-    }
-    return self;
-}
-
-- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
-{
-    self.state = UIGestureRecognizerStateRecognized;
-}
-
-- (BOOL)canPreventGestureRecognizer:(UIGestureRecognizer *)preventedGestureRecognizer
-{
-    return NO;
-}
-
-@end
-
+#import "ECInstantGestureRecognizer.h"
 
 #pragma mark -
 #pragma makr Popover Controller
@@ -49,7 +19,7 @@
 @private
     CGFloat keyboardHeight;
     
-    InstantGestureRecognizer *dismissRecognizer;
+    ECInstantGestureRecognizer *dismissRecognizer;
     
     BOOL delegateHasPopoverControllerShouldDismissPopover;
     BOOL delegateHasPopoverControllerDidDismissPopover;
@@ -356,7 +326,7 @@ static void preinit(ECPopoverController *self)
     if (automaticDismiss) 
     {
         if (!dismissRecognizer)
-            dismissRecognizer = [[InstantGestureRecognizer alloc] initWithTarget:self action:@selector(dismissHandler:)];
+            dismissRecognizer = [[ECInstantGestureRecognizer alloc] initWithTarget:self action:@selector(dismissHandler:)];
         [view.window addGestureRecognizer:dismissRecognizer];
     }
 }

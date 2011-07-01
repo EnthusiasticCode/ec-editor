@@ -32,6 +32,10 @@
 		CDAD700513A7BBDC00C0B9B4 /* ECPopoverView.m in Sources */ = {isa = PBXBuildFile; fileRef = CDAD700313A7BBDC00C0B9B4 /* ECPopoverView.m */; };
 		CDB01FA613BCF8AC00794823 /* UIView+ReuseIdentifier.m in Sources */ = {isa = PBXBuildFile; fileRef = CDB01FA513BCF8AC00794823 /* UIView+ReuseIdentifier.m */; };
 		CDB01FAD13BD272300794823 /* ACJumpBarTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = CDB01FAC13BD272300794823 /* ACJumpBarTextField.m */; };
+		CDB01FB213BD2D5200794823 /* ACFileTableController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDB01FB113BD2D5200794823 /* ACFileTableController.m */; };
+		CDB7768013BE2E91003CA99C /* ToolPanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = CDB7767F13BE2E91003CA99C /* ToolPanel.xib */; };
+		CDB7768513BE2EDF003CA99C /* ACToolPanelController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDB7768413BE2EDF003CA99C /* ACToolPanelController.m */; };
+		CDB7768813BE436A003CA99C /* ECInstantGestureRecognizer.m in Sources */ = {isa = PBXBuildFile; fileRef = CDB7768713BE436A003CA99C /* ECInstantGestureRecognizer.m */; };
 		CDF9846013B25DB7007429D4 /* ECTabBar.m in Sources */ = {isa = PBXBuildFile; fileRef = CDF9845F13B25DB7007429D4 /* ECTabBar.m */; };
 /* End PBXBuildFile section */
 
@@ -82,6 +86,13 @@
 		CDB01FA513BCF8AC00794823 /* UIView+ReuseIdentifier.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+ReuseIdentifier.m"; sourceTree = "<group>"; };
 		CDB01FAB13BD272300794823 /* ACJumpBarTextField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACJumpBarTextField.h; sourceTree = "<group>"; };
 		CDB01FAC13BD272300794823 /* ACJumpBarTextField.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACJumpBarTextField.m; sourceTree = "<group>"; };
+		CDB01FB013BD2D5200794823 /* ACFileTableController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACFileTableController.h; sourceTree = "<group>"; };
+		CDB01FB113BD2D5200794823 /* ACFileTableController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACFileTableController.m; sourceTree = "<group>"; };
+		CDB7767F13BE2E91003CA99C /* ToolPanel.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ToolPanel.xib; sourceTree = "<group>"; };
+		CDB7768313BE2EDF003CA99C /* ACToolPanelController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACToolPanelController.h; sourceTree = "<group>"; };
+		CDB7768413BE2EDF003CA99C /* ACToolPanelController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACToolPanelController.m; sourceTree = "<group>"; };
+		CDB7768613BE436A003CA99C /* ECInstantGestureRecognizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECInstantGestureRecognizer.h; sourceTree = "<group>"; };
+		CDB7768713BE436A003CA99C /* ECInstantGestureRecognizer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECInstantGestureRecognizer.m; sourceTree = "<group>"; };
 		CDF9845E13B25DB7007429D4 /* ECTabBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECTabBar.h; sourceTree = "<group>"; };
 		CDF9845F13B25DB7007429D4 /* ECTabBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECTabBar.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -172,7 +183,9 @@
 			children = (
 				CD6AB29413ACF5E700DA8A14 /* Style */,
 				CD8D782C13ABE6BD00A391F4 /* Navigation */,
+				CDB7768213BE2E9D003CA99C /* Tools */,
 				CD8D782D13ABE6C500A391F4 /* Projects */,
+				CDB01FAF13BD2D3000794823 /* Files */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -196,6 +209,8 @@
 				CDF9845F13B25DB7007429D4 /* ECTabBar.m */,
 				CD8BDAB513B6765300B553EB /* ECSwipeGestureRecognizer.h */,
 				CD8BDAB613B6765300B553EB /* ECSwipeGestureRecognizer.m */,
+				CDB7768613BE436A003CA99C /* ECInstantGestureRecognizer.h */,
+				CDB7768713BE436A003CA99C /* ECInstantGestureRecognizer.m */,
 			);
 			name = ECUIKit;
 			path = ../../Frameworks/ECUIKit;
@@ -243,8 +258,27 @@
 			isa = PBXGroup;
 			children = (
 				CD19241A13A147EE00A47E38 /* MainStoryboard.storyboard */,
+				CDB7767F13BE2E91003CA99C /* ToolPanel.xib */,
 			);
 			name = Resources;
+			sourceTree = "<group>";
+		};
+		CDB01FAF13BD2D3000794823 /* Files */ = {
+			isa = PBXGroup;
+			children = (
+				CDB01FB013BD2D5200794823 /* ACFileTableController.h */,
+				CDB01FB113BD2D5200794823 /* ACFileTableController.m */,
+			);
+			name = Files;
+			sourceTree = "<group>";
+		};
+		CDB7768213BE2E9D003CA99C /* Tools */ = {
+			isa = PBXGroup;
+			children = (
+				CDB7768313BE2EDF003CA99C /* ACToolPanelController.h */,
+				CDB7768413BE2EDF003CA99C /* ACToolPanelController.m */,
+			);
+			name = Tools;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -296,6 +330,7 @@
 			files = (
 				CD19241313A147EE00A47E38 /* InfoPlist.strings in Resources */,
 				CD19241C13A147EE00A47E38 /* MainStoryboard.storyboard in Resources */,
+				CDB7768013BE2E91003CA99C /* ToolPanel.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -325,6 +360,9 @@
 				CD10B35913B73FEA00901780 /* NSTimer+block.m in Sources */,
 				CDB01FA613BCF8AC00794823 /* UIView+ReuseIdentifier.m in Sources */,
 				CDB01FAD13BD272300794823 /* ACJumpBarTextField.m in Sources */,
+				CDB01FB213BD2D5200794823 /* ACFileTableController.m in Sources */,
+				CDB7768513BE2EDF003CA99C /* ACToolPanelController.m in Sources */,
+				CDB7768813BE436A003CA99C /* ECInstantGestureRecognizer.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

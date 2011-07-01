@@ -13,14 +13,7 @@
 #import "ECSwipeGestureRecognizer.h"
 
 
-@interface ACNavigationController : UIViewController <ECJumpBarDelegate, ECTabBarDelegate> {
-@private
-    ECPopoverController *popoverController;
-    ECTabBar *tabBar;
-    
-    ECSwipeGestureRecognizer *tabGestureRecognizer;
-    UIScrollView *contentScrollView;
-}
+@interface ACNavigationController : UIViewController <ECJumpBarDelegate, ECTabBarDelegate> 
 
 @property (nonatomic, strong) IBOutlet UIScrollView *contentScrollView;
 
@@ -34,14 +27,21 @@
 
 - (void)pushViewController:(UIViewController *)viewController animated:(BOOL)animated;
 - (UIViewController *)popViewControllerAnimated:(BOOL)animated;
-//- (NSArray *)popToViewController:(UIViewController *)viewController animated:(BOOL)animated;
 
 #pragma mark Tab Navigation
 
 @property (nonatomic, strong) IBOutlet ECTabBar *tabBar;
 
+#pragma mark Tool Panel
 
-#pragma mark Bar Methods
+@property (nonatomic, strong) IBOutlet UIViewController *toolPanelController;
+@property (nonatomic, getter = isToolPanelEnabled) BOOL toolPanelEnabled;
+@property (nonatomic, getter = isToolPanelOnRight) BOOL toolPanelOnRight;
+
+- (void)showToolPanelAnimated:(BOOL)animated;
+- (void)hideToolPanelAnimated:(BOOL)animated;
+
+#pragma mark Head Bar Methods
 
 - (IBAction)toggleTools:(id)sender;
 - (IBAction)toggleEditing:(id)sender;

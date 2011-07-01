@@ -9,6 +9,7 @@
 #import "ACUIAppDelegate.h"
 #import "AppStyle.h"
 #import "ACNavigationController.h"
+#import "ACToolPanelController.h"
 #import "ECTabBar.h"
 #import "ECJumpBar.h"
 
@@ -65,6 +66,7 @@
     [buttonInJumpBarAppearance setBackgroundImage:[UIImage styleBackgroundImageWithColor:[UIColor styleBackgroundColor] borderColor:[UIColor styleForegroundColor] insets:UIEdgeInsetsZero arrowSize:CGSizeMake(10, 30) roundingCorners:UIRectCornerAllCorners] forState:UIControlStateNormal];
     [buttonInJumpBarAppearance setBackgroundImage:[UIImage styleBackgroundImageWithColor:[UIColor styleHighlightColor] borderColor:[UIColor styleForegroundColor] insets:UIEdgeInsetsZero arrowSize:CGSizeMake(10, 30) roundingCorners:UIRectCornerAllCorners] forState:UIControlStateHighlighted];
     
+    // Jump bar back button
     // TODO should be in the controller
     UIButton *backButton = [UIButton new];
     [backButton setBackgroundImage:[UIImage styleBackgroundImageWithColor:[UIColor styleBackgroundColor] borderColor:[UIColor styleForegroundColor] insets:UIEdgeInsetsZero arrowSize:CGSizeZero roundingCorners:UIRectCornerTopLeft | UIRectCornerBottomLeft] forState:UIControlStateNormal];
@@ -72,6 +74,16 @@
     [backButton setImage:[UIImage styleDisclosureArrowImageWithOrientation:UIImageOrientationLeft color:[UIColor styleForegroundColor]] forState:UIControlStateNormal];
     backButton.frame = CGRectMake(0, 0, 40, 30);
     navigationController.jumpBar.backElement = backButton;
+    
+    // Jump bar search button
+    // TODO make this a button?
+    navigationController.jumpBar.textElement.leftView = [[UIImageView alloc] initWithImage:[UIImage styleSymbolImageWithColor:[UIColor styleSymbolColorBlue] letter:@"M"]];
+    navigationController.jumpBar.textElement.leftViewMode = UITextFieldViewModeUnlessEditing;
+    
+    // Adding tool panel
+    navigationController.toolPanelController = [[ACToolPanelController alloc] initWithNibName:@"ToolPanel" bundle:[NSBundle mainBundle]];
+    navigationController.toolPanelOnRight = YES;
+    navigationController.toolPanelEnabled = YES;
     
     return YES;
 }
