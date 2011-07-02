@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CD078A2613BF9D3200D6B16A /* ToolPanels.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CD078A2513BF9D3200D6B16A /* ToolPanels.storyboard */; };
 		CD10B35913B73FEA00901780 /* NSTimer+block.m in Sources */ = {isa = PBXBuildFile; fileRef = CD10B35813B73FEA00901780 /* NSTimer+block.m */; };
 		CD19240913A147EE00A47E38 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD19240813A147EE00A47E38 /* UIKit.framework */; };
 		CD19240B13A147EE00A47E38 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD19240A13A147EE00A47E38 /* Foundation.framework */; };
@@ -33,7 +34,6 @@
 		CDB01FA613BCF8AC00794823 /* UIView+ReuseIdentifier.m in Sources */ = {isa = PBXBuildFile; fileRef = CDB01FA513BCF8AC00794823 /* UIView+ReuseIdentifier.m */; };
 		CDB01FAD13BD272300794823 /* ACJumpBarTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = CDB01FAC13BD272300794823 /* ACJumpBarTextField.m */; };
 		CDB01FB213BD2D5200794823 /* ACFileTableController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDB01FB113BD2D5200794823 /* ACFileTableController.m */; };
-		CDB7768013BE2E91003CA99C /* ToolPanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = CDB7767F13BE2E91003CA99C /* ToolPanel.xib */; };
 		CDB7768513BE2EDF003CA99C /* ACToolPanelController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDB7768413BE2EDF003CA99C /* ACToolPanelController.m */; };
 		CDB7768813BE436A003CA99C /* ECInstantGestureRecognizer.m in Sources */ = {isa = PBXBuildFile; fileRef = CDB7768713BE436A003CA99C /* ECInstantGestureRecognizer.m */; };
 		CDB7769413BE5135003CA99C /* toolPanelHistoryActiveIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = CDB7768A13BE5135003CA99C /* toolPanelHistoryActiveIcon.png */; };
@@ -51,6 +51,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		CD078A2513BF9D3200D6B16A /* ToolPanels.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = ToolPanels.storyboard; sourceTree = "<group>"; };
 		CD10B35713B73FEA00901780 /* NSTimer+block.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSTimer+block.h"; sourceTree = "<group>"; };
 		CD10B35813B73FEA00901780 /* NSTimer+block.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSTimer+block.m"; sourceTree = "<group>"; };
 		CD19240413A147ED00A47E38 /* ACUI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ACUI.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -99,7 +100,6 @@
 		CDB01FAC13BD272300794823 /* ACJumpBarTextField.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACJumpBarTextField.m; sourceTree = "<group>"; };
 		CDB01FB013BD2D5200794823 /* ACFileTableController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACFileTableController.h; sourceTree = "<group>"; };
 		CDB01FB113BD2D5200794823 /* ACFileTableController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACFileTableController.m; sourceTree = "<group>"; };
-		CDB7767F13BE2E91003CA99C /* ToolPanel.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ToolPanel.xib; sourceTree = "<group>"; };
 		CDB7768313BE2EDF003CA99C /* ACToolPanelController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACToolPanelController.h; sourceTree = "<group>"; };
 		CDB7768413BE2EDF003CA99C /* ACToolPanelController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACToolPanelController.m; sourceTree = "<group>"; };
 		CDB7768613BE436A003CA99C /* ECInstantGestureRecognizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECInstantGestureRecognizer.h; sourceTree = "<group>"; };
@@ -284,7 +284,7 @@
 			children = (
 				CDB7768913BE5135003CA99C /* Shared */,
 				CD19241A13A147EE00A47E38 /* MainStoryboard.storyboard */,
-				CDB7767F13BE2E91003CA99C /* ToolPanel.xib */,
+				CD078A2513BF9D3200D6B16A /* ToolPanels.storyboard */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -382,7 +382,6 @@
 			files = (
 				CD19241313A147EE00A47E38 /* InfoPlist.strings in Resources */,
 				CD19241C13A147EE00A47E38 /* MainStoryboard.storyboard in Resources */,
-				CDB7768013BE2E91003CA99C /* ToolPanel.xib in Resources */,
 				CDB7769413BE5135003CA99C /* toolPanelHistoryActiveIcon.png in Resources */,
 				CDB7769513BE5135003CA99C /* toolPanelHistoryIcon.png in Resources */,
 				CDB7769613BE5135003CA99C /* toolPanelNavigatorActiveIcon.png in Resources */,
@@ -393,6 +392,7 @@
 				CDB7769B13BE5135003CA99C /* toolPanelStarIcon.png in Resources */,
 				CDB7769C13BE5135003CA99C /* toolPanelSymbolsActiveIcon.png in Resources */,
 				CDB7769D13BE5135003CA99C /* toolPanelSymbolsIcon.png in Resources */,
+				CD078A2613BF9D3200D6B16A /* ToolPanels.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -12,14 +12,9 @@
 static NSCache *imagesCache = nil;
 
 
-//@interface ACProjectTableCell () {
-//@private
-//    BOOL editingInternal;
-//}
-//@end
-//
-
 @implementation ACProjectTableCell
+@synthesize titleLabel;
+@synthesize iconView;
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
@@ -45,12 +40,18 @@ static NSCache *imagesCache = nil;
             image = [UIImage styleProjectImageWithSize:CGSizeMake(32, 33) labelColor:[UIColor styleForegroundColor]];
             [imagesCache setObject:image forKey:[UIColor styleForegroundColor]];
         }
+        self.iconView.image = image;
         self.imageView.image = image;
         [self.imageView sizeToFit];
         
         //
         self.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-        self.accessoryView = [[UIImageView alloc] initWithImage:[UIImage styleTableDisclosureImage]];
+        
+        static UIImage *disclosureImage = nil;
+        if (!disclosureImage)
+            disclosureImage = [UIImage styleTableDisclosureImageWithColor:[UIColor styleForegroundColor] shadowColor:[UIColor whiteColor]];
+        
+        self.accessoryView = [[UIImageView alloc] initWithImage:disclosureImage];
         [self addSubview:self.accessoryView];
         
         //

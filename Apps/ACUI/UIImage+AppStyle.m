@@ -360,46 +360,40 @@
     }];
 }
 
-+ (UIImage *)styleTableDisclosureImage
++ (UIImage *)styleTableDisclosureImageWithColor:(UIColor *)color shadowColor:(UIColor *)shadowColor
 {
-    static UIImage *_styleDisclosureImage = nil;
-    if (!_styleDisclosureImage)
-    {
-        _styleDisclosureImage = [UIImage imageWithSize:(CGSize){ 9, 14 } block:^(CGContextRef ctx, CGRect rect) {
-            // Account for shadow
+    CGSize size = CGSizeMake(9, shadowColor ? 14 : 13);
+    return [UIImage imageWithSize:size block:^(CGContextRef ctx, CGRect rect) {
+        // Account for shadow
+        if (shadowColor)
             rect.size.height -= 1;
-            
-            // (x,y) is the tip of the arrow
-            CGFloat x = CGRectGetMaxX(rect) - 2;
-            CGFloat y = CGRectGetMidY(rect);
-            const CGFloat R = 4.5;
-            // Create 
-            CGMutablePathRef path = CGPathCreateMutable();
-            CGPathMoveToPoint(path, NULL, x-R, y-R);
-            CGPathAddLineToPoint(path, NULL, x, y);
-            CGPathAddLineToPoint(path, NULL, x-R, y+R);
-            // Set properties
-            CGContextSetLineCap(ctx, kCGLineCapSquare);
-            CGContextSetLineJoin(ctx, kCGLineJoinMiter);
-            CGContextSetLineWidth(ctx, 3);
-            // Draw shadow
-            CGContextSetStrokeColorWithColor(ctx, [UIColor styleForegroundShadowColor].CGColor);
-            CGContextSaveGState(ctx);
-            {
-                CGContextTranslateCTM(ctx, 0, 1);
-                CGContextAddPath(ctx, path);
-                CGContextStrokePath(ctx);
-            }
-            CGContextRestoreGState(ctx);
-            // Draw body
-            CGContextSetStrokeColorWithColor(ctx, [UIColor styleForegroundColor].CGColor);
-            CGContextAddPath(ctx, path);
-            CGContextStrokePath(ctx);
-            //
-            CGPathRelease(path);
-        }];
-    }
-    return _styleDisclosureImage;
+        
+        // (x,y) is the tip of the arrow
+        CGFloat x = CGRectGetMaxX(rect) - 2;
+        CGFloat y = CGRectGetMidY(rect);
+        const CGFloat R = 4.5;
+        
+        // Create 
+        CGMutablePathRef path = CGPathCreateMutable();
+        CGPathMoveToPoint(path, NULL, x-R, y-R);
+        CGPathAddLineToPoint(path, NULL, x, y);
+        CGPathAddLineToPoint(path, NULL, x-R, y+R);
+
+        // Set properties
+        CGContextSetLineCap(ctx, kCGLineCapSquare);
+        CGContextSetLineJoin(ctx, kCGLineJoinMiter);
+        CGContextSetLineWidth(ctx, 3);
+
+        // Draw body
+        if (shadowColor)
+            CGContextSetShadowWithColor(ctx, CGSizeMake(0, -1), 0, shadowColor.CGColor);
+        CGContextSetStrokeColorWithColor(ctx, color.CGColor);
+        CGContextAddPath(ctx, path);
+        CGContextStrokePath(ctx);
+        
+        // Clean up
+        CGPathRelease(path);
+    }];
 }
 
 + (UIImage *)styleDisclosureArrowImageWithOrientation:(UIImageOrientation)orientation color:(UIColor *)color
@@ -457,16 +451,7 @@
         CGContextSetLineWidth(ctx, 4);
         
         if (shadowColor)
-        {
-            CGContextSetStrokeColorWithColor(ctx, shadowColor.CGColor);
-            CGContextSaveGState(ctx);
-            {
-                CGContextTranslateCTM(ctx, 0, 1);
-                CGContextAddPath(ctx, path);
-                CGContextStrokePath(ctx);
-            }
-            CGContextRestoreGState(ctx);
-        }
+            CGContextSetShadowWithColor(ctx, CGSizeMake(0, -1), 0, shadowColor.CGColor);
         
         CGContextSetStrokeColorWithColor(ctx, color.CGColor);
         CGContextAddPath(ctx, path);
@@ -537,31 +522,32 @@
     }];
 }
 
-+ (UIImage *)styleSearchIcon
++ (UIImage *)styleSearchIconWithColor:(UIColor *)color shadowColor:(UIColor *)shadowColor
 {
-    static UIImage *_styleSearchIcon = nil;
-    if (!_styleSearchIcon)
-        _styleSearchIcon = [UIImage imageWithSize:CGSizeMake(16, 17) block:^(CGContextRef ctx, CGRect rect) {
+    CGSize size = CGSizeMake(16, shadowColor ? 17 : 16);
+    return [UIImage imageWithSize:size block:^(CGContextRef ctx, CGRect rect) {
+        if (shadowColor)
+        {
             rect.size.height -= 1;
-            
-            CGContextSetShadowWithColor(ctx, CGSizeMake(0, -1), 0, [UIColor whiteColor].CGColor);
+            CGContextSetShadowWithColor(ctx, CGSizeMake(0, -1), 0, shadowColor.CGColor);
             CGContextBeginTransparencyLayer(ctx, NULL);
-            // 
-            CGContextSetStrokeColorWithColor(ctx, [UIColor styleForegroundColor].CGColor);
-            CGContextSetLineCap(ctx, kCGLineCapRound);
-            //
-            CGContextAddArc(ctx, rect.size.width - 6, 6, 5, 0, M_PI * 2, YES);
-            CGContextSetLineWidth(ctx, 2);
-            CGContextStrokePath(ctx);
-            //
-            CGContextMoveToPoint(ctx, 2, rect.size.height - 2);
-            CGContextAddLineToPoint(ctx, 4.8, rect.size.height - 4.8);
-            CGContextSetLineWidth(ctx, 4);
-            CGContextStrokePath(ctx);
-            //
+        }
+        // 
+        CGContextSetStrokeColorWithColor(ctx, color.CGColor);
+        CGContextSetLineCap(ctx, kCGLineCapRound);
+        //
+        CGContextAddArc(ctx, rect.size.width - 6, 6, 5, 0, M_PI * 2, YES);
+        CGContextSetLineWidth(ctx, 2);
+        CGContextStrokePath(ctx);
+        //
+        CGContextMoveToPoint(ctx, 2, rect.size.height - 2);
+        CGContextAddLineToPoint(ctx, 4.8, rect.size.height - 4.8);
+        CGContextSetLineWidth(ctx, 4);
+        CGContextStrokePath(ctx);
+        //
+        if (shadowColor)
             CGContextEndTransparencyLayer(ctx);
-        }];
-    return _styleSearchIcon;
+    }];
 }
 
 @end

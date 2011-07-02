@@ -84,7 +84,7 @@
     jumpBar.textElement.spellCheckingType = UITextSpellCheckingTypeNo;
     jumpBar.textElement.autocapitalizationType = UITextAutocapitalizationTypeNone;
     jumpBar.textElement.returnKeyType = UIReturnKeySearch;
-    jumpBar.textElement.rightView = [[UIImageView alloc] initWithImage:[UIImage styleSearchIcon]];
+    jumpBar.textElement.rightView = [[UIImageView alloc] initWithImage:[UIImage styleSearchIconWithColor:[UIColor styleForegroundColor] shadowColor:[UIColor whiteColor]]];
     jumpBar.textElement.rightViewMode = UITextFieldViewModeAlways;
 //    jumpBar.textElement.clearButtonMode = UITextFieldViewModeUnlessEditing;
     jumpBar.backgroundView = [[UIImageView alloc] initWithImage:[UIImage styleBackgroundImageWithColor:[UIColor styleAlternateBackgroundColor] borderColor:[UIColor styleForegroundColor]]];

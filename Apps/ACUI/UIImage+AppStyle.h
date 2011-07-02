@@ -32,8 +32,8 @@
 /// Icon of a group.
 + (UIImage *)styleGroupImageWithSize:(CGSize)size;
 
-/// Table disclosure arrow with style foreground color and shadow. This image is cached.
-+ (UIImage *)styleTableDisclosureImage;
+/// Table disclosure arrow.
++ (UIImage *)styleTableDisclosureImageWithColor:(UIColor *)color shadowColor:(UIColor *)shadowColor;
 
 /// Image of a triangle poinging in the direction of its orientation.
 + (UIImage *)styleDisclosureArrowImageWithOrientation:(UIImageOrientation)orientation color:(UIColor *)color;
@@ -48,6 +48,7 @@
 /// Produce a rounded rect 14x14 image with the given color and white letter over it.
 + (UIImage *)styleSymbolImageWithColor:(UIColor *)color letter:(NSString *)letter;
 
-+ (UIImage *)styleSearchIcon;
+/// Icon 16x16+shadow of a magnifying glass.
++ (UIImage *)styleSearchIconWithColor:(UIColor *)color shadowColor:(UIColor *)shadowColor;;
 
 @end

@@ -82,7 +82,8 @@
     [closeButtonInTabBarAppearance setImage:[UIImage styleCloseImageWithColor:[UIColor styleForegroundColor] outlineColor:[UIColor styleBackgroundColor]] forState:UIControlStateHighlighted];
     
     // Adding tool panel
-    navigationController.toolPanelController = [[ACToolPanelController alloc] initWithNibName:@"ToolPanel" bundle:[NSBundle mainBundle]];
+    UIStoryboard *toolPanelsStoryboard = [UIStoryboard storyboardWithName:@"ToolPanels" bundle:[NSBundle mainBundle]];
+    navigationController.toolPanelController = [toolPanelsStoryboard instantiateInitialViewController];
     navigationController.toolPanelOnRight = YES;
     navigationController.toolPanelEnabled = YES;
     

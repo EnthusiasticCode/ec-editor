@@ -10,4 +10,7 @@
 
 @interface ACProjectTableCell : UITableViewCell
 
+@property (nonatomic, strong) IBOutlet UIImageView *iconView;
+@property (nonatomic, strong) IBOutlet UILabel *titleLabel;
+
 @end

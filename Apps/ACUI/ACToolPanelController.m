@@ -7,6 +7,7 @@
 //
 
 #import "ACToolPanelController.h"
+#import "AppStyle.h"
 #import <QuartzCore/QuartzCore.h>
 
 
@@ -41,7 +42,7 @@
     CALayer *viewLayer = self.view.layer;
     viewLayer.cornerRadius = 4;
     viewLayer.borderWidth = 2;
-    viewLayer.borderColor = [UIColor whiteColor].CGColor;
+    viewLayer.borderColor = [UIColor styleBackgroundColor].CGColor;
 }
 
 - (void)viewDidUnload
@@ -53,7 +54,6 @@
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
-    // Return YES for supported orientations
 	return YES;
 }
 
