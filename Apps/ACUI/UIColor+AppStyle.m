@@ -71,4 +71,17 @@
                         [UIColor colorWithRed:75.0/255.0 green:92.0/255.0 blue:179.0/255.0 alpha:1.0]);
 }
 
++ (UIColor *)styleFileRedColor
+{
+    RETURN_CACHED_COLOR(styleFileRedColor, 
+                        [UIColor colorWithRed:193.0/255.0 green:39.0/255.0 blue:45.0/255.0 alpha:1.0]);
+}
+
++ (UIColor *)styleFileBlueColor
+{
+    RETURN_CACHED_COLOR(styleFileBlueColor, 
+                        [UIColor colorWithRed:0.0/255.0 green:113.0/255.0 blue:188.0/255.0 alpha:1.0]);
+}
+
+
 @end

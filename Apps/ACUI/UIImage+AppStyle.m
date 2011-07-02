@@ -9,6 +9,7 @@
 #import "UIImage+AppStyle.h"
 #import "UIColor+AppStyle.h"
 #import "UIImage+BlockDrawing.h"
+#import <CoreText/CoreText.h>
 
 @implementation UIImage (AppStyle)
 
@@ -233,6 +234,90 @@
         
         CGPathRelease(docPath);
         CGPathRelease(bookmarkPath);
+    }];
+}
+
++ (UIImage *)styleDocumentImageWithSize:(CGSize)size color:(UIColor *)color text:(NSString *)text
+{
+    // Account for shadow
+    size.height += 1;
+    return [UIImage imageWithSize:size block:^(CGContextRef ctx, CGRect rect) {
+        // Resize for shadow and margins
+        rect.size.height -= 1;
+        rect = CGRectInset(rect, roundf(rect.size.width / 20.), 0);
+        CGFloat outterLineWidth = ceilf(0.14 * rect.size.height);
+        CGFloat outterLineWidth_2 = outterLineWidth / 2.;
+        rect = CGRectInset(rect, outterLineWidth_2, outterLineWidth_2);
+        
+        // Create path
+        CGMutablePathRef path = CGPathCreateMutable();
+        CGFloat rectMaxX = CGRectGetMaxX(rect);
+        CGFloat rectMaxY = CGRectGetMaxY(rect);
+        CGFloat foldSize = roundf(rect.size.height / 4.);
+        
+        CGPathMoveToPoint(path, NULL, rect.origin.x, rect.origin.y);
+        CGPathAddLineToPoint(path, NULL, rectMaxX - foldSize, rect.origin.y);
+        CGPathAddLineToPoint(path, NULL, rectMaxX, rect.origin.y + foldSize);
+        CGPathAddLineToPoint(path, NULL, rectMaxX, rectMaxY);
+        CGPathAddLineToPoint(path, NULL, rect.origin.x, rectMaxY);
+        CGPathCloseSubpath(path);
+        
+        // Draw
+        CGContextAddPath(ctx, path);
+        CGContextSetStrokeColorWithColor(ctx, [UIColor styleForegroundColor].CGColor);
+        CGContextSetLineWidth(ctx, outterLineWidth);
+        CGContextStrokePath(ctx);
+        
+        if (color && outterLineWidth > 2)
+        {
+            CGContextAddPath(ctx, path);
+            CGContextSetStrokeColorWithColor(ctx, color.CGColor);
+            CGContextSetLineWidth(ctx, outterLineWidth - 2);
+            CGContextStrokePath(ctx);
+        }
+        
+        // Label
+        if (text)
+        {
+            CGFloat fontSize = (rect.size.width - outterLineWidth);
+            if ([text length] > 1)
+                fontSize /= 2.;
+            CTFontRef font = CTFontCreateWithName((__bridge CFStringRef)@"Courier-Bold", fontSize, NULL);
+            NSAttributedString *attributedText = 
+            [[NSAttributedString alloc] initWithString:text 
+                                            attributes:[NSDictionary dictionaryWithObjectsAndKeys:
+                                                        (__bridge id)font, kCTFontAttributeName, nil]];
+            
+            CTLineRef line = CTLineCreateWithAttributedString((__bridge CFAttributedStringRef)attributedText);
+            CGFloat lineDescent;
+            CGFloat lineWidth = CTLineGetTypographicBounds(line, NULL, &lineDescent, NULL);
+            if ([text length] == 1)
+            {
+                lineWidth += 1;
+                lineDescent = 0;
+            }
+            
+//            CTRunRef run = CFArrayGetValueAtIndex(CTLineGetGlyphRuns(line), 0);
+//            CFIndex runCount = CTRunGetGlyphCount(run);
+//            const CGGlyph *glyphs = CTRunGetGlyphsPtr(run);
+//            CGRect glyphRect;
+//            CGFloat lineWidth = 0, lineHeight = 0;
+//            do {
+//                CTFontGetBoundingRectsForGlyphs(font, kCTFontDefaultOrientation, glyphs, &glyphRect, 1);
+//                lineWidth += glyphRect.size.width;
+//                lineHeight = MAX(lineHeight, glyphRect.size.height);
+//            } while (--runCount > 0 && glyphs++);
+            
+            CGContextSetTextMatrix(ctx, CGAffineTransformMakeScale(1, -1));
+            CGContextSetTextPosition(ctx, rectMaxX - outterLineWidth_2 - lineWidth, rectMaxY - outterLineWidth_2 - lineDescent - 1);
+            CTLineDraw(line, ctx);
+            
+            CFRelease(line);
+            CFRelease(font);
+        }
+        
+        // Cleanup
+        CGPathRelease(path);
     }];
 }
 

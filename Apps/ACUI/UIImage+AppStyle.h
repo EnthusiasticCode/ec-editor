@@ -25,6 +25,10 @@
 /// foreground color and shadow.
 + (UIImage *)styleProjectImageWithSize:(CGSize)size labelColor:(UIColor *)labelColor;
 
+/// Icon of a document with 1 pixel outline and colored inside.
+/// A label may also be applied to indicate document extension.
++ (UIImage *)styleDocumentImageWithSize:(CGSize)size color:(UIColor *)color text:(NSString *)text;
+
 /// Table disclosure arrow with style foreground color and shadow. This image is cached.
 + (UIImage *)styleTableDisclosureImage;
 

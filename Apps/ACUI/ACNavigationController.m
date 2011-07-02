@@ -12,6 +12,8 @@
 #import "ACJumpBarTextField.h"
 #import "ECInstantGestureRecognizer.h"
 
+#import "ACFileTableController.h"
+
 
 @implementation ACNavigationController {
 @private
@@ -21,6 +23,7 @@
     ECSwipeGestureRecognizer *tabGestureRecognizer;
     UISwipeGestureRecognizer *toolPanelLeftGestureRecognizer, *toolPanelRightGestureRecognizer;
     ECInstantGestureRecognizer *toolPanelDismissGestureRecognizer;
+    
     UIScrollView *contentScrollView;
 }
 
@@ -47,15 +50,6 @@
 
 #pragma mark - View lifecycle
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
-{
-    if ((self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil]))
-    {
-        popoverController = [ECPopoverController new];
-    }
-    return self;
-}
-
 - (void)didReceiveMemoryWarning
 {
     // Releases the view if it doesn't have a superview.
@@ -69,6 +63,8 @@
     [super viewDidLoad];
     
     // TODO create internal views if not connected in IB
+    
+    popoverController = [ECPopoverController new];
     
     // Setup present APIs to use this controller as reference.
     self.definesPresentationContext = YES;
@@ -144,6 +140,7 @@
 
 - (void)viewDidUnload
 {
+    popoverController = nil;
     [self setJumpBar:nil];
     [self setTabBar:nil];
     toolPanelLeftGestureRecognizer = nil;
@@ -312,6 +309,16 @@
 
 - (void)popJumpBar:(id)sender
 {
+//    static ACFileTableController *testController = nil;
+//    if (!testController)
+//    {
+//        testController = [[ACFileTableController alloc] initWithStyle:UITableViewStylePlain];
+//        testController.contentSizeForViewInPopover = CGSizeMake(300, 300);
+//    }
+//    
+//    [popoverController setContentViewController:testController];
+//    [popoverController presentPopoverFromRect:[sender frame] inView:jumpBar permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
+    
     [jumpBar popThroughJumpElement:sender animated:YES];
 }
 

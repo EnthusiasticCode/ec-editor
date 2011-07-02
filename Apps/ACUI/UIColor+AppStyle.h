@@ -22,4 +22,7 @@
 
 + (UIColor *)styleSymbolColorBlue;
 
++ (UIColor *)styleFileRedColor;
++ (UIColor *)styleFileBlueColor;
+
 @end
