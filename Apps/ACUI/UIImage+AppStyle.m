@@ -245,9 +245,9 @@
         // Resize for shadow and margins
         rect.size.height -= 1;
         rect = CGRectInset(rect, roundf(rect.size.width / 20.), 0);
-        CGFloat outterLineWidth = ceilf(0.14 * rect.size.height);
-        CGFloat outterLineWidth_2 = outterLineWidth / 2.;
-        rect = CGRectInset(rect, outterLineWidth_2, outterLineWidth_2);
+        CGFloat strokeWidth = ceilf(0.14 * rect.size.height);
+        CGFloat strokeWidth_2 = strokeWidth / 2.;
+        rect = CGRectInset(rect, strokeWidth_2, strokeWidth_2);
         
         // Create path
         CGMutablePathRef path = CGPathCreateMutable();
@@ -263,23 +263,28 @@
         CGPathCloseSubpath(path);
         
         // Draw
-        CGContextAddPath(ctx, path);
-        CGContextSetStrokeColorWithColor(ctx, [UIColor styleForegroundColor].CGColor);
-        CGContextSetLineWidth(ctx, outterLineWidth);
-        CGContextStrokePath(ctx);
+        CGContextSaveGState(ctx);
+        {
+            CGContextSetShadowWithColor(ctx, CGSizeMake(0, -1), 0, [UIColor whiteColor].CGColor);
+            CGContextAddPath(ctx, path);
+            CGContextSetStrokeColorWithColor(ctx, [UIColor styleForegroundColor].CGColor);
+            CGContextSetLineWidth(ctx, strokeWidth);
+            CGContextStrokePath(ctx);
+        }
+        CGContextRestoreGState(ctx);
         
-        if (color && outterLineWidth > 2)
+        if (color && strokeWidth > 2)
         {
             CGContextAddPath(ctx, path);
             CGContextSetStrokeColorWithColor(ctx, color.CGColor);
-            CGContextSetLineWidth(ctx, outterLineWidth - 2);
+            CGContextSetLineWidth(ctx, strokeWidth - 2);
             CGContextStrokePath(ctx);
         }
         
         // Label
         if (text)
         {
-            CGFloat fontSize = (rect.size.width - outterLineWidth);
+            CGFloat fontSize = (rect.size.width - strokeWidth);
             if ([text length] > 1)
                 fontSize /= 2.;
             CTFontRef font = CTFontCreateWithName((__bridge CFStringRef)@"Courier-Bold", fontSize, NULL);
@@ -309,7 +314,7 @@
 //            } while (--runCount > 0 && glyphs++);
             
             CGContextSetTextMatrix(ctx, CGAffineTransformMakeScale(1, -1));
-            CGContextSetTextPosition(ctx, rectMaxX - outterLineWidth_2 - lineWidth, rectMaxY - outterLineWidth_2 - lineDescent - 1);
+            CGContextSetTextPosition(ctx, rectMaxX - strokeWidth_2 - lineWidth, rectMaxY - strokeWidth_2 - lineDescent - 1);
             CTLineDraw(line, ctx);
             
             CFRelease(line);
@@ -317,6 +322,40 @@
         }
         
         // Cleanup
+        CGPathRelease(path);
+    }];
+}
+
++ (UIImage *)styleGroupImageWithSize:(CGSize)size
+{
+    size.height += 1;
+    return [UIImage imageWithSize:size block:^(CGContextRef ctx, CGRect rect) {
+        rect.size.height -= 1;
+        CGFloat strokeWidth = ceilf(0.14 * rect.size.height);
+        CGFloat strokeWidth_2 = strokeWidth / 2.;
+        rect = CGRectInset(rect, strokeWidth_2, strokeWidth_2);
+        
+        // Create path
+        CGMutablePathRef path = CGPathCreateMutable();
+        CGFloat rectMaxX = CGRectGetMaxX(rect);
+        CGFloat rectMaxY = CGRectGetMaxY(rect);
+        CGRect angleRect = CGRectMake(rect.origin.x + rect.size.width * .42, rect.origin.y, rect.size.width * .18, roundf(rect.size.height * .18));
+        
+        CGPathMoveToPoint(path, NULL, rect.origin.x, rect.origin.y);
+        CGPathAddLineToPoint(path, NULL, angleRect.origin.x, angleRect.origin.y);
+        CGPathAddLineToPoint(path, NULL, CGRectGetMaxX(angleRect), CGRectGetMaxY(angleRect));
+        CGPathAddLineToPoint(path, NULL, rectMaxX, CGRectGetMaxY(angleRect));
+        CGPathAddLineToPoint(path, NULL, rectMaxX, rectMaxY);
+        CGPathAddLineToPoint(path, NULL, rect.origin.x, rectMaxY);
+        CGPathCloseSubpath(path);
+        
+        // Draw
+        CGContextSetShadowWithColor(ctx, CGSizeMake(0, -1), 0, [UIColor whiteColor].CGColor);
+        CGContextAddPath(ctx, path);
+        CGContextSetStrokeColorWithColor(ctx, [UIColor styleForegroundColor].CGColor);
+        CGContextSetLineWidth(ctx, strokeWidth);
+        CGContextStrokePath(ctx);
+        
         CGPathRelease(path);
     }];
 }

@@ -84,7 +84,7 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     // Return the number of rows in the section.
-    return 6;
+    return 7;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -95,11 +95,23 @@
     if (cell == nil) {
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:FileCellIdentifier];
         cell.backgroundView = nil;
+        cell.selectionStyle = UITableViewCellSelectionStyleGray;
     }
     
     // Configure the cell...
-    cell.textLabel.text = @"File";
-    cell.imageView.image = [UIImage styleDocumentImageWithSize:CGSizeMake(32, 32) color:[UIColor styleFileRedColor] text:[extensions objectAtIndex:[indexPath indexAtPosition:1]]];
+    NSUInteger idx = [indexPath indexAtPosition:1];
+    if (idx < 6)
+    {
+        cell.textLabel.text = @"File";
+        cell.imageView.image = [UIImage styleDocumentImageWithSize:CGSizeMake(32, 32) 
+                                                             color:idx % 2 ? [UIColor styleFileBlueColor] : [UIColor styleFileRedColor] 
+                                                              text:[extensions objectAtIndex:idx]];
+    }
+    else
+    {
+        cell.textLabel.text = @"Group";
+        cell.imageView.image = [UIImage styleGroupImageWithSize:CGSizeMake(32, 32)];
+    }
     
     return cell;
 }

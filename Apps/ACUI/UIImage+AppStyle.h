@@ -29,6 +29,9 @@
 /// A label may also be applied to indicate document extension.
 + (UIImage *)styleDocumentImageWithSize:(CGSize)size color:(UIColor *)color text:(NSString *)text;
 
+/// Icon of a group.
++ (UIImage *)styleGroupImageWithSize:(CGSize)size;
+
 /// Table disclosure arrow with style foreground color and shadow. This image is cached.
 + (UIImage *)styleTableDisclosureImage;
 
