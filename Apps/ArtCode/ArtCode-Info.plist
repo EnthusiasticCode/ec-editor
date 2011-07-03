@@ -30,6 +30,10 @@
 	<string>1.0</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>UIAppFonts</key>
+	<array>
+		<string>Inconsolata-dz.otf</string>
+	</array>
 	<key>UIMainStoryboardFile</key>
 	<string>MainStoryboard</string>
 	<key>UISupportedInterfaceOrientations~ipad</key>
