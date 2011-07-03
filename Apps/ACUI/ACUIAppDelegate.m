@@ -13,6 +13,7 @@
 #import "ACToolPanelController.h"
 #import "ECTabBar.h"
 #import "ECJumpBar.h"
+#import "ACToolFiltersView.h"
 
 @implementation ACUIAppDelegate
 
@@ -86,6 +87,15 @@
     navigationController.toolPanelController = [toolPanelsStoryboard instantiateInitialViewController];
     navigationController.toolPanelOnRight = YES;
     navigationController.toolPanelEnabled = YES;
+    
+    // Tools
+    UIImage *toolFilterElementBackgorundImage = [UIImage styleBackgroundImageWithColor:[UIColor styleForegroundColor] borderColor:[UIColor styleBackgroundColor] insets:UIEdgeInsetsMake(7, 7, 7, 7) arrowSize:CGSizeZero roundingCorners:UIRectCornerAllCorners];
+    id buttonInToolFiltersView = [UIButton appearanceWhenContainedIn:[ACToolFiltersView class], nil];
+    [buttonInToolFiltersView setBackgroundImage:toolFilterElementBackgorundImage forState:UIControlStateNormal];
+    
+    id textFieldInToolFiltersView = [UITextField appearanceWhenContainedIn:[ACToolFiltersView class], nil];
+    [textFieldInToolFiltersView setTextColor:[UIColor styleBackgroundColor]];
+    [textFieldInToolFiltersView setBackground:toolFilterElementBackgorundImage];
     
     return YES;
 }

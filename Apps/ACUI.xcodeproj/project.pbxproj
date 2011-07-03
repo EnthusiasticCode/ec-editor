@@ -35,6 +35,12 @@
 		CD7D2AB213C0A02600B889EE /* toolHistoryNow.png in Resources */ = {isa = PBXBuildFile; fileRef = CD7D2AAB13C0A02600B889EE /* toolHistoryNow.png */; };
 		CD7D2AB313C0A02600B889EE /* toolSnippetsPaste.png in Resources */ = {isa = PBXBuildFile; fileRef = CD7D2AAC13C0A02600B889EE /* toolSnippetsPaste.png */; };
 		CD7D2AB413C0A02600B889EE /* toolSnippetsSnippet.png in Resources */ = {isa = PBXBuildFile; fileRef = CD7D2AAD13C0A02600B889EE /* toolSnippetsSnippet.png */; };
+		CD7D2AB813C0A71200B889EE /* ACToolFiltersView.m in Sources */ = {isa = PBXBuildFile; fileRef = CD7D2AB713C0A71200B889EE /* ACToolFiltersView.m */; };
+		CD7D2ABD13C0A94000B889EE /* toolFilterBookmarksNote.png in Resources */ = {isa = PBXBuildFile; fileRef = CD7D2AB913C0A94000B889EE /* toolFilterBookmarksNote.png */; };
+		CD7D2ABE13C0A94000B889EE /* toolFilterBookmarksStar.png in Resources */ = {isa = PBXBuildFile; fileRef = CD7D2ABA13C0A94000B889EE /* toolFilterBookmarksStar.png */; };
+		CD7D2ABF13C0A94000B889EE /* toolFilterSnippetsPaste.png in Resources */ = {isa = PBXBuildFile; fileRef = CD7D2ABB13C0A94000B889EE /* toolFilterSnippetsPaste.png */; };
+		CD7D2AC013C0A94000B889EE /* toolFilterSnippetsSnippet.png in Resources */ = {isa = PBXBuildFile; fileRef = CD7D2ABC13C0A94000B889EE /* toolFilterSnippetsSnippet.png */; };
+		CD7D2AC413C0AEA000B889EE /* ACToolTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = CD7D2AC313C0AEA000B889EE /* ACToolTextField.m */; };
 		CD8BDAB713B6765400B553EB /* ECSwipeGestureRecognizer.m in Sources */ = {isa = PBXBuildFile; fileRef = CD8BDAB613B6765300B553EB /* ECSwipeGestureRecognizer.m */; };
 		CD8D782A13ABE4D500A391F4 /* ACProjectTableController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD8D782913ABE4D500A391F4 /* ACProjectTableController.m */; };
 		CDABE3EE13ABF26B006B53AE /* ACProjectTableCell.m in Sources */ = {isa = PBXBuildFile; fileRef = CDABE3ED13ABF26B006B53AE /* ACProjectTableCell.m */; };
@@ -104,6 +110,14 @@
 		CD7D2AAB13C0A02600B889EE /* toolHistoryNow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = toolHistoryNow.png; sourceTree = "<group>"; };
 		CD7D2AAC13C0A02600B889EE /* toolSnippetsPaste.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = toolSnippetsPaste.png; sourceTree = "<group>"; };
 		CD7D2AAD13C0A02600B889EE /* toolSnippetsSnippet.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = toolSnippetsSnippet.png; sourceTree = "<group>"; };
+		CD7D2AB613C0A71200B889EE /* ACToolFiltersView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACToolFiltersView.h; sourceTree = "<group>"; };
+		CD7D2AB713C0A71200B889EE /* ACToolFiltersView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACToolFiltersView.m; sourceTree = "<group>"; };
+		CD7D2AB913C0A94000B889EE /* toolFilterBookmarksNote.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = toolFilterBookmarksNote.png; sourceTree = "<group>"; };
+		CD7D2ABA13C0A94000B889EE /* toolFilterBookmarksStar.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = toolFilterBookmarksStar.png; sourceTree = "<group>"; };
+		CD7D2ABB13C0A94000B889EE /* toolFilterSnippetsPaste.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = toolFilterSnippetsPaste.png; sourceTree = "<group>"; };
+		CD7D2ABC13C0A94000B889EE /* toolFilterSnippetsSnippet.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = toolFilterSnippetsSnippet.png; sourceTree = "<group>"; };
+		CD7D2AC213C0AE9F00B889EE /* ACToolTextField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACToolTextField.h; sourceTree = "<group>"; };
+		CD7D2AC313C0AEA000B889EE /* ACToolTextField.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACToolTextField.m; sourceTree = "<group>"; };
 		CD8BDAB513B6765300B553EB /* ECSwipeGestureRecognizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECSwipeGestureRecognizer.h; sourceTree = "<group>"; };
 		CD8BDAB613B6765300B553EB /* ECSwipeGestureRecognizer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECSwipeGestureRecognizer.m; sourceTree = "<group>"; };
 		CD8D782813ABE4D500A391F4 /* ACProjectTableController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACProjectTableController.h; sourceTree = "<group>"; };
@@ -287,6 +301,17 @@
 			name = "Tools Icons";
 			sourceTree = "<group>";
 		};
+		CD7D2AC113C0A94300B889EE /* Tools Filters Icons */ = {
+			isa = PBXGroup;
+			children = (
+				CD7D2AB913C0A94000B889EE /* toolFilterBookmarksNote.png */,
+				CD7D2ABA13C0A94000B889EE /* toolFilterBookmarksStar.png */,
+				CD7D2ABB13C0A94000B889EE /* toolFilterSnippetsPaste.png */,
+				CD7D2ABC13C0A94000B889EE /* toolFilterSnippetsSnippet.png */,
+			);
+			name = "Tools Filters Icons";
+			sourceTree = "<group>";
+		};
 		CD8D782C13ABE6BD00A391F4 /* Navigation */ = {
 			isa = PBXGroup;
 			children = (
@@ -339,6 +364,10 @@
 				CDB7768413BE2EDF003CA99C /* ACToolPanelController.m */,
 				CD05666C13C0791F0005D3A4 /* ACToolPanelSegue.h */,
 				CD05666D13C0791F0005D3A4 /* ACToolPanelSegue.m */,
+				CD7D2AB613C0A71200B889EE /* ACToolFiltersView.h */,
+				CD7D2AB713C0A71200B889EE /* ACToolFiltersView.m */,
+				CD7D2AC213C0AE9F00B889EE /* ACToolTextField.h */,
+				CD7D2AC313C0AEA000B889EE /* ACToolTextField.m */,
 				CD7D2AA413C09C2D00B889EE /* ACToolBookmarksController.h */,
 				CD7D2AA513C09C2D00B889EE /* ACToolBookmarksController.m */,
 			);
@@ -348,6 +377,7 @@
 		CDB7768913BE5135003CA99C /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				CD7D2AC113C0A94300B889EE /* Tools Filters Icons */,
 				CD7D2AB513C0A02C00B889EE /* Tools Icons */,
 				CDB7769E13BE513C003CA99C /* Tool Panel Icons */,
 			);
@@ -439,6 +469,10 @@
 				CD7D2AB213C0A02600B889EE /* toolHistoryNow.png in Resources */,
 				CD7D2AB313C0A02600B889EE /* toolSnippetsPaste.png in Resources */,
 				CD7D2AB413C0A02600B889EE /* toolSnippetsSnippet.png in Resources */,
+				CD7D2ABD13C0A94000B889EE /* toolFilterBookmarksNote.png in Resources */,
+				CD7D2ABE13C0A94000B889EE /* toolFilterBookmarksStar.png in Resources */,
+				CD7D2ABF13C0A94000B889EE /* toolFilterSnippetsPaste.png in Resources */,
+				CD7D2AC013C0A94000B889EE /* toolFilterSnippetsSnippet.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -474,6 +508,8 @@
 				CDB776A113BE531D003CA99C /* ACTopBarView.m in Sources */,
 				CD05666E13C0791F0005D3A4 /* ACToolPanelSegue.m in Sources */,
 				CD7D2AA613C09C2D00B889EE /* ACToolBookmarksController.m in Sources */,
+				CD7D2AB813C0A71200B889EE /* ACToolFiltersView.m in Sources */,
+				CD7D2AC413C0AEA000B889EE /* ACToolTextField.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

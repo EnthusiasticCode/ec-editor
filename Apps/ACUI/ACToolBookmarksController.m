@@ -6,6 +6,7 @@
 //  Copyright 2011 __MyCompanyName__. All rights reserved.
 //
 
+#import <QuartzCore/QuartzCore.h>
 #import "ACToolBookmarksController.h"
 #import "AppStyle.h"
 
@@ -15,6 +16,9 @@
 }
 
 @synthesize tableView;
+@synthesize filterContainerView;
+@synthesize addButton;
+@synthesize filterTextField;
 
 //- (void)didReceiveMemoryWarning
 //{
@@ -49,10 +53,28 @@
     // TODO Write hints in this view
     UIView *footerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, tableView.bounds.size.width, 10)];
     tableView.tableFooterView = footerView;
+    
+    // Initializing filters
+    CALayer *layer = filterContainerView.layer;
+    layer.borderColor = [UIColor styleBackgroundColor].CGColor;
+    layer.borderWidth = 1;
+    
+    // Add button
+    [addButton setImage:[UIImage styleAddImageWithColor:[UIColor styleBackgroundColor] shadowColor:nil] forState:UIControlStateNormal];
+    layer = addButton.layer;
+    layer.borderColor = [UIColor styleBackgroundColor].CGColor;
+    layer.borderWidth = 1;
+    
+    // Filter text field
+    filterTextField.rightView = [[UIImageView alloc] initWithImage:[UIImage styleSearchIconWithColor:[UIColor styleBackgroundColor] shadowColor:nil]];
+    filterTextField.rightViewMode = UITextFieldViewModeUnlessEditing;
 }
 
 - (void)viewDidUnload
 {
+    [self setFilterContainerView:nil];
+    [self setAddButton:nil];
+    [self setFilterTextField:nil];
     [super viewDidUnload];
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;
@@ -88,14 +110,12 @@
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-#warning Potentially incomplete method implementation.
     // Return the number of sections.
     return 1;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-#warning Incomplete method implementation.
     // Return the number of rows in the section.
     return 2;
 }
