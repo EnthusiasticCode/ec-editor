@@ -10,4 +10,9 @@
 
 @interface ACToolPanelController : UIViewController
 
+@property (nonatomic, strong) IBOutlet UIView *tabsView;
+
+@property (nonatomic, strong) UIViewController *selectedViewController;
+- (void)setSelectedViewController:(UIViewController *)controller animated:(BOOL)animated;
+
 @end

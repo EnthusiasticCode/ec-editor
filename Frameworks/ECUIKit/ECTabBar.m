@@ -21,7 +21,7 @@
     
     UIView *additionalButtonsContainerView;
     
-    __weak UIButton *movedTab;
+    UIButton *movedTab;
     CGPoint movedTabOffsetFromCenter;
     NSUInteger movedTabIndex, movedTabDestinationIndex;
     NSTimer *movedTabScrollTimer;

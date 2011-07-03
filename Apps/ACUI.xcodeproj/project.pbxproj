@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CD05666E13C0791F0005D3A4 /* ACToolPanelSegue.m in Sources */ = {isa = PBXBuildFile; fileRef = CD05666D13C0791F0005D3A4 /* ACToolPanelSegue.m */; };
 		CD078A2613BF9D3200D6B16A /* ToolPanels.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CD078A2513BF9D3200D6B16A /* ToolPanels.storyboard */; };
 		CD10B35913B73FEA00901780 /* NSTimer+block.m in Sources */ = {isa = PBXBuildFile; fileRef = CD10B35813B73FEA00901780 /* NSTimer+block.m */; };
 		CD19240913A147EE00A47E38 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD19240813A147EE00A47E38 /* UIKit.framework */; };
@@ -51,6 +52,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		CD05666C13C0791F0005D3A4 /* ACToolPanelSegue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACToolPanelSegue.h; sourceTree = "<group>"; };
+		CD05666D13C0791F0005D3A4 /* ACToolPanelSegue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACToolPanelSegue.m; sourceTree = "<group>"; };
 		CD078A2513BF9D3200D6B16A /* ToolPanels.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = ToolPanels.storyboard; sourceTree = "<group>"; };
 		CD10B35713B73FEA00901780 /* NSTimer+block.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSTimer+block.h"; sourceTree = "<group>"; };
 		CD10B35813B73FEA00901780 /* NSTimer+block.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSTimer+block.m"; sourceTree = "<group>"; };
@@ -303,6 +306,8 @@
 			children = (
 				CDB7768313BE2EDF003CA99C /* ACToolPanelController.h */,
 				CDB7768413BE2EDF003CA99C /* ACToolPanelController.m */,
+				CD05666C13C0791F0005D3A4 /* ACToolPanelSegue.h */,
+				CD05666D13C0791F0005D3A4 /* ACToolPanelSegue.m */,
 			);
 			name = Tools;
 			sourceTree = "<group>";
@@ -426,6 +431,7 @@
 				CDB7768513BE2EDF003CA99C /* ACToolPanelController.m in Sources */,
 				CDB7768813BE436A003CA99C /* ECInstantGestureRecognizer.m in Sources */,
 				CDB776A113BE531D003CA99C /* ACTopBarView.m in Sources */,
+				CD05666E13C0791F0005D3A4 /* ACToolPanelSegue.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -506,6 +512,7 @@
 				GCC_PREFIX_HEADER = "ACUI/ACUI-Prefix.pch";
 				GCC_STRICT_ALIASING = YES;
 				INFOPLIST_FILE = "ACUI/ACUI-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -519,6 +526,7 @@
 				GCC_PREFIX_HEADER = "ACUI/ACUI-Prefix.pch";
 				GCC_STRICT_ALIASING = YES;
 				INFOPLIST_FILE = "ACUI/ACUI-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};

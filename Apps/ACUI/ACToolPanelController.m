@@ -11,24 +11,12 @@
 #import <QuartzCore/QuartzCore.h>
 
 
-@implementation ACToolPanelController
-
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
-{
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    if (self) {
-        // Custom initialization
-    }
-    return self;
+@implementation ACToolPanelController {
+    UIButton *selectedTabButton;
 }
 
-- (void)didReceiveMemoryWarning
-{
-    // Releases the view if it doesn't have a superview.
-    [super didReceiveMemoryWarning];
-    
-    // Release any cached data, images, etc that aren't in use.
-}
+@synthesize tabsView;
+@synthesize selectedViewController;
 
 #pragma mark - View lifecycle
 
@@ -43,10 +31,16 @@
     viewLayer.cornerRadius = 4;
     viewLayer.borderWidth = 2;
     viewLayer.borderColor = [UIColor styleBackgroundColor].CGColor;
+    
+    //
+    viewLayer = tabsView.layer;
+    viewLayer.borderColor = [UIColor styleBackgroundColor].CGColor;
+    viewLayer.borderWidth = 1;
 }
 
 - (void)viewDidUnload
 {
+    [self setTabsView:nil];
     [super viewDidUnload];
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;
@@ -55,6 +49,53 @@
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
 	return YES;
+}
+
+#pragma mark - Segue Management
+
+- (void)setSelectedViewController:(UIViewController *)controller
+{
+    [self setSelectedViewController:controller animated:NO];
+}
+
+- (void)setSelectedViewController:(UIViewController *)controller animated:(BOOL)animated
+{
+    // Add controller if not present in child controllers
+    [self addChildViewController:controller];
+    
+    // Calculate controller's size
+    CGFloat tabsHeight = CGRectGetMaxY(self.tabsView.frame);
+    CGRect controllerViewFrame = self.view.bounds;
+    controllerViewFrame.origin.y = tabsHeight;
+    controllerViewFrame.size.height -= tabsHeight;
+    
+    // Insert controller's view
+    if (animated)
+    {
+        controller.view.frame = controllerViewFrame;
+        if (!selectedViewController)
+            [self.view addSubview:controller.view];
+        [UIView transitionFromView:selectedViewController.view toView:controller.view duration:0.15 options:UIViewAnimationOptionTransitionCrossDissolve completion:^(BOOL finished) {
+            selectedViewController = controller;
+        }];
+    }
+    else
+    {
+        [selectedViewController.view removeFromSuperview];
+        selectedViewController = controller;
+        selectedViewController.view.frame = controllerViewFrame;
+        [self.view addSubview:selectedViewController.view];
+    }
+}
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+{
+    selectedTabButton.selected = NO;
+    selectedTabButton.backgroundColor = [UIColor clearColor];
+    
+    selectedTabButton = sender;
+    selectedTabButton.selected = YES;
+    selectedTabButton.backgroundColor = [UIColor styleBackgroundColor];
 }
 
 @end
