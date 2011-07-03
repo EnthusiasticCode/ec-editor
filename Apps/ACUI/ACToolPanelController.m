@@ -28,7 +28,7 @@
     
     // TODO make this more efficient
     CALayer *viewLayer = self.view.layer;
-    viewLayer.cornerRadius = 4;
+//    viewLayer.cornerRadius = 4;
     viewLayer.borderWidth = 2;
     viewLayer.borderColor = [UIColor styleBackgroundColor].CGColor;
     
