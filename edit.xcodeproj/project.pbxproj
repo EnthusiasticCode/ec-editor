@@ -25,7 +25,6 @@
 		B706EE72139277BE00DA822C /* CodeAssistantType.tiff in Resources */ = {isa = PBXBuildFile; fileRef = B706EE61139277BE00DA822C /* CodeAssistantType.tiff */; };
 		B706EE73139277BE00DA822C /* CodeAssistantUnion.tiff in Resources */ = {isa = PBXBuildFile; fileRef = B706EE62139277BE00DA822C /* CodeAssistantUnion.tiff */; };
 		B706EE74139277BE00DA822C /* CodeAssistantVariable.tiff in Resources */ = {isa = PBXBuildFile; fileRef = B706EE63139277BE00DA822C /* CodeAssistantVariable.tiff */; };
-		B706F05A13563ECB00E03DDF /* UIColor+StyleColors.m in Sources */ = {isa = PBXBuildFile; fileRef = B706F05513563ECB00E03DDF /* UIColor+StyleColors.m */; };
 		B706F05B13563ECB00E03DDF /* UIImage+BlockDrawing.m in Sources */ = {isa = PBXBuildFile; fileRef = B706F05713563ECB00E03DDF /* UIImage+BlockDrawing.m */; };
 		B7086D33138BCA28001F2ECE /* ECPatriciaTrie.m in Sources */ = {isa = PBXBuildFile; fileRef = B7086D32138BCA28001F2ECE /* ECPatriciaTrie.m */; };
 		B70D64BC132A2581008DDEA4 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B70D64BB132A2581008DDEA4 /* UIKit.framework */; };
@@ -183,6 +182,8 @@
 		B7F03391139E76FE00FDC353 /* HFObjectGraph.m in Sources */ = {isa = PBXBuildFile; fileRef = B7F0337E139E76FE00FDC353 /* HFObjectGraph.m */; };
 		B7F03392139E76FE00FDC353 /* HFProgressTracker.m in Sources */ = {isa = PBXBuildFile; fileRef = B7F03380139E76FE00FDC353 /* HFProgressTracker.m */; };
 		B7F03393139E76FE00FDC353 /* HFSharedMemoryByteSlice.m in Sources */ = {isa = PBXBuildFile; fileRef = B7F03382139E76FE00FDC353 /* HFSharedMemoryByteSlice.m */; };
+		CD7D2AD013C0CA1200B889EE /* UIColor+AppStyle.m in Sources */ = {isa = PBXBuildFile; fileRef = CD7D2ACF13C0CA1200B889EE /* UIColor+AppStyle.m */; };
+		CD7D2AD313C0CA5900B889EE /* ECInstantGestureRecognizer.m in Sources */ = {isa = PBXBuildFile; fileRef = CD7D2AD213C0CA5900B889EE /* ECInstantGestureRecognizer.m */; };
 		CDEBF21613489A8E00CE2285 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = CDEBF20913489A8E00CE2285 /* AppDelegate.m */; };
 		CDEBF21713489A8E00CE2285 /* FileController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDEBF20D13489A8E00CE2285 /* FileController.m */; };
 		CDEBF21913489A8E00CE2285 /* FilesController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDEBF21113489A8E00CE2285 /* FilesController.m */; };
@@ -217,8 +218,6 @@
 		B706EE61139277BE00DA822C /* CodeAssistantType.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = CodeAssistantType.tiff; path = Apps/edit/CodeAssistantType.tiff; sourceTree = SOURCE_ROOT; };
 		B706EE62139277BE00DA822C /* CodeAssistantUnion.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = CodeAssistantUnion.tiff; path = Apps/edit/CodeAssistantUnion.tiff; sourceTree = SOURCE_ROOT; };
 		B706EE63139277BE00DA822C /* CodeAssistantVariable.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = CodeAssistantVariable.tiff; path = Apps/edit/CodeAssistantVariable.tiff; sourceTree = SOURCE_ROOT; };
-		B706F05413563ECB00E03DDF /* UIColor+StyleColors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIColor+StyleColors.h"; path = "Frameworks/ECUIKit/UIColor+StyleColors.h"; sourceTree = "<group>"; };
-		B706F05513563ECB00E03DDF /* UIColor+StyleColors.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIColor+StyleColors.m"; path = "Frameworks/ECUIKit/UIColor+StyleColors.m"; sourceTree = "<group>"; };
 		B706F05613563ECB00E03DDF /* UIImage+BlockDrawing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIImage+BlockDrawing.h"; path = "Frameworks/ECUIKit/UIImage+BlockDrawing.h"; sourceTree = "<group>"; };
 		B706F05713563ECB00E03DDF /* UIImage+BlockDrawing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIImage+BlockDrawing.m"; path = "Frameworks/ECUIKit/UIImage+BlockDrawing.m"; sourceTree = "<group>"; };
 		B707755413A2B02B00CE9AE3 /* ECDebug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECDebug.h; sourceTree = "<group>"; };
@@ -450,6 +449,10 @@
 		B7F03381139E76FE00FDC353 /* HFSharedMemoryByteSlice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HFSharedMemoryByteSlice.h; sourceTree = "<group>"; };
 		B7F03382139E76FE00FDC353 /* HFSharedMemoryByteSlice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HFSharedMemoryByteSlice.m; sourceTree = "<group>"; };
 		B7F03383139E76FE00FDC353 /* HFTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HFTypes.h; sourceTree = "<group>"; };
+		CD7D2ACE13C0CA1200B889EE /* UIColor+AppStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIColor+AppStyle.h"; path = "Apps/ACUI/UIColor+AppStyle.h"; sourceTree = "<group>"; };
+		CD7D2ACF13C0CA1200B889EE /* UIColor+AppStyle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIColor+AppStyle.m"; path = "Apps/ACUI/UIColor+AppStyle.m"; sourceTree = "<group>"; };
+		CD7D2AD113C0CA5900B889EE /* ECInstantGestureRecognizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECInstantGestureRecognizer.h; path = Frameworks/ECUIKit/ECInstantGestureRecognizer.h; sourceTree = "<group>"; };
+		CD7D2AD213C0CA5900B889EE /* ECInstantGestureRecognizer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECInstantGestureRecognizer.m; path = Frameworks/ECUIKit/ECInstantGestureRecognizer.m; sourceTree = "<group>"; };
 		CDEBF20813489A8E00CE2285 /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		CDEBF20913489A8E00CE2285 /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		CDEBF20C13489A8E00CE2285 /* FileController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileController.h; sourceTree = "<group>"; };
@@ -581,10 +584,12 @@
 		B706F05313563EB100E03DDF /* UIKit Additions */ = {
 			isa = PBXGroup;
 			children = (
+				CD7D2AD113C0CA5900B889EE /* ECInstantGestureRecognizer.h */,
+				CD7D2AD213C0CA5900B889EE /* ECInstantGestureRecognizer.m */,
+				CD7D2ACE13C0CA1200B889EE /* UIColor+AppStyle.h */,
+				CD7D2ACF13C0CA1200B889EE /* UIColor+AppStyle.m */,
 				B715124E13A2876400D54F5B /* UIView+ConcurrentAnimation.h */,
 				B715124F13A2876400D54F5B /* UIView+ConcurrentAnimation.m */,
-				B706F05413563ECB00E03DDF /* UIColor+StyleColors.h */,
-				B706F05513563ECB00E03DDF /* UIColor+StyleColors.m */,
 				B706F05613563ECB00E03DDF /* UIImage+BlockDrawing.h */,
 				B706F05713563ECB00E03DDF /* UIImage+BlockDrawing.m */,
 			);
@@ -1123,7 +1128,6 @@
 				CDEBF2AE13489BE800CE2285 /* ECTextStyle.m in Sources */,
 				CDEFF96E1348BD5E006FEFCC /* edit-main.m in Sources */,
 				CDEFF9751348BD5E006FEFCC /* Project.xcdatamodeld in Sources */,
-				B706F05A13563ECB00E03DDF /* UIColor+StyleColors.m in Sources */,
 				B706F05B13563ECB00E03DDF /* UIImage+BlockDrawing.m in Sources */,
 				B75B8743135840070098E7E2 /* ECHashing.m in Sources */,
 				B75B8745135840070098E7E2 /* MurmurHash3.c in Sources */,
@@ -1188,6 +1192,8 @@
 				B75DBA4D13A80C8600C12630 /* SidebarController.m in Sources */,
 				B7BAF62113A9232F001B0B34 /* RootController.m in Sources */,
 				B7BAF62413A9236A001B0B34 /* NavbarController.m in Sources */,
+				CD7D2AD013C0CA1200B889EE /* UIColor+AppStyle.m in Sources */,
+				CD7D2AD313C0CA5900B889EE /* ECInstantGestureRecognizer.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1218,7 +1224,7 @@
 				GCC_WARN_UNUSED_LABEL = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				PROVISIONING_PROFILE = "B878F291-0B0B-4DF0-90A2-161179F23F65";
-				RUN_CLANG_STATIC_ANALYZER = YES;
+				RUN_CLANG_STATIC_ANALYZER = NO;
 				SDKROOT = iphoneos;
 			};
 			name = Debug;
@@ -1246,7 +1252,7 @@
 				GCC_WARN_UNUSED_LABEL = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				PROVISIONING_PROFILE = "B878F291-0B0B-4DF0-90A2-161179F23F65";
-				RUN_CLANG_STATIC_ANALYZER = YES;
+				RUN_CLANG_STATIC_ANALYZER = NO;
 				SDKROOT = iphoneos;
 			};
 			name = Release;

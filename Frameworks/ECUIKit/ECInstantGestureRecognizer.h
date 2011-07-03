@@ -8,6 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
+/// Trivial gesture recognizer that recognize any touch immediatly without 
+/// canceling it.
 @interface ECInstantGestureRecognizer : UIGestureRecognizer
 
 @end

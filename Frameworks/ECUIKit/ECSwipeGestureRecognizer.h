@@ -9,6 +9,8 @@
 #import <UIKit/UIKit.h>
 #import <UIKit/UIGestureRecognizerSubclass.h>
 
+/// Trivial override of \c UISwipeGestureRecognizer to decrease the times to fail
+/// if required number of fingers is not reached.
 @interface ECSwipeGestureRecognizer : UISwipeGestureRecognizer {
 @private
     NSTimeInterval beginTimestamp;

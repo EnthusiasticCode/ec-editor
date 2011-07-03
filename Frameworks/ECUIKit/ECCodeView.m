@@ -10,7 +10,7 @@
 #import <QuartzCore/QuartzCore.h>
 #import "ECTextPosition.h"
 #import "ECTextRange.h"
-#import "UIColor+StyleColors.h"
+#import "UIColor+AppStyle.h"
 #import "NSTimer+block.h"
 
 #define CARET_WIDTH 2
