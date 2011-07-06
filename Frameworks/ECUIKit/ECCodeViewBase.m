@@ -159,7 +159,7 @@
             {
                 [CATransaction begin];
                 [CATransaction setDisableActions:YES];
-                textLayer.contents = objc_unretainedObject(image.CGImage);
+                textLayer.contents = (__bridge id)image.CGImage;
                 textLayer.hidden = NO;
                 [CATransaction commit];
             }
