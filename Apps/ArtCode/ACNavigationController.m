@@ -7,18 +7,23 @@
 //
 
 #import <QuartzCore/QuartzCore.h>
+
 #import "AppStyle.h"
 #import "ACNavigationController.h"
 #import "ACJumpBarTextField.h"
+#import "ACFileTableController.h"
+
 #import "ECInstantGestureRecognizer.h"
 
-#import "ACFileTableController.h"
+
 
 
 @implementation ACNavigationController {
 @private
     ECPopoverController *popoverController;
     ECTabBar *tabBar;
+    
+    UILongPressGestureRecognizer *jumpBarElementLongPressRecognizer;
     
     ECSwipeGestureRecognizer *tabGestureRecognizer;
     UISwipeGestureRecognizer *toolPanelLeftGestureRecognizer, *toolPanelRightGestureRecognizer;
@@ -93,6 +98,8 @@
     [backButton setBackgroundImage:[UIImage styleBackgroundImageWithColor:[UIColor styleHighlightColor] borderColor:[UIColor styleForegroundColor] insets:UIEdgeInsetsZero arrowSize:CGSizeZero roundingCorners:UIRectCornerTopLeft | UIRectCornerBottomLeft] forState:UIControlStateHighlighted];
     [backButton setImage:[UIImage styleDisclosureArrowImageWithOrientation:UIImageOrientationLeft color:[UIColor styleForegroundColor]] forState:UIControlStateNormal];
     backButton.frame = CGRectMake(0, 0, 40, 30);
+    [backButton addTarget:self action:@selector(jumpBarBackAction:) forControlEvents:UIControlEventTouchUpInside];
+    [backButton addGestureRecognizer:[[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(jumpBarBackLongAction:)]];
     jumpBar.backElement = backButton;
     //
     jumpBar.textElement.leftView = [[UIImageView alloc] initWithImage:[UIImage styleSymbolImageWithColor:[UIColor styleSymbolColorBlue] letter:@"M"]];
@@ -314,9 +321,21 @@
     // TODO also remove controller
 }
 
-#pragma mark - JumpBar Delegate Methods
+#pragma mark - JumpBar Methods
 
-- (void)popJumpBar:(id)sender
+- (void)jumpBarBackAction:(id)sender
+{
+    NSLog(@"Back action");
+}
+
+- (void)jumpBarBackLongAction:(UILongPressGestureRecognizer *)recognizer
+{
+    if (recognizer.state == UIGestureRecognizerStateBegan) {
+        
+    }
+}
+
+- (void)jumpBarElementAction:(id)sender
 {
 //    static ACFileTableController *testController = nil;
 //    if (!testController)
@@ -331,19 +350,33 @@
     [jumpBar popThroughJumpElement:sender animated:YES];
 }
 
+- (void)jumpBarElementLongAction:(UILongPressGestureRecognizer *)recognizer
+{
+    if (recognizer.state == UIGestureRecognizerStateBegan) {
+//        recognizer.view
+    }
+}
+
+#pragma mark -
+
 - (UIView *)jumpBar:(ECJumpBar *)bar elementForJumpPathComponent:(NSString *)pathComponent index:(NSUInteger)componentIndex
 {
     static NSString *elementIdentifier = @"jumpBarElement";
     
+    // TODO special case for componentIndex == NSNotFound as collapse element?
     UIButton *button = (UIButton *)[bar dequeueReusableJumpElementWithIdentifier:elementIdentifier];
     if (button == nil)
     {
         button = [UIButton new];
         button.reuseIdentifier = elementIdentifier;
-        [button addTarget:self action:@selector(popJumpBar:) forControlEvents:UIControlEventTouchUpInside];
+        [button addTarget:self action:@selector(jumpBarElementAction:) forControlEvents:UIControlEventTouchUpInside];
         // TODO move label settings in appearance when possble
         button.titleLabel.font = [UIFont styleFontWithSize:14];
         button.titleLabel.shadowOffset = CGSizeMake(0, 1);
+        
+        if (jumpBarElementLongPressRecognizer == nil)
+            jumpBarElementLongPressRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(jumpBarElementLongAction:)];
+        [button addGestureRecognizer:jumpBarElementLongPressRecognizer];
     }
     
     [button setTitle:pathComponent forState:UIControlStateNormal];
