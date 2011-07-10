@@ -113,7 +113,7 @@
 
 - (CTFramesetterRef)framesetter
 {
-    CTFramesetterRef f = (CTFramesetterRef)objc_unretainedPointer([parentRenderer.framesettersCache objectForKey:self]);
+    CTFramesetterRef f = (__bridge CTFramesetterRef)[parentRenderer.framesettersCache objectForKey:self];
     
     if (!f) 
     {
@@ -122,7 +122,7 @@
         // Cache
         if (f) 
         {
-            [parentRenderer.framesettersCache setObject:objc_unretainedObject(f) forKey:self];
+            [parentRenderer.framesettersCache setObject:(__bridge id)f forKey:self];
             CFRelease(f);
         }
         
@@ -135,7 +135,7 @@
 
 - (CTFrameRef)frame
 {
-    CTFrameRef f = (CTFrameRef)objc_unretainedPointer([parentRenderer.framesCache objectForKey:self]);
+    CTFrameRef f = (__bridge CTFrameRef)[parentRenderer.framesCache objectForKey:self];
     
     if (!f)
     {
@@ -148,7 +148,7 @@
         CGPathRelease(path);
         
         // Update cache and return
-        [parentRenderer.framesCache setObject:objc_unretainedObject(f) forKey:self];
+        [parentRenderer.framesCache setObject:(__bridge id)f forKey:self];
         CFRelease(f);
     }
     return f;
@@ -441,7 +441,7 @@
     if (endOfString)
         lastTextSegment = requestSegment;
     
-    framesetter = CTFramesetterCreateWithAttributedString((CFAttributedStringRef)objc_unretainedPointer(string));
+    framesetter = CTFramesetterCreateWithAttributedString((__bridge CFAttributedStringRef)string);
     
     if (lines)
         *lines = lineRange.length;
@@ -596,13 +596,13 @@
             }
             else
             {
-                runAttributes = (NSDictionary *)objc_unretainedObject(CTRunGetAttributes(run));
+                runAttributes = (__bridge NSDictionary *)CTRunGetAttributes(run);
             }
             
             // Apply custom back attributes
             if (runAttributes)
             {
-                CGColorRef backgroundColor = (CGColorRef)objc_unretainedPointer([runAttributes objectForKey:ECTSBackgroundColorAttributeName]);
+                CGColorRef backgroundColor = (__bridge CGColorRef)[runAttributes objectForKey:ECTSBackgroundColorAttributeName];
                 if (backgroundColor) 
                 {
                     CGContextSetFillColorWithColor(context, backgroundColor);
@@ -885,7 +885,7 @@
                 NSAttributedString *string = [datasource textRenderer:self stringInLineRange:&tempRange endOfString:&isStringEnd];
                 if (string) 
                 {
-                    CTLineRef line = CTLineCreateWithAttributedString((CFAttributedStringRef)objc_unretainedPointer(string));
+                    CTLineRef line = CTLineCreateWithAttributedString((__bridge CFAttributedStringRef)string);
                     CGFloat width, ascent, descent, leading;
                     width = CTLineGetTypographicBounds(line, &ascent, &descent, &leading);
                     meanLineHeight = ascent + descent + leading;

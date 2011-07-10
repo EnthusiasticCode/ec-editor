@@ -856,7 +856,7 @@ FORCE_STATIC_INLINE void btree_apply_function_to_entries(HFBTree *tree, HFBTreeI
 
 
 static BOOL add_to_array(id entry, HFBTreeIndex offset __attribute__((unused)), void *array) {
-    [(NSMutableArray *)objc_unretainedObject(array) addObject:entry];
+    [(__bridge NSMutableArray *)array addObject:entry];
     return YES;
 }
 
@@ -866,7 +866,7 @@ static BOOL add_to_array(id entry, HFBTreeIndex offset __attribute__((unused)), 
     unsigned int depthIndex = depth;
     while (depthIndex--) treeCapacity *= BTREE_ORDER;
     NSMutableArray *result = [NSMutableArray arrayWithCapacity: treeCapacity/2]; //assume we're half full
-    btree_apply_function_to_entries(self, 0, &add_to_array, (void *)objc_unretainedPointer(result));
+    btree_apply_function_to_entries(self, 0, &add_to_array, (__bridge void *)result);
     return result;
 }
 

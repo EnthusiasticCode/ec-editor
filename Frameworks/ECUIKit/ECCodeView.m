@@ -10,7 +10,6 @@
 #import <QuartzCore/QuartzCore.h>
 #import "ECTextPosition.h"
 #import "ECTextRange.h"
-#import "UIColor+AppStyle.h"
 #import "NSTimer+block.h"
 
 #define CARET_WIDTH 2
@@ -846,7 +845,7 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
 
 static void preinit(ECCodeView *self)
 {
-    self->navigatorBackgroundColor = [UIColor styleForegroundColor];
+//    self->navigatorBackgroundColor = [UIColor styleForegroundColor];
     self->navigatorWidth = 200;
 }
 
@@ -854,8 +853,8 @@ static void init(ECCodeView *self)
 {
     // Adding selection view
     self->selectionView = [[TextSelectionView alloc] initWithFrame:CGRectZero codeView:self];
-    [self->selectionView setCaretColor:[UIColor styleThemeColorOne]];
-    [self->selectionView setSelectionColor:[[UIColor styleThemeColorOne] colorWithAlphaComponent:0.3]];
+//    [self->selectionView setCaretColor:[UIColor styleThemeColorOne]];
+//    [self->selectionView setSelectionColor:[[UIColor styleThemeColorOne] colorWithAlphaComponent:0.3]];
     [self->selectionView setOpaque:NO];
     [self->selectionView setHidden:YES];
     [self addSubview:self->selectionView];

@@ -33,13 +33,13 @@ NSString *const ECTSBackCustomOverlayAttributeName = @"ECTextStyleBackCustomOver
     
     if (font)
     {
-        CTFontRef CTFont = CTFontCreateWithName((CFStringRef)objc_unretainedPointer(font.fontName), font.pointSize, NULL);
-        [CTAttributes setObject:objc_unretainedObject(CTFont) forKey:objc_unretainedObject(kCTFontAttributeName)];
+        CTFontRef CTFont = CTFontCreateWithName((__bridge CFStringRef)font.fontName, font.pointSize, NULL);
+        [CTAttributes setObject:(__bridge id)CTFont forKey:(__bridge id)kCTFontAttributeName];
         CFRelease(CTFont);
     }
     else
     {
-        [CTAttributes removeObjectForKey:(id)kCTFontAttributeName];
+        [CTAttributes removeObjectForKey:(__bridge id)kCTFontAttributeName];
     }
 }
 
@@ -49,11 +49,11 @@ NSString *const ECTSBackCustomOverlayAttributeName = @"ECTextStyleBackCustomOver
     
     if (foregroundColor)
     {
-        [CTAttributes setObject:objc_unretainedObject(foregroundColor.CGColor) forKey:objc_unretainedObject(kCTForegroundColorAttributeName)];
+        [CTAttributes setObject:(__bridge id)foregroundColor.CGColor forKey:(__bridge id)kCTForegroundColorAttributeName];
     }
     else
     {
-        [CTAttributes removeObjectForKey:(id)kCTForegroundColorAttributeName];
+        [CTAttributes removeObjectForKey:(__bridge id)kCTForegroundColorAttributeName];
     }
 }
 
@@ -63,7 +63,7 @@ NSString *const ECTSBackCustomOverlayAttributeName = @"ECTextStyleBackCustomOver
     
     if (backgroundColor) 
     {
-        [CTAttributes setObject:objc_unretainedObject(backgroundColor.CGColor) forKey:ECTSBackgroundColorAttributeName];
+        [CTAttributes setObject:(__bridge id)backgroundColor.CGColor forKey:ECTSBackgroundColorAttributeName];
     }
     else
     {
@@ -77,11 +77,11 @@ NSString *const ECTSBackCustomOverlayAttributeName = @"ECTextStyleBackCustomOver
     
     if (underlineColor) 
     {
-        [CTAttributes setObject:objc_unretainedObject(underlineColor.CGColor) forKey:objc_unretainedObject(kCTUnderlineColorAttributeName)];
+        [CTAttributes setObject:(__bridge id)underlineColor.CGColor forKey:(__bridge id)kCTUnderlineColorAttributeName];
     }
     else
     {
-        [CTAttributes removeObjectForKey:(id)kCTUnderlineColorAttributeName];
+        [CTAttributes removeObjectForKey:(__bridge id)kCTUnderlineColorAttributeName];
     }
 }
 
@@ -91,11 +91,11 @@ NSString *const ECTSBackCustomOverlayAttributeName = @"ECTextStyleBackCustomOver
     
     if (underlineStyle & 0xFF) 
     {
-        [CTAttributes setObject:[NSNumber numberWithInt:underlineStyle] forKey:(id)kCTUnderlineStyleAttributeName];
+        [CTAttributes setObject:[NSNumber numberWithInt:underlineStyle] forKey:(__bridge id)kCTUnderlineStyleAttributeName];
     }
     else
     {
-        [CTAttributes removeObjectForKey:(id)kCTUnderlineStyleAttributeName];
+        [CTAttributes removeObjectForKey:(__bridge id)kCTUnderlineStyleAttributeName];
     }
 }
 
