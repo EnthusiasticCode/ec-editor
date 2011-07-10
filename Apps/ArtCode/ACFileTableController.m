@@ -37,6 +37,10 @@
     self.tableView.separatorColor = [UIColor styleForegroundColor];
 //    self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     
+    // TODO Write hints in this view
+    UIView *footerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.tableView.bounds.size.width, 10)];
+    self.tableView.tableFooterView = footerView;
+    
     extensions = [NSArray arrayWithObjects:@"h", @"m", @"hpp", @"cpp", @"mm", @"py", nil];
 }
 

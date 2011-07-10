@@ -36,6 +36,9 @@
     viewLayer = tabsView.layer;
     viewLayer.borderColor = [UIColor styleBackgroundColor].CGColor;
     viewLayer.borderWidth = 1;
+    
+    //
+    [self performSegueWithIdentifier:@"rootSegue" sender:[tabsView.subviews objectAtIndex:0]];
 }
 
 - (void)viewDidUnload
