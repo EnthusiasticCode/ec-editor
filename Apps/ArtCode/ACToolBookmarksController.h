@@ -11,6 +11,7 @@
 @interface ACToolBookmarksController : UIViewController <UITableViewDataSource, UITableViewDelegate>
 
 @property (nonatomic, strong) IBOutlet UITableView *tableView;
+
 @property (nonatomic, strong) IBOutlet UIView *filterContainerView;
 @property (nonatomic, strong) IBOutlet UIButton *addButton;
 @property (nonatomic, strong) IBOutlet UITextField *filterTextField;

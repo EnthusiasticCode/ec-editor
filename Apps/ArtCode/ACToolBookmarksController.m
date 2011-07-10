@@ -29,10 +29,37 @@
 //}
 
 #pragma mark - View lifecycle
+- (void)keyboardWillChangeFrame:(NSNotification *)notification
+{
+    CGRect toFrame = [self.view convertRect:[[notification.userInfo objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue] fromView:nil];
+    UIViewAnimationCurve animationCurve = [[notification.userInfo objectForKey:UIKeyboardAnimationCurveUserInfoKey] integerValue];
+    double animationDuration = [[notification.userInfo objectForKey:UIKeyboardAnimationDurationUserInfoKey] doubleValue];
+    
+    CGRect filterContainerFrame = filterContainerView.frame;
+    if(fabsf(toFrame.size.height) < 264.)
+    {
+        filterContainerFrame.origin.y = self.view.bounds.size.height - filterContainerFrame.size.height;
+    }
+    else
+    {
+        filterContainerFrame.origin.y = toFrame.origin.y - filterContainerFrame.size.height;
+    }
+    
+    CGRect tableViewFrame = tableView.frame;
+    tableViewFrame.size.height = filterContainerFrame.origin.y - tableViewFrame.origin.y;
+    
+    [UIView animateWithDuration:animationDuration delay:0 options:animationCurve << 16 animations:^(void) {
+        filterContainerView.frame = filterContainerFrame;
+        tableView.frame = tableViewFrame;
+    } completion:nil];
+}
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    // Keyboard frame change management
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillChangeFrame:) name:UIKeyboardWillChangeFrameNotification object:nil];
     
     // Load cell's images
     starImage = [UIImage imageNamed:@"toolBookmarksStar.png"];
