@@ -7,6 +7,7 @@
 //
 
 #import "ECTextRange.h"
+#import "ECTextPosition.h"
 
 
 @implementation ECTextRange

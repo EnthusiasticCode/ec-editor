@@ -7,7 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "ECTextPosition.h"
+
+@class ECTextPosition;
 
 @interface ECTextRange : UITextRange <NSCopying> {
 @protected

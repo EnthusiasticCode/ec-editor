@@ -11,6 +11,9 @@
 #import "ECTextPosition.h"
 #import "ECTextRange.h"
 #import "NSTimer+block.h"
+#import "ECPopoverController.h"
+
+#import "ECCodeViewTokenizer.h"
 
 #define CARET_WIDTH 2
 
@@ -47,7 +50,7 @@
     UITapGestureRecognizer *doubleTapRecognizer;
     UILongPressGestureRecognizer *longPressRecognizer;
     UILongPressGestureRecognizer *longDoublePressRecognizer;
-    __strong UITextInputStringTokenizer *tokenizer;
+    id<UITextInputTokenizer> tokenizer;
 }
 
 /// Specify if the info view containing search marks and navigator should be visible.
@@ -1161,7 +1164,9 @@ static void init(ECCodeView *self)
 // TODO create a proper code tokenizer, should be retreived from the datasource
 - (id<UITextInputTokenizer>)tokenizer
 {
+#warning TODO use custom tokenizer.
     if (!tokenizer)
+//        tokenizer = [[ECCodeViewTokenizer alloc] initWithCodeView:self];
         tokenizer = [[UITextInputStringTokenizer alloc] initWithTextInput:self];
     return tokenizer;
 }
