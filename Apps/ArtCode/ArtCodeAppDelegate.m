@@ -23,14 +23,15 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     ACNavigationController *navigationController = (ACNavigationController *)self.window.rootViewController;
-    
     UIFont *defaultFont = [UIFont styleFontWithSize:14];
     
+    ////////////////////////////////////////////////////////////////////////////
     // Generic text field
     id textFieldAppearance = [UITextField appearance];
     [textFieldAppearance setTextColor:[UIColor styleForegroundColor]];
     [textFieldAppearance setFont:defaultFont];
     
+    ////////////////////////////////////////////////////////////////////////////
     // Button in top bar
     id buttonInTopBarAppearance = [UIButton appearanceWhenContainedIn:[ACTopBarView class], nil];
     [buttonInTopBarAppearance setBackgroundImage:[UIImage styleBackgroundImageWithColor:[UIColor styleBackgroundColor] borderColor:[UIColor styleForegroundColor]] forState:UIControlStateNormal];
@@ -41,6 +42,7 @@
     [buttonInTopBarAppearance setTitleColor:[UIColor styleForegroundColor] forState:UIControlStateNormal];
     [buttonInTopBarAppearance setTitleShadowColor:[UIColor styleForegroundShadowColor] forState:UIControlStateNormal];
     
+    ////////////////////////////////////////////////////////////////////////////
     // Jump bar
     id jumpBarAppearance = [ECJumpBar appearance];
     [jumpBarAppearance setJumpElementMargins:UIEdgeInsetsMake(0, -3, 0, -12)];
@@ -50,6 +52,7 @@
     [buttonInJumpBarAppearance setBackgroundImage:[UIImage styleBackgroundImageWithColor:[UIColor styleBackgroundColor] borderColor:[UIColor styleForegroundColor] insets:UIEdgeInsetsZero arrowSize:CGSizeMake(10, 30) roundingCorners:UIRectCornerAllCorners] forState:UIControlStateNormal];
     [buttonInJumpBarAppearance setBackgroundImage:[UIImage styleBackgroundImageWithColor:[UIColor styleHighlightColor] borderColor:[UIColor styleForegroundColor] insets:UIEdgeInsetsZero arrowSize:CGSizeMake(10, 30) roundingCorners:UIRectCornerAllCorners] forState:UIControlStateHighlighted];
 
+    ////////////////////////////////////////////////////////////////////////////
     // Button inside tabbar
     id buttonInTabBarAppearance = [UIButton appearanceWhenContainedIn:[ECTabBar class], nil];
     [buttonInTabBarAppearance setBackgroundImage:[UIImage styleBackgroundImageWithColor:[UIColor styleForegroundColor] borderColor:[UIColor styleBackgroundColor]] forState:UIControlStateNormal];
@@ -58,6 +61,7 @@
     [buttonInTabBarAppearance setTitleColor:[UIColor styleBackgroundColor] forState:UIControlStateNormal];
     [buttonInTabBarAppearance setTitleColor:[UIColor styleForegroundColor] forState:UIControlStateSelected];
     
+    ////////////////////////////////////////////////////////////////////////////
     // Close button of tabs
     id closeButtonInTabBarAppearance = [UIButton appearanceWhenContainedIn:[UIButton class], [ECTabBar class], nil];
     [closeButtonInTabBarAppearance setBackgroundImage:nil forState:UIControlStateNormal];
@@ -65,12 +69,14 @@
     [closeButtonInTabBarAppearance setImage:[UIImage styleCloseImageWithColor:[UIColor styleBackgroundColor] outlineColor:[UIColor styleForegroundColor]] forState:UIControlStateNormal];
     [closeButtonInTabBarAppearance setImage:[UIImage styleCloseImageWithColor:[UIColor styleForegroundColor] outlineColor:[UIColor styleBackgroundColor]] forState:UIControlStateHighlighted];
     
+    ////////////////////////////////////////////////////////////////////////////
     // Adding tool panel
     UIStoryboard *toolPanelsStoryboard = [UIStoryboard storyboardWithName:@"ToolPanelStoryboard" bundle:[NSBundle mainBundle]];
     navigationController.toolPanelController = [toolPanelsStoryboard instantiateInitialViewController];
     navigationController.toolPanelOnRight = YES;
-    navigationController.toolPanelEnabled = YES;
+    navigationController.toolPanelEnabled = NO;
     
+    ////////////////////////////////////////////////////////////////////////////
     // Tools
     UIImage *toolFilterElementBackgorundImage = [UIImage styleBackgroundImageWithColor:[UIColor styleForegroundColor] borderColor:[UIColor styleBackgroundColor] insets:UIEdgeInsetsMake(7, 7, 7, 7) arrowSize:CGSizeZero roundingCorners:UIRectCornerAllCorners];
     id buttonInToolFiltersView = [UIButton appearanceWhenContainedIn:[ACToolFiltersView class], nil];
@@ -80,6 +86,7 @@
     [textFieldInToolFiltersView setTextColor:[UIColor styleBackgroundColor]];
     [textFieldInToolFiltersView setBackground:toolFilterElementBackgorundImage];
     
+    ////////////////////////////////////////////////////////////////////////////
     [window makeKeyAndVisible];
     [navigationController performSegueWithIdentifier:@"rootSegue" sender:nil];
     return YES;

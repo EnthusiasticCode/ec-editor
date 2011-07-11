@@ -30,13 +30,14 @@
 
 #pragma mark Tab Navigation
 
+@property (nonatomic, getter = isTabBarEnabled) BOOL tabBarEnabled;
 @property (nonatomic, strong) IBOutlet ECTabBar *tabBar;
 
 #pragma mark Tool Panel
 
-@property (nonatomic, strong) IBOutlet UIViewController *toolPanelController;
 @property (nonatomic, getter = isToolPanelEnabled) BOOL toolPanelEnabled;
 @property (nonatomic, getter = isToolPanelOnRight) BOOL toolPanelOnRight;
+@property (nonatomic, strong) IBOutlet UIViewController *toolPanelController;
 
 - (void)showToolPanelAnimated:(BOOL)animated;
 - (void)hideToolPanelAnimated:(BOOL)animated;

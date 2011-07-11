@@ -17,7 +17,6 @@
 
 
 
-
 @implementation ACNavigationController {
 @private
     ECPopoverController *popoverController;
@@ -35,9 +34,23 @@
 #pragma mark - Properties
 
 @synthesize contentScrollView;
-@synthesize tabBar;
+@synthesize tabBar, tabBarEnabled;
 @synthesize jumpBar, buttonEdit, buttonTools;
 @synthesize toolPanelController, toolPanelEnabled, toolPanelOnRight;
+
+- (void)setTabBarEnabled:(BOOL)enabled
+{
+    if (enabled == tabBarEnabled)
+        return;
+    
+    tabBarEnabled = enabled;
+    
+    // TODO instead of disable, show message that you need to choose a project to enable tabs
+    tabGestureRecognizer.enabled = enabled;
+    
+    if (!tabBarEnabled)
+        [self toggleTabBar:nil];
+}
 
 - (void)setToolPanelEnabled:(BOOL)enabled
 {
@@ -78,6 +91,7 @@
     [buttonTools setImage:[UIImage styleAddImageWithColor:[UIColor styleForegroundColor] shadowColor:[UIColor whiteColor]] forState:UIControlStateNormal];
     buttonTools.adjustsImageWhenHighlighted = NO;
     
+    ////////////////////////////////////////////////////////////////////////////
     // Jump Bar
     jumpBar.delegate = self;
     jumpBar.minimumTextElementWidth = 0.4;
@@ -105,7 +119,8 @@
     jumpBar.textElement.leftView = [[UIImageView alloc] initWithImage:[UIImage styleSymbolImageWithColor:[UIColor styleSymbolColorBlue] letter:@"M"]];
     jumpBar.textElement.leftViewMode = UITextFieldViewModeUnlessEditing;
     
-    // Setup tab bar
+    ////////////////////////////////////////////////////////////////////////////
+    // Tab bar
     if (!tabBar)
         tabBar = [[ECTabBar alloc] initWithFrame:CGRectMake(0, 45, self.view.bounds.size.width, 44)];
     tabBar.delegate = self;
@@ -129,20 +144,24 @@
     [tabBar addTabButtonWithTitle:@"Three" animated:NO];
     [tabBar addTabButtonWithTitle:@"Four" animated:NO];
     
-    // Tab gesture recognizer
+    ////////////////////////////////////////////////////////////////////////////
+    // Tab Bar gesture recognizer
     tabGestureRecognizer = [[ECSwipeGestureRecognizer alloc] initWithTarget:self action:@selector(toggleTabBar:)];
     tabGestureRecognizer.numberOfTouchesRequired = 3;
     tabGestureRecognizer.numberOfTouchesRequiredImmediatlyOrFailAfterInterval = .05;
     tabGestureRecognizer.direction = UISwipeGestureRecognizerDirectionUp | UISwipeGestureRecognizerDirectionDown;
     [self.view addGestureRecognizer:tabGestureRecognizer];
+    tabGestureRecognizer.enabled = tabBarEnabled;
     
-    // Setup content scroll view
+    ////////////////////////////////////////////////////////////////////////////
+    // Content scroll view
     contentScrollView.pagingEnabled = YES;
     contentScrollView.showsVerticalScrollIndicator = NO;
     contentScrollView.showsHorizontalScrollIndicator = NO;
     contentScrollView.panGestureRecognizer.minimumNumberOfTouches = 3;
     contentScrollView.panGestureRecognizer.maximumNumberOfTouches = 3;
     
+    ////////////////////////////////////////////////////////////////////////////
     // Tool panel gesture recognizer
     toolPanelLeftGestureRecognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(handleToolPanelGesture:)];
     toolPanelLeftGestureRecognizer.direction = UISwipeGestureRecognizerDirectionLeft;
@@ -256,7 +275,7 @@
     [self setEditing:editing animated:YES];
 }
 
-#pragma mark - TabBarDelegate Methods Implementation
+#pragma mark - TabBar Methods
 
 - (BOOL)tabBar:(ECTabBar *)tabBar willAddTabButton:(UIButton *)tabButton atIndex:(NSUInteger)tabIndex
 {    
@@ -281,10 +300,13 @@
 #pragma mark -
 
 - (void)toggleTabBar:(id)sender
-{    
+{
+    if (!tabBarEnabled && tabBar.superview == nil)
+        return;
+    
     CGRect contentScrollViewFrame = contentScrollView.frame;
     CGRect tabBarFrame = CGRectMake(0, 45, contentScrollViewFrame.size.width, 44);
-    if ([tabBar superview] != nil)
+    if (tabBar.superview != nil)
     {
         contentScrollViewFrame.size.height += tabBarFrame.size.height;
         contentScrollViewFrame.origin.y -= tabBarFrame.size.height;
