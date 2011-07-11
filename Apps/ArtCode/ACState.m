@@ -9,53 +9,38 @@
 #import "ACState.h"
 #import "NSFileManager(ECAdditions).h"
 
-static NSString * const ACProjectBundleExtension = @"acproj";
-static NSString * const ACProjectWillMoveNotification = @"ACProjectWillMoveNotification";
-static NSString * const ACProjectDidMoveNotification = @"ACProjectDidMoveNotification";
-static NSString * const ACProjectPropertiesWillChangeNotification = @"ACProjectPropertiesWillChangeNotification";
-static NSString * const ACProjectPropertiesDidChangeNotification = @"ACProjectPropertiesDidChangeNotification";
+#pragma mark - ACState Constants
+NSString * const ACProjectBundleExtension = @"acproj";
 
+#pragma mark - ACState Notifications
+NSString * const ACProjectWillRenameNotification = @"ACProjectWillRenameNotification";
+NSString * const ACProjectDidRenameNotification = @"ACProjectDidRenameNotification";
+NSString * const ACProjectPropertiesWillChangeNotification = @"ACProjectPropertiesWillChangeNotification";
+NSString * const ACProjectPropertiesDidChangeNotification = @"ACProjectPropertiesDidChangeNotification";
+
+#pragma mark - ACState Commands
+// Internal use only, used by the ACState controller to broadcast commands to all proxies
+static NSString * const ACProjectProxyRenameCommand = @"ACProjectProxyRenameCommand";
 
 @interface ACState ()
+#pragma mark - Internal Methods
 + (void)scanForProjects;
 @end
 
 @interface ACStateProject ()
-- (void)handleProjectWillMoveNotification:(NSNotification *)notification;
-- (void)handleProjectDidMoveNotification:(NSNotification *)notification;
+#pragma mark - Internal Methods
++ (ACStateProject *)projectProxyForProjectWithName:(NSString *)name;
+#pragma mark - Notification and command handling
+- (void)handleProjectProxyRenameCommand:(NSNotification *)notification;
+- (void)handleProjectWillRenameNotification:(NSNotification *)notification;
+- (void)handleProjectDidRenameNotification:(NSNotification *)notification;
 - (void)handleProjectPropertiesWillChangeNotification:(NSNotification *)notification;
 - (void)handleProjectPropertiesDidChangeNotification:(NSNotification *)notification;
-+ (ACStateProject *)projectProxyForProjectAtPath:(NSString *)fullPath;
 @end
 
 @implementation ACState
 
-@synthesize projects = _projects;
-
-- (NSOrderedSet *)projects
-{
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    NSMutableOrderedSet *projects = [[NSMutableOrderedSet alloc] init];
-    for (NSDictionary *dictionary in [defaults arrayForKey:@"projects"]) {
-        ACStateProject *project = [[ACStateProject alloc] init];
-        project.path = [dictionary objectForKey:@"path"];
-        project.name = [project.path lastPathComponent];
-        project.color = [NSKeyedUnarchiver unarchiveObjectWithData:[dictionary objectForKey:@"color"]];
-        [projects addObject:project];
-    }
-    return projects;
-}
-
-+ (ACState *)sharedState
-{
-    static ACState *sharedState = nil;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        sharedState = [[self alloc] init];
-    });
-    return sharedState;
-}
-
+#pragma mark - Internal Methods
 + (void)initialize
 {
     [self scanForProjects];
@@ -69,92 +54,77 @@ static NSString * const ACProjectPropertiesDidChangeNotification = @"ACProjectPr
     NSString *applicationDocumentsDirectory = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject];
     NSArray *projectPaths = [fileManager subpathsOfDirectoryAtPath:applicationDocumentsDirectory withExtensions:[NSArray arrayWithObject:ACProjectBundleExtension] options:NSDirectoryEnumerationSkipsHiddenFiles skipFiles:NO skipDirectories:NO error:NULL];
     NSMutableArray *projects = [NSMutableArray array];
-    for (NSString *path in projectPaths) {
+    for (NSString *path in projectPaths)
         [projects addObject:[NSDictionary dictionaryWithObjectsAndKeys:path, @"path", [NSKeyedArchiver archivedDataWithRootObject:[UIColor redColor]], @"color" , nil]];
-    }
     [defaults setObject:projects forKey:@"projects"];
     [defaults synchronize];
+}
+
+#pragma mark - Application Level
++ (ACState *)sharedState
+{
+    static ACState *sharedState = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        sharedState = [[self alloc] init];
+    });
+    return sharedState;
+}
+
+#pragma mark - Project Level
+- (NSOrderedSet *)projects
+{
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSMutableOrderedSet *projects = [[NSMutableOrderedSet alloc] init];
+    for (NSDictionary *dictionary in [defaults arrayForKey:@"projects"])
+    {
+        ACStateProject *project = [ACStateProject projectProxyForProjectWithName:[dictionary objectForKey:@"name"]];
+        [projects addObject:project];
+    }
+    return projects;
 }
 
 @end
 
 @implementation ACStateProject
 
-@synthesize fullPath = _fullPath;
-
-- (NSString *)fullPath
-{
-    if (_fullPath && [[ACState sharedState] projectExistsAtPath:_fullPath])
-        return [_fullPath copy];
-    return nil;
-}
-
-- (void)setFullPath:(NSString *)fullPath
-{
-    ECASSERT(fullPath);
-    ECASSERT([[fullPath pathExtension] isEqualToString:ACProjectBundleExtension]);
-    [[ACState sharedState] moveProjectAtPath:_fullPath toPath:fullPath];
-}
-
-- (NSString *)path
-{
-    if (_fullPath && [[ACState sharedState] projectExistsAtPath:_fullPath])
-        return [_fullPath stringByDeletingLastPathComponent];
-    return nil;
-}
-
-- (void)setPath:(NSString *)path
-{
-    ECASSERT(path);
-    [[ACState sharedState] moveProjectAtPath:_fullPath toPath:[path stringByAppendingPathComponent:[_fullPath lastPathComponent]]];
-}
-
-- (NSString *)fullName
-{
-    if (_fullPath && [[ACState sharedState] projectExistsAtPath:_fullPath])
-        return [_fullPath lastPathComponent];
-    return nil;
-}
-
-- (void)setFullName:(NSString *)fullName
-{
-    ECASSERT(fullName);
-    ECASSERT([[fullName pathExtension] isEqualToString:ACProjectBundleExtension]);
-    [[ACState sharedState] moveProjectAtPath:_fullPath toPath:[[_fullPath stringByDeletingLastPathComponent] stringByAppendingPathComponent:fullName]];
-}
-
-- (NSString *)name
-{
-    if (_fullPath && [[ACState sharedState] projectExistsAtPath:_fullPath])
-        return [[_fullPath lastPathComponent] stringByDeletingPathExtension];
-    return nil;
-}
+@synthesize name = _name;
 
 - (void)setName:(NSString *)name
 {
     ECASSERT(name);
-    [[ACState sharedState] moveProjectAtPath:_fullPath toPath:[[[_fullPath stringByDeletingLastPathComponent] stringByAppendingPathComponent:name] stringByAppendingPathExtension:[_fullPath pathExtension]]];
+    [[ACState sharedState] setName:name forProjectWithName:_name];
+}
+
+- (NSUInteger)index
+{
+    return [[ACState sharedState] indexOfProjectWithName:self.name];
+}
+
+- (void)setIndex:(NSUInteger)index
+{
+    [[ACState sharedState] setIndex:index forProjectWithName:self.name];
 }
 
 - (UIColor *)color
 {
-    if (_fullPath && [[ACState sharedState] projectExistsAtPath:_fullPath])
-        return [[ACState sharedState] colorForProjectAtPath:_fullPath];
-    return nil;
+    return [[ACState sharedState] colorForProjectWithName:self.name];
 }
 
 - (void)setColor:(UIColor *)color
 {
-    [[ACState sharedState] setColor:color forProjectAtPath:_fullPath];
+    [[ACState sharedState] setColor:color forProjectWithName:self.name];
 }
 
+#pragma mark - Internal Methods
 - (id)init
 {
     self = [super init];
     if (!self)
         return nil;
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleProjectWillMoveNotification:) name:ACProjectWillMoveNotification object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleProjectDidMoveNotification:) name:ACProjectDidMoveNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleProjectProxyRenameCommand:) name:ACProjectProxyRenameCommand object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleProjectWillRenameNotification::) name:ACProjectWillRenameNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleProjectDidRenameNotification:) name:ACProjectDidRenameNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleProjectPropertiesWillChangeNotification:) name:ACProjectPropertiesWillChangeNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleProjectPropertiesDidChangeNotification:) name:ACProjectPropertiesDidChangeNotification object:nil];
     return self;
@@ -165,30 +135,40 @@ static NSString * const ACProjectPropertiesDidChangeNotification = @"ACProjectPr
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
-- (void)handleProjectWillMoveNotification:(NSNotification *)notification
++ (ACStateProject *)projectProxyForProjectWithName:(NSString *)name
 {
-    if (![[[notification userInfo] objectForKey:@"source"] isEqualToString:_fullPath])
-        return;
-    [self willChangeValueForKey:@"fullPath"];
-    [self willChangeValueForKey:@"path"];
-    [self willChangeValueForKey:@"fullName"];
-    [self willChangeValueForKey:@"name"];
-    _fullPath = [[notification userInfo] objectForKey:@"destination"];
+    ACStateProject *proxy = [self alloc];
+    proxy = [proxy init];
+    proxy->_name = name;
+    return proxy;
 }
 
-- (void)handleProjectDidMoveNotification:(NSNotification *)notification
+#pragma mark - Notification and command handling
+
+- (void)handleProjectProxyRenameCommand:(NSNotification *)notification
 {
-    if (![[[notification userInfo] objectForKey:@"destination"] isEqualToString:_fullPath])
+    if (![[[notification userInfo] objectForKey:@"oldName"] isEqualToString:self.name])
         return;
-    [self didChangeValueForKey:@"fullPath"];
-    [self didChangeValueForKey:@"path"];
-    [self didChangeValueForKey:@"fullName"];
+    _name = [[notification userInfo] objectForKey:@"newName"];
+}
+
+- (void)handleProjectWillRenameNotification:(NSNotification *)notification
+{
+    if (![[[notification userInfo] objectForKey:@"oldName"] isEqualToString:self.name])
+        return;
+    [self willChangeValueForKey:@"name"];
+}
+
+- (void)handleProjectDidRenameNotification:(NSNotification *)notification
+{
+    if (![[[notification userInfo] objectForKey:@"newName"] isEqualToString:self.name])
+        return;
     [self didChangeValueForKey:@"name"];
 }
 
 - (void)handleProjectPropertiesWillChangeNotification:(NSNotification *)notification
 {
-    if (![[[notification userInfo] objectForKey:@"projectBundlePath"] isEqualToString:_fullPath])
+    if (![[[notification userInfo] objectForKey:@"name"] isEqualToString:self.name])
         return;
     for (NSString *key in [[notification userInfo] objectForKey:@"propertyKeys"])
         [self willChangeValueForKey:key];
@@ -196,18 +176,10 @@ static NSString * const ACProjectPropertiesDidChangeNotification = @"ACProjectPr
 
 - (void)handleProjectPropertiesDidChangeNotification:(NSNotification *)notification
 {
-    if (![[[notification userInfo] objectForKey:@"projectBundlePath"] isEqualToString:_fullPath])
+    if (![[[notification userInfo] objectForKey:@"name"] isEqualToString:self.name])
         return;
     for (NSString *key in [[notification userInfo] objectForKey:@"propertyKeys"])
         [self didChangeValueForKey:key];
-}
-
-+ (ACStateProject *)projectProxyForProjectAtPath:(NSString *)fullPath
-{
-    ACStateProject *proxy = [self alloc];
-    proxy = [proxy init];
-    proxy->_fullPath = fullPath;
-    return proxy;
 }
 
 @end
