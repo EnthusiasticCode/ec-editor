@@ -15,12 +15,12 @@
 		B7C79DF513C9E84600558F1B /* ACStateAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = B7C79DF413C9E84600558F1B /* ACStateAppDelegate.m */; };
 		B7C79E0213C9E90E00558F1B /* MainStoryboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B7C79E0113C9E90E00558F1B /* MainStoryboard.storyboard */; };
 		B7C79E0513C9EA1F00558F1B /* ACState.m in Sources */ = {isa = PBXBuildFile; fileRef = B7C79E0413C9EA1F00558F1B /* ACState.m */; };
-		B7C79E0813C9EDBB00558F1B /* ACStateProject.m in Sources */ = {isa = PBXBuildFile; fileRef = B7C79E0713C9EDBB00558F1B /* ACStateProject.m */; };
 		B7C79E1013C9EF6600558F1B /* NSFileManager(ECAdditions).m in Sources */ = {isa = PBXBuildFile; fileRef = B7C79E0F13C9EF6600558F1B /* NSFileManager(ECAdditions).m */; };
 		B7C79E1313C9F24E00558F1B /* ProjectsController.m in Sources */ = {isa = PBXBuildFile; fileRef = B7C79E1213C9F24E00558F1B /* ProjectsController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		B703B28013CAE2CC0057E8AD /* ECDebug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECDebug.h; sourceTree = "<group>"; };
 		B7C79DE013C9E84600558F1B /* ACState.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ACState.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B7C79DE413C9E84600558F1B /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		B7C79DE613C9E84600558F1B /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -34,8 +34,6 @@
 		B7C79E0113C9E90E00558F1B /* MainStoryboard.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = MainStoryboard.storyboard; sourceTree = "<group>"; };
 		B7C79E0313C9EA1F00558F1B /* ACState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACState.h; sourceTree = "<group>"; };
 		B7C79E0413C9EA1F00558F1B /* ACState.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACState.m; sourceTree = "<group>"; };
-		B7C79E0613C9EDBB00558F1B /* ACStateProject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACStateProject.h; sourceTree = "<group>"; };
-		B7C79E0713C9EDBB00558F1B /* ACStateProject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACStateProject.m; sourceTree = "<group>"; };
 		B7C79E0E13C9EF6600558F1B /* NSFileManager(ECAdditions).h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSFileManager(ECAdditions).h"; sourceTree = "<group>"; };
 		B7C79E0F13C9EF6600558F1B /* NSFileManager(ECAdditions).m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSFileManager(ECAdditions).m"; sourceTree = "<group>"; };
 		B7C79E1113C9F24E00558F1B /* ProjectsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProjectsController.h; sourceTree = "<group>"; };
@@ -56,9 +54,19 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		B703B27F13CAE2AA0057E8AD /* ECCore */ = {
+			isa = PBXGroup;
+			children = (
+				B703B28013CAE2CC0057E8AD /* ECDebug.h */,
+			);
+			name = ECCore;
+			path = ../Frameworks/ECCore;
+			sourceTree = "<group>";
+		};
 		B7C79DD513C9E84500558F1B = {
 			isa = PBXGroup;
 			children = (
+				B703B27F13CAE2AA0057E8AD /* ECCore */,
 				B7C79E0D13C9EF4800558F1B /* ECFoundation */,
 				B7C79DFF13C9E88400558F1B /* ArtCode */,
 				B7C79DEA13C9E84600558F1B /* ACState */,
@@ -114,8 +122,6 @@
 			children = (
 				B7C79E0313C9EA1F00558F1B /* ACState.h */,
 				B7C79E0413C9EA1F00558F1B /* ACState.m */,
-				B7C79E0613C9EDBB00558F1B /* ACStateProject.h */,
-				B7C79E0713C9EDBB00558F1B /* ACStateProject.m */,
 			);
 			path = ArtCode;
 			sourceTree = "<group>";
@@ -192,7 +198,6 @@
 				B7C79DF113C9E84600558F1B /* main.m in Sources */,
 				B7C79DF513C9E84600558F1B /* ACStateAppDelegate.m in Sources */,
 				B7C79E0513C9EA1F00558F1B /* ACState.m in Sources */,
-				B7C79E0813C9EDBB00558F1B /* ACStateProject.m in Sources */,
 				B7C79E1013C9EF6600558F1B /* NSFileManager(ECAdditions).m in Sources */,
 				B7C79E1313C9F24E00558F1B /* ProjectsController.m in Sources */,
 			);

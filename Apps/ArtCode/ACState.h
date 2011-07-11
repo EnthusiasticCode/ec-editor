@@ -12,9 +12,20 @@
 
 + (ACState *)sharedState;
 @property (nonatomic, copy, readonly) NSOrderedSet *projects;
-- (NSString *)applicationDocumentsDirectory;
-- (NSArray *)projectBundlesInApplicationDocumentsDirectory;
-@property (nonatomic, strong, readonly) NSFileManager *fileManager;
-- (void)scanForProjects;
+
+- (void)moveProjectAtPath:(NSString *)source toPath:(NSString *)destination;
+- (UIColor *)colorForProjectAtPath:(NSString *)path;
+- (void)setColor:(UIColor *)color forProjectAtPath:(NSString *)path;
+- (BOOL)projectExistsAtPath:(NSString *)path;
+
+@end
+
+@interface ACStateProject : NSObject
+
+@property (nonatomic, copy) NSString *fullPath;
+@property (nonatomic, copy) NSString *path;
+@property (nonatomic, copy) NSString *fullName;
+@property (nonatomic, copy) NSString *name;
+@property (nonatomic, strong) UIColor *color;
 
 @end
