@@ -277,7 +277,7 @@
 
 #pragma mark - TabBar Methods
 
-- (BOOL)tabBar:(ECTabBar *)tabBar willAddTabButton:(UIButton *)tabButton atIndex:(NSUInteger)tabIndex
+- (BOOL)tabBar:(ECTabBar *)tabBar shouldAddTabButton:(UIButton *)tabButton atIndex:(NSUInteger)tabIndex
 {    
     UIButton *closeButton = [UIButton new];
     CGRect frame = tabButton.bounds;

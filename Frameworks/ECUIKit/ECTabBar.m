@@ -27,13 +27,13 @@
     NSTimer *movedTabScrollTimer;
     
     struct {
-        unsigned int hasWillAddTabButtonAtIndex : 1;
+        unsigned int hasShouldAddTabButtonAtIndex : 1;
         unsigned int hasDidAddTabButtonAtIndex : 1;
-        unsigned int hasWillRemoveTabButtonAtIndex : 1;
+        unsigned int hasShouldRemoveTabButtonAtIndex : 1;
         unsigned int hasDidRemoveTabButtonAtIndex : 1;
-        unsigned int hasWillSelectTabAtIndex :1;
+        unsigned int hasShouldSelectTabAtIndex :1;
         unsigned int hasDidSelectTabAtIndex : 1;
-        unsigned int hasWillMoveTabButton : 1;
+        unsigned int hasShouldMoveTabButton : 1;
         unsigned int hasDidMoveTabButtonFromIndexToIndex : 1;
     } delegateFlags;
 }
@@ -55,13 +55,13 @@
 {
     delegate = aDelegate;
     
-    delegateFlags.hasWillAddTabButtonAtIndex = [delegate respondsToSelector:@selector(tabBar:willAddTabButton:atIndex:)];
+    delegateFlags.hasShouldAddTabButtonAtIndex = [delegate respondsToSelector:@selector(tabBar:shouldAddTabButton:atIndex:)];
     delegateFlags.hasDidAddTabButtonAtIndex = [delegate respondsToSelector:@selector(tabBar:didAddTabButtonAtIndex:)];
-    delegateFlags.hasWillRemoveTabButtonAtIndex = [delegate respondsToSelector:@selector(tabBar:willRemoveTabButtonAtIndex:)];
+    delegateFlags.hasShouldRemoveTabButtonAtIndex = [delegate respondsToSelector:@selector(tabBar:shouldRemoveTabButtonAtIndex:)];
     delegateFlags.hasDidRemoveTabButtonAtIndex = [delegate respondsToSelector:@selector(tabBar:didRemoveTabButtonAtIndex:)];
-    delegateFlags.hasWillSelectTabAtIndex = [delegate respondsToSelector:@selector(tabBar:willSelectTabAtIndex:)];
+    delegateFlags.hasShouldSelectTabAtIndex = [delegate respondsToSelector:@selector(tabBar:shouldSelectTabAtIndex:)];
     delegateFlags.hasDidSelectTabAtIndex = [delegate respondsToSelector:@selector(tabBar:didSelectTabAtIndex:)];
-    delegateFlags.hasWillMoveTabButton = [delegate respondsToSelector:@selector(tabBar:willMoveTabButton:)];
+    delegateFlags.hasShouldMoveTabButton = [delegate respondsToSelector:@selector(tabBar:shouldMoveTabButton:)];
     delegateFlags.hasDidMoveTabButtonFromIndexToIndex = [delegate respondsToSelector:@selector(tabBar:didMoveTabButton:fromIndex:toIndex:)];
 }
 
@@ -323,8 +323,8 @@ static void init(ECTabBar *self)
     [newTabButton setTitle:title forState:UIControlStateNormal];
     [newTabButton addTarget:self action:@selector(tabButtonAction:) forControlEvents:UIControlEventTouchUpInside];
     
-    if (delegateFlags.hasWillAddTabButtonAtIndex 
-        && ![delegate tabBar:self willAddTabButton:newTabButton atIndex:newTabButtonIndex])
+    if (delegateFlags.hasShouldAddTabButtonAtIndex 
+        && ![delegate tabBar:self shouldAddTabButton:newTabButton atIndex:newTabButtonIndex])
         return;
     
     // Add the button and resize content
@@ -343,8 +343,8 @@ static void init(ECTabBar *self)
     if (index >= [tabButtons count])
         return;
     
-    if (delegateFlags.hasWillRemoveTabButtonAtIndex
-        && ![delegate tabBar:self willRemoveTabButtonAtIndex:index])
+    if (delegateFlags.hasShouldRemoveTabButtonAtIndex
+        && ![delegate tabBar:self shouldRemoveTabButtonAtIndex:index])
         return;
     
     if (animated)
@@ -405,8 +405,8 @@ static void init(ECTabBar *self)
     if (tabIndex == NSNotFound)
         return;
     
-    if (delegateFlags.hasWillSelectTabAtIndex
-        && ![delegate tabBar:self willSelectTabAtIndex:tabIndex])
+    if (delegateFlags.hasShouldSelectTabAtIndex
+        && ![delegate tabBar:self shouldSelectTabAtIndex:tabIndex])
         return;
     
     [self setSelectedTabIndex:tabIndex];
@@ -434,8 +434,8 @@ static void init(ECTabBar *self)
             movedTabIndex = (NSUInteger)(locationInView.x / tabButtonSize.width);
             movedTabDestinationIndex = movedTabIndex;
             movedTab = [tabButtons objectAtIndex:movedTabIndex];
-            if (delegateFlags.hasWillMoveTabButton
-                && ![delegate tabBar:self willMoveTabButton:movedTab])
+            if (delegateFlags.hasShouldMoveTabButton
+                && ![delegate tabBar:self shouldMoveTabButton:movedTab])
             {
                 movedTab = nil;
                 return;

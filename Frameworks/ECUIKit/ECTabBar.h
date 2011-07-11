@@ -13,16 +13,16 @@
 @protocol ECTabBarDelegate <UIScrollViewDelegate>
 @optional
 
-- (BOOL)tabBar:(ECTabBar *)tabBar willAddTabButton:(UIButton *)tabButton atIndex:(NSUInteger)tabIndex;
+- (BOOL)tabBar:(ECTabBar *)tabBar shouldAddTabButton:(UIButton *)tabButton atIndex:(NSUInteger)tabIndex;
 - (void)tabBar:(ECTabBar *)tabBar didAddTabButtonAtIndex:(NSUInteger)index;
 
-- (BOOL)tabBar:(ECTabBar *)tabBar willRemoveTabButtonAtIndex:(NSUInteger)tabIndex;
+- (BOOL)tabBar:(ECTabBar *)tabBar shouldRemoveTabButtonAtIndex:(NSUInteger)tabIndex;
 - (void)tabBar:(ECTabBar *)tabBar didRemoveTabButtonAtIndex:(NSUInteger)tabIndex;
 
-- (BOOL)tabBar:(ECTabBar *)tabBar willSelectTabAtIndex:(NSUInteger)index;
+- (BOOL)tabBar:(ECTabBar *)tabBar shouldSelectTabAtIndex:(NSUInteger)index;
 - (void)tabBar:(ECTabBar *)tabBar didSelectTabAtIndex:(NSUInteger)index;
 
-- (BOOL)tabBar:(ECTabBar *)tabBar willMoveTabButton:(UIButton *)tabButton;
+- (BOOL)tabBar:(ECTabBar *)tabBar shouldMoveTabButton:(UIButton *)tabButton;
 - (void)tabBar:(ECTabBar *)tabBar didMoveTabButton:(UIButton *)tabButton fromIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex;
 
 @end
