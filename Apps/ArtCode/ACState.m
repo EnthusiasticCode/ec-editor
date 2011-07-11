@@ -9,38 +9,38 @@
 #import "ACState.h"
 #import "NSFileManager(ECAdditions).h"
 
-#pragma mark - ACState Constants
 NSString * const ACProjectBundleExtension = @"acproj";
 
-#pragma mark - ACState Notifications
 NSString * const ACProjectWillRenameNotification = @"ACProjectWillRenameNotification";
 NSString * const ACProjectDidRenameNotification = @"ACProjectDidRenameNotification";
 NSString * const ACProjectPropertiesWillChangeNotification = @"ACProjectPropertiesWillChangeNotification";
 NSString * const ACProjectPropertiesDidChangeNotification = @"ACProjectPropertiesDidChangeNotification";
 
-#pragma mark - ACState Commands
 // Internal use only, used by the ACState controller to broadcast commands to all proxies
 static NSString * const ACProjectProxyRenameCommand = @"ACProjectProxyRenameCommand";
 
 @interface ACState ()
-#pragma mark - Internal Methods
+
 + (void)scanForProjects;
+
 @end
 
 @interface ACStateProject ()
-#pragma mark - Internal Methods
+
 + (ACStateProject *)projectProxyForProjectWithName:(NSString *)name;
-#pragma mark - Notification and command handling
+
 - (void)handleProjectProxyRenameCommand:(NSNotification *)notification;
 - (void)handleProjectWillRenameNotification:(NSNotification *)notification;
 - (void)handleProjectDidRenameNotification:(NSNotification *)notification;
 - (void)handleProjectPropertiesWillChangeNotification:(NSNotification *)notification;
 - (void)handleProjectPropertiesDidChangeNotification:(NSNotification *)notification;
+
 @end
 
 @implementation ACState
 
 #pragma mark - Internal Methods
+
 + (void)initialize
 {
     [self scanForProjects];
@@ -61,6 +61,7 @@ static NSString * const ACProjectProxyRenameCommand = @"ACProjectProxyRenameComm
 }
 
 #pragma mark - Application Level
+
 + (ACState *)sharedState
 {
     static ACState *sharedState = nil;
@@ -72,6 +73,7 @@ static NSString * const ACProjectProxyRenameCommand = @"ACProjectProxyRenameComm
 }
 
 #pragma mark - Project Level
+
 - (NSOrderedSet *)projects
 {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
@@ -85,6 +87,8 @@ static NSString * const ACProjectProxyRenameCommand = @"ACProjectProxyRenameComm
 }
 
 @end
+
+#pragma mark -
 
 @implementation ACStateProject
 
@@ -117,6 +121,7 @@ static NSString * const ACProjectProxyRenameCommand = @"ACProjectProxyRenameComm
 }
 
 #pragma mark - Internal Methods
+
 - (id)init
 {
     self = [super init];
