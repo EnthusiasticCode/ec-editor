@@ -37,7 +37,7 @@
 		CD7D2B4813C0D55700B889EE /* ACFileTableController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD7D2B4713C0D55700B889EE /* ACFileTableController.m */; };
 		CD7D2B4B13C0D5B800B889EE /* MainStoryboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CD7D2B4913C0D5B800B889EE /* MainStoryboard.storyboard */; };
 		CD7D2B4E13C0D5FB00B889EE /* ToolPanelStoryboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CD7D2B4D13C0D5FB00B889EE /* ToolPanelStoryboard.storyboard */; };
-		CD8A677813D0B71D0037D742 /* ipad_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CD8A677713D0B71D0037D742 /* ipad_icon.png */; };
+		CD8A677A13D0B8110037D742 /* ipad_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CD8A677913D0B8110037D742 /* ipad_icon.png */; };
 		CDE3F14713C0DDD500DFFAFF /* Inconsolata-dz.otf in Resources */ = {isa = PBXBuildFile; fileRef = CDE3F14613C0DDD500DFFAFF /* Inconsolata-dz.otf */; };
 		CDFF3DAC13C0D71900108DE2 /* NSTimer+block.m in Sources */ = {isa = PBXBuildFile; fileRef = CDFF3DAB13C0D71900108DE2 /* NSTimer+block.m */; };
 		CDFF3DBB13C0D76400108DE2 /* ECInstantGestureRecognizer.m in Sources */ = {isa = PBXBuildFile; fileRef = CDFF3DAE13C0D76400108DE2 /* ECInstantGestureRecognizer.m */; };
@@ -127,7 +127,7 @@
 		CD7D2B4713C0D55700B889EE /* ACFileTableController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACFileTableController.m; sourceTree = "<group>"; };
 		CD7D2B4913C0D5B800B889EE /* MainStoryboard.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = MainStoryboard.storyboard; sourceTree = "<group>"; };
 		CD7D2B4D13C0D5FB00B889EE /* ToolPanelStoryboard.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = ToolPanelStoryboard.storyboard; sourceTree = "<group>"; };
-		CD8A677713D0B71D0037D742 /* ipad_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = ipad_icon.png; path = ../../ipad_icon.png; sourceTree = "<group>"; };
+		CD8A677913D0B8110037D742 /* ipad_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = ipad_icon.png; path = ../../ipad_icon.png; sourceTree = "<group>"; };
 		CDE3F14613C0DDD500DFFAFF /* Inconsolata-dz.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Inconsolata-dz.otf"; sourceTree = "<group>"; };
 		CDFF3DAA13C0D71900108DE2 /* NSTimer+block.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSTimer+block.h"; sourceTree = "<group>"; };
 		CDFF3DAB13C0D71900108DE2 /* NSTimer+block.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSTimer+block.m"; sourceTree = "<group>"; };
@@ -281,7 +281,7 @@
 		CD7D2B0713C0CE5200B889EE /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				CD8A677713D0B71D0037D742 /* ipad_icon.png */,
+				CD8A677913D0B8110037D742 /* ipad_icon.png */,
 				CDE3F14613C0DDD500DFFAFF /* Inconsolata-dz.otf */,
 				CD7D2B0A13C0CEFF00B889EE /* Images */,
 				CD7D2B0913C0CEE100B889EE /* Storyboards */,
@@ -587,7 +587,7 @@
 				CDFF3DF213C0D9BB00108DE2 /* toolSnippetsPaste.png in Resources */,
 				CDFF3DF313C0D9BB00108DE2 /* toolSnippetsSnippet.png in Resources */,
 				CDE3F14713C0DDD500DFFAFF /* Inconsolata-dz.otf in Resources */,
-				CD8A677813D0B71D0037D742 /* ipad_icon.png in Resources */,
+				CD8A677A13D0B8110037D742 /* ipad_icon.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
