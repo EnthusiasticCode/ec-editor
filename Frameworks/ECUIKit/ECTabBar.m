@@ -396,6 +396,19 @@ static void init(ECTabBar *self)
     return [tabButtons indexOfObject:tabButton];
 }
 
+- (NSUInteger)indexOfTabWithTitle:(NSString *)title
+{
+    __block NSUInteger result = NSNotFound;
+    [tabButtons enumerateObjectsUsingBlock:^(UIButton *tabButton, NSUInteger idx, BOOL *stop) {
+        if ([title isEqualToString:[tabButton titleForState:UIControlStateNormal]])
+        {
+            result = idx;
+            *stop = YES;
+        }
+    }];
+    return result;
+}
+
 #pragma mark -
 
 - (void)tabButtonAction:(id)sender

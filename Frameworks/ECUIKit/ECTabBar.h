@@ -52,12 +52,13 @@
 
 @property (nonatomic, readonly) NSUInteger tabCount;
 @property (nonatomic) NSUInteger selectedTabIndex;
-@property (nonatomic, readonly, weak) UIButton *selectedTabButton;
+@property (nonatomic, weak) UIButton *selectedTabButton;
 
 - (void)addTabButtonWithTitle:(NSString *)title animated:(BOOL)animated;
 - (void)removeTabAtIndex:(NSUInteger)index animated:(BOOL)animated;
 
 - (UIButton *)tabAtIndex:(NSUInteger)index;
 - (NSUInteger)indexOfTab:(UIButton *)tabButton;
+- (NSUInteger)indexOfTabWithTitle:(NSString *)title;
 
 @end
