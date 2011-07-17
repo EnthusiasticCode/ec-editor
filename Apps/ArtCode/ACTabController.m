@@ -11,7 +11,19 @@
 
 #import "ECSwipeGestureRecognizer.h"
 
-@implementation ACTabController
+@interface ACTab : NSObject
+
+@property (nonatomic, strong) NSMutableArray *history;
+@property (nonatomic, strong) UIViewController<ACNavigable> *viewController;
+
++ (ACTab *)tabWithURL:(NSURL *)url viewController:(UIViewController<ACNavigable> *)controller;
+
+@end
+
+@implementation ACTabController {
+    /// Dictionary of tab titles -> ACTab.
+    NSMutableDictionary *tabs;
+}
 
 #pragma mark - Properties
 
@@ -164,6 +176,86 @@
     [tabBar removeTabAtIndex:tabIndex animated:YES];
     
     // TODO also remove controller
+}
+
+#pragma mark - Tab Navigation Methods
+
+@synthesize currentTab;
+
+- (NSArray *)tabTitles
+{
+    return [tabs allKeys];
+}
+
+- (NSString *)addTabWithURL:(NSURL *)url title:(NSString *)title animated:(BOOL)animated
+{
+    // TODO warn if no delegate?
+    // TODO assert url != nil?
+    
+    // Create a proper title
+    if (title == nil)
+    {
+        title = [url lastPathComponent];
+    }
+    else if ([tabs objectForKey:title] != nil)
+    {
+        if ([url.pathComponents count] > 1)
+        {
+            title = [title stringByAppendingFormat:@" - %@", [url.pathComponents objectAtIndex:[url.pathComponents count] - 2]];
+        }
+        else
+        {
+            NSString *newTitle;
+            NSUInteger i = 1;
+            do {
+                newTitle = [title stringByAppendingFormat:@" (%u)", i];
+            } while ([tabs objectForKey:newTitle] != nil);
+            title = newTitle;
+        }
+    }
+    
+    // Create new tab entry
+    if (!tabs)
+        tabs = [NSMutableDictionary new];
+    ACTab *tab = [ACTab tabWithURL:url viewController:[delegate tabController:self viewControllerForURL:url]];
+    [tabs setObject:tab forKey:title];
+    
+    // Account for tab gesture recognizer
+    if ([tab.viewController.view isKindOfClass:[UIScrollView class]])
+    {
+        UIScrollView *scrollView = (UIScrollView *)tab.viewController.view;
+        [scrollView.panGestureRecognizer requireGestureRecognizerToFail:swipeGestureRecognizer];
+    }
+    
+    // Add new tab in the tab bar
+    [tabBar addTabButtonWithTitle:title animated:animated];
+    
+    // Position new tab controller's view
+    CGRect tabFrame = contentScrollView.bounds;
+    if ([tabs count] > 1)
+    {
+        contentScrollView.contentSize = CGSizeMake(tabFrame.size.width * [tabs count], tabFrame.size.height);
+        tabFrame.origin.x = tabFrame.size.width * ([tabs count] - 1);
+    }
+    tab.viewController.view.frame = tabFrame;
+    [self.view addSubview:tab.viewController.view];
+    [contentScrollView scrollRectToVisible:tabFrame animated:animated];
+    
+    return title;
+}
+
+@end
+
+@implementation ACTab
+
+@synthesize history, viewController;
+
++ (ACTab *)tabWithURL:(NSURL *)url viewController:(UIViewController<ACNavigable> *)controller
+{
+    ACTab *result = [ACTab new];
+    result.viewController = controller;
+    result.history = [NSMutableArray arrayWithObject:url];
+    return result;
 }
 
 @end

@@ -45,8 +45,8 @@
 
 #pragma mark Tab Bar Actions
 
+/// Shows or hide the tab bar. This method can be called from a control's action.
 - (void)toggleTabBar:(id)sender;
-- (void)closeTabButtonAction:(id)sender;
 
 #pragma mark Tab Navigation Methods
 
@@ -54,12 +54,18 @@
 @property (nonatomic, weak) NSString *currentTab;
 
 /// Retrieve the titles of all tabs.
-@property (nonatomic, readonly) NSArray *tabTitles;
+@property (nonatomic, copy, readonly) NSArray *tabTitles;
 
 /// Add a new tab with the given url and title. If title is nil it will be infered
 /// by the URL. The delegate tabController:viewControllerForURL: method may be 
 /// implemented to make this method effective.
-- (void)addTabWithURL:(NSURL *)url title:(NSString *)title animated:(BOOL)animated;
+/// Returns the actual title given to the tab. This title may change from the 
+/// provided one if, for example, a tab with the same title already exists.
+- (NSString *)addTabWithURL:(NSURL *)url title:(NSString *)title animated:(BOOL)animated;
+
+/// Removes the tab form the controller. If title is nil, the current tab will be
+/// removed. This method will not remove a tab if it's the last remaining.
+- (void)removeTabWithTitle:(NSString *)title animated:(BOOL)animated;
 
 /// Pushes the given URL to the specified tab's history. If tab tile is nil, the
 /// current tab is used. If no current tab is selected, a new tab will be created.
@@ -72,6 +78,6 @@
 
 /// Retrieve the history of a given tab. If title is nil, the current tab will
 /// be used.
-- (NSArray *)urlStackForTabWithTitle:(NSString *)tabTitle;
+- (NSArray *)URLHistoryForTabWithTitle:(NSString *)tabTitle;
 
 @end
