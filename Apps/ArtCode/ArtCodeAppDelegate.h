@@ -7,8 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "ACNavigationController.h"
 
-@interface ArtCodeAppDelegate : UIResponder <UIApplicationDelegate>
+@interface ArtCodeAppDelegate : UIResponder <UIApplicationDelegate, ACNavigationControllerDelegate>
 
 @property (nonatomic, strong) UIWindow *window;
 

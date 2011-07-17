@@ -16,6 +16,8 @@
 #import "ECJumpBar.h"
 #import "ACToolFiltersView.h"
 
+#import "ACProjectTableController.h"
+
 @implementation ArtCodeAppDelegate
 
 @synthesize window;
@@ -72,9 +74,25 @@
     ////////////////////////////////////////////////////////////////////////////
     // Adding tool panel
     UIStoryboard *toolPanelsStoryboard = [UIStoryboard storyboardWithName:@"ToolPanelStoryboard" bundle:[NSBundle mainBundle]];
-    navigationController.toolPanelController = [toolPanelsStoryboard instantiateInitialViewController];
+    ACToolPanelController *toolPanelController = [toolPanelsStoryboard instantiateInitialViewController];
+    [toolPanelController addToolWithController:[toolPanelsStoryboard instantiateViewControllerWithIdentifier:@"HistoryTool"]
+                                      tabImage:[UIImage imageNamed:@"toolPanelHistoryIcon.png"] 
+                              selectedTabImage:[UIImage imageNamed:@"toolPanelHistoryActiveIcon.png"]];
+    [toolPanelController addToolWithController:[toolPanelsStoryboard instantiateViewControllerWithIdentifier:@"BookmarksTool"]
+                                      tabImage:[UIImage imageNamed:@"toolPanelStarIcon.png"] 
+                              selectedTabImage:[UIImage imageNamed:@"toolPanelStarActiveIcon.png"]];
+    [toolPanelController addToolWithController:[toolPanelsStoryboard instantiateViewControllerWithIdentifier:@"SnippetsTool"]
+                                      tabImage:[UIImage imageNamed:@"toolPanelSnippetsIcon.png"] 
+                              selectedTabImage:[UIImage imageNamed:@"toolPanelSnippetsActiveIcon.png"]];
+    [toolPanelController addToolWithController:[toolPanelsStoryboard instantiateViewControllerWithIdentifier:@"SymbolsTool"]
+                                      tabImage:[UIImage imageNamed:@"toolPanelSymbolsIcon.png"] 
+                              selectedTabImage:[UIImage imageNamed:@"toolPanelSymbolsActiveIcon.png"]];
+    [toolPanelController addToolWithController:[toolPanelsStoryboard instantiateViewControllerWithIdentifier:@"NavigatorTool"]
+                                      tabImage:[UIImage imageNamed:@"toolPanelNavigatorIcon.png"] 
+                              selectedTabImage:[UIImage imageNamed:@"toolPanelNavigatorActiveIcon.png"]];
+    //
+    navigationController.toolPanelController = toolPanelController;
     navigationController.toolPanelOnRight = YES;
-    navigationController.toolPanelEnabled = NO;
     
     ////////////////////////////////////////////////////////////////////////////
     // Tools
@@ -88,7 +106,8 @@
     
     ////////////////////////////////////////////////////////////////////////////
     [window makeKeyAndVisible];
-    [navigationController performSegueWithIdentifier:@"rootSegue" sender:nil];
+    navigationController.delegate = self;
+    [navigationController pushURL:nil animated:YES];
     return YES;
 }
 
@@ -129,6 +148,20 @@
      Save data if appropriate.
      See also applicationDidEnterBackground:.
      */
+}
+
+#pragma mark - Navigation Controller Delegate Methods
+
+- (UIViewController<ACNavigable> *)navigationController:(ACNavigationController *)navigationController viewControllerForURL:(NSURL *)url
+{
+    Class controllerClass = nil;
+    // TODO url switch logic
+    controllerClass = [ACProjectTableController class];
+    
+    if ([navigationController.currentViewController isKindOfClass:controllerClass])
+        return navigationController.currentViewController;
+    else
+        return [[controllerClass alloc] init]; // TODO initWithNibName:name of class
 }
 
 @end

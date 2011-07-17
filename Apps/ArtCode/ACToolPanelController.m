@@ -9,11 +9,10 @@
 #import "ACToolPanelController.h"
 #import "AppStyle.h"
 #import <QuartzCore/QuartzCore.h>
+#import "UIControl+BlockAction.h"
 
 
-@implementation ACToolPanelController {
-    UIButton *selectedTabButton;
-}
+@implementation ACToolPanelController
 
 @synthesize tabsView;
 @synthesize selectedViewController;
@@ -38,7 +37,7 @@
     viewLayer.borderWidth = 1;
     
     //
-    [self performSegueWithIdentifier:@"rootSegue" sender:[tabsView.subviews objectAtIndex:0]];
+//    [self performSegueWithIdentifier:@"rootSegue" sender:[tabsView.subviews objectAtIndex:0]];
 }
 
 - (void)viewDidUnload
@@ -54,21 +53,77 @@
 	return YES;
 }
 
+- (void)addToolWithController:(ACToolController *)toolController tabImage:(UIImage *)tabImage selectedTabImage:(UIImage *)selectedImage
+{
+    [super addChildViewController:toolController];
+    
+    UIButton *tabButton = [UIButton new];
+    [tabButton setImage:tabImage forState:UIControlStateNormal];
+    [tabButton setImage:selectedImage forState:UIControlStateSelected];
+    toolController.tabButton = tabButton;
+    
+    [tabButton setActionBlock:^(id sender) {
+        [self setSelectedViewController:toolController animated:YES];
+    } forControlEvent:UIControlEventTouchUpInside];
+}
+
+#pragma mark - Tabs Management
+
+- (void)updateTabs
+{
+    NSMutableArray *visibleTabControllers = [[NSMutableArray alloc] initWithCapacity:[self.childViewControllers count]];
+    for (ACToolController *toolController in self.childViewControllers)
+    {
+        if (toolController.isEnabled)
+        {
+            [visibleTabControllers addObject:toolController];
+        }
+        else
+        {
+            [toolController.tabButton removeFromSuperview];
+        }
+    }
+    
+    // Set the selected view, it will also load the actual panel controller view
+    // and thus initialize the tabsView.
+    if ([visibleTabControllers count] > 0 
+        && ![visibleTabControllers containsObject:selectedViewController])
+    {
+        [self setSelectedViewController:[visibleTabControllers objectAtIndex:0]];
+    }
+    
+    CGRect tabButtonFrame = CGRectMake(0, 0, 44, 44);
+    for (ACToolController *toolController in visibleTabControllers)
+    {
+        [tabsView addSubview:toolController.tabButton];
+        toolController.tabButton.frame = tabButtonFrame;
+        tabButtonFrame.origin.x += 45;
+    }
+}
+
 #pragma mark - Segue Management
 
-- (void)setSelectedViewController:(UIViewController *)controller
+- (void)setSelectedViewController:(ACToolController *)controller
 {
     [self setSelectedViewController:controller animated:NO];
 }
 
-- (void)setSelectedViewController:(UIViewController *)controller animated:(BOOL)animated
+- (void)setSelectedViewController:(ACToolController *)controller animated:(BOOL)animated
 {
+    // Do nothing if already selected
+    if (controller == selectedViewController)
+        return;
+    
+    // Deselect button
+    selectedViewController.tabButton.selected = NO;
+    selectedViewController.tabButton.backgroundColor = [UIColor clearColor];
+    
     // Add controller if not present in child controllers
     [self addChildViewController:controller];
     
     // Calculate controller's size
-    CGFloat tabsHeight = CGRectGetMaxY(self.tabsView.frame);
     CGRect controllerViewFrame = self.view.bounds;
+    CGFloat tabsHeight = CGRectGetMaxY(self.tabsView.frame);
     controllerViewFrame.origin.y = tabsHeight;
     controllerViewFrame.size.height -= tabsHeight;
     
@@ -80,6 +135,10 @@
             [self.view addSubview:controller.view];
         [UIView transitionFromView:selectedViewController.view toView:controller.view duration:0.15 options:UIViewAnimationOptionTransitionCrossDissolve completion:^(BOOL finished) {
             selectedViewController = controller;
+            
+            // Select button
+            selectedViewController.tabButton.selected = YES;
+            selectedViewController.tabButton.backgroundColor = [UIColor styleBackgroundColor];
         }];
     }
     else
@@ -88,17 +147,11 @@
         selectedViewController = controller;
         selectedViewController.view.frame = controllerViewFrame;
         [self.view addSubview:selectedViewController.view];
+        
+        // Select button
+        selectedViewController.tabButton.selected = YES;
+        selectedViewController.tabButton.backgroundColor = [UIColor styleBackgroundColor];
     }
-}
-
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
-{
-    selectedTabButton.selected = NO;
-    selectedTabButton.backgroundColor = [UIColor clearColor];
-    
-    selectedTabButton = sender;
-    selectedTabButton.selected = YES;
-    selectedTabButton.backgroundColor = [UIColor styleBackgroundColor];
 }
 
 @end

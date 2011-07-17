@@ -13,8 +13,10 @@
 #import "ACJumpBarTextField.h"
 #import "ACFileTableController.h"
 
-#import "ECInstantGestureRecognizer.h"
+#import "ACToolPanelController.h"
+#import "ACToolController.h"
 
+#import "ECInstantGestureRecognizer.h"
 
 
 @implementation ACNavigationController {
@@ -33,6 +35,7 @@
 
 #pragma mark - Properties
 
+@synthesize delegate;
 @synthesize contentScrollView;
 @synthesize tabBar, tabBarEnabled;
 @synthesize jumpBar, buttonEdit, buttonTools;
@@ -192,8 +195,16 @@
 
 #pragma mark - Navigation Methods
 
-- (void)pushViewController:(UIViewController *)viewController animated:(BOOL)animated
+@synthesize currentViewController;
+
+// TODO update history for tab
+- (void)pushViewController:(UIViewController<ACNavigable> *)viewController animated:(BOOL)animated
 {
+    if (viewController == currentViewController)
+        return;
+    
+    currentViewController = viewController;
+    
     // Customize view controller's view's gesture recognizers
     if ([viewController.view isKindOfClass:[UIScrollView class]])
     {
@@ -227,13 +238,14 @@
     // Jump bar
 }
 //- (void)viewWillLayoutSubviews check this out
-- (UIViewController *)popViewControllerAnimated:(BOOL)animated
+- (UIViewController<ACNavigable> *)popViewControllerAnimated:(BOOL)animated
 {    
     NSUInteger childViewControllersCount = [self.childViewControllers count];
     if (childViewControllersCount < 2)
         return nil;
     
-    UIViewController *topViewController = [self.childViewControllers lastObject];
+#warning TODO add tabs logic and update currentController
+    UIViewController<ACNavigable> *topViewController = [self.childViewControllers lastObject];
     UIViewController *viewController = [self.childViewControllers objectAtIndex:childViewControllersCount - 2];
     [viewController willMoveToParentViewController:self];
     if (animated)
@@ -251,6 +263,26 @@
         [topViewController removeFromParentViewController];
     }
     return topViewController;
+}
+
+- (void)pushURL:(NSURL *)url animated:(BOOL)animated
+{
+    UIViewController<ACNavigable> *viewController = [delegate navigationController:self viewControllerForURL:url];
+    if (!viewController)
+        return;
+    
+    self.tabBarEnabled = [viewController shouldShowTabBar];
+    BOOL enableToolPanels = NO;
+    for (ACToolController *toolController in toolPanelController.childViewControllers)
+    {
+        BOOL enable = [viewController shouldShowToolPanelController:toolController];
+        toolController.enabled = enable;
+        enableToolPanels |= enable;
+    }
+    [toolPanelController updateTabs];
+    self.toolPanelEnabled = enableToolPanels;
+    
+    [self pushViewController:viewController animated:animated];
 }
 
 #pragma mark - Bar Methods

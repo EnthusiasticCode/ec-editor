@@ -7,12 +7,16 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "ACToolController.h"
 
 @interface ACToolPanelController : UIViewController
 
 @property (nonatomic, strong) IBOutlet UIView *tabsView;
 
-@property (nonatomic, strong) UIViewController *selectedViewController;
-- (void)setSelectedViewController:(UIViewController *)controller animated:(BOOL)animated;
+- (void)addToolWithController:(ACToolController *)toolController tabImage:(UIImage *)tabImage selectedTabImage:(UIImage *)selectedImage;
+- (void)updateTabs;
+
+@property (nonatomic, strong) ACToolController *selectedViewController;
+- (void)setSelectedViewController:(ACToolController *)controller animated:(BOOL)animated;
 
 @end

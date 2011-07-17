@@ -14,21 +14,41 @@
 
 #pragma mark - View lifecycle
 
-- (id)initWithStyle:(UITableViewStyle)style
+- (void)viewDidLoad
 {
-    self = [super initWithStyle:style];
-    if (self) {
-        // Custom initialization
-    }
-    return self;
+    [super viewDidLoad];
+    
+    self.tableView.rowHeight = 55;
+    self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+    self.tableView.backgroundColor = [UIColor clearColor];
 }
 
-- (void)didReceiveMemoryWarning
+#pragma mark - ACNavigable Protocol
+
+- (BOOL)canOpenURL:(NSURL *)url
 {
-    // Releases the view if it doesn't have a superview.
-    [super didReceiveMemoryWarning];
-    
-    // Release any cached data, images, etc that aren't in use.
+    // TODO accept something like acproj://about:projects
+    return url == nil;
+}
+
+- (void)openURL:(NSURL *)url
+{
+    // TODO refresh projects
+}
+
+- (BOOL)shouldShowTabBar
+{
+    return NO;
+}
+
+- (BOOL)shouldShowToolPanelController:(ACToolController *)toolController
+{
+    return YES;
+}
+
+- (void)applyFilter:(NSString *)filter
+{
+    // TODO filter
 }
 
 #pragma mark - Table view data source

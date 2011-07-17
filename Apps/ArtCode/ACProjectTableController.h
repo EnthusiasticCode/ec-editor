@@ -7,7 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "ACNavigable.h"
 
-@interface ACProjectTableController : UITableViewController
+@interface ACProjectTableController : UITableViewController <ACNavigable>
 
 @end

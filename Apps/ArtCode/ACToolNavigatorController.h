@@ -7,7 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "ACToolController.h"
 
-@interface ACToolNavigatorController : UIViewController
+@interface ACToolNavigatorController : ACToolController
 
 @end

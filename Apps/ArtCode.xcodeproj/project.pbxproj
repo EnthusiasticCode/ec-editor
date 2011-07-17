@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CD13665913D32150001F3455 /* UIControl+BlockAction.m in Sources */ = {isa = PBXBuildFile; fileRef = CD13665813D32150001F3455 /* UIControl+BlockAction.m */; };
 		CD62BAC613CA06A900266BC0 /* ACToolController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD62BAC513CA06A900266BC0 /* ACToolController.m */; };
 		CD62BACA13CA1B4600266BC0 /* ACToolHistoryController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD62BAC913CA1B4500266BC0 /* ACToolHistoryController.m */; };
 		CD62BACD13CA1F8700266BC0 /* ACToolSnippetsController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD62BACC13CA1F8600266BC0 /* ACToolSnippetsController.m */; };
@@ -72,6 +73,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		CD13665713D32150001F3455 /* UIControl+BlockAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIControl+BlockAction.h"; sourceTree = "<group>"; };
+		CD13665813D32150001F3455 /* UIControl+BlockAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIControl+BlockAction.m"; sourceTree = "<group>"; };
+		CD54A0C313D21D7800C3DD33 /* ACNavigable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACNavigable.h; sourceTree = "<group>"; };
 		CD62BAC413CA06A900266BC0 /* ACToolController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACToolController.h; sourceTree = "<group>"; };
 		CD62BAC513CA06A900266BC0 /* ACToolController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACToolController.m; sourceTree = "<group>"; };
 		CD62BAC813CA1B4500266BC0 /* ACToolHistoryController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACToolHistoryController.h; sourceTree = "<group>"; };
@@ -368,6 +372,7 @@
 		CD7D2B1613C0D39B00B889EE /* Navigation */ = {
 			isa = PBXGroup;
 			children = (
+				CD54A0C313D21D7800C3DD33 /* ACNavigable.h */,
 				CD7D2B2513C0D4B700B889EE /* ACNavigationController.h */,
 				CD7D2B2613C0D4B700B889EE /* ACNavigationController.m */,
 				CD7D2B4513C0D53A00B889EE /* Views and Segues */,
@@ -460,6 +465,8 @@
 				CDFF3DB813C0D76400108DE2 /* UIImage+BlockDrawing.m */,
 				CDFF3DB913C0D76400108DE2 /* UIView+ReuseIdentifier.h */,
 				CDFF3DBA13C0D76400108DE2 /* UIView+ReuseIdentifier.m */,
+				CD13665713D32150001F3455 /* UIControl+BlockAction.h */,
+				CD13665813D32150001F3455 /* UIControl+BlockAction.m */,
 			);
 			name = "UIKit Additions";
 			sourceTree = "<group>";
@@ -629,6 +636,7 @@
 				CD62BACD13CA1F8700266BC0 /* ACToolSnippetsController.m in Sources */,
 				CD62BAD013CA248C00266BC0 /* ACToolSymbolsController.m in Sources */,
 				CD62BAD313CA2ABD00266BC0 /* ACToolNavigatorController.m in Sources */,
+				CD13665913D32150001F3455 /* UIControl+BlockAction.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
