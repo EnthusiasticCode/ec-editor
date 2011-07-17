@@ -16,44 +16,26 @@
 #import "ACToolPanelController.h"
 #import "ACToolController.h"
 
+#import "ACTabController.h"
+
 #import "ECInstantGestureRecognizer.h"
 
 
 @implementation ACNavigationController {
 @private
     ECPopoverController *popoverController;
-    ECTabBar *tabBar;
     
     UILongPressGestureRecognizer *jumpBarElementLongPressRecognizer;
     
-    ECSwipeGestureRecognizer *tabGestureRecognizer;
     UISwipeGestureRecognizer *toolPanelLeftGestureRecognizer, *toolPanelRightGestureRecognizer;
     ECInstantGestureRecognizer *toolPanelDismissGestureRecognizer;
-    
-    UIScrollView *contentScrollView;
 }
 
 #pragma mark - Properties
 
-@synthesize delegate;
-@synthesize contentScrollView;
-@synthesize tabBar, tabBarEnabled;
 @synthesize jumpBar, buttonEdit, buttonTools;
 @synthesize toolPanelController, toolPanelEnabled, toolPanelOnRight;
-
-- (void)setTabBarEnabled:(BOOL)enabled
-{
-    if (enabled == tabBarEnabled)
-        return;
-    
-    tabBarEnabled = enabled;
-    
-    // TODO instead of disable, show message that you need to choose a project to enable tabs
-    tabGestureRecognizer.enabled = enabled;
-    
-    if (!tabBarEnabled)
-        [self toggleTabBar:nil];
-}
+@synthesize tabController;
 
 - (void)setToolPanelEnabled:(BOOL)enabled
 {
@@ -123,48 +105,6 @@
     jumpBar.textElement.leftViewMode = UITextFieldViewModeUnlessEditing;
     
     ////////////////////////////////////////////////////////////////////////////
-    // Tab bar
-    if (!tabBar)
-        tabBar = [[ECTabBar alloc] initWithFrame:CGRectMake(0, 45, self.view.bounds.size.width, 44)];
-    tabBar.delegate = self;
-    tabBar.alwaysBounceHorizontal = YES;
-    tabBar.backgroundColor = [UIColor styleForegroundColor];
-    tabBar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-    
-    UIButton *addTabButton = [UIButton new];
-    [addTabButton setImage:[UIImage styleAddImageWithColor:[UIColor styleBackgroundColor] shadowColor:nil] forState:UIControlStateNormal];
-    addTabButton.adjustsImageWhenHighlighted = NO;
-    
-    UIButton *closeTabBarButton = [UIButton new];
-    [closeTabBarButton addTarget:self action:@selector(toggleTabBar:) forControlEvents:UIControlEventTouchUpInside];
-    [closeTabBarButton setImage:[UIImage styleDisclosureArrowImageWithOrientation:UIImageOrientationUp color:[UIColor styleBackgroundColor]] forState:UIControlStateNormal];
-    closeTabBarButton.adjustsImageWhenHighlighted = NO;
-
-    tabBar.additionalControls = [NSArray arrayWithObjects:addTabButton, closeTabBarButton, nil];
-    
-    [tabBar addTabButtonWithTitle:@"One" animated:NO];
-    [tabBar addTabButtonWithTitle:@"Two" animated:NO];
-    [tabBar addTabButtonWithTitle:@"Three" animated:NO];
-    [tabBar addTabButtonWithTitle:@"Four" animated:NO];
-    
-    ////////////////////////////////////////////////////////////////////////////
-    // Tab Bar gesture recognizer
-    tabGestureRecognizer = [[ECSwipeGestureRecognizer alloc] initWithTarget:self action:@selector(toggleTabBar:)];
-    tabGestureRecognizer.numberOfTouchesRequired = 3;
-    tabGestureRecognizer.numberOfTouchesRequiredImmediatlyOrFailAfterInterval = .05;
-    tabGestureRecognizer.direction = UISwipeGestureRecognizerDirectionUp | UISwipeGestureRecognizerDirectionDown;
-    [self.view addGestureRecognizer:tabGestureRecognizer];
-    tabGestureRecognizer.enabled = tabBarEnabled;
-    
-    ////////////////////////////////////////////////////////////////////////////
-    // Content scroll view
-    contentScrollView.pagingEnabled = YES;
-    contentScrollView.showsVerticalScrollIndicator = NO;
-    contentScrollView.showsHorizontalScrollIndicator = NO;
-    contentScrollView.panGestureRecognizer.minimumNumberOfTouches = 3;
-    contentScrollView.panGestureRecognizer.maximumNumberOfTouches = 3;
-    
-    ////////////////////////////////////////////////////////////////////////////
     // Tool panel gesture recognizer
     toolPanelLeftGestureRecognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(handleToolPanelGesture:)];
     toolPanelLeftGestureRecognizer.direction = UISwipeGestureRecognizerDirectionLeft;
@@ -174,17 +114,27 @@
     [self.view addGestureRecognizer:toolPanelRightGestureRecognizer];
     toolPanelLeftGestureRecognizer.enabled = toolPanelEnabled;
     toolPanelRightGestureRecognizer.enabled = toolPanelEnabled;
+    
+    ////////////////////////////////////////////////////////////////////////////
+    // Tab controller
+    if (!tabController)
+        tabController = [ACTabController new];
+    [self addChildViewController:tabController];
+    [self.view addSubview:tabController.view];
+    CGRect tabControllerFrame = self.view.bounds;
+    tabControllerFrame.origin.y = 45;
+    tabControllerFrame.size.height -= 45;
+    tabController.view.frame = tabControllerFrame;
+    tabController.view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
 }
 
 - (void)viewDidUnload
 {
     popoverController = nil;
     [self setJumpBar:nil];
-    [self setTabBar:nil];
     toolPanelLeftGestureRecognizer = nil;
     toolPanelRightGestureRecognizer = nil;
-    tabGestureRecognizer = nil;
-    [self setContentScrollView:nil];
+    [self setTabController:nil];
     [super viewDidUnload];
 }
 
@@ -206,84 +156,85 @@
     currentViewController = viewController;
     
     // Customize view controller's view's gesture recognizers
-    if ([viewController.view isKindOfClass:[UIScrollView class]])
-    {
-        UIScrollView *scrollView = (UIScrollView *)viewController.view;
-        [scrollView.panGestureRecognizer requireGestureRecognizerToFail:tabGestureRecognizer];
-    }
+//    if ([viewController.view isKindOfClass:[UIScrollView class]])
+//    {
+//        UIScrollView *scrollView = (UIScrollView *)viewController.view;
+//        [scrollView.panGestureRecognizer requireGestureRecognizerToFail:tabController.swipeGestureRecognizer];
+//    }
     
-    UIViewController *topViewController = [self.childViewControllers lastObject];
-    [self addChildViewController:viewController];
-    if (animated && topViewController)
-    {
-        [contentScrollView addSubview:viewController.view];
-        viewController.view.frame = contentScrollView.bounds;
-        viewController.view.alpha = 0;
-        [UIView animateWithDuration:0.25 animations:^(void) {
-            topViewController.view.alpha = 0;
-            viewController.view.alpha = 1;
-        } completion:^(BOOL finished) {
-            [topViewController.view removeFromSuperview];
-            [viewController didMoveToParentViewController:self];            
-        }];
-    }
-    else
-    {
-        [topViewController.view removeFromSuperview];
-        [contentScrollView addSubview:viewController.view];
-        viewController.view.frame = contentScrollView.bounds;
-        [viewController didMoveToParentViewController:self];
-    }
+//    UIViewController *topViewController = [self.childViewControllers lastObject];
+//    [self addChildViewController:viewController];
+//    if (animated && topViewController)
+//    {
+//        [contentScrollView addSubview:viewController.view];
+//        viewController.view.frame = contentScrollView.bounds;
+//        viewController.view.alpha = 0;
+//        [UIView animateWithDuration:0.25 animations:^(void) {
+//            topViewController.view.alpha = 0;
+//            viewController.view.alpha = 1;
+//        } completion:^(BOOL finished) {
+//            [topViewController.view removeFromSuperview];
+//            [viewController didMoveToParentViewController:self];            
+//        }];
+//    }
+//    else
+//    {
+//        [topViewController.view removeFromSuperview];
+//        [contentScrollView addSubview:viewController.view];
+//        viewController.view.frame = contentScrollView.bounds;
+//        [viewController didMoveToParentViewController:self];
+//    }
     
     // Jump bar
 }
 //- (void)viewWillLayoutSubviews check this out
 - (UIViewController<ACNavigable> *)popViewControllerAnimated:(BOOL)animated
 {    
-    NSUInteger childViewControllersCount = [self.childViewControllers count];
-    if (childViewControllersCount < 2)
-        return nil;
-    
-#warning TODO add tabs logic and update currentController
-    UIViewController<ACNavigable> *topViewController = [self.childViewControllers lastObject];
-    UIViewController *viewController = [self.childViewControllers objectAtIndex:childViewControllersCount - 2];
-    [viewController willMoveToParentViewController:self];
-    if (animated)
-    {
-        [self transitionFromViewController:topViewController toViewController:viewController duration:1 options:UIViewAnimationOptionCurveEaseInOut animations:^(void) {
-            // ???
-        } completion:^(BOOL finished) {
-            [topViewController removeFromParentViewController];
-        }];
-    }
-    else
-    {
-        [contentScrollView addSubview:viewController.view];
-        viewController.view.frame = contentScrollView.bounds;
-        [topViewController removeFromParentViewController];
-    }
-    return topViewController;
+//    NSUInteger childViewControllersCount = [self.childViewControllers count];
+//    if (childViewControllersCount < 2)
+//        return nil;
+//    
+//#warning TODO add tabs logic and update currentController
+//    UIViewController<ACNavigable> *topViewController = [self.childViewControllers lastObject];
+//    UIViewController *viewController = [self.childViewControllers objectAtIndex:childViewControllersCount - 2];
+//    [viewController willMoveToParentViewController:self];
+//    if (animated)
+//    {
+//        [self transitionFromViewController:topViewController toViewController:viewController duration:1 options:UIViewAnimationOptionCurveEaseInOut animations:^(void) {
+//            // ???
+//        } completion:^(BOOL finished) {
+//            [topViewController removeFromParentViewController];
+//        }];
+//    }
+//    else
+//    {
+//        [contentScrollView addSubview:viewController.view];
+//        viewController.view.frame = contentScrollView.bounds;
+//        [topViewController removeFromParentViewController];
+//    }
+//    return topViewController;
+    return nil;
 }
 
-- (void)pushURL:(NSURL *)url animated:(BOOL)animated
-{
-    UIViewController<ACNavigable> *viewController = [delegate navigationController:self viewControllerForURL:url];
-    if (!viewController)
-        return;
-    
-    self.tabBarEnabled = [viewController shouldShowTabBar];
-    BOOL enableToolPanels = NO;
-    for (ACToolController *toolController in toolPanelController.childViewControllers)
-    {
-        BOOL enable = [viewController shouldShowToolPanelController:toolController];
-        toolController.enabled = enable;
-        enableToolPanels |= enable;
-    }
-    [toolPanelController updateTabs];
-    self.toolPanelEnabled = enableToolPanels;
-    
-    [self pushViewController:viewController animated:animated];
-}
+//- (void)pushURL:(NSURL *)url animated:(BOOL)animated
+//{
+//    UIViewController<ACNavigable> *viewController = [delegate navigationController:self viewControllerForURL:url];
+//    if (!viewController)
+//        return;
+//    
+////    self.tabBarEnabled = [viewController shouldShowTabBar];
+//    BOOL enableToolPanels = NO;
+//    for (ACToolController *toolController in toolPanelController.childViewControllers)
+//    {
+//        BOOL enable = [viewController shouldShowToolPanelController:toolController];
+//        toolController.enabled = enable;
+//        enableToolPanels |= enable;
+//    }
+//    [toolPanelController updateTabs];
+//    self.toolPanelEnabled = enableToolPanels;
+//    
+//    [self pushViewController:viewController animated:animated];
+//}
 
 #pragma mark - Bar Methods
 
@@ -305,74 +256,6 @@
 {
     BOOL editing = !self.isEditing;
     [self setEditing:editing animated:YES];
-}
-
-#pragma mark - TabBar Methods
-
-- (BOOL)tabBar:(ECTabBar *)tabBar shouldAddTabButton:(UIButton *)tabButton atIndex:(NSUInteger)tabIndex
-{    
-    UIButton *closeButton = [UIButton new];
-    CGRect frame = tabButton.bounds;
-    frame.origin.x = frame.size.width - 35;
-    frame.size.width = 35;
-    closeButton.frame = frame;
-    [closeButton addTarget:self action:@selector(closeTabButtonAction:) forControlEvents:UIControlEventTouchUpInside];
-    [tabButton addSubview:closeButton];
-    
-    // TODO no appearance proxy for this?
-    [tabButton.titleLabel setFont:[UIFont styleFontWithSize:14]];
-    return YES;
-}
-
-- (void)tabBar:(ECTabBar *)bar didSelectTabAtIndex:(NSUInteger)index
-{
-    [jumpBar setJumpPath:[NSString stringWithFormat:@"/Path/To/%@", [[bar tabAtIndex:index] currentTitle]] animated:YES];
-}
-
-#pragma mark -
-
-- (void)toggleTabBar:(id)sender
-{
-    if (!tabBarEnabled && tabBar.superview == nil)
-        return;
-    
-    CGRect contentScrollViewFrame = contentScrollView.frame;
-    CGRect tabBarFrame = CGRectMake(0, 45, contentScrollViewFrame.size.width, 44);
-    if (tabBar.superview != nil)
-    {
-        contentScrollViewFrame.size.height += tabBarFrame.size.height;
-        contentScrollViewFrame.origin.y -= tabBarFrame.size.height;
-        tabBarFrame.size.height = 0;
-        [UIView animateWithDuration:.1 animations:^(void) {
-            // TODO fix layout problems of tab buttons during animation?
-            tabBar.frame = tabBarFrame;
-            contentScrollView.frame = contentScrollViewFrame;
-        } completion:^(BOOL finished) {
-            [tabBar removeFromSuperview];
-        }];
-    }
-    else
-    {
-        tabBarFrame.size.height = 0;
-        tabBar.frame = tabBarFrame;
-        tabBarFrame.size.height = 44;
-        
-        [self.view addSubview:tabBar];
-        contentScrollViewFrame.size.height -= tabBarFrame.size.height;
-        contentScrollViewFrame.origin.y += tabBarFrame.size.height;
-        [UIView animateWithDuration:.1 animations:^(void) {
-            tabBar.frame = tabBarFrame;
-            contentScrollView.frame = contentScrollViewFrame;
-        }];
-    }
-}
-
-- (void)closeTabButtonAction:(id)sender
-{
-    NSUInteger tabIndex = [tabBar indexOfTab:(UIButton *)[sender superview]];
-    [tabBar removeTabAtIndex:tabIndex animated:YES];
-    
-    // TODO also remove controller
 }
 
 #pragma mark - JumpBar Methods

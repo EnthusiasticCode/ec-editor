@@ -152,16 +152,16 @@
 
 #pragma mark - Navigation Controller Delegate Methods
 
-- (UIViewController<ACNavigable> *)navigationController:(ACNavigationController *)navigationController viewControllerForURL:(NSURL *)url
+- (UIViewController<ACNavigable> *)tabController:(ACTabController *)tabController viewControllerForURL:(NSURL *)url
 {
     Class controllerClass = nil;
     // TODO url switch logic
     controllerClass = [ACProjectTableController class];
     
-    if ([navigationController.currentViewController isKindOfClass:controllerClass])
-        return navigationController.currentViewController;
-    else
-        return [[controllerClass alloc] init]; // TODO initWithNibName:name of class
+//    if ([navigationController.currentViewController isKindOfClass:controllerClass])
+//        return navigationController.currentViewController;
+//    else
+//        return [[controllerClass alloc] init]; // TODO initWithNibName:name of class
 }
 
 @end
