@@ -281,6 +281,18 @@ static void init(ECTabBar *self)
 
 #pragma mark - Managing Tabs
 
+- (void)setSelectedTabButton:(UIButton *)tabButton
+{
+    if (tabButton == selectedTabButton)
+        return;
+    
+    NSUInteger index = [tabButtons indexOfObject:tabButton];
+    if (index == NSNotFound)
+        return;
+    
+    [self setSelectedTabIndex:index];
+}
+
 - (NSUInteger)selectedTabIndex
 {
     return [tabButtons indexOfObject:selectedTabButton];
