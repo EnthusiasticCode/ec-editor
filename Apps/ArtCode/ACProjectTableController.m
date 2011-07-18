@@ -25,12 +25,6 @@
 
 #pragma mark - ACNavigable Protocol
 
-- (BOOL)canOpenURL:(NSURL *)url
-{
-    // TODO accept something like acproj://about:projects
-    return url == nil;
-}
-
 - (void)openURL:(NSURL *)url
 {
     // TODO refresh projects
@@ -38,7 +32,7 @@
 
 - (BOOL)shouldShowTabBar
 {
-    return NO;
+    return YES;
 }
 
 - (BOOL)shouldShowToolPanelController:(ACToolController *)toolController

@@ -77,6 +77,28 @@
 	return YES;
 }
 
+#pragma mark - Tool Target Methods
+
+- (void)openURL:(NSURL *)url
+{
+    
+}
+
+- (BOOL)shouldShowTabBar
+{
+    return YES;
+}
+
+- (BOOL)shouldShowToolPanelController:(ACToolController *)toolController
+{
+    return YES;
+}
+
+- (void)applyFilter:(NSString *)filter
+{
+    
+}
+
 #pragma mark - Table view data source
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView

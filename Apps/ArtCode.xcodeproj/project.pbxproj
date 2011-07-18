@@ -74,9 +74,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		CD0DEAB613D4C2430087ADBB /* ACToolTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACToolTarget.h; sourceTree = "<group>"; };
+		CD0DEAB713D4C26A0087ADBB /* ACURLTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACURLTarget.h; sourceTree = "<group>"; };
 		CD13665713D32150001F3455 /* UIControl+BlockAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIControl+BlockAction.h"; sourceTree = "<group>"; };
 		CD13665813D32150001F3455 /* UIControl+BlockAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIControl+BlockAction.m"; sourceTree = "<group>"; };
-		CD54A0C313D21D7800C3DD33 /* ACNavigable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACNavigable.h; sourceTree = "<group>"; };
 		CD62BAC413CA06A900266BC0 /* ACToolController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACToolController.h; sourceTree = "<group>"; };
 		CD62BAC513CA06A900266BC0 /* ACToolController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACToolController.m; sourceTree = "<group>"; };
 		CD62BAC813CA1B4500266BC0 /* ACToolHistoryController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACToolHistoryController.h; sourceTree = "<group>"; };
@@ -375,7 +376,8 @@
 		CD7D2B1613C0D39B00B889EE /* Navigation */ = {
 			isa = PBXGroup;
 			children = (
-				CD54A0C313D21D7800C3DD33 /* ACNavigable.h */,
+				CD0DEAB713D4C26A0087ADBB /* ACURLTarget.h */,
+				CD0DEAB613D4C2430087ADBB /* ACToolTarget.h */,
 				CD7D2B2513C0D4B700B889EE /* ACNavigationController.h */,
 				CD7D2B2613C0D4B700B889EE /* ACNavigationController.m */,
 				CD7C01BF13D354A0004CD5E5 /* ACTabController.h */,

@@ -7,6 +7,9 @@
 //
 
 #import <QuartzCore/QuartzCore.h>
+#import "ECPopoverController.h"
+#import "ECTabBar.h"
+#import "ECSwipeGestureRecognizer.h"
 
 #import "AppStyle.h"
 #import "ACNavigationController.h"
@@ -33,6 +36,7 @@
 
 #pragma mark - Properties
 
+@synthesize delegate;
 @synthesize jumpBar, buttonEdit, buttonTools;
 @synthesize toolPanelController, toolPanelEnabled, toolPanelOnRight;
 @synthesize tabController;
@@ -119,6 +123,7 @@
     // Tab controller
     if (!tabController)
         tabController = [ACTabController new];
+    tabController.delegate = self;
     [self addChildViewController:tabController];
     [self.view addSubview:tabController.view];
     CGRect tabControllerFrame = self.view.bounds;
@@ -126,6 +131,7 @@
     tabControllerFrame.size.height -= 45;
     tabController.view.frame = tabControllerFrame;
     tabController.view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    tabController.contentScrollView.frame = (CGRect){ CGPointZero, tabControllerFrame.size };
 }
 
 - (void)viewDidUnload
@@ -145,96 +151,96 @@
 
 #pragma mark - Navigation Methods
 
-@synthesize currentViewController;
-
-// TODO update history for tab
-- (void)pushViewController:(UIViewController<ACNavigable> *)viewController animated:(BOOL)animated
-{
-    if (viewController == currentViewController)
-        return;
-    
-    currentViewController = viewController;
-    
-    // Customize view controller's view's gesture recognizers
-//    if ([viewController.view isKindOfClass:[UIScrollView class]])
-//    {
-//        UIScrollView *scrollView = (UIScrollView *)viewController.view;
-//        [scrollView.panGestureRecognizer requireGestureRecognizerToFail:tabController.swipeGestureRecognizer];
-//    }
-    
-//    UIViewController *topViewController = [self.childViewControllers lastObject];
-//    [self addChildViewController:viewController];
-//    if (animated && topViewController)
-//    {
-//        [contentScrollView addSubview:viewController.view];
-//        viewController.view.frame = contentScrollView.bounds;
-//        viewController.view.alpha = 0;
-//        [UIView animateWithDuration:0.25 animations:^(void) {
-//            topViewController.view.alpha = 0;
-//            viewController.view.alpha = 1;
-//        } completion:^(BOOL finished) {
-//            [topViewController.view removeFromSuperview];
-//            [viewController didMoveToParentViewController:self];            
-//        }];
-//    }
-//    else
-//    {
-//        [topViewController.view removeFromSuperview];
-//        [contentScrollView addSubview:viewController.view];
-//        viewController.view.frame = contentScrollView.bounds;
-//        [viewController didMoveToParentViewController:self];
-//    }
-    
-    // Jump bar
-}
-//- (void)viewWillLayoutSubviews check this out
-- (UIViewController<ACNavigable> *)popViewControllerAnimated:(BOOL)animated
-{    
-//    NSUInteger childViewControllersCount = [self.childViewControllers count];
-//    if (childViewControllersCount < 2)
-//        return nil;
-//    
-//#warning TODO add tabs logic and update currentController
-//    UIViewController<ACNavigable> *topViewController = [self.childViewControllers lastObject];
-//    UIViewController *viewController = [self.childViewControllers objectAtIndex:childViewControllersCount - 2];
-//    [viewController willMoveToParentViewController:self];
-//    if (animated)
-//    {
-//        [self transitionFromViewController:topViewController toViewController:viewController duration:1 options:UIViewAnimationOptionCurveEaseInOut animations:^(void) {
-//            // ???
-//        } completion:^(BOOL finished) {
-//            [topViewController removeFromParentViewController];
-//        }];
-//    }
-//    else
-//    {
-//        [contentScrollView addSubview:viewController.view];
-//        viewController.view.frame = contentScrollView.bounds;
-//        [topViewController removeFromParentViewController];
-//    }
-//    return topViewController;
-    return nil;
-}
-
-//- (void)pushURL:(NSURL *)url animated:(BOOL)animated
+//@synthesize currentViewController;
+//
+//// TODO update history for tab
+//- (void)pushViewController:(UIViewController<ACNavigable> *)viewController animated:(BOOL)animated
 //{
-//    UIViewController<ACNavigable> *viewController = [delegate navigationController:self viewControllerForURL:url];
-//    if (!viewController)
+//    if (viewController == currentViewController)
 //        return;
 //    
-////    self.tabBarEnabled = [viewController shouldShowTabBar];
-//    BOOL enableToolPanels = NO;
-//    for (ACToolController *toolController in toolPanelController.childViewControllers)
-//    {
-//        BOOL enable = [viewController shouldShowToolPanelController:toolController];
-//        toolController.enabled = enable;
-//        enableToolPanels |= enable;
-//    }
-//    [toolPanelController updateTabs];
-//    self.toolPanelEnabled = enableToolPanels;
+//    currentViewController = viewController;
 //    
-//    [self pushViewController:viewController animated:animated];
+//    // Customize view controller's view's gesture recognizers
+////    if ([viewController.view isKindOfClass:[UIScrollView class]])
+////    {
+////        UIScrollView *scrollView = (UIScrollView *)viewController.view;
+////        [scrollView.panGestureRecognizer requireGestureRecognizerToFail:tabController.swipeGestureRecognizer];
+////    }
+//    
+////    UIViewController *topViewController = [self.childViewControllers lastObject];
+////    [self addChildViewController:viewController];
+////    if (animated && topViewController)
+////    {
+////        [contentScrollView addSubview:viewController.view];
+////        viewController.view.frame = contentScrollView.bounds;
+////        viewController.view.alpha = 0;
+////        [UIView animateWithDuration:0.25 animations:^(void) {
+////            topViewController.view.alpha = 0;
+////            viewController.view.alpha = 1;
+////        } completion:^(BOOL finished) {
+////            [topViewController.view removeFromSuperview];
+////            [viewController didMoveToParentViewController:self];            
+////        }];
+////    }
+////    else
+////    {
+////        [topViewController.view removeFromSuperview];
+////        [contentScrollView addSubview:viewController.view];
+////        viewController.view.frame = contentScrollView.bounds;
+////        [viewController didMoveToParentViewController:self];
+////    }
+//    
+//    // Jump bar
 //}
+////- (void)viewWillLayoutSubviews check this out
+//- (UIViewController<ACNavigable> *)popViewControllerAnimated:(BOOL)animated
+//{    
+////    NSUInteger childViewControllersCount = [self.childViewControllers count];
+////    if (childViewControllersCount < 2)
+////        return nil;
+////    
+////#warning TODO add tabs logic and update currentController
+////    UIViewController<ACNavigable> *topViewController = [self.childViewControllers lastObject];
+////    UIViewController *viewController = [self.childViewControllers objectAtIndex:childViewControllersCount - 2];
+////    [viewController willMoveToParentViewController:self];
+////    if (animated)
+////    {
+////        [self transitionFromViewController:topViewController toViewController:viewController duration:1 options:UIViewAnimationOptionCurveEaseInOut animations:^(void) {
+////            // ???
+////        } completion:^(BOOL finished) {
+////            [topViewController removeFromParentViewController];
+////        }];
+////    }
+////    else
+////    {
+////        [contentScrollView addSubview:viewController.view];
+////        viewController.view.frame = contentScrollView.bounds;
+////        [topViewController removeFromParentViewController];
+////    }
+////    return topViewController;
+//    return nil;
+//}
+//
+////- (void)pushURL:(NSURL *)url animated:(BOOL)animated
+////{
+////    UIViewController<ACNavigable> *viewController = [delegate navigationController:self viewControllerForURL:url];
+////    if (!viewController)
+////        return;
+////    
+//////    self.tabBarEnabled = [viewController shouldShowTabBar];
+////    BOOL enableToolPanels = NO;
+////    for (ACToolController *toolController in toolPanelController.childViewControllers)
+////    {
+////        BOOL enable = [viewController shouldShowToolPanelController:toolController];
+////        toolController.enabled = enable;
+////        enableToolPanels |= enable;
+////    }
+////    [toolPanelController updateTabs];
+////    self.toolPanelEnabled = enableToolPanels;
+////    
+////    [self pushViewController:viewController animated:animated];
+////}
 
 #pragma mark - Bar Methods
 
@@ -324,6 +330,26 @@
 - (NSString *)jumpBar:(ECJumpBar *)jumpBar pathComponentForJumpElement:(UIView *)jumpElement index:(NSUInteger)elementIndex
 {
     return [(UIButton *)jumpElement currentTitle];
+}
+
+#pragma mark - Tab Controller Delegate Method
+
+- (UIViewController<ACURLTarget> *)tabController:(ACTabController *)tController viewControllerForURL:(NSURL *)url previousViewController:(UIViewController<ACURLTarget> *)previousViewController
+{
+    UIViewController<ACToolTarget> *controller = [delegate navigationController:self viewControllerForURL:url previousViewController:(UIViewController<ACToolTarget> *)previousViewController];
+    
+    tabController.tabBarEnabled = [controller shouldShowTabBar];
+    
+    BOOL toolEnabled = NO;
+    for (ACToolController *toolController in toolPanelController.childViewControllers)
+    {
+        toolController.enabled = [controller shouldShowToolPanelController:toolController];
+        toolEnabled |= toolController.enabled;
+    }
+    [toolPanelController updateTabs];
+    self.toolPanelEnabled = toolEnabled;
+    
+    return controller;
 }
 
 #pragma mark - Tool Panel Management Methods

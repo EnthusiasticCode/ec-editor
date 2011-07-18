@@ -1,21 +1,17 @@
 //
-//  ACURLEnabledProtocol.h
+//  ACToolTarget.h
 //  ArtCode
 //
-//  Created by Nicola Peduzzi on 16/07/11.
+//  Created by Nicola Peduzzi on 18/07/11.
 //  Copyright 2011 __MyCompanyName__. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
+#import "ACURLTarget.h"
 
 @class ACToolController;
 
-// TODO use ACURL instead of NSURL?
-@protocol ACNavigable <NSObject>
-@required
-
-- (BOOL)canOpenURL:(NSURL *)url;
-- (void)openURL:(NSURL *)url;
+@protocol ACToolTarget <ACURLTarget>
 
 - (BOOL)shouldShowTabBar;
 - (BOOL)shouldShowToolPanelController:(ACToolController *)toolController;

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="1.0" toolsVersion="1891" systemVersion="10K540" targetRuntime="iOS.CocoaTouch.iPad" nextObjectID="233" propertyAccessControl="none" initialViewController="71">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="1.0" toolsVersion="1891" systemVersion="10K540" targetRuntime="iOS.CocoaTouch.iPad" nextObjectID="236" propertyAccessControl="none" initialViewController="71">
     <dependencies>
         <development defaultVersion="4200" identifier="xcode"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="884"/>
@@ -63,61 +63,38 @@
                                 </subviews>
                                 <color key="backgroundColor" white="0.90000000000000002" alpha="1" colorSpace="calibratedWhite"/>
                             </view>
-                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" id="196">
-                                <rect key="frame" x="0.0" y="45" width="768" height="959"/>
-                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                <subviews/>
-                            </scrollView>
                         </subviews>
                         <color key="backgroundColor" white="0.90000000000000002" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
                     <connections>
                         <outlet property="buttonEdit" destination="134" id="140"/>
                         <outlet property="buttonTools" destination="82" id="139"/>
-                        <outlet property="contentScrollView" destination="196" id="197"/>
                         <outlet property="jumpBar" destination="133" id="138"/>
                     </connections>
                 </viewController>
             </objects>
             <point key="canvasLocation" x="705" y="-733"/>
         </scene>
-        <scene sceneID="203">
-            <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="202" userLabel="First Responder" sceneMemberID="firstResponder"/>
-                <tableViewController id="198" customClass="ACFileTableController" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="199">
-                        <rect key="frame" x="0.0" y="20" width="768" height="1004"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                        <connections>
-                            <outlet property="dataSource" destination="198" id="201"/>
-                            <outlet property="delegate" destination="198" id="200"/>
-                        </connections>
-                    </tableView>
-                </tableViewController>
-            </objects>
-            <point key="canvasLocation" x="2635" y="-728"/>
-        </scene>
     </scenes>
     <classes>
-        <class className="ACFileTableController" superclassName="UITableViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/ACFileTableController.h"/>
-            <relationships/>
-        </class>
         <class className="ACNavigationController" superclassName="UIViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/ACNavigationController.h"/>
             <relationships>
-                <relationship kind="action" name="closeTabButtonAction:"/>
                 <relationship kind="action" name="tests:"/>
                 <relationship kind="action" name="toggleEditing:"/>
-                <relationship kind="action" name="toggleTabBar:"/>
                 <relationship kind="action" name="toggleTools:"/>
                 <relationship kind="outlet" name="buttonEdit" candidateClass="UIButton"/>
                 <relationship kind="outlet" name="buttonTools" candidateClass="UIButton"/>
-                <relationship kind="outlet" name="contentScrollView" candidateClass="UIScrollView"/>
                 <relationship kind="outlet" name="jumpBar" candidateClass="ECJumpBar"/>
-                <relationship kind="outlet" name="tabBar" candidateClass="ECTabBar"/>
+                <relationship kind="outlet" name="tabController" candidateClass="ACTabController"/>
                 <relationship kind="outlet" name="toolPanelController" candidateClass="ACToolPanelController"/>
+            </relationships>
+        </class>
+        <class className="ACTabController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/ACTabController.h"/>
+            <relationships>
+                <relationship kind="outlet" name="contentScrollView" candidateClass="UIScrollView"/>
+                <relationship kind="outlet" name="tabBar" candidateClass="ECTabBar"/>
             </relationships>
         </class>
         <class className="ACToolPanelController" superclassName="UIViewController">

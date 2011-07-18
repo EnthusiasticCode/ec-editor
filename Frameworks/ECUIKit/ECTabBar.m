@@ -317,7 +317,7 @@ static void init(ECTabBar *self)
     [self scrollRectToVisible:selectedTabFrame animated:YES];
 }
 
-- (void)addTabButtonWithTitle:(NSString *)title animated:(BOOL)animated
+- (NSUInteger)addTabButtonWithTitle:(NSString *)title animated:(BOOL)animated
 {
     if (!tabButtons)
         tabButtons = [NSMutableArray new];
@@ -337,7 +337,7 @@ static void init(ECTabBar *self)
     
     if (delegateFlags.hasShouldAddTabButtonAtIndex 
         && ![delegate tabBar:self shouldAddTabButton:newTabButton atIndex:newTabButtonIndex])
-        return;
+        return NSNotFound;
     
     // Add the button and resize content
     [tabButtons addObject:newTabButton];
@@ -348,6 +348,8 @@ static void init(ECTabBar *self)
     
     if (delegateFlags.hasDidAddTabButtonAtIndex)
         [delegate tabBar:self didAddTabButtonAtIndex:newTabButtonIndex];
+    
+    return newTabButtonIndex;
 }
 
 - (void)removeTabAtIndex:(NSUInteger)index animated:(BOOL)animated
@@ -395,6 +397,8 @@ static void init(ECTabBar *self)
     }
 }
 
+#pragma mark - Utility Methods
+
 - (UIButton *)tabAtIndex:(NSUInteger)index
 {
     if (index >= [tabButtons count])
@@ -419,6 +423,16 @@ static void init(ECTabBar *self)
         }
     }];
     return result;
+}
+
+- (NSArray *)allTabTitles
+{
+    NSMutableArray *tabTitles = [[NSMutableArray alloc] initWithCapacity:[tabButtons count]];
+    for (UIButton *tabButton in tabButtons)
+    {
+        [tabTitles addObject:[tabButton titleForState:UIControlStateNormal]];
+    }
+    return tabTitles;
 }
 
 #pragma mark -

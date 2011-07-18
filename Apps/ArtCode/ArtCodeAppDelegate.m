@@ -17,6 +17,7 @@
 #import "ACToolFiltersView.h"
 
 #import "ACProjectTableController.h"
+#import "ACFileTableController.h"
 
 @implementation ArtCodeAppDelegate
 
@@ -107,7 +108,8 @@
     ////////////////////////////////////////////////////////////////////////////
     [window makeKeyAndVisible];
     navigationController.delegate = self;
-    [navigationController pushURL:nil animated:YES];
+    [navigationController.tabController addTabWithURL:[NSURL URLWithString:@"artcode:projects"] title:@"Projects" animated:NO];
+    [navigationController.tabController addTabWithURL:[NSURL URLWithString:@"artcode:files"] title:@"Projects" animated:NO];
     return YES;
 }
 
@@ -152,16 +154,19 @@
 
 #pragma mark - Navigation Controller Delegate Methods
 
-- (UIViewController<ACNavigable> *)tabController:(ACTabController *)tabController viewControllerForURL:(NSURL *)url
+- (UIViewController<ACToolTarget> *)navigationController:(ACNavigationController *)navigationController viewControllerForURL:(NSURL *)url previousViewController:(UIViewController<ACToolTarget> *)previousViewController
 {
     Class controllerClass = nil;
     // TODO url switch logic
-    controllerClass = [ACProjectTableController class];
+    if ([url.absoluteString isEqualToString:@"artcode:projects"])
+        controllerClass = [ACProjectTableController class];
+    else
+        controllerClass = [ACFileTableController class];
     
-//    if ([navigationController.currentViewController isKindOfClass:controllerClass])
-//        return navigationController.currentViewController;
-//    else
-//        return [[controllerClass alloc] init]; // TODO initWithNibName:name of class
+    if ([previousViewController isKindOfClass:controllerClass])
+        return previousViewController;
+    else
+        return [[controllerClass alloc] init]; // TODO initWithNibName:name of class
 }
 
 @end

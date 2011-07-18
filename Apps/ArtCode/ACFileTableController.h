@@ -7,7 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "ACToolTarget.h"
 
-@interface ACFileTableController : UITableViewController
+@interface ACFileTableController : UITableViewController <ACToolTarget>
 
 @end

@@ -8,17 +8,28 @@
 
 #import <UIKit/UIKit.h>
 #import "ECJumpBar.h"
-#import "ECPopoverController.h"
-#import "ECTabBar.h"
-#import "ECSwipeGestureRecognizer.h"
-#import "ACNavigable.h"
+#import "ACTabController.h"
+#import "ACToolTarget.h"
 
-
+@class ACNavigationController;
 @class ACToolPanelController;
-@class ACTabController;
+
+@protocol ACNavigationControllerDelegate <NSObject>
+@required
+
+/// When implemented, return a view controller that can handle the given URL.
+/// This method should chech if the previous view controller is already able to
+/// open the given URL. If it is, that controller should be returned or a transition
+/// will be performed.
+- (UIViewController<ACToolTarget> *)navigationController:(ACNavigationController *)navigationController viewControllerForURL:(NSURL *)url previousViewController:(UIViewController<ACToolTarget> *)previousViewController;
+
+@end
+
 
 /// A navigation controller with jump bar and tabs capabilities
-@interface ACNavigationController : UIViewController <ECJumpBarDelegate> 
+@interface ACNavigationController : UIViewController <ECJumpBarDelegate, ACTabControllerDelegate> 
+
+@property (nonatomic, weak) id<ACNavigationControllerDelegate> delegate;
 
 #pragma mark Navigation Tools
 
@@ -28,9 +39,9 @@
 
 #pragma mark Navigation Methods
 
-@property (nonatomic, readonly) UIViewController<ACNavigable> *currentViewController;
-- (void)pushViewController:(UIViewController<ACNavigable> *)viewController animated:(BOOL)animated;
-- (UIViewController<ACNavigable> *)popViewControllerAnimated:(BOOL)animated;
+//@property (nonatomic, readonly) UIViewController<ACNavigable> *currentViewController;
+//- (void)pushViewController:(UIViewController<ACNavigable> *)viewController animated:(BOOL)animated;
+//- (UIViewController<ACNavigable> *)popViewControllerAnimated:(BOOL)animated;
 
 #pragma mark URL Navigation Methods
 

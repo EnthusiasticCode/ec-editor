@@ -54,11 +54,14 @@
 @property (nonatomic) NSUInteger selectedTabIndex;
 @property (nonatomic, weak) UIButton *selectedTabButton;
 
-- (void)addTabButtonWithTitle:(NSString *)title animated:(BOOL)animated;
+- (NSUInteger)addTabButtonWithTitle:(NSString *)title animated:(BOOL)animated;
 - (void)removeTabAtIndex:(NSUInteger)index animated:(BOOL)animated;
+
+#pragma mark - Utility Methods
 
 - (UIButton *)tabAtIndex:(NSUInteger)index;
 - (NSUInteger)indexOfTab:(UIButton *)tabButton;
 - (NSUInteger)indexOfTabWithTitle:(NSString *)title;
+- (NSArray *)allTabTitles;
 
 @end
