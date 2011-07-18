@@ -190,7 +190,7 @@
     [tabButton addSubview:closeButton];
     
     // TODO no appearance proxy for this?
-    //    [tabButton.titleLabel setFont:[UIFont styleFontWithSize:14]];
+    [tabButton.titleLabel setFont:[UIFont styleFontWithSize:14]];
     return YES;
 }
 
@@ -362,7 +362,7 @@
     
     // Insert into tabs collection
     if (!tabs)
-        tabs = [NSMutableArray new];    
+        tabs = [NSMutableArray new];
     [tabs insertObject:tab atIndex:tabIndex];
     
     // Increase content view size
