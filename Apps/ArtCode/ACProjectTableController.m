@@ -37,7 +37,7 @@
 
 - (BOOL)shouldShowToolPanelController:(ACToolController *)toolController
 {
-    return YES;
+    return NO;
 }
 
 - (void)applyFilter:(NSString *)filter

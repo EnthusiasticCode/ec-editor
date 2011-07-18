@@ -22,6 +22,8 @@
 
 @implementation ACTabController {
     NSMutableArray *tabs;
+    
+    BOOL delegateHasDidShowTabAtIndexWithViewController;
 }
 
 #pragma mark - Properties
@@ -31,6 +33,12 @@
 @synthesize tabBar, tabBarEnabled;
 @synthesize swipeGestureRecognizer;
 @synthesize tabs, currentTabIndex;
+
+- (void)setDelegate:(id<ACTabControllerDelegate>)aDelegate
+{
+    delegate = aDelegate;
+    delegateHasDidShowTabAtIndexWithViewController = [delegate respondsToSelector:@selector(tabController:didShowTabAtIndex:withViewController:)];
+}
 
 - (void)setTabBarEnabled:(BOOL)enabled
 {
@@ -293,16 +301,16 @@
     [hiddenTabsIndexes removeIndex:tabIndex];
     if (tabIndex > 0)
     {
-        tab = (ACTab *)[tabs objectAtIndex:tabIndex - 1];
-        if (tab.viewController == nil)
-            [self loadAndPositionViewControllerForTab:tab animated:NO];
+        ACTab *prevTab = (ACTab *)[tabs objectAtIndex:tabIndex - 1];
+        if (prevTab.viewController == nil)
+            [self loadAndPositionViewControllerForTab:prevTab animated:NO];
         [hiddenTabsIndexes removeIndex:tabIndex - 1];
     }
     if (tabIndex + 1 < [tabs count])
     {
-        tab = (ACTab *)[tabs objectAtIndex:tabIndex + 1];
-        if (tab.viewController == nil)
-            [self loadAndPositionViewControllerForTab:tab animated:NO];
+        ACTab *postTab = (ACTab *)[tabs objectAtIndex:tabIndex + 1];
+        if (postTab.viewController == nil)
+            [self loadAndPositionViewControllerForTab:postTab animated:NO];
         [hiddenTabsIndexes removeIndex:tabIndex + 1];
     }
     
@@ -311,6 +319,10 @@
         [t.viewController removeFromParentViewController];
         // TODO remove view?
     }];
+    
+    // Call delegate
+    if (delegateHasDidShowTabAtIndexWithViewController)
+        [delegate tabController:self didShowTabAtIndex:tabIndex withViewController:tab.viewController];
 }
 
 - (NSUInteger)addTabWithURL:(NSURL *)url title:(NSString *)title animated:(BOOL)animated
@@ -357,15 +369,15 @@
     CGRect tabFrame = contentScrollView.bounds;
     contentScrollView.contentSize = CGSizeMake(tabFrame.size.width * [tabs count], 1);
     
+    // Push url
+    [self pushURL:url toTabAtIndex:tabIndex animated:animated];
+    
     // Make current if no tab
     if ([tabs count] == 1)
     {
         currentTabIndex = tabIndex + 1;
         [self setCurrentTabIndex:tabIndex animated:animated];
     }
-    
-    // Push url
-    [self pushURL:url toTabAtIndex:tabIndex animated:animated];
     
     return tabIndex;
 }

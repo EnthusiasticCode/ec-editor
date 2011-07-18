@@ -337,6 +337,12 @@
 - (UIViewController<ACURLTarget> *)tabController:(ACTabController *)tController viewControllerForURL:(NSURL *)url previousViewController:(UIViewController<ACURLTarget> *)previousViewController
 {
     UIViewController<ACToolTarget> *controller = [delegate navigationController:self viewControllerForURL:url previousViewController:(UIViewController<ACToolTarget> *)previousViewController];
+    return controller;
+}
+
+- (void)tabController:(ACTabController *)tController didShowTabAtIndex:(NSUInteger)tabIndex withViewController:(UIViewController<ACURLTarget> *)viewController
+{
+    UIViewController<ACToolTarget> *controller = (UIViewController<ACToolTarget> *)viewController;
     
     tabController.tabBarEnabled = [controller shouldShowTabBar];
     
@@ -348,8 +354,6 @@
     }
     [toolPanelController updateTabs];
     self.toolPanelEnabled = toolEnabled;
-    
-    return controller;
 }
 
 #pragma mark - Tool Panel Management Methods
