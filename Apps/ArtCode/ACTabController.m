@@ -117,6 +117,58 @@
     }
 }
 
+- (void)setCurrentTabIndex:(NSUInteger)tabIndex scroll:(BOOL)scroll animated:(BOOL)animated
+{
+    if (tabIndex == currentTabIndex || tabIndex == ACTabCurrent)
+        return;
+    
+    currentTabIndex = tabIndex;
+    
+    ACTab *tab = [self tabAtIndex:tabIndex];
+    
+    // Select tab
+    [tabBar setSelectedTabIndex:tabIndex];
+    
+    // Load and position current tab
+    if (tab.viewController == nil)
+        [self loadAndPositionViewControllerForTab:tab animated:animated];
+    
+    // Scroll to tab controller
+    if (scroll)
+    {
+        CGRect tabFrame = tab.viewController.view.frame;
+        [contentScrollView scrollRectToVisible:tabFrame animated:animated];
+    }
+    
+    // Load and position adiacent tabs controllers
+    NSMutableIndexSet *hiddenTabsIndexes = [NSMutableIndexSet indexSetWithIndexesInRange:NSMakeRange(0, [tabs count])];
+    [hiddenTabsIndexes removeIndex:tabIndex];
+    if (tabIndex > 0)
+    {
+        ACTab *prevTab = (ACTab *)[tabs objectAtIndex:tabIndex - 1];
+        if (prevTab.viewController == nil)
+            [self loadAndPositionViewControllerForTab:prevTab animated:NO];
+        [hiddenTabsIndexes removeIndex:tabIndex - 1];
+    }
+    if (tabIndex + 1 < [tabs count])
+    {
+        ACTab *postTab = (ACTab *)[tabs objectAtIndex:tabIndex + 1];
+        if (postTab.viewController == nil)
+            [self loadAndPositionViewControllerForTab:postTab animated:NO];
+        [hiddenTabsIndexes removeIndex:tabIndex + 1];
+    }
+    
+    // Cleanup non used child controllers
+    [tabs enumerateObjectsAtIndexes:hiddenTabsIndexes options:0 usingBlock:^(ACTab *t, NSUInteger idx, BOOL *stop) {
+        [t.viewController removeFromParentViewController];
+        // TODO remove view?
+    }];
+    
+    // Call delegate
+    if (delegateHasDidShowTabAtIndexWithViewController)
+        [delegate tabController:self didShowTabAtIndex:tabIndex withViewController:tab.viewController];
+}
+
 #pragma mark - View lifecycle
 
 - (void)viewDidLoad
@@ -158,6 +210,7 @@
     if (!contentScrollView)
     {
         contentScrollView = [[UIScrollView alloc] initWithFrame:self.view.bounds];
+        contentScrollView.delegate = self;
         [self.view addSubview:contentScrollView];
     }
     contentScrollView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
@@ -269,60 +322,27 @@
     // TODO also remove controller
 }
 
+#pragma mark - Content ScrollView Methods
+
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView
+{
+    // Gets tab page position
+    CGRect tabFrame = contentScrollView.bounds;
+    NSInteger tabIndex = (NSInteger)roundf(tabFrame.origin.x / tabFrame.size.width);
+    
+    [self setCurrentTabIndex:tabIndex scroll:NO animated:YES];
+}
+
 #pragma mark - Tab Navigation Methods
 
 - (void)setCurrentTabIndex:(NSUInteger)tabIndex
 {
-    [self setCurrentTabIndex:tabIndex animated:NO];
+    [self setCurrentTabIndex:tabIndex scroll:YES animated:NO];
 }
 
 - (void)setCurrentTabIndex:(NSUInteger)tabIndex animated:(BOOL)animated
 {
-    if (tabIndex == currentTabIndex || tabIndex == ACTabCurrent)
-        return;
-    
-    currentTabIndex = tabIndex;
-    
-    ACTab *tab = [self tabAtIndex:tabIndex];
-    
-    // Select tab
-    [tabBar setSelectedTabIndex:tabIndex];
-    
-    // Load and position current tab
-    if (tab.viewController == nil)
-        [self loadAndPositionViewControllerForTab:tab animated:animated];
-    
-    // Scroll to tab controller
-    CGRect tabFrame = tab.viewController.view.frame;
-    [contentScrollView scrollRectToVisible:tabFrame animated:animated];
-    
-    // Load and position adiacent tabs controllers
-    NSMutableIndexSet *hiddenTabsIndexes = [NSMutableIndexSet indexSetWithIndexesInRange:NSMakeRange(0, [tabs count])];
-    [hiddenTabsIndexes removeIndex:tabIndex];
-    if (tabIndex > 0)
-    {
-        ACTab *prevTab = (ACTab *)[tabs objectAtIndex:tabIndex - 1];
-        if (prevTab.viewController == nil)
-            [self loadAndPositionViewControllerForTab:prevTab animated:NO];
-        [hiddenTabsIndexes removeIndex:tabIndex - 1];
-    }
-    if (tabIndex + 1 < [tabs count])
-    {
-        ACTab *postTab = (ACTab *)[tabs objectAtIndex:tabIndex + 1];
-        if (postTab.viewController == nil)
-            [self loadAndPositionViewControllerForTab:postTab animated:NO];
-        [hiddenTabsIndexes removeIndex:tabIndex + 1];
-    }
-    
-    // Cleanup non used child controllers
-    [tabs enumerateObjectsAtIndexes:hiddenTabsIndexes options:0 usingBlock:^(ACTab *t, NSUInteger idx, BOOL *stop) {
-        [t.viewController removeFromParentViewController];
-        // TODO remove view?
-    }];
-    
-    // Call delegate
-    if (delegateHasDidShowTabAtIndexWithViewController)
-        [delegate tabController:self didShowTabAtIndex:tabIndex withViewController:tab.viewController];
+    [self setCurrentTabIndex:tabIndex scroll:YES animated:animated];
 }
 
 - (NSUInteger)addTabWithURL:(NSURL *)url title:(NSString *)title animated:(BOOL)animated

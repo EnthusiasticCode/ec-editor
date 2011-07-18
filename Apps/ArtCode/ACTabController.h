@@ -29,7 +29,7 @@ enum {ACTabCurrent = NSIntegerMax};
 @end
 
 
-@interface ACTabController : UIViewController <ECTabBarDelegate>
+@interface ACTabController : UIViewController <ECTabBarDelegate, UIScrollViewDelegate>
 
 @property (nonatomic, weak) id<ACTabControllerDelegate> delegate;
 
