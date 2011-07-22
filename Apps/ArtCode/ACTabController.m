@@ -20,6 +20,14 @@
 
 @end
 
+
+@interface ACTabPagingScrollView : UIScrollView
+
+@property (nonatomic) NSUInteger pageCount;
+
+@end
+
+
 @implementation ACTabController {
     NSMutableArray *tabs;
     
@@ -87,6 +95,9 @@
     tabFrame.origin.x = tabFrame.size.width * tabPage;
     tabController.view.frame = tabFrame;
     tabController.view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    
+    // Set view tag used by custom paging scrollview to layout pages
+    tabController.view.tag = tabPage;
     
     // Transition if neccessary
     if (oldController != tabController)
@@ -169,11 +180,25 @@
         [delegate tabController:self didShowTabAtIndex:tabIndex withViewController:tab.viewController];
 }
 
+/// Relayout content view contentSize and tabs
+- (void)layoutContentViewTabs
+{
+    CGRect tabFrame = contentScrollView.bounds;
+    contentScrollView.contentSize = CGSizeMake(tabFrame.size.width * [tabs count], 1);
+    
+    [tabs enumerateObjectsUsingBlock:^(ACTab *tab, NSUInteger idx, BOOL *stop) {
+        if (tab.viewController)
+        {
+            tab.viewController.view.center = CGPointMake((idx + .5) * tabFrame.size.width, tabFrame.size.height / 2);
+        }
+    }];
+}
+
 #pragma mark - View lifecycle
 
-- (void)viewDidLoad
+- (void)loadView
 {
-    [super viewDidLoad];
+    [super loadView];
     
     if (!tabBar)
         tabBar = [[ECTabBar alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, 44)];
@@ -209,7 +234,7 @@
     // Content scroll view
     if (!contentScrollView)
     {
-        contentScrollView = [[UIScrollView alloc] initWithFrame:self.view.bounds];
+        contentScrollView = [[ACTabPagingScrollView alloc] initWithFrame:self.view.bounds];
         contentScrollView.delegate = self;
         [self.view addSubview:contentScrollView];
     }
@@ -387,7 +412,10 @@
     
     // Increase content view size
     CGRect tabFrame = contentScrollView.bounds;
-    contentScrollView.contentSize = CGSizeMake(tabFrame.size.width * [tabs count], 1);
+    contentScrollView.contentSize = CGSizeMake((tabFrame.size.width + 10) * [tabs count], 1);
+    
+    // Set count of pages in content scroll view
+    [(ACTabPagingScrollView *)contentScrollView setPageCount:[tabs count]];
     
     // Push url
     [self pushURL:url toTabAtIndex:tabIndex animated:animated];
@@ -429,5 +457,27 @@
 @implementation ACTab
 
 @synthesize button, history, historyPoint, viewController;
+
+@end
+
+
+@implementation ACTabPagingScrollView
+@synthesize pageCount;
+
+- (void)layoutSubviews
+{
+    [super layoutSubviews];
+    // TODO layout with tag as page index
+    
+    CGRect bounds = self.bounds;
+    
+    self.contentSize = CGSizeMake(bounds.size.width * pageCount, 1);
+    
+    for (UIView *view in self.subviews)
+    {
+        bounds.origin.x = bounds.size.width * view.tag;
+        view.frame = bounds;
+    }
+}
 
 @end
