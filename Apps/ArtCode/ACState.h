@@ -8,16 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-#pragma mark - ACState Constants
-
-NSString * const ACProjectBundleExtension;
-
-#pragma mark - ACState Notifications
-
-NSString * const ACProjectWillRenameNotification;
-NSString * const ACProjectDidRenameNotification;
-NSString * const ACProjectPropertiesWillChangeNotification;
-NSString * const ACProjectPropertiesDidChangeNotification;
+@class ACStateProject;
 
 /// Global AC application state controller class
 @interface ACState : NSObject
@@ -27,26 +18,32 @@ NSString * const ACProjectPropertiesDidChangeNotification;
 /// Returns the ACState application wide singleton
 + (ACState *)sharedState;
 
+/// Loads or creates a saved state
+/// Needs to be called to populate the projects list
+- (void)loadState;
+
+/// Saves the current state
+- (void)saveState;
+
 #pragma mark - Project Level
 
-/// Returns a list containing all existing projects
-@property (nonatomic, copy, readonly) NSOrderedSet *projects;
+/// A list containing all existing projects
+@property (nonatomic, strong, readonly) NSOrderedSet *allProjects;
 
-/// Renames a project
-- (void)setName:(NSString *)newName forProjectWithName:(NSString *)oldName;
+/// The currently active project
+@property (nonatomic, strong, readonly) ACStateProject *activeProject;
 
-/// Returns the index of a project in the projects list
-- (NSUInteger)indexOfProjectWithName:(NSString *)name;
+/// Returns a proxy that always represents the active project
+/// The proxy's properties change both when the project's properties change, and when a different project is activated
+- (ACStateProject *)currentProject;
 
-/// Sets the index of a project in the projects list
-/// The project is inserted at the set index, other projects are shuffled
-- (void)setIndex:(NSUInteger)index forProjectWithName:(NSString *)name;
+/// Adds a new project
+/// Inserting a project with the same name as an existing project is an error
+- (void)insertProjectWithName:(NSString *)name color:(UIColor *)color atIndex:(NSUInteger)index;
 
-/// Returns the color of a project
-- (UIColor *)colorForProjectWithName:(NSString *)name;
-
-/// Sets the color of a project
-- (void)setColor:(UIColor *)color forProjectWithName:(NSString *)name;
+/// Deletes a project
+/// If the project is active it deactives it before deleting it.
+- (void)deleteProjectWithName:(NSString *)name;
 
 @end
 
@@ -64,5 +61,9 @@ NSString * const ACProjectPropertiesDidChangeNotification;
 
 /// Color of the project
 @property (nonatomic, strong) UIColor *color;
+
+/// Whether or not the project is active
+/// Only one project can be active at any time, activating one will deactivate the previously active project
+@property (nonatomic, getter = isActive) BOOL active;
 
 @end

@@ -41,7 +41,7 @@
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
     
-    [[ACState sharedState] scanForProjects];
+//    [[ACState sharedState] scanForProjects];
 }
 
 - (void)viewDidUnload
@@ -81,7 +81,7 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return [[ACState sharedState].projects count];
+    return [[ACState sharedState].allProjects count];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -93,7 +93,7 @@
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
     }
     // Configure the cell...
-    cell.textLabel.text = [[[ACState sharedState].projects objectAtIndex:indexPath.row] name];
+    cell.textLabel.text = [[[ACState sharedState].allProjects objectAtIndex:indexPath.row] name];
     
     return cell;
 }
