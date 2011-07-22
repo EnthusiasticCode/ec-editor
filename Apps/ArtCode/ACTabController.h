@@ -74,11 +74,11 @@ enum {ACTabCurrent = NSIntegerMax};
 - (void)pushURL:(NSURL *)url toTabAtIndex:(NSUInteger)tabIndex animated:(BOOL)animated;
 
 /// Moves the history point of the given tab.
-- (void)setHistoryPoint:(NSUInteger *)index forTabAtIndex:(NSUInteger)tabIndex animated:(BOOL)animated;
+- (void)setHistoryPoint:(NSUInteger)index forTabAtIndex:(NSUInteger)tabIndex animated:(BOOL)animated;
 
 /// Pops the current URL from the given tab. The url is popped only if it's not 
 /// the only one remaining in the tab's history.
-- (void)popURLFromTabAtIndex:(NSUInteger)tabIndex;
+- (void)popURLFromTabAtIndex:(NSUInteger)tabIndex animated:(BOOL)animated;
 
 /// Removes the tab form the controller. This method will not remove a tab if 
 /// it's the last remaining.

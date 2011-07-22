@@ -20,6 +20,7 @@
 @property (nonatomic, weak) UIViewController<ACURLTarget> *viewController;
 
 - (void)pushToHistory:(NSURL *)url;
+- (void)popHistory;
 - (NSURL *)historyPointURL;
 
 @end
@@ -335,9 +336,7 @@
 - (void)closeTabButtonAction:(id)sender
 {
     NSUInteger tabIndex = [tabBar indexOfTab:(UIButton *)[sender superview]];
-    [tabBar removeTabAtIndex:tabIndex animated:YES];
-    
-    // TODO also remove controller
+    [self removeTabAtIndex:tabIndex animated:YES];
 }
 
 #pragma mark - Content ScrollView Methods
@@ -361,6 +360,19 @@
 - (void)setCurrentTabIndex:(NSUInteger)tabIndex animated:(BOOL)animated
 {
     [self setCurrentTabIndex:tabIndex scroll:YES animated:animated];
+}
+
+- (NSUInteger)indexOfTabWithTitle:(NSString *)title
+{
+    __block NSUInteger result = NSNotFound;
+    [tabs enumerateObjectsUsingBlock:^(ACTab *tab, NSUInteger idx, BOOL *stop) {
+        if ([title isEqualToString:[tab.button titleForState:UIControlStateNormal]])
+        {
+            result = idx;
+            *stop = YES;
+        }
+    }];
+    return result;
 }
 
 - (NSUInteger)addTabWithURL:(NSURL *)url title:(NSString *)title animated:(BOOL)animated
@@ -427,15 +439,95 @@
     // Push history url
     [tab pushToHistory:url];
     
-    // Gets tab page position
-    CGRect tabFrame = contentScrollView.bounds;
-    NSInteger tabPage = (NSInteger)[tabBar indexOfTab:tab.button];
-    NSInteger currentPage = (NSInteger)(tabFrame.origin.x / tabFrame.size.width);
-    
     // Create controller if neccessary
-    if (abs(tabPage - currentPage) <= 1)
+    if (abs((NSInteger)tabIndex - (NSInteger)currentTabIndex) <= 1)
     {
         [self loadAndPositionViewControllerForTab:tab animated:animated];
+    }
+}
+
+- (void)setHistoryPoint:(NSUInteger)index forTabAtIndex:(NSUInteger)tabIndex animated:(BOOL)animated
+{
+    ACTab *tab = [self tabAtIndex:tabIndex];
+    if (tab == nil)
+        return;
+    
+    if (index >= [tab.history count])
+        index = NSNotFound;
+    
+    if (tab.historyPoint == index)
+        return;
+    
+    tab.historyPoint = index;
+    
+    // Update controller if neccessary
+    if (abs((NSInteger)tabIndex - (NSInteger)currentTabIndex) <= 1)
+    {
+        [self loadAndPositionViewControllerForTab:tab animated:animated];
+    }    
+}
+
+- (void)popURLFromTabAtIndex:(NSUInteger)tabIndex animated:(BOOL)animated
+{
+    ACTab *tab = [self tabAtIndex:tabIndex];
+    if (tab == nil)
+        return;
+    
+    [tab popHistory];
+    
+    if (abs((NSInteger)tabIndex - (NSInteger)currentTabIndex) <= 1)
+    {
+        [self loadAndPositionViewControllerForTab:tab animated:animated];
+    }
+}
+
+- (void)removeTabAtIndex:(NSUInteger)tabIndex animated:(BOOL)animated
+{
+    // Will not remove all tabs
+    if ([tabs count] == 1)
+        return;
+    
+    ACTab *tab = [self tabAtIndex:tabIndex];
+    if (tab == nil)
+        return;
+    
+    [tabBar removeTabAtIndex:tabIndex animated:animated];
+    [tabs removeObject:tab];
+    [(ACTabPagingScrollView *)contentScrollView setPageCount:[tabs count]];
+    
+    if (tabIndex == currentTabIndex)
+    {
+        NSUInteger newCurrentTabIndex = currentTabIndex >= [tabs count] ? currentTabIndex - 1 : currentTabIndex;
+        if (animated)
+        {
+            [UIView animateWithDuration:0.10 animations:^(void) {
+                tab.viewController.view.alpha = 0; 
+            } completion:^(BOOL finished) {
+                [tab.viewController.view removeFromSuperview];
+                [tab.viewController removeFromParentViewController];
+                currentTabIndex += 1;
+                [self setCurrentTabIndex:newCurrentTabIndex animated:YES];
+            }];
+        }
+        else
+        {
+            [tab.viewController.view removeFromSuperview];
+            [tab.viewController removeFromParentViewController];
+            currentTabIndex += 1;
+            [self setCurrentTabIndex:newCurrentTabIndex];
+        }
+    }
+    else
+    {
+        ACTab *currentTab = [self tabAtIndex:ACTabCurrent];
+        
+        [tab.viewController.view removeFromSuperview];
+        [tab.viewController removeFromParentViewController];
+        
+        if ([tabs indexOfObject:currentTab] != currentTabIndex)
+            [self setCurrentTabIndex:[tabs indexOfObject:currentTab] animated:animated];
+        else if (tabIndex - currentTabIndex == 1 && tabIndex < [tabs count])
+            [self loadAndPositionViewControllerForTab:[tabs objectAtIndex:tabIndex] animated:NO];
     }
 }
 
@@ -462,6 +554,23 @@
     [history addObject:url];
 }
 
+- (void)popHistory
+{
+    // Will not pop if only one item in the history
+    if ([history count] == 1)
+        return;
+    
+    if (historyPoint == NSNotFound)
+    {
+        [history removeLastObject];
+    }
+    else if (historyPoint > 0)
+    {
+        [history removeObjectsAtIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(historyPoint, [history count] - historyPoint)]];
+        historyPoint = historyPoint - 1;
+    }
+}
+
 - (NSURL *)historyPointURL
 {
     if (historyPoint == NSNotFound)
@@ -484,7 +593,6 @@
     
     if (keepCurrentPageCentered)
     {
-        NSLog(@"%f / %f", self.contentOffset.x, self.contentSize.width);
         NSUInteger currentPage = roundf(self.contentOffset.x * pageCount / self.contentSize.width);
         self.contentOffset = CGPointMake(currentPage * bounds.size.width, 0);
     }
