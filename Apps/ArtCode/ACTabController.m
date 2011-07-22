@@ -11,6 +11,7 @@
 
 #import "ECSwipeGestureRecognizer.h"
 
+/// ACTab represent a tab with it's history. 
 @interface ACTab : NSObject
 
 @property (nonatomic, weak) UIButton *button;
@@ -18,12 +19,17 @@
 @property (nonatomic) NSUInteger historyPoint;
 @property (nonatomic, weak) UIViewController<ACURLTarget> *viewController;
 
+- (void)pushToHistory:(NSURL *)url;
+- (NSURL *)historyPointURL;
+
 @end
 
 
+/// Customized UIScrollView to layout subviews as pages based on their tag.
 @interface ACTabPagingScrollView : UIScrollView
 
 @property (nonatomic) NSUInteger pageCount;
+@property (nonatomic) BOOL keepCurrentPageCentered;
 
 @end
 
@@ -74,7 +80,7 @@
 
 - (void)loadAndPositionViewControllerForTab:(ACTab *)tab animated:(BOOL)animated
 {
-    NSURL *url = [tab.history lastObject];
+    NSURL *url = [tab historyPointURL];
     if (url == nil)
         return;
     
@@ -91,13 +97,9 @@
     tab.viewController = tabController;
     [tab.viewController openURL:url];
     
-    // Position new tab controller's view
-    tabFrame.origin.x = tabFrame.size.width * tabPage;
-    tabController.view.frame = tabFrame;
-    tabController.view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-    
     // Set view tag used by custom paging scrollview to layout pages
     tabController.view.tag = tabPage;
+    [contentScrollView setNeedsLayout];
     
     // Transition if neccessary
     if (oldController != tabController)
@@ -180,20 +182,6 @@
         [delegate tabController:self didShowTabAtIndex:tabIndex withViewController:tab.viewController];
 }
 
-/// Relayout content view contentSize and tabs
-- (void)layoutContentViewTabs
-{
-    CGRect tabFrame = contentScrollView.bounds;
-    contentScrollView.contentSize = CGSizeMake(tabFrame.size.width * [tabs count], 1);
-    
-    [tabs enumerateObjectsUsingBlock:^(ACTab *tab, NSUInteger idx, BOOL *stop) {
-        if (tab.viewController)
-        {
-            tab.viewController.view.center = CGPointMake((idx + .5) * tabFrame.size.width, tabFrame.size.height / 2);
-        }
-    }];
-}
-
 #pragma mark - View lifecycle
 
 - (void)loadView
@@ -255,6 +243,16 @@
     contentScrollView = nil;
 }
 
+- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
+{
+    [(ACTabPagingScrollView *)contentScrollView setKeepCurrentPageCentered:YES];
+}
+
+- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
+{
+    [(ACTabPagingScrollView *)contentScrollView setKeepCurrentPageCentered:NO];
+}
+
 #pragma mark - TabBar Methods
 
 - (BOOL)tabBar:(ECTabBar *)tabBar shouldAddTabButton:(UIButton *)tabButton atIndex:(NSUInteger)tabIndex
@@ -299,6 +297,8 @@
     {
         [self loadAndPositionViewControllerForTab:tab animated:NO];
     }
+    
+    // TODO update selected tab
 }
 
 #pragma mark -
@@ -399,7 +399,6 @@
     
     // Create new tab entry
     ACTab *tab = [ACTab new];
-    tab.history = [NSMutableArray new];
     
     // Add new tab in the tab bar
     NSUInteger tabIndex = [tabBar addTabButtonWithTitle:title animated:animated];
@@ -409,10 +408,6 @@
     if (!tabs)
         tabs = [NSMutableArray new];
     [tabs insertObject:tab atIndex:tabIndex];
-    
-    // Increase content view size
-    CGRect tabFrame = contentScrollView.bounds;
-    contentScrollView.contentSize = CGSizeMake((tabFrame.size.width + 10) * [tabs count], 1);
     
     // Set count of pages in content scroll view
     [(ACTabPagingScrollView *)contentScrollView setPageCount:[tabs count]];
@@ -437,7 +432,7 @@
         return;
     
     // Push history url
-    [tab.history addObject:url];
+    [tab pushToHistory:url];
     
     // Gets tab page position
     CGRect tabFrame = contentScrollView.bounds;
@@ -458,18 +453,48 @@
 
 @synthesize button, history, historyPoint, viewController;
 
+- (void)pushToHistory:(NSURL *)url
+{
+    if (history == nil)
+    {
+        history = [NSMutableArray new];
+        historyPoint = NSNotFound;
+    }
+    
+    if (historyPoint != NSNotFound && historyPoint < [history count] - 1)
+    {
+        [history removeObjectsAtIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(historyPoint + 1, [history count] - historyPoint - 1)]];
+    }
+    
+    [history addObject:url];
+}
+
+- (NSURL *)historyPointURL
+{
+    if (historyPoint == NSNotFound)
+        return [history lastObject];
+    else
+        return [history objectAtIndex:historyPoint];
+}
+
 @end
 
 
 @implementation ACTabPagingScrollView
-@synthesize pageCount;
+@synthesize pageCount, keepCurrentPageCentered;
 
 - (void)layoutSubviews
 {
     [super layoutSubviews];
-    // TODO layout with tag as page index
-    
+
     CGRect bounds = self.bounds;
+    
+    if (keepCurrentPageCentered)
+    {
+        NSLog(@"%f / %f", self.contentOffset.x, self.contentSize.width);
+        NSUInteger currentPage = roundf(self.contentOffset.x * pageCount / self.contentSize.width);
+        self.contentOffset = CGPointMake(currentPage * bounds.size.width, 0);
+    }
     
     self.contentSize = CGSizeMake(bounds.size.width * pageCount, 1);
     
