@@ -145,11 +145,14 @@
     // Load and position current tab
     if (tab.viewController == nil)
         [self loadAndPositionViewControllerForTab:tab animated:animated];
+    else
+        tab.viewController.view.tag = tabIndex;
     
     // Scroll to tab controller
     if (scroll)
     {
-        CGRect tabFrame = tab.viewController.view.frame;
+        CGRect tabFrame = contentScrollView.bounds;
+        tabFrame.origin.x = tabIndex * tabFrame.size.width;
         [contentScrollView scrollRectToVisible:tabFrame animated:animated];
     }
     
@@ -161,6 +164,8 @@
         ACTab *prevTab = (ACTab *)[tabs objectAtIndex:tabIndex - 1];
         if (prevTab.viewController == nil)
             [self loadAndPositionViewControllerForTab:prevTab animated:NO];
+        else
+            prevTab.viewController.view.tag = tabIndex - 1;
         [hiddenTabsIndexes removeIndex:tabIndex - 1];
     }
     if (tabIndex + 1 < [tabs count])
@@ -168,13 +173,15 @@
         ACTab *postTab = (ACTab *)[tabs objectAtIndex:tabIndex + 1];
         if (postTab.viewController == nil)
             [self loadAndPositionViewControllerForTab:postTab animated:NO];
+        else
+            postTab.viewController.view.tag = tabIndex + 1;
         [hiddenTabsIndexes removeIndex:tabIndex + 1];
     }
     
     // Cleanup non used child controllers
     [tabs enumerateObjectsAtIndexes:hiddenTabsIndexes options:0 usingBlock:^(ACTab *t, NSUInteger idx, BOOL *stop) {
         [t.viewController removeFromParentViewController];
-        // TODO remove view?
+#warning TODO remove view?
     }];
     
     // Call delegate
@@ -279,26 +286,12 @@
 - (void)tabBar:(ECTabBar *)tabBar didMoveTabButton:(UIButton *)tabButton fromIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex
 {
     ACTab *tab = [tabs objectAtIndex:fromIndex];
+    ACTab *currentTab = [self tabAtIndex:ACTabCurrent];
     
     [tabs removeObjectAtIndex:fromIndex];
     [tabs insertObject:tab atIndex:toIndex];
     
-    NSUInteger currentFromIndex = MIN(0, currentTabIndex - 1);
-    NSRange indexRange = NSMakeRange(currentFromIndex, MIN(3, [tabs count] - currentFromIndex));
-    if (toIndex <= currentTabIndex)
-    {
-        NSIndexSet *indexes = [NSIndexSet indexSetWithIndexesInRange:indexRange];
-        [tabs enumerateObjectsAtIndexes:indexes options:0 usingBlock:^(ACTab *t, NSUInteger idx, BOOL *stop) {
-            [self loadAndPositionViewControllerForTab:t animated:NO];
-            // TODO remove oher from parentController
-        }];
-    }
-    else if (toIndex == NSMaxRange(indexRange) - 1)
-    {
-        [self loadAndPositionViewControllerForTab:tab animated:NO];
-    }
-    
-    // TODO update selected tab
+    [self setCurrentTabIndex:[tabs indexOfObject:currentTab]];
 }
 
 #pragma mark -
