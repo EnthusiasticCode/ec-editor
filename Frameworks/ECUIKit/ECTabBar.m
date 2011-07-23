@@ -327,6 +327,7 @@ static void init(ECTabBar *self)
     NSUInteger newTabButtonIndex = [tabButtons count];
     UIButton *newTabButton = [UIButton new];
     
+    // Position and size new tab
     CGRect buttonFrame = (CGRect) { CGPointMake(tabButtonSize.width * [tabButtons count], 0), tabButtonSize };
     if (buttonFrame.size.height == 0)
         buttonFrame.size.height = self.frame.size.height;

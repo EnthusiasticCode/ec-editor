@@ -38,7 +38,7 @@
 
 @implementation ACTabController {
     NSMutableArray *tabs;
-    
+    BOOL ignoreContentViewScrolling;
     BOOL delegateHasDidShowTabAtIndexWithViewController;
 }
 
@@ -151,7 +151,7 @@
         return;
     
     currentTabIndex = tabIndex;
-    
+
     ACTab *tab = [self tabAtIndex:tabIndex];
     
     // Select tab
@@ -166,8 +166,12 @@
     // Scroll to tab controller
     if (scroll)
     {
+        // Flag to avoid the scrollview to call back this method on animated scrolling
+        ignoreContentViewScrolling = animated;
+
         CGRect tabFrame = contentScrollView.bounds;
         tabFrame.origin.x = tabIndex * tabFrame.size.width;
+        // Fix content size without waiting for conntentScrollView layout to account for just added tab
         contentScrollView.contentSize = CGSizeMake(tabFrame.size.width * [tabs count], 1);
         [contentScrollView scrollRectToVisible:tabFrame animated:animated];
     }
@@ -373,7 +377,7 @@
 {
     ACTab *tab = [self tabAtIndex:ACTabCurrent];
     NSUInteger tabIndex = [self addTabWithURL:[tab historyPointURL] title:[tab.button titleForState:UIControlStateNormal] animated:NO];
-    [self setCurrentTabIndex:tabIndex];
+    [self setCurrentTabIndex:tabIndex animated:YES];
 }
 
 - (void)closeTabButtonAction:(id)sender
@@ -386,6 +390,9 @@
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
+    if (ignoreContentViewScrolling)
+        return;
+    
     // Gets tab page position
     CGRect tabFrame = contentScrollView.bounds;
     NSInteger tabIndex = (NSInteger)roundf(tabFrame.origin.x / tabFrame.size.width);
@@ -393,6 +400,12 @@
         return;
     
     [self setCurrentTabIndex:tabIndex scroll:NO animated:YES];
+}
+
+- (void)scrollViewDidEndScrollingAnimation:(UIScrollView *)scrollView
+{
+    // Restore the ability to change current tab via scrolling
+    ignoreContentViewScrolling = NO;
 }
 
 #pragma mark - Tab Navigation Methods
