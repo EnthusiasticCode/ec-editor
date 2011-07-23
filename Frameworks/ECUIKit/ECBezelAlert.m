@@ -27,9 +27,10 @@
     return sharedAlert;
 }
 
-- (id)init {
-    self = [super init];
-    if (self) {
+- (id)init
+{
+    if ((self = [super init]))
+    {
         bezelCornerRadius = 10;
     }
     return self;

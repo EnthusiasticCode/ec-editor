@@ -220,6 +220,7 @@
     ////////////////////////////////////////////////////////////////////////////
     // Additional buttons
     UIButton *addTabButton = [UIButton new];
+    [addTabButton addTarget:self action:@selector(duplicateCurrentTab:) forControlEvents:UIControlEventTouchUpInside];
     [addTabButton setImage:[UIImage styleAddImageWithColor:[UIColor styleBackgroundColor] shadowColor:nil] forState:UIControlStateNormal];
     addTabButton.adjustsImageWhenHighlighted = NO;
     
@@ -363,6 +364,13 @@
             contentScrollView.frame = contentScrollViewFrame;
         }];
     }
+}
+
+- (void)duplicateCurrentTab:(id)sender
+{
+    ACTab *tab = [self tabAtIndex:ACTabCurrent];
+    NSUInteger tabIndex = [self addTabWithURL:[tab historyPointURL] title:[tab.button titleForState:UIControlStateNormal] animated:YES];
+    [self setCurrentTabIndex:tabIndex];
 }
 
 - (void)closeTabButtonAction:(id)sender

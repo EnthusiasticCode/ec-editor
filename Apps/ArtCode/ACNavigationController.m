@@ -69,9 +69,9 @@
     // Release any cached data, images, etc that aren't in use.
 }
 
-- (void)viewDidLoad
+- (void)loadView
 {
-    [super viewDidLoad];
+    [super loadView];
     
     // TODO create internal views if not connected in IB
     

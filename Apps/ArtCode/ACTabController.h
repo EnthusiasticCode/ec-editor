@@ -54,8 +54,11 @@ enum {ACTabCurrent = NSIntegerMax};
 
 #pragma mark Tab Bar Actions
 
+/// Called by the + button. Will duplicate the current tab.
+- (IBAction)duplicateCurrentTab:(id)sender;
+
 /// Shows or hide the tab bar. This method can be called from a control's action.
-- (void)toggleTabBar:(id)sender;
+- (IBAction)toggleTabBar:(id)sender;
 
 #pragma mark Tab Navigation Methods
 
