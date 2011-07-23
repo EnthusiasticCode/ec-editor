@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		B732CFEE13DB1BB000637FBE /* ACStateProject.m in Sources */ = {isa = PBXBuildFile; fileRef = B732CFED13DB1BB000637FBE /* ACStateProject.m */; };
+		B732CFFB13DB24F600637FBE /* Project.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = B732CFF913DB24F600637FBE /* Project.xcdatamodeld */; };
 		CD13665913D32150001F3455 /* UIControl+BlockAction.m in Sources */ = {isa = PBXBuildFile; fileRef = CD13665813D32150001F3455 /* UIControl+BlockAction.m */; };
 		CD4786E913DB0C2500616B62 /* ACState.m in Sources */ = {isa = PBXBuildFile; fileRef = CD4786E813DB0C2500616B62 /* ACState.m */; };
 		CD4786ED13DB0F7A00616B62 /* ECBezelAlert.m in Sources */ = {isa = PBXBuildFile; fileRef = CD4786EC13DB0F7A00616B62 /* ECBezelAlert.m */; };
@@ -81,6 +82,7 @@
 		B732CFEB13DB1BB000637FBE /* ACStateInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACStateInternal.h; sourceTree = "<group>"; };
 		B732CFEC13DB1BB000637FBE /* ACStateProject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACStateProject.h; sourceTree = "<group>"; };
 		B732CFED13DB1BB000637FBE /* ACStateProject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACStateProject.m; sourceTree = "<group>"; };
+		B732CFFA13DB24F600637FBE /* Project.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Project.xcdatamodel; sourceTree = "<group>"; };
 		CD0DEAB613D4C2430087ADBB /* ACToolTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACToolTarget.h; sourceTree = "<group>"; };
 		CD0DEAB713D4C26A0087ADBB /* ACURLTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACURLTarget.h; sourceTree = "<group>"; };
 		CD13665713D32150001F3455 /* UIControl+BlockAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIControl+BlockAction.h"; sourceTree = "<group>"; };
@@ -327,6 +329,7 @@
 				CDE3F14613C0DDD500DFFAFF /* Inconsolata-dz.otf */,
 				CD7D2B0A13C0CEFF00B889EE /* Images */,
 				CD7D2B0913C0CEE100B889EE /* Storyboards */,
+				B732CFF913DB24F600637FBE /* Project.xcdatamodeld */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -686,6 +689,7 @@
 				CD4786E913DB0C2500616B62 /* ACState.m in Sources */,
 				CD4786ED13DB0F7A00616B62 /* ECBezelAlert.m in Sources */,
 				B732CFEE13DB1BB000637FBE /* ACStateProject.m in Sources */,
+				B732CFFB13DB24F600637FBE /* Project.xcdatamodeld in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -797,6 +801,19 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		B732CFF913DB24F600637FBE /* Project.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				B732CFFA13DB24F600637FBE /* Project.xcdatamodel */,
+			);
+			currentVersion = B732CFFA13DB24F600637FBE /* Project.xcdatamodel */;
+			path = Project.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = CD7D2AD613C0CD2600B889EE /* Project object */;
 }
