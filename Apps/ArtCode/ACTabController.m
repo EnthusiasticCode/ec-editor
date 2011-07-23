@@ -168,6 +168,7 @@
     {
         CGRect tabFrame = contentScrollView.bounds;
         tabFrame.origin.x = tabIndex * tabFrame.size.width;
+        contentScrollView.contentSize = CGSizeMake(tabFrame.size.width * [tabs count], 1);
         [contentScrollView scrollRectToVisible:tabFrame animated:animated];
     }
     
@@ -297,7 +298,9 @@
 #pragma mark - TabBar Methods
 
 - (BOOL)tabBar:(ECTabBar *)tabBar shouldAddTabButton:(UIButton *)tabButton atIndex:(NSUInteger)tabIndex
-{    
+{
+    tabButton.titleLabel.lineBreakMode = UILineBreakModeMiddleTruncation;
+    
     UIButton *closeButton = [UIButton new];
     CGRect frame = tabButton.bounds;
     frame.origin.x = frame.size.width - 35;
@@ -369,7 +372,7 @@
 - (void)duplicateCurrentTab:(id)sender
 {
     ACTab *tab = [self tabAtIndex:ACTabCurrent];
-    NSUInteger tabIndex = [self addTabWithURL:[tab historyPointURL] title:[tab.button titleForState:UIControlStateNormal] animated:YES];
+    NSUInteger tabIndex = [self addTabWithURL:[tab historyPointURL] title:[tab.button titleForState:UIControlStateNormal] animated:NO];
     [self setCurrentTabIndex:tabIndex];
 }
 

@@ -327,7 +327,7 @@ static void init(ECTabBar *self)
     NSUInteger newTabButtonIndex = [tabButtons count];
     UIButton *newTabButton = [UIButton new];
     
-    CGRect buttonFrame = (CGRect) { CGPointZero, tabButtonSize };
+    CGRect buttonFrame = (CGRect) { CGPointMake(tabButtonSize.width * [tabButtons count], 0), tabButtonSize };
     if (buttonFrame.size.height == 0)
         buttonFrame.size.height = self.frame.size.height;
     newTabButton.frame = UIEdgeInsetsInsetRect(buttonFrame, buttonsInsets);
