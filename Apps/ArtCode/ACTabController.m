@@ -509,7 +509,7 @@
                 [tab.viewController.view removeFromSuperview];
                 [tab.viewController removeFromParentViewController];
                 currentTabIndex += 1;
-                [self setCurrentTabIndex:newCurrentTabIndex animated:YES];
+                [self setCurrentTabIndex:newCurrentTabIndex scroll:NO animated:YES];
             }];
         }
         else
