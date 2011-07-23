@@ -158,6 +158,16 @@
         [self didChangeValueForKey:key];
 }
 
+- (void)openWithCompletionHandler:(void (^)(BOOL))completionHandler
+{
+    [[ACState sharedState] openProjectWithName:self.name withCompletionHandler:completionHandler];
+}
+
+- (void)closeWithCompletionHandler:(void (^)(BOOL))completionHandler
+{
+    [[ACState sharedState] closeProjectWithName:self.name withCompletionHandler:completionHandler];
+}
+
 @end
 
 @implementation ACStateCurrentProjectProxy

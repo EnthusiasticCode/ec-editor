@@ -30,4 +30,12 @@
 /// Only one project can be active at any time, activating one will deactivate the previously active project
 @property (nonatomic, getter = isActive) BOOL active;
 
+/// Open the project
+/// Must be called before using any of the following methods
+- (void)openWithCompletionHandler:(void (^)(BOOL success))completionHandler;
+
+/// Close the project
+/// Must be called if the project has been opened
+- (void)closeWithCompletionHandler:(void (^)(BOOL success))completionHandler;
+
 @end

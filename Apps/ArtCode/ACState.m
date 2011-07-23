@@ -7,11 +7,18 @@
 //
 
 #import "ACStateInternal.h"
+#import "ACProject.h"
 
 @interface ACState ()
 
 /// The projects list
 @property (nonatomic, strong) NSMutableArray *projects;
+
+/// Dictionary with project names as keys and project document objects as values
+@property (nonatomic, strong) NSMutableDictionary *projectDocuments;
+
+/// Return the path of the application documents directory
+- (NSString *)applicationDocumentsDirectory;
 
 /// Scans the application document directory for new projects
 - (void)scanForProjects;
@@ -39,6 +46,7 @@
 #pragma mark - Application Level
 
 @synthesize projects = _projects;
+@synthesize projectDocuments = _projectDocuments;
 
 + (ACState *)sharedState
 {
@@ -46,6 +54,7 @@
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         sharedState = [[self alloc] init];
+        sharedState->_projectDocuments = [NSMutableDictionary dictionary];
     });
     return sharedState;
 }
@@ -66,11 +75,15 @@
     [defaults synchronize];
 }
 
+- (NSString *)applicationDocumentsDirectory
+{
+    return [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject];
+}
+
 - (void)scanForProjects
 {
     NSFileManager *fileManager = [[NSFileManager alloc] init];
-    NSString *applicationDocumentsDirectory = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject];
-    NSArray *projectPaths = [fileManager contentsOfDirectoryAtPath:applicationDocumentsDirectory error:NULL];
+    NSArray *projectPaths = [fileManager contentsOfDirectoryAtPath:self.applicationDocumentsDirectory error:NULL];
     for (NSString *path in projectPaths)
     {
         if (![[path pathExtension] isEqualToString:ACProjectBundleExtension])
@@ -217,6 +230,20 @@
     [self.projects removeObjectAtIndex:index];
     [self didChangeValueForKey:@"allProjects" withSetMutation:NSKeyValueMinusSetMutation usingObjects:[NSSet setWithObject:proxy]];
     [self didChange:NSKeyValueChangeRemoval valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"allProjects"];
+}
+
+- (void)openProjectWithName:(NSString *)name withCompletionHandler:(void (^)(BOOL))completionHandler
+{
+    ACProject *projectDocument = [self.projectDocuments objectForKey:name];
+    if (!projectDocument)
+        projectDocument = [[ACProject alloc] initWithFileURL:[NSURL fileURLWithPath:[[self.applicationDocumentsDirectory stringByAppendingPathComponent:name] stringByAppendingPathExtension:ACProjectBundleExtension]]];
+    [projectDocument openWithCompletionHandler:completionHandler];
+}
+
+- (void)closeProjectWithName:(NSString *)name withCompletionHandler:(void (^)(BOOL))completionHandler
+{
+    ECASSERT([self.projectDocuments objectForKey:name]);
+    [[self.projectDocuments objectForKey:name] closeWithCompletionHandler:completionHandler];
 }
 
 @end

@@ -48,6 +48,12 @@ static NSString * const ACProjectProxyDeleteCommand = @"ACProjectProxyDeleteComm
 /// Delete a project
 - (void)deleteProjectAtIndex:(NSUInteger)index;
 
+/// Opens a project
+- (void)openProjectWithName:(NSString *)name withCompletionHandler:(void (^)(BOOL success))completionHandler;
+
+/// Closes a project
+- (void)closeProjectWithName:(NSString *)name withCompletionHandler:(void (^)(BOOL success))completionHandler;
+
 @end
 
 @interface ACStateProject (Internal)
