@@ -19,12 +19,15 @@
 #import "ACProjectTableController.h"
 #import "ACFileTableController.h"
 
+#import "ACState.h"
+
 @implementation ArtCodeAppDelegate
 
 @synthesize window;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    [[ACState sharedState] loadState];
     ACNavigationController *navigationController = (ACNavigationController *)self.window.rootViewController;
     UIFont *defaultFont = [UIFont styleFontWithSize:14];
     
@@ -125,6 +128,7 @@
      Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later. 
      If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
      */
+    [[ACState sharedState] saveState];
 }
 
 - (void)applicationWillEnterForeground:(UIApplication *)application
