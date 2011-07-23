@@ -73,7 +73,7 @@
 
 - (ACTab *)tabAtIndex:(NSUInteger)tabIndex
 {
-    // TODO sanity checks
+    ECASSERT(tabIndex == ACTabCurrent || tabIndex >= 0 && tabIndex < [tabs count]);
     if (tabIndex == ACTabCurrent)
         tabIndex = currentTabIndex;
     return [tabs objectAtIndex:tabIndex];
@@ -455,7 +455,7 @@
     [tab pushToHistory:url];
     
     // Create controller if neccessary
-    if (abs((NSInteger)tabIndex - (NSInteger)currentTabIndex) <= 1)
+    if (tabIndex == ACTabCurrent || abs((NSInteger)tabIndex - (NSInteger)currentTabIndex) <= 1)
     {
         [self loadAndPositionViewControllerForTab:tab animated:animated];
     }
@@ -476,7 +476,7 @@
     tab.historyPoint = index;
     
     // Update controller if neccessary
-    if (abs((NSInteger)tabIndex - (NSInteger)currentTabIndex) <= 1)
+    if (tabIndex == ACTabCurrent || abs((NSInteger)tabIndex - (NSInteger)currentTabIndex) <= 1)
     {
         [self loadAndPositionViewControllerForTab:tab animated:animated];
     }    
@@ -490,7 +490,7 @@
     
     [tab popHistory];
     
-    if (abs((NSInteger)tabIndex - (NSInteger)currentTabIndex) <= 1)
+    if (tabIndex == ACTabCurrent || abs((NSInteger)tabIndex - (NSInteger)currentTabIndex) <= 1)
     {
         [self loadAndPositionViewControllerForTab:tab animated:animated];
     }
@@ -511,7 +511,7 @@
     [tabs removeObject:tab];
     [(ACTabPagingScrollView *)contentScrollView setPageCount:[tabs count]];
     
-    if (tabIndex == currentTabIndex)
+    if (tabIndex == ACTabCurrent || tabIndex == currentTabIndex)
     {
         NSUInteger newCurrentTabIndex = currentTabIndex >= [tabs count] ? currentTabIndex - 1 : currentTabIndex;
         if (animated)
