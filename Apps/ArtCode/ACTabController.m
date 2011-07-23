@@ -133,7 +133,7 @@
 
 - (void)setCurrentTabIndex:(NSUInteger)tabIndex scroll:(BOOL)scroll animated:(BOOL)animated
 {
-    if (tabIndex == currentTabIndex || tabIndex == ACTabCurrent)
+    if (tabIndex == currentTabIndex || tabIndex == ACTabCurrent || tabIndex >= [tabs count])
         return;
     
     currentTabIndex = tabIndex;
@@ -181,8 +181,8 @@
     
     // Cleanup non used child controllers
     [tabs enumerateObjectsAtIndexes:hiddenTabsIndexes options:0 usingBlock:^(ACTab *t, NSUInteger idx, BOOL *stop) {
+        [t.viewController.view removeFromSuperview];
         [t.viewController removeFromParentViewController];
-#warning TODO remove view?
     }];
     
     // Call delegate
@@ -346,6 +346,8 @@
     // Gets tab page position
     CGRect tabFrame = contentScrollView.bounds;
     NSInteger tabIndex = (NSInteger)roundf(tabFrame.origin.x / tabFrame.size.width);
+    if (tabIndex < 0 || tabIndex == currentTabIndex)
+        return;
     
     [self setCurrentTabIndex:tabIndex scroll:NO animated:YES];
 }
@@ -487,6 +489,7 @@
     if ([tabs count] == 1)
         return;
     
+    ACTab *currentTab = [self tabAtIndex:ACTabCurrent];
     ACTab *tab = [self tabAtIndex:tabIndex];
     if (tab == nil)
         return;
@@ -519,13 +522,11 @@
     }
     else
     {
-        ACTab *currentTab = [self tabAtIndex:ACTabCurrent];
-        
         [tab.viewController.view removeFromSuperview];
         [tab.viewController removeFromParentViewController];
         
         if ([tabs indexOfObject:currentTab] != currentTabIndex)
-            [self setCurrentTabIndex:[tabs indexOfObject:currentTab] animated:animated];
+            [self setCurrentTabIndex:[tabs indexOfObject:currentTab] scroll:NO animated:NO];
         else if (tabIndex - currentTabIndex == 1 && tabIndex < [tabs count])
             [self loadAndPositionViewControllerForTab:[tabs objectAtIndex:tabIndex] animated:NO];
     }

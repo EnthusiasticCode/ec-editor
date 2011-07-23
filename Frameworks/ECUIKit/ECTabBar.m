@@ -365,11 +365,11 @@ static void init(ECTabBar *self)
     {
         UIButton *buttonToRemove = [tabButtons objectAtIndex:index];
         buttonToRemove.layer.shouldRasterize = YES;
+        [tabButtons removeObjectAtIndex:index];
         [UIView animateWithDuration:.10 animations:^(void) {
             buttonToRemove.alpha = 0;
         } completion:^(BOOL finished) {
             [buttonToRemove removeFromSuperview];
-            [tabButtons removeObjectAtIndex:index];
             [UIView animateWithDuration:.15 animations:^(void) {
                 [self layoutSubviews];
             } completion:^(BOOL finished) {
