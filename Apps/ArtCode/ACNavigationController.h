@@ -67,3 +67,7 @@
 - (IBAction)tests:(id)sender;
 
 @end
+
+@interface UIViewController (ACNavigationController)
+- (ACNavigationController *)ACNavigationController;
+@end

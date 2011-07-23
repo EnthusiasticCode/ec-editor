@@ -11,6 +11,7 @@
 #import "AppStyle.h"
 #import "ACState.h"
 #import "ACStateProject.h"
+#import "ACNavigationController.h"
 
 @implementation ACProjectTableController
 
@@ -132,16 +133,7 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    // Navigation logic may go here. Create and push another view controller.
-    /*
-     <#DetailViewController#> *detailViewController = [[<#DetailViewController#> alloc] initWithNibName:@"<#Nib name#>" bundle:nil];
-     // ...
-     // Pass the selected object to the new view controller.
-     [self.navigationController pushViewController:detailViewController animated:YES];
-     [detailViewController release];
-     */
-
-    [self performSegueWithIdentifier:@"projectSegue" sender:self];
+    [self.ACNavigationController pushURL:[[[ACState sharedState].allProjects objectAtIndex:indexPath.row] URL] animated:YES];
 }
 
 @end

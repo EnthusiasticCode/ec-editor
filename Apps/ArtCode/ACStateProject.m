@@ -19,10 +19,6 @@
 
 @end
 
-@interface ACStateCurrentProjectProxy : ACStateProject
-+ (ACStateCurrentProjectProxy *)sharedProxy;
-@end
-
 @implementation ACStateProject
 
 @synthesize name = _name;
@@ -53,21 +49,15 @@
     [[ACState sharedState] setColor:color forProjectWithName:self.name];
 }
 
-- (BOOL)isActive
+- (NSURL *)URL
 {
-    return [[ACState sharedState].activeProject.name isEqualToString:self.name];
+    return [NSURL URLWithString:[[ACURLScheme stringByAppendingString:@":/"] stringByAppendingString:[self.name stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]]];
 }
 
-- (void)setActive:(BOOL)active
+- (void)setURL:(NSURL *)URL
 {
-    if (!self.name)
-        return;
-    if (self.active == active)
-        return;
-    if (active)
-        [[ACState sharedState] activateProject:self.name];
-    else
-        [[ACState sharedState] activateProject:nil];
+    ECASSERT([[URL scheme] isEqualToString:ACURLScheme]);
+    self.name = [[URL pathComponents] objectAtIndex:0];
 }
 
 #pragma mark - Internal Methods
@@ -89,11 +79,6 @@
 - (void)dealloc
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-}
-
-+ (ACStateProject *)currentProject
-{
-    return [ACStateCurrentProjectProxy sharedProxy];
 }
 
 + (ACStateProject *)projectProxyForProjectWithName:(NSString *)name
@@ -118,11 +103,13 @@
     if (![[[notification userInfo] objectForKey:@"name"] isEqualToString:self.name])
         return;
     [self willChangeValueForKey:@"name"];
+    [self willChangeValueForKey:@"URL"];
     [self willChangeValueForKey:@"index"];
     [self willChangeValueForKey:@"color"];
     [self willChangeValueForKey:@"active"];
     _name = nil;
     [self didChangeValueForKey:@"name"];
+    [self didChangeValueForKey:@"URL"];
     [self didChangeValueForKey:@"index"];
     [self didChangeValueForKey:@"color"];
     [self didChangeValueForKey:@"active"];
@@ -133,6 +120,7 @@
     if (![[[notification userInfo] objectForKey:@"oldName"] isEqualToString:self.name])
         return;
     [self willChangeValueForKey:@"name"];
+    [self willChangeValueForKey:@"URL"];
 }
 
 - (void)handleProjectDidRenameNotification:(NSNotification *)notification
@@ -140,6 +128,7 @@
     if (![[[notification userInfo] objectForKey:@"newName"] isEqualToString:self.name])
         return;
     [self didChangeValueForKey:@"name"];
+    [self didChangeValueForKey:@"URL"];
 }
 
 - (void)handleProjectPropertiesWillChangeNotification:(NSNotification *)notification
@@ -158,58 +147,14 @@
         [self didChangeValueForKey:key];
 }
 
-@end
-
-@implementation ACStateCurrentProjectProxy
-
-- (NSString *)name
+- (void)openWithCompletionHandler:(void (^)(BOOL))completionHandler
 {
-    return [ACState sharedState].activeProject.name;
+    [[ACState sharedState] openProjectWithName:self.name withCompletionHandler:completionHandler];
 }
 
-- (id)init
+- (void)closeWithCompletionHandler:(void (^)(BOOL))completionHandler
 {
-    self = [super init];
-    if (!self)
-        return nil;
-    [[ACState sharedState] addObserver:self forKeyPath:@"activeProject" options:NSKeyValueObservingOptionPrior | NSKeyValueObservingOptionInitial context:NULL];
-    return self;
-}
-
-- (void)dealloc
-{
-    [[ACState sharedState] removeObserver:self forKeyPath:@"activeProject"];
-}
-
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
-{
-    [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
-    if (![keyPath isEqualToString:@"activeProject"])
-        return;
-    if ([[change objectForKey:NSKeyValueChangeNotificationIsPriorKey] boolValue])
-    {
-        [self willChangeValueForKey:@"name"];
-        [self willChangeValueForKey:@"index"];
-        [self willChangeValueForKey:@"color"];
-        [self willChangeValueForKey:@"active"];
-    }
-    else
-    {
-        [self didChangeValueForKey:@"name"];
-        [self didChangeValueForKey:@"index"];
-        [self didChangeValueForKey:@"color"];
-        [self didChangeValueForKey:@"active"];
-    }
-}
-
-+ (ACStateCurrentProjectProxy *)sharedProxy
-{
-    static ACStateCurrentProjectProxy *sharedProxy = nil;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        sharedProxy = [[self alloc] init];
-    });
-    return sharedProxy;
+    [[ACState sharedState] closeProjectWithName:self.name withCompletionHandler:completionHandler];
 }
 
 @end

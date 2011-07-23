@@ -157,6 +157,7 @@
 
 - (void)pushURL:(NSURL *)url animated:(BOOL)animated
 {
+    ECASSERT(url);
     [tabController pushURL:url toTabAtIndex:ACTabCurrent animated:animated];
 }
 
@@ -421,5 +422,17 @@
     [[ECBezelAlert sharedAlert] addAlertMessageWithText:title image:nil displayImmediatly:NO];
 }
 
+
+@end
+
+@implementation UIViewController (ACNavigationController)
+
+- (ACNavigationController *)ACNavigationController
+{
+    UIViewController *ancestor = self.parentViewController;
+    while (ancestor && ![ancestor isKindOfClass:[ACNavigationController class]])
+        ancestor = [ancestor parentViewController];
+    return (ACNavigationController *)ancestor;
+}
 
 @end
