@@ -33,10 +33,6 @@
 /// The currently active project
 @property (nonatomic, strong, readonly) ACStateProject *activeProject;
 
-/// Returns a proxy that always represents the active project
-/// The proxy's properties change both when the project's properties change, and when a different project is activated
-- (ACStateProject *)currentProject;
-
 /// Adds a new project
 /// Inserting a project with the same name as an existing project is an error
 - (void)insertProjectWithName:(NSString *)name color:(UIColor *)color atIndex:(NSUInteger)index;
@@ -44,26 +40,5 @@
 /// Deletes a project
 /// If the project is active it deactives it before deleting it.
 - (void)deleteProjectWithName:(NSString *)name;
-
-@end
-
-
-/// AC Project controller
-/// Is returned by ACState methods, cannot be created
-@interface ACStateProject : NSObject
-
-/// Project name
-/// Same as the bundle's name, setting it will rename the bundle
-@property (nonatomic, copy) NSString *name;
-
-/// Project index in the projects list
-@property (nonatomic) NSUInteger index;
-
-/// Color of the project
-@property (nonatomic, strong) UIColor *color;
-
-/// Whether or not the project is active
-/// Only one project can be active at any time, activating one will deactivate the previously active project
-@property (nonatomic, getter = isActive) BOOL active;
 
 @end

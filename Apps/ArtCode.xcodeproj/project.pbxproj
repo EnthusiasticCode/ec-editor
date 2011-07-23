@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B70A2DC013DB10B10034B929 /* ACStateProject.m in Sources */ = {isa = PBXBuildFile; fileRef = B70A2DBF13DB10B10034B929 /* ACStateProject.m */; };
 		CD13665913D32150001F3455 /* UIControl+BlockAction.m in Sources */ = {isa = PBXBuildFile; fileRef = CD13665813D32150001F3455 /* UIControl+BlockAction.m */; };
 		CD4786E913DB0C2500616B62 /* ACState.m in Sources */ = {isa = PBXBuildFile; fileRef = CD4786E813DB0C2500616B62 /* ACState.m */; };
 		CD62BAC613CA06A900266BC0 /* ACToolController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD62BAC513CA06A900266BC0 /* ACToolController.m */; };
@@ -75,6 +76,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		B70A2DBC13DB108A0034B929 /* ECDebug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECDebug.h; path = ../../Frameworks/ECCore/ECDebug.h; sourceTree = "<group>"; };
+		B70A2DBE13DB10B10034B929 /* ACStateProject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACStateProject.h; sourceTree = "<group>"; };
+		B70A2DBF13DB10B10034B929 /* ACStateProject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACStateProject.m; sourceTree = "<group>"; };
+		B70A2DC113DB120C0034B929 /* ACStateInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACStateInternal.h; sourceTree = "<group>"; };
 		CD0DEAB613D4C2430087ADBB /* ACToolTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACToolTarget.h; sourceTree = "<group>"; };
 		CD0DEAB713D4C26A0087ADBB /* ACURLTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACURLTarget.h; sourceTree = "<group>"; };
 		CD13665713D32150001F3455 /* UIControl+BlockAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIControl+BlockAction.h"; sourceTree = "<group>"; };
@@ -200,8 +205,11 @@
 		CD4786E513DB0BF500616B62 /* State */ = {
 			isa = PBXGroup;
 			children = (
+				B70A2DC113DB120C0034B929 /* ACStateInternal.h */,
 				CD4786E713DB0C2500616B62 /* ACState.h */,
 				CD4786E813DB0C2500616B62 /* ACState.m */,
+				B70A2DBE13DB10B10034B929 /* ACStateProject.h */,
+				B70A2DBF13DB10B10034B929 /* ACStateProject.m */,
 			);
 			name = State;
 			sourceTree = "<group>";
@@ -247,6 +255,7 @@
 		CD7D2AEA13C0CD2600B889EE /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				B70A2DBC13DB108A0034B929 /* ECDebug.h */,
 				CD7D2AEB13C0CD2600B889EE /* ArtCode-Info.plist */,
 				CD7D2AEC13C0CD2600B889EE /* InfoPlist.strings */,
 				CD7D2AEF13C0CD2600B889EE /* main.m */,
@@ -662,6 +671,7 @@
 				CD13665913D32150001F3455 /* UIControl+BlockAction.m in Sources */,
 				CD7C01C113D354A0004CD5E5 /* ACTabController.m in Sources */,
 				CD4786E913DB0C2500616B62 /* ACState.m in Sources */,
+				B70A2DC013DB10B10034B929 /* ACStateProject.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -9,6 +9,8 @@
 #import "ACProjectTableController.h"
 #import "ACProjectTableCell.h"
 #import "AppStyle.h"
+#import "ACState.h"
+#import "ACStateProject.h"
 
 @implementation ACProjectTableController
 
@@ -54,7 +56,7 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return 4;
+    return [[ACState sharedState].allProjects count];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -78,7 +80,7 @@
     }
     
     // Configure the cell...
-    [cell.textLabel setText:[NSString stringWithFormat:@"Project %ld", indexPath.row]];
+    [cell.textLabel setText:[[[ACState sharedState].allProjects objectAtIndex:indexPath.row] name]];
     
     return cell;
 }
@@ -90,7 +92,7 @@
 
 - (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)sourceIndexPath toIndexPath:(NSIndexPath *)destinationIndexPath
 {
-    
+    [[[ACState sharedState].allProjects objectAtIndex:sourceIndexPath.row] setIndex:destinationIndexPath.row];
 }
 
 /*
@@ -102,19 +104,20 @@
 }
 */
 
-/*
+
 // Override to support editing the table view.
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (editingStyle == UITableViewCellEditingStyleDelete) {
         // Delete the row from the data source
+        [[ACState sharedState] deleteProjectWithName:[[[ACState sharedState].allProjects objectAtIndex:indexPath.row] name]];
         [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
     }   
     else if (editingStyle == UITableViewCellEditingStyleInsert) {
         // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
     }   
 }
-*/
+
 
 /*
 // Override to support conditional rearranging of the table view.
