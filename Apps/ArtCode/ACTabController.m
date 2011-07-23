@@ -405,6 +405,7 @@
 - (void)scrollViewDidEndScrollingAnimation:(UIScrollView *)scrollView
 {
     // Restore the ability to change current tab via scrolling
+    // removed when changing current tab via API in setCurrentTab:scroll:YES animated:YES.
     ignoreContentViewScrolling = NO;
 }
 
@@ -435,8 +436,8 @@
 
 - (NSUInteger)addTabWithURL:(NSURL *)url title:(NSString *)title animated:(BOOL)animated
 {
-    // TODO warn if no delegate?
-    // TODO assert url != nil?
+    ECASSERT(delegate != nil);
+    ECASSERT(url != nil);
     
     // Create a proper title
     if (title == nil)
@@ -451,10 +452,21 @@
         }
         else
         {
+            NSUInteger i = 0;
+            
+            static NSRegularExpression *titleCountRegexp = nil;
+            if (titleCountRegexp == nil)
+                titleCountRegexp = [NSRegularExpression regularExpressionWithPattern:@"(.+?)\\s\\((\\d+)\\)$" options:0 error:nil];
+            NSTextCheckingResult *checkResult = [titleCountRegexp firstMatchInString:title options:0 range:NSMakeRange(0, [title length])];
+            if (checkResult.numberOfRanges > 2)
+            {
+                i = [[title substringWithRange:[checkResult rangeAtIndex:2]] integerValue];
+                title = [title substringWithRange:[checkResult rangeAtIndex:1]];
+            }
+            
             NSString *newTitle;
-            NSUInteger i = 1;
             do {
-                newTitle = [title stringByAppendingFormat:@" (%u)", i];
+                newTitle = [title stringByAppendingFormat:@" (%u)", ++i];
             } while ([tabTitles containsObject:newTitle]);
             title = newTitle;
         }
