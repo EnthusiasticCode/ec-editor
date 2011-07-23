@@ -67,7 +67,8 @@
     
     // Layout content view
     CGRect contentFrame = (CGRect){ CGPointMake(bezelCornerRadius, bezelCornerRadius), viewController.contentSizeForViewInPopover };
-    // TODO check if size == Zero
+    // TODO check if size == Zero and use view size instead
+    ECASSERT(!CGSizeEqualToSize(contentFrame.size, CGSizeZero));
     viewController.view.frame = contentFrame;
     [self.view addSubview:viewController.view];
     
@@ -89,13 +90,15 @@
         [UIView animateWithDuration:0.10 delay:0 options:UIViewAnimationOptionAllowUserInteraction animations:^(void) {
             viewController.view.alpha = 1;
             self.view.frame = bezelFrame;
+            viewController.view.frame = contentFrame;
         } completion:nil];
     }
     else
     {
-        viewController.view.alpha = 1;
         self.view.frame = bezelFrame;
         self.view.alpha = 0;
+        viewController.view.alpha = 1;
+        viewController.view.frame = contentFrame;
         [UIView animateWithDuration:0.10 delay:0 options:UIViewAnimationOptionAllowUserInteraction animations:^(void) {
             self.view.alpha = 1;
         } completion:nil];
@@ -158,11 +161,11 @@
         }
         
         [self addChildViewController:viewController];
-        
-        if (immediate || [self.childViewControllers count] == 1)
-        {
-            [self presentFirstChildViewController];
-        }
+    }
+    
+    if (immediate || [self.childViewControllers count] == 1)
+    {
+        [self presentFirstChildViewController];
     }
     
     if (visibleTimeInterval == 0)

@@ -283,19 +283,22 @@
     buttonEdit.selected = tabController.isEditing;
     
     // Showing bezel alert of page change
-    if (tabPageControlController == nil)
-    {
-        tabPageControl = [UIPageControl new];
-        tabPageControlController = [UIViewController new];
-        tabPageControlController.view = tabPageControl;
-    }
     NSUInteger pages = [tabController.tabs count];
-    tabPageControl.numberOfPages = pages;
-    tabPageControl.currentPage = tabIndex;
-    CGRect tabPageControlFrame = (CGRect){ CGPointZero, [tabPageControl sizeForNumberOfPages:pages] };
-    tabPageControl.frame = tabPageControlFrame;
-    tabPageControlController.contentSizeForViewInPopover = CGSizeMake(tabPageControlFrame.size.width, 10);
-    [[ECBezelAlert sharedAlert] addAlertMessageWithViewController:tabPageControlController displayImmediatly:YES];
+    if (pages > 1)
+    {
+        if (tabPageControlController == nil)
+        {
+            tabPageControl = [UIPageControl new];
+            tabPageControlController = [UIViewController new];
+            tabPageControlController.view = tabPageControl;
+        }        
+        tabPageControl.numberOfPages = pages;
+        tabPageControl.currentPage = tabIndex;
+        CGRect tabPageControlFrame = (CGRect){ CGPointZero, [tabPageControl sizeForNumberOfPages:pages] };
+        tabPageControl.frame = tabPageControlFrame;
+        tabPageControlController.contentSizeForViewInPopover = CGSizeMake(tabPageControlFrame.size.width, 10);
+        [[ECBezelAlert sharedAlert] addAlertMessageWithViewController:tabPageControlController displayImmediatly:YES];
+    }
 }
 
 #pragma mark - Tool Panel Management Methods
