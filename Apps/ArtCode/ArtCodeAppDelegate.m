@@ -28,8 +28,8 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     [[ACState sharedState] loadState];
+    UIFont *defaultFont = [UIFont styleFontWithSize:14];    
     ACNavigationController *navigationController = (ACNavigationController *)self.window.rootViewController;
-    UIFont *defaultFont = [UIFont styleFontWithSize:14];
     
     ////////////////////////////////////////////////////////////////////////////
     // Generic text field
@@ -109,6 +109,7 @@
     ////////////////////////////////////////////////////////////////////////////
     [window makeKeyAndVisible];
     navigationController.delegate = self;
+    navigationController.tabController.tabPageMargin = 10;
     [navigationController.tabController addTabWithURL:[NSURL URLWithString:@"artcode:projects"] title:@"Projects" animated:NO];
     [navigationController.tabController addTabWithURL:[NSURL URLWithString:@"artcode:files"] title:@"Projects" animated:NO];
     return YES;

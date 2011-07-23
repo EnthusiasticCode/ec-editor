@@ -23,7 +23,7 @@
     
     self.tableView.rowHeight = 55;
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
-    self.tableView.backgroundColor = [UIColor clearColor];
+    self.tableView.backgroundColor = [UIColor styleBackgroundColor];
 }
 
 #pragma mark - ACNavigable Protocol

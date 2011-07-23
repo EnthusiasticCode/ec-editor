@@ -31,6 +31,7 @@
 
 @property (nonatomic) NSUInteger pageCount;
 @property (nonatomic) BOOL keepCurrentPageCentered;
+@property (nonatomic) CGFloat pageMargin;
 
 @end
 
@@ -44,6 +45,7 @@
 #pragma mark - Properties
 
 @synthesize delegate;
+@synthesize tabPageMargin;
 @synthesize contentScrollView;
 @synthesize tabBar, tabBarEnabled;
 @synthesize swipeGestureRecognizer;
@@ -67,6 +69,18 @@
     
     if (!tabBarEnabled)
         [self toggleTabBar:nil];
+}
+
+- (void)setTabPageMargin:(CGFloat)margin
+{
+    tabPageMargin = margin;
+    
+    CGRect contentScrollViewFrame = self.view.bounds;
+    contentScrollViewFrame.origin.x -= tabPageMargin / 2;
+    contentScrollViewFrame.size.width += tabPageMargin;
+    contentScrollView.frame = contentScrollViewFrame;
+    
+    [(ACTabPagingScrollView *)contentScrollView setPageMargin:margin];
 }
 
 #pragma mark - Private Methods
@@ -230,10 +244,15 @@
     // Content scroll view
     if (!contentScrollView)
     {
-        contentScrollView = [[ACTabPagingScrollView alloc] initWithFrame:self.view.bounds];
+        CGRect contentScrollViewFrame = self.view.bounds;
+        contentScrollViewFrame.origin.x -= tabPageMargin / 2;
+        contentScrollViewFrame.size.width += tabPageMargin;
+        contentScrollView = [[ACTabPagingScrollView alloc] initWithFrame:contentScrollViewFrame];
         contentScrollView.delegate = self;
+        [(ACTabPagingScrollView *)contentScrollView setPageMargin:tabPageMargin];
         [self.view addSubview:contentScrollView];
     }
+    contentScrollView.backgroundColor = [UIColor styleForegroundColor];
     contentScrollView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     contentScrollView.pagingEnabled = YES;
     contentScrollView.showsVerticalScrollIndicator = NO;
@@ -316,7 +335,7 @@
         return;
     
     CGRect contentScrollViewFrame = contentScrollView.frame;
-    CGRect tabBarFrame = CGRectMake(0, 0, contentScrollViewFrame.size.width, 44);
+    CGRect tabBarFrame = CGRectMake(0, 0, contentScrollViewFrame.size.width - tabPageMargin, 44);
     if (tabBar.superview != nil)
     {
         contentScrollViewFrame.size.height += tabBarFrame.size.height;
@@ -597,7 +616,7 @@
 
 
 @implementation ACTabPagingScrollView
-@synthesize pageCount, keepCurrentPageCentered;
+@synthesize pageCount, keepCurrentPageCentered, pageMargin;
 
 - (void)layoutSubviews
 {
@@ -613,9 +632,10 @@
     
     self.contentSize = CGSizeMake(bounds.size.width * pageCount, 1);
     
+    bounds.size.width -= pageMargin;
     for (UIView *view in self.subviews)
     {
-        bounds.origin.x = bounds.size.width * view.tag;
+        bounds.origin.x = (bounds.size.width + pageMargin) * view.tag + pageMargin / 2;
         view.frame = bounds;
     }
 }

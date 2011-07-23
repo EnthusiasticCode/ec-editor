@@ -33,6 +33,11 @@ enum {ACTabCurrent = NSIntegerMax};
 
 @property (nonatomic, weak) id<ACTabControllerDelegate> delegate;
 
+#pragma mark Layout
+
+/// Define a margin between two tab pages.
+@property (nonatomic) CGFloat tabPageMargin;
+
 #pragma mark Controller's Views
 
 /// A flag indicating if the tab bar can be displayed.
