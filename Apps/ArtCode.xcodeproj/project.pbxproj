@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B732CFEE13DB1BB000637FBE /* ACStateProject.m in Sources */ = {isa = PBXBuildFile; fileRef = B732CFED13DB1BB000637FBE /* ACStateProject.m */; };
 		CD13665913D32150001F3455 /* UIControl+BlockAction.m in Sources */ = {isa = PBXBuildFile; fileRef = CD13665813D32150001F3455 /* UIControl+BlockAction.m */; };
 		CD4786E913DB0C2500616B62 /* ACState.m in Sources */ = {isa = PBXBuildFile; fileRef = CD4786E813DB0C2500616B62 /* ACState.m */; };
 		CD4786ED13DB0F7A00616B62 /* ECBezelAlert.m in Sources */ = {isa = PBXBuildFile; fileRef = CD4786EC13DB0F7A00616B62 /* ECBezelAlert.m */; };
@@ -77,6 +78,9 @@
 
 /* Begin PBXFileReference section */
 		B732CFE913DB1B6B00637FBE /* ECDebug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECDebug.h; path = ../../Frameworks/ECCore/ECDebug.h; sourceTree = "<group>"; };
+		B732CFEB13DB1BB000637FBE /* ACStateInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACStateInternal.h; sourceTree = "<group>"; };
+		B732CFEC13DB1BB000637FBE /* ACStateProject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACStateProject.h; sourceTree = "<group>"; };
+		B732CFED13DB1BB000637FBE /* ACStateProject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACStateProject.m; sourceTree = "<group>"; };
 		CD0DEAB613D4C2430087ADBB /* ACToolTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACToolTarget.h; sourceTree = "<group>"; };
 		CD0DEAB713D4C26A0087ADBB /* ACURLTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACURLTarget.h; sourceTree = "<group>"; };
 		CD13665713D32150001F3455 /* UIControl+BlockAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIControl+BlockAction.h"; sourceTree = "<group>"; };
@@ -204,6 +208,9 @@
 		CD4786E513DB0BF500616B62 /* State */ = {
 			isa = PBXGroup;
 			children = (
+				B732CFEB13DB1BB000637FBE /* ACStateInternal.h */,
+				B732CFEC13DB1BB000637FBE /* ACStateProject.h */,
+				B732CFED13DB1BB000637FBE /* ACStateProject.m */,
 				CD4786E713DB0C2500616B62 /* ACState.h */,
 				CD4786E813DB0C2500616B62 /* ACState.m */,
 			);
@@ -678,6 +685,7 @@
 				CD7C01C113D354A0004CD5E5 /* ACTabController.m in Sources */,
 				CD4786E913DB0C2500616B62 /* ACState.m in Sources */,
 				CD4786ED13DB0F7A00616B62 /* ECBezelAlert.m in Sources */,
+				B732CFEE13DB1BB000637FBE /* ACStateProject.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

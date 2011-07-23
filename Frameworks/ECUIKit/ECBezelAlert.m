@@ -20,14 +20,14 @@
 {
     // View background image
     CGFloat radius = 10;
-    UIImage *bezieBackgroundImage = [[UIImage imageWithSize:CGSizeMake(radius * 2 + 1, radius * 2 + 1) block:^(CGContextRef ctx, CGRect rect) {
+    UIImage *bezelBackgroundImage = [[UIImage imageWithSize:CGSizeMake(radius * 2 + 1, radius * 2 + 1) block:^(CGContextRef ctx, CGRect rect) {
         CGContextSetFillColorWithColor(ctx, [UIColor colorWithWhite:0 alpha:0.5].CGColor);
         CGContextAddPath(ctx, [UIBezierPath bezierPathWithRoundedRect:rect cornerRadius:radius].CGPath);
         CGContextFillPath(ctx);
     }] resizableImageWithCapInsets:UIEdgeInsetsMake(radius, radius, radius, radius)];
     
     // Create view
-    UIView *bezieView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, radius * 3, radius * 3)];
+    UIView *bezelView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, radius * 3, radius * 3)];
     
 }
 
