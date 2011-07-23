@@ -12,6 +12,7 @@
 #import "UIImage+BlockDrawing.h"
 
 @implementation ECBezelAlert
+
 @synthesize visibleTimeInterval;
 
 #pragma mark - View Lifecycle
@@ -27,8 +28,8 @@
     }] resizableImageWithCapInsets:UIEdgeInsetsMake(radius, radius, radius, radius)];
     
     // Create view
-    UIView *bezelView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, radius * 3, radius * 3)];
-    
+    UIImageView *bezelView = [[UIImageView alloc] initWithImage:bezelBackgroundImage];
+    self.view = bezelView;
 }
 
 @end
