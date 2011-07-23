@@ -246,10 +246,8 @@
 
 - (void)setEditing:(BOOL)editing animated:(BOOL)animated
 {
-    [super setEditing:editing animated:animated];
     buttonEdit.selected = editing;
-    
-    [[self.childViewControllers lastObject] setEditing:editing animated:animated];
+    [tabController setEditing:editing animated:animated];
 }
 
 - (IBAction)toggleTools:(id)sender
@@ -260,7 +258,7 @@
 
 - (IBAction)toggleEditing:(id)sender
 {
-    BOOL editing = !self.isEditing;
+    BOOL editing = !tabController.isEditing;
     [self setEditing:editing animated:YES];
 }
 
@@ -354,6 +352,8 @@
     }
     [toolPanelController updateTabs];
     self.toolPanelEnabled = toolEnabled;
+    
+    buttonEdit.selected = tabController.isEditing;
 }
 
 #pragma mark - Tool Panel Management Methods

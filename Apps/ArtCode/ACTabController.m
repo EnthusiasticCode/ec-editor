@@ -261,6 +261,19 @@
     [(ACTabPagingScrollView *)contentScrollView setKeepCurrentPageCentered:NO];
 }
 
+- (BOOL)isEditing
+{
+    ACTab *tab = [self tabAtIndex:currentTabIndex];
+    return tab.viewController.isEditing;
+}
+
+- (void)setEditing:(BOOL)editing animated:(BOOL)animated
+{
+    // Forward editing calls to current tab controller
+    ACTab *tab = [self tabAtIndex:currentTabIndex];
+    [tab.viewController setEditing:editing animated:animated];
+}
+
 #pragma mark - TabBar Methods
 
 - (BOOL)tabBar:(ECTabBar *)tabBar shouldAddTabButton:(UIButton *)tabButton atIndex:(NSUInteger)tabIndex
