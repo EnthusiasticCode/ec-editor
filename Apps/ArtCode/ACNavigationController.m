@@ -23,6 +23,7 @@
 
 #import "ECInstantGestureRecognizer.h"
 
+#import "ECBezelAlert.h"
 
 @implementation ACNavigationController {
 @private
@@ -32,6 +33,9 @@
     
     UISwipeGestureRecognizer *toolPanelLeftGestureRecognizer, *toolPanelRightGestureRecognizer;
     ECInstantGestureRecognizer *toolPanelDismissGestureRecognizer;
+    
+    UIPageControl *tabPageControl;
+    UIViewController *tabPageControlController;
 }
 
 #pragma mark - Properties
@@ -261,8 +265,10 @@
 {
     UIViewController<ACToolTarget> *controller = (UIViewController<ACToolTarget> *)viewController;
     
+    // Enable tabs
     tabController.tabBarEnabled = [controller shouldShowTabBar];
     
+    // Enable tools
     BOOL toolEnabled = NO;
     for (ACToolController *toolController in toolPanelController.childViewControllers)
     {
@@ -272,7 +278,23 @@
     [toolPanelController updateTabs];
     self.toolPanelEnabled = toolEnabled;
     
+    // Toggle editing button
     buttonEdit.selected = tabController.isEditing;
+    
+    // Showing bezel alert of page change
+    if (tabPageControlController == nil)
+    {
+        tabPageControl = [UIPageControl new];
+        tabPageControlController = [UIViewController new];
+        tabPageControlController.view = tabPageControl;
+    }
+    NSUInteger pages = [tabController.tabs count];
+    tabPageControl.numberOfPages = pages;
+    tabPageControl.currentPage = tabIndex;
+    CGRect tabPageControlFrame = (CGRect){ CGPointZero, [tabPageControl sizeForNumberOfPages:pages] };
+    tabPageControl.frame = tabPageControlFrame;
+    tabPageControlController.contentSizeForViewInPopover = CGSizeMake(tabPageControlFrame.size.width, 10);
+    [[ECBezelAlert sharedAlert] addAlertMessageWithViewController:tabPageControlController displayImmediatly:YES];
 }
 
 #pragma mark - Tool Panel Management Methods
@@ -393,8 +415,10 @@
 #pragma mark -
 
 - (IBAction)tests:(id)sender {
-    NSString *title = [NSString stringWithFormat:@"Path %u", [jumpBar.jumpElements count]];
-    [jumpBar pushJumpElementWithPathComponent:title animated:YES];
+    static NSUInteger count = 0;
+    NSString *title = [NSString stringWithFormat:@"Path %u", count++];
+//    [jumpBar pushJumpElementWithPathComponent:title animated:YES];
+    [[ECBezelAlert sharedAlert] addAlertMessageWithText:title image:nil displayImmediatly:NO];
 }
 
 

@@ -14,6 +14,13 @@
 /// Return a shared instance of the bezel alert.
 + (ECBezelAlert *)sharedAlert;
 
+/// Specify the view controller in which the alert will be presented. If nil the allert
+/// will be presented in the application's window root view controller.
+@property (nonatomic, weak) UIViewController *presentingViewController;
+
+/// Radius of rounded corners for the presented bezel view.
+@property (nonatomic) CGFloat bezelCornerRadius;
+
 /// The time for which the alert stays vivible before faigin out. Default 1 second.
 @property (nonatomic) NSTimeInterval visibleTimeInterval;
 
