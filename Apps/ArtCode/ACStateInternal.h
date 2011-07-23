@@ -10,6 +10,7 @@
 #import "ACStateProject.h"
 
 static NSString * const ACProjectBundleExtension = @"acproj";
+static NSString * const ACURLScheme = @"artcode";
 
 static NSString * const ACProjectWillRenameNotification = @"ACProjectWillRenameNotification";
 static NSString * const ACProjectDidRenameNotification = @"ACProjectDidRenameNotification";
@@ -21,9 +22,6 @@ static NSString * const ACProjectProxyRenameCommand = @"ACProjectProxyRenameComm
 static NSString * const ACProjectProxyDeleteCommand = @"ACProjectProxyDeleteCommand";
 
 @interface ACState (Internal)
-
-/// The currently active project
-@property (nonatomic, strong) ACStateProject *activeProject;
 
 /// Renames a project
 - (void)setName:(NSString *)newName forProjectWithName:(NSString *)oldName;
@@ -40,10 +38,6 @@ static NSString * const ACProjectProxyDeleteCommand = @"ACProjectProxyDeleteComm
 
 /// Sets the color of a project
 - (void)setColor:(UIColor *)color forProjectWithName:(NSString *)name;
-
-/// Activate a project
-/// If nil, deactivates all projects
-- (void)activateProject:(NSString *)projectName;
 
 /// Delete a project
 - (void)deleteProjectAtIndex:(NSUInteger)index;

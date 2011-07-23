@@ -30,9 +30,6 @@
 /// A list containing all existing projects
 @property (nonatomic, strong, readonly) NSOrderedSet *allProjects;
 
-/// The currently active project
-@property (nonatomic, strong, readonly) ACStateProject *activeProject;
-
 /// Adds a new project
 /// Inserting a project with the same name as an existing project is an error
 - (void)insertProjectWithName:(NSString *)name color:(UIColor *)color atIndex:(NSUInteger)index;

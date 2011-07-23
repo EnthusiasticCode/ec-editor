@@ -97,8 +97,6 @@
 
 #pragma mark - Project Level
 
-@synthesize activeProject = _activeProject;
-
 - (NSOrderedSet *)allProjects
 {
     NSMutableOrderedSet *allProjects = [NSMutableOrderedSet orderedSetWithCapacity:[self.projects count]];
@@ -191,15 +189,6 @@
     project = [NSDictionary dictionaryWithObjectsAndKeys:[project objectForKey:@"name"], @"name", color, @"color", nil];
     [self.projects replaceObjectAtIndex:index withObject:project];
     [[NSNotificationCenter defaultCenter] postNotificationName:ACProjectPropertiesDidChangeNotification object:self userInfo:[NSDictionary dictionaryWithObjectsAndKeys:name , @"name", [NSArray arrayWithObject:@"color"], @"propertyKeys", nil]];
-}
-
-- (void)activateProject:(NSString *)projectName
-{
-    ECASSERT(!projectName || [self indexOfProjectWithName:projectName] != NSNotFound);
-    if (!projectName)
-        self.activeProject = nil;
-    else
-        self.activeProject = [ACStateProject projectProxyForProjectWithName:projectName];
 }
 
 - (void)insertProjectWithName:(NSString *)name color:(UIColor *)color atIndex:(NSUInteger)index

@@ -15,6 +15,7 @@
 		B732D00D13DB2B3800637FBE /* ACModelHistoryItem.m in Sources */ = {isa = PBXBuildFile; fileRef = B732D00C13DB2B3800637FBE /* ACModelHistoryItem.m */; };
 		B732D01013DB2B3800637FBE /* ACModelBookmark.m in Sources */ = {isa = PBXBuildFile; fileRef = B732D00F13DB2B3800637FBE /* ACModelBookmark.m */; };
 		B732D01313DB2C0800637FBE /* ACProject.m in Sources */ = {isa = PBXBuildFile; fileRef = B732D01213DB2C0800637FBE /* ACProject.m */; };
+		B732D01513DB361600637FBE /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B732D01413DB361600637FBE /* CoreData.framework */; };
 		CD13665913D32150001F3455 /* UIControl+BlockAction.m in Sources */ = {isa = PBXBuildFile; fileRef = CD13665813D32150001F3455 /* UIControl+BlockAction.m */; };
 		CD4786E913DB0C2500616B62 /* ACState.m in Sources */ = {isa = PBXBuildFile; fileRef = CD4786E813DB0C2500616B62 /* ACState.m */; };
 		CD4786ED13DB0F7A00616B62 /* ECBezelAlert.m in Sources */ = {isa = PBXBuildFile; fileRef = CD4786EC13DB0F7A00616B62 /* ECBezelAlert.m */; };
@@ -101,6 +102,7 @@
 		B732D00F13DB2B3800637FBE /* ACModelBookmark.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACModelBookmark.m; sourceTree = "<group>"; };
 		B732D01113DB2C0800637FBE /* ACProject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACProject.h; sourceTree = "<group>"; };
 		B732D01213DB2C0800637FBE /* ACProject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACProject.m; sourceTree = "<group>"; };
+		B732D01413DB361600637FBE /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		CD0DEAB613D4C2430087ADBB /* ACToolTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACToolTarget.h; sourceTree = "<group>"; };
 		CD0DEAB713D4C26A0087ADBB /* ACURLTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACURLTarget.h; sourceTree = "<group>"; };
 		CD13665713D32150001F3455 /* UIControl+BlockAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIControl+BlockAction.h"; sourceTree = "<group>"; };
@@ -219,6 +221,7 @@
 				CD7D2AE413C0CD2600B889EE /* UIKit.framework in Frameworks */,
 				CD7D2AE613C0CD2600B889EE /* Foundation.framework in Frameworks */,
 				CD7D2AE813C0CD2600B889EE /* CoreGraphics.framework in Frameworks */,
+				B732D01513DB361600637FBE /* CoreData.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -350,6 +353,7 @@
 		CD7D2B0613C0CE3200B889EE /* Apple Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B732D01413DB361600637FBE /* CoreData.framework */,
 				CD7D2B0113C0CD9D00B889EE /* CoreText.framework */,
 				CD7D2AFF13C0CD9700B889EE /* QuartzCore.framework */,
 				CD7D2AE313C0CD2600B889EE /* UIKit.framework */,

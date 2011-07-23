@@ -12,10 +12,6 @@
 /// This object should not be instantiated
 @interface ACStateProject : NSObject
 
-/// Returns a proxy that always represents the active project
-/// The proxy's properties change both when the project's properties change, and when a different project is activated
-+ (ACStateProject *)currentProject;
-
 /// Project name
 /// Same as the bundle's name, setting it will rename the bundle
 @property (nonatomic, copy) NSString *name;
@@ -26,9 +22,8 @@
 /// Color of the project
 @property (nonatomic, strong) UIColor *color;
 
-/// Whether or not the project is active
-/// Only one project can be active at any time, activating one will deactivate the previously active project
-@property (nonatomic, getter = isActive) BOOL active;
+/// AC URL of the project
+@property (nonatomic, strong) NSURL *URL;
 
 /// Open the project
 /// Must be called before using any of the following methods
