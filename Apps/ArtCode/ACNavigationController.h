@@ -37,18 +37,13 @@
 @property (nonatomic, strong) IBOutlet UIButton *buttonTools;
 @property (nonatomic, strong) IBOutlet UIButton *buttonEdit; // TODO remember to use setEdit:animated: and editing of uiviewcontroller
 
-#pragma mark Navigation Methods
-
-//@property (nonatomic, readonly) UIViewController<ACNavigable> *currentViewController;
-//- (void)pushViewController:(UIViewController<ACNavigable> *)viewController animated:(BOOL)animated;
-//- (UIViewController<ACNavigable> *)popViewControllerAnimated:(BOOL)animated;
-
 #pragma mark URL Navigation Methods
 
-// TODO move to tab controller
 /// Pushes an URL in the current tab. This method only works if delegate is 
-/// set and implments navigationController:viewControllerForURL:.
-//- (void)pushURL:(NSURL *)url animated:(BOOL)animated;
+/// set and implments navigationController:viewControllerForURL:previousViewController:.
+- (void)pushURL:(NSURL *)url animated:(BOOL)animated;
+
+- (void)popURLAnimated:(BOOL)animated;
 
 #pragma mark Tab Navigation
 
