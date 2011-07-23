@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		CD13665913D32150001F3455 /* UIControl+BlockAction.m in Sources */ = {isa = PBXBuildFile; fileRef = CD13665813D32150001F3455 /* UIControl+BlockAction.m */; };
 		CD4786E913DB0C2500616B62 /* ACState.m in Sources */ = {isa = PBXBuildFile; fileRef = CD4786E813DB0C2500616B62 /* ACState.m */; };
+		CD4786ED13DB0F7A00616B62 /* ECBezelAlert.m in Sources */ = {isa = PBXBuildFile; fileRef = CD4786EC13DB0F7A00616B62 /* ECBezelAlert.m */; };
 		CD62BAC613CA06A900266BC0 /* ACToolController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD62BAC513CA06A900266BC0 /* ACToolController.m */; };
 		CD62BACA13CA1B4600266BC0 /* ACToolHistoryController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD62BAC913CA1B4500266BC0 /* ACToolHistoryController.m */; };
 		CD62BACD13CA1F8700266BC0 /* ACToolSnippetsController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD62BACC13CA1F8600266BC0 /* ACToolSnippetsController.m */; };
@@ -81,6 +82,8 @@
 		CD13665813D32150001F3455 /* UIControl+BlockAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIControl+BlockAction.m"; sourceTree = "<group>"; };
 		CD4786E713DB0C2500616B62 /* ACState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACState.h; sourceTree = "<group>"; };
 		CD4786E813DB0C2500616B62 /* ACState.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACState.m; sourceTree = "<group>"; };
+		CD4786EB13DB0F7A00616B62 /* ECBezelAlert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECBezelAlert.h; sourceTree = "<group>"; };
+		CD4786EC13DB0F7A00616B62 /* ECBezelAlert.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECBezelAlert.m; sourceTree = "<group>"; };
 		CD62BAC413CA06A900266BC0 /* ACToolController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACToolController.h; sourceTree = "<group>"; };
 		CD62BAC513CA06A900266BC0 /* ACToolController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACToolController.m; sourceTree = "<group>"; };
 		CD62BAC813CA1B4500266BC0 /* ACToolHistoryController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACToolHistoryController.h; sourceTree = "<group>"; };
@@ -206,6 +209,15 @@
 			name = State;
 			sourceTree = "<group>";
 		};
+		CD4786EA13DB0F5100616B62 /* BezelAlert */ = {
+			isa = PBXGroup;
+			children = (
+				CD4786EB13DB0F7A00616B62 /* ECBezelAlert.h */,
+				CD4786EC13DB0F7A00616B62 /* ECBezelAlert.m */,
+			);
+			name = BezelAlert;
+			sourceTree = "<group>";
+		};
 		CD7D2AD413C0CD2600B889EE = {
 			isa = PBXGroup;
 			children = (
@@ -273,6 +285,7 @@
 				CDFF3DC213C0D77000108DE2 /* Popover */,
 				CDFF3DC413C0D7FC00108DE2 /* Jump Bar */,
 				CDFF3DC913C0D85200108DE2 /* Tab Bar */,
+				CD4786EA13DB0F5100616B62 /* BezelAlert */,
 			);
 			name = ECUIKit;
 			path = ../Frameworks/ECUIKit;
@@ -662,6 +675,7 @@
 				CD13665913D32150001F3455 /* UIControl+BlockAction.m in Sources */,
 				CD7C01C113D354A0004CD5E5 /* ACTabController.m in Sources */,
 				CD4786E913DB0C2500616B62 /* ACState.m in Sources */,
+				CD4786ED13DB0F7A00616B62 /* ECBezelAlert.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
