@@ -554,6 +554,9 @@
 /* Begin PBXProject section */
 		CD7D2AD613C0CD2600B889EE /* Project object */ = {
 			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0420;
+			};
 			buildConfigurationList = CD7D2AD913C0CD2600B889EE /* Build configuration list for PBXProject "ArtCode" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
