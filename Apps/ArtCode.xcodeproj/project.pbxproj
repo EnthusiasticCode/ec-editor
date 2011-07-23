@@ -76,6 +76,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		B732CFE913DB1B6B00637FBE /* ECDebug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECDebug.h; path = ../../Frameworks/ECCore/ECDebug.h; sourceTree = "<group>"; };
 		CD0DEAB613D4C2430087ADBB /* ACToolTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACToolTarget.h; sourceTree = "<group>"; };
 		CD0DEAB713D4C26A0087ADBB /* ACURLTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACURLTarget.h; sourceTree = "<group>"; };
 		CD13665713D32150001F3455 /* UIControl+BlockAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIControl+BlockAction.h"; sourceTree = "<group>"; };
@@ -259,6 +260,7 @@
 		CD7D2AEA13C0CD2600B889EE /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				B732CFE913DB1B6B00637FBE /* ECDebug.h */,
 				CD7D2AEB13C0CD2600B889EE /* ArtCode-Info.plist */,
 				CD7D2AEC13C0CD2600B889EE /* InfoPlist.strings */,
 				CD7D2AEF13C0CD2600B889EE /* main.m */,
