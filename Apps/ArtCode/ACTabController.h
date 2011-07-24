@@ -26,6 +26,8 @@ enum {ACTabCurrent = NSIntegerMax};
 
 - (void)tabController:(ACTabController *)tabController didShowTabAtIndex:(NSUInteger)tabIndex withViewController:(UIViewController<ACURLTarget> *)viewController;
 
+- (void)tabController:(ACTabController *)tabController didChangeURLForTabAtIndex:(NSUInteger)tabIndex withURL:(NSURL *)url;
+
 @end
 
 

@@ -190,7 +190,7 @@
 
 - (void)jumpBarBackAction:(id)sender
 {
-    NSLog(@"Back action");
+    [self popURLAnimated:YES];
 }
 
 - (void)jumpBarBackLongAction:(UILongPressGestureRecognizer *)recognizer
@@ -298,6 +298,14 @@
         tabPageControl.frame = tabPageControlFrame;
         tabPageControlController.contentSizeForViewInPopover = CGSizeMake(tabPageControlFrame.size.width, 10);
         [[ECBezelAlert sharedAlert] addAlertMessageWithViewController:tabPageControlController displayImmediatly:YES];
+    }
+}
+
+- (void)tabController:(ACTabController *)tabController didChangeURLForTabAtIndex:(NSUInteger)tabIndex withURL:(NSURL *)url
+{
+    if (tabIndex == ACTabCurrent)
+    {
+        [jumpBar setJumpPath:[url path]];
     }
 }
 

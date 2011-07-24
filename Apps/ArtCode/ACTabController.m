@@ -39,7 +39,9 @@
 @implementation ACTabController {
     NSMutableArray *tabs;
     BOOL ignoreContentViewScrolling;
+    
     BOOL delegateHasDidShowTabAtIndexWithViewController;
+    BOOL delegateHasDidChangeURLForTabAtIndexWithURL;
 }
 
 #pragma mark - Properties
@@ -55,6 +57,7 @@
 {
     delegate = aDelegate;
     delegateHasDidShowTabAtIndexWithViewController = [delegate respondsToSelector:@selector(tabController:didShowTabAtIndex:withViewController:)];
+    delegateHasDidChangeURLForTabAtIndexWithURL = [delegate respondsToSelector:@selector(tabController:didChangeURLForTabAtIndex:withURL:)];
 }
 
 - (void)setTabBarEnabled:(BOOL)enabled
@@ -207,6 +210,12 @@
     // Call delegate
     if (delegateHasDidShowTabAtIndexWithViewController)
         [delegate tabController:self didShowTabAtIndex:tabIndex withViewController:tab.viewController];
+    
+    if (tabIndex == currentTabIndex)
+        tabIndex = ACTabCurrent;
+    
+    if (delegateHasDidChangeURLForTabAtIndexWithURL)
+        [delegate tabController:self didChangeURLForTabAtIndex:tabIndex withURL:[tab historyPointURL]];
 }
 
 #pragma mark - View lifecycle
@@ -515,6 +524,12 @@
     {
         [self loadAndPositionViewControllerForTab:tab animated:animated];
     }
+    
+    if (tabIndex == currentTabIndex)
+        tabIndex = ACTabCurrent;
+    
+    if (delegateHasDidChangeURLForTabAtIndexWithURL)
+        [delegate tabController:self didChangeURLForTabAtIndex:tabIndex withURL:url];
 }
 
 - (void)setHistoryPoint:(NSUInteger)index forTabAtIndex:(NSUInteger)tabIndex animated:(BOOL)animated
@@ -535,7 +550,13 @@
     if (tabIndex == ACTabCurrent || abs((NSInteger)tabIndex - (NSInteger)currentTabIndex) <= 1)
     {
         [self loadAndPositionViewControllerForTab:tab animated:animated];
-    }    
+    }
+    
+    if (tabIndex == currentTabIndex)
+        tabIndex = ACTabCurrent;
+    
+    if (delegateHasDidChangeURLForTabAtIndexWithURL)
+        [delegate tabController:self didChangeURLForTabAtIndex:tabIndex withURL:[tab historyPointURL]];
 }
 
 - (void)popURLFromTabAtIndex:(NSUInteger)tabIndex animated:(BOOL)animated
@@ -550,6 +571,12 @@
     {
         [self loadAndPositionViewControllerForTab:tab animated:animated];
     }
+    
+    if (tabIndex == currentTabIndex)
+        tabIndex = ACTabCurrent;
+    
+    if (delegateHasDidChangeURLForTabAtIndexWithURL)
+        [delegate tabController:self didChangeURLForTabAtIndex:tabIndex withURL:[tab historyPointURL]];
 }
 
 - (void)removeTabAtIndex:(NSUInteger)tabIndex animated:(BOOL)animated
