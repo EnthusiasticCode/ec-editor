@@ -35,7 +35,7 @@
 - (id)init {
     if ((self = [super init])) 
     {
-        defaultTextStyle = [ECTextStyle textStyleWithName:@"default" font:[UIFont fontWithName:@"Inconsolata" size:15] color:nil];
+        defaultTextStyle = [ECTextStyle textStyleWithName:@"default" font:[UIFont fontWithName:@"Inconsolata-dz" size:15] color:nil];
     }
     return self;
 }

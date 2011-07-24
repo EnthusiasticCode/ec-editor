@@ -242,28 +242,29 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
     else if (CGRectGetMaxX(textRect) > parent.renderer.wrapWidth + 10)
         textRect.origin.x = parent.renderer.wrapWidth - textRect.size.width + 10;
     // Render magnified image
+    __weak TextMagnificationView *this = self;
     [parent.renderingQueue addOperationWithBlock:^(void) {
-        UIGraphicsBeginImageContext(self.bounds.size);
+        UIGraphicsBeginImageContext(this.bounds.size);
         // Prepare magnified context
         CGContextRef imageContext = UIGraphicsGetCurrentContext();        
         CGContextScaleCTM(imageContext, magnification, magnification);
         CGContextTranslateCTM(imageContext, -textRect.origin.x, 0);
         // Render text
         CGContextSaveGState(imageContext);
-        [parent.renderer drawTextWithinRect:textRect inContext:imageContext];
+        [this->parent.renderer drawTextWithinRect:textRect inContext:imageContext];
         CGContextRestoreGState(imageContext);
         // Render additional drawings
         if (block)
             block(imageContext, textRect.origin);
         // Get result image
-        @synchronized(detailImage)
+        @synchronized(this->detailImage)
         {
-            detailImage = UIGraphicsGetImageFromCurrentImageContext();
+            this->detailImage = UIGraphicsGetImageFromCurrentImageContext();
         }
         UIGraphicsEndImageContext();
         // Request rerendering
         [[NSOperationQueue mainQueue] addOperationWithBlock:^(void) {
-            [self setNeedsDisplay];
+            [this setNeedsDisplay];
         }];
     }];
 }
@@ -1164,9 +1165,7 @@ static void init(ECCodeView *self)
 // TODO create a proper code tokenizer, should be retreived from the datasource
 - (id<UITextInputTokenizer>)tokenizer
 {
-#warning TODO use custom tokenizer.
     if (!tokenizer)
-//        tokenizer = [[ECCodeViewTokenizer alloc] initWithCodeView:self];
         tokenizer = [[UITextInputStringTokenizer alloc] initWithTextInput:self];
     return tokenizer;
 }
