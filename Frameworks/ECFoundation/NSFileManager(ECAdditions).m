@@ -10,6 +10,8 @@
 
 static BOOL isPackage(NSString *path)
 {
+    if ([[path pathExtension] isEqualToString:@"acproj"])
+        return YES;
     if ([[path pathExtension] isEqualToString:@"xcodeproj"])
         return YES;
     if ([[path pathExtension] isEqualToString:@"xcworkspace"])
@@ -81,7 +83,7 @@ static BOOL arrayIncludesExtensionOfPath(NSArray *extensions, NSString *path)
 {
     if (skipFiles && skipDirectories)
         return nil;
-    NSArray *paths = [self contentsOfDirectoryAtPath:path withExtensions:extensions options:options skipFiles:skipFiles skipDirectories:NO error:error];
+    NSArray *paths = [self contentsOfDirectoryAtPath:path withExtensions:nil options:options skipFiles:skipFiles skipDirectories:NO error:error];
     if (!paths)
         return nil;
     NSMutableArray *subpaths = [NSMutableArray arrayWithArray:paths];
@@ -91,7 +93,7 @@ static BOOL arrayIncludesExtensionOfPath(NSArray *extensions, NSString *path)
     {
         if ((options & NSDirectoryEnumerationSkipsPackageDescendants) && isPackage(subPath))
             continue;
-        for (NSString *subPathFromRecursing in [self subpathsOfDirectoryAtPath:subPath withExtensions:extensions options:options skipFiles:skipFiles skipDirectories:NO error:error])
+        for (NSString *subPathFromRecursing in [self subpathsOfDirectoryAtPath:subPath withExtensions:nil options:options skipFiles:skipFiles skipDirectories:NO error:error])
             [subpaths addObject:[subPath stringByAppendingPathComponent:subPathFromRecursing]];
     }
     if (skipDirectories)
@@ -101,6 +103,14 @@ static BOOL arrayIncludesExtensionOfPath(NSArray *extensions, NSString *path)
             if ([self fileExistsAndIsDirectoryAtPath:[subpaths objectAtIndex:i]])
                 [directories addIndex:i];
         [subpaths removeObjectsAtIndexes:directories];
+    }
+    if (extensions)
+    {
+        NSMutableIndexSet *pathsNotMatchingExtensions = [NSMutableIndexSet indexSet];
+        for (NSUInteger i = 0; i < [subpaths count]; ++i)
+            if (!arrayIncludesExtensionOfPath(extensions, [subpaths objectAtIndex:i]))
+                [pathsNotMatchingExtensions addIndex:i];
+        [subpaths removeObjectsAtIndexes:pathsNotMatchingExtensions];
     }
     [self changeCurrentDirectoryPath:oldWorkingDirectory];
     return subpaths;

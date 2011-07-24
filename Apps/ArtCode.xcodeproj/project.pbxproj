@@ -7,6 +7,24 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B732CFEE13DB1BB000637FBE /* ACStateProject.m in Sources */ = {isa = PBXBuildFile; fileRef = B732CFED13DB1BB000637FBE /* ACStateProject.m */; };
+		B732CFFB13DB24F600637FBE /* Project.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = B732CFF913DB24F600637FBE /* Project.xcdatamodeld */; };
+		B732D00413DB2B3800637FBE /* ACModelTab.m in Sources */ = {isa = PBXBuildFile; fileRef = B732D00313DB2B3800637FBE /* ACModelTab.m */; };
+		B732D00713DB2B3800637FBE /* ACModelFile.m in Sources */ = {isa = PBXBuildFile; fileRef = B732D00613DB2B3800637FBE /* ACModelFile.m */; };
+		B732D00A13DB2B3800637FBE /* ACModelNode.m in Sources */ = {isa = PBXBuildFile; fileRef = B732D00913DB2B3800637FBE /* ACModelNode.m */; };
+		B732D00D13DB2B3800637FBE /* ACModelHistoryItem.m in Sources */ = {isa = PBXBuildFile; fileRef = B732D00C13DB2B3800637FBE /* ACModelHistoryItem.m */; };
+		B732D01013DB2B3800637FBE /* ACModelBookmark.m in Sources */ = {isa = PBXBuildFile; fileRef = B732D00F13DB2B3800637FBE /* ACModelBookmark.m */; };
+		B732D01313DB2C0800637FBE /* ACProject.m in Sources */ = {isa = PBXBuildFile; fileRef = B732D01213DB2C0800637FBE /* ACProject.m */; };
+		B732D01513DB361600637FBE /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B732D01413DB361600637FBE /* CoreData.framework */; };
+		CD13665913D32150001F3455 /* UIControl+BlockAction.m in Sources */ = {isa = PBXBuildFile; fileRef = CD13665813D32150001F3455 /* UIControl+BlockAction.m */; };
+		CD4786E913DB0C2500616B62 /* ACState.m in Sources */ = {isa = PBXBuildFile; fileRef = CD4786E813DB0C2500616B62 /* ACState.m */; };
+		CD4786ED13DB0F7A00616B62 /* ECBezelAlert.m in Sources */ = {isa = PBXBuildFile; fileRef = CD4786EC13DB0F7A00616B62 /* ECBezelAlert.m */; };
+		CD62BAC613CA06A900266BC0 /* ACToolController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD62BAC513CA06A900266BC0 /* ACToolController.m */; };
+		CD62BACA13CA1B4600266BC0 /* ACToolHistoryController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD62BAC913CA1B4500266BC0 /* ACToolHistoryController.m */; };
+		CD62BACD13CA1F8700266BC0 /* ACToolSnippetsController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD62BACC13CA1F8600266BC0 /* ACToolSnippetsController.m */; };
+		CD62BAD013CA248C00266BC0 /* ACToolSymbolsController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD62BACF13CA248C00266BC0 /* ACToolSymbolsController.m */; };
+		CD62BAD313CA2ABD00266BC0 /* ACToolNavigatorController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD62BAD213CA2ABC00266BC0 /* ACToolNavigatorController.m */; };
+		CD7C01C113D354A0004CD5E5 /* ACTabController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD7C01C013D354A0004CD5E5 /* ACTabController.m */; };
 		CD7D2AE413C0CD2600B889EE /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD7D2AE313C0CD2600B889EE /* UIKit.framework */; };
 		CD7D2AE613C0CD2600B889EE /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD7D2AE513C0CD2600B889EE /* Foundation.framework */; };
 		CD7D2AE813C0CD2600B889EE /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD7D2AE713C0CD2600B889EE /* CoreGraphics.framework */; };
@@ -32,6 +50,7 @@
 		CD7D2B4813C0D55700B889EE /* ACFileTableController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD7D2B4713C0D55700B889EE /* ACFileTableController.m */; };
 		CD7D2B4B13C0D5B800B889EE /* MainStoryboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CD7D2B4913C0D5B800B889EE /* MainStoryboard.storyboard */; };
 		CD7D2B4E13C0D5FB00B889EE /* ToolPanelStoryboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CD7D2B4D13C0D5FB00B889EE /* ToolPanelStoryboard.storyboard */; };
+		CD8A677C13D0BB000037D742 /* ipad_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CD8A677B13D0BB000037D742 /* ipad_icon.png */; };
 		CDE3F14713C0DDD500DFFAFF /* Inconsolata-dz.otf in Resources */ = {isa = PBXBuildFile; fileRef = CDE3F14613C0DDD500DFFAFF /* Inconsolata-dz.otf */; };
 		CDFF3DAC13C0D71900108DE2 /* NSTimer+block.m in Sources */ = {isa = PBXBuildFile; fileRef = CDFF3DAB13C0D71900108DE2 /* NSTimer+block.m */; };
 		CDFF3DBB13C0D76400108DE2 /* ECInstantGestureRecognizer.m in Sources */ = {isa = PBXBuildFile; fileRef = CDFF3DAE13C0D76400108DE2 /* ECInstantGestureRecognizer.m */; };
@@ -66,6 +85,44 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		B732CFE913DB1B6B00637FBE /* ECDebug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECDebug.h; path = ../../Frameworks/ECCore/ECDebug.h; sourceTree = "<group>"; };
+		B732CFEB13DB1BB000637FBE /* ACStateInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACStateInternal.h; sourceTree = "<group>"; };
+		B732CFEC13DB1BB000637FBE /* ACStateProject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACStateProject.h; sourceTree = "<group>"; };
+		B732CFED13DB1BB000637FBE /* ACStateProject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACStateProject.m; sourceTree = "<group>"; };
+		B732CFFA13DB24F600637FBE /* Project.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Project.xcdatamodel; sourceTree = "<group>"; };
+		B732D00213DB2B3800637FBE /* ACModelTab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACModelTab.h; sourceTree = "<group>"; };
+		B732D00313DB2B3800637FBE /* ACModelTab.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACModelTab.m; sourceTree = "<group>"; };
+		B732D00513DB2B3800637FBE /* ACModelFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACModelFile.h; sourceTree = "<group>"; };
+		B732D00613DB2B3800637FBE /* ACModelFile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACModelFile.m; sourceTree = "<group>"; };
+		B732D00813DB2B3800637FBE /* ACModelNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACModelNode.h; sourceTree = "<group>"; };
+		B732D00913DB2B3800637FBE /* ACModelNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACModelNode.m; sourceTree = "<group>"; };
+		B732D00B13DB2B3800637FBE /* ACModelHistoryItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACModelHistoryItem.h; sourceTree = "<group>"; };
+		B732D00C13DB2B3800637FBE /* ACModelHistoryItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACModelHistoryItem.m; sourceTree = "<group>"; };
+		B732D00E13DB2B3800637FBE /* ACModelBookmark.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACModelBookmark.h; sourceTree = "<group>"; };
+		B732D00F13DB2B3800637FBE /* ACModelBookmark.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACModelBookmark.m; sourceTree = "<group>"; };
+		B732D01113DB2C0800637FBE /* ACProject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACProject.h; sourceTree = "<group>"; };
+		B732D01213DB2C0800637FBE /* ACProject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACProject.m; sourceTree = "<group>"; };
+		B732D01413DB361600637FBE /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		CD0DEAB613D4C2430087ADBB /* ACToolTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACToolTarget.h; sourceTree = "<group>"; };
+		CD0DEAB713D4C26A0087ADBB /* ACURLTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACURLTarget.h; sourceTree = "<group>"; };
+		CD13665713D32150001F3455 /* UIControl+BlockAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIControl+BlockAction.h"; sourceTree = "<group>"; };
+		CD13665813D32150001F3455 /* UIControl+BlockAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIControl+BlockAction.m"; sourceTree = "<group>"; };
+		CD4786E713DB0C2500616B62 /* ACState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACState.h; sourceTree = "<group>"; };
+		CD4786E813DB0C2500616B62 /* ACState.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACState.m; sourceTree = "<group>"; };
+		CD4786EB13DB0F7A00616B62 /* ECBezelAlert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECBezelAlert.h; sourceTree = "<group>"; };
+		CD4786EC13DB0F7A00616B62 /* ECBezelAlert.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECBezelAlert.m; sourceTree = "<group>"; };
+		CD62BAC413CA06A900266BC0 /* ACToolController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACToolController.h; sourceTree = "<group>"; };
+		CD62BAC513CA06A900266BC0 /* ACToolController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACToolController.m; sourceTree = "<group>"; };
+		CD62BAC813CA1B4500266BC0 /* ACToolHistoryController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACToolHistoryController.h; sourceTree = "<group>"; };
+		CD62BAC913CA1B4500266BC0 /* ACToolHistoryController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACToolHistoryController.m; sourceTree = "<group>"; };
+		CD62BACB13CA1F8500266BC0 /* ACToolSnippetsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACToolSnippetsController.h; sourceTree = "<group>"; };
+		CD62BACC13CA1F8600266BC0 /* ACToolSnippetsController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACToolSnippetsController.m; sourceTree = "<group>"; };
+		CD62BACE13CA248C00266BC0 /* ACToolSymbolsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACToolSymbolsController.h; sourceTree = "<group>"; };
+		CD62BACF13CA248C00266BC0 /* ACToolSymbolsController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACToolSymbolsController.m; sourceTree = "<group>"; };
+		CD62BAD113CA2ABB00266BC0 /* ACToolNavigatorController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACToolNavigatorController.h; sourceTree = "<group>"; };
+		CD62BAD213CA2ABC00266BC0 /* ACToolNavigatorController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACToolNavigatorController.m; sourceTree = "<group>"; };
+		CD7C01BF13D354A0004CD5E5 /* ACTabController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACTabController.h; sourceTree = "<group>"; };
+		CD7C01C013D354A0004CD5E5 /* ACTabController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACTabController.m; sourceTree = "<group>"; };
 		CD7D2ADF13C0CD2600B889EE /* ArtCode.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ArtCode.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CD7D2AE313C0CD2600B889EE /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		CD7D2AE513C0CD2600B889EE /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -111,6 +168,7 @@
 		CD7D2B4713C0D55700B889EE /* ACFileTableController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACFileTableController.m; sourceTree = "<group>"; };
 		CD7D2B4913C0D5B800B889EE /* MainStoryboard.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = MainStoryboard.storyboard; sourceTree = "<group>"; };
 		CD7D2B4D13C0D5FB00B889EE /* ToolPanelStoryboard.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = ToolPanelStoryboard.storyboard; sourceTree = "<group>"; };
+		CD8A677B13D0BB000037D742 /* ipad_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ipad_icon.png; sourceTree = "<group>"; };
 		CDE3F14613C0DDD500DFFAFF /* Inconsolata-dz.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Inconsolata-dz.otf"; sourceTree = "<group>"; };
 		CDFF3DAA13C0D71900108DE2 /* NSTimer+block.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSTimer+block.h"; sourceTree = "<group>"; };
 		CDFF3DAB13C0D71900108DE2 /* NSTimer+block.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSTimer+block.m"; sourceTree = "<group>"; };
@@ -163,12 +221,53 @@
 				CD7D2AE413C0CD2600B889EE /* UIKit.framework in Frameworks */,
 				CD7D2AE613C0CD2600B889EE /* Foundation.framework in Frameworks */,
 				CD7D2AE813C0CD2600B889EE /* CoreGraphics.framework in Frameworks */,
+				B732D01513DB361600637FBE /* CoreData.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		B732D00113DB2AD100637FBE /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				B732D01113DB2C0800637FBE /* ACProject.h */,
+				B732D01213DB2C0800637FBE /* ACProject.m */,
+				B732D00E13DB2B3800637FBE /* ACModelBookmark.h */,
+				B732D00F13DB2B3800637FBE /* ACModelBookmark.m */,
+				B732D00B13DB2B3800637FBE /* ACModelHistoryItem.h */,
+				B732D00C13DB2B3800637FBE /* ACModelHistoryItem.m */,
+				B732D00813DB2B3800637FBE /* ACModelNode.h */,
+				B732D00913DB2B3800637FBE /* ACModelNode.m */,
+				B732D00513DB2B3800637FBE /* ACModelFile.h */,
+				B732D00613DB2B3800637FBE /* ACModelFile.m */,
+				B732D00213DB2B3800637FBE /* ACModelTab.h */,
+				B732D00313DB2B3800637FBE /* ACModelTab.m */,
+			);
+			name = Model;
+			sourceTree = "<group>";
+		};
+		CD4786E513DB0BF500616B62 /* State */ = {
+			isa = PBXGroup;
+			children = (
+				B732CFEB13DB1BB000637FBE /* ACStateInternal.h */,
+				CD4786E713DB0C2500616B62 /* ACState.h */,
+				CD4786E813DB0C2500616B62 /* ACState.m */,
+				B732CFEC13DB1BB000637FBE /* ACStateProject.h */,
+				B732CFED13DB1BB000637FBE /* ACStateProject.m */,
+			);
+			name = State;
+			sourceTree = "<group>";
+		};
+		CD4786EA13DB0F5100616B62 /* BezelAlert */ = {
+			isa = PBXGroup;
+			children = (
+				CD4786EB13DB0F7A00616B62 /* ECBezelAlert.h */,
+				CD4786EC13DB0F7A00616B62 /* ECBezelAlert.m */,
+			);
+			name = BezelAlert;
+			sourceTree = "<group>";
+		};
 		CD7D2AD413C0CD2600B889EE = {
 			isa = PBXGroup;
 			children = (
@@ -210,6 +309,7 @@
 		CD7D2AEA13C0CD2600B889EE /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				B732CFE913DB1B6B00637FBE /* ECDebug.h */,
 				CD7D2AEB13C0CD2600B889EE /* ArtCode-Info.plist */,
 				CD7D2AEC13C0CD2600B889EE /* InfoPlist.strings */,
 				CD7D2AEF13C0CD2600B889EE /* main.m */,
@@ -236,6 +336,7 @@
 				CDFF3DC213C0D77000108DE2 /* Popover */,
 				CDFF3DC413C0D7FC00108DE2 /* Jump Bar */,
 				CDFF3DC913C0D85200108DE2 /* Tab Bar */,
+				CD4786EA13DB0F5100616B62 /* BezelAlert */,
 			);
 			name = ECUIKit;
 			path = ../Frameworks/ECUIKit;
@@ -252,6 +353,7 @@
 		CD7D2B0613C0CE3200B889EE /* Apple Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B732D01413DB361600637FBE /* CoreData.framework */,
 				CD7D2B0113C0CD9D00B889EE /* CoreText.framework */,
 				CD7D2AFF13C0CD9700B889EE /* QuartzCore.framework */,
 				CD7D2AE313C0CD2600B889EE /* UIKit.framework */,
@@ -264,6 +366,8 @@
 		CD7D2B0713C0CE5200B889EE /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				B732CFF913DB24F600637FBE /* Project.xcdatamodeld */,
+				CD8A677B13D0BB000037D742 /* ipad_icon.png */,
 				CDE3F14613C0DDD500DFFAFF /* Inconsolata-dz.otf */,
 				CD7D2B0A13C0CEFF00B889EE /* Images */,
 				CD7D2B0913C0CEE100B889EE /* Storyboards */,
@@ -276,6 +380,8 @@
 			children = (
 				CD7D2B0F13C0D18500B889EE /* ArtCodeAppDelegate.h */,
 				CD7D2B1013C0D18500B889EE /* ArtCodeAppDelegate.m */,
+				CD4786E513DB0BF500616B62 /* State */,
+				B732D00113DB2AD100637FBE /* Model */,
 				CD7D2B1713C0D3A600B889EE /* Styles */,
 				CD7D2B1613C0D39B00B889EE /* Navigation */,
 				CD7D2B1513C0D39000B889EE /* Tools */,
@@ -330,8 +436,18 @@
 			children = (
 				CD7D2B3913C0D4F400B889EE /* ACToolPanelController.h */,
 				CD7D2B3A13C0D4F400B889EE /* ACToolPanelController.m */,
+				CD62BAC413CA06A900266BC0 /* ACToolController.h */,
+				CD62BAC513CA06A900266BC0 /* ACToolController.m */,
 				CD7D2B3513C0D4F400B889EE /* ACToolBookmarksController.h */,
 				CD7D2B3613C0D4F400B889EE /* ACToolBookmarksController.m */,
+				CD62BAC813CA1B4500266BC0 /* ACToolHistoryController.h */,
+				CD62BAC913CA1B4500266BC0 /* ACToolHistoryController.m */,
+				CD62BACB13CA1F8500266BC0 /* ACToolSnippetsController.h */,
+				CD62BACC13CA1F8600266BC0 /* ACToolSnippetsController.m */,
+				CD62BACE13CA248C00266BC0 /* ACToolSymbolsController.h */,
+				CD62BACF13CA248C00266BC0 /* ACToolSymbolsController.m */,
+				CD62BAD113CA2ABB00266BC0 /* ACToolNavigatorController.h */,
+				CD62BAD213CA2ABC00266BC0 /* ACToolNavigatorController.m */,
 				CD7D2B4413C0D51400B889EE /* Views and Segues */,
 			);
 			name = Tools;
@@ -340,8 +456,12 @@
 		CD7D2B1613C0D39B00B889EE /* Navigation */ = {
 			isa = PBXGroup;
 			children = (
+				CD0DEAB713D4C26A0087ADBB /* ACURLTarget.h */,
+				CD0DEAB613D4C2430087ADBB /* ACToolTarget.h */,
 				CD7D2B2513C0D4B700B889EE /* ACNavigationController.h */,
 				CD7D2B2613C0D4B700B889EE /* ACNavigationController.m */,
+				CD7C01BF13D354A0004CD5E5 /* ACTabController.h */,
+				CD7C01C013D354A0004CD5E5 /* ACTabController.m */,
 				CD7D2B4513C0D53A00B889EE /* Views and Segues */,
 			);
 			name = Navigation;
@@ -432,6 +552,8 @@
 				CDFF3DB813C0D76400108DE2 /* UIImage+BlockDrawing.m */,
 				CDFF3DB913C0D76400108DE2 /* UIView+ReuseIdentifier.h */,
 				CDFF3DBA13C0D76400108DE2 /* UIView+ReuseIdentifier.m */,
+				CD13665713D32150001F3455 /* UIControl+BlockAction.h */,
+				CD13665813D32150001F3455 /* UIControl+BlockAction.m */,
 			);
 			name = "UIKit Additions";
 			sourceTree = "<group>";
@@ -512,6 +634,9 @@
 /* Begin PBXProject section */
 		CD7D2AD613C0CD2600B889EE /* Project object */ = {
 			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0420;
+			};
 			buildConfigurationList = CD7D2AD913C0CD2600B889EE /* Build configuration list for PBXProject "ArtCode" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
@@ -559,6 +684,7 @@
 				CDFF3DF213C0D9BB00108DE2 /* toolSnippetsPaste.png in Resources */,
 				CDFF3DF313C0D9BB00108DE2 /* toolSnippetsSnippet.png in Resources */,
 				CDE3F14713C0DDD500DFFAFF /* Inconsolata-dz.otf in Resources */,
+				CD8A677C13D0BB000037D742 /* ipad_icon.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -595,6 +721,23 @@
 				CDFF3DC013C0D76400108DE2 /* UIImage+BlockDrawing.m in Sources */,
 				CDFF3DC113C0D76400108DE2 /* UIView+ReuseIdentifier.m in Sources */,
 				CDFF3DC813C0D84D00108DE2 /* ECTabBar.m in Sources */,
+				CD62BAC613CA06A900266BC0 /* ACToolController.m in Sources */,
+				CD62BACA13CA1B4600266BC0 /* ACToolHistoryController.m in Sources */,
+				CD62BACD13CA1F8700266BC0 /* ACToolSnippetsController.m in Sources */,
+				CD62BAD013CA248C00266BC0 /* ACToolSymbolsController.m in Sources */,
+				CD62BAD313CA2ABD00266BC0 /* ACToolNavigatorController.m in Sources */,
+				CD13665913D32150001F3455 /* UIControl+BlockAction.m in Sources */,
+				CD7C01C113D354A0004CD5E5 /* ACTabController.m in Sources */,
+				CD4786E913DB0C2500616B62 /* ACState.m in Sources */,
+				CD4786ED13DB0F7A00616B62 /* ECBezelAlert.m in Sources */,
+				B732CFEE13DB1BB000637FBE /* ACStateProject.m in Sources */,
+				B732CFFB13DB24F600637FBE /* Project.xcdatamodeld in Sources */,
+				B732D00413DB2B3800637FBE /* ACModelTab.m in Sources */,
+				B732D00713DB2B3800637FBE /* ACModelFile.m in Sources */,
+				B732D00A13DB2B3800637FBE /* ACModelNode.m in Sources */,
+				B732D00D13DB2B3800637FBE /* ACModelHistoryItem.m in Sources */,
+				B732D01013DB2B3800637FBE /* ACModelBookmark.m in Sources */,
+				B732D01313DB2C0800637FBE /* ACProject.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -706,6 +849,19 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		B732CFF913DB24F600637FBE /* Project.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				B732CFFA13DB24F600637FBE /* Project.xcdatamodel */,
+			);
+			currentVersion = B732CFFA13DB24F600637FBE /* Project.xcdatamodel */;
+			path = Project.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = CD7D2AD613C0CD2600B889EE /* Project object */;
 }

@@ -13,16 +13,16 @@
 @protocol ECTabBarDelegate <UIScrollViewDelegate>
 @optional
 
-- (BOOL)tabBar:(ECTabBar *)tabBar willAddTabButton:(UIButton *)tabButton atIndex:(NSUInteger)tabIndex;
+- (BOOL)tabBar:(ECTabBar *)tabBar shouldAddTabButton:(UIButton *)tabButton atIndex:(NSUInteger)tabIndex;
 - (void)tabBar:(ECTabBar *)tabBar didAddTabButtonAtIndex:(NSUInteger)index;
 
-- (BOOL)tabBar:(ECTabBar *)tabBar willRemoveTabButtonAtIndex:(NSUInteger)tabIndex;
+- (BOOL)tabBar:(ECTabBar *)tabBar shouldRemoveTabButtonAtIndex:(NSUInteger)tabIndex;
 - (void)tabBar:(ECTabBar *)tabBar didRemoveTabButtonAtIndex:(NSUInteger)tabIndex;
 
-- (BOOL)tabBar:(ECTabBar *)tabBar willSelectTabAtIndex:(NSUInteger)index;
+- (BOOL)tabBar:(ECTabBar *)tabBar shouldSelectTabAtIndex:(NSUInteger)index;
 - (void)tabBar:(ECTabBar *)tabBar didSelectTabAtIndex:(NSUInteger)index;
 
-- (BOOL)tabBar:(ECTabBar *)tabBar willMoveTabButton:(UIButton *)tabButton;
+- (BOOL)tabBar:(ECTabBar *)tabBar shouldMoveTabButton:(UIButton *)tabButton;
 - (void)tabBar:(ECTabBar *)tabBar didMoveTabButton:(UIButton *)tabButton fromIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex;
 
 @end
@@ -52,12 +52,16 @@
 
 @property (nonatomic, readonly) NSUInteger tabCount;
 @property (nonatomic) NSUInteger selectedTabIndex;
-@property (nonatomic, readonly, weak) UIButton *selectedTabButton;
+@property (nonatomic, weak) UIButton *selectedTabButton;
 
-- (void)addTabButtonWithTitle:(NSString *)title animated:(BOOL)animated;
+- (NSUInteger)addTabButtonWithTitle:(NSString *)title animated:(BOOL)animated;
 - (void)removeTabAtIndex:(NSUInteger)index animated:(BOOL)animated;
+
+#pragma mark - Utility Methods
 
 - (UIButton *)tabAtIndex:(NSUInteger)index;
 - (NSUInteger)indexOfTab:(UIButton *)tabButton;
+- (NSUInteger)indexOfTabWithTitle:(NSString *)title;
+- (NSArray *)allTabTitles;
 
 @end

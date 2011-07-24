@@ -17,7 +17,7 @@
     while (ancestor && ![ancestor isKindOfClass:[ACNavigationController class]])
         ancestor = [ancestor parentViewController];
     
-    [(ACNavigationController *)ancestor pushViewController:self.destinationViewController animated:YES];
+    //[(ACNavigationController *)ancestor pushViewController:self.destinationViewController animated:YES];
 }
 
 @end

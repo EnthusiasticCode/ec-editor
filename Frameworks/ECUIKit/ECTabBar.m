@@ -27,13 +27,13 @@
     NSTimer *movedTabScrollTimer;
     
     struct {
-        unsigned int hasWillAddTabButtonAtIndex : 1;
+        unsigned int hasShouldAddTabButtonAtIndex : 1;
         unsigned int hasDidAddTabButtonAtIndex : 1;
-        unsigned int hasWillRemoveTabButtonAtIndex : 1;
+        unsigned int hasShouldRemoveTabButtonAtIndex : 1;
         unsigned int hasDidRemoveTabButtonAtIndex : 1;
-        unsigned int hasWillSelectTabAtIndex :1;
+        unsigned int hasShouldSelectTabAtIndex :1;
         unsigned int hasDidSelectTabAtIndex : 1;
-        unsigned int hasWillMoveTabButton : 1;
+        unsigned int hasShouldMoveTabButton : 1;
         unsigned int hasDidMoveTabButtonFromIndexToIndex : 1;
     } delegateFlags;
 }
@@ -55,13 +55,13 @@
 {
     delegate = aDelegate;
     
-    delegateFlags.hasWillAddTabButtonAtIndex = [delegate respondsToSelector:@selector(tabBar:willAddTabButton:atIndex:)];
+    delegateFlags.hasShouldAddTabButtonAtIndex = [delegate respondsToSelector:@selector(tabBar:shouldAddTabButton:atIndex:)];
     delegateFlags.hasDidAddTabButtonAtIndex = [delegate respondsToSelector:@selector(tabBar:didAddTabButtonAtIndex:)];
-    delegateFlags.hasWillRemoveTabButtonAtIndex = [delegate respondsToSelector:@selector(tabBar:willRemoveTabButtonAtIndex:)];
+    delegateFlags.hasShouldRemoveTabButtonAtIndex = [delegate respondsToSelector:@selector(tabBar:shouldRemoveTabButtonAtIndex:)];
     delegateFlags.hasDidRemoveTabButtonAtIndex = [delegate respondsToSelector:@selector(tabBar:didRemoveTabButtonAtIndex:)];
-    delegateFlags.hasWillSelectTabAtIndex = [delegate respondsToSelector:@selector(tabBar:willSelectTabAtIndex:)];
+    delegateFlags.hasShouldSelectTabAtIndex = [delegate respondsToSelector:@selector(tabBar:shouldSelectTabAtIndex:)];
     delegateFlags.hasDidSelectTabAtIndex = [delegate respondsToSelector:@selector(tabBar:didSelectTabAtIndex:)];
-    delegateFlags.hasWillMoveTabButton = [delegate respondsToSelector:@selector(tabBar:willMoveTabButton:)];
+    delegateFlags.hasShouldMoveTabButton = [delegate respondsToSelector:@selector(tabBar:shouldMoveTabButton:)];
     delegateFlags.hasDidMoveTabButtonFromIndexToIndex = [delegate respondsToSelector:@selector(tabBar:didMoveTabButton:fromIndex:toIndex:)];
 }
 
@@ -281,6 +281,18 @@ static void init(ECTabBar *self)
 
 #pragma mark - Managing Tabs
 
+- (void)setSelectedTabButton:(UIButton *)tabButton
+{
+    if (tabButton == selectedTabButton)
+        return;
+    
+    NSUInteger index = [tabButtons indexOfObject:tabButton];
+    if (index == NSNotFound)
+        return;
+    
+    [self setSelectedTabIndex:index];
+}
+
 - (NSUInteger)selectedTabIndex
 {
     return [tabButtons indexOfObject:selectedTabButton];
@@ -305,7 +317,7 @@ static void init(ECTabBar *self)
     [self scrollRectToVisible:selectedTabFrame animated:YES];
 }
 
-- (void)addTabButtonWithTitle:(NSString *)title animated:(BOOL)animated
+- (NSUInteger)addTabButtonWithTitle:(NSString *)title animated:(BOOL)animated
 {
     if (!tabButtons)
         tabButtons = [NSMutableArray new];
@@ -315,7 +327,8 @@ static void init(ECTabBar *self)
     NSUInteger newTabButtonIndex = [tabButtons count];
     UIButton *newTabButton = [UIButton new];
     
-    CGRect buttonFrame = (CGRect) { CGPointZero, tabButtonSize };
+    // Position and size new tab
+    CGRect buttonFrame = (CGRect) { CGPointMake(tabButtonSize.width * [tabButtons count], 0), tabButtonSize };
     if (buttonFrame.size.height == 0)
         buttonFrame.size.height = self.frame.size.height;
     newTabButton.frame = UIEdgeInsetsInsetRect(buttonFrame, buttonsInsets);
@@ -323,9 +336,9 @@ static void init(ECTabBar *self)
     [newTabButton setTitle:title forState:UIControlStateNormal];
     [newTabButton addTarget:self action:@selector(tabButtonAction:) forControlEvents:UIControlEventTouchUpInside];
     
-    if (delegateFlags.hasWillAddTabButtonAtIndex 
-        && ![delegate tabBar:self willAddTabButton:newTabButton atIndex:newTabButtonIndex])
-        return;
+    if (delegateFlags.hasShouldAddTabButtonAtIndex 
+        && ![delegate tabBar:self shouldAddTabButton:newTabButton atIndex:newTabButtonIndex])
+        return NSNotFound;
     
     // Add the button and resize content
     [tabButtons addObject:newTabButton];
@@ -336,6 +349,8 @@ static void init(ECTabBar *self)
     
     if (delegateFlags.hasDidAddTabButtonAtIndex)
         [delegate tabBar:self didAddTabButtonAtIndex:newTabButtonIndex];
+    
+    return newTabButtonIndex;
 }
 
 - (void)removeTabAtIndex:(NSUInteger)index animated:(BOOL)animated
@@ -343,19 +358,19 @@ static void init(ECTabBar *self)
     if (index >= [tabButtons count])
         return;
     
-    if (delegateFlags.hasWillRemoveTabButtonAtIndex
-        && ![delegate tabBar:self willRemoveTabButtonAtIndex:index])
+    if (delegateFlags.hasShouldRemoveTabButtonAtIndex
+        && ![delegate tabBar:self shouldRemoveTabButtonAtIndex:index])
         return;
     
     if (animated)
     {
         UIButton *buttonToRemove = [tabButtons objectAtIndex:index];
         buttonToRemove.layer.shouldRasterize = YES;
+        [tabButtons removeObjectAtIndex:index];
         [UIView animateWithDuration:.10 animations:^(void) {
             buttonToRemove.alpha = 0;
         } completion:^(BOOL finished) {
             [buttonToRemove removeFromSuperview];
-            [tabButtons removeObjectAtIndex:index];
             [UIView animateWithDuration:.15 animations:^(void) {
                 [self layoutSubviews];
             } completion:^(BOOL finished) {
@@ -383,6 +398,8 @@ static void init(ECTabBar *self)
     }
 }
 
+#pragma mark - Utility Methods
+
 - (UIButton *)tabAtIndex:(NSUInteger)index
 {
     if (index >= [tabButtons count])
@@ -396,6 +413,29 @@ static void init(ECTabBar *self)
     return [tabButtons indexOfObject:tabButton];
 }
 
+- (NSUInteger)indexOfTabWithTitle:(NSString *)title
+{
+    __block NSUInteger result = NSNotFound;
+    [tabButtons enumerateObjectsUsingBlock:^(UIButton *tabButton, NSUInteger idx, BOOL *stop) {
+        if ([title isEqualToString:[tabButton titleForState:UIControlStateNormal]])
+        {
+            result = idx;
+            *stop = YES;
+        }
+    }];
+    return result;
+}
+
+- (NSArray *)allTabTitles
+{
+    NSMutableArray *tabTitles = [[NSMutableArray alloc] initWithCapacity:[tabButtons count]];
+    for (UIButton *tabButton in tabButtons)
+    {
+        [tabTitles addObject:[tabButton titleForState:UIControlStateNormal]];
+    }
+    return tabTitles;
+}
+
 #pragma mark -
 
 - (void)tabButtonAction:(id)sender
@@ -405,8 +445,8 @@ static void init(ECTabBar *self)
     if (tabIndex == NSNotFound)
         return;
     
-    if (delegateFlags.hasWillSelectTabAtIndex
-        && ![delegate tabBar:self willSelectTabAtIndex:tabIndex])
+    if (delegateFlags.hasShouldSelectTabAtIndex
+        && ![delegate tabBar:self shouldSelectTabAtIndex:tabIndex])
         return;
     
     [self setSelectedTabIndex:tabIndex];
@@ -434,8 +474,8 @@ static void init(ECTabBar *self)
             movedTabIndex = (NSUInteger)(locationInView.x / tabButtonSize.width);
             movedTabDestinationIndex = movedTabIndex;
             movedTab = [tabButtons objectAtIndex:movedTabIndex];
-            if (delegateFlags.hasWillMoveTabButton
-                && ![delegate tabBar:self willMoveTabButton:movedTab])
+            if (delegateFlags.hasShouldMoveTabButton
+                && ![delegate tabBar:self shouldMoveTabButton:movedTab])
             {
                 movedTab = nil;
                 return;

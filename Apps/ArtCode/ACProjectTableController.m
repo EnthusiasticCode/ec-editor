@@ -9,26 +9,43 @@
 #import "ACProjectTableController.h"
 #import "ACProjectTableCell.h"
 #import "AppStyle.h"
+#import "ACState.h"
+#import "ACStateProject.h"
+#import "ACNavigationController.h"
 
 @implementation ACProjectTableController
 
 #pragma mark - View lifecycle
 
-- (id)initWithStyle:(UITableViewStyle)style
+- (void)viewDidLoad
 {
-    self = [super initWithStyle:style];
-    if (self) {
-        // Custom initialization
-    }
-    return self;
+    [super viewDidLoad];
+    
+    self.tableView.rowHeight = 55;
+    self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+    self.tableView.backgroundColor = [UIColor styleBackgroundColor];
 }
 
-- (void)didReceiveMemoryWarning
+#pragma mark - ACNavigable Protocol
+
+- (void)openURL:(NSURL *)url
 {
-    // Releases the view if it doesn't have a superview.
-    [super didReceiveMemoryWarning];
-    
-    // Release any cached data, images, etc that aren't in use.
+    // TODO refresh projects
+}
+
+- (BOOL)shouldShowTabBar
+{
+    return YES;
+}
+
+- (BOOL)shouldShowToolPanelController:(ACToolController *)toolController
+{
+    return NO;
+}
+
+- (void)applyFilter:(NSString *)filter
+{
+    // TODO filter
 }
 
 #pragma mark - Table view data source
@@ -40,7 +57,7 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return 4;
+    return [[ACState sharedState].allProjects count];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -64,7 +81,7 @@
     }
     
     // Configure the cell...
-    [cell.textLabel setText:[NSString stringWithFormat:@"Project %ld", indexPath.row]];
+    [cell.textLabel setText:[[[ACState sharedState].allProjects objectAtIndex:indexPath.row] name]];
     
     return cell;
 }
@@ -76,7 +93,7 @@
 
 - (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)sourceIndexPath toIndexPath:(NSIndexPath *)destinationIndexPath
 {
-    
+    [[[ACState sharedState].allProjects objectAtIndex:sourceIndexPath.row] setIndex:destinationIndexPath.row];
 }
 
 /*
@@ -88,19 +105,20 @@
 }
 */
 
-/*
+
 // Override to support editing the table view.
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (editingStyle == UITableViewCellEditingStyleDelete) {
         // Delete the row from the data source
+        [[ACState sharedState] deleteProjectWithName:[[[ACState sharedState].allProjects objectAtIndex:indexPath.row] name]];
         [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
     }   
     else if (editingStyle == UITableViewCellEditingStyleInsert) {
         // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
     }   
 }
-*/
+
 
 /*
 // Override to support conditional rearranging of the table view.
@@ -115,16 +133,7 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    // Navigation logic may go here. Create and push another view controller.
-    /*
-     <#DetailViewController#> *detailViewController = [[<#DetailViewController#> alloc] initWithNibName:@"<#Nib name#>" bundle:nil];
-     // ...
-     // Pass the selected object to the new view controller.
-     [self.navigationController pushViewController:detailViewController animated:YES];
-     [detailViewController release];
-     */
-
-    [self performSegueWithIdentifier:@"projectSegue" sender:self];
+    [self.ACNavigationController pushURL:[[[ACState sharedState].allProjects objectAtIndex:indexPath.row] URL] animated:YES];
 }
 
 @end
