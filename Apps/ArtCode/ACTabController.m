@@ -569,24 +569,10 @@
     if (tabIndex == ACTabCurrent || tabIndex == currentTabIndex)
     {
         NSUInteger newCurrentTabIndex = currentTabIndex >= [tabs count] ? currentTabIndex - 1 : currentTabIndex;
-        if (animated)
-        {
-            [UIView animateWithDuration:0.10 animations:^(void) {
-                tab.viewController.view.alpha = 0; 
-            } completion:^(BOOL finished) {
-                [tab.viewController.view removeFromSuperview];
-                [tab.viewController removeFromParentViewController];
-                currentTabIndex += 1;
-                [self setCurrentTabIndex:newCurrentTabIndex scroll:NO animated:YES];
-            }];
-        }
-        else
-        {
-            [tab.viewController.view removeFromSuperview];
-            [tab.viewController removeFromParentViewController];
-            currentTabIndex += 1;
-            [self setCurrentTabIndex:newCurrentTabIndex];
-        }
+        [tab.viewController.view removeFromSuperview];
+        [tab.viewController removeFromParentViewController];
+        currentTabIndex += 1;
+        [self setCurrentTabIndex:newCurrentTabIndex scroll:YES animated:animated];
     }
     else
     {
