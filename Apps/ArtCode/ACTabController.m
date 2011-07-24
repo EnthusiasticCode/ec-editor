@@ -383,7 +383,8 @@
 - (void)closeTabButtonAction:(id)sender
 {
     NSUInteger tabIndex = [tabBar indexOfTab:(UIButton *)[sender superview]];
-    [self removeTabAtIndex:tabIndex animated:YES];
+    // TODO fix bugs araising from animated removal
+    [self removeTabAtIndex:tabIndex animated:NO];
 }
 
 #pragma mark - Content ScrollView Methods
