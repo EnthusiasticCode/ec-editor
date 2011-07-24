@@ -320,7 +320,7 @@
 
 - (void)tabBar:(ECTabBar *)bar didSelectTabAtIndex:(NSUInteger)index
 {
-    // TODO assert index in tabs range
+    ECASSERT(index < [tabs count]);
     [self setCurrentTabIndex:index animated:NO];
 }
 
