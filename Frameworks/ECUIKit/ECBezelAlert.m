@@ -217,7 +217,7 @@
     CGRect labelFrame = CGRectNull;
     if (label)
     {
-        label.center = CGPointMake(viewFrame.size.width / 2, imageViewFrame.size.height + imageViewFrame.size.height / 2);
+        label.center = CGPointMake(viewFrame.size.width / 2, imageViewFrame.size.height + label.bounds.size.height / 2);
         labelFrame = label.frame;
     }
     
