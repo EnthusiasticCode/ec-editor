@@ -8,8 +8,18 @@
 
 #import <UIKit/UIKit.h>
 
+NSString * const ACProjectContentDirectory;
+
+typedef enum
+{
+    ACProjectNodeTypeFolder,
+    ACProjectNodeTypeGroup,
+    ACProjectNodeTypeFile,
+} ACProjectNodeType;
+
 @interface ACProject : UIManagedDocument
 
-
+- (NSString *)contentDirectoryPath;
+- (NSOrderedSet *)children;
 
 @end

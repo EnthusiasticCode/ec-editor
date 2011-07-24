@@ -9,6 +9,8 @@
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
 
+#import "ACProject.h"
+
 @class ACModelHistoryItem, ACModelNode;
 
 @interface ACModelNode : NSManagedObject
@@ -21,6 +23,11 @@
 @property (nonatomic, retain) NSOrderedSet *children;
 @property (nonatomic, retain) ACModelNode *parent;
 @property (nonatomic, retain) NSSet *historyItems;
+
+- (NSString *)absolutePath;
+- (NSInteger)depth;
+- (ACModelNode *)addNodeWithName:(NSString *)name type:(ACProjectNodeType)type;
+
 @end
 
 @interface ACModelNode (CoreDataGeneratedAccessors)
