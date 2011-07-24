@@ -377,7 +377,7 @@
     return 0;
 }
 
-#pragma mark Private Methods
+#pragma mark - Private Methods
 
 - (FileTriOffset *)offsetForLine:(NSUInteger)line
 {

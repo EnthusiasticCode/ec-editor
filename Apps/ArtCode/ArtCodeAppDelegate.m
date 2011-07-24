@@ -18,6 +18,7 @@
 
 #import "ACProjectTableController.h"
 #import "ACFileTableController.h"
+#import "ACCodeFileController.h"
 
 #import "ACState.h"
 
@@ -163,6 +164,8 @@
     // TODO url switch logic
     if ([url.absoluteString isEqualToString:@"artcode:projects"])
         controllerClass = [ACProjectTableController class];
+    else if (url.pathExtension != nil)
+        controllerClass = [ACCodeFileController class];
     else
         controllerClass = [ACFileTableController class];
     

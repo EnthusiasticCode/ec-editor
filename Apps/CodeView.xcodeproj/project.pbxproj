@@ -31,6 +31,7 @@
 		CD57842D138941BD0065F27E /* ECCodeByteArrayDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = CD57842C138941BD0065F27E /* ECCodeByteArrayDataSource.m */; };
 		CD67747B1379DBEB00AA37CE /* Inconsolata.otf in Resources */ = {isa = PBXBuildFile; fileRef = CD67747A1379DBEB00AA37CE /* Inconsolata.otf */; };
 		CD7CB9A3139A87CA001C5F2A /* ComplitionController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CD7CB9A2139A87CA001C5F2A /* ComplitionController.xib */; };
+		CD97785C13C60B1000EDFCF7 /* ECCodeViewTokenizer.m in Sources */ = {isa = PBXBuildFile; fileRef = CD97785B13C60B1000EDFCF7 /* ECCodeViewTokenizer.m */; };
 		CDA3F5C71379BBC400E72D46 /* NSTimer+block.m in Sources */ = {isa = PBXBuildFile; fileRef = CDA3F5C61379BBC400E72D46 /* NSTimer+block.m */; };
 		CDA9216F137D945000AE1BBF /* ECCodeFileDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = CDA9216E137D945000AE1BBF /* ECCodeFileDataSource.m */; };
 		CDB949BA136C3AF200870A98 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CDB949B9136C3AF200870A98 /* QuartzCore.framework */; };
@@ -105,6 +106,8 @@
 		CD57842C138941BD0065F27E /* ECCodeByteArrayDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeByteArrayDataSource.m; sourceTree = "<group>"; };
 		CD67747A1379DBEB00AA37CE /* Inconsolata.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Inconsolata.otf; sourceTree = "<group>"; };
 		CD7CB9A2139A87CA001C5F2A /* ComplitionController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ComplitionController.xib; sourceTree = "<group>"; };
+		CD97785A13C60B1000EDFCF7 /* ECCodeViewTokenizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeViewTokenizer.h; sourceTree = "<group>"; };
+		CD97785B13C60B1000EDFCF7 /* ECCodeViewTokenizer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeViewTokenizer.m; sourceTree = "<group>"; };
 		CDA3F5C51379BBC300E72D46 /* NSTimer+block.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSTimer+block.h"; sourceTree = "<group>"; };
 		CDA3F5C61379BBC400E72D46 /* NSTimer+block.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSTimer+block.m"; sourceTree = "<group>"; };
 		CDA9216D137D945000AE1BBF /* ECCodeFileDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeFileDataSource.h; sourceTree = "<group>"; };
@@ -315,6 +318,8 @@
 				CDF9F22D136DC9BD00CB5945 /* ECCodeViewBase.m */,
 				CDCD1CE11368684300A6DA9E /* ECCodeView.h */,
 				CDCD1CE21368684300A6DA9E /* ECCodeView.m */,
+				CD97785A13C60B1000EDFCF7 /* ECCodeViewTokenizer.h */,
+				CD97785B13C60B1000EDFCF7 /* ECCodeViewTokenizer.m */,
 				CDA92170137D949800AE1BBF /* Concrete data sources */,
 				CDCD1CBD1368614000A6DA9E /* ECTextPosition.h */,
 				CDCD1CBE1368614000A6DA9E /* ECTextPosition.m */,
@@ -430,6 +435,7 @@
 				CD57842A138941880065F27E /* HFSharedMemoryByteSlice.m in Sources */,
 				CD57842D138941BD0065F27E /* ECCodeByteArrayDataSource.m in Sources */,
 				CD4305A513C119B300E88BF3 /* ECInstantGestureRecognizer.m in Sources */,
+				CD97785C13C60B1000EDFCF7 /* ECCodeViewTokenizer.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

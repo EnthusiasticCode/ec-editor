@@ -120,47 +120,49 @@
     CGFloat scale = parent.contentScaleFactor;
     CGFloat invertScale = 1.0 / scale;
     CGRect rect = self.bounds;
+    
+    __weak TextTileView* this = self;
     [parent.renderingQueue addOperationWithBlock:^(void) {
         // Rendering image
         UIGraphicsBeginImageContextWithOptions(rect.size, YES, 0);
         CGContextRef imageContext = UIGraphicsGetCurrentContext();
         {
             
-            [self.backgroundColor setFill];
+            [this.backgroundColor setFill];
             CGContextFillRect(imageContext, rect);
             
             //
             CGContextScaleCTM(imageContext, scale, scale);
             
             // Drawing text
-            CGPoint textOffset = CGPointMake(0, rect.size.height * tileIndex * invertScale);
-            if (tileIndex == 0) 
+            CGPoint textOffset = CGPointMake(0, rect.size.height * this->tileIndex * invertScale);
+            if (this->tileIndex == 0) 
             {
-                CGContextTranslateCTM(imageContext, textInsets.left, textInsets.top);
+                CGContextTranslateCTM(imageContext, this->textInsets.left, this->textInsets.top);
             }
             else
             {
-                textOffset.y -= textInsets.top;
-                CGContextTranslateCTM(imageContext, textInsets.left, 0);
+                textOffset.y -= this->textInsets.top;
+                CGContextTranslateCTM(imageContext, this->textInsets.left, 0);
             }
             
             CGSize textSize = rect.size;
             textSize.height *= invertScale;
             textSize.width *= invertScale;
             
-            [parent.renderer drawTextWithinRect:(CGRect){ textOffset, textSize } inContext:imageContext];
+            [this->parent.renderer drawTextWithinRect:(CGRect){ textOffset, textSize } inContext:imageContext];
         }
         UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
         UIGraphicsEndImageContext();
         
         // Send rendered image to presentation layer
         [[NSOperationQueue mainQueue] addOperationWithBlock:^(void) {
-            @synchronized(textLayer)
+            @synchronized(this->textLayer)
             {
                 [CATransaction begin];
                 [CATransaction setDisableActions:YES];
-                textLayer.contents = (__bridge id)image.CGImage;
-                textLayer.hidden = NO;
+                this->textLayer.contents = (__bridge id)image.CGImage;
+                this->textLayer.hidden = NO;
                 [CATransaction commit];
             }
         }];

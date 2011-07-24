@@ -8,7 +8,6 @@
 
 #import <UIKit/UIKit.h>
 #import "ECCodeViewBase.h"
-#import "ECPopoverController.h"
 
 @class ECCodeView;
 
