@@ -21,6 +21,9 @@
 		B732D05E13DC733900637FBE /* ACStateTab.m in Sources */ = {isa = PBXBuildFile; fileRef = B732D05D13DC733800637FBE /* ACStateTab.m */; };
 		B732D06113DC738800637FBE /* ACStateBookmark.m in Sources */ = {isa = PBXBuildFile; fileRef = B732D06013DC738700637FBE /* ACStateBookmark.m */; };
 		B732D06413DD799400637FBE /* ACURL.m in Sources */ = {isa = PBXBuildFile; fileRef = B732D06313DD799300637FBE /* ACURL.m */; };
+		B732D06C13DDCAB800637FBE /* ACStateFolder.m in Sources */ = {isa = PBXBuildFile; fileRef = B732D06B13DDCAB700637FBE /* ACStateFolder.m */; };
+		B732D06F13DDCAC700637FBE /* ACStateGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = B732D06E13DDCAC600637FBE /* ACStateGroup.m */; };
+		B732D07213DDE02100637FBE /* ACStateOrderedSetWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = B732D07113DDE02000637FBE /* ACStateOrderedSetWrapper.m */; };
 		CD13665913D32150001F3455 /* UIControl+BlockAction.m in Sources */ = {isa = PBXBuildFile; fileRef = CD13665813D32150001F3455 /* UIControl+BlockAction.m */; };
 		CD4786E913DB0C2500616B62 /* ACState.m in Sources */ = {isa = PBXBuildFile; fileRef = CD4786E813DB0C2500616B62 /* ACState.m */; };
 		CD4786ED13DB0F7A00616B62 /* ECBezelAlert.m in Sources */ = {isa = PBXBuildFile; fileRef = CD4786EC13DB0F7A00616B62 /* ECBezelAlert.m */; };
@@ -130,6 +133,12 @@
 		B732D06313DD799300637FBE /* ACURL.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACURL.m; sourceTree = "<group>"; };
 		B732D06513DD79F600637FBE /* ArtCode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArtCode.h; sourceTree = "<group>"; };
 		B732D06613DD7B6F00637FBE /* ACStateNodeInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACStateNodeInternal.h; sourceTree = "<group>"; };
+		B732D06A13DDCAB700637FBE /* ACStateFolder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACStateFolder.h; sourceTree = "<group>"; };
+		B732D06B13DDCAB700637FBE /* ACStateFolder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACStateFolder.m; sourceTree = "<group>"; };
+		B732D06D13DDCAC500637FBE /* ACStateGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACStateGroup.h; sourceTree = "<group>"; };
+		B732D06E13DDCAC600637FBE /* ACStateGroup.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACStateGroup.m; sourceTree = "<group>"; };
+		B732D07013DDE01E00637FBE /* ACStateOrderedSetWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACStateOrderedSetWrapper.h; sourceTree = "<group>"; };
+		B732D07113DDE02000637FBE /* ACStateOrderedSetWrapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACStateOrderedSetWrapper.m; sourceTree = "<group>"; };
 		CD0DEAB613D4C2430087ADBB /* ACToolTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACToolTarget.h; sourceTree = "<group>"; };
 		CD0DEAB713D4C26A0087ADBB /* ACURLTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACURLTarget.h; sourceTree = "<group>"; };
 		CD13665713D32150001F3455 /* UIControl+BlockAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIControl+BlockAction.h"; sourceTree = "<group>"; };
@@ -300,11 +309,17 @@
 				CD4786E713DB0C2500616B62 /* ACState.h */,
 				B732CFEB13DB1BB000637FBE /* ACStateInternal.h */,
 				CD4786E813DB0C2500616B62 /* ACState.m */,
+				B732D07013DDE01E00637FBE /* ACStateOrderedSetWrapper.h */,
+				B732D07113DDE02000637FBE /* ACStateOrderedSetWrapper.m */,
 				B732D05513DC463500637FBE /* ACStateNode.h */,
 				B732D06613DD7B6F00637FBE /* ACStateNodeInternal.h */,
 				B732D05613DC463500637FBE /* ACStateNode.m */,
 				B732CFEC13DB1BB000637FBE /* ACStateProject.h */,
 				B732CFED13DB1BB000637FBE /* ACStateProject.m */,
+				B732D06A13DDCAB700637FBE /* ACStateFolder.h */,
+				B732D06B13DDCAB700637FBE /* ACStateFolder.m */,
+				B732D06D13DDCAC500637FBE /* ACStateGroup.h */,
+				B732D06E13DDCAC600637FBE /* ACStateGroup.m */,
 				B732D05913DC732C00637FBE /* ACStateFile.h */,
 				B732D05A13DC732C00637FBE /* ACStateFile.m */,
 				B732D05F13DC738600637FBE /* ACStateBookmark.h */,
@@ -856,6 +871,9 @@
 				B732D05E13DC733900637FBE /* ACStateTab.m in Sources */,
 				B732D06113DC738800637FBE /* ACStateBookmark.m in Sources */,
 				B732D06413DD799400637FBE /* ACURL.m in Sources */,
+				B732D06C13DDCAB800637FBE /* ACStateFolder.m in Sources */,
+				B732D06F13DDCAC700637FBE /* ACStateGroup.m in Sources */,
+				B732D07213DDE02100637FBE /* ACStateOrderedSetWrapper.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

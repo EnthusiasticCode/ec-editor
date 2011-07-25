@@ -7,7 +7,7 @@
 //
 
 #import "ACStateNode.h"
-#import "ACStateInternal.h"
+#import "ACStateNodeInternal.h"
 
 @interface ACStateNode ()
 @property (nonatomic, getter = isDeleted) BOOL deleted;
@@ -15,20 +15,61 @@
 
 @implementation ACStateNode
 
-@dynamic URL;
-@dynamic name;
-@dynamic index;
-@dynamic tag;
-@dynamic children;
 @synthesize deleted = _deleted;
+
+- (NSURL *)URL
+{
+    return nil;
+}
+
+- (void)setURL:(NSURL *)URL
+{
+    
+}
+
+- (NSString *)name
+{
+    return nil;
+}
+
+- (void)setName:(NSString *)name
+{
+    
+}
+
+- (NSUInteger)index
+{
+    return NSNotFound;
+}
+
+- (void)setIndex:(NSUInteger)index
+{
+    
+}
+
+- (NSUInteger)tag
+{
+    return 0;
+}
+
+- (void)setTag:(NSUInteger)tag
+{
+    
+}
+
+- (NSOrderedSet *)children
+{
+    return nil;
+}
 
 - (id)initWithURL:(NSURL *)URL
 {
-    self = [super init];
-    if (!self)
-        return nil;
-    self.URL = URL;
-    return self;
+    return [super init];
+}
+
+- (id)initWithObject:(id)object
+{
+    return [super init];
 }
 
 - (void)delete

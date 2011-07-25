@@ -10,6 +10,10 @@
 
 @interface ACStateNode (Internal)
 
+/// initializes a node proxy for the specified ACURL
 - (id)initWithURL:(NSURL *)URL;
+
+/// initializes a node proxy for the specified object
+- (id)initWithObject:(id)object;
 
 @end

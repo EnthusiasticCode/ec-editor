@@ -11,6 +11,7 @@
 #import "ACURL.h"
 #import "ACStateProject.h"
 #import "ACStateNodeInternal.h"
+#import "ACStateOrderedSetWrapper.h"
 
 @interface ACStateProject ()
 {
@@ -55,12 +56,30 @@
     [self didChangeValueForKey:@"index"];
 }
 
+- (NSOrderedSet *)children
+{
+    ECASSERT(_document);
+    return [ACStateOrderedSetWrapper orderedSetWithOrderedSet:_document.children];
+}
+
 - (id)initWithURL:(NSURL *)URL
 {
     self = [super initWithURL:URL];
     if (!self)
         return nil;
+    _URL = URL;
     _document = [[ACProject alloc] initWithFileURL:[self documentDirectory]];
+    return self;
+}
+
+- (id)initWithObject:(id)object
+{
+    ECASSERT([object isKindOfClass:[ACProject class]]);
+    self = [super initWithObject:object];
+    if (!self)
+        return nil;
+    _URL = [object fileURL];
+    _document = object;
     return self;
 }
 
@@ -83,14 +102,12 @@
 
 - (NSURL *)documentDirectory
 {
-    ECASSERT(_document);
-    return [_document documentDirectory];
+    return [[[ACState sharedState] stateProjectsDirectory] URLByAppendingPathComponent:[self.URL ACProjectName]];
 }
 
 - (NSURL *)contentDirectory
 {
-    ECASSERT(_document);
-    return [_document contentDirectory];
+    return [[[[ACState sharedState] stateProjectsDirectory] URLByAppendingPathComponent:[self.URL ACProjectName]] URLByAppendingPathComponent:ACProjectContentDirectory];
 }
 
 @end

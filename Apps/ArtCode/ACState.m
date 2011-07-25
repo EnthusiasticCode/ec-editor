@@ -10,7 +10,11 @@
 #import "ACStateProject.h"
 #import "ACStateNodeInternal.h"
 #import "ACProject.h"
+#import "ACModelNode.h"
 #import "ACURL.h"
+#import "ACStateFile.h"
+#import "ACStateFolder.h"
+#import "ACStateGroup.h"
 
 static void * const ACStateProjectURLObservingContext;
 static void * const ACStateProjectDeletedObservingContext;
@@ -124,6 +128,57 @@ static void * const ACStateProjectDeletedObservingContext;
     return [_projectProxies copy];
 }
 
+- (void)insertProjectWithURL:(NSURL *)URL atIndex:(NSUInteger)index
+{
+    ECASSERT(URL && [self indexOfProjectWithURL:URL] == NSNotFound);
+    ECASSERT(index <= [_projectProxies count] || index == NSNotFound);
+    if (index == NSNotFound)
+        index = [_projectProxies count];
+    NSMutableArray *projectNames = [self loadProjectNames];
+    [self willChange:NSKeyValueChangeInsertion valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"projects"];
+    [projectNames insertObject:[URL ACProjectName] atIndex:index];
+    [self saveProjectNames:projectNames];
+    [self insertProjectWithURL:URL atIndex:index];
+    [self didChange:NSKeyValueChangeInsertion valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"projects"];
+}
+
+- (void)deleteProjectWithURL:(NSURL *)URL
+{
+    ECASSERT(URL && [self indexOfProjectWithURL:URL] != NSNotFound);
+    NSUInteger index = [self indexOfProjectWithURL:URL];
+    ACStateProject *project = [_projectProxies objectAtIndex:index];
+    NSMutableArray *projectNames = [self loadProjectNames];
+    [self willChange:NSKeyValueChangeRemoval valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"projects"];
+    [projectNames removeObjectAtIndex:index];
+    [self saveProjectNames:projectNames];
+    [self removeProjectProxyWithURL:URL];
+    [project delete];
+    [self didChange:NSKeyValueChangeRemoval valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"projects"];
+}
+
+#pragma mark - Internal methods
+
++ (id)ACStateProxyForObject:(id)object
+{
+    if ([object isKindOfClass:[ACProject class]])
+        return [[ACStateProject alloc] initWithObject:object];
+    ECASSERT([object isKindOfClass:[ACModelNode class]]); // if it's not a project object, it should be a regular node object
+    ACModelNode *node = object;
+    if ([node.type intValue] == ACProjectNodeTypeFile)
+        return [[ACStateFile alloc] initWithObject:object];
+    if ([node.type intValue] == ACProjectNodeTypeFolder)
+        return [[ACStateFolder alloc] initWithObject:object];
+    if ([node.type intValue] == ACProjectNodeTypeGroup)
+        return [[ACStateGroup alloc] initWithObject:object];
+    ECASSERT(false); // object passed is of an invalid type
+    return nil;
+}
+
++ (id)ACStateProxyForURL:(NSURL *)URL
+{
+    return nil;
+}
+
 - (NSUInteger)indexOfProjectWithURL:(NSURL *)URL
 {
     ECASSERT(URL);
@@ -155,35 +210,7 @@ static void * const ACStateProjectDeletedObservingContext;
     [self didChange:NSKeyValueChangeRemoval valuesAtIndexes:[NSIndexSet indexSetWithIndex:oldIndex] forKey:@"projects"];
 }
 
-- (void)insertProjectWithURL:(NSURL *)URL atIndex:(NSUInteger)index
-{
-    ECASSERT(URL && [self indexOfProjectWithURL:URL] == NSNotFound);
-    ECASSERT(index <= [_projectProxies count] || index == NSNotFound);
-    if (index == NSNotFound)
-        index = [_projectProxies count];
-    NSMutableArray *projectNames = [self loadProjectNames];
-    [self willChange:NSKeyValueChangeInsertion valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"projects"];
-    [projectNames insertObject:[URL ACProjectName] atIndex:index];
-    [self saveProjectNames:projectNames];
-    [self insertProjectWithURL:URL atIndex:index];
-    [self didChange:NSKeyValueChangeInsertion valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"projects"];
-}
-
-- (void)deleteProjectWithURL:(NSURL *)URL
-{
-    ECASSERT(URL && [self indexOfProjectWithURL:URL] != NSNotFound);
-    NSUInteger index = [self indexOfProjectWithURL:URL];
-    ACStateProject *project = [_projectProxies objectAtIndex:index];
-    NSMutableArray *projectNames = [self loadProjectNames];
-    [self willChange:NSKeyValueChangeRemoval valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"projects"];
-    [projectNames removeObjectAtIndex:index];
-    [self saveProjectNames:projectNames];
-    [self removeProjectProxyWithURL:URL];
-    [project delete];
-    [self didChange:NSKeyValueChangeRemoval valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"projects"];
-}
-
-#pragma mark - Internal methods
+#pragma mark - Private methods
 
 - (void)insertProjectProxyWithURL:(NSURL *)URL atIndex:(NSUInteger)index
 {
