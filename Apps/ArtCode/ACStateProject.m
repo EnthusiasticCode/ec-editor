@@ -7,154 +7,90 @@
 //
 
 #import "ACStateInternal.h"
+#import "ACProject.h"
+#import "ACURL.h"
+#import "ACStateProject.h"
+#import "ACStateNodeInternal.h"
 
 @interface ACStateProject ()
-
-- (void)handleProjectProxyRenameCommand:(NSNotification *)notification;
-- (void)handleProjectProxyDeleteCommand:(NSNotification *)notification;
-- (void)handleProjectWillRenameNotification:(NSNotification *)notification;
-- (void)handleProjectDidRenameNotification:(NSNotification *)notification;
-- (void)handleProjectPropertiesWillChangeNotification:(NSNotification *)notification;
-- (void)handleProjectPropertiesDidChangeNotification:(NSNotification *)notification;
-
+{
+    ACProject *_document;
+}
 @end
 
 @implementation ACStateProject
 
-@synthesize name = _name;
+@synthesize URL = _URL;
+
+- (void)setURL:(NSURL *)URL
+{
+    ECASSERT(URL);
+    [self willChangeValueForKey:@"URL"];
+    [self willChangeValueForKey:@"name"];
+    _URL = URL;
+    [self didChangeValueForKey:@"name"];
+    [self didChangeValueForKey:@"URL"];
+}
+
+- (NSString *)name
+{
+    return [self.URL ACProjectName];
+}
 
 - (void)setName:(NSString *)name
 {
     ECASSERT(name);
-    [[ACState sharedState] setName:name forProjectWithName:_name];
+    self.URL = [NSURL ACURLForProjectWithName:name];
 }
 
 - (NSUInteger)index
 {
-    return [[ACState sharedState] indexOfProjectWithName:self.name];
+    return [[ACState sharedState] indexOfProjectWithURL:self.URL];
 }
 
 - (void)setIndex:(NSUInteger)index
 {
-    [[ACState sharedState] setIndex:index forProjectWithName:self.name];
+    [self willChangeValueForKey:@"index"];
+    [[ACState sharedState] setIndex:index forProjectWithURL:self.URL];
+    [self didChangeValueForKey:@"index"];
 }
 
-- (UIColor *)color
+- (id)initWithURL:(NSURL *)URL
 {
-    return [[ACState sharedState] colorForProjectWithName:self.name];
-}
-
-- (void)setColor:(UIColor *)color
-{
-    [[ACState sharedState] setColor:color forProjectWithName:self.name];
-}
-
-- (NSURL *)URL
-{
-    return [NSURL URLWithString:[[ACURLScheme stringByAppendingString:@":/"] stringByAppendingString:[self.name stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]]];
-}
-
-- (void)setURL:(NSURL *)URL
-{
-    ECASSERT([[URL scheme] isEqualToString:ACURLScheme]);
-    self.name = [[URL pathComponents] objectAtIndex:0];
-}
-
-#pragma mark - Internal Methods
-
-- (id)init
-{
-    self = [super init];
+    self = [super initWithURL:URL];
     if (!self)
         return nil;
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleProjectProxyRenameCommand:) name:ACProjectProxyRenameCommand object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleProjectProxyDeleteCommand:) name:ACProjectProxyDeleteCommand object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleProjectWillRenameNotification::) name:ACProjectWillRenameNotification object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleProjectDidRenameNotification:) name:ACProjectDidRenameNotification object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleProjectPropertiesWillChangeNotification:) name:ACProjectPropertiesWillChangeNotification object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleProjectPropertiesDidChangeNotification:) name:ACProjectPropertiesDidChangeNotification object:nil];
+    _document = [[ACProject alloc] initWithFileURL:[self documentDirectory]];
     return self;
 }
 
-- (void)dealloc
+- (void)delete
 {
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
-}
-
-+ (ACStateProject *)projectProxyForProjectWithName:(NSString *)name
-{
-    ACStateProject *proxy = [self alloc];
-    proxy = [proxy init];
-    proxy->_name = name;
-    return proxy;
-}
-
-#pragma mark - Notification and command handling
-
-- (void)handleProjectProxyRenameCommand:(NSNotification *)notification
-{
-    if (![[[notification userInfo] objectForKey:@"oldName"] isEqualToString:self.name])
-        return;
-    _name = [[notification userInfo] objectForKey:@"newName"];
-}
-
-- (void)handleProjectProxyDeleteCommand:(NSNotification *)notification
-{
-    if (![[[notification userInfo] objectForKey:@"name"] isEqualToString:self.name])
-        return;
-    [self willChangeValueForKey:@"name"];
-    [self willChangeValueForKey:@"URL"];
-    [self willChangeValueForKey:@"index"];
-    [self willChangeValueForKey:@"color"];
-    [self willChangeValueForKey:@"active"];
-    _name = nil;
-    [self didChangeValueForKey:@"name"];
-    [self didChangeValueForKey:@"URL"];
-    [self didChangeValueForKey:@"index"];
-    [self didChangeValueForKey:@"color"];
-    [self didChangeValueForKey:@"active"];
-}
-
-- (void)handleProjectWillRenameNotification:(NSNotification *)notification
-{
-    if (![[[notification userInfo] objectForKey:@"oldName"] isEqualToString:self.name])
-        return;
-    [self willChangeValueForKey:@"name"];
-    [self willChangeValueForKey:@"URL"];
-}
-
-- (void)handleProjectDidRenameNotification:(NSNotification *)notification
-{
-    if (![[[notification userInfo] objectForKey:@"newName"] isEqualToString:self.name])
-        return;
-    [self didChangeValueForKey:@"name"];
-    [self didChangeValueForKey:@"URL"];
-}
-
-- (void)handleProjectPropertiesWillChangeNotification:(NSNotification *)notification
-{
-    if (![[[notification userInfo] objectForKey:@"name"] isEqualToString:self.name])
-        return;
-    for (NSString *key in [[notification userInfo] objectForKey:@"propertyKeys"])
-        [self willChangeValueForKey:key];
-}
-
-- (void)handleProjectPropertiesDidChangeNotification:(NSNotification *)notification
-{
-    if (![[[notification userInfo] objectForKey:@"name"] isEqualToString:self.name])
-        return;
-    for (NSString *key in [[notification userInfo] objectForKey:@"propertyKeys"])
-        [self didChangeValueForKey:key];
+    [super delete];
 }
 
 - (void)openWithCompletionHandler:(void (^)(BOOL))completionHandler
 {
-    [[ACState sharedState] openProjectWithName:self.name withCompletionHandler:completionHandler];
+    ECASSERT(_document);
+    [_document openWithCompletionHandler:completionHandler];
 }
 
 - (void)closeWithCompletionHandler:(void (^)(BOOL))completionHandler
 {
-    [[ACState sharedState] closeProjectWithName:self.name withCompletionHandler:completionHandler];
+    ECASSERT(_document);
+    [_document closeWithCompletionHandler:completionHandler];
+}
+
+- (NSURL *)documentDirectory
+{
+    ECASSERT(_document);
+    return [_document documentDirectory];
+}
+
+- (NSURL *)contentDirectory
+{
+    ECASSERT(_document);
+    return [_document contentDirectory];
 }
 
 @end

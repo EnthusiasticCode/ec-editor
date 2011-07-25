@@ -6,27 +6,21 @@
 //  Copyright 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+#import "ACStateNode.h"
 
 /// AC Project controller
 /// This object should not be instantiated
-@interface ACStateProject : NSObject
+@interface ACStateProject : ACStateNode
 
-/// Project name
-/// Same as the bundle's name, setting it will rename the bundle
-@property (nonatomic, copy) NSString *name;
+/// The directory where the project's documents are stored
+- (NSURL *)documentDirectory;
 
-/// Project index in the projects list
-@property (nonatomic) NSUInteger index;
-
-/// Color of the project
-@property (nonatomic, strong) UIColor *color;
-
-/// AC URL of the project
-@property (nonatomic, strong) NSURL *URL;
+/// The directory where the project's contents are stored
+- (NSURL *)contentDirectory;
 
 /// Open the project
 /// Must be called before using any of the following methods
+/// The children property is empty before calling this
 - (void)openWithCompletionHandler:(void (^)(BOOL success))completionHandler;
 
 /// Close the project
