@@ -7,37 +7,26 @@
 //
 
 #import "ACStateInternal.h"
+#import "ACStateProject.h"
+#import "ACStateNodeInternal.h"
 #import "ACProject.h"
+#import "ACURL.h"
+
+static void * const ACStateProjectURLObservingContext;
+static void * const ACStateProjectDeletedObservingContext;
 
 @interface ACState ()
+{
+    NSMutableArray *_projectProxies;
+}
 
-/// The projects list
-@property (nonatomic, strong) NSMutableArray *projects;
+/// Adds and removes a project proxy with a given name to the list
+- (void)insertProjectProxyWithURL:(NSURL *)URL atIndex:(NSUInteger)index;
+- (void)removeProjectProxyWithURL:(NSURL *)URL;
 
-/// Dictionary with project names as keys and project document objects as values
-@property (nonatomic, strong) NSMutableDictionary *projectDocuments;
-
-/// Return the path of the application documents directory
-- (NSString *)applicationDocumentsDirectory;
-
-/// Scans the application document directory for new projects
-- (void)scanForProjects;
-
-/// Renames a project
-- (void)setName:(NSString *)name forProjectAtIndex:(NSUInteger)index;
-
-/// Returns the name of a project in the projects list
-- (NSString *)nameOfProjectAtIndex:(NSUInteger)index;
-
-/// Sets the index of a project in the projects list
-/// The project is inserted at the set index, other projects are shuffled
-- (void)setIndex:(NSUInteger)newIndex forProjectAtIndex:(NSUInteger)oldIndex;
-
-/// Returns the color of a project
-- (UIColor *)colorForProjectAtIndex:(NSUInteger)index;
-
-/// Sets the color of a project
-- (void)setColor:(UIColor *)color forProjectAtIndex:(NSUInteger)index;
+/// Load / save ordered list of projects
+- (NSMutableArray *)loadProjectNames;
+- (void)saveProjectNames:(NSArray *)projectNames;
 
 @end
 
@@ -45,194 +34,177 @@
 
 #pragma mark - Application Level
 
-@synthesize projects = _projects;
-@synthesize projectDocuments = _projectDocuments;
-
 + (ACState *)sharedState
 {
     static ACState *sharedState = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         sharedState = [[self alloc] init];
-        sharedState->_projectDocuments = [NSMutableDictionary dictionary];
     });
     return sharedState;
 }
 
-- (void)loadState
+- (id)init
 {
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    [self willChangeValueForKey:@"allProjects"];
-    self.projects = [NSMutableArray arrayWithArray:[defaults arrayForKey:@"projects"]];
+    self = [super init];
+    if (!self)
+        return nil;
+    _projectProxies = [NSMutableOrderedSet orderedSet];
+    for (NSString *projectName in [self loadProjectNames])
+        [self insertProjectProxyWithURL:[NSURL ACURLForProjectWithName:projectName] atIndex:NSNotFound];
     [self scanForProjects];
-    [self didChangeValueForKey:@"allProjects"];
+    return self;
 }
 
-- (void)saveState
+- (NSURL *)stateProjectsDirectory
 {
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    [defaults setObject:[self.projects copy] forKey:@"projects"];
-    [defaults synchronize];
-}
-
-- (NSString *)applicationDocumentsDirectory
-{
-    return [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject];
+    return [NSURL fileURLWithPath:[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject]];
 }
 
 - (void)scanForProjects
 {
     NSFileManager *fileManager = [[NSFileManager alloc] init];
-    NSArray *projectPaths = [fileManager contentsOfDirectoryAtPath:self.applicationDocumentsDirectory error:NULL];
-    for (NSString *path in projectPaths)
+    NSMutableArray *projectNames = [self loadProjectNames];
+    NSArray *projectURLs = [fileManager contentsOfDirectoryAtURL:[self stateProjectsDirectory] includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles error:NULL];
+    BOOL projectListHasChanged = NO;
+    for (NSURL *projectURL in projectURLs)
     {
-        if (![[path pathExtension] isEqualToString:ACProjectBundleExtension])
+        if (![[projectURL pathExtension] isEqualToString:ACProjectBundleExtension])
             continue;
-        NSString *name = [path stringByDeletingPathExtension];
-        if ([self indexOfProjectWithName:name] == NSNotFound)
-             [self.projects addObject:[NSDictionary dictionaryWithObjectsAndKeys:name, @"name", nil, @"color" , nil]];
+        NSString *projectName = [projectURL lastPathComponent];
+        if ([projectNames containsObject:projectName])
+            continue;
+        if (!projectListHasChanged)
+        {
+            projectListHasChanged = YES;
+            [self willChangeValueForKey:@"projects"];
+        }
+        [projectNames addObject:projectName];
+        [self insertProjectProxyWithURL:[NSURL ACURLForProjectWithName:projectName] atIndex:NSNotFound];
+    }
+    if (projectListHasChanged)
+    {
+        [self saveProjectNames:projectNames];
+        [self didChangeValueForKey:@"projects"];
     }
 }
 
+- (NSMutableArray *)loadProjectNames
+{
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    return [NSMutableArray arrayWithArray:[defaults arrayForKey:@"projects"]];
+}
+
+- (void)saveProjectNames:(NSArray *)projectNames
+{
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    [defaults setObject:projectNames forKey:@"projects"];
+    [defaults synchronize];
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
+    if (context == ACStateProjectURLObservingContext) {
+        NSURL *oldURL = [change objectForKey:NSKeyValueChangeOldKey];
+        NSURL *newURL = [change objectForKey:NSKeyValueChangeNewKey];
+        ECASSERT(oldURL && newURL && [self indexOfProjectWithURL:oldURL] != NSNotFound);
+        NSMutableArray *projectNames = [self loadProjectNames];
+        NSUInteger index = [projectNames indexOfObject:[oldURL ACProjectName]];
+        [projectNames removeObjectAtIndex:index];
+        [projectNames insertObject:[newURL ACProjectName] atIndex:index];
+        [self saveProjectNames:projectNames];
+    } else {
+        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+    }
+}
 
 #pragma mark - Project Level
 
-- (NSOrderedSet *)allProjects
+- (NSArray *)projects
 {
-    NSMutableOrderedSet *allProjects = [NSMutableOrderedSet orderedSetWithCapacity:[self.projects count]];
-    for (NSDictionary *project in self.projects)
-        [allProjects addObject:[ACStateProject projectProxyForProjectWithName:[project objectForKey:@"name"]]];
-    return allProjects;
+    return [_projectProxies copy];
 }
 
-- (void)setName:(NSString *)newName forProjectWithName:(NSString *)oldName
+- (NSUInteger)indexOfProjectWithURL:(NSURL *)URL
 {
-    ECASSERT(oldName && newName && [self indexOfProjectWithName:oldName] != NSNotFound);
-    [self setName:newName forProjectAtIndex:[self indexOfProjectWithName:oldName]];
-}
-
-- (void)setName:(NSString *)name forProjectAtIndex:(NSUInteger)index
-{
-    ECASSERT(name && [self indexOfProjectWithName:name] == NSNotFound);
-    ECASSERT(index < [self.projects count]);
-    NSDictionary *project = [self.projects objectAtIndex:index];
-    NSString *oldName = [project objectForKey:@"name"];
-    [[NSNotificationCenter defaultCenter] postNotificationName:ACProjectWillRenameNotification object:self userInfo:[NSDictionary dictionaryWithObjectsAndKeys:oldName, @"oldName", name, @"newName", nil]];
-    project = [NSDictionary dictionaryWithObjectsAndKeys:name, @"name", [project objectForKey:@"color"], @"color", nil];
-    [self.projects replaceObjectAtIndex:index withObject:project];
-    [[NSNotificationCenter defaultCenter] postNotificationName:ACProjectProxyRenameCommand object:self userInfo:[NSDictionary dictionaryWithObjectsAndKeys:oldName, @"oldName", name, @"newName", nil]];
-    [[NSNotificationCenter defaultCenter] postNotificationName:ACProjectDidRenameNotification object:self userInfo:[NSDictionary dictionaryWithObjectsAndKeys:oldName, @"oldName", name, @"newName", nil]];
-}
-
-- (NSUInteger)indexOfProjectWithName:(NSString *)name
-{
-    ECASSERT(name);
+    ECASSERT(URL);
     NSUInteger index = 0;
-    for (NSDictionary *project in self.projects)
-        if ([[project objectForKey:@"name"] isEqualToString:name])
+    for (ACStateProject *project in _projectProxies)
+        if ([project.name isEqualToString:[URL ACProjectName]])
             return index;
         else
             ++index;
     return NSNotFound;
 }
 
-- (NSString *)nameOfProjectAtIndex:(NSUInteger)index
+- (void)setIndex:(NSUInteger)index forProjectWithURL:(NSURL *)URL
 {
-    ECASSERT(index < [self.projects count]);
-    return [[self.projects objectAtIndex:index] objectForKey:@"name"];
+    ECASSERT(URL);
+    ECASSERT(index < [_projectProxies count]);
+    NSUInteger oldIndex = [self indexOfProjectWithURL:URL];
+    NSMutableArray *projectNames = [self loadProjectNames];
+    NSString *projectName = [projectNames objectAtIndex:oldIndex];
+    ACStateProject *project = [_projectProxies objectAtIndex:oldIndex];
+    [self willChange:NSKeyValueChangeRemoval valuesAtIndexes:[NSIndexSet indexSetWithIndex:oldIndex] forKey:@"projects"];
+    [self willChange:NSKeyValueChangeInsertion valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"projects"];
+    [projectNames removeObjectAtIndex:oldIndex];
+    [projectNames insertObject:projectName atIndex:index];
+    [self saveProjectNames:projectNames];
+    [_projectProxies removeObjectAtIndex:oldIndex];
+    [_projectProxies insertObject:project atIndex:index];
+    [self didChange:NSKeyValueChangeInsertion valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"projects"];
+    [self didChange:NSKeyValueChangeRemoval valuesAtIndexes:[NSIndexSet indexSetWithIndex:oldIndex] forKey:@"projects"];
 }
 
-- (void)setIndex:(NSUInteger)index forProjectWithName:(NSString *)name
+- (void)insertProjectWithURL:(NSURL *)URL atIndex:(NSUInteger)index
 {
-    ECASSERT(name && [self indexOfProjectWithName:name] != NSNotFound);
-    [self setIndex:index forProjectAtIndex:[self indexOfProjectWithName:name]];
-}
-
-- (void)setIndex:(NSUInteger)newIndex forProjectAtIndex:(NSUInteger)oldIndex
-{
-    ECASSERT(oldIndex < [self.projects count]);
-    ECASSERT(newIndex < [self.projects count]);
-    if (newIndex == oldIndex)
-        return;
-    NSDictionary *project = [self.projects objectAtIndex:oldIndex];
-    NSString *name = [project objectForKey:@"name"];
-    [[NSNotificationCenter defaultCenter] postNotificationName:ACProjectPropertiesWillChangeNotification object:self userInfo:[NSDictionary dictionaryWithObjectsAndKeys:name , @"name", [NSArray arrayWithObject:@"index"], @"propertyKeys", nil]];
-    [self.projects removeObjectAtIndex:oldIndex];
-    [self.projects insertObject:project atIndex:newIndex];
-    [[NSNotificationCenter defaultCenter] postNotificationName:ACProjectPropertiesDidChangeNotification object:self userInfo:[NSDictionary dictionaryWithObjectsAndKeys:name , @"name", [NSArray arrayWithObject:@"index"], @"propertyKeys", nil]];
-}
-
-- (UIColor *)colorForProjectWithName:(NSString *)name
-{
-    ECASSERT(name && [self indexOfProjectWithName:name] != NSNotFound);
-    return [self colorForProjectAtIndex:[self indexOfProjectWithName:name]];
-}
-
-- (UIColor *)colorForProjectAtIndex:(NSUInteger)index
-{
-    ECASSERT(index < [self.projects count]);
-    return [[self.projects objectAtIndex:index] objectForKey:@"color"];
-}
-
-- (void)setColor:(UIColor *)color forProjectWithName:(NSString *)name
-{
-    ECASSERT(name && [self indexOfProjectWithName:name] != NSNotFound);
-    [self setColor:color forProjectAtIndex:[self indexOfProjectWithName:name]];
-}
-
-- (void)setColor:(UIColor *)color forProjectAtIndex:(NSUInteger)index
-{
-    ECASSERT(index < [self.projects count]);
-    NSDictionary *project = [self.projects objectAtIndex:index];
-    NSString *name = [project objectForKey:@"name"];
-    [[NSNotificationCenter defaultCenter] postNotificationName:ACProjectPropertiesWillChangeNotification object:self userInfo:[NSDictionary dictionaryWithObjectsAndKeys:name , @"name", [NSArray arrayWithObject:@"color"], @"propertyKeys", nil]];
-    project = [NSDictionary dictionaryWithObjectsAndKeys:[project objectForKey:@"name"], @"name", color, @"color", nil];
-    [self.projects replaceObjectAtIndex:index withObject:project];
-    [[NSNotificationCenter defaultCenter] postNotificationName:ACProjectPropertiesDidChangeNotification object:self userInfo:[NSDictionary dictionaryWithObjectsAndKeys:name , @"name", [NSArray arrayWithObject:@"color"], @"propertyKeys", nil]];
-}
-
-- (void)insertProjectWithName:(NSString *)name color:(UIColor *)color atIndex:(NSUInteger)index
-{
-    ECASSERT(name && [self indexOfProjectWithName:name] == NSNotFound);
+    ECASSERT(URL && [self indexOfProjectWithURL:URL] == NSNotFound);
+    ECASSERT(index <= [_projectProxies count] || index == NSNotFound);
     if (index == NSNotFound)
-        index = [self.projects count];
-    ACStateProject *proxy = [ACStateProject projectProxyForProjectWithName:name];
-    [self willChangeValueForKey:@"allProjects" withSetMutation:NSKeyValueUnionSetMutation usingObjects:[NSSet setWithObject:proxy]];
-    [self willChange:NSKeyValueChangeInsertion valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"allProjects"];
-    [self.projects insertObject:[NSDictionary dictionaryWithObjectsAndKeys:name, @"name", color, @"color", nil] atIndex:index];
-    [self didChangeValueForKey:@"allProjects" withSetMutation:NSKeyValueUnionSetMutation usingObjects:[NSSet setWithObject:proxy]];
-    [self didChange:NSKeyValueChangeInsertion valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"allProjects"];
+        index = [_projectProxies count];
+    NSMutableArray *projectNames = [self loadProjectNames];
+    [self willChange:NSKeyValueChangeInsertion valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"projects"];
+    [projectNames insertObject:[URL ACProjectName] atIndex:index];
+    [self saveProjectNames:projectNames];
+    [self insertProjectWithURL:URL atIndex:index];
+    [self didChange:NSKeyValueChangeInsertion valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"projects"];
 }
 
-- (void)deleteProjectWithName:(NSString *)name
+- (void)deleteProjectWithURL:(NSURL *)URL
 {
-    ECASSERT(name && [self indexOfProjectWithName:name] != NSNotFound);
-    [self deleteProjectAtIndex:[self indexOfProjectWithName:name]];
+    ECASSERT(URL && [self indexOfProjectWithURL:URL] != NSNotFound);
+    NSUInteger index = [self indexOfProjectWithURL:URL];
+    ACStateProject *project = [_projectProxies objectAtIndex:index];
+    NSMutableArray *projectNames = [self loadProjectNames];
+    [self willChange:NSKeyValueChangeRemoval valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"projects"];
+    [projectNames removeObjectAtIndex:index];
+    [self saveProjectNames:projectNames];
+    [self removeProjectProxyWithURL:URL];
+    [project delete];
+    [self didChange:NSKeyValueChangeRemoval valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"projects"];
 }
 
-- (void)deleteProjectAtIndex:(NSUInteger)index
+#pragma mark - Internal methods
+
+- (void)insertProjectProxyWithURL:(NSURL *)URL atIndex:(NSUInteger)index
 {
-    ECASSERT(index < [self.projects count]);
-    ACStateProject *proxy = [ACStateProject projectProxyForProjectWithName:[self nameOfProjectAtIndex:index]];
-    [self willChangeValueForKey:@"allProjects" withSetMutation:NSKeyValueMinusSetMutation usingObjects:[NSSet setWithObject:proxy]];
-    [self willChange:NSKeyValueChangeRemoval valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"allProjects"];
-    [self.projects removeObjectAtIndex:index];
-    [self didChangeValueForKey:@"allProjects" withSetMutation:NSKeyValueMinusSetMutation usingObjects:[NSSet setWithObject:proxy]];
-    [self didChange:NSKeyValueChangeRemoval valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"allProjects"];
+    ECASSERT(URL);
+    ECASSERT(index <= [_projectProxies count] || index == NSNotFound);
+    if (index == NSNotFound)
+        index = [_projectProxies count];
+    ACStateProject *project = [[ACStateProject alloc] initWithURL:URL];
+    [project addObserver:self forKeyPath:@"URL" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld context:ACStateProjectURLObservingContext];
+    [project addObserver:self forKeyPath:@"deleted" options:NSKeyValueObservingOptionNew context:ACStateProjectDeletedObservingContext];
+    [_projectProxies insertObject:project atIndex:index];
 }
 
-- (void)openProjectWithName:(NSString *)name withCompletionHandler:(void (^)(BOOL))completionHandler
+- (void)removeProjectProxyWithURL:(NSURL *)URL
 {
-    ACProject *projectDocument = [self.projectDocuments objectForKey:name];
-    if (!projectDocument)
-        projectDocument = [[ACProject alloc] initWithFileURL:[NSURL fileURLWithPath:[[self.applicationDocumentsDirectory stringByAppendingPathComponent:name] stringByAppendingPathExtension:ACProjectBundleExtension]]];
-    [projectDocument openWithCompletionHandler:completionHandler];
-}
-
-- (void)closeProjectWithName:(NSString *)name withCompletionHandler:(void (^)(BOOL))completionHandler
-{
-    ECASSERT([self.projectDocuments objectForKey:name]);
-    [[self.projectDocuments objectForKey:name] closeWithCompletionHandler:completionHandler];
+    ECASSERT(URL && [self indexOfProjectWithURL:URL] != NSNotFound);
+    NSUInteger index = [self indexOfProjectWithURL:URL];
+    ACStateProject *project = [_projectProxies objectAtIndex:index];
+    [project removeObserver:self forKeyPath:@"URL" context:ACStateProjectURLObservingContext];
+    [project removeObserver:self forKeyPath:@"deleted" context:ACStateProjectDeletedObservingContext];
+    [_projectProxies removeObjectAtIndex:index];
 }
 
 @end

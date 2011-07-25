@@ -19,7 +19,12 @@ typedef enum
 
 @interface ACProject : UIManagedDocument
 
-- (NSString *)contentDirectoryPath;
+/// The directory where the project's documents are stored
+- (NSURL *)documentDirectory;
+
+/// The directory where the project's contents are stored
+- (NSURL *)contentDirectory;
+
 - (NSOrderedSet *)children;
 
 @end

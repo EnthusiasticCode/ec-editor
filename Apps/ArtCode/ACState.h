@@ -18,24 +18,24 @@
 /// Returns the ACState application wide singleton
 + (ACState *)sharedState;
 
-/// Loads or creates a saved state
-/// Needs to be called to populate the projects list
-- (void)loadState;
+/// The directory where the state's projects are stored
+- (NSURL *)stateProjectsDirectory;
 
-/// Saves the current state
-- (void)saveState;
+/// Scans the state projects directory for new projects
+- (void)scanForProjects;
 
 #pragma mark - Project Level
 
 /// A list containing all existing projects
-@property (nonatomic, strong, readonly) NSOrderedSet *allProjects;
+@property (nonatomic, strong, readonly) NSArray *projects;
 
 /// Adds a new project
 /// Inserting a project with the same name as an existing project is an error
-- (void)insertProjectWithName:(NSString *)name color:(UIColor *)color atIndex:(NSUInteger)index;
+/// Passing index = NSNotFound will add the project to the end of the project list
+- (void)insertProjectWithURL:(NSURL *)URL atIndex:(NSUInteger)index;
 
 /// Deletes a project
 /// If the project is active it deactives it before deleting it.
-- (void)deleteProjectWithName:(NSString *)name;
+- (void)deleteProjectWithURL:(NSURL *)URL;
 
 @end

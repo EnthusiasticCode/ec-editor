@@ -53,7 +53,7 @@ NSString * const ACProjectContentDirectory = @"Content";
         ACModelNode *rootNode = [NSEntityDescription insertNewObjectForEntityForName:@"Node" inManagedObjectContext:self.managedObjectContext];
         rootNode.name = @"";
         rootNode.type = [NSNumber numberWithInt:ACProjectNodeTypeFolder];
-        rootNode.path = @"../../";
+        rootNode.path = @"";
         return rootNode;
     }
 }
@@ -84,14 +84,19 @@ NSString * const ACProjectContentDirectory = @"Content";
         [self addNodesAtPath:[path stringByAppendingPathComponent:subPath] toNode:[subNodes objectForKey:subPath]];
 }
 
-- (NSString *)contentDirectoryPath
+- (NSURL *)contentDirectory
 {
-    return [[self.fileURL path] stringByAppendingPathComponent:ACProjectContentDirectory];
+    return [self.fileURL URLByAppendingPathComponent:ACProjectContentDirectory];
+}
+
+- (NSURL *)documentDirectory
+{
+    return self.fileURL;
 }
 
 - (void)addAllNodesInProjectRoot
 {
-    [self addNodesAtPath:[self contentDirectoryPath] toNode:self.rootNode];
+    [self addNodesAtPath:[[self contentDirectory] path] toNode:self.rootNode];
 }
 
 - (NSOrderedSet *)children

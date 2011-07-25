@@ -57,7 +57,7 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return [[ACState sharedState].allProjects count];
+    return [[ACState sharedState].projects count];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -81,7 +81,7 @@
     }
     
     // Configure the cell...
-    [cell.textLabel setText:[[[ACState sharedState].allProjects objectAtIndex:indexPath.row] name]];
+    [cell.textLabel setText:[[[ACState sharedState].projects objectAtIndex:indexPath.row] name]];
     
     return cell;
 }
@@ -93,7 +93,7 @@
 
 - (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)sourceIndexPath toIndexPath:(NSIndexPath *)destinationIndexPath
 {
-    [[[ACState sharedState].allProjects objectAtIndex:sourceIndexPath.row] setIndex:destinationIndexPath.row];
+    [[[ACState sharedState].projects objectAtIndex:sourceIndexPath.row] setIndex:destinationIndexPath.row];
 }
 
 /*
@@ -111,7 +111,7 @@
 {
     if (editingStyle == UITableViewCellEditingStyleDelete) {
         // Delete the row from the data source
-        [[ACState sharedState] deleteProjectWithName:[[[ACState sharedState].allProjects objectAtIndex:indexPath.row] name]];
+        [[[ACState sharedState].projects objectAtIndex:indexPath.row] delete];
         [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
     }   
     else if (editingStyle == UITableViewCellEditingStyleInsert) {
@@ -133,7 +133,7 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    [self.ACNavigationController pushURL:[[[ACState sharedState].allProjects objectAtIndex:indexPath.row] URL] animated:YES];
+    [self.ACNavigationController pushURL:[[[ACState sharedState].projects objectAtIndex:indexPath.row] URL] animated:YES];
 }
 
 @end
