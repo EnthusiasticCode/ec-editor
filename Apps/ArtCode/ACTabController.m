@@ -10,6 +10,7 @@
 #import "AppStyle.h"
 
 #import "ECSwipeGestureRecognizer.h"
+#import "UIView+ReuseIdentifier.h"
 
 /// ACTab represent a tab with it's history. 
 @interface ACTab : NSObject
@@ -39,6 +40,7 @@
 @implementation ACTabController {
     NSMutableArray *tabs;
     BOOL ignoreContentViewScrolling;
+    BOOL tabBarVisible;
     
     BOOL delegateHasDidShowTabAtIndexWithViewController;
     BOOL delegateHasDidChangeURLForTabAtIndexWithURL;
@@ -104,7 +106,7 @@
     
     // Gets tab page position
     CGRect tabFrame = contentScrollView.bounds;
-    NSInteger tabPage = (NSInteger)[tabBar indexOfTab:tab.button];
+    NSInteger tabPage = (NSInteger)[tabBar.tabControls indexOfObject:tab.button];
     NSInteger currentPage = (NSInteger)(tabFrame.origin.x / tabFrame.size.width);
     
     // Load new controller
@@ -227,7 +229,6 @@
     if (!tabBar)
         tabBar = [[ECTabBar alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, 44)];
     tabBar.delegate = self;
-    tabBar.alwaysBounceHorizontal = YES;
     tabBar.backgroundColor = [UIColor styleForegroundColor];
     tabBar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
     
@@ -310,30 +311,37 @@
 
 #pragma mark - TabBar Methods
 
-- (BOOL)tabBar:(ECTabBar *)tabBar shouldAddTabButton:(UIButton *)tabButton atIndex:(NSUInteger)tabIndex
+- (UIControl *)tabBar:(ECTabBar *)bar controlForTabWithTitle:(NSString *)title atIndex:(NSUInteger)tabIndex
 {
-    tabButton.titleLabel.lineBreakMode = UILineBreakModeMiddleTruncation;
+    static NSString *tabButtonIdentifier = @"tabButton";
     
-    UIButton *closeButton = [UIButton new];
-    CGRect frame = tabButton.bounds;
-    frame.origin.x = frame.size.width - 35;
-    frame.size.width = 35;
-    closeButton.frame = frame;
-    [closeButton addTarget:self action:@selector(closeTabButtonAction:) forControlEvents:UIControlEventTouchUpInside];
-    [tabButton addSubview:closeButton];
+    UIButton *tabButton = (UIButton *)[bar dequeueReusableTabControlWithIdentifier:tabButtonIdentifier];
+    if (!tabButton)
+    {
+        tabButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 100, 40)];
+        tabButton.reuseIdentifier = tabButtonIdentifier;
+        tabButton.titleLabel.lineBreakMode = UILineBreakModeMiddleTruncation;
+        tabButton.titleLabel.font = [UIFont styleFontWithSize:14];
+        
+        UIButton *closeButton = [UIButton new];
+        closeButton.frame = CGRectMake(65, 0, 35, 40);
+        closeButton.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleHeight;
+        [closeButton addTarget:self action:@selector(closeTabButtonAction:) forControlEvents:UIControlEventTouchUpInside];
+        [tabButton addSubview:closeButton];
+    }
     
-    // TODO no appearance proxy for this?
-    [tabButton.titleLabel setFont:[UIFont styleFontWithSize:14]];
-    return YES;
+    [tabButton setTitle:title forState:UIControlStateNormal];
+    
+    return tabButton;
 }
 
-- (void)tabBar:(ECTabBar *)bar didSelectTabAtIndex:(NSUInteger)index
+- (void)tabBar:(ECTabBar *)bar didSelectTabControl:(UIControl *)tabControl atIndex:(NSUInteger)tabIndex
 {
-    ECASSERT(index < [tabs count]);
-    [self setCurrentTabIndex:index animated:NO];
+    ECASSERT(tabIndex < [tabs count]);
+    [self setCurrentTabIndex:tabIndex animated:NO];
 }
 
-- (void)tabBar:(ECTabBar *)tabBar didMoveTabButton:(UIButton *)tabButton fromIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex
+- (void)tabBar:(ECTabBar *)tabBar didMoveTabControl:(UIControl *)tabControl fromIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex
 {
     ACTab *tab = [tabs objectAtIndex:fromIndex];
     ACTab *currentTab = [self tabAtIndex:ACTabCurrent];
@@ -351,33 +359,49 @@
     if (!tabBarEnabled && tabBar.superview == nil)
         return;
     
-    CGRect contentScrollViewFrame = contentScrollView.frame;
+    CGRect contentScrollViewFrame = self.view.bounds;
+    contentScrollViewFrame.origin.x -= tabPageMargin / 2;
+    contentScrollViewFrame.size.width += tabPageMargin;
     CGRect tabBarFrame = CGRectMake(0, 0, contentScrollViewFrame.size.width - tabPageMargin, 44);
-    if (tabBar.superview != nil)
+    if (tabBarVisible)
     {
-        contentScrollViewFrame.size.height += tabBarFrame.size.height;
-        contentScrollViewFrame.origin.y -= tabBarFrame.size.height;
+        tabBarVisible = NO;
+        
         tabBarFrame.size.height = 0;
-        [UIView animateWithDuration:.1 animations:^(void) {
-            // TODO fix layout problems of tab buttons during animation?
+        
+        tabBar.clipsToBounds = YES;
+        [UIView animateWithDuration:0.2 delay:0 options:UIViewAnimationOptionAllowUserInteraction | UIViewAnimationOptionBeginFromCurrentState animations:^(void) {
             tabBar.frame = tabBarFrame;
             contentScrollView.frame = contentScrollViewFrame;
         } completion:^(BOOL finished) {
-            [tabBar removeFromSuperview];
+            if (finished)
+            {
+                [tabBar removeFromSuperview];
+                tabBar.clipsToBounds = NO;
+            }
         }];
     }
     else
     {
+        tabBarVisible = YES;
+        
+        contentScrollViewFrame.origin.y += tabBarFrame.size.height;
+        contentScrollViewFrame.size.height -= tabBarFrame.size.height;
+
         tabBarFrame.size.height = 0;
         tabBar.frame = tabBarFrame;
         tabBarFrame.size.height = 44;
         
         [self.view addSubview:tabBar];
-        contentScrollViewFrame.size.height -= tabBarFrame.size.height;
-        contentScrollViewFrame.origin.y += tabBarFrame.size.height;
-        [UIView animateWithDuration:.1 animations:^(void) {
+        tabBar.clipsToBounds = YES;
+        [UIView animateWithDuration:0.2 delay:0 options:UIViewAnimationOptionAllowUserInteraction | UIViewAnimationOptionBeginFromCurrentState animations:^(void) {
             tabBar.frame = tabBarFrame;
             contentScrollView.frame = contentScrollViewFrame;
+        } completion:^(BOOL finished) {
+            if (finished)
+            {
+                tabBar.clipsToBounds = NO;
+            }
         }];
     }
 }
@@ -391,7 +415,7 @@
 
 - (void)closeTabButtonAction:(id)sender
 {
-    NSUInteger tabIndex = [tabBar indexOfTab:(UIButton *)[sender superview]];
+    NSUInteger tabIndex = [tabBar.tabControls indexOfObject:[sender superview]];
     // TODO fix bugs araising from animated removal
     [self removeTabAtIndex:tabIndex animated:NO];
 }
@@ -453,7 +477,11 @@
     if (title == nil)
         title = [url lastPathComponent];
     
-    NSArray *tabTitles = [tabBar allTabTitles];
+    NSMutableArray *tabTitles = [NSMutableArray new];
+    for (UIButton *tabButton in tabBar.tabControls)
+    {
+        [tabTitles addObject:[tabButton titleForState:UIControlStateNormal]];
+    }
     if ([tabTitles containsObject:title])
     {
         if ([url.pathComponents count] > 1)
@@ -486,8 +514,8 @@
     ACTab *tab = [ACTab new];
     
     // Add new tab in the tab bar
-    NSUInteger tabIndex = [tabBar addTabButtonWithTitle:title animated:animated];
-    tab.button = [tabBar tabAtIndex:tabIndex];
+    tab.button = (UIButton *)[tabBar addTabWithTitle:title animated:animated];
+    NSUInteger tabIndex = [tabBar.tabControls indexOfObject:tab.button];
     
     // Insert into tabs collection
     if (!tabs)
@@ -590,7 +618,7 @@
     if (tab == nil)
         return;
     
-    [tabBar removeTabAtIndex:tabIndex animated:animated];
+    [tabBar removeTabControl:tab.button animated:animated];
     [tabs removeObject:tab];
     [(ACTabPagingScrollView *)contentScrollView setPageCount:[tabs count]];
     

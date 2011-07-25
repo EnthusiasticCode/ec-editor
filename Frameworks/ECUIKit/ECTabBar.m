@@ -7,137 +7,123 @@
 //
 
 #import "ECTabBar.h"
+
 #import <QuartzCore/QuartzCore.h>
-#import "UIImage+BlockDrawing.h"
-#import "NSTimer+block.h"
 #import <objc/runtime.h>
 
-@interface ECTabBar () {
+#import "NSTimer+block.h"
+#import "UIView+ReuseIdentifier.h"
+
+typedef void (^ScrollViewBlock)(UIScrollView *scrollView);
+
+/// Custom scroll view to manage it's layout with a block
+@interface ECTabBarScrollView : UIScrollView
+@property (nonatomic, copy) ScrollViewBlock customLayoutSubviews;
+@end
+
+@implementation ECTabBar {
 @private
-    NSMutableArray *tabButtons;
+    NSMutableArray *tabControls;
+    NSMutableArray *reusableTabControls;
+    ECTabBarScrollView *tabControlsContainerView;
     
     CAGradientLayer *leftFadeLayer;
     CAGradientLayer *rightFadeLayer;
     
-    UIView *additionalButtonsContainerView;
+    UIView *additionalControlsContainerView;
     
-    UIButton *movedTab;
+    UIControl *movedTab;
     CGPoint movedTabOffsetFromCenter;
     NSUInteger movedTabIndex, movedTabDestinationIndex;
     NSTimer *movedTabScrollTimer;
     
     struct {
-        unsigned int hasShouldAddTabButtonAtIndex : 1;
-        unsigned int hasDidAddTabButtonAtIndex : 1;
-        unsigned int hasShouldRemoveTabButtonAtIndex : 1;
-        unsigned int hasDidRemoveTabButtonAtIndex : 1;
-        unsigned int hasShouldSelectTabAtIndex :1;
-        unsigned int hasDidSelectTabAtIndex : 1;
-        unsigned int hasShouldMoveTabButton : 1;
-        unsigned int hasDidMoveTabButtonFromIndexToIndex : 1;
+        unsigned int hasWillSelectTabControlAtIndex :1;
+        unsigned int hasDidSelectTabControlAtIndex : 1;
+        unsigned int hasWillRemoveTabControlAtIndex : 1;
+        unsigned int hasDidRemoveTabControlAtIndex : 1;
+        unsigned int hasWillMoveTabControlAtIndex : 1;
+        unsigned int hasDidMoveTabControlFromIndexToIndex : 1;
+        unsigned int reserved : 2;
     } delegateFlags;
 }
 
-- (void)tabButtonAction:(id)sender;
-- (void)moveTabAction:(UILongPressGestureRecognizer *)recognizer;
-
-@end
-
-@implementation ECTabBar
-
 #pragma mark - Properties
 
-@synthesize tabButtonSize, buttonsInsets;
-@synthesize delegate, longPressGestureRecognizer;
-@synthesize selectedTabButton;
+@synthesize delegate;
+@synthesize longPressGestureRecognizer;
+@synthesize tabControlSize, tabControlInsets;
+@synthesize additionalControls, additionalControlSize, additionalControlInsets;
+@synthesize selectedTabControl;
+@synthesize tabControls;
 
 - (void)setDelegate:(id<ECTabBarDelegate>)aDelegate
 {
     delegate = aDelegate;
     
-    delegateFlags.hasShouldAddTabButtonAtIndex = [delegate respondsToSelector:@selector(tabBar:shouldAddTabButton:atIndex:)];
-    delegateFlags.hasDidAddTabButtonAtIndex = [delegate respondsToSelector:@selector(tabBar:didAddTabButtonAtIndex:)];
-    delegateFlags.hasShouldRemoveTabButtonAtIndex = [delegate respondsToSelector:@selector(tabBar:shouldRemoveTabButtonAtIndex:)];
-    delegateFlags.hasDidRemoveTabButtonAtIndex = [delegate respondsToSelector:@selector(tabBar:didRemoveTabButtonAtIndex:)];
-    delegateFlags.hasShouldSelectTabAtIndex = [delegate respondsToSelector:@selector(tabBar:shouldSelectTabAtIndex:)];
-    delegateFlags.hasDidSelectTabAtIndex = [delegate respondsToSelector:@selector(tabBar:didSelectTabAtIndex:)];
-    delegateFlags.hasShouldMoveTabButton = [delegate respondsToSelector:@selector(tabBar:shouldMoveTabButton:)];
-    delegateFlags.hasDidMoveTabButtonFromIndexToIndex = [delegate respondsToSelector:@selector(tabBar:didMoveTabButton:fromIndex:toIndex:)];
-}
-
-@synthesize closeTabImage;
-
-- (NSUInteger)tabCount
-{
-    return [tabButtons count];
+    delegateFlags.hasWillRemoveTabControlAtIndex = [delegate respondsToSelector:@selector(tabBar:willRemoveTabControl:atIndex:)];
+    delegateFlags.hasDidRemoveTabControlAtIndex = [delegate respondsToSelector:@selector(tabBar:didRemoveTabControl:atIndex:)];
+    delegateFlags.hasWillSelectTabControlAtIndex = [delegate respondsToSelector:@selector(tabBar:willSelectTabControl:atIndex:)];
+    delegateFlags.hasDidSelectTabControlAtIndex = [delegate respondsToSelector:@selector(tabBar:didSelectTabControl:atIndex:)];
+    delegateFlags.hasWillMoveTabControlAtIndex = [delegate respondsToSelector:@selector(tabBar:willMoveTabControl:atIndex:)];
+    delegateFlags.hasDidMoveTabControlFromIndexToIndex = [delegate respondsToSelector:@selector(tabBar:didMoveTabControl:fromIndex:toIndex:)];
 }
 
 - (void)setBackgroundColor:(UIColor *)backgroundColor
 {
     [super setBackgroundColor:backgroundColor];
     
-    // TODO this objc_unretainedObject([backgroundColor colorWithAlphaComponent:0].CGColor) may cause problems?
     leftFadeLayer.colors = [NSArray arrayWithObjects:
-                            objc_unretainedObject(backgroundColor.CGColor),
-                            objc_unretainedObject([backgroundColor colorWithAlphaComponent:0].CGColor), nil];
+                            (__bridge id)(backgroundColor.CGColor),
+                            (__bridge id)([backgroundColor colorWithAlphaComponent:0].CGColor), nil];
     rightFadeLayer.colors = [NSArray arrayWithObjects:
-                             objc_unretainedObject([backgroundColor colorWithAlphaComponent:0].CGColor),
-                             objc_unretainedObject(backgroundColor.CGColor), nil];
-    
-    additionalButtonsContainerView.backgroundColor = self.backgroundColor;
+                             (__bridge id)([backgroundColor colorWithAlphaComponent:0].CGColor),
+                             (__bridge id)(backgroundColor.CGColor), nil];
 }
-
-@synthesize additionalControls, additionalControlsDefaultSize;
 
 - (void)setAdditionalControls:(NSArray *)array
 {
-    additionalControls = array;
+    additionalControls = [array copy];
     
-    if (!additionalControls)
+    if (!additionalControls || [additionalControls count] == 0)
     {
-        [additionalButtonsContainerView removeFromSuperview];
-        additionalButtonsContainerView = nil;
+        [additionalControlsContainerView removeFromSuperview];
+        additionalControlsContainerView = nil;
         return;
     }
     
-    if (!additionalButtonsContainerView)
+    if (!additionalControlsContainerView)
     {
-        additionalButtonsContainerView = [UIView new];
-        additionalButtonsContainerView.backgroundColor = self.backgroundColor;
-        [self addSubview:additionalButtonsContainerView];
+        additionalControlsContainerView = [UIView new];
+        additionalControlsContainerView.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleHeight;
+        additionalControlsContainerView.backgroundColor = [UIColor clearColor];
+        [self addSubview:additionalControlsContainerView];
     }
     else
     {
-        for (UIView *view in additionalButtonsContainerView.subviews)
-        {
-            [view removeFromSuperview];
-        }
+        [additionalControlsContainerView.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
     }
     
+    CGRect bounds = self.bounds;
     CGRect viewFrame;
-    CGPoint defaultOrigin = CGPointMake(self.contentInset.left, 0);
-    CGSize defaultSize = CGSizeMake(additionalControlsDefaultSize.width, additionalControlsDefaultSize.height ? additionalControlsDefaultSize.height : self.frame.size.height);
+    CGPoint defaultOrigin = CGPointZero;
+    CGSize defaultSize = CGSizeMake(additionalControlSize.width, additionalControlSize.height ? additionalControlSize.height : bounds.size.height);
     for (UIView *view in additionalControls)
     {
-        viewFrame = [view frame];
+        viewFrame = view.frame;
         if (CGRectIsEmpty(viewFrame))
             viewFrame.size = defaultSize;
         
         viewFrame.origin = defaultOrigin;
         defaultOrigin.x += viewFrame.size.width;
         
-        view.frame = UIEdgeInsetsInsetRect(viewFrame, buttonsInsets);
+        view.frame = UIEdgeInsetsInsetRect(viewFrame, additionalControlInsets);
         
-        [additionalButtonsContainerView addSubview:view];
+        [additionalControlsContainerView addSubview:view];
     }
     
-    additionalButtonsContainerView.frame = (CGRect){ CGPointZero, CGSizeMake(defaultOrigin.x, self.frame.size.height) };
-    
-    UIEdgeInsets contentInset = self.contentInset;
-    contentInset.right = defaultOrigin.x;
-    self.contentInset = contentInset;
-    
-    [self setNeedsLayout];
+    tabControlsContainerView.frame = CGRectMake(0, 0, bounds.size.width - defaultOrigin.x, bounds.size.height);
+    additionalControlsContainerView.frame = CGRectMake(bounds.size.width - defaultOrigin.x, 0, defaultOrigin.x, bounds.size.height);
 }
 
 #pragma mark - View Lifecicle
@@ -154,6 +140,7 @@ static void updateFadeViews(ECTabBar *self)
         self->leftFadeLayer.startPoint = CGPointMake(0, .5);
         self->leftFadeLayer.endPoint = CGPointMake(1, .5);
         self->leftFadeLayer.opacity = 0;
+        [self.layer addSublayer:self->leftFadeLayer];
     }
     
     // Update right fade layer
@@ -166,30 +153,103 @@ static void updateFadeViews(ECTabBar *self)
         self->rightFadeLayer.startPoint = CGPointMake(0, .5);
         self->rightFadeLayer.endPoint = CGPointMake(1, .5);
         self->rightFadeLayer.opacity = 0;
+        [self.layer addSublayer:self->rightFadeLayer];
     }
 }
 
 static void preinit(ECTabBar *self)
 {
-    self->tabButtonSize = CGSizeMake(300, 0);
-    self->buttonsInsets = UIEdgeInsetsMake(7, 0, 7, 7);
-    self->additionalControlsDefaultSize = CGSizeMake(41, 0);
+    self->tabControlSize = CGSizeMake(300, 0);
+    self->tabControlInsets = UIEdgeInsetsMake(7, 3, 7, 3);
+    self->additionalControlSize = CGSizeMake(41, 0);
+    self->additionalControlInsets = UIEdgeInsetsMake(7, 0, 7, 7);
 }
 
 static void init(ECTabBar *self)
 {
-    self.contentInset = UIEdgeInsetsMake(0, 7, 0, 0);
+    // Tab container
+    self->tabControlsContainerView = [ECTabBarScrollView new];
+    self->tabControlsContainerView.autoresizingMask = UIViewAutoresizingFlexibleWidth; // | UIViewAutoresizingFlexibleHeight;
+    self->tabControlsContainerView.backgroundColor = [UIColor clearColor];
+    self->tabControlsContainerView.contentInset = UIEdgeInsetsMake(0, 4, 0, 4);
+    self->tabControlsContainerView.alwaysBounceHorizontal = YES;
+    [self->tabControlsContainerView setShowsVerticalScrollIndicator:NO];
+    [self->tabControlsContainerView setShowsHorizontalScrollIndicator:NO];
+    __weak ECTabBar *this = self;
+    self->tabControlsContainerView.customLayoutSubviews = ^(UIScrollView *scrollView) {
+        CGRect bounds = scrollView.bounds;
+        
+        // TODO remove non visible controls
+        
+        // Determine button's size
+        CGRect buttonFrame = (CGRect) { CGPointZero, this->tabControlSize };
+        if (buttonFrame.size.height == 0)
+            buttonFrame.size.height = bounds.size.height;
+        
+        // Layout tab buttons
+        NSUInteger buttonIndex = 0;
+        for (UIButton *button in this->tabControls)
+        {
+            if (this->movedTab != nil
+                && buttonIndex == this->movedTabDestinationIndex 
+                && this->movedTabIndex > this->movedTabDestinationIndex)
+            {
+                buttonFrame.origin.x += buttonFrame.size.width;
+            }
+            
+            if (button != this->movedTab)
+            {
+                button.frame = UIEdgeInsetsInsetRect(buttonFrame, this->tabControlInsets);
+                buttonFrame.origin.x += buttonFrame.size.width;
+            }
+            
+            if (this->movedTab != nil
+                && buttonIndex == this->movedTabDestinationIndex 
+                && this->movedTabIndex <= this->movedTabDestinationIndex)
+            {
+                buttonFrame.origin.x += buttonFrame.size.width;
+            }
+            
+            ++buttonIndex;
+        }
+        
+        // Show left fading layer
+        if (bounds.origin.x > 0)
+        {
+            this->leftFadeLayer.frame = (CGRect){ 
+                CGPointZero, 
+                CGSizeMake(20, bounds.size.height)
+            };
+            this->leftFadeLayer.opacity = 1;
+        }
+        else
+        {
+            this->leftFadeLayer.opacity = 0;
+        }
+        
+        // Show right fading layer
+        if (CGRectGetMaxX(bounds) < scrollView.contentSize.width)
+        {
+            this->rightFadeLayer.frame = (CGRect){ 
+                CGPointMake(bounds.size.width - this->rightFadeLayer.bounds.size.width, 0), 
+                CGSizeMake(20, bounds.size.height)
+            };
+            this->rightFadeLayer.opacity = 1;
+        }
+        else
+        {
+            this->rightFadeLayer.opacity = 0;
+        }
+    };
+    [self addSubview:self->tabControlsContainerView];
     
-    //
+    // Move recognizer
     self->longPressGestureRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(moveTabAction:)];
-    [self addGestureRecognizer:self->longPressGestureRecognizer];
+    [self->tabControlsContainerView addGestureRecognizer:self->longPressGestureRecognizer];
     
-    //
-    [self setShowsVerticalScrollIndicator:NO];
-    [self setShowsHorizontalScrollIndicator:NO];
-    
-    //
+    // Create fade views
     updateFadeViews(self);
+    
     [self setNeedsLayout];
 }
 
@@ -213,269 +273,191 @@ static void init(ECTabBar *self)
     return self;
 }
 
-- (void)layoutSubviews
+#pragma mark - Reusable Controls
+
+- (UIControl *)dequeueReusableTabControlWithIdentifier:(NSString *)reuseIdentifier
 {
-    CGRect bounds = self.bounds;
-    
-    // Determine button's size
-    CGRect buttonFrame = (CGRect) { CGPointZero, tabButtonSize };
-    if (buttonFrame.size.height == 0)
-        buttonFrame.size.height = bounds.size.height;
-    
-    // Layout tab button
-    NSUInteger buttonIndex = 0;
-    for (UIButton *button in tabButtons)
+    ECASSERT(reuseIdentifier != nil);
+    UIControl *result = nil;
+    for (UIControl *control in reusableTabControls)
     {
-        if (movedTab && buttonIndex == movedTabDestinationIndex && movedTabIndex > movedTabDestinationIndex)
-            buttonFrame.origin.x += buttonFrame.size.width;
-        
-        if (button != movedTab)
+        if ([reuseIdentifier isEqualToString:control.reuseIdentifier])
         {
-            button.frame = UIEdgeInsetsInsetRect(buttonFrame, buttonsInsets);
-            buttonFrame.origin.x += buttonFrame.size.width;
+            result = control;
+            break;
         }
-        
-        if (movedTab && buttonIndex == movedTabDestinationIndex && movedTabIndex <= movedTabDestinationIndex)
-            buttonFrame.origin.x += buttonFrame.size.width;
-        
-        ++buttonIndex;
     }
     
-    // Layout additional buttons
-    CGFloat rightMargin = 0;
-    if (additionalButtonsContainerView)
-    {
-        CGRect containerFrame = additionalButtonsContainerView.frame;
-        additionalButtonsContainerView.frame = (CGRect){ CGPointMake(CGRectGetMaxX(bounds) - containerFrame.size.width, bounds.origin.y) ,containerFrame.size };
-        [self bringSubviewToFront:additionalButtonsContainerView];
-        
-        rightMargin = containerFrame.size.width;
-    }
+    if (result)
+        [reusableTabControls removeObject:result];
     
-    // Show left fading layer
-    if (bounds.origin.x > 0)
-    {
-        [self.layer addSublayer:leftFadeLayer];
-        leftFadeLayer.position = bounds.origin;
-        leftFadeLayer.opacity = 1;
-    }
-    else
-    {
-        leftFadeLayer.opacity = 0;
-        [leftFadeLayer removeFromSuperlayer];
-    }
-    
-    // Show right fading layer
-    if (CGRectGetMaxX(bounds) < self.contentSize.width)
-    {
-        [self.layer addSublayer:rightFadeLayer];
-        rightFadeLayer.position = CGPointMake(CGRectGetMaxX(bounds) - rightFadeLayer.bounds.size.width - rightMargin, bounds.origin.y);
-        rightFadeLayer.opacity = 1;
-    }
-    else
-    {
-        rightFadeLayer.opacity = 0;
-        [rightFadeLayer removeFromSuperlayer];
-    }
+    return result;
 }
 
 #pragma mark - Managing Tabs
 
-- (void)setSelectedTabButton:(UIButton *)tabButton
+- (NSUInteger)tabCount
 {
-    if (tabButton == selectedTabButton)
+    return [tabControls count];
+}
+
+- (void)setSelectedTabControl:(UIControl *)tabControl animated:(BOOL)animated
+{
+    if (tabControl == selectedTabControl)
         return;
     
-    NSUInteger index = [tabButtons indexOfObject:tabButton];
-    if (index == NSNotFound)
+    NSUInteger tabIndex = [tabControls indexOfObject:tabControl];
+    if (tabIndex == NSNotFound)
         return;
     
-    [self setSelectedTabIndex:index];
+    if (delegateFlags.hasWillSelectTabControlAtIndex
+        && ![delegate tabBar:self willSelectTabControl:tabControl atIndex:tabIndex])
+        return;
+    
+    [selectedTabControl setSelected:NO];
+    selectedTabControl = tabControl;
+    [selectedTabControl setSelected:YES];
+    
+    // Scroll to fully show tab
+    CGRect selectedTabFrame = selectedTabControl.frame;
+    selectedTabFrame.origin.x -= tabControlInsets.left;
+    selectedTabFrame.size.width += tabControlInsets.left + tabControlInsets.right;
+    selectedTabFrame.origin.y = 0;
+    selectedTabFrame.size.height = 1;
+    if (animated)
+    {
+        [UIView animateWithDuration:0.2 delay:0 options:UIViewAnimationOptionAllowUserInteraction animations:^(void) {
+            [tabControlsContainerView scrollRectToVisible:selectedTabFrame animated:NO];
+        } completion:^(BOOL finished) {
+            if (delegateFlags.hasDidSelectTabControlAtIndex)
+                [delegate tabBar:self didSelectTabControl:tabControl atIndex:tabIndex];
+        }];
+    }
+    else
+    {
+        [tabControlsContainerView scrollRectToVisible:selectedTabFrame animated:NO];
+        if (delegateFlags.hasDidSelectTabControlAtIndex)
+            [delegate tabBar:self didSelectTabControl:tabControl atIndex:tabIndex];
+    }
+}
+
+- (void)setSelectedTabControl:(UIControl *)tabControl
+{
+    [self setSelectedTabControl:tabControl animated:YES];
 }
 
 - (NSUInteger)selectedTabIndex
 {
-    return [tabButtons indexOfObject:selectedTabButton];
+    return [tabControls indexOfObject:selectedTabControl];
 }
 
 - (void)setSelectedTabIndex:(NSUInteger)index
 {
-    if (index >= [tabButtons count])
+    if (index >= [tabControls count])
         return;
     
-    if (index != NSNotFound)
-        [selectedTabButton setSelected:NO];
+    UIControl *tabControl = [tabControls objectAtIndex:index];
     
-    selectedTabButton = [tabButtons objectAtIndex:index];
-    
-    [selectedTabButton setSelected:YES];
-    
-    // Scroll to fully show tab
-    CGRect selectedTabFrame = selectedTabButton.frame;
-    selectedTabFrame.origin.x -= buttonsInsets.left;
-    selectedTabFrame.size.width += buttonsInsets.left + buttonsInsets.right;
-    [self scrollRectToVisible:selectedTabFrame animated:YES];
+    [self setSelectedTabControl:tabControl];
 }
 
-- (NSUInteger)addTabButtonWithTitle:(NSString *)title animated:(BOOL)animated
+- (UIControl *)addTabWithTitle:(NSString *)title animated:(BOOL)animated
 {
-    if (!tabButtons)
-        tabButtons = [NSMutableArray new];
+    ECASSERT(delegate != nil);
     
-    // TODO use a +tabButtonClass
-    // TODO use reuse logic?
-    NSUInteger newTabButtonIndex = [tabButtons count];
-    UIButton *newTabButton = [UIButton new];
+    if (!tabControls)
+        tabControls = [NSMutableArray new];
     
-    // Position and size new tab
-    CGRect buttonFrame = (CGRect) { CGPointMake(tabButtonSize.width * [tabButtons count], 0), tabButtonSize };
-    if (buttonFrame.size.height == 0)
-        buttonFrame.size.height = self.frame.size.height;
-    newTabButton.frame = UIEdgeInsetsInsetRect(buttonFrame, buttonsInsets);
+    // Creating new tab control
+    NSUInteger newTabControlIndex = [tabControls count];
+    UIControl *newTabControl = [delegate tabBar:self controlForTabWithTitle:title atIndex:newTabControlIndex];
+    [tabControls addObject:newTabControl];
     
-    [newTabButton setTitle:title forState:UIControlStateNormal];
-    [newTabButton addTarget:self action:@selector(tabButtonAction:) forControlEvents:UIControlEventTouchUpInside];
+    // Assigning default tab control selection action
+    [newTabControl addTarget:self action:@selector(setSelectedTabControl:) forControlEvents:UIControlEventTouchUpInside];
     
-    if (delegateFlags.hasShouldAddTabButtonAtIndex 
-        && ![delegate tabBar:self shouldAddTabButton:newTabButton atIndex:newTabButtonIndex])
-        return NSNotFound;
+    // Position and size new tab control
+    //    CGRect tabControlFrame = (CGRect) { CGPointMake(tabControlSize.width * newTabControlIndex, 0), tabControlSize };
+    //    if (tabControlFrame.size.height == 0)
+    //        tabControlFrame.size.height = tabControlsContainerView.bounds.size.height;
+    //    newTabControl.frame = UIEdgeInsetsInsetRect(tabControlFrame, tabControlInsets);
     
-    // Add the button and resize content
-    [tabButtons addObject:newTabButton];
-    self.contentSize = CGSizeMake(tabButtonSize.width * (newTabButtonIndex + 1), self.frame.size.height);
+    // Resize content
+    // TODO check with height = 0
+    tabControlsContainerView.contentSize = CGSizeMake(tabControlSize.width * (newTabControlIndex + 1), 1);
     
     // TODO animate
-    [self addSubview:newTabButton];
+    [tabControlsContainerView addSubview:newTabControl];
     
-    if (delegateFlags.hasDidAddTabButtonAtIndex)
-        [delegate tabBar:self didAddTabButtonAtIndex:newTabButtonIndex];
-    
-    return newTabButtonIndex;
+    return newTabControl;
 }
 
-- (void)removeTabAtIndex:(NSUInteger)index animated:(BOOL)animated
+- (void)removeTabControl:(UIControl *)tabControl animated:(BOOL)animated
 {
-    if (index >= [tabButtons count])
+    if (tabControl == nil)
         return;
     
-    if (delegateFlags.hasShouldRemoveTabButtonAtIndex
-        && ![delegate tabBar:self shouldRemoveTabButtonAtIndex:index])
+    NSUInteger tabIndex = [tabControls indexOfObject:tabControl];
+    if (tabIndex == NSNotFound)
         return;
+    
+    if (delegateFlags.hasWillRemoveTabControlAtIndex
+        && ![delegate tabBar:self willRemoveTabControl:tabControl atIndex:tabIndex])
+        return;
+    
+    [tabControls removeObjectAtIndex:tabIndex];
+    
+    if (tabControl.reuseIdentifier)
+    {
+        if (!reusableTabControls)
+            reusableTabControls = [NSMutableArray new];
+        [reusableTabControls addObject:tabControl];
+    }
     
     if (animated)
     {
-        UIButton *buttonToRemove = [tabButtons objectAtIndex:index];
-        buttonToRemove.layer.shouldRasterize = YES;
-        [tabButtons removeObjectAtIndex:index];
+        tabControl.layer.shouldRasterize = YES;
         [UIView animateWithDuration:.10 animations:^(void) {
-            buttonToRemove.alpha = 0;
+            tabControl.alpha = 0;
         } completion:^(BOOL finished) {
-            [buttonToRemove removeFromSuperview];
             [UIView animateWithDuration:.15 animations:^(void) {
-                [self layoutSubviews];
+                [tabControlsContainerView layoutSubviews];
             } completion:^(BOOL finished) {
-                CGSize contentSize = self.contentSize;
-                contentSize.width -= tabButtonSize.width;
-                self.contentSize = contentSize;
+                [tabControl removeFromSuperview];
                 
-                if (delegateFlags.hasDidRemoveTabButtonAtIndex)
-                    [delegate tabBar:self didRemoveTabButtonAtIndex:index];
+                tabControlsContainerView.contentSize = CGSizeMake(tabControlSize.width * [tabControls count], 1);
+                
+                if (delegateFlags.hasDidRemoveTabControlAtIndex)
+                    [delegate tabBar:self didRemoveTabControl:tabControl atIndex:tabIndex];
             }];
         }];
     }
     else
     {
-        [[tabButtons objectAtIndex:index] removeFromSuperview];
-        [tabButtons removeObjectAtIndex:index];
-        [self setNeedsLayout];
+        [tabControl removeFromSuperview];
         
-        CGSize contentSize = self.contentSize;
-        contentSize.width -= tabButtonSize.width;
-        self.contentSize = contentSize;
+        tabControlsContainerView.contentSize = CGSizeMake(tabControlSize.width * [tabControls count], 1);
         
-        if (delegateFlags.hasDidRemoveTabButtonAtIndex)
-            [delegate tabBar:self didRemoveTabButtonAtIndex:index];
+        if (delegateFlags.hasDidRemoveTabControlAtIndex)
+            [delegate tabBar:self didRemoveTabControl:tabControl atIndex:tabIndex];
     }
-}
-
-#pragma mark - Utility Methods
-
-- (UIButton *)tabAtIndex:(NSUInteger)index
-{
-    if (index >= [tabButtons count])
-        return nil;
-    
-    return [tabButtons objectAtIndex:index];
-}
-
-- (NSUInteger)indexOfTab:(UIButton *)tabButton
-{
-    return [tabButtons indexOfObject:tabButton];
-}
-
-- (NSUInteger)indexOfTabWithTitle:(NSString *)title
-{
-    __block NSUInteger result = NSNotFound;
-    [tabButtons enumerateObjectsUsingBlock:^(UIButton *tabButton, NSUInteger idx, BOOL *stop) {
-        if ([title isEqualToString:[tabButton titleForState:UIControlStateNormal]])
-        {
-            result = idx;
-            *stop = YES;
-        }
-    }];
-    return result;
-}
-
-- (NSArray *)allTabTitles
-{
-    NSMutableArray *tabTitles = [[NSMutableArray alloc] initWithCapacity:[tabButtons count]];
-    for (UIButton *tabButton in tabButtons)
-    {
-        [tabTitles addObject:[tabButton titleForState:UIControlStateNormal]];
-    }
-    return tabTitles;
 }
 
 #pragma mark -
 
-- (void)tabButtonAction:(id)sender
-{
-    NSUInteger tabIndex = [tabButtons indexOfObject:sender];
-    
-    if (tabIndex == NSNotFound)
-        return;
-    
-    if (delegateFlags.hasShouldSelectTabAtIndex
-        && ![delegate tabBar:self shouldSelectTabAtIndex:tabIndex])
-        return;
-    
-    [self setSelectedTabIndex:tabIndex];
-    
-    if (delegateFlags.hasDidSelectTabAtIndex)
-        [delegate tabBar:self didSelectTabAtIndex:tabIndex];
-}
-
 - (void)moveTabAction:(UILongPressGestureRecognizer *)recognizer
 {
+    CGPoint locationInView = [recognizer locationInView:tabControlsContainerView];
     switch (recognizer.state)
     {
         case UIGestureRecognizerStateBegan:
         {
-            // Ignore long press in additional buttons
-            CGPoint locationInView = [recognizer locationInView:self];
-            if (additionalButtonsContainerView 
-                && locationInView.x - self.contentOffset.x >= self.frame.size.width - additionalButtonsContainerView.frame.size.width)
-            {
-                movedTab = nil;
-                return;
-            }
-            
             // Get tab to move and forward to delegate to ask for permission
-            movedTabIndex = (NSUInteger)(locationInView.x / tabButtonSize.width);
+            movedTabIndex = (NSUInteger)(locationInView.x / tabControlSize.width);
             movedTabDestinationIndex = movedTabIndex;
-            movedTab = [tabButtons objectAtIndex:movedTabIndex];
-            if (delegateFlags.hasShouldMoveTabButton
-                && ![delegate tabBar:self shouldMoveTabButton:movedTab])
+            movedTab = [tabControls objectAtIndex:movedTabIndex];
+            if (delegateFlags.hasWillMoveTabControlAtIndex
+                && ![delegate tabBar:self willMoveTabControl:movedTab atIndex:movedTabIndex])
             {
                 movedTab = nil;
                 return;
@@ -483,7 +465,7 @@ static void init(ECTabBar *self)
             
             // Record center offset and animate motion beginning
             movedTabOffsetFromCenter = CGPointMake(movedTab.center.x - locationInView.x, 0);
-            [self bringSubviewToFront:movedTab];
+            [tabControlsContainerView bringSubviewToFront:movedTab];
             [UIView animateWithDuration:0.2 animations:^(void) {
                 [movedTab setTransform:CGAffineTransformMakeScale(1.25, 1.25)];
                 [movedTab setAlpha:0.75];
@@ -495,55 +477,54 @@ static void init(ECTabBar *self)
         case UIGestureRecognizerStateChanged:
             if (movedTab)
             {
-                CGPoint locationInView = [recognizer locationInView:self];
-                
                 // Move tab horizontaly
                 CGPoint movedTabCenter = movedTab.center;
                 movedTabCenter.x = locationInView.x + movedTabOffsetFromCenter.x;
                 movedTab.center = movedTabCenter;
                 
                 // Select final destination
-                movedTabDestinationIndex = (NSUInteger)(locationInView.x / tabButtonSize.width);
-                if (movedTabDestinationIndex >= [tabButtons count])
-                    movedTabDestinationIndex = [tabButtons count] - 1;
-                [UIView animateWithDuration:0.2 animations:^(void) {
-                    [self layoutSubviews];
-                }];
+                movedTabDestinationIndex = (NSUInteger)(locationInView.x / tabControlSize.width);
+                if (movedTabDestinationIndex >= [tabControls count])
+                    movedTabDestinationIndex = [tabControls count] - 1;
+                [UIView animateWithDuration:0.2 delay:0 options:UIViewAnimationOptionAllowUserInteraction animations:^(void) {
+                    [tabControlsContainerView layoutSubviews];                    
+                } completion:nil];
                 
                 // Calculate scrolling offset
-                CGPoint contentOffset = self.contentOffset;
+                CGPoint contentOffset = tabControlsContainerView.contentOffset;
                 CGFloat scrollLocationInView = locationInView.x - contentOffset.x;
                 CGFloat scrollingOffset = 0;
                 if (scrollLocationInView < 60)
                     scrollingOffset = -(scrollLocationInView);
-                else if (scrollLocationInView > self.frame.size.width - 60)
-                    scrollingOffset = scrollLocationInView - (self.frame.size.width - 60);
+                else if (scrollLocationInView > tabControlsContainerView.frame.size.width - 60)
+                    scrollingOffset = scrollLocationInView - (tabControlsContainerView.frame.size.width - 60);
                 
                 // Manual scrolling
                 [movedTabScrollTimer invalidate];
                 if (scrollingOffset != 0)
+                {
+                    __weak ECTabBar *this = self;
                     movedTabScrollTimer = [NSTimer scheduledTimerWithTimeInterval:1./100. usingBlock:^(NSTimer *timer) {
-                        CGFloat contentOffsetX = self.contentOffset.x;
+                        CGFloat contentOffsetX = this->tabControlsContainerView.contentOffset.x;
                         if ((scrollingOffset < 0 && contentOffsetX <= 0)
-                            || (scrollingOffset > 0 && contentOffsetX > (self.contentSize.width - self.frame.size.width + self.contentInset.right)))
+                            || (scrollingOffset > 0 && contentOffsetX >= (this->tabControlsContainerView.contentSize.width - this->tabControlsContainerView.bounds.size.width)))
                         {
-                            [movedTabScrollTimer invalidate];
-                            movedTabScrollTimer = nil;
+                            [this->movedTabScrollTimer invalidate];
+                            this->movedTabScrollTimer = nil;
                         }
                         else
                         {
-                            contentOffsetX += (scrollingOffset > 0 ? 5 : -5);
+                            CGFloat delta = roundf(scrollingOffset / 5);
+                            contentOffsetX += delta;
                             
-                            CGPoint center = movedTab.center;
-                            center.x -= self.contentOffset.x;
-
-                            // TODO choose a better rect
-                            [self scrollRectToVisible:CGRectMake(contentOffsetX, 0, self.frame.size.width - self.contentInset.right, 1) animated:NO];
+                            CGPoint center = this->movedTab.center;
+                            center.x += delta;
+                            this->movedTab.center = center;
                             
-                            center.x += self.contentOffset.x;
-                            movedTab.center = center;
+                            [this->tabControlsContainerView scrollRectToVisible:CGRectMake(contentOffsetX, 0, this->tabControlsContainerView.bounds.size.width, 1) animated:NO];
                         }
                     } repeats:YES];
+                }
                 else
                     movedTabScrollTimer = nil;
             }
@@ -560,22 +541,20 @@ static void init(ECTabBar *self)
                 // Apply movement
                 if (movedTabIndex != movedTabDestinationIndex)
                 {
-                    [tabButtons removeObjectAtIndex:movedTabIndex];
-                    [tabButtons insertObject:movedTab atIndex:movedTabDestinationIndex];
+                    [tabControls removeObjectAtIndex:movedTabIndex];
+                    [tabControls insertObject:movedTab atIndex:movedTabDestinationIndex];
                 }
                 
                 // Animate to position
-                UIButton *movedTabButton = movedTab;
+                UIControl *movedTabControl = movedTab;
+                movedTab = nil;
                 [UIView animateWithDuration:0.2 animations:^(void) {
-                    [movedTab setTransform:CGAffineTransformIdentity];
-                    [movedTab setAlpha:1.0];
-                    movedTab = nil;
-                    [self layoutSubviews];
+                    [movedTabControl setTransform:CGAffineTransformIdentity];
+                    [movedTabControl setAlpha:1.0];
+                    [tabControlsContainerView layoutSubviews];
                 } completion:^(BOOL finished) {
-                    [self sendSubviewToBack:movedTab];
-                    
-                    if (delegateFlags.hasDidMoveTabButtonFromIndexToIndex)
-                        [delegate tabBar:self didMoveTabButton:movedTabButton fromIndex:movedTabIndex toIndex:movedTabDestinationIndex];
+                    if (delegateFlags.hasDidMoveTabControlFromIndexToIndex)
+                        [delegate tabBar:self didMoveTabControl:movedTabControl fromIndex:movedTabIndex toIndex:movedTabDestinationIndex];
                 }];
             }
             break;
@@ -583,6 +562,20 @@ static void init(ECTabBar *self)
         default:
             break;
     }
+}
+
+@end
+
+
+@implementation ECTabBarScrollView
+
+@synthesize customLayoutSubviews;
+
+- (void)layoutSubviews
+{
+    [super layoutSubviews];
+    
+    customLayoutSubviews(self);
 }
 
 @end
