@@ -303,17 +303,37 @@ static void init(ECTabBar *self)
 
 - (void)setSelectedTabControl:(UIControl *)tabControl animated:(BOOL)animated
 {
-    if (tabControl == selectedTabControl)
+    // Deselection
+    if (tabControl == nil)
+    {
+        [selectedTabControl setSelected:NO];
+        selectedTabControl = nil;
         return;
+    }
     
+    // Only scroll if already selected
+    if (tabControl == selectedTabControl)
+    {
+        CGRect selectedTabFrame = selectedTabControl.frame;
+        selectedTabFrame.origin.x -= tabControlInsets.left;
+        selectedTabFrame.size.width += tabControlInsets.left + tabControlInsets.right;
+        selectedTabFrame.origin.y = 0;
+        selectedTabFrame.size.height = 1;
+        [tabControlsContainerView scrollRectToVisible:selectedTabFrame animated:animated];
+        return;
+    }
+    
+    // Retrieve index
     NSUInteger tabIndex = [tabControls indexOfObject:tabControl];
     if (tabIndex == NSNotFound)
         return;
     
+    // Ask selection permission to delegate
     if (delegateFlags.hasWillSelectTabControlAtIndex
         && ![delegate tabBar:self willSelectTabControl:tabControl atIndex:tabIndex])
         return;
     
+    // Change selection
     [selectedTabControl setSelected:NO];
     selectedTabControl = tabControl;
     [selectedTabControl setSelected:YES];
