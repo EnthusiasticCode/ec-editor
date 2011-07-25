@@ -39,7 +39,9 @@
 @implementation ACTabController {
     NSMutableArray *tabs;
     BOOL ignoreContentViewScrolling;
+    
     BOOL delegateHasDidShowTabAtIndexWithViewController;
+    BOOL delegateHasDidChangeURLForTabAtIndexWithURL;
 }
 
 #pragma mark - Properties
@@ -55,6 +57,7 @@
 {
     delegate = aDelegate;
     delegateHasDidShowTabAtIndexWithViewController = [delegate respondsToSelector:@selector(tabController:didShowTabAtIndex:withViewController:)];
+    delegateHasDidChangeURLForTabAtIndexWithURL = [delegate respondsToSelector:@selector(tabController:didChangeURLForTabAtIndex:withURL:)];
 }
 
 - (void)setTabBarEnabled:(BOOL)enabled
@@ -207,6 +210,12 @@
     // Call delegate
     if (delegateHasDidShowTabAtIndexWithViewController)
         [delegate tabController:self didShowTabAtIndex:tabIndex withViewController:tab.viewController];
+    
+    if (tabIndex == currentTabIndex)
+        tabIndex = ACTabCurrent;
+    
+    if (delegateHasDidChangeURLForTabAtIndexWithURL)
+        [delegate tabController:self didChangeURLForTabAtIndex:tabIndex withURL:[tab historyPointURL]];
 }
 
 #pragma mark - View lifecycle
@@ -383,7 +392,8 @@
 - (void)closeTabButtonAction:(id)sender
 {
     NSUInteger tabIndex = [tabBar indexOfTab:(UIButton *)[sender superview]];
-    [self removeTabAtIndex:tabIndex animated:YES];
+    // TODO fix bugs araising from animated removal
+    [self removeTabAtIndex:tabIndex animated:NO];
 }
 
 #pragma mark - Content ScrollView Methods
@@ -514,6 +524,12 @@
     {
         [self loadAndPositionViewControllerForTab:tab animated:animated];
     }
+    
+    if (tabIndex == currentTabIndex)
+        tabIndex = ACTabCurrent;
+    
+    if (delegateHasDidChangeURLForTabAtIndexWithURL)
+        [delegate tabController:self didChangeURLForTabAtIndex:tabIndex withURL:url];
 }
 
 - (void)setHistoryPoint:(NSUInteger)index forTabAtIndex:(NSUInteger)tabIndex animated:(BOOL)animated
@@ -534,7 +550,13 @@
     if (tabIndex == ACTabCurrent || abs((NSInteger)tabIndex - (NSInteger)currentTabIndex) <= 1)
     {
         [self loadAndPositionViewControllerForTab:tab animated:animated];
-    }    
+    }
+    
+    if (tabIndex == currentTabIndex)
+        tabIndex = ACTabCurrent;
+    
+    if (delegateHasDidChangeURLForTabAtIndexWithURL)
+        [delegate tabController:self didChangeURLForTabAtIndex:tabIndex withURL:[tab historyPointURL]];
 }
 
 - (void)popURLFromTabAtIndex:(NSUInteger)tabIndex animated:(BOOL)animated
@@ -549,6 +571,12 @@
     {
         [self loadAndPositionViewControllerForTab:tab animated:animated];
     }
+    
+    if (tabIndex == currentTabIndex)
+        tabIndex = ACTabCurrent;
+    
+    if (delegateHasDidChangeURLForTabAtIndexWithURL)
+        [delegate tabController:self didChangeURLForTabAtIndex:tabIndex withURL:[tab historyPointURL]];
 }
 
 - (void)removeTabAtIndex:(NSUInteger)tabIndex animated:(BOOL)animated
@@ -569,24 +597,10 @@
     if (tabIndex == ACTabCurrent || tabIndex == currentTabIndex)
     {
         NSUInteger newCurrentTabIndex = currentTabIndex >= [tabs count] ? currentTabIndex - 1 : currentTabIndex;
-        if (animated)
-        {
-            [UIView animateWithDuration:0.10 animations:^(void) {
-                tab.viewController.view.alpha = 0; 
-            } completion:^(BOOL finished) {
-                [tab.viewController.view removeFromSuperview];
-                [tab.viewController removeFromParentViewController];
-                currentTabIndex += 1;
-                [self setCurrentTabIndex:newCurrentTabIndex scroll:NO animated:YES];
-            }];
-        }
-        else
-        {
-            [tab.viewController.view removeFromSuperview];
-            [tab.viewController removeFromParentViewController];
-            currentTabIndex += 1;
-            [self setCurrentTabIndex:newCurrentTabIndex];
-        }
+        [tab.viewController.view removeFromSuperview];
+        [tab.viewController removeFromParentViewController];
+        currentTabIndex += 1;
+        [self setCurrentTabIndex:newCurrentTabIndex scroll:YES animated:animated];
     }
     else
     {
