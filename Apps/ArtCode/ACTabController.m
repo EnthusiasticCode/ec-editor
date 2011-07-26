@@ -78,12 +78,13 @@
 
 #pragma mark - Create Tab Controllers
 
-- (id)initWithURL:(NSURL *)initialURL
+- (id)initWithDataSource:(id<ACTabControllerDataSource>)aDatasource URL:(NSURL *)initialURL
 {
     ECASSERT(initialURL != nil);
     
     if ((self = [super init]))
     {
+        dataSource = aDatasource;
         historyURLs = [NSMutableArray new];
         [historyURLs addObject:initialURL];
     }
@@ -150,7 +151,7 @@
 
 - (id)copyWithZone:(NSZone *)zone
 {
-    return [[ACTabController alloc] initWithURL:[self currentURL]];
+    return [[ACTabController alloc] initWithDataSource:dataSource URL:[self currentURL]];
 }
 
 @end

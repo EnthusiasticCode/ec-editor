@@ -50,7 +50,7 @@
 #pragma mark Create Tab Controllers
 
 /// Create a new tab controller with a single URL in its history.
-- (id)initWithURL:(NSURL *)initialURL;
+- (id)initWithDataSource:(id<ACTabControllerDataSource>)datasource URL:(NSURL *)initialURL;
 
 #pragma mark Accessing Tab's Environment
 

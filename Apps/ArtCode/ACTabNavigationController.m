@@ -434,8 +434,7 @@ typedef void (^ScrollViewBlock)(UIScrollView *scrollView);
     ECASSERT(datasource != nil);
     ECASSERT(initialURL != nil);
     
-    ACTabController *tabController = [[ACTabController alloc] initWithURL:initialURL];
-    tabController.dataSource = datasource;
+    ACTabController *tabController = [[ACTabController alloc] initWithDataSource:datasource URL:initialURL];
     
     [self addTabController:tabController animated:animated];
     
