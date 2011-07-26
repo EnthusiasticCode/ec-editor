@@ -1,97 +1,113 @@
 //
 //  ACTabController.h
-//  ArtCode
+//  tab
 //
-//  Created by Nicola Peduzzi on 17/07/11.
+//  Created by Nicola Peduzzi on 7/26/11.
 //  Copyright 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
-#import "ECTabBar.h"
-#import "ACURLTarget.h"
-
-/// Use this value to identify the current tab in various APIs.
-enum {ACTabCurrent = NSIntegerMax};
+#import <Foundation/Foundation.h>
 
 @class ACTabController;
-@class ECSwipeGestureRecognizer;
+@class ACTabNavigationController;
 
-
-@protocol ACTabControllerDelegate <NSObject>
+@protocol ACTabControllerDataSource <NSObject>
 @required
 
-- (UIViewController<ACURLTarget> *)tabController:(ACTabController *)tabController viewControllerForURL:(NSURL *)url previousViewController:(UIViewController<ACURLTarget> *)previousViewController;
-
-@optional
-
-- (void)tabController:(ACTabController *)tabController didShowTabAtIndex:(NSUInteger)tabIndex withViewController:(UIViewController<ACURLTarget> *)viewController;
-
-- (void)tabController:(ACTabController *)tabController didChangeURLForTabAtIndex:(NSUInteger)tabIndex withURL:(NSURL *)url;
+/// Returns a view controller initialized with the given URL.
+- (UIViewController *)tabController:(ACTabController *)tabController viewControllerForURL:(NSURL *)url;
 
 @end
 
 
-@interface ACTabController : UIViewController <ECTabBarDelegate, UIScrollViewDelegate>
+@protocol ACTabControllerDelegate <NSObject>
+@optional
 
+/// Informs the delegate that the current URL will change and ask if the given current
+/// view controller should be changed to handle that new URL. If YES, the tabViewController 
+/// property will be set to nil and a new call to that property will create a new view controller.
+/// The provided view controller is equal to the one returned by the tabViewController
+/// property; but if nil, it will not be created during this call.
+/// If not implemented, the default behaviour act as if this method always return YES.
+- (BOOL)tabController:(ACTabController *)tabController shouldChangeCurrentViewController:(UIViewController *)viewController forURL:(NSURL *)url;
+
+/// Informs the delegate that the current URL has changed and provides the previous
+/// view controller. An implementation should call the tabViewController property
+/// to retrieve the view controller for the new URL.
+- (void)tabController:(ACTabController *)tabController didChangeURL:(NSURL *)url previousViewController:(UIViewController *)previousVewController;
+
+@end
+
+
+/// Control a single tab. This class expose the tab history and keep track of
+/// the current view controller for the tab.
+@interface ACTabController : NSObject <NSCopying> {
+@private
+    __weak ACTabNavigationController *parentTabNavigationController;
+    __weak UIControl *tabButton;
+}
+
+#pragma mark Create Tab Controllers
+
+/// Create a new tab controller with a single URL in its history.
+- (id)initWithURL:(NSURL *)initialURL;
+
+#pragma mark Accessing Tab's Environment
+
+/// Data source of the tab. If nil, some methods will not work properly.
+@property (nonatomic, weak) id<ACTabControllerDataSource> dataSource;
+
+/// Delegate of the tab.
 @property (nonatomic, weak) id<ACTabControllerDelegate> delegate;
 
-#pragma mark Layout
+/// Returns the tab navigation controller that manage this tab.
+@property (nonatomic, readonly, weak) ACTabNavigationController *parentTabNavigationController;
 
-/// Define a margin between two tab pages.
-@property (nonatomic) CGFloat tabPageMargin;
+/// The position of the tab in the parent tab navigation controller.
+@property (nonatomic, readonly) NSUInteger position;
 
-#pragma mark Controller's Views
+#pragma mark Tab Controls
 
-/// A flag indicating if the tab bar can be displayed.
-@property (nonatomic, getter = isTabBarEnabled) BOOL tabBarEnabled;
+/// A reference to the control used to switch to the tab.
+@property (nonatomic, readonly, weak) UIControl *tabButton;
 
-/// The tab bar
-@property (nonatomic, strong) IBOutlet ECTabBar *tabBar;
+/// A reference to the view controller that manages the current tab URL.
+/// Accessing this property will trigger the allocation of a proper view 
+/// controller if not already existing. This method requires the delegate's 
+/// tabController:viewControllerForURL: method to be implemented.
+/// The property is weak, if the created view controller will not be strongly
+/// retained, usually by a parent view controller, it will be immediatly deallocated.
+@property (nonatomic, readonly, weak) UIViewController *tabViewController;
 
-/// The scroll view that contains all tab pages
-@property (nonatomic, strong) IBOutlet UIScrollView *contentScrollView;
+/// Returns true if the tabViewController property is not nil without triggering 
+/// a view controller creation.
+@property (nonatomic, readonly) BOOL isTabViewControllerLoaded;
 
-/// The gesture recognizer used to toggle the tabbar.
-@property (nonatomic, readonly, strong) ECSwipeGestureRecognizer *swipeGestureRecognizer;
+#pragma mark Managing Tab's History
 
-#pragma mark Tab Bar Actions
+/// Returns an array of all URLs in the tab's history.
+@property (nonatomic, readonly, copy) NSArray *historyURLs;
 
-/// Called by the + button. Will duplicate the current tab.
-- (IBAction)duplicateCurrentTab:(id)sender;
+/// The current URL the tab history is pointing at. This property is read only.
+/// To change the current URL use one of the move methods or pushURL.
+@property (nonatomic, readonly) NSURL *currentURL;
 
-/// Shows or hide the tab bar. This method can be called from a control's action.
-- (IBAction)toggleTabBar:(id)sender;
+/// A value indicating if calling moveBackInHistoryAnimated: will have any effect.
+@property (nonatomic, readonly) BOOL canMoveBack;
 
-#pragma mark Tab Navigation Methods
+/// A value indicating if calling moveForwardInHistoryAnimated: will have any effect.
+@property (nonatomic, readonly) BOOL canMoveForward;
 
-/// An array of ACTab containing all the tabs in displaying order.
-@property (nonatomic, strong, readonly) NSArray *tabs;
+/// Pushes an URL to the tab's history.
+- (void)pushURL:(NSURL *)url;
 
-/// Gets or set the current tab.
-@property (nonatomic) NSUInteger currentTabIndex;
-- (void)setCurrentTabIndex:(NSUInteger)tabIndex animated:(BOOL)animated;
+/// Move in the tab's history. The index is relative to the historyURLs array.
+- (void)moveToHistoryURLAtIndex:(NSUInteger)URLIndex;
 
-/// Return the tab with the given title if present; nil otherwise.
-- (NSUInteger)indexOfTabWithTitle:(NSString *)title;
+/// Convinience method that moves the tab's history back by one step.
+- (void)moveBackInHistory;
 
-/// Add a new tab with the given url and title. If title is nil it will be infered
-/// by the URL. The delegate tabController:viewControllerForURL: method may be 
-/// implemented to make this method effective.
-/// Returns the created tab.
-- (NSUInteger)addTabWithURL:(NSURL *)url title:(NSString *)title animated:(BOOL)animated;
-
-/// Pushes the given URL to the specified tab's history.
-- (void)pushURL:(NSURL *)url toTabAtIndex:(NSUInteger)tabIndex animated:(BOOL)animated;
-
-/// Moves the history point of the given tab.
-- (void)setHistoryPoint:(NSUInteger)index forTabAtIndex:(NSUInteger)tabIndex animated:(BOOL)animated;
-
-/// Pops the current URL from the given tab. The url is popped only if it's not 
-/// the only one remaining in the tab's history.
-- (void)popURLFromTabAtIndex:(NSUInteger)tabIndex animated:(BOOL)animated;
-
-/// Removes the tab form the controller. This method will not remove a tab if 
-/// it's the last remaining.
-- (void)removeTabAtIndex:(NSUInteger)tabIndex animated:(BOOL)animated;
+/// Convinience method that moves the tab's history forward by one step.
+- (void)moveForwardInHistory;
 
 @end

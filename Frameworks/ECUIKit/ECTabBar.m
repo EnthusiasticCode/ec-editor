@@ -335,7 +335,7 @@ static void init(ECTabBar *self)
     
     // Change selection
     [selectedTabControl setSelected:NO];
-    selectedTabControl = tabControl;
+    selectedTabControl = tabControl; // TODO!!! make this weak
     [selectedTabControl setSelected:YES];
     
     // Scroll to fully show tab
@@ -384,6 +384,7 @@ static void init(ECTabBar *self)
 - (UIControl *)addTabWithTitle:(NSString *)title animated:(BOOL)animated
 {
     ECASSERT(delegate != nil);
+    ECASSERT(title != nil);
     
     if (!tabControls)
         tabControls = [NSMutableArray new];

@@ -40,10 +40,9 @@
 
 #pragma mark - Properties
 
-@synthesize delegate;
 @synthesize jumpBar, buttonEdit, buttonTools;
 @synthesize toolPanelController, toolPanelEnabled, toolPanelOnRight;
-@synthesize tabController;
+@synthesize tabNavigationController;
 
 - (void)setToolPanelEnabled:(BOOL)enabled
 {
@@ -125,17 +124,17 @@
     
     ////////////////////////////////////////////////////////////////////////////
     // Tab controller
-    if (!tabController)
-        tabController = [ACTabController new];
-    tabController.delegate = self;
-    [self addChildViewController:tabController];
-    [self.view addSubview:tabController.view];
+    if (!tabNavigationController)
+        tabNavigationController = [ACTabNavigationController new];
+    tabNavigationController.delegate = self;
+    [self addChildViewController:tabNavigationController];
+    [self.view addSubview:tabNavigationController.view];
     CGRect tabControllerFrame = self.view.bounds;
     tabControllerFrame.origin.y = 45;
     tabControllerFrame.size.height -= 45;
-    tabController.view.frame = tabControllerFrame;
-    tabController.view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-    tabController.contentScrollView.frame = (CGRect){ CGPointZero, tabControllerFrame.size };
+    tabNavigationController.view.frame = tabControllerFrame;
+    tabNavigationController.view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    tabNavigationController.contentScrollView.frame = (CGRect){ CGPointZero, tabControllerFrame.size };
 }
 
 - (void)viewDidUnload
@@ -144,7 +143,7 @@
     [self setJumpBar:nil];
     toolPanelLeftGestureRecognizer = nil;
     toolPanelRightGestureRecognizer = nil;
-    [self setTabController:nil];
+    [self setTabNavigationController:nil];
     [super viewDidUnload];
 }
 
@@ -153,25 +152,12 @@
 	return YES;
 }
 
-#pragma mark - Navigation Methods
-
-- (void)pushURL:(NSURL *)url animated:(BOOL)animated
-{
-    ECASSERT(url);
-    [tabController pushURL:url toTabAtIndex:ACTabCurrent animated:animated];
-}
-
-- (void)popURLAnimated:(BOOL)animated
-{
-    [tabController popURLFromTabAtIndex:ACTabCurrent animated:animated];
-}
-
 #pragma mark - Bar Methods
 
 - (void)setEditing:(BOOL)editing animated:(BOOL)animated
 {
     buttonEdit.selected = editing;
-    [tabController setEditing:editing animated:animated];
+    [tabNavigationController setEditing:editing animated:animated];
 }
 
 - (IBAction)toggleTools:(id)sender
@@ -182,7 +168,7 @@
 
 - (IBAction)toggleEditing:(id)sender
 {
-    BOOL editing = !tabController.isEditing;
+    BOOL editing = !tabNavigationController.isEditing;
     [self setEditing:editing animated:YES];
 }
 
@@ -190,7 +176,7 @@
 
 - (void)jumpBarBackAction:(id)sender
 {
-    [self popURLAnimated:YES];
+    [tabNavigationController.currentTabController moveBackInHistory];
 }
 
 - (void)jumpBarBackLongAction:(UILongPressGestureRecognizer *)recognizer
@@ -254,59 +240,12 @@
     return [(UIButton *)jumpElement currentTitle];
 }
 
-#pragma mark - Tab Controller Delegate Method
+#pragma mark - Tab Navigation Controller Delegate Method
 
-- (UIViewController<ACURLTarget> *)tabController:(ACTabController *)tController viewControllerForURL:(NSURL *)url previousViewController:(UIViewController<ACURLTarget> *)previousViewController
+- (void)tabNavigationController:(ACTabNavigationController *)tabNavigationController didChangeCurrentTabController:(ACTabController *)tabController fromTabController:(ACTabController *)previousTabController
 {
-    UIViewController<ACToolTarget> *controller = [delegate navigationController:self viewControllerForURL:url previousViewController:(UIViewController<ACToolTarget> *)previousViewController];
-    return controller;
-}
-
-- (void)tabController:(ACTabController *)tController didShowTabAtIndex:(NSUInteger)tabIndex withViewController:(UIViewController<ACURLTarget> *)viewController
-{
-    UIViewController<ACToolTarget> *controller = (UIViewController<ACToolTarget> *)viewController;
-    
-    // Enable tabs
-    tabController.tabBarEnabled = [controller shouldShowTabBar];
-    
-    // Enable tools
-    BOOL toolEnabled = NO;
-    for (ACToolController *toolController in toolPanelController.childViewControllers)
-    {
-        toolController.enabled = [controller shouldShowToolPanelController:toolController];
-        toolEnabled |= toolController.enabled;
-    }
-    [toolPanelController updateTabs];
-    self.toolPanelEnabled = toolEnabled;
-    
-    // Toggle editing button
-    buttonEdit.selected = tabController.isEditing;
-    
-    // Showing bezel alert of page change
-    NSUInteger pages = [tabController.tabs count];
-    if (pages > 1)
-    {
-        if (tabPageControlController == nil)
-        {
-            tabPageControl = [UIPageControl new];
-            tabPageControlController = [UIViewController new];
-            tabPageControlController.view = tabPageControl;
-        }        
-        tabPageControl.numberOfPages = pages;
-        tabPageControl.currentPage = tabIndex;
-        CGRect tabPageControlFrame = (CGRect){ CGPointZero, [tabPageControl sizeForNumberOfPages:pages] };
-        tabPageControl.frame = tabPageControlFrame;
-        tabPageControlController.contentSizeForViewInPopover = CGSizeMake(tabPageControlFrame.size.width, 10);
-        [[ECBezelAlert sharedAlert] addAlertMessageWithViewController:tabPageControlController displayImmediatly:YES];
-    }
-}
-
-- (void)tabController:(ACTabController *)tabController didChangeURLForTabAtIndex:(NSUInteger)tabIndex withURL:(NSURL *)url
-{
-    if (tabIndex == ACTabCurrent)
-    {
-        [jumpBar setJumpPath:[url path]];
-    }
+    // TODO enable tabs and stuff
+    self.tabNavigationController.tabBarEnabled = YES;
 }
 
 #pragma mark - Tool Panel Management Methods

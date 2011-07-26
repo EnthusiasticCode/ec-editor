@@ -108,10 +108,9 @@
     
     ////////////////////////////////////////////////////////////////////////////
     [window makeKeyAndVisible];
-    navigationController.delegate = self;
-    navigationController.tabController.tabPageMargin = 10;
-    [navigationController.tabController addTabWithURL:[NSURL URLWithString:@"artcode:projects"] title:@"Projects" animated:NO];
-    [navigationController.tabController addTabWithURL:[NSURL URLWithString:@"artcode:files"] title:@"Projects" animated:NO];
+    navigationController.tabNavigationController.tabPageMargin = 10;
+    [navigationController.tabNavigationController addTabControllerWithDataSorce:self initialURL:[NSURL URLWithString:@"artcode:projects"] animated:NO];
+    [navigationController.tabNavigationController addTabControllerWithDataSorce:self initialURL:[NSURL URLWithString:@"artcode:files"] animated:NO];
     return YES;
 }
 
@@ -156,7 +155,7 @@
 
 #pragma mark - Navigation Controller Delegate Methods
 
-- (UIViewController<ACToolTarget> *)navigationController:(ACNavigationController *)navigationController viewControllerForURL:(NSURL *)url previousViewController:(UIViewController<ACToolTarget> *)previousViewController
+- (UIViewController *)tabController:(ACTabController *)tabController viewControllerForURL:(NSURL *)url
 {
     Class controllerClass = nil;
     // TODO url switch logic
@@ -167,10 +166,9 @@
     else
         controllerClass = [ACFileTableController class];
     
-    if ([previousViewController isKindOfClass:controllerClass])
-        return previousViewController;
-    else
-        return [[controllerClass alloc] init]; // TODO initWithNibName:name of class
+    UIViewController<ACToolTarget> *controller = [[controllerClass alloc] init];
+    [controller openURL:url];
+    return controller; // TODO initWithNibName:name of class
 }
 
 @end

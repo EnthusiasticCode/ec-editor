@@ -7,11 +7,12 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "ACURLTarget.h"
 
 @class ACToolController;
 
-@protocol ACToolTarget <ACURLTarget>
+@protocol ACToolTarget <NSObject>
+
+- (void)openURL:(NSURL *)url;
 
 - (BOOL)shouldShowTabBar;
 - (BOOL)shouldShowToolPanelController:(ACToolController *)toolController;
