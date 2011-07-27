@@ -244,13 +244,23 @@
 
 - (void)tabNavigationController:(ACTabNavigationController *)controller didAddTabController:(ACTabController *)tabController
 {
-    [tabNavigationController setCurrentTabController:tabController animated:YES];
+    [controller setCurrentTabController:tabController animated:YES];
+}
+
+- (BOOL)tabNavigationController:(ACTabNavigationController *)controller willRemoveTabController:(ACTabController *)tabController
+{
+    if ([controller.tabControllers count] == 1)
+    {
+        [[ECBezelAlert sharedAlert] addAlertMessageWithText:@"Can not stay without tabs!" image:nil displayImmediatly:YES];
+        return NO;
+    }
+    return YES;
 }
 
 - (void)tabNavigationController:(ACTabNavigationController *)controller didChangeCurrentTabController:(ACTabController *)tabController fromTabController:(ACTabController *)previousTabController
 {
     // TODO enable tabs and stuff
-    tabNavigationController.tabBarEnabled = YES;
+    controller.tabBarEnabled = YES;
 }
 
 #pragma mark - Tool Panel Management Methods
