@@ -32,6 +32,7 @@ typedef void (^ScrollViewBlock)(UIScrollView *scrollView);
 @implementation ACTabNavigationController {
     NSMutableArray *tabControllers;
     
+    NSMutableArray *tabTitles;
     BOOL tabBarVisible;
     
     ACTabPagingScrollView *contentScrollView;
@@ -109,14 +110,17 @@ typedef void (^ScrollViewBlock)(UIScrollView *scrollView);
 
 - (NSString *)titleForTabController:(ACTabController *)controller
 {
-#warning TODO move this as ivar, update with add/remove
     // Retrieve all tabs titles
-    NSMutableArray *tabTitles = [NSMutableArray new];
-    for (UIButton *tabButton in tabBar.tabControls)
+    if ([tabTitles count] == 0)
     {
-        NSString *title = [tabButton titleForState:UIControlStateNormal];
-        ECASSERT(title != nil);
-        [tabTitles addObject:title];
+        if (tabTitles == nil)
+            tabTitles = [NSMutableArray new];
+        for (UIButton *tabButton in tabBar.tabControls)
+        {
+            NSString *title = [tabButton titleForState:UIControlStateNormal];
+            ECASSERT(title != nil);
+            [tabTitles addObject:title];
+        }
     }
     
     NSString *title = nil;
@@ -209,6 +213,7 @@ static void loadCurrentAndAdiacentTabViews(ACTabNavigationController *self)
     [super didReceiveMemoryWarning];
     
     // Release any cached data, images, etc that aren't in use.
+    tabTitles = nil;
 }
 
 - (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
@@ -315,6 +320,7 @@ static void loadCurrentAndAdiacentTabViews(ACTabNavigationController *self)
     [super viewDidUnload];
     [self setTabBar:nil];
     [self setContentScrollView:nil];
+    tabTitles = nil;
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
@@ -461,6 +467,7 @@ static void loadCurrentAndAdiacentTabViews(ACTabNavigationController *self)
     // Creating and assigning tab button
     NSString *title = [self titleForTabController:tabController];
     tabController.tabButton = [tabBar addTabWithTitle:title animated:animated];
+    [tabTitles addObject:title];
     
     // Set current if no other current controller
     if (currentTabController == nil || (makeAddedTabCurrent && !animated))
@@ -508,6 +515,7 @@ static void loadCurrentAndAdiacentTabViews(ACTabNavigationController *self)
         [tabController.tabViewController.view removeFromSuperview];
     [tabController.tabViewController removeFromParentViewController];
     
+    [tabTitles removeObject:[(UIButton *)tabController.tabButton titleForState:UIControlStateNormal]];
     [tabBar removeTabControl:tabController.tabButton animated:animated];
     
     // Change current tab controller if neccessary
@@ -628,10 +636,14 @@ static void loadCurrentAndAdiacentTabViews(ACTabNavigationController *self)
         }
     }
     
-    // Change tab title
-    UIButton *tabButton = (UIButton *)tabController.tabButton;
-    NSString *title = [self titleForTabController:tabController];
-    [tabButton setTitle:title forState:UIControlStateNormal];
+    // Change tab title only if it has an url, otherwise keep previous title
+    if (url != nil && url.lastPathComponent != nil)
+    {
+        UIButton *tabButton = (UIButton *)tabController.tabButton;
+        [tabTitles removeObject:[tabButton titleForState:UIControlStateNormal]];
+        NSString *title = [self titleForTabController:tabController];
+        [tabButton setTitle:title forState:UIControlStateNormal];
+    }
 }
 
 #pragma mark - Scroll View Delegate
