@@ -171,4 +171,11 @@
     return controller; // TODO initWithNibName:name of class
 }
 
+- (BOOL)tabController:(ACTabController *)tabController shouldChangeCurrentViewController:(UIViewController *)viewController forURL:(NSURL *)url
+{
+    // TODO convert the view controller to an ACToolTarget and see if it can handle
+    // the URL. if it can, open it and return NO.
+    return YES;
+}
+
 @end

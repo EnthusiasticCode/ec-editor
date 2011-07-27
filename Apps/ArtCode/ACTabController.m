@@ -14,11 +14,8 @@
     NSMutableArray *historyURLs;
     NSUInteger historyPointIndex;
     
-    struct {
-        unsigned int hasShouldChangeCurrentViewControllerForURL : 1;
-        unsigned int hasDidChangeURLPreviousViewController : 1;
-        unsigned int reserved : 2;
-    } delegateFlags;
+    BOOL dataSourceHasShouldChangeCurrentViewControllerForURL;
+    BOOL delegateHasDidChangeURLPreviousViewController;
 }
 
 #pragma mark - Properties
@@ -28,12 +25,18 @@
 @synthesize tabButton, tabViewController;
 @synthesize historyURLs;
 
+- (void)setDataSource:(id<ACTabControllerDataSource>)aDatasource
+{
+    dataSource = aDatasource;
+
+    dataSourceHasShouldChangeCurrentViewControllerForURL = [dataSource respondsToSelector:@selector(tabController:shouldChangeCurrentViewController:forURL:)];
+}
+
 - (void)setDelegate:(id<ACTabControllerDelegate>)aDelegate
 {
     delegate = aDelegate;
     
-    delegateFlags.hasShouldChangeCurrentViewControllerForURL = [delegate respondsToSelector:@selector(tabController:shouldChangeCurrentViewController:forURL:)];
-    delegateFlags.hasDidChangeURLPreviousViewController = [delegate respondsToSelector:@selector(tabController:didChangeURL:previousViewController:)];
+    delegateHasDidChangeURLPreviousViewController = [delegate respondsToSelector:@selector(tabController:didChangeURL:previousViewController:)];
 }
 
 - (NSUInteger)position
@@ -120,14 +123,14 @@
     UIViewController *previousViewController = tabViewController;
     
     // Delete reference to current view controller
-    if (!delegateFlags.hasShouldChangeCurrentViewControllerForURL
-        || [delegate tabController:self shouldChangeCurrentViewController:previousViewController forURL:currentURL])
+    if (!dataSourceHasShouldChangeCurrentViewControllerForURL
+        || [dataSource tabController:self shouldChangeCurrentViewController:previousViewController forURL:currentURL])
     {
         tabViewController = nil;
     }
     
     // Inform of URL change
-    if (delegateFlags.hasDidChangeURLPreviousViewController)
+    if (delegateHasDidChangeURLPreviousViewController)
         [delegate tabController:self didChangeURL:currentURL previousViewController:previousViewController];
 }
 

@@ -188,7 +188,7 @@ static void init(ECTabBar *self)
         
         // Layout tab buttons
         NSUInteger buttonIndex = 0;
-        for (UIButton *button in this->tabControls)
+        for (UIControl *button in this->tabControls)
         {
             if (this->movedTab != nil
                 && buttonIndex == this->movedTabDestinationIndex 
@@ -415,12 +415,10 @@ static void init(ECTabBar *self)
 
 - (void)removeTabControl:(UIControl *)tabControl animated:(BOOL)animated
 {
-    if (tabControl == nil)
-        return;
+    ECASSERT(tabControl != nil);
     
     NSUInteger tabIndex = [tabControls indexOfObject:tabControl];
-    if (tabIndex == NSNotFound)
-        return;
+    ECASSERT(tabIndex != NSNotFound);
     
     if (delegateFlags.hasWillRemoveTabControlAtIndex
         && ![delegate tabBar:self willRemoveTabControl:tabControl atIndex:tabIndex])
@@ -441,11 +439,12 @@ static void init(ECTabBar *self)
         [UIView animateWithDuration:.10 animations:^(void) {
             tabControl.alpha = 0;
         } completion:^(BOOL finished) {
+            tabControl.layer.shouldRasterize = NO;
             [UIView animateWithDuration:.15 animations:^(void) {
                 [tabControlsContainerView layoutSubviews];
             } completion:^(BOOL finished) {
+                tabControl.alpha = 1;
                 [tabControl removeFromSuperview];
-                
                 tabControlsContainerView.contentSize = CGSizeMake(tabControlSize.width * [tabControls count], 1);
                 
                 if (delegateFlags.hasDidRemoveTabControlAtIndex)

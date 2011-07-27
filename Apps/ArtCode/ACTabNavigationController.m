@@ -154,6 +154,41 @@ typedef void (^ScrollViewBlock)(UIScrollView *scrollView);
     return title;
 }
 
+static void loadCurrentAndAdiacentTabViews(ACTabNavigationController *self)
+{
+    NSInteger currentTabIndex = [self->tabControllers indexOfObject:self->currentTabController];
+    
+    NSUInteger minLoadableIndex = currentTabIndex > 0 ? currentTabIndex - 1 : currentTabIndex;
+    NSUInteger maxLoadableIndex = currentTabIndex < [self->tabControllers count] - 1 ? currentTabIndex + 1 : currentTabIndex;
+    [self->tabControllers enumerateObjectsUsingBlock:^(ACTabController *tabController, NSUInteger index, BOOL *stop) {
+        if (tabController.isTabViewControllerLoaded)
+        {
+            // Load view if current or diacent to current
+            if (index >= minLoadableIndex && index <= maxLoadableIndex)
+            {
+                if (tabController.tabViewController.view.superview == nil)
+                {
+                    [self->contentScrollView addSubview:tabController.tabViewController.view];
+                    // Enabling tab swipe gesture recognizer to win over nested scrollviews pan
+                    if ([tabController.tabViewController.view isKindOfClass:[UIScrollView class]])
+                    {
+                        UIScrollView *addedView = (UIScrollView *)tabController.tabViewController.view;
+                        [addedView.panGestureRecognizer requireGestureRecognizerToFail:self->swipeGestureRecognizer];
+                    }
+                }
+                else
+                {
+                    [self->contentScrollView setNeedsLayout];
+                }
+            }
+            else if (tabController.tabViewController.isViewLoaded)
+            {
+                [tabController.tabViewController.view removeFromSuperview];
+            }
+        }
+    }];
+}
+
 #pragma mark - Controller lifecycle
 
 - (BOOL)isEditing
@@ -369,11 +404,12 @@ typedef void (^ScrollViewBlock)(UIScrollView *scrollView);
     // the current tab controller has already been modified.
     [tabBar setSelectedTabControl:tabController.tabButton animated:animated];
     
+    // Load current view/adiacent views
+    loadCurrentAndAdiacentTabViews(self);
+    
     CGFloat pageWidth = contentScrollView.bounds.size.width;
     if (!animated)
     {
-#warning TODO postion page if current (because didScroll will not be called) and add to contentScrollView
-        
         // NOTE The scrolling callback will try to set the current tab to the one already selected returning immediatly
         [contentScrollView scrollRectToVisible:CGRectMake(pageWidth * tabIndex, 0, pageWidth, 1) animated:NO];
         
@@ -536,13 +572,6 @@ typedef void (^ScrollViewBlock)(UIScrollView *scrollView);
 
 #pragma mark - Tab Controller Delegate Methods
 
-- (BOOL)tabController:(ACTabController *)tabController shouldChangeCurrentViewController:(UIViewController *)viewController forURL:(NSURL *)url
-{
-    // TODO use view controller specific protocol to see if it can handle the url,
-    // if it can navigate it to that url and return NO.
-    return YES;
-}
-
 - (void)tabController:(ACTabController *)tabController didChangeURL:(NSURL *)url previousViewController:(UIViewController *)previousVewController
 {
     // Substitute view controller
@@ -589,35 +618,7 @@ typedef void (^ScrollViewBlock)(UIScrollView *scrollView);
     [tabBar setSelectedTabControl:currentTabController.tabButton animated:YES];
     
     // Load/Unload needed views
-    NSUInteger minLoadableIndex = currentTabIndex > 0 ? currentTabIndex - 1 : currentTabIndex;
-    NSUInteger maxLoadableIndex = currentTabIndex < tabControllersCount - 1 ? currentTabIndex + 1 : currentTabIndex;
-    [tabControllers enumerateObjectsUsingBlock:^(ACTabController *tabController, NSUInteger index, BOOL *stop) {
-        if (tabController.isTabViewControllerLoaded)
-        {
-            // Load view if current or diacent to current
-            if (index >= minLoadableIndex && index <= maxLoadableIndex)
-            {
-                if (tabController.tabViewController.view.superview == nil)
-                {
-                    [contentScrollView addSubview:tabController.tabViewController.view];
-                    // Enabling tab swipe gesture recognizer to win over nested scrollviews pan
-                    if ([tabController.tabViewController.view isKindOfClass:[UIScrollView class]])
-                    {
-                        UIScrollView *addedView = (UIScrollView *)tabController.tabViewController.view;
-                        [addedView.panGestureRecognizer requireGestureRecognizerToFail:swipeGestureRecognizer];
-                    }
-                }
-                else
-                {
-                    [contentScrollView setNeedsLayout];
-                }
-            }
-            else if (tabController.tabViewController.isViewLoaded)
-            {
-                [tabController.tabViewController.view removeFromSuperview];
-            }
-        }
-    }];
+    loadCurrentAndAdiacentTabViews(self);
 }
 
 @end

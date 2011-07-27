@@ -17,23 +17,29 @@
 /// Returns a view controller initialized with the given URL.
 - (UIViewController *)tabController:(ACTabController *)tabController viewControllerForURL:(NSURL *)url;
 
+@optional
+
+/// Ask the datasource if the given view controller can not handle the provided URL
+/// and should be dismissed.
+/// If it can, this method should make the view controller open the given URL.
+/// The provided view controller is equal to the one returned by the tabViewController
+/// property; but if nil, it will not be created during this call.
+/// If not implemented, the default behaviour act as if this method always return YES,
+/// making the tabViewController property being set to nil and thus, making a new
+/// call to that property invoke the tabController:viewControllerForURL: data source method.
+- (BOOL)tabController:(ACTabController *)tabController shouldChangeCurrentViewController:(UIViewController *)viewController forURL:(NSURL *)url;
+
 @end
 
 
 @protocol ACTabControllerDelegate <NSObject>
 @optional
 
-/// Informs the delegate that the current URL will change and ask if the given current
-/// view controller should be changed to handle that new URL. If YES, the tabViewController 
-/// property will be set to nil and a new call to that property will create a new view controller.
-/// The provided view controller is equal to the one returned by the tabViewController
-/// property; but if nil, it will not be created during this call.
-/// If not implemented, the default behaviour act as if this method always return YES.
-- (BOOL)tabController:(ACTabController *)tabController shouldChangeCurrentViewController:(UIViewController *)viewController forURL:(NSURL *)url;
-
-/// Informs the delegate that the current URL has changed and provides the previous
-/// view controller. An implementation should call the tabViewController property
-/// to retrieve the view controller for the new URL.
+/// Informs the delegate that the current URL has changed to the one given and 
+/// provides the view controller that was handling the previous URL. This view
+/// controller may be equal to the one returned by the tabViewController property.
+/// An implementation should call the tabViewController property
+/// to retrieve or create the view controller for the new URL.
 - (void)tabController:(ACTabController *)tabController didChangeURL:(NSURL *)url previousViewController:(UIViewController *)previousVewController;
 
 @end
