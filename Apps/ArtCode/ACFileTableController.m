@@ -8,6 +8,7 @@
 
 #import "ACFileTableController.h"
 #import "AppStyle.h"
+#import "ACNavigationController.h"
 
 @implementation ACFileTableController {
     NSArray *extensions;
@@ -193,6 +194,8 @@
      [self.navigationController pushViewController:detailViewController animated:YES];
      [detailViewController release];
      */
+    
+    [self.ACNavigationController pushURL:[NSURL URLWithString:@"artcode:projects"]];
 }
 
 @end

@@ -240,10 +240,18 @@
     return [(UIButton *)jumpElement currentTitle];
 }
 
+#pragma mark - Navigation Methods
+
+- (void)pushURL:(NSURL *)url
+{
+    [tabNavigationController.currentTabController pushURL:url];
+}
+
 #pragma mark - Tab Navigation Controller Delegate Method
 
 - (void)tabNavigationController:(ACTabNavigationController *)controller didAddTabController:(ACTabController *)tabController
 {
+    // TODO don't do this, instead inert a flag in tabnavigation to select new controller
     [controller setCurrentTabController:tabController animated:YES];
 }
 

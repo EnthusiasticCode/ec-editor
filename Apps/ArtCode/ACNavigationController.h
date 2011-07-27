@@ -28,6 +28,9 @@
 
 @property (nonatomic, strong) IBOutlet ACTabNavigationController *tabNavigationController;
 
+/// Conviniance method to push an URL to the current tab's history
+- (void)pushURL:(NSURL *)url;
+
 #pragma mark Tool Panel
 
 @property (nonatomic, getter = isToolPanelEnabled) BOOL toolPanelEnabled;

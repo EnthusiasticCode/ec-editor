@@ -87,7 +87,7 @@
     
     if ((self = [super init]))
     {
-        dataSource = aDatasource;
+        self.dataSource = aDatasource;
         historyURLs = [NSMutableArray new];
         [historyURLs addObject:initialURL];
     }
@@ -117,6 +117,9 @@
 - (void)moveToHistoryURLAtIndex:(NSUInteger)URLIndex
 {
     ECASSERT(URLIndex < [historyURLs count]);
+    
+    if (historyPointIndex == URLIndex)
+        return;
     
     historyPointIndex = URLIndex;
     NSURL *currentURL = [historyURLs objectAtIndex:URLIndex];

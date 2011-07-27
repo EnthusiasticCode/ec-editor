@@ -452,6 +452,7 @@ static void loadCurrentAndAdiacentTabViews(ACTabNavigationController *self)
     
     [tabControllers addObject:tabController];
     tabController.parentTabNavigationController = self;
+    tabController.delegate = self;
     
     // Creating tab view controller
     [self addChildViewController:tabController.tabViewController];
@@ -608,7 +609,15 @@ static void loadCurrentAndAdiacentTabViews(ACTabNavigationController *self)
         
         // Add new controller and view
         [self addChildViewController:tabController.tabViewController];
-        [contentScrollView addSubview:tabController.tabViewController.view];
+        
+        // Update views if current tab
+        if (tabController == currentTabController)
+        {
+            loadCurrentAndAdiacentTabViews(self);
+            
+            if (delegateFlags.hasDidChangeCurrentTabControllerFromTabController)
+                [delegate tabNavigationController:self didChangeCurrentTabController:currentTabController fromTabController:currentTabController];
+        }
     }
     
     // Change tab title
@@ -638,11 +647,16 @@ static void loadCurrentAndAdiacentTabViews(ACTabNavigationController *self)
     // NOTE tabBar setSelectedTabControl will eventually call setCurrentTabController
     // but at that point currentTabController is already set to the one requested
     // by the tabBar, making the method return.
+    ACTabController *fromTabController = currentTabController;
     currentTabController = [tabControllers objectAtIndex:currentTabIndex];
     [tabBar setSelectedTabControl:currentTabController.tabButton animated:YES];
     
     // Load/Unload needed views
     loadCurrentAndAdiacentTabViews(self);
+    
+    // Informing the delegate
+    if (delegateFlags.hasDidChangeCurrentTabControllerFromTabController)
+        [delegate tabNavigationController:self didChangeCurrentTabController:currentTabController fromTabController:fromTabController];
 }
 
 @end
