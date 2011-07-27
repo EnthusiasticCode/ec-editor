@@ -44,7 +44,8 @@ typedef void (^ScrollViewBlock)(UIScrollView *scrollView);
         unsigned int hasDidAddTabController : 1;
         unsigned int hasWillRemoveTabController : 1;
         unsigned int hasDidRemoveTabController : 1;
-        unsigned int reserved : 2;
+        unsigned int informDidAddAfterTabBarAnimation : 1;
+        unsigned int reserved : 1;
     } delegateFlags;
 }
 
@@ -463,7 +464,18 @@ static void loadCurrentAndAdiacentTabViews(ACTabNavigationController *self)
     if (currentTabController == nil)
         [self setCurrentTabController:tabController animated:NO];
     
-    // Delegate didAddTabController is called in tab bar add callback
+    // Inform delegate of added controller immediatly if no animation
+    if (!animated)
+    {
+        delegateFlags.informDidAddAfterTabBarAnimation = NO;
+        if (delegateFlags.hasDidAddTabController)
+            [delegate tabNavigationController:self didAddTabController:tabController];
+    }
+    else
+    {
+        // Let the tab bar didAdd delegate callback call the local delegate
+        delegateFlags.informDidAddAfterTabBarAnimation = YES;
+    }
 }
 
 - (ACTabController *)addTabControllerWithDataSorce:(id<ACTabControllerDataSource>)datasource initialURL:(NSURL *)initialURL animated:(BOOL)animated
@@ -552,8 +564,11 @@ static void loadCurrentAndAdiacentTabViews(ACTabNavigationController *self)
 {
     ECASSERT(tabIndex == [tabControllers count] - 1);
     
-    if (delegateFlags.hasDidAddTabController)
-        [delegate tabNavigationController:self didAddTabController:[tabControllers objectAtIndex:tabIndex]];
+    if (delegateFlags.informDidAddAfterTabBarAnimation)
+    {
+        if (delegateFlags.hasDidAddTabController)
+            [delegate tabNavigationController:self didAddTabController:[tabControllers objectAtIndex:tabIndex]];
+    }
 }
 
 - (void)tabBar:(ECTabBar *)tabBar didMoveTabControl:(UIControl *)tabControl fromIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex
