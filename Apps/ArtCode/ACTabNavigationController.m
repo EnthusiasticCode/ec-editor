@@ -57,6 +57,7 @@ typedef void (^ScrollViewBlock)(UIScrollView *scrollView);
 @synthesize swipeGestureRecognizer;
 @synthesize tabControllers, currentTabController;
 @synthesize tabPageMargin;
+@synthesize makeAddedTabCurrent;
 
 - (void)setDelegate:(id<ACTabNavigationControllerDelegate>)aDelegate
 {
@@ -462,7 +463,7 @@ static void loadCurrentAndAdiacentTabViews(ACTabNavigationController *self)
     tabController.tabButton = [tabBar addTabWithTitle:title animated:animated];
     
     // Set current if no other current controller
-    if (currentTabController == nil)
+    if (currentTabController == nil || (makeAddedTabCurrent && !animated))
         [self setCurrentTabController:tabController animated:NO];
     
     // Inform delegate of added controller immediatly if no animation
@@ -565,10 +566,17 @@ static void loadCurrentAndAdiacentTabViews(ACTabNavigationController *self)
 {
     ECASSERT(tabIndex == [tabControllers count] - 1);
     
+    // NOTE this delegate method is invoked from a call in addTabController:animated:
+    // and will proceed only if that method has animated = YES;
     if (delegateFlags.informDidAddAfterTabBarAnimation)
     {
+        ACTabController *addedTabController = [tabControllers objectAtIndex:tabIndex];
+        
+        if (makeAddedTabCurrent)
+            [self setCurrentTabController:addedTabController animated:YES];
+            
         if (delegateFlags.hasDidAddTabController)
-            [delegate tabNavigationController:self didAddTabController:[tabControllers objectAtIndex:tabIndex]];
+            [delegate tabNavigationController:self didAddTabController:addedTabController];
     }
 }
 

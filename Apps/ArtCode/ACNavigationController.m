@@ -249,12 +249,6 @@
 
 #pragma mark - Tab Navigation Controller Delegate Method
 
-- (void)tabNavigationController:(ACTabNavigationController *)controller didAddTabController:(ACTabController *)tabController
-{
-    // TODO don't do this, instead inert a flag in tabnavigation to select new controller
-    [controller setCurrentTabController:tabController animated:YES];
-}
-
 - (BOOL)tabNavigationController:(ACTabNavigationController *)controller willRemoveTabController:(ACTabController *)tabController
 {
     if ([controller.tabControllers count] == 1)

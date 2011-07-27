@@ -77,6 +77,9 @@
 
 #pragma mark Adding and Removing Tabs
 
+/// A value indicating if newly added tab should be immediatly selected as current.
+@property (nonatomic, getter = isMakingAddedTabCurrent) BOOL makeAddedTabCurrent;
+
 /// Add a tab controller to the tab navigation. This method will not make it the current tab.
 /// A tab controller will have it's delegate method set to the receiver.
 - (void)addTabController:(ACTabController *)tabController animated:(BOOL)animated;

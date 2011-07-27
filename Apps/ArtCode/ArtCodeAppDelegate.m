@@ -111,6 +111,7 @@
     navigationController.tabNavigationController.tabPageMargin = 10;
     [navigationController.tabNavigationController addTabControllerWithDataSorce:self initialURL:[NSURL URLWithString:@"artcode:projects"] animated:NO];
     [navigationController.tabNavigationController addTabControllerWithDataSorce:self initialURL:[NSURL URLWithString:@"artcode:files"] animated:NO];
+    navigationController.tabNavigationController.makeAddedTabCurrent = YES;
     return YES;
 }
 
