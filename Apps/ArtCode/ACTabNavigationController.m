@@ -45,8 +45,8 @@ typedef void (^ScrollViewBlock)(UIScrollView *scrollView);
         unsigned int hasDidAddTabController : 1;
         unsigned int hasWillRemoveTabController : 1;
         unsigned int hasDidRemoveTabController : 1;
+        unsigned int hasChangedURLForCurrentTabController : 1;
         unsigned int informDidAddAfterTabBarAnimation : 1;
-        unsigned int reserved : 1;
     } delegateFlags;
 }
 
@@ -70,6 +70,7 @@ typedef void (^ScrollViewBlock)(UIScrollView *scrollView);
     delegateFlags.hasDidAddTabController = [delegate respondsToSelector:@selector(tabNavigationController:didAddTabController:)];
     delegateFlags.hasWillRemoveTabController = [delegate respondsToSelector:@selector(tabNavigationController:willRemoveTabController:)];
     delegateFlags.hasDidRemoveTabController = [delegate respondsToSelector:@selector(tabNavigationController:didRemoveTabController:)];
+    delegateFlags.hasChangedURLForCurrentTabController = [delegate respondsToSelector:@selector(tabNavigationController:changedURLForTabController:)];
 }
 
 - (void)setTabBarEnabled:(BOOL)enabled
@@ -628,12 +629,7 @@ static void loadCurrentAndAdiacentTabViews(ACTabNavigationController *self)
         
         // Update views if current tab
         if (tabController == currentTabController)
-        {
             loadCurrentAndAdiacentTabViews(self);
-            
-            if (delegateFlags.hasDidChangeCurrentTabControllerFromTabController)
-                [delegate tabNavigationController:self didChangeCurrentTabController:currentTabController fromTabController:currentTabController];
-        }
     }
     
     // Change tab title only if it has an url, otherwise keep previous title
@@ -644,6 +640,10 @@ static void loadCurrentAndAdiacentTabViews(ACTabNavigationController *self)
         NSString *title = [self titleForTabController:tabController];
         [tabButton setTitle:title forState:UIControlStateNormal];
     }
+    
+    // Forward to delegate
+    if (delegateFlags.hasChangedURLForCurrentTabController)
+        [delegate tabNavigationController:self changedURLForTabController:tabController];
 }
 
 #pragma mark - Scroll View Delegate

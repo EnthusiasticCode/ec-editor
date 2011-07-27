@@ -265,6 +265,11 @@
     controller.tabBarEnabled = YES;
 }
 
+- (void)tabNavigationController:(ACTabNavigationController *)tabNavigationController changedURLForTabController:(ACTabController *)tabController
+{
+    // TODO same thing as above
+}
+
 #pragma mark - Tool Panel Management Methods
 
 - (void)showToolPanelAnimated:(BOOL)animated

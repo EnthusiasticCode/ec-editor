@@ -26,6 +26,9 @@
 - (BOOL)tabNavigationController:(ACTabNavigationController *)tabNavigationController willRemoveTabController:(ACTabController *)tabController;
 - (void)tabNavigationController:(ACTabNavigationController *)tabNavigationController didRemoveTabController:(ACTabController *)tabController;
 
+/// Forward the \c ACTabController delegate method invoked when changing URL.
+- (void)tabNavigationController:(ACTabNavigationController *)tabNavigationController changedURLForTabController:(ACTabController *)tabController;
+
 @end
 
 
