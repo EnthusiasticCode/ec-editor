@@ -406,8 +406,12 @@ static void loadCurrentAndAdiacentTabViews(ACTabNavigationController *self)
     
     // Load current view/adiacent views
     loadCurrentAndAdiacentTabViews(self);
+    [contentScrollView layoutIfNeeded];
     
+    // Requires to resize content size because content scroll view layout will happen after the next scrolling
     CGFloat pageWidth = contentScrollView.bounds.size.width;
+//    contentScrollView.contentSize = CGSizeMake(pageWidth * [tabControllers count], 1);
+    
     if (!animated)
     {
         // NOTE The scrolling callback will try to set the current tab to the one already selected returning immediatly
@@ -451,12 +455,12 @@ static void loadCurrentAndAdiacentTabViews(ACTabNavigationController *self)
     [tabControllers addObject:tabController];
     tabController.parentTabNavigationController = self;
     
+    // Creating tab view controller
+    [self addChildViewController:tabController.tabViewController];
+    
     // Creating and assigning tab button
     NSString *title = [self titleForTabController:tabController];
     tabController.tabButton = [tabBar addTabWithTitle:title animated:animated];
-    
-    // Creating tab view controller
-    [self addChildViewController:tabController.tabViewController];
     
     // Set current if no other current controller
     if (currentTabController == nil)
