@@ -69,6 +69,9 @@
 /// Returns the tab navigation controller that manage this tab.
 @property (nonatomic, readonly, weak) ACTabNavigationController *parentTabNavigationController;
 
+/// Convenience property that indicate if the receiver is the current tab controller in its parent.
+@property (nonatomic, readonly) BOOL isCurrentTabController;
+
 /// The position of the tab in the parent tab navigation controller.
 @property (nonatomic, readonly) NSUInteger position;
 

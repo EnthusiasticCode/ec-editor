@@ -39,6 +39,11 @@
     delegateHasDidChangeURLPreviousViewController = [delegate respondsToSelector:@selector(tabController:didChangeURL:previousViewController:)];
 }
 
+- (BOOL)isCurrentTabController
+{
+    return parentTabNavigationController.currentTabController == self;
+}
+
 - (NSUInteger)position
 {
     return [parentTabNavigationController.tabControllers indexOfObject:self];
