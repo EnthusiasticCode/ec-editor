@@ -242,10 +242,15 @@
 
 #pragma mark - Tab Navigation Controller Delegate Method
 
-- (void)tabNavigationController:(ACTabNavigationController *)tabNavigationController didChangeCurrentTabController:(ACTabController *)tabController fromTabController:(ACTabController *)previousTabController
+- (void)tabNavigationController:(ACTabNavigationController *)controller didAddTabController:(ACTabController *)tabController
+{
+    [tabNavigationController setCurrentTabController:tabController animated:YES];
+}
+
+- (void)tabNavigationController:(ACTabNavigationController *)controller didChangeCurrentTabController:(ACTabController *)tabController fromTabController:(ACTabController *)previousTabController
 {
     // TODO enable tabs and stuff
-    self.tabNavigationController.tabBarEnabled = YES;
+    tabNavigationController.tabBarEnabled = YES;
 }
 
 #pragma mark - Tool Panel Management Methods

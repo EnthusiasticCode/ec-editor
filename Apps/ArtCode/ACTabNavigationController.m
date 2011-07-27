@@ -547,6 +547,14 @@ static void loadCurrentAndAdiacentTabViews(ACTabNavigationController *self)
     return YES;
 }
 
+- (void)tabBar:(ECTabBar *)tabBar didAddTabControl:(UIControl *)tabControl atIndex:(NSUInteger)tabIndex
+{
+    ECASSERT(tabIndex == [tabControllers count] - 1);
+    
+    if (delegateFlags.hasDidAddTabController)
+        [delegate tabNavigationController:self didAddTabController:[tabControllers objectAtIndex:tabIndex]];
+}
+
 - (void)tabBar:(ECTabBar *)tabBar didMoveTabControl:(UIControl *)tabControl fromIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex
 {
     ECASSERT(fromIndex < [tabControllers count]);

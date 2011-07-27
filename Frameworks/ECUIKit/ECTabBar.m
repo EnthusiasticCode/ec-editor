@@ -40,11 +40,12 @@ typedef void (^ScrollViewBlock)(UIScrollView *scrollView);
     struct {
         unsigned int hasWillSelectTabControlAtIndex :1;
         unsigned int hasDidSelectTabControlAtIndex : 1;
+        unsigned int hasWillAddTabAtIndex :1;
+        unsigned int hasDidAddTabControlAtIndex : 1;
         unsigned int hasWillRemoveTabControlAtIndex : 1;
         unsigned int hasDidRemoveTabControlAtIndex : 1;
         unsigned int hasWillMoveTabControlAtIndex : 1;
         unsigned int hasDidMoveTabControlFromIndexToIndex : 1;
-        unsigned int reserved : 2;
     } delegateFlags;
 }
 
@@ -61,10 +62,12 @@ typedef void (^ScrollViewBlock)(UIScrollView *scrollView);
 {
     delegate = aDelegate;
     
-    delegateFlags.hasWillRemoveTabControlAtIndex = [delegate respondsToSelector:@selector(tabBar:willRemoveTabControl:atIndex:)];
-    delegateFlags.hasDidRemoveTabControlAtIndex = [delegate respondsToSelector:@selector(tabBar:didRemoveTabControl:atIndex:)];
     delegateFlags.hasWillSelectTabControlAtIndex = [delegate respondsToSelector:@selector(tabBar:willSelectTabControl:atIndex:)];
     delegateFlags.hasDidSelectTabControlAtIndex = [delegate respondsToSelector:@selector(tabBar:didSelectTabControl:atIndex:)];
+    delegateFlags.hasWillAddTabAtIndex = [delegate respondsToSelector:@selector(tabBar:willAddTabAtIndex:)];
+    delegateFlags.hasDidAddTabControlAtIndex = [delegate respondsToSelector:@selector(tabBar:didAddTabControl:atIndex:)];
+    delegateFlags.hasWillRemoveTabControlAtIndex = [delegate respondsToSelector:@selector(tabBar:willRemoveTabControl:atIndex:)];
+    delegateFlags.hasDidRemoveTabControlAtIndex = [delegate respondsToSelector:@selector(tabBar:didRemoveTabControl:atIndex:)];    
     delegateFlags.hasWillMoveTabControlAtIndex = [delegate respondsToSelector:@selector(tabBar:willMoveTabControl:atIndex:)];
     delegateFlags.hasDidMoveTabControlFromIndexToIndex = [delegate respondsToSelector:@selector(tabBar:didMoveTabControl:fromIndex:toIndex:)];
 }
@@ -386,11 +389,15 @@ static void init(ECTabBar *self)
     ECASSERT(delegate != nil);
     ECASSERT(title != nil);
     
+    NSUInteger newTabControlIndex = [tabControls count];
+    if (delegateFlags.hasWillAddTabAtIndex
+        && ![delegate tabBar:self willAddTabAtIndex:newTabControlIndex])
+        return nil;
+    
     if (!tabControls)
         tabControls = [NSMutableArray new];
     
     // Creating new tab control
-    NSUInteger newTabControlIndex = [tabControls count];
     UIControl *newTabControl = [delegate tabBar:self controlForTabWithTitle:title atIndex:newTabControlIndex];
     [tabControls addObject:newTabControl];
     
@@ -407,8 +414,22 @@ static void init(ECTabBar *self)
     // TODO check with height = 0
     tabControlsContainerView.contentSize = CGSizeMake(tabControlSize.width * (newTabControlIndex + 1), 1);
     
-    // TODO animate
     [tabControlsContainerView addSubview:newTabControl];
+    if (!animated)
+    {        
+        if (delegateFlags.hasDidAddTabControlAtIndex)
+            [delegate tabBar:self didAddTabControl:newTabControl atIndex:newTabControlIndex];
+    }
+    else
+    {
+        newTabControl.alpha = 0;
+        [UIView animateWithDuration:.10 animations:^(void) {
+            newTabControl.alpha = 1;
+        } completion:^(BOOL finished) {
+            if (delegateFlags.hasDidAddTabControlAtIndex)
+                [delegate tabBar:self didAddTabControl:newTabControl atIndex:newTabControlIndex];
+        }];
+    }
     
     return newTabControl;
 }
