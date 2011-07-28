@@ -81,10 +81,9 @@
     // TODO create internal views if not connected in IB
     
     popoverController = [ECPopoverController new];
-#warning TODO move shadow in ecpopoverview relative to arrow.
     popoverController.popoverView.layer.shadowOpacity = 0.5;
     popoverController.popoverView.layer.shadowRadius = 4;
-    popoverController.popoverView.layer.shadowOffset = CGSizeMake(0, 3);
+    popoverController.popoverView.shadowOffsetForArrowDirectionUpToAutoOrient = CGSizeMake(0, 3);
     
     // Setup present APIs to use this controller as reference.
     self.definesPresentationContext = YES;

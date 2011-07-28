@@ -24,15 +24,8 @@
 #pragma mark -
 #pragma mark Properties
 
-@synthesize cornerRadius;
-
-@synthesize contentInsets;
-
-@synthesize arrowDirection;
-@synthesize arrowPosition;
-@synthesize arrowSize;
-@synthesize arrowMargin;
-@synthesize arrowCornerRadius;
+@synthesize cornerRadius, contentInsets, shadowOffsetForArrowDirectionUpToAutoOrient;
+@synthesize arrowDirection, arrowPosition, arrowSize, arrowMargin, arrowCornerRadius;
 
 - (void)setContentInsets:(UIEdgeInsets)insets
 {
@@ -70,7 +63,9 @@
 
 - (void)setArrowPosition:(CGFloat)position
 {
-    if (position < 0) 
+    ECASSERT(position >= 0);
+    
+    if (position == arrowPosition)
         return;
 
     arrowPosition = position;
@@ -88,6 +83,9 @@
 
 - (void)setBounds:(CGRect)bounds
 {
+    if (CGRectEqualToRect(bounds, self.bounds))
+        return;
+    
     [super setBounds:bounds];
     contentRect = UIEdgeInsetsInsetRect(bounds, contentInsets);
     [self updatePath];
@@ -95,6 +93,9 @@
 
 - (void)setFrame:(CGRect)frame
 {
+    if (CGRectEqualToRect(frame, self.frame))
+        return;
+    
     [super setFrame:frame];
     contentRect = UIEdgeInsetsInsetRect(self.bounds, contentInsets);
     [self updatePath];
@@ -365,6 +366,41 @@ static void init(ECPopoverView *self)
     // Apply path
     CAShapeLayer *layer = (CAShapeLayer *)[self layer];
     layer.path = path;
+    
+    // Apply path to shadow
+    if (layer.shadowOpacity > 0.)
+    {
+        layer.shadowPath = path;
+        
+        if (!CGSizeEqualToSize(shadowOffsetForArrowDirectionUpToAutoOrient, CGSizeZero))
+        {
+            switch (arrowDirection) {
+                case UIPopoverArrowDirectionDown:
+                {
+                    layer.shadowOffset = CGSizeMake(shadowOffsetForArrowDirectionUpToAutoOrient.width, -shadowOffsetForArrowDirectionUpToAutoOrient.height);
+                    break;
+                }
+                    
+                case UIPopoverArrowDirectionLeft:
+                {
+                    layer.shadowOffset = CGSizeMake(shadowOffsetForArrowDirectionUpToAutoOrient.height, shadowOffsetForArrowDirectionUpToAutoOrient.width);
+                    break;
+                }
+                    
+                case UIPopoverArrowDirectionRight:
+                {
+                    layer.shadowOffset = CGSizeMake(-shadowOffsetForArrowDirectionUpToAutoOrient.height, shadowOffsetForArrowDirectionUpToAutoOrient.width);
+                    break;
+                }
+                    
+                default:
+                {
+                    layer.shadowOffset = shadowOffsetForArrowDirectionUpToAutoOrient;
+                    break;
+                }
+            }
+        }
+    }
     
     CGPathRelease(path); 
 }

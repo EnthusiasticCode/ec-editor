@@ -15,6 +15,10 @@
 
 @property (nonatomic) CGFloat cornerRadius UI_APPEARANCE_SELECTOR;
 
+/// Specify a shadow offset to apply as the layer shadow offset that will be
+/// automaticaly oriented based on the arrow direction.
+@property (nonatomic) CGSize shadowOffsetForArrowDirectionUpToAutoOrient;
+
 #pragma mark Content
 
 @property (nonatomic) UIEdgeInsets contentInsets UI_APPEARANCE_SELECTOR;
