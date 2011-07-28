@@ -57,6 +57,11 @@
     return [historyURLs objectAtIndex:historyPointIndex];
 }
 
+- (NSUInteger)currentURLIndex
+{
+    return historyPointIndex;
+}
+
 - (BOOL)canMoveBack
 {
     return historyPointIndex > 0;

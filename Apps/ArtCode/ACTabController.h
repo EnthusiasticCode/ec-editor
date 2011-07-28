@@ -101,6 +101,9 @@
 /// To change the current URL use one of the move methods or pushURL.
 @property (nonatomic, readonly) NSURL *currentURL;
 
+/// Convenience method to retrieve the index of currentURL in the historyURLs array.
+@property (nonatomic, readonly) NSUInteger currentURLIndex;
+
 /// A value indicating if calling moveBackInHistoryAnimated: will have any effect.
 @property (nonatomic, readonly) BOOL canMoveBack;
 

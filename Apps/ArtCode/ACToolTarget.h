@@ -23,4 +23,6 @@
 /// A nil value can be passed to reset the filter.
 - (void)applyFilter:(NSString *)filter;
 
+// TODO add filterPlaceholder, thik how to do if placeholder has to be dynamic
+
 @end

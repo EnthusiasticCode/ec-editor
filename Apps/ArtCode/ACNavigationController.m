@@ -8,20 +8,19 @@
 
 #import <QuartzCore/QuartzCore.h>
 #import "ECPopoverController.h"
-#import "ECTabBar.h"
-#import "ECSwipeGestureRecognizer.h"
-
 #import "AppStyle.h"
 #import "ACNavigationController.h"
+
+#import "ACPopoverHistoryToolController.h"
 #import "ACJumpBarTextField.h"
-#import "ACFileTableController.h"
 
-#import "ACToolPanelController.h"
-#import "ACToolController.h"
-
+#import "ECTabBar.h"
+#import "ECSwipeGestureRecognizer.h"
 #import "ACTabController.h"
 
 #import "ECInstantGestureRecognizer.h"
+#import "ACToolPanelController.h"
+#import "ACToolController.h"
 
 #import "ECBezelAlert.h"
 
@@ -29,11 +28,15 @@
 @private
     ECPopoverController *popoverController;
     
+    // Jump Bar
     UILongPressGestureRecognizer *jumpBarElementLongPressRecognizer;
+    ACPopoverHistoryToolController *popoverHistoryToolController;
     
+    // Tool panel recognizers
     UISwipeGestureRecognizer *toolPanelLeftGestureRecognizer, *toolPanelRightGestureRecognizer;
     ECInstantGestureRecognizer *toolPanelDismissGestureRecognizer;
     
+    // Bezel current page
     UIPageControl *tabPageControl;
     UIViewController *tabPageControlController;
 }
@@ -183,8 +186,20 @@
 
 - (void)jumpBarBackLongAction:(UILongPressGestureRecognizer *)recognizer
 {
-    if (recognizer.state == UIGestureRecognizerStateBegan) {
+    if (recognizer.state == UIGestureRecognizerStateBegan)
+    {
+        if (popoverHistoryToolController == nil)
+        {
+            popoverHistoryToolController = [[ACPopoverHistoryToolController alloc] initWithStyle:UITableViewStyleGrouped];
+            popoverHistoryToolController.contentSizeForViewInPopover = CGSizeMake(300, 200);
+        }
+        [popoverHistoryToolController setHistoryURLs:tabNavigationController.currentTabController.historyURLs 
+                                    hisoryPointIndex:tabNavigationController.currentTabController.currentURLIndex];
         
+        // Present popover
+        popoverController.contentViewController = popoverHistoryToolController;
+        popoverController.automaticDismiss = YES;
+        [popoverController presentPopoverFromRect:jumpBar.backElement.frame inView:jumpBar permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
     }
 }
 

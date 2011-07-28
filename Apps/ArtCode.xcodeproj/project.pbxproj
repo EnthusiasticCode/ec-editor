@@ -70,6 +70,7 @@
 		CD9CD96C13DC18DD007964D3 /* ECCodeStringDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = CD9CD96B13DC18DD007964D3 /* ECCodeStringDataSource.m */; };
 		CD9CD97013DC22AF007964D3 /* ACCodeFileController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD9CD96F13DC22AF007964D3 /* ACCodeFileController.m */; };
 		CDA0156013DF0C210087B518 /* ACTabNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDA0155F13DF0C210087B518 /* ACTabNavigationController.m */; };
+		CDD40B0313E1A046008AC36B /* ACPopoverHistoryToolController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDD40B0213E1A046008AC36B /* ACPopoverHistoryToolController.m */; };
 		CDE3F14713C0DDD500DFFAFF /* Inconsolata-dz.otf in Resources */ = {isa = PBXBuildFile; fileRef = CDE3F14613C0DDD500DFFAFF /* Inconsolata-dz.otf */; };
 		CDFF3DAC13C0D71900108DE2 /* NSTimer+block.m in Sources */ = {isa = PBXBuildFile; fileRef = CDFF3DAB13C0D71900108DE2 /* NSTimer+block.m */; };
 		CDFF3DBB13C0D76400108DE2 /* ECInstantGestureRecognizer.m in Sources */ = {isa = PBXBuildFile; fileRef = CDFF3DAE13C0D76400108DE2 /* ECInstantGestureRecognizer.m */; };
@@ -227,6 +228,8 @@
 		CD9CD96F13DC22AF007964D3 /* ACCodeFileController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACCodeFileController.m; sourceTree = "<group>"; };
 		CDA0155E13DF0C210087B518 /* ACTabNavigationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACTabNavigationController.h; sourceTree = "<group>"; };
 		CDA0155F13DF0C210087B518 /* ACTabNavigationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACTabNavigationController.m; sourceTree = "<group>"; };
+		CDD40B0113E1A046008AC36B /* ACPopoverHistoryToolController.h */ = {isa = PBXFileReference; fileEncoding = 4; path = ACPopoverHistoryToolController.h; sourceTree = "<group>"; };
+		CDD40B0213E1A046008AC36B /* ACPopoverHistoryToolController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACPopoverHistoryToolController.m; sourceTree = "<group>"; };
 		CDE3F14613C0DDD500DFFAFF /* Inconsolata-dz.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Inconsolata-dz.otf"; sourceTree = "<group>"; };
 		CDFF3DAA13C0D71900108DE2 /* NSTimer+block.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSTimer+block.h"; sourceTree = "<group>"; };
 		CDFF3DAB13C0D71900108DE2 /* NSTimer+block.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSTimer+block.m"; sourceTree = "<group>"; };
@@ -542,6 +545,7 @@
 				CD7C01C013D354A0004CD5E5 /* ACTabController.m */,
 				CDA0155E13DF0C210087B518 /* ACTabNavigationController.h */,
 				CDA0155F13DF0C210087B518 /* ACTabNavigationController.m */,
+				CDD40AFF13E19FC4008AC36B /* Popovers Content Controllers */,
 				CD7D2B4513C0D53A00B889EE /* Views and Segues */,
 			);
 			name = Navigation;
@@ -631,6 +635,15 @@
 				CD9CD96B13DC18DD007964D3 /* ECCodeStringDataSource.m */,
 			);
 			name = "Data Sources";
+			sourceTree = "<group>";
+		};
+		CDD40AFF13E19FC4008AC36B /* Popovers Content Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				CDD40B0113E1A046008AC36B /* ACPopoverHistoryToolController.h */,
+				CDD40B0213E1A046008AC36B /* ACPopoverHistoryToolController.m */,
+			);
+			name = "Popovers Content Controllers";
 			sourceTree = "<group>";
 		};
 		CDFF3DC213C0D77000108DE2 /* Popover */ = {
@@ -878,6 +891,7 @@
 				B732D06F13DDCAC700637FBE /* ACStateGroup.m in Sources */,
 				B732D07213DDE02100637FBE /* ACStateOrderedSetWrapper.m in Sources */,
 				CDA0156013DF0C210087B518 /* ACTabNavigationController.m in Sources */,
+				CDD40B0313E1A046008AC36B /* ACPopoverHistoryToolController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
