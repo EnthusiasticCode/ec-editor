@@ -195,6 +195,8 @@
      [detailViewController release];
      */
     
+#warning TODO if used in a popover from the jump bar should just change its own url
+    
     [self.ACNavigationController pushURL:[NSURL URLWithString:@"artcode:projects"]];
 }
 

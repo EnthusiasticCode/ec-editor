@@ -11,8 +11,9 @@
 #import "AppStyle.h"
 #import "ACNavigationController.h"
 
-#import "ACPopoverHistoryToolController.h"
 #import "ACJumpBarTextField.h"
+#import "ACPopoverHistoryToolController.h"
+#import "ACFileTableController.h"
 
 #import "ECTabBar.h"
 #import "ECSwipeGestureRecognizer.h"
@@ -31,6 +32,7 @@
     // Jump Bar
     UILongPressGestureRecognizer *jumpBarElementLongPressRecognizer;
     ACPopoverHistoryToolController *popoverHistoryToolController;
+    ACFileTableController *popoverBrowseFileToolController;
     
     // Tool panel recognizers
     UISwipeGestureRecognizer *toolPanelLeftGestureRecognizer, *toolPanelRightGestureRecognizer;
@@ -188,6 +190,7 @@
 {
     if (recognizer.state == UIGestureRecognizerStateBegan)
     {
+        // Create and initialize popover tool history controller
         if (popoverHistoryToolController == nil)
         {
             popoverHistoryToolController = [[ACPopoverHistoryToolController alloc] initWithStyle:UITableViewStyleGrouped];
@@ -205,17 +208,21 @@
 
 - (void)jumpBarElementAction:(id)sender
 {
-//    static ACFileTableController *testController = nil;
-//    if (!testController)
-//    {
-//        testController = [[ACFileTableController alloc] initWithStyle:UITableViewStylePlain];
-//        testController.contentSizeForViewInPopover = CGSizeMake(300, 300);
-//    }
-//    
-//    [popoverController setContentViewController:testController];
-//    [popoverController presentPopoverFromRect:[sender frame] inView:jumpBar permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
+    if (popoverBrowseFileToolController == nil)
+    {
+        popoverBrowseFileToolController = [ACFileTableController new];
+        // TODO size that fits
+        popoverBrowseFileToolController.contentSizeForViewInPopover = CGSizeMake(200, 200);
+    }
     
-    [jumpBar popThroughJumpElement:sender animated:YES];
+    // TODO set url
+    // TODO!!! the select row of the controller should not change the parent acnavigationcotnroller pushURL...
+    
+    popoverController.contentViewController = popoverBrowseFileToolController;
+    popoverController.automaticDismiss = YES;
+    [popoverController presentPopoverFromRect:[sender frame] inView:jumpBar permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
+    
+//    [jumpBar popThroughJumpElement:sender animated:YES];
 }
 
 - (void)jumpBarElementLongAction:(UILongPressGestureRecognizer *)recognizer
