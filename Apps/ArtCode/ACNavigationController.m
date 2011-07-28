@@ -100,7 +100,9 @@
     jumpBar.textElement.rightViewMode = UITextFieldViewModeAlways;
     // Jump bar back button
     UIButton *backButton = [UIButton new];
-    [backButton setBackgroundImage:[UIImage styleBackgroundImageWithColor:[UIColor styleBackgroundColor] borderColor:[UIColor styleForegroundColor] insets:UIEdgeInsetsZero arrowSize:CGSizeZero roundingCorners:UIRectCornerTopLeft | UIRectCornerBottomLeft] forState:UIControlStateNormal];
+    UIImage *normalBackButtonBackgrounImage = [UIImage styleBackgroundImageWithColor:[UIColor styleBackgroundColor] borderColor:[UIColor styleForegroundColor] insets:UIEdgeInsetsZero arrowSize:CGSizeZero roundingCorners:UIRectCornerTopLeft | UIRectCornerBottomLeft];
+    [backButton setBackgroundImage:normalBackButtonBackgrounImage forState:UIControlStateNormal];
+    [backButton setBackgroundImage:normalBackButtonBackgrounImage forState:UIControlStateDisabled];
     [backButton setBackgroundImage:[UIImage styleBackgroundImageWithColor:[UIColor styleHighlightColor] borderColor:[UIColor styleForegroundColor] insets:UIEdgeInsetsZero arrowSize:CGSizeZero roundingCorners:UIRectCornerTopLeft | UIRectCornerBottomLeft] forState:UIControlStateHighlighted];
     [backButton setImage:[UIImage styleDisclosureArrowImageWithOrientation:UIImageOrientationLeft color:[UIColor styleForegroundColor]] forState:UIControlStateNormal];
     backButton.frame = CGRectMake(0, 0, 40, 30);
@@ -263,11 +265,10 @@
 {
     // TODO enable tabs and stuff
     controller.tabBarEnabled = YES;
-}
-
-- (void)tabNavigationController:(ACTabNavigationController *)tabNavigationController changedURLForTabController:(ACTabController *)tabController
-{
-    // TODO same thing as above
+    
+    // Setup jump bar
+    [jumpBar setJumpPath:tabController.currentURL.path animated:YES];
+    [(UIButton *)jumpBar.backElement setEnabled:[tabController.historyURLs count] > 1];
 }
 
 #pragma mark - Tool Panel Management Methods

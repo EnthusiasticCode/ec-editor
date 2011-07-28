@@ -474,6 +474,8 @@ static void loadCurrentAndAdiacentTabViews(ACTabNavigationController *self)
     if (currentTabController == nil || (makeAddedTabCurrent && !animated))
         [self setCurrentTabController:tabController animated:NO];
     
+#warning TODO load the view if close to current and set the content size anyway
+    
     // Inform delegate of added controller immediatly if no animation
     if (!animated)
     {
@@ -629,7 +631,12 @@ static void loadCurrentAndAdiacentTabViews(ACTabNavigationController *self)
         
         // Update views if current tab
         if (tabController == currentTabController)
+        {
             loadCurrentAndAdiacentTabViews(self);
+            
+            if (delegateFlags.hasDidChangeCurrentTabControllerFromTabController)
+                [delegate tabNavigationController:self didChangeCurrentTabController:currentTabController fromTabController:currentTabController];
+        }
     }
     
     // Change tab title only if it has an url, otherwise keep previous title

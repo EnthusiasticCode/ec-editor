@@ -18,6 +18,10 @@
 @optional
 
 - (BOOL)tabNavigationController:(ACTabNavigationController *)tabNavigationController willChangeCurrentTabController:(ACTabController *)tabController fromTabController:(ACTabController *)previousTabController;
+
+/// This method is called when the tab controller changes both on user action and API call of 
+/// setCurrentTabController:. It is also called when the current tab controller changes it's view controller;
+/// in which case tabController and previousTabController will be equal.
 - (void)tabNavigationController:(ACTabNavigationController *)tabNavigationController didChangeCurrentTabController:(ACTabController *)tabController fromTabController:(ACTabController *)previousTabController;
 
 - (BOOL)tabNavigationController:(ACTabNavigationController *)tabNavigationController willAddTabController:(ACTabController *)tabController;

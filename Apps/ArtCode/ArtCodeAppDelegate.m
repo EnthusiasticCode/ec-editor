@@ -110,7 +110,7 @@
     [window makeKeyAndVisible];
     navigationController.tabNavigationController.tabPageMargin = 10;
     [navigationController.tabNavigationController addTabControllerWithDataSorce:self initialURL:[NSURL URLWithString:@"artcode:projects"] animated:NO];
-    [navigationController.tabNavigationController addTabControllerWithDataSorce:self initialURL:[NSURL URLWithString:@"artcode:files"] animated:NO];
+    [navigationController.tabNavigationController addTabControllerWithDataSorce:self initialURL:[NSURL URLWithString:@"artcode:/ProjectX"] animated:NO];
     navigationController.tabNavigationController.makeAddedTabCurrent = YES;
     return YES;
 }
@@ -162,8 +162,8 @@
     // TODO url switch logic
     if ([url.absoluteString isEqualToString:@"artcode:projects"])
         controllerClass = [ACProjectTableController class];
-    else if (url.pathExtension != nil)
-        controllerClass = [ACCodeFileController class];
+//    else if (url.pathExtension != nil)
+//        controllerClass = [ACCodeFileController class];
     else
         controllerClass = [ACFileTableController class];
     

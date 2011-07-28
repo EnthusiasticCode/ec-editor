@@ -57,7 +57,7 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return [[ACState sharedState].projects count];
+    return 3; //[[ACState sharedState].projects count];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -81,7 +81,8 @@
     }
     
     // Configure the cell...
-    [cell.textLabel setText:[[[ACState sharedState].projects objectAtIndex:indexPath.row] name]];
+    //[cell.textLabel setText:[[[ACState sharedState].projects objectAtIndex:indexPath.row] name]];
+    cell.textLabel.text = @"Project";
     
     return cell;
 }
@@ -134,6 +135,7 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
 //    [self.ACNavigationController pushURL:[[[ACState sharedState].projects objectAtIndex:indexPath.row] URL] animated:YES];
+    [self.ACNavigationController pushURL:[NSURL URLWithString:@"artcode:/Project"]];
 }
 
 @end
