@@ -96,7 +96,12 @@
 
 #pragma mark Managing Elements via Jump Path
 
+/// Gets or set the jump elements in form of path. The path has to be in the format:
+/// /element1/element2/...
 @property (nonatomic, copy) NSString *jumpPath;
 - (void)setJumpPath:(NSString *)jumpPath animated:(BOOL)animated;
+
+/// Returns a jump path constructed from the first element up to the given element included.
+- (NSString *)jumpPathUpThroughElement:(UIView *)element;
 
 @end

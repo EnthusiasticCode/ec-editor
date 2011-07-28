@@ -9,6 +9,7 @@
 #import <QuartzCore/QuartzCore.h>
 #import "ECPopoverController.h"
 #import "AppStyle.h"
+#import "ACURL.h"
 #import "ACNavigationController.h"
 
 #import "ACJumpBarTextField.h"
@@ -80,6 +81,10 @@
     // TODO create internal views if not connected in IB
     
     popoverController = [ECPopoverController new];
+#warning TODO move shadow in ecpopoverview relative to arrow.
+    popoverController.popoverView.layer.shadowOpacity = 0.5;
+    popoverController.popoverView.layer.shadowRadius = 4;
+    popoverController.popoverView.layer.shadowOffset = CGSizeMake(0, 3);
     
     // Setup present APIs to use this controller as reference.
     self.definesPresentationContext = YES;
@@ -212,10 +217,14 @@
     {
         popoverBrowseFileToolController = [ACFileTableController new];
         // TODO size that fits
-        popoverBrowseFileToolController.contentSizeForViewInPopover = CGSizeMake(200, 200);
+        popoverBrowseFileToolController.contentSizeForViewInPopover = CGSizeMake(268, 220);
+        // TODO more performant, maybe move inside popover
+        popoverBrowseFileToolController.view.layer.cornerRadius = 3;
+        popoverBrowseFileToolController.view.layer.masksToBounds = YES;
     }
     
-    // TODO set url
+    // Setup file browser
+    [popoverBrowseFileToolController openURL:[NSURL ACURLWithPath:[jumpBar jumpPathUpThroughElement:sender]]];
     // TODO!!! the select row of the controller should not change the parent acnavigationcotnroller pushURL...
     
     popoverController.contentViewController = popoverBrowseFileToolController;

@@ -597,4 +597,21 @@ static void init(ECJumpBar *self)
     [self setJumpElements:elements animated:animated];
 }
 
+- (NSString *)jumpPathUpThroughElement:(UIView *)element
+{
+    ECASSERT(element != nil);
+    ECASSERT([jumpElements containsObject:element]);
+    
+    NSMutableString *path = [NSMutableString new];
+    NSUInteger elementIndex = [jumpElements indexOfObject:element];
+    
+    [jumpElements enumerateObjectsUsingBlock:^(UIView *element, NSUInteger idx, BOOL *stop) {
+        [path appendFormat:@"/%@", [delegate jumpBar:self pathComponentForJumpElement:element index:idx]];
+        if (idx == elementIndex)
+            *stop = YES;
+    }];
+    
+    return path;
+}
+
 @end

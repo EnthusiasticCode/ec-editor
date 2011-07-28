@@ -14,4 +14,7 @@
 
 + (NSURL *)ACURLForProjectWithName:(NSString *)name;
 
+/// Create a NSURL with the default ArtCode scheme.
++ (NSURL *)ACURLWithPath:(NSString *)path;
+
 @end

@@ -8,5 +8,6 @@
 
 #import <Foundation/Foundation.h>
 
+#warning TODO this will make redefine the string in every file that include the header. use extern
 static NSString * const ACProjectBundleExtension = @"acproj";
 static NSString * const ACURLScheme = @"artcode";
