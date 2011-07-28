@@ -253,7 +253,7 @@
 
 - (BOOL)tabNavigationController:(ACTabNavigationController *)controller willRemoveTabController:(ACTabController *)tabController
 {
-    if ([controller.tabControllers count] == 1)
+    if (controller.tabCount == 1)
     {
         [[ECBezelAlert sharedAlert] addAlertMessageWithText:@"Can not stay without tabs!" image:nil displayImmediatly:YES];
         return NO;
@@ -263,6 +263,23 @@
 
 - (void)tabNavigationController:(ACTabNavigationController *)controller didChangeCurrentTabController:(ACTabController *)tabController fromTabController:(ACTabController *)previousTabController
 {
+    // Bezel alert with page indicator
+    if (tabController != previousTabController && controller.tabCount > 1)
+    {
+        if (tabPageControlController == nil)
+        {
+            tabPageControl = [UIPageControl new];
+            tabPageControlController = [UIViewController new];
+            tabPageControlController.view = tabPageControl;
+        }        
+        tabPageControl.numberOfPages = controller.tabCount;
+        tabPageControl.currentPage = tabController.position;
+        CGRect tabPageControlFrame = (CGRect){ CGPointZero, [tabPageControl sizeForNumberOfPages:controller.tabCount] };
+        tabPageControl.frame = tabPageControlFrame;
+        tabPageControlController.contentSizeForViewInPopover = CGSizeMake(tabPageControlFrame.size.width, 10);
+        [[ECBezelAlert sharedAlert] addAlertMessageWithViewController:tabPageControlController displayImmediatly:YES];
+    }
+    
     // TODO enable tabs and stuff
     controller.tabBarEnabled = YES;
     

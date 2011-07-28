@@ -72,6 +72,9 @@
 /// The array of ordered tab controllers managed by this tab navigator.
 @property (nonatomic, readonly, copy) NSArray *tabControllers;
 
+/// Convenience method that returns the count of tab controllers.
+@property (nonatomic, readonly) NSUInteger tabCount;
+
 /// The current displayed tab controller.
 @property (nonatomic, weak) ACTabController *currentTabController;
 

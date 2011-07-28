@@ -73,6 +73,11 @@ typedef void (^ScrollViewBlock)(UIScrollView *scrollView);
     delegateFlags.hasChangedURLForCurrentTabController = [delegate respondsToSelector:@selector(tabNavigationController:changedURLForTabController:)];
 }
 
+- (NSUInteger)tabCount
+{
+    return [tabControllers count];
+}
+
 - (void)setTabBarEnabled:(BOOL)enabled
 {
     if (enabled == tabBarEnabled)
