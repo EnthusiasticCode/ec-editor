@@ -161,12 +161,26 @@ typedef void (^ScrollViewBlock)(UIScrollView *scrollView);
     return title;
 }
 
-static void loadCurrentAndAdiacentTabViews(ACTabNavigationController *self)
+/// Utility function that loads the current tab view controller as well as the previous and next if present.
+/// The function also unload any other view in the content scroll view that is not one of the one described.
+/// If onlyIfThisLoadable is not nil, the function will execute the loading phase only if the given 
+/// tab controller is the current or close to it.
+static void loadCurrentAndAdiacentTabViews(ACTabNavigationController *self, ACTabController *onlyIfThisLoadable)
 {
     NSInteger currentTabIndex = [self->tabControllers indexOfObject:self->currentTabController];
     
     NSUInteger minLoadableIndex = currentTabIndex > 0 ? currentTabIndex - 1 : currentTabIndex;
     NSUInteger maxLoadableIndex = currentTabIndex < [self->tabControllers count] - 1 ? currentTabIndex + 1 : currentTabIndex;
+    
+    if (onlyIfThisLoadable != nil)
+    {
+        ECASSERT([self->tabControllers containsObject:onlyIfThisLoadable]);
+        
+        NSUInteger filterIndex = [self->tabControllers indexOfObject:onlyIfThisLoadable];
+        if (filterIndex < minLoadableIndex || filterIndex > maxLoadableIndex)
+            return;
+    }
+    
     [self->tabControllers enumerateObjectsUsingBlock:^(ACTabController *tabController, NSUInteger index, BOOL *stop) {
         if (tabController.isTabViewControllerLoaded)
         {
@@ -414,7 +428,7 @@ static void loadCurrentAndAdiacentTabViews(ACTabNavigationController *self)
     [tabBar setSelectedTabControl:tabController.tabButton animated:animated];
     
     // Load current view/adiacent views
-    loadCurrentAndAdiacentTabViews(self);
+    loadCurrentAndAdiacentTabViews(self, nil);
     [contentScrollView layoutIfNeeded];
     
     CGFloat pageWidth = contentScrollView.bounds.size.width;
@@ -472,9 +486,14 @@ static void loadCurrentAndAdiacentTabViews(ACTabNavigationController *self)
     
     // Set current if no other current controller
     if (currentTabController == nil || (makeAddedTabCurrent && !animated))
+    {
         [self setCurrentTabController:tabController animated:NO];
-    
-#warning TODO load the view if close to current and set the content size anyway
+    }
+    else
+    {
+        loadCurrentAndAdiacentTabViews(self, tabController);
+        [contentScrollView layoutIfNeeded];
+    }
     
     // Inform delegate of added controller immediatly if no animation
     if (!animated)
@@ -632,7 +651,7 @@ static void loadCurrentAndAdiacentTabViews(ACTabNavigationController *self)
         // Update views if current tab
         if (tabController == currentTabController)
         {
-            loadCurrentAndAdiacentTabViews(self);
+            loadCurrentAndAdiacentTabViews(self, nil);
             
             if (delegateFlags.hasDidChangeCurrentTabControllerFromTabController)
                 [delegate tabNavigationController:self didChangeCurrentTabController:currentTabController fromTabController:currentTabController];
@@ -679,7 +698,7 @@ static void loadCurrentAndAdiacentTabViews(ACTabNavigationController *self)
     [tabBar setSelectedTabControl:currentTabController.tabButton animated:YES];
     
     // Load/Unload needed views
-    loadCurrentAndAdiacentTabViews(self);
+    loadCurrentAndAdiacentTabViews(self, nil);
     
     // Informing the delegate
     if (delegateFlags.hasDidChangeCurrentTabControllerFromTabController)
