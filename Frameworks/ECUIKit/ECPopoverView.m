@@ -9,22 +9,18 @@
 #import "ECPopoverView.h"
 #import <QuartzCore/QuartzCore.h>
 
-@interface ECPopoverView () {
-@private
+
+@implementation ECPopoverView {
     CGRect contentRect;
+    CAShapeLayer *contentCorners[4];
 }
 
-- (void)updatePath;
+static void updatePath(ECPopoverView *self);
+static void updateContentCorners(ECPopoverView *self);
 
-@end
+#pragma mark - Properties
 
-
-@implementation ECPopoverView
-
-#pragma mark -
-#pragma mark Properties
-
-@synthesize cornerRadius, contentInsets, shadowOffsetForArrowDirectionUpToAutoOrient;
+@synthesize cornerRadius, contentInsets, contentCornerRadius, shadowOffsetForArrowDirectionUpToAutoOrient;
 @synthesize arrowDirection, arrowPosition, arrowSize, arrowMargin, arrowCornerRadius;
 
 - (void)setContentInsets:(UIEdgeInsets)insets
@@ -50,6 +46,16 @@
     } }];
 }
 
+- (void)setContentCornerRadius:(CGFloat)radius
+{
+    if (radius == contentCornerRadius)
+        return;
+    
+    contentCornerRadius = radius;
+    
+    updateContentCorners(self);
+}
+
 - (UIView *)contentView
 {
     return [self.subviews count] ? [self.subviews objectAtIndex:0] : nil;
@@ -69,7 +75,7 @@
         return;
 
     arrowPosition = position;
-    [self updatePath];
+    updatePath(self);
 }
 
 - (void)setArrowDirection:(UIPopoverArrowDirection)direction
@@ -78,7 +84,7 @@
         return;
     
     arrowDirection = direction;
-    [self updatePath];
+    updatePath(self);
 }
 
 - (void)setBounds:(CGRect)bounds
@@ -88,7 +94,7 @@
     
     [super setBounds:bounds];
     contentRect = UIEdgeInsetsInsetRect(bounds, contentInsets);
-    [self updatePath];
+    updatePath(self);
 }
 
 - (void)setFrame:(CGRect)frame
@@ -98,16 +104,25 @@
     
     [super setFrame:frame];
     contentRect = UIEdgeInsetsInsetRect(self.bounds, contentInsets);
-    [self updatePath];
+    updatePath(self);
 }
 
 - (void)setBackgroundColor:(UIColor *)backgroundColor
 {
-    [(CAShapeLayer *)self.layer setFillColor:backgroundColor.CGColor];
+    CGColorRef color = backgroundColor.CGColor;
+    
+    [(CAShapeLayer *)self.layer setFillColor:color];
+    
+    if (contentCornerRadius > 0)
+    {
+        for (int i = 0; i < 4; ++ i)
+        {
+            contentCorners[i].fillColor = color;
+        }
+    }
 }
 
-#pragma mark -
-#pragma mark UIView Methods
+#pragma mark - UIView Methods
 
 static void preinit(ECPopoverView *self)
 {
@@ -125,7 +140,7 @@ static void preinit(ECPopoverView *self)
 static void init(ECPopoverView *self)
 {    
     self->contentRect = UIEdgeInsetsInsetRect(self.bounds, self->contentInsets);
-    [self updatePath];
+    updatePath(self);
 }
 
 - (id)initWithFrame:(CGRect)frame
@@ -159,9 +174,23 @@ static void init(ECPopoverView *self)
     {
         sub.frame = contentRect;
     }
+    
+    if (contentCorners[0] != nil)
+    {
+        CGRect cornersRect = CGRectInset(contentRect, -.5, -.5);
+        for (int i = 0; i < 4; ++i)
+        {
+            contentCorners[i].position = (CGPoint){
+                (i && i < 3) ? CGRectGetMaxX(cornersRect) : cornersRect.origin.x,
+                (i < 2) ? cornersRect.origin.y : CGRectGetMaxY(cornersRect)
+            };
+        }
+    }
 }
 
-- (void)updatePath
+#pragma mark - Private Methods
+
+static void updatePath(ECPopoverView *self)
 {
     CGRect rect = self.bounds;
     if (CGRectIsEmpty(rect))
@@ -169,17 +198,17 @@ static void init(ECPopoverView *self)
     
     CGMutablePathRef path = CGPathCreateMutable();
     
-    CGFloat localArrowPosition = arrowPosition;
-    if (arrowDirection == UIPopoverArrowDirectionDown)
+    CGFloat localArrowPosition = self->arrowPosition;
+    if (self->arrowDirection == UIPopoverArrowDirectionDown)
         localArrowPosition = (rect.size.width <= localArrowPosition) ? 0 : (rect.size.width - localArrowPosition);
-    else if (arrowDirection == UIPopoverArrowDirectionLeft)
+    else if (self->arrowDirection == UIPopoverArrowDirectionLeft)
         localArrowPosition = (rect.size.height <= localArrowPosition) ? 0 : (rect.size.height - localArrowPosition);
     
-    CGFloat arrowNoCornerSize = arrowSize - arrowCornerRadius;
-    CGFloat arrowLength = arrowMargin;
+    CGFloat arrowNoCornerSize = self->arrowSize - self->arrowCornerRadius;
+    CGFloat arrowLength = self->arrowMargin;
     CGFloat arrowLength2 = arrowLength * 2;
     
-    CGRect innerRect = CGRectInset(rect, cornerRadius, cornerRadius);
+    CGRect innerRect = CGRectInset(rect, self->cornerRadius, self->cornerRadius);
     
     CGFloat inside_right = innerRect.origin.x + innerRect.size.width;
     CGFloat outside_right = rect.origin.x + rect.size.width;
@@ -192,15 +221,15 @@ static void init(ECPopoverView *self)
     
     UIPopoverArrowDirection arrowCorner = 0;
     NSUInteger arrowCornerAtStart = 1UL << 8;
-    if (localArrowPosition <= arrowLength2 + cornerRadius)
+    if (localArrowPosition <= arrowLength2 + self->cornerRadius)
     {
-        arrowCorner = (NSInteger)arrowDirection | arrowCornerAtStart;
+        arrowCorner = (NSInteger)self->arrowDirection | arrowCornerAtStart;
     }
     else if (
-             (arrowDirection <= UIPopoverArrowDirectionDown && localArrowPosition >= rect.size.width - arrowLength2 - cornerRadius)
-             || (arrowDirection > UIPopoverArrowDirectionDown && localArrowPosition >= rect.size.height - arrowLength2 - cornerRadius))
+             (self->arrowDirection <= UIPopoverArrowDirectionDown && localArrowPosition >= rect.size.width - arrowLength2 - self->cornerRadius)
+             || (self->arrowDirection > UIPopoverArrowDirectionDown && localArrowPosition >= rect.size.height - arrowLength2 - self->cornerRadius))
     {
-        arrowCorner = (NSInteger)arrowDirection;
+        arrowCorner = (NSInteger)self->arrowDirection;
     }
     
     // Start position
@@ -210,7 +239,7 @@ static void init(ECPopoverView *self)
         CGPathMoveToPoint(path, NULL, innerRect.origin.x, outside_top);
     
     // Up edge
-    if (arrowDirection & UIPopoverArrowDirectionUp) 
+    if (self->arrowDirection & UIPopoverArrowDirectionUp) 
     {
         if (arrowCorner & UIPopoverArrowDirectionUp)
         {
@@ -219,7 +248,7 @@ static void init(ECPopoverView *self)
                 CGPathAddLineToPoint(path, NULL, outside_left, outside_top - arrowLength);
                 CGPathAddLineToPoint(path, NULL, outside_left + arrowLength, outside_top);
                 CGPathAddLineToPoint(path, NULL, inside_right, outside_top);
-                CGPathAddArcToPoint(path, NULL, outside_right, outside_top, outside_right, inside_top, cornerRadius);
+                CGPathAddArcToPoint(path, NULL, outside_right, outside_top, outside_right, inside_top, self->cornerRadius);
             }
             else
             {
@@ -234,21 +263,21 @@ static void init(ECPopoverView *self)
             CGAffineTransform currentTransform = CGAffineTransformMakeTranslation(currentX, outside_top);
             currentTransform = CGAffineTransformRotate(currentTransform, -M_PI_4);
             CGPathAddLineToPoint(path, &currentTransform, arrowNoCornerSize, 0);
-            CGPathAddArcToPoint(path, &currentTransform, arrowSize, 0, arrowSize, arrowCornerRadius, arrowCornerRadius);
-            CGPathAddLineToPoint(path, &currentTransform, arrowSize, arrowSize);
+            CGPathAddArcToPoint(path, &currentTransform, self->arrowSize, 0, self->arrowSize, self->arrowCornerRadius, self->arrowCornerRadius);
+            CGPathAddLineToPoint(path, &currentTransform, self->arrowSize, self->arrowSize);
             CGPathAddLineToPoint(path, NULL, inside_right, outside_top);
-            CGPathAddArcToPoint(path, NULL, outside_right, outside_top, outside_right, inside_top, cornerRadius);
+            CGPathAddArcToPoint(path, NULL, outside_right, outside_top, outside_right, inside_top, self->cornerRadius);
         }
     }
     else
     {
         CGPathAddLineToPoint(path, NULL, inside_right, outside_top);
         if (!((arrowCorner & UIPopoverArrowDirectionRight) && (arrowCorner & arrowCornerAtStart)))
-            CGPathAddArcToPoint(path, NULL, outside_right, outside_top, outside_right, inside_top, cornerRadius);
+            CGPathAddArcToPoint(path, NULL, outside_right, outside_top, outside_right, inside_top, self->cornerRadius);
     }
     
     // Right edge
-    if (arrowDirection & UIPopoverArrowDirectionRight) 
+    if (self->arrowDirection & UIPopoverArrowDirectionRight) 
     {
         if (arrowCorner & UIPopoverArrowDirectionRight)
         {
@@ -257,7 +286,7 @@ static void init(ECPopoverView *self)
                 CGPathAddLineToPoint(path, NULL, outside_right + arrowLength, outside_top);
                 CGPathAddLineToPoint(path, NULL, outside_right, outside_top + arrowLength);
                 CGPathAddLineToPoint(path, NULL, outside_right, inside_bottom);
-                CGPathAddArcToPoint(path, NULL,  outside_right, outside_bottom, inside_right, outside_bottom, cornerRadius);                    
+                CGPathAddArcToPoint(path, NULL,  outside_right, outside_bottom, inside_right, outside_bottom, self->cornerRadius);                    
             }
             else
             {
@@ -272,21 +301,21 @@ static void init(ECPopoverView *self)
             CGAffineTransform currentTransform = CGAffineTransformMakeTranslation(outside_right, currentY);
             currentTransform = CGAffineTransformRotate(currentTransform, M_PI_4);
             CGPathAddLineToPoint(path, &currentTransform, arrowNoCornerSize, 0);
-            CGPathAddArcToPoint(path, &currentTransform, arrowSize, 0, arrowSize, arrowCornerRadius, arrowCornerRadius);
-            CGPathAddLineToPoint(path, &currentTransform, arrowSize, arrowSize);
+            CGPathAddArcToPoint(path, &currentTransform, self->arrowSize, 0, self->arrowSize, self->arrowCornerRadius, self->arrowCornerRadius);
+            CGPathAddLineToPoint(path, &currentTransform, self->arrowSize, self->arrowSize);
             CGPathAddLineToPoint(path, NULL, outside_right, inside_bottom);
-            CGPathAddArcToPoint(path, NULL,  outside_right, outside_bottom, inside_right, outside_bottom, cornerRadius);
+            CGPathAddArcToPoint(path, NULL,  outside_right, outside_bottom, inside_right, outside_bottom, self->cornerRadius);
         }
     }
     else
     {
         CGPathAddLineToPoint(path, NULL, outside_right, inside_bottom);
         if (!((arrowCorner & UIPopoverArrowDirectionDown) && (arrowCorner & arrowCornerAtStart)))
-            CGPathAddArcToPoint(path, NULL,  outside_right, outside_bottom, inside_right, outside_bottom, cornerRadius);
+            CGPathAddArcToPoint(path, NULL,  outside_right, outside_bottom, inside_right, outside_bottom, self->cornerRadius);
     }
     
     // Bottom edge
-    if (arrowDirection & UIPopoverArrowDirectionDown) 
+    if (self->arrowDirection & UIPopoverArrowDirectionDown) 
     {
         if (arrowCorner & UIPopoverArrowDirectionDown)
         {
@@ -295,7 +324,7 @@ static void init(ECPopoverView *self)
                 CGPathAddLineToPoint(path, NULL, outside_right, outside_bottom + arrowLength);
                 CGPathAddLineToPoint(path, NULL, outside_right - arrowLength, outside_bottom);
                 CGPathAddLineToPoint(path, NULL, innerRect.origin.x, outside_bottom);
-                CGPathAddArcToPoint(path, NULL,  outside_left, outside_bottom, outside_left, inside_bottom, cornerRadius);
+                CGPathAddArcToPoint(path, NULL,  outside_left, outside_bottom, outside_left, inside_bottom, self->cornerRadius);
             }
             else
             {
@@ -310,21 +339,21 @@ static void init(ECPopoverView *self)
             CGAffineTransform currentTransform = CGAffineTransformMakeTranslation(currentX, outside_bottom);
             currentTransform = CGAffineTransformRotate(currentTransform, -M_PI_4);
             CGPathAddLineToPoint(path, &currentTransform, -arrowNoCornerSize, 0);
-            CGPathAddArcToPoint(path, &currentTransform, -arrowSize, 0, -arrowSize, -arrowCornerRadius, arrowCornerRadius);
-            CGPathAddLineToPoint(path, &currentTransform, -arrowSize, -arrowSize);
+            CGPathAddArcToPoint(path, &currentTransform, -self->arrowSize, 0, -self->arrowSize, -self->arrowCornerRadius, self->arrowCornerRadius);
+            CGPathAddLineToPoint(path, &currentTransform, -self->arrowSize, -self->arrowSize);
             CGPathAddLineToPoint(path, NULL, innerRect.origin.x, outside_bottom);
-            CGPathAddArcToPoint(path, NULL,  outside_left, outside_bottom, outside_left, inside_bottom, cornerRadius);
+            CGPathAddArcToPoint(path, NULL,  outside_left, outside_bottom, outside_left, inside_bottom, self->cornerRadius);
         }
     }
     else
     {
         CGPathAddLineToPoint(path, NULL, innerRect.origin.x, outside_bottom);
         if (!((arrowCorner & UIPopoverArrowDirectionLeft) && (arrowCorner & arrowCornerAtStart)))
-            CGPathAddArcToPoint(path, NULL,  outside_left, outside_bottom, outside_left, inside_bottom, cornerRadius);
+            CGPathAddArcToPoint(path, NULL,  outside_left, outside_bottom, outside_left, inside_bottom, self->cornerRadius);
     }
     
     // Left edge
-    if (arrowDirection & UIPopoverArrowDirectionLeft) 
+    if (self->arrowDirection & UIPopoverArrowDirectionLeft) 
     {
         if (arrowCorner & UIPopoverArrowDirectionLeft)
         {
@@ -333,7 +362,7 @@ static void init(ECPopoverView *self)
                 CGPathAddLineToPoint(path, NULL, outside_left - arrowLength, outside_bottom);
                 CGPathAddLineToPoint(path, NULL, outside_left, outside_bottom - arrowLength);
                 CGPathAddLineToPoint(path, NULL, outside_left, inside_top);
-                CGPathAddArcToPoint(path, NULL,  outside_left, outside_top, innerRect.origin.x, outside_top, cornerRadius);                    
+                CGPathAddArcToPoint(path, NULL,  outside_left, outside_top, innerRect.origin.x, outside_top, self->cornerRadius);                    
             }
             else
             {
@@ -348,17 +377,17 @@ static void init(ECPopoverView *self)
             CGAffineTransform currentTransform = CGAffineTransformMakeTranslation(outside_left, currentY);
             currentTransform = CGAffineTransformRotate(currentTransform, M_PI_4);
             CGPathAddLineToPoint(path, &currentTransform, -arrowNoCornerSize, 0);
-            CGPathAddArcToPoint(path, &currentTransform, -arrowSize, 0, -arrowSize, -arrowCornerRadius, arrowCornerRadius);
-            CGPathAddLineToPoint(path, &currentTransform, -arrowSize, -arrowSize);
+            CGPathAddArcToPoint(path, &currentTransform, -self->arrowSize, 0, -self->arrowSize, -self->arrowCornerRadius, self->arrowCornerRadius);
+            CGPathAddLineToPoint(path, &currentTransform, -self->arrowSize, -self->arrowSize);
             CGPathAddLineToPoint(path, NULL, outside_left, inside_top);
-            CGPathAddArcToPoint(path, NULL,  outside_left, outside_top, innerRect.origin.x, outside_top, cornerRadius); 
+            CGPathAddArcToPoint(path, NULL,  outside_left, outside_top, innerRect.origin.x, outside_top, self->cornerRadius); 
         }
     }
     else
     {
         CGPathAddLineToPoint(path, NULL, outside_left, inside_top);
         if (!((arrowCorner & UIPopoverArrowDirectionUp) && (arrowCorner & arrowCornerAtStart)))
-            CGPathAddArcToPoint(path, NULL,  outside_left, outside_top, innerRect.origin.x, outside_top, cornerRadius);
+            CGPathAddArcToPoint(path, NULL,  outside_left, outside_top, innerRect.origin.x, outside_top, self->cornerRadius);
     }
     
     CGPathCloseSubpath(path);
@@ -372,30 +401,30 @@ static void init(ECPopoverView *self)
     {
         layer.shadowPath = path;
         
-        if (!CGSizeEqualToSize(shadowOffsetForArrowDirectionUpToAutoOrient, CGSizeZero))
+        if (!CGSizeEqualToSize(self->shadowOffsetForArrowDirectionUpToAutoOrient, CGSizeZero))
         {
-            switch (arrowDirection) {
+            switch (self->arrowDirection) {
                 case UIPopoverArrowDirectionDown:
                 {
-                    layer.shadowOffset = CGSizeMake(shadowOffsetForArrowDirectionUpToAutoOrient.width, -shadowOffsetForArrowDirectionUpToAutoOrient.height);
+                    layer.shadowOffset = CGSizeMake(self->shadowOffsetForArrowDirectionUpToAutoOrient.width, -self->shadowOffsetForArrowDirectionUpToAutoOrient.height);
                     break;
                 }
                     
                 case UIPopoverArrowDirectionLeft:
                 {
-                    layer.shadowOffset = CGSizeMake(shadowOffsetForArrowDirectionUpToAutoOrient.height, shadowOffsetForArrowDirectionUpToAutoOrient.width);
+                    layer.shadowOffset = CGSizeMake(self->shadowOffsetForArrowDirectionUpToAutoOrient.height, self->shadowOffsetForArrowDirectionUpToAutoOrient.width);
                     break;
                 }
                     
                 case UIPopoverArrowDirectionRight:
                 {
-                    layer.shadowOffset = CGSizeMake(-shadowOffsetForArrowDirectionUpToAutoOrient.height, shadowOffsetForArrowDirectionUpToAutoOrient.width);
+                    layer.shadowOffset = CGSizeMake(-self->shadowOffsetForArrowDirectionUpToAutoOrient.height, self->shadowOffsetForArrowDirectionUpToAutoOrient.width);
                     break;
                 }
                     
                 default:
                 {
-                    layer.shadowOffset = shadowOffsetForArrowDirectionUpToAutoOrient;
+                    layer.shadowOffset = self->shadowOffsetForArrowDirectionUpToAutoOrient;
                     break;
                 }
             }
@@ -403,6 +432,47 @@ static void init(ECPopoverView *self)
     }
     
     CGPathRelease(path); 
+}
+
+static void updateContentCorners(ECPopoverView *self)
+{
+    CGFloat radius = self->contentCornerRadius;
+    
+    // Remove from layer if no content corner radius
+    if (radius == 0)
+    {
+        for (int i = 0; i < 4; ++i)
+        {
+            [self->contentCorners[i] removeFromSuperlayer];
+            self->contentCorners[i] = nil;
+        }
+        return;
+    }
+    
+    // Create top left inverse corner shape
+    CGMutablePathRef path = CGPathCreateMutable();
+    CGPathMoveToPoint(path, NULL, 0, radius);
+    CGPathAddLineToPoint(path, NULL, 0, 0);
+    CGPathAddLineToPoint(path, NULL, radius, 0);
+    CGPathAddArcToPoint(path, NULL, 0, 0, 0, radius, radius);
+    
+    CGColorRef backgroundColor = [(CAShapeLayer *)self.layer fillColor];
+
+    // Create layers
+    for (int i = 0; i < 4; ++i)
+    {
+        if (!self->contentCorners[i])
+            self->contentCorners[i] = [CAShapeLayer layer];
+        self->contentCorners[i].affineTransform = CGAffineTransformMakeRotation(M_PI_2 * i);
+        self->contentCorners[i].path = path;
+        self->contentCorners[i].fillColor = backgroundColor;
+        self->contentCorners[i].zPosition = 100;
+        [self.layer addSublayer:self->contentCorners[i]];
+    }
+    
+    CGPathRelease(path);
+
+    [self setNeedsLayout];
 }
 
 @end

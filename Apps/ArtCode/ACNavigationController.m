@@ -81,6 +81,7 @@
     // TODO create internal views if not connected in IB
     
     popoverController = [ECPopoverController new];
+    popoverController.popoverView.contentCornerRadius = 4;
     popoverController.popoverView.layer.shadowOpacity = 0.5;
     popoverController.popoverView.layer.shadowRadius = 4;
     popoverController.popoverView.shadowOffsetForArrowDirectionUpToAutoOrient = CGSizeMake(0, 3);
@@ -216,10 +217,7 @@
     {
         popoverBrowseFileToolController = [ACFileTableController new];
         // TODO size that fits
-        popoverBrowseFileToolController.contentSizeForViewInPopover = CGSizeMake(268, 220);
-        // TODO more performant, maybe move inside popover
-        popoverBrowseFileToolController.view.layer.cornerRadius = 3;
-        popoverBrowseFileToolController.view.layer.masksToBounds = YES;
+        popoverBrowseFileToolController.contentSizeForViewInPopover = CGSizeMake(268, 219);
     }
     
     // Setup file browser
