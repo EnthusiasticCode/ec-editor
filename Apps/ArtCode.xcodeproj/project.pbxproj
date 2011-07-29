@@ -58,6 +58,7 @@
 		CD7D2B4813C0D55700B889EE /* ACFileTableController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD7D2B4713C0D55700B889EE /* ACFileTableController.m */; };
 		CD7D2B4B13C0D5B800B889EE /* MainStoryboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CD7D2B4913C0D5B800B889EE /* MainStoryboard.storyboard */; };
 		CD7D2B4E13C0D5FB00B889EE /* ToolPanelStoryboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CD7D2B4D13C0D5FB00B889EE /* ToolPanelStoryboard.storyboard */; };
+		CD8108D513E31A28000E1941 /* ACColorSelectionControl.m in Sources */ = {isa = PBXBuildFile; fileRef = CD8108D413E31A28000E1941 /* ACColorSelectionControl.m */; };
 		CD8A677C13D0BB000037D742 /* ipad_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CD8A677B13D0BB000037D742 /* ipad_icon.png */; };
 		CD9CD95D13DC1854007964D3 /* ECCodeView.m in Sources */ = {isa = PBXBuildFile; fileRef = CD9CD95213DC1854007964D3 /* ECCodeView.m */; };
 		CD9CD95E13DC1854007964D3 /* ECCodeViewBase.m in Sources */ = {isa = PBXBuildFile; fileRef = CD9CD95413DC1854007964D3 /* ECCodeViewBase.m */; };
@@ -205,6 +206,8 @@
 		CD7D2B4713C0D55700B889EE /* ACFileTableController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACFileTableController.m; sourceTree = "<group>"; };
 		CD7D2B4913C0D5B800B889EE /* MainStoryboard.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = MainStoryboard.storyboard; sourceTree = "<group>"; };
 		CD7D2B4D13C0D5FB00B889EE /* ToolPanelStoryboard.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = ToolPanelStoryboard.storyboard; sourceTree = "<group>"; };
+		CD8108D313E31A28000E1941 /* ACColorSelectionControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACColorSelectionControl.h; sourceTree = "<group>"; };
+		CD8108D413E31A28000E1941 /* ACColorSelectionControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACColorSelectionControl.m; sourceTree = "<group>"; };
 		CD8A677B13D0BB000037D742 /* ipad_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ipad_icon.png; sourceTree = "<group>"; };
 		CD9CD95113DC1854007964D3 /* ECCodeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeView.h; sourceTree = "<group>"; };
 		CD9CD95213DC1854007964D3 /* ECCodeView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeView.m; sourceTree = "<group>"; };
@@ -228,7 +231,7 @@
 		CD9CD96F13DC22AF007964D3 /* ACCodeFileController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACCodeFileController.m; sourceTree = "<group>"; };
 		CDA0155E13DF0C210087B518 /* ACTabNavigationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACTabNavigationController.h; sourceTree = "<group>"; };
 		CDA0155F13DF0C210087B518 /* ACTabNavigationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACTabNavigationController.m; sourceTree = "<group>"; };
-		CDD40B0113E1A046008AC36B /* ACPopoverHistoryToolController.h */ = {isa = PBXFileReference; fileEncoding = 4; path = ACPopoverHistoryToolController.h; sourceTree = "<group>"; };
+		CDD40B0113E1A046008AC36B /* ACPopoverHistoryToolController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACPopoverHistoryToolController.h; sourceTree = "<group>"; };
 		CDD40B0213E1A046008AC36B /* ACPopoverHistoryToolController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACPopoverHistoryToolController.m; sourceTree = "<group>"; };
 		CDE3F14613C0DDD500DFFAFF /* Inconsolata-dz.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Inconsolata-dz.otf"; sourceTree = "<group>"; };
 		CDFF3DAA13C0D71900108DE2 /* NSTimer+block.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSTimer+block.h"; sourceTree = "<group>"; };
@@ -366,7 +369,6 @@
 			children = (
 				CD7D2B0313C0CDD400B889EE /* ECFoundation */,
 				CD7D2B0413C0CDDC00B889EE /* ECUIKit */,
-				CD7D2B0513C0CE0700B889EE /* HFHexFiend */,
 				CD7D2B0613C0CE3200B889EE /* Apple Frameworks */,
 			);
 			name = Frameworks;
@@ -419,14 +421,6 @@
 			);
 			name = ECUIKit;
 			path = ../Frameworks/ECUIKit;
-			sourceTree = "<group>";
-		};
-		CD7D2B0513C0CE0700B889EE /* HFHexFiend */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = HFHexFiend;
-			path = ../Frameworks/HFHexFiend;
 			sourceTree = "<group>";
 		};
 		CD7D2B0613C0CE3200B889EE /* Apple Frameworks */ = {
@@ -509,6 +503,7 @@
 				CD7D2B3213C0D4C700B889EE /* ACProjectTableController.m */,
 				CD7D2B2F13C0D4C700B889EE /* ACProjectTableCell.h */,
 				CD7D2B3013C0D4C700B889EE /* ACProjectTableCell.m */,
+				CD8108D613E334F7000E1941 /* Views and Controls */,
 			);
 			name = Projects;
 			sourceTree = "<group>";
@@ -598,6 +593,15 @@
 				CD7D2B2A13C0D4B700B889EE /* ACTopBarView.m */,
 			);
 			name = "Views and Segues";
+			sourceTree = "<group>";
+		};
+		CD8108D613E334F7000E1941 /* Views and Controls */ = {
+			isa = PBXGroup;
+			children = (
+				CD8108D313E31A28000E1941 /* ACColorSelectionControl.h */,
+				CD8108D413E31A28000E1941 /* ACColorSelectionControl.m */,
+			);
+			name = "Views and Controls";
 			sourceTree = "<group>";
 		};
 		CD9CD94F13DC17FE007964D3 /* Code View */ = {
@@ -892,6 +896,7 @@
 				B732D07213DDE02100637FBE /* ACStateOrderedSetWrapper.m in Sources */,
 				CDA0156013DF0C210087B518 /* ACTabNavigationController.m in Sources */,
 				CDD40B0313E1A046008AC36B /* ACPopoverHistoryToolController.m in Sources */,
+				CD8108D513E31A28000E1941 /* ACColorSelectionControl.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

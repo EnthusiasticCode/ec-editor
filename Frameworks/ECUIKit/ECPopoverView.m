@@ -122,6 +122,32 @@ static void updateContentCorners(ECPopoverView *self);
     }
 }
 
+- (CGFloat)shadowRadius
+{
+    return self.layer.shadowRadius;
+}
+
+- (void)setShadowRadius:(CGFloat)shadowRadius
+{
+    self.layer.shadowRadius = shadowRadius;
+}
+
+- (CGFloat)shadowOpacity
+{
+    return self.layer.shadowOpacity;
+}
+
+- (void)setShadowOpacity:(CGFloat)shadowOpacity
+{
+    self.layer.shadowOpacity = shadowOpacity;
+}
+
+- (void)setShadowOffsetForArrowDirectionUpToAutoOrient:(CGSize)offset
+{
+    shadowOffsetForArrowDirectionUpToAutoOrient = offset;
+    updatePath(self);
+}
+
 #pragma mark - UIView Methods
 
 static void preinit(ECPopoverView *self)

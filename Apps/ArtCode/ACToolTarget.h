@@ -10,7 +10,11 @@
 
 @class ACToolController;
 
+// TODO rename/rework this protocol
+// TODO integrate in navigation controller didChangeCurrentTabController..
 @protocol ACToolTarget <NSObject>
+
++ (id)newToolTargetController;
 
 - (void)openURL:(NSURL *)url;
 

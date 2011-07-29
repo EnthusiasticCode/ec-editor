@@ -9,6 +9,8 @@
 #import "ArtCodeAppDelegate.h"
 
 #import "AppStyle.h"
+#import "ECPopoverView.h"
+
 #import "ACNavigationController.h"
 #import "ACTopBarView.h"
 #import "ACToolPanelController.h"
@@ -36,6 +38,13 @@
     id textFieldAppearance = [UITextField appearance];
     [textFieldAppearance setTextColor:[UIColor styleForegroundColor]];
     [textFieldAppearance setFont:defaultFont];
+    
+    // Generic popover
+    id popoverAppearance = [ECPopoverView appearance];
+    [popoverAppearance setContentCornerRadius: 4];
+    [popoverAppearance setShadowOpacity:0.5];
+    [popoverAppearance setShadowRadius:4];
+    [popoverAppearance setShadowOffsetForArrowDirectionUpToAutoOrient:CGSizeMake(0, 3)];
     
     ////////////////////////////////////////////////////////////////////////////
     // Button in top bar
@@ -167,7 +176,7 @@
     else
         controllerClass = [ACFileTableController class];
     
-    UIViewController<ACToolTarget> *controller = [[controllerClass alloc] init];
+    UIViewController<ACToolTarget> *controller = [controllerClass newToolTargetController];
     [controller openURL:url];
     return controller; // TODO initWithNibName:name of class
 }

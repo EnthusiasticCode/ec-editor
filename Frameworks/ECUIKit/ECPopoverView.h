@@ -15,15 +15,19 @@
 
 @property (nonatomic) CGFloat cornerRadius UI_APPEARANCE_SELECTOR;
 
+@property (nonatomic) UIEdgeInsets contentInsets UI_APPEARANCE_SELECTOR;
+
 /// Specify a shadow offset to apply as the layer shadow offset that will be
 /// automaticaly oriented based on the arrow direction.
-@property (nonatomic) CGSize shadowOffsetForArrowDirectionUpToAutoOrient;
+@property (nonatomic) CGSize shadowOffsetForArrowDirectionUpToAutoOrient UI_APPEARANCE_SELECTOR;
 
-@property (nonatomic) UIEdgeInsets contentInsets UI_APPEARANCE_SELECTOR;
+@property (nonatomic) CGFloat shadowOpacity UI_APPEARANCE_SELECTOR;
+
+@property (nonatomic) CGFloat shadowRadius UI_APPEARANCE_SELECTOR;
 
 /// If greater than 0, this property will make the view apply the given corner radius to
 /// content in an efficient way.
-@property (nonatomic) CGFloat contentCornerRadius;
+@property (nonatomic) CGFloat contentCornerRadius UI_APPEARANCE_SELECTOR;
 
 #pragma mark Content
 

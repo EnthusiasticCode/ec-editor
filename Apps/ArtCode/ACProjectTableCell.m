@@ -9,53 +9,75 @@
 #import "ACProjectTableCell.h"
 #import "AppStyle.h"
 
+
 static NSCache *imagesCache = nil;
 
-
 @implementation ACProjectTableCell
-@synthesize titleLabel;
-@synthesize iconView;
+@synthesize iconButton, iconLabelColor;
+
+- (void)setIconLabelColor:(UIColor *)color
+{
+    iconLabelColor = color;
+    
+    UIImage *image = [imagesCache objectForKey:color];
+    if (!image)
+    {
+        image = [UIImage styleProjectImageWithSize:CGSizeMake(32, 33) labelColor:color];
+        [imagesCache setObject:image forKey:color];
+    }
+    
+    [iconButton setImage:image forState:UIControlStateNormal];
+}
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
     if ((self = [super initWithStyle:style reuseIdentifier:reuseIdentifier]))
     {
-        // TODO Remove when storyboarding reuse identifier is fixed
         //
-        self.textLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-
-        self.textLabel.backgroundColor = [UIColor clearColor];
-        self.textLabel.font = [UIFont styleFontWithSize:18];
-        self.textLabel.textColor = [UIColor styleForegroundColor];
-        self.textLabel.highlightedTextColor = [UIColor styleForegroundColor];
-        self.textLabel.shadowColor = [UIColor styleForegroundShadowColor];
-        self.textLabel.shadowOffset = CGSizeMake(0, 1);
         
-        //
-        if (!imagesCache)
-            imagesCache = [NSCache new];
+        if (!imagesCache) imagesCache = [NSCache new];
         UIImage *image = [imagesCache objectForKey:[UIColor styleForegroundColor]];
         if (!image)
         {
             image = [UIImage styleProjectImageWithSize:CGSizeMake(32, 33) labelColor:[UIColor styleForegroundColor]];
             [imagesCache setObject:image forKey:[UIColor styleForegroundColor]];
         }
-        self.iconView.image = image;
-        self.imageView.image = image;
-        [self.imageView sizeToFit];
+        
+        // 
+        if (!iconButton)
+        {
+            iconButton = [UIButton new];
+            iconButton.adjustsImageWhenDisabled = NO;
+            iconButton.adjustsImageWhenHighlighted = NO;
+            [self addSubview:iconButton];
+        }
+        [iconButton setImage:image forState:UIControlStateNormal];
+        [iconButton sizeToFit];
+        iconButton.enabled = NO;
         
         //
-        self.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+        static UIFont *cellFont = nil;
+        if (!cellFont) cellFont = [UIFont styleFontWithSize:18];
+
+        //
+        self.textLabel.backgroundColor = [UIColor clearColor];
+        self.textLabel.font = cellFont;
+        self.textLabel.textColor = [UIColor styleForegroundColor];
+        self.textLabel.highlightedTextColor = [UIColor styleForegroundColor];
+        self.textLabel.shadowColor = [UIColor styleForegroundShadowColor];
+        self.textLabel.shadowOffset = CGSizeMake(0, 1);
         
+        //
         static UIImage *disclosureImage = nil;
         if (!disclosureImage)
             disclosureImage = [UIImage styleTableDisclosureImageWithColor:[UIColor styleForegroundColor] shadowColor:[UIColor whiteColor]];
+        
+        self.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
         
         self.accessoryView = [[UIImageView alloc] initWithImage:disclosureImage];
         [self addSubview:self.accessoryView];
         
         //
-//        self.editingAccessoryView = [[UIImageView alloc] initWithImage:[UIImage styleDisclosureImage]];
         self.showsReorderControl = YES;
         
         //
@@ -78,7 +100,6 @@ static NSCache *imagesCache = nil;
     [super layoutSubviews];
     
     BOOL editing = self.isEditing;
-    
     CGRect bounds = self.bounds;
     CGFloat middleY = CGRectGetMidY(bounds);
     
@@ -86,10 +107,8 @@ static NSCache *imagesCache = nil;
     
     self.accessoryView.center = CGPointMake(bounds.size.width - (editing ? 0 : 35.5), middleY + .5);
     
-//    NSLog(@"-");
     for (UIView *view in self.subviews)
     {
-//        NSLog(@"%@", [view class]);
         if ([view isKindOfClass:NSClassFromString(@"UITableViewCellReorderControl")]) { //UITableViewCellEditControl
             // TODO also change image
             view.center = CGPointMake(bounds.size.width - 35, middleY);
@@ -97,6 +116,17 @@ static NSCache *imagesCache = nil;
     }
     
     self.editingAccessoryView.frame = CGRectMake(0, 0, 100, 100);
+    
+    iconButton.center = CGPointMake(editing ? 35 : 30, middleY);
+    
+    self.textLabel.frame = CGRectMake(editing ? 60 : 50, 0, bounds.size.width - 100, bounds.size.height);
+}
+
+- (void)setEditing:(BOOL)editing animated:(BOOL)animated
+{
+    [super setEditing:editing animated:animated];
+    
+    iconButton.enabled = editing;
 }
 
 @end

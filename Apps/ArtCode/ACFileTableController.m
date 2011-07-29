@@ -59,6 +59,11 @@
 
 #pragma mark - Tool Target Methods
 
++ (id)newToolTargetController
+{
+    return [ACFileTableController new];
+}
+
 - (void)openURL:(NSURL *)url
 {
     

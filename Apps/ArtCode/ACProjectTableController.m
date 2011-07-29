@@ -12,8 +12,13 @@
 #import "ACState.h"
 #import "ACStateProject.h"
 #import "ACNavigationController.h"
+#import "ACColorSelectionControl.h"
 
-@implementation ACProjectTableController
+#import "ECPopoverController.h"
+
+@implementation ACProjectTableController {
+    ECPopoverController *popoverLabelColorController;
+}
 
 #pragma mark - View lifecycle
 
@@ -26,7 +31,19 @@
     self.tableView.backgroundColor = [UIColor styleBackgroundColor];
 }
 
-#pragma mark - ACNavigable Protocol
+- (void)didReceiveMemoryWarning
+{
+    [super didReceiveMemoryWarning];
+    
+    popoverLabelColorController = nil;
+}
+
+#pragma mark - Tool Target Protocol
+
++ (id)newToolTargetController
+{
+    return [ACProjectTableController new];
+}
 
 - (void)openURL:(NSURL *)url
 {
@@ -46,6 +63,50 @@
 - (void)applyFilter:(NSString *)filter
 {
     // TODO filter
+}
+
+#pragma mark - Color label selection methods
+
+- (void)colorSelectionAction:(ACColorSelectionControl *)sender
+{
+    ACProjectTableCell *cell = (ACProjectTableCell *)sender.userInfo;
+    cell.iconLabelColor = sender.selectedColor;
+    
+    [popoverLabelColorController dismissPopoverAnimated:YES];
+}
+
+
+- (void)labelColorAction:(id)sender
+{
+    if (!popoverLabelColorController)
+    {
+        ACColorSelectionControl *colorControl = [ACColorSelectionControl new];
+        colorControl.colorCellsMargin = 3;
+        colorControl.columns = 3;
+        colorControl.rows = 2;
+        colorControl.colors = [NSArray arrayWithObjects:
+                               [UIColor colorWithRed:255./255. green:106./255. blue:89./255. alpha:1], 
+                               [UIColor colorWithRed:255./255. green:184./255. blue:62./255. alpha:1], 
+                               [UIColor colorWithRed:237./255. green:233./255. blue:68./255. alpha:1],
+                               [UIColor colorWithRed:168./255. green:230./255. blue:75./255. alpha:1],
+                               [UIColor colorWithRed:93./255. green:157./255. blue:255./255. alpha:1],
+                               [UIColor styleForegroundColor], nil];
+        [colorControl addTarget:self action:@selector(colorSelectionAction:) forControlEvents:UIControlEventTouchUpInside];
+        
+        UIViewController *viewController = [UIViewController new];
+        viewController.contentSizeForViewInPopover = CGSizeMake(300, 100);
+        viewController.view = colorControl;
+        
+        popoverLabelColorController = [[ECPopoverController alloc] initWithContentViewController:viewController];
+    }
+    
+    // Retrieve cell
+    id cell = sender;
+    while (cell && ![cell isKindOfClass:[UITableViewCell class]])
+        cell = [cell superview];
+    [(ACColorSelectionControl *)popoverLabelColorController.contentViewController.view setUserInfo:cell];
+    
+    [popoverLabelColorController presentPopoverFromRect:[sender frame] inView:[sender superview] permittedArrowDirections:UIPopoverArrowDirectionLeft animated:YES];
 }
 
 #pragma mark - Table view data source
@@ -71,13 +132,14 @@
         cellBackgroundImage = [UIImage styleBackgroundImageWithColor:[UIColor styleBackgroundColor] borderColor:[UIColor styleForegroundColor] insets:UIEdgeInsetsMake(4, 7, 4, 7) arrowSize:CGSizeZero roundingCorners:UIRectCornerAllCorners];
     if (!cellHighlightedImage)
         cellHighlightedImage = [UIImage styleBackgroundImageWithColor:[UIColor styleHighlightColor] borderColor:[UIColor styleForegroundColor] insets:UIEdgeInsetsMake(4, 7, 4, 7) arrowSize:CGSizeZero roundingCorners:UIRectCornerAllCorners];
-    
+
     ACProjectTableCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     if (cell == nil)
     {
         cell = [[ACProjectTableCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
         cell.backgroundView = [[UIImageView alloc] initWithImage:cellBackgroundImage];
         cell.selectedBackgroundView = [[UIImageView alloc] initWithImage:cellHighlightedImage];
+        [cell.iconButton addTarget:self action:@selector(labelColorAction:) forControlEvents:UIControlEventTouchUpInside];
     }
     
     // Configure the cell...
