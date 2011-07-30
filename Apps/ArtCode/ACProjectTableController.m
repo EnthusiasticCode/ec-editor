@@ -81,7 +81,7 @@
     if (!popoverLabelColorController)
     {
         ACColorSelectionControl *colorControl = [ACColorSelectionControl new];
-        colorControl.colorCellsMargin = 3;
+        colorControl.colorCellsMargin = 2;
         colorControl.columns = 3;
         colorControl.rows = 2;
         colorControl.colors = [NSArray arrayWithObjects:
@@ -94,7 +94,7 @@
         [colorControl addTarget:self action:@selector(colorSelectionAction:) forControlEvents:UIControlEventTouchUpInside];
         
         UIViewController *viewController = [UIViewController new];
-        viewController.contentSizeForViewInPopover = CGSizeMake(300, 100);
+        viewController.contentSizeForViewInPopover = CGSizeMake(145, 90);
         viewController.view = colorControl;
         
         popoverLabelColorController = [[ECPopoverController alloc] initWithContentViewController:viewController];
