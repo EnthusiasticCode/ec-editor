@@ -116,8 +116,8 @@
     [backButton addGestureRecognizer:[[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(jumpBarBackLongAction:)]];
     jumpBar.backElement = backButton;
     //
-    jumpBar.textElement.leftView = [[UIImageView alloc] initWithImage:[UIImage styleSymbolImageWithColor:[UIColor styleSymbolColorBlue] letter:@"M"]];
-    jumpBar.textElement.leftViewMode = UITextFieldViewModeUnlessEditing;
+//    jumpBar.textElement.leftView = [[UIImageView alloc] initWithImage:[UIImage styleSymbolImageWithColor:[UIColor styleSymbolColorBlue] letter:@"M"]];
+//    jumpBar.textElement.leftViewMode = UITextFieldViewModeUnlessEditing;
     
     ////////////////////////////////////////////////////////////////////////////
     // Tool panel gesture recognizer

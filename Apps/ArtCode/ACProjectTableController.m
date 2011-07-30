@@ -144,7 +144,7 @@
     
     // Configure the cell...
     //[cell.textLabel setText:[[[ACState sharedState].projects objectAtIndex:indexPath.row] name]];
-    cell.textLabel.text = @"Project";
+    cell.titleField.text = @"Project";
     
     return cell;
 }

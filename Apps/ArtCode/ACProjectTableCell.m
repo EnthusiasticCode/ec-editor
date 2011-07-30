@@ -14,6 +14,7 @@ static NSCache *imagesCache = nil;
 
 @implementation ACProjectTableCell
 @synthesize iconButton, iconLabelColor;
+@synthesize titleField;
 
 - (void)setIconLabelColor:(UIColor *)color
 {
@@ -60,12 +61,22 @@ static NSCache *imagesCache = nil;
         if (!cellFont) cellFont = [UIFont styleFontWithSize:18];
 
         //
-        self.textLabel.backgroundColor = [UIColor clearColor];
-        self.textLabel.font = cellFont;
-        self.textLabel.textColor = [UIColor styleForegroundColor];
-        self.textLabel.highlightedTextColor = [UIColor styleForegroundColor];
-        self.textLabel.shadowColor = [UIColor styleForegroundShadowColor];
-        self.textLabel.shadowOffset = CGSizeMake(0, 1);
+        if (!titleField)
+        {
+            titleField = [UITextField new];
+            titleField.backgroundColor = [UIColor clearColor];
+            titleField.textColor = [UIColor styleForegroundColor];
+            titleField.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
+            titleField.autocorrectionType = UITextAutocorrectionTypeNo;
+            titleField.spellCheckingType = UITextSpellCheckingTypeNo;
+            titleField.font = cellFont;
+            titleField.adjustsFontSizeToFitWidth = YES;
+            titleField.enabled = NO;
+//            titleField.highlightedTextColor = [UIColor styleForegroundColor];
+//            titleField.shadowColor = [UIColor styleForegroundShadowColor];
+//            titleField.shadowOffset = CGSizeMake(0, 1);
+            [self addSubview:titleField];
+        }
         
         //
         static UIImage *disclosureImage = nil;
@@ -119,7 +130,7 @@ static NSCache *imagesCache = nil;
     
     iconButton.center = CGPointMake(editing ? 35 : 30, middleY);
     
-    self.textLabel.frame = CGRectMake(editing ? 60 : 50, 0, bounds.size.width - 100, bounds.size.height);
+    titleField.frame = CGRectMake(editing ? 60 : 50, 0, bounds.size.width - 130, bounds.size.height);
 }
 
 - (void)setEditing:(BOOL)editing animated:(BOOL)animated
@@ -127,6 +138,7 @@ static NSCache *imagesCache = nil;
     [super setEditing:editing animated:animated];
     
     iconButton.enabled = editing;
+    titleField.enabled = editing;
 }
 
 @end

@@ -13,6 +13,8 @@
 
 @property (nonatomic, strong) IBOutlet UIButton *iconButton;
 
+@property (nonatomic, strong) IBOutlet UITextField *titleField;
+
 @property (nonatomic, strong) UIColor *iconLabelColor;
 
 @end
