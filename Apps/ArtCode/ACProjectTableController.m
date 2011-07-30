@@ -7,14 +7,18 @@
 //
 
 #import "ACProjectTableController.h"
-#import "ACProjectTableCell.h"
 #import "AppStyle.h"
+#import "ACEditableTableCell.h"
+#import "ACColorSelectionControl.h"
+
 #import "ACState.h"
 #import "ACStateProject.h"
 #import "ACNavigationController.h"
-#import "ACColorSelectionControl.h"
 
 #import "ECPopoverController.h"
+
+#define STATIC_OBJECT(typ, nam, init) static typ *nam = nil; if (!nam) nam = init
+
 
 @implementation ACProjectTableController {
     ECPopoverController *popoverLabelColorController;
@@ -29,6 +33,8 @@
     self.tableView.rowHeight = 55;
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     self.tableView.backgroundColor = [UIColor styleBackgroundColor];
+    
+//    self.tableView.allowsMultipleSelectionDuringEditing = YES;
 }
 
 - (void)didReceiveMemoryWarning
@@ -65,12 +71,27 @@
     // TODO filter
 }
 
+#pragma mark - Colored icons
+
+- (UIImage *)projectIconWithColor:(UIColor *)color
+{
+    // Icons cache
+    STATIC_OBJECT(NSCache, iconCache, [NSCache new]);
+    
+    // Cell icon
+    UIImage *cellIcon = [iconCache objectForKey:color];
+    if (!cellIcon)
+        cellIcon = [UIImage styleProjectImageWithSize:CGSizeMake(32, 33) labelColor:color];
+    
+    return cellIcon;
+}
+
 #pragma mark - Color label selection methods
 
 - (void)colorSelectionAction:(ACColorSelectionControl *)sender
 {
-    ACProjectTableCell *cell = (ACProjectTableCell *)sender.userInfo;
-    cell.iconLabelColor = sender.selectedColor;
+//    ACProjectTableCell *cell = (ACProjectTableCell *)sender.userInfo;
+//    cell.iconLabelColor = sender.selectedColor;
     
     [popoverLabelColorController dismissPopoverAnimated:YES];
 }
@@ -122,29 +143,43 @@
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    // TODO just for test, recreate all cells properly
-    static NSString *CellIdentifier = @"ProjectCell";
-    static UIImage *cellBackgroundImage = nil;
-    static UIImage *cellHighlightedImage = nil;
+{    
+    // Backgrounds images
+    STATIC_OBJECT(UIImage, cellBackgroundImage, [UIImage styleBackgroundImageWithColor:[UIColor styleBackgroundColor] borderColor:[UIColor styleForegroundColor] insets:UIEdgeInsetsMake(4, 7, 4, 7) arrowSize:CGSizeZero roundingCorners:UIRectCornerAllCorners]);
+    STATIC_OBJECT(UIImage, cellHighlightedImage, [UIImage styleBackgroundImageWithColor:[UIColor styleHighlightColor] borderColor:[UIColor styleForegroundColor] insets:UIEdgeInsetsMake(4, 7, 4, 7) arrowSize:CGSizeZero roundingCorners:UIRectCornerAllCorners]);
     
-    if (!cellBackgroundImage)
-        cellBackgroundImage = [UIImage styleBackgroundImageWithColor:[UIColor styleBackgroundColor] borderColor:[UIColor styleForegroundColor] insets:UIEdgeInsetsMake(4, 7, 4, 7) arrowSize:CGSizeZero roundingCorners:UIRectCornerAllCorners];
-    if (!cellHighlightedImage)
-        cellHighlightedImage = [UIImage styleBackgroundImageWithColor:[UIColor styleHighlightColor] borderColor:[UIColor styleForegroundColor] insets:UIEdgeInsetsMake(4, 7, 4, 7) arrowSize:CGSizeZero roundingCorners:UIRectCornerAllCorners];
-
-    ACProjectTableCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+    // Create cell
+    static NSString *CellIdentifier = @"ProjectCell";
+    ACEditableTableCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     if (cell == nil)
     {
-        cell = [[ACProjectTableCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
+        cell = [[ACEditableTableCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
         cell.backgroundView = [[UIImageView alloc] initWithImage:cellBackgroundImage];
         cell.selectedBackgroundView = [[UIImageView alloc] initWithImage:cellHighlightedImage];
+        
+        // Icon button default setup
         [cell.iconButton addTarget:self action:@selector(labelColorAction:) forControlEvents:UIControlEventTouchUpInside];
+        
+        // Text field default setup
+        STATIC_OBJECT(UIFont, font, [UIFont styleFontWithSize:18]);
+        cell.textField.font = font;
+        
+        // Accessory default setup
+        STATIC_OBJECT(UIImage, disclosureImage, [UIImage styleTableDisclosureImageWithColor:[UIColor styleForegroundColor] shadowColor:[UIColor whiteColor]]);
+        cell.accessoryView = [[UIImageView alloc] initWithImage:disclosureImage];
+        
+        // Layout
+        cell.contentInsets = UIEdgeInsetsMake(3, 10, 0, 10);
+        cell.iconButton.bounds = CGRectMake(0, 0, 32, 33);
     }
     
-    // Configure the cell...
+    // Setup project icon
+    // TODO use project color
+    [cell.iconButton setImage:[self projectIconWithColor:[UIColor styleForegroundColor]] forState:UIControlStateNormal];
+    
+    // Setup project title
     //[cell.textLabel setText:[[[ACState sharedState].projects objectAtIndex:indexPath.row] name]];
-    cell.titleField.text = @"Project";
+    cell.textField.text = @"Project";
     
     return cell;
 }
@@ -196,6 +231,9 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    if (self.isEditing)
+        return;
+    
 //    [self.ACNavigationController pushURL:[[[ACState sharedState].projects objectAtIndex:indexPath.row] URL] animated:YES];
     [self.ACNavigationController pushURL:[NSURL URLWithString:@"artcode:/Project"]];
 }

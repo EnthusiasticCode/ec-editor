@@ -49,6 +49,12 @@
 + (UIImage *)styleSymbolImageWithColor:(UIColor *)color letter:(NSString *)letter;
 
 /// Icon 16x16+shadow of a magnifying glass.
-+ (UIImage *)styleSearchIconWithColor:(UIColor *)color shadowColor:(UIColor *)shadowColor;;
++ (UIImage *)styleSearchIconWithColor:(UIColor *)color shadowColor:(UIColor *)shadowColor;
+
+/// An image to be used in a table view cell check mark. Cached.
++ (UIImage *)styleCheckMarkImage;
+
+/// An image to be used as a table reorder control. Cached.
++ (UIImage *)styleReorderControlImage;
 
 @end

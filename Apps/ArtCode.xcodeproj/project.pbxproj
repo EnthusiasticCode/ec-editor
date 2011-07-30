@@ -48,7 +48,6 @@
 		CD7D2B2C13C0D4B700B889EE /* ACNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD7D2B2613C0D4B700B889EE /* ACNavigationController.m */; };
 		CD7D2B2D13C0D4B700B889EE /* ACNavigationPushSegue.m in Sources */ = {isa = PBXBuildFile; fileRef = CD7D2B2813C0D4B700B889EE /* ACNavigationPushSegue.m */; };
 		CD7D2B2E13C0D4B700B889EE /* ACTopBarView.m in Sources */ = {isa = PBXBuildFile; fileRef = CD7D2B2A13C0D4B700B889EE /* ACTopBarView.m */; };
-		CD7D2B3313C0D4C700B889EE /* ACProjectTableCell.m in Sources */ = {isa = PBXBuildFile; fileRef = CD7D2B3013C0D4C700B889EE /* ACProjectTableCell.m */; };
 		CD7D2B3413C0D4C700B889EE /* ACProjectTableController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD7D2B3213C0D4C700B889EE /* ACProjectTableController.m */; };
 		CD7D2B3F13C0D4F400B889EE /* ACToolBookmarksController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD7D2B3613C0D4F400B889EE /* ACToolBookmarksController.m */; };
 		CD7D2B4013C0D4F400B889EE /* ACToolFiltersView.m in Sources */ = {isa = PBXBuildFile; fileRef = CD7D2B3813C0D4F400B889EE /* ACToolFiltersView.m */; };
@@ -73,6 +72,7 @@
 		CDA0156013DF0C210087B518 /* ACTabNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDA0155F13DF0C210087B518 /* ACTabNavigationController.m */; };
 		CDD40B0313E1A046008AC36B /* ACPopoverHistoryToolController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDD40B0213E1A046008AC36B /* ACPopoverHistoryToolController.m */; };
 		CDE3F14713C0DDD500DFFAFF /* Inconsolata-dz.otf in Resources */ = {isa = PBXBuildFile; fileRef = CDE3F14613C0DDD500DFFAFF /* Inconsolata-dz.otf */; };
+		CDF215F713E4468F005B520F /* ACEditableTableCell.m in Sources */ = {isa = PBXBuildFile; fileRef = CDF215F613E4468F005B520F /* ACEditableTableCell.m */; };
 		CDFF3DAC13C0D71900108DE2 /* NSTimer+block.m in Sources */ = {isa = PBXBuildFile; fileRef = CDFF3DAB13C0D71900108DE2 /* NSTimer+block.m */; };
 		CDFF3DBB13C0D76400108DE2 /* ECInstantGestureRecognizer.m in Sources */ = {isa = PBXBuildFile; fileRef = CDFF3DAE13C0D76400108DE2 /* ECInstantGestureRecognizer.m */; };
 		CDFF3DBC13C0D76400108DE2 /* ECJumpBar.m in Sources */ = {isa = PBXBuildFile; fileRef = CDFF3DB013C0D76400108DE2 /* ECJumpBar.m */; };
@@ -188,8 +188,6 @@
 		CD7D2B2813C0D4B700B889EE /* ACNavigationPushSegue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACNavigationPushSegue.m; sourceTree = "<group>"; };
 		CD7D2B2913C0D4B700B889EE /* ACTopBarView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACTopBarView.h; sourceTree = "<group>"; };
 		CD7D2B2A13C0D4B700B889EE /* ACTopBarView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACTopBarView.m; sourceTree = "<group>"; };
-		CD7D2B2F13C0D4C700B889EE /* ACProjectTableCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACProjectTableCell.h; sourceTree = "<group>"; };
-		CD7D2B3013C0D4C700B889EE /* ACProjectTableCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACProjectTableCell.m; sourceTree = "<group>"; };
 		CD7D2B3113C0D4C700B889EE /* ACProjectTableController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACProjectTableController.h; sourceTree = "<group>"; };
 		CD7D2B3213C0D4C700B889EE /* ACProjectTableController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACProjectTableController.m; sourceTree = "<group>"; };
 		CD7D2B3513C0D4F400B889EE /* ACToolBookmarksController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACToolBookmarksController.h; sourceTree = "<group>"; };
@@ -234,6 +232,8 @@
 		CDD40B0113E1A046008AC36B /* ACPopoverHistoryToolController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACPopoverHistoryToolController.h; sourceTree = "<group>"; };
 		CDD40B0213E1A046008AC36B /* ACPopoverHistoryToolController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACPopoverHistoryToolController.m; sourceTree = "<group>"; };
 		CDE3F14613C0DDD500DFFAFF /* Inconsolata-dz.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Inconsolata-dz.otf"; sourceTree = "<group>"; };
+		CDF215F513E4468F005B520F /* ACEditableTableCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACEditableTableCell.h; sourceTree = "<group>"; };
+		CDF215F613E4468F005B520F /* ACEditableTableCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACEditableTableCell.m; sourceTree = "<group>"; };
 		CDFF3DAA13C0D71900108DE2 /* NSTimer+block.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSTimer+block.h"; sourceTree = "<group>"; };
 		CDFF3DAB13C0D71900108DE2 /* NSTimer+block.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSTimer+block.m"; sourceTree = "<group>"; };
 		CDFF3DAD13C0D76400108DE2 /* ECInstantGestureRecognizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECInstantGestureRecognizer.h; sourceTree = "<group>"; };
@@ -501,8 +501,8 @@
 			children = (
 				CD7D2B3113C0D4C700B889EE /* ACProjectTableController.h */,
 				CD7D2B3213C0D4C700B889EE /* ACProjectTableController.m */,
-				CD7D2B2F13C0D4C700B889EE /* ACProjectTableCell.h */,
-				CD7D2B3013C0D4C700B889EE /* ACProjectTableCell.m */,
+				CDF215F513E4468F005B520F /* ACEditableTableCell.h */,
+				CDF215F613E4468F005B520F /* ACEditableTableCell.m */,
 				CD8108D613E334F7000E1941 /* Views and Controls */,
 			);
 			name = Projects;
@@ -842,7 +842,6 @@
 				CD7D2B2C13C0D4B700B889EE /* ACNavigationController.m in Sources */,
 				CD7D2B2D13C0D4B700B889EE /* ACNavigationPushSegue.m in Sources */,
 				CD7D2B2E13C0D4B700B889EE /* ACTopBarView.m in Sources */,
-				CD7D2B3313C0D4C700B889EE /* ACProjectTableCell.m in Sources */,
 				CD7D2B3413C0D4C700B889EE /* ACProjectTableController.m in Sources */,
 				CD7D2B3F13C0D4F400B889EE /* ACToolBookmarksController.m in Sources */,
 				CD7D2B4013C0D4F400B889EE /* ACToolFiltersView.m in Sources */,
@@ -897,6 +896,7 @@
 				CDA0156013DF0C210087B518 /* ACTabNavigationController.m in Sources */,
 				CDD40B0313E1A046008AC36B /* ACPopoverHistoryToolController.m in Sources */,
 				CD8108D513E31A28000E1941 /* ACColorSelectionControl.m in Sources */,
+				CDF215F713E4468F005B520F /* ACEditableTableCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

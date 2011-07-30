@@ -37,6 +37,7 @@
     self.tableView.backgroundColor = [UIColor styleBackgroundColor];
     self.tableView.separatorColor = [UIColor styleForegroundColor];
 //    self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+    self.tableView.allowsMultipleSelectionDuringEditing = YES;
     
     // TODO Write hints in this view
     UIView *footerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.tableView.bounds.size.width, 10)];
@@ -107,6 +108,7 @@
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:FileCellIdentifier];
         cell.backgroundView = nil;
         cell.selectionStyle = UITableViewCellSelectionStyleGray;
+        cell.showsReorderControl = YES;
     }
     
     // Configure the cell...
@@ -150,12 +152,10 @@
 }
 */
 
-/*
 // Override to support rearranging the table view.
 - (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath
 {
 }
-*/
 
 /*
 // Override to support conditional rearranging of the table view.
@@ -170,6 +170,8 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    if (self.isEditing)
+        return;
     // Navigation logic may go here. Create and push another view controller.
     /*
      <#DetailViewController#> *detailViewController = [[<#DetailViewController#> alloc] initWithNibName:@"<#Nib name#>" bundle:nil];

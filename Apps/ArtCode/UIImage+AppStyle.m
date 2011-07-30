@@ -550,4 +550,51 @@
     }];
 }
 
++ (UIImage *)styleCheckMarkImage
+{
+    static UIImage *_styleCheckMarkImage = nil;
+    if (!_styleCheckMarkImage)
+    {
+        _styleCheckMarkImage = [UIImage imageWithSize:CGSizeMake(29, 29) block:^(CGContextRef ctx, CGRect rect) {
+            CGContextSetStrokeColorWithColor(ctx, [UIColor styleForegroundColor].CGColor);
+            
+            CGContextAddArc(ctx, 29. / 2., 29. / 2., 10, -M_PI, M_PI, 0);
+            CGContextSetLineWidth(ctx, 2);
+            CGContextStrokePath(ctx);
+            
+            CGContextMoveToPoint(ctx, 9, 16);
+            CGContextAddLineToPoint(ctx, 14, 20);
+            CGContextAddLineToPoint(ctx, 20, 9);
+            CGContextSetLineWidth(ctx, 3);
+            CGContextStrokePath(ctx);
+        }];
+    }
+    return _styleCheckMarkImage;
+}
+
++ (UIImage *)styleReorderControlImage
+{
+    static UIImage *_styleReorderControlImage = nil;
+    if (!_styleReorderControlImage)
+    {
+        _styleReorderControlImage = [UIImage imageWithSize:CGSizeMake(19, 17) block:^(CGContextRef ctx, CGRect rect) {
+            CGContextSetShadowWithColor(ctx, CGSizeMake(0, 1), 0, [UIColor whiteColor].CGColor);
+
+            CGContextSetStrokeColorWithColor(ctx, [UIColor styleForegroundColor].CGColor);
+            CGContextSetLineWidth(ctx, 4);
+            
+            CGFloat y = 2;
+            for (NSUInteger i = 0; i < 3; ++i)
+            {
+                CGContextMoveToPoint(ctx, 0, y);
+                CGContextAddLineToPoint(ctx, rect.size.width, y);
+                y += 6;
+            }
+            
+            CGContextStrokePath(ctx);
+        }];
+    }
+    return _styleReorderControlImage;
+}
+
 @end
