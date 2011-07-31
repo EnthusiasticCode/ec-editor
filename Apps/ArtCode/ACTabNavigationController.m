@@ -645,21 +645,28 @@ static void loadCurrentAndAdiacentTabViews(ACTabNavigationController *self, ACTa
     // Substitute view controller
     if (previousVewController != tabController.tabViewController)
     {
-        // Remove old controller
-        if ([previousVewController isViewLoaded])
-            [previousVewController.view removeFromSuperview];
-        [previousVewController removeFromParentViewController];
-        
         // Add new controller and view
         [self addChildViewController:tabController.tabViewController];
         
-        // Update views if current tab
         if (tabController == currentTabController)
         {
-            loadCurrentAndAdiacentTabViews(self, nil);
+            [UIView transitionFromView:previousVewController.view toView:tabController.tabViewController.view duration:0.2 options:UIViewAnimationOptionTransitionCrossDissolve completion:^(BOOL finished) {
+                [previousVewController removeFromParentViewController];
+                
+                loadCurrentAndAdiacentTabViews(self, nil);
+                
+                if (delegateFlags.hasDidChangeCurrentTabControllerFromTabController)
+                    [delegate tabNavigationController:self didChangeCurrentTabController:currentTabController fromTabController:currentTabController];
+            }];
+        }
+        else
+        {
+            // Remove old controller
+            if ([previousVewController isViewLoaded])
+                [previousVewController.view removeFromSuperview];
+            [previousVewController removeFromParentViewController];
             
-            if (delegateFlags.hasDidChangeCurrentTabControllerFromTabController)
-                [delegate tabNavigationController:self didChangeCurrentTabController:currentTabController fromTabController:currentTabController];
+            loadCurrentAndAdiacentTabViews(self, tabController);
         }
     }
     
