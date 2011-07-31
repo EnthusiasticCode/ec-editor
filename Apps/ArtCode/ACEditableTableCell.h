@@ -26,4 +26,15 @@
 /// Insets applied to all controls inside the cell.
 @property (nonatomic) UIEdgeInsets contentInsets;
 
+/// Insets applied to all editing controls.
+@property (nonatomic) UIEdgeInsets editingContentInsets;
+
+#pragma mark Custom Delete
+
+@property (nonatomic, getter = isCustomDelete) BOOL customDelete;
+
+@end
+
+@interface ACEditableTableCellCustomDeleteContainerView : UIView
+
 @end

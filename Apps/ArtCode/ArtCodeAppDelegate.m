@@ -21,6 +21,7 @@
 #import "ACProjectTableController.h"
 #import "ACFileTableController.h"
 #import "ACCodeFileController.h"
+#import "ACEditableTableCell.h"
 
 #import "ACState.h"
 
@@ -114,6 +115,13 @@
     id textFieldInToolFiltersView = [UITextField appearanceWhenContainedIn:[ACToolFiltersView class], nil];
     [textFieldInToolFiltersView setTextColor:[UIColor styleBackgroundColor]];
     [textFieldInToolFiltersView setBackground:toolFilterElementBackgorundImage];
+    
+    ////////////////////////////////////////////////////////////////////////////
+    // Editable table cell
+    id buttonIneditableTableCellDeleteContainer = [UIButton appearanceWhenContainedIn:[ACEditableTableCellCustomDeleteContainerView class], nil];
+    [buttonIneditableTableCellDeleteContainer setBackgroundImage:[UIImage styleBackgroundImageWithColor:[UIColor colorWithRed:200./255. green:8./255. blue:21./255. alpha:1] borderColor:[UIColor styleForegroundColor] insets:UIEdgeInsetsZero arrowSize:CGSizeZero roundingCorners:UIRectCornerTopRight | UIRectCornerBottomRight] forState:UIControlStateNormal];
+    [buttonIneditableTableCellDeleteContainer setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [buttonIneditableTableCellDeleteContainer setTitleShadowColor:[UIColor styleForegroundColor] forState:UIControlStateNormal];
     
     ////////////////////////////////////////////////////////////////////////////
     [window makeKeyAndVisible];

@@ -11,13 +11,66 @@
 
 static Class UITableViewCellReorderControlClass = nil;
 static Class UITableViewCellEditControlClass = nil;
+static Class UITableViewCellDeleteConfirmationControlClass = nil;
 
 @implementation ACEditableTableCell {
-    UIImageView *checkMarkImageView;
+    __weak UIImageView *checkMarkImageView;
+    UIButton *customDeleteActivation;
+    ACEditableTableCellCustomDeleteContainerView *customDeleteContainer;
+    UIButton *customDeleteButton;
 }
 
+
 @synthesize iconButton, textField;
-@synthesize contentInsets;
+@synthesize contentInsets, editingContentInsets;
+@synthesize customDelete;
+
+#pragma mark - Private Methods
+
+- (void)toggleCustomDeleteAction:(id)sender
+{
+    CGRect bounds = self.bounds;
+    if (!customDeleteContainer)
+    {
+        customDeleteContainer = [[ACEditableTableCellCustomDeleteContainerView alloc] initWithFrame:bounds];
+        //
+        customDeleteButton = [[UIButton alloc] initWithFrame:CGRectMake(bounds.size.width - 75 - editingContentInsets.right, editingContentInsets.top, 75, bounds.size.height - editingContentInsets.top - editingContentInsets.bottom)];
+        customDeleteButton.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleBottomMargin;
+        [customDeleteButton setTitle:@"Delete" forState:UIControlStateNormal];
+        [customDeleteContainer addSubview:customDeleteButton];
+        //
+        customDeleteButton.titleLabel.shadowOffset = CGSizeMake(0, -1);
+        customDeleteButton.titleLabel.font = [UIFont styleFontWithSize:16];
+    }
+    
+    if (customDeleteContainer.superview)
+    {
+        // Hide
+        customDeleteContainer.clipsToBounds = YES;
+        [UIView animateWithDuration:0.25 animations:^(void) {
+            customDeleteContainer.frame = CGRectMake(bounds.size.width, 0, 0, bounds.size.height);
+            customDeleteActivation.transform = CGAffineTransformIdentity;
+        } completion:^(BOOL finished) {
+            [customDeleteContainer removeFromSuperview];
+            customDeleteContainer.clipsToBounds = NO;
+        }];
+    }
+    else
+    {
+        // Show
+        customDeleteContainer.frame = CGRectMake(bounds.size.width, 0, 0, bounds.size.height);
+        customDeleteContainer.clipsToBounds = YES;
+        [self addSubview:customDeleteContainer];
+        [UIView animateWithDuration:0.25 animations:^(void) {
+            customDeleteContainer.frame = CGRectMake(bounds.size.width - 80, 0, 80, bounds.size.height);
+            customDeleteActivation.transform = CGAffineTransformMakeRotation(M_PI_2);
+        } completion:^(BOOL finished) {
+            customDeleteContainer.clipsToBounds = NO;
+        }];
+    }
+}
+
+#pragma mark - View lifecycle
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
@@ -25,6 +78,8 @@ static Class UITableViewCellEditControlClass = nil;
         UITableViewCellReorderControlClass = NSClassFromString(@"UITableViewCellReorderControl");
     if (!UITableViewCellEditControlClass)
         UITableViewCellEditControlClass = NSClassFromString(@"UITableViewCellEditControl");
+    if (!UITableViewCellDeleteConfirmationControlClass)
+        UITableViewCellDeleteConfirmationControlClass = NSClassFromString(@"UITableViewCellDeleteConfirmationControl");
     
     if ((self = [super initWithStyle:style reuseIdentifier:reuseIdentifier]))
     {
@@ -65,33 +120,36 @@ static Class UITableViewCellEditControlClass = nil;
 {
     [super layoutSubviews];
     
+    CGPoint center;
+    
     if (!UIEdgeInsetsEqualToEdgeInsets(contentInsets, UIEdgeInsetsZero))
-    {
-        CGPoint center;
-        if (self.isEditing)
-        {
-            for (UIView *view in self.subviews)
-            {
-                if ([view isKindOfClass:UITableViewCellEditControlClass]) {
-                    center = view.center;
-                    center.x += contentInsets.left;
-                    view.center = center;
-                }
-                else if ([view isKindOfClass:UITableViewCellReorderControlClass]) {
-                    center = view.center;
-                    center.x -= contentInsets.right;
-                    view.center = center;
-                }
-            }
-        }
-        
+    {        
         self.contentView.frame = UIEdgeInsetsInsetRect(self.contentView.frame, contentInsets);
         
         center = self.accessoryView.center;
         center.x -= contentInsets.right;
         self.accessoryView.center = center;
     }
+    
+    if (self.isEditing && !UIEdgeInsetsEqualToEdgeInsets(editingContentInsets, UIEdgeInsetsZero))
+    {
+        for (UIView *view in self.subviews)
+        {
+            if ([view isKindOfClass:UITableViewCellEditControlClass]) {
+                center = view.center;
+                center.x += editingContentInsets.left;
+                view.center = center;
+            }
+            else if ([view isKindOfClass:UITableViewCellReorderControlClass]) {
+                center = view.center;
+                center.x -= editingContentInsets.right;
+                view.center = center;
+            }
+        }
+    }
 }
+
+#pragma mark - Cell Methods
 
 - (void)setEditing:(BOOL)editing animated:(BOOL)animated
 {
@@ -114,6 +172,32 @@ static Class UITableViewCellEditControlClass = nil;
                         break;
                     }
                 }
+                if (customDelete && self.editingStyle == UITableViewCellEditingStyleNone)
+                {
+                    if (!customDeleteActivation)
+                    {
+                        customDeleteActivation = [UIButton new];
+                        [customDeleteActivation setImage:[UIImage styleDeleteActivationImage] forState:UIControlStateNormal];
+                        [customDeleteActivation addTarget:self action:@selector(toggleCustomDeleteAction:) forControlEvents:UIControlEventTouchUpInside];
+                    }
+                    CGRect frame = view.frame;
+                    [self addSubview:customDeleteActivation];
+                    [view removeFromSuperview];
+                    if (animated)
+                    {
+                        frame.origin.x -= frame.size.width;
+                        customDeleteActivation.frame = frame;
+                        customDeleteActivation.alpha = 0;
+                        [UIView animateWithDuration:0.25 animations:^(void) {
+                            customDeleteActivation.frame = view.frame;
+                            customDeleteActivation.alpha = 1;
+                        }];
+                    }
+                    else
+                    {
+                       customDeleteActivation.frame = frame; 
+                    }
+                }
             }
             // TODO uncomment for custom reorder image
 //            else if ([view isKindOfClass:UITableViewCellReorderControlClass]) {
@@ -125,6 +209,27 @@ static Class UITableViewCellEditControlClass = nil;
 //                }
 //            }
         }
+    }
+    else
+    {
+        if (animated)
+        {
+            CGRect frame = customDeleteActivation.frame;
+            frame.origin.x -= frame.size.width;
+            [UIView animateWithDuration:0.25 animations:^(void) {
+                customDeleteActivation.frame = frame;
+                customDeleteActivation.alpha = 0;
+            } completion:^(BOOL finished) {
+                [customDeleteActivation removeFromSuperview];
+            }];
+        }
+        else
+        {
+            [customDeleteActivation removeFromSuperview];
+        }
+        
+        if (customDeleteContainer.superview)
+            [self toggleCustomDeleteAction:nil];
     }
 }
 
@@ -143,5 +248,9 @@ static Class UITableViewCellEditControlClass = nil;
     if (selected && checkMarkImageView)
         checkMarkImageView.image = [UIImage styleCheckMarkImage];
 }
+
+@end
+
+@implementation ACEditableTableCellCustomDeleteContainerView
 
 @end

@@ -57,4 +57,7 @@
 /// An image to be used as a table reorder control. Cached.
 + (UIImage *)styleReorderControlImage;
 
+/// An image to be used as a table delete activation control. Cached.
++ (UIImage *)styleDeleteActivationImage;
+
 @end

@@ -597,4 +597,25 @@
     return _styleReorderControlImage;
 }
 
++ (UIImage *)styleDeleteActivationImage
+{
+    static UIImage *_styleDeleteActivationImage = nil;
+    if (!_styleDeleteActivationImage)
+    {
+        _styleDeleteActivationImage = [UIImage imageWithSize:CGSizeMake(29, 29) block:^(CGContextRef ctx, CGRect rect) {
+            CGContextSetStrokeColorWithColor(ctx, [UIColor whiteColor].CGColor);
+            CGContextSetFillColorWithColor(ctx, [UIColor colorWithRed:200./255. green:8./255. blue:21./255. alpha:1].CGColor);
+            
+            CGContextAddArc(ctx, 29. / 2., 29. / 2., 11, -M_PI, M_PI, 0);
+            CGContextFillPath(ctx);
+            
+            CGContextMoveToPoint(ctx, 8, 29. / 2.);
+            CGContextAddLineToPoint(ctx, 21, 29. / 2.);
+            CGContextSetLineWidth(ctx, 5);
+            CGContextStrokePath(ctx);
+        }];
+    }
+    return _styleDeleteActivationImage;
+}
+
 @end

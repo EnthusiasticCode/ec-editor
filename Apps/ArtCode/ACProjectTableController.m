@@ -170,7 +170,9 @@
         
         // Layout
         cell.contentInsets = UIEdgeInsetsMake(3, 10, 0, 10);
+        cell.editingContentInsets = UIEdgeInsetsMake(4, 8, 4, 7);
         cell.iconButton.bounds = CGRectMake(0, 0, 32, 33);
+        cell.customDelete = YES;
     }
     
     // Setup project icon
@@ -182,6 +184,12 @@
     cell.textField.text = @"Project";
     
     return cell;
+}
+
+- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    // Remove 'slide to delete' on cells.
+    return self.isEditing;
 }
 
 - (UITableViewCellEditingStyle)tableView:(UITableView *)tableView editingStyleForRowAtIndexPath:(NSIndexPath *)indexPath
