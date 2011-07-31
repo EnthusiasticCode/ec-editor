@@ -29,11 +29,15 @@
 /// Insets applied to all editing controls.
 @property (nonatomic) UIEdgeInsets editingContentInsets;
 
-#pragma mark Custom Delete
+#pragma mark Additional controls
 
+/// Indicate if the cell should show the custom delete controls.
 @property (nonatomic, getter = isCustomDelete) BOOL customDelete;
 
+- (void)setColor:(UIColor *)color forIndentationLevel:(NSInteger)indentationLevel animated:(BOOL)animated;
+
 @end
+
 
 @interface ACEditableTableCellCustomDeleteContainerView : UIView
 

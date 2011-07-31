@@ -9,6 +9,7 @@
 #import "ACFileTableController.h"
 #import "AppStyle.h"
 #import "ACNavigationController.h"
+#import "ACEditableTableCell.h"
 
 @implementation ACFileTableController {
     NSArray *extensions;
@@ -103,27 +104,37 @@
 {
     static NSString *FileCellIdentifier = @"FileCell";
     
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:FileCellIdentifier];
-    if (cell == nil) {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:FileCellIdentifier];
+    ACEditableTableCell *cell = [tableView dequeueReusableCellWithIdentifier:FileCellIdentifier];
+    if (cell == nil)
+    {
+        cell = [[ACEditableTableCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:FileCellIdentifier];
         cell.backgroundView = nil;
         cell.selectionStyle = UITableViewCellSelectionStyleGray;
-        cell.showsReorderControl = YES;
+        cell.indentationWidth = 38;
     }
     
     // Configure the cell...
     NSUInteger idx = [indexPath indexAtPosition:1];
-    if (idx < 6)
+    if (idx < 2)
     {
-        cell.textLabel.text = @"File";
+        cell.textField.text = @"File";
         cell.imageView.image = [UIImage styleDocumentImageWithSize:CGSizeMake(32, 32) 
                                                              color:idx % 2 ? [UIColor styleFileBlueColor] : [UIColor styleFileRedColor] 
                                                               text:[extensions objectAtIndex:idx]];
     }
-    else
+    else if (idx == 2)
     {
-        cell.textLabel.text = @"Group";
+        cell.textField.text = @"Group";
         cell.imageView.image = [UIImage styleGroupImageWithSize:CGSizeMake(32, 32)];
+    }
+    else 
+    {
+        cell.textField.text = @"File";
+        cell.imageView.image = [UIImage styleDocumentImageWithSize:CGSizeMake(32, 32) 
+                                                             color:idx % 2 ? [UIColor styleFileBlueColor] : [UIColor styleFileRedColor] 
+                                                              text:[extensions objectAtIndex:idx - 1]];
+        cell.indentationLevel = 1;
+        [cell setColor:[UIColor colorWithWhite:0.8 alpha:1] forIndentationLevel:0 animated:YES];
     }
     
     return cell;

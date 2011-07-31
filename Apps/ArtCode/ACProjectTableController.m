@@ -90,10 +90,14 @@
 
 - (void)colorSelectionAction:(ACColorSelectionControl *)sender
 {
-//    ACProjectTableCell *cell = (ACProjectTableCell *)sender.userInfo;
-//    cell.iconLabelColor = sender.selectedColor;
+    // TODO change way of retrieving cell?
+    
+    ACEditableTableCell *cell = (ACEditableTableCell *)sender.userInfo;
+    [cell.iconButton setImage:[self projectIconWithColor:sender.selectedColor] forState:UIControlStateNormal];
     
     [popoverLabelColorController dismissPopoverAnimated:YES];
+    
+    // TODO here change persisten color with sender.selectedColor
 }
 
 
