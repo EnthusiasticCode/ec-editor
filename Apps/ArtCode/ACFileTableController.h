@@ -9,6 +9,13 @@
 #import <UIKit/UIKit.h>
 #import "ACToolTarget.h"
 
-@interface ACFileTableController : UITableViewController <ACToolTarget>
+@class ACToolFiltersView;
+
+
+@interface ACFileTableController : UIViewController <ACToolTarget, UITableViewDataSource, UITableViewDelegate>
+
+@property (nonatomic, strong) IBOutlet UITableView *tableView;
+
+@property (nonatomic, strong) IBOutlet ACToolFiltersView *editingToolsView;
 
 @end

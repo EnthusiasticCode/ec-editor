@@ -11,9 +11,13 @@
 #import "ACNavigationController.h"
 #import "ACEditableTableCell.h"
 
+#import "ACToolFiltersView.h"
+
 @implementation ACFileTableController {
     NSArray *extensions;
 }
+
+@synthesize tableView, editingToolsView;
 
 - (void)didReceiveMemoryWarning
 {
@@ -25,24 +29,27 @@
 
 #pragma mark - View lifecycle
 
-- (void)viewDidLoad
+- (void)loadView
 {
-    [super viewDidLoad];
+    [super loadView];
 
-    // Uncomment the following line to preserve selection between presentations.
-    // self.clearsSelectionOnViewWillAppear = NO;
- 
-    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-    // self.navigationItem.rightBarButtonItem = self.editButtonItem;
-    
-    self.tableView.backgroundColor = [UIColor styleBackgroundColor];
-    self.tableView.separatorColor = [UIColor styleForegroundColor];
-//    self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
-    self.tableView.allowsMultipleSelectionDuringEditing = YES;
+    // Creating the table view
+    if (!tableView)
+    {
+        tableView = [[UITableView alloc] initWithFrame:self.view.bounds style:UITableViewStylePlain];
+        tableView.dataSource = self;
+        tableView.delegate = self;
+        tableView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+        [self.view addSubview:tableView];
+        
+        tableView.backgroundColor = [UIColor styleBackgroundColor];
+        tableView.separatorColor = [UIColor styleForegroundColor];
+        tableView.allowsMultipleSelectionDuringEditing = YES;
+    }
     
     // TODO Write hints in this view
     UIView *footerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.tableView.bounds.size.width, 0)];
-    self.tableView.tableFooterView = footerView;
+    tableView.tableFooterView = footerView;
     
     extensions = [NSArray arrayWithObjects:@"h", @"m", @"hpp", @"cpp", @"mm", @"py", nil];
 }
@@ -50,13 +57,68 @@
 - (void)viewDidUnload
 {
     [super viewDidUnload];
-    // Release any retained subviews of the main view.
-    // e.g. self.myOutlet = nil;
+    tableView = nil;
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
 	return YES;
+}
+
+- (void)setEditing:(BOOL)editing animated:(BOOL)animated
+{
+    [tableView setEditing:editing animated:animated];
+    
+    CGRect bounds = self.view.bounds;
+    if (editing)
+    {
+        if (!editingToolsView)
+        {
+            
+            editingToolsView = [ACToolFiltersView new];
+            editingToolsView.backgroundColor = [UIColor styleForegroundColor];
+            editingToolsView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleTopMargin;
+        }
+        editingToolsView.frame = CGRectMake(0, bounds.size.height - 44, bounds.size.width, 44);
+        bounds.size.height -= 44;
+        if (!animated)
+        {
+            [self.view addSubview:editingToolsView];
+            tableView.frame = bounds;
+        }
+        else
+        {
+            CGPoint center = editingToolsView.center;
+            editingToolsView.center = CGPointMake(center.x, center.y + 44);
+            [self.view addSubview:editingToolsView];
+            [UIView animateWithDuration:0.10 animations:^(void) {
+                editingToolsView.center = center;
+                tableView.frame = bounds;
+            }];
+        }
+    }
+    else
+    {
+        if (!animated)
+        {
+            [editingToolsView removeFromSuperview];
+            tableView.frame = self.view.bounds;
+        }
+        else
+        {
+            [UIView animateWithDuration:0.10 animations:^(void) {
+                editingToolsView.frame = CGRectMake(0, bounds.size.height, bounds.size.width, 44);
+                tableView.frame = self.view.bounds;
+            } completion:^(BOOL finished) {
+                [editingToolsView removeFromSuperview];
+            }];
+        }
+    }
+}
+
+- (BOOL)isEditing
+{
+    return tableView.isEditing;
 }
 
 #pragma mark - Tool Target Methods
@@ -100,11 +162,11 @@
     return 7;
 }
 
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+- (UITableViewCell *)tableView:(UITableView *)tView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     static NSString *FileCellIdentifier = @"FileCell";
     
-    ACEditableTableCell *cell = [tableView dequeueReusableCellWithIdentifier:FileCellIdentifier];
+    ACEditableTableCell *cell = [tView dequeueReusableCellWithIdentifier:FileCellIdentifier];
     if (cell == nil)
     {
         cell = [[ACEditableTableCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:FileCellIdentifier];
