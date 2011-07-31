@@ -7,6 +7,7 @@
 //
 
 #import "ACPopoverHistoryToolController.h"
+#import "AppStyle.h"
 
 #define SECTION_BACK_TO_PROJECTS 1
 #define SECTION_HISTORY_URLS 0
@@ -31,11 +32,10 @@
 {
     [super viewDidLoad];
 
-    // Uncomment the following line to preserve selection between presentations.
-    // self.clearsSelectionOnViewWillAppear = NO;
- 
-    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-    // self.navigationItem.rightBarButtonItem = self.editButtonItem;
+    self.tableView.backgroundColor = [UIColor styleBackgroundColor];
+    self.tableView.separatorColor = [UIColor styleForegroundColor];
+    // TODO make this a button to go back to projects?
+    self.tableView.tableFooterView = [UIView new];
 }
 
 - (void)viewDidUnload
@@ -53,7 +53,7 @@
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    return 2;
+    return 1;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
@@ -69,6 +69,7 @@
     if (cell == nil)
     {
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
+        cell.selectionStyle = UITableViewCellSelectionStyleNone;
     }
     
     NSUInteger section = [indexPath indexAtPosition:0];

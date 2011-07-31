@@ -41,7 +41,7 @@
     self.tableView.allowsMultipleSelectionDuringEditing = YES;
     
     // TODO Write hints in this view
-    UIView *footerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.tableView.bounds.size.width, 10)];
+    UIView *footerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.tableView.bounds.size.width, 0)];
     self.tableView.tableFooterView = footerView;
     
     extensions = [NSArray arrayWithObjects:@"h", @"m", @"hpp", @"cpp", @"mm", @"py", nil];
@@ -115,6 +115,7 @@
     
     // Configure the cell...
     NSUInteger idx = [indexPath indexAtPosition:1];
+    cell.indentationLevel = 0;
     if (idx < 2)
     {
         cell.textField.text = @"File";

@@ -194,9 +194,9 @@
         // Create and initialize popover tool history controller
         if (popoverHistoryToolController == nil)
         {
-            popoverHistoryToolController = [[ACPopoverHistoryToolController alloc] initWithStyle:UITableViewStyleGrouped];
-            popoverHistoryToolController.contentSizeForViewInPopover = CGSizeMake(300, 200);
+            popoverHistoryToolController = [[ACPopoverHistoryToolController alloc] initWithStyle:UITableViewStylePlain];
         }
+        popoverHistoryToolController.contentSizeForViewInPopover = CGSizeMake(300, MIN(439, [tabNavigationController.currentTabController.historyURLs count] * 44 - 1));
         [popoverHistoryToolController setHistoryURLs:tabNavigationController.currentTabController.historyURLs 
                                     hisoryPointIndex:tabNavigationController.currentTabController.currentURLIndex];
         
