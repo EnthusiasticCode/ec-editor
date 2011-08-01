@@ -136,18 +136,10 @@ typedef void (^ScrollViewBlock)(UIScrollView *scrollView);
     if (url != nil && url.lastPathComponent != nil)
     {
         title = url.lastPathComponent;
-        if ([tabTitles containsObject:title])
-        {
-            if ([url.pathComponents count] > 1)
-            {
-                title = [NSString stringWithFormat:@"%@ - %@", title, [url.pathComponents objectAtIndex:[url.pathComponents count] - 2]];
-                return title;
-            }
-        }
-        else
-        {
+        if (![tabTitles containsObject:title])
             return title;
-        }
+        if ([url.pathComponents count] > 1)
+            title = [NSString stringWithFormat:@"%@ - %@", title, [url.pathComponents objectAtIndex:[url.pathComponents count] - 2]];
     }
     else
     {
