@@ -279,7 +279,7 @@
 {
     if (controller.tabCount == 1)
     {
-        [[ECBezelAlert sharedAlert] addAlertMessageWithText:@"Can not stay without tabs!" image:nil displayImmediatly:YES];
+        [[ECBezelAlert bottomBezelAlert] addAlertMessageWithText:@"Can not stay without tabs!" image:nil displayImmediatly:YES];
         return NO;
     }
     return YES;
@@ -301,7 +301,7 @@
         CGRect tabPageControlFrame = (CGRect){ CGPointZero, [tabPageControl sizeForNumberOfPages:controller.tabCount] };
         tabPageControl.frame = tabPageControlFrame;
         tabPageControlController.contentSizeForViewInPopover = CGSizeMake(tabPageControlFrame.size.width, 10);
-        [[ECBezelAlert sharedAlert] addAlertMessageWithViewController:tabPageControlController displayImmediatly:YES];
+        [[ECBezelAlert bottomBezelAlert] addAlertMessageWithViewController:tabPageControlController displayImmediatly:YES];
     }
     
     // TODO enable tabs and stuff
@@ -433,7 +433,7 @@
     static NSUInteger count = 0;
     NSString *title = [NSString stringWithFormat:@"Path %u", count++];
 //    [jumpBar pushJumpElementWithPathComponent:title animated:YES];
-    [[ECBezelAlert sharedAlert] addAlertMessageWithText:title image:nil displayImmediatly:NO];
+    [[ECBezelAlert centerBezelAlert] addAlertMessageWithText:title image:nil displayImmediatly:NO];
 }
 
 

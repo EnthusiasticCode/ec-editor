@@ -13,18 +13,49 @@
 
 @implementation ECBezelAlert {
     NSTimer *alertTimer;
+    UIViewAutoresizing autoresizingMask;
 }
 
-@synthesize presentingViewController, bezelCornerRadius, visibleTimeInterval;
+#pragma mark - Properties
+
+@synthesize presentingViewController, bezelCornerRadius, visibleTimeInterval, margins, presentationAnimationType;
+
+- (void)setMargins:(UIEdgeInsets)m
+{
+    margins = m;
+    
+    autoresizingMask = 0;
+    if (margins.top < 0) autoresizingMask |= UIViewAutoresizingFlexibleTopMargin;
+    if (margins.right < 0) autoresizingMask |= UIViewAutoresizingFlexibleRightMargin;
+    if (margins.bottom < 0) autoresizingMask |= UIViewAutoresizingFlexibleBottomMargin;
+    if (margins.left < 0) autoresizingMask |= UIViewAutoresizingFlexibleLeftMargin;
+    
+    if (self.isViewLoaded)
+        self.view.autoresizingMask = autoresizingMask;
+}
 
 #pragma mark - Controller Methods
 
-+ (ECBezelAlert *)sharedAlert
++ (ECBezelAlert *)centerBezelAlert
 {
-    static ECBezelAlert *sharedAlert = nil;
-    if (sharedAlert == nil)
-        sharedAlert = [ECBezelAlert new];
-    return sharedAlert;
+    static ECBezelAlert *_centerBezelAlert = nil;
+    if (_centerBezelAlert == nil)
+    {
+        _centerBezelAlert = [ECBezelAlert new];
+        _centerBezelAlert.presentationAnimationType = ECBezelAlertAnimationFade | ECBezelAlertAnimationPop;
+    }
+    return _centerBezelAlert;
+}
+
++ (ECBezelAlert *)bottomBezelAlert
+{
+    static ECBezelAlert *_bottomBezelAlert = nil;
+    if (_bottomBezelAlert == nil)
+    {
+        _bottomBezelAlert = [ECBezelAlert new];
+        _bottomBezelAlert.margins = UIEdgeInsetsMake(-1, -1, 20, -1);
+    }
+    return _bottomBezelAlert;
 }
 
 - (id)init
@@ -32,6 +63,8 @@
     if ((self = [super init]))
     {
         bezelCornerRadius = 10;
+        self.margins = UIEdgeInsetsMake(-1, -1, -1, -1);
+        presentationAnimationType = ECBezelAlertAnimationFade;
     }
     return self;
 }
@@ -41,7 +74,7 @@
 - (void)loadView
 {
     // View background image
-    UIImage *bezelBackgroundImage = [[UIImage imageWithSize:CGSizeMake(bezelCornerRadius * 2 + 1, bezelCornerRadius * 2 + 1) block:^(CGContextRef ctx, CGRect rect) {
+    UIImage *bezelBackgroundImage = [[UIImage imageWithSize:CGSizeMake(bezelCornerRadius * 2 + 2, bezelCornerRadius * 2 + 2) block:^(CGContextRef ctx, CGRect rect) {
         CGContextSetFillColorWithColor(ctx, [UIColor colorWithWhite:0 alpha:0.5].CGColor);
         CGContextAddPath(ctx, [UIBezierPath bezierPathWithRoundedRect:rect cornerRadius:bezelCornerRadius].CGPath);
         CGContextFillPath(ctx);
@@ -49,7 +82,8 @@
     
     // Create view
     UIImageView *bezelView = [[UIImageView alloc] initWithImage:bezelBackgroundImage];
-    bezelView.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin;
+    bezelView.contentMode = UIViewContentModeCenter;
+    bezelView.autoresizingMask = autoresizingMask;
     self.view = bezelView;
 }
 
@@ -82,11 +116,27 @@
     CGRect presentingBounds = presentingViewController.view.bounds;
     // TODO intersect with keyboard frame
     
-    // Layout bezel view
+    // Calculate bezel frame
     CGRect bezelFrame = CGRectInset(contentFrame, -bezelCornerRadius, -bezelCornerRadius);
-    bezelFrame = (CGRect){ CGPointMake((presentingBounds.size.width - bezelFrame.size.width) / 2, presentingBounds.size.height - bezelFrame.size.height - 20), bezelFrame.size };
+    // Horizontal positioning
+    if (margins.left >= 0)
+        bezelFrame.origin.x = margins.left;
+    else if (margins.right >= 0)
+        bezelFrame.origin.x = presentingBounds.size.width - bezelFrame.size.width - margins.right;
+    else
+        bezelFrame.origin.x = (presentingBounds.size.width - bezelFrame.size.width) / 2.;
+    // Vertical positioning
+    if (margins.top >= 0)
+        bezelFrame.origin.y = margins.top;
+    else if (margins.bottom >= 0)
+        bezelFrame.origin.y = presentingBounds.size.height - bezelFrame.size.height - margins.bottom;
+    else
+        bezelFrame.origin.y = (presentingBounds.size.height - bezelFrame.size.height) / 2.;
+    
+    // Animate bezel view
     if (self.view.superview)
     {
+        // If already visible, change content with cross fade
         viewController.view.alpha = 0;
         [UIView animateWithDuration:0.10 delay:0 options:UIViewAnimationOptionAllowUserInteraction animations:^(void) {
             viewController.view.alpha = 1;
@@ -97,12 +147,30 @@
     else
     {
         self.view.frame = bezelFrame;
-        self.view.alpha = 0;
         viewController.view.alpha = 1;
         viewController.view.frame = contentFrame;
-        [UIView animateWithDuration:0.10 delay:0 options:UIViewAnimationOptionAllowUserInteraction animations:^(void) {
-            self.view.alpha = 1;
-        } completion:nil];
+        
+        if (presentationAnimationType)
+        {
+            if (presentationAnimationType & ECBezelAlertAnimationFade)
+                self.view.alpha = 0;
+            
+            if (presentationAnimationType & ECBezelAlertAnimationPop)
+                self.view.transform = CGAffineTransformMakeScale(0.01, 0.01);    
+            
+            [UIView animateWithDuration:0.10 delay:0 options:UIViewAnimationOptionAllowUserInteraction animations:^(void) {
+                self.view.alpha = 1;
+                if (presentationAnimationType & ECBezelAlertAnimationPop)
+                    self.view.transform = CGAffineTransformMakeScale(1.4, 1.4);
+            } completion:^(BOOL finished) {
+                if (presentationAnimationType & ECBezelAlertAnimationPop)
+                {
+                    [UIView animateWithDuration:0.05 delay:0 options:UIViewAnimationOptionAllowUserInteraction animations:^(void) {
+                        self.view.transform = CGAffineTransformIdentity;
+                    } completion:nil];
+                }
+            }];
+        }        
     }
     
     // Present view
@@ -151,14 +219,8 @@
         // Remove all queued controllers if immediate display
         if (immediate)
         {
-            for (UIView *view in self.view.subviews)
-            {
-                [view removeFromSuperview];
-            }
-            for (UIViewController *controller in self.childViewControllers)
-            {
-                [controller removeFromParentViewController];
-            }
+            [self.view.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
+            [self.childViewControllers makeObjectsPerformSelector:@selector(removeFromParentViewController)];
         }
         
         [self addChildViewController:viewController];
