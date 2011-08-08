@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@interface ACStateNode : NSObject
+@protocol ACStateNode <NSObject>
 
 /// AC URL of the node
 @property (nonatomic, strong) NSURL *URL;

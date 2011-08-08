@@ -9,7 +9,7 @@
 #import "ACModelNode.h"
 #import "ACModelHistoryItem.h"
 #import "ACModelNode.h"
-
+#import "ACURL.h"
 
 @implementation ACModelNode
 

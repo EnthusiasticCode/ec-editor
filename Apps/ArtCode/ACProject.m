@@ -8,106 +8,106 @@
 
 #import "ACProject.h"
 #import "ACModelNode.h"
-
-NSString * const ACProjectContentDirectory = @"Content";
+#import "ACURL.h"
+#import "ACState.h"
+#import "ACStateInternal.h"
+#import "ACProjectDocument.h"
 
 @interface ACProject ()
-@property (nonatomic, strong, readonly) NSFileManager *fileManager;
-@property (nonatomic, strong) ACModelNode *rootNode;
-- (ACModelNode *)findRootNode;
-- (void)addNodesAtPath:(NSString *)path toNode:(ACModelNode *)node;
-- (void)addAllNodesInProjectRoot;
+@property (nonatomic, strong, readonly) ACProjectDocument *document;
 @end
-
 
 @implementation ACProject
 
-@synthesize fileManager = _fileManager;
-@synthesize rootNode = _rootNode;
+@synthesize document = _document;
+@synthesize URL = _URL;
+@synthesize deleted = _isDeleted;
 
-- (NSFileManager *)_fileManager
+- (NSUInteger)tag
 {
-    if (!_fileManager)
-        _fileManager = [[NSFileManager alloc] init];
-    return _fileManager;
+    return 0;
 }
 
-+ (NSString *)persistentStoreName
+- (void)setTag:(NSUInteger)tag
 {
-    return @"acproject.db";
+    
 }
 
-- (ACModelNode *)findRootNode
+- (NSString *)name
 {
-    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
-    [fetchRequest setEntity:[NSEntityDescription entityForName:@"Node" inManagedObjectContext:self.managedObjectContext]];
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"%K == %@", @"parent", nil];
-    [fetchRequest setPredicate:predicate];
-    NSArray *rootNodes = [self.managedObjectContext executeFetchRequest:fetchRequest error:NULL];
-    if ([rootNodes count] > 1)
-        abort(); // core data file broken, all nodes except the root node should have a parent
-    else if ([rootNodes count] == 1)
-        return [rootNodes objectAtIndex:0];
-    else
-    {
-        ACModelNode *rootNode = [NSEntityDescription insertNewObjectForEntityForName:@"Node" inManagedObjectContext:self.managedObjectContext];
-        rootNode.name = @"";
-        rootNode.type = [NSNumber numberWithInt:ACProjectNodeTypeFolder];
-        rootNode.path = @"";
-        return rootNode;
-    }
+    return [self.URL ACProjectName];
 }
 
-- (void)addNodesAtPath:(NSString *)path toNode:(ACModelNode *)node
+- (void)setName:(NSString *)name
 {
-    NSArray *subPaths = [self.fileManager contentsOfDirectoryAtPath:path error:NULL];
-    NSMutableDictionary *subNodes = [NSMutableDictionary dictionaryWithCapacity:[subPaths count]];
-    for (NSString *subPath in subPaths)
-    {
-        NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
-        [fetchRequest setEntity:[NSEntityDescription entityForName:@"Node" inManagedObjectContext:self.managedObjectContext]];
-        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"%K == %@", @"parent", node];
-        predicate = [NSCompoundPredicate andPredicateWithSubpredicates:[NSArray arrayWithObjects:predicate, [NSPredicate predicateWithFormat:@"%K == %@", @"path", [path stringByAppendingPathComponent:subPath]], nil]];
-        [fetchRequest setPredicate:predicate];
-        NSUInteger count = [self.managedObjectContext countForFetchRequest:fetchRequest error:NULL];
-        if (!count)
-        {
-            BOOL isDirectory;
-            [self.fileManager fileExistsAtPath:[path stringByAppendingPathComponent:subPath] isDirectory:&isDirectory];
-            if (isDirectory)
-                [subNodes setObject:[node addNodeWithName:subPath type:ACProjectNodeTypeFolder] forKey:subPath];
-            else
-                [node addNodeWithName:subPath type:ACProjectNodeTypeFile];
-        }
-    }
-    for (NSString *subPath in [subNodes allKeys])
-        [self addNodesAtPath:[path stringByAppendingPathComponent:subPath] toNode:[subNodes objectForKey:subPath]];
+    self.URL = [NSURL ACURLForProjectWithName:name];
 }
 
-- (NSURL *)contentDirectory
+- (NSUInteger)index
 {
-    return [self.fileURL URLByAppendingPathComponent:ACProjectContentDirectory];
+    return [[ACState sharedState] indexOfProjectWithURL:self.URL];
 }
 
-- (NSURL *)documentDirectory
+- (void)setIndex:(NSUInteger)index
 {
-    return self.fileURL;
+    [[ACState sharedState] setIndex:index forProjectWithURL:self.URL];
 }
 
-- (void)addAllNodesInProjectRoot
+- (void)setURL:(NSURL *)URL
 {
-    [self addNodesAtPath:[[self contentDirectory] path] toNode:self.rootNode];
+    ECASSERT(false); // NYI
+}
+
+- (ACProjectDocument *)document
+{
+    if (!_document)
+        _document = [[ACProjectDocument alloc] initWithFileURL:[self.URL ACProjectBundleURL]];
+    return _document;
+}
+
+- (id)initWithURL:(NSURL *)URL
+{
+    self = [super init];
+    if (!self)
+        return nil;
+    _URL = URL;
+    return self;
+}
+
+- (void)delete
+{
+    ECASSERT(false); // NYI
 }
 
 - (NSOrderedSet *)children
 {
-    return self.rootNode.children;
+    return [_document children];
+}
+
+- (NSURL *)documentDirectory
+{
+    return [self.URL ACProjectBundleURL];
+}
+
+- (NSURL *)contentDirectory
+{
+    return [self.URL ACProjectContentURL];
 }
 
 - (void)openWithCompletionHandler:(void (^)(BOOL))completionHandler
 {
-    [super openWithCompletionHandler:completionHandler];
-    [self addAllNodesInProjectRoot];
+    [_document openWithCompletionHandler:completionHandler];
+}
+
+- (void)closeWithCompletionHandler:(void (^)(BOOL))completionHandler
+{
+    if (!_document)
+    {
+        completionHandler(YES);
+        return;
+    }
+    [_document closeWithCompletionHandler:completionHandler];
+    _document = nil;
 }
 
 @end

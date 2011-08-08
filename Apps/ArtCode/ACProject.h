@@ -7,8 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-
-NSString * const ACProjectContentDirectory;
+#import "ACStateProject.h"
 
 typedef enum
 {
@@ -17,14 +16,15 @@ typedef enum
     ACProjectNodeTypeFile,
 } ACProjectNodeType;
 
-@interface ACProject : UIManagedDocument
+@interface ACProject : NSObject <ACStateProject>
+
+/// Designated initializer, returns the ACProject referenced by the ACURL
+- (id)initWithURL:(NSURL *)URL;
 
 /// The directory where the project's documents are stored
 - (NSURL *)documentDirectory;
 
 /// The directory where the project's contents are stored
 - (NSURL *)contentDirectory;
-
-- (NSOrderedSet *)children;
 
 @end

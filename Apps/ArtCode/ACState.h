@@ -18,9 +18,6 @@
 /// Returns the ACState application wide singleton
 + (ACState *)sharedState;
 
-/// The directory where the state's projects are stored
-- (NSURL *)stateProjectsDirectory;
-
 /// Scans the state projects directory for new projects
 - (void)scanForProjects;
 
