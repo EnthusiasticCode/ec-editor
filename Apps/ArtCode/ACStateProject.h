@@ -10,7 +10,7 @@
 
 /// AC Project controller
 /// This object should not be instantiated
-@interface ACStateProject : ACStateNode
+@protocol ACStateProject <ACStateNode>
 
 /// The directory where the project's documents are stored
 - (NSURL *)documentDirectory;

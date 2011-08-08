@@ -6,15 +6,12 @@
 //  Copyright 2011 __MyCompanyName__. All rights reserved.
 //
 
+#import "ACState.h"
 #import "ACStateInternal.h"
 #import "ACStateProject.h"
-#import "ACStateNodeInternal.h"
 #import "ACProject.h"
 #import "ACModelNode.h"
 #import "ACURL.h"
-#import "ACStateFile.h"
-#import "ACStateFolder.h"
-#import "ACStateGroup.h"
 
 static void * const ACStateProjectURLObservingContext;
 static void * const ACStateProjectDeletedObservingContext;
@@ -24,9 +21,12 @@ static void * const ACStateProjectDeletedObservingContext;
     NSMutableArray *_projectProxies;
 }
 
+/// returns a suitable ACState proxy for the ACURL
++ (id)ACStateProxyForURL:(NSURL *)URL;
+
 /// Adds and removes a project proxy with a given name to the list
-- (void)insertProjectProxyWithURL:(NSURL *)URL atIndex:(NSUInteger)index;
-- (void)removeProjectProxyWithURL:(NSURL *)URL;
+- (void)insertProjectObjectWithURL:(NSURL *)URL atIndex:(NSUInteger)index;
+- (void)removeProjectObjectWithURL:(NSURL *)URL;
 
 /// Load / save ordered list of projects
 - (NSMutableArray *)loadProjectNames;
@@ -53,23 +53,18 @@ static void * const ACStateProjectDeletedObservingContext;
     self = [super init];
     if (!self)
         return nil;
-    _projectProxies = [NSMutableOrderedSet orderedSet];
+    _projectProxies = [NSMutableArray array];
     for (NSString *projectName in [self loadProjectNames])
-        [self insertProjectProxyWithURL:[NSURL ACURLForProjectWithName:projectName] atIndex:NSNotFound];
+        [self insertProjectObjectWithURL:[NSURL ACURLForProjectWithName:projectName] atIndex:NSNotFound];
     [self scanForProjects];
     return self;
-}
-
-- (NSURL *)stateProjectsDirectory
-{
-    return [NSURL fileURLWithPath:[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject]];
 }
 
 - (void)scanForProjects
 {
     NSFileManager *fileManager = [[NSFileManager alloc] init];
     NSMutableArray *projectNames = [self loadProjectNames];
-    NSArray *projectURLs = [fileManager contentsOfDirectoryAtURL:[self stateProjectsDirectory] includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles error:NULL];
+    NSArray *projectURLs = [fileManager contentsOfDirectoryAtURL:[NSURL applicationDocumentsDirectory] includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles error:NULL];
     BOOL projectListHasChanged = NO;
     for (NSURL *projectURL in projectURLs)
     {
@@ -84,7 +79,7 @@ static void * const ACStateProjectDeletedObservingContext;
             [self willChangeValueForKey:@"projects"];
         }
         [projectNames addObject:projectName];
-        [self insertProjectProxyWithURL:[NSURL ACURLForProjectWithName:projectName] atIndex:NSNotFound];
+        [self insertProjectObjectWithURL:[NSURL ACURLForProjectWithName:projectName] atIndex:NSNotFound];
     }
     if (projectListHasChanged)
     {
@@ -146,33 +141,17 @@ static void * const ACStateProjectDeletedObservingContext;
 {
     ECASSERT(URL && [self indexOfProjectWithURL:URL] != NSNotFound);
     NSUInteger index = [self indexOfProjectWithURL:URL];
-    ACStateProject *project = [_projectProxies objectAtIndex:index];
+    id<ACStateProject> project = [_projectProxies objectAtIndex:index];
     NSMutableArray *projectNames = [self loadProjectNames];
     [self willChange:NSKeyValueChangeRemoval valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"projects"];
     [projectNames removeObjectAtIndex:index];
     [self saveProjectNames:projectNames];
-    [self removeProjectProxyWithURL:URL];
+    [self removeProjectObjectWithURL:URL];
     [project delete];
     [self didChange:NSKeyValueChangeRemoval valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"projects"];
 }
 
 #pragma mark - Internal methods
-
-+ (id)ACStateProxyForObject:(id)object
-{
-    if ([object isKindOfClass:[ACProject class]])
-        return [[ACStateProject alloc] initWithObject:object];
-    ECASSERT([object isKindOfClass:[ACModelNode class]]); // if it's not a project object, it should be a regular node object
-    ACModelNode *node = object;
-    if ([node.type intValue] == ACProjectNodeTypeFile)
-        return [[ACStateFile alloc] initWithObject:object];
-    if ([node.type intValue] == ACProjectNodeTypeFolder)
-        return [[ACStateFolder alloc] initWithObject:object];
-    if ([node.type intValue] == ACProjectNodeTypeGroup)
-        return [[ACStateGroup alloc] initWithObject:object];
-    ECASSERT(false); // object passed is of an invalid type
-    return nil;
-}
 
 + (id)ACStateProxyForURL:(NSURL *)URL
 {
@@ -183,7 +162,7 @@ static void * const ACStateProjectDeletedObservingContext;
 {
     ECASSERT(URL);
     NSUInteger index = 0;
-    for (ACStateProject *project in _projectProxies)
+    for (id<ACStateProject> project in _projectProxies)
         if ([project.name isEqualToString:[URL ACProjectName]])
             return index;
         else
@@ -212,23 +191,23 @@ static void * const ACStateProjectDeletedObservingContext;
 
 #pragma mark - Private methods
 
-- (void)insertProjectProxyWithURL:(NSURL *)URL atIndex:(NSUInteger)index
+- (void)insertProjectObjectWithURL:(NSURL *)URL atIndex:(NSUInteger)index
 {
     ECASSERT(URL);
     ECASSERT(index <= [_projectProxies count] || index == NSNotFound);
     if (index == NSNotFound)
         index = [_projectProxies count];
-    ACStateProject *project = [[ACStateProject alloc] initWithURL:URL];
+    NSObject<ACStateProject> *project = [[ACProject alloc] initWithURL:URL];
     [project addObserver:self forKeyPath:@"URL" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld context:ACStateProjectURLObservingContext];
     [project addObserver:self forKeyPath:@"deleted" options:NSKeyValueObservingOptionNew context:ACStateProjectDeletedObservingContext];
     [_projectProxies insertObject:project atIndex:index];
 }
 
-- (void)removeProjectProxyWithURL:(NSURL *)URL
+- (void)removeProjectObjectWithURL:(NSURL *)URL
 {
     ECASSERT(URL && [self indexOfProjectWithURL:URL] != NSNotFound);
     NSUInteger index = [self indexOfProjectWithURL:URL];
-    ACStateProject *project = [_projectProxies objectAtIndex:index];
+    NSObject<ACStateProject> *project = [_projectProxies objectAtIndex:index];
     [project removeObserver:self forKeyPath:@"URL" context:ACStateProjectURLObservingContext];
     [project removeObserver:self forKeyPath:@"deleted" context:ACStateProjectDeletedObservingContext];
     [_projectProxies removeObjectAtIndex:index];

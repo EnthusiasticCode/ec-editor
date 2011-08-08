@@ -8,12 +8,31 @@
 
 #import "ACURL.h"
 
+NSString * const ACProjectBundleExtension = @"acproj";
+NSString * const ACURLScheme = @"artcode";
+NSString * const ACProjectContentDirectory = @"Content";
+
 @implementation NSURL (ACURL)
+
++ (NSURL *)applicationDocumentsDirectory
+{
+    return [NSURL fileURLWithPath:[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject]];
+}
 
 - (NSString *)ACProjectName
 {
     ECASSERT([self.scheme isEqualToString:ACURLScheme]);
     return [self.pathComponents objectAtIndex:0];
+}
+
+- (NSURL *)ACProjectBundleURL
+{
+    return [[[self class] URLByAppendingPathComponent:[self ACProjectName]] URLByAppendingPathExtension:ACProjectBundleExtension];
+}
+
+- (NSURL *)ACProjectContentURL
+{
+    return [[[[self class] URLByAppendingPathComponent:[self ACProjectName]] URLByAppendingPathExtension:ACProjectBundleExtension] URLByAppendingPathComponent:ACProjectContentDirectory isDirectory:YES];
 }
 
 + (NSURL *)ACURLForProjectWithName:(NSString *)name

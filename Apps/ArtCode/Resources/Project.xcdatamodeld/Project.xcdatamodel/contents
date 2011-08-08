@@ -11,6 +11,7 @@
     <entity name="HistoryItem" representedClassName="ACModelHistoryItem">
         <attribute name="position" attributeType="Float" defaultValueString="0.0"/>
         <attribute name="selection" optional="YES" attributeType="Transformable"/>
+        <relationship name="currentTab" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Tab" inverseName="currentHistoryItem" inverseEntity="Tab"/>
         <relationship name="node" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Node" inverseName="historyItems" inverseEntity="Node"/>
         <relationship name="tab" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Tab" inverseName="historyItems" inverseEntity="Tab"/>
     </entity>
@@ -26,13 +27,14 @@
     </entity>
     <entity name="Tab" representedClassName="ACModelTab">
         <attribute name="index" attributeType="Integer 16"/>
+        <relationship name="currentHistoryItem" optional="YES" minCount="1" maxCount="1" deletionRule="Cascade" destinationEntity="HistoryItem" inverseName="currentTab" inverseEntity="HistoryItem"/>
         <relationship name="historyItems" optional="YES" toMany="YES" deletionRule="Cascade" ordered="YES" destinationEntity="HistoryItem" inverseName="tab" inverseEntity="HistoryItem"/>
     </entity>
     <elements>
-        <element name="Node" positionX="-3737" positionY="-2493" width="128" height="165"/>
-        <element name="File" positionX="-3737" positionY="-2637" width="128" height="60"/>
         <element name="Bookmark" positionX="-3960" positionY="-2601" width="128" height="90"/>
-        <element name="HistoryItem" positionX="-3537" positionY="-2610" width="128" height="105"/>
-        <element name="Tab" positionX="-3476" positionY="-2421" width="128" height="75"/>
+        <element name="File" positionX="-3737" positionY="-2637" width="128" height="60"/>
+        <element name="HistoryItem" positionX="-3537" positionY="-2610" width="128" height="120"/>
+        <element name="Node" positionX="-3737" positionY="-2493" width="128" height="165"/>
+        <element name="Tab" positionX="-3476" positionY="-2421" width="128" height="90"/>
     </elements>
 </model>

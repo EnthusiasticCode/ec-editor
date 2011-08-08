@@ -8,6 +8,6 @@
 
 #import <Foundation/Foundation.h>
 
-@interface ACStateTab : NSObject
+@protocol ACStateTab <NSObject>
 
 @end

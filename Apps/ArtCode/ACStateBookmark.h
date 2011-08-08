@@ -8,6 +8,6 @@
 
 #import <Foundation/Foundation.h>
 
-@interface ACStateBookmark : NSObject
+@protocol ACStateBookmark <NSObject>
 
 @end
