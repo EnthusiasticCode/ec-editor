@@ -82,7 +82,8 @@
     
     // Create view
     UIImageView *bezelView = [[UIImageView alloc] initWithImage:bezelBackgroundImage];
-    bezelView.contentMode = UIViewContentModeCenter;
+//    bezelView.contentMode = UIViewContentModeScaleToFill;
+#warning TODO the resulting immage is not properly scaled (corners are deformed)
     bezelView.autoresizingMask = autoresizingMask;
     self.view = bezelView;
 }

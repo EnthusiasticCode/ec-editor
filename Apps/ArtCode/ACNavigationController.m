@@ -279,7 +279,7 @@
 {
     if (controller.tabCount == 1)
     {
-        [[ECBezelAlert bottomBezelAlert] addAlertMessageWithText:@"Can not stay without tabs!" image:nil displayImmediatly:YES];
+        [[ECBezelAlert centerBezelAlert] addAlertMessageWithText:@"Can not stay without tabs!" image:nil displayImmediatly:YES];
         return NO;
     }
     return YES;
