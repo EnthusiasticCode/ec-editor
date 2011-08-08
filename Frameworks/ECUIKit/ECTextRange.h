@@ -12,8 +12,11 @@
 
 @interface ECTextRange : UITextRange <NSCopying> {
 @protected
-    ECTextPosition *start, *end;
+    ECTextPosition *_start, *_end;
 }
+
+@property (nonatomic, readonly, weak) UITextPosition *start;
+@property (nonatomic, readonly, weak) UITextPosition *end;
 
 @property (nonatomic, readonly) NSRange range;
 @property (nonatomic, readonly) CFRange CFRange;

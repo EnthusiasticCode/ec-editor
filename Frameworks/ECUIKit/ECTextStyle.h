@@ -49,7 +49,7 @@ typedef void (^ECTextStyleCustomOverlayBlock)(CGContextRef context, CGRect rect)
 @property (nonatomic) ECUnderlineStyle underlineStyle;
 
 /// Gets a dictionary of core text compatible attributed string's attributes.
-@property (nonatomic, readonly) NSDictionary *CTAttributes;
+@property (nonatomic, readonly, strong) NSDictionary *CTAttributes;
 
 @property (nonatomic, copy) ECTextStyleCustomOverlayBlock backCustomOverlay;
 

@@ -23,6 +23,11 @@
 
 #pragma mark - Tool Target Protocol Implementation
 
++ (id)newToolTargetController
+{
+    return [ACCodeFileController new];
+}
+
 - (void)openURL:(NSURL *)url
 {
     // TODO handle error

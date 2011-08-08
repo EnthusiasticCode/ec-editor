@@ -57,7 +57,7 @@
 @property (nonatomic, weak) id<UITextInputDelegate> inputDelegate;
 
 /// An input tokenizer that provides information about the granularity of text units.
-@property (nonatomic, readonly) id<UITextInputTokenizer> tokenizer;
+@property (nonatomic, readonly, weak) id<UITextInputTokenizer> tokenizer;
 
 /// A dictionary of attributes that describes how marked text should be drawn.
 @property (nonatomic, copy) NSDictionary *markedTextStyle;

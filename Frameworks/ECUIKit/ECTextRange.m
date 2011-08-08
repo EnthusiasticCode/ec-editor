@@ -14,12 +14,20 @@
 
 #pragma mark Properties
 
-@synthesize start, end;
+- (UITextPosition *)start
+{
+    return _start;
+}
+
+- (UITextPosition *)end
+{
+    return _end;
+}
 
 - (NSRange)range
 {
-    NSUInteger s = start.index;
-    NSUInteger e = end.index;
+    NSUInteger s = _start.index;
+    NSUInteger e = _end.index;
     if (s > e) 
         return (NSRange){e, s - e};
     return (NSRange){s, e - s};
@@ -27,7 +35,7 @@
 
 - (CFRange)CFRange
 {
-    return (CFRange){(CFIndex)start.index, (CFIndex)(end.index - start.index)};
+    return (CFRange){(CFIndex)_start.index, (CFIndex)(_end.index - _start.index)};
 }
 
 - (id)initWithStart:(ECTextPosition*)aStart end:(ECTextPosition*)aEnd
@@ -36,8 +44,8 @@
 //    assert([aEnd isKindOfClass:[ECTextPosition class]]);
     if((self = [super init]))
     {
-        start = aStart;
-        end = aEnd;
+        _start = aStart;
+        _end = aEnd;
     }
     return self;
 }
@@ -65,19 +73,19 @@
 
 - (ECTextRange*)rangeIncludingPosition:(ECTextPosition*)p
 {
-    if ([p compare:start] == NSOrderedAscending)
-        return [[[self class] alloc] initWithStart:p end:end];
-    if ([p compare:end] == NSOrderedDescending)
-        return [[[self class] alloc] initWithStart:start end:p];
+    if ([p compare:_start] == NSOrderedAscending)
+        return [[[self class] alloc] initWithStart:p end:_end];
+    if ([p compare:_end] == NSOrderedDescending)
+        return [[[self class] alloc] initWithStart:_start end:p];
     
     return self;
 }
 
 - (BOOL)includesPosition:(ECTextPosition*)p
 {
-    if ([start compare:p] == NSOrderedDescending)
+    if ([_start compare:p] == NSOrderedDescending)
         return NO;
-    if ([end compare:p] == NSOrderedAscending)
+    if ([_end compare:p] == NSOrderedAscending)
         return NO;
     return YES;
 }
@@ -89,7 +97,7 @@
 
 - (BOOL)isEmpty
 {
-    return ( [start compare:end] == NSOrderedSame );
+    return ( [_start compare:_end] == NSOrderedSame );
 }
 
 - (BOOL)isEqual:(id)other
@@ -99,12 +107,12 @@
     
     ECTextRange *otherRange = (ECTextRange *)other;
     
-    return ([start compare:otherRange.start] == NSOrderedSame) && ([end compare:otherRange.end] == NSOrderedSame);
+    return ([_start compare:otherRange.start] == NSOrderedSame) && ([_end compare:otherRange.end] == NSOrderedSame);
 }
 
 - (NSString *)description
 {
-    return [NSString stringWithFormat:@"%@..%@", [start description], [end description]];
+    return [NSString stringWithFormat:@"%@..%@", [_start description], [_end description]];
 }
 
 #pragma mark -

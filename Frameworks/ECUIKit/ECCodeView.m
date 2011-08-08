@@ -50,7 +50,7 @@
     UITapGestureRecognizer *doubleTapRecognizer;
     UILongPressGestureRecognizer *longPressRecognizer;
     UILongPressGestureRecognizer *longDoublePressRecognizer;
-    id<UITextInputTokenizer> tokenizer;
+    id<UITextInputTokenizer> _tokenizer;
 }
 
 /// Specify if the info view containing search marks and navigator should be visible.
@@ -1165,9 +1165,9 @@ static void init(ECCodeView *self)
 // TODO create a proper code tokenizer, should be retreived from the datasource
 - (id<UITextInputTokenizer>)tokenizer
 {
-    if (!tokenizer)
-        tokenizer = [[UITextInputStringTokenizer alloc] initWithTextInput:self];
-    return tokenizer;
+    if (!_tokenizer)
+        _tokenizer = [[UITextInputStringTokenizer alloc] initWithTextInput:self];
+    return _tokenizer;
 }
 
 - (UIView *)textInputView

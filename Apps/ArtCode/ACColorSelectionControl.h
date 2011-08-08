@@ -12,7 +12,7 @@
 
 @property (nonatomic, strong) NSArray *colors;
 
-@property (nonatomic, readonly) UIColor *selectedColor;
+@property (nonatomic, readonly, strong) UIColor *selectedColor;
 
 @property (nonatomic) CGFloat colorCellsMargin;
 

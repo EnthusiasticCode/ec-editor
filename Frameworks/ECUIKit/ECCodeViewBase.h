@@ -39,7 +39,7 @@
 - (id)initWithFrame:(CGRect)frame renderer:(ECTextRenderer *)aRenderer renderingQueue:(NSOperationQueue *)queue;
 
 /// Renderer used in the codeview.
-@property (nonatomic, readonly) ECTextRenderer *renderer;
+@property (nonatomic, readonly, strong) ECTextRenderer *renderer;
 
 /// Queue where renderer should be used.
 @property (nonatomic, strong) NSOperationQueue *renderingQueue;
