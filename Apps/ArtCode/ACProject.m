@@ -15,6 +15,7 @@
 
 @interface ACProject ()
 @property (nonatomic, strong, readonly) ACProjectDocument *document;
+@property (nonatomic, getter = isDeleted) BOOL deleted;
 @end
 
 @implementation ACProject
@@ -25,41 +26,63 @@
 
 - (NSUInteger)tag
 {
+    if (self.deleted)
+        return 0;
     return 0;
 }
 
 - (void)setTag:(NSUInteger)tag
 {
-    
+    if (self.deleted)
+        return;
 }
 
 - (NSString *)name
 {
+    if (self.deleted)
+        return nil;
     return [self.URL ACProjectName];
 }
 
 - (void)setName:(NSString *)name
 {
+    if (self.deleted)
+        return;
     self.URL = [NSURL ACURLForProjectWithName:name];
 }
 
 - (NSUInteger)index
 {
-    return [[ACState sharedState] indexOfProjectWithURL:self.URL];
+    if (self.deleted)
+        return NSNotFound;
+    return [[ACState localState] indexOfProjectWithURL:self.URL];
 }
 
 - (void)setIndex:(NSUInteger)index
 {
-    [[ACState sharedState] setIndex:index forProjectWithURL:self.URL];
+    if (self.deleted)
+        return;
+    [[ACState localState] setIndex:index forProjectWithURL:self.URL];
+}
+
+- (NSURL *)URL
+{
+    if (self.deleted)
+        return nil;
+    return _URL;
 }
 
 - (void)setURL:(NSURL *)URL
 {
+    if (self.deleted)
+        return;
     ECASSERT(false); // NYI
 }
 
 - (ACProjectDocument *)document
 {
+    if (self.deleted)
+        return nil;
     if (!_document)
         _document = [[ACProjectDocument alloc] initWithFileURL:[self.URL ACProjectBundleURL]];
     return _document;
@@ -76,12 +99,17 @@
 
 - (void)delete
 {
-    ECASSERT(false); // NYI
+    [_document closeWithCompletionHandler:NULL];
+    NSFileManager *fileManager = [[NSFileManager alloc] init];
+    [fileManager removeItemAtURL:self.URL error:NULL];
+    self.deleted = YES;
 }
 
 - (NSOrderedSet *)children
 {
-    return [_document children];
+    if (self.deleted)
+        return nil;
+    return [self.document children];
 }
 
 - (NSURL *)documentDirectory
@@ -96,7 +124,7 @@
 
 - (void)openWithCompletionHandler:(void (^)(BOOL))completionHandler
 {
-    [_document openWithCompletionHandler:completionHandler];
+    [self.document openWithCompletionHandler:completionHandler];
 }
 
 - (void)closeWithCompletionHandler:(void (^)(BOOL))completionHandler

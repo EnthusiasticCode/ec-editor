@@ -18,13 +18,10 @@ static void * const ACStateProjectDeletedObservingContext;
 
 @interface ACState ()
 {
-    NSMutableArray *_projectProxies;
+    NSMutableArray *_projectObjects;
 }
 
-/// returns a suitable ACState proxy for the ACURL
-+ (id)ACStateProxyForURL:(NSURL *)URL;
-
-/// Adds and removes a project proxy with a given name to the list
+/// Adds and removes a project object to the list
 - (void)insertProjectObjectWithURL:(NSURL *)URL atIndex:(NSUInteger)index;
 - (void)removeProjectObjectWithURL:(NSURL *)URL;
 
@@ -38,14 +35,14 @@ static void * const ACStateProjectDeletedObservingContext;
 
 #pragma mark - Application Level
 
-+ (ACState *)sharedState
++ (ACState *)localState
 {
-    static ACState *sharedState = nil;
+    static ACState *localState = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        sharedState = [[self alloc] init];
+        localState = [[self alloc] init];
     });
-    return sharedState;
+    return localState;
 }
 
 - (id)init
@@ -53,7 +50,7 @@ static void * const ACStateProjectDeletedObservingContext;
     self = [super init];
     if (!self)
         return nil;
-    _projectProxies = [NSMutableArray array];
+    _projectObjects = [NSMutableArray array];
     for (NSString *projectName in [self loadProjectNames])
         [self insertProjectObjectWithURL:[NSURL ACURLForProjectWithName:projectName] atIndex:NSNotFound];
     [self scanForProjects];
@@ -102,7 +99,8 @@ static void * const ACStateProjectDeletedObservingContext;
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
-    if (context == ACStateProjectURLObservingContext) {
+    if (context == ACStateProjectURLObservingContext)
+    {
         NSURL *oldURL = [change objectForKey:NSKeyValueChangeOldKey];
         NSURL *newURL = [change objectForKey:NSKeyValueChangeNewKey];
         ECASSERT(oldURL && newURL && [self indexOfProjectWithURL:oldURL] != NSNotFound);
@@ -111,24 +109,37 @@ static void * const ACStateProjectDeletedObservingContext;
         [projectNames removeObjectAtIndex:index];
         [projectNames insertObject:[newURL ACProjectName] atIndex:index];
         [self saveProjectNames:projectNames];
-    } else {
-        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+        return;
     }
+    if (context == ACStateProjectDeletedObservingContext)
+    {
+        NSURL *URL = [object URL];
+        ECASSERT(URL && [self indexOfProjectWithURL:URL] != NSNotFound);
+        NSUInteger index = [self indexOfProjectWithURL:URL];
+        NSMutableArray *projectNames = [self loadProjectNames];
+        [self willChange:NSKeyValueChangeRemoval valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"projects"];
+        [projectNames removeObjectAtIndex:index];
+        [self saveProjectNames:projectNames];
+        [self removeProjectObjectWithURL:URL];
+        [self didChange:NSKeyValueChangeRemoval valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"projects"];
+        return;
+    }
+    [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
 }
 
 #pragma mark - Project Level
 
 - (NSArray *)projects
 {
-    return [_projectProxies copy];
+    return [_projectObjects copy];
 }
 
 - (void)insertProjectWithURL:(NSURL *)URL atIndex:(NSUInteger)index
 {
     ECASSERT(URL && [self indexOfProjectWithURL:URL] == NSNotFound);
-    ECASSERT(index <= [_projectProxies count] || index == NSNotFound);
+    ECASSERT(index <= [_projectObjects count] || index == NSNotFound);
     if (index == NSNotFound)
-        index = [_projectProxies count];
+        index = [_projectObjects count];
     NSMutableArray *projectNames = [self loadProjectNames];
     [self willChange:NSKeyValueChangeInsertion valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"projects"];
     [projectNames insertObject:[URL ACProjectName] atIndex:index];
@@ -137,32 +148,13 @@ static void * const ACStateProjectDeletedObservingContext;
     [self didChange:NSKeyValueChangeInsertion valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"projects"];
 }
 
-- (void)deleteProjectWithURL:(NSURL *)URL
-{
-    ECASSERT(URL && [self indexOfProjectWithURL:URL] != NSNotFound);
-    NSUInteger index = [self indexOfProjectWithURL:URL];
-    id<ACStateProject> project = [_projectProxies objectAtIndex:index];
-    NSMutableArray *projectNames = [self loadProjectNames];
-    [self willChange:NSKeyValueChangeRemoval valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"projects"];
-    [projectNames removeObjectAtIndex:index];
-    [self saveProjectNames:projectNames];
-    [self removeProjectObjectWithURL:URL];
-    [project delete];
-    [self didChange:NSKeyValueChangeRemoval valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"projects"];
-}
-
 #pragma mark - Internal methods
-
-+ (id)ACStateProxyForURL:(NSURL *)URL
-{
-    return nil;
-}
 
 - (NSUInteger)indexOfProjectWithURL:(NSURL *)URL
 {
     ECASSERT(URL);
     NSUInteger index = 0;
-    for (id<ACStateProject> project in _projectProxies)
+    for (id<ACStateProject> project in _projectObjects)
         if ([project.name isEqualToString:[URL ACProjectName]])
             return index;
         else
@@ -173,18 +165,18 @@ static void * const ACStateProjectDeletedObservingContext;
 - (void)setIndex:(NSUInteger)index forProjectWithURL:(NSURL *)URL
 {
     ECASSERT(URL);
-    ECASSERT(index < [_projectProxies count]);
+    ECASSERT(index < [_projectObjects count]);
     NSUInteger oldIndex = [self indexOfProjectWithURL:URL];
     NSMutableArray *projectNames = [self loadProjectNames];
     NSString *projectName = [projectNames objectAtIndex:oldIndex];
-    ACStateProject *project = [_projectProxies objectAtIndex:oldIndex];
+    ACStateProject *project = [_projectObjects objectAtIndex:oldIndex];
     [self willChange:NSKeyValueChangeRemoval valuesAtIndexes:[NSIndexSet indexSetWithIndex:oldIndex] forKey:@"projects"];
     [self willChange:NSKeyValueChangeInsertion valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"projects"];
     [projectNames removeObjectAtIndex:oldIndex];
     [projectNames insertObject:projectName atIndex:index];
     [self saveProjectNames:projectNames];
-    [_projectProxies removeObjectAtIndex:oldIndex];
-    [_projectProxies insertObject:project atIndex:index];
+    [_projectObjects removeObjectAtIndex:oldIndex];
+    [_projectObjects insertObject:project atIndex:index];
     [self didChange:NSKeyValueChangeInsertion valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"projects"];
     [self didChange:NSKeyValueChangeRemoval valuesAtIndexes:[NSIndexSet indexSetWithIndex:oldIndex] forKey:@"projects"];
 }
@@ -194,23 +186,23 @@ static void * const ACStateProjectDeletedObservingContext;
 - (void)insertProjectObjectWithURL:(NSURL *)URL atIndex:(NSUInteger)index
 {
     ECASSERT(URL);
-    ECASSERT(index <= [_projectProxies count] || index == NSNotFound);
+    ECASSERT(index <= [_projectObjects count] || index == NSNotFound);
     if (index == NSNotFound)
-        index = [_projectProxies count];
+        index = [_projectObjects count];
     NSObject<ACStateProject> *project = [[ACProject alloc] initWithURL:URL];
     [project addObserver:self forKeyPath:@"URL" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld context:ACStateProjectURLObservingContext];
     [project addObserver:self forKeyPath:@"deleted" options:NSKeyValueObservingOptionNew context:ACStateProjectDeletedObservingContext];
-    [_projectProxies insertObject:project atIndex:index];
+    [_projectObjects insertObject:project atIndex:index];
 }
 
 - (void)removeProjectObjectWithURL:(NSURL *)URL
 {
     ECASSERT(URL && [self indexOfProjectWithURL:URL] != NSNotFound);
     NSUInteger index = [self indexOfProjectWithURL:URL];
-    NSObject<ACStateProject> *project = [_projectProxies objectAtIndex:index];
+    NSObject<ACStateProject> *project = [_projectObjects objectAtIndex:index];
     [project removeObserver:self forKeyPath:@"URL" context:ACStateProjectURLObservingContext];
     [project removeObserver:self forKeyPath:@"deleted" context:ACStateProjectDeletedObservingContext];
-    [_projectProxies removeObjectAtIndex:index];
+    [_projectObjects removeObjectAtIndex:index];
 }
 
 @end

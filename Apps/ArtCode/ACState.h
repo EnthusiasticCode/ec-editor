@@ -16,7 +16,7 @@
 #pragma mark - Application Level
 
 /// Returns the ACState application wide singleton
-+ (ACState *)sharedState;
++ (ACState *)localState;
 
 /// Scans the state projects directory for new projects
 - (void)scanForProjects;
@@ -30,9 +30,5 @@
 /// Inserting a project with the same name as an existing project is an error
 /// Passing index = NSNotFound will add the project to the end of the project list
 - (void)insertProjectWithURL:(NSURL *)URL atIndex:(NSUInteger)index;
-
-/// Deletes a project
-/// If the project is active it deactives it before deleting it.
-- (void)deleteProjectWithURL:(NSURL *)URL;
 
 @end

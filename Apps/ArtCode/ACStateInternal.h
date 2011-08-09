@@ -8,6 +8,7 @@
 
 #import "ACState.h"
 
+/// Internal methods to be called by project objects
 @interface ACState (Internal)
 
 /// Returns the index of a project in the projects list

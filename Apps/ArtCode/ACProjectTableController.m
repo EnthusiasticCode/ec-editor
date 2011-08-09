@@ -143,7 +143,7 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return 3; //[[ACState sharedState].projects count];
+    return 3; //[[ACState localState].projects count];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -184,7 +184,7 @@
     [cell.iconButton setImage:[self projectIconWithColor:[UIColor styleForegroundColor]] forState:UIControlStateNormal];
     
     // Setup project title
-    //[cell.textLabel setText:[[[ACState sharedState].projects objectAtIndex:indexPath.row] name]];
+    //[cell.textLabel setText:[[[ACState localState].projects objectAtIndex:indexPath.row] name]];
     cell.textField.text = @"Project";
     
     return cell;
@@ -203,7 +203,7 @@
 
 - (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)sourceIndexPath toIndexPath:(NSIndexPath *)destinationIndexPath
 {
-    [[[ACState sharedState].projects objectAtIndex:sourceIndexPath.row] setIndex:destinationIndexPath.row];
+    [[[ACState localState].projects objectAtIndex:sourceIndexPath.row] setIndex:destinationIndexPath.row];
 }
 
 /*
@@ -221,7 +221,7 @@
 {
     if (editingStyle == UITableViewCellEditingStyleDelete) {
         // Delete the row from the data source
-        [[[ACState sharedState].projects objectAtIndex:indexPath.row] delete];
+        [[[ACState localState].projects objectAtIndex:indexPath.row] delete];
         [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
     }   
     else if (editingStyle == UITableViewCellEditingStyleInsert) {
@@ -246,7 +246,7 @@
     if (self.isEditing)
         return;
     
-//    [self.ACNavigationController pushURL:[[[ACState sharedState].projects objectAtIndex:indexPath.row] URL] animated:YES];
+//    [self.ACNavigationController pushURL:[[[ACState localState].projects objectAtIndex:indexPath.row] URL] animated:YES];
     [self.ACNavigationController pushURL:[NSURL URLWithString:@"artcode:/Project"]];
 }
 
