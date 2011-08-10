@@ -143,7 +143,7 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return 3; //[[ACState localState].projects count];
+    return [[ACState localState].projects count];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -184,8 +184,8 @@
     [cell.iconButton setImage:[self projectIconWithColor:[UIColor styleForegroundColor]] forState:UIControlStateNormal];
     
     // Setup project title
-    //[cell.textLabel setText:[[[ACState localState].projects objectAtIndex:indexPath.row] name]];
-    cell.textField.text = @"Project";
+    [cell.textLabel setText:[[[ACState localState].projects objectAtIndex:indexPath.row] name]];
+//    cell.textField.text = @"Project";
     
     return cell;
 }
@@ -246,8 +246,8 @@
     if (self.isEditing)
         return;
     
-//    [self.ACNavigationController pushURL:[[[ACState localState].projects objectAtIndex:indexPath.row] URL] animated:YES];
-    [self.ACNavigationController pushURL:[NSURL URLWithString:@"artcode:/Project"]];
+    [self.ACNavigationController pushURL:[[[ACState localState].projects objectAtIndex:indexPath.row] URL]];
+//    [self.ACNavigationController pushURL:[NSURL URLWithString:@"artcode:/Project"]];
 }
 
 @end

@@ -51,9 +51,9 @@ static void * const ACStateProjectDeletedObservingContext;
     if (!self)
         return nil;
     _projectObjects = [NSMutableArray array];
+    [self scanForProjects];
     for (NSString *projectName in [self loadProjectNames])
         [self insertProjectObjectWithURL:[NSURL ACURLForProjectWithName:projectName] atIndex:NSNotFound];
-    [self scanForProjects];
     return self;
 }
 
@@ -63,11 +63,27 @@ static void * const ACStateProjectDeletedObservingContext;
     NSMutableArray *projectNames = [self loadProjectNames];
     NSArray *projectURLs = [fileManager contentsOfDirectoryAtURL:[NSURL applicationDocumentsDirectory] includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles error:NULL];
     BOOL projectListHasChanged = NO;
+    NSMutableArray *deletedProjectsNames = nil;
+    for (NSString *projectName in projectNames)
+    {
+        if ([fileManager fileExistsAtPath:[[[[NSURL applicationDocumentsDirectory] path] stringByAppendingPathComponent:projectName] stringByAppendingPathExtension:ACProjectBundleExtension]])
+            continue;
+        if (!projectListHasChanged)
+        {
+            projectListHasChanged = YES;
+            [self willChangeValueForKey:@"projects"];
+        }
+        if (!deletedProjectsNames)
+            deletedProjectsNames = [[NSMutableArray alloc] init];
+        [deletedProjectsNames addObject:projectName];
+    }
+    if (deletedProjectsNames)
+        [projectNames removeObjectsInArray:deletedProjectsNames];
     for (NSURL *projectURL in projectURLs)
     {
         if (![[projectURL pathExtension] isEqualToString:ACProjectBundleExtension])
             continue;
-        NSString *projectName = [projectURL lastPathComponent];
+        NSString *projectName = [[projectURL lastPathComponent] stringByDeletingPathExtension];
         if ([projectNames containsObject:projectName])
             continue;
         if (!projectListHasChanged)
@@ -76,7 +92,6 @@ static void * const ACStateProjectDeletedObservingContext;
             [self willChangeValueForKey:@"projects"];
         }
         [projectNames addObject:projectName];
-        [self insertProjectObjectWithURL:[NSURL ACURLForProjectWithName:projectName] atIndex:NSNotFound];
     }
     if (projectListHasChanged)
     {

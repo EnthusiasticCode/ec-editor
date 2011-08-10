@@ -22,7 +22,7 @@ NSString * const ACProjectContentDirectory = @"Content";
 - (NSString *)ACProjectName
 {
     ECASSERT([self.scheme isEqualToString:ACURLScheme]);
-    return [self.pathComponents objectAtIndex:0];
+    return [[self.pathComponents objectAtIndex:1] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
 }
 
 - (NSURL *)ACProjectBundleURL
