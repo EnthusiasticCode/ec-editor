@@ -123,7 +123,7 @@
 
 #pragma mark - Tool Target Methods
 
-+ (id)newToolTargetController
++ (id)newNavigationTargetController
 {
     return [ACFileTableController new];
 }

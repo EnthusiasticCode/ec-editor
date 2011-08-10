@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "ECJumpBar.h"
 #import "ACTabNavigationController.h"
-#import "ACToolTarget.h"
+#import "ACNavigationTarget.h"
 
 @class ACNavigationController;
 @class ACToolPanelController;

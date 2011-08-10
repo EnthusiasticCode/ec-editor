@@ -7,11 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "ACToolTarget.h"
+#import "ACNavigationTarget.h"
 
 @class ECCodeView;
 
-@interface ACCodeFileController : UIViewController <ACToolTarget>
+@interface ACCodeFileController : UIViewController <ACNavigationTarget>
 
 @property (nonatomic, strong) ECCodeView *codeView;
 

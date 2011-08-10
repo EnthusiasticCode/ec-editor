@@ -23,7 +23,7 @@
 
 #pragma mark - Tool Target Protocol Implementation
 
-+ (id)newToolTargetController
++ (id)newNavigationTargetController
 {
     return [ACCodeFileController new];
 }

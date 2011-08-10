@@ -123,7 +123,7 @@
 		B7DF4B5B13EFE52F00BF8306 /* ACProjectDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACProjectDocument.h; sourceTree = "<group>"; };
 		B7DF4B5C13EFE52F00BF8306 /* ACProjectDocument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACProjectDocument.m; sourceTree = "<group>"; };
 		B7DF4B5E13EFEE5900BF8306 /* ACStateInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACStateInternal.h; sourceTree = "<group>"; };
-		CD0DEAB613D4C2430087ADBB /* ACToolTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACToolTarget.h; sourceTree = "<group>"; };
+		CD0DEAB613D4C2430087ADBB /* ACNavigationTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; path = ACNavigationTarget.h; sourceTree = "<group>"; };
 		CD13665713D32150001F3455 /* UIControl+BlockAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIControl+BlockAction.h"; sourceTree = "<group>"; };
 		CD13665813D32150001F3455 /* UIControl+BlockAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIControl+BlockAction.m"; sourceTree = "<group>"; };
 		CD4786E713DB0C2500616B62 /* ACState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACState.h; sourceTree = "<group>"; };
@@ -492,7 +492,7 @@
 		CD7D2B1613C0D39B00B889EE /* Navigation */ = {
 			isa = PBXGroup;
 			children = (
-				CD0DEAB613D4C2430087ADBB /* ACToolTarget.h */,
+				CD0DEAB613D4C2430087ADBB /* ACNavigationTarget.h */,
 				CD7D2B2513C0D4B700B889EE /* ACNavigationController.h */,
 				CD7D2B2613C0D4B700B889EE /* ACNavigationController.m */,
 				CD7C01BF13D354A0004CD5E5 /* ACTabController.h */,

@@ -184,7 +184,7 @@
     else
         controllerClass = [ACFileTableController class];
     
-    UIViewController<ACToolTarget> *controller = [controllerClass newToolTargetController];
+    UIViewController<ACNavigationTarget> *controller = [controllerClass newNavigationTargetController];
     [controller openURL:url];
     return controller; // TODO initWithNibName:name of class
 }

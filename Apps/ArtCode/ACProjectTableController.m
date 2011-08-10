@@ -46,7 +46,7 @@
 
 #pragma mark - Tool Target Protocol
 
-+ (id)newToolTargetController
++ (id)newNavigationTargetController
 {
     return [ACProjectTableController new];
 }

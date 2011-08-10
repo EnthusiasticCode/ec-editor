@@ -7,12 +7,12 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "ACToolTarget.h"
+#import "ACNavigationTarget.h"
 
 @class ACToolFiltersView;
 
 
-@interface ACFileTableController : UIViewController <ACToolTarget, UITableViewDataSource, UITableViewDelegate>
+@interface ACFileTableController : UIViewController <ACNavigationTarget, UITableViewDataSource, UITableViewDelegate>
 
 @property (nonatomic, strong) IBOutlet UITableView *tableView;
 
