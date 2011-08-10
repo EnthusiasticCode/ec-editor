@@ -168,13 +168,14 @@
     [tabNavigationController setEditing:editing animated:animated];
 }
 
-- (IBAction)toggleTools:(id)sender
+- (IBAction)toolButtonAction:(id)sender
 {
-//    if (!popoverController)
-//        popoverController = [ECPopoverController new];
+    if ([tabNavigationController.currentTabController.tabViewController respondsToSelector:@selector(toolButtonAction:)])
+        [(UIViewController<ACNavigationTarget> *)tabNavigationController.currentTabController.tabViewController toolButtonAction:sender];
+    // TODO if not, the button should be removed.
 }
 
-- (IBAction)toggleEditing:(id)sender
+- (IBAction)editButtonAction:(id)sender
 {
     BOOL editing = !tabNavigationController.isEditing;
     [self setEditing:editing animated:YES];
@@ -429,12 +430,12 @@
 
 #pragma mark -
 
-- (IBAction)tests:(id)sender {
-    static NSUInteger count = 0;
-    NSString *title = [NSString stringWithFormat:@"Path %u", count++];
-//    [jumpBar pushJumpElementWithPathComponent:title animated:YES];
-    [[ECBezelAlert centerBezelAlert] addAlertMessageWithText:title image:nil displayImmediatly:NO];
-}
+//- (IBAction)tests:(id)sender {
+//    static NSUInteger count = 0;
+//    NSString *title = [NSString stringWithFormat:@"Path %u", count++];
+////    [jumpBar pushJumpElementWithPathComponent:title animated:YES];
+//    [[ECBezelAlert centerBezelAlert] addAlertMessageWithText:title image:nil displayImmediatly:NO];
+//}
 
 
 @end

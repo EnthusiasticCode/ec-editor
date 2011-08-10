@@ -17,6 +17,8 @@
 
 #import "ECPopoverController.h"
 
+#import "ECBezelAlert.h"
+
 #define STATIC_OBJECT(typ, nam, init) static typ *nam = nil; if (!nam) nam = init
 
 
@@ -69,6 +71,15 @@
 - (void)applyFilter:(NSString *)filter
 {
     // TODO filter
+}
+
+- (void)toolButtonAction:(id)sender
+{
+    // TODO custom stuff here
+    static NSUInteger count = 0;
+    NSString *title = [NSString stringWithFormat:@"Path %u", count++];
+//    [jumpBar pushJumpElementWithPathComponent:title animated:YES];
+    [[ECBezelAlert centerBezelAlert] addAlertMessageWithText:title image:nil displayImmediatly:NO];
 }
 
 #pragma mark - Colored icons

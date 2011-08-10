@@ -42,11 +42,8 @@
 
 #pragma mark Head Bar Methods
 
-- (IBAction)toggleTools:(id)sender;
-- (IBAction)toggleEditing:(id)sender;
-
-
-- (IBAction)tests:(id)sender;
+- (IBAction)toolButtonAction:(id)sender;
+- (IBAction)editButtonAction:(id)sender;
 
 @end
 
