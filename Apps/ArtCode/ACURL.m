@@ -27,12 +27,12 @@ NSString * const ACProjectContentDirectory = @"Content";
 
 - (NSURL *)ACProjectBundleURL
 {
-    return [[[self class] URLByAppendingPathComponent:[self ACProjectName]] URLByAppendingPathExtension:ACProjectBundleExtension];
+    return [[[[self class] applicationDocumentsDirectory] URLByAppendingPathComponent:[self ACProjectName]] URLByAppendingPathExtension:ACProjectBundleExtension];
 }
 
 - (NSURL *)ACProjectContentURL
 {
-    return [[[[self class] URLByAppendingPathComponent:[self ACProjectName]] URLByAppendingPathExtension:ACProjectBundleExtension] URLByAppendingPathComponent:ACProjectContentDirectory isDirectory:YES];
+    return [[[[[self class] applicationDocumentsDirectory] URLByAppendingPathComponent:[self ACProjectName]] URLByAppendingPathExtension:ACProjectBundleExtension] URLByAppendingPathComponent:ACProjectContentDirectory isDirectory:YES];
 }
 
 + (NSURL *)ACURLForProjectWithName:(NSString *)name

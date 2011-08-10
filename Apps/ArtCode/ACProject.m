@@ -94,6 +94,9 @@
     if (!self)
         return nil;
     _URL = URL;
+    NSFileManager *fileManager = [[NSFileManager alloc] init];
+    if (![fileManager fileExistsAtPath:[[URL ACProjectBundleURL] path]])
+        [fileManager createDirectoryAtURL:[URL ACProjectBundleURL] withIntermediateDirectories:YES attributes:nil error:NULL];
     return self;
 }
 

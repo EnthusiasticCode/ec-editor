@@ -149,18 +149,22 @@ static void * const ACStateProjectDeletedObservingContext;
     return [_projectObjects copy];
 }
 
-- (void)insertProjectWithURL:(NSURL *)URL atIndex:(NSUInteger)index
+- (BOOL)insertProjectWithURL:(NSURL *)URL atIndex:(NSUInteger)index error:(NSError *__autoreleasing *)error
 {
-    ECASSERT(URL && [self indexOfProjectWithURL:URL] == NSNotFound);
+    ECASSERT(URL);
     ECASSERT(index <= [_projectObjects count] || index == NSNotFound);
     if (index == NSNotFound)
         index = [_projectObjects count];
+    NSFileManager *fileManager = [[NSFileManager alloc] init];
+    if ([fileManager fileExistsAtPath:[[[[NSURL applicationDocumentsDirectory] path] stringByAppendingPathComponent:[URL ACProjectName]] stringByAppendingPathExtension:ACProjectBundleExtension]])
+        return NO;
     NSMutableArray *projectNames = [self loadProjectNames];
     [self willChange:NSKeyValueChangeInsertion valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"projects"];
     [projectNames insertObject:[URL ACProjectName] atIndex:index];
     [self saveProjectNames:projectNames];
-    [self insertProjectWithURL:URL atIndex:index];
+    [self insertProjectObjectWithURL:URL atIndex:index];
     [self didChange:NSKeyValueChangeInsertion valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"projects"];
+    return YES;
 }
 
 #pragma mark - Internal methods
