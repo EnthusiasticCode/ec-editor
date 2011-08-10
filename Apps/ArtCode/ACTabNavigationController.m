@@ -188,15 +188,17 @@ static void loadCurrentAndAdiacentTabViews(ACTabNavigationController *self, ACTa
                 {
                     [self->contentScrollView addSubview:tabController.tabViewController.view];
                     // Enabling tab swipe gesture recognizer to win over nested scrollviews pan
-                    if([tabController.tabViewController respondsToSelector:@selector(tabNavigationController:)])
-                    {
-                        
-                    }
-                    else if ([tabController.tabViewController.view isKindOfClass:[UIScrollView class]])
-                    {
-                        UIScrollView *addedView = (UIScrollView *)tabController.tabViewController.view;
-                        [addedView.panGestureRecognizer requireGestureRecognizerToFail:self->swipeGestureRecognizer];
-                    }
+                    UIView *addedView = tabController.tabViewController.view;
+                    do {
+                        if ([addedView isKindOfClass:[UIScrollView class]])
+                        {
+                            UIScrollView *addedScrollviewView = (UIScrollView *)addedView;
+                            [addedScrollviewView.panGestureRecognizer requireGestureRecognizerToFail:self->swipeGestureRecognizer];
+                            break;
+                        }
+                        addedView = [addedView.subviews objectAtIndex:0];
+                        // TODO Fix, this will check only the view and descending of the first subview. may also crash. could need protocol like tabNavigationControllerWillAddView:
+                    } while (addedView);
                 }
                 else
                 {
