@@ -184,8 +184,7 @@
     [cell.iconButton setImage:[self projectIconWithColor:[UIColor styleForegroundColor]] forState:UIControlStateNormal];
     
     // Setup project title
-    [cell.textLabel setText:[[[ACState localState].projects objectAtIndex:indexPath.row] name]];
-//    cell.textField.text = @"Project";
+    [cell.textField setText:[[[ACState localState].projects objectAtIndex:indexPath.row] name]];
     
     return cell;
 }
