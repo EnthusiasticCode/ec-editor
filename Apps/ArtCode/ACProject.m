@@ -14,74 +14,75 @@
 #import "ACProjectDocument.h"
 
 @interface ACProject ()
+{
+    BOOL _isDeleted;
+}
 @property (nonatomic, strong, readonly) ACProjectDocument *document;
-@property (nonatomic, getter = isDeleted) BOOL deleted;
 @end
 
 @implementation ACProject
 
 @synthesize document = _document;
 @synthesize URL = _URL;
-@synthesize deleted = _isDeleted;
 
 - (NSUInteger)tag
 {
-    if (self.deleted)
+    if (_isDeleted)
         return 0;
     return 0;
 }
 
 - (void)setTag:(NSUInteger)tag
 {
-    if (self.deleted)
+    if (_isDeleted)
         return;
 }
 
 - (NSString *)name
 {
-    if (self.deleted)
+    if (_isDeleted)
         return nil;
     return [self.URL ACProjectName];
 }
 
 - (void)setName:(NSString *)name
 {
-    if (self.deleted)
+    if (_isDeleted)
         return;
     self.URL = [NSURL ACURLForProjectWithName:name];
 }
 
 - (NSUInteger)index
 {
-    if (self.deleted)
+    if (_isDeleted)
         return NSNotFound;
     return [[ACState localState] indexOfProjectWithURL:self.URL];
 }
 
 - (void)setIndex:(NSUInteger)index
 {
-    if (self.deleted)
+    if (_isDeleted)
         return;
     [[ACState localState] setIndex:index forProjectWithURL:self.URL];
 }
 
 - (NSURL *)URL
 {
-    if (self.deleted)
+    if (_isDeleted)
         return nil;
     return _URL;
 }
 
 - (void)setURL:(NSURL *)URL
 {
-    if (self.deleted)
+    if (_isDeleted)
         return;
     ECASSERT(false); // NYI
 }
 
 - (ACProjectDocument *)document
 {
-    if (self.deleted)
+    if (_isDeleted)
         return nil;
     if (!_document)
         _document = [[ACProjectDocument alloc] initWithFileURL:[self.URL ACProjectBundleURL]];
@@ -102,15 +103,21 @@
 
 - (void)delete
 {
+    [[ACState localState] removeProjectWithURL:self.URL error:NULL];
+    _isDeleted = YES;
     [_document closeWithCompletionHandler:NULL];
     NSFileManager *fileManager = [[NSFileManager alloc] init];
     [fileManager removeItemAtURL:self.URL error:NULL];
-    self.deleted = YES;
+}
+
+- (BOOL)isDeleted
+{
+    return _isDeleted;
 }
 
 - (NSOrderedSet *)children
 {
-    if (self.deleted)
+    if (_isDeleted)
         return nil;
     return [self.document children];
 }

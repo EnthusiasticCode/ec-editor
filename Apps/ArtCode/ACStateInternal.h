@@ -18,4 +18,8 @@
 /// The project is inserted at the set index, other projects are shuffled
 - (void)setIndex:(NSUInteger)index forProjectWithURL:(NSURL *)URL;
 
+/// Removes a project from the project list
+/// This does not delete the project
+- (BOOL)removeProjectWithURL:(NSURL *)URL error:(NSError **)error;
+
 @end

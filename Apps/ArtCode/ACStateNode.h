@@ -29,6 +29,6 @@
 - (void)delete;
 
 /// Returns whether the node has been deleted
-@property (nonatomic, readonly, getter = isDeleted) BOOL deleted;
+- (BOOL)isDeleted;
 
 @end

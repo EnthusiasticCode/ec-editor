@@ -14,7 +14,6 @@
 #import "ACURL.h"
 
 static void * const ACStateProjectURLObservingContext;
-static void * const ACStateProjectDeletedObservingContext;
 
 @interface ACState ()
 {
@@ -126,19 +125,6 @@ static void * const ACStateProjectDeletedObservingContext;
         [self saveProjectNames:projectNames];
         return;
     }
-    if (context == ACStateProjectDeletedObservingContext)
-    {
-        NSURL *URL = [object URL];
-        ECASSERT(URL && [self indexOfProjectWithURL:URL] != NSNotFound);
-        NSUInteger index = [self indexOfProjectWithURL:URL];
-        NSMutableArray *projectNames = [self loadProjectNames];
-        [self willChange:NSKeyValueChangeRemoval valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"projects"];
-        [projectNames removeObjectAtIndex:index];
-        [self saveProjectNames:projectNames];
-        [self removeProjectObjectWithURL:URL];
-        [self didChange:NSKeyValueChangeRemoval valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"projects"];
-        return;
-    }
     [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
 }
 
@@ -164,6 +150,19 @@ static void * const ACStateProjectDeletedObservingContext;
     [self saveProjectNames:projectNames];
     [self insertProjectObjectWithURL:URL atIndex:index];
     [self didChange:NSKeyValueChangeInsertion valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"projects"];
+    return YES;
+}
+
+- (BOOL)removeProjectWithURL:(NSURL *)URL error:(NSError *__autoreleasing *)error
+{
+    ECASSERT(URL && [self indexOfProjectWithURL:URL] != NSNotFound);
+    NSUInteger index = [self indexOfProjectWithURL:URL];
+    NSMutableArray *projectNames = [self loadProjectNames];
+    [self willChange:NSKeyValueChangeRemoval valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"projects"];
+    [projectNames removeObjectAtIndex:index];
+    [self saveProjectNames:projectNames];
+    [self removeProjectObjectWithURL:URL];
+    [self didChange:NSKeyValueChangeRemoval valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"projects"];
     return YES;
 }
 
@@ -210,7 +209,6 @@ static void * const ACStateProjectDeletedObservingContext;
         index = [_projectObjects count];
     NSObject<ACStateProject> *project = [[ACProject alloc] initWithURL:URL];
     [project addObserver:self forKeyPath:@"URL" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld context:ACStateProjectURLObservingContext];
-    [project addObserver:self forKeyPath:@"deleted" options:NSKeyValueObservingOptionNew context:ACStateProjectDeletedObservingContext];
     [_projectObjects insertObject:project atIndex:index];
 }
 
@@ -220,7 +218,6 @@ static void * const ACStateProjectDeletedObservingContext;
     NSUInteger index = [self indexOfProjectWithURL:URL];
     NSObject<ACStateProject> *project = [_projectObjects objectAtIndex:index];
     [project removeObserver:self forKeyPath:@"URL" context:ACStateProjectURLObservingContext];
-    [project removeObserver:self forKeyPath:@"deleted" context:ACStateProjectDeletedObservingContext];
     [_projectObjects removeObjectAtIndex:index];
 }
 
