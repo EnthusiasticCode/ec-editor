@@ -11,6 +11,7 @@
 #import "ACEditableTableCell.h"
 #import "ACColorSelectionControl.h"
 
+#import "ACURL.h"
 #import "ACState.h"
 #import "ACStateProject.h"
 #import "ACNavigationController.h"
@@ -75,11 +76,20 @@
 
 - (void)toolButtonAction:(id)sender
 {
-    // TODO custom stuff here
-    static NSUInteger count = 0;
-    NSString *title = [NSString stringWithFormat:@"Path %u", count++];
-//    [jumpBar pushJumpElementWithPathComponent:title animated:YES];
-    [[ECBezelAlert centerBezelAlert] addAlertMessageWithText:title image:nil displayImmediatly:NO];
+    NSString *projectName;
+    for (NSUInteger projectNumber = 0; YES; ++projectNumber)
+    {
+        projectName = [@"Project " stringByAppendingString:[NSString stringWithFormat:@"%d", projectNumber]];
+        if (![[ACState localState] insertProjectWithURL:[NSURL ACURLForProjectWithName:projectName] atIndex:NSNotFound error:NULL])
+            continue;
+        break;
+    }
+    [[ACState localState] scanForProjects];
+//    [self.tableView beginUpdates];
+//    [self.tableView insertRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:[[[ACState localState] projects] count] inSection:0]] withRowAnimation:UITableViewRowAnimationAutomatic];
+//    [self.tableView endUpdates];
+    [self.tableView reloadData];
+    [[ECBezelAlert centerBezelAlert] addAlertMessageWithText:[@"Added new project: " stringByAppendingString:projectName] image:nil displayImmediatly:NO];
 }
 
 #pragma mark - Colored icons

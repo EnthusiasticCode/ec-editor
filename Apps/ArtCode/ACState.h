@@ -29,6 +29,6 @@
 /// Adds a new project
 /// Inserting a project with the same name as an existing project is an error
 /// Passing index = NSNotFound will add the project to the end of the project list
-- (void)insertProjectWithURL:(NSURL *)URL atIndex:(NSUInteger)index;
+- (BOOL)insertProjectWithURL:(NSURL *)URL atIndex:(NSUInteger)index error:(NSError **)error;
 
 @end
