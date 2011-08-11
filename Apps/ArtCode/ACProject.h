@@ -8,13 +8,6 @@
 
 #import "ACState.h"
 
-typedef enum
-{
-    ACProjectNodeTypeFolder,
-    ACProjectNodeTypeGroup,
-    ACProjectNodeTypeFile,
-} ACProjectNodeType;
-
 @interface ACProject : NSObject <ACStateProject>
 
 /// Designated initializer, returns the ACProject referenced by the ACURL

@@ -1,26 +1,15 @@
 //
-//  ACModelNode.m
+//  ACNode.m
 //  ArtCode
 //
-//  Created by Uri Baghin on 7/23/11.
+//  Created by Uri Baghin on 8/11/11.
 //  Copyright (c) 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import "ACModelNode.h"
-#import "ACModelHistoryItem.h"
-#import "ACModelNode.h"
+#import "ACNode.h"
 #import "ACURL.h"
 
-@implementation ACModelNode
-
-@dynamic expanded;
-@dynamic name;
-@dynamic path;
-@dynamic tag;
-@dynamic type;
-@dynamic children;
-@dynamic parent;
-@dynamic historyItems;
+@implementation ACNode
 
 - (NSString *)absolutePath
 {
@@ -30,7 +19,7 @@
 - (NSInteger)depth
 {
     NSInteger depth = -1;
-    ACModelNode *ancestor = self;
+    CDNode *ancestor = self;
     while (ancestor.parent)
     {
         depth++;
@@ -39,25 +28,25 @@
     return depth;
 }
 
-- (ACModelNode *)addNodeWithName:(NSString *)name type:(ACProjectNodeType)type
+- (ACNode *)addNodeWithName:(NSString *)name type:(ACNodeType)type
 {
-    ACModelNode *node;
+    ACNode *node;
     switch (type) {
-        case ACProjectNodeTypeFile:
+        case ACNodeTypeSourceFile:
             node = [NSEntityDescription insertNewObjectForEntityForName:@"File" inManagedObjectContext:[self managedObjectContext]];
             node.path = [self.path stringByAppendingPathComponent:name];
             break;
-        case ACProjectNodeTypeGroup:
+        case ACNodeTypeGroup:
             node = [NSEntityDescription insertNewObjectForEntityForName:@"Node" inManagedObjectContext:[self managedObjectContext]];
             node.path = self.path;
             break;
-        case ACProjectNodeTypeFolder:
+        case ACNodeTypeFolder:
             node = [NSEntityDescription insertNewObjectForEntityForName:@"Node" inManagedObjectContext:[self managedObjectContext]];
             node.path = [self.path stringByAppendingPathComponent:name];
             break;
     }
     node.name = name;
-    node.type = [NSNumber numberWithInt:type];
+    node.type = type;
     node.parent = self;
     return node;
 }

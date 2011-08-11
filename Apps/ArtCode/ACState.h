@@ -53,6 +53,9 @@ extern NSString * const ACStateNodeTypeSourceFile;
 /// Type of the node
 @property (nonatomic, readonly) NSString *nodeType;
 
+/// Whether the node is expanded or not
+@property (nonatomic) BOOL expanded;
+
 /// Child nodes
 @property (nonatomic, strong, readonly) NSOrderedSet *children;
 

@@ -7,7 +7,7 @@
 //
 
 #import "ACProject.h"
-#import "ACModelNode.h"
+#import "ACNode.h"
 #import "ACURL.h"
 #import "ACState.h"
 #import "ACStateInternal.h"
@@ -22,6 +22,7 @@
 
 @implementation ACProject
 
+@synthesize expanded = _expanded;
 @synthesize document = _document;
 @synthesize URL = _URL;
 

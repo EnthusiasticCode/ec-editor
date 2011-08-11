@@ -7,14 +7,14 @@
 //
 
 #import "ACProjectDocument.h"
-#import "ACModelNode.h"
+#import "ACNode.h"
 #import "ACURL.h"
 
 @interface ACProjectDocument ()
 @property (nonatomic, strong, readonly) NSFileManager *fileManager;
-@property (nonatomic, strong) ACModelNode *rootNode;
-- (ACModelNode *)findRootNode;
-- (void)addNodesAtPath:(NSString *)path toNode:(ACModelNode *)node;
+@property (nonatomic, strong) ACNode *rootNode;
+- (ACNode *)findRootNode;
+- (void)addNodesAtPath:(NSString *)path toNode:(ACNode *)node;
 - (void)addAllNodesInProjectRoot;
 @end
 
@@ -35,7 +35,7 @@
     return @"acproject.db";
 }
 
-- (ACModelNode *)findRootNode
+- (ACNode *)findRootNode
 {
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
     [fetchRequest setEntity:[NSEntityDescription entityForName:@"Node" inManagedObjectContext:self.managedObjectContext]];
@@ -48,15 +48,15 @@
         return [rootNodes objectAtIndex:0];
     else
     {
-        ACModelNode *rootNode = [NSEntityDescription insertNewObjectForEntityForName:@"Node" inManagedObjectContext:self.managedObjectContext];
+        ACNode *rootNode = [NSEntityDescription insertNewObjectForEntityForName:@"Node" inManagedObjectContext:self.managedObjectContext];
         rootNode.name = @"";
-        rootNode.type = [NSNumber numberWithInt:ACProjectNodeTypeFolder];
+        rootNode.type = ACNodeTypeFolder;
         rootNode.path = @"";
         return rootNode;
     }
 }
 
-- (void)addNodesAtPath:(NSString *)path toNode:(ACModelNode *)node
+- (void)addNodesAtPath:(NSString *)path toNode:(ACNode *)node
 {
     NSArray *subPaths = [self.fileManager contentsOfDirectoryAtPath:path error:NULL];
     NSMutableDictionary *subNodes = [NSMutableDictionary dictionaryWithCapacity:[subPaths count]];
@@ -73,9 +73,9 @@
             BOOL isDirectory;
             [self.fileManager fileExistsAtPath:[path stringByAppendingPathComponent:subPath] isDirectory:&isDirectory];
             if (isDirectory)
-                [subNodes setObject:[node addNodeWithName:subPath type:ACProjectNodeTypeFolder] forKey:subPath];
+                [subNodes setObject:[node addNodeWithName:subPath type:ACNodeTypeFolder] forKey:subPath];
             else
-                [node addNodeWithName:subPath type:ACProjectNodeTypeFile];
+                [node addNodeWithName:subPath type:ACNodeTypeSourceFile];
         }
     }
     for (NSString *subPath in [subNodes allKeys])
