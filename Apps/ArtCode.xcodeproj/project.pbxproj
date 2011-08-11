@@ -18,6 +18,7 @@
 		B732D06413DD799400637FBE /* ACURL.m in Sources */ = {isa = PBXBuildFile; fileRef = B732D06313DD799300637FBE /* ACURL.m */; };
 		B7DF4B5D13EFE52F00BF8306 /* ACProjectDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = B7DF4B5C13EFE52F00BF8306 /* ACProjectDocument.m */; };
 		CD13665913D32150001F3455 /* UIControl+BlockAction.m in Sources */ = {isa = PBXBuildFile; fileRef = CD13665813D32150001F3455 /* UIControl+BlockAction.m */; };
+		CD21547913F45CC200614B83 /* ACToolButton.m in Sources */ = {isa = PBXBuildFile; fileRef = CD21547813F45CC200614B83 /* ACToolButton.m */; };
 		CD4786E913DB0C2500616B62 /* ACState.m in Sources */ = {isa = PBXBuildFile; fileRef = CD4786E813DB0C2500616B62 /* ACState.m */; };
 		CD4786ED13DB0F7A00616B62 /* ECBezelAlert.m in Sources */ = {isa = PBXBuildFile; fileRef = CD4786EC13DB0F7A00616B62 /* ECBezelAlert.m */; };
 		CD62BAC613CA06A900266BC0 /* ACToolController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD62BAC513CA06A900266BC0 /* ACToolController.m */; };
@@ -126,6 +127,8 @@
 		CD0DEAB613D4C2430087ADBB /* ACNavigationTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACNavigationTarget.h; sourceTree = "<group>"; };
 		CD13665713D32150001F3455 /* UIControl+BlockAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIControl+BlockAction.h"; sourceTree = "<group>"; };
 		CD13665813D32150001F3455 /* UIControl+BlockAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIControl+BlockAction.m"; sourceTree = "<group>"; };
+		CD21547713F45CC200614B83 /* ACToolButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACToolButton.h; sourceTree = "<group>"; };
+		CD21547813F45CC200614B83 /* ACToolButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACToolButton.m; sourceTree = "<group>"; };
 		CD4786E713DB0C2500616B62 /* ACState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACState.h; sourceTree = "<group>"; };
 		CD4786E813DB0C2500616B62 /* ACState.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACState.m; sourceTree = "<group>"; };
 		CD4786EB13DB0F7A00616B62 /* ECBezelAlert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECBezelAlert.h; sourceTree = "<group>"; };
@@ -537,6 +540,8 @@
 				CD7D2B3813C0D4F400B889EE /* ACToolFiltersView.m */,
 				CD7D2B3D13C0D4F400B889EE /* ACToolTextField.h */,
 				CD7D2B3E13C0D4F400B889EE /* ACToolTextField.m */,
+				CD21547713F45CC200614B83 /* ACToolButton.h */,
+				CD21547813F45CC200614B83 /* ACToolButton.m */,
 			);
 			name = "Views and Segues";
 			sourceTree = "<group>";
@@ -851,6 +856,7 @@
 				CD8108D513E31A28000E1941 /* ACColorSelectionControl.m in Sources */,
 				CDF215F713E4468F005B520F /* ACEditableTableCell.m in Sources */,
 				B7DF4B5D13EFE52F00BF8306 /* ACProjectDocument.m in Sources */,
+				CD21547913F45CC200614B83 /* ACToolButton.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

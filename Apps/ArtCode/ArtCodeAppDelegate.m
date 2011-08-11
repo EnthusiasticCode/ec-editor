@@ -87,12 +87,6 @@
     // Adding tool panel
     UIStoryboard *toolPanelsStoryboard = [UIStoryboard storyboardWithName:@"ToolPanelStoryboard" bundle:[NSBundle mainBundle]];
     ACToolPanelController *toolPanelController = [toolPanelsStoryboard instantiateInitialViewController];
-    // TODO somohow move this to the storyboard    
-    [toolPanelController addToolWithIdentifier:@"NavigatorTool"];
-    [toolPanelController addToolWithIdentifier:@"SymbolsTool"];
-    [toolPanelController addToolWithIdentifier:@"SnippetsTool"];
-    [toolPanelController addToolWithIdentifier:@"BookmarksTool"];
-    [toolPanelController addToolWithIdentifier:@"HistoryTool"];
     //
     navigationController.toolPanelController = toolPanelController;
     navigationController.toolPanelOnRight = YES;

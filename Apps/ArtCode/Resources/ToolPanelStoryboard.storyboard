@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="1.0" toolsVersion="1910" systemVersion="11A511" targetRuntime="iOS.CocoaTouch.iPad" nextObjectID="93" propertyAccessControl="none" initialViewController="2">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="1.0" toolsVersion="1910" systemVersion="11A511" targetRuntime="iOS.CocoaTouch.iPad" nextObjectID="104" propertyAccessControl="none" initialViewController="2">
     <dependencies>
         <development defaultVersion="4200" identifier="xcode"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="911"/>
@@ -16,7 +16,78 @@
                             <view contentMode="scaleToFill" id="13">
                                 <rect key="frame" x="0.0" y="0.0" width="320" height="45"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
-                                <subviews/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="93" customClass="ACToolButton">
+                                        <rect key="frame" x="0.0" y="0.0" width="44" height="44"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                        <state key="normal" image="toolPanelHistoryToolImage.png">
+                                            <color key="titleColor" red="0.19607843459999999" green="0.30980393290000002" blue="0.52156865600000002" alpha="1" colorSpace="calibratedRGB"/>
+                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <state key="disabled" title="HistoryTool"/>
+                                        <state key="selected" image="toolPanelHistoryToolSelectedImage.png"/>
+                                        <state key="highlighted">
+                                            <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="95" customClass="ACToolButton">
+                                        <rect key="frame" x="45" y="0.0" width="44" height="44"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                        <state key="normal" image="toolPanelBookmarksToolImage.png">
+                                            <color key="titleColor" red="0.19607843459999999" green="0.30980393290000002" blue="0.52156865600000002" alpha="1" colorSpace="calibratedRGB"/>
+                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <state key="disabled" title="BookmarksTool"/>
+                                        <state key="selected" image="toolPanelBookmarksToolSelectedImage.png"/>
+                                        <state key="highlighted">
+                                            <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="96" customClass="ACToolButton">
+                                        <rect key="frame" x="90" y="0.0" width="44" height="44"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                        <state key="normal" image="toolPanelSnippetsToolImage.png">
+                                            <color key="titleColor" red="0.19607843459999999" green="0.30980393290000002" blue="0.52156865600000002" alpha="1" colorSpace="calibratedRGB"/>
+                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <state key="disabled" title="SnippetsTool"/>
+                                        <state key="selected" image="toolPanelSnippetsToolSelectedImage.png"/>
+                                        <state key="highlighted">
+                                            <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="97" customClass="ACToolButton">
+                                        <rect key="frame" x="135" y="0.0" width="44" height="44"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                        <state key="normal" image="toolPanelSymbolsToolImage.png">
+                                            <color key="titleColor" red="0.19607843459999999" green="0.30980393290000002" blue="0.52156865600000002" alpha="1" colorSpace="calibratedRGB"/>
+                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <state key="disabled" title="SymbolsTool"/>
+                                        <state key="selected" image="toolPanelSymbolsToolSelectedImage.png"/>
+                                        <state key="highlighted">
+                                            <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="98" customClass="ACToolButton">
+                                        <rect key="frame" x="180" y="1" width="44" height="44"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                        <state key="normal" image="toolPanelNavigatorToolImage.png">
+                                            <color key="titleColor" red="0.19607843459999999" green="0.30980393290000002" blue="0.52156865600000002" alpha="1" colorSpace="calibratedRGB"/>
+                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <state key="disabled" title="NavigationTool"/>
+                                        <state key="selected" image="toolPanelNavigatorToolSelectedImage.png"/>
+                                        <state key="highlighted">
+                                            <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                    </button>
+                                </subviews>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                             </view>
                         </subviews>
@@ -266,10 +337,24 @@
         <image name="toolFilterBookmarksStar.png" width="14" height="14"/>
         <image name="toolFilterSnippetsPaste.png" width="14" height="15"/>
         <image name="toolFilterSnippetsSnippet.png" width="14" height="15"/>
+        <image name="toolPanelBookmarksToolImage.png" width="21" height="21"/>
+        <image name="toolPanelBookmarksToolSelectedImage.png" width="21" height="21"/>
+        <image name="toolPanelHistoryToolImage.png" width="21" height="21"/>
+        <image name="toolPanelHistoryToolSelectedImage.png" width="21" height="21"/>
+        <image name="toolPanelNavigatorToolImage.png" width="21" height="21"/>
+        <image name="toolPanelNavigatorToolSelectedImage.png" width="21" height="21"/>
+        <image name="toolPanelSnippetsToolImage.png" width="21" height="21"/>
+        <image name="toolPanelSnippetsToolSelectedImage.png" width="21" height="21"/>
+        <image name="toolPanelSymbolsToolImage.png" width="21" height="21"/>
+        <image name="toolPanelSymbolsToolSelectedImage.png" width="21" height="21"/>
     </resources>
     <classes>
         <class className="ACToolBookmarksController" superclassName="ACToolController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/ACToolBookmarksController.h"/>
+            <relationships/>
+        </class>
+        <class className="ACToolButton" superclassName="UIButton">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/ACToolButton.h"/>
             <relationships/>
         </class>
         <class className="ACToolController" superclassName="UIViewController">
