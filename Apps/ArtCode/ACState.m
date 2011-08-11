@@ -8,10 +8,13 @@
 
 #import "ACState.h"
 #import "ACStateInternal.h"
-#import "ACStateProject.h"
 #import "ACProject.h"
-#import "ACModelNode.h"
 #import "ACURL.h"
+
+NSString * const ACStateNodeTypeProject = @"ACStateNodeTypeProject";
+NSString * const ACStateNodeTypeFolder = @"ACStateNodeTypeFolder";
+NSString * const ACStateNodeTypeGroup = @"ACStateNodeTypeGroup";
+NSString * const ACStateNodeTypeSourceFile = @"ACStateNodeTypeSourceFile";
 
 static void * const ACStateProjectURLObservingContext;
 
@@ -187,7 +190,7 @@ static void * const ACStateProjectURLObservingContext;
     NSUInteger oldIndex = [self indexOfProjectWithURL:URL];
     NSMutableArray *projectNames = [self loadProjectNames];
     NSString *projectName = [projectNames objectAtIndex:oldIndex];
-    ACStateProject *project = [_projectObjects objectAtIndex:oldIndex];
+    ACProject *project = [_projectObjects objectAtIndex:oldIndex];
     [self willChange:NSKeyValueChangeRemoval valuesAtIndexes:[NSIndexSet indexSetWithIndex:oldIndex] forKey:@"projects"];
     [self willChange:NSKeyValueChangeInsertion valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"projects"];
     [projectNames removeObjectAtIndex:oldIndex];

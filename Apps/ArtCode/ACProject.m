@@ -89,6 +89,11 @@
     return _document;
 }
 
+- (NSString *)nodeType
+{
+    return ACStateNodeTypeProject;
+}
+
 - (id)initWithURL:(NSURL *)URL
 {
     self = [super init];

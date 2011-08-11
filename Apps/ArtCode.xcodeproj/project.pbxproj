@@ -100,7 +100,6 @@
 
 /* Begin PBXFileReference section */
 		B732CFE913DB1B6B00637FBE /* ECDebug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECDebug.h; path = ../../Frameworks/ECCore/ECDebug.h; sourceTree = "<group>"; };
-		B732CFEC13DB1BB000637FBE /* ACStateProject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACStateProject.h; sourceTree = "<group>"; };
 		B732CFFA13DB24F600637FBE /* Project.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Project.xcdatamodel; sourceTree = "<group>"; };
 		B732D00213DB2B3800637FBE /* ACModelTab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACModelTab.h; sourceTree = "<group>"; };
 		B732D00313DB2B3800637FBE /* ACModelTab.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACModelTab.m; sourceTree = "<group>"; };
@@ -115,9 +114,6 @@
 		B732D01113DB2C0800637FBE /* ACProject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACProject.h; sourceTree = "<group>"; };
 		B732D01213DB2C0800637FBE /* ACProject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACProject.m; sourceTree = "<group>"; };
 		B732D01413DB361600637FBE /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
-		B732D05513DC463500637FBE /* ACStateNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACStateNode.h; sourceTree = "<group>"; };
-		B732D05C13DC733800637FBE /* ACStateTab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACStateTab.h; sourceTree = "<group>"; };
-		B732D05F13DC738600637FBE /* ACStateBookmark.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACStateBookmark.h; sourceTree = "<group>"; };
 		B732D06213DD799200637FBE /* ACURL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACURL.h; sourceTree = "<group>"; };
 		B732D06313DD799300637FBE /* ACURL.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACURL.m; sourceTree = "<group>"; };
 		B7DF4B5B13EFE52F00BF8306 /* ACProjectDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACProjectDocument.h; sourceTree = "<group>"; };
@@ -300,10 +296,6 @@
 				CD4786E713DB0C2500616B62 /* ACState.h */,
 				B7DF4B5E13EFEE5900BF8306 /* ACStateInternal.h */,
 				CD4786E813DB0C2500616B62 /* ACState.m */,
-				B732D05513DC463500637FBE /* ACStateNode.h */,
-				B732CFEC13DB1BB000637FBE /* ACStateProject.h */,
-				B732D05F13DC738600637FBE /* ACStateBookmark.h */,
-				B732D05C13DC733800637FBE /* ACStateTab.h */,
 			);
 			name = State;
 			sourceTree = "<group>";
