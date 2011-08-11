@@ -35,6 +35,16 @@
    codeView.text = urlContent;
 }
 
+- (BOOL)enableTabBar
+{
+    return YES;
+}
+
+- (BOOL)enableToolPanelControllerWithIdentifier:(NSString *)toolControllerIdentifier
+{
+    return YES;
+}
+
 - (BOOL)shouldShowTabBar
 {
     return YES;

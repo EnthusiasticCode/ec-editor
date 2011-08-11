@@ -87,21 +87,12 @@
     // Adding tool panel
     UIStoryboard *toolPanelsStoryboard = [UIStoryboard storyboardWithName:@"ToolPanelStoryboard" bundle:[NSBundle mainBundle]];
     ACToolPanelController *toolPanelController = [toolPanelsStoryboard instantiateInitialViewController];
-    [toolPanelController addToolWithController:[toolPanelsStoryboard instantiateViewControllerWithIdentifier:@"HistoryTool"]
-                                      tabImage:[UIImage imageNamed:@"toolPanelHistoryIcon.png"] 
-                              selectedTabImage:[UIImage imageNamed:@"toolPanelHistoryActiveIcon.png"]];
-    [toolPanelController addToolWithController:[toolPanelsStoryboard instantiateViewControllerWithIdentifier:@"BookmarksTool"]
-                                      tabImage:[UIImage imageNamed:@"toolPanelStarIcon.png"] 
-                              selectedTabImage:[UIImage imageNamed:@"toolPanelStarActiveIcon.png"]];
-    [toolPanelController addToolWithController:[toolPanelsStoryboard instantiateViewControllerWithIdentifier:@"SnippetsTool"]
-                                      tabImage:[UIImage imageNamed:@"toolPanelSnippetsIcon.png"] 
-                              selectedTabImage:[UIImage imageNamed:@"toolPanelSnippetsActiveIcon.png"]];
-    [toolPanelController addToolWithController:[toolPanelsStoryboard instantiateViewControllerWithIdentifier:@"SymbolsTool"]
-                                      tabImage:[UIImage imageNamed:@"toolPanelSymbolsIcon.png"] 
-                              selectedTabImage:[UIImage imageNamed:@"toolPanelSymbolsActiveIcon.png"]];
-    [toolPanelController addToolWithController:[toolPanelsStoryboard instantiateViewControllerWithIdentifier:@"NavigatorTool"]
-                                      tabImage:[UIImage imageNamed:@"toolPanelNavigatorIcon.png"] 
-                              selectedTabImage:[UIImage imageNamed:@"toolPanelNavigatorActiveIcon.png"]];
+    // TODO somohow move this to the storyboard    
+    [toolPanelController addToolWithIdentifier:@"NavigatorTool"];
+    [toolPanelController addToolWithIdentifier:@"SymbolsTool"];
+    [toolPanelController addToolWithIdentifier:@"SnippetsTool"];
+    [toolPanelController addToolWithIdentifier:@"BookmarksTool"];
+    [toolPanelController addToolWithIdentifier:@"HistoryTool"];
     //
     navigationController.toolPanelController = toolPanelController;
     navigationController.toolPanelOnRight = YES;
@@ -173,6 +164,13 @@
 
 #pragma mark - Navigation Controller Delegate Methods
 
+- (BOOL)tabController:(ACTabController *)tabController shouldChangeCurrentViewController:(UIViewController *)viewController forURL:(NSURL *)url
+{
+    // TODO convert the view controller to an ACToolTarget and see if it can handle
+    // the URL. if it can, open it and return NO.
+    return YES;
+}
+
 - (UIViewController *)tabController:(ACTabController *)tabController viewControllerForURL:(NSURL *)url
 {
     Class controllerClass = nil;
@@ -187,13 +185,6 @@
     UIViewController<ACNavigationTarget> *controller = [controllerClass newNavigationTargetController];
     [controller openURL:url];
     return controller; // TODO initWithNibName:name of class
-}
-
-- (BOOL)tabController:(ACTabController *)tabController shouldChangeCurrentViewController:(UIViewController *)viewController forURL:(NSURL *)url
-{
-    // TODO convert the view controller to an ACToolTarget and see if it can handle
-    // the URL. if it can, open it and return NO.
-    return YES;
 }
 
 @end

@@ -84,16 +84,16 @@
 		CDFF3DE513C0D9BB00108DE2 /* toolHistoryBack.png in Resources */ = {isa = PBXBuildFile; fileRef = CDFF3DD013C0D9BB00108DE2 /* toolHistoryBack.png */; };
 		CDFF3DE613C0D9BB00108DE2 /* toolHistoryForward.png in Resources */ = {isa = PBXBuildFile; fileRef = CDFF3DD113C0D9BB00108DE2 /* toolHistoryForward.png */; };
 		CDFF3DE713C0D9BB00108DE2 /* toolHistoryNow.png in Resources */ = {isa = PBXBuildFile; fileRef = CDFF3DD213C0D9BB00108DE2 /* toolHistoryNow.png */; };
-		CDFF3DE813C0D9BB00108DE2 /* toolPanelHistoryActiveIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = CDFF3DD313C0D9BB00108DE2 /* toolPanelHistoryActiveIcon.png */; };
-		CDFF3DE913C0D9BB00108DE2 /* toolPanelHistoryIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = CDFF3DD413C0D9BB00108DE2 /* toolPanelHistoryIcon.png */; };
-		CDFF3DEA13C0D9BB00108DE2 /* toolPanelNavigatorActiveIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = CDFF3DD513C0D9BB00108DE2 /* toolPanelNavigatorActiveIcon.png */; };
-		CDFF3DEB13C0D9BB00108DE2 /* toolPanelNavigatorIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = CDFF3DD613C0D9BB00108DE2 /* toolPanelNavigatorIcon.png */; };
-		CDFF3DEC13C0D9BB00108DE2 /* toolPanelSnippetsActiveIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = CDFF3DD713C0D9BB00108DE2 /* toolPanelSnippetsActiveIcon.png */; };
-		CDFF3DED13C0D9BB00108DE2 /* toolPanelSnippetsIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = CDFF3DD813C0D9BB00108DE2 /* toolPanelSnippetsIcon.png */; };
-		CDFF3DEE13C0D9BB00108DE2 /* toolPanelStarActiveIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = CDFF3DD913C0D9BB00108DE2 /* toolPanelStarActiveIcon.png */; };
-		CDFF3DEF13C0D9BB00108DE2 /* toolPanelStarIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = CDFF3DDA13C0D9BB00108DE2 /* toolPanelStarIcon.png */; };
-		CDFF3DF013C0D9BB00108DE2 /* toolPanelSymbolsActiveIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = CDFF3DDB13C0D9BB00108DE2 /* toolPanelSymbolsActiveIcon.png */; };
-		CDFF3DF113C0D9BB00108DE2 /* toolPanelSymbolsIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = CDFF3DDC13C0D9BB00108DE2 /* toolPanelSymbolsIcon.png */; };
+		CDFF3DE813C0D9BB00108DE2 /* toolPanelHistoryToolSelectedImage.png in Resources */ = {isa = PBXBuildFile; fileRef = CDFF3DD313C0D9BB00108DE2 /* toolPanelHistoryToolSelectedImage.png */; };
+		CDFF3DE913C0D9BB00108DE2 /* toolPanelHistoryToolImage.png in Resources */ = {isa = PBXBuildFile; fileRef = CDFF3DD413C0D9BB00108DE2 /* toolPanelHistoryToolImage.png */; };
+		CDFF3DEA13C0D9BB00108DE2 /* toolPanelNavigatorToolSelectedImage.png in Resources */ = {isa = PBXBuildFile; fileRef = CDFF3DD513C0D9BB00108DE2 /* toolPanelNavigatorToolSelectedImage.png */; };
+		CDFF3DEB13C0D9BB00108DE2 /* toolPanelNavigatorToolImage.png in Resources */ = {isa = PBXBuildFile; fileRef = CDFF3DD613C0D9BB00108DE2 /* toolPanelNavigatorToolImage.png */; };
+		CDFF3DEC13C0D9BB00108DE2 /* toolPanelSnippetsToolSelectedImage.png in Resources */ = {isa = PBXBuildFile; fileRef = CDFF3DD713C0D9BB00108DE2 /* toolPanelSnippetsToolSelectedImage.png */; };
+		CDFF3DED13C0D9BB00108DE2 /* toolPanelSnippetsToolImage.png in Resources */ = {isa = PBXBuildFile; fileRef = CDFF3DD813C0D9BB00108DE2 /* toolPanelSnippetsToolImage.png */; };
+		CDFF3DEE13C0D9BB00108DE2 /* toolPanelBookmarksToolSelectedImage.png in Resources */ = {isa = PBXBuildFile; fileRef = CDFF3DD913C0D9BB00108DE2 /* toolPanelBookmarksToolSelectedImage.png */; };
+		CDFF3DEF13C0D9BB00108DE2 /* toolPanelBookmarksToolImage.png in Resources */ = {isa = PBXBuildFile; fileRef = CDFF3DDA13C0D9BB00108DE2 /* toolPanelBookmarksToolImage.png */; };
+		CDFF3DF013C0D9BB00108DE2 /* toolPanelSymbolsToolSelectedImage.png in Resources */ = {isa = PBXBuildFile; fileRef = CDFF3DDB13C0D9BB00108DE2 /* toolPanelSymbolsToolSelectedImage.png */; };
+		CDFF3DF113C0D9BB00108DE2 /* toolPanelSymbolsToolImage.png in Resources */ = {isa = PBXBuildFile; fileRef = CDFF3DDC13C0D9BB00108DE2 /* toolPanelSymbolsToolImage.png */; };
 		CDFF3DF213C0D9BB00108DE2 /* toolSnippetsPaste.png in Resources */ = {isa = PBXBuildFile; fileRef = CDFF3DDD13C0D9BB00108DE2 /* toolSnippetsPaste.png */; };
 		CDFF3DF313C0D9BB00108DE2 /* toolSnippetsSnippet.png in Resources */ = {isa = PBXBuildFile; fileRef = CDFF3DDE13C0D9BB00108DE2 /* toolSnippetsSnippet.png */; };
 /* End PBXBuildFile section */
@@ -123,7 +123,7 @@
 		B7DF4B5B13EFE52F00BF8306 /* ACProjectDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACProjectDocument.h; sourceTree = "<group>"; };
 		B7DF4B5C13EFE52F00BF8306 /* ACProjectDocument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACProjectDocument.m; sourceTree = "<group>"; };
 		B7DF4B5E13EFEE5900BF8306 /* ACStateInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACStateInternal.h; sourceTree = "<group>"; };
-		CD0DEAB613D4C2430087ADBB /* ACNavigationTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; path = ACNavigationTarget.h; sourceTree = "<group>"; };
+		CD0DEAB613D4C2430087ADBB /* ACNavigationTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACNavigationTarget.h; sourceTree = "<group>"; };
 		CD13665713D32150001F3455 /* UIControl+BlockAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIControl+BlockAction.h"; sourceTree = "<group>"; };
 		CD13665813D32150001F3455 /* UIControl+BlockAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIControl+BlockAction.m"; sourceTree = "<group>"; };
 		CD4786E713DB0C2500616B62 /* ACState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACState.h; sourceTree = "<group>"; };
@@ -242,16 +242,16 @@
 		CDFF3DD013C0D9BB00108DE2 /* toolHistoryBack.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = toolHistoryBack.png; sourceTree = "<group>"; };
 		CDFF3DD113C0D9BB00108DE2 /* toolHistoryForward.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = toolHistoryForward.png; sourceTree = "<group>"; };
 		CDFF3DD213C0D9BB00108DE2 /* toolHistoryNow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = toolHistoryNow.png; sourceTree = "<group>"; };
-		CDFF3DD313C0D9BB00108DE2 /* toolPanelHistoryActiveIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = toolPanelHistoryActiveIcon.png; sourceTree = "<group>"; };
-		CDFF3DD413C0D9BB00108DE2 /* toolPanelHistoryIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = toolPanelHistoryIcon.png; sourceTree = "<group>"; };
-		CDFF3DD513C0D9BB00108DE2 /* toolPanelNavigatorActiveIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = toolPanelNavigatorActiveIcon.png; sourceTree = "<group>"; };
-		CDFF3DD613C0D9BB00108DE2 /* toolPanelNavigatorIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = toolPanelNavigatorIcon.png; sourceTree = "<group>"; };
-		CDFF3DD713C0D9BB00108DE2 /* toolPanelSnippetsActiveIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = toolPanelSnippetsActiveIcon.png; sourceTree = "<group>"; };
-		CDFF3DD813C0D9BB00108DE2 /* toolPanelSnippetsIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = toolPanelSnippetsIcon.png; sourceTree = "<group>"; };
-		CDFF3DD913C0D9BB00108DE2 /* toolPanelStarActiveIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = toolPanelStarActiveIcon.png; sourceTree = "<group>"; };
-		CDFF3DDA13C0D9BB00108DE2 /* toolPanelStarIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = toolPanelStarIcon.png; sourceTree = "<group>"; };
-		CDFF3DDB13C0D9BB00108DE2 /* toolPanelSymbolsActiveIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = toolPanelSymbolsActiveIcon.png; sourceTree = "<group>"; };
-		CDFF3DDC13C0D9BB00108DE2 /* toolPanelSymbolsIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = toolPanelSymbolsIcon.png; sourceTree = "<group>"; };
+		CDFF3DD313C0D9BB00108DE2 /* toolPanelHistoryToolSelectedImage.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = toolPanelHistoryToolSelectedImage.png; sourceTree = "<group>"; };
+		CDFF3DD413C0D9BB00108DE2 /* toolPanelHistoryToolImage.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = toolPanelHistoryToolImage.png; sourceTree = "<group>"; };
+		CDFF3DD513C0D9BB00108DE2 /* toolPanelNavigatorToolSelectedImage.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = toolPanelNavigatorToolSelectedImage.png; sourceTree = "<group>"; };
+		CDFF3DD613C0D9BB00108DE2 /* toolPanelNavigatorToolImage.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = toolPanelNavigatorToolImage.png; sourceTree = "<group>"; };
+		CDFF3DD713C0D9BB00108DE2 /* toolPanelSnippetsToolSelectedImage.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = toolPanelSnippetsToolSelectedImage.png; sourceTree = "<group>"; };
+		CDFF3DD813C0D9BB00108DE2 /* toolPanelSnippetsToolImage.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = toolPanelSnippetsToolImage.png; sourceTree = "<group>"; };
+		CDFF3DD913C0D9BB00108DE2 /* toolPanelBookmarksToolSelectedImage.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = toolPanelBookmarksToolSelectedImage.png; sourceTree = "<group>"; };
+		CDFF3DDA13C0D9BB00108DE2 /* toolPanelBookmarksToolImage.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = toolPanelBookmarksToolImage.png; sourceTree = "<group>"; };
+		CDFF3DDB13C0D9BB00108DE2 /* toolPanelSymbolsToolSelectedImage.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = toolPanelSymbolsToolSelectedImage.png; sourceTree = "<group>"; };
+		CDFF3DDC13C0D9BB00108DE2 /* toolPanelSymbolsToolImage.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = toolPanelSymbolsToolImage.png; sourceTree = "<group>"; };
 		CDFF3DDD13C0D9BB00108DE2 /* toolSnippetsPaste.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = toolSnippetsPaste.png; sourceTree = "<group>"; };
 		CDFF3DDE13C0D9BB00108DE2 /* toolSnippetsSnippet.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = toolSnippetsSnippet.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -669,16 +669,16 @@
 		CDFF3DF413C0D9D100108DE2 /* Tools Tab Icons */ = {
 			isa = PBXGroup;
 			children = (
-				CDFF3DD313C0D9BB00108DE2 /* toolPanelHistoryActiveIcon.png */,
-				CDFF3DD413C0D9BB00108DE2 /* toolPanelHistoryIcon.png */,
-				CDFF3DD513C0D9BB00108DE2 /* toolPanelNavigatorActiveIcon.png */,
-				CDFF3DD613C0D9BB00108DE2 /* toolPanelNavigatorIcon.png */,
-				CDFF3DD713C0D9BB00108DE2 /* toolPanelSnippetsActiveIcon.png */,
-				CDFF3DD813C0D9BB00108DE2 /* toolPanelSnippetsIcon.png */,
-				CDFF3DD913C0D9BB00108DE2 /* toolPanelStarActiveIcon.png */,
-				CDFF3DDA13C0D9BB00108DE2 /* toolPanelStarIcon.png */,
-				CDFF3DDB13C0D9BB00108DE2 /* toolPanelSymbolsActiveIcon.png */,
-				CDFF3DDC13C0D9BB00108DE2 /* toolPanelSymbolsIcon.png */,
+				CDFF3DD313C0D9BB00108DE2 /* toolPanelHistoryToolSelectedImage.png */,
+				CDFF3DD413C0D9BB00108DE2 /* toolPanelHistoryToolImage.png */,
+				CDFF3DD513C0D9BB00108DE2 /* toolPanelNavigatorToolSelectedImage.png */,
+				CDFF3DD613C0D9BB00108DE2 /* toolPanelNavigatorToolImage.png */,
+				CDFF3DD713C0D9BB00108DE2 /* toolPanelSnippetsToolSelectedImage.png */,
+				CDFF3DD813C0D9BB00108DE2 /* toolPanelSnippetsToolImage.png */,
+				CDFF3DD913C0D9BB00108DE2 /* toolPanelBookmarksToolSelectedImage.png */,
+				CDFF3DDA13C0D9BB00108DE2 /* toolPanelBookmarksToolImage.png */,
+				CDFF3DDB13C0D9BB00108DE2 /* toolPanelSymbolsToolSelectedImage.png */,
+				CDFF3DDC13C0D9BB00108DE2 /* toolPanelSymbolsToolImage.png */,
 			);
 			name = "Tools Tab Icons";
 			sourceTree = "<group>";
@@ -770,16 +770,16 @@
 				CDFF3DE513C0D9BB00108DE2 /* toolHistoryBack.png in Resources */,
 				CDFF3DE613C0D9BB00108DE2 /* toolHistoryForward.png in Resources */,
 				CDFF3DE713C0D9BB00108DE2 /* toolHistoryNow.png in Resources */,
-				CDFF3DE813C0D9BB00108DE2 /* toolPanelHistoryActiveIcon.png in Resources */,
-				CDFF3DE913C0D9BB00108DE2 /* toolPanelHistoryIcon.png in Resources */,
-				CDFF3DEA13C0D9BB00108DE2 /* toolPanelNavigatorActiveIcon.png in Resources */,
-				CDFF3DEB13C0D9BB00108DE2 /* toolPanelNavigatorIcon.png in Resources */,
-				CDFF3DEC13C0D9BB00108DE2 /* toolPanelSnippetsActiveIcon.png in Resources */,
-				CDFF3DED13C0D9BB00108DE2 /* toolPanelSnippetsIcon.png in Resources */,
-				CDFF3DEE13C0D9BB00108DE2 /* toolPanelStarActiveIcon.png in Resources */,
-				CDFF3DEF13C0D9BB00108DE2 /* toolPanelStarIcon.png in Resources */,
-				CDFF3DF013C0D9BB00108DE2 /* toolPanelSymbolsActiveIcon.png in Resources */,
-				CDFF3DF113C0D9BB00108DE2 /* toolPanelSymbolsIcon.png in Resources */,
+				CDFF3DE813C0D9BB00108DE2 /* toolPanelHistoryToolSelectedImage.png in Resources */,
+				CDFF3DE913C0D9BB00108DE2 /* toolPanelHistoryToolImage.png in Resources */,
+				CDFF3DEA13C0D9BB00108DE2 /* toolPanelNavigatorToolSelectedImage.png in Resources */,
+				CDFF3DEB13C0D9BB00108DE2 /* toolPanelNavigatorToolImage.png in Resources */,
+				CDFF3DEC13C0D9BB00108DE2 /* toolPanelSnippetsToolSelectedImage.png in Resources */,
+				CDFF3DED13C0D9BB00108DE2 /* toolPanelSnippetsToolImage.png in Resources */,
+				CDFF3DEE13C0D9BB00108DE2 /* toolPanelBookmarksToolSelectedImage.png in Resources */,
+				CDFF3DEF13C0D9BB00108DE2 /* toolPanelBookmarksToolImage.png in Resources */,
+				CDFF3DF013C0D9BB00108DE2 /* toolPanelSymbolsToolSelectedImage.png in Resources */,
+				CDFF3DF113C0D9BB00108DE2 /* toolPanelSymbolsToolImage.png in Resources */,
 				CDFF3DF213C0D9BB00108DE2 /* toolSnippetsPaste.png in Resources */,
 				CDFF3DF313C0D9BB00108DE2 /* toolSnippetsSnippet.png in Resources */,
 				CDE3F14713C0DDD500DFFAFF /* Inconsolata-dz.otf in Resources */,
