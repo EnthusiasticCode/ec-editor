@@ -12,7 +12,6 @@
 @interface ACToolController : UIViewController <UITableViewDataSource, UITableViewDelegate>
 
 @property (nonatomic, strong) IBOutlet UIButton *tabButton;
-@property (nonatomic, getter = isEnabled) BOOL enabled;
 
 @property (nonatomic, strong) IBOutlet UITableView *tableView;
 

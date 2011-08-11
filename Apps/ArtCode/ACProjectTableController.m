@@ -59,12 +59,12 @@
     // TODO refresh projects
 }
 
-- (BOOL)shouldShowTabBar
+- (BOOL)enableTabBar
 {
     return YES;
 }
 
-- (BOOL)shouldShowToolPanelController:(ACToolController *)toolController
+- (BOOL)enableToolPanelControllerWithIdentifier:(NSString *)toolControllerIdentifier
 {
     return NO;
 }

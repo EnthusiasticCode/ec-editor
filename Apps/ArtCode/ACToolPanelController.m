@@ -12,13 +12,17 @@
 #import "UIControl+BlockAction.h"
 
 
-@implementation ACToolPanelController
+@implementation ACToolPanelController {
+    NSMutableDictionary *toolControllers;
+    NSMutableArray *enabledToolControllers;
+}
+
+#pragma makr - Properties
 
 @synthesize tabsView;
 @synthesize selectedViewController;
 
 #pragma mark - View lifecycle
-
 
 // Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
 - (void)viewDidLoad
@@ -53,6 +57,97 @@
 	return YES;
 }
 
+#pragma mark - Managing Tools by Identifiers
+
+@synthesize enabledToolControllerIdentifiers;
+
+- (void)setEnabledToolControllerIdentifiers:(NSArray *)array
+{
+    // TODO filter array and check if in [toolControllers allKeys]
+    
+    enabledToolControllerIdentifiers = [array copy];
+    
+    if (enabledToolControllers == nil)
+        enabledToolControllers = [NSMutableArray new];
+    else
+        [enabledToolControllers removeAllObjects];
+    
+    for (NSString *identifier in enabledToolControllerIdentifiers)
+    {
+        // TODO unload not enabled tool controllers
+        id button = [toolControllers objectForKey:identifier];
+        if (button == nil)
+            continue;
+        // Load the tool controller if a button is stored instead
+        ACToolController *toolController = nil;
+        if ([button isKindOfClass:[UIButton class]])
+        {
+            toolController = (ACToolController *)[self.storyboard instantiateViewControllerWithIdentifier:identifier];
+            toolController.tabButton = button;
+            [toolControllers setObject:toolController forKey:identifier];
+            //
+            __weak ACToolController *weakController = toolController;
+            [button setActionBlock:^(id sender) {
+                [self setSelectedViewController:weakController];
+            } forControlEvent:UIControlEventTouchUpInside];
+        }
+        else
+        {
+            toolController = (ACToolController *)button;
+        }
+        //
+        [enabledToolControllers addObject:toolController];
+    }
+    
+    // Set the selected view, it will also load the actual panel controller view
+    // and thus initialize the tabsView.
+    if ([enabledToolControllers count] > 0 
+        && ![enabledToolControllers containsObject:selectedViewController])
+    {
+        [self setSelectedViewController:[enabledToolControllers objectAtIndex:0]];
+    }
+    
+    // Layout buttons
+    [tabsView.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
+    CGRect tabButtonFrame = CGRectMake(0, 0, 44, 44);
+    for (ACToolController *toolController in enabledToolControllers)
+    {
+        [tabsView addSubview:toolController.tabButton];
+        toolController.tabButton.frame = tabButtonFrame;
+        tabButtonFrame.origin.x += 45;
+    }
+}
+
+- (NSArray *)toolControllerIdentifiers
+{
+    return [toolControllers allKeys];
+}
+
+- (void)addToolWithIdentifier:(NSString *)toolControllerIdentifier
+{
+    NSString *tabImageName = [NSString stringWithFormat:@"toolPanel%@Image", toolControllerIdentifier];
+    NSString *selectedImageName = [NSString stringWithFormat:@"toolPanel%@SelectedImage", toolControllerIdentifier];
+    [self addToolWithIdentifier:toolControllerIdentifier tabImageName:tabImageName selectedTabImageName:selectedImageName];
+}
+
+
+- (void)addToolWithIdentifier:(NSString *)toolControllerIdentifier tabImageName:(NSString *)tabImageName selectedTabImageName:(NSString *)selectedImageName
+{
+    ECASSERT(toolControllerIdentifier != nil);
+    ECASSERT(self.storyboard != nil);
+    ECASSERT([toolControllers objectForKey:toolControllerIdentifier] == nil); // may only be added once
+    
+    // Create tab button
+    UIButton *tabButton = [UIButton new];
+    [tabButton setImage:[UIImage imageNamed:tabImageName] forState:UIControlStateNormal];
+    [tabButton setImage:[UIImage imageNamed:selectedImageName] forState:UIControlStateSelected];
+    
+    // toolControllers will hold a button if the actual controller is not instantiated yet
+    if (toolControllers == nil)
+        toolControllers = [NSMutableDictionary new];
+    [toolControllers setObject:tabButton forKey:toolControllerIdentifier];
+}
+
 - (void)addToolWithController:(ACToolController *)toolController tabImage:(UIImage *)tabImage selectedTabImage:(UIImage *)selectedImage
 {
     [super addChildViewController:toolController];
@@ -67,41 +162,9 @@
     } forControlEvent:UIControlEventTouchUpInside];
 }
 
-#pragma mark - Tabs Management
+#pragma mark - Managing Tools by Controller
 
-- (void)updateTabs
-{
-    NSMutableArray *visibleTabControllers = [[NSMutableArray alloc] initWithCapacity:[self.childViewControllers count]];
-    for (ACToolController *toolController in self.childViewControllers)
-    {
-        if (toolController.isEnabled)
-        {
-            [visibleTabControllers addObject:toolController];
-        }
-        else
-        {
-            [toolController.tabButton removeFromSuperview];
-        }
-    }
-    
-    // Set the selected view, it will also load the actual panel controller view
-    // and thus initialize the tabsView.
-    if ([visibleTabControllers count] > 0 
-        && ![visibleTabControllers containsObject:selectedViewController])
-    {
-        [self setSelectedViewController:[visibleTabControllers objectAtIndex:0]];
-    }
-    
-    CGRect tabButtonFrame = CGRectMake(0, 0, 44, 44);
-    for (ACToolController *toolController in visibleTabControllers)
-    {
-        [tabsView addSubview:toolController.tabButton];
-        toolController.tabButton.frame = tabButtonFrame;
-        tabButtonFrame.origin.x += 45;
-    }
-}
-
-#pragma mark - Segue Management
+@synthesize enabledToolControllers;
 
 - (void)setSelectedViewController:(ACToolController *)controller
 {

@@ -288,6 +288,8 @@
 
 - (void)tabNavigationController:(ACTabNavigationController *)controller didChangeCurrentTabController:(ACTabController *)tabController fromTabController:(ACTabController *)previousTabController
 {
+    ECASSERT([tabController.tabViewController conformsToProtocol:@protocol(ACNavigationTarget)]);
+    
     // Bezel alert with page indicator
     if (tabController != previousTabController && controller.tabCount > 1)
     {
@@ -305,8 +307,20 @@
         [[ECBezelAlert bottomBezelAlert] addAlertMessageWithViewController:tabPageControlController displayImmediatly:YES];
     }
     
-    // TODO enable tabs and stuff
-    controller.tabBarEnabled = YES;
+    UIViewController<ACNavigationTarget> *target = (UIViewController<ACNavigationTarget> *)tabController.tabViewController;
+    
+    // Enabling tab bar
+    controller.tabBarEnabled = [target enableTabBar];
+    
+    // Enabling panels
+    NSMutableArray *enabledToolsIdentifiers = [NSMutableArray new];
+    for (NSString *toolIdentifier in toolPanelController.toolControllerIdentifiers)
+    {
+        if ([target enableToolPanelControllerWithIdentifier:toolIdentifier])
+            [enabledToolsIdentifiers addObject:toolIdentifier];
+    }
+    self.toolPanelEnabled = ([enabledToolsIdentifiers count] > 0);    
+    toolPanelController.enabledToolControllerIdentifiers = enabledToolsIdentifiers;
     
     // Setup jump bar
     [jumpBar setJumpPath:tabController.currentURL.path animated:YES];

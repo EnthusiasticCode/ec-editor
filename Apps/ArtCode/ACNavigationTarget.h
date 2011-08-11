@@ -15,12 +15,18 @@
 @protocol ACNavigationTarget <NSObject>
 @required
 
+/// When implemented, create a new view controller that responds to the protocol methods.
 + (id)newNavigationTargetController;
 
+/// Makes the target open the given URL.
 - (void)openURL:(NSURL *)url;
 
-- (BOOL)shouldShowTabBar;
-- (BOOL)shouldShowToolPanelController:(ACToolController *)toolController;
+/// Indicates if the tab bar can be displayed when the target is in foreground.
+- (BOOL)enableTabBar;
+
+/// Indicates if the tool controller with the given identifier should be enabled 
+/// when the target is in foreground.
+- (BOOL)enableToolPanelControllerWithIdentifier:(NSString *)toolControllerIdentifier;
 
 @optional
 

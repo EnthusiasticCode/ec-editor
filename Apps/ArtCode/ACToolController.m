@@ -11,7 +11,7 @@
 
 @implementation ACToolController
 
-@synthesize tabButton, enabled;
+@synthesize tabButton;
 @synthesize tableView, filterContainerView, filterTextField, filterAddButton;
 
 #pragma mark - Private Methods
