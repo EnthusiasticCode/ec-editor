@@ -112,7 +112,7 @@
     [window makeKeyAndVisible];
     navigationController.tabNavigationController.tabPageMargin = 10;
     [navigationController.tabNavigationController addTabControllerWithDataSorce:self initialURL:[NSURL URLWithString:@"artcode:projects"] animated:NO];
-    [navigationController.tabNavigationController addTabControllerWithDataSorce:self initialURL:[NSURL URLWithString:@"artcode:/ProjectX"] animated:NO];
+//    [navigationController.tabNavigationController addTabControllerWithDataSorce:self initialURL:[NSURL URLWithString:@"artcode:/ProjectX"] animated:NO];
     navigationController.tabNavigationController.makeAddedTabCurrent = YES;
     return YES;
 }
@@ -171,11 +171,19 @@
     // TODO url switch logic
     if ([url.absoluteString isEqualToString:@"artcode:projects"])
         controllerClass = [ACProjectTableController class];
+    else
+    {
+        id<ACStateNode> node = [[ACState localState] nodeForURL:url];
+        if (node.nodeType == ACStateNodeTypeFolder || node.nodeType == ACStateNodeTypeGroup || node.nodeType == ACStateNodeTypeProject)
+            controllerClass = [ACFileTableController class];
+        else if (node.nodeType == ACStateNodeTypeSourceFile)
+            controllerClass = [ACCodeFileController class];
+    }
 //    else if (url.pathExtension != nil)
 //        controllerClass = [ACCodeFileController class];
-    else
-        controllerClass = [ACFileTableController class];
-    
+//    else
+//        controllerClass = [ACFileTableController class];
+
     UIViewController<ACNavigationTarget> *controller = [controllerClass newNavigationTargetController];
     [controller openURL:url];
     return controller; // TODO initWithNibName:name of class

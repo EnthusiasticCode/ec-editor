@@ -69,9 +69,10 @@
 
 - (NSURL *)fileURL
 {
-    NSURL *fileURL = [[[[self.managedObjectContext.persistentStoreCoordinator.persistentStores objectAtIndex:0] URL] URLByDeletingLastPathComponent] URLByAppendingPathComponent:ACProjectContentDirectory];
+    NSURL *fileURL = [[[[[self.managedObjectContext.persistentStoreCoordinator.persistentStores objectAtIndex:0] URL] URLByDeletingLastPathComponent] URLByDeletingLastPathComponent] URLByAppendingPathComponent:ACProjectContentDirectory];
     for (NSString *pathComponent in [self.path pathComponents])
         fileURL = [fileURL URLByAppendingPathComponent:pathComponent];
+    NSLog(@"%@", [fileURL URLByStandardizingPath]);
     return [fileURL URLByStandardizingPath];
 }
 

@@ -80,7 +80,27 @@
     if (_isDeleted)
         return nil;
     if (!_document)
-        _document = [[ACProjectDocument alloc] initWithFileURL:[self.URL ACProjectBundleURL]];
+    {
+        NSFileManager *fileManager = [[NSFileManager alloc] init];
+        NSURL *documentURL = [self.URL ACProjectBundleURL];
+        _document = [[ACProjectDocument alloc] initWithFileURL:documentURL];
+        NSDictionary *options = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithBool:YES], NSMigratePersistentStoresAutomaticallyOption, [NSNumber numberWithBool:YES], NSInferMappingModelAutomaticallyOption, nil];
+        _document.persistentStoreOptions = options;
+        if ([fileManager fileExistsAtPath:[documentURL path]]) {
+            [_document openWithCompletionHandler:^(BOOL success){
+                if (!success) {
+                    // Handle the error.
+                }
+            }];
+        }
+        else {
+            [_document saveToURL:documentURL forSaveOperation:UIDocumentSaveForCreating completionHandler:^(BOOL success){
+                if (!success) {
+                    // Handle the error.
+                }
+            }];
+        }
+    }
     return _document;
 }
 
@@ -95,9 +115,6 @@
     if (!self)
         return nil;
     _URL = URL;
-    NSFileManager *fileManager = [[NSFileManager alloc] init];
-    if (![fileManager fileExistsAtPath:[[URL ACProjectBundleURL] path]])
-        [fileManager createDirectoryAtURL:[URL ACProjectBundleURL] withIntermediateDirectories:YES attributes:nil error:NULL];
     return self;
 }
 

@@ -9,6 +9,8 @@
 #import "ACCodeFileController.h"
 #import "ECCodeView.h"
 
+#import "ACState.h"
+
 @implementation ACCodeFileController
 
 @synthesize codeView;
@@ -31,7 +33,10 @@
 - (void)openURL:(NSURL *)url
 {
     // TODO handle error
-    NSString *urlContent = [NSString stringWithContentsOfURL:url encoding:NSUTF8StringEncoding error:nil];
+    id<ACStateNode> node = [[ACState localState] nodeForURL:url];
+    ECASSERT([node respondsToSelector:@selector(fileURL)]);
+    NSURL *fileURL = node.fileURL;
+    NSString *urlContent = [NSString stringWithContentsOfURL:fileURL encoding:NSUTF8StringEncoding error:nil];
    codeView.text = urlContent;
 }
 
