@@ -9,11 +9,25 @@
 #import "ACCodeFileController.h"
 #import "ECCodeView.h"
 
+#import "AppStyle.h"
 #import "ACState.h"
 
 @implementation ACCodeFileController
 
 @synthesize codeView;
+
+- (ECCodeView *)codeView
+{
+    if (!codeView)
+    {
+        codeView = [ECCodeView new];
+        codeView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+        codeView.backgroundColor = [UIColor whiteColor];
+        codeView.caretColor = [UIColor styleThemeColorOne];
+        codeView.selectionColor = [[UIColor styleThemeColorOne] colorWithAlphaComponent:0.3];
+    }
+    return codeView;
+}
 
 - (void)didReceiveMemoryWarning
 {
@@ -37,7 +51,7 @@
     ECASSERT([node respondsToSelector:@selector(fileURL)]);
     NSURL *fileURL = node.fileURL;
     NSString *urlContent = [NSString stringWithContentsOfURL:fileURL encoding:NSUTF8StringEncoding error:nil];
-   codeView.text = urlContent;
+    self.codeView.text = urlContent;
 }
 
 - (BOOL)enableTabBar
@@ -69,9 +83,7 @@
 
 - (void)loadView
 {
-    codeView = [ECCodeView new];
-    codeView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-    self.view = codeView;
+    self.view = self.codeView;
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation

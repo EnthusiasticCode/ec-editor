@@ -845,6 +845,26 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
     dataSourceHasViewControllerForCompletionAtTextInRange = [self.datasource respondsToSelector:@selector(codeView:viewControllerForCompletionAtTextInRange:)];
 }
 
+- (void)setCaretColor:(UIColor *)caretColor
+{
+    selectionView.caretColor = caretColor;
+}
+
+- (UIColor *)caretColor
+{
+    return selectionView.caretColor;
+}
+
+- (void)setSelectionColor:(UIColor *)selectionColor
+{
+    selectionView.selectionColor = selectionColor;
+}
+
+- (UIColor *)selectionColor
+{
+    return selectionView.selectionColor;
+}
+
 #pragma mark NSObject Methods
 
 static void preinit(ECCodeView *self)

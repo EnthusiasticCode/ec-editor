@@ -39,6 +39,14 @@
 
 @property (nonatomic, weak) id<ECCodeViewDataSource> datasource;
 
+#pragma mark Style
+
+/// Specify the color of caret.
+@property (nonatomic, strong) UIColor *caretColor;
+
+/// Specify the color of the selection rect.
+@property (nonatomic, strong) UIColor *selectionColor;
+
 #pragma mark Managing the Navigator
 
 @property (nonatomic) CGFloat navigatorWidth;
