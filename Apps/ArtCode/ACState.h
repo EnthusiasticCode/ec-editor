@@ -70,6 +70,11 @@ extern NSString * const ACStateNodeTypeSourceFile;
 /// Returns whether the node has been deleted
 - (BOOL)isDeleted;
 
+@optional
+
+/// Returns the fileURL for the object, if applicable
+@property (nonatomic, strong, readonly) NSURL *fileURL;
+
 @end
 
 /// AC Project controller

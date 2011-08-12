@@ -18,7 +18,6 @@ typedef enum
 
 @interface ACNode : CDNode <ACStateNode>
 
-- (NSString *)absolutePath;
 - (NSInteger)depth;
 - (ACNode *)addNodeWithName:(NSString *)name type:(ACNodeType)type;
 - (ACNode *)childNodeWithName:(NSString *)name;

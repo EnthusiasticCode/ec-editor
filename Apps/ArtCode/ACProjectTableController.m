@@ -79,7 +79,7 @@
     for (NSUInteger projectNumber = 0; YES; ++projectNumber)
     {
         projectName = [@"Project " stringByAppendingString:[NSString stringWithFormat:@"%d", projectNumber]];
-        if (![[ACState localState] insertProjectWithURL:[NSURL ACURLForProjectWithName:projectName] atIndex:NSNotFound error:NULL])
+        if (![[ACState localState] insertProjectWithURL:[NSURL ACURLForLocalProjectWithName:projectName] atIndex:NSNotFound error:NULL])
             continue;
         break;
     }

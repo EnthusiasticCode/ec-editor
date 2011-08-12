@@ -54,7 +54,7 @@
         ancestor = ancestor.parent;
         [pathComponents addObject:ancestor.name];
     }
-    __block NSURL *URL = [NSURL ACURLForProjectWithName:[pathComponents lastObject]];
+    __block NSURL *URL = [NSURL ACURLForLocalProjectWithName:[pathComponents lastObject]];
     [pathComponents removeLastObject];
     [pathComponents enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(id pathComponent, NSUInteger idx, BOOL *stop) {
         URL = [URL URLByAppendingPathComponent:pathComponent];
@@ -67,9 +67,12 @@
     [self.managedObjectContext deleteObject:self];
 }
 
-- (NSString *)absolutePath
+- (NSURL *)fileURL
 {
-    return [[[[[self.managedObjectContext.persistentStoreCoordinator.persistentStores objectAtIndex:0] URL] URLByDeletingLastPathComponent] URLByAppendingPathComponent:ACProjectContentDirectory] URLByStandardizingPath].path;
+    NSURL *fileURL = [[[[self.managedObjectContext.persistentStoreCoordinator.persistentStores objectAtIndex:0] URL] URLByDeletingLastPathComponent] URLByAppendingPathComponent:ACProjectContentDirectory];
+    for (NSString *pathComponent in [self.path pathComponents])
+        fileURL = [fileURL URLByAppendingPathComponent:pathComponent];
+    return [fileURL URLByStandardizingPath];
 }
 
 - (NSInteger)depth

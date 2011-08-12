@@ -19,23 +19,44 @@ NSString * const ACProjectContentDirectory = @"Content";
     return [NSURL fileURLWithPath:[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject]];
 }
 
+- (BOOL)isACURL
+{
+    return [self.scheme isEqualToString:ACURLScheme];
+}
+
+- (BOOL)isLocal
+{
+    // all ACURLs are local at the moment
+    return YES;
+}
+
++ (NSURL *)ACLocalProjectsDirectory
+{
+    return [self applicationDocumentsDirectory];
+}
+
 - (NSString *)ACProjectName
 {
-    ECASSERT([self.scheme isEqualToString:ACURLScheme]);
+    ECASSERT([self isACURL]);
     return [[self.pathComponents objectAtIndex:1] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
 }
 
 - (NSURL *)ACProjectBundleURL
 {
-    return [[[[self class] applicationDocumentsDirectory] URLByAppendingPathComponent:[self ACProjectName]] URLByAppendingPathExtension:ACProjectBundleExtension];
+    ECASSERT([self isACURL]);
+    if ([self isLocal])
+        return [[[[self class] ACLocalProjectsDirectory] URLByAppendingPathComponent:[self ACProjectName]] URLByAppendingPathExtension:ACProjectBundleExtension];
+    else
+        ECASSERT(false); // NYI
 }
 
 - (NSURL *)ACProjectContentURL
 {
-    return [[[[[self class] applicationDocumentsDirectory] URLByAppendingPathComponent:[self ACProjectName]] URLByAppendingPathExtension:ACProjectBundleExtension] URLByAppendingPathComponent:ACProjectContentDirectory isDirectory:YES];
+    ECASSERT([self isACURL]);
+    return [[[[[self class] ACLocalProjectsDirectory] URLByAppendingPathComponent:[self ACProjectName]] URLByAppendingPathExtension:ACProjectBundleExtension] URLByAppendingPathComponent:ACProjectContentDirectory isDirectory:YES];
 }
 
-+ (NSURL *)ACURLForProjectWithName:(NSString *)name
++ (NSURL *)ACURLForLocalProjectWithName:(NSString *)name
 {
     ECASSERT(name);
     return [NSURL URLWithString:[NSString stringWithFormat:@"%@:/%@", ACURLScheme, [name stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]]];
@@ -51,9 +72,7 @@ NSString * const ACProjectContentDirectory = @"Content";
 
 - (BOOL)isAncestorOfACURL:(NSURL *)URL
 {
-    ECASSERT([[URL scheme] isEqualToString:ACURLScheme]);
-    if (![[URL scheme] isEqualToString:ACURLScheme])
-        return NO;
+    ECASSERT([self isACURL]);
     NSArray *URLPathComponents = [URL pathComponents];
     NSArray *selfPathComponents = [self pathComponents];
     NSUInteger selfPathComponentsCount = [selfPathComponents count];

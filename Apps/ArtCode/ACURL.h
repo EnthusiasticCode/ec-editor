@@ -17,6 +17,15 @@ extern NSString * const ACProjectContentDirectory;
 /// Returns the application's documents directory
 + (NSURL *)applicationDocumentsDirectory;
 
+/// Returns whether or not the URL is an ACURL
+- (BOOL)isACURL;
+
+/// Returns whether the ACURL refers to a local resource
+- (BOOL)isLocal;
+
+/// Returns the local projects directory
++ (NSURL *)ACLocalProjectsDirectory;
+
 /// Returns the name of the project which is referenced by or contains the node referenced by the ACURL
 - (NSString *)ACProjectName;
 
@@ -26,8 +35,8 @@ extern NSString * const ACProjectContentDirectory;
 /// Returns a file URL to the content directory of the project referenced by or containing the node referenced by the ACURL
 - (NSURL *)ACProjectContentURL;
 
-/// Returns an ACURL referencing the project with the given name
-+ (NSURL *)ACURLForProjectWithName:(NSString *)name;
+/// Returns an ACURL referencing a local project with the given name
++ (NSURL *)ACURLForLocalProjectWithName:(NSString *)name;
 
 /// Create an ACURL referencing the node for the given path
 + (NSURL *)ACURLWithPath:(NSString *)path;

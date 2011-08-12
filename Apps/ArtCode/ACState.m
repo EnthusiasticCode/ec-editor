@@ -55,7 +55,7 @@ static void * const ACStateProjectURLObservingContext;
     _projectObjects = [NSMutableArray array];
     [self scanForProjects];
     for (NSString *projectName in [self loadProjectNames])
-        [self insertProjectObjectWithURL:[NSURL ACURLForProjectWithName:projectName] atIndex:NSNotFound];
+        [self insertProjectObjectWithURL:[NSURL ACURLForLocalProjectWithName:projectName] atIndex:NSNotFound];
     return self;
 }
 
@@ -63,12 +63,12 @@ static void * const ACStateProjectURLObservingContext;
 {
     NSFileManager *fileManager = [[NSFileManager alloc] init];
     NSMutableArray *projectNames = [self loadProjectNames];
-    NSArray *projectURLs = [fileManager contentsOfDirectoryAtURL:[NSURL applicationDocumentsDirectory] includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles error:NULL];
+    NSArray *projectURLs = [fileManager contentsOfDirectoryAtURL:[NSURL ACLocalProjectsDirectory] includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles error:NULL];
     BOOL projectListHasChanged = NO;
     NSMutableArray *deletedProjectsNames = nil;
     for (NSString *projectName in projectNames)
     {
-        if ([fileManager fileExistsAtPath:[[[[NSURL applicationDocumentsDirectory] path] stringByAppendingPathComponent:projectName] stringByAppendingPathExtension:ACProjectBundleExtension]])
+        if ([fileManager fileExistsAtPath:[[[[NSURL ACLocalProjectsDirectory] path] stringByAppendingPathComponent:projectName] stringByAppendingPathExtension:ACProjectBundleExtension]])
             continue;
         if (!projectListHasChanged)
         {
@@ -145,7 +145,7 @@ static void * const ACStateProjectURLObservingContext;
     if (index == NSNotFound)
         index = [_projectObjects count];
     NSFileManager *fileManager = [[NSFileManager alloc] init];
-    if ([fileManager fileExistsAtPath:[[[[NSURL applicationDocumentsDirectory] path] stringByAppendingPathComponent:[URL ACProjectName]] stringByAppendingPathExtension:ACProjectBundleExtension]])
+    if ([fileManager fileExistsAtPath:[[[[NSURL ACLocalProjectsDirectory] path] stringByAppendingPathComponent:[URL ACProjectName]] stringByAppendingPathExtension:ACProjectBundleExtension]])
         return NO;
     NSMutableArray *projectNames = [self loadProjectNames];
     [self willChange:NSKeyValueChangeInsertion valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"projects"];
