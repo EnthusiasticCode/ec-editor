@@ -22,7 +22,7 @@
 @synthesize fileManager = _fileManager;
 @synthesize rootNode = _rootNode;
 
-- (NSFileManager *)_fileManager
+- (NSFileManager *)fileManager
 {
     if (!_fileManager)
         _fileManager = [[NSFileManager alloc] init];
@@ -32,7 +32,10 @@
 - (ACNode *)rootNode
 {
     if (!_rootNode)
+    {
         _rootNode = [self findRootNode];
+        [self addAllNodesInProjectRoot];
+    }
     return _rootNode;
 }
 
@@ -91,12 +94,6 @@
 - (void)addAllNodesInProjectRoot
 {
     [self addNodesAtPath:[self.fileURL URLByAppendingPathComponent:ACProjectContentDirectory].path toNode:self.rootNode];
-}
-
-- (void)openWithCompletionHandler:(void (^)(BOOL))completionHandler
-{
-    [super openWithCompletionHandler:completionHandler];
-    [self addAllNodesInProjectRoot];
 }
 
 @end

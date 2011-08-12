@@ -10,7 +10,7 @@
         <attribute name="URL" attributeType="String"/>
         <relationship name="tab" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Tab" inverseName="historyItems" inverseEntity="Tab"/>
     </entity>
-    <entity name="Node" representedClassName="CDNode">
+    <entity name="Node" representedClassName="ACNode">
         <attribute name="expanded" attributeType="Boolean" defaultValueString="NO"/>
         <attribute name="name" attributeType="String"/>
         <attribute name="path" optional="YES" attributeType="String"/>

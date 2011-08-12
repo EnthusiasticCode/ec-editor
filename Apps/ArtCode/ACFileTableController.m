@@ -13,8 +13,11 @@
 
 #import "ACToolFiltersView.h"
 
+#import "ACState.h"
+
 @implementation ACFileTableController {
     NSArray *extensions;
+    id<ACStateNode> _displayedNode;
 }
 
 @synthesize tableView, editingToolsView;
@@ -130,7 +133,8 @@
 
 - (void)openURL:(NSURL *)url
 {
-    
+    _displayedNode = [[ACState localState] nodeForURL:url];
+    [self.tableView reloadData];
 }
 
 - (BOOL)enableTabBar
@@ -159,7 +163,8 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     // Return the number of rows in the section.
-    return 7;
+//    return 7;
+    return [_displayedNode.children count];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -176,30 +181,37 @@
     }
     
     // Configure the cell...
-    NSUInteger idx = [indexPath indexAtPosition:1];
-    cell.indentationLevel = 0;
-    if (idx < 2)
-    {
-        cell.textField.text = @"File";
-        cell.imageView.image = [UIImage styleDocumentImageWithSize:CGSizeMake(32, 32) 
-                                                             color:idx % 2 ? [UIColor styleFileBlueColor] : [UIColor styleFileRedColor] 
-                                                              text:[extensions objectAtIndex:idx]];
-    }
-    else if (idx == 2)
-    {
-        cell.textField.text = @"Group";
+//    NSUInteger idx = [indexPath indexAtPosition:1];
+//    cell.indentationLevel = 0;
+//    if (idx < 2)
+//    {
+//        cell.textField.text = @"File";
+//        cell.imageView.image = [UIImage styleDocumentImageWithSize:CGSizeMake(32, 32) 
+//                                                             color:idx % 2 ? [UIColor styleFileBlueColor] : [UIColor styleFileRedColor] 
+//                                                              text:[extensions objectAtIndex:idx]];
+//    }
+//    else if (idx == 2)
+//    {
+//        cell.textField.text = @"Group";
+//        cell.imageView.image = [UIImage styleGroupImageWithSize:CGSizeMake(32, 32)];
+//    }
+//    else 
+//    {
+//        cell.textField.text = @"File";
+//        cell.imageView.image = [UIImage styleDocumentImageWithSize:CGSizeMake(32, 32) 
+//                                                             color:idx % 2 ? [UIColor styleFileBlueColor] : [UIColor styleFileRedColor] 
+//                                                              text:[extensions objectAtIndex:idx - 1]];
+//        cell.indentationLevel = 1;
+//        [cell setColor:[UIColor colorWithWhite:0.8 alpha:1] forIndentationLevel:0 animated:YES];
+//    }
+    id<ACStateNode> cellNode = [_displayedNode.children objectAtIndex:indexPath.row];
+    if (cellNode.nodeType == ACStateNodeTypeFolder || cellNode.nodeType == ACStateNodeTypeGroup)
         cell.imageView.image = [UIImage styleGroupImageWithSize:CGSizeMake(32, 32)];
-    }
-    else 
-    {
-        cell.textField.text = @"File";
+    else
         cell.imageView.image = [UIImage styleDocumentImageWithSize:CGSizeMake(32, 32) 
-                                                             color:idx % 2 ? [UIColor styleFileBlueColor] : [UIColor styleFileRedColor] 
-                                                              text:[extensions objectAtIndex:idx - 1]];
-        cell.indentationLevel = 1;
-        [cell setColor:[UIColor colorWithWhite:0.8 alpha:1] forIndentationLevel:0 animated:YES];
-    }
-    
+                                                             color:[[cellNode.name pathExtension] isEqualToString:@"h"] ? [UIColor styleFileRedColor] : [UIColor styleFileBlueColor]
+                                                              text:[cellNode.name pathExtension]];
+    [cell.textField setText:[[cellNode URL] description]];
     return cell;
 }
 
@@ -257,7 +269,7 @@
     
 #warning TODO if used in a popover from the jump bar should just change its own url
     
-    [self.ACNavigationController pushURL:[NSURL URLWithString:@"artcode:projects"]];
+    [self.ACNavigationController pushURL:[[_displayedNode.children objectAtIndex:indexPath.row] URL]];
 }
 
 @end

@@ -89,7 +89,7 @@
     ACNode *node;
     switch (type) {
         case ACNodeTypeSourceFile:
-            node = [NSEntityDescription insertNewObjectForEntityForName:@"File" inManagedObjectContext:[self managedObjectContext]];
+            node = [NSEntityDescription insertNewObjectForEntityForName:@"Node" inManagedObjectContext:[self managedObjectContext]];
             node.path = [self.path stringByAppendingPathComponent:name];
             break;
         case ACNodeTypeGroup:
