@@ -49,5 +49,25 @@ NSString * const ACProjectContentDirectory = @"Content";
     return [NSURL URLWithString:[NSString stringWithFormat:@"%@:%@", ACURLScheme, [path stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]]];
 }
 
+- (BOOL)isAncestorOfACURL:(NSURL *)URL
+{
+    ECASSERT([[URL scheme] isEqualToString:ACURLScheme]);
+    if (![[URL scheme] isEqualToString:ACURLScheme])
+        return NO;
+    NSArray *URLPathComponents = [URL pathComponents];
+    NSArray *selfPathComponents = [self pathComponents];
+    NSUInteger selfPathComponentsCount = [selfPathComponents count];
+    if (selfPathComponentsCount > [URLPathComponents count])
+        return NO;
+    for (NSUInteger currentPathComponent = 0; currentPathComponent < selfPathComponentsCount; ++currentPathComponent)
+        if (![[URLPathComponents objectAtIndex:currentPathComponent] isEqualToString:[selfPathComponents objectAtIndex:currentPathComponent]])
+            return NO;
+    return YES;
+}
+
+- (BOOL)isDescendantOfACURL:(NSURL *)URL
+{
+    return [URL isAncestorOfACURL:self];
+}
 
 @end

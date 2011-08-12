@@ -25,6 +25,7 @@
 @synthesize expanded = _expanded;
 @synthesize document = _document;
 @synthesize URL = _URL;
+@synthesize rootNode = _rootNode;
 
 - (NSUInteger)tag
 {
@@ -50,7 +51,7 @@
 {
     if (_isDeleted)
         return;
-    self.URL = [NSURL ACURLForProjectWithName:name];
+    ECASSERT(false); // NYI
 }
 
 - (NSUInteger)index
@@ -72,13 +73,6 @@
     if (_isDeleted)
         return nil;
     return _URL;
-}
-
-- (void)setURL:(NSURL *)URL
-{
-    if (_isDeleted)
-        return;
-    ECASSERT(false); // NYI
 }
 
 - (ACProjectDocument *)document
@@ -111,6 +105,7 @@
 {
     [[ACState localState] removeProjectWithURL:self.URL error:NULL];
     _isDeleted = YES;
+    _rootNode = nil;
     [_document closeWithCompletionHandler:NULL];
     NSFileManager *fileManager = [[NSFileManager alloc] init];
     [fileManager removeItemAtURL:self.URL error:NULL];
@@ -121,11 +116,39 @@
     return _isDeleted;
 }
 
-- (NSOrderedSet *)children
+- (id<ACStateNode>)rootNode
 {
     if (_isDeleted)
         return nil;
-    return [self.document children];
+    if (!_rootNode)
+    {
+        _rootNode = self.document.rootNode;
+        _rootNode.name = self.name;
+    }
+    return _rootNode;
+}
+
+- (NSOrderedSet *)children
+{
+    return [self.rootNode children];
+}
+
+- (id<ACStateNode>)nodeForURL:(NSURL *)URL
+{
+    NSArray *pathComponents = [URL pathComponents];
+    NSUInteger pathComponentsCount = [pathComponents count];
+    if (pathComponentsCount < 2)
+        return nil;
+    if (![[URL ACProjectName] isEqualToString:self.name])
+        return nil;
+    if (pathComponentsCount == 2)
+        return self;
+    if (!self.document)
+        return nil;
+    ACNode *node = self.document.rootNode;
+    for (NSUInteger currentPathComponent = 2; currentPathComponent < pathComponentsCount; ++currentPathComponent)
+        node = [node childNodeWithName:[pathComponents objectAtIndex:currentPathComponent]];
+    return node;
 }
 
 - (NSURL *)documentDirectory

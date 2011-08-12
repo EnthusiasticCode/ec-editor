@@ -7,9 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "ACNode.h"
 
 @interface ACProjectDocument : UIManagedDocument
 
-@property (nonatomic, strong, readonly) NSOrderedSet *children;
+@property (nonatomic, strong, readonly) ACNode *rootNode;
 
 @end

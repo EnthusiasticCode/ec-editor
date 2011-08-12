@@ -8,6 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
+@protocol ACStateNode, ACStateProject, ACStateTab, ACStateBookmark, ACStateHistoryItem;
+
 extern NSString * const ACStateNodeTypeProject;
 extern NSString * const ACStateNodeTypeFolder;
 extern NSString * const ACStateNodeTypeGroup;
@@ -29,17 +31,20 @@ extern NSString * const ACStateNodeTypeSourceFile;
 /// A list containing all existing projects
 @property (nonatomic, strong, readonly) NSArray *projects;
 
-/// Adds a new project
+/// Adds a new project described by the ACURL
 /// Inserting a project with the same name as an existing project is an error
 /// Passing index = NSNotFound will add the project to the end of the project list
 - (BOOL)insertProjectWithURL:(NSURL *)URL atIndex:(NSUInteger)index error:(NSError **)error;
+
+/// Returns the node referenced by the ACURL or nil if the node does not exist
+- (id<ACStateNode>)nodeForURL:(NSURL *)URL;
 
 @end
 
 @protocol ACStateNode <NSObject>
 
 /// AC URL of the node
-@property (nonatomic, strong) NSURL *URL;
+@property (nonatomic, strong, readonly) NSURL *URL;
 
 /// Node name
 @property (nonatomic, copy) NSString *name;
@@ -86,6 +91,9 @@ extern NSString * const ACStateNodeTypeSourceFile;
 /// Must be called if the project has been opened
 - (void)closeWithCompletionHandler:(void (^)(BOOL success))completionHandler;
 
+/// Returns the node referenced by the ACURL or nil if the node does not exist
+- (id<ACStateNode>)nodeForURL:(NSURL *)URL;
+
 @end
 
 @protocol ACStateBookmark <NSObject>
@@ -93,5 +101,9 @@ extern NSString * const ACStateNodeTypeSourceFile;
 @end
 
 @protocol ACStateTab <NSObject>
+
+@end
+
+@protocol ACStateHistoryItem <NSObject>
 
 @end

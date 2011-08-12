@@ -7,6 +7,7 @@
 //
 
 #import "CDNode.h"
+#import "ACState.h"
 
 typedef enum
 {
@@ -15,10 +16,11 @@ typedef enum
     ACNodeTypeSourceFile,
 } ACNodeType;
 
-@interface ACNode : CDNode
+@interface ACNode : CDNode <ACStateNode>
 
 - (NSString *)absolutePath;
 - (NSInteger)depth;
 - (ACNode *)addNodeWithName:(NSString *)name type:(ACNodeType)type;
+- (ACNode *)childNodeWithName:(NSString *)name;
 
 @end

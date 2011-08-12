@@ -11,6 +11,62 @@
 
 @implementation ACNode
 
+@dynamic expanded;
+@dynamic name;
+@dynamic path;
+@dynamic tag;
+@dynamic type;
+@dynamic children;
+@dynamic parent;
+
+- (NSString *)nodeType
+{
+    switch (self.type) {
+        case ACNodeTypeFolder:
+            return ACStateNodeTypeFolder;
+            break;
+        case ACNodeTypeGroup:
+            return ACStateNodeTypeGroup;
+            break;
+        case ACNodeTypeSourceFile:
+            return ACStateNodeTypeSourceFile;
+            break;
+    }
+    return nil;
+}
+
+- (NSUInteger)index
+{
+    return [self.parent.children indexOfObject:self];
+}
+
+- (void)setIndex:(NSUInteger)index
+{
+    [[self.parent mutableOrderedSetValueForKey:@"children"] insertObject:self atIndex:index];
+}
+
+- (NSURL *)URL
+{
+    CDNode *ancestor = self;
+    NSMutableArray *pathComponents = [NSMutableArray array];
+    [pathComponents addObject:ancestor.name];
+    while (ancestor.parent) {
+        ancestor = ancestor.parent;
+        [pathComponents addObject:ancestor.name];
+    }
+    __block NSURL *URL = [NSURL ACURLForProjectWithName:[pathComponents lastObject]];
+    [pathComponents removeLastObject];
+    [pathComponents enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(id pathComponent, NSUInteger idx, BOOL *stop) {
+        URL = [URL URLByAppendingPathComponent:pathComponent];
+    }];
+    return URL;
+}
+
+- (void)delete
+{
+    [self.managedObjectContext deleteObject:self];
+}
+
 - (NSString *)absolutePath
 {
     return [[[[[self.managedObjectContext.persistentStoreCoordinator.persistentStores objectAtIndex:0] URL] URLByDeletingLastPathComponent] URLByAppendingPathComponent:ACProjectContentDirectory] URLByStandardizingPath].path;
@@ -49,6 +105,15 @@
     node.type = type;
     node.parent = self;
     return node;
+}
+
+- (ACNode *)childNodeWithName:(NSString *)name
+{
+    NSFetchRequest *fetchRequest = [NSFetchRequest fetchRequestWithEntityName:@"Node"];
+    NSPredicate *predicate = [NSCompoundPredicate andPredicateWithSubpredicates:[NSArray arrayWithObjects:[NSPredicate predicateWithFormat:@"%K == %@", @"parent", self], [NSPredicate predicateWithFormat:@"%K == %@", @"name", name], nil]];
+    [fetchRequest setPredicate:predicate];
+    NSArray *results = [self.managedObjectContext executeFetchRequest:fetchRequest error:NULL];
+    return [results objectAtIndex:0];
 }
 
 @end

@@ -32,4 +32,10 @@ extern NSString * const ACProjectContentDirectory;
 /// Create an ACURL referencing the node for the given path
 + (NSURL *)ACURLWithPath:(NSString *)path;
 
+/// Returns whether the receiver references an ancestor of the object referenced by the passed ACURL
+- (BOOL)isAncestorOfACURL:(NSURL *)URL;
+
+/// Returns whether the receiver references a descendant of the object referenced by the passed ACURL
+- (BOOL)isDescendantOfACURL:(NSURL *)URL;
+
 @end

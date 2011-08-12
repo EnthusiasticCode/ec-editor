@@ -169,6 +169,14 @@ static void * const ACStateProjectURLObservingContext;
     return YES;
 }
 
+- (id<ACStateNode>)nodeForURL:(NSURL *)URL
+{
+    for (id<ACStateProject> project in _projectObjects)
+        if ([project.name isEqualToString:[URL ACProjectName]])
+            return [project nodeForURL:URL];
+    return nil;
+}
+
 #pragma mark - Internal methods
 
 - (NSUInteger)indexOfProjectWithURL:(NSURL *)URL

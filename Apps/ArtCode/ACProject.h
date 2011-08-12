@@ -19,4 +19,7 @@
 /// The directory where the project's contents are stored
 - (NSURL *)contentDirectory;
 
+/// The root node of the project
+@property (nonatomic, strong, readonly) id<ACStateNode> rootNode;
+
 @end

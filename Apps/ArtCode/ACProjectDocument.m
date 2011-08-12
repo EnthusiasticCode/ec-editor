@@ -12,7 +12,6 @@
 
 @interface ACProjectDocument ()
 @property (nonatomic, strong, readonly) NSFileManager *fileManager;
-@property (nonatomic, strong) ACNode *rootNode;
 - (ACNode *)findRootNode;
 - (void)addNodesAtPath:(NSString *)path toNode:(ACNode *)node;
 - (void)addAllNodesInProjectRoot;
@@ -28,6 +27,13 @@
     if (!_fileManager)
         _fileManager = [[NSFileManager alloc] init];
     return _fileManager;
+}
+
+- (ACNode *)rootNode
+{
+    if (!_rootNode)
+        _rootNode = [self findRootNode];
+    return _rootNode;
 }
 
 + (NSString *)persistentStoreName
@@ -85,11 +91,6 @@
 - (void)addAllNodesInProjectRoot
 {
     [self addNodesAtPath:[self.fileURL URLByAppendingPathComponent:ACProjectContentDirectory].path toNode:self.rootNode];
-}
-
-- (NSOrderedSet *)children
-{
-    return self.rootNode.children;
 }
 
 - (void)openWithCompletionHandler:(void (^)(BOOL))completionHandler
