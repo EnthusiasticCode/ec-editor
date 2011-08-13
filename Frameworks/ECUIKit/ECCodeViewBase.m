@@ -97,6 +97,11 @@
         self.clearsContextBeforeDrawing = NO;
         
         textLayer = [CALayer layer];
+        textLayer.actions = [NSDictionary dictionaryWithObjectsAndKeys:
+                             [NSNull null], @"bounds",
+                             [NSNull null], @"contents",
+                             [NSNull null], @"hidden", 
+                             [NSNull null], @"opacity", nil];
         textLayer.hidden = YES;
         [self.layer addSublayer:textLayer];
         [textLayer setFrame:self.bounds];
@@ -157,14 +162,8 @@
         
         // Send rendered image to presentation layer
         [[NSOperationQueue mainQueue] addOperationWithBlock:^(void) {
-            @synchronized(this->textLayer)
-            {
-                [CATransaction begin];
-                [CATransaction setDisableActions:YES];
-                this->textLayer.contents = (__bridge id)image.CGImage;
-                this->textLayer.hidden = NO;
-                [CATransaction commit];
-            }
+            this->textLayer.contents = (__bridge id)image.CGImage;
+            this->textLayer.hidden = NO;
         }];
     }];
 }
@@ -211,6 +210,9 @@
 
 - (void)setFrame:(CGRect)frame
 {
+    if (CGRectEqualToRect(frame, self.frame))
+        return;
+    
     if (ownsRenderer)
         renderer.wrapWidth = UIEdgeInsetsInsetRect(frame, self->textInsets).size.width;
     
