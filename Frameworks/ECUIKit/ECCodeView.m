@@ -304,9 +304,12 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
     return self;
 }
 
-
 - (void)drawRect:(CGRect)rect
 {
+#warning DEBUG increase thumb hit size, see ouieditableframe 1842
+//    [[UIColor redColor] setFill];
+//    UIRectFill(rect);
+    
     [caretColor setFill];
     
     // Draw caret
