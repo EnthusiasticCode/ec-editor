@@ -25,6 +25,8 @@
         codeView.backgroundColor = [UIColor whiteColor];
         codeView.caretColor = [UIColor styleThemeColorOne];
         codeView.selectionColor = [[UIColor styleThemeColorOne] colorWithAlphaComponent:0.3];
+        
+        codeView.renderer.preferredLineCountPerSegment = 500;
     }
     return codeView;
 }

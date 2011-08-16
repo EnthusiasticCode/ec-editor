@@ -8,7 +8,6 @@
 
 #import "ECTextRenderer.h"
 #import <CoreText/CoreText.h>
-#import "ECDictionaryCache.h"
 #import "ECTextStyle.h"
 
 // Internal working notes: (outdated)
@@ -23,6 +22,9 @@
 
 
 @class TextSegment;
+@class TextSegmentFrame;
+
+#pragma mark - ECTextRenderer Interface (Class extension)
 
 @interface ECTextRenderer () {
 @private
@@ -33,16 +35,16 @@
     BOOL datasourceHasTextRendererEstimatedTextLineCountOfLength;
 }
 
-/// Text renderer framesetter's cache shared among all text segments
-@property (nonatomic, readonly, strong) ECDictionaryCache *framesettersCache;
+/// Text renderer typesetters' cache shared among all text segments.
+@property (nonatomic, readonly, strong) NSCache *typesettersCache;
 
-/// Text renderer frame's cache shared among all text segments
-@property (nonatomic, readonly, strong) ECDictionaryCache *framesCache;
+/// Text renderer line arrays' cache shared among all text segments.
+@property (nonatomic, readonly, strong) NSCache *renderedLinesCache;
 
-/// Create the specified segment's framesetter. Lines and lenght are output parameter, pass NULL if not interested.
-/// This function is supposed to be used by a text segment to generate it's framesetter if not present in cache.
+/// Retrieve the string for the given text segment. Line count is an output parameter, pass NULL if not interested.
+/// This function is supposed to be used by a text segment to generate it's typesetter if not present in cache.
 /// The function can return NULL if the source string has no text for the given segment.
-- (CTFramesetterRef)createFramesetterForTextSegment:(TextSegment *)segment lineCount:(NSUInteger *)lines stringLenght:(NSUInteger *)length;
+- (NSAttributedString *)stringForTextSegment:(TextSegment *)segment lineCount:(NSUInteger *)lines;
 
 /// Enumerate throught text segments creating them if not yet present. This function
 /// guarantee to enumerate throught all the text segments that cover the entire
@@ -55,31 +57,67 @@
 
 @end
 
+#pragma mark - RenderedLine Interface
 
-#pragma mark -
-#pragma mark TextSegment
+/// A class to wrap a core text line and add extra informations.
+@interface RenderedLine : NSObject {
+@public
+    CTLineRef CTLine;
+    CGFloat width;
+    CGFloat ascent;
+    CGFloat descent;
+    BOOL hasNewLine;
+}
+
+/// The rendered core text line.
+@property (nonatomic) CTLineRef CTLine;
+
+@property (nonatomic) CGFloat width;
+
+@property (nonatomic) CGFloat ascent;
+
+@property (nonatomic) CGFloat descent;
+
+@property (nonatomic, readonly) CGFloat height;
+
+/// Indicates if the line text has a new line meaning that it will advance the 
+/// actual text line count.
+@property (nonatomic) BOOL hasNewLine;
+
++ (id)renderedLineWithCTLine:(CTLineRef)line hasNewLine:(BOOL)newLine;
+
+@end
+
+#pragma mark - TextSegment Interface
 
 #define HEIGHT_CACHE_SIZE (3)
 
+/// A Text Segment represent a part of the text rendered. The segment represented
+/// text is limited by the number of lines in \c preferredLineCountPerSegment.
 @interface TextSegment : NSObject {
 @private
     ECTextRenderer *parentRenderer;
     
-    // Cache of heights for wrap widths
+    /// Cache of heights for wrap widths
     struct { CGFloat wrapWidth; CGFloat height; } heightCache[HEIGHT_CACHE_SIZE];
 }
 
 - (id)initWithTextRenderer:(ECTextRenderer *)renderer;
 
-@property (nonatomic, readonly) CTFramesetterRef framesetter;
-@property (nonatomic, readonly) CTFrameRef frame;
-@property (nonatomic, readonly, getter = isValid) BOOL valid;
+/// The string rendered with this text segment.
+@property (nonatomic, readonly, weak) NSAttributedString *string;
+
+/// The typesetter generated from the text segment string.
+@property (nonatomic, readonly) CTTypesetterRef typesetter;
+
+/// An array of rendered wrapped lines ready to be drawn on a context.
+@property (nonatomic, readonly, weak) NSArray *renderedLines;
 
 /// Count of string lines used to generate the segment's framesetter.
 @property (nonatomic) NSUInteger lineCount;
 
-/// Length of the string used to generate the segment's framesetter.
-@property (nonatomic, readonly) NSUInteger stringLength;
+/// Indicates if the text segment is valid.
+@property (nonatomic, readonly, getter = isValid) BOOL valid;
 
 /// The current render width. Changing this property will make the segment to
 /// generate a new frame if no one with this width is present in cache.
@@ -105,53 +143,99 @@
 @end
 
 
+#pragma mark - Implementations
+
+#pragma mark - RenderedLine Implementation
+
+@implementation RenderedLine
+
+@synthesize CTLine, width, ascent, descent, hasNewLine;
+
+- (CGFloat)height
+{
+    return ascent + descent;
+}
+
++ (id)renderedLineWithCTLine:(CTLineRef)line hasNewLine:(BOOL)newLine
+{
+    RenderedLine *result = [RenderedLine new];
+    // TODO should be retained?
+    result->CTLine = line;
+    result->width = CTLineGetTypographicBounds(line, &result->ascent, &result->descent, NULL);
+    result->hasNewLine = newLine;
+    return result;
+}
+
+@end
+
+
+#pragma mark - TextSegment Implementation
+
 @implementation TextSegment
 
 #pragma mark TextSegment Properties
 
-@synthesize valid, lineCount, stringLength, renderWrapWidth;
+@synthesize lineCount, renderWrapWidth, string, valid;
 
-- (CTFramesetterRef)framesetter
+- (CTTypesetterRef)typesetter
 {
-    CTFramesetterRef f = (__bridge CTFramesetterRef)[parentRenderer.framesettersCache objectForKey:self];
+    CTTypesetterRef t = (__bridge CTTypesetterRef)[parentRenderer.typesettersCache objectForKey:self];
     
-    if (!f) 
+    if (!t)
     {
-        f = [parentRenderer createFramesetterForTextSegment:self lineCount:&lineCount stringLenght:&stringLength];
+        string = [parentRenderer stringForTextSegment:self lineCount:&lineCount];
+        if (!string)
+            return NULL;
+        
+        t = CTTypesetterCreateWithAttributedString((__bridge CFAttributedStringRef)string);
         
         // Cache
-        if (f) 
+        if (t) 
         {
-            [parentRenderer.framesettersCache setObject:(__bridge id)f forKey:self];
-            CFRelease(f);
+            [parentRenderer.typesettersCache setObject:(__bridge id)t forKey:self];
+            CFRelease(t);
         }
-        
+
         // Remove frame
-        [parentRenderer.framesCache removeObjectForKey:self];
+        [parentRenderer.renderedLinesCache removeObjectForKey:self];
     }
     
-    return f;
+    return t;
 }
 
-- (CTFrameRef)frame
+- (NSArray *)renderedLines
 {
-    CTFrameRef f = (__bridge CTFrameRef)[parentRenderer.framesCache objectForKey:self];
+    NSMutableArray *lines = [parentRenderer.renderedLinesCache objectForKey:self];
     
-    if (!f)
+    if (!lines)
     {
-        // Create path
-        CGMutablePathRef path = CGPathCreateMutable();
-        CGPathAddRect(path, NULL, (CGRect){ CGPointZero, { renderWrapWidth, CGFLOAT_MAX } });
+        // Retrieve typesetter and string
+        CTTypesetterRef typesetter = self.typesetter;
+        lines = [[NSMutableArray alloc] initWithCapacity:lineCount];
         
-        // Create frame
-        f = CTFramesetterCreateFrame(self.framesetter, (CFRange){ 0, 0 }, path, NULL);
-        CGPathRelease(path);
+        // Generate wrapped lines
+        __block CFRange lineRange = CFRangeMake(0, 0);
+        [string.string enumerateLinesUsingBlock:^(NSString *line, BOOL *stop) {
+            CFIndex lineLength = [line length], truncationLenght;
+            do {
+                // TODO possibly filter using customizable block
+                truncationLenght = CTTypesetterSuggestLineBreak(typesetter, lineRange.location, renderWrapWidth);
+                
+                // Generate line
+                lineRange.length = truncationLenght;
+                CTLineRef ctline = CTTypesetterCreateLine(typesetter, lineRange);
+                lineRange.location += lineRange.length;
+                
+                // Save line
+                [lines addObject:[RenderedLine renderedLineWithCTLine:ctline hasNewLine:(lineLength == truncationLenght)]];
+                lineLength -= truncationLenght;
+            } while (lineLength > 0);
+        }];
         
-        // Update cache and return
-        [parentRenderer.framesCache setObject:(__bridge id)f forKey:self];
-        CFRelease(f);
+        // Cache result
+        [parentRenderer.renderedLinesCache setObject:lines forKey:self];
     }
-    return f;
+    return lines;
 }
 
 - (void)setRenderWrapWidth:(CGFloat)width
@@ -159,7 +243,7 @@
     if (renderWrapWidth != width) 
     {
         renderWrapWidth = width;
-        [parentRenderer.framesCache removeObjectForKey:self];
+        [parentRenderer.renderedLinesCache removeObjectForKey:self];
     }
 }
 
@@ -179,25 +263,13 @@
         }
     }
     
-    if (!valid)
-        return 0;
-    
     // Calculate actual height
     heightCache[cacheIdx].wrapWidth = renderWrapWidth;
     heightCache[cacheIdx].height = 0;
-    CTFrameRef frame = CFRetain(self.frame);
-    CFArrayRef lines = CTFrameGetLines(frame);
-    CFIndex count = CFArrayGetCount(lines);
-    CTLineRef line;
-    CGFloat ascent, descent, leading;
-    for (CFIndex i = 0; i < count; ++i)
+    for (RenderedLine *line in self.renderedLines)
     {
-        line = CFArrayGetValueAtIndex(lines, i);
-        CTLineGetTypographicBounds(line, &ascent, &descent, &leading);
-        heightCache[cacheIdx].height += ascent + descent + leading;
+        heightCache[cacheIdx].height += line->ascent + line->descent;
     }
-    
-    CFRelease(frame);
     
     return heightCache[cacheIdx].height;
 }
@@ -206,11 +278,12 @@
 
 - (id)initWithTextRenderer:(ECTextRenderer *)renderer
 {
-    // TODO throw if renderer == nil
+    ECASSERT(renderer != nil);
+    
     if ((self = [super init])) 
     {
         parentRenderer = renderer;
-        valid = self.framesetter != NULL;
+        valid = self.typesetter != NULL;
     }
     return self;
 }
@@ -218,8 +291,7 @@
 - (void)enumerateLinesIntersectingRect:(CGRect)rect 
                             usingBlock:(void (^)(CTLineRef, CGRect, CGFloat, BOOL *))block 
 {
-    if (!valid)
-        return;
+    ECASSERT(valid);
     
     if (CGRectIsNull(rect) || CGRectIsEmpty(rect)) 
     {
@@ -227,126 +299,92 @@
     }
     CGFloat rectEnd = CGRectGetMaxY(rect);
     
-    BOOL stop = NO;
-    CTFrameRef frame = CFRetain(self.frame);
-    CFArrayRef lines = CTFrameGetLines(frame);
-    CFIndex count = CFArrayGetCount(lines);
-    
     CGFloat currentY = 0;
-    CGFloat width, ascent, descent, leading;
     CGRect bounds;
     
-    for (CFIndex i = 0; i < count; ++i)
+    BOOL stop = NO;
+    for (RenderedLine *line in self.renderedLines)
     {
-        CTLineRef line = CFArrayGetValueAtIndex(lines, i);
-        width = CTLineGetTypographicBounds(line, &ascent, &descent, &leading);
-        bounds = CGRectMake(0, currentY, width, ascent + descent + leading);
+        bounds = CGRectMake(0, currentY, line->width, line->ascent + line->descent);
         if (currentY + bounds.size.height > rect.origin.y) 
         {
             // Break if past the required rect
             if (currentY >= rectEnd)
                 break;
             //
-            block(line, bounds, ascent, &stop);
+            block(line->CTLine, bounds, line->ascent, &stop);
             if (stop) break;
         }
         currentY += bounds.size.height;
     }
-    
-    CFRelease(frame);
 }
 
 - (void)enumerateLinesInStringRange:(NSRange)queryRange usingBlock:(void (^)(CTLineRef, NSUInteger, CGRect, NSRange, BOOL *))block
 {
-    if (!valid)
-        return;
+    ECASSERT(valid);
     
     NSUInteger queryRangeEnd = NSUIntegerMax;
     if (queryRange.length > 0)
         queryRangeEnd = queryRange.location + queryRange.length;
     
-    BOOL stop = NO;
-    CTFrameRef frame = CFRetain(self.frame);
-    CFArrayRef lines = CTFrameGetLines(frame);
-    CFIndex count = CFArrayGetCount(lines);
-    
     CGFloat currentY = 0;
-    CGFloat width, ascent, descent, leading;
     CGRect bounds;
-    
     CFRange stringRange;
+    NSUInteger lineIndex = 0;
     
-    for (CFIndex i = 0; i < count; ++i)
+    BOOL stop = NO;
+    for (RenderedLine *line in self.renderedLines)
     {
-        CTLineRef line = CFArrayGetValueAtIndex(lines, i);
-        
-        stringRange = CTLineGetStringRange(line);
+        stringRange = CTLineGetStringRange(line->CTLine);
         if ((NSUInteger)stringRange.location >= queryRangeEnd)
-        {
-            CFRelease(frame);
             return;
-        }
         
-        width = CTLineGetTypographicBounds(line, &ascent, &descent, &leading);
-        bounds = CGRectMake(0, currentY, width, ascent + descent + leading);
+        bounds = CGRectMake(0, currentY, line->width, line->ascent + line->descent);
         
         if ((NSUInteger)(stringRange.location + stringRange.length) > queryRange.location) 
         {
-            block(line, i, bounds, (NSRange){ stringRange.location, stringRange.length }, &stop);
+            block(line->CTLine, lineIndex, bounds, (NSRange){ stringRange.location, stringRange.length }, &stop);
             if (stop) break;
         }
 
         currentY += bounds.size.height;
+        lineIndex++;
     }
-    
-    CFRelease(frame);
 }
 
 - (void)enumerateLinesInLineRange:(NSRange)queryRange 
                        usingBlock:(void (^)(CTLineRef, NSUInteger, CGRect, NSRange, BOOL *))block
 {
-    if (!valid)
-        return;
+    ECASSERT(valid);
     
     NSUInteger queryRangeEnd = NSUIntegerMax;
     if (queryRange.length > 0)
         queryRangeEnd = queryRange.location + queryRange.length;
     
-    BOOL stop = NO;
-    CTFrameRef frame = CFRetain(self.frame);
-    CFArrayRef lines = CTFrameGetLines(frame);
-    CFIndex count = CFArrayGetCount(lines);
-    
     CGFloat currentY = 0;
-    CGFloat width, ascent, descent, leading;
     CGRect bounds;
-    
     CFRange stringRange;
+    NSUInteger lineIndex = 0;
     
-    for (CFIndex i = queryRange.location; i < count; ++i)
+    BOOL stop = NO;
+    for (RenderedLine *line in self.renderedLines)
     {
-        if (i >= (CFIndex)queryRangeEnd) 
-        {
-            CFRelease(frame);
+        if (lineIndex >= (CFIndex)queryRangeEnd) 
             return;
-        }
+            
+        stringRange = CTLineGetStringRange(line->CTLine);
         
-        CTLineRef line = CFArrayGetValueAtIndex(lines, i);        
-        stringRange = CTLineGetStringRange(line);
-        
-        width = CTLineGetTypographicBounds(line, &ascent, &descent, &leading);
-        bounds = CGRectMake(0, currentY, width, ascent + descent + leading);
+        bounds = CGRectMake(0, currentY, line->width, line->ascent + line->descent);
         
         if ((NSUInteger)(stringRange.location + stringRange.length) > queryRange.location) 
         {
-            block(line, i, bounds, (NSRange){ stringRange.location, stringRange.length }, &stop);
+            block(line->CTLine, lineIndex, bounds, (NSRange){ stringRange.location, stringRange.length }, &stop);
             if (stop) break;
         }
         
         currentY += bounds.size.height;
+        lineIndex++;
     }
-    
-    CFRelease(frame);
 }
 
 @end
@@ -359,7 +397,7 @@
 
 #pragma mark Properties
 
-@synthesize framesettersCache, framesCache;
+@synthesize typesettersCache, renderedLinesCache;
 @synthesize delegate, datasource, preferredLineCountPerSegment, wrapWidth, estimatedHeight;
 
 - (void)setDelegate:(id<ECTextRendererDelegate>)aDelegate
@@ -384,7 +422,7 @@
     if (wrapWidth == width) 
         return;
 
-    [framesCache removeAllObjects];
+    [renderedLinesCache removeAllObjects];
     wrapWidth = width;
     for (TextSegment *segment in textSegments) 
     {
@@ -410,17 +448,19 @@
     if ((self = [super init])) 
     {
         textSegments = [NSMutableArray new];
-        framesettersCache = [[ECDictionaryCache alloc] initWithCountLimit:5];
-        framesCache = [[ECDictionaryCache alloc] initWithCountLimit:2];
+#warning TODO check if count limit works as expected
+        typesettersCache = [NSCache new];
+        typesettersCache.countLimit = 5;
+        renderedLinesCache = [NSCache new];
+        renderedLinesCache.countLimit = 3;
     }
     return self;
 }
 
 #pragma mark Private Methods
 
-- (CTFramesetterRef)createFramesetterForTextSegment:(TextSegment *)requestSegment lineCount:(NSUInteger *)lines stringLenght:(NSUInteger *)length
+- (NSAttributedString *)stringForTextSegment:(TextSegment *)requestSegment lineCount:(NSUInteger *)lines
 {
-    CTFramesetterRef framesetter = NULL;
     NSRange lineRange = NSMakeRange(0, 0);
     
     // Source text line offset for requested segment
@@ -441,15 +481,10 @@
     if (endOfString)
         lastTextSegment = requestSegment;
     
-    framesetter = CTFramesetterCreateWithAttributedString((__bridge CFAttributedStringRef)string);
-    
     if (lines)
         *lines = lineRange.length;
     
-    if (length)
-        *length = [string length];
-    
-    return framesetter;
+    return string;
 }
 
 - (void)generateTextSegmentsAndEnumerateUsingBlock:(void (^)(TextSegment *, NSUInteger, NSUInteger, NSUInteger, CGFloat, BOOL *))block
@@ -492,7 +527,7 @@
         currentIndex++;
         currentLineRange.length = segment.lineCount;
         currentLineRange.location += currentLineRange.length;
-        currentStringOffset += segment.stringLength;
+        currentStringOffset += [segment.string length];
         currentPositionOffset += segment.renderHeight;
         
     } while (!stop);
@@ -591,13 +626,9 @@
             
             // Get run attributes but not for last run in line (new line character)
             if (i == runCount - 1) 
-            {
                 runAttributes = nil;
-            }
             else
-            {
                 runAttributes = (__bridge NSDictionary *)CTRunGetAttributes(run);
-            }
             
             // Apply custom back attributes
             if (runAttributes)
@@ -643,8 +674,10 @@
     __block CFIndex result = 0;
     __block CTLineRef lastLine = NULL;
     [self generateTextSegmentsAndEnumerateUsingBlock:^(TextSegment *segment, NSUInteger outerIdx, NSUInteger lineOffset, NSUInteger stringOffset, CGFloat positionOffset, BOOL *stop) {
+        NSUInteger segmentStringLength = [segment.string length];
+        
         // Skip segment if before required string range
-        if (stringOffset + segment.stringLength <= queryStringRange.location)
+        if (stringOffset + segmentStringLength <= queryStringRange.location)
             return;
         
         // Get relative positions to current semgnet
@@ -652,7 +685,7 @@
         segmentRelativePoint.y -= positionOffset;
         NSRange segmentRelativeStringRange = queryStringRange;
         if (queryStringRange.length > 0) 
-            segmentRelativeStringRange = NSIntersectionRange(queryStringRange, (NSRange){ stringOffset, segment.stringLength });
+            segmentRelativeStringRange = NSIntersectionRange(queryStringRange, (NSRange){ stringOffset, segmentStringLength });
         else if (queryStringRange.location >= stringOffset)
             segmentRelativeStringRange.location -= stringOffset;
         
@@ -687,7 +720,7 @@
     ECMutableRectSet *result = [ECMutableRectSet rectSetWithCapacity:1];
     [self generateTextSegmentsAndEnumerateUsingBlock:^(TextSegment *segment, NSUInteger outerIdx, NSUInteger lineOffset, NSUInteger stringOffset, CGFloat positionOffset, BOOL *stop) {
         // Skip segment if before required string range
-        if (stringOffset + segment.stringLength < queryStringRange.location)
+        if (stringOffset + [segment.string length] < queryStringRange.location)
             return;
         
         // Get relative positions to current semgnet
@@ -746,7 +779,7 @@
             __block NSUInteger positionLine = NSUIntegerMax;
             [self generateTextSegmentsAndEnumerateUsingBlock:^(TextSegment *segment, NSUInteger outerIdx, NSUInteger lineOffset, NSUInteger stringOffset, CGFloat positionOffset, BOOL *stop) {
                 // Skip segment if before required string range
-                if (stringOffset + segment.stringLength < position)
+                if (stringOffset + [segment.string length] < position)
                     return;
                 
                 // Get relative positions to current semgnet
@@ -958,8 +991,9 @@
             
             // TODO!!! if lineCount > 1.5 * preferred -> split or merge if * 0.5
             // and remember to set proper lastTextSegment
-            [framesettersCache removeObjectForKey:segment];
-            [framesCache removeObjectForKey:segment];
+            [typesettersCache removeObjectForKey:segment];
+            [renderedLinesCache removeObjectForKey:segment];
+            // TODO!!! instead of cleaning the cache, use a segment method to update just those lines
         }
         
         currentLineLocation += segmentRange.length;
@@ -976,8 +1010,8 @@
 
 - (void)clearCache
 {
-    [framesettersCache removeAllObjects];
-    [framesCache removeAllObjects];
+    [typesettersCache removeAllObjects];
+    [renderedLinesCache removeAllObjects];
 }
 
 @end
