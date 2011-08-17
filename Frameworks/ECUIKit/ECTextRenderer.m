@@ -9,6 +9,7 @@
 #import "ECTextRenderer.h"
 #import <CoreText/CoreText.h>
 #import "ECTextStyle.h"
+#import "ECDictionaryCache.h"
 
 // Internal working notes: (outdated)
 // - The renderer keeps an array of ordered framesetter informations:
@@ -35,11 +36,12 @@
     BOOL datasourceHasTextRendererEstimatedTextLineCountOfLength;
 }
 
+#warning TODO use NSCache?
 /// Text renderer typesetters' cache shared among all text segments.
-@property (nonatomic, readonly, strong) NSCache *typesettersCache;
+@property (nonatomic, readonly, strong) ECDictionaryCache *typesettersCache;
 
 /// Text renderer line arrays' cache shared among all text segments.
-@property (nonatomic, readonly, strong) NSCache *renderedLinesCache;
+@property (nonatomic, readonly, strong) ECDictionaryCache *renderedLinesCache;
 
 /// Retrieve the string for the given text segment. Line count is an output parameter, pass NULL if not interested.
 /// This function is supposed to be used by a text segment to generate it's typesetter if not present in cache.
@@ -107,6 +109,10 @@
 /// The string rendered with this text segment.
 @property (nonatomic, readonly, weak) NSAttributedString *string;
 
+/// The length of the receiver's string. Use this method instead of [string length]
+/// to avoid calling on a deallocated cache.
+@property (nonatomic) NSUInteger stringLength;
+
 /// The typesetter generated from the text segment string.
 @property (nonatomic, readonly) CTTypesetterRef typesetter;
 
@@ -156,11 +162,19 @@
     return ascent + descent;
 }
 
-+ (id)renderedLineWithCTLine:(CTLineRef)line hasNewLine:(BOOL)newLine
+- (void)dealloc
 {
+    if (CTLine)
+        CFRelease(CTLine);
+    NSLog(@"dealloc - this sould not happen!");
+}
+
++ (RenderedLine *)renderedLineWithCTLine:(CTLineRef)line hasNewLine:(BOOL)newLine
+{
+    ECASSERT(line != NULL);
+    
     RenderedLine *result = [RenderedLine new];
-    // TODO should be retained?
-    result->CTLine = line;
+    result->CTLine = CFRetain(line);
     result->width = CTLineGetTypographicBounds(line, &result->ascent, &result->descent, NULL);
     result->hasNewLine = newLine;
     return result;
@@ -175,7 +189,7 @@
 
 #pragma mark TextSegment Properties
 
-@synthesize lineCount, renderWrapWidth, string, valid;
+@synthesize lineCount, renderWrapWidth, string, stringLength, valid;
 
 - (CTTypesetterRef)typesetter
 {
@@ -187,6 +201,7 @@
         if (!string)
             return NULL;
         
+        stringLength = [string length];
         t = CTTypesetterCreateWithAttributedString((__bridge CFAttributedStringRef)string);
         
         // Cache
@@ -227,8 +242,9 @@
                 lineRange.location += lineRange.length;
                 
                 // Save line
-                [lines addObject:[RenderedLine renderedLineWithCTLine:ctline hasNewLine:(lineLength == truncationLenght)]];
+                [lines addObject:[RenderedLine renderedLineWithCTLine:ctline hasNewLine:(lineLength <= truncationLenght)]];
                 lineLength -= truncationLenght;
+                CFRelease(ctline);
             } while (lineLength > 0);
         }];
         
@@ -448,11 +464,13 @@
     if ((self = [super init])) 
     {
         textSegments = [NSMutableArray new];
-#warning TODO check if count limit works as expected
-        typesettersCache = [NSCache new];
-        typesettersCache.countLimit = 5;
-        renderedLinesCache = [NSCache new];
-        renderedLinesCache.countLimit = 3;
+//#warning TODO check if count limit works as expected
+//        typesettersCache = [NSCache new];
+//        typesettersCache.countLimit = 5;
+//        renderedLinesCache = [NSCache new];
+//        renderedLinesCache.countLimit = 3;
+        typesettersCache = [[ECDictionaryCache alloc] initWithCountLimit:5];
+        renderedLinesCache = [[ECDictionaryCache alloc] initWithCountLimit:2];
     }
     return self;
 }
@@ -527,7 +545,7 @@
         currentIndex++;
         currentLineRange.length = segment.lineCount;
         currentLineRange.location += currentLineRange.length;
-        currentStringOffset += [segment.string length];
+        currentStringOffset += segment.stringLength;
         currentPositionOffset += segment.renderHeight;
         
     } while (!stop);
@@ -545,9 +563,8 @@
 - (void)enumerateLinesIntersectingRect:(CGRect)rect usingBlock:(void (^)(CTLineRef, CGRect, CGFloat, BOOL *))block
 {
     if (CGRectIsNull(rect) || CGRectIsEmpty(rect)) 
-    {
         rect = CGRectInfinite;
-    }
+    
     CGFloat rectEnd = CGRectGetMaxY(rect);
     
     [self generateTextSegmentsAndEnumerateUsingBlock:^(TextSegment *segment, NSUInteger idx, NSUInteger lineOffset, NSUInteger stringOffset, CGFloat positionOffset, BOOL *stop) {
@@ -585,9 +602,7 @@
 
 - (void)drawTextWithinRect:(CGRect)rect inContext:(CGContextRef)context
 {
-    // Sanitize input
-    if (!context)
-        return;
+    ECASSERT(context != NULL);
     
     CGContextRetain(context);
     
@@ -674,7 +689,7 @@
     __block CFIndex result = 0;
     __block CTLineRef lastLine = NULL;
     [self generateTextSegmentsAndEnumerateUsingBlock:^(TextSegment *segment, NSUInteger outerIdx, NSUInteger lineOffset, NSUInteger stringOffset, CGFloat positionOffset, BOOL *stop) {
-        NSUInteger segmentStringLength = [segment.string length];
+        NSUInteger segmentStringLength = segment.stringLength;
         
         // Skip segment if before required string range
         if (stringOffset + segmentStringLength <= queryStringRange.location)
@@ -720,7 +735,7 @@
     ECMutableRectSet *result = [ECMutableRectSet rectSetWithCapacity:1];
     [self generateTextSegmentsAndEnumerateUsingBlock:^(TextSegment *segment, NSUInteger outerIdx, NSUInteger lineOffset, NSUInteger stringOffset, CGFloat positionOffset, BOOL *stop) {
         // Skip segment if before required string range
-        if (stringOffset + [segment.string length] < queryStringRange.location)
+        if (stringOffset + segment.stringLength < queryStringRange.location)
             return;
         
         // Get relative positions to current semgnet
@@ -779,7 +794,7 @@
             __block NSUInteger positionLine = NSUIntegerMax;
             [self generateTextSegmentsAndEnumerateUsingBlock:^(TextSegment *segment, NSUInteger outerIdx, NSUInteger lineOffset, NSUInteger stringOffset, CGFloat positionOffset, BOOL *stop) {
                 // Skip segment if before required string range
-                if (stringOffset + [segment.string length] < position)
+                if (stringOffset + segment.stringLength < position)
                     return;
                 
                 // Get relative positions to current semgnet
