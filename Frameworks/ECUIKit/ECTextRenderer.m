@@ -166,7 +166,7 @@
 {
     if (CTLine)
         CFRelease(CTLine);
-    NSLog(@"dealloc - this sould not happen!");
+//    NSLog(@"dealloc - this sould not happen!");
 }
 
 + (RenderedLine *)renderedLineWithCTLine:(CTLineRef)line hasNewLine:(BOOL)newLine
@@ -318,9 +318,13 @@
     CGFloat currentY = 0;
     CGRect bounds;
     
+#warning TODO fix for in!!!
     BOOL stop = NO;
-    for (RenderedLine *line in self.renderedLines)
+    NSArray *lines = self.renderedLines;
+    for (NSUInteger i = 0; i < [lines count]; ++i)
     {
+        RenderedLine *line = [lines objectAtIndex:i];
+        
         bounds = CGRectMake(0, currentY, line->width, line->ascent + line->descent);
         if (currentY + bounds.size.height > rect.origin.y) 
         {
