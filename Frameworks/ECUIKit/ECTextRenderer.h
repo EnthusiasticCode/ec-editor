@@ -109,7 +109,10 @@
 /// context. The given context will not be modified prior rendering. Lines
 /// will be drawn with the current context transformation and context will
 /// be left at the beginning of the next non redered line.
-- (void)drawTextWithinRect:(CGRect)rect inContext:(CGContextRef)context;
+/// A block can be specified and it will be called for each rendered line
+/// with the current line number (not considering wraps), after the context 
+/// has been positioned to draw the current partial line.
+- (void)drawTextWithinRect:(CGRect)rect inContext:(CGContextRef)context withLineBlock:(void(^)(NSUInteger lineNumber))block;
 
 #pragma mark Retreiving Geometry to Text Mapping
 

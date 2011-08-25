@@ -24,6 +24,7 @@
 
 @class TextSegment;
 @class TextSegmentFrame;
+@class RenderedLine;
 
 #pragma mark - ECTextRenderer Interface (Class extension)
 
@@ -55,7 +56,7 @@
 
 /// Convenience function to enumerate throught all lines (indipendent from text segment)
 /// contained in the given rect relative to the rendered text space.
-- (void)enumerateLinesIntersectingRect:(CGRect)rect usingBlock:(void(^)(CTLineRef line, CGRect lineBound, CGFloat baselineOffset, BOOL *stop))block;
+- (void)enumerateLinesIntersectingRect:(CGRect)rect usingBlock:(void(^)(TextSegment *segment, RenderedLine *line, NSUInteger lineIndex, NSUInteger lineNumber, CGFloat lineOffset, BOOL *stop))block;
 
 @end
 
@@ -81,6 +82,8 @@
 @property (nonatomic) CGFloat descent;
 
 @property (nonatomic, readonly) CGFloat height;
+
+@property (nonatomic, readonly) CGSize size;
 
 /// Indicates if the line text has a new line meaning that it will advance the 
 /// actual text line count.
@@ -119,6 +122,9 @@
 /// An array of rendered wrapped lines ready to be drawn on a context.
 @property (nonatomic, readonly, weak) NSArray *renderedLines;
 
+/// Count of elements in renderedLines. Reading this property does not generate the rendered lines if not needed.
+@property (nonatomic, readonly) NSUInteger renderedLineCount;
+
 /// Count of string lines used to generate the segment's framesetter.
 @property (nonatomic) NSUInteger lineCount;
 
@@ -135,10 +141,9 @@
 
 /// Enumerate all the rendered lines in the text segment that intersect the given rect. 
 /// The rect should be relative to this segment coordinates.
-/// The block to apply will receive the line and its bounds relative to the first rendered
-/// line in this segment. It also recive an offset from the origin y of the bounds
-/// at wich the baseline is positioned.
-- (void)enumerateLinesIntersectingRect:(CGRect)rect usingBlock:(void(^)(CTLineRef line, CGRect lineBound, CGFloat baselineOffset, BOOL *stop))block;
+/// The block to apply will receive the line and its index as well as it's number
+/// (that may differ from the index if line wraps occurred) and the Y offset of the line.
+- (void)enumerateLinesIntersectingRect:(CGRect)rect usingBlock:(void(^)(RenderedLine *line, NSUInteger lineIndex, NSUInteger lineNumber, CGFloat lineOffset, BOOL *stop))block;
 
 /// Enumerate all the lines in the text segment within the given segment-relative 
 /// string range. The block will also receive the relative line string range.
@@ -160,6 +165,11 @@
 - (CGFloat)height
 {
     return ascent + descent;
+}
+
+- (CGSize)size
+{
+    return CGSizeMake(width, ascent + descent);
 }
 
 - (void)dealloc
@@ -189,7 +199,7 @@
 
 #pragma mark TextSegment Properties
 
-@synthesize lineCount, renderWrapWidth, string, stringLength, valid;
+@synthesize lineCount, renderedLineCount, renderWrapWidth, string, stringLength, valid;
 
 - (CTTypesetterRef)typesetter
 {
@@ -250,8 +260,16 @@
         
         // Cache result
         [parentRenderer.renderedLinesCache setObject:lines forKey:self];
+        renderedLineCount = [lines count];
     }
     return lines;
+}
+
+- (NSUInteger)renderedLineCount
+{
+    if (renderedLineCount == 0)
+        renderedLineCount = [self.renderedLines count];
+    return renderedLineCount;
 }
 
 - (void)setRenderWrapWidth:(CGFloat)width
@@ -304,8 +322,7 @@
     return self;
 }
 
-- (void)enumerateLinesIntersectingRect:(CGRect)rect 
-                            usingBlock:(void (^)(CTLineRef, CGRect, CGFloat, BOOL *))block 
+- (void)enumerateLinesIntersectingRect:(CGRect)rect usingBlock:(void (^)(RenderedLine *, NSUInteger, NSUInteger, CGFloat, BOOL *))block
 {
     ECASSERT(valid);
     
@@ -315,27 +332,26 @@
     }
     CGFloat rectEnd = CGRectGetMaxY(rect);
     
-    CGFloat currentY = 0;
-    CGRect bounds;
-    
-#warning TODO fix for in!!!
+    NSUInteger index = 0;
+    NSUInteger number = 0;
+    CGFloat currentY = 0, nextY;
+
     BOOL stop = NO;
-    NSArray *lines = self.renderedLines;
-    for (NSUInteger i = 0; i < [lines count]; ++i)
+    for (RenderedLine *line in self.renderedLines)
     {
-        RenderedLine *line = [lines objectAtIndex:i];
-        
-        bounds = CGRectMake(0, currentY, line->width, line->ascent + line->descent);
-        if (currentY + bounds.size.height > rect.origin.y) 
+        nextY = currentY + line.height;
+        if (nextY > rect.origin.y) 
         {
             // Break if past the required rect
             if (currentY >= rectEnd)
                 break;
             //
-            block(line->CTLine, bounds, line->ascent, &stop);
+            block(line, index, number, currentY, &stop);
             if (stop) break;
         }
-        currentY += bounds.size.height;
+        index++;
+        number += line.hasNewLine;
+        currentY = nextY;
     }
 }
 
@@ -540,7 +556,7 @@
         {
             segment = [textSegments objectAtIndex:currentIndex];
         }
-        currentLineRange.length = segment.lineCount;
+//        currentLineRange.length = segment.lineCount;
         
         // Apply block
         block(segment, currentIndex, currentLineRange.location, currentStringOffset, currentPositionOffset, &stop);
@@ -564,14 +580,14 @@
     }
 }
 
-- (void)enumerateLinesIntersectingRect:(CGRect)rect usingBlock:(void (^)(CTLineRef, CGRect, CGFloat, BOOL *))block
+- (void)enumerateLinesIntersectingRect:(CGRect)rect usingBlock:(void (^)(TextSegment *, RenderedLine *, NSUInteger, NSUInteger, CGFloat, BOOL *))block
 {
     if (CGRectIsNull(rect) || CGRectIsEmpty(rect)) 
         rect = CGRectInfinite;
     
     CGFloat rectEnd = CGRectGetMaxY(rect);
     
-    [self generateTextSegmentsAndEnumerateUsingBlock:^(TextSegment *segment, NSUInteger idx, NSUInteger lineOffset, NSUInteger stringOffset, CGFloat positionOffset, BOOL *stop) {
+    [self generateTextSegmentsAndEnumerateUsingBlock:^(TextSegment *segment, NSUInteger idx, NSUInteger lineNumberOffset, NSUInteger stringOffset, CGFloat positionOffset, BOOL *stop) {
         // End when past rect
         if (positionOffset > rectEnd)
         {
@@ -589,10 +605,10 @@
         
         // Enumerate needed lines from this segment
         __block CGFloat lastLineEnd = rect.origin.y;
-        [segment enumerateLinesIntersectingRect:currentRect usingBlock:^(CTLineRef line, CGRect lineBound, CGFloat baselineOffset, BOOL *stopInner) {
-            lineBound.origin.y += positionOffset;
-            lastLineEnd += lineBound.size.height;
-            block(line, lineBound, baselineOffset, stopInner);
+        [segment enumerateLinesIntersectingRect:currentRect usingBlock:^(RenderedLine *line, NSUInteger lineIndex, NSUInteger lineNumber, CGFloat lineOffset, BOOL *stopInner) {
+            lastLineEnd += line.height;
+            // TODO make an indexOffset that sums renderedLineCount from past segments
+            block(segment, line, lineIndex, lineNumberOffset + lineNumber, positionOffset + lineOffset, stopInner);
             *stop = *stopInner;
         }];
         
@@ -604,7 +620,7 @@
 
 #pragma mark Public Outtake Methods
 
-- (void)drawTextWithinRect:(CGRect)rect inContext:(CGContextRef)context
+- (void)drawTextWithinRect:(CGRect)rect inContext:(CGContextRef)context withLineBlock:(void (^)(NSUInteger))block
 {
     ECASSERT(context != NULL);
     
@@ -616,20 +632,30 @@
     CGContextScaleCTM(context, 1, -1);
     
     // Draw needed lines from this segment
-    [self enumerateLinesIntersectingRect:rect usingBlock:^(CTLineRef line, CGRect lineBound, CGFloat baseline, BOOL *stop) {
+    [self enumerateLinesIntersectingRect:rect usingBlock:^(TextSegment *segment, RenderedLine *line, NSUInteger lineIndex, NSUInteger lineNumber, CGFloat lineOffset, BOOL *stop) {
+        CGRect lineBound = (CGRect){ CGPointMake(0, lineOffset), line.size };
+        CGFloat baseline = line.ascent;
+        
         // Require adjustment in rendering for first partial line
         if (lineBound.origin.y < rect.origin.y) 
         {
             CGContextTranslateCTM(context, 0, rect.origin.y - lineBound.origin.y);
         }
+        
         // Positioning and rendering
         CGContextTranslateCTM(context, 0, -baseline);
+        
+        // Apply block for this line
+        if (block)
+        {
+            block(lineNumber);
+        }
 
         CGRect runRect = lineBound;
         runRect.origin.y = - lineBound.size.height + baseline;
         CGFloat runWidth;
         
-        CFArrayRef runs = CTLineGetGlyphRuns(line);
+        CFArrayRef runs = CTLineGetGlyphRuns(line.CTLine);
         CFIndex runCount = CFArrayGetCount(runs);
         CTRunRef run;
         
@@ -907,19 +933,21 @@
         if (rect.origin.y > lastSegmentEnd)
             continue;
         
-        [segment enumerateLinesIntersectingRect:currentRect usingBlock:^(CTLineRef line, CGRect lineBound, CGFloat baseline, BOOL *stop) {
-            result.size.width = MAX(result.size.width, lineBound.size.width);
-            result.size.height += lineBound.size.height;
+        [segment enumerateLinesIntersectingRect:currentRect usingBlock:^(RenderedLine *line, NSUInteger lineIndex, NSUInteger lineNumber, CGFloat lineOffset, BOOL *stop) {
+            CGSize lineSize = line.size;
+            
+            result.size.width = MAX(result.size.width, lineSize.width);
+            result.size.height += lineSize.height;
             
             if (meanLineHeight > 0) 
             {
-                meanLineHeight = (meanLineHeight + lineBound.size.height) / 2.0;
+                meanLineHeight = (meanLineHeight + lineSize.height) / 2.0;
             }
             else
             {
-                meanLineHeight = lineBound.size.height;
+                meanLineHeight = lineSize.height;
             }
-            maxCharsForLine = MAX((CFIndex)maxCharsForLine, CTLineGetGlyphCount(line));
+            maxCharsForLine = MAX((CFIndex)maxCharsForLine, CTLineGetGlyphCount(line.CTLine));
         }];
     }
     

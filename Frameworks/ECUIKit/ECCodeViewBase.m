@@ -155,7 +155,18 @@
             textSize.height *= invertScale;
             textSize.width *= invertScale;
             
-            [this->parent.renderer drawTextWithinRect:(CGRect){ textOffset, textSize } inContext:imageContext];
+            __block NSUInteger lastLine = NSUIntegerMax;
+            [this->parent.renderer drawTextWithinRect:(CGRect){ textOffset, textSize } inContext:imageContext withLineBlock:^(NSUInteger lineNumber) {
+                if (lastLine != lineNumber)
+                {
+                    lastLine = lineNumber;
+                    return;
+                }
+                CGContextSaveGState(imageContext);
+                CGContextSetFillColorWithColor(imageContext, [UIColor redColor].CGColor);
+                CGContextFillRect(imageContext, CGRectMake(0, 0, 10, 10));
+                CGContextRestoreGState(imageContext);
+            }];
         }
         UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
         UIGraphicsEndImageContext();
