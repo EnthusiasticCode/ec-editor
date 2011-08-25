@@ -71,22 +71,18 @@
     BOOL hasNewLine;
 }
 
-/// The rendered core text line.
 @property (nonatomic) CTLineRef CTLine;
-
 @property (nonatomic) CGFloat width;
-
 @property (nonatomic) CGFloat ascent;
-
 @property (nonatomic) CGFloat descent;
-
 @property (nonatomic, readonly) CGFloat height;
-
 @property (nonatomic, readonly) CGSize size;
 
 /// Indicates if the line text has a new line meaning that it will advance the 
 /// actual text line count.
 @property (nonatomic) BOOL hasNewLine;
+
+- (void)drawInContext:(CGContextRef)context;
 
 + (id)renderedLineWithCTLine:(CTLineRef)line hasNewLine:(BOOL)newLine;
 
@@ -171,13 +167,6 @@
     return CGSizeMake(width, ascent + descent);
 }
 
-- (void)dealloc
-{
-    if (CTLine)
-        CFRelease(CTLine);
-//    NSLog(@"dealloc - this sould not happen!");
-}
-
 + (RenderedLine *)renderedLineWithCTLine:(CTLineRef)line hasNewLine:(BOOL)newLine
 {
     ECASSERT(line != NULL);
@@ -187,6 +176,72 @@
     result->width = CTLineGetTypographicBounds(line, &result->ascent, &result->descent, NULL);
     result->hasNewLine = newLine;
     return result;
+}
+
+- (void)dealloc
+{
+    if (CTLine)
+        CFRelease(CTLine);
+}
+
+- (void)drawInContext:(CGContextRef)context
+{
+    CGRect runRect = CGRectMake(0, 0, width, ascent + descent);
+    runRect.origin.y = -descent;
+    CGFloat runWidth;
+    
+    CFArrayRef runs = CTLineGetGlyphRuns(CTLine);
+    CFIndex runCount = CFArrayGetCount(runs);
+    CTRunRef run;
+    
+    NSDictionary *runAttributes;
+    ECTextStyleCustomOverlayBlock block;
+    for (CFIndex i = 0; i < runCount; ++i) 
+    {
+        run = CFArrayGetValueAtIndex(runs, i);
+        
+        // Get run width
+        runWidth = CTRunGetTypographicBounds(run, (CFRange){0, 0}, NULL, NULL, NULL);
+        runRect.size.width = runWidth;
+        
+        // Get run attributes but not for last run in line (new line character)
+        if (i == runCount - 1) 
+            runAttributes = nil;
+        else
+            runAttributes = (__bridge NSDictionary *)CTRunGetAttributes(run);
+        
+        // Apply custom back attributes
+        if (runAttributes)
+        {
+            CGColorRef backgroundColor = (__bridge CGColorRef)[runAttributes objectForKey:ECTSBackgroundColorAttributeName];
+            if (backgroundColor) 
+            {
+                CGContextSetFillColorWithColor(context, backgroundColor);
+                CGContextFillRect(context, runRect);
+            }
+            block = [runAttributes objectForKey:ECTSBackCustomOverlayAttributeName];
+            if (block) 
+            {
+                CGContextSaveGState(context);
+                block(context, runRect);
+                CGContextRestoreGState(context);
+            }
+        }
+        
+        // Draw run
+        CTRunDraw(run, context, (CFRange){ 0, 0 });
+        
+        // Apply custom front attributes
+        if (runAttributes && (block = [runAttributes objectForKey:ECTSFrontCustomOverlayAttributeName])) 
+        {
+            CGContextSaveGState(context);
+            block(context, runRect);
+            CGContextRestoreGState(context);
+        }
+        
+        // Advance run origin
+        runRect.origin.x += runWidth;
+    }
 }
 
 @end
@@ -647,62 +702,7 @@
             block(lineNumber);
         }
 
-        CGRect runRect = lineBound;
-        runRect.origin.y = - lineBound.size.height + baseline;
-        CGFloat runWidth;
-        
-        CFArrayRef runs = CTLineGetGlyphRuns(line.CTLine);
-        CFIndex runCount = CFArrayGetCount(runs);
-        CTRunRef run;
-        
-        NSDictionary *runAttributes;
-        ECTextStyleCustomOverlayBlock block;
-        for (CFIndex i = 0; i < runCount; ++i) 
-        {
-            run = CFArrayGetValueAtIndex(runs, i);
-            
-            // Get run width
-            runWidth = CTRunGetTypographicBounds(run, (CFRange){0, 0}, NULL, NULL, NULL);
-            runRect.size.width = runWidth;
-            
-            // Get run attributes but not for last run in line (new line character)
-            if (i == runCount - 1) 
-                runAttributes = nil;
-            else
-                runAttributes = (__bridge NSDictionary *)CTRunGetAttributes(run);
-            
-            // Apply custom back attributes
-            if (runAttributes)
-            {
-                CGColorRef backgroundColor = (__bridge CGColorRef)[runAttributes objectForKey:ECTSBackgroundColorAttributeName];
-                if (backgroundColor) 
-                {
-                    CGContextSetFillColorWithColor(context, backgroundColor);
-                    CGContextFillRect(context, runRect);
-                }
-                block = [runAttributes objectForKey:ECTSBackCustomOverlayAttributeName];
-                if (block) 
-                {
-                    CGContextSaveGState(context);
-                    block(context, runRect);
-                    CGContextRestoreGState(context);
-                }
-            }
-            
-            // Draw run
-            CTRunDraw(run, context, (CFRange){ 0, 0 });
-            
-            // Apply custom front attributes
-            if (runAttributes && (block = [runAttributes objectForKey:ECTSFrontCustomOverlayAttributeName])) 
-            {
-                CGContextSaveGState(context);
-                block(context, runRect);
-                CGContextRestoreGState(context);
-            }
-            
-            // Advance run origin
-            runRect.origin.x += runWidth;
-        }
+        [line drawInContext:context];
 
         CGContextTranslateCTM(context, 0, -lineBound.size.height+baseline);
     }];
