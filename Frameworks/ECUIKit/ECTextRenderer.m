@@ -9,7 +9,6 @@
 #import "ECTextRenderer.h"
 #import <CoreText/CoreText.h>
 #import "ECTextStyle.h"
-#import "ECDictionaryCache.h"
 
 // Internal working notes: (outdated)
 // - The renderer keeps an array of ordered framesetter informations:
@@ -37,12 +36,11 @@
     BOOL datasourceHasTextRendererEstimatedTextLineCountOfLength;
 }
 
-#warning TODO use NSCache?
 /// Text renderer typesetters' cache shared among all text segments.
-@property (nonatomic, readonly, strong) ECDictionaryCache *typesettersCache;
+@property (nonatomic, readonly, strong) NSCache *typesettersCache;
 
 /// Text renderer line arrays' cache shared among all text segments.
-@property (nonatomic, readonly, strong) ECDictionaryCache *renderedLinesCache;
+@property (nonatomic, readonly, strong) NSCache *renderedLinesCache;
 
 /// Retrieve the string for the given text segment. Line count is an output parameter, pass NULL if not interested.
 /// This function is supposed to be used by a text segment to generate it's typesetter if not present in cache.
@@ -62,6 +60,7 @@
 
 #pragma mark - RenderedLine Interface
 
+#warning TODO!!! move to public, move line rendering login in here. expose enumeratelines.
 /// A class to wrap a core text line and add extra informations.
 @interface RenderedLine : NSObject {
 @public
@@ -484,13 +483,10 @@
     if ((self = [super init])) 
     {
         textSegments = [NSMutableArray new];
-//#warning TODO check if count limit works as expected
-//        typesettersCache = [NSCache new];
-//        typesettersCache.countLimit = 5;
-//        renderedLinesCache = [NSCache new];
-//        renderedLinesCache.countLimit = 3;
-        typesettersCache = [[ECDictionaryCache alloc] initWithCountLimit:5];
-        renderedLinesCache = [[ECDictionaryCache alloc] initWithCountLimit:2];
+        typesettersCache = [NSCache new];
+        typesettersCache.countLimit = 5;
+        renderedLinesCache = [NSCache new];
+        renderedLinesCache.countLimit = 3;
     }
     return self;
 }
