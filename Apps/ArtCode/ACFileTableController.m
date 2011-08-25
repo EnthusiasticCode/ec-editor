@@ -211,7 +211,7 @@
         cell.imageView.image = [UIImage styleDocumentImageWithSize:CGSizeMake(32, 32) 
                                                              color:[[cellNode.name pathExtension] isEqualToString:@"h"] ? [UIColor styleFileRedColor] : [UIColor styleFileBlueColor]
                                                               text:[cellNode.name pathExtension]];
-    [cell.textField setText:[[cellNode URL] description]];
+    [cell.textField setText:[cellNode name]];
     return cell;
 }
 
