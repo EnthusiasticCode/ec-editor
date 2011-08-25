@@ -13,6 +13,7 @@
 #import "ECRectSet.h"
 
 @class ECTextRenderer;
+@class ECTextRendererLine;
 
 @protocol ECTextRendererDelegate <NSObject>
 @optional
@@ -129,5 +130,23 @@
 /// has been returned. In some cases the returned position may be greater than
 /// the source text lenght.
 - (NSUInteger)positionFromPosition:(NSUInteger)position inLayoutDirection:(UITextLayoutDirection)direction offset:(NSInteger)offset;
+
+@end
+
+
+/// A class used to provide line informations on line enumeration
+@interface ECTextRendererLine : NSObject
+
+@property (nonatomic) CGFloat width;
+@property (nonatomic) CGFloat ascent;
+@property (nonatomic) CGFloat descent;
+@property (nonatomic, readonly) CGFloat height;
+@property (nonatomic, readonly) CGSize size;
+
+/// Indicates if the line text has a new line meaning that it will advance the 
+/// actual text line count.
+@property (nonatomic) BOOL hasNewLine;
+
+- (void)drawInContext:(CGContextRef)context;
 
 @end
