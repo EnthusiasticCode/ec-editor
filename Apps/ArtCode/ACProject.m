@@ -89,14 +89,14 @@
         if ([fileManager fileExistsAtPath:[documentURL path]]) {
             [_document openWithCompletionHandler:^(BOOL success){
                 if (!success) {
-                    // Handle the error.
+                    abort();
                 }
             }];
         }
         else {
             [_document saveToURL:documentURL forSaveOperation:UIDocumentSaveForCreating completionHandler:^(BOOL success){
                 if (!success) {
-                    // Handle the error.
+                    abort();
                 }
             }];
         }
