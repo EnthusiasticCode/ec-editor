@@ -17,7 +17,6 @@ static Class UITableViewCellDeleteConfirmationControlClass = nil;
     __weak UIImageView *checkMarkImageView;
     UIButton *customDeleteActivation;
     ACEditableTableCellCustomDeleteContainerView *customDeleteContainer;
-    UIButton *customDeleteButton;
     
     NSMutableArray *indentationLevelsViews;
 }
@@ -26,7 +25,7 @@ static Class UITableViewCellDeleteConfirmationControlClass = nil;
 
 @synthesize iconButton, textField;
 @synthesize contentInsets, editingContentInsets;
-@synthesize customDelete;
+@synthesize customDelete, customDeleteButton;
 
 - (UIButton *)iconButton
 {
@@ -66,6 +65,20 @@ static Class UITableViewCellDeleteConfirmationControlClass = nil;
     return textField;
 }
 
+- (UIButton *)customDeleteButton
+{
+    if (!customDeleteButton)
+    {
+        customDeleteButton = [[UIButton alloc] initWithFrame:CGRectZero];
+        customDeleteButton.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleBottomMargin;
+        [customDeleteButton setTitle:@"Delete" forState:UIControlStateNormal];
+        [customDeleteButton addTarget:self action:@selector(toggleCustomDeleteAction:) forControlEvents:UIControlEventTouchUpInside];
+        customDeleteButton.titleLabel.shadowOffset = CGSizeMake(0, -1);
+        customDeleteButton.titleLabel.font = [UIFont styleFontWithSize:16];
+    }
+    return customDeleteButton;
+}
+
 - (void)setIndentationLevel:(NSInteger)indentationLevel
 {
     [super setIndentationLevel:indentationLevel];
@@ -102,15 +115,8 @@ static Class UITableViewCellDeleteConfirmationControlClass = nil;
     if (!customDeleteContainer)
     {
         customDeleteContainer = [[ACEditableTableCellCustomDeleteContainerView alloc] initWithFrame:bounds];
-        //
-        customDeleteButton = [[UIButton alloc] initWithFrame:CGRectMake(bounds.size.width - 75 - editingContentInsets.right, editingContentInsets.top, 75, bounds.size.height - editingContentInsets.top - editingContentInsets.bottom)];
-        customDeleteButton.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleBottomMargin;
-        [customDeleteButton setTitle:@"Delete" forState:UIControlStateNormal];
-        [customDeleteContainer addSubview:customDeleteButton];
-        //
-        customDeleteButton.titleLabel.shadowOffset = CGSizeMake(0, -1);
-        customDeleteButton.titleLabel.font = [UIFont styleFontWithSize:16];
-        // TODO add customDeleteButton action
+        self.customDeleteButton.frame = CGRectMake(bounds.size.width - 75 - editingContentInsets.right, editingContentInsets.top, 75, bounds.size.height - editingContentInsets.top - editingContentInsets.bottom);
+        [customDeleteContainer addSubview:self.customDeleteButton];
     }
     
     if (customDeleteContainer.superview)

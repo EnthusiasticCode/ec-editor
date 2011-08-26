@@ -22,6 +22,10 @@
 #define STATIC_OBJECT(typ, nam, init) static typ *nam = nil; if (!nam) nam = init
 
 
+@interface ACProjectTableController ()
+- (void)deleteTableRow:(id)sender;
+@end
+
 @implementation ACProjectTableController {
     ECPopoverController *popoverLabelColorController;
 }
@@ -197,6 +201,7 @@
         cell.editingContentInsets = UIEdgeInsetsMake(4, 8, 4, 7);
         cell.iconButton.bounds = CGRectMake(0, 0, 32, 33);
         cell.customDelete = YES;
+        [cell.customDeleteButton addTarget:self action:@selector(deleteTableRow:) forControlEvents:UIControlEventTouchUpInside];
     }
     
     // Setup project icon
@@ -206,7 +211,18 @@
     // Setup project title
     [cell.textField setText:[[[ACState localState].projects objectAtIndex:indexPath.row] name]];
     
+    // Setup tag for delete callback
+    [cell.customDeleteButton setTag:indexPath.row];
+    
     return cell;
+}
+
+- (void)deleteTableRow:(id)sender
+{
+    NSInteger rowIndex = [sender tag];
+    ECASSERT(rowIndex >= 0);
+    [[[ACState localState].projects objectAtIndex:rowIndex] delete];
+    [self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:rowIndex inSection:0]] withRowAnimation:UITableViewRowAnimationFade];
 }
 
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
@@ -236,17 +252,17 @@
 
 
 // Override to support editing the table view.
-- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    if (editingStyle == UITableViewCellEditingStyleDelete) {
-        // Delete the row from the data source
-        [[[ACState localState].projects objectAtIndex:indexPath.row] delete];
-        [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
-    }   
-    else if (editingStyle == UITableViewCellEditingStyleInsert) {
-        // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-    }   
-}
+//- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
+//{
+//    if (editingStyle == UITableViewCellEditingStyleDelete) {
+//        // Delete the row from the data source
+//        [[[ACState localState].projects objectAtIndex:indexPath.row] delete];
+//        [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
+//    }   
+//    else if (editingStyle == UITableViewCellEditingStyleInsert) {
+//        // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
+//    }   
+//}
 
 
 /*

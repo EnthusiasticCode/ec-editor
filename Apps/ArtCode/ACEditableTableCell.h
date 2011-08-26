@@ -21,6 +21,9 @@
 /// The text field will be enabled only in editing mode.
 @property (nonatomic, strong) IBOutlet UITextField *textField;
 
+/// Replaces the default delete confirmation button.
+@property (nonatomic, strong) IBOutlet UIButton *customDeleteButton;
+
 #pragma mark Layout
 
 /// Insets applied to all controls inside the cell.
