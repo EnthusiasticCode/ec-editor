@@ -121,11 +121,11 @@
 - (void)delete
 {
     [[ACState localState] removeProjectWithURL:self.URL error:NULL];
-    _isDeleted = YES;
     _rootNode = nil;
     [_document closeWithCompletionHandler:NULL];
     NSFileManager *fileManager = [[NSFileManager alloc] init];
-    [fileManager removeItemAtURL:self.URL error:NULL];
+    [fileManager removeItemAtURL:[self.URL ACProjectBundleURL] error:NULL];
+    _isDeleted = YES;
 }
 
 - (BOOL)isDeleted
