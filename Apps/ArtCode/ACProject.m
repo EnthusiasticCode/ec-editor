@@ -115,6 +115,7 @@
     if (!self)
         return nil;
     _URL = URL;
+    [self document]; // access document immediately so files are created if they don't exist
     return self;
 }
 

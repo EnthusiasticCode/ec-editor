@@ -87,7 +87,6 @@
             continue;
         break;
     }
-    [[ACState localState] scanForProjects];
 //    [self.tableView beginUpdates];
 //    [self.tableView insertRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:[[[ACState localState] projects] count] inSection:0]] withRowAnimation:UITableViewRowAnimationAutomatic];
 //    [self.tableView endUpdates];
