@@ -74,6 +74,12 @@ typedef void (^LineNumberRenderingBlock)(CGContextRef context, CGRect lineNumber
 /// The width to reserve for line numbers left inset.
 @property (nonatomic) CGFloat lineNumberWidth;
 
+/// Font to be used for rendering line numbers
+@property (nonatomic, strong) UIFont *lineNumberFont;
+
+/// Color to be used for rendering line numbers
+@property (nonatomic, strong) UIColor *lineNumberColor;
+
 /// Provide a block that will be called for each line and may render the number of the line
 /// in the given context. The block receives: the context in which to draw, bounds in which
 /// the drawing may be bounded, a baseline relative to the bounds y to align with the text

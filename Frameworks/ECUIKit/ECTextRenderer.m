@@ -55,7 +55,6 @@
 
 #pragma mark - ECTextRendererLine Class continuation
 
-#warning TODO!!! move to public, move line rendering login in here. expose enumeratelines.
 @interface ECTextRendererLine () {
 @public
     CTLineRef CTLine;

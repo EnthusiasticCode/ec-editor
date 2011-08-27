@@ -140,7 +140,7 @@
             // Positioning text
             CGContextScaleCTM(imageContext, scale, scale);
             CGPoint textOffset = CGPointMake(0, rect.size.height * this->tileIndex * invertScale);
-            CGFloat lineNumberWidth = lineBlock ? this->parent.lineNumberWidth : 0;
+            CGFloat lineNumberWidth = this->parent.lineNumberWidth;
             if (this->tileIndex == 0) 
             {
                 CGContextTranslateCTM(imageContext, this->textInsets.left + lineNumberWidth, this->textInsets.top);
@@ -156,16 +156,45 @@
             textSize.width *= invertScale;
             
             // Drawing text
-            if (lineBlock)
+            if (lineNumberWidth > 0 && this->parent.lineNumberFont)
             {
-                __block NSUInteger lastLine = NSUIntegerMax;
-                [this->parent.renderer drawTextWithinRect:(CGRect){ textOffset, textSize } inContext:imageContext withLineBlock:^(ECTextRendererLine *line, NSUInteger lineNumber) {
-                    CGContextSaveGState(imageContext);
-                    CGContextTranslateCTM(imageContext, -lineNumberWidth, 0);
-                    lineBlock(imageContext, CGRectMake(0, 0, lineNumberWidth, line.height), line.ascent, lineNumber, (lastLine == lineNumber));
-                    CGContextRestoreGState(imageContext);
-                    lastLine = lineNumber;
-                }];
+                const char *lineNumberFontName = this->parent.lineNumberFont.fontName.UTF8String;
+                CGFloat lineNumberSize = this->parent.lineNumberFont.pointSize;
+                CGColorRef lineNumberColor = this->parent.lineNumberColor.CGColor;
+                CGFloat textInsetsLeft = this->textInsets.left;
+                
+                @autoreleasepool {
+                    __block NSUInteger lastLine = NSUIntegerMax;
+                    [this->parent.renderer drawTextWithinRect:(CGRect){ textOffset, textSize } inContext:imageContext withLineBlock:^(ECTextRendererLine *line, NSUInteger lineNumber) {
+                        CGContextSaveGState(imageContext);
+                        {
+                            CGSize lineNumberBoundsSize = CGSizeMake(lineNumberWidth, line.height);
+                            
+                            // Rendering line number
+                            if (lastLine != lineNumber)
+                            {
+                                // TODO get this more efficient. possibly by creating line numbers with preallocated characters.
+                                NSString *lineNumberString = [NSString stringWithFormat:@"%u", lineNumber + 1];
+                                CGSize lineNumberStringSize = [lineNumberString sizeWithFont:this->parent.lineNumberFont];
+                                
+                                CGContextSelectFont(imageContext, lineNumberFontName, lineNumberSize, kCGEncodingMacRoman);
+                                CGContextSetTextDrawingMode(imageContext, kCGTextFill);
+                                CGContextSetFillColorWithColor(imageContext, lineNumberColor);
+
+                                CGContextShowTextAtPoint(imageContext, -lineNumberStringSize.width - textInsetsLeft, -lineNumberBoundsSize.height + lineNumberStringSize.height / 2, lineNumberString.UTF8String, [lineNumberString lengthOfBytesUsingEncoding:NSUTF8StringEncoding]);
+                            }
+                            
+                            if (lineBlock)
+                            {
+                                CGContextTranslateCTM(imageContext, -lineNumberBoundsSize.width - textInsetsLeft, -lineNumberBoundsSize.height);
+                                lineBlock(imageContext, (CGRect){ CGPointZero, lineNumberBoundsSize }, line.ascent, lineNumber, (lastLine == lineNumber));                                                
+                            }
+                        }
+                        CGContextRestoreGState(imageContext);
+                        CGContextSetTextMatrix(imageContext, CGAffineTransformIdentity);
+                        lastLine = lineNumber;
+                    }];
+                }
             }
             else
             {
@@ -195,7 +224,7 @@
 @synthesize datasource; 
 @synthesize textInsets;
 @synthesize renderingQueue, renderer;
-@synthesize lineNumberWidth, lineNumberRenderingBlock;
+@synthesize lineNumberWidth, lineNumberFont, lineNumberColor, lineNumberRenderingBlock;
 
 - (id<ECCodeViewBaseDataSource>)datasource
 {
@@ -231,7 +260,7 @@
     
     // Setup renderer wrap with keeping in to account insets and line display
     if (ownsRenderer)
-        renderer.wrapWidth = UIEdgeInsetsInsetRect(frame, self->textInsets).size.width - (lineNumberRenderingBlock ? lineNumberWidth : 0);
+        renderer.wrapWidth = UIEdgeInsetsInsetRect(frame, self->textInsets).size.width - lineNumberWidth;
     
     self.contentSize = CGSizeMake(frame.size.width, (renderer.estimatedHeight + textInsets.top + textInsets.bottom) * self.contentScaleFactor);
     
