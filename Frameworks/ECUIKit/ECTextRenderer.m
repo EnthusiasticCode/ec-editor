@@ -35,6 +35,9 @@
     BOOL datasourceHasTextRendererEstimatedTextLineCountOfLength;
 }
 
+/// Text renderer strings' cache shared among all text segments.
+@property (nonatomic, readonly, strong) NSCache *segmentStringsCache;
+
 /// Text renderer typesetters' cache shared among all text segments.
 @property (nonatomic, readonly, strong) NSCache *typesettersCache;
 
@@ -235,7 +238,24 @@
 
 #pragma mark TextSegment Properties
 
-@synthesize lineCount, renderedLineCount, renderWrapWidth, string, stringLength, valid;
+@synthesize lineCount, renderedLineCount, renderWrapWidth, stringLength, valid;
+
+- (NSAttributedString *)string
+{
+    NSAttributedString *string = [parentRenderer.segmentStringsCache objectForKey:self];
+    
+    if (!string)
+    {
+        string = [parentRenderer stringForTextSegment:self lineCount:&lineCount];
+        if (!string)
+            return nil;
+        
+        stringLength = [string length];
+        [parentRenderer.segmentStringsCache setObject:string forKey:self];
+    }
+    
+    return string;
+}
 
 - (CTTypesetterRef)typesetter
 {
@@ -243,12 +263,7 @@
     
     if (!t)
     {
-        string = [parentRenderer stringForTextSegment:self lineCount:&lineCount];
-        if (!string)
-            return NULL;
-        
-        stringLength = [string length];
-        t = CTTypesetterCreateWithAttributedString((__bridge CFAttributedStringRef)string);
+        t = CTTypesetterCreateWithAttributedString((__bridge CFAttributedStringRef)self.string);
         
         // Cache
         if (t) 
@@ -276,7 +291,7 @@
         
         // Generate wrapped lines
         __block CFRange lineRange = CFRangeMake(0, 0);
-        [string.string enumerateLinesUsingBlock:^(NSString *line, BOOL *stop) {
+        [self.string.string enumerateLinesUsingBlock:^(NSString *line, BOOL *stop) {
             CFIndex lineLength = [line length], truncationLenght;
             do {
                 // TODO possibly filter using customizable block
@@ -469,7 +484,7 @@
 
 #pragma mark Properties
 
-@synthesize typesettersCache, renderedLinesCache;
+@synthesize segmentStringsCache, typesettersCache, renderedLinesCache;
 @synthesize delegate, datasource, preferredLineCountPerSegment, wrapWidth, estimatedHeight;
 
 - (void)setDelegate:(id<ECTextRendererDelegate>)aDelegate
@@ -520,6 +535,8 @@
     if ((self = [super init])) 
     {
         textSegments = [NSMutableArray new];
+        segmentStringsCache = [NSCache new];
+        segmentStringsCache.countLimit = 5;
         typesettersCache = [NSCache new];
         typesettersCache.countLimit = 5;
         renderedLinesCache = [NSCache new];
@@ -1016,6 +1033,7 @@
             
             // TODO!!! if lineCount > 1.5 * preferred -> split or merge if * 0.5
             // and remember to set proper lastTextSegment
+            [segmentStringsCache removeObjectForKey:segment];
             [typesettersCache removeObjectForKey:segment];
             [renderedLinesCache removeObjectForKey:segment];
             // TODO!!! instead of cleaning the cache, use a segment method to update just those lines
@@ -1035,6 +1053,7 @@
 
 - (void)clearCache
 {
+    [segmentStringsCache removeAllObjects];
     [typesettersCache removeAllObjects];
     [renderedLinesCache removeAllObjects];
 }

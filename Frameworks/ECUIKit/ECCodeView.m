@@ -306,7 +306,7 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
 
 - (void)drawRect:(CGRect)rect
 {
-#warning DEBUG increase thumb hit size, see ouieditableframe 1842
+#warning FIX increase thumb hit size, see ouieditableframe 1842
 //    [[UIColor redColor] setFill];
 //    UIRectFill(rect);
     

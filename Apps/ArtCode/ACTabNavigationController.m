@@ -648,7 +648,7 @@ static void loadCurrentAndAdiacentTabViews(ACTabNavigationController *self, ACTa
         
         if (tabController == currentTabController)
         {
-#warning TODO this transition should be applied even if the view controller is not changed?
+            // TODO this transition should be applied even if the view controller is not changed?
             [UIView transitionFromView:previousVewController.view toView:tabController.tabViewController.view duration:0.2 options:UIViewAnimationOptionTransitionCrossDissolve completion:^(BOOL finished) {
                 [previousVewController removeFromParentViewController];
 
