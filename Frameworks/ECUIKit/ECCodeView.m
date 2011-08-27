@@ -251,7 +251,7 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
         CGContextTranslateCTM(imageContext, -textRect.origin.x, 0);
         // Render text
         CGContextSaveGState(imageContext);
-        [this->parent.renderer drawTextWithinRect:textRect inContext:imageContext];
+        [this->parent.renderer drawTextWithinRect:textRect inContext:imageContext withLineBlock:nil];
         CGContextRestoreGState(imageContext);
         // Render additional drawings
         if (block)
@@ -306,7 +306,7 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
 
 - (void)drawRect:(CGRect)rect
 {
-#warning DEBUG increase thumb hit size, see ouieditableframe 1842
+#warning FIX increase thumb hit size, see ouieditableframe 1842
 //    [[UIColor redColor] setFill];
 //    UIRectFill(rect);
     

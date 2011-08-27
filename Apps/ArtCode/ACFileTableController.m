@@ -267,7 +267,7 @@
      [detailViewController release];
      */
     
-#warning TODO if used in a popover from the jump bar should just change its own url
+    // TODO if used in a popover from the jump bar should just change its own url
     
     [self.ACNavigationController pushURL:[[_displayedNode.children objectAtIndex:indexPath.row] URL]];
 }

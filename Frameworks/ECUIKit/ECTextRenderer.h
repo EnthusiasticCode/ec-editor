@@ -13,6 +13,7 @@
 #import "ECRectSet.h"
 
 @class ECTextRenderer;
+@class ECTextRendererLine;
 
 @protocol ECTextRendererDelegate <NSObject>
 @optional
@@ -105,11 +106,18 @@
 
 #pragma mark Rendering Content
 
+/// Convenience function to enumerate throught all lines (indipendent from text segment)
+/// contained in the given rect relative to the rendered text space.
+- (void)enumerateLinesIntersectingRect:(CGRect)rect usingBlock:(void(^)(ECTextRendererLine *line, NSUInteger lineIndex, NSUInteger lineNumber, CGFloat lineOffset, BOOL *stop))block;
+
 /// Renders the content text contained in the given rect to the specified 
 /// context. The given context will not be modified prior rendering. Lines
 /// will be drawn with the current context transformation and context will
 /// be left at the beginning of the next non redered line.
-- (void)drawTextWithinRect:(CGRect)rect inContext:(CGContextRef)context;
+/// A block can be specified and it will be called for each rendered line
+/// with the current line number (not considering wraps), after the context 
+/// has been positioned to draw the current partial line.
+- (void)drawTextWithinRect:(CGRect)rect inContext:(CGContextRef)context withLineBlock:(void(^)(ECTextRendererLine *line, NSUInteger lineNumber))block;
 
 #pragma mark Retreiving Geometry to Text Mapping
 
@@ -126,5 +134,23 @@
 /// has been returned. In some cases the returned position may be greater than
 /// the source text lenght.
 - (NSUInteger)positionFromPosition:(NSUInteger)position inLayoutDirection:(UITextLayoutDirection)direction offset:(NSInteger)offset;
+
+@end
+
+
+/// A class used to provide line informations on line enumeration
+@interface ECTextRendererLine : NSObject
+
+@property (nonatomic) CGFloat width;
+@property (nonatomic) CGFloat ascent;
+@property (nonatomic) CGFloat descent;
+@property (nonatomic, readonly) CGFloat height;
+@property (nonatomic, readonly) CGSize size;
+
+/// Indicates if the line text has a new line meaning that it will advance the 
+/// actual text line count.
+@property (nonatomic) BOOL hasNewLine;
+
+- (void)drawInContext:(CGContextRef)context;
 
 @end

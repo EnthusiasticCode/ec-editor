@@ -924,6 +924,7 @@
 		CD7D2AF813C0CD2600B889EE /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ARC_MIGRATION = donothing;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ArtCode/ArtCode-Prefix.pch";
 				GCC_STRICT_ALIASING = YES;
@@ -936,6 +937,7 @@
 		CD7D2AF913C0CD2600B889EE /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ARC_MIGRATION = donothing;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ArtCode/ArtCode-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = "NDEBUG=1";

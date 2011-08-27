@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <QuartzCore/QuartzCore.h>
 #import "ECTextRenderer.h"
 
 @class ECCodeViewBase;
@@ -22,6 +23,9 @@
 - (NSString *)codeView:(ECCodeViewBase *)codeView stringInRange:(NSRange)range;
 
 @end
+
+
+typedef void (^LineNumberRenderingBlock)(CGContextRef context, CGRect lineNumberBounds, CGFloat baseline, NSUInteger lineNumber, BOOL isWrappedLine);
 
 
 @interface ECCodeViewBase : UIScrollView <ECTextRendererDelegate> {
@@ -64,5 +68,23 @@
 
 /// Invalidate a particular section of the text making the reveiver redraw it.
 - (void)updateTextInLineRange:(NSRange)originalRange toLineRange:(NSRange)newRange;
+
+#pragma mark Styling Text Display
+
+/// The width to reserve for line numbers left inset.
+@property (nonatomic) CGFloat lineNumberWidth;
+
+/// Font to be used for rendering line numbers
+@property (nonatomic, strong) UIFont *lineNumberFont;
+
+/// Color to be used for rendering line numbers
+@property (nonatomic, strong) UIColor *lineNumberColor;
+
+/// Provide a block that will be called for each line and may render the number of the line
+/// in the given context. The block receives: the context in which to draw, bounds in which
+/// the drawing may be bounded, a baseline relative to the bounds y to align with the text
+/// line, the number of the line that will be drawn and a value indicating if the requested
+/// line is a wrapped line.
+@property (nonatomic, copy) LineNumberRenderingBlock lineNumberRenderingBlock;
 
 @end

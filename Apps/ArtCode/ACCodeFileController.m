@@ -12,6 +12,8 @@
 #import "AppStyle.h"
 #import "ACState.h"
 
+#import <QuartzCore/QuartzCore.h>
+
 @implementation ACCodeFileController
 
 @synthesize codeView;
@@ -25,6 +27,25 @@
         codeView.backgroundColor = [UIColor whiteColor];
         codeView.caretColor = [UIColor styleThemeColorOne];
         codeView.selectionColor = [[UIColor styleThemeColorOne] colorWithAlphaComponent:0.3];
+        
+        codeView.lineNumberWidth = 30;
+        codeView.lineNumberFont = [UIFont systemFontOfSize:10];
+        codeView.lineNumberColor = [UIColor colorWithWhite:0.8 alpha:1];
+        // TODO maybe is not the best option to draw the line number in an external block
+        codeView.lineNumberRenderingBlock = ^(CGContextRef context, CGRect lineNumberBounds, CGFloat baseline, NSUInteger lineNumber, BOOL isWrappedLine) {
+            CGContextSetStrokeColorWithColor(context, [UIColor colorWithWhite:0.9 alpha:1].CGColor);
+            CGContextMoveToPoint(context, lineNumberBounds.size.width + 3, 0);
+            CGContextAddLineToPoint(context, lineNumberBounds.size.width + 3, lineNumberBounds.size.height);
+            CGContextStrokePath(context);
+            
+//            if (!isWrappedLine)
+//                return;
+//
+//            CGContextSetFillColorWithColor(context, [UIColor redColor].CGColor);
+//            CGContextFillRect(context, lineNumberBounds);
+        };
+        
+        codeView.renderer.preferredLineCountPerSegment = 500;
     }
     return codeView;
 }
