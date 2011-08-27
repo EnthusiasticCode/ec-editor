@@ -19,7 +19,11 @@
 - (void)setIndex:(NSUInteger)index forProjectWithURL:(NSURL *)URL;
 
 /// Removes a project from the project list
-/// This does not delete the project
+/// This does NOT delete the project bundle
 - (BOOL)removeProjectWithURL:(NSURL *)URL error:(NSError **)error;
+
+/// Renames a project in the project list
+/// This does NOT rename the project bundle
+- (void)renameProjectWithURL:(NSURL *)URL to:(NSString *)name;
 
 @end

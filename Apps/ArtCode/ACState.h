@@ -87,15 +87,6 @@ extern NSString * const ACStateNodeTypeSourceFile;
 /// The directory where the project's contents are stored
 - (NSURL *)contentDirectory;
 
-/// Open the project
-/// Must be called before using any of the following methods
-/// The children property is empty before calling this
-- (void)openWithCompletionHandler:(void (^)(BOOL success))completionHandler;
-
-/// Close the project
-/// Must be called if the project has been opened
-- (void)closeWithCompletionHandler:(void (^)(BOOL success))completionHandler;
-
 /// Returns the node referenced by the ACURL or nil if the node does not exist
 - (id<ACStateNode>)nodeForURL:(NSURL *)URL;
 

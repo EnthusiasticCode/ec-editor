@@ -169,6 +169,17 @@ static void * const ACStateProjectURLObservingContext;
     return YES;
 }
 
+- (void)renameProjectWithURL:(NSURL *)URL to:(NSString *)name
+{
+    ECASSERT(URL && [self indexOfProjectWithURL:URL] != NSNotFound);
+    ECASSERT(name);
+    ECASSERT([name length]);
+    NSUInteger index = [self indexOfProjectWithURL:URL];
+    NSMutableArray *projectNames = [self loadProjectNames];
+    [projectNames replaceObjectAtIndex:index withObject:name];
+    [self saveProjectNames:projectNames];
+}
+
 - (id<ACStateNode>)nodeForURL:(NSURL *)URL
 {
     for (id<ACStateProject> project in _projectObjects)

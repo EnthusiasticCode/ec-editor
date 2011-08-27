@@ -49,9 +49,19 @@
 
 - (void)setName:(NSString *)name
 {
+    ECASSERT(name);
+    ECASSERT([name length]);
     if (_isDeleted)
         return;
-    ECASSERT(false); // NYI
+    if ([name isEqualToString:self.name])
+        return;
+    [[ACState localState] renameProjectWithURL:self.URL to:name];
+    NSFileManager *fileManager = [[NSFileManager alloc] init];
+    NSURL *newURL = [NSURL ACURLForLocalProjectWithName:name];
+    NSURL *documentURL = [self.URL ACProjectBundleURL];
+    NSURL *newDocumentURL = [newURL ACProjectBundleURL];
+    [fileManager moveItemAtURL:documentURL toURL:newDocumentURL error:NULL];
+    _URL = newURL;
 }
 
 - (NSUInteger)index
@@ -177,22 +187,6 @@
 - (NSURL *)contentDirectory
 {
     return [self.URL ACProjectContentURL];
-}
-
-- (void)openWithCompletionHandler:(void (^)(BOOL))completionHandler
-{
-    [self.document openWithCompletionHandler:completionHandler];
-}
-
-- (void)closeWithCompletionHandler:(void (^)(BOOL))completionHandler
-{
-    if (!_document)
-    {
-        completionHandler(YES);
-        return;
-    }
-    [_document closeWithCompletionHandler:completionHandler];
-    _document = nil;
 }
 
 @end

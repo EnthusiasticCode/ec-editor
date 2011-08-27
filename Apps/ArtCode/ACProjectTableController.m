@@ -157,6 +157,30 @@
     [popoverLabelColorController presentPopoverFromRect:[sender frame] inView:[sender superview] permittedArrowDirections:UIPopoverArrowDirectionLeft animated:YES];
 }
 
+#pragma mark - Table view functionality
+
+- (void)deleteTableRow:(id)sender
+{
+    NSInteger rowIndex = [sender tag];
+    ECASSERT(rowIndex >= 0);
+    [[[ACState localState].projects objectAtIndex:rowIndex] delete];
+    [self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:rowIndex inSection:0]] withRowAnimation:UITableViewRowAnimationFade];
+}
+
+- (void)textFieldDidEndEditing:(UITextField *)textField
+{
+    NSLog(@"end editing");
+    textField.text = [[[ACState localState].projects objectAtIndex:textField.tag] name];
+}
+
+- (BOOL)textFieldShouldReturn:(UITextField *)textField
+{
+    NSLog(@"return");
+    [[[ACState localState].projects objectAtIndex:textField.tag] setName:textField.text];
+    [textField resignFirstResponder];
+    return YES;
+}
+
 #pragma mark - Table view data source
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
@@ -190,6 +214,7 @@
         // Text field default setup
         STATIC_OBJECT(UIFont, font, [UIFont styleFontWithSize:18]);
         cell.textField.font = font;
+        cell.textField.delegate = self;
         
         // Accessory default setup
         STATIC_OBJECT(UIImage, disclosureImage, [UIImage styleTableDisclosureImageWithColor:[UIColor styleForegroundColor] shadowColor:[UIColor whiteColor]]);
@@ -210,18 +235,11 @@
     // Setup project title
     [cell.textField setText:[[[ACState localState].projects objectAtIndex:indexPath.row] name]];
     
-    // Setup tag for delete callback
+    // Setup tags for callbacks
     [cell.customDeleteButton setTag:indexPath.row];
+    [cell.textField setTag:indexPath.row];
     
     return cell;
-}
-
-- (void)deleteTableRow:(id)sender
-{
-    NSInteger rowIndex = [sender tag];
-    ECASSERT(rowIndex >= 0);
-    [[[ACState localState].projects objectAtIndex:rowIndex] delete];
-    [self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:rowIndex inSection:0]] withRowAnimation:UITableViewRowAnimationFade];
 }
 
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath

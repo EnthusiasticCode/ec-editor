@@ -9,6 +9,6 @@
 #import <UIKit/UIKit.h>
 #import "ACNavigationTarget.h"
 
-@interface ACProjectTableController : UITableViewController <ACNavigationTarget>
+@interface ACProjectTableController : UITableViewController <ACNavigationTarget, UITextFieldDelegate>
 
 @end
