@@ -106,6 +106,10 @@
 
 #pragma mark Rendering Content
 
+/// Convenience function to enumerate throught all lines (indipendent from text segment)
+/// contained in the given rect relative to the rendered text space.
+- (void)enumerateLinesIntersectingRect:(CGRect)rect usingBlock:(void(^)(ECTextRendererLine *line, NSUInteger lineIndex, NSUInteger lineNumber, CGFloat lineOffset, BOOL *stop))block;
+
 /// Renders the content text contained in the given rect to the specified 
 /// context. The given context will not be modified prior rendering. Lines
 /// will be drawn with the current context transformation and context will
@@ -113,7 +117,7 @@
 /// A block can be specified and it will be called for each rendered line
 /// with the current line number (not considering wraps), after the context 
 /// has been positioned to draw the current partial line.
-- (void)drawTextWithinRect:(CGRect)rect inContext:(CGContextRef)context withLineBlock:(void(^)(NSUInteger lineNumber))block;
+- (void)drawTextWithinRect:(CGRect)rect inContext:(CGContextRef)context withLineBlock:(void(^)(ECTextRendererLine *line, NSUInteger lineNumber))block;
 
 #pragma mark Retreiving Geometry to Text Mapping
 

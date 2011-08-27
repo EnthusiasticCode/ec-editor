@@ -12,6 +12,8 @@
 #import "AppStyle.h"
 #import "ACState.h"
 
+#import <QuartzCore/QuartzCore.h>
+
 @implementation ACCodeFileController
 
 @synthesize codeView;
@@ -25,6 +27,15 @@
         codeView.backgroundColor = [UIColor whiteColor];
         codeView.caretColor = [UIColor styleThemeColorOne];
         codeView.selectionColor = [[UIColor styleThemeColorOne] colorWithAlphaComponent:0.3];
+        
+        codeView.lineNumberWidth = 20;
+        codeView.lineNumberRenderingBlock = ^(CGContextRef context, CGRect lineNumberBounds, CGFloat baseline, NSUInteger lineNumber, BOOL isWrappedLine) {
+            if (!isWrappedLine)
+                return;
+            
+            CGContextSetFillColorWithColor(context, [UIColor redColor].CGColor);
+            CGContextFillRect(context, lineNumberBounds);
+        };
         
         codeView.renderer.preferredLineCountPerSegment = 500;
     }

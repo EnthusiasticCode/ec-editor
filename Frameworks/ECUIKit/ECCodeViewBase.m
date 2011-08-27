@@ -7,7 +7,6 @@
 //
 
 #import "ECCodeViewBase.h"
-#import <QuartzCore/QuartzCore.h>
 #import "ECCodeStringDataSource.h"
 
 #define TILEVIEWPOOL_SIZE (3)
@@ -132,41 +131,46 @@
         UIGraphicsBeginImageContextWithOptions(rect.size, YES, 0);
         CGContextRef imageContext = UIGraphicsGetCurrentContext();
         {
+            LineNumberRenderingBlock lineBlock = this->parent.lineNumberRenderingBlock;
             
+            // Draw background
             [this.backgroundColor setFill];
             CGContextFillRect(imageContext, rect);
             
-            //
+            // Positioning text
             CGContextScaleCTM(imageContext, scale, scale);
-            
-            // Drawing text
             CGPoint textOffset = CGPointMake(0, rect.size.height * this->tileIndex * invertScale);
+            CGFloat lineNumberWidth = lineBlock ? this->parent.lineNumberWidth : 0;
             if (this->tileIndex == 0) 
             {
-                CGContextTranslateCTM(imageContext, this->textInsets.left, this->textInsets.top);
+                CGContextTranslateCTM(imageContext, this->textInsets.left + lineNumberWidth, this->textInsets.top);
             }
             else
             {
                 textOffset.y -= this->textInsets.top;
-                CGContextTranslateCTM(imageContext, this->textInsets.left, 0);
+                CGContextTranslateCTM(imageContext, this->textInsets.left + lineNumberWidth, 0);
             }
             
             CGSize textSize = rect.size;
             textSize.height *= invertScale;
             textSize.width *= invertScale;
             
-            __block NSUInteger lastLine = NSUIntegerMax;
-            [this->parent.renderer drawTextWithinRect:(CGRect){ textOffset, textSize } inContext:imageContext withLineBlock:^(NSUInteger lineNumber) {
-                if (lastLine != lineNumber)
-                {
+            // Drawing text
+            if (lineBlock)
+            {
+                __block NSUInteger lastLine = NSUIntegerMax;
+                [this->parent.renderer drawTextWithinRect:(CGRect){ textOffset, textSize } inContext:imageContext withLineBlock:^(ECTextRendererLine *line, NSUInteger lineNumber) {
+                    CGContextSaveGState(imageContext);
+                    CGContextTranslateCTM(imageContext, -lineNumberWidth, 0);
+                    lineBlock(imageContext, CGRectMake(0, 0, lineNumberWidth, line.height), line.ascent, lineNumber, (lastLine == lineNumber));
+                    CGContextRestoreGState(imageContext);
                     lastLine = lineNumber;
-                    return;
-                }
-                CGContextSaveGState(imageContext);
-                CGContextSetFillColorWithColor(imageContext, [UIColor redColor].CGColor);
-                CGContextFillRect(imageContext, CGRectMake(0, 0, 10, 10));
-                CGContextRestoreGState(imageContext);
-            }];
+                }];
+            }
+            else
+            {
+                [this->parent.renderer drawTextWithinRect:(CGRect){ textOffset, textSize } inContext:imageContext withLineBlock:nil];
+            }
         }
         UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
         UIGraphicsEndImageContext();
@@ -191,6 +195,7 @@
 @synthesize datasource; 
 @synthesize textInsets;
 @synthesize renderingQueue, renderer;
+@synthesize lineNumberWidth, lineNumberRenderingBlock;
 
 - (id<ECCodeViewBaseDataSource>)datasource
 {
@@ -224,8 +229,9 @@
     if (CGRectEqualToRect(frame, self.frame))
         return;
     
+    // Setup renderer wrap with keeping in to account insets and line display
     if (ownsRenderer)
-        renderer.wrapWidth = UIEdgeInsetsInsetRect(frame, self->textInsets).size.width;
+        renderer.wrapWidth = UIEdgeInsetsInsetRect(frame, self->textInsets).size.width - (lineNumberRenderingBlock ? lineNumberWidth : 0);
     
     self.contentSize = CGSizeMake(frame.size.width, (renderer.estimatedHeight + textInsets.top + textInsets.bottom) * self.contentScaleFactor);
     
