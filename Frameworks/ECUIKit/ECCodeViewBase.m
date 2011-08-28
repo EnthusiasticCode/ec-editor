@@ -38,10 +38,10 @@
 #pragma mark -
 @interface TextTileView : UIView {
 @private
-    ECCodeViewBase *parent;
     CALayer *textLayer;
 }
 
+@property (nonatomic, readonly, weak) ECCodeViewBase *parent;
 @property (nonatomic) NSInteger tileIndex;
 @property (nonatomic) UIEdgeInsets textInsets;
 - (id)initWithCodeViewBase:(ECCodeViewBase *)codeView;
@@ -58,7 +58,7 @@
 
 @implementation TextTileView
 
-@synthesize tileIndex, textInsets;
+@synthesize parent, tileIndex, textInsets;
 
 #pragma mark Properties
 
