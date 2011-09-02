@@ -27,6 +27,7 @@
         codeView.backgroundColor = [UIColor whiteColor];
         codeView.caretColor = [UIColor styleThemeColorOne];
         codeView.selectionColor = [[UIColor styleThemeColorOne] colorWithAlphaComponent:0.3];
+        codeView.textInsets = UIEdgeInsetsMake(10, 40, 10, 10);
         
         codeView.lineNumberWidth = 30;
         codeView.lineNumberFont = [UIFont systemFontOfSize:10];

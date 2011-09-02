@@ -60,7 +60,8 @@ typedef void (^LineNumberRenderingBlock)(CGContextRef context, CGRect lineNumber
 /// is the code view itself.
 @property (nonatomic, strong) NSString *text;
 
-/// Insets of the text.
+/// Insets of the text. This insets may contains the line number width in it's 
+/// left component.
 @property (nonatomic) UIEdgeInsets textInsets;
 
 /// Invalidate the text making the receiver redraw it.
@@ -71,7 +72,8 @@ typedef void (^LineNumberRenderingBlock)(CGContextRef context, CGRect lineNumber
 
 #pragma mark Styling Text Display
 
-/// The width to reserve for line numbers left inset.
+/// The width to reserve for line numbers left inset. This value will not increase
+/// the text insets; textInsets.left must be greater than this number.
 @property (nonatomic) CGFloat lineNumberWidth;
 
 /// Font to be used for rendering line numbers

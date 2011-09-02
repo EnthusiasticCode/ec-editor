@@ -78,8 +78,7 @@
     {
         ECASSERT(dataSource != nil);
         ECASSERT([self currentURL] != nil);
-        __autoreleasing UIViewController *viewController = [dataSource tabController:self viewControllerForURL:[self currentURL]];
-        tabViewController = viewController;
+        tabViewController = [dataSource tabController:self viewControllerForURL:[self currentURL]];
     }
     return tabViewController;
 }

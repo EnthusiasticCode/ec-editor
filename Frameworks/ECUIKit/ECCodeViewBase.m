@@ -143,12 +143,12 @@
             CGFloat lineNumberWidth = this->parent.lineNumberWidth;
             if (this->tileIndex == 0) 
             {
-                CGContextTranslateCTM(imageContext, this->textInsets.left + lineNumberWidth, this->textInsets.top);
+                CGContextTranslateCTM(imageContext, this->textInsets.left, this->textInsets.top);
             }
             else
             {
                 textOffset.y -= this->textInsets.top;
-                CGContextTranslateCTM(imageContext, this->textInsets.left + lineNumberWidth, 0);
+                CGContextTranslateCTM(imageContext, this->textInsets.left, 0);
             }
             
             CGSize textSize = rect.size;
@@ -161,7 +161,9 @@
                 const char *lineNumberFontName = this->parent.lineNumberFont.fontName.UTF8String;
                 CGFloat lineNumberSize = this->parent.lineNumberFont.pointSize;
                 CGColorRef lineNumberColor = this->parent.lineNumberColor.CGColor;
-                CGFloat textInsetsLeft = this->textInsets.left;
+                CGFloat textInsetsLeft = this->textInsets.left - lineNumberWidth;
+                
+                ECASSERT(textInsetsLeft >= 0); // text inset too small
                 
                 @autoreleasepool {
                     __block NSUInteger lastLine = NSUIntegerMax;
@@ -260,7 +262,7 @@
     
     // Setup renderer wrap with keeping in to account insets and line display
     if (ownsRenderer)
-        renderer.wrapWidth = UIEdgeInsetsInsetRect(frame, self->textInsets).size.width - lineNumberWidth;
+        renderer.wrapWidth = UIEdgeInsetsInsetRect(frame, self->textInsets).size.width;
     
     self.contentSize = CGSizeMake(frame.size.width, (renderer.estimatedHeight + textInsets.top + textInsets.bottom) * self.contentScaleFactor);
     
