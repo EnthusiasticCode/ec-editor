@@ -86,6 +86,9 @@
 /// tabController:viewControllerForURL: method to be implemented.
 /// The property is weak, if the created view controller will not be strongly
 /// retained, usually by a parent view controller, it will be immediatly deallocated.
+/// The view controller may implement a method setScrollToRequireGestureRecognizerToFail:
+/// receiving a UIGestureRecognizer that should be required to fail for every controlled
+///scrolling view.
 @property (nonatomic, readonly, weak) UIViewController *tabViewController;
 
 /// Returns true if the tabViewController property is not nil without triggering 
