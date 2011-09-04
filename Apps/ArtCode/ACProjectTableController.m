@@ -44,14 +44,14 @@ static void * ACStateProjectsObservingContext;
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     self.tableView.backgroundColor = [UIColor styleBackgroundColor];
     
-    [[ACState localState] addObserver:self forKeyPath:@"projects" options:NSKeyValueObservingOptionNew context:ACStateProjectsObservingContext];
+    [[ACState sharedState] addObserver:self forKeyPath:@"projects" options:NSKeyValueObservingOptionNew context:ACStateProjectsObservingContext];
     
 //    self.tableView.allowsMultipleSelectionDuringEditing = YES;
 }
 
 - (void)viewDidUnload
 {
-    [[ACState localState] removeObserver:self forKeyPath:@"projects"];
+    [[ACState sharedState] removeObserver:self forKeyPath:@"projects"];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
@@ -173,20 +173,20 @@ static void * ACStateProjectsObservingContext;
 {
     NSInteger rowIndex = [sender tag];
     ECASSERT(rowIndex >= 0);
-    [[[ACState localState].projects objectAtIndex:rowIndex] delete];
+    [[[ACState sharedState].projects objectAtIndex:rowIndex] delete];
     [self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:rowIndex inSection:0]] withRowAnimation:UITableViewRowAnimationFade];
 }
 
 - (void)textFieldDidEndEditing:(UITextField *)textField
 {
     NSLog(@"end editing");
-    textField.text = [[[ACState localState].projects objectAtIndex:textField.tag] name];
+    textField.text = [[[ACState sharedState].projects objectAtIndex:textField.tag] name];
 }
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
     NSLog(@"return");
-    [[[ACState localState].projects objectAtIndex:textField.tag] setName:textField.text];
+    [[[ACState sharedState].projects objectAtIndex:textField.tag] setName:textField.text];
     [textField resignFirstResponder];
     return YES;
 }
@@ -200,7 +200,7 @@ static void * ACStateProjectsObservingContext;
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return [[ACState localState].projects count];
+    return [[ACState sharedState].projects count];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -243,7 +243,7 @@ static void * ACStateProjectsObservingContext;
     [cell.iconButton setImage:[self projectIconWithColor:[UIColor styleForegroundColor]] forState:UIControlStateNormal];
     
     // Setup project title
-    [cell.textField setText:[[[ACState localState].projects objectAtIndex:indexPath.row] name]];
+    [cell.textField setText:[[[ACState sharedState].projects objectAtIndex:indexPath.row] name]];
     
     // Setup tags for callbacks
     [cell.customDeleteButton setTag:indexPath.row];
@@ -265,7 +265,7 @@ static void * ACStateProjectsObservingContext;
 
 - (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)sourceIndexPath toIndexPath:(NSIndexPath *)destinationIndexPath
 {
-    [[[ACState localState].projects objectAtIndex:sourceIndexPath.row] setIndex:destinationIndexPath.row];
+    [[[ACState sharedState].projects objectAtIndex:sourceIndexPath.row] setIndex:destinationIndexPath.row];
 }
 
 /*
@@ -283,7 +283,7 @@ static void * ACStateProjectsObservingContext;
 //{
 //    if (editingStyle == UITableViewCellEditingStyleDelete) {
 //        // Delete the row from the data source
-//        [[[ACState localState].projects objectAtIndex:indexPath.row] delete];
+//        [[[ACState sharedState].projects objectAtIndex:indexPath.row] delete];
 //        [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
 //    }   
 //    else if (editingStyle == UITableViewCellEditingStyleInsert) {
@@ -308,7 +308,7 @@ static void * ACStateProjectsObservingContext;
     if (self.isEditing)
         return;
     
-    [self.ACNavigationController pushURL:[[[ACState localState].projects objectAtIndex:indexPath.row] URL]];
+    [self.ACNavigationController pushURL:[[[ACState sharedState].projects objectAtIndex:indexPath.row] URL]];
 //    [self.ACNavigationController pushURL:[NSURL URLWithString:@"artcode:/Project"]];
 }
 

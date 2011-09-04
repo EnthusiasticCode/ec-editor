@@ -57,7 +57,7 @@
         return;
     if ([name isEqualToString:self.name])
         return;
-    [[ACState localState] renameProjectWithURL:self.URL to:name];
+    [[ACState sharedState] renameProjectWithURL:self.URL to:name];
     NSFileManager *fileManager = [[NSFileManager alloc] init];
     NSURL *newURL = [NSURL ACURLForLocalProjectWithName:name];
     NSURL *documentURL = [self.URL ACProjectBundleURL];
@@ -70,14 +70,14 @@
 {
     if (_isDeleted)
         return NSNotFound;
-    return [[ACState localState] indexOfProjectWithURL:self.URL];
+    return [[ACState sharedState] indexOfProjectWithURL:self.URL];
 }
 
 - (void)setIndex:(NSUInteger)index
 {
     if (_isDeleted)
         return;
-    [[ACState localState] setIndex:index forProjectWithURL:self.URL];
+    [[ACState sharedState] setIndex:index forProjectWithURL:self.URL];
 }
 
 - (NSURL *)URL
@@ -133,7 +133,7 @@
 
 - (void)delete
 {
-    [[ACState localState] removeProjectWithURL:self.URL error:NULL];
+    [[ACState sharedState] removeProjectWithURL:self.URL error:NULL];
     _rootNode = nil;
     [_document closeWithCompletionHandler:NULL];
     NSFileManager *fileManager = [[NSFileManager alloc] init];

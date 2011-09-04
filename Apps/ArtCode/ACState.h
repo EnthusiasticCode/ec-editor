@@ -21,7 +21,7 @@ extern NSString * const ACStateNodeTypeSourceFile;
 #pragma mark - Application Level
 
 /// Returns the ACState application wide singleton
-+ (ACState *)localState;
++ (ACState *)sharedState;
 
 #pragma mark - Project Level
 

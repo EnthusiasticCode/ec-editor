@@ -133,7 +133,7 @@
 
 - (void)openURL:(NSURL *)url
 {
-    _displayedNode = [[ACState localState] nodeForURL:url];
+    _displayedNode = [[ACState sharedState] nodeForURL:url];
     [self.tableView reloadData];
 }
 

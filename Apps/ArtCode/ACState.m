@@ -37,14 +37,14 @@ static void * const ACStateProjectURLObservingContext;
 
 #pragma mark - Application Level
 
-+ (ACState *)localState
++ (ACState *)sharedState
 {
-    static ACState *localState = nil;
+    static ACState *sharedState = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        localState = [[self alloc] init];
+        sharedState = [[self alloc] init];
     });
-    return localState;
+    return sharedState;
 }
 
 - (id)init

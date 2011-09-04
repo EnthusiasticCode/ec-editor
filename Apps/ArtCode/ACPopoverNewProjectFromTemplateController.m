@@ -149,11 +149,11 @@
     for (NSUInteger projectNumber = 0; YES; ++projectNumber)
     {
         projectName = [@"Project " stringByAppendingString:[NSString stringWithFormat:@"%d", projectNumber]];
-        if ([[ACState localState] projectWithURL:[NSURL ACURLForLocalProjectWithName:projectName]])
+        if ([[ACState sharedState] projectWithURL:[NSURL ACURLForLocalProjectWithName:projectName]])
             continue;
         break;
     }
-    [[ACState localState] addNewProjectWithURL:[NSURL ACURLForLocalProjectWithName:projectName] atIndex:NSNotFound fromTemplate:nil withCompletionHandler:^(BOOL success) {
+    [[ACState sharedState] addNewProjectWithURL:[NSURL ACURLForLocalProjectWithName:projectName] atIndex:NSNotFound fromTemplate:nil withCompletionHandler:^(BOOL success) {
         if (success)
             [[ECBezelAlert centerBezelAlert] addAlertMessageWithText:[@"Added new project: " stringByAppendingString:projectName] image:nil displayImmediatly:NO];
     }];

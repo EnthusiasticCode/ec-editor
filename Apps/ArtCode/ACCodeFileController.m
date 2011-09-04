@@ -69,7 +69,7 @@
 - (void)openURL:(NSURL *)url
 {
     // TODO handle error
-    id<ACStateNode> node = [[ACState localState] nodeForURL:url];
+    id<ACStateNode> node = [[ACState sharedState] nodeForURL:url];
     ECASSERT([node respondsToSelector:@selector(fileURL)]);
     NSURL *fileURL = node.fileURL;
     NSString *urlContent = [NSString stringWithContentsOfURL:fileURL encoding:NSUTF8StringEncoding error:nil];

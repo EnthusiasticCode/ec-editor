@@ -180,7 +180,7 @@
         controllerClass = [ACProjectTableController class];
     else
     {
-        id<ACStateNode> node = [[ACState localState] nodeForURL:url];
+        id<ACStateNode> node = [[ACState sharedState] nodeForURL:url];
         if (node.nodeType == ACStateNodeTypeFolder || node.nodeType == ACStateNodeTypeGroup || node.nodeType == ACStateNodeTypeProject)
             controllerClass = [ACFileTableController class];
         else if (node.nodeType == ACStateNodeTypeSourceFile)
