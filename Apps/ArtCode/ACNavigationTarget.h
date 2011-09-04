@@ -38,4 +38,8 @@
 
 - (void)toolButtonAction:(id)sender;
 
+/// Used to indicate that the controller should make every scrolling view to require
+/// the given recognizer to fail.
+- (void)setScrollToRequireGestureRecognizerToFail:(UIGestureRecognizer *)recognizer;
+
 @end

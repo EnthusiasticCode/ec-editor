@@ -152,6 +152,11 @@
     
 }
 
+- (void)setScrollToRequireGestureRecognizerToFail:(UIGestureRecognizer *)recognizer
+{
+    [tableView.panGestureRecognizer requireGestureRecognizerToFail:recognizer];
+}
+
 #pragma mark - Table view data source
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView

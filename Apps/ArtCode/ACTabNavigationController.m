@@ -162,7 +162,9 @@ typedef void (^ScrollViewBlock)(UIScrollView *scrollView);
 /// The function also unload any other view in the content scroll view that is not one of the one described.
 /// If onlyIfThisLoadable is not nil, the function will execute the loading phase only if the given 
 /// tab controller is the current or close to it.
-static void loadCurrentAndAdiacentTabViews(ACTabNavigationController *self, ACTabController *onlyIfThisLoadable)
+/// The forceInitialization parameter will initialize the view controller's view even if already
+/// inserted in the view hierarchy.
+static void loadCurrentAndAdiacentTabViews(ACTabNavigationController *self, ACTabController *onlyIfThisLoadable, BOOL forceInitialization)
 {
     NSInteger currentTabIndex = [self->tabControllers indexOfObject:self->currentTabController];
     
@@ -184,21 +186,24 @@ static void loadCurrentAndAdiacentTabViews(ACTabNavigationController *self, ACTa
             // Load view if current or diacent to current
             if (index >= minLoadableIndex && index <= maxLoadableIndex)
             {
-                if (tabController.tabViewController.view.superview == nil)
+                if (forceInitialization || tabController.tabViewController.view.superview == nil)
                 {
                     [self->contentScrollView addSubview:tabController.tabViewController.view];
-                    // Enabling tab swipe gesture recognizer to win over nested scrollviews pan
-                    UIView *addedView = tabController.tabViewController.view;
-                    do {
+                    
+                    // Check for informal protocol to disable scrolling for swipe
+                    if ([tabController.tabViewController respondsToSelector:@selector(setScrollToRequireGestureRecognizerToFail:)])
+                    {
+                        [tabController.tabViewController performSelector:@selector(setScrollToRequireGestureRecognizerToFail:) withObject:self->swipeGestureRecognizer];
+                    }
+                    else {
+                        // Enabling tab swipe gesture recognizer to win over nested scrollviews pan
+                        UIView *addedView = tabController.tabViewController.view;
                         if ([addedView isKindOfClass:[UIScrollView class]])
                         {
                             UIScrollView *addedScrollviewView = (UIScrollView *)addedView;
                             [addedScrollviewView.panGestureRecognizer requireGestureRecognizerToFail:self->swipeGestureRecognizer];
-                            break;
                         }
-                        addedView = [addedView.subviews objectAtIndex:0];
-                        // TODO Fix, this will check only the view and descending of the first subview. may also crash. could need protocol like tabNavigationControllerWillAddView:
-                    } while (addedView);
+                    }
                 }
                 else
                 {
@@ -431,7 +436,7 @@ static void loadCurrentAndAdiacentTabViews(ACTabNavigationController *self, ACTa
     [tabBar setSelectedTabControl:tabController.tabButton animated:animated];
     
     // Load current view/adiacent views
-    loadCurrentAndAdiacentTabViews(self, nil);
+    loadCurrentAndAdiacentTabViews(self, nil, NO);
     [contentScrollView layoutIfNeeded];
     
     CGFloat pageWidth = contentScrollView.bounds.size.width;
@@ -494,7 +499,7 @@ static void loadCurrentAndAdiacentTabViews(ACTabNavigationController *self, ACTa
     }
     else
     {
-        loadCurrentAndAdiacentTabViews(self, tabController);
+        loadCurrentAndAdiacentTabViews(self, tabController, NO);
         [contentScrollView layoutIfNeeded];
     }
     
@@ -653,7 +658,7 @@ static void loadCurrentAndAdiacentTabViews(ACTabNavigationController *self, ACTa
             [UIView transitionFromView:previousVewController.view toView:tabController.tabViewController.view duration:0.2 options:UIViewAnimationOptionTransitionCrossDissolve completion:^(BOOL finished) {
                 [previousVewController removeFromParentViewController];
 
-                loadCurrentAndAdiacentTabViews(self, nil);
+                loadCurrentAndAdiacentTabViews(self, nil, YES);
                 
                 if (delegateFlags.hasDidChangeCurrentTabControllerFromTabController)
                     [delegate tabNavigationController:self didChangeCurrentTabController:currentTabController fromTabController:currentTabController];
@@ -666,7 +671,7 @@ static void loadCurrentAndAdiacentTabViews(ACTabNavigationController *self, ACTa
                 [previousVewController.view removeFromSuperview];
             [previousVewController removeFromParentViewController];
             
-            loadCurrentAndAdiacentTabViews(self, tabController);
+            loadCurrentAndAdiacentTabViews(self, tabController, NO);
         }
     }
     
@@ -710,7 +715,7 @@ static void loadCurrentAndAdiacentTabViews(ACTabNavigationController *self, ACTa
     [tabBar setSelectedTabControl:currentTabController.tabButton animated:YES];
     
     // Load/Unload needed views
-    loadCurrentAndAdiacentTabViews(self, nil);
+    loadCurrentAndAdiacentTabViews(self, nil, NO);
     
     // Informing the delegate
     if (delegateFlags.hasDidChangeCurrentTabControllerFromTabController)
