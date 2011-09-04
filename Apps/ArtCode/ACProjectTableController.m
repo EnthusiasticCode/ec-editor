@@ -21,8 +21,12 @@
 
 #define STATIC_OBJECT(typ, nam, init) static typ *nam = nil; if (!nam) nam = init
 
+static void * ACStateProjectsObservingContext;
 
 @interface ACProjectTableController ()
+{
+    UIPopoverController *_popover;
+}
 - (void)deleteTableRow:(id)sender;
 @end
 
@@ -40,7 +44,22 @@
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     self.tableView.backgroundColor = [UIColor styleBackgroundColor];
     
+    [[ACState localState] addObserver:self forKeyPath:@"projects" options:NSKeyValueObservingOptionNew context:ACStateProjectsObservingContext];
+    
 //    self.tableView.allowsMultipleSelectionDuringEditing = YES;
+}
+
+- (void)viewDidUnload
+{
+    [[ACState localState] removeObserver:self forKeyPath:@"projects"];
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    if (context != ACStateProjectsObservingContext)
+        return [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+    [self.tableView reloadData];
+    [_popover dismissPopoverAnimated:YES];
 }
 
 - (void)didReceiveMemoryWarning
@@ -79,19 +98,10 @@
 
 - (void)toolButtonAction:(id)sender
 {
-    NSString *projectName;
-    for (NSUInteger projectNumber = 0; YES; ++projectNumber)
-    {
-        projectName = [@"Project " stringByAppendingString:[NSString stringWithFormat:@"%d", projectNumber]];
-        if (![[ACState localState] insertProjectWithURL:[NSURL ACURLForLocalProjectWithName:projectName] atIndex:NSNotFound error:NULL])
-            continue;
-        break;
-    }
-//    [self.tableView beginUpdates];
-//    [self.tableView insertRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:[[[ACState localState] projects] count] inSection:0]] withRowAnimation:UITableViewRowAnimationAutomatic];
-//    [self.tableView endUpdates];
-    [self.tableView reloadData];
-    [[ECBezelAlert centerBezelAlert] addAlertMessageWithText:[@"Added new project: " stringByAppendingString:projectName] image:nil displayImmediatly:NO];
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"NewProjectPopover" bundle:[NSBundle mainBundle]];
+    UIViewController *popoverViewController = [storyboard instantiateInitialViewController];
+    _popover = [[UIPopoverController alloc] initWithContentViewController:popoverViewController];
+    [_popover presentPopoverFromRect:[sender frame] inView:[sender superview] permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
 }
 
 #pragma mark - Colored icons

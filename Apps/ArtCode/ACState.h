@@ -23,18 +23,20 @@ extern NSString * const ACStateNodeTypeSourceFile;
 /// Returns the ACState application wide singleton
 + (ACState *)localState;
 
-/// Scans the state projects directory for new projects
-- (void)scanForProjects;
-
 #pragma mark - Project Level
 
 /// A list containing all existing projects
 @property (nonatomic, strong, readonly) NSArray *projects;
 
-/// Adds a new project described by the ACURL
-/// Inserting a project with the same name as an existing project is an error
+/// Returns the project with the given ACURL if it exists
+- (id<ACStateProject>)projectWithURL:(NSURL *)URL;
+
+/// Adds a new project with the given ACURL
+/// Inserting a project with the same ACURL as an existing project is an error
 /// Passing index = NSNotFound will add the project to the end of the project list
-- (BOOL)insertProjectWithURL:(NSURL *)URL atIndex:(NSUInteger)index error:(NSError **)error;
+- (void)addNewProjectWithURL:(NSURL *)URL atIndex:(NSUInteger)index fromTemplate:(NSString *)templateName withCompletionHandler:(void (^)(BOOL success))completionHandler;
+- (void)addNewProjectWithURL:(NSURL *)URL atIndex:(NSUInteger)index fromACZ:(NSURL *)ACZFileURL withCompletionHandler:(void (^)(BOOL success))completionHandler;
+- (void)addNewProjectWithURL:(NSURL *)URL atIndex:(NSUInteger)index fromZIP:(NSURL *)ZIPFileURL withCompletionHandler:(void (^)(BOOL success))completionHandler;
 
 /// Returns the node referenced by the ACURL or nil if the node does not exist
 - (id<ACStateNode>)nodeForURL:(NSURL *)URL;
@@ -77,18 +79,7 @@ extern NSString * const ACStateNodeTypeSourceFile;
 
 @end
 
-/// AC Project controller
-/// This object should not be instantiated
 @protocol ACStateProject <ACStateNode>
-
-/// The directory where the project's documents are stored
-- (NSURL *)documentDirectory;
-
-/// The directory where the project's contents are stored
-- (NSURL *)contentDirectory;
-
-/// Returns the node referenced by the ACURL or nil if the node does not exist
-- (id<ACStateNode>)nodeForURL:(NSURL *)URL;
 
 @end
 

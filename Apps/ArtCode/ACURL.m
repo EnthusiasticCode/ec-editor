@@ -12,11 +12,18 @@ NSString * const ACProjectBundleExtension = @"bundle";
 NSString * const ACURLScheme = @"artcode";
 NSString * const ACProjectContentDirectory = @"Content";
 
+static NSString * const ACLocalProjectsSubdirectory = @"ACLocalProjects";
+
 @implementation NSURL (ACURL)
 
 + (NSURL *)applicationDocumentsDirectory
 {
-    return [NSURL fileURLWithPath:[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject]];
+    return [NSURL fileURLWithPath:[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0]];
+}
+
++ (NSURL *)applicationLibraryDirectory
+{
+    return [NSURL fileURLWithPath:[NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) objectAtIndex:0]];
 }
 
 - (BOOL)isACURL
@@ -32,7 +39,7 @@ NSString * const ACProjectContentDirectory = @"Content";
 
 + (NSURL *)ACLocalProjectsDirectory
 {
-    return [self applicationDocumentsDirectory];
+    return [[self applicationLibraryDirectory] URLByAppendingPathComponent:ACLocalProjectsSubdirectory];
 }
 
 - (NSString *)ACProjectName

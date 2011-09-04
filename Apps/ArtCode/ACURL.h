@@ -17,6 +17,9 @@ extern NSString * const ACProjectContentDirectory;
 /// Returns the application's documents directory
 + (NSURL *)applicationDocumentsDirectory;
 
+/// Returns the application's library directory
++ (NSURL *)applicationLibraryDirectory;
+
 /// Returns whether or not the URL is an ACURL
 - (BOOL)isACURL;
 

@@ -24,6 +24,7 @@
 #import "ACEditableTableCell.h"
 
 #import "ACState.h"
+#import "ACURL.h"
 
 @implementation ArtCodeAppDelegate
 
@@ -31,6 +32,10 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    // Setup all directiories
+    NSFileManager *fileManager = [[NSFileManager alloc] init];
+    if (![fileManager fileExistsAtPath:[[NSURL ACLocalProjectsDirectory] path]])
+        [fileManager createDirectoryAtURL:[NSURL ACLocalProjectsDirectory] withIntermediateDirectories:YES attributes:nil error:NULL];
     UIFont *defaultFont = [UIFont styleFontWithSize:14];    
     ACNavigationController *navigationController = (ACNavigationController *)self.window.rootViewController;
     

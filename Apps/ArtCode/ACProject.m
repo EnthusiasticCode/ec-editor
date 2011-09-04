@@ -17,6 +17,8 @@
 {
     BOOL _isDeleted;
 }
+/// Designated initializer, returns the ACProject referenced by the ACURL
+- (id)initWithURL:(NSURL *)URL;
 @property (nonatomic, strong, readonly) ACProjectDocument *document;
 @end
 
@@ -179,14 +181,32 @@
     return node;
 }
 
-- (NSURL *)documentDirectory
++ (id)projectWithURL:(NSURL *)URL
 {
-    return [self.URL ACProjectBundleURL];
+    NSFileManager *fileManager = [[NSFileManager alloc] init];
+    if (![fileManager fileExistsAtPath:[[URL ACProjectBundleURL] path]])
+        return nil;
+    return [[self alloc] initWithURL:URL];
 }
 
-- (NSURL *)contentDirectory
++ (id)projectWithURL:(NSURL *)URL fromTemplate:(NSString *)templateName withCompletionHandler:(void (^)(BOOL))completionHandler
 {
-    return [self.URL ACProjectContentURL];
+    id project = [[self alloc] initWithURL:URL];
+    if (completionHandler)
+        completionHandler(project ? YES : NO);
+    return project;
+}
+
++ (id)projectWithURL:(NSURL *)URL fromACZAtURL:(NSURL *)ACZFileURL withCompletionHandler:(void (^)(BOOL))completionHandler
+{
+    ECASSERT(NO);
+    return nil;
+}
+
++ (id)projectWithURL:(NSURL *)URL fromZIPAtURL:(NSURL *)ZIPFileURL withCompletionHandler:(void (^)(BOOL))completionHandler
+{
+    ECASSERT(NO);
+    return nil;
 }
 
 @end
