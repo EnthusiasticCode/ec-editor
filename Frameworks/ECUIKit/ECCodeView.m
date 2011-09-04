@@ -47,6 +47,7 @@
     // Recognizers
     UITapGestureRecognizer *focusRecognizer;
     UITapGestureRecognizer *tapRecognizer;
+    UITapGestureRecognizer *tapTwoTouchesRecognizer;
     UITapGestureRecognizer *doubleTapRecognizer;
     UILongPressGestureRecognizer *longPressRecognizer;
     UILongPressGestureRecognizer *longDoublePressRecognizer;
@@ -77,6 +78,7 @@
 // Gestures handlers
 - (void)handleGestureFocus:(UITapGestureRecognizer *)recognizer;
 - (void)handleGestureTap:(UITapGestureRecognizer *)recognizer;
+- (void)handleGestureTapTwoTouches:(UITapGestureRecognizer *)recognizer;
 - (void)handleGestureDoubleTap:(UITapGestureRecognizer *)recognizer;
 - (void)handleGestureLongPress:(UILongPressGestureRecognizer *)recognizer;
 
@@ -131,6 +133,8 @@
 @property (nonatomic) NSRange selection;
 @property (nonatomic, weak) ECTextRange *selectionRange;
 @property (nonatomic, readonly) ECTextPosition *selectionPosition;
+@property (nonatomic, readonly, getter = isEmpty) BOOL empty;
+@property (nonatomic, readonly) BOOL hasSelection;
 
 #pragma mark Selection Styles
 
@@ -336,16 +340,15 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
 
 #pragma mark Properties
 
-@synthesize selection;
-@synthesize selectionColor;
-@synthesize caretColor;
-@synthesize blink;
+@synthesize selection, hasSelection;
+@synthesize selectionColor, caretColor, blink;
 
 - (void)setSelection:(NSRange)range
 {
     if (NSEqualRanges(range, selection))
         return;
     
+    hasSelection = YES;
     selection = range;
     if (blinkDelayTimer)
     {
@@ -440,6 +443,11 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
 - (ECTextPosition *)selectionPosition
 {
     return [[ECTextPosition alloc] initWithIndex:selection.location];
+}
+
+- (BOOL)isEmpty
+{
+    return selection.length == 0;
 }
 
 #pragma mark Blinking
@@ -1056,6 +1064,10 @@ static void init(ECCodeView *self)
         tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleGestureTap:)];
         [self addGestureRecognizer:tapRecognizer];
         
+        tapTwoTouchesRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleGestureTapTwoTouches:)];
+        tapTwoTouchesRecognizer.numberOfTouchesRequired = 2;
+        [self addGestureRecognizer:tapTwoTouchesRecognizer];
+        
         doubleTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleGestureDoubleTap:)];
         doubleTapRecognizer.numberOfTapsRequired = 2;
         [self addGestureRecognizer:doubleTapRecognizer];
@@ -1075,6 +1087,7 @@ static void init(ECCodeView *self)
     {
         focusRecognizer.enabled = NO;
         tapRecognizer.enabled = YES;
+        tapTwoTouchesRecognizer.enabled = YES;
         doubleTapRecognizer.enabled = YES;
         longPressRecognizer.enabled = YES;
         longDoublePressRecognizer.enabled = YES;
@@ -1093,6 +1106,7 @@ static void init(ECCodeView *self)
     {
         focusRecognizer.enabled = YES;
         tapRecognizer.enabled = NO;
+        tapTwoTouchesRecognizer.enabled = NO;
         doubleTapRecognizer.enabled = NO;
         longPressRecognizer.enabled = NO;
         longDoublePressRecognizer.enabled = NO;
@@ -1436,7 +1450,7 @@ static void init(ECCodeView *self)
                       forRange:(UITextRange *)range
 {
     // TODO
-    abort();
+//    abort();
 }
 
 #pragma mark Geometry and Hit-Testing Methods
@@ -1505,8 +1519,140 @@ static void init(ECCodeView *self)
     return [[ECTextRange alloc] initWithRange:r];
 }
 
-#pragma mark -
-#pragma mark Private methods
+#pragma mark - UIResponder Standard Editing Actions
+
+- (void)copy:(id)sender
+{
+    if (selectionView.isEmpty)
+        return;
+    
+    UIPasteboard *generalPasteboard = [UIPasteboard generalPasteboard];
+    NSString *text = [self textInRange:selectionView.selectionRange];
+    generalPasteboard.string = text;
+}
+
+- (void)cut:(id)sender
+{
+    if (selectionView.isEmpty)
+        return;
+    
+    [self copy:sender];
+    [self delete:sender];
+}
+
+- (void)delete:(id)sender
+{
+    if (selectionView.isEmpty)
+        return;
+    
+    [inputDelegate textWillChange:self];
+    [inputDelegate selectionWillChange:self];
+    [self replaceRange:selectionView.selectionRange withText:@""];
+    [inputDelegate textDidChange:self];
+    [inputDelegate selectionDidChange:self];
+}
+
+- (void)paste:(id)sender
+{
+    // TODO smart paste logic
+    
+    NSString *text = [UIPasteboard generalPasteboard].string;
+    if (!text)
+        return;
+    
+    ECTextRange *selectedRange;
+    if (selectionView.hasSelection && !selectionView.hidden)
+        selectedRange = selectionView.selectionRange;
+    else
+        selectedRange = [ECTextRange textRangeWithRange:NSMakeRange([self.datasource textLength], 0)];
+    
+    [inputDelegate textWillChange:self];
+    [inputDelegate selectionWillChange:self];
+    [self replaceRange:selectedRange withText:text];
+    [inputDelegate textDidChange:self];
+    [inputDelegate selectionDidChange:self];
+}
+
+- (void)select:(id)sender
+{
+    ECTextRange *selectionRange = selectionView.selectionRange;
+    UITextRange *forwardRange = [tokenizer rangeEnclosingPosition:selectionRange.start withGranularity:UITextGranularityWord inDirection:UITextStorageDirectionForward];
+    UITextRange *backRange = [tokenizer rangeEnclosingPosition:selectionRange.end withGranularity:UITextGranularityWord inDirection:UITextStorageDirectionBackward];
+    
+    if (forwardRange && backRange)
+    {
+        ECTextRange *range = [[ECTextRange alloc] initWithStart:(ECTextPosition *)backRange.start end:(ECTextPosition *)forwardRange.end];
+        [self setSelectedTextRange:range];
+    }
+    else if (forwardRange)
+    {
+        [self setSelectedTextRange:forwardRange];
+    }
+    else if (backRange)
+    {
+        [self setSelectedTextRange:backRange];
+    }
+    else
+    {
+        // Not empty selection is not altered
+        if (![selectionRange.start isEqual:selectionRange.end])
+            return;
+        
+        // TODO instead of left/rigth text direction see oui
+        UITextPosition *beforeStart = [self positionFromPosition:selectionRange.start inDirection:UITextLayoutDirectionLeft offset:1];
+        if (beforeStart && [selectionRange.start isEqual:beforeStart] == NO)
+        {
+            self.selectedTextRange = [self textRangeFromPosition:beforeStart toPosition:selectionRange.start];
+            return;
+        }
+        
+        UITextPosition *afterEnd = [self positionFromPosition:selectionRange.end inDirection:UITextLayoutDirectionRight offset:1];
+        if (afterEnd && [selectionRange.end isEqual:afterEnd] == NO)
+        {
+            self.selectedTextRange = [self textRangeFromPosition:selectionRange.end toPosition:afterEnd];
+            return;
+        }
+    }
+}
+
+- (void)selectAll:(id)sender
+{
+    // TODO
+}
+
+- (BOOL)canPerformAction:(SEL)action withSender:(id)sender
+{
+    if (action == @selector(copy:) || action == @selector(cut:) || action == @selector(delete:))
+    {
+        return !selectionView.isEmpty;
+    }
+    
+    if (action == @selector(paste:))
+    {
+        UIPasteboard *generalPasteboard = [UIPasteboard generalPasteboard];
+        return [generalPasteboard containsPasteboardTypes:UIPasteboardTypeListString];
+    }
+    
+    if (action == @selector(select:))
+    {
+        return selectionView.selection.length == 0;
+    }
+    
+    if (action == @selector(selectAll:))
+    {
+        if (!selectionView.hasSelection)
+            return YES;
+        
+        UITextRange *selectionRange = selectionView.selectionRange;
+        if (![selectionRange.start isEqual:[self beginningOfDocument]] 
+            || ![selectionRange.end isEqual:[self endOfDocument]])
+            return YES;
+    }
+    
+    return NO;
+}
+
+#pragma mark - Private methods
 
 - (void)editDataSourceInRange:(NSRange)range withString:(NSString *)string
 {
@@ -1623,8 +1769,18 @@ static void init(ECCodeView *self)
 
 - (void)handleGestureTap:(UITapGestureRecognizer *)recognizer
 {
+    UIMenuController *sharedMenuController = [UIMenuController sharedMenuController];
+    [sharedMenuController setMenuVisible:NO animated:YES];
+    
     CGPoint tapPoint = [recognizer locationInView:self];
     [self setSelectedTextFromPoint:tapPoint toPoint:tapPoint];
+}
+
+- (void)handleGestureTapTwoTouches:(UITapGestureRecognizer *)recognizer
+{
+    UIMenuController *sharedMenuController = [UIMenuController sharedMenuController];
+    [sharedMenuController setTargetRect:selectionView.frame inView:self];
+    [sharedMenuController setMenuVisible:YES animated:YES];
 }
 
 - (void)handleGestureDoubleTap:(UITapGestureRecognizer *)recognizer
