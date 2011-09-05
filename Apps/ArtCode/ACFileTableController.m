@@ -147,11 +147,6 @@
     return YES;
 }
 
-- (void)applyFilter:(NSString *)filter
-{
-    
-}
-
 - (void)setScrollToRequireGestureRecognizerToFail:(UIGestureRecognizer *)recognizer
 {
     [tableView.panGestureRecognizer requireGestureRecognizerToFail:recognizer];

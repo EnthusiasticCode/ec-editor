@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="1.0" toolsVersion="1910" systemVersion="11A511" targetRuntime="iOS.CocoaTouch.iPad" nextObjectID="238" propertyAccessControl="none" initialViewController="71">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="1.0" toolsVersion="1934" systemVersion="11B26" targetRuntime="iOS.CocoaTouch.iPad" propertyAccessControl="none" initialViewController="71">
     <dependencies>
         <development defaultVersion="4200" identifier="xcode"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="911"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="931"/>
     </dependencies>
     <scenes>
         <scene sceneID="74">
@@ -17,28 +17,9 @@
                                 <rect key="frame" x="0.0" y="0.0" width="768" height="44"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
                                 <subviews>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="82">
-                                        <rect key="frame" x="7" y="7" width="75" height="30"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                                        <fontDescription key="fontDescription" name="Helvetica-Bold" family="Helvetica" pointSize="14"/>
-                                        <size key="titleShadowOffset" width="0.0" height="1"/>
-                                        <state key="normal">
-                                            <color key="titleColor" white="0.16" alpha="1" colorSpace="calibratedWhite"/>
-                                            <color key="titleShadowColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                        </state>
-                                        <state key="highlighted">
-                                            <color key="titleColor" white="0.16" alpha="1" colorSpace="calibratedWhite"/>
-                                            <color key="titleShadowColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                        </state>
-                                        <connections>
-                                            <action selector="toolButtonAction:" destination="71" eventType="touchUpInside" id="237"/>
-                                        </connections>
-                                    </button>
                                     <view contentMode="scaleToFill" id="133" customClass="ECJumpBar">
-                                        <rect key="frame" x="89" y="7" width="590" height="30"/>
+                                        <rect key="frame" x="7" y="7" width="672" height="30"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
-                                        <subviews/>
                                         <color key="backgroundColor" white="0.80000000000000004" alpha="1" colorSpace="calibratedWhite"/>
                                     </view>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="134">
@@ -67,8 +48,8 @@
                     </view>
                     <connections>
                         <outlet property="buttonEdit" destination="134" id="140"/>
-                        <outlet property="buttonTools" destination="82" id="139"/>
                         <outlet property="jumpBar" destination="133" id="138"/>
+                        <outlet property="topBarView" destination="207" id="DUM-1A-RRA"/>
                     </connections>
                 </viewController>
             </objects>
@@ -86,6 +67,7 @@
                 <relationship kind="outlet" name="jumpBar" candidateClass="ECJumpBar"/>
                 <relationship kind="outlet" name="tabNavigationController" candidateClass="ACTabNavigationController"/>
                 <relationship kind="outlet" name="toolPanelController" candidateClass="ACToolPanelController"/>
+                <relationship kind="outlet" name="topBarView" candidateClass="UIView"/>
             </relationships>
         </class>
         <class className="ACTabNavigationController" superclassName="UIViewController">
@@ -105,7 +87,6 @@
         </class>
         <class className="ACTopBarView" superclassName="UIView">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/ACTopBarView.h"/>
-            <relationships/>
         </class>
         <class className="ECJumpBar" superclassName="UIView">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/ECJumpBar.h"/>
@@ -115,7 +96,6 @@
         </class>
         <class className="ECTabBar" superclassName="UIView">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/ECTabBar.h"/>
-            <relationships/>
         </class>
     </classes>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">

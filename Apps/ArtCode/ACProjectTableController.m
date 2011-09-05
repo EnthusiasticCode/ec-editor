@@ -52,6 +52,8 @@
 
 #pragma mark - Tool Target Protocol
 
+@synthesize toolButton;
+
 + (id)newNavigationTargetController
 {
     return [ACProjectTableController new];
@@ -75,6 +77,18 @@
 - (void)applyFilter:(NSString *)filter
 {
     // TODO filter
+}
+
+- (UIButton *)toolButton
+{
+    if (!toolButton)
+    {
+        toolButton = [UIButton new];
+        [toolButton addTarget:self action:@selector(toolButtonAction:) forControlEvents:UIControlEventTouchUpInside];
+        [toolButton setImage:[UIImage styleAddImageWithColor:[UIColor styleForegroundColor] shadowColor:[UIColor whiteColor]] forState:UIControlStateNormal];
+        toolButton.adjustsImageWhenHighlighted = NO;
+    }
+    return toolButton;
 }
 
 - (void)toolButtonAction:(id)sender

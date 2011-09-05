@@ -46,7 +46,7 @@
 
 #pragma mark - Properties
 
-@synthesize jumpBar, buttonEdit, buttonTools;
+@synthesize topBarView, jumpBar, buttonEdit, buttonTools;
 @synthesize toolPanelController, toolPanelEnabled, toolPanelOnRight;
 @synthesize tabNavigationController;
 
@@ -84,10 +84,6 @@
     
     // Setup present APIs to use this controller as reference.
     self.definesPresentationContext = YES;
-    
-    // Tools button
-    [buttonTools setImage:[UIImage styleAddImageWithColor:[UIColor styleForegroundColor] shadowColor:[UIColor whiteColor]] forState:UIControlStateNormal];
-    buttonTools.adjustsImageWhenHighlighted = NO;
     
     ////////////////////////////////////////////////////////////////////////////
     // Jump Bar
@@ -152,6 +148,7 @@
     toolPanelLeftGestureRecognizer = nil;
     toolPanelRightGestureRecognizer = nil;
     [self setTabNavigationController:nil];
+    [self setTopBarView:nil];
     [super viewDidUnload];
 }
 
@@ -166,13 +163,6 @@
 {
     buttonEdit.selected = editing;
     [tabNavigationController setEditing:editing animated:animated];
-}
-
-- (IBAction)toolButtonAction:(id)sender
-{
-    if ([tabNavigationController.currentTabController.tabViewController respondsToSelector:@selector(toolButtonAction:)])
-        [(UIViewController<ACNavigationTarget> *)tabNavigationController.currentTabController.tabViewController toolButtonAction:sender];
-    // TODO if not, the button should be removed.
 }
 
 - (IBAction)editButtonAction:(id)sender
@@ -290,9 +280,9 @@
 {
     ECASSERT([tabController.tabViewController conformsToProtocol:@protocol(ACNavigationTarget)]);
     
-    // Bezel alert with page indicator
     if (tabController != previousTabController && controller.tabCount > 1)
     {
+        // Bezel alert with page indicator
         if (tabPageControlController == nil)
         {
             tabPageControl = [UIPageControl new];
@@ -308,6 +298,50 @@
     }
     
     UIViewController<ACNavigationTarget> *target = (UIViewController<ACNavigationTarget> *)tabController.tabViewController;
+    
+    // Layou top bar with tool button
+    UIButton *newToolButton = nil;
+    if ([target respondsToSelector:@selector(toolButton)])
+        newToolButton = [target toolButton];
+    if (newToolButton != buttonTools)
+    {
+        CGRect bounds = topBarView.bounds;
+        CGRect newToolButtonFrame = CGRectMake(7, 7, 75, 30);
+        newToolButton.frame = newToolButtonFrame;
+        if (buttonTools == nil)
+        {
+            // Animate jump bar and than fade in new button
+            [UIView animateWithDuration:STYLE_ANIMATION_DURATION animations:^{
+                jumpBar.frame = CGRectMake(CGRectGetMaxX(newToolButtonFrame) + 7, 7, bounds.size.width - (7 + 75 + 7) * 2, 30);
+            } completion:^(BOOL finished) {
+                buttonTools = newToolButton;
+                [topBarView addSubview:buttonTools];
+                buttonTools.alpha = 0;
+                [UIView animateWithDuration:STYLE_ANIMATION_DURATION animations:^{
+                    buttonTools.alpha = 1;
+                }];
+            }];
+        }
+        else if (newToolButton == nil)
+        {
+            // Fade out current button and resize jump bar
+            [UIView animateWithDuration:STYLE_ANIMATION_DURATION animations:^{
+                buttonTools.alpha = 0;
+            } completion:^(BOOL finished) {
+                [buttonTools removeFromSuperview];
+                buttonTools = nil;
+                [UIView animateWithDuration:STYLE_ANIMATION_DURATION animations:^{
+                    jumpBar.frame = CGRectMake(7, 7, bounds.size.width - (7 + 75 + 7 + 7), 30);
+                }];
+            }];
+        }
+        else
+        {
+            [UIView transitionFromView:buttonTools toView:newToolButton duration:STYLE_ANIMATION_DURATION options:UIViewAnimationOptionTransitionCrossDissolve completion:^(BOOL finished) {
+                buttonTools = newToolButton;
+            }];
+        }
+    }
     
     // Enabling tab bar
     controller.tabBarEnabled = [target enableTabBar];

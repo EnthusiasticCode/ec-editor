@@ -96,11 +96,6 @@
     return YES;
 }
 
-- (void)applyFilter:(NSString *)filter
-{
-    // TODO
-}
-
 #pragma mark - View lifecycle
 
 - (void)loadView
