@@ -13,13 +13,25 @@
 #import "ACStateInternal.h"
 #import "ACProjectDocument.h"
 
+static NSString * const ACLocalProjectsSubdirectory = @"ACLocalProjects";
+
 @interface ACProject ()
 {
     BOOL _isDeleted;
 }
-/// Designated initializer, returns the ACProject referenced by the ACURL
+// Designated initializer, returns the ACProject referenced by the ACURL
 - (id)initWithURL:(NSURL *)URL;
 @property (nonatomic, strong, readonly) ACProjectDocument *document;
+
+// Returns the local projects directory
++ (NSURL *)localProjectsDirectory;
+
+/// Returns a file URL to the bundle of the project referenced by or containing the node referenced by the ACURL
++ (NSURL *)bundleURLForLocalProjectWithURL:(NSURL *)URL;
+
+/// Returns a file URL to the content directory of the project referenced by or containing the node referenced by the ACURL
++ (NSURL *)contentDirectoryURLForLocalProjectWithURL:(NSURL *)URL;
+
 @end
 
 @implementation ACProject
@@ -46,7 +58,7 @@
 {
     if (_isDeleted)
         return nil;
-    return [self.URL ACProjectName];
+    return [[self.URL lastPathComponent] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
 }
 
 - (void)setName:(NSString *)name
@@ -59,9 +71,9 @@
         return;
     [[ACState sharedState] renameProjectWithURL:self.URL to:name];
     NSFileManager *fileManager = [[NSFileManager alloc] init];
-    NSURL *newURL = [NSURL ACURLForLocalProjectWithName:name];
-    NSURL *documentURL = [self.URL ACProjectBundleURL];
-    NSURL *newDocumentURL = [newURL ACProjectBundleURL];
+    NSURL *newURL = [NSURL ACURLWithPathComponents:[NSArray arrayWithObject:name]];
+    NSURL *documentURL = [[self class] bundleURLForLocalProjectWithURL:self.URL];
+    NSURL *newDocumentURL = [[self class] bundleURLForLocalProjectWithURL:newURL];
     [fileManager moveItemAtURL:documentURL toURL:newDocumentURL error:NULL];
     _URL = newURL;
 }
@@ -93,25 +105,10 @@
         return nil;
     if (!_document)
     {
-        NSFileManager *fileManager = [[NSFileManager alloc] init];
-        NSURL *documentURL = [self.URL ACProjectBundleURL];
+        NSURL *documentURL = [[self class] bundleURLForLocalProjectWithURL:self.URL];
         _document = [[ACProjectDocument alloc] initWithFileURL:documentURL];
         NSDictionary *options = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithBool:YES], NSMigratePersistentStoresAutomaticallyOption, [NSNumber numberWithBool:YES], NSInferMappingModelAutomaticallyOption, nil];
         _document.persistentStoreOptions = options;
-        if ([fileManager fileExistsAtPath:[documentURL path]]) {
-            [_document openWithCompletionHandler:^(BOOL success){
-                if (!success) {
-                    abort();
-                }
-            }];
-        }
-        else {
-            [_document saveToURL:documentURL forSaveOperation:UIDocumentSaveForCreating completionHandler:^(BOOL success){
-                if (!success) {
-                    abort();
-                }
-            }];
-        }
     }
     return _document;
 }
@@ -127,17 +124,16 @@
     if (!self)
         return nil;
     _URL = URL;
-    [self document]; // access document immediately so files are created if they don't exist
     return self;
 }
 
 - (void)delete
 {
-    [[ACState sharedState] removeProjectWithURL:self.URL error:NULL];
+    [[ACState sharedState] removeProjectWithURL:self.URL];
     _rootNode = nil;
     [_document closeWithCompletionHandler:NULL];
     NSFileManager *fileManager = [[NSFileManager alloc] init];
-    [fileManager removeItemAtURL:[self.URL ACProjectBundleURL] error:NULL];
+    [fileManager removeItemAtURL:[[self class] bundleURLForLocalProjectWithURL:self.URL] error:NULL];
     _isDeleted = YES;
 }
 
@@ -165,16 +161,12 @@
 
 - (id<ACStateNode>)nodeForURL:(NSURL *)URL
 {
+    if ([URL isEqual:self.URL])
+        return self;
+    if (![URL isDescendantOfACURL:self.URL])
+        return nil;
     NSArray *pathComponents = [URL pathComponents];
     NSUInteger pathComponentsCount = [pathComponents count];
-    if (pathComponentsCount < 2)
-        return nil;
-    if (![[URL ACProjectName] isEqualToString:self.name])
-        return nil;
-    if (pathComponentsCount == 2)
-        return self;
-    if (!self.document)
-        return nil;
     ACNode *node = self.document.rootNode;
     for (NSUInteger currentPathComponent = 2; currentPathComponent < pathComponentsCount; ++currentPathComponent)
         node = [node childNodeWithName:[pathComponents objectAtIndex:currentPathComponent]];
@@ -183,9 +175,6 @@
 
 + (id)projectWithURL:(NSURL *)URL
 {
-    NSFileManager *fileManager = [[NSFileManager alloc] init];
-    if (![fileManager fileExistsAtPath:[[URL ACProjectBundleURL] path]])
-        return nil;
     return [[self alloc] initWithURL:URL];
 }
 
@@ -207,6 +196,25 @@
 {
     ECASSERT(NO);
     return nil;
+}
+
+#pragma mark - Private methods
+
++ (NSURL *)ACLocalProjectsDirectory
+{
+    return [[NSURL applicationLibraryDirectory] URLByAppendingPathComponent:ACLocalProjectsSubdirectory];
+}
+
++ (NSURL *)bundleURLForLocalProjectWithURL:(NSURL *)URL
+{
+    ECASSERT([URL isACURL]);
+    return [[[[self class] ACLocalProjectsDirectory] URLByAppendingPathComponent:[[[URL pathComponents] objectAtIndex:0] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding]] URLByAppendingPathExtension:ACProjectBundleExtension];
+}
+
++ (NSURL *)contentDirectoryURLForLocalProjectWithURL:(NSURL *)URL
+{
+    ECASSERT([URL isACURL]);
+    return [[[[[self class] ACLocalProjectsDirectory] URLByAppendingPathComponent:[[[URL pathComponents] objectAtIndex:0] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding]] URLByAppendingPathExtension:ACProjectBundleExtension] URLByAppendingPathComponent:ACProjectContentDirectory isDirectory:YES];
 }
 
 @end

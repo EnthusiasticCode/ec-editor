@@ -146,14 +146,16 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     NSString *projectName;
+    NSURL *projectURL;
     for (NSUInteger projectNumber = 0; YES; ++projectNumber)
     {
         projectName = [@"Project " stringByAppendingString:[NSString stringWithFormat:@"%d", projectNumber]];
-        if ([[ACState sharedState] projectWithURL:[NSURL ACURLForLocalProjectWithName:projectName]])
+        projectURL = [NSURL ACURLWithPathComponents:[NSArray arrayWithObject:projectName]];
+        if ([[ACState sharedState] nodeForURL:projectURL])
             continue;
         break;
     }
-    [[ACState sharedState] addNewProjectWithURL:[NSURL ACURLForLocalProjectWithName:projectName] atIndex:NSNotFound fromTemplate:nil withCompletionHandler:^(BOOL success) {
+    [[ACState sharedState] addNewProjectWithURL:projectURL atIndex:NSNotFound fromTemplate:nil withCompletionHandler:^(BOOL success) {
         if (success)
             [[ECBezelAlert centerBezelAlert] addAlertMessageWithText:[@"Added new project: " stringByAppendingString:projectName] image:nil displayImmediatly:NO];
     }];

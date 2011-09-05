@@ -22,7 +22,7 @@
 /// Exports the project to a .zip file
 - (void)exportToZIPAtURL:(NSURL *)URL withCompletionHandler:(void (^)(BOOL success))completionHandler;
 
-/// Returns the project for the given URL or nil if it does not exist
+/// Returns a project with the given URL
 + (id)projectWithURL:(NSURL *)URL;
 
 /// Creates a new blank project with the given template, or a blank project the template is nil

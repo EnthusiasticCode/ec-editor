@@ -28,15 +28,14 @@ extern NSString * const ACStateNodeTypeSourceFile;
 /// A list containing all existing projects
 @property (nonatomic, strong, readonly) NSArray *projects;
 
-/// Returns the project with the given ACURL if it exists
-- (id<ACStateProject>)projectWithURL:(NSURL *)URL;
-
 /// Adds a new project with the given ACURL
 /// Inserting a project with the same ACURL as an existing project is an error
 /// Passing index = NSNotFound will add the project to the end of the project list
 - (void)addNewProjectWithURL:(NSURL *)URL atIndex:(NSUInteger)index fromTemplate:(NSString *)templateName withCompletionHandler:(void (^)(BOOL success))completionHandler;
 - (void)addNewProjectWithURL:(NSURL *)URL atIndex:(NSUInteger)index fromACZ:(NSURL *)ACZFileURL withCompletionHandler:(void (^)(BOOL success))completionHandler;
 - (void)addNewProjectWithURL:(NSURL *)URL atIndex:(NSUInteger)index fromZIP:(NSURL *)ZIPFileURL withCompletionHandler:(void (^)(BOOL success))completionHandler;
+
+#pragma mark - Node Level
 
 /// Returns the node referenced by the ACURL or nil if the node does not exist
 - (id<ACStateNode>)nodeForURL:(NSURL *)URL;
@@ -71,8 +70,6 @@ extern NSString * const ACStateNodeTypeSourceFile;
 
 /// Returns whether the node has been deleted
 - (BOOL)isDeleted;
-
-@optional
 
 /// Returns the fileURL for the object, if applicable
 @property (nonatomic, strong, readonly) NSURL *fileURL;

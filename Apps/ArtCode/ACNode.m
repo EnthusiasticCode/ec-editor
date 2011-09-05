@@ -52,14 +52,9 @@
     [pathComponents addObject:ancestor.name];
     while (ancestor.parent) {
         ancestor = ancestor.parent;
-        [pathComponents addObject:ancestor.name];
+        [pathComponents insertObject:ancestor.name atIndex:0];
     }
-    __block NSURL *URL = [NSURL ACURLForLocalProjectWithName:[pathComponents lastObject]];
-    [pathComponents removeLastObject];
-    [pathComponents enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(id pathComponent, NSUInteger idx, BOOL *stop) {
-        URL = [URL URLByAppendingPathComponent:pathComponent];
-    }];
-    return URL;
+    return [NSURL ACURLWithPathComponents:pathComponents];
 }
 
 - (void)delete

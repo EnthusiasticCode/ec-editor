@@ -20,7 +20,7 @@
 
 /// Removes a project from the project list
 /// This does NOT delete the project bundle
-- (BOOL)removeProjectWithURL:(NSURL *)URL error:(NSError **)error;
+- (void)removeProjectWithURL:(NSURL *)URL;
 
 /// Renames a project in the project list
 /// This does NOT rename the project bundle
