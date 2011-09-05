@@ -52,7 +52,7 @@ typedef void (^LineNumberRenderingBlock)(CGContextRef context, CGRect lineNumber
 
 /// The datasource for the text displayed by the code view. Default is self.
 /// If this datasource is not self, the text property will have no effect.
-@property (nonatomic, weak) id<ECCodeViewBaseDataSource> datasource;
+@property (nonatomic, strong) id<ECCodeViewBaseDataSource> datasource;
 
 #pragma mark Managing Text Content
 

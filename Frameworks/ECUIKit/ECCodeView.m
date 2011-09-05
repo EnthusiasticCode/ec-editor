@@ -1018,7 +1018,7 @@ static void init(ECCodeView *self)
     
     completionPopover.contentViewController = [self.datasource codeView:self viewControllerForCompletionAtTextInRange:textRange];
     
-    // TODO something is completionPopover.contentViewController is nil
+    // TODO something if completionPopover.contentViewController is nil
     
     CGRect textRect = [renderer rectsForStringRange:textRange limitToFirstLine:YES].bounds;
     textRect.origin.y += textInsets.top;
@@ -1501,7 +1501,7 @@ static void init(ECCodeView *self)
     return [[ECTextRange alloc] initWithRange:r];
 }
 
-#pragma mark - UIResponder Standard Editing Actions
+#pragma mark - Editing Actions
 
 - (void)copy:(id)sender
 {
@@ -1602,6 +1602,11 @@ static void init(ECCodeView *self)
     // TODO
 }
 
+- (void)complete:(id)sender
+{
+    [self showCompletionPopoverAtCursor];
+}
+
 - (BOOL)canPerformAction:(SEL)action withSender:(id)sender
 {
     if (action == @selector(copy:) || action == @selector(cut:) || action == @selector(delete:))
@@ -1613,6 +1618,11 @@ static void init(ECCodeView *self)
     {
         UIPasteboard *generalPasteboard = [UIPasteboard generalPasteboard];
         return [generalPasteboard containsPasteboardTypes:UIPasteboardTypeListString];
+    }
+    
+    if (action == @selector(complete:))
+    {
+        return selectionView.hasSelection;
     }
     
     if (action == @selector(select:))
@@ -1633,6 +1643,7 @@ static void init(ECCodeView *self)
     
     return NO;
 }
+
 
 #pragma mark - Private methods
 
@@ -1763,6 +1774,12 @@ static void init(ECCodeView *self)
 - (void)handleGestureTapTwoTouches:(UITapGestureRecognizer *)recognizer
 {
     UIMenuController *sharedMenuController = [UIMenuController sharedMenuController];
+    
+    // Adding custom menu
+    UIMenuItem *completionMenuItem = [[UIMenuItem alloc] initWithTitle:@"Completion" action:@selector(complete:)];
+    sharedMenuController.menuItems = [NSArray arrayWithObject:completionMenuItem];
+    
+    // Show context menu
     [sharedMenuController setTargetRect:selectionView.frame inView:self];
     [sharedMenuController setMenuVisible:YES animated:YES];
 }

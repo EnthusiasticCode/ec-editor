@@ -18,6 +18,7 @@
 		B7C738A713F47B36006EB040 /* ACNode.m in Sources */ = {isa = PBXBuildFile; fileRef = B7C738A613F47B36006EB040 /* ACNode.m */; };
 		B7DF4B5D13EFE52F00BF8306 /* ACProjectDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = B7DF4B5C13EFE52F00BF8306 /* ACProjectDocument.m */; };
 		CD13665913D32150001F3455 /* UIControl+BlockAction.m in Sources */ = {isa = PBXBuildFile; fileRef = CD13665813D32150001F3455 /* UIControl+BlockAction.m */; };
+		CD1DEA4A1415558500560D81 /* ACCodeIndexerDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = CD1DEA491415558500560D81 /* ACCodeIndexerDataSource.m */; };
 		CD21547913F45CC200614B83 /* ACToolButton.m in Sources */ = {isa = PBXBuildFile; fileRef = CD21547813F45CC200614B83 /* ACToolButton.m */; };
 		CD4786E913DB0C2500616B62 /* ACState.m in Sources */ = {isa = PBXBuildFile; fileRef = CD4786E813DB0C2500616B62 /* ACState.m */; };
 		CD4786ED13DB0F7A00616B62 /* ECBezelAlert.m in Sources */ = {isa = PBXBuildFile; fileRef = CD4786EC13DB0F7A00616B62 /* ECBezelAlert.m */; };
@@ -223,6 +224,8 @@
 		CD0DEAB613D4C2430087ADBB /* ACNavigationTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACNavigationTarget.h; sourceTree = "<group>"; };
 		CD13665713D32150001F3455 /* UIControl+BlockAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIControl+BlockAction.h"; sourceTree = "<group>"; };
 		CD13665813D32150001F3455 /* UIControl+BlockAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIControl+BlockAction.m"; sourceTree = "<group>"; };
+		CD1DEA481415558500560D81 /* ACCodeIndexerDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACCodeIndexerDataSource.h; sourceTree = "<group>"; };
+		CD1DEA491415558500560D81 /* ACCodeIndexerDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACCodeIndexerDataSource.m; sourceTree = "<group>"; };
 		CD21547713F45CC200614B83 /* ACToolButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACToolButton.h; sourceTree = "<group>"; };
 		CD21547813F45CC200614B83 /* ACToolButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACToolButton.m; sourceTree = "<group>"; };
 		CD4786E713DB0C2500616B62 /* ACState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACState.h; sourceTree = "<group>"; };
@@ -837,6 +840,8 @@
 			children = (
 				CD9CD96E13DC22AF007964D3 /* ACCodeFileController.h */,
 				CD9CD96F13DC22AF007964D3 /* ACCodeFileController.m */,
+				CD1DEA481415558500560D81 /* ACCodeIndexerDataSource.h */,
+				CD1DEA491415558500560D81 /* ACCodeIndexerDataSource.m */,
 			);
 			name = Editor;
 			sourceTree = "<group>";
@@ -1324,6 +1329,7 @@
 				CDF1D3B91415073900EFEC21 /* ECCodeUnit.m in Sources */,
 				CDF1D46B14150A9200EFEC21 /* ECHashing.m in Sources */,
 				CDF1D47014150C7800EFEC21 /* MurmurHash3.c in Sources */,
+				CD1DEA4A1415558500560D81 /* ACCodeIndexerDataSource.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

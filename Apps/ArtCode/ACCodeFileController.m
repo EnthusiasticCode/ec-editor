@@ -6,27 +6,16 @@
 //  Copyright 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import "ACCodeFileController.h"
-#import "ECCodeView.h"
-#import "ECCodeStringDataSource.h"
-
-#import "ECCodeUnit.h"
-#import "ECCodeToken.h"
-#import "ECCodeCursor.h"
-
 #import "AppStyle.h"
 #import "ACState.h"
+
+#import "ACCodeFileController.h"
+#import "ECCodeView.h"
+#import "ACCodeIndexerDataSource.h"
 
 #import <QuartzCore/QuartzCore.h>
 
 @implementation ACCodeFileController
-
-static NSRange intersectionOfRangeRelativeToRange(NSRange range, NSRange inRange)
-{
-    NSRange intersectionRange = NSIntersectionRange(range, inRange);
-    intersectionRange.location -= inRange.location;
-    return intersectionRange;
-}
 
 @synthesize codeView;
 
@@ -35,6 +24,11 @@ static NSRange intersectionOfRangeRelativeToRange(NSRange range, NSRange inRange
     if (!codeView)
     {
         codeView = [ECCodeView new];
+        
+        // Datasource setup
+        codeView.datasource = [ACCodeIndexerDataSource new];
+        
+        // Layout setup
         codeView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
         codeView.backgroundColor = [UIColor whiteColor];
         codeView.caretColor = [UIColor styleThemeColorOne];
@@ -84,49 +78,11 @@ static NSRange intersectionOfRangeRelativeToRange(NSRange range, NSRange inRange
     id<ACStateNode> node = [[ACState localState] nodeForURL:url];
     
     // TODO start loading animation
-    ECCodeStringDataSource *dataSource = (ECCodeStringDataSource *)self.codeView.datasource;
+    ACCodeIndexerDataSource *dataSource = (ACCodeIndexerDataSource *)self.codeView.datasource;
     [node loadCodeUnitWithCompletionHandler:^(BOOL success) {
         if (success)
         {
-            ECTextStyle *keywordStyle = [ECTextStyle textStyleWithName:@"Keyword" font:nil color:[UIColor blueColor]];
-            ECTextStyle *commentStyle = [ECTextStyle textStyleWithName:@"Comment" font:nil color:[UIColor greenColor]];
-            ECTextStyle *referenceStyle = [ECTextStyle textStyleWithName:@"Reference" font:nil color:[UIColor purpleColor]];
-            ECTextStyle *literalStyle = [ECTextStyle textStyleWithName:@"Literal" font:nil color:[UIColor redColor]];
-            ECTextStyle *declarationStyle = [ECTextStyle textStyleWithName:@"Declaration" font:nil color:[UIColor brownColor]];
-            ECTextStyle *preprocessingStyle = [ECTextStyle textStyleWithName:@"Preprocessing" font:nil color:[UIColor orangeColor]];
-            
-            dataSource.stylingBlock = ^(NSMutableAttributedString *string, NSRange stringRange)
-            {                
-                for (ECCodeToken *token in [node.codeUnit tokensInRange:stringRange withCursors:YES])
-                {
-                    switch (token.kind)
-                    {
-                        case ECCodeTokenKindKeyword:
-                            [string addAttributes:keywordStyle.CTAttributes range:intersectionOfRangeRelativeToRange(token.extent, stringRange)];
-                            break;
-                            
-                        case ECCodeTokenKindComment:
-                            [string addAttributes:commentStyle.CTAttributes range:intersectionOfRangeRelativeToRange(token.extent, stringRange)];
-                            break;
-                            
-                        case ECCodeTokenKindLiteral:
-                            [string addAttributes:literalStyle.CTAttributes range:intersectionOfRangeRelativeToRange(token.extent, stringRange)];
-                            break;
-                            
-                        default:
-                        {
-                            if (token.cursor.kind >= ECCodeCursorKindFirstDecl && token.cursor.kind <= ECCodeCursorKindLastDecl)
-                                [string addAttributes:declarationStyle.CTAttributes range:intersectionOfRangeRelativeToRange(token.extent, stringRange)];
-                            else if (token.cursor.kind >= ECCodeCursorKindFirstRef && token.cursor.kind <= ECCodeCursorKindLastRef)
-                                [string addAttributes:referenceStyle.CTAttributes range:intersectionOfRangeRelativeToRange(token.extent, stringRange)];
-                            else if (token.cursor.kind >= ECCodeCursorKindFirstPreprocessing && token.cursor.kind <= ECCodeCursorKindLastPreprocessing)
-                                [string addAttributes:preprocessingStyle.CTAttributes range:intersectionOfRangeRelativeToRange(token.extent, stringRange)];
-                            break;
-                        }
-                    }
-                }
-            };
-            
+            dataSource.codeUnit = node.codeUnit;
             [self.codeView updateAllText];
         }
         // TODO else report error
