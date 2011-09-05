@@ -9,13 +9,14 @@
 #import <clang-c/Index.h>
 #import "ECClangCodeUnit.h"
 #import "ECClangCodeIndex.h"
-#import <ECCodeIndexing/ECCodeToken.h>
-#import <ECCodeIndexing/ECCodeFixIt.h>
-#import <ECCodeIndexing/ECCodeDiagnostic.h>
-#import <ECCodeIndexing/ECCodeCompletionResult.h>
-#import <ECCodeIndexing/ECCodeCompletionString.h>
-#import <ECCodeIndexing/ECCodeCompletionChunk.h>
-#import <ECCodeIndexing/ECCodeCursor.h>
+
+#import "ECCodeToken.h"
+#import "ECCodeFixIt.h"
+#import "ECCodeDiagnostic.h"
+#import "ECCodeCompletionResult.h"
+#import "ECCodeCompletionString.h"
+#import "ECCodeCompletionChunk.h"
+#import "ECCodeCursor.h"
 
 NSString *const ECClangCodeUnitOptionLanguage = @"Language";
 NSString *const ECClangCodeUnitOptionCXIndex = @"CXIndex";

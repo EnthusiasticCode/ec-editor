@@ -8,7 +8,7 @@
 
 #import "ECCodeCompletionString.h"
 #import "ECCodeCompletionChunk.h"
-#import <ECFoundation/ECHashing.h>
+#import "ECHashing.h"
 
 @interface ECCodeCompletionString ()
 {

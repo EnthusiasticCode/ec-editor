@@ -7,7 +7,7 @@
 //
 
 #import "ECCodeCompletionChunk.h"
-#import <ECFoundation/ECHashing.h>
+#import "ECHashing.h"
 
 @interface ECCodeCompletionChunk ()
 {

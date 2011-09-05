@@ -43,7 +43,6 @@
 
 #pragma mark Head Bar Methods
 
-- (IBAction)toolButtonAction:(id)sender;
 - (IBAction)editButtonAction:(id)sender;
 
 @end

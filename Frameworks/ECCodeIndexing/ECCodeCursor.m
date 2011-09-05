@@ -8,7 +8,7 @@
 
 #import "ECCodeCursor.h"
 #import "ECCodeUnit.h"
-#import <ECFoundation/ECHashing.h>
+#import "ECHashing.h"
 
 @interface ECCodeCursor ()
 {

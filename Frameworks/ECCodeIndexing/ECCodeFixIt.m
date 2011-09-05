@@ -7,7 +7,7 @@
 //
 
 #import "ECCodeFixIt.h"
-#import <ECFoundation/ECHashing.h>
+#import "ECHashing.h"
 
 @interface ECCodeFixIt ()
 {

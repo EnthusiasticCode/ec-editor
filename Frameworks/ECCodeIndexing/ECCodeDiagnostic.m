@@ -7,7 +7,7 @@
 //
 
 #import "ECCodeDiagnostic.h"
-#import <ECFoundation/ECHashing.h>
+#import "ECHashing.h"
 
 @interface ECCodeDiagnostic ()
 {
