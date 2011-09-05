@@ -8,7 +8,7 @@
 
 #import "ACURL.h"
 
-NSString * const ACProjectBundleExtension = @"bundle";
+NSString * const ACProjectBundleExtension = @"acproj";
 NSString * const ACURLScheme = @"artcode";
 NSString * const ACProjectContentDirectory = @"Content";
 

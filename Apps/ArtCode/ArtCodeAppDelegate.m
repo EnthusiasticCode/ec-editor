@@ -24,7 +24,6 @@
 #import "ACEditableTableCell.h"
 
 #import "ACState.h"
-#import "ACURL.h"
 
 @implementation ArtCodeAppDelegate
 

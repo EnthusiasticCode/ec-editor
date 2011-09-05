@@ -22,16 +22,16 @@
 /// Exports the project to a .zip file
 - (void)exportToZIPAtURL:(NSURL *)URL withCompletionHandler:(void (^)(BOOL success))completionHandler;
 
-/// Returns a project with the given URL
-+ (id)projectWithURL:(NSURL *)URL;
+/// Opens an existing project with the given URL
++ (id)projectWithURL:(NSURL *)URL withCompletionHandler:(void (^)(BOOL success))completionHandler;
 
-/// Creates a new blank project with the given template, or a blank project the template is nil
-+ (id)projectWithURL:(NSURL *)URL fromTemplate:(NSString *)templateName withCompletionHandler:(void (^)(BOOL))completionHandler;
+/// Creates and returns a new blank project with the given template, or a blank project the template is nil
++ (id)projectWithURL:(NSURL *)URL fromTemplate:(NSString *)templateName withCompletionHandler:(void (^)(BOOL success))completionHandler;
 
-/// Imports a new project from a .acz file
+/// Imports and returns a new project from a .acz file
 + (id)projectWithURL:(NSURL *)URL fromACZAtURL:(NSURL *)ACZFileURL withCompletionHandler:(void (^)(BOOL success))completionHandler;
 
-/// Imports a new project from a .zip file
+/// Imports and returns new project from a .zip file
 + (id)projectWithURL:(NSURL *)URL fromZIPAtURL:(NSURL *)ZIPFileURL withCompletionHandler:(void (^)(BOOL success))completionHandler;
 
 @end

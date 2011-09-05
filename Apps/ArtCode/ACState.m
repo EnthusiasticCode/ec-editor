@@ -62,7 +62,7 @@ static void * const ACStateProjectURLObservingContext;
         [_projectURLs addObject:[NSURL URLWithString:projectURL]];
     for (NSURL *projectURL in _projectURLs)
     {
-        ACProject *project = [ACProject projectWithURL:projectURL];
+        ACProject *project = [ACProject projectWithURL:projectURL withCompletionHandler:NULL];
         ECASSERT(project);
         [project addObserver:self forKeyPath:@"URL" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld context:ACStateProjectURLObservingContext];
         [_projectObjects setObject:project forKey:projectURL];

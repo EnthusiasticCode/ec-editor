@@ -32,16 +32,18 @@
 - (ACNode *)rootNode
 {
     if (!_rootNode)
-    {
         _rootNode = [self findRootNode];
-        [self addAllNodesInProjectRoot];
-    }
     return _rootNode;
 }
 
 + (NSString *)persistentStoreName
 {
     return @"acproject.db";
+}
+
+- (NSDictionary *)persistentStoreOptions
+{
+    return [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithBool:YES], NSMigratePersistentStoresAutomaticallyOption, [NSNumber numberWithBool:YES], NSInferMappingModelAutomaticallyOption, nil];
 }
 
 - (ACNode *)findRootNode

@@ -173,8 +173,10 @@ static void * ACStateProjectsObservingContext;
 {
     NSInteger rowIndex = [sender tag];
     ECASSERT(rowIndex >= 0);
-    [[[ACState sharedState].projects objectAtIndex:rowIndex] delete];
+    [self.tableView beginUpdates];
     [self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:rowIndex inSection:0]] withRowAnimation:UITableViewRowAnimationFade];
+    [[[ACState sharedState].projects objectAtIndex:rowIndex] delete];
+    [self.tableView endUpdates];
 }
 
 - (void)textFieldDidEndEditing:(UITextField *)textField
