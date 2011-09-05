@@ -1,33 +1,45 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model name="" userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="870" systemVersion="11B26" minimumToolsVersion="Automatic" macOSVersion="Automatic" iOSVersion="Automatic">
-    <entity name="Bookmark" representedClassName="CDBookmark">
+    <entity name="Bookmark" representedClassName="">
         <attribute name="note" optional="YES" attributeType="String"/>
         <attribute name="offset" attributeType="Integer 32" defaultValueString="0"/>
+        <relationship name="project" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Project" inverseName="bookmarks" inverseEntity="Project" syncable="YES"/>
     </entity>
-    <entity name="HistoryItem" representedClassName="CDHistoryItem">
+    <entity name="File" representedClassName="ACFile" parentEntity="Node" syncable="YES"/>
+    <entity name="Group" representedClassName="ACGroup" parentEntity="Node" syncable="YES">
+        <attribute name="concrete" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
+        <attribute name="expanded" attributeType="Boolean" defaultValueString="NO"/>
+        <relationship name="children" optional="YES" toMany="YES" deletionRule="No Action" ordered="YES" destinationEntity="Node" inverseName="parent" inverseEntity="Node"/>
+    </entity>
+    <entity name="HistoryItem" representedClassName="">
         <attribute name="position" attributeType="Float" defaultValueString="0.0"/>
         <attribute name="selection" optional="YES" attributeType="Transformable"/>
         <attribute name="URL" attributeType="String"/>
         <relationship name="tab" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Tab" inverseName="historyItems" inverseEntity="Tab"/>
     </entity>
     <entity name="Node" representedClassName="ACNode">
-        <attribute name="expanded" attributeType="Boolean" defaultValueString="NO"/>
         <attribute name="name" attributeType="String"/>
         <attribute name="path" optional="YES" attributeType="String"/>
         <attribute name="tag" attributeType="Integer 16" defaultValueString="0"/>
-        <attribute name="type" attributeType="Integer 16"/>
-        <relationship name="children" optional="YES" toMany="YES" deletionRule="Cascade" ordered="YES" destinationEntity="Node" inverseName="parent" inverseEntity="Node"/>
-        <relationship name="parent" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Node" inverseName="children" inverseEntity="Node"/>
+        <relationship name="parent" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Group" inverseName="children" inverseEntity="Group"/>
     </entity>
-    <entity name="Tab" representedClassName="CDTab">
+    <entity name="Project" representedClassName="ACProject" parentEntity="Group" syncable="YES">
+        <relationship name="bookmarks" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Bookmark" inverseName="project" inverseEntity="Bookmark" syncable="YES"/>
+        <relationship name="tabs" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Tab" inverseName="project" inverseEntity="Tab" syncable="YES"/>
+    </entity>
+    <entity name="Tab" representedClassName="">
         <attribute name="currentHistoryPosition" attributeType="Integer 16" defaultValueString="0"/>
         <attribute name="index" attributeType="Integer 16"/>
         <relationship name="historyItems" toMany="YES" minCount="1" deletionRule="Cascade" ordered="YES" destinationEntity="HistoryItem" inverseName="tab" inverseEntity="HistoryItem"/>
+        <relationship name="project" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Project" inverseName="tabs" inverseEntity="Project" syncable="YES"/>
     </entity>
     <elements>
-        <element name="Bookmark" positionX="-3960" positionY="-2601" width="128" height="75"/>
+        <element name="Bookmark" positionX="-4068" positionY="-2619" width="128" height="90"/>
+        <element name="File" positionX="-3960" positionY="-2484" width="128" height="45"/>
+        <element name="Group" positionX="-3755" positionY="-2475" width="128" height="90"/>
         <element name="HistoryItem" positionX="-3537" positionY="-2610" width="128" height="105"/>
-        <element name="Node" positionX="-3737" positionY="-2493" width="128" height="150"/>
-        <element name="Tab" positionX="-3476" positionY="-2421" width="128" height="90"/>
+        <element name="Node" positionX="-3753" positionY="-2358" width="128" height="150"/>
+        <element name="Project" positionX="-3746" positionY="-2667" width="128" height="75"/>
+        <element name="Tab" positionX="-3476" positionY="-2421" width="128" height="105"/>
     </elements>
 </model>

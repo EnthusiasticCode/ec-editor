@@ -17,10 +17,6 @@
 		B77F53A81413667200B8A978 /* ACPopoverNewProjectFromTemplateController.m in Sources */ = {isa = PBXBuildFile; fileRef = B77F53A71413667200B8A978 /* ACPopoverNewProjectFromTemplateController.m */; };
 		B77F53AB1413669B00B8A978 /* ACPopoverNewProjectFromACZController.m in Sources */ = {isa = PBXBuildFile; fileRef = B77F53AA1413669B00B8A978 /* ACPopoverNewProjectFromACZController.m */; };
 		B77F53AE141366AD00B8A978 /* ACPopoverNewProjectFromZIPController.m in Sources */ = {isa = PBXBuildFile; fileRef = B77F53AD141366AC00B8A978 /* ACPopoverNewProjectFromZIPController.m */; };
-		B7C738A113F47B01006EB040 /* CDBookmark.m in Sources */ = {isa = PBXBuildFile; fileRef = B7C7389A13F47B01006EB040 /* CDBookmark.m */; };
-		B7C738A213F47B01006EB040 /* CDHistoryItem.m in Sources */ = {isa = PBXBuildFile; fileRef = B7C7389C13F47B01006EB040 /* CDHistoryItem.m */; };
-		B7C738A313F47B01006EB040 /* CDNode.m in Sources */ = {isa = PBXBuildFile; fileRef = B7C7389E13F47B01006EB040 /* CDNode.m */; };
-		B7C738A413F47B01006EB040 /* CDTab.m in Sources */ = {isa = PBXBuildFile; fileRef = B7C738A013F47B01006EB040 /* CDTab.m */; };
 		B7C738A713F47B36006EB040 /* ACNode.m in Sources */ = {isa = PBXBuildFile; fileRef = B7C738A613F47B36006EB040 /* ACNode.m */; };
 		B7DD7817140F7293005C60AB /* NSData+CocoaDevUsersAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = B7DD7816140F7293005C60AB /* NSData+CocoaDevUsersAdditions.m */; };
 		B7DF4B5D13EFE52F00BF8306 /* ACProjectDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = B7DF4B5C13EFE52F00BF8306 /* ACProjectDocument.m */; };
@@ -124,14 +120,6 @@
 		B77F53AA1413669B00B8A978 /* ACPopoverNewProjectFromACZController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACPopoverNewProjectFromACZController.m; sourceTree = "<group>"; };
 		B77F53AC141366AC00B8A978 /* ACPopoverNewProjectFromZIPController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACPopoverNewProjectFromZIPController.h; sourceTree = "<group>"; };
 		B77F53AD141366AC00B8A978 /* ACPopoverNewProjectFromZIPController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACPopoverNewProjectFromZIPController.m; sourceTree = "<group>"; };
-		B7C7389913F47B01006EB040 /* CDBookmark.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDBookmark.h; sourceTree = "<group>"; };
-		B7C7389A13F47B01006EB040 /* CDBookmark.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CDBookmark.m; sourceTree = "<group>"; };
-		B7C7389B13F47B01006EB040 /* CDHistoryItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDHistoryItem.h; sourceTree = "<group>"; };
-		B7C7389C13F47B01006EB040 /* CDHistoryItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CDHistoryItem.m; sourceTree = "<group>"; };
-		B7C7389D13F47B01006EB040 /* CDNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDNode.h; sourceTree = "<group>"; };
-		B7C7389E13F47B01006EB040 /* CDNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CDNode.m; sourceTree = "<group>"; };
-		B7C7389F13F47B01006EB040 /* CDTab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDTab.h; sourceTree = "<group>"; };
-		B7C738A013F47B01006EB040 /* CDTab.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CDTab.m; sourceTree = "<group>"; };
 		B7C738A513F47B36006EB040 /* ACNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACNode.h; sourceTree = "<group>"; };
 		B7C738A613F47B36006EB040 /* ACNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACNode.m; sourceTree = "<group>"; };
 		B7DD7815140F7293005C60AB /* NSData+CocoaDevUsersAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSData+CocoaDevUsersAdditions.h"; path = "../ThirdParty/CocoaDev/NSData+CocoaDevUsersAdditions.h"; sourceTree = "<group>"; };
@@ -307,14 +295,6 @@
 		B7C7389713F47AE6006EB040 /* Core Data */ = {
 			isa = PBXGroup;
 			children = (
-				B7C7389913F47B01006EB040 /* CDBookmark.h */,
-				B7C7389A13F47B01006EB040 /* CDBookmark.m */,
-				B7C7389B13F47B01006EB040 /* CDHistoryItem.h */,
-				B7C7389C13F47B01006EB040 /* CDHistoryItem.m */,
-				B7C7389D13F47B01006EB040 /* CDNode.h */,
-				B7C7389E13F47B01006EB040 /* CDNode.m */,
-				B7C7389F13F47B01006EB040 /* CDTab.h */,
-				B7C738A013F47B01006EB040 /* CDTab.m */,
 				B732CFF913DB24F600637FBE /* Project.xcdatamodeld */,
 			);
 			name = "Core Data";
@@ -901,10 +881,6 @@
 				CDF215F713E4468F005B520F /* ACEditableTableCell.m in Sources */,
 				B7DF4B5D13EFE52F00BF8306 /* ACProjectDocument.m in Sources */,
 				CD21547913F45CC200614B83 /* ACToolButton.m in Sources */,
-				B7C738A113F47B01006EB040 /* CDBookmark.m in Sources */,
-				B7C738A213F47B01006EB040 /* CDHistoryItem.m in Sources */,
-				B7C738A313F47B01006EB040 /* CDNode.m in Sources */,
-				B7C738A413F47B01006EB040 /* CDTab.m in Sources */,
 				B7C738A713F47B36006EB040 /* ACNode.m in Sources */,
 				B7DD7817140F7293005C60AB /* NSData+CocoaDevUsersAdditions.m in Sources */,
 				B77F53A81413667200B8A978 /* ACPopoverNewProjectFromTemplateController.m in Sources */,
