@@ -207,7 +207,7 @@ static NSString * const ACLocalProjectsSubdirectory = @"ACLocalProjects";
         [fileManager createDirectoryAtURL:[[self class] localProjectsDirectory] withIntermediateDirectories:YES attributes:nil error:NULL];
 }
 
-+ (NSURL *)ACLocalProjectsDirectory
++ (NSURL *)localProjectsDirectory
 {
     return [[NSURL applicationLibraryDirectory] URLByAppendingPathComponent:ACLocalProjectsSubdirectory];
 }
@@ -215,13 +215,13 @@ static NSString * const ACLocalProjectsSubdirectory = @"ACLocalProjects";
 + (NSURL *)bundleURLForLocalProjectWithURL:(NSURL *)URL
 {
     ECASSERT([URL isACURL]);
-    return [[[[self class] ACLocalProjectsDirectory] URLByAppendingPathComponent:[[[URL pathComponents] objectAtIndex:1] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding]] URLByAppendingPathExtension:ACProjectBundleExtension];
+    return [[[[self class] localProjectsDirectory] URLByAppendingPathComponent:[[[URL pathComponents] objectAtIndex:1] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding]] URLByAppendingPathExtension:ACProjectBundleExtension];
 }
 
 + (NSURL *)contentDirectoryURLForLocalProjectWithURL:(NSURL *)URL
 {
     ECASSERT([URL isACURL]);
-    return [[[[[self class] ACLocalProjectsDirectory] URLByAppendingPathComponent:[[[URL pathComponents] objectAtIndex:1] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding]] URLByAppendingPathExtension:ACProjectBundleExtension] URLByAppendingPathComponent:ACProjectContentDirectory isDirectory:YES];
+    return [[[[[self class] localProjectsDirectory] URLByAppendingPathComponent:[[[URL pathComponents] objectAtIndex:1] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding]] URLByAppendingPathExtension:ACProjectBundleExtension] URLByAppendingPathComponent:ACProjectContentDirectory isDirectory:YES];
 }
 
 @end
