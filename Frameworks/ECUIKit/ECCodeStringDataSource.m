@@ -18,7 +18,7 @@
 
 @implementation ECCodeStringDataSource
 
-@synthesize defaultTextStyle;
+@synthesize defaultTextStyle, stylingBlock;
 
 - (NSString *)string
 {
@@ -73,6 +73,13 @@
         NSAttributedString *newLine = [[NSAttributedString alloc] initWithString:@"\n" attributes:defaultTextStyle.CTAttributes];
         NSMutableAttributedString *result = (stringRange.length == stringLength) ? [string mutableCopy] : [[NSMutableAttributedString alloc] initWithAttributedString:[string attributedSubstringFromRange:stringRange]];
         [result appendAttributedString:newLine];
+        return result;
+    }
+    
+    if (stylingBlock)
+    {
+        NSMutableAttributedString *result = [[string attributedSubstringFromRange:stringRange] mutableCopy];
+        stylingBlock(result, stringRange);
         return result;
     }
     

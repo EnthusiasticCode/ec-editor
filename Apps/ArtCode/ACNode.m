@@ -9,15 +9,24 @@
 #import "ACNode.h"
 #import "ACURL.h"
 
+#import "ECCodeUnit.h"
+#import "ECCodeIndex.h"
+
+@interface ACNode ()
+
+@property (nonatomic, strong) ECCodeUnit *codeUnit;
+
+@end
+
+
 @implementation ACNode
 
 @dynamic expanded;
-@dynamic name;
-@dynamic path;
-@dynamic tag;
-@dynamic type;
-@dynamic children;
-@dynamic parent;
+@dynamic name, path;
+@dynamic tag, type;
+@dynamic children, parent;
+
+@synthesize codeUnit = _codeUnit;
 
 - (NSString *)nodeType
 {
@@ -118,6 +127,20 @@
     [fetchRequest setPredicate:predicate];
     NSArray *results = [self.managedObjectContext executeFetchRequest:fetchRequest error:NULL];
     return [results objectAtIndex:0];
+}
+
+- (NSString *)contentString
+{
+    return [NSString stringWithContentsOfURL:self.fileURL encoding:NSUTF8StringEncoding error:NULL];
+}
+
+- (void)loadCodeUnitWithCompletionHandler:(void (^)(BOOL))completionHandler
+{
+    dispatch_async(dispatch_get_main_queue(), ^{
+        ECCodeIndex *index = [[ECCodeIndex alloc] init];
+        self.codeUnit = [index unitForFile:[self.fileURL path]];
+        completionHandler(true);
+    });
 }
 
 @end

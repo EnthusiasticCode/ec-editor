@@ -10,6 +10,9 @@
 #import "ECCodeView.h"
 #import "ECTextStyle.h"
 
+typedef void (^StylingBlock)(NSMutableAttributedString *string, NSRange stringRange);
+
+
 @interface ECCodeStringDataSource : NSObject <ECCodeViewDataSource>
 
 /// The string to be managed by the datasource
@@ -17,6 +20,10 @@
 
 /// Default style applied to the entire string.
 @property (nonatomic, strong) ECTextStyle *defaultTextStyle;
+
+/// A block that will be used before returning a string to a requester. The block
+/// will receive a mutable string already styled with global styling informations.
+@property (nonatomic, copy) StylingBlock stylingBlock;
 
 /// Add a text style to the specified input string range. If the style specifies
 /// an attribute already present for the string range, this will be substituted

@@ -8,6 +8,11 @@
 
 #import "ACCodeFileController.h"
 #import "ECCodeView.h"
+#import "ECCodeStringDataSource.h"
+
+#import "ECCodeUnit.h"
+#import "ECCodeToken.h"
+#import "ECCodeCursor.h"
 
 #import "AppStyle.h"
 #import "ACState.h"
@@ -15,6 +20,13 @@
 #import <QuartzCore/QuartzCore.h>
 
 @implementation ACCodeFileController
+
+static NSRange intersectionOfRangeRelativeToRange(NSRange range, NSRange inRange)
+{
+    NSRange intersectionRange = NSIntersectionRange(range, inRange);
+    intersectionRange.location -= inRange.location;
+    return intersectionRange;
+}
 
 @synthesize codeView;
 
@@ -70,10 +82,57 @@
 {
     // TODO handle error
     id<ACStateNode> node = [[ACState localState] nodeForURL:url];
-    ECASSERT([node respondsToSelector:@selector(fileURL)]);
-    NSURL *fileURL = node.fileURL;
-    NSString *urlContent = [NSString stringWithContentsOfURL:fileURL encoding:NSUTF8StringEncoding error:nil];
-    self.codeView.text = urlContent;
+    
+    // TODO start loading animation
+    ECCodeStringDataSource *dataSource = (ECCodeStringDataSource *)self.codeView.datasource;
+    [node loadCodeUnitWithCompletionHandler:^(BOOL success) {
+        if (success)
+        {
+            ECTextStyle *keywordStyle = [ECTextStyle textStyleWithName:@"Keyword" font:nil color:[UIColor blueColor]];
+            ECTextStyle *commentStyle = [ECTextStyle textStyleWithName:@"Comment" font:nil color:[UIColor greenColor]];
+            ECTextStyle *referenceStyle = [ECTextStyle textStyleWithName:@"Reference" font:nil color:[UIColor purpleColor]];
+            ECTextStyle *literalStyle = [ECTextStyle textStyleWithName:@"Literal" font:nil color:[UIColor redColor]];
+            ECTextStyle *declarationStyle = [ECTextStyle textStyleWithName:@"Declaration" font:nil color:[UIColor brownColor]];
+            ECTextStyle *preprocessingStyle = [ECTextStyle textStyleWithName:@"Preprocessing" font:nil color:[UIColor orangeColor]];
+            
+            dataSource.stylingBlock = ^(NSMutableAttributedString *string, NSRange stringRange)
+            {
+                for (ECCodeToken *token in [node.codeUnit tokensInRange:stringRange withCursors:YES])
+                {
+                    switch (token.kind)
+                    {
+                        case ECCodeTokenKindKeyword:
+                            [string addAttributes:keywordStyle.CTAttributes range:intersectionOfRangeRelativeToRange(token.extent, stringRange)];
+                            break;
+                            
+                        case ECCodeTokenKindComment:
+                            [string addAttributes:commentStyle.CTAttributes range:intersectionOfRangeRelativeToRange(token.extent, stringRange)];
+                            break;
+                            
+                        case ECCodeTokenKindLiteral:
+                            [string addAttributes:literalStyle.CTAttributes range:intersectionOfRangeRelativeToRange(token.extent, stringRange)];
+                            break;
+                            
+                        default:
+                        {
+                            if (token.cursor.kind >= ECCodeCursorKindFirstDecl && token.cursor.kind <= ECCodeCursorKindLastDecl)
+                                [string addAttributes:declarationStyle.CTAttributes range:intersectionOfRangeRelativeToRange(token.extent, stringRange)];
+                            else if (token.cursor.kind >= ECCodeCursorKindFirstRef && token.cursor.kind <= ECCodeCursorKindLastRef)
+                                [string addAttributes:referenceStyle.CTAttributes range:intersectionOfRangeRelativeToRange(token.extent, stringRange)];
+                            else if (token.cursor.kind >= ECCodeCursorKindFirstPreprocessing && token.cursor.kind <= ECCodeCursorKindLastPreprocessing)
+                                [string addAttributes:preprocessingStyle.CTAttributes range:intersectionOfRangeRelativeToRange(token.extent, stringRange)];
+                            break;
+                        }
+                    }
+                }
+            };
+            
+            [self.codeView updateAllText];
+        }
+        // TODO else report error
+    }];
+    
+    self.codeView.text = node.contentString;
 }
 
 - (BOOL)enableTabBar
