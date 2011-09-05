@@ -67,23 +67,23 @@
     // Indicate if at end of string
     *endOfString = NSMaxRange(stringRange) >= stringLength;
     
-    // Return requested substring
+    // Preparing result
+    NSMutableAttributedString *result = [[string attributedSubstringFromRange:stringRange] mutableCopy];
+    
+    // Append tailing new line
     if (*endOfString) 
     {
         NSAttributedString *newLine = [[NSAttributedString alloc] initWithString:@"\n" attributes:defaultTextStyle.CTAttributes];
-        NSMutableAttributedString *result = (stringRange.length == stringLength) ? [string mutableCopy] : [[NSMutableAttributedString alloc] initWithAttributedString:[string attributedSubstringFromRange:stringRange]];
         [result appendAttributedString:newLine];
-        return result;
     }
     
+    // Apply styling block
     if (stylingBlock)
     {
-        NSMutableAttributedString *result = [[string attributedSubstringFromRange:stringRange] mutableCopy];
         stylingBlock(result, stringRange);
-        return result;
     }
     
-    return [string attributedSubstringFromRange:stringRange];
+    return result;
 }
 
 - (NSUInteger)textRenderer:(ECTextRenderer *)sender estimatedTextLineCountOfLength:(NSUInteger)maximumLineLength

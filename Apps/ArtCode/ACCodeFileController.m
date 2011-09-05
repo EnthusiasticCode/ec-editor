@@ -96,7 +96,7 @@ static NSRange intersectionOfRangeRelativeToRange(NSRange range, NSRange inRange
             ECTextStyle *preprocessingStyle = [ECTextStyle textStyleWithName:@"Preprocessing" font:nil color:[UIColor orangeColor]];
             
             dataSource.stylingBlock = ^(NSMutableAttributedString *string, NSRange stringRange)
-            {
+            {                
                 for (ECCodeToken *token in [node.codeUnit tokensInRange:stringRange withCursors:YES])
                 {
                     switch (token.kind)
