@@ -175,7 +175,7 @@ static void * ACStateProjectsObservingContext;
     ECASSERT(rowIndex >= 0);
     [self.tableView beginUpdates];
     [self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:rowIndex inSection:0]] withRowAnimation:UITableViewRowAnimationFade];
-    [[[ACState sharedState].projects objectAtIndex:rowIndex] delete];
+    [[ACState sharedState] deleteNodeWithURL:[[[[ACState sharedState] projects] objectAtIndex:rowIndex] URL]];
     [self.tableView endUpdates];
 }
 
@@ -267,7 +267,7 @@ static void * ACStateProjectsObservingContext;
 
 - (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)sourceIndexPath toIndexPath:(NSIndexPath *)destinationIndexPath
 {
-    [[[ACState sharedState].projects objectAtIndex:sourceIndexPath.row] setIndex:destinationIndexPath.row];
+    [[ACState sharedState] moveProjectsAtIndexes:[NSIndexSet indexSetWithIndex:sourceIndexPath.row] toIndex:destinationIndexPath.row];
 }
 
 /*

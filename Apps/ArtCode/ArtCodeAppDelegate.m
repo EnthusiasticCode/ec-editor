@@ -24,6 +24,7 @@
 #import "ACEditableTableCell.h"
 
 #import "ACState.h"
+#import "ACNode.h"
 
 @implementation ArtCodeAppDelegate
 
@@ -175,10 +176,10 @@
         controllerClass = [ACProjectTableController class];
     else
     {
-        id<ACStateNode> node = [[ACState sharedState] nodeForURL:url];
-        if (node.nodeType == ACStateNodeTypeFolder || node.nodeType == ACStateNodeTypeGroup || node.nodeType == ACStateNodeTypeProject)
+        ACNode *node = [[ACState sharedState] nodeWithURL:url];
+        if ([[node nodeType] isEqualToString:@"Group"] || [[node nodeType] isEqualToString:@"Project"])
             controllerClass = [ACFileTableController class];
-        else if (node.nodeType == ACStateNodeTypeSourceFile)
+        else if ([[node nodeType] isEqualToString:@"File"])
             controllerClass = [ACCodeFileController class];
     }
 //    else if (url.pathExtension != nil)

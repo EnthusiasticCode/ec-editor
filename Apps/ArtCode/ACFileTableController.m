@@ -14,10 +14,12 @@
 #import "ACToolFiltersView.h"
 
 #import "ACState.h"
+#import "ACNode.h"
+#import "ACGroup.h"
 
 @implementation ACFileTableController {
     NSArray *extensions;
-    id<ACStateNode> _displayedNode;
+    ACGroup *_displayedNode;
 }
 
 @synthesize tableView, editingToolsView;
@@ -133,7 +135,7 @@
 
 - (void)openURL:(NSURL *)url
 {
-    _displayedNode = [[ACState sharedState] nodeForURL:url];
+    _displayedNode = (ACGroup *)[[ACState sharedState] nodeWithURL:url];
     [self.tableView reloadData];
 }
 
@@ -209,8 +211,8 @@
 //        cell.indentationLevel = 1;
 //        [cell setColor:[UIColor colorWithWhite:0.8 alpha:1] forIndentationLevel:0 animated:YES];
 //    }
-    id<ACStateNode> cellNode = [_displayedNode.children objectAtIndex:indexPath.row];
-    if (cellNode.nodeType == ACStateNodeTypeFolder || cellNode.nodeType == ACStateNodeTypeGroup)
+    ACNode *cellNode = [_displayedNode.children objectAtIndex:indexPath.row];
+    if ([[cellNode nodeType] isEqualToString:@"Group"])
         cell.imageView.image = [UIImage styleGroupImageWithSize:CGSizeMake(32, 32)];
     else
         cell.imageView.image = [UIImage styleDocumentImageWithSize:CGSizeMake(32, 32) 

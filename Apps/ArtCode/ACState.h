@@ -8,12 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@protocol ACStateNode, ACStateProject, ACStateTab, ACStateBookmark, ACStateHistoryItem;
-
-extern NSString * const ACStateNodeTypeProject;
-extern NSString * const ACStateNodeTypeFolder;
-extern NSString * const ACStateNodeTypeGroup;
-extern NSString * const ACStateNodeTypeSourceFile;
+@class ACNode, ACProject;
 
 /// Global AC application state controller class
 @interface ACState : NSObject
@@ -26,7 +21,10 @@ extern NSString * const ACStateNodeTypeSourceFile;
 #pragma mark - Project Level
 
 /// A list containing all existing projects
-@property (nonatomic, strong, readonly) NSArray *projects;
+@property (nonatomic, strong, readonly) NSOrderedSet *projects;
+
+- (void)moveProjectsAtIndexes:(NSIndexSet *)indexes toIndex:(NSUInteger)index;
+- (void)exchangeProjectAtIndex:(NSUInteger)fromIndex withProjectAtIndex:(NSUInteger)toIndex;
 
 /// Adds a new project with the given ACURL
 /// Inserting a project with the same ACURL as an existing project is an error
@@ -38,56 +36,15 @@ extern NSString * const ACStateNodeTypeSourceFile;
 #pragma mark - Node Level
 
 /// Returns the node referenced by the ACURL or nil if the node does not exist
-- (id<ACStateNode>)nodeForURL:(NSURL *)URL;
+- (ACNode *)nodeWithURL:(NSURL *)URL;
 
-@end
+/// Deletes the node referenced by the ACURL
+- (void)deleteNodeWithURL:(NSURL *)URL;
 
-@protocol ACStateNode <NSObject>
-
-/// AC URL of the node
-@property (nonatomic, strong, readonly) NSURL *URL;
-
-/// Node name
-@property (nonatomic, copy) NSString *name;
-
-/// Node index in the containing node or list
-@property (nonatomic) NSUInteger index;
-
-/// Tag of the node
-@property (nonatomic) NSUInteger tag;
-
-/// Type of the node
-@property (nonatomic, readonly) NSString *nodeType;
-
-/// Whether the node is expanded or not
-@property (nonatomic) BOOL expanded;
-
-/// Child nodes
-@property (nonatomic, strong, readonly) NSOrderedSet *children;
-
-/// Deletes the node
-- (void)delete;
-
-/// Returns whether the node has been deleted
-- (BOOL)isDeleted;
-
-/// Returns the fileURL for the object, if applicable
-@property (nonatomic, strong, readonly) NSURL *fileURL;
-
-@end
-
-@protocol ACStateProject <ACStateNode>
-
-@end
-
-@protocol ACStateBookmark <NSObject>
-
-@end
-
-@protocol ACStateTab <NSObject>
-
-@end
-
-@protocol ACStateHistoryItem <NSObject>
+/// Move or copy nodes to a group
+- (void)moveNodeWithURL:(NSURL *)URL toGroupWithURL:(NSURL *)groupURL;
+- (void)moveNodesWithURLs:(NSArray *)URLs toGroupWithURL:(NSURL *)groupURL;
+- (void)copyNodeWithURL:(NSURL *)URL toGroupWithURL:(NSURL *)groupURL;
+- (void)copyNodesWithURLs:(NSArray *)URLs toGroupWithURL:(NSURL *)groupURL;
 
 @end

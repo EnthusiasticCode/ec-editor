@@ -11,6 +11,7 @@
 
 #import "AppStyle.h"
 #import "ACState.h"
+#import "ACNode.h"
 
 #import <QuartzCore/QuartzCore.h>
 
@@ -69,8 +70,7 @@
 - (void)openURL:(NSURL *)url
 {
     // TODO handle error
-    id<ACStateNode> node = [[ACState sharedState] nodeForURL:url];
-    ECASSERT([node respondsToSelector:@selector(fileURL)]);
+    ACNode *node = [[ACState sharedState] nodeWithURL:url];
     NSURL *fileURL = node.fileURL;
     NSString *urlContent = [NSString stringWithContentsOfURL:fileURL encoding:NSUTF8StringEncoding error:nil];
     self.codeView.text = urlContent;

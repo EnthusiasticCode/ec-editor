@@ -151,7 +151,7 @@
     {
         projectName = [@"Project " stringByAppendingString:[NSString stringWithFormat:@"%d", projectNumber]];
         projectURL = [NSURL ACURLWithPathComponents:[NSArray arrayWithObject:projectName]];
-        if ([[ACState sharedState] nodeForURL:projectURL])
+        if ([[ACState sharedState] nodeWithURL:projectURL])
             continue;
         break;
     }

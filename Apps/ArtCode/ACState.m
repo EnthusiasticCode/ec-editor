@@ -7,14 +7,8 @@
 //
 
 #import "ACState.h"
-#import "ACStateInternal.h"
 #import "ACProject.h"
 #import "ACURL.h"
-
-NSString * const ACStateNodeTypeProject = @"ACStateNodeTypeProject";
-NSString * const ACStateNodeTypeFolder = @"ACStateNodeTypeFolder";
-NSString * const ACStateNodeTypeGroup = @"ACStateNodeTypeGroup";
-NSString * const ACStateNodeTypeSourceFile = @"ACStateNodeTypeSourceFile";
 
 static void * const ACStateProjectURLObservingContext;
 
@@ -118,6 +112,16 @@ static void * const ACStateProjectURLObservingContext;
     [self didChange:NSKeyValueChangeInsertion valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"projects"];
 }
 
+- (void)addNewProjectWithURL:(NSURL *)URL atIndex:(NSUInteger)index fromACZ:(NSURL *)ACZFileURL withCompletionHandler:(void (^)(BOOL))completionHandler
+{
+    ECASSERT(NO); // NYI
+}
+
+- (void)addNewProjectWithURL:(NSURL *)URL atIndex:(NSUInteger)index fromZIP:(NSURL *)ZIPFileURL withCompletionHandler:(void (^)(BOOL))completionHandler
+{
+    ECASSERT(NO); // NYI
+}
+
 - (void)removeProjectWithURL:(NSURL *)URL
 {
     ECASSERT(URL && [URL isACURL]);
@@ -142,7 +146,7 @@ static void * const ACStateProjectURLObservingContext;
     [self saveProjects];
 }
 
-- (id<ACStateNode>)nodeForURL:(NSURL *)URL
+- (ACNode *)nodeForURL:(NSURL *)URL
 {
     ECASSERT(URL && [URL isACURL]);
     id node = [_projectObjects objectForKey:URL];
