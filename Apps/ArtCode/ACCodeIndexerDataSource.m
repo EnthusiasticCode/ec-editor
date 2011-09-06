@@ -13,8 +13,11 @@
 #import "ECCodeToken.h"
 #import "ECCodeCursor.h"
 
+#import "ACCompletionController.h"
 
-@implementation ACCodeIndexerDataSource
+@implementation ACCodeIndexerDataSource {
+    ACCompletionController *completionController;
+}
 
 static NSRange intersectionOfRangeRelativeToRange(NSRange range, NSRange inRange)
 {
@@ -75,6 +78,11 @@ static NSRange intersectionOfRangeRelativeToRange(NSRange range, NSRange inRange
 
 //- (UIViewController *)codeView:(ECCodeView *)codeView viewControllerForCompletionAtTextInRange:(NSRange)range
 //{
+//    if (!completionController)
+//    {
+//        completionController = [ACCompletionController new];
+//    }
+//    
 //    
 //}
 
