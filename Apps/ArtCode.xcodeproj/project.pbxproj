@@ -27,6 +27,8 @@
 		CD62BACD13CA1F8700266BC0 /* ACToolSnippetsController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD62BACC13CA1F8600266BC0 /* ACToolSnippetsController.m */; };
 		CD62BAD013CA248C00266BC0 /* ACToolSymbolsController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD62BACF13CA248C00266BC0 /* ACToolSymbolsController.m */; };
 		CD62BAD313CA2ABD00266BC0 /* ACToolNavigatorController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD62BAD213CA2ABC00266BC0 /* ACToolNavigatorController.m */; };
+		CD6580C9141626F20079412F /* ACCompletionController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD6580C8141626F20079412F /* ACCompletionController.m */; };
+		CD6580CC1416273D0079412F /* ECPatriciaTrie.m in Sources */ = {isa = PBXBuildFile; fileRef = CD6580CB1416273D0079412F /* ECPatriciaTrie.m */; };
 		CD7C01C113D354A0004CD5E5 /* ACTabController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD7C01C013D354A0004CD5E5 /* ACTabController.m */; };
 		CD7D2AE413C0CD2600B889EE /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD7D2AE313C0CD2600B889EE /* UIKit.framework */; };
 		CD7D2AE613C0CD2600B889EE /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD7D2AE513C0CD2600B889EE /* Foundation.framework */; };
@@ -242,6 +244,10 @@
 		CD62BACF13CA248C00266BC0 /* ACToolSymbolsController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACToolSymbolsController.m; sourceTree = "<group>"; };
 		CD62BAD113CA2ABB00266BC0 /* ACToolNavigatorController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACToolNavigatorController.h; sourceTree = "<group>"; };
 		CD62BAD213CA2ABC00266BC0 /* ACToolNavigatorController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACToolNavigatorController.m; sourceTree = "<group>"; };
+		CD6580C7141626F20079412F /* ACCompletionController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACCompletionController.h; sourceTree = "<group>"; };
+		CD6580C8141626F20079412F /* ACCompletionController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACCompletionController.m; sourceTree = "<group>"; };
+		CD6580CA1416273D0079412F /* ECPatriciaTrie.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECPatriciaTrie.h; sourceTree = "<group>"; };
+		CD6580CB1416273D0079412F /* ECPatriciaTrie.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECPatriciaTrie.m; sourceTree = "<group>"; };
 		CD7C01BF13D354A0004CD5E5 /* ACTabController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACTabController.h; sourceTree = "<group>"; };
 		CD7C01C013D354A0004CD5E5 /* ACTabController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACTabController.m; sourceTree = "<group>"; };
 		CD7D2ADF13C0CD2600B889EE /* ArtCode.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ArtCode.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -627,6 +633,17 @@
 			name = BezelAlert;
 			sourceTree = "<group>";
 		};
+		CD6580C514157B300079412F /* Views and Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				CD1DEA481415558500560D81 /* ACCodeIndexerDataSource.h */,
+				CD1DEA491415558500560D81 /* ACCodeIndexerDataSource.m */,
+				CD6580C7141626F20079412F /* ACCompletionController.h */,
+				CD6580C8141626F20079412F /* ACCompletionController.m */,
+			);
+			name = "Views and Controllers";
+			sourceTree = "<group>";
+		};
 		CD7D2AD413C0CD2600B889EE = {
 			isa = PBXGroup;
 			children = (
@@ -681,6 +698,8 @@
 		CD7D2B0313C0CDD400B889EE /* ECFoundation */ = {
 			isa = PBXGroup;
 			children = (
+				CD6580CA1416273D0079412F /* ECPatriciaTrie.h */,
+				CD6580CB1416273D0079412F /* ECPatriciaTrie.m */,
 				CDF1D46E14150C7800EFEC21 /* MurmurHash3.c */,
 				CDF1D46F14150C7800EFEC21 /* MurmurHash3.h */,
 				CDF1D46914150A9200EFEC21 /* ECHashing.h */,
@@ -840,8 +859,7 @@
 			children = (
 				CD9CD96E13DC22AF007964D3 /* ACCodeFileController.h */,
 				CD9CD96F13DC22AF007964D3 /* ACCodeFileController.m */,
-				CD1DEA481415558500560D81 /* ACCodeIndexerDataSource.h */,
-				CD1DEA491415558500560D81 /* ACCodeIndexerDataSource.m */,
+				CD6580C514157B300079412F /* Views and Controllers */,
 			);
 			name = Editor;
 			sourceTree = "<group>";
@@ -1330,6 +1348,8 @@
 				CDF1D46B14150A9200EFEC21 /* ECHashing.m in Sources */,
 				CDF1D47014150C7800EFEC21 /* MurmurHash3.c in Sources */,
 				CD1DEA4A1415558500560D81 /* ACCodeIndexerDataSource.m in Sources */,
+				CD6580C9141626F20079412F /* ACCompletionController.m in Sources */,
+				CD6580CC1416273D0079412F /* ECPatriciaTrie.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
