@@ -359,6 +359,10 @@
     // Setup jump bar
     [jumpBar setJumpPath:tabController.currentURL.path animated:YES];
     [(UIButton *)jumpBar.backElement setEnabled:[tabController.historyURLs count] > 1];
+    
+    // Setup jump bar filter field
+    [jumpBar.textElement resignFirstResponder];
+    jumpBar.textElement.delegate = [target respondsToSelector:@selector(delegateForFilterField:)] ? [target delegateForFilterField:jumpBar.textElement] : nil; 
 }
 
 #pragma mark - Tool Panel Management Methods

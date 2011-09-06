@@ -33,11 +33,11 @@
 /// Returns a UIButton that will be placed on the left of the jump bar.
 @property (nonatomic, readonly, strong) UIButton *toolButton;
 
-/// When implemented, this method will be called to apply a filter to the navigable.
-/// A nil value can be passed to reset the filter.
-- (void)applyFilter:(NSString *)filter;
-
-// TODO add filterPlaceholder, thik how to do if placeholder has to be dynamic
+/// Provide the delegate to be connected to the given text field. 
+/// The controller can change properties of the text field; but connecting actions
+/// to it will result in unwanted behaviours when the text field will be associated
+/// to a different controller.
+- (id<UITextFieldDelegate>)delegateForFilterField:(UITextField *)textField;
 
 /// Used to indicate that the controller should make every scrolling view to require
 /// the given recognizer to fail.
