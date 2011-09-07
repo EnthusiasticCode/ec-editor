@@ -241,6 +241,7 @@
         // TODO move label settings in appearance when possble
         button.titleLabel.font = [UIFont styleFontWithSize:14];
         button.titleLabel.shadowOffset = CGSizeMake(0, 1);
+        button.titleEdgeInsets = UIEdgeInsetsMake(0, 15, 0, 10);
         
         if (jumpBarElementLongPressRecognizer == nil)
             jumpBarElementLongPressRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(jumpBarElementLongAction:)];
