@@ -29,6 +29,7 @@
 		CD62BAD313CA2ABD00266BC0 /* ACToolNavigatorController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD62BAD213CA2ABC00266BC0 /* ACToolNavigatorController.m */; };
 		CD6580C9141626F20079412F /* ACCompletionController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD6580C8141626F20079412F /* ACCompletionController.m */; };
 		CD6580CC1416273D0079412F /* ECPatriciaTrie.m in Sources */ = {isa = PBXBuildFile; fileRef = CD6580CB1416273D0079412F /* ECPatriciaTrie.m */; };
+		CD6580CF141641D50079412F /* ACCodeFileFilterController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD6580CE141641D40079412F /* ACCodeFileFilterController.m */; };
 		CD7C01C113D354A0004CD5E5 /* ACTabController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD7C01C013D354A0004CD5E5 /* ACTabController.m */; };
 		CD7D2AE413C0CD2600B889EE /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD7D2AE313C0CD2600B889EE /* UIKit.framework */; };
 		CD7D2AE613C0CD2600B889EE /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD7D2AE513C0CD2600B889EE /* Foundation.framework */; };
@@ -248,6 +249,8 @@
 		CD6580C8141626F20079412F /* ACCompletionController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACCompletionController.m; sourceTree = "<group>"; };
 		CD6580CA1416273D0079412F /* ECPatriciaTrie.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECPatriciaTrie.h; sourceTree = "<group>"; };
 		CD6580CB1416273D0079412F /* ECPatriciaTrie.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECPatriciaTrie.m; sourceTree = "<group>"; };
+		CD6580CD141641D40079412F /* ACCodeFileFilterController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACCodeFileFilterController.h; sourceTree = "<group>"; };
+		CD6580CE141641D40079412F /* ACCodeFileFilterController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACCodeFileFilterController.m; sourceTree = "<group>"; };
 		CD7C01BF13D354A0004CD5E5 /* ACTabController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACTabController.h; sourceTree = "<group>"; };
 		CD7C01C013D354A0004CD5E5 /* ACTabController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACTabController.m; sourceTree = "<group>"; };
 		CD7D2ADF13C0CD2600B889EE /* ArtCode.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ArtCode.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -640,6 +643,8 @@
 				CD1DEA491415558500560D81 /* ACCodeIndexerDataSource.m */,
 				CD6580C7141626F20079412F /* ACCompletionController.h */,
 				CD6580C8141626F20079412F /* ACCompletionController.m */,
+				CD6580CD141641D40079412F /* ACCodeFileFilterController.h */,
+				CD6580CE141641D40079412F /* ACCodeFileFilterController.m */,
 			);
 			name = "Views and Controllers";
 			sourceTree = "<group>";
@@ -1350,6 +1355,7 @@
 				CD1DEA4A1415558500560D81 /* ACCodeIndexerDataSource.m in Sources */,
 				CD6580C9141626F20079412F /* ACCompletionController.m in Sources */,
 				CD6580CC1416273D0079412F /* ECPatriciaTrie.m in Sources */,
+				CD6580CF141641D50079412F /* ACCodeFileFilterController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

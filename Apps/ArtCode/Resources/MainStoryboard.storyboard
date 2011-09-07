@@ -32,6 +32,7 @@
                                             <color key="titleColor" white="0.16" alpha="1" colorSpace="calibratedWhite"/>
                                             <color key="titleShadowColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
+                                        <state key="selected" title="Done"/>
                                         <state key="highlighted">
                                             <color key="titleColor" white="0.16" alpha="1" colorSpace="calibratedWhite"/>
                                             <color key="titleShadowColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -61,7 +62,6 @@
             <source key="sourceIdentifier" type="project" relativePath="./Classes/ACNavigationController.h"/>
             <relationships>
                 <relationship kind="action" name="editButtonAction:"/>
-                <relationship kind="action" name="toolButtonAction:"/>
                 <relationship kind="outlet" name="buttonEdit" candidateClass="UIButton"/>
                 <relationship kind="outlet" name="buttonTools" candidateClass="UIButton"/>
                 <relationship kind="outlet" name="jumpBar" candidateClass="ECJumpBar"/>

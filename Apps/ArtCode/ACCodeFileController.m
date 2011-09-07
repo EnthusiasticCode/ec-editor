@@ -8,14 +8,20 @@
 
 #import "AppStyle.h"
 #import "ACState.h"
-
 #import "ACCodeFileController.h"
+
+#import "ECPopoverController.h"
 #import "ECCodeView.h"
 #import "ACCodeIndexerDataSource.h"
 
+#import "ACCodeFileFilterController.h"
+
 #import <QuartzCore/QuartzCore.h>
 
-@implementation ACCodeFileController
+@implementation ACCodeFileController {
+    ACCodeFileFilterController *filterController;
+    ECPopoverController *filterPopoverController;
+}
 
 @synthesize codeView;
 
@@ -111,6 +117,11 @@
     return YES;
 }
 
+- (id<UITextFieldDelegate>)delegateForFilterField:(UITextField *)textField
+{
+    return self;
+}
+
 #pragma mark - View lifecycle
 
 - (void)loadView
@@ -121,6 +132,35 @@
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
 	return YES;
+}
+
+#pragma mark - UITextField Delegate Methods
+
+- (void)textFieldDidBeginEditing:(UITextField *)textField
+{
+    if (!filterController)
+    {
+        filterController = [ACCodeFileFilterController new];
+        filterController.contentSizeForViewInPopover = CGSizeMake(300, 300);
+    }
+    
+    if (!filterPopoverController)
+    {
+        filterPopoverController = [[ECPopoverController alloc] initWithContentViewController:filterController];
+    }
+    
+    [filterPopoverController presentPopoverFromRect:textField.frame inView:textField.superview permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
+}
+
+- (void)textFieldDidEndEditing:(UITextField *)textField
+{
+    [filterPopoverController dismissPopoverAnimated:YES];
+}
+
+- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
+{
+    // TODO apply filter to filterController
+    return YES;
 }
 
 @end
