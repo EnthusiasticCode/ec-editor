@@ -10,7 +10,6 @@
 
 NSString * const ACProjectBundleExtension = @"acproj";
 NSString * const ACURLScheme = @"artcode";
-NSString * const ACProjectContentDirectory = @"Content";
 
 @implementation NSURL (ACURL)
 

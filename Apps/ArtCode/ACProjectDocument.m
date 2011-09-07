@@ -7,33 +7,35 @@
 //
 
 #import "ACProjectDocument.h"
-#import "ACNode.h"
+#import "ACProject.h"
 #import "ACURL.h"
 
-@interface ACProjectDocument ()
-@property (nonatomic, strong, readonly) NSFileManager *fileManager;
-- (ACNode *)findRootNode;
-- (void)addNodesAtPath:(NSString *)path toNode:(ACNode *)node;
-- (void)addAllNodesInProjectRoot;
-@end
+static NSString * const ACProjectContentDirectory = @"Content";
 
 @implementation ACProjectDocument
 
-@synthesize fileManager = _fileManager;
-@synthesize rootNode = _rootNode;
+@synthesize project = _project;
+@synthesize projectURL = _projectURL;
 
-- (NSFileManager *)fileManager
+- (ACProject *)project
 {
-    if (!_fileManager)
-        _fileManager = [[NSFileManager alloc] init];
-    return _fileManager;
-}
-
-- (ACNode *)rootNode
-{
-    if (!_rootNode)
-        _rootNode = [self findRootNode];
-    return _rootNode;
+    if (!_project)
+    {
+        NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
+        [fetchRequest setEntity:[NSEntityDescription entityForName:@"Project" inManagedObjectContext:self.managedObjectContext]];
+        NSArray *projects = [self.managedObjectContext executeFetchRequest:fetchRequest error:NULL];
+        if ([projects count] > 1)
+            // TODO: fix the core data file by merging projects
+            ECASSERT(NO); // core data file broken, more than 1 project
+        if (![projects count])
+            _project = [NSEntityDescription insertNewObjectForEntityForName:@"Project" inManagedObjectContext:self.managedObjectContext];
+        else
+            _project = [projects objectAtIndex:0];
+        ECASSERT([self.projectURL isACURL]);
+        _project.URL = self.projectURL;
+        _project.fileURL = [self.fileURL URLByAppendingPathComponent:ACProjectContentDirectory];
+    }
+    return _project;
 }
 
 + (NSString *)persistentStoreName
@@ -44,58 +46,6 @@
 - (NSDictionary *)persistentStoreOptions
 {
     return [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithBool:YES], NSMigratePersistentStoresAutomaticallyOption, [NSNumber numberWithBool:YES], NSInferMappingModelAutomaticallyOption, nil];
-}
-
-- (ACNode *)findRootNode
-{
-    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
-    [fetchRequest setEntity:[NSEntityDescription entityForName:@"Node" inManagedObjectContext:self.managedObjectContext]];
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"%K == %@", @"parent", nil];
-    [fetchRequest setPredicate:predicate];
-    NSArray *rootNodes = [self.managedObjectContext executeFetchRequest:fetchRequest error:NULL];
-    if ([rootNodes count] > 1)
-        abort(); // core data file broken, all nodes except the root node should have a parent
-    else if ([rootNodes count] == 1)
-        return [rootNodes objectAtIndex:0];
-    else
-    {
-        ACNode *rootNode = [NSEntityDescription insertNewObjectForEntityForName:@"Node" inManagedObjectContext:self.managedObjectContext];
-        rootNode.name = @"";
-        rootNode.type = ACNodeTypeFolder;
-        rootNode.path = @"";
-        return rootNode;
-    }
-}
-
-- (void)addNodesAtPath:(NSString *)path toNode:(ACNode *)node
-{
-    NSArray *subPaths = [self.fileManager contentsOfDirectoryAtPath:path error:NULL];
-    NSMutableDictionary *subNodes = [NSMutableDictionary dictionaryWithCapacity:[subPaths count]];
-    for (NSString *subPath in subPaths)
-    {
-        NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
-        [fetchRequest setEntity:[NSEntityDescription entityForName:@"Node" inManagedObjectContext:self.managedObjectContext]];
-        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"%K == %@", @"parent", node];
-        predicate = [NSCompoundPredicate andPredicateWithSubpredicates:[NSArray arrayWithObjects:predicate, [NSPredicate predicateWithFormat:@"%K == %@", @"path", [path stringByAppendingPathComponent:subPath]], nil]];
-        [fetchRequest setPredicate:predicate];
-        NSUInteger count = [self.managedObjectContext countForFetchRequest:fetchRequest error:NULL];
-        if (!count)
-        {
-            BOOL isDirectory;
-            [self.fileManager fileExistsAtPath:[path stringByAppendingPathComponent:subPath] isDirectory:&isDirectory];
-            if (isDirectory)
-                [subNodes setObject:[node addNodeWithName:subPath type:ACNodeTypeFolder] forKey:subPath];
-            else
-                [node addNodeWithName:subPath type:ACNodeTypeSourceFile];
-        }
-    }
-    for (NSString *subPath in [subNodes allKeys])
-        [self addNodesAtPath:[path stringByAppendingPathComponent:subPath] toNode:[subNodes objectForKey:subPath]];
-}
-
-- (void)addAllNodesInProjectRoot
-{
-    [self addNodesAtPath:[self.fileURL URLByAppendingPathComponent:ACProjectContentDirectory].path toNode:self.rootNode];
 }
 
 @end

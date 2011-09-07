@@ -13,7 +13,6 @@
 @implementation ACNode
 
 @dynamic name;
-@dynamic path;
 @dynamic tag;
 @dynamic parent;
 
@@ -46,6 +45,17 @@
 - (NSString *)nodeType
 {
     return [self.entity name];
+}
+
+- (ACNode *)childWithName:(NSString *)name
+{
+    NSFetchRequest *fetchRequest = [NSFetchRequest fetchRequestWithEntityName:@"Node"];
+    NSPredicate *predicate = [NSCompoundPredicate andPredicateWithSubpredicates:[NSArray arrayWithObjects:[NSPredicate predicateWithFormat:@"%K == %@", @"parent", self], [NSPredicate predicateWithFormat:@"%K == %@", @"name", name], nil]];
+    [fetchRequest setPredicate:predicate];
+    NSArray *results = [self.managedObjectContext executeFetchRequest:fetchRequest error:NULL];
+    if (![results count])
+        return nil;
+    return [results objectAtIndex:0];
 }
 
 @end

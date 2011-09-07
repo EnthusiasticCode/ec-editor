@@ -10,12 +10,11 @@
 #import <CoreData/CoreData.h>
 #import "ACState.h"
 
-@class ACGroup;
+@class ACGroup, ACNode;
 
 @interface ACNode : NSManagedObject
 
 @property (nonatomic, retain) NSString * name;
-@property (nonatomic, retain) NSString * path;
 @property (nonatomic) int16_t tag;
 @property (nonatomic, retain) ACGroup *parent;
 
@@ -24,5 +23,7 @@
 @property (nonatomic, getter = isConcrete, readonly) BOOL concrete;
 
 - (NSString *)nodeType;
+
+- (ACNode *)childWithName:(NSString *)name;
 
 @end

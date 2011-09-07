@@ -10,7 +10,6 @@
 
 extern NSString * const ACProjectBundleExtension;
 extern NSString * const ACURLScheme;
-extern NSString * const ACProjectContentDirectory;
 
 @interface NSURL (ACURL)
 

@@ -8,19 +8,37 @@
 
 #import "ACState.h"
 #import "ACProject.h"
+#import "ACProjectDocument.h"
 #import "ACURL.h"
 
+static NSString * const ACLocalProjectsSubdirectory = @"ACLocalProjects";
 static void * const ACStateProjectURLObservingContext;
 
 @interface ACState ()
 {
     NSMutableDictionary *_projectObjects;
-    NSMutableArray *_projectURLs;
+    NSMutableOrderedSet *_projectURLs;
 }
 
-// Load / save ordered list of project URLs
+// Load / save ordered list of project URLs from/to app preferences plist
 - (void)loadProjects;
 - (void)saveProjects;
+
+// Setup / teardown project objects in the project object dictionary
+- (void)setupExistingProjectWithURL:(NSURL *)URL atIndex:(NSUInteger)index;
+- (void)setupProject:(ACProject *)project forURL:(NSURL *)URL atIndex:(NSUInteger)index;
+
+// Renames a project
+- (void)renameProjectWithURL:(NSURL *)URL to:(NSString *)newName;
+
+// Deletes a project
+- (void)deleteProjectWithURL:(NSURL *)URL;
+
+// Returns the local projects directory
++ (NSURL *)localProjectsDirectory;
+
+// Returns a file URL to the bundle of the project referenced by or containing the node referenced by the ACURL
+- (NSURL *)bundleURLForLocalProjectWithURL:(NSURL *)URL;
 
 @end
 
@@ -47,20 +65,23 @@ static void * const ACStateProjectURLObservingContext;
     return self;
 }
 
++ (void)initialize
+{
+    // Setup all directiories
+    NSFileManager *fileManager = [[NSFileManager alloc] init];
+    if (![fileManager fileExistsAtPath:[[[self class] localProjectsDirectory] path]])
+        [fileManager createDirectoryAtURL:[[self class] localProjectsDirectory] withIntermediateDirectories:YES attributes:nil error:NULL];
+}
+
 - (void)loadProjects
 {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     _projectObjects = [NSMutableDictionary dictionary];
-    _projectURLs = [NSMutableArray array];
+    _projectURLs = [NSMutableOrderedSet orderedSet];
     for (NSString *projectURL in [defaults arrayForKey:@"projects"])
         [_projectURLs addObject:[NSURL URLWithString:projectURL]];
     for (NSURL *projectURL in _projectURLs)
-    {
-        ACProject *project = [ACProject projectWithURL:projectURL withCompletionHandler:NULL];
-        ECASSERT(project);
-        [project addObserver:self forKeyPath:@"URL" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld context:ACStateProjectURLObservingContext];
-        [_projectObjects setObject:project forKey:projectURL];
-    }
+        [self setupExistingProjectWithURL:projectURL atIndex:NSNotFound];
 }
 
 - (void)saveProjects
@@ -79,7 +100,9 @@ static void * const ACStateProjectURLObservingContext;
         return [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
     NSURL *oldURL = [change objectForKey:NSKeyValueChangeOldKey];
     NSURL *newURL = [change objectForKey:NSKeyValueChangeNewKey];
-    ECASSERT(oldURL && newURL && [self indexOfProjectWithURL:oldURL] != NSNotFound);
+    ECASSERT(oldURL && newURL);
+    ECASSERT([_projectObjects objectForKey:oldURL]);
+    ECASSERT([_projectURLs containsObject:oldURL]);
     NSUInteger index = [_projectURLs indexOfObject:oldURL];
     [_projectURLs removeObjectAtIndex:index];
     [_projectURLs insertObject:newURL atIndex:index];
@@ -88,13 +111,33 @@ static void * const ACStateProjectURLObservingContext;
 
 #pragma mark - Project Level
 
-- (NSArray *)projects
+- (NSOrderedSet *)projects
 {
     // TODO: if this is a bottleneck pass a proxy to optimize access to often used methods (i.e. count)
-    NSMutableArray *projects = [NSMutableArray arrayWithCapacity:[_projectObjects count]];
+    NSMutableOrderedSet *projects = [NSMutableOrderedSet orderedSetWithCapacity:[_projectObjects count]];
     for (NSURL *projectURL in _projectURLs)
         [projects addObject:[_projectObjects objectForKey:projectURL]];
     return projects;
+}
+
+- (void)moveProjectsAtIndexes:(NSIndexSet *)indexes toIndex:(NSUInteger)index
+{
+    [self willChange:NSKeyValueChangeRemoval valuesAtIndexes:indexes forKey:@"projects"];
+    [self willChange:NSKeyValueChangeInsertion valuesAtIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(index, [indexes count])] forKey:@"projects"];
+    [_projectURLs moveObjectsAtIndexes:indexes toIndex:index];
+    [self saveProjects];
+    [self didChange:NSKeyValueChangeRemoval valuesAtIndexes:indexes forKey:@"projects"];
+    [self didChange:NSKeyValueChangeInsertion valuesAtIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(index, [indexes count])] forKey:@"projects"];
+}
+
+- (void)exchangeProjectAtIndex:(NSUInteger)fromIndex withProjectAtIndex:(NSUInteger)toIndex
+{
+    [self willChange:NSKeyValueChangeRemoval valuesAtIndexes:[NSIndexSet indexSetWithIndex:fromIndex] forKey:@"projects"];
+    [self willChange:NSKeyValueChangeInsertion valuesAtIndexes:[NSIndexSet indexSetWithIndex:toIndex] forKey:@"projects"];
+    [_projectURLs exchangeObjectAtIndex:fromIndex withObjectAtIndex:toIndex];
+    [self saveProjects];
+    [self didChange:NSKeyValueChangeRemoval valuesAtIndexes:[NSIndexSet indexSetWithIndex:fromIndex] forKey:@"projects"];
+    [self didChange:NSKeyValueChangeInsertion valuesAtIndexes:[NSIndexSet indexSetWithIndex:toIndex] forKey:@"projects"];
 }
 
 - (void)addNewProjectWithURL:(NSURL *)URL atIndex:(NSUInteger)index fromTemplate:(NSString *)templateName withCompletionHandler:(void (^)(BOOL))completionHandler
@@ -104,11 +147,17 @@ static void * const ACStateProjectURLObservingContext;
     if (index == NSNotFound)
         index = [_projectObjects count];
     [self willChange:NSKeyValueChangeInsertion valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"projects"];
-    ACProject *project = [ACProject projectWithURL:URL fromTemplate:templateName withCompletionHandler:completionHandler];
+    NSURL *fileURL = [self bundleURLForLocalProjectWithURL:URL];
+    ACProjectDocument *document = [[ACProjectDocument alloc] initWithFileURL:fileURL];
+    document.projectURL = URL;
+    [document saveToURL:fileURL forSaveOperation:UIDocumentSaveForCreating completionHandler:^(BOOL success) {
+        if (!success)
+            ECASSERT(NO); // TODO: implement error handling
+    }];
+    ACProject *project = document.project;
     [_projectURLs insertObject:URL atIndex:index];
     [self saveProjects];
-    [project addObserver:self forKeyPath:@"URL" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld context:ACStateProjectURLObservingContext];
-    [_projectObjects setObject:project forKey:URL];
+    [self setupProject:project forURL:URL atIndex:index];
     [self didChange:NSKeyValueChangeInsertion valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"projects"];
 }
 
@@ -122,11 +171,60 @@ static void * const ACStateProjectURLObservingContext;
     ECASSERT(NO); // NYI
 }
 
-- (void)removeProjectWithURL:(NSURL *)URL
+#pragma mark - Node level
+
+- (ACNode *)nodeWithURL:(NSURL *)URL
 {
-    ECASSERT(URL && [URL isACURL]);
-    ECASSERT(URL && [self indexOfProjectWithURL:URL] != NSNotFound);
-    NSUInteger index = [self indexOfProjectWithURL:URL];
+    ECASSERT([URL isACURL]);
+    id node = [_projectObjects objectForKey:URL];
+    if (node)
+        return node;
+    return [[_projectObjects objectForKey:[URL ACProjectURL]] nodeWithURL:URL];
+}
+
+- (void)deleteNodeWithURL:(NSURL *)URL
+{
+    if ([_projectURLs containsObject:URL])
+        return [self deleteProjectWithURL:URL];
+}
+
+#pragma mark - Private methods
+
+- (void)setupExistingProjectWithURL:(NSURL *)URL atIndex:(NSUInteger)index
+{
+    ECASSERT([URL isACURL]);
+    ACProjectDocument *document = [[ACProjectDocument alloc] initWithFileURL:[self bundleURLForLocalProjectWithURL:URL]];
+    document.projectURL = URL;
+    ACProject *project = document.project;
+    [self setupProject:project forURL:URL atIndex:index];
+}
+
+- (void)setupProject:(ACProject *)project forURL:(NSURL *)URL atIndex:(NSUInteger)index
+{
+    ECASSERT(project);
+    ECASSERT([URL isACURL]);
+    [project addObserver:self forKeyPath:@"URL" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld context:ACStateProjectURLObservingContext];
+    [_projectObjects setObject:project forKey:URL];
+}
+
+- (void)renameProjectWithURL:(NSURL *)URL to:(NSString *)name
+{
+    ECASSERT([URL isACURL]);
+    ECASSERT([_projectObjects objectForKey:URL]);
+    ECASSERT([_projectURLs containsObject:URL]);
+    ECASSERT(name);
+    ECASSERT([name length]);
+    NSUInteger index = [_projectURLs indexOfObject:URL];
+    [_projectURLs replaceObjectAtIndex:index withObject:[NSURL ACURLWithPathComponents:[NSArray arrayWithObject:name]]];
+    [self saveProjects];
+}
+
+- (void)deleteProjectWithURL:(NSURL *)URL
+{
+    ECASSERT([URL isACURL]);
+    ECASSERT([_projectObjects objectForKey:URL]);
+    ECASSERT([_projectURLs containsObject:URL]);
+    NSUInteger index = [_projectURLs indexOfObject:URL];
     [self willChange:NSKeyValueChangeRemoval valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"projects"];
     [_projectURLs removeObjectAtIndex:index];
     [self saveProjects];
@@ -134,48 +232,18 @@ static void * const ACStateProjectURLObservingContext;
     [project removeObserver:self forKeyPath:@"URL" context:ACStateProjectURLObservingContext];
     [_projectObjects removeObjectForKey:URL];
     [self didChange:NSKeyValueChangeRemoval valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"projects"];
+    // TODO: actually delete the files
 }
 
-- (void)renameProjectWithURL:(NSURL *)URL to:(NSString *)name
++ (NSURL *)localProjectsDirectory
 {
-    ECASSERT(URL && [self indexOfProjectWithURL:URL] != NSNotFound);
-    ECASSERT(name);
-    ECASSERT([name length]);
-    NSUInteger index = [self indexOfProjectWithURL:URL];
-    [_projectURLs replaceObjectAtIndex:index withObject:name];
-    [self saveProjects];
+    return [[NSURL applicationLibraryDirectory] URLByAppendingPathComponent:ACLocalProjectsSubdirectory];
 }
 
-- (ACNode *)nodeForURL:(NSURL *)URL
+- (NSURL *)bundleURLForLocalProjectWithURL:(NSURL *)URL
 {
-    ECASSERT(URL && [URL isACURL]);
-    id node = [_projectObjects objectForKey:URL];
-    if (node)
-        return node;
-    return [[_projectObjects objectForKey:[URL ACProjectURL]] nodeForURL:URL];
-}
-
-#pragma mark - Internal methods
-
-- (NSUInteger)indexOfProjectWithURL:(NSURL *)URL
-{
-    ECASSERT(URL && [URL isACURL]);
-    return [_projectURLs indexOfObject:URL];
-}
-
-- (void)setIndex:(NSUInteger)index forProjectWithURL:(NSURL *)URL
-{
-    ECASSERT(URL && [URL isACURL]);
-    ECASSERT(index < [_projectObjects count]);
-    NSUInteger oldIndex = [self indexOfProjectWithURL:URL];
-    NSString *projectName = [_projectURLs objectAtIndex:oldIndex];
-    [self willChange:NSKeyValueChangeRemoval valuesAtIndexes:[NSIndexSet indexSetWithIndex:oldIndex] forKey:@"projects"];
-    [self willChange:NSKeyValueChangeInsertion valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"projects"];
-    [_projectURLs removeObjectAtIndex:oldIndex];
-    [_projectURLs insertObject:projectName atIndex:index];
-    [self saveProjects];
-    [self didChange:NSKeyValueChangeInsertion valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"projects"];
-    [self didChange:NSKeyValueChangeRemoval valuesAtIndexes:[NSIndexSet indexSetWithIndex:oldIndex] forKey:@"projects"];
+    ECASSERT([URL isACURL]);
+    return [[[[self class] localProjectsDirectory] URLByAppendingPathComponent:[[[URL pathComponents] objectAtIndex:1] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding]] URLByAppendingPathExtension:ACProjectBundleExtension];
 }
 
 @end

@@ -18,7 +18,6 @@
     </entity>
     <entity name="Node" representedClassName="ACNode" isAbstract="YES">
         <attribute name="name" attributeType="String"/>
-        <attribute name="path" optional="YES" attributeType="String"/>
         <attribute name="tag" attributeType="Integer 16" defaultValueString="0"/>
         <relationship name="parent" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Group" inverseName="children" inverseEntity="Group"/>
     </entity>
@@ -37,7 +36,7 @@
         <element name="File" positionX="-3960" positionY="-2484" width="128" height="45"/>
         <element name="Group" positionX="-3755" positionY="-2475" width="128" height="90"/>
         <element name="HistoryItem" positionX="-3537" positionY="-2610" width="128" height="105"/>
-        <element name="Node" positionX="-3753" positionY="-2358" width="128" height="105"/>
+        <element name="Node" positionX="-3753" positionY="-2358" width="128" height="90"/>
         <element name="Project" positionX="-3746" positionY="-2667" width="128" height="75"/>
         <element name="Tab" positionX="-3476" positionY="-2421" width="128" height="105"/>
     </elements>

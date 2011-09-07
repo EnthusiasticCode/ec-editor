@@ -10,12 +10,18 @@
 #import <CoreData/CoreData.h>
 #import "ACGroup.h"
 
-@class ACBookmark, ACTab;
+@class ACBookmark, ACTab, ACNode;
 
 @interface ACProject : ACGroup
 
 @property (nonatomic, retain) NSSet *bookmarks;
 @property (nonatomic, retain) NSSet *tabs;
+
+@property (nonatomic, strong) NSURL *URL;
+@property (nonatomic, strong) NSURL *fileURL;
+
+- (ACNode *)nodeWithURL:(NSURL *)URL;
+
 @end
 
 @interface ACProject (CoreDataGeneratedAccessors)

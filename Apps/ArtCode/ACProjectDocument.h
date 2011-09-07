@@ -7,10 +7,16 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "ACNode.h"
+
+@class ACProject;
 
 @interface ACProjectDocument : UIManagedDocument
 
-@property (nonatomic, strong, readonly) ACNode *rootNode;
+/// The document's Project object
+@property (nonatomic, strong, readonly) ACProject *project;
+
+/// The ACURL of the document's Project object
+/// Must be set before the first access to the Project object
+@property (nonatomic, strong) NSURL *projectURL;
 
 @end
