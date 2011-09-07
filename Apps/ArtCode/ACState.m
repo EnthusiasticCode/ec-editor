@@ -28,9 +28,6 @@ static void * const ACStateProjectURLObservingContext;
 - (void)setupExistingProjectWithURL:(NSURL *)URL atIndex:(NSUInteger)index;
 - (void)setupProject:(ACProject *)project forURL:(NSURL *)URL atIndex:(NSUInteger)index;
 
-// Renames a project
-- (void)renameProjectWithURL:(NSURL *)URL to:(NSString *)newName;
-
 // Deletes a project
 - (void)deleteProjectWithURL:(NSURL *)URL;
 
@@ -104,8 +101,13 @@ static void * const ACStateProjectURLObservingContext;
     ECASSERT([_projectObjects objectForKey:oldURL]);
     ECASSERT([_projectURLs containsObject:oldURL]);
     NSUInteger index = [_projectURLs indexOfObject:oldURL];
-    [_projectURLs removeObjectAtIndex:index];
-    [_projectURLs insertObject:newURL atIndex:index];
+    [_projectURLs replaceObjectAtIndex:index withObject:newURL];
+    ACProject *project = [_projectObjects objectForKey:oldURL];
+    [_projectObjects removeObjectForKey:oldURL];
+    [_projectObjects setObject:project forKey:newURL];
+    NSFileManager *fileManager = [[NSFileManager alloc] init];
+    // TODO: check if this is ok when the project is open, or if the document needs to be resaved
+    [fileManager moveItemAtURL:[self bundleURLForLocalProjectWithURL:oldURL] toURL:[self bundleURLForLocalProjectWithURL:newURL] error:NULL];
     [self saveProjects];
 }
 
@@ -207,18 +209,6 @@ static void * const ACStateProjectURLObservingContext;
     [_projectObjects setObject:project forKey:URL];
 }
 
-- (void)renameProjectWithURL:(NSURL *)URL to:(NSString *)name
-{
-    ECASSERT([URL isACURL]);
-    ECASSERT([_projectObjects objectForKey:URL]);
-    ECASSERT([_projectURLs containsObject:URL]);
-    ECASSERT(name);
-    ECASSERT([name length]);
-    NSUInteger index = [_projectURLs indexOfObject:URL];
-    [_projectURLs replaceObjectAtIndex:index withObject:[NSURL ACURLWithPathComponents:[NSArray arrayWithObject:name]]];
-    [self saveProjects];
-}
-
 - (void)deleteProjectWithURL:(NSURL *)URL
 {
     ECASSERT([URL isACURL]);
@@ -232,7 +222,8 @@ static void * const ACStateProjectURLObservingContext;
     [project removeObserver:self forKeyPath:@"URL" context:ACStateProjectURLObservingContext];
     [_projectObjects removeObjectForKey:URL];
     [self didChange:NSKeyValueChangeRemoval valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"projects"];
-    // TODO: actually delete the files
+    NSFileManager *fileManager = [[NSFileManager alloc] init];
+    [fileManager removeItemAtURL:[self bundleURLForLocalProjectWithURL:URL] error:NULL];
 }
 
 + (NSURL *)localProjectsDirectory

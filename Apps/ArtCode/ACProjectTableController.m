@@ -181,13 +181,11 @@ static void * ACStateProjectsObservingContext;
 
 - (void)textFieldDidEndEditing:(UITextField *)textField
 {
-    NSLog(@"end editing");
     textField.text = [[[ACState sharedState].projects objectAtIndex:textField.tag] name];
 }
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
-    NSLog(@"return");
     [[[ACState sharedState].projects objectAtIndex:textField.tag] setName:textField.text];
     [textField resignFirstResponder];
     return YES;
