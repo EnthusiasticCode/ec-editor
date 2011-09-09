@@ -53,6 +53,8 @@
     {
         [fileManager copyItemAtURL:fileURL toURL:[self.fileURL URLByAppendingPathComponent:[fileURL lastPathComponent]] error:NULL];
         [self insertChildFileWithName:[fileURL lastPathComponent] atIndex:NSNotFound];
+        if (completionHandler)
+            completionHandler(YES);
     }
     else
     {
@@ -62,6 +64,8 @@
             [childGroup importFileFromURL:fileInSubdirectoryURL withCompletionHandler:^(BOOL success) {
                 if (!success)
                     ECASSERT(NO); // TODO: error handling
+                if (completionHandler)
+                    completionHandler(YES);
             }];
     }
 }
@@ -78,6 +82,8 @@
             [self importFileFromURL:fileURL withCompletionHandler:^(BOOL success) {
                 if (!success)
                     ECASSERT(NO); // TODO: error handling
+                if (completionHandler)
+                    completionHandler(YES);
             }];
     }];
 }
