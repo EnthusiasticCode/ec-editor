@@ -140,7 +140,9 @@
 {
     if (!filterController)
     {
-        filterController = [ACCodeFileFilterController new];
+        // TODO this require loading spinner
+        filterController = [[ACCodeFileFilterController alloc] initWithNibName:@"ACCodeFileFilterController" bundle:nil];
+        filterController.targetCodeIndexerDataSource = (ACCodeIndexerDataSource *)self.codeView.datasource;
         filterController.contentSizeForViewInPopover = CGSizeMake(300, 300);
     }
     
@@ -159,7 +161,13 @@
 
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
 {
-    // TODO apply filter to filterController
+    // Apply filter to filterController
+    NSMutableString *filterString = [textField.text mutableCopy];
+    [filterString replaceCharactersInRange:range withString:string];
+    filterController.filterString = filterString;
+    
+    // TODO Use a debounce timer instead
+    
     return YES;
 }
 
