@@ -46,7 +46,7 @@ NSString * const ACURLScheme = @"artcode";
 
 - (NSURL *)ACProjectURL
 {
-    return [NSURL URLWithString:[NSString stringWithFormat:@"%@:/%@", ACURLScheme, [self.pathComponents objectAtIndex:1]]];
+    return [NSURL URLWithString:[NSString stringWithFormat:@"%@:/%@", ACURLScheme, [[self.pathComponents objectAtIndex:1] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]]];
 }
 
 - (NSString *)ACProjectName
