@@ -11,7 +11,7 @@
 
 @class ECCodeView;
 
-@interface ACCodeFileController : UIViewController <ACNavigationTarget>
+@interface ACCodeFileController : UIViewController <ACNavigationTarget, UITextFieldDelegate>
 
 @property (nonatomic, strong) ECCodeView *codeView;
 

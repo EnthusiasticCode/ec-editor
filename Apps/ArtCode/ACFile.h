@@ -10,8 +10,14 @@
 #import <CoreData/CoreData.h>
 #import "ACNode.h"
 
+@class ECCodeUnit;
 
 @interface ACFile : ACNode
 
+@property (nonatomic, strong, readonly) ECCodeUnit *codeUnit;
+
+- (NSString *)contentString;
+
+- (void)loadCodeUnitWithCompletionHandler:(void (^)(BOOL))completionHandler;
 
 @end

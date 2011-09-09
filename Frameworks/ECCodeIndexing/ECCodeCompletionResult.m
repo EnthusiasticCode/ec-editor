@@ -7,7 +7,7 @@
 //
 
 #import "ECCodeCompletionResult.h"
-#import <ECFoundation/ECHashing.h>
+#import "ECHashing.h"
 #import "ECCodeCompletionString.h"
 
 @interface ECCodeCompletionResult ()

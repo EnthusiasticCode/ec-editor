@@ -10,6 +10,9 @@
 #import "ACGroup.h"
 #import "ACURL.h"
 
+#import "ECCodeUnit.h"
+#import "ECCodeIndex.h"
+
 @implementation ACNode
 
 @dynamic name;

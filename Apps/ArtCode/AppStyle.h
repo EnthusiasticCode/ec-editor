@@ -9,3 +9,5 @@
 #import "UIFont+AppStyle.h"
 #import "UIColor+AppStyle.h"
 #import "UIImage+AppStyle.h"
+
+#define STYLE_ANIMATION_DURATION 0.15

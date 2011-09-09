@@ -427,8 +427,10 @@ static void init(ECCodeViewBase *self)
 
 - (void)updateAllText
 {
-    if (ownsRenderer)
-        [renderer updateAllText];
+    if (!ownsRenderer)
+        return;
+
+    [renderer updateAllText];
 }
 
 - (void)updateTextInLineRange:(NSRange)originalRange toLineRange:(NSRange)newRange
@@ -468,20 +470,13 @@ static void init(ECCodeViewBase *self)
 
 - (void)setText:(NSString *)string
 {
+    ECASSERT([self.datasource isKindOfClass:[ECCodeStringDataSource class]]);
+    
     if (!ownsRenderer)
         return;
     
-    // Will make sure that if no datasource have been set, a default one will be created.
-    [self didMoveToSuperview];
-    
-    if (![self.datasource isKindOfClass:[ECCodeStringDataSource class]])
-    {
-        [NSException raise:NSInternalInconsistencyException format:@"Trying to set codeview text with textDelegate not self."];
-        return;
-    }
-    
-    // Set text
     [(ECCodeStringDataSource *)datasource setString:string];
+    
     [renderer updateAllText];
     
     // Update tiles

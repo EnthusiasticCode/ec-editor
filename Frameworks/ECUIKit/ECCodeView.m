@@ -278,6 +278,8 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
 #pragma mark -
 #pragma mark TextSelectionKnobView
 
+#define KNOB_SIZE 30.0
+
 @implementation TextSelectionKnobView
 
 @synthesize knobDirection, knobDiameter;
@@ -288,13 +290,11 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
     caretRect = rect;
     
     // Set frame considering knob direction
-    rect.size.width = knobDiameter;
-    rect.origin.x -= knobDiameter / 2;
-    rect.size.height += knobDiameter;
-    if (knobDirection == UITextLayoutDirectionLeft || knobDirection == UITextLayoutDirectionUp) 
-    {
-        rect.origin.y -= knobDiameter;
-    }
+    // The given rect has origin where the selection start/end
+    rect.size.width = KNOB_SIZE;
+    rect.origin.x -= KNOB_SIZE / 2;
+    rect.size.height = KNOB_SIZE;
+    rect.origin.y -= (KNOB_SIZE - caretRect.size.height) / 2;
     self.frame = rect;
 }
 
@@ -310,25 +310,19 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
 
 - (void)drawRect:(CGRect)rect
 {
-#warning FIX increase thumb hit size, see ouieditableframe 1842
-//    [[UIColor redColor] setFill];
-//    UIRectFill(rect);
-    
+    CGContextRef context = UIGraphicsGetCurrentContext();
     [caretColor setFill];
     
     // Draw caret
+    CGRect bounds = self.bounds;
     CGRect caret = caretRect;
-    caret.origin.x = CGRectGetMidX(self.bounds) - CARET_WIDTH / 2;
-    caret.origin.y = 0;
-    if (knobDirection == UITextLayoutDirectionLeft)
-        caret.origin.y += knobDiameter;
-    UIRectFill(caret);
+    caret.origin.x = CGRectGetMidX(bounds) - CARET_WIDTH / 2;
+    caret.origin.y = CGRectGetMidY(bounds) - caretRect.size.height / 2;
+    CGContextFillRect(context, caret);
     
     // Draw knob
-    CGRect knobRect = CGRectMake(0, 0, knobDiameter, knobDiameter);
-    if (knobDirection == UITextLayoutDirectionRight)
-        knobRect.origin.y += caretRect.size.height;
-    [[UIBezierPath bezierPathWithRoundedRect:knobRect cornerRadius:1] fill];
+    CGContextAddArc(context, CGRectGetMidX(caret), knobDirection == UITextLayoutDirectionRight ? CGRectGetMaxY(caret) : caret.origin.y, knobDiameter / 2, -M_PI, M_PI, 0);
+    CGContextFillPath(context);
 }
 
 @end
@@ -362,6 +356,7 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
     if (selection.length == 0) 
     {
         frame = [parent caretRectForPosition:self.selectionPosition];
+        self.frame = frame;
         [leftKnob removeFromSuperview];
         leftKnobRecognizer.enabled = NO;
         [rightKnob removeFromSuperview];
@@ -381,6 +376,7 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
         frame = selectionRects.bounds;
         frame.origin.x += parentTextInsets.left;
         frame.origin.y += parentTextInsets.top;
+        self.frame = frame;
         
         // Left knob
         if (!leftKnob) 
@@ -425,7 +421,6 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
         }
         rightKnobRecognizer.enabled = YES;
     }
-    self.frame = frame;
     
     [self setNeedsDisplay];
 }
@@ -570,26 +565,12 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
 }
 
 - (void)handleKnobGesture:(UILongPressGestureRecognizer *)recognizer
-{    
+{
+    // TODO it may be needed to change thumbs hit test, see ouieditableframe 1842
+    
     UIEdgeInsets parentTextInsets = parent.textInsets;
     CGPoint tapPoint = [recognizer locationInView:parent];
     CGPoint textPoint = tapPoint;
-    
-    // Adding knob offset
-    if (recognizer.view == rightKnob)
-    {
-        if (textPoint.y <= CGRectGetMidY(leftKnob.caretRect))
-            textPoint.y = CGRectGetMidY(rightKnob.caretRect);
-        else if (textPoint.y > CGRectGetMaxY(rightKnob.caretRect))
-            textPoint.y -= MIN(rightKnob.caretRect.size.height, rightKnob.knobDiameter);
-    }
-    else // leftKnob
-    {
-        if (textPoint.y >= CGRectGetMidY(rightKnob.caretRect))
-            textPoint.y = CGRectGetMidY(leftKnob.caretRect);
-        else if (textPoint.y < leftKnob.caretRect.origin.y)
-            textPoint.y += MIN(leftKnob.caretRect.size.height, leftKnob.knobDiameter);
-    }
     textPoint.x -= parentTextInsets.left;
     textPoint.y -= parentTextInsets.top;
     
@@ -627,7 +608,8 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
             
         default:
         {
-            [self setMagnify:YES fromRect:[(TextSelectionKnobView *)recognizer.view caretRect] ratio:2 animated:animatePopover];
+            CGRect knobRect = recognizer.view.frame;
+            [self setMagnify:YES fromRect:knobRect ratio:2 animated:animatePopover];
             
             // Scrolling
             tapPoint.y -= parent.contentOffset.y;
@@ -1036,7 +1018,7 @@ static void init(ECCodeView *self)
     
     completionPopover.contentViewController = [self.datasource codeView:self viewControllerForCompletionAtTextInRange:textRange];
     
-    // TODO something is completionPopover.contentViewController is nil
+    // TODO something if completionPopover.contentViewController is nil
     
     CGRect textRect = [renderer rectsForStringRange:textRange limitToFirstLine:YES].bounds;
     textRect.origin.y += textInsets.top;
@@ -1519,7 +1501,7 @@ static void init(ECCodeView *self)
     return [[ECTextRange alloc] initWithRange:r];
 }
 
-#pragma mark - UIResponder Standard Editing Actions
+#pragma mark - Editing Actions
 
 - (void)copy:(id)sender
 {
@@ -1620,6 +1602,11 @@ static void init(ECCodeView *self)
     // TODO
 }
 
+- (void)complete:(id)sender
+{
+    [self showCompletionPopoverAtCursor];
+}
+
 - (BOOL)canPerformAction:(SEL)action withSender:(id)sender
 {
     if (action == @selector(copy:) || action == @selector(cut:) || action == @selector(delete:))
@@ -1631,6 +1618,11 @@ static void init(ECCodeView *self)
     {
         UIPasteboard *generalPasteboard = [UIPasteboard generalPasteboard];
         return [generalPasteboard containsPasteboardTypes:UIPasteboardTypeListString];
+    }
+    
+    if (action == @selector(complete:))
+    {
+        return selectionView.hasSelection;
     }
     
     if (action == @selector(select:))
@@ -1651,6 +1643,7 @@ static void init(ECCodeView *self)
     
     return NO;
 }
+
 
 #pragma mark - Private methods
 
@@ -1690,7 +1683,9 @@ static void init(ECCodeView *self)
     if ([self isFirstResponder])
     {
         selectionView.hidden = NO;
-        [self bringSubviewToFront:selectionView];
+        // TODO this has been removed because it was putting the selection view
+        // on top of thumb handlers.
+//        [self bringSubviewToFront:selectionView];
     }
 }
 
@@ -1779,6 +1774,12 @@ static void init(ECCodeView *self)
 - (void)handleGestureTapTwoTouches:(UITapGestureRecognizer *)recognizer
 {
     UIMenuController *sharedMenuController = [UIMenuController sharedMenuController];
+    
+    // Adding custom menu
+    UIMenuItem *completionMenuItem = [[UIMenuItem alloc] initWithTitle:@"Completion" action:@selector(complete:)];
+    sharedMenuController.menuItems = [NSArray arrayWithObject:completionMenuItem];
+    
+    // Show context menu
     [sharedMenuController setTargetRect:selectionView.frame inView:self];
     [sharedMenuController setMenuVisible:YES animated:YES];
 }

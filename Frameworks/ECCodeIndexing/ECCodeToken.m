@@ -7,7 +7,7 @@
 //
 
 #import "ECCodeToken.h"
-#import <ECFoundation/ECHashing.h>
+#import "ECHashing.h"
 #import "ECCodeCursor.h"
 
 @interface ECCodeToken ()

@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <ECCodeIndexing/ECCodeIndexPlugin.h>
+#import "ECCodeIndexPlugin.h"
 
 @interface ECClangCodeIndex : NSObject <ECCodeIndexPlugin>
 

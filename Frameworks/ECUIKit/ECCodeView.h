@@ -37,7 +37,7 @@
 
 @interface ECCodeView : ECCodeViewBase <UIKeyInput, UITextInputTraits, UITextInput>
 
-@property (nonatomic, weak) id<ECCodeViewDataSource> datasource;
+@property (nonatomic, strong) id<ECCodeViewDataSource> datasource;
 
 #pragma mark Style
 

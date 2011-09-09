@@ -6,16 +6,25 @@
 //  Copyright 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import "ACCodeFileController.h"
-#import "ECCodeView.h"
-
 #import "AppStyle.h"
 #import "ACState.h"
-#import "ACNode.h"
+#import "ACCodeFileController.h"
+
+#import "ECPopoverController.h"
+#import "ECCodeView.h"
+#import "ACCodeIndexerDataSource.h"
+
+#import "ACCodeFileFilterController.h"
+#import "AppStyle.h"
+#import "ACState.h"
+#import "ACFile.h"
 
 #import <QuartzCore/QuartzCore.h>
 
-@implementation ACCodeFileController
+@implementation ACCodeFileController {
+    ACCodeFileFilterController *filterController;
+    ECPopoverController *filterPopoverController;
+}
 
 @synthesize codeView;
 
@@ -24,6 +33,11 @@
     if (!codeView)
     {
         codeView = [ECCodeView new];
+        
+        // Datasource setup
+        codeView.datasource = [ACCodeIndexerDataSource new];
+        
+        // Layout setup
         codeView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
         codeView.backgroundColor = [UIColor whiteColor];
         codeView.caretColor = [UIColor styleThemeColorOne];
@@ -70,10 +84,20 @@
 - (void)openURL:(NSURL *)url
 {
     // TODO handle error
-    ACNode *node = [[ACState sharedState] nodeWithURL:url];
-    NSURL *fileURL = node.fileURL;
-    NSString *urlContent = [NSString stringWithContentsOfURL:fileURL encoding:NSUTF8StringEncoding error:nil];
-    self.codeView.text = urlContent;
+    ACFile *file = (ACFile *)[[ACState sharedState] nodeWithURL:url];
+    
+    // TODO start loading animation
+    ACCodeIndexerDataSource *dataSource = (ACCodeIndexerDataSource *)self.codeView.datasource;
+    [file loadCodeUnitWithCompletionHandler:^(BOOL success) {
+        if (success)
+        {
+            dataSource.codeUnit = file.codeUnit;
+            [self.codeView updateAllText];
+        }
+        // TODO else report error
+    }];
+    
+    self.codeView.text = file.contentString;
 }
 
 - (BOOL)enableTabBar
@@ -96,9 +120,9 @@
     return YES;
 }
 
-- (void)applyFilter:(NSString *)filter
+- (id<UITextFieldDelegate>)delegateForFilterField:(UITextField *)textField
 {
-    // TODO
+    return self;
 }
 
 #pragma mark - View lifecycle
@@ -111,6 +135,35 @@
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
 	return YES;
+}
+
+#pragma mark - UITextField Delegate Methods
+
+- (void)textFieldDidBeginEditing:(UITextField *)textField
+{
+    if (!filterController)
+    {
+        filterController = [ACCodeFileFilterController new];
+        filterController.contentSizeForViewInPopover = CGSizeMake(300, 300);
+    }
+    
+    if (!filterPopoverController)
+    {
+        filterPopoverController = [[ECPopoverController alloc] initWithContentViewController:filterController];
+    }
+    
+    [filterPopoverController presentPopoverFromRect:textField.frame inView:textField.superview permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
+}
+
+- (void)textFieldDidEndEditing:(UITextField *)textField
+{
+    [filterPopoverController dismissPopoverAnimated:YES];
+}
+
+- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
+{
+    // TODO apply filter to filterController
+    return YES;
 }
 
 @end
