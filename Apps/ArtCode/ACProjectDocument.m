@@ -11,6 +11,7 @@
 #import "ACURL.h"
 
 static NSString * const ACProjectContentDirectory = @"Content";
+void * ACProjectDocumentProjectURLObserving;
 
 @implementation ACProjectDocument
 
@@ -34,6 +35,7 @@ static NSString * const ACProjectContentDirectory = @"Content";
         ECASSERT([self.projectURL isACURL]);
         _project.URL = self.projectURL;
         _project.fileURL = [self.fileURL URLByAppendingPathComponent:ACProjectContentDirectory];
+        // TODO: when URL of project is changed, and the document is moved, project's fileURL should be updated
     }
     return _project;
 }

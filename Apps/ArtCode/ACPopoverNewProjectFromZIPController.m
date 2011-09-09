@@ -7,6 +7,14 @@
 //
 
 #import "ACPopoverNewProjectFromZIPController.h"
+#import "ACURL.h"
+#import "ACState.h"
+
+@interface ACPopoverNewProjectFromZIPController ()
+{
+    NSArray *_fileURLs;
+}
+@end
 
 @implementation ACPopoverNewProjectFromZIPController
 
@@ -49,6 +57,12 @@
 
 - (void)viewWillAppear:(BOOL)animated
 {
+    NSFileManager *fileManager = [[NSFileManager alloc] init];
+    _fileURLs = [fileManager contentsOfDirectoryAtURL:[NSURL applicationDocumentsDirectory] includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsPackageDescendants | NSDirectoryEnumerationSkipsSubdirectoryDescendants error:NULL];
+    NSPredicate *predicate = [NSPredicate predicateWithBlock:^BOOL(id evaluatedObject, NSDictionary *bindings) {
+        return [[[evaluatedObject pathExtension] lowercaseString] isEqualToString:@"zip"];
+    }];
+    _fileURLs = [_fileURLs filteredArrayUsingPredicate:predicate];
     [super viewWillAppear:animated];
 }
 
@@ -77,16 +91,12 @@
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-#warning Potentially incomplete method implementation.
-    // Return the number of sections.
-    return 0;
+    return 1;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-#warning Incomplete method implementation.
-    // Return the number of rows in the section.
-    return 0;
+    return [_fileURLs count];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -99,7 +109,7 @@
     }
     
     // Configure the cell...
-    
+    cell.textLabel.text = [[_fileURLs objectAtIndex:indexPath.row] lastPathComponent];
     return cell;
 }
 
@@ -153,6 +163,7 @@
      // Pass the selected object to the new view controller.
      [self.navigationController pushViewController:detailViewController animated:YES];
      */
+    [[ACState sharedState] addNewProjectWithURL:[NSURL URLWithString:@"artcode:/Test%20from%20Zip"] atIndex:NSNotFound fromZIP:[_fileURLs objectAtIndex:indexPath.row] withCompletionHandler:NULL];
 }
 
 @end

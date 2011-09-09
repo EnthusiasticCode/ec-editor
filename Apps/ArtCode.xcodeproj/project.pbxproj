@@ -12,6 +12,9 @@
 		B732CFFB13DB24F600637FBE /* Project.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = B732CFF913DB24F600637FBE /* Project.xcdatamodeld */; };
 		B732D01513DB361600637FBE /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B732D01413DB361600637FBE /* CoreData.framework */; };
 		B732D06413DD799400637FBE /* ACURL.m in Sources */ = {isa = PBXBuildFile; fileRef = B732D06313DD799300637FBE /* ACURL.m */; };
+		B779AF1E1418E1E30018E8AA /* libarc.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B779AF1D1418E1E30018E8AA /* libarc.a */; };
+		B779AF201418E23A0018E8AA /* libz.1.2.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B779AF1F1418E23A0018E8AA /* libz.1.2.5.dylib */; };
+		B779AF2414192DB90018E8AA /* ECArchive.m in Sources */ = {isa = PBXBuildFile; fileRef = B779AF2314192DB90018E8AA /* ECArchive.m */; };
 		B77F53A41413649D00B8A978 /* NewProjectPopover.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B77F53A31413649D00B8A978 /* NewProjectPopover.storyboard */; };
 		B77F53A81413667200B8A978 /* ACPopoverNewProjectFromTemplateController.m in Sources */ = {isa = PBXBuildFile; fileRef = B77F53A71413667200B8A978 /* ACPopoverNewProjectFromTemplateController.m */; };
 		B77F53AB1413669B00B8A978 /* ACPopoverNewProjectFromACZController.m in Sources */ = {isa = PBXBuildFile; fileRef = B77F53AA1413669B00B8A978 /* ACPopoverNewProjectFromACZController.m */; };
@@ -23,7 +26,6 @@
 		B79F561414160782000E32CF /* ACGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = B79F561314160782000E32CF /* ACGroup.m */; };
 		B79F561714160782000E32CF /* ACHistoryItem.m in Sources */ = {isa = PBXBuildFile; fileRef = B79F561614160782000E32CF /* ACHistoryItem.m */; };
 		B79F561A14160782000E32CF /* ACNode.m in Sources */ = {isa = PBXBuildFile; fileRef = B79F561914160782000E32CF /* ACNode.m */; };
-		B7DD7817140F7293005C60AB /* NSData+CocoaDevUsersAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = B7DD7816140F7293005C60AB /* NSData+CocoaDevUsersAdditions.m */; };
 		B7DF4B5D13EFE52F00BF8306 /* ACProjectDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = B7DF4B5C13EFE52F00BF8306 /* ACProjectDocument.m */; };
 		CD13665913D32150001F3455 /* UIControl+BlockAction.m in Sources */ = {isa = PBXBuildFile; fileRef = CD13665813D32150001F3455 /* UIControl+BlockAction.m */; };
 		CD21547913F45CC200614B83 /* ACToolButton.m in Sources */ = {isa = PBXBuildFile; fileRef = CD21547813F45CC200614B83 /* ACToolButton.m */; };
@@ -116,6 +118,11 @@
 		B732D01413DB361600637FBE /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		B732D06213DD799200637FBE /* ACURL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACURL.h; sourceTree = "<group>"; };
 		B732D06313DD799300637FBE /* ACURL.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACURL.m; sourceTree = "<group>"; };
+		B779AF1C1418E1E30018E8AA /* archive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = archive.h; sourceTree = "<group>"; };
+		B779AF1D1418E1E30018E8AA /* libarc.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libarc.a; sourceTree = "<group>"; };
+		B779AF1F1418E23A0018E8AA /* libz.1.2.5.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.1.2.5.dylib; path = usr/lib/libz.1.2.5.dylib; sourceTree = SDKROOT; };
+		B779AF2214192DB90018E8AA /* ECArchive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECArchive.h; path = ../Frameworks/ECArchive/ECArchive.h; sourceTree = "<group>"; };
+		B779AF2314192DB90018E8AA /* ECArchive.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECArchive.m; path = ../Frameworks/ECArchive/ECArchive.m; sourceTree = "<group>"; };
 		B77F53A31413649D00B8A978 /* NewProjectPopover.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = NewProjectPopover.storyboard; sourceTree = "<group>"; };
 		B77F53A61413667200B8A978 /* ACPopoverNewProjectFromTemplateController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACPopoverNewProjectFromTemplateController.h; sourceTree = "<group>"; };
 		B77F53A71413667200B8A978 /* ACPopoverNewProjectFromTemplateController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACPopoverNewProjectFromTemplateController.m; sourceTree = "<group>"; };
@@ -137,8 +144,6 @@
 		B79F561614160782000E32CF /* ACHistoryItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACHistoryItem.m; sourceTree = "<group>"; };
 		B79F561814160782000E32CF /* ACNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACNode.h; sourceTree = "<group>"; };
 		B79F561914160782000E32CF /* ACNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACNode.m; sourceTree = "<group>"; };
-		B7DD7815140F7293005C60AB /* NSData+CocoaDevUsersAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSData+CocoaDevUsersAdditions.h"; path = "../ThirdParty/CocoaDev/NSData+CocoaDevUsersAdditions.h"; sourceTree = "<group>"; };
-		B7DD7816140F7293005C60AB /* NSData+CocoaDevUsersAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSData+CocoaDevUsersAdditions.m"; path = "../ThirdParty/CocoaDev/NSData+CocoaDevUsersAdditions.m"; sourceTree = "<group>"; };
 		B7DF4B5B13EFE52F00BF8306 /* ACProjectDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACProjectDocument.h; sourceTree = "<group>"; };
 		B7DF4B5C13EFE52F00BF8306 /* ACProjectDocument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACProjectDocument.m; sourceTree = "<group>"; };
 		CD0DEAB613D4C2430087ADBB /* ACNavigationTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACNavigationTarget.h; sourceTree = "<group>"; };
@@ -287,6 +292,8 @@
 				CD7D2AE613C0CD2600B889EE /* Foundation.framework in Frameworks */,
 				CD7D2AE813C0CD2600B889EE /* CoreGraphics.framework in Frameworks */,
 				B732D01513DB361600637FBE /* CoreData.framework in Frameworks */,
+				B779AF1E1418E1E30018E8AA /* libarc.a in Frameworks */,
+				B779AF201418E23A0018E8AA /* libz.1.2.5.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -316,6 +323,25 @@
 			name = Model;
 			sourceTree = "<group>";
 		};
+		B779AF1B1418E1E30018E8AA /* libarchive */ = {
+			isa = PBXGroup;
+			children = (
+				B779AF1C1418E1E30018E8AA /* archive.h */,
+				B779AF1D1418E1E30018E8AA /* libarc.a */,
+			);
+			name = libarchive;
+			path = ../ThirdParty/libarchive;
+			sourceTree = "<group>";
+		};
+		B779AF2114192D610018E8AA /* ECArchive */ = {
+			isa = PBXGroup;
+			children = (
+				B779AF2214192DB90018E8AA /* ECArchive.h */,
+				B779AF2314192DB90018E8AA /* ECArchive.m */,
+			);
+			name = ECArchive;
+			sourceTree = "<group>";
+		};
 		B7C7389713F47AE6006EB040 /* Core Data */ = {
 			isa = PBXGroup;
 			children = (
@@ -327,18 +353,9 @@
 		B7DD7813140F7265005C60AB /* Third Party */ = {
 			isa = PBXGroup;
 			children = (
-				B7DD7818140F7298005C60AB /* CocoaDev */,
+				B779AF1B1418E1E30018E8AA /* libarchive */,
 			);
 			name = "Third Party";
-			sourceTree = "<group>";
-		};
-		B7DD7818140F7298005C60AB /* CocoaDev */ = {
-			isa = PBXGroup;
-			children = (
-				B7DD7815140F7293005C60AB /* NSData+CocoaDevUsersAdditions.h */,
-				B7DD7816140F7293005C60AB /* NSData+CocoaDevUsersAdditions.m */,
-			);
-			name = CocoaDev;
 			sourceTree = "<group>";
 		};
 		CD4786E513DB0BF500616B62 /* State */ = {
@@ -379,9 +396,10 @@
 		CD7D2AE213C0CD2600B889EE /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				B7DD7813140F7265005C60AB /* Third Party */,
 				CD7D2B0313C0CDD400B889EE /* ECFoundation */,
 				CD7D2B0413C0CDDC00B889EE /* ECUIKit */,
+				B779AF2114192D610018E8AA /* ECArchive */,
+				B7DD7813140F7265005C60AB /* Third Party */,
 				CD7D2B0613C0CE3200B889EE /* Apple Frameworks */,
 			);
 			name = Frameworks;
@@ -439,6 +457,7 @@
 		CD7D2B0613C0CE3200B889EE /* Apple Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B779AF1F1418E23A0018E8AA /* libz.1.2.5.dylib */,
 				B732D01413DB361600637FBE /* CoreData.framework */,
 				CD7D2B0113C0CD9D00B889EE /* CoreText.framework */,
 				CD7D2AFF13C0CD9700B889EE /* QuartzCore.framework */,
@@ -903,7 +922,6 @@
 				CDF215F713E4468F005B520F /* ACEditableTableCell.m in Sources */,
 				B7DF4B5D13EFE52F00BF8306 /* ACProjectDocument.m in Sources */,
 				CD21547913F45CC200614B83 /* ACToolButton.m in Sources */,
-				B7DD7817140F7293005C60AB /* NSData+CocoaDevUsersAdditions.m in Sources */,
 				B77F53A81413667200B8A978 /* ACPopoverNewProjectFromTemplateController.m in Sources */,
 				B77F53AB1413669B00B8A978 /* ACPopoverNewProjectFromACZController.m in Sources */,
 				B77F53AE141366AD00B8A978 /* ACPopoverNewProjectFromZIPController.m in Sources */,
@@ -915,6 +933,7 @@
 				B79F561414160782000E32CF /* ACGroup.m in Sources */,
 				B79F561714160782000E32CF /* ACHistoryItem.m in Sources */,
 				B79F561A14160782000E32CF /* ACNode.m in Sources */,
+				B779AF2414192DB90018E8AA /* ECArchive.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -987,7 +1006,10 @@
 				GCC_PREFIX_HEADER = "ArtCode/ArtCode-Prefix.pch";
 				GCC_STRICT_ALIASING = YES;
 				INFOPLIST_FILE = "ArtCode/ArtCode-Info.plist";
-				OTHER_LDFLAGS = "-lz";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../ThirdParty/libarchive\"",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -1002,7 +1024,10 @@
 				GCC_PREPROCESSOR_DEFINITIONS = "NDEBUG=1";
 				GCC_STRICT_ALIASING = YES;
 				INFOPLIST_FILE = "ArtCode/ArtCode-Info.plist";
-				OTHER_LDFLAGS = "-lz";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../ThirdParty/libarchive\"",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};

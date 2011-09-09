@@ -10,7 +10,7 @@
 #import <CoreData/CoreData.h>
 #import "ACNode.h"
 
-@class ACNode;
+@class ACNode, ACFile;
 
 @interface ACGroup : ACNode
 
@@ -21,6 +21,12 @@
 
 - (void)moveChildrenAtIndexes:(NSIndexSet *)indexes toIndex:(NSUInteger)index;
 - (void)exchangeChildAtIndex:(NSUInteger)fromIndex withChildAtIndex:(NSUInteger)toIndex;
+
+- (void)importFileFromURL:(NSURL *)fileURL withCompletionHandler:(void (^)(BOOL success))completionHandler;
+- (void)importFilesFromZIP:(NSURL *)ZIPFileURL withCompletionHandler:(void (^)(BOOL success))completionHandler;
+
+- (ACGroup *)insertChildGroupWithName:(NSString *)name atIndex:(NSUInteger)index;
+- (ACFile *)insertChildFileWithName:(NSString *)name atIndex:(NSUInteger)index;
 
 @end
 

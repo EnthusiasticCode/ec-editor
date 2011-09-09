@@ -8,7 +8,9 @@
 
 #import "ACGroup.h"
 #import "ACNode.h"
-
+#import "ACFile.h"
+#import "ACURL.h"
+#import "ECArchive.h"
 
 @implementation ACGroup
 
@@ -38,6 +40,66 @@
 - (void)exchangeChildAtIndex:(NSUInteger)fromIndex withChildAtIndex:(NSUInteger)toIndex
 {
     [[self mutableOrderedSetValueForKey:@"children"] exchangeObjectAtIndex:fromIndex withObjectAtIndex:toIndex];
+}
+
+- (void)importFileFromURL:(NSURL *)fileURL withCompletionHandler:(void (^)(BOOL))completionHandler
+{
+    // TODO: check for existing files, add import step to undo history
+    NSFileManager *fileManager = [[NSFileManager alloc] init];
+    id isDirectoryValue;
+    [fileURL getResourceValue:&isDirectoryValue forKey:NSURLIsDirectoryKey error:NULL];
+    BOOL isDirectory = [isDirectoryValue boolValue];
+    if (!isDirectory)
+    {
+        [fileManager copyItemAtURL:fileURL toURL:[self.fileURL URLByAppendingPathComponent:[fileURL lastPathComponent]] error:NULL];
+        [self insertChildFileWithName:[fileURL lastPathComponent] atIndex:NSNotFound];
+    }
+    else
+    {
+        [fileManager createDirectoryAtURL:[self.fileURL URLByAppendingPathComponent:[fileURL lastPathComponent]] withIntermediateDirectories:YES attributes:nil error:NULL];
+        ACGroup *childGroup = [self insertChildGroupWithName:[fileURL lastPathComponent] atIndex:NSNotFound];
+        for (NSURL *fileInSubdirectoryURL in [fileManager contentsOfDirectoryAtURL:fileURL includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsPackageDescendants | NSDirectoryEnumerationSkipsSubdirectoryDescendants error:NULL])
+            [childGroup importFileFromURL:fileInSubdirectoryURL withCompletionHandler:^(BOOL success) {
+                if (!success)
+                    ECASSERT(NO); // TODO: error handling
+            }];
+    }
+}
+
+- (void)importFilesFromZIP:(NSURL *)ZIPFileURL withCompletionHandler:(void (^)(BOOL))completionHandler
+{
+    NSURL *tempDirectory = [NSURL temporaryDirectory];
+    ECArchive *archive = [[ECArchive alloc] initWithFileURL:ZIPFileURL];
+    [archive extractToDirectory:tempDirectory withCompletionHandler:^(BOOL success) {
+        if (!success)
+            ECASSERT(NO); // TODO: error handling
+        NSFileManager *fileManager = [[NSFileManager alloc] init];
+        for (NSURL *fileURL in [fileManager contentsOfDirectoryAtURL:tempDirectory includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsPackageDescendants | NSDirectoryEnumerationSkipsSubdirectoryDescendants error:NULL])
+            [self importFileFromURL:fileURL withCompletionHandler:^(BOOL success) {
+                if (!success)
+                    ECASSERT(NO); // TODO: error handling
+            }];
+    }];
+}
+
+- (ACGroup *)insertChildGroupWithName:(NSString *)name atIndex:(NSUInteger)index
+{
+    ECASSERT(name);
+    ECASSERT(![self childWithName:name]);
+    ACGroup *childGroup = [NSEntityDescription insertNewObjectForEntityForName:@"Group" inManagedObjectContext:self.managedObjectContext];
+    childGroup.parent = self;
+    childGroup.name = name;
+    return childGroup;
+}
+
+- (ACFile *)insertChildFileWithName:(NSString *)name atIndex:(NSUInteger)index
+{
+    ECASSERT(name);
+    ECASSERT(![self childWithName:name]);
+    ACFile *childFile = [NSEntityDescription insertNewObjectForEntityForName:@"File" inManagedObjectContext:self.managedObjectContext];
+    childFile.parent = self;
+    childFile.name = name;
+    return childFile;
 }
 
 @end

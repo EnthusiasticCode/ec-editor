@@ -19,6 +19,9 @@ extern NSString * const ACURLScheme;
 /// Returns the application's library directory
 + (NSURL *)applicationLibraryDirectory;
 
+/// Return a temporary directory
++ (NSURL *)temporaryDirectory;
+
 /// Returns whether or not the URL is an ACURL
 - (BOOL)isACURL;
 

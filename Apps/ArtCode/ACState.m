@@ -10,6 +10,7 @@
 #import "ACProject.h"
 #import "ACProjectDocument.h"
 #import "ACURL.h"
+#import "ECArchive.h"
 
 static NSString * const ACLocalProjectsSubdirectory = @"ACLocalProjects";
 static void * const ACStateProjectURLObservingContext;
@@ -148,29 +149,74 @@ static void * const ACStateProjectURLObservingContext;
     ECASSERT(index <= [_projectObjects count] || index == NSNotFound);
     if (index == NSNotFound)
         index = [_projectObjects count];
-    [self willChange:NSKeyValueChangeInsertion valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"projects"];
     NSURL *fileURL = [self bundleURLForLocalProjectWithURL:URL];
     ACProjectDocument *document = [[ACProjectDocument alloc] initWithFileURL:fileURL];
     document.projectURL = URL;
     [document saveToURL:fileURL forSaveOperation:UIDocumentSaveForCreating completionHandler:^(BOOL success) {
         if (!success)
             ECASSERT(NO); // TODO: implement error handling
+        ACProject *project = document.project;
+        [self willChange:NSKeyValueChangeInsertion valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"projects"];
+        [_projectURLs insertObject:URL atIndex:index];
+        [self saveProjects];
+        [self setupProject:project forURL:URL atIndex:index];
+        [self didChange:NSKeyValueChangeInsertion valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"projects"];
+        if (completionHandler)
+            completionHandler(YES);
     }];
-    ACProject *project = document.project;
-    [_projectURLs insertObject:URL atIndex:index];
-    [self saveProjects];
-    [self setupProject:project forURL:URL atIndex:index];
-    [self didChange:NSKeyValueChangeInsertion valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"projects"];
 }
 
 - (void)addNewProjectWithURL:(NSURL *)URL atIndex:(NSUInteger)index fromACZ:(NSURL *)ACZFileURL withCompletionHandler:(void (^)(BOOL))completionHandler
 {
-    ECASSERT(NO); // NYI
+    ECASSERT([URL isACURL]);
+    ECASSERT(ACZFileURL);    
+    NSURL *fileURL = [self bundleURLForLocalProjectWithURL:URL];
+    ECArchive *archive = [[ECArchive alloc] initWithFileURL:ACZFileURL];
+    [archive extractToDirectory:fileURL withCompletionHandler:^(BOOL success) {
+        if (!success)
+            ECASSERT(NO); // TODO: error handling
+        ACProjectDocument *document = [[ACProjectDocument alloc] initWithFileURL:fileURL];
+        document.projectURL = URL;
+        [document openWithCompletionHandler:^(BOOL success) {
+            if (!success)
+                ECASSERT(NO); // TODO: error handling
+            ACProject *project = document.project;
+            [self willChange:NSKeyValueChangeInsertion valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"projects"];
+            [_projectURLs insertObject:URL atIndex:index];
+            [self saveProjects];
+            [self setupProject:project forURL:URL atIndex:index];
+            [self didChange:NSKeyValueChangeInsertion valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"projects"];
+            if (completionHandler)
+                completionHandler(YES);
+        }];
+    }];
 }
 
 - (void)addNewProjectWithURL:(NSURL *)URL atIndex:(NSUInteger)index fromZIP:(NSURL *)ZIPFileURL withCompletionHandler:(void (^)(BOOL))completionHandler
 {
-    ECASSERT(NO); // NYI
+    ECASSERT(URL);
+    ECASSERT(index <= [_projectObjects count] || index == NSNotFound);
+    if (index == NSNotFound)
+        index = [_projectObjects count];
+    NSURL *fileURL = [self bundleURLForLocalProjectWithURL:URL];
+    ACProjectDocument *document = [[ACProjectDocument alloc] initWithFileURL:fileURL];
+    document.projectURL = URL;
+    [document saveToURL:fileURL forSaveOperation:UIDocumentSaveForCreating completionHandler:^(BOOL success) {
+        if (!success)
+            ECASSERT(NO); // TODO: implement error handling
+        ACProject *project = document.project;
+        [project importFilesFromZIP:ZIPFileURL withCompletionHandler:^(BOOL success) {
+            if (!success)
+                ECASSERT(NO); // TODO: implement error handling
+            [self willChange:NSKeyValueChangeInsertion valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"projects"];
+            [_projectURLs insertObject:URL atIndex:index];
+            [self saveProjects];
+            [self setupProject:project forURL:URL atIndex:index];
+            [self didChange:NSKeyValueChangeInsertion valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"projects"];
+            if (completionHandler)
+                completionHandler(YES);
+        }];
+    }];
 }
 
 #pragma mark - Node level
