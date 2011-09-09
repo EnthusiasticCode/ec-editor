@@ -82,6 +82,7 @@ enum ACCodeFileFilterSections {
             {
                 if (otherSectionCount == 0 && otherSectionOldCount > 0)
                 {
+                    // Remove section if no result found
                     [_tableView beginUpdates];
                     [_tableView deleteSections:[NSIndexSet indexSetWithIndex:sectionIndex] withRowAnimation:UITableViewRowAnimationAutomatic];
                     [_tableView endUpdates];
@@ -91,17 +92,21 @@ enum ACCodeFileFilterSections {
             
             if ([result numberOfRanges] > 1)
             {   
+                // Get actual line number to navigate to
                 NSRange lineRange = [result rangeAtIndex:1];
                 NSInteger line = [[filterString substringWithRange:lineRange] integerValue];
                 [otherSection addObject:[NSNumber numberWithInteger:line]];
                 otherSectionCount++;
                 
                 [_tableView beginUpdates];
+                // Add section if not already present
                 if (otherSectionCount == 1 && otherSectionOldCount == 0)
                     [_tableView insertSections:[NSIndexSet indexSetWithIndex:sectionIndex] withRowAnimation:UITableViewRowAnimationAutomatic];
-                if (otherSectionCount <= otherSectionOldCount)
-                    [_tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:otherSectionCount - 1 inSection:sectionIndex]] withRowAnimation:UITableViewRowAnimationAutomatic];
-                [_tableView insertRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:otherSectionCount - 1 inSection:sectionIndex]] withRowAnimation:UITableViewRowAnimationAutomatic];
+                // Create new row for go to line
+                if (otherSectionCount > otherSectionOldCount)
+                    [_tableView insertRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:otherSectionCount - 1 inSection:sectionIndex]] withRowAnimation:UITableViewRowAnimationAutomatic];
+                else // reload
+                    [_tableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:otherSectionCount - 1 inSection:sectionIndex]] withRowAnimation:UITableViewRowAnimationAutomatic];
                 [_tableView endUpdates];
             }
         }];    
