@@ -23,8 +23,9 @@
 #import "ACCodeFileController.h"
 #import "ACEditableTableCell.h"
 
-#import "ACState.h"
 #import "ACNode.h"
+#import "ACProject.h"
+#import "ACProjectDocument.h"
 
 @implementation ArtCodeAppDelegate
 
@@ -174,18 +175,18 @@
     // TODO url switch logic
     if ([url.absoluteString isEqualToString:@"artcode:projects"])
         controllerClass = [ACProjectTableController class];
+    else if ([url isACProjectURL])
+        controllerClass = [ACFileTableController class];
     else
     {
-        ACNode *node = [[ACState sharedState] nodeWithURL:url];
-        if ([[node nodeType] isEqualToString:@"Group"] || [[node nodeType] isEqualToString:@"Project"])
+        ACProjectDocument *document = [[ACState sharedState] projectWithURL:[url ACProjectURL]];
+        ACProject *project = document.project;
+        ACNode *node = [project nodeWithURL:url];
+        if ([[node nodeType] isEqualToString:@"Group"])
             controllerClass = [ACFileTableController class];
         else if ([[node nodeType] isEqualToString:@"File"])
             controllerClass = [ACCodeFileController class];
     }
-//    else if (url.pathExtension != nil)
-//        controllerClass = [ACCodeFileController class];
-//    else
-//        controllerClass = [ACFileTableController class];
 
     UIViewController<ACNavigationTarget> *controller = [controllerClass newNavigationTargetController];
     [controller openURL:url];

@@ -8,15 +8,12 @@
 
 #import "ACProjectDocument.h"
 #import "ACProject.h"
-#import "ACURL.h"
 
 static NSString * const ACProjectContentDirectory = @"Content";
-void * ACProjectDocumentProjectURLObserving;
 
 @implementation ACProjectDocument
 
 @synthesize project = _project;
-@synthesize projectURL = _projectURL;
 
 - (ACProject *)project
 {
@@ -32,8 +29,6 @@ void * ACProjectDocumentProjectURLObserving;
             _project = [NSEntityDescription insertNewObjectForEntityForName:@"Project" inManagedObjectContext:self.managedObjectContext];
         else
             _project = [projects objectAtIndex:0];
-        ECASSERT([self.projectURL isACURL]);
-        _project.URL = self.projectURL;
         _project.fileURL = [self.fileURL URLByAppendingPathComponent:ACProjectContentDirectory];
         // TODO: when URL of project is changed, and the document is moved, project's fileURL should be updated
     }

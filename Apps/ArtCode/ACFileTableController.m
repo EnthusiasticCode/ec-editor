@@ -13,9 +13,10 @@
 
 #import "ACToolFiltersView.h"
 
-#import "ACState.h"
 #import "ACNode.h"
 #import "ACGroup.h"
+#import "ACProject.h"
+#import "ACProjectDocument.h"
 
 @implementation ACFileTableController {
     NSArray *extensions;
@@ -135,7 +136,10 @@
 
 - (void)openURL:(NSURL *)url
 {
-    _displayedNode = (ACGroup *)[[ACState sharedState] nodeWithURL:url];
+    if ([url isACProjectURL])
+        _displayedNode = [[ACState sharedState] projectWithURL:url].project;
+    else
+        _displayedNode = (ACGroup *)[[[ACState sharedState] projectWithURL:[url ACProjectURL]].project nodeWithURL:url];
     [self.tableView reloadData];
 }
 

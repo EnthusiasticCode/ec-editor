@@ -7,8 +7,8 @@
 //
 
 #import "ACPopoverNewProjectFromZIPController.h"
-#import "ACURL.h"
-#import "ACState.h"
+#import "ACProjectDocumentsList.h"
+#import "ECURL.h"
 
 @interface ACPopoverNewProjectFromZIPController ()
 {
@@ -163,7 +163,6 @@
      // Pass the selected object to the new view controller.
      [self.navigationController pushViewController:detailViewController animated:YES];
      */
-    [[ACState sharedState] addNewProjectWithURL:[NSURL URLWithString:@"artcode:/Test%20from%20Zip"] atIndex:NSNotFound fromZIP:[_fileURLs objectAtIndex:indexPath.row] withCompletionHandler:NULL];
 }
 
 @end

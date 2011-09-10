@@ -9,8 +9,8 @@
 #import "ACGroup.h"
 #import "ACNode.h"
 #import "ACFile.h"
-#import "ACURL.h"
 #import "ECArchive.h"
+#import "ECURL.h"
 
 @implementation ACGroup
 
@@ -86,6 +86,17 @@
                     completionHandler(YES);
             }];
     }];
+}
+
+- (ACNode *)childWithName:(NSString *)name
+{
+    NSFetchRequest *fetchRequest = [NSFetchRequest fetchRequestWithEntityName:@"Node"];
+    NSPredicate *predicate = [NSCompoundPredicate andPredicateWithSubpredicates:[NSArray arrayWithObjects:[NSPredicate predicateWithFormat:@"%K == %@", @"parent", self], [NSPredicate predicateWithFormat:@"%K == %@", @"name", name], nil]];
+    [fetchRequest setPredicate:predicate];
+    NSArray *results = [self.managedObjectContext executeFetchRequest:fetchRequest error:NULL];
+    if (![results count])
+        return nil;
+    return [results objectAtIndex:0];
 }
 
 - (ACGroup *)insertChildGroupWithName:(NSString *)name atIndex:(NSUInteger)index

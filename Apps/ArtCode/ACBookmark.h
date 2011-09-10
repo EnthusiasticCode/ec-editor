@@ -13,8 +13,8 @@
 
 @interface ACBookmark : NSManagedObject
 
-@property (nonatomic, retain) NSString * note;
+@property (nonatomic, strong) NSString * note;
 @property (nonatomic) int32_t offset;
-@property (nonatomic, retain) ACProject *project;
+@property (nonatomic, strong) ACProject *project;
 
 @end

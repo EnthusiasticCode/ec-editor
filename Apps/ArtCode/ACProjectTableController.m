@@ -11,8 +11,7 @@
 #import "ACEditableTableCell.h"
 #import "ACColorSelectionControl.h"
 
-#import "ACURL.h"
-#import "ACState.h"
+#import "ACProjectDocumentsList.h"
 #import "ACNavigationController.h"
 
 #import "ECPopoverController.h"
@@ -44,14 +43,14 @@ static void * ACStateProjectsObservingContext;
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     self.tableView.backgroundColor = [UIColor styleBackgroundColor];
     
-    [[ACState sharedState] addObserver:self forKeyPath:@"projects" options:NSKeyValueObservingOptionNew context:ACStateProjectsObservingContext];
+    [[ACProjectDocumentsList sharedList] addObserver:self forKeyPath:@"projects" options:NSKeyValueObservingOptionNew context:ACStateProjectsObservingContext];
     
 //    self.tableView.allowsMultipleSelectionDuringEditing = YES;
 }
 
 - (void)viewDidUnload
 {
-    [[ACState sharedState] removeObserver:self forKeyPath:@"projects"];
+    [[ACProjectDocumentsList sharedList] removeObserver:self forKeyPath:@"projects"];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
@@ -189,18 +188,18 @@ static void * ACStateProjectsObservingContext;
     ECASSERT(rowIndex >= 0);
     [self.tableView beginUpdates];
     [self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:rowIndex inSection:0]] withRowAnimation:UITableViewRowAnimationFade];
-    [[ACState sharedState] deleteNodeWithURL:[[[[ACState sharedState] projects] objectAtIndex:rowIndex] URL]];
+    [[ACProjectDocumentsList sharedList] deleteProjectWithURL:[[[ACProjectDocumentsList sharedList].projectDocuments objectAtIndex:rowIndex] URL]];
     [self.tableView endUpdates];
 }
 
 - (void)textFieldDidEndEditing:(UITextField *)textField
 {
-    textField.text = [[[ACState sharedState].projects objectAtIndex:textField.tag] name];
+    textField.text = [[[ACProjectDocumentsList sharedList].projectDocuments objectAtIndex:textField.tag] name];
 }
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
-    [[[ACState sharedState].projects objectAtIndex:textField.tag] setName:textField.text];
+    [[[ACProjectDocumentsList sharedList].projectDocuments objectAtIndex:textField.tag] setName:textField.text];
     [textField resignFirstResponder];
     return YES;
 }
@@ -214,7 +213,7 @@ static void * ACStateProjectsObservingContext;
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return [[ACState sharedState].projects count];
+    return [[ACProjectDocumentsList sharedList].projectDocuments count];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -257,7 +256,7 @@ static void * ACStateProjectsObservingContext;
     [cell.iconButton setImage:[self projectIconWithColor:[UIColor styleForegroundColor]] forState:UIControlStateNormal];
     
     // Setup project title
-    [cell.textField setText:[[[ACState sharedState].projects objectAtIndex:indexPath.row] name]];
+    [cell.textField setText:[[[ACProjectDocumentsList sharedList].projectDocuments objectAtIndex:indexPath.row] name]];
     
     // Setup tags for callbacks
     [cell.customDeleteButton setTag:indexPath.row];
@@ -279,7 +278,7 @@ static void * ACStateProjectsObservingContext;
 
 - (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)sourceIndexPath toIndexPath:(NSIndexPath *)destinationIndexPath
 {
-    [[ACState sharedState] moveProjectsAtIndexes:[NSIndexSet indexSetWithIndex:sourceIndexPath.row] toIndex:destinationIndexPath.row];
+    [[ACProjectDocumentsList sharedList] moveProjectsAtIndexes:[NSIndexSet indexSetWithIndex:sourceIndexPath.row] toIndex:destinationIndexPath.row];
 }
 
 /*
@@ -322,7 +321,7 @@ static void * ACStateProjectsObservingContext;
     if (self.isEditing)
         return;
     
-    [self.ACNavigationController pushURL:[[[ACState sharedState].projects objectAtIndex:indexPath.row] URL]];
+    [self.ACNavigationController pushURL:[[[ACProjectDocumentsList sharedList].projectDocuments objectAtIndex:indexPath.row] URL]];
 //    [self.ACNavigationController pushURL:[NSURL URLWithString:@"artcode:/Project"]];
 }
 

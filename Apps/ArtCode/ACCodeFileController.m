@@ -7,7 +7,6 @@
 //
 
 #import "AppStyle.h"
-#import "ACState.h"
 #import "ACCodeFileController.h"
 
 #import "ECPopoverController.h"
@@ -16,8 +15,9 @@
 
 #import "ACCodeFileFilterController.h"
 #import "AppStyle.h"
-#import "ACState.h"
 #import "ACFile.h"
+#import "ACProject.h"
+#import "ACProjectDocument.h"
 
 #import <QuartzCore/QuartzCore.h>
 
@@ -84,7 +84,7 @@
 - (void)openURL:(NSURL *)url
 {
     // TODO handle error
-    ACFile *file = (ACFile *)[[ACState sharedState] nodeWithURL:url];
+    ACFile *file = (ACFile *)[[[ACState sharedState] projectWithURL:[url ACProjectURL]].project nodeWithURL:url];
     
     // TODO start loading animation
     ACCodeIndexerDataSource *dataSource = (ACCodeIndexerDataSource *)self.codeView.datasource;

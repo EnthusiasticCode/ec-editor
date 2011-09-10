@@ -9,7 +9,6 @@
 #import <QuartzCore/QuartzCore.h>
 #import "ECPopoverController.h"
 #import "AppStyle.h"
-#import "ACURL.h"
 #import "ACNavigationController.h"
 
 #import "ACJumpBarTextField.h"

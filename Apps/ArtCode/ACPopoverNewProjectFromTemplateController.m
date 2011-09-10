@@ -7,8 +7,7 @@
 //
 
 #import "ACPopoverNewProjectFromTemplateController.h"
-#import "ACState.h"
-#import "ACURL.h"
+#import "ACProjectDocumentsList.h"
 #import "ECBezelAlert.h"
 
 @implementation ACPopoverNewProjectFromTemplateController
@@ -151,11 +150,11 @@
     {
         projectName = [@"Project " stringByAppendingString:[NSString stringWithFormat:@"%d", projectNumber]];
         projectURL = [NSURL ACURLWithPathComponents:[NSArray arrayWithObject:projectName]];
-        if ([[ACState sharedState] nodeWithURL:projectURL])
+        if ([[ACProjectDocumentsList sharedList] projectWithURL:projectURL])
             continue;
         break;
     }
-    [[ACState sharedState] addNewProjectWithURL:projectURL atIndex:NSNotFound fromTemplate:nil withCompletionHandler:^(BOOL success) {
+    [[ACProjectDocumentsList sharedList] addNewProjectWithURL:projectURL atIndex:NSNotFound fromTemplate:nil withCompletionHandler:^(BOOL success) {
         if (success)
             [[ECBezelAlert centerBezelAlert] addAlertMessageWithText:[@"Added new project: " stringByAppendingString:projectName] image:nil displayImmediatly:NO];
     }];

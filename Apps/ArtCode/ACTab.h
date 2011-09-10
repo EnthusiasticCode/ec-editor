@@ -15,8 +15,8 @@
 
 @property (nonatomic) int16_t currentHistoryPosition;
 @property (nonatomic) int16_t index;
-@property (nonatomic, retain) NSOrderedSet *historyItems;
-@property (nonatomic, retain) ACProject *project;
+@property (nonatomic, strong) NSOrderedSet *historyItems;
+@property (nonatomic, strong) ACProject *project;
 @end
 
 @interface ACTab (CoreDataGeneratedAccessors)

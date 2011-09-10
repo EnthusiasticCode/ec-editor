@@ -15,7 +15,7 @@
 @interface ACGroup : ACNode
 
 @property (nonatomic) BOOL expanded;
-@property (nonatomic, retain) NSOrderedSet *children;
+@property (nonatomic, strong) NSOrderedSet *children;
 
 @property (nonatomic, getter = isConcrete) BOOL concrete;
 
@@ -24,6 +24,8 @@
 
 - (void)importFileFromURL:(NSURL *)fileURL withCompletionHandler:(void (^)(BOOL success))completionHandler;
 - (void)importFilesFromZIP:(NSURL *)ZIPFileURL withCompletionHandler:(void (^)(BOOL success))completionHandler;
+
+- (ACNode *)childWithName:(NSString *)name;
 
 - (ACGroup *)insertChildGroupWithName:(NSString *)name atIndex:(NSUInteger)index;
 - (ACFile *)insertChildFileWithName:(NSString *)name atIndex:(NSUInteger)index;
