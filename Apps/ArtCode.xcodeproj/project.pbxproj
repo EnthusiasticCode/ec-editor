@@ -209,7 +209,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		B71454A01413BD940059828D /* ACNewFileImportFileController.h */ = {isa = PBXFileReference; fileEncoding = 4; path = ACNewFileImportFileController.h; sourceTree = "<group>"; };
+		B71454A01413BD940059828D /* ACNewFileImportFileController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACNewFileImportFileController.h; sourceTree = "<group>"; };
 		B71454A11413BD940059828D /* ACNewFileImportFileController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACNewFileImportFileController.m; sourceTree = "<group>"; };
 		B732CFE913DB1B6B00637FBE /* ECDebug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECDebug.h; path = ../../Frameworks/ECCore/ECDebug.h; sourceTree = "<group>"; };
 		B732CFFA13DB24F600637FBE /* Project.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Project.xcdatamodel; sourceTree = "<group>"; };
@@ -221,11 +221,11 @@
 		B779AF1F1418E23A0018E8AA /* libz.1.2.5.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.1.2.5.dylib; path = usr/lib/libz.1.2.5.dylib; sourceTree = SDKROOT; };
 		B779AF2214192DB90018E8AA /* ECArchive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECArchive.h; path = ../Frameworks/ECArchive/ECArchive.h; sourceTree = "<group>"; };
 		B779AF2314192DB90018E8AA /* ECArchive.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECArchive.m; path = ../Frameworks/ECArchive/ECArchive.m; sourceTree = "<group>"; };
-		B77F53A61413667200B8A978 /* ACNewProjectFromTemplateController.h */ = {isa = PBXFileReference; fileEncoding = 4; path = ACNewProjectFromTemplateController.h; sourceTree = "<group>"; };
+		B77F53A61413667200B8A978 /* ACNewProjectFromTemplateController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACNewProjectFromTemplateController.h; sourceTree = "<group>"; };
 		B77F53A71413667200B8A978 /* ACNewProjectFromTemplateController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACNewProjectFromTemplateController.m; sourceTree = "<group>"; };
-		B77F53A91413669B00B8A978 /* ACNewProjectFromACZController.h */ = {isa = PBXFileReference; fileEncoding = 4; path = ACNewProjectFromACZController.h; sourceTree = "<group>"; };
+		B77F53A91413669B00B8A978 /* ACNewProjectFromACZController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACNewProjectFromACZController.h; sourceTree = "<group>"; };
 		B77F53AA1413669B00B8A978 /* ACNewProjectFromACZController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACNewProjectFromACZController.m; sourceTree = "<group>"; };
-		B77F53AC141366AC00B8A978 /* ACNewProjectFromZIPController.h */ = {isa = PBXFileReference; fileEncoding = 4; path = ACNewProjectFromZIPController.h; sourceTree = "<group>"; };
+		B77F53AC141366AC00B8A978 /* ACNewProjectFromZIPController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACNewProjectFromZIPController.h; sourceTree = "<group>"; };
 		B77F53AD141366AC00B8A978 /* ACNewProjectFromZIPController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACNewProjectFromZIPController.m; sourceTree = "<group>"; };
 		B79F560614160782000E32CF /* ACTab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACTab.h; sourceTree = "<group>"; };
 		B79F560714160782000E32CF /* ACTab.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACTab.m; sourceTree = "<group>"; };

@@ -17,7 +17,7 @@ static NSString * const ACProjectContentDirectory = @"Content";
 
 - (ACProject *)project
 {
-    if (self.documentState == UIDocumentStateClosed)
+    if ((self.documentState & UIDocumentStateClosed) == UIDocumentStateClosed)
         return nil;
     if (!_project)
     {
@@ -31,7 +31,7 @@ static NSString * const ACProjectContentDirectory = @"Content";
             _project = [NSEntityDescription insertNewObjectForEntityForName:@"Project" inManagedObjectContext:self.managedObjectContext];
         else
             _project = [projects objectAtIndex:0];
-        _project.fileURL = [self.fileURL URLByAppendingPathComponent:ACProjectContentDirectory];
+        _project.fileURL = [[self.fileURL URLByDeletingLastPathComponent] URLByAppendingPathComponent:ACProjectContentDirectory];
         // TODO: when URL of project is changed, and the document is moved, project's fileURL should be updated
     }
     return _project;

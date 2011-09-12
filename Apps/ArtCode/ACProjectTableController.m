@@ -46,7 +46,7 @@ static void * ACStateProjectsObservingContext;
 {
     if (!_newProjectFromTemplate)
     {
-        UIPopoverController *popover = _popover;
+        __weak UIPopoverController *popover = _popover;
         _newProjectFromTemplate = [^(NSString *templateName)
         {
             NSString *projectName;
@@ -78,6 +78,22 @@ static void * ACStateProjectsObservingContext;
         UIPopoverController *popover = _popover;
         _newProjectFromACZ = [^(NSURL *ACZFileURL)
         {
+            NSString *projectName;
+            for (NSUInteger projectNumber = 0; YES; ++projectNumber)
+            {
+                projectName = [@"Project " stringByAppendingString:[NSString stringWithFormat:@"%d", projectNumber]];
+                if ([[ACProjectDocumentsList sharedList] projectDocumentWithName:projectName])
+                    continue;
+                break;
+            }
+            [[ACProjectDocumentsList sharedList] addNewProjectWithName:projectName atIndex:NSNotFound fromACZ:ACZFileURL withCompletionHandler:^(BOOL success) {
+                NSString *message = nil;
+                if (success)
+                    message = [@"Added new project: " stringByAppendingString:projectName];
+                else
+                    message = @"Add project failed";
+                [[ECBezelAlert centerBezelAlert] addAlertMessageWithText:message image:nil displayImmediatly:NO];
+            }];            
             [popover dismissPopoverAnimated:YES];            
         } copy];
     }
@@ -91,6 +107,22 @@ static void * ACStateProjectsObservingContext;
         UIPopoverController *popover = _popover;
         _newProjectFromZIP = [^(NSURL *ZIPFileURL)
         {
+            NSString *projectName;
+            for (NSUInteger projectNumber = 0; YES; ++projectNumber)
+            {
+                projectName = [@"Project " stringByAppendingString:[NSString stringWithFormat:@"%d", projectNumber]];
+                if ([[ACProjectDocumentsList sharedList] projectDocumentWithName:projectName])
+                    continue;
+                break;
+            }
+            [[ACProjectDocumentsList sharedList] addNewProjectWithName:projectName atIndex:NSNotFound fromZIP:ZIPFileURL withCompletionHandler:^(BOOL success) {
+                NSString *message = nil;
+                if (success)
+                    message = [@"Added new project: " stringByAppendingString:projectName];
+                else
+                    message = @"Add project failed";
+                [[ECBezelAlert centerBezelAlert] addAlertMessageWithText:message image:nil displayImmediatly:NO];
+            }];
             [popover dismissPopoverAnimated:YES];
         } copy];
     }

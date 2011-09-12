@@ -64,9 +64,9 @@
             [childGroup importFileFromURL:fileInSubdirectoryURL withCompletionHandler:^(BOOL success) {
                 if (!success)
                     ECASSERT(NO); // TODO: error handling
-                if (completionHandler)
-                    completionHandler(YES);
             }];
+        if (completionHandler)
+            completionHandler(YES);
     }
 }
 

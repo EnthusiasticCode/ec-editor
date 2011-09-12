@@ -35,5 +35,6 @@
 /// Passing index = NSNotFound will add the project to the end of the project list
 - (void)addNewProjectWithName:(NSString *)projectName atIndex:(NSUInteger)index fromTemplate:(NSString *)templateName withCompletionHandler:(void (^)(BOOL success))completionHandler;
 - (void)addNewProjectWithName:(NSString *)projectName atIndex:(NSUInteger)index fromACZ:(NSURL *)ACZFileURL withCompletionHandler:(void (^)(BOOL success))completionHandler;
+- (void)addNewProjectWithName:(NSString *)projectName atIndex:(NSUInteger)index fromZIP:(NSURL *)ZIPFileURL withCompletionHandler:(void (^)(BOOL success))completionHandler;
 
 @end

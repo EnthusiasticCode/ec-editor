@@ -173,7 +173,6 @@ static void * const ACStateProjectURLObservingContext;
         [self didChange:NSKeyValueChangeInsertion valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"projectDocuments"];
         if (completionHandler)
             completionHandler(YES);
-        NSLog(@"document is: %d", [document documentState]);
     }];
 }
 
@@ -189,6 +188,8 @@ static void * const ACStateProjectURLObservingContext;
     [archive extractToDirectory:fileURL withCompletionHandler:^(BOOL success) {
         if (!success)
         {
+            NSFileManager *fileManager = [[NSFileManager alloc] init];
+            [fileManager removeItemAtURL:fileURL error:NULL];
             if (completionHandler)
                 completionHandler(NO);
             return;
@@ -201,6 +202,45 @@ static void * const ACStateProjectURLObservingContext;
         [self didChange:NSKeyValueChangeInsertion valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"projectDocuments"];
         if (completionHandler)
             completionHandler(YES);
+    }];
+}
+
+- (void)addNewProjectWithName:(NSString *)projectName atIndex:(NSUInteger)index fromZIP:(NSURL *)ZIPFileURL withCompletionHandler:(void (^)(BOOL))completionHandler
+{
+    __weak ACProjectDocumentsList *this = self;
+    [self addNewProjectWithName:projectName atIndex:index fromTemplate:nil withCompletionHandler:^(BOOL success) {
+        if (!success)
+        {
+            if (completionHandler)
+                completionHandler(NO);
+            return;
+        }
+        ACProjectDocument *document = [this projectDocumentWithName:projectName];
+        void(^block)(BOOL) = ^(BOOL success)
+        {
+            if (!success)
+            {
+                if (completionHandler)
+                    completionHandler(NO);
+                return;
+            }
+            ACProject *project = document.project;
+            [project importFilesFromZIP:ZIPFileURL withCompletionHandler:^(BOOL success) {
+                if (!success)
+                {
+                    [this deleteProjectWithName:projectName];
+                    if (completionHandler)
+                        completionHandler(NO);
+                    return;
+                }
+                if (completionHandler)
+                    completionHandler(YES);
+            }];
+        };
+        if (document.documentState == UIDocumentStateClosed)
+            [document openWithCompletionHandler:block];
+        else
+            block(YES);
     }];
 }
 
