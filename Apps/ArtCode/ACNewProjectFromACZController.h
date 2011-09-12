@@ -10,6 +10,4 @@
 
 @interface ACNewProjectFromACZController : UITableViewController
 
-@property (nonatomic, strong) void (^newProjectFromACZ)(NSURL *ACZFileURL);
-
 @end

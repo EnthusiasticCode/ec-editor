@@ -10,6 +10,4 @@
 
 @interface ACNewProjectFromZIPController : UITableViewController
 
-@property (nonatomic, strong) void (^newProjectFromZIP)(NSURL *ZIPFileURL);
-
 @end

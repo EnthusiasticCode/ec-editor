@@ -18,6 +18,7 @@
 #import "ECBezelAlert.h"
 
 #import "ACFileTableController.h"
+#import "ACNewProjectPopoverController.h"
 
 #define STATIC_OBJECT(typ, nam, init) static typ *nam = nil; if (!nam) nam = init
 
@@ -29,11 +30,72 @@ static void * ACStateProjectsObservingContext;
     ECPopoverController *popoverLabelColorController;
     UINavigationItem *_customNavigationItem;
 }
+@property (nonatomic, strong, readonly) void (^newProjectFromTemplate)(NSString *templateName);
+@property (nonatomic, strong, readonly) void (^newProjectFromACZ)(NSURL *ACZFileURL);
+@property (nonatomic, strong, readonly) void (^newProjectFromZIP)(NSURL *ZIPFileURL);
 - (void)deleteTableRow:(id)sender;
-- (void)addNewProject:(id)sender;
 @end
 
 @implementation ACProjectTableController
+
+@synthesize newProjectFromTemplate = _newProjectFromTemplate;
+@synthesize newProjectFromACZ = _newProjectFromACZ;
+@synthesize newProjectFromZIP = _newProjectFromZIP;
+
+- (void (^)(NSString *))newProjectFromTemplate
+{
+    if (!_newProjectFromTemplate)
+    {
+        UIPopoverController *popover = _popover;
+        _newProjectFromTemplate = [^(NSString *templateName)
+        {
+            NSString *projectName;
+            for (NSUInteger projectNumber = 0; YES; ++projectNumber)
+            {
+                projectName = [@"Project " stringByAppendingString:[NSString stringWithFormat:@"%d", projectNumber]];
+                if ([[ACProjectDocumentsList sharedList] projectDocumentWithName:projectName])
+                    continue;
+                break;
+            }
+            [[ACProjectDocumentsList sharedList] addNewProjectWithName:projectName atIndex:NSNotFound fromTemplate:nil withCompletionHandler:^(BOOL success) {
+                NSString *message = nil;
+                if (success)
+                    message = [@"Added new project: " stringByAppendingString:projectName];
+                else
+                    message = @"Add project failed";
+                [[ECBezelAlert centerBezelAlert] addAlertMessageWithText:message image:nil displayImmediatly:NO];
+            }];
+            [popover dismissPopoverAnimated:YES];
+        } copy];
+    }
+    return _newProjectFromTemplate;
+}
+
+- (void (^)(NSURL *))newProjectFromACZ
+{
+    if (!_newProjectFromACZ)
+    {
+        UIPopoverController *popover = _popover;
+        _newProjectFromACZ = [^(NSURL *ACZFileURL)
+        {
+            [popover dismissPopoverAnimated:YES];            
+        } copy];
+    }
+    return _newProjectFromACZ;
+}
+
+- (void (^)(NSURL *))newProjectFromZIP
+{
+    if (!_newProjectFromZIP)
+    {
+        UIPopoverController *popover = _popover;
+        _newProjectFromZIP = [^(NSURL *ZIPFileURL)
+        {
+            [popover dismissPopoverAnimated:YES];
+        } copy];
+    }
+    return _newProjectFromZIP;
+}
 
 #pragma mark - View lifecycle
 
@@ -60,7 +122,6 @@ static void * ACStateProjectsObservingContext;
     if (context != ACStateProjectsObservingContext)
         return [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
     [self.tableView reloadData];
-    [_popover dismissPopoverAnimated:YES];
 }
 
 - (void)didReceiveMemoryWarning
@@ -72,11 +133,22 @@ static void * ACStateProjectsObservingContext;
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
-    if (![segue.identifier isEqualToString:@"OpenProject"])
+    NSString *identifier = segue.identifier;
+    if ([identifier isEqualToString:@"OpenProject"])
+    {
+        NSUInteger selectedRow = [self.tableView indexPathForSelectedRow].row;
+        ACProjectDocument *document = [[ACProjectDocumentsList sharedList].projectDocuments objectAtIndex:selectedRow];
+        [segue.destinationViewController setProjectDocument:document];
+    }
+    else if ([identifier isEqualToString:@"NewProject"])
+    {
+        _popover = [(UIStoryboardPopoverSegue *)segue popoverController];
+        [segue.destinationViewController setNewProjectFromTemplate:self.newProjectFromTemplate];
+        [segue.destinationViewController setNewProjectFromACZ:self.newProjectFromACZ];
+        [segue.destinationViewController setNewProjectFromZIP:self.newProjectFromZIP];
+    }
+    else
         return [super prepareForSegue:segue sender:sender];
-    NSUInteger selectedRow = [self.tableView indexPathForSelectedRow].row;
-    ACProjectDocument *document = [[ACProjectDocumentsList sharedList].projectDocuments objectAtIndex:selectedRow];
-    [segue.destinationViewController setProjectDocument:document];
 }
 
 - (UINavigationItem *)navigationItem

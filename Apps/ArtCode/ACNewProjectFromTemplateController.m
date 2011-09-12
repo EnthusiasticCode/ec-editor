@@ -9,10 +9,9 @@
 #import "ACNewProjectFromTemplateController.h"
 #import "ACProjectDocumentsList.h"
 #import "ECBezelAlert.h"
+#import "ACNewProjectPopoverController.h"
 
 @implementation ACNewProjectFromTemplateController
-
-@synthesize newProjectFromTemplate;
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
@@ -49,23 +48,8 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSString *projectName;
-    for (NSUInteger projectNumber = 0; YES; ++projectNumber)
-    {
-        projectName = [@"Project " stringByAppendingString:[NSString stringWithFormat:@"%d", projectNumber]];
-        if ([[ACProjectDocumentsList sharedList] projectDocumentWithName:projectName])
-            continue;
-        break;
-    }
-    [[ACProjectDocumentsList sharedList] addNewProjectWithName:projectName atIndex:NSNotFound fromTemplate:nil withCompletionHandler:^(BOOL success) {
-        NSString *message = nil;
-        if (success)
-            message = [@"Added new project: " stringByAppendingString:projectName];
-        else
-            message = @"Add project failed";
-        [[ECBezelAlert centerBezelAlert] addAlertMessageWithText:message image:nil displayImmediatly:NO];
-        
-    }];
+    ECASSERT([(ACNewProjectPopoverController *)self.navigationController newProjectFromTemplate]);
+    [(ACNewProjectPopoverController *)self.navigationController newProjectFromTemplate](nil);
 }
 
 @end

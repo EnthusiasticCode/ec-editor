@@ -10,6 +10,4 @@
 
 @interface ACNewProjectFromTemplateController : UITableViewController
 
-@property (nonatomic, strong) void (^newProjectFromTemplate)(NSString *templateName);
-
 @end

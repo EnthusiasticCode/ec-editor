@@ -30,8 +30,6 @@
 - (NSUInteger)removeNodesForNode:(ACNode *)node;
 - (NSIndexSet *)indexesOfNodesToRemoveForNode:(ACNode *)node;
 
-- (void)addNewNode:(id)sender;
-
 @end
 
 @implementation ACFileTableController
