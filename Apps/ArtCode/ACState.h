@@ -41,10 +41,4 @@
 /// Deletes the node referenced by the ACURL
 - (void)deleteNodeWithURL:(NSURL *)URL;
 
-/// Move or copy nodes to a group
-- (void)moveNodeWithURL:(NSURL *)URL toGroupWithURL:(NSURL *)groupURL;
-- (void)moveNodesWithURLs:(NSArray *)URLs toGroupWithURL:(NSURL *)groupURL;
-- (void)copyNodeWithURL:(NSURL *)URL toGroupWithURL:(NSURL *)groupURL;
-- (void)copyNodesWithURLs:(NSArray *)URLs toGroupWithURL:(NSURL *)groupURL;
-
 @end

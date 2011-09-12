@@ -8,6 +8,7 @@
 
 #import "AppStyle.h"
 #import "ACState.h"
+#import "ACFile.h"
 #import "ACCodeFileController.h"
 
 #import "ECPopoverController.h"
@@ -15,9 +16,6 @@
 #import "ACCodeIndexerDataSource.h"
 
 #import "ACCodeFileFilterController.h"
-#import "AppStyle.h"
-#import "ACState.h"
-#import "ACFile.h"
 
 #import <QuartzCore/QuartzCore.h>
 
@@ -143,8 +141,23 @@
 {
     if (!filterController)
     {
-        filterController = [ACCodeFileFilterController new];
+        // TODO this require loading spinner
+        filterController = [[ACCodeFileFilterController alloc] initWithNibName:@"ACCodeFileFilterController" bundle:nil];
+        filterController.targetCodeView = self.codeView;
         filterController.contentSizeForViewInPopover = CGSizeMake(300, 300);
+        
+        // Scroll codeview to selected filter result range
+        __weak ECCodeView *thisCodeView = codeView;
+        filterController.didSelectFilterResultBlock = ^(NSRange range) {
+            if (range.length == 0)
+                range.length = 1; // Go to line
+            
+            CGRect rangeRect = [thisCodeView.renderer rectsForStringRange:range limitToFirstLine:NO].bounds;
+            rangeRect.origin.x += thisCodeView.textInsets.left;
+            rangeRect.origin.y += thisCodeView.textInsets.top - 50;
+            rangeRect.size.height += 100;
+            [thisCodeView scrollRectToVisible:rangeRect animated:YES];
+        };
     }
     
     if (!filterPopoverController)
@@ -162,7 +175,13 @@
 
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
 {
-    // TODO apply filter to filterController
+    // Apply filter to filterController
+    NSMutableString *filterString = [textField.text mutableCopy];
+    [filterString replaceCharactersInRange:range withString:string];
+    filterController.filterString = filterString;
+    
+    // TODO Use a debounce timer instead
+    
     return YES;
 }
 
