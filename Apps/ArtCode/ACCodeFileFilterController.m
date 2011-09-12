@@ -11,6 +11,8 @@
 #import "AppStyle.h"
 #import "ACCodeIndexerDataSource.h"
 
+#import "ECTextRenderer.h"
+
 enum ACCodeFileFilterSections {
     /// Identifies the symbol section of the filter table view.
     ACCodeFileFilterSymbolsSection,
@@ -51,11 +53,8 @@ enum ACCodeFileFilterSections {
         // TODO create here? keep? manage error
         NSRegularExpression *filterExp = [NSRegularExpression regularExpressionWithPattern:filterString options:0 error:NULL];
         
-//        __block NSUInteger sectionIndex = 0;
-        
         // Prepare text search section
         NSMutableArray *searchSection = [sections objectAtIndex:ACCodeFileFilterSearchSection];
-//        NSInteger searchSectionOldCount = [searchSection count];
         [searchSection removeAllObjects];
         
         /// Search in text
@@ -68,42 +67,16 @@ enum ACCodeFileFilterSections {
         
         // Prepare other section
         NSMutableArray *otherSection = [sections objectAtIndex:ACCodeFileFilterOtherSection];
-//        NSInteger otherSectionOldCount = [otherSection count];
         [otherSection removeAllObjects];
         
         // Search for go to line
-        [goToLineRegExp enumerateMatchesInString:filterString options:NSMatchingReportCompletion range:NSMakeRange(0, [filterString length]) usingBlock:^(NSTextCheckingResult *result, NSMatchingFlags flags, BOOL *stop) {
-            NSUInteger otherSectionCount = [otherSection count];
-//            if (flags & NSMatchingCompleted)
-//            {
-//                if (otherSectionCount == 0 && otherSectionOldCount > 0)
-//                {
-//                    // Remove section if no result found
-////                    [_tableView beginUpdates];
-////                    [_tableView deleteSections:[NSIndexSet indexSetWithIndex:sectionIndex] withRowAnimation:UITableViewRowAnimationAutomatic];
-////                    [_tableView endUpdates];
-//                }
-//                return;
-//            }
-            
+        [goToLineRegExp enumerateMatchesInString:filterString options:0 range:NSMakeRange(0, [filterString length]) usingBlock:^(NSTextCheckingResult *result, NSMatchingFlags flags, BOOL *stop) {
             if ([result numberOfRanges] > 1)
             {   
                 // Get actual line number to navigate to
                 NSRange lineRange = [result rangeAtIndex:1];
                 NSInteger line = [[filterString substringWithRange:lineRange] integerValue];
                 [otherSection addObject:[NSNumber numberWithInteger:line]];
-                otherSectionCount++;
-                
-//                [_tableView beginUpdates];
-//                // Add section if not already present
-//                if (otherSectionCount == 1 && otherSectionOldCount == 0)
-//                    [_tableView insertSections:[NSIndexSet indexSetWithIndex:sectionIndex] withRowAnimation:UITableViewRowAnimationAutomatic];
-//                // Create new row for go to line
-//                if (otherSectionCount > otherSectionOldCount)
-//                    [_tableView insertRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:otherSectionCount - 1 inSection:sectionIndex]] withRowAnimation:UITableViewRowAnimationAutomatic];
-//                else // reload
-//                    [_tableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:otherSectionCount - 1 inSection:sectionIndex]] withRowAnimation:UITableViewRowAnimationAutomatic];
-//                [_tableView endUpdates];
             }
         }];
         
@@ -268,6 +241,11 @@ enum ACCodeFileFilterSections {
                 break;
             }
         }
+        
+        // Solid color selection highlight
+        UIView *selectedBackgroundView = [UIView new];
+        selectedBackgroundView.backgroundColor = [UIColor styleHighlightColor];
+        cell.selectedBackgroundView = selectedBackgroundView;
     }
     
     // Configure the cell
@@ -283,7 +261,45 @@ enum ACCodeFileFilterSections {
         case ACCodeFileFilterSearchSection:
         {
             NSTextCheckingResult *result = [sectionObjects objectAtIndex:index];
-            cell.textLabel.text = [targetCodeView.datasource codeView:nil stringInRange:[result rangeAtIndex:0]];
+            CGRect resultRect = [targetCodeView.renderer rectsForStringRange:[result rangeAtIndex:0] limitToFirstLine:YES].bounds;
+            CGRect clipRect = cell.bounds;
+            clipRect.origin.x = CGRectGetMidX(resultRect) - clipRect.size.width / 2;
+            clipRect.origin.y = CGRectGetMidY(resultRect) - clipRect.size.height / 2;
+            
+            // TODO do in background?
+            UIGraphicsBeginImageContext(clipRect.size);
+            {
+                CGContextRef context = UIGraphicsGetCurrentContext();
+                
+                if (clipRect.origin.x > 0)
+                    CGContextTranslateCTM(context, -clipRect.origin.x, 0);
+                
+                // Draw text
+                CGContextSaveGState(context);
+                [targetCodeView.renderer drawTextWithinRect:clipRect inContext:context withLineBlock:nil];
+                CGContextRestoreGState(context);
+                
+                // Draw gradient
+                static CGGradientRef gradient = NULL;
+                if (!gradient)
+                {
+                    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+                    NSArray *gradientColors = [NSArray arrayWithObjects:
+                                               (__bridge id)tableView.backgroundColor.CGColor,
+                                               (__bridge id)[tableView.backgroundColor colorWithAlphaComponent:0].CGColor,
+                                               (__bridge id)tableView.backgroundColor.CGColor,nil];
+                    CGFloat gradientLocations[] = {0, 0.5, 1};
+                    gradient = CGGradientCreateWithColors(colorSpace, (__bridge CFArrayRef)gradientColors, gradientLocations);
+                    CGColorSpaceRelease(colorSpace);
+                }
+                
+                CGContextDrawLinearGradient(context, gradient, CGPointMake(clipRect.size.width / 2, 0), CGPointMake(clipRect.size.width / 2, clipRect.size.height), 0);
+            }
+            UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+            UIGraphicsEndImageContext();
+            
+            [cell.contentView.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
+            [cell.contentView addSubview:[[UIImageView alloc] initWithImage:image]];
             break;
         }
             
