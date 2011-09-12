@@ -319,6 +319,23 @@ enum ACCodeFileFilterSections {
 
 #pragma mark - Table view delegate
 
+- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
+{
+    UILabel *label = [UILabel new];
+    label.font = [UIFont styleFontWithSize:16];
+    label.backgroundColor = [UIColor styleForegroundColor];
+    label.textColor = [UIColor styleBackgroundColor];
+    
+    label.text = [self tableView:tableView titleForHeaderInSection:section];
+    
+    return label;
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
+{
+    return UITableViewAutomaticDimension;
+}
+
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     [tableView deselectRowAtIndexPath:indexPath animated:NO];
@@ -327,6 +344,7 @@ enum ACCodeFileFilterSections {
     NSInteger index = [indexPath indexAtPosition:1];
     NSObject *obj = [[sections objectAtIndex:section] objectAtIndex:index];
     
+    // Produce range of found element in target code view text
     NSRange range;
     switch (section) {
         case ACCodeFileFilterSymbolsSection:
@@ -355,11 +373,6 @@ enum ACCodeFileFilterSections {
     
     if (didSelectFilterResultBlock)
         didSelectFilterResultBlock(range);
-}
-
-- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
-{
-    return UITableViewAutomaticDimension;
 }
 
 @end
