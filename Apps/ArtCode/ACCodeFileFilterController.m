@@ -8,6 +8,9 @@
 
 #import "ACCodeFileFilterController.h"
 
+#import "AppStyle.h"
+#import "ACCodeIndexerDataSource.h"
+
 enum ACCodeFileFilterSections {
     /// Identifies the symbol section of the filter table view.
     ACCodeFileFilterSymbolsSection,
@@ -28,6 +31,87 @@ enum ACCodeFileFilterSections {
     /// Every entry of the sections array is another array that contains fitlered
     /// restults for the section.
     NSArray *sections;
+}
+
+#pragma mark - Properties
+
+@synthesize targetCodeView, filterString;
+@synthesize startSearchingBlock, endSearchingBlock;
+@synthesize tableView = _tableView;
+@synthesize replaceToolView;
+
+- (void)setFilterString:(NSString *)string
+{
+    filterString = string;
+    
+    if (startSearchingBlock)
+        startSearchingBlock(self);
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        // TODO create here? keep? manage error
+        NSRegularExpression *filterExp = [NSRegularExpression regularExpressionWithPattern:filterString options:0 error:NULL];
+        
+//        __block NSUInteger sectionIndex = 0;
+        
+        // Prepare text search section
+        NSMutableArray *searchSection = [sections objectAtIndex:ACCodeFileFilterSearchSection];
+//        NSInteger searchSectionOldCount = [searchSection count];
+        [searchSection removeAllObjects];
+        
+        /// Search in text
+        if (targetCodeView)
+        {
+            NSString *text = targetCodeView.text;
+            NSArray *matches = [filterExp matchesInString:text options:0 range:NSMakeRange(0, [text length])];
+            [searchSection addObjectsFromArray:matches];
+        }
+        
+        // Prepare other section
+        NSMutableArray *otherSection = [sections objectAtIndex:ACCodeFileFilterOtherSection];
+//        NSInteger otherSectionOldCount = [otherSection count];
+        [otherSection removeAllObjects];
+        
+        // Search for go to line
+        [goToLineRegExp enumerateMatchesInString:filterString options:NSMatchingReportCompletion range:NSMakeRange(0, [filterString length]) usingBlock:^(NSTextCheckingResult *result, NSMatchingFlags flags, BOOL *stop) {
+            NSUInteger otherSectionCount = [otherSection count];
+//            if (flags & NSMatchingCompleted)
+//            {
+//                if (otherSectionCount == 0 && otherSectionOldCount > 0)
+//                {
+//                    // Remove section if no result found
+////                    [_tableView beginUpdates];
+////                    [_tableView deleteSections:[NSIndexSet indexSetWithIndex:sectionIndex] withRowAnimation:UITableViewRowAnimationAutomatic];
+////                    [_tableView endUpdates];
+//                }
+//                return;
+//            }
+            
+            if ([result numberOfRanges] > 1)
+            {   
+                // Get actual line number to navigate to
+                NSRange lineRange = [result rangeAtIndex:1];
+                NSInteger line = [[filterString substringWithRange:lineRange] integerValue];
+                [otherSection addObject:[NSNumber numberWithInteger:line]];
+                otherSectionCount++;
+                
+//                [_tableView beginUpdates];
+//                // Add section if not already present
+//                if (otherSectionCount == 1 && otherSectionOldCount == 0)
+//                    [_tableView insertSections:[NSIndexSet indexSetWithIndex:sectionIndex] withRowAnimation:UITableViewRowAnimationAutomatic];
+//                // Create new row for go to line
+//                if (otherSectionCount > otherSectionOldCount)
+//                    [_tableView insertRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:otherSectionCount - 1 inSection:sectionIndex]] withRowAnimation:UITableViewRowAnimationAutomatic];
+//                else // reload
+//                    [_tableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:otherSectionCount - 1 inSection:sectionIndex]] withRowAnimation:UITableViewRowAnimationAutomatic];
+//                [_tableView endUpdates];
+            }
+        }];
+        
+        [self.tableView reloadData];
+        
+        if (endSearchingBlock)
+            endSearchingBlock(self);
+    });
 }
 
 #pragma mark - Private Methods
@@ -53,64 +137,26 @@ enum ACCodeFileFilterSections {
     return -1;
 }
 
-#pragma mark - Properties
-
-@synthesize targetCodeIndexerDataSource, filterString;
-@synthesize startSearchingBlock, endSearchingBlock;
-@synthesize tableView = _tableView;
-@synthesize replaceToolView;
-
-- (void)setFilterString:(NSString *)string
+- (void)showReplaceTool:(BOOL)show animated:(BOOL)animated
 {
-    filterString = string;
+    [self.view bringSubviewToFront:_tableView];
     
-    if (startSearchingBlock)
-        startSearchingBlock(self);
-    
-    dispatch_async(dispatch_get_main_queue(), ^{
-        __block NSUInteger sectionIndex = 0;
-        
-        // Prepare other section
-        NSMutableArray *otherSection = [sections objectAtIndex:ACCodeFileFilterOtherSection];
-        NSInteger otherSectionOldCount = [otherSection count];
-        [otherSection removeAllObjects];
-        
-        // Search for go to line
-        [goToLineRegExp enumerateMatchesInString:filterString options:NSMatchingReportCompletion range:NSMakeRange(0, [filterString length]) usingBlock:^(NSTextCheckingResult *result, NSMatchingFlags flags, BOOL *stop) {
-            NSUInteger otherSectionCount = [otherSection count];
-            if (flags & NSMatchingCompleted)
-            {
-                if (otherSectionCount == 0 && otherSectionOldCount > 0)
-                {
-                    // Remove section if no result found
-                    [_tableView beginUpdates];
-                    [_tableView deleteSections:[NSIndexSet indexSetWithIndex:sectionIndex] withRowAnimation:UITableViewRowAnimationAutomatic];
-                    [_tableView endUpdates];
-                }
-                return;
-            }
-            
-            if ([result numberOfRanges] > 1)
-            {   
-                // Get actual line number to navigate to
-                NSRange lineRange = [result rangeAtIndex:1];
-                NSInteger line = [[filterString substringWithRange:lineRange] integerValue];
-                [otherSection addObject:[NSNumber numberWithInteger:line]];
-                otherSectionCount++;
-                
-                [_tableView beginUpdates];
-                // Add section if not already present
-                if (otherSectionCount == 1 && otherSectionOldCount == 0)
-                    [_tableView insertSections:[NSIndexSet indexSetWithIndex:sectionIndex] withRowAnimation:UITableViewRowAnimationAutomatic];
-                // Create new row for go to line
-                if (otherSectionCount > otherSectionOldCount)
-                    [_tableView insertRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:otherSectionCount - 1 inSection:sectionIndex]] withRowAnimation:UITableViewRowAnimationAutomatic];
-                else // reload
-                    [_tableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:otherSectionCount - 1 inSection:sectionIndex]] withRowAnimation:UITableViewRowAnimationAutomatic];
-                [_tableView endUpdates];
-            }
-        }];    
-    });
+    if (animated)
+    {
+        [UIView animateWithDuration:STYLE_ANIMATION_DURATION delay:0 options:UIViewAnimationOptionAllowUserInteraction | UIViewAnimationOptionBeginFromCurrentState animations:^{
+            CGRect frame = self.view.bounds;
+            if (show)
+                frame.size.width -= 44;
+            _tableView.frame = frame;
+        } completion:nil];
+    }
+    else
+    {
+        CGRect frame = self.view.bounds;
+        if (show)
+            frame.size.width -= 44;
+        _tableView.frame = frame;
+    }
 }
 
 #pragma mark - Controller lifecycle
@@ -134,6 +180,9 @@ enum ACCodeFileFilterSections {
     
     // Initialize sections with filtered restuls
     sections = [NSArray arrayWithObjects:[NSMutableArray array], [NSMutableArray array], [NSMutableArray array], nil];
+    
+    // TODO show or hide depending on current filter
+    [self showReplaceTool:NO animated:NO];
 }
 
 - (void)viewDidUnload
@@ -233,6 +282,8 @@ enum ACCodeFileFilterSections {
             
         case ACCodeFileFilterSearchSection:
         {
+            NSTextCheckingResult *result = [sectionObjects objectAtIndex:index];
+            cell.textLabel.text = [targetCodeView.datasource codeView:nil stringInRange:[result rangeAtIndex:0]];
             break;
         }
             

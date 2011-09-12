@@ -142,7 +142,7 @@
     {
         // TODO this require loading spinner
         filterController = [[ACCodeFileFilterController alloc] initWithNibName:@"ACCodeFileFilterController" bundle:nil];
-        filterController.targetCodeIndexerDataSource = (ACCodeIndexerDataSource *)self.codeView.datasource;
+        filterController.targetCodeView = self.codeView;
         filterController.contentSizeForViewInPopover = CGSizeMake(300, 300);
     }
     

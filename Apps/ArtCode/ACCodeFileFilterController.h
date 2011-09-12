@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@class ACCodeIndexerDataSource;
+@class ECCodeView;
 @class ACCodeFileFilterController;
 
 
@@ -25,8 +25,8 @@ typedef void (^ACCodeFileFilterBlock)(ACCodeFileFilterController *sender);
 
 #pragma mark Managing Filtering
 
-/// Code indexer datasource from which retrive content and code unit.
-@property (weak, nonatomic) ACCodeIndexerDataSource *targetCodeIndexerDataSource;
+/// Code view to which apply the filter.
+@property (weak, nonatomic) ECCodeView *targetCodeView;
 
 /// Specify the string to use to filter the content.
 @property (strong, nonatomic) NSString *filterString;
