@@ -38,7 +38,7 @@ enum ACCodeFileFilterSections {
 #pragma mark - Properties
 
 @synthesize targetCodeView, filterString;
-@synthesize startSearchingBlock, endSearchingBlock;
+@synthesize startSearchingBlock, endSearchingBlock, didSelectFilterResultBlock;
 @synthesize tableView = _tableView;
 @synthesize replaceToolView;
 
@@ -309,7 +309,7 @@ enum ACCodeFileFilterSections {
             cell.textLabel.text = [NSString stringWithFormat:@"Go to line %@", line];
             break;
         }
-            
+
         default:
             return nil;
     }
@@ -321,13 +321,40 @@ enum ACCodeFileFilterSections {
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    // Navigation logic may go here. Create and push another view controller.
-    /*
-     <#DetailViewController#> *detailViewController = [[<#DetailViewController#> alloc] initWithNibName:@"<#Nib name#>" bundle:nil];
-     // ...
-     // Pass the selected object to the new view controller.
-     [self.navigationController pushViewController:detailViewController animated:YES];
-     */
+    [tableView deselectRowAtIndexPath:indexPath animated:NO];
+    
+    NSInteger section = [self filterSectionForSection:[indexPath indexAtPosition:0]];
+    NSInteger index = [indexPath indexAtPosition:1];
+    NSObject *obj = [[sections objectAtIndex:section] objectAtIndex:index];
+    
+    NSRange range;
+    switch (section) {
+        case ACCodeFileFilterSymbolsSection:
+            range = NSMakeRange(0, 0);
+            break;
+            
+        case ACCodeFileFilterSearchSection:
+            range = [(NSTextCheckingResult *)obj rangeAtIndex:0];
+            
+        default:
+            if ([obj isKindOfClass:[NSNumber class]])
+            {
+                NSInteger lineTerminatorLength = [@"\n" length];
+                __block NSInteger lineIndex = [(NSNumber *)obj integerValue];
+                __block NSInteger location = 0;
+                [targetCodeView.text enumerateLinesUsingBlock:^(NSString *line, BOOL *stop) {
+                    if (lineIndex-- == 0)
+                        *stop = YES;
+                    else
+                        location += [line length] + lineTerminatorLength;
+                }];
+                range = NSMakeRange(location, 0);
+            }
+            break;
+    }
+    
+    if (didSelectFilterResultBlock)
+        didSelectFilterResultBlock(range);
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section

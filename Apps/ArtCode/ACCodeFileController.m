@@ -144,6 +144,19 @@
         filterController = [[ACCodeFileFilterController alloc] initWithNibName:@"ACCodeFileFilterController" bundle:nil];
         filterController.targetCodeView = self.codeView;
         filterController.contentSizeForViewInPopover = CGSizeMake(300, 300);
+        
+        // Scroll codeview to selected filter result range
+        __weak ECCodeView *thisCodeView = codeView;
+        filterController.didSelectFilterResultBlock = ^(NSRange range) {
+            if (range.length == 0)
+                range.length = 1; // Go to line
+            
+            CGRect rangeRect = [thisCodeView.renderer rectsForStringRange:range limitToFirstLine:NO].bounds;
+            rangeRect.origin.x += thisCodeView.textInsets.left;
+            rangeRect.origin.y += thisCodeView.textInsets.top - 50;
+            rangeRect.size.height += 100;
+            [thisCodeView scrollRectToVisible:rangeRect animated:YES];
+        };
     }
     
     if (!filterPopoverController)

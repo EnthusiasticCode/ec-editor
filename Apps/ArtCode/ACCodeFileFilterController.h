@@ -14,6 +14,7 @@
 
 typedef void (^ACCodeFileFilterBlock)(ACCodeFileFilterController *sender);
 
+
 /// A controller that present a filtrable list of code view related elements.
 /// Without filtering, the controller displays a list of symbols derived from 
 /// the target code indexer datasource's code unit.
@@ -33,8 +34,15 @@ typedef void (^ACCodeFileFilterBlock)(ACCodeFileFilterController *sender);
 
 #pragma mark Customizing Controller Actions
 
+/// Called by the controller before starting to apply a filter.
 @property (copy, nonatomic) ACCodeFileFilterBlock startSearchingBlock;
+
+/// Called by the controller after the filtering is done.
 @property (copy, nonatomic) ACCodeFileFilterBlock endSearchingBlock;
+
+/// Called when a user select a filter result.
+@property (copy, nonatomic) void (^didSelectFilterResultBlock)(NSRange range);
+
 
 #pragma mark Controlled Views
 
