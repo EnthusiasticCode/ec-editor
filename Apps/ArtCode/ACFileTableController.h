@@ -7,14 +7,13 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "ACNavigationTarget.h"
 
-@class ACToolFiltersView;
+@class ACToolFiltersView, ACProjectDocument;
 
 
-@interface ACFileTableController : UIViewController <ACNavigationTarget, UITableViewDataSource, UITableViewDelegate>
+@interface ACFileTableController : UITableViewController <UITextFieldDelegate>
 
-@property (nonatomic, strong) IBOutlet UITableView *tableView;
+@property (nonatomic, strong) ACProjectDocument *projectDocument;
 
 @property (nonatomic, strong) IBOutlet ACToolFiltersView *editingToolsView;
 

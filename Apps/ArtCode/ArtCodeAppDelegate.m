@@ -11,7 +11,6 @@
 #import "AppStyle.h"
 #import "ECPopoverView.h"
 
-#import "ACNavigationController.h"
 #import "ACTopBarView.h"
 #import "ACToolPanelController.h"
 #import "ECTabBar.h"
@@ -34,7 +33,6 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     UIFont *defaultFont = [UIFont styleFontWithSize:14];    
-    ACNavigationController *navigationController = (ACNavigationController *)self.window.rootViewController;
     
     ////////////////////////////////////////////////////////////////////////////
     // Generic text field
@@ -89,11 +87,9 @@
     
     ////////////////////////////////////////////////////////////////////////////
     // Adding tool panel
-    UIStoryboard *toolPanelsStoryboard = [UIStoryboard storyboardWithName:@"ToolPanelStoryboard" bundle:[NSBundle mainBundle]];
-    ACToolPanelController *toolPanelController = [toolPanelsStoryboard instantiateInitialViewController];
+//    UIStoryboard *toolPanelsStoryboard = [UIStoryboard storyboardWithName:@"ToolPanelStoryboard" bundle:[NSBundle mainBundle]];
+//    ACToolPanelController *toolPanelController = [toolPanelsStoryboard instantiateInitialViewController];
     //
-    navigationController.toolPanelController = toolPanelController;
-    navigationController.toolPanelOnRight = YES;
     
     ////////////////////////////////////////////////////////////////////////////
     // Tools
@@ -113,11 +109,7 @@
     [buttonIneditableTableCellDeleteContainer setTitleShadowColor:[UIColor styleForegroundColor] forState:UIControlStateNormal];
     
     ////////////////////////////////////////////////////////////////////////////
-    [window makeKeyAndVisible];
-    navigationController.tabNavigationController.tabPageMargin = 10;
-    [navigationController.tabNavigationController addTabControllerWithDataSorce:self initialURL:[NSURL URLWithString:@"artcode:projects"] animated:NO];
-//    [navigationController.tabNavigationController addTabControllerWithDataSorce:self initialURL:[NSURL URLWithString:@"artcode:/ProjectX"] animated:NO];
-    navigationController.tabNavigationController.makeAddedTabCurrent = YES;
+    [self.window makeKeyAndVisible];
     return YES;
 }
 
@@ -158,39 +150,6 @@
      Save data if appropriate.
      See also applicationDidEnterBackground:.
      */
-}
-
-#pragma mark - Navigation Controller Delegate Methods
-
-- (BOOL)tabController:(ACTabController *)tabController shouldChangeCurrentViewController:(UIViewController *)viewController forURL:(NSURL *)url
-{
-    // TODO convert the view controller to an ACToolTarget and see if it can handle
-    // the URL. if it can, open it and return NO.
-    return YES;
-}
-
-- (UIViewController *)tabController:(ACTabController *)tabController viewControllerForURL:(NSURL *)url
-{
-    Class controllerClass = nil;
-    // TODO url switch logic
-    if ([url.absoluteString isEqualToString:@"artcode:projects"])
-        controllerClass = [ACProjectTableController class];
-    else if ([url isACProjectURL])
-        controllerClass = [ACFileTableController class];
-    else
-    {
-        ACProjectDocument *document = [[ACState sharedState] projectWithURL:[url ACProjectURL]];
-        ACProject *project = document.project;
-        ACNode *node = [project nodeWithURL:url];
-        if ([[node nodeType] isEqualToString:@"Group"])
-            controllerClass = [ACFileTableController class];
-        else if ([[node nodeType] isEqualToString:@"File"])
-            controllerClass = [ACCodeFileController class];
-    }
-
-    UIViewController<ACNavigationTarget> *controller = [controllerClass newNavigationTargetController];
-    [controller openURL:url];
-    return controller; // TODO initWithNibName:name of class
 }
 
 @end

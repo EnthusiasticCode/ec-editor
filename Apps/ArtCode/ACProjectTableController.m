@@ -12,11 +12,12 @@
 #import "ACColorSelectionControl.h"
 
 #import "ACProjectDocumentsList.h"
-#import "ACNavigationController.h"
 
 #import "ECPopoverController.h"
 
 #import "ECBezelAlert.h"
+
+#import "ACFileTableController.h"
 
 #define STATIC_OBJECT(typ, nam, init) static typ *nam = nil; if (!nam) nam = init
 
@@ -25,13 +26,14 @@ static void * ACStateProjectsObservingContext;
 @interface ACProjectTableController ()
 {
     UIPopoverController *_popover;
+    ECPopoverController *popoverLabelColorController;
+    UINavigationItem *_customNavigationItem;
 }
 - (void)deleteTableRow:(id)sender;
+- (void)addNewProject:(id)sender;
 @end
 
-@implementation ACProjectTableController {
-    ECPopoverController *popoverLabelColorController;
-}
+@implementation ACProjectTableController
 
 #pragma mark - View lifecycle
 
@@ -43,14 +45,14 @@ static void * ACStateProjectsObservingContext;
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     self.tableView.backgroundColor = [UIColor styleBackgroundColor];
     
-    [[ACProjectDocumentsList sharedList] addObserver:self forKeyPath:@"projects" options:NSKeyValueObservingOptionNew context:ACStateProjectsObservingContext];
+    [[ACProjectDocumentsList sharedList] addObserver:self forKeyPath:@"projectDocuments" options:NSKeyValueObservingOptionNew context:ACStateProjectsObservingContext];
     
 //    self.tableView.allowsMultipleSelectionDuringEditing = YES;
 }
 
 - (void)viewDidUnload
 {
-    [[ACProjectDocumentsList sharedList] removeObserver:self forKeyPath:@"projects"];
+    [[ACProjectDocumentsList sharedList] removeObserver:self forKeyPath:@"projectDocuments"];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
@@ -68,53 +70,23 @@ static void * ACStateProjectsObservingContext;
     popoverLabelColorController = nil;
 }
 
-#pragma mark - Tool Target Protocol
-
-@synthesize toolButton;
-
-+ (id)newNavigationTargetController
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
-    return [ACProjectTableController new];
+    if (![segue.identifier isEqualToString:@"OpenProject"])
+        return [super prepareForSegue:segue sender:sender];
+    NSUInteger selectedRow = [self.tableView indexPathForSelectedRow].row;
+    ACProjectDocument *document = [[ACProjectDocumentsList sharedList].projectDocuments objectAtIndex:selectedRow];
+    [segue.destinationViewController setProjectDocument:document];
 }
 
-- (void)openURL:(NSURL *)url
+- (UINavigationItem *)navigationItem
 {
-    // TODO refresh projects
-}
-
-- (BOOL)enableTabBar
-{
-    return YES;
-}
-
-- (BOOL)enableToolPanelControllerWithIdentifier:(NSString *)toolControllerIdentifier
-{
-    return NO;
-}
-
-- (void)applyFilter:(NSString *)filter
-{
-    // TODO filter
-}
-
-- (UIButton *)toolButton
-{
-    if (!toolButton)
+    if (!_customNavigationItem)
     {
-        toolButton = [UIButton new];
-        [toolButton addTarget:self action:@selector(toolButtonAction:) forControlEvents:UIControlEventTouchUpInside];
-        [toolButton setImage:[UIImage styleAddImageWithColor:[UIColor styleForegroundColor] shadowColor:[UIColor whiteColor]] forState:UIControlStateNormal];
-        toolButton.adjustsImageWhenHighlighted = NO;
+        _customNavigationItem = [super navigationItem];
+        _customNavigationItem.rightBarButtonItem = self.editButtonItem;
     }
-    return toolButton;
-}
-
-- (void)toolButtonAction:(id)sender
-{
-    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"NewProjectPopover" bundle:[NSBundle mainBundle]];
-    UIViewController *popoverViewController = [storyboard instantiateInitialViewController];
-    _popover = [[UIPopoverController alloc] initWithContentViewController:popoverViewController];
-    [_popover presentPopoverFromRect:[sender frame] inView:[sender superview] permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
+    return _customNavigationItem;
 }
 
 #pragma mark - Colored icons
@@ -180,30 +152,6 @@ static void * ACStateProjectsObservingContext;
     [popoverLabelColorController presentPopoverFromRect:[sender frame] inView:[sender superview] permittedArrowDirections:UIPopoverArrowDirectionLeft animated:YES];
 }
 
-#pragma mark - Table view functionality
-
-- (void)deleteTableRow:(id)sender
-{
-    NSInteger rowIndex = [sender tag];
-    ECASSERT(rowIndex >= 0);
-    [self.tableView beginUpdates];
-    [self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:rowIndex inSection:0]] withRowAnimation:UITableViewRowAnimationFade];
-    [[ACProjectDocumentsList sharedList] deleteProjectWithURL:[[[ACProjectDocumentsList sharedList].projectDocuments objectAtIndex:rowIndex] URL]];
-    [self.tableView endUpdates];
-}
-
-- (void)textFieldDidEndEditing:(UITextField *)textField
-{
-    textField.text = [[[ACProjectDocumentsList sharedList].projectDocuments objectAtIndex:textField.tag] name];
-}
-
-- (BOOL)textFieldShouldReturn:(UITextField *)textField
-{
-    [[[ACProjectDocumentsList sharedList].projectDocuments objectAtIndex:textField.tag] setName:textField.text];
-    [textField resignFirstResponder];
-    return YES;
-}
-
 #pragma mark - Table view data source
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
@@ -256,7 +204,7 @@ static void * ACStateProjectsObservingContext;
     [cell.iconButton setImage:[self projectIconWithColor:[UIColor styleForegroundColor]] forState:UIControlStateNormal];
     
     // Setup project title
-    [cell.textField setText:[[[ACProjectDocumentsList sharedList].projectDocuments objectAtIndex:indexPath.row] name]];
+    [cell.textField setText:[[[ACProjectDocumentsList sharedList].projectDocuments objectAtIndex:indexPath.row] localizedName]];
     
     // Setup tags for callbacks
     [cell.customDeleteButton setTag:indexPath.row];
@@ -304,6 +252,27 @@ static void * ACStateProjectsObservingContext;
 //    }   
 //}
 
+- (void)deleteTableRow:(id)sender
+{
+    NSInteger rowIndex = [sender tag];
+    ECASSERT(rowIndex >= 0);
+    [self.tableView beginUpdates];
+    [self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:rowIndex inSection:0]] withRowAnimation:UITableViewRowAnimationFade];
+    [[ACProjectDocumentsList sharedList] deleteProjectWithName:[[[ACProjectDocumentsList sharedList].projectDocuments objectAtIndex:rowIndex] name]];
+    [self.tableView endUpdates];
+}
+
+- (void)textFieldDidEndEditing:(UITextField *)textField
+{
+    textField.text = [[[ACProjectDocumentsList sharedList].projectDocuments objectAtIndex:textField.tag] name];
+}
+
+- (BOOL)textFieldShouldReturn:(UITextField *)textField
+{
+    [[[ACProjectDocumentsList sharedList].projectDocuments objectAtIndex:textField.tag] setName:textField.text];
+    [textField resignFirstResponder];
+    return YES;
+}
 
 /*
 // Override to support conditional rearranging of the table view.
@@ -313,16 +282,5 @@ static void * ACStateProjectsObservingContext;
     return YES;
 }
 */
-
-#pragma mark - Table view delegate
-
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    if (self.isEditing)
-        return;
-    
-    [self.ACNavigationController pushURL:[[[ACProjectDocumentsList sharedList].projectDocuments objectAtIndex:indexPath.row] URL]];
-//    [self.ACNavigationController pushURL:[NSURL URLWithString:@"artcode:/Project"]];
-}
 
 @end

@@ -19,7 +19,12 @@
 
 - (NSString *)name
 {
-    return [[self.fileURL lastPathComponent] stringByDeletingPathExtension];
+    return [[[self.fileURL lastPathComponent] stringByDeletingPathExtension] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+}
+
++ (NSSet *)keyPathsForValuesAffectingName
+{
+    return [NSSet setWithObject:@"fileURL"];
 }
 
 + (NSSet *)keyPathsForValuesAffectingFileURL {

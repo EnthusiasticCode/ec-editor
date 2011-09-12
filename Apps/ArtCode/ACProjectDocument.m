@@ -17,6 +17,8 @@ static NSString * const ACProjectContentDirectory = @"Content";
 
 - (ACProject *)project
 {
+    if (self.documentState == UIDocumentStateClosed)
+        return nil;
     if (!_project)
     {
         NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
@@ -33,6 +35,17 @@ static NSString * const ACProjectContentDirectory = @"Content";
         // TODO: when URL of project is changed, and the document is moved, project's fileURL should be updated
     }
     return _project;
+}
+
+- (NSString *)localizedName
+{
+    // TODO: this property is built in UIDocument, but doesn't seem to work, at least on non-open documents
+    return [[[self.fileURL lastPathComponent] stringByDeletingPathExtension] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+}
+
++ (NSSet *)keyPathsForValuesAffectingName
+{
+    return [NSSet setWithObject:@"fileURL"];
 }
 
 + (NSString *)persistentStoreName

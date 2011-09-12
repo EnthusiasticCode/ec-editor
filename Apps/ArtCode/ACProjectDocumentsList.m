@@ -69,7 +69,7 @@ static void * const ACStateProjectURLObservingContext;
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     _projectDocuments = [NSMutableDictionary dictionary];
     _projectNames = [NSMutableOrderedSet orderedSet];
-    for (NSString *projectName in [defaults arrayForKey:@"projects"])
+    for (NSString *projectName in [defaults arrayForKey:@"projectDocuments"])
         [_projectNames addObject:projectName];
     for (NSString *projectName in _projectNames)
     {
@@ -81,7 +81,7 @@ static void * const ACStateProjectURLObservingContext;
 - (void)saveProjects
 {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    [defaults setObject:[_projectNames array] forKey:@"projects"];
+    [defaults setObject:[_projectNames array] forKey:@"projectDocuments"];
     [defaults synchronize];
 }
 
@@ -105,11 +105,11 @@ static void * const ACStateProjectURLObservingContext;
     ECASSERT([_projectDocuments objectForKey:projectName]);
     ECASSERT([_projectNames containsObject:projectName]);
     NSUInteger index = [_projectNames indexOfObject:projectName];
-    [self willChange:NSKeyValueChangeRemoval valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"projects"];
+    [self willChange:NSKeyValueChangeRemoval valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"projectDocuments"];
     [_projectNames removeObjectAtIndex:index];
     [self saveProjects];
     [_projectDocuments removeObjectForKey:projectName];
-    [self didChange:NSKeyValueChangeRemoval valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"projects"];
+    [self didChange:NSKeyValueChangeRemoval valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"projectDocuments"];
     NSFileManager *fileManager = [[NSFileManager alloc] init];
     [fileManager removeItemAtURL:[self bundleURLForLocalProjectWithName:projectName] error:NULL];
 }
@@ -131,22 +131,22 @@ static void * const ACStateProjectURLObservingContext;
 
 - (void)moveProjectsAtIndexes:(NSIndexSet *)indexes toIndex:(NSUInteger)index
 {
-    [self willChange:NSKeyValueChangeRemoval valuesAtIndexes:indexes forKey:@"projects"];
-    [self willChange:NSKeyValueChangeInsertion valuesAtIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(index, [indexes count])] forKey:@"projects"];
+    [self willChange:NSKeyValueChangeRemoval valuesAtIndexes:indexes forKey:@"projectDocuments"];
+    [self willChange:NSKeyValueChangeInsertion valuesAtIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(index, [indexes count])] forKey:@"projectDocuments"];
     [_projectNames moveObjectsAtIndexes:indexes toIndex:index];
     [self saveProjects];
-    [self didChange:NSKeyValueChangeRemoval valuesAtIndexes:indexes forKey:@"projects"];
-    [self didChange:NSKeyValueChangeInsertion valuesAtIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(index, [indexes count])] forKey:@"projects"];
+    [self didChange:NSKeyValueChangeRemoval valuesAtIndexes:indexes forKey:@"projectDocuments"];
+    [self didChange:NSKeyValueChangeInsertion valuesAtIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(index, [indexes count])] forKey:@"projectDocuments"];
 }
 
 - (void)exchangeProjectAtIndex:(NSUInteger)fromIndex withProjectAtIndex:(NSUInteger)toIndex
 {
-    [self willChange:NSKeyValueChangeRemoval valuesAtIndexes:[NSIndexSet indexSetWithIndex:fromIndex] forKey:@"projects"];
-    [self willChange:NSKeyValueChangeInsertion valuesAtIndexes:[NSIndexSet indexSetWithIndex:toIndex] forKey:@"projects"];
+    [self willChange:NSKeyValueChangeRemoval valuesAtIndexes:[NSIndexSet indexSetWithIndex:fromIndex] forKey:@"projectDocuments"];
+    [self willChange:NSKeyValueChangeInsertion valuesAtIndexes:[NSIndexSet indexSetWithIndex:toIndex] forKey:@"projectDocuments"];
     [_projectNames exchangeObjectAtIndex:fromIndex withObjectAtIndex:toIndex];
     [self saveProjects];
-    [self didChange:NSKeyValueChangeRemoval valuesAtIndexes:[NSIndexSet indexSetWithIndex:fromIndex] forKey:@"projects"];
-    [self didChange:NSKeyValueChangeInsertion valuesAtIndexes:[NSIndexSet indexSetWithIndex:toIndex] forKey:@"projects"];
+    [self didChange:NSKeyValueChangeRemoval valuesAtIndexes:[NSIndexSet indexSetWithIndex:fromIndex] forKey:@"projectDocuments"];
+    [self didChange:NSKeyValueChangeInsertion valuesAtIndexes:[NSIndexSet indexSetWithIndex:toIndex] forKey:@"projectDocuments"];
 }
 
 - (void)addNewProjectWithName:(NSString *)projectName atIndex:(NSUInteger)index fromTemplate:(NSString *)templateName withCompletionHandler:(void (^)(BOOL))completionHandler
@@ -166,11 +166,11 @@ static void * const ACStateProjectURLObservingContext;
                 completionHandler(NO);
             return;
         }
-        [self willChange:NSKeyValueChangeInsertion valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"projects"];
+        [self willChange:NSKeyValueChangeInsertion valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"projectDocuments"];
         [_projectNames insertObject:projectName atIndex:index];
         [self saveProjects];
         [_projectDocuments setObject:document forKey:projectName];
-        [self didChange:NSKeyValueChangeInsertion valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"projects"];
+        [self didChange:NSKeyValueChangeInsertion valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"projectDocuments"];
         if (completionHandler)
             completionHandler(YES);
         NSLog(@"document is: %d", [document documentState]);
@@ -194,11 +194,11 @@ static void * const ACStateProjectURLObservingContext;
             return;
         }
         ACProjectDocument *document = [[ACProjectDocument alloc] initWithFileURL:fileURL];
-        [self willChange:NSKeyValueChangeInsertion valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"projects"];
+        [self willChange:NSKeyValueChangeInsertion valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"projectDocuments"];
         [_projectNames insertObject:projectName atIndex:index];
         [self saveProjects];
         [_projectDocuments setObject:document forKey:projectName];
-        [self didChange:NSKeyValueChangeInsertion valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"projects"];
+        [self didChange:NSKeyValueChangeInsertion valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"projectDocuments"];
         if (completionHandler)
             completionHandler(YES);
     }];
