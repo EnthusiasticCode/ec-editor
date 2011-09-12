@@ -9,16 +9,14 @@
 #import "ECCodeStringDataSource.h"
 #import "ECCodeViewBase.h"
 
-@interface ECCodeStringDataSource () {
+
+@implementation ECCodeStringDataSource {
 @private
     NSMutableAttributedString *string;
+    NSMutableDictionary *stylingBlocks;
 }
 
-@end
-
-@implementation ECCodeStringDataSource
-
-@synthesize defaultTextStyle, stylingBlock;
+@synthesize defaultTextStyle;
 
 - (NSString *)string
 {
@@ -68,7 +66,7 @@
     *endOfString = NSMaxRange(stringRange) >= stringLength;
     
     // Preparing result
-    NSMutableAttributedString *result = [[string attributedSubstringFromRange:stringRange] mutableCopy];
+    NSMutableAttributedString *result = [[NSMutableAttributedString alloc] initWithString:[string.string substringWithRange:stringRange] attributes:defaultTextStyle.CTAttributes];
     
     // Append tailing new line
     if (*endOfString) 
@@ -77,9 +75,8 @@
         [result appendAttributedString:newLine];
     }
     
-    // Apply styling block
-    if (stylingBlock)
-    {
+    // Apply styling blocks
+    for (ECCodeStringDataSourceStylingBlock stylingBlock in [stylingBlocks allValues]) {
         stylingBlock(result, stringRange);
     }
     
@@ -155,36 +152,21 @@
     }
 }
 
-#pragma mark Text Styling Methods
+#pragma mark - Managing Styling Blocks
 
-- (void)addTextStyle:(ECTextStyle *)textStyle toStringRange:(NSRange)range
+- (void)addStylingBlock:(ECCodeStringDataSourceStylingBlock)stylingBlock forKey:(NSString *)stylingKey
 {
-    if (!textStyle || NSMaxRange(range) > [string length])
-        return;
+    ECASSERT(stylingBlock);
     
-    [string addAttributes:textStyle.CTAttributes range:range];
+    if (!stylingBlocks)
+        stylingBlocks = [NSMutableDictionary new];
+    
+    [stylingBlocks setObject:[stylingBlock copy] forKey:stylingKey];
 }
 
-- (void)removeTextStyle:(ECTextStyle *)textStyle fromStringRange:(NSRange)range
+- (void)removeStylingBlockForKey:(NSString *)stylingKey
 {
-    if (!textStyle || NSMaxRange(range) > [string length])
-        return;
-    
-    for (NSString *attr in textStyle.CTAttributes)
-        [string removeAttribute:attr range:range];
-}
-
-- (void)removeAllTextStylesFromRange:(NSRange)range
-{
-    if (NSMaxRange(range) > [string length])
-        return;
-    
-    [string setAttributes:defaultTextStyle.CTAttributes range:range];
-}
-
-- (void)removeAllTextStyles
-{
-    [string setAttributes:defaultTextStyle.CTAttributes range:(NSRange){0, [string length]}];
+    [stylingBlocks removeObjectForKey:stylingKey];
 }
 
 @end
