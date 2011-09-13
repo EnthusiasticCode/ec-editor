@@ -42,7 +42,7 @@
     [[self mutableOrderedSetValueForKey:@"children"] exchangeObjectAtIndex:fromIndex withObjectAtIndex:toIndex];
 }
 
-- (void)importFileFromURL:(NSURL *)fileURL completionHandler:(void (^)(BOOL))completionHandler
+- (void)importFileFromURL:(NSURL *)fileURL
 {
     // TODO: check for existing files, add import step to undo history
     NSFileManager *fileManager = [[NSFileManager alloc] init];
@@ -53,24 +53,17 @@
     {
         [fileManager copyItemAtURL:fileURL toURL:[self.fileURL URLByAppendingPathComponent:[fileURL lastPathComponent]] error:NULL];
         [self insertChildFileWithName:[fileURL lastPathComponent] atIndex:NSNotFound];
-        if (completionHandler)
-            completionHandler(YES);
     }
     else
     {
         [fileManager createDirectoryAtURL:[self.fileURL URLByAppendingPathComponent:[fileURL lastPathComponent]] withIntermediateDirectories:YES attributes:nil error:NULL];
         ACGroup *childGroup = [self insertChildGroupWithName:[fileURL lastPathComponent] atIndex:NSNotFound];
         for (NSURL *fileInSubdirectoryURL in [fileManager contentsOfDirectoryAtURL:fileURL includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsPackageDescendants | NSDirectoryEnumerationSkipsSubdirectoryDescendants error:NULL])
-            [childGroup importFileFromURL:fileInSubdirectoryURL completionHandler:^(BOOL success) {
-                if (!success)
-                    ECASSERT(NO); // TODO: error handling
-            }];
-        if (completionHandler)
-            completionHandler(YES);
+            [childGroup importFileFromURL:fileInSubdirectoryURL];
     }
 }
 
-- (void)importFilesFromZIP:(NSURL *)ZIPFileURL completionHandler:(void (^)(BOOL))completionHandler
+- (void)importFilesFromZIP:(NSURL *)ZIPFileURL
 {
     NSURL *tempDirectory = [NSURL temporaryDirectory];
     ECArchive *archive = [[ECArchive alloc] initWithFileURL:ZIPFileURL];
@@ -79,12 +72,7 @@
             ECASSERT(NO); // TODO: error handling
         NSFileManager *fileManager = [[NSFileManager alloc] init];
         for (NSURL *fileURL in [fileManager contentsOfDirectoryAtURL:tempDirectory includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsPackageDescendants | NSDirectoryEnumerationSkipsSubdirectoryDescendants error:NULL])
-            [self importFileFromURL:fileURL completionHandler:^(BOOL success) {
-                if (!success)
-                    ECASSERT(NO); // TODO: error handling
-                if (completionHandler)
-                    completionHandler(YES);
-            }];
+            [self importFileFromURL:fileURL];
     }];
 }
 

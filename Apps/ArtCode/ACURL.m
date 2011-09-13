@@ -19,6 +19,7 @@ NSString * const ACURLScheme = @"artcode";
 
 - (NSURL *)ACProjectURL
 {
+    ECASSERT([self isACURL]);
     return [NSURL URLWithString:[NSString stringWithFormat:@"%@:/%@", ACURLScheme, [[self.pathComponents objectAtIndex:1] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]]];
 }
 
@@ -30,7 +31,7 @@ NSString * const ACURLScheme = @"artcode";
 
 - (BOOL)isACProjectURL
 {
-    return [self.pathComponents count] == 2;
+    return [self isACURL] && [self.pathComponents count] == 2;
 }
 
 + (NSURL *)ACURLWithPathComponents:(NSArray *)pathComponents

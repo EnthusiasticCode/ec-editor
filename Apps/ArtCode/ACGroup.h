@@ -22,8 +22,8 @@
 - (void)moveChildrenAtIndexes:(NSIndexSet *)indexes toIndex:(NSUInteger)index;
 - (void)exchangeChildAtIndex:(NSUInteger)fromIndex withChildAtIndex:(NSUInteger)toIndex;
 
-- (void)importFileFromURL:(NSURL *)fileURL completionHandler:(void (^)(BOOL success))completionHandler;
-- (void)importFilesFromZIP:(NSURL *)ZIPFileURL completionHandler:(void (^)(BOOL success))completionHandler;
+- (void)importFileFromURL:(NSURL *)fileURL;
+- (void)importFilesFromZIP:(NSURL *)ZIPFileURL;
 
 - (ACNode *)childWithName:(NSString *)name;
 

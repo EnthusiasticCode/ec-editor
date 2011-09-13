@@ -31,6 +31,9 @@ typedef enum
 /// URLs of existing projects
 @property (nonatomic, strong, readonly) NSOrderedSet *projectURLs;
 
+/// Loads the project containing the given URL
+- (void)loadProjectDocumentIfNeededForURL:(NSURL *)URL completionHandler:(void(^)(BOOL success))completionHandler;
+
 /// Reorder the projects list
 - (void)moveProjectsAtIndexes:(NSIndexSet *)indexes toIndex:(NSUInteger)index;
 - (void)exchangeProjectAtIndex:(NSUInteger)fromIndex withProjectAtIndex:(NSUInteger)toIndex;
@@ -38,22 +41,22 @@ typedef enum
 /// Adds a new project with the given ACURL
 /// Inserting a project with the same ACURL as an existing project is an error
 /// Passing index = NSNotFound will add the project to the end of the project list
-- (void)addNewProjectWithURL:(NSURL *)projectURL atIndex:(NSUInteger)index fromTemplate:(NSString *)templateName completionHandler:(void (^)(BOOL success))completionHandler;
-- (void)addNewProjectWithURL:(NSURL *)projectURL atIndex:(NSUInteger)index fromACZ:(NSURL *)ACZFileURL completionHandler:(void (^)(BOOL success))completionHandler;
-- (void)addNewProjectWithURL:(NSURL *)projectURL atIndex:(NSUInteger)index fromZIP:(NSURL *)ZIPFileURL completionHandler:(void (^)(BOOL success))completionHandler;
+- (void)addNewProjectWithURL:(NSURL *)projectURL atIndex:(NSUInteger)index fromTemplate:(NSString *)templateName;
+- (void)addNewProjectWithURL:(NSURL *)projectURL atIndex:(NSUInteger)index fromACZ:(NSURL *)ACZFileURL;
+- (void)addNewProjectWithURL:(NSURL *)projectURL atIndex:(NSUInteger)index fromZIP:(NSURL *)ZIPFileURL;
 
 #pragma mark - Object Level
 
 /// Returns the object referenced by the ACURL or nil if the node does not exist
-- (void)objectWithURL:(NSURL *)URL completionHandler:(void (^)(id object, ACObjectType type))completionHandler;
+- (id)objectWithURL:(NSURL *)URL;
 
 /// Deletes the object referenced by the ACURL
-- (void)deleteObjectWithURL:(NSURL *)URL completionHandler:(void (^)(BOOL success))completionHandler;
+- (void)deleteObjectWithURL:(NSURL *)URL;
 
 /// Moves / copies objects
-- (void)moveObjectAtURL:(NSURL *)fromURL toURL:(NSURL *)toURL completionHandler:(void (^)(BOOL success))completionHandler;
-- (void)moveObjectsAtURLs:(NSArray *)fromURLs toURLs:(NSArray *)toURLs completionHandler:(void (^)(BOOL success))completionHandler;
-- (void)copyObjectAtURL:(NSURL *)fromURL toURL:(NSURL *)toURL completionHandler:(void (^)(BOOL success))completionHandler;
-- (void)copyObjectsAtURLs:(NSArray *)fromURLs toURLs:(NSArray *)toURLs completionHandler:(void (^)(BOOL success))completionHandler;
+- (void)moveObjectAtURL:(NSURL *)fromURL toURL:(NSURL *)toURL;
+- (void)moveObjectsAtURLs:(NSArray *)fromURLs toURLs:(NSArray *)toURLs;
+- (void)copyObjectAtURL:(NSURL *)fromURL toURL:(NSURL *)toURL;
+- (void)copyObjectsAtURLs:(NSArray *)fromURLs toURLs:(NSArray *)toURLs;
 
 @end

@@ -21,9 +21,9 @@
 @property (nonatomic, strong) NSURL *projectURL;
 
 /// Returns the object referenced by the ACURL or nil if the node does not exist
-- (void)objectWithURL:(NSURL *)URL completionHandler:(void (^)(id object, ACObjectType type))completionHandler;
+- (id)objectWithURL:(NSURL *)URL;
 
 /// Deletes the object referenced by the ACURL
-- (void)deleteObjectWithURL:(NSURL *)URL completionHandler:(void (^)(BOOL success))completionHandler;
+- (void)deleteObjectWithURL:(NSURL *)URL;
 
 @end

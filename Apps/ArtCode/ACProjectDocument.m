@@ -50,4 +50,28 @@ void * ACProjectDocumentProjectURLObserving;
     return [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithBool:YES], NSMigratePersistentStoresAutomaticallyOption, [NSNumber numberWithBool:YES], NSInferMappingModelAutomaticallyOption, nil];
 }
 
+- (id)objectWithURL:(NSURL *)URL
+{
+    if ([URL isEqual:self.projectURL])
+        return self.project;
+    if (![URL isDescendantOfACURL:self.projectURL])
+        return nil;
+    NSArray *pathComponents = [URL pathComponents];
+    NSUInteger pathComponentsCount = [pathComponents count];
+    ACGroup *node = self.project;
+    for (NSUInteger currentPathComponent = 2; currentPathComponent < pathComponentsCount; ++currentPathComponent)
+    {
+        node = (ACGroup *)[node childWithName:[pathComponents objectAtIndex:currentPathComponent]];
+        if (![node.nodeType isEqualToString:@"Group"])
+            return nil;
+    }
+    return node;
+}
+
+- (void)deleteObjectWithURL:(NSURL *)URL
+{
+    id object = [self objectWithURL:URL];
+    [self.managedObjectContext deleteObject:object];
+}
+
 @end

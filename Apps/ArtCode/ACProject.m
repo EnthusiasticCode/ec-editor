@@ -43,18 +43,4 @@
     return [NSSet set];
 }
 
-- (ACNode *)nodeWithURL:(NSURL *)URL
-{
-    if ([URL isEqual:self.URL])
-        return self;
-    if (![URL isDescendantOfACURL:self.URL])
-        return nil;
-    NSArray *pathComponents = [URL pathComponents];
-    NSUInteger pathComponentsCount = [pathComponents count];
-    ACNode *node = self;
-    for (NSUInteger currentPathComponent = 2; currentPathComponent < pathComponentsCount; ++currentPathComponent)
-        node = [(ACGroup *)node childWithName:[pathComponents objectAtIndex:currentPathComponent]];
-    return node;
-}
-
 @end

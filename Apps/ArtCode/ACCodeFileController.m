@@ -82,7 +82,7 @@
 - (void)openURL:(NSURL *)url
 {
     // TODO handle error
-    ACFile *file = (ACFile *)[[ACState sharedState] nodeWithURL:url];
+    ACFile *file = (ACFile *)[[ACState sharedState] objectWithURL:url];
     
     // TODO start loading animation
     ACCodeIndexerDataSource *dataSource = (ACCodeIndexerDataSource *)self.codeView.datasource;

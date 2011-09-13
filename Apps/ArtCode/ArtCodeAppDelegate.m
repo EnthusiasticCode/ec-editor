@@ -176,7 +176,7 @@
         controllerClass = [ACProjectTableController class];
     else
     {
-        ACNode *node = [[ACState sharedState] nodeWithURL:url];
+        ACNode *node = [[ACState sharedState] objectWithURL:url];
         if ([[node nodeType] isEqualToString:@"Group"] || [[node nodeType] isEqualToString:@"Project"])
             controllerClass = [ACFileTableController class];
         else if ([[node nodeType] isEqualToString:@"File"])
