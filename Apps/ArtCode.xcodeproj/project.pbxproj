@@ -171,7 +171,6 @@
 		CDF1D46D14150C4900EFEC21 /* libstdc++.6.0.9.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CDF1D46C14150C4900EFEC21 /* libstdc++.6.0.9.dylib */; };
 		CDF1D47014150C7800EFEC21 /* MurmurHash3.c in Sources */ = {isa = PBXBuildFile; fileRef = CDF1D46E14150C7800EFEC21 /* MurmurHash3.c */; };
 		CDF215F713E4468F005B520F /* ACEditableTableCell.m in Sources */ = {isa = PBXBuildFile; fileRef = CDF215F613E4468F005B520F /* ACEditableTableCell.m */; };
-		CDF435481417B4970061EB04 /* ACCodeFileFilterController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CDF435471417B4970061EB04 /* ACCodeFileFilterController.xib */; };
 		CDFF3DAC13C0D71900108DE2 /* NSTimer+block.m in Sources */ = {isa = PBXBuildFile; fileRef = CDFF3DAB13C0D71900108DE2 /* NSTimer+block.m */; };
 		CDFF3DBB13C0D76400108DE2 /* ECInstantGestureRecognizer.m in Sources */ = {isa = PBXBuildFile; fileRef = CDFF3DAE13C0D76400108DE2 /* ECInstantGestureRecognizer.m */; };
 		CDFF3DBC13C0D76400108DE2 /* ECJumpBar.m in Sources */ = {isa = PBXBuildFile; fileRef = CDFF3DB013C0D76400108DE2 /* ECJumpBar.m */; };
@@ -444,7 +443,6 @@
 		CDF1D46F14150C7800EFEC21 /* MurmurHash3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MurmurHash3.h; sourceTree = "<group>"; };
 		CDF215F513E4468F005B520F /* ACEditableTableCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACEditableTableCell.h; sourceTree = "<group>"; };
 		CDF215F613E4468F005B520F /* ACEditableTableCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACEditableTableCell.m; sourceTree = "<group>"; };
-		CDF435471417B4970061EB04 /* ACCodeFileFilterController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = ACCodeFileFilterController.xib; path = Resources/ACCodeFileFilterController.xib; sourceTree = "<group>"; };
 		CDFF3DAA13C0D71900108DE2 /* NSTimer+block.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSTimer+block.h"; sourceTree = "<group>"; };
 		CDFF3DAB13C0D71900108DE2 /* NSTimer+block.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSTimer+block.m"; sourceTree = "<group>"; };
 		CDFF3DAD13C0D76400108DE2 /* ECInstantGestureRecognizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECInstantGestureRecognizer.h; sourceTree = "<group>"; };
@@ -647,7 +645,6 @@
 				CD6580C8141626F20079412F /* ACCompletionController.m */,
 				CD6580CD141641D40079412F /* ACCodeFileFilterController.h */,
 				CD6580CE141641D40079412F /* ACCodeFileFilterController.m */,
-				CDF435471417B4970061EB04 /* ACCodeFileFilterController.xib */,
 			);
 			name = "Views and Controllers";
 			sourceTree = "<group>";
@@ -1274,7 +1271,6 @@
 				CDFF3DF313C0D9BB00108DE2 /* toolSnippetsSnippet.png in Resources */,
 				CDE3F14713C0DDD500DFFAFF /* Inconsolata-dz.otf in Resources */,
 				CD8A677C13D0BB000037D742 /* ipad_icon.png in Resources */,
-				CDF435481417B4970061EB04 /* ACCodeFileFilterController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

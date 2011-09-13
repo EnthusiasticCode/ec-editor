@@ -141,7 +141,7 @@
     if (!filterController)
     {
         // TODO this require loading spinner
-        filterController = [[ACCodeFileFilterController alloc] initWithNibName:@"ACCodeFileFilterController" bundle:nil];
+        filterController = [[ACCodeFileFilterController alloc] initWithStyle:UITableViewStylePlain];
         filterController.targetCodeView = self.codeView;
         filterController.contentSizeForViewInPopover = CGSizeMake(300, 300);
         
@@ -157,6 +157,9 @@
             rangeRect.size.height += 100;
             [thisCodeView scrollRectToVisible:rangeRect animated:YES];
         };
+        
+        filterController.filterHighlightTextStyle = [[ECTextStyle alloc] initWithName:@"Search highlight"];
+        filterController.filterHighlightTextStyle.backgroundColor = [UIColor yellowColor];
     }
     
     if (!filterPopoverController)

@@ -39,8 +39,50 @@ enum ACCodeFileFilterSections {
 
 @synthesize targetCodeView, filterString;
 @synthesize startSearchingBlock, endSearchingBlock, didSelectFilterResultBlock;
-@synthesize tableView = _tableView;
-@synthesize replaceToolView;
+@synthesize filterHighlightTextStyle;
+
+- (void)setTargetCodeView:(ECCodeView *)codeView
+{
+    ECASSERT([codeView.datasource isKindOfClass:[ACCodeIndexerDataSource class]]);
+    
+    static NSString * filteringBlockKey = @"filteringHighlight";
+    
+    if (targetCodeView == codeView)
+        return;
+    
+    if (targetCodeView)
+        [(ACCodeIndexerDataSource *)targetCodeView.datasource removeStylingBlockForKey:filteringBlockKey];
+    
+    targetCodeView = codeView;
+    
+    [(ACCodeIndexerDataSource *)targetCodeView.datasource addStylingBlock:^(NSMutableAttributedString *string, NSRange stringRange) {
+        if (filterHighlightTextStyle == nil)
+            return;
+        
+        NSMutableArray *searchSection = [sections objectAtIndex:ACCodeFileFilterSearchSection];
+        if ([searchSection count] == 0)
+            return;
+        
+        NSRange range;
+        NSUInteger endStringRange = NSMaxRange(stringRange);
+        for (NSTextCheckingResult *result in searchSection)
+        {
+            range = [result rangeAtIndex:0];
+            if (range.location >= endStringRange)
+                break;
+            
+            if (NSMaxRange(range) < stringRange.location)
+                continue;
+            
+            if (range.location < stringRange.location)
+                range = NSMakeRange(stringRange.location, range.length - (stringRange.location - range.location));
+            else
+                range.location -= stringRange.location;
+            
+            [string addAttributes:filterHighlightTextStyle.CTAttributes range:range];
+        }
+    } forKey:filteringBlockKey];
+}
 
 - (void)setFilterString:(NSString *)string
 {
@@ -62,6 +104,7 @@ enum ACCodeFileFilterSections {
         {
             NSString *text = targetCodeView.text;
             NSArray *matches = [filterExp matchesInString:text options:0 range:NSMakeRange(0, [text length])];
+            // TODO save only rangeAtPosition:0?
             [searchSection addObjectsFromArray:matches];
         }
         
@@ -81,6 +124,7 @@ enum ACCodeFileFilterSections {
         }];
         
         [self.tableView reloadData];
+        [targetCodeView updateAllText];
         
         if (endSearchingBlock)
             endSearchingBlock(self);
@@ -110,28 +154,6 @@ enum ACCodeFileFilterSections {
     return -1;
 }
 
-- (void)showReplaceTool:(BOOL)show animated:(BOOL)animated
-{
-    [self.view bringSubviewToFront:_tableView];
-    
-    if (animated)
-    {
-        [UIView animateWithDuration:STYLE_ANIMATION_DURATION delay:0 options:UIViewAnimationOptionAllowUserInteraction | UIViewAnimationOptionBeginFromCurrentState animations:^{
-            CGRect frame = self.view.bounds;
-            if (show)
-                frame.size.width -= 44;
-            _tableView.frame = frame;
-        } completion:nil];
-    }
-    else
-    {
-        CGRect frame = self.view.bounds;
-        if (show)
-            frame.size.width -= 44;
-        _tableView.frame = frame;
-    }
-}
-
 #pragma mark - Controller lifecycle
 
 - (void)didReceiveMemoryWarning
@@ -153,15 +175,10 @@ enum ACCodeFileFilterSections {
     
     // Initialize sections with filtered restuls
     sections = [NSArray arrayWithObjects:[NSMutableArray array], [NSMutableArray array], [NSMutableArray array], nil];
-    
-    // TODO show or hide depending on current filter
-    [self showReplaceTool:NO animated:NO];
 }
 
 - (void)viewDidUnload
 {
-    [self setTableView:nil];
-    [self setReplaceToolView:nil];
     [super viewDidUnload];
     
     sections = nil;

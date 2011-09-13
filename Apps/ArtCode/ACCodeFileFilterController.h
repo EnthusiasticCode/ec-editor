@@ -10,6 +10,7 @@
 
 @class ECCodeView;
 @class ACCodeFileFilterController;
+@class ECTextStyle;
 
 
 typedef void (^ACCodeFileFilterBlock)(ACCodeFileFilterController *sender);
@@ -22,9 +23,9 @@ typedef void (^ACCodeFileFilterBlock)(ACCodeFileFilterController *sender);
 /// - Filtered symbols (if any present)
 /// - Searches in file's content (if any present)
 /// - go to line, column (if filter string is a proper number pair)
-@interface ACCodeFileFilterController : UIViewController <UITableViewDelegate, UITableViewDataSource>
+@interface ACCodeFileFilterController : UITableViewController
 
-#pragma mark Managing Filtering
+#pragma mark Manage Filtering
 
 /// Code view to which apply the filter.
 @property (weak, nonatomic) ECCodeView *targetCodeView;
@@ -43,10 +44,6 @@ typedef void (^ACCodeFileFilterBlock)(ACCodeFileFilterController *sender);
 /// Called when a user select a filter result.
 @property (copy, nonatomic) void (^didSelectFilterResultBlock)(NSRange range);
 
-
-#pragma mark Controlled Views
-
-@property (strong, nonatomic) IBOutlet UITableView *tableView;
-@property (strong, nonatomic) IBOutlet UIView *replaceToolView;
+@property (strong, nonatomic) ECTextStyle *filterHighlightTextStyle;
 
 @end
