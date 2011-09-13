@@ -7,7 +7,6 @@
 //
 
 #import "ECTextRenderer.h"
-#import <CoreText/CoreText.h>
 #import "ECTextStyle.h"
 
 // Internal working notes: (outdated)
@@ -31,8 +30,12 @@
     NSMutableArray *textSegments;
     TextSegment *lastTextSegment;
     
-    BOOL delegateHasTextRendererInvalidateRenderInRect;
-    BOOL datasourceHasTextRendererEstimatedTextLineCountOfLength;
+    struct {
+        unsigned int delegateHasTextRendererInvalidateRenderInRect : 1;
+        unsigned int dataSourceHasTextRendererEstimatedTextLineCountOfLength : 1;
+        unsigned int dataSourceHasUnderlayPasses : 1;
+        unsigned int dataSourceHasOverlayPasses : 1;
+    } flags;
 }
 
 /// Text renderer strings' cache shared among all text segments.
@@ -179,11 +182,13 @@
     CFIndex runCount = CFArrayGetCount(runs);
     CTRunRef run;
     
+    // Drawing text
     NSDictionary *runAttributes;
     ECTextStyleCustomOverlayBlock block;
     for (CFIndex i = 0; i < runCount; ++i) 
     {
         run = CFArrayGetValueAtIndex(runs, i);
+        
         
         // Get run width
         runWidth = CTRunGetTypographicBounds(run, (CFRange){0, 0}, NULL, NULL, NULL);
@@ -490,7 +495,7 @@
 - (void)setDelegate:(id<ECTextRendererDelegate>)aDelegate
 {
     delegate = aDelegate;
-    delegateHasTextRendererInvalidateRenderInRect = [delegate respondsToSelector:@selector(textRenderer:invalidateRenderInRect:)];
+    flags.delegateHasTextRendererInvalidateRenderInRect = [delegate respondsToSelector:@selector(textRenderer:invalidateRenderInRect:)];
 }
 
 - (void)setDatasource:(id<ECTextRendererDataSource>)aDatasource
@@ -499,7 +504,10 @@
         return;
     
     datasource = aDatasource;
-    datasourceHasTextRendererEstimatedTextLineCountOfLength = [datasource respondsToSelector:@selector(textRenderer:estimatedTextLineCountOfLength:)];
+    
+    flags.dataSourceHasTextRendererEstimatedTextLineCountOfLength = [datasource respondsToSelector:@selector(textRenderer:estimatedTextLineCountOfLength:)];
+    flags.dataSourceHasUnderlayPasses = [datasource respondsToSelector:@selector(underlayPasses)];
+    flags.dataSourceHasOverlayPasses = [datasource respondsToSelector:@selector(overlayPasses)];
     
     [self updateAllText];
 }
@@ -632,7 +640,7 @@
 
 #pragma mark Public Outtake Methods
 
-- (void)enumerateLinesIntersectingRect:(CGRect)rect usingBlock:(void (^)(ECTextRendererLine *, NSUInteger, NSUInteger, CGFloat, BOOL *))block
+- (void)enumerateLinesIntersectingRect:(CGRect)rect usingBlock:(void (^)(ECTextRendererLine *, NSUInteger, NSUInteger, CGFloat, NSRange, BOOL *))block
 {
     if (CGRectIsNull(rect) || CGRectIsEmpty(rect)) 
         rect = CGRectInfinite;
@@ -659,8 +667,11 @@
         __block CGFloat lastLineEnd = rect.origin.y;
         [segment enumerateLinesIntersectingRect:currentRect usingBlock:^(ECTextRendererLine *line, NSUInteger lineIndex, NSUInteger lineNumber, CGFloat lineOffset, BOOL *stopInner) {
             lastLineEnd += line.height;
+            
+            CFRange stringRange = CTLineGetStringRange(line.CTLine);
+            
             // TODO make an indexOffset that sums renderedLineCount from past segments
-            block(line, lineIndex, lineNumberOffset + lineNumber, positionOffset + lineOffset, stopInner);
+            block(line, lineIndex, lineNumberOffset + lineNumber, positionOffset + lineOffset, NSMakeRange(stringOffset + stringRange.location, stringRange.length), stopInner);
             *stop = *stopInner;
         }];
         
@@ -670,7 +681,7 @@
     }];
 }
 
-- (void)drawTextWithinRect:(CGRect)rect inContext:(CGContextRef)context withLineBlock:(void (^)(ECTextRendererLine *, NSUInteger))block
+- (void)drawTextWithinRect:(CGRect)rect inContext:(CGContextRef)context
 {
     ECASSERT(context != NULL);
     
@@ -681,8 +692,12 @@
     CGContextSetTextPosition(context, 0, 0);
     CGContextScaleCTM(context, 1, -1);
     
+    // Get rendering passes
+    NSArray *underlays = flags.dataSourceHasUnderlayPasses ? [datasource underlayPasses] : nil;
+    NSArray *overlays = flags.dataSourceHasOverlayPasses ? [datasource overlayPasses] : nil;
+    
     // Draw needed lines from this segment
-    [self enumerateLinesIntersectingRect:rect usingBlock:^(ECTextRendererLine *line, NSUInteger lineIndex, NSUInteger lineNumber, CGFloat lineOffset, BOOL *stop) {
+    [self enumerateLinesIntersectingRect:rect usingBlock:^(ECTextRendererLine *line, NSUInteger lineIndex, NSUInteger lineNumber, CGFloat lineOffset, NSRange stringRange, BOOL *stop) {
         CGRect lineBound = (CGRect){ CGPointMake(0, lineOffset), line.size };
         CGFloat baseline = line.ascent;
         
@@ -692,18 +707,30 @@
             CGContextTranslateCTM(context, 0, rect.origin.y - lineBound.origin.y);
         }
         
-        // Apply block for this line
-        if (block)
+        // Apply underlay passes
+        for (ECTextRendererLayerPass pass in underlays)
         {
-            block(line, lineNumber);
+            CGContextSaveGState(context);
+            pass(context, line.CTLine, lineBound, baseline, stringRange, lineNumber);
+            CGContextRestoreGState(context);
         }
         
-        // Positioning and rendering
+        // Rendering text
+        CGContextSaveGState(context);
         CGContextTranslateCTM(context, 0, -baseline);
-
         [line drawInContext:context];
-
-        CGContextTranslateCTM(context, 0, -lineBound.size.height+baseline);
+        CGContextRestoreGState(context);
+        
+        // Apply overlay passes
+        for (ECTextRendererLayerPass pass in overlays)
+        {
+            CGContextSaveGState(context);
+            pass(context, line.CTLine, lineBound, baseline, stringRange, lineNumber);
+            CGContextRestoreGState(context);
+        }
+        
+        // Move context to next line
+        CGContextTranslateCTM(context, 0, -lineBound.size.height);
     }];
     
     CGContextRelease(context);
@@ -950,7 +977,7 @@
     if (guessed && lastSegmentEnd < CGRectGetMaxY(rect)) 
     {
         // Create datasource enabled guess
-        if (datasourceHasTextRendererEstimatedTextLineCountOfLength) 
+        if (flags.dataSourceHasTextRendererEstimatedTextLineCountOfLength) 
         {
             // Ensure to have a mean line height or generate it
             if (meanLineHeight == 0) 
@@ -997,7 +1024,7 @@
     [textSegments removeAllObjects];
     lastTextSegment = nil;
     
-    if (delegateHasTextRendererInvalidateRenderInRect) 
+    if (flags.delegateHasTextRendererInvalidateRenderInRect) 
     {
         CGRect changedRect = CGRectMake(0, 0, wrapWidth, estimatedHeight);
         [delegate textRenderer:self invalidateRenderInRect:changedRect];
@@ -1042,7 +1069,7 @@
         currentLineLocation += segmentRange.length;
     }
     
-    if (delegateHasTextRendererInvalidateRenderInRect) 
+    if (flags.delegateHasTextRendererInvalidateRenderInRect) 
     {
         [delegate textRenderer:self invalidateRenderInRect:changedRect];
     }

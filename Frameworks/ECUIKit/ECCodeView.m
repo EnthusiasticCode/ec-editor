@@ -255,7 +255,7 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
         CGContextTranslateCTM(imageContext, -textRect.origin.x, 0);
         // Render text
         CGContextSaveGState(imageContext);
-        [this->parent.renderer drawTextWithinRect:textRect inContext:imageContext withLineBlock:nil];
+        [this->parent.renderer drawTextWithinRect:textRect inContext:imageContext];
         CGContextRestoreGState(imageContext);
         // Render additional drawings
         if (block)

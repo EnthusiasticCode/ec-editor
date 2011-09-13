@@ -293,7 +293,7 @@ enum ACCodeFileFilterSections {
                 
                 // Draw text
                 CGContextSaveGState(context);
-                [targetCodeView.renderer drawTextWithinRect:clipRect inContext:context withLineBlock:nil];
+                [targetCodeView.renderer drawTextWithinRect:clipRect inContext:context];
                 CGContextRestoreGState(context);
                 
                 // Draw gradient

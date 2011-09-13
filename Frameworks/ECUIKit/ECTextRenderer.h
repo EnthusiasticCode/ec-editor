@@ -6,14 +6,23 @@
 //  Copyright 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 #import <QuartzCore/QuartzCore.h>
-#import <UIKit/UIKit.h>
+#import <CoreText/CoreText.h>
 #import "ECRectSet.h"
 
 @class ECTextRenderer;
 @class ECTextRendererLine;
+
+
+/// Block used to apply an overlay or underlay pass to the rendering.
+/// The block should draw on the given context and inside the lineBounds rect which
+/// is relative to the current context state. Bounds will account for text insets.
+/// The CTLine can be used to retireve offsets inside the line with CTLineGetOffsetForStringIndex.
+/// Baseline is the offset from bounds top to the line base.
+/// String range and line number are relative to the whole text managed by the renderer.
+typedef void (^ECTextRendererLayerPass)(CGContextRef context, CTLineRef line, CGRect lineBounds, CGFloat baseline, NSRange stringRange, NSUInteger lineNumber);
+
 
 @protocol ECTextRendererDelegate <NSObject>
 @optional
@@ -45,6 +54,14 @@
 /// of characters shold be considered as multiple lines. If this method
 /// returns 0 a different estime will be used.
 - (NSUInteger)textRenderer:(ECTextRenderer *)sender estimatedTextLineCountOfLength:(NSUInteger)maximumLineLength;
+
+/// An array of ECTextRendererLayerPass that will be applied in order to every
+/// line before rendering the actual text line.
+- (NSArray *)underlayPasses;
+
+/// An array of ECTextRendererLayerPass that will be applied in order to every
+/// line after rendering the actual text line.
+- (NSArray *)overlayPasses;
 
 @end
 
@@ -108,7 +125,7 @@
 
 /// Convenience function to enumerate throught all lines (indipendent from text segment)
 /// contained in the given rect relative to the rendered text space.
-- (void)enumerateLinesIntersectingRect:(CGRect)rect usingBlock:(void(^)(ECTextRendererLine *line, NSUInteger lineIndex, NSUInteger lineNumber, CGFloat lineOffset, BOOL *stop))block;
+- (void)enumerateLinesIntersectingRect:(CGRect)rect usingBlock:(void(^)(ECTextRendererLine *line, NSUInteger lineIndex, NSUInteger lineNumber, CGFloat lineOffset, NSRange stringRange, BOOL *stop))block;
 
 /// Renders the content text contained in the given rect to the specified 
 /// context. The given context will not be modified prior rendering. Lines
@@ -117,7 +134,7 @@
 /// A block can be specified and it will be called for each rendered line
 /// with the current line number (not considering wraps), after the context 
 /// has been positioned to draw the current partial line.
-- (void)drawTextWithinRect:(CGRect)rect inContext:(CGContextRef)context withLineBlock:(void(^)(ECTextRendererLine *line, NSUInteger lineNumber))block;
+- (void)drawTextWithinRect:(CGRect)rect inContext:(CGContextRef)context;
 
 #pragma mark Retreiving Geometry to Text Mapping
 
