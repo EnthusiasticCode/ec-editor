@@ -67,13 +67,10 @@
 {
     NSURL *tempDirectory = [NSURL temporaryDirectory];
     ECArchive *archive = [[ECArchive alloc] initWithFileURL:ZIPFileURL];
-    [archive extractToDirectory:tempDirectory completionHandler:^(BOOL success) {
-        if (!success)
-            ECASSERT(NO); // TODO: error handling
-        NSFileManager *fileManager = [[NSFileManager alloc] init];
-        for (NSURL *fileURL in [fileManager contentsOfDirectoryAtURL:tempDirectory includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsPackageDescendants | NSDirectoryEnumerationSkipsSubdirectoryDescendants error:NULL])
-            [self importFileFromURL:fileURL];
-    }];
+    [archive extractToDirectory:tempDirectory];
+    NSFileManager *fileManager = [[NSFileManager alloc] init];
+    for (NSURL *fileURL in [fileManager contentsOfDirectoryAtURL:tempDirectory includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsPackageDescendants | NSDirectoryEnumerationSkipsSubdirectoryDescendants error:NULL])
+        [self importFileFromURL:fileURL];
 }
 
 - (ACNode *)childWithName:(NSString *)name

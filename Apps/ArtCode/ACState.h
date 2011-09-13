@@ -41,9 +41,9 @@ typedef enum
 /// Adds a new project with the given ACURL
 /// Inserting a project with the same ACURL as an existing project is an error
 /// Passing index = NSNotFound will add the project to the end of the project list
-- (void)addNewProjectWithURL:(NSURL *)projectURL atIndex:(NSUInteger)index fromTemplate:(NSString *)templateName;
-- (void)addNewProjectWithURL:(NSURL *)projectURL atIndex:(NSUInteger)index fromACZ:(NSURL *)ACZFileURL;
-- (void)addNewProjectWithURL:(NSURL *)projectURL atIndex:(NSUInteger)index fromZIP:(NSURL *)ZIPFileURL;
+- (void)addNewProjectWithURL:(NSURL *)projectURL atIndex:(NSUInteger)index fromTemplate:(NSString *)templateName completionHandler:(void (^)(BOOL success))completionHandler;
+- (void)addNewProjectWithURL:(NSURL *)projectURL atIndex:(NSUInteger)index fromACZ:(NSURL *)ACZFileURL completionHandler:(void (^)(BOOL success))completionHandler;
+- (void)addNewProjectWithURL:(NSURL *)projectURL atIndex:(NSUInteger)index fromZIP:(NSURL *)ZIPFileURL completionHandler:(void (^)(BOOL success))completionHandler;
 
 #pragma mark - Object Level
 

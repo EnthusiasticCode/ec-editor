@@ -62,7 +62,7 @@ void * ACProjectDocumentProjectURLObserving;
     for (NSUInteger currentPathComponent = 2; currentPathComponent < pathComponentsCount; ++currentPathComponent)
     {
         node = (ACGroup *)[node childWithName:[pathComponents objectAtIndex:currentPathComponent]];
-        if (![node.nodeType isEqualToString:@"Group"])
+        if (![node.nodeType isEqualToString:@"Group"] && currentPathComponent != pathComponentsCount - 1)
             return nil;
     }
     return node;

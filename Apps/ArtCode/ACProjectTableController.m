@@ -61,8 +61,14 @@ static void * ACStateProjectsObservingContext;
                      continue;
                  break;
              }
-             [[ACState sharedState] addNewProjectWithURL:projectURL atIndex:NSNotFound fromTemplate:nil];
-             [[ECBezelAlert centerBezelAlert] addAlertMessageWithText:[@"Added new project: " stringByAppendingString:projectName] image:nil displayImmediatly:NO];
+             [[ACState sharedState] addNewProjectWithURL:projectURL atIndex:NSNotFound fromTemplate:nil completionHandler:^(BOOL success) {
+                 NSString *message = nil;
+                 if (success)
+                     message = [@"Added new project: " stringByAppendingString:projectName];
+                 else
+                     message = @"Add project failed";
+                 [[ECBezelAlert centerBezelAlert] addAlertMessageWithText:message image:nil displayImmediatly:NO];
+             }];
              [popover dismissPopoverAnimated:YES];
          } copy];
     }
@@ -87,9 +93,15 @@ static void * ACStateProjectsObservingContext;
                      continue;
                  break;
              }
-             [[ACState sharedState] addNewProjectWithURL:projectURL atIndex:NSNotFound fromACZ:ACZFileURL];
-             [[ECBezelAlert centerBezelAlert] addAlertMessageWithText:[@"Added new project: " stringByAppendingString:projectName] image:nil displayImmediatly:NO];
-             [popover dismissPopoverAnimated:YES];
+             [[ACState sharedState] addNewProjectWithURL:projectURL atIndex:NSNotFound fromACZ:ACZFileURL completionHandler:^(BOOL success) {
+                 NSString *message = nil;
+                 if (success)
+                     message = [@"Added new project: " stringByAppendingString:projectName];
+                 else
+                     message = @"Add project failed";
+                 [[ECBezelAlert centerBezelAlert] addAlertMessageWithText:message image:nil displayImmediatly:NO];
+             }];            
+             [popover dismissPopoverAnimated:YES];            
          } copy];
     }
     return _newProjectFromACZ;
@@ -113,8 +125,14 @@ static void * ACStateProjectsObservingContext;
                      continue;
                  break;
              }
-             [[ACState sharedState] addNewProjectWithURL:projectURL atIndex:NSNotFound fromZIP:ZIPFileURL];
-             [[ECBezelAlert centerBezelAlert] addAlertMessageWithText:[@"Added new project: " stringByAppendingString:projectName] image:nil displayImmediatly:NO];
+             [[ACState sharedState] addNewProjectWithURL:projectURL atIndex:NSNotFound fromZIP:ZIPFileURL completionHandler:^(BOOL success) {
+                 NSString *message = nil;
+                 if (success)
+                     message = [@"Added new project: " stringByAppendingString:projectName];
+                 else
+                     message = @"Add project failed";
+                 [[ECBezelAlert centerBezelAlert] addAlertMessageWithText:message image:nil displayImmediatly:NO];
+             }];
              [popover dismissPopoverAnimated:YES];
          } copy];
     }

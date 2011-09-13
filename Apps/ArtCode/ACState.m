@@ -100,7 +100,7 @@ static NSString * const ACProjectBundleExtension = @"acproj";
     [self didChange:NSKeyValueChangeInsertion valuesAtIndexes:[NSIndexSet indexSetWithIndex:toIndex] forKey:@"projectURLs"];
 }
 
-- (void)addNewProjectWithURL:(NSURL *)projectURL atIndex:(NSUInteger)index fromTemplate:(NSString *)templateName
+- (void)addNewProjectWithURL:(NSURL *)projectURL atIndex:(NSUInteger)index fromTemplate:(NSString *)templateName completionHandler:(void (^)(BOOL))completionHandler
 {
     ECASSERT(projectURL);
     ECASSERT(index <= [_projectDocuments count] || index == NSNotFound);
@@ -110,17 +110,25 @@ static NSString * const ACProjectBundleExtension = @"acproj";
         index = [_projectDocuments count];
     NSURL *fileURL = [self bundleURLForLocalProjectWithURL:projectURL];
     ACProjectDocument *document = [[ACProjectDocument alloc] initWithFileURL:fileURL];
+    document.projectURL = projectURL;
     [document saveToURL:fileURL forSaveOperation:UIDocumentSaveForCreating completionHandler:^(BOOL success) {
-        ECASSERT(success);
+        if (!success)
+        {
+            if (completionHandler)
+                completionHandler(NO);
+            return;
+        }
         [self willChange:NSKeyValueChangeInsertion valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"projectURLs"];
         [_projectURLs insertObject:projectURL atIndex:index];
         [self saveProjects];
         [_projectDocuments setObject:document forKey:projectURL];
         [self didChange:NSKeyValueChangeInsertion valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"projectURLs"];
+        if (completionHandler)
+            completionHandler(YES);
     }];
 }
 
-- (void)addNewProjectWithURL:(NSURL *)projectURL atIndex:(NSUInteger)index fromACZ:(NSURL *)ACZFileURL
+- (void)addNewProjectWithURL:(NSURL *)projectURL atIndex:(NSUInteger)index fromACZ:(NSURL *)ACZFileURL completionHandler:(void (^)(BOOL))completionHandler
 {
     ECASSERT(projectURL);
     ECASSERT(index <= [_projectDocuments count] || index == NSNotFound);
@@ -129,26 +137,47 @@ static NSString * const ACProjectBundleExtension = @"acproj";
     ECASSERT(ACZFileURL);
     NSURL *fileURL = [self bundleURLForLocalProjectWithURL:projectURL];
     ECArchive *archive = [[ECArchive alloc] initWithFileURL:ACZFileURL];
-    [archive extractToDirectory:fileURL completionHandler:^(BOOL success) {
-        ECASSERT(success);
-        ACProjectDocument *document = [[ACProjectDocument alloc] initWithFileURL:fileURL];
-        [self willChange:NSKeyValueChangeInsertion valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"projectURLs"];
-        [_projectURLs insertObject:projectURL atIndex:index];
-        [self saveProjects];
-        [_projectDocuments setObject:document forKey:projectURL];
-        [self didChange:NSKeyValueChangeInsertion valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"projectURLs"];
-    }];
+    [archive extractToDirectory:fileURL];
+    ACProjectDocument *document = [[ACProjectDocument alloc] initWithFileURL:fileURL];
+    document.projectURL = projectURL;
+    [self willChange:NSKeyValueChangeInsertion valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"projectURLs"];
+    [_projectURLs insertObject:projectURL atIndex:index];
+    [self saveProjects];
+    [_projectDocuments setObject:document forKey:projectURL];
+    [self didChange:NSKeyValueChangeInsertion valuesAtIndexes:[NSIndexSet indexSetWithIndex:index] forKey:@"projectURLs"];
+    if (completionHandler)
+        completionHandler(YES);
 }
 
-- (void)addNewProjectWithURL:(NSURL *)projectURL atIndex:(NSUInteger)index fromZIP:(NSURL *)ZIPFileURL
+- (void)addNewProjectWithURL:(NSURL *)projectURL atIndex:(NSUInteger)index fromZIP:(NSURL *)ZIPFileURL completionHandler:(void (^)(BOOL))completionHandler
 {
-    [self addNewProjectWithURL:projectURL atIndex:index fromTemplate:nil];
-    ACProjectDocument *document = [_projectDocuments objectForKey:projectURL];
-    ECASSERT(document);
-    [document openWithCompletionHandler:^(BOOL success) {
-        ECASSERT(success);
-        ACProject *project = document.project;
-        [project importFilesFromZIP:ZIPFileURL];
+    __weak ACState *this = self;
+    [self addNewProjectWithURL:projectURL atIndex:index fromTemplate:nil completionHandler:^(BOOL success) {
+        if (!success)
+        {
+            if (completionHandler)
+                completionHandler(NO);
+            return;
+        }
+        ACProjectDocument *document = [this->_projectDocuments objectForKey:projectURL];
+        ECASSERT(document);
+        void(^block)(BOOL) = ^(BOOL success)
+        {
+            if (!success)
+            {
+                if (completionHandler)
+                    completionHandler(NO);
+                return;
+            }
+            ACProject *project = document.project;
+            [project importFilesFromZIP:ZIPFileURL];
+            if (completionHandler)
+                completionHandler(YES);
+        };
+        if (document.documentState & UIDocumentStateClosed)
+            [document openWithCompletionHandler:block];
+        else
+            block(YES);
     }];
 }
 
