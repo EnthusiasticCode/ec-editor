@@ -17,6 +17,9 @@ typedef void (^ECCodeStringDataSourceStylingBlock)(NSMutableAttributedString *st
 /// The string to be managed by the datasource
 @property (nonatomic, strong) NSString *string;
 
+/// Text insets for the rendering.
+@property (nonatomic) UIEdgeInsets textInsets;
+
 /// Default style applied to the entire string.
 @property (nonatomic, strong) ECTextStyle *defaultTextStyle;
 

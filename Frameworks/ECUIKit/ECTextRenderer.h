@@ -48,6 +48,9 @@ typedef void (^ECTextRendererLayerPass)(CGContextRef context, CTLineRef line, CG
 /// the source text for optimal rendering.
 - (NSAttributedString *)textRenderer:(ECTextRenderer *)sender stringInLineRange:(NSRange *)lineRange endOfString:(BOOL *)endOfString;
 
+/// Returns insets for the given renderer.
+- (UIEdgeInsets)textInsetsForTextRenderer:(ECTextRenderer *)sender;
+
 @optional
 /// When implemented, this delegate method should return the total number 
 /// of lines in the input text. Lines that exceed the given maximum length
@@ -57,11 +60,11 @@ typedef void (^ECTextRendererLayerPass)(CGContextRef context, CTLineRef line, CG
 
 /// An array of ECTextRendererLayerPass that will be applied in order to every
 /// line before rendering the actual text line.
-- (NSArray *)underlayPasses;
+- (NSArray *)underlayPassesForTextRenderer:(ECTextRenderer *)sender;
 
 /// An array of ECTextRendererLayerPass that will be applied in order to every
 /// line after rendering the actual text line.
-- (NSArray *)overlayPasses;
+- (NSArray *)overlayPassesForTextRenderer:(ECTextRenderer *)sender;
 
 @end
 
@@ -107,8 +110,9 @@ typedef void (^ECTextRendererLayerPass)(CGContextRef context, CTLineRef line, CG
 
 #pragma mark Managing Rendering Behaviours
 
-/// The width to use to wrap the text. Changing this property will make the
-/// renderer to invalidate it's content.
+/// The width to use to wrap the text. If the datasource provide a textInset greater
+/// than zero, this width will be changed to account for that. 
+/// Changing this property will make the renderer to invalidate it's content.
 @property (nonatomic) CGFloat wrapWidth;
 
 /// Returns the estimated height for the current content at the current wrap
@@ -137,6 +141,15 @@ typedef void (^ECTextRendererLayerPass)(CGContextRef context, CTLineRef line, CG
 - (void)drawTextWithinRect:(CGRect)rect inContext:(CGContextRef)context;
 
 #pragma mark Retreiving Geometry to Text Mapping
+
+/// Convert a rect relative to the text to one that account for text insets.
+- (CGRect)convertFromTextRect:(CGRect)rect;
+- (CGPoint)convertFromTextPoint:(CGPoint)point;
+
+/// Convert a rect in rendered image coordinates to one relative to the text only.
+/// Removes data source text insets.
+- (CGRect)convertToTextRect:(CGRect)rect;
+- (CGPoint)convertToTextPoint:(CGPoint)point;
 
 /// Returns the closest string location to the given graphical point relative
 /// to the rendered text space where the first line is at 0, 0.

@@ -16,7 +16,7 @@
     NSMutableDictionary *stylingBlocks;
 }
 
-@synthesize defaultTextStyle;
+@synthesize textInsets, defaultTextStyle;
 
 - (NSString *)string
 {
@@ -34,6 +34,7 @@
     if ((self = [super init])) 
     {
         defaultTextStyle = [ECTextStyle textStyleWithName:@"default" font:[UIFont fontWithName:@"Inconsolata-dz" size:15] color:nil];
+        textInsets = UIEdgeInsetsMake(10, 10, 10, 10);
     }
     return self;
 }
@@ -91,6 +92,11 @@
         count += ceilf((float)[line length] / max);
     }];
     return count;
+}
+
+- (UIEdgeInsets)textInsetsForTextRenderer:(ECTextRenderer *)sender
+{
+    return textInsets;
 }
 
 #pragma mark Code View DataSource Methods

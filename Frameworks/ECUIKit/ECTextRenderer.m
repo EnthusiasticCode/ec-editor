@@ -33,8 +33,8 @@
     struct {
         unsigned int delegateHasTextRendererInvalidateRenderInRect : 1;
         unsigned int dataSourceHasTextRendererEstimatedTextLineCountOfLength : 1;
-        unsigned int dataSourceHasUnderlayPasses : 1;
-        unsigned int dataSourceHasOverlayPasses : 1;
+        unsigned int dataSourceHasUnderlayPassesForTextRenderer : 1;
+        unsigned int dataSourceHasOverlayPassesForTextRenderer : 1;
     } flags;
 }
 
@@ -506,14 +506,17 @@
     datasource = aDatasource;
     
     flags.dataSourceHasTextRendererEstimatedTextLineCountOfLength = [datasource respondsToSelector:@selector(textRenderer:estimatedTextLineCountOfLength:)];
-    flags.dataSourceHasUnderlayPasses = [datasource respondsToSelector:@selector(underlayPasses)];
-    flags.dataSourceHasOverlayPasses = [datasource respondsToSelector:@selector(overlayPasses)];
+    flags.dataSourceHasUnderlayPassesForTextRenderer = [datasource respondsToSelector:@selector(underlayPassesForTextRenderer:)];
+    flags.dataSourceHasOverlayPassesForTextRenderer = [datasource respondsToSelector:@selector(overlayPassesForTextRenderer:)];
     
     [self updateAllText];
 }
 
 - (void)setWrapWidth:(CGFloat)width
 {
+    UIEdgeInsets textInsets = [datasource textInsetsForTextRenderer:self];
+    width -= textInsets.left + textInsets.right;
+    
     if (wrapWidth == width) 
         return;
 
@@ -692,9 +695,14 @@
     CGContextSetTextPosition(context, 0, 0);
     CGContextScaleCTM(context, 1, -1);
     
+    // Get text insets
+    UIEdgeInsets textInsets = [datasource textInsetsForTextRenderer:self];
+    rect.size.height -= textInsets.top;
+    CGContextTranslateCTM(context, textInsets.left, -textInsets.top);
+    
     // Get rendering passes
-    NSArray *underlays = flags.dataSourceHasUnderlayPasses ? [datasource underlayPasses] : nil;
-    NSArray *overlays = flags.dataSourceHasOverlayPasses ? [datasource overlayPasses] : nil;
+    NSArray *underlays = flags.dataSourceHasUnderlayPassesForTextRenderer ? [datasource underlayPassesForTextRenderer:self] : nil;
+    NSArray *overlays = flags.dataSourceHasOverlayPassesForTextRenderer ? [datasource overlayPassesForTextRenderer:self] : nil;
     
     // Draw needed lines from this segment
     [self enumerateLinesIntersectingRect:rect usingBlock:^(ECTextRendererLine *line, NSUInteger lineIndex, NSUInteger lineNumber, CGFloat lineOffset, NSRange stringRange, BOOL *stop) {
@@ -738,6 +746,8 @@
 
 - (NSUInteger)closestStringLocationToPoint:(CGPoint)point withinStringRange:(NSRange)queryStringRange
 {
+    point = [self convertToTextPoint:point];
+    
     __block CFIndex result = 0;
     __block CTLineRef lastLine = NULL;
     [self generateTextSegmentsAndEnumerateUsingBlock:^(TextSegment *segment, NSUInteger outerIdx, NSUInteger lineOffset, NSUInteger stringOffset, CGFloat positionOffset, BOOL *stop) {
@@ -814,6 +824,7 @@
                 lineBounds.size.width = offset - lineBounds.origin.x;
             }
             
+            lineBounds = [self convertFromTextRect:lineBounds];
             [result addRect:lineBounds];
             
             stringEnd += lineStringRange.length;
@@ -926,6 +937,10 @@
     {
         rect = CGRectInfinite;
     }
+    else
+    {
+        rect = [self convertToTextRect:rect];
+    }
     
     // Count for existing segments
     CGFloat lastSegmentEnd = 0;
@@ -1014,6 +1029,40 @@
     }
     
     return result;
+}
+
+#pragma mark -
+
+- (CGRect)convertFromTextRect:(CGRect)rect
+{
+    UIEdgeInsets textInsets = [datasource textInsetsForTextRenderer:self];
+    rect.origin.x += textInsets.left;
+    rect.origin.y += textInsets.top;
+    return rect;
+}
+
+- (CGPoint)convertFromTextPoint:(CGPoint)point
+{
+    UIEdgeInsets textInsets = [datasource textInsetsForTextRenderer:self];
+    point.x += textInsets.left;
+    point.y += textInsets.top;
+    return point;
+}
+
+- (CGRect)convertToTextRect:(CGRect)rect
+{
+    UIEdgeInsets textInsets = [datasource textInsetsForTextRenderer:self];
+    rect.origin.x -= textInsets.left;
+    rect.origin.y -= textInsets.top;
+    return rect;
+}
+
+- (CGPoint)convertToTextPoint:(CGPoint)point
+{
+    UIEdgeInsets textInsets = [datasource textInsetsForTextRenderer:self];
+    point.x -= textInsets.left;
+    point.y -= textInsets.top;
+    return point;
 }
 
 #pragma mark Public Intake Methods
