@@ -7,18 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		B714549A1413B8DC0059828D /* NewFilePopover.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B71454991413B8DC0059828D /* NewFilePopover.storyboard */; };
-		B71454A21413BD940059828D /* ACPopoverNewFileImportFileController.m in Sources */ = {isa = PBXBuildFile; fileRef = B71454A11413BD940059828D /* ACPopoverNewFileImportFileController.m */; };
 		B732CFFB13DB24F600637FBE /* Project.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = B732CFF913DB24F600637FBE /* Project.xcdatamodeld */; };
 		B732D01513DB361600637FBE /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B732D01413DB361600637FBE /* CoreData.framework */; };
 		B732D06413DD799400637FBE /* ACURL.m in Sources */ = {isa = PBXBuildFile; fileRef = B732D06313DD799300637FBE /* ACURL.m */; };
 		B779AF1E1418E1E30018E8AA /* libarc.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B779AF1D1418E1E30018E8AA /* libarc.a */; };
 		B779AF201418E23A0018E8AA /* libz.1.2.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B779AF1F1418E23A0018E8AA /* libz.1.2.5.dylib */; };
 		B779AF2414192DB90018E8AA /* ECArchive.m in Sources */ = {isa = PBXBuildFile; fileRef = B779AF2314192DB90018E8AA /* ECArchive.m */; };
-		B77F53A41413649D00B8A978 /* NewProjectPopover.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B77F53A31413649D00B8A978 /* NewProjectPopover.storyboard */; };
-		B77F53A81413667200B8A978 /* ACPopoverNewProjectFromTemplateController.m in Sources */ = {isa = PBXBuildFile; fileRef = B77F53A71413667200B8A978 /* ACPopoverNewProjectFromTemplateController.m */; };
-		B77F53AB1413669B00B8A978 /* ACPopoverNewProjectFromACZController.m in Sources */ = {isa = PBXBuildFile; fileRef = B77F53AA1413669B00B8A978 /* ACPopoverNewProjectFromACZController.m */; };
-		B77F53AE141366AD00B8A978 /* ACPopoverNewProjectFromZIPController.m in Sources */ = {isa = PBXBuildFile; fileRef = B77F53AD141366AC00B8A978 /* ACPopoverNewProjectFromZIPController.m */; };
 		B79F560814160782000E32CF /* ACTab.m in Sources */ = {isa = PBXBuildFile; fileRef = B79F560714160782000E32CF /* ACTab.m */; };
 		B79F560B14160782000E32CF /* ACBookmark.m in Sources */ = {isa = PBXBuildFile; fileRef = B79F560A14160782000E32CF /* ACBookmark.m */; };
 		B79F560E14160782000E32CF /* ACProject.m in Sources */ = {isa = PBXBuildFile; fileRef = B79F560D14160782000E32CF /* ACProject.m */; };
@@ -27,6 +21,14 @@
 		B79F561714160782000E32CF /* ACHistoryItem.m in Sources */ = {isa = PBXBuildFile; fileRef = B79F561614160782000E32CF /* ACHistoryItem.m */; };
 		B79F561A14160782000E32CF /* ACNode.m in Sources */ = {isa = PBXBuildFile; fileRef = B79F561914160782000E32CF /* ACNode.m */; };
 		B7DF4B5D13EFE52F00BF8306 /* ACProjectDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = B7DF4B5C13EFE52F00BF8306 /* ACProjectDocument.m */; };
+		B7DFA753141E8E7F0015CCE1 /* NewFilePopover.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B7DFA751141E8E7F0015CCE1 /* NewFilePopover.storyboard */; };
+		B7DFA754141E8E7F0015CCE1 /* NewProjectPopover.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B7DFA752141E8E7F0015CCE1 /* NewProjectPopover.storyboard */; };
+		B7DFA757141E8EB80015CCE1 /* ECURL.m in Sources */ = {isa = PBXBuildFile; fileRef = B7DFA756141E8EB80015CCE1 /* ECURL.m */; };
+		B7DFA764141E8FC00015CCE1 /* ACNewFileImportFileController.m in Sources */ = {isa = PBXBuildFile; fileRef = B7DFA75B141E8FC00015CCE1 /* ACNewFileImportFileController.m */; };
+		B7DFA765141E8FC00015CCE1 /* ACNewProjectFromACZController.m in Sources */ = {isa = PBXBuildFile; fileRef = B7DFA75D141E8FC00015CCE1 /* ACNewProjectFromACZController.m */; };
+		B7DFA766141E8FC00015CCE1 /* ACNewProjectFromTemplateController.m in Sources */ = {isa = PBXBuildFile; fileRef = B7DFA75F141E8FC00015CCE1 /* ACNewProjectFromTemplateController.m */; };
+		B7DFA767141E8FC00015CCE1 /* ACNewProjectFromZIPController.m in Sources */ = {isa = PBXBuildFile; fileRef = B7DFA761141E8FC00015CCE1 /* ACNewProjectFromZIPController.m */; };
+		B7DFA768141E8FC00015CCE1 /* ACNewProjectPopoverController.m in Sources */ = {isa = PBXBuildFile; fileRef = B7DFA763141E8FC00015CCE1 /* ACNewProjectPopoverController.m */; };
 		CD13665913D32150001F3455 /* UIControl+BlockAction.m in Sources */ = {isa = PBXBuildFile; fileRef = CD13665813D32150001F3455 /* UIControl+BlockAction.m */; };
 		CD1DEA4A1415558500560D81 /* ACCodeIndexerDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = CD1DEA491415558500560D81 /* ACCodeIndexerDataSource.m */; };
 		CD21547913F45CC200614B83 /* ACToolButton.m in Sources */ = {isa = PBXBuildFile; fileRef = CD21547813F45CC200614B83 /* ACToolButton.m */; };
@@ -215,9 +217,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		B71454991413B8DC0059828D /* NewFilePopover.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = NewFilePopover.storyboard; sourceTree = "<group>"; };
-		B71454A01413BD940059828D /* ACPopoverNewFileImportFileController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACPopoverNewFileImportFileController.h; sourceTree = "<group>"; };
-		B71454A11413BD940059828D /* ACPopoverNewFileImportFileController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACPopoverNewFileImportFileController.m; sourceTree = "<group>"; };
 		B732CFE913DB1B6B00637FBE /* ECDebug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECDebug.h; path = ../../Frameworks/ECCore/ECDebug.h; sourceTree = "<group>"; };
 		B732CFFA13DB24F600637FBE /* Project.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Project.xcdatamodel; sourceTree = "<group>"; };
 		B732D01413DB361600637FBE /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
@@ -228,13 +227,6 @@
 		B779AF1F1418E23A0018E8AA /* libz.1.2.5.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.1.2.5.dylib; path = usr/lib/libz.1.2.5.dylib; sourceTree = SDKROOT; };
 		B779AF2214192DB90018E8AA /* ECArchive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECArchive.h; path = ../Frameworks/ECArchive/ECArchive.h; sourceTree = "<group>"; };
 		B779AF2314192DB90018E8AA /* ECArchive.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ECArchive.m; path = ../Frameworks/ECArchive/ECArchive.m; sourceTree = "<group>"; };
-		B77F53A31413649D00B8A978 /* NewProjectPopover.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = NewProjectPopover.storyboard; sourceTree = "<group>"; };
-		B77F53A61413667200B8A978 /* ACPopoverNewProjectFromTemplateController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACPopoverNewProjectFromTemplateController.h; sourceTree = "<group>"; };
-		B77F53A71413667200B8A978 /* ACPopoverNewProjectFromTemplateController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACPopoverNewProjectFromTemplateController.m; sourceTree = "<group>"; };
-		B77F53A91413669B00B8A978 /* ACPopoverNewProjectFromACZController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACPopoverNewProjectFromACZController.h; sourceTree = "<group>"; };
-		B77F53AA1413669B00B8A978 /* ACPopoverNewProjectFromACZController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACPopoverNewProjectFromACZController.m; sourceTree = "<group>"; };
-		B77F53AC141366AC00B8A978 /* ACPopoverNewProjectFromZIPController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACPopoverNewProjectFromZIPController.h; sourceTree = "<group>"; };
-		B77F53AD141366AC00B8A978 /* ACPopoverNewProjectFromZIPController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACPopoverNewProjectFromZIPController.m; sourceTree = "<group>"; };
 		B79F560614160782000E32CF /* ACTab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACTab.h; sourceTree = "<group>"; };
 		B79F560714160782000E32CF /* ACTab.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACTab.m; sourceTree = "<group>"; };
 		B79F560914160782000E32CF /* ACBookmark.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACBookmark.h; sourceTree = "<group>"; };
@@ -251,6 +243,21 @@
 		B79F561914160782000E32CF /* ACNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACNode.m; sourceTree = "<group>"; };
 		B7DF4B5B13EFE52F00BF8306 /* ACProjectDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACProjectDocument.h; sourceTree = "<group>"; };
 		B7DF4B5C13EFE52F00BF8306 /* ACProjectDocument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACProjectDocument.m; sourceTree = "<group>"; };
+		B7DFA751141E8E7F0015CCE1 /* NewFilePopover.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = NewFilePopover.storyboard; sourceTree = "<group>"; };
+		B7DFA752141E8E7F0015CCE1 /* NewProjectPopover.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = NewProjectPopover.storyboard; sourceTree = "<group>"; };
+		B7DFA755141E8EB80015CCE1 /* ECURL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECURL.h; sourceTree = "<group>"; };
+		B7DFA756141E8EB80015CCE1 /* ECURL.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECURL.m; sourceTree = "<group>"; };
+		B7DFA758141E8EC90015CCE1 /* pstdint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pstdint.h; sourceTree = "<group>"; };
+		B7DFA75A141E8FC00015CCE1 /* ACNewFileImportFileController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACNewFileImportFileController.h; sourceTree = "<group>"; };
+		B7DFA75B141E8FC00015CCE1 /* ACNewFileImportFileController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACNewFileImportFileController.m; sourceTree = "<group>"; };
+		B7DFA75C141E8FC00015CCE1 /* ACNewProjectFromACZController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACNewProjectFromACZController.h; sourceTree = "<group>"; };
+		B7DFA75D141E8FC00015CCE1 /* ACNewProjectFromACZController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACNewProjectFromACZController.m; sourceTree = "<group>"; };
+		B7DFA75E141E8FC00015CCE1 /* ACNewProjectFromTemplateController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACNewProjectFromTemplateController.h; sourceTree = "<group>"; };
+		B7DFA75F141E8FC00015CCE1 /* ACNewProjectFromTemplateController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACNewProjectFromTemplateController.m; sourceTree = "<group>"; };
+		B7DFA760141E8FC00015CCE1 /* ACNewProjectFromZIPController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACNewProjectFromZIPController.h; sourceTree = "<group>"; };
+		B7DFA761141E8FC00015CCE1 /* ACNewProjectFromZIPController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACNewProjectFromZIPController.m; sourceTree = "<group>"; };
+		B7DFA762141E8FC00015CCE1 /* ACNewProjectPopoverController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACNewProjectPopoverController.h; sourceTree = "<group>"; };
+		B7DFA763141E8FC00015CCE1 /* ACNewProjectPopoverController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACNewProjectPopoverController.m; sourceTree = "<group>"; };
 		CD0DEAB613D4C2430087ADBB /* ACNavigationTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACNavigationTarget.h; sourceTree = "<group>"; };
 		CD13665713D32150001F3455 /* UIControl+BlockAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIControl+BlockAction.h"; sourceTree = "<group>"; };
 		CD13665813D32150001F3455 /* UIControl+BlockAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIControl+BlockAction.m"; sourceTree = "<group>"; };
@@ -660,20 +667,29 @@
 			name = ECArchive;
 			sourceTree = "<group>";
 		};
-		B7C7389713F47AE6006EB040 /* Core Data */ = {
-			isa = PBXGroup;
-			children = (
-				B732CFF913DB24F600637FBE /* Project.xcdatamodeld */,
-			);
-			name = "Core Data";
-			sourceTree = "<group>";
-		};
 		B7DD7813140F7265005C60AB /* Third Party */ = {
 			isa = PBXGroup;
 			children = (
 				B779AF1B1418E1E30018E8AA /* libarchive */,
 			);
 			name = "Third Party";
+			sourceTree = "<group>";
+		};
+		B7DFA759141E8F9E0015CCE1 /* Popover Content Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				B7DFA75A141E8FC00015CCE1 /* ACNewFileImportFileController.h */,
+				B7DFA75B141E8FC00015CCE1 /* ACNewFileImportFileController.m */,
+				B7DFA75C141E8FC00015CCE1 /* ACNewProjectFromACZController.h */,
+				B7DFA75D141E8FC00015CCE1 /* ACNewProjectFromACZController.m */,
+				B7DFA75E141E8FC00015CCE1 /* ACNewProjectFromTemplateController.h */,
+				B7DFA75F141E8FC00015CCE1 /* ACNewProjectFromTemplateController.m */,
+				B7DFA760141E8FC00015CCE1 /* ACNewProjectFromZIPController.h */,
+				B7DFA761141E8FC00015CCE1 /* ACNewProjectFromZIPController.m */,
+				B7DFA762141E8FC00015CCE1 /* ACNewProjectPopoverController.h */,
+				B7DFA763141E8FC00015CCE1 /* ACNewProjectPopoverController.m */,
+			);
+			name = "Popover Content Controllers";
 			sourceTree = "<group>";
 		};
 		CD4786E513DB0BF500616B62 /* State */ = {
@@ -764,10 +780,13 @@
 		CD7D2B0313C0CDD400B889EE /* ECFoundation */ = {
 			isa = PBXGroup;
 			children = (
+				B7DFA755141E8EB80015CCE1 /* ECURL.h */,
+				B7DFA756141E8EB80015CCE1 /* ECURL.m */,
 				CD6580CA1416273D0079412F /* ECPatriciaTrie.h */,
 				CD6580CB1416273D0079412F /* ECPatriciaTrie.m */,
 				CDF1D46E14150C7800EFEC21 /* MurmurHash3.c */,
 				CDF1D46F14150C7800EFEC21 /* MurmurHash3.h */,
+				B7DFA758141E8EC90015CCE1 /* pstdint.h */,
 				CDF1D46914150A9200EFEC21 /* ECHashing.h */,
 				CDF1D46A14150A9200EFEC21 /* ECHashing.m */,
 				CD9CD96413DC1896007964D3 /* ECDictionaryCache.h */,
@@ -811,9 +830,9 @@
 		CD7D2B0713C0CE5200B889EE /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				B732CFF913DB24F600637FBE /* Project.xcdatamodeld */,
 				CD8A677B13D0BB000037D742 /* ipad_icon.png */,
 				CDE3F14613C0DDD500DFFAFF /* Inconsolata-dz.otf */,
-				B7C7389713F47AE6006EB040 /* Core Data */,
 				CD7D2B0A13C0CEFF00B889EE /* Images */,
 				CD7D2B0913C0CEE100B889EE /* Storyboards */,
 			);
@@ -841,10 +860,10 @@
 		CD7D2B0913C0CEE100B889EE /* Storyboards */ = {
 			isa = PBXGroup;
 			children = (
+				B7DFA751141E8E7F0015CCE1 /* NewFilePopover.storyboard */,
+				B7DFA752141E8E7F0015CCE1 /* NewProjectPopover.storyboard */,
 				CD7D2B4913C0D5B800B889EE /* MainStoryboard.storyboard */,
 				CD7D2B4D13C0D5FB00B889EE /* ToolPanelStoryboard.storyboard */,
-				B77F53A31413649D00B8A978 /* NewProjectPopover.storyboard */,
-				B71454991413B8DC0059828D /* NewFilePopover.storyboard */,
 			);
 			name = Storyboards;
 			sourceTree = "<group>";
@@ -866,6 +885,7 @@
 				CD7D2B3213C0D4C700B889EE /* ACProjectTableController.m */,
 				CD7D2B4613C0D55700B889EE /* ACFileTableController.h */,
 				CD7D2B4713C0D55700B889EE /* ACFileTableController.m */,
+				B7DFA759141E8F9E0015CCE1 /* Popover Content Controllers */,
 				CD8108D613E334F7000E1941 /* Views and Controls */,
 			);
 			name = Browsers;
@@ -1014,14 +1034,6 @@
 			children = (
 				CDD40B0113E1A046008AC36B /* ACPopoverHistoryToolController.h */,
 				CDD40B0213E1A046008AC36B /* ACPopoverHistoryToolController.m */,
-				B77F53A61413667200B8A978 /* ACPopoverNewProjectFromTemplateController.h */,
-				B77F53A71413667200B8A978 /* ACPopoverNewProjectFromTemplateController.m */,
-				B77F53A91413669B00B8A978 /* ACPopoverNewProjectFromACZController.h */,
-				B77F53AA1413669B00B8A978 /* ACPopoverNewProjectFromACZController.m */,
-				B77F53AC141366AC00B8A978 /* ACPopoverNewProjectFromZIPController.h */,
-				B77F53AD141366AC00B8A978 /* ACPopoverNewProjectFromZIPController.m */,
-				B71454A01413BD940059828D /* ACPopoverNewFileImportFileController.h */,
-				B71454A11413BD940059828D /* ACPopoverNewFileImportFileController.m */,
 			);
 			name = "Popovers Content Controllers";
 			sourceTree = "<group>";
@@ -1344,8 +1356,8 @@
 				CDE3F14713C0DDD500DFFAFF /* Inconsolata-dz.otf in Resources */,
 				CD8A677C13D0BB000037D742 /* ipad_icon.png in Resources */,
 				CDF435481417B4970061EB04 /* ACCodeFileFilterController.xib in Resources */,
-				B77F53A41413649D00B8A978 /* NewProjectPopover.storyboard in Resources */,
-				B714549A1413B8DC0059828D /* NewFilePopover.storyboard in Resources */,
+				B7DFA753141E8E7F0015CCE1 /* NewFilePopover.storyboard in Resources */,
+				B7DFA754141E8E7F0015CCE1 /* NewProjectPopover.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1391,7 +1403,6 @@
 				CD4786E913DB0C2500616B62 /* ACState.m in Sources */,
 				CD4786ED13DB0F7A00616B62 /* ECBezelAlert.m in Sources */,
 				B732CFFB13DB24F600637FBE /* Project.xcdatamodeld in Sources */,
-				B732D01313DB2C0800637FBE /* ACProject.m in Sources */,
 				CD9CD95D13DC1854007964D3 /* ECCodeView.m in Sources */,
 				CD9CD95E13DC1854007964D3 /* ECCodeViewBase.m in Sources */,
 				CD9CD95F13DC1854007964D3 /* ECTextPosition.m in Sources */,
@@ -1409,11 +1420,6 @@
 				CDF215F713E4468F005B520F /* ACEditableTableCell.m in Sources */,
 				B7DF4B5D13EFE52F00BF8306 /* ACProjectDocument.m in Sources */,
 				CD21547913F45CC200614B83 /* ACToolButton.m in Sources */,
-				B7C738A113F47B01006EB040 /* CDBookmark.m in Sources */,
-				B7C738A213F47B01006EB040 /* CDHistoryItem.m in Sources */,
-				B7C738A313F47B01006EB040 /* CDNode.m in Sources */,
-				B7C738A413F47B01006EB040 /* CDTab.m in Sources */,
-				B7C738A713F47B36006EB040 /* ACNode.m in Sources */,
 				CDF1D3AE1415073900EFEC21 /* ECClangCodeIndex.m in Sources */,
 				CDF1D3AF1415073900EFEC21 /* ECClangCodeUnit.m in Sources */,
 				CDF1D3B01415073900EFEC21 /* ECCodeCompletionChunk.m in Sources */,
@@ -1431,10 +1437,6 @@
 				CD6580C9141626F20079412F /* ACCompletionController.m in Sources */,
 				CD6580CC1416273D0079412F /* ECPatriciaTrie.m in Sources */,
 				CD6580CF141641D50079412F /* ACCodeFileFilterController.m in Sources */,
-				B77F53A81413667200B8A978 /* ACPopoverNewProjectFromTemplateController.m in Sources */,
-				B77F53AB1413669B00B8A978 /* ACPopoverNewProjectFromACZController.m in Sources */,
-				B77F53AE141366AD00B8A978 /* ACPopoverNewProjectFromZIPController.m in Sources */,
-				B71454A21413BD940059828D /* ACPopoverNewFileImportFileController.m in Sources */,
 				B79F560814160782000E32CF /* ACTab.m in Sources */,
 				B79F560B14160782000E32CF /* ACBookmark.m in Sources */,
 				B79F560E14160782000E32CF /* ACProject.m in Sources */,
@@ -1443,6 +1445,12 @@
 				B79F561714160782000E32CF /* ACHistoryItem.m in Sources */,
 				B79F561A14160782000E32CF /* ACNode.m in Sources */,
 				B779AF2414192DB90018E8AA /* ECArchive.m in Sources */,
+				B7DFA757141E8EB80015CCE1 /* ECURL.m in Sources */,
+				B7DFA764141E8FC00015CCE1 /* ACNewFileImportFileController.m in Sources */,
+				B7DFA765141E8FC00015CCE1 /* ACNewProjectFromACZController.m in Sources */,
+				B7DFA766141E8FC00015CCE1 /* ACNewProjectFromTemplateController.m in Sources */,
+				B7DFA767141E8FC00015CCE1 /* ACNewProjectFromZIPController.m in Sources */,
+				B7DFA768141E8FC00015CCE1 /* ACNewProjectPopoverController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

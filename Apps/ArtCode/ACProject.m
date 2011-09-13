@@ -53,7 +53,7 @@
     NSUInteger pathComponentsCount = [pathComponents count];
     ACNode *node = self;
     for (NSUInteger currentPathComponent = 2; currentPathComponent < pathComponentsCount; ++currentPathComponent)
-        node = [node childWithName:[pathComponents objectAtIndex:currentPathComponent]];
+        node = [(ACGroup *)node childWithName:[pathComponents objectAtIndex:currentPathComponent]];
     return node;
 }
 

@@ -28,10 +28,110 @@ static void * ACStateProjectsObservingContext;
     UIPopoverController *_popover;
 }
 - (void)deleteTableRow:(id)sender;
+@property (nonatomic, strong, readonly) void(^newProjectFromTemplate)(NSString *templateName);
+@property (nonatomic, strong, readonly) void(^newProjectFromACZ)(NSURL *ACZFileURL);
+@property (nonatomic, strong, readonly) void(^newProjectFromZIP)(NSURL *ZIPFileURL);
 @end
 
 @implementation ACProjectTableController {
     ECPopoverController *popoverLabelColorController;
+}
+
+@synthesize newProjectFromTemplate = _newProjectFromTemplate;
+@synthesize newProjectFromACZ = _newProjectFromACZ;
+@synthesize newProjectFromZIP = _newProjectFromZIP;
+
+- (void (^)(NSString *))newProjectFromTemplate
+{
+    if (!_newProjectFromTemplate)
+    {
+        __weak UIPopoverController *popover = _popover;
+        _newProjectFromTemplate = [^(NSString *templateName)
+                                   {
+                                       NSString *projectName;
+                                       NSURL *projectURL;
+                                       for (NSUInteger projectNumber = 0; YES; ++projectNumber)
+                                       {
+                                           projectName = [@"Project " stringByAppendingString:[NSString stringWithFormat:@"%d", projectNumber]];
+                                           projectURL = [NSURL ACURLWithPathComponents:[NSArray arrayWithObject:projectName]];
+                                           if ([[ACState sharedState].projectURLs containsObject:projectURL])
+                                               continue;
+                                           break;
+                                       }
+                                       [[ACState sharedState] addNewProjectWithURL:projectURL atIndex:NSNotFound fromTemplate:nil completionHandler:^(BOOL success) {
+                                           NSString *message = nil;
+                                           if (success)
+                                               message = [@"Added new project: " stringByAppendingString:projectName];
+                                           else
+                                               message = @"Add project failed";
+                                           [[ECBezelAlert centerBezelAlert] addAlertMessageWithText:message image:nil displayImmediatly:NO];
+                                       }];
+                                       [popover dismissPopoverAnimated:YES];
+                                   } copy];
+    }
+    return _newProjectFromTemplate;
+}
+
+- (void (^)(NSURL *))newProjectFromACZ
+{
+    if (!_newProjectFromACZ)
+    {
+        UIPopoverController *popover = _popover;
+        _newProjectFromACZ = [^(NSURL *ACZFileURL)
+                              {
+                                  NSString *projectName;
+                                  NSURL *projectURL;
+                                  for (NSUInteger projectNumber = 0; YES; ++projectNumber)
+                                  {
+                                      projectName = [@"Project " stringByAppendingString:[NSString stringWithFormat:@"%d", projectNumber]];
+                                      projectURL = [NSURL ACURLWithPathComponents:[NSArray arrayWithObject:projectName]];
+                                      if ([[ACState sharedState].projectURLs containsObject:projectURL])
+                                          continue;
+                                      break;
+                                  }
+                                  [[ACState sharedState] addNewProjectWithURL:projectURL atIndex:NSNotFound fromACZ:ACZFileURL completionHandler:^(BOOL success) {
+                                      NSString *message = nil;
+                                      if (success)
+                                          message = [@"Added new project: " stringByAppendingString:projectName];
+                                      else
+                                          message = @"Add project failed";
+                                      [[ECBezelAlert centerBezelAlert] addAlertMessageWithText:message image:nil displayImmediatly:NO];
+                                  }];            
+                                  [popover dismissPopoverAnimated:YES];            
+                              } copy];
+    }
+    return _newProjectFromACZ;
+}
+
+- (void (^)(NSURL *))newProjectFromZIP
+{
+    if (!_newProjectFromZIP)
+    {
+        UIPopoverController *popover = _popover;
+        _newProjectFromZIP = [^(NSURL *ZIPFileURL)
+                              {
+                                  NSString *projectName;
+                                  NSURL *projectURL;
+                                  for (NSUInteger projectNumber = 0; YES; ++projectNumber)
+                                  {
+                                      projectName = [@"Project " stringByAppendingString:[NSString stringWithFormat:@"%d", projectNumber]];
+                                      projectURL = [NSURL ACURLWithPathComponents:[NSArray arrayWithObject:projectName]];
+                                      if ([[ACState sharedState].projectURLs containsObject:projectURL])
+                                          continue;
+                                      break;
+                                  }
+                                  [[ACState sharedState] addNewProjectWithURL:projectURL atIndex:NSNotFound fromZIP:ZIPFileURL completionHandler:^(BOOL success) {
+                                      NSString *message = nil;
+                                      if (success)
+                                          message = [@"Added new project: " stringByAppendingString:projectName];
+                                      else
+                                          message = @"Add project failed";
+                                      [[ECBezelAlert centerBezelAlert] addAlertMessageWithText:message image:nil displayImmediatly:NO];
+                                  }];
+                                  [popover dismissPopoverAnimated:YES];
+                              } copy];
+    }
+    return _newProjectFromZIP;
 }
 
 #pragma mark - View lifecycle
@@ -187,21 +287,24 @@ static void * ACStateProjectsObservingContext;
 {
     NSInteger rowIndex = [sender tag];
     ECASSERT(rowIndex >= 0);
-    [self.tableView beginUpdates];
-    [self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:rowIndex inSection:0]] withRowAnimation:UITableViewRowAnimationFade];
-    [[ACState sharedState] deleteNodeWithURL:[[[[ACState sharedState] projects] objectAtIndex:rowIndex] URL]];
-    [self.tableView endUpdates];
+    [[ACState sharedState] deleteObjectWithURL:[[ACState sharedState].projectURLs objectAtIndex:rowIndex] completionHandler:^(BOOL success) {
+        if (!success)
+            return;
+        [self.tableView beginUpdates];
+        [self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:rowIndex inSection:0]] withRowAnimation:UITableViewRowAnimationFade];
+        [self.tableView endUpdates];
+    }];
 }
 
 - (void)textFieldDidEndEditing:(UITextField *)textField
 {
-    textField.text = [[[ACState sharedState].projects objectAtIndex:textField.tag] name];
+//    textField.text = [[[ACState sharedState].projects objectAtIndex:textField.tag] name];
 }
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
-    [[[ACState sharedState].projects objectAtIndex:textField.tag] setName:textField.text];
-    [textField resignFirstResponder];
+//    [[[ACState sharedState].projects objectAtIndex:textField.tag] setName:textField.text];
+//    [textField resignFirstResponder];
     return YES;
 }
 
@@ -214,7 +317,7 @@ static void * ACStateProjectsObservingContext;
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return [[ACState sharedState].projects count];
+    return [[ACState sharedState].projectURLs count];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -257,7 +360,7 @@ static void * ACStateProjectsObservingContext;
     [cell.iconButton setImage:[self projectIconWithColor:[UIColor styleForegroundColor]] forState:UIControlStateNormal];
     
     // Setup project title
-    [cell.textField setText:[[[ACState sharedState].projects objectAtIndex:indexPath.row] name]];
+    [cell.textField setText:[[[ACState sharedState].projectURLs objectAtIndex:indexPath.row] ACProjectName]];
     
     // Setup tags for callbacks
     [cell.customDeleteButton setTag:indexPath.row];
@@ -322,7 +425,7 @@ static void * ACStateProjectsObservingContext;
     if (self.isEditing)
         return;
     
-    [self.ACNavigationController pushURL:[[[ACState sharedState].projects objectAtIndex:indexPath.row] URL]];
+    [self.ACNavigationController pushURL:[[ACState sharedState].projectURLs objectAtIndex:indexPath.row]];
 //    [self.ACNavigationController pushURL:[NSURL URLWithString:@"artcode:/Project"]];
 }
 

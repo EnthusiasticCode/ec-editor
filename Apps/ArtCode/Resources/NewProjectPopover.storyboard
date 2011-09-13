@@ -70,7 +70,7 @@
         <scene sceneID="Pdm-8s-FHd">
             <objects>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="uGF-QW-LTl" userLabel="First Responder" sceneMemberID="firstResponder"/>
-                <navigationController definesPresentationContext="YES" id="mOe-d7-uCT" sceneMemberID="viewController">
+                <navigationController definesPresentationContext="YES" id="mOe-d7-uCT" customClass="ACNewProjectPopoverController" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" id="YfA-2q-AFs">
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
@@ -84,7 +84,7 @@
         <scene sceneID="hgv-Af-GTq">
             <objects>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="7v5-LT-4sZ" userLabel="First Responder" sceneMemberID="firstResponder"/>
-                <tableViewController storyboardIdentifier="Import ACZ" title="Import ACZ" id="Pqc-mO-Ww6" customClass="ACPopoverNewProjectFromACZController" sceneMemberID="viewController">
+                <tableViewController storyboardIdentifier="Import ACZ" title="Import ACZ" id="Pqc-mO-Ww6" customClass="ACNewProjectFromACZController" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="dNO-IM-P3S">
                         <rect key="frame" x="0.0" y="64" width="768" height="960"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -114,7 +114,7 @@
         <scene sceneID="seG-ha-RWM">
             <objects>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="WOE-Gg-tmF" userLabel="First Responder" sceneMemberID="firstResponder"/>
-                <tableViewController id="KfM-4H-Whc" customClass="ACPopoverNewProjectFromZIPController" sceneMemberID="viewController">
+                <tableViewController id="KfM-4H-Whc" customClass="ACNewProjectFromZIPController" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="ean-6F-l1P">
                         <rect key="frame" x="0.0" y="64" width="768" height="960"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -144,7 +144,7 @@
         <scene sceneID="il7-Dh-M60">
             <objects>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="nfV-ec-TyI" userLabel="First Responder" sceneMemberID="firstResponder"/>
-                <tableViewController storyboardIdentifier="Templates" title="Templates" id="DR9-8m-f4z" customClass="ACPopoverNewProjectFromTemplateController" sceneMemberID="viewController">
+                <tableViewController storyboardIdentifier="Templates" title="Templates" id="DR9-8m-f4z" customClass="ACNewProjectFromTemplateController" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="NQ9-Zo-Iz1">
                         <rect key="frame" x="0.0" y="64" width="768" height="960"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>

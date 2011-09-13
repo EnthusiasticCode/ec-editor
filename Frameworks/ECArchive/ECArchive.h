@@ -14,6 +14,6 @@
 - (id)initWithFileURL:(NSURL *)URL;
 
 /// Extracts the archive to the specified directory
-- (void)extractToDirectory:(NSURL *)URL withCompletionHandler:(void(^)(BOOL success))completionHandler;
+- (void)extractToDirectory:(NSURL *)URL completionHandler:(void(^)(BOOL success))completionHandler;
 
 @end

@@ -1,14 +1,14 @@
 //
-//  ACPopoverNewProjectFromACZController.m
+//  ACPopoverNewFileImportFileController.m
 //  ArtCode
 //
 //  Created by Uri Baghin on 9/4/11.
 //  Copyright (c) 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import "ACPopoverNewProjectFromACZController.h"
+#import "ACNewFileImportFileController.h"
 
-@implementation ACPopoverNewProjectFromACZController
+@implementation ACNewFileImportFileController
 
 - (id)initWithStyle:(UITableViewStyle)style
 {
@@ -77,14 +77,12 @@
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-#warning Potentially incomplete method implementation.
     // Return the number of sections.
     return 0;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-#warning Incomplete method implementation.
     // Return the number of rows in the section.
     return 0;
 }

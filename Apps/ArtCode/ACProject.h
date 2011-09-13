@@ -14,13 +14,12 @@
 
 @interface ACProject : ACGroup
 
-@property (nonatomic, retain) NSSet *bookmarks;
-@property (nonatomic, retain) NSSet *tabs;
+@property (nonatomic, strong) NSSet *bookmarks;
+@property (nonatomic, strong) NSSet *tabs;
 
+@property (nonatomic, strong, readonly) NSString *name;
 @property (nonatomic, strong) NSURL *URL;
 @property (nonatomic, strong) NSURL *fileURL;
-
-- (ACNode *)nodeWithURL:(NSURL *)URL;
 
 @end
 

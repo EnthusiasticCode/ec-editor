@@ -1,5 +1,5 @@
 //
-//  ACPopoverNewProjectFromZIPController.h
+//  ACPopoverNewProjectFromTemplateController.h
 //  ArtCode
 //
 //  Created by Uri Baghin on 9/4/11.
@@ -8,6 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface ACPopoverNewProjectFromZIPController : UITableViewController
+@interface ACNewProjectFromTemplateController : UITableViewController
 
 @end

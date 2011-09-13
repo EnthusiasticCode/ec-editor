@@ -14,8 +14,8 @@
 @interface ACHistoryItem : NSManagedObject
 
 @property (nonatomic) float position;
-@property (nonatomic, retain) id selection;
-@property (nonatomic, retain) NSString * URL;
-@property (nonatomic, retain) ACTab *tab;
+@property (nonatomic, strong) id selection;
+@property (nonatomic, strong) NSString * URL;
+@property (nonatomic, strong) ACTab *tab;
 
 @end

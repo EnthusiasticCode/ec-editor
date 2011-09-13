@@ -8,6 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface ACPopoverNewProjectFromACZController : UITableViewController
+@interface ACNewProjectFromACZController : UITableViewController
 
 @end

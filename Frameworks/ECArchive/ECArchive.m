@@ -54,7 +54,7 @@
     archive_read_finish(_archive);
 }
 
-- (void)extractToDirectory:(NSURL *)URL withCompletionHandler:(void (^)(BOOL))completionHandler
+- (void)extractToDirectory:(NSURL *)URL completionHandler:(void (^)(BOOL))completionHandler
 {
     __block int returnCode;
     NSBlockOperation *extractOperation = [NSBlockOperation blockOperationWithBlock:^{

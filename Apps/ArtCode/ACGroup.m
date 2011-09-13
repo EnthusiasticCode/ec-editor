@@ -9,8 +9,8 @@
 #import "ACGroup.h"
 #import "ACNode.h"
 #import "ACFile.h"
-#import "ACURL.h"
 #import "ECArchive.h"
+#import "ECURL.h"
 
 @implementation ACGroup
 
@@ -42,7 +42,7 @@
     [[self mutableOrderedSetValueForKey:@"children"] exchangeObjectAtIndex:fromIndex withObjectAtIndex:toIndex];
 }
 
-- (void)importFileFromURL:(NSURL *)fileURL withCompletionHandler:(void (^)(BOOL))completionHandler
+- (void)importFileFromURL:(NSURL *)fileURL completionHandler:(void (^)(BOOL))completionHandler
 {
     // TODO: check for existing files, add import step to undo history
     NSFileManager *fileManager = [[NSFileManager alloc] init];
@@ -61,31 +61,42 @@
         [fileManager createDirectoryAtURL:[self.fileURL URLByAppendingPathComponent:[fileURL lastPathComponent]] withIntermediateDirectories:YES attributes:nil error:NULL];
         ACGroup *childGroup = [self insertChildGroupWithName:[fileURL lastPathComponent] atIndex:NSNotFound];
         for (NSURL *fileInSubdirectoryURL in [fileManager contentsOfDirectoryAtURL:fileURL includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsPackageDescendants | NSDirectoryEnumerationSkipsSubdirectoryDescendants error:NULL])
-            [childGroup importFileFromURL:fileInSubdirectoryURL withCompletionHandler:^(BOOL success) {
+            [childGroup importFileFromURL:fileInSubdirectoryURL completionHandler:^(BOOL success) {
                 if (!success)
                     ECASSERT(NO); // TODO: error handling
-                if (completionHandler)
-                    completionHandler(YES);
             }];
+        if (completionHandler)
+            completionHandler(YES);
     }
 }
 
-- (void)importFilesFromZIP:(NSURL *)ZIPFileURL withCompletionHandler:(void (^)(BOOL))completionHandler
+- (void)importFilesFromZIP:(NSURL *)ZIPFileURL completionHandler:(void (^)(BOOL))completionHandler
 {
     NSURL *tempDirectory = [NSURL temporaryDirectory];
     ECArchive *archive = [[ECArchive alloc] initWithFileURL:ZIPFileURL];
-    [archive extractToDirectory:tempDirectory withCompletionHandler:^(BOOL success) {
+    [archive extractToDirectory:tempDirectory completionHandler:^(BOOL success) {
         if (!success)
             ECASSERT(NO); // TODO: error handling
         NSFileManager *fileManager = [[NSFileManager alloc] init];
         for (NSURL *fileURL in [fileManager contentsOfDirectoryAtURL:tempDirectory includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsPackageDescendants | NSDirectoryEnumerationSkipsSubdirectoryDescendants error:NULL])
-            [self importFileFromURL:fileURL withCompletionHandler:^(BOOL success) {
+            [self importFileFromURL:fileURL completionHandler:^(BOOL success) {
                 if (!success)
                     ECASSERT(NO); // TODO: error handling
                 if (completionHandler)
                     completionHandler(YES);
             }];
     }];
+}
+
+- (ACNode *)childWithName:(NSString *)name
+{
+    NSFetchRequest *fetchRequest = [NSFetchRequest fetchRequestWithEntityName:@"Node"];
+    NSPredicate *predicate = [NSCompoundPredicate andPredicateWithSubpredicates:[NSArray arrayWithObjects:[NSPredicate predicateWithFormat:@"%K == %@", @"parent", self], [NSPredicate predicateWithFormat:@"%K == %@", @"name", name], nil]];
+    [fetchRequest setPredicate:predicate];
+    NSArray *results = [self.managedObjectContext executeFetchRequest:fetchRequest error:NULL];
+    if (![results count])
+        return nil;
+    return [results objectAtIndex:0];
 }
 
 - (ACGroup *)insertChildGroupWithName:(NSString *)name atIndex:(NSUInteger)index

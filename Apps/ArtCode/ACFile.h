@@ -18,6 +18,6 @@
 
 - (NSString *)contentString;
 
-- (void)loadCodeUnitWithCompletionHandler:(void (^)(BOOL))completionHandler;
+- (void)loadCodeUnitWithCompletionHandler:(void (^)(BOOL success))completionHandler;
 
 @end
