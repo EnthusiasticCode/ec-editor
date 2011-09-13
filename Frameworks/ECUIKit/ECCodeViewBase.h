@@ -60,10 +60,6 @@ typedef void (^LineNumberRenderingBlock)(CGContextRef context, CGRect lineNumber
 /// is the code view itself.
 @property (nonatomic, strong) NSString *text;
 
-/// Insets of the text. This insets may contains the line number width in it's 
-/// left component.
-@property (nonatomic) UIEdgeInsets textInsets;
-
 /// Invalidate the text making the receiver redraw it.
 - (void)updateAllText;
 

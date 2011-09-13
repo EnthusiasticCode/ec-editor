@@ -43,7 +43,6 @@
 
 @property (nonatomic, readonly, weak) ECCodeViewBase *parent;
 @property (nonatomic) NSInteger tileIndex;
-@property (nonatomic) UIEdgeInsets textInsets;
 - (id)initWithCodeViewBase:(ECCodeViewBase *)codeView;
 - (void)invalidate;
 - (void)renderText;
@@ -58,7 +57,7 @@
 
 @implementation TextTileView
 
-@synthesize parent, tileIndex, textInsets;
+@synthesize parent, tileIndex;
 
 #pragma mark Properties
 
@@ -141,15 +140,15 @@
             CGContextScaleCTM(imageContext, scale, scale);
             CGPoint textOffset = CGPointMake(0, rect.size.height * this->tileIndex * invertScale);
             CGFloat lineNumberWidth = this->parent.lineNumberWidth;
-            if (this->tileIndex == 0) 
-            {
-                CGContextTranslateCTM(imageContext, this->textInsets.left, this->textInsets.top);
-            }
-            else
-            {
-                textOffset.y -= this->textInsets.top;
-                CGContextTranslateCTM(imageContext, this->textInsets.left, 0);
-            }
+//            if (this->tileIndex == 0) 
+//            {
+//                CGContextTranslateCTM(imageContext, this->textInsets.left, this->textInsets.top);
+//            }
+//            else
+//            {
+//                textOffset.y -= this->textInsets.top;
+//                CGContextTranslateCTM(imageContext, this->textInsets.left, 0);
+//            }
             
             CGSize textSize = rect.size;
             textSize.height *= invertScale;
@@ -223,8 +222,7 @@
 
 #pragma mark Properties
 
-@synthesize datasource; 
-@synthesize textInsets;
+@synthesize datasource;
 @synthesize renderingQueue, renderer;
 @synthesize lineNumberWidth, lineNumberFont, lineNumberColor, lineNumberRenderingBlock;
 
@@ -246,15 +244,6 @@
         renderer.datasource = datasource;
 }
 
-- (void)setTextInsets:(UIEdgeInsets)insets
-{
-    textInsets = insets;
-    for (NSInteger i = 0; i < TILEVIEWPOOL_SIZE; ++i)
-    {
-        [tileViewPool[i] setTextInsets:insets];
-    }
-}
-
 - (void)setFrame:(CGRect)frame
 {
     if (CGRectEqualToRect(frame, self.frame))
@@ -262,9 +251,9 @@
     
     // Setup renderer wrap with keeping in to account insets and line display
     if (ownsRenderer)
-        renderer.wrapWidth = UIEdgeInsetsInsetRect(frame, self->textInsets).size.width;
+        renderer.wrapWidth = frame.size.width;
     
-    self.contentSize = CGSizeMake(frame.size.width, (renderer.estimatedHeight + textInsets.top + textInsets.bottom) * self.contentScaleFactor);
+    self.contentSize = CGSizeMake(frame.size.width, renderer.estimatedHeight * self.contentScaleFactor);
     
     for (NSInteger i = 0; i < TILEVIEWPOOL_SIZE; ++i)
     {
@@ -298,14 +287,12 @@ static void preinit(ECCodeViewBase *self)
     // Creating rendering queue
     self->renderingQueue = [NSOperationQueue new];
     [self->renderingQueue setMaxConcurrentOperationCount:1];
-    
-    self->textInsets = UIEdgeInsetsMake(10, 10, 10, 10);
 }
 
 static void init(ECCodeViewBase *self)
 {
     if (self->ownsRenderer)
-        self->renderer.wrapWidth = UIEdgeInsetsInsetRect(self.bounds, self->textInsets).size.width;
+        self->renderer.wrapWidth = self.bounds.size.width;
     [self->renderer addObserver:self forKeyPath:@"estimatedHeight" options:NSKeyValueObservingOptionNew context:nil];
 }
 
@@ -314,7 +301,6 @@ static void init(ECCodeViewBase *self)
     ownsRenderer = NO;
     renderer = aRenderer;
     renderingQueue = queue;
-    textInsets = UIEdgeInsetsMake(10, 10, 10, 10);
     
     self = [super initWithFrame:frame];
     if (self) {
@@ -351,7 +337,7 @@ static void init(ECCodeViewBase *self)
         [[NSOperationQueue mainQueue] addOperationWithBlock:^(void) {
             CGFloat height = [[change valueForKey:NSKeyValueChangeNewKey] floatValue];
             CGFloat width = self.bounds.size.width;
-            self.contentSize = CGSizeMake(width, (height + textInsets.top + textInsets.bottom) * self.contentScaleFactor);            
+            self.contentSize = CGSizeMake(width, height * self.contentScaleFactor);            
         }];
     }
 }
@@ -387,7 +373,6 @@ static void init(ECCodeViewBase *self)
     {
         tileViewPool[selected] = [[TextTileView alloc] initWithCodeViewBase:self];
         tileViewPool[selected].backgroundColor = self.backgroundColor;
-        tileViewPool[selected].textInsets = textInsets;
         // TODO remove from self when not displayed
         [self addSubview:tileViewPool[selected]];
     }
@@ -481,8 +466,8 @@ static void init(ECCodeViewBase *self)
     
     // Update tiles
     CGRect bounds = self.bounds;
-    renderer.wrapWidth = UIEdgeInsetsInsetRect(bounds, self->textInsets).size.width;
-    self.contentSize = CGSizeMake(bounds.size.width, (renderer.estimatedHeight + textInsets.top + textInsets.bottom) * self.contentScaleFactor);
+    renderer.wrapWidth = bounds.size.width;
+    self.contentSize = CGSizeMake(bounds.size.width, renderer.estimatedHeight * self.contentScaleFactor);
     for (NSInteger i = 0; i < TILEVIEWPOOL_SIZE; ++i)
     {
         [tileViewPool[i] invalidate];

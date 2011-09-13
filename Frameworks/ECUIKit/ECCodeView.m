@@ -369,13 +369,9 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
         } repeats:NO];
     }
     else
-    {
-        UIEdgeInsets parentTextInsets = parent.textInsets;
-        
+    {        
         selectionRects = [parent.renderer rectsForStringRange:selection limitToFirstLine:NO];
         frame = selectionRects.bounds;
-        frame.origin.x += parentTextInsets.left;
-        frame.origin.y += parentTextInsets.top;
         self.frame = frame;
         
         // Left knob
@@ -387,8 +383,6 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
         }
         // TODO!!! set knob 'caret'
         CGRect knobRect = [selectionRects topLeftRect];
-        knobRect.origin.x += parentTextInsets.left;
-        knobRect.origin.y += parentTextInsets.top;
         knobRect.size.width = CARET_WIDTH;
         leftKnob.caretRect = knobRect;
         [parent addSubview:leftKnob];
@@ -408,8 +402,7 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
             rightKnob.knobDirection = UITextLayoutDirectionRight;
         }
         knobRect = [selectionRects bottomRightRect];
-        knobRect.origin.x = CGRectGetMaxX(knobRect) + parentTextInsets.left;
-        knobRect.origin.y += parentTextInsets.top;
+        knobRect.origin.x = CGRectGetMaxX(knobRect);
         knobRect.size.width = CARET_WIDTH;
         rightKnob.caretRect = knobRect;
         [parent addSubview:rightKnob];
@@ -508,17 +501,13 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
         self.blink = NO;
         
         // Magnify at the center of given rect
-        UIEdgeInsets parentTextInsets = parent.textInsets;
         CGPoint textPoint = CGPointMake(CGRectGetMidX(rect), CGRectGetMidY(rect));
-        textPoint.x -= parentTextInsets.left;
-        textPoint.y -= parentTextInsets.top;
         [self.magnificationView detailTextAtPoint:textPoint magnification:ratio additionalDrawingBlock:^(CGContextRef context, CGPoint textOffset) {
             if (selection.length == 0) 
             {
                 // Draw caret
                 CGRect detailCaretRect = self.frame;
-                detailCaretRect.origin.x -= parentTextInsets.left;
-                detailCaretRect.origin.y -= parentTextInsets.top + textOffset.y;
+                detailCaretRect.origin.y -= textOffset.y;
                 [caretColor setFill];
                 UIRectFill(detailCaretRect);    
             }
@@ -568,11 +557,8 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
 {
     // TODO it may be needed to change thumbs hit test, see ouieditableframe 1842
     
-    UIEdgeInsets parentTextInsets = parent.textInsets;
     CGPoint tapPoint = [recognizer locationInView:parent];
     CGPoint textPoint = tapPoint;
-    textPoint.x -= parentTextInsets.left;
-    textPoint.y -= parentTextInsets.top;
     
     // Retrieving position
     NSUInteger pos = [parent.renderer closestStringLocationToPoint:textPoint withinStringRange:(NSRange){0, 0}];
@@ -1021,8 +1007,7 @@ static void init(ECCodeView *self)
     // TODO something if completionPopover.contentViewController is nil
     
     CGRect textRect = [renderer rectsForStringRange:textRange limitToFirstLine:YES].bounds;
-    textRect.origin.y += textInsets.top;
-    textRect.origin.x += textRect.size.width - 1 + textInsets.left;
+    textRect.origin.x += textRect.size.width - 1;
     textRect.size.width = 2;
     [completionPopover presentPopoverFromRect:textRect inView:self permittedArrowDirections:UIPopoverArrowDirectionUp | UIPopoverArrowDirectionDown animated:YES];
 }
@@ -1448,9 +1433,6 @@ static void init(ECCodeView *self)
     NSUInteger pos = ((ECTextPosition *)position).index;
     CGRect carretRect = [renderer rectsForStringRange:(NSRange){pos, 0} limitToFirstLine:YES].bounds;
     
-    carretRect.origin.x += textInsets.left;
-    carretRect.origin.y += textInsets.top;
-    
     carretRect.origin.x -= 1.0;
     carretRect.size.width = 2.0;
     
@@ -1474,9 +1456,6 @@ static void init(ECCodeView *self)
 - (UITextPosition *)closestPositionToPoint:(CGPoint)point 
                                withinRange:(UITextRange *)range
 {
-    point.x -= textInsets.left;
-    point.y -= textInsets.top;
-    
     CGFloat scale = self.contentScaleFactor;
     if (scale != 1.0)
     {
@@ -1832,10 +1811,7 @@ static void init(ECCodeView *self)
             }
             else
             {
-                CGPoint textPoint = tapPoint;
-                textPoint.x -= textInsets.left;
-                textPoint.y -= textInsets.top;
-                selectionView.selection = NSMakeRange([renderer closestStringLocationToPoint:textPoint withinStringRange:(NSRange){0, 0}], 0);
+                selectionView.selection = NSMakeRange([renderer closestStringLocationToPoint:tapPoint withinStringRange:(NSRange){0, 0}], 0);
                 [selectionView setMagnify:YES fromRect:selectionView.frame ratio:2 animated:animatePopover];
             }
 
