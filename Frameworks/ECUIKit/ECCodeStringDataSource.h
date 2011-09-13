@@ -10,8 +10,7 @@
 #import "ECCodeView.h"
 #import "ECTextStyle.h"
 
-typedef void (^StylingBlock)(NSMutableAttributedString *string, NSRange stringRange);
-
+typedef void (^ECCodeStringDataSourceStylingBlock)(NSMutableAttributedString *string, NSRange stringRange);
 
 @interface ECCodeStringDataSource : NSObject <ECCodeViewDataSource>
 
@@ -21,22 +20,13 @@ typedef void (^StylingBlock)(NSMutableAttributedString *string, NSRange stringRa
 /// Default style applied to the entire string.
 @property (nonatomic, strong) ECTextStyle *defaultTextStyle;
 
-/// A block that will be used before returning a string to a requester. The block
-/// will receive a mutable string already styled with global styling informations.
-@property (nonatomic, copy) StylingBlock stylingBlock;
+/// Add a styling block that will be called when the datasource will have to return
+/// a string. Styling blocks are applyed in unknown order and should not remove
+/// any attributes from the provided string but only add them. The string will
+/// initially only have the defaultTextStyle applied to it.
+- (void)addStylingBlock:(ECCodeStringDataSourceStylingBlock)stylingBlock forKey:(NSString *)stylingKey;
 
-/// Add a text style to the specified input string range. If the style specifies
-/// an attribute already present for the string range, this will be substituted
-/// with the provided one.
-- (void)addTextStyle:(ECTextStyle *)textStyle toStringRange:(NSRange)range;
-
-/// Remove all styles types specified in the given text style from the range of text.
-- (void)removeTextStyle:(ECTextStyle *)textStyle fromStringRange:(NSRange)range;
-
-/// Remove all text styles from the given range replacing them with the default style.
-- (void)removeAllTextStylesFromRange:(NSRange)range;
-
-/// Remove all text styles replacing them with the default style.
-- (void)removeAllTextStyles;
+/// Removes a styling block from the collection of those applied to the string.
+- (void)removeStylingBlockForKey:(NSString *)stylingKey;
 
 @end

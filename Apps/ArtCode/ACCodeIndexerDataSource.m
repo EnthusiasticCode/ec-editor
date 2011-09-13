@@ -41,7 +41,7 @@ static NSRange intersectionOfRangeRelativeToRange(NSRange range, NSRange inRange
         preprocessingStyle = [ECTextStyle textStyleWithName:@"Preprocessing" font:nil color:[UIColor orangeColor]];
         
         __weak ACCodeIndexerDataSource *this = self;
-        self.stylingBlock = ^(NSMutableAttributedString *string, NSRange stringRange)
+        [self addStylingBlock:^(NSMutableAttributedString *string, NSRange stringRange)
         {
             for (ECCodeToken *token in [this->codeUnit tokensInRange:stringRange withCursors:YES])
             {
@@ -71,7 +71,7 @@ static NSRange intersectionOfRangeRelativeToRange(NSRange range, NSRange inRange
                     }
                 }
             }
-        };
+        } forKey:@"IndexerStylingBlock"];
     }
     return self;
 }
