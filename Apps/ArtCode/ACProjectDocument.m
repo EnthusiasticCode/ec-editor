@@ -34,6 +34,7 @@ void * ACProjectDocumentProjectURLObserving;
             _project = [projects objectAtIndex:0];
         ECASSERT([self.projectURL isACURL]);
         _project.URL = self.projectURL;
+        [_project setPrimitiveValue:[self.projectURL ACProjectName] forKey:@"name"];
         _project.fileURL = [self.fileURL URLByAppendingPathComponent:ACProjectContentDirectory];
         // TODO: when URL of project is changed, and the document is moved, project's fileURL should be updated
     }
@@ -72,6 +73,14 @@ void * ACProjectDocumentProjectURLObserving;
 {
     id object = [self objectWithURL:URL];
     [self.managedObjectContext deleteObject:object];
+}
+
+- (void)handleError:(NSError *)error userInteractionPermitted:(BOOL)userInteractionPermitted
+{
+    // TODO: handle errors gracefully
+    // for now, just debug them manually by checking [error localizedDescription]
+    // NOTE: do not delete this even if it stays empty, because UIDocument fails VERY silently otherwise
+    ECASSERT(NO);
 }
 
 @end
