@@ -529,6 +529,7 @@
     estimatedHeight = 0;
 }
 
+// TODO: account for text insets
 - (CGFloat)estimatedHeight
 {
     if (estimatedHeight == 0) 
@@ -692,7 +693,6 @@
     
     // Setup rendering transformations
     CGContextSetTextMatrix(context, CGAffineTransformIdentity);
-    CGContextSetTextPosition(context, 0, 0);
     CGContextScaleCTM(context, 1, -1);
     
     // Get text insets
@@ -706,7 +706,7 @@
     
     // Draw needed lines from this segment
     [self enumerateLinesIntersectingRect:rect usingBlock:^(ECTextRendererLine *line, NSUInteger lineIndex, NSUInteger lineNumber, CGFloat lineOffset, NSRange stringRange, BOOL *stop) {
-        CGRect lineBound = (CGRect){ CGPointMake(0, lineOffset), line.size };
+        CGRect lineBound = (CGRect){ CGPointMake(textInsets.left, lineOffset), line.size };
         CGFloat baseline = line.ascent;
         
         // Require adjustment in rendering for first partial line
@@ -719,12 +719,14 @@
         for (ECTextRendererLayerPass pass in underlays)
         {
             CGContextSaveGState(context);
-            pass(context, line.CTLine, lineBound, baseline, stringRange, lineNumber);
+            CGContextSetTextPosition(context, 0, 0);
+            pass(context, line, lineBound, stringRange, lineNumber);
             CGContextRestoreGState(context);
         }
         
         // Rendering text
         CGContextSaveGState(context);
+        CGContextSetTextPosition(context, 0, 0);
         CGContextTranslateCTM(context, 0, -baseline);
         [line drawInContext:context];
         CGContextRestoreGState(context);
@@ -733,7 +735,8 @@
         for (ECTextRendererLayerPass pass in overlays)
         {
             CGContextSaveGState(context);
-            pass(context, line.CTLine, lineBound, baseline, stringRange, lineNumber);
+            CGContextSetTextPosition(context, 0, 0);
+            pass(context, line, lineBound, stringRange, lineNumber);
             CGContextRestoreGState(context);
         }
         
@@ -937,10 +940,6 @@
     {
         rect = CGRectInfinite;
     }
-    else
-    {
-        rect = [self convertToTextRect:rect];
-    }
     
     // Count for existing segments
     CGFloat lastSegmentEnd = 0;
@@ -1027,6 +1026,9 @@
             // TODO CTFramesetterSuggestFrameSizeWithConstraints
         }
     }
+    
+    UIEdgeInsets textInsets = [datasource textInsetsForTextRenderer:self];
+    result.size.height += textInsets.top + textInsets.bottom;
     
     return result;
 }

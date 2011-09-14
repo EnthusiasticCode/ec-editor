@@ -32,4 +32,10 @@ typedef void (^ECCodeStringDataSourceStylingBlock)(NSMutableAttributedString *st
 /// Removes a styling block from the collection of those applied to the string.
 - (void)removeStylingBlockForKey:(NSString *)stylingKey;
 
+/// Add a layer pass that will be used by the renderer for overlays or underlays.
+- (void)addPassLayerBlock:(ECTextRendererLayerPass)block underText:(BOOL)isUnderlay forKey:(NSString *)passKey;
+
+// Removes a layer pass from the rendering process.
+- (void)removePassLayerForKey:(NSString *)passKey;
+
 @end

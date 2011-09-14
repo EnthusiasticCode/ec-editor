@@ -13,7 +13,10 @@
 @implementation ECCodeStringDataSource {
 @private
     NSMutableAttributedString *string;
+    
     NSMutableDictionary *stylingBlocks;
+    NSMutableDictionary *overlayPasses;
+    NSMutableDictionary *underlayPasses;
 }
 
 @synthesize textInsets, defaultTextStyle;
@@ -99,6 +102,17 @@
     return textInsets;
 }
 
+- (NSArray *)underlayPassesForTextRenderer:(ECTextRenderer *)sender
+{
+    return [underlayPasses allValues];
+}
+
+
+- (NSArray *)overlayPassesForTextRenderer:(ECTextRenderer *)sender
+{
+    return [overlayPasses allValues];
+}
+
 #pragma mark Code View DataSource Methods
 
 - (NSUInteger)textLength
@@ -173,6 +187,28 @@
 - (void)removeStylingBlockForKey:(NSString *)stylingKey
 {
     [stylingBlocks removeObjectForKey:stylingKey];
+}
+
+- (void)addPassLayerBlock:(ECTextRendererLayerPass)block underText:(BOOL)isUnderlay forKey:(NSString *)passKey
+{
+    if (isUnderlay)
+    {
+        if (!underlayPasses)
+            underlayPasses = [NSMutableDictionary new];
+        [underlayPasses setObject:[block copy] forKey:passKey];
+    }
+    else
+    {
+        if (!overlayPasses)
+            overlayPasses = [NSMutableDictionary new];
+        [overlayPasses setObject:[block copy] forKey:passKey];        
+    }
+}
+
+- (void)removePassLayerForKey:(NSString *)passKey
+{
+    [underlayPasses removeObjectForKey:passKey];
+    [overlayPasses removeObjectForKey:passKey];
 }
 
 @end

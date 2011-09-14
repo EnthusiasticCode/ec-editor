@@ -32,7 +32,9 @@
         codeView = [ECCodeView new];
         
         // Datasource setup
-        codeView.datasource = [ACCodeIndexerDataSource new];
+        ACCodeIndexerDataSource *datasource = [ACCodeIndexerDataSource new];
+        datasource.showLineNumbers = YES;
+        codeView.datasource = datasource;
         
         // Layout setup
         codeView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;

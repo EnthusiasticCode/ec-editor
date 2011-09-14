@@ -19,9 +19,8 @@
 /// The block should draw on the given context and inside the lineBounds rect which
 /// is relative to the current context state. Bounds will account for text insets.
 /// The CTLine can be used to retireve offsets inside the line with CTLineGetOffsetForStringIndex.
-/// Baseline is the offset from bounds top to the line base.
 /// String range and line number are relative to the whole text managed by the renderer.
-typedef void (^ECTextRendererLayerPass)(CGContextRef context, CTLineRef line, CGRect lineBounds, CGFloat baseline, NSRange stringRange, NSUInteger lineNumber);
+typedef void (^ECTextRendererLayerPass)(CGContextRef context, ECTextRendererLine *line, CGRect lineBounds, NSRange stringRange, NSUInteger lineNumber);
 
 
 @protocol ECTextRendererDelegate <NSObject>
