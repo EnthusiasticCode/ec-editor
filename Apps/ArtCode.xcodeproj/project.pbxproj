@@ -69,6 +69,7 @@
 		CD9CD97013DC22AF007964D3 /* ACCodeFileController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD9CD96F13DC22AF007964D3 /* ACCodeFileController.m */; };
 		CDA0156013DF0C210087B518 /* ACTabNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDA0155F13DF0C210087B518 /* ACTabNavigationController.m */; };
 		CDD40B0313E1A046008AC36B /* ACPopoverHistoryToolController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDD40B0213E1A046008AC36B /* ACPopoverHistoryToolController.m */; };
+		CDE1CB81142102A500151BD7 /* ACTabButton.m in Sources */ = {isa = PBXBuildFile; fileRef = CDE1CB80142102A500151BD7 /* ACTabButton.m */; };
 		CDE3F14713C0DDD500DFFAFF /* Inconsolata-dz.otf in Resources */ = {isa = PBXBuildFile; fileRef = CDE3F14613C0DDD500DFFAFF /* Inconsolata-dz.otf */; };
 		CDF1D3AE1415073900EFEC21 /* ECClangCodeIndex.m in Sources */ = {isa = PBXBuildFile; fileRef = CDF1D3921415073900EFEC21 /* ECClangCodeIndex.m */; };
 		CDF1D3AF1415073900EFEC21 /* ECClangCodeUnit.m in Sources */ = {isa = PBXBuildFile; fileRef = CDF1D3941415073900EFEC21 /* ECClangCodeUnit.m */; };
@@ -323,6 +324,8 @@
 		CDA0155F13DF0C210087B518 /* ACTabNavigationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACTabNavigationController.m; sourceTree = "<group>"; };
 		CDD40B0113E1A046008AC36B /* ACPopoverHistoryToolController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACPopoverHistoryToolController.h; sourceTree = "<group>"; };
 		CDD40B0213E1A046008AC36B /* ACPopoverHistoryToolController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACPopoverHistoryToolController.m; sourceTree = "<group>"; };
+		CDE1CB7F142102A500151BD7 /* ACTabButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACTabButton.h; sourceTree = "<group>"; };
+		CDE1CB80142102A500151BD7 /* ACTabButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACTabButton.m; sourceTree = "<group>"; };
 		CDE3F14613C0DDD500DFFAFF /* Inconsolata-dz.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Inconsolata-dz.otf"; sourceTree = "<group>"; };
 		CDF1D3911415073900EFEC21 /* ECClangCodeIndex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECClangCodeIndex.h; sourceTree = "<group>"; };
 		CDF1D3921415073900EFEC21 /* ECClangCodeIndex.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECClangCodeIndex.m; sourceTree = "<group>"; };
@@ -893,6 +896,8 @@
 				CD7D2B2413C0D4B700B889EE /* ACJumpBarTextField.m */,
 				CD7D2B2913C0D4B700B889EE /* ACTopBarView.h */,
 				CD7D2B2A13C0D4B700B889EE /* ACTopBarView.m */,
+				CDE1CB7F142102A500151BD7 /* ACTabButton.h */,
+				CDE1CB80142102A500151BD7 /* ACTabButton.m */,
 			);
 			name = "Views and Segues";
 			sourceTree = "<group>";
@@ -1356,6 +1361,7 @@
 				CD6580C9141626F20079412F /* ACCompletionController.m in Sources */,
 				CD6580CC1416273D0079412F /* ECPatriciaTrie.m in Sources */,
 				CD6580CF141641D50079412F /* ACCodeFileFilterController.m in Sources */,
+				CDE1CB81142102A500151BD7 /* ACTabButton.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

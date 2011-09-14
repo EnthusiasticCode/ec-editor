@@ -81,9 +81,7 @@
     // Close button of tabs
     id closeButtonInTabBarAppearance = [UIButton appearanceWhenContainedIn:[UIButton class], [ECTabBar class], nil];
     [closeButtonInTabBarAppearance setBackgroundImage:nil forState:UIControlStateNormal];
-    [closeButtonInTabBarAppearance setBackgroundImage:nil forState:UIControlStateHighlighted];
-    [closeButtonInTabBarAppearance setImage:[UIImage styleCloseImageWithColor:[UIColor styleBackgroundColor] outlineColor:[UIColor styleForegroundColor]] forState:UIControlStateNormal];
-    [closeButtonInTabBarAppearance setImage:[UIImage styleCloseImageWithColor:[UIColor styleForegroundColor] outlineColor:[UIColor styleBackgroundColor]] forState:UIControlStateHighlighted];
+    [closeButtonInTabBarAppearance setBackgroundImage:nil forState:UIControlStateHighlighted];    
     
     ////////////////////////////////////////////////////////////////////////////
     // Adding tool panel

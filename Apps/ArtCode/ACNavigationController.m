@@ -481,16 +481,6 @@
     }
 }
 
-#pragma mark -
-
-//- (IBAction)tests:(id)sender {
-//    static NSUInteger count = 0;
-//    NSString *title = [NSString stringWithFormat:@"Path %u", count++];
-////    [jumpBar pushJumpElementWithPathComponent:title animated:YES];
-//    [[ECBezelAlert centerBezelAlert] addAlertMessageWithText:title image:nil displayImmediatly:NO];
-//}
-
-
 @end
 
 @implementation UIViewController (ACNavigationController)

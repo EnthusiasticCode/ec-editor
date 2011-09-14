@@ -67,6 +67,7 @@
 {
     if (toolControllerIdentifiers == nil)
     {
+        [self view];
         toolControllerIdentifiers = [[NSMutableArray alloc] initWithCapacity:[tabsView.subviews count]];
         for (ACToolButton *toolButton in tabsView.subviews)
         {

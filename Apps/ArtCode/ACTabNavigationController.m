@@ -11,6 +11,8 @@
 #import "ECSwipeGestureRecognizer.h"
 #import "UIView+ReuseIdentifier.h"
 
+#import "ACTabButton.h"
+
 /// Category on tab controller to assign it's parent;
 @interface ACTabController (ParentCategory)
 
@@ -572,19 +574,14 @@ static void loadCurrentAndAdiacentTabViews(ACTabNavigationController *self, ACTa
     {
         static NSString *tabButtonIdentifier = @"tabButton";
         
-        UIButton *tabButton = (UIButton *)[bar dequeueReusableTabControlWithIdentifier:tabButtonIdentifier];
+        ACTabButton *tabButton = (ACTabButton *)[bar dequeueReusableTabControlWithIdentifier:tabButtonIdentifier];
         if (!tabButton)
         {
-            tabButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 100, 40)];
+            tabButton = [[ACTabButton alloc] initWithFrame:CGRectMake(0, 0, 100, 40)];
             tabButton.reuseIdentifier = tabButtonIdentifier;
             tabButton.titleLabel.lineBreakMode = UILineBreakModeMiddleTruncation;
             tabButton.titleLabel.font = [UIFont styleFontWithSize:14];
-            
-            UIButton *closeButton = [UIButton new];
-            closeButton.frame = CGRectMake(65, 0, 35, 40);
-            closeButton.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleHeight;
-            [closeButton addTarget:self action:@selector(closeTabButtonAction:) forControlEvents:UIControlEventTouchUpInside];
-            [tabButton addSubview:closeButton];
+            [tabButton.closeButton addTarget:self action:@selector(closeTabButtonAction:) forControlEvents:UIControlEventTouchUpInside];
         }
         
         [tabButton setTitle:title forState:UIControlStateNormal];
