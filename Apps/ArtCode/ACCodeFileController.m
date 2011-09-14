@@ -8,6 +8,7 @@
 
 #import "AppStyle.h"
 #import "ACState.h"
+#import "ACFile.h"
 #import "ACCodeFileController.h"
 
 #import "ECPopoverController.h"
@@ -84,20 +85,20 @@
 - (void)openURL:(NSURL *)url
 {
     // TODO handle error
-    id<ACStateNode> node = [[ACState localState] nodeForURL:url];
+    ACFile *file = (ACFile *)[[ACState sharedState] objectWithURL:url];
     
     // TODO start loading animation
     ACCodeIndexerDataSource *dataSource = (ACCodeIndexerDataSource *)self.codeView.datasource;
-    [node loadCodeUnitWithCompletionHandler:^(BOOL success) {
+    [file loadCodeUnitWithCompletionHandler:^(BOOL success) {
         if (success)
         {
-            dataSource.codeUnit = node.codeUnit;
+            dataSource.codeUnit = file.codeUnit;
             [self.codeView updateAllText];
         }
         // TODO else report error
     }];
     
-    self.codeView.text = node.contentString;
+    self.codeView.text = file.contentString;
 }
 
 - (BOOL)enableTabBar

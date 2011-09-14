@@ -8,31 +8,19 @@
 
 #import "ACURL.h"
 
-NSString * const ACProjectBundleExtension = @"bundle";
 NSString * const ACURLScheme = @"artcode";
-NSString * const ACProjectContentDirectory = @"Content";
 
 @implementation NSURL (ACURL)
-
-+ (NSURL *)applicationDocumentsDirectory
-{
-    return [NSURL fileURLWithPath:[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject]];
-}
 
 - (BOOL)isACURL
 {
     return [self.scheme isEqualToString:ACURLScheme];
 }
 
-- (BOOL)isLocal
+- (NSURL *)ACProjectURL
 {
-    // all ACURLs are local at the moment
-    return YES;
-}
-
-+ (NSURL *)ACLocalProjectsDirectory
-{
-    return [self applicationDocumentsDirectory];
+    ECASSERT([self isACURL]);
+    return [NSURL URLWithString:[NSString stringWithFormat:@"%@:/%@", ACURLScheme, [[self.pathComponents objectAtIndex:1] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]]];
 }
 
 - (NSString *)ACProjectName
@@ -41,30 +29,21 @@ NSString * const ACProjectContentDirectory = @"Content";
     return [[self.pathComponents objectAtIndex:1] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
 }
 
-- (NSURL *)ACProjectBundleURL
+- (BOOL)isACProjectURL
 {
-    ECASSERT([self isACURL]);
-    if ([self isLocal])
-        return [[[[self class] ACLocalProjectsDirectory] URLByAppendingPathComponent:[self ACProjectName]] URLByAppendingPathExtension:ACProjectBundleExtension];
-    else
-        ECASSERT(false); // NYI
+    return [self isACURL] && [self.pathComponents count] == 2;
 }
 
-- (NSURL *)ACProjectContentURL
++ (NSURL *)ACURLWithPathComponents:(NSArray *)pathComponents
 {
-    ECASSERT([self isACURL]);
-    return [[[[[self class] ACLocalProjectsDirectory] URLByAppendingPathComponent:[self ACProjectName]] URLByAppendingPathExtension:ACProjectBundleExtension] URLByAppendingPathComponent:ACProjectContentDirectory isDirectory:YES];
-}
-
-+ (NSURL *)ACURLForLocalProjectWithName:(NSString *)name
-{
-    ECASSERT(name);
-    return [NSURL URLWithString:[NSString stringWithFormat:@"%@:/%@", ACURLScheme, [name stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]]];
+    ECASSERT(pathComponents);
+    ECASSERT([pathComponents count]);
+    return [NSURL URLWithString:[NSString stringWithFormat:@"%@:/%@", ACURLScheme, [[pathComponents componentsJoinedByString:@"/"] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]]];
 }
 
 + (NSURL *)ACURLWithPath:(NSString *)path
 {
-    ECASSERT(path != nil);
+    ECASSERT(path);
     ECASSERT([path hasPrefix:@"/"]);
     
     return [NSURL URLWithString:[NSString stringWithFormat:@"%@:%@", ACURLScheme, [path stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]]];

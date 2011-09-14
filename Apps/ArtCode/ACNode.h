@@ -2,24 +2,25 @@
 //  ACNode.h
 //  ArtCode
 //
-//  Created by Uri Baghin on 8/11/11.
+//  Created by Uri Baghin on 9/6/11.
 //  Copyright (c) 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import "CDNode.h"
-#import "ACState.h"
+#import <Foundation/Foundation.h>
+#import <CoreData/CoreData.h>
 
-typedef enum
-{
-    ACNodeTypeFolder,
-    ACNodeTypeGroup,
-    ACNodeTypeSourceFile,
-} ACNodeType;
+@class ACGroup, ACNode;
 
-@interface ACNode : CDNode <ACStateNode>
+@interface ACNode : NSManagedObject
 
-- (NSInteger)depth;
-- (ACNode *)addNodeWithName:(NSString *)name type:(ACNodeType)type;
-- (ACNode *)childNodeWithName:(NSString *)name;
+@property (nonatomic, strong) NSString * name;
+@property (nonatomic) int16_t tag;
+@property (nonatomic, strong) ACGroup *parent;
+
+@property (nonatomic, strong, readonly) NSURL *URL;
+@property (nonatomic, strong, readonly) NSURL *fileURL;
+@property (nonatomic, getter = isConcrete, readonly) BOOL concrete;
+
+- (NSString *)nodeType;
 
 @end

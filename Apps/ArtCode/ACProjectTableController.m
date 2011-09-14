@@ -15,19 +15,128 @@
 #import "ACState.h"
 #import "ACNavigationController.h"
 
+#import "ACNewProjectPopoverController.h"
+
 #import "ECPopoverController.h"
 
 #import "ECBezelAlert.h"
 
 #define STATIC_OBJECT(typ, nam, init) static typ *nam = nil; if (!nam) nam = init
 
+static void * ACStateProjectsObservingContext;
 
 @interface ACProjectTableController ()
+{
+    UIPopoverController *_popover;
+}
 - (void)deleteTableRow:(id)sender;
+@property (nonatomic, strong, readonly) void(^newProjectFromTemplate)(NSString *templateName);
+@property (nonatomic, strong, readonly) void(^newProjectFromACZ)(NSURL *ACZFileURL);
+@property (nonatomic, strong, readonly) void(^newProjectFromZIP)(NSURL *ZIPFileURL);
 @end
 
 @implementation ACProjectTableController {
     ECPopoverController *popoverLabelColorController;
+}
+
+@synthesize newProjectFromTemplate = _newProjectFromTemplate;
+@synthesize newProjectFromACZ = _newProjectFromACZ;
+@synthesize newProjectFromZIP = _newProjectFromZIP;
+
+- (void (^)(NSString *))newProjectFromTemplate
+{
+    if (!_newProjectFromTemplate)
+    {
+        __weak UIPopoverController *popover = _popover;
+        _newProjectFromTemplate =
+        [^(NSString *templateName)
+         {
+             NSString *projectName;
+             NSURL *projectURL;
+             for (NSUInteger projectNumber = 0; YES; ++projectNumber)
+             {
+                 projectName = [@"Project " stringByAppendingString:[NSString stringWithFormat:@"%d", projectNumber]];
+                 projectURL = [NSURL ACURLWithPathComponents:[NSArray arrayWithObject:projectName]];
+                 if ([[ACState sharedState].projectURLs containsObject:projectURL])
+                     continue;
+                 break;
+             }
+             [[ACState sharedState] addNewProjectWithURL:projectURL atIndex:NSNotFound fromTemplate:nil completionHandler:^(BOOL success) {
+                 NSString *message = nil;
+                 if (success)
+                     message = [@"Added new project: " stringByAppendingString:projectName];
+                 else
+                     message = @"Add project failed";
+                 [[ECBezelAlert centerBezelAlert] addAlertMessageWithText:message image:nil displayImmediatly:NO];
+             }];
+             [popover dismissPopoverAnimated:YES];
+         } copy];
+    }
+    return _newProjectFromTemplate;
+}
+
+- (void (^)(NSURL *))newProjectFromACZ
+{
+    if (!_newProjectFromACZ)
+    {
+        UIPopoverController *popover = _popover;
+        _newProjectFromACZ =
+        [^(NSURL *ACZFileURL)
+         {
+             NSString *projectName;
+             NSURL *projectURL;
+             for (NSUInteger projectNumber = 0; YES; ++projectNumber)
+             {
+                 projectName = [@"Project " stringByAppendingString:[NSString stringWithFormat:@"%d", projectNumber]];
+                 projectURL = [NSURL ACURLWithPathComponents:[NSArray arrayWithObject:projectName]];
+                 if ([[ACState sharedState].projectURLs containsObject:projectURL])
+                     continue;
+                 break;
+             }
+             [[ACState sharedState] addNewProjectWithURL:projectURL atIndex:NSNotFound fromACZ:ACZFileURL completionHandler:^(BOOL success) {
+                 NSString *message = nil;
+                 if (success)
+                     message = [@"Added new project: " stringByAppendingString:projectName];
+                 else
+                     message = @"Add project failed";
+                 [[ECBezelAlert centerBezelAlert] addAlertMessageWithText:message image:nil displayImmediatly:NO];
+             }];            
+             [popover dismissPopoverAnimated:YES];            
+         } copy];
+    }
+    return _newProjectFromACZ;
+}
+
+- (void (^)(NSURL *))newProjectFromZIP
+{
+    if (!_newProjectFromZIP)
+    {
+        UIPopoverController *popover = _popover;
+        _newProjectFromZIP =
+        [^(NSURL *ZIPFileURL)
+         {
+             NSString *projectName;
+             NSURL *projectURL;
+             for (NSUInteger projectNumber = 0; YES; ++projectNumber)
+             {
+                 projectName = [@"Project " stringByAppendingString:[NSString stringWithFormat:@"%d", projectNumber]];
+                 projectURL = [NSURL ACURLWithPathComponents:[NSArray arrayWithObject:projectName]];
+                 if ([[ACState sharedState].projectURLs containsObject:projectURL])
+                     continue;
+                 break;
+             }
+             [[ACState sharedState] addNewProjectWithURL:projectURL atIndex:NSNotFound fromZIP:ZIPFileURL completionHandler:^(BOOL success) {
+                 NSString *message = nil;
+                 if (success)
+                     message = [@"Added new project: " stringByAppendingString:projectName];
+                 else
+                     message = @"Add project failed";
+                 [[ECBezelAlert centerBezelAlert] addAlertMessageWithText:message image:nil displayImmediatly:NO];
+             }];
+             [popover dismissPopoverAnimated:YES];
+         } copy];
+    }
+    return _newProjectFromZIP;
 }
 
 #pragma mark - View lifecycle
@@ -40,7 +149,22 @@
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     self.tableView.backgroundColor = [UIColor styleBackgroundColor];
     
-//    self.tableView.allowsMultipleSelectionDuringEditing = YES;
+    [[ACState sharedState] addObserver:self forKeyPath:@"projectURLs" options:NSKeyValueObservingOptionNew context:ACStateProjectsObservingContext];
+    
+    //    self.tableView.allowsMultipleSelectionDuringEditing = YES;
+}
+
+- (void)viewDidUnload
+{
+    [[ACState sharedState] removeObserver:self forKeyPath:@"projectURLs"];
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    if (context != ACStateProjectsObservingContext)
+        return [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+    [self.tableView reloadData];
+    [_popover dismissPopoverAnimated:YES];
 }
 
 - (void)didReceiveMemoryWarning
@@ -93,19 +217,17 @@
 
 - (void)toolButtonAction:(id)sender
 {
-    NSString *projectName;
-    for (NSUInteger projectNumber = 0; YES; ++projectNumber)
+    // Removing the lazy loading could cause the old popover to be overwritten by the new one causing a dealloc while popover is visible
+    if (!_popover)
     {
-        projectName = [@"Project " stringByAppendingString:[NSString stringWithFormat:@"%d", projectNumber]];
-        if (![[ACState localState] insertProjectWithURL:[NSURL ACURLForLocalProjectWithName:projectName] atIndex:NSNotFound error:NULL])
-            continue;
-        break;
+        UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"NewProjectPopover" bundle:[NSBundle mainBundle]];
+        ACNewProjectPopoverController *popoverViewController = (ACNewProjectPopoverController *)[storyboard instantiateInitialViewController];
+        popoverViewController.newProjectFromTemplate = self.newProjectFromTemplate;
+        popoverViewController.newProjectFromACZ = self.newProjectFromACZ;
+        popoverViewController.newProjectFromZIP = self.newProjectFromZIP;
+        _popover = [[UIPopoverController alloc] initWithContentViewController:popoverViewController];
     }
-//    [self.tableView beginUpdates];
-//    [self.tableView insertRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:[[[ACState localState] projects] count] inSection:0]] withRowAnimation:UITableViewRowAnimationAutomatic];
-//    [self.tableView endUpdates];
-    [self.tableView reloadData];
-    [[ECBezelAlert centerBezelAlert] addAlertMessageWithText:[@"Added new project: " stringByAppendingString:projectName] image:nil displayImmediatly:NO];
+    [_popover presentPopoverFromRect:[sender frame] inView:[sender superview] permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
 }
 
 #pragma mark - Colored icons
@@ -177,21 +299,21 @@
 {
     NSInteger rowIndex = [sender tag];
     ECASSERT(rowIndex >= 0);
-    [[[ACState localState].projects objectAtIndex:rowIndex] delete];
+    [self.tableView beginUpdates];
+    [[ACState sharedState] deleteObjectWithURL:[[ACState sharedState].projectURLs objectAtIndex:rowIndex]];
     [self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:rowIndex inSection:0]] withRowAnimation:UITableViewRowAnimationFade];
+    [self.tableView endUpdates];
 }
 
 - (void)textFieldDidEndEditing:(UITextField *)textField
 {
-    NSLog(@"end editing");
-    textField.text = [[[ACState localState].projects objectAtIndex:textField.tag] name];
+    //    textField.text = [[[ACState sharedState].projects objectAtIndex:textField.tag] name];
 }
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
-    NSLog(@"return");
-    [[[ACState localState].projects objectAtIndex:textField.tag] setName:textField.text];
-    [textField resignFirstResponder];
+    //    [[[ACState sharedState].projects objectAtIndex:textField.tag] setName:textField.text];
+    //    [textField resignFirstResponder];
     return YES;
 }
 
@@ -204,7 +326,7 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return [[ACState localState].projects count];
+    return [[ACState sharedState].projectURLs count];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -247,7 +369,7 @@
     [cell.iconButton setImage:[self projectIconWithColor:[UIColor styleForegroundColor]] forState:UIControlStateNormal];
     
     // Setup project title
-    [cell.textField setText:[[[ACState localState].projects objectAtIndex:indexPath.row] name]];
+    [cell.textField setText:[[[ACState sharedState].projectURLs objectAtIndex:indexPath.row] ACProjectName]];
     
     // Setup tags for callbacks
     [cell.customDeleteButton setTag:indexPath.row];
@@ -269,17 +391,17 @@
 
 - (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)sourceIndexPath toIndexPath:(NSIndexPath *)destinationIndexPath
 {
-    [[[ACState localState].projects objectAtIndex:sourceIndexPath.row] setIndex:destinationIndexPath.row];
+    [[ACState sharedState] moveProjectsAtIndexes:[NSIndexSet indexSetWithIndex:sourceIndexPath.row] toIndex:destinationIndexPath.row];
 }
 
 /*
-// Override to support conditional editing of the table view.
-- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    // Return NO if you do not want the specified item to be editable.
-    return YES;
-}
-*/
+ // Override to support conditional editing of the table view.
+ - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
+ {
+ // Return NO if you do not want the specified item to be editable.
+ return YES;
+ }
+ */
 
 
 // Override to support editing the table view.
@@ -287,7 +409,7 @@
 //{
 //    if (editingStyle == UITableViewCellEditingStyleDelete) {
 //        // Delete the row from the data source
-//        [[[ACState localState].projects objectAtIndex:indexPath.row] delete];
+//        [[[ACState sharedState].projects objectAtIndex:indexPath.row] delete];
 //        [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
 //    }   
 //    else if (editingStyle == UITableViewCellEditingStyleInsert) {
@@ -297,13 +419,13 @@
 
 
 /*
-// Override to support conditional rearranging of the table view.
-- (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    // Return NO if you do not want the item to be re-orderable.
-    return YES;
-}
-*/
+ // Override to support conditional rearranging of the table view.
+ - (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath
+ {
+ // Return NO if you do not want the item to be re-orderable.
+ return YES;
+ }
+ */
 
 #pragma mark - Table view delegate
 
@@ -311,9 +433,10 @@
 {
     if (self.isEditing)
         return;
-    
-    [self.ACNavigationController pushURL:[[[ACState localState].projects objectAtIndex:indexPath.row] URL]];
-//    [self.ACNavigationController pushURL:[NSURL URLWithString:@"artcode:/Project"]];
+    NSURL *projectURL = [[ACState sharedState].projectURLs objectAtIndex:indexPath.row];
+    [[ACState sharedState] loadProjectDocumentIfNeededForURL:projectURL completionHandler:^(BOOL success){
+        [self.ACNavigationController pushURL:projectURL];
+    }];
 }
 
 @end

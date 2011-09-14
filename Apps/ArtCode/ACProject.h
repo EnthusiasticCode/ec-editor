@@ -2,24 +2,37 @@
 //  ACProject.h
 //  ArtCode
 //
-//  Created by Uri Baghin on 7/23/11.
-//  Copyright 2011 __MyCompanyName__. All rights reserved.
+//  Created by Uri Baghin on 9/6/11.
+//  Copyright (c) 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import "ACState.h"
+#import <Foundation/Foundation.h>
+#import <CoreData/CoreData.h>
+#import "ACGroup.h"
 
-@interface ACProject : NSObject <ACStateProject>
+@class ACBookmark, ACTab, ACNode;
 
-/// Designated initializer, returns the ACProject referenced by the ACURL
-- (id)initWithURL:(NSURL *)URL;
+@interface ACProject : ACGroup
 
-/// The directory where the project's documents are stored
-- (NSURL *)documentDirectory;
+@property (nonatomic, strong) NSSet *bookmarks;
+@property (nonatomic, strong) NSSet *tabs;
 
-/// The directory where the project's contents are stored
-- (NSURL *)contentDirectory;
+@property (nonatomic, strong, readonly) NSString *name;
+@property (nonatomic, strong) NSURL *URL;
+@property (nonatomic, strong) NSURL *fileURL;
 
-/// The root node of the project
-@property (nonatomic, strong, readonly) id<ACStateNode> rootNode;
+@end
+
+@interface ACProject (CoreDataGeneratedAccessors)
+
+- (void)addBookmarksObject:(ACBookmark *)value;
+- (void)removeBookmarksObject:(ACBookmark *)value;
+- (void)addBookmarks:(NSSet *)values;
+- (void)removeBookmarks:(NSSet *)values;
+
+- (void)addTabsObject:(ACTab *)value;
+- (void)removeTabsObject:(ACTab *)value;
+- (void)addTabs:(NSSet *)values;
+- (void)removeTabs:(NSSet *)values;
 
 @end
