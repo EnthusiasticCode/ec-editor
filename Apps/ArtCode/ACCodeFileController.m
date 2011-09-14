@@ -16,11 +16,14 @@
 
 #import "ACCodeFileFilterController.h"
 
+#import "NSTimer+block.h"
 #import <QuartzCore/QuartzCore.h>
 
 @implementation ACCodeFileController {
     ACCodeFileFilterController *filterController;
     ECPopoverController *filterPopoverController;
+    
+    NSTimer *filterDebounceTimer;
 }
 
 @synthesize codeView;
@@ -180,9 +183,11 @@
     // Apply filter to filterController
     NSMutableString *filterString = [textField.text mutableCopy];
     [filterString replaceCharactersInRange:range withString:string];
-    filterController.filterString = filterString;
     
-#warning TODO Use a debounce timer instead
+    [filterDebounceTimer invalidate];
+    filterDebounceTimer = [NSTimer scheduledTimerWithTimeInterval:0.5 usingBlock:^(NSTimer *timer) {
+        filterController.filterString = filterString;
+    } repeats:NO];
     
     return YES;
 }
