@@ -152,12 +152,34 @@
         __weak ECCodeView *thisCodeView = codeView;
         filterController.didSelectFilterResultBlock = ^(NSRange range) {
             if (range.length == 0)
-                range.length = 1; // Go to line
+                return;
             
-            CGRect rangeRect = [thisCodeView.renderer rectsForStringRange:range limitToFirstLine:NO].bounds;
-            rangeRect.origin.y -= 50;
-            rangeRect.size.height += 100;
-            [thisCodeView scrollRectToVisible:rangeRect animated:YES];
+            ECRectSet *rangeRects = [thisCodeView.renderer rectsForStringRange:range limitToFirstLine:NO];
+            
+            // Scroll to position
+            CGRect scrollRect = rangeRects.bounds;
+            scrollRect.origin.y -= 50;
+            scrollRect.size.height += 100;
+            [thisCodeView scrollRectToVisible:scrollRect animated:YES];
+            
+            // Highlight with animation
+            [rangeRects enumerateRectsUsingBlock:^(CGRect rect, BOOL *stop) {
+                UIView *highlightView = [[UIView alloc] initWithFrame:rect];
+                highlightView.backgroundColor = [UIColor redColor];
+                highlightView.alpha = 0;
+                [thisCodeView addSubview:highlightView];
+                [UIView animateWithDuration:STYLE_ANIMATION_DURATION animations:^{
+                    highlightView.alpha = 1;
+                    highlightView.transform = CGAffineTransformMakeScale(2, 2);
+                } completion:^(BOOL finished) {
+                    [UIView animateWithDuration:STYLE_ANIMATION_DURATION animations:^{
+                        highlightView.alpha = 0;
+                        highlightView.transform = CGAffineTransformIdentity;
+                    } completion:^(BOOL finished) {
+                        [highlightView removeFromSuperview];
+                    }];
+                }];
+            }];
         };
     }
     
@@ -180,9 +202,9 @@
     NSMutableString *filterString = [textField.text mutableCopy];
     [filterString replaceCharactersInRange:range withString:string];
     
-    // Apply filter to filterController with .5 second debounce
+    // Apply filter to filterController with .3 second debounce
     [filterDebounceTimer invalidate];
-    filterDebounceTimer = [NSTimer scheduledTimerWithTimeInterval:0.5 usingBlock:^(NSTimer *timer) {
+    filterDebounceTimer = [NSTimer scheduledTimerWithTimeInterval:0.3 usingBlock:^(NSTimer *timer) {
         filterController.filterString = filterString;
     } repeats:NO];
     

@@ -396,15 +396,20 @@ enum ACCodeFileFilterSections {
             if ([obj isKindOfClass:[NSNumber class]])
             {
                 NSInteger lineTerminatorLength = [@"\n" length];
-                __block NSInteger lineIndex = [(NSNumber *)obj integerValue];
-                __block NSInteger location = 0;
+                __block NSInteger lineIndex = [(NSNumber *)obj integerValue] - 1;
+                __block NSRange lineStringRange = NSMakeRange(0, 0);
                 [targetCodeView.text enumerateLinesUsingBlock:^(NSString *line, BOOL *stop) {
                     if (lineIndex-- == 0)
+                    {
+                        lineStringRange.length = [line length];
                         *stop = YES;
+                    }
                     else
-                        location += [line length] + lineTerminatorLength;
+                    {
+                        lineStringRange.location += [line length] + lineTerminatorLength;
+                    }
                 }];
-                range = NSMakeRange(location, 0);
+                range = lineStringRange;
             }
             break;
     }
