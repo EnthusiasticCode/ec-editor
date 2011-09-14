@@ -182,4 +182,8 @@ typedef void (^ECTextRendererLayerPass)(CGContextRef context, ECTextRendererLine
 
 - (void)drawInContext:(CGContextRef)context;
 
+/// Return a rect relative to the string start position containing the given 
+/// substirng character range. The string range has to be relative to the string.
+- (CGRect)boundsForSubstringInRange:(NSRange)stringRange;
+
 @end

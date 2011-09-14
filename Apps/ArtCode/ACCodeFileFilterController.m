@@ -55,33 +55,50 @@ enum ACCodeFileFilterSections {
     
     targetCodeView = codeView;
     
-    [(ACCodeIndexerDataSource *)targetCodeView.datasource addStylingBlock:^(NSMutableAttributedString *string, NSRange stringRange) {
-        if (filterHighlightTextStyle == nil)
-            return;
-        
+    UIColor *decorationColor = [UIColor yellowColor];
+    
+    __block NSMutableIndexSet *searchSectionIndexes = nil;
+    __block NSUInteger lastLine = NSUIntegerMax;
+    [(ACCodeIndexerDataSource *)targetCodeView.datasource addPassLayerBlock:^(CGContextRef context, ECTextRendererLine *line, CGRect lineBounds, NSRange stringRange, NSUInteger lineNumber) {
         NSMutableArray *searchSection = [sections objectAtIndex:ACCodeFileFilterSearchSection];
-        if ([searchSection count] == 0)
+        NSUInteger searchSectionCount = [searchSection count];
+        if (searchSectionCount == 0)
             return;
         
-        NSRange range;
+        // Get indexes to search into
+        if (searchSectionIndexes == nil || lineNumber < lastLine)
+            searchSectionIndexes = [NSMutableIndexSet indexSetWithIndexesInRange:NSMakeRange(0, [searchSection count])];
+        
         NSUInteger endStringRange = NSMaxRange(stringRange);
-        for (NSTextCheckingResult *result in searchSection)
-        {
-            range = [result rangeAtIndex:0];
+        [searchSection enumerateObjectsAtIndexes:searchSectionIndexes options:0 usingBlock:^(NSTextCheckingResult *result, NSUInteger idx, BOOL *stop) {
+            // End loop if range after current string range
+            NSRange range = [result rangeAtIndex:0];
             if (range.location >= endStringRange)
-                break;
+            {
+                *stop = YES;
+                return;
+            }
             
+            // Skip indexes behind current string range
             if (NSMaxRange(range) < stringRange.location)
-                continue;
+            {
+                [searchSectionIndexes removeIndex:idx];
+                return;
+            }
             
+            // Adjust range to fit in string
             if (range.location < stringRange.location)
                 range = NSMakeRange(stringRange.location, range.length - (stringRange.location - range.location));
             else
                 range.location -= stringRange.location;
             
-            [string addAttributes:filterHighlightTextStyle.CTAttributes range:range];
-        }
-    } forKey:filteringBlockKey];
+            // Draw decoration
+            CGRect rect = [line boundsForSubstringInRange:range];
+#warning TODO add custom decoration
+            CGContextSetFillColorWithColor(context, decorationColor.CGColor);
+            CGContextFillRect(context, rect);
+        }];
+    } underText:YES forKey:filteringBlockKey];
 }
 
 - (void)setFilterString:(NSString *)string
@@ -124,7 +141,7 @@ enum ACCodeFileFilterSections {
         }];
         
         [self.tableView reloadData];
-        [targetCodeView updateAllText];
+        [targetCodeView setNeedsDisplay];
         
         if (endSearchingBlock)
             endSearchingBlock(self);
@@ -161,6 +178,7 @@ enum ACCodeFileFilterSections {
     [super didReceiveMemoryWarning];
  
     goToLineRegExp = nil;
+    sections = nil;
 }
 
 #pragma mark - View lifecycle

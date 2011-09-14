@@ -182,7 +182,7 @@
     [filterString replaceCharactersInRange:range withString:string];
     filterController.filterString = filterString;
     
-    // TODO Use a debounce timer instead
+#warning TODO Use a debounce timer instead
     
     return YES;
 }

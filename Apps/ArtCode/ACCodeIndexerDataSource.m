@@ -45,7 +45,7 @@ static NSRange intersectionOfRangeRelativeToRange(NSRange range, NSRange inRange
         // TODO make a property
         static UIFont *lineNumersFont = nil;
         if (!lineNumersFont)
-            lineNumersFont = [UIFont fontWithName:@"Helvetica" size:12];
+            lineNumersFont = [UIFont fontWithName:@"Helvetica" size:10];
         UIColor *lineNumbersColor = [UIColor colorWithWhite:0.5 alpha:1];
         
         __block NSUInteger lastLine = NSUIntegerMax;
@@ -61,7 +61,7 @@ static NSRange intersectionOfRangeRelativeToRange(NSRange range, NSRange inRange
                 CGContextSetTextDrawingMode(context, kCGTextFill);
                 CGContextSetFillColorWithColor(context, lineNumbersColor.CGColor);
 
-                CGContextShowTextAtPoint(context, -lineBounds.origin.x + LINE_NUMBERS_SPACE_WIDTH- lineNumberStringSize.width, -lineNumberStringSize.height + (lineBounds.size.height - lineNumberStringSize.height) / 2, lineNumberString.UTF8String, [lineNumberString lengthOfBytesUsingEncoding:NSUTF8StringEncoding]);
+                CGContextShowTextAtPoint(context, -lineBounds.origin.x + LINE_NUMBERS_SPACE_WIDTH - lineNumberStringSize.width, line.descent + (lineBounds.size.height - lineNumberStringSize.height) / 2, lineNumberString.UTF8String, [lineNumberString lengthOfBytesUsingEncoding:NSUTF8StringEncoding]);
             }
 
             lastLine = lineNumber;

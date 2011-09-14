@@ -234,6 +234,28 @@
     }
 }
 
+- (CGRect)boundsForSubstringInRange:(NSRange)stringRange
+{
+    ECASSERT(NSMaxRange(stringRange) <= CTLineGetStringRange(CTLine).length);
+    
+    CFRange lineStringRange = CTLineGetStringRange(CTLine);
+    
+    CGRect result = CGRectMake(0, 0, 0, ascent + descent);
+    
+    if (stringRange.location > 0)
+    {
+        result.origin.x = CTLineGetOffsetForStringIndex(CTLine, lineStringRange.location + stringRange.location, NULL);
+    }
+    
+    CFIndex stringRangeEnd = NSMaxRange(stringRange);
+    if (stringRangeEnd < lineStringRange.length)
+        result.size.width = CTLineGetOffsetForStringIndex(CTLine, lineStringRange.location + stringRangeEnd, NULL) - result.origin.x;
+    else
+        result.size.width = width - result.origin.x;
+    
+    return result;
+}
+
 @end
 
 
@@ -707,7 +729,9 @@
     // Draw needed lines from this segment
     [self enumerateLinesIntersectingRect:rect usingBlock:^(ECTextRendererLine *line, NSUInteger lineIndex, NSUInteger lineNumber, CGFloat lineOffset, NSRange stringRange, BOOL *stop) {
         CGRect lineBound = (CGRect){ CGPointMake(textInsets.left, lineOffset), line.size };
-        CGFloat baseline = line.ascent;
+        
+        // Move context to next line
+        CGContextTranslateCTM(context, 0, -lineBound.size.height);
         
         // Require adjustment in rendering for first partial line
         if (lineBound.origin.y < rect.origin.y) 
@@ -727,7 +751,7 @@
         // Rendering text
         CGContextSaveGState(context);
         CGContextSetTextPosition(context, 0, 0);
-        CGContextTranslateCTM(context, 0, -baseline);
+        CGContextTranslateCTM(context, 0, line.descent);
         [line drawInContext:context];
         CGContextRestoreGState(context);
         
@@ -739,9 +763,6 @@
             pass(context, line, lineBound, stringRange, lineNumber);
             CGContextRestoreGState(context);
         }
-        
-        // Move context to next line
-        CGContextTranslateCTM(context, 0, -lineBound.size.height);
     }];
     
     CGContextRelease(context);
