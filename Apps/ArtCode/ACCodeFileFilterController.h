@@ -44,6 +44,4 @@ typedef void (^ACCodeFileFilterBlock)(ACCodeFileFilterController *sender);
 /// Called when a user select a filter result.
 @property (copy, nonatomic) void (^didSelectFilterResultBlock)(NSRange range);
 
-@property (strong, nonatomic) ECTextStyle *filterHighlightTextStyle;
-
 @end

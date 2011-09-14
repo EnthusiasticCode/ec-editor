@@ -26,6 +26,17 @@ typedef void (^ECTextRendererLayerPass)(CGContextRef context, ECTextRendererLine
 @protocol ECTextRendererDelegate <NSObject>
 @optional
 
+/// Returns insets for the given renderer.
+- (UIEdgeInsets)textInsetsForTextRenderer:(ECTextRenderer *)sender;
+
+/// An array of ECTextRendererLayerPass that will be applied in order to every
+/// line before rendering the actual text line.
+- (NSArray *)underlayPassesForTextRenderer:(ECTextRenderer *)sender;
+
+/// An array of ECTextRendererLayerPass that will be applied in order to every
+/// line after rendering the actual text line.
+- (NSArray *)overlayPassesForTextRenderer:(ECTextRenderer *)sender;
+
 /// Called when the renderer update a part of its content.
 - (void)textRenderer:(ECTextRenderer *)sender invalidateRenderInRect:(CGRect)rect;
 
@@ -47,23 +58,12 @@ typedef void (^ECTextRendererLayerPass)(CGContextRef context, ECTextRendererLine
 /// the source text for optimal rendering.
 - (NSAttributedString *)textRenderer:(ECTextRenderer *)sender stringInLineRange:(NSRange *)lineRange endOfString:(BOOL *)endOfString;
 
-/// Returns insets for the given renderer.
-- (UIEdgeInsets)textInsetsForTextRenderer:(ECTextRenderer *)sender;
-
 @optional
 /// When implemented, this delegate method should return the total number 
 /// of lines in the input text. Lines that exceed the given maximum length
 /// of characters shold be considered as multiple lines. If this method
 /// returns 0 a different estime will be used.
 - (NSUInteger)textRenderer:(ECTextRenderer *)sender estimatedTextLineCountOfLength:(NSUInteger)maximumLineLength;
-
-/// An array of ECTextRendererLayerPass that will be applied in order to every
-/// line before rendering the actual text line.
-- (NSArray *)underlayPassesForTextRenderer:(ECTextRenderer *)sender;
-
-/// An array of ECTextRendererLayerPass that will be applied in order to every
-/// line after rendering the actual text line.
-- (NSArray *)overlayPassesForTextRenderer:(ECTextRenderer *)sender;
 
 @end
 

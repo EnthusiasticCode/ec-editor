@@ -17,9 +17,6 @@ typedef void (^ECCodeStringDataSourceStylingBlock)(NSMutableAttributedString *st
 /// The string to be managed by the datasource
 @property (nonatomic, strong) NSString *string;
 
-/// Text insets for the rendering.
-@property (nonatomic) UIEdgeInsets textInsets;
-
 /// Default style applied to the entire string.
 @property (nonatomic, strong) ECTextStyle *defaultTextStyle;
 
@@ -31,11 +28,5 @@ typedef void (^ECCodeStringDataSourceStylingBlock)(NSMutableAttributedString *st
 
 /// Removes a styling block from the collection of those applied to the string.
 - (void)removeStylingBlockForKey:(NSString *)stylingKey;
-
-/// Add a layer pass that will be used by the renderer for overlays or underlays.
-- (void)addPassLayerBlock:(ECTextRendererLayerPass)block underText:(BOOL)isUnderlay forKey:(NSString *)passKey;
-
-// Removes a layer pass from the rendering process.
-- (void)removePassLayerForKey:(NSString *)passKey;
 
 @end

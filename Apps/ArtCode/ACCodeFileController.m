@@ -35,9 +35,7 @@
         codeView = [ECCodeView new];
         
         // Datasource setup
-        ACCodeIndexerDataSource *datasource = [ACCodeIndexerDataSource new];
-        datasource.showLineNumbers = YES;
-        codeView.datasource = datasource;
+        codeView.datasource = [ACCodeIndexerDataSource new];
         
         // Layout setup
         codeView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
@@ -45,9 +43,10 @@
         codeView.caretColor = [UIColor styleThemeColorOne];
         codeView.selectionColor = [[UIColor styleThemeColorOne] colorWithAlphaComponent:0.3];
         
-        codeView.lineNumberWidth = 30;
-        codeView.lineNumberFont = [UIFont systemFontOfSize:10];
-        codeView.lineNumberColor = [UIColor colorWithWhite:0.8 alpha:1];
+        codeView.lineNumbersEnabled = YES;
+        codeView.lineNumbersWidth = 30;
+        codeView.lineNumbersFont = [UIFont systemFontOfSize:10];
+        codeView.lineNumbersColor = [UIColor colorWithWhite:0.8 alpha:1];
         // TODO maybe is not the best option to draw the line number in an external block
         codeView.lineNumberRenderingBlock = ^(CGContextRef context, CGRect lineNumberBounds, CGFloat baseline, NSUInteger lineNumber, BOOL isWrappedLine) {
             CGContextSetStrokeColorWithColor(context, [UIColor colorWithWhite:0.9 alpha:1].CGColor);
@@ -160,9 +159,6 @@
             rangeRect.size.height += 100;
             [thisCodeView scrollRectToVisible:rangeRect animated:YES];
         };
-        
-        filterController.filterHighlightTextStyle = [[ECTextStyle alloc] initWithName:@"Search highlight"];
-        filterController.filterHighlightTextStyle.backgroundColor = [UIColor yellowColor];
     }
     
     if (!filterPopoverController)
@@ -180,10 +176,11 @@
 
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
 {
-    // Apply filter to filterController
+    // Calculate filter string
     NSMutableString *filterString = [textField.text mutableCopy];
     [filterString replaceCharactersInRange:range withString:string];
     
+    // Apply filter to filterController with .5 second debounce
     [filterDebounceTimer invalidate];
     filterDebounceTimer = [NSTimer scheduledTimerWithTimeInterval:0.5 usingBlock:^(NSTimer *timer) {
         filterController.filterString = filterString;

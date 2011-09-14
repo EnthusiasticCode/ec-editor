@@ -16,10 +16,6 @@
 
 @property (nonatomic, strong) ECCodeUnit *codeUnit;
 
-#pragma mark Layout Styles
-
-@property (nonatomic, getter = isShowingLineNumbers) BOOL showLineNumbers;
-
 #pragma mark Defining Code Styles
 
 @property (nonatomic, strong) ECTextStyle *keywordStyle;

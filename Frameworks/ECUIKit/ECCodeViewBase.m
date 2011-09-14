@@ -28,6 +28,10 @@
     
     // Variable to indicate if renderer and rendering queue are owned by this codeview
     BOOL ownsRenderer;
+    
+    // Dictionaries that holds additional passes
+    NSMutableDictionary *overlayPasses;
+    NSMutableDictionary *underlayPasses;
 }
 
 /// Get or create a tile for the given index.
@@ -172,7 +176,7 @@
 
 @synthesize datasource;
 @synthesize renderingQueue, renderer;
-@synthesize lineNumberWidth, lineNumberFont, lineNumberColor, lineNumberRenderingBlock;
+@synthesize textInsets, lineNumbersEnabled, lineNumbersWidth, lineNumbersFont, lineNumbersColor, lineNumberRenderingBlock;
 
 - (id<ECCodeViewBaseDataSource>)datasource
 {
@@ -221,6 +225,42 @@
     [super setBackgroundColor:color];
 }
 
+- (void)setLineNumbersEnabled:(BOOL)enabled
+{
+    if (lineNumbersEnabled == enabled)
+        return;
+    
+    lineNumbersEnabled = enabled;
+    
+    static NSString *lineNumberPassKey = @"LineNumbersUnderlayPass";
+    if (lineNumbersEnabled)
+    {
+        __weak ECCodeViewBase *this = self;
+        __block NSUInteger lastLine = NSUIntegerMax;
+        [self addPassLayerBlock:^(CGContextRef context, ECTextRendererLine *line, CGRect lineBounds, NSRange stringRange, NSUInteger lineNumber) {
+            // Rendering line number
+            if (lastLine != lineNumber)
+            {
+                // TODO get this more efficient. possibly by creating line numbers with preallocated characters.
+                NSString *lineNumberString = [NSString stringWithFormat:@"%u", lineNumber + 1];
+                CGSize lineNumberStringSize = [lineNumberString sizeWithFont:this->lineNumbersFont];
+                
+                CGContextSelectFont(context, this->lineNumbersFont.fontName.UTF8String, this->lineNumbersFont.pointSize, kCGEncodingMacRoman);
+                CGContextSetTextDrawingMode(context, kCGTextFill);
+                CGContextSetFillColorWithColor(context, this->lineNumbersColor.CGColor);
+                
+                CGContextShowTextAtPoint(context, -lineBounds.origin.x + this->lineNumbersWidth - lineNumberStringSize.width, line.descent + (lineBounds.size.height - lineNumberStringSize.height) / 2, lineNumberString.UTF8String, [lineNumberString lengthOfBytesUsingEncoding:NSUTF8StringEncoding]);
+            }
+            
+            lastLine = lineNumber;
+        } underText:YES forKey:lineNumberPassKey];
+    }
+    else
+    {
+        [self removePassLayerForKey:lineNumberPassKey];
+    }
+}
+
 #pragma mark NSObject Methods
 
 static void preinit(ECCodeViewBase *self)
@@ -235,6 +275,8 @@ static void preinit(ECCodeViewBase *self)
     // Creating rendering queue
     self->renderingQueue = [NSOperationQueue new];
     [self->renderingQueue setMaxConcurrentOperationCount:1];
+    
+    self->textInsets = UIEdgeInsetsMake(10, 10, 10, 10);
 }
 
 static void init(ECCodeViewBase *self)
@@ -282,16 +324,15 @@ static void init(ECCodeViewBase *self)
     if (object == renderer)
     {
         // Operating in the main queue because this message can be generated in the renderingQueue
-        [[NSOperationQueue mainQueue] addOperationWithBlock:^(void) {
+        dispatch_async(dispatch_get_main_queue(), ^{
             CGFloat height = [[change valueForKey:NSKeyValueChangeNewKey] floatValue];
             CGFloat width = self.bounds.size.width;
-            self.contentSize = CGSizeMake(width, height * self.contentScaleFactor);            
-        }];
+            self.contentSize = CGSizeMake(width, height * self.contentScaleFactor); 
+        });
     }
 }
 
-#pragma mark -
-#pragma mark Rendering Methods
+#pragma mark - Rendering Methods
 
 - (void)setNeedsDisplay
 {
@@ -378,9 +419,26 @@ static void init(ECCodeViewBase *self)
         [renderer updateTextInLineRange:originalRange toLineRange:newRange];
 }
 
+#pragma mark - Text Renderer Delegate
 
-#pragma mark -
-#pragma mark Text Renderer Delegate
+- (UIEdgeInsets)textInsetsForTextRenderer:(ECTextRenderer *)sender
+{
+    UIEdgeInsets insets = textInsets;
+    if (lineNumbersEnabled)
+        insets.left += lineNumbersWidth;
+    return insets;
+}
+
+- (NSArray *)underlayPassesForTextRenderer:(ECTextRenderer *)sender
+{
+    return [underlayPasses allValues];
+}
+
+
+- (NSArray *)overlayPassesForTextRenderer:(ECTextRenderer *)sender
+{
+    return [overlayPasses allValues];
+}
 
 - (void)textRenderer:(ECTextRenderer *)sender invalidateRenderInRect:(CGRect)rect
 {
@@ -395,7 +453,30 @@ static void init(ECCodeViewBase *self)
 }
 
 #pragma mark -
-#pragma mark Text Renderer and CodeView String Datasource
+
+- (void)addPassLayerBlock:(ECTextRendererLayerPass)block underText:(BOOL)isUnderlay forKey:(NSString *)passKey
+{
+    if (isUnderlay)
+    {
+        if (!underlayPasses)
+            underlayPasses = [NSMutableDictionary new];
+        [underlayPasses setObject:[block copy] forKey:passKey];
+    }
+    else
+    {
+        if (!overlayPasses)
+            overlayPasses = [NSMutableDictionary new];
+        [overlayPasses setObject:[block copy] forKey:passKey];        
+    }
+}
+
+- (void)removePassLayerForKey:(NSString *)passKey
+{
+    [underlayPasses removeObjectForKey:passKey];
+    [overlayPasses removeObjectForKey:passKey];
+}
+
+#pragma mark - Text Renderer and CodeView String Datasource
 
 - (NSString *)text
 {

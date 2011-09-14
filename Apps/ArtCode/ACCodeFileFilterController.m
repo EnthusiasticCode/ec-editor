@@ -39,7 +39,6 @@ enum ACCodeFileFilterSections {
 
 @synthesize targetCodeView, filterString;
 @synthesize startSearchingBlock, endSearchingBlock, didSelectFilterResultBlock;
-@synthesize filterHighlightTextStyle;
 
 - (void)setTargetCodeView:(ECCodeView *)codeView
 {
@@ -51,15 +50,15 @@ enum ACCodeFileFilterSections {
         return;
     
     if (targetCodeView)
-        [(ACCodeIndexerDataSource *)targetCodeView.datasource removeStylingBlockForKey:filteringBlockKey];
+        [targetCodeView removePassLayerForKey:filteringBlockKey];
     
     targetCodeView = codeView;
     
-    UIColor *decorationColor = [UIColor yellowColor];
+    UIColor *decorationColor = [[UIColor yellowColor] colorWithAlphaComponent:0.3];
     
     __block NSMutableIndexSet *searchSectionIndexes = nil;
     __block NSUInteger lastLine = NSUIntegerMax;
-    [(ACCodeIndexerDataSource *)targetCodeView.datasource addPassLayerBlock:^(CGContextRef context, ECTextRendererLine *line, CGRect lineBounds, NSRange stringRange, NSUInteger lineNumber) {
+    [targetCodeView addPassLayerBlock:^(CGContextRef context, ECTextRendererLine *line, CGRect lineBounds, NSRange stringRange, NSUInteger lineNumber) {
         NSMutableArray *searchSection = [sections objectAtIndex:ACCodeFileFilterSearchSection];
         NSUInteger searchSectionCount = [searchSection count];
         if (searchSectionCount == 0)
@@ -98,7 +97,7 @@ enum ACCodeFileFilterSections {
             CGContextSetFillColorWithColor(context, decorationColor.CGColor);
             CGContextFillRect(context, rect);
         }];
-    } underText:YES forKey:filteringBlockKey];
+    } underText:NO forKey:filteringBlockKey];
 }
 
 - (void)setFilterString:(NSString *)string

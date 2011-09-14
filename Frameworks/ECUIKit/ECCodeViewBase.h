@@ -68,15 +68,21 @@ typedef void (^LineNumberRenderingBlock)(CGContextRef context, CGRect lineNumber
 
 #pragma mark Styling Text Display
 
+/// Text insets for the rendering.
+@property (nonatomic) UIEdgeInsets textInsets;
+
+/// Indicates if line numbers should be displayed according to line numbers properties.
+@property (nonatomic, getter = isLineNumbersEnabled) BOOL lineNumbersEnabled;
+
 /// The width to reserve for line numbers left inset. This value will not increase
 /// the text insets; textInsets.left must be greater than this number.
-@property (nonatomic) CGFloat lineNumberWidth;
+@property (nonatomic) CGFloat lineNumbersWidth;
 
 /// Font to be used for rendering line numbers
-@property (nonatomic, strong) UIFont *lineNumberFont;
+@property (nonatomic, strong) UIFont *lineNumbersFont;
 
 /// Color to be used for rendering line numbers
-@property (nonatomic, strong) UIColor *lineNumberColor;
+@property (nonatomic, strong) UIColor *lineNumbersColor;
 
 /// Provide a block that will be called for each line and may render the number of the line
 /// in the given context. The block receives: the context in which to draw, bounds in which
@@ -84,5 +90,11 @@ typedef void (^LineNumberRenderingBlock)(CGContextRef context, CGRect lineNumber
 /// line, the number of the line that will be drawn and a value indicating if the requested
 /// line is a wrapped line.
 @property (nonatomic, copy) LineNumberRenderingBlock lineNumberRenderingBlock;
+
+/// Add a layer pass that will be used by the renderer for overlays or underlays.
+- (void)addPassLayerBlock:(ECTextRendererLayerPass)block underText:(BOOL)isUnderlay forKey:(NSString *)passKey;
+
+// Removes a layer pass from the rendering process.
+- (void)removePassLayerForKey:(NSString *)passKey;
 
 @end

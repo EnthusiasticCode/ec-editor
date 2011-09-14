@@ -15,8 +15,6 @@
 
 #import "ACCompletionController.h"
 
-#define LINE_NUMBERS_SPACE_WIDTH 30
-
 @implementation ACCodeIndexerDataSource {
     ACCompletionController *completionController;
 }
@@ -29,49 +27,7 @@ static NSRange intersectionOfRangeRelativeToRange(NSRange range, NSRange inRange
 }
 
 @synthesize codeUnit;
-@synthesize showLineNumbers;
 @synthesize keywordStyle, commentStyle, referenceStyle, literalStyle, declarationStyle, preprocessingStyle;
-
-- (void)setShowLineNumbers:(BOOL)value
-{
-    if (showLineNumbers == value)
-        return;
-    
-    showLineNumbers = value;
-    
-    static NSString *lineNumberPassKey = @"LineNumbersUnderlayPass";
-    if (showLineNumbers)
-    {
-        // TODO make a property
-        static UIFont *lineNumersFont = nil;
-        if (!lineNumersFont)
-            lineNumersFont = [UIFont fontWithName:@"Helvetica" size:10];
-        UIColor *lineNumbersColor = [UIColor colorWithWhite:0.5 alpha:1];
-        
-        __block NSUInteger lastLine = NSUIntegerMax;
-        [self addPassLayerBlock:^(CGContextRef context, ECTextRendererLine *line, CGRect lineBounds, NSRange stringRange, NSUInteger lineNumber) {
-            // Rendering line number
-            if (lastLine != lineNumber)
-            {
-                // TODO get this more efficient. possibly by creating line numbers with preallocated characters.
-                NSString *lineNumberString = [NSString stringWithFormat:@"%u", lineNumber + 1];
-                CGSize lineNumberStringSize = [lineNumberString sizeWithFont:lineNumersFont];
-                
-                CGContextSelectFont(context, lineNumersFont.fontName.UTF8String, lineNumersFont.pointSize, kCGEncodingMacRoman);
-                CGContextSetTextDrawingMode(context, kCGTextFill);
-                CGContextSetFillColorWithColor(context, lineNumbersColor.CGColor);
-
-                CGContextShowTextAtPoint(context, -lineBounds.origin.x + LINE_NUMBERS_SPACE_WIDTH - lineNumberStringSize.width, line.descent + (lineBounds.size.height - lineNumberStringSize.height) / 2, lineNumberString.UTF8String, [lineNumberString lengthOfBytesUsingEncoding:NSUTF8StringEncoding]);
-            }
-
-            lastLine = lineNumber;
-        } underText:YES forKey:lineNumberPassKey];
-    }
-    else
-    {
-        [self removePassLayerForKey:lineNumberPassKey];
-    }
-}
 
 - (id)init
 {
@@ -129,13 +85,5 @@ static NSRange intersectionOfRangeRelativeToRange(NSRange range, NSRange inRange
 //    
 //    
 //}
-
-- (UIEdgeInsets)textInsetsForTextRenderer:(ECTextRenderer *)sender
-{
-    UIEdgeInsets textInsets = [super textInsetsForTextRenderer:sender];
-    if (showLineNumbers)
-        textInsets.left += LINE_NUMBERS_SPACE_WIDTH;
-    return textInsets;
-}
 
 @end

@@ -31,12 +31,17 @@
     TextSegment *lastTextSegment;
     
     struct {
+        unsigned int delegateHasTextInsetsForTextRenderer : 1;
         unsigned int delegateHasTextRendererInvalidateRenderInRect : 1;
+        unsigned int delegateHasUnderlayPassesForTextRenderer : 1;
+        unsigned int delegateHasOverlayPassesForTextRenderer : 1;
         unsigned int dataSourceHasTextRendererEstimatedTextLineCountOfLength : 1;
-        unsigned int dataSourceHasUnderlayPassesForTextRenderer : 1;
-        unsigned int dataSourceHasOverlayPassesForTextRenderer : 1;
+        unsigned int reserved : 3;
     } flags;
 }
+
+/// Shourtcut to retrieve the text insets from the delegate.
+@property (nonatomic, readonly) UIEdgeInsets textInsets;
 
 /// Text renderer strings' cache shared among all text segments.
 @property (nonatomic, readonly, strong) NSCache *segmentStringsCache;
@@ -517,6 +522,9 @@
 - (void)setDelegate:(id<ECTextRendererDelegate>)aDelegate
 {
     delegate = aDelegate;
+    flags.delegateHasTextInsetsForTextRenderer = [delegate respondsToSelector:@selector(textInsetsForTextRenderer:)];
+    flags.delegateHasUnderlayPassesForTextRenderer = [delegate respondsToSelector:@selector(underlayPassesForTextRenderer:)];
+    flags.delegateHasOverlayPassesForTextRenderer = [delegate respondsToSelector:@selector(overlayPassesForTextRenderer:)];
     flags.delegateHasTextRendererInvalidateRenderInRect = [delegate respondsToSelector:@selector(textRenderer:invalidateRenderInRect:)];
 }
 
@@ -528,15 +536,13 @@
     datasource = aDatasource;
     
     flags.dataSourceHasTextRendererEstimatedTextLineCountOfLength = [datasource respondsToSelector:@selector(textRenderer:estimatedTextLineCountOfLength:)];
-    flags.dataSourceHasUnderlayPassesForTextRenderer = [datasource respondsToSelector:@selector(underlayPassesForTextRenderer:)];
-    flags.dataSourceHasOverlayPassesForTextRenderer = [datasource respondsToSelector:@selector(overlayPassesForTextRenderer:)];
     
     [self updateAllText];
 }
 
 - (void)setWrapWidth:(CGFloat)width
 {
-    UIEdgeInsets textInsets = [datasource textInsetsForTextRenderer:self];
+    UIEdgeInsets textInsets = self.textInsets;
     width -= textInsets.left + textInsets.right;
     
     if (wrapWidth == width) 
@@ -577,6 +583,13 @@
         renderedLinesCache.countLimit = 3;
     }
     return self;
+}
+
+- (UIEdgeInsets)textInsets
+{
+    if (flags.delegateHasTextInsetsForTextRenderer)
+        return [delegate textInsetsForTextRenderer:self];
+    return UIEdgeInsetsZero;
 }
 
 #pragma mark Private Methods
@@ -718,13 +731,13 @@
     CGContextScaleCTM(context, 1, -1);
     
     // Get text insets
-    UIEdgeInsets textInsets = [datasource textInsetsForTextRenderer:self];
+    UIEdgeInsets textInsets = self.textInsets;
     rect.size.height -= textInsets.top;
     CGContextTranslateCTM(context, textInsets.left, -textInsets.top);
     
     // Get rendering passes
-    NSArray *underlays = flags.dataSourceHasUnderlayPassesForTextRenderer ? [datasource underlayPassesForTextRenderer:self] : nil;
-    NSArray *overlays = flags.dataSourceHasOverlayPassesForTextRenderer ? [datasource overlayPassesForTextRenderer:self] : nil;
+    NSArray *underlays = flags.delegateHasUnderlayPassesForTextRenderer ? [delegate underlayPassesForTextRenderer:self] : nil;
+    NSArray *overlays = flags.delegateHasOverlayPassesForTextRenderer ? [delegate overlayPassesForTextRenderer:self] : nil;
     
     // Draw needed lines from this segment
     [self enumerateLinesIntersectingRect:rect usingBlock:^(ECTextRendererLine *line, NSUInteger lineIndex, NSUInteger lineNumber, CGFloat lineOffset, NSRange stringRange, BOOL *stop) {
@@ -1048,7 +1061,7 @@
         }
     }
     
-    UIEdgeInsets textInsets = [datasource textInsetsForTextRenderer:self];
+    UIEdgeInsets textInsets = self.textInsets;
     result.size.height += textInsets.top + textInsets.bottom;
     
     return result;
@@ -1058,7 +1071,7 @@
 
 - (CGRect)convertFromTextRect:(CGRect)rect
 {
-    UIEdgeInsets textInsets = [datasource textInsetsForTextRenderer:self];
+    UIEdgeInsets textInsets = self.textInsets;
     rect.origin.x += textInsets.left;
     rect.origin.y += textInsets.top;
     return rect;
@@ -1066,7 +1079,7 @@
 
 - (CGPoint)convertFromTextPoint:(CGPoint)point
 {
-    UIEdgeInsets textInsets = [datasource textInsetsForTextRenderer:self];
+    UIEdgeInsets textInsets = self.textInsets;
     point.x += textInsets.left;
     point.y += textInsets.top;
     return point;
@@ -1074,7 +1087,7 @@
 
 - (CGRect)convertToTextRect:(CGRect)rect
 {
-    UIEdgeInsets textInsets = [datasource textInsetsForTextRenderer:self];
+    UIEdgeInsets textInsets = self.textInsets;
     rect.origin.x -= textInsets.left;
     rect.origin.y -= textInsets.top;
     return rect;
@@ -1082,7 +1095,7 @@
 
 - (CGPoint)convertToTextPoint:(CGPoint)point
 {
-    UIEdgeInsets textInsets = [datasource textInsetsForTextRenderer:self];
+    UIEdgeInsets textInsets = self.textInsets;
     point.x -= textInsets.left;
     point.y -= textInsets.top;
     return point;
