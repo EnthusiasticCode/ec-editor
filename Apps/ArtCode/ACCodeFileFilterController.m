@@ -54,7 +54,8 @@ enum ACCodeFileFilterSections {
     
     targetCodeView = codeView;
     
-    UIColor *decorationColor = [[UIColor yellowColor] colorWithAlphaComponent:0.3];
+    UIColor *decorationColor = [UIColor colorWithRed:249.0/255.0 green:254.0/255.0 blue:192.0/255.0 alpha:1];
+    UIColor *decorationSecondaryColor = [UIColor colorWithRed:224.0/255.0 green:233.0/255.0 blue:128.0/255.0 alpha:1];
     
     __block NSMutableIndexSet *searchSectionIndexes = nil;
     __block NSUInteger lastLine = NSUIntegerMax;
@@ -93,11 +94,14 @@ enum ACCodeFileFilterSections {
             
             // Draw decoration
             CGRect rect = [line boundsForSubstringInRange:range];
-#warning TODO add custom decoration
             CGContextSetFillColorWithColor(context, decorationColor.CGColor);
             CGContextFillRect(context, rect);
+            
+            rect.size.height = 2;
+            CGContextSetFillColorWithColor(context, decorationSecondaryColor.CGColor);
+            CGContextFillRect(context, rect);            
         }];
-    } underText:NO forKey:filteringBlockKey];
+    } underText:YES forKey:filteringBlockKey];
 }
 
 - (void)setFilterString:(NSString *)string

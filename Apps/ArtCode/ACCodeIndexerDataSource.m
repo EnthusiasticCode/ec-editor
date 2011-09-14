@@ -33,12 +33,12 @@ static NSRange intersectionOfRangeRelativeToRange(NSRange range, NSRange inRange
 {
     if ((self = [super init]))
     {
-        keywordStyle = [ECTextStyle textStyleWithName:@"Keyword" font:nil color:[UIColor blueColor]];
-        commentStyle = [ECTextStyle textStyleWithName:@"Comment" font:nil color:[UIColor greenColor]];
+        keywordStyle = [ECTextStyle textStyleWithName:@"Keyword" font:nil color:[UIColor colorWithRed:200.0/255.0 green:0.0/255.0 blue:151.0/255.0 alpha:1]];
+        commentStyle = [ECTextStyle textStyleWithName:@"Comment" font:nil color:[UIColor colorWithRed:0.0/255.0 green:133.0/255.0 blue:13.0/255.0 alpha:1]];
         referenceStyle = [ECTextStyle textStyleWithName:@"Reference" font:nil color:[UIColor purpleColor]];
-        literalStyle = [ECTextStyle textStyleWithName:@"Literal" font:nil color:[UIColor redColor]];
-        declarationStyle = [ECTextStyle textStyleWithName:@"Declaration" font:nil color:[UIColor brownColor]];
-        preprocessingStyle = [ECTextStyle textStyleWithName:@"Preprocessing" font:nil color:[UIColor orangeColor]];
+        literalStyle = [ECTextStyle textStyleWithName:@"Strings" font:nil color:[UIColor colorWithRed:222.0/255.0 green:19.0/255.0 blue:0.0/255.0 alpha:1]];
+        declarationStyle = [ECTextStyle textStyleWithName:@"Declaration" font:nil color:[UIColor colorWithRed:57.0/255.0 green:118.0/255.0 blue:126.0/255.0 alpha:1]];
+        preprocessingStyle = [ECTextStyle textStyleWithName:@"Preprocessor Statements" font:nil color:[UIColor colorWithRed:115.0/255.0 green:66.0/255.0 blue:33.0/255.0 alpha:1]];
         
         __weak ACCodeIndexerDataSource *this = self;
         [self addStylingBlock:^(NSMutableAttributedString *string, NSRange stringRange)
