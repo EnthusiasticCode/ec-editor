@@ -96,7 +96,7 @@
 
 /// Conveniance method to add a tab with a datasouce and an URL. This method returns the 
 /// added tab controller or nil if the controller could not be crated.
-- (ACTabController *)addTabControllerWithDataSorce:(id<ACTabControllerDataSource>)datasource initialURL:(NSURL *)initialURL animated:(BOOL)animated;
+- (ACTabController *)addTabControllerWithDataSorce:(id<ACTabControllerDataSource>)datasource tab:(ACTab *)tab animated:(BOOL)animated;
 
 /// Removes a tab controller from the tab navigation
 - (void)removeTabController:(ACTabController *)tabController animated:(BOOL)animated;

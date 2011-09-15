@@ -8,22 +8,47 @@
 
 #import "ACPopoverHistoryToolController.h"
 #import "AppStyle.h"
+#import "ACTab.h"
+
+static void * const ACPopoverHistoryToolControllerTabCurrentHistoryPositionObserving;
+static void * const ACPopoverHistoryToolControllerTabHistoryItemsObserving;
 
 #define SECTION_BACK_TO_PROJECTS 1
 #define SECTION_HISTORY_URLS 0
 
-@implementation ACPopoverHistoryToolController {
-    NSArray *historyURLs;
-    NSUInteger historyPoint;
+@implementation ACPopoverHistoryToolController
+
+@synthesize tab = _tab;
+
+- (void)setTab:(ACTab *)tab
+{
+    if (tab == _tab)
+        return;
+    [_tab removeObserver:self forKeyPath:@"currentHistoryPosition" context:ACPopoverHistoryToolControllerTabCurrentHistoryPositionObserving];
+    [_tab removeObserver:self forKeyPath:@"historyItems" context:ACPopoverHistoryToolControllerTabHistoryItemsObserving];
+    _tab = tab;
+    [_tab addObserver:self forKeyPath:@"currentHistoryPosition" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial context:ACPopoverHistoryToolControllerTabCurrentHistoryPositionObserving];
+    [_tab addObserver:self forKeyPath:@"historyItems" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial context:ACPopoverHistoryToolControllerTabHistoryItemsObserving];
 }
 
-- (void)didReceiveMemoryWarning
+- (void)dealloc
 {
-    // Releases the view if it doesn't have a superview.
-    [super didReceiveMemoryWarning];
-    
-    // TODO release this?
-    historyURLs = nil;
+    [_tab removeObserver:self forKeyPath:@"currentHistoryPosition" context:ACPopoverHistoryToolControllerTabCurrentHistoryPositionObserving];
+    [_tab removeObserver:self forKeyPath:@"historyItems" context:ACPopoverHistoryToolControllerTabHistoryItemsObserving];
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    if (context == ACPopoverHistoryToolControllerTabHistoryItemsObserving)
+    {
+        [self.tableView reloadData];
+    }
+    else if (context == ACPopoverHistoryToolControllerTabCurrentHistoryPositionObserving)
+    {
+        // TODO: different formatting for current history position, update without reloading on history position change
+    }
+    else
+        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
 }
 
 #pragma mark - View lifecycle
@@ -36,12 +61,6 @@
     self.tableView.separatorColor = [UIColor styleForegroundColor];
     // TODO make this a button to go back to projects?
     self.tableView.tableFooterView = [UIView new];
-}
-
-- (void)viewDidUnload
-{
-    [super viewDidUnload];
-    historyURLs = nil;
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
@@ -58,7 +77,7 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return section == SECTION_HISTORY_URLS ? [historyURLs count] : 1;
+    return section == SECTION_HISTORY_URLS ? [self.tab.historyItems count] : 1;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -83,7 +102,7 @@
     else
     {
         NSUInteger historyIndex = [indexPath indexAtPosition:1];
-        cell.textLabel.text = [[historyURLs objectAtIndex:historyIndex] path];
+        cell.textLabel.text = [[[self.tab.historyItems objectAtIndex:historyIndex] URL] path];
     }
     
     return cell;
@@ -98,28 +117,8 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    // Navigation logic may go here. Create and push another view controller.
-    /*
-     <#DetailViewController#> *detailViewController = [[<#DetailViewController#> alloc] initWithNibName:@"<#Nib name#>" bundle:nil];
-     // ...
-     // Pass the selected object to the new view controller.
-     [self.navigationController pushViewController:detailViewController animated:YES];
-     */
-}
-
-#pragma mark - Public Methods
-
-- (void)setHistoryURLs:(NSArray *)urls hisoryPointIndex:(NSUInteger)index
-{
-    ECASSERT(urls != nil);
-    ECASSERT(index < [urls count]);
-    
-    // TODO filter out urls with nil path
-    
-    historyURLs = urls;
-    historyPoint = index;
-    
-    [self.tableView reloadData];
+    NSUInteger historyIndex = [indexPath indexAtPosition:1];
+    self.tab.currentHistoryPosition = historyIndex;
 }
 
 @end

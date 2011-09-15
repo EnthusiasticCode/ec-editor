@@ -8,9 +8,10 @@
 
 #import <UIKit/UIKit.h>
 
+@class ACTab;
+
 @interface ACPopoverHistoryToolController : UITableViewController
 
-/// Sets the urls to be displayed by the table and the current history point.
-- (void)setHistoryURLs:(NSArray *)urls hisoryPointIndex:(NSUInteger)index;
+@property (nonatomic, strong) ACTab *tab;
 
 @end

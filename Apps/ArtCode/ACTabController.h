@@ -10,6 +10,7 @@
 
 @class ACTabController;
 @class ACTabNavigationController;
+@class ACTab;
 
 @protocol ACTabControllerDataSource <NSObject>
 @required
@@ -56,7 +57,7 @@
 #pragma mark Create Tab Controllers
 
 /// Create a new tab controller with a single URL in its history.
-- (id)initWithDataSource:(id<ACTabControllerDataSource>)datasource URL:(NSURL *)initialURL;
+- (id)initWithDataSource:(id<ACTabControllerDataSource>)datasource tab:(ACTab *)tab;
 
 #pragma mark Accessing Tab's Environment
 
@@ -65,6 +66,9 @@
 
 /// Delegate of the tab.
 @property (nonatomic, weak) id<ACTabControllerDelegate> delegate;
+
+/// Tab object the tab controller is displaying
+@property (nonatomic, strong) ACTab *tab;
 
 /// Returns the tab navigation controller that manage this tab.
 @property (nonatomic, readonly, weak) ACTabNavigationController *parentTabNavigationController;
@@ -94,35 +98,5 @@
 /// Returns true if the tabViewController property is not nil without triggering 
 /// a view controller creation.
 @property (nonatomic, readonly) BOOL isTabViewControllerLoaded;
-
-#pragma mark Managing Tab's History
-
-/// Returns an array of all URLs in the tab's history.
-@property (nonatomic, readonly, copy) NSArray *historyURLs;
-
-/// The current URL the tab history is pointing at. This property is read only.
-/// To change the current URL use one of the move methods or pushURL.
-@property (nonatomic, readonly) NSURL *currentURL;
-
-/// Convenience method to retrieve the index of currentURL in the historyURLs array.
-@property (nonatomic, readonly) NSUInteger currentURLIndex;
-
-/// A value indicating if calling moveBackInHistoryAnimated: will have any effect.
-@property (nonatomic, readonly) BOOL canMoveBack;
-
-/// A value indicating if calling moveForwardInHistoryAnimated: will have any effect.
-@property (nonatomic, readonly) BOOL canMoveForward;
-
-/// Pushes an URL to the tab's history.
-- (void)pushURL:(NSURL *)url;
-
-/// Move in the tab's history. The index is relative to the historyURLs array.
-- (void)moveToHistoryURLAtIndex:(NSUInteger)URLIndex;
-
-/// Convinience method that moves the tab's history back by one step.
-- (void)moveBackInHistory;
-
-/// Convinience method that moves the tab's history forward by one step.
-- (void)moveForwardInHistory;
 
 @end

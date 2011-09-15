@@ -12,6 +12,7 @@
 #import "UIView+ReuseIdentifier.h"
 
 #import "ACTabButton.h"
+#import "ACTab.h"
 
 /// Category on tab controller to assign it's parent;
 @interface ACTabController (ParentCategory)
@@ -134,7 +135,7 @@ typedef void (^ScrollViewBlock)(UIScrollView *scrollView);
     NSString *title = nil;
     
     // Generate and validate title
-    NSURL *url = controller.currentURL;
+    NSURL *url = controller.tab.currentURL;
     if (url != nil && url.lastPathComponent != nil)
     {
         title = url.lastPathComponent;
@@ -519,12 +520,12 @@ static void loadCurrentAndAdiacentTabViews(ACTabNavigationController *self, ACTa
     }
 }
 
-- (ACTabController *)addTabControllerWithDataSorce:(id<ACTabControllerDataSource>)datasource initialURL:(NSURL *)initialURL animated:(BOOL)animated
+- (ACTabController *)addTabControllerWithDataSorce:(id<ACTabControllerDataSource>)datasource tab:(ACTab *)tab animated:(BOOL)animated
 {
     ECASSERT(datasource != nil);
-    ECASSERT(initialURL != nil);
+    ECASSERT(tab != nil);
     
-    ACTabController *tabController = [[ACTabController alloc] initWithDataSource:datasource URL:initialURL];
+    ACTabController *tabController = [[ACTabController alloc] initWithDataSource:datasource tab:tab];
     
     [self addTabController:tabController animated:animated];
     

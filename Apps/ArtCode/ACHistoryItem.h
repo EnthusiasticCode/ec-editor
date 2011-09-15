@@ -15,7 +15,7 @@
 
 @property (nonatomic) float position;
 @property (nonatomic, strong) id selection;
-@property (nonatomic, strong) NSString * URL;
+@property (nonatomic, strong) NSURL * URL;
 @property (nonatomic, strong) ACTab *tab;
 
 @end

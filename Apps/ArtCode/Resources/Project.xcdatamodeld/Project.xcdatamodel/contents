@@ -11,8 +11,6 @@
         <relationship name="children" optional="YES" toMany="YES" deletionRule="Cascade" ordered="YES" destinationEntity="Node" inverseName="parent" inverseEntity="Node"/>
     </entity>
     <entity name="HistoryItem" representedClassName="ACHistoryItem">
-        <attribute name="position" attributeType="Float" defaultValueString="0.0"/>
-        <attribute name="selection" optional="YES" attributeType="Transformable"/>
         <attribute name="URL" attributeType="String"/>
         <relationship name="tab" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Tab" inverseName="historyItems" inverseEntity="Tab"/>
     </entity>
@@ -22,12 +20,11 @@
         <relationship name="parent" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Group" inverseName="children" inverseEntity="Group"/>
     </entity>
     <entity name="Project" representedClassName="ACProject" parentEntity="Group" syncable="YES">
-        <relationship name="bookmarks" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Bookmark" inverseName="project" inverseEntity="Bookmark" syncable="YES"/>
-        <relationship name="tabs" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Tab" inverseName="project" inverseEntity="Tab" syncable="YES"/>
+        <relationship name="bookmarks" optional="YES" toMany="YES" deletionRule="Cascade" ordered="YES" destinationEntity="Bookmark" inverseName="project" inverseEntity="Bookmark" syncable="YES"/>
+        <relationship name="tabs" optional="YES" toMany="YES" deletionRule="Cascade" ordered="YES" destinationEntity="Tab" inverseName="project" inverseEntity="Tab" syncable="YES"/>
     </entity>
     <entity name="Tab" representedClassName="ACTab">
         <attribute name="currentHistoryPosition" attributeType="Integer 16" defaultValueString="0"/>
-        <attribute name="index" attributeType="Integer 16"/>
         <relationship name="historyItems" toMany="YES" minCount="1" deletionRule="Cascade" ordered="YES" destinationEntity="HistoryItem" inverseName="tab" inverseEntity="HistoryItem"/>
         <relationship name="project" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Project" inverseName="tabs" inverseEntity="Project" syncable="YES"/>
     </entity>

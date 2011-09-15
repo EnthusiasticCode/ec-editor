@@ -14,12 +14,19 @@
 
 @interface ACProject : ACGroup
 
-@property (nonatomic, strong) NSSet *bookmarks;
-@property (nonatomic, strong) NSSet *tabs;
+@property (nonatomic, strong) NSOrderedSet *bookmarks;
+@property (nonatomic, strong) NSOrderedSet *tabs;
 
 @property (nonatomic, strong, readonly) NSString *name;
 @property (nonatomic, strong) NSURL *URL;
 @property (nonatomic, strong) NSURL *fileURL;
+
+- (void)insertTabAtIndex:(NSUInteger)index;
+- (void)removeTabAtIndex:(NSUInteger)index;
+
+/// Reorder the tabs list
+- (void)moveTabsAtIndexes:(NSIndexSet *)indexes toIndex:(NSUInteger)index;
+- (void)exchangeTabsAtIndex:(NSUInteger)fromIndex withTabsAtIndex:(NSUInteger)toIndex;
 
 @end
 
