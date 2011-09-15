@@ -97,6 +97,8 @@
     UIImage *toolFilterElementBackgorundImage = [UIImage styleBackgroundImageWithColor:[UIColor styleForegroundColor] borderColor:[UIColor styleBackgroundColor] insets:UIEdgeInsetsMake(7, 7, 7, 7) arrowSize:CGSizeZero roundingCorners:UIRectCornerAllCorners];
     id buttonInToolFiltersView = [UIButton appearanceWhenContainedIn:[ACToolFiltersView class], nil];
     [buttonInToolFiltersView setBackgroundImage:toolFilterElementBackgorundImage forState:UIControlStateNormal];
+    [buttonInToolFiltersView setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [buttonInToolFiltersView setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     
     id textFieldInToolFiltersView = [UITextField appearanceWhenContainedIn:[ACToolFiltersView class], nil];
     [textFieldInToolFiltersView setTextColor:[UIColor styleBackgroundColor]];

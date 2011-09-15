@@ -57,6 +57,8 @@
     tableView.tableFooterView = footerView;
     
     extensions = [NSArray arrayWithObjects:@"h", @"m", @"hpp", @"cpp", @"mm", @"py", nil];
+    
+    [self setEditing:NO animated:NO];
 }
 
 - (void)viewDidUnload
@@ -79,7 +81,6 @@
     {
         if (!editingToolsView)
         {
-            
             editingToolsView = [ACToolFiltersView new];
             editingToolsView.backgroundColor = [UIColor styleForegroundColor];
             editingToolsView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleTopMargin;
@@ -130,7 +131,7 @@
 
 + (id)newNavigationTargetController
 {
-    return [ACFileTableController new];
+    return [[ACFileTableController alloc] initWithNibName:@"ACFileTableController" bundle:nil];
 }
 
 - (void)openURL:(NSURL *)url
