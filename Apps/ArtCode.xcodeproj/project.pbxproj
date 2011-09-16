@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		B732CFFB13DB24F600637FBE /* Project.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = B732CFF913DB24F600637FBE /* Project.xcdatamodeld */; };
-		B732D01313DB2C0800637FBE /* ACProject.m in Sources */ = {isa = PBXBuildFile; fileRef = B732D01213DB2C0800637FBE /* ACProject.m */; };
 		B732D01513DB361600637FBE /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B732D01413DB361600637FBE /* CoreData.framework */; };
 		B732D06413DD799400637FBE /* ACURL.m in Sources */ = {isa = PBXBuildFile; fileRef = B732D06313DD799300637FBE /* ACURL.m */; };
 		B7AC172214216C3C009E9205 /* ECURL.m in Sources */ = {isa = PBXBuildFile; fileRef = B7AC172014216C3C009E9205 /* ECURL.m */; };
@@ -16,20 +15,23 @@
 		B7AC172C14216C9F009E9205 /* libarc.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7AC172B14216C9F009E9205 /* libarc.a */; };
 		B7AC172F14216CD4009E9205 /* NewFilePopover.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B7AC172D14216CD4009E9205 /* NewFilePopover.storyboard */; };
 		B7AC173014216CD4009E9205 /* NewProjectPopover.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B7AC172E14216CD4009E9205 /* NewProjectPopover.storyboard */; };
-		B7AC174514216D1C009E9205 /* ACBookmark.m in Sources */ = {isa = PBXBuildFile; fileRef = B7AC173214216D1B009E9205 /* ACBookmark.m */; };
-		B7AC174614216D1C009E9205 /* ACFile.m in Sources */ = {isa = PBXBuildFile; fileRef = B7AC173414216D1C009E9205 /* ACFile.m */; };
-		B7AC174714216D1C009E9205 /* ACGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = B7AC173614216D1C009E9205 /* ACGroup.m */; };
-		B7AC174814216D1C009E9205 /* ACHistoryItem.m in Sources */ = {isa = PBXBuildFile; fileRef = B7AC173814216D1C009E9205 /* ACHistoryItem.m */; };
 		B7AC174914216D1C009E9205 /* ACNewFileImportFileController.m in Sources */ = {isa = PBXBuildFile; fileRef = B7AC173A14216D1C009E9205 /* ACNewFileImportFileController.m */; };
 		B7AC174A14216D1C009E9205 /* ACNewProjectFromACZController.m in Sources */ = {isa = PBXBuildFile; fileRef = B7AC173C14216D1C009E9205 /* ACNewProjectFromACZController.m */; };
 		B7AC174B14216D1C009E9205 /* ACNewProjectFromTemplateController.m in Sources */ = {isa = PBXBuildFile; fileRef = B7AC173E14216D1C009E9205 /* ACNewProjectFromTemplateController.m */; };
 		B7AC174C14216D1C009E9205 /* ACNewProjectFromZIPController.m in Sources */ = {isa = PBXBuildFile; fileRef = B7AC174014216D1C009E9205 /* ACNewProjectFromZIPController.m */; };
 		B7AC174D14216D1C009E9205 /* ACNewProjectPopoverController.m in Sources */ = {isa = PBXBuildFile; fileRef = B7AC174214216D1C009E9205 /* ACNewProjectPopoverController.m */; };
-		B7AC174E14216D1C009E9205 /* ACTab.m in Sources */ = {isa = PBXBuildFile; fileRef = B7AC174414216D1C009E9205 /* ACTab.m */; };
 		B7AC175514216D91009E9205 /* libz.1.2.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B7AC175414216D91009E9205 /* libz.1.2.5.dylib */; };
 		B7AC177E1423A6D4009E9205 /* ECClangCodeCursor.m in Sources */ = {isa = PBXBuildFile; fileRef = B7AC177B1423A6D3009E9205 /* ECClangCodeCursor.m */; };
 		B7AC177F1423A6D4009E9205 /* ECClangHelperFunctions.m in Sources */ = {isa = PBXBuildFile; fileRef = B7AC177D1423A6D3009E9205 /* ECClangHelperFunctions.m */; };
-		B7C738A713F47B36006EB040 /* ACNode.m in Sources */ = {isa = PBXBuildFile; fileRef = B7C738A613F47B36006EB040 /* ACNode.m */; };
+		B7AC17871423B339009E9205 /* Application.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = B7AC17851423B339009E9205 /* Application.xcdatamodeld */; };
+		B7AC178B1423B56C009E9205 /* ACTab.m in Sources */ = {isa = PBXBuildFile; fileRef = B7AC178A1423B56C009E9205 /* ACTab.m */; };
+		B7AC178E1423B56C009E9205 /* ACApplication.m in Sources */ = {isa = PBXBuildFile; fileRef = B7AC178D1423B56C009E9205 /* ACApplication.m */; };
+		B7AC17911423B56C009E9205 /* ACBookmark.m in Sources */ = {isa = PBXBuildFile; fileRef = B7AC17901423B56C009E9205 /* ACBookmark.m */; };
+		B7AC17941423B56D009E9205 /* ACHistoryItem.m in Sources */ = {isa = PBXBuildFile; fileRef = B7AC17931423B56D009E9205 /* ACHistoryItem.m */; };
+		B7AC17971423B5B5009E9205 /* ACFile.m in Sources */ = {isa = PBXBuildFile; fileRef = B7AC17961423B5B5009E9205 /* ACFile.m */; };
+		B7AC179A1423B5B5009E9205 /* ACProject.m in Sources */ = {isa = PBXBuildFile; fileRef = B7AC17991423B5B5009E9205 /* ACProject.m */; };
+		B7AC179D1423B5B5009E9205 /* ACNode.m in Sources */ = {isa = PBXBuildFile; fileRef = B7AC179C1423B5B5009E9205 /* ACNode.m */; };
+		B7AC17A01423B5B5009E9205 /* ACGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = B7AC179F1423B5B5009E9205 /* ACGroup.m */; };
 		B7DF4B5D13EFE52F00BF8306 /* ACProjectDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = B7DF4B5C13EFE52F00BF8306 /* ACProjectDocument.m */; };
 		CD13665913D32150001F3455 /* UIControl+BlockAction.m in Sources */ = {isa = PBXBuildFile; fileRef = CD13665813D32150001F3455 /* UIControl+BlockAction.m */; };
 		CD1DEA4A1415558500560D81 /* ACCodeIndexerDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = CD1DEA491415558500560D81 /* ACCodeIndexerDataSource.m */; };
@@ -225,8 +227,6 @@
 /* Begin PBXFileReference section */
 		B732CFE913DB1B6B00637FBE /* ECDebug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECDebug.h; path = ../../Frameworks/ECCore/ECDebug.h; sourceTree = "<group>"; };
 		B732CFFA13DB24F600637FBE /* Project.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Project.xcdatamodel; sourceTree = "<group>"; };
-		B732D01113DB2C0800637FBE /* ACProject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACProject.h; sourceTree = "<group>"; };
-		B732D01213DB2C0800637FBE /* ACProject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACProject.m; sourceTree = "<group>"; };
 		B732D01413DB361600637FBE /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		B732D06213DD799200637FBE /* ACURL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACURL.h; sourceTree = "<group>"; };
 		B732D06313DD799300637FBE /* ACURL.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACURL.m; sourceTree = "<group>"; };
@@ -239,14 +239,6 @@
 		B7AC172B14216C9F009E9205 /* libarc.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libarc.a; sourceTree = "<group>"; };
 		B7AC172D14216CD4009E9205 /* NewFilePopover.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = NewFilePopover.storyboard; sourceTree = "<group>"; };
 		B7AC172E14216CD4009E9205 /* NewProjectPopover.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = NewProjectPopover.storyboard; sourceTree = "<group>"; };
-		B7AC173114216D1B009E9205 /* ACBookmark.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACBookmark.h; sourceTree = "<group>"; };
-		B7AC173214216D1B009E9205 /* ACBookmark.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACBookmark.m; sourceTree = "<group>"; };
-		B7AC173314216D1B009E9205 /* ACFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACFile.h; sourceTree = "<group>"; };
-		B7AC173414216D1C009E9205 /* ACFile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACFile.m; sourceTree = "<group>"; };
-		B7AC173514216D1C009E9205 /* ACGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACGroup.h; sourceTree = "<group>"; };
-		B7AC173614216D1C009E9205 /* ACGroup.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACGroup.m; sourceTree = "<group>"; };
-		B7AC173714216D1C009E9205 /* ACHistoryItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACHistoryItem.h; sourceTree = "<group>"; };
-		B7AC173814216D1C009E9205 /* ACHistoryItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACHistoryItem.m; sourceTree = "<group>"; };
 		B7AC173914216D1C009E9205 /* ACNewFileImportFileController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACNewFileImportFileController.h; sourceTree = "<group>"; };
 		B7AC173A14216D1C009E9205 /* ACNewFileImportFileController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACNewFileImportFileController.m; sourceTree = "<group>"; };
 		B7AC173B14216D1C009E9205 /* ACNewProjectFromACZController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACNewProjectFromACZController.h; sourceTree = "<group>"; };
@@ -257,15 +249,28 @@
 		B7AC174014216D1C009E9205 /* ACNewProjectFromZIPController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACNewProjectFromZIPController.m; sourceTree = "<group>"; };
 		B7AC174114216D1C009E9205 /* ACNewProjectPopoverController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACNewProjectPopoverController.h; sourceTree = "<group>"; };
 		B7AC174214216D1C009E9205 /* ACNewProjectPopoverController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACNewProjectPopoverController.m; sourceTree = "<group>"; };
-		B7AC174314216D1C009E9205 /* ACTab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACTab.h; sourceTree = "<group>"; };
-		B7AC174414216D1C009E9205 /* ACTab.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACTab.m; sourceTree = "<group>"; };
 		B7AC175414216D91009E9205 /* libz.1.2.5.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.1.2.5.dylib; path = usr/lib/libz.1.2.5.dylib; sourceTree = SDKROOT; };
 		B7AC177A1423A6D3009E9205 /* ECClangCodeCursor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECClangCodeCursor.h; sourceTree = "<group>"; };
 		B7AC177B1423A6D3009E9205 /* ECClangCodeCursor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECClangCodeCursor.m; sourceTree = "<group>"; };
 		B7AC177C1423A6D3009E9205 /* ECClangHelperFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECClangHelperFunctions.h; sourceTree = "<group>"; };
 		B7AC177D1423A6D3009E9205 /* ECClangHelperFunctions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECClangHelperFunctions.m; sourceTree = "<group>"; };
-		B7C738A513F47B36006EB040 /* ACNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACNode.h; sourceTree = "<group>"; };
-		B7C738A613F47B36006EB040 /* ACNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACNode.m; sourceTree = "<group>"; };
+		B7AC17861423B339009E9205 /* Application.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Application.xcdatamodel; sourceTree = "<group>"; };
+		B7AC17891423B56C009E9205 /* ACTab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACTab.h; sourceTree = "<group>"; };
+		B7AC178A1423B56C009E9205 /* ACTab.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACTab.m; sourceTree = "<group>"; };
+		B7AC178C1423B56C009E9205 /* ACApplication.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACApplication.h; sourceTree = "<group>"; };
+		B7AC178D1423B56C009E9205 /* ACApplication.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACApplication.m; sourceTree = "<group>"; };
+		B7AC178F1423B56C009E9205 /* ACBookmark.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACBookmark.h; sourceTree = "<group>"; };
+		B7AC17901423B56C009E9205 /* ACBookmark.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACBookmark.m; sourceTree = "<group>"; };
+		B7AC17921423B56D009E9205 /* ACHistoryItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACHistoryItem.h; sourceTree = "<group>"; };
+		B7AC17931423B56D009E9205 /* ACHistoryItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACHistoryItem.m; sourceTree = "<group>"; };
+		B7AC17951423B5B5009E9205 /* ACFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACFile.h; sourceTree = "<group>"; };
+		B7AC17961423B5B5009E9205 /* ACFile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACFile.m; sourceTree = "<group>"; };
+		B7AC17981423B5B5009E9205 /* ACProject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACProject.h; sourceTree = "<group>"; };
+		B7AC17991423B5B5009E9205 /* ACProject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACProject.m; sourceTree = "<group>"; };
+		B7AC179B1423B5B5009E9205 /* ACNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACNode.h; sourceTree = "<group>"; };
+		B7AC179C1423B5B5009E9205 /* ACNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACNode.m; sourceTree = "<group>"; };
+		B7AC179E1423B5B5009E9205 /* ACGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACGroup.h; sourceTree = "<group>"; };
+		B7AC179F1423B5B5009E9205 /* ACGroup.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACGroup.m; sourceTree = "<group>"; };
 		B7DF4B5B13EFE52F00BF8306 /* ACProjectDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACProjectDocument.h; sourceTree = "<group>"; };
 		B7DF4B5C13EFE52F00BF8306 /* ACProjectDocument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACProjectDocument.m; sourceTree = "<group>"; };
 		CD0DEAB613D4C2430087ADBB /* ACNavigationTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACNavigationTarget.h; sourceTree = "<group>"; };
@@ -643,20 +648,22 @@
 		B732D00113DB2AD100637FBE /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				B7AC173114216D1B009E9205 /* ACBookmark.h */,
-				B7AC173214216D1B009E9205 /* ACBookmark.m */,
-				B7AC173314216D1B009E9205 /* ACFile.h */,
-				B7AC173414216D1C009E9205 /* ACFile.m */,
-				B7AC173514216D1C009E9205 /* ACGroup.h */,
-				B7AC173614216D1C009E9205 /* ACGroup.m */,
-				B7AC173714216D1C009E9205 /* ACHistoryItem.h */,
-				B7AC173814216D1C009E9205 /* ACHistoryItem.m */,
-				B7AC174314216D1C009E9205 /* ACTab.h */,
-				B7AC174414216D1C009E9205 /* ACTab.m */,
-				B7C738A513F47B36006EB040 /* ACNode.h */,
-				B7C738A613F47B36006EB040 /* ACNode.m */,
-				B732D01113DB2C0800637FBE /* ACProject.h */,
-				B732D01213DB2C0800637FBE /* ACProject.m */,
+				B7AC179E1423B5B5009E9205 /* ACGroup.h */,
+				B7AC179F1423B5B5009E9205 /* ACGroup.m */,
+				B7AC179B1423B5B5009E9205 /* ACNode.h */,
+				B7AC179C1423B5B5009E9205 /* ACNode.m */,
+				B7AC17981423B5B5009E9205 /* ACProject.h */,
+				B7AC17991423B5B5009E9205 /* ACProject.m */,
+				B7AC17951423B5B5009E9205 /* ACFile.h */,
+				B7AC17961423B5B5009E9205 /* ACFile.m */,
+				B7AC17921423B56D009E9205 /* ACHistoryItem.h */,
+				B7AC17931423B56D009E9205 /* ACHistoryItem.m */,
+				B7AC178F1423B56C009E9205 /* ACBookmark.h */,
+				B7AC17901423B56C009E9205 /* ACBookmark.m */,
+				B7AC178C1423B56C009E9205 /* ACApplication.h */,
+				B7AC178D1423B56C009E9205 /* ACApplication.m */,
+				B7AC17891423B56C009E9205 /* ACTab.h */,
+				B7AC178A1423B56C009E9205 /* ACTab.m */,
 				B7DF4B5B13EFE52F00BF8306 /* ACProjectDocument.h */,
 				B7DF4B5C13EFE52F00BF8306 /* ACProjectDocument.m */,
 			);
@@ -739,6 +746,7 @@
 			isa = PBXGroup;
 			children = (
 				B732CFF913DB24F600637FBE /* Project.xcdatamodeld */,
+				B7AC17851423B339009E9205 /* Application.xcdatamodeld */,
 			);
 			name = "Core Data";
 			sourceTree = "<group>";
@@ -1456,7 +1464,6 @@
 				CD4786E913DB0C2500616B62 /* ACState.m in Sources */,
 				CD4786ED13DB0F7A00616B62 /* ECBezelAlert.m in Sources */,
 				B732CFFB13DB24F600637FBE /* Project.xcdatamodeld in Sources */,
-				B732D01313DB2C0800637FBE /* ACProject.m in Sources */,
 				CD9CD95D13DC1854007964D3 /* ECCodeView.m in Sources */,
 				CD9CD95E13DC1854007964D3 /* ECCodeViewBase.m in Sources */,
 				CD9CD95F13DC1854007964D3 /* ECTextPosition.m in Sources */,
@@ -1474,7 +1481,6 @@
 				CDF215F713E4468F005B520F /* ACEditableTableCell.m in Sources */,
 				B7DF4B5D13EFE52F00BF8306 /* ACProjectDocument.m in Sources */,
 				CD21547913F45CC200614B83 /* ACToolButton.m in Sources */,
-				B7C738A713F47B36006EB040 /* ACNode.m in Sources */,
 				CDF1D3AE1415073900EFEC21 /* ECClangCodeIndex.m in Sources */,
 				CDF1D3AF1415073900EFEC21 /* ECClangCodeUnit.m in Sources */,
 				CDF1D3B01415073900EFEC21 /* ECCodeCompletionChunk.m in Sources */,
@@ -1495,18 +1501,22 @@
 				CDE1CB81142102A500151BD7 /* ACTabButton.m in Sources */,
 				B7AC172214216C3C009E9205 /* ECURL.m in Sources */,
 				B7AC172614216C4A009E9205 /* ECArchive.m in Sources */,
-				B7AC174514216D1C009E9205 /* ACBookmark.m in Sources */,
-				B7AC174614216D1C009E9205 /* ACFile.m in Sources */,
-				B7AC174714216D1C009E9205 /* ACGroup.m in Sources */,
-				B7AC174814216D1C009E9205 /* ACHistoryItem.m in Sources */,
 				B7AC174914216D1C009E9205 /* ACNewFileImportFileController.m in Sources */,
 				B7AC174A14216D1C009E9205 /* ACNewProjectFromACZController.m in Sources */,
 				B7AC174B14216D1C009E9205 /* ACNewProjectFromTemplateController.m in Sources */,
 				B7AC174C14216D1C009E9205 /* ACNewProjectFromZIPController.m in Sources */,
 				B7AC174D14216D1C009E9205 /* ACNewProjectPopoverController.m in Sources */,
-				B7AC174E14216D1C009E9205 /* ACTab.m in Sources */,
 				B7AC177E1423A6D4009E9205 /* ECClangCodeCursor.m in Sources */,
 				B7AC177F1423A6D4009E9205 /* ECClangHelperFunctions.m in Sources */,
+				B7AC17871423B339009E9205 /* Application.xcdatamodeld in Sources */,
+				B7AC178B1423B56C009E9205 /* ACTab.m in Sources */,
+				B7AC178E1423B56C009E9205 /* ACApplication.m in Sources */,
+				B7AC17911423B56C009E9205 /* ACBookmark.m in Sources */,
+				B7AC17941423B56D009E9205 /* ACHistoryItem.m in Sources */,
+				B7AC17971423B5B5009E9205 /* ACFile.m in Sources */,
+				B7AC179A1423B5B5009E9205 /* ACProject.m in Sources */,
+				B7AC179D1423B5B5009E9205 /* ACNode.m in Sources */,
+				B7AC17A01423B5B5009E9205 /* ACGroup.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1637,6 +1647,16 @@
 			);
 			currentVersion = B732CFFA13DB24F600637FBE /* Project.xcdatamodel */;
 			path = Project.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+		B7AC17851423B339009E9205 /* Application.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				B7AC17861423B339009E9205 /* Application.xcdatamodel */,
+			);
+			currentVersion = B7AC17861423B339009E9205 /* Application.xcdatamodel */;
+			path = Application.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
 		};

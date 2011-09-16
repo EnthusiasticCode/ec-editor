@@ -2,19 +2,19 @@
 //  ACBookmark.h
 //  ArtCode
 //
-//  Created by Uri Baghin on 9/6/11.
+//  Created by Uri Baghin on 9/16/11.
 //  Copyright (c) 2011 __MyCompanyName__. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
 
-@class ACProject;
+@class ACApplication;
 
 @interface ACBookmark : NSManagedObject
 
 @property (nonatomic, strong) NSString * note;
-@property (nonatomic) int32_t offset;
-@property (nonatomic, strong) ACProject *project;
+@property (nonatomic, strong) NSURL * URL;
+@property (nonatomic, strong) ACApplication *application;
 
 @end

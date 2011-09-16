@@ -9,7 +9,7 @@
 #import "ACTabController.h"
 #import "ACTabNavigationController.h"
 #import "ACTab.h"
-#import "ACProject.h"
+#import "ACApplication.h"
 
 @implementation ACTabController {
     // TODO substitute with state
@@ -47,7 +47,7 @@
 
 - (NSUInteger)position
 {
-    return [self.tab.project.tabs indexOfObject:self.tab];
+    return [self.tab.application.tabs indexOfObject:self.tab];
 }
 
 - (UIViewController *)tabViewController
@@ -84,8 +84,8 @@
 
 - (id)copyWithZone:(NSZone *)zone
 {
-    [self.tab.project insertTabAtIndex:self.position + 1];
-    ACTab *newTab = [self.tab.project.tabs objectAtIndex:self.position + 1];
+    [self.tab.application insertTabAtIndex:self.position + 1];
+    ACTab *newTab = [self.tab.application.tabs objectAtIndex:self.position + 1];
     [newTab pushURL:self.tab.currentURL];
     return [[ACTabController alloc] initWithDataSource:dataSource tab:newTab];
 }

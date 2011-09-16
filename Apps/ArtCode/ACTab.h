@@ -2,25 +2,20 @@
 //  ACTab.h
 //  ArtCode
 //
-//  Created by Uri Baghin on 9/6/11.
+//  Created by Uri Baghin on 9/16/11.
 //  Copyright (c) 2011 __MyCompanyName__. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
 
-@class ACHistoryItem, ACProject;
+@class ACApplication, ACHistoryItem;
 
 @interface ACTab : NSManagedObject
 
-/// The project the tab is part of
-@property (nonatomic, strong) ACProject *project;
-
-/// Returns an ordered set of all history items in the tab's history.
-@property (nonatomic, strong) NSOrderedSet *historyItems;
-
-/// Convenience method to retrieve the index of currentURL in the historyURLs array.
 @property (nonatomic) int16_t currentHistoryPosition;
+@property (nonatomic, strong) ACApplication *application;
+@property (nonatomic, strong) NSOrderedSet *historyItems;
 
 /// The current URL the tab history is pointing at. This property is read only.
 /// To change the current URL use one of the move methods or pushURL.
@@ -41,7 +36,6 @@
 
 /// Convinience method that moves the tab's history forward by one step.
 - (void)moveForwardInHistory;
-
 
 @end
 

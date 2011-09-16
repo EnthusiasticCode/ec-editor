@@ -2,7 +2,7 @@
 //  ACGroup.m
 //  ArtCode
 //
-//  Created by Uri Baghin on 9/6/11.
+//  Created by Uri Baghin on 9/16/11.
 //  Copyright (c) 2011 __MyCompanyName__. All rights reserved.
 //
 
@@ -14,10 +14,7 @@
 
 @implementation ACGroup
 
-@dynamic expanded;
 @dynamic children;
-
-@dynamic concrete;
 
 - (NSURL *)fileURL
 {

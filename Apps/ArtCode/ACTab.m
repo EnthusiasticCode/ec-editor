@@ -2,20 +2,20 @@
 //  ACTab.m
 //  ArtCode
 //
-//  Created by Uri Baghin on 9/6/11.
+//  Created by Uri Baghin on 9/16/11.
 //  Copyright (c) 2011 __MyCompanyName__. All rights reserved.
 //
 
 #import "ACTab.h"
+#import "ACApplication.h"
 #import "ACHistoryItem.h"
-#import "ACProject.h"
 
 
 @implementation ACTab
 
 @dynamic currentHistoryPosition;
+@dynamic application;
 @dynamic historyItems;
-@dynamic project;
 
 - (NSURL *)currentURL
 {
@@ -54,7 +54,7 @@
     {
         NSMutableOrderedSet *historyItems = [self mutableOrderedSetValueForKey:@"historyItems"];
         [historyItems removeObjectsInRange:NSMakeRange(self.currentHistoryPosition, lastPosition - self.currentHistoryPosition)];
-     }
+    }
     ACHistoryItem *historyItem = [NSEntityDescription insertNewObjectForEntityForName:@"HistoryItem" inManagedObjectContext:self.managedObjectContext];
     historyItem.tab = self;
     historyItem.URL = url;
