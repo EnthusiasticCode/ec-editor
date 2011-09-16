@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "ECCodeUnitPlugin.h"
+#import <clang-c/Index.h>
 
 extern NSString *const ECClangCodeUnitOptionLanguage;
 extern NSString *const ECClangCodeUnitOptionCXIndex;
