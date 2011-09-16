@@ -89,6 +89,7 @@
     // Jump Bar
     jumpBar.delegate = self;
     jumpBar.minimumTextElementWidth = 0.4;
+    // Text Element
     jumpBar.textElement = [ACJumpBarTextField new];
     jumpBar.textElement.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
     jumpBar.textElement.placeholder = @"Filter";
@@ -97,9 +98,16 @@
     jumpBar.textElement.autocapitalizationType = UITextAutocapitalizationTypeNone;
     jumpBar.textElement.returnKeyType = UIReturnKeySearch;
     jumpBar.backgroundView = [[UIImageView alloc] initWithImage:[UIImage styleBackgroundImageWithColor:[UIColor styleAlternateBackgroundColor] borderColor:[UIColor styleForegroundColor]]];
-    // TODO make this a button?
-    jumpBar.textElement.rightView = [[UIImageView alloc] initWithImage:[UIImage styleSearchIconWithColor:[UIColor styleForegroundColor] shadowColor:[UIColor whiteColor]]];
+    // Right button to search/remove search
+    UIButton *rightButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 16, 17)];
+    [rightButton setImage:[UIImage styleSearchIconWithColor:[UIColor styleForegroundColor] shadowColor:[UIColor whiteColor]] forState:UIControlStateNormal];
+    [rightButton setImage:[UIImage styleCloseImageWithColor:[UIColor styleForegroundColor] outlineColor:nil] forState:UIControlStateSelected];
+    [rightButton setBackgroundImage:nil forState:UIControlStateNormal];
+    [rightButton setBackgroundImage:nil forState:UIControlStateHighlighted];
+    rightButton.adjustsImageWhenHighlighted = NO;
+    jumpBar.textElement.rightView = rightButton;
     jumpBar.textElement.rightViewMode = UITextFieldViewModeAlways;
+    jumpBar.textElement.clearButtonMode = UITextFieldViewModeAlways;
     // Jump bar back button
     UIButton *backButton = [UIButton new];
     UIImage *normalBackButtonBackgrounImage = [UIImage styleBackgroundImageWithColor:[UIColor styleBackgroundColor] borderColor:[UIColor styleForegroundColor] insets:UIEdgeInsetsZero arrowSize:CGSizeZero roundingCorners:UIRectCornerTopLeft | UIRectCornerBottomLeft];

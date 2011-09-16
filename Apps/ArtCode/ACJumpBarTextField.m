@@ -7,8 +7,26 @@
 //
 
 #import "ACJumpBarTextField.h"
+#import "AppStyle.h"
 
 @implementation ACJumpBarTextField
+
+//- (id)initWithFrame:(CGRect)frame
+//{
+//    if ((self = [super initWithFrame:frame]))
+//    {
+//        UIButton *rightButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 16, 17)];
+//        [rightButton setImage:[UIImage styleSearchIconWithColor:[UIColor styleForegroundColor] shadowColor:[UIColor whiteColor]] forState:UIControlStateNormal];
+//        [rightButton setImage:[UIImage styleCloseImageWithColor:[UIColor styleForegroundColor] outlineColor:nil] forState:UIControlStateSelected];
+//        [rightButton setBackgroundImage:nil forState:UIControlStateNormal];
+//        [rightButton setBackgroundImage:nil forState:UIControlStateHighlighted];
+//        rightButton.adjustsImageWhenHighlighted = NO;
+//        self.rightView = rightButton;
+//        self.rightViewMode = UITextFieldViewModeAlways;
+//    }
+//    return self;
+//}
+
 
 - (CGRect)textRectForBounds:(CGRect)bounds
 {
