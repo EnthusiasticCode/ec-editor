@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
+@class ECCodeCursor;
 
 @protocol ECCodeUnitPlugin <NSObject>
 /// Returns whether the unit depends on the file at the given file or not.
@@ -25,4 +26,8 @@
 - (NSArray *)tokensInRange:(NSRange)range withCursors:(BOOL)attachCursors;
 /// Returns all tokens in the file.
 - (NSArray *)tokensWithCursors:(BOOL)attachCursors;
+/// Return the cursor for the unit.
+- (ECCodeCursor *)cursor;
+/// Return the cursor for an offset in the unit's main source file.
+- (ECCodeCursor *)cursorForOffset:(NSUInteger)offset;
 @end

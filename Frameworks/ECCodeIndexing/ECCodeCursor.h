@@ -7,7 +7,6 @@
 //
 
 #import <Foundation/Foundation.h>
-@class ECCodeUnit;
 
 typedef enum
 {
@@ -291,8 +290,14 @@ typedef enum
     ECCodeCursorKindLastPreprocessing             = ECCodeCursorKindInclusionDirective
 } ECCodeCursorKind;
 
+typedef enum
+{
+    ECCodeChildVisitResultBreak,
+    ECCodeChildVisitResultContinue,
+    ECCodeChildVisitResultRecurse,
+} ECCodeChildVisitResult;
+
 @interface ECCodeCursor : NSObject
-@property (nonatomic, readonly, strong) ECCodeUnit *codeUnit;
 @property (nonatomic, readonly, copy) NSString *language;
 @property (nonatomic, readonly) ECCodeCursorKind kind;
 @property (nonatomic, readonly, copy) NSString *spelling;
@@ -300,8 +305,14 @@ typedef enum
 @property (nonatomic, readonly) NSUInteger offset;
 @property (nonatomic, readonly) NSRange extent;
 @property (nonatomic, readonly, copy) NSString *unifiedSymbolResolution;
+@property (nonatomic, readonly, strong) ECCodeCursor *parent;
 
-- (id)initWithLanguage:(NSString *)language kind:(ECCodeCursorKind)kind spelling:(NSString *)spelling file:(NSString *)file offset:(NSUInteger)offset extent:(NSRange)extent unifiedSymbolResolution:(NSString *)unifiedSymbolResolution;
-+ (id)cursorWithLanguage:(NSString *)language kind:(ECCodeCursorKind)kind spelling:(NSString *)spelling file:(NSString *)file offset:(NSUInteger)offset extent:(NSRange)extent unifiedSymbolResolution:(NSString *)unifiedSymbolResolution;
+/// Creates and returns an ordered set containing the child cursors of the receiver
+/// This method is very resource intensive, consider using visitChildCursorsWithBlock: instead
+- (NSOrderedSet *)childCursors;
+
+/// Enumerate the child cursors of the receiver
+/// The block return value specified whether enumeration should stop, continue by enumerating the current cursor's siblings, or continue by enumerating it's child cursors
+- (void)enumerateChildCursorsWithBlock:(ECCodeChildVisitResult(^)(ECCodeCursor *cursor, ECCodeCursor *parent))enumerationBlock;
 
 @end
