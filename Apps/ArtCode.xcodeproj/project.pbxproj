@@ -27,6 +27,8 @@
 		B7AC174D14216D1C009E9205 /* ACNewProjectPopoverController.m in Sources */ = {isa = PBXBuildFile; fileRef = B7AC174214216D1C009E9205 /* ACNewProjectPopoverController.m */; };
 		B7AC174E14216D1C009E9205 /* ACTab.m in Sources */ = {isa = PBXBuildFile; fileRef = B7AC174414216D1C009E9205 /* ACTab.m */; };
 		B7AC175514216D91009E9205 /* libz.1.2.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B7AC175414216D91009E9205 /* libz.1.2.5.dylib */; };
+		B7AC177E1423A6D4009E9205 /* ECClangCodeCursor.m in Sources */ = {isa = PBXBuildFile; fileRef = B7AC177B1423A6D3009E9205 /* ECClangCodeCursor.m */; };
+		B7AC177F1423A6D4009E9205 /* ECClangHelperFunctions.m in Sources */ = {isa = PBXBuildFile; fileRef = B7AC177D1423A6D3009E9205 /* ECClangHelperFunctions.m */; };
 		B7C738A713F47B36006EB040 /* ACNode.m in Sources */ = {isa = PBXBuildFile; fileRef = B7C738A613F47B36006EB040 /* ACNode.m */; };
 		B7DF4B5D13EFE52F00BF8306 /* ACProjectDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = B7DF4B5C13EFE52F00BF8306 /* ACProjectDocument.m */; };
 		CD13665913D32150001F3455 /* UIControl+BlockAction.m in Sources */ = {isa = PBXBuildFile; fileRef = CD13665813D32150001F3455 /* UIControl+BlockAction.m */; };
@@ -258,6 +260,10 @@
 		B7AC174314216D1C009E9205 /* ACTab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACTab.h; sourceTree = "<group>"; };
 		B7AC174414216D1C009E9205 /* ACTab.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACTab.m; sourceTree = "<group>"; };
 		B7AC175414216D91009E9205 /* libz.1.2.5.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.1.2.5.dylib; path = usr/lib/libz.1.2.5.dylib; sourceTree = SDKROOT; };
+		B7AC177A1423A6D3009E9205 /* ECClangCodeCursor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECClangCodeCursor.h; sourceTree = "<group>"; };
+		B7AC177B1423A6D3009E9205 /* ECClangCodeCursor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECClangCodeCursor.m; sourceTree = "<group>"; };
+		B7AC177C1423A6D3009E9205 /* ECClangHelperFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECClangHelperFunctions.h; sourceTree = "<group>"; };
+		B7AC177D1423A6D3009E9205 /* ECClangHelperFunctions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECClangHelperFunctions.m; sourceTree = "<group>"; };
 		B7C738A513F47B36006EB040 /* ACNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACNode.h; sourceTree = "<group>"; };
 		B7C738A613F47B36006EB040 /* ACNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACNode.m; sourceTree = "<group>"; };
 		B7DF4B5B13EFE52F00BF8306 /* ACProjectDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACProjectDocument.h; sourceTree = "<group>"; };
@@ -1128,6 +1134,10 @@
 		CDF1D3BA1415075600EFEC21 /* Clang */ = {
 			isa = PBXGroup;
 			children = (
+				B7AC177A1423A6D3009E9205 /* ECClangCodeCursor.h */,
+				B7AC177B1423A6D3009E9205 /* ECClangCodeCursor.m */,
+				B7AC177C1423A6D3009E9205 /* ECClangHelperFunctions.h */,
+				B7AC177D1423A6D3009E9205 /* ECClangHelperFunctions.m */,
 				CDF1D3911415073900EFEC21 /* ECClangCodeIndex.h */,
 				CDF1D3921415073900EFEC21 /* ECClangCodeIndex.m */,
 				CDF1D3931415073900EFEC21 /* ECClangCodeUnit.h */,
@@ -1495,6 +1505,8 @@
 				B7AC174C14216D1C009E9205 /* ACNewProjectFromZIPController.m in Sources */,
 				B7AC174D14216D1C009E9205 /* ACNewProjectPopoverController.m in Sources */,
 				B7AC174E14216D1C009E9205 /* ACTab.m in Sources */,
+				B7AC177E1423A6D4009E9205 /* ECClangCodeCursor.m in Sources */,
+				B7AC177F1423A6D4009E9205 /* ECClangHelperFunctions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
