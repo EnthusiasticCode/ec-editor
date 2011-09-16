@@ -50,15 +50,6 @@ static void updateContentCorners(ECRoundedContentCornersView *self);
 
 #pragma mark - View lifecycle
 
-- (id)initWithFrame:(CGRect)frame
-{
-    self = [super initWithFrame:frame];
-    if (self) {
-        // Initialization code
-    }
-    return self;
-}
-
 - (void)layoutSubviews
 {
     if (contentCorners[0] != nil)
@@ -98,7 +89,7 @@ static void updateContentCorners(ECRoundedContentCornersView *self)
     CGPathAddLineToPoint(path, NULL, radius, 0);
     CGPathAddArcToPoint(path, NULL, 0, 0, 0, radius, radius);
     
-    CGColorRef backgroundColor = [(CAShapeLayer *)self.layer fillColor];
+    CGColorRef backgroundColor = self.backgroundColor.CGColor;
     
     // Create layers
     for (int i = 0; i < 4; ++i)
@@ -108,7 +99,7 @@ static void updateContentCorners(ECRoundedContentCornersView *self)
         self->contentCorners[i].affineTransform = CGAffineTransformMakeRotation(M_PI_2 * i);
         self->contentCorners[i].path = path;
         self->contentCorners[i].fillColor = backgroundColor;
-        self->contentCorners[i].zPosition = 100;
+        self->contentCorners[i].zPosition = 1000;
         [self.layer addSublayer:self->contentCorners[i]];
     }
     

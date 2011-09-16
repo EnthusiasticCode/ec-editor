@@ -95,6 +95,11 @@ static void updatePath(ECPopoverView *self);
     updatePath(self);
 }
 
+- (UIColor *)backgroundColor
+{
+    return [UIColor colorWithCGColor:[(CAShapeLayer *)self.layer fillColor]];
+}
+
 - (void)setBackgroundColor:(UIColor *)backgroundColor
 {
     CGColorRef color = backgroundColor.CGColor;
