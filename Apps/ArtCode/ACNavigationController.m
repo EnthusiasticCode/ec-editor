@@ -104,6 +104,7 @@
     [rightButton setImage:[UIImage styleCloseImageWithColor:[UIColor styleForegroundColor] outlineColor:nil] forState:UIControlStateSelected];
     [rightButton setBackgroundImage:nil forState:UIControlStateNormal];
     [rightButton setBackgroundImage:nil forState:UIControlStateHighlighted];
+    [rightButton setBackgroundImage:nil forState:UIControlStateSelected];
     rightButton.adjustsImageWhenHighlighted = NO;
     jumpBar.textElement.rightView = rightButton;
     jumpBar.textElement.rightViewMode = UITextFieldViewModeAlways;

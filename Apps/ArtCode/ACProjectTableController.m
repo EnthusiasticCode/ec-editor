@@ -257,6 +257,8 @@ static void * ACStateProjectsObservingContext;
     return toolButton;
 }
 
+#pragma mark -
+
 - (void)toolButtonAction:(id)sender
 {
     // Removing the lazy loading could cause the old popover to be overwritten by the new one causing a dealloc while popover is visible

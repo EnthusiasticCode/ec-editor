@@ -77,6 +77,8 @@
 
 #pragma mark - Tool Target Protocol Implementation
 
+@synthesize toolButton;
+
 + (id)newNavigationTargetController
 {
     return [ACCodeFileController new];
@@ -124,6 +126,26 @@
 - (id<UITextFieldDelegate>)delegateForFilterField:(UITextField *)textField
 {
     return self;
+}
+
+- (UIButton *)toolButton
+{
+    if (!toolButton)
+    {
+        toolButton = [UIButton new];
+        [toolButton setTitle:@"Tools" forState:UIControlStateNormal];
+        [toolButton setTitleColor:[UIColor styleForegroundColor] forState:UIControlStateNormal];
+        toolButton.titleLabel.font = [UIFont styleFontWithSize:14];
+        [toolButton addTarget:self action:@selector(toolButtonAction:) forControlEvents:UIControlEventTouchUpInside];
+    }
+    return toolButton;
+}
+
+#pragma mark -
+
+- (void)toolButtonAction:(id)sender
+{
+    
 }
 
 #pragma mark - View lifecycle
@@ -190,11 +212,24 @@
     }
     
     [filterPopoverController presentPopoverFromRect:textField.frame inView:textField.superview permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
+    
+    // Select right button to allow content deletion
+    if ([textField.rightView isKindOfClass:[UIButton class]])
+    {
+        [(UIButton *)textField.rightView setSelected:YES];
+    }
 }
 
 - (void)textFieldDidEndEditing:(UITextField *)textField
 {
     [filterPopoverController dismissPopoverAnimated:YES];
+    
+    // Select right button to normal icon
+    // TODO set as arrow to cycle through search results
+    if ([textField.rightView isKindOfClass:[UIButton class]])
+    {
+        [(UIButton *)textField.rightView setSelected:NO];
+    }
 }
 
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
