@@ -149,9 +149,11 @@ static void * ACStateProjectsObservingContext;
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     self.tableView.backgroundColor = [UIColor styleBackgroundColor];
     
+    self.tableView.tableFooterView = [UIView new];
+    
     [[ACState sharedState] addObserver:self forKeyPath:@"projectURLs" options:NSKeyValueObservingOptionNew context:ACStateProjectsObservingContext];
     
-    //    self.tableView.allowsMultipleSelectionDuringEditing = YES;
+    [self setEditing:NO animated:NO];
 }
 
 - (void)viewDidUnload
@@ -172,6 +174,46 @@ static void * ACStateProjectsObservingContext;
     [super didReceiveMemoryWarning];
     
     popoverLabelColorController = nil;
+}
+
+- (void)setEditing:(BOOL)editing animated:(BOOL)animated
+{
+    [super setEditing:editing animated:animated];
+    
+    // Prepare tips image view
+    UIView *newView = nil;
+    if ([self tableView:self.tableView numberOfRowsInSection:0] == 0)
+    {
+        if (!editing)
+        {
+            newView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"projectBrowserTipsEmpty"]];
+            CGRect frame = newView.frame;
+            frame.origin.x += 37;
+            newView.frame = frame;
+        }
+    }
+    else if (editing)
+    {
+        newView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"projectBrowserTipsPopulatedEdit"]];
+        CGRect frame = newView.frame;
+        frame.origin.x += 22;
+        newView.frame = frame;
+    }
+    
+    // Animate new tip in place with crossfade with one already present
+    NSArray *oldViews = self.tableView.tableFooterView.subviews;
+    [self.tableView.tableFooterView addSubview:newView];
+    newView.alpha = 0;
+    [UIView animateWithDuration:STYLE_ANIMATION_DURATION animations:^{
+        for (UIView *currentViews in oldViews) {
+            currentViews.alpha = 0;
+        }
+        newView.alpha = 1;
+    } completion:^(BOOL finished) {
+        [oldViews makeObjectsPerformSelector:@selector(removeFromSuperview)];
+    }];
+    
+#warning TODO remove 'create new project' tip after creating the first project
 }
 
 #pragma mark - Tool Target Protocol
