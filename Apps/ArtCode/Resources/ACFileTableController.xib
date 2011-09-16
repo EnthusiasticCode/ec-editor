@@ -14,6 +14,7 @@
 			<string>IBUIButton</string>
 			<string>IBUITableView</string>
 			<string>IBUIView</string>
+			<string>IBUIImageView</string>
 			<string>IBProxyObject</string>
 		</array>
 		<array key="IBDocument.PluginDependencies">
@@ -71,7 +72,7 @@
 							<object class="IBUIButton" id="774957961">
 								<reference key="NSNextResponder" ref="650693577"/>
 								<int key="NSvFlags">292</int>
-								<string key="NSFrame">{{100, 0}, {82, 45}}</string>
+								<string key="NSFrame">{{79, 0}, {82, 45}}</string>
 								<reference key="NSSuperview" ref="650693577"/>
 								<reference key="NSWindow"/>
 								<reference key="NSNextKeyView" ref="534670109"/>
@@ -85,11 +86,12 @@
 									<int key="NSColorSpace">3</int>
 									<bytes key="NSWhite">MQA</bytes>
 								</object>
-								<reference key="IBUINormalTitleColor" ref="102596350"/>
-								<object class="NSColor" key="IBUINormalTitleShadowColor" id="246760449">
+								<object class="NSColor" key="IBUIDisabledTitleColor" id="246760449">
 									<int key="NSColorSpace">3</int>
 									<bytes key="NSWhite">MC41AA</bytes>
 								</object>
+								<reference key="IBUINormalTitleColor" ref="102596350"/>
+								<reference key="IBUINormalTitleShadowColor" ref="246760449"/>
 								<object class="IBUIFontDescription" key="IBUIFontDescription" id="963961293">
 									<int key="type">2</int>
 									<double key="pointSize">15</double>
@@ -103,7 +105,7 @@
 							<object class="IBUIButton" id="534670109">
 								<reference key="NSNextResponder" ref="650693577"/>
 								<int key="NSvFlags">292</int>
-								<string key="NSFrame">{{182, 0}, {82, 45}}</string>
+								<string key="NSFrame">{{161, 0}, {82, 45}}</string>
 								<reference key="NSSuperview" ref="650693577"/>
 								<reference key="NSWindow"/>
 								<reference key="NSNextKeyView" ref="303552962"/>
@@ -114,6 +116,7 @@
 								<int key="IBUIContentVerticalAlignment">0</int>
 								<string key="IBUINormalTitle">Group</string>
 								<reference key="IBUIHighlightedTitleColor" ref="102596350"/>
+								<reference key="IBUIDisabledTitleColor" ref="246760449"/>
 								<reference key="IBUINormalTitleColor" ref="102596350"/>
 								<reference key="IBUINormalTitleShadowColor" ref="246760449"/>
 								<reference key="IBUIFontDescription" ref="963961293"/>
@@ -133,16 +136,32 @@
 								<int key="IBUIContentVerticalAlignment">0</int>
 								<string key="IBUINormalTitle">Delete</string>
 								<reference key="IBUIHighlightedTitleColor" ref="102596350"/>
+								<reference key="IBUIDisabledTitleColor" ref="246760449"/>
 								<reference key="IBUINormalTitleColor" ref="102596350"/>
 								<reference key="IBUINormalTitleShadowColor" ref="246760449"/>
 								<reference key="IBUIFontDescription" ref="963961293"/>
 								<reference key="IBUIFont" ref="206488004"/>
 							</object>
+							<object class="IBUIImageView" id="926678113">
+								<reference key="NSNextResponder" ref="650693577"/>
+								<int key="NSvFlags">292</int>
+								<string key="NSFrame">{{15, 7}, {56, 22}}</string>
+								<reference key="NSSuperview" ref="650693577"/>
+								<reference key="NSWindow"/>
+								<reference key="NSNextKeyView" ref="774957961"/>
+								<string key="NSReuseIdentifierKey">_NS:569</string>
+								<bool key="IBUIUserInteractionEnabled">NO</bool>
+								<string key="targetRuntimeIdentifier">IBIPadFramework</string>
+								<object class="NSCustomResource" key="IBUIImage">
+									<string key="NSClassName">NSImage</string>
+									<string key="NSResourceName">fileBrowserEditArrow.png</string>
+								</object>
+							</object>
 						</array>
 						<string key="NSFrame">{{0, 960}, {768, 45}}</string>
 						<reference key="NSSuperview" ref="191373211"/>
 						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView" ref="774957961"/>
+						<reference key="NSNextKeyView" ref="926678113"/>
 						<string key="NSReuseIdentifierKey">_NS:212</string>
 						<object class="NSColor" key="IBUIBackgroundColor">
 							<int key="NSColorSpace">3</int>
@@ -243,9 +262,10 @@
 						<int key="objectID">5</int>
 						<reference key="object" ref="650693577"/>
 						<array class="NSMutableArray" key="children">
+							<reference ref="303552962"/>
+							<reference ref="926678113"/>
 							<reference ref="774957961"/>
 							<reference ref="534670109"/>
-							<reference ref="303552962"/>
 						</array>
 						<reference key="parent" ref="191373211"/>
 					</object>
@@ -269,6 +289,11 @@
 						<reference key="object" ref="303552962"/>
 						<reference key="parent" ref="650693577"/>
 					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">14</int>
+						<reference key="object" ref="926678113"/>
+						<reference key="parent" ref="650693577"/>
+					</object>
 				</array>
 			</object>
 			<dictionary class="NSMutableDictionary" key="flattenedProperties">
@@ -278,17 +303,21 @@
 				<string key="-2.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 				<string key="1.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 				<string key="12.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
+				<real value="3" key="12.IBUIButtonInspectorSelectedStateConfigurationMetadataKey"/>
 				<string key="13.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
+				<real value="3" key="13.IBUIButtonInspectorSelectedStateConfigurationMetadataKey"/>
+				<string key="14.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 				<string key="4.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 				<string key="5.CustomClassName">ACToolFiltersView</string>
 				<string key="5.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 				<string key="8.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
+				<real value="3" key="8.IBUIButtonInspectorSelectedStateConfigurationMetadataKey"/>
 			</dictionary>
 			<dictionary class="NSMutableDictionary" key="unlocalizedProperties"/>
 			<nil key="activeLocalization"/>
 			<dictionary class="NSMutableDictionary" key="localizations"/>
 			<nil key="sourceID"/>
-			<int key="maxID">13</int>
+			<int key="maxID">14</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<array class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -328,6 +357,10 @@
 		<string key="IBDocument.TargetRuntimeIdentifier">IBIPadFramework</string>
 		<bool key="IBDocument.PluginDeclaredDependenciesTrackSystemTargetVersion">YES</bool>
 		<int key="IBDocument.defaultPropertyAccessControl">3</int>
+		<object class="NSMutableDictionary" key="IBDocument.LastKnownImageSizes">
+			<string key="NS.key.0">fileBrowserEditArrow.png</string>
+			<string key="NS.object.0">{56, 22}</string>
+		</object>
 		<string key="IBCocoaTouchPluginVersion">931</string>
 	</data>
 </archive>

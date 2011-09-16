@@ -80,6 +80,8 @@
 		CD9CD96913DC18BC007964D3 /* ECRectSet.m in Sources */ = {isa = PBXBuildFile; fileRef = CD9CD96813DC18BC007964D3 /* ECRectSet.m */; };
 		CD9CD96C13DC18DD007964D3 /* ECCodeStringDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = CD9CD96B13DC18DD007964D3 /* ECCodeStringDataSource.m */; };
 		CD9CD97013DC22AF007964D3 /* ACCodeFileController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD9CD96F13DC22AF007964D3 /* ACCodeFileController.m */; };
+		CD9F3CF4142381EF00ACD841 /* fileBrowserEditArrow.png in Resources */ = {isa = PBXBuildFile; fileRef = CD9F3CF3142381EF00ACD841 /* fileBrowserEditArrow.png */; };
+		CD9F3CF71423855E00ACD841 /* projectBrowserTipsPopulatedEdit.png in Resources */ = {isa = PBXBuildFile; fileRef = CD9F3CF61423855E00ACD841 /* projectBrowserTipsPopulatedEdit.png */; };
 		CDA0156013DF0C210087B518 /* ACTabNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDA0155F13DF0C210087B518 /* ACTabNavigationController.m */; };
 		CDD40B0313E1A046008AC36B /* ACPopoverHistoryToolController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDD40B0213E1A046008AC36B /* ACPopoverHistoryToolController.m */; };
 		CDE1CB81142102A500151BD7 /* ACTabButton.m in Sources */ = {isa = PBXBuildFile; fileRef = CDE1CB80142102A500151BD7 /* ACTabButton.m */; };
@@ -355,6 +357,8 @@
 		CD9CD96B13DC18DD007964D3 /* ECCodeStringDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeStringDataSource.m; sourceTree = "<group>"; };
 		CD9CD96E13DC22AF007964D3 /* ACCodeFileController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACCodeFileController.h; sourceTree = "<group>"; };
 		CD9CD96F13DC22AF007964D3 /* ACCodeFileController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACCodeFileController.m; sourceTree = "<group>"; };
+		CD9F3CF3142381EF00ACD841 /* fileBrowserEditArrow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = fileBrowserEditArrow.png; path = Resources/fileBrowserEditArrow.png; sourceTree = "<group>"; };
+		CD9F3CF61423855E00ACD841 /* projectBrowserTipsPopulatedEdit.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = projectBrowserTipsPopulatedEdit.png; path = Resources/projectBrowserTipsPopulatedEdit.png; sourceTree = "<group>"; };
 		CDA0155E13DF0C210087B518 /* ACTabNavigationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACTabNavigationController.h; sourceTree = "<group>"; };
 		CDA0155F13DF0C210087B518 /* ACTabNavigationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACTabNavigationController.m; sourceTree = "<group>"; };
 		CDD40B0113E1A046008AC36B /* ACPopoverHistoryToolController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACPopoverHistoryToolController.h; sourceTree = "<group>"; };
@@ -1034,6 +1038,8 @@
 		CD82554014224D3D00B742AF /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				CD9F3CF61423855E00ACD841 /* projectBrowserTipsPopulatedEdit.png */,
+				CD9F3CF3142381EF00ACD841 /* fileBrowserEditArrow.png */,
 				CD82554214224DA100B742AF /* ACFileTableController.xib */,
 			);
 			name = Resources;
@@ -1389,6 +1395,8 @@
 				B7AC172F14216CD4009E9205 /* NewFilePopover.storyboard in Resources */,
 				B7AC173014216CD4009E9205 /* NewProjectPopover.storyboard in Resources */,
 				CD82554314224DA100B742AF /* ACFileTableController.xib in Resources */,
+				CD9F3CF4142381EF00ACD841 /* fileBrowserEditArrow.png in Resources */,
+				CD9F3CF71423855E00ACD841 /* projectBrowserTipsPopulatedEdit.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

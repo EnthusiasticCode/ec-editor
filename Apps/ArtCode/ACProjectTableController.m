@@ -149,9 +149,9 @@ static void * ACStateProjectsObservingContext;
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     self.tableView.backgroundColor = [UIColor styleBackgroundColor];
     
-    [[ACState sharedState] addObserver:self forKeyPath:@"projectURLs" options:NSKeyValueObservingOptionNew context:ACStateProjectsObservingContext];
+    self.tableView.tableFooterView = [UIView new];
     
-    //    self.tableView.allowsMultipleSelectionDuringEditing = YES;
+    [[ACState sharedState] addObserver:self forKeyPath:@"projectURLs" options:NSKeyValueObservingOptionNew context:ACStateProjectsObservingContext];
 }
 
 - (void)viewDidUnload
@@ -172,6 +172,32 @@ static void * ACStateProjectsObservingContext;
     [super didReceiveMemoryWarning];
     
     popoverLabelColorController = nil;
+}
+
+- (void)setEditing:(BOOL)editing animated:(BOOL)animated
+{
+    [super setEditing:editing animated:animated];
+    
+    UIView *newView = nil;
+    if (editing)
+    {
+        // TODO switch if has elements
+        newView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"projectBrowserTipsPopulatedEdit"]];
+        CGRect frame = newView.frame;
+        frame.origin.x += 22;
+        newView.frame = frame;
+    }
+    NSArray *oldViews = self.tableView.tableFooterView.subviews;
+    [self.tableView.tableFooterView addSubview:newView];
+    newView.alpha = 0;
+    [UIView animateWithDuration:STYLE_ANIMATION_DURATION animations:^{
+        for (UIView *currentViews in oldViews) {
+            currentViews.alpha = 0;
+        }
+        newView.alpha = 1;
+    } completion:^(BOOL finished) {
+        [oldViews makeObjectsPerformSelector:@selector(removeFromSuperview)];
+    }];
 }
 
 #pragma mark - Tool Target Protocol
