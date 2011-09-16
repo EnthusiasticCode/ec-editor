@@ -152,6 +152,8 @@ static void * ACStateProjectsObservingContext;
     self.tableView.tableFooterView = [UIView new];
     
     [[ACState sharedState] addObserver:self forKeyPath:@"projectURLs" options:NSKeyValueObservingOptionNew context:ACStateProjectsObservingContext];
+    
+    [self setEditing:NO animated:NO];
 }
 
 - (void)viewDidUnload
@@ -178,15 +180,27 @@ static void * ACStateProjectsObservingContext;
 {
     [super setEditing:editing animated:animated];
     
+    // Prepare tips image view
     UIView *newView = nil;
-    if (editing)
+    if ([self tableView:self.tableView numberOfRowsInSection:0] == 0)
     {
-        // TODO switch if has elements
+        if (!editing)
+        {
+            newView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"projectBrowserTipsEmpty"]];
+            CGRect frame = newView.frame;
+            frame.origin.x += 37;
+            newView.frame = frame;
+        }
+    }
+    else if (editing)
+    {
         newView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"projectBrowserTipsPopulatedEdit"]];
         CGRect frame = newView.frame;
         frame.origin.x += 22;
         newView.frame = frame;
     }
+    
+    // Animate new tip in place with crossfade with one already present
     NSArray *oldViews = self.tableView.tableFooterView.subviews;
     [self.tableView.tableFooterView addSubview:newView];
     newView.alpha = 0;
@@ -198,6 +212,8 @@ static void * ACStateProjectsObservingContext;
     } completion:^(BOOL finished) {
         [oldViews makeObjectsPerformSelector:@selector(removeFromSuperview)];
     }];
+    
+#warning TODO remove 'create new project' tip after creating the first project
 }
 
 #pragma mark - Tool Target Protocol
