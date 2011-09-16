@@ -12,22 +12,19 @@
 
 @implementation ECPopoverView {
     CGRect contentRect;
-    CAShapeLayer *contentCorners[4];
 }
 
 static void updatePath(ECPopoverView *self);
-static void updateContentCorners(ECPopoverView *self);
 
 #pragma mark - Properties
 
-@synthesize cornerRadius, contentInsets, contentCornerRadius, shadowOffsetForArrowDirectionUpToAutoOrient;
+@synthesize cornerRadius, shadowOffsetForArrowDirectionUpToAutoOrient;
 @synthesize arrowDirection, arrowPosition, arrowSize, arrowMargin, arrowCornerRadius;
 
 - (void)setContentInsets:(UIEdgeInsets)insets
 {
-    contentInsets = insets;
     contentRect = UIEdgeInsetsInsetRect(self.bounds, insets);
-    [self layoutIfNeeded];
+    [super setContentInsets:insets];
 }
 
 - (CGSize)contentSize
@@ -40,20 +37,11 @@ static void updateContentCorners(ECPopoverView *self);
     if (CGSizeEqualToSize(size, contentRect.size))
         return;
     
+    UIEdgeInsets contentInsets = self.contentInsets;
     [self setBounds:(CGRect){ CGPointZero, {
         size.width + contentInsets.left + contentInsets.right,
         size.height + contentInsets.top + contentInsets.bottom
     } }];
-}
-
-- (void)setContentCornerRadius:(CGFloat)radius
-{
-    if (radius == contentCornerRadius)
-        return;
-    
-    contentCornerRadius = radius;
-    
-    updateContentCorners(self);
 }
 
 - (UIView *)contentView
@@ -93,7 +81,7 @@ static void updateContentCorners(ECPopoverView *self);
         return;
     
     [super setBounds:bounds];
-    contentRect = UIEdgeInsetsInsetRect(bounds, contentInsets);
+    contentRect = UIEdgeInsetsInsetRect(bounds, self.contentInsets);
     updatePath(self);
 }
 
@@ -103,23 +91,16 @@ static void updateContentCorners(ECPopoverView *self);
         return;
     
     [super setFrame:frame];
-    contentRect = UIEdgeInsetsInsetRect(self.bounds, contentInsets);
+    contentRect = UIEdgeInsetsInsetRect(self.bounds, self.contentInsets);
     updatePath(self);
 }
 
 - (void)setBackgroundColor:(UIColor *)backgroundColor
 {
     CGColorRef color = backgroundColor.CGColor;
-    
     [(CAShapeLayer *)self.layer setFillColor:color];
     
-    if (contentCornerRadius > 0)
-    {
-        for (int i = 0; i < 4; ++ i)
-        {
-            contentCorners[i].fillColor = color;
-        }
-    }
+    [super setBackgroundColor:backgroundColor];
 }
 
 - (CGFloat)shadowRadius
@@ -160,12 +141,12 @@ static void preinit(ECPopoverView *self)
     
     self->cornerRadius = 5;
     
-    self->contentInsets = UIEdgeInsetsMake(5, 5, 5, 5);
+    self.contentInsets = UIEdgeInsetsMake(5, 5, 5, 5);
 }
 
 static void init(ECPopoverView *self)
 {    
-    self->contentRect = UIEdgeInsetsInsetRect(self.bounds, self->contentInsets);
+    self->contentRect = UIEdgeInsetsInsetRect(self.bounds, self.contentInsets);
     updatePath(self);
 }
 
@@ -201,17 +182,7 @@ static void init(ECPopoverView *self)
         sub.frame = contentRect;
     }
     
-    if (contentCorners[0] != nil)
-    {
-        CGRect cornersRect = CGRectInset(contentRect, -.5, -.5);
-        for (int i = 0; i < 4; ++i)
-        {
-            contentCorners[i].position = (CGPoint){
-                (i && i < 3) ? CGRectGetMaxX(cornersRect) : cornersRect.origin.x,
-                (i < 2) ? cornersRect.origin.y : CGRectGetMaxY(cornersRect)
-            };
-        }
-    }
+    [super layoutSubviews];
 }
 
 #pragma mark - Private Methods
@@ -458,47 +429,6 @@ static void updatePath(ECPopoverView *self)
     }
     
     CGPathRelease(path); 
-}
-
-static void updateContentCorners(ECPopoverView *self)
-{
-    CGFloat radius = self->contentCornerRadius;
-    
-    // Remove from layer if no content corner radius
-    if (radius == 0)
-    {
-        for (int i = 0; i < 4; ++i)
-        {
-            [self->contentCorners[i] removeFromSuperlayer];
-            self->contentCorners[i] = nil;
-        }
-        return;
-    }
-    
-    // Create top left inverse corner shape
-    CGMutablePathRef path = CGPathCreateMutable();
-    CGPathMoveToPoint(path, NULL, 0, radius);
-    CGPathAddLineToPoint(path, NULL, 0, 0);
-    CGPathAddLineToPoint(path, NULL, radius, 0);
-    CGPathAddArcToPoint(path, NULL, 0, 0, 0, radius, radius);
-    
-    CGColorRef backgroundColor = [(CAShapeLayer *)self.layer fillColor];
-
-    // Create layers
-    for (int i = 0; i < 4; ++i)
-    {
-        if (!self->contentCorners[i])
-            self->contentCorners[i] = [CAShapeLayer layer];
-        self->contentCorners[i].affineTransform = CGAffineTransformMakeRotation(M_PI_2 * i);
-        self->contentCorners[i].path = path;
-        self->contentCorners[i].fillColor = backgroundColor;
-        self->contentCorners[i].zPosition = 100;
-        [self.layer addSublayer:self->contentCorners[i]];
-    }
-    
-    CGPathRelease(path);
-
-    [self setNeedsLayout];
 }
 
 @end

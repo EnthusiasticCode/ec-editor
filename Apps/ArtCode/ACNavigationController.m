@@ -373,6 +373,7 @@
     // Setup jump bar filter field
     [jumpBar.textElement resignFirstResponder];
     jumpBar.textElement.delegate = [target respondsToSelector:@selector(delegateForFilterField:)] ? [target delegateForFilterField:jumpBar.textElement] : nil; 
+    // TODO reset right element targets and selection
 }
 
 #pragma mark - Tool Panel Management Methods
