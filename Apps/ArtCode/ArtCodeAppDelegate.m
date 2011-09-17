@@ -3,10 +3,12 @@
 //  ArtCode
 //
 //  Created by Nicola Peduzzi on 03/07/11.
-//  Copyright 2011 __MyCompanyName__. All rights reserved.
+//  Copyright 2011 _MyCompanyName_. All rights reserved.
 //
 
 #import "ArtCodeAppDelegate.h"
+
+#import "ECURL.h"
 
 #import "AppStyle.h"
 #import "ECPopoverView.h"
@@ -25,15 +27,22 @@
 
 #import "ACState.h"
 #import "ACNode.h"
+#import "ACApplication.h"
+#import "ACTab.h"
 
 @implementation ArtCodeAppDelegate
 
 @synthesize window;
+@synthesize managedObjectContext = _managedObjectContext;
+@synthesize managedObjectModel = _managedObjectModel;
+@synthesize persistentStoreCoordinator = _persistentStoreCoordinator;
+@synthesize application = _application;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     UIFont *defaultFont = [UIFont styleFontWithSize:14];    
     ACNavigationController *navigationController = (ACNavigationController *)self.window.rootViewController;
+    navigationController.application = self.application;
     
     ////////////////////////////////////////////////////////////////////////////
     // Generic text field
@@ -114,8 +123,15 @@
     ////////////////////////////////////////////////////////////////////////////
     [window makeKeyAndVisible];
     navigationController.tabNavigationController.tabPageMargin = 10;
-    [navigationController.tabNavigationController addTabControllerWithDataSorce:self initialURL:[NSURL URLWithString:@"artcode:projects"] animated:NO];
-//    [navigationController.tabNavigationController addTabControllerWithDataSorce:self initialURL:[NSURL URLWithString:@"artcode:/ProjectX"] animated:NO];
+    if (![self.application.tabs count])
+    {
+        [self.application insertTabAtIndex:0];
+        [[self.application.tabs objectAtIndex:0] pushURL:[NSURL URLWithString:@"artcode:projects"]];
+    }
+    for (ACTab *tab in self.application.tabs)
+        [navigationController.tabNavigationController addTabControllerWithDataSource:self tab:tab animated:NO];
+    navigationController.tabNavigationController.currentTabController = [navigationController.tabNavigationController.tabControllers objectAtIndex:0];
+
     navigationController.tabNavigationController.makeAddedTabCurrent = YES;
     return YES;
 }
@@ -159,6 +175,28 @@
      */
 }
 
+- (ACApplication *)application
+{
+    if (_application)
+        return _application;
+    
+    NSFetchRequest *fetchRequest = [NSFetchRequest fetchRequestWithEntityName:@"Application"];
+    NSArray *applications = [self.managedObjectContext executeFetchRequest:fetchRequest error:NULL];
+    if ([applications count] == 1)
+    {
+        _application = [applications lastObject];
+    }
+    else if ([applications count] > 1)
+    {
+        ECASSERT(NO); // TODO: handle error by merging application objects together
+    }
+    else
+    {
+        _application = [NSEntityDescription insertNewObjectForEntityForName:@"Application" inManagedObjectContext:self.managedObjectContext];
+    }
+    return _application;
+}
+
 #pragma mark - Navigation Controller Delegate Methods
 
 - (BOOL)tabController:(ACTabController *)tabController shouldChangeCurrentViewController:(UIViewController *)viewController forURL:(NSURL *)url
@@ -186,10 +224,114 @@
 //        controllerClass = [ACCodeFileController class];
 //    else
 //        controllerClass = [ACFileTableController class];
-
+    ECASSERT(controllerClass);
     UIViewController<ACNavigationTarget> *controller = [controllerClass newNavigationTargetController];
     [controller openURL:url];
+    ECASSERT(controller);
     return controller; // TODO initWithNibName:name of class
+}
+
+#pragma mark - Core Data stack
+
+/**
+ Returns the managed object context for the application.
+ If the context doesn't already exist, it is created and bound to the persistent store coordinator for the application.
+ */
+- (NSManagedObjectContext *)managedObjectContext
+{
+    if (_managedObjectContext != nil)
+    {
+        return _managedObjectContext;
+    }
+    
+    NSPersistentStoreCoordinator *coordinator = [self persistentStoreCoordinator];
+    if (coordinator != nil)
+    {
+        _managedObjectContext = [[NSManagedObjectContext alloc] init];
+        [_managedObjectContext setPersistentStoreCoordinator:coordinator];
+    }
+    return _managedObjectContext;
+}
+
+/**
+ Returns the managed object model for the application.
+ If the model doesn't already exist, it is created from the application's model.
+ */
+- (NSManagedObjectModel *)managedObjectModel
+{
+    if (_managedObjectModel != nil)
+    {
+        return _managedObjectModel;
+    }
+    NSURL *modelURL = [[NSBundle mainBundle] URLForResource:@"Application" withExtension:@"momd"];
+    _managedObjectModel = [[NSManagedObjectModel alloc] initWithContentsOfURL:modelURL];
+    return _managedObjectModel;
+}
+
+/**
+ Returns the persistent store coordinator for the application.
+ If the coordinator doesn't already exist, it is created and the application's store added to it.
+ */
+- (NSPersistentStoreCoordinator *)persistentStoreCoordinator
+{
+    if (_persistentStoreCoordinator != nil)
+    {
+        return _persistentStoreCoordinator;
+    }
+    
+    NSURL *storeURL = [[NSURL applicationLibraryDirectory] URLByAppendingPathComponent:@"com.enthusiasticcode.ArtCode.sqlite"];
+    
+    NSError *error = nil;
+    _persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:[self managedObjectModel]];
+    if (![_persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeURL options:nil error:&error])
+    {
+        /*
+         Replace this implementation with code to handle the error appropriately.
+         
+         abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development. 
+         
+         Typical reasons for an error here include:
+         * The persistent store is not accessible;
+         * The schema for the persistent store is incompatible with current managed object model.
+         Check the error message to determine what the actual problem was.
+         
+         
+         If the persistent store is not accessible, there is typically something wrong with the file path. Often, a file URL is pointing into the application's resources directory instead of a writeable directory.
+         
+         If you encounter schema incompatibility errors during development, you can reduce their frequency by:
+         * Simply deleting the existing store:
+         [[NSFileManager defaultManager] removeItemAtURL:storeURL error:nil]
+         
+         * Performing automatic lightweight migration by passing the following dictionary as the options parameter: 
+         [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithBool:YES], NSMigratePersistentStoresAutomaticallyOption, [NSNumber numberWithBool:YES], NSInferMappingModelAutomaticallyOption, nil];
+         
+         Lightweight migration will only work for a limited set of schema changes; consult "Core Data Model Versioning and Data Migration Programming Guide" for details.
+         
+         */
+        NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
+        abort();
+    }    
+    
+    return _persistentStoreCoordinator;
+}
+
+- (void)saveContext
+{
+    NSError *error = nil;
+    NSManagedObjectContext *managedObjectContext = self.managedObjectContext;
+    if (managedObjectContext != nil)
+    {
+        if ([managedObjectContext hasChanges] && ![managedObjectContext save:&error])
+        {
+            /*
+             Replace this implementation with code to handle the error appropriately.
+             
+             abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development. 
+             */
+            NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
+            abort();
+        } 
+    }
 }
 
 @end

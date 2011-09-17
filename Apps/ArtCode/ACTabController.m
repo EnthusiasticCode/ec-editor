@@ -8,11 +8,19 @@
 
 #import "ACTabController.h"
 #import "ACTabNavigationController.h"
+#import "ACTab.h"
+#import "ACApplication.h"
+
+static void * const ACTabControllerTabCurrentURLObserving;
+
+@interface ACTabController ()
+@property (nonatomic, weak) UIViewController *tabViewController;
+@end
 
 @implementation ACTabController {
     // TODO substitute with state
-    NSMutableArray *historyURLs;
-    NSUInteger historyPointIndex;
+//    NSMutableArray *historyURLs;
+//    NSUInteger historyPointIndex;
     
     BOOL dataSourceHasShouldChangeCurrentViewControllerForURL;
     BOOL delegateHasDidChangeURLPreviousViewController;
@@ -22,8 +30,7 @@
 
 @synthesize dataSource, delegate;
 @synthesize parentTabNavigationController;
-@synthesize tabButton, tabViewController;
-@synthesize historyURLs;
+@synthesize tabButton, tabViewController, tab = _tab;
 
 - (void)setDataSource:(id<ACTabControllerDataSource>)aDatasource
 {
@@ -39,6 +46,17 @@
     delegateHasDidChangeURLPreviousViewController = [delegate respondsToSelector:@selector(tabController:didChangeURL:previousViewController:)];
 }
 
+- (void)setTab:(ACTab *)tab
+{
+    if (tab == _tab)
+        return;
+    [self willChangeValueForKey:@"tab"];
+    [_tab removeObserver:self forKeyPath:@"currentURL" context:ACTabControllerTabCurrentURLObserving];
+    _tab = tab;
+    [_tab addObserver:self forKeyPath:@"currentURL" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial context:ACTabControllerTabCurrentURLObserving];
+    [self didChangeValueForKey:@"tab"];
+}
+
 - (BOOL)isCurrentTabController
 {
     return parentTabNavigationController.currentTabController == self;
@@ -46,30 +64,7 @@
 
 - (NSUInteger)position
 {
-    return [parentTabNavigationController.tabControllers indexOfObject:self];
-}
-
-- (NSURL *)currentURL
-{
-    if (historyPointIndex >= [historyURLs count])
-        return nil;
-    
-    return [historyURLs objectAtIndex:historyPointIndex];
-}
-
-- (NSUInteger)currentURLIndex
-{
-    return historyPointIndex;
-}
-
-- (BOOL)canMoveBack
-{
-    return historyPointIndex > 0;
-}
-
-- (BOOL)canMoveForward
-{
-    return [historyURLs count] > 1 && historyPointIndex < ([historyURLs count] - 1);
+    return [self.tab.application.tabs indexOfObject:self.tab];
 }
 
 - (UIViewController *)tabViewController
@@ -77,8 +72,8 @@
     if (tabViewController == nil)
     {
         ECASSERT(dataSource != nil);
-        ECASSERT([self currentURL] != nil);
-        tabViewController = [dataSource tabController:self viewControllerForURL:[self currentURL]];
+        ECASSERT(self.tab.currentURL != nil);
+        tabViewController = [dataSource tabController:self viewControllerForURL:self.tab.currentURL];
     }
     return tabViewController;
 }
@@ -88,85 +83,45 @@
     return tabViewController != nil;
 }
 
+- (void)dealloc
+{
+    [_tab removeObserver:self forKeyPath:@"currentURL" context:ACTabControllerTabCurrentURLObserving];
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    if (context != ACTabControllerTabCurrentURLObserving)
+        return [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+    
+    // TODO: stink! accessing an instance variable to avoid lazy instantiation
+    UIViewController *previousViewController = tabViewController;
+    self.tabViewController = nil;
+    if (delegateHasDidChangeURLPreviousViewController)
+        [self.delegate tabController:self didChangeURL:[change objectForKey:NSKeyValueChangeNewKey] previousViewController:previousViewController];
+}
+
 #pragma mark - Create Tab Controllers
 
-- (id)initWithDataSource:(id<ACTabControllerDataSource>)aDatasource URL:(NSURL *)initialURL
+- (id)initWithDataSource:(id<ACTabControllerDataSource>)aDatasource tab:(ACTab *)tab
 {
-    ECASSERT(initialURL != nil);
+    ECASSERT(tab != nil);
     
     if ((self = [super init]))
     {
         self.dataSource = aDatasource;
-        historyURLs = [NSMutableArray new];
-        [historyURLs addObject:initialURL];
+        self.tab = tab;
     }
     return self;
-}
-
-#pragma mark - Managing Tab's History
-
-- (void)pushURL:(NSURL *)url
-{
-    ECASSERT(url != nil);
-    
-    if (!historyURLs)
-        historyURLs = [NSMutableArray new];
-    
-    // Remove forwars history
-    if (historyPointIndex < ([historyURLs count] - 1))
-    {
-        [historyURLs removeObjectsInRange:NSMakeRange(historyPointIndex + 1, [historyURLs count] - historyPointIndex - 1)];
-    }
-    
-    [historyURLs addObject:url];
-    
-    [self moveToHistoryURLAtIndex:[historyURLs count] - 1];
-}
-
-- (void)moveToHistoryURLAtIndex:(NSUInteger)URLIndex
-{
-    ECASSERT(URLIndex < [historyURLs count]);
-    
-    if (historyPointIndex == URLIndex)
-        return;
-    
-    historyPointIndex = URLIndex;
-    NSURL *currentURL = [historyURLs objectAtIndex:URLIndex];
-    UIViewController *previousViewController = tabViewController;
-    
-    // Delete reference to current view controller
-    if (!dataSourceHasShouldChangeCurrentViewControllerForURL
-        || [dataSource tabController:self shouldChangeCurrentViewController:previousViewController forURL:currentURL])
-    {
-        tabViewController = nil;
-    }
-    
-    // Inform of URL change
-    if (delegateHasDidChangeURLPreviousViewController)
-        [delegate tabController:self didChangeURL:currentURL previousViewController:previousViewController];
-}
-
-- (void)moveBackInHistory
-{
-    if (![self canMoveBack])
-        return;
-    
-    [self moveToHistoryURLAtIndex:historyPointIndex - 1];
-}
-
-- (void)moveForwardInHistory
-{
-    if (![self canMoveForward])
-        return;
-    
-    [self moveToHistoryURLAtIndex:historyPointIndex + 1];
 }
 
 #pragma mark - Copying
 
 - (id)copyWithZone:(NSZone *)zone
 {
-    return [[ACTabController alloc] initWithDataSource:dataSource URL:[self currentURL]];
+    [self.tab.application insertTabAtIndex:self.position + 1];
+    ACTab *newTab = [self.tab.application.tabs objectAtIndex:self.position + 1];
+    [newTab pushURL:self.tab.currentURL];
+    return [[ACTabController alloc] initWithDataSource:dataSource tab:newTab];
 }
 
 @end

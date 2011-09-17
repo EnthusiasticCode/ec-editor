@@ -19,6 +19,7 @@
 #import "ECTabBar.h"
 #import "ECSwipeGestureRecognizer.h"
 #import "ACTabController.h"
+#import "ACTab.h"
 
 #import "ECInstantGestureRecognizer.h"
 #import "ACToolPanelController.h"
@@ -48,7 +49,7 @@
 
 @synthesize topBarView, jumpBar, buttonEdit, buttonTools;
 @synthesize toolPanelController, toolPanelEnabled, toolPanelOnRight;
-@synthesize tabNavigationController;
+@synthesize tabNavigationController, application = _application;
 
 - (void)setToolPanelEnabled:(BOOL)enabled
 {
@@ -184,7 +185,7 @@
 
 - (void)jumpBarBackAction:(id)sender
 {
-    [tabNavigationController.currentTabController moveBackInHistory];
+    [tabNavigationController.currentTabController.tab moveBackInHistory];
 }
 
 - (void)jumpBarBackLongAction:(UILongPressGestureRecognizer *)recognizer
@@ -196,9 +197,8 @@
         {
             popoverHistoryToolController = [[ACPopoverHistoryToolController alloc] initWithStyle:UITableViewStylePlain];
         }
-        popoverHistoryToolController.contentSizeForViewInPopover = CGSizeMake(300, MIN(439, [tabNavigationController.currentTabController.historyURLs count] * 44 - 1));
-        [popoverHistoryToolController setHistoryURLs:tabNavigationController.currentTabController.historyURLs 
-                                    hisoryPointIndex:tabNavigationController.currentTabController.currentURLIndex];
+        popoverHistoryToolController.contentSizeForViewInPopover = CGSizeMake(300, MIN(439, [tabNavigationController.currentTabController.tab.historyItems count] * 44 - 1));
+        popoverHistoryToolController.tab = tabNavigationController.currentTabController.tab;
         
         // Present popover
         popoverController.contentViewController = popoverHistoryToolController;
@@ -271,7 +271,7 @@
 
 - (void)pushURL:(NSURL *)url
 {
-    [tabNavigationController.currentTabController pushURL:url];
+    [tabNavigationController.currentTabController.tab pushURL:url];
 }
 
 #pragma mark - Tab Navigation Controller Delegate Method
@@ -367,8 +367,8 @@
     toolPanelController.enabledToolControllerIdentifiers = enabledToolsIdentifiers;
     
     // Setup jump bar
-    [jumpBar setJumpPath:tabController.currentURL.path animated:YES];
-    [(UIButton *)jumpBar.backElement setEnabled:[tabController.historyURLs count] > 1];
+    [jumpBar setJumpPath:tabController.tab.currentURL.path animated:YES];
+    [(UIButton *)jumpBar.backElement setEnabled:[tabController.tab.historyItems count] > 1];
     
     // Setup jump bar filter field
     [jumpBar.textElement resignFirstResponder];

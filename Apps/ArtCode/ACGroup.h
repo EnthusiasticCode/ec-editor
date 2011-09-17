@@ -2,7 +2,7 @@
 //  ACGroup.h
 //  ArtCode
 //
-//  Created by Uri Baghin on 9/6/11.
+//  Created by Uri Baghin on 9/16/11.
 //  Copyright (c) 2011 __MyCompanyName__. All rights reserved.
 //
 
@@ -14,10 +14,9 @@
 
 @interface ACGroup : ACNode
 
-@property (nonatomic) BOOL expanded;
-@property (nonatomic, strong) NSOrderedSet *children;
-
 @property (nonatomic, getter = isConcrete) BOOL concrete;
+
+@property (nonatomic, strong) NSOrderedSet *children;
 
 - (void)moveChildrenAtIndexes:(NSIndexSet *)indexes toIndex:(NSUInteger)index;
 - (void)exchangeChildAtIndex:(NSUInteger)fromIndex withChildAtIndex:(NSUInteger)toIndex;
