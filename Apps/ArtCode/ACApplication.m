@@ -19,7 +19,8 @@
 - (void)insertTabAtIndex:(NSUInteger)index
 {
     ACTab *tab = [NSEntityDescription insertNewObjectForEntityForName:@"Tab" inManagedObjectContext:self.managedObjectContext];
-    [self insertObject:tab inTabsAtIndex:index];
+    NSMutableOrderedSet *tabs = [self mutableOrderedSetValueForKey:@"tabs"];
+    [tabs insertObject:tab atIndex:index];
 }
 
 - (void)removeTabAtIndex:(NSUInteger)index

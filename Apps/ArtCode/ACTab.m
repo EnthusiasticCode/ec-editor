@@ -49,6 +49,13 @@
 
 - (void)pushURL:(NSURL *)url
 {
+    if (![self.historyItems count])
+    {
+        ACHistoryItem *historyItem = [NSEntityDescription insertNewObjectForEntityForName:@"HistoryItem" inManagedObjectContext:self.managedObjectContext];
+        historyItem.tab = self;
+        historyItem.URL = url;
+        return;
+    }
     NSUInteger lastPosition = [self.historyItems count] - 1;
     if (self.currentHistoryPosition < lastPosition)
     {

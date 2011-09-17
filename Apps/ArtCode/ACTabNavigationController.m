@@ -13,6 +13,9 @@
 
 #import "ACTabButton.h"
 #import "ACTab.h"
+#import "ACApplication.h"
+
+static void * ACTabControllerApplicationTabsObserving;
 
 /// Category on tab controller to assign it's parent;
 @interface ACTabController (ParentCategory)
@@ -22,7 +25,6 @@
 
 @end
 
-
 typedef void (^ScrollViewBlock)(UIScrollView *scrollView);
 
 /// Custom scroll view to manage it's layout with a block
@@ -31,10 +33,7 @@ typedef void (^ScrollViewBlock)(UIScrollView *scrollView);
 @end
 
 
-//
 @implementation ACTabNavigationController {
-    NSMutableArray *tabControllers;
-    
     NSMutableArray *tabTitles;
     BOOL tabBarVisible;
     
@@ -56,10 +55,11 @@ typedef void (^ScrollViewBlock)(UIScrollView *scrollView);
 #pragma mark - Properties
 
 @synthesize delegate;
+@synthesize application = _application;
 @synthesize tabBarEnabled;
 @synthesize tabBar, contentScrollView;
 @synthesize swipeGestureRecognizer;
-@synthesize tabControllers, currentTabController;
+@synthesize tabControllers = _tabControllers, currentTabController;
 @synthesize tabPageMargin;
 @synthesize makeAddedTabCurrent;
 
@@ -76,9 +76,18 @@ typedef void (^ScrollViewBlock)(UIScrollView *scrollView);
     delegateFlags.hasChangedURLForCurrentTabController = [delegate respondsToSelector:@selector(tabNavigationController:changedURLForTabController:)];
 }
 
+- (void)setApplication:(ACApplication *)application
+{
+    if (application == _application)
+        return;
+    [_application removeObserver:self forKeyPath:@"tabs" context:ACTabControllerApplicationTabsObserving];
+    _application = application;
+    [_application addObserver:self forKeyPath:@"tabs" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial context:ACTabControllerApplicationTabsObserving];
+}
+
 - (NSUInteger)tabCount
 {
-    return [tabControllers count];
+    return [self.tabControllers count];
 }
 
 - (void)setTabBarEnabled:(BOOL)enabled
@@ -113,6 +122,18 @@ typedef void (^ScrollViewBlock)(UIScrollView *scrollView);
         contentScrollViewFrame.size.height -= tabBar.bounds.size.height;
     }
     contentScrollView.frame = contentScrollViewFrame;
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    if (context != ACTabControllerApplicationTabsObserving)
+        return [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+    // TODO: observe tabs for changes and reflect them in the ui? or let all code paths that change tabs go through this controller?
+}
+
+- (void)dealloc
+{
+    [_application removeObserver:self forKeyPath:@"tabs" context:ACTabControllerApplicationTabsObserving];
 }
 
 #pragma mark - Private Methods
@@ -169,54 +190,51 @@ typedef void (^ScrollViewBlock)(UIScrollView *scrollView);
 /// inserted in the view hierarchy.
 static void loadCurrentAndAdiacentTabViews(ACTabNavigationController *self, ACTabController *onlyIfThisLoadable, BOOL forceInitialization)
 {
-    NSInteger currentTabIndex = [self->tabControllers indexOfObject:self->currentTabController];
+    NSInteger currentTabIndex = [self.tabControllers indexOfObject:self->currentTabController];
     
     NSUInteger minLoadableIndex = currentTabIndex > 0 ? currentTabIndex - 1 : currentTabIndex;
-    NSUInteger maxLoadableIndex = currentTabIndex < [self->tabControllers count] - 1 ? currentTabIndex + 1 : currentTabIndex;
+    NSUInteger maxLoadableIndex = currentTabIndex < self.tabCount - 1 ? currentTabIndex + 1 : currentTabIndex;
     
     if (onlyIfThisLoadable != nil)
     {
-        ECASSERT([self->tabControllers containsObject:onlyIfThisLoadable]);
+        ECASSERT([self.tabControllers containsObject:onlyIfThisLoadable]);
         
-        NSUInteger filterIndex = [self->tabControllers indexOfObject:onlyIfThisLoadable];
+        NSUInteger filterIndex = [self.tabControllers indexOfObject:onlyIfThisLoadable];
         if (filterIndex < minLoadableIndex || filterIndex > maxLoadableIndex)
             return;
     }
     
-    [self->tabControllers enumerateObjectsUsingBlock:^(ACTabController *tabController, NSUInteger index, BOOL *stop) {
-        if (tabController.isTabViewControllerLoaded)
+    [self.tabControllers enumerateObjectsUsingBlock:^(ACTabController *tabController, NSUInteger index, BOOL *stop) {
+        // Load view if current or diacent to current
+        if (index >= minLoadableIndex && index <= maxLoadableIndex)
         {
-            // Load view if current or diacent to current
-            if (index >= minLoadableIndex && index <= maxLoadableIndex)
+            if (forceInitialization || tabController.tabViewController.view.superview == nil)
             {
-                if (forceInitialization || tabController.tabViewController.view.superview == nil)
+                [self->contentScrollView addSubview:tabController.tabViewController.view];
+                
+                // Check for informal protocol to disable scrolling for swipe
+                if ([tabController.tabViewController respondsToSelector:@selector(setScrollToRequireGestureRecognizerToFail:)])
                 {
-                    [self->contentScrollView addSubview:tabController.tabViewController.view];
-                    
-                    // Check for informal protocol to disable scrolling for swipe
-                    if ([tabController.tabViewController respondsToSelector:@selector(setScrollToRequireGestureRecognizerToFail:)])
+                    [tabController.tabViewController performSelector:@selector(setScrollToRequireGestureRecognizerToFail:) withObject:self->swipeGestureRecognizer];
+                }
+                else {
+                    // Enabling tab swipe gesture recognizer to win over nested scrollviews pan
+                    UIView *addedView = tabController.tabViewController.view;
+                    if ([addedView isKindOfClass:[UIScrollView class]])
                     {
-                        [tabController.tabViewController performSelector:@selector(setScrollToRequireGestureRecognizerToFail:) withObject:self->swipeGestureRecognizer];
+                        UIScrollView *addedScrollviewView = (UIScrollView *)addedView;
+                        [addedScrollviewView.panGestureRecognizer requireGestureRecognizerToFail:self->swipeGestureRecognizer];
                     }
-                    else {
-                        // Enabling tab swipe gesture recognizer to win over nested scrollviews pan
-                        UIView *addedView = tabController.tabViewController.view;
-                        if ([addedView isKindOfClass:[UIScrollView class]])
-                        {
-                            UIScrollView *addedScrollviewView = (UIScrollView *)addedView;
-                            [addedScrollviewView.panGestureRecognizer requireGestureRecognizerToFail:self->swipeGestureRecognizer];
-                        }
-                    }
-                }
-                else
-                {
-                    [self->contentScrollView setNeedsLayout];
                 }
             }
-            else if (tabController.tabViewController.isViewLoaded)
+            else
             {
-                [tabController.tabViewController.view removeFromSuperview];
+                [self->contentScrollView setNeedsLayout];
             }
+        }
+        else if (tabController.tabViewController.isViewLoaded)
+        {
+            [tabController.tabViewController.view removeFromSuperview];
         }
     }];
 }
@@ -306,7 +324,7 @@ static void loadCurrentAndAdiacentTabViews(ACTabNavigationController *self, ACTa
     __weak ACTabNavigationController *this = self;
     contentScrollView.customLayoutSubviews = ^(UIScrollView *scrollView) {
         CGRect bounds = scrollView.bounds;
-        NSUInteger tabControllersCount = [this->tabControllers count];
+        NSUInteger tabControllersCount = [this.tabControllers count];
         
         // Will keep the page centered in case of device rotation
         if (this->keepCurrentPageCentered)
@@ -322,7 +340,7 @@ static void loadCurrentAndAdiacentTabViews(ACTabNavigationController *self, ACTa
         CGRect pageFrame = bounds;
         pageFrame.origin.x = this->tabPageMargin / 2;
         pageFrame.size.width -= this->tabPageMargin;
-        for (ACTabController *tabController in this->tabControllers)
+        for (ACTabController *tabController in this.tabControllers)
         {
             if (tabController.isTabViewControllerLoaded 
                 && tabController.tabViewController.isViewLoaded)
@@ -420,8 +438,8 @@ static void loadCurrentAndAdiacentTabViews(ACTabNavigationController *self, ACTa
 
 - (void)setCurrentTabController:(ACTabController *)tabController animated:(BOOL)animated
 {
-    ECASSERT(tabControllers != nil);
-    ECASSERT([tabControllers indexOfObject:tabController] != NSNotFound);
+    ECASSERT(self.tabControllers != nil);
+    ECASSERT([self.tabControllers indexOfObject:tabController] != NSNotFound);
     
     if (tabController == currentTabController)
         return;
@@ -432,7 +450,7 @@ static void loadCurrentAndAdiacentTabViews(ACTabNavigationController *self, ACTa
     
     ACTabController *fromTabController = currentTabController;
     currentTabController = tabController;
-    NSUInteger tabIndex = [tabControllers indexOfObject:tabController];
+    NSUInteger tabIndex = [self.tabControllers indexOfObject:tabController];
     
     // NOTE This method will trigger a recursive call, but it will end because
     // the current tab controller has already been modified.
@@ -464,10 +482,10 @@ static void loadCurrentAndAdiacentTabViews(ACTabNavigationController *self, ACTa
 
 - (ACTabController *)tabControllerAtPosition:(NSInteger)position
 {
-    if (position >= [tabControllers count])
+    if (position >= self.tabCount)
         return nil;
     
-    return [tabControllers objectAtIndex:position];
+    return [self.tabControllers objectAtIndex:position];
 }
 
 #pragma mark - Adding and Removing Tabs
@@ -476,14 +494,13 @@ static void loadCurrentAndAdiacentTabViews(ACTabNavigationController *self, ACTa
 {
     ECASSERT(tabController != nil);
     
-    if (!tabControllers)
-        tabControllers = [NSMutableArray new];
-    
     if (delegateFlags.hasWillAddTabController
         && ![delegate tabNavigationController:self willAddTabController:tabController])
         return;
     
+    NSMutableArray *tabControllers = [NSMutableArray arrayWithArray:self.tabControllers];
     [tabControllers addObject:tabController];
+    self.tabControllers = tabControllers;
     tabController.parentTabNavigationController = self;
     tabController.delegate = self;
     
@@ -520,7 +537,7 @@ static void loadCurrentAndAdiacentTabViews(ACTabNavigationController *self, ACTa
     }
 }
 
-- (ACTabController *)addTabControllerWithDataSorce:(id<ACTabControllerDataSource>)datasource tab:(ACTab *)tab animated:(BOOL)animated
+- (ACTabController *)addTabControllerWithDataSource:(id<ACTabControllerDataSource>)datasource tab:(ACTab *)tab animated:(BOOL)animated
 {
     ECASSERT(datasource != nil);
     ECASSERT(tab != nil);
@@ -535,14 +552,16 @@ static void loadCurrentAndAdiacentTabViews(ACTabNavigationController *self, ACTa
 - (void)removeTabController:(ACTabController *)tabController animated:(BOOL)animated
 {
     ECASSERT(tabController != nil);
-    ECASSERT([tabControllers containsObject:tabController]);
+    ECASSERT([self.tabControllers containsObject:tabController]);
     
     if (delegateFlags.hasWillRemoveTabController
         && ![delegate tabNavigationController:self willRemoveTabController:tabController])
         return;
     
-    NSUInteger tabIndex = [tabControllers indexOfObject:tabController];
+    NSUInteger tabIndex = [self.tabControllers indexOfObject:tabController];
+    NSMutableArray *tabControllers = [NSMutableArray arrayWithArray:self.tabControllers];
     [tabControllers removeObject:tabController];
+    self.tabControllers = tabControllers;
     
     if ([tabController.tabViewController isViewLoaded])
         [tabController.tabViewController.view removeFromSuperview];
@@ -554,13 +573,13 @@ static void loadCurrentAndAdiacentTabViews(ACTabNavigationController *self, ACTa
     // Change current tab controller if neccessary
     if (tabController == currentTabController)
     {
-        if (tabIndex >= [tabControllers count])
+        if (tabIndex >= self.tabCount)
             tabIndex--;
-        [self setCurrentTabController:[tabControllers objectAtIndex:tabIndex] animated:animated];
+        [self setCurrentTabController:[self.tabControllers objectAtIndex:tabIndex] animated:animated];
     }
     else
     {
-        NSUInteger currentTabIndex = [tabControllers indexOfObject:currentTabController];
+        NSUInteger currentTabIndex = [self.tabControllers indexOfObject:currentTabController];
         CGSize pageSize = contentScrollView.bounds.size;
         [contentScrollView scrollRectToVisible:CGRectMake(pageSize.width * currentTabIndex, 0, pageSize.width, 1) animated:NO];
     }
@@ -600,13 +619,13 @@ static void loadCurrentAndAdiacentTabViews(ACTabNavigationController *self, ACTa
 
 - (void)tabBar:(ECTabBar *)tabBar didAddTabControl:(UIControl *)tabControl atIndex:(NSUInteger)tabIndex
 {
-    ECASSERT(tabIndex == [tabControllers count] - 1);
+    ECASSERT(tabIndex == self.tabCount - 1);
     
     // NOTE this delegate method is invoked from a call in addTabController:animated:
     // and will proceed only if that method has animated = YES;
     if (delegateFlags.informDidAddAfterTabBarAnimation)
     {
-        ACTabController *addedTabController = [tabControllers objectAtIndex:tabIndex];
+        ACTabController *addedTabController = [self.tabControllers objectAtIndex:tabIndex];
         
         if (makeAddedTabCurrent)
             [self setCurrentTabController:addedTabController animated:YES];
@@ -618,14 +637,16 @@ static void loadCurrentAndAdiacentTabViews(ACTabNavigationController *self, ACTa
 
 - (void)tabBar:(ECTabBar *)tabBar didMoveTabControl:(UIControl *)tabControl fromIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex
 {
-    ECASSERT(fromIndex < [tabControllers count]);
-    ECASSERT(toIndex < [tabControllers count]);
+    ECASSERT(fromIndex < self.tabCount);
+    ECASSERT(toIndex < self.tabCount);
     
-    ACTabController *tabController = [tabControllers objectAtIndex:fromIndex];
+    ACTabController *tabController = [self.tabControllers objectAtIndex:fromIndex];
+    NSMutableArray *tabControllers = [NSMutableArray arrayWithArray:self.tabControllers];
     [tabControllers removeObjectAtIndex:fromIndex];
     [tabControllers insertObject:tabController atIndex:toIndex];
+    self.tabControllers = tabControllers;
     
-    NSUInteger currentTabIndex = [tabControllers indexOfObject:currentTabController];
+    NSUInteger currentTabIndex = [self.tabControllers indexOfObject:currentTabController];
     CGSize pageSize = contentScrollView.bounds.size;
     [contentScrollView scrollRectToVisible:CGRectMake(pageSize.width * currentTabIndex, 0, pageSize.width, 1) animated:NO];
 }
@@ -693,7 +714,7 @@ static void loadCurrentAndAdiacentTabViews(ACTabNavigationController *self, ACTa
 {
     // Get current tab index
     CGRect pageBounds = contentScrollView.bounds;
-    NSUInteger tabControllersCount = [tabControllers count];
+    NSUInteger tabControllersCount = self.tabCount;
     NSInteger currentTabIndex = (NSInteger)roundf(pageBounds.origin.x / pageBounds.size.width);
     if (currentTabIndex < 0)
         currentTabIndex = 0;
@@ -701,7 +722,7 @@ static void loadCurrentAndAdiacentTabViews(ACTabNavigationController *self, ACTa
         currentTabIndex = tabControllersCount - 1;
     
     // Return if already on this tab
-    if (currentTabIndex == [tabControllers indexOfObject:currentTabController])
+    if (currentTabIndex == [self.tabControllers indexOfObject:currentTabController])
         return;
     
     // Set selected tab
@@ -709,7 +730,7 @@ static void loadCurrentAndAdiacentTabViews(ACTabNavigationController *self, ACTa
     // but at that point currentTabController is already set to the one requested
     // by the tabBar, making the method return.
     ACTabController *fromTabController = currentTabController;
-    currentTabController = [tabControllers objectAtIndex:currentTabIndex];
+    currentTabController = [self.tabControllers objectAtIndex:currentTabIndex];
     [tabBar setSelectedTabControl:currentTabController.tabButton animated:YES];
     
     // Load/Unload needed views

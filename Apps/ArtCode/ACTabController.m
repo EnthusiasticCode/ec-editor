@@ -11,6 +11,12 @@
 #import "ACTab.h"
 #import "ACApplication.h"
 
+static void * const ACTabControllerTabCurrentURLObserving;
+
+@interface ACTabController ()
+@property (nonatomic, weak) UIViewController *tabViewController;
+@end
+
 @implementation ACTabController {
     // TODO substitute with state
 //    NSMutableArray *historyURLs;
@@ -40,6 +46,17 @@
     delegateHasDidChangeURLPreviousViewController = [delegate respondsToSelector:@selector(tabController:didChangeURL:previousViewController:)];
 }
 
+- (void)setTab:(ACTab *)tab
+{
+    if (tab == _tab)
+        return;
+    [self willChangeValueForKey:@"tab"];
+    [_tab removeObserver:self forKeyPath:@"currentURL" context:ACTabControllerTabCurrentURLObserving];
+    _tab = tab;
+    [_tab addObserver:self forKeyPath:@"currentURL" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial context:ACTabControllerTabCurrentURLObserving];
+    [self didChangeValueForKey:@"tab"];
+}
+
 - (BOOL)isCurrentTabController
 {
     return parentTabNavigationController.currentTabController == self;
@@ -64,6 +81,20 @@
 - (BOOL)isTabViewControllerLoaded
 {
     return tabViewController != nil;
+}
+
+- (void)dealloc
+{
+    [_tab removeObserver:self forKeyPath:@"currentURL" context:ACTabControllerTabCurrentURLObserving];
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    if (context != ACTabControllerTabCurrentURLObserving)
+        return [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+    if (delegateHasDidChangeURLPreviousViewController)
+        [self.delegate tabController:self didChangeURL:[change objectForKey:NSKeyValueChangeNewKey] previousViewController:self.tabViewController];
+    self.tabViewController = nil;
 }
 
 #pragma mark - Create Tab Controllers

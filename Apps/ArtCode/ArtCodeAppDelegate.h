@@ -8,9 +8,18 @@
 
 #import <UIKit/UIKit.h>
 #import "ACTabController.h"
+@class ACApplication;
 
 @interface ArtCodeAppDelegate : UIResponder <UIApplicationDelegate, ACTabControllerDataSource>
 
 @property (nonatomic, strong) UIWindow *window;
+
+@property (readonly, strong, nonatomic) NSManagedObjectContext *managedObjectContext;
+@property (readonly, strong, nonatomic) NSManagedObjectModel *managedObjectModel;
+@property (readonly, strong, nonatomic) NSPersistentStoreCoordinator *persistentStoreCoordinator;
+
+@property (nonatomic, strong, readonly) ACApplication *application;
+
+- (void)saveContext;
 
 @end

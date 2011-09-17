@@ -12,6 +12,7 @@
 
 @class ACTabNavigationController;
 @class ECSwipeGestureRecognizer;
+@class ACApplication;
 
 
 @protocol ACTabNavigationControllerDelegate <NSObject>
@@ -39,6 +40,8 @@
 @interface ACTabNavigationController : UIViewController <ECTabBarDelegate, ACTabControllerDelegate, UIScrollViewDelegate>
 
 @property (nonatomic, weak) id<ACTabNavigationControllerDelegate> delegate;
+
+@property (nonatomic, strong) ACApplication *application;
 
 #pragma mark Layout
 
@@ -70,13 +73,13 @@
 #pragma mark Managing Tabs
 
 /// The array of ordered tab controllers managed by this tab navigator.
-@property (nonatomic, readonly, copy) NSArray *tabControllers;
+@property (nonatomic, copy) NSArray *tabControllers;
 
 /// Convenience method that returns the count of tab controllers.
 @property (nonatomic, readonly) NSUInteger tabCount;
 
 /// The current displayed tab controller.
-@property (nonatomic, weak) ACTabController *currentTabController;
+@property (nonatomic, strong) ACTabController *currentTabController;
 
 /// Set the current tab to the one provider if present in the tab collection.
 - (void)setCurrentTabController:(ACTabController *)tabController animated:(BOOL)animated;
@@ -96,7 +99,7 @@
 
 /// Conveniance method to add a tab with a datasouce and an URL. This method returns the 
 /// added tab controller or nil if the controller could not be crated.
-- (ACTabController *)addTabControllerWithDataSorce:(id<ACTabControllerDataSource>)datasource tab:(ACTab *)tab animated:(BOOL)animated;
+- (ACTabController *)addTabControllerWithDataSource:(id<ACTabControllerDataSource>)datasource tab:(ACTab *)tab animated:(BOOL)animated;
 
 /// Removes a tab controller from the tab navigation
 - (void)removeTabController:(ACTabController *)tabController animated:(BOOL)animated;

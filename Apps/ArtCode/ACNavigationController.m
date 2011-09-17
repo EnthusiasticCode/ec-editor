@@ -49,7 +49,7 @@
 
 @synthesize topBarView, jumpBar, buttonEdit, buttonTools;
 @synthesize toolPanelController, toolPanelEnabled, toolPanelOnRight;
-@synthesize tabNavigationController;
+@synthesize tabNavigationController, application = _application;
 
 - (void)setToolPanelEnabled:(BOOL)enabled
 {
@@ -131,7 +131,8 @@
     // Tab controller
     if (!tabNavigationController)
         tabNavigationController = [ACTabNavigationController new];
-    tabNavigationController.delegate = self;
+    /*tabNavigationController.delegate = self;*/
+    tabNavigationController.application = self.application;
     [self addChildViewController:tabNavigationController];
     [self.view addSubview:tabNavigationController.view];
     CGRect tabControllerFrame = self.view.bounds;
