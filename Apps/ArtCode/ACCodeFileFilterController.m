@@ -383,10 +383,9 @@ enum ACCodeFileFilterSections {
     NSObject *obj = [[sections objectAtIndex:section] objectAtIndex:index];
     
     // Produce range of found element in target code view text
-    NSRange range;
+    NSRange range = NSMakeRange(0, 0);
     switch (section) {
         case ACCodeFileFilterSymbolsSection:
-            range = NSMakeRange(0, 0);
             break;
             
         case ACCodeFileFilterSearchSection:

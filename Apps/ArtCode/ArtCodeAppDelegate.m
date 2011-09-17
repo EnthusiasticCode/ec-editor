@@ -45,7 +45,7 @@
     // Generic popover
     id popoverAppearance = [ECPopoverView appearance];
     [popoverAppearance setBackgroundColor:[UIColor styleForegroundColor]];
-    [popoverAppearance setContentCornerRadius: 4];
+    [popoverAppearance setContentCornerRadius:4];
     [popoverAppearance setShadowOpacity:0.5];
     [popoverAppearance setShadowRadius:4];
     [popoverAppearance setShadowOffsetForArrowDirectionUpToAutoOrient:CGSizeMake(0, 2)];

@@ -15,12 +15,16 @@
 #import "ECCodeView.h"
 #import "ACCodeIndexerDataSource.h"
 
+#import "ACEditorToolSelectionController.h"
 #import "ACCodeFileFilterController.h"
 
 #import "NSTimer+block.h"
 #import <QuartzCore/QuartzCore.h>
 
 @implementation ACCodeFileController {
+    ACEditorToolSelectionController *editorToolSelectionController;
+    ECPopoverController *editorToolSelectionPopover;
+    
     ACCodeFileFilterController *filterController;
     ECPopoverController *filterPopoverController;
     
@@ -145,7 +149,19 @@
 
 - (void)toolButtonAction:(id)sender
 {
+    if (!editorToolSelectionController)
+    {
+        editorToolSelectionController = [[ACEditorToolSelectionController alloc] initWithNibName:@"ACEditorToolSelectionController" bundle:nil];
+        editorToolSelectionController.contentSizeForViewInPopover = CGSizeMake(250, 284);
+    }
     
+    if (!editorToolSelectionPopover)
+    {
+        editorToolSelectionPopover = [[ECPopoverController alloc] initWithContentViewController:editorToolSelectionController];
+        editorToolSelectionPopover.popoverView.contentCornerRadius = 0;
+    }
+    
+    [editorToolSelectionPopover presentPopoverFromRect:[sender frame] inView:[sender superview] permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
 }
 
 #pragma mark - View lifecycle
@@ -153,6 +169,16 @@
 - (void)loadView
 {
     self.view = self.codeView;
+}
+
+- (void)viewDidUnload
+{
+    [super viewDidUnload];
+    editorToolSelectionController = nil;
+    editorToolSelectionPopover = nil;
+    
+    filterController = nil;
+    filterPopoverController = nil;
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
