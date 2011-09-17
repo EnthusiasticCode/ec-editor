@@ -51,6 +51,12 @@ void * ACProjectDocumentProjectURLObserving;
     return [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithBool:YES], NSMigratePersistentStoresAutomaticallyOption, [NSNumber numberWithBool:YES], NSInferMappingModelAutomaticallyOption, nil];
 }
 
+- (NSManagedObjectModel *)managedObjectModel
+{
+    NSURL *modelURL = [[NSBundle mainBundle] URLForResource:@"Project" withExtension:@"momd"];
+    return [[NSManagedObjectModel alloc] initWithContentsOfURL:modelURL];
+}
+
 - (id)objectWithURL:(NSURL *)URL
 {
     if ([URL isEqual:self.projectURL])

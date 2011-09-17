@@ -8,7 +8,7 @@
         <attribute name="expanded" attributeType="Boolean" defaultValueString="NO"/>
         <attribute name="name" attributeType="String"/>
         <attribute name="tag" attributeType="Integer 16" defaultValueString="0"/>
-        <relationship name="parent" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Group" inverseName="children" inverseEntity="Group"/>
+        <relationship name="parent" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Group" inverseName="children" inverseEntity="Group"/>
     </entity>
     <entity name="Project" representedClassName="ACProject" parentEntity="Group" syncable="YES"/>
     <elements>

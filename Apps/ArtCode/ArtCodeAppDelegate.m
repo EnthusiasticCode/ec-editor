@@ -224,9 +224,10 @@
 //        controllerClass = [ACCodeFileController class];
 //    else
 //        controllerClass = [ACFileTableController class];
-
+    ECASSERT(controllerClass);
     UIViewController<ACNavigationTarget> *controller = [controllerClass newNavigationTargetController];
     [controller openURL:url];
+    ECASSERT(controller);
     return controller; // TODO initWithNibName:name of class
 }
 
