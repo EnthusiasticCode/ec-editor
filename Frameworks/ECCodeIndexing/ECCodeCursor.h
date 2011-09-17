@@ -298,13 +298,29 @@ typedef enum
 } ECCodeChildVisitResult;
 
 @interface ECCodeCursor : NSObject
+
+/// Hints on the language that this cursor is in.
 @property (nonatomic, readonly, copy) NSString *language;
+
+/// Kind of cursor.
 @property (nonatomic, readonly) ECCodeCursorKind kind;
+
+/// Spelling of the symbol.
 @property (nonatomic, readonly, copy) NSString *spelling;
+
+/// Path of the file the cursor is in.
 @property (nonatomic, readonly, copy) NSString *file;
+
+/// Offset in the file content at which the cursor is found.
 @property (nonatomic, readonly) NSUInteger offset;
+
+/// Range of the whole cursor and child cursors.
 @property (nonatomic, readonly) NSRange extent;
+
+/// Unique symbol name usable for refactoring inside the index.
 @property (nonatomic, readonly, copy) NSString *unifiedSymbolResolution;
+
+/// Parent cursor.
 @property (nonatomic, readonly, strong) ECCodeCursor *parent;
 
 /// Creates and returns an ordered set containing the child cursors of the receiver

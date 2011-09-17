@@ -116,12 +116,20 @@
 
 - (ECCodeCursor *)cursor
 {
-    return nil;
+    if (![plugin_ respondsToSelector:@selector(cursor)])
+        return nil;
+    if (self.filesHaveUnsavedContent)
+        [plugin_ reparseDependentFiles:[self observedFiles]];
+    return [plugin_ cursor];
 }
 
 - (ECCodeCursor *)cursorForOffset:(NSUInteger)offset
 {
-    return nil;
+    if (![plugin_ respondsToSelector:@selector(cursorForOffset:)])
+        return nil;
+    if (self.filesHaveUnsavedContent)
+        [plugin_ reparseDependentFiles:[self observedFiles]];
+    return [plugin_ cursorForOffset:offset];
 }
 
 - (NSArray *)observedFiles

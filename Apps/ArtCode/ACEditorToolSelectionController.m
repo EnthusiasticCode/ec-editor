@@ -10,7 +10,12 @@
 #import "ACEditorToolSelectionController.h"
 #import "ECRoundedContentCornersView.h"
 
+#import "ACNavigationController.h"
+#import "ECPopoverController.h"
+
 @implementation ACEditorToolSelectionController
+
+@synthesize targetNavigationController, containerPopoverController;
 
 #pragma mark - View lifecycle
 
@@ -33,4 +38,9 @@
 	return YES;
 }
 
+- (IBAction)tabsAction:(id)sender 
+{
+    [targetNavigationController.tabNavigationController toggleTabBar:sender];
+    [containerPopoverController dismissPopoverAnimated:YES];
+}
 @end

@@ -44,6 +44,7 @@
 								<int key="NSvFlags">290</int>
 								<string key="NSFrameSize">{334, 37}</string>
 								<reference key="NSSuperview" ref="287731385"/>
+								<reference key="NSWindow"/>
 								<reference key="NSNextKeyView" ref="701081072"/>
 								<string key="NSReuseIdentifierKey">_NS:241</string>
 								<object class="NSColor" key="IBUIBackgroundColor">
@@ -93,6 +94,7 @@
 								<int key="NSvFlags">290</int>
 								<string key="NSFrame">{{0, 38}, {334, 37}}</string>
 								<reference key="NSSuperview" ref="287731385"/>
+								<reference key="NSWindow"/>
 								<reference key="NSNextKeyView" ref="184418408"/>
 								<string key="NSReuseIdentifierKey">_NS:241</string>
 								<object class="NSColor" key="IBUIBackgroundColor">
@@ -124,6 +126,7 @@
 						</array>
 						<string key="NSFrameSize">{334, 75}</string>
 						<reference key="NSSuperview" ref="191373211"/>
+						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="79317818"/>
 						<string key="NSReuseIdentifierKey">_NS:212</string>
 						<object class="NSColor" key="IBUIBackgroundColor">
@@ -141,6 +144,7 @@
 								<int key="NSvFlags">290</int>
 								<string key="NSFrameSize">{334, 37}</string>
 								<reference key="NSSuperview" ref="184418408"/>
+								<reference key="NSWindow"/>
 								<reference key="NSNextKeyView" ref="887297611"/>
 								<string key="NSReuseIdentifierKey">_NS:241</string>
 								<object class="NSColor" key="IBUIBackgroundColor">
@@ -177,6 +181,7 @@
 								<int key="NSvFlags">290</int>
 								<string key="NSFrame">{{0, 38}, {334, 37}}</string>
 								<reference key="NSSuperview" ref="184418408"/>
+								<reference key="NSWindow"/>
 								<reference key="NSNextKeyView" ref="724655805"/>
 								<string key="NSReuseIdentifierKey">_NS:241</string>
 								<object class="NSColor" key="IBUIBackgroundColor">
@@ -210,6 +215,7 @@
 								<int key="NSvFlags">290</int>
 								<string key="NSFrame">{{0, 76}, {334, 37}}</string>
 								<reference key="NSSuperview" ref="184418408"/>
+								<reference key="NSWindow"/>
 								<reference key="NSNextKeyView" ref="522163028"/>
 								<string key="NSReuseIdentifierKey">_NS:241</string>
 								<object class="NSColor" key="IBUIBackgroundColor">
@@ -246,6 +252,7 @@
 								<int key="NSvFlags">290</int>
 								<string key="NSFrame">{{0, 114}, {334, 37}}</string>
 								<reference key="NSSuperview" ref="184418408"/>
+								<reference key="NSWindow"/>
 								<reference key="NSNextKeyView" ref="541627174"/>
 								<string key="NSReuseIdentifierKey">_NS:241</string>
 								<object class="NSColor" key="IBUIBackgroundColor">
@@ -282,7 +289,7 @@
 								<int key="NSvFlags">290</int>
 								<string key="NSFrame">{{0, 152}, {334, 37}}</string>
 								<reference key="NSSuperview" ref="184418408"/>
-								<reference key="NSNextKeyView"/>
+								<reference key="NSWindow"/>
 								<string key="NSReuseIdentifierKey">_NS:241</string>
 								<object class="NSColor" key="IBUIBackgroundColor">
 									<int key="NSColorSpace">3</int>
@@ -316,6 +323,7 @@
 						</array>
 						<string key="NSFrame">{{0, 95}, {334, 189}}</string>
 						<reference key="NSSuperview" ref="191373211"/>
+						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="948766918"/>
 						<string key="NSReuseIdentifierKey">_NS:212</string>
 						<object class="NSColor" key="IBUIBackgroundColor">
@@ -327,6 +335,7 @@
 				</array>
 				<string key="NSFrameSize">{334, 284}</string>
 				<reference key="NSSuperview"/>
+				<reference key="NSWindow"/>
 				<reference key="NSNextKeyView" ref="287731385"/>
 				<object class="NSColor" key="IBUIBackgroundColor">
 					<int key="NSColorSpace">3</int>
@@ -344,6 +353,15 @@
 						<reference key="destination" ref="191373211"/>
 					</object>
 					<int key="connectionID">12</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBCocoaTouchEventConnection" key="connection">
+						<string key="label">tabsAction:</string>
+						<reference key="source" ref="79317818"/>
+						<reference key="destination" ref="372490531"/>
+						<int key="IBEventType">7</int>
+					</object>
+					<int key="connectionID">13</int>
 				</object>
 			</array>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -468,9 +486,39 @@
 			<nil key="activeLocalization"/>
 			<dictionary class="NSMutableDictionary" key="localizations"/>
 			<nil key="sourceID"/>
-			<int key="maxID">12</int>
+			<int key="maxID">13</int>
 		</object>
-		<object class="IBClassDescriber" key="IBDocument.Classes"/>
+		<object class="IBClassDescriber" key="IBDocument.Classes">
+			<array class="NSMutableArray" key="referencedPartialClassDescriptions">
+				<object class="IBPartialClassDescription">
+					<string key="className">ACEditorToolSelectionController</string>
+					<string key="superclassName">UIViewController</string>
+					<object class="NSMutableDictionary" key="actions">
+						<string key="NS.key.0">tabsAction:</string>
+						<string key="NS.object.0">id</string>
+					</object>
+					<object class="NSMutableDictionary" key="actionInfosByName">
+						<string key="NS.key.0">tabsAction:</string>
+						<object class="IBActionInfo" key="NS.object.0">
+							<string key="name">tabsAction:</string>
+							<string key="candidateClassName">id</string>
+						</object>
+					</object>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/ACEditorToolSelectionController.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">ECRoundedContentCornersView</string>
+					<string key="superclassName">UIView</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/ECRoundedContentCornersView.h</string>
+					</object>
+				</object>
+			</array>
+		</object>
 		<int key="IBDocument.localizationMode">0</int>
 		<string key="IBDocument.TargetRuntimeIdentifier">IBIPadFramework</string>
 		<bool key="IBDocument.PluginDeclaredDependenciesTrackSystemTargetVersion">YES</bool>

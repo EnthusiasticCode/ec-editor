@@ -30,7 +30,12 @@ void ECCodeOffsetAndFileFromClangSourceLocation(CXSourceLocation clangSourceLoca
     if (offset)
         *offset = clangOffset;
     if (file)
-        *file = [NSString stringWithUTF8String:clang_getCString(clangFileName)];
+    {
+        if (clang_getCString(clangFileName))
+            *file = [NSString stringWithUTF8String:clang_getCString(clangFileName)];
+        else
+            *file = nil;
+    }
     clang_disposeString(clangFileName);
 }
 

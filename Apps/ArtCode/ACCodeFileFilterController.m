@@ -12,6 +12,8 @@
 #import "ACCodeIndexerDataSource.h"
 
 #import "ECTextRenderer.h"
+#import "ECCodeUnit.h"
+#import "ECCodeCursor.h"
 
 enum ACCodeFileFilterSections {
     /// Identifies the symbol section of the filter table view.
@@ -35,10 +37,55 @@ enum ACCodeFileFilterSections {
     NSArray *sections;
 }
 
-#pragma mark - Properties
-
 @synthesize targetCodeView, filterString;
 @synthesize startSearchingBlock, endSearchingBlock, didSelectFilterResultBlock;
+
+#pragma mark - Private Methods
+
+/// Returns the ACCodeFileFilterSections
+- (NSInteger)filterSectionForSection:(NSInteger)section
+{
+    ECASSERT(section < [sections count]);
+    
+    NSInteger result = 0;
+    for (NSArray *sec in sections)
+    {
+        if ([sec count] > 0)
+        {
+            if (section == 0)
+                return result;
+            else
+                section--;
+        }
+        result++;
+    }
+    
+    return -1;
+}
+
+- (void)populateSymbolsArrayWithFitler:(NSString *)filter
+{
+    ECASSERT([targetCodeView.datasource isKindOfClass:[ACCodeIndexerDataSource class]]);
+    
+    ECCodeUnit *codeUnit = [(ACCodeIndexerDataSource *)targetCodeView.datasource codeUnit];
+    
+    NSMutableArray *symbolsSection = [sections objectAtIndex:ACCodeFileFilterSymbolsSection];
+    [symbolsSection removeAllObjects];
+    
+    [[codeUnit cursorForOffset:0] enumerateChildCursorsWithBlock:^ECCodeChildVisitResult(ECCodeCursor *cursor, ECCodeCursor *parent) {
+        // TODO filter
+        [symbolsSection addObject:cursor];
+        if (cursor.kind == ECCodeCursorKindObjCInterfaceDecl 
+            || cursor.kind == ECCodeCursorKindObjCImplementationDecl)
+        {
+            return ECCodeChildVisitResultRecurse;
+        }
+        
+        return ECCodeChildVisitResultContinue;
+    }];
+}
+
+#pragma mark - Properties
 
 - (void)setTargetCodeView:(ECCodeView *)codeView
 {
@@ -102,6 +149,9 @@ enum ACCodeFileFilterSections {
             CGContextFillRect(context, rect);            
         }];
     } underText:YES forKey:filteringBlockKey];
+    
+    // Apply filtering
+    [self setFilterString:filterString];
 }
 
 - (void)setFilterString:(NSString *)string
@@ -112,36 +162,42 @@ enum ACCodeFileFilterSections {
         startSearchingBlock(self);
     
     dispatch_async(dispatch_get_main_queue(), ^{
-        // TODO create here? keep? manage error
-        NSRegularExpression *filterExp = [NSRegularExpression regularExpressionWithPattern:filterString options:0 error:NULL];
+        // Prepare symbol section
+//        [self populateSymbolsArrayWithFitler:filterString];
         
-        // Prepare text search section
-        NSMutableArray *searchSection = [sections objectAtIndex:ACCodeFileFilterSearchSection];
-        [searchSection removeAllObjects];
-        
-        /// Search in text
-        if (targetCodeView)
+        if (filterString)
         {
-            NSString *text = targetCodeView.text;
-            NSArray *matches = [filterExp matchesInString:text options:0 range:NSMakeRange(0, [text length])];
-            // TODO save only rangeAtPosition:0?
-            [searchSection addObjectsFromArray:matches];
-        }
-        
-        // Prepare other section
-        NSMutableArray *otherSection = [sections objectAtIndex:ACCodeFileFilterOtherSection];
-        [otherSection removeAllObjects];
-        
-        // Search for go to line
-        [goToLineRegExp enumerateMatchesInString:filterString options:0 range:NSMakeRange(0, [filterString length]) usingBlock:^(NSTextCheckingResult *result, NSMatchingFlags flags, BOOL *stop) {
-            if ([result numberOfRanges] > 1)
-            {   
-                // Get actual line number to navigate to
-                NSRange lineRange = [result rangeAtIndex:1];
-                NSInteger line = [[filterString substringWithRange:lineRange] integerValue];
-                [otherSection addObject:[NSNumber numberWithInteger:line]];
+            // TODO create here? keep? manage error
+            NSRegularExpression *filterExp = [NSRegularExpression regularExpressionWithPattern:filterString options:0 error:NULL];
+            
+            // Prepare text search section
+            NSMutableArray *searchSection = [sections objectAtIndex:ACCodeFileFilterSearchSection];
+            [searchSection removeAllObjects];
+            
+            /// Search in text
+            if (targetCodeView)
+            {
+                NSString *text = targetCodeView.text;
+                NSArray *matches = [filterExp matchesInString:text options:0 range:NSMakeRange(0, [text length])];
+                // TODO save only rangeAtPosition:0?
+                [searchSection addObjectsFromArray:matches];
             }
-        }];
+            
+            // Prepare other section
+            NSMutableArray *otherSection = [sections objectAtIndex:ACCodeFileFilterOtherSection];
+            [otherSection removeAllObjects];
+            
+            // Search for go to line
+            [goToLineRegExp enumerateMatchesInString:filterString options:0 range:NSMakeRange(0, [filterString length]) usingBlock:^(NSTextCheckingResult *result, NSMatchingFlags flags, BOOL *stop) {
+                if ([result numberOfRanges] > 1)
+                {   
+                    // Get actual line number to navigate to
+                    NSRange lineRange = [result rangeAtIndex:1];
+                    NSInteger line = [[filterString substringWithRange:lineRange] integerValue];
+                    [otherSection addObject:[NSNumber numberWithInteger:line]];
+                }
+            }];
+        }
         
         [self.tableView reloadData];
         [targetCodeView setNeedsDisplay];
@@ -149,29 +205,6 @@ enum ACCodeFileFilterSections {
         if (endSearchingBlock)
             endSearchingBlock(self);
     });
-}
-
-#pragma mark - Private Methods
-
-/// Returns the ACCodeFileFilterSections
-- (NSInteger)filterSectionForSection:(NSInteger)section
-{
-    ECASSERT(section < [sections count]);
-    
-    NSInteger result = 0;
-    for (NSArray *sec in sections)
-    {
-        if ([sec count] > 0)
-        {
-            if (section == 0)
-                return result;
-            else
-                section--;
-        }
-        result++;
-    }
-    
-    return -1;
 }
 
 #pragma mark - Controller lifecycle
@@ -293,6 +326,8 @@ enum ACCodeFileFilterSections {
     {
         case ACCodeFileFilterSymbolsSection:
         {
+            ECCodeCursor *cursor = [sectionObjects objectAtIndex:index];
+            cell.textLabel.text = cursor.spelling;
             break;
         }
             

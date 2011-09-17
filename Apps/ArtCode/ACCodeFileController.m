@@ -11,6 +11,8 @@
 #import "ACFile.h"
 #import "ACCodeFileController.h"
 
+#import "ACNavigationController.h"
+
 #import "ECPopoverController.h"
 #import "ECCodeView.h"
 #import "ACCodeIndexerDataSource.h"
@@ -153,12 +155,15 @@
     {
         editorToolSelectionController = [[ACEditorToolSelectionController alloc] initWithNibName:@"ACEditorToolSelectionController" bundle:nil];
         editorToolSelectionController.contentSizeForViewInPopover = CGSizeMake(250, 284);
+        editorToolSelectionController.targetNavigationController = self.ACNavigationController;
     }
     
     if (!editorToolSelectionPopover)
     {
         editorToolSelectionPopover = [[ECPopoverController alloc] initWithContentViewController:editorToolSelectionController];
         editorToolSelectionPopover.popoverView.contentCornerRadius = 0;
+        
+        editorToolSelectionController.containerPopoverController = editorToolSelectionPopover;
     }
     
     [editorToolSelectionPopover presentPopoverFromRect:[sender frame] inView:[sender superview] permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];

@@ -154,6 +154,7 @@ NSString *const ECClangCodeUnitOptionCXIndex = @"CXIndex";
 - (ECCodeCursor *)cursorForOffset:(NSUInteger)offset
 {
     CXSourceLocation clangLocation = clang_getLocationForOffset(translationUnit_, clang_getFile(translationUnit_, [self.file fileSystemRepresentation]), offset);
+    ECASSERT(!clang_equalLocations(clangLocation, clang_getNullLocation()));
     return [ECClangCodeCursor cursorWithCXCursor:clang_getCursor(translationUnit_, clangLocation)];
 }
 
