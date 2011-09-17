@@ -461,9 +461,17 @@
     }];
 }
 
-+ (UIImage *)styleCloseImageWithColor:(UIColor *)color outlineColor:(UIColor *)outlineColor
++ (UIImage *)styleCloseImageWithColor:(UIColor *)color outlineColor:(UIColor *)outlineColor shadowColor:(UIColor *)shadowColor
 {
-    return [UIImage imageWithSize:(CGSize){16, 16} block:^(CGContextRef ctx, CGRect rect) {
+    return [UIImage imageWithSize:(CGSize){16, shadowColor ? 17 : 16} block:^(CGContextRef ctx, CGRect rect) {
+        // Accounting for shadow
+        if (shadowColor)
+        {
+            rect.size.height -= 1;
+            CGContextSetShadowWithColor(ctx, CGSizeMake(0, -1), 0, shadowColor.CGColor);
+            CGContextBeginTransparencyLayer(ctx, NULL);
+        }
+        
         CGMutablePathRef path = CGPathCreateMutable();
         CGRect innerRect = CGRectInset(rect, 3, 3);
         
@@ -487,6 +495,9 @@
         CGContextSetStrokeColorWithColor(ctx, color.CGColor);
         CGContextAddPath(ctx, path);
         CGContextStrokePath(ctx);
+        
+        if (shadowColor)
+            CGContextEndTransparencyLayer(ctx);
         
         CGPathRelease(path);
     }];

@@ -43,7 +43,7 @@
 
 /// Image of an X. This image can have a required background and outline color. 
 /// The outline will look like a border.
-+ (UIImage *)styleCloseImageWithColor:(UIColor *)color outlineColor:(UIColor *)outlineColor;
++ (UIImage *)styleCloseImageWithColor:(UIColor *)color outlineColor:(UIColor *)outlineColor shadowColor:(UIColor *)shadowColor;
 
 /// Produce a rounded rect 14x14 image with the given color and white letter over it.
 + (UIImage *)styleSymbolImageWithColor:(UIColor *)color letter:(NSString *)letter;

@@ -101,7 +101,7 @@
     // Right button to search/remove search
     UIButton *rightButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 16, 17)];
     [rightButton setImage:[UIImage styleSearchIconWithColor:[UIColor styleForegroundColor] shadowColor:[UIColor whiteColor]] forState:UIControlStateNormal];
-    [rightButton setImage:[UIImage styleCloseImageWithColor:[UIColor styleForegroundColor] outlineColor:nil] forState:UIControlStateSelected];
+    [rightButton setImage:[UIImage styleCloseImageWithColor:[UIColor styleForegroundColor] outlineColor:nil shadowColor:[UIColor whiteColor]] forState:UIControlStateSelected];
     [rightButton setBackgroundImage:nil forState:UIControlStateNormal];
     [rightButton setBackgroundImage:nil forState:UIControlStateHighlighted];
     [rightButton setBackgroundImage:nil forState:UIControlStateSelected];

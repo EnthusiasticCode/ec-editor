@@ -22,11 +22,11 @@
         closeButton.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleHeight;
         static UIImage *closeImageNormal = nil;
         if (!closeImageNormal)
-            closeImageNormal = [UIImage styleCloseImageWithColor:[UIColor styleBackgroundColor] outlineColor:[UIColor styleForegroundColor]];
+            closeImageNormal = [UIImage styleCloseImageWithColor:[UIColor styleBackgroundColor] outlineColor:[UIColor styleForegroundColor] shadowColor:nil];
         [closeButton setImage:closeImageNormal forState:UIControlStateNormal];
         static UIImage *closeImageHighlighted = nil;
         if (!closeImageHighlighted)
-            closeImageHighlighted = [UIImage styleCloseImageWithColor:[UIColor styleForegroundColor] outlineColor:[UIColor styleBackgroundColor]];
+            closeImageHighlighted = [UIImage styleCloseImageWithColor:[UIColor styleForegroundColor] outlineColor:[UIColor styleBackgroundColor] shadowColor:nil];
         [closeButton setImage:closeImageHighlighted forState:UIControlStateHighlighted];
         
         [self addSubview:closeButton];
