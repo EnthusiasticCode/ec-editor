@@ -41,8 +41,6 @@
 
 @property (nonatomic, weak) id<ACTabNavigationControllerDelegate> delegate;
 
-@property (nonatomic, strong) ACApplication *application;
-
 #pragma mark Layout
 
 /// Define a margin between two tab pages.
@@ -73,7 +71,7 @@
 #pragma mark Managing Tabs
 
 /// The array of ordered tab controllers managed by this tab navigator.
-@property (nonatomic, copy) NSArray *tabControllers;
+@property (nonatomic, copy, readonly) NSArray *tabControllers;
 
 /// Convenience method that returns the count of tab controllers.
 @property (nonatomic, readonly) NSUInteger tabCount;

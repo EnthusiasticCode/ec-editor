@@ -17,7 +17,7 @@
 
 
 /// A navigation controller with jump bar and tabs capabilities
-@interface ACNavigationController : UIViewController <ECJumpBarDelegate/*, ACTabNavigationControllerDelegate*/> 
+@interface ACNavigationController : UIViewController <ECJumpBarDelegate, ACTabNavigationControllerDelegate> 
 
 @property (nonatomic, strong) ACApplication *application;
 

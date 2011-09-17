@@ -15,8 +15,6 @@
 #import "ACTab.h"
 #import "ACApplication.h"
 
-static void * ACTabControllerApplicationTabsObserving;
-
 /// Category on tab controller to assign it's parent;
 @interface ACTabController (ParentCategory)
 
@@ -32,6 +30,10 @@ typedef void (^ScrollViewBlock)(UIScrollView *scrollView);
 @property (nonatomic, copy) ScrollViewBlock customLayoutSubviews;
 @end
 
+
+@interface ACTabNavigationController ()
+@property (nonatomic, copy) NSArray *tabControllers;
+@end
 
 @implementation ACTabNavigationController {
     NSMutableArray *tabTitles;
@@ -55,7 +57,6 @@ typedef void (^ScrollViewBlock)(UIScrollView *scrollView);
 #pragma mark - Properties
 
 @synthesize delegate;
-@synthesize application = _application;
 @synthesize tabBarEnabled;
 @synthesize tabBar, contentScrollView;
 @synthesize swipeGestureRecognizer;
@@ -74,15 +75,6 @@ typedef void (^ScrollViewBlock)(UIScrollView *scrollView);
     delegateFlags.hasWillRemoveTabController = [delegate respondsToSelector:@selector(tabNavigationController:willRemoveTabController:)];
     delegateFlags.hasDidRemoveTabController = [delegate respondsToSelector:@selector(tabNavigationController:didRemoveTabController:)];
     delegateFlags.hasChangedURLForCurrentTabController = [delegate respondsToSelector:@selector(tabNavigationController:changedURLForTabController:)];
-}
-
-- (void)setApplication:(ACApplication *)application
-{
-    if (application == _application)
-        return;
-    [_application removeObserver:self forKeyPath:@"tabs" context:ACTabControllerApplicationTabsObserving];
-    _application = application;
-    [_application addObserver:self forKeyPath:@"tabs" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial context:ACTabControllerApplicationTabsObserving];
 }
 
 - (NSUInteger)tabCount
@@ -122,18 +114,6 @@ typedef void (^ScrollViewBlock)(UIScrollView *scrollView);
         contentScrollViewFrame.size.height -= tabBar.bounds.size.height;
     }
     contentScrollView.frame = contentScrollViewFrame;
-}
-
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
-{
-    if (context != ACTabControllerApplicationTabsObserving)
-        return [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
-    // TODO: observe tabs for changes and reflect them in the ui? or let all code paths that change tabs go through this controller?
-}
-
-- (void)dealloc
-{
-    [_application removeObserver:self forKeyPath:@"tabs" context:ACTabControllerApplicationTabsObserving];
 }
 
 #pragma mark - Private Methods

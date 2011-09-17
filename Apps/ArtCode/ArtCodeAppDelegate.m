@@ -128,12 +128,9 @@
         [self.application insertTabAtIndex:0];
         [[self.application.tabs objectAtIndex:0] pushURL:[NSURL URLWithString:@"artcode:projects"]];
     }
-    NSMutableArray *tabControllers = [NSMutableArray arrayWithCapacity:[self.application.tabs count]];
     for (ACTab *tab in self.application.tabs)
-        [tabControllers addObject:[[ACTabController alloc] initWithDataSource:(id<ACTabControllerDataSource>)[UIApplication sharedApplication].delegate tab:tab]];
-    navigationController.tabNavigationController.application = self.application;
-    navigationController.tabNavigationController.tabControllers = tabControllers;
-    navigationController.tabNavigationController.currentTabController = [tabControllers objectAtIndex:0];
+        [navigationController.tabNavigationController addTabControllerWithDataSource:self tab:tab animated:NO];
+    navigationController.tabNavigationController.currentTabController = [navigationController.tabNavigationController.tabControllers objectAtIndex:0];
 
     navigationController.tabNavigationController.makeAddedTabCurrent = YES;
     return YES;

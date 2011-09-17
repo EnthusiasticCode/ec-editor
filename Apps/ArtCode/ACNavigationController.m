@@ -131,8 +131,7 @@
     // Tab controller
     if (!tabNavigationController)
         tabNavigationController = [ACTabNavigationController new];
-    /*tabNavigationController.delegate = self;*/
-    tabNavigationController.application = self.application;
+    tabNavigationController.delegate = self;
     [self addChildViewController:tabNavigationController];
     [self.view addSubview:tabNavigationController.view];
     CGRect tabControllerFrame = self.view.bounds;

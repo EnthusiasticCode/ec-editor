@@ -92,8 +92,10 @@ static void * const ACTabControllerTabCurrentURLObserving;
 {
     if (context != ACTabControllerTabCurrentURLObserving)
         return [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+    
     if (delegateHasDidChangeURLPreviousViewController)
         [self.delegate tabController:self didChangeURL:[change objectForKey:NSKeyValueChangeNewKey] previousViewController:self.tabViewController];
+    
     self.tabViewController = nil;
 }
 
