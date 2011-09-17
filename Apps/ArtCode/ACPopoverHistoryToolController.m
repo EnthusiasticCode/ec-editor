@@ -16,6 +16,11 @@ static void * const ACPopoverHistoryToolControllerTabHistoryItemsObserving;
 #define SECTION_BACK_TO_PROJECTS 1
 #define SECTION_HISTORY_URLS 0
 
+@interface ACPopoverHistoryToolController ()
+- (NSUInteger)historyIndexForIndexPath:(NSIndexPath *)indexPath;
+- (BOOL)currentHistoryPositionIsAtIndexPath:(NSIndexPath *)indexPath;
+@end
+
 @implementation ACPopoverHistoryToolController
 
 @synthesize tab = _tab;
@@ -46,6 +51,7 @@ static void * const ACPopoverHistoryToolControllerTabHistoryItemsObserving;
     else if (context == ACPopoverHistoryToolControllerTabCurrentHistoryPositionObserving)
     {
         // TODO: different formatting for current history position, update without reloading on history position change
+        // NOTE: doesn't seem to be needed as changing the current history position triggers the history items observing as well
     }
     else
         [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
@@ -101,8 +107,11 @@ static void * const ACPopoverHistoryToolControllerTabHistoryItemsObserving;
     }
     else
     {
-        NSUInteger historyIndex = [indexPath indexAtPosition:1];
-        cell.textLabel.text = [[[self.tab.historyItems objectAtIndex:historyIndex] URL] path];
+        cell.textLabel.text = [[[self.tab.historyItems objectAtIndex:[self historyIndexForIndexPath:indexPath]] URL] path];
+        if ([self currentHistoryPositionIsAtIndexPath:indexPath])
+            cell.imageView.image = [UIImage imageNamed:@"toolPanelBookmarksToolSelectedImage.png"];
+        else
+            cell.imageView.image = nil;
     }
     
     return cell;
@@ -113,12 +122,21 @@ static void * const ACPopoverHistoryToolControllerTabHistoryItemsObserving;
     return NO;
 }
 
+- (NSUInteger)historyIndexForIndexPath:(NSIndexPath *)indexPath
+{
+    return [self.tab.historyItems count] - 1 - indexPath.row;
+}
+
+- (BOOL)currentHistoryPositionIsAtIndexPath:(NSIndexPath *)indexPath
+{
+    return [self.tab.historyItems count] - 1 - self.tab.currentHistoryPosition == indexPath.row;
+}
+
 #pragma mark - Table view delegate
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSUInteger historyIndex = [indexPath indexAtPosition:1];
-    self.tab.currentHistoryPosition = historyIndex;
+    self.tab.currentHistoryPosition = [self historyIndexForIndexPath:indexPath];
 }
 
 @end
