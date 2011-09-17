@@ -60,7 +60,7 @@
     if (self.currentHistoryPosition < lastPosition)
     {
         NSMutableOrderedSet *historyItems = [self mutableOrderedSetValueForKey:@"historyItems"];
-        [historyItems removeObjectsInRange:NSMakeRange(self.currentHistoryPosition, lastPosition - self.currentHistoryPosition)];
+        [historyItems removeObjectsInRange:NSMakeRange(self.currentHistoryPosition + 1, lastPosition - self.currentHistoryPosition)];
     }
     ACHistoryItem *historyItem = [NSEntityDescription insertNewObjectForEntityForName:@"HistoryItem" inManagedObjectContext:self.managedObjectContext];
     historyItem.tab = self;

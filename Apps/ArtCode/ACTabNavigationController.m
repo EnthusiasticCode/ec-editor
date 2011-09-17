@@ -642,11 +642,11 @@ static void loadCurrentAndAdiacentTabViews(ACTabNavigationController *self, ACTa
 
 #pragma mark - Tab Controller Delegate Methods
 
-- (void)tabController:(ACTabController *)tabController didChangeURL:(NSURL *)url previousViewController:(UIViewController *)previousVewController
+- (void)tabController:(ACTabController *)tabController didChangeURL:(NSURL *)url previousViewController:(UIViewController *)previousViewController
 {
     // Substitute view controller
 #warning BUG the next line crashes randomly
-    if (previousVewController != tabController.tabViewController)
+    if (previousViewController != tabController.tabViewController)
     {
         // Add new controller and view
         [self addChildViewController:tabController.tabViewController];
@@ -654,8 +654,8 @@ static void loadCurrentAndAdiacentTabViews(ACTabNavigationController *self, ACTa
         if (tabController == currentTabController)
         {
             // TODO this transition should be applied even if the view controller is not changed?
-            [UIView transitionFromView:previousVewController.view toView:tabController.tabViewController.view duration:0.2 options:UIViewAnimationOptionTransitionCrossDissolve completion:^(BOOL finished) {
-                [previousVewController removeFromParentViewController];
+            [UIView transitionFromView:previousViewController.view toView:tabController.tabViewController.view duration:0.2 options:UIViewAnimationOptionTransitionCrossDissolve completion:^(BOOL finished) {
+                [previousViewController removeFromParentViewController];
 
                 loadCurrentAndAdiacentTabViews(self, nil, YES);
                 
@@ -666,9 +666,9 @@ static void loadCurrentAndAdiacentTabViews(ACTabNavigationController *self, ACTa
         else
         {
             // Remove old controller
-            if ([previousVewController isViewLoaded])
-                [previousVewController.view removeFromSuperview];
-            [previousVewController removeFromParentViewController];
+            if ([previousViewController isViewLoaded])
+                [previousViewController.view removeFromSuperview];
+            [previousViewController removeFromParentViewController];
             
             loadCurrentAndAdiacentTabViews(self, tabController, NO);
         }

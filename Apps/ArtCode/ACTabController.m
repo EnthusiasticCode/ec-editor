@@ -93,10 +93,11 @@ static void * const ACTabControllerTabCurrentURLObserving;
     if (context != ACTabControllerTabCurrentURLObserving)
         return [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
     
-    if (delegateHasDidChangeURLPreviousViewController)
-        [self.delegate tabController:self didChangeURL:[change objectForKey:NSKeyValueChangeNewKey] previousViewController:self.tabViewController];
-    
+    // TODO: stink! accessing an instance variable to avoid lazy instantiation
+    UIViewController *previousViewController = tabViewController;
     self.tabViewController = nil;
+    if (delegateHasDidChangeURLPreviousViewController)
+        [self.delegate tabController:self didChangeURL:[change objectForKey:NSKeyValueChangeNewKey] previousViewController:previousViewController];
 }
 
 #pragma mark - Create Tab Controllers
