@@ -235,6 +235,7 @@ enum ACCodeFileFilterSections {
     
     self.tableView.backgroundColor = [UIColor styleBackgroundColor];
     self.tableView.separatorColor = [UIColor styleForegroundColor];
+    self.tableView.tableFooterView = [UIView new];
 }
 
 - (void)viewDidUnload
@@ -339,6 +340,10 @@ enum ACCodeFileFilterSections {
             
             [cell.contentView addSubview:toolsView];
         }
+        else if (section == ACCodeFileFilterSearchSection)
+        {
+            cell.selectionStyle = UITableViewCellSelectionStyleNone;
+        }
         else
         {
             // Solid color selection highlight
@@ -430,7 +435,7 @@ enum ACCodeFileFilterSections {
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {
     UILabel *label = [UILabel new];
-    label.font = [UIFont styleFontWithSize:16];
+    label.font = [UIFont styleFontWithSize:14];
     label.backgroundColor = [UIColor styleForegroundColor];
     label.textColor = [UIColor styleBackgroundColor];
     
