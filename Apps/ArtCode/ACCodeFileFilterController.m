@@ -318,18 +318,24 @@ enum ACCodeFileFilterSections {
             [regExpButton setTitle:@"RegExp" forState:UIControlStateNormal];
             [toolsView addSubview:regExpButton];
             
-            CGRect replaceFieldFrame = CGRectMake(75, 0, cell.bounds.size.width - (75 + 44 + 44), 44);
+            CGRect replaceFieldFrame = CGRectMake(75, 0, cell.bounds.size.width - (75 + 40 + 40), 44);
             ACToolTextField *replaceField = [[ACToolTextField alloc] initWithFrame:replaceFieldFrame];
             replaceField.autoresizingMask = UIViewAutoresizingFlexibleWidth;
             replaceField.placeholder = @"Replace";
             replaceField.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
             [toolsView addSubview:replaceField];
             
-            UIButton *allButton = [[UIButton alloc] initWithFrame:CGRectMake(CGRectGetMaxX(replaceFieldFrame), 0, 44, 44)];
+            UIButton *allButton = [[UIButton alloc] initWithFrame:CGRectMake(CGRectGetMaxX(replaceFieldFrame), 0, 40, 44)];
             allButton.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin;
             allButton.titleLabel.font = [UIFont styleFontWithSize:14];
             [allButton setTitle:@"All" forState:UIControlStateNormal];
             [toolsView addSubview:allButton];
+            
+            UIButton *modalButton = [[UIButton alloc] initWithFrame:CGRectMake(CGRectGetMaxX(replaceFieldFrame) + 40, 0, 40, 44)];
+            modalButton.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin;
+            modalButton.titleLabel.font = [UIFont styleFontWithSize:14];
+            [modalButton setTitle:@"F" forState:UIControlStateNormal];
+            [toolsView addSubview:modalButton];
             
             [cell.contentView addSubview:toolsView];
         }

@@ -10,4 +10,6 @@
 
 @interface ACToolFiltersView : UIView
 
+@property (nonatomic, copy) void (^customDrawRect)(UIView *view, CGRect rect);
+
 @end

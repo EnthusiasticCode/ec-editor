@@ -12,4 +12,14 @@
 
 @implementation ACToolFiltersView
 
+@synthesize customDrawRect;
+
+- (void)drawRect:(CGRect)rect
+{
+    [super drawRect:rect];
+    
+    if (customDrawRect)
+        customDrawRect(self, rect);
+}
+
 @end

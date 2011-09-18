@@ -9,6 +9,8 @@
 #import "ACToolController.h"
 #import <QuartzCore/QuartzCore.h>
 
+#import "ACToolFiltersView.h"
+
 @implementation ACToolController
 
 @synthesize tabButton;
@@ -62,9 +64,19 @@
     // Filters container
     if (filterContainerView)
     {
-        CALayer *layer = filterContainerView.layer;
-        layer.borderColor = [UIColor styleBackgroundColor].CGColor;
-        layer.borderWidth = 1;
+        CGFloat lineX = filterAddButton ? CGRectGetMaxX(filterAddButton.frame) + 2.5 : 0;
+        filterContainerView.customDrawRect = ^(UIView *view, CGRect rect) {
+            CGContextRef ctx = UIGraphicsGetCurrentContext();
+            [[UIColor styleBackgroundColor] setStroke];
+            CGContextMoveToPoint(ctx, 0, 0.5);
+            CGContextAddLineToPoint(ctx, rect.size.width, 0.5);
+            if (lineX)
+            {
+                CGContextMoveToPoint(ctx, lineX, 0);
+                CGContextAddLineToPoint(ctx, lineX, rect.size.height);
+            }
+            CGContextStrokePath(ctx);
+        };
     }
     
     // Filter text field
@@ -78,9 +90,6 @@
     if (filterAddButton)
     {
         [filterAddButton setImage:[UIImage styleAddImageWithColor:[UIColor styleBackgroundColor] shadowColor:nil] forState:UIControlStateNormal];
-        CALayer *layer = filterAddButton.layer;
-        layer.borderColor = [UIColor styleBackgroundColor].CGColor;
-        layer.borderWidth = 1;
     }
 }
 
