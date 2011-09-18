@@ -10,13 +10,14 @@
 #import "ACProject.h"
 #import "ACURL.h"
 
-static NSString * const ACProjectContentDirectory = @"Content";
 void * ACProjectDocumentProjectURLObserving;
 
 @implementation ACProjectDocument
 
 @synthesize project = _project;
 @synthesize projectURL = _projectURL;
+
+// TODO: handle the pass through of URL and fileURL to the core data project object more gracefully
 
 - (ACProject *)project
 {
@@ -35,10 +36,27 @@ void * ACProjectDocumentProjectURLObserving;
         ECASSERT([self.projectURL isACURL]);
         _project.URL = self.projectURL;
         [_project setPrimitiveValue:[self.projectURL ACProjectName] forKey:@"name"];
-        _project.fileURL = [self.fileURL URLByAppendingPathComponent:ACProjectContentDirectory];
-        // TODO: when URL of project is changed, and the document is moved, project's fileURL should be updated
+        _project.fileURL = [self.fileURL URLByDeletingPathExtension];
     }
+    ECASSERT(_project); // should never return nil
     return _project;
+}
+
+- (void)setProjectURL:(NSURL *)projectURL
+{
+    if (projectURL == _projectURL)
+        return;
+    [self willChangeValueForKey:@"projectURL"];
+    _projectURL = projectURL;
+    if (_project)
+    {
+        [_project willChangeValueForKey:@"name"];
+        _project.URL = projectURL;
+        [_project setPrimitiveValue:[projectURL ACProjectName] forKey:@"name"];
+        _project.fileURL = [self.fileURL URLByDeletingPathExtension];
+        [_project didChangeValueForKey:@"name"];
+    }
+    [self didChangeValueForKey:@"projectURL"];
 }
 
 + (NSString *)persistentStoreName
@@ -65,13 +83,9 @@ void * ACProjectDocumentProjectURLObserving;
         return nil;
     NSArray *pathComponents = [URL pathComponents];
     NSUInteger pathComponentsCount = [pathComponents count];
-    ACGroup *node = self.project;
+    ACNode *node = self.project;
     for (NSUInteger currentPathComponent = 2; currentPathComponent < pathComponentsCount; ++currentPathComponent)
-    {
-        node = (ACGroup *)[node childWithName:[pathComponents objectAtIndex:currentPathComponent]];
-        if (![node.nodeType isEqualToString:@"Group"] && currentPathComponent != pathComponentsCount - 1)
-            return nil;
-    }
+        node = [node childWithName:[pathComponents objectAtIndex:currentPathComponent]];
     return node;
 }
 

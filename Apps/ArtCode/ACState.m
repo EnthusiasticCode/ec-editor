@@ -192,6 +192,7 @@ static NSString * const ACProjectBundleExtension = @"acproj";
 
 - (void)deleteObjectWithURL:(NSURL *)URL
 {
+    ECASSERT([self objectWithURL:URL]);
     if ([_projectURLs containsObject:URL])
     {
         [[_projectDocuments objectForKey:URL] closeWithCompletionHandler:NULL];
@@ -200,6 +201,7 @@ static NSString * const ACProjectBundleExtension = @"acproj";
         [_projectDocuments removeObjectForKey:URL];
         NSFileManager *fileManager = [[NSFileManager alloc] init];
         [fileManager removeItemAtURL:[self bundleURLForLocalProjectWithURL:URL] error:NULL];
+        [fileManager removeItemAtURL:[[self bundleURLForLocalProjectWithURL:URL] URLByDeletingPathExtension] error:NULL];
         [self didChangeValueForKey:@"projectURLs"];
     }
     else
@@ -208,22 +210,35 @@ static NSString * const ACProjectBundleExtension = @"acproj";
 
 - (void)moveObjectAtURL:(NSURL *)fromURL toURL:(NSURL *)toURL
 {
-    ECASSERT(NO);
-}
-
-- (void)moveObjectsAtURLs:(NSArray *)fromURLs toURLs:(NSArray *)toURLs
-{
-    ECASSERT(NO);
+    ECASSERT([self objectWithURL:fromURL]);
+    ECASSERT([toURL isACURL]);
+    ECASSERT(![fromURL isACProjectURL] || [toURL isACProjectURL]);
+    ECASSERT(![self objectWithURL:toURL]);
+    if ([fromURL isACProjectURL])
+    {
+        NSUInteger projectIndex = [_projectURLs indexOfObject:fromURL];
+        [self willChange:NSKeyValueChangeReplacement valuesAtIndexes:[NSIndexSet indexSetWithIndex:projectIndex] forKey:@"projectURLs"];
+        NSFileManager *fileManager = [[NSFileManager alloc] init];
+        [fileManager moveItemAtURL:[[self bundleURLForLocalProjectWithURL:fromURL] URLByDeletingPathExtension] toURL:[[self bundleURLForLocalProjectWithURL:toURL] URLByDeletingPathExtension] error:NULL];
+        [_projectURLs replaceObjectAtIndex:projectIndex withObject:toURL];
+        ACProjectDocument *document = [_projectDocuments objectForKey:fromURL];
+        [document saveToURL:[self bundleURLForLocalProjectWithURL:toURL] forSaveOperation:UIDocumentSaveForCreating completionHandler:^(BOOL success) {
+            ECASSERT(success); // TODO: error handling, although I'm not sure anything can be done if this fails
+            [fileManager removeItemAtURL:[self bundleURLForLocalProjectWithURL:fromURL] error:NULL];
+        }];
+        [_projectDocuments removeObjectForKey:fromURL];
+        [_projectDocuments setObject:document forKey:toURL];
+        document.projectURL = toURL;
+        [self didChange:NSKeyValueChangeReplacement valuesAtIndexes:[NSIndexSet indexSetWithIndex:projectIndex] forKey:@"projectURLs"];
+    }
 }
 
 - (void)copyObjectAtURL:(NSURL *)fromURL toURL:(NSURL *)toURL
 {
-    ECASSERT(NO);
-}
-
-- (void)copyObjectsAtURLs:(NSArray *)fromURLs toURLs:(NSArray *)toURLs
-{
-    ECASSERT(NO);
+    ECASSERT([self objectWithURL:fromURL]);
+    ECASSERT([toURL isACURL]);
+    ECASSERT(![fromURL isACProjectURL] || [toURL isACProjectURL]);
+    ECASSERT(![self objectWithURL:toURL]);
 }
 
 #pragma mark - Private methods
