@@ -759,6 +759,14 @@
 			name = "Core Data";
 			sourceTree = "<group>";
 		};
+		CD02EB4B142639B60027E8FA /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				B7AC17F414253ADA009E9205 /* ACEditorToolSelectionController.xib */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
 		CD4786E513DB0BF500616B62 /* State */ = {
 			isa = PBXGroup;
 			children = (
@@ -786,6 +794,8 @@
 				CD6580C8141626F20079412F /* ACCompletionController.m */,
 				CD6580CD141641D40079412F /* ACCodeFileFilterController.h */,
 				CD6580CE141641D40079412F /* ACCodeFileFilterController.m */,
+				B7AC17F114253A99009E9205 /* ACEditorToolSelectionController.h */,
+				B7AC17F214253A99009E9205 /* ACEditorToolSelectionController.m */,
 			);
 			name = "Views and Controllers";
 			sourceTree = "<group>";
@@ -959,8 +969,6 @@
 		CD7D2B1513C0D39000B889EE /* Tools */ = {
 			isa = PBXGroup;
 			children = (
-				B7AC17F114253A99009E9205 /* ACEditorToolSelectionController.h */,
-				B7AC17F214253A99009E9205 /* ACEditorToolSelectionController.m */,
 				CD7D2B3913C0D4F400B889EE /* ACToolPanelController.h */,
 				CD7D2B3A13C0D4F400B889EE /* ACToolPanelController.m */,
 				CD62BAC413CA06A900266BC0 /* ACToolController.h */,
@@ -1016,6 +1024,7 @@
 				CD9CD96E13DC22AF007964D3 /* ACCodeFileController.h */,
 				CD9CD96F13DC22AF007964D3 /* ACCodeFileController.m */,
 				CD6580C514157B300079412F /* Views and Controllers */,
+				CD02EB4B142639B60027E8FA /* Resources */,
 			);
 			name = Editor;
 			sourceTree = "<group>";
@@ -1064,7 +1073,6 @@
 		CD82554014224D3D00B742AF /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				B7AC17F414253ADA009E9205 /* ACEditorToolSelectionController.xib */,
 				CD9F3CF814238DE200ACD841 /* projectBrowserTipsEmpty.png */,
 				CD9F3CF61423855E00ACD841 /* projectBrowserTipsPopulatedEdit.png */,
 				CD9F3CF3142381EF00ACD841 /* fileBrowserEditArrow.png */,
@@ -1258,6 +1266,8 @@
 				CDFF3DB213C0D76400108DE2 /* ECPopoverController.m */,
 				CDFF3DB313C0D76400108DE2 /* ECPopoverView.h */,
 				CDFF3DB413C0D76400108DE2 /* ECPopoverView.m */,
+				B7AC17ED14253A66009E9205 /* ECRoundedContentCornersView.h */,
+				B7AC17EE14253A66009E9205 /* ECRoundedContentCornersView.m */,
 			);
 			name = Popover;
 			sourceTree = "<group>";
@@ -1285,8 +1295,6 @@
 		CDFF3DC513C0D81000108DE2 /* UIKit Additions */ = {
 			isa = PBXGroup;
 			children = (
-				B7AC17ED14253A66009E9205 /* ECRoundedContentCornersView.h */,
-				B7AC17EE14253A66009E9205 /* ECRoundedContentCornersView.m */,
 				CD9CD96713DC18BC007964D3 /* ECRectSet.h */,
 				CD9CD96813DC18BC007964D3 /* ECRectSet.m */,
 				CDFF3DB713C0D76400108DE2 /* UIImage+BlockDrawing.h */,

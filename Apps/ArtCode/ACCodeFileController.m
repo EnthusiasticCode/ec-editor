@@ -200,7 +200,7 @@
         // TODO this require loading spinner
         filterController = [[ACCodeFileFilterController alloc] initWithStyle:UITableViewStylePlain];
         filterController.targetCodeView = self.codeView;
-        filterController.contentSizeForViewInPopover = CGSizeMake(300, 300);
+        filterController.contentSizeForViewInPopover = CGSizeMake(400, 300);
         
         // Scroll codeview to selected filter result range
         __weak ECCodeView *thisCodeView = codeView;
@@ -240,6 +240,7 @@
     if (!filterPopoverController)
     {
         filterPopoverController = [[ECPopoverController alloc] initWithContentViewController:filterController];
+        filterPopoverController.passthroughViews = [NSArray arrayWithObject:textField];
     }
     
     [filterPopoverController presentPopoverFromRect:textField.frame inView:textField.superview permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
@@ -253,7 +254,7 @@
 
 - (void)textFieldDidEndEditing:(UITextField *)textField
 {
-    [filterPopoverController dismissPopoverAnimated:YES];
+//    [filterPopoverController dismissPopoverAnimated:YES];
     
     // Select right button to normal icon
     // TODO set as arrow to cycle through search results
