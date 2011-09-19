@@ -31,7 +31,7 @@
                                             <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
                                         <connections>
-                                            <segue destination="19" kind="custom" customClass="ACToolPanelSegue" id="5CU-P4-Bjr"/>
+                                            <segue destination="19" kind="custom" identifier="HistoryTool" customClass="ACToolPanelSegue" id="5CU-P4-Bjr"/>
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="95" customClass="ACToolButton">
@@ -48,7 +48,7 @@
                                             <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
                                         <connections>
-                                            <segue destination="25" kind="custom" customClass="ACToolPanelSegue" id="zK7-bX-V3g"/>
+                                            <segue destination="25" kind="custom" identifier="BookmarksTool" customClass="ACToolPanelSegue" id="zK7-bX-V3g"/>
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="96" customClass="ACToolButton">
@@ -65,7 +65,7 @@
                                             <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
                                         <connections>
-                                            <segue destination="43" kind="custom" customClass="ACToolPanelSegue" id="7NU-VG-JhR"/>
+                                            <segue destination="43" kind="custom" identifier="SnippetsTool" customClass="ACToolPanelSegue" id="7NU-VG-JhR"/>
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="97" customClass="ACToolButton">
@@ -82,7 +82,7 @@
                                             <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
                                         <connections>
-                                            <segue destination="59" kind="custom" customClass="ACToolPanelSegue" id="pdb-8j-rUf"/>
+                                            <segue destination="59" kind="custom" identifier="SymbolsTool" customClass="ACToolPanelSegue" id="pdb-8j-rUf"/>
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="98" customClass="ACToolButton">
@@ -99,7 +99,7 @@
                                             <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
                                         <connections>
-                                            <segue destination="74" kind="custom" customClass="ACToolPanelSegue" id="rzL-lk-0wI"/>
+                                            <segue destination="74" kind="custom" identifier="NavigationTool" customClass="ACToolPanelSegue" id="rzL-lk-0wI"/>
                                         </connections>
                                     </button>
                                 </subviews>
@@ -362,48 +362,6 @@
         <image name="toolPanelSymbolsToolImage.png" width="21" height="21"/>
         <image name="toolPanelSymbolsToolSelectedImage.png" width="21" height="21"/>
     </resources>
-    <classes>
-        <class className="ACToolBookmarksController" superclassName="ACToolController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/ACToolBookmarksController.h"/>
-        </class>
-        <class className="ACToolButton" superclassName="UIButton">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/ACToolButton.h"/>
-        </class>
-        <class className="ACToolController" superclassName="UIViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/ACToolController.h"/>
-            <relationships>
-                <relationship kind="outlet" name="filterAddButton" candidateClass="UIButton"/>
-                <relationship kind="outlet" name="filterContainerView" candidateClass="ACToolFiltersView"/>
-                <relationship kind="outlet" name="filterTextField" candidateClass="UITextField"/>
-                <relationship kind="outlet" name="tabButton" candidateClass="UIButton"/>
-                <relationship kind="outlet" name="tableView" candidateClass="UITableView"/>
-            </relationships>
-        </class>
-        <class className="ACToolFiltersView" superclassName="UIView">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/ACToolFiltersView.h"/>
-        </class>
-        <class className="ACToolHistoryController" superclassName="ACToolController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/ACToolHistoryController.h"/>
-        </class>
-        <class className="ACToolNavigatorController" superclassName="ACToolController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/ACToolNavigatorController.h"/>
-        </class>
-        <class className="ACToolPanelController" superclassName="UIViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/ACToolPanelController.h"/>
-            <relationships>
-                <relationship kind="outlet" name="tabsView" candidateClass="UIView"/>
-            </relationships>
-        </class>
-        <class className="ACToolSnippetsController" superclassName="ACToolController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/ACToolSnippetsController.h"/>
-        </class>
-        <class className="ACToolSymbolsController" superclassName="ACToolController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/ACToolSymbolsController.h"/>
-        </class>
-        <class className="ACToolTextField" superclassName="UITextField">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/ACToolTextField.h"/>
-        </class>
-    </classes>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar" statusBarStyle="blackTranslucent"/>
         <simulatedOrientationMetrics key="orientation"/>

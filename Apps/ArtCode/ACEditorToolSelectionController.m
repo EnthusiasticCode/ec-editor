@@ -12,6 +12,7 @@
 
 #import "ACNavigationController.h"
 #import "ECPopoverController.h"
+#import "ACToolPanelController.h"
 
 @implementation ACEditorToolSelectionController
 
@@ -43,4 +44,19 @@
     [targetNavigationController.tabNavigationController toggleTabBar:sender];
     [containerPopoverController dismissPopoverAnimated:YES];
 }
+
+- (IBAction)showToolPanel:(id)sender
+{
+    [targetNavigationController showToolPanelAnimated:YES];
+    
+    NSInteger tag = [sender tag];
+    NSArray *toolIdentifiers = targetNavigationController.toolPanelController.enabledToolControllerIdentifiers;
+    
+    ECASSERT([toolIdentifiers count] > tag);
+    
+    [targetNavigationController.toolPanelController setSelectedViewControllerIdentifier:[toolIdentifiers objectAtIndex:tag] animated:YES];
+    
+    [containerPopoverController dismissPopoverAnimated:YES];
+}
+
 @end

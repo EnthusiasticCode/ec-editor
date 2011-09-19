@@ -22,5 +22,6 @@
 @property (weak, nonatomic) ACNavigationController *targetNavigationController;
 
 - (IBAction)tabsAction:(id)sender;
+- (IBAction)showToolPanel:(id)sender;
 
 @end

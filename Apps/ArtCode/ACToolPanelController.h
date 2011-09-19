@@ -31,4 +31,10 @@
 @property (nonatomic, strong) ACToolController *selectedViewController;
 - (void)setSelectedViewController:(ACToolController *)controller animated:(BOOL)animated;
 
+/// Gets or set the identifier of the current selected tool controller.
+/// This property requires that both the tab button and the segue has the same
+/// identifier in the storyboard.
+@property (nonatomic, strong) NSString *selectedViewControllerIdentifier;
+- (void)setSelectedViewControllerIdentifier:(NSString *)identifier animated:(BOOL)animated;
+
 @end

@@ -14,8 +14,6 @@
 
 
 @implementation ACToolPanelController {
-    NSMutableDictionary *toolControllers;
-    
     NSMutableArray *toolControllerIdentifiers;
 }
 
@@ -57,6 +55,14 @@
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
 	return YES;
+}
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+{
+    if ([segue.destinationViewController isKindOfClass:[ACToolController class]])
+    {
+        [(ACToolController *)segue.destinationViewController setTabButton:(UIButton *)sender];
+    }
 }
 
 #pragma mark - Managing Tools by Identifiers
@@ -150,6 +156,35 @@
         selectedViewController.tabButton.selected = YES;
         selectedViewController.tabButton.backgroundColor = [UIColor styleBackgroundColor];
     }
+}
+
+- (NSString *)selectedViewControllerIdentifier
+{
+    return [(ACToolButton *)selectedViewController.tabButton toolIdentifier];
+}
+
+- (void)setSelectedViewControllerIdentifier:(NSString *)identifier
+{
+    [self setSelectedViewControllerIdentifier:identifier animated:NO];
+}
+
+- (void)setSelectedViewControllerIdentifier:(NSString *)identifier animated:(BOOL)animated
+{
+    ECASSERT([self.enabledToolControllerIdentifiers containsObject:identifier]);
+    
+    // Get the button that is supposed to select the controller
+    ACToolButton *toolButton = nil;
+    for (ACToolButton *button in tabsView.subviews)
+    {
+        if ([button.toolIdentifier isEqualToString:identifier])
+        {
+            toolButton = button;
+            break;
+        }
+    }
+    
+    // Run the segue
+    [self performSegueWithIdentifier:identifier sender:toolButton];
 }
 
 @end

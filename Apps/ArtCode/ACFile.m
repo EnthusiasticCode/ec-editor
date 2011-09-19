@@ -22,6 +22,7 @@
 
 - (NSString *)contentString
 {
+#warning TODO handle error
     return [NSString stringWithContentsOfURL:self.fileURL encoding:NSUTF8StringEncoding error:NULL];
 }
 
