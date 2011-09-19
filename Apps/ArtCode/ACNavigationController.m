@@ -234,6 +234,21 @@
     }
 }
 
+// By default, when selected, the text element right button will remove the content of the field.
+- (void)jumpBarTextElementRightButtonAction:(UIButton *)sender
+{
+    if (sender.isSelected)
+    {
+        id<UITextFieldDelegate> del = jumpBar.textElement.delegate;
+        if (del && [del respondsToSelector:@selector(textField:shouldChangeCharactersInRange:replacementString:)])
+        {
+            if (![del textField:jumpBar.textElement shouldChangeCharactersInRange:NSMakeRange(0, [jumpBar.textElement.text length]) replacementString:@""])
+                return;
+        }
+        jumpBar.textElement.text = @"";
+    }
+}
+
 #pragma mark -
 
 - (UIView *)jumpBar:(ECJumpBar *)bar elementForJumpPathComponent:(NSString *)pathComponent index:(NSUInteger)componentIndex
@@ -372,8 +387,9 @@
     
     // Setup jump bar filter field
     [jumpBar.textElement resignFirstResponder];
+    [(UIButton *)jumpBar.textElement.rightView removeTarget:nil action:NULL forControlEvents:UIControlEventAllEvents];
+    [(UIButton *)jumpBar.textElement.rightView addTarget:self action:@selector(jumpBarTextElementRightButtonAction:) forControlEvents:UIControlEventTouchUpInside];
     jumpBar.textElement.delegate = [target respondsToSelector:@selector(delegateForFilterField:)] ? [target delegateForFilterField:jumpBar.textElement] : nil; 
-    // TODO reset right element targets and selection
 }
 
 #pragma mark - Tool Panel Management Methods
