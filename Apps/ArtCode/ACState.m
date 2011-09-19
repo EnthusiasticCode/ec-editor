@@ -229,7 +229,16 @@ static NSString * const ACProjectBundleExtension = @"acproj";
         [_projectDocuments removeObjectForKey:fromURL];
         [_projectDocuments setObject:document forKey:toURL];
         document.projectURL = toURL;
+        [self saveProjects];
         [self didChange:NSKeyValueChangeReplacement valuesAtIndexes:[NSIndexSet indexSetWithIndex:projectIndex] forKey:@"projectURLs"];
+    }
+    else if ([[fromURL ACProjectURL] isEqual:[toURL ACProjectURL]])
+    {
+        
+    }
+    else
+    {
+        ECASSERT(NO); // TODO: cross project move not implemented yet
     }
 }
 
@@ -239,6 +248,28 @@ static NSString * const ACProjectBundleExtension = @"acproj";
     ECASSERT([toURL isACURL]);
     ECASSERT(![fromURL isACProjectURL] || [toURL isACProjectURL]);
     ECASSERT(![self objectWithURL:toURL]);
+    if ([fromURL isACProjectURL])
+    {
+        [self willChange:NSKeyValueChangeInsertion valuesAtIndexes:[NSIndexSet indexSetWithIndex:[_projectURLs count]] forKey:@"projectURLs"];
+        NSFileManager *fileManager = [[NSFileManager alloc] init];
+        [fileManager copyItemAtURL:[[self bundleURLForLocalProjectWithURL:fromURL] URLByDeletingLastPathComponent] toURL:[[self bundleURLForLocalProjectWithURL:toURL] URLByDeletingLastPathComponent] error:NULL];
+        [_projectURLs addObject:toURL];
+        ACProjectDocument *document = [[ACProjectDocument alloc] initWithFileURL:[self bundleURLForLocalProjectWithURL:fromURL]];
+        [_projectDocuments setObject:document forKey:toURL];
+        [document saveToURL:[self bundleURLForLocalProjectWithURL:toURL] forSaveOperation:UIDocumentSaveForCreating completionHandler:^(BOOL success) {
+            ECASSERT(success); // TODO: error handling, although I'm not sure anything can be done if this fails
+        }];
+        [self saveProjects];
+        [self didChange:NSKeyValueChangeInsertion valuesAtIndexes:[NSIndexSet indexSetWithIndex:[_projectURLs count]] forKey:@"projectURLs"];
+    }
+    else if ([[fromURL ACProjectURL] isEqual:[toURL ACProjectURL]])
+    {
+        
+    }
+    else
+    {
+        ECASSERT(NO); // TODO: cross project copy not implemented yet
+    }
 }
 
 #pragma mark - Private methods
