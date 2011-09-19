@@ -31,6 +31,8 @@ enum ACCodeFileFilterSections {
     // TODO add recent searches (global)
 };
 
+static BOOL codeFileFilterUseRegularExpression = YES;
+
 @implementation ACCodeFileFilterController {
     NSRegularExpression *goToLineRegExp;
     
@@ -38,6 +40,9 @@ enum ACCodeFileFilterSections {
     /// Every entry of the sections array is another array that contains fitlered
     /// restults for the section.
     NSArray *sections;
+    
+    /// Filter regular expression
+    NSRegularExpression *filterRegExp;
     
     /// Controls in search tools
     UIButton *searchToolsRegExpButton;
@@ -48,7 +53,6 @@ enum ACCodeFileFilterSections {
 
 @synthesize targetCodeView, filterString;
 @synthesize startSearchingBlock, endSearchingBlock, didSelectFilterResultBlock;
-@synthesize useRegularExpression;
 
 - (void)setTargetCodeView:(ECCodeView *)codeView
 {
@@ -124,6 +128,7 @@ enum ACCodeFileFilterSections {
     if (startSearchingBlock)
         startSearchingBlock(self);
     
+    // TODO divide filtering in various methods
     dispatch_async(dispatch_get_main_queue(), ^{
         // Prepare symbol section
 //        [self populateSymbolsArrayWithFitler:filterString];
@@ -131,8 +136,8 @@ enum ACCodeFileFilterSections {
         if (filterString)
         {
             // TODO useRegularExpression to see if create a regexp or use normal search 
-            // TODO create here? keep? manage error
-            NSRegularExpression *filterExp = [NSRegularExpression regularExpressionWithPattern:filterString options:0 error:NULL];
+            // TODO create here? manage error
+           filterRegExp = [NSRegularExpression regularExpressionWithPattern:filterString options:0 error:NULL];
             
             // Prepare text search section
             NSMutableArray *searchSection = [sections objectAtIndex:ACCodeFileFilterSearchSection];
@@ -142,7 +147,7 @@ enum ACCodeFileFilterSections {
             if (targetCodeView)
             {
                 NSString *text = targetCodeView.text;
-                NSArray *matches = [filterExp matchesInString:text options:0 range:NSMakeRange(0, [text length])];
+                NSArray *matches = [filterRegExp matchesInString:text options:0 range:NSMakeRange(0, [text length])];
                 // TODO save only rangeAtPosition:0?
                 [searchSection addObjectsFromArray:matches];
             }
@@ -171,14 +176,21 @@ enum ACCodeFileFilterSections {
     });
 }
 
+- (BOOL)isUsingRegularExpression
+{
+    return codeFileFilterUseRegularExpression;
+}
+
 - (void)setUseRegularExpression:(BOOL)value
 {
-    if (useRegularExpression == value)
+    if (codeFileFilterUseRegularExpression == value)
         return;
     
-    useRegularExpression = value;
+    codeFileFilterUseRegularExpression = value;
     
     searchToolsRegExpButton.selected = value;
+    
+    // TODO reapply filter
 }
 
 #pragma mark - Private Methods
@@ -230,7 +242,21 @@ enum ACCodeFileFilterSections {
 
 - (void)searchToolsRegExpAction:(id)sender
 {
-    [self setUseRegularExpression:!useRegularExpression];
+    [self setUseRegularExpression:!codeFileFilterUseRegularExpression];
+}
+
+/// Will replace all the occurence of the current filter string with the content
+/// of the replace text field.
+- (void)searchToolsReplaceAllAction:(id)sender
+{
+    if (codeFileFilterUseRegularExpression)
+    {
+        ECASSERT(filterRegExp != nil);
+
+        NSMutableString *newContent = [targetCodeView.text mutableCopy];
+        [filterRegExp replaceMatchesInString:newContent options:0 range:NSMakeRange(0, [newContent length]) withTemplate:searchToolsReplaceTextField.text];
+        targetCodeView.text = newContent;
+    }
 }
 
 #pragma mark - Controller lifecycle
@@ -342,6 +368,7 @@ enum ACCodeFileFilterSections {
             [searchToolsRegExpButton setTitle:@"RegExp" forState:UIControlStateNormal];
             [toolsView addSubview:searchToolsRegExpButton];
             [searchToolsRegExpButton addTarget:self action:@selector(searchToolsRegExpAction:) forControlEvents:UIControlEventTouchUpInside];
+            searchToolsRegExpButton.selected = codeFileFilterUseRegularExpression;
             
             CGRect replaceFieldFrame = CGRectMake(75, 0, cell.bounds.size.width - (75 + 40 + 40), 44);
             ACToolTextField *replaceField = [[ACToolTextField alloc] initWithFrame:replaceFieldFrame];
@@ -356,6 +383,7 @@ enum ACCodeFileFilterSections {
             allButton.titleLabel.font = [UIFont styleFontWithSize:14];
             [allButton setTitle:@"All" forState:UIControlStateNormal];
             [toolsView addSubview:allButton];
+            [allButton addTarget:self action:@selector(searchToolsReplaceAllAction:) forControlEvents:UIControlEventTouchUpInside];
             
             UIButton *modalButton = [[UIButton alloc] initWithFrame:CGRectMake(CGRectGetMaxX(replaceFieldFrame) + 40, 0, 40, 44)];
             modalButton.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin;
