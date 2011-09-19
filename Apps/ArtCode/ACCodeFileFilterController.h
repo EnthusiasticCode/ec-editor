@@ -33,6 +33,9 @@ typedef void (^ACCodeFileFilterBlock)(ACCodeFileFilterController *sender);
 /// Specify the string to use to filter the content.
 @property (strong, nonatomic) NSString *filterString;
 
+/// Indicate if the search feature should consider the filter string a regualr expression.
+@property (nonatomic, getter = isUsingRegularExpression) BOOL useRegularExpression;
+
 #pragma mark Customizing Controller Actions
 
 /// Called by the controller before starting to apply a filter.

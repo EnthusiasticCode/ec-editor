@@ -38,57 +38,17 @@ enum ACCodeFileFilterSections {
     /// Every entry of the sections array is another array that contains fitlered
     /// restults for the section.
     NSArray *sections;
-}
-
-@synthesize targetCodeView, filterString;
-@synthesize startSearchingBlock, endSearchingBlock, didSelectFilterResultBlock;
-
-#pragma mark - Private Methods
-
-/// Returns the ACCodeFileFilterSections
-- (NSInteger)filterSectionForSection:(NSInteger)section
-{
-    ECASSERT(section < [sections count]);
     
-    NSInteger result = 0;
-    for (NSArray *sec in sections)
-    {
-        if ([sec count] > 0)
-        {
-            if (section == 0)
-                return result;
-            else
-                section--;
-        }
-        result++;
-    }
-    
-    return -1;
-}
-
-- (void)populateSymbolsArrayWithFitler:(NSString *)filter
-{
-    ECASSERT([targetCodeView.datasource isKindOfClass:[ACCodeIndexerDataSource class]]);
-    
-    ECCodeUnit *codeUnit = [(ACCodeIndexerDataSource *)targetCodeView.datasource codeUnit];
-    
-    NSMutableArray *symbolsSection = [sections objectAtIndex:ACCodeFileFilterSymbolsSection];
-    [symbolsSection removeAllObjects];
-    
-    [[codeUnit cursorForOffset:0] enumerateChildCursorsWithBlock:^ECCodeChildVisitResult(ECCodeCursor *cursor, ECCodeCursor *parent) {
-        // TODO filter
-        [symbolsSection addObject:cursor];
-        if (cursor.kind == ECCodeCursorKindObjCInterfaceDecl 
-            || cursor.kind == ECCodeCursorKindObjCImplementationDecl)
-        {
-            return ECCodeChildVisitResultRecurse;
-        }
-        
-        return ECCodeChildVisitResultContinue;
-    }];
+    /// Controls in search tools
+    UIButton *searchToolsRegExpButton;
+    UITextField *searchToolsReplaceTextField;
 }
 
 #pragma mark - Properties
+
+@synthesize targetCodeView, filterString;
+@synthesize startSearchingBlock, endSearchingBlock, didSelectFilterResultBlock;
+@synthesize useRegularExpression;
 
 - (void)setTargetCodeView:(ECCodeView *)codeView
 {
@@ -170,6 +130,7 @@ enum ACCodeFileFilterSections {
         
         if (filterString)
         {
+            // TODO useRegularExpression to see if create a regexp or use normal search 
             // TODO create here? keep? manage error
             NSRegularExpression *filterExp = [NSRegularExpression regularExpressionWithPattern:filterString options:0 error:NULL];
             
@@ -208,6 +169,68 @@ enum ACCodeFileFilterSections {
         if (endSearchingBlock)
             endSearchingBlock(self);
     });
+}
+
+- (void)setUseRegularExpression:(BOOL)value
+{
+    if (useRegularExpression == value)
+        return;
+    
+    useRegularExpression = value;
+    
+    searchToolsRegExpButton.selected = value;
+}
+
+#pragma mark - Private Methods
+
+/// Returns the ACCodeFileFilterSections
+- (NSInteger)filterSectionForSection:(NSInteger)section
+{
+    ECASSERT(section < [sections count]);
+    
+    NSInteger result = 0;
+    for (NSArray *sec in sections)
+    {
+        if ([sec count] > 0)
+        {
+            if (section == 0)
+                return result;
+            else
+                section--;
+        }
+        result++;
+    }
+    
+    return -1;
+}
+
+- (void)populateSymbolsArrayWithFitler:(NSString *)filter
+{
+    ECASSERT([targetCodeView.datasource isKindOfClass:[ACCodeIndexerDataSource class]]);
+    
+    ECCodeUnit *codeUnit = [(ACCodeIndexerDataSource *)targetCodeView.datasource codeUnit];
+    
+    NSMutableArray *symbolsSection = [sections objectAtIndex:ACCodeFileFilterSymbolsSection];
+    [symbolsSection removeAllObjects];
+    
+    [[codeUnit cursorForOffset:0] enumerateChildCursorsWithBlock:^ECCodeChildVisitResult(ECCodeCursor *cursor, ECCodeCursor *parent) {
+        // TODO filter
+        [symbolsSection addObject:cursor];
+        if (cursor.kind == ECCodeCursorKindObjCInterfaceDecl 
+            || cursor.kind == ECCodeCursorKindObjCImplementationDecl)
+        {
+            return ECCodeChildVisitResultRecurse;
+        }
+        
+        return ECCodeChildVisitResultContinue;
+    }];
+}
+
+#pragma mark - Search tools actions
+
+- (void)searchToolsRegExpAction:(id)sender
+{
+    [self setUseRegularExpression:!useRegularExpression];
 }
 
 #pragma mark - Controller lifecycle
@@ -314,10 +337,11 @@ enum ACCodeFileFilterSections {
             toolsView.backgroundColor = [UIColor styleForegroundColor];
             toolsView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
             
-            UIButton *regExpButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 75, 44)];
-            regExpButton.titleLabel.font = [UIFont styleFontWithSize:14];
-            [regExpButton setTitle:@"RegExp" forState:UIControlStateNormal];
-            [toolsView addSubview:regExpButton];
+            searchToolsRegExpButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 75, 44)];
+            searchToolsRegExpButton.titleLabel.font = [UIFont styleFontWithSize:14];
+            [searchToolsRegExpButton setTitle:@"RegExp" forState:UIControlStateNormal];
+            [toolsView addSubview:searchToolsRegExpButton];
+            [searchToolsRegExpButton addTarget:self action:@selector(searchToolsRegExpAction:) forControlEvents:UIControlEventTouchUpInside];
             
             CGRect replaceFieldFrame = CGRectMake(75, 0, cell.bounds.size.width - (75 + 40 + 40), 44);
             ACToolTextField *replaceField = [[ACToolTextField alloc] initWithFrame:replaceFieldFrame];
@@ -325,6 +349,7 @@ enum ACCodeFileFilterSections {
             replaceField.placeholder = @"Replace";
             replaceField.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
             [toolsView addSubview:replaceField];
+            searchToolsReplaceTextField = replaceField;
             
             UIButton *allButton = [[UIButton alloc] initWithFrame:CGRectMake(CGRectGetMaxX(replaceFieldFrame), 0, 40, 44)];
             allButton.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin;

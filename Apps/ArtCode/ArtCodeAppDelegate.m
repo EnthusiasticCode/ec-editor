@@ -105,8 +105,9 @@
     // Tools
     id buttonInToolFiltersView = [UIButton appearanceWhenContainedIn:[ACToolFiltersView class], nil];
     [buttonInToolFiltersView setBackgroundImage:[UIImage styleBackgroundImageWithColor:[UIColor styleForegroundColor] borderColor:[UIColor styleBackgroundColor] insets:UIEdgeInsetsMake(7, 3, 7, 3) arrowSize:CGSizeZero roundingCorners:UIRectCornerAllCorners] forState:UIControlStateNormal];
-    [buttonInToolFiltersView setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    [buttonInToolFiltersView setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [buttonInToolFiltersView setTitleColor:[UIColor styleBackgroundColor] forState:UIControlStateNormal];
+    [buttonInToolFiltersView setBackgroundImage:[UIImage styleBackgroundImageWithColor:[UIColor styleBackgroundColor] borderColor:[UIColor styleBackgroundColor] insets:UIEdgeInsetsMake(7, 3, 7, 3) arrowSize:CGSizeZero roundingCorners:UIRectCornerAllCorners] forState:UIControlStateSelected];
+    [buttonInToolFiltersView setTitleColor:[UIColor styleForegroundColor] forState:UIControlStateSelected];
     
     id textFieldInToolFiltersView = [UITextField appearanceWhenContainedIn:[ACToolFiltersView class], nil];
     [textFieldInToolFiltersView setTextColor:[UIColor styleBackgroundColor]];
