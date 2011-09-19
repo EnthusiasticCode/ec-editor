@@ -179,8 +179,11 @@
     {
         cell = [[ACEditableTableCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:FileCellIdentifier];
         cell.backgroundView = nil;
-        cell.selectionStyle = UITableViewCellSelectionStyleGray;
         cell.indentationWidth = 38;
+        
+        UIView *selectionView = [UIView new];
+        selectionView.backgroundColor = [UIColor styleHighlightColor];
+        cell.selectedBackgroundView = selectionView;
     }
     
     // Configure the cell...

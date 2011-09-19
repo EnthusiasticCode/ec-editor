@@ -103,15 +103,14 @@
     
     ////////////////////////////////////////////////////////////////////////////
     // Tools
-    UIImage *toolFilterElementBackgorundImage = [UIImage styleBackgroundImageWithColor:[UIColor styleForegroundColor] borderColor:[UIColor styleBackgroundColor] insets:UIEdgeInsetsMake(7, 7, 7, 7) arrowSize:CGSizeZero roundingCorners:UIRectCornerAllCorners];
     id buttonInToolFiltersView = [UIButton appearanceWhenContainedIn:[ACToolFiltersView class], nil];
-    [buttonInToolFiltersView setBackgroundImage:toolFilterElementBackgorundImage forState:UIControlStateNormal];
+    [buttonInToolFiltersView setBackgroundImage:[UIImage styleBackgroundImageWithColor:[UIColor styleForegroundColor] borderColor:[UIColor styleBackgroundColor] insets:UIEdgeInsetsMake(7, 3, 7, 3) arrowSize:CGSizeZero roundingCorners:UIRectCornerAllCorners] forState:UIControlStateNormal];
     [buttonInToolFiltersView setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [buttonInToolFiltersView setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     
     id textFieldInToolFiltersView = [UITextField appearanceWhenContainedIn:[ACToolFiltersView class], nil];
     [textFieldInToolFiltersView setTextColor:[UIColor styleBackgroundColor]];
-    [textFieldInToolFiltersView setBackground:toolFilterElementBackgorundImage];
+    [textFieldInToolFiltersView setBackground:[UIImage styleBackgroundImageWithColor:[UIColor colorWithWhite:0.2 alpha:1] borderColor:[UIColor styleBackgroundColor] insets:UIEdgeInsetsMake(7, 3, 7, 3) arrowSize:CGSizeZero roundingCorners:UIRectCornerAllCorners]];
     
     ////////////////////////////////////////////////////////////////////////////
     // Editable table cell

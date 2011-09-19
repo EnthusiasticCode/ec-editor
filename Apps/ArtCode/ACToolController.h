@@ -9,13 +9,16 @@
 #import <UIKit/UIKit.h>
 #import "AppStyle.h"
 
+@class ACToolFiltersView;
+
+
 @interface ACToolController : UIViewController <UITableViewDataSource, UITableViewDelegate>
 
 @property (nonatomic, strong) IBOutlet UIButton *tabButton;
 
 @property (nonatomic, strong) IBOutlet UITableView *tableView;
 
-@property (nonatomic, strong) IBOutlet UIView *filterContainerView;
+@property (nonatomic, strong) IBOutlet ACToolFiltersView *filterContainerView;
 @property (nonatomic, strong) IBOutlet UITextField *filterTextField;
 @property (nonatomic, strong) IBOutlet UIButton *filterAddButton;
 

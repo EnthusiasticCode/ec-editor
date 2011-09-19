@@ -15,6 +15,9 @@
 #import "ECCodeUnit.h"
 #import "ECCodeCursor.h"
 
+#import "ACToolFiltersView.h"
+#import "ACToolTextField.h"
+
 enum ACCodeFileFilterSections {
     /// Identifies the symbol section of the filter table view.
     ACCodeFileFilterSymbolsSection,
@@ -229,13 +232,16 @@ enum ACCodeFileFilterSections {
     
     // Initialize sections with filtered restuls
     sections = [NSArray arrayWithObjects:[NSMutableArray array], [NSMutableArray array], [NSMutableArray array], nil];
+    
+    self.tableView.backgroundColor = [UIColor styleBackgroundColor];
+    self.tableView.separatorColor = [UIColor styleForegroundColor];
+    self.tableView.tableFooterView = [UIView new];
 }
 
 - (void)viewDidUnload
 {
-    [super viewDidUnload];
-    
     sections = nil;
+    [super viewDidUnload];
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
@@ -259,7 +265,10 @@ enum ACCodeFileFilterSections {
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     section = [self filterSectionForSection:section];
-    return [[sections objectAtIndex:section] count];
+    NSUInteger count = [[sections objectAtIndex:section] count];
+    if (section == ACCodeFileFilterSearchSection)
+        count += count ? 1 : 0;
+    return count;
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
@@ -285,43 +294,67 @@ enum ACCodeFileFilterSections {
 {
     // Calculate section
     NSUInteger section = [self filterSectionForSection:[indexPath indexAtPosition:0]];
-    NSString *CellIdentifier = [self tableView:tableView titleForHeaderInSection:section];
+    NSInteger index = [indexPath indexAtPosition:1];
+    NSString *CellIdentifier = nil;
+    if (section == ACCodeFileFilterSearchSection && index == 0)
+        CellIdentifier = @"Search Options";
+    else
+        CellIdentifier = [self tableView:tableView titleForHeaderInSection:section];
     
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     if (cell == nil)
     {
-        switch (section)
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
+        if (section == ACCodeFileFilterSearchSection && index == 0)
         {
-            case ACCodeFileFilterSymbolsSection:
-            {
-                // TODO cell for symbol
-                cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
-                break;
-            }
-                
-            case ACCodeFileFilterSearchSection:
-            {
-                // TODO cell for find in file
-                cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
-                break;
-            }
-                
-            default:
-            {
-                cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
-                break;
-            }
+            // Create search options cell
+            cell.selectionStyle = UITableViewCellSelectionStyleNone;
+            
+            ACToolFiltersView *toolsView = [[ACToolFiltersView alloc] initWithFrame:cell.bounds];
+            toolsView.backgroundColor = [UIColor styleForegroundColor];
+            toolsView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+            
+            UIButton *regExpButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 75, 44)];
+            regExpButton.titleLabel.font = [UIFont styleFontWithSize:14];
+            [regExpButton setTitle:@"RegExp" forState:UIControlStateNormal];
+            [toolsView addSubview:regExpButton];
+            
+            CGRect replaceFieldFrame = CGRectMake(75, 0, cell.bounds.size.width - (75 + 40 + 40), 44);
+            ACToolTextField *replaceField = [[ACToolTextField alloc] initWithFrame:replaceFieldFrame];
+            replaceField.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+            replaceField.placeholder = @"Replace";
+            replaceField.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
+            [toolsView addSubview:replaceField];
+            
+            UIButton *allButton = [[UIButton alloc] initWithFrame:CGRectMake(CGRectGetMaxX(replaceFieldFrame), 0, 40, 44)];
+            allButton.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin;
+            allButton.titleLabel.font = [UIFont styleFontWithSize:14];
+            [allButton setTitle:@"All" forState:UIControlStateNormal];
+            [toolsView addSubview:allButton];
+            
+            UIButton *modalButton = [[UIButton alloc] initWithFrame:CGRectMake(CGRectGetMaxX(replaceFieldFrame) + 40, 0, 40, 44)];
+            modalButton.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin;
+            modalButton.titleLabel.font = [UIFont styleFontWithSize:14];
+            [modalButton setTitle:@"F" forState:UIControlStateNormal];
+            [toolsView addSubview:modalButton];
+            
+            [cell.contentView addSubview:toolsView];
         }
-        
-        // Solid color selection highlight
-        UIView *selectedBackgroundView = [UIView new];
-        selectedBackgroundView.backgroundColor = [UIColor styleHighlightColor];
-        cell.selectedBackgroundView = selectedBackgroundView;
+        else if (section == ACCodeFileFilterSearchSection)
+        {
+            cell.selectionStyle = UITableViewCellSelectionStyleNone;
+        }
+        else
+        {
+            // Solid color selection highlight
+            UIView *selectedBackgroundView = [UIView new];
+            selectedBackgroundView.backgroundColor = [UIColor styleHighlightColor];
+            cell.selectedBackgroundView = selectedBackgroundView;
+        }
     }
     
     // Configure the cell
     NSArray *sectionObjects = [sections objectAtIndex:section];
-    NSInteger index = [indexPath indexAtPosition:1];
     switch (section)
     {
         case ACCodeFileFilterSymbolsSection:
@@ -333,6 +366,13 @@ enum ACCodeFileFilterSections {
             
         case ACCodeFileFilterSearchSection:
         {
+            // The first row will be a special cell with replace controls
+            if (index == 0)
+            {
+                break;
+            }
+            index--;
+            
             NSTextCheckingResult *result = [sectionObjects objectAtIndex:index];
             CGRect resultRect = [targetCodeView.renderer rectsForStringRange:[result rangeAtIndex:0] limitToFirstLine:YES].bounds;
             CGRect clipRect = cell.bounds;
@@ -395,7 +435,7 @@ enum ACCodeFileFilterSections {
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {
     UILabel *label = [UILabel new];
-    label.font = [UIFont styleFontWithSize:16];
+    label.font = [UIFont styleFontWithSize:14];
     label.backgroundColor = [UIColor styleForegroundColor];
     label.textColor = [UIColor styleBackgroundColor];
     
@@ -415,6 +455,12 @@ enum ACCodeFileFilterSections {
     
     NSInteger section = [self filterSectionForSection:[indexPath indexAtPosition:0]];
     NSInteger index = [indexPath indexAtPosition:1];
+    if (section == ACCodeFileFilterSearchSection)
+    {
+        if (index == 0)
+            return;
+        index--;
+    }
     NSObject *obj = [[sections objectAtIndex:section] objectAtIndex:index];
     
     // Produce range of found element in target code view text
