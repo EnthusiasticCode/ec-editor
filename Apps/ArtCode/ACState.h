@@ -55,8 +55,6 @@ typedef enum
 
 /// Moves / copies objects
 - (void)moveObjectAtURL:(NSURL *)fromURL toURL:(NSURL *)toURL;
-- (void)moveObjectsAtURLs:(NSArray *)fromURLs toURLs:(NSArray *)toURLs;
 - (void)copyObjectAtURL:(NSURL *)fromURL toURL:(NSURL *)toURL;
-- (void)copyObjectsAtURLs:(NSArray *)fromURLs toURLs:(NSArray *)toURLs;
 
 @end

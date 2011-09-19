@@ -645,7 +645,6 @@ static void loadCurrentAndAdiacentTabViews(ACTabNavigationController *self, ACTa
 - (void)tabController:(ACTabController *)tabController didChangeURL:(NSURL *)url previousViewController:(UIViewController *)previousViewController
 {
     // Substitute view controller
-#warning BUG the next line crashes randomly
     if (previousViewController != tabController.tabViewController)
     {
         // Add new controller and view

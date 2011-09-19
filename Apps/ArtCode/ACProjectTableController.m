@@ -158,7 +158,7 @@ static void * ACStateProjectsObservingContext;
 
 - (void)viewDidUnload
 {
-    [[ACState sharedState] removeObserver:self forKeyPath:@"projectURLs"];
+    [[ACState sharedState] removeObserver:self forKeyPath:@"projectURLs" context:ACStateProjectsObservingContext];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
@@ -351,13 +351,15 @@ static void * ACStateProjectsObservingContext;
 
 - (void)textFieldDidEndEditing:(UITextField *)textField
 {
-    //    textField.text = [[[ACState sharedState].projects objectAtIndex:textField.tag] name];
+    textField.text = [[[ACState sharedState].projectURLs objectAtIndex:textField.tag] ACProjectName];
 }
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
-    //    [[[ACState sharedState].projects objectAtIndex:textField.tag] setName:textField.text];
-    //    [textField resignFirstResponder];
+    if (![textField.text length])
+        return NO;
+    [[ACState sharedState] moveObjectAtURL:[[ACState sharedState].projectURLs objectAtIndex:textField.tag] toURL:[NSURL ACURLWithPathComponents:[NSArray arrayWithObject:textField.text]]];
+    [textField resignFirstResponder];
     return YES;
 }
 
