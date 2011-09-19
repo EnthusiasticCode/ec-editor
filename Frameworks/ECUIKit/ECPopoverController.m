@@ -303,6 +303,9 @@ static void preinit(ECPopoverController *self)
 
 - (void)presentPopoverInView:(UIView *)view WithFrame:(CGRect)frame animated:(BOOL)animated
 {
+    if (popoverView.superview != nil)
+        return;
+    
     [view.window.rootViewController.view addSubview:popoverView];
     frame.origin.x = roundf(frame.origin.x);
     frame.origin.y = roundf(frame.origin.y);
