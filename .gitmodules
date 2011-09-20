@@ -1,0 +1,3 @@
+[submodule "ThirdParty/Kiwi"]
+	path = ThirdParty/Kiwi
+	url = https://github.com/allending/Kiwi.git
