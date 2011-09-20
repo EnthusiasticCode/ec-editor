@@ -93,7 +93,6 @@
 		B71709981428D7AD00DF7794 /* NSObject+KiwiVerifierAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = B71709541428D7AD00DF7794 /* NSObject+KiwiVerifierAdditions.m */; };
 		B71709991428D7AD00DF7794 /* NSValue+KiwiAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = B71709561428D7AD00DF7794 /* NSValue+KiwiAdditions.m */; };
 		B717099B1428DDA300DF7794 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B717099A1428DDA200DF7794 /* UIKit.framework */; };
-		B717099F1428E29D00DF7794 /* NSTimer+block.m in Sources */ = {isa = PBXBuildFile; fileRef = B71707811428D52F00DF7794 /* NSTimer+block.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -756,7 +755,6 @@
 				B71709971428D7AD00DF7794 /* NSObject+KiwiStubAdditions.m in Sources */,
 				B71709981428D7AD00DF7794 /* NSObject+KiwiVerifierAdditions.m in Sources */,
 				B71709991428D7AD00DF7794 /* NSValue+KiwiAdditions.m in Sources */,
-				B717099F1428E29D00DF7794 /* NSTimer+block.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -865,6 +863,10 @@
 				HEADER_SEARCH_PATHS = "${BUILD_DIR}/usr/local/include";
 				INFOPLIST_FILE = "ECFoundation/Tests/ECFoundationTests-Info.plist";
 				LIBRARY_SEARCH_PATHS = "${BUILD_DIR}";
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"-all_load",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = octest;
 			};
@@ -883,6 +885,10 @@
 				HEADER_SEARCH_PATHS = "${BUILD_DIR}/usr/local/include";
 				INFOPLIST_FILE = "ECFoundation/Tests/ECFoundationTests-Info.plist";
 				LIBRARY_SEARCH_PATHS = "${BUILD_DIR}";
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"-all_load",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = octest;
 			};
