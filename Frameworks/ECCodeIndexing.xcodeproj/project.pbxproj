@@ -1,0 +1,1028 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		B7170BF61428F65A00DF7794 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7170BF51428F65A00DF7794 /* Foundation.framework */; };
+		B7170C041428F65B00DF7794 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7170C031428F65B00DF7794 /* SenTestingKit.framework */; };
+		B7170C071428F65B00DF7794 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7170BF51428F65A00DF7794 /* Foundation.framework */; };
+		B7170C0A1428F65B00DF7794 /* libECCodeIndexing.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7170BF21428F65A00DF7794 /* libECCodeIndexing.a */; };
+		B7170C101428F65B00DF7794 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = B7170C0E1428F65B00DF7794 /* InfoPlist.strings */; };
+		B7170C131428F65B00DF7794 /* ECCodeIndexingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170C121428F65B00DF7794 /* ECCodeIndexingTests.m */; };
+		B7170C211428F72100DF7794 /* ECDebug.h in Headers */ = {isa = PBXBuildFile; fileRef = B7170C201428F72100DF7794 /* ECDebug.h */; };
+		B7170C231428F7B000DF7794 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7170C221428F7B000DF7794 /* UIKit.framework */; };
+		B7170CBB1428F7C500DF7794 /* KWAfterAllNode.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170C261428F7C400DF7794 /* KWAfterAllNode.m */; };
+		B7170CBC1428F7C500DF7794 /* KWAfterEachNode.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170C281428F7C400DF7794 /* KWAfterEachNode.m */; };
+		B7170CBD1428F7C500DF7794 /* KWAsyncVerifier.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170C2A1428F7C400DF7794 /* KWAsyncVerifier.m */; };
+		B7170CBE1428F7C500DF7794 /* KWBeBetweenMatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170C2C1428F7C400DF7794 /* KWBeBetweenMatcher.m */; };
+		B7170CBF1428F7C500DF7794 /* KWBeEmptyMatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170C2E1428F7C400DF7794 /* KWBeEmptyMatcher.m */; };
+		B7170CC01428F7C500DF7794 /* KWBeIdenticalToMatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170C301428F7C400DF7794 /* KWBeIdenticalToMatcher.m */; };
+		B7170CC11428F7C500DF7794 /* KWBeKindOfClassMatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170C321428F7C400DF7794 /* KWBeKindOfClassMatcher.m */; };
+		B7170CC21428F7C500DF7794 /* KWBeMemberOfClassMatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170C341428F7C400DF7794 /* KWBeMemberOfClassMatcher.m */; };
+		B7170CC31428F7C500DF7794 /* KWBeNilMatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170C361428F7C400DF7794 /* KWBeNilMatcher.m */; };
+		B7170CC41428F7C500DF7794 /* KWBeNonNilMatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170C381428F7C400DF7794 /* KWBeNonNilMatcher.m */; };
+		B7170CC51428F7C500DF7794 /* KWBeTrueMatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170C3A1428F7C400DF7794 /* KWBeTrueMatcher.m */; };
+		B7170CC61428F7C500DF7794 /* KWBeWithinMatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170C3C1428F7C400DF7794 /* KWBeWithinMatcher.m */; };
+		B7170CC71428F7C500DF7794 /* KWBeZeroMatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170C3E1428F7C400DF7794 /* KWBeZeroMatcher.m */; };
+		B7170CC81428F7C500DF7794 /* KWBeforeAllNode.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170C401428F7C400DF7794 /* KWBeforeAllNode.m */; };
+		B7170CC91428F7C500DF7794 /* KWBeforeEachNode.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170C421428F7C400DF7794 /* KWBeforeEachNode.m */; };
+		B7170CCA1428F7C500DF7794 /* KWBlock.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170C441428F7C400DF7794 /* KWBlock.m */; };
+		B7170CCB1428F7C500DF7794 /* KWBlockNode.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170C461428F7C400DF7794 /* KWBlockNode.m */; };
+		B7170CCC1428F7C500DF7794 /* KWBlockRaiseMatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170C481428F7C400DF7794 /* KWBlockRaiseMatcher.m */; };
+		B7170CCD1428F7C500DF7794 /* KWCallSite.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170C4A1428F7C400DF7794 /* KWCallSite.m */; };
+		B7170CCE1428F7C500DF7794 /* KWConformToProtocolMatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170C4C1428F7C400DF7794 /* KWConformToProtocolMatcher.m */; };
+		B7170CCF1428F7C500DF7794 /* KWContainMatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170C4E1428F7C400DF7794 /* KWContainMatcher.m */; };
+		B7170CD01428F7C500DF7794 /* KWContextNode.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170C501428F7C400DF7794 /* KWContextNode.m */; };
+		B7170CD11428F7C500DF7794 /* KWDeviceInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170C531428F7C400DF7794 /* KWDeviceInfo.m */; };
+		B7170CD21428F7C500DF7794 /* KWEqualMatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170C551428F7C400DF7794 /* KWEqualMatcher.m */; };
+		B7170CD31428F7C500DF7794 /* KWExampleGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170C571428F7C400DF7794 /* KWExampleGroup.m */; };
+		B7170CD41428F7C500DF7794 /* KWExampleGroupBuilder.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170C591428F7C400DF7794 /* KWExampleGroupBuilder.m */; };
+		B7170CD51428F7C500DF7794 /* KWExistVerifier.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170C5E1428F7C400DF7794 /* KWExistVerifier.m */; };
+		B7170CD61428F7C500DF7794 /* KWFailure.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170C611428F7C400DF7794 /* KWFailure.m */; };
+		B7170CD71428F7C500DF7794 /* KWFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170C631428F7C400DF7794 /* KWFormatter.m */; };
+		B7170CD81428F7C500DF7794 /* KWFutureObject.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170C651428F7C400DF7794 /* KWFutureObject.m */; };
+		B7170CD91428F7C500DF7794 /* KWHamcrestMatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170C681428F7C400DF7794 /* KWHamcrestMatcher.m */; };
+		B7170CDA1428F7C500DF7794 /* KWHamrestMatchingAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170C6A1428F7C400DF7794 /* KWHamrestMatchingAdditions.m */; };
+		B7170CDB1428F7C500DF7794 /* KWHaveMatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170C6C1428F7C400DF7794 /* KWHaveMatcher.m */; };
+		B7170CDC1428F7C500DF7794 /* KWHaveValueMatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170C6E1428F7C400DF7794 /* KWHaveValueMatcher.m */; };
+		B7170CDD1428F7C500DF7794 /* KWInequalityMatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170C701428F7C400DF7794 /* KWInequalityMatcher.m */; };
+		B7170CDE1428F7C500DF7794 /* KWIntercept.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170C721428F7C400DF7794 /* KWIntercept.m */; };
+		B7170CDF1428F7C500DF7794 /* KWInvocationCapturer.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170C741428F7C400DF7794 /* KWInvocationCapturer.m */; };
+		B7170CE01428F7C500DF7794 /* KWItNode.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170C761428F7C400DF7794 /* KWItNode.m */; };
+		B7170CE11428F7C500DF7794 /* KWMatchVerifier.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170C781428F7C400DF7794 /* KWMatchVerifier.m */; };
+		B7170CE21428F7C500DF7794 /* KWMatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170C7A1428F7C400DF7794 /* KWMatcher.m */; };
+		B7170CE31428F7C500DF7794 /* KWMatcherFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170C7C1428F7C400DF7794 /* KWMatcherFactory.m */; };
+		B7170CE41428F7C500DF7794 /* KWMatchers.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170C7E1428F7C400DF7794 /* KWMatchers.m */; };
+		B7170CE51428F7C500DF7794 /* KWMessagePattern.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170C811428F7C400DF7794 /* KWMessagePattern.m */; };
+		B7170CE61428F7C500DF7794 /* KWMessageTracker.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170C841428F7C400DF7794 /* KWMessageTracker.m */; };
+		B7170CE71428F7C500DF7794 /* KWMock.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170C861428F7C400DF7794 /* KWMock.m */; };
+		B7170CE81428F7C500DF7794 /* KWNull.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170C881428F7C400DF7794 /* KWNull.m */; };
+		B7170CE91428F7C500DF7794 /* KWObjCUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170C8A1428F7C400DF7794 /* KWObjCUtilities.m */; };
+		B7170CEA1428F7C500DF7794 /* KWPendingNode.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170C8C1428F7C400DF7794 /* KWPendingNode.m */; };
+		B7170CEB1428F7C500DF7794 /* KWProbePoller.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170C8F1428F7C400DF7794 /* KWProbePoller.m */; };
+		B7170CEC1428F7C500DF7794 /* KWRaiseMatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170C911428F7C400DF7794 /* KWRaiseMatcher.m */; };
+		B7170CED1428F7C500DF7794 /* KWReceiveMatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170C931428F7C400DF7794 /* KWReceiveMatcher.m */; };
+		B7170CEE1428F7C500DF7794 /* KWRegisterMatchersNode.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170C951428F7C400DF7794 /* KWRegisterMatchersNode.m */; };
+		B7170CEF1428F7C500DF7794 /* KWRespondToSelectorMatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170C981428F7C400DF7794 /* KWRespondToSelectorMatcher.m */; };
+		B7170CF01428F7C500DF7794 /* KWSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170C9A1428F7C400DF7794 /* KWSpec.m */; };
+		B7170CF11428F7C500DF7794 /* KWStringUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170C9C1428F7C400DF7794 /* KWStringUtilities.m */; };
+		B7170CF21428F7C500DF7794 /* KWStub.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170C9E1428F7C400DF7794 /* KWStub.m */; };
+		B7170CF31428F7C500DF7794 /* KWTestCase.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170CA01428F7C400DF7794 /* KWTestCase.m */; };
+		B7170CF41428F7C500DF7794 /* KWUserDefinedMatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170CA21428F7C400DF7794 /* KWUserDefinedMatcher.m */; };
+		B7170CF51428F7C500DF7794 /* KWValue.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170CA41428F7C400DF7794 /* KWValue.m */; };
+		B7170CF61428F7C500DF7794 /* KWWorkarounds.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170CA71428F7C400DF7794 /* KWWorkarounds.m */; };
+		B7170CF71428F7C500DF7794 /* NSInvocation+KiwiAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170CAE1428F7C400DF7794 /* NSInvocation+KiwiAdditions.m */; };
+		B7170CF81428F7C500DF7794 /* NSMethodSignature+KiwiAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170CB01428F7C400DF7794 /* NSMethodSignature+KiwiAdditions.m */; };
+		B7170CF91428F7C500DF7794 /* NSNumber+KiwiAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170CB21428F7C400DF7794 /* NSNumber+KiwiAdditions.m */; };
+		B7170CFA1428F7C500DF7794 /* NSObject+KiwiMockAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170CB41428F7C400DF7794 /* NSObject+KiwiMockAdditions.m */; };
+		B7170CFB1428F7C500DF7794 /* NSObject+KiwiStubAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170CB61428F7C400DF7794 /* NSObject+KiwiStubAdditions.m */; };
+		B7170CFC1428F7C500DF7794 /* NSObject+KiwiVerifierAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170CB81428F7C400DF7794 /* NSObject+KiwiVerifierAdditions.m */; };
+		B7170CFD1428F7C500DF7794 /* NSValue+KiwiAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170CBA1428F7C400DF7794 /* NSValue+KiwiAdditions.m */; };
+		B7170D1C1428FAAF00DF7794 /* ECClangCodeCursor.h in Headers */ = {isa = PBXBuildFile; fileRef = B7170CFE1428FAAE00DF7794 /* ECClangCodeCursor.h */; };
+		B7170D1D1428FAAF00DF7794 /* ECClangCodeCursor.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170CFF1428FAAE00DF7794 /* ECClangCodeCursor.m */; };
+		B7170D1E1428FAAF00DF7794 /* ECClangCodeIndex.h in Headers */ = {isa = PBXBuildFile; fileRef = B7170D001428FAAE00DF7794 /* ECClangCodeIndex.h */; };
+		B7170D1F1428FAAF00DF7794 /* ECClangCodeIndex.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170D011428FAAE00DF7794 /* ECClangCodeIndex.m */; };
+		B7170D201428FAAF00DF7794 /* ECClangCodeUnit.h in Headers */ = {isa = PBXBuildFile; fileRef = B7170D021428FAAE00DF7794 /* ECClangCodeUnit.h */; };
+		B7170D211428FAAF00DF7794 /* ECClangCodeUnit.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170D031428FAAE00DF7794 /* ECClangCodeUnit.m */; };
+		B7170D221428FAAF00DF7794 /* ECClangHelperFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = B7170D041428FAAE00DF7794 /* ECClangHelperFunctions.h */; };
+		B7170D231428FAAF00DF7794 /* ECClangHelperFunctions.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170D051428FAAE00DF7794 /* ECClangHelperFunctions.m */; };
+		B7170D241428FAAF00DF7794 /* ECCodeCompletionChunk.h in Headers */ = {isa = PBXBuildFile; fileRef = B7170D061428FAAE00DF7794 /* ECCodeCompletionChunk.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B7170D251428FAAF00DF7794 /* ECCodeCompletionChunk.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170D071428FAAE00DF7794 /* ECCodeCompletionChunk.m */; };
+		B7170D261428FAAF00DF7794 /* ECCodeCompletionResult.h in Headers */ = {isa = PBXBuildFile; fileRef = B7170D081428FAAE00DF7794 /* ECCodeCompletionResult.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B7170D271428FAAF00DF7794 /* ECCodeCompletionResult.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170D091428FAAE00DF7794 /* ECCodeCompletionResult.m */; };
+		B7170D281428FAAF00DF7794 /* ECCodeCompletionString.h in Headers */ = {isa = PBXBuildFile; fileRef = B7170D0A1428FAAE00DF7794 /* ECCodeCompletionString.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B7170D291428FAAF00DF7794 /* ECCodeCompletionString.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170D0B1428FAAE00DF7794 /* ECCodeCompletionString.m */; };
+		B7170D2A1428FAAF00DF7794 /* ECCodeCursor.h in Headers */ = {isa = PBXBuildFile; fileRef = B7170D0C1428FAAE00DF7794 /* ECCodeCursor.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B7170D2B1428FAAF00DF7794 /* ECCodeCursor.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170D0D1428FAAE00DF7794 /* ECCodeCursor.m */; };
+		B7170D2C1428FAAF00DF7794 /* ECCodeDiagnostic.h in Headers */ = {isa = PBXBuildFile; fileRef = B7170D0E1428FAAE00DF7794 /* ECCodeDiagnostic.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B7170D2D1428FAAF00DF7794 /* ECCodeDiagnostic.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170D0F1428FAAE00DF7794 /* ECCodeDiagnostic.m */; };
+		B7170D2E1428FAAF00DF7794 /* ECCodeFixIt.h in Headers */ = {isa = PBXBuildFile; fileRef = B7170D101428FAAE00DF7794 /* ECCodeFixIt.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B7170D2F1428FAAF00DF7794 /* ECCodeFixIt.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170D111428FAAE00DF7794 /* ECCodeFixIt.m */; };
+		B7170D301428FAAF00DF7794 /* ECCodeIndex.h in Headers */ = {isa = PBXBuildFile; fileRef = B7170D121428FAAE00DF7794 /* ECCodeIndex.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B7170D311428FAAF00DF7794 /* ECCodeIndex.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170D131428FAAE00DF7794 /* ECCodeIndex.m */; };
+		B7170D321428FAAF00DF7794 /* ECCodeIndex(Private).h in Headers */ = {isa = PBXBuildFile; fileRef = B7170D141428FAAF00DF7794 /* ECCodeIndex(Private).h */; };
+		B7170D331428FAAF00DF7794 /* ECCodeIndexPlugin.h in Headers */ = {isa = PBXBuildFile; fileRef = B7170D151428FAAF00DF7794 /* ECCodeIndexPlugin.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B7170D341428FAAF00DF7794 /* ECCodeToken.h in Headers */ = {isa = PBXBuildFile; fileRef = B7170D161428FAAF00DF7794 /* ECCodeToken.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B7170D351428FAAF00DF7794 /* ECCodeToken.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170D171428FAAF00DF7794 /* ECCodeToken.m */; };
+		B7170D361428FAAF00DF7794 /* ECCodeUnit.h in Headers */ = {isa = PBXBuildFile; fileRef = B7170D181428FAAF00DF7794 /* ECCodeUnit.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B7170D371428FAAF00DF7794 /* ECCodeUnit.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170D191428FAAF00DF7794 /* ECCodeUnit.m */; };
+		B7170D381428FAAF00DF7794 /* ECCodeUnit(Private).h in Headers */ = {isa = PBXBuildFile; fileRef = B7170D1A1428FAAF00DF7794 /* ECCodeUnit(Private).h */; };
+		B7170D391428FAAF00DF7794 /* ECCodeUnitPlugin.h in Headers */ = {isa = PBXBuildFile; fileRef = B7170D1B1428FAAF00DF7794 /* ECCodeUnitPlugin.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B7170D461428FAFE00DF7794 /* libECFoundation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7170D431428FAF100DF7794 /* libECFoundation.a */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		B7170C081428F65B00DF7794 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B7170BE91428F65A00DF7794 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B7170BF11428F65A00DF7794;
+			remoteInfo = ECCodeIndexing;
+		};
+		B7170D421428FAF100DF7794 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B7170D3A1428FAF000DF7794 /* ECFoundation.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = B71707441428D30500DF7794;
+			remoteInfo = ECFoundation;
+		};
+		B7170D441428FAF100DF7794 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B7170D3A1428FAF000DF7794 /* ECFoundation.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = B71707541428D30500DF7794;
+			remoteInfo = ECFoundationTests;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		B7170BF21428F65A00DF7794 /* libECCodeIndexing.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libECCodeIndexing.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		B7170BF51428F65A00DF7794 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		B7170BF91428F65A00DF7794 /* ECCodeIndexing-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ECCodeIndexing-Prefix.pch"; sourceTree = "<group>"; };
+		B7170C021428F65B00DF7794 /* ECCodeIndexingTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ECCodeIndexingTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
+		B7170C031428F65B00DF7794 /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
+		B7170C0D1428F65B00DF7794 /* ECCodeIndexingTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ECCodeIndexingTests-Info.plist"; sourceTree = "<group>"; };
+		B7170C0F1428F65B00DF7794 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		B7170C121428F65B00DF7794 /* ECCodeIndexingTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ECCodeIndexingTests.m; sourceTree = "<group>"; };
+		B7170C201428F72100DF7794 /* ECDebug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECDebug.h; sourceTree = SOURCE_ROOT; };
+		B7170C221428F7B000DF7794 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		B7170C251428F7C400DF7794 /* KWAfterAllNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KWAfterAllNode.h; sourceTree = "<group>"; };
+		B7170C261428F7C400DF7794 /* KWAfterAllNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KWAfterAllNode.m; sourceTree = "<group>"; };
+		B7170C271428F7C400DF7794 /* KWAfterEachNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KWAfterEachNode.h; sourceTree = "<group>"; };
+		B7170C281428F7C400DF7794 /* KWAfterEachNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KWAfterEachNode.m; sourceTree = "<group>"; };
+		B7170C291428F7C400DF7794 /* KWAsyncVerifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KWAsyncVerifier.h; sourceTree = "<group>"; };
+		B7170C2A1428F7C400DF7794 /* KWAsyncVerifier.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KWAsyncVerifier.m; sourceTree = "<group>"; };
+		B7170C2B1428F7C400DF7794 /* KWBeBetweenMatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KWBeBetweenMatcher.h; sourceTree = "<group>"; };
+		B7170C2C1428F7C400DF7794 /* KWBeBetweenMatcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KWBeBetweenMatcher.m; sourceTree = "<group>"; };
+		B7170C2D1428F7C400DF7794 /* KWBeEmptyMatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KWBeEmptyMatcher.h; sourceTree = "<group>"; };
+		B7170C2E1428F7C400DF7794 /* KWBeEmptyMatcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KWBeEmptyMatcher.m; sourceTree = "<group>"; };
+		B7170C2F1428F7C400DF7794 /* KWBeIdenticalToMatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KWBeIdenticalToMatcher.h; sourceTree = "<group>"; };
+		B7170C301428F7C400DF7794 /* KWBeIdenticalToMatcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KWBeIdenticalToMatcher.m; sourceTree = "<group>"; };
+		B7170C311428F7C400DF7794 /* KWBeKindOfClassMatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KWBeKindOfClassMatcher.h; sourceTree = "<group>"; };
+		B7170C321428F7C400DF7794 /* KWBeKindOfClassMatcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KWBeKindOfClassMatcher.m; sourceTree = "<group>"; };
+		B7170C331428F7C400DF7794 /* KWBeMemberOfClassMatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KWBeMemberOfClassMatcher.h; sourceTree = "<group>"; };
+		B7170C341428F7C400DF7794 /* KWBeMemberOfClassMatcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KWBeMemberOfClassMatcher.m; sourceTree = "<group>"; };
+		B7170C351428F7C400DF7794 /* KWBeNilMatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KWBeNilMatcher.h; sourceTree = "<group>"; };
+		B7170C361428F7C400DF7794 /* KWBeNilMatcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KWBeNilMatcher.m; sourceTree = "<group>"; };
+		B7170C371428F7C400DF7794 /* KWBeNonNilMatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KWBeNonNilMatcher.h; sourceTree = "<group>"; };
+		B7170C381428F7C400DF7794 /* KWBeNonNilMatcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KWBeNonNilMatcher.m; sourceTree = "<group>"; };
+		B7170C391428F7C400DF7794 /* KWBeTrueMatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KWBeTrueMatcher.h; sourceTree = "<group>"; };
+		B7170C3A1428F7C400DF7794 /* KWBeTrueMatcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KWBeTrueMatcher.m; sourceTree = "<group>"; };
+		B7170C3B1428F7C400DF7794 /* KWBeWithinMatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KWBeWithinMatcher.h; sourceTree = "<group>"; };
+		B7170C3C1428F7C400DF7794 /* KWBeWithinMatcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KWBeWithinMatcher.m; sourceTree = "<group>"; };
+		B7170C3D1428F7C400DF7794 /* KWBeZeroMatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KWBeZeroMatcher.h; sourceTree = "<group>"; };
+		B7170C3E1428F7C400DF7794 /* KWBeZeroMatcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KWBeZeroMatcher.m; sourceTree = "<group>"; };
+		B7170C3F1428F7C400DF7794 /* KWBeforeAllNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KWBeforeAllNode.h; sourceTree = "<group>"; };
+		B7170C401428F7C400DF7794 /* KWBeforeAllNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KWBeforeAllNode.m; sourceTree = "<group>"; };
+		B7170C411428F7C400DF7794 /* KWBeforeEachNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KWBeforeEachNode.h; sourceTree = "<group>"; };
+		B7170C421428F7C400DF7794 /* KWBeforeEachNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KWBeforeEachNode.m; sourceTree = "<group>"; };
+		B7170C431428F7C400DF7794 /* KWBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KWBlock.h; sourceTree = "<group>"; };
+		B7170C441428F7C400DF7794 /* KWBlock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KWBlock.m; sourceTree = "<group>"; };
+		B7170C451428F7C400DF7794 /* KWBlockNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KWBlockNode.h; sourceTree = "<group>"; };
+		B7170C461428F7C400DF7794 /* KWBlockNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KWBlockNode.m; sourceTree = "<group>"; };
+		B7170C471428F7C400DF7794 /* KWBlockRaiseMatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KWBlockRaiseMatcher.h; sourceTree = "<group>"; };
+		B7170C481428F7C400DF7794 /* KWBlockRaiseMatcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KWBlockRaiseMatcher.m; sourceTree = "<group>"; };
+		B7170C491428F7C400DF7794 /* KWCallSite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KWCallSite.h; sourceTree = "<group>"; };
+		B7170C4A1428F7C400DF7794 /* KWCallSite.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KWCallSite.m; sourceTree = "<group>"; };
+		B7170C4B1428F7C400DF7794 /* KWConformToProtocolMatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KWConformToProtocolMatcher.h; sourceTree = "<group>"; };
+		B7170C4C1428F7C400DF7794 /* KWConformToProtocolMatcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KWConformToProtocolMatcher.m; sourceTree = "<group>"; };
+		B7170C4D1428F7C400DF7794 /* KWContainMatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KWContainMatcher.h; sourceTree = "<group>"; };
+		B7170C4E1428F7C400DF7794 /* KWContainMatcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KWContainMatcher.m; sourceTree = "<group>"; };
+		B7170C4F1428F7C400DF7794 /* KWContextNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KWContextNode.h; sourceTree = "<group>"; };
+		B7170C501428F7C400DF7794 /* KWContextNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KWContextNode.m; sourceTree = "<group>"; };
+		B7170C511428F7C400DF7794 /* KWCountType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KWCountType.h; sourceTree = "<group>"; };
+		B7170C521428F7C400DF7794 /* KWDeviceInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KWDeviceInfo.h; sourceTree = "<group>"; };
+		B7170C531428F7C400DF7794 /* KWDeviceInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KWDeviceInfo.m; sourceTree = "<group>"; };
+		B7170C541428F7C400DF7794 /* KWEqualMatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KWEqualMatcher.h; sourceTree = "<group>"; };
+		B7170C551428F7C400DF7794 /* KWEqualMatcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KWEqualMatcher.m; sourceTree = "<group>"; };
+		B7170C561428F7C400DF7794 /* KWExampleGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KWExampleGroup.h; sourceTree = "<group>"; };
+		B7170C571428F7C400DF7794 /* KWExampleGroup.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KWExampleGroup.m; sourceTree = "<group>"; };
+		B7170C581428F7C400DF7794 /* KWExampleGroupBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KWExampleGroupBuilder.h; sourceTree = "<group>"; };
+		B7170C591428F7C400DF7794 /* KWExampleGroupBuilder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KWExampleGroupBuilder.m; sourceTree = "<group>"; };
+		B7170C5A1428F7C400DF7794 /* KWExampleGroupDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KWExampleGroupDelegate.h; sourceTree = "<group>"; };
+		B7170C5B1428F7C400DF7794 /* KWExampleNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KWExampleNode.h; sourceTree = "<group>"; };
+		B7170C5C1428F7C400DF7794 /* KWExampleNodeVisitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KWExampleNodeVisitor.h; sourceTree = "<group>"; };
+		B7170C5D1428F7C400DF7794 /* KWExistVerifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KWExistVerifier.h; sourceTree = "<group>"; };
+		B7170C5E1428F7C400DF7794 /* KWExistVerifier.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KWExistVerifier.m; sourceTree = "<group>"; };
+		B7170C5F1428F7C400DF7794 /* KWExpectationType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KWExpectationType.h; sourceTree = "<group>"; };
+		B7170C601428F7C400DF7794 /* KWFailure.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KWFailure.h; sourceTree = "<group>"; };
+		B7170C611428F7C400DF7794 /* KWFailure.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KWFailure.m; sourceTree = "<group>"; };
+		B7170C621428F7C400DF7794 /* KWFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KWFormatter.h; sourceTree = "<group>"; };
+		B7170C631428F7C400DF7794 /* KWFormatter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KWFormatter.m; sourceTree = "<group>"; };
+		B7170C641428F7C400DF7794 /* KWFutureObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KWFutureObject.h; sourceTree = "<group>"; };
+		B7170C651428F7C400DF7794 /* KWFutureObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KWFutureObject.m; sourceTree = "<group>"; };
+		B7170C661428F7C400DF7794 /* KWHCMatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KWHCMatcher.h; sourceTree = "<group>"; };
+		B7170C671428F7C400DF7794 /* KWHamcrestMatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KWHamcrestMatcher.h; sourceTree = "<group>"; };
+		B7170C681428F7C400DF7794 /* KWHamcrestMatcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KWHamcrestMatcher.m; sourceTree = "<group>"; };
+		B7170C691428F7C400DF7794 /* KWHamrestMatchingAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KWHamrestMatchingAdditions.h; sourceTree = "<group>"; };
+		B7170C6A1428F7C400DF7794 /* KWHamrestMatchingAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KWHamrestMatchingAdditions.m; sourceTree = "<group>"; };
+		B7170C6B1428F7C400DF7794 /* KWHaveMatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KWHaveMatcher.h; sourceTree = "<group>"; };
+		B7170C6C1428F7C400DF7794 /* KWHaveMatcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KWHaveMatcher.m; sourceTree = "<group>"; };
+		B7170C6D1428F7C400DF7794 /* KWHaveValueMatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KWHaveValueMatcher.h; sourceTree = "<group>"; };
+		B7170C6E1428F7C400DF7794 /* KWHaveValueMatcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KWHaveValueMatcher.m; sourceTree = "<group>"; };
+		B7170C6F1428F7C400DF7794 /* KWInequalityMatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KWInequalityMatcher.h; sourceTree = "<group>"; };
+		B7170C701428F7C400DF7794 /* KWInequalityMatcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KWInequalityMatcher.m; sourceTree = "<group>"; };
+		B7170C711428F7C400DF7794 /* KWIntercept.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KWIntercept.h; sourceTree = "<group>"; };
+		B7170C721428F7C400DF7794 /* KWIntercept.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KWIntercept.m; sourceTree = "<group>"; };
+		B7170C731428F7C400DF7794 /* KWInvocationCapturer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KWInvocationCapturer.h; sourceTree = "<group>"; };
+		B7170C741428F7C400DF7794 /* KWInvocationCapturer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KWInvocationCapturer.m; sourceTree = "<group>"; };
+		B7170C751428F7C400DF7794 /* KWItNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KWItNode.h; sourceTree = "<group>"; };
+		B7170C761428F7C400DF7794 /* KWItNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KWItNode.m; sourceTree = "<group>"; };
+		B7170C771428F7C400DF7794 /* KWMatchVerifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KWMatchVerifier.h; sourceTree = "<group>"; };
+		B7170C781428F7C400DF7794 /* KWMatchVerifier.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KWMatchVerifier.m; sourceTree = "<group>"; };
+		B7170C791428F7C400DF7794 /* KWMatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KWMatcher.h; sourceTree = "<group>"; };
+		B7170C7A1428F7C400DF7794 /* KWMatcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KWMatcher.m; sourceTree = "<group>"; };
+		B7170C7B1428F7C400DF7794 /* KWMatcherFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KWMatcherFactory.h; sourceTree = "<group>"; };
+		B7170C7C1428F7C400DF7794 /* KWMatcherFactory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KWMatcherFactory.m; sourceTree = "<group>"; };
+		B7170C7D1428F7C400DF7794 /* KWMatchers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KWMatchers.h; sourceTree = "<group>"; };
+		B7170C7E1428F7C400DF7794 /* KWMatchers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KWMatchers.m; sourceTree = "<group>"; };
+		B7170C7F1428F7C400DF7794 /* KWMatching.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KWMatching.h; sourceTree = "<group>"; };
+		B7170C801428F7C400DF7794 /* KWMessagePattern.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KWMessagePattern.h; sourceTree = "<group>"; };
+		B7170C811428F7C400DF7794 /* KWMessagePattern.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KWMessagePattern.m; sourceTree = "<group>"; };
+		B7170C821428F7C400DF7794 /* KWMessageSpying.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KWMessageSpying.h; sourceTree = "<group>"; };
+		B7170C831428F7C400DF7794 /* KWMessageTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KWMessageTracker.h; sourceTree = "<group>"; };
+		B7170C841428F7C400DF7794 /* KWMessageTracker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KWMessageTracker.m; sourceTree = "<group>"; };
+		B7170C851428F7C400DF7794 /* KWMock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KWMock.h; sourceTree = "<group>"; };
+		B7170C861428F7C400DF7794 /* KWMock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KWMock.m; sourceTree = "<group>"; };
+		B7170C871428F7C400DF7794 /* KWNull.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KWNull.h; sourceTree = "<group>"; };
+		B7170C881428F7C400DF7794 /* KWNull.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KWNull.m; sourceTree = "<group>"; };
+		B7170C891428F7C400DF7794 /* KWObjCUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KWObjCUtilities.h; sourceTree = "<group>"; };
+		B7170C8A1428F7C400DF7794 /* KWObjCUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KWObjCUtilities.m; sourceTree = "<group>"; };
+		B7170C8B1428F7C400DF7794 /* KWPendingNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KWPendingNode.h; sourceTree = "<group>"; };
+		B7170C8C1428F7C400DF7794 /* KWPendingNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KWPendingNode.m; sourceTree = "<group>"; };
+		B7170C8D1428F7C400DF7794 /* KWProbe.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KWProbe.h; sourceTree = "<group>"; };
+		B7170C8E1428F7C400DF7794 /* KWProbePoller.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KWProbePoller.h; sourceTree = "<group>"; };
+		B7170C8F1428F7C400DF7794 /* KWProbePoller.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KWProbePoller.m; sourceTree = "<group>"; };
+		B7170C901428F7C400DF7794 /* KWRaiseMatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KWRaiseMatcher.h; sourceTree = "<group>"; };
+		B7170C911428F7C400DF7794 /* KWRaiseMatcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KWRaiseMatcher.m; sourceTree = "<group>"; };
+		B7170C921428F7C400DF7794 /* KWReceiveMatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KWReceiveMatcher.h; sourceTree = "<group>"; };
+		B7170C931428F7C400DF7794 /* KWReceiveMatcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KWReceiveMatcher.m; sourceTree = "<group>"; };
+		B7170C941428F7C400DF7794 /* KWRegisterMatchersNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KWRegisterMatchersNode.h; sourceTree = "<group>"; };
+		B7170C951428F7C400DF7794 /* KWRegisterMatchersNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KWRegisterMatchersNode.m; sourceTree = "<group>"; };
+		B7170C961428F7C400DF7794 /* KWReporting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KWReporting.h; sourceTree = "<group>"; };
+		B7170C971428F7C400DF7794 /* KWRespondToSelectorMatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KWRespondToSelectorMatcher.h; sourceTree = "<group>"; };
+		B7170C981428F7C400DF7794 /* KWRespondToSelectorMatcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KWRespondToSelectorMatcher.m; sourceTree = "<group>"; };
+		B7170C991428F7C400DF7794 /* KWSpec.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KWSpec.h; sourceTree = "<group>"; };
+		B7170C9A1428F7C400DF7794 /* KWSpec.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KWSpec.m; sourceTree = "<group>"; };
+		B7170C9B1428F7C400DF7794 /* KWStringUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KWStringUtilities.h; sourceTree = "<group>"; };
+		B7170C9C1428F7C400DF7794 /* KWStringUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KWStringUtilities.m; sourceTree = "<group>"; };
+		B7170C9D1428F7C400DF7794 /* KWStub.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KWStub.h; sourceTree = "<group>"; };
+		B7170C9E1428F7C400DF7794 /* KWStub.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KWStub.m; sourceTree = "<group>"; };
+		B7170C9F1428F7C400DF7794 /* KWTestCase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KWTestCase.h; sourceTree = "<group>"; };
+		B7170CA01428F7C400DF7794 /* KWTestCase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KWTestCase.m; sourceTree = "<group>"; };
+		B7170CA11428F7C400DF7794 /* KWUserDefinedMatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KWUserDefinedMatcher.h; sourceTree = "<group>"; };
+		B7170CA21428F7C400DF7794 /* KWUserDefinedMatcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KWUserDefinedMatcher.m; sourceTree = "<group>"; };
+		B7170CA31428F7C400DF7794 /* KWValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KWValue.h; sourceTree = "<group>"; };
+		B7170CA41428F7C400DF7794 /* KWValue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KWValue.m; sourceTree = "<group>"; };
+		B7170CA51428F7C400DF7794 /* KWVerifying.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KWVerifying.h; sourceTree = "<group>"; };
+		B7170CA61428F7C400DF7794 /* KWWorkarounds.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KWWorkarounds.h; sourceTree = "<group>"; };
+		B7170CA71428F7C400DF7794 /* KWWorkarounds.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KWWorkarounds.m; sourceTree = "<group>"; };
+		B7170CA81428F7C400DF7794 /* Kiwi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Kiwi.h; sourceTree = "<group>"; };
+		B7170CA91428F7C400DF7794 /* KiwiBlockMacros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KiwiBlockMacros.h; sourceTree = "<group>"; };
+		B7170CAA1428F7C400DF7794 /* KiwiConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KiwiConfiguration.h; sourceTree = "<group>"; };
+		B7170CAB1428F7C400DF7794 /* KiwiMacros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KiwiMacros.h; sourceTree = "<group>"; };
+		B7170CAC1428F7C400DF7794 /* KiwiNewMacros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KiwiNewMacros.h; sourceTree = "<group>"; };
+		B7170CAD1428F7C400DF7794 /* NSInvocation+KiwiAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSInvocation+KiwiAdditions.h"; sourceTree = "<group>"; };
+		B7170CAE1428F7C400DF7794 /* NSInvocation+KiwiAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSInvocation+KiwiAdditions.m"; sourceTree = "<group>"; };
+		B7170CAF1428F7C400DF7794 /* NSMethodSignature+KiwiAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSMethodSignature+KiwiAdditions.h"; sourceTree = "<group>"; };
+		B7170CB01428F7C400DF7794 /* NSMethodSignature+KiwiAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSMethodSignature+KiwiAdditions.m"; sourceTree = "<group>"; };
+		B7170CB11428F7C400DF7794 /* NSNumber+KiwiAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSNumber+KiwiAdditions.h"; sourceTree = "<group>"; };
+		B7170CB21428F7C400DF7794 /* NSNumber+KiwiAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSNumber+KiwiAdditions.m"; sourceTree = "<group>"; };
+		B7170CB31428F7C400DF7794 /* NSObject+KiwiMockAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+KiwiMockAdditions.h"; sourceTree = "<group>"; };
+		B7170CB41428F7C400DF7794 /* NSObject+KiwiMockAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+KiwiMockAdditions.m"; sourceTree = "<group>"; };
+		B7170CB51428F7C400DF7794 /* NSObject+KiwiStubAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+KiwiStubAdditions.h"; sourceTree = "<group>"; };
+		B7170CB61428F7C400DF7794 /* NSObject+KiwiStubAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+KiwiStubAdditions.m"; sourceTree = "<group>"; };
+		B7170CB71428F7C400DF7794 /* NSObject+KiwiVerifierAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+KiwiVerifierAdditions.h"; sourceTree = "<group>"; };
+		B7170CB81428F7C400DF7794 /* NSObject+KiwiVerifierAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+KiwiVerifierAdditions.m"; sourceTree = "<group>"; };
+		B7170CB91428F7C400DF7794 /* NSValue+KiwiAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSValue+KiwiAdditions.h"; sourceTree = "<group>"; };
+		B7170CBA1428F7C400DF7794 /* NSValue+KiwiAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSValue+KiwiAdditions.m"; sourceTree = "<group>"; };
+		B7170CFE1428FAAE00DF7794 /* ECClangCodeCursor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECClangCodeCursor.h; sourceTree = "<group>"; };
+		B7170CFF1428FAAE00DF7794 /* ECClangCodeCursor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECClangCodeCursor.m; sourceTree = "<group>"; };
+		B7170D001428FAAE00DF7794 /* ECClangCodeIndex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECClangCodeIndex.h; sourceTree = "<group>"; };
+		B7170D011428FAAE00DF7794 /* ECClangCodeIndex.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECClangCodeIndex.m; sourceTree = "<group>"; };
+		B7170D021428FAAE00DF7794 /* ECClangCodeUnit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECClangCodeUnit.h; sourceTree = "<group>"; };
+		B7170D031428FAAE00DF7794 /* ECClangCodeUnit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECClangCodeUnit.m; sourceTree = "<group>"; };
+		B7170D041428FAAE00DF7794 /* ECClangHelperFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECClangHelperFunctions.h; sourceTree = "<group>"; };
+		B7170D051428FAAE00DF7794 /* ECClangHelperFunctions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECClangHelperFunctions.m; sourceTree = "<group>"; };
+		B7170D061428FAAE00DF7794 /* ECCodeCompletionChunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeCompletionChunk.h; sourceTree = "<group>"; };
+		B7170D071428FAAE00DF7794 /* ECCodeCompletionChunk.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeCompletionChunk.m; sourceTree = "<group>"; };
+		B7170D081428FAAE00DF7794 /* ECCodeCompletionResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeCompletionResult.h; sourceTree = "<group>"; };
+		B7170D091428FAAE00DF7794 /* ECCodeCompletionResult.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeCompletionResult.m; sourceTree = "<group>"; };
+		B7170D0A1428FAAE00DF7794 /* ECCodeCompletionString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeCompletionString.h; sourceTree = "<group>"; };
+		B7170D0B1428FAAE00DF7794 /* ECCodeCompletionString.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeCompletionString.m; sourceTree = "<group>"; };
+		B7170D0C1428FAAE00DF7794 /* ECCodeCursor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeCursor.h; sourceTree = "<group>"; };
+		B7170D0D1428FAAE00DF7794 /* ECCodeCursor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeCursor.m; sourceTree = "<group>"; };
+		B7170D0E1428FAAE00DF7794 /* ECCodeDiagnostic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeDiagnostic.h; sourceTree = "<group>"; };
+		B7170D0F1428FAAE00DF7794 /* ECCodeDiagnostic.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeDiagnostic.m; sourceTree = "<group>"; };
+		B7170D101428FAAE00DF7794 /* ECCodeFixIt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeFixIt.h; sourceTree = "<group>"; };
+		B7170D111428FAAE00DF7794 /* ECCodeFixIt.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeFixIt.m; sourceTree = "<group>"; };
+		B7170D121428FAAE00DF7794 /* ECCodeIndex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeIndex.h; sourceTree = "<group>"; };
+		B7170D131428FAAE00DF7794 /* ECCodeIndex.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeIndex.m; sourceTree = "<group>"; };
+		B7170D141428FAAF00DF7794 /* ECCodeIndex(Private).h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ECCodeIndex(Private).h"; sourceTree = "<group>"; };
+		B7170D151428FAAF00DF7794 /* ECCodeIndexPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeIndexPlugin.h; sourceTree = "<group>"; };
+		B7170D161428FAAF00DF7794 /* ECCodeToken.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeToken.h; sourceTree = "<group>"; };
+		B7170D171428FAAF00DF7794 /* ECCodeToken.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeToken.m; sourceTree = "<group>"; };
+		B7170D181428FAAF00DF7794 /* ECCodeUnit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeUnit.h; sourceTree = "<group>"; };
+		B7170D191428FAAF00DF7794 /* ECCodeUnit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeUnit.m; sourceTree = "<group>"; };
+		B7170D1A1428FAAF00DF7794 /* ECCodeUnit(Private).h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ECCodeUnit(Private).h"; sourceTree = "<group>"; };
+		B7170D1B1428FAAF00DF7794 /* ECCodeUnitPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeUnitPlugin.h; sourceTree = "<group>"; };
+		B7170D3A1428FAF000DF7794 /* ECFoundation.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = ECFoundation.xcodeproj; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		B7170BEF1428F65A00DF7794 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B7170D461428FAFE00DF7794 /* libECFoundation.a in Frameworks */,
+				B7170BF61428F65A00DF7794 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B7170BFE1428F65B00DF7794 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B7170C231428F7B000DF7794 /* UIKit.framework in Frameworks */,
+				B7170C041428F65B00DF7794 /* SenTestingKit.framework in Frameworks */,
+				B7170C071428F65B00DF7794 /* Foundation.framework in Frameworks */,
+				B7170C0A1428F65B00DF7794 /* libECCodeIndexing.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		B7170BE71428F65A00DF7794 = {
+			isa = PBXGroup;
+			children = (
+				B7170BF71428F65A00DF7794 /* ECCodeIndexing */,
+				B7170C0B1428F65B00DF7794 /* ECCodeIndexingTests */,
+				B7170BF41428F65A00DF7794 /* Frameworks */,
+				B7170BF31428F65A00DF7794 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		B7170BF31428F65A00DF7794 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				B7170BF21428F65A00DF7794 /* libECCodeIndexing.a */,
+				B7170C021428F65B00DF7794 /* ECCodeIndexingTests.octest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B7170BF41428F65A00DF7794 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				B7170D3A1428FAF000DF7794 /* ECFoundation.xcodeproj */,
+				B7170C241428F7C400DF7794 /* Kiwi */,
+				B7170BF51428F65A00DF7794 /* Foundation.framework */,
+				B7170C221428F7B000DF7794 /* UIKit.framework */,
+				B7170C031428F65B00DF7794 /* SenTestingKit.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		B7170BF71428F65A00DF7794 /* ECCodeIndexing */ = {
+			isa = PBXGroup;
+			children = (
+				B7170CFE1428FAAE00DF7794 /* ECClangCodeCursor.h */,
+				B7170CFF1428FAAE00DF7794 /* ECClangCodeCursor.m */,
+				B7170D001428FAAE00DF7794 /* ECClangCodeIndex.h */,
+				B7170D011428FAAE00DF7794 /* ECClangCodeIndex.m */,
+				B7170D021428FAAE00DF7794 /* ECClangCodeUnit.h */,
+				B7170D031428FAAE00DF7794 /* ECClangCodeUnit.m */,
+				B7170D041428FAAE00DF7794 /* ECClangHelperFunctions.h */,
+				B7170D051428FAAE00DF7794 /* ECClangHelperFunctions.m */,
+				B7170D061428FAAE00DF7794 /* ECCodeCompletionChunk.h */,
+				B7170D071428FAAE00DF7794 /* ECCodeCompletionChunk.m */,
+				B7170D081428FAAE00DF7794 /* ECCodeCompletionResult.h */,
+				B7170D091428FAAE00DF7794 /* ECCodeCompletionResult.m */,
+				B7170D0A1428FAAE00DF7794 /* ECCodeCompletionString.h */,
+				B7170D0B1428FAAE00DF7794 /* ECCodeCompletionString.m */,
+				B7170D0C1428FAAE00DF7794 /* ECCodeCursor.h */,
+				B7170D0D1428FAAE00DF7794 /* ECCodeCursor.m */,
+				B7170D0E1428FAAE00DF7794 /* ECCodeDiagnostic.h */,
+				B7170D0F1428FAAE00DF7794 /* ECCodeDiagnostic.m */,
+				B7170D101428FAAE00DF7794 /* ECCodeFixIt.h */,
+				B7170D111428FAAE00DF7794 /* ECCodeFixIt.m */,
+				B7170D121428FAAE00DF7794 /* ECCodeIndex.h */,
+				B7170D131428FAAE00DF7794 /* ECCodeIndex.m */,
+				B7170D141428FAAF00DF7794 /* ECCodeIndex(Private).h */,
+				B7170D151428FAAF00DF7794 /* ECCodeIndexPlugin.h */,
+				B7170D161428FAAF00DF7794 /* ECCodeToken.h */,
+				B7170D171428FAAF00DF7794 /* ECCodeToken.m */,
+				B7170D181428FAAF00DF7794 /* ECCodeUnit.h */,
+				B7170D191428FAAF00DF7794 /* ECCodeUnit.m */,
+				B7170D1A1428FAAF00DF7794 /* ECCodeUnit(Private).h */,
+				B7170D1B1428FAAF00DF7794 /* ECCodeUnitPlugin.h */,
+				B7170BF81428F65A00DF7794 /* Supporting Files */,
+			);
+			path = ECCodeIndexing;
+			sourceTree = "<group>";
+		};
+		B7170BF81428F65A00DF7794 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				B7170C201428F72100DF7794 /* ECDebug.h */,
+				B7170BF91428F65A00DF7794 /* ECCodeIndexing-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		B7170C0B1428F65B00DF7794 /* ECCodeIndexingTests */ = {
+			isa = PBXGroup;
+			children = (
+				B7170C121428F65B00DF7794 /* ECCodeIndexingTests.m */,
+				B7170C0C1428F65B00DF7794 /* Supporting Files */,
+			);
+			name = ECCodeIndexingTests;
+			path = ECCodeIndexing/Tests;
+			sourceTree = "<group>";
+		};
+		B7170C0C1428F65B00DF7794 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				B7170C0D1428F65B00DF7794 /* ECCodeIndexingTests-Info.plist */,
+				B7170C0E1428F65B00DF7794 /* InfoPlist.strings */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		B7170C241428F7C400DF7794 /* Kiwi */ = {
+			isa = PBXGroup;
+			children = (
+				B7170C251428F7C400DF7794 /* KWAfterAllNode.h */,
+				B7170C261428F7C400DF7794 /* KWAfterAllNode.m */,
+				B7170C271428F7C400DF7794 /* KWAfterEachNode.h */,
+				B7170C281428F7C400DF7794 /* KWAfterEachNode.m */,
+				B7170C291428F7C400DF7794 /* KWAsyncVerifier.h */,
+				B7170C2A1428F7C400DF7794 /* KWAsyncVerifier.m */,
+				B7170C2B1428F7C400DF7794 /* KWBeBetweenMatcher.h */,
+				B7170C2C1428F7C400DF7794 /* KWBeBetweenMatcher.m */,
+				B7170C2D1428F7C400DF7794 /* KWBeEmptyMatcher.h */,
+				B7170C2E1428F7C400DF7794 /* KWBeEmptyMatcher.m */,
+				B7170C2F1428F7C400DF7794 /* KWBeIdenticalToMatcher.h */,
+				B7170C301428F7C400DF7794 /* KWBeIdenticalToMatcher.m */,
+				B7170C311428F7C400DF7794 /* KWBeKindOfClassMatcher.h */,
+				B7170C321428F7C400DF7794 /* KWBeKindOfClassMatcher.m */,
+				B7170C331428F7C400DF7794 /* KWBeMemberOfClassMatcher.h */,
+				B7170C341428F7C400DF7794 /* KWBeMemberOfClassMatcher.m */,
+				B7170C351428F7C400DF7794 /* KWBeNilMatcher.h */,
+				B7170C361428F7C400DF7794 /* KWBeNilMatcher.m */,
+				B7170C371428F7C400DF7794 /* KWBeNonNilMatcher.h */,
+				B7170C381428F7C400DF7794 /* KWBeNonNilMatcher.m */,
+				B7170C391428F7C400DF7794 /* KWBeTrueMatcher.h */,
+				B7170C3A1428F7C400DF7794 /* KWBeTrueMatcher.m */,
+				B7170C3B1428F7C400DF7794 /* KWBeWithinMatcher.h */,
+				B7170C3C1428F7C400DF7794 /* KWBeWithinMatcher.m */,
+				B7170C3D1428F7C400DF7794 /* KWBeZeroMatcher.h */,
+				B7170C3E1428F7C400DF7794 /* KWBeZeroMatcher.m */,
+				B7170C3F1428F7C400DF7794 /* KWBeforeAllNode.h */,
+				B7170C401428F7C400DF7794 /* KWBeforeAllNode.m */,
+				B7170C411428F7C400DF7794 /* KWBeforeEachNode.h */,
+				B7170C421428F7C400DF7794 /* KWBeforeEachNode.m */,
+				B7170C431428F7C400DF7794 /* KWBlock.h */,
+				B7170C441428F7C400DF7794 /* KWBlock.m */,
+				B7170C451428F7C400DF7794 /* KWBlockNode.h */,
+				B7170C461428F7C400DF7794 /* KWBlockNode.m */,
+				B7170C471428F7C400DF7794 /* KWBlockRaiseMatcher.h */,
+				B7170C481428F7C400DF7794 /* KWBlockRaiseMatcher.m */,
+				B7170C491428F7C400DF7794 /* KWCallSite.h */,
+				B7170C4A1428F7C400DF7794 /* KWCallSite.m */,
+				B7170C4B1428F7C400DF7794 /* KWConformToProtocolMatcher.h */,
+				B7170C4C1428F7C400DF7794 /* KWConformToProtocolMatcher.m */,
+				B7170C4D1428F7C400DF7794 /* KWContainMatcher.h */,
+				B7170C4E1428F7C400DF7794 /* KWContainMatcher.m */,
+				B7170C4F1428F7C400DF7794 /* KWContextNode.h */,
+				B7170C501428F7C400DF7794 /* KWContextNode.m */,
+				B7170C511428F7C400DF7794 /* KWCountType.h */,
+				B7170C521428F7C400DF7794 /* KWDeviceInfo.h */,
+				B7170C531428F7C400DF7794 /* KWDeviceInfo.m */,
+				B7170C541428F7C400DF7794 /* KWEqualMatcher.h */,
+				B7170C551428F7C400DF7794 /* KWEqualMatcher.m */,
+				B7170C561428F7C400DF7794 /* KWExampleGroup.h */,
+				B7170C571428F7C400DF7794 /* KWExampleGroup.m */,
+				B7170C581428F7C400DF7794 /* KWExampleGroupBuilder.h */,
+				B7170C591428F7C400DF7794 /* KWExampleGroupBuilder.m */,
+				B7170C5A1428F7C400DF7794 /* KWExampleGroupDelegate.h */,
+				B7170C5B1428F7C400DF7794 /* KWExampleNode.h */,
+				B7170C5C1428F7C400DF7794 /* KWExampleNodeVisitor.h */,
+				B7170C5D1428F7C400DF7794 /* KWExistVerifier.h */,
+				B7170C5E1428F7C400DF7794 /* KWExistVerifier.m */,
+				B7170C5F1428F7C400DF7794 /* KWExpectationType.h */,
+				B7170C601428F7C400DF7794 /* KWFailure.h */,
+				B7170C611428F7C400DF7794 /* KWFailure.m */,
+				B7170C621428F7C400DF7794 /* KWFormatter.h */,
+				B7170C631428F7C400DF7794 /* KWFormatter.m */,
+				B7170C641428F7C400DF7794 /* KWFutureObject.h */,
+				B7170C651428F7C400DF7794 /* KWFutureObject.m */,
+				B7170C661428F7C400DF7794 /* KWHCMatcher.h */,
+				B7170C671428F7C400DF7794 /* KWHamcrestMatcher.h */,
+				B7170C681428F7C400DF7794 /* KWHamcrestMatcher.m */,
+				B7170C691428F7C400DF7794 /* KWHamrestMatchingAdditions.h */,
+				B7170C6A1428F7C400DF7794 /* KWHamrestMatchingAdditions.m */,
+				B7170C6B1428F7C400DF7794 /* KWHaveMatcher.h */,
+				B7170C6C1428F7C400DF7794 /* KWHaveMatcher.m */,
+				B7170C6D1428F7C400DF7794 /* KWHaveValueMatcher.h */,
+				B7170C6E1428F7C400DF7794 /* KWHaveValueMatcher.m */,
+				B7170C6F1428F7C400DF7794 /* KWInequalityMatcher.h */,
+				B7170C701428F7C400DF7794 /* KWInequalityMatcher.m */,
+				B7170C711428F7C400DF7794 /* KWIntercept.h */,
+				B7170C721428F7C400DF7794 /* KWIntercept.m */,
+				B7170C731428F7C400DF7794 /* KWInvocationCapturer.h */,
+				B7170C741428F7C400DF7794 /* KWInvocationCapturer.m */,
+				B7170C751428F7C400DF7794 /* KWItNode.h */,
+				B7170C761428F7C400DF7794 /* KWItNode.m */,
+				B7170C771428F7C400DF7794 /* KWMatchVerifier.h */,
+				B7170C781428F7C400DF7794 /* KWMatchVerifier.m */,
+				B7170C791428F7C400DF7794 /* KWMatcher.h */,
+				B7170C7A1428F7C400DF7794 /* KWMatcher.m */,
+				B7170C7B1428F7C400DF7794 /* KWMatcherFactory.h */,
+				B7170C7C1428F7C400DF7794 /* KWMatcherFactory.m */,
+				B7170C7D1428F7C400DF7794 /* KWMatchers.h */,
+				B7170C7E1428F7C400DF7794 /* KWMatchers.m */,
+				B7170C7F1428F7C400DF7794 /* KWMatching.h */,
+				B7170C801428F7C400DF7794 /* KWMessagePattern.h */,
+				B7170C811428F7C400DF7794 /* KWMessagePattern.m */,
+				B7170C821428F7C400DF7794 /* KWMessageSpying.h */,
+				B7170C831428F7C400DF7794 /* KWMessageTracker.h */,
+				B7170C841428F7C400DF7794 /* KWMessageTracker.m */,
+				B7170C851428F7C400DF7794 /* KWMock.h */,
+				B7170C861428F7C400DF7794 /* KWMock.m */,
+				B7170C871428F7C400DF7794 /* KWNull.h */,
+				B7170C881428F7C400DF7794 /* KWNull.m */,
+				B7170C891428F7C400DF7794 /* KWObjCUtilities.h */,
+				B7170C8A1428F7C400DF7794 /* KWObjCUtilities.m */,
+				B7170C8B1428F7C400DF7794 /* KWPendingNode.h */,
+				B7170C8C1428F7C400DF7794 /* KWPendingNode.m */,
+				B7170C8D1428F7C400DF7794 /* KWProbe.h */,
+				B7170C8E1428F7C400DF7794 /* KWProbePoller.h */,
+				B7170C8F1428F7C400DF7794 /* KWProbePoller.m */,
+				B7170C901428F7C400DF7794 /* KWRaiseMatcher.h */,
+				B7170C911428F7C400DF7794 /* KWRaiseMatcher.m */,
+				B7170C921428F7C400DF7794 /* KWReceiveMatcher.h */,
+				B7170C931428F7C400DF7794 /* KWReceiveMatcher.m */,
+				B7170C941428F7C400DF7794 /* KWRegisterMatchersNode.h */,
+				B7170C951428F7C400DF7794 /* KWRegisterMatchersNode.m */,
+				B7170C961428F7C400DF7794 /* KWReporting.h */,
+				B7170C971428F7C400DF7794 /* KWRespondToSelectorMatcher.h */,
+				B7170C981428F7C400DF7794 /* KWRespondToSelectorMatcher.m */,
+				B7170C991428F7C400DF7794 /* KWSpec.h */,
+				B7170C9A1428F7C400DF7794 /* KWSpec.m */,
+				B7170C9B1428F7C400DF7794 /* KWStringUtilities.h */,
+				B7170C9C1428F7C400DF7794 /* KWStringUtilities.m */,
+				B7170C9D1428F7C400DF7794 /* KWStub.h */,
+				B7170C9E1428F7C400DF7794 /* KWStub.m */,
+				B7170C9F1428F7C400DF7794 /* KWTestCase.h */,
+				B7170CA01428F7C400DF7794 /* KWTestCase.m */,
+				B7170CA11428F7C400DF7794 /* KWUserDefinedMatcher.h */,
+				B7170CA21428F7C400DF7794 /* KWUserDefinedMatcher.m */,
+				B7170CA31428F7C400DF7794 /* KWValue.h */,
+				B7170CA41428F7C400DF7794 /* KWValue.m */,
+				B7170CA51428F7C400DF7794 /* KWVerifying.h */,
+				B7170CA61428F7C400DF7794 /* KWWorkarounds.h */,
+				B7170CA71428F7C400DF7794 /* KWWorkarounds.m */,
+				B7170CA81428F7C400DF7794 /* Kiwi.h */,
+				B7170CA91428F7C400DF7794 /* KiwiBlockMacros.h */,
+				B7170CAA1428F7C400DF7794 /* KiwiConfiguration.h */,
+				B7170CAB1428F7C400DF7794 /* KiwiMacros.h */,
+				B7170CAC1428F7C400DF7794 /* KiwiNewMacros.h */,
+				B7170CAD1428F7C400DF7794 /* NSInvocation+KiwiAdditions.h */,
+				B7170CAE1428F7C400DF7794 /* NSInvocation+KiwiAdditions.m */,
+				B7170CAF1428F7C400DF7794 /* NSMethodSignature+KiwiAdditions.h */,
+				B7170CB01428F7C400DF7794 /* NSMethodSignature+KiwiAdditions.m */,
+				B7170CB11428F7C400DF7794 /* NSNumber+KiwiAdditions.h */,
+				B7170CB21428F7C400DF7794 /* NSNumber+KiwiAdditions.m */,
+				B7170CB31428F7C400DF7794 /* NSObject+KiwiMockAdditions.h */,
+				B7170CB41428F7C400DF7794 /* NSObject+KiwiMockAdditions.m */,
+				B7170CB51428F7C400DF7794 /* NSObject+KiwiStubAdditions.h */,
+				B7170CB61428F7C400DF7794 /* NSObject+KiwiStubAdditions.m */,
+				B7170CB71428F7C400DF7794 /* NSObject+KiwiVerifierAdditions.h */,
+				B7170CB81428F7C400DF7794 /* NSObject+KiwiVerifierAdditions.m */,
+				B7170CB91428F7C400DF7794 /* NSValue+KiwiAdditions.h */,
+				B7170CBA1428F7C400DF7794 /* NSValue+KiwiAdditions.m */,
+			);
+			name = Kiwi;
+			path = ../ThirdParty/Kiwi/Kiwi;
+			sourceTree = "<group>";
+		};
+		B7170D3B1428FAF000DF7794 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				B7170D431428FAF100DF7794 /* libECFoundation.a */,
+				B7170D451428FAF100DF7794 /* ECFoundationTests.octest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		B7170BF01428F65A00DF7794 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B7170D241428FAAF00DF7794 /* ECCodeCompletionChunk.h in Headers */,
+				B7170D261428FAAF00DF7794 /* ECCodeCompletionResult.h in Headers */,
+				B7170D281428FAAF00DF7794 /* ECCodeCompletionString.h in Headers */,
+				B7170D2A1428FAAF00DF7794 /* ECCodeCursor.h in Headers */,
+				B7170D2C1428FAAF00DF7794 /* ECCodeDiagnostic.h in Headers */,
+				B7170D2E1428FAAF00DF7794 /* ECCodeFixIt.h in Headers */,
+				B7170D301428FAAF00DF7794 /* ECCodeIndex.h in Headers */,
+				B7170D331428FAAF00DF7794 /* ECCodeIndexPlugin.h in Headers */,
+				B7170D341428FAAF00DF7794 /* ECCodeToken.h in Headers */,
+				B7170D361428FAAF00DF7794 /* ECCodeUnit.h in Headers */,
+				B7170D391428FAAF00DF7794 /* ECCodeUnitPlugin.h in Headers */,
+				B7170C211428F72100DF7794 /* ECDebug.h in Headers */,
+				B7170D1C1428FAAF00DF7794 /* ECClangCodeCursor.h in Headers */,
+				B7170D1E1428FAAF00DF7794 /* ECClangCodeIndex.h in Headers */,
+				B7170D201428FAAF00DF7794 /* ECClangCodeUnit.h in Headers */,
+				B7170D221428FAAF00DF7794 /* ECClangHelperFunctions.h in Headers */,
+				B7170D321428FAAF00DF7794 /* ECCodeIndex(Private).h in Headers */,
+				B7170D381428FAAF00DF7794 /* ECCodeUnit(Private).h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		B7170BF11428F65A00DF7794 /* ECCodeIndexing */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B7170C161428F65B00DF7794 /* Build configuration list for PBXNativeTarget "ECCodeIndexing" */;
+			buildPhases = (
+				B7170BEE1428F65A00DF7794 /* Sources */,
+				B7170BEF1428F65A00DF7794 /* Frameworks */,
+				B7170BF01428F65A00DF7794 /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ECCodeIndexing;
+			productName = ECCodeIndexing;
+			productReference = B7170BF21428F65A00DF7794 /* libECCodeIndexing.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		B7170C011428F65B00DF7794 /* ECCodeIndexingTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B7170C191428F65B00DF7794 /* Build configuration list for PBXNativeTarget "ECCodeIndexingTests" */;
+			buildPhases = (
+				B7170BFD1428F65B00DF7794 /* Sources */,
+				B7170BFE1428F65B00DF7794 /* Frameworks */,
+				B7170BFF1428F65B00DF7794 /* Resources */,
+				B7170C001428F65B00DF7794 /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				B7170C091428F65B00DF7794 /* PBXTargetDependency */,
+			);
+			name = ECCodeIndexingTests;
+			productName = ECCodeIndexingTests;
+			productReference = B7170C021428F65B00DF7794 /* ECCodeIndexingTests.octest */;
+			productType = "com.apple.product-type.bundle";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		B7170BE91428F65A00DF7794 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0420;
+			};
+			buildConfigurationList = B7170BEC1428F65A00DF7794 /* Build configuration list for PBXProject "ECCodeIndexing" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = B7170BE71428F65A00DF7794;
+			productRefGroup = B7170BF31428F65A00DF7794 /* Products */;
+			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = B7170D3B1428FAF000DF7794 /* Products */;
+					ProjectRef = B7170D3A1428FAF000DF7794 /* ECFoundation.xcodeproj */;
+				},
+			);
+			projectRoot = "";
+			targets = (
+				B7170BF11428F65A00DF7794 /* ECCodeIndexing */,
+				B7170C011428F65B00DF7794 /* ECCodeIndexingTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		B7170D431428FAF100DF7794 /* libECFoundation.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libECFoundation.a;
+			remoteRef = B7170D421428FAF100DF7794 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B7170D451428FAF100DF7794 /* ECFoundationTests.octest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = ECFoundationTests.octest;
+			remoteRef = B7170D441428FAF100DF7794 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
+
+/* Begin PBXResourcesBuildPhase section */
+		B7170BFF1428F65B00DF7794 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B7170C101428F65B00DF7794 /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		B7170C001428F65B00DF7794 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Run the unit tests in this test bundle.\n\"${SYSTEM_DEVELOPER_DIR}/Tools/RunUnitTests\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		B7170BEE1428F65A00DF7794 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B7170D1D1428FAAF00DF7794 /* ECClangCodeCursor.m in Sources */,
+				B7170D1F1428FAAF00DF7794 /* ECClangCodeIndex.m in Sources */,
+				B7170D211428FAAF00DF7794 /* ECClangCodeUnit.m in Sources */,
+				B7170D231428FAAF00DF7794 /* ECClangHelperFunctions.m in Sources */,
+				B7170D251428FAAF00DF7794 /* ECCodeCompletionChunk.m in Sources */,
+				B7170D271428FAAF00DF7794 /* ECCodeCompletionResult.m in Sources */,
+				B7170D291428FAAF00DF7794 /* ECCodeCompletionString.m in Sources */,
+				B7170D2B1428FAAF00DF7794 /* ECCodeCursor.m in Sources */,
+				B7170D2D1428FAAF00DF7794 /* ECCodeDiagnostic.m in Sources */,
+				B7170D2F1428FAAF00DF7794 /* ECCodeFixIt.m in Sources */,
+				B7170D311428FAAF00DF7794 /* ECCodeIndex.m in Sources */,
+				B7170D351428FAAF00DF7794 /* ECCodeToken.m in Sources */,
+				B7170D371428FAAF00DF7794 /* ECCodeUnit.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B7170BFD1428F65B00DF7794 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B7170C131428F65B00DF7794 /* ECCodeIndexingTests.m in Sources */,
+				B7170CBB1428F7C500DF7794 /* KWAfterAllNode.m in Sources */,
+				B7170CBC1428F7C500DF7794 /* KWAfterEachNode.m in Sources */,
+				B7170CBD1428F7C500DF7794 /* KWAsyncVerifier.m in Sources */,
+				B7170CBE1428F7C500DF7794 /* KWBeBetweenMatcher.m in Sources */,
+				B7170CBF1428F7C500DF7794 /* KWBeEmptyMatcher.m in Sources */,
+				B7170CC01428F7C500DF7794 /* KWBeIdenticalToMatcher.m in Sources */,
+				B7170CC11428F7C500DF7794 /* KWBeKindOfClassMatcher.m in Sources */,
+				B7170CC21428F7C500DF7794 /* KWBeMemberOfClassMatcher.m in Sources */,
+				B7170CC31428F7C500DF7794 /* KWBeNilMatcher.m in Sources */,
+				B7170CC41428F7C500DF7794 /* KWBeNonNilMatcher.m in Sources */,
+				B7170CC51428F7C500DF7794 /* KWBeTrueMatcher.m in Sources */,
+				B7170CC61428F7C500DF7794 /* KWBeWithinMatcher.m in Sources */,
+				B7170CC71428F7C500DF7794 /* KWBeZeroMatcher.m in Sources */,
+				B7170CC81428F7C500DF7794 /* KWBeforeAllNode.m in Sources */,
+				B7170CC91428F7C500DF7794 /* KWBeforeEachNode.m in Sources */,
+				B7170CCA1428F7C500DF7794 /* KWBlock.m in Sources */,
+				B7170CCB1428F7C500DF7794 /* KWBlockNode.m in Sources */,
+				B7170CCC1428F7C500DF7794 /* KWBlockRaiseMatcher.m in Sources */,
+				B7170CCD1428F7C500DF7794 /* KWCallSite.m in Sources */,
+				B7170CCE1428F7C500DF7794 /* KWConformToProtocolMatcher.m in Sources */,
+				B7170CCF1428F7C500DF7794 /* KWContainMatcher.m in Sources */,
+				B7170CD01428F7C500DF7794 /* KWContextNode.m in Sources */,
+				B7170CD11428F7C500DF7794 /* KWDeviceInfo.m in Sources */,
+				B7170CD21428F7C500DF7794 /* KWEqualMatcher.m in Sources */,
+				B7170CD31428F7C500DF7794 /* KWExampleGroup.m in Sources */,
+				B7170CD41428F7C500DF7794 /* KWExampleGroupBuilder.m in Sources */,
+				B7170CD51428F7C500DF7794 /* KWExistVerifier.m in Sources */,
+				B7170CD61428F7C500DF7794 /* KWFailure.m in Sources */,
+				B7170CD71428F7C500DF7794 /* KWFormatter.m in Sources */,
+				B7170CD81428F7C500DF7794 /* KWFutureObject.m in Sources */,
+				B7170CD91428F7C500DF7794 /* KWHamcrestMatcher.m in Sources */,
+				B7170CDA1428F7C500DF7794 /* KWHamrestMatchingAdditions.m in Sources */,
+				B7170CDB1428F7C500DF7794 /* KWHaveMatcher.m in Sources */,
+				B7170CDC1428F7C500DF7794 /* KWHaveValueMatcher.m in Sources */,
+				B7170CDD1428F7C500DF7794 /* KWInequalityMatcher.m in Sources */,
+				B7170CDE1428F7C500DF7794 /* KWIntercept.m in Sources */,
+				B7170CDF1428F7C500DF7794 /* KWInvocationCapturer.m in Sources */,
+				B7170CE01428F7C500DF7794 /* KWItNode.m in Sources */,
+				B7170CE11428F7C500DF7794 /* KWMatchVerifier.m in Sources */,
+				B7170CE21428F7C500DF7794 /* KWMatcher.m in Sources */,
+				B7170CE31428F7C500DF7794 /* KWMatcherFactory.m in Sources */,
+				B7170CE41428F7C500DF7794 /* KWMatchers.m in Sources */,
+				B7170CE51428F7C500DF7794 /* KWMessagePattern.m in Sources */,
+				B7170CE61428F7C500DF7794 /* KWMessageTracker.m in Sources */,
+				B7170CE71428F7C500DF7794 /* KWMock.m in Sources */,
+				B7170CE81428F7C500DF7794 /* KWNull.m in Sources */,
+				B7170CE91428F7C500DF7794 /* KWObjCUtilities.m in Sources */,
+				B7170CEA1428F7C500DF7794 /* KWPendingNode.m in Sources */,
+				B7170CEB1428F7C500DF7794 /* KWProbePoller.m in Sources */,
+				B7170CEC1428F7C500DF7794 /* KWRaiseMatcher.m in Sources */,
+				B7170CED1428F7C500DF7794 /* KWReceiveMatcher.m in Sources */,
+				B7170CEE1428F7C500DF7794 /* KWRegisterMatchersNode.m in Sources */,
+				B7170CEF1428F7C500DF7794 /* KWRespondToSelectorMatcher.m in Sources */,
+				B7170CF01428F7C500DF7794 /* KWSpec.m in Sources */,
+				B7170CF11428F7C500DF7794 /* KWStringUtilities.m in Sources */,
+				B7170CF21428F7C500DF7794 /* KWStub.m in Sources */,
+				B7170CF31428F7C500DF7794 /* KWTestCase.m in Sources */,
+				B7170CF41428F7C500DF7794 /* KWUserDefinedMatcher.m in Sources */,
+				B7170CF51428F7C500DF7794 /* KWValue.m in Sources */,
+				B7170CF61428F7C500DF7794 /* KWWorkarounds.m in Sources */,
+				B7170CF71428F7C500DF7794 /* NSInvocation+KiwiAdditions.m in Sources */,
+				B7170CF81428F7C500DF7794 /* NSMethodSignature+KiwiAdditions.m in Sources */,
+				B7170CF91428F7C500DF7794 /* NSNumber+KiwiAdditions.m in Sources */,
+				B7170CFA1428F7C500DF7794 /* NSObject+KiwiMockAdditions.m in Sources */,
+				B7170CFB1428F7C500DF7794 /* NSObject+KiwiStubAdditions.m in Sources */,
+				B7170CFC1428F7C500DF7794 /* NSObject+KiwiVerifierAdditions.m in Sources */,
+				B7170CFD1428F7C500DF7794 /* NSValue+KiwiAdditions.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		B7170C091428F65B00DF7794 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B7170BF11428F65A00DF7794 /* ECCodeIndexing */;
+			targetProxy = B7170C081428F65B00DF7794 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		B7170C0E1428F65B00DF7794 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				B7170C0F1428F65B00DF7794 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		B7170C141428F65B00DF7794 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		B7170C151428F65B00DF7794 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		B7170C171428F65B00DF7794 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DSTROOT = /tmp/ECCodeIndexing.dst;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "ECCodeIndexing/ECCodeIndexing-Prefix.pch";
+				HEADER_SEARCH_PATHS = "${BUILD_DIR}/usr/local/include/";
+				LIBRARY_SEARCH_PATHS = "${BUILD_DIR}/";
+				OTHER_LDFLAGS = "-ObjC";
+				PRIVATE_HEADERS_FOLDER_PATH = /usr/local/include/ECCodeIndexing;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PUBLIC_HEADERS_FOLDER_PATH = /usr/local/include/ECCodeIndexing;
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		B7170C181428F65B00DF7794 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DSTROOT = /tmp/ECCodeIndexing.dst;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "ECCodeIndexing/ECCodeIndexing-Prefix.pch";
+				HEADER_SEARCH_PATHS = "${BUILD_DIR}/usr/local/include/";
+				LIBRARY_SEARCH_PATHS = "${BUILD_DIR}/";
+				OTHER_LDFLAGS = "-ObjC";
+				PRIVATE_HEADERS_FOLDER_PATH = /usr/local/include/ECCodeIndexing;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PUBLIC_HEADERS_FOLDER_PATH = /usr/local/include/ECCodeIndexing;
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+		B7170C1A1428F65B00DF7794 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(DEVELOPER_LIBRARY_DIR)/Frameworks",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "ECCodeIndexing/ECCodeIndexing-Prefix.pch";
+				HEADER_SEARCH_PATHS = "${BUILD_DIR}/usr/local/include/";
+				INFOPLIST_FILE = "ECCodeIndexing/Tests/ECCodeIndexingTests-Info.plist";
+				LIBRARY_SEARCH_PATHS = "${BUILD_DIR}/";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = octest;
+			};
+			name = Debug;
+		};
+		B7170C1B1428F65B00DF7794 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(DEVELOPER_LIBRARY_DIR)/Frameworks",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "ECCodeIndexing/ECCodeIndexing-Prefix.pch";
+				HEADER_SEARCH_PATHS = "${BUILD_DIR}/usr/local/include/";
+				INFOPLIST_FILE = "ECCodeIndexing/Tests/ECCodeIndexingTests-Info.plist";
+				LIBRARY_SEARCH_PATHS = "${BUILD_DIR}/";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = octest;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		B7170BEC1428F65A00DF7794 /* Build configuration list for PBXProject "ECCodeIndexing" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B7170C141428F65B00DF7794 /* Debug */,
+				B7170C151428F65B00DF7794 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B7170C161428F65B00DF7794 /* Build configuration list for PBXNativeTarget "ECCodeIndexing" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B7170C171428F65B00DF7794 /* Debug */,
+				B7170C181428F65B00DF7794 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B7170C191428F65B00DF7794 /* Build configuration list for PBXNativeTarget "ECCodeIndexingTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B7170C1A1428F65B00DF7794 /* Debug */,
+				B7170C1B1428F65B00DF7794 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = B7170BE91428F65A00DF7794 /* Project object */;
+}
