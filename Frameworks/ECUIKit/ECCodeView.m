@@ -10,7 +10,7 @@
 #import <QuartzCore/QuartzCore.h>
 #import "ECTextPosition.h"
 #import "ECTextRange.h"
-#import "NSTimer+block.h"
+#import <ECFoundation/NSTimer+block.h>
 #import "ECPopoverController.h"
 
 #import "ECCodeViewTokenizer.h"
