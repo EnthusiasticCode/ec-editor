@@ -6,8 +6,6 @@
 //  Copyright 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
-
 /// A Patricia Trie implementation for NSStrings
 /// Stores and retrieves objects identified by NSString keys
 /// Nodes are added and removed automatically to ensure the trie has no unnecessary nodes, but allows for all key prefix queries

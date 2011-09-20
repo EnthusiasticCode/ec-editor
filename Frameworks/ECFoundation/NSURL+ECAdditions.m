@@ -6,9 +6,9 @@
 //  Copyright 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import "ECURL.h"
+#import "NSURL+ECAdditions.h"
 
-@implementation NSURL (ECURL)
+@implementation NSURL (ECAdditions)
 
 + (NSURL *)applicationDocumentsDirectory
 {

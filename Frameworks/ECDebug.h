@@ -11,7 +11,7 @@
 
 #include <assert.h>
 
-#if !NDEBUG
+#if DEBUG
 #define ECASSERT(a) assert(a)
 #else
 #define ECASSERT(a)
@@ -22,7 +22,7 @@
 
 #define UNIMPLEMENTED() UNIMPLEMENTED_VOID(); return 0
 
-#if ! NDEBUG
+#if DEBUG
 #define REQUIRE_NOT_NULL(a) do { \
 if ((a)==NULL) {\
 fprintf(stderr, "REQUIRE_NOT_NULL failed: NULL value for parameter " #a " on line %d in file %s\n", __LINE__, __FILE__);\
