@@ -128,6 +128,14 @@
 		B7170BDA1428F01600DF7794 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7170BD61428F00800DF7794 /* QuartzCore.framework */; };
 		B7170BE51428F1A000DF7794 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7170BE41428F1A000DF7794 /* CoreGraphics.framework */; };
 		B7170BE61428F1A800DF7794 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7170BE41428F1A000DF7794 /* CoreGraphics.framework */; };
+		CD0DDA1614293E7300FE8B5B /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B71709DC1428E68A00DF7794 /* UIKit.framework */; };
+		CD0DDA1714293E7300FE8B5B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B71709AF1428E3CD00DF7794 /* Foundation.framework */; };
+		CD0DDA1814293E7300FE8B5B /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7170BE41428F1A000DF7794 /* CoreGraphics.framework */; };
+		CD0DDA1E14293E7300FE8B5B /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = CD0DDA1C14293E7300FE8B5B /* InfoPlist.strings */; };
+		CD0DDA2014293E7300FE8B5B /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = CD0DDA1F14293E7300FE8B5B /* main.m */; };
+		CD0DDA2414293E7300FE8B5B /* ECSplitViewControllerTest_AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = CD0DDA2314293E7300FE8B5B /* ECSplitViewControllerTest_AppDelegate.m */; };
+		CD0DDA2714293E7300FE8B5B /* MainStoryboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CD0DDA2514293E7300FE8B5B /* MainStoryboard.storyboard */; };
+		CD0DDA2A14293E7300FE8B5B /* ECSplitViewControllerTest_ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD0DDA2914293E7300FE8B5B /* ECSplitViewControllerTest_ViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -364,6 +372,16 @@
 		B7170BD51428F00800DF7794 /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
 		B7170BD61428F00800DF7794 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		B7170BE41428F1A000DF7794 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		CD0DDA1414293E7300FE8B5B /* ECSplitViewControllerTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ECSplitViewControllerTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		CD0DDA1B14293E7300FE8B5B /* ECSplitViewControllerTest-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ECSplitViewControllerTest-Info.plist"; sourceTree = "<group>"; };
+		CD0DDA1D14293E7300FE8B5B /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		CD0DDA1F14293E7300FE8B5B /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		CD0DDA2114293E7300FE8B5B /* ECSplitViewControllerTest-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ECSplitViewControllerTest-Prefix.pch"; sourceTree = "<group>"; };
+		CD0DDA2214293E7300FE8B5B /* ECSplitViewControllerTest_AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ECSplitViewControllerTest_AppDelegate.h; sourceTree = "<group>"; };
+		CD0DDA2314293E7300FE8B5B /* ECSplitViewControllerTest_AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ECSplitViewControllerTest_AppDelegate.m; sourceTree = "<group>"; };
+		CD0DDA2614293E7300FE8B5B /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/MainStoryboard.storyboard; sourceTree = "<group>"; };
+		CD0DDA2814293E7300FE8B5B /* ECSplitViewControllerTest_ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ECSplitViewControllerTest_ViewController.h; sourceTree = "<group>"; };
+		CD0DDA2914293E7300FE8B5B /* ECSplitViewControllerTest_ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ECSplitViewControllerTest_ViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -394,6 +412,16 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		CD0DDA1114293E7300FE8B5B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CD0DDA1614293E7300FE8B5B /* UIKit.framework in Frameworks */,
+				CD0DDA1714293E7300FE8B5B /* Foundation.framework in Frameworks */,
+				CD0DDA1814293E7300FE8B5B /* CoreGraphics.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -413,6 +441,7 @@
 			children = (
 				B71709AC1428E3CD00DF7794 /* libECUIKit.a */,
 				B71709BC1428E3CD00DF7794 /* ECUIKitTests.octest */,
+				CD0DDA1414293E7300FE8B5B /* ECSplitViewControllerTest.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -459,8 +488,8 @@
 		B71709C51428E3CE00DF7794 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
-				B71709CC1428E3CE00DF7794 /* ECUIKitTests.m */,
-				B71709C61428E3CE00DF7794 /* Supporting Files */,
+				CD0DDA1914293E7300FE8B5B /* ECSplitViewControllerTest */,
+				CD0DD9F114293D9E00FE8B5B /* Unit Tests */,
 			);
 			name = Tests;
 			path = ECUIKit/Tests;
@@ -745,6 +774,40 @@
 			name = "UIKit Additions";
 			sourceTree = "<group>";
 		};
+		CD0DD9F114293D9E00FE8B5B /* Unit Tests */ = {
+			isa = PBXGroup;
+			children = (
+				B71709CC1428E3CE00DF7794 /* ECUIKitTests.m */,
+				B71709C61428E3CE00DF7794 /* Supporting Files */,
+			);
+			name = "Unit Tests";
+			path = UnitTests;
+			sourceTree = "<group>";
+		};
+		CD0DDA1914293E7300FE8B5B /* ECSplitViewControllerTest */ = {
+			isa = PBXGroup;
+			children = (
+				CD0DDA2214293E7300FE8B5B /* ECSplitViewControllerTest_AppDelegate.h */,
+				CD0DDA2314293E7300FE8B5B /* ECSplitViewControllerTest_AppDelegate.m */,
+				CD0DDA2514293E7300FE8B5B /* MainStoryboard.storyboard */,
+				CD0DDA2814293E7300FE8B5B /* ECSplitViewControllerTest_ViewController.h */,
+				CD0DDA2914293E7300FE8B5B /* ECSplitViewControllerTest_ViewController.m */,
+				CD0DDA1A14293E7300FE8B5B /* Supporting Files */,
+			);
+			path = ECSplitViewControllerTest;
+			sourceTree = "<group>";
+		};
+		CD0DDA1A14293E7300FE8B5B /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				CD0DDA1B14293E7300FE8B5B /* ECSplitViewControllerTest-Info.plist */,
+				CD0DDA1C14293E7300FE8B5B /* InfoPlist.strings */,
+				CD0DDA1F14293E7300FE8B5B /* main.m */,
+				CD0DDA2114293E7300FE8B5B /* ECSplitViewControllerTest-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -815,6 +878,23 @@
 			productReference = B71709BC1428E3CD00DF7794 /* ECUIKitTests.octest */;
 			productType = "com.apple.product-type.bundle";
 		};
+		CD0DDA1314293E7300FE8B5B /* ECSplitViewControllerTest */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CD0DDA2B14293E7300FE8B5B /* Build configuration list for PBXNativeTarget "ECSplitViewControllerTest" */;
+			buildPhases = (
+				CD0DDA1014293E7300FE8B5B /* Sources */,
+				CD0DDA1114293E7300FE8B5B /* Frameworks */,
+				CD0DDA1214293E7300FE8B5B /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ECSplitViewControllerTest;
+			productName = ECSplitViewControllerTest;
+			productReference = CD0DDA1414293E7300FE8B5B /* ECSplitViewControllerTest.app */;
+			productType = "com.apple.product-type.application";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -843,6 +923,7 @@
 			targets = (
 				B71709AB1428E3CD00DF7794 /* ECUIKit */,
 				B71709BB1428E3CD00DF7794 /* ECUIKitTests */,
+				CD0DDA1314293E7300FE8B5B /* ECSplitViewControllerTest */,
 			);
 		};
 /* End PBXProject section */
@@ -870,6 +951,15 @@
 			buildActionMask = 2147483647;
 			files = (
 				B71709CA1428E3CE00DF7794 /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CD0DDA1214293E7300FE8B5B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CD0DDA1E14293E7300FE8B5B /* InfoPlist.strings in Resources */,
+				CD0DDA2714293E7300FE8B5B /* MainStoryboard.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -993,6 +1083,16 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		CD0DDA1014293E7300FE8B5B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CD0DDA2014293E7300FE8B5B /* main.m in Sources */,
+				CD0DDA2414293E7300FE8B5B /* ECSplitViewControllerTest_AppDelegate.m in Sources */,
+				CD0DDA2A14293E7300FE8B5B /* ECSplitViewControllerTest_ViewController.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -1015,6 +1115,22 @@
 				B71709C91428E3CE00DF7794 /* en */,
 			);
 			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		CD0DDA1C14293E7300FE8B5B /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				CD0DDA1D14293E7300FE8B5B /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		CD0DDA2514293E7300FE8B5B /* MainStoryboard.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				CD0DDA2614293E7300FE8B5B /* en */,
+			);
+			name = MainStoryboard.storyboard;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
@@ -1130,6 +1246,33 @@
 			};
 			name = Release;
 		};
+		CD0DDA2C14293E7300FE8B5B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "ECSplitViewControllerTest/ECSplitViewControllerTest-Prefix.pch";
+				INFOPLIST_FILE = "ECSplitViewControllerTest/ECSplitViewControllerTest-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = 2;
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		CD0DDA2D14293E7300FE8B5B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "ECSplitViewControllerTest/ECSplitViewControllerTest-Prefix.pch";
+				INFOPLIST_FILE = "ECSplitViewControllerTest/ECSplitViewControllerTest-Info.plist";
+				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = 2;
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -1159,6 +1302,14 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
+		};
+		CD0DDA2B14293E7300FE8B5B /* Build configuration list for PBXNativeTarget "ECSplitViewControllerTest" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CD0DDA2C14293E7300FE8B5B /* Debug */,
+				CD0DDA2D14293E7300FE8B5B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
 		};
 /* End XCConfigurationList section */
 	};
