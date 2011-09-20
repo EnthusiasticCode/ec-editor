@@ -8,6 +8,7 @@
 
 #import "ACState.h"
 #import "ACProject.h"
+#import "ACFile.h"
 #import "ACProjectDocument.h"
 #import "ECArchive.h"
 #import "ECURL.h"
@@ -32,6 +33,10 @@ static NSString * const ACProjectBundleExtension = @"acproj";
 
 // Returns a file URL to the bundle of the project referenced by or containing the node referenced by the ACURL
 - (NSURL *)bundleURLForLocalProjectWithURL:(NSURL *)projectURL;
+
+static void copyFileToGroupWithNewName(ACFile *sourceFile, ACGroup *destinationGroup, NSString *newName);
+
+static void copyGroupToGroupWithNewName(ACGroup *sourceGroup, ACGroup *destinationGroup, NSString *newName);
 
 @end
 
@@ -213,12 +218,12 @@ static NSString * const ACProjectBundleExtension = @"acproj";
     ECASSERT([self objectWithURL:fromURL]);
     ECASSERT([toURL isACURL]);
     ECASSERT(![fromURL isACProjectURL] || [toURL isACProjectURL]);
-    ECASSERT(![self objectWithURL:toURL]);
+    ECASSERT(![self objectWithURL:toURL] && [self objectWithURL:[toURL URLByDeletingLastPathComponent]]);
+    NSFileManager *fileManager = [[NSFileManager alloc] init];
     if ([fromURL isACProjectURL])
     {
         NSUInteger projectIndex = [_projectURLs indexOfObject:fromURL];
         [self willChange:NSKeyValueChangeReplacement valuesAtIndexes:[NSIndexSet indexSetWithIndex:projectIndex] forKey:@"projectURLs"];
-        NSFileManager *fileManager = [[NSFileManager alloc] init];
         [fileManager moveItemAtURL:[[self bundleURLForLocalProjectWithURL:fromURL] URLByDeletingPathExtension] toURL:[[self bundleURLForLocalProjectWithURL:toURL] URLByDeletingPathExtension] error:NULL];
         [_projectURLs replaceObjectAtIndex:projectIndex withObject:toURL];
         ACProjectDocument *document = [_projectDocuments objectForKey:fromURL];
@@ -234,7 +239,12 @@ static NSString * const ACProjectBundleExtension = @"acproj";
     }
     else if ([[fromURL ACProjectURL] isEqual:[toURL ACProjectURL]])
     {
-        
+        ACNode *node = [self objectWithURL:fromURL];
+        ACGroup *group = [self objectWithURL:[toURL URLByDeletingLastPathComponent]];
+        ECASSERT([group.nodeType isEqualToString:@"Group"] || [group.nodeType isEqualToString:@"Project"]);
+        [fileManager moveItemAtURL:node.fileURL toURL:[group.fileURL URLByAppendingPathComponent:[toURL lastPathComponent]] error:NULL];
+        node.parent = group;
+        node.name = [toURL lastPathComponent];
     }
     else
     {
@@ -247,11 +257,11 @@ static NSString * const ACProjectBundleExtension = @"acproj";
     ECASSERT([self objectWithURL:fromURL]);
     ECASSERT([toURL isACURL]);
     ECASSERT(![fromURL isACProjectURL] || [toURL isACProjectURL]);
-    ECASSERT(![self objectWithURL:toURL]);
+    ECASSERT(![self objectWithURL:toURL] && [self objectWithURL:[toURL URLByDeletingLastPathComponent]]);
+    NSFileManager *fileManager = [[NSFileManager alloc] init];
     if ([fromURL isACProjectURL])
     {
         [self willChange:NSKeyValueChangeInsertion valuesAtIndexes:[NSIndexSet indexSetWithIndex:[_projectURLs count]] forKey:@"projectURLs"];
-        NSFileManager *fileManager = [[NSFileManager alloc] init];
         [fileManager copyItemAtURL:[[self bundleURLForLocalProjectWithURL:fromURL] URLByDeletingLastPathComponent] toURL:[[self bundleURLForLocalProjectWithURL:toURL] URLByDeletingLastPathComponent] error:NULL];
         [_projectURLs addObject:toURL];
         ACProjectDocument *document = [[ACProjectDocument alloc] initWithFileURL:[self bundleURLForLocalProjectWithURL:fromURL]];
@@ -264,7 +274,14 @@ static NSString * const ACProjectBundleExtension = @"acproj";
     }
     else if ([[fromURL ACProjectURL] isEqual:[toURL ACProjectURL]])
     {
-        
+        ACNode *node = [self objectWithURL:fromURL];
+        ACGroup *group = [self objectWithURL:[toURL URLByDeletingLastPathComponent]];
+        ECASSERT([group.nodeType isEqualToString:@"Group"] || [group.nodeType isEqualToString:@"Project"]);
+        [fileManager copyItemAtURL:node.fileURL toURL:[group.fileURL URLByAppendingPathComponent:[toURL lastPathComponent]] error:NULL];
+        if ([node.nodeType isEqualToString:@"File"])
+            copyFileToGroupWithNewName((ACFile *)node, group, [toURL lastPathComponent]);
+        else
+            copyGroupToGroupWithNewName((ACGroup *)node, group, [toURL lastPathComponent]);
     }
     else
     {
@@ -307,6 +324,33 @@ static NSString * const ACProjectBundleExtension = @"acproj";
 {
     ECASSERT(projectURL);
     return [[[[self class] localProjectsDirectory] URLByAppendingPathComponent:[projectURL ACProjectName]] URLByAppendingPathExtension:ACProjectBundleExtension];
+}
+
+static void copyFileToGroupWithNewName(ACFile *sourceFile, ACGroup *destinationGroup, NSString *newName)
+{
+    ACFile *newFile = [NSEntityDescription insertNewObjectForEntityForName:@"File" inManagedObjectContext:destinationGroup.managedObjectContext];
+    newFile.parent = destinationGroup;
+    if (newName)
+        newFile.name = newName;
+    else
+        newFile.name = sourceFile.name;
+    newFile.tag = sourceFile.tag;
+}
+
+static void copyGroupToGroupWithNewName(ACGroup *sourceGroup, ACGroup *destinationGroup, NSString *newName)
+{
+    ACGroup *newGroup = [NSEntityDescription insertNewObjectForEntityForName:@"Group" inManagedObjectContext:destinationGroup.managedObjectContext];
+    newGroup.parent = destinationGroup;
+    if (newName)
+        newGroup.name = newName;
+    else
+        newGroup.name = sourceGroup.name;
+    newGroup.tag = sourceGroup.tag;
+    for (ACNode *node in sourceGroup.children)
+        if ([node.nodeType isEqualToString:@"File"])
+            copyFileToGroupWithNewName((ACFile *)node, newGroup, nil);
+        else
+            copyGroupToGroupWithNewName((ACGroup *)node, newGroup, nil);
 }
 
 @end
