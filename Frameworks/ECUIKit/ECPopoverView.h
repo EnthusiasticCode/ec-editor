@@ -29,6 +29,8 @@
 
 @property (nonatomic, strong) UIView *contentView;
 
+@property (nonatomic, strong) UIView *barView;
+
 #pragma mark Arrow
 
 @property (nonatomic) UIPopoverArrowDirection arrowDirection;

@@ -94,6 +94,23 @@ static void preinit(ECPopoverController *self)
         return;
     
     contentViewController = viewController;
+    
+    // Add navigation bar if needed
+    if ([contentViewController isKindOfClass:[UINavigationController class]])
+    {
+        [(UINavigationController *)contentViewController setNavigationBarHidden:YES];
+        
+        UIView *navigationBar = [UIView new];
+        navigationBar.backgroundColor = [UIColor redColor];
+        navigationBar.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+        popoverView.barView = navigationBar;
+    }
+    else
+    {
+        popoverView.barView = nil;
+    }
+    
+    // Show content view
     if (animated) 
     {
         // TODO change with opacity animation

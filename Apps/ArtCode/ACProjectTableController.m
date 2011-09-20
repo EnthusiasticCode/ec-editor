@@ -25,10 +25,10 @@
 
 static void * ACStateProjectsObservingContext;
 
-@interface ACProjectTableController ()
-{
-    UIPopoverController *_popover;
+@interface ACProjectTableController () {
+    ECPopoverController *_popover;
 }
+
 - (void)deleteTableRow:(id)sender;
 @property (nonatomic, strong, readonly) void(^newProjectFromTemplate)(NSString *templateName);
 @property (nonatomic, strong, readonly) void(^newProjectFromACZ)(NSURL *ACZFileURL);
@@ -269,7 +269,7 @@ static void * ACStateProjectsObservingContext;
         popoverViewController.newProjectFromTemplate = self.newProjectFromTemplate;
         popoverViewController.newProjectFromACZ = self.newProjectFromACZ;
         popoverViewController.newProjectFromZIP = self.newProjectFromZIP;
-        _popover = [[UIPopoverController alloc] initWithContentViewController:popoverViewController];
+        _popover = [[ECPopoverController alloc] initWithContentViewController:popoverViewController];
     }
     [_popover presentPopoverFromRect:[sender frame] inView:[sender superview] permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
 }

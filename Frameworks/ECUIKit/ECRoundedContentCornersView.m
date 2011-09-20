@@ -23,7 +23,7 @@ static void updateContentCorners(ECRoundedContentCornersView *self);
 - (void)setContentInsets:(UIEdgeInsets)insets
 {
     contentInsets = insets;
-    [self layoutIfNeeded];
+    [self setNeedsLayout];
 }
 
 - (void)setContentCornerRadius:(CGFloat)radius

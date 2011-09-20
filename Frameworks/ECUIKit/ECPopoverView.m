@@ -9,6 +9,7 @@
 #import "ECPopoverView.h"
 #import <QuartzCore/QuartzCore.h>
 
+#define BARVIEW_HEIGHT 44
 
 @implementation ECPopoverView {
     CGRect contentRect;
@@ -18,13 +19,22 @@ static void updatePath(ECPopoverView *self);
 
 #pragma mark - Properties
 
+@synthesize contentView, barView;
 @synthesize cornerRadius, shadowOffsetForArrowDirectionUpToAutoOrient;
 @synthesize arrowDirection, arrowPosition, arrowSize, arrowMargin, arrowCornerRadius;
 
+- (UIEdgeInsets)contentInsets
+{
+    UIEdgeInsets insets = [super contentInsets];
+    if (barView)
+        insets.top += BARVIEW_HEIGHT;
+    return insets;
+}
+
 - (void)setContentInsets:(UIEdgeInsets)insets
 {
-    contentRect = UIEdgeInsetsInsetRect(self.bounds, insets);
     [super setContentInsets:insets];
+    contentRect = UIEdgeInsetsInsetRect(self.bounds, self.contentInsets);
 }
 
 - (CGSize)contentSize
@@ -44,15 +54,17 @@ static void updatePath(ECPopoverView *self);
     } }];
 }
 
-- (UIView *)contentView
+- (void)setContentView:(UIView *)view
 {
-    return [self.subviews count] ? [self.subviews objectAtIndex:0] : nil;
+    [contentView removeFromSuperview];
+    contentView = view;
+    [self addSubview:contentView];
 }
 
-- (void)setContentView:(UIView *)contentView
+- (void)setBarView:(UIView *)view
 {
-    [self.contentView removeFromSuperview];
-    [self addSubview:contentView];
+    barView = view;
+    [self addSubview:barView];
 }
 
 - (void)setArrowPosition:(CGFloat)position
@@ -182,10 +194,10 @@ static void init(ECPopoverView *self)
 
 - (void)layoutSubviews
 {
-    for (UIView *sub in self.subviews) 
-    {
-        sub.frame = contentRect;
-    }
+    contentView.frame = contentRect;
+    
+    if (barView)
+        barView.frame = CGRectMake(contentRect.origin.x, contentRect.origin.y - BARVIEW_HEIGHT, contentRect.size.width, BARVIEW_HEIGHT);
     
     [super layoutSubviews];
 }
