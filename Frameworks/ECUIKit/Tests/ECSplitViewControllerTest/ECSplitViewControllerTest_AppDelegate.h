@@ -8,8 +8,12 @@
 
 #import <UIKit/UIKit.h>
 
+@class ECSplitViewController;
+
+
 @interface ECSplitViewControllerTest_AppDelegate : UIResponder <UIApplicationDelegate>
 
-@property (strong, nonatomic) UIWindow *window;
+@property (strong, nonatomic) IBOutlet UIWindow *window;
+@property (weak, nonatomic) IBOutlet ECSplitViewController *splitViewController;
 
 @end

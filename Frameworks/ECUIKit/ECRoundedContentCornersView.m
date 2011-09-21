@@ -18,8 +18,9 @@ static void updateContentCorners(ECRoundedContentCornersView *self);
 
 #pragma mark - Properties
 
-@synthesize contentCornerRadius, contentInsets;
+@synthesize contentCornerRadius, contentInsets, clipContent;
 
+#warning TODO remove content instets. Popover view will need to have one of this view as a subview instead of deriving from it.
 - (void)setContentInsets:(UIEdgeInsets)insets
 {
     contentInsets = insets;
@@ -36,6 +37,17 @@ static void updateContentCorners(ECRoundedContentCornersView *self);
     updateContentCorners(self);
 }
 
+- (void)setClipContent:(BOOL)value
+{
+    if (clipContent == value)
+        return;
+    
+    clipContent = value;
+    self.layer.masksToBounds = clipContent;
+    
+    updateContentCorners(self);
+}
+
 - (void)setBackgroundColor:(UIColor *)backgroundColor
 {
     CGColorRef color = backgroundColor.CGColor;
@@ -46,12 +58,14 @@ static void updateContentCorners(ECRoundedContentCornersView *self);
             contentCorners[i].fillColor = color;
         }
     }
+    [super setBackgroundColor:backgroundColor];
 }
 
 #pragma mark - View lifecycle
 
 - (void)layoutSubviews
 {
+    [CALayer layer];
     if (contentCorners[0] != nil)
     {
         CGRect cornersRect = CGRectInset(UIEdgeInsetsInsetRect(self.bounds, contentInsets), -.5, -.5);
@@ -71,15 +85,27 @@ static void updateContentCorners(ECRoundedContentCornersView *self)
 {
     CGFloat radius = self->contentCornerRadius;
     
-    // Remove from layer if no content corner radius
-    if (radius == 0)
+    // Remove from layer if no content corner radius or clipping
+    if (radius == 0 || self->clipContent)
     {
+        // Remove corner layers
         for (int i = 0; i < 4; ++i)
         {
             [self->contentCorners[i] removeFromSuperlayer];
             self->contentCorners[i] = nil;
         }
+        
+        // Apply clipping
+        if (self->clipContent)
+        {
+            self.layer.cornerRadius = radius;
+        }
+        
         return;
+    }
+    else if (!self->clipContent)
+    {
+        self.layer.cornerRadius = 0;
     }
     
     // Create top left inverse corner shape
@@ -99,7 +125,7 @@ static void updateContentCorners(ECRoundedContentCornersView *self)
         self->contentCorners[i].affineTransform = CGAffineTransformMakeRotation(M_PI_2 * i);
         self->contentCorners[i].path = path;
         self->contentCorners[i].fillColor = backgroundColor;
-        self->contentCorners[i].zPosition = 1000;
+        self->contentCorners[i].zPosition = 100;
         [self.layer addSublayer:self->contentCorners[i]];
     }
     

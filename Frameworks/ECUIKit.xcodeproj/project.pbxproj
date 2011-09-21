@@ -134,8 +134,16 @@
 		CD0DDA1E14293E7300FE8B5B /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = CD0DDA1C14293E7300FE8B5B /* InfoPlist.strings */; };
 		CD0DDA2014293E7300FE8B5B /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = CD0DDA1F14293E7300FE8B5B /* main.m */; };
 		CD0DDA2414293E7300FE8B5B /* ECSplitViewControllerTest_AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = CD0DDA2314293E7300FE8B5B /* ECSplitViewControllerTest_AppDelegate.m */; };
-		CD0DDA2714293E7300FE8B5B /* MainStoryboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CD0DDA2514293E7300FE8B5B /* MainStoryboard.storyboard */; };
-		CD0DDA2A14293E7300FE8B5B /* ECSplitViewControllerTest_ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD0DDA2914293E7300FE8B5B /* ECSplitViewControllerTest_ViewController.m */; };
+		CD0DDA311429426B00FE8B5B /* ECSplitViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = CD0DDA2F1429426B00FE8B5B /* ECSplitViewController.h */; };
+		CD0DDA321429426B00FE8B5B /* ECSplitViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD0DDA301429426B00FE8B5B /* ECSplitViewController.m */; };
+		CD0DDA331429426B00FE8B5B /* ECSplitViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD0DDA301429426B00FE8B5B /* ECSplitViewController.m */; };
+		CD0DDA35142949DB00FE8B5B /* ECSplitViewControllerTest_Window.xib in Resources */ = {isa = PBXBuildFile; fileRef = CD0DDA34142949DB00FE8B5B /* ECSplitViewControllerTest_Window.xib */; };
+		CD0DDA38142A028800FE8B5B /* ECBlockView.h in Headers */ = {isa = PBXBuildFile; fileRef = CD0DDA36142A028800FE8B5B /* ECBlockView.h */; };
+		CD0DDA39142A028800FE8B5B /* ECBlockView.m in Sources */ = {isa = PBXBuildFile; fileRef = CD0DDA37142A028800FE8B5B /* ECBlockView.m */; };
+		CD0DDA3A142A028800FE8B5B /* ECBlockView.m in Sources */ = {isa = PBXBuildFile; fileRef = CD0DDA37142A028800FE8B5B /* ECBlockView.m */; };
+		CD0DDA3B142A028800FE8B5B /* ECBlockView.m in Sources */ = {isa = PBXBuildFile; fileRef = CD0DDA37142A028800FE8B5B /* ECBlockView.m */; };
+		CD0DDA3C142A145600FE8B5B /* ECRoundedContentCornersView.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170B701428EB2400DF7794 /* ECRoundedContentCornersView.m */; };
+		CD0DDA3D142A146D00FE8B5B /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7170BD61428F00800DF7794 /* QuartzCore.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -379,9 +387,11 @@
 		CD0DDA2114293E7300FE8B5B /* ECSplitViewControllerTest-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ECSplitViewControllerTest-Prefix.pch"; sourceTree = "<group>"; };
 		CD0DDA2214293E7300FE8B5B /* ECSplitViewControllerTest_AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ECSplitViewControllerTest_AppDelegate.h; sourceTree = "<group>"; };
 		CD0DDA2314293E7300FE8B5B /* ECSplitViewControllerTest_AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ECSplitViewControllerTest_AppDelegate.m; sourceTree = "<group>"; };
-		CD0DDA2614293E7300FE8B5B /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/MainStoryboard.storyboard; sourceTree = "<group>"; };
-		CD0DDA2814293E7300FE8B5B /* ECSplitViewControllerTest_ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ECSplitViewControllerTest_ViewController.h; sourceTree = "<group>"; };
-		CD0DDA2914293E7300FE8B5B /* ECSplitViewControllerTest_ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ECSplitViewControllerTest_ViewController.m; sourceTree = "<group>"; };
+		CD0DDA2F1429426B00FE8B5B /* ECSplitViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECSplitViewController.h; sourceTree = "<group>"; };
+		CD0DDA301429426B00FE8B5B /* ECSplitViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECSplitViewController.m; sourceTree = "<group>"; };
+		CD0DDA34142949DB00FE8B5B /* ECSplitViewControllerTest_Window.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ECSplitViewControllerTest_Window.xib; sourceTree = "<group>"; };
+		CD0DDA36142A028800FE8B5B /* ECBlockView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECBlockView.h; sourceTree = "<group>"; };
+		CD0DDA37142A028800FE8B5B /* ECBlockView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECBlockView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -416,6 +426,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CD0DDA3D142A146D00FE8B5B /* QuartzCore.framework in Frameworks */,
 				CD0DDA1614293E7300FE8B5B /* UIKit.framework in Frameworks */,
 				CD0DDA1714293E7300FE8B5B /* Foundation.framework in Frameworks */,
 				CD0DDA1814293E7300FE8B5B /* CoreGraphics.framework in Frameworks */,
@@ -471,6 +482,7 @@
 				CD0DD9E1142918D300FE8B5B /* Tab Bar */,
 				CD0DD9E2142918EE00FE8B5B /* Bezel Alert */,
 				CD0DD9E31429193400FE8B5B /* Code View */,
+				CD0DDA2E1429423F00FE8B5B /* Split View */,
 			);
 			path = ECUIKit;
 			sourceTree = "<group>";
@@ -770,6 +782,8 @@
 				B7170B841428EB2500DF7794 /* UIImage+BlockDrawing.m */,
 				B7170B871428EB2500DF7794 /* UIView+ReuseIdentifier.h */,
 				B7170B881428EB2500DF7794 /* UIView+ReuseIdentifier.m */,
+				CD0DDA36142A028800FE8B5B /* ECBlockView.h */,
+				CD0DDA37142A028800FE8B5B /* ECBlockView.m */,
 			);
 			name = "UIKit Additions";
 			sourceTree = "<group>";
@@ -789,9 +803,7 @@
 			children = (
 				CD0DDA2214293E7300FE8B5B /* ECSplitViewControllerTest_AppDelegate.h */,
 				CD0DDA2314293E7300FE8B5B /* ECSplitViewControllerTest_AppDelegate.m */,
-				CD0DDA2514293E7300FE8B5B /* MainStoryboard.storyboard */,
-				CD0DDA2814293E7300FE8B5B /* ECSplitViewControllerTest_ViewController.h */,
-				CD0DDA2914293E7300FE8B5B /* ECSplitViewControllerTest_ViewController.m */,
+				CD0DDA34142949DB00FE8B5B /* ECSplitViewControllerTest_Window.xib */,
 				CD0DDA1A14293E7300FE8B5B /* Supporting Files */,
 			);
 			path = ECSplitViewControllerTest;
@@ -806,6 +818,15 @@
 				CD0DDA2114293E7300FE8B5B /* ECSplitViewControllerTest-Prefix.pch */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		CD0DDA2E1429423F00FE8B5B /* Split View */ = {
+			isa = PBXGroup;
+			children = (
+				CD0DDA2F1429426B00FE8B5B /* ECSplitViewController.h */,
+				CD0DDA301429426B00FE8B5B /* ECSplitViewController.m */,
+			);
+			name = "Split View";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -835,6 +856,8 @@
 				B7170BBB1428EB2500DF7794 /* UIImage+BlockDrawing.h in Headers */,
 				B7170BBF1428EB2500DF7794 /* UIView+ReuseIdentifier.h in Headers */,
 				B71709DB1428E64F00DF7794 /* ECDebug.h in Headers */,
+				CD0DDA311429426B00FE8B5B /* ECSplitViewController.h in Headers */,
+				CD0DDA38142A028800FE8B5B /* ECBlockView.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -959,7 +982,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CD0DDA1E14293E7300FE8B5B /* InfoPlist.strings in Resources */,
-				CD0DDA2714293E7300FE8B5B /* MainStoryboard.storyboard in Resources */,
+				CD0DDA35142949DB00FE8B5B /* ECSplitViewControllerTest_Window.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1005,6 +1028,8 @@
 				B7170BBA1428EB2500DF7794 /* UIControl+BlockAction.m in Sources */,
 				B7170BBC1428EB2500DF7794 /* UIImage+BlockDrawing.m in Sources */,
 				B7170BC01428EB2500DF7794 /* UIView+ReuseIdentifier.m in Sources */,
+				CD0DDA321429426B00FE8B5B /* ECSplitViewController.m in Sources */,
+				CD0DDA39142A028800FE8B5B /* ECBlockView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1080,6 +1105,7 @@
 				B7170B1E1428E6A300DF7794 /* NSObject+KiwiStubAdditions.m in Sources */,
 				B7170B1F1428E6A300DF7794 /* NSObject+KiwiVerifierAdditions.m in Sources */,
 				B7170B201428E6A300DF7794 /* NSValue+KiwiAdditions.m in Sources */,
+				CD0DDA3A142A028800FE8B5B /* ECBlockView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1089,7 +1115,9 @@
 			files = (
 				CD0DDA2014293E7300FE8B5B /* main.m in Sources */,
 				CD0DDA2414293E7300FE8B5B /* ECSplitViewControllerTest_AppDelegate.m in Sources */,
-				CD0DDA2A14293E7300FE8B5B /* ECSplitViewControllerTest_ViewController.m in Sources */,
+				CD0DDA331429426B00FE8B5B /* ECSplitViewController.m in Sources */,
+				CD0DDA3B142A028800FE8B5B /* ECBlockView.m in Sources */,
+				CD0DDA3C142A145600FE8B5B /* ECRoundedContentCornersView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1123,14 +1151,6 @@
 				CD0DDA1D14293E7300FE8B5B /* en */,
 			);
 			name = InfoPlist.strings;
-			sourceTree = "<group>";
-		};
-		CD0DDA2514293E7300FE8B5B /* MainStoryboard.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				CD0DDA2614293E7300FE8B5B /* en */,
-			);
-			name = MainStoryboard.storyboard;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
@@ -1251,8 +1271,9 @@
 			buildSettings = {
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "ECSplitViewControllerTest/ECSplitViewControllerTest-Prefix.pch";
-				INFOPLIST_FILE = "ECSplitViewControllerTest/ECSplitViewControllerTest-Info.plist";
+				GCC_PREFIX_HEADER = "ECUIKit/Tests/ECSplitViewControllerTest/ECSplitViewControllerTest-Prefix.pch";
+				GCC_STRICT_ALIASING = YES;
+				INFOPLIST_FILE = "ECUIKit/Tests/ECSplitViewControllerTest/ECSplitViewControllerTest-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = 2;
 				WRAPPER_EXTENSION = app;
@@ -1264,8 +1285,9 @@
 			buildSettings = {
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "ECSplitViewControllerTest/ECSplitViewControllerTest-Prefix.pch";
-				INFOPLIST_FILE = "ECSplitViewControllerTest/ECSplitViewControllerTest-Info.plist";
+				GCC_PREFIX_HEADER = "ECUIKit/Tests/ECSplitViewControllerTest/ECSplitViewControllerTest-Prefix.pch";
+				GCC_STRICT_ALIASING = YES;
+				INFOPLIST_FILE = "ECUIKit/Tests/ECSplitViewControllerTest/ECSplitViewControllerTest-Info.plist";
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = 2;
@@ -1310,6 +1332,7 @@
 				CD0DDA2D14293E7300FE8B5B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

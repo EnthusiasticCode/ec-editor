@@ -20,4 +20,8 @@
 /// Defines how the corners will be inset from the receiver's bounds.
 @property (nonatomic) UIEdgeInsets contentInsets UI_APPEARANCE_SELECTOR;
 
+/// Indicates if the corner radius will be clipping the content. In this case
+/// the layer corner radius will be used.
+@property (nonatomic, getter = isClippingContent) BOOL clipContent;
+
 @end
