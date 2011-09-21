@@ -13,6 +13,8 @@
 #import "ECCodeUnit.h"
 #import "ECCodeUnit(Private).h"
 
+#import "ECClangCodeIndex.h"
+
 @interface ECCodeIndex ()
 @property (nonatomic, copy) NSDictionary *pluginsByLanguage;
 @property (nonatomic, copy) NSDictionary *languageToExtensionMap;
@@ -136,18 +138,7 @@
     numClasses = objc_getClassList(NULL, 0);
     if (!numClasses)
         return NO;
-    Class *classes = NULL;
-    NSMutableArray *pluginClasses;
-    pluginClasses = [NSMutableArray array];
-    classes = (__unsafe_unretained Class *)malloc(sizeof(Class) * numClasses);
-    objc_getClassList(classes, numClasses);
-    for (int i = 0; i < numClasses; ++i)
-    {
-        if (class_getSuperclass(classes[i]) != Nil) // class is not a base class
-            if (class_conformsToProtocol(classes[i], @protocol(ECCodeIndexPlugin)))
-                [pluginClasses addObject:classes[i]];
-    }
-    free(classes);
+    NSArray *pluginClasses = [NSArray arrayWithObjects:[ECClangCodeIndex class], nil];
     id<ECCodeIndexPlugin> plugin;
     NSMutableDictionary *pluginsByLanguage = [NSMutableDictionary dictionary];
     NSMutableDictionary *languageToExtensionMap = [NSMutableDictionary dictionary];

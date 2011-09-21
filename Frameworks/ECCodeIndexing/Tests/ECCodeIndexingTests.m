@@ -66,19 +66,19 @@ describe(@"A code index",^
     
     it(@"doesn't create an invalid code unit", ^
        {
-           [[codeIndex unitForURL:invalidFileURL] shouldBeNil];
+           [[codeIndex unitForFile:[invalidFileURL path]] shouldBeNil];
        });
     
     it(@"creates a valid code unit", ^
        {
-           [[codeIndex unitForURL:cFileURL] shouldNotBeNil];
+           [[codeIndex unitForFile:[cFileURL path]] shouldNotBeNil];
        });
     
     describe(@"creates a code unit which", ^
              {
                  beforeEach(^
                             {
-                                cCodeUnit = [[codeIndex unitForURL:cFileURL] retain];
+                                cCodeUnit = [[codeIndex unitForFile:[cFileURL path]] retain];
                             });
                  
                  afterEach(^
@@ -98,12 +98,12 @@ describe(@"A code index",^
                  
                  it(@"has 25 tokens", ^
                     {
-                        [[[cCodeUnit should] have:25] tokens];
+                        [[[cCodeUnit should] have:25] tokensInRange:NSMakeRange(0, 79) withCursors:NO];
                     });
                  
                  it(@"has 4 tokens between the 8th and 18th character", ^
                     {
-                        [[[cCodeUnit should] have:6] tokensInRange:NSMakeRange(8, 10)];
+                        [[[cCodeUnit should] have:6] tokensInRange:NSMakeRange(8, 10) withCursors:NO];
                     });
                  
                  it(@"has at least 400 completions", ^

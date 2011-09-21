@@ -198,6 +198,9 @@
 		B723371B1429FD8C006D540A /* libclangStaticAnalyzerCheckers.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B723370A1429FD8B006D540A /* libclangStaticAnalyzerCheckers.a */; };
 		B723371C1429FD8C006D540A /* libclangStaticAnalyzerCore.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B723370B1429FD8B006D540A /* libclangStaticAnalyzerCore.a */; };
 		B723371D1429FD8C006D540A /* libclangStaticAnalyzerFrontend.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B723370C1429FD8B006D540A /* libclangStaticAnalyzerFrontend.a */; };
+		B7233746142A0918006D540A /* libstdc++.6.0.9.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B7233745142A0918006D540A /* libstdc++.6.0.9.dylib */; };
+		B7233747142A0918006D540A /* libstdc++.6.0.9.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B7233745142A0918006D540A /* libstdc++.6.0.9.dylib */; };
+		B7233748142A0D62006D540A /* libECFoundation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7170D431428FAF100DF7794 /* libECFoundation.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -502,6 +505,7 @@
 		B723370A1429FD8B006D540A /* libclangStaticAnalyzerCheckers.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libclangStaticAnalyzerCheckers.a; path = usr/lib/libclangStaticAnalyzerCheckers.a; sourceTree = SDKROOT; };
 		B723370B1429FD8B006D540A /* libclangStaticAnalyzerCore.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libclangStaticAnalyzerCore.a; path = usr/lib/libclangStaticAnalyzerCore.a; sourceTree = SDKROOT; };
 		B723370C1429FD8B006D540A /* libclangStaticAnalyzerFrontend.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libclangStaticAnalyzerFrontend.a; path = usr/lib/libclangStaticAnalyzerFrontend.a; sourceTree = SDKROOT; };
+		B7233745142A0918006D540A /* libstdc++.6.0.9.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libstdc++.6.0.9.dylib"; path = "usr/lib/libstdc++.6.0.9.dylib"; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -596,6 +600,7 @@
 				B723371B1429FD8C006D540A /* libclangStaticAnalyzerCheckers.a in Frameworks */,
 				B723371C1429FD8C006D540A /* libclangStaticAnalyzerCore.a in Frameworks */,
 				B723371D1429FD8C006D540A /* libclangStaticAnalyzerFrontend.a in Frameworks */,
+				B7233746142A0918006D540A /* libstdc++.6.0.9.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -603,10 +608,12 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B7233748142A0D62006D540A /* libECFoundation.a in Frameworks */,
 				B7170C231428F7B000DF7794 /* UIKit.framework in Frameworks */,
 				B7170C041428F65B00DF7794 /* SenTestingKit.framework in Frameworks */,
 				B7170C071428F65B00DF7794 /* Foundation.framework in Frameworks */,
 				B7170C0A1428F65B00DF7794 /* libECCodeIndexing.a in Frameworks */,
+				B7233747142A0918006D540A /* libstdc++.6.0.9.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -635,6 +642,7 @@
 		B7170BF41428F65A00DF7794 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B7233745142A0918006D540A /* libstdc++.6.0.9.dylib */,
 				B723366F1429FD2C006D540A /* LLVM */,
 				B7170D3A1428FAF000DF7794 /* ECFoundation.xcodeproj */,
 				B7170C241428F7C400DF7794 /* Kiwi */,
