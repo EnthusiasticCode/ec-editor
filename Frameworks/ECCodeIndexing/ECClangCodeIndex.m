@@ -29,7 +29,7 @@
     return self;
 }
 
-+ (void)initialize
++ (void)load
 {
     [ECCodeIndex registerExtension:self];
 }

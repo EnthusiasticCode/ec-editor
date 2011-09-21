@@ -93,7 +93,8 @@
     _kindCategory = ECCodeCursorKindCategoryFromClangKind(_kind);
     NSString *filePath;
     ECCodeOffsetAndFileFromClangSourceLocation(clang_getCursorLocation(_cursor), &_offset, &filePath);
-    _fileURL = [NSURL fileURLWithPath:filePath];
+    if (filePath)
+        _fileURL = [NSURL fileURLWithPath:filePath];
     ECCodeRangeAndFileFromClangSourceRange(clang_getCursorExtent(_cursor), &_extent, NULL);
     return self;
 }

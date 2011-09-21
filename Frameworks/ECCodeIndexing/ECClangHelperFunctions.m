@@ -86,7 +86,10 @@ ECCodeToken *ECCodeTokenFromClangToken(CXTranslationUnit translationUnit, CXToke
     ECCodeCursor *cursor = nil;
     if (attachCursor)
         cursor = [ECClangCodeCursor cursorWithCXCursor:clangTokenCursor];
-    return [[ECCodeToken alloc] initWithKind:kind spelling:spelling fileURL:[NSURL fileURLWithPath:filePath] offset:offset extent:extent cursor:cursor];
+    NSURL *fileURL = nil;
+    if (filePath)
+        fileURL = [NSURL fileURLWithPath:filePath];
+    return [[ECCodeToken alloc] initWithKind:kind spelling:spelling fileURL:fileURL offset:offset extent:extent cursor:cursor];
 }
 
 ECCodeFixIt *ECCodeFixItFromClangDiagnostic(CXDiagnostic clangDiagnostic, unsigned index)
@@ -98,7 +101,10 @@ ECCodeFixIt *ECCodeFixItFromClangDiagnostic(CXDiagnostic clangDiagnostic, unsign
     NSRange replacementRange;
     NSString *filePath;
     ECCodeRangeAndFileFromClangSourceRange(clangReplacementRange, &replacementRange, &filePath);
-    return [[ECCodeFixIt alloc] initWithString:string fileURL:[NSURL fileURLWithPath:filePath] replacementRange:replacementRange];
+    NSURL *fileURL = nil;
+    if (filePath)
+        fileURL = [NSURL fileURLWithPath:filePath];
+    return [[ECCodeFixIt alloc] initWithString:string fileURL:fileURL replacementRange:replacementRange];
 }
 
 ECCodeDiagnostic *diagnosticFromClangDiagnostic(CXDiagnostic clangDiagnostic)
@@ -144,7 +150,10 @@ ECCodeDiagnostic *diagnosticFromClangDiagnostic(CXDiagnostic clangDiagnostic)
     for (unsigned i = 0; i < numFixIts; ++i)
         [fixIts addObject:ECCodeFixItFromClangDiagnostic(clangDiagnostic, i)];
     
-    return [[ECCodeDiagnostic alloc] initWithSeverity:severity fileURL:[NSURL fileURLWithPath:filePath] offset:offset spelling:spelling category:category sourceRanges:ranges fixIts:fixIts];
+    NSURL *fileURL = nil;
+    if (filePath)
+        fileURL = [NSURL fileURLWithPath:filePath];
+    return [[ECCodeDiagnostic alloc] initWithSeverity:severity fileURL:fileURL offset:offset spelling:spelling category:category sourceRanges:ranges fixIts:fixIts];
 }
 
 ECCodeCompletionChunk *ECCodeCompletionChunkFromClangCompletionString(CXCompletionString clangCompletionString, unsigned index)
