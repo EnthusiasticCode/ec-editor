@@ -7,11 +7,11 @@
 //
 
 #import "ACCodeIndexerDataSource.h"
-#import "ECTextStyle.h"
+#import <ECUIKit/ECTextStyle.h>
 
-#import "ECCodeUnit.h"
-#import "ECCodeToken.h"
-#import "ECCodeCursor.h"
+#import <ECCodeIndexing/ECCodeUnit.h>
+#import <ECCodeIndexing/ECCodeToken.h>
+#import <ECCodeIndexing/ECCodeCursor.h>
 
 #import "ACCompletionController.h"
 

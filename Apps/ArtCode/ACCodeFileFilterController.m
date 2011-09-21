@@ -11,9 +11,9 @@
 #import "AppStyle.h"
 #import "ACCodeIndexerDataSource.h"
 
-#import "ECTextRenderer.h"
-#import "ECCodeUnit.h"
-#import "ECCodeCursor.h"
+#import <ECUIKit/ECTextRenderer.h>
+#import <ECCodeIndexing/ECCodeUnit.h>
+#import <ECCodeIndexing/ECCodeCursor.h>
 
 #import "ACToolFiltersView.h"
 #import "ACToolTextField.h"

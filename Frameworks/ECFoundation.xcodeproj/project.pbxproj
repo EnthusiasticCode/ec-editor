@@ -828,6 +828,7 @@
 				DSTROOT = /tmp/ECFoundation.dst;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ECFoundation/ECFoundation-Prefix.pch";
+				GCC_STRICT_ALIASING = YES;
 				OTHER_LDFLAGS = "-ObjC";
 				PRIVATE_HEADERS_FOLDER_PATH = /usr/local/include/ECFoundation;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -842,6 +843,7 @@
 				DSTROOT = /tmp/ECFoundation.dst;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ECFoundation/ECFoundation-Prefix.pch";
+				GCC_STRICT_ALIASING = YES;
 				OTHER_LDFLAGS = "-ObjC";
 				PRIVATE_HEADERS_FOLDER_PATH = /usr/local/include/ECFoundation;
 				PRODUCT_NAME = "$(TARGET_NAME)";

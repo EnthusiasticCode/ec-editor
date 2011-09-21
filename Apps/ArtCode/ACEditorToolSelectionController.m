@@ -8,10 +8,10 @@
 
 #import "AppStyle.h"
 #import "ACEditorToolSelectionController.h"
-#import "ECRoundedContentCornersView.h"
+#import <ECUIKit/ECRoundedContentCornersView.h>
 
 #import "ACNavigationController.h"
-#import "ECPopoverController.h"
+#import <ECUIKit/ECPopoverController.h>
 #import "ACToolPanelController.h"
 
 @implementation ACEditorToolSelectionController

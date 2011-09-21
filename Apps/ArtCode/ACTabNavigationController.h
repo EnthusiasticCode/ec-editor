@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "ECTabBar.h"
+#import <ECUIKit/ECTabBar.h>
 #import "ACTabController.h"
 
 @class ACTabNavigationController;

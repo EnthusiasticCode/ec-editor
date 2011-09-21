@@ -11,7 +11,7 @@
 #import "ACFile.h"
 #import "ACProjectDocument.h"
 #import "ECArchive.h"
-#import "ECURL.h"
+#import <ECFoundation/NSURL+ECAdditions.h>
 #import "ACURL.h"
 
 static NSString * const ACLocalProjectsSubdirectory = @"ACLocalProjects";

@@ -10,11 +10,11 @@
 #import "ACGroup.h"
 #import "ACFile.h"
 
-#import "ECCodeUnit.h"
-#import "ECCodeIndex.h"
+#import <ECCodeIndexing/ECCodeUnit.h>
+#import <ECCodeIndexing/ECCodeIndex.h>
 
-#import "ECURL.h"
-#import "ECArchive.h"
+#import <ECFoundation/NSURL+ECAdditions.h>
+#import <ECArchive/ECArchive.h>
 
 @implementation ACNode
 
@@ -22,6 +22,7 @@
 @dynamic tag;
 @dynamic expanded;
 @dynamic parent;
+@dynamic children;
 
 - (NSURL *)URL
 {

@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "ECJumpBar.h"
+#import <ECUIKit/ECJumpBar.h>
 #import "ACTabNavigationController.h"
 #import "ACNavigationTarget.h"
 

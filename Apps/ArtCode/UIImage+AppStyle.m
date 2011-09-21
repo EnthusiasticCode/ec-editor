@@ -8,7 +8,7 @@
 
 #import "UIImage+AppStyle.h"
 #import "UIColor+AppStyle.h"
-#import "UIImage+BlockDrawing.h"
+#import <ECUIKit/UIImage+BlockDrawing.h>
 #import <CoreText/CoreText.h>
 
 @implementation UIImage (AppStyle)

@@ -7,7 +7,7 @@
 //
 
 #import <QuartzCore/QuartzCore.h>
-#import "ECPopoverController.h"
+#import <ECUIKit/ECPopoverController.h>
 #import "AppStyle.h"
 #import "ACURL.h"
 #import "ACNavigationController.h"
@@ -16,16 +16,16 @@
 #import "ACPopoverHistoryToolController.h"
 #import "ACFileTableController.h"
 
-#import "ECTabBar.h"
-#import "ECSwipeGestureRecognizer.h"
+#import <ECUIKit/ECTabBar.h>
+#import <ECUIKit/ECSwipeGestureRecognizer.h>
 #import "ACTabController.h"
 #import "ACTab.h"
 
-#import "ECInstantGestureRecognizer.h"
+#import <ECUIKit/ECInstantGestureRecognizer.h>
 #import "ACToolPanelController.h"
 #import "ACToolController.h"
 
-#import "ECBezelAlert.h"
+#import <ECUIKit/ECBezelAlert.h>
 
 @implementation ACNavigationController {
 @private

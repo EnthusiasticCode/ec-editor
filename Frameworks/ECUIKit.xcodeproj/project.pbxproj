@@ -121,7 +121,6 @@
 		B7170BBC1428EB2500DF7794 /* UIImage+BlockDrawing.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170B841428EB2500DF7794 /* UIImage+BlockDrawing.m */; };
 		B7170BBF1428EB2500DF7794 /* UIView+ReuseIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = B7170B871428EB2500DF7794 /* UIView+ReuseIdentifier.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B7170BC01428EB2500DF7794 /* UIView+ReuseIdentifier.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170B881428EB2500DF7794 /* UIView+ReuseIdentifier.m */; };
-		B7170BD41428EE2000DF7794 /* libECFoundation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7170BCF1428ECC300DF7794 /* libECFoundation.a */; };
 		B7170BD71428F00800DF7794 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7170BD51428F00800DF7794 /* CoreText.framework */; };
 		B7170BD81428F00800DF7794 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7170BD61428F00800DF7794 /* QuartzCore.framework */; };
 		B7170BD91428F01600DF7794 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7170BD51428F00800DF7794 /* CoreText.framework */; };
@@ -331,7 +330,7 @@
 		B7170A981428E6A200DF7794 /* NSValue+KiwiAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSValue+KiwiAdditions.h"; sourceTree = "<group>"; };
 		B7170A991428E6A200DF7794 /* NSValue+KiwiAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSValue+KiwiAdditions.m"; sourceTree = "<group>"; };
 		B7170B511428EB2300DF7794 /* ECBezelAlert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECBezelAlert.h; sourceTree = "<group>"; };
-		B7170B521428EB2300DF7794 /* ECBezelAlert.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECBezelAlert.m; sourceTree = "<group>"; };
+		B7170B521428EB2300DF7794 /* ECBezelAlert.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ECBezelAlert.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		B7170B591428EB2300DF7794 /* ECCodeStringDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeStringDataSource.h; sourceTree = "<group>"; };
 		B7170B5A1428EB2300DF7794 /* ECCodeStringDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeStringDataSource.m; sourceTree = "<group>"; };
 		B7170B5B1428EB2300DF7794 /* ECCodeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeView.h; sourceTree = "<group>"; };
@@ -340,7 +339,7 @@
 		B7170B5E1428EB2300DF7794 /* ECCodeViewBase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeViewBase.m; sourceTree = "<group>"; };
 		B7170B631428EB2400DF7794 /* ECInstantGestureRecognizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECInstantGestureRecognizer.h; sourceTree = "<group>"; };
 		B7170B641428EB2400DF7794 /* ECInstantGestureRecognizer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECInstantGestureRecognizer.m; sourceTree = "<group>"; };
-		B7170B651428EB2400DF7794 /* ECJumpBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECJumpBar.h; sourceTree = "<group>"; };
+		B7170B651428EB2400DF7794 /* ECJumpBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ECJumpBar.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		B7170B661428EB2400DF7794 /* ECJumpBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECJumpBar.m; sourceTree = "<group>"; };
 		B7170B691428EB2400DF7794 /* ECPopoverController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECPopoverController.h; sourceTree = "<group>"; };
 		B7170B6A1428EB2400DF7794 /* ECPopoverController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECPopoverController.m; sourceTree = "<group>"; };
@@ -353,7 +352,7 @@
 		B7170B751428EB2400DF7794 /* ECSwipeGestureRecognizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECSwipeGestureRecognizer.h; sourceTree = "<group>"; };
 		B7170B761428EB2400DF7794 /* ECSwipeGestureRecognizer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECSwipeGestureRecognizer.m; sourceTree = "<group>"; };
 		B7170B771428EB2400DF7794 /* ECTabBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECTabBar.h; sourceTree = "<group>"; };
-		B7170B781428EB2400DF7794 /* ECTabBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECTabBar.m; sourceTree = "<group>"; };
+		B7170B781428EB2400DF7794 /* ECTabBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ECTabBar.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		B7170B791428EB2400DF7794 /* ECTextPosition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECTextPosition.h; sourceTree = "<group>"; };
 		B7170B7A1428EB2500DF7794 /* ECTextPosition.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECTextPosition.m; sourceTree = "<group>"; };
 		B7170B7B1428EB2500DF7794 /* ECTextRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECTextRange.h; sourceTree = "<group>"; };
@@ -363,11 +362,11 @@
 		B7170B7F1428EB2500DF7794 /* ECTextStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECTextStyle.h; sourceTree = "<group>"; };
 		B7170B801428EB2500DF7794 /* ECTextStyle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECTextStyle.m; sourceTree = "<group>"; };
 		B7170B811428EB2500DF7794 /* UIControl+BlockAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIControl+BlockAction.h"; sourceTree = "<group>"; };
-		B7170B821428EB2500DF7794 /* UIControl+BlockAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIControl+BlockAction.m"; sourceTree = "<group>"; };
+		B7170B821428EB2500DF7794 /* UIControl+BlockAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = "UIControl+BlockAction.m"; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		B7170B831428EB2500DF7794 /* UIImage+BlockDrawing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+BlockDrawing.h"; sourceTree = "<group>"; };
-		B7170B841428EB2500DF7794 /* UIImage+BlockDrawing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+BlockDrawing.m"; sourceTree = "<group>"; };
+		B7170B841428EB2500DF7794 /* UIImage+BlockDrawing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = "UIImage+BlockDrawing.m"; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		B7170B871428EB2500DF7794 /* UIView+ReuseIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+ReuseIdentifier.h"; sourceTree = "<group>"; };
-		B7170B881428EB2500DF7794 /* UIView+ReuseIdentifier.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+ReuseIdentifier.m"; sourceTree = "<group>"; };
+		B7170B881428EB2500DF7794 /* UIView+ReuseIdentifier.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = "UIView+ReuseIdentifier.m"; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		B7170BC61428ECC200DF7794 /* ECFoundation.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = ECFoundation.xcodeproj; sourceTree = "<group>"; };
 		B7170BD51428F00800DF7794 /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
 		B7170BD61428F00800DF7794 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
@@ -392,7 +391,6 @@
 				B7170BE61428F1A800DF7794 /* CoreGraphics.framework in Frameworks */,
 				B7170BD71428F00800DF7794 /* CoreText.framework in Frameworks */,
 				B7170BD81428F00800DF7794 /* QuartzCore.framework in Frameworks */,
-				B7170BD41428EE2000DF7794 /* libECFoundation.a in Frameworks */,
 				B71709DD1428E68A00DF7794 /* UIKit.framework in Frameworks */,
 				B71709B01428E3CD00DF7794 /* Foundation.framework in Frameworks */,
 			);
@@ -1184,6 +1182,7 @@
 				DSTROOT = /tmp/ECUIKit.dst;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ECUIKit/ECUIKit-Prefix.pch";
+				GCC_STRICT_ALIASING = YES;
 				HEADER_SEARCH_PATHS = "${BUILD_DIR}/${CONFIGURATION}$(EFFECTIVE_PLATFORM_NAME)/usr/local/include/";
 				LIBRARY_SEARCH_PATHS = "${BUILD_DIR}/";
 				OTHER_LDFLAGS = "-ObjC";
@@ -1200,6 +1199,7 @@
 				DSTROOT = /tmp/ECUIKit.dst;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ECUIKit/ECUIKit-Prefix.pch";
+				GCC_STRICT_ALIASING = YES;
 				HEADER_SEARCH_PATHS = "${BUILD_DIR}/${CONFIGURATION}$(EFFECTIVE_PLATFORM_NAME)/usr/local/include/";
 				LIBRARY_SEARCH_PATHS = "${BUILD_DIR}/";
 				OTHER_LDFLAGS = "-ObjC";
@@ -1310,6 +1310,7 @@
 				CD0DDA2D14293E7300FE8B5B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
