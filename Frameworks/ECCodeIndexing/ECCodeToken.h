@@ -21,12 +21,9 @@ typedef enum
 @interface ECCodeToken : NSObject
 @property (nonatomic, readonly) ECCodeTokenKind kind;
 @property (nonatomic, readonly, copy) NSString *spelling;
-@property (nonatomic, readonly, copy) NSString *file;
+@property (nonatomic, readonly, strong) NSURL *fileURL;
 @property (nonatomic, readonly) NSUInteger offset;
 @property (nonatomic, readonly) NSRange extent;
 @property (nonatomic, readonly, strong) ECCodeCursor *cursor;
-
-- (id)initWithKind:(ECCodeTokenKind)kind spelling:(NSString *)spelling file:(NSString *)file offset:(NSUInteger )offset extent:(NSRange)extent cursor:(ECCodeCursor *)cursor;
-+ (id)tokenWithKind:(ECCodeTokenKind)kind spelling:(NSString *)spelling file:(NSString *)file offset:(NSUInteger )offset extent:(NSRange)extent cursor:(ECCodeCursor *)cursor;
 
 @end

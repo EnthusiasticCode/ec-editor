@@ -7,8 +7,8 @@
 //
 
 #import "ECCodeCompletionString.h"
-#import "ECCodeCompletionChunk.h"
 #import <ECFoundation/ECHashing.h>
+#import "ECCodeIndexing+PrivateInitializers.h"
 
 @interface ECCodeCompletionString ()
 {
@@ -31,13 +31,6 @@
         _hash = [self computeHash];
     }
     return self;
-}
-
-+ (id)stringWithCompletionChunks:(NSArray *)completionChunks
-{
-    id string = [self alloc];
-    string = [string initWithCompletionChunks:completionChunks];
-    return string;
 }
 
 - (NSString *)typedText

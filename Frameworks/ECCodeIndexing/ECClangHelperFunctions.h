@@ -18,3 +18,4 @@ ECCodeDiagnostic *diagnosticFromClangDiagnostic(CXDiagnostic clangDiagnostic);
 ECCodeCompletionChunk *ECCodeCompletionChunkFromClangCompletionString(CXCompletionString clangCompletionString, unsigned index);
 ECCodeCompletionString *ECCodeCompletionStringFromClangCompletionString(CXCompletionString clangCompletionString);
 ECCodeCompletionResult *ECCodeCompletionResultFromClangCompletionResult(CXCompletionResult clangCompletionResult);
+int ECCodeCursorKindCategoryFromClangKind(int kind);

@@ -8,6 +8,8 @@
 
 #import "ECClangHelperFunctions.h"
 
+#import "ECCodeIndexing+PrivateInitializers.h"
+
 #import "ECClangCodeCursor.h"
 
 #import "ECCodeToken.h"
@@ -77,14 +79,14 @@ ECCodeToken *ECCodeTokenFromClangToken(CXTranslationUnit translationUnit, CXToke
     NSString *spelling = [NSString stringWithUTF8String:clang_getCString(clangSpelling)];
     clang_disposeString(clangSpelling);
     NSUInteger offset;
-    NSString *file;
-    ECCodeOffsetAndFileFromClangSourceLocation(clang_getTokenLocation(translationUnit, clangToken), &offset, &file);
+    NSString *filePath;
+    ECCodeOffsetAndFileFromClangSourceLocation(clang_getTokenLocation(translationUnit, clangToken), &offset, &filePath);
     NSRange extent;
     ECCodeRangeAndFileFromClangSourceRange(clang_getTokenExtent(translationUnit, clangToken), &extent, NULL);
     ECCodeCursor *cursor = nil;
     if (attachCursor)
         cursor = [ECClangCodeCursor cursorWithCXCursor:clangTokenCursor];
-    return [ECCodeToken tokenWithKind:kind spelling:spelling file:file offset:offset extent:extent cursor:cursor];
+    return [[ECCodeToken alloc] initWithKind:kind spelling:spelling fileURL:[NSURL fileURLWithPath:filePath] offset:offset extent:extent cursor:cursor];
 }
 
 ECCodeFixIt *ECCodeFixItFromClangDiagnostic(CXDiagnostic clangDiagnostic, unsigned index)
@@ -94,9 +96,9 @@ ECCodeFixIt *ECCodeFixItFromClangDiagnostic(CXDiagnostic clangDiagnostic, unsign
     NSString *string = [NSString stringWithUTF8String:clang_getCString(clangString)];
     clang_disposeString(clangString);
     NSRange replacementRange;
-    NSString *file;
-    ECCodeRangeAndFileFromClangSourceRange(clangReplacementRange, &replacementRange, &file);
-    return [ECCodeFixIt fixItWithString:string file:file replacementRange:replacementRange];
+    NSString *filePath;
+    ECCodeRangeAndFileFromClangSourceRange(clangReplacementRange, &replacementRange, &filePath);
+    return [[ECCodeFixIt alloc] initWithString:string fileURL:[NSURL fileURLWithPath:filePath] replacementRange:replacementRange];
 }
 
 ECCodeDiagnostic *diagnosticFromClangDiagnostic(CXDiagnostic clangDiagnostic)
@@ -121,8 +123,8 @@ ECCodeDiagnostic *diagnosticFromClangDiagnostic(CXDiagnostic clangDiagnostic)
             break;
     };
     NSUInteger offset;
-    NSString *file;
-    ECCodeOffsetAndFileFromClangSourceLocation(clang_getDiagnosticLocation(clangDiagnostic), &offset, &file);
+    NSString *filePath;
+    ECCodeOffsetAndFileFromClangSourceLocation(clang_getDiagnosticLocation(clangDiagnostic), &offset, &filePath);
     CXString clangSpelling = clang_getDiagnosticSpelling(clangDiagnostic);
     NSString *spelling = [NSString stringWithUTF8String:clang_getCString(clangSpelling)];
     clang_disposeString(clangSpelling);
@@ -142,7 +144,7 @@ ECCodeDiagnostic *diagnosticFromClangDiagnostic(CXDiagnostic clangDiagnostic)
     for (unsigned i = 0; i < numFixIts; ++i)
         [fixIts addObject:ECCodeFixItFromClangDiagnostic(clangDiagnostic, i)];
     
-    return [ECCodeDiagnostic diagnosticWithSeverity:severity file:file offset:offset spelling:spelling category:category sourceRanges:ranges fixIts:fixIts];
+    return [[ECCodeDiagnostic alloc] initWithSeverity:severity fileURL:[NSURL fileURLWithPath:filePath] offset:offset spelling:spelling category:category sourceRanges:ranges fixIts:fixIts];
 }
 
 ECCodeCompletionChunk *ECCodeCompletionChunkFromClangCompletionString(CXCompletionString clangCompletionString, unsigned index)
@@ -150,7 +152,7 @@ ECCodeCompletionChunk *ECCodeCompletionChunkFromClangCompletionString(CXCompleti
     CXString clangString = clang_getCompletionChunkText(clangCompletionString, index);
     NSString *string = [NSString stringWithUTF8String:clang_getCString(clangString)];
     clang_disposeString(clangString);
-    return [ECCodeCompletionChunk chunkWithKind:(ECCodeCompletionChunkKind)clang_getCompletionChunkKind(clangCompletionString, index) string:string];
+    return [[ECCodeCompletionChunk alloc] initWithKind:(ECCodeCompletionChunkKind)clang_getCompletionChunkKind(clangCompletionString, index) string:string];
 }
 
 ECCodeCompletionString *ECCodeCompletionStringFromClangCompletionString(CXCompletionString clangCompletionString)
@@ -159,11 +161,16 @@ ECCodeCompletionString *ECCodeCompletionStringFromClangCompletionString(CXComple
     NSMutableArray *chunks = [NSMutableArray arrayWithCapacity:numChunks];
     for (unsigned i = 0; i < numChunks; ++i)
         [chunks addObject:ECCodeCompletionChunkFromClangCompletionString(clangCompletionString, i)];
-    return [ECCodeCompletionString stringWithCompletionChunks:chunks];
+    return [[ECCodeCompletionString alloc] initWithCompletionChunks:chunks];
 }
 
 ECCodeCompletionResult *ECCodeCompletionResultFromClangCompletionResult(CXCompletionResult clangCompletionResult)
 {
     ECCodeCompletionString *completionString = ECCodeCompletionStringFromClangCompletionString(clangCompletionResult.CompletionString);
-    return [ECCodeCompletionResult resultWithCursorKind:(ECCodeCursorKind)clangCompletionResult.CursorKind completionString:completionString];
+    return [[ECCodeCompletionResult alloc] initWithCursorKind:(ECCodeCursorKind)clangCompletionResult.CursorKind completionString:completionString];
+}
+
+int ECCodeCursorKindCategoryFromClangKind(int kind)
+{
+    return ECCodeCursorKindCategoryUnknown;
 }

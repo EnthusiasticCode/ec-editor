@@ -44,52 +44,32 @@ describe(@"A code index",^
                   [codeIndex release];
               });
     
-    it(@"has a language to extension mapping dictionary", ^
+    it(@"should support at least 4 languages", ^
        {
-           [[[codeIndex should] have:4] languageToExtensionMap];
+           [[[ECCodeIndex should] haveAtLeast:4] supportedLanguages];
        });
-    
-    it(@"has an extension to language mapping dictionary", ^
-       {
-           [[[codeIndex should] have:5] extensionToLanguageMap];
-       });
-    
-    it(@"maps extensions to languages", ^
-       {
-           [[[codeIndex languageForExtension:@"m"] should] equal:@"Objective C"];
-       });
-    
-    it(@"maps languages to extensions", ^
-       {
-           [[[codeIndex extensionForLanguage:@"Objective C"] should] equal:@"m"];
-       });
-    
+        
     it(@"doesn't create an invalid code unit", ^
        {
-           [[codeIndex unitForFile:[invalidFileURL path]] shouldBeNil];
+           [[codeIndex unitWithFileURL:invalidFileURL] shouldBeNil];
        });
     
     it(@"creates a valid code unit", ^
        {
-           [[codeIndex unitForFile:[cFileURL path]] shouldNotBeNil];
+           [[codeIndex unitWithFileURL:cFileURL] shouldNotBeNil];
        });
     
     describe(@"creates a code unit which", ^
              {
                  beforeEach(^
                             {
-                                cCodeUnit = [[codeIndex unitForFile:[cFileURL path]] retain];
+                                cCodeUnit = [[codeIndex unitWithFileURL:cFileURL] retain];
                             });
                  
                  afterEach(^
                            {
                                [cCodeUnit release];
                            });
-                 
-                 it(@"detects the language based on source", ^
-                    {
-                        [[cCodeUnit.language should] equal:@"C"];
-                    });
                  
                  it(@"loads without diagnostics", ^
                     {
@@ -108,7 +88,7 @@ describe(@"A code index",^
                  
                  it(@"has at least 400 completions", ^
                     {
-                        [[[cCodeUnit completionsWithSelection:NSMakeRange(57, 0)] should] haveCountOfAtLeast:400];
+                        [[[cCodeUnit completionsAtOffset:57] should] haveCountOfAtLeast:400];
                     });
              });
 });

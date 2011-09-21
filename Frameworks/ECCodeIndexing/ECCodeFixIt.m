@@ -8,6 +8,7 @@
 
 #import "ECCodeFixIt.h"
 #import <ECFoundation/ECHashing.h>
+#import "ECCodeIndexing+PrivateInitializers.h"
 
 @interface ECCodeFixIt ()
 {
@@ -19,28 +20,21 @@
 @implementation ECCodeFixIt
 
 @synthesize string = _string;
-@synthesize file = _file;
+@synthesize fileURL = _fileURL;
 @synthesize replacementRange = _replacementRange;
 
 
-- (id)initWithString:(NSString *)string file:(NSString *)file replacementRange:(NSRange)replacementRange
+- (id)initWithString:(NSString *)string fileURL:(NSURL *)fileURL replacementRange:(NSRange)replacementRange
 {
     self = [super init];
     if (self)
     {
         _string = [string copy];
-        _file = [file copy];
+        _fileURL = fileURL;
         _replacementRange = replacementRange;
         _hash = [self computeHash];
     }
     return self;
-}
-
-+ (id)fixItWithString:(NSString *)string file:(NSString *)file replacementRange:(NSRange)replacementRange
-{
-    id fixIt = [self alloc];
-    fixIt = [fixIt initWithString:string file:file replacementRange:replacementRange];
-    return fixIt;
 }
 
 - (id)copyWithZone:(NSZone *)zone
@@ -56,7 +50,7 @@
 - (NSUInteger)computeHash
 {
     const NSUInteger propertyCount = 4;
-    NSUInteger propertyHashes[4] = { [_string hash], [_file hash], _replacementRange.location, _replacementRange.length };
+    NSUInteger propertyHashes[4] = { [_string hash], [_fileURL hash], _replacementRange.location, _replacementRange.length };
     return ECHashNSUIntegers(propertyHashes, propertyCount);
 }
 
@@ -75,8 +69,8 @@
     if (_string || otherFixIt.string)
         if (![otherFixIt.string isEqual:_string])
             return NO;
-    if (_file || otherFixIt.file)
-        if (![otherFixIt.file isEqual:_file])
+    if (_fileURL || otherFixIt.fileURL)
+        if (![otherFixIt.fileURL isEqual:_fileURL])
             return NO;
     return YES;
 }

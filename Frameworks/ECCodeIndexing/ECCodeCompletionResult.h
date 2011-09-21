@@ -12,9 +12,6 @@
 
 @interface ECCodeCompletionResult : NSObject
 @property (nonatomic,readonly) ECCodeCursorKind cursorKind;
-@property (nonatomic,readonly, copy) ECCodeCompletionString *completionString;
-
-- (id)initWithCursorKind:(ECCodeCursorKind)cursorKind completionString:(ECCodeCompletionString *)completionString;
-+ (id)resultWithCursorKind:(ECCodeCursorKind)cursorKind completionString:(ECCodeCompletionString *)completionString;
+@property (nonatomic,readonly, strong) ECCodeCompletionString *completionString;
 
 @end

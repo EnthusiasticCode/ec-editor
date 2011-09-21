@@ -12,8 +12,6 @@
 @interface ECCodeCompletionString : NSObject
 @property (nonatomic, readonly, copy) NSArray *completionChunks;
 
-- (id)initWithCompletionChunks:(NSArray *)completionChunks;
-+ (id)stringWithCompletionChunks:(NSArray *)completionChunks;
 - (NSString *)typedText;
 
 @end
