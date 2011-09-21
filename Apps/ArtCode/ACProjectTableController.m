@@ -17,9 +17,9 @@
 
 #import "ACNewProjectPopoverController.h"
 
-#import "ECPopoverController.h"
+#import <ECUIKit/ECPopoverController.h>
 
-#import "ECBezelAlert.h"
+#import <ECUIKit/ECBezelAlert.h>
 
 #define STATIC_OBJECT(typ, nam, init) static typ *nam = nil; if (!nam) nam = init
 
@@ -47,7 +47,7 @@ static void * ACStateProjectsObservingContext;
 {
     if (!_newProjectFromTemplate)
     {
-        __weak UIPopoverController *popover = _popover;
+        __weak ECPopoverController *popover = _popover;
         _newProjectFromTemplate =
         [^(NSString *templateName)
          {
@@ -79,7 +79,7 @@ static void * ACStateProjectsObservingContext;
 {
     if (!_newProjectFromACZ)
     {
-        UIPopoverController *popover = _popover;
+        ECPopoverController *popover = _popover;
         _newProjectFromACZ =
         [^(NSURL *ACZFileURL)
          {
@@ -111,7 +111,7 @@ static void * ACStateProjectsObservingContext;
 {
     if (!_newProjectFromZIP)
     {
-        UIPopoverController *popover = _popover;
+        ECPopoverController *popover = _popover;
         _newProjectFromZIP =
         [^(NSURL *ZIPFileURL)
          {

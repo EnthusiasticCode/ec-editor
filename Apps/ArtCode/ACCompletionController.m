@@ -8,10 +8,10 @@
 
 #import "ACCompletionController.h"
 
-#import "ECPatriciaTrie.h"
-#import "ECCodeCompletionResult.h"
-#import "ECCodeCompletionString.h"
-#import "ECCodeCompletionChunk.h"
+#import <ECFoundation/ECPatriciaTrie.h>
+#import <ECCodeIndexing/ECCodeCompletionResult.h>
+#import <ECCodeIndexing/ECCodeCompletionString.h>
+#import <ECCodeIndexing/ECCodeCompletionChunk.h>
 
 #define TRIE_OPTIONS (ECPatriciaTrieEnumerationOptionsSkipRoot | ECPatriciaTrieEnumerationOptionsSkipNotEndOfWord | ECPatriciaTrieEnumerationOptionsStopAtShallowestMatch)
 

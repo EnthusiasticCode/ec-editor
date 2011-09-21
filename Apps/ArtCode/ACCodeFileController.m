@@ -13,14 +13,14 @@
 
 #import "ACNavigationController.h"
 
-#import "ECPopoverController.h"
-#import "ECCodeView.h"
+#import <ECUIKit/ECPopoverController.h>
+#import <ECUIKit/ECCodeView.h>
 #import "ACCodeIndexerDataSource.h"
 
 #import "ACEditorToolSelectionController.h"
 #import "ACCodeFileFilterController.h"
 
-#import "NSTimer+block.h"
+#import <ECFoundation/NSTimer+block.h>
 #import <QuartzCore/QuartzCore.h>
 
 @implementation ACCodeFileController {

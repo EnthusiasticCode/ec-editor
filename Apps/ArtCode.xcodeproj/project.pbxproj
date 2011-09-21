@@ -7,12 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B7170ECA1429F54D00DF7794 /* libECArchive.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7170EA31429F3B800DF7794 /* libECArchive.a */; };
+		B7170ECB1429F54D00DF7794 /* libECCodeIndexing.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7170EA91429F3B800DF7794 /* libECCodeIndexing.a */; };
+		B7170ECC1429F54D00DF7794 /* libECFoundation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7170EAF1429F3B800DF7794 /* libECFoundation.a */; };
+		B7170ECD1429F54D00DF7794 /* libECUIKit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7170EB61429F3B800DF7794 /* libECUIKit.a */; };
 		B732CFFB13DB24F600637FBE /* Project.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = B732CFF913DB24F600637FBE /* Project.xcdatamodeld */; };
 		B732D01513DB361600637FBE /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B732D01413DB361600637FBE /* CoreData.framework */; };
 		B732D06413DD799400637FBE /* ACURL.m in Sources */ = {isa = PBXBuildFile; fileRef = B732D06313DD799300637FBE /* ACURL.m */; };
-		B7AC172214216C3C009E9205 /* ECURL.m in Sources */ = {isa = PBXBuildFile; fileRef = B7AC172014216C3C009E9205 /* ECURL.m */; };
-		B7AC172614216C4A009E9205 /* ECArchive.m in Sources */ = {isa = PBXBuildFile; fileRef = B7AC172514216C4A009E9205 /* ECArchive.m */; };
-		B7AC172C14216C9F009E9205 /* libarc.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7AC172B14216C9F009E9205 /* libarc.a */; };
 		B7AC172F14216CD4009E9205 /* NewFilePopover.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B7AC172D14216CD4009E9205 /* NewFilePopover.storyboard */; };
 		B7AC173014216CD4009E9205 /* NewProjectPopover.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B7AC172E14216CD4009E9205 /* NewProjectPopover.storyboard */; };
 		B7AC174914216D1C009E9205 /* ACNewFileImportFileController.m in Sources */ = {isa = PBXBuildFile; fileRef = B7AC173A14216D1C009E9205 /* ACNewFileImportFileController.m */; };
@@ -21,8 +22,6 @@
 		B7AC174C14216D1C009E9205 /* ACNewProjectFromZIPController.m in Sources */ = {isa = PBXBuildFile; fileRef = B7AC174014216D1C009E9205 /* ACNewProjectFromZIPController.m */; };
 		B7AC174D14216D1C009E9205 /* ACNewProjectPopoverController.m in Sources */ = {isa = PBXBuildFile; fileRef = B7AC174214216D1C009E9205 /* ACNewProjectPopoverController.m */; };
 		B7AC175514216D91009E9205 /* libz.1.2.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B7AC175414216D91009E9205 /* libz.1.2.5.dylib */; };
-		B7AC177E1423A6D4009E9205 /* ECClangCodeCursor.m in Sources */ = {isa = PBXBuildFile; fileRef = B7AC177B1423A6D3009E9205 /* ECClangCodeCursor.m */; };
-		B7AC177F1423A6D4009E9205 /* ECClangHelperFunctions.m in Sources */ = {isa = PBXBuildFile; fileRef = B7AC177D1423A6D3009E9205 /* ECClangHelperFunctions.m */; };
 		B7AC17871423B339009E9205 /* Application.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = B7AC17851423B339009E9205 /* Application.xcdatamodeld */; };
 		B7AC178B1423B56C009E9205 /* ACTab.m in Sources */ = {isa = PBXBuildFile; fileRef = B7AC178A1423B56C009E9205 /* ACTab.m */; };
 		B7AC178E1423B56C009E9205 /* ACApplication.m in Sources */ = {isa = PBXBuildFile; fileRef = B7AC178D1423B56C009E9205 /* ACApplication.m */; };
@@ -32,22 +31,18 @@
 		B7AC179A1423B5B5009E9205 /* ACProject.m in Sources */ = {isa = PBXBuildFile; fileRef = B7AC17991423B5B5009E9205 /* ACProject.m */; };
 		B7AC179D1423B5B5009E9205 /* ACNode.m in Sources */ = {isa = PBXBuildFile; fileRef = B7AC179C1423B5B5009E9205 /* ACNode.m */; };
 		B7AC17A01423B5B5009E9205 /* ACGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = B7AC179F1423B5B5009E9205 /* ACGroup.m */; };
-		B7AC17EF14253A66009E9205 /* ECRoundedContentCornersView.m in Sources */ = {isa = PBXBuildFile; fileRef = B7AC17EE14253A66009E9205 /* ECRoundedContentCornersView.m */; };
 		B7AC17F314253A99009E9205 /* ACEditorToolSelectionController.m in Sources */ = {isa = PBXBuildFile; fileRef = B7AC17F214253A99009E9205 /* ACEditorToolSelectionController.m */; };
 		B7AC17F514253ADA009E9205 /* ACEditorToolSelectionController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B7AC17F414253ADA009E9205 /* ACEditorToolSelectionController.xib */; };
 		B7DF4B5D13EFE52F00BF8306 /* ACProjectDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = B7DF4B5C13EFE52F00BF8306 /* ACProjectDocument.m */; };
-		CD13665913D32150001F3455 /* UIControl+BlockAction.m in Sources */ = {isa = PBXBuildFile; fileRef = CD13665813D32150001F3455 /* UIControl+BlockAction.m */; };
 		CD1DEA4A1415558500560D81 /* ACCodeIndexerDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = CD1DEA491415558500560D81 /* ACCodeIndexerDataSource.m */; };
 		CD21547913F45CC200614B83 /* ACToolButton.m in Sources */ = {isa = PBXBuildFile; fileRef = CD21547813F45CC200614B83 /* ACToolButton.m */; };
 		CD4786E913DB0C2500616B62 /* ACState.m in Sources */ = {isa = PBXBuildFile; fileRef = CD4786E813DB0C2500616B62 /* ACState.m */; };
-		CD4786ED13DB0F7A00616B62 /* ECBezelAlert.m in Sources */ = {isa = PBXBuildFile; fileRef = CD4786EC13DB0F7A00616B62 /* ECBezelAlert.m */; };
 		CD62BAC613CA06A900266BC0 /* ACToolController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD62BAC513CA06A900266BC0 /* ACToolController.m */; };
 		CD62BACA13CA1B4600266BC0 /* ACToolHistoryController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD62BAC913CA1B4500266BC0 /* ACToolHistoryController.m */; };
 		CD62BACD13CA1F8700266BC0 /* ACToolSnippetsController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD62BACC13CA1F8600266BC0 /* ACToolSnippetsController.m */; };
 		CD62BAD013CA248C00266BC0 /* ACToolSymbolsController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD62BACF13CA248C00266BC0 /* ACToolSymbolsController.m */; };
 		CD62BAD313CA2ABD00266BC0 /* ACToolNavigatorController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD62BAD213CA2ABC00266BC0 /* ACToolNavigatorController.m */; };
 		CD6580C9141626F20079412F /* ACCompletionController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD6580C8141626F20079412F /* ACCompletionController.m */; };
-		CD6580CC1416273D0079412F /* ECPatriciaTrie.m in Sources */ = {isa = PBXBuildFile; fileRef = CD6580CB1416273D0079412F /* ECPatriciaTrie.m */; };
 		CD6580CF141641D50079412F /* ACCodeFileFilterController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD6580CE141641D40079412F /* ACCodeFileFilterController.m */; };
 		CD7C01C113D354A0004CD5E5 /* ACTabController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD7C01C013D354A0004CD5E5 /* ACTabController.m */; };
 		CD7D2AE413C0CD2600B889EE /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD7D2AE313C0CD2600B889EE /* UIKit.framework */; };
@@ -77,15 +72,6 @@
 		CD8108D513E31A28000E1941 /* ACColorSelectionControl.m in Sources */ = {isa = PBXBuildFile; fileRef = CD8108D413E31A28000E1941 /* ACColorSelectionControl.m */; };
 		CD82554314224DA100B742AF /* ACFileTableController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CD82554214224DA100B742AF /* ACFileTableController.xib */; };
 		CD8A677C13D0BB000037D742 /* ipad_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CD8A677B13D0BB000037D742 /* ipad_icon.png */; };
-		CD9CD95D13DC1854007964D3 /* ECCodeView.m in Sources */ = {isa = PBXBuildFile; fileRef = CD9CD95213DC1854007964D3 /* ECCodeView.m */; };
-		CD9CD95E13DC1854007964D3 /* ECCodeViewBase.m in Sources */ = {isa = PBXBuildFile; fileRef = CD9CD95413DC1854007964D3 /* ECCodeViewBase.m */; };
-		CD9CD95F13DC1854007964D3 /* ECTextPosition.m in Sources */ = {isa = PBXBuildFile; fileRef = CD9CD95613DC1854007964D3 /* ECTextPosition.m */; };
-		CD9CD96013DC1854007964D3 /* ECTextRange.m in Sources */ = {isa = PBXBuildFile; fileRef = CD9CD95813DC1854007964D3 /* ECTextRange.m */; };
-		CD9CD96113DC1854007964D3 /* ECTextRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = CD9CD95A13DC1854007964D3 /* ECTextRenderer.m */; };
-		CD9CD96213DC1854007964D3 /* ECTextStyle.m in Sources */ = {isa = PBXBuildFile; fileRef = CD9CD95C13DC1854007964D3 /* ECTextStyle.m */; };
-		CD9CD96613DC1896007964D3 /* ECDictionaryCache.m in Sources */ = {isa = PBXBuildFile; fileRef = CD9CD96513DC1896007964D3 /* ECDictionaryCache.m */; };
-		CD9CD96913DC18BC007964D3 /* ECRectSet.m in Sources */ = {isa = PBXBuildFile; fileRef = CD9CD96813DC18BC007964D3 /* ECRectSet.m */; };
-		CD9CD96C13DC18DD007964D3 /* ECCodeStringDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = CD9CD96B13DC18DD007964D3 /* ECCodeStringDataSource.m */; };
 		CD9CD97013DC22AF007964D3 /* ACCodeFileController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD9CD96F13DC22AF007964D3 /* ACCodeFileController.m */; };
 		CD9F3CF4142381EF00ACD841 /* fileBrowserEditArrow.png in Resources */ = {isa = PBXBuildFile; fileRef = CD9F3CF3142381EF00ACD841 /* fileBrowserEditArrow.png */; };
 		CD9F3CF71423855E00ACD841 /* projectBrowserTipsPopulatedEdit.png in Resources */ = {isa = PBXBuildFile; fileRef = CD9F3CF61423855E00ACD841 /* projectBrowserTipsPopulatedEdit.png */; };
@@ -94,116 +80,8 @@
 		CDD40B0313E1A046008AC36B /* ACPopoverHistoryToolController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDD40B0213E1A046008AC36B /* ACPopoverHistoryToolController.m */; };
 		CDE1CB81142102A500151BD7 /* ACTabButton.m in Sources */ = {isa = PBXBuildFile; fileRef = CDE1CB80142102A500151BD7 /* ACTabButton.m */; };
 		CDE3F14713C0DDD500DFFAFF /* Inconsolata-dz.otf in Resources */ = {isa = PBXBuildFile; fileRef = CDE3F14613C0DDD500DFFAFF /* Inconsolata-dz.otf */; };
-		CDF1D3AE1415073900EFEC21 /* ECClangCodeIndex.m in Sources */ = {isa = PBXBuildFile; fileRef = CDF1D3921415073900EFEC21 /* ECClangCodeIndex.m */; };
-		CDF1D3AF1415073900EFEC21 /* ECClangCodeUnit.m in Sources */ = {isa = PBXBuildFile; fileRef = CDF1D3941415073900EFEC21 /* ECClangCodeUnit.m */; };
-		CDF1D3B01415073900EFEC21 /* ECCodeCompletionChunk.m in Sources */ = {isa = PBXBuildFile; fileRef = CDF1D3961415073900EFEC21 /* ECCodeCompletionChunk.m */; };
-		CDF1D3B11415073900EFEC21 /* ECCodeCompletionResult.m in Sources */ = {isa = PBXBuildFile; fileRef = CDF1D3981415073900EFEC21 /* ECCodeCompletionResult.m */; };
-		CDF1D3B21415073900EFEC21 /* ECCodeCompletionString.m in Sources */ = {isa = PBXBuildFile; fileRef = CDF1D39A1415073900EFEC21 /* ECCodeCompletionString.m */; };
-		CDF1D3B31415073900EFEC21 /* ECCodeCursor.m in Sources */ = {isa = PBXBuildFile; fileRef = CDF1D39C1415073900EFEC21 /* ECCodeCursor.m */; };
-		CDF1D3B41415073900EFEC21 /* ECCodeDiagnostic.m in Sources */ = {isa = PBXBuildFile; fileRef = CDF1D39E1415073900EFEC21 /* ECCodeDiagnostic.m */; };
-		CDF1D3B51415073900EFEC21 /* ECCodeFixIt.m in Sources */ = {isa = PBXBuildFile; fileRef = CDF1D3A01415073900EFEC21 /* ECCodeFixIt.m */; };
-		CDF1D3B61415073900EFEC21 /* ECCodeIndex.m in Sources */ = {isa = PBXBuildFile; fileRef = CDF1D3A31415073900EFEC21 /* ECCodeIndex.m */; };
-		CDF1D3B81415073900EFEC21 /* ECCodeToken.m in Sources */ = {isa = PBXBuildFile; fileRef = CDF1D3A71415073900EFEC21 /* ECCodeToken.m */; };
-		CDF1D3B91415073900EFEC21 /* ECCodeUnit.m in Sources */ = {isa = PBXBuildFile; fileRef = CDF1D3AA1415073900EFEC21 /* ECCodeUnit.m */; };
-		CDF1D4011415081300EFEC21 /* libLLVMAlphaCodeGen.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDF1D3BC1415081300EFEC21 /* libLLVMAlphaCodeGen.a */; };
-		CDF1D4021415081300EFEC21 /* libLLVMAlphaInfo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDF1D3BD1415081300EFEC21 /* libLLVMAlphaInfo.a */; };
-		CDF1D4031415081300EFEC21 /* libLLVMAnalysis.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDF1D3BE1415081300EFEC21 /* libLLVMAnalysis.a */; };
-		CDF1D4041415081300EFEC21 /* libLLVMArchive.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDF1D3BF1415081300EFEC21 /* libLLVMArchive.a */; };
-		CDF1D4051415081300EFEC21 /* libLLVMARMAsmParser.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDF1D3C01415081300EFEC21 /* libLLVMARMAsmParser.a */; };
-		CDF1D4061415081300EFEC21 /* libLLVMARMAsmPrinter.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDF1D3C11415081300EFEC21 /* libLLVMARMAsmPrinter.a */; };
-		CDF1D4071415081300EFEC21 /* libLLVMARMCodeGen.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDF1D3C21415081300EFEC21 /* libLLVMARMCodeGen.a */; };
-		CDF1D4081415081300EFEC21 /* libLLVMARMDisassembler.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDF1D3C31415081300EFEC21 /* libLLVMARMDisassembler.a */; };
-		CDF1D4091415081300EFEC21 /* libLLVMARMInfo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDF1D3C41415081300EFEC21 /* libLLVMARMInfo.a */; };
-		CDF1D40A1415081300EFEC21 /* libLLVMAsmParser.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDF1D3C51415081300EFEC21 /* libLLVMAsmParser.a */; };
-		CDF1D40B1415081300EFEC21 /* libLLVMAsmPrinter.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDF1D3C61415081300EFEC21 /* libLLVMAsmPrinter.a */; };
-		CDF1D40C1415081300EFEC21 /* libLLVMBitReader.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDF1D3C71415081300EFEC21 /* libLLVMBitReader.a */; };
-		CDF1D40D1415081300EFEC21 /* libLLVMBitWriter.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDF1D3C81415081300EFEC21 /* libLLVMBitWriter.a */; };
-		CDF1D40E1415081300EFEC21 /* libLLVMBlackfinCodeGen.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDF1D3C91415081300EFEC21 /* libLLVMBlackfinCodeGen.a */; };
-		CDF1D40F1415081300EFEC21 /* libLLVMBlackfinInfo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDF1D3CA1415081300EFEC21 /* libLLVMBlackfinInfo.a */; };
-		CDF1D4101415081300EFEC21 /* libLLVMCBackend.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDF1D3CB1415081300EFEC21 /* libLLVMCBackend.a */; };
-		CDF1D4111415081300EFEC21 /* libLLVMCBackendInfo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDF1D3CC1415081300EFEC21 /* libLLVMCBackendInfo.a */; };
-		CDF1D4121415081300EFEC21 /* libLLVMCellSPUCodeGen.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDF1D3CD1415081300EFEC21 /* libLLVMCellSPUCodeGen.a */; };
-		CDF1D4131415081300EFEC21 /* libLLVMCellSPUInfo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDF1D3CE1415081300EFEC21 /* libLLVMCellSPUInfo.a */; };
-		CDF1D4141415081300EFEC21 /* libLLVMCodeGen.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDF1D3CF1415081300EFEC21 /* libLLVMCodeGen.a */; };
-		CDF1D4151415081300EFEC21 /* libLLVMCore.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDF1D3D01415081300EFEC21 /* libLLVMCore.a */; };
-		CDF1D4161415081300EFEC21 /* libLLVMCppBackend.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDF1D3D11415081300EFEC21 /* libLLVMCppBackend.a */; };
-		CDF1D4171415081300EFEC21 /* libLLVMCppBackendInfo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDF1D3D21415081300EFEC21 /* libLLVMCppBackendInfo.a */; };
-		CDF1D4181415081300EFEC21 /* libLLVMExecutionEngine.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDF1D3D31415081300EFEC21 /* libLLVMExecutionEngine.a */; };
-		CDF1D4191415081300EFEC21 /* libLLVMInstCombine.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDF1D3D41415081300EFEC21 /* libLLVMInstCombine.a */; };
-		CDF1D41A1415081300EFEC21 /* libLLVMInstrumentation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDF1D3D51415081300EFEC21 /* libLLVMInstrumentation.a */; };
-		CDF1D41B1415081300EFEC21 /* libLLVMInterpreter.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDF1D3D61415081300EFEC21 /* libLLVMInterpreter.a */; };
-		CDF1D41C1415081300EFEC21 /* libLLVMipa.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDF1D3D71415081300EFEC21 /* libLLVMipa.a */; };
-		CDF1D41D1415081300EFEC21 /* libLLVMipo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDF1D3D81415081300EFEC21 /* libLLVMipo.a */; };
-		CDF1D41E1415081300EFEC21 /* libLLVMJIT.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDF1D3D91415081300EFEC21 /* libLLVMJIT.a */; };
-		CDF1D41F1415081300EFEC21 /* libLLVMLinker.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDF1D3DA1415081300EFEC21 /* libLLVMLinker.a */; };
-		CDF1D4201415081300EFEC21 /* libLLVMMBlazeAsmParser.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDF1D3DB1415081300EFEC21 /* libLLVMMBlazeAsmParser.a */; };
-		CDF1D4211415081300EFEC21 /* libLLVMMBlazeAsmPrinter.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDF1D3DC1415081300EFEC21 /* libLLVMMBlazeAsmPrinter.a */; };
-		CDF1D4221415081300EFEC21 /* libLLVMMBlazeCodeGen.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDF1D3DD1415081300EFEC21 /* libLLVMMBlazeCodeGen.a */; };
-		CDF1D4231415081300EFEC21 /* libLLVMMBlazeDisassembler.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDF1D3DE1415081300EFEC21 /* libLLVMMBlazeDisassembler.a */; };
-		CDF1D4241415081300EFEC21 /* libLLVMMBlazeInfo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDF1D3DF1415081300EFEC21 /* libLLVMMBlazeInfo.a */; };
-		CDF1D4251415081300EFEC21 /* libLLVMMC.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDF1D3E01415081300EFEC21 /* libLLVMMC.a */; };
-		CDF1D4261415081300EFEC21 /* libLLVMMCDisassembler.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDF1D3E11415081300EFEC21 /* libLLVMMCDisassembler.a */; };
-		CDF1D4271415081300EFEC21 /* libLLVMMCJIT.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDF1D3E21415081300EFEC21 /* libLLVMMCJIT.a */; };
-		CDF1D4281415081300EFEC21 /* libLLVMMCParser.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDF1D3E31415081300EFEC21 /* libLLVMMCParser.a */; };
-		CDF1D4291415081300EFEC21 /* libLLVMMipsCodeGen.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDF1D3E41415081300EFEC21 /* libLLVMMipsCodeGen.a */; };
-		CDF1D42A1415081300EFEC21 /* libLLVMMipsInfo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDF1D3E51415081300EFEC21 /* libLLVMMipsInfo.a */; };
-		CDF1D42B1415081300EFEC21 /* libLLVMMSP430AsmPrinter.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDF1D3E61415081300EFEC21 /* libLLVMMSP430AsmPrinter.a */; };
-		CDF1D42C1415081300EFEC21 /* libLLVMMSP430CodeGen.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDF1D3E71415081300EFEC21 /* libLLVMMSP430CodeGen.a */; };
-		CDF1D42D1415081300EFEC21 /* libLLVMMSP430Info.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDF1D3E81415081300EFEC21 /* libLLVMMSP430Info.a */; };
-		CDF1D42E1415081300EFEC21 /* libLLVMObject.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDF1D3E91415081300EFEC21 /* libLLVMObject.a */; };
-		CDF1D42F1415081300EFEC21 /* libLLVMPowerPCAsmPrinter.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDF1D3EA1415081300EFEC21 /* libLLVMPowerPCAsmPrinter.a */; };
-		CDF1D4301415081300EFEC21 /* libLLVMPowerPCCodeGen.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDF1D3EB1415081300EFEC21 /* libLLVMPowerPCCodeGen.a */; };
-		CDF1D4311415081300EFEC21 /* libLLVMPowerPCInfo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDF1D3EC1415081300EFEC21 /* libLLVMPowerPCInfo.a */; };
-		CDF1D4321415081300EFEC21 /* libLLVMPTXCodeGen.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDF1D3ED1415081300EFEC21 /* libLLVMPTXCodeGen.a */; };
-		CDF1D4331415081300EFEC21 /* libLLVMPTXInfo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDF1D3EE1415081300EFEC21 /* libLLVMPTXInfo.a */; };
-		CDF1D4341415081300EFEC21 /* libLLVMRuntimeDyld.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDF1D3EF1415081300EFEC21 /* libLLVMRuntimeDyld.a */; };
-		CDF1D4351415081300EFEC21 /* libLLVMScalarOpts.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDF1D3F01415081300EFEC21 /* libLLVMScalarOpts.a */; };
-		CDF1D4361415081300EFEC21 /* libLLVMSelectionDAG.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDF1D3F11415081300EFEC21 /* libLLVMSelectionDAG.a */; };
-		CDF1D4371415081300EFEC21 /* libLLVMSparcCodeGen.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDF1D3F21415081300EFEC21 /* libLLVMSparcCodeGen.a */; };
-		CDF1D4381415081300EFEC21 /* libLLVMSparcInfo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDF1D3F31415081300EFEC21 /* libLLVMSparcInfo.a */; };
-		CDF1D4391415081300EFEC21 /* libLLVMSupport.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDF1D3F41415081300EFEC21 /* libLLVMSupport.a */; };
-		CDF1D43A1415081300EFEC21 /* libLLVMSystemZCodeGen.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDF1D3F51415081300EFEC21 /* libLLVMSystemZCodeGen.a */; };
-		CDF1D43B1415081300EFEC21 /* libLLVMSystemZInfo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDF1D3F61415081300EFEC21 /* libLLVMSystemZInfo.a */; };
-		CDF1D43C1415081300EFEC21 /* libLLVMTarget.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDF1D3F71415081300EFEC21 /* libLLVMTarget.a */; };
-		CDF1D43D1415081300EFEC21 /* libLLVMTransformUtils.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDF1D3F81415081300EFEC21 /* libLLVMTransformUtils.a */; };
-		CDF1D43E1415081300EFEC21 /* libLLVMX86AsmParser.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDF1D3F91415081300EFEC21 /* libLLVMX86AsmParser.a */; };
-		CDF1D43F1415081300EFEC21 /* libLLVMX86AsmPrinter.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDF1D3FA1415081300EFEC21 /* libLLVMX86AsmPrinter.a */; };
-		CDF1D4401415081300EFEC21 /* libLLVMX86CodeGen.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDF1D3FB1415081300EFEC21 /* libLLVMX86CodeGen.a */; };
-		CDF1D4411415081300EFEC21 /* libLLVMX86Disassembler.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDF1D3FC1415081300EFEC21 /* libLLVMX86Disassembler.a */; };
-		CDF1D4421415081300EFEC21 /* libLLVMX86Info.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDF1D3FD1415081300EFEC21 /* libLLVMX86Info.a */; };
-		CDF1D4431415081300EFEC21 /* libLLVMX86Utils.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDF1D3FE1415081300EFEC21 /* libLLVMX86Utils.a */; };
-		CDF1D4441415081300EFEC21 /* libLLVMXCoreCodeGen.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDF1D3FF1415081300EFEC21 /* libLLVMXCoreCodeGen.a */; };
-		CDF1D4451415081300EFEC21 /* libLLVMXCoreInfo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDF1D4001415081300EFEC21 /* libLLVMXCoreInfo.a */; };
-		CDF1D4581415083700EFEC21 /* libclang.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDF1D4471415083700EFEC21 /* libclang.a */; };
-		CDF1D4591415083700EFEC21 /* libclangAnalysis.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDF1D4481415083700EFEC21 /* libclangAnalysis.a */; };
-		CDF1D45A1415083700EFEC21 /* libclangAST.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDF1D4491415083700EFEC21 /* libclangAST.a */; };
-		CDF1D45B1415083700EFEC21 /* libclangBasic.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDF1D44A1415083700EFEC21 /* libclangBasic.a */; };
-		CDF1D45C1415083700EFEC21 /* libclangCodeGen.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDF1D44B1415083700EFEC21 /* libclangCodeGen.a */; };
-		CDF1D45D1415083700EFEC21 /* libclangDriver.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDF1D44C1415083700EFEC21 /* libclangDriver.a */; };
-		CDF1D45E1415083700EFEC21 /* libclangFrontend.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDF1D44D1415083700EFEC21 /* libclangFrontend.a */; };
-		CDF1D45F1415083700EFEC21 /* libclangFrontendTool.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDF1D44E1415083700EFEC21 /* libclangFrontendTool.a */; };
-		CDF1D4601415083700EFEC21 /* libclangIndex.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDF1D44F1415083700EFEC21 /* libclangIndex.a */; };
-		CDF1D4611415083700EFEC21 /* libclangLex.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDF1D4501415083700EFEC21 /* libclangLex.a */; };
-		CDF1D4621415083700EFEC21 /* libclangParse.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDF1D4511415083700EFEC21 /* libclangParse.a */; };
-		CDF1D4631415083700EFEC21 /* libclangRewrite.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDF1D4521415083700EFEC21 /* libclangRewrite.a */; };
-		CDF1D4641415083700EFEC21 /* libclangSema.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDF1D4531415083700EFEC21 /* libclangSema.a */; };
-		CDF1D4651415083700EFEC21 /* libclangSerialization.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDF1D4541415083700EFEC21 /* libclangSerialization.a */; };
-		CDF1D4661415083700EFEC21 /* libclangStaticAnalyzerCheckers.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDF1D4551415083700EFEC21 /* libclangStaticAnalyzerCheckers.a */; };
-		CDF1D4671415083700EFEC21 /* libclangStaticAnalyzerCore.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDF1D4561415083700EFEC21 /* libclangStaticAnalyzerCore.a */; };
-		CDF1D4681415083700EFEC21 /* libclangStaticAnalyzerFrontend.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDF1D4571415083700EFEC21 /* libclangStaticAnalyzerFrontend.a */; };
-		CDF1D46B14150A9200EFEC21 /* ECHashing.m in Sources */ = {isa = PBXBuildFile; fileRef = CDF1D46A14150A9200EFEC21 /* ECHashing.m */; };
 		CDF1D46D14150C4900EFEC21 /* libstdc++.6.0.9.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CDF1D46C14150C4900EFEC21 /* libstdc++.6.0.9.dylib */; };
-		CDF1D47014150C7800EFEC21 /* MurmurHash3.c in Sources */ = {isa = PBXBuildFile; fileRef = CDF1D46E14150C7800EFEC21 /* MurmurHash3.c */; };
 		CDF215F713E4468F005B520F /* ACEditableTableCell.m in Sources */ = {isa = PBXBuildFile; fileRef = CDF215F613E4468F005B520F /* ACEditableTableCell.m */; };
-		CDFF3DAC13C0D71900108DE2 /* NSTimer+block.m in Sources */ = {isa = PBXBuildFile; fileRef = CDFF3DAB13C0D71900108DE2 /* NSTimer+block.m */; };
-		CDFF3DBB13C0D76400108DE2 /* ECInstantGestureRecognizer.m in Sources */ = {isa = PBXBuildFile; fileRef = CDFF3DAE13C0D76400108DE2 /* ECInstantGestureRecognizer.m */; };
-		CDFF3DBC13C0D76400108DE2 /* ECJumpBar.m in Sources */ = {isa = PBXBuildFile; fileRef = CDFF3DB013C0D76400108DE2 /* ECJumpBar.m */; };
-		CDFF3DBD13C0D76400108DE2 /* ECPopoverController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDFF3DB213C0D76400108DE2 /* ECPopoverController.m */; };
-		CDFF3DBE13C0D76400108DE2 /* ECPopoverView.m in Sources */ = {isa = PBXBuildFile; fileRef = CDFF3DB413C0D76400108DE2 /* ECPopoverView.m */; };
-		CDFF3DBF13C0D76400108DE2 /* ECSwipeGestureRecognizer.m in Sources */ = {isa = PBXBuildFile; fileRef = CDFF3DB613C0D76400108DE2 /* ECSwipeGestureRecognizer.m */; };
-		CDFF3DC013C0D76400108DE2 /* UIImage+BlockDrawing.m in Sources */ = {isa = PBXBuildFile; fileRef = CDFF3DB813C0D76400108DE2 /* UIImage+BlockDrawing.m */; };
-		CDFF3DC113C0D76400108DE2 /* UIView+ReuseIdentifier.m in Sources */ = {isa = PBXBuildFile; fileRef = CDFF3DBA13C0D76400108DE2 /* UIView+ReuseIdentifier.m */; };
-		CDFF3DC813C0D84D00108DE2 /* ECTabBar.m in Sources */ = {isa = PBXBuildFile; fileRef = CDFF3DC713C0D84D00108DE2 /* ECTabBar.m */; };
 		CDFF3DDF13C0D9BB00108DE2 /* toolBookmarksNote.png in Resources */ = {isa = PBXBuildFile; fileRef = CDFF3DCA13C0D9BB00108DE2 /* toolBookmarksNote.png */; };
 		CDFF3DE013C0D9BB00108DE2 /* toolBookmarksStar.png in Resources */ = {isa = PBXBuildFile; fileRef = CDFF3DCB13C0D9BB00108DE2 /* toolBookmarksStar.png */; };
 		CDFF3DE113C0D9BB00108DE2 /* toolFilterBookmarksNote.png in Resources */ = {isa = PBXBuildFile; fileRef = CDFF3DCC13C0D9BB00108DE2 /* toolFilterBookmarksNote.png */; };
@@ -227,19 +105,110 @@
 		CDFF3DF313C0D9BB00108DE2 /* toolSnippetsSnippet.png in Resources */ = {isa = PBXBuildFile; fileRef = CDFF3DDE13C0D9BB00108DE2 /* toolSnippetsSnippet.png */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		B7170EA21429F3B800DF7794 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B7170E851429F3B600DF7794 /* ECArchive.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = B7170D521428FD0300DF7794;
+			remoteInfo = ECArchive;
+		};
+		B7170EA41429F3B800DF7794 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B7170E851429F3B600DF7794 /* ECArchive.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = B7170D621428FD0300DF7794;
+			remoteInfo = ECArchiveTests;
+		};
+		B7170EA81429F3B800DF7794 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B7170E881429F3B600DF7794 /* ECCodeIndexing.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = B7170BF21428F65A00DF7794;
+			remoteInfo = ECCodeIndexing;
+		};
+		B7170EAA1429F3B800DF7794 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B7170E881429F3B600DF7794 /* ECCodeIndexing.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = B7170C021428F65B00DF7794;
+			remoteInfo = ECCodeIndexingTests;
+		};
+		B7170EAE1429F3B800DF7794 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B7170E8B1429F3B600DF7794 /* ECFoundation.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = B71707441428D30500DF7794;
+			remoteInfo = ECFoundation;
+		};
+		B7170EB01429F3B800DF7794 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B7170E8B1429F3B600DF7794 /* ECFoundation.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = B71707541428D30500DF7794;
+			remoteInfo = ECFoundationTests;
+		};
+		B7170EB51429F3B800DF7794 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B7170E8E1429F3B600DF7794 /* ECUIKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = B71709AC1428E3CD00DF7794;
+			remoteInfo = ECUIKit;
+		};
+		B7170EB71429F3B800DF7794 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B7170E8E1429F3B600DF7794 /* ECUIKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = B71709BC1428E3CD00DF7794;
+			remoteInfo = ECUIKitTests;
+		};
+		B7170EB91429F3B800DF7794 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B7170E8E1429F3B600DF7794 /* ECUIKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = CD0DDA1414293E7300FE8B5B;
+			remoteInfo = ECSplitViewControllerTest;
+		};
+		B7170EC21429F54300DF7794 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B7170E8B1429F3B600DF7794 /* ECFoundation.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = B71707431428D30500DF7794;
+			remoteInfo = ECFoundation;
+		};
+		B7170EC41429F54300DF7794 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B7170E851429F3B600DF7794 /* ECArchive.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = B7170D511428FD0300DF7794;
+			remoteInfo = ECArchive;
+		};
+		B7170EC61429F54300DF7794 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B7170E881429F3B600DF7794 /* ECCodeIndexing.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = B7170BF11428F65A00DF7794;
+			remoteInfo = ECCodeIndexing;
+		};
+		B7170EC81429F54300DF7794 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B7170E8E1429F3B600DF7794 /* ECUIKit.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = B71709AB1428E3CD00DF7794;
+			remoteInfo = ECUIKit;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
+		B7170E851429F3B600DF7794 /* ECArchive.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ECArchive.xcodeproj; path = ../Frameworks/ECArchive.xcodeproj; sourceTree = "<group>"; };
+		B7170E881429F3B600DF7794 /* ECCodeIndexing.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ECCodeIndexing.xcodeproj; path = ../Frameworks/ECCodeIndexing.xcodeproj; sourceTree = "<group>"; };
+		B7170E8B1429F3B600DF7794 /* ECFoundation.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ECFoundation.xcodeproj; path = ../Frameworks/ECFoundation.xcodeproj; sourceTree = "<group>"; };
+		B7170E8E1429F3B600DF7794 /* ECUIKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ECUIKit.xcodeproj; path = ../Frameworks/ECUIKit.xcodeproj; sourceTree = "<group>"; };
 		B732CFE913DB1B6B00637FBE /* ECDebug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECDebug.h; path = ../../Frameworks/ECDebug.h; sourceTree = "<group>"; };
 		B732CFFA13DB24F600637FBE /* Project.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Project.xcdatamodel; sourceTree = "<group>"; };
 		B732D01413DB361600637FBE /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		B732D06213DD799200637FBE /* ACURL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACURL.h; sourceTree = "<group>"; };
 		B732D06313DD799300637FBE /* ACURL.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACURL.m; sourceTree = "<group>"; };
-		B7AC171F14216C3C009E9205 /* ECURL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECURL.h; sourceTree = "<group>"; };
-		B7AC172014216C3C009E9205 /* ECURL.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECURL.m; sourceTree = "<group>"; };
-		B7AC172114216C3C009E9205 /* pstdint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pstdint.h; sourceTree = "<group>"; };
-		B7AC172414216C4A009E9205 /* ECArchive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECArchive.h; sourceTree = "<group>"; };
-		B7AC172514216C4A009E9205 /* ECArchive.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECArchive.m; sourceTree = "<group>"; };
-		B7AC172A14216C9F009E9205 /* archive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = archive.h; sourceTree = "<group>"; };
-		B7AC172B14216C9F009E9205 /* libarc.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libarc.a; sourceTree = "<group>"; };
 		B7AC172D14216CD4009E9205 /* NewFilePopover.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = NewFilePopover.storyboard; sourceTree = "<group>"; };
 		B7AC172E14216CD4009E9205 /* NewProjectPopover.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = NewProjectPopover.storyboard; sourceTree = "<group>"; };
 		B7AC173914216D1C009E9205 /* ACNewFileImportFileController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACNewFileImportFileController.h; sourceTree = "<group>"; };
@@ -253,10 +222,6 @@
 		B7AC174114216D1C009E9205 /* ACNewProjectPopoverController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACNewProjectPopoverController.h; sourceTree = "<group>"; };
 		B7AC174214216D1C009E9205 /* ACNewProjectPopoverController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACNewProjectPopoverController.m; sourceTree = "<group>"; };
 		B7AC175414216D91009E9205 /* libz.1.2.5.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.1.2.5.dylib; path = usr/lib/libz.1.2.5.dylib; sourceTree = SDKROOT; };
-		B7AC177A1423A6D3009E9205 /* ECClangCodeCursor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECClangCodeCursor.h; sourceTree = "<group>"; };
-		B7AC177B1423A6D3009E9205 /* ECClangCodeCursor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECClangCodeCursor.m; sourceTree = "<group>"; };
-		B7AC177C1423A6D3009E9205 /* ECClangHelperFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECClangHelperFunctions.h; sourceTree = "<group>"; };
-		B7AC177D1423A6D3009E9205 /* ECClangHelperFunctions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECClangHelperFunctions.m; sourceTree = "<group>"; };
 		B7AC17861423B339009E9205 /* Application.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Application.xcdatamodel; sourceTree = "<group>"; };
 		B7AC17891423B56C009E9205 /* ACTab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACTab.h; sourceTree = "<group>"; };
 		B7AC178A1423B56C009E9205 /* ACTab.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACTab.m; sourceTree = "<group>"; };
@@ -274,24 +239,18 @@
 		B7AC179C1423B5B5009E9205 /* ACNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACNode.m; sourceTree = "<group>"; };
 		B7AC179E1423B5B5009E9205 /* ACGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACGroup.h; sourceTree = "<group>"; };
 		B7AC179F1423B5B5009E9205 /* ACGroup.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACGroup.m; sourceTree = "<group>"; };
-		B7AC17ED14253A66009E9205 /* ECRoundedContentCornersView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECRoundedContentCornersView.h; sourceTree = "<group>"; };
-		B7AC17EE14253A66009E9205 /* ECRoundedContentCornersView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECRoundedContentCornersView.m; sourceTree = "<group>"; };
 		B7AC17F114253A99009E9205 /* ACEditorToolSelectionController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACEditorToolSelectionController.h; sourceTree = "<group>"; };
 		B7AC17F214253A99009E9205 /* ACEditorToolSelectionController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACEditorToolSelectionController.m; sourceTree = "<group>"; };
 		B7AC17F414253ADA009E9205 /* ACEditorToolSelectionController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = ACEditorToolSelectionController.xib; path = Resources/ACEditorToolSelectionController.xib; sourceTree = "<group>"; };
 		B7DF4B5B13EFE52F00BF8306 /* ACProjectDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACProjectDocument.h; sourceTree = "<group>"; };
 		B7DF4B5C13EFE52F00BF8306 /* ACProjectDocument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACProjectDocument.m; sourceTree = "<group>"; };
 		CD0DEAB613D4C2430087ADBB /* ACNavigationTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACNavigationTarget.h; sourceTree = "<group>"; };
-		CD13665713D32150001F3455 /* UIControl+BlockAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIControl+BlockAction.h"; sourceTree = "<group>"; };
-		CD13665813D32150001F3455 /* UIControl+BlockAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIControl+BlockAction.m"; sourceTree = "<group>"; };
 		CD1DEA481415558500560D81 /* ACCodeIndexerDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACCodeIndexerDataSource.h; sourceTree = "<group>"; };
 		CD1DEA491415558500560D81 /* ACCodeIndexerDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACCodeIndexerDataSource.m; sourceTree = "<group>"; };
 		CD21547713F45CC200614B83 /* ACToolButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACToolButton.h; sourceTree = "<group>"; };
 		CD21547813F45CC200614B83 /* ACToolButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACToolButton.m; sourceTree = "<group>"; };
 		CD4786E713DB0C2500616B62 /* ACState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACState.h; sourceTree = "<group>"; };
 		CD4786E813DB0C2500616B62 /* ACState.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACState.m; sourceTree = "<group>"; };
-		CD4786EB13DB0F7A00616B62 /* ECBezelAlert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECBezelAlert.h; sourceTree = "<group>"; };
-		CD4786EC13DB0F7A00616B62 /* ECBezelAlert.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECBezelAlert.m; sourceTree = "<group>"; };
 		CD62BAC413CA06A900266BC0 /* ACToolController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACToolController.h; sourceTree = "<group>"; };
 		CD62BAC513CA06A900266BC0 /* ACToolController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACToolController.m; sourceTree = "<group>"; };
 		CD62BAC813CA1B4500266BC0 /* ACToolHistoryController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACToolHistoryController.h; sourceTree = "<group>"; };
@@ -304,8 +263,6 @@
 		CD62BAD213CA2ABC00266BC0 /* ACToolNavigatorController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACToolNavigatorController.m; sourceTree = "<group>"; };
 		CD6580C7141626F20079412F /* ACCompletionController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACCompletionController.h; sourceTree = "<group>"; };
 		CD6580C8141626F20079412F /* ACCompletionController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACCompletionController.m; sourceTree = "<group>"; };
-		CD6580CA1416273D0079412F /* ECPatriciaTrie.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECPatriciaTrie.h; sourceTree = "<group>"; };
-		CD6580CB1416273D0079412F /* ECPatriciaTrie.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECPatriciaTrie.m; sourceTree = "<group>"; };
 		CD6580CD141641D40079412F /* ACCodeFileFilterController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACCodeFileFilterController.h; sourceTree = "<group>"; };
 		CD6580CE141641D40079412F /* ACCodeFileFilterController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACCodeFileFilterController.m; sourceTree = "<group>"; };
 		CD7C01BF13D354A0004CD5E5 /* ACTabController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACTabController.h; sourceTree = "<group>"; };
@@ -322,13 +279,13 @@
 		CD7D2B0113C0CD9D00B889EE /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
 		CD7D2B0F13C0D18500B889EE /* ArtCodeAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArtCodeAppDelegate.h; sourceTree = "<group>"; };
 		CD7D2B1013C0D18500B889EE /* ArtCodeAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArtCodeAppDelegate.m; sourceTree = "<group>"; };
-		CD7D2B1913C0D47C00B889EE /* AppStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppStyle.h; sourceTree = "<group>"; };
+		CD7D2B1913C0D47C00B889EE /* AppStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = AppStyle.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		CD7D2B1A13C0D47C00B889EE /* UIColor+AppStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+AppStyle.h"; sourceTree = "<group>"; };
-		CD7D2B1B13C0D47C00B889EE /* UIColor+AppStyle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+AppStyle.m"; sourceTree = "<group>"; };
+		CD7D2B1B13C0D47C00B889EE /* UIColor+AppStyle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = "UIColor+AppStyle.m"; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		CD7D2B1C13C0D47C00B889EE /* UIFont+AppStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIFont+AppStyle.h"; sourceTree = "<group>"; };
-		CD7D2B1D13C0D47C00B889EE /* UIFont+AppStyle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIFont+AppStyle.m"; sourceTree = "<group>"; };
+		CD7D2B1D13C0D47C00B889EE /* UIFont+AppStyle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = "UIFont+AppStyle.m"; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		CD7D2B1E13C0D47C00B889EE /* UIImage+AppStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+AppStyle.h"; sourceTree = "<group>"; };
-		CD7D2B1F13C0D47C00B889EE /* UIImage+AppStyle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+AppStyle.m"; sourceTree = "<group>"; };
+		CD7D2B1F13C0D47C00B889EE /* UIImage+AppStyle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = "UIImage+AppStyle.m"; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		CD7D2B2313C0D4B700B889EE /* ACJumpBarTextField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACJumpBarTextField.h; sourceTree = "<group>"; };
 		CD7D2B2413C0D4B700B889EE /* ACJumpBarTextField.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACJumpBarTextField.m; sourceTree = "<group>"; };
 		CD7D2B2513C0D4B700B889EE /* ACNavigationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACNavigationController.h; sourceTree = "<group>"; };
@@ -357,173 +314,21 @@
 		CD8108D413E31A28000E1941 /* ACColorSelectionControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACColorSelectionControl.m; sourceTree = "<group>"; };
 		CD82554214224DA100B742AF /* ACFileTableController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = ACFileTableController.xib; path = Resources/ACFileTableController.xib; sourceTree = "<group>"; };
 		CD8A677B13D0BB000037D742 /* ipad_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ipad_icon.png; sourceTree = "<group>"; };
-		CD9CD95113DC1854007964D3 /* ECCodeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeView.h; sourceTree = "<group>"; };
-		CD9CD95213DC1854007964D3 /* ECCodeView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeView.m; sourceTree = "<group>"; };
-		CD9CD95313DC1854007964D3 /* ECCodeViewBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeViewBase.h; sourceTree = "<group>"; };
-		CD9CD95413DC1854007964D3 /* ECCodeViewBase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeViewBase.m; sourceTree = "<group>"; };
-		CD9CD95513DC1854007964D3 /* ECTextPosition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECTextPosition.h; sourceTree = "<group>"; };
-		CD9CD95613DC1854007964D3 /* ECTextPosition.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECTextPosition.m; sourceTree = "<group>"; };
-		CD9CD95713DC1854007964D3 /* ECTextRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECTextRange.h; sourceTree = "<group>"; };
-		CD9CD95813DC1854007964D3 /* ECTextRange.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECTextRange.m; sourceTree = "<group>"; };
-		CD9CD95913DC1854007964D3 /* ECTextRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECTextRenderer.h; sourceTree = "<group>"; };
-		CD9CD95A13DC1854007964D3 /* ECTextRenderer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECTextRenderer.m; sourceTree = "<group>"; };
-		CD9CD95B13DC1854007964D3 /* ECTextStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECTextStyle.h; sourceTree = "<group>"; };
-		CD9CD95C13DC1854007964D3 /* ECTextStyle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECTextStyle.m; sourceTree = "<group>"; };
-		CD9CD96413DC1896007964D3 /* ECDictionaryCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECDictionaryCache.h; sourceTree = "<group>"; };
-		CD9CD96513DC1896007964D3 /* ECDictionaryCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECDictionaryCache.m; sourceTree = "<group>"; };
-		CD9CD96713DC18BC007964D3 /* ECRectSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECRectSet.h; sourceTree = "<group>"; };
-		CD9CD96813DC18BC007964D3 /* ECRectSet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECRectSet.m; sourceTree = "<group>"; };
-		CD9CD96A13DC18DD007964D3 /* ECCodeStringDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeStringDataSource.h; sourceTree = "<group>"; };
-		CD9CD96B13DC18DD007964D3 /* ECCodeStringDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeStringDataSource.m; sourceTree = "<group>"; };
 		CD9CD96E13DC22AF007964D3 /* ACCodeFileController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACCodeFileController.h; sourceTree = "<group>"; };
 		CD9CD96F13DC22AF007964D3 /* ACCodeFileController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACCodeFileController.m; sourceTree = "<group>"; };
 		CD9F3CF3142381EF00ACD841 /* fileBrowserEditArrow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = fileBrowserEditArrow.png; path = Resources/fileBrowserEditArrow.png; sourceTree = "<group>"; };
 		CD9F3CF61423855E00ACD841 /* projectBrowserTipsPopulatedEdit.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = projectBrowserTipsPopulatedEdit.png; path = Resources/projectBrowserTipsPopulatedEdit.png; sourceTree = "<group>"; };
 		CD9F3CF814238DE200ACD841 /* projectBrowserTipsEmpty.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = projectBrowserTipsEmpty.png; path = Resources/projectBrowserTipsEmpty.png; sourceTree = "<group>"; };
 		CDA0155E13DF0C210087B518 /* ACTabNavigationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACTabNavigationController.h; sourceTree = "<group>"; };
-		CDA0155F13DF0C210087B518 /* ACTabNavigationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACTabNavigationController.m; sourceTree = "<group>"; };
+		CDA0155F13DF0C210087B518 /* ACTabNavigationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ACTabNavigationController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		CDD40B0113E1A046008AC36B /* ACPopoverHistoryToolController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACPopoverHistoryToolController.h; sourceTree = "<group>"; };
 		CDD40B0213E1A046008AC36B /* ACPopoverHistoryToolController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACPopoverHistoryToolController.m; sourceTree = "<group>"; };
 		CDE1CB7F142102A500151BD7 /* ACTabButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACTabButton.h; sourceTree = "<group>"; };
 		CDE1CB80142102A500151BD7 /* ACTabButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACTabButton.m; sourceTree = "<group>"; };
 		CDE3F14613C0DDD500DFFAFF /* Inconsolata-dz.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Inconsolata-dz.otf"; sourceTree = "<group>"; };
-		CDF1D3911415073900EFEC21 /* ECClangCodeIndex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECClangCodeIndex.h; sourceTree = "<group>"; };
-		CDF1D3921415073900EFEC21 /* ECClangCodeIndex.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECClangCodeIndex.m; sourceTree = "<group>"; };
-		CDF1D3931415073900EFEC21 /* ECClangCodeUnit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECClangCodeUnit.h; sourceTree = "<group>"; };
-		CDF1D3941415073900EFEC21 /* ECClangCodeUnit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECClangCodeUnit.m; sourceTree = "<group>"; };
-		CDF1D3951415073900EFEC21 /* ECCodeCompletionChunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeCompletionChunk.h; sourceTree = "<group>"; };
-		CDF1D3961415073900EFEC21 /* ECCodeCompletionChunk.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeCompletionChunk.m; sourceTree = "<group>"; };
-		CDF1D3971415073900EFEC21 /* ECCodeCompletionResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeCompletionResult.h; sourceTree = "<group>"; };
-		CDF1D3981415073900EFEC21 /* ECCodeCompletionResult.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeCompletionResult.m; sourceTree = "<group>"; };
-		CDF1D3991415073900EFEC21 /* ECCodeCompletionString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeCompletionString.h; sourceTree = "<group>"; };
-		CDF1D39A1415073900EFEC21 /* ECCodeCompletionString.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeCompletionString.m; sourceTree = "<group>"; };
-		CDF1D39B1415073900EFEC21 /* ECCodeCursor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeCursor.h; sourceTree = "<group>"; };
-		CDF1D39C1415073900EFEC21 /* ECCodeCursor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeCursor.m; sourceTree = "<group>"; };
-		CDF1D39D1415073900EFEC21 /* ECCodeDiagnostic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeDiagnostic.h; sourceTree = "<group>"; };
-		CDF1D39E1415073900EFEC21 /* ECCodeDiagnostic.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeDiagnostic.m; sourceTree = "<group>"; };
-		CDF1D39F1415073900EFEC21 /* ECCodeFixIt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeFixIt.h; sourceTree = "<group>"; };
-		CDF1D3A01415073900EFEC21 /* ECCodeFixIt.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeFixIt.m; sourceTree = "<group>"; };
-		CDF1D3A11415073900EFEC21 /* ECCodeIndex(Private).h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ECCodeIndex(Private).h"; sourceTree = "<group>"; };
-		CDF1D3A21415073900EFEC21 /* ECCodeIndex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeIndex.h; sourceTree = "<group>"; };
-		CDF1D3A31415073900EFEC21 /* ECCodeIndex.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeIndex.m; sourceTree = "<group>"; };
-		CDF1D3A51415073900EFEC21 /* ECCodeIndexPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeIndexPlugin.h; sourceTree = "<group>"; };
-		CDF1D3A61415073900EFEC21 /* ECCodeToken.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeToken.h; sourceTree = "<group>"; };
-		CDF1D3A71415073900EFEC21 /* ECCodeToken.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeToken.m; sourceTree = "<group>"; };
-		CDF1D3A81415073900EFEC21 /* ECCodeUnit(Private).h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ECCodeUnit(Private).h"; sourceTree = "<group>"; };
-		CDF1D3A91415073900EFEC21 /* ECCodeUnit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeUnit.h; sourceTree = "<group>"; };
-		CDF1D3AA1415073900EFEC21 /* ECCodeUnit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeUnit.m; sourceTree = "<group>"; };
-		CDF1D3AB1415073900EFEC21 /* ECCodeUnitPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeUnitPlugin.h; sourceTree = "<group>"; };
-		CDF1D3BC1415081300EFEC21 /* libLLVMAlphaCodeGen.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libLLVMAlphaCodeGen.a; path = usr/lib/libLLVMAlphaCodeGen.a; sourceTree = SDKROOT; };
-		CDF1D3BD1415081300EFEC21 /* libLLVMAlphaInfo.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libLLVMAlphaInfo.a; path = usr/lib/libLLVMAlphaInfo.a; sourceTree = SDKROOT; };
-		CDF1D3BE1415081300EFEC21 /* libLLVMAnalysis.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libLLVMAnalysis.a; path = usr/lib/libLLVMAnalysis.a; sourceTree = SDKROOT; };
-		CDF1D3BF1415081300EFEC21 /* libLLVMArchive.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libLLVMArchive.a; path = usr/lib/libLLVMArchive.a; sourceTree = SDKROOT; };
-		CDF1D3C01415081300EFEC21 /* libLLVMARMAsmParser.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libLLVMARMAsmParser.a; path = usr/lib/libLLVMARMAsmParser.a; sourceTree = SDKROOT; };
-		CDF1D3C11415081300EFEC21 /* libLLVMARMAsmPrinter.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libLLVMARMAsmPrinter.a; path = usr/lib/libLLVMARMAsmPrinter.a; sourceTree = SDKROOT; };
-		CDF1D3C21415081300EFEC21 /* libLLVMARMCodeGen.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libLLVMARMCodeGen.a; path = usr/lib/libLLVMARMCodeGen.a; sourceTree = SDKROOT; };
-		CDF1D3C31415081300EFEC21 /* libLLVMARMDisassembler.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libLLVMARMDisassembler.a; path = usr/lib/libLLVMARMDisassembler.a; sourceTree = SDKROOT; };
-		CDF1D3C41415081300EFEC21 /* libLLVMARMInfo.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libLLVMARMInfo.a; path = usr/lib/libLLVMARMInfo.a; sourceTree = SDKROOT; };
-		CDF1D3C51415081300EFEC21 /* libLLVMAsmParser.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libLLVMAsmParser.a; path = usr/lib/libLLVMAsmParser.a; sourceTree = SDKROOT; };
-		CDF1D3C61415081300EFEC21 /* libLLVMAsmPrinter.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libLLVMAsmPrinter.a; path = usr/lib/libLLVMAsmPrinter.a; sourceTree = SDKROOT; };
-		CDF1D3C71415081300EFEC21 /* libLLVMBitReader.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libLLVMBitReader.a; path = usr/lib/libLLVMBitReader.a; sourceTree = SDKROOT; };
-		CDF1D3C81415081300EFEC21 /* libLLVMBitWriter.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libLLVMBitWriter.a; path = usr/lib/libLLVMBitWriter.a; sourceTree = SDKROOT; };
-		CDF1D3C91415081300EFEC21 /* libLLVMBlackfinCodeGen.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libLLVMBlackfinCodeGen.a; path = usr/lib/libLLVMBlackfinCodeGen.a; sourceTree = SDKROOT; };
-		CDF1D3CA1415081300EFEC21 /* libLLVMBlackfinInfo.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libLLVMBlackfinInfo.a; path = usr/lib/libLLVMBlackfinInfo.a; sourceTree = SDKROOT; };
-		CDF1D3CB1415081300EFEC21 /* libLLVMCBackend.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libLLVMCBackend.a; path = usr/lib/libLLVMCBackend.a; sourceTree = SDKROOT; };
-		CDF1D3CC1415081300EFEC21 /* libLLVMCBackendInfo.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libLLVMCBackendInfo.a; path = usr/lib/libLLVMCBackendInfo.a; sourceTree = SDKROOT; };
-		CDF1D3CD1415081300EFEC21 /* libLLVMCellSPUCodeGen.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libLLVMCellSPUCodeGen.a; path = usr/lib/libLLVMCellSPUCodeGen.a; sourceTree = SDKROOT; };
-		CDF1D3CE1415081300EFEC21 /* libLLVMCellSPUInfo.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libLLVMCellSPUInfo.a; path = usr/lib/libLLVMCellSPUInfo.a; sourceTree = SDKROOT; };
-		CDF1D3CF1415081300EFEC21 /* libLLVMCodeGen.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libLLVMCodeGen.a; path = usr/lib/libLLVMCodeGen.a; sourceTree = SDKROOT; };
-		CDF1D3D01415081300EFEC21 /* libLLVMCore.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libLLVMCore.a; path = usr/lib/libLLVMCore.a; sourceTree = SDKROOT; };
-		CDF1D3D11415081300EFEC21 /* libLLVMCppBackend.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libLLVMCppBackend.a; path = usr/lib/libLLVMCppBackend.a; sourceTree = SDKROOT; };
-		CDF1D3D21415081300EFEC21 /* libLLVMCppBackendInfo.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libLLVMCppBackendInfo.a; path = usr/lib/libLLVMCppBackendInfo.a; sourceTree = SDKROOT; };
-		CDF1D3D31415081300EFEC21 /* libLLVMExecutionEngine.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libLLVMExecutionEngine.a; path = usr/lib/libLLVMExecutionEngine.a; sourceTree = SDKROOT; };
-		CDF1D3D41415081300EFEC21 /* libLLVMInstCombine.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libLLVMInstCombine.a; path = usr/lib/libLLVMInstCombine.a; sourceTree = SDKROOT; };
-		CDF1D3D51415081300EFEC21 /* libLLVMInstrumentation.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libLLVMInstrumentation.a; path = usr/lib/libLLVMInstrumentation.a; sourceTree = SDKROOT; };
-		CDF1D3D61415081300EFEC21 /* libLLVMInterpreter.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libLLVMInterpreter.a; path = usr/lib/libLLVMInterpreter.a; sourceTree = SDKROOT; };
-		CDF1D3D71415081300EFEC21 /* libLLVMipa.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libLLVMipa.a; path = usr/lib/libLLVMipa.a; sourceTree = SDKROOT; };
-		CDF1D3D81415081300EFEC21 /* libLLVMipo.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libLLVMipo.a; path = usr/lib/libLLVMipo.a; sourceTree = SDKROOT; };
-		CDF1D3D91415081300EFEC21 /* libLLVMJIT.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libLLVMJIT.a; path = usr/lib/libLLVMJIT.a; sourceTree = SDKROOT; };
-		CDF1D3DA1415081300EFEC21 /* libLLVMLinker.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libLLVMLinker.a; path = usr/lib/libLLVMLinker.a; sourceTree = SDKROOT; };
-		CDF1D3DB1415081300EFEC21 /* libLLVMMBlazeAsmParser.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libLLVMMBlazeAsmParser.a; path = usr/lib/libLLVMMBlazeAsmParser.a; sourceTree = SDKROOT; };
-		CDF1D3DC1415081300EFEC21 /* libLLVMMBlazeAsmPrinter.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libLLVMMBlazeAsmPrinter.a; path = usr/lib/libLLVMMBlazeAsmPrinter.a; sourceTree = SDKROOT; };
-		CDF1D3DD1415081300EFEC21 /* libLLVMMBlazeCodeGen.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libLLVMMBlazeCodeGen.a; path = usr/lib/libLLVMMBlazeCodeGen.a; sourceTree = SDKROOT; };
-		CDF1D3DE1415081300EFEC21 /* libLLVMMBlazeDisassembler.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libLLVMMBlazeDisassembler.a; path = usr/lib/libLLVMMBlazeDisassembler.a; sourceTree = SDKROOT; };
-		CDF1D3DF1415081300EFEC21 /* libLLVMMBlazeInfo.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libLLVMMBlazeInfo.a; path = usr/lib/libLLVMMBlazeInfo.a; sourceTree = SDKROOT; };
-		CDF1D3E01415081300EFEC21 /* libLLVMMC.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libLLVMMC.a; path = usr/lib/libLLVMMC.a; sourceTree = SDKROOT; };
-		CDF1D3E11415081300EFEC21 /* libLLVMMCDisassembler.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libLLVMMCDisassembler.a; path = usr/lib/libLLVMMCDisassembler.a; sourceTree = SDKROOT; };
-		CDF1D3E21415081300EFEC21 /* libLLVMMCJIT.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libLLVMMCJIT.a; path = usr/lib/libLLVMMCJIT.a; sourceTree = SDKROOT; };
-		CDF1D3E31415081300EFEC21 /* libLLVMMCParser.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libLLVMMCParser.a; path = usr/lib/libLLVMMCParser.a; sourceTree = SDKROOT; };
-		CDF1D3E41415081300EFEC21 /* libLLVMMipsCodeGen.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libLLVMMipsCodeGen.a; path = usr/lib/libLLVMMipsCodeGen.a; sourceTree = SDKROOT; };
-		CDF1D3E51415081300EFEC21 /* libLLVMMipsInfo.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libLLVMMipsInfo.a; path = usr/lib/libLLVMMipsInfo.a; sourceTree = SDKROOT; };
-		CDF1D3E61415081300EFEC21 /* libLLVMMSP430AsmPrinter.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libLLVMMSP430AsmPrinter.a; path = usr/lib/libLLVMMSP430AsmPrinter.a; sourceTree = SDKROOT; };
-		CDF1D3E71415081300EFEC21 /* libLLVMMSP430CodeGen.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libLLVMMSP430CodeGen.a; path = usr/lib/libLLVMMSP430CodeGen.a; sourceTree = SDKROOT; };
-		CDF1D3E81415081300EFEC21 /* libLLVMMSP430Info.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libLLVMMSP430Info.a; path = usr/lib/libLLVMMSP430Info.a; sourceTree = SDKROOT; };
-		CDF1D3E91415081300EFEC21 /* libLLVMObject.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libLLVMObject.a; path = usr/lib/libLLVMObject.a; sourceTree = SDKROOT; };
-		CDF1D3EA1415081300EFEC21 /* libLLVMPowerPCAsmPrinter.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libLLVMPowerPCAsmPrinter.a; path = usr/lib/libLLVMPowerPCAsmPrinter.a; sourceTree = SDKROOT; };
-		CDF1D3EB1415081300EFEC21 /* libLLVMPowerPCCodeGen.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libLLVMPowerPCCodeGen.a; path = usr/lib/libLLVMPowerPCCodeGen.a; sourceTree = SDKROOT; };
-		CDF1D3EC1415081300EFEC21 /* libLLVMPowerPCInfo.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libLLVMPowerPCInfo.a; path = usr/lib/libLLVMPowerPCInfo.a; sourceTree = SDKROOT; };
-		CDF1D3ED1415081300EFEC21 /* libLLVMPTXCodeGen.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libLLVMPTXCodeGen.a; path = usr/lib/libLLVMPTXCodeGen.a; sourceTree = SDKROOT; };
-		CDF1D3EE1415081300EFEC21 /* libLLVMPTXInfo.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libLLVMPTXInfo.a; path = usr/lib/libLLVMPTXInfo.a; sourceTree = SDKROOT; };
-		CDF1D3EF1415081300EFEC21 /* libLLVMRuntimeDyld.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libLLVMRuntimeDyld.a; path = usr/lib/libLLVMRuntimeDyld.a; sourceTree = SDKROOT; };
-		CDF1D3F01415081300EFEC21 /* libLLVMScalarOpts.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libLLVMScalarOpts.a; path = usr/lib/libLLVMScalarOpts.a; sourceTree = SDKROOT; };
-		CDF1D3F11415081300EFEC21 /* libLLVMSelectionDAG.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libLLVMSelectionDAG.a; path = usr/lib/libLLVMSelectionDAG.a; sourceTree = SDKROOT; };
-		CDF1D3F21415081300EFEC21 /* libLLVMSparcCodeGen.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libLLVMSparcCodeGen.a; path = usr/lib/libLLVMSparcCodeGen.a; sourceTree = SDKROOT; };
-		CDF1D3F31415081300EFEC21 /* libLLVMSparcInfo.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libLLVMSparcInfo.a; path = usr/lib/libLLVMSparcInfo.a; sourceTree = SDKROOT; };
-		CDF1D3F41415081300EFEC21 /* libLLVMSupport.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libLLVMSupport.a; path = usr/lib/libLLVMSupport.a; sourceTree = SDKROOT; };
-		CDF1D3F51415081300EFEC21 /* libLLVMSystemZCodeGen.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libLLVMSystemZCodeGen.a; path = usr/lib/libLLVMSystemZCodeGen.a; sourceTree = SDKROOT; };
-		CDF1D3F61415081300EFEC21 /* libLLVMSystemZInfo.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libLLVMSystemZInfo.a; path = usr/lib/libLLVMSystemZInfo.a; sourceTree = SDKROOT; };
-		CDF1D3F71415081300EFEC21 /* libLLVMTarget.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libLLVMTarget.a; path = usr/lib/libLLVMTarget.a; sourceTree = SDKROOT; };
-		CDF1D3F81415081300EFEC21 /* libLLVMTransformUtils.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libLLVMTransformUtils.a; path = usr/lib/libLLVMTransformUtils.a; sourceTree = SDKROOT; };
-		CDF1D3F91415081300EFEC21 /* libLLVMX86AsmParser.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libLLVMX86AsmParser.a; path = usr/lib/libLLVMX86AsmParser.a; sourceTree = SDKROOT; };
-		CDF1D3FA1415081300EFEC21 /* libLLVMX86AsmPrinter.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libLLVMX86AsmPrinter.a; path = usr/lib/libLLVMX86AsmPrinter.a; sourceTree = SDKROOT; };
-		CDF1D3FB1415081300EFEC21 /* libLLVMX86CodeGen.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libLLVMX86CodeGen.a; path = usr/lib/libLLVMX86CodeGen.a; sourceTree = SDKROOT; };
-		CDF1D3FC1415081300EFEC21 /* libLLVMX86Disassembler.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libLLVMX86Disassembler.a; path = usr/lib/libLLVMX86Disassembler.a; sourceTree = SDKROOT; };
-		CDF1D3FD1415081300EFEC21 /* libLLVMX86Info.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libLLVMX86Info.a; path = usr/lib/libLLVMX86Info.a; sourceTree = SDKROOT; };
-		CDF1D3FE1415081300EFEC21 /* libLLVMX86Utils.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libLLVMX86Utils.a; path = usr/lib/libLLVMX86Utils.a; sourceTree = SDKROOT; };
-		CDF1D3FF1415081300EFEC21 /* libLLVMXCoreCodeGen.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libLLVMXCoreCodeGen.a; path = usr/lib/libLLVMXCoreCodeGen.a; sourceTree = SDKROOT; };
-		CDF1D4001415081300EFEC21 /* libLLVMXCoreInfo.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libLLVMXCoreInfo.a; path = usr/lib/libLLVMXCoreInfo.a; sourceTree = SDKROOT; };
-		CDF1D4471415083700EFEC21 /* libclang.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libclang.a; path = usr/lib/libclang.a; sourceTree = SDKROOT; };
-		CDF1D4481415083700EFEC21 /* libclangAnalysis.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libclangAnalysis.a; path = usr/lib/libclangAnalysis.a; sourceTree = SDKROOT; };
-		CDF1D4491415083700EFEC21 /* libclangAST.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libclangAST.a; path = usr/lib/libclangAST.a; sourceTree = SDKROOT; };
-		CDF1D44A1415083700EFEC21 /* libclangBasic.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libclangBasic.a; path = usr/lib/libclangBasic.a; sourceTree = SDKROOT; };
-		CDF1D44B1415083700EFEC21 /* libclangCodeGen.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libclangCodeGen.a; path = usr/lib/libclangCodeGen.a; sourceTree = SDKROOT; };
-		CDF1D44C1415083700EFEC21 /* libclangDriver.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libclangDriver.a; path = usr/lib/libclangDriver.a; sourceTree = SDKROOT; };
-		CDF1D44D1415083700EFEC21 /* libclangFrontend.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libclangFrontend.a; path = usr/lib/libclangFrontend.a; sourceTree = SDKROOT; };
-		CDF1D44E1415083700EFEC21 /* libclangFrontendTool.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libclangFrontendTool.a; path = usr/lib/libclangFrontendTool.a; sourceTree = SDKROOT; };
-		CDF1D44F1415083700EFEC21 /* libclangIndex.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libclangIndex.a; path = usr/lib/libclangIndex.a; sourceTree = SDKROOT; };
-		CDF1D4501415083700EFEC21 /* libclangLex.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libclangLex.a; path = usr/lib/libclangLex.a; sourceTree = SDKROOT; };
-		CDF1D4511415083700EFEC21 /* libclangParse.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libclangParse.a; path = usr/lib/libclangParse.a; sourceTree = SDKROOT; };
-		CDF1D4521415083700EFEC21 /* libclangRewrite.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libclangRewrite.a; path = usr/lib/libclangRewrite.a; sourceTree = SDKROOT; };
-		CDF1D4531415083700EFEC21 /* libclangSema.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libclangSema.a; path = usr/lib/libclangSema.a; sourceTree = SDKROOT; };
-		CDF1D4541415083700EFEC21 /* libclangSerialization.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libclangSerialization.a; path = usr/lib/libclangSerialization.a; sourceTree = SDKROOT; };
-		CDF1D4551415083700EFEC21 /* libclangStaticAnalyzerCheckers.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libclangStaticAnalyzerCheckers.a; path = usr/lib/libclangStaticAnalyzerCheckers.a; sourceTree = SDKROOT; };
-		CDF1D4561415083700EFEC21 /* libclangStaticAnalyzerCore.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libclangStaticAnalyzerCore.a; path = usr/lib/libclangStaticAnalyzerCore.a; sourceTree = SDKROOT; };
-		CDF1D4571415083700EFEC21 /* libclangStaticAnalyzerFrontend.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libclangStaticAnalyzerFrontend.a; path = usr/lib/libclangStaticAnalyzerFrontend.a; sourceTree = SDKROOT; };
-		CDF1D46914150A9200EFEC21 /* ECHashing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECHashing.h; sourceTree = "<group>"; };
-		CDF1D46A14150A9200EFEC21 /* ECHashing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECHashing.m; sourceTree = "<group>"; };
 		CDF1D46C14150C4900EFEC21 /* libstdc++.6.0.9.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libstdc++.6.0.9.dylib"; path = "usr/lib/libstdc++.6.0.9.dylib"; sourceTree = SDKROOT; };
-		CDF1D46E14150C7800EFEC21 /* MurmurHash3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = MurmurHash3.c; sourceTree = "<group>"; };
-		CDF1D46F14150C7800EFEC21 /* MurmurHash3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MurmurHash3.h; sourceTree = "<group>"; };
 		CDF215F513E4468F005B520F /* ACEditableTableCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACEditableTableCell.h; sourceTree = "<group>"; };
 		CDF215F613E4468F005B520F /* ACEditableTableCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACEditableTableCell.m; sourceTree = "<group>"; };
-		CDFF3DAA13C0D71900108DE2 /* NSTimer+block.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSTimer+block.h"; sourceTree = "<group>"; };
-		CDFF3DAB13C0D71900108DE2 /* NSTimer+block.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSTimer+block.m"; sourceTree = "<group>"; };
-		CDFF3DAD13C0D76400108DE2 /* ECInstantGestureRecognizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECInstantGestureRecognizer.h; sourceTree = "<group>"; };
-		CDFF3DAE13C0D76400108DE2 /* ECInstantGestureRecognizer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECInstantGestureRecognizer.m; sourceTree = "<group>"; };
-		CDFF3DAF13C0D76400108DE2 /* ECJumpBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECJumpBar.h; sourceTree = "<group>"; };
-		CDFF3DB013C0D76400108DE2 /* ECJumpBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECJumpBar.m; sourceTree = "<group>"; };
-		CDFF3DB113C0D76400108DE2 /* ECPopoverController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECPopoverController.h; sourceTree = "<group>"; };
-		CDFF3DB213C0D76400108DE2 /* ECPopoverController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECPopoverController.m; sourceTree = "<group>"; };
-		CDFF3DB313C0D76400108DE2 /* ECPopoverView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECPopoverView.h; sourceTree = "<group>"; };
-		CDFF3DB413C0D76400108DE2 /* ECPopoverView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECPopoverView.m; sourceTree = "<group>"; };
-		CDFF3DB513C0D76400108DE2 /* ECSwipeGestureRecognizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECSwipeGestureRecognizer.h; sourceTree = "<group>"; };
-		CDFF3DB613C0D76400108DE2 /* ECSwipeGestureRecognizer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECSwipeGestureRecognizer.m; sourceTree = "<group>"; };
-		CDFF3DB713C0D76400108DE2 /* UIImage+BlockDrawing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+BlockDrawing.h"; sourceTree = "<group>"; };
-		CDFF3DB813C0D76400108DE2 /* UIImage+BlockDrawing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+BlockDrawing.m"; sourceTree = "<group>"; };
-		CDFF3DB913C0D76400108DE2 /* UIView+ReuseIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+ReuseIdentifier.h"; sourceTree = "<group>"; };
-		CDFF3DBA13C0D76400108DE2 /* UIView+ReuseIdentifier.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+ReuseIdentifier.m"; sourceTree = "<group>"; };
-		CDFF3DC613C0D84D00108DE2 /* ECTabBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECTabBar.h; sourceTree = "<group>"; };
-		CDFF3DC713C0D84D00108DE2 /* ECTabBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECTabBar.m; sourceTree = "<group>"; };
 		CDFF3DCA13C0D9BB00108DE2 /* toolBookmarksNote.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = toolBookmarksNote.png; sourceTree = "<group>"; };
 		CDFF3DCB13C0D9BB00108DE2 /* toolBookmarksStar.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = toolBookmarksStar.png; sourceTree = "<group>"; };
 		CDFF3DCC13C0D9BB00108DE2 /* toolFilterBookmarksNote.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = toolFilterBookmarksNote.png; sourceTree = "<group>"; };
@@ -552,100 +357,17 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B7170ECA1429F54D00DF7794 /* libECArchive.a in Frameworks */,
+				B7170ECB1429F54D00DF7794 /* libECCodeIndexing.a in Frameworks */,
+				B7170ECC1429F54D00DF7794 /* libECFoundation.a in Frameworks */,
+				B7170ECD1429F54D00DF7794 /* libECUIKit.a in Frameworks */,
 				CD7D2B0213C0CD9D00B889EE /* CoreText.framework in Frameworks */,
 				CD7D2B0013C0CD9700B889EE /* QuartzCore.framework in Frameworks */,
 				CD7D2AE413C0CD2600B889EE /* UIKit.framework in Frameworks */,
 				CD7D2AE613C0CD2600B889EE /* Foundation.framework in Frameworks */,
 				CD7D2AE813C0CD2600B889EE /* CoreGraphics.framework in Frameworks */,
 				B732D01513DB361600637FBE /* CoreData.framework in Frameworks */,
-				CDF1D4011415081300EFEC21 /* libLLVMAlphaCodeGen.a in Frameworks */,
-				CDF1D4021415081300EFEC21 /* libLLVMAlphaInfo.a in Frameworks */,
-				CDF1D4031415081300EFEC21 /* libLLVMAnalysis.a in Frameworks */,
-				CDF1D4041415081300EFEC21 /* libLLVMArchive.a in Frameworks */,
-				CDF1D4051415081300EFEC21 /* libLLVMARMAsmParser.a in Frameworks */,
-				CDF1D4061415081300EFEC21 /* libLLVMARMAsmPrinter.a in Frameworks */,
-				CDF1D4071415081300EFEC21 /* libLLVMARMCodeGen.a in Frameworks */,
-				CDF1D4081415081300EFEC21 /* libLLVMARMDisassembler.a in Frameworks */,
-				CDF1D4091415081300EFEC21 /* libLLVMARMInfo.a in Frameworks */,
-				CDF1D40A1415081300EFEC21 /* libLLVMAsmParser.a in Frameworks */,
-				CDF1D40B1415081300EFEC21 /* libLLVMAsmPrinter.a in Frameworks */,
-				CDF1D40C1415081300EFEC21 /* libLLVMBitReader.a in Frameworks */,
-				CDF1D40D1415081300EFEC21 /* libLLVMBitWriter.a in Frameworks */,
-				CDF1D40E1415081300EFEC21 /* libLLVMBlackfinCodeGen.a in Frameworks */,
-				CDF1D40F1415081300EFEC21 /* libLLVMBlackfinInfo.a in Frameworks */,
-				CDF1D4101415081300EFEC21 /* libLLVMCBackend.a in Frameworks */,
-				CDF1D4111415081300EFEC21 /* libLLVMCBackendInfo.a in Frameworks */,
-				CDF1D4121415081300EFEC21 /* libLLVMCellSPUCodeGen.a in Frameworks */,
-				CDF1D4131415081300EFEC21 /* libLLVMCellSPUInfo.a in Frameworks */,
-				CDF1D4141415081300EFEC21 /* libLLVMCodeGen.a in Frameworks */,
-				CDF1D4151415081300EFEC21 /* libLLVMCore.a in Frameworks */,
-				CDF1D4161415081300EFEC21 /* libLLVMCppBackend.a in Frameworks */,
-				CDF1D4171415081300EFEC21 /* libLLVMCppBackendInfo.a in Frameworks */,
-				CDF1D4181415081300EFEC21 /* libLLVMExecutionEngine.a in Frameworks */,
-				CDF1D4191415081300EFEC21 /* libLLVMInstCombine.a in Frameworks */,
-				CDF1D41A1415081300EFEC21 /* libLLVMInstrumentation.a in Frameworks */,
-				CDF1D41B1415081300EFEC21 /* libLLVMInterpreter.a in Frameworks */,
-				CDF1D41C1415081300EFEC21 /* libLLVMipa.a in Frameworks */,
-				CDF1D41D1415081300EFEC21 /* libLLVMipo.a in Frameworks */,
-				CDF1D41E1415081300EFEC21 /* libLLVMJIT.a in Frameworks */,
-				CDF1D41F1415081300EFEC21 /* libLLVMLinker.a in Frameworks */,
-				CDF1D4201415081300EFEC21 /* libLLVMMBlazeAsmParser.a in Frameworks */,
-				CDF1D4211415081300EFEC21 /* libLLVMMBlazeAsmPrinter.a in Frameworks */,
-				CDF1D4221415081300EFEC21 /* libLLVMMBlazeCodeGen.a in Frameworks */,
-				CDF1D4231415081300EFEC21 /* libLLVMMBlazeDisassembler.a in Frameworks */,
-				CDF1D4241415081300EFEC21 /* libLLVMMBlazeInfo.a in Frameworks */,
-				CDF1D4251415081300EFEC21 /* libLLVMMC.a in Frameworks */,
-				CDF1D4261415081300EFEC21 /* libLLVMMCDisassembler.a in Frameworks */,
-				CDF1D4271415081300EFEC21 /* libLLVMMCJIT.a in Frameworks */,
-				CDF1D4281415081300EFEC21 /* libLLVMMCParser.a in Frameworks */,
-				CDF1D4291415081300EFEC21 /* libLLVMMipsCodeGen.a in Frameworks */,
-				CDF1D42A1415081300EFEC21 /* libLLVMMipsInfo.a in Frameworks */,
-				CDF1D42B1415081300EFEC21 /* libLLVMMSP430AsmPrinter.a in Frameworks */,
-				CDF1D42C1415081300EFEC21 /* libLLVMMSP430CodeGen.a in Frameworks */,
-				CDF1D42D1415081300EFEC21 /* libLLVMMSP430Info.a in Frameworks */,
-				CDF1D42E1415081300EFEC21 /* libLLVMObject.a in Frameworks */,
-				CDF1D42F1415081300EFEC21 /* libLLVMPowerPCAsmPrinter.a in Frameworks */,
-				CDF1D4301415081300EFEC21 /* libLLVMPowerPCCodeGen.a in Frameworks */,
-				CDF1D4311415081300EFEC21 /* libLLVMPowerPCInfo.a in Frameworks */,
-				CDF1D4321415081300EFEC21 /* libLLVMPTXCodeGen.a in Frameworks */,
-				CDF1D4331415081300EFEC21 /* libLLVMPTXInfo.a in Frameworks */,
-				CDF1D4341415081300EFEC21 /* libLLVMRuntimeDyld.a in Frameworks */,
-				CDF1D4351415081300EFEC21 /* libLLVMScalarOpts.a in Frameworks */,
-				CDF1D4361415081300EFEC21 /* libLLVMSelectionDAG.a in Frameworks */,
-				CDF1D4371415081300EFEC21 /* libLLVMSparcCodeGen.a in Frameworks */,
-				CDF1D4381415081300EFEC21 /* libLLVMSparcInfo.a in Frameworks */,
-				CDF1D4391415081300EFEC21 /* libLLVMSupport.a in Frameworks */,
-				CDF1D43A1415081300EFEC21 /* libLLVMSystemZCodeGen.a in Frameworks */,
-				CDF1D43B1415081300EFEC21 /* libLLVMSystemZInfo.a in Frameworks */,
-				CDF1D43C1415081300EFEC21 /* libLLVMTarget.a in Frameworks */,
-				CDF1D43D1415081300EFEC21 /* libLLVMTransformUtils.a in Frameworks */,
-				CDF1D43E1415081300EFEC21 /* libLLVMX86AsmParser.a in Frameworks */,
-				CDF1D43F1415081300EFEC21 /* libLLVMX86AsmPrinter.a in Frameworks */,
-				CDF1D4401415081300EFEC21 /* libLLVMX86CodeGen.a in Frameworks */,
-				CDF1D4411415081300EFEC21 /* libLLVMX86Disassembler.a in Frameworks */,
-				CDF1D4421415081300EFEC21 /* libLLVMX86Info.a in Frameworks */,
-				CDF1D4431415081300EFEC21 /* libLLVMX86Utils.a in Frameworks */,
-				CDF1D4441415081300EFEC21 /* libLLVMXCoreCodeGen.a in Frameworks */,
-				CDF1D4451415081300EFEC21 /* libLLVMXCoreInfo.a in Frameworks */,
-				CDF1D4581415083700EFEC21 /* libclang.a in Frameworks */,
-				CDF1D4591415083700EFEC21 /* libclangAnalysis.a in Frameworks */,
-				CDF1D45A1415083700EFEC21 /* libclangAST.a in Frameworks */,
-				CDF1D45B1415083700EFEC21 /* libclangBasic.a in Frameworks */,
-				CDF1D45C1415083700EFEC21 /* libclangCodeGen.a in Frameworks */,
-				CDF1D45D1415083700EFEC21 /* libclangDriver.a in Frameworks */,
-				CDF1D45E1415083700EFEC21 /* libclangFrontend.a in Frameworks */,
-				CDF1D45F1415083700EFEC21 /* libclangFrontendTool.a in Frameworks */,
-				CDF1D4601415083700EFEC21 /* libclangIndex.a in Frameworks */,
-				CDF1D4611415083700EFEC21 /* libclangLex.a in Frameworks */,
-				CDF1D4621415083700EFEC21 /* libclangParse.a in Frameworks */,
-				CDF1D4631415083700EFEC21 /* libclangRewrite.a in Frameworks */,
-				CDF1D4641415083700EFEC21 /* libclangSema.a in Frameworks */,
-				CDF1D4651415083700EFEC21 /* libclangSerialization.a in Frameworks */,
-				CDF1D4661415083700EFEC21 /* libclangStaticAnalyzerCheckers.a in Frameworks */,
-				CDF1D4671415083700EFEC21 /* libclangStaticAnalyzerCore.a in Frameworks */,
-				CDF1D4681415083700EFEC21 /* libclangStaticAnalyzerFrontend.a in Frameworks */,
 				CDF1D46D14150C4900EFEC21 /* libstdc++.6.0.9.dylib in Frameworks */,
-				B7AC172C14216C9F009E9205 /* libarc.a in Frameworks */,
 				B7AC175514216D91009E9205 /* libz.1.2.5.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -653,6 +375,43 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		B7170E861429F3B600DF7794 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				B7170EA31429F3B800DF7794 /* libECArchive.a */,
+				B7170EA51429F3B800DF7794 /* ECArchiveTests.octest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B7170E891429F3B600DF7794 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				B7170EA91429F3B800DF7794 /* libECCodeIndexing.a */,
+				B7170EAB1429F3B800DF7794 /* ECCodeIndexingTests.octest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B7170E8C1429F3B600DF7794 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				B7170EAF1429F3B800DF7794 /* libECFoundation.a */,
+				B7170EB11429F3B800DF7794 /* ECFoundationTests.octest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B7170E8F1429F3B600DF7794 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				B7170EB61429F3B800DF7794 /* libECUIKit.a */,
+				B7170EB81429F3B800DF7794 /* ECUIKitTests.octest */,
+				B7170EBA1429F3B800DF7794 /* ECSplitViewControllerTest.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		B732D00113DB2AD100637FBE /* Model */ = {
 			isa = PBXGroup;
 			children = (
@@ -678,59 +437,13 @@
 			name = Model;
 			sourceTree = "<group>";
 		};
-		B7AC172314216C4A009E9205 /* ECArchive */ = {
-			isa = PBXGroup;
-			children = (
-				B7AC172414216C4A009E9205 /* ECArchive.h */,
-				B7AC172514216C4A009E9205 /* ECArchive.m */,
-			);
-			name = ECArchive;
-			path = ../Frameworks/ECArchive;
-			sourceTree = "<group>";
-		};
 		B7AC172714216C59009E9205 /* Third Party */ = {
 			isa = PBXGroup;
 			children = (
 				CDF1D46C14150C4900EFEC21 /* libstdc++.6.0.9.dylib */,
 				B7AC175414216D91009E9205 /* libz.1.2.5.dylib */,
-				B7AC172914216C9F009E9205 /* libarchive */,
-				CDF1D3BB141507B100EFEC21 /* LLVM */,
 			);
 			name = "Third Party";
-			sourceTree = "<group>";
-		};
-		B7AC172814216C7F009E9205 /* libclang */ = {
-			isa = PBXGroup;
-			children = (
-				CDF1D4471415083700EFEC21 /* libclang.a */,
-				CDF1D4481415083700EFEC21 /* libclangAnalysis.a */,
-				CDF1D4491415083700EFEC21 /* libclangAST.a */,
-				CDF1D44A1415083700EFEC21 /* libclangBasic.a */,
-				CDF1D44B1415083700EFEC21 /* libclangCodeGen.a */,
-				CDF1D44C1415083700EFEC21 /* libclangDriver.a */,
-				CDF1D44D1415083700EFEC21 /* libclangFrontend.a */,
-				CDF1D44E1415083700EFEC21 /* libclangFrontendTool.a */,
-				CDF1D44F1415083700EFEC21 /* libclangIndex.a */,
-				CDF1D4501415083700EFEC21 /* libclangLex.a */,
-				CDF1D4511415083700EFEC21 /* libclangParse.a */,
-				CDF1D4521415083700EFEC21 /* libclangRewrite.a */,
-				CDF1D4531415083700EFEC21 /* libclangSema.a */,
-				CDF1D4541415083700EFEC21 /* libclangSerialization.a */,
-				CDF1D4551415083700EFEC21 /* libclangStaticAnalyzerCheckers.a */,
-				CDF1D4561415083700EFEC21 /* libclangStaticAnalyzerCore.a */,
-				CDF1D4571415083700EFEC21 /* libclangStaticAnalyzerFrontend.a */,
-			);
-			name = libclang;
-			sourceTree = "<group>";
-		};
-		B7AC172914216C9F009E9205 /* libarchive */ = {
-			isa = PBXGroup;
-			children = (
-				B7AC172A14216C9F009E9205 /* archive.h */,
-				B7AC172B14216C9F009E9205 /* libarc.a */,
-			);
-			name = libarchive;
-			path = ../ThirdParty/libarchive;
 			sourceTree = "<group>";
 		};
 		B7AC174F14216D25009E9205 /* Popover Content Controllers */ = {
@@ -776,15 +489,6 @@
 			name = State;
 			sourceTree = "<group>";
 		};
-		CD4786EA13DB0F5100616B62 /* BezelAlert */ = {
-			isa = PBXGroup;
-			children = (
-				CD4786EB13DB0F7A00616B62 /* ECBezelAlert.h */,
-				CD4786EC13DB0F7A00616B62 /* ECBezelAlert.m */,
-			);
-			name = BezelAlert;
-			sourceTree = "<group>";
-		};
 		CD6580C514157B300079412F /* Views and Controllers */ = {
 			isa = PBXGroup;
 			children = (
@@ -820,10 +524,10 @@
 		CD7D2AE213C0CD2600B889EE /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				CDF1D3901415073900EFEC21 /* ECCodeIndexing */,
-				CD7D2B0313C0CDD400B889EE /* ECFoundation */,
-				B7AC172314216C4A009E9205 /* ECArchive */,
-				CD7D2B0413C0CDDC00B889EE /* ECUIKit */,
+				B7170E851429F3B600DF7794 /* ECArchive.xcodeproj */,
+				B7170E881429F3B600DF7794 /* ECCodeIndexing.xcodeproj */,
+				B7170E8B1429F3B600DF7794 /* ECFoundation.xcodeproj */,
+				B7170E8E1429F3B600DF7794 /* ECUIKit.xcodeproj */,
 				CD7D2B0613C0CE3200B889EE /* Apple Frameworks */,
 				B7AC172714216C59009E9205 /* Third Party */,
 			);
@@ -850,42 +554,6 @@
 				CD7D2AF113C0CD2600B889EE /* ArtCode-Prefix.pch */,
 			);
 			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
-		CD7D2B0313C0CDD400B889EE /* ECFoundation */ = {
-			isa = PBXGroup;
-			children = (
-				B7AC171F14216C3C009E9205 /* ECURL.h */,
-				B7AC172014216C3C009E9205 /* ECURL.m */,
-				B7AC172114216C3C009E9205 /* pstdint.h */,
-				CD6580CA1416273D0079412F /* ECPatriciaTrie.h */,
-				CD6580CB1416273D0079412F /* ECPatriciaTrie.m */,
-				CDF1D46E14150C7800EFEC21 /* MurmurHash3.c */,
-				CDF1D46F14150C7800EFEC21 /* MurmurHash3.h */,
-				CDF1D46914150A9200EFEC21 /* ECHashing.h */,
-				CDF1D46A14150A9200EFEC21 /* ECHashing.m */,
-				CD9CD96413DC1896007964D3 /* ECDictionaryCache.h */,
-				CD9CD96513DC1896007964D3 /* ECDictionaryCache.m */,
-				CDFF3DAA13C0D71900108DE2 /* NSTimer+block.h */,
-				CDFF3DAB13C0D71900108DE2 /* NSTimer+block.m */,
-			);
-			name = ECFoundation;
-			path = ../Frameworks/ECFoundation;
-			sourceTree = "<group>";
-		};
-		CD7D2B0413C0CDDC00B889EE /* ECUIKit */ = {
-			isa = PBXGroup;
-			children = (
-				CDFF3DC513C0D81000108DE2 /* UIKit Additions */,
-				CDFF3DC313C0D77A00108DE2 /* Gesture Recognizers */,
-				CDFF3DC213C0D77000108DE2 /* Popover */,
-				CDFF3DC413C0D7FC00108DE2 /* Jump Bar */,
-				CDFF3DC913C0D85200108DE2 /* Tab Bar */,
-				CD4786EA13DB0F5100616B62 /* BezelAlert */,
-				CD9CD94F13DC17FE007964D3 /* Code View */,
-			);
-			name = ECUIKit;
-			path = ../Frameworks/ECUIKit;
 			sourceTree = "<group>";
 		};
 		CD7D2B0613C0CE3200B889EE /* Apple Frameworks */ = {
@@ -1081,43 +749,6 @@
 			name = Resources;
 			sourceTree = "<group>";
 		};
-		CD9CD94F13DC17FE007964D3 /* Code View */ = {
-			isa = PBXGroup;
-			children = (
-				CD9CD95113DC1854007964D3 /* ECCodeView.h */,
-				CD9CD95213DC1854007964D3 /* ECCodeView.m */,
-				CD9CD95313DC1854007964D3 /* ECCodeViewBase.h */,
-				CD9CD95413DC1854007964D3 /* ECCodeViewBase.m */,
-				CD9CD96313DC185D007964D3 /* Text */,
-				CD9CD96D13DC18E4007964D3 /* Data Sources */,
-			);
-			name = "Code View";
-			sourceTree = "<group>";
-		};
-		CD9CD96313DC185D007964D3 /* Text */ = {
-			isa = PBXGroup;
-			children = (
-				CD9CD95513DC1854007964D3 /* ECTextPosition.h */,
-				CD9CD95613DC1854007964D3 /* ECTextPosition.m */,
-				CD9CD95713DC1854007964D3 /* ECTextRange.h */,
-				CD9CD95813DC1854007964D3 /* ECTextRange.m */,
-				CD9CD95913DC1854007964D3 /* ECTextRenderer.h */,
-				CD9CD95A13DC1854007964D3 /* ECTextRenderer.m */,
-				CD9CD95B13DC1854007964D3 /* ECTextStyle.h */,
-				CD9CD95C13DC1854007964D3 /* ECTextStyle.m */,
-			);
-			name = Text;
-			sourceTree = "<group>";
-		};
-		CD9CD96D13DC18E4007964D3 /* Data Sources */ = {
-			isa = PBXGroup;
-			children = (
-				CD9CD96A13DC18DD007964D3 /* ECCodeStringDataSource.h */,
-				CD9CD96B13DC18DD007964D3 /* ECCodeStringDataSource.m */,
-			);
-			name = "Data Sources";
-			sourceTree = "<group>";
-		};
 		CDD40AFF13E19FC4008AC36B /* Popovers Content Controllers */ = {
 			isa = PBXGroup;
 			children = (
@@ -1125,195 +756,6 @@
 				CDD40B0213E1A046008AC36B /* ACPopoverHistoryToolController.m */,
 			);
 			name = "Popovers Content Controllers";
-			sourceTree = "<group>";
-		};
-		CDF1D3901415073900EFEC21 /* ECCodeIndexing */ = {
-			isa = PBXGroup;
-			children = (
-				CDF1D3BA1415075600EFEC21 /* Clang */,
-				CDF1D3951415073900EFEC21 /* ECCodeCompletionChunk.h */,
-				CDF1D3961415073900EFEC21 /* ECCodeCompletionChunk.m */,
-				CDF1D3971415073900EFEC21 /* ECCodeCompletionResult.h */,
-				CDF1D3981415073900EFEC21 /* ECCodeCompletionResult.m */,
-				CDF1D3991415073900EFEC21 /* ECCodeCompletionString.h */,
-				CDF1D39A1415073900EFEC21 /* ECCodeCompletionString.m */,
-				CDF1D39B1415073900EFEC21 /* ECCodeCursor.h */,
-				CDF1D39C1415073900EFEC21 /* ECCodeCursor.m */,
-				CDF1D39D1415073900EFEC21 /* ECCodeDiagnostic.h */,
-				CDF1D39E1415073900EFEC21 /* ECCodeDiagnostic.m */,
-				CDF1D39F1415073900EFEC21 /* ECCodeFixIt.h */,
-				CDF1D3A01415073900EFEC21 /* ECCodeFixIt.m */,
-				CDF1D3A11415073900EFEC21 /* ECCodeIndex(Private).h */,
-				CDF1D3A21415073900EFEC21 /* ECCodeIndex.h */,
-				CDF1D3A31415073900EFEC21 /* ECCodeIndex.m */,
-				CDF1D3A51415073900EFEC21 /* ECCodeIndexPlugin.h */,
-				CDF1D3A61415073900EFEC21 /* ECCodeToken.h */,
-				CDF1D3A71415073900EFEC21 /* ECCodeToken.m */,
-				CDF1D3A81415073900EFEC21 /* ECCodeUnit(Private).h */,
-				CDF1D3A91415073900EFEC21 /* ECCodeUnit.h */,
-				CDF1D3AA1415073900EFEC21 /* ECCodeUnit.m */,
-				CDF1D3AB1415073900EFEC21 /* ECCodeUnitPlugin.h */,
-			);
-			name = ECCodeIndexing;
-			path = ../Frameworks/ECCodeIndexing;
-			sourceTree = "<group>";
-		};
-		CDF1D3BA1415075600EFEC21 /* Clang */ = {
-			isa = PBXGroup;
-			children = (
-				B7AC177A1423A6D3009E9205 /* ECClangCodeCursor.h */,
-				B7AC177B1423A6D3009E9205 /* ECClangCodeCursor.m */,
-				B7AC177C1423A6D3009E9205 /* ECClangHelperFunctions.h */,
-				B7AC177D1423A6D3009E9205 /* ECClangHelperFunctions.m */,
-				CDF1D3911415073900EFEC21 /* ECClangCodeIndex.h */,
-				CDF1D3921415073900EFEC21 /* ECClangCodeIndex.m */,
-				CDF1D3931415073900EFEC21 /* ECClangCodeUnit.h */,
-				CDF1D3941415073900EFEC21 /* ECClangCodeUnit.m */,
-			);
-			name = Clang;
-			sourceTree = "<group>";
-		};
-		CDF1D3BB141507B100EFEC21 /* LLVM */ = {
-			isa = PBXGroup;
-			children = (
-				B7AC172814216C7F009E9205 /* libclang */,
-				CDF1D4461415081E00EFEC21 /* llvm */,
-			);
-			name = LLVM;
-			path = ../Frameworks/ECCodeIndexing;
-			sourceTree = "<group>";
-		};
-		CDF1D4461415081E00EFEC21 /* llvm */ = {
-			isa = PBXGroup;
-			children = (
-				CDF1D3BC1415081300EFEC21 /* libLLVMAlphaCodeGen.a */,
-				CDF1D3BD1415081300EFEC21 /* libLLVMAlphaInfo.a */,
-				CDF1D3BE1415081300EFEC21 /* libLLVMAnalysis.a */,
-				CDF1D3BF1415081300EFEC21 /* libLLVMArchive.a */,
-				CDF1D3C01415081300EFEC21 /* libLLVMARMAsmParser.a */,
-				CDF1D3C11415081300EFEC21 /* libLLVMARMAsmPrinter.a */,
-				CDF1D3C21415081300EFEC21 /* libLLVMARMCodeGen.a */,
-				CDF1D3C31415081300EFEC21 /* libLLVMARMDisassembler.a */,
-				CDF1D3C41415081300EFEC21 /* libLLVMARMInfo.a */,
-				CDF1D3C51415081300EFEC21 /* libLLVMAsmParser.a */,
-				CDF1D3C61415081300EFEC21 /* libLLVMAsmPrinter.a */,
-				CDF1D3C71415081300EFEC21 /* libLLVMBitReader.a */,
-				CDF1D3C81415081300EFEC21 /* libLLVMBitWriter.a */,
-				CDF1D3C91415081300EFEC21 /* libLLVMBlackfinCodeGen.a */,
-				CDF1D3CA1415081300EFEC21 /* libLLVMBlackfinInfo.a */,
-				CDF1D3CB1415081300EFEC21 /* libLLVMCBackend.a */,
-				CDF1D3CC1415081300EFEC21 /* libLLVMCBackendInfo.a */,
-				CDF1D3CD1415081300EFEC21 /* libLLVMCellSPUCodeGen.a */,
-				CDF1D3CE1415081300EFEC21 /* libLLVMCellSPUInfo.a */,
-				CDF1D3CF1415081300EFEC21 /* libLLVMCodeGen.a */,
-				CDF1D3D01415081300EFEC21 /* libLLVMCore.a */,
-				CDF1D3D11415081300EFEC21 /* libLLVMCppBackend.a */,
-				CDF1D3D21415081300EFEC21 /* libLLVMCppBackendInfo.a */,
-				CDF1D3D31415081300EFEC21 /* libLLVMExecutionEngine.a */,
-				CDF1D3D41415081300EFEC21 /* libLLVMInstCombine.a */,
-				CDF1D3D51415081300EFEC21 /* libLLVMInstrumentation.a */,
-				CDF1D3D61415081300EFEC21 /* libLLVMInterpreter.a */,
-				CDF1D3D71415081300EFEC21 /* libLLVMipa.a */,
-				CDF1D3D81415081300EFEC21 /* libLLVMipo.a */,
-				CDF1D3D91415081300EFEC21 /* libLLVMJIT.a */,
-				CDF1D3DA1415081300EFEC21 /* libLLVMLinker.a */,
-				CDF1D3DB1415081300EFEC21 /* libLLVMMBlazeAsmParser.a */,
-				CDF1D3DC1415081300EFEC21 /* libLLVMMBlazeAsmPrinter.a */,
-				CDF1D3DD1415081300EFEC21 /* libLLVMMBlazeCodeGen.a */,
-				CDF1D3DE1415081300EFEC21 /* libLLVMMBlazeDisassembler.a */,
-				CDF1D3DF1415081300EFEC21 /* libLLVMMBlazeInfo.a */,
-				CDF1D3E01415081300EFEC21 /* libLLVMMC.a */,
-				CDF1D3E11415081300EFEC21 /* libLLVMMCDisassembler.a */,
-				CDF1D3E21415081300EFEC21 /* libLLVMMCJIT.a */,
-				CDF1D3E31415081300EFEC21 /* libLLVMMCParser.a */,
-				CDF1D3E41415081300EFEC21 /* libLLVMMipsCodeGen.a */,
-				CDF1D3E51415081300EFEC21 /* libLLVMMipsInfo.a */,
-				CDF1D3E61415081300EFEC21 /* libLLVMMSP430AsmPrinter.a */,
-				CDF1D3E71415081300EFEC21 /* libLLVMMSP430CodeGen.a */,
-				CDF1D3E81415081300EFEC21 /* libLLVMMSP430Info.a */,
-				CDF1D3E91415081300EFEC21 /* libLLVMObject.a */,
-				CDF1D3EA1415081300EFEC21 /* libLLVMPowerPCAsmPrinter.a */,
-				CDF1D3EB1415081300EFEC21 /* libLLVMPowerPCCodeGen.a */,
-				CDF1D3EC1415081300EFEC21 /* libLLVMPowerPCInfo.a */,
-				CDF1D3ED1415081300EFEC21 /* libLLVMPTXCodeGen.a */,
-				CDF1D3EE1415081300EFEC21 /* libLLVMPTXInfo.a */,
-				CDF1D3EF1415081300EFEC21 /* libLLVMRuntimeDyld.a */,
-				CDF1D3F01415081300EFEC21 /* libLLVMScalarOpts.a */,
-				CDF1D3F11415081300EFEC21 /* libLLVMSelectionDAG.a */,
-				CDF1D3F21415081300EFEC21 /* libLLVMSparcCodeGen.a */,
-				CDF1D3F31415081300EFEC21 /* libLLVMSparcInfo.a */,
-				CDF1D3F41415081300EFEC21 /* libLLVMSupport.a */,
-				CDF1D3F51415081300EFEC21 /* libLLVMSystemZCodeGen.a */,
-				CDF1D3F61415081300EFEC21 /* libLLVMSystemZInfo.a */,
-				CDF1D3F71415081300EFEC21 /* libLLVMTarget.a */,
-				CDF1D3F81415081300EFEC21 /* libLLVMTransformUtils.a */,
-				CDF1D3F91415081300EFEC21 /* libLLVMX86AsmParser.a */,
-				CDF1D3FA1415081300EFEC21 /* libLLVMX86AsmPrinter.a */,
-				CDF1D3FB1415081300EFEC21 /* libLLVMX86CodeGen.a */,
-				CDF1D3FC1415081300EFEC21 /* libLLVMX86Disassembler.a */,
-				CDF1D3FD1415081300EFEC21 /* libLLVMX86Info.a */,
-				CDF1D3FE1415081300EFEC21 /* libLLVMX86Utils.a */,
-				CDF1D3FF1415081300EFEC21 /* libLLVMXCoreCodeGen.a */,
-				CDF1D4001415081300EFEC21 /* libLLVMXCoreInfo.a */,
-			);
-			name = llvm;
-			sourceTree = "<group>";
-		};
-		CDFF3DC213C0D77000108DE2 /* Popover */ = {
-			isa = PBXGroup;
-			children = (
-				CDFF3DB113C0D76400108DE2 /* ECPopoverController.h */,
-				CDFF3DB213C0D76400108DE2 /* ECPopoverController.m */,
-				CDFF3DB313C0D76400108DE2 /* ECPopoverView.h */,
-				CDFF3DB413C0D76400108DE2 /* ECPopoverView.m */,
-				B7AC17ED14253A66009E9205 /* ECRoundedContentCornersView.h */,
-				B7AC17EE14253A66009E9205 /* ECRoundedContentCornersView.m */,
-			);
-			name = Popover;
-			sourceTree = "<group>";
-		};
-		CDFF3DC313C0D77A00108DE2 /* Gesture Recognizers */ = {
-			isa = PBXGroup;
-			children = (
-				CDFF3DB513C0D76400108DE2 /* ECSwipeGestureRecognizer.h */,
-				CDFF3DB613C0D76400108DE2 /* ECSwipeGestureRecognizer.m */,
-				CDFF3DAD13C0D76400108DE2 /* ECInstantGestureRecognizer.h */,
-				CDFF3DAE13C0D76400108DE2 /* ECInstantGestureRecognizer.m */,
-			);
-			name = "Gesture Recognizers";
-			sourceTree = "<group>";
-		};
-		CDFF3DC413C0D7FC00108DE2 /* Jump Bar */ = {
-			isa = PBXGroup;
-			children = (
-				CDFF3DAF13C0D76400108DE2 /* ECJumpBar.h */,
-				CDFF3DB013C0D76400108DE2 /* ECJumpBar.m */,
-			);
-			name = "Jump Bar";
-			sourceTree = "<group>";
-		};
-		CDFF3DC513C0D81000108DE2 /* UIKit Additions */ = {
-			isa = PBXGroup;
-			children = (
-				CD9CD96713DC18BC007964D3 /* ECRectSet.h */,
-				CD9CD96813DC18BC007964D3 /* ECRectSet.m */,
-				CDFF3DB713C0D76400108DE2 /* UIImage+BlockDrawing.h */,
-				CDFF3DB813C0D76400108DE2 /* UIImage+BlockDrawing.m */,
-				CDFF3DB913C0D76400108DE2 /* UIView+ReuseIdentifier.h */,
-				CDFF3DBA13C0D76400108DE2 /* UIView+ReuseIdentifier.m */,
-				CD13665713D32150001F3455 /* UIControl+BlockAction.h */,
-				CD13665813D32150001F3455 /* UIControl+BlockAction.m */,
-			);
-			name = "UIKit Additions";
-			sourceTree = "<group>";
-		};
-		CDFF3DC913C0D85200108DE2 /* Tab Bar */ = {
-			isa = PBXGroup;
-			children = (
-				CDFF3DC613C0D84D00108DE2 /* ECTabBar.h */,
-				CDFF3DC713C0D84D00108DE2 /* ECTabBar.m */,
-			);
-			name = "Tab Bar";
 			sourceTree = "<group>";
 		};
 		CDFF3DF413C0D9D100108DE2 /* Tools Tab Icons */ = {
@@ -1372,6 +814,10 @@
 			buildRules = (
 			);
 			dependencies = (
+				B7170EC31429F54300DF7794 /* PBXTargetDependency */,
+				B7170EC51429F54300DF7794 /* PBXTargetDependency */,
+				B7170EC71429F54300DF7794 /* PBXTargetDependency */,
+				B7170EC91429F54300DF7794 /* PBXTargetDependency */,
 			);
 			name = ArtCode;
 			productName = ArtCode;
@@ -1396,12 +842,96 @@
 			mainGroup = CD7D2AD413C0CD2600B889EE;
 			productRefGroup = CD7D2AE013C0CD2600B889EE /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = B7170E861429F3B600DF7794 /* Products */;
+					ProjectRef = B7170E851429F3B600DF7794 /* ECArchive.xcodeproj */;
+				},
+				{
+					ProductGroup = B7170E891429F3B600DF7794 /* Products */;
+					ProjectRef = B7170E881429F3B600DF7794 /* ECCodeIndexing.xcodeproj */;
+				},
+				{
+					ProductGroup = B7170E8C1429F3B600DF7794 /* Products */;
+					ProjectRef = B7170E8B1429F3B600DF7794 /* ECFoundation.xcodeproj */;
+				},
+				{
+					ProductGroup = B7170E8F1429F3B600DF7794 /* Products */;
+					ProjectRef = B7170E8E1429F3B600DF7794 /* ECUIKit.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				CD7D2ADE13C0CD2600B889EE /* ArtCode */,
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		B7170EA31429F3B800DF7794 /* libECArchive.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libECArchive.a;
+			remoteRef = B7170EA21429F3B800DF7794 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B7170EA51429F3B800DF7794 /* ECArchiveTests.octest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = ECArchiveTests.octest;
+			remoteRef = B7170EA41429F3B800DF7794 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B7170EA91429F3B800DF7794 /* libECCodeIndexing.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libECCodeIndexing.a;
+			remoteRef = B7170EA81429F3B800DF7794 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B7170EAB1429F3B800DF7794 /* ECCodeIndexingTests.octest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = ECCodeIndexingTests.octest;
+			remoteRef = B7170EAA1429F3B800DF7794 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B7170EAF1429F3B800DF7794 /* libECFoundation.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libECFoundation.a;
+			remoteRef = B7170EAE1429F3B800DF7794 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B7170EB11429F3B800DF7794 /* ECFoundationTests.octest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = ECFoundationTests.octest;
+			remoteRef = B7170EB01429F3B800DF7794 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B7170EB61429F3B800DF7794 /* libECUIKit.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libECUIKit.a;
+			remoteRef = B7170EB51429F3B800DF7794 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B7170EB81429F3B800DF7794 /* ECUIKitTests.octest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = ECUIKitTests.octest;
+			remoteRef = B7170EB71429F3B800DF7794 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B7170EBA1429F3B800DF7794 /* ECSplitViewControllerTest.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = ECSplitViewControllerTest.app;
+			remoteRef = B7170EB91429F3B800DF7794 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		CD7D2ADD13C0CD2600B889EE /* Resources */ = {
@@ -1467,34 +997,14 @@
 				CD7D2B4213C0D4F400B889EE /* ACToolPanelSegue.m in Sources */,
 				CD7D2B4313C0D4F400B889EE /* ACToolTextField.m in Sources */,
 				CD7D2B4813C0D55700B889EE /* ACFileTableController.m in Sources */,
-				CDFF3DAC13C0D71900108DE2 /* NSTimer+block.m in Sources */,
-				CDFF3DBB13C0D76400108DE2 /* ECInstantGestureRecognizer.m in Sources */,
-				CDFF3DBC13C0D76400108DE2 /* ECJumpBar.m in Sources */,
-				CDFF3DBD13C0D76400108DE2 /* ECPopoverController.m in Sources */,
-				CDFF3DBE13C0D76400108DE2 /* ECPopoverView.m in Sources */,
-				CDFF3DBF13C0D76400108DE2 /* ECSwipeGestureRecognizer.m in Sources */,
-				CDFF3DC013C0D76400108DE2 /* UIImage+BlockDrawing.m in Sources */,
-				CDFF3DC113C0D76400108DE2 /* UIView+ReuseIdentifier.m in Sources */,
-				CDFF3DC813C0D84D00108DE2 /* ECTabBar.m in Sources */,
 				CD62BAC613CA06A900266BC0 /* ACToolController.m in Sources */,
 				CD62BACA13CA1B4600266BC0 /* ACToolHistoryController.m in Sources */,
 				CD62BACD13CA1F8700266BC0 /* ACToolSnippetsController.m in Sources */,
 				CD62BAD013CA248C00266BC0 /* ACToolSymbolsController.m in Sources */,
 				CD62BAD313CA2ABD00266BC0 /* ACToolNavigatorController.m in Sources */,
-				CD13665913D32150001F3455 /* UIControl+BlockAction.m in Sources */,
 				CD7C01C113D354A0004CD5E5 /* ACTabController.m in Sources */,
 				CD4786E913DB0C2500616B62 /* ACState.m in Sources */,
-				CD4786ED13DB0F7A00616B62 /* ECBezelAlert.m in Sources */,
 				B732CFFB13DB24F600637FBE /* Project.xcdatamodeld in Sources */,
-				CD9CD95D13DC1854007964D3 /* ECCodeView.m in Sources */,
-				CD9CD95E13DC1854007964D3 /* ECCodeViewBase.m in Sources */,
-				CD9CD95F13DC1854007964D3 /* ECTextPosition.m in Sources */,
-				CD9CD96013DC1854007964D3 /* ECTextRange.m in Sources */,
-				CD9CD96113DC1854007964D3 /* ECTextRenderer.m in Sources */,
-				CD9CD96213DC1854007964D3 /* ECTextStyle.m in Sources */,
-				CD9CD96613DC1896007964D3 /* ECDictionaryCache.m in Sources */,
-				CD9CD96913DC18BC007964D3 /* ECRectSet.m in Sources */,
-				CD9CD96C13DC18DD007964D3 /* ECCodeStringDataSource.m in Sources */,
 				CD9CD97013DC22AF007964D3 /* ACCodeFileController.m in Sources */,
 				B732D06413DD799400637FBE /* ACURL.m in Sources */,
 				CDA0156013DF0C210087B518 /* ACTabNavigationController.m in Sources */,
@@ -1503,33 +1013,15 @@
 				CDF215F713E4468F005B520F /* ACEditableTableCell.m in Sources */,
 				B7DF4B5D13EFE52F00BF8306 /* ACProjectDocument.m in Sources */,
 				CD21547913F45CC200614B83 /* ACToolButton.m in Sources */,
-				CDF1D3AE1415073900EFEC21 /* ECClangCodeIndex.m in Sources */,
-				CDF1D3AF1415073900EFEC21 /* ECClangCodeUnit.m in Sources */,
-				CDF1D3B01415073900EFEC21 /* ECCodeCompletionChunk.m in Sources */,
-				CDF1D3B11415073900EFEC21 /* ECCodeCompletionResult.m in Sources */,
-				CDF1D3B21415073900EFEC21 /* ECCodeCompletionString.m in Sources */,
-				CDF1D3B31415073900EFEC21 /* ECCodeCursor.m in Sources */,
-				CDF1D3B41415073900EFEC21 /* ECCodeDiagnostic.m in Sources */,
-				CDF1D3B51415073900EFEC21 /* ECCodeFixIt.m in Sources */,
-				CDF1D3B61415073900EFEC21 /* ECCodeIndex.m in Sources */,
-				CDF1D3B81415073900EFEC21 /* ECCodeToken.m in Sources */,
-				CDF1D3B91415073900EFEC21 /* ECCodeUnit.m in Sources */,
-				CDF1D46B14150A9200EFEC21 /* ECHashing.m in Sources */,
-				CDF1D47014150C7800EFEC21 /* MurmurHash3.c in Sources */,
 				CD1DEA4A1415558500560D81 /* ACCodeIndexerDataSource.m in Sources */,
 				CD6580C9141626F20079412F /* ACCompletionController.m in Sources */,
-				CD6580CC1416273D0079412F /* ECPatriciaTrie.m in Sources */,
 				CD6580CF141641D50079412F /* ACCodeFileFilterController.m in Sources */,
 				CDE1CB81142102A500151BD7 /* ACTabButton.m in Sources */,
-				B7AC172214216C3C009E9205 /* ECURL.m in Sources */,
-				B7AC172614216C4A009E9205 /* ECArchive.m in Sources */,
 				B7AC174914216D1C009E9205 /* ACNewFileImportFileController.m in Sources */,
 				B7AC174A14216D1C009E9205 /* ACNewProjectFromACZController.m in Sources */,
 				B7AC174B14216D1C009E9205 /* ACNewProjectFromTemplateController.m in Sources */,
 				B7AC174C14216D1C009E9205 /* ACNewProjectFromZIPController.m in Sources */,
 				B7AC174D14216D1C009E9205 /* ACNewProjectPopoverController.m in Sources */,
-				B7AC177E1423A6D4009E9205 /* ECClangCodeCursor.m in Sources */,
-				B7AC177F1423A6D4009E9205 /* ECClangHelperFunctions.m in Sources */,
 				B7AC17871423B339009E9205 /* Application.xcdatamodeld in Sources */,
 				B7AC178B1423B56C009E9205 /* ACTab.m in Sources */,
 				B7AC178E1423B56C009E9205 /* ACApplication.m in Sources */,
@@ -1539,12 +1031,34 @@
 				B7AC179A1423B5B5009E9205 /* ACProject.m in Sources */,
 				B7AC179D1423B5B5009E9205 /* ACNode.m in Sources */,
 				B7AC17A01423B5B5009E9205 /* ACGroup.m in Sources */,
-				B7AC17EF14253A66009E9205 /* ECRoundedContentCornersView.m in Sources */,
 				B7AC17F314253A99009E9205 /* ACEditorToolSelectionController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		B7170EC31429F54300DF7794 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = ECFoundation;
+			targetProxy = B7170EC21429F54300DF7794 /* PBXContainerItemProxy */;
+		};
+		B7170EC51429F54300DF7794 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = ECArchive;
+			targetProxy = B7170EC41429F54300DF7794 /* PBXContainerItemProxy */;
+		};
+		B7170EC71429F54300DF7794 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = ECCodeIndexing;
+			targetProxy = B7170EC61429F54300DF7794 /* PBXContainerItemProxy */;
+		};
+		B7170EC91429F54300DF7794 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = ECUIKit;
+			targetProxy = B7170EC81429F54300DF7794 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		CD7D2AEC13C0CD2600B889EE /* InfoPlist.strings */ = {
@@ -1612,10 +1126,12 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ArtCode/ArtCode-Prefix.pch";
 				GCC_STRICT_ALIASING = YES;
+				HEADER_SEARCH_PATHS = "${BUILD_DIR}/${CONFIGURATION}${EFFECTIVE_PLATFORM_NAME}/usr/local/include/";
 				INFOPLIST_FILE = "ArtCode/ArtCode-Info.plist";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/../ThirdParty/libarchive\"",
+				LIBRARY_SEARCH_PATHS = "${BUILD_DIR}/";
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"-all_load",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
@@ -1630,10 +1146,12 @@
 				GCC_PREFIX_HEADER = "ArtCode/ArtCode-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = "NDEBUG=1";
 				GCC_STRICT_ALIASING = YES;
+				HEADER_SEARCH_PATHS = "${BUILD_DIR}/${CONFIGURATION}${EFFECTIVE_PLATFORM_NAME}/usr/local/include/";
 				INFOPLIST_FILE = "ArtCode/ArtCode-Info.plist";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/../ThirdParty/libarchive\"",
+				LIBRARY_SEARCH_PATHS = "${BUILD_DIR}/";
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"-all_load",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;

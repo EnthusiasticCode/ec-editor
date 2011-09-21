@@ -7,7 +7,7 @@
 //
 
 #import "ACNewProjectFromACZController.h"
-#import "ECURL.h"
+#import <ECFoundation/NSURL+ECAdditions.h>
 #import "ACNewProjectPopoverController.h"
 
 @interface ACNewProjectFromACZController ()

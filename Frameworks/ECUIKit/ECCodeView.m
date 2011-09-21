@@ -13,8 +13,6 @@
 #import <ECFoundation/NSTimer+block.h>
 #import "ECPopoverController.h"
 
-#import "ECCodeViewTokenizer.h"
-
 #define CARET_WIDTH 2
 
 #pragma mark -

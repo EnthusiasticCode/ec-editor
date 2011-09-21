@@ -7,8 +7,8 @@
 //
 
 #import "ACFile.h"
-#import "ECCodeUnit.h"
-#import "ECCodeIndex.h"
+#import <ECCodeIndexing/ECCodeUnit.h>
+#import <ECCodeIndexing/ECCodeIndex.h>
 
 @interface ACFile ()
 

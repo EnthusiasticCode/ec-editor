@@ -6,7 +6,7 @@
 //  Copyright (c) 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import "ECCodeStringDataSource.h"
+#import <ECUIKit/ECCodeStringDataSource.h>
 
 @class ECCodeUnit, ECTextStyle;
 

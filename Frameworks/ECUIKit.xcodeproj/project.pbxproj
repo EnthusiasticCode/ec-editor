@@ -121,7 +121,6 @@
 		B7170BBC1428EB2500DF7794 /* UIImage+BlockDrawing.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170B841428EB2500DF7794 /* UIImage+BlockDrawing.m */; };
 		B7170BBF1428EB2500DF7794 /* UIView+ReuseIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = B7170B871428EB2500DF7794 /* UIView+ReuseIdentifier.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B7170BC01428EB2500DF7794 /* UIView+ReuseIdentifier.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170B881428EB2500DF7794 /* UIView+ReuseIdentifier.m */; };
-		B7170BD41428EE2000DF7794 /* libECFoundation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7170BCF1428ECC300DF7794 /* libECFoundation.a */; };
 		B7170BD71428F00800DF7794 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7170BD51428F00800DF7794 /* CoreText.framework */; };
 		B7170BD81428F00800DF7794 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7170BD61428F00800DF7794 /* QuartzCore.framework */; };
 		B7170BD91428F01600DF7794 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7170BD51428F00800DF7794 /* CoreText.framework */; };
@@ -134,16 +133,17 @@
 		CD0DDA1E14293E7300FE8B5B /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = CD0DDA1C14293E7300FE8B5B /* InfoPlist.strings */; };
 		CD0DDA2014293E7300FE8B5B /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = CD0DDA1F14293E7300FE8B5B /* main.m */; };
 		CD0DDA2414293E7300FE8B5B /* ECSplitViewControllerTest_AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = CD0DDA2314293E7300FE8B5B /* ECSplitViewControllerTest_AppDelegate.m */; };
-		CD0DDA311429426B00FE8B5B /* ECSplitViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = CD0DDA2F1429426B00FE8B5B /* ECSplitViewController.h */; };
-		CD0DDA321429426B00FE8B5B /* ECSplitViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD0DDA301429426B00FE8B5B /* ECSplitViewController.m */; };
-		CD0DDA331429426B00FE8B5B /* ECSplitViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD0DDA301429426B00FE8B5B /* ECSplitViewController.m */; };
-		CD0DDA35142949DB00FE8B5B /* ECSplitViewControllerTest_Window.xib in Resources */ = {isa = PBXBuildFile; fileRef = CD0DDA34142949DB00FE8B5B /* ECSplitViewControllerTest_Window.xib */; };
-		CD0DDA38142A028800FE8B5B /* ECBlockView.h in Headers */ = {isa = PBXBuildFile; fileRef = CD0DDA36142A028800FE8B5B /* ECBlockView.h */; };
-		CD0DDA39142A028800FE8B5B /* ECBlockView.m in Sources */ = {isa = PBXBuildFile; fileRef = CD0DDA37142A028800FE8B5B /* ECBlockView.m */; };
-		CD0DDA3A142A028800FE8B5B /* ECBlockView.m in Sources */ = {isa = PBXBuildFile; fileRef = CD0DDA37142A028800FE8B5B /* ECBlockView.m */; };
-		CD0DDA3B142A028800FE8B5B /* ECBlockView.m in Sources */ = {isa = PBXBuildFile; fileRef = CD0DDA37142A028800FE8B5B /* ECBlockView.m */; };
-		CD0DDA3C142A145600FE8B5B /* ECRoundedContentCornersView.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170B701428EB2400DF7794 /* ECRoundedContentCornersView.m */; };
-		CD0DDA3D142A146D00FE8B5B /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7170BD61428F00800DF7794 /* QuartzCore.framework */; };
+		CD2A5FC9142A4A7E00A2CACD /* ECSplitViewControllerTest_Window.xib in Resources */ = {isa = PBXBuildFile; fileRef = CD2A5FC8142A4A7E00A2CACD /* ECSplitViewControllerTest_Window.xib */; };
+		CD2A5FCD142A4A9900A2CACD /* ECSplitViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = CD2A5FCB142A4A9900A2CACD /* ECSplitViewController.h */; };
+		CD2A5FCE142A4A9900A2CACD /* ECSplitViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD2A5FCC142A4A9900A2CACD /* ECSplitViewController.m */; };
+		CD2A5FCF142A4A9900A2CACD /* ECSplitViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD2A5FCC142A4A9900A2CACD /* ECSplitViewController.m */; };
+		CD2A5FD0142A4A9900A2CACD /* ECSplitViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD2A5FCC142A4A9900A2CACD /* ECSplitViewController.m */; };
+		CD2A5FD3142A4AA500A2CACD /* ECBlockView.h in Headers */ = {isa = PBXBuildFile; fileRef = CD2A5FD1142A4AA500A2CACD /* ECBlockView.h */; };
+		CD2A5FD4142A4AA500A2CACD /* ECBlockView.m in Sources */ = {isa = PBXBuildFile; fileRef = CD2A5FD2142A4AA500A2CACD /* ECBlockView.m */; };
+		CD2A5FD5142A4AA500A2CACD /* ECBlockView.m in Sources */ = {isa = PBXBuildFile; fileRef = CD2A5FD2142A4AA500A2CACD /* ECBlockView.m */; };
+		CD2A5FD6142A4AA500A2CACD /* ECBlockView.m in Sources */ = {isa = PBXBuildFile; fileRef = CD2A5FD2142A4AA500A2CACD /* ECBlockView.m */; };
+		CDC7C952142A4ADD00FCF269 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7170BD61428F00800DF7794 /* QuartzCore.framework */; };
+		CDC7C953142A4B3300FCF269 /* ECRoundedContentCornersView.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170B701428EB2400DF7794 /* ECRoundedContentCornersView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -339,7 +339,7 @@
 		B7170A981428E6A200DF7794 /* NSValue+KiwiAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSValue+KiwiAdditions.h"; sourceTree = "<group>"; };
 		B7170A991428E6A200DF7794 /* NSValue+KiwiAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSValue+KiwiAdditions.m"; sourceTree = "<group>"; };
 		B7170B511428EB2300DF7794 /* ECBezelAlert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECBezelAlert.h; sourceTree = "<group>"; };
-		B7170B521428EB2300DF7794 /* ECBezelAlert.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECBezelAlert.m; sourceTree = "<group>"; };
+		B7170B521428EB2300DF7794 /* ECBezelAlert.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ECBezelAlert.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		B7170B591428EB2300DF7794 /* ECCodeStringDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeStringDataSource.h; sourceTree = "<group>"; };
 		B7170B5A1428EB2300DF7794 /* ECCodeStringDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeStringDataSource.m; sourceTree = "<group>"; };
 		B7170B5B1428EB2300DF7794 /* ECCodeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeView.h; sourceTree = "<group>"; };
@@ -348,7 +348,7 @@
 		B7170B5E1428EB2300DF7794 /* ECCodeViewBase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeViewBase.m; sourceTree = "<group>"; };
 		B7170B631428EB2400DF7794 /* ECInstantGestureRecognizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECInstantGestureRecognizer.h; sourceTree = "<group>"; };
 		B7170B641428EB2400DF7794 /* ECInstantGestureRecognizer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECInstantGestureRecognizer.m; sourceTree = "<group>"; };
-		B7170B651428EB2400DF7794 /* ECJumpBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECJumpBar.h; sourceTree = "<group>"; };
+		B7170B651428EB2400DF7794 /* ECJumpBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ECJumpBar.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		B7170B661428EB2400DF7794 /* ECJumpBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECJumpBar.m; sourceTree = "<group>"; };
 		B7170B691428EB2400DF7794 /* ECPopoverController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECPopoverController.h; sourceTree = "<group>"; };
 		B7170B6A1428EB2400DF7794 /* ECPopoverController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECPopoverController.m; sourceTree = "<group>"; };
@@ -361,7 +361,7 @@
 		B7170B751428EB2400DF7794 /* ECSwipeGestureRecognizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECSwipeGestureRecognizer.h; sourceTree = "<group>"; };
 		B7170B761428EB2400DF7794 /* ECSwipeGestureRecognizer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECSwipeGestureRecognizer.m; sourceTree = "<group>"; };
 		B7170B771428EB2400DF7794 /* ECTabBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECTabBar.h; sourceTree = "<group>"; };
-		B7170B781428EB2400DF7794 /* ECTabBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECTabBar.m; sourceTree = "<group>"; };
+		B7170B781428EB2400DF7794 /* ECTabBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ECTabBar.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		B7170B791428EB2400DF7794 /* ECTextPosition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECTextPosition.h; sourceTree = "<group>"; };
 		B7170B7A1428EB2500DF7794 /* ECTextPosition.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECTextPosition.m; sourceTree = "<group>"; };
 		B7170B7B1428EB2500DF7794 /* ECTextRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECTextRange.h; sourceTree = "<group>"; };
@@ -371,11 +371,11 @@
 		B7170B7F1428EB2500DF7794 /* ECTextStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECTextStyle.h; sourceTree = "<group>"; };
 		B7170B801428EB2500DF7794 /* ECTextStyle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECTextStyle.m; sourceTree = "<group>"; };
 		B7170B811428EB2500DF7794 /* UIControl+BlockAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIControl+BlockAction.h"; sourceTree = "<group>"; };
-		B7170B821428EB2500DF7794 /* UIControl+BlockAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIControl+BlockAction.m"; sourceTree = "<group>"; };
+		B7170B821428EB2500DF7794 /* UIControl+BlockAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = "UIControl+BlockAction.m"; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		B7170B831428EB2500DF7794 /* UIImage+BlockDrawing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+BlockDrawing.h"; sourceTree = "<group>"; };
-		B7170B841428EB2500DF7794 /* UIImage+BlockDrawing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+BlockDrawing.m"; sourceTree = "<group>"; };
+		B7170B841428EB2500DF7794 /* UIImage+BlockDrawing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = "UIImage+BlockDrawing.m"; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		B7170B871428EB2500DF7794 /* UIView+ReuseIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+ReuseIdentifier.h"; sourceTree = "<group>"; };
-		B7170B881428EB2500DF7794 /* UIView+ReuseIdentifier.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+ReuseIdentifier.m"; sourceTree = "<group>"; };
+		B7170B881428EB2500DF7794 /* UIView+ReuseIdentifier.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = "UIView+ReuseIdentifier.m"; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		B7170BC61428ECC200DF7794 /* ECFoundation.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = ECFoundation.xcodeproj; sourceTree = "<group>"; };
 		B7170BD51428F00800DF7794 /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
 		B7170BD61428F00800DF7794 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
@@ -387,11 +387,11 @@
 		CD0DDA2114293E7300FE8B5B /* ECSplitViewControllerTest-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ECSplitViewControllerTest-Prefix.pch"; sourceTree = "<group>"; };
 		CD0DDA2214293E7300FE8B5B /* ECSplitViewControllerTest_AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ECSplitViewControllerTest_AppDelegate.h; sourceTree = "<group>"; };
 		CD0DDA2314293E7300FE8B5B /* ECSplitViewControllerTest_AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ECSplitViewControllerTest_AppDelegate.m; sourceTree = "<group>"; };
-		CD0DDA2F1429426B00FE8B5B /* ECSplitViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECSplitViewController.h; sourceTree = "<group>"; };
-		CD0DDA301429426B00FE8B5B /* ECSplitViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECSplitViewController.m; sourceTree = "<group>"; };
-		CD0DDA34142949DB00FE8B5B /* ECSplitViewControllerTest_Window.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ECSplitViewControllerTest_Window.xib; sourceTree = "<group>"; };
-		CD0DDA36142A028800FE8B5B /* ECBlockView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECBlockView.h; sourceTree = "<group>"; };
-		CD0DDA37142A028800FE8B5B /* ECBlockView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECBlockView.m; sourceTree = "<group>"; };
+		CD2A5FC8142A4A7E00A2CACD /* ECSplitViewControllerTest_Window.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ECSplitViewControllerTest_Window.xib; sourceTree = "<group>"; };
+		CD2A5FCB142A4A9900A2CACD /* ECSplitViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECSplitViewController.h; sourceTree = "<group>"; };
+		CD2A5FCC142A4A9900A2CACD /* ECSplitViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECSplitViewController.m; sourceTree = "<group>"; };
+		CD2A5FD1142A4AA500A2CACD /* ECBlockView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECBlockView.h; sourceTree = "<group>"; };
+		CD2A5FD2142A4AA500A2CACD /* ECBlockView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECBlockView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -402,7 +402,6 @@
 				B7170BE61428F1A800DF7794 /* CoreGraphics.framework in Frameworks */,
 				B7170BD71428F00800DF7794 /* CoreText.framework in Frameworks */,
 				B7170BD81428F00800DF7794 /* QuartzCore.framework in Frameworks */,
-				B7170BD41428EE2000DF7794 /* libECFoundation.a in Frameworks */,
 				B71709DD1428E68A00DF7794 /* UIKit.framework in Frameworks */,
 				B71709B01428E3CD00DF7794 /* Foundation.framework in Frameworks */,
 			);
@@ -426,7 +425,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CD0DDA3D142A146D00FE8B5B /* QuartzCore.framework in Frameworks */,
+				CDC7C952142A4ADD00FCF269 /* QuartzCore.framework in Frameworks */,
 				CD0DDA1614293E7300FE8B5B /* UIKit.framework in Frameworks */,
 				CD0DDA1714293E7300FE8B5B /* Foundation.framework in Frameworks */,
 				CD0DDA1814293E7300FE8B5B /* CoreGraphics.framework in Frameworks */,
@@ -482,7 +481,7 @@
 				CD0DD9E1142918D300FE8B5B /* Tab Bar */,
 				CD0DD9E2142918EE00FE8B5B /* Bezel Alert */,
 				CD0DD9E31429193400FE8B5B /* Code View */,
-				CD0DDA2E1429423F00FE8B5B /* Split View */,
+				CD2A5FCA142A4A8400A2CACD /* Split View */,
 			);
 			path = ECUIKit;
 			sourceTree = "<group>";
@@ -774,6 +773,8 @@
 		CD0DD9E71429198900FE8B5B /* UIKit Additions */ = {
 			isa = PBXGroup;
 			children = (
+				CD2A5FD1142A4AA500A2CACD /* ECBlockView.h */,
+				CD2A5FD2142A4AA500A2CACD /* ECBlockView.m */,
 				B7170B6D1428EB2400DF7794 /* ECRectSet.h */,
 				B7170B6E1428EB2400DF7794 /* ECRectSet.m */,
 				B7170B811428EB2500DF7794 /* UIControl+BlockAction.h */,
@@ -782,8 +783,6 @@
 				B7170B841428EB2500DF7794 /* UIImage+BlockDrawing.m */,
 				B7170B871428EB2500DF7794 /* UIView+ReuseIdentifier.h */,
 				B7170B881428EB2500DF7794 /* UIView+ReuseIdentifier.m */,
-				CD0DDA36142A028800FE8B5B /* ECBlockView.h */,
-				CD0DDA37142A028800FE8B5B /* ECBlockView.m */,
 			);
 			name = "UIKit Additions";
 			sourceTree = "<group>";
@@ -801,9 +800,9 @@
 		CD0DDA1914293E7300FE8B5B /* ECSplitViewControllerTest */ = {
 			isa = PBXGroup;
 			children = (
+				CD2A5FC8142A4A7E00A2CACD /* ECSplitViewControllerTest_Window.xib */,
 				CD0DDA2214293E7300FE8B5B /* ECSplitViewControllerTest_AppDelegate.h */,
 				CD0DDA2314293E7300FE8B5B /* ECSplitViewControllerTest_AppDelegate.m */,
-				CD0DDA34142949DB00FE8B5B /* ECSplitViewControllerTest_Window.xib */,
 				CD0DDA1A14293E7300FE8B5B /* Supporting Files */,
 			);
 			path = ECSplitViewControllerTest;
@@ -820,11 +819,11 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		CD0DDA2E1429423F00FE8B5B /* Split View */ = {
+		CD2A5FCA142A4A8400A2CACD /* Split View */ = {
 			isa = PBXGroup;
 			children = (
-				CD0DDA2F1429426B00FE8B5B /* ECSplitViewController.h */,
-				CD0DDA301429426B00FE8B5B /* ECSplitViewController.m */,
+				CD2A5FCB142A4A9900A2CACD /* ECSplitViewController.h */,
+				CD2A5FCC142A4A9900A2CACD /* ECSplitViewController.m */,
 			);
 			name = "Split View";
 			sourceTree = "<group>";
@@ -856,8 +855,8 @@
 				B7170BBB1428EB2500DF7794 /* UIImage+BlockDrawing.h in Headers */,
 				B7170BBF1428EB2500DF7794 /* UIView+ReuseIdentifier.h in Headers */,
 				B71709DB1428E64F00DF7794 /* ECDebug.h in Headers */,
-				CD0DDA311429426B00FE8B5B /* ECSplitViewController.h in Headers */,
-				CD0DDA38142A028800FE8B5B /* ECBlockView.h in Headers */,
+				CD2A5FCD142A4A9900A2CACD /* ECSplitViewController.h in Headers */,
+				CD2A5FD3142A4AA500A2CACD /* ECBlockView.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -982,7 +981,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CD0DDA1E14293E7300FE8B5B /* InfoPlist.strings in Resources */,
-				CD0DDA35142949DB00FE8B5B /* ECSplitViewControllerTest_Window.xib in Resources */,
+				CD2A5FC9142A4A7E00A2CACD /* ECSplitViewControllerTest_Window.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1028,8 +1027,8 @@
 				B7170BBA1428EB2500DF7794 /* UIControl+BlockAction.m in Sources */,
 				B7170BBC1428EB2500DF7794 /* UIImage+BlockDrawing.m in Sources */,
 				B7170BC01428EB2500DF7794 /* UIView+ReuseIdentifier.m in Sources */,
-				CD0DDA321429426B00FE8B5B /* ECSplitViewController.m in Sources */,
-				CD0DDA39142A028800FE8B5B /* ECBlockView.m in Sources */,
+				CD2A5FCE142A4A9900A2CACD /* ECSplitViewController.m in Sources */,
+				CD2A5FD4142A4AA500A2CACD /* ECBlockView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1105,7 +1104,8 @@
 				B7170B1E1428E6A300DF7794 /* NSObject+KiwiStubAdditions.m in Sources */,
 				B7170B1F1428E6A300DF7794 /* NSObject+KiwiVerifierAdditions.m in Sources */,
 				B7170B201428E6A300DF7794 /* NSValue+KiwiAdditions.m in Sources */,
-				CD0DDA3A142A028800FE8B5B /* ECBlockView.m in Sources */,
+				CD2A5FCF142A4A9900A2CACD /* ECSplitViewController.m in Sources */,
+				CD2A5FD5142A4AA500A2CACD /* ECBlockView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1115,9 +1115,9 @@
 			files = (
 				CD0DDA2014293E7300FE8B5B /* main.m in Sources */,
 				CD0DDA2414293E7300FE8B5B /* ECSplitViewControllerTest_AppDelegate.m in Sources */,
-				CD0DDA331429426B00FE8B5B /* ECSplitViewController.m in Sources */,
-				CD0DDA3B142A028800FE8B5B /* ECBlockView.m in Sources */,
-				CD0DDA3C142A145600FE8B5B /* ECRoundedContentCornersView.m in Sources */,
+				CD2A5FD0142A4A9900A2CACD /* ECSplitViewController.m in Sources */,
+				CD2A5FD6142A4AA500A2CACD /* ECBlockView.m in Sources */,
+				CDC7C953142A4B3300FCF269 /* ECRoundedContentCornersView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1204,6 +1204,7 @@
 				DSTROOT = /tmp/ECUIKit.dst;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ECUIKit/ECUIKit-Prefix.pch";
+				GCC_STRICT_ALIASING = YES;
 				HEADER_SEARCH_PATHS = "${BUILD_DIR}/${CONFIGURATION}$(EFFECTIVE_PLATFORM_NAME)/usr/local/include/";
 				LIBRARY_SEARCH_PATHS = "${BUILD_DIR}/";
 				OTHER_LDFLAGS = "-ObjC";
@@ -1220,6 +1221,7 @@
 				DSTROOT = /tmp/ECUIKit.dst;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ECUIKit/ECUIKit-Prefix.pch";
+				GCC_STRICT_ALIASING = YES;
 				HEADER_SEARCH_PATHS = "${BUILD_DIR}/${CONFIGURATION}$(EFFECTIVE_PLATFORM_NAME)/usr/local/include/";
 				LIBRARY_SEARCH_PATHS = "${BUILD_DIR}/";
 				OTHER_LDFLAGS = "-ObjC";

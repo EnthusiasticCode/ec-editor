@@ -8,8 +8,8 @@
 
 #import "AppStyle.h"
 #import "ACTabNavigationController.h"
-#import "ECSwipeGestureRecognizer.h"
-#import "UIView+ReuseIdentifier.h"
+#import <ECUIKit/ECSwipeGestureRecognizer.h>
+#import <ECUIKit/UIView+ReuseIdentifier.h>
 
 #import "ACTabButton.h"
 #import "ACTab.h"

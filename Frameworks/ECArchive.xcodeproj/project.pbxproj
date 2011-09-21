@@ -789,12 +789,15 @@
 				DSTROOT = /tmp/ECArchive.dst;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ECArchive/ECArchive-Prefix.pch";
+				GCC_STRICT_ALIASING = YES;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../ThirdParty/libarchive\"",
 				);
 				OTHER_LDFLAGS = "-ObjC";
+				PRIVATE_HEADERS_FOLDER_PATH = /usr/local/include/ECArchive;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PUBLIC_HEADERS_FOLDER_PATH = /usr/local/include/ECArchive;
 				SKIP_INSTALL = YES;
 			};
 			name = Debug;
@@ -805,12 +808,15 @@
 				DSTROOT = /tmp/ECArchive.dst;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ECArchive/ECArchive-Prefix.pch";
+				GCC_STRICT_ALIASING = YES;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../ThirdParty/libarchive\"",
 				);
 				OTHER_LDFLAGS = "-ObjC";
+				PRIVATE_HEADERS_FOLDER_PATH = /usr/local/include/ECArchive;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PUBLIC_HEADERS_FOLDER_PATH = /usr/local/include/ECArchive;
 				SKIP_INSTALL = YES;
 			};
 			name = Release;
