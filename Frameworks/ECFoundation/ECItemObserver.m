@@ -89,6 +89,8 @@
 {
     if ([self.delegate respondsToSelector:@selector(itemObserver:accommodateObservedItemDeletionWithCompletionHandler:)])
         [self.delegate itemObserver:self accommodateObservedItemDeletionWithCompletionHandler:completionHandler];
+    else
+        completionHandler(nil);
 }
 
 @end
