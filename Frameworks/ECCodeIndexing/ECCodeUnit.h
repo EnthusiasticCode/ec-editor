@@ -35,9 +35,6 @@
 /// Returns tokens in the given range in the unit's main source file, attaching cursors if possible.
 - (NSArray *)tokensInRange:(NSRange)range withCursors:(BOOL)attachCursors;
 
-/// Returns all tokens in the unit's main source file, attacching cursors if possible.
-- (NSArray *)tokensWithCursors:(BOOL)attachCursors;
-
 /// Return the cursor for the unit.
 - (ECCodeCursor *)cursor;
 

@@ -7,7 +7,8 @@
 //
 
 #import "ECCodeUnit.h"
+#import <ECFoundation/ECItemObserver.h>
 
-@interface ECClangCodeUnit : ECCodeUnit
+@interface ECClangCodeUnit : ECCodeUnit <NSFilePresenter, ECItemObserverDelegate>
 
 @end
