@@ -50,7 +50,6 @@ static NSMutableOrderedSet *_extensionClasses;
 
 + (NSArray *)supportedLanguages
 {
-    NSLog(@"%@", _extensionClassesByLanguage);
     return [_extensionClassesByLanguage allKeys];
 }
 
@@ -64,6 +63,9 @@ static NSMutableOrderedSet *_extensionClasses;
 
 - (ECCodeUnit *)unitWithFileURL:(NSURL *)fileURL
 {
+    NSFileManager *fileManager = [[NSFileManager alloc] init];
+    if (![fileManager fileExistsAtPath:[fileURL path]])
+        return nil;
     float winningSupport = 0.0;
     Class winningExtensionClass;
     for (Class extensionClass in _extensionClasses)
@@ -82,6 +84,9 @@ static NSMutableOrderedSet *_extensionClasses;
 
 - (ECCodeUnit *)unitWithFileURL:(NSURL *)fileURL withLanguage:(NSString *)language
 {
+    NSFileManager *fileManager = [[NSFileManager alloc] init];
+    if (![fileManager fileExistsAtPath:[fileURL path]])
+        return nil;
     float winningSupport = 0.0;
     Class winningExtensionClass;
     for (Class extensionClass in [_extensionClassesByLanguage objectForKey:language])

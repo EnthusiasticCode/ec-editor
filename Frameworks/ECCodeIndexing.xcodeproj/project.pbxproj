@@ -222,6 +222,13 @@
 			remoteGlobalIDString = B71707541428D30500DF7794;
 			remoteInfo = ECFoundationTests;
 		};
+		B76B8E94142D31AB002ABBC8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B7170D3A1428FAF000DF7794 /* ECFoundation.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = B71707431428D30500DF7794;
+			remoteInfo = ECFoundation;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
@@ -1041,6 +1048,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				B76B8E95142D31AB002ABBC8 /* PBXTargetDependency */,
 			);
 			name = ECCodeIndexing;
 			productName = ECCodeIndexing;
@@ -1245,6 +1253,11 @@
 			isa = PBXTargetDependency;
 			target = B7170BF11428F65A00DF7794 /* ECCodeIndexing */;
 			targetProxy = B7170C081428F65B00DF7794 /* PBXContainerItemProxy */;
+		};
+		B76B8E95142D31AB002ABBC8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = ECFoundation;
+			targetProxy = B76B8E94142D31AB002ABBC8 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 

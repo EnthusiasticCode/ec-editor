@@ -65,8 +65,10 @@ static void inclusionVisitor(CXFile included_file, CXSourceLocation* inclusion_s
     return clang_getFile(self.translationUnit, [[self.fileURL path] fileSystemRepresentation]);
 }
 
-- (void)dealloc {
-    clang_disposeTranslationUnit(self.translationUnit);
+- (void)dealloc
+{
+    if (self.translationUnit)
+        clang_disposeTranslationUnit(self.translationUnit);
     if ([[NSFileCoordinator filePresenters] containsObject:self])
         [NSFileCoordinator removeFilePresenter:self];
 }
@@ -83,6 +85,8 @@ static void inclusionVisitor(CXFile included_file, CXSourceLocation* inclusion_s
     self.language = language;
     self.index = index;
     [self loadTranslationUnitForFileURL:fileURL];
+    if (!self.translationUnit)
+        return nil;
     return self;
 }
 
@@ -186,7 +190,7 @@ static void inclusionVisitor(CXFile included_file, CXSourceLocation* inclusion_s
         [NSFileCoordinator removeFilePresenter:self];
     if (!fileURL)
         return;
-    NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] init];
+    NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] initWithFilePresenter:self];
     __weak ECClangCodeUnit *this = self;
     [fileCoordinator coordinateReadingItemAtURL:fileURL options:NSFileCoordinatorReadingResolvesSymbolicLink error:NULL byAccessor:^(NSURL *newURL) {
         id lastModificationDate;
