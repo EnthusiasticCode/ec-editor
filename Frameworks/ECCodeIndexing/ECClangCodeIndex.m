@@ -9,10 +9,7 @@
 #import <clang-c/Index.h>
 #import "ECClangCodeIndex.h"
 #import "ECClangCodeUnit.h"
-
-@interface ECClangCodeIndex()
-@property (nonatomic) CXIndex index;
-@end
+#import "ECCodeIndexing+PrivateInitializers.h"
 
 @implementation ECClangCodeIndex
 
@@ -32,23 +29,40 @@
     return self;
 }
 
-- (NSDictionary *)languageToExtensionMap
++ (void)load
 {
-    NSArray *languages = [NSArray arrayWithObjects:@"C", @"Objective C", @"C++", @"Objective C++", nil];
-    NSArray *extensionForLanguages = [NSArray arrayWithObjects:@"c", @"m", @"cc", @"mm", nil];
-    return [NSDictionary dictionaryWithObjects:extensionForLanguages forKeys:languages];
+    [ECCodeIndex registerExtension:self];
 }
 
-- (NSDictionary *)extensionToLanguageMap
++ (void)registerExtension:(Class)extensionClass
 {
-    NSArray *extensions = [NSArray arrayWithObjects:@"c", @"m", @"cc", @"mm", @"h", nil];
-    NSArray *languageForextensions = [NSArray arrayWithObjects:@"C", @"Objective C", @"C++", @"Objective C++", @"C", nil];
-    return [NSDictionary dictionaryWithObjects:languageForextensions forKeys:extensions];
+    ECASSERT(NO); // ECClangCodeIndex does not support extensions at the moment
 }
 
-- (id<ECCodeUnitPlugin>)unitPluginForFile:(NSString *)file withLanguage:(NSString *)language
++ (NSArray *)supportedLanguages
 {
-    return [ECClangCodeUnit unitForFile:file index:self.index language:language];
+    return [NSArray arrayWithObjects:@"C", @"Objective C", @"C++", @"Objective C++", nil];
+}
+
++ (float)supportForFile:(NSURL *)fileURL
+{
+    ECASSERT([fileURL isFileURL]);
+    NSString *fileExtension = [fileURL pathExtension];
+    NSArray *supportedFileExtensions = [NSArray arrayWithObjects:@"h", @"c", @"cc", @"m", @"mm", nil];
+    for (NSString *supportedExtension in supportedFileExtensions)
+        if ([fileExtension isEqualToString:supportedExtension])
+            return 1.0;
+    return 0.0;
+}
+
+- (ECCodeUnit *)unitWithFileURL:(NSURL *)fileURL
+{
+    return [self unitWithFileURL:fileURL withLanguage:nil];
+}
+
+- (ECCodeUnit *)unitWithFileURL:(NSURL *)fileURL withLanguage:(NSString *)language
+{
+    return [[ECClangCodeUnit alloc] initWithIndex:self fileURL:fileURL language:language];
 }
 
 @end

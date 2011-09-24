@@ -9,31 +9,24 @@
 #import <Foundation/Foundation.h>
 @class ECCodeUnit;
 
-/// Protocol objects passed as files to track must conform to.
-@protocol ECCodeIndexingFileObserving
-@property (nonatomic, strong) NSString *file;
-@property (nonatomic, strong) NSString *unsavedContent;
-@end
-
 /// Class that encapsulates interaction with parsing and indexing libraries to provide language related non file specific functionality such as symbol resolution and refactoring.
 @interface ECCodeIndex : NSObject
-/// Returns a dictionary with languages for keys, and their default associated file extension as values.
-- (NSDictionary *)languageToExtensionMap;
-/// Returns a dictionary with file extensions for keys, and the languages they are usually associated to.
-- (NSDictionary *)extensionToLanguageMap;
-/// Returns the language associated to the given file extension.
-- (NSString *)languageForExtension:(NSString *)extension;
-/// Returns the default file extension for a file of the given language.
-- (NSString *)extensionForLanguage:(NSString *)language;
-/// Returns a set containing all files currently being observed by the code index.
-- (NSArray *)observedFiles;
-/// Attempts to add KVO observers to the given file to track changes to it.
-/// If a file with the same file is already being tracked, returns NO. No observers are added to the file in that case.
-- (BOOL)addObserversToFile:(NSObject<ECCodeIndexingFileObserving> *)fileObject;
-/// Removes all previously added KVO observers from the given file.
-- (void)removeObserversFromFile:(NSObject<ECCodeIndexingFileObserving> *)fileObject;
+
+/// Registers a subclass as an extension of the receiver
++ (void)registerExtension:(Class)extensionClass;
+
+/// Returns an array of NSString identifying the languages an index can support
++ (NSArray *)supportedLanguages;
+
+/// Returns from 0.0 to 1.0 how extensively an index supports the given file
++ (float)supportForFile:(NSURL *)fileURL;
+
+/// Create code units for files.
+/// The code units will track changes to the file and related files automatically through NSFileCoordination.
+
 /// Returns a code unit for the given file, with the given language.
-- (ECCodeUnit *)unitForFile:(NSString *)file withLanguage:(NSString *)language;
-/// Returns a code unit for the given file, with the default language as detected from the file.
-- (ECCodeUnit *)unitForFile:(NSString *)file;
+- (ECCodeUnit *)unitWithFileURL:(NSURL *)fileURL withLanguage:(NSString *)language;
+/// Returns a code unit for the given file, with the automatically detected language.
+- (ECCodeUnit *)unitWithFileURL:(NSURL *)fileURL;
+
 @end

@@ -21,8 +21,9 @@
 
 @synthesize language = _language;
 @synthesize kind = _kind;
+@synthesize kindCategory = _kindCategory;
 @synthesize spelling = _spelling;
-@synthesize file = _file;
+@synthesize fileURL = _fileURL;
 @synthesize offset = _offset;
 @synthesize extent = _extent;
 @synthesize unifiedSymbolResolution = _unifiedSymbolResolution;
@@ -89,9 +90,11 @@
     _cursor = clangCursor;
     _hash = [self computeHash];
     _kind = (ECCodeCursorKind)clang_getCursorKind(_cursor);
-    NSString *file;
-    ECCodeOffsetAndFileFromClangSourceLocation(clang_getCursorLocation(_cursor), &_offset, &file);
-    _file = file;
+    _kindCategory = ECCodeCursorKindCategoryFromClangKind(_kind);
+    NSString *filePath;
+    ECCodeOffsetAndFileFromClangSourceLocation(clang_getCursorLocation(_cursor), &_offset, &filePath);
+    if (filePath)
+        _fileURL = [NSURL fileURLWithPath:filePath];
     ECCodeRangeAndFileFromClangSourceRange(clang_getCursorExtent(_cursor), &_extent, NULL);
     return self;
 }
@@ -131,9 +134,9 @@
     return YES;
 }
 
-- (NSOrderedSet *)childCursors
+- (NSArray *)childCursors
 {
-    NSMutableOrderedSet *childCursors = [NSMutableOrderedSet orderedSet];
+    NSMutableArray *childCursors = [NSMutableArray array];
     [self enumerateChildCursorsWithBlock:^ECCodeChildVisitResult(ECCodeCursor *cursor, ECCodeCursor *parent) {
         [childCursors addObject:cursor];
         return ECCodeChildVisitResultContinue;

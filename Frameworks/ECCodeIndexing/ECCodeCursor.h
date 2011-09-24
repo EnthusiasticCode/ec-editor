@@ -290,6 +290,12 @@ typedef enum
     ECCodeCursorKindLastPreprocessing             = ECCodeCursorKindInclusionDirective
 } ECCodeCursorKind;
 
+
+typedef enum
+{
+    ECCodeCursorKindCategoryUnknown,
+} ECCodeCursorKindCategory;
+
 typedef enum
 {
     ECCodeChildVisitResultBreak,
@@ -299,17 +305,20 @@ typedef enum
 
 @interface ECCodeCursor : NSObject
 
-/// Hints on the language that this cursor is in.
+/// The language that this cursor is in.
 @property (nonatomic, readonly, copy) NSString *language;
 
 /// Kind of cursor.
 @property (nonatomic, readonly) ECCodeCursorKind kind;
 
+/// The category the kind of the cursor falls in.
+@property (nonatomic, readonly) ECCodeCursorKindCategory kindCategory;
+
 /// Spelling of the symbol.
 @property (nonatomic, readonly, copy) NSString *spelling;
 
 /// Path of the file the cursor is in.
-@property (nonatomic, readonly, copy) NSString *file;
+@property (nonatomic, readonly, strong) NSURL *fileURL;
 
 /// Offset in the file content at which the cursor is found.
 @property (nonatomic, readonly) NSUInteger offset;
@@ -325,7 +334,7 @@ typedef enum
 
 /// Creates and returns an ordered set containing the child cursors of the receiver
 /// This method is very resource intensive, consider using visitChildCursorsWithBlock: instead
-- (NSOrderedSet *)childCursors;
+- (NSArray *)childCursors;
 
 /// Enumerate the child cursors of the receiver
 /// The block return value specified whether enumeration should stop, continue by enumerating the current cursor's siblings, or continue by enumerating it's child cursors

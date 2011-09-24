@@ -28,11 +28,11 @@
 
 - (void)loadCodeUnitWithCompletionHandler:(void (^)(BOOL))completionHandler
 {
-    dispatch_async(dispatch_get_main_queue(), ^{
+//    dispatch_async(dispatch_get_main_queue(), ^{
         ECCodeIndex *index = [[ECCodeIndex alloc] init];
-        self.codeUnit = [index unitForFile:[self.fileURL path]];
+        self.codeUnit = [index unitWithFileURL:self.fileURL];
         completionHandler(true);
-    });
+//    });
 }
 
 @end

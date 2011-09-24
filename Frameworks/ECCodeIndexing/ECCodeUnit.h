@@ -17,35 +17,23 @@
 /// The code index that generated the code unit.
 @property (nonatomic, readonly, strong) ECCodeIndex *index;
 
-/// The file of the file the unit is attached to.
-@property (nonatomic, readonly, strong) NSString *file;
+/// The main source file the unit is interpreting.
+@property (nonatomic, readonly, strong) NSURL *fileURL;
 
-/// The language the unit is using to interpret the file's contents.
+/// The language the unit is using to interpret the main source file's contents.
 @property (nonatomic, readonly, strong) NSString *language;
 
-/// Whether or not the files the units is depending on have unsaved content.
-@property (nonatomic, readonly) BOOL filesHaveUnsavedContent;
+/// Returns the possible completions at a given insertion point in the unit's main source file.
+- (NSArray *)completionsAtOffset:(NSUInteger)offset;
 
-/// Returns whether the unit depends on the file at the given file or not.
-- (BOOL)isDependentOnFile:(NSString *)file;
-
-/// Force the code unit to reparse all files.
-- (void)setNeedsReparse;
-
-/// Returns the possible completions at a given insertion range.
-- (NSArray *)completionsWithSelection:(NSRange)selection;
-
-/// Returns warnings and errors.
+/// Returns warnings and errors in the unit's main source file.
 - (NSArray *)diagnostics;
 
-/// Returns fixits.
+/// Returns fixits in the unit's main source file.
 - (NSArray *)fixIts;
 
-/// Returns tokens in the given range.
+/// Returns tokens in the given range in the unit's main source file, attaching cursors if possible.
 - (NSArray *)tokensInRange:(NSRange)range withCursors:(BOOL)attachCursors;
-
-/// Returns all tokens in the file.
-- (NSArray *)tokensWithCursors:(BOOL)attachCursors;
 
 /// Return the cursor for the unit.
 - (ECCodeCursor *)cursor;

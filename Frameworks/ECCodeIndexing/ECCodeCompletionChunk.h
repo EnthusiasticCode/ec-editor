@@ -36,7 +36,4 @@ typedef enum
 @property (nonatomic, readonly) ECCodeCompletionChunkKind kind;
 @property (nonatomic, readonly, copy) NSString *string;
 
-- (id)initWithKind:(ECCodeCompletionChunkKind)kind string:(NSString *)string;
-+ (id)chunkWithKind:(ECCodeCompletionChunkKind)kind string:(NSString *)string;
-
 @end

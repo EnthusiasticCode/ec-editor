@@ -8,7 +8,7 @@
 
 #import "ECCodeCompletionResult.h"
 #import <ECFoundation/ECHashing.h>
-#import "ECCodeCompletionString.h"
+#import "ECCodeIndexing+PrivateInitializers.h"
 
 @interface ECCodeCompletionResult ()
 {
@@ -29,17 +29,10 @@
     if (self)
     {
         _cursorKind = cursorKind;
-        _completionString = [completionString copy];
+        _completionString = completionString;
         _hash = [self computeHash];
     }
     return self;
-}
-
-+ (id)resultWithCursorKind:(ECCodeCursorKind)cursorKind completionString:(ECCodeCompletionString *)completionString
-{
-    id result = [self alloc];
-    result = [result initWithCursorKind:cursorKind completionString:completionString];
-    return result;
 }
 
 - (id)copyWithZone:(NSZone *)zone

@@ -6,14 +6,9 @@
 //  Copyright 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
-#import "ECCodeUnitPlugin.h"
-#import <clang-c/Index.h>
+#import "ECCodeUnit.h"
+#import <ECFoundation/ECItemObserver.h>
 
-extern NSString *const ECClangCodeUnitOptionLanguage;
-extern NSString *const ECClangCodeUnitOptionCXIndex;
+@interface ECClangCodeUnit : ECCodeUnit <NSFilePresenter, ECItemObserverDelegate>
 
-@interface ECClangCodeUnit : NSObject <ECCodeUnitPlugin>
-- (id)initWithFile:(NSString *)file index:(CXIndex)index language:(NSString *)language;
-+ (id)unitForFile:(NSString *)file index:(CXIndex)index language:(NSString *)language;
 @end

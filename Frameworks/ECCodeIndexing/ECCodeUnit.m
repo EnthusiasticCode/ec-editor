@@ -7,158 +7,46 @@
 //
 
 #import "ECCodeUnit.h"
-#import "ECCodeIndex(Private).h"
-#import "ECCodeUnit(Private).h"
-
-@interface ECCodeUnit ()
-{
-    @private
-    id<ECCodeUnitPlugin> plugin_;
-    NSMutableDictionary *filePointers_;
-}
-@property (nonatomic) BOOL filesHaveUnsavedContent;
-@end
 
 @implementation ECCodeUnit
 
-@synthesize index = index_;
-@synthesize file = file_;
-@synthesize language = language_;
-@synthesize filesHaveUnsavedContent = filesHaveUnsavedContent_;
+@dynamic index;
+@dynamic fileURL;
+@dynamic language;
 
-- (void)dealloc
+- (NSArray *)completionsAtOffset:(NSUInteger)offset
 {
-    for (NSObject<ECCodeIndexingFileObserving> *fileObject in [filePointers_ allValues])
-    {
-        [self removeObserversFromFile:fileObject];
-    }
-    [self.index removeTranslationUnitForFile:self.file];
-}
-
-- (id)initWithIndex:(ECCodeIndex *)index file:(NSString *)file language:(NSString *)language plugin:(id<ECCodeUnitPlugin>)plugin
-{
-    self = [super init];
-    if (!self)
-        return nil;
-    if (!plugin || !language || !file || !index)
-    {
-        return nil;
-    }
-    index_ = index;
-    file_ = [file copy];
-    language_ = [language copy];
-    plugin_ = plugin;
-    filePointers_ = [NSMutableDictionary dictionary];
-    return self;
-}
-
-+ (id)unitWithIndex:(ECCodeIndex *)index file:(NSString *)file language:(NSString *)language plugin:(id<ECCodeUnitPlugin>)plugin
-{
-    id codeUnit = [self alloc];
-    codeUnit = [codeUnit initWithIndex:index file:file language:language plugin:plugin];
-    return codeUnit;
-}
-
-- (BOOL)isDependentOnFile:(NSString *)file
-{
-    return [plugin_ isDependentOnFile:file];
-}
-
-- (void)setNeedsReparse
-{
-    self.filesHaveUnsavedContent = YES;
-}
-
-- (NSArray *)completionsWithSelection:(NSRange)selection
-{
-    if (![plugin_ respondsToSelector:@selector(completionsWithSelection:)])
-        return nil;
-    if (self.filesHaveUnsavedContent)
-        [plugin_ reparseDependentFiles:[self observedFiles]];
-    return [plugin_ completionsWithSelection:selection];
+    return nil;
 }
 
 - (NSArray *)diagnostics
 {
-    if (![plugin_ respondsToSelector:@selector(diagnostics)])
-        return nil;
-    if (self.filesHaveUnsavedContent)
-        [plugin_ reparseDependentFiles:[self observedFiles]];
-    return [plugin_ diagnostics];
+    return nil;
 }
 
 - (NSArray *)fixIts
 {
-    if (![plugin_ respondsToSelector:@selector(fixIts)])
-        return nil;
-    if (self.filesHaveUnsavedContent)
-        [plugin_ reparseDependentFiles:[self observedFiles]];
-    return [plugin_ fixIts];
+    return nil;
 }
 
 - (NSArray *)tokensInRange:(NSRange)range withCursors:(BOOL)attachCursors
 {
-    if (![plugin_ respondsToSelector:@selector(tokensInRange:withCursors:)])
-        return nil;
-    if (self.filesHaveUnsavedContent)
-        [plugin_ reparseDependentFiles:[self observedFiles]];
-    return [plugin_ tokensInRange:range withCursors:attachCursors];
+    return nil;
 }
 
 - (NSArray *)tokensWithCursors:(BOOL)attachCursors
 {
-    if (![plugin_ respondsToSelector:@selector(tokensWithCursors:)])
-        return nil;
-    if (self.filesHaveUnsavedContent)
-        [plugin_ reparseDependentFiles:[self observedFiles]];
-    return [plugin_ tokensWithCursors:attachCursors];
+    return nil;
 }
 
 - (ECCodeCursor *)cursor
 {
-    if (![plugin_ respondsToSelector:@selector(cursor)])
-        return nil;
-    if (self.filesHaveUnsavedContent)
-        [plugin_ reparseDependentFiles:[self observedFiles]];
-    return [plugin_ cursor];
+    return nil;
 }
 
 - (ECCodeCursor *)cursorForOffset:(NSUInteger)offset
 {
-    if (![plugin_ respondsToSelector:@selector(cursorForOffset:)])
-        return nil;
-    if (self.filesHaveUnsavedContent)
-        [plugin_ reparseDependentFiles:[self observedFiles]];
-    return [plugin_ cursorForOffset:offset];
-}
-
-- (NSArray *)observedFiles
-{
-    NSMutableArray *observedFiles = [NSMutableArray arrayWithCapacity:[filePointers_ count]];
-    for (NSValue *pointerWrapper in [filePointers_ allValues])
-        [observedFiles addObject:[pointerWrapper nonretainedObjectValue]];
-    return observedFiles;
-}
-
-- (BOOL)addObserversToFile:(NSObject<ECCodeIndexingFileObserving> *)fileObject
-{
-    NSString *file = fileObject.file;
-    if (![self isDependentOnFile:file])
-        return NO;
-    [filePointers_ setObject:[NSValue valueWithNonretainedObject:fileObject] forKey:file];
-    [file addObserver:self forKeyPath:@"unsavedContent" options:0 context:NULL];
-    return YES;
-}
-
-- (void)removeObserversFromFile:(NSObject<ECCodeIndexingFileObserving> *)fileObject
-{
-    [filePointers_ removeObjectForKey:fileObject.file];
-    [fileObject removeObserver:self forKeyPath:@"unsavedContent"];
-}
-
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
-{
-    self.filesHaveUnsavedContent = YES;
+    return nil;
 }
 
 @end

@@ -7,21 +7,20 @@
 //
 
 #import "ECCodeCursor.h"
-#import "ECCodeUnit.h"
-#import <ECFoundation/ECHashing.h>
 
 @implementation ECCodeCursor
 
 @dynamic language;
 @dynamic kind;
+@dynamic kindCategory;
 @dynamic spelling;
-@dynamic file;
+@dynamic fileURL;
 @dynamic offset;
 @dynamic extent;
 @dynamic unifiedSymbolResolution;
 @dynamic parent;
 
-- (NSOrderedSet *)childCursors
+- (NSArray *)childCursors
 {
     return nil;
 }

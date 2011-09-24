@@ -10,7 +10,7 @@
 #import "ACProject.h"
 #import "ACFile.h"
 #import "ACProjectDocument.h"
-#import "ECArchive.h"
+#import <ECArchive/ECArchive.h>
 #import <ECFoundation/NSURL+ECAdditions.h>
 #import "ACURL.h"
 

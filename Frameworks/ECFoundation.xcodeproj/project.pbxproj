@@ -93,6 +93,8 @@
 		B71709981428D7AD00DF7794 /* NSObject+KiwiVerifierAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = B71709541428D7AD00DF7794 /* NSObject+KiwiVerifierAdditions.m */; };
 		B71709991428D7AD00DF7794 /* NSValue+KiwiAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = B71709561428D7AD00DF7794 /* NSValue+KiwiAdditions.m */; };
 		B717099B1428DDA300DF7794 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B717099A1428DDA200DF7794 /* UIKit.framework */; };
+		B7C9A841142BB046009D8FF3 /* ECItemObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = B7C9A83F142BB046009D8FF3 /* ECItemObserver.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B7C9A842142BB046009D8FF3 /* ECItemObserver.m in Sources */ = {isa = PBXBuildFile; fileRef = B7C9A840142BB046009D8FF3 /* ECItemObserver.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -277,6 +279,8 @@
 		B71709551428D7AD00DF7794 /* NSValue+KiwiAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSValue+KiwiAdditions.h"; sourceTree = "<group>"; };
 		B71709561428D7AD00DF7794 /* NSValue+KiwiAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSValue+KiwiAdditions.m"; sourceTree = "<group>"; };
 		B717099A1428DDA200DF7794 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		B7C9A83F142BB046009D8FF3 /* ECItemObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECItemObserver.h; sourceTree = "<group>"; };
+		B7C9A840142BB046009D8FF3 /* ECItemObserver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECItemObserver.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -335,9 +339,10 @@
 		B71707491428D30500DF7794 /* ECFoundation */ = {
 			isa = PBXGroup;
 			children = (
+				B7C9A83E142BAFF7009D8FF3 /* File Coordination */,
 				B71707901428D55700DF7794 /* Hashing */,
 				B71707911428D56600DF7794 /* Data Structures */,
-				B71707921428D58300DF7794 /* New Group */,
+				B71707921428D58300DF7794 /* Additions */,
 				B717074A1428D30500DF7794 /* Supporting Files */,
 			);
 			path = ECFoundation;
@@ -392,7 +397,7 @@
 			name = "Data Structures";
 			sourceTree = "<group>";
 		};
-		B71707921428D58300DF7794 /* New Group */ = {
+		B71707921428D58300DF7794 /* Additions */ = {
 			isa = PBXGroup;
 			children = (
 				B717077C1428D52F00DF7794 /* NSURL+ECAdditions.h */,
@@ -400,7 +405,7 @@
 				B71707801428D52F00DF7794 /* NSTimer+block.h */,
 				B71707811428D52F00DF7794 /* NSTimer+block.m */,
 			);
-			name = "New Group";
+			name = Additions;
 			sourceTree = "<group>";
 		};
 		B71708C01428D7AD00DF7794 /* Kiwi */ = {
@@ -561,6 +566,15 @@
 			path = ../ThirdParty/Kiwi/Kiwi;
 			sourceTree = "<group>";
 		};
+		B7C9A83E142BAFF7009D8FF3 /* File Coordination */ = {
+			isa = PBXGroup;
+			children = (
+				B7C9A83F142BB046009D8FF3 /* ECItemObserver.h */,
+				B7C9A840142BB046009D8FF3 /* ECItemObserver.m */,
+			);
+			name = "File Coordination";
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -570,6 +584,7 @@
 			files = (
 				B71707851428D52F00DF7794 /* ECHashing.h in Headers */,
 				B71707871428D52F00DF7794 /* ECPatriciaTrie.h in Headers */,
+				B7C9A841142BB046009D8FF3 /* ECItemObserver.h in Headers */,
 				B71707891428D52F00DF7794 /* NSURL+ECAdditions.h in Headers */,
 				B717078D1428D52F00DF7794 /* NSTimer+block.h in Headers */,
 				B71707751428D50000DF7794 /* ECDebug.h in Headers */,
@@ -680,6 +695,7 @@
 				B717078A1428D52F00DF7794 /* NSURL+ECAdditions.m in Sources */,
 				B717078B1428D52F00DF7794 /* MurmurHash3.c in Sources */,
 				B717078E1428D52F00DF7794 /* NSTimer+block.m in Sources */,
+				B7C9A842142BB046009D8FF3 /* ECItemObserver.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
