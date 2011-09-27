@@ -15,6 +15,7 @@
 
 @property (nonatomic, strong) NSOrderedSet *bookmarks;
 @property (nonatomic, strong) NSOrderedSet *tabs;
+@property (nonatomic, strong) NSOrderedSet *projects;
 
 - (void)insertTabAtIndex:(NSUInteger)index;
 - (void)removeTabAtIndex:(NSUInteger)index;
@@ -23,28 +24,14 @@
 - (void)moveTabsAtIndexes:(NSIndexSet *)indexes toIndex:(NSUInteger)index;
 - (void)exchangeTabsAtIndex:(NSUInteger)fromIndex withTabsAtIndex:(NSUInteger)toIndex;
 
-@end
+/// Reorder the projcets list
+- (void)moveProjectsAtIndexes:(NSIndexSet *)indexes toIndex:(NSUInteger)index;
+- (void)exchangeProjectAtIndex:(NSUInteger)fromIndex withProjectAtIndex:(NSUInteger)toIndex;
 
-@interface ACApplication (CoreDataGeneratedAccessors)
+/// Returns the object referenced by the URL or nil if the object could not be found does not exist
+- (id)objectWithURL:(NSURL *)URL;
 
-- (void)insertObject:(ACBookmark *)value inBookmarksAtIndex:(NSUInteger)idx;
-- (void)removeObjectFromBookmarksAtIndex:(NSUInteger)idx;
-- (void)insertBookmarks:(NSArray *)value atIndexes:(NSIndexSet *)indexes;
-- (void)removeBookmarksAtIndexes:(NSIndexSet *)indexes;
-- (void)replaceObjectInBookmarksAtIndex:(NSUInteger)idx withObject:(ACBookmark *)value;
-- (void)replaceBookmarksAtIndexes:(NSIndexSet *)indexes withBookmarks:(NSArray *)values;
-- (void)addBookmarksObject:(ACBookmark *)value;
-- (void)removeBookmarksObject:(ACBookmark *)value;
-- (void)addBookmarks:(NSOrderedSet *)values;
-- (void)removeBookmarks:(NSOrderedSet *)values;
-- (void)insertObject:(ACTab *)value inTabsAtIndex:(NSUInteger)idx;
-- (void)removeObjectFromTabsAtIndex:(NSUInteger)idx;
-- (void)insertTabs:(NSArray *)value atIndexes:(NSIndexSet *)indexes;
-- (void)removeTabsAtIndexes:(NSIndexSet *)indexes;
-- (void)replaceObjectInTabsAtIndex:(NSUInteger)idx withObject:(ACTab *)value;
-- (void)replaceTabsAtIndexes:(NSIndexSet *)indexes withTabs:(NSArray *)values;
-- (void)addTabsObject:(ACTab *)value;
-- (void)removeTabsObject:(ACTab *)value;
-- (void)addTabs:(NSOrderedSet *)values;
-- (void)removeTabs:(NSOrderedSet *)values;
+/// Deletes the object referenced by the URL
+- (void)deleteObjectWithURL:(NSURL *)URL;
+
 @end

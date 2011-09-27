@@ -10,12 +10,16 @@
 
 @implementation ACGroup
 
+@dynamic name;
+
 - (NSURL *)fileURL
 {
-    NSURL *fileURL = self.parent.fileURL;
-    if (self.concrete)
-        fileURL = [fileURL URLByAppendingPathComponent:self.name];
-    return fileURL;
+    return self.parent.fileURL;
+}
+
++ (NSSet *)keyPathsForValuesAffectingName
+{
+    return [NSSet setWithObject:@"parent.fileURL"];
 }
 
 @end

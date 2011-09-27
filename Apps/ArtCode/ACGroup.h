@@ -12,4 +12,6 @@
 
 @interface ACGroup : ACNode
 
+@property (nonatomic, strong) NSString *name;
+
 @end

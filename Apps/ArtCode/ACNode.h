@@ -13,7 +13,7 @@
 
 @interface ACNode : NSManagedObject
 
-@property (nonatomic, strong) NSString * name;
+@property (nonatomic, strong) NSURL *fileURL;
 @property (nonatomic) int16_t tag;
 @property (nonatomic) BOOL expanded;
 @property (nonatomic, strong) ACNode *parent;
@@ -23,18 +23,11 @@
 - (void)moveChildrenAtIndexes:(NSIndexSet *)indexes toIndex:(NSUInteger)index;
 - (void)exchangeChildAtIndex:(NSUInteger)fromIndex withChildAtIndex:(NSUInteger)toIndex;
 
-- (void)importFileFromURL:(NSURL *)fileURL;
-- (void)importFilesFromZIP:(NSURL *)ZIPFileURL;
-
-- (ACNode *)childWithName:(NSString *)name;
-
 - (ACGroup *)insertChildGroupWithName:(NSString *)name atIndex:(NSUInteger)index;
-- (ACFile *)insertChildFileWithName:(NSString *)name atIndex:(NSUInteger)index;
-
-@property (nonatomic, strong, readonly) NSURL *URL;
-@property (nonatomic, strong, readonly) NSURL *fileURL;
-@property (nonatomic, getter = isConcrete, readonly) BOOL concrete;
 
 - (NSString *)nodeType;
+
+@property (nonatomic, strong) NSURL *ACURL;
+@property (nonatomic, strong) NSString *name;
 
 @end

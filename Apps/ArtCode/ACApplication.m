@@ -15,6 +15,7 @@
 
 @dynamic bookmarks;
 @dynamic tabs;
+@dynamic projects;
 
 - (void)insertTabAtIndex:(NSUInteger)index
 {
@@ -36,6 +37,26 @@
 - (void)exchangeTabsAtIndex:(NSUInteger)fromIndex withTabsAtIndex:(NSUInteger)toIndex
 {
     [[self mutableOrderedSetValueForKey:@"tabs"] exchangeObjectAtIndex:fromIndex withObjectAtIndex:toIndex];
+}
+
+- (void)moveProjectsAtIndexes:(NSIndexSet *)indexes toIndex:(NSUInteger)index
+{
+    [[self mutableOrderedSetValueForKey:@"projects"] moveObjectsAtIndexes:indexes toIndex:index];
+}
+
+- (void)exchangeProjectAtIndex:(NSUInteger)fromIndex withProjectAtIndex:(NSUInteger)toIndex
+{
+    [[self mutableOrderedSetValueForKey:@"projects"] exchangeObjectAtIndex:fromIndex withObjectAtIndex:toIndex];
+}
+
+- (id)objectWithURL:(NSURL *)URL
+{
+    UNIMPLEMENTED();
+}
+
+- (void)deleteObjectWithURL:(NSURL *)URL
+{
+    UNIMPLEMENTED_VOID();
 }
 
 @end

@@ -25,7 +25,6 @@
 #import "ACCodeFileController.h"
 #import "ACEditableTableCell.h"
 
-#import "ACState.h"
 #import "ACNode.h"
 #import "ACApplication.h"
 #import "ACTab.h"
@@ -214,7 +213,7 @@
         controllerClass = [ACProjectTableController class];
     else
     {
-        ACNode *node = [[ACState sharedState] objectWithURL:url];
+        ACNode *node = [self.application objectWithURL:url];
         if ([[node nodeType] isEqualToString:@"Group"] || [[node nodeType] isEqualToString:@"Project"])
             controllerClass = [ACFileTableController class];
         else if ([[node nodeType] isEqualToString:@"File"])

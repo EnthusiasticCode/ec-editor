@@ -7,7 +7,6 @@
 //
 
 #import "AppStyle.h"
-#import "ACState.h"
 #import "ACFile.h"
 #import "ACCodeFileController.h"
 
@@ -90,25 +89,6 @@
     return [ACCodeFileController new];
 }
 
-- (void)openURL:(NSURL *)url
-{
-    // TODO handle error
-    ACFile *file = (ACFile *)[[ACState sharedState] objectWithURL:url];
-    
-    // TODO start loading animation
-    ACCodeIndexerDataSource *dataSource = (ACCodeIndexerDataSource *)self.codeView.datasource;
-    [file loadCodeUnitWithCompletionHandler:^(BOOL success) {
-        if (success)
-        {
-            dataSource.codeUnit = file.codeUnit;
-            [self.codeView updateAllText];
-        }
-        // TODO else report error
-    }];
-    
-    self.codeView.text = file.contentString;
-}
-
 - (BOOL)enableTabBar
 {
     return YES;
@@ -174,6 +154,19 @@
 - (void)loadView
 {
     self.view = self.codeView;
+    // TODO start loading animation
+    ACCodeIndexerDataSource *dataSource = (ACCodeIndexerDataSource *)self.codeView.datasource;
+    [self.file loadCodeUnitWithCompletionHandler:^(BOOL success) {
+        if (success)
+        {
+            dataSource.codeUnit = self.file.codeUnit;
+            [self.codeView updateAllText];
+        }
+        // TODO else report error
+    }];
+    
+    self.codeView.text = self.file.contentString;
+
 }
 
 - (void)viewDidUnload

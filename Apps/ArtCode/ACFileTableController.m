@@ -13,16 +13,15 @@
 
 #import "ACToolFiltersView.h"
 
-#import "ACState.h"
 #import "ACNode.h"
 #import "ACGroup.h"
 
 @implementation ACFileTableController {
     NSArray *extensions;
-    ACGroup *_displayedNode;
 }
 
 @synthesize tableView, editingToolsView;
+@synthesize group = _group;
 
 - (void)didReceiveMemoryWarning
 {
@@ -134,12 +133,6 @@
     return [[ACFileTableController alloc] initWithNibName:@"ACFileTableController" bundle:nil];
 }
 
-- (void)openURL:(NSURL *)url
-{
-    _displayedNode = (ACGroup *)[[ACState sharedState] objectWithURL:url];
-    [self.tableView reloadData];
-}
-
 - (BOOL)enableTabBar
 {
     return YES;
@@ -167,7 +160,7 @@
 {
     // Return the number of rows in the section.
 //    return 7;
-    return [_displayedNode.children count];
+    return [self.group.children count];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -210,7 +203,7 @@
 //        cell.indentationLevel = 1;
 //        [cell setColor:[UIColor colorWithWhite:0.8 alpha:1] forIndentationLevel:0 animated:YES];
 //    }
-    ACNode *cellNode = [_displayedNode.children objectAtIndex:indexPath.row];
+    ACNode *cellNode = [self.group.children objectAtIndex:indexPath.row];
     if ([[cellNode nodeType] isEqualToString:@"Group"])
         cell.imageView.image = [UIImage styleGroupImageWithSize:CGSizeMake(32, 32)];
     else
@@ -247,7 +240,7 @@
 // Override to support rearranging the table view.
 - (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath
 {
-    [_displayedNode moveChildrenAtIndexes:[NSIndexSet indexSetWithIndex:fromIndexPath.row] toIndex:toIndexPath.row];
+    [self.group moveChildrenAtIndexes:[NSIndexSet indexSetWithIndex:fromIndexPath.row] toIndex:toIndexPath.row];
 }
 
 /*
@@ -276,7 +269,7 @@
     
     // TODO if used in a popover from the jump bar should just change its own url
     
-    [self.ACNavigationController pushURL:[[_displayedNode.children objectAtIndex:indexPath.row] URL]];
+    [self.ACNavigationController pushURL:[[self.group.children objectAtIndex:indexPath.row] URL]];
 }
 
 @end
