@@ -204,7 +204,7 @@
 //        [cell setColor:[UIColor colorWithWhite:0.8 alpha:1] forIndentationLevel:0 animated:YES];
 //    }
     ACNode *cellNode = [self.group.children objectAtIndex:indexPath.row];
-    if ([[cellNode nodeType] isEqualToString:@"Group"])
+    if (![cellNode.name pathExtension])
         cell.imageView.image = [UIImage styleGroupImageWithSize:CGSizeMake(32, 32)];
     else
         cell.imageView.image = [UIImage styleDocumentImageWithSize:CGSizeMake(32, 32) 

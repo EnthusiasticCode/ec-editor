@@ -25,9 +25,7 @@
 
 - (ACGroup *)insertChildGroupWithName:(NSString *)name atIndex:(NSUInteger)index;
 
-- (NSString *)nodeType;
-
-@property (nonatomic, strong) NSURL *ACURL;
-@property (nonatomic, strong) NSString *name;
+@property (nonatomic, strong, readonly) NSURL *ACURL;
+@property (nonatomic, strong, readonly) NSString *name;
 
 @end

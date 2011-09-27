@@ -35,11 +35,6 @@
     [self didChangeValueForKey:@"fileURL"];
 }
 
-- (NSString *)nodeType
-{
-    return [self.entity name];
-}
-
 - (void)moveChildrenAtIndexes:(NSIndexSet *)indexes toIndex:(NSUInteger)index
 {
     [[self mutableOrderedSetValueForKey:@"children"] moveObjectsAtIndexes:indexes toIndex:index];

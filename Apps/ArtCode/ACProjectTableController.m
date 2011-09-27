@@ -264,6 +264,7 @@ static void * ACStateProjectsObservingContext;
 {
     if (![textField.text length])
         return NO;
+    [self.application moveObjectWithURL:[[self.application.projects objectAtIndex:textField.tag] ACURL] toURL:[self.application ACURLForProjectWithName:textField.text]];
     [[self.application.projects objectAtIndex:textField.tag] setName:textField.text];
     [textField resignFirstResponder];
     return YES;

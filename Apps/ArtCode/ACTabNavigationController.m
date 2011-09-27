@@ -517,12 +517,11 @@ static void loadCurrentAndAdiacentTabViews(ACTabNavigationController *self, ACTa
     }
 }
 
-- (ACTabController *)addTabControllerWithDataSource:(id<ACTabControllerDataSource>)datasource tab:(ACTab *)tab animated:(BOOL)animated
+- (ACTabController *)addTabControllerWithTab:(ACTab *)tab animated:(BOOL)animated
 {
-    ECASSERT(datasource != nil);
     ECASSERT(tab != nil);
     
-    ACTabController *tabController = [[ACTabController alloc] initWithDataSource:datasource tab:tab];
+    ACTabController *tabController = [[ACTabController alloc] initWithTab:tab];
     
     [self addTabController:tabController animated:animated];
     

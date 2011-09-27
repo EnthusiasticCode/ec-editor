@@ -128,7 +128,7 @@
         [[self.application.tabs objectAtIndex:0] pushURL:[NSURL URLWithString:@"artcode:projects"]];
     }
     for (ACTab *tab in self.application.tabs)
-        [navigationController.tabNavigationController addTabControllerWithDataSource:self tab:tab animated:NO];
+        [navigationController.tabNavigationController addTabControllerWithTab:tab animated:NO];
     navigationController.tabNavigationController.currentTabController = [navigationController.tabNavigationController.tabControllers objectAtIndex:0];
 
     navigationController.tabNavigationController.makeAddedTabCurrent = YES;
@@ -194,40 +194,6 @@
         _application = [NSEntityDescription insertNewObjectForEntityForName:@"Application" inManagedObjectContext:self.managedObjectContext];
     }
     return _application;
-}
-
-#pragma mark - Navigation Controller Delegate Methods
-
-- (BOOL)tabController:(ACTabController *)tabController shouldChangeCurrentViewController:(UIViewController *)viewController forURL:(NSURL *)url
-{
-    // TODO convert the view controller to an ACToolTarget and see if it can handle
-    // the URL. if it can, open it and return NO.
-    return YES;
-}
-
-- (UIViewController *)tabController:(ACTabController *)tabController viewControllerForURL:(NSURL *)url
-{
-    Class controllerClass = nil;
-    // TODO url switch logic
-    if ([url.absoluteString isEqualToString:@"artcode:projects"])
-        controllerClass = [ACProjectTableController class];
-    else
-    {
-        ACNode *node = [self.application objectWithURL:url];
-        if ([[node nodeType] isEqualToString:@"Group"] || [[node nodeType] isEqualToString:@"Project"])
-            controllerClass = [ACFileTableController class];
-        else if ([[node nodeType] isEqualToString:@"File"])
-            controllerClass = [ACCodeFileController class];
-    }
-//    else if (url.pathExtension != nil)
-//        controllerClass = [ACCodeFileController class];
-//    else
-//        controllerClass = [ACFileTableController class];
-    ECASSERT(controllerClass);
-    UIViewController<ACNavigationTarget> *controller = [controllerClass newNavigationTargetController];
-    [controller openURL:url];
-    ECASSERT(controller);
-    return controller; // TODO initWithNibName:name of class
 }
 
 #pragma mark - Core Data stack
