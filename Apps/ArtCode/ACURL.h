@@ -8,8 +8,10 @@
 
 #import <Foundation/Foundation.h>
 
+/// Enum specifying the types of the objects ACURLs can refer to
 typedef enum
 {
+    ACObjectTypeUnknown,
     ACObjectTypeApplication,
     ACObjectTypeProject,
     ACObjectTypeFolder,
@@ -27,5 +29,9 @@ typedef enum
 
 /// Returns the type of the object referenced by the ACURL
 - (ACObjectType)ACObjectType;
+
+/// Returns the fileURL of the object referenced by the ACURL
+/// This is not guaranteed to exist
+- (NSURL *)ACObjectFileURL;
 
 @end
