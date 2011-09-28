@@ -8,17 +8,9 @@
 
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
+#import "ACURL.h"
 
 @class ACBookmark, ACTab;
-
-typedef enum
-{
-    ACObjectTypeApplication,
-    ACObjectTypeProject,
-    ACObjectTypeFolder,
-    ACObjectTypeGroup,
-    ACObjectTypeFile,
-} ACObjectType;
 
 @interface ACApplication : NSManagedObject
 

@@ -8,32 +8,24 @@
 
 #import <Foundation/Foundation.h>
 
-extern NSString * const ACURLScheme;
+typedef enum
+{
+    ACObjectTypeApplication,
+    ACObjectTypeProject,
+    ACObjectTypeFolder,
+    ACObjectTypeGroup,
+    ACObjectTypeFile,
+} ACObjectType;
 
 @interface NSURL (ACURL)
 
-/// Returns whether or not the URL is an ACURL
+/// Returns whether or not the URL refers to an AC object
 - (BOOL)isACURL;
 
-/// Returns the ACURL of the project which contains the object referenced by the ACURL
-- (NSURL *)ACProjectURL;
+/// Returns the name of the object referenced by the ACURL
+- (NSString *)ACObjectName;
 
-/// Returns the name of the project which contains the object referenced by the ACURL
-- (NSString *)ACProjectName;
-
-/// Returns whether or not the ACURL refers to a project
-- (BOOL)isACProjectURL;
-
-/// Create an ACURL referencing the object with the given path components
-+ (NSURL *)ACURLWithPathComponents:(NSArray *)pathComponents;
-
-/// Create an ACURL referencing the object for the given path
-+ (NSURL *)ACURLWithPath:(NSString *)path;
-
-/// Returns whether the receiver references an ancestor of the object referenced by the passed ACURL
-- (BOOL)isAncestorOfACURL:(NSURL *)URL;
-
-/// Returns whether the receiver references a descendant of the object referenced by the passed ACURL
-- (BOOL)isDescendantOfACURL:(NSURL *)URL;
+/// Returns the type of the object referenced by the ACURL
+- (ACObjectType)ACObjectType;
 
 @end

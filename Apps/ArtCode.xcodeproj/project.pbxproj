@@ -11,6 +11,12 @@
 		B7170ECB1429F54D00DF7794 /* libECCodeIndexing.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7170EA91429F3B800DF7794 /* libECCodeIndexing.a */; };
 		B7170ECC1429F54D00DF7794 /* libECFoundation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7170EAF1429F3B800DF7794 /* libECFoundation.a */; };
 		B7170ECD1429F54D00DF7794 /* libECUIKit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7170EB61429F3B800DF7794 /* libECUIKit.a */; };
+		B723CBA214337A0C006483C4 /* NSArray+SSToolkitAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = B723CB9714337A0C006483C4 /* NSArray+SSToolkitAdditions.m */; };
+		B723CBA314337A0C006483C4 /* NSData+SSToolkitAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = B723CB9914337A0C006483C4 /* NSData+SSToolkitAdditions.m */; };
+		B723CBA414337A0C006483C4 /* NSDate+SSToolkitAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = B723CB9B14337A0C006483C4 /* NSDate+SSToolkitAdditions.m */; };
+		B723CBA514337A0C006483C4 /* NSDictionary+SSToolkitAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = B723CB9D14337A0C006483C4 /* NSDictionary+SSToolkitAdditions.m */; };
+		B723CBA614337A0C006483C4 /* NSString+SSToolkitAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = B723CB9F14337A0C006483C4 /* NSString+SSToolkitAdditions.m */; };
+		B723CBA714337A0C006483C4 /* NSURL+SSToolkitAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = B723CBA114337A0C006483C4 /* NSURL+SSToolkitAdditions.m */; };
 		B732D01513DB361600637FBE /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B732D01413DB361600637FBE /* CoreData.framework */; };
 		B732D06413DD799400637FBE /* ACURL.m in Sources */ = {isa = PBXBuildFile; fileRef = B732D06313DD799300637FBE /* ACURL.m */; };
 		B7AC172F14216CD4009E9205 /* NewFilePopover.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B7AC172D14216CD4009E9205 /* NewFilePopover.storyboard */; };
@@ -202,6 +208,18 @@
 		B7170E881429F3B600DF7794 /* ECCodeIndexing.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ECCodeIndexing.xcodeproj; path = ../Frameworks/ECCodeIndexing.xcodeproj; sourceTree = "<group>"; };
 		B7170E8B1429F3B600DF7794 /* ECFoundation.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ECFoundation.xcodeproj; path = ../Frameworks/ECFoundation.xcodeproj; sourceTree = "<group>"; };
 		B7170E8E1429F3B600DF7794 /* ECUIKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ECUIKit.xcodeproj; path = ../Frameworks/ECUIKit.xcodeproj; sourceTree = "<group>"; };
+		B723CB9614337A0C006483C4 /* NSArray+SSToolkitAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSArray+SSToolkitAdditions.h"; path = "../ThirdParty/sstoolkit/SSToolkit/NSArray+SSToolkitAdditions.h"; sourceTree = "<group>"; };
+		B723CB9714337A0C006483C4 /* NSArray+SSToolkitAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSArray+SSToolkitAdditions.m"; path = "../ThirdParty/sstoolkit/SSToolkit/NSArray+SSToolkitAdditions.m"; sourceTree = "<group>"; };
+		B723CB9814337A0C006483C4 /* NSData+SSToolkitAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSData+SSToolkitAdditions.h"; path = "../ThirdParty/sstoolkit/SSToolkit/NSData+SSToolkitAdditions.h"; sourceTree = "<group>"; };
+		B723CB9914337A0C006483C4 /* NSData+SSToolkitAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSData+SSToolkitAdditions.m"; path = "../ThirdParty/sstoolkit/SSToolkit/NSData+SSToolkitAdditions.m"; sourceTree = "<group>"; };
+		B723CB9A14337A0C006483C4 /* NSDate+SSToolkitAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSDate+SSToolkitAdditions.h"; path = "../ThirdParty/sstoolkit/SSToolkit/NSDate+SSToolkitAdditions.h"; sourceTree = "<group>"; };
+		B723CB9B14337A0C006483C4 /* NSDate+SSToolkitAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSDate+SSToolkitAdditions.m"; path = "../ThirdParty/sstoolkit/SSToolkit/NSDate+SSToolkitAdditions.m"; sourceTree = "<group>"; };
+		B723CB9C14337A0C006483C4 /* NSDictionary+SSToolkitAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSDictionary+SSToolkitAdditions.h"; path = "../ThirdParty/sstoolkit/SSToolkit/NSDictionary+SSToolkitAdditions.h"; sourceTree = "<group>"; };
+		B723CB9D14337A0C006483C4 /* NSDictionary+SSToolkitAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSDictionary+SSToolkitAdditions.m"; path = "../ThirdParty/sstoolkit/SSToolkit/NSDictionary+SSToolkitAdditions.m"; sourceTree = "<group>"; };
+		B723CB9E14337A0C006483C4 /* NSString+SSToolkitAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSString+SSToolkitAdditions.h"; path = "../ThirdParty/sstoolkit/SSToolkit/NSString+SSToolkitAdditions.h"; sourceTree = "<group>"; };
+		B723CB9F14337A0C006483C4 /* NSString+SSToolkitAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSString+SSToolkitAdditions.m"; path = "../ThirdParty/sstoolkit/SSToolkit/NSString+SSToolkitAdditions.m"; sourceTree = "<group>"; };
+		B723CBA014337A0C006483C4 /* NSURL+SSToolkitAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSURL+SSToolkitAdditions.h"; path = "../ThirdParty/sstoolkit/SSToolkit/NSURL+SSToolkitAdditions.h"; sourceTree = "<group>"; };
+		B723CBA114337A0C006483C4 /* NSURL+SSToolkitAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSURL+SSToolkitAdditions.m"; path = "../ThirdParty/sstoolkit/SSToolkit/NSURL+SSToolkitAdditions.m"; sourceTree = "<group>"; };
 		B732CFE913DB1B6B00637FBE /* ECDebug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECDebug.h; path = ../../Frameworks/ECDebug.h; sourceTree = "<group>"; };
 		B732D01413DB361600637FBE /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		B732D06213DD799200637FBE /* ACURL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACURL.h; sourceTree = "<group>"; };
@@ -407,9 +425,30 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		B723CB95143379EE006483C4 /* sstoolkit */ = {
+			isa = PBXGroup;
+			children = (
+				B723CB9614337A0C006483C4 /* NSArray+SSToolkitAdditions.h */,
+				B723CB9714337A0C006483C4 /* NSArray+SSToolkitAdditions.m */,
+				B723CB9814337A0C006483C4 /* NSData+SSToolkitAdditions.h */,
+				B723CB9914337A0C006483C4 /* NSData+SSToolkitAdditions.m */,
+				B723CB9A14337A0C006483C4 /* NSDate+SSToolkitAdditions.h */,
+				B723CB9B14337A0C006483C4 /* NSDate+SSToolkitAdditions.m */,
+				B723CB9C14337A0C006483C4 /* NSDictionary+SSToolkitAdditions.h */,
+				B723CB9D14337A0C006483C4 /* NSDictionary+SSToolkitAdditions.m */,
+				B723CB9E14337A0C006483C4 /* NSString+SSToolkitAdditions.h */,
+				B723CB9F14337A0C006483C4 /* NSString+SSToolkitAdditions.m */,
+				B723CBA014337A0C006483C4 /* NSURL+SSToolkitAdditions.h */,
+				B723CBA114337A0C006483C4 /* NSURL+SSToolkitAdditions.m */,
+			);
+			name = sstoolkit;
+			sourceTree = "<group>";
+		};
 		B732D00113DB2AD100637FBE /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				B732D06213DD799200637FBE /* ACURL.h */,
+				B732D06313DD799300637FBE /* ACURL.m */,
 				B7AC178C1423B56C009E9205 /* ACApplication.h */,
 				B7AC178D1423B56C009E9205 /* ACApplication.m */,
 				B7AC17891423B56C009E9205 /* ACTab.h */,
@@ -435,6 +474,7 @@
 		B7AC172714216C59009E9205 /* Third Party */ = {
 			isa = PBXGroup;
 			children = (
+				B723CB95143379EE006483C4 /* sstoolkit */,
 				CDF1D46C14150C4900EFEC21 /* libstdc++.6.0.9.dylib */,
 				B7AC175414216D91009E9205 /* libz.1.2.5.dylib */,
 			);
@@ -571,8 +611,6 @@
 			children = (
 				CD7D2B0F13C0D18500B889EE /* ArtCodeAppDelegate.h */,
 				CD7D2B1013C0D18500B889EE /* ArtCodeAppDelegate.m */,
-				B732D06213DD799200637FBE /* ACURL.h */,
-				B732D06313DD799300637FBE /* ACURL.m */,
 				B732D00113DB2AD100637FBE /* Model */,
 				CD7D2B1713C0D3A600B889EE /* Styles */,
 				CD7D2B1613C0D39B00B889EE /* Navigation */,
@@ -1014,6 +1052,12 @@
 				B7AC17F314253A99009E9205 /* ACEditorToolSelectionController.m in Sources */,
 				B7D3BE761431BA3A00BF43EB /* Application.xcdatamodeld in Sources */,
 				B7D3BE791431BAA000BF43EB /* ACFolder.m in Sources */,
+				B723CBA214337A0C006483C4 /* NSArray+SSToolkitAdditions.m in Sources */,
+				B723CBA314337A0C006483C4 /* NSData+SSToolkitAdditions.m in Sources */,
+				B723CBA414337A0C006483C4 /* NSDate+SSToolkitAdditions.m in Sources */,
+				B723CBA514337A0C006483C4 /* NSDictionary+SSToolkitAdditions.m in Sources */,
+				B723CBA614337A0C006483C4 /* NSString+SSToolkitAdditions.m in Sources */,
+				B723CBA714337A0C006483C4 /* NSURL+SSToolkitAdditions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
