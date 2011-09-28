@@ -35,6 +35,11 @@
     [self didChangeValueForKey:@"fileURL"];
 }
 
+- (NSURL *)ACURL
+{
+    
+}
+
 - (void)moveChildrenAtIndexes:(NSIndexSet *)indexes toIndex:(NSUInteger)index
 {
     [[self mutableOrderedSetValueForKey:@"children"] moveObjectsAtIndexes:indexes toIndex:index];

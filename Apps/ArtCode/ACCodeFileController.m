@@ -32,6 +32,7 @@
     NSTimer *filterDebounceTimer;
 }
 
+@synthesize file = _file;
 @synthesize codeView;
 
 - (ECCodeView *)codeView

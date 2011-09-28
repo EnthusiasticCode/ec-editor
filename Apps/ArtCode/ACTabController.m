@@ -17,7 +17,7 @@
 static void * const ACTabControllerTabCurrentURLObserving;
 
 @interface ACTabController ()
-@property (nonatomic, weak) UIViewController *tabViewController;
+@property (nonatomic, strong) UIViewController *tabViewController;
 @end
 
 @implementation ACTabController {
