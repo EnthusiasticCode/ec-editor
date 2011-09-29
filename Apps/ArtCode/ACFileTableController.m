@@ -15,6 +15,7 @@
 
 #import "ACNode.h"
 #import "ACGroup.h"
+#import "ACTab.h"
 
 @implementation ACFileTableController {
     NSArray *extensions;
@@ -22,6 +23,7 @@
 
 @synthesize tableView, editingToolsView;
 @synthesize group = _group;
+@synthesize tab = _tab;
 
 - (void)didReceiveMemoryWarning
 {

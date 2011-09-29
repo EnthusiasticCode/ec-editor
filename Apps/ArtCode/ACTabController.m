@@ -79,6 +79,7 @@ static void * const ACTabControllerTabCurrentURLObserving;
             {
                 ACProjectTableController *projectTableController = [[ACProjectTableController alloc] init];
                 projectTableController.application = [self.tab.application objectWithURL:self.tab.currentURL];
+                projectTableController.tab = self.tab;
                 tabViewController = projectTableController;
                 break;
             }
@@ -88,6 +89,7 @@ static void * const ACTabControllerTabCurrentURLObserving;
             {
                 ACFileTableController *fileTableController = [[ACFileTableController alloc] init];
                 fileTableController.group = [self.tab.application objectWithURL:self.tab.currentURL];
+                fileTableController.tab = self.tab;
                 tabViewController = fileTableController;
                 break;
             }
