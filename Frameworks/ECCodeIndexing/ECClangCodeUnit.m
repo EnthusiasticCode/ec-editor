@@ -6,6 +6,8 @@
 //  Copyright 2011 __MyCompanyName__. All rights reserved.
 //
 
+#import "ECCodeIndexing+PrivateInitializers.h"
+
 #import "ECClangHelperFunctions.h"
 #import "ECClangCodeUnit.h"
 #import "ECClangCodeIndex.h"
@@ -19,74 +21,86 @@
 #import "ECCodeCompletionChunk.h"
 #import "ECCodeCursor.h"
 
-NSString *const ECClangCodeUnitOptionLanguage = @"Language";
-NSString *const ECClangCodeUnitOptionCXIndex = @"CXIndex";
-
 @interface ECClangCodeUnit ()
-@property (nonatomic) CXIndex index;
+{
+    NSOperationQueue *_presentedItemOperationQueue;
+}
+@property (nonatomic, strong) ECCodeIndex *index;
+@property (nonatomic, readonly) CXIndex clangIndex;
 @property (nonatomic) CXTranslationUnit translationUnit;
-@property (nonatomic) CXFile source;
-@property (nonatomic, strong) NSString *file;
+@property (nonatomic, readonly) CXFile mainSourceFile;
+@property (atomic, strong) NSURL *fileURL;
 @property (nonatomic, strong) NSString *language;
+@property (nonatomic, strong) NSDate *presentedItemLastModificationDate;
+@property (nonatomic) BOOL sourceFilesContentsHaveChangesSinceLastReparse;
+- (void)loadTranslationUnitForFileURL:(NSURL *)fileURL;
+- (void)reparseSourceFiles;
+
+#pragma mark - Included file observing
+@property (nonatomic, strong) NSMutableDictionary *observedIncludedFiles;
+- (BOOL)observeIncludedFilesDidObserveNewFiles;
+- (NSSet *)includedFileURLs;
+static void inclusionVisitor(CXFile included_file, CXSourceLocation* inclusion_stack, unsigned include_len, NSMutableSet **includedFileURLs);
 @end
 
 @implementation ECClangCodeUnit
 
-@synthesize index = index_;
-@synthesize translationUnit = translationUnit_;
-@synthesize source = source_;
-@synthesize file = file_;
-@synthesize language = language_;
+@synthesize index = _index;
+@synthesize translationUnit = _translationUnit;
+@synthesize fileURL = _fileURL;
+@synthesize language = _language;
+@synthesize presentedItemLastModificationDate = _presentedItemLastModificationDate;
+@synthesize sourceFilesContentsHaveChangesSinceLastReparse = _sourceFilesContentsHaveChangesSinceLastReparse;
+@synthesize observedIncludedFiles = _observedIncludedFiles;
 
-- (void)dealloc {
-    clang_disposeTranslationUnit(self.translationUnit);
+- (CXIndex)clangIndex
+{
+    return [(ECClangCodeIndex *)self.index index];
 }
 
-- (id)initWithFile:(NSString *)file index:(CXIndex)index language:(NSString *)language
+- (CXFile)mainSourceFile
 {
+    if (!self.translationUnit)
+        return NULL;
+    return clang_getFile(self.translationUnit, [[self.fileURL path] fileSystemRepresentation]);
+}
+
+- (void)dealloc
+{
+    if (self.translationUnit)
+        clang_disposeTranslationUnit(self.translationUnit);
+    if ([[NSFileCoordinator filePresenters] containsObject:self])
+        [NSFileCoordinator removeFilePresenter:self];
+}
+
+#pragma mark - ECCodeUnit subclass methods
+
+- (id)initWithIndex:(ECCodeIndex *)index fileURL:(NSURL *)fileURL language:(NSString *)language
+{
+    ECASSERT([index isKindOfClass:[ECClangCodeIndex class]]);
+    ECASSERT([fileURL isFileURL]);
     self = [super init];
     if (!self)
         return nil;
-    if (!index)
-    {
-        return nil;
-    }
-    int parameter_count = 11;
-    const char const *parameters[] = {"-ObjC", "-fobjc-nonfragile-abi", "-nostdinc", "-nobuiltininc", "-I/Developer/usr/lib/clang/3.0/include", "-I/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator5.0.sdk/usr/include", "-F/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator5.0.sdk/System/Library/Frameworks", "-isysroot=/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator5.0.sdk/", "-DTARGET_OS_IPHONE=1", "-UTARGET_OS_MAC", "-miphoneos-version-min=4.3"};
+    self.language = language;
     self.index = index;
-    self.translationUnit = clang_parseTranslationUnit(index, [file fileSystemRepresentation], parameters, parameter_count, 0, 0, CXTranslationUnit_PrecompiledPreamble | CXTranslationUnit_CacheCompletionResults);
-    self.source = clang_getFile(self.translationUnit, [file fileSystemRepresentation]);
-    self.file = file;
+    [self loadTranslationUnitForFileURL:fileURL];
+    if (!self.translationUnit)
+        return nil;
     return self;
 }
 
-+ (id)unitForFile:(NSString *)file index:(CXIndex)index language:(NSString *)language
+- (NSArray *)completionsAtOffset:(NSUInteger)offset
 {
-    id codeUnit = [self alloc];
-    codeUnit = [codeUnit initWithFile:file index:index language:language];
-    return codeUnit;
-}
-
-- (BOOL)isDependentOnFile:(NSString *)file
-{
-    CXFile *clangFile = clang_getFile(self.translationUnit, [file fileSystemRepresentation]);
-    if (clangFile)
-        return YES;
-    return NO;
-}
-
-- (void)reparseDependentFiles:(NSArray *)files
-{
-    
-}
-
-- (NSArray *)completionsWithSelection:(NSRange)selection
-{
-    CXSourceLocation selectionLocation = clang_getLocationForOffset(self.translationUnit, self.source, selection.location);
+    if (!self.translationUnit)
+        return nil;
+    if (self.sourceFilesContentsHaveChangesSinceLastReparse)
+        [self reparseSourceFiles];
+    CXSourceLocation selectionLocation = clang_getLocationForOffset(self.translationUnit, self.mainSourceFile, offset);
     unsigned line;
     unsigned column;
     clang_getInstantiationLocation(selectionLocation, NULL, &line, &column, NULL);
-    CXCodeCompleteResults *clangCompletions = clang_codeCompleteAt(self.translationUnit, [self.file fileSystemRepresentation], line, column, NULL, 0, clang_defaultCodeCompleteOptions());
+    CXCodeCompleteResults *clangCompletions = clang_codeCompleteAt(self.translationUnit, [[self.fileURL path] fileSystemRepresentation], line, column, NULL, 0, clang_defaultCodeCompleteOptions());
     NSMutableArray *completions = [[NSMutableArray alloc] init];
     for (unsigned i = 0; i < clangCompletions->NumResults; ++i)
         [completions addObject:ECCodeCompletionResultFromClangCompletionResult(clangCompletions->Results[i])];
@@ -98,6 +112,8 @@ NSString *const ECClangCodeUnitOptionCXIndex = @"CXIndex";
 {
     if (!self.translationUnit)
         return nil;
+    if (self.sourceFilesContentsHaveChangesSinceLastReparse)
+        [self reparseSourceFiles];
     unsigned numDiagnostics = clang_getNumDiagnostics(self.translationUnit);
     NSMutableArray *diagnostics = [NSMutableArray arrayWithCapacity:numDiagnostics];
     for (unsigned i = 0; i < numDiagnostics; ++i)
@@ -112,19 +128,23 @@ NSString *const ECClangCodeUnitOptionCXIndex = @"CXIndex";
 
 - (NSArray *)fixIts
 {
+    if (!self.translationUnit)
+        return nil;
+    if (self.sourceFilesContentsHaveChangesSinceLastReparse)
+        [self reparseSourceFiles];
     return nil;
 }
 
 - (NSArray *)tokensInRange:(NSRange)range withCursors:(BOOL)attachCursors
 {
-    if (!self.source)
+    if (!self.translationUnit)
         return nil;
-    if (range.location == NSNotFound)
-        return nil;
+    if (self.sourceFilesContentsHaveChangesSinceLastReparse)
+        [self reparseSourceFiles];
     unsigned numTokens;
     CXToken *clangTokens;
-    CXSourceLocation clangStart = clang_getLocationForOffset(self.translationUnit, self.source, range.location);
-    CXSourceLocation clangEnd = clang_getLocationForOffset(self.translationUnit, self.source, range.location + range.length);
+    CXSourceLocation clangStart = clang_getLocationForOffset(self.translationUnit, self.mainSourceFile, range.location);
+    CXSourceLocation clangEnd = clang_getLocationForOffset(self.translationUnit, self.mainSourceFile, range.location + range.length);
     CXSourceRange clangRange = clang_getRange(clangStart, clangEnd);
     clang_tokenize(self.translationUnit, clangRange, &clangTokens, &numTokens);
     NSMutableArray *tokens = [NSMutableArray arrayWithCapacity:numTokens];
@@ -140,22 +160,166 @@ NSString *const ECClangCodeUnitOptionCXIndex = @"CXIndex";
     return tokens;
 }
 
-- (NSArray *)tokensWithCursors:(BOOL)attachCursors
-{
-    NSUInteger fileLength = [[NSString stringWithContentsOfFile:self.file encoding:NSUTF8StringEncoding error:NULL] length];
-    return [self tokensInRange:NSMakeRange(0, fileLength) withCursors:attachCursors];
-}
-
 - (ECCodeCursor *)cursor
 {
-    return [ECClangCodeCursor cursorWithCXCursor:clang_getTranslationUnitCursor(translationUnit_)];
+    if (!self.translationUnit)
+        return nil;
+    return [ECClangCodeCursor cursorWithCXCursor:clang_getTranslationUnitCursor(self.translationUnit)];
 }
 
 - (ECCodeCursor *)cursorForOffset:(NSUInteger)offset
 {
-    CXSourceLocation clangLocation = clang_getLocationForOffset(translationUnit_, clang_getFile(translationUnit_, [self.file fileSystemRepresentation]), offset);
+    if (!self.translationUnit)
+        return nil;
+    if (self.sourceFilesContentsHaveChangesSinceLastReparse)
+        [self reparseSourceFiles];
+    CXSourceLocation clangLocation = clang_getLocationForOffset(self.translationUnit, clang_getFile(self.translationUnit, [[self.fileURL path] fileSystemRepresentation]), offset);
     ECASSERT(!clang_equalLocations(clangLocation, clang_getNullLocation()));
-    return [ECClangCodeCursor cursorWithCXCursor:clang_getCursor(translationUnit_, clangLocation)];
+    return [ECClangCodeCursor cursorWithCXCursor:clang_getCursor(self.translationUnit, clangLocation)];
+}
+
+#pragma mark - Translation unit management
+
+- (void)loadTranslationUnitForFileURL:(NSURL *)fileURL
+{
+    if (self.translationUnit)
+        clang_disposeTranslationUnit(self.translationUnit);
+    self.observedIncludedFiles = nil;
+    self.fileURL = nil;
+    if ([[NSFileCoordinator filePresenters] containsObject:self])
+        [NSFileCoordinator removeFilePresenter:self];
+    if (!fileURL)
+        return;
+    NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] initWithFilePresenter:self];
+    __weak ECClangCodeUnit *this = self;
+    [fileCoordinator coordinateReadingItemAtURL:fileURL options:NSFileCoordinatorReadingResolvesSymbolicLink error:NULL byAccessor:^(NSURL *newURL) {
+        id lastModificationDate;
+        [newURL getResourceValue:&lastModificationDate forKey:NSURLContentModificationDateKey error:NULL];
+        this.presentedItemLastModificationDate = lastModificationDate;
+        int parameter_count = 11;
+        const char const *parameters[] = {"-ObjC", "-fobjc-nonfragile-abi", "-nostdinc", "-nobuiltininc", "-I/Developer/usr/lib/clang/3.0/include", "-I/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator5.0.sdk/usr/include", "-F/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator5.0.sdk/System/Library/Frameworks", "-isysroot=/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator5.0.sdk/", "-DTARGET_OS_IPHONE=1", "-UTARGET_OS_MAC", "-miphoneos-version-min=4.3"};
+        this.translationUnit = clang_parseTranslationUnit(this.clangIndex, [[newURL path] fileSystemRepresentation], parameters, parameter_count, 0, 0, clang_defaultEditingTranslationUnitOptions());
+        this.fileURL = newURL;
+        [NSFileCoordinator addFilePresenter:self];
+    }];
+}
+
+- (void)reparseSourceFiles
+{
+    if (!self.translationUnit)
+        return;
+    NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] initWithFilePresenter:self];
+    __weak ECClangCodeUnit *this = self;
+    do
+    {
+        [fileCoordinator prepareForReadingItemsAtURLs:[self.observedIncludedFiles allKeys] options:NSFileCoordinatorReadingResolvesSymbolicLink writingItemsAtURLs:nil options:0 error:NULL byAccessor:^(void(^completionHandler)(void)) {
+            [fileCoordinator coordinateReadingItemAtURL:this.fileURL options:NSFileCoordinatorReadingResolvesSymbolicLink error:NULL byAccessor:^(NSURL *newURL) {
+                clang_reparseTranslationUnit(this.translationUnit, 0, NULL, clang_defaultReparseOptions(this.translationUnit));
+            }];
+            completionHandler();
+        }];
+    }
+    while ([this observeIncludedFilesDidObserveNewFiles]);
+    self.sourceFilesContentsHaveChangesSinceLastReparse = NO;
+}
+
+#pragma mark - NSFileCoordination
+
+- (NSURL *)presentedItemURL
+{
+    return self.fileURL;
+}
+
++ (NSSet *)keyPathsForValuesAffectingPresentedItemURL
+{
+    return [NSSet setWithObject:@"fileURL"];
+}
+
+- (NSOperationQueue *)presentedItemOperationQueue
+{
+    if (!_presentedItemOperationQueue)
+    {
+        _presentedItemOperationQueue = [[NSOperationQueue alloc] init];
+        _presentedItemOperationQueue.maxConcurrentOperationCount = 1;
+    }
+    return _presentedItemOperationQueue;
+}
+
+- (void)presentedItemDidChange
+{
+    NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] initWithFilePresenter:self];
+    __weak ECClangCodeUnit *this = self;
+    [fileCoordinator coordinateReadingItemAtURL:self.fileURL options:NSFileCoordinatorReadingResolvesSymbolicLink error:NULL byAccessor:^(NSURL *newURL) {
+        id lastModificationDate;
+        [newURL getResourceValue:&lastModificationDate forKey:NSURLContentModificationDateKey error:NULL];
+        if ([this.presentedItemLastModificationDate isEqualToDate:lastModificationDate])
+            return;
+        this.presentedItemLastModificationDate = lastModificationDate;
+        this.sourceFilesContentsHaveChangesSinceLastReparse = YES;
+    }];
+}
+
+- (void)presentedItemDidMoveToURL:(NSURL *)newURL
+{
+    [self loadTranslationUnitForFileURL:newURL];
+}
+
+- (void)accommodatePresentedItemDeletionWithCompletionHandler:(void (^)(NSError *))completionHandler
+{
+    [self loadTranslationUnitForFileURL:nil];
+    completionHandler(nil);
+}
+
+#pragma mark - Included files observing
+
+- (NSMutableDictionary *)observedIncludedFiles
+{
+    if (!_observedIncludedFiles)
+        _observedIncludedFiles = [NSMutableDictionary dictionary];
+    return _observedIncludedFiles;
+}
+
+- (void)contentsOfObservedItemDidChangeForItemObserver:(ECItemObserver *)itemObserver
+{
+    self.sourceFilesContentsHaveChangesSinceLastReparse = YES;
+}
+
+- (BOOL)observeIncludedFilesDidObserveNewFiles
+{
+    NSSet *observedFileURLs = [NSSet setWithArray:[self.observedIncludedFiles allKeys]];
+    NSSet *includedFileURLs = [self includedFileURLs];
+    NSMutableSet *fileURLsToRemove = [NSMutableSet setWithSet:observedFileURLs];
+    [fileURLsToRemove minusSet:includedFileURLs];
+    NSMutableSet *fileURLsToAdd = [NSMutableSet setWithSet:includedFileURLs];
+    [fileURLsToAdd minusSet:observedFileURLs];
+    for (NSURL *fileURL in fileURLsToRemove)
+        [self.observedIncludedFiles removeObjectForKey:fileURL];
+    for (NSURL *fileURL in fileURLsToAdd)
+    {
+        ECItemObserver *itemObserver = [[ECItemObserver alloc] initWithItemURL:fileURL queue:self.presentedItemOperationQueue];
+        itemObserver.delegate = self;
+        [self.observedIncludedFiles setObject:itemObserver forKey:fileURL];
+    }
+    return [fileURLsToAdd count] != 0;
+}
+
+- (NSSet *)includedFileURLs
+{
+    if (!self.translationUnit)
+        return nil;
+    NSSet *includedFileURLs;
+    clang_getInclusions(self.translationUnit, (CXInclusionVisitor)&inclusionVisitor, &includedFileURLs);
+    return includedFileURLs;
+}
+
+static void inclusionVisitor(CXFile included_file, CXSourceLocation* inclusion_stack, unsigned include_len, NSMutableSet **includedFileURLs)
+{
+    ECASSERT(includedFileURLs);
+    if (!*includedFileURLs)
+        *includedFileURLs = [NSMutableSet set];
+    CXString fileName = clang_getFileName(included_file);
+    [*includedFileURLs addObject:[NSURL fileURLWithPath:[NSString stringWithCString:clang_getCString(fileName) encoding:NSUTF8StringEncoding]]];
+    clang_disposeString(fileName);
 }
 
 @end

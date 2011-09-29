@@ -6,191 +6,112 @@
 //  Copyright 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import <objc/runtime.h>
 #import "ECCodeIndex.h"
-#import "ECCodeIndex(Private).h"
-#import "ECCodeIndexPlugin.h"
 #import "ECCodeUnit.h"
-#import "ECCodeUnit(Private).h"
 
-#import "ECClangCodeIndex.h"
+static NSMutableDictionary *_extensionClassesByLanguage;
+static NSMutableOrderedSet *_extensionClasses;
 
 @interface ECCodeIndex ()
-@property (nonatomic, copy) NSDictionary *pluginsByLanguage;
-@property (nonatomic, copy) NSDictionary *languageToExtensionMap;
-@property (nonatomic, copy) NSDictionary *extensionToLanguageMap;
-@property (nonatomic, strong) NSMutableDictionary *codeUnitPointers;
-@property (nonatomic, strong) NSMutableDictionary *filePointers;
-- (BOOL)loadPlugins;
-- (id<ECCodeIndexPlugin>)pluginForLanguage:(NSString *)language;
-- (void)addObserversForUnitsToFile:(NSObject<ECCodeIndexingFileObserving> *)fileObject;
-- (void)removeObserversForUnitsFromFile:(NSObject<ECCodeIndexingFileObserving> *)fileObject;
+@property (nonatomic, strong, readonly) NSMutableDictionary *extensionsByExtensionClass;
+- (ECCodeIndex *)extensionForClass:(Class)extensionClass;
 @end
-
-#pragma mark -
 
 @implementation ECCodeIndex
 
-@synthesize pluginsByLanguage = _pluginsByLanguage;
-@synthesize languageToExtensionMap = _languageToExtensionMap;
-@synthesize extensionToLanguageMap = _extensionToLanguageMap;
-@synthesize codeUnitPointers = _codeUnitPointers;
-@synthesize filePointers = _filePointers;
+@synthesize extensionsByExtensionClass = _extensionsByExtensionClass;
 
-#pragma mark -
-#pragma mark Initialization and deallocation
-
-
-- (id)init
+- (NSMutableDictionary *)extensionsByExtensionClass
 {
-    self = [super init];
-    if (!self)
-        return nil;
-    if (![self loadPlugins])
+    if (!_extensionsByExtensionClass)
+        _extensionsByExtensionClass = [[NSMutableDictionary alloc] init];
+    return _extensionsByExtensionClass;
+}
+
++ (void)registerExtension:(Class)extensionClass
+{
+    ECASSERT([extensionClass isSubclassOfClass:self]);
+    if (!_extensionClassesByLanguage)
+        _extensionClassesByLanguage = [[NSMutableDictionary alloc] init];
+    for (NSString *language in [extensionClass supportedLanguages])
     {
-        return nil;
-    }
-    self.codeUnitPointers = [NSMutableDictionary dictionary];
-    self.filePointers = [NSMutableDictionary dictionary];
-    return self;
-}
-
-#pragma mark -
-#pragma mark Public Methods
-
-- (NSString *)languageForExtension:(NSString *)extension
-{
-    return [[self extensionToLanguageMap] objectForKey:extension];
-}
-
-- (NSString *)extensionForLanguage:(NSString *)language
-{
-    return [[self languageToExtensionMap] objectForKey:language];
-}
-
-- (NSArray *)observedFiles
-{
-    return [self.filePointers allValues];
-}
-
-- (BOOL)addObserversToFile:(NSObject<ECCodeIndexingFileObserving> *)fileObject
-{
-    if ([self.filePointers objectForKey:fileObject.file])
-        return NO;
-    [self addObserversForUnitsToFile:fileObject];
-    [fileObject addObserver:self forKeyPath:@"file" options:NSKeyValueObservingOptionPrior context:NULL];
-    return YES;
-}
-
-- (void)removeObserversFromFile:(NSObject<ECCodeIndexingFileObserving> *)fileObject
-{
-    [self removeObserversForUnitsFromFile:fileObject];
-    [fileObject removeObserver:self forKeyPath:@"file"];
-    [self.filePointers removeObjectForKey:fileObject.file];
-}
-
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
-{
-    BOOL isPriorToChange = [[change objectForKey:NSKeyValueChangeNotificationIsPriorKey] boolValue];
-    if (isPriorToChange)
-        [self removeObserversForUnitsFromFile:object];
-    NSString *newFile = [change objectForKey:NSKeyValueChangeNewKey];
-    if (newFile)
-        [self addObserversForUnitsToFile:object];
-}
-
-- (ECCodeUnit *)unitForFile:(NSString *)file
-{
-    return [self unitForFile:file withLanguage:nil];
-}
-
-- (ECCodeUnit *)unitForFile:(NSString *)file withLanguage:(NSString *)language
-{
-    if (!file)
-        return nil;
-    if (!language)
-        language = [self languageForExtension:[file pathExtension]];
-    ECCodeUnit *unit;
-    unit = [[self.codeUnitPointers objectForKey:file] nonretainedObjectValue];
-    if (unit)
-    {
-        if ([unit.language isEqual:language])
-            return unit;
-        else
-            return nil;
-    }
-    unit = [ECCodeUnit unitWithIndex:self file:file language:language plugin:[[self pluginForLanguage:language] unitPluginForFile:file withLanguage:language]];
-    if (!unit)
-        return nil;
-    [self.codeUnitPointers setObject:[NSValue valueWithNonretainedObject:unit] forKey:file];
-    for (NSObject<ECCodeIndexingFileObserving> *fileObject in self.filePointers)
-        [unit addObserversToFile:fileObject];
-    return unit;
-}
-
-#pragma mark -
-#pragma mark Private methods
-
-- (BOOL)loadPlugins
-{
-    // TODO: implement some priority system for plugin loading
-    int numClasses;
-    numClasses = objc_getClassList(NULL, 0);
-    if (!numClasses)
-        return NO;
-    NSArray *pluginClasses = [NSArray arrayWithObjects:[ECClangCodeIndex class], nil];
-    id<ECCodeIndexPlugin> plugin;
-    NSMutableDictionary *pluginsByLanguage = [NSMutableDictionary dictionary];
-    NSMutableDictionary *languageToExtensionMap = [NSMutableDictionary dictionary];
-    NSMutableDictionary *extensionToLanguageMap = [NSMutableDictionary dictionary];
-    for (Class pluginClass in pluginClasses)
-    {
-        plugin = [[pluginClass alloc] init];
-        NSDictionary *pluginLanguageToExtensionMappingDictionary = [plugin languageToExtensionMap];
-        for (NSString *language in [pluginLanguageToExtensionMappingDictionary allKeys])
+        NSMutableOrderedSet *registeredExtensionsForLanguage = [_extensionClassesByLanguage objectForKey:language];
+        if (!registeredExtensionsForLanguage)
         {
-            if ([languageToExtensionMap objectForKey:language])
-                continue;
-            [pluginsByLanguage setObject:plugin forKey:language];
-            [languageToExtensionMap setObject:[pluginLanguageToExtensionMappingDictionary objectForKey:language] forKey:language];
+            registeredExtensionsForLanguage = [[NSMutableOrderedSet alloc] init];
+            [_extensionClassesByLanguage setObject:registeredExtensionsForLanguage forKey:language];
         }
-        NSDictionary *pluginExtensionToLanguageMappingDictionary = [plugin extensionToLanguageMap];
-        for (NSString *extension in [pluginExtensionToLanguageMappingDictionary allKeys])
-        {
-            if ([extensionToLanguageMap objectForKey:extension])
-                continue;
-            [extensionToLanguageMap setObject:[pluginExtensionToLanguageMappingDictionary objectForKey:extension] forKey:extension];
-        }
+        [registeredExtensionsForLanguage addObject:extensionClass];
     }
-    self.pluginsByLanguage = pluginsByLanguage;
-    self.languageToExtensionMap = languageToExtensionMap;
-    self.extensionToLanguageMap = extensionToLanguageMap;
-    return YES;
+    if (!_extensionClasses)
+        _extensionClasses = [[NSMutableOrderedSet alloc] init];
+    [_extensionClasses addObject:extensionClass];
 }
 
-- (ECCodeIndex *)pluginForLanguage:(NSString *)language
++ (NSArray *)supportedLanguages
 {
-    return [self.pluginsByLanguage objectForKey:language];
+    return [_extensionClassesByLanguage allKeys];
 }
 
-- (void)addObserversForUnitsToFile:(NSObject<ECCodeIndexingFileObserving> *)fileObject
++ (float)supportForFile:(NSURL *)fileURL
 {
-    for (ECCodeUnit *unit in [self.codeUnitPointers allValues])
-        [unit addObserversToFile:fileObject];
+    float support = 0.0;
+    for (Class extensionClass in _extensionClasses)
+        support = MAX([extensionClass supportForFile:fileURL], support);
+    return support;
 }
 
-- (void)removeObserversForUnitsFromFile:(NSObject<ECCodeIndexingFileObserving> *)fileObject
+- (ECCodeUnit *)unitWithFileURL:(NSURL *)fileURL
 {
-    for (ECCodeUnit *unit in [self.codeUnitPointers allValues])
-        [unit removeObserversFromFile:fileObject];
+    NSFileManager *fileManager = [[NSFileManager alloc] init];
+    if (![fileManager fileExistsAtPath:[fileURL path]])
+        return nil;
+    float winningSupport = 0.0;
+    Class winningExtensionClass;
+    for (Class extensionClass in _extensionClasses)
+    {
+        float support = [extensionClass supportForFile:fileURL];
+        if (support <= winningSupport)
+            continue;
+        winningSupport = support;
+        winningExtensionClass = extensionClass;
+    }
+    if (winningSupport == 0.0)
+        return nil;
+    ECCodeIndex *extension = [self extensionForClass:winningExtensionClass];
+    return [extension unitWithFileURL:fileURL];
 }
 
-#pragma mark -
-#pragma mark Categories
-
-- (void)removeTranslationUnitForFile:(NSString *)file
+- (ECCodeUnit *)unitWithFileURL:(NSURL *)fileURL withLanguage:(NSString *)language
 {
-    [self.codeUnitPointers removeObjectForKey:file];
+    NSFileManager *fileManager = [[NSFileManager alloc] init];
+    if (![fileManager fileExistsAtPath:[fileURL path]])
+        return nil;
+    float winningSupport = 0.0;
+    Class winningExtensionClass;
+    for (Class extensionClass in [_extensionClassesByLanguage objectForKey:language])
+    {
+        float support = [extensionClass supportForFile:fileURL];
+        if (support <= winningSupport)
+            continue;
+        winningSupport = support;
+        winningExtensionClass = extensionClass;
+    }
+    if (winningSupport == 0.0)
+        return nil;
+    ECCodeIndex *extension = [self extensionForClass:winningExtensionClass];
+    return [extension unitWithFileURL:fileURL withLanguage:language];
 }
 
+- (ECCodeIndex *)extensionForClass:(Class)extensionClass
+{
+    NSString *className = NSStringFromClass(extensionClass);
+    ECCodeIndex *extension = [self.extensionsByExtensionClass objectForKey:className];
+    if (!extension)
+    {
+        extension = [[extensionClass alloc] init];
+        [self.extensionsByExtensionClass setObject:extension forKey:className];
+    }
+    return extension;
+}
 @end

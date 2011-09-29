@@ -6,9 +6,11 @@
 //  Copyright 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
-#import "ECCodeIndexPlugin.h"
+#import "ECCodeIndex.h"
+#import <clang-c/Index.h>
 
-@interface ECClangCodeIndex : NSObject <ECCodeIndexPlugin>
+@interface ECClangCodeIndex : ECCodeIndex
+
+@property (nonatomic) CXIndex index;
 
 @end

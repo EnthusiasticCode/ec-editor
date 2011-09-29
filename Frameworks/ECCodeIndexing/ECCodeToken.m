@@ -8,7 +8,7 @@
 
 #import "ECCodeToken.h"
 #import <ECFoundation/ECHashing.h>
-#import "ECCodeCursor.h"
+#import "ECCodeIndexing+PrivateInitializers.h"
 
 @interface ECCodeToken ()
 {
@@ -21,33 +21,26 @@
 
 @synthesize kind = _kind;
 @synthesize spelling = _spelling;
-@synthesize file = _file;
+@synthesize fileURL = _fileURL;
 @synthesize offset = _offset;
 @synthesize extent = _extent;
 @synthesize cursor = cursor_;
 
 
-- (id)initWithKind:(ECCodeTokenKind)kind spelling:(NSString *)spelling file:(NSString *)file offset:(NSUInteger )offset extent:(NSRange)extent cursor:(ECCodeCursor *)cursor
+- (id)initWithKind:(ECCodeTokenKind)kind spelling:(NSString *)spelling fileURL:(NSURL *)fileURL offset:(NSUInteger )offset extent:(NSRange)extent cursor:(ECCodeCursor *)cursor
 {
     self = [super init];
     if (self)
     {
         _kind = kind;
         _spelling = [spelling copy];
-        _file = [file copy];
+        _fileURL = fileURL;
         _offset = offset;
         _extent = extent;
         cursor_ = cursor;
         _hash = [self computeHash];
     }
     return self;
-}
-
-+ (id)tokenWithKind:(ECCodeTokenKind)kind spelling:(NSString *)spelling file:(NSString *)file offset:(NSUInteger )offset extent:(NSRange)extent cursor:(ECCodeCursor *)cursor
-{
-    id token = [self alloc];
-    token = [token initWithKind:kind spelling:spelling file:file offset:offset extent:extent cursor:cursor];
-    return token;
 }
 
 - (NSString *)description
@@ -68,7 +61,7 @@
 - (NSUInteger)computeHash
 {
     const NSUInteger propertyCount = 6;
-    NSUInteger propertyHashes[6] = { _kind, [_spelling hash], [_file hash], _offset, _extent.location, _extent.length };
+    NSUInteger propertyHashes[6] = { _kind, [_spelling hash], [_fileURL hash], _offset, _extent.location, _extent.length };
     return ECHashNSUIntegers(propertyHashes, propertyCount);
 }
 
@@ -91,8 +84,8 @@
     if (_spelling || otherToken.spelling)
         if (![otherToken.spelling isEqual:_spelling])
             return NO;
-    if (_file || otherToken.file)
-        if (![otherToken.file isEqual:_file])
+    if (_fileURL || otherToken.fileURL)
+        if (![otherToken.fileURL isEqual:_fileURL])
             return NO;
     return YES;
 }

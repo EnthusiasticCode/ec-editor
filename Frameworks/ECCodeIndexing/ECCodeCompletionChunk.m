@@ -8,6 +8,7 @@
 
 #import "ECCodeCompletionChunk.h"
 #import <ECFoundation/ECHashing.h>
+#import "ECCodeIndexing+PrivateInitializers.h"
 
 @interface ECCodeCompletionChunk ()
 {
@@ -32,13 +33,6 @@
         _hash = [self computeHash];
     }
     return self;
-}
-
-+ (id)chunkWithKind:(ECCodeCompletionChunkKind)kind string:(NSString *)string
-{
-    id chunk = [self alloc];
-    chunk = [chunk initWithKind:kind string:string];
-    return chunk;
 }
 
 - (id)copyWithZone:(NSZone *)zone
