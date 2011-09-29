@@ -31,6 +31,7 @@
 - (void)layoutChildViewsForInterfaceOrientation:(UIInterfaceOrientation)orientation prepareForAnimation:(BOOL)prepareAnimation;
 - (void)layoutChildViews;
 
+- (void)enableSwipeRecognizers;
 - (void)handleGestureSwipe:(UISwipeGestureRecognizer *)recognizer;
 - (void)handleGesturePan:(UIPanGestureRecognizer *)recognizer;
 
@@ -110,6 +111,16 @@
     sidebarContainerView.contentCornerRadius = mainContainerView.contentCornerRadius = cornerRadius;
 }
 
+- (void)setSidebarOnRight:(BOOL)value
+{
+    if (sidebarOnRight == value)
+        return;
+    
+    sidebarOnRight = value;
+    
+    [self enableSwipeRecognizers];
+}
+
 - (BOOL)isSidebarVisible
 {
     if (self.isSplittingView)
@@ -133,7 +144,7 @@
         
         sidebarVisible = value;
         
-        [UIView animateWithDuration:2 animations:^{
+        [UIView animateWithDuration:0.20 animations:^{
             [self layoutChildViewsForInterfaceOrientation:self.interfaceOrientation prepareForAnimation:YES];
         } completion:^(BOOL finished) {
             [self layoutChildViews];
@@ -144,6 +155,8 @@
         sidebarVisible = value;
         [self layoutChildViews];
     }
+    
+    [self enableSwipeRecognizers];
 }
 
 #pragma mark - Creating new controller
@@ -213,6 +226,8 @@ static void init(ECSplitViewController *self)
     swipeGestureRecognizer.direction = UISwipeGestureRecognizerDirectionLeft;
     [self.view addGestureRecognizer:swipeGestureRecognizer];
     leftSwipeGestureRecognizer = swipeGestureRecognizer;
+    
+    [self enableSwipeRecognizers];
 }
 
 - (void)viewDidUnload
@@ -276,15 +291,33 @@ static void init(ECSplitViewController *self)
         return;
     
     BOOL isPortrait = UIInterfaceOrientationIsPortrait(orientation);
+    BOOL willLayout = (isPortrait == UIInterfaceOrientationIsPortrait(self.interfaceOrientation));
+    
+    if (animated && willLayout)
+        [self layoutChildViewsForInterfaceOrientation:orientation prepareForAnimation:YES];
+    
     if (isPortrait)
         splitInPortrait = value;
     else
         splitInLandscape = value;
     
-    if (isPortrait != UIInterfaceOrientationIsPortrait(self.interfaceOrientation))
+    if (!willLayout)
         return;
     
-    // TODO hide or show sidebar animated
+    if (animated)
+    {
+        [UIView animateWithDuration:0.20 animations:^{
+            [self layoutChildViewsForInterfaceOrientation:orientation prepareForAnimation:YES];
+        } completion:^(BOOL finished) {
+            [self layoutChildViews];
+        }];
+    }
+    else
+    {
+        [self layoutChildViews];
+    }
+    
+    [self enableSwipeRecognizers];
 }
 
 #pragma mark - Private Methods
@@ -360,6 +393,12 @@ static void init(ECSplitViewController *self)
 }
 
 #pragma mark - Private Methods - Handling Gestures
+
+- (void)enableSwipeRecognizers
+{
+    rightSwipeGestureRecognizer.enabled = !sidebarVisible ^ sidebarOnRight;
+    leftSwipeGestureRecognizer.enabled = sidebarVisible ^ sidebarOnRight;
+}
 
 - (void)handleGestureSwipe:(UISwipeGestureRecognizer *)recognizer
 {

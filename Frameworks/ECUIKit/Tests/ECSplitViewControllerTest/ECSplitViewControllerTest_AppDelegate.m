@@ -58,4 +58,7 @@
      */
 }
 
+- (IBAction)pinSidebar:(id)sender {
+    [self.splitViewController setSplittingView:!self.splitViewController.isSplittingView animated:YES];
+}
 @end
