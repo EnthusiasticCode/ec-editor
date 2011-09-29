@@ -7,10 +7,15 @@
 //
 
 #import "ACProject.h"
-
+#import "ACURL.h"
 
 @implementation ACProject
 
 @dynamic application;
+
+- (NSURL *)ACURL
+{
+    return [NSURL ACURLForProjectWithName:self.name];
+}
 
 @end

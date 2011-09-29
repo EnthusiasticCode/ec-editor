@@ -8,6 +8,7 @@
 
 #import "ACURL.h"
 #import "NSURL+SSToolkitAdditions.h"
+#import "NSString+SSToolkitAdditions.h"
 #import <ECFoundation/NSURL+ECAdditions.h>
 
 static NSString * const ACProjectsSubfolderName = @"ACLocalProjects";
@@ -15,29 +16,60 @@ static NSString * const ACProjectsSubfolderName = @"ACLocalProjects";
 /*
  ArtCode URL format:
  Specify all identifiers in the preamble so that they can be changed if needed.
- All identifiers should be as short as possible and unique within their respective group.
+ All identifiers MUST not require query escaping and should be as short as possible and unique within their respective group.
  The format string is <scheme>:<type identifier>?<parameter identifier>=<parameter value>[& ...]
  Examples:
  The file main.c in the root directory for the project called "Project 1"
  ac:f?p=Project%201/main.c
- The subgroup Icons in the group Images in the folder Resources in the project TestProject
- ac:g?p=TestProject/Resources&g=Images/Icons
  */
 
 // Scheme
 static NSString * const ACURLScheme = @"ac";
 
 // Object types identifiers
+static NSString * const ACURLApplicationIdentifier = @"a";
 static NSString * const ACURLProjectIdentifier = @"p";
 static NSString * const ACURLFolderIdentifier = @"f";
 static NSString * const ACURLGroupIdentifier = @"g";
 static NSString * const ACURLFileIdentifier = @"c";
 
 // Object parameters identifiers
+static NSString * const ACURLObjectScreenIdentifier = @"s";
 static NSString * const ACURLObjectPathIdentifier = @"p";
-static NSString * const ACURLObjectGroupIdentifier = @"g";
+
+// Application screen identifiers
+static NSString * const ACURLAppScreenIdentifierProjects = @"p";
 
 @implementation NSURL (ACURL)
+
++ (NSURL *)ACURLForApplicationProjectsList
+{
+    return [NSURL URLWithFormat:@"%@:/%@?%@=%@", ACURLScheme, ACURLApplicationIdentifier, ACURLObjectScreenIdentifier, ACURLAppScreenIdentifierProjects];
+}
+
++ (NSURL *)ACURLForProjectWithName:(NSString *)name
+{
+    ECASSERT([name length]);
+    return [NSURL URLWithFormat:@"%@:/%@?%@=%@", ACURLScheme, ACURLProjectIdentifier, ACURLObjectPathIdentifier, [name stringByEscapingForURLQuery]];
+}
+
++ (NSURL *)ACURLForFolderAtPath:(NSString *)path
+{
+    ECASSERT([path length]);
+    return [NSURL URLWithFormat:@"%@:/%@?%@=%@", ACURLScheme, ACURLFolderIdentifier, ACURLObjectPathIdentifier, [path stringByEscapingForURLQuery]];
+}
+
++ (NSURL *)ACURLForGroupAtPath:(NSString *)path
+{
+    ECASSERT([path length]);
+    return [NSURL URLWithFormat:@"%@:/%@?%@=%@", ACURLScheme, ACURLGroupIdentifier, ACURLObjectPathIdentifier, [path stringByEscapingForURLQuery]];
+}
+
++ (NSURL *)ACURLForFileAtPath:(NSString *)path
+{
+    ECASSERT([path length]);
+    return [NSURL URLWithFormat:@"%@:/%@?%@=%@", ACURLScheme, ACURLFileIdentifier, ACURLObjectPathIdentifier, [path stringByEscapingForURLQuery]];
+}
 
 - (BOOL)isACURL
 {
@@ -52,9 +84,8 @@ static NSString * const ACURLObjectGroupIdentifier = @"g";
         case ACObjectTypeProject:
         case ACObjectTypeFolder:
         case ACObjectTypeFile:
-            return [[parameters objectForKey:ACURLObjectPathIdentifier] lastPathComponent];
         case ACObjectTypeGroup:
-            return [[parameters objectForKey:ACURLObjectGroupIdentifier] lastPathComponent];
+            return [[parameters objectForKey:ACURLObjectPathIdentifier] lastPathComponent];
         case ACObjectTypeApplication:
         case ACObjectTypeUnknown:
         default:
@@ -64,7 +95,7 @@ static NSString * const ACURLObjectGroupIdentifier = @"g";
 
 - (ACObjectType)ACObjectType
 {
-    NSString *identifier = [[self pathComponents] objectAtIndex:0];
+    NSString *identifier = [[self pathComponents] objectAtIndex:1];
     if ([identifier isEqualToString:ACURLProjectIdentifier])
         return ACObjectTypeProject;
     else if ([identifier isEqualToString:ACURLFolderIdentifier])
@@ -73,6 +104,8 @@ static NSString * const ACURLObjectGroupIdentifier = @"g";
         return ACObjectTypeGroup;
     else if ([identifier isEqualToString:ACURLFileIdentifier])
         return ACObjectTypeFile;
+    else if ([identifier isEqualToString:ACURLApplicationIdentifier])
+        return ACObjectTypeApplication;
     else
         return ACObjectTypeUnknown;
 }

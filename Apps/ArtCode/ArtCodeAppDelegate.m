@@ -125,7 +125,7 @@
     if (![self.application.tabs count])
     {
         [self.application insertTabAtIndex:0];
-        [[self.application.tabs objectAtIndex:0] pushURL:[NSURL URLWithString:@"artcode:projects"]];
+        [[self.application.tabs objectAtIndex:0] pushURL:[NSURL ACURLForApplicationProjectsList]];
     }
     for (ACTab *tab in self.application.tabs)
         [navigationController.tabNavigationController addTabControllerWithTab:tab animated:NO];
@@ -149,6 +149,7 @@
      Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later. 
      If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
      */
+    [self saveContext];
 }
 
 - (void)applicationWillEnterForeground:(UIApplication *)application

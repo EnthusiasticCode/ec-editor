@@ -18,11 +18,6 @@
 @dynamic parent;
 @dynamic children;
 
-- (NSURL *)ACURL
-{
-    
-}
-
 - (void)moveChildrenAtIndexes:(NSIndexSet *)indexes toIndex:(NSUInteger)index
 {
     [[self mutableOrderedSetValueForKey:@"children"] moveObjectsAtIndexes:indexes toIndex:index];
@@ -40,6 +35,16 @@
     childGroup.parent = self;
     childGroup.name = name;
     return childGroup;
+}
+
+- (NSURL *)ACURL
+{
+    UNIMPLEMENTED();
+}
+
+- (NSString *)relativePath
+{
+    UNIMPLEMENTED();
 }
 
 @end

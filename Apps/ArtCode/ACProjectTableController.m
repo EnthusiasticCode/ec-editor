@@ -175,6 +175,7 @@ static void * ACStateProjectsObservingContext;
     {
         UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"NewProjectPopover" bundle:[NSBundle mainBundle]];
         ACNewProjectPopoverController *popoverViewController = (ACNewProjectPopoverController *)[storyboard instantiateInitialViewController];
+        popoverViewController.application = self.application;
         _popover = [[ECPopoverController alloc] initWithContentViewController:popoverViewController];
     }
     [_popover presentPopoverFromRect:[sender frame] inView:[sender superview] permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];

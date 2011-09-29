@@ -9,6 +9,7 @@
 #import "ACFile.h"
 #import <ECCodeIndexing/ECCodeUnit.h>
 #import <ECCodeIndexing/ECCodeIndex.h>
+#import "ACURL.h"
 
 @interface ACFile ()
 
@@ -20,17 +21,22 @@
 
 @synthesize codeUnit = _codeUnit;
 
+- (NSURL *)ACURL
+{
+    return [NSURL ACURLForFileAtPath:[self relativePath]];
+}
+
 - (NSString *)contentString
 {
 #warning TODO handle error
-    return [NSString stringWithContentsOfURL:self.fileURL encoding:NSUTF8StringEncoding error:NULL];
+    return [NSString stringWithContentsOfURL:[[self ACURL] ACObjectFileURL] encoding:NSUTF8StringEncoding error:NULL];
 }
 
 - (void)loadCodeUnitWithCompletionHandler:(void (^)(BOOL))completionHandler
 {
 //    dispatch_async(dispatch_get_main_queue(), ^{
         ECCodeIndex *index = [[ECCodeIndex alloc] init];
-        self.codeUnit = [index unitWithFileURL:self.fileURL];
+        self.codeUnit = [index unitWithFileURL:[[self ACURL] ACObjectFileURL]];
         completionHandler(true);
 //    });
 }

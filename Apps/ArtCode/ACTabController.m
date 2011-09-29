@@ -66,7 +66,7 @@ static void * const ACTabControllerTabCurrentURLObserving;
 {
     if (tabViewController == nil)
     {
-        switch ([self.tab.application typeOfObjectWithURL:self.tab.currentURL])
+        switch ([self.tab.currentURL ACObjectType])
         {
             case ACObjectTypeFile:
             {
@@ -80,6 +80,7 @@ static void * const ACTabControllerTabCurrentURLObserving;
                 ACProjectTableController *projectTableController = [[ACProjectTableController alloc] init];
                 projectTableController.application = [self.tab.application objectWithURL:self.tab.currentURL];
                 tabViewController = projectTableController;
+                break;
             }
             case ACObjectTypeProject:
             case ACObjectTypeGroup:
@@ -88,6 +89,12 @@ static void * const ACTabControllerTabCurrentURLObserving;
                 ACFileTableController *fileTableController = [[ACFileTableController alloc] init];
                 fileTableController.group = [self.tab.application objectWithURL:self.tab.currentURL];
                 tabViewController = fileTableController;
+                break;
+            }
+            case ACObjectTypeUnknown:
+            default:
+            {
+                ECASSERT(NO); // TODO: error handling
             }
         }
     }

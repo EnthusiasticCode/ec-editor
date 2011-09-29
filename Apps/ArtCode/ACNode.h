@@ -24,6 +24,7 @@
 
 - (ACGroup *)insertChildGroupWithName:(NSString *)name atIndex:(NSUInteger)index;
 
-@property (nonatomic, strong, readonly) NSURL *ACURL;
+- (NSURL *)ACURL;
+- (NSString *)relativePath;
 
 @end

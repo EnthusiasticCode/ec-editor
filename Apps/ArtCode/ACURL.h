@@ -21,6 +21,13 @@ typedef enum
 
 @interface NSURL (ACURL)
 
+/// Create ACURLs
++ (NSURL *)ACURLForApplicationProjectsList;
++ (NSURL *)ACURLForProjectWithName:(NSString *)name;
++ (NSURL *)ACURLForFolderAtPath:(NSString *)path;
++ (NSURL *)ACURLForGroupAtPath:(NSString *)path;
++ (NSURL *)ACURLForFileAtPath:(NSString *)path;
+
 /// Returns whether or not the URL refers to an AC object
 - (BOOL)isACURL;
 

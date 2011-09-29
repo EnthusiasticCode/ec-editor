@@ -7,9 +7,13 @@
 //
 
 #import "ACFolder.h"
-
+#import "ACURL.h"
 
 @implementation ACFolder
 
+- (NSURL *)ACURL
+{
+    return [NSURL ACURLForFolderAtPath:self.relativePath];
+}
 
 @end

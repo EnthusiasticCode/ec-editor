@@ -32,9 +32,6 @@
 		B7AC172F14216CD4009E9205 /* NewFilePopover.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B7AC172D14216CD4009E9205 /* NewFilePopover.storyboard */; };
 		B7AC173014216CD4009E9205 /* NewProjectPopover.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B7AC172E14216CD4009E9205 /* NewProjectPopover.storyboard */; };
 		B7AC174914216D1C009E9205 /* ACNewFileImportFileController.m in Sources */ = {isa = PBXBuildFile; fileRef = B7AC173A14216D1C009E9205 /* ACNewFileImportFileController.m */; };
-		B7AC174A14216D1C009E9205 /* ACNewProjectFromACZController.m in Sources */ = {isa = PBXBuildFile; fileRef = B7AC173C14216D1C009E9205 /* ACNewProjectFromACZController.m */; };
-		B7AC174B14216D1C009E9205 /* ACNewProjectFromTemplateController.m in Sources */ = {isa = PBXBuildFile; fileRef = B7AC173E14216D1C009E9205 /* ACNewProjectFromTemplateController.m */; };
-		B7AC174C14216D1C009E9205 /* ACNewProjectFromZIPController.m in Sources */ = {isa = PBXBuildFile; fileRef = B7AC174014216D1C009E9205 /* ACNewProjectFromZIPController.m */; };
 		B7AC174D14216D1C009E9205 /* ACNewProjectPopoverController.m in Sources */ = {isa = PBXBuildFile; fileRef = B7AC174214216D1C009E9205 /* ACNewProjectPopoverController.m */; };
 		B7AC175514216D91009E9205 /* libz.1.2.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B7AC175414216D91009E9205 /* libz.1.2.5.dylib */; };
 		B7AC17F314253A99009E9205 /* ACEditorToolSelectionController.m in Sources */ = {isa = PBXBuildFile; fileRef = B7AC17F214253A99009E9205 /* ACEditorToolSelectionController.m */; };
@@ -249,12 +246,6 @@
 		B7AC172E14216CD4009E9205 /* NewProjectPopover.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = NewProjectPopover.storyboard; sourceTree = "<group>"; };
 		B7AC173914216D1C009E9205 /* ACNewFileImportFileController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACNewFileImportFileController.h; sourceTree = "<group>"; };
 		B7AC173A14216D1C009E9205 /* ACNewFileImportFileController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACNewFileImportFileController.m; sourceTree = "<group>"; };
-		B7AC173B14216D1C009E9205 /* ACNewProjectFromACZController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACNewProjectFromACZController.h; sourceTree = "<group>"; };
-		B7AC173C14216D1C009E9205 /* ACNewProjectFromACZController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACNewProjectFromACZController.m; sourceTree = "<group>"; };
-		B7AC173D14216D1C009E9205 /* ACNewProjectFromTemplateController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACNewProjectFromTemplateController.h; sourceTree = "<group>"; };
-		B7AC173E14216D1C009E9205 /* ACNewProjectFromTemplateController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACNewProjectFromTemplateController.m; sourceTree = "<group>"; };
-		B7AC173F14216D1C009E9205 /* ACNewProjectFromZIPController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACNewProjectFromZIPController.h; sourceTree = "<group>"; };
-		B7AC174014216D1C009E9205 /* ACNewProjectFromZIPController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACNewProjectFromZIPController.m; sourceTree = "<group>"; };
 		B7AC174114216D1C009E9205 /* ACNewProjectPopoverController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACNewProjectPopoverController.h; sourceTree = "<group>"; };
 		B7AC174214216D1C009E9205 /* ACNewProjectPopoverController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACNewProjectPopoverController.m; sourceTree = "<group>"; };
 		B7AC175414216D91009E9205 /* libz.1.2.5.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.1.2.5.dylib; path = usr/lib/libz.1.2.5.dylib; sourceTree = SDKROOT; };
@@ -489,16 +480,10 @@
 		B7AC174F14216D25009E9205 /* Popover Content Controllers */ = {
 			isa = PBXGroup;
 			children = (
-				B7AC173914216D1C009E9205 /* ACNewFileImportFileController.h */,
-				B7AC173A14216D1C009E9205 /* ACNewFileImportFileController.m */,
-				B7AC173B14216D1C009E9205 /* ACNewProjectFromACZController.h */,
-				B7AC173C14216D1C009E9205 /* ACNewProjectFromACZController.m */,
-				B7AC173D14216D1C009E9205 /* ACNewProjectFromTemplateController.h */,
-				B7AC173E14216D1C009E9205 /* ACNewProjectFromTemplateController.m */,
-				B7AC173F14216D1C009E9205 /* ACNewProjectFromZIPController.h */,
-				B7AC174014216D1C009E9205 /* ACNewProjectFromZIPController.m */,
 				B7AC174114216D1C009E9205 /* ACNewProjectPopoverController.h */,
 				B7AC174214216D1C009E9205 /* ACNewProjectPopoverController.m */,
+				B7AC173914216D1C009E9205 /* ACNewFileImportFileController.h */,
+				B7AC173A14216D1C009E9205 /* ACNewFileImportFileController.m */,
 			);
 			name = "Popover Content Controllers";
 			sourceTree = "<group>";
@@ -1042,9 +1027,6 @@
 				CD6580CF141641D50079412F /* ACCodeFileFilterController.m in Sources */,
 				CDE1CB81142102A500151BD7 /* ACTabButton.m in Sources */,
 				B7AC174914216D1C009E9205 /* ACNewFileImportFileController.m in Sources */,
-				B7AC174A14216D1C009E9205 /* ACNewProjectFromACZController.m in Sources */,
-				B7AC174B14216D1C009E9205 /* ACNewProjectFromTemplateController.m in Sources */,
-				B7AC174C14216D1C009E9205 /* ACNewProjectFromZIPController.m in Sources */,
 				B7AC174D14216D1C009E9205 /* ACNewProjectPopoverController.m in Sources */,
 				B7AC17F314253A99009E9205 /* ACEditorToolSelectionController.m in Sources */,
 				B7D3BE761431BA3A00BF43EB /* Application.xcdatamodeld in Sources */,

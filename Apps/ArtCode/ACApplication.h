@@ -33,14 +33,11 @@
 
 /// Methods to manipulate objects in the application
 /// All parameters are ACURLs
-/// Not all objects can be deleted, moved or copied
+/// Not all objects can be inserted, deleted, moved or copied
 - (id)objectWithURL:(NSURL *)URL;
+- (id)addObjectWithURL:(NSURL *)URL;
 - (void)deleteObjectWithURL:(NSURL *)URL;
 - (void)moveObjectWithURL:(NSURL *)fromURL toURL:(NSURL *)toURL;
 - (void)copyObjectWithURL:(NSURL *)fromURL toURL:(NSURL *)toURL;
-
-/// Type information
-- (ACObjectType)typeOfObject:(id)object;
-- (ACObjectType)typeOfObjectWithURL:(NSURL *)URL;
 
 @end

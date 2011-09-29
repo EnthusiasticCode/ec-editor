@@ -7,10 +7,24 @@
 //
 
 #import "ACPhysicalNode.h"
+#import "ACURL.h"
 
 @implementation ACPhysicalNode
 
 @dynamic physicalChildren;
 @dynamic physicalParent;
+
+- (NSString *)relativePath;
+{
+    NSMutableArray *pathComponents = [NSMutableArray array];
+    ACPhysicalNode *node = self;
+    do
+    {
+        [pathComponents insertObject:node.name atIndex:0];
+        node = node.physicalParent;
+    }
+    while (node);
+    return [pathComponents componentsJoinedByString:@"/"];
+}
 
 @end

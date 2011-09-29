@@ -15,6 +15,4 @@
 @property (nonatomic, strong) NSOrderedSet *physicalChildren;
 @property (nonatomic, strong) ACPhysicalNode *physicalParent;
 
-@property (nonatomic, strong, readonly) NSURL *fileURL;
-
 @end
