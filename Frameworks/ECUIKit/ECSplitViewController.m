@@ -21,12 +21,18 @@
     
     BOOL splitInLandscape;
     BOOL splitInPortrait;
+    
+    __weak UISwipeGestureRecognizer *leftSwipeGestureRecognizer;
+    __weak UISwipeGestureRecognizer *rightSwipeGestureRecognizer;
 }
 
 - (void)setupMainView;
 - (void)setupSidebarView;
 - (void)layoutChildViewsForInterfaceOrientation:(UIInterfaceOrientation)orientation prepareForAnimation:(BOOL)prepareAnimation;
 - (void)layoutChildViews;
+
+- (void)handleGestureSwipe:(UISwipeGestureRecognizer *)recognizer;
+- (void)handleGesturePan:(UIPanGestureRecognizer *)recognizer;
 
 @end
 
@@ -38,6 +44,7 @@
 @synthesize mainViewController, sidebarViewController;
 @synthesize cornerRadius;
 @synthesize sidebarOnRight, sidebarVisible;
+@synthesize panGestureEnabled, panGestureRecognizer;
 
 - (NSArray *)viewControllers
 {
@@ -110,6 +117,35 @@
     return sidebarVisible;
 }
 
+- (void)setSidebarVisible:(BOOL)value
+{
+    [self setSidebarVisible:value animated:NO];
+}
+
+- (void)setSidebarVisible:(BOOL)value animated:(BOOL)animated
+{
+    if (sidebarVisible == value || self.isSplittingView)
+        return;
+    
+    if (animated)
+    {
+        [self layoutChildViewsForInterfaceOrientation:self.interfaceOrientation prepareForAnimation:YES];
+        
+        sidebarVisible = value;
+        
+        [UIView animateWithDuration:2 animations:^{
+            [self layoutChildViewsForInterfaceOrientation:self.interfaceOrientation prepareForAnimation:YES];
+        } completion:^(BOOL finished) {
+            [self layoutChildViews];
+        }];
+    }
+    else
+    {
+        sidebarVisible = value;
+        [self layoutChildViews];
+    }
+}
+
 #pragma mark - Creating new controller
 
 static void preinit(ECSplitViewController *self)
@@ -167,6 +203,16 @@ static void init(ECSplitViewController *self)
     // TODO here setting up even if not neccessary
     [self setupSidebarView];
     [self layoutChildViews];
+    
+    UISwipeGestureRecognizer *swipeGestureRecognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(handleGestureSwipe:)];
+    swipeGestureRecognizer.direction = UISwipeGestureRecognizerDirectionRight;
+    [self.view addGestureRecognizer:swipeGestureRecognizer];
+    rightSwipeGestureRecognizer = swipeGestureRecognizer;
+    
+    swipeGestureRecognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(handleGestureSwipe:)];
+    swipeGestureRecognizer.direction = UISwipeGestureRecognizerDirectionLeft;
+    [self.view addGestureRecognizer:swipeGestureRecognizer];
+    leftSwipeGestureRecognizer = swipeGestureRecognizer;
 }
 
 - (void)viewDidUnload
@@ -192,6 +238,14 @@ static void init(ECSplitViewController *self)
     [super willAnimateRotationToInterfaceOrientation:toInterfaceOrientation duration:duration];
     
     [self layoutChildViewsForInterfaceOrientation:toInterfaceOrientation prepareForAnimation:YES];
+}
+
+- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
+{
+    [super didRotateFromInterfaceOrientation:fromInterfaceOrientation];
+    
+    sidebarVisible = NO;
+    leftSwipeGestureRecognizer.enabled = rightSwipeGestureRecognizer.enabled = ![self isSplittingView];
 }
 
 #pragma mark - Setting view splitting
@@ -263,7 +317,7 @@ static void init(ECSplitViewController *self)
     BOOL isSplitting = [self isSplittingViewForInterfaceOrientation:orientation];
     
     // Setup sidebar view
-    if (prepareAnimation || isSplitting)
+    if (prepareAnimation || self.isSidebarVisible)
     {
         if (sidebarContainerView.superview == nil)
             [self.view addSubview:sidebarContainerView];
@@ -289,7 +343,7 @@ static void init(ECSplitViewController *self)
             mainFrame.origin.x += gutterWidth + sidebarWidth;
         mainFrame.size.width -= gutterWidth + sidebarWidth;
     }
-    else
+    else if (!sidebarVisible)
     {
         sidebarFrame.origin.x += sidebarOnRight ? sidebarWidth : -sidebarWidth;
     }
@@ -303,6 +357,17 @@ static void init(ECSplitViewController *self)
 - (void)layoutChildViews
 {
     [self layoutChildViewsForInterfaceOrientation:self.interfaceOrientation prepareForAnimation:NO];
+}
+
+#pragma mark - Private Methods - Handling Gestures
+
+- (void)handleGestureSwipe:(UISwipeGestureRecognizer *)recognizer
+{
+    if (recognizer.state == UIGestureRecognizerStateRecognized)
+    {
+        BOOL isOpen = (recognizer == rightSwipeGestureRecognizer) ^ sidebarOnRight;
+        [self setSidebarVisible:isOpen animated:YES];
+    }
 }
 
 @end

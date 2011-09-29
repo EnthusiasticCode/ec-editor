@@ -22,7 +22,6 @@
 /// providing a direct movement of the view itself. If NO, only the swipe
 /// gesture will be available to show the hidden master view.
 @property (nonatomic, getter = isPanGestureEnabled) BOOL panGestureEnabled;
-@property (nonatomic, strong, readonly) UISwipeGestureRecognizer *swipeGestureRecognizer;
 @property (nonatomic, strong, readonly) UIPanGestureRecognizer *panGestureRecognizer;
 
 /// Indicates if, in the current interface orientation, the controller should
