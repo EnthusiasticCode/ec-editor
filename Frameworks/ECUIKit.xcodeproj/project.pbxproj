@@ -138,10 +138,6 @@
 		CD2A5FCE142A4A9900A2CACD /* ECSplitViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD2A5FCC142A4A9900A2CACD /* ECSplitViewController.m */; };
 		CD2A5FCF142A4A9900A2CACD /* ECSplitViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD2A5FCC142A4A9900A2CACD /* ECSplitViewController.m */; };
 		CD2A5FD0142A4A9900A2CACD /* ECSplitViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD2A5FCC142A4A9900A2CACD /* ECSplitViewController.m */; };
-		CD2A5FD3142A4AA500A2CACD /* ECBlockView.h in Headers */ = {isa = PBXBuildFile; fileRef = CD2A5FD1142A4AA500A2CACD /* ECBlockView.h */; };
-		CD2A5FD4142A4AA500A2CACD /* ECBlockView.m in Sources */ = {isa = PBXBuildFile; fileRef = CD2A5FD2142A4AA500A2CACD /* ECBlockView.m */; };
-		CD2A5FD5142A4AA500A2CACD /* ECBlockView.m in Sources */ = {isa = PBXBuildFile; fileRef = CD2A5FD2142A4AA500A2CACD /* ECBlockView.m */; };
-		CD2A5FD6142A4AA500A2CACD /* ECBlockView.m in Sources */ = {isa = PBXBuildFile; fileRef = CD2A5FD2142A4AA500A2CACD /* ECBlockView.m */; };
 		CD6B0F051434D43000049625 /* ECInverseCornerShapeView.h in Headers */ = {isa = PBXBuildFile; fileRef = CD6B0F031434D43000049625 /* ECInverseCornerShapeView.h */; };
 		CD6B0F061434D43000049625 /* ECInverseCornerShapeView.m in Sources */ = {isa = PBXBuildFile; fileRef = CD6B0F041434D43000049625 /* ECInverseCornerShapeView.m */; };
 		CD6B0F071434D43000049625 /* ECInverseCornerShapeView.m in Sources */ = {isa = PBXBuildFile; fileRef = CD6B0F041434D43000049625 /* ECInverseCornerShapeView.m */; };
@@ -393,8 +389,6 @@
 		CD2A5FC8142A4A7E00A2CACD /* ECSplitViewControllerTest_Window.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ECSplitViewControllerTest_Window.xib; sourceTree = "<group>"; };
 		CD2A5FCB142A4A9900A2CACD /* ECSplitViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECSplitViewController.h; sourceTree = "<group>"; };
 		CD2A5FCC142A4A9900A2CACD /* ECSplitViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECSplitViewController.m; sourceTree = "<group>"; };
-		CD2A5FD1142A4AA500A2CACD /* ECBlockView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECBlockView.h; sourceTree = "<group>"; };
-		CD2A5FD2142A4AA500A2CACD /* ECBlockView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECBlockView.m; sourceTree = "<group>"; };
 		CD6B0F031434D43000049625 /* ECInverseCornerShapeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECInverseCornerShapeView.h; sourceTree = "<group>"; };
 		CD6B0F041434D43000049625 /* ECInverseCornerShapeView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECInverseCornerShapeView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -778,8 +772,6 @@
 		CD0DD9E71429198900FE8B5B /* UIKit Additions */ = {
 			isa = PBXGroup;
 			children = (
-				CD2A5FD1142A4AA500A2CACD /* ECBlockView.h */,
-				CD2A5FD2142A4AA500A2CACD /* ECBlockView.m */,
 				B7170B6D1428EB2400DF7794 /* ECRectSet.h */,
 				B7170B6E1428EB2400DF7794 /* ECRectSet.m */,
 				B7170B811428EB2500DF7794 /* UIControl+BlockAction.h */,
@@ -863,7 +855,6 @@
 				B7170BBF1428EB2500DF7794 /* UIView+ReuseIdentifier.h in Headers */,
 				B71709DB1428E64F00DF7794 /* ECDebug.h in Headers */,
 				CD2A5FCD142A4A9900A2CACD /* ECSplitViewController.h in Headers */,
-				CD2A5FD3142A4AA500A2CACD /* ECBlockView.h in Headers */,
 				CD6B0F051434D43000049625 /* ECInverseCornerShapeView.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1036,7 +1027,6 @@
 				B7170BBC1428EB2500DF7794 /* UIImage+BlockDrawing.m in Sources */,
 				B7170BC01428EB2500DF7794 /* UIView+ReuseIdentifier.m in Sources */,
 				CD2A5FCE142A4A9900A2CACD /* ECSplitViewController.m in Sources */,
-				CD2A5FD4142A4AA500A2CACD /* ECBlockView.m in Sources */,
 				CD6B0F061434D43000049625 /* ECInverseCornerShapeView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1114,7 +1104,6 @@
 				B7170B1F1428E6A300DF7794 /* NSObject+KiwiVerifierAdditions.m in Sources */,
 				B7170B201428E6A300DF7794 /* NSValue+KiwiAdditions.m in Sources */,
 				CD2A5FCF142A4A9900A2CACD /* ECSplitViewController.m in Sources */,
-				CD2A5FD5142A4AA500A2CACD /* ECBlockView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1125,7 +1114,6 @@
 				CD0DDA2014293E7300FE8B5B /* main.m in Sources */,
 				CD0DDA2414293E7300FE8B5B /* ECSplitViewControllerTest_AppDelegate.m in Sources */,
 				CD2A5FD0142A4A9900A2CACD /* ECSplitViewController.m in Sources */,
-				CD2A5FD6142A4AA500A2CACD /* ECBlockView.m in Sources */,
 				CDC7C953142A4B3300FCF269 /* ECRoundedContentCornersView.m in Sources */,
 				CD6B0F071434D43000049625 /* ECInverseCornerShapeView.m in Sources */,
 			);

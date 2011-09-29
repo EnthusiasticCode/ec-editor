@@ -160,22 +160,14 @@ static void preinit(ECSplitViewController *self)
 {
     self->gutterWidth = 1;
     self->sidebarWidth = 300;
-    
-//    self->sidebarVisible = YES;
-    self->splitInLandscape = YES;
 }
 
-static void init(ECSplitViewController *self)
-{
-
-}
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     preinit(self);
     if ((self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil]))
     {
-        init(self);
     }
     return self;
 }
@@ -185,7 +177,6 @@ static void init(ECSplitViewController *self)
     preinit(self);
     if ((self = [super initWithCoder:coder]))
     {
-        init(self);
     }
     return self;
 }
@@ -229,10 +220,6 @@ static void init(ECSplitViewController *self)
     sidebarContainerView = nil;
     mainContainerView = nil;
 }
-
-#pragma mark View behaviours
-
-
 
 #pragma mark Rotation
 
@@ -322,7 +309,6 @@ static void init(ECSplitViewController *self)
     [mainContainerView.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
     
     [mainContainerView addSubview:mainViewController.view];
-//    [mainContainerView sendSubviewToBack:mainViewController.view];
     [self.view addSubview:mainContainerView];
     
     mainViewController.view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
@@ -384,6 +370,8 @@ static void init(ECSplitViewController *self)
                 
                 // Create rounded corners
                 // 0,1 are top/bottom in main view, 2/3 are bottom/top in sidebar view
+                [CATransaction begin];
+                [CATransaction setDisableActions:YES];
                 for (int i = 0; i < 4; ++i)
                 {
                     BOOL isSidebar = i > 1;
@@ -398,6 +386,7 @@ static void init(ECSplitViewController *self)
                         [mainContainerView addSubview:corner];
                     roundedCorners[i] = corner;
                 }
+                [CATransaction commit];
             }
         }
         else
@@ -430,10 +419,6 @@ static void init(ECSplitViewController *self)
 {
     [self layoutChildViewsForInterfaceOrientation:self.interfaceOrientation prepareForAnimation:NO];
 }
-
-#pragma mark - Private Methods - Rounded corners
-
-
 
 #pragma mark - Private Methods - Handling Gestures
 
