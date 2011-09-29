@@ -21,6 +21,7 @@
 		B7170ECB1429F54D00DF7794 /* libECCodeIndexing.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7170EA91429F3B800DF7794 /* libECCodeIndexing.a */; };
 		B7170ECC1429F54D00DF7794 /* libECFoundation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7170EAF1429F3B800DF7794 /* libECFoundation.a */; };
 		B7170ECD1429F54D00DF7794 /* libECUIKit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7170EB61429F3B800DF7794 /* libECUIKit.a */; };
+		B71A1DE71435112700672F65 /* ACNewFilePopoverController.m in Sources */ = {isa = PBXBuildFile; fileRef = B71A1DE61435112700672F65 /* ACNewFilePopoverController.m */; };
 		B723CBA214337A0C006483C4 /* NSArray+SSToolkitAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = B723CB9714337A0C006483C4 /* NSArray+SSToolkitAdditions.m */; };
 		B723CBA314337A0C006483C4 /* NSData+SSToolkitAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = B723CB9914337A0C006483C4 /* NSData+SSToolkitAdditions.m */; };
 		B723CBA414337A0C006483C4 /* NSDate+SSToolkitAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = B723CB9B14337A0C006483C4 /* NSDate+SSToolkitAdditions.m */; };
@@ -31,7 +32,6 @@
 		B732D06413DD799400637FBE /* ACURL.m in Sources */ = {isa = PBXBuildFile; fileRef = B732D06313DD799300637FBE /* ACURL.m */; };
 		B7AC172F14216CD4009E9205 /* NewFilePopover.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B7AC172D14216CD4009E9205 /* NewFilePopover.storyboard */; };
 		B7AC173014216CD4009E9205 /* NewProjectPopover.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B7AC172E14216CD4009E9205 /* NewProjectPopover.storyboard */; };
-		B7AC174914216D1C009E9205 /* ACNewFileImportFileController.m in Sources */ = {isa = PBXBuildFile; fileRef = B7AC173A14216D1C009E9205 /* ACNewFileImportFileController.m */; };
 		B7AC174D14216D1C009E9205 /* ACNewProjectPopoverController.m in Sources */ = {isa = PBXBuildFile; fileRef = B7AC174214216D1C009E9205 /* ACNewProjectPopoverController.m */; };
 		B7AC175514216D91009E9205 /* libz.1.2.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B7AC175414216D91009E9205 /* libz.1.2.5.dylib */; };
 		B7AC17F314253A99009E9205 /* ACEditorToolSelectionController.m in Sources */ = {isa = PBXBuildFile; fileRef = B7AC17F214253A99009E9205 /* ACEditorToolSelectionController.m */; };
@@ -226,6 +226,8 @@
 		B7170E881429F3B600DF7794 /* ECCodeIndexing.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ECCodeIndexing.xcodeproj; path = ../Frameworks/ECCodeIndexing.xcodeproj; sourceTree = "<group>"; };
 		B7170E8B1429F3B600DF7794 /* ECFoundation.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ECFoundation.xcodeproj; path = ../Frameworks/ECFoundation.xcodeproj; sourceTree = "<group>"; };
 		B7170E8E1429F3B600DF7794 /* ECUIKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ECUIKit.xcodeproj; path = ../Frameworks/ECUIKit.xcodeproj; sourceTree = "<group>"; };
+		B71A1DE51435112700672F65 /* ACNewFilePopoverController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACNewFilePopoverController.h; sourceTree = "<group>"; };
+		B71A1DE61435112700672F65 /* ACNewFilePopoverController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACNewFilePopoverController.m; sourceTree = "<group>"; };
 		B723CB9614337A0C006483C4 /* NSArray+SSToolkitAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSArray+SSToolkitAdditions.h"; path = "../ThirdParty/sstoolkit/SSToolkit/NSArray+SSToolkitAdditions.h"; sourceTree = "<group>"; };
 		B723CB9714337A0C006483C4 /* NSArray+SSToolkitAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSArray+SSToolkitAdditions.m"; path = "../ThirdParty/sstoolkit/SSToolkit/NSArray+SSToolkitAdditions.m"; sourceTree = "<group>"; };
 		B723CB9814337A0C006483C4 /* NSData+SSToolkitAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSData+SSToolkitAdditions.h"; path = "../ThirdParty/sstoolkit/SSToolkit/NSData+SSToolkitAdditions.h"; sourceTree = "<group>"; };
@@ -244,8 +246,6 @@
 		B732D06313DD799300637FBE /* ACURL.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACURL.m; sourceTree = "<group>"; };
 		B7AC172D14216CD4009E9205 /* NewFilePopover.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = NewFilePopover.storyboard; sourceTree = "<group>"; };
 		B7AC172E14216CD4009E9205 /* NewProjectPopover.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = NewProjectPopover.storyboard; sourceTree = "<group>"; };
-		B7AC173914216D1C009E9205 /* ACNewFileImportFileController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACNewFileImportFileController.h; sourceTree = "<group>"; };
-		B7AC173A14216D1C009E9205 /* ACNewFileImportFileController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACNewFileImportFileController.m; sourceTree = "<group>"; };
 		B7AC174114216D1C009E9205 /* ACNewProjectPopoverController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACNewProjectPopoverController.h; sourceTree = "<group>"; };
 		B7AC174214216D1C009E9205 /* ACNewProjectPopoverController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACNewProjectPopoverController.m; sourceTree = "<group>"; };
 		B7AC175414216D91009E9205 /* libz.1.2.5.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.1.2.5.dylib; path = usr/lib/libz.1.2.5.dylib; sourceTree = SDKROOT; };
@@ -482,8 +482,8 @@
 			children = (
 				B7AC174114216D1C009E9205 /* ACNewProjectPopoverController.h */,
 				B7AC174214216D1C009E9205 /* ACNewProjectPopoverController.m */,
-				B7AC173914216D1C009E9205 /* ACNewFileImportFileController.h */,
-				B7AC173A14216D1C009E9205 /* ACNewFileImportFileController.m */,
+				B71A1DE51435112700672F65 /* ACNewFilePopoverController.h */,
+				B71A1DE61435112700672F65 /* ACNewFilePopoverController.m */,
 			);
 			name = "Popover Content Controllers";
 			sourceTree = "<group>";
@@ -1026,7 +1026,6 @@
 				CD6580C9141626F20079412F /* ACCompletionController.m in Sources */,
 				CD6580CF141641D50079412F /* ACCodeFileFilterController.m in Sources */,
 				CDE1CB81142102A500151BD7 /* ACTabButton.m in Sources */,
-				B7AC174914216D1C009E9205 /* ACNewFileImportFileController.m in Sources */,
 				B7AC174D14216D1C009E9205 /* ACNewProjectPopoverController.m in Sources */,
 				B7AC17F314253A99009E9205 /* ACEditorToolSelectionController.m in Sources */,
 				B7D3BE761431BA3A00BF43EB /* Application.xcdatamodeld in Sources */,
@@ -1046,6 +1045,7 @@
 				B702320C14345B5A006D23F7 /* ACApplication.m in Sources */,
 				B702320F14345B5B006D23F7 /* ACGroup.m in Sources */,
 				B702321214345B5B006D23F7 /* ACHistoryItem.m in Sources */,
+				B71A1DE71435112700672F65 /* ACNewFilePopoverController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

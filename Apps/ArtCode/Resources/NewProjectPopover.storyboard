@@ -29,18 +29,12 @@
                             <outlet property="delegate" destination="DR9-8m-f4z" id="l3J-gv-gte"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" id="1QX-w5-ft6"/>
                     <value key="contentSizeForViewInPopover" type="size" width="600" height="600"/>
                 </tableViewController>
             </objects>
             <point key="canvasLocation" x="1584" y="-777"/>
         </scene>
     </scenes>
-    <classes>
-        <class className="ACNewProjectPopoverController" superclassName="UITableViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/ACNewProjectPopoverController.h"/>
-        </class>
-    </classes>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar" statusBarStyle="blackTranslucent"/>
         <simulatedOrientationMetrics key="orientation"/>

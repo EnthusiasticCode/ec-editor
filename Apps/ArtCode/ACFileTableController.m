@@ -10,12 +10,20 @@
 #import "AppStyle.h"
 #import "ACNavigationController.h"
 #import "ACEditableTableCell.h"
+#import "ACNewFilePopoverController.h"
 
 #import "ACToolFiltersView.h"
+#import <ECUIKit/ECPopoverController.h>
 
 #import "ACNode.h"
 #import "ACGroup.h"
 #import "ACTab.h"
+
+@interface ACFileTableController () {
+    ECPopoverController *_popover;
+}
+
+@end
 
 @implementation ACFileTableController {
     NSArray *extensions;
@@ -24,6 +32,8 @@
 @synthesize tableView, editingToolsView;
 @synthesize group = _group;
 @synthesize tab = _tab;
+
+@synthesize toolButton;
 
 - (void)didReceiveMemoryWarning
 {
@@ -148,6 +158,33 @@
 - (void)setScrollToRequireGestureRecognizerToFail:(UIGestureRecognizer *)recognizer
 {
     [tableView.panGestureRecognizer requireGestureRecognizerToFail:recognizer];
+}
+
+- (UIButton *)toolButton
+{
+    if (!toolButton)
+    {
+        toolButton = [UIButton new];
+        [toolButton addTarget:self action:@selector(toolButtonAction:) forControlEvents:UIControlEventTouchUpInside];
+        [toolButton setImage:[UIImage styleAddImageWithColor:[UIColor styleForegroundColor] shadowColor:[UIColor whiteColor]] forState:UIControlStateNormal];
+        toolButton.adjustsImageWhenHighlighted = NO;
+    }
+    return toolButton;
+}
+
+#pragma mark -
+
+- (void)toolButtonAction:(id)sender
+{
+    // Removing the lazy loading could cause the old popover to be overwritten by the new one causing a dealloc while popover is visible
+    if (!_popover)
+    {
+        UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"NewFilePopover" bundle:[NSBundle mainBundle]];
+        ACNewFilePopoverController *popoverViewController = (ACNewFilePopoverController *)[storyboard instantiateInitialViewController];
+        popoverViewController.group = self.group;
+        _popover = [[ECPopoverController alloc] initWithContentViewController:popoverViewController];
+    }
+    [_popover presentPopoverFromRect:[sender frame] inView:[sender superview] permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
 }
 
 #pragma mark - Table view data source
