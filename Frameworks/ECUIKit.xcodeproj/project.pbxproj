@@ -142,6 +142,9 @@
 		CD2A5FD4142A4AA500A2CACD /* ECBlockView.m in Sources */ = {isa = PBXBuildFile; fileRef = CD2A5FD2142A4AA500A2CACD /* ECBlockView.m */; };
 		CD2A5FD5142A4AA500A2CACD /* ECBlockView.m in Sources */ = {isa = PBXBuildFile; fileRef = CD2A5FD2142A4AA500A2CACD /* ECBlockView.m */; };
 		CD2A5FD6142A4AA500A2CACD /* ECBlockView.m in Sources */ = {isa = PBXBuildFile; fileRef = CD2A5FD2142A4AA500A2CACD /* ECBlockView.m */; };
+		CD6B0F051434D43000049625 /* ECInverseCornerShapeView.h in Headers */ = {isa = PBXBuildFile; fileRef = CD6B0F031434D43000049625 /* ECInverseCornerShapeView.h */; };
+		CD6B0F061434D43000049625 /* ECInverseCornerShapeView.m in Sources */ = {isa = PBXBuildFile; fileRef = CD6B0F041434D43000049625 /* ECInverseCornerShapeView.m */; };
+		CD6B0F071434D43000049625 /* ECInverseCornerShapeView.m in Sources */ = {isa = PBXBuildFile; fileRef = CD6B0F041434D43000049625 /* ECInverseCornerShapeView.m */; };
 		CDC7C952142A4ADD00FCF269 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7170BD61428F00800DF7794 /* QuartzCore.framework */; };
 		CDC7C953142A4B3300FCF269 /* ECRoundedContentCornersView.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170B701428EB2400DF7794 /* ECRoundedContentCornersView.m */; };
 /* End PBXBuildFile section */
@@ -392,6 +395,8 @@
 		CD2A5FCC142A4A9900A2CACD /* ECSplitViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECSplitViewController.m; sourceTree = "<group>"; };
 		CD2A5FD1142A4AA500A2CACD /* ECBlockView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECBlockView.h; sourceTree = "<group>"; };
 		CD2A5FD2142A4AA500A2CACD /* ECBlockView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECBlockView.m; sourceTree = "<group>"; };
+		CD6B0F031434D43000049625 /* ECInverseCornerShapeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECInverseCornerShapeView.h; sourceTree = "<group>"; };
+		CD6B0F041434D43000049625 /* ECInverseCornerShapeView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECInverseCornerShapeView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -822,6 +827,8 @@
 		CD2A5FCA142A4A8400A2CACD /* Split View */ = {
 			isa = PBXGroup;
 			children = (
+				CD6B0F031434D43000049625 /* ECInverseCornerShapeView.h */,
+				CD6B0F041434D43000049625 /* ECInverseCornerShapeView.m */,
 				CD2A5FCB142A4A9900A2CACD /* ECSplitViewController.h */,
 				CD2A5FCC142A4A9900A2CACD /* ECSplitViewController.m */,
 			);
@@ -857,6 +864,7 @@
 				B71709DB1428E64F00DF7794 /* ECDebug.h in Headers */,
 				CD2A5FCD142A4A9900A2CACD /* ECSplitViewController.h in Headers */,
 				CD2A5FD3142A4AA500A2CACD /* ECBlockView.h in Headers */,
+				CD6B0F051434D43000049625 /* ECInverseCornerShapeView.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1029,6 +1037,7 @@
 				B7170BC01428EB2500DF7794 /* UIView+ReuseIdentifier.m in Sources */,
 				CD2A5FCE142A4A9900A2CACD /* ECSplitViewController.m in Sources */,
 				CD2A5FD4142A4AA500A2CACD /* ECBlockView.m in Sources */,
+				CD6B0F061434D43000049625 /* ECInverseCornerShapeView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1118,6 +1127,7 @@
 				CD2A5FD0142A4A9900A2CACD /* ECSplitViewController.m in Sources */,
 				CD2A5FD6142A4AA500A2CACD /* ECBlockView.m in Sources */,
 				CDC7C953142A4B3300FCF269 /* ECRoundedContentCornersView.m in Sources */,
+				CD6B0F071434D43000049625 /* ECInverseCornerShapeView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
