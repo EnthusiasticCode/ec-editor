@@ -8,32 +8,15 @@
 
 #import "ACNode.h"
 #import "ACGroup.h"
-#import "ACFile.h"
 
-#import <ECCodeIndexing/ECCodeUnit.h>
-#import <ECCodeIndexing/ECCodeIndex.h>
-
-#import <ECFoundation/NSURL+ECAdditions.h>
-#import <ECArchive/ECArchive.h>
 
 @implementation ACNode
 
+@dynamic name;
 @dynamic tag;
 @dynamic expanded;
 @dynamic parent;
 @dynamic children;
-
-- (NSURL *)fileURL
-{
-    return [NSURL URLWithString:[self primitiveValueForKey:@"fileURL"]];
-}
-
-- (void)setFileURL:(NSURL *)fileURL
-{
-    [self willChangeValueForKey:@"fileURL"];
-    [self setPrimitiveValue:[fileURL absoluteString] forKey:@"fileURL"];
-    [self didChangeValueForKey:@"fileURL"];
-}
 
 - (NSURL *)ACURL
 {

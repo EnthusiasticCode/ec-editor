@@ -10,8 +10,6 @@
 #import <CoreData/CoreData.h>
 #import "ACURL.h"
 
-@class ACBookmark, ACTab;
-
 @interface ACApplication : NSManagedObject
 
 @property (nonatomic, strong) NSOrderedSet *bookmarks;

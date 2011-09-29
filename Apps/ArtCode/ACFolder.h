@@ -6,9 +6,9 @@
 //  Copyright (c) 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import "ACGroup.h"
+#import "ACPhysicalNode.h"
 
 
-@interface ACFolder : ACGroup
+@interface ACFolder : ACPhysicalNode
 
 @end

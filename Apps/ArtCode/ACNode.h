@@ -9,15 +9,14 @@
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
 
-@class ACGroup, ACFile;
+@class ACGroup;
 
 @interface ACNode : NSManagedObject
 
-@property (nonatomic, strong) NSURL *fileURL;
+@property (nonatomic, strong) NSString * name;
 @property (nonatomic) int16_t tag;
 @property (nonatomic) BOOL expanded;
 @property (nonatomic, strong) ACNode *parent;
-
 @property (nonatomic, strong) NSOrderedSet *children;
 
 - (void)moveChildrenAtIndexes:(NSIndexSet *)indexes toIndex:(NSUInteger)index;
@@ -26,6 +25,5 @@
 - (ACGroup *)insertChildGroupWithName:(NSString *)name atIndex:(NSUInteger)index;
 
 @property (nonatomic, strong, readonly) NSURL *ACURL;
-@property (nonatomic, strong, readonly) NSString *name;
 
 @end

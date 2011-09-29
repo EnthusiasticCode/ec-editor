@@ -8,7 +8,10 @@
 
 #import "ACFolder.h"
 
+@class ACApplication;
 
 @interface ACProject : ACFolder
+
+@property (nonatomic, strong) ACApplication *application;
 
 @end

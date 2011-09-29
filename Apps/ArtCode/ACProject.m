@@ -11,5 +11,6 @@
 
 @implementation ACProject
 
+@dynamic application;
 
 @end
