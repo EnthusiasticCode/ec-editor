@@ -9,12 +9,12 @@
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
 
-@class ACApplication;
+@class ACProject;
 
 @interface ACBookmark : NSManagedObject
 
 @property (nonatomic, strong) NSString * note;
 @property (nonatomic, strong) NSURL * URL;
-@property (nonatomic, strong) ACApplication *application;
+@property (nonatomic, strong) ACProject *project;
 
 @end

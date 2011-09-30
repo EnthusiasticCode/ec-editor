@@ -13,7 +13,6 @@
 
 @implementation ACApplication
 
-@dynamic bookmarks;
 @dynamic tabs;
 @dynamic projects;
 
@@ -34,7 +33,7 @@
     [[self mutableOrderedSetValueForKey:@"tabs"] moveObjectsAtIndexes:indexes toIndex:index];
 }
 
-- (void)exchangeTabsAtIndex:(NSUInteger)fromIndex withTabsAtIndex:(NSUInteger)toIndex
+- (void)exchangeTabAtIndex:(NSUInteger)fromIndex withTabAtIndex:(NSUInteger)toIndex
 {
     [[self mutableOrderedSetValueForKey:@"tabs"] exchangeObjectAtIndex:fromIndex withObjectAtIndex:toIndex];
 }
@@ -87,12 +86,6 @@
     switch ([URL ACObjectType])
     {
         case ACObjectTypeProject:
-        {
-            ACProject *project = [NSEntityDescription insertNewObjectForEntityForName:@"Project" inManagedObjectContext:self.managedObjectContext];
-            project.name = [URL ACObjectName];
-            project.application = self;
-            return project;
-        }
         case ACObjectTypeApplication:
         case ACObjectTypeUnknown:
         default:

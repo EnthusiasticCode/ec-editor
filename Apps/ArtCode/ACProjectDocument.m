@@ -15,9 +15,6 @@ void * ACProjectDocumentProjectURLObserving;
 @implementation ACProjectDocument
 
 @synthesize project = _project;
-@synthesize projectURL = _projectURL;
-
-// TODO: handle the pass through of URL and fileURL to the core data project object more gracefully
 
 - (ACProject *)project
 {
@@ -33,30 +30,10 @@ void * ACProjectDocumentProjectURLObserving;
             _project = [NSEntityDescription insertNewObjectForEntityForName:@"Project" inManagedObjectContext:self.managedObjectContext];
         else
             _project = [projects objectAtIndex:0];
-        ECASSERT([self.projectURL isACURL]);
-        _project.URL = self.projectURL;
-        [_project setPrimitiveValue:[self.projectURL ACProjectName] forKey:@"name"];
-        _project.fileURL = [self.fileURL URLByDeletingPathExtension];
     }
     ECASSERT(_project); // should never return nil
+    _project.document = self;
     return _project;
-}
-
-- (void)setProjectURL:(NSURL *)projectURL
-{
-    if (projectURL == _projectURL)
-        return;
-    [self willChangeValueForKey:@"projectURL"];
-    _projectURL = projectURL;
-    if (_project)
-    {
-        [_project willChangeValueForKey:@"name"];
-        _project.URL = projectURL;
-        [_project setPrimitiveValue:[projectURL ACProjectName] forKey:@"name"];
-        _project.fileURL = [self.fileURL URLByDeletingPathExtension];
-        [_project didChangeValueForKey:@"name"];
-    }
-    [self didChangeValueForKey:@"projectURL"];
 }
 
 + (NSString *)persistentStoreName
@@ -73,26 +50,6 @@ void * ACProjectDocumentProjectURLObserving;
 {
     NSURL *modelURL = [[NSBundle mainBundle] URLForResource:@"Project" withExtension:@"momd"];
     return [[NSManagedObjectModel alloc] initWithContentsOfURL:modelURL];
-}
-
-- (id)objectWithURL:(NSURL *)URL
-{
-    if ([URL isEqual:self.projectURL])
-        return self.project;
-    if (![URL isDescendantOfACURL:self.projectURL])
-        return nil;
-    NSArray *pathComponents = [URL pathComponents];
-    NSUInteger pathComponentsCount = [pathComponents count];
-    ACNode *node = self.project;
-    for (NSUInteger currentPathComponent = 2; currentPathComponent < pathComponentsCount; ++currentPathComponent)
-        node = [node childWithName:[pathComponents objectAtIndex:currentPathComponent]];
-    return node;
-}
-
-- (void)deleteObjectWithURL:(NSURL *)URL
-{
-    id object = [self objectWithURL:URL];
-    [self.managedObjectContext deleteObject:object];
 }
 
 - (void)handleError:(NSError *)error userInteractionPermitted:(BOOL)userInteractionPermitted

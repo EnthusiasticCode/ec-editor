@@ -2,7 +2,7 @@
 //  ACProject.m
 //  ArtCode
 //
-//  Created by Uri Baghin on 9/16/11.
+//  Created by Uri Baghin on 9/30/11.
 //  Copyright (c) 2011 __MyCompanyName__. All rights reserved.
 //
 
@@ -11,7 +11,9 @@
 
 @implementation ACProject
 
-@dynamic application;
+@dynamic bookmarks;
+
+@synthesize document = _document;
 
 - (NSURL *)ACURL
 {

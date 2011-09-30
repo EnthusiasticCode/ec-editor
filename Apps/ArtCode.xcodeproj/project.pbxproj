@@ -9,11 +9,8 @@
 /* Begin PBXBuildFile section */
 		B70231F714345B5A006D23F7 /* ACNode.m in Sources */ = {isa = PBXBuildFile; fileRef = B70231F614345B5A006D23F7 /* ACNode.m */; };
 		B70231FA14345B5A006D23F7 /* ACTab.m in Sources */ = {isa = PBXBuildFile; fileRef = B70231F914345B5A006D23F7 /* ACTab.m */; };
-		B70231FD14345B5A006D23F7 /* ACFolder.m in Sources */ = {isa = PBXBuildFile; fileRef = B70231FC14345B5A006D23F7 /* ACFolder.m */; };
-		B702320014345B5A006D23F7 /* ACPhysicalNode.m in Sources */ = {isa = PBXBuildFile; fileRef = B70231FF14345B5A006D23F7 /* ACPhysicalNode.m */; };
 		B702320314345B5A006D23F7 /* ACBookmark.m in Sources */ = {isa = PBXBuildFile; fileRef = B702320214345B5A006D23F7 /* ACBookmark.m */; };
 		B702320614345B5A006D23F7 /* ACFile.m in Sources */ = {isa = PBXBuildFile; fileRef = B702320514345B5A006D23F7 /* ACFile.m */; };
-		B702320914345B5A006D23F7 /* ACProject.m in Sources */ = {isa = PBXBuildFile; fileRef = B702320814345B5A006D23F7 /* ACProject.m */; };
 		B702320C14345B5A006D23F7 /* ACApplication.m in Sources */ = {isa = PBXBuildFile; fileRef = B702320B14345B5A006D23F7 /* ACApplication.m */; };
 		B702320F14345B5B006D23F7 /* ACGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = B702320E14345B5B006D23F7 /* ACGroup.m */; };
 		B702321214345B5B006D23F7 /* ACHistoryItem.m in Sources */ = {isa = PBXBuildFile; fileRef = B702321114345B5B006D23F7 /* ACHistoryItem.m */; };
@@ -22,6 +19,10 @@
 		B7170ECC1429F54D00DF7794 /* libECFoundation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7170EAF1429F3B800DF7794 /* libECFoundation.a */; };
 		B7170ECD1429F54D00DF7794 /* libECUIKit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7170EB61429F3B800DF7794 /* libECUIKit.a */; };
 		B71A1DE71435112700672F65 /* ACNewFilePopoverController.m in Sources */ = {isa = PBXBuildFile; fileRef = B71A1DE61435112700672F65 /* ACNewFilePopoverController.m */; };
+		B71A1E071435C3C300672F65 /* Project.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = B71A1E051435C3C300672F65 /* Project.xcdatamodeld */; };
+		B71A1E0A1435C3F300672F65 /* ACProjectDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = B71A1E091435C3F300672F65 /* ACProjectDocument.m */; };
+		B71A1E0D1435C7A300672F65 /* ACProjectListItem.m in Sources */ = {isa = PBXBuildFile; fileRef = B71A1E0C1435C7A300672F65 /* ACProjectListItem.m */; };
+		B71A1E101435C8EA00672F65 /* ACProject.m in Sources */ = {isa = PBXBuildFile; fileRef = B71A1E0F1435C8EA00672F65 /* ACProject.m */; };
 		B723CBA214337A0C006483C4 /* NSArray+SSToolkitAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = B723CB9714337A0C006483C4 /* NSArray+SSToolkitAdditions.m */; };
 		B723CBA314337A0C006483C4 /* NSData+SSToolkitAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = B723CB9914337A0C006483C4 /* NSData+SSToolkitAdditions.m */; };
 		B723CBA414337A0C006483C4 /* NSDate+SSToolkitAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = B723CB9B14337A0C006483C4 /* NSDate+SSToolkitAdditions.m */; };
@@ -206,16 +207,10 @@
 		B70231F614345B5A006D23F7 /* ACNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACNode.m; sourceTree = "<group>"; };
 		B70231F814345B5A006D23F7 /* ACTab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACTab.h; sourceTree = "<group>"; };
 		B70231F914345B5A006D23F7 /* ACTab.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACTab.m; sourceTree = "<group>"; };
-		B70231FB14345B5A006D23F7 /* ACFolder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACFolder.h; sourceTree = "<group>"; };
-		B70231FC14345B5A006D23F7 /* ACFolder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACFolder.m; sourceTree = "<group>"; };
-		B70231FE14345B5A006D23F7 /* ACPhysicalNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACPhysicalNode.h; sourceTree = "<group>"; };
-		B70231FF14345B5A006D23F7 /* ACPhysicalNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACPhysicalNode.m; sourceTree = "<group>"; };
 		B702320114345B5A006D23F7 /* ACBookmark.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACBookmark.h; sourceTree = "<group>"; };
 		B702320214345B5A006D23F7 /* ACBookmark.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACBookmark.m; sourceTree = "<group>"; };
 		B702320414345B5A006D23F7 /* ACFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACFile.h; sourceTree = "<group>"; };
 		B702320514345B5A006D23F7 /* ACFile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACFile.m; sourceTree = "<group>"; };
-		B702320714345B5A006D23F7 /* ACProject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACProject.h; sourceTree = "<group>"; };
-		B702320814345B5A006D23F7 /* ACProject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACProject.m; sourceTree = "<group>"; };
 		B702320A14345B5A006D23F7 /* ACApplication.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACApplication.h; sourceTree = "<group>"; };
 		B702320B14345B5A006D23F7 /* ACApplication.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACApplication.m; sourceTree = "<group>"; };
 		B702320D14345B5B006D23F7 /* ACGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACGroup.h; sourceTree = "<group>"; };
@@ -228,6 +223,13 @@
 		B7170E8E1429F3B600DF7794 /* ECUIKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ECUIKit.xcodeproj; path = ../Frameworks/ECUIKit.xcodeproj; sourceTree = "<group>"; };
 		B71A1DE51435112700672F65 /* ACNewFilePopoverController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACNewFilePopoverController.h; sourceTree = "<group>"; };
 		B71A1DE61435112700672F65 /* ACNewFilePopoverController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACNewFilePopoverController.m; sourceTree = "<group>"; };
+		B71A1E061435C3C300672F65 /* Project.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Project.xcdatamodel; sourceTree = "<group>"; };
+		B71A1E081435C3F300672F65 /* ACProjectDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACProjectDocument.h; sourceTree = "<group>"; };
+		B71A1E091435C3F300672F65 /* ACProjectDocument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACProjectDocument.m; sourceTree = "<group>"; };
+		B71A1E0B1435C7A300672F65 /* ACProjectListItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACProjectListItem.h; sourceTree = "<group>"; };
+		B71A1E0C1435C7A300672F65 /* ACProjectListItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACProjectListItem.m; sourceTree = "<group>"; };
+		B71A1E0E1435C8E900672F65 /* ACProject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACProject.h; sourceTree = "<group>"; };
+		B71A1E0F1435C8EA00672F65 /* ACProject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACProject.m; sourceTree = "<group>"; };
 		B723CB9614337A0C006483C4 /* NSArray+SSToolkitAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSArray+SSToolkitAdditions.h"; path = "../ThirdParty/sstoolkit/SSToolkit/NSArray+SSToolkitAdditions.h"; sourceTree = "<group>"; };
 		B723CB9714337A0C006483C4 /* NSArray+SSToolkitAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSArray+SSToolkitAdditions.m"; path = "../ThirdParty/sstoolkit/SSToolkit/NSArray+SSToolkitAdditions.m"; sourceTree = "<group>"; };
 		B723CB9814337A0C006483C4 /* NSData+SSToolkitAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSData+SSToolkitAdditions.h"; path = "../ThirdParty/sstoolkit/SSToolkit/NSData+SSToolkitAdditions.h"; sourceTree = "<group>"; };
@@ -445,22 +447,22 @@
 				B732D06313DD799300637FBE /* ACURL.m */,
 				B702320A14345B5A006D23F7 /* ACApplication.h */,
 				B702320B14345B5A006D23F7 /* ACApplication.m */,
-				B702320714345B5A006D23F7 /* ACProject.h */,
-				B702320814345B5A006D23F7 /* ACProject.m */,
-				B70231FB14345B5A006D23F7 /* ACFolder.h */,
-				B70231FC14345B5A006D23F7 /* ACFolder.m */,
+				B70231F814345B5A006D23F7 /* ACTab.h */,
+				B70231F914345B5A006D23F7 /* ACTab.m */,
+				B702321014345B5B006D23F7 /* ACHistoryItem.h */,
+				B702321114345B5B006D23F7 /* ACHistoryItem.m */,
+				B71A1E0B1435C7A300672F65 /* ACProjectListItem.h */,
+				B71A1E0C1435C7A300672F65 /* ACProjectListItem.m */,
+				B71A1E081435C3F300672F65 /* ACProjectDocument.h */,
+				B71A1E091435C3F300672F65 /* ACProjectDocument.m */,
+				B71A1E0E1435C8E900672F65 /* ACProject.h */,
+				B71A1E0F1435C8EA00672F65 /* ACProject.m */,
 				B702320414345B5A006D23F7 /* ACFile.h */,
 				B702320514345B5A006D23F7 /* ACFile.m */,
-				B70231FE14345B5A006D23F7 /* ACPhysicalNode.h */,
-				B70231FF14345B5A006D23F7 /* ACPhysicalNode.m */,
 				B702320D14345B5B006D23F7 /* ACGroup.h */,
 				B702320E14345B5B006D23F7 /* ACGroup.m */,
 				B70231F514345B5A006D23F7 /* ACNode.h */,
 				B70231F614345B5A006D23F7 /* ACNode.m */,
-				B702321014345B5B006D23F7 /* ACHistoryItem.h */,
-				B702321114345B5B006D23F7 /* ACHistoryItem.m */,
-				B70231F814345B5A006D23F7 /* ACTab.h */,
-				B70231F914345B5A006D23F7 /* ACTab.m */,
 				B702320114345B5A006D23F7 /* ACBookmark.h */,
 				B702320214345B5A006D23F7 /* ACBookmark.m */,
 			);
@@ -492,6 +494,7 @@
 			isa = PBXGroup;
 			children = (
 				B7D3BE741431BA3A00BF43EB /* Application.xcdatamodeld */,
+				B71A1E051435C3C300672F65 /* Project.xcdatamodeld */,
 			);
 			name = "Core Data";
 			sourceTree = "<group>";
@@ -1037,15 +1040,16 @@
 				B723CBA714337A0C006483C4 /* NSURL+SSToolkitAdditions.m in Sources */,
 				B70231F714345B5A006D23F7 /* ACNode.m in Sources */,
 				B70231FA14345B5A006D23F7 /* ACTab.m in Sources */,
-				B70231FD14345B5A006D23F7 /* ACFolder.m in Sources */,
-				B702320014345B5A006D23F7 /* ACPhysicalNode.m in Sources */,
 				B702320314345B5A006D23F7 /* ACBookmark.m in Sources */,
 				B702320614345B5A006D23F7 /* ACFile.m in Sources */,
-				B702320914345B5A006D23F7 /* ACProject.m in Sources */,
 				B702320C14345B5A006D23F7 /* ACApplication.m in Sources */,
 				B702320F14345B5B006D23F7 /* ACGroup.m in Sources */,
 				B702321214345B5B006D23F7 /* ACHistoryItem.m in Sources */,
 				B71A1DE71435112700672F65 /* ACNewFilePopoverController.m in Sources */,
+				B71A1E071435C3C300672F65 /* Project.xcdatamodeld in Sources */,
+				B71A1E0A1435C3F300672F65 /* ACProjectDocument.m in Sources */,
+				B71A1E0D1435C7A300672F65 /* ACProjectListItem.m in Sources */,
+				B71A1E101435C8EA00672F65 /* ACProject.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1196,6 +1200,16 @@
 /* End XCConfigurationList section */
 
 /* Begin XCVersionGroup section */
+		B71A1E051435C3C300672F65 /* Project.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				B71A1E061435C3C300672F65 /* Project.xcdatamodel */,
+			);
+			currentVersion = B71A1E061435C3C300672F65 /* Project.xcdatamodel */;
+			path = Project.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
 		B7D3BE741431BA3A00BF43EB /* Application.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (

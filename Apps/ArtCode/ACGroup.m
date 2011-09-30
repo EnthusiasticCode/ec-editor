@@ -13,7 +13,7 @@
 
 - (NSURL *)ACURL
 {
-    
+    return [NSURL ACURLForGroupAtPath:self.relativePath];
 }
 
 - (NSString *)relativePath;

@@ -7,13 +7,12 @@
 //
 
 #import "ACBookmark.h"
-#import "ACApplication.h"
 
 
 @implementation ACBookmark
 
 @dynamic note;
-@dynamic application;
+@dynamic project;
 
 - (NSURL *)URL
 {

@@ -12,7 +12,6 @@
 
 @interface ACApplication : NSManagedObject
 
-@property (nonatomic, strong) NSOrderedSet *bookmarks;
 @property (nonatomic, strong) NSOrderedSet *tabs;
 @property (nonatomic, strong) NSOrderedSet *projects;
 
@@ -21,7 +20,7 @@
 
 /// Reorder the tabs list
 - (void)moveTabsAtIndexes:(NSIndexSet *)indexes toIndex:(NSUInteger)index;
-- (void)exchangeTabsAtIndex:(NSUInteger)fromIndex withTabsAtIndex:(NSUInteger)toIndex;
+- (void)exchangeTabAtIndex:(NSUInteger)fromIndex withTabAtIndex:(NSUInteger)toIndex;
 
 /// Reorder the projcets list
 - (void)moveProjectsAtIndexes:(NSIndexSet *)indexes toIndex:(NSUInteger)index;
