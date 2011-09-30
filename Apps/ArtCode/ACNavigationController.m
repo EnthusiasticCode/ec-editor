@@ -217,7 +217,8 @@
     }
     
     // Setup file browser
-    [popoverBrowseFileToolController openURL:[NSURL ACURLWithPath:[jumpBar jumpPathUpThroughElement:sender]]];
+#warning update following line to new architecture
+//    [popoverBrowseFileToolController openURL:[NSURL ACURLWithPath:[jumpBar jumpPathUpThroughElement:sender]]];
     // TODO!!! the select row of the controller should not change the parent acnavigationcotnroller pushURL...
     
     popoverController.contentViewController = popoverBrowseFileToolController;

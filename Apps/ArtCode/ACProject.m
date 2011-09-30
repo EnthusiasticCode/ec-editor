@@ -7,35 +7,15 @@
 //
 
 #import "ACProject.h"
-
+#import "ACURL.h"
 
 @implementation ACProject
 
-@synthesize URL = _URL;
-@synthesize fileURL = _fileURL;
+@dynamic application;
 
-- (NSString *)name
+- (NSURL *)ACURL
 {
-    return [[self.URL lastPathComponent] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-}
-
-- (void)setName:(NSString *)name
-{
-    ECASSERT(name);
-    self.URL = [[self.URL URLByDeletingLastPathComponent] URLByAppendingPathComponent:name];
-}
-
-+ (NSSet *)keyPathsForValuesAffectingName
-{
-    return [NSSet setWithObject:@"URL"];
-}
-
-+ (NSSet *)keyPathsForValuesAffectingURL {
-    return [NSSet set];
-}
-
-+ (NSSet *)keyPathsForValuesAffectingFileURL {
-    return [NSSet set];
+    return [NSURL ACURLForProjectWithName:self.name];
 }
 
 @end

@@ -12,27 +12,6 @@
 @class ACTabNavigationController;
 @class ACTab;
 
-@protocol ACTabControllerDataSource <NSObject>
-@required
-
-/// Returns a view controller initialized with the given URL.
-- (UIViewController *)tabController:(ACTabController *)tabController viewControllerForURL:(NSURL *)url;
-
-@optional
-
-/// Ask the datasource if the given view controller can not handle the provided URL
-/// and should be dismissed.
-/// If it can, this method should make the view controller open the given URL.
-/// The provided view controller is equal to the one returned by the tabViewController
-/// property; but if nil, it will not be created during this call.
-/// If not implemented, the default behaviour act as if this method always return YES,
-/// making the tabViewController property being set to nil and thus, making a new
-/// call to that property invoke the tabController:viewControllerForURL: data source method.
-- (BOOL)tabController:(ACTabController *)tabController shouldChangeCurrentViewController:(UIViewController *)viewController forURL:(NSURL *)url;
-
-@end
-
-
 @protocol ACTabControllerDelegate <NSObject>
 @optional
 
@@ -57,12 +36,9 @@
 #pragma mark Create Tab Controllers
 
 /// Create a new tab controller with a single URL in its history.
-- (id)initWithDataSource:(id<ACTabControllerDataSource>)datasource tab:(ACTab *)tab;
+- (id)initWithTab:(ACTab *)tab;
 
 #pragma mark Accessing Tab's Environment
-
-/// Data source of the tab. If nil, some methods will not work properly.
-@property (nonatomic, weak) id<ACTabControllerDataSource> dataSource;
 
 /// Delegate of the tab.
 @property (nonatomic, weak) id<ACTabControllerDelegate> delegate;
@@ -86,14 +62,11 @@
 
 /// A reference to the view controller that manages the current tab URL.
 /// Accessing this property will trigger the allocation of a proper view 
-/// controller if not already existing. This method requires the delegate's 
-/// tabController:viewControllerForURL: method to be implemented.
-/// The property is weak, if the created view controller will not be strongly
-/// retained, usually by a parent view controller, it will be immediatly deallocated.
+/// controller if not already existing.
 /// The view controller may implement a method setScrollToRequireGestureRecognizerToFail:
 /// receiving a UIGestureRecognizer that should be required to fail for every controlled
 ///scrolling view.
-@property (nonatomic, readonly, weak) UIViewController *tabViewController;
+@property (nonatomic, readonly, strong) UIViewController *tabViewController;
 
 /// Returns true if the tabViewController property is not nil without triggering 
 /// a view controller creation.

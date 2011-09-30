@@ -7,15 +7,26 @@
 //
 
 #import "ACGroup.h"
+#import "ACURL.h"
 
 @implementation ACGroup
 
-- (NSURL *)fileURL
+- (NSURL *)ACURL
 {
-    NSURL *fileURL = self.parent.fileURL;
-    if (self.concrete)
-        fileURL = [fileURL URLByAppendingPathComponent:self.name];
-    return fileURL;
+    
+}
+
+- (NSString *)relativePath;
+{
+    NSMutableArray *pathComponents = [NSMutableArray array];
+    ACNode *node = self;
+    do
+    {
+        [pathComponents insertObject:node.name atIndex:0];
+        node = node.parent;
+    }
+    while (node);
+    return [pathComponents componentsJoinedByString:@"/"];
 }
 
 @end

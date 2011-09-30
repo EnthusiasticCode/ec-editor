@@ -10,11 +10,14 @@
 #import "ACTabNavigationController.h"
 #import "ACTab.h"
 #import "ACApplication.h"
+#import "ACProjectTableController.h"
+#import "ACFileTableController.h"
+#import "ACCodeFileController.h"
 
 static void * const ACTabControllerTabCurrentURLObserving;
 
 @interface ACTabController ()
-@property (nonatomic, weak) UIViewController *tabViewController;
+@property (nonatomic, strong) UIViewController *tabViewController;
 @end
 
 @implementation ACTabController {
@@ -22,22 +25,14 @@ static void * const ACTabControllerTabCurrentURLObserving;
 //    NSMutableArray *historyURLs;
 //    NSUInteger historyPointIndex;
     
-    BOOL dataSourceHasShouldChangeCurrentViewControllerForURL;
     BOOL delegateHasDidChangeURLPreviousViewController;
 }
 
 #pragma mark - Properties
 
-@synthesize dataSource, delegate;
+@synthesize delegate;
 @synthesize parentTabNavigationController;
 @synthesize tabButton, tabViewController, tab = _tab;
-
-- (void)setDataSource:(id<ACTabControllerDataSource>)aDatasource
-{
-    dataSource = aDatasource;
-
-    dataSourceHasShouldChangeCurrentViewControllerForURL = [dataSource respondsToSelector:@selector(tabController:shouldChangeCurrentViewController:forURL:)];
-}
 
 - (void)setDelegate:(id<ACTabControllerDelegate>)aDelegate
 {
@@ -71,9 +66,39 @@ static void * const ACTabControllerTabCurrentURLObserving;
 {
     if (tabViewController == nil)
     {
-        ECASSERT(dataSource != nil);
-        ECASSERT(self.tab.currentURL != nil);
-        tabViewController = [dataSource tabController:self viewControllerForURL:self.tab.currentURL];
+        switch ([self.tab.currentURL ACObjectType])
+        {
+            case ACObjectTypeFile:
+            {
+                ACCodeFileController *codeFileController = [[ACCodeFileController alloc] init];
+                codeFileController.file = [self.tab.application objectWithURL:self.tab.currentURL];
+                tabViewController = codeFileController;
+                break;
+            }
+            case ACObjectTypeApplication:
+            {
+                ACProjectTableController *projectTableController = [[ACProjectTableController alloc] init];
+                projectTableController.application = [self.tab.application objectWithURL:self.tab.currentURL];
+                projectTableController.tab = self.tab;
+                tabViewController = projectTableController;
+                break;
+            }
+            case ACObjectTypeProject:
+            case ACObjectTypeGroup:
+            case ACObjectTypeFolder:
+            {
+                ACFileTableController *fileTableController = [[ACFileTableController alloc] init];
+                fileTableController.group = [self.tab.application objectWithURL:self.tab.currentURL];
+                fileTableController.tab = self.tab;
+                tabViewController = fileTableController;
+                break;
+            }
+            case ACObjectTypeUnknown:
+            default:
+            {
+                ECASSERT(NO); // TODO: error handling
+            }
+        }
     }
     return tabViewController;
 }
@@ -102,13 +127,12 @@ static void * const ACTabControllerTabCurrentURLObserving;
 
 #pragma mark - Create Tab Controllers
 
-- (id)initWithDataSource:(id<ACTabControllerDataSource>)aDatasource tab:(ACTab *)tab
+- (id)initWithTab:(ACTab *)tab
 {
     ECASSERT(tab != nil);
     
     if ((self = [super init]))
     {
-        self.dataSource = aDatasource;
         self.tab = tab;
     }
     return self;
@@ -121,7 +145,7 @@ static void * const ACTabControllerTabCurrentURLObserving;
     [self.tab.application insertTabAtIndex:self.position + 1];
     ACTab *newTab = [self.tab.application.tabs objectAtIndex:self.position + 1];
     [newTab pushURL:self.tab.currentURL];
-    return [[ACTabController alloc] initWithDataSource:dataSource tab:newTab];
+    return [[ACTabController alloc] initWithTab:newTab];
 }
 
 @end

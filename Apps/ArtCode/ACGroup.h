@@ -8,8 +8,8 @@
 
 #import "ACNode.h"
 
-@class ACNode, ACFile;
 
 @interface ACGroup : ACNode
+
 
 @end

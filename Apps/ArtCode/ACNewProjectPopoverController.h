@@ -8,12 +8,10 @@
 
 #import <UIKit/UIKit.h>
 
-@interface ACNewProjectPopoverController : UINavigationController
+@class ACApplication;
 
-@property (nonatomic, strong) void (^newProjectFromTemplate)(NSString *templateName);
+@interface ACNewProjectPopoverController : UITableViewController
 
-@property (nonatomic, strong) void (^newProjectFromACZ)(NSURL *ACZFileURL);
-
-@property (nonatomic, strong) void (^newProjectFromZIP)(NSURL *ZIPFileURL);
+@property (nonatomic, strong) ACApplication *application;
 
 @end

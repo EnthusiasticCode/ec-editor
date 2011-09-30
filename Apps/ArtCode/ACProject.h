@@ -6,15 +6,12 @@
 //  Copyright (c) 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
-#import <CoreData/CoreData.h>
-#import "ACGroup.h"
+#import "ACFolder.h"
 
+@class ACApplication;
 
-@interface ACProject : ACGroup
+@interface ACProject : ACFolder
 
-@property (nonatomic, strong, readonly) NSString *name;
-@property (nonatomic, strong) NSURL *URL;
-@property (nonatomic, strong) NSURL *fileURL;
+@property (nonatomic, strong) ACApplication *application;
 
 @end

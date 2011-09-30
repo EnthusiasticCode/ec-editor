@@ -7,65 +7,124 @@
 //
 
 #import "ACURL.h"
+#import "NSURL+SSToolkitAdditions.h"
+#import "NSString+SSToolkitAdditions.h"
+#import <ECFoundation/NSURL+ECAdditions.h>
 
-NSString * const ACURLScheme = @"artcode";
+static NSString * const ACProjectsSubfolderName = @"ACLocalProjects";
+
+/*
+ ArtCode URL format:
+ Specify all identifiers in the preamble so that they can be changed if needed.
+ All identifiers MUST not require query escaping and should be as short as possible and unique within their respective group.
+ The format string is <scheme>:<type identifier>?<parameter identifier>=<parameter value>[& ...]
+ Examples:
+ The file main.c in the root directory for the project called "Project 1"
+ ac:f?p=Project%201/main.c
+ */
+
+// Scheme
+static NSString * const ACURLScheme = @"ac";
+
+// Object types identifiers
+static NSString * const ACURLApplicationIdentifier = @"a";
+static NSString * const ACURLProjectIdentifier = @"p";
+static NSString * const ACURLFolderIdentifier = @"f";
+static NSString * const ACURLGroupIdentifier = @"g";
+static NSString * const ACURLFileIdentifier = @"c";
+
+// Object parameters identifiers
+static NSString * const ACURLObjectScreenIdentifier = @"s";
+static NSString * const ACURLObjectPathIdentifier = @"p";
+
+// Application screen identifiers
+static NSString * const ACURLAppScreenIdentifierProjects = @"p";
 
 @implementation NSURL (ACURL)
+
++ (NSURL *)ACURLForApplicationProjectsList
+{
+    return [NSURL URLWithFormat:@"%@:/%@?%@=%@", ACURLScheme, ACURLApplicationIdentifier, ACURLObjectScreenIdentifier, ACURLAppScreenIdentifierProjects];
+}
+
++ (NSURL *)ACURLForProjectWithName:(NSString *)name
+{
+    ECASSERT([name length]);
+    return [NSURL URLWithFormat:@"%@:/%@?%@=%@", ACURLScheme, ACURLProjectIdentifier, ACURLObjectPathIdentifier, [name stringByEscapingForURLQuery]];
+}
+
++ (NSURL *)ACURLForFolderAtPath:(NSString *)path
+{
+    ECASSERT([path length]);
+    return [NSURL URLWithFormat:@"%@:/%@?%@=%@", ACURLScheme, ACURLFolderIdentifier, ACURLObjectPathIdentifier, [path stringByEscapingForURLQuery]];
+}
+
++ (NSURL *)ACURLForGroupAtPath:(NSString *)path
+{
+    ECASSERT([path length]);
+    return [NSURL URLWithFormat:@"%@:/%@?%@=%@", ACURLScheme, ACURLGroupIdentifier, ACURLObjectPathIdentifier, [path stringByEscapingForURLQuery]];
+}
+
++ (NSURL *)ACURLForFileAtPath:(NSString *)path
+{
+    ECASSERT([path length]);
+    return [NSURL URLWithFormat:@"%@:/%@?%@=%@", ACURLScheme, ACURLFileIdentifier, ACURLObjectPathIdentifier, [path stringByEscapingForURLQuery]];
+}
 
 - (BOOL)isACURL
 {
     return [self.scheme isEqualToString:ACURLScheme];
 }
 
-- (NSURL *)ACProjectURL
+- (NSString *)ACObjectName
 {
-    ECASSERT([self isACURL]);
-    return [NSURL URLWithString:[NSString stringWithFormat:@"%@:/%@", ACURLScheme, [[self.pathComponents objectAtIndex:1] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]]];
+    NSDictionary *parameters = [self queryDictionary];
+    switch ([self ACObjectType])
+    {
+        case ACObjectTypeProject:
+        case ACObjectTypeFolder:
+        case ACObjectTypeFile:
+        case ACObjectTypeGroup:
+            return [[parameters objectForKey:ACURLObjectPathIdentifier] lastPathComponent];
+        case ACObjectTypeApplication:
+        case ACObjectTypeUnknown:
+        default:
+            return nil;
+    }
 }
 
-- (NSString *)ACProjectName
+- (ACObjectType)ACObjectType
 {
-    ECASSERT([self isACURL]);
-    return [[self.pathComponents objectAtIndex:1] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    NSString *identifier = [[self pathComponents] objectAtIndex:1];
+    if ([identifier isEqualToString:ACURLProjectIdentifier])
+        return ACObjectTypeProject;
+    else if ([identifier isEqualToString:ACURLFolderIdentifier])
+        return ACObjectTypeFolder;
+    else if ([identifier isEqualToString:ACURLGroupIdentifier])
+        return ACObjectTypeGroup;
+    else if ([identifier isEqualToString:ACURLFileIdentifier])
+        return ACObjectTypeFile;
+    else if ([identifier isEqualToString:ACURLApplicationIdentifier])
+        return ACObjectTypeApplication;
+    else
+        return ACObjectTypeUnknown;
 }
 
-- (BOOL)isACProjectURL
+- (NSURL *)ACObjectFileURL
 {
-    return [self isACURL] && [self.pathComponents count] == 2;
-}
-
-+ (NSURL *)ACURLWithPathComponents:(NSArray *)pathComponents
-{
-    ECASSERT(pathComponents);
-    ECASSERT([pathComponents count]);
-    return [NSURL URLWithString:[NSString stringWithFormat:@"%@:/%@", ACURLScheme, [[pathComponents componentsJoinedByString:@"/"] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]]];
-}
-
-+ (NSURL *)ACURLWithPath:(NSString *)path
-{
-    ECASSERT(path);
-    ECASSERT([path hasPrefix:@"/"]);
-    
-    return [NSURL URLWithString:[NSString stringWithFormat:@"%@:%@", ACURLScheme, [path stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]]];
-}
-
-- (BOOL)isAncestorOfACURL:(NSURL *)URL
-{
-    ECASSERT([self isACURL]);
-    NSArray *URLPathComponents = [URL pathComponents];
-    NSArray *selfPathComponents = [self pathComponents];
-    NSUInteger selfPathComponentsCount = [selfPathComponents count];
-    if (selfPathComponentsCount > [URLPathComponents count])
-        return NO;
-    for (NSUInteger currentPathComponent = 0; currentPathComponent < selfPathComponentsCount; ++currentPathComponent)
-        if (![[URLPathComponents objectAtIndex:currentPathComponent] isEqualToString:[selfPathComponents objectAtIndex:currentPathComponent]])
-            return NO;
-    return YES;
-}
-
-- (BOOL)isDescendantOfACURL:(NSURL *)URL
-{
-    return [URL isAncestorOfACURL:self];
+    NSDictionary *parameters = [self queryDictionary];
+    switch ([self ACObjectType])
+    {
+        case ACObjectTypeProject:
+        case ACObjectTypeFolder:
+        case ACObjectTypeFile:
+            return [[[NSURL applicationLibraryDirectory] URLByAppendingPathComponent:ACProjectsSubfolderName] URLByAppendingPathComponent:[parameters objectForKey:ACURLObjectPathIdentifier]];
+        case ACObjectTypeGroup:
+        case ACObjectTypeApplication:
+        case ACObjectTypeUnknown:
+        default:
+            return nil;
+    }
 }
 
 @end

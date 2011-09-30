@@ -25,7 +25,6 @@
 #import "ACCodeFileController.h"
 #import "ACEditableTableCell.h"
 
-#import "ACState.h"
 #import "ACNode.h"
 #import "ACApplication.h"
 #import "ACTab.h"
@@ -126,10 +125,10 @@
     if (![self.application.tabs count])
     {
         [self.application insertTabAtIndex:0];
-        [[self.application.tabs objectAtIndex:0] pushURL:[NSURL URLWithString:@"artcode:projects"]];
+        [[self.application.tabs objectAtIndex:0] pushURL:[NSURL ACURLForApplicationProjectsList]];
     }
     for (ACTab *tab in self.application.tabs)
-        [navigationController.tabNavigationController addTabControllerWithDataSource:self tab:tab animated:NO];
+        [navigationController.tabNavigationController addTabControllerWithTab:tab animated:NO];
     navigationController.tabNavigationController.currentTabController = [navigationController.tabNavigationController.tabControllers objectAtIndex:0];
 
     navigationController.tabNavigationController.makeAddedTabCurrent = YES;
@@ -150,6 +149,7 @@
      Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later. 
      If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
      */
+    [self saveContext];
 }
 
 - (void)applicationWillEnterForeground:(UIApplication *)application
@@ -195,40 +195,6 @@
         _application = [NSEntityDescription insertNewObjectForEntityForName:@"Application" inManagedObjectContext:self.managedObjectContext];
     }
     return _application;
-}
-
-#pragma mark - Navigation Controller Delegate Methods
-
-- (BOOL)tabController:(ACTabController *)tabController shouldChangeCurrentViewController:(UIViewController *)viewController forURL:(NSURL *)url
-{
-    // TODO convert the view controller to an ACToolTarget and see if it can handle
-    // the URL. if it can, open it and return NO.
-    return YES;
-}
-
-- (UIViewController *)tabController:(ACTabController *)tabController viewControllerForURL:(NSURL *)url
-{
-    Class controllerClass = nil;
-    // TODO url switch logic
-    if ([url.absoluteString isEqualToString:@"artcode:projects"])
-        controllerClass = [ACProjectTableController class];
-    else
-    {
-        ACNode *node = [[ACState sharedState] objectWithURL:url];
-        if ([[node nodeType] isEqualToString:@"Group"] || [[node nodeType] isEqualToString:@"Project"])
-            controllerClass = [ACFileTableController class];
-        else if ([[node nodeType] isEqualToString:@"File"])
-            controllerClass = [ACCodeFileController class];
-    }
-//    else if (url.pathExtension != nil)
-//        controllerClass = [ACCodeFileController class];
-//    else
-//        controllerClass = [ACFileTableController class];
-    ECASSERT(controllerClass);
-    UIViewController<ACNavigationTarget> *controller = [controllerClass newNavigationTargetController];
-    [controller openURL:url];
-    ECASSERT(controller);
-    return controller; // TODO initWithNibName:name of class
 }
 
 #pragma mark - Core Data stack

@@ -10,19 +10,30 @@
 #import "AppStyle.h"
 #import "ACNavigationController.h"
 #import "ACEditableTableCell.h"
+#import "ACNewFilePopoverController.h"
 
 #import "ACToolFiltersView.h"
+#import <ECUIKit/ECPopoverController.h>
 
-#import "ACState.h"
 #import "ACNode.h"
 #import "ACGroup.h"
+#import "ACTab.h"
+
+@interface ACFileTableController () {
+    ECPopoverController *_popover;
+}
+
+@end
 
 @implementation ACFileTableController {
     NSArray *extensions;
-    ACGroup *_displayedNode;
 }
 
 @synthesize tableView, editingToolsView;
+@synthesize group = _group;
+@synthesize tab = _tab;
+
+@synthesize toolButton;
 
 - (void)didReceiveMemoryWarning
 {
@@ -134,12 +145,6 @@
     return [[ACFileTableController alloc] initWithNibName:@"ACFileTableController" bundle:nil];
 }
 
-- (void)openURL:(NSURL *)url
-{
-    _displayedNode = (ACGroup *)[[ACState sharedState] objectWithURL:url];
-    [self.tableView reloadData];
-}
-
 - (BOOL)enableTabBar
 {
     return YES;
@@ -155,6 +160,33 @@
     [tableView.panGestureRecognizer requireGestureRecognizerToFail:recognizer];
 }
 
+- (UIButton *)toolButton
+{
+    if (!toolButton)
+    {
+        toolButton = [UIButton new];
+        [toolButton addTarget:self action:@selector(toolButtonAction:) forControlEvents:UIControlEventTouchUpInside];
+        [toolButton setImage:[UIImage styleAddImageWithColor:[UIColor styleForegroundColor] shadowColor:[UIColor whiteColor]] forState:UIControlStateNormal];
+        toolButton.adjustsImageWhenHighlighted = NO;
+    }
+    return toolButton;
+}
+
+#pragma mark -
+
+- (void)toolButtonAction:(id)sender
+{
+    // Removing the lazy loading could cause the old popover to be overwritten by the new one causing a dealloc while popover is visible
+    if (!_popover)
+    {
+        UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"NewFilePopover" bundle:[NSBundle mainBundle]];
+        ACNewFilePopoverController *popoverViewController = (ACNewFilePopoverController *)[storyboard instantiateInitialViewController];
+        popoverViewController.group = self.group;
+        _popover = [[ECPopoverController alloc] initWithContentViewController:popoverViewController];
+    }
+    [_popover presentPopoverFromRect:[sender frame] inView:[sender superview] permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
+}
+
 #pragma mark - Table view data source
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
@@ -167,7 +199,7 @@
 {
     // Return the number of rows in the section.
 //    return 7;
-    return [_displayedNode.children count];
+    return [self.group.children count];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -210,8 +242,8 @@
 //        cell.indentationLevel = 1;
 //        [cell setColor:[UIColor colorWithWhite:0.8 alpha:1] forIndentationLevel:0 animated:YES];
 //    }
-    ACNode *cellNode = [_displayedNode.children objectAtIndex:indexPath.row];
-    if ([[cellNode nodeType] isEqualToString:@"Group"])
+    ACNode *cellNode = [self.group.children objectAtIndex:indexPath.row];
+    if (![cellNode.name pathExtension])
         cell.imageView.image = [UIImage styleGroupImageWithSize:CGSizeMake(32, 32)];
     else
         cell.imageView.image = [UIImage styleDocumentImageWithSize:CGSizeMake(32, 32) 
@@ -247,7 +279,7 @@
 // Override to support rearranging the table view.
 - (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath
 {
-    [_displayedNode moveChildrenAtIndexes:[NSIndexSet indexSetWithIndex:fromIndexPath.row] toIndex:toIndexPath.row];
+    [self.group moveChildrenAtIndexes:[NSIndexSet indexSetWithIndex:fromIndexPath.row] toIndex:toIndexPath.row];
 }
 
 /*
@@ -276,7 +308,7 @@
     
     // TODO if used in a popover from the jump bar should just change its own url
     
-    [self.ACNavigationController pushURL:[[_displayedNode.children objectAtIndex:indexPath.row] URL]];
+    [self.ACNavigationController pushURL:[[self.group.children objectAtIndex:indexPath.row] URL]];
 }
 
 @end

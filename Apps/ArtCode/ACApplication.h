@@ -8,13 +8,13 @@
 
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
-
-@class ACBookmark, ACTab;
+#import "ACURL.h"
 
 @interface ACApplication : NSManagedObject
 
 @property (nonatomic, strong) NSOrderedSet *bookmarks;
 @property (nonatomic, strong) NSOrderedSet *tabs;
+@property (nonatomic, strong) NSOrderedSet *projects;
 
 - (void)insertTabAtIndex:(NSUInteger)index;
 - (void)removeTabAtIndex:(NSUInteger)index;
@@ -23,28 +23,21 @@
 - (void)moveTabsAtIndexes:(NSIndexSet *)indexes toIndex:(NSUInteger)index;
 - (void)exchangeTabsAtIndex:(NSUInteger)fromIndex withTabsAtIndex:(NSUInteger)toIndex;
 
-@end
+/// Reorder the projcets list
+- (void)moveProjectsAtIndexes:(NSIndexSet *)indexes toIndex:(NSUInteger)index;
+- (void)exchangeProjectAtIndex:(NSUInteger)fromIndex withProjectAtIndex:(NSUInteger)toIndex;
 
-@interface ACApplication (CoreDataGeneratedAccessors)
+/// Methods to generate ACURLs
+- (NSURL *)ACURLForProjectWithName:(NSString *)name;
+- (NSURL *)ACURLForObject:(id)object;
 
-- (void)insertObject:(ACBookmark *)value inBookmarksAtIndex:(NSUInteger)idx;
-- (void)removeObjectFromBookmarksAtIndex:(NSUInteger)idx;
-- (void)insertBookmarks:(NSArray *)value atIndexes:(NSIndexSet *)indexes;
-- (void)removeBookmarksAtIndexes:(NSIndexSet *)indexes;
-- (void)replaceObjectInBookmarksAtIndex:(NSUInteger)idx withObject:(ACBookmark *)value;
-- (void)replaceBookmarksAtIndexes:(NSIndexSet *)indexes withBookmarks:(NSArray *)values;
-- (void)addBookmarksObject:(ACBookmark *)value;
-- (void)removeBookmarksObject:(ACBookmark *)value;
-- (void)addBookmarks:(NSOrderedSet *)values;
-- (void)removeBookmarks:(NSOrderedSet *)values;
-- (void)insertObject:(ACTab *)value inTabsAtIndex:(NSUInteger)idx;
-- (void)removeObjectFromTabsAtIndex:(NSUInteger)idx;
-- (void)insertTabs:(NSArray *)value atIndexes:(NSIndexSet *)indexes;
-- (void)removeTabsAtIndexes:(NSIndexSet *)indexes;
-- (void)replaceObjectInTabsAtIndex:(NSUInteger)idx withObject:(ACTab *)value;
-- (void)replaceTabsAtIndexes:(NSIndexSet *)indexes withTabs:(NSArray *)values;
-- (void)addTabsObject:(ACTab *)value;
-- (void)removeTabsObject:(ACTab *)value;
-- (void)addTabs:(NSOrderedSet *)values;
-- (void)removeTabs:(NSOrderedSet *)values;
+/// Methods to manipulate objects in the application
+/// All parameters are ACURLs
+/// Not all objects can be inserted, deleted, moved or copied
+- (id)objectWithURL:(NSURL *)URL;
+- (id)addObjectWithURL:(NSURL *)URL;
+- (void)deleteObjectWithURL:(NSURL *)URL;
+- (void)moveObjectWithURL:(NSURL *)fromURL toURL:(NSURL *)toURL;
+- (void)copyObjectWithURL:(NSURL *)fromURL toURL:(NSURL *)toURL;
+
 @end
