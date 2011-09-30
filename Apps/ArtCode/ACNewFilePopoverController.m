@@ -7,6 +7,13 @@
 //
 
 #import "ACNewFilePopoverController.h"
+#import <ECFoundation/NSURL+ECAdditions.h>
+
+@interface ACNewFilePopoverController ()
+{
+    NSArray *_fileURLs;
+}
+@end
 
 @implementation ACNewFilePopoverController
 
@@ -16,15 +23,34 @@
 @synthesize fileButton = _fileButton;
 @synthesize fileImportTableView = _fileImportTableView;
 
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
+{
+	return YES;
+}
+
 - (void)viewDidLoad
 {
+    [super viewDidLoad];
     self.fileImportTableView.dataSource = self;
     self.fileImportTableView.delegate = self;
 }
 
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    NSFileManager *fileManager = [[NSFileManager alloc] init];
+    _fileURLs = [fileManager contentsOfDirectoryAtURL:[NSURL applicationDocumentsDirectory] includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsPackageDescendants | NSDirectoryEnumerationSkipsSubdirectoryDescendants error:NULL];
+}
+
+- (void)viewDidDisappear:(BOOL)animated
+{
+    _fileURLs = nil;
+    [super viewDidDisappear:animated];
+}
+
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return 0;
+    return [_fileURLs count];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -35,8 +61,13 @@
     {
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellReuseIdentifier];
     }
-    
+    cell.textLabel.text = [[_fileURLs objectAtIndex:indexPath.row] lastPathComponent];
     return cell;
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    
 }
 
 @end
