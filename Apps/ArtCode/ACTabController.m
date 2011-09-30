@@ -14,7 +14,7 @@
 #import "ACFileTableController.h"
 #import "ACCodeFileController.h"
 
-static void * const ACTabControllerTabCurrentURLObserving;
+static void * ACTabControllerTabCurrentURLObserving;
 
 @interface ACTabController ()
 @property (nonatomic, strong) UIViewController *tabViewController;

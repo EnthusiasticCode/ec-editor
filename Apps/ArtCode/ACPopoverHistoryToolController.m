@@ -10,8 +10,8 @@
 #import "AppStyle.h"
 #import "ACTab.h"
 
-static void * const ACPopoverHistoryToolControllerTabCurrentHistoryPositionObserving;
-static void * const ACPopoverHistoryToolControllerTabHistoryItemsObserving;
+static void * ACPopoverHistoryToolControllerTabCurrentHistoryPositionObserving;
+static void * ACPopoverHistoryToolControllerTabHistoryItemsObserving;
 
 #define SECTION_BACK_TO_PROJECTS 1
 #define SECTION_HISTORY_URLS 0
