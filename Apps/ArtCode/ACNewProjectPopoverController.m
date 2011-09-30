@@ -52,13 +52,10 @@
     NSURL *projectURL;
     for (NSUInteger projectNumber = 0; YES; ++projectNumber)
     {
-        projectName = [@"Project " stringByAppendingString:[NSString stringWithFormat:@"%d", projectNumber]];
+        projectName = [@"Project " stringByAppendingString:[NSString stringWithFormat:@"%d", arc4random()]];
         projectURL = [NSURL ACURLForProjectWithName:projectName];
-        if ([self.application objectWithURL:projectURL])
-            continue;
-        break;
     }    
-    [self.application addObjectWithURL:[NSURL ACURLForProjectWithName:projectName]];
+    [self.application addObjectWithURL:[NSURL ACURLForProjectWithName:projectName] withCompletionHandler:NULL];
 }
 
 @end

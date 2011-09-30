@@ -33,10 +33,11 @@
 /// Methods to manipulate objects in the application
 /// All parameters are ACURLs
 /// Not all objects can be inserted, deleted, moved or copied
-- (id)objectWithURL:(NSURL *)URL;
-- (id)addObjectWithURL:(NSURL *)URL;
-- (void)deleteObjectWithURL:(NSURL *)URL;
-- (void)moveObjectWithURL:(NSURL *)fromURL toURL:(NSURL *)toURL;
-- (void)copyObjectWithURL:(NSURL *)fromURL toURL:(NSURL *)toURL;
+/// All methods are asynchronous and will load / unload project documents as needed
+- (void)objectWithURL:(NSURL *)URL withCompletionHandler:(void (^)(id object))completionHandler;
+- (void)addObjectWithURL:(NSURL *)URL withCompletionHandler:(void (^)(id object))completionHandler;
+- (void)deleteObjectWithURL:(NSURL *)URL withCompletionHandler:(void (^)(BOOL success))completionHandler;
+- (void)moveObjectWithURL:(NSURL *)fromURL toURL:(NSURL *)toURL withCompletionHandler:(void (^)(BOOL success))completionHandler;
+- (void)copyObjectWithURL:(NSURL *)fromURL toURL:(NSURL *)toURL withCompletionHandler:(void (^)(BOOL success))completionHandler;
 
 @end

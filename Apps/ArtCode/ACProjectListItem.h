@@ -9,12 +9,14 @@
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
 
-@class ACApplication;
+@class ACApplication, ACProject;
 
 @interface ACProjectListItem : NSManagedObject
 
 @property (nonatomic) int16_t tag;
 @property (nonatomic, strong) NSURL * projectURL;
 @property (nonatomic, strong) ACApplication *application;
+
+- (void)loadProjectWithCompletionHandler:(void(^)(ACProject *project))completionHandler;
 
 @end

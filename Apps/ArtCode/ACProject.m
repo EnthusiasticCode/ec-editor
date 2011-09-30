@@ -7,17 +7,18 @@
 //
 
 #import "ACProject.h"
+#import "ACProjectListItem.h"
 #import "ACURL.h"
 
 @implementation ACProject
 
 @dynamic bookmarks;
 
-@synthesize document = _document;
+@synthesize projectListItem = _projectListItem;
 
 - (NSURL *)ACURL
 {
-    return [NSURL ACURLForProjectWithName:self.name];
+    return self.projectListItem.projectURL;
 }
 
 @end

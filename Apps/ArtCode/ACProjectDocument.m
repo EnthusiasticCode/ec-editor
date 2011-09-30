@@ -10,31 +10,7 @@
 #import "ACProject.h"
 #import "ACURL.h"
 
-void * ACProjectDocumentProjectURLObserving;
-
 @implementation ACProjectDocument
-
-@synthesize project = _project;
-
-- (ACProject *)project
-{
-    if (!_project)
-    {
-        NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
-        [fetchRequest setEntity:[NSEntityDescription entityForName:@"Project" inManagedObjectContext:self.managedObjectContext]];
-        NSArray *projects = [self.managedObjectContext executeFetchRequest:fetchRequest error:NULL];
-        if ([projects count] > 1)
-            // TODO: fix the core data file by merging projects
-            ECASSERT(NO); // core data file broken, more than 1 project
-        if (![projects count])
-            _project = [NSEntityDescription insertNewObjectForEntityForName:@"Project" inManagedObjectContext:self.managedObjectContext];
-        else
-            _project = [projects objectAtIndex:0];
-    }
-    ECASSERT(_project); // should never return nil
-    _project.document = self;
-    return _project;
-}
 
 + (NSString *)persistentStoreName
 {

@@ -251,7 +251,7 @@ static void * ACStateProjectsObservingContext;
     NSInteger rowIndex = [(UIControl *)sender tag];
     ECASSERT(rowIndex >= 0);
     [self.tableView beginUpdates];
-    [self.application deleteObjectWithURL:[[self.application.projects objectAtIndex:rowIndex] ACURL]];
+    [self.application deleteObjectWithURL:[[self.application.projects objectAtIndex:rowIndex] ACURL] withCompletionHandler:NULL];
     [self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:rowIndex inSection:0]] withRowAnimation:UITableViewRowAnimationFade];
     [self.tableView endUpdates];
 }
@@ -265,8 +265,7 @@ static void * ACStateProjectsObservingContext;
 {
     if (![textField.text length])
         return NO;
-    [self.application moveObjectWithURL:[[self.application.projects objectAtIndex:textField.tag] ACURL] toURL:[self.application ACURLForProjectWithName:textField.text]];
-    [[self.application.projects objectAtIndex:textField.tag] setName:textField.text];
+    [self.application moveObjectWithURL:[[self.application.projects objectAtIndex:textField.tag] ACURL] toURL:[self.application ACURLForProjectWithName:textField.text] withCompletionHandler:NULL];
     [textField resignFirstResponder];
     return YES;
 }

@@ -48,29 +48,18 @@
     [[self mutableOrderedSetValueForKey:@"projects"] exchangeObjectAtIndex:fromIndex withObjectAtIndex:toIndex];
 }
 
-- (id)objectWithURL:(NSURL *)URL
+- (void)objectWithURL:(NSURL *)URL withCompletionHandler:(void (^)(id))completionHandler
 {
     ECASSERT([URL isACURL]);
     switch ([URL ACObjectType])
     {
         case ACObjectTypeApplication:
         {
-            return self;
+            completionHandler(self);
         }
         case ACObjectTypeProject:
         {
-            NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"Project"];
-            NSPredicate *predicate = [NSPredicate predicateWithFormat:@"%K == %@", @"name", [URL ACObjectName]];
-            fetchRequest.predicate = predicate;
-            NSArray *projects = [self.managedObjectContext executeFetchRequest:fetchRequest error:NULL];
-            id object = nil;
-            if ([projects count] > 1)
-            {
-                ECASSERT(NO); // TODO: handle error by merging project objects together, then set object = newly merged project
-            }
-            else if ([projects count] == 1)
-                object = [projects lastObject];
-            return object;
+            
         }
         case ACObjectTypeUnknown:
         default:
@@ -80,7 +69,7 @@
     }
 }
 
-- (id)addObjectWithURL:(NSURL *)URL
+- (void)addObjectWithURL:(NSURL *)URL withCompletionHandler:(void (^)(id))completionHandler
 {
     ECASSERT([URL isACURL]);
     switch ([URL ACObjectType])
@@ -95,7 +84,7 @@
     }
 }
 
-- (void)deleteObjectWithURL:(NSURL *)URL
+- (void)deleteObjectWithURL:(NSURL *)URL withCompletionHandler:(void (^)(BOOL))completionHandler
 {
     ECASSERT([URL isACURL]);
     UNIMPLEMENTED_VOID();

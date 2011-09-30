@@ -8,13 +8,13 @@
 
 #import "ACGroup.h"
 
-@class ACProjectDocument;
+@class ACProjectListItem;
 
 @interface ACProject : ACGroup
 
 @property (nonatomic, retain) NSOrderedSet *bookmarks;
 
-@property (nonatomic, weak) ACProjectDocument *document;
+@property (nonatomic, weak) ACProjectListItem *projectListItem;
 
 @end
 
