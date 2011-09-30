@@ -65,5 +65,6 @@
 
 - (UIControl *)addTabWithTitle:(NSString *)title animated:(BOOL)animated;
 - (void)removeTabControl:(UIControl *)tabControl animated:(BOOL)animated;
+- (void)moveTabControlAtIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex animated:(BOOL)animated;
 
 @end

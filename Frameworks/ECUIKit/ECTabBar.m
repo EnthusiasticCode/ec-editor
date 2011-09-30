@@ -484,6 +484,27 @@ static void init(ECTabBar *self)
     }
 }
 
+- (void)moveTabControlAtIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex animated:(BOOL)animated
+{
+    ECASSERT(fromIndex < [tabControls count]);
+    ECASSERT(toIndex < [tabControls count]);
+    
+    id obj = [tabControls objectAtIndex:fromIndex];
+    [tabControls removeObjectAtIndex:fromIndex];
+    [tabControls insertObject:obj atIndex:toIndex];
+    
+    if (animated)
+    {
+        [UIView animateWithDuration:0.2 animations:^{
+            [tabControlsContainerView layoutSubviews];
+        }];
+    }
+    else
+    {
+        [tabControlsContainerView setNeedsLayout];
+    }
+}
+
 #pragma mark -
 
 - (void)moveTabAction:(UILongPressGestureRecognizer *)recognizer
