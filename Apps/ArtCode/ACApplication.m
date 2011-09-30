@@ -9,6 +9,7 @@
 #import "ACApplication.h"
 #import "ACTab.h"
 #import "ACURL.h"
+#import "ACProjectListItem.h"
 #import "ACProject.h"
 
 @implementation ACApplication
@@ -56,10 +57,22 @@
         case ACObjectTypeApplication:
         {
             completionHandler(self);
+            break;
         }
         case ACObjectTypeProject:
         {
-            
+            NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"ProjectListItem"];
+            fetchRequest.predicate = [NSPredicate predicateWithFormat:@"%K == %@", @"projectURL", URL];
+            NSArray *projectListItems = [self.managedObjectContext executeFetchRequest:fetchRequest error:NULL];
+            if (![projectListItems count])
+                completionHandler(nil);
+            else if ([projectListItems count] > 1)
+                ECASSERT(NO); // TODO: malformed core data, fix it
+            else
+                [[projectListItems lastObject] loadProjectWithCompletionHandler:^(ACProject *project) {
+                    completionHandler(project);
+                }];
+            break;
         }
         case ACObjectTypeUnknown:
         default:

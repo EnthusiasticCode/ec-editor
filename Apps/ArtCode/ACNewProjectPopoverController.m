@@ -48,13 +48,7 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSString *projectName;
-    NSURL *projectURL;
-    for (NSUInteger projectNumber = 0; YES; ++projectNumber)
-    {
-        projectName = [@"Project " stringByAppendingString:[NSString stringWithFormat:@"%d", arc4random()]];
-        projectURL = [NSURL ACURLForProjectWithName:projectName];
-    }    
+    NSString *projectName = [@"Project " stringByAppendingString:[NSString stringWithFormat:@"%d", arc4random()]];
     [self.application addObjectWithURL:[NSURL ACURLForProjectWithName:projectName] withCompletionHandler:NULL];
 }
 
