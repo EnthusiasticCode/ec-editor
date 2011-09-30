@@ -14,7 +14,8 @@
 @interface ACProjectListItem : NSManagedObject
 
 @property (nonatomic) int16_t tag;
-@property (nonatomic, strong) NSURL * projectURL;
+@property (nonatomic, strong) NSURL *projectURL;
+@property (nonatomic, strong, readonly) NSString *name;
 @property (nonatomic, strong) ACApplication *application;
 
 - (void)loadProjectWithCompletionHandler:(void(^)(ACProject *project))completionHandler;

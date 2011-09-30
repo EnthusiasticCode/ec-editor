@@ -37,7 +37,8 @@
 //    dispatch_async(dispatch_get_main_queue(), ^{
         ECCodeIndex *index = [[ECCodeIndex alloc] init];
         self.codeUnit = [index unitWithFileURL:[[self ACURL] ACObjectFileURL]];
-        completionHandler(true);
+        if (completionHandler)
+            completionHandler(true);
 //    });
 }
 

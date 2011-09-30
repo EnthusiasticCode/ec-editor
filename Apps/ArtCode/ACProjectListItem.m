@@ -36,6 +36,11 @@
     [self didChangeValueForKey:@"projectURL"];
 }
 
+- (NSString *)name
+{
+    return [self.projectURL ACObjectName];
+}
+
 - (UIManagedDocument *)document
 {
     if (!self.projectURL)
@@ -49,20 +54,33 @@
 - (void)loadProjectWithCompletionHandler:(void (^)(ACProject *))completionHandler
 {
     if (!self.document)
-        completionHandler(nil);
+        if (completionHandler)
+            completionHandler(nil);
     NSFileManager *fileManager = [[NSFileManager alloc] init];
-    if ([fileManager fileExistsAtPath:[self.projectURL ACObjectFileURL].path])
-        [self.document openWithCompletionHandler:^(BOOL success) {
-            if (!success)
-                ECASSERT(NO); // TODO: error handling
-            completionHandler(self.project);
-        }];
+    NSURL *projectDocumentURL = [self.projectURL ACObjectFileURL];
+    if (self.document.documentState & UIDocumentStateClosed)
+    {
+        if ([fileManager fileExistsAtPath:projectDocumentURL.path])
+            [self.document openWithCompletionHandler:^(BOOL success) {
+                if (!success)
+                    ECASSERT(NO); // TODO: error handling
+                if (completionHandler)
+                    completionHandler(self.project);
+            }];
+        else
+        {
+            [fileManager createDirectoryAtURL:[projectDocumentURL URLByDeletingLastPathComponent] withIntermediateDirectories:YES attributes:nil error:NULL];
+            [self.document saveToURL:projectDocumentURL forSaveOperation:UIDocumentSaveForCreating completionHandler:^(BOOL success) {
+                if (!success)
+                    ECASSERT(NO); // TODO: error handling
+                if (completionHandler)
+                    completionHandler(self.project);
+            }];
+        }
+    }
     else
-        [self.document saveToURL:[self.projectURL ACObjectFileURL] forSaveOperation:UIDocumentSaveForCreating completionHandler:^(BOOL success) {
-            if (!success)
-                ECASSERT(NO); // TODO: error handling
+        if (completionHandler)
             completionHandler(self.project);
-        }];
 }
 
 - (ACProject *)project

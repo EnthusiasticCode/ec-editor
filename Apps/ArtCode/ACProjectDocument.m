@@ -33,6 +33,9 @@
     // TODO: handle errors gracefully
     // for now, just debug them manually by checking [error localizedDescription]
     // NOTE: do not delete this even if it stays empty, because UIDocument fails VERY silently otherwise
+    NSLog(@"Error in ACProjectDocument");
+    NSLog(@"%@", self.fileURL);
+    NSLog(@"%@", [error localizedDescription]);
     ECASSERT(NO);
 }
 

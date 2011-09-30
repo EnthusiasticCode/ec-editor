@@ -56,7 +56,8 @@
     {
         case ACObjectTypeApplication:
         {
-            completionHandler(self);
+            if (completionHandler)
+                completionHandler(self);
             break;
         }
         case ACObjectTypeProject:
@@ -65,12 +66,16 @@
             fetchRequest.predicate = [NSPredicate predicateWithFormat:@"%K == %@", @"projectURL", URL];
             NSArray *projectListItems = [self.managedObjectContext executeFetchRequest:fetchRequest error:NULL];
             if (![projectListItems count])
-                completionHandler(nil);
+            {
+                if (completionHandler)
+                    completionHandler(nil);
+            }
             else if ([projectListItems count] > 1)
                 ECASSERT(NO); // TODO: malformed core data, fix it
             else
                 [[projectListItems lastObject] loadProjectWithCompletionHandler:^(ACProject *project) {
-                    completionHandler(project);
+                    if (completionHandler)
+                        completionHandler(project);
                 }];
             break;
         }
@@ -88,6 +93,20 @@
     switch ([URL ACObjectType])
     {
         case ACObjectTypeProject:
+        {
+            [self objectWithURL:URL withCompletionHandler:^(id object) {
+                if (object)
+                    ECASSERT(NO); // object with that URL already exists
+                ACProjectListItem *projectListItem = [NSEntityDescription insertNewObjectForEntityForName:@"ProjectListItem" inManagedObjectContext:self.managedObjectContext];
+                projectListItem.projectURL = URL;
+                projectListItem.application = self;
+                [projectListItem loadProjectWithCompletionHandler:^(ACProject *project) {
+                    if (completionHandler)
+                        completionHandler(project);
+                }];
+            }];
+            break;
+        }
         case ACObjectTypeApplication:
         case ACObjectTypeUnknown:
         default:
