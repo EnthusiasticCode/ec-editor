@@ -23,7 +23,13 @@
 @property (nonatomic) NSUInteger selectedViewControllerIndex;
 - (void)setSelectedViewControllerIndex:(NSUInteger)index animated:(BOOL)animated;
 
+/// Add a child view controller as a tab.
+- (void)addChildViewController:(UIViewController *)childController animated:(BOOL)animated;
+
+/// Removes a tab at the given index.
+- (void)removeChildViewControllerAtIndex:(NSUInteger)controllerIndex animated:(BOOL)animated;
+
 /// Reorder tabs by moving them to the specified index.
-- (void)moveChildViewControllerAtIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex;
+- (void)moveChildViewControllerAtIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex animated:(BOOL)animated;
 
 @end

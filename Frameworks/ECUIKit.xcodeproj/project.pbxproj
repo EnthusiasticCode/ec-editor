@@ -129,6 +129,7 @@
 		B7170BE61428F1A800DF7794 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7170BE41428F1A000DF7794 /* CoreGraphics.framework */; };
 		CD0AD99014362AF100FC1EFE /* libECFoundation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7170BCF1428ECC300DF7794 /* libECFoundation.a */; };
 		CD0AD991143634FC00FC1EFE /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7170BD61428F00800DF7794 /* QuartzCore.framework */; };
+		CD0BD4AA14374FD2006F2A37 /* UIView+ReuseIdentifier.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170B881428EB2500DF7794 /* UIView+ReuseIdentifier.m */; };
 		CD0DDA1614293E7300FE8B5B /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B71709DC1428E68A00DF7794 /* UIKit.framework */; };
 		CD0DDA1714293E7300FE8B5B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B71709AF1428E3CD00DF7794 /* Foundation.framework */; };
 		CD0DDA1814293E7300FE8B5B /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7170BE41428F1A000DF7794 /* CoreGraphics.framework */; };
@@ -1225,6 +1226,7 @@
 				CDBD283C1435104F00E05F40 /* ECTabControllerTest_AppDelegate.m in Sources */,
 				CDBD28461435115900E05F40 /* ECTabController.m in Sources */,
 				CDBD2847143512B200E05F40 /* ECTabBar.m in Sources */,
+				CD0BD4AA14374FD2006F2A37 /* UIView+ReuseIdentifier.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

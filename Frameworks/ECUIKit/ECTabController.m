@@ -6,21 +6,56 @@
 //  Copyright (c) 2011 __MyCompanyName__. All rights reserved.
 //
 
+
 #import "ECTabController.h"
+#import "UIView+ReuseIdentifier.h"
 
 #define TABBAR_HEIGHT 44
 
 static void *ECTabControllerChildViewControllerContext;
 
-@implementation ECTabController {
+@interface ECTabController () {
     NSMutableArray *orderedChildViewControllers;
-    UIView *contentView;
 }
+
+@property (nonatomic, readonly, strong) UIView *contentView;
+@end
+
+@implementation ECTabController
 
 #pragma mark - Properties
 
-@synthesize tabBar;
+@synthesize tabBar = _tabBar, contentView = _contentView;
 @synthesize selectedViewControllerIndex;
+
+- (ECTabBar *)tabBar
+{
+    if (_tabBar == nil)
+    {
+        // Creating tab bar
+        _tabBar = [[ECTabBar alloc] init];
+        _tabBar.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleBottomMargin;
+        _tabBar.delegate = self;
+    }
+    return _tabBar;
+}
+
+- (UIView *)contentView
+{
+    if (_contentView == nil)
+    {
+        // Creating the content view
+        _contentView = [[UIView alloc] init];
+        _contentView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+        _contentView.backgroundColor = [UIColor clearColor];
+    }
+    return _contentView;
+}
+
+- (NSArray *)childViewControllers
+{
+    return orderedChildViewControllers;
+}
 
 - (UIViewController *)selectedViewController
 {
@@ -45,13 +80,23 @@ static void *ECTabControllerChildViewControllerContext;
     {
         ECASSERT(index < [orderedChildViewControllers count]);
         toViewController = [orderedChildViewControllers objectAtIndex:index];
+        toViewController.view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     }
     
-    [self transitionFromViewController:self.selectedViewController toViewController:toViewController duration:animated ? 0.20 : 0 options:UIViewAnimationOptionTransitionCrossDissolve animations:nil completion:^(BOOL finished) {
-        selectedViewControllerIndex = index;
+    UIViewController *fromViewController = self.selectedViewController;
+    toViewController.view.alpha = 0;
+    toViewController.view.frame = self.contentView.bounds;
+    [self.contentView addSubview:toViewController.view];
+    [UIView animateWithDuration:animated ? 0.20 : 0 animations:^{
+        toViewController.view.alpha = 1;
+        fromViewController.view.alpha = 0;
+    } completion:^(BOOL finished) {
+        [fromViewController.view removeFromSuperview];
     }];
     
-    [tabBar setSelectedTabControl:[tabBar.tabControls objectAtIndex:index] animated:animated];
+    selectedViewControllerIndex = index;
+    
+    [self.tabBar setSelectedTabIndex:index animated:animated];
 }
 
 #pragma mark - Controller initialization
@@ -102,7 +147,7 @@ static void init(ECTabController *self)
                 [orderedChildViewControllers addObject:controller];
                 
                 // Add tab button
-                [tabBar addTabWithTitle:controller.navigationItem.title animated:YES];
+                [self.tabBar addTabWithTitle:controller.navigationItem.title animated:YES];
                 
                 // Set selection
                 if (self.selectedViewControllerIndex == NSNotFound)
@@ -118,7 +163,7 @@ static void init(ECTabController *self)
                 [orderedChildViewControllers removeObject:controller];
                 
                 // Remove from tab bar
-                [tabBar removeTabControl:[tabBar.tabControls objectAtIndex:controllerIndex] animated:YES];
+                [self.tabBar removeTabControlAtIndex:controllerIndex animated:YES];
                 
                 // Change selection if needed
                 if (self.selectedViewControllerIndex == controllerIndex)
@@ -153,29 +198,76 @@ static void init(ECTabController *self)
     CGRect bounds = self.view.bounds;
     
     // Creating tab bar
-    tabBar = [[ECTabBar alloc] initWithFrame:CGRectMake(0, 0, bounds.size.width, TABBAR_HEIGHT)];
-    tabBar.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleBottomMargin;
-    tabBar.delegate = self;
-    [self.view addSubview:tabBar];
+    self.tabBar.frame = CGRectMake(0, 0, bounds.size.width, TABBAR_HEIGHT);
+    self.tabBar.backgroundColor = [UIColor grayColor];
+    [self.view addSubview:self.tabBar];
     
     // Creating the content view
-    contentView = [[UIView alloc] initWithFrame:CGRectMake(0, TABBAR_HEIGHT, bounds.size.width, bounds.size.height - TABBAR_HEIGHT)];
-    contentView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-    contentView.backgroundColor = [UIColor clearColor];
-    [self.view addSubview:contentView];
+    self.contentView.frame = CGRectMake(0, TABBAR_HEIGHT, bounds.size.width, bounds.size.height - TABBAR_HEIGHT);
+    [self.view addSubview:self.contentView];
 }
 
 - (void)viewDidUnload
 {
     [super viewDidUnload];
     
-    tabBar = nil;
-    contentView = nil;
+    _tabBar = nil;
+    _contentView = nil;
 }
 
 #pragma mark - Managing tabs
 
-- (void)moveChildViewControllerAtIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex
+- (void)addChildViewController:(UIViewController *)childController
+{
+    [self addChildViewController:childController animated:NO];
+}
+
+- (void)addChildViewController:(UIViewController *)childController animated:(BOOL)animated
+{
+    [super addChildViewController:childController];
+    
+    // Adding to ordered array of controllers
+    if (orderedChildViewControllers == nil)
+        orderedChildViewControllers = [NSMutableArray new];
+    [orderedChildViewControllers addObject:childController];
+    
+    // Add tab button
+    [self.tabBar addTabWithTitle:childController.navigationItem.title animated:animated];
+    
+    // Set selection
+    if (self.selectedViewControllerIndex == NSNotFound)
+        [self setSelectedViewControllerIndex:([orderedChildViewControllers count] - 1) animated:animated];
+    
+    [childController didMoveToParentViewController:self];
+}
+
+- (void)removeChildViewControllerAtIndex:(NSUInteger)controllerIndex animated:(BOOL)animated
+{
+    ECASSERT(controllerIndex < [orderedChildViewControllers count]);
+    
+    UIViewController *controller = [orderedChildViewControllers objectAtIndex:controllerIndex];
+    [controller willMoveToParentViewController:nil];
+    
+    [orderedChildViewControllers removeObject:controller];
+    
+    // Remove from tab bar
+    [self.tabBar removeTabControlAtIndex:controllerIndex animated:animated];
+    
+    // Change selection if needed
+    if (self.selectedViewControllerIndex == controllerIndex)
+    {
+        if (controllerIndex > 0)
+            controllerIndex -= 1;
+        if (controllerIndex < [orderedChildViewControllers count])
+            [self setSelectedViewControllerIndex:controllerIndex animated:animated];
+        else
+            self.selectedViewControllerIndex = NSNotFound;
+    }
+    
+    [controller removeFromParentViewController];
+}
+
+- (void)moveChildViewControllerAtIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex animated:(BOOL)animated
 {
     ECASSERT(fromIndex < [orderedChildViewControllers count]);
     ECASSERT(toIndex < [orderedChildViewControllers count]);
@@ -184,7 +276,7 @@ static void init(ECTabController *self)
     [orderedChildViewControllers removeObjectAtIndex:fromIndex];
     [orderedChildViewControllers insertObject:obj atIndex:toIndex];
     
-    [tabBar moveTabControlAtIndex:fromIndex toIndex:toIndex animated:YES];
+    [self.tabBar moveTabControlAtIndex:fromIndex toIndex:toIndex animated:animated];
     // TODO animation
 }
 
@@ -192,10 +284,22 @@ static void init(ECTabController *self)
 
 - (UIControl *)tabBar:(ECTabBar *)tabBar controlForTabWithTitle:(NSString *)title atIndex:(NSUInteger)tabIndex
 {
-    UIButton *control = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 100, 44)];
+    static NSString *tabButtonIdentifier = @"TabButton";
+    
+    UIButton *control = (UIButton *)[tabBar dequeueReusableTabControlWithIdentifier:tabButtonIdentifier];
+    if (control == nil)
+    {
+        control = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+        control.reuseIdentifier = tabButtonIdentifier;
+    }
     [control setTitle:title forState:UIControlStateNormal];
     // TODO close button
     return control;
+}
+
+- (void)tabBar:(ECTabBar *)tabBar didSelectTabControl:(UIControl *)tabControl atIndex:(NSUInteger)tabIndex
+{
+    [self setSelectedViewControllerIndex:tabIndex animated:YES];
 }
 
 @end

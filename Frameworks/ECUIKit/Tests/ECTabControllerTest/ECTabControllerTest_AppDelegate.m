@@ -25,7 +25,12 @@
     tabOne.view.backgroundColor = [UIColor greenColor];
     tabOne.navigationItem.title = @"Tab One";
     
+    UIViewController *tabTwo = [UIViewController new];
+    tabTwo.view.backgroundColor = [UIColor yellowColor];
+    tabTwo.navigationItem.title = @"Tab Two";
+    
     [self.tabController addChildViewController:tabOne];
+    [self.tabController addChildViewController:tabTwo];
     
     self.window.rootViewController = self.tabController;
     [self.window makeKeyAndVisible];
