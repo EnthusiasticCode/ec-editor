@@ -105,7 +105,9 @@ static void * ACTabControllerTabCurrentURLObserving;
                 ECASSERT(NO); // TODO: error handling
             }
         }
+        return [[UIViewController alloc] init];
     }
+    ECASSERT(tabViewController); // should never return nil
     return tabViewController;
 }
 

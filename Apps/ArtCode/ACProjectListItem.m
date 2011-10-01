@@ -13,6 +13,9 @@
 #import "ACURL.h"
 
 @interface ACProjectListItem ()
+{
+    BOOL _documentIsOpeningOrSaving;
+}
 @property (nonatomic, strong, readonly) ACProjectDocument *document;
 - (ACProject *)project;
 @end
@@ -63,10 +66,12 @@
             completionHandler(nil);
     NSFileManager *fileManager = [[NSFileManager alloc] init];
     NSURL *projectDocumentURL = [self.projectURL ACObjectFileURL];
-    if (self.document.documentState & UIDocumentStateClosed)
+    if (!_documentIsOpeningOrSaving && self.document.documentState & UIDocumentStateClosed)
     {
+        _documentIsOpeningOrSaving = YES;
         if ([fileManager fileExistsAtPath:projectDocumentURL.path])
             [self.document openWithCompletionHandler:^(BOOL success) {
+                _documentIsOpeningOrSaving = NO;
                 if (!success)
                     ECASSERT(NO); // TODO: error handling
                 if (completionHandler)
@@ -76,6 +81,7 @@
         {
             [fileManager createDirectoryAtURL:[projectDocumentURL URLByDeletingLastPathComponent] withIntermediateDirectories:YES attributes:nil error:NULL];
             [self.document saveToURL:projectDocumentURL forSaveOperation:UIDocumentSaveForCreating completionHandler:^(BOOL success) {
+                _documentIsOpeningOrSaving = NO;
                 if (!success)
                     ECASSERT(NO); // TODO: error handling
                 if (completionHandler)
@@ -90,6 +96,8 @@
 
 - (ACProject *)project
 {
+    if (!self.document || _documentIsOpeningOrSaving)
+        return nil;
     ACProject *project = nil;
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
     [fetchRequest setEntity:[NSEntityDescription entityForName:@"Project" inManagedObjectContext:self.document.managedObjectContext]];
