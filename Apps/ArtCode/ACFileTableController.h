@@ -14,8 +14,6 @@
 
 @interface ACFileTableController : UIViewController <ACNavigationTarget, UITableViewDataSource, UITableViewDelegate>
 
-@property (nonatomic, strong) ACGroup *group;
-
 @property (nonatomic, strong) ACTab *tab;
 
 @property (nonatomic, strong) IBOutlet UITableView *tableView;

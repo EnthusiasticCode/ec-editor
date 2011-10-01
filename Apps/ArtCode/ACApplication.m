@@ -10,7 +10,6 @@
 #import "ACTab.h"
 #import "ACURL.h"
 #import "ACProjectListItem.h"
-#import "ACProject.h"
 
 @implementation ACApplication
 
@@ -49,15 +48,14 @@
     [[self mutableOrderedSetValueForKey:@"projects"] exchangeObjectAtIndex:fromIndex withObjectAtIndex:toIndex];
 }
 
-- (void)objectWithURL:(NSURL *)URL withCompletionHandler:(void (^)(id))completionHandler
+- (id)objectWithURL:(NSURL *)URL
 {
     ECASSERT([URL isACURL]);
     switch ([URL ACObjectType])
     {
         case ACObjectTypeApplication:
         {
-            if (completionHandler)
-                completionHandler(self);
+            return self;
             break;
         }
         case ACObjectTypeProject:
@@ -67,16 +65,12 @@
             NSArray *projectListItems = [self.managedObjectContext executeFetchRequest:fetchRequest error:NULL];
             if (![projectListItems count])
             {
-                if (completionHandler)
-                    completionHandler(nil);
+                return nil;
             }
             else if ([projectListItems count] > 1)
                 ECASSERT(NO); // TODO: malformed core data, fix it
             else
-                [[projectListItems lastObject] loadProjectWithCompletionHandler:^(ACProject *project) {
-                    if (completionHandler)
-                        completionHandler(project);
-                }];
+                return [projectListItems lastObject];
             break;
         }
         case ACObjectTypeUnknown:
@@ -87,24 +81,15 @@
     }
 }
 
-- (void)addObjectWithURL:(NSURL *)URL withCompletionHandler:(void (^)(id))completionHandler
+- (id)addObjectWithURL:(NSURL *)URL
 {
     ECASSERT([URL isACURL]);
     switch ([URL ACObjectType])
     {
         case ACObjectTypeProject:
         {
-            [self objectWithURL:URL withCompletionHandler:^(id object) {
-                if (object)
-                    ECASSERT(NO); // object with that URL already exists
-                ACProjectListItem *projectListItem = [NSEntityDescription insertNewObjectForEntityForName:@"ProjectListItem" inManagedObjectContext:self.managedObjectContext];
-                projectListItem.projectURL = URL;
-                projectListItem.application = self;
-                [projectListItem loadProjectWithCompletionHandler:^(ACProject *project) {
-                    if (completionHandler)
-                        completionHandler(project);
-                }];
-            }];
+            ECASSERT(![self objectWithURL:URL]);
+            return nil;
             break;
         }
         case ACObjectTypeApplication:
@@ -112,11 +97,12 @@
         default:
         {
             ECASSERT(NO); // TODO: error handling
+            return nil;
         }
     }
 }
 
-- (void)deleteObjectWithURL:(NSURL *)URL withCompletionHandler:(void (^)(BOOL))completionHandler
+- (void)deleteObjectWithURL:(NSURL *)URL
 {
     ECASSERT([URL isACURL]);
     UNIMPLEMENTED_VOID();

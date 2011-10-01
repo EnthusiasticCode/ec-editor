@@ -15,8 +15,6 @@
 #import "ACToolFiltersView.h"
 #import <ECUIKit/ECPopoverController.h>
 
-#import "ACNode.h"
-#import "ACGroup.h"
 #import "ACTab.h"
 
 @interface ACFileTableController () {
@@ -30,7 +28,6 @@
 }
 
 @synthesize tableView, editingToolsView;
-@synthesize group = _group;
 @synthesize tab = _tab;
 
 @synthesize toolButton;
@@ -181,7 +178,7 @@
     {
         UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"NewFilePopover" bundle:[NSBundle mainBundle]];
         ACNewFilePopoverController *popoverViewController = (ACNewFilePopoverController *)[storyboard instantiateInitialViewController];
-        popoverViewController.group = self.group;
+//        popoverViewController.group = self.group;
         _popover = [[ECPopoverController alloc] initWithContentViewController:popoverViewController];
     }
     [_popover presentPopoverFromRect:[sender frame] inView:[sender superview] permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
@@ -199,7 +196,7 @@
 {
     // Return the number of rows in the section.
 //    return 7;
-    return [self.group.children count];
+    return 0;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -242,14 +239,14 @@
 //        cell.indentationLevel = 1;
 //        [cell setColor:[UIColor colorWithWhite:0.8 alpha:1] forIndentationLevel:0 animated:YES];
 //    }
-    ACNode *cellNode = [self.group.children objectAtIndex:indexPath.row];
-    if (![cellNode.name pathExtension])
-        cell.imageView.image = [UIImage styleGroupImageWithSize:CGSizeMake(32, 32)];
-    else
-        cell.imageView.image = [UIImage styleDocumentImageWithSize:CGSizeMake(32, 32) 
-                                                             color:[[cellNode.name pathExtension] isEqualToString:@"h"] ? [UIColor styleFileRedColor] : [UIColor styleFileBlueColor]
-                                                              text:[cellNode.name pathExtension]];
-    [cell.textField setText:[cellNode name]];
+//    ACNode *cellNode = [self.group.children objectAtIndex:indexPath.row];
+//    if (![cellNode.name pathExtension])
+//        cell.imageView.image = [UIImage styleGroupImageWithSize:CGSizeMake(32, 32)];
+//    else
+//        cell.imageView.image = [UIImage styleDocumentImageWithSize:CGSizeMake(32, 32) 
+//                                                             color:[[cellNode.name pathExtension] isEqualToString:@"h"] ? [UIColor styleFileRedColor] : [UIColor styleFileBlueColor]
+//                                                              text:[cellNode.name pathExtension]];
+//    [cell.textField setText:[cellNode name]];
     return cell;
 }
 
@@ -279,7 +276,7 @@
 // Override to support rearranging the table view.
 - (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath
 {
-    [self.group moveChildrenAtIndexes:[NSIndexSet indexSetWithIndex:fromIndexPath.row] toIndex:toIndexPath.row];
+//    [self.group moveChildrenAtIndexes:[NSIndexSet indexSetWithIndex:fromIndexPath.row] toIndex:toIndexPath.row];
 }
 
 /*
@@ -308,7 +305,7 @@
     
     // TODO if used in a popover from the jump bar should just change its own url
     
-    [self.ACNavigationController pushURL:[[self.group.children objectAtIndex:indexPath.row] URL]];
+//    [self.ACNavigationController pushURL:[[self.group.children objectAtIndex:indexPath.row] URL]];
 }
 
 @end

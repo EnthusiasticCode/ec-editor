@@ -7,7 +7,7 @@
 //
 
 #import "AppStyle.h"
-#import "ACFile.h"
+#import "ACFileDocument.h"
 #import "ACCodeFileController.h"
 
 #import "ACNavigationController.h"
@@ -32,7 +32,7 @@
     NSTimer *filterDebounceTimer;
 }
 
-@synthesize file = _file;
+@synthesize fileDocument = _fileDocument;
 @synthesize codeView;
 
 - (ECCodeView *)codeView
@@ -157,16 +157,13 @@
     self.view = self.codeView;
     // TODO start loading animation
     ACCodeIndexerDataSource *dataSource = (ACCodeIndexerDataSource *)self.codeView.datasource;
-    [self.file loadCodeUnitWithCompletionHandler:^(BOOL success) {
-        if (success)
-        {
-            dataSource.codeUnit = self.file.codeUnit;
-            [self.codeView updateAllText];
-        }
-        // TODO else report error
+    [self.fileDocument loadCodeUnitWithCompletionHandler:^(ECCodeUnit *codeUnit) {
+        ECASSERT(codeUnit); // TODO: error handling
+        dataSource.codeUnit = codeUnit;
+        [self.codeView updateAllText];
     }];
     
-    self.codeView.text = self.file.contentString;
+    self.codeView.text = self.fileDocument.contentString;
 
 }
 

@@ -70,33 +70,27 @@ static void * ACTabControllerTabCurrentURLObserving;
         {
             case ACObjectTypeFile:
             {
-                [self.tab.application objectWithURL:self.tab.currentURL withCompletionHandler:^(id object) {
-                    ACCodeFileController *codeFileController = [[ACCodeFileController alloc] init];
-                    codeFileController.file = object;
-                    self.tabViewController = codeFileController;
-                }];
+                ACCodeFileController *codeFileController = [[ACCodeFileController alloc] init];
+                codeFileController.fileDocument = [self.tab.application objectWithURL:self.tab.currentURL];
+                tabViewController = codeFileController;
                 break;
             }
             case ACObjectTypeApplication:
             {
-                [self.tab.application objectWithURL:self.tab.currentURL withCompletionHandler:^(id object) {
-                    ACProjectTableController *projectTableController = [[ACProjectTableController alloc] init];
-                    projectTableController.application = object;
-                    projectTableController.tab = self.tab;
-                    self.tabViewController = projectTableController;
-                }];
+                ACProjectTableController *projectTableController = [[ACProjectTableController alloc] init];
+                projectTableController.application = [self.tab.application objectWithURL:self.tab.currentURL];
+                projectTableController.tab = self.tab;
+                tabViewController = projectTableController;
                 break;
             }
             case ACObjectTypeProject:
             case ACObjectTypeGroup:
             case ACObjectTypeFolder:
             {
-                [self.tab.application objectWithURL:self.tab.currentURL withCompletionHandler:^(id object) {
-                    ACFileTableController *fileTableController = [[ACFileTableController alloc] init];
-                    fileTableController.group = object;
-                    fileTableController.tab = self.tab;
-                    self.tabViewController = fileTableController;
-                }];
+                ACFileTableController *fileTableController = [[ACFileTableController alloc] init];
+//                fileTableController.group = [self.tab.application objectWithURL:self.tab.currentURL];
+                fileTableController.tab = self.tab;
+                tabViewController = fileTableController;
                 break;
             }
             case ACObjectTypeUnknown:

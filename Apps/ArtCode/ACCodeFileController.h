@@ -9,11 +9,11 @@
 #import <UIKit/UIKit.h>
 #import "ACNavigationTarget.h"
 
-@class ECCodeView, ACFile;
+@class ECCodeView, ACFileDocument;
 
 @interface ACCodeFileController : UIViewController <ACNavigationTarget, UITextFieldDelegate>
 
-@property (nonatomic, strong) ACFile *file;
+@property (nonatomic, strong) ACFileDocument *fileDocument;
 
 @property (nonatomic, strong) ECCodeView *codeView;
 
