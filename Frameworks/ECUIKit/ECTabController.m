@@ -272,12 +272,9 @@ static void init(ECTabController *self)
     ECASSERT(fromIndex < [orderedChildViewControllers count]);
     ECASSERT(toIndex < [orderedChildViewControllers count]);
     
-    id obj = [orderedChildViewControllers objectAtIndex:fromIndex];
-    [orderedChildViewControllers removeObjectAtIndex:fromIndex];
-    [orderedChildViewControllers insertObject:obj atIndex:toIndex];
-    
     [self.tabBar moveTabControlAtIndex:fromIndex toIndex:toIndex animated:animated];
-    // TODO animation
+    
+    [self tabBar:self.tabBar didMoveTabControl:nil fromIndex:fromIndex toIndex:toIndex];
 }
 
 #pragma mark - Tab bar delegate methods
@@ -300,6 +297,20 @@ static void init(ECTabController *self)
 - (void)tabBar:(ECTabBar *)tabBar didSelectTabControl:(UIControl *)tabControl atIndex:(NSUInteger)tabIndex
 {
     [self setSelectedViewControllerIndex:tabIndex animated:YES];
+}
+
+- (void)tabBar:(ECTabBar *)tabBar didMoveTabControl:(UIControl *)tabControl fromIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex
+{
+    id obj = [orderedChildViewControllers objectAtIndex:fromIndex];
+    [orderedChildViewControllers removeObjectAtIndex:fromIndex];
+    [orderedChildViewControllers insertObject:obj atIndex:toIndex];
+    
+    if (selectedViewControllerIndex == fromIndex)
+        selectedViewControllerIndex = toIndex;
+    else if (selectedViewControllerIndex > fromIndex)
+        selectedViewControllerIndex -= selectedViewControllerIndex > toIndex ? 0 : 1;
+    else if (selectedViewControllerIndex >= toIndex)
+        selectedViewControllerIndex += selectedViewControllerIndex > fromIndex ? 0 : 1;
 }
 
 @end
