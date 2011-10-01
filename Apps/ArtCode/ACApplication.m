@@ -8,19 +8,21 @@
 
 #import "ACApplication.h"
 #import "ACTab.h"
-#import "ACURL.h"
-#import "ACProjectListItem.h"
+#import <ECFoundation/NSURL+ECAdditions.h>
+
+static NSString * const ACProjectListDirectoryName = @"ACLocalProjects";
 
 @implementation ACApplication
 
 @dynamic tabs;
-@dynamic projects;
 
-- (void)insertTabAtIndex:(NSUInteger)index
+- (ACTab *)insertTabAtIndex:(NSUInteger)index
 {
     ACTab *tab = [NSEntityDescription insertNewObjectForEntityForName:@"Tab" inManagedObjectContext:self.managedObjectContext];
     NSMutableOrderedSet *tabs = [self mutableOrderedSetValueForKey:@"tabs"];
     [tabs insertObject:tab atIndex:index];
+    [tab pushURL:[self projectsDirectory]];
+    return tab;
 }
 
 - (void)removeTabAtIndex:(NSUInteger)index
@@ -48,64 +50,9 @@
     [[self mutableOrderedSetValueForKey:@"projects"] exchangeObjectAtIndex:fromIndex withObjectAtIndex:toIndex];
 }
 
-- (id)objectWithURL:(NSURL *)URL
+- (NSURL *)projectsDirectory
 {
-    ECASSERT([URL isACURL]);
-    switch ([URL ACObjectType])
-    {
-        case ACObjectTypeApplication:
-        {
-            return self;
-            break;
-        }
-        case ACObjectTypeProject:
-        {
-            NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"ProjectListItem"];
-            fetchRequest.predicate = [NSPredicate predicateWithFormat:@"%K == %@", @"projectURL", URL];
-            NSArray *projectListItems = [self.managedObjectContext executeFetchRequest:fetchRequest error:NULL];
-            if (![projectListItems count])
-            {
-                return nil;
-            }
-            else if ([projectListItems count] > 1)
-                ECASSERT(NO); // TODO: malformed core data, fix it
-            else
-                return [projectListItems lastObject];
-            break;
-        }
-        case ACObjectTypeUnknown:
-        default:
-        {
-            ECASSERT(NO); // TODO: error handling?
-        }
-    }
-}
-
-- (id)addObjectWithURL:(NSURL *)URL
-{
-    ECASSERT([URL isACURL]);
-    switch ([URL ACObjectType])
-    {
-        case ACObjectTypeProject:
-        {
-            ECASSERT(![self objectWithURL:URL]);
-            return nil;
-            break;
-        }
-        case ACObjectTypeApplication:
-        case ACObjectTypeUnknown:
-        default:
-        {
-            ECASSERT(NO); // TODO: error handling
-            return nil;
-        }
-    }
-}
-
-- (void)deleteObjectWithURL:(NSURL *)URL
-{
-    ECASSERT([URL isACURL]);
-    UNIMPLEMENTED_VOID();
+    return [[NSURL applicationLibraryDirectory] URLByAppendingPathComponent:ACProjectListDirectoryName];
 }
 
 @end

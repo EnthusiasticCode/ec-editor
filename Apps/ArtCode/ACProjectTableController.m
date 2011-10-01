@@ -11,11 +11,9 @@
 #import "ACEditableTableCell.h"
 #import "ACColorSelectionControl.h"
 
-#import "ACURL.h"
 #import "ArtCodeAppDelegate.h"
 #import "ACApplication.h"
 #import "ACTab.h"
-#import "ACProjectListItem.h"
 #import "ACNavigationController.h"
 
 #import "ACNewProjectPopoverController.h"
@@ -65,14 +63,14 @@ static void * ACStateProjectsObservingContext;
     
     self.tableView.tableFooterView = [UIView new];
     
-    [self.application addObserver:self forKeyPath:@"projectURLs" options:NSKeyValueObservingOptionNew context:ACStateProjectsObservingContext];
+    [self.application addObserver:self forKeyPath:@"projects" options:NSKeyValueObservingOptionNew context:ACStateProjectsObservingContext];
     
     [self setEditing:NO animated:NO];
 }
 
 - (void)viewDidUnload
 {
-    [self.application removeObserver:self forKeyPath:@"projectURLs" context:ACStateProjectsObservingContext];
+    [self.application removeObserver:self forKeyPath:@"projects" context:ACStateProjectsObservingContext];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
@@ -251,21 +249,21 @@ static void * ACStateProjectsObservingContext;
     NSInteger rowIndex = [(UIControl *)sender tag];
     ECASSERT(rowIndex >= 0);
     [self.tableView beginUpdates];
-    [self.application deleteObjectWithURL:[[self.application.projects objectAtIndex:rowIndex] projectURL]];
+//    [self.application deleteObjectWithURL:[[self.application.projects objectAtIndex:rowIndex] fileURL]];
     [self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:rowIndex inSection:0]] withRowAnimation:UITableViewRowAnimationFade];
     [self.tableView endUpdates];
 }
 
 - (void)textFieldDidEndEditing:(UITextField *)textField
 {
-    textField.text = [[self.application.projects objectAtIndex:textField.tag] name];
+//    textField.text = [[self.application.projects objectAtIndex:textField.tag] name];
 }
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
     if (![textField.text length])
         return NO;
-    [self.application moveObjectWithURL:[[self.application.projects objectAtIndex:textField.tag] projectURL] toURL:[self.application ACURLForProjectWithName:textField.text]];
+//    [self.application moveObjectWithURL:[[self.application.projects objectAtIndex:textField.tag] fileURL] toURL:[self.application ACURLForProjectWithName:textField.text]];
     [textField resignFirstResponder];
     return YES;
 }
@@ -279,7 +277,7 @@ static void * ACStateProjectsObservingContext;
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return [self.application.projects count];
+//    return [self.application.projects count];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -322,7 +320,7 @@ static void * ACStateProjectsObservingContext;
     [cell.iconButton setImage:[self projectIconWithColor:[UIColor styleForegroundColor]] forState:UIControlStateNormal];
     
     // Setup project title
-    [cell.textField setText:[[self.application.projects objectAtIndex:indexPath.row] name]];
+//    [cell.textField setText:[[self.application.projects objectAtIndex:indexPath.row] name]];
     
     // Setup tags for callbacks
     [cell.customDeleteButton setTag:indexPath.row];
@@ -340,11 +338,6 @@ static void * ACStateProjectsObservingContext;
 - (UITableViewCellEditingStyle)tableView:(UITableView *)tableView editingStyleForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     return UITableViewCellEditingStyleNone;
-}
-
-- (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)sourceIndexPath toIndexPath:(NSIndexPath *)destinationIndexPath
-{
-    [self.application moveProjectsAtIndexes:[NSIndexSet indexSetWithIndex:sourceIndexPath.row] toIndex:destinationIndexPath.row];
 }
 
 // Override to support editing the table view.
@@ -367,7 +360,7 @@ static void * ACStateProjectsObservingContext;
 {
     if (self.isEditing)
         return;
-    [self.tab pushURL:[[self.application.projects objectAtIndex:indexPath.row] projectURL]];
+//    [self.tab pushURL:[[self.application.projects objectAtIndex:indexPath.row] fileURL]];
 }
 
 @end

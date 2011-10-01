@@ -2,7 +2,6 @@
 <model name="" userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="870" systemVersion="11B26" minimumToolsVersion="Automatic" macOSVersion="Automatic" iOSVersion="Automatic">
     <entity name="Application" representedClassName="ACApplication" syncable="YES">
         <relationship name="bookmarks" optional="YES" toMany="YES" deletionRule="Cascade" ordered="YES" destinationEntity="Bookmark" inverseName="application" inverseEntity="Bookmark" syncable="YES"/>
-        <relationship name="projects" optional="YES" toMany="YES" deletionRule="Cascade" ordered="YES" destinationEntity="ProjectListItem" inverseName="application" inverseEntity="ProjectListItem" syncable="YES"/>
         <relationship name="tabs" optional="YES" toMany="YES" deletionRule="Cascade" ordered="YES" destinationEntity="Tab" inverseName="application" inverseEntity="Tab" syncable="YES"/>
     </entity>
     <entity name="Bookmark" representedClassName="ACBookmark">
@@ -14,11 +13,6 @@
         <attribute name="URL" attributeType="String" syncable="YES"/>
         <relationship name="tab" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Tab" inverseName="historyItems" inverseEntity="Tab" syncable="YES"/>
     </entity>
-    <entity name="ProjectListItem" representedClassName="ACProjectListItem" syncable="YES">
-        <attribute name="projectURL" attributeType="String" syncable="YES"/>
-        <attribute name="tag" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
-        <relationship name="application" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Application" inverseName="projects" inverseEntity="Application" syncable="YES"/>
-    </entity>
     <entity name="Tab" representedClassName="ACTab">
         <attribute name="currentHistoryPosition" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
         <relationship name="application" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Application" inverseName="tabs" inverseEntity="Application" syncable="YES"/>
@@ -26,9 +20,8 @@
     </entity>
     <elements>
         <element name="Application" positionX="-99" positionY="120" width="128" height="75"/>
-        <element name="HistoryItem" positionX="-452" positionY="330" width="128" height="75"/>
-        <element name="ProjectListItem" positionX="160" positionY="192" width="128" height="90"/>
-        <element name="Tab" positionX="-200" positionY="450" width="128" height="90"/>
         <element name="Bookmark" positionX="160" positionY="192" width="128" height="90"/>
+        <element name="HistoryItem" positionX="-452" positionY="330" width="128" height="75"/>
+        <element name="Tab" positionX="-200" positionY="450" width="128" height="90"/>
     </elements>
 </model>

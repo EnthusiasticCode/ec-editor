@@ -122,10 +122,7 @@
     [window makeKeyAndVisible];
     navigationController.tabNavigationController.tabPageMargin = 10;
     if (![self.application.tabs count])
-    {
         [self.application insertTabAtIndex:0];
-        [[self.application.tabs objectAtIndex:0] pushURL:[NSURL ACURLForApplicationProjectsList]];
-    }
     for (ACTab *tab in self.application.tabs)
         [navigationController.tabNavigationController addTabControllerWithTab:tab animated:NO];
     navigationController.tabNavigationController.currentTabController = [navigationController.tabNavigationController.tabControllers objectAtIndex:0];

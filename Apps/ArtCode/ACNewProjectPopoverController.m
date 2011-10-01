@@ -49,7 +49,8 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     NSString *projectName = [@"Project " stringByAppendingString:[NSString stringWithFormat:@"%d", arc4random()]];
-    [self.application addObjectWithURL:[NSURL ACURLForProjectWithName:projectName]];
+    NSFileManager *fileManager = [[NSFileManager alloc] init];
+    [fileManager createDirectoryAtURL:[[self.application projectsDirectory] URLByAppendingPathComponent:projectName] withIntermediateDirectories:YES attributes:nil error:NULL];
 }
 
 @end

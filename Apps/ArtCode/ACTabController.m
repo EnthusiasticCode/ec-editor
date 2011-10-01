@@ -66,40 +66,40 @@ static void * ACTabControllerTabCurrentURLObserving;
 {
     if (tabViewController == nil)
     {
-        switch ([self.tab.currentURL ACObjectType])
-        {
-            case ACObjectTypeFile:
-            {
-                ACCodeFileController *codeFileController = [[ACCodeFileController alloc] init];
-                codeFileController.fileDocument = [self.tab.application objectWithURL:self.tab.currentURL];
-                tabViewController = codeFileController;
-                break;
-            }
-            case ACObjectTypeApplication:
-            {
-                ACProjectTableController *projectTableController = [[ACProjectTableController alloc] init];
-                projectTableController.application = [self.tab.application objectWithURL:self.tab.currentURL];
-                projectTableController.tab = self.tab;
-                tabViewController = projectTableController;
-                break;
-            }
-            case ACObjectTypeProject:
-            case ACObjectTypeGroup:
-            case ACObjectTypeFolder:
-            {
-                ACFileTableController *fileTableController = [[ACFileTableController alloc] init];
+//        switch ([self.tab.currentURL ACObjectType])
+//        {
+//            case ACObjectTypeFile:
+//            {
+//                ACCodeFileController *codeFileController = [[ACCodeFileController alloc] init];
+//                codeFileController.fileDocument = [self.tab.application objectWithURL:self.tab.currentURL];
+//                tabViewController = codeFileController;
+//                break;
+//            }
+//            case ACObjectTypeApplication:
+//            {
+//                ACProjectTableController *projectTableController = [[ACProjectTableController alloc] init];
+//                projectTableController.application = [self.tab.application objectWithURL:self.tab.currentURL];
+//                projectTableController.tab = self.tab;
+//                tabViewController = projectTableController;
+//                break;
+//            }
+//            case ACObjectTypeProject:
+//            case ACObjectTypeGroup:
+//            case ACObjectTypeFolder:
+//            {
+//                ACFileTableController *fileTableController = [[ACFileTableController alloc] init];
 //                fileTableController.group = [self.tab.application objectWithURL:self.tab.currentURL];
-                fileTableController.tab = self.tab;
-                tabViewController = fileTableController;
-                break;
-            }
-            case ACObjectTypeUnknown:
-            default:
-            {
-                ECASSERT(NO); // TODO: error handling
-            }
-        }
-        return [[UIViewController alloc] init];
+//                fileTableController.tab = self.tab;
+//                tabViewController = fileTableController;
+//                break;
+//            }
+//            case ACObjectTypeUnknown:
+//            default:
+//            {
+//                ECASSERT(NO); // TODO: error handling
+//            }
+//        }
+//        return [[UIViewController alloc] init];
     }
     ECASSERT(tabViewController); // should never return nil
     return tabViewController;
