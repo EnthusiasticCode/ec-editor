@@ -66,17 +66,24 @@ static void * ACTabControllerTabCurrentURLObserving;
 {
     if (tabViewController == nil)
     {
-        BOOL currentURLIsDirectory;
         NSURL *currentURL = self.tab.currentURL;
-        NSFileManager *fileManager = [[NSFileManager alloc] init];
-        if ([currentURL isEqual:[self.tab.application projectsDirectory]])
+        NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] init];
+        __block BOOL currentURLIsEqualToProjectsDirectory = NO;
+        __block BOOL currentURLExists = NO;
+        __block BOOL currentURLIsDirectory = NO;
+        [fileCoordinator coordinateReadingItemAtURL:currentURL options:NSFileCoordinatorReadingResolvesSymbolicLink | NSFileCoordinatorReadingWithoutChanges error:NULL byAccessor:^(NSURL *newURL) {
+            currentURLIsEqualToProjectsDirectory = [newURL isEqual:[self.tab.application projectsDirectory]];
+            NSFileManager *fileManager = [[NSFileManager alloc] init];
+            currentURLExists = [fileManager fileExistsAtPath:[newURL path] isDirectory:&currentURLIsDirectory];
+        }];
+        if (currentURLIsEqualToProjectsDirectory)
         {
             ACProjectTableController *projectTableController = [[ACProjectTableController alloc] init];
             projectTableController.projectsDirectory = currentURL;
             projectTableController.tab = self.tab;
             return projectTableController;
         }
-        else if ([fileManager fileExistsAtPath:[currentURL path] isDirectory:&currentURLIsDirectory])
+        else if (currentURLExists)
         {
             if (currentURLIsDirectory)
             {
