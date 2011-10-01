@@ -28,18 +28,12 @@
 	return YES;
 }
 
-- (void)viewDidLoad
-{
-    [super viewDidLoad];
-    self.fileImportTableView.dataSource = self;
-    self.fileImportTableView.delegate = self;
-}
-
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
     NSFileManager *fileManager = [[NSFileManager alloc] init];
     _fileURLs = [fileManager contentsOfDirectoryAtURL:[NSURL applicationDocumentsDirectory] includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsPackageDescendants | NSDirectoryEnumerationSkipsSubdirectoryDescendants error:NULL];
+    [self.fileImportTableView reloadData];
 }
 
 - (void)viewDidDisappear:(BOOL)animated
