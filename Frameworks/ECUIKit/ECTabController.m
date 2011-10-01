@@ -12,7 +12,6 @@
 
 #define TABBAR_HEIGHT 44
 
-static void *ECTabControllerChildViewControllerContext;
 
 @interface ECTabController () {
     NSMutableArray *orderedChildViewControllers;
@@ -74,28 +73,7 @@ static void *ECTabControllerChildViewControllerContext;
 {
     if (selectedViewControllerIndex == index)
         return;
-    
-    UIViewController *toViewController = nil;
-    if (index != NSNotFound)
-    {
-        ECASSERT(index < [orderedChildViewControllers count]);
-        toViewController = [orderedChildViewControllers objectAtIndex:index];
-        toViewController.view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-    }
-    
-    UIViewController *fromViewController = self.selectedViewController;
-    toViewController.view.alpha = 0;
-    toViewController.view.frame = self.contentView.bounds;
-    [self.contentView addSubview:toViewController.view];
-    [UIView animateWithDuration:animated ? 0.20 : 0 animations:^{
-        toViewController.view.alpha = 1;
-        fromViewController.view.alpha = 0;
-    } completion:^(BOOL finished) {
-        [fromViewController.view removeFromSuperview];
-    }];
-    
-    selectedViewControllerIndex = index;
-    
+        
     [self.tabBar setSelectedTabIndex:index animated:animated];
 }
 
@@ -104,7 +82,6 @@ static void *ECTabControllerChildViewControllerContext;
 static void init(ECTabController *self)
 {
     self->selectedViewControllerIndex = NSNotFound;
-    [self addObserver:self forKeyPath:@"childViewControllers" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld context:ECTabControllerChildViewControllerContext];
 }
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -123,65 +100,6 @@ static void init(ECTabController *self)
         init(self);
     }
     return self;
-}
-
-- (void)dealloc
-{
-    [self removeObserver:self forKeyPath:@"childViewControllers" context:ECTabControllerChildViewControllerContext];
-}
-
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
-{
-    if (context == ECTabControllerChildViewControllerContext)
-    {
-        if (orderedChildViewControllers == nil)
-            orderedChildViewControllers = [NSMutableArray new];
-        
-        NSInteger kind = [[change objectForKey:NSKeyValueChangeKindKey] integerValue];
-        if (kind == NSKeyValueChangeInsertion)
-        {
-            NSIndexSet *changedValues = [change objectForKey:NSKeyValueChangeIndexesKey];
-            NSArray *newChildViewController = [change objectForKey:NSKeyValueChangeNewKey];
-            [newChildViewController enumerateObjectsAtIndexes:changedValues options:0 usingBlock:^(UIViewController *controller, NSUInteger idx, BOOL *stop) {
-                // Adding to ordered array of controllers
-                [orderedChildViewControllers addObject:controller];
-                
-                // Add tab button
-                [self.tabBar addTabWithTitle:controller.navigationItem.title animated:YES];
-                
-                // Set selection
-                if (self.selectedViewControllerIndex == NSNotFound)
-                    [self setSelectedViewControllerIndex:[orderedChildViewControllers count] - 1 animated:YES];
-            }];
-        }
-        else if (kind == NSKeyValueChangeRemoval)
-        {
-            NSIndexSet *changedValues = [change objectForKey:NSKeyValueChangeIndexesKey];
-            NSArray *oldChildViewController = [change objectForKey:NSKeyValueChangeOldKey];
-            [oldChildViewController enumerateObjectsAtIndexes:changedValues options:0 usingBlock:^(UIViewController *controller, NSUInteger idx, BOOL *stop) {
-                NSUInteger controllerIndex = [orderedChildViewControllers indexOfObject:controller];
-                [orderedChildViewControllers removeObject:controller];
-                
-                // Remove from tab bar
-                [self.tabBar removeTabControlAtIndex:controllerIndex animated:YES];
-                
-                // Change selection if needed
-                if (self.selectedViewControllerIndex == controllerIndex)
-                {
-                    if (controllerIndex > 0)
-                        controllerIndex -= 1;
-                    if (controllerIndex < [orderedChildViewControllers count])
-                        [self setSelectedViewControllerIndex:controllerIndex animated:YES];
-                    else
-                        self.selectedViewControllerIndex = NSNotFound;
-                }
-            }];
-        }
-    }
-    else
-    {
-        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
-    }
 }
 
 #pragma mark - View lifecycle
@@ -245,26 +163,7 @@ static void init(ECTabController *self)
 {
     ECASSERT(controllerIndex < [orderedChildViewControllers count]);
     
-    UIViewController *controller = [orderedChildViewControllers objectAtIndex:controllerIndex];
-    [controller willMoveToParentViewController:nil];
-    
-    [orderedChildViewControllers removeObject:controller];
-    
-    // Remove from tab bar
     [self.tabBar removeTabControlAtIndex:controllerIndex animated:animated];
-    
-    // Change selection if needed
-    if (self.selectedViewControllerIndex == controllerIndex)
-    {
-        if (controllerIndex > 0)
-            controllerIndex -= 1;
-        if (controllerIndex < [orderedChildViewControllers count])
-            [self setSelectedViewControllerIndex:controllerIndex animated:animated];
-        else
-            self.selectedViewControllerIndex = NSNotFound;
-    }
-    
-    [controller removeFromParentViewController];
 }
 
 - (void)moveChildViewControllerAtIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex animated:(BOOL)animated
@@ -294,9 +193,53 @@ static void init(ECTabController *self)
     return control;
 }
 
-- (void)tabBar:(ECTabBar *)tabBar didSelectTabControl:(UIControl *)tabControl atIndex:(NSUInteger)tabIndex
+- (BOOL)tabBar:(ECTabBar *)tabBar willSelectTabControl:(UIControl *)tabControl atIndex:(NSUInteger)index
 {
-    [self setSelectedViewControllerIndex:tabIndex animated:YES];
+    UIViewController *toViewController = nil;
+    if (index != NSNotFound)
+    {
+        ECASSERT(index < [orderedChildViewControllers count]);
+        toViewController = [orderedChildViewControllers objectAtIndex:index];
+        toViewController.view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    }
+    
+    UIViewController *fromViewController = self.selectedViewController;
+    toViewController.view.alpha = 0;
+    toViewController.view.frame = self.contentView.bounds;
+    [self.contentView addSubview:toViewController.view];
+    [UIView animateWithDuration:0.20 animations:^{
+        toViewController.view.alpha = 1;
+        fromViewController.view.alpha = 0;
+    } completion:^(BOOL finished) {
+        [fromViewController.view removeFromSuperview];
+    }];
+    
+    selectedViewControllerIndex = index;
+    
+    return YES;
+}
+
+- (BOOL)tabBar:(ECTabBar *)tabBar willRemoveTabControl:(UIControl *)tabControl atIndex:(NSUInteger)tabIndex
+{ 
+    UIViewController *controller = [orderedChildViewControllers objectAtIndex:tabIndex];
+    [controller willMoveToParentViewController:nil];
+    
+    [orderedChildViewControllers removeObject:controller];
+
+    // Change selection if needed
+    if (self.selectedViewControllerIndex == tabIndex)
+    {
+        if (tabIndex > 0)
+            tabIndex -= 1;
+        if (tabIndex < [orderedChildViewControllers count])
+            [self setSelectedViewControllerIndex:tabIndex animated:YES];
+        else
+            self.selectedViewControllerIndex = NSNotFound;
+    }
+    
+    [controller removeFromParentViewController];
+    
+    return YES;
 }
 
 - (void)tabBar:(ECTabBar *)tabBar didMoveTabControl:(UIControl *)tabControl fromIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex

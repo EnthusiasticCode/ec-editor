@@ -304,6 +304,11 @@ static void init(ECTabBar *self)
     return [tabControls count];
 }
 
+- (void)setSelectedTabControl:(UIControl *)tabControl
+{
+    [self setSelectedTabControl:tabControl animated:YES];
+}
+
 - (void)setSelectedTabControl:(UIControl *)tabControl animated:(BOOL)animated
 {
     // Deselection
@@ -362,11 +367,6 @@ static void init(ECTabBar *self)
         if (delegateFlags.hasDidSelectTabControlAtIndex)
             [delegate tabBar:self didSelectTabControl:tabControl atIndex:tabIndex];
     }
-}
-
-- (void)setSelectedTabControl:(UIControl *)tabControl
-{
-    [self setSelectedTabControl:tabControl animated:YES];
 }
 
 - (NSUInteger)selectedTabIndex
