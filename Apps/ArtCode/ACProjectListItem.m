@@ -41,6 +41,11 @@
     return [self.projectURL ACObjectName];
 }
 
++ (NSSet *)keyPathsForValuesAffectingName
+{
+    return [NSSet setWithObject:@"projectURL"];
+}
+
 - (UIManagedDocument *)document
 {
     if (!self.projectURL)
@@ -93,7 +98,10 @@
         // TODO: fix the core data file by merging projects
         ECASSERT(NO); // core data file broken, more than 1 project
     if (![projects count])
+    {
         project = [NSEntityDescription insertNewObjectForEntityForName:@"Project" inManagedObjectContext:self.document.managedObjectContext];
+        [project setPrimitiveValue:@"Project" forKey:@"name"];
+    }
     else
         project = [projects objectAtIndex:0];
     ECASSERT(project); // should never return nil

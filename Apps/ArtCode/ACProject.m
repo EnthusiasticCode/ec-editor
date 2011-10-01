@@ -21,4 +21,19 @@
     return self.projectListItem.projectURL;
 }
 
++ (NSSet *)keyPathsForValuesAffectingACURL
+{
+    return [NSSet setWithObject:@"projectListItem.projectURL"];
+}
+
+- (NSString *)name
+{
+    return self.projectListItem.name;
+}
+
++ (NSSet *)keyPathsForValuesAffectingName
+{
+    return [NSSet setWithObject:@"projectListItem.name"];
+}
+
 @end

@@ -14,6 +14,8 @@
 
 @property (nonatomic, retain) NSOrderedSet *bookmarks;
 
+@property (nonatomic, strong, readonly) NSString *name;
+
 @property (nonatomic, weak) ACProjectListItem *projectListItem;
 
 @end
