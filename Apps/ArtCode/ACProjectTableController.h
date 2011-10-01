@@ -12,7 +12,7 @@
 
 @interface ACProjectTableController : UITableViewController <ACNavigationTarget, UITextFieldDelegate>
 
-@property (nonatomic, strong) ACApplication *application;
+@property (nonatomic, strong) NSURL *projectsDirectory;
 
 @property (nonatomic, strong) ACTab *tab;
 

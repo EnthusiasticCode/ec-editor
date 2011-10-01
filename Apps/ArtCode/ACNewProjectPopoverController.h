@@ -8,10 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
-@class ACApplication;
-
 @interface ACNewProjectPopoverController : UITableViewController
 
-@property (nonatomic, strong) ACApplication *application;
+@property (nonatomic, strong) NSURL *projectsDirectory;
 
 @end

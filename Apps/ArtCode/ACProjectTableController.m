@@ -24,32 +24,19 @@
 
 #define STATIC_OBJECT(typ, nam, init) static typ *nam = nil; if (!nam) nam = init
 
-static void * ACStateProjectsObservingContext;
-
-@interface ACProjectTableController () {
+@interface ACProjectTableController ()
+{
+    ECPopoverController *popoverLabelColorController;
     ECPopoverController *_popover;
 }
 
 - (void)deleteTableRow:(id)sender;
 @end
 
-@implementation ACProjectTableController {
-    ECPopoverController *popoverLabelColorController;
-}
+@implementation ACProjectTableController
 
-@synthesize application = _application;
+@synthesize projectsDirectory = _projectsDirectory;
 @synthesize tab = _tab;
-
-- (void)setApplication:(ACApplication *)application
-{
-    if (application == _application)
-        return;
-    [self willChangeValueForKey:@"application"];
-    [_application removeObserver:self forKeyPath:@"projects" context:ACStateProjectsObservingContext];
-    _application = application;
-    [_application addObserver:self forKeyPath:@"projects" options:NSKeyValueObservingOptionNew context:ACStateProjectsObservingContext];
-    [self didChangeValueForKey:@"application"];
-}
 
 #pragma mark - View lifecycle
 
@@ -63,22 +50,7 @@ static void * ACStateProjectsObservingContext;
     
     self.tableView.tableFooterView = [UIView new];
     
-    [self.application addObserver:self forKeyPath:@"projects" options:NSKeyValueObservingOptionNew context:ACStateProjectsObservingContext];
-    
     [self setEditing:NO animated:NO];
-}
-
-- (void)viewDidUnload
-{
-    [self.application removeObserver:self forKeyPath:@"projects" context:ACStateProjectsObservingContext];
-}
-
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
-{
-    if (context != ACStateProjectsObservingContext)
-        return [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
-    [self.tableView reloadData];
-    [_popover dismissPopoverAnimated:YES];
 }
 
 - (void)didReceiveMemoryWarning
@@ -173,7 +145,7 @@ static void * ACStateProjectsObservingContext;
     {
         UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"NewProjectPopover" bundle:[NSBundle mainBundle]];
         ACNewProjectPopoverController *popoverViewController = (ACNewProjectPopoverController *)[storyboard instantiateInitialViewController];
-        popoverViewController.application = self.application;
+        popoverViewController.projectsDirectory = self.projectsDirectory;
         _popover = [[ECPopoverController alloc] initWithContentViewController:popoverViewController];
     }
     [_popover presentPopoverFromRect:[sender frame] inView:[sender superview] permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];

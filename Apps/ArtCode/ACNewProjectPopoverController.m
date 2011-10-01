@@ -11,7 +11,7 @@
 
 @implementation ACNewProjectPopoverController
 
-@synthesize application = _application;
+@synthesize projectsDirectory = _projectsDirectory;
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
@@ -50,7 +50,7 @@
 {
     NSString *projectName = [@"Project " stringByAppendingString:[NSString stringWithFormat:@"%d", arc4random()]];
     NSFileManager *fileManager = [[NSFileManager alloc] init];
-    [fileManager createDirectoryAtURL:[[self.application projectsDirectory] URLByAppendingPathComponent:projectName] withIntermediateDirectories:YES attributes:nil error:NULL];
+    [fileManager createDirectoryAtURL:[self.projectsDirectory URLByAppendingPathComponent:projectName] withIntermediateDirectories:YES attributes:nil error:NULL];
 }
 
 @end

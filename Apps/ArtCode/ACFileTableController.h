@@ -14,6 +14,8 @@
 
 @interface ACFileTableController : UIViewController <ACNavigationTarget, UITableViewDataSource, UITableViewDelegate>
 
+@property (nonatomic, strong) NSURL *directory;
+
 @property (nonatomic, strong) ACTab *tab;
 
 @property (nonatomic, strong) IBOutlet UITableView *tableView;

@@ -22,7 +22,8 @@
 #import <ECFoundation/NSTimer+block.h>
 #import <QuartzCore/QuartzCore.h>
 
-@implementation ACCodeFileController {
+@interface ACCodeFileController ()
+{
     ACEditorToolSelectionController *editorToolSelectionController;
     ECPopoverController *editorToolSelectionPopover;
     
@@ -31,9 +32,15 @@
     
     NSTimer *filterDebounceTimer;
 }
+@property (nonatomic, strong, readonly) ACFileDocument *document;
+@end
 
-@synthesize fileDocument = _fileDocument;
+@implementation ACCodeFileController
+
+@synthesize fileURL = _fileURL;
+@synthesize tab = _tab;
 @synthesize codeView;
+@synthesize document = _document;
 
 - (ECCodeView *)codeView
 {
@@ -157,13 +164,13 @@
     self.view = self.codeView;
     // TODO start loading animation
     ACCodeIndexerDataSource *dataSource = (ACCodeIndexerDataSource *)self.codeView.datasource;
-    [self.fileDocument loadCodeUnitWithCompletionHandler:^(ECCodeUnit *codeUnit) {
+    [self.document loadCodeUnitWithCompletionHandler:^(ECCodeUnit *codeUnit) {
         ECASSERT(codeUnit); // TODO: error handling
         dataSource.codeUnit = codeUnit;
         [self.codeView updateAllText];
     }];
     
-    self.codeView.text = self.fileDocument.contentString;
+    self.codeView.text = self.document.contentString;
 
 }
 
