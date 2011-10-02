@@ -60,6 +60,20 @@
 
 #pragma mark - General methods
 
+- (id)init
+{
+    self = [super init];
+    if (!self)
+        return nil;
+    [NSFileCoordinator addFilePresenter:self];
+    return self;
+}
+
+- (void)dealloc
+{
+    [NSFileCoordinator removeFilePresenter:self];
+}
+
 - (NSUInteger)insertionPointForFileURL:(NSURL *)fileURL
 {
     NSUInteger insertionPoint = 0;

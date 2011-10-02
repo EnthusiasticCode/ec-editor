@@ -18,6 +18,8 @@
 
 #import "ACNewProjectPopoverController.h"
 
+#import <ECFoundation/ECDirectoryPresenter.h>
+
 #import <ECUIKit/ECPopoverController.h>
 
 #import <ECUIKit/ECBezelAlert.h>
@@ -29,7 +31,7 @@
     ECPopoverController *popoverLabelColorController;
     ECPopoverController *_popover;
 }
-
+@property (nonatomic, strong) ECDirectoryPresenter *directoryPresenter;
 - (void)deleteTableRow:(id)sender;
 @end
 
@@ -37,6 +39,7 @@
 
 @synthesize projectsDirectory = _projectsDirectory;
 @synthesize tab = _tab;
+@synthesize directoryPresenter = _directoryPresenter;
 
 #pragma mark - View lifecycle
 
@@ -220,22 +223,29 @@
 {
     NSInteger rowIndex = [(UIControl *)sender tag];
     ECASSERT(rowIndex >= 0);
-    [self.tableView beginUpdates];
-//    [self.application deleteObjectWithURL:[[self.application.projects objectAtIndex:rowIndex] fileURL]];
-    [self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:rowIndex inSection:0]] withRowAnimation:UITableViewRowAnimationFade];
-    [self.tableView endUpdates];
+    NSURL *fileURL = [self.directoryPresenter.fileURLs objectAtIndex:rowIndex];
+    NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] init];
+    [fileCoordinator coordinateWritingItemAtURL:fileURL options:NSFileCoordinatorWritingForDeleting error:NULL byAccessor:^(NSURL *newURL) {
+        NSFileManager *fileManager = [[NSFileManager alloc] init];
+        [fileManager removeItemAtURL:newURL error:NULL];
+    }];
 }
 
 - (void)textFieldDidEndEditing:(UITextField *)textField
 {
-//    textField.text = [[self.application.projects objectAtIndex:textField.tag] name];
+    textField.text = [[self.directoryPresenter.fileURLs objectAtIndex:textField.tag] lastPathComponent];
 }
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
     if (![textField.text length])
         return NO;
-//    [self.application moveObjectWithURL:[[self.application.projects objectAtIndex:textField.tag] fileURL] toURL:[self.application ACURLForProjectWithName:textField.text]];
+    NSURL *fileURL = [self.directoryPresenter.fileURLs objectAtIndex:textField.tag];
+    NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] init];
+    [fileCoordinator coordinateWritingItemAtURL:fileURL options:NSFileCoordinatorWritingForMoving error:NULL byAccessor:^(NSURL *newURL) {
+        NSFileManager *fileManager = [[NSFileManager alloc] init];
+        [fileManager moveItemAtURL:newURL toURL:[[newURL URLByDeletingLastPathComponent] URLByAppendingPathComponent:textField.text] error:NULL];
+    }];
     [textField resignFirstResponder];
     return YES;
 }
@@ -249,7 +259,7 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-//    return [self.application.projects count];
+    return [self.directoryPresenter.fileURLs count];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -306,25 +316,6 @@
     // Remove 'slide to delete' on cells.
     return self.isEditing;
 }
-
-- (UITableViewCellEditingStyle)tableView:(UITableView *)tableView editingStyleForRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    return UITableViewCellEditingStyleNone;
-}
-
-// Override to support editing the table view.
-//- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
-//{
-//    if (editingStyle == UITableViewCellEditingStyleDelete) {
-//        // Delete the row from the data source
-//        [[[ACState sharedState].projects objectAtIndex:indexPath.row] delete];
-//        [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
-//    }   
-//    else if (editingStyle == UITableViewCellEditingStyleInsert) {
-//        // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-//    }   
-//}
-
 
 #pragma mark - Table view delegate
 
