@@ -127,6 +127,9 @@
 		B7170BDA1428F01600DF7794 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7170BD61428F00800DF7794 /* QuartzCore.framework */; };
 		B7170BE51428F1A000DF7794 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7170BE41428F1A000DF7794 /* CoreGraphics.framework */; };
 		B7170BE61428F1A800DF7794 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7170BE41428F1A000DF7794 /* CoreGraphics.framework */; };
+		CD0AD99014362AF100FC1EFE /* libECFoundation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7170BCF1428ECC300DF7794 /* libECFoundation.a */; };
+		CD0AD991143634FC00FC1EFE /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7170BD61428F00800DF7794 /* QuartzCore.framework */; };
+		CD0BD4AA14374FD2006F2A37 /* UIView+ReuseIdentifier.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170B881428EB2500DF7794 /* UIView+ReuseIdentifier.m */; };
 		CD0DDA1614293E7300FE8B5B /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B71709DC1428E68A00DF7794 /* UIKit.framework */; };
 		CD0DDA1714293E7300FE8B5B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B71709AF1428E3CD00DF7794 /* Foundation.framework */; };
 		CD0DDA1814293E7300FE8B5B /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7170BE41428F1A000DF7794 /* CoreGraphics.framework */; };
@@ -138,10 +141,20 @@
 		CD2A5FCE142A4A9900A2CACD /* ECSplitViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD2A5FCC142A4A9900A2CACD /* ECSplitViewController.m */; };
 		CD2A5FCF142A4A9900A2CACD /* ECSplitViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD2A5FCC142A4A9900A2CACD /* ECSplitViewController.m */; };
 		CD2A5FD0142A4A9900A2CACD /* ECSplitViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD2A5FCC142A4A9900A2CACD /* ECSplitViewController.m */; };
-		CD2A5FD3142A4AA500A2CACD /* ECBlockView.h in Headers */ = {isa = PBXBuildFile; fileRef = CD2A5FD1142A4AA500A2CACD /* ECBlockView.h */; };
-		CD2A5FD4142A4AA500A2CACD /* ECBlockView.m in Sources */ = {isa = PBXBuildFile; fileRef = CD2A5FD2142A4AA500A2CACD /* ECBlockView.m */; };
-		CD2A5FD5142A4AA500A2CACD /* ECBlockView.m in Sources */ = {isa = PBXBuildFile; fileRef = CD2A5FD2142A4AA500A2CACD /* ECBlockView.m */; };
-		CD2A5FD6142A4AA500A2CACD /* ECBlockView.m in Sources */ = {isa = PBXBuildFile; fileRef = CD2A5FD2142A4AA500A2CACD /* ECBlockView.m */; };
+		CD6B0F051434D43000049625 /* ECInverseCornerShapeView.h in Headers */ = {isa = PBXBuildFile; fileRef = CD6B0F031434D43000049625 /* ECInverseCornerShapeView.h */; };
+		CD6B0F061434D43000049625 /* ECInverseCornerShapeView.m in Sources */ = {isa = PBXBuildFile; fileRef = CD6B0F041434D43000049625 /* ECInverseCornerShapeView.m */; };
+		CD6B0F071434D43000049625 /* ECInverseCornerShapeView.m in Sources */ = {isa = PBXBuildFile; fileRef = CD6B0F041434D43000049625 /* ECInverseCornerShapeView.m */; };
+		CDBD28261435101B00E05F40 /* ECTabController.h in Headers */ = {isa = PBXBuildFile; fileRef = CDBD28241435101B00E05F40 /* ECTabController.h */; };
+		CDBD28271435101B00E05F40 /* ECTabController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDBD28251435101B00E05F40 /* ECTabController.m */; };
+		CDBD282E1435104F00E05F40 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B71709DC1428E68A00DF7794 /* UIKit.framework */; };
+		CDBD282F1435104F00E05F40 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B71709AF1428E3CD00DF7794 /* Foundation.framework */; };
+		CDBD28301435104F00E05F40 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7170BE41428F1A000DF7794 /* CoreGraphics.framework */; };
+		CDBD28361435104F00E05F40 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = CDBD28341435104F00E05F40 /* InfoPlist.strings */; };
+		CDBD28381435104F00E05F40 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = CDBD28371435104F00E05F40 /* main.m */; };
+		CDBD283C1435104F00E05F40 /* ECTabControllerTest_AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = CDBD283B1435104F00E05F40 /* ECTabControllerTest_AppDelegate.m */; };
+		CDBD28421435104F00E05F40 /* ECTabControllerTest_ViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CDBD28401435104F00E05F40 /* ECTabControllerTest_ViewController.xib */; };
+		CDBD28461435115900E05F40 /* ECTabController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDBD28251435101B00E05F40 /* ECTabController.m */; };
+		CDBD2847143512B200E05F40 /* ECTabBar.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170B781428EB2400DF7794 /* ECTabBar.m */; };
 		CDC7C952142A4ADD00FCF269 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7170BD61428F00800DF7794 /* QuartzCore.framework */; };
 		CDC7C953142A4B3300FCF269 /* ECRoundedContentCornersView.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170B701428EB2400DF7794 /* ECRoundedContentCornersView.m */; };
 /* End PBXBuildFile section */
@@ -169,6 +182,13 @@
 			remoteInfo = ECFoundationTests;
 		};
 		B7170BD21428ED6A00DF7794 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B7170BC61428ECC200DF7794 /* ECFoundation.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = B71707431428D30500DF7794;
+			remoteInfo = ECFoundation;
+		};
+		CD0AD98E14362A4100FC1EFE /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B7170BC61428ECC200DF7794 /* ECFoundation.xcodeproj */;
 			proxyType = 1;
@@ -390,8 +410,18 @@
 		CD2A5FC8142A4A7E00A2CACD /* ECSplitViewControllerTest_Window.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ECSplitViewControllerTest_Window.xib; sourceTree = "<group>"; };
 		CD2A5FCB142A4A9900A2CACD /* ECSplitViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECSplitViewController.h; sourceTree = "<group>"; };
 		CD2A5FCC142A4A9900A2CACD /* ECSplitViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECSplitViewController.m; sourceTree = "<group>"; };
-		CD2A5FD1142A4AA500A2CACD /* ECBlockView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECBlockView.h; sourceTree = "<group>"; };
-		CD2A5FD2142A4AA500A2CACD /* ECBlockView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECBlockView.m; sourceTree = "<group>"; };
+		CD6B0F031434D43000049625 /* ECInverseCornerShapeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECInverseCornerShapeView.h; sourceTree = "<group>"; };
+		CD6B0F041434D43000049625 /* ECInverseCornerShapeView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECInverseCornerShapeView.m; sourceTree = "<group>"; };
+		CDBD28241435101B00E05F40 /* ECTabController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECTabController.h; sourceTree = "<group>"; };
+		CDBD28251435101B00E05F40 /* ECTabController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECTabController.m; sourceTree = "<group>"; };
+		CDBD282C1435104F00E05F40 /* ECTabControllerTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ECTabControllerTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		CDBD28331435104F00E05F40 /* ECTabControllerTest-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ECTabControllerTest-Info.plist"; sourceTree = "<group>"; };
+		CDBD28351435104F00E05F40 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		CDBD28371435104F00E05F40 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		CDBD28391435104F00E05F40 /* ECTabControllerTest-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ECTabControllerTest-Prefix.pch"; sourceTree = "<group>"; };
+		CDBD283A1435104F00E05F40 /* ECTabControllerTest_AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ECTabControllerTest_AppDelegate.h; sourceTree = "<group>"; };
+		CDBD283B1435104F00E05F40 /* ECTabControllerTest_AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ECTabControllerTest_AppDelegate.m; sourceTree = "<group>"; };
+		CDBD28411435104F00E05F40 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/ECTabControllerTest_ViewController.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -432,6 +462,18 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		CDBD28291435104F00E05F40 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CD0AD991143634FC00FC1EFE /* QuartzCore.framework in Frameworks */,
+				CD0AD99014362AF100FC1EFE /* libECFoundation.a in Frameworks */,
+				CDBD282E1435104F00E05F40 /* UIKit.framework in Frameworks */,
+				CDBD282F1435104F00E05F40 /* Foundation.framework in Frameworks */,
+				CDBD28301435104F00E05F40 /* CoreGraphics.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -452,6 +494,7 @@
 				B71709AC1428E3CD00DF7794 /* libECUIKit.a */,
 				B71709BC1428E3CD00DF7794 /* ECUIKitTests.octest */,
 				CD0DDA1414293E7300FE8B5B /* ECSplitViewControllerTest.app */,
+				CDBD282C1435104F00E05F40 /* ECTabControllerTest.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -478,7 +521,7 @@
 				CD0DD9E61429196300FE8B5B /* Gesture Recognizers */,
 				CD0DD9DF1429126000FE8B5B /* Popover */,
 				CD0DD9E01429185100FE8B5B /* Jump Bar */,
-				CD0DD9E1142918D300FE8B5B /* Tab Bar */,
+				CD0DD9E1142918D300FE8B5B /* Tabs */,
 				CD0DD9E2142918EE00FE8B5B /* Bezel Alert */,
 				CD0DD9E31429193400FE8B5B /* Code View */,
 				CD2A5FCA142A4A8400A2CACD /* Split View */,
@@ -499,6 +542,7 @@
 		B71709C51428E3CE00DF7794 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				CDBD28311435104F00E05F40 /* ECTabControllerTest */,
 				CD0DDA1914293E7300FE8B5B /* ECSplitViewControllerTest */,
 				CD0DD9F114293D9E00FE8B5B /* Unit Tests */,
 			);
@@ -704,13 +748,15 @@
 			name = "Jump Bar";
 			sourceTree = "<group>";
 		};
-		CD0DD9E1142918D300FE8B5B /* Tab Bar */ = {
+		CD0DD9E1142918D300FE8B5B /* Tabs */ = {
 			isa = PBXGroup;
 			children = (
 				B7170B771428EB2400DF7794 /* ECTabBar.h */,
 				B7170B781428EB2400DF7794 /* ECTabBar.m */,
+				CDBD28241435101B00E05F40 /* ECTabController.h */,
+				CDBD28251435101B00E05F40 /* ECTabController.m */,
 			);
-			name = "Tab Bar";
+			name = Tabs;
 			sourceTree = "<group>";
 		};
 		CD0DD9E2142918EE00FE8B5B /* Bezel Alert */ = {
@@ -773,8 +819,6 @@
 		CD0DD9E71429198900FE8B5B /* UIKit Additions */ = {
 			isa = PBXGroup;
 			children = (
-				CD2A5FD1142A4AA500A2CACD /* ECBlockView.h */,
-				CD2A5FD2142A4AA500A2CACD /* ECBlockView.m */,
 				B7170B6D1428EB2400DF7794 /* ECRectSet.h */,
 				B7170B6E1428EB2400DF7794 /* ECRectSet.m */,
 				B7170B811428EB2500DF7794 /* UIControl+BlockAction.h */,
@@ -822,10 +866,34 @@
 		CD2A5FCA142A4A8400A2CACD /* Split View */ = {
 			isa = PBXGroup;
 			children = (
+				CD6B0F031434D43000049625 /* ECInverseCornerShapeView.h */,
+				CD6B0F041434D43000049625 /* ECInverseCornerShapeView.m */,
 				CD2A5FCB142A4A9900A2CACD /* ECSplitViewController.h */,
 				CD2A5FCC142A4A9900A2CACD /* ECSplitViewController.m */,
 			);
 			name = "Split View";
+			sourceTree = "<group>";
+		};
+		CDBD28311435104F00E05F40 /* ECTabControllerTest */ = {
+			isa = PBXGroup;
+			children = (
+				CDBD283A1435104F00E05F40 /* ECTabControllerTest_AppDelegate.h */,
+				CDBD283B1435104F00E05F40 /* ECTabControllerTest_AppDelegate.m */,
+				CDBD28401435104F00E05F40 /* ECTabControllerTest_ViewController.xib */,
+				CDBD28321435104F00E05F40 /* Supporting Files */,
+			);
+			path = ECTabControllerTest;
+			sourceTree = "<group>";
+		};
+		CDBD28321435104F00E05F40 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				CDBD28331435104F00E05F40 /* ECTabControllerTest-Info.plist */,
+				CDBD28341435104F00E05F40 /* InfoPlist.strings */,
+				CDBD28371435104F00E05F40 /* main.m */,
+				CDBD28391435104F00E05F40 /* ECTabControllerTest-Prefix.pch */,
+			);
+			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -856,7 +924,8 @@
 				B7170BBF1428EB2500DF7794 /* UIView+ReuseIdentifier.h in Headers */,
 				B71709DB1428E64F00DF7794 /* ECDebug.h in Headers */,
 				CD2A5FCD142A4A9900A2CACD /* ECSplitViewController.h in Headers */,
-				CD2A5FD3142A4AA500A2CACD /* ECBlockView.h in Headers */,
+				CD6B0F051434D43000049625 /* ECInverseCornerShapeView.h in Headers */,
+				CDBD28261435101B00E05F40 /* ECTabController.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -917,6 +986,24 @@
 			productReference = CD0DDA1414293E7300FE8B5B /* ECSplitViewControllerTest.app */;
 			productType = "com.apple.product-type.application";
 		};
+		CDBD282B1435104F00E05F40 /* ECTabControllerTest */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CDBD28431435104F00E05F40 /* Build configuration list for PBXNativeTarget "ECTabControllerTest" */;
+			buildPhases = (
+				CDBD28281435104F00E05F40 /* Sources */,
+				CDBD28291435104F00E05F40 /* Frameworks */,
+				CDBD282A1435104F00E05F40 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				CD0AD98F14362A4100FC1EFE /* PBXTargetDependency */,
+			);
+			name = ECTabControllerTest;
+			productName = ECTabControllerTest;
+			productReference = CDBD282C1435104F00E05F40 /* ECTabControllerTest.app */;
+			productType = "com.apple.product-type.application";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -946,6 +1033,7 @@
 				B71709AB1428E3CD00DF7794 /* ECUIKit */,
 				B71709BB1428E3CD00DF7794 /* ECUIKitTests */,
 				CD0DDA1314293E7300FE8B5B /* ECSplitViewControllerTest */,
+				CDBD282B1435104F00E05F40 /* ECTabControllerTest */,
 			);
 		};
 /* End PBXProject section */
@@ -982,6 +1070,15 @@
 			files = (
 				CD0DDA1E14293E7300FE8B5B /* InfoPlist.strings in Resources */,
 				CD2A5FC9142A4A7E00A2CACD /* ECSplitViewControllerTest_Window.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CDBD282A1435104F00E05F40 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CDBD28361435104F00E05F40 /* InfoPlist.strings in Resources */,
+				CDBD28421435104F00E05F40 /* ECTabControllerTest_ViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1028,7 +1125,8 @@
 				B7170BBC1428EB2500DF7794 /* UIImage+BlockDrawing.m in Sources */,
 				B7170BC01428EB2500DF7794 /* UIView+ReuseIdentifier.m in Sources */,
 				CD2A5FCE142A4A9900A2CACD /* ECSplitViewController.m in Sources */,
-				CD2A5FD4142A4AA500A2CACD /* ECBlockView.m in Sources */,
+				CD6B0F061434D43000049625 /* ECInverseCornerShapeView.m in Sources */,
+				CDBD28271435101B00E05F40 /* ECTabController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1105,7 +1203,6 @@
 				B7170B1F1428E6A300DF7794 /* NSObject+KiwiVerifierAdditions.m in Sources */,
 				B7170B201428E6A300DF7794 /* NSValue+KiwiAdditions.m in Sources */,
 				CD2A5FCF142A4A9900A2CACD /* ECSplitViewController.m in Sources */,
-				CD2A5FD5142A4AA500A2CACD /* ECBlockView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1116,8 +1213,20 @@
 				CD0DDA2014293E7300FE8B5B /* main.m in Sources */,
 				CD0DDA2414293E7300FE8B5B /* ECSplitViewControllerTest_AppDelegate.m in Sources */,
 				CD2A5FD0142A4A9900A2CACD /* ECSplitViewController.m in Sources */,
-				CD2A5FD6142A4AA500A2CACD /* ECBlockView.m in Sources */,
 				CDC7C953142A4B3300FCF269 /* ECRoundedContentCornersView.m in Sources */,
+				CD6B0F071434D43000049625 /* ECInverseCornerShapeView.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CDBD28281435104F00E05F40 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CDBD28381435104F00E05F40 /* main.m in Sources */,
+				CDBD283C1435104F00E05F40 /* ECTabControllerTest_AppDelegate.m in Sources */,
+				CDBD28461435115900E05F40 /* ECTabController.m in Sources */,
+				CDBD2847143512B200E05F40 /* ECTabBar.m in Sources */,
+				CD0BD4AA14374FD2006F2A37 /* UIView+ReuseIdentifier.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1133,6 +1242,11 @@
 			isa = PBXTargetDependency;
 			name = ECFoundation;
 			targetProxy = B7170BD21428ED6A00DF7794 /* PBXContainerItemProxy */;
+		};
+		CD0AD98F14362A4100FC1EFE /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = ECFoundation;
+			targetProxy = CD0AD98E14362A4100FC1EFE /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -1151,6 +1265,22 @@
 				CD0DDA1D14293E7300FE8B5B /* en */,
 			);
 			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		CDBD28341435104F00E05F40 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				CDBD28351435104F00E05F40 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		CDBD28401435104F00E05F40 /* ECTabControllerTest_ViewController.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				CDBD28411435104F00E05F40 /* en */,
+			);
+			name = ECTabControllerTest_ViewController.xib;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
@@ -1297,6 +1427,37 @@
 			};
 			name = Release;
 		};
+		CDBD28441435104F00E05F40 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "ECUIKit/Tests/ECTabControllerTest/ECTabControllerTest-Prefix.pch";
+				HEADER_SEARCH_PATHS = "${BUILD_DIR}/${CONFIGURATION}$(EFFECTIVE_PLATFORM_NAME)/usr/local/include/";
+				INFOPLIST_FILE = "ECUIKit/Tests/ECTabControllerTest/ECTabControllerTest-Info.plist";
+				LIBRARY_SEARCH_PATHS = "${BUILD_DIR}/";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = 2;
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		CDBD28451435104F00E05F40 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "ECUIKit/Tests/ECTabControllerTest/ECTabControllerTest-Prefix.pch";
+				HEADER_SEARCH_PATHS = "${BUILD_DIR}/${CONFIGURATION}$(EFFECTIVE_PLATFORM_NAME)/usr/local/include/";
+				INFOPLIST_FILE = "ECUIKit/Tests/ECTabControllerTest/ECTabControllerTest-Info.plist";
+				LIBRARY_SEARCH_PATHS = "${BUILD_DIR}/";
+				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = 2;
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -1332,6 +1493,15 @@
 			buildConfigurations = (
 				CD0DDA2C14293E7300FE8B5B /* Debug */,
 				CD0DDA2D14293E7300FE8B5B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CDBD28431435104F00E05F40 /* Build configuration list for PBXNativeTarget "ECTabControllerTest" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CDBD28441435104F00E05F40 /* Debug */,
+				CDBD28451435104F00E05F40 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

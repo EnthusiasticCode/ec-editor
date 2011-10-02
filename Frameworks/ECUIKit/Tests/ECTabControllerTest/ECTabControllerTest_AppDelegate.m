@@ -1,24 +1,42 @@
 //
-//  ECSplitViewControllerTest_AppDelegate.m
-//  ECSplitViewControllerTest
+//  ECTabControllerTest_AppDelegate.m
+//  ECTabControllerTest
 //
-//  Created by Nicola Peduzzi on 20/09/11.
+//  Created by Nicola Peduzzi on 29/09/11.
 //  Copyright (c) 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import "ECSplitViewControllerTest_AppDelegate.h"
-#import "ECSplitViewController.h"
+#import "ECTabControllerTest_AppDelegate.h"
 
-@implementation ECSplitViewControllerTest_AppDelegate
+
+
+@implementation ECTabControllerTest_AppDelegate
 
 @synthesize window = _window;
-@synthesize splitViewController = _splitViewController;
+@synthesize tabController = _tabController;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+    
+    self.tabController = [[ECTabController alloc] initWithNibName:@"ECTabControllerTest_ViewController" bundle:nil];
+    
+    UIViewController *tabOne = [UIViewController new];
+    tabOne.view.backgroundColor = [UIColor greenColor];
+    tabOne.navigationItem.title = @"Tab One";
+    
+    UIViewController *tabTwo = [UIViewController new];
+    tabTwo.view.backgroundColor = [UIColor yellowColor];
+    tabTwo.navigationItem.title = @"Tab Two";
+    
+    [self.tabController addChildViewController:tabOne];
+    [self.tabController addChildViewController:tabTwo];
+    
+    self.window.rootViewController = self.tabController;
+    [self.window makeKeyAndVisible];
     return YES;
 }
-							
+
 - (void)applicationWillResignActive:(UIApplication *)application
 {
     /*
@@ -58,7 +76,4 @@
      */
 }
 
-- (IBAction)pinSidebar:(id)sender {
-    [self.splitViewController setSplittingView:!self.splitViewController.isSplittingView animated:YES];
-}
 @end

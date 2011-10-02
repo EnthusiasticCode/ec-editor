@@ -7,24 +7,38 @@
 //
 
 #import "ECSplitViewController.h"
+#import <QuartzCore/QuartzCore.h>
 
-#import "ECBlockView.h"
-#import "ECRoundedContentCornersView.h"
+#import "ECInverseCornerShapeView.h"
+
+#define CORNER_RADIUS 6
+#define ANIMATION_DURATION 0.20
 
 
 @interface ECSplitViewController () {
-    ECRoundedContentCornersView *sidebarContainerView;
-    ECRoundedContentCornersView *mainContainerView;
+    UIView *sidebarContainerView;
+    UIView *mainContainerView;
+    
+    __weak ECInverseCornerShapeView *roundedCorners[4];
     
     CGFloat sidebarWidth;
     CGFloat gutterWidth;
     
     BOOL splitInLandscape;
     BOOL splitInPortrait;
+    
+    __weak UISwipeGestureRecognizer *leftSwipeGestureRecognizer;
+    __weak UISwipeGestureRecognizer *rightSwipeGestureRecognizer;
 }
 
 - (void)setupMainView;
 - (void)setupSidebarView;
+- (void)layoutChildViewsForInterfaceOrientation:(UIInterfaceOrientation)orientation prepareForAnimation:(BOOL)prepareAnimation;
+- (void)layoutChildViews;
+
+- (void)enableSwipeRecognizers;
+- (void)handleGestureSwipe:(UISwipeGestureRecognizer *)recognizer;
+- (void)handleGesturePan:(UIPanGestureRecognizer *)recognizer;
 
 @end
 
@@ -34,8 +48,8 @@
 #pragma mark - Properties
 
 @synthesize mainViewController, sidebarViewController;
-@synthesize cornerRadius;
 @synthesize sidebarOnRight, sidebarVisible;
+@synthesize panGestureEnabled, panGestureRecognizer;
 
 - (NSArray *)viewControllers
 {
@@ -67,7 +81,7 @@
     if (self.isViewLoaded)
     {
         [self setupMainView];
-        [self.view setNeedsLayout];
+        [self layoutChildViews];
     }
 }
 
@@ -88,17 +102,56 @@
     if (self.isViewLoaded)
     {
         [self setupSidebarView];
-        [self.view setNeedsLayout];
+        [self layoutChildViews];
     }
 }
 
-- (void)setCornerRadius:(CGFloat)radius
+- (void)setSidebarOnRight:(BOOL)value
 {
-    if (radius == cornerRadius)
+    if (sidebarOnRight == value)
         return;
     
-    cornerRadius = radius;
-    sidebarContainerView.contentCornerRadius = mainContainerView.contentCornerRadius = cornerRadius;
+    sidebarOnRight = value;
+    
+    [self enableSwipeRecognizers];
+}
+
+- (BOOL)isSidebarVisible
+{
+    if (self.isSplittingView)
+        return YES;
+    return sidebarVisible;
+}
+
+- (void)setSidebarVisible:(BOOL)value
+{
+    [self setSidebarVisible:value animated:NO];
+}
+
+- (void)setSidebarVisible:(BOOL)value animated:(BOOL)animated
+{
+    if (sidebarVisible == value || self.isSplittingView)
+        return;
+    
+    if (animated)
+    {
+        [self layoutChildViewsForInterfaceOrientation:self.interfaceOrientation prepareForAnimation:YES];
+        
+        sidebarVisible = value;
+        
+        [UIView animateWithDuration:ANIMATION_DURATION animations:^{
+            [self layoutChildViewsForInterfaceOrientation:self.interfaceOrientation prepareForAnimation:YES];
+        } completion:^(BOOL finished) {
+            [self layoutChildViews];
+        }];
+    }
+    else
+    {
+        sidebarVisible = value;
+        [self layoutChildViews];
+    }
+    
+    [self enableSwipeRecognizers];
 }
 
 #pragma mark - Creating new controller
@@ -107,24 +160,14 @@ static void preinit(ECSplitViewController *self)
 {
     self->gutterWidth = 1;
     self->sidebarWidth = 300;
-    
-    self->cornerRadius = 30;
-    
-//    self->sidebarVisible = YES;
-    self->splitInLandscape = YES;
 }
 
-static void init(ECSplitViewController *self)
-{
-
-}
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     preinit(self);
     if ((self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil]))
     {
-        init(self);
     }
     return self;
 }
@@ -134,60 +177,41 @@ static void init(ECSplitViewController *self)
     preinit(self);
     if ((self = [super initWithCoder:coder]))
     {
-        init(self);
     }
     return self;
 }
 
 #pragma mark - View lifecycle
 
-- (void)loadView
-{
-    sidebarContainerView = [ECRoundedContentCornersView new];
-    mainContainerView = [ECRoundedContentCornersView new];
-    
-    ECBlockView *view = [ECBlockView new];
-    __weak ECSplitViewController *this = self;
-    view.layoutSubviewsBlock = ^(UIView *view) {
-        CGRect bounds = view.bounds;
-        CGRect sidebarFrame = CGRectMake(this.isSidebarOnRight ? bounds.size.width - this->sidebarWidth : 0, 0, this->sidebarWidth, bounds.size.height);
-        if ([this isSplittingView])
-        {
-            // View splitting like normal splitview
-            this->sidebarContainerView.frame = sidebarFrame;
-            
-            if (!this.sidebarOnRight)
-                bounds.origin.x += this->gutterWidth + this->sidebarWidth;
-            bounds.size.width -= this->gutterWidth + this->sidebarWidth;
-            this->mainContainerView.frame = bounds;
-        }
-        else
-        {
-            this->mainContainerView.frame = bounds;
-            if ([this isSidebarVisible])
-            {
-                // Sidebar floating
-                [view bringSubviewToFront:this->sidebarContainerView];
-                this->sidebarContainerView.frame = sidebarFrame;
-            }
-        }
-    };
-    
-    self.view = view;
-}
-
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     
-    sidebarContainerView.contentCornerRadius = mainContainerView.contentCornerRadius = cornerRadius;
-    self.view.backgroundColor = sidebarContainerView.backgroundColor = mainContainerView.backgroundColor = [UIColor redColor];
+    sidebarContainerView = [UIView new];
+    mainContainerView = [UIView new];
+    
+    self.view.backgroundColor = [UIColor blackColor];
+    mainContainerView.backgroundColor = sidebarContainerView.backgroundColor = [UIColor clearColor];
     
     mainContainerView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     sidebarContainerView.autoresizingMask = UIViewAutoresizingFlexibleHeight | (self.isSidebarOnRight ? UIViewAutoresizingFlexibleLeftMargin : UIViewAutoresizingFlexibleRightMargin);
     
     [self setupMainView];
+    // TODO here setting up even if not neccessary
     [self setupSidebarView];
+    [self layoutChildViews];
+    
+    UISwipeGestureRecognizer *swipeGestureRecognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(handleGestureSwipe:)];
+    swipeGestureRecognizer.direction = UISwipeGestureRecognizerDirectionRight;
+    [self.view addGestureRecognizer:swipeGestureRecognizer];
+    rightSwipeGestureRecognizer = swipeGestureRecognizer;
+    
+    swipeGestureRecognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(handleGestureSwipe:)];
+    swipeGestureRecognizer.direction = UISwipeGestureRecognizerDirectionLeft;
+    [self.view addGestureRecognizer:swipeGestureRecognizer];
+    leftSwipeGestureRecognizer = swipeGestureRecognizer;
+    
+    [self enableSwipeRecognizers];
 }
 
 - (void)viewDidUnload
@@ -197,15 +221,6 @@ static void init(ECSplitViewController *self)
     mainContainerView = nil;
 }
 
-- (BOOL)automaticallyForwardAppearanceAndRotationMethodsToChildViewControllers
-{
-    return NO;
-}
-
-#pragma mark View behaviours
-
-
-
 #pragma mark Rotation
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
@@ -213,12 +228,21 @@ static void init(ECSplitViewController *self)
 	return YES;
 }
 
-- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
+- (void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
 {
-    for (UIViewController *controller in self.childViewControllers)
-    {
-        [controller willRotateToInterfaceOrientation:toInterfaceOrientation duration:duration];
-    }
+    [super willAnimateRotationToInterfaceOrientation:toInterfaceOrientation duration:duration];
+    
+    [self layoutChildViewsForInterfaceOrientation:toInterfaceOrientation prepareForAnimation:YES];
+}
+
+- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
+{
+    [super didRotateFromInterfaceOrientation:fromInterfaceOrientation];
+    
+    sidebarVisible = NO;
+    leftSwipeGestureRecognizer.enabled = rightSwipeGestureRecognizer.enabled = ![self isSplittingView];
+    
+    [self layoutChildViews];
 }
 
 #pragma mark - Setting view splitting
@@ -249,23 +273,42 @@ static void init(ECSplitViewController *self)
         return;
     
     BOOL isPortrait = UIInterfaceOrientationIsPortrait(orientation);
+    BOOL willLayout = (isPortrait == UIInterfaceOrientationIsPortrait(self.interfaceOrientation));
+    
+    if (animated && willLayout)
+        [self layoutChildViewsForInterfaceOrientation:orientation prepareForAnimation:YES];
+    
     if (isPortrait)
         splitInPortrait = value;
     else
         splitInLandscape = value;
     
-    if (isPortrait != UIInterfaceOrientationIsPortrait(self.interfaceOrientation))
+    if (!willLayout)
         return;
     
-    // TODO hide or show sidebar animated
+    if (animated)
+    {
+        [UIView animateWithDuration:ANIMATION_DURATION animations:^{
+            [self layoutChildViewsForInterfaceOrientation:orientation prepareForAnimation:YES];
+        } completion:^(BOOL finished) {
+            [self layoutChildViews];
+        }];
+    }
+    else
+    {
+        [self layoutChildViews];
+    }
+    
+    [self enableSwipeRecognizers];
 }
 
 #pragma mark - Private Methods
 
 - (void)setupMainView
 {
+    [mainContainerView.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
+    
     [mainContainerView addSubview:mainViewController.view];
-    [mainContainerView sendSubviewToBack:mainViewController.view];
     [self.view addSubview:mainContainerView];
     
     mainViewController.view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
@@ -274,20 +317,123 @@ static void init(ECSplitViewController *self)
 
 - (void)setupSidebarView
 {
-    if ([self isSidebarVisible])
+    [sidebarContainerView.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
+    
+    [sidebarContainerView addSubview:sidebarViewController.view];
+    [self.view addSubview:sidebarContainerView];
+    
+    sidebarViewController.view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    sidebarViewController.view.frame = sidebarContainerView.bounds;
+}
+
+- (void)layoutChildViewsForInterfaceOrientation:(UIInterfaceOrientation)orientation prepareForAnimation:(BOOL)prepareAnimation
+{
+    BOOL isSplitting = [self isSplittingViewForInterfaceOrientation:orientation];
+    
+    // Compute frames
+    CGRect mainFrame = self.view.bounds;
+    if (UIInterfaceOrientationIsPortrait(orientation) != UIInterfaceOrientationIsPortrait(self.interfaceOrientation))
+        mainFrame = (CGRect){ mainFrame.origin, {mainFrame.size.height, mainFrame.size.width} };
+    CGRect sidebarFrame = CGRectMake(sidebarOnRight ? mainFrame.size.width - sidebarWidth : 0, 0, sidebarWidth, mainFrame.size.height);
+    
+    // Adjust frames for configuration
+    if (isSplitting)
     {
-        [sidebarContainerView addSubview:sidebarViewController.view];
-        [self.view addSubview:sidebarContainerView];
-        
-        sidebarViewController.view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-        sidebarViewController.view.frame = sidebarContainerView.bounds;
-        
-        sidebarContainerView.clipContent = ![self isSplittingView];    
-        // TODO shadow with shadowpath
+        // Adjust main view frame
+        if (!sidebarOnRight)
+            mainFrame.origin.x += gutterWidth + sidebarWidth;
+        mainFrame.size.width -= gutterWidth + sidebarWidth;
+    }
+    else if (!sidebarVisible)
+    {
+        sidebarFrame.origin.x += sidebarOnRight ? sidebarWidth : -sidebarWidth;
+    }
+    
+    // Apply frames
+    mainContainerView.frame = mainFrame;
+    sidebarContainerView.frame = sidebarFrame;
+    
+    // Setup sidebar view
+    if (prepareAnimation || self.isSidebarVisible)
+    {
+        if (sidebarContainerView.superview == nil)
+            [self.view addSubview:sidebarContainerView];
+        if (isSplitting)
+        {
+            // Setup corners
+            if (roundedCorners[0] == nil)
+            {
+                // Remove clipping
+                self.sidebarViewController.view.layer.cornerRadius = 0;
+                self.sidebarViewController.view.layer.masksToBounds = NO;
+                sidebarContainerView.layer.shadowOpacity = 0;
+                
+                // Create rounded corners
+                // 0,1 are top/bottom in main view, 2/3 are bottom/top in sidebar view
+                [CATransaction begin];
+                [CATransaction setDisableActions:YES];
+                for (int i = 0; i < 4; ++i)
+                {
+                    BOOL isSidebar = i > 1;
+                    BOOL isBottom = i % 3;
+                    ECInverseCornerShapeView *corner = [[ECInverseCornerShapeView alloc] initWithFrame:CGRectMake((isSidebar ? sidebarWidth - CORNER_RADIUS : 0), (isBottom ? mainFrame.size.height - CORNER_RADIUS : 0), CORNER_RADIUS, CORNER_RADIUS)];
+                    corner.transform = CGAffineTransformMakeRotation(-M_PI_2 * i);
+                    corner.autoresizingMask = (isSidebar ? UIViewAutoresizingFlexibleLeftMargin : UIViewAutoresizingFlexibleRightMargin) | (isBottom ? UIViewAutoresizingFlexibleTopMargin : UIViewAutoresizingFlexibleBottomMargin);
+                    corner.backgroundColor = [UIColor blackColor];
+                    if (isSidebar)
+                        [sidebarContainerView addSubview:corner];
+                    else
+                        [mainContainerView addSubview:corner];
+                    roundedCorners[i] = corner;
+                }
+                [CATransaction commit];
+            }
+        }
+        else
+        {
+            // Setup clipping
+            if (!sidebarContainerView.layer.masksToBounds)
+            {
+                // Remove rounded corners
+                for (int i = 0; i < 4; ++i)
+                    [roundedCorners[i] removeFromSuperview];
+                
+                // Apply clipping
+                self.sidebarViewController.view.layer.cornerRadius = CORNER_RADIUS;
+                self.sidebarViewController.view.layer.masksToBounds = YES;
+                
+                // Apply shadow
+                sidebarContainerView.layer.shadowPath = [UIBezierPath bezierPathWithRoundedRect:(CGRect){ CGPointZero, sidebarFrame.size } cornerRadius:CORNER_RADIUS].CGPath;
+                sidebarContainerView.layer.shadowOffset = CGSizeMake(sidebarOnRight ? -5 : 5, 0);
+                sidebarContainerView.layer.shadowOpacity = 0.3;
+            }
+        }
     }
     else
     {
         [sidebarContainerView removeFromSuperview];
+    }
+}
+
+- (void)layoutChildViews
+{
+    [self layoutChildViewsForInterfaceOrientation:self.interfaceOrientation prepareForAnimation:NO];
+}
+
+#pragma mark - Private Methods - Handling Gestures
+
+- (void)enableSwipeRecognizers
+{
+    rightSwipeGestureRecognizer.enabled = !sidebarVisible ^ sidebarOnRight;
+    leftSwipeGestureRecognizer.enabled = sidebarVisible ^ sidebarOnRight;
+}
+
+- (void)handleGestureSwipe:(UISwipeGestureRecognizer *)recognizer
+{
+    if (recognizer.state == UIGestureRecognizerStateRecognized)
+    {
+        BOOL isOpen = (recognizer == rightSwipeGestureRecognizer) ^ sidebarOnRight;
+        [self setSidebarVisible:isOpen animated:YES];
     }
 }
 

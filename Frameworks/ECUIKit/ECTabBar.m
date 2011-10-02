@@ -172,7 +172,7 @@ static void init(ECTabBar *self)
 {
     // Tab container
     self->tabControlsContainerView = [ECTabBarScrollView new];
-    self->tabControlsContainerView.autoresizingMask = UIViewAutoresizingFlexibleWidth; // | UIViewAutoresizingFlexibleHeight;
+    self->tabControlsContainerView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     self->tabControlsContainerView.backgroundColor = [UIColor clearColor];
     self->tabControlsContainerView.contentInset = UIEdgeInsetsMake(0, 4, 0, 4);
     self->tabControlsContainerView.alwaysBounceHorizontal = YES;
@@ -304,6 +304,11 @@ static void init(ECTabBar *self)
     return [tabControls count];
 }
 
+- (void)setSelectedTabControl:(UIControl *)tabControl
+{
+    [self setSelectedTabControl:tabControl animated:YES];
+}
+
 - (void)setSelectedTabControl:(UIControl *)tabControl animated:(BOOL)animated
 {
     // Deselection
@@ -364,11 +369,6 @@ static void init(ECTabBar *self)
     }
 }
 
-- (void)setSelectedTabControl:(UIControl *)tabControl
-{
-    [self setSelectedTabControl:tabControl animated:YES];
-}
-
 - (NSUInteger)selectedTabIndex
 {
     return [tabControls indexOfObject:selectedTabControl];
@@ -376,12 +376,17 @@ static void init(ECTabBar *self)
 
 - (void)setSelectedTabIndex:(NSUInteger)index
 {
-    if (index >= [tabControls count])
-        return;
+    [self setSelectedTabIndex:index animated:NO];
+}
+
+- (void)setSelectedTabIndex:(NSUInteger)index animated:(BOOL)animated
+{
+    if (index == NSNotFound)
+        [self setSelectedTabControl:nil animated:animated];
     
+    ECASSERT(index < [tabControls count]);
     UIControl *tabControl = [tabControls objectAtIndex:index];
-    
-    [self setSelectedTabControl:tabControl];
+    [self setSelectedTabControl:tabControl animated:animated];
 }
 
 - (UIControl *)addTabWithTitle:(NSString *)title animated:(BOOL)animated
@@ -481,6 +486,34 @@ static void init(ECTabBar *self)
         
         if (delegateFlags.hasDidRemoveTabControlAtIndex)
             [delegate tabBar:self didRemoveTabControl:tabControl atIndex:tabIndex];
+    }
+}
+
+- (void)removeTabControlAtIndex:(NSUInteger)tabIndex animated:(BOOL)animated
+{
+    ECASSERT(tabIndex < [tabControls count]);
+    UIControl *tabControl = [tabControls objectAtIndex:tabIndex];
+    [self removeTabControl:tabControl animated:animated];
+}
+
+- (void)moveTabControlAtIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex animated:(BOOL)animated
+{
+    ECASSERT(fromIndex < [tabControls count]);
+    ECASSERT(toIndex < [tabControls count]);
+    
+    id obj = [tabControls objectAtIndex:fromIndex];
+    [tabControls removeObjectAtIndex:fromIndex];
+    [tabControls insertObject:obj atIndex:toIndex];
+    
+    if (animated)
+    {
+        [UIView animateWithDuration:0.2 animations:^{
+            [tabControlsContainerView layoutSubviews];
+        }];
+    }
+    else
+    {
+        [tabControlsContainerView setNeedsLayout];
     }
 }
 

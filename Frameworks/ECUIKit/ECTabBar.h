@@ -59,11 +59,17 @@
 #pragma mark Managing Tabs
 
 @property (nonatomic, readonly, strong) NSArray *tabControls;
+
 @property (nonatomic) NSUInteger selectedTabIndex;
+- (void)setSelectedTabIndex:(NSUInteger)tabIndex animated:(BOOL)animated;
+
 @property (nonatomic, weak) UIControl *selectedTabControl;
 - (void)setSelectedTabControl:(UIControl *)tabControl animated:(BOOL)animated;
 
 - (UIControl *)addTabWithTitle:(NSString *)title animated:(BOOL)animated;
 - (void)removeTabControl:(UIControl *)tabControl animated:(BOOL)animated;
+
+- (void)removeTabControlAtIndex:(NSUInteger)tabIndex animated:(BOOL)animated;
+- (void)moveTabControlAtIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex animated:(BOOL)animated;
 
 @end

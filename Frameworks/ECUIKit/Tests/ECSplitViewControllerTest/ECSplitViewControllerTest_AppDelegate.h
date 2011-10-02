@@ -15,5 +15,6 @@
 
 @property (strong, nonatomic) IBOutlet UIWindow *window;
 @property (weak, nonatomic) IBOutlet ECSplitViewController *splitViewController;
+- (IBAction)pinSidebar:(id)sender;
 
 @end

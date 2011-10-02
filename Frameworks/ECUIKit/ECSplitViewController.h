@@ -15,14 +15,10 @@
 @property (nonatomic, strong) IBOutlet UIViewController *mainViewController;
 @property (nonatomic, strong) IBOutlet UIViewController *sidebarViewController;
 
-/// Corner radius applied to the content.
-@property (nonatomic) CGFloat cornerRadius;
-
 /// Indicates if the pan gesture should be used to show the sidebar
 /// providing a direct movement of the view itself. If NO, only the swipe
 /// gesture will be available to show the hidden master view.
 @property (nonatomic, getter = isPanGestureEnabled) BOOL panGestureEnabled;
-@property (nonatomic, strong, readonly) UISwipeGestureRecognizer *swipeGestureRecognizer;
 @property (nonatomic, strong, readonly) UIPanGestureRecognizer *panGestureRecognizer;
 
 /// Indicates if, in the current interface orientation, the controller should
