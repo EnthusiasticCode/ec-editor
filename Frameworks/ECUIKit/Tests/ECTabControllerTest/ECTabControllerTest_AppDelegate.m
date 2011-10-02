@@ -37,6 +37,11 @@
     [self.tabController addChildViewController:tabTwo];
 }
 
+- (void)toggleTabBarAction:(id)sender
+{
+    [self.tabController setShowTabBar:!self.tabController.showTabBar animated:YES];
+}
+
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
@@ -47,11 +52,18 @@
     UIViewController *tabOne = [UIViewController new];
     tabOne.view.backgroundColor = [UIColor whiteColor];
     tabOne.navigationItem.title = @"Main";
+    
     UIButton *addTabButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
     [addTabButton setTitle:@"Add tab" forState:UIControlStateNormal];
     [addTabButton addTarget:self action:@selector(addTabAction:) forControlEvents:UIControlEventTouchUpInside];
     [addTabButton setFrame:CGRectMake(20, 20, 100, 44)];
     [tabOne.view addSubview:addTabButton];
+    
+    UIButton *toggleTabBarButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+    [toggleTabBarButton setTitle:@"Toggle tab bar" forState:UIControlStateNormal];
+    [toggleTabBarButton addTarget:self action:@selector(toggleTabBarAction:) forControlEvents:UIControlEventTouchUpInside];
+    [toggleTabBarButton setFrame:CGRectMake(140, 20, 100, 44)];
+    [tabOne.view addSubview:toggleTabBarButton];
     
     [self.tabController addChildViewController:tabOne];    
     [self addTabAction:nil];

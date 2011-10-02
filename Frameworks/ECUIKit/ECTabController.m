@@ -49,6 +49,11 @@
     return _tabBar;
 }
 
+- (void)setShowTabBar:(BOOL)value
+{
+    [self setShowTabBar:value animated:NO];
+}
+
 - (void)setShowTabBar:(BOOL)value animated:(BOOL)animated
 {
     if (value == _showTabBar)
@@ -59,7 +64,23 @@
     
     if (self.isViewLoaded)
     {
-        // TODO
+        if (_showTabBar)
+            [self.view addSubview:self.tabBar];
+        if (animated)
+        {
+            [UIView animateWithDuration:0.2 delay:0 options:UIViewAnimationOptionAllowUserInteraction | UIViewAnimationOptionBeginFromCurrentState animations:^{
+                [self layoutChildViews]; 
+            } completion:^(BOOL finished) {
+                if (finished && !_showTabBar)
+                    [self.tabBar removeFromSuperview];
+            }];
+        }
+        else
+        {
+            [self layoutChildViews];
+            if (!_showTabBar)
+                [self.tabBar removeFromSuperview];
+        }
     }
     
     [self didChangeValueForKey:@"showTabBar"];
@@ -189,7 +210,8 @@ static void init(ECTabController *self)
     [super loadView];
     
     self.tabBar.backgroundColor = [UIColor grayColor];
-    [self.view addSubview:self.tabBar];
+    if (self.showTabBar)
+        [self.view addSubview:self.tabBar];
     [self.view addSubview:self.contentScrollView];
 }
 
@@ -383,14 +405,14 @@ static void init(ECTabController *self)
         return;
     
     CGRect bounds = self.view.bounds;
-    CGRect tabBarFrame = CGRectMake(0, 0, bounds.size.width, _showTabBar ? TABBAR_HEIGHT : 0);
     
     // Layout tab bar
-    if (_showTabBar)
-        self.tabBar.frame = tabBarFrame;
+    if (self.tabBar.superview != nil)
+        self.tabBar.frame = CGRectMake(0, self.showTabBar ? 0 : -TABBAR_HEIGHT, bounds.size.width, TABBAR_HEIGHT);;
     
     // Creating the content view
-    self.contentScrollView.frame = CGRectMake(-tabPageMargin / 2, tabBarFrame.size.height, bounds.size.width + tabPageMargin, bounds.size.height - tabBarFrame.size.height);
+    CGFloat tabBarActualHeight = self.showTabBar ? TABBAR_HEIGHT : 0;
+    self.contentScrollView.frame = CGRectMake(-tabPageMargin / 2, tabBarActualHeight, bounds.size.width + tabPageMargin, bounds.size.height - tabBarActualHeight);
 }
 
 - (void)loadSelectedAndAdiacentTabViews
