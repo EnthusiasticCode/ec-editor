@@ -36,6 +36,8 @@
 
 - (NSOrderedSet *)fileURLs
 {
+    if (!self.directory)
+        return nil;
     if (!_fileURLs)
     {
         NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] initWithFilePresenter:self];

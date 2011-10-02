@@ -24,6 +24,8 @@
 
 #import <ECUIKit/ECBezelAlert.h>
 
+static void * directoryPresenterFileURLsObservingContext;
+
 #define STATIC_OBJECT(typ, nam, init) static typ *nam = nil; if (!nam) nam = init
 
 @interface ACProjectTableController ()
@@ -37,6 +39,8 @@
 
 @implementation ACProjectTableController
 
+#pragma mark - Properties
+
 @synthesize projectsDirectory = _projectsDirectory;
 @synthesize tab = _tab;
 @synthesize directoryPresenter = _directoryPresenter;
@@ -49,6 +53,37 @@
     _projectsDirectory = projectsDirectory;
     self.directoryPresenter.directory = _projectsDirectory;
     [self didChangeValueForKey:@"projectsDirectory"];
+}
+
+- (void)setDirectoryPresenter:(ECDirectoryPresenter *)directoryPresenter
+{
+    if (directoryPresenter == _directoryPresenter)
+        return;
+    [self willChangeValueForKey:@"directoryPresenter"];
+    [_directoryPresenter removeObserver:self forKeyPath:@"fileURLs" context:&directoryPresenterFileURLsObservingContext];
+    _directoryPresenter = directoryPresenter;
+    [_directoryPresenter addObserver:self forKeyPath:@"fileURLs" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial context:&directoryPresenterFileURLsObservingContext];
+    [self didChangeValueForKey:@"directoryPresenter"];
+}
+
+#pragma mark - KVO
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    if (context == &directoryPresenterFileURLsObservingContext)
+    {
+        // TODO: add / delete / move table rows instead of reloading all once NSFilePresenter actually works
+        [self.tableView reloadData];
+    }
+    else
+        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+}
+
+#pragma mark - General methods
+
+- (void)dealloc
+{
+    [self.directoryPresenter removeObserver:self forKeyPath:@"fileURLs" context:&directoryPresenterFileURLsObservingContext];
 }
 
 #pragma mark - View lifecycle
