@@ -130,8 +130,20 @@
     completionHandler(nil);
 }
 
+#warning DELETE this method when the submethod items work (hopefully developer seed 8)
+- (void)presentedItemDidChange
+{
+    NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] initWithFilePresenter:self];
+    [fileCoordinator coordinateReadingItemAtURL:self.directory options:NSFileCoordinatorReadingResolvesSymbolicLink error:NULL byAccessor:^(NSURL *newURL) {
+        NSFileManager *fileManager = [[NSFileManager alloc] init];
+        NSArray *fileURLs = [fileManager contentsOfDirectoryAtURL:newURL includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsPackageDescendants error:NULL];
+        self.fileURLs = [NSMutableOrderedSet orderedSetWithArray:fileURLs];
+    }];
+}
+
 - (void)presentedSubitemDidAppearAtURL:(NSURL *)url
 {
+    ECASSERT(NO);
     NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] initWithFilePresenter:self];
     [fileCoordinator coordinateReadingItemAtURL:url options:NSFileCoordinatorReadingResolvesSymbolicLink error:NULL byAccessor:^(NSURL *newURL) {
         if (![self fileURLIsDirectDescendant:newURL])
@@ -143,6 +155,7 @@
 
 - (void)accommodatePresentedSubitemDeletionAtURL:(NSURL *)url completionHandler:(void (^)(NSError *))completionHandler
 {
+    ECASSERT(NO);
     if (![self fileURLIsDirectDescendant:url])
         return completionHandler(nil);
     [[self mutableOrderedSetValueForKey:@"fileURLs"] removeObject:url];
@@ -151,6 +164,7 @@
 
 - (void)presentedSubitemAtURL:(NSURL *)oldURL didMoveToURL:(NSURL *)newURL
 {
+    ECASSERT(NO);
     NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] initWithFilePresenter:self];
     [fileCoordinator coordinateReadingItemAtURL:newURL options:NSFileCoordinatorReadingResolvesSymbolicLink error:NULL byAccessor:^(NSURL *newURL) {
         if ([self fileURLIsDirectDescendant:oldURL])

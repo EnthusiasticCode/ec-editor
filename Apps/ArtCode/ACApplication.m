@@ -10,7 +10,7 @@
 #import "ACTab.h"
 #import <ECFoundation/NSURL+ECAdditions.h>
 
-static NSString * const ACProjectListDirectoryName = @"ACLocalProjects";
+static NSString * const ACProjectListDirectoryName = @"ACLocalProjects.weakpkg";
 
 @implementation ACApplication
 

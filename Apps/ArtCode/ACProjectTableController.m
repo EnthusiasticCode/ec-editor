@@ -41,6 +41,16 @@
 @synthesize tab = _tab;
 @synthesize directoryPresenter = _directoryPresenter;
 
+- (void)setProjectsDirectory:(NSURL *)projectsDirectory
+{
+    if (projectsDirectory == _projectsDirectory)
+        return;
+    [self willChangeValueForKey:@"projectsDirectory"];
+    _projectsDirectory = projectsDirectory;
+    self.directoryPresenter.directory = _projectsDirectory;
+    [self didChangeValueForKey:@"projectsDirectory"];
+}
+
 #pragma mark - View lifecycle
 
 - (void)viewDidLoad
@@ -313,7 +323,7 @@
     [cell.iconButton setImage:[self projectIconWithColor:[UIColor styleForegroundColor]] forState:UIControlStateNormal];
     
     // Setup project title
-//    [cell.textField setText:[[self.application.projects objectAtIndex:indexPath.row] name]];
+    [cell.textField setText:[[self.directoryPresenter.fileURLs objectAtIndex:indexPath.row] lastPathComponent]];
     
     // Setup tags for callbacks
     [cell.customDeleteButton setTag:indexPath.row];

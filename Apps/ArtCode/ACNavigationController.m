@@ -42,6 +42,7 @@ static void *tabCurrentURLObservingContext;
 @synthesize topBarView, jumpBar, buttonEdit, buttonTools;
 @synthesize tab = _tab;
 @synthesize contentViewController = _contentViewController;
+@synthesize contentView = _contentView;
 
 + (NSSet *)keyPathsForValuesAffectingEditing
 {
@@ -70,6 +71,30 @@ static void *tabCurrentURLObservingContext;
         return;
     [self willChangeValueForKey:@"contentViewController"];
     [_contentViewController removeObserver:self forKeyPath:@"editing" context:&contentViewControllerEditingObservingContext];
+
+    UIViewController *oldViewController = _contentViewController;
+    
+    [oldViewController willMoveToParentViewController:nil];
+    [contentViewController willMoveToParentViewController:self];
+    [oldViewController viewWillDisappear:NO];
+    if (self.isViewLoaded && self.view.window)
+        [contentViewController viewWillAppear:NO];
+    
+    [oldViewController.view removeFromSuperview];
+    [oldViewController removeFromParentViewController];
+    if (contentViewController)
+    {
+        [self addChildViewController:contentViewController];
+        [self.contentView addSubview:contentViewController.view];
+        contentViewController.view.frame = self.contentView.bounds;
+        contentViewController.view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    }
+    
+    [oldViewController viewDidDisappear:NO];
+    [oldViewController didMoveToParentViewController:nil];
+    [contentViewController didMoveToParentViewController:self];
+    [contentViewController viewDidAppear:NO];
+    
     _contentViewController = contentViewController;
     [_contentViewController addObserver:self forKeyPath:@"editing" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial context:&contentViewControllerEditingObservingContext];
 
@@ -187,9 +212,9 @@ static void *tabCurrentURLObservingContext;
 
 #pragma mark - View lifecycle
 
-- (void)loadView
+- (void)viewDidLoad
 {
-    [super loadView];
+    [super viewDidLoad];
     
     // TODO create internal views if not connected in IB
     
@@ -236,7 +261,16 @@ static void *tabCurrentURLObservingContext;
     //
     //    jumpBar.textElement.leftView = [[UIImageView alloc] initWithImage:[UIImage styleSymbolImageWithColor:[UIColor styleSymbolColorBlue] letter:@"M"]];
     //    jumpBar.textElement.leftViewMode = UITextFieldViewModeUnlessEditing;
-    
+    if (self.contentViewController)
+    {
+        self.contentViewController.view.frame = self.contentView.bounds;
+        self.contentViewController.view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+        if (self.view.window)
+            [self.contentViewController viewWillAppear:NO];
+        [self.contentView addSubview:self.contentViewController.view];
+        if (self.view.window)
+            [self.contentViewController viewDidAppear:NO];
+    }
 }
 
 - (void)viewDidUnload

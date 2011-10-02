@@ -23,6 +23,7 @@
 #pragma mark Navigation Tools
 
 @property (nonatomic, strong) IBOutlet UIView *topBarView;
+@property (nonatomic, strong) IBOutlet UIView *contentView;
 @property (nonatomic, strong) IBOutlet ECJumpBar *jumpBar;
 @property (nonatomic, strong) IBOutlet UIButton *buttonTools;
 @property (nonatomic, strong) IBOutlet UIButton *buttonEdit; // TODO remember to use setEdit:animated: and editing of uiviewcontroller
