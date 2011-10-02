@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="1.0" toolsVersion="1934" systemVersion="11B26" targetRuntime="iOS.CocoaTouch.iPad" propertyAccessControl="none" initialViewController="8k5-g4-fjf">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="1.0" toolsVersion="1934" systemVersion="11B26" targetRuntime="iOS.CocoaTouch.iPad" propertyAccessControl="none" initialViewController="Doe-Yc-YbD">
     <dependencies>
         <development defaultVersion="4200" identifier="xcode"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="931"/>
@@ -8,9 +8,9 @@
         <scene sceneID="EHK-hR-e9u">
             <objects>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="sjF-9W-C2V" userLabel="First Responder" sceneMemberID="firstResponder"/>
-                <viewController storyboardIdentifier="New File" title="New File" id="Doe-Yc-YbD" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="New File" title="New File" id="Doe-Yc-YbD" customClass="ACNewFilePopoverController" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="gyq-KR-jhW">
-                        <rect key="frame" x="0.0" y="64" width="768" height="960"/>
+                        <rect key="frame" x="0.0" y="20" width="768" height="1004"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="jri-Dx-QEX">
@@ -26,7 +26,7 @@
                                 </state>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="57B-4I-zFP">
-                                <rect key="frame" x="21" y="65" width="105" height="37"/>
+                                <rect key="frame" x="134" y="20" width="105" height="37"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
                                 <state key="normal" title="New Group">
@@ -38,7 +38,7 @@
                                 </state>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="NEe-i6-RbC">
-                                <rect key="frame" x="21" y="110" width="131" height="37"/>
+                                <rect key="frame" x="247" y="20" width="131" height="37"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
                                 <state key="normal" title="New Blank File">
@@ -49,75 +49,52 @@
                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="g4V-GG-3Kc">
-                                <rect key="frame" x="23" y="155" width="101" height="37"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
-                                <state key="normal" title="Import File">
-                                    <color key="titleColor" red="0.19607843459999999" green="0.30980393290000002" blue="0.52156865600000002" alpha="1" colorSpace="calibratedRGB"/>
-                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <state key="highlighted">
-                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="dhR-g3-H7l">
+                                <rect key="frame" x="20" y="65" width="358" height="603"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                <prototypes>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="FileImportTableCell" id="bqT-G5-ezb">
+                                        <rect key="frame" x="0.0" y="22" width="358" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                                            <rect key="frame" x="0.0" y="0.0" width="358" height="43"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        </view>
+                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    </tableViewCell>
+                                </prototypes>
                                 <connections>
-                                    <segue destination="VK1-gm-Wue" kind="push" id="uKH-iO-2Q5"/>
+                                    <outlet property="dataSource" destination="Doe-Yc-YbD" id="0m1-tA-F2D"/>
+                                    <outlet property="delegate" destination="Doe-Yc-YbD" id="NZl-tA-Bma"/>
                                 </connections>
-                            </button>
+                            </tableView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
-                    <navigationItem key="navigationItem" title="New File" id="88s-Zy-Fk4"/>
-                    <value key="contentSizeForViewInPopover" type="size" width="400" height="400"/>
+                    <value key="contentSizeForViewInPopover" type="size" width="400" height="600"/>
+                    <connections>
+                        <outlet property="fileButton" destination="NEe-i6-RbC" id="mw6-M5-3oS"/>
+                        <outlet property="fileImportTableView" destination="dhR-g3-H7l" id="Oeh-4h-ANg"/>
+                        <outlet property="folderButton" destination="jri-Dx-QEX" id="6Lq-nc-wgF"/>
+                        <outlet property="groupButton" destination="57B-4I-zFP" id="5Cq-AQ-8Qz"/>
+                    </connections>
                 </viewController>
             </objects>
             <point key="canvasLocation" x="575" y="-62"/>
         </scene>
-        <scene sceneID="vfI-ch-raC">
-            <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="Bdz-IC-9hd" userLabel="First Responder" sceneMemberID="firstResponder"/>
-                <tableViewController storyboardIdentifier="Import File" title="Import File" id="VK1-gm-Wue" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="EgE-0H-FBb">
-                        <rect key="frame" x="0.0" y="64" width="768" height="960"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                        <prototypes>
-                            <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="Default" id="TYC-jW-b4q">
-                                <rect key="frame" x="0.0" y="22" width="768" height="44"/>
-                                <autoresizingMask key="autoresizingMask"/>
-                                <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
-                                    <rect key="frame" x="0.0" y="0.0" width="768" height="43"/>
-                                    <autoresizingMask key="autoresizingMask"/>
-                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                                </view>
-                            </tableViewCell>
-                        </prototypes>
-                        <connections>
-                            <outlet property="dataSource" destination="VK1-gm-Wue" id="tnX-I6-kze"/>
-                            <outlet property="delegate" destination="VK1-gm-Wue" id="J52-EA-TzO"/>
-                        </connections>
-                    </tableView>
-                    <navigationItem key="navigationItem" id="g53-7y-fFz"/>
-                    <value key="contentSizeForViewInPopover" type="size" width="600" height="600"/>
-                </tableViewController>
-            </objects>
-            <point key="canvasLocation" x="1553" y="-62"/>
-        </scene>
-        <scene sceneID="qSh-Nq-Ajj">
-            <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="xcP-vT-uQq" userLabel="First Responder" sceneMemberID="firstResponder"/>
-                <navigationController definesPresentationContext="YES" id="8k5-g4-fjf" sceneMemberID="viewController">
-                    <navigationBar key="navigationBar" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" id="vvb-he-JIP">
-                        <autoresizingMask key="autoresizingMask"/>
-                    </navigationBar>
-                    <connections>
-                        <segue destination="Doe-Yc-YbD" kind="relationship" relationship="rootViewController" id="qnD-hq-bOc"/>
-                    </connections>
-                </navigationController>
-            </objects>
-            <point key="canvasLocation" x="-407" y="-62"/>
-        </scene>
     </scenes>
+    <classes>
+        <class className="ACNewFilePopoverController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/ACNewFilePopoverController.h"/>
+            <relationships>
+                <relationship kind="outlet" name="fileButton" candidateClass="UIButton"/>
+                <relationship kind="outlet" name="fileImportTableView" candidateClass="UITableView"/>
+                <relationship kind="outlet" name="folderButton" candidateClass="UIButton"/>
+                <relationship kind="outlet" name="groupButton" candidateClass="UIButton"/>
+            </relationships>
+        </class>
+    </classes>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar" statusBarStyle="blackTranslucent"/>
         <simulatedOrientationMetrics key="orientation"/>

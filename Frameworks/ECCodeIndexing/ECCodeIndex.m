@@ -63,44 +63,54 @@ static NSMutableOrderedSet *_extensionClasses;
 
 - (ECCodeUnit *)unitWithFileURL:(NSURL *)fileURL
 {
-    NSFileManager *fileManager = [[NSFileManager alloc] init];
-    if (![fileManager fileExistsAtPath:[fileURL path]])
-        return nil;
-    float winningSupport = 0.0;
-    Class winningExtensionClass;
-    for (Class extensionClass in _extensionClasses)
-    {
-        float support = [extensionClass supportForFile:fileURL];
-        if (support <= winningSupport)
-            continue;
-        winningSupport = support;
-        winningExtensionClass = extensionClass;
-    }
-    if (winningSupport == 0.0)
-        return nil;
-    ECCodeIndex *extension = [self extensionForClass:winningExtensionClass];
-    return [extension unitWithFileURL:fileURL];
+    NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] init];
+    __block ECCodeUnit *codeUnit = nil;
+    [fileCoordinator coordinateReadingItemAtURL:fileURL options:NSFileCoordinatorReadingResolvesSymbolicLink | NSFileCoordinatorReadingWithoutChanges error:NULL byAccessor:^(NSURL *newURL) {
+        NSFileManager *fileManager = [[NSFileManager alloc] init];
+        if (![fileManager fileExistsAtPath:[newURL path]])
+            return;
+        float winningSupport = 0.0;
+        Class winningExtensionClass;
+        for (Class extensionClass in _extensionClasses)
+        {
+            float support = [extensionClass supportForFile:newURL];
+            if (support <= winningSupport)
+                continue;
+            winningSupport = support;
+            winningExtensionClass = extensionClass;
+        }
+        if (winningSupport == 0.0)
+            return;
+        ECCodeIndex *extension = [self extensionForClass:winningExtensionClass];
+        codeUnit = [extension unitWithFileURL:newURL];
+    }];
+    return codeUnit;
 }
 
 - (ECCodeUnit *)unitWithFileURL:(NSURL *)fileURL withLanguage:(NSString *)language
 {
-    NSFileManager *fileManager = [[NSFileManager alloc] init];
-    if (![fileManager fileExistsAtPath:[fileURL path]])
-        return nil;
-    float winningSupport = 0.0;
-    Class winningExtensionClass;
-    for (Class extensionClass in [_extensionClassesByLanguage objectForKey:language])
-    {
-        float support = [extensionClass supportForFile:fileURL];
-        if (support <= winningSupport)
-            continue;
-        winningSupport = support;
-        winningExtensionClass = extensionClass;
-    }
-    if (winningSupport == 0.0)
-        return nil;
-    ECCodeIndex *extension = [self extensionForClass:winningExtensionClass];
-    return [extension unitWithFileURL:fileURL withLanguage:language];
+    NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] init];
+    __block ECCodeUnit *codeUnit = nil;
+    [fileCoordinator coordinateReadingItemAtURL:fileURL options:NSFileCoordinatorReadingResolvesSymbolicLink | NSFileCoordinatorReadingWithoutChanges error:NULL byAccessor:^(NSURL *newURL) {
+        NSFileManager *fileManager = [[NSFileManager alloc] init];
+        if (![fileManager fileExistsAtPath:[newURL path]])
+            return;
+        float winningSupport = 0.0;
+        Class winningExtensionClass;
+        for (Class extensionClass in [_extensionClassesByLanguage objectForKey:language])
+        {
+            float support = [extensionClass supportForFile:newURL];
+            if (support <= winningSupport)
+                continue;
+            winningSupport = support;
+            winningExtensionClass = extensionClass;
+        }
+        if (winningSupport == 0.0)
+            return;
+        ECCodeIndex *extension = [self extensionForClass:winningExtensionClass];
+        codeUnit = [extension unitWithFileURL:newURL withLanguage:language];
+    }];
+    return codeUnit;
 }
 
 - (ECCodeIndex *)extensionForClass:(Class)extensionClass

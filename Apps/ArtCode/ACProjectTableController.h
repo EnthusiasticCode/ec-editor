@@ -8,7 +8,12 @@
 
 #import <UIKit/UIKit.h>
 #import "ACNavigationTarget.h"
+@class ACApplication, ACTab;
 
 @interface ACProjectTableController : UITableViewController <ACNavigationTarget, UITextFieldDelegate>
+
+@property (nonatomic, strong) NSURL *projectsDirectory;
+
+@property (nonatomic, strong) ACTab *tab;
 
 @end

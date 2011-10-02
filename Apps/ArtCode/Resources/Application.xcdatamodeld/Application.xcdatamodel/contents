@@ -7,7 +7,7 @@
     <entity name="Bookmark" representedClassName="ACBookmark">
         <attribute name="note" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="URL" attributeType="String" syncable="YES"/>
-        <relationship name="application" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Application" inverseName="bookmarks" inverseEntity="Application" syncable="YES" preferredClientType="" preferredRecord=""/>
+        <relationship name="application" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Application" inverseName="bookmarks" inverseEntity="Application" syncable="YES"/>
     </entity>
     <entity name="HistoryItem" representedClassName="ACHistoryItem">
         <attribute name="URL" attributeType="String" syncable="YES"/>
@@ -19,9 +19,9 @@
         <relationship name="historyItems" toMany="YES" minCount="1" deletionRule="Cascade" ordered="YES" destinationEntity="HistoryItem" inverseName="tab" inverseEntity="HistoryItem" syncable="YES"/>
     </entity>
     <elements>
-        <element name="Bookmark" positionX="169" positionY="324" width="128" height="90"/>
+        <element name="Application" positionX="-99" positionY="120" width="128" height="75"/>
+        <element name="Bookmark" positionX="160" positionY="192" width="128" height="90"/>
         <element name="HistoryItem" positionX="-452" positionY="330" width="128" height="75"/>
         <element name="Tab" positionX="-200" positionY="450" width="128" height="90"/>
-        <element name="Application" positionX="-99" positionY="120" width="128" height="75"/>
     </elements>
 </model>

@@ -38,17 +38,3 @@
 - (void)moveForwardInHistory;
 
 @end
-
-@interface ACTab (CoreDataGeneratedAccessors)
-
-- (void)insertObject:(ACHistoryItem *)value inHistoryItemsAtIndex:(NSUInteger)idx;
-- (void)removeObjectFromHistoryItemsAtIndex:(NSUInteger)idx;
-- (void)insertHistoryItems:(NSArray *)value atIndexes:(NSIndexSet *)indexes;
-- (void)removeHistoryItemsAtIndexes:(NSIndexSet *)indexes;
-- (void)replaceObjectInHistoryItemsAtIndex:(NSUInteger)idx withObject:(ACHistoryItem *)value;
-- (void)replaceHistoryItemsAtIndexes:(NSIndexSet *)indexes withHistoryItems:(NSArray *)values;
-- (void)addHistoryItemsObject:(ACHistoryItem *)value;
-- (void)removeHistoryItemsObject:(ACHistoryItem *)value;
-- (void)addHistoryItems:(NSOrderedSet *)values;
-- (void)removeHistoryItems:(NSOrderedSet *)values;
-@end

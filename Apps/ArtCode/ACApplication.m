@@ -7,20 +7,22 @@
 //
 
 #import "ACApplication.h"
-#import "ACBookmark.h"
 #import "ACTab.h"
+#import <ECFoundation/NSURL+ECAdditions.h>
 
+static NSString * const ACProjectListDirectoryName = @"ACLocalProjects.weakpkg";
 
 @implementation ACApplication
 
-@dynamic bookmarks;
 @dynamic tabs;
 
-- (void)insertTabAtIndex:(NSUInteger)index
+- (ACTab *)insertTabAtIndex:(NSUInteger)index
 {
     ACTab *tab = [NSEntityDescription insertNewObjectForEntityForName:@"Tab" inManagedObjectContext:self.managedObjectContext];
     NSMutableOrderedSet *tabs = [self mutableOrderedSetValueForKey:@"tabs"];
     [tabs insertObject:tab atIndex:index];
+    [tab pushURL:[self projectsDirectory]];
+    return tab;
 }
 
 - (void)removeTabAtIndex:(NSUInteger)index
@@ -33,9 +35,24 @@
     [[self mutableOrderedSetValueForKey:@"tabs"] moveObjectsAtIndexes:indexes toIndex:index];
 }
 
-- (void)exchangeTabsAtIndex:(NSUInteger)fromIndex withTabsAtIndex:(NSUInteger)toIndex
+- (void)exchangeTabAtIndex:(NSUInteger)fromIndex withTabAtIndex:(NSUInteger)toIndex
 {
     [[self mutableOrderedSetValueForKey:@"tabs"] exchangeObjectAtIndex:fromIndex withObjectAtIndex:toIndex];
+}
+
+- (void)moveProjectsAtIndexes:(NSIndexSet *)indexes toIndex:(NSUInteger)index
+{
+    [[self mutableOrderedSetValueForKey:@"projects"] moveObjectsAtIndexes:indexes toIndex:index];
+}
+
+- (void)exchangeProjectAtIndex:(NSUInteger)fromIndex withProjectAtIndex:(NSUInteger)toIndex
+{
+    [[self mutableOrderedSetValueForKey:@"projects"] exchangeObjectAtIndex:fromIndex withObjectAtIndex:toIndex];
+}
+
+- (NSURL *)projectsDirectory
+{
+    return [[NSURL applicationLibraryDirectory] URLByAppendingPathComponent:ACProjectListDirectoryName];
 }
 
 @end

@@ -7,10 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "ACTabController.h"
 @class ACApplication;
 
-@interface ArtCodeAppDelegate : UIResponder <UIApplicationDelegate, ACTabControllerDataSource>
+@interface ArtCodeAppDelegate : UIResponder <UIApplicationDelegate>
 
 @property (nonatomic, strong) UIWindow *window;
 
