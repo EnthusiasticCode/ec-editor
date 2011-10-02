@@ -256,6 +256,7 @@ static void init(ECTabController *self)
 
 #pragma mark - Tab bar delegate methods
 
+/// Overload this method to return a custom control for the tab bar
 - (UIControl *)tabBar:(ECTabBar *)tabBar controlForTabWithTitle:(NSString *)title atIndex:(NSUInteger)tabIndex
 {
     static NSString *tabButtonIdentifier = @"TabButton";
@@ -265,9 +266,9 @@ static void init(ECTabController *self)
     {
         control = [UIButton buttonWithType:UIButtonTypeRoundedRect];
         control.reuseIdentifier = tabButtonIdentifier;
+        [control setTitleColor:[UIColor redColor] forState:UIControlStateSelected];
     }
     [control setTitle:title forState:UIControlStateNormal];
-    // TODO close button
     return control;
 }
 
@@ -325,6 +326,27 @@ static void init(ECTabController *self)
     
     // Reposition content scroll view to 
     [self scrollToSelectedViewControllerAnimated:NO];
+}
+
+#pragma mark - Scroll view delegate methods
+
+- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
+{
+    // Get current tab index
+    CGRect pageBounds = self.contentScrollView.bounds;
+    NSUInteger tabControllersCount = [orderedChildViewControllers count];
+    NSInteger currentTabIndex = (NSInteger)roundf(pageBounds.origin.x / pageBounds.size.width);
+    if (currentTabIndex < 0)
+        currentTabIndex = 0;
+    else if (currentTabIndex >= tabControllersCount)
+        currentTabIndex = tabControllersCount - 1;
+    
+    // Return if already on this tab
+    if (currentTabIndex == selectedViewControllerIndex)
+        return;
+    
+    // Select tab button
+    [self.tabBar setSelectedTabIndex:currentTabIndex animated:YES];
 }
 
 #pragma mark - Private methods
