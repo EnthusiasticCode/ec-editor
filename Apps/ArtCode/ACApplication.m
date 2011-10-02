@@ -10,7 +10,7 @@
 #import "ACTab.h"
 #import <ECFoundation/NSURL+ECAdditions.h>
 
-static NSString * const ACProjectListDirectoryName = @"ACLocalProjects.weakpkg";
+static NSString * const ACProjectListDirectoryName = @"ACLocalProjects";
 
 @implementation ACApplication
 
@@ -52,7 +52,8 @@ static NSString * const ACProjectListDirectoryName = @"ACLocalProjects.weakpkg";
 
 - (NSURL *)projectsDirectory
 {
-    return [[NSURL applicationLibraryDirectory] URLByAppendingPathComponent:ACProjectListDirectoryName];
+    // dirty workaround for urls being saved without trailing slashes in core data, so equality test fails
+    return [[NSURL applicationLibraryDirectory] URLByAppendingPathComponent:ACProjectListDirectoryName isDirectory:NO];
 }
 
 @end

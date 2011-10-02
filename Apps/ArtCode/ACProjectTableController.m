@@ -358,7 +358,7 @@ static void * directoryPresenterFileURLsObservingContext;
     [cell.iconButton setImage:[self projectIconWithColor:[UIColor styleForegroundColor]] forState:UIControlStateNormal];
     
     // Setup project title
-    [cell.textField setText:[[self.directoryPresenter.fileURLs objectAtIndex:indexPath.row] lastPathComponent]];
+    [cell.textField setText:[[[self.directoryPresenter.fileURLs objectAtIndex:indexPath.row] lastPathComponent] stringByDeletingPathExtension]];
     
     // Setup tags for callbacks
     [cell.customDeleteButton setTag:indexPath.row];
@@ -379,7 +379,7 @@ static void * directoryPresenterFileURLsObservingContext;
 {
     if (self.isEditing)
         return;
-//    [self.tab pushURL:[[self.application.projects objectAtIndex:indexPath.row] fileURL]];
+    [self.tab pushURL:[self.directoryPresenter.fileURLs objectAtIndex:indexPath.row]];
 }
 
 @end
