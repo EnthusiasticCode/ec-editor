@@ -165,10 +165,7 @@
 }
 
 - (void)setSelectedViewControllerIndex:(NSInteger)index animated:(BOOL)animated
-{
-    if (selectedViewControllerIndex == index)
-        return;
-        
+{ 
     [self.tabBar setSelectedTabIndex:index animated:animated];
 }
 
@@ -316,7 +313,6 @@ static void init(ECTabController *self)
     {
         ECASSERT(index < [orderedChildViewControllers count]);
         toViewController = [orderedChildViewControllers objectAtIndex:index];
-        toViewController.view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     }
     
     if (abs(selectedViewControllerIndex - (NSInteger)index) <= 1)
@@ -341,11 +337,14 @@ static void init(ECTabController *self)
     UIViewController *controller = [orderedChildViewControllers objectAtIndex:tabIndex];
     [controller willMoveToParentViewController:nil];
     
+    // Remove from tab controller
     [orderedChildViewControllers removeObject:controller];
+    [controller removeFromParentViewController];
 
     // Change selection if needed
     if (self.selectedViewControllerIndex == tabIndex)
     {
+        selectedViewControllerIndex = -2;
         if (tabIndex > 0)
             tabIndex -= 1;
         if (tabIndex < [orderedChildViewControllers count])
@@ -353,8 +352,14 @@ static void init(ECTabController *self)
         else
             self.selectedViewControllerIndex = NSNotFound;
     }
+    else
+    {
+        [self scrollToSelectedViewControllerAnimated:YES];
+    }
     
-    [controller removeFromParentViewController];
+    // Remove view if loaded
+    if (controller.isViewLoaded)
+        [controller.view removeFromSuperview];
     
     return YES;
 }
