@@ -126,12 +126,12 @@
     return [orderedChildViewControllers objectAtIndex:selectedViewControllerIndex];
 }
 
-- (void)setSelectedViewControllerIndex:(NSUInteger)index
+- (void)setSelectedViewControllerIndex:(NSInteger)index
 {
     [self setSelectedViewControllerIndex:index animated:NO];
 }
 
-- (void)setSelectedViewControllerIndex:(NSUInteger)index animated:(BOOL)animated
+- (void)setSelectedViewControllerIndex:(NSInteger)index animated:(BOOL)animated
 {
     if (selectedViewControllerIndex == index)
         return;
@@ -282,8 +282,19 @@ static void init(ECTabController *self)
         toViewController.view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     }
     
-    selectedViewControllerIndex = index;
-    [self scrollToSelectedViewControllerAnimated:YES];
+    if (abs(selectedViewControllerIndex - (NSInteger)index) <= 1)
+    {
+        // Scroll if adiacent tab
+        selectedViewControllerIndex = index;
+        [self scrollToSelectedViewControllerAnimated:YES];
+    }
+    else
+    {
+        // Crossfade if non adiacent
+        selectedViewControllerIndex = index;
+        [self scrollToSelectedViewControllerAnimated:NO];
+        [UIView transitionWithView:self.contentScrollView duration:0.2 options:UIViewAnimationOptionTransitionCrossDissolve animations:nil completion:nil];
+    }
     
     return YES;
 }
@@ -396,6 +407,7 @@ static void init(ECTabController *self)
 - (void)scrollToSelectedViewControllerAnimated:(BOOL)animated
 {
     [self loadSelectedAndAdiacentTabViews];
+    [self.contentScrollView layoutIfNeeded];
     CGFloat pageWidth = self.contentScrollView.bounds.size.width;
     [self.contentScrollView scrollRectToVisible:CGRectMake(pageWidth * selectedViewControllerIndex, 0, pageWidth, 1) animated:animated];
 }

@@ -26,8 +26,8 @@
 @property (nonatomic, readonly, strong) UIViewController *selectedViewController;
 
 /// The index in the child view controllers array of the currently selected view controller.
-@property (nonatomic) NSUInteger selectedViewControllerIndex;
-- (void)setSelectedViewControllerIndex:(NSUInteger)index animated:(BOOL)animated;
+@property (nonatomic) NSInteger selectedViewControllerIndex;
+- (void)setSelectedViewControllerIndex:(NSInteger)index animated:(BOOL)animated;
 
 /// Add a child view controller as a tab.
 - (void)addChildViewController:(UIViewController *)childController animated:(BOOL)animated;

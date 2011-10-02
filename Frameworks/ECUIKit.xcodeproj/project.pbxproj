@@ -155,7 +155,6 @@
 		CDBD28361435104F00E05F40 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = CDBD28341435104F00E05F40 /* InfoPlist.strings */; };
 		CDBD28381435104F00E05F40 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = CDBD28371435104F00E05F40 /* main.m */; };
 		CDBD283C1435104F00E05F40 /* ECTabControllerTest_AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = CDBD283B1435104F00E05F40 /* ECTabControllerTest_AppDelegate.m */; };
-		CDBD28421435104F00E05F40 /* ECTabControllerTest_ViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CDBD28401435104F00E05F40 /* ECTabControllerTest_ViewController.xib */; };
 		CDBD28461435115900E05F40 /* ECTabController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDBD28251435101B00E05F40 /* ECTabController.m */; };
 		CDBD2847143512B200E05F40 /* ECTabBar.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170B781428EB2400DF7794 /* ECTabBar.m */; };
 		CDC7C952142A4ADD00FCF269 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7170BD61428F00800DF7794 /* QuartzCore.framework */; };
@@ -426,7 +425,6 @@
 		CDBD28391435104F00E05F40 /* ECTabControllerTest-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ECTabControllerTest-Prefix.pch"; sourceTree = "<group>"; };
 		CDBD283A1435104F00E05F40 /* ECTabControllerTest_AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ECTabControllerTest_AppDelegate.h; sourceTree = "<group>"; };
 		CDBD283B1435104F00E05F40 /* ECTabControllerTest_AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ECTabControllerTest_AppDelegate.m; sourceTree = "<group>"; };
-		CDBD28411435104F00E05F40 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/ECTabControllerTest_ViewController.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -886,7 +884,6 @@
 			children = (
 				CDBD283A1435104F00E05F40 /* ECTabControllerTest_AppDelegate.h */,
 				CDBD283B1435104F00E05F40 /* ECTabControllerTest_AppDelegate.m */,
-				CDBD28401435104F00E05F40 /* ECTabControllerTest_ViewController.xib */,
 				CDBD28321435104F00E05F40 /* Supporting Files */,
 			);
 			path = ECTabControllerTest;
@@ -1086,7 +1083,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				CDBD28361435104F00E05F40 /* InfoPlist.strings in Resources */,
-				CDBD28421435104F00E05F40 /* ECTabControllerTest_ViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1283,14 +1279,6 @@
 				CDBD28351435104F00E05F40 /* en */,
 			);
 			name = InfoPlist.strings;
-			sourceTree = "<group>";
-		};
-		CDBD28401435104F00E05F40 /* ECTabControllerTest_ViewController.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				CDBD28411435104F00E05F40 /* en */,
-			);
-			name = ECTabControllerTest_ViewController.xib;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
