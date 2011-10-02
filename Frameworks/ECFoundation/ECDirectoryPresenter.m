@@ -132,17 +132,6 @@
     completionHandler(nil);
 }
 
-#warning DELETE this method when the submethod items work (hopefully developer seed 8)
-- (void)presentedItemDidChange
-{
-    NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] initWithFilePresenter:self];
-    [fileCoordinator coordinateReadingItemAtURL:self.directory options:NSFileCoordinatorReadingResolvesSymbolicLink error:NULL byAccessor:^(NSURL *newURL) {
-        NSFileManager *fileManager = [[NSFileManager alloc] init];
-        NSArray *fileURLs = [fileManager contentsOfDirectoryAtURL:newURL includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsPackageDescendants error:NULL];
-        self.fileURLs = [NSMutableOrderedSet orderedSetWithArray:fileURLs];
-    }];
-}
-
 - (void)presentedSubitemDidAppearAtURL:(NSURL *)url
 {
     ECASSERT(NO);
