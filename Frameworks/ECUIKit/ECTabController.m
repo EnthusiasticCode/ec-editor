@@ -115,7 +115,14 @@
 
 - (void)setTabPageMargin:(CGFloat)margin
 {
-    // TODO
+    [self willChangeValueForKey:@"tabPageMargin"];
+    
+    tabPageMargin = margin;
+    
+    [self layoutChildViews];
+    [self.contentScrollView setNeedsLayout];
+    
+    [self didChangeValueForKey:@"tabPageMargin"];
 }
 
 - (NSArray *)childViewControllers

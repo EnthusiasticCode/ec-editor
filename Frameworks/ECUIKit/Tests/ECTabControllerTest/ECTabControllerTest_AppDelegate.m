@@ -56,6 +56,8 @@
     [self.tabController addChildViewController:tabOne];    
     [self addTabAction:nil];
     
+    self.tabController.tabPageMargin = 20;
+    
     self.window.rootViewController = self.tabController;
     [self.window makeKeyAndVisible];
     return YES;
