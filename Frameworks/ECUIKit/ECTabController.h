@@ -9,12 +9,18 @@
 #import <UIKit/UIKit.h>
 #import "ECTabBar.h"
 
-@interface ECTabController : UIViewController <ECTabBarDelegate>
+@interface ECTabController : UIViewController <ECTabBarDelegate, UIScrollViewDelegate>
 
-/// Access the tab bar.
-@property (nonatomic, readonly, strong) ECTabBar *tabBar;
+/// Define a margin between two tab pages.
+@property (nonatomic) CGFloat tabPageMargin;
 
-#pragma mark Managing Tabs
+#pragma mark Managing the tab bar
+
+/// Indicates if the tab bar is visible or not.
+@property (nonatomic) BOOL showTabBar;
+- (void)setShowTabBar:(BOOL)value animated:(BOOL)animated;
+
+#pragma mark Managing tabs
 
 /// The view controller currently selected.
 @property (nonatomic, readonly, strong) UIViewController *selectedViewController;

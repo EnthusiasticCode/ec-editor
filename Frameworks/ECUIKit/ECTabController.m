@@ -9,22 +9,31 @@
 
 #import "ECTabController.h"
 #import "UIView+ReuseIdentifier.h"
+#import "ECCustomizableScrollView.h"
 
 #define TABBAR_HEIGHT 44
 
 
 @interface ECTabController () {
     NSMutableArray *orderedChildViewControllers;
+    
+    BOOL keepCurrentPageCentered;
 }
 
-@property (nonatomic, readonly, strong) UIView *contentView;
+@property (nonatomic, readonly, strong) ECTabBar *tabBar;
+@property (nonatomic, readonly, strong) ECCustomizableScrollView *contentScrollView;
+
+- (void)layoutChildViews;
+- (void)loadSelectedAndAdiacentTabViews;
+
 @end
 
 @implementation ECTabController
 
 #pragma mark - Properties
 
-@synthesize tabBar = _tabBar, contentView = _contentView;
+@synthesize tabBar = _tabBar, showTabBar = _showTabBar;
+@synthesize contentScrollView = _contentScrollView, tabPageMargin;
 @synthesize selectedViewControllerIndex;
 
 - (ECTabBar *)tabBar
@@ -39,16 +48,68 @@
     return _tabBar;
 }
 
-- (UIView *)contentView
+- (void)setShowTabBar:(BOOL)value animated:(BOOL)animated
 {
-    if (_contentView == nil)
+    if (value == _showTabBar)
+        return;
+    
+    [self willChangeValueForKey:@"showTabBar"];
+    _showTabBar = value;
+    
+    if (self.isViewLoaded)
+    {
+ 
+    }
+    
+    [self didChangeValueForKey:@"showTabBar"];
+}
+
+- (UIView *)contentScrollView
+{
+    if (_contentScrollView == nil)
     {
         // Creating the content view
-        _contentView = [[UIView alloc] init];
-        _contentView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-        _contentView.backgroundColor = [UIColor clearColor];
+        _contentScrollView = [[ECCustomizableScrollView alloc] init];
+        _contentScrollView.delegate = self;
+        _contentScrollView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+        _contentScrollView.backgroundColor = [UIColor clearColor];
+        _contentScrollView.pagingEnabled = YES;
+        _contentScrollView.showsVerticalScrollIndicator = NO;
+        _contentScrollView.showsHorizontalScrollIndicator = NO;
+        _contentScrollView.panGestureRecognizer.minimumNumberOfTouches = 3;
+        _contentScrollView.panGestureRecognizer.maximumNumberOfTouches = 3;
+        
+        // Custom layout
+        __weak ECTabController *this = self;
+        _contentScrollView.layoutSubviewsBlock = ^(UIScrollView *scrollView) {
+            CGRect bounds = scrollView.bounds;
+            NSUInteger tabControllersCount = [this->orderedChildViewControllers count];
+            
+            // Will keep the page centered in case of device rotation
+            if (this->keepCurrentPageCentered)
+            {
+                NSUInteger currentPage = roundf(scrollView.contentOffset.x * tabControllersCount / scrollView.contentSize.width);
+                scrollView.contentOffset = CGPointMake(currentPage * bounds.size.width, 0);
+            }
+            
+            // Adjust content size
+            scrollView.contentSize = CGSizeMake(bounds.size.width * tabControllersCount, 1);
+            
+            // Layout tab pages
+            CGRect pageFrame = bounds;
+            pageFrame.origin.x = this->tabPageMargin / 2;
+            pageFrame.size.width -= this->tabPageMargin;
+            for (UIViewController *tabController in this->orderedChildViewControllers)
+            {
+                if (tabController.isViewLoaded)
+                {
+                    tabController.view.frame = pageFrame;
+                }
+                pageFrame.origin.x += bounds.size.width;
+            }
+        };
     }
-    return _contentView;
+    return _contentScrollView;
 }
 
 - (NSArray *)childViewControllers
@@ -82,6 +143,7 @@
 static void init(ECTabController *self)
 {
     self->selectedViewControllerIndex = NSNotFound;
+    self->_showTabBar = YES;
 }
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -113,16 +175,16 @@ static void init(ECTabController *self)
 {
     [super loadView];
     
-    CGRect bounds = self.view.bounds;
-    
-    // Creating tab bar
-    self.tabBar.frame = CGRectMake(0, 0, bounds.size.width, TABBAR_HEIGHT);
     self.tabBar.backgroundColor = [UIColor grayColor];
     [self.view addSubview:self.tabBar];
-    
-    // Creating the content view
-    self.contentView.frame = CGRectMake(0, TABBAR_HEIGHT, bounds.size.width, bounds.size.height - TABBAR_HEIGHT);
-    [self.view addSubview:self.contentView];
+    [self.view addSubview:self.contentScrollView];
+}
+
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+    [self layoutChildViews];
+    [self loadSelectedAndAdiacentTabViews];
 }
 
 - (void)viewDidUnload
@@ -130,7 +192,22 @@ static void init(ECTabController *self)
     [super viewDidUnload];
     
     _tabBar = nil;
-    _contentView = nil;
+    _contentScrollView = nil;
+}
+
+// TODO: all messages automatically forwarded to child view controllers should be managed manually
+
+#pragma mark Handling rotation
+
+- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
+{
+    // Makes the current tab view to be centered in the scroll view during device orientation
+    keepCurrentPageCentered = YES;
+}
+
+- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
+{
+    keepCurrentPageCentered = NO;
 }
 
 #pragma mark - Managing tabs
@@ -203,18 +280,11 @@ static void init(ECTabController *self)
         toViewController.view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     }
     
-    UIViewController *fromViewController = self.selectedViewController;
-    toViewController.view.alpha = 0;
-    toViewController.view.frame = self.contentView.bounds;
-    [self.contentView addSubview:toViewController.view];
-    [UIView animateWithDuration:0.20 animations:^{
-        toViewController.view.alpha = 1;
-        fromViewController.view.alpha = 0;
-    } completion:^(BOOL finished) {
-        [fromViewController.view removeFromSuperview];
-    }];
-    
     selectedViewControllerIndex = index;
+    [self loadSelectedAndAdiacentTabViews];
+    
+    CGFloat pageWidth = self.contentScrollView.bounds.size.width;
+    [self.contentScrollView scrollRectToVisible:CGRectMake(pageWidth * index, 0, pageWidth, 1) animated:YES];
     
     return YES;
 }
@@ -254,6 +324,50 @@ static void init(ECTabController *self)
         selectedViewControllerIndex -= selectedViewControllerIndex > toIndex ? 0 : 1;
     else if (selectedViewControllerIndex >= toIndex)
         selectedViewControllerIndex += selectedViewControllerIndex > fromIndex ? 0 : 1;
+}
+
+#pragma mark - Private methods
+
+- (void)layoutChildViews
+{
+    if (!self.isViewLoaded)
+        return;
+    
+    CGRect bounds = self.view.bounds;
+    CGRect tabBarFrame = CGRectMake(0, 0, bounds.size.width, _showTabBar ? TABBAR_HEIGHT : 0);
+    
+    // Layout tab bar
+    if (_showTabBar)
+        self.tabBar.frame = tabBarFrame;
+    
+    // Creating the content view
+    self.contentScrollView.frame = CGRectMake(-tabPageMargin / 2, tabBarFrame.size.height, bounds.size.width + tabPageMargin, bounds.size.height - tabBarFrame.size.height);
+}
+
+- (void)loadSelectedAndAdiacentTabViews
+{
+    NSUInteger minLoadableIndex = selectedViewControllerIndex > 0 ? selectedViewControllerIndex - 1 : selectedViewControllerIndex;
+    NSUInteger maxLoadableIndex = selectedViewControllerIndex < [orderedChildViewControllers count] - 1 ? selectedViewControllerIndex + 1 : selectedViewControllerIndex;
+    
+    [orderedChildViewControllers enumerateObjectsUsingBlock:^(UIViewController *viewController, NSUInteger index, BOOL *stop) {
+        // Load view if current or diacent to current
+        if (index >= minLoadableIndex && index <= maxLoadableIndex)
+        {
+            if (viewController.view.superview == nil)
+            {
+                [self.contentScrollView addSubview:viewController.view];
+                viewController.view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+            }
+            else
+            {
+                [self.contentScrollView setNeedsLayout];
+            }
+        }
+        else if (viewController.isViewLoaded)
+        {
+            [viewController.view removeFromSuperview];
+        }
+    }];
 }
 
 @end

@@ -127,6 +127,9 @@
 		B7170BDA1428F01600DF7794 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7170BD61428F00800DF7794 /* QuartzCore.framework */; };
 		B7170BE51428F1A000DF7794 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7170BE41428F1A000DF7794 /* CoreGraphics.framework */; };
 		B7170BE61428F1A800DF7794 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7170BE41428F1A000DF7794 /* CoreGraphics.framework */; };
+		CD06BA5F1438640200295E5A /* ECCustomizableScrollView.h in Headers */ = {isa = PBXBuildFile; fileRef = CD06BA5D1438640200295E5A /* ECCustomizableScrollView.h */; };
+		CD06BA601438640200295E5A /* ECCustomizableScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = CD06BA5E1438640200295E5A /* ECCustomizableScrollView.m */; };
+		CD06BA611438640200295E5A /* ECCustomizableScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = CD06BA5E1438640200295E5A /* ECCustomizableScrollView.m */; };
 		CD0AD99014362AF100FC1EFE /* libECFoundation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7170BCF1428ECC300DF7794 /* libECFoundation.a */; };
 		CD0AD991143634FC00FC1EFE /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7170BD61428F00800DF7794 /* QuartzCore.framework */; };
 		CD0BD4AA14374FD2006F2A37 /* UIView+ReuseIdentifier.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170B881428EB2500DF7794 /* UIView+ReuseIdentifier.m */; };
@@ -400,6 +403,8 @@
 		B7170BD51428F00800DF7794 /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
 		B7170BD61428F00800DF7794 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		B7170BE41428F1A000DF7794 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		CD06BA5D1438640200295E5A /* ECCustomizableScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCustomizableScrollView.h; sourceTree = "<group>"; };
+		CD06BA5E1438640200295E5A /* ECCustomizableScrollView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCustomizableScrollView.m; sourceTree = "<group>"; };
 		CD0DDA1414293E7300FE8B5B /* ECSplitViewControllerTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ECSplitViewControllerTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CD0DDA1B14293E7300FE8B5B /* ECSplitViewControllerTest-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ECSplitViewControllerTest-Info.plist"; sourceTree = "<group>"; };
 		CD0DDA1D14293E7300FE8B5B /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -827,6 +832,8 @@
 				B7170B841428EB2500DF7794 /* UIImage+BlockDrawing.m */,
 				B7170B871428EB2500DF7794 /* UIView+ReuseIdentifier.h */,
 				B7170B881428EB2500DF7794 /* UIView+ReuseIdentifier.m */,
+				CD06BA5D1438640200295E5A /* ECCustomizableScrollView.h */,
+				CD06BA5E1438640200295E5A /* ECCustomizableScrollView.m */,
 			);
 			name = "UIKit Additions";
 			sourceTree = "<group>";
@@ -926,6 +933,7 @@
 				CD2A5FCD142A4A9900A2CACD /* ECSplitViewController.h in Headers */,
 				CD6B0F051434D43000049625 /* ECInverseCornerShapeView.h in Headers */,
 				CDBD28261435101B00E05F40 /* ECTabController.h in Headers */,
+				CD06BA5F1438640200295E5A /* ECCustomizableScrollView.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1127,6 +1135,7 @@
 				CD2A5FCE142A4A9900A2CACD /* ECSplitViewController.m in Sources */,
 				CD6B0F061434D43000049625 /* ECInverseCornerShapeView.m in Sources */,
 				CDBD28271435101B00E05F40 /* ECTabController.m in Sources */,
+				CD06BA601438640200295E5A /* ECCustomizableScrollView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1227,6 +1236,7 @@
 				CDBD28461435115900E05F40 /* ECTabController.m in Sources */,
 				CDBD2847143512B200E05F40 /* ECTabBar.m in Sources */,
 				CD0BD4AA14374FD2006F2A37 /* UIView+ReuseIdentifier.m in Sources */,
+				CD06BA611438640200295E5A /* ECCustomizableScrollView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
