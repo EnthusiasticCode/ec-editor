@@ -25,6 +25,7 @@
 
 - (void)layoutChildViews;
 - (void)loadSelectedAndAdiacentTabViews;
+- (void)scrollToSelectedViewControllerAnimated:(BOOL)animated;
 
 @end
 
@@ -281,10 +282,7 @@ static void init(ECTabController *self)
     }
     
     selectedViewControllerIndex = index;
-    [self loadSelectedAndAdiacentTabViews];
-    
-    CGFloat pageWidth = self.contentScrollView.bounds.size.width;
-    [self.contentScrollView scrollRectToVisible:CGRectMake(pageWidth * index, 0, pageWidth, 1) animated:YES];
+    [self scrollToSelectedViewControllerAnimated:YES];
     
     return YES;
 }
@@ -324,6 +322,9 @@ static void init(ECTabController *self)
         selectedViewControllerIndex -= selectedViewControllerIndex > toIndex ? 0 : 1;
     else if (selectedViewControllerIndex >= toIndex)
         selectedViewControllerIndex += selectedViewControllerIndex > fromIndex ? 0 : 1;
+    
+    // Reposition content scroll view to 
+    [self scrollToSelectedViewControllerAnimated:NO];
 }
 
 #pragma mark - Private methods
@@ -368,6 +369,13 @@ static void init(ECTabController *self)
             [viewController.view removeFromSuperview];
         }
     }];
+}
+
+- (void)scrollToSelectedViewControllerAnimated:(BOOL)animated
+{
+    [self loadSelectedAndAdiacentTabViews];
+    CGFloat pageWidth = self.contentScrollView.bounds.size.width;
+    [self.contentScrollView scrollRectToVisible:CGRectMake(pageWidth * selectedViewControllerIndex, 0, pageWidth, 1) animated:animated];
 }
 
 @end
