@@ -59,7 +59,7 @@
     
     if (self.isViewLoaded)
     {
- 
+        // TODO
     }
     
     [self didChangeValueForKey:@"showTabBar"];
@@ -111,6 +111,11 @@
         };
     }
     return _contentScrollView;
+}
+
+- (void)setTabPageMargin:(CGFloat)margin
+{
+    // TODO
 }
 
 - (NSArray *)childViewControllers
@@ -231,8 +236,11 @@ static void init(ECTabController *self)
     [self.tabBar addTabWithTitle:childController.navigationItem.title animated:animated];
     
     // Set selection
-    if (self.selectedViewControllerIndex == NSNotFound)
+    if (selectedViewControllerIndex == NSNotFound)
         [self setSelectedViewControllerIndex:([orderedChildViewControllers count] - 1) animated:animated];
+    // Or load adiacent views
+    else if (abs(selectedViewControllerIndex - ([orderedChildViewControllers count] - 1)) <= 1)
+        [self loadSelectedAndAdiacentTabViews];
     
     [childController didMoveToParentViewController:self];
 }
