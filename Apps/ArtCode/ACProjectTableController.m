@@ -56,6 +56,17 @@
     [self setEditing:NO animated:NO];
 }
 
+- (void)viewWillAppear:(BOOL)animated
+{
+    self.directoryPresenter = [[ECDirectoryPresenter alloc] init];
+    self.directoryPresenter.directory = self.projectsDirectory;
+}
+
+- (void)viewDidDisappear:(BOOL)animated
+{
+    self.directoryPresenter = nil;
+}
+
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
