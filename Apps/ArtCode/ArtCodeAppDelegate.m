@@ -40,7 +40,6 @@
 {
     UIFont *defaultFont = [UIFont styleFontWithSize:14];    
     ACNavigationController *navigationController = (ACNavigationController *)self.window.rootViewController;
-    navigationController.application = self.application;
     
     ////////////////////////////////////////////////////////////////////////////
     // Generic text field
@@ -93,11 +92,11 @@
     
     ////////////////////////////////////////////////////////////////////////////
     // Adding tool panel
-    UIStoryboard *toolPanelsStoryboard = [UIStoryboard storyboardWithName:@"ToolPanelStoryboard" bundle:[NSBundle mainBundle]];
-    ACToolPanelController *toolPanelController = [toolPanelsStoryboard instantiateInitialViewController];
+//    UIStoryboard *toolPanelsStoryboard = [UIStoryboard storyboardWithName:@"ToolPanelStoryboard" bundle:[NSBundle mainBundle]];
+//    ACToolPanelController *toolPanelController = [toolPanelsStoryboard instantiateInitialViewController];
     //
-    navigationController.toolPanelController = toolPanelController;
-    navigationController.toolPanelOnRight = YES;
+//    navigationController.toolPanelController = toolPanelController;
+//    navigationController.toolPanelOnRight = YES;
     
     ////////////////////////////////////////////////////////////////////////////
     // Tools
@@ -119,15 +118,12 @@
     [buttonIneditableTableCellDeleteContainer setTitleShadowColor:[UIColor styleForegroundColor] forState:UIControlStateNormal];
     
     ////////////////////////////////////////////////////////////////////////////
-    [window makeKeyAndVisible];
-    navigationController.tabNavigationController.tabPageMargin = 10;
+
     if (![self.application.tabs count])
         [self.application insertTabAtIndex:0];
-    for (ACTab *tab in self.application.tabs)
-        [navigationController.tabNavigationController addTabControllerWithTab:tab animated:NO];
-    navigationController.tabNavigationController.currentTabController = [navigationController.tabNavigationController.tabControllers objectAtIndex:0];
-
-    navigationController.tabNavigationController.makeAddedTabCurrent = YES;
+    
+    navigationController.tab = [self.application.tabs objectAtIndex:0];
+    [window makeKeyAndVisible];
     return YES;
 }
 

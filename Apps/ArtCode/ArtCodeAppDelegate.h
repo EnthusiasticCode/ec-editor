@@ -7,7 +7,6 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "ACTabController.h"
 @class ACApplication;
 
 @interface ArtCodeAppDelegate : UIResponder <UIApplicationDelegate>

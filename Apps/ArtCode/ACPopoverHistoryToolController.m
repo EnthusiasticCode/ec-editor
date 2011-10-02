@@ -29,26 +29,26 @@ static void * ACPopoverHistoryToolControllerTabHistoryItemsObserving;
 {
     if (tab == _tab)
         return;
-    [_tab removeObserver:self forKeyPath:@"currentHistoryPosition" context:ACPopoverHistoryToolControllerTabCurrentHistoryPositionObserving];
-    [_tab removeObserver:self forKeyPath:@"historyItems" context:ACPopoverHistoryToolControllerTabHistoryItemsObserving];
+    [_tab removeObserver:self forKeyPath:@"currentHistoryPosition" context:&ACPopoverHistoryToolControllerTabCurrentHistoryPositionObserving];
+    [_tab removeObserver:self forKeyPath:@"historyItems" context:&ACPopoverHistoryToolControllerTabHistoryItemsObserving];
     _tab = tab;
-    [_tab addObserver:self forKeyPath:@"currentHistoryPosition" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial context:ACPopoverHistoryToolControllerTabCurrentHistoryPositionObserving];
-    [_tab addObserver:self forKeyPath:@"historyItems" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial context:ACPopoverHistoryToolControllerTabHistoryItemsObserving];
+    [_tab addObserver:self forKeyPath:@"currentHistoryPosition" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial context:&ACPopoverHistoryToolControllerTabCurrentHistoryPositionObserving];
+    [_tab addObserver:self forKeyPath:@"historyItems" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial context:&ACPopoverHistoryToolControllerTabHistoryItemsObserving];
 }
 
 - (void)dealloc
 {
-    [_tab removeObserver:self forKeyPath:@"currentHistoryPosition" context:ACPopoverHistoryToolControllerTabCurrentHistoryPositionObserving];
-    [_tab removeObserver:self forKeyPath:@"historyItems" context:ACPopoverHistoryToolControllerTabHistoryItemsObserving];
+    [_tab removeObserver:self forKeyPath:@"currentHistoryPosition" context:&ACPopoverHistoryToolControllerTabCurrentHistoryPositionObserving];
+    [_tab removeObserver:self forKeyPath:@"historyItems" context:&ACPopoverHistoryToolControllerTabHistoryItemsObserving];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
-    if (context == ACPopoverHistoryToolControllerTabHistoryItemsObserving)
+    if (context == &ACPopoverHistoryToolControllerTabHistoryItemsObserving)
     {
         [self.tableView reloadData];
     }
-    else if (context == ACPopoverHistoryToolControllerTabCurrentHistoryPositionObserving)
+    else if (context == &ACPopoverHistoryToolControllerTabCurrentHistoryPositionObserving)
     {
         // TODO: different formatting for current history position, update without reloading on history position change
         // NOTE: doesn't seem to be needed as changing the current history position triggers the history items observing as well

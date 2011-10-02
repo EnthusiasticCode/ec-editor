@@ -143,7 +143,7 @@
     {
         editorToolSelectionController = [[ACEditorToolSelectionController alloc] initWithNibName:@"ACEditorToolSelectionController" bundle:nil];
         editorToolSelectionController.contentSizeForViewInPopover = CGSizeMake(250, 284);
-        editorToolSelectionController.targetNavigationController = self.ACNavigationController;
+//        editorToolSelectionController.targetNavigationController = self.ACNavigationController;
     }
     
     if (!editorToolSelectionPopover)
