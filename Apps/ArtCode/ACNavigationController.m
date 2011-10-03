@@ -197,6 +197,7 @@ static void *tabCurrentURLObservingContext;
                 codeFileController.tab = self.tab;
             }
         }
+        [self.jumpBar setJumpPath:[self.tab.application pathRelativeToProjectsDirectory:currentURL] animated:YES];
     }
     else
         [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
