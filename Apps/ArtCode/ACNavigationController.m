@@ -227,6 +227,8 @@ static void *tabCurrentURLObservingContext;
     // Jump Bar
     jumpBar.delegate = self;
     jumpBar.minimumTextElementWidth = 0.4;
+    if (self.contentViewController.toolButton)
+        jumpBar.frame = CGRectMake(CGRectGetMaxX(self.contentViewController.toolButton.frame) + 7, 7, topBarView.bounds.size.width - (7 + 75 + 7) * 2, 30);
     // Text Element
     jumpBar.textElement = [ACJumpBarTextField new];
     jumpBar.textElement.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;

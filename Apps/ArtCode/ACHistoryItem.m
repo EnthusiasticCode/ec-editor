@@ -14,16 +14,14 @@
 
 @dynamic tab;
 
-- (NSURL *)URL
+- (ACApplication *)application
 {
-    return [NSURL URLWithString:[self primitiveValueForKey:@"URL"]];
+    return self.tab.application;
 }
 
-- (void)setURL:(NSURL *)URL
++ (NSSet *)keyPathsForValuesAffectingApplication
 {
-    [self willChangeValueForKey:@"URL"];
-    [self setPrimitiveValue:[URL absoluteString] forKey:@"URL"];
-    [self didChangeValueForKey:@"URL"];
+    return [NSSet setWithObject:@"tab.application"];
 }
 
 @end

@@ -12,9 +12,15 @@
 
 static NSString * const ACProjectListDirectoryName = @"ACLocalProjects";
 
+@interface ACApplication ()
+@property (nonatomic) NSUInteger _projectsDirectoryPathComponentsCount;
+@end
+
 @implementation ACApplication
 
 @dynamic tabs;
+
+@synthesize _projectsDirectoryPathComponentsCount = __projectsDirectoryPathComponentsCount;
 
 - (ACTab *)insertTabAtIndex:(NSUInteger)index
 {
@@ -52,8 +58,27 @@ static NSString * const ACProjectListDirectoryName = @"ACLocalProjects";
 
 - (NSURL *)projectsDirectory
 {
-    // dirty workaround for urls being saved without trailing slashes in core data, so equality test fails
-    return [[NSURL applicationLibraryDirectory] URLByAppendingPathComponent:ACProjectListDirectoryName isDirectory:NO];
+    return [[NSURL applicationLibraryDirectory] URLByAppendingPathComponent:ACProjectListDirectoryName isDirectory:YES];
+}
+
+- (NSString *)pathRelativeToProjectsDirectory:(NSURL *)fileURL
+{
+    if (![fileURL isFileURL])
+        return nil;
+    NSArray *pathComponents = [[fileURL URLByStandardizingPath] pathComponents];
+    if (![[pathComponents subarrayWithRange:NSMakeRange(0, self._projectsDirectoryPathComponentsCount)] isEqualToArray:[[self projectsDirectory] pathComponents]])
+        return nil;
+    pathComponents = [pathComponents subarrayWithRange:NSMakeRange(self._projectsDirectoryPathComponentsCount, [pathComponents count] - self._projectsDirectoryPathComponentsCount)];
+    return [NSString pathWithComponents:pathComponents];
+}
+
+- (NSUInteger)_projectsDirectoryPathComponentsCount
+{
+    if (!__projectsDirectoryPathComponentsCount)
+    {
+        __projectsDirectoryPathComponentsCount = [[[self projectsDirectory] pathComponents] count];
+    }
+    return __projectsDirectoryPathComponentsCount;
 }
 
 @end

@@ -12,6 +12,7 @@
 		B702320314345B5A006D23F7 /* ACBookmark.m in Sources */ = {isa = PBXBuildFile; fileRef = B702320214345B5A006D23F7 /* ACBookmark.m */; };
 		B702320C14345B5A006D23F7 /* ACApplication.m in Sources */ = {isa = PBXBuildFile; fileRef = B702320B14345B5A006D23F7 /* ACApplication.m */; };
 		B702321214345B5B006D23F7 /* ACHistoryItem.m in Sources */ = {isa = PBXBuildFile; fileRef = B702321114345B5B006D23F7 /* ACHistoryItem.m */; };
+		B7107AEE143A32E500827FD2 /* ACURLWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = B7107AED143A32E500827FD2 /* ACURLWrapper.m */; };
 		B7170ECA1429F54D00DF7794 /* libECArchive.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7170EA31429F3B800DF7794 /* libECArchive.a */; };
 		B7170ECB1429F54D00DF7794 /* libECCodeIndexing.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7170EA91429F3B800DF7794 /* libECCodeIndexing.a */; };
 		B7170ECC1429F54D00DF7794 /* libECFoundation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7170EAF1429F3B800DF7794 /* libECFoundation.a */; };
@@ -205,6 +206,8 @@
 		B702320B14345B5A006D23F7 /* ACApplication.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACApplication.m; sourceTree = "<group>"; };
 		B702321014345B5B006D23F7 /* ACHistoryItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACHistoryItem.h; sourceTree = "<group>"; };
 		B702321114345B5B006D23F7 /* ACHistoryItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACHistoryItem.m; sourceTree = "<group>"; };
+		B7107AEC143A32E500827FD2 /* ACURLWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACURLWrapper.h; sourceTree = "<group>"; };
+		B7107AED143A32E500827FD2 /* ACURLWrapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACURLWrapper.m; sourceTree = "<group>"; };
 		B7170E851429F3B600DF7794 /* ECArchive.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ECArchive.xcodeproj; path = ../Frameworks/ECArchive.xcodeproj; sourceTree = "<group>"; };
 		B7170E881429F3B600DF7794 /* ECCodeIndexing.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ECCodeIndexing.xcodeproj; path = ../Frameworks/ECCodeIndexing.xcodeproj; sourceTree = "<group>"; };
 		B7170E8B1429F3B600DF7794 /* ECFoundation.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ECFoundation.xcodeproj; path = ../Frameworks/ECFoundation.xcodeproj; sourceTree = "<group>"; };
@@ -396,6 +399,8 @@
 				B702321114345B5B006D23F7 /* ACHistoryItem.m */,
 				B702320114345B5A006D23F7 /* ACBookmark.h */,
 				B702320214345B5A006D23F7 /* ACBookmark.m */,
+				B7107AEC143A32E500827FD2 /* ACURLWrapper.h */,
+				B7107AED143A32E500827FD2 /* ACURLWrapper.m */,
 				B701291F143759010070CCDF /* ACFileDocument.h */,
 				B7012920143759010070CCDF /* ACFileDocument.m */,
 			);
@@ -969,6 +974,7 @@
 				B702321214345B5B006D23F7 /* ACHistoryItem.m in Sources */,
 				B71A1DE71435112700672F65 /* ACNewFilePopoverController.m in Sources */,
 				B7012921143759020070CCDF /* ACFileDocument.m in Sources */,
+				B7107AEE143A32E500827FD2 /* ACURLWrapper.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

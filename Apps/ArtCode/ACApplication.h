@@ -24,4 +24,6 @@
 
 - (NSURL *)projectsDirectory;
 
+- (NSString *)pathRelativeToProjectsDirectory:(NSURL *)fileURL;
+
 @end
