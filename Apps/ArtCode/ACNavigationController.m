@@ -88,8 +88,6 @@ static CGFloat _buttonWidth = 75.0;
         return;
     [self.jumpBar.textElement resignFirstResponder];
     self.jumpBar.textElement.delegate = nil;
-    [self.buttonTools removeFromSuperview];
-    self.buttonTools = nil;
     [self willChangeValueForKey:@"contentViewController"];
     if (_contentViewController)
     {
@@ -98,6 +96,8 @@ static CGFloat _buttonWidth = 75.0;
         if (self.isViewLoaded && self.view.window)
             [_contentViewController viewWillDisappear:NO];
         [_contentViewController.view removeFromSuperview];
+        [self.buttonTools removeFromSuperview];
+        self.buttonTools = nil;
         if (self.isViewLoaded && self.view.window)
             [_contentViewController viewDidDisappear:NO];
         [_contentViewController removeFromParentViewController];
@@ -285,7 +285,6 @@ static CGFloat _buttonWidth = 75.0;
                 codeFileController.tab = self.tab;
             }
         }
-        [self.jumpBar setJumpPath:[self.tab.application pathRelativeToProjectsDirectory:currentURL] animated:YES];
     }
     else
         [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
@@ -308,6 +307,8 @@ static CGFloat _buttonWidth = 75.0;
     [self.contentView addSubview:self.contentViewController.view];
     self.contentViewController.view.frame = self.contentView.bounds;
     self.contentViewController.view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    if (self.buttonTools)
+        [self.topBarView addSubview:self.buttonTools];
     if (self.view.window)
         [self.contentViewController viewDidAppear:NO];
 
@@ -353,6 +354,7 @@ static CGFloat _buttonWidth = 75.0;
 //    }
     // Setup jump bar filter field
     self.jumpBar.textElement.delegate = [_contentViewController respondsToSelector:@selector(delegateForFilterField:)] ? [_contentViewController delegateForFilterField:self.jumpBar.textElement] : nil;
+    [self.jumpBar setJumpPath:[self.tab.application pathRelativeToProjectsDirectory:self.tab.currentURL] animated:YES];
 }
 
 #pragma mark - View lifecycle
@@ -365,8 +367,6 @@ static CGFloat _buttonWidth = 75.0;
     
     if (self.topBarView)
         [self.view addSubview:self.topBarView];
-    if (self.buttonTools)
-        [self.topBarView addSubview:self.buttonTools];
     if (self.jumpBar)
         [self.topBarView addSubview:self.jumpBar];
     if (self.buttonEdit)
