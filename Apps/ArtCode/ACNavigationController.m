@@ -371,8 +371,11 @@ static CGFloat _buttonWidth = 75.0;
 - (void)viewDidUnload
 {
     popoverController = nil;
-    [self setJumpBar:nil];
-    [self setTopBarView:nil];
+    self.jumpBar = nil;
+    self.buttonTools = nil;
+    self.buttonEdit = nil;
+    self.topBarView = nil;
+    self.contentView = nil;
     [super viewDidUnload];
 }
 
@@ -390,6 +393,7 @@ static CGFloat _buttonWidth = 75.0;
     self.jumpBar = nil;
     self.buttonTools = nil;
     self.buttonEdit = nil;
+    self.contentView = nil;
 }
 
 #pragma mark - Bar Methods
