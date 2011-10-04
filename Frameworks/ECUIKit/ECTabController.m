@@ -315,6 +315,9 @@ static void init(ECTabController *self)
         toViewController = [orderedChildViewControllers objectAtIndex:index];
     }
     
+    if (!self.isViewLoaded || self.view.window == nil)
+        return YES;
+    
     if (abs(selectedViewControllerIndex - (NSInteger)index) <= 1)
     {
         // Scroll if adiacent tab
@@ -431,8 +434,10 @@ static void init(ECTabController *self)
         {
             if (viewController.view.superview == nil)
             {
+                [viewController viewWillAppear:NO];
                 [self.contentScrollView addSubview:viewController.view];
                 viewController.view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+                [viewController viewDidAppear:NO];
             }
             else
             {
@@ -441,7 +446,9 @@ static void init(ECTabController *self)
         }
         else if (viewController.isViewLoaded)
         {
+            [viewController viewWillDisappear:NO];
             [viewController.view removeFromSuperview];
+            [viewController viewDidDisappear:NO];
         }
     }];
 }
