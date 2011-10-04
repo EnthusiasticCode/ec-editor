@@ -362,6 +362,8 @@ static CGFloat _buttonWidth = 75.0;
         [self.topBarView addSubview:self.jumpBar];
     if (self.buttonEdit)
         [self.topBarView addSubview:self.buttonEdit];
+    if (self.contentView)
+        [self.view addSubview:self.contentView];
     if (self.contentViewController)
         [self loadContentView];
 }
