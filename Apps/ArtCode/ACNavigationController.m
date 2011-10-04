@@ -159,7 +159,7 @@ static CGFloat _buttonWidth = 75.0;
         return nil;
     if (!_jumpBar)
     {
-        _jumpBar = [[ECJumpBar alloc] initWithFrame:CGRectMake(self.buttonTools ? 0.0 : _buttonWidth + _buttonSpacing, _buttonSpacing, self.topBarView.bounds.size.width - _buttonSpacing * 2 - (self.buttonTools ? 0.0 : _buttonWidth + _buttonSpacing) - (self.buttonEdit ? 0.0 : _buttonWidth + _buttonSpacing), self.topBarView.bounds.size.height - _buttonSpacing * 2)];
+        _jumpBar = [[ECJumpBar alloc] initWithFrame:CGRectMake(self.buttonTools ? _buttonWidth + _buttonSpacing : 0.0, _buttonSpacing, self.topBarView.bounds.size.width - _buttonSpacing * 2 - (self.buttonTools ?_buttonWidth + _buttonSpacing : 0.0) - (self.buttonEdit ? _buttonWidth + _buttonSpacing : 0.0), self.topBarView.bounds.size.height - _buttonSpacing * 2)];
         _jumpBar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
         _jumpBar.delegate = self;
         [(UIButton *)_jumpBar.textElement.rightView addTarget:self action:@selector(jumpBarTextElementRightButtonAction:) forControlEvents:UIControlEventTouchUpInside];
@@ -360,8 +360,6 @@ static CGFloat _buttonWidth = 75.0;
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
-    // TODO create internal views if not connected in IB
     
     popoverController = [ECPopoverController new];
     
