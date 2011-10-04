@@ -227,6 +227,16 @@ static void init(ECTabController *self)
     _contentScrollView = nil;
 }
 
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    
+    if (selectedViewControllerIndex == NSNotFound && [orderedChildViewControllers count] > 0) {
+        selectedViewControllerIndex = 0;
+    }
+    [self scrollToSelectedViewControllerAnimated:animated];
+}
+
 // TODO: all messages automatically forwarded to child view controllers should be managed manually
 
 #pragma mark Handling rotation
