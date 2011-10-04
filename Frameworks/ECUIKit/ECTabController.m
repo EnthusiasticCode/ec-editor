@@ -259,7 +259,7 @@ static void init(ECTabController *self)
     [orderedChildViewControllers addObject:childController];
     
     // Add tab button
-    [self.tabBar addTabWithTitle:childController.navigationItem.title animated:animated];
+    [self.tabBar addTabWithTitle:childController.title animated:animated];
     
     // Set selection
     if (selectedViewControllerIndex == NSNotFound)

@@ -140,14 +140,14 @@
 		CD0DDA2014293E7300FE8B5B /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = CD0DDA1F14293E7300FE8B5B /* main.m */; };
 		CD0DDA2414293E7300FE8B5B /* ECSplitViewControllerTest_AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = CD0DDA2314293E7300FE8B5B /* ECSplitViewControllerTest_AppDelegate.m */; };
 		CD2A5FC9142A4A7E00A2CACD /* ECSplitViewControllerTest_Window.xib in Resources */ = {isa = PBXBuildFile; fileRef = CD2A5FC8142A4A7E00A2CACD /* ECSplitViewControllerTest_Window.xib */; };
-		CD2A5FCD142A4A9900A2CACD /* ECSplitViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = CD2A5FCB142A4A9900A2CACD /* ECSplitViewController.h */; };
+		CD2A5FCD142A4A9900A2CACD /* ECSplitViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = CD2A5FCB142A4A9900A2CACD /* ECSplitViewController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CD2A5FCE142A4A9900A2CACD /* ECSplitViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD2A5FCC142A4A9900A2CACD /* ECSplitViewController.m */; };
 		CD2A5FCF142A4A9900A2CACD /* ECSplitViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD2A5FCC142A4A9900A2CACD /* ECSplitViewController.m */; };
 		CD2A5FD0142A4A9900A2CACD /* ECSplitViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD2A5FCC142A4A9900A2CACD /* ECSplitViewController.m */; };
 		CD6B0F051434D43000049625 /* ECInverseCornerShapeView.h in Headers */ = {isa = PBXBuildFile; fileRef = CD6B0F031434D43000049625 /* ECInverseCornerShapeView.h */; };
 		CD6B0F061434D43000049625 /* ECInverseCornerShapeView.m in Sources */ = {isa = PBXBuildFile; fileRef = CD6B0F041434D43000049625 /* ECInverseCornerShapeView.m */; };
 		CD6B0F071434D43000049625 /* ECInverseCornerShapeView.m in Sources */ = {isa = PBXBuildFile; fileRef = CD6B0F041434D43000049625 /* ECInverseCornerShapeView.m */; };
-		CDBD28261435101B00E05F40 /* ECTabController.h in Headers */ = {isa = PBXBuildFile; fileRef = CDBD28241435101B00E05F40 /* ECTabController.h */; };
+		CDBD28261435101B00E05F40 /* ECTabController.h in Headers */ = {isa = PBXBuildFile; fileRef = CDBD28241435101B00E05F40 /* ECTabController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CDBD28271435101B00E05F40 /* ECTabController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDBD28251435101B00E05F40 /* ECTabController.m */; };
 		CDBD282E1435104F00E05F40 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B71709DC1428E68A00DF7794 /* UIKit.framework */; };
 		CDBD282F1435104F00E05F40 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B71709AF1428E3CD00DF7794 /* Foundation.framework */; };
@@ -922,14 +922,14 @@
 				B7170BB11428EB2500DF7794 /* ECTextPosition.h in Headers */,
 				B7170BB31428EB2500DF7794 /* ECTextRange.h in Headers */,
 				B7170BB51428EB2500DF7794 /* ECTextRenderer.h in Headers */,
+				CD2A5FCD142A4A9900A2CACD /* ECSplitViewController.h in Headers */,
+				CDBD28261435101B00E05F40 /* ECTabController.h in Headers */,
 				B7170BB71428EB2500DF7794 /* ECTextStyle.h in Headers */,
 				B7170BB91428EB2500DF7794 /* UIControl+BlockAction.h in Headers */,
 				B7170BBB1428EB2500DF7794 /* UIImage+BlockDrawing.h in Headers */,
 				B7170BBF1428EB2500DF7794 /* UIView+ReuseIdentifier.h in Headers */,
 				B71709DB1428E64F00DF7794 /* ECDebug.h in Headers */,
-				CD2A5FCD142A4A9900A2CACD /* ECSplitViewController.h in Headers */,
 				CD6B0F051434D43000049625 /* ECInverseCornerShapeView.h in Headers */,
-				CDBD28261435101B00E05F40 /* ECTabController.h in Headers */,
 				CD06BA5F1438640200295E5A /* ECCustomizableScrollView.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -57,7 +57,6 @@
 		CD7D2B4213C0D4F400B889EE /* ACToolPanelSegue.m in Sources */ = {isa = PBXBuildFile; fileRef = CD7D2B3C13C0D4F400B889EE /* ACToolPanelSegue.m */; };
 		CD7D2B4313C0D4F400B889EE /* ACToolTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = CD7D2B3E13C0D4F400B889EE /* ACToolTextField.m */; };
 		CD7D2B4813C0D55700B889EE /* ACFileTableController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD7D2B4713C0D55700B889EE /* ACFileTableController.m */; };
-		CD7D2B4B13C0D5B800B889EE /* MainStoryboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CD7D2B4913C0D5B800B889EE /* MainStoryboard.storyboard */; };
 		CD7D2B4E13C0D5FB00B889EE /* ToolPanelStoryboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CD7D2B4D13C0D5FB00B889EE /* ToolPanelStoryboard.storyboard */; };
 		CD8108D513E31A28000E1941 /* ACColorSelectionControl.m in Sources */ = {isa = PBXBuildFile; fileRef = CD8108D413E31A28000E1941 /* ACColorSelectionControl.m */; };
 		CD82554314224DA100B742AF /* ACFileTableController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CD82554214224DA100B742AF /* ACFileTableController.xib */; };
@@ -285,7 +284,6 @@
 		CD7D2B3E13C0D4F400B889EE /* ACToolTextField.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACToolTextField.m; sourceTree = "<group>"; };
 		CD7D2B4613C0D55700B889EE /* ACFileTableController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACFileTableController.h; sourceTree = "<group>"; };
 		CD7D2B4713C0D55700B889EE /* ACFileTableController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACFileTableController.m; sourceTree = "<group>"; };
-		CD7D2B4913C0D5B800B889EE /* MainStoryboard.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = MainStoryboard.storyboard; sourceTree = "<group>"; };
 		CD7D2B4D13C0D5FB00B889EE /* ToolPanelStoryboard.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = ToolPanelStoryboard.storyboard; sourceTree = "<group>"; };
 		CD8108D313E31A28000E1941 /* ACColorSelectionControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACColorSelectionControl.h; sourceTree = "<group>"; };
 		CD8108D413E31A28000E1941 /* ACColorSelectionControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACColorSelectionControl.m; sourceTree = "<group>"; };
@@ -555,7 +553,6 @@
 			children = (
 				B7AC172D14216CD4009E9205 /* NewFilePopover.storyboard */,
 				B7AC172E14216CD4009E9205 /* NewProjectPopover.storyboard */,
-				CD7D2B4913C0D5B800B889EE /* MainStoryboard.storyboard */,
 				CD7D2B4D13C0D5FB00B889EE /* ToolPanelStoryboard.storyboard */,
 			);
 			name = Storyboards;
@@ -893,7 +890,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				CD7D2AEE13C0CD2600B889EE /* InfoPlist.strings in Resources */,
-				CD7D2B4B13C0D5B800B889EE /* MainStoryboard.storyboard in Resources */,
 				CD7D2B4E13C0D5FB00B889EE /* ToolPanelStoryboard.storyboard in Resources */,
 				CDFF3DDF13C0D9BB00108DE2 /* toolBookmarksNote.png in Resources */,
 				CDFF3DE013C0D9BB00108DE2 /* toolBookmarksStar.png in Resources */,

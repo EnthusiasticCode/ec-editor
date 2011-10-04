@@ -392,7 +392,6 @@ static void init(ECTabBar *self)
 - (UIControl *)addTabWithTitle:(NSString *)title animated:(BOOL)animated
 {
     ECASSERT(delegate != nil);
-    ECASSERT(title != nil);
     
     NSUInteger newTabControlIndex = [tabControls count];
     if (delegateFlags.hasWillAddTabAtIndex
@@ -403,7 +402,7 @@ static void init(ECTabBar *self)
         tabControls = [NSMutableArray new];
     
     // Creating new tab control
-    UIControl *newTabControl = [delegate tabBar:self controlForTabWithTitle:title atIndex:newTabControlIndex];
+    UIControl *newTabControl = [delegate tabBar:self controlForTabWithTitle:(title ? title : @"") atIndex:newTabControlIndex];
     [tabControls addObject:newTabControl];
     
     // Assigning default tab control selection action

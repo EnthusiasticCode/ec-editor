@@ -11,6 +11,8 @@
 #import <ECFoundation/NSURL+ECAdditions.h>
 
 #import "AppStyle.h"
+#import <ECUIKit/ECSplitViewController.h>
+#import <ECUIKit/ECTabController.h>
 #import <ECUIKit/ECPopoverView.h>
 
 #import "ACNavigationController.h"
@@ -30,10 +32,14 @@
 
 @implementation ArtCodeAppDelegate
 
-@synthesize window;
+@synthesize window = _window;
+@synthesize splitViewController = _splitViewController, tabController = _tabController;
+@synthesize toolPanelController = _toolPanelController;
+
 @synthesize managedObjectContext = _managedObjectContext;
 @synthesize managedObjectModel = _managedObjectModel;
 @synthesize persistentStoreCoordinator = _persistentStoreCoordinator;
+
 @synthesize application = _application;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
@@ -91,14 +97,6 @@
     [closeButtonInTabBarAppearance setBackgroundImage:nil forState:UIControlStateHighlighted];    
     
     ////////////////////////////////////////////////////////////////////////////
-    // Adding tool panel
-//    UIStoryboard *toolPanelsStoryboard = [UIStoryboard storyboardWithName:@"ToolPanelStoryboard" bundle:[NSBundle mainBundle]];
-//    ACToolPanelController *toolPanelController = [toolPanelsStoryboard instantiateInitialViewController];
-    //
-//    navigationController.toolPanelController = toolPanelController;
-//    navigationController.toolPanelOnRight = YES;
-    
-    ////////////////////////////////////////////////////////////////////////////
     // Tools
     id buttonInToolFiltersView = [UIButton appearanceWhenContainedIn:[ACToolFiltersView class], nil];
     [buttonInToolFiltersView setBackgroundImage:[UIImage styleBackgroundImageWithColor:[UIColor styleForegroundColor] borderColor:[UIColor styleBackgroundColor] insets:UIEdgeInsetsMake(7, 3, 7, 3) arrowSize:CGSizeZero roundingCorners:UIRectCornerAllCorners] forState:UIControlStateNormal];
@@ -118,12 +116,30 @@
     [buttonIneditableTableCellDeleteContainer setTitleShadowColor:[UIColor styleForegroundColor] forState:UIControlStateNormal];
     
     ////////////////////////////////////////////////////////////////////////////
+    // Creating UI controllers
+    self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] applicationFrame]];
+    self.splitViewController = [[ECSplitViewController alloc] init];
+    self.tabController = [[ECTabController alloc] init];
+    self.toolPanelController = [[UIStoryboard storyboardWithName:@"ToolPanelStoryboard" bundle:nil] instantiateInitialViewController];
+    
+    ////////////////////////////////////////////////////////////////////////////
+    // Setup UI
+    self.window.rootViewController = self.splitViewController;
+    self.splitViewController.mainViewController = self.tabController;
+    self.splitViewController.sidebarViewController = self.toolPanelController;
 
+    ////////////////////////////////////////////////////////////////////////////
+    // Resume tabs
     if (![self.application.tabs count])
         [self.application insertTabAtIndex:0];
-    
-    navigationController.tab = [self.application.tabs objectAtIndex:0];
-    [window makeKeyAndVisible];
+    for (ACTab *tab in self.application.tabs)
+    {
+        ACNavigationController *navigationController = [[ACNavigationController alloc] init];
+        navigationController.tab = tab;
+        [self.tabController addChildViewController:navigationController];
+    }
+
+    [self.window makeKeyAndVisible];
     return YES;
 }
 
