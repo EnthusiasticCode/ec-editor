@@ -16,7 +16,7 @@
 
 @implementation ACEditorToolSelectionController
 
-@synthesize targetNavigationController, containerPopoverController;
+@synthesize /*targetNavigationController, */containerPopoverController;
 
 #pragma mark - View lifecycle
 
@@ -41,20 +41,20 @@
 
 - (IBAction)tabsAction:(id)sender 
 {
-    [targetNavigationController.tabNavigationController toggleTabBar:sender];
+//    [targetNavigationController.tabNavigationController toggleTabBar:sender];
     [containerPopoverController dismissPopoverAnimated:YES];
 }
 
 - (IBAction)showToolPanel:(id)sender
 {
-    [targetNavigationController showToolPanelAnimated:YES];
+//    [targetNavigationController showToolPanelAnimated:YES];
     
-    NSInteger tag = [sender tag];
-    NSArray *toolIdentifiers = targetNavigationController.toolPanelController.enabledToolControllerIdentifiers;
+//    NSInteger tag = [sender tag];
+//    NSArray *toolIdentifiers = targetNavigationController.toolPanelController.enabledToolControllerIdentifiers;
     
-    ECASSERT([toolIdentifiers count] > tag);
+//    ECASSERT([toolIdentifiers count] > tag);
     
-    [targetNavigationController.toolPanelController setSelectedViewControllerIdentifier:[toolIdentifiers objectAtIndex:tag] animated:YES];
+//    [targetNavigationController.toolPanelController setSelectedViewControllerIdentifier:[toolIdentifiers objectAtIndex:tag] animated:YES];
     
     [containerPopoverController dismissPopoverAnimated:YES];
 }

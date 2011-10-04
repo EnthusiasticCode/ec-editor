@@ -18,9 +18,6 @@
 /// When implemented, create a new view controller that responds to the protocol methods.
 + (id)newNavigationTargetController;
 
-/// Makes the target open the given URL.
-- (void)openURL:(NSURL *)url;
-
 /// Indicates if the tab bar can be displayed when the target is in foreground.
 - (BOOL)enableTabBar;
 

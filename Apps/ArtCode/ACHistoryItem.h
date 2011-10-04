@@ -6,14 +6,14 @@
 //  Copyright (c) 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
-#import <CoreData/CoreData.h>
+#import "ACURLWrapper.h"
 
-@class ACTab;
+@class ACTab, ACApplication;
 
-@interface ACHistoryItem : NSManagedObject
+@interface ACHistoryItem : ACURLWrapper
 
-@property (nonatomic, strong) NSURL * URL;
 @property (nonatomic, strong) ACTab *tab;
+
+@property (nonatomic, strong, readonly) ACApplication *application;
 
 @end

@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B7012971143860490070CCDF /* ECDirectoryPresenter.h in Headers */ = {isa = PBXBuildFile; fileRef = B701296F143860490070CCDF /* ECDirectoryPresenter.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B7012972143860490070CCDF /* ECDirectoryPresenter.m in Sources */ = {isa = PBXBuildFile; fileRef = B7012970143860490070CCDF /* ECDirectoryPresenter.m */; };
 		B71707481428D30500DF7794 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B71707471428D30500DF7794 /* Foundation.framework */; };
 		B71707561428D30500DF7794 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B71707551428D30500DF7794 /* SenTestingKit.framework */; };
 		B71707591428D30500DF7794 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B71707471428D30500DF7794 /* Foundation.framework */; };
@@ -108,6 +110,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		B701296F143860490070CCDF /* ECDirectoryPresenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECDirectoryPresenter.h; sourceTree = "<group>"; };
+		B7012970143860490070CCDF /* ECDirectoryPresenter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECDirectoryPresenter.m; sourceTree = "<group>"; };
 		B71707441428D30500DF7794 /* libECFoundation.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libECFoundation.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		B71707471428D30500DF7794 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		B717074B1428D30500DF7794 /* ECFoundation-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ECFoundation-Prefix.pch"; sourceTree = "<group>"; };
@@ -569,6 +573,8 @@
 		B7C9A83E142BAFF7009D8FF3 /* File Coordination */ = {
 			isa = PBXGroup;
 			children = (
+				B701296F143860490070CCDF /* ECDirectoryPresenter.h */,
+				B7012970143860490070CCDF /* ECDirectoryPresenter.m */,
 				B7C9A83F142BB046009D8FF3 /* ECItemObserver.h */,
 				B7C9A840142BB046009D8FF3 /* ECItemObserver.m */,
 			);
@@ -590,6 +596,7 @@
 				B71707751428D50000DF7794 /* ECDebug.h in Headers */,
 				B717078C1428D52F00DF7794 /* MurmurHash3.h in Headers */,
 				B717078F1428D52F00DF7794 /* pstdint.h in Headers */,
+				B7012971143860490070CCDF /* ECDirectoryPresenter.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -696,6 +703,7 @@
 				B717078B1428D52F00DF7794 /* MurmurHash3.c in Sources */,
 				B717078E1428D52F00DF7794 /* NSTimer+block.m in Sources */,
 				B7C9A842142BB046009D8FF3 /* ECItemObserver.m in Sources */,
+				B7012972143860490070CCDF /* ECDirectoryPresenter.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

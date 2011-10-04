@@ -19,7 +19,7 @@
 @property (weak, nonatomic) ECPopoverController *containerPopoverController;
 
 /// THe navigation controller to control.
-@property (weak, nonatomic) ACNavigationController *targetNavigationController;
+//@property (weak, nonatomic) ACNavigationController *targetNavigationController;
 
 - (IBAction)tabsAction:(id)sender;
 - (IBAction)showToolPanel:(id)sender;

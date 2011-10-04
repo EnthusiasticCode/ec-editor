@@ -9,75 +9,213 @@
 #import <QuartzCore/QuartzCore.h>
 #import <ECUIKit/ECPopoverController.h>
 #import "AppStyle.h"
-#import "ACURL.h"
 #import "ACNavigationController.h"
 
 #import "ACJumpBarTextField.h"
 #import "ACPopoverHistoryToolController.h"
+#import "ACProjectTableController.h"
 #import "ACFileTableController.h"
+#import "ACCodeFileController.h"
 
-#import <ECUIKit/ECTabBar.h>
-#import <ECUIKit/ECSwipeGestureRecognizer.h>
-#import "ACTabController.h"
 #import "ACTab.h"
+#import "ACApplication.h"
 
-#import <ECUIKit/ECInstantGestureRecognizer.h>
-#import "ACToolPanelController.h"
-#import "ACToolController.h"
+static void *contentViewControllerEditingObservingContext;
+static void *tabCurrentURLObservingContext;
 
-#import <ECUIKit/ECBezelAlert.h>
-
-@implementation ACNavigationController {
-@private
+@interface ACNavigationController ()
+{
     ECPopoverController *popoverController;
     
     // Jump Bar
     UILongPressGestureRecognizer *jumpBarElementLongPressRecognizer;
     ACPopoverHistoryToolController *popoverHistoryToolController;
     ACFileTableController *popoverBrowseFileToolController;
-    
-    // Tool panel recognizers
-    UISwipeGestureRecognizer *toolPanelLeftGestureRecognizer, *toolPanelRightGestureRecognizer;
-    ECInstantGestureRecognizer *toolPanelDismissGestureRecognizer;
-    
-    // Bezel current page
-    UIPageControl *tabPageControl;
-    UIViewController *tabPageControlController;
 }
+@property (nonatomic, strong) UIViewController *contentViewController;
+@end
+
+@implementation ACNavigationController
 
 #pragma mark - Properties
 
 @synthesize topBarView, jumpBar, buttonEdit, buttonTools;
-@synthesize toolPanelController, toolPanelEnabled, toolPanelOnRight;
-@synthesize tabNavigationController, application = _application;
+@synthesize tab = _tab;
+@synthesize contentViewController = _contentViewController;
+@synthesize contentView = _contentView;
 
-- (void)setToolPanelEnabled:(BOOL)enabled
++ (NSSet *)keyPathsForValuesAffectingEditing
 {
-    if (enabled == toolPanelEnabled)
+    return [NSSet setWithObject:@"contentViewController.editing"];
+}
+
+- (void)setEditing:(BOOL)editing animated:(BOOL)animated
+{
+    [self.contentViewController setEditing:editing animated:animated];
+}
+
+- (void)setTab:(ACTab *)tab
+{
+    if (tab == _tab)
         return;
+    [self willChangeValueForKey:@"tab"];
+    [_tab removeObserver:self forKeyPath:@"currentURL" context:&tabCurrentURLObservingContext];
+    _tab = tab;
+    [_tab addObserver:self forKeyPath:@"currentURL" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial context:&tabCurrentURLObservingContext];
+    [self didChangeValueForKey:@"tab"];
+}
+
+- (void)setContentViewController:(UIViewController<ACNavigationTarget> *)contentViewController
+{
+    if (contentViewController == _contentViewController)
+        return;
+    [self willChangeValueForKey:@"contentViewController"];
+    [_contentViewController removeObserver:self forKeyPath:@"editing" context:&contentViewControllerEditingObservingContext];
+
+    UIViewController *oldViewController = _contentViewController;
     
-    toolPanelEnabled = enabled;
+    [oldViewController willMoveToParentViewController:nil];
+    [contentViewController willMoveToParentViewController:self];
+    [oldViewController viewWillDisappear:NO];
+    if (self.isViewLoaded && self.view.window)
+        [contentViewController viewWillAppear:NO];
     
-    toolPanelLeftGestureRecognizer.enabled = enabled;
-    toolPanelRightGestureRecognizer.enabled = enabled;
+    [oldViewController.view removeFromSuperview];
+    [oldViewController removeFromParentViewController];
+    if (contentViewController)
+    {
+        [self addChildViewController:contentViewController];
+        [self.contentView addSubview:contentViewController.view];
+        contentViewController.view.frame = self.contentView.bounds;
+        contentViewController.view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    }
     
-    if (!toolPanelEnabled)
-        [self hideToolPanelAnimated:NO];
+    [oldViewController viewDidDisappear:NO];
+    [oldViewController didMoveToParentViewController:nil];
+    [contentViewController didMoveToParentViewController:self];
+    [contentViewController viewDidAppear:NO];
+    
+    _contentViewController = contentViewController;
+    [_contentViewController addObserver:self forKeyPath:@"editing" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial context:&contentViewControllerEditingObservingContext];
+
+    // Layou top bar with tool button
+    UIButton *newToolButton = nil;
+    if ([_contentViewController respondsToSelector:@selector(toolButton)])
+        newToolButton = [_contentViewController toolButton];
+    if (newToolButton != buttonTools)
+    {
+        CGRect bounds = topBarView.bounds;
+        CGRect newToolButtonFrame = CGRectMake(7, 7, 75, 30);
+        newToolButton.frame = newToolButtonFrame;
+        if (buttonTools == nil)
+        {
+            // Animate jump bar and than fade in new button
+            [UIView animateWithDuration:STYLE_ANIMATION_DURATION animations:^{
+                jumpBar.frame = CGRectMake(CGRectGetMaxX(newToolButtonFrame) + 7, 7, bounds.size.width - (7 + 75 + 7) * 2, 30);
+            } completion:^(BOOL finished) {
+                buttonTools = newToolButton;
+                [topBarView addSubview:buttonTools];
+                buttonTools.alpha = 0;
+                [UIView animateWithDuration:STYLE_ANIMATION_DURATION animations:^{
+                    buttonTools.alpha = 1;
+                }];
+            }];
+        }
+        else if (newToolButton == nil)
+        {
+            // Fade out current button and resize jump bar
+            [UIView animateWithDuration:STYLE_ANIMATION_DURATION animations:^{
+                buttonTools.alpha = 0;
+            } completion:^(BOOL finished) {
+                [buttonTools removeFromSuperview];
+                buttonTools = nil;
+                [UIView animateWithDuration:STYLE_ANIMATION_DURATION animations:^{
+                    jumpBar.frame = CGRectMake(7, 7, bounds.size.width - (7 + 75 + 7 + 7), 30);
+                }];
+            }];
+        }
+        else
+        {
+            [UIView transitionFromView:buttonTools toView:newToolButton duration:STYLE_ANIMATION_DURATION options:UIViewAnimationOptionTransitionCrossDissolve completion:^(BOOL finished) {
+                buttonTools = newToolButton;
+            }];
+        }
+    }
+    // Setup jump bar filter field
+    [jumpBar.textElement resignFirstResponder];
+    [(UIButton *)jumpBar.textElement.rightView removeTarget:nil action:NULL forControlEvents:UIControlEventAllEvents];
+    [(UIButton *)jumpBar.textElement.rightView addTarget:self action:@selector(jumpBarTextElementRightButtonAction:) forControlEvents:UIControlEventTouchUpInside];
+    jumpBar.textElement.delegate = [_contentViewController respondsToSelector:@selector(delegateForFilterField:)] ? [_contentViewController delegateForFilterField:jumpBar.textElement] : nil; 
+
+    [self didChangeValueForKey:@"contentViewController"];
+}
+
+#pragma mark - KVO
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    if (context == &contentViewControllerEditingObservingContext)
+    {
+        self.buttonEdit.selected = [[change objectForKey:NSKeyValueChangeNewKey] boolValue];
+    }
+    else if (context == &tabCurrentURLObservingContext)
+    {
+        NSURL *currentURL = self.tab.currentURL;
+        NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] init];
+        __block BOOL currentURLIsEqualToProjectsDirectory = NO;
+        __block BOOL currentURLExists = NO;
+        __block BOOL currentURLIsDirectory = NO;
+        [fileCoordinator coordinateReadingItemAtURL:currentURL options:NSFileCoordinatorReadingResolvesSymbolicLink | NSFileCoordinatorReadingWithoutChanges error:NULL byAccessor:^(NSURL *newURL) {
+            currentURLIsEqualToProjectsDirectory = [newURL isEqual:[self.tab.application projectsDirectory]];
+            NSFileManager *fileManager = [[NSFileManager alloc] init];
+            currentURLExists = [fileManager fileExistsAtPath:[newURL path] isDirectory:&currentURLIsDirectory];
+        }];
+        if (currentURLIsEqualToProjectsDirectory)
+        {
+            if (![self.contentViewController isKindOfClass:[ACProjectTableController class]])
+                self.contentViewController = [[ACProjectTableController alloc] init];
+            ACProjectTableController *projectTableController = (ACProjectTableController *)self.contentViewController;
+            projectTableController.projectsDirectory = currentURL;
+            projectTableController.tab = self.tab;
+        }
+        else if (currentURLExists)
+        {
+            if (currentURLIsDirectory)
+            {
+                if (![self.contentViewController isKindOfClass:[ACFileTableController class]])
+                    self.contentViewController = [[ACFileTableController alloc] init];
+                ACFileTableController *fileTableController = (ACFileTableController *)self.contentViewController;
+                fileTableController.directory = currentURL;
+                fileTableController.tab = self.tab;
+            }
+            else
+            {
+                if (![self.contentViewController isKindOfClass:[ACCodeFileController class]])
+                    self.contentViewController = [[ACCodeFileController alloc] init];
+                ACCodeFileController *codeFileController = (ACCodeFileController *)self.contentViewController;
+                codeFileController.fileURL = currentURL;
+                codeFileController.tab = self.tab;
+            }
+        }
+        [self.jumpBar setJumpPath:[self.tab.application pathRelativeToProjectsDirectory:currentURL] animated:YES];
+    }
+    else
+        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+}
+
+#pragma mark - General methods
+
+- (void)dealloc
+{
+    [self.contentViewController removeObserver:self forKeyPath:@"editing" context:&contentViewControllerEditingObservingContext];
+    [self.tab removeObserver:self forKeyPath:@"currentURL" context:&tabCurrentURLObservingContext];
 }
 
 #pragma mark - View lifecycle
 
-- (void)didReceiveMemoryWarning
+- (void)viewDidLoad
 {
-    // Releases the view if it doesn't have a superview.
-    [super didReceiveMemoryWarning];
-    
-    // Release any cached data, images, etc that aren't in use.
-}
-
-- (void)loadView
-{
-    [super loadView];
+    [super viewDidLoad];
     
     // TODO create internal views if not connected in IB
     
@@ -90,6 +228,8 @@
     // Jump Bar
     jumpBar.delegate = self;
     jumpBar.minimumTextElementWidth = 0.4;
+    if (self.contentViewController.toolButton)
+        jumpBar.frame = CGRectMake(CGRectGetMaxX(self.contentViewController.toolButton.frame) + 7, 7, topBarView.bounds.size.width - (7 + 75 + 7) * 2, 30);
     // Text Element
     jumpBar.textElement = [ACJumpBarTextField new];
     jumpBar.textElement.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
@@ -122,42 +262,24 @@
     [backButton addGestureRecognizer:[[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(jumpBarBackLongAction:)]];
     jumpBar.backElement = backButton;
     //
-//    jumpBar.textElement.leftView = [[UIImageView alloc] initWithImage:[UIImage styleSymbolImageWithColor:[UIColor styleSymbolColorBlue] letter:@"M"]];
-//    jumpBar.textElement.leftViewMode = UITextFieldViewModeUnlessEditing;
-    
-    ////////////////////////////////////////////////////////////////////////////
-    // Tool panel gesture recognizer
-    toolPanelLeftGestureRecognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(handleToolPanelGesture:)];
-    toolPanelLeftGestureRecognizer.direction = UISwipeGestureRecognizerDirectionLeft;
-    toolPanelRightGestureRecognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(handleToolPanelGesture:)];
-    toolPanelRightGestureRecognizer.direction = UISwipeGestureRecognizerDirectionRight;
-    [self.view addGestureRecognizer:toolPanelLeftGestureRecognizer];
-    [self.view addGestureRecognizer:toolPanelRightGestureRecognizer];
-    toolPanelLeftGestureRecognizer.enabled = toolPanelEnabled;
-    toolPanelRightGestureRecognizer.enabled = toolPanelEnabled;
-    
-    ////////////////////////////////////////////////////////////////////////////
-    // Tab controller
-    if (!tabNavigationController)
-        tabNavigationController = [ACTabNavigationController new];
-    tabNavigationController.delegate = self;
-    [self addChildViewController:tabNavigationController];
-    [self.view addSubview:tabNavigationController.view];
-    CGRect tabControllerFrame = self.view.bounds;
-    tabControllerFrame.origin.y = 45;
-    tabControllerFrame.size.height -= 45;
-    tabNavigationController.view.frame = tabControllerFrame;
-    tabNavigationController.view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-    tabNavigationController.contentScrollView.frame = (CGRect){ CGPointZero, tabControllerFrame.size };
+    //    jumpBar.textElement.leftView = [[UIImageView alloc] initWithImage:[UIImage styleSymbolImageWithColor:[UIColor styleSymbolColorBlue] letter:@"M"]];
+    //    jumpBar.textElement.leftViewMode = UITextFieldViewModeUnlessEditing;
+    if (self.contentViewController)
+    {
+        self.contentViewController.view.frame = self.contentView.bounds;
+        self.contentViewController.view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+        if (self.view.window)
+            [self.contentViewController viewWillAppear:NO];
+        [self.contentView addSubview:self.contentViewController.view];
+        if (self.view.window)
+            [self.contentViewController viewDidAppear:NO];
+    }
 }
 
 - (void)viewDidUnload
 {
     popoverController = nil;
     [self setJumpBar:nil];
-    toolPanelLeftGestureRecognizer = nil;
-    toolPanelRightGestureRecognizer = nil;
-    [self setTabNavigationController:nil];
     [self setTopBarView:nil];
     [super viewDidUnload];
 }
@@ -169,23 +291,16 @@
 
 #pragma mark - Bar Methods
 
-- (void)setEditing:(BOOL)editing animated:(BOOL)animated
-{
-    buttonEdit.selected = editing;
-    [tabNavigationController setEditing:editing animated:animated];
-}
-
 - (IBAction)editButtonAction:(id)sender
 {
-    BOOL editing = !tabNavigationController.isEditing;
-    [self setEditing:editing animated:YES];
+    [self.contentViewController setEditing:!self.contentViewController.editing animated:YES];
 }
 
 #pragma mark - JumpBar Methods
 
 - (void)jumpBarBackAction:(id)sender
 {
-    [tabNavigationController.currentTabController.tab moveBackInHistory];
+    [self.tab moveBackInHistory];
 }
 
 - (void)jumpBarBackLongAction:(UILongPressGestureRecognizer *)recognizer
@@ -197,8 +312,8 @@
         {
             popoverHistoryToolController = [[ACPopoverHistoryToolController alloc] initWithStyle:UITableViewStylePlain];
         }
-        popoverHistoryToolController.contentSizeForViewInPopover = CGSizeMake(300, MIN(439, [tabNavigationController.currentTabController.tab.historyItems count] * 44 - 1));
-        popoverHistoryToolController.tab = tabNavigationController.currentTabController.tab;
+        popoverHistoryToolController.contentSizeForViewInPopover = CGSizeMake(300, MIN(439, [self.tab.historyItems count] * 44 - 1));
+        popoverHistoryToolController.tab = self.tab;
         
         // Present popover
         popoverController.contentViewController = popoverHistoryToolController;
@@ -217,20 +332,21 @@
     }
     
     // Setup file browser
-    [popoverBrowseFileToolController openURL:[NSURL ACURLWithPath:[jumpBar jumpPathUpThroughElement:sender]]];
+#warning update following line to new architecture
+    //    [popoverBrowseFileToolController openURL:[NSURL ACURLWithPath:[jumpBar jumpPathUpThroughElement:sender]]];
     // TODO!!! the select row of the controller should not change the parent acnavigationcotnroller pushURL...
     
     popoverController.contentViewController = popoverBrowseFileToolController;
     popoverController.automaticDismiss = YES;
     [popoverController presentPopoverFromRect:[sender frame] inView:jumpBar permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
     
-//    [jumpBar popThroughJumpElement:sender animated:YES];
+    //    [jumpBar popThroughJumpElement:sender animated:YES];
 }
 
 - (void)jumpBarElementLongAction:(UILongPressGestureRecognizer *)recognizer
 {
     if (recognizer.state == UIGestureRecognizerStateBegan) {
-//        recognizer.view
+        //        recognizer.view
     }
 }
 
@@ -280,243 +396,6 @@
 - (NSString *)jumpBar:(ECJumpBar *)jumpBar pathComponentForJumpElement:(UIView *)jumpElement index:(NSUInteger)elementIndex
 {
     return [(UIButton *)jumpElement currentTitle];
-}
-
-#pragma mark - Navigation Methods
-
-- (void)pushURL:(NSURL *)url
-{
-    [tabNavigationController.currentTabController.tab pushURL:url];
-}
-
-#pragma mark - Tab Navigation Controller Delegate Method
-
-- (BOOL)tabNavigationController:(ACTabNavigationController *)controller willRemoveTabController:(ACTabController *)tabController
-{
-    if (controller.tabCount == 1)
-    {
-        [[ECBezelAlert centerBezelAlert] addAlertMessageWithText:@"Can not stay without tabs!" image:nil displayImmediatly:YES];
-        return NO;
-    }
-    return YES;
-}
-
-- (void)tabNavigationController:(ACTabNavigationController *)controller didChangeCurrentTabController:(ACTabController *)tabController fromTabController:(ACTabController *)previousTabController
-{
-    ECASSERT([tabController.tabViewController conformsToProtocol:@protocol(ACNavigationTarget)]);
-    
-    if (tabController != previousTabController && controller.tabCount > 1)
-    {
-        // Bezel alert with page indicator
-        if (tabPageControlController == nil)
-        {
-            tabPageControl = [UIPageControl new];
-            tabPageControlController = [UIViewController new];
-            tabPageControlController.view = tabPageControl;
-        }        
-        tabPageControl.numberOfPages = controller.tabCount;
-        tabPageControl.currentPage = tabController.position;
-        CGRect tabPageControlFrame = (CGRect){ CGPointZero, [tabPageControl sizeForNumberOfPages:controller.tabCount] };
-        tabPageControl.frame = tabPageControlFrame;
-        tabPageControlController.contentSizeForViewInPopover = CGSizeMake(tabPageControlFrame.size.width, 10);
-        [[ECBezelAlert bottomBezelAlert] addAlertMessageWithViewController:tabPageControlController displayImmediatly:YES];
-    }
-    
-    UIViewController<ACNavigationTarget> *target = (UIViewController<ACNavigationTarget> *)tabController.tabViewController;
-    
-    // Layou top bar with tool button
-    UIButton *newToolButton = nil;
-    if ([target respondsToSelector:@selector(toolButton)])
-        newToolButton = [target toolButton];
-    if (newToolButton != buttonTools)
-    {
-        CGRect bounds = topBarView.bounds;
-        CGRect newToolButtonFrame = CGRectMake(7, 7, 75, 30);
-        newToolButton.frame = newToolButtonFrame;
-        if (buttonTools == nil)
-        {
-            // Animate jump bar and than fade in new button
-            [UIView animateWithDuration:STYLE_ANIMATION_DURATION animations:^{
-                jumpBar.frame = CGRectMake(CGRectGetMaxX(newToolButtonFrame) + 7, 7, bounds.size.width - (7 + 75 + 7) * 2, 30);
-            } completion:^(BOOL finished) {
-                buttonTools = newToolButton;
-                [topBarView addSubview:buttonTools];
-                buttonTools.alpha = 0;
-                [UIView animateWithDuration:STYLE_ANIMATION_DURATION animations:^{
-                    buttonTools.alpha = 1;
-                }];
-            }];
-        }
-        else if (newToolButton == nil)
-        {
-            // Fade out current button and resize jump bar
-            [UIView animateWithDuration:STYLE_ANIMATION_DURATION animations:^{
-                buttonTools.alpha = 0;
-            } completion:^(BOOL finished) {
-                [buttonTools removeFromSuperview];
-                buttonTools = nil;
-                [UIView animateWithDuration:STYLE_ANIMATION_DURATION animations:^{
-                    jumpBar.frame = CGRectMake(7, 7, bounds.size.width - (7 + 75 + 7 + 7), 30);
-                }];
-            }];
-        }
-        else
-        {
-            [UIView transitionFromView:buttonTools toView:newToolButton duration:STYLE_ANIMATION_DURATION options:UIViewAnimationOptionTransitionCrossDissolve completion:^(BOOL finished) {
-                buttonTools = newToolButton;
-            }];
-        }
-    }
-    
-    // Enabling tab bar
-    controller.tabBarEnabled = [target enableTabBar];
-    
-    // Enabling panels
-    NSMutableArray *enabledToolsIdentifiers = [NSMutableArray new];
-    for (NSString *toolIdentifier in toolPanelController.toolControllerIdentifiers)
-    {
-        if ([target enableToolPanelControllerWithIdentifier:toolIdentifier])
-            [enabledToolsIdentifiers addObject:toolIdentifier];
-    }
-    self.toolPanelEnabled = ([enabledToolsIdentifiers count] > 0);    
-    toolPanelController.enabledToolControllerIdentifiers = enabledToolsIdentifiers;
-    
-    // Setup jump bar
-    [jumpBar setJumpPath:tabController.tab.currentURL.path animated:YES];
-    [(UIButton *)jumpBar.backElement setEnabled:[tabController.tab.historyItems count] > 1];
-    
-    // Setup jump bar filter field
-    [jumpBar.textElement resignFirstResponder];
-    [(UIButton *)jumpBar.textElement.rightView removeTarget:nil action:NULL forControlEvents:UIControlEventAllEvents];
-    [(UIButton *)jumpBar.textElement.rightView addTarget:self action:@selector(jumpBarTextElementRightButtonAction:) forControlEvents:UIControlEventTouchUpInside];
-    jumpBar.textElement.delegate = [target respondsToSelector:@selector(delegateForFilterField:)] ? [target delegateForFilterField:jumpBar.textElement] : nil; 
-}
-
-#pragma mark - Tool Panel Management Methods
-
-- (void)showToolPanelAnimated:(BOOL)animated
-{
-    UIView *toolPanelView = toolPanelController.view;
-    if (!toolPanelController || toolPanelView.superview != nil)
-        return;
-    
-    if (!toolPanelDismissGestureRecognizer)
-    {
-        toolPanelDismissGestureRecognizer = [[ECInstantGestureRecognizer alloc] initWithTarget:self action:@selector(handleToolPanelGesture:)];
-        [toolPanelRightGestureRecognizer requireGestureRecognizerToFail:toolPanelLeftGestureRecognizer];
-        [toolPanelRightGestureRecognizer requireGestureRecognizerToFail:toolPanelRightGestureRecognizer];
-    }
-    
-    toolPanelView.autoresizingMask = UIViewAutoresizingFlexibleHeight | (toolPanelOnRight ? UIViewAutoresizingFlexibleLeftMargin : UIViewAutoresizingFlexibleRightMargin);
-    
-    CALayer *toolPanelLayer = toolPanelView.layer;
-    CGRect bounds = self.view.bounds;
-    CGFloat panelSize = 322 + toolPanelLayer.borderWidth;
-    CGRect panelFrame = (CGRect){
-        (toolPanelOnRight 
-         ? (CGPoint){ bounds.size.width - panelSize + toolPanelLayer.borderWidth, 0 } 
-         : CGPointMake(toolPanelLayer.borderWidth, 0)),
-        CGSizeMake(panelSize, bounds.size.height)
-    };
-    
-    [self.view addSubview:toolPanelView];
-    
-    // TODO add instant gesture recognizer to dismiss
-    if (animated)
-    {
-        toolPanelLayer.shadowOpacity = 0;
-        toolPanelLayer.shouldRasterize = YES; // TODO check for performance 
-        CGRect panelPreAnimationFrame = panelFrame;
-        panelPreAnimationFrame.origin.x += toolPanelOnRight ? panelFrame.size.width : -panelFrame.size.width;
-        toolPanelView.frame = panelPreAnimationFrame;
-        [UIView animateWithDuration:0.10 delay:0 options:UIViewAnimationCurveEaseInOut animations:^(void) {
-            toolPanelView.frame = panelFrame;
-        } completion:^(BOOL finished) {
-            toolPanelLayer.shouldRasterize = NO;
-            //
-            toolPanelLayer.shadowOffset = toolPanelOnRight ? CGSizeMake(-5, 0) : CGSizeMake(5, 0);
-            toolPanelLayer.shadowOpacity = 0.3;
-            //
-            [self.view addGestureRecognizer:toolPanelDismissGestureRecognizer];
-        }];
-    }
-    else
-    {
-        toolPanelView.frame = panelFrame;
-        toolPanelLayer.shadowOffset = toolPanelOnRight ? CGSizeMake(-5, 0) : CGSizeMake(5, 0);
-        toolPanelLayer.shadowOpacity = 0.3;
-        [self.view addGestureRecognizer:toolPanelDismissGestureRecognizer];
-    }
-}
-
-- (void)hideToolPanelAnimated:(BOOL)animated
-{
-    UIView *toolPanelView = toolPanelController.view;
-    if (!toolPanelController || toolPanelView.superview == nil)
-        return;
-    
-    [self.view removeGestureRecognizer:toolPanelDismissGestureRecognizer];
-    
-    CALayer *toolPanelLayer = toolPanelView.layer;
-    toolPanelLayer.shadowOpacity = 0;
-    
-    if (animated)
-    {
-        // TODO check for performance 
-        toolPanelLayer.shouldRasterize = YES;
-        CGRect panelFrame = toolPanelView.frame;
-        panelFrame.origin.x += toolPanelOnRight ? panelFrame.size.width : -panelFrame.size.width;
-        [UIView animateWithDuration:0.10 delay:0 options:UIViewAnimationCurveEaseInOut animations:^(void) {
-            toolPanelView.frame = panelFrame;
-        } completion:^(BOOL finished) {
-            toolPanelLayer.shouldRasterize = NO;
-            [toolPanelView removeFromSuperview];
-        }];
-    }
-    else
-    {
-        [toolPanelView removeFromSuperview];
-    }
-}
-
-#pragma mark -
-
-- (void)handleToolPanelGesture:(UIGestureRecognizer *)recognizer
-{
-    if (recognizer == toolPanelLeftGestureRecognizer)
-    {
-        if (toolPanelOnRight)
-            [self showToolPanelAnimated:YES];
-        else
-            [self hideToolPanelAnimated:YES];
-    }
-    else if (recognizer == toolPanelRightGestureRecognizer)
-    {
-        if (!toolPanelOnRight)
-            [self showToolPanelAnimated:YES];
-        else
-            [self hideToolPanelAnimated:YES];
-    }
-    else if (recognizer == toolPanelDismissGestureRecognizer)
-    {
-        CGPoint location = [recognizer locationInView:toolPanelController.view];
-        if ([toolPanelController.view pointInside:location withEvent:nil])
-            return;
-        [self hideToolPanelAnimated:YES];
-        [recognizer.view removeGestureRecognizer:recognizer];
-    }
-}
-
-@end
-
-@implementation UIViewController (ACNavigationController)
-
-- (ACNavigationController *)ACNavigationController
-{
-    UIViewController *ancestor = self.parentViewController;
-    while (ancestor && ![ancestor isKindOfClass:[ACNavigationController class]])
-        ancestor = [ancestor parentViewController];
-    return (ACNavigationController *)ancestor;
 }
 
 @end

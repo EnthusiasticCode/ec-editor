@@ -6,15 +6,13 @@
 //  Copyright (c) 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
-#import <CoreData/CoreData.h>
+#import "ACURLWrapper.h"
 
 @class ACApplication;
 
-@interface ACBookmark : NSManagedObject
+@interface ACBookmark : ACURLWrapper
 
 @property (nonatomic, strong) NSString * note;
-@property (nonatomic, strong) NSURL * URL;
 @property (nonatomic, strong) ACApplication *application;
 
 @end

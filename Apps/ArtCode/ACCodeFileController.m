@@ -7,8 +7,7 @@
 //
 
 #import "AppStyle.h"
-#import "ACState.h"
-#import "ACFile.h"
+#import "ACFileDocument.h"
 #import "ACCodeFileController.h"
 
 #import "ACNavigationController.h"
@@ -23,7 +22,8 @@
 #import <ECFoundation/NSTimer+block.h>
 #import <QuartzCore/QuartzCore.h>
 
-@implementation ACCodeFileController {
+@interface ACCodeFileController ()
+{
     ACEditorToolSelectionController *editorToolSelectionController;
     ECPopoverController *editorToolSelectionPopover;
     
@@ -32,8 +32,15 @@
     
     NSTimer *filterDebounceTimer;
 }
+@property (nonatomic, strong, readonly) ACFileDocument *document;
+@end
 
+@implementation ACCodeFileController
+
+@synthesize fileURL = _fileURL;
+@synthesize tab = _tab;
 @synthesize codeView;
+@synthesize document = _document;
 
 - (ECCodeView *)codeView
 {
@@ -90,25 +97,6 @@
     return [ACCodeFileController new];
 }
 
-- (void)openURL:(NSURL *)url
-{
-    // TODO handle error
-    ACFile *file = (ACFile *)[[ACState sharedState] objectWithURL:url];
-    
-    // TODO start loading animation
-    ACCodeIndexerDataSource *dataSource = (ACCodeIndexerDataSource *)self.codeView.datasource;
-    [file loadCodeUnitWithCompletionHandler:^(BOOL success) {
-        if (success)
-        {
-            dataSource.codeUnit = file.codeUnit;
-            [self.codeView updateAllText];
-        }
-        // TODO else report error
-    }];
-    
-    self.codeView.text = file.contentString;
-}
-
 - (BOOL)enableTabBar
 {
     return YES;
@@ -155,7 +143,7 @@
     {
         editorToolSelectionController = [[ACEditorToolSelectionController alloc] initWithNibName:@"ACEditorToolSelectionController" bundle:nil];
         editorToolSelectionController.contentSizeForViewInPopover = CGSizeMake(250, 284);
-        editorToolSelectionController.targetNavigationController = self.ACNavigationController;
+//        editorToolSelectionController.targetNavigationController = self.ACNavigationController;
     }
     
     if (!editorToolSelectionPopover)
@@ -174,6 +162,16 @@
 - (void)loadView
 {
     self.view = self.codeView;
+    // TODO start loading animation
+    ACCodeIndexerDataSource *dataSource = (ACCodeIndexerDataSource *)self.codeView.datasource;
+    [self.document loadCodeUnitWithCompletionHandler:^(ECCodeUnit *codeUnit) {
+        ECASSERT(codeUnit); // TODO: error handling
+        dataSource.codeUnit = codeUnit;
+        [self.codeView updateAllText];
+    }];
+    
+    self.codeView.text = self.document.contentString;
+
 }
 
 - (void)viewDidUnload
