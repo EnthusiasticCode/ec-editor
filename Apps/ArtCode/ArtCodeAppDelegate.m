@@ -22,9 +22,6 @@
 #import <ECUIKit/ECJumpBar.h>
 #import "ACToolFiltersView.h"
 
-#import "ACProjectTableController.h"
-#import "ACFileTableController.h"
-#import "ACCodeFileController.h"
 #import "ACEditableTableCell.h"
 
 #import "ACApplication.h"
@@ -45,8 +42,7 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     UIFont *defaultFont = [UIFont styleFontWithSize:14];    
-    ACNavigationController *navigationController = (ACNavigationController *)self.window.rootViewController;
-    
+
     ////////////////////////////////////////////////////////////////////////////
     // Generic text field
     id textFieldAppearance = [UITextField appearance];

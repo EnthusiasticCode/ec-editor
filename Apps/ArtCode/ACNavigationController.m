@@ -88,8 +88,6 @@ static CGFloat _buttonWidth = 75.0;
         return;
     [self.jumpBar.textElement resignFirstResponder];
     self.jumpBar.textElement.delegate = nil;
-    [self.buttonTools removeFromSuperview];
-    self.buttonTools = nil;
     [self willChangeValueForKey:@"contentViewController"];
     if (_contentViewController)
     {
@@ -98,6 +96,8 @@ static CGFloat _buttonWidth = 75.0;
         if (self.isViewLoaded && self.view.window)
             [_contentViewController viewWillDisappear:NO];
         [_contentViewController.view removeFromSuperview];
+        [self.buttonTools removeFromSuperview];
+        self.buttonTools = nil;
         if (self.isViewLoaded && self.view.window)
             [_contentViewController viewDidDisappear:NO];
         [_contentViewController removeFromParentViewController];
@@ -111,11 +111,14 @@ static CGFloat _buttonWidth = 75.0;
         [_contentViewController willMoveToParentViewController:self];
         [self addChildViewController:_contentViewController];
         [_contentViewController didMoveToParentViewController:self];
-        if (self.isViewLoaded && self.view.window)
-            [_contentViewController viewWillAppear:NO];
-        [self loadContentView];
-        if (self.isViewLoaded && self.view.window)
-            [_contentViewController viewDidAppear:NO];
+        if (self.isViewLoaded)
+        {
+            if (self.view.window)
+                [_contentViewController viewWillAppear:NO];
+            [self loadContentView];
+            if (self.view.window)
+                [_contentViewController viewDidAppear:NO];
+        }
         [_contentViewController addObserver:self forKeyPath:@"editing" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial context:&contentViewControllerEditingObservingContext];
     }
     
@@ -129,7 +132,7 @@ static CGFloat _buttonWidth = 75.0;
     if (!_contentView)
     {
         _contentView = [[UIView alloc] initWithFrame:CGRectMake(0.0, 44.0, self.view.bounds.size.width, self.view.bounds.size.height - 44.0)];
-        _contentView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+        _contentView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleBottomMargin;
         _contentView.backgroundColor = [UIColor styleBackgroundColor];
     }
     return _contentView;
@@ -152,9 +155,12 @@ static CGFloat _buttonWidth = 75.0;
 {
     if (!self.isViewLoaded)
         return nil;
+    if (!self.topBarView)
+        return nil;
     if (!_jumpBar)
     {
-        _jumpBar = [[ECJumpBar alloc] initWithFrame:CGRectMake(self.buttonTools ? 0.0 : _buttonWidth + _buttonSpacing, _buttonSpacing, self.topBarView.bounds.size.width - _buttonSpacing * 2 - (self.buttonTools ? 0.0 : _buttonWidth + _buttonSpacing) - (self.buttonEdit ? 0.0 : _buttonWidth + _buttonSpacing), self.topBarView.bounds.size.height - _buttonSpacing * 2)];
+        _jumpBar = [[ECJumpBar alloc] initWithFrame:CGRectMake(self.buttonTools ? _buttonWidth + _buttonSpacing : 0.0, _buttonSpacing, self.topBarView.bounds.size.width - _buttonSpacing * 2 - (self.buttonTools ?_buttonWidth + _buttonSpacing : 0.0) - (self.buttonEdit ? _buttonWidth + _buttonSpacing : 0.0), self.topBarView.bounds.size.height - _buttonSpacing * 2)];
+        _jumpBar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
         _jumpBar.delegate = self;
         [(UIButton *)_jumpBar.textElement.rightView addTarget:self action:@selector(jumpBarTextElementRightButtonAction:) forControlEvents:UIControlEventTouchUpInside];
         _jumpBar.minimumTextElementWidth = 0.4;
@@ -197,6 +203,8 @@ static CGFloat _buttonWidth = 75.0;
 {
     if (!self.isViewLoaded)
         return nil;
+    if (!self.topBarView)
+        return nil;
     if (!self.contentViewController || ![self.contentViewController respondsToSelector:@selector(toolButton)])
         return nil;
     if (!_buttonTools)
@@ -211,11 +219,14 @@ static CGFloat _buttonWidth = 75.0;
 {
     if (!self.isViewLoaded)
         return nil;
+    if (!self.topBarView)
+        return nil;
     if (!self.contentViewController)
         return nil;
     if (!_buttonEdit)
     {
         _buttonEdit = [[UIButton alloc] initWithFrame:CGRectMake(self.topBarView.bounds.size.width - _buttonSpacing - _buttonWidth, _buttonSpacing, _buttonWidth, self.topBarView.bounds.size.height - _buttonSpacing * 2)];
+        _buttonEdit.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin;
         [_buttonEdit setImage:[UIImage styleAddImageWithColor:[UIColor styleForegroundColor] shadowColor:[UIColor whiteColor]] forState:UIControlStateNormal];
         [_buttonEdit setTitle:@"Edit" forState:UIControlStateNormal];
         [_buttonEdit setTitleColor:[UIColor styleForegroundColor] forState:UIControlStateNormal];
@@ -274,7 +285,6 @@ static CGFloat _buttonWidth = 75.0;
                 codeFileController.tab = self.tab;
             }
         }
-        [self.jumpBar setJumpPath:[self.tab.application pathRelativeToProjectsDirectory:currentURL] animated:YES];
     }
     else
         [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
@@ -297,6 +307,8 @@ static CGFloat _buttonWidth = 75.0;
     [self.contentView addSubview:self.contentViewController.view];
     self.contentViewController.view.frame = self.contentView.bounds;
     self.contentViewController.view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    if (self.buttonTools)
+        [self.topBarView addSubview:self.buttonTools];
     if (self.view.window)
         [self.contentViewController viewDidAppear:NO];
 
@@ -342,6 +354,7 @@ static CGFloat _buttonWidth = 75.0;
 //    }
     // Setup jump bar filter field
     self.jumpBar.textElement.delegate = [_contentViewController respondsToSelector:@selector(delegateForFilterField:)] ? [_contentViewController delegateForFilterField:self.jumpBar.textElement] : nil;
+    [self.jumpBar setJumpPath:[self.tab.application pathRelativeToProjectsDirectory:self.tab.currentURL] animated:YES];
 }
 
 #pragma mark - View lifecycle
@@ -350,14 +363,10 @@ static CGFloat _buttonWidth = 75.0;
 {
     [super viewDidLoad];
     
-    // TODO create internal views if not connected in IB
-    
     popoverController = [ECPopoverController new];
     
     if (self.topBarView)
         [self.view addSubview:self.topBarView];
-    if (self.buttonTools)
-        [self.topBarView addSubview:self.buttonTools];
     if (self.jumpBar)
         [self.topBarView addSubview:self.jumpBar];
     if (self.buttonEdit)
@@ -371,8 +380,11 @@ static CGFloat _buttonWidth = 75.0;
 - (void)viewDidUnload
 {
     popoverController = nil;
-    [self setJumpBar:nil];
-    [self setTopBarView:nil];
+    self.jumpBar = nil;
+    self.buttonTools = nil;
+    self.buttonEdit = nil;
+    self.topBarView = nil;
+    self.contentView = nil;
     [super viewDidUnload];
 }
 
@@ -390,6 +402,7 @@ static CGFloat _buttonWidth = 75.0;
     self.jumpBar = nil;
     self.buttonTools = nil;
     self.buttonEdit = nil;
+    self.contentView = nil;
 }
 
 #pragma mark - Bar Methods
