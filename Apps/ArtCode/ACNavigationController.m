@@ -32,7 +32,6 @@ static CGFloat _buttonWidth = 75.0;
     ECPopoverController *popoverController;
     
     // Jump Bar
-    UILongPressGestureRecognizer *jumpBarElementLongPressRecognizer;
     ACPopoverHistoryToolController *popoverHistoryToolController;
     ACFileTableController *popoverBrowseFileToolController;
 }
@@ -438,7 +437,24 @@ static CGFloat _buttonWidth = 75.0;
     }
 }
 
-- (void)jumpBarElementAction:(id)sender
+// By default, when selected, the text element right button will remove the content of the field.
+- (void)jumpBarTextElementRightButtonAction:(UIButton *)sender
+{
+    if (sender.isSelected)
+    {
+        id<UITextFieldDelegate> del = self.jumpBar.textElement.delegate;
+        if (del && [del respondsToSelector:@selector(textField:shouldChangeCharactersInRange:replacementString:)])
+        {
+            if (![del textField:self.jumpBar.textElement shouldChangeCharactersInRange:NSMakeRange(0, [self.jumpBar.textElement.text length]) replacementString:@""])
+                return;
+        }
+        self.jumpBar.textElement.text = @"";
+    }
+}
+
+#pragma mark
+
+- (void)jumpBar:(ECJumpBar *)jumpBar didSelectJumpElement:(UIView *)sender atIndex:(NSUInteger)index
 {
     if (popoverBrowseFileToolController == nil)
     {
@@ -457,61 +473,6 @@ static CGFloat _buttonWidth = 75.0;
     [popoverController presentPopoverFromRect:[sender frame] inView:self.jumpBar permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
     
     //    [jumpBar popThroughJumpElement:sender animated:YES];
-}
-
-- (void)jumpBarElementLongAction:(UILongPressGestureRecognizer *)recognizer
-{
-    if (recognizer.state == UIGestureRecognizerStateBegan) {
-        //        recognizer.view
-    }
-}
-
-// By default, when selected, the text element right button will remove the content of the field.
-- (void)jumpBarTextElementRightButtonAction:(UIButton *)sender
-{
-    if (sender.isSelected)
-    {
-        id<UITextFieldDelegate> del = self.jumpBar.textElement.delegate;
-        if (del && [del respondsToSelector:@selector(textField:shouldChangeCharactersInRange:replacementString:)])
-        {
-            if (![del textField:self.jumpBar.textElement shouldChangeCharactersInRange:NSMakeRange(0, [self.jumpBar.textElement.text length]) replacementString:@""])
-                return;
-        }
-        self.jumpBar.textElement.text = @"";
-    }
-}
-
-#pragma mark -
-
-- (UIView *)jumpBar:(ECJumpBar *)bar elementForJumpPathComponent:(NSString *)pathComponent index:(NSUInteger)componentIndex
-{
-    static NSString *elementIdentifier = @"jumpBarElement";
-    
-    // TODO special case for componentIndex == NSNotFound as collapse element?
-    UIButton *button = (UIButton *)[bar dequeueReusableJumpElementWithIdentifier:elementIdentifier];
-    if (button == nil)
-    {
-        button = [UIButton new];
-        button.reuseIdentifier = elementIdentifier;
-        [button addTarget:self action:@selector(jumpBarElementAction:) forControlEvents:UIControlEventTouchUpInside];
-        // TODO move label settings in appearance when possble
-        button.titleLabel.font = [UIFont styleFontWithSize:14];
-        button.titleLabel.shadowOffset = CGSizeMake(0, 1);
-        button.titleEdgeInsets = UIEdgeInsetsMake(0, 15, 0, 10);
-        
-        if (jumpBarElementLongPressRecognizer == nil)
-            jumpBarElementLongPressRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(jumpBarElementLongAction:)];
-        [button addGestureRecognizer:jumpBarElementLongPressRecognizer];
-    }
-    
-    [button setTitle:pathComponent forState:UIControlStateNormal];
-    
-    return button;
-}
-
-- (NSString *)jumpBar:(ECJumpBar *)jumpBar pathComponentForJumpElement:(UIView *)jumpElement index:(NSUInteger)elementIndex
-{
-    return [(UIButton *)jumpElement currentTitle];
 }
 
 @end

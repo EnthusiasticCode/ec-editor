@@ -7,32 +7,20 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "UIView+ReuseIdentifier.h"
 
 @class ECJumpBar;
 
 @protocol ECJumpBarDelegate <NSObject>
-@required
-
-/// Ask the delegate for an element with the given path component that will be displayed in
-/// the provided index. The delegate sould use dequeueReusableJumpElementWithIdentifier: to
-/// see if an element is already created like in UITableView.
-/// Use UIView's reuseIdentifier addition property to set the reuse identifier of a newly
-/// created element.
-/// If index is NSNotFound, the collapse element should be returned.
-- (UIView *)jumpBar:(ECJumpBar *)jumpBar elementForJumpPathComponent:(NSString *)pathComponent index:(NSUInteger)componentIndex;
-
-/// Return the path component for the given element.
-/// If this methods return nil, the title or text property of the element will be used.
-- (NSString *)jumpBar:(ECJumpBar *)jumpBar pathComponentForJumpElement:(UIView *)jumpElement index:(NSUInteger)elementIndex;
-
 @optional
 
-// TODO see if use this method, it will introduce quite a lot of work
-//- (BOOL)jumpBar:(ECJumpBar *)jumpBar shouldResizeJumpElement:(UIView *)jumpElement index:(NSUInteger)elementIndex;
+/// This method is called when a jump element is selected by the user with a tap. If index is NSNotFound, the element represent the collapse element.
+- (void)jumpBar:(ECJumpBar *)jumpBar didSelectJumpElement:(UIView *)jumpElement atIndex:(NSUInteger)index;
+
+/// Inform the delegate of the newly created jump element. To be used for further customizations of the element.
+- (void)jumpBar:(ECJumpBar *)jumpBar didPushJumpElement:(UIView *)jumpElement atIndex:(NSUInteger)index;
 
 /// Return a value indicating if the given element can be collapsed.
-- (BOOL)jumpBar:(ECJumpBar *)jumpBar canCollapseJumpElement:(UIView *)jumpElement index:(NSUInteger)elementIndex;
+- (BOOL)jumpBar:(ECJumpBar *)jumpBar canCollapseJumpElementAtIndex:(NSUInteger)index;
 
 @end
 
@@ -70,15 +58,10 @@
 /// A \c UITextView used as text positioned in the remaining right space.
 @property (nonatomic, strong) UITextField *textElement;
 
-/// The element to use as a placeholder representing all collapsed elements.
-/// Default to an UIButton with "..." as title.
-@property (nonatomic, strong) UIView *collapseElement;
-
 #pragma mark Managing Jump Elements
 
 /// The jump elements array.
-@property (nonatomic, strong) NSArray *jumpElements;
-- (void)setJumpElements:(NSArray *)array animated:(BOOL)animated;
+@property (nonatomic, readonly, strong) NSArray *jumpElements;
 
 /// Add an element to the end of the jump bar stack.
 - (void)pushJumpElementWithPathComponent:(NSString *)pathComponent animated:(BOOL)animated;
@@ -87,12 +70,7 @@
 - (void)popJumpElementAnimated:(BOOL)animated;
 
 /// Remove an element and all it's descending elements.
-- (void)popThroughJumpElement:(UIView *)element animated:(BOOL)animated;
-
-#pragma mark Jump Elements Reuse
-
-/// Try to dequeue a previously used and popped element. This method may return nil.
-- (UIView *)dequeueReusableJumpElementWithIdentifier:(NSString *)identifier;
+- (void)popThroughJumpElementAtIndex:(NSUInteger)elementIndex animated:(BOOL)animated;
 
 #pragma mark Managing Elements via Jump Path
 
@@ -102,6 +80,11 @@
 - (void)setJumpPath:(NSString *)jumpPath animated:(BOOL)animated;
 
 /// Returns a jump path constructed from the first element up to the given element included.
-- (NSString *)jumpPathUpThroughElement:(UIView *)element;
+- (NSString *)jumpPathUpThroughElementAtIndex:(NSUInteger)elementIndex;
 
+@end
+
+
+/// A button used for the dynamic part of the jump bar. This class is intended to be used as an appearance selector.
+@interface ECJumpBarElementButton : UIButton
 @end
