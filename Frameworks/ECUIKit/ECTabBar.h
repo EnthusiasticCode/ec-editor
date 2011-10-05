@@ -11,12 +11,6 @@
 @class ECTabBar;
 
 @protocol ECTabBarDelegate <UIScrollViewDelegate>
-@required
-
-/// Create a new control to be used at tab control. This method should first try
-/// to use dequeueReusableTabControlWithIdentifier: to reuse an already created control.
-- (UIControl *)tabBar:(ECTabBar *)tabBar controlForTabWithTitle:(NSString *)title atIndex:(NSUInteger)tabIndex;
-
 @optional
 
 - (BOOL)tabBar:(ECTabBar *)tabBar willSelectTabControl:(UIControl *)tabControl atIndex:(NSUInteger)tabIndex;
@@ -53,23 +47,21 @@
 @property (nonatomic) CGSize additionalControlSize;
 @property (nonatomic) UIEdgeInsets additionalControlInsets;
 
-/// Returns a reusable tab control object located by its identifier.
-- (UIControl *)dequeueReusableTabControlWithIdentifier:(NSString *)reuseIdentifier;
-
 #pragma mark Managing Tabs
 
-@property (nonatomic, readonly, strong) NSArray *tabControls;
-
+@property (nonatomic, readonly) NSUInteger tabCount;
 @property (nonatomic) NSUInteger selectedTabIndex;
 - (void)setSelectedTabIndex:(NSUInteger)tabIndex animated:(BOOL)animated;
+- (void)addTabWithTitle:(NSString *)title animated:(BOOL)animated;
+- (void)removeTabAtIndex:(NSUInteger)tabIndex animated:(BOOL)animated;
+- (void)moveTabAtIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex animated:(BOOL)animated;
 
-@property (nonatomic, weak) UIControl *selectedTabControl;
-- (void)setSelectedTabControl:(UIControl *)tabControl animated:(BOOL)animated;
+@end
 
-- (UIControl *)addTabWithTitle:(NSString *)title animated:(BOOL)animated;
-- (void)removeTabControl:(UIControl *)tabControl animated:(BOOL)animated;
+/// Button used as a tab element. This class is intended to be used as an appearance selector.
+@interface ECTabBarButton : UIButton
+@end
 
-- (void)removeTabControlAtIndex:(NSUInteger)tabIndex animated:(BOOL)animated;
-- (void)moveTabControlAtIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex animated:(BOOL)animated;
-
+/// Button used as close button inside a tab button. This class is intended to be used as an appearance selector.
+@interface ECTabBarButtonCloseButton : UIButton
 @end

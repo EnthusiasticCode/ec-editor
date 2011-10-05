@@ -21,7 +21,7 @@ typedef void (^ScrollViewBlock)(UIScrollView *scrollView);
 @property (nonatomic, copy) ScrollViewBlock customLayoutSubviews;
 @end
 
-@implementation ECTabBar {
+@interface ECTabBar () {
 @private
     NSMutableArray *tabControls;
     NSMutableArray *reusableTabControls;
@@ -48,6 +48,19 @@ typedef void (^ScrollViewBlock)(UIScrollView *scrollView);
         unsigned int hasDidMoveTabControlFromIndexToIndex : 1;
     } delegateFlags;
 }
+
+@property (nonatomic, readonly, strong) NSArray *tabControls;
+@property (nonatomic, weak) UIControl *selectedTabControl;
+- (void)_setSelectedTabControl:(UIControl *)tabControl animated:(BOOL)animated;
+- (void)_removeTabControl:(UIControl *)tabControl animated:(BOOL)animated;
+
+- (UIControl *)_dequeueReusableTabControlWithIdentifier:(NSString *)reuseIdentifier;
+- (UIControl *)_controlForTabWithTitle:(NSString *)title atIndex:(NSUInteger)tabIndex;
+
+@end
+
+
+@implementation ECTabBar
 
 #pragma mark - Properties
 
@@ -276,97 +289,11 @@ static void init(ECTabBar *self)
     return self;
 }
 
-#pragma mark - Reusable Controls
-
-- (UIControl *)dequeueReusableTabControlWithIdentifier:(NSString *)reuseIdentifier
-{
-    ECASSERT(reuseIdentifier != nil);
-    UIControl *result = nil;
-    for (UIControl *control in reusableTabControls)
-    {
-        if ([reuseIdentifier isEqualToString:control.reuseIdentifier])
-        {
-            result = control;
-            break;
-        }
-    }
-    
-    if (result)
-        [reusableTabControls removeObject:result];
-    
-    return result;
-}
-
 #pragma mark - Managing Tabs
 
 - (NSUInteger)tabCount
 {
     return [tabControls count];
-}
-
-- (void)setSelectedTabControl:(UIControl *)tabControl
-{
-    [self setSelectedTabControl:tabControl animated:YES];
-}
-
-- (void)setSelectedTabControl:(UIControl *)tabControl animated:(BOOL)animated
-{
-    // Deselection
-    if (tabControl == nil)
-    {
-        [selectedTabControl setSelected:NO];
-        selectedTabControl = nil;
-        return;
-    }
-    
-    // Only scroll if already selected
-    if (tabControl == selectedTabControl)
-    {
-        CGRect selectedTabFrame = selectedTabControl.frame;
-        selectedTabFrame.origin.x -= tabControlInsets.left;
-        selectedTabFrame.size.width += tabControlInsets.left + tabControlInsets.right;
-        selectedTabFrame.origin.y = 0;
-        selectedTabFrame.size.height = 1;
-        [tabControlsContainerView scrollRectToVisible:selectedTabFrame animated:animated];
-        return;
-    }
-    
-    // Retrieve index
-    NSUInteger tabIndex = [tabControls indexOfObject:tabControl];
-    if (tabIndex == NSNotFound)
-        return;
-    
-    // Ask selection permission to delegate
-    if (delegateFlags.hasWillSelectTabControlAtIndex
-        && ![delegate tabBar:self willSelectTabControl:tabControl atIndex:tabIndex])
-        return;
-    
-    // Change selection
-    [selectedTabControl setSelected:NO];
-    selectedTabControl = tabControl; // TODO!!! make this weak
-    [selectedTabControl setSelected:YES];
-    
-    // Scroll to fully show tab
-    CGRect selectedTabFrame = selectedTabControl.frame;
-    selectedTabFrame.origin.x -= tabControlInsets.left;
-    selectedTabFrame.size.width += tabControlInsets.left + tabControlInsets.right;
-    selectedTabFrame.origin.y = 0;
-    selectedTabFrame.size.height = 1;
-    if (animated)
-    {
-        [UIView animateWithDuration:0.2 delay:0 options:UIViewAnimationOptionAllowUserInteraction animations:^(void) {
-            [tabControlsContainerView scrollRectToVisible:selectedTabFrame animated:NO];
-        } completion:^(BOOL finished) {
-            if (delegateFlags.hasDidSelectTabControlAtIndex)
-                [delegate tabBar:self didSelectTabControl:tabControl atIndex:tabIndex];
-        }];
-    }
-    else
-    {
-        [tabControlsContainerView scrollRectToVisible:selectedTabFrame animated:NO];
-        if (delegateFlags.hasDidSelectTabControlAtIndex)
-            [delegate tabBar:self didSelectTabControl:tabControl atIndex:tabIndex];
-    }
 }
 
 - (NSUInteger)selectedTabIndex
@@ -382,27 +309,26 @@ static void init(ECTabBar *self)
 - (void)setSelectedTabIndex:(NSUInteger)index animated:(BOOL)animated
 {
     if (index == NSNotFound)
-        [self setSelectedTabControl:nil animated:animated];
+        [self _setSelectedTabControl:nil animated:animated];
     
     ECASSERT(index < [tabControls count]);
     UIControl *tabControl = [tabControls objectAtIndex:index];
-    [self setSelectedTabControl:tabControl animated:animated];
+    [self _setSelectedTabControl:tabControl animated:animated];
 }
 
-- (UIControl *)addTabWithTitle:(NSString *)title animated:(BOOL)animated
+- (void)addTabWithTitle:(NSString *)title animated:(BOOL)animated
 {
-    ECASSERT(delegate != nil);
-    
     NSUInteger newTabControlIndex = [tabControls count];
     if (delegateFlags.hasWillAddTabAtIndex
         && ![delegate tabBar:self willAddTabAtIndex:newTabControlIndex])
-        return nil;
+        return;
     
     if (!tabControls)
         tabControls = [NSMutableArray new];
     
     // Creating new tab control
-    UIControl *newTabControl = [delegate tabBar:self controlForTabWithTitle:(title ? title : @"") atIndex:newTabControlIndex];
+    //UIControl *newTabControl = [delegate tabBar:self controlForTabWithTitle:(title ? title : @"") atIndex:newTabControlIndex];
+    UIControl *newTabControl = [self _controlForTabWithTitle:(title ? title : @"") atIndex:newTabControlIndex];
     [tabControls addObject:newTabControl];
     
     // Assigning default tab control selection action
@@ -434,68 +360,16 @@ static void init(ECTabBar *self)
                 [delegate tabBar:self didAddTabControl:newTabControl atIndex:newTabControlIndex];
         }];
     }
-    
-    return newTabControl;
 }
 
-- (void)removeTabControl:(UIControl *)tabControl animated:(BOOL)animated
-{
-    ECASSERT(tabControl != nil);
-    
-    NSUInteger tabIndex = [tabControls indexOfObject:tabControl];
-    ECASSERT(tabIndex != NSNotFound);
-    
-    if (delegateFlags.hasWillRemoveTabControlAtIndex
-        && ![delegate tabBar:self willRemoveTabControl:tabControl atIndex:tabIndex])
-        return;
-    
-    [tabControls removeObjectAtIndex:tabIndex];
-    
-    if (tabControl.reuseIdentifier)
-    {
-        if (!reusableTabControls)
-            reusableTabControls = [NSMutableArray new];
-        [reusableTabControls addObject:tabControl];
-    }
-    
-    if (animated)
-    {
-        tabControl.layer.shouldRasterize = YES;
-        [UIView animateWithDuration:.10 animations:^(void) {
-            tabControl.alpha = 0;
-        } completion:^(BOOL finished) {
-            tabControl.layer.shouldRasterize = NO;
-            [UIView animateWithDuration:.15 animations:^(void) {
-                [tabControlsContainerView layoutSubviews];
-            } completion:^(BOOL finished) {
-                tabControl.alpha = 1;
-                [tabControl removeFromSuperview];
-                tabControlsContainerView.contentSize = CGSizeMake(tabControlSize.width * [tabControls count], 1);
-                
-                if (delegateFlags.hasDidRemoveTabControlAtIndex)
-                    [delegate tabBar:self didRemoveTabControl:tabControl atIndex:tabIndex];
-            }];
-        }];
-    }
-    else
-    {
-        [tabControl removeFromSuperview];
-        
-        tabControlsContainerView.contentSize = CGSizeMake(tabControlSize.width * [tabControls count], 1);
-        
-        if (delegateFlags.hasDidRemoveTabControlAtIndex)
-            [delegate tabBar:self didRemoveTabControl:tabControl atIndex:tabIndex];
-    }
-}
-
-- (void)removeTabControlAtIndex:(NSUInteger)tabIndex animated:(BOOL)animated
+- (void)removeTabAtIndex:(NSUInteger)tabIndex animated:(BOOL)animated
 {
     ECASSERT(tabIndex < [tabControls count]);
     UIControl *tabControl = [tabControls objectAtIndex:tabIndex];
-    [self removeTabControl:tabControl animated:animated];
+    [self _removeTabControl:tabControl animated:animated];
 }
 
-- (void)moveTabControlAtIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex animated:(BOOL)animated
+- (void)moveTabAtIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex animated:(BOOL)animated
 {
     ECASSERT(fromIndex < [tabControls count]);
     ECASSERT(toIndex < [tabControls count]);
@@ -637,6 +511,168 @@ static void init(ECTabBar *self)
     }
 }
 
+#pragma mark - Private methods
+
+- (void)_setSelectedTabControl:(UIControl *)tabControl animated:(BOOL)animated
+{
+    // Deselection
+    if (tabControl == nil)
+    {
+        [selectedTabControl setSelected:NO];
+        selectedTabControl = nil;
+        return;
+    }
+    
+    // Only scroll if already selected
+    if (tabControl == selectedTabControl)
+    {
+        CGRect selectedTabFrame = selectedTabControl.frame;
+        selectedTabFrame.origin.x -= tabControlInsets.left;
+        selectedTabFrame.size.width += tabControlInsets.left + tabControlInsets.right;
+        selectedTabFrame.origin.y = 0;
+        selectedTabFrame.size.height = 1;
+        [tabControlsContainerView scrollRectToVisible:selectedTabFrame animated:animated];
+        return;
+    }
+    
+    // Retrieve index
+    NSUInteger tabIndex = [tabControls indexOfObject:tabControl];
+    if (tabIndex == NSNotFound)
+        return;
+    
+    // Ask selection permission to delegate
+    if (delegateFlags.hasWillSelectTabControlAtIndex
+        && ![delegate tabBar:self willSelectTabControl:tabControl atIndex:tabIndex])
+        return;
+    
+    // Change selection
+    [selectedTabControl setSelected:NO];
+    selectedTabControl = tabControl; // TODO!!! make this weak
+    [selectedTabControl setSelected:YES];
+    
+    // Scroll to fully show tab
+    CGRect selectedTabFrame = selectedTabControl.frame;
+    selectedTabFrame.origin.x -= tabControlInsets.left;
+    selectedTabFrame.size.width += tabControlInsets.left + tabControlInsets.right;
+    selectedTabFrame.origin.y = 0;
+    selectedTabFrame.size.height = 1;
+    if (animated)
+    {
+        [UIView animateWithDuration:0.2 delay:0 options:UIViewAnimationOptionAllowUserInteraction animations:^(void) {
+            [tabControlsContainerView scrollRectToVisible:selectedTabFrame animated:NO];
+        } completion:^(BOOL finished) {
+            if (delegateFlags.hasDidSelectTabControlAtIndex)
+                [delegate tabBar:self didSelectTabControl:tabControl atIndex:tabIndex];
+        }];
+    }
+    else
+    {
+        [tabControlsContainerView scrollRectToVisible:selectedTabFrame animated:NO];
+        if (delegateFlags.hasDidSelectTabControlAtIndex)
+            [delegate tabBar:self didSelectTabControl:tabControl atIndex:tabIndex];
+    }
+}
+
+- (void)_removeTabControl:(UIControl *)tabControl animated:(BOOL)animated
+{
+    ECASSERT(tabControl != nil);
+    
+    NSUInteger tabIndex = [tabControls indexOfObject:tabControl];
+    ECASSERT(tabIndex != NSNotFound);
+    
+    if (delegateFlags.hasWillRemoveTabControlAtIndex
+        && ![delegate tabBar:self willRemoveTabControl:tabControl atIndex:tabIndex])
+        return;
+    
+    [tabControls removeObjectAtIndex:tabIndex];
+    
+    if (tabControl.reuseIdentifier)
+    {
+        if (!reusableTabControls)
+            reusableTabControls = [NSMutableArray new];
+        [reusableTabControls addObject:tabControl];
+    }
+    
+    if (animated)
+    {
+        tabControl.layer.shouldRasterize = YES;
+        [UIView animateWithDuration:.10 animations:^(void) {
+            tabControl.alpha = 0;
+        } completion:^(BOOL finished) {
+            tabControl.layer.shouldRasterize = NO;
+            [UIView animateWithDuration:.15 animations:^(void) {
+                [tabControlsContainerView layoutSubviews];
+            } completion:^(BOOL finished) {
+                tabControl.alpha = 1;
+                [tabControl removeFromSuperview];
+                tabControlsContainerView.contentSize = CGSizeMake(tabControlSize.width * [tabControls count], 1);
+                
+                if (delegateFlags.hasDidRemoveTabControlAtIndex)
+                    [delegate tabBar:self didRemoveTabControl:tabControl atIndex:tabIndex];
+            }];
+        }];
+    }
+    else
+    {
+        [tabControl removeFromSuperview];
+        
+        tabControlsContainerView.contentSize = CGSizeMake(tabControlSize.width * [tabControls count], 1);
+        
+        if (delegateFlags.hasDidRemoveTabControlAtIndex)
+            [delegate tabBar:self didRemoveTabControl:tabControl atIndex:tabIndex];
+    }
+}
+
+- (UIControl *)_dequeueReusableTabControlWithIdentifier:(NSString *)reuseIdentifier
+{
+    ECASSERT(reuseIdentifier != nil);
+    UIControl *result = nil;
+    for (UIControl *control in reusableTabControls)
+    {
+        if ([reuseIdentifier isEqualToString:control.reuseIdentifier])
+        {
+            result = control;
+            break;
+        }
+    }
+    
+    if (result)
+        [reusableTabControls removeObject:result];
+    
+    return result;
+}
+
+- (UIControl *)_controlForTabWithTitle:(NSString *)title atIndex:(NSUInteger)tabIndex
+{
+    static NSString *tabButtonReusableIdentifier = @"ECTabBarButton";
+    
+    ECTabBarButton *tabButton = (ECTabBarButton *)[self _dequeueReusableTabControlWithIdentifier:tabButtonReusableIdentifier];
+    if (tabButton == nil) {
+        tabButton = [ECTabBarButton buttonWithType:UIButtonTypeCustom];
+        tabButton.titleEdgeInsets = UIEdgeInsetsMake(0, 44, 0, 0);
+        tabButton.frame = CGRectMake(0, 0, 100, 44);
+        
+        tabButton.reuseIdentifier = tabButtonReusableIdentifier;
+        
+        ECTabBarButtonCloseButton *tabCloseButton = [ECTabBarButtonCloseButton buttonWithType:UIButtonTypeCustom];
+        tabCloseButton.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+        tabCloseButton.frame = CGRectMake(0, 0, 44, 44);
+        [tabCloseButton setTitle:@"X" forState:UIControlStateNormal];
+        
+        [tabButton addSubview:tabCloseButton];
+    }
+    
+    return tabButton;
+}
+
+@end
+
+
+@implementation ECTabBarButton
+@end
+
+
+@implementation ECTabBarButtonCloseButton
 @end
 
 

@@ -285,7 +285,7 @@ static void init(ECTabController *self)
 {
     ECASSERT(controllerIndex < [orderedChildViewControllers count]);
     
-    [self.tabBar removeTabControlAtIndex:controllerIndex animated:animated];
+    [self.tabBar removeTabAtIndex:controllerIndex animated:animated];
 }
 
 - (void)moveChildViewControllerAtIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex animated:(BOOL)animated
@@ -293,28 +293,12 @@ static void init(ECTabController *self)
     ECASSERT(fromIndex < [orderedChildViewControllers count]);
     ECASSERT(toIndex < [orderedChildViewControllers count]);
     
-    [self.tabBar moveTabControlAtIndex:fromIndex toIndex:toIndex animated:animated];
+    [self.tabBar moveTabAtIndex:fromIndex toIndex:toIndex animated:animated];
     
     [self tabBar:self.tabBar didMoveTabControl:nil fromIndex:fromIndex toIndex:toIndex];
 }
 
 #pragma mark - Tab bar delegate methods
-
-/// Overload this method to return a custom control for the tab bar
-- (UIControl *)tabBar:(ECTabBar *)tabBar controlForTabWithTitle:(NSString *)title atIndex:(NSUInteger)tabIndex
-{
-    static NSString *tabButtonIdentifier = @"TabButton";
-    
-    UIButton *control = (UIButton *)[tabBar dequeueReusableTabControlWithIdentifier:tabButtonIdentifier];
-    if (control == nil)
-    {
-        control = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-        control.reuseIdentifier = tabButtonIdentifier;
-        [control setTitleColor:[UIColor redColor] forState:UIControlStateSelected];
-    }
-    [control setTitle:title forState:UIControlStateNormal];
-    return control;
-}
 
 - (BOOL)tabBar:(ECTabBar *)tabBar willSelectTabControl:(UIControl *)tabControl atIndex:(NSUInteger)index
 {
