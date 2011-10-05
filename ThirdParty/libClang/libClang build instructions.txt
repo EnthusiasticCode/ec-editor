@@ -1,0 +1,68 @@
+#For both:
+svn co http://llvm.org/svn/llvm-project/llvm/trunk llvm
+cd llvm/tools
+svn co http://llvm.org/svn/llvm-project/cfe/trunk clang
+cd ..
+
+#If you already have sources:
+#make update
+
+#Make cross-compile build tools:
+mkdir BuildTools
+cd BuildTools
+#if it complains about "already configured" delete / move include/llvm/Config/config.h
+../configure
+cd ..
+make -C BuildTools ENABLE_OPTIMIZED=1 BUILD_DIRS_ONLY=1 TOOL_VERBOSE=1
+
+#For ipad:
+
+export DEVROOT=/Developer/Platforms/iPhoneOS.platform/Developer
+export SDKROOT=$DEVROOT/SDKs/iPhoneOS5.0.sdk
+export CFLAGS="-isysroot $SDKROOT -arch armv7 -miphoneos-version-min=5.0"
+export CXXFLAGS="-isysroot $SDKROOT -arch armv7 -miphoneos-version-min=5.0"
+export LDFLAGS="-isysroot $SDKROOT -arch armv7 -miphoneos-version-min=5.0 -lstdc++"
+sudo cp /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator5.0.sdk/usr/include/crt_externs.h $SDKROOT/usr/include
+
+#For simulator:
+
+export DEVROOT=/Developer/Platforms/iPhoneSimulator.platform/Developer
+export SDKROOT=$DEVROOT/SDKs/iPhoneSimulator5.0.sdk
+export CFLAGS="-isysroot $SDKROOT -arch i386 -mmacosx-version-min=10.7"
+export CXXFLAGS="-isysroot $SDKROOT -arch i386 -mmacosx-version-min=10.7"
+export LDFLAGS="-isysroot $SDKROOT -arch i386 -mmacosx-version-min=10.7 -lstdc++"
+
+#For both:
+
+export CC=$DEVROOT/usr/bin/clang
+export BUILD_CC=$DEVROOT/usr/bin/clang
+export BUILD_CXX=$DEVROOT/usr/bin/clang
+export LD=$DEVROOT/usr/bin/ld
+export CPP="$DEVROOT/usr/bin/clang -E"
+export CXX=$DEVROOT/usr/bin/clang
+export AR=$DEVROOT/usr/bin/ar
+export AS=$DEVROOT/usr/bin/as
+export NM=$DEVROOT/usr/bin/nm
+export CXXCPP="$DEVROOT/usr/bin/clang -E"
+
+#For ipad:
+
+./configure --enable-optimized --host=armv7-apple-darwin10 --prefix=$SDKROOT/usr
+
+make TOOL_VERBOSE=1
+
+#For simulator:
+
+./configure --enable-optimized --host=i386-apple-darwin10 --prefix=$SDKROOT/usr
+
+#this will eventually fail because tblgen can't find Intrinsic class
+make TOOL_VERBOSE=1
+#that's because tblgen is broken when compiled for i386, just copy over the buildtools bins from the cross compile build
+cp -r BuildTools/Release+Asserts/bin/ ./Release+Asserts/bin/
+#and make again
+make TOOL_VERBOSE=1
+
+#For both:
+
+sudo make install
+sudo rm $SDKROOT/usr/lib/libclang.dylib
