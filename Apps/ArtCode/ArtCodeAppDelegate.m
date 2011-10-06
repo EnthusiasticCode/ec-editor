@@ -114,7 +114,7 @@
     
     ////////////////////////////////////////////////////////////////////////////
     // Creating UI controllers
-    self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] applicationFrame]];
+    self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     self.splitViewController = [[ECSplitViewController alloc] init];
     self.tabController = [[ECTabController alloc] init];
     self.toolPanelController = [[UIStoryboard storyboardWithName:@"ToolPanelStoryboard" bundle:nil] instantiateInitialViewController];

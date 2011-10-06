@@ -202,18 +202,14 @@ static void init(ECTabController *self)
 	return YES;
 }
 
-- (void)loadView
+- (void)viewDidLoad
 {
-    [super loadView];
+    [super viewDidLoad];
     
     if (self.showTabBar)
         [self.view addSubview:self.tabBar];
     [self.view addSubview:self.contentScrollView];
-}
-
-- (void)viewDidLoad
-{
-    [super viewDidLoad];
+    
     [self layoutChildViews];
     [self loadSelectedAndAdiacentTabViews];
 }
