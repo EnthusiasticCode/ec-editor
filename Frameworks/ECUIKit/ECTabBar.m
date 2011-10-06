@@ -655,9 +655,8 @@ static void init(ECTabBar *self)
         tabButton.reuseIdentifier = tabButtonReusableIdentifier;
         
         ECTabBarButtonCloseButton *tabCloseButton = [ECTabBarButtonCloseButton buttonWithType:UIButtonTypeCustom];
-        tabCloseButton.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+        tabCloseButton.autoresizingMask = UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleHeight;
         tabCloseButton.frame = CGRectMake(0, 0, 44, 44);
-        [tabCloseButton setTitle:@"X" forState:UIControlStateNormal];
         
         [tabButton addSubview:tabCloseButton];
     }
