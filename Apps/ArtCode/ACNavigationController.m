@@ -159,7 +159,7 @@ static CGFloat _buttonWidth = 75.0;
         return nil;
     if (!_jumpBar)
     {
-        _jumpBar = [[ECJumpBar alloc] initWithFrame:CGRectMake(self.buttonTools ? _buttonWidth + _buttonSpacing : 0.0, _buttonSpacing, self.topBarView.bounds.size.width - _buttonSpacing * 2 - (self.buttonTools ?_buttonWidth + _buttonSpacing : 0.0) - (self.buttonEdit ? _buttonWidth + _buttonSpacing : 0.0), self.topBarView.bounds.size.height - _buttonSpacing * 2)];
+        _jumpBar = [[ECJumpBar alloc] initWithFrame:CGRectMake(_buttonSpacing + (self.buttonTools ? _buttonWidth + _buttonSpacing : 0.0), _buttonSpacing, self.topBarView.bounds.size.width - _buttonSpacing * 2 - (self.buttonTools ? _buttonWidth + _buttonSpacing : 0.0) - (self.buttonEdit ? _buttonWidth + _buttonSpacing : 0.0), self.topBarView.bounds.size.height - _buttonSpacing * 2)];
         _jumpBar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
         _jumpBar.delegate = self;
         [(UIButton *)_jumpBar.textElement.rightView addTarget:self action:@selector(jumpBarTextElementRightButtonAction:) forControlEvents:UIControlEventTouchUpInside];
