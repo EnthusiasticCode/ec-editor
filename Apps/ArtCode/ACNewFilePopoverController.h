@@ -10,14 +10,8 @@
 
 @class ACGroup;
 
-@interface ACNewFilePopoverController : UIViewController <UITableViewDataSource, UITableViewDelegate>
+@interface ACNewFilePopoverController : UITableViewController
 
 @property (nonatomic, strong) ACGroup *group;
-
-@property (nonatomic, strong) IBOutlet UIButton *folderButton;
-@property (nonatomic, strong) IBOutlet UIButton *groupButton;
-@property (nonatomic, strong) IBOutlet UIButton *fileButton;
-
-@property (nonatomic, strong) IBOutlet UITableView *fileImportTableView;
 
 @end
