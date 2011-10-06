@@ -12,6 +12,7 @@
 #import "ACNavigationController.h"
 
 #import "ACJumpBarTextField.h"
+#import "ACTopBarView.h"
 #import "ACPopoverHistoryToolController.h"
 #import "ACProjectTableController.h"
 #import "ACFileTableController.h"
@@ -143,7 +144,7 @@ static CGFloat _buttonWidth = 75.0;
         return nil;
     if (!_topBarView)
     {
-        _topBarView = [[UIView alloc] initWithFrame:CGRectMake(0.0, 0.0, self.view.bounds.size.width, _topBarHeight)];
+        _topBarView = [[ACTopBarView alloc] initWithFrame:CGRectMake(0.0, 0.0, self.view.bounds.size.width, _topBarHeight)];
         _topBarView.autoresizingMask = UIViewAutoresizingFlexibleWidth;
         _topBarView.backgroundColor = [UIColor styleBackgroundColor];
     }
@@ -226,7 +227,6 @@ static CGFloat _buttonWidth = 75.0;
     {
         _buttonEdit = [[UIButton alloc] initWithFrame:CGRectMake(self.topBarView.bounds.size.width - _buttonSpacing - _buttonWidth, _buttonSpacing, _buttonWidth, self.topBarView.bounds.size.height - _buttonSpacing * 2)];
         _buttonEdit.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin;
-        [_buttonEdit setImage:[UIImage styleAddImageWithColor:[UIColor styleForegroundColor] shadowColor:[UIColor whiteColor]] forState:UIControlStateNormal];
         [_buttonEdit setTitle:@"Edit" forState:UIControlStateNormal];
         [_buttonEdit setTitleColor:[UIColor styleForegroundColor] forState:UIControlStateNormal];
         [_buttonEdit setTitleShadowColor:[UIColor styleForegroundShadowColor] forState:UIControlStateNormal];
