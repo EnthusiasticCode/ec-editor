@@ -116,8 +116,14 @@
     return _presentedItemOperationQueue;
 }
 
+- (void)presentedItemDidChange
+{
+    ECASSERT(NO);
+}
+
 - (void)presentedItemDidMoveToURL:(NSURL *)newURL
 {
+    ECASSERT(NO);
     NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] initWithFilePresenter:self];
     [fileCoordinator coordinateReadingItemAtURL:newURL options:NSFileCoordinatorReadingResolvesSymbolicLink error:NULL byAccessor:^(NSURL *newURL) {
         self.directory = newURL;
@@ -127,6 +133,7 @@
 
 - (void)accommodatePresentedItemDeletionWithCompletionHandler:(void (^)(NSError *))completionHandler
 {
+    ECASSERT(NO);
     self.directory = nil;
     self.fileURLs = nil;
     completionHandler(nil);
