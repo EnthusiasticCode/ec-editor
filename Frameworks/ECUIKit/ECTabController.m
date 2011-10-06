@@ -206,7 +206,6 @@ static void init(ECTabController *self)
 {
     [super loadView];
     
-    self.tabBar.backgroundColor = [UIColor grayColor];
     if (self.showTabBar)
         [self.view addSubview:self.tabBar];
     [self.view addSubview:self.contentScrollView];
