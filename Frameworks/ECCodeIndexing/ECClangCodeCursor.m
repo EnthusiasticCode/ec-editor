@@ -91,7 +91,7 @@
     _hash = [self computeHash];
     _kind = (ECCodeCursorKind)clang_getCursorKind(_cursor);
     _kindCategory = ECCodeCursorKindCategoryFromClangKind(_kind);
-    NSString *filePath;
+    NSString *filePath = nil;
     ECCodeOffsetAndFileFromClangSourceLocation(clang_getCursorLocation(_cursor), &_offset, &filePath);
     if (filePath)
         _fileURL = [NSURL fileURLWithPath:filePath];

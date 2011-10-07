@@ -41,7 +41,10 @@
         if (!completionHandler)
             return;
         ECCodeIndex *codeIndex = [[ECCodeIndex alloc] init];
-        completionHandler([codeIndex unitWithFileURL:self.fileURL]);
+        ECCodeUnit *unit = [codeIndex unitWithFileURL:self.fileURL];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            completionHandler(unit);
+        });
     });
 }
 
