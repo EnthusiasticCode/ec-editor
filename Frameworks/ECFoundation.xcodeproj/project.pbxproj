@@ -95,6 +95,10 @@
 		B71709981428D7AD00DF7794 /* NSObject+KiwiVerifierAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = B71709541428D7AD00DF7794 /* NSObject+KiwiVerifierAdditions.m */; };
 		B71709991428D7AD00DF7794 /* NSValue+KiwiAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = B71709561428D7AD00DF7794 /* NSValue+KiwiAdditions.m */; };
 		B717099B1428DDA300DF7794 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B717099A1428DDA200DF7794 /* UIKit.framework */; };
+		B7A4BB34143F918200BB6F29 /* NSString+ECAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = B7A4BB32143F918200BB6F29 /* NSString+ECAdditions.h */; };
+		B7A4BB35143F918200BB6F29 /* NSString+ECAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = B7A4BB33143F918200BB6F29 /* NSString+ECAdditions.m */; };
+		B7A4BB39143F94A100BB6F29 /* NSArray+ECAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = B7A4BB37143F949D00BB6F29 /* NSArray+ECAdditions.h */; };
+		B7A4BB3A143F94A100BB6F29 /* NSArray+ECAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = B7A4BB38143F94A100BB6F29 /* NSArray+ECAdditions.m */; };
 		B7C9A841142BB046009D8FF3 /* ECItemObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = B7C9A83F142BB046009D8FF3 /* ECItemObserver.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B7C9A842142BB046009D8FF3 /* ECItemObserver.m in Sources */ = {isa = PBXBuildFile; fileRef = B7C9A840142BB046009D8FF3 /* ECItemObserver.m */; };
 /* End PBXBuildFile section */
@@ -283,6 +287,10 @@
 		B71709551428D7AD00DF7794 /* NSValue+KiwiAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSValue+KiwiAdditions.h"; sourceTree = "<group>"; };
 		B71709561428D7AD00DF7794 /* NSValue+KiwiAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSValue+KiwiAdditions.m"; sourceTree = "<group>"; };
 		B717099A1428DDA200DF7794 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		B7A4BB32143F918200BB6F29 /* NSString+ECAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+ECAdditions.h"; sourceTree = "<group>"; };
+		B7A4BB33143F918200BB6F29 /* NSString+ECAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+ECAdditions.m"; sourceTree = "<group>"; };
+		B7A4BB37143F949D00BB6F29 /* NSArray+ECAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSArray+ECAdditions.h"; sourceTree = "<group>"; };
+		B7A4BB38143F94A100BB6F29 /* NSArray+ECAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSArray+ECAdditions.m"; sourceTree = "<group>"; };
 		B7C9A83F142BB046009D8FF3 /* ECItemObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECItemObserver.h; sourceTree = "<group>"; };
 		B7C9A840142BB046009D8FF3 /* ECItemObserver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECItemObserver.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -408,6 +416,10 @@
 				B717077D1428D52F00DF7794 /* NSURL+ECAdditions.m */,
 				B71707801428D52F00DF7794 /* NSTimer+block.h */,
 				B71707811428D52F00DF7794 /* NSTimer+block.m */,
+				B7A4BB32143F918200BB6F29 /* NSString+ECAdditions.h */,
+				B7A4BB33143F918200BB6F29 /* NSString+ECAdditions.m */,
+				B7A4BB37143F949D00BB6F29 /* NSArray+ECAdditions.h */,
+				B7A4BB38143F94A100BB6F29 /* NSArray+ECAdditions.m */,
 			);
 			name = Additions;
 			sourceTree = "<group>";
@@ -597,6 +609,8 @@
 				B717078C1428D52F00DF7794 /* MurmurHash3.h in Headers */,
 				B717078F1428D52F00DF7794 /* pstdint.h in Headers */,
 				B7012971143860490070CCDF /* ECDirectoryPresenter.h in Headers */,
+				B7A4BB34143F918200BB6F29 /* NSString+ECAdditions.h in Headers */,
+				B7A4BB39143F94A100BB6F29 /* NSArray+ECAdditions.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -704,6 +718,8 @@
 				B717078E1428D52F00DF7794 /* NSTimer+block.m in Sources */,
 				B7C9A842142BB046009D8FF3 /* ECItemObserver.m in Sources */,
 				B7012972143860490070CCDF /* ECDirectoryPresenter.m in Sources */,
+				B7A4BB35143F918200BB6F29 /* NSString+ECAdditions.m in Sources */,
+				B7A4BB3A143F94A100BB6F29 /* NSArray+ECAdditions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
