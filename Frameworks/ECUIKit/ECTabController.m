@@ -13,6 +13,7 @@
 
 #define TABBAR_HEIGHT 44
 
+static void *childViewControllerTitleContext;
 
 @interface ECTabController () {
     NSMutableArray *orderedChildViewControllers;
@@ -195,6 +196,23 @@ static void init(ECTabController *self)
     return self;
 }
 
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    if (context == &childViewControllerTitleContext)
+    {
+        // Change title to tab button relative to observed child view controller.
+        NSUInteger tabIndex = [orderedChildViewControllers indexOfObject:object];
+        if (tabIndex != NSNotFound)
+        {
+            [self.tabBar setTitle:[change objectForKey:NSKeyValueChangeNewKey] forTabAtIndex:tabIndex];
+        }
+    }
+    else 
+    {
+        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+    }
+}
+
 #pragma mark - View lifecycle
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
@@ -265,6 +283,7 @@ static void init(ECTabController *self)
     
     // Add tab button
     [self.tabBar addTabWithTitle:childController.title animated:animated];
+    [childController addObserver:self forKeyPath:@"title" options:NSKeyValueObservingOptionNew context:&childViewControllerTitleContext];
     
     // Set selection
     if (selectedViewControllerIndex == NSNotFound)
@@ -279,6 +298,9 @@ static void init(ECTabController *self)
 - (void)removeChildViewControllerAtIndex:(NSUInteger)controllerIndex animated:(BOOL)animated
 {
     ECASSERT(controllerIndex < [orderedChildViewControllers count]);
+    
+    UIViewController *childController = [orderedChildViewControllers objectAtIndex:controllerIndex];
+    [childController removeObserver:self forKeyPath:@"title"];
     
     [self.tabBar removeTabAtIndex:controllerIndex animated:animated];
 }

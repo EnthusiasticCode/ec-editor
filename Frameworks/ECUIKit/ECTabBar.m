@@ -390,6 +390,14 @@ static void init(ECTabBar *self)
     }
 }
 
+- (void)setTitle:(NSString *)title forTabAtIndex:(NSUInteger)tabIndex
+{
+    ECASSERT(tabIndex < [tabControls count]);
+    
+    UIButton *tabButton = (UIButton *)[tabControls objectAtIndex:tabIndex];
+    [tabButton setTitle:title forState:UIControlStateNormal];
+}
+
 #pragma mark -
 
 - (void)moveTabAction:(UILongPressGestureRecognizer *)recognizer

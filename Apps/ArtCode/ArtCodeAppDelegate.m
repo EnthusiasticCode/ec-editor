@@ -67,6 +67,9 @@
     [buttonInTopBarAppearance setTitleColor:[UIColor styleForegroundColor] forState:UIControlStateNormal];
     [buttonInTopBarAppearance setTitleShadowColor:[UIColor styleForegroundShadowColor] forState:UIControlStateNormal];
     
+    id labelForButtonInTopBarAppearance = [UILabel appearanceWhenContainedIn:[UIButton class], [ACTopBarView class], nil];
+    [labelForButtonInTopBarAppearance setFont:[UIFont styleFontWithSize:14]];
+    
     ////////////////////////////////////////////////////////////////////////////
     // Jump bar
     id jumpBarAppearance = [ECJumpBar appearance];
