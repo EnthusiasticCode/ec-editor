@@ -11,16 +11,19 @@
 #import "ACNavigationController.h"
 #import "ACEditableTableCell.h"
 #import "ACNewFilePopoverController.h"
+#import <ECFoundation/ECDirectoryPresenter.h>
 
 #import "ACToolFiltersView.h"
 #import <ECUIKit/ECPopoverController.h>
 
 #import "ACTab.h"
 
+static void * directoryPresenterFileURLsObservingContext;
+
 @interface ACFileTableController () {
     ECPopoverController *_popover;
 }
-
+@property (nonatomic, strong) ECDirectoryPresenter *directoryPresenter;
 @end
 
 @implementation ACFileTableController {
@@ -30,8 +33,43 @@
 @synthesize tableView, editingToolsView;
 @synthesize directory = _directory;
 @synthesize tab = _tab;
+@synthesize directoryPresenter = _directoryPresenter;
 
 @synthesize toolButton;
+
+- (void)setDirectory:(NSURL *)directory
+{
+    if (directory == _directory)
+        return;
+    [self willChangeValueForKey:@"directory"];
+    _directory = directory;
+    self.directoryPresenter.directory = _directory;
+    [self didChangeValueForKey:@"directory"];
+}
+
+- (void)setDirectoryPresenter:(ECDirectoryPresenter *)directoryPresenter
+{
+    if (directoryPresenter == _directoryPresenter)
+        return;
+    [self willChangeValueForKey:@"directoryPresenter"];
+    [_directoryPresenter removeObserver:self forKeyPath:@"fileURLs" context:&directoryPresenterFileURLsObservingContext];
+    _directoryPresenter = directoryPresenter;
+    [_directoryPresenter addObserver:self forKeyPath:@"fileURLs" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial context:&directoryPresenterFileURLsObservingContext];
+    [self didChangeValueForKey:@"directoryPresenter"];
+}
+
+#pragma mark - KVO
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    if (context == &directoryPresenterFileURLsObservingContext)
+    {
+        // TODO: add / delete / move table rows instead of reloading all once NSFilePresenter actually works
+        [self.tableView reloadData];
+    }
+    else
+        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+}
 
 #pragma mark - View lifecycle
 
@@ -66,6 +104,17 @@
 {
     [super viewDidUnload];
     tableView = nil;
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    self.directoryPresenter = [[ECDirectoryPresenter alloc] init];
+    self.directoryPresenter.directory = self.directory;
+}
+
+- (void)viewDidDisappear:(BOOL)animated
+{
+    self.directoryPresenter = nil;
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
@@ -179,17 +228,9 @@
 
 #pragma mark - Table view data source
 
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
-{
-    // Return the number of sections.
-    return 1;
-}
-
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    // Return the number of rows in the section.
-//    return 7;
-    return 0;
+    return [self.directoryPresenter.fileURLs count];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -239,7 +280,7 @@
 //        cell.imageView.image = [UIImage styleDocumentImageWithSize:CGSizeMake(32, 32) 
 //                                                             color:[[cellNode.name pathExtension] isEqualToString:@"h"] ? [UIColor styleFileRedColor] : [UIColor styleFileBlueColor]
 //                                                              text:[cellNode.name pathExtension]];
-//    [cell.textField setText:[cellNode name]];
+    cell.textField.text = [[self.directoryPresenter.fileURLs objectAtIndex:indexPath.row] lastPathComponent];
     return cell;
 }
 
@@ -249,18 +290,7 @@
 {
     if (self.isEditing)
         return;
-    // Navigation logic may go here. Create and push another view controller.
-    /*
-     <#DetailViewController#> *detailViewController = [[<#DetailViewController#> alloc] initWithNibName:@"<#Nib name#>" bundle:nil];
-     // ...
-     // Pass the selected object to the new view controller.
-     [self.navigationController pushViewController:detailViewController animated:YES];
-     [detailViewController release];
-     */
-    
-    // TODO if used in a popover from the jump bar should just change its own url
-    
-//    [self.ACNavigationController pushURL:[[self.group.children objectAtIndex:indexPath.row] URL]];
+    [self.tab pushURL:[self.directoryPresenter.fileURLs objectAtIndex:indexPath.row]];
 }
 
 @end

@@ -12,7 +12,7 @@
 
 @interface ACFileDocument : UIDocument
 
-- (NSString *)contentString;
+@property (nonatomic, strong) NSString *contentString;
 
 - (void)loadCodeUnitWithCompletionHandler:(void (^)(ECCodeUnit *codeUnit))completionHandler;
 

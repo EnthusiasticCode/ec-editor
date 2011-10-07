@@ -80,6 +80,21 @@
     return codeView;
 }
 
+- (ACFileDocument *)document
+{
+    if (!self.fileURL)
+        return nil;
+    if (!_document)
+    {
+        _document = [[ACFileDocument alloc] initWithFileURL:self.fileURL];
+        [_document openWithCompletionHandler:^(BOOL success) {
+            ECASSERT(success);
+            self.codeView.text = self.document.contentString;
+        }];
+    }
+    return _document;
+}
+
 - (void)didReceiveMemoryWarning
 {
     // Releases the view if it doesn't have a superview.
@@ -159,7 +174,7 @@
 
 #pragma mark - View lifecycle
 
-- (void)loadView
+- (void)viewDidLoad
 {
     self.view = self.codeView;
     // TODO start loading animation
@@ -169,9 +184,6 @@
         dataSource.codeUnit = codeUnit;
         [self.codeView updateAllText];
     }];
-    
-    self.codeView.text = self.document.contentString;
-
 }
 
 - (void)viewDidUnload
