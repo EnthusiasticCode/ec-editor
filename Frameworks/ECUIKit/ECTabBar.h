@@ -56,6 +56,8 @@
 - (void)removeTabAtIndex:(NSUInteger)tabIndex animated:(BOOL)animated;
 - (void)moveTabAtIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex animated:(BOOL)animated;
 
+- (void)setTitle:(NSString *)title forTabAtIndex:(NSUInteger)tabIndex;
+
 @end
 
 /// Button used as a tab element. This class is intended to be used as an appearance selector.

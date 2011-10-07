@@ -32,7 +32,7 @@
     
     NSTimer *filterDebounceTimer;
 }
-@property (nonatomic, strong, readonly) ACFileDocument *document;
+@property (nonatomic, strong) ACFileDocument *document;
 @end
 
 @implementation ACCodeFileController
@@ -41,6 +41,20 @@
 @synthesize tab = _tab;
 @synthesize codeView;
 @synthesize document = _document;
+
+- (void)setFileURL:(NSURL *)fileURL
+{
+    if (fileURL == _fileURL)
+        return;
+    
+    [self willChangeValueForKey:@"fileURL"];
+    
+    _fileURL = fileURL;
+    
+    self.document = fileURL ? [[ACFileDocument alloc] initWithFileURL:fileURL] : nil;
+    
+    [self didChangeValueForKey:@"fileURL"];
+}
 
 - (ECCodeView *)codeView
 {
@@ -93,6 +107,23 @@
         }];
     }
     return _document;
+}
+
+- (void)setDocument:(ACFileDocument *)document
+{
+    if (document == _document)
+        return;
+    
+    [self willChangeValueForKey:@"document"];
+    
+    [_document closeWithCompletionHandler:nil];
+    _document = document;
+    [_document openWithCompletionHandler:^(BOOL success) {
+        ECASSERT(success);
+        self.codeView.text = self.document.contentString;
+    }];
+    
+    [self didChangeValueForKey:@"document"];
 }
 
 - (void)didReceiveMemoryWarning
