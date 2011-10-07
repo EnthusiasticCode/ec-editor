@@ -8,12 +8,21 @@
 
 #import <Foundation/Foundation.h>
 
-@interface NSArray (ECAdditions)
+/// Sorts elements of the array based on the return value of the given block , and removes all elements for which the block returns a value equal or lower than the given breakoff point.
+/// Additional sort descriptors may be specified to sort objects which have the same score.
 
-/// Returns an array obtained by sorting the elements of the receiver based on the return value of the given block, and by removing all elements for which the block returns a value equal or lower than the given breakoff point.
-/// Additional sort descriptors may be specified to sort objects which have the same score, but they cannot have selectors or comparators.
-- (NSArray *)cleanedArrayUsingBlock:(float (^)(id object))scoreForObject;
-- (NSArray *)cleanedArrayUsingBlock:(float (^)(id object))scoreForObject breakoffScore:(float)breakoffScore;
-- (NSArray *)cleanedArrayUsingBlock:(float (^)(id object))scoreForObject breakoffScore:(float)breakoffScore additionalSortDescriptors:(NSArray *)sortDescriptors;
+@interface NSArray (ECArrayCleaning)
+
+- (NSArray *)cleanedArrayUsingBlock:(NSNumber *(^)(id object))scoreForObject;
+- (NSArray *)cleanedArrayUsingBlock:(NSNumber *(^)(id object))scoreForObject breakoffScore:(NSNumber *)breakoffScore;
+- (NSArray *)cleanedArrayUsingBlock:(NSNumber *(^)(id object))scoreForObject breakoffScore:(NSNumber *)breakoffScore additionalSortDescriptors:(NSArray *)additionalSortDescriptors;
+
+@end
+
+@interface NSMutableArray (ECArrayCleaning)
+
+- (void)cleanUsingBlock:(NSNumber *(^)(id object))scoreForObject;
+- (void)cleanUsingBlock:(NSNumber *(^)(id))scoreForObject breakoffScore:(NSNumber *)breakoffScore;
+- (void)cleanUsingBlock:(NSNumber *(^)(id object))scoreForObject breakoffScore:(NSNumber *)breakoffScore additionalSortDescriptors:(NSArray *)additionalSortDescriptors;
 
 @end

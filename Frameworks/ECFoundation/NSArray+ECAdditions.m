@@ -7,58 +7,62 @@
 //
 
 #import "NSArray+ECAdditions.h"
+#import <objc/runtime.h>
 
-@interface SortableWrapper : NSObject
-@property (nonatomic, strong) NSNumber *sortKey;
-@property (nonatomic, strong) id object;
-@end
+#warning Test this ASAP, not even sure it works, if it doesn't rollback to the implementation in commit b4dc482082331f83438b0ea8a589cfeecf894e21
 
-@implementation SortableWrapper
-@synthesize sortKey;
-@synthesize object;
-@end
+static const void * ECArrayCleaningSortKeyAssociation;
 
-@implementation NSArray (ECAdditions)
+@implementation NSArray (ECArrayCleaning)
 
-- (NSArray *)cleanedArrayUsingBlock:(float (^)(id))scoreForObject
+- (NSArray *)cleanedArrayUsingBlock:(NSNumber *(^)(id))scoreForObject
 {
-    return [self cleanedArrayUsingBlock:scoreForObject breakoffScore:0.0];
+    return [self cleanedArrayUsingBlock:scoreForObject breakoffScore:[NSNumber numberWithFloat:0.0]];
 }
 
-- (NSArray *)cleanedArrayUsingBlock:(float (^)(id))scoreForObject breakoffScore:(float)breakoffScore
+- (NSArray *)cleanedArrayUsingBlock:(NSNumber *(^)(id))scoreForObject breakoffScore:(NSNumber *)breakoffScore
 {
     return [self cleanedArrayUsingBlock:scoreForObject breakoffScore:breakoffScore additionalSortDescriptors:nil];
 }
 
-- (NSArray *)cleanedArrayUsingBlock:(float (^)(id))scoreForObject breakoffScore:(float)breakoffScore additionalSortDescriptors:(NSArray *)sortDescriptors
+- (NSArray *)cleanedArrayUsingBlock:(NSNumber *(^)(id))scoreForObject breakoffScore:(NSNumber *)breakoffScore additionalSortDescriptors:(NSArray *)additionalSortDescriptors
+{
+    NSMutableArray *cleanedArray = [NSMutableArray arrayWithArray:self];
+    [cleanedArray cleanUsingBlock:scoreForObject breakoffScore:breakoffScore additionalSortDescriptors:additionalSortDescriptors];
+    return [cleanedArray copy];
+}
+
+@end
+
+@implementation NSMutableArray (ECArrayCleaning)
+
+- (void)cleanUsingBlock:(NSNumber *(^)(id))scoreForObject
+{
+    [self cleanUsingBlock:scoreForObject breakoffScore:[NSNumber numberWithFloat:0.0]];
+}
+
+- (void)cleanUsingBlock:(NSNumber *(^)(id))scoreForObject breakoffScore:(NSNumber *)breakoffScore
+{
+    [self cleanUsingBlock:scoreForObject breakoffScore:breakoffScore additionalSortDescriptors:nil];
+}
+
+- (void)cleanUsingBlock:(NSNumber *(^)(id))scoreForObject breakoffScore:(NSNumber *)breakoffScore additionalSortDescriptors:(NSArray *)additionalSortDescriptors
 {
     ECASSERT(scoreForObject);
-    NSMutableArray *filteredWrappers = [[NSMutableArray alloc] init];
+    [self filterUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(id evaluatedObject, NSDictionary *bindings) {
+        NSNumber *score = scoreForObject(evaluatedObject);
+        if ([score compare:breakoffScore] != NSOrderedDescending)
+            return NO;
+        objc_setAssociatedObject(evaluatedObject, &ECArrayCleaningSortKeyAssociation, score, OBJC_ASSOCIATION_RETAIN);
+        return YES;
+    }]];
+    NSMutableArray *sortDescriptors = [NSMutableArray arrayWithArray:additionalSortDescriptors];
+    [sortDescriptors insertObject:[NSSortDescriptor sortDescriptorWithKey:nil ascending:NO comparator:^NSComparisonResult(id obj1, id obj2) {
+        return [objc_getAssociatedObject(obj1, ECArrayCleaningSortKeyAssociation) compare:objc_getAssociatedObject(obj2, ECArrayCleaningSortKeyAssociation)];
+    }] atIndex:0];
+    [self sortUsingDescriptors:sortDescriptors];
     for (id object in self)
-    {
-        float score = scoreForObject(object);
-        if (score > breakoffScore)
-        {
-            SortableWrapper *wrapper = [[SortableWrapper alloc] init];
-            wrapper.sortKey = [[NSNumber alloc] initWithFloat:score];
-            wrapper.object = object;
-            [filteredWrappers addObject:wrapper];
-        }
-    }
-    if (![filteredWrappers count])
-        return filteredWrappers;
-    NSMutableArray *wrapperSortDescriptors = [NSMutableArray array];
-    for (NSSortDescriptor *sortDescriptor in sortDescriptors)
-    {
-        ECASSERT([sortDescriptor selector]);
-        [wrapperSortDescriptors addObject:[NSSortDescriptor sortDescriptorWithKey:[@"object." stringByAppendingString:[sortDescriptor key]] ascending:[sortDescriptor ascending]]];
-    }
-    [wrapperSortDescriptors insertObject:[NSSortDescriptor sortDescriptorWithKey:@"sortKey" ascending:NO] atIndex:0];
-    [filteredWrappers sortUsingDescriptors:wrapperSortDescriptors];
-    NSMutableArray *cleanedArray = [NSMutableArray arrayWithCapacity:[filteredWrappers count]];
-    for (SortableWrapper *wrapper in filteredWrappers)
-        [cleanedArray addObject:wrapper.object];
-    return cleanedArray;
+        objc_setAssociatedObject(object, ECArrayCleaningSortKeyAssociation, nil, OBJC_ASSOCIATION_ASSIGN);
 }
 
 @end
