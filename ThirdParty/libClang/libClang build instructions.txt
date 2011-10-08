@@ -47,17 +47,17 @@ export CXXCPP="$DEVROOT/usr/bin/clang -E"
 
 #For ipad:
 
-./configure --enable-optimized --host=armv7-apple-darwin10 --prefix=$SDKROOT/usr
+./configure --enable-optimized --disable-shared --disable-docs --host=armv7-apple-darwin10 --prefix=$SDKROOT/usr
 
 make TOOL_VERBOSE=1
 
 #For simulator:
 
-./configure --enable-optimized --host=i386-apple-darwin10 --prefix=$SDKROOT/usr
+./configure --enable-optimized --disable-shared --disable-docs --host=i386-apple-darwin10 --prefix=$SDKROOT/usr
 
 #this will eventually fail because tblgen can't find Intrinsic class
 make TOOL_VERBOSE=1
-#that's because tblgen is broken when compiled for i386, just copy over the buildtools bins from the cross compile build
+#that's because llvm-tblgen and clang-tblgen are broken when compiled for i386, just copy over the buildtools bins from the cross compile build
 cp -r BuildTools/Release+Asserts/bin/ ./Release+Asserts/bin/
 #and make again
 make TOOL_VERBOSE=1
