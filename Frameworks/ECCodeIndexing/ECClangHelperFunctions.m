@@ -84,7 +84,7 @@ ECCodeToken *ECCodeTokenFromClangToken(CXTranslationUnit translationUnit, CXToke
     NSRange extent;
     ECCodeRangeAndFileFromClangSourceRange(clang_getTokenExtent(translationUnit, clangToken), &extent, NULL);
     ECCodeCursor *cursor = nil;
-    if (attachCursor)
+    if (attachCursor && !clang_Cursor_isNull(clangTokenCursor))
         cursor = [ECClangCodeCursor cursorWithCXCursor:clangTokenCursor];
     NSURL *fileURL = nil;
     if (filePath)

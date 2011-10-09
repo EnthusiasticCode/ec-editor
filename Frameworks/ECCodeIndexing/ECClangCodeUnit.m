@@ -149,6 +149,10 @@ static void inclusionVisitor(CXFile included_file, CXSourceLocation* inclusion_s
     clang_tokenize(self.translationUnit, clangRange, &clangTokens, &numTokens);
     NSMutableArray *tokens = [NSMutableArray arrayWithCapacity:numTokens];
     CXCursor *clangTokenCursors = malloc(numTokens * sizeof(CXCursor));
+    
+#warning Disable attaching cursors since libclang is currently broken, enable them again eventually
+    attachCursors = NO;
+    
     if (attachCursors)
         clang_annotateTokens(self.translationUnit, clangTokens, numTokens, clangTokenCursors);
     for (unsigned i = 0; i < numTokens; ++i)
