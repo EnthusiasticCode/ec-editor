@@ -78,15 +78,9 @@
 
 - (NSUInteger)insertionPointForFileURL:(NSURL *)fileURL
 {
-    NSUInteger insertionPoint = 0;
-    for (NSURL *currentFileURL in self.fileURLs)
-    {
-        NSComparisonResult result = [[currentFileURL lastPathComponent] compare:[fileURL lastPathComponent]];
-        if (result == NSOrderedDescending || result == NSOrderedSame)
-            break;
-        insertionPoint++;
-    }
-    return insertionPoint;
+    return [self.fileURLs indexOfObject:fileURL inSortedRange:NSMakeRange(0, [self.fileURLs count]) options:NSBinarySearchingInsertionIndex usingComparator:^NSComparisonResult(id obj1, id obj2) {
+        return [[obj1 lastPathComponent] compare:[obj2 lastPathComponent]];
+    }];
 }
 
 - (BOOL)fileURLIsDirectDescendant:(NSURL *)fileURL
