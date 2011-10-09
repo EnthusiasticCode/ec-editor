@@ -12,6 +12,8 @@
 #import "ACEditableTableCell.h"
 #import "ACNewFilePopoverController.h"
 #import <ECFoundation/ECDirectoryPresenter.h>
+#import <ECFoundation/NSTimer+block.h>
+#import <ECFoundation/NSString+ECAdditions.h>
 
 #import "ACToolFiltersView.h"
 #import <ECUIKit/ECPopoverController.h>
@@ -20,10 +22,56 @@
 
 static void * directoryPresenterFileURLsObservingContext;
 
+@interface FilteredFileURLWrapper : NSObject
+@property (nonatomic) float score;
+@property (nonatomic, strong) NSIndexSet *hitMask;
+@property (nonatomic, strong) NSURL *fileURL;
+- (id)initWithFileURL:(NSURL *)fileURL;
+- (NSComparisonResult)compare:(FilteredFileURLWrapper *)wrapper;
+@end
+
+@implementation FilteredFileURLWrapper
+
+@synthesize score = _score, hitMask = _hitMask, fileURL = _fileURL;
+
+- (id)initWithFileURL:(NSURL *)fileURL
+{
+    self = [super init];
+    if (!self)
+        return nil;
+    self.fileURL = fileURL;
+    return self;
+}
+
+- (NSComparisonResult)compare:(FilteredFileURLWrapper *)wrapper
+{
+    if (self.score > wrapper.score)
+        return NSOrderedAscending;
+    else if (self.score < wrapper.score)
+        return NSOrderedDescending;
+    return [[self.fileURL lastPathComponent] compare:[wrapper.fileURL lastPathComponent]];
+}
+
+- (BOOL)isEqual:(id)object
+{
+    if (![object isKindOfClass:[self class]])
+        return NO;
+    return [self.fileURL isEqual:[object fileURL]];
+}
+
+@end
+
 @interface ACFileTableController () {
     ECPopoverController *_popover;
+    NSTimer *filterDebounceTimer;
 }
 @property (nonatomic, strong) ECDirectoryPresenter *directoryPresenter;
+@property (nonatomic, strong) NSString *filterString;
+@property (nonatomic) NSUInteger filterCount;
+@property (nonatomic, strong) NSMutableArray *filteredFileURLs;
+- (void)directoryPresenterDidChangeFileURLs:(NSArray *)newFileURLs;
+- (void)directoryPresenterDidInsertFileURLsAtIndexes:(NSIndexSet *)indexes inFileURLs:(NSArray *)newFileURLs;
+- (void)directoryPresenterDidRemoveFileURLsAtIndexes:(NSIndexSet *)indexes fromFileURLs:(NSArray *)oldFileURLs;
 @end
 
 @implementation ACFileTableController {
@@ -34,6 +82,9 @@ static void * directoryPresenterFileURLsObservingContext;
 @synthesize directory = _directory;
 @synthesize tab = _tab;
 @synthesize directoryPresenter = _directoryPresenter;
+@synthesize filterString = _filterString;
+@synthesize filterCount = _filterCount;
+@synthesize filteredFileURLs = _filteredFileURLs;
 
 @synthesize toolButton;
 
@@ -58,17 +109,106 @@ static void * directoryPresenterFileURLsObservingContext;
     [self didChangeValueForKey:@"directoryPresenter"];
 }
 
+- (void)setFilterString:(NSString *)filterString
+{
+    if (filterString == _filterString)
+        return;
+    [self willChangeValueForKey:@"filterString"];
+    _filterString = filterString;
+    // TODO: update it by moving objects around in the array instead of making a new one, so we can match the tableview animations to the movements
+    NSMutableArray *newFilteredFileURLs = [NSMutableArray array];
+    NSUInteger newFilterCount = 0;
+    for (FilteredFileURLWrapper *wrapper in self.filteredFileURLs)
+    {
+        NSIndexSet *hitMask = nil;
+        float score = [[wrapper.fileURL lastPathComponent] scoreForAbbreviation:filterString hitMask:&hitMask];
+        if (score > 0.0)
+            ++newFilterCount;
+        wrapper.score = score;
+        wrapper.hitMask = hitMask;
+        [newFilteredFileURLs addObject:wrapper];
+    }
+    [newFilteredFileURLs sortUsingSelector:@selector(compare:)];
+    self.filteredFileURLs = newFilteredFileURLs;
+    self.filterCount = newFilterCount;
+    [self.tableView reloadData];
+    [self didChangeValueForKey:@"filterString"];
+}
+
+- (NSMutableArray *)filteredFileURLs
+{
+    if (!_filteredFileURLs)
+        _filteredFileURLs = [NSMutableArray array];
+    return _filteredFileURLs;
+}
+
 #pragma mark - KVO
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
     if (context == &directoryPresenterFileURLsObservingContext)
     {
-        // TODO: add / delete / move table rows instead of reloading all once NSFilePresenter actually works
-        [self.tableView reloadData];
+        if ([[change objectForKey:NSKeyValueChangeKindKey] intValue] == NSKeyValueChangeInsertion)
+            [self directoryPresenterDidInsertFileURLsAtIndexes:[change objectForKey:NSKeyValueChangeIndexesKey] inFileURLs:[change objectForKey:NSKeyValueChangeNewKey]];
+        else if ([[change objectForKey:NSKeyValueChangeKindKey] intValue] == NSKeyValueChangeRemoval)
+            [self directoryPresenterDidRemoveFileURLsAtIndexes:[change objectForKey:NSKeyValueChangeIndexesKey] fromFileURLs:[change objectForKey:NSKeyValueChangeOldKey]];
+        else if ([[change objectForKey:NSKeyValueChangeKindKey] intValue] == NSKeyValueChangeReplacement)
+        {
+            [self directoryPresenterDidRemoveFileURLsAtIndexes:[change objectForKey:NSKeyValueChangeIndexesKey] fromFileURLs:[change objectForKey:NSKeyValueChangeOldKey]];
+            [self directoryPresenterDidInsertFileURLsAtIndexes:[change objectForKey:NSKeyValueChangeIndexesKey] inFileURLs:[change objectForKey:NSKeyValueChangeNewKey]];
+        }
+        else
+            [self directoryPresenterDidChangeFileURLs:[[change objectForKey:NSKeyValueChangeNewKey] isEqual:[NSNull null]] ? nil : [change objectForKey:NSKeyValueChangeNewKey]];
     }
     else
         [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+}
+
+- (void)directoryPresenterDidChangeFileURLs:(NSArray *)newFileURLs
+{
+    [self.filteredFileURLs removeAllObjects];
+    NSUInteger newFilterCount = 0;
+    for (NSURL *fileURL in newFileURLs)
+    {
+        FilteredFileURLWrapper *fileURLWrapper = [[FilteredFileURLWrapper alloc] initWithFileURL:fileURL];
+        NSIndexSet *hitMask = nil;
+        float score = [[fileURL lastPathComponent] scoreForAbbreviation:self.filterString hitMask:&hitMask];
+        if (score)
+            newFilterCount++;
+        fileURLWrapper.score = score;
+        fileURLWrapper.hitMask = hitMask;
+        [self.filteredFileURLs addObject:fileURLWrapper];
+    }
+    self.filterCount = newFilterCount;
+    [self.filteredFileURLs sortUsingSelector:@selector(compare:)];
+    [self.tableView reloadData];
+}
+
+- (void)directoryPresenterDidInsertFileURLsAtIndexes:(NSIndexSet *)indexes inFileURLs:(NSArray *)newFileURLs
+{
+    [indexes enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
+        NSURL *fileURL = [newFileURLs objectAtIndex:idx];
+        FilteredFileURLWrapper *fileURLWrapper = [[FilteredFileURLWrapper alloc] initWithFileURL:fileURL];
+        NSIndexSet *hitMask = nil;
+        fileURLWrapper.score = [[fileURL lastPathComponent] scoreForAbbreviation:self.filterString hitMask:&hitMask];
+        fileURLWrapper.hitMask = hitMask;
+        [self.filteredFileURLs insertObject:fileURLWrapper atIndex:[self.filteredFileURLs indexOfObject:fileURLWrapper inSortedRange:NSMakeRange(0, [self.filteredFileURLs count]) options:NSBinarySearchingInsertionIndex usingComparator:^NSComparisonResult(id obj1, id obj2) {
+            return [obj1 compare:obj2];
+        }]];
+    }];
+}
+
+- (void)directoryPresenterDidRemoveFileURLsAtIndexes:(NSIndexSet *)indexes fromFileURLs:(NSArray *)oldFileURLs
+{
+    [indexes enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
+        NSURL *fileURL = [oldFileURLs objectAtIndex:idx];
+        FilteredFileURLWrapper *fileURLWrapper = [[FilteredFileURLWrapper alloc] initWithFileURL:fileURL];
+        fileURLWrapper.score = [[fileURL lastPathComponent] scoreForAbbreviation:self.filterString hitMask:NULL];
+        NSUInteger index = [self.filteredFileURLs indexOfObject:fileURLWrapper inSortedRange:NSMakeRange(0, [self.filteredFileURLs count]) options:0 usingComparator:^NSComparisonResult(id obj1, id obj2) {
+            return [obj1 compare:obj2];
+        }];
+        [self.filteredFileURLs removeObjectAtIndex:index];
+    }];
 }
 
 #pragma mark - View lifecycle
@@ -199,6 +339,11 @@ static void * directoryPresenterFileURLsObservingContext;
     [tableView.panGestureRecognizer requireGestureRecognizerToFail:recognizer];
 }
 
+- (id<UITextFieldDelegate>)delegateForFilterField:(UITextField *)textField
+{
+    return self;
+}
+
 - (UIButton *)toolButton
 {
     if (!toolButton)
@@ -230,7 +375,7 @@ static void * directoryPresenterFileURLsObservingContext;
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return [self.directoryPresenter.fileURLs count];
+    return self.filterCount;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -250,37 +395,14 @@ static void * directoryPresenterFileURLsObservingContext;
     }
     
     // Configure the cell...
-//    NSUInteger idx = [indexPath indexAtPosition:1];
-//    cell.indentationLevel = 0;
-//    if (idx < 2)
-//    {
-//        cell.textField.text = @"File";
-//        cell.imageView.image = [UIImage styleDocumentImageWithSize:CGSizeMake(32, 32) 
-//                                                             color:idx % 2 ? [UIColor styleFileBlueColor] : [UIColor styleFileRedColor] 
-//                                                              text:[extensions objectAtIndex:idx]];
-//    }
-//    else if (idx == 2)
-//    {
-//        cell.textField.text = @"Group";
-//        cell.imageView.image = [UIImage styleGroupImageWithSize:CGSizeMake(32, 32)];
-//    }
-//    else 
-//    {
-//        cell.textField.text = @"File";
-//        cell.imageView.image = [UIImage styleDocumentImageWithSize:CGSizeMake(32, 32) 
-//                                                             color:idx % 2 ? [UIColor styleFileBlueColor] : [UIColor styleFileRedColor] 
-//                                                              text:[extensions objectAtIndex:idx - 1]];
-//        cell.indentationLevel = 1;
-//        [cell setColor:[UIColor colorWithWhite:0.8 alpha:1] forIndentationLevel:0 animated:YES];
-//    }
-//    ACNode *cellNode = [self.group.children objectAtIndex:indexPath.row];
-//    if (![cellNode.name pathExtension])
-//        cell.imageView.image = [UIImage styleGroupImageWithSize:CGSizeMake(32, 32)];
-//    else
-//        cell.imageView.image = [UIImage styleDocumentImageWithSize:CGSizeMake(32, 32) 
-//                                                             color:[[cellNode.name pathExtension] isEqualToString:@"h"] ? [UIColor styleFileRedColor] : [UIColor styleFileBlueColor]
-//                                                              text:[cellNode.name pathExtension]];
-    cell.textField.text = [[self.directoryPresenter.fileURLs objectAtIndex:indexPath.row] lastPathComponent];
+    NSString *fileName = [[[self.filteredFileURLs objectAtIndex:indexPath.row] fileURL] lastPathComponent];
+    if (![fileName pathExtension])
+        cell.imageView.image = [UIImage styleGroupImageWithSize:CGSizeMake(32, 32)];
+    else
+        cell.imageView.image = [UIImage styleDocumentImageWithSize:CGSizeMake(32, 32) 
+                                                             color:[[fileName pathExtension] isEqualToString:@"h"] ? [UIColor styleFileRedColor] : [UIColor styleFileBlueColor]
+                                                              text:[fileName pathExtension]];
+    cell.textField.text = fileName;
     return cell;
 }
 
@@ -290,7 +412,32 @@ static void * directoryPresenterFileURLsObservingContext;
 {
     if (self.isEditing)
         return;
-    [self.tab pushURL:[self.directoryPresenter.fileURLs objectAtIndex:indexPath.row]];
+    [self.tab pushURL:[[self.filteredFileURLs objectAtIndex:indexPath.row] fileURL]];
+}
+
+#pragma mark - UITextField Delegate Methods
+
+- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
+{
+    // Calculate filter string
+    NSMutableString *filterString = [textField.text mutableCopy];
+    [filterString replaceCharactersInRange:range withString:string];
+    
+    // Apply filter to filterController with .3 second debounce
+    [filterDebounceTimer invalidate];
+    filterDebounceTimer = [NSTimer scheduledTimerWithTimeInterval:0.3 usingBlock:^(NSTimer *timer) {
+        self.filterString = filterString;
+    } repeats:NO];
+
+    if ([textField.rightView isKindOfClass:[UIButton class]])
+    {
+        if ([filterString length])
+            [(UIButton *)textField.rightView setSelected:YES];
+        else
+            [(UIButton *)textField.rightView setSelected:NO];            
+    }
+    
+    return YES;
 }
 
 @end
