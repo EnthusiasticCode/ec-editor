@@ -30,34 +30,33 @@
         return;
     [self willChangeValueForKey:@"directory"];
     _directory = directory;
-    self.fileURLs = nil;
-    [self didChangeValueForKey:@"directory"];
-}
-
-- (NSOrderedSet *)fileURLs
-{
-    if (!self.directory)
-        return nil;
-    if (!_fileURLs)
+    if (directory)
     {
         NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] initWithFilePresenter:self];
         [fileCoordinator coordinateReadingItemAtURL:self.directory options:NSFileCoordinatorReadingResolvesSymbolicLink error:NULL byAccessor:^(NSURL *newURL) {
             NSFileManager *fileManager = [[NSFileManager alloc] init];
             NSArray *fileURLs = [fileManager contentsOfDirectoryAtURL:newURL includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsPackageDescendants error:NULL];
-            _fileURLs = [NSMutableOrderedSet orderedSetWithArray:fileURLs];
+            self.fileURLs = [NSMutableOrderedSet orderedSetWithArray:fileURLs];
         }];
     }
-    return _fileURLs;
+    else
+        self.fileURLs = nil;
+    [self didChangeValueForKey:@"directory"];
+}
+
+- (NSOrderedSet *)fileURLs
+{
+    return [_fileURLs copy];
 }
 
 - (void)insertFileURLs:(NSArray *)array atIndexes:(NSIndexSet *)indexes
 {
-    [(NSMutableOrderedSet *)_fileURLs insertObjects:array atIndexes:indexes];
+    [[self mutableOrderedSetValueForKey:@"fileURLs"] insertObjects:array atIndexes:indexes];
 }
 
 - (void)replaceFileURLsAtIndexes:(NSIndexSet *)indexes withFileURLs:(NSArray *)array
 {
-    [(NSMutableOrderedSet *)_fileURLs replaceObjectsAtIndexes:indexes withObjects:array];
+    [[self mutableOrderedSetValueForKey:@"fileURLs"] replaceObjectsAtIndexes:indexes withObjects:array];
 }
 
 #pragma mark - General methods
@@ -121,7 +120,6 @@
     NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] initWithFilePresenter:self];
     [fileCoordinator coordinateReadingItemAtURL:newURL options:NSFileCoordinatorReadingResolvesSymbolicLink error:NULL byAccessor:^(NSURL *newURL) {
         self.directory = newURL;
-        self.fileURLs = nil;
     }];
 }
 
@@ -129,7 +127,6 @@
 {
     ECASSERT(NO);
     self.directory = nil;
-    self.fileURLs = nil;
     completionHandler(nil);
 }
 
