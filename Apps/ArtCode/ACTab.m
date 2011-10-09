@@ -49,6 +49,7 @@
 
 - (void)pushURL:(NSURL *)url
 {
+    ECASSERT(url);
     if (![self.historyItems count])
     {
         ACHistoryItem *historyItem = [NSEntityDescription insertNewObjectForEntityForName:@"HistoryItem" inManagedObjectContext:self.managedObjectContext];

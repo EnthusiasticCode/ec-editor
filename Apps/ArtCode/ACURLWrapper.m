@@ -27,6 +27,7 @@
     NSString *string = [self.application pathRelativeToProjectsDirectory:URL];
     if (!string)
         string = [URL absoluteString];
+    ECASSERT(string);
     [self setPrimitiveValue:string forKey:@"URL"];
     [self didChangeValueForKey:@"URL"];
 }
