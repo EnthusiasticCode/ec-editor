@@ -246,14 +246,18 @@ static NSRange intersectionOfRangeRelativeToRange(NSRange range, NSRange inRange
         for (index = range.location; index <= limit; ++toLineCount)
             index = NSMaxRange([self.contentString lineRangeForRange:(NSRange){ index, 0 }]);
         
-        NSMutableString *mutableContentString = [NSMutableString stringWithString:self.contentString];
-        [mutableContentString replaceCharactersInRange:range withString:commitString];
-        self.contentString = mutableContentString;
-#warning check if this test is actually necessary
-//        if (!commitString || [commitString length] == 0)
-//            [self.contentString deleteCharactersInRange:range];
-//        else
-//            [string replaceCharactersInRange:range withString:commitString];
+        if ([commitString length])
+        {
+            NSMutableString *mutableContentString = [NSMutableString stringWithString:self.contentString];
+            [mutableContentString replaceCharactersInRange:range withString:commitString];
+            self.contentString = mutableContentString;
+        }
+        else
+        {
+            NSMutableString *mutableContentString = [NSMutableString stringWithString:self.contentString];
+            [mutableContentString deleteCharactersInRange:range];
+            self.contentString = mutableContentString;
+        }
         
         [codeView updateTextInLineRange:fromLineRange toLineRange:(NSRange){ fromLineRange.location, toLineCount }];
     }
