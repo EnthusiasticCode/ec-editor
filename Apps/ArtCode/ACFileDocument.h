@@ -7,13 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <ECUIKit/ECCodeView.h>
 
 @class ECCodeUnit;
 
-@interface ACFileDocument : UIDocument
-
-@property (nonatomic, strong) NSString *contentString;
-
-- (void)loadCodeUnitWithCompletionHandler:(void (^)(ECCodeUnit *codeUnit))completionHandler;
+@interface ACFileDocument : UIDocument <ECCodeViewDataSource>
 
 @end

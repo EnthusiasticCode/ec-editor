@@ -17,6 +17,6 @@
 
 @property (nonatomic, strong) ACTab *tab;
 
-@property (nonatomic, strong) ECCodeView *codeView;
+@property (nonatomic, strong, readonly) ECCodeView *codeView;
 
 @end

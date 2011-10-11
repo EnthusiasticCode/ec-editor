@@ -58,40 +58,7 @@
 
 - (ECCodeView *)codeView
 {
-    if (!codeView)
-    {
-        codeView = [ECCodeView new];
-        
-        // Datasource setup
-        codeView.datasource = [ACCodeIndexerDataSource new];
-        
-        // Layout setup
-        codeView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-        codeView.backgroundColor = [UIColor whiteColor];
-        codeView.caretColor = [UIColor styleThemeColorOne];
-        codeView.selectionColor = [[UIColor styleThemeColorOne] colorWithAlphaComponent:0.3];
-        
-        codeView.lineNumbersEnabled = YES;
-        codeView.lineNumbersWidth = 30;
-        codeView.lineNumbersFont = [UIFont systemFontOfSize:10];
-        codeView.lineNumbersColor = [UIColor colorWithWhite:0.8 alpha:1];
-        // TODO maybe is not the best option to draw the line number in an external block
-        codeView.lineNumberRenderingBlock = ^(CGContextRef context, CGRect lineNumberBounds, CGFloat baseline, NSUInteger lineNumber, BOOL isWrappedLine) {
-            CGContextSetStrokeColorWithColor(context, [UIColor colorWithWhite:0.9 alpha:1].CGColor);
-            CGContextMoveToPoint(context, lineNumberBounds.size.width + 3, 0);
-            CGContextAddLineToPoint(context, lineNumberBounds.size.width + 3, lineNumberBounds.size.height);
-            CGContextStrokePath(context);
-            
-//            if (!isWrappedLine)
-//                return;
-//
-//            CGContextSetFillColorWithColor(context, [UIColor redColor].CGColor);
-//            CGContextFillRect(context, lineNumberBounds);
-        };
-        
-        codeView.renderer.preferredLineCountPerSegment = 500;
-    }
-    return codeView;
+    return (ECCodeView *)self.view;
 }
 
 - (ACFileDocument *)document
@@ -100,11 +67,7 @@
         return nil;
     if (!_document)
     {
-        _document = [[ACFileDocument alloc] initWithFileURL:self.fileURL];
-        [_document openWithCompletionHandler:^(BOOL success) {
-            ECASSERT(success);
-            self.codeView.text = self.document.contentString;
-        }];
+        self.document = [[ACFileDocument alloc] initWithFileURL:self.fileURL];
     }
     return _document;
 }
@@ -120,7 +83,7 @@
     _document = document;
     [_document openWithCompletionHandler:^(BOOL success) {
         ECASSERT(success);
-        self.codeView.text = self.document.contentString;
+        self.codeView.datasource = _document;
     }];
     
     [self didChangeValueForKey:@"document"];
@@ -205,16 +168,37 @@
 
 #pragma mark - View lifecycle
 
-- (void)viewDidLoad
+- (void)loadView
 {
-    self.view = self.codeView;
-    // TODO start loading animation
-    ACCodeIndexerDataSource *dataSource = (ACCodeIndexerDataSource *)self.codeView.datasource;
-    [self.document loadCodeUnitWithCompletionHandler:^(ECCodeUnit *codeUnit) {
-        ECASSERT(codeUnit); // TODO: error handling
-        dataSource.codeUnit = codeUnit;
-        [self.codeView updateAllText];
-    }];
+    codeView = [ECCodeView new];
+        
+    // Layout setup
+    codeView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    codeView.backgroundColor = [UIColor whiteColor];
+    codeView.caretColor = [UIColor styleThemeColorOne];
+    codeView.selectionColor = [[UIColor styleThemeColorOne] colorWithAlphaComponent:0.3];
+    
+    codeView.lineNumbersEnabled = YES;
+    codeView.lineNumbersWidth = 30;
+    codeView.lineNumbersFont = [UIFont systemFontOfSize:10];
+    codeView.lineNumbersColor = [UIColor colorWithWhite:0.8 alpha:1];
+    // TODO maybe is not the best option to draw the line number in an external block
+    codeView.lineNumberRenderingBlock = ^(CGContextRef context, CGRect lineNumberBounds, CGFloat baseline, NSUInteger lineNumber, BOOL isWrappedLine) {
+        CGContextSetStrokeColorWithColor(context, [UIColor colorWithWhite:0.9 alpha:1].CGColor);
+        CGContextMoveToPoint(context, lineNumberBounds.size.width + 3, 0);
+        CGContextAddLineToPoint(context, lineNumberBounds.size.width + 3, lineNumberBounds.size.height);
+        CGContextStrokePath(context);
+        
+        //            if (!isWrappedLine)
+        //                return;
+        //
+        //            CGContextSetFillColorWithColor(context, [UIColor redColor].CGColor);
+        //            CGContextFillRect(context, lineNumberBounds);
+    };
+    
+    codeView.renderer.preferredLineCountPerSegment = 500;
+    
+    self.view = codeView;
 }
 
 - (void)viewDidUnload
