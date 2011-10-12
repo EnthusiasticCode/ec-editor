@@ -9,22 +9,12 @@
 #import "ECCodeViewBase.h"
 #import "ECCodeStringDataSource.h"
 
-#define TILEVIEWPOOL_SIZE (3)
-
-#pragma mark -
-#pragma mark Interfaces
-
-@class TextTileView;
-
-#pragma mark -
+#define TILE_WIDTH 300
 
 @interface ECCodeViewBase () {
 @private
     NSMutableAttributedString *text;
     ECCodeStringDataSource *defaultDatasource;
-    
-    // Tileing and rendering management
-    TextTileView* tileViewPool[TILEVIEWPOOL_SIZE];
     
     // Dictionaries that holds additional passes
     NSMutableDictionary *overlayPasses;
@@ -34,139 +24,50 @@
 @property (nonatomic, strong) ECTextRenderer *renderer;
 @property (nonatomic, readonly) BOOL ownsRenderer;
 
-/// Get or create a tile for the given index.
-- (TextTileView *)viewForTileIndex:(NSUInteger)tileIndex;
-
 @end
 
-#pragma mark -
-@interface TextTileView : UIView {
-@private
-    CALayer *textLayer;
-}
-
-@property (nonatomic, readonly, weak) ECCodeViewBase *parent;
-@property (nonatomic) NSInteger tileIndex;
-- (id)initWithCodeViewBase:(ECCodeViewBase *)codeView;
-- (void)invalidate;
-- (void)renderText;
-
-@end
-
-#pragma mark - Implementations
-
-#pragma mark - TextTileView
-
-@implementation TextTileView
-
-@synthesize parent, tileIndex;
-
-#pragma mark Properties
-
-- (void)setTileIndex:(NSInteger)index
-{
-    if (index != tileIndex) 
-    {
-        tileIndex = index;
-        [self setNeedsDisplay];
-    }
-}
-
-- (void)setBounds:(CGRect)bounds
-{
-    [super setBounds:bounds];
-    [textLayer setFrame:bounds];
-}
-
-- (void)setBackgroundColor:(UIColor *)color
-{
-    [super setBackgroundColor:color];
-    [self setNeedsDisplay];
-}
 
 
-#pragma mark Methods
-
-- (id)initWithCodeViewBase:(ECCodeViewBase *)codeView
-{
-    if ((self = [super init]))
-    {
-        parent = codeView;
-        
-        self.opaque = YES;
-        self.clearsContextBeforeDrawing = NO;
-        
-        textLayer = [CALayer layer];
-        textLayer.actions = [NSDictionary dictionaryWithObjectsAndKeys:
-                             [NSNull null], @"bounds",
-                             [NSNull null], @"contents",
-                             [NSNull null], @"hidden", 
-                             [NSNull null], @"opacity", nil];
-        textLayer.hidden = YES;
-        [self.layer addSublayer:textLayer];
-        [textLayer setFrame:self.bounds];
-        
-        [self invalidate];
-    }
-    return self;
-}
-
-- (void)invalidate
-{
-    tileIndex = -2;
-    self.hidden = YES;
-}
-
-- (void)renderText
-{
-    if (tileIndex < 0)
-        return;
-    
-    CGFloat scale = parent.contentScaleFactor;
-    CGFloat invertScale = 1.0 / scale;
-    CGRect rect = self.bounds;
-    
-    __weak TextTileView* this = self;
-    [parent.renderingQueue addOperationWithBlock:^(void) {
-        // Rendering image
-        UIGraphicsBeginImageContextWithOptions(rect.size, YES, 0);
-        CGContextRef imageContext = UIGraphicsGetCurrentContext();
-        {
-            // Draw background
-            [this.backgroundColor setFill];
-            CGContextFillRect(imageContext, rect);
-            
-            // Positioning text
-            CGContextScaleCTM(imageContext, scale, scale);
-            CGPoint textOffset = CGPointMake(0, rect.size.height * this->tileIndex * invertScale);
-
-            CGSize textSize = rect.size;
-            textSize.height *= invertScale;
-            textSize.width *= invertScale;
-            
-            // Drawing text
-            [this->parent.renderer drawTextWithinRect:(CGRect){ textOffset, textSize } inContext:imageContext];
-        }
-        UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
-        UIGraphicsEndImageContext();
-        
-        // Send rendered image to presentation layer
-        [[NSOperationQueue mainQueue] addOperationWithBlock:^(void) {
-            this->textLayer.contents = (__bridge id)image.CGImage;
-            this->textLayer.hidden = NO;
-        }];
-    }];
-}
-
-- (void)drawRect:(CGRect)rect
-{
-    [self renderText];
-}
-
-@end
-
-#pragma mark -
-#pragma mark ECCodeView
+//- (void)renderText
+//{
+//    if (tileIndex < 0)
+//        return;
+//    
+//    CGFloat scale = parent.contentScaleFactor;
+//    CGFloat invertScale = 1.0 / scale;
+//    CGRect rect = self.bounds;
+//    
+//    __weak TextTileView* this = self;
+//    [parent.renderingQueue addOperationWithBlock:^(void) {
+//        // Rendering image
+//        UIGraphicsBeginImageContextWithOptions(rect.size, YES, 0);
+//        CGContextRef imageContext = UIGraphicsGetCurrentContext();
+//        {
+//            // Draw background
+//            [this.backgroundColor setFill];
+//            CGContextFillRect(imageContext, rect);
+//            
+//            // Positioning text
+//            CGContextScaleCTM(imageContext, scale, scale);
+//            CGPoint textOffset = CGPointMake(0, rect.size.height * this->tileIndex * invertScale);
+//
+//            CGSize textSize = rect.size;
+//            textSize.height *= invertScale;
+//            textSize.width *= invertScale;
+//            
+//            // Drawing text
+//            [this->parent.renderer drawTextWithinRect:(CGRect){ textOffset, textSize } inContext:imageContext];
+//        }
+//        UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+//        UIGraphicsEndImageContext();
+//        
+//        // Send rendered image to presentation layer
+//        [[NSOperationQueue mainQueue] addOperationWithBlock:^(void) {
+//            this->textLayer.contents = (__bridge id)image.CGImage;
+//            this->textLayer.hidden = NO;
+//        }];
+//    }];
+//}
 
 @implementation ECCodeViewBase
 
@@ -225,22 +126,9 @@
     
     self.contentSize = CGSizeMake(frame.size.width, self.renderer.estimatedHeight * self.contentScaleFactor);
     
-    for (NSInteger i = 0; i < TILEVIEWPOOL_SIZE; ++i)
-    {
-        [tileViewPool[i] invalidate];
-        tileViewPool[i].bounds = (CGRect){ CGPointZero, frame.size };
-    }
+    [(CATiledLayer *)self.layer setTileSize:CGSizeMake(frame.size.width, TILE_WIDTH)];
 
     [super setFrame:frame];
-}
-
-- (void)setBackgroundColor:(UIColor *)color
-{
-    for (NSInteger i = 0; i < TILEVIEWPOOL_SIZE; ++i)
-    {
-        [tileViewPool[i] setBackgroundColor:color];
-    }
-    [super setBackgroundColor:color];
 }
 
 - (void)setLineNumbersEnabled:(BOOL)enabled
@@ -336,75 +224,47 @@ static void init(ECCodeViewBase *self)
 
 #pragma mark - Rendering Methods
 
-- (void)setNeedsDisplay
++ (Class)layerClass
 {
-    [super setNeedsDisplay];
-    [self.subviews makeObjectsPerformSelector:@selector(setNeedsDisplay)];
+    return [CATiledLayer class];
 }
 
-- (TextTileView *)viewForTileIndex:(NSUInteger)tileIndex
+- (void)drawRect:(CGRect)rect
 {
-    NSInteger selected = -1;
-    // Select free tile
-    for (NSInteger i = 0; i < TILEVIEWPOOL_SIZE; ++i) 
-    {
-        if (tileViewPool[i])
-        {
-            // Tile already present and ready
-            if ([tileViewPool[i] tileIndex] == (NSInteger)tileIndex)
-            {
-                return tileViewPool[i];
-            }
-            // If still no selection just select this as a candidate
-            if (selected >= 0)
-                continue;
-            // Select only if better than previous
-            if (abs([tileViewPool[i] tileIndex] - tileIndex) <= 1) 
-                continue;
-        }
-        selected = i;
-    }
+    CGContextRef context = UIGraphicsGetCurrentContext();
     
-    // Generate new tile
-    if (!tileViewPool[selected]) 
-    {
-        tileViewPool[selected] = [[TextTileView alloc] initWithCodeViewBase:self];
-        tileViewPool[selected].backgroundColor = self.backgroundColor;
-        // TODO remove from self when not displayed
-        [self addSubview:tileViewPool[selected]];
-    }
+//    CGFloat scale = parent.contentScaleFactor;
+//    CGFloat invertScale = 1.0 / scale;
     
-    tileViewPool[selected].bounds = (CGRect){ CGPointZero, self.frame.size };
-    tileViewPool[selected].tileIndex = tileIndex;
+    // Draw background
+    if (rect.origin.y == 0)
+        [[UIColor grayColor] setFill];
+    else
+        [self.backgroundColor setFill];
+    CGContextFillRect(context, rect);
     
-    return tileViewPool[selected];
-}
+    // Positioning text
+//    CGContextScaleCTM(imageContext, scale, scale);
 
-- (void)layoutSubviews
-{
-    // Scrolled content rect
-    CGRect contentRect = self.bounds;
-    CGFloat halfHeight = contentRect.size.height / 2.0;
+//    CGRect textRect = rect;
+//    if (textInsets.top > 0)
+//    {
+//        if (textRect.origin.y > textInsets.top)
+//            textRect.origin.y -= textInsets.top;
+//        else
+//            textRect.origin.y = 0;
+//        textRect.size.width -= textInsets.top;
+//        CGContextTranslateCTM(context, 0, -textInsets.top);
+//    }
     
-    // Find first visible tile index
-    NSUInteger index = contentRect.origin.y / contentRect.size.height;
+//    CGPointMake(, rect.size.height * this->tileIndex * invertScale);
+
+//    CGSize textSize = rect.size;
+//    textSize.height *= invertScale;
+//    textSize.width *= invertScale;
     
-    // Layout first visible tile
-    CGFloat firstTileEnd = (index + 1) * contentRect.size.height;
-    TextTileView *firstTile = [self viewForTileIndex:index];
-    [self sendSubviewToBack:firstTile];
-    firstTile.hidden = NO;
-    firstTile.center = CGPointMake(CGRectGetMidX(contentRect), firstTileEnd - halfHeight);
-    
-    // Layout second visible tile if needed
-    if (firstTileEnd < CGRectGetMaxY(contentRect)) 
-    {
-        index++;
-        TextTileView *secondTile = [self viewForTileIndex:index];
-        [self sendSubviewToBack:secondTile];
-        secondTile.hidden = NO;
-        secondTile.center = CGPointMake(CGRectGetMidX(contentRect), firstTileEnd + halfHeight);
-    }
+    // Drawing textgconte
+    [self.renderer drawTextWithinRect:rect inContext:context];
 }
 
 - (void)updateAllText
@@ -440,14 +300,8 @@ static void init(ECCodeViewBase *self)
 
 - (void)textRenderer:(ECTextRenderer *)sender invalidateRenderInRect:(CGRect)rect
 {
-    if (rect.origin.y <= CGRectGetMaxY(self.bounds)) 
-    {
-        for (int i = 0; i < TILEVIEWPOOL_SIZE; ++i) 
-        {
-            [tileViewPool[i] invalidate];
-        }
-        [self setNeedsLayout];
-    }
+#warning TODO fix rect with insects
+    [self setNeedsDisplayInRect:rect];
 }
 
 #pragma mark -
@@ -515,13 +369,8 @@ static void init(ECCodeViewBase *self)
     CGRect bounds = self.bounds;
     self.renderer.wrapWidth = bounds.size.width;
     self.contentSize = CGSizeMake(bounds.size.width, self.renderer.estimatedHeight * self.contentScaleFactor);
-    for (NSInteger i = 0; i < TILEVIEWPOOL_SIZE; ++i)
-    {
-        [tileViewPool[i] invalidate];
-        tileViewPool[i].bounds = (CGRect){ CGPointZero, bounds.size };
-    }
     
-    [self setNeedsLayout];
+    [self setNeedsDisplay];
 }
 
 @end

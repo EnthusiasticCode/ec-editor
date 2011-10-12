@@ -630,50 +630,52 @@
     NSRange currentLineRange = NSMakeRange(0, 0);
     NSUInteger currentStringOffset = 0;
     CGFloat currentPositionOffset = 0;
-    // TODO add @synchronized (textSegments)?
-    do
+    @synchronized (textSegments)
     {
-        if (lastTextSegment && lastTextSegment == segment)
-            break;
-        
-        // Generate segment if needed
-        if ([textSegments count] <= currentIndex) 
+        do
         {
-            segment = [[TextSegment alloc] initWithTextRenderer:self];
-            segment.renderWrapWidth = wrapWidth;
-            if (!segment.isValid) 
-            {
-                lastTextSegment = [textSegments lastObject];
+            if (lastTextSegment && lastTextSegment == segment)
                 break;
-            }
             
-            [textSegments addObject:segment];
-        }
-        else
+            // Generate segment if needed
+            if ([textSegments count] <= currentIndex) 
+            {
+                segment = [[TextSegment alloc] initWithTextRenderer:self];
+                segment.renderWrapWidth = wrapWidth;
+                if (!segment.isValid) 
+                {
+                    lastTextSegment = [textSegments lastObject];
+                    break;
+                }
+                
+                [textSegments addObject:segment];
+            }
+            else
+            {
+                segment = [textSegments objectAtIndex:currentIndex];
+            }
+    //        currentLineRange.length = segment.lineCount;
+            
+            // Apply block
+            block(segment, currentIndex, currentLineRange.location, currentStringOffset, currentPositionOffset, &stop);
+            
+            // Update offsets
+            currentIndex++;
+            currentLineRange.length = segment.lineCount;
+            currentLineRange.location += currentLineRange.length;
+            currentStringOffset += segment.stringLength;
+            currentPositionOffset += segment.renderHeight;
+            
+        } while (!stop);
+        
+        // Update estimated height
+        if (currentPositionOffset > estimatedHeight 
+            || (lastTextSegment == segment && currentPositionOffset != estimatedHeight)) 
         {
-            segment = [textSegments objectAtIndex:currentIndex];
+            [self willChangeValueForKey:@"estimatedHeight"];
+            estimatedHeight = currentPositionOffset;
+            [self didChangeValueForKey:@"estimatedHeight"];
         }
-//        currentLineRange.length = segment.lineCount;
-        
-        // Apply block
-        block(segment, currentIndex, currentLineRange.location, currentStringOffset, currentPositionOffset, &stop);
-        
-        // Update offsets
-        currentIndex++;
-        currentLineRange.length = segment.lineCount;
-        currentLineRange.location += currentLineRange.length;
-        currentStringOffset += segment.stringLength;
-        currentPositionOffset += segment.renderHeight;
-        
-    } while (!stop);
-    
-    // Update estimated height
-    if (currentPositionOffset > estimatedHeight 
-        || (lastTextSegment == segment && currentPositionOffset != estimatedHeight)) 
-    {
-        [self willChangeValueForKey:@"estimatedHeight"];
-        estimatedHeight = currentPositionOffset;
-        [self didChangeValueForKey:@"estimatedHeight"];
     }
 }
 
@@ -723,9 +725,7 @@
 - (void)drawTextWithinRect:(CGRect)rect inContext:(CGContextRef)context
 {
     ECASSERT(context != NULL);
-    
-    CGContextRetain(context);
-    
+
     // Setup rendering transformations
     CGContextSetTextMatrix(context, CGAffineTransformIdentity);
     CGContextScaleCTM(context, 1, -1);
@@ -733,7 +733,16 @@
     // Get text insets
     UIEdgeInsets textInsets = self.textInsets;
     rect.size.height -= textInsets.top;
-    CGContextTranslateCTM(context, textInsets.left, -textInsets.top);
+    if (rect.origin.y > textInsets.top)
+    {
+        CGContextTranslateCTM(context, textInsets.left, -rect.origin.y);
+        rect.origin.y -= textInsets.top;
+    }
+    else
+    {
+        rect.origin.y = 0;
+        CGContextTranslateCTM(context, textInsets.left, -textInsets.top);
+    }
     
     // Get rendering passes
     NSArray *underlays = flags.delegateHasUnderlayPassesForTextRenderer ? [delegate underlayPassesForTextRenderer:self] : nil;
@@ -777,8 +786,6 @@
             CGContextRestoreGState(context);
         }
     }];
-    
-    CGContextRelease(context);
 }
 
 - (NSUInteger)closestStringLocationToPoint:(CGPoint)point withinStringRange:(NSRange)queryStringRange
@@ -1111,8 +1118,9 @@
     
     if (flags.delegateHasTextRendererInvalidateRenderInRect) 
     {
+        UIEdgeInsets textInsets = self.textInsets;
         CGRect changedRect = CGRectMake(0, 0, wrapWidth, estimatedHeight);
-        [delegate textRenderer:self invalidateRenderInRect:changedRect];
+        [delegate textRenderer:self invalidateRenderInRect:[self convertFromTextRect:changedRect]];
     }
     
     // TODO inform kvo?
@@ -1156,11 +1164,12 @@
     
     if (flags.delegateHasTextRendererInvalidateRenderInRect) 
     {
-        [delegate textRenderer:self invalidateRenderInRect:changedRect];
+        [delegate textRenderer:self invalidateRenderInRect:[self convertFromTextRect:changedRect]];
     }
     
-    // TODO inform kvo?
+    [self willChangeValueForKey:@"estimatedHeight"];
     estimatedHeight = 0;
+    [self didChangeValueForKey:@"estimatedHeight"];
 }
 
 - (void)clearCache
