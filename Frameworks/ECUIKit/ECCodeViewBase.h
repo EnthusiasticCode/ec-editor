@@ -12,15 +12,19 @@
 
 @class ECCodeViewBase;
 
-@protocol ECCodeViewBaseDataSource <ECTextRendererDataSource>
+@protocol ECCodeViewBaseDataSource <NSObject>
 @required
 
 /// When implemented return the length of the text in the datasource.
 - (NSUInteger)textLength;
 
+/// Returns the string range from a given line range.
+/// The provided line range sould have it's length modified to the actual number of lines returned.
+- (NSRange)codeView:(ECCodeViewBase *)codeView stringRangeForLineRange:(NSRange *)lineRange;
+
 /// Return the substring in the given range. Used to implement
 /// \c UITextInput methods.
-- (NSString *)codeView:(ECCodeViewBase *)codeView stringInRange:(NSRange)range;
+- (NSAttributedString *)codeView:(ECCodeViewBase *)codeView stringInRange:(NSRange)range;
 
 @end
 
@@ -28,12 +32,7 @@
 typedef void (^LineNumberRenderingBlock)(CGContextRef context, CGRect lineNumberBounds, CGFloat baseline, NSUInteger lineNumber, BOOL isWrappedLine);
 
 
-@interface ECCodeViewBase : UIScrollView <ECTextRendererDelegate> {
-@protected
-    ECTextRenderer *renderer;
-    NSOperationQueue *renderingQueue;
-    UIEdgeInsets textInsets;
-}
+@interface ECCodeViewBase : UIScrollView <ECTextRendererDelegate, ECTextRendererDataSource>
 
 #pragma mark Advanced Initialization and Configuration
 

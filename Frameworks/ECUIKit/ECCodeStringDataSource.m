@@ -39,38 +39,45 @@
     return self;
 }
 
-#pragma mark Text Renderer DataSource Methods
+#pragma mark Code View DataSource Methods
 
-- (NSAttributedString *)textRenderer:(ECTextRenderer *)sender stringInLineRange:(NSRange *)lineRange endOfString:(BOOL *)endOfString
+- (NSUInteger)textLength
+{
+    return [string length];
+}
+
+- (NSRange)codeView:(ECCodeViewBase *)codeView stringRangeForLineRange:(NSRange *)lineRange
 {
     NSString *str = [string string];
     NSUInteger lineIndex, stringLength = [str length];
     NSRange stringRange = NSMakeRange(0, 0);
-
+    
     // Calculate string range location for query line range location
     for (lineIndex = 0; lineIndex < lineRange->location; ++lineIndex)
         stringRange.location = NSMaxRange([str lineRangeForRange:(NSRange){ stringRange.location, 0 }]);
     
     if (stringRange.location >= stringLength)
-        return nil;
+        return NSMakeRange(0, 0);
     
     // Calculate string range lenght for query line range length
     stringRange.length = stringRange.location;
     for (lineIndex = 0; lineIndex < lineRange->length && stringRange.length < stringLength; ++lineIndex)
         stringRange.length = NSMaxRange([str lineRangeForRange:(NSRange){ stringRange.length, 0 }]);
     stringRange.length -= stringRange.location;
-
+    
     // Assign return read count of lines
     lineRange->length = lineIndex;
     
-    // Indicate if at end of string
-    *endOfString = NSMaxRange(stringRange) >= stringLength;
-    
+    return stringRange;
+}
+
+- (NSAttributedString *)codeView:(ECCodeViewBase *)codeView stringInRange:(NSRange)stringRange
+{
     // Preparing result
     NSMutableAttributedString *result = [[NSMutableAttributedString alloc] initWithString:[string.string substringWithRange:stringRange] attributes:defaultTextStyle.CTAttributes];
     
     // Append tailing new line
-    if (*endOfString) 
+    if (NSMaxRange(stringRange) == [string length]) 
     {
         NSAttributedString *newLine = [[NSAttributedString alloc] initWithString:@"\n" attributes:defaultTextStyle.CTAttributes];
         [result appendAttributedString:newLine];
@@ -82,28 +89,6 @@
     }
     
     return result;
-}
-
-- (NSUInteger)textRenderer:(ECTextRenderer *)sender estimatedTextLineCountOfLength:(NSUInteger)maximumLineLength
-{
-    CGFloat max = maximumLineLength;
-    __block NSUInteger count = 0;
-    [[string string] enumerateLinesUsingBlock:^(NSString *line, BOOL *stop) {
-        count += ceilf((float)[line length] / max);
-    }];
-    return count;
-}
-
-#pragma mark Code View DataSource Methods
-
-- (NSUInteger)textLength
-{
-    return [string length];
-}
-
-- (NSString *)codeView:(ECCodeViewBase *)codeView stringInRange:(NSRange)range
-{
-    return [[string string] substringWithRange:range];
 }
 
 - (BOOL)codeView:(ECCodeViewBase *)codeView canEditTextInRange:(NSRange)range
@@ -125,22 +110,22 @@
     }
     else
     {
-        NSUInteger index = 0;
-        NSRange fromLineRange = NSMakeRange(0, 0);
-        NSUInteger toLineCount = 0, limit;
-        // From line location
-        for (index = 0; index < range.location; ++fromLineRange.location)
-            index = NSMaxRange([str lineRangeForRange:(NSRange){ index, 0 }]);
-        if (fromLineRange.location)
-            fromLineRange.location--;
-        // From line count
-        limit = NSMaxRange(range);
-        for (index = range.location; index <= limit; ++fromLineRange.length)
-            index = NSMaxRange([str lineRangeForRange:(NSRange){ index, 0 }]);
-        // To line count
-        limit = range.location + [commitString length];
-        for (index = range.location; index <= limit; ++toLineCount)
-            index = NSMaxRange([str lineRangeForRange:(NSRange){ index, 0 }]);
+//        NSUInteger index = 0;
+//        NSRange fromLineRange = NSMakeRange(0, 0);
+//        NSUInteger toLineCount = 0, limit;
+//        // From line location
+//        for (index = 0; index < range.location; ++fromLineRange.location)
+//            index = NSMaxRange([str lineRangeForRange:(NSRange){ index, 0 }]);
+//        if (fromLineRange.location)
+//            fromLineRange.location--;
+//        // From line count
+//        limit = NSMaxRange(range);
+//        for (index = range.location; index <= limit; ++fromLineRange.length)
+//            index = NSMaxRange([str lineRangeForRange:(NSRange){ index, 0 }]);
+//        // To line count
+//        limit = range.location + [commitString length];
+//        for (index = range.location; index <= limit; ++toLineCount)
+//            index = NSMaxRange([str lineRangeForRange:(NSRange){ index, 0 }]);
         
         [string beginEditing];
         if (!commitString || [commitString length] == 0)
@@ -149,7 +134,8 @@
             [string replaceCharactersInRange:range withString:commitString];
         [string endEditing];
         
-        [codeView updateTextInLineRange:fromLineRange toLineRange:(NSRange){ fromLineRange.location, toLineCount }];
+//        [codeView updateTextInLineRange:fromLineRange toLineRange:(NSRange){ fromLineRange.location, toLineCount }];
+        [codeView updateAllText];
     }
 }
 

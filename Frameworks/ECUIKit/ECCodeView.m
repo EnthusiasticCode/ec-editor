@@ -15,8 +15,7 @@
 
 #define CARET_WIDTH 2
 
-#pragma mark -
-#pragma mark Interfaces
+#pragma mark - Interfaces
 
 @class TextSelectionView;
 @class TextMagnificationView;
@@ -919,7 +918,7 @@ static void init(ECCodeView *self)
     {
         if (!infoView)
         {
-            infoView = [[CodeInfoView alloc] initWithFrame:self.bounds navigatorDatasource:self.datasource renderer:renderer renderingQueue:renderingQueue];
+            infoView = [[CodeInfoView alloc] initWithFrame:self.bounds navigatorDatasource:self.datasource renderer:self.renderer renderingQueue:self.renderingQueue];
             infoView.navigatorBackgroundColor = navigatorBackgroundColor;
             infoView.navigatorWidth = navigatorWidth;
             infoView.parentSize = self.bounds.size;
@@ -1004,7 +1003,7 @@ static void init(ECCodeView *self)
     
     // TODO something if completionPopover.contentViewController is nil
     
-    CGRect textRect = [renderer rectsForStringRange:textRange limitToFirstLine:YES].bounds;
+    CGRect textRect = [self.renderer rectsForStringRange:textRange limitToFirstLine:YES].bounds;
     textRect.origin.x += textRect.size.width - 1;
     textRect.size.width = 2;
     [completionPopover presentPopoverFromRect:textRect inView:self permittedArrowDirections:UIPopoverArrowDirectionUp | UIPopoverArrowDirectionDown animated:YES];
@@ -1087,8 +1086,7 @@ static void init(ECCodeView *self)
     return shouldResignFirstResponder;
 }
 
-#pragma mark -
-#pragma mark UIKeyInput protocol
+#pragma mark - UIKeyInput protocol
 
 - (BOOL)hasText
 {
@@ -1191,7 +1189,7 @@ static void init(ECCodeView *self)
     if (e <= s)
         result = @"";
     else
-        result = [self.datasource codeView:self stringInRange:(NSRange){s, e - s}];
+        result = [self.datasource codeView:self stringInRange:(NSRange){s, e - s}].string;
     
     return result;
 }
@@ -1346,7 +1344,7 @@ static void init(ECCodeView *self)
     } 
     else
     {
-        result = [renderer positionFromPosition:pos inLayoutDirection:direction offset:offset];
+        result = [self.renderer positionFromPosition:pos inLayoutDirection:direction offset:offset];
         if (result == NSUIntegerMax)
             return nil;
     }
@@ -1422,14 +1420,14 @@ static void init(ECCodeView *self)
 
 - (CGRect)firstRectForRange:(UITextRange *)range
 {
-    CGRect r = [renderer rectsForStringRange:[(ECTextRange *)range range] limitToFirstLine:YES].bounds;
+    CGRect r = [self.renderer rectsForStringRange:[(ECTextRange *)range range] limitToFirstLine:YES].bounds;
     return r;
 }
 
 - (CGRect)caretRectForPosition:(UITextPosition *)position
 {
     NSUInteger pos = ((ECTextPosition *)position).index;
-    CGRect carretRect = [renderer rectsForStringRange:(NSRange){pos, 0} limitToFirstLine:YES].bounds;
+    CGRect carretRect = [self.renderer rectsForStringRange:(NSRange){pos, 0} limitToFirstLine:YES].bounds;
     
     carretRect.origin.x -= 1.0;
     carretRect.size.width = 2.0;
@@ -1461,7 +1459,7 @@ static void init(ECCodeView *self)
         point.y /= scale;
     }
     
-    NSUInteger location = [renderer closestStringLocationToPoint:point 
+    NSUInteger location = [self.renderer closestStringLocationToPoint:point 
                                                withinStringRange:range ? [(ECTextRange *)range range] : (NSRange){0, 0}];
     return [[ECTextPosition alloc] initWithIndex:location];;
 }
@@ -1470,7 +1468,7 @@ static void init(ECCodeView *self)
 {
     ECTextPosition *pos = (ECTextPosition *)[self closestPositionToPoint:point];
     
-    NSRange r = [[self.datasource codeView:self stringInRange:(NSRange){ pos.index, 1 }] rangeOfComposedCharacterSequenceAtIndex:0];
+    NSRange r = [[self.datasource codeView:self stringInRange:(NSRange){ pos.index, 1 }].string rangeOfComposedCharacterSequenceAtIndex:0];
     
     if (r.location == NSNotFound)
         return nil;
@@ -1809,7 +1807,7 @@ static void init(ECCodeView *self)
             }
             else
             {
-                selectionView.selection = NSMakeRange([renderer closestStringLocationToPoint:tapPoint withinStringRange:(NSRange){0, 0}], 0);
+                selectionView.selection = NSMakeRange([self.renderer closestStringLocationToPoint:tapPoint withinStringRange:(NSRange){0, 0}], 0);
                 [selectionView setMagnify:YES fromRect:selectionView.frame ratio:2 animated:animatePopover];
             }
 

@@ -119,10 +119,8 @@
     NSURL *dir = [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject];
     NSURL *file = [dir URLByAppendingPathComponent:[tableView cellForRowAtIndexPath:indexPath].textLabel.text];
     
-//    NSString *fileContent = [NSString stringWithContentsOfURL:file encoding:NSUTF8StringEncoding error:NULL];
-//    detailViewController.codeView.text = fileContent;
-    [(ECCodeByteArrayDataSource *)detailViewController.codeView.datasource setFileURL:file];
-    [detailViewController.codeView updateAllText];
+    NSString *fileContent = [NSString stringWithContentsOfURL:file encoding:NSUTF8StringEncoding error:NULL];
+    detailViewController.codeView.text = fileContent;
 }
 
 - (void)didReceiveMemoryWarning

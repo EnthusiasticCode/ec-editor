@@ -26,13 +26,13 @@
     // Tileing and rendering management
     TextTileView* tileViewPool[TILEVIEWPOOL_SIZE];
     
-    // Variable to indicate if renderer and rendering queue are owned by this codeview
-    BOOL ownsRenderer;
-    
     // Dictionaries that holds additional passes
     NSMutableDictionary *overlayPasses;
     NSMutableDictionary *underlayPasses;
 }
+
+@property (nonatomic, strong) ECTextRenderer *renderer;
+@property (nonatomic, readonly) BOOL ownsRenderer;
 
 /// Get or create a tile for the given index.
 - (TextTileView *)viewForTileIndex:(NSUInteger)tileIndex;
@@ -53,11 +53,9 @@
 
 @end
 
-#pragma mark -
-#pragma mark Implementations
+#pragma mark - Implementations
 
-#pragma mark -
-#pragma mark TextTileView
+#pragma mark - TextTileView
 
 @implementation TextTileView
 
@@ -175,7 +173,7 @@
 #pragma mark Properties
 
 @synthesize datasource;
-@synthesize renderingQueue, renderer;
+@synthesize renderingQueue = _renderingQueue, renderer = _renderer;
 @synthesize textInsets, lineNumbersEnabled, lineNumbersWidth, lineNumbersFont, lineNumbersColor, lineNumberRenderingBlock;
 
 - (id<ECCodeViewBaseDataSource>)datasource
@@ -189,11 +187,31 @@
     return datasource;
 }
 
-- (void)setDatasource:(id<ECCodeViewDataSource>)aDatasource
+- (ECTextRenderer *)renderer
 {
-    datasource = aDatasource;
-    if (ownsRenderer)
-        renderer.datasource = datasource;
+    if (_renderer == nil)
+    {
+        _renderer = [ECTextRenderer new];
+        _renderer.delegate = self;
+        _renderer.datasource = self;
+        _renderer.preferredLineCountPerSegment = 500;
+    }
+    return _renderer;
+}
+
+- (BOOL)ownsRenderer
+{
+    return self.renderer.delegate == self;
+}
+
+- (NSOperationQueue *)renderingQueue
+{
+    if (_renderingQueue == nil)
+    {
+        _renderingQueue = [NSOperationQueue new];
+        [_renderingQueue setMaxConcurrentOperationCount:1];
+    }
+    return _renderingQueue;
 }
 
 - (void)setFrame:(CGRect)frame
@@ -202,10 +220,10 @@
         return;
     
     // Setup renderer wrap with keeping in to account insets and line display
-    if (ownsRenderer)
-        renderer.wrapWidth = frame.size.width;
+    if (self.ownsRenderer)
+        self.renderer.wrapWidth = frame.size.width;
     
-    self.contentSize = CGSizeMake(frame.size.width, renderer.estimatedHeight * self.contentScaleFactor);
+    self.contentSize = CGSizeMake(frame.size.width, self.renderer.estimatedHeight * self.contentScaleFactor);
     
     for (NSInteger i = 0; i < TILEVIEWPOOL_SIZE; ++i)
     {
@@ -263,65 +281,49 @@
 
 #pragma mark NSObject Methods
 
-static void preinit(ECCodeViewBase *self)
-{
-    self->ownsRenderer = YES;
-    
-    // Creating new renderer
-    self->renderer = [ECTextRenderer new];
-    self->renderer.delegate = self;
-    self->renderer.preferredLineCountPerSegment = 500;
-    
-    // Creating rendering queue
-    self->renderingQueue = [NSOperationQueue new];
-    [self->renderingQueue setMaxConcurrentOperationCount:1];
-    
-    self->textInsets = UIEdgeInsetsMake(10, 10, 10, 10);
-}
-
 static void init(ECCodeViewBase *self)
 {
-    if (self->ownsRenderer)
-        self->renderer.wrapWidth = self.bounds.size.width;
-    [self->renderer addObserver:self forKeyPath:@"estimatedHeight" options:NSKeyValueObservingOptionNew context:nil];
+    if (self.ownsRenderer)
+        self.renderer.wrapWidth = self.bounds.size.width;
+    [self.renderer addObserver:self forKeyPath:@"estimatedHeight" options:NSKeyValueObservingOptionNew context:nil];
 }
 
 - (id)initWithFrame:(CGRect)frame renderer:(ECTextRenderer *)aRenderer renderingQueue:(NSOperationQueue *)queue
-{
-    ownsRenderer = NO;
-    renderer = aRenderer;
-    renderingQueue = queue;
-    
-    self = [super initWithFrame:frame];
-    if (self) {
-        init(self);
-    }
+{    
+    if (!(self = [super initWithFrame:frame]))
+        return nil;
+ 
+    self.renderer = aRenderer;
+    self.renderingQueue = queue;
+
+    init(self);
+
     return self;
 }
 
 - (id)initWithFrame:(CGRect)frame
 {
-    preinit(self);
-    self = [super initWithFrame:frame];
-    if (self) {
-        init(self);
-    }
+    if (!(self = [super initWithFrame:frame]))
+        return nil;
+    
+    init(self);
+
     return self;
 }
 
 - (id)initWithCoder:(NSCoder *)coder 
 {
-    preinit(self);
-    self = [super initWithCoder:coder];
-    if (self) {
-        init(self);
-    }
+    if (!(self = [super initWithCoder:coder]))
+        return nil;
+    
+    init(self);
+
     return self;
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
-    if (object == renderer)
+    if (object == self.renderer)
     {
         // Operating in the main queue because this message can be generated in the renderingQueue
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -407,16 +409,12 @@ static void init(ECCodeViewBase *self)
 
 - (void)updateAllText
 {
-    if (!ownsRenderer)
-        return;
-
-    [renderer updateAllText];
+    [self.renderer updateAllText];
 }
 
 - (void)updateTextInLineRange:(NSRange)originalRange toLineRange:(NSRange)newRange
 {
-    if (ownsRenderer)
-        [renderer updateTextInLineRange:originalRange toLineRange:newRange];
+    [self.renderer updateTextInLineRange:originalRange toLineRange:newRange];
 }
 
 #pragma mark - Text Renderer Delegate
@@ -476,6 +474,20 @@ static void init(ECCodeViewBase *self)
     [overlayPasses removeObjectForKey:passKey];
 }
 
+#pragma mark - Text Renderer Data source
+
+- (NSAttributedString *)textRenderer:(ECTextRenderer *)sender stringInLineRange:(NSRange *)lineRange endOfString:(BOOL *)endOfString
+{
+    ECASSERT(sender == self.renderer);
+    
+    NSRange stringRange = [self.datasource codeView:self stringRangeForLineRange:lineRange];
+    
+    if (endOfString)
+        *endOfString = (NSMaxRange(stringRange) == [self.datasource textLength]);
+    
+    return [self.datasource codeView:self stringInRange:stringRange];
+}
+
 #pragma mark - Text Renderer and CodeView String Datasource
 
 - (NSString *)text
@@ -492,17 +504,17 @@ static void init(ECCodeViewBase *self)
 {
     ECASSERT([self.datasource isKindOfClass:[ECCodeStringDataSource class]]);
     
-    if (!ownsRenderer)
+    if (!self.ownsRenderer)
         return;
     
     [(ECCodeStringDataSource *)datasource setString:string];
     
-    [renderer updateAllText];
+    [self.renderer updateAllText];
     
     // Update tiles
     CGRect bounds = self.bounds;
-    renderer.wrapWidth = bounds.size.width;
-    self.contentSize = CGSizeMake(bounds.size.width, renderer.estimatedHeight * self.contentScaleFactor);
+    self.renderer.wrapWidth = bounds.size.width;
+    self.contentSize = CGSizeMake(bounds.size.width, self.renderer.estimatedHeight * self.contentScaleFactor);
     for (NSInteger i = 0; i < TILEVIEWPOOL_SIZE; ++i)
     {
         [tileViewPool[i] invalidate];
