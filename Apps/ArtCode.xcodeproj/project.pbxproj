@@ -1068,10 +1068,7 @@
 				HEADER_SEARCH_PATHS = "${BUILD_DIR}/${CONFIGURATION}${EFFECTIVE_PLATFORM_NAME}/usr/local/include/";
 				INFOPLIST_FILE = "ArtCode/ArtCode-Info.plist";
 				LIBRARY_SEARCH_PATHS = "${BUILD_DIR}/";
-				OTHER_LDFLAGS = (
-					"-ObjC",
-					"-all_load",
-				);
+				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -1088,10 +1085,7 @@
 				HEADER_SEARCH_PATHS = "${BUILD_DIR}/${CONFIGURATION}${EFFECTIVE_PLATFORM_NAME}/usr/local/include/";
 				INFOPLIST_FILE = "ArtCode/ArtCode-Info.plist";
 				LIBRARY_SEARCH_PATHS = "${BUILD_DIR}/";
-				OTHER_LDFLAGS = (
-					"-ObjC",
-					"-all_load",
-				);
+				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
