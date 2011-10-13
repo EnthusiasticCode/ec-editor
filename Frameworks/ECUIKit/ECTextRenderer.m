@@ -735,7 +735,7 @@
     rect.size.height -= textInsets.top;
     if (rect.origin.y > textInsets.top)
     {
-        CGContextTranslateCTM(context, textInsets.left, -rect.origin.y);
+        CGContextTranslateCTM(context, textInsets.left, 0);
         rect.origin.y -= textInsets.top;
     }
     else
@@ -1118,8 +1118,7 @@
     
     if (flags.delegateHasTextRendererInvalidateRenderInRect) 
     {
-        UIEdgeInsets textInsets = self.textInsets;
-        CGRect changedRect = CGRectMake(0, 0, wrapWidth, estimatedHeight);
+        CGRect changedRect = CGRectMake(0, 0, wrapWidth, self.estimatedHeight);
         [delegate textRenderer:self invalidateRenderInRect:[self convertFromTextRect:changedRect]];
     }
     
@@ -1151,7 +1150,7 @@
             changedRect = CGRectUnion(changedRect, currentRect);
             currentY += currentRect.size.height;
             
-            // TODO!!! if lineCount > 1.5 * preferred -> split or merge if * 0.5
+#warning NIK TODO!!! if lineCount > 1.5 * preferred -> split or merge if * 0.5
             // and remember to set proper lastTextSegment
             [segmentStringsCache removeObjectForKey:segment];
             [typesettersCache removeObjectForKey:segment];

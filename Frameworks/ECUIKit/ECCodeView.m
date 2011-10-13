@@ -1189,7 +1189,7 @@ static void init(ECCodeView *self)
     if (e <= s)
         result = @"";
     else
-        result = [self.datasource codeView:self stringInRange:(NSRange){s, e - s}].string;
+        result = [self.datasource codeView:self attributedStringInRange:(NSRange){s, e - s}].string;
     
     return result;
 }
@@ -1468,7 +1468,7 @@ static void init(ECCodeView *self)
 {
     ECTextPosition *pos = (ECTextPosition *)[self closestPositionToPoint:point];
     
-    NSRange r = [[self.datasource codeView:self stringInRange:(NSRange){ pos.index, 1 }].string rangeOfComposedCharacterSequenceAtIndex:0];
+    NSRange r = [[self.datasource codeView:self attributedStringInRange:(NSRange){ pos.index, 1 }].string rangeOfComposedCharacterSequenceAtIndex:0];
     
     if (r.location == NSNotFound)
         return nil;

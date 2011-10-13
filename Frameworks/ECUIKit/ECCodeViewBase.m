@@ -9,16 +9,23 @@
 #import "ECCodeViewBase.h"
 #import "ECCodeStringDataSource.h"
 
-#define TILE_WIDTH 300
+#define TILE_HEIGHT 300
+
+
+@interface ECCodeViewBaseContentView : UIView
+@property (nonatomic, weak) ECCodeViewBase *parentCodeView;
+@end
+
 
 @interface ECCodeViewBase () {
 @private
-    NSMutableAttributedString *text;
-    ECCodeStringDataSource *defaultDatasource;
+    ECCodeViewBaseContentView *_contentView;
     
     // Dictionaries that holds additional passes
     NSMutableDictionary *overlayPasses;
     NSMutableDictionary *underlayPasses;
+    
+    BOOL dataSourceHasStringRangeForLineRange;
 }
 
 @property (nonatomic, strong) ECTextRenderer *renderer;
@@ -28,64 +35,26 @@
 
 
 
-//- (void)renderText
-//{
-//    if (tileIndex < 0)
-//        return;
-//    
-//    CGFloat scale = parent.contentScaleFactor;
-//    CGFloat invertScale = 1.0 / scale;
-//    CGRect rect = self.bounds;
-//    
-//    __weak TextTileView* this = self;
-//    [parent.renderingQueue addOperationWithBlock:^(void) {
-//        // Rendering image
-//        UIGraphicsBeginImageContextWithOptions(rect.size, YES, 0);
-//        CGContextRef imageContext = UIGraphicsGetCurrentContext();
-//        {
-//            // Draw background
-//            [this.backgroundColor setFill];
-//            CGContextFillRect(imageContext, rect);
-//            
-//            // Positioning text
-//            CGContextScaleCTM(imageContext, scale, scale);
-//            CGPoint textOffset = CGPointMake(0, rect.size.height * this->tileIndex * invertScale);
-//
-//            CGSize textSize = rect.size;
-//            textSize.height *= invertScale;
-//            textSize.width *= invertScale;
-//            
-//            // Drawing text
-//            [this->parent.renderer drawTextWithinRect:(CGRect){ textOffset, textSize } inContext:imageContext];
-//        }
-//        UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
-//        UIGraphicsEndImageContext();
-//        
-//        // Send rendered image to presentation layer
-//        [[NSOperationQueue mainQueue] addOperationWithBlock:^(void) {
-//            this->textLayer.contents = (__bridge id)image.CGImage;
-//            this->textLayer.hidden = NO;
-//        }];
-//    }];
-//}
-
 @implementation ECCodeViewBase
 
 #pragma mark Properties
 
-@synthesize datasource;
+@synthesize datasource = _datasource;
 @synthesize renderingQueue = _renderingQueue, renderer = _renderer;
 @synthesize textInsets, lineNumbersEnabled, lineNumbersWidth, lineNumbersFont, lineNumbersColor, lineNumberRenderingBlock;
 
-- (id<ECCodeViewBaseDataSource>)datasource
+- (void)setDatasource:(id<ECCodeViewBaseDataSource>)datasource
 {
-    if (!datasource)
-    {
-        if (!defaultDatasource)
-            defaultDatasource = [ECCodeStringDataSource new];
-        self.datasource = defaultDatasource;
-    }
-    return datasource;
+    if (datasource == _datasource)
+        return;
+    
+    [self willChangeValueForKey:@"datasource"];
+    
+    _datasource = datasource;
+    dataSourceHasStringRangeForLineRange = [_datasource respondsToSelector:@selector(codeView:stringRangeForLineRange:)];
+    [_renderer updateAllText];
+    
+    [self didChangeValueForKey:@"datasource"];
 }
 
 - (ECTextRenderer *)renderer
@@ -124,11 +93,18 @@
     if (self.ownsRenderer)
         self.renderer.wrapWidth = frame.size.width;
     
-    self.contentSize = CGSizeMake(frame.size.width, self.renderer.estimatedHeight * self.contentScaleFactor);
-    
-    [(CATiledLayer *)self.layer setTileSize:CGSizeMake(frame.size.width, TILE_WIDTH)];
+    CGFloat contentHeight = self.renderer.estimatedHeight * self.contentScaleFactor;
+    if (contentHeight == 0)
+        contentHeight = frame.size.height;
+    self.contentSize = CGSizeMake(frame.size.width, contentHeight);
 
     [super setFrame:frame];
+}
+
+- (void)setContentSize:(CGSize)contentSize
+{
+    [_contentView setFrame:(CGRect){ CGPointZero, contentSize }];
+    [super setContentSize:contentSize];
 }
 
 - (void)setLineNumbersEnabled:(BOOL)enabled
@@ -171,6 +147,11 @@
 
 static void init(ECCodeViewBase *self)
 {
+    self->_contentView = [ECCodeViewBaseContentView new];
+    self->_contentView.parentCodeView = self;
+    self->_contentView.contentMode = UIViewContentModeRedraw;
+    [self addSubview:self->_contentView];
+    
     if (self.ownsRenderer)
         self.renderer.wrapWidth = self.bounds.size.width;
     [self.renderer addObserver:self forKeyPath:@"estimatedHeight" options:NSKeyValueObservingOptionNew context:nil];
@@ -217,55 +198,12 @@ static void init(ECCodeViewBase *self)
         dispatch_async(dispatch_get_main_queue(), ^{
             CGFloat height = [[change valueForKey:NSKeyValueChangeNewKey] floatValue];
             CGFloat width = self.bounds.size.width;
-            self.contentSize = CGSizeMake(width, height * self.contentScaleFactor); 
+            self.contentSize = CGSizeMake(width, height * self.contentScaleFactor);
         });
     }
 }
 
 #pragma mark - Rendering Methods
-
-+ (Class)layerClass
-{
-    return [CATiledLayer class];
-}
-
-- (void)drawRect:(CGRect)rect
-{
-    CGContextRef context = UIGraphicsGetCurrentContext();
-    
-//    CGFloat scale = parent.contentScaleFactor;
-//    CGFloat invertScale = 1.0 / scale;
-    
-    // Draw background
-    if (rect.origin.y == 0)
-        [[UIColor grayColor] setFill];
-    else
-        [self.backgroundColor setFill];
-    CGContextFillRect(context, rect);
-    
-    // Positioning text
-//    CGContextScaleCTM(imageContext, scale, scale);
-
-//    CGRect textRect = rect;
-//    if (textInsets.top > 0)
-//    {
-//        if (textRect.origin.y > textInsets.top)
-//            textRect.origin.y -= textInsets.top;
-//        else
-//            textRect.origin.y = 0;
-//        textRect.size.width -= textInsets.top;
-//        CGContextTranslateCTM(context, 0, -textInsets.top);
-//    }
-    
-//    CGPointMake(, rect.size.height * this->tileIndex * invertScale);
-
-//    CGSize textSize = rect.size;
-//    textSize.height *= invertScale;
-//    textSize.width *= invertScale;
-    
-    // Drawing textgconte
-    [self.renderer drawTextWithinRect:rect inContext:context];
-}
 
 - (void)updateAllText
 {
@@ -301,7 +239,10 @@ static void init(ECCodeViewBase *self)
 - (void)textRenderer:(ECTextRenderer *)sender invalidateRenderInRect:(CGRect)rect
 {
 #warning TODO fix rect with insects
-    [self setNeedsDisplayInRect:rect];
+    if (rect.size.height == 0)
+        [_contentView setNeedsDisplay];
+    else
+        [_contentView setNeedsDisplayInRect:rect];
 }
 
 #pragma mark -
@@ -334,34 +275,67 @@ static void init(ECCodeViewBase *self)
 {
     ECASSERT(sender == self.renderer);
     
-    NSRange stringRange = [self.datasource codeView:self stringRangeForLineRange:lineRange];
+    if (self.datasource == nil)
+        return nil;
+    
+    NSRange stringRange = NSMakeRange(0, 0);
+    if (dataSourceHasStringRangeForLineRange)
+    {
+        stringRange = [self.datasource codeView:self stringRangeForLineRange:lineRange];
+    }
+    else
+    {
+#warning NIK TODO!!! optimize line to string range conversion
+        NSUInteger lineIndex, stringLength = [self.datasource textLength];
+        NSString *contentString = [self.datasource codeView:self attributedStringInRange:NSMakeRange(0, stringLength)].string;
+        
+        // Calculate string range location for query line range location
+        for (lineIndex = 0; lineIndex < lineRange->location; ++lineIndex)
+            stringRange.location = NSMaxRange([contentString lineRangeForRange:(NSRange){ stringRange.location, 0 }]);
+        
+        if (stringRange.location < stringLength)
+        {        
+            // Calculate string range lenght for query line range length
+            stringRange.length = stringRange.location;
+            for (lineIndex = 0; lineIndex < lineRange->length && stringRange.length < stringLength; ++lineIndex)
+                stringRange.length = NSMaxRange([contentString lineRangeForRange:(NSRange){ stringRange.length, 0 }]);
+            stringRange.length -= stringRange.location;
+            
+            // Assign return read count of lines
+            lineRange->length = lineIndex;
+        }
+    }
     
     if (endOfString)
         *endOfString = (NSMaxRange(stringRange) == [self.datasource textLength]);
     
-    return [self.datasource codeView:self stringInRange:stringRange];
+    return [self.datasource codeView:self attributedStringInRange:stringRange];
 }
 
 #pragma mark - Text Renderer and CodeView String Datasource
 
 - (NSString *)text
 {
-    if (![self.datasource isKindOfClass:[ECCodeStringDataSource class]])
-    {
+    if (_datasource == nil)
         return nil;
-    }
     
-    return [(ECCodeStringDataSource *)datasource string];
+    if (![self.datasource isKindOfClass:[ECCodeStringDataSource class]])
+        return nil;
+    
+    return [(ECCodeStringDataSource *)_datasource string];
 }
 
 - (void)setText:(NSString *)string
 {
+    if (_datasource == nil)
+        self.datasource = [ECCodeStringDataSource new];
+    
     ECASSERT([self.datasource isKindOfClass:[ECCodeStringDataSource class]]);
     
     if (!self.ownsRenderer)
         return;
     
-    [(ECCodeStringDataSource *)datasource setString:string];
+    [(ECCodeStringDataSource *)_datasource setString:string];
     
     [self.renderer updateAllText];
     
@@ -370,7 +344,72 @@ static void init(ECCodeViewBase *self)
     self.renderer.wrapWidth = bounds.size.width;
     self.contentSize = CGSizeMake(bounds.size.width, self.renderer.estimatedHeight * self.contentScaleFactor);
     
-    [self setNeedsDisplay];
+    [_contentView setNeedsDisplay];
 }
 
 @end
+
+
+@implementation ECCodeViewBaseContentView
+
+@synthesize parentCodeView;
+
++ (Class)layerClass
+{
+    return [CATiledLayer class];
+}
+
+- (void)drawRect:(CGRect)rect
+{
+    ECASSERT(parentCodeView != nil);
+    
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    
+    //    CGFloat scale = parent.contentScaleFactor;
+    //    CGFloat invertScale = 1.0 / scale;
+    
+    // Draw background
+//    if ((int)(rect.origin.y / TILE_HEIGHT) % 2)
+//        [[UIColor grayColor] setFill];
+//    else
+        [parentCodeView.backgroundColor setFill];
+    CGContextFillRect(context, rect);
+    
+    // Positioning text
+    //    CGContextScaleCTM(imageContext, scale, scale);
+    
+    //    CGRect textRect = rect;
+    //    if (textInsets.top > 0)
+    //    {
+    //        if (textRect.origin.y > textInsets.top)
+    //            textRect.origin.y -= textInsets.top;
+    //        else
+    //            textRect.origin.y = 0;
+    //        textRect.size.width -= textInsets.top;
+    //        CGContextTranslateCTM(context, 0, -textInsets.top);
+    //    }
+    
+    //    CGPointMake(, rect.size.height * this->tileIndex * invertScale);
+    
+    //    CGSize textSize = rect.size;
+    //    textSize.height *= invertScale;
+    //    textSize.width *= invertScale;
+    
+    // Drawing text
+    CGContextTranslateCTM(context, 0, rect.origin.y);
+    [parentCodeView.renderer drawTextWithinRect:rect inContext:context];
+}
+
+- (void)setFrame:(CGRect)frame
+{
+    if (CGRectEqualToRect(frame, self.frame))
+        return;
+    
+    if (frame.size.width != self.frame.size.width)
+        [(CATiledLayer *)self.layer setTileSize:CGSizeMake(frame.size.width, TILE_HEIGHT)];
+    
+    [super setFrame:frame];
+}
+
+@end
+

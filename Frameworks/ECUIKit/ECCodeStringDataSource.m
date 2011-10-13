@@ -71,8 +71,11 @@
     return stringRange;
 }
 
-- (NSAttributedString *)codeView:(ECCodeViewBase *)codeView stringInRange:(NSRange)stringRange
+- (NSAttributedString *)codeView:(ECCodeViewBase *)codeView attributedStringInRange:(NSRange)stringRange
 {
+    if (string == nil)
+        return nil;
+    
     // Preparing result
     NSMutableAttributedString *result = [[NSMutableAttributedString alloc] initWithString:[string.string substringWithRange:stringRange] attributes:defaultTextStyle.CTAttributes];
     

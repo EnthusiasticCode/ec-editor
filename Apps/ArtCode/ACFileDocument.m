@@ -131,32 +131,15 @@ static NSRange intersectionOfRangeRelativeToRange(NSRange range, NSRange inRange
     return YES;
 }
 
-#pragma mark - Text Renderer DataSource Methods
+#pragma mark - Code View DataSource Methods
 
-- (NSAttributedString *)textRenderer:(ECTextRenderer *)sender stringInLineRange:(NSRange *)lineRange endOfString:(BOOL *)endOfString
+- (NSUInteger)textLength
 {
-    NSUInteger lineIndex, stringLength = [self.contentString length];
-    NSRange stringRange = NSMakeRange(0, 0);
-    
-    // Calculate string range location for query line range location
-    for (lineIndex = 0; lineIndex < lineRange->location; ++lineIndex)
-        stringRange.location = NSMaxRange([self.contentString lineRangeForRange:(NSRange){ stringRange.location, 0 }]);
-    
-    if (stringRange.location >= stringLength)
-        return nil;
-    
-    // Calculate string range lenght for query line range length
-    stringRange.length = stringRange.location;
-    for (lineIndex = 0; lineIndex < lineRange->length && stringRange.length < stringLength; ++lineIndex)
-        stringRange.length = NSMaxRange([self.contentString lineRangeForRange:(NSRange){ stringRange.length, 0 }]);
-    stringRange.length -= stringRange.location;
-    
-    // Assign return read count of lines
-    lineRange->length = lineIndex;
-    
-    // Indicate if at end of string
-    *endOfString = NSMaxRange(stringRange) >= stringLength;
-    
+    return [self.contentString length];
+}
+
+- (NSAttributedString *)codeView:(ECCodeViewBase *)codeView attributedStringInRange:(NSRange)stringRange
+{
     // Preparing result
     NSMutableAttributedString *result = [[NSMutableAttributedString alloc] initWithString:[self.contentString substringWithRange:stringRange] attributes:self.defaultTextStyle.CTAttributes];
     
@@ -190,25 +173,13 @@ static NSRange intersectionOfRangeRelativeToRange(NSRange range, NSRange inRange
     }
     
     // Append tailing new line
-    if (*endOfString) 
+    if (NSMaxRange(stringRange) == self.contentString.length) 
     {
         NSAttributedString *newLine = [[NSAttributedString alloc] initWithString:@"\n" attributes:self.defaultTextStyle.CTAttributes];
         [result appendAttributedString:newLine];
     }
     
     return result;
-}
-
-#pragma mark - Code View DataSource Methods
-
-- (NSUInteger)textLength
-{
-    return [self.contentString length];
-}
-
-- (NSString *)codeView:(ECCodeViewBase *)codeView stringInRange:(NSRange)range
-{
-    return [self.contentString substringWithRange:range];
 }
 
 - (BOOL)codeView:(ECCodeViewBase *)codeView canEditTextInRange:(NSRange)range

@@ -18,13 +18,15 @@
 /// When implemented return the length of the text in the datasource.
 - (NSUInteger)textLength;
 
+/// Return the substring in the given range. Used to implement
+/// \c UITextInput methods.
+- (NSAttributedString *)codeView:(ECCodeViewBase *)codeView attributedStringInRange:(NSRange)range;
+
+@optional
+
 /// Returns the string range from a given line range.
 /// The provided line range sould have it's length modified to the actual number of lines returned.
 - (NSRange)codeView:(ECCodeViewBase *)codeView stringRangeForLineRange:(NSRange *)lineRange;
-
-/// Return the substring in the given range. Used to implement
-/// \c UITextInput methods.
-- (NSAttributedString *)codeView:(ECCodeViewBase *)codeView stringInRange:(NSRange)range;
 
 @end
 

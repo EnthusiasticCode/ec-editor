@@ -192,6 +192,13 @@
 			remoteGlobalIDString = B71709AB1428E3CD00DF7794;
 			remoteInfo = ECUIKit;
 		};
+		CD65C0AD1446F6BE000F66CD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B7170E8E1429F3B600DF7794 /* ECUIKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = CD17F2E0144596F60008ED91;
+			remoteInfo = ECCodeViewTest;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
@@ -382,6 +389,7 @@
 				B7170EB81429F3B800DF7794 /* ECUIKitTests.octest */,
 				B7170EBA1429F3B800DF7794 /* ECSplitViewControllerTest.app */,
 				B70129E91438696D0070CCDF /* ECTabControllerTest.app */,
+				CD65C0AE1446F6BE000F66CD /* ECCodeViewTest.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -880,6 +888,13 @@
 			fileType = wrapper.application;
 			path = ECSplitViewControllerTest.app;
 			remoteRef = B7170EB91429F3B800DF7794 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		CD65C0AE1446F6BE000F66CD /* ECCodeViewTest.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = ECCodeViewTest.app;
+			remoteRef = CD65C0AD1446F6BE000F66CD /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
