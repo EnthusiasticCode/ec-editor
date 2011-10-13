@@ -843,12 +843,6 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
 
 #pragma mark NSObject Methods
 
-static void preinit(ECCodeView *self)
-{
-//    self->navigatorBackgroundColor = [UIColor styleForegroundColor];
-    self->navigatorWidth = 200;
-}
-
 static void init(ECCodeView *self)
 {
     // Adding selection view
@@ -867,7 +861,6 @@ static void init(ECCodeView *self)
 
 - (id)initWithFrame:(CGRect)frame
 {
-    preinit(self);
     self = [super initWithFrame:frame];
     if (self) {
         init(self);
@@ -877,7 +870,6 @@ static void init(ECCodeView *self)
 
 - (id)initWithCoder:(NSCoder *)coder 
 {
-    preinit(self);
     self = [super initWithCoder:coder];
     if (self) {
         init(self);
@@ -904,8 +896,7 @@ static void init(ECCodeView *self)
     [super layoutSubviews];
 }
 
-#pragma mark -
-#pragma mark InfoView and Navigator methods
+#pragma mark - InfoView and Navigator methods
 
 - (void)setInfoViewVisible:(BOOL)visible
 {
