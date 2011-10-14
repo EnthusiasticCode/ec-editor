@@ -194,12 +194,12 @@ static void init(ECCodeViewBase *self)
 {
     if (object == self.renderer)
     {
-        // Operating in the main queue because this message can be generated in the renderingQueue
-        dispatch_async(dispatch_get_main_queue(), ^{
-            CGFloat height = [[change valueForKey:NSKeyValueChangeNewKey] floatValue];
-            CGFloat width = self.bounds.size.width;
-            self.contentSize = CGSizeMake(width, height * self.contentScaleFactor);
-        });
+        CGSize boundsSize = self.bounds.size;
+        CGFloat height = [[change valueForKey:NSKeyValueChangeNewKey] floatValue];
+        if (height == 0)
+            height = boundsSize.height;
+        CGFloat width = boundsSize.width;
+        self.contentSize = CGSizeMake(width, height * self.contentScaleFactor);
     }
 }
 

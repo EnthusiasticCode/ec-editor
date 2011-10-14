@@ -40,6 +40,8 @@
     } flags;
 }
 
+@property (nonatomic) CGFloat estimatedHeight;
+
 /// Shourtcut to retrieve the text insets from the delegate.
 @property (nonatomic, readonly) UIEdgeInsets textInsets;
 
@@ -556,13 +558,17 @@
     if (wrapWidth == width) 
         return;
 
+    [self willChangeValueForKey:@"wrapWidth"];
+    
     [renderedLinesCache removeAllObjects];
     wrapWidth = width;
     for (TextSegment *segment in textSegments) 
     {
         segment.renderWrapWidth = width;
     }
-    estimatedHeight = 0;
+    [self didChangeValueForKey:@"wrapWidth"];
+    
+    self.estimatedHeight = 0;
 }
 
 // TODO: account for text insets
@@ -574,6 +580,18 @@
     }
     
     return estimatedHeight;
+}
+
+- (void)setEstimatedHeight:(CGFloat)height
+{
+    if (height == estimatedHeight)
+        return;
+    
+    [self willChangeValueForKey:@"estimatedHeight"];
+    if (height == 0)
+        height = [self rectForIntegralNumberOfTextLinesWithinRect:CGRectInfinite allowGuessedResult:YES].size.height;
+    estimatedHeight = height;
+    [self didChangeValueForKey:@"estimatedHeight"];
 }
 
 #pragma mark NSObject Methods
@@ -680,9 +698,7 @@
         if (currentPositionOffset > estimatedHeight 
             || (lastTextSegment == segment && currentPositionOffset != estimatedHeight)) 
         {
-            [self willChangeValueForKey:@"estimatedHeight"];
-            estimatedHeight = currentPositionOffset;
-            [self didChangeValueForKey:@"estimatedHeight"];
+            self.estimatedHeight = currentPositionOffset;
         }
     }
 }
@@ -1150,8 +1166,7 @@
         [delegate textRenderer:self invalidateRenderInRect:[self convertFromTextRect:changedRect]];
     }
     
-    // TODO inform kvo?
-    estimatedHeight = 0;
+    self.estimatedHeight = 0;
 }
 
 - (void)updateTextInLineRange:(NSRange)originalRange toLineRange:(NSRange)newRange
@@ -1194,9 +1209,7 @@
         [delegate textRenderer:self invalidateRenderInRect:[self convertFromTextRect:changedRect]];
     }
     
-    [self willChangeValueForKey:@"estimatedHeight"];
-    estimatedHeight = 0;
-    [self didChangeValueForKey:@"estimatedHeight"];
+    self.estimatedHeight = 0;
 }
 
 - (void)clearCache
