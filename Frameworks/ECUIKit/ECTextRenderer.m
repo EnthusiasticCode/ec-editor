@@ -571,12 +571,17 @@
     self.estimatedHeight = 0;
 }
 
-// TODO: account for text insets
 - (CGFloat)estimatedHeight
 {
     if (estimatedHeight == 0) 
     {
         estimatedHeight = [self rectForIntegralNumberOfTextLinesWithinRect:CGRectInfinite allowGuessedResult:YES].size.height;
+    }
+    
+    if (estimatedHeight != 0)
+    {
+        UIEdgeInsets textInsets = self.textInsets;
+        estimatedHeight += textInsets.top + textInsets.bottom;
     }
     
     return estimatedHeight;
@@ -589,8 +594,15 @@
     
     [self willChangeValueForKey:@"estimatedHeight"];
     if (height == 0)
-        height = [self rectForIntegralNumberOfTextLinesWithinRect:CGRectInfinite allowGuessedResult:YES].size.height;
-    estimatedHeight = height;
+    {
+        // TODO this whole estimated height calculation and information should be handled better
+        estimatedHeight = 0;
+        [self estimatedHeight];
+    }
+    else
+    {
+        estimatedHeight = height;
+    }
     [self didChangeValueForKey:@"estimatedHeight"];
 }
 

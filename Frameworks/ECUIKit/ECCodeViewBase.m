@@ -377,6 +377,8 @@ static void init(ECCodeViewBase *self)
 
 - (void)setFrame:(CGRect)frame
 {
+    ECASSERT(CGRectEqualToRect(frame, CGRectIntegral(frame)) && "If frame is not integral, the rendering is blurry.");
+    
     if (CGRectEqualToRect(frame, self.frame))
         return;
     
