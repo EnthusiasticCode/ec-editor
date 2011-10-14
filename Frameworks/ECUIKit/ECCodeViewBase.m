@@ -103,8 +103,9 @@
 
 - (void)setContentSize:(CGSize)contentSize
 {
-    [_contentView setFrame:(CGRect){ CGPointZero, contentSize }];
-    [super setContentSize:contentSize];
+    CGRect contentRect = CGRectMake(0, 0, ceilf(contentSize.width), ceilf(contentSize.height));
+    [_contentView setFrame:contentRect];
+    [super setContentSize:contentRect.size];
 }
 
 - (void)setLineNumbersEnabled:(BOOL)enabled
@@ -365,38 +366,12 @@ static void init(ECCodeViewBase *self)
     
     CGContextRef context = UIGraphicsGetCurrentContext();
     
-    //    CGFloat scale = parent.contentScaleFactor;
-    //    CGFloat invertScale = 1.0 / scale;
-    
-    // Draw background
-//    if ((int)(rect.origin.y / TILE_HEIGHT) % 2)
-//        [[UIColor grayColor] setFill];
-//    else
-        [parentCodeView.backgroundColor setFill];
+    [parentCodeView.backgroundColor setFill];
     CGContextFillRect(context, rect);
     
-    // Positioning text
-    //    CGContextScaleCTM(imageContext, scale, scale);
-    
-    //    CGRect textRect = rect;
-    //    if (textInsets.top > 0)
-    //    {
-    //        if (textRect.origin.y > textInsets.top)
-    //            textRect.origin.y -= textInsets.top;
-    //        else
-    //            textRect.origin.y = 0;
-    //        textRect.size.width -= textInsets.top;
-    //        CGContextTranslateCTM(context, 0, -textInsets.top);
-    //    }
-    
-    //    CGPointMake(, rect.size.height * this->tileIndex * invertScale);
-    
-    //    CGSize textSize = rect.size;
-    //    textSize.height *= invertScale;
-    //    textSize.width *= invertScale;
-    
     // Drawing text
-    CGContextTranslateCTM(context, 0, rect.origin.y);
+    if (rect.origin.y > 0)
+        CGContextTranslateCTM(context, 0, rect.origin.y);
     [parentCodeView.renderer drawTextWithinRect:rect inContext:context];
 }
 

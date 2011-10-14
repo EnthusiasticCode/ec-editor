@@ -1083,7 +1083,7 @@
             {
                 BOOL isStringEnd = NO;
                 NSRange tempRange = NSMakeRange(0, 1);
-                NSAttributedString *string = [datasource textRenderer:self stringInLineRange:&tempRange endOfString:&isStringEnd];
+                NSAttributedString *string = [self.datasource textRenderer:self stringInLineRange:&tempRange endOfString:&isStringEnd];
                 if (string) 
                 {
                     CTLineRef line = CTLineCreateWithAttributedString((__bridge CFAttributedStringRef)string);
