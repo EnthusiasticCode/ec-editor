@@ -495,7 +495,7 @@
         
         bounds = CGRectMake(0, currentY, line->width, line->ascent + line->descent);
         
-        if ((NSUInteger)(stringRange.location + stringRange.length) > queryRange.location) 
+        if (lineIndex >= queryRange.location) 
         {
             block(line->CTLine, lineIndex, bounds, (NSRange){ stringRange.location, stringRange.length }, &stop);
             if (stop) break;
