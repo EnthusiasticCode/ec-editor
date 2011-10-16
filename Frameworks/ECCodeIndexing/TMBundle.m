@@ -20,6 +20,18 @@ static NSDictionary *_bundleURLs;
 - (id)initWithBundleURL:(NSURL *)bundleURL;
 @property (nonatomic, strong) NSURL *bundleURL;
 @property (nonatomic, strong) NSString *bundleName;
+@property (nonatomic, strong) NSDictionary *bundlePlist;
+@property (nonatomic, strong) NSDictionary *syntaxes;
+@end
+
+static NSString * const _syntaxDirectory = @"Syntaxes";
+static NSString * const _syntaxNameKey = @"name";
+
+@interface TMSyntax ()
+@property (nonatomic, strong) NSURL *fileURL;
+@property (nonatomic, strong) NSString *name;
+@property (nonatomic, strong) NSDictionary *plist;
+- (id)initWithFileURL:(NSURL *)fileURL;
 @end
 
 @implementation TMBundle
@@ -66,6 +78,26 @@ static NSDictionary *_bundleURLs;
 
 @synthesize bundleURL = _bundleURL;
 @synthesize bundleName = _bundleName;
+@synthesize bundlePlist = _bundlePlist;
+@synthesize syntaxes = _syntaxes;
+
+- (NSDictionary *)syntaxes
+{
+    if (!_syntaxes)
+    {
+        NSMutableDictionary *syntaxes = [NSMutableDictionary dictionary];
+        NSFileManager *fileManager = [[NSFileManager alloc] init];
+        for (NSURL *fileURL in [fileManager contentsOfDirectoryAtURL:[self.bundleURL URLByAppendingPathComponent:_syntaxDirectory] includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles error:NULL])
+        {
+            TMSyntax *syntax = [[TMSyntax alloc] initWithFileURL:fileURL];
+            if (!syntax)
+                continue;
+            [syntaxes setObject:syntax forKey:syntax.name];
+        }
+        _syntaxes = [syntaxes copy];
+    }
+    return _syntaxes;
+}
 
 - (id)initWithBundleURL:(NSURL *)bundleURL
 {
@@ -85,6 +117,32 @@ static NSDictionary *_bundleURLs;
         return nil;
     self.bundleURL = bundleURL;
     self.bundleName = bundleName;
+    self.bundlePlist = bundlePlist;
+    return self;
+}
+
+@end
+
+@implementation TMSyntax
+
+@synthesize fileURL = _fileURL;
+@synthesize name = _name;
+@synthesize plist = _plist;
+
+- (id)initWithFileURL:(NSURL *)fileURL
+{
+    self = [super init];
+    if (!self)
+        return nil;
+    NSDictionary *syntaxPlist = [NSPropertyListSerialization propertyListWithData:[NSData dataWithContentsOfURL:fileURL options:NSDataReadingUncached error:NULL] options:NSPropertyListImmutable format:NULL error:NULL];
+    if (!syntaxPlist)
+        return nil;
+    NSString *syntaxName = [syntaxPlist objectForKey:_syntaxNameKey];
+    if (!syntaxName)
+        return nil;
+    self.fileURL = fileURL;
+    self.name = syntaxName;
+    self.plist = syntaxPlist;
     return self;
 }
 
