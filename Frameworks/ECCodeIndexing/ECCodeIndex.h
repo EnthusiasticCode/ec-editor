@@ -12,6 +12,10 @@
 /// Class that encapsulates interaction with parsing and indexing libraries to provide language related non file specific functionality such as symbol resolution and refactoring.
 @interface ECCodeIndex : NSObject
 
+/// The directory where language bundles are saved
++ (NSURL *)bundleDirectory;
++ (void)setBundleDirectory:(NSURL *)bundleDirectory;
+
 /// Registers a subclass as an extension of the receiver
 + (void)registerExtension:(Class)extensionClass;
 

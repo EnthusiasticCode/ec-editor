@@ -9,8 +9,10 @@
 #import <UIKit/UIKit.h>
 #import <ECUIKit/ECCodeView.h>
 
-@class ECCodeUnit;
+@class ECCodeUnit, TMTheme;
 
 @interface ACFileDocument : UIDocument <ECCodeViewDataSource>
+
+@property (nonatomic, strong) TMTheme *theme;
 
 @end

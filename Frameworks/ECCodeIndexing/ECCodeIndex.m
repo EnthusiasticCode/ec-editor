@@ -11,6 +11,7 @@
 
 static NSMutableDictionary *_extensionClassesByLanguage;
 static NSMutableOrderedSet *_extensionClasses;
+static NSURL *_bundleDirectory;
 
 @interface ECCodeIndex ()
 @property (nonatomic, strong, readonly) NSMutableDictionary *extensionsByExtensionClass;
@@ -26,6 +27,19 @@ static NSMutableOrderedSet *_extensionClasses;
     if (!_extensionsByExtensionClass)
         _extensionsByExtensionClass = [[NSMutableDictionary alloc] init];
     return _extensionsByExtensionClass;
+}
+
++ (NSURL *)bundleDirectory
+{
+    return _bundleDirectory;
+}
+
++ (void)setBundleDirectory:(NSURL *)bundleDirectory
+{
+    _bundleDirectory = bundleDirectory;
+    if (self == [ECCodeIndex class])
+        for (Class extensionClass in _extensionClasses)
+            [extensionClass setBundleDirectory:bundleDirectory];
 }
 
 + (void)registerExtension:(Class)extensionClass

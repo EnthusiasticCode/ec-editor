@@ -9,6 +9,8 @@
 #import "ArtCodeAppDelegate.h"
 
 #import <ECFoundation/NSURL+ECAdditions.h>
+#import <ECCodeIndexing/ECCodeIndex.h>
+#import <ECCodeIndexing/TMTheme.h>
 
 #import "AppStyle.h"
 #import <ECUIKit/ECSplitViewController.h>
@@ -27,6 +29,9 @@
 #import "ACApplication.h"
 #import "ACTab.h"
 
+static NSString * const themeDirectory = @"Themes";
+static NSString * const bundleDirectory = @"Bundles";
+
 @implementation ArtCodeAppDelegate
 
 @synthesize window = _window;
@@ -41,6 +46,8 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    [ECCodeIndex setBundleDirectory:[[[NSBundle mainBundle] bundleURL] URLByAppendingPathComponent:bundleDirectory]];
+    [TMTheme setThemeDirectory:[[[NSBundle mainBundle] bundleURL] URLByAppendingPathComponent:themeDirectory]];
     UIFont *defaultFont = [UIFont styleFontWithSize:14];    
 
     ////////////////////////////////////////////////////////////////////////////

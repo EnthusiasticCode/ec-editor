@@ -96,6 +96,10 @@
 		B7233747142A0918006D540A /* libstdc++.6.0.9.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B7233745142A0918006D540A /* libstdc++.6.0.9.dylib */; };
 		B7233748142A0D62006D540A /* libECFoundation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7170D431428FAF100DF7794 /* libECFoundation.a */; };
 		B7656BC7144ACCC80084B050 /* ECCodeScope.h in Headers */ = {isa = PBXBuildFile; fileRef = B7656BC6144ACCC80084B050 /* ECCodeScope.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B7656BEB144B3BCE0084B050 /* NSString+ECCodeScopes.h in Headers */ = {isa = PBXBuildFile; fileRef = B7656BE9144B3BCE0084B050 /* NSString+ECCodeScopes.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B7656BEC144B3BCE0084B050 /* NSString+ECCodeScopes.m in Sources */ = {isa = PBXBuildFile; fileRef = B7656BEA144B3BCE0084B050 /* NSString+ECCodeScopes.m */; };
+		B7656BF1144B3D830084B050 /* TMTheme.h in Headers */ = {isa = PBXBuildFile; fileRef = B7656BEF144B3D830084B050 /* TMTheme.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B7656BF2144B3D830084B050 /* TMTheme.m in Sources */ = {isa = PBXBuildFile; fileRef = B7656BF0144B3D830084B050 /* TMTheme.m */; };
 		B7772630143D127800DA3FD3 /* libclangFrontend.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B777262F143D127800DA3FD3 /* libclangFrontend.a */; };
 		B7772633143D137800DA3FD3 /* libLLVMAnalysis.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B72336741429FD76006D540A /* libLLVMAnalysis.a */; };
 		B7772634143D139400DA3FD3 /* libclangAnalysis.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B72336FD1429FD8B006D540A /* libclangAnalysis.a */; };
@@ -349,6 +353,10 @@
 		B72337091429FD8B006D540A /* libclangSerialization.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libclangSerialization.a; path = usr/lib/libclangSerialization.a; sourceTree = SDKROOT; };
 		B7233745142A0918006D540A /* libstdc++.6.0.9.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libstdc++.6.0.9.dylib"; path = "usr/lib/libstdc++.6.0.9.dylib"; sourceTree = SDKROOT; };
 		B7656BC6144ACCC80084B050 /* ECCodeScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeScope.h; sourceTree = "<group>"; };
+		B7656BE9144B3BCE0084B050 /* NSString+ECCodeScopes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+ECCodeScopes.h"; sourceTree = "<group>"; };
+		B7656BEA144B3BCE0084B050 /* NSString+ECCodeScopes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+ECCodeScopes.m"; sourceTree = "<group>"; };
+		B7656BEF144B3D830084B050 /* TMTheme.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TMTheme.h; sourceTree = "<group>"; };
+		B7656BF0144B3D830084B050 /* TMTheme.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TMTheme.m; sourceTree = "<group>"; };
 		B777262F143D127800DA3FD3 /* libclangFrontend.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libclangFrontend.a; path = usr/lib/libclangFrontend.a; sourceTree = SDKROOT; };
 		B7772631143D12CA00DA3FD3 /* libclangARCMigrate.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libclangARCMigrate.a; path = usr/lib/libclangARCMigrate.a; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
@@ -710,6 +718,10 @@
 				B7656BC6144ACCC80084B050 /* ECCodeScope.h */,
 				B7170D0A1428FAAE00DF7794 /* ECCodeCompletion.h */,
 				B7170D0E1428FAAE00DF7794 /* ECCodeDiagnostic.h */,
+				B7656BE9144B3BCE0084B050 /* NSString+ECCodeScopes.h */,
+				B7656BEA144B3BCE0084B050 /* NSString+ECCodeScopes.m */,
+				B7656BEF144B3D830084B050 /* TMTheme.h */,
+				B7656BF0144B3D830084B050 /* TMTheme.m */,
 			);
 			name = General;
 			sourceTree = "<group>";
@@ -729,6 +741,8 @@
 				B7170D1E1428FAAF00DF7794 /* ECClangCodeIndex.h in Headers */,
 				B7170D201428FAAF00DF7794 /* ECClangCodeUnit.h in Headers */,
 				B7656BC7144ACCC80084B050 /* ECCodeScope.h in Headers */,
+				B7656BEB144B3BCE0084B050 /* NSString+ECCodeScopes.h in Headers */,
+				B7656BF1144B3D830084B050 /* TMTheme.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -856,6 +870,8 @@
 				B7170D1F1428FAAF00DF7794 /* ECClangCodeIndex.m in Sources */,
 				B7170D211428FAAF00DF7794 /* ECClangCodeUnit.m in Sources */,
 				B7170D311428FAAF00DF7794 /* ECCodeIndex.m in Sources */,
+				B7656BEC144B3BCE0084B050 /* NSString+ECCodeScopes.m in Sources */,
+				B7656BF2144B3D830084B050 /* TMTheme.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

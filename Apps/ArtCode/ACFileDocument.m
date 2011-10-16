@@ -9,8 +9,7 @@
 #import "ACFileDocument.h"
 #import <ECCodeIndexing/ECCodeIndex.h>
 #import <ECCodeIndexing/ECCodeUnit.h>
-#import <ECCodeIndexing/ECCodeToken.h>
-#import <ECCodeIndexing/ECCodeCursor.h>
+#import <ECCodeIndexing/TMTheme.h>
 #import <ECUIKit/ECTextStyle.h>
 
 static NSRange intersectionOfRangeRelativeToRange(NSRange range, NSRange inRange)
@@ -22,21 +21,16 @@ static NSRange intersectionOfRangeRelativeToRange(NSRange range, NSRange inRange
 
 @interface ACFileDocument ()
 @property (nonatomic, strong) NSString *contentString;
-@property (nonatomic, strong) ECCodeUnit *codeUnit;
+@property (nonatomic, strong) id<ECCodeUnit>codeUnit;
 @property (nonatomic, strong, readonly) ECTextStyle *defaultTextStyle;
-@property (nonatomic, strong, readonly) ECTextStyle *keywordStyle;
-@property (nonatomic, strong, readonly) ECTextStyle *commentStyle;
-@property (nonatomic, strong, readonly) ECTextStyle *referenceStyle;
-@property (nonatomic, strong, readonly) ECTextStyle *literalStyle;
-@property (nonatomic, strong, readonly) ECTextStyle *declarationStyle;
-@property (nonatomic, strong, readonly) ECTextStyle *preprocessingStyle;
 @end
 
 @implementation ACFileDocument
 
 @synthesize contentString = _contentString;
 @synthesize codeUnit = _codeUnit;
-@synthesize defaultTextStyle = _defaultTextStyle, keywordStyle = _keywordStyle, commentStyle = _commentStyle, referenceStyle = _referenceStyle, literalStyle = _literalStyle, declarationStyle = _declarationStyle, preprocessingStyle = _preprocessingStyle;
+@synthesize defaultTextStyle = _defaultTextStyle;
+@synthesize theme = _theme;
 
 - (void)setContentString:(NSString *)contentString
 {
@@ -48,53 +42,11 @@ static NSRange intersectionOfRangeRelativeToRange(NSRange range, NSRange inRange
     [self didChangeValueForKey:@"contentString"];
 }
 
-- (ECTextStyle *)defaultTextStyle
+- (TMTheme *)theme
 {
-    if (!_defaultTextStyle)
-        _defaultTextStyle = [ECTextStyle textStyleWithName:@"default" font:[UIFont fontWithName:@"Inconsolata-dz" size:15] color:nil];
-    return _defaultTextStyle;
-}
-
-- (ECTextStyle *)keywordStyle
-{
-    if (!_keywordStyle)
-        _keywordStyle = [ECTextStyle textStyleWithName:@"Keyword" font:nil color:[UIColor colorWithRed:200.0/255.0 green:0.0/255.0 blue:151.0/255.0 alpha:1]];
-    return _keywordStyle;
-}
-
-- (ECTextStyle *)commentStyle
-{
-    if (!_commentStyle)
-        _commentStyle = [ECTextStyle textStyleWithName:@"Comment" font:nil color:[UIColor colorWithRed:0.0/255.0 green:133.0/255.0 blue:13.0/255.0 alpha:1]];
-    return _commentStyle;
-}
-
-- (ECTextStyle *)referenceStyle
-{
-    if (!_referenceStyle)
-        _referenceStyle = [ECTextStyle textStyleWithName:@"Reference" font:nil color:[UIColor purpleColor]];
-    return _referenceStyle;
-}
-
-- (ECTextStyle *)literalStyle
-{
-    if (!_literalStyle)
-        _literalStyle = [ECTextStyle textStyleWithName:@"Strings" font:nil color:[UIColor colorWithRed:222.0/255.0 green:19.0/255.0 blue:0.0/255.0 alpha:1]];
-    return _literalStyle;
-}
-
-- (ECTextStyle *)declarationStyle
-{
-    if (!_declarationStyle)
-        _declarationStyle = [ECTextStyle textStyleWithName:@"Declaration" font:nil color:[UIColor colorWithRed:57.0/255.0 green:118.0/255.0 blue:126.0/255.0 alpha:1]];
-    return _declarationStyle;
-}
-
-- (ECTextStyle *)preprocessingStyle
-{
-    if (!_preprocessingStyle)
-        _preprocessingStyle = [ECTextStyle textStyleWithName:@"Preprocessor Statements" font:nil color:[UIColor colorWithRed:115.0/255.0 green:66.0/255.0 blue:33.0/255.0 alpha:1]];
-    return _preprocessingStyle;
+    if (!_theme)
+        _theme = [TMTheme themeWithName:[[TMTheme themeNames] lastObject]];
+    return _theme;
 }
 
 #pragma mark - UIDocument methods
@@ -143,35 +95,10 @@ static NSRange intersectionOfRangeRelativeToRange(NSRange range, NSRange inRange
     // Preparing result
     NSMutableAttributedString *result = [[NSMutableAttributedString alloc] initWithString:[self.contentString substringWithRange:stringRange] attributes:self.defaultTextStyle.CTAttributes];
     
-    for (ECCodeToken *token in [self.codeUnit tokensInRange:stringRange withCursors:YES])
-    {
-        switch (token.kind)
-        {
-            case ECCodeTokenKindKeyword:
-                [result addAttributes:self.keywordStyle.CTAttributes range:intersectionOfRangeRelativeToRange(token.extent, stringRange)];
-                break;
-                
-            case ECCodeTokenKindComment:
-                [result addAttributes:self.commentStyle.CTAttributes range:intersectionOfRangeRelativeToRange(token.extent, stringRange)];
-                break;
-                
-            case ECCodeTokenKindLiteral:
-                [result addAttributes:self.literalStyle.CTAttributes range:intersectionOfRangeRelativeToRange(token.extent, stringRange)];
-                break;
-                
-            default:
-            {
-                if (token.cursor.kind >= ECCodeCursorKindFirstDecl && token.cursor.kind <= ECCodeCursorKindLastDecl)
-                    [result addAttributes:self.declarationStyle.CTAttributes range:intersectionOfRangeRelativeToRange(token.extent, stringRange)];
-                else if (token.cursor.kind >= ECCodeCursorKindFirstRef && token.cursor.kind <= ECCodeCursorKindLastRef)
-                    [result addAttributes:self.referenceStyle.CTAttributes range:intersectionOfRangeRelativeToRange(token.extent, stringRange)];
-                else if (token.cursor.kind >= ECCodeCursorKindFirstPreprocessing && token.cursor.kind <= ECCodeCursorKindLastPreprocessing)
-                    [result addAttributes:self.preprocessingStyle.CTAttributes range:intersectionOfRangeRelativeToRange(token.extent, stringRange)];
-                break;
-            }
-        }
-    }
-    
+    [self.codeUnit enumerateScopesInMainFileWithContent:self.contentString inRange:stringRange usingBlock:^(NSArray *scopes, NSRange range, ECCodeScopeEnumerationStackChange change, BOOL *skipChildren, BOOL *cancel) {
+        [result addAttributes:[self.theme attributesForScopeStack:scopes] range:range];
+    }];
+        
     // Append tailing new line
     if (NSMaxRange(stringRange) == self.contentString.length) 
     {

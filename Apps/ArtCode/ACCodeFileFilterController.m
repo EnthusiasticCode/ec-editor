@@ -9,11 +9,10 @@
 #import "ACCodeFileFilterController.h"
 
 #import "AppStyle.h"
-#import "ACCodeIndexerDataSource.h"
 
+#import <ECUIKit/ECCodeView.h>
 #import <ECUIKit/ECTextRenderer.h>
 #import <ECCodeIndexing/ECCodeUnit.h>
-#import <ECCodeIndexing/ECCodeCursor.h>
 
 #import "ACToolFiltersView.h"
 #import "ACToolTextField.h"
@@ -55,9 +54,7 @@ static BOOL codeFileFilterUseRegularExpression = YES;
 @synthesize startSearchingBlock, endSearchingBlock, didSelectFilterResultBlock;
 
 - (void)setTargetCodeView:(ECCodeView *)codeView
-{
-    ECASSERT([codeView.datasource isKindOfClass:[ACCodeIndexerDataSource class]]);
-    
+{    
     static NSString * filteringBlockKey = @"filteringHighlight";
     
     if (targetCodeView == codeView)
@@ -131,7 +128,7 @@ static BOOL codeFileFilterUseRegularExpression = YES;
     // TODO divide filtering in various methods
     dispatch_async(dispatch_get_main_queue(), ^{
         // Prepare symbol section
-//        [self populateSymbolsArrayWithFitler:filterString];
+//        [self populateSymbolsArrayWithFilter:filterString];
         
         if (filterString)
         {
@@ -216,26 +213,9 @@ static BOOL codeFileFilterUseRegularExpression = YES;
     return -1;
 }
 
-- (void)populateSymbolsArrayWithFitler:(NSString *)filter
+- (void)populateSymbolsArrayWithFilter:(NSString *)filter
 {
-    ECASSERT([targetCodeView.datasource isKindOfClass:[ACCodeIndexerDataSource class]]);
-    
-    ECCodeUnit *codeUnit = [(ACCodeIndexerDataSource *)targetCodeView.datasource codeUnit];
-    
-    NSMutableArray *symbolsSection = [sections objectAtIndex:ACCodeFileFilterSymbolsSection];
-    [symbolsSection removeAllObjects];
-    
-    [[codeUnit cursorForOffset:0] enumerateChildCursorsWithBlock:^ECCodeChildVisitResult(ECCodeCursor *cursor, ECCodeCursor *parent) {
-        // TODO filter
-        [symbolsSection addObject:cursor];
-        if (cursor.kind == ECCodeCursorKindObjCInterfaceDecl 
-            || cursor.kind == ECCodeCursorKindObjCImplementationDecl)
-        {
-            return ECCodeChildVisitResultRecurse;
-        }
-        
-        return ECCodeChildVisitResultContinue;
-    }];
+    UNIMPLEMENTED_VOID();
 }
 
 #pragma mark - Search tools actions
@@ -252,10 +232,12 @@ static BOOL codeFileFilterUseRegularExpression = YES;
     if (codeFileFilterUseRegularExpression)
     {
         ECASSERT(filterRegExp != nil);
-
-        NSMutableString *newContent = [targetCodeView.text mutableCopy];
-        [filterRegExp replaceMatchesInString:newContent options:0 range:NSMakeRange(0, [newContent length]) withTemplate:searchToolsReplaceTextField.text];
-        targetCodeView.text = newContent;
+        // The new ECCodeView does not have a method to retrieve the whole text
+        // Running regexes on the file should probably be ACFileDocument's responsability anyway
+        UNIMPLEMENTED_VOID();
+//        NSMutableString *newContent = [targetCodeView.text mutableCopy];
+//        [filterRegExp replaceMatchesInString:newContent options:0 range:NSMakeRange(0, [newContent length]) withTemplate:searchToolsReplaceTextField.text];
+//        targetCodeView.text = newContent;
     }
 }
 
@@ -412,8 +394,8 @@ static BOOL codeFileFilterUseRegularExpression = YES;
     {
         case ACCodeFileFilterSymbolsSection:
         {
-            ECCodeCursor *cursor = [sectionObjects objectAtIndex:index];
-            cell.textLabel.text = cursor.spelling;
+//            ECCodeCursor *cursor = [sectionObjects objectAtIndex:index];
+//            cell.textLabel.text = cursor.spelling;
             break;
         }
             

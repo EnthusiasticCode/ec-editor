@@ -111,7 +111,6 @@
 
 - (void)presentedItemDidChange
 {
-#warning TODO file coordination works
     ECASSERT(NO);
 }
 

@@ -26,7 +26,6 @@
 		B7AC17F314253A99009E9205 /* ACEditorToolSelectionController.m in Sources */ = {isa = PBXBuildFile; fileRef = B7AC17F214253A99009E9205 /* ACEditorToolSelectionController.m */; };
 		B7AC17F514253ADA009E9205 /* ACEditorToolSelectionController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B7AC17F414253ADA009E9205 /* ACEditorToolSelectionController.xib */; };
 		B7D3BE761431BA3A00BF43EB /* Application.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = B7D3BE741431BA3A00BF43EB /* Application.xcdatamodeld */; };
-		CD1DEA4A1415558500560D81 /* ACCodeIndexerDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = CD1DEA491415558500560D81 /* ACCodeIndexerDataSource.m */; };
 		CD21547913F45CC200614B83 /* ACToolButton.m in Sources */ = {isa = PBXBuildFile; fileRef = CD21547813F45CC200614B83 /* ACToolButton.m */; };
 		CD62BAC613CA06A900266BC0 /* ACToolController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD62BAC513CA06A900266BC0 /* ACToolController.m */; };
 		CD62BACA13CA1B4600266BC0 /* ACToolHistoryController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD62BAC913CA1B4500266BC0 /* ACToolHistoryController.m */; };
@@ -232,8 +231,6 @@
 		B7AC17F414253ADA009E9205 /* ACEditorToolSelectionController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = ACEditorToolSelectionController.xib; path = Resources/ACEditorToolSelectionController.xib; sourceTree = "<group>"; };
 		B7D3BE751431BA3A00BF43EB /* Application.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Application.xcdatamodel; sourceTree = "<group>"; };
 		CD0DEAB613D4C2430087ADBB /* ACNavigationTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACNavigationTarget.h; sourceTree = "<group>"; };
-		CD1DEA481415558500560D81 /* ACCodeIndexerDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACCodeIndexerDataSource.h; sourceTree = "<group>"; };
-		CD1DEA491415558500560D81 /* ACCodeIndexerDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACCodeIndexerDataSource.m; sourceTree = "<group>"; };
 		CD21547713F45CC200614B83 /* ACToolButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACToolButton.h; sourceTree = "<group>"; };
 		CD21547813F45CC200614B83 /* ACToolButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACToolButton.m; sourceTree = "<group>"; };
 		CD62BAC413CA06A900266BC0 /* ACToolController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACToolController.h; sourceTree = "<group>"; };
@@ -452,8 +449,6 @@
 		CD6580C514157B300079412F /* Views and Controllers */ = {
 			isa = PBXGroup;
 			children = (
-				CD1DEA481415558500560D81 /* ACCodeIndexerDataSource.h */,
-				CD1DEA491415558500560D81 /* ACCodeIndexerDataSource.m */,
 				CD6580C7141626F20079412F /* ACCompletionController.h */,
 				CD6580C8141626F20079412F /* ACCompletionController.m */,
 				CD6580CD141641D40079412F /* ACCodeFileFilterController.h */,
@@ -972,7 +967,6 @@
 				CD8108D513E31A28000E1941 /* ACColorSelectionControl.m in Sources */,
 				CDF215F713E4468F005B520F /* ACEditableTableCell.m in Sources */,
 				CD21547913F45CC200614B83 /* ACToolButton.m in Sources */,
-				CD1DEA4A1415558500560D81 /* ACCodeIndexerDataSource.m in Sources */,
 				CD6580C9141626F20079412F /* ACCompletionController.m in Sources */,
 				CD6580CF141641D50079412F /* ACCodeFileFilterController.m in Sources */,
 				CDE1CB81142102A500151BD7 /* ACTabButton.m in Sources */,

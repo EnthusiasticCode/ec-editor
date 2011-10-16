@@ -14,7 +14,6 @@
 
 #import <ECUIKit/ECPopoverController.h>
 #import <ECUIKit/ECCodeView.h>
-#import "ACCodeIndexerDataSource.h"
 
 #import "ACEditorToolSelectionController.h"
 #import "ACCodeFileFilterController.h"
