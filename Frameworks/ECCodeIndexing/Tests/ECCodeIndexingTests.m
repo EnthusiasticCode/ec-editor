@@ -15,7 +15,7 @@ SPEC_BEGIN(ECCodeIndexingSpec)
 
 describe(@"A code index",^{
     __block ECCodeIndex *codeIndex;
-    __block ECCodeUnit *cCodeUnit;
+    __block id<ECCodeUnit>cCodeUnit;
     __block NSURL *cFileURL;
     __block NSURL *invalidFileURL;
     beforeAll(^{

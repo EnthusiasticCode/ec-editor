@@ -82,36 +82,20 @@
 		B7170CFB1428F7C500DF7794 /* NSObject+KiwiStubAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170CB61428F7C400DF7794 /* NSObject+KiwiStubAdditions.m */; };
 		B7170CFC1428F7C500DF7794 /* NSObject+KiwiVerifierAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170CB81428F7C400DF7794 /* NSObject+KiwiVerifierAdditions.m */; };
 		B7170CFD1428F7C500DF7794 /* NSValue+KiwiAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170CBA1428F7C400DF7794 /* NSValue+KiwiAdditions.m */; };
-		B7170D1C1428FAAF00DF7794 /* ECClangCodeCursor.h in Headers */ = {isa = PBXBuildFile; fileRef = B7170CFE1428FAAE00DF7794 /* ECClangCodeCursor.h */; };
-		B7170D1D1428FAAF00DF7794 /* ECClangCodeCursor.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170CFF1428FAAE00DF7794 /* ECClangCodeCursor.m */; };
 		B7170D1E1428FAAF00DF7794 /* ECClangCodeIndex.h in Headers */ = {isa = PBXBuildFile; fileRef = B7170D001428FAAE00DF7794 /* ECClangCodeIndex.h */; };
 		B7170D1F1428FAAF00DF7794 /* ECClangCodeIndex.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170D011428FAAE00DF7794 /* ECClangCodeIndex.m */; };
 		B7170D201428FAAF00DF7794 /* ECClangCodeUnit.h in Headers */ = {isa = PBXBuildFile; fileRef = B7170D021428FAAE00DF7794 /* ECClangCodeUnit.h */; };
 		B7170D211428FAAF00DF7794 /* ECClangCodeUnit.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170D031428FAAE00DF7794 /* ECClangCodeUnit.m */; };
-		B7170D221428FAAF00DF7794 /* ECClangHelperFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = B7170D041428FAAE00DF7794 /* ECClangHelperFunctions.h */; };
-		B7170D231428FAAF00DF7794 /* ECClangHelperFunctions.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170D051428FAAE00DF7794 /* ECClangHelperFunctions.m */; };
-		B7170D241428FAAF00DF7794 /* ECCodeCompletionChunk.h in Headers */ = {isa = PBXBuildFile; fileRef = B7170D061428FAAE00DF7794 /* ECCodeCompletionChunk.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B7170D251428FAAF00DF7794 /* ECCodeCompletionChunk.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170D071428FAAE00DF7794 /* ECCodeCompletionChunk.m */; };
-		B7170D261428FAAF00DF7794 /* ECCodeCompletionResult.h in Headers */ = {isa = PBXBuildFile; fileRef = B7170D081428FAAE00DF7794 /* ECCodeCompletionResult.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B7170D271428FAAF00DF7794 /* ECCodeCompletionResult.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170D091428FAAE00DF7794 /* ECCodeCompletionResult.m */; };
-		B7170D281428FAAF00DF7794 /* ECCodeCompletionString.h in Headers */ = {isa = PBXBuildFile; fileRef = B7170D0A1428FAAE00DF7794 /* ECCodeCompletionString.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B7170D291428FAAF00DF7794 /* ECCodeCompletionString.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170D0B1428FAAE00DF7794 /* ECCodeCompletionString.m */; };
-		B7170D2A1428FAAF00DF7794 /* ECCodeCursor.h in Headers */ = {isa = PBXBuildFile; fileRef = B7170D0C1428FAAE00DF7794 /* ECCodeCursor.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B7170D2B1428FAAF00DF7794 /* ECCodeCursor.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170D0D1428FAAE00DF7794 /* ECCodeCursor.m */; };
+		B7170D281428FAAF00DF7794 /* ECCodeCompletion.h in Headers */ = {isa = PBXBuildFile; fileRef = B7170D0A1428FAAE00DF7794 /* ECCodeCompletion.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B7170D2C1428FAAF00DF7794 /* ECCodeDiagnostic.h in Headers */ = {isa = PBXBuildFile; fileRef = B7170D0E1428FAAE00DF7794 /* ECCodeDiagnostic.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B7170D2D1428FAAF00DF7794 /* ECCodeDiagnostic.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170D0F1428FAAE00DF7794 /* ECCodeDiagnostic.m */; };
-		B7170D2E1428FAAF00DF7794 /* ECCodeFixIt.h in Headers */ = {isa = PBXBuildFile; fileRef = B7170D101428FAAE00DF7794 /* ECCodeFixIt.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B7170D2F1428FAAF00DF7794 /* ECCodeFixIt.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170D111428FAAE00DF7794 /* ECCodeFixIt.m */; };
 		B7170D301428FAAF00DF7794 /* ECCodeIndex.h in Headers */ = {isa = PBXBuildFile; fileRef = B7170D121428FAAE00DF7794 /* ECCodeIndex.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B7170D311428FAAF00DF7794 /* ECCodeIndex.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170D131428FAAE00DF7794 /* ECCodeIndex.m */; };
-		B7170D341428FAAF00DF7794 /* ECCodeToken.h in Headers */ = {isa = PBXBuildFile; fileRef = B7170D161428FAAF00DF7794 /* ECCodeToken.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B7170D351428FAAF00DF7794 /* ECCodeToken.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170D171428FAAF00DF7794 /* ECCodeToken.m */; };
 		B7170D361428FAAF00DF7794 /* ECCodeUnit.h in Headers */ = {isa = PBXBuildFile; fileRef = B7170D181428FAAF00DF7794 /* ECCodeUnit.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B7170D371428FAAF00DF7794 /* ECCodeUnit.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170D191428FAAF00DF7794 /* ECCodeUnit.m */; };
 		B723370D1429FD8B006D540A /* libclang.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B72336FC1429FD8B006D540A /* libclang.a */; };
 		B7233746142A0918006D540A /* libstdc++.6.0.9.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B7233745142A0918006D540A /* libstdc++.6.0.9.dylib */; };
 		B7233747142A0918006D540A /* libstdc++.6.0.9.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B7233745142A0918006D540A /* libstdc++.6.0.9.dylib */; };
 		B7233748142A0D62006D540A /* libECFoundation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7170D431428FAF100DF7794 /* libECFoundation.a */; };
+		B7656BC7144ACCC80084B050 /* ECCodeScope.h in Headers */ = {isa = PBXBuildFile; fileRef = B7656BC6144ACCC80084B050 /* ECCodeScope.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B7772630143D127800DA3FD3 /* libclangFrontend.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B777262F143D127800DA3FD3 /* libclangFrontend.a */; };
 		B7772633143D137800DA3FD3 /* libLLVMAnalysis.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B72336741429FD76006D540A /* libLLVMAnalysis.a */; };
 		B7772634143D139400DA3FD3 /* libclangAnalysis.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B72336FD1429FD8B006D540A /* libclangAnalysis.a */; };
@@ -136,7 +120,6 @@
 		B7772668143D17EE00DA3FD3 /* libLLVMMC.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B72336961429FD76006D540A /* libLLVMMC.a */; };
 		B7772669143D185500DA3FD3 /* libLLVMSupport.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B72336AA1429FD76006D540A /* libLLVMSupport.a */; };
 		B777266A143D188200DA3FD3 /* libLLVMTransformUtils.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B72336AE1429FD76006D540A /* libLLVMTransformUtils.a */; };
-		B7C9A802142A3A1E009D8FF3 /* ECCodeIndexing+PrivateInitializers.h in Headers */ = {isa = PBXBuildFile; fileRef = B7C9A801142A3A1E009D8FF3 /* ECCodeIndexing+PrivateInitializers.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -331,32 +314,15 @@
 		B7170CB81428F7C400DF7794 /* NSObject+KiwiVerifierAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+KiwiVerifierAdditions.m"; sourceTree = "<group>"; };
 		B7170CB91428F7C400DF7794 /* NSValue+KiwiAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSValue+KiwiAdditions.h"; sourceTree = "<group>"; };
 		B7170CBA1428F7C400DF7794 /* NSValue+KiwiAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSValue+KiwiAdditions.m"; sourceTree = "<group>"; };
-		B7170CFE1428FAAE00DF7794 /* ECClangCodeCursor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECClangCodeCursor.h; sourceTree = "<group>"; };
-		B7170CFF1428FAAE00DF7794 /* ECClangCodeCursor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECClangCodeCursor.m; sourceTree = "<group>"; };
 		B7170D001428FAAE00DF7794 /* ECClangCodeIndex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECClangCodeIndex.h; sourceTree = "<group>"; };
 		B7170D011428FAAE00DF7794 /* ECClangCodeIndex.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECClangCodeIndex.m; sourceTree = "<group>"; };
 		B7170D021428FAAE00DF7794 /* ECClangCodeUnit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECClangCodeUnit.h; sourceTree = "<group>"; };
 		B7170D031428FAAE00DF7794 /* ECClangCodeUnit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECClangCodeUnit.m; sourceTree = "<group>"; };
-		B7170D041428FAAE00DF7794 /* ECClangHelperFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECClangHelperFunctions.h; sourceTree = "<group>"; };
-		B7170D051428FAAE00DF7794 /* ECClangHelperFunctions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECClangHelperFunctions.m; sourceTree = "<group>"; };
-		B7170D061428FAAE00DF7794 /* ECCodeCompletionChunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeCompletionChunk.h; sourceTree = "<group>"; };
-		B7170D071428FAAE00DF7794 /* ECCodeCompletionChunk.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeCompletionChunk.m; sourceTree = "<group>"; };
-		B7170D081428FAAE00DF7794 /* ECCodeCompletionResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeCompletionResult.h; sourceTree = "<group>"; };
-		B7170D091428FAAE00DF7794 /* ECCodeCompletionResult.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeCompletionResult.m; sourceTree = "<group>"; };
-		B7170D0A1428FAAE00DF7794 /* ECCodeCompletionString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeCompletionString.h; sourceTree = "<group>"; };
-		B7170D0B1428FAAE00DF7794 /* ECCodeCompletionString.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeCompletionString.m; sourceTree = "<group>"; };
-		B7170D0C1428FAAE00DF7794 /* ECCodeCursor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeCursor.h; sourceTree = "<group>"; };
-		B7170D0D1428FAAE00DF7794 /* ECCodeCursor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeCursor.m; sourceTree = "<group>"; };
+		B7170D0A1428FAAE00DF7794 /* ECCodeCompletion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeCompletion.h; sourceTree = "<group>"; };
 		B7170D0E1428FAAE00DF7794 /* ECCodeDiagnostic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeDiagnostic.h; sourceTree = "<group>"; };
-		B7170D0F1428FAAE00DF7794 /* ECCodeDiagnostic.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeDiagnostic.m; sourceTree = "<group>"; };
-		B7170D101428FAAE00DF7794 /* ECCodeFixIt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeFixIt.h; sourceTree = "<group>"; };
-		B7170D111428FAAE00DF7794 /* ECCodeFixIt.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeFixIt.m; sourceTree = "<group>"; };
 		B7170D121428FAAE00DF7794 /* ECCodeIndex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeIndex.h; sourceTree = "<group>"; };
 		B7170D131428FAAE00DF7794 /* ECCodeIndex.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeIndex.m; sourceTree = "<group>"; };
-		B7170D161428FAAF00DF7794 /* ECCodeToken.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeToken.h; sourceTree = "<group>"; };
-		B7170D171428FAAF00DF7794 /* ECCodeToken.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeToken.m; sourceTree = "<group>"; };
 		B7170D181428FAAF00DF7794 /* ECCodeUnit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeUnit.h; sourceTree = "<group>"; };
-		B7170D191428FAAF00DF7794 /* ECCodeUnit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeUnit.m; sourceTree = "<group>"; };
 		B7170D3A1428FAF000DF7794 /* ECFoundation.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = ECFoundation.xcodeproj; sourceTree = "<group>"; };
 		B72336741429FD76006D540A /* libLLVMAnalysis.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libLLVMAnalysis.a; path = usr/lib/libLLVMAnalysis.a; sourceTree = SDKROOT; };
 		B72336851429FD76006D540A /* libLLVMCodeGen.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libLLVMCodeGen.a; path = usr/lib/libLLVMCodeGen.a; sourceTree = SDKROOT; };
@@ -382,9 +348,9 @@
 		B72337081429FD8B006D540A /* libclangSema.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libclangSema.a; path = usr/lib/libclangSema.a; sourceTree = SDKROOT; };
 		B72337091429FD8B006D540A /* libclangSerialization.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libclangSerialization.a; path = usr/lib/libclangSerialization.a; sourceTree = SDKROOT; };
 		B7233745142A0918006D540A /* libstdc++.6.0.9.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libstdc++.6.0.9.dylib"; path = "usr/lib/libstdc++.6.0.9.dylib"; sourceTree = SDKROOT; };
+		B7656BC6144ACCC80084B050 /* ECCodeScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeScope.h; sourceTree = "<group>"; };
 		B777262F143D127800DA3FD3 /* libclangFrontend.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libclangFrontend.a; path = usr/lib/libclangFrontend.a; sourceTree = SDKROOT; };
 		B7772631143D12CA00DA3FD3 /* libclangARCMigrate.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libclangARCMigrate.a; path = usr/lib/libclangARCMigrate.a; sourceTree = SDKROOT; };
-		B7C9A801142A3A1E009D8FF3 /* ECCodeIndexing+PrivateInitializers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ECCodeIndexing+PrivateInitializers.h"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -731,10 +697,6 @@
 				B7170D011428FAAE00DF7794 /* ECClangCodeIndex.m */,
 				B7170D021428FAAE00DF7794 /* ECClangCodeUnit.h */,
 				B7170D031428FAAE00DF7794 /* ECClangCodeUnit.m */,
-				B7170CFE1428FAAE00DF7794 /* ECClangCodeCursor.h */,
-				B7170CFF1428FAAE00DF7794 /* ECClangCodeCursor.m */,
-				B7170D041428FAAE00DF7794 /* ECClangHelperFunctions.h */,
-				B7170D051428FAAE00DF7794 /* ECClangHelperFunctions.m */,
 			);
 			name = Clang;
 			sourceTree = "<group>";
@@ -742,25 +704,12 @@
 		B7C9A800142A10C8009D8FF3 /* General */ = {
 			isa = PBXGroup;
 			children = (
-				B7C9A801142A3A1E009D8FF3 /* ECCodeIndexing+PrivateInitializers.h */,
 				B7170D121428FAAE00DF7794 /* ECCodeIndex.h */,
 				B7170D131428FAAE00DF7794 /* ECCodeIndex.m */,
 				B7170D181428FAAF00DF7794 /* ECCodeUnit.h */,
-				B7170D191428FAAF00DF7794 /* ECCodeUnit.m */,
-				B7170D0C1428FAAE00DF7794 /* ECCodeCursor.h */,
-				B7170D0D1428FAAE00DF7794 /* ECCodeCursor.m */,
-				B7170D081428FAAE00DF7794 /* ECCodeCompletionResult.h */,
-				B7170D091428FAAE00DF7794 /* ECCodeCompletionResult.m */,
-				B7170D0A1428FAAE00DF7794 /* ECCodeCompletionString.h */,
-				B7170D0B1428FAAE00DF7794 /* ECCodeCompletionString.m */,
-				B7170D061428FAAE00DF7794 /* ECCodeCompletionChunk.h */,
-				B7170D071428FAAE00DF7794 /* ECCodeCompletionChunk.m */,
+				B7656BC6144ACCC80084B050 /* ECCodeScope.h */,
+				B7170D0A1428FAAE00DF7794 /* ECCodeCompletion.h */,
 				B7170D0E1428FAAE00DF7794 /* ECCodeDiagnostic.h */,
-				B7170D0F1428FAAE00DF7794 /* ECCodeDiagnostic.m */,
-				B7170D101428FAAE00DF7794 /* ECCodeFixIt.h */,
-				B7170D111428FAAE00DF7794 /* ECCodeFixIt.m */,
-				B7170D161428FAAF00DF7794 /* ECCodeToken.h */,
-				B7170D171428FAAF00DF7794 /* ECCodeToken.m */,
 			);
 			name = General;
 			sourceTree = "<group>";
@@ -772,21 +721,14 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B7170D241428FAAF00DF7794 /* ECCodeCompletionChunk.h in Headers */,
-				B7170D261428FAAF00DF7794 /* ECCodeCompletionResult.h in Headers */,
-				B7170D281428FAAF00DF7794 /* ECCodeCompletionString.h in Headers */,
-				B7170D2A1428FAAF00DF7794 /* ECCodeCursor.h in Headers */,
+				B7170D281428FAAF00DF7794 /* ECCodeCompletion.h in Headers */,
 				B7170D2C1428FAAF00DF7794 /* ECCodeDiagnostic.h in Headers */,
-				B7170D2E1428FAAF00DF7794 /* ECCodeFixIt.h in Headers */,
 				B7170D301428FAAF00DF7794 /* ECCodeIndex.h in Headers */,
-				B7170D341428FAAF00DF7794 /* ECCodeToken.h in Headers */,
 				B7170D361428FAAF00DF7794 /* ECCodeUnit.h in Headers */,
 				B7170C211428F72100DF7794 /* ECDebug.h in Headers */,
-				B7170D1C1428FAAF00DF7794 /* ECClangCodeCursor.h in Headers */,
 				B7170D1E1428FAAF00DF7794 /* ECClangCodeIndex.h in Headers */,
 				B7170D201428FAAF00DF7794 /* ECClangCodeUnit.h in Headers */,
-				B7170D221428FAAF00DF7794 /* ECClangHelperFunctions.h in Headers */,
-				B7C9A802142A3A1E009D8FF3 /* ECCodeIndexing+PrivateInitializers.h in Headers */,
+				B7656BC7144ACCC80084B050 /* ECCodeScope.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -911,19 +853,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B7170D1D1428FAAF00DF7794 /* ECClangCodeCursor.m in Sources */,
 				B7170D1F1428FAAF00DF7794 /* ECClangCodeIndex.m in Sources */,
 				B7170D211428FAAF00DF7794 /* ECClangCodeUnit.m in Sources */,
-				B7170D231428FAAF00DF7794 /* ECClangHelperFunctions.m in Sources */,
-				B7170D251428FAAF00DF7794 /* ECCodeCompletionChunk.m in Sources */,
-				B7170D271428FAAF00DF7794 /* ECCodeCompletionResult.m in Sources */,
-				B7170D291428FAAF00DF7794 /* ECCodeCompletionString.m in Sources */,
-				B7170D2B1428FAAF00DF7794 /* ECCodeCursor.m in Sources */,
-				B7170D2D1428FAAF00DF7794 /* ECCodeDiagnostic.m in Sources */,
-				B7170D2F1428FAAF00DF7794 /* ECCodeFixIt.m in Sources */,
 				B7170D311428FAAF00DF7794 /* ECCodeIndex.m in Sources */,
-				B7170D351428FAAF00DF7794 /* ECCodeToken.m in Sources */,
-				B7170D371428FAAF00DF7794 /* ECCodeUnit.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

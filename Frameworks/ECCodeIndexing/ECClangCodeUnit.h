@@ -9,6 +9,8 @@
 #import "ECCodeUnit.h"
 #import <ECFoundation/ECItemObserver.h>
 
-@interface ECClangCodeUnit : ECCodeUnit <NSFilePresenter, ECItemObserverDelegate>
+@interface ECClangCodeUnit : NSObject <ECCodeUnit, ECItemObserverDelegate>
+
+- (id)initWithIndex:(ECCodeIndex *)index fileURL:(NSURL *)fileURL language:(NSString *)language;
 
 @end

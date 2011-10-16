@@ -9,7 +9,6 @@
 #import <clang-c/Index.h>
 #import "ECClangCodeIndex.h"
 #import "ECClangCodeUnit.h"
-#import "ECCodeIndexing+PrivateInitializers.h"
 
 @implementation ECClangCodeIndex
 
@@ -55,12 +54,12 @@
     return 0.0;
 }
 
-- (ECCodeUnit *)unitWithFileURL:(NSURL *)fileURL
+- (id<ECCodeUnit>)unitWithFileURL:(NSURL *)fileURL
 {
     return [self unitWithFileURL:fileURL withLanguage:nil];
 }
 
-- (ECCodeUnit *)unitWithFileURL:(NSURL *)fileURL withLanguage:(NSString *)language
+- (id<ECCodeUnit>)unitWithFileURL:(NSURL *)fileURL withLanguage:(NSString *)language
 {
     return [[ECClangCodeUnit alloc] initWithIndex:self fileURL:fileURL language:language];
 }

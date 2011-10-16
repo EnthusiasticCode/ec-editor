@@ -6,7 +6,7 @@
 //  Copyright 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+#import "ECCodeScope.h"
 
 typedef enum
 {
@@ -17,13 +17,9 @@ typedef enum
     ECCodeDiagnosticSeverityFatal = 4 
 } ECCodeDiagnosticSeverity;
 
-@interface ECCodeDiagnostic : NSObject
-@property (nonatomic, readonly) ECCodeDiagnosticSeverity severity;
-@property (nonatomic, readonly, strong) NSURL *fileURL;
-@property (nonatomic, readonly) NSUInteger offset;
-@property (nonatomic, readonly, copy) NSString *spelling;
-@property (nonatomic, readonly, copy) NSString *category;
-@property (nonatomic, readonly, copy) NSArray *sourceRanges;
-@property (nonatomic, readonly, copy) NSArray *fixIts;
+@protocol ECCodeDiagnostic <ECCodeScope>
+@property (nonatomic, readonly) ECCodeDiagnosticSeverity diagnosticSeverity;
+@property (nonatomic, readonly, copy) NSString *diagnosticMessage;
+@property (nonatomic, readonly, copy) NSString *diagnosticCategory;
 
 @end

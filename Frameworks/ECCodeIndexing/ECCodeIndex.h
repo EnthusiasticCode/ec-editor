@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-@class ECCodeUnit;
+#import "ECCodeUnit.h"
 
 /// Class that encapsulates interaction with parsing and indexing libraries to provide language related non file specific functionality such as symbol resolution and refactoring.
 @interface ECCodeIndex : NSObject
@@ -25,8 +25,8 @@
 /// The code units will track changes to the file and related files automatically through NSFileCoordination.
 
 /// Returns a code unit for the given file, with the given language.
-- (ECCodeUnit *)unitWithFileURL:(NSURL *)fileURL withLanguage:(NSString *)language;
+- (id<ECCodeUnit>)unitWithFileURL:(NSURL *)fileURL withLanguage:(NSString *)language;
 /// Returns a code unit for the given file, with the automatically detected language.
-- (ECCodeUnit *)unitWithFileURL:(NSURL *)fileURL;
+- (id<ECCodeUnit>)unitWithFileURL:(NSURL *)fileURL;
 
 @end

@@ -61,10 +61,10 @@ static NSMutableOrderedSet *_extensionClasses;
     return support;
 }
 
-- (ECCodeUnit *)unitWithFileURL:(NSURL *)fileURL
+- (id<ECCodeUnit>)unitWithFileURL:(NSURL *)fileURL
 {
     NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] init];
-    __block ECCodeUnit *codeUnit = nil;
+    __block id<ECCodeUnit>codeUnit = nil;
     [fileCoordinator coordinateReadingItemAtURL:fileURL options:NSFileCoordinatorReadingResolvesSymbolicLink | NSFileCoordinatorReadingWithoutChanges error:NULL byAccessor:^(NSURL *newURL) {
         NSFileManager *fileManager = [[NSFileManager alloc] init];
         if (![fileManager fileExistsAtPath:[newURL path]])
@@ -87,10 +87,10 @@ static NSMutableOrderedSet *_extensionClasses;
     return codeUnit;
 }
 
-- (ECCodeUnit *)unitWithFileURL:(NSURL *)fileURL withLanguage:(NSString *)language
+- (id<ECCodeUnit>)unitWithFileURL:(NSURL *)fileURL withLanguage:(NSString *)language
 {
     NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] init];
-    __block ECCodeUnit *codeUnit = nil;
+    __block id<ECCodeUnit>codeUnit = nil;
     [fileCoordinator coordinateReadingItemAtURL:fileURL options:NSFileCoordinatorReadingResolvesSymbolicLink | NSFileCoordinatorReadingWithoutChanges error:NULL byAccessor:^(NSURL *newURL) {
         NSFileManager *fileManager = [[NSFileManager alloc] init];
         if (![fileManager fileExistsAtPath:[newURL path]])
