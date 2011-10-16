@@ -26,7 +26,6 @@
 + (float)supportForFile:(NSURL *)fileURL;
 
 /// Create code units for files.
-/// The code units will track changes to the file and related files automatically through NSFileCoordination.
 
 /// Returns a code unit for the given file, with the given language.
 - (id<ECCodeUnit>)unitWithFileURL:(NSURL *)fileURL withLanguage:(NSString *)language;

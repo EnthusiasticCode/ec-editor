@@ -29,9 +29,6 @@
 #import "ACApplication.h"
 #import "ACTab.h"
 
-static NSString * const themeDirectory = @"Themes";
-static NSString * const bundleDirectory = @"Bundles";
-
 @implementation ArtCodeAppDelegate
 
 @synthesize window = _window;
@@ -46,8 +43,8 @@ static NSString * const bundleDirectory = @"Bundles";
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    [ECCodeIndex setBundleDirectory:[[[NSBundle mainBundle] bundleURL] URLByAppendingPathComponent:bundleDirectory]];
-    [TMTheme setThemeDirectory:[[[NSBundle mainBundle] bundleURL] URLByAppendingPathComponent:themeDirectory]];
+    [ECCodeIndex setBundleDirectory:[[NSBundle mainBundle] bundleURL]];
+    [TMTheme setThemeDirectory:[[NSBundle mainBundle] bundleURL]];
     UIFont *defaultFont = [UIFont styleFontWithSize:14];    
 
     ////////////////////////////////////////////////////////////////////////////

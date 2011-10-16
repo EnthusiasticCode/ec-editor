@@ -43,6 +43,7 @@
     return [NSArray arrayWithObjects:@"C", @"Objective C", @"C++", @"Objective C++", nil];
 }
 
+/* leave this out for now until we figure out how to best plug it in the textmate one
 + (float)supportForFile:(NSURL *)fileURL
 {
     ECASSERT([fileURL isFileURL]);
@@ -53,7 +54,7 @@
             return 1.0;
     return 0.0;
 }
-
+ */
 - (id<ECCodeUnit>)unitWithFileURL:(NSURL *)fileURL
 {
     return [self unitWithFileURL:fileURL withLanguage:nil];

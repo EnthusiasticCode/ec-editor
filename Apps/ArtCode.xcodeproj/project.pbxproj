@@ -19,6 +19,64 @@
 		B7170ECD1429F54D00DF7794 /* libECUIKit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7170EB61429F3B800DF7794 /* libECUIKit.a */; };
 		B71A1DE71435112700672F65 /* ACNewFilePopoverController.m in Sources */ = {isa = PBXBuildFile; fileRef = B71A1DE61435112700672F65 /* ACNewFilePopoverController.m */; };
 		B732D01513DB361600637FBE /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B732D01413DB361600637FBE /* CoreData.framework */; };
+		B7656C40144B53FE0084B050 /* ActionScript.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7656C19144B53FE0084B050 /* ActionScript.tmbundle */; };
+		B7656C41144B53FE0084B050 /* Apache.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7656C1A144B53FE0084B050 /* Apache.tmbundle */; };
+		B7656C42144B53FE0084B050 /* AppleScript.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7656C1B144B53FE0084B050 /* AppleScript.tmbundle */; };
+		B7656C43144B53FE0084B050 /* Blogging.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7656C1C144B53FE0084B050 /* Blogging.tmbundle */; };
+		B7656C44144B53FE0084B050 /* Bundle Development.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7656C1D144B53FE0084B050 /* Bundle Development.tmbundle */; };
+		B7656C45144B53FE0084B050 /* C.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7656C1E144B53FE0084B050 /* C.tmbundle */; };
+		B7656C46144B53FE0084B050 /* CSS.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7656C1F144B53FE0084B050 /* CSS.tmbundle */; };
+		B7656C47144B53FE0084B050 /* Diff.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7656C20144B53FE0084B050 /* Diff.tmbundle */; };
+		B7656C48144B53FE0084B050 /* Git.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7656C21144B53FE0084B050 /* Git.tmbundle */; };
+		B7656C49144B53FE0084B050 /* HTML.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7656C22144B53FE0084B050 /* HTML.tmbundle */; };
+		B7656C4A144B53FE0084B050 /* Hyperlink Helper.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7656C23144B53FE0084B050 /* Hyperlink Helper.tmbundle */; };
+		B7656C4B144B53FE0084B050 /* Java.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7656C24144B53FE0084B050 /* Java.tmbundle */; };
+		B7656C4C144B53FE0084B050 /* JavaDoc.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7656C25144B53FE0084B050 /* JavaDoc.tmbundle */; };
+		B7656C4D144B53FE0084B050 /* JavaScript.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7656C26144B53FE0084B050 /* JavaScript.tmbundle */; };
+		B7656C4E144B53FE0084B050 /* LaTeX.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7656C27144B53FE0084B050 /* LaTeX.tmbundle */; };
+		B7656C4F144B53FE0084B050 /* Mail.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7656C28144B53FE0084B050 /* Mail.tmbundle */; };
+		B7656C50144B53FE0084B050 /* Make.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7656C29144B53FE0084B050 /* Make.tmbundle */; };
+		B7656C51144B53FE0084B050 /* Markdown.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7656C2A144B53FE0084B050 /* Markdown.tmbundle */; };
+		B7656C52144B53FE0084B050 /* Math.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7656C2B144B53FE0084B050 /* Math.tmbundle */; };
+		B7656C53144B53FE0084B050 /* Objective-C.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7656C2C144B53FE0084B050 /* Objective-C.tmbundle */; };
+		B7656C54144B53FE0084B050 /* OpenGL.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7656C2D144B53FE0084B050 /* OpenGL.tmbundle */; };
+		B7656C55144B53FE0084B050 /* Perl.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7656C2E144B53FE0084B050 /* Perl.tmbundle */; };
+		B7656C56144B53FE0084B050 /* PHP.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7656C2F144B53FE0084B050 /* PHP.tmbundle */; };
+		B7656C57144B53FE0084B050 /* Property List.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7656C30144B53FE0084B050 /* Property List.tmbundle */; };
+		B7656C58144B53FE0084B050 /* Python.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7656C31144B53FE0084B050 /* Python.tmbundle */; };
+		B7656C59144B53FE0084B050 /* Ruby on Rails.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7656C32144B53FE0084B050 /* Ruby on Rails.tmbundle */; };
+		B7656C5A144B53FE0084B050 /* Ruby.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7656C33144B53FE0084B050 /* Ruby.tmbundle */; };
+		B7656C5B144B53FE0084B050 /* Shell Script.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7656C34144B53FE0084B050 /* Shell Script.tmbundle */; };
+		B7656C5C144B53FE0084B050 /* Source.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7656C35144B53FE0084B050 /* Source.tmbundle */; };
+		B7656C5D144B53FE0084B050 /* SQL.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7656C36144B53FE0084B050 /* SQL.tmbundle */; };
+		B7656C5E144B53FE0084B050 /* Subversion.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7656C37144B53FE0084B050 /* Subversion.tmbundle */; };
+		B7656C5F144B53FE0084B050 /* Text.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7656C38144B53FE0084B050 /* Text.tmbundle */; };
+		B7656C60144B53FE0084B050 /* Textile.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7656C39144B53FE0084B050 /* Textile.tmbundle */; };
+		B7656C61144B53FE0084B050 /* TextMate.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7656C3A144B53FE0084B050 /* TextMate.tmbundle */; };
+		B7656C62144B53FE0084B050 /* TODO.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7656C3B144B53FE0084B050 /* TODO.tmbundle */; };
+		B7656C63144B53FE0084B050 /* Transmit.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7656C3C144B53FE0084B050 /* Transmit.tmbundle */; };
+		B7656C64144B53FE0084B050 /* Xcode.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7656C3D144B53FE0084B050 /* Xcode.tmbundle */; };
+		B7656C65144B53FE0084B050 /* XML.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7656C3E144B53FE0084B050 /* XML.tmbundle */; };
+		B7656C66144B53FE0084B050 /* YAML.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7656C3F144B53FE0084B050 /* YAML.tmbundle */; };
+		B7656C7A144B54120084B050 /* All Hallow's Eve.tmTheme in Resources */ = {isa = PBXBuildFile; fileRef = B7656C67144B54120084B050 /* All Hallow's Eve.tmTheme */; };
+		B7656C7B144B54120084B050 /* Amy.tmTheme in Resources */ = {isa = PBXBuildFile; fileRef = B7656C68144B54120084B050 /* Amy.tmTheme */; };
+		B7656C7C144B54120084B050 /* Blackboard.tmTheme in Resources */ = {isa = PBXBuildFile; fileRef = B7656C69144B54120084B050 /* Blackboard.tmTheme */; };
+		B7656C7D144B54120084B050 /* Brilliance Black.tmTheme in Resources */ = {isa = PBXBuildFile; fileRef = B7656C6A144B54120084B050 /* Brilliance Black.tmTheme */; };
+		B7656C7E144B54120084B050 /* Brilliance Dull.tmTheme in Resources */ = {isa = PBXBuildFile; fileRef = B7656C6B144B54120084B050 /* Brilliance Dull.tmTheme */; };
+		B7656C7F144B54120084B050 /* Cobalt.tmTheme in Resources */ = {isa = PBXBuildFile; fileRef = B7656C6C144B54120084B050 /* Cobalt.tmTheme */; };
+		B7656C80144B54120084B050 /* Dawn.tmTheme in Resources */ = {isa = PBXBuildFile; fileRef = B7656C6D144B54120084B050 /* Dawn.tmTheme */; };
+		B7656C81144B54120084B050 /* Espresso Libre.tmTheme in Resources */ = {isa = PBXBuildFile; fileRef = B7656C6E144B54120084B050 /* Espresso Libre.tmTheme */; };
+		B7656C82144B54120084B050 /* IDLE.tmTheme in Resources */ = {isa = PBXBuildFile; fileRef = B7656C6F144B54120084B050 /* IDLE.tmTheme */; };
+		B7656C83144B54120084B050 /* iPlastic.tmTheme in Resources */ = {isa = PBXBuildFile; fileRef = B7656C70144B54120084B050 /* iPlastic.tmTheme */; };
+		B7656C84144B54120084B050 /* LAZY.tmTheme in Resources */ = {isa = PBXBuildFile; fileRef = B7656C71144B54120084B050 /* LAZY.tmTheme */; };
+		B7656C85144B54120084B050 /* Mac Classic.tmTheme in Resources */ = {isa = PBXBuildFile; fileRef = B7656C72144B54120084B050 /* Mac Classic.tmTheme */; };
+		B7656C86144B54120084B050 /* MagicWB (Amiga).tmTheme in Resources */ = {isa = PBXBuildFile; fileRef = B7656C73144B54120084B050 /* MagicWB (Amiga).tmTheme */; };
+		B7656C87144B54120084B050 /* Pastels on Dark.tmTheme in Resources */ = {isa = PBXBuildFile; fileRef = B7656C74144B54120084B050 /* Pastels on Dark.tmTheme */; };
+		B7656C88144B54120084B050 /* Slush & Poppies.tmTheme in Resources */ = {isa = PBXBuildFile; fileRef = B7656C75144B54120084B050 /* Slush & Poppies.tmTheme */; };
+		B7656C89144B54120084B050 /* SpaceCadet.tmTheme in Resources */ = {isa = PBXBuildFile; fileRef = B7656C76144B54120084B050 /* SpaceCadet.tmTheme */; };
+		B7656C8A144B54120084B050 /* Sunburst.tmTheme in Resources */ = {isa = PBXBuildFile; fileRef = B7656C77144B54120084B050 /* Sunburst.tmTheme */; };
+		B7656C8B144B54120084B050 /* Twilight.tmTheme in Resources */ = {isa = PBXBuildFile; fileRef = B7656C78144B54120084B050 /* Twilight.tmTheme */; };
+		B7656C8C144B54120084B050 /* Zenburnesque.tmTheme in Resources */ = {isa = PBXBuildFile; fileRef = B7656C79144B54120084B050 /* Zenburnesque.tmTheme */; };
 		B7AC172F14216CD4009E9205 /* NewFilePopover.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B7AC172D14216CD4009E9205 /* NewFilePopover.storyboard */; };
 		B7AC173014216CD4009E9205 /* NewProjectPopover.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B7AC172E14216CD4009E9205 /* NewProjectPopover.storyboard */; };
 		B7AC174D14216D1C009E9205 /* ACNewProjectPopoverController.m in Sources */ = {isa = PBXBuildFile; fileRef = B7AC174214216D1C009E9205 /* ACNewProjectPopoverController.m */; };
@@ -221,6 +279,64 @@
 		B71A1DE61435112700672F65 /* ACNewFilePopoverController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACNewFilePopoverController.m; sourceTree = "<group>"; };
 		B732CFE913DB1B6B00637FBE /* ECDebug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECDebug.h; path = ../../Frameworks/ECDebug.h; sourceTree = "<group>"; };
 		B732D01413DB361600637FBE /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		B7656C19144B53FE0084B050 /* ActionScript.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = ActionScript.tmbundle; sourceTree = "<group>"; };
+		B7656C1A144B53FE0084B050 /* Apache.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Apache.tmbundle; sourceTree = "<group>"; };
+		B7656C1B144B53FE0084B050 /* AppleScript.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = AppleScript.tmbundle; sourceTree = "<group>"; };
+		B7656C1C144B53FE0084B050 /* Blogging.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Blogging.tmbundle; sourceTree = "<group>"; };
+		B7656C1D144B53FE0084B050 /* Bundle Development.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "Bundle Development.tmbundle"; sourceTree = "<group>"; };
+		B7656C1E144B53FE0084B050 /* C.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = C.tmbundle; sourceTree = "<group>"; };
+		B7656C1F144B53FE0084B050 /* CSS.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = CSS.tmbundle; sourceTree = "<group>"; };
+		B7656C20144B53FE0084B050 /* Diff.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Diff.tmbundle; sourceTree = "<group>"; };
+		B7656C21144B53FE0084B050 /* Git.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Git.tmbundle; sourceTree = "<group>"; };
+		B7656C22144B53FE0084B050 /* HTML.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = HTML.tmbundle; sourceTree = "<group>"; };
+		B7656C23144B53FE0084B050 /* Hyperlink Helper.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "Hyperlink Helper.tmbundle"; sourceTree = "<group>"; };
+		B7656C24144B53FE0084B050 /* Java.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Java.tmbundle; sourceTree = "<group>"; };
+		B7656C25144B53FE0084B050 /* JavaDoc.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = JavaDoc.tmbundle; sourceTree = "<group>"; };
+		B7656C26144B53FE0084B050 /* JavaScript.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = JavaScript.tmbundle; sourceTree = "<group>"; };
+		B7656C27144B53FE0084B050 /* LaTeX.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = LaTeX.tmbundle; sourceTree = "<group>"; };
+		B7656C28144B53FE0084B050 /* Mail.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Mail.tmbundle; sourceTree = "<group>"; };
+		B7656C29144B53FE0084B050 /* Make.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Make.tmbundle; sourceTree = "<group>"; };
+		B7656C2A144B53FE0084B050 /* Markdown.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Markdown.tmbundle; sourceTree = "<group>"; };
+		B7656C2B144B53FE0084B050 /* Math.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Math.tmbundle; sourceTree = "<group>"; };
+		B7656C2C144B53FE0084B050 /* Objective-C.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "Objective-C.tmbundle"; sourceTree = "<group>"; };
+		B7656C2D144B53FE0084B050 /* OpenGL.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = OpenGL.tmbundle; sourceTree = "<group>"; };
+		B7656C2E144B53FE0084B050 /* Perl.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Perl.tmbundle; sourceTree = "<group>"; };
+		B7656C2F144B53FE0084B050 /* PHP.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = PHP.tmbundle; sourceTree = "<group>"; };
+		B7656C30144B53FE0084B050 /* Property List.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "Property List.tmbundle"; sourceTree = "<group>"; };
+		B7656C31144B53FE0084B050 /* Python.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Python.tmbundle; sourceTree = "<group>"; };
+		B7656C32144B53FE0084B050 /* Ruby on Rails.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "Ruby on Rails.tmbundle"; sourceTree = "<group>"; };
+		B7656C33144B53FE0084B050 /* Ruby.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Ruby.tmbundle; sourceTree = "<group>"; };
+		B7656C34144B53FE0084B050 /* Shell Script.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "Shell Script.tmbundle"; sourceTree = "<group>"; };
+		B7656C35144B53FE0084B050 /* Source.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Source.tmbundle; sourceTree = "<group>"; };
+		B7656C36144B53FE0084B050 /* SQL.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = SQL.tmbundle; sourceTree = "<group>"; };
+		B7656C37144B53FE0084B050 /* Subversion.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Subversion.tmbundle; sourceTree = "<group>"; };
+		B7656C38144B53FE0084B050 /* Text.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Text.tmbundle; sourceTree = "<group>"; };
+		B7656C39144B53FE0084B050 /* Textile.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Textile.tmbundle; sourceTree = "<group>"; };
+		B7656C3A144B53FE0084B050 /* TextMate.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = TextMate.tmbundle; sourceTree = "<group>"; };
+		B7656C3B144B53FE0084B050 /* TODO.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = TODO.tmbundle; sourceTree = "<group>"; };
+		B7656C3C144B53FE0084B050 /* Transmit.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Transmit.tmbundle; sourceTree = "<group>"; };
+		B7656C3D144B53FE0084B050 /* Xcode.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Xcode.tmbundle; sourceTree = "<group>"; };
+		B7656C3E144B53FE0084B050 /* XML.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = XML.tmbundle; sourceTree = "<group>"; };
+		B7656C3F144B53FE0084B050 /* YAML.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = YAML.tmbundle; sourceTree = "<group>"; };
+		B7656C67144B54120084B050 /* All Hallow's Eve.tmTheme */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = "All Hallow's Eve.tmTheme"; sourceTree = "<group>"; };
+		B7656C68144B54120084B050 /* Amy.tmTheme */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = Amy.tmTheme; sourceTree = "<group>"; };
+		B7656C69144B54120084B050 /* Blackboard.tmTheme */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = Blackboard.tmTheme; sourceTree = "<group>"; };
+		B7656C6A144B54120084B050 /* Brilliance Black.tmTheme */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = "Brilliance Black.tmTheme"; sourceTree = "<group>"; };
+		B7656C6B144B54120084B050 /* Brilliance Dull.tmTheme */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = "Brilliance Dull.tmTheme"; sourceTree = "<group>"; };
+		B7656C6C144B54120084B050 /* Cobalt.tmTheme */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = Cobalt.tmTheme; sourceTree = "<group>"; };
+		B7656C6D144B54120084B050 /* Dawn.tmTheme */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = Dawn.tmTheme; sourceTree = "<group>"; };
+		B7656C6E144B54120084B050 /* Espresso Libre.tmTheme */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = "Espresso Libre.tmTheme"; sourceTree = "<group>"; };
+		B7656C6F144B54120084B050 /* IDLE.tmTheme */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = IDLE.tmTheme; sourceTree = "<group>"; };
+		B7656C70144B54120084B050 /* iPlastic.tmTheme */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = iPlastic.tmTheme; sourceTree = "<group>"; };
+		B7656C71144B54120084B050 /* LAZY.tmTheme */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = LAZY.tmTheme; sourceTree = "<group>"; };
+		B7656C72144B54120084B050 /* Mac Classic.tmTheme */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = "Mac Classic.tmTheme"; sourceTree = "<group>"; };
+		B7656C73144B54120084B050 /* MagicWB (Amiga).tmTheme */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = "MagicWB (Amiga).tmTheme"; sourceTree = "<group>"; };
+		B7656C74144B54120084B050 /* Pastels on Dark.tmTheme */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = "Pastels on Dark.tmTheme"; sourceTree = "<group>"; };
+		B7656C75144B54120084B050 /* Slush & Poppies.tmTheme */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = "Slush & Poppies.tmTheme"; sourceTree = "<group>"; };
+		B7656C76144B54120084B050 /* SpaceCadet.tmTheme */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = SpaceCadet.tmTheme; sourceTree = "<group>"; };
+		B7656C77144B54120084B050 /* Sunburst.tmTheme */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = Sunburst.tmTheme; sourceTree = "<group>"; };
+		B7656C78144B54120084B050 /* Twilight.tmTheme */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = Twilight.tmTheme; sourceTree = "<group>"; };
+		B7656C79144B54120084B050 /* Zenburnesque.tmTheme */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = Zenburnesque.tmTheme; sourceTree = "<group>"; };
 		B7AC172D14216CD4009E9205 /* NewFilePopover.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = NewFilePopover.storyboard; sourceTree = "<group>"; };
 		B7AC172E14216CD4009E9205 /* NewProjectPopover.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = NewProjectPopover.storyboard; sourceTree = "<group>"; };
 		B7AC174114216D1C009E9205 /* ACNewProjectPopoverController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACNewProjectPopoverController.h; sourceTree = "<group>"; };
@@ -410,6 +526,79 @@
 			name = Model;
 			sourceTree = "<group>";
 		};
+		B7656C17144B53330084B050 /* Themes */ = {
+			isa = PBXGroup;
+			children = (
+				B7656C67144B54120084B050 /* All Hallow's Eve.tmTheme */,
+				B7656C68144B54120084B050 /* Amy.tmTheme */,
+				B7656C69144B54120084B050 /* Blackboard.tmTheme */,
+				B7656C6A144B54120084B050 /* Brilliance Black.tmTheme */,
+				B7656C6B144B54120084B050 /* Brilliance Dull.tmTheme */,
+				B7656C6C144B54120084B050 /* Cobalt.tmTheme */,
+				B7656C6D144B54120084B050 /* Dawn.tmTheme */,
+				B7656C6E144B54120084B050 /* Espresso Libre.tmTheme */,
+				B7656C6F144B54120084B050 /* IDLE.tmTheme */,
+				B7656C70144B54120084B050 /* iPlastic.tmTheme */,
+				B7656C71144B54120084B050 /* LAZY.tmTheme */,
+				B7656C72144B54120084B050 /* Mac Classic.tmTheme */,
+				B7656C73144B54120084B050 /* MagicWB (Amiga).tmTheme */,
+				B7656C74144B54120084B050 /* Pastels on Dark.tmTheme */,
+				B7656C75144B54120084B050 /* Slush & Poppies.tmTheme */,
+				B7656C76144B54120084B050 /* SpaceCadet.tmTheme */,
+				B7656C77144B54120084B050 /* Sunburst.tmTheme */,
+				B7656C78144B54120084B050 /* Twilight.tmTheme */,
+				B7656C79144B54120084B050 /* Zenburnesque.tmTheme */,
+			);
+			path = Themes;
+			sourceTree = "<group>";
+		};
+		B7656C18144B53500084B050 /* Language Bundles */ = {
+			isa = PBXGroup;
+			children = (
+				B7656C19144B53FE0084B050 /* ActionScript.tmbundle */,
+				B7656C1A144B53FE0084B050 /* Apache.tmbundle */,
+				B7656C1B144B53FE0084B050 /* AppleScript.tmbundle */,
+				B7656C1C144B53FE0084B050 /* Blogging.tmbundle */,
+				B7656C1D144B53FE0084B050 /* Bundle Development.tmbundle */,
+				B7656C1E144B53FE0084B050 /* C.tmbundle */,
+				B7656C1F144B53FE0084B050 /* CSS.tmbundle */,
+				B7656C20144B53FE0084B050 /* Diff.tmbundle */,
+				B7656C21144B53FE0084B050 /* Git.tmbundle */,
+				B7656C22144B53FE0084B050 /* HTML.tmbundle */,
+				B7656C23144B53FE0084B050 /* Hyperlink Helper.tmbundle */,
+				B7656C24144B53FE0084B050 /* Java.tmbundle */,
+				B7656C25144B53FE0084B050 /* JavaDoc.tmbundle */,
+				B7656C26144B53FE0084B050 /* JavaScript.tmbundle */,
+				B7656C27144B53FE0084B050 /* LaTeX.tmbundle */,
+				B7656C28144B53FE0084B050 /* Mail.tmbundle */,
+				B7656C29144B53FE0084B050 /* Make.tmbundle */,
+				B7656C2A144B53FE0084B050 /* Markdown.tmbundle */,
+				B7656C2B144B53FE0084B050 /* Math.tmbundle */,
+				B7656C2C144B53FE0084B050 /* Objective-C.tmbundle */,
+				B7656C2D144B53FE0084B050 /* OpenGL.tmbundle */,
+				B7656C2E144B53FE0084B050 /* Perl.tmbundle */,
+				B7656C2F144B53FE0084B050 /* PHP.tmbundle */,
+				B7656C30144B53FE0084B050 /* Property List.tmbundle */,
+				B7656C31144B53FE0084B050 /* Python.tmbundle */,
+				B7656C32144B53FE0084B050 /* Ruby on Rails.tmbundle */,
+				B7656C33144B53FE0084B050 /* Ruby.tmbundle */,
+				B7656C34144B53FE0084B050 /* Shell Script.tmbundle */,
+				B7656C35144B53FE0084B050 /* Source.tmbundle */,
+				B7656C36144B53FE0084B050 /* SQL.tmbundle */,
+				B7656C37144B53FE0084B050 /* Subversion.tmbundle */,
+				B7656C38144B53FE0084B050 /* Text.tmbundle */,
+				B7656C39144B53FE0084B050 /* Textile.tmbundle */,
+				B7656C3A144B53FE0084B050 /* TextMate.tmbundle */,
+				B7656C3B144B53FE0084B050 /* TODO.tmbundle */,
+				B7656C3C144B53FE0084B050 /* Transmit.tmbundle */,
+				B7656C3D144B53FE0084B050 /* Xcode.tmbundle */,
+				B7656C3E144B53FE0084B050 /* XML.tmbundle */,
+				B7656C3F144B53FE0084B050 /* YAML.tmbundle */,
+			);
+			name = "Language Bundles";
+			path = Bundles;
+			sourceTree = "<group>";
+		};
 		B7AC172714216C59009E9205 /* Third Party */ = {
 			isa = PBXGroup;
 			children = (
@@ -531,6 +720,8 @@
 				CDE3F14613C0DDD500DFFAFF /* Inconsolata-dz.otf */,
 				B7C7389713F47AE6006EB040 /* Core Data */,
 				CD7D2B0A13C0CEFF00B889EE /* Images */,
+				B7656C18144B53500084B050 /* Language Bundles */,
+				B7656C17144B53330084B050 /* Themes */,
 				CD7D2B0913C0CEE100B889EE /* Storyboards */,
 			);
 			path = Resources;
@@ -931,6 +1122,64 @@
 				CD9F3CF71423855E00ACD841 /* projectBrowserTipsPopulatedEdit.png in Resources */,
 				CD9F3CF914238DE200ACD841 /* projectBrowserTipsEmpty.png in Resources */,
 				B7AC17F514253ADA009E9205 /* ACEditorToolSelectionController.xib in Resources */,
+				B7656C40144B53FE0084B050 /* ActionScript.tmbundle in Resources */,
+				B7656C41144B53FE0084B050 /* Apache.tmbundle in Resources */,
+				B7656C42144B53FE0084B050 /* AppleScript.tmbundle in Resources */,
+				B7656C43144B53FE0084B050 /* Blogging.tmbundle in Resources */,
+				B7656C44144B53FE0084B050 /* Bundle Development.tmbundle in Resources */,
+				B7656C45144B53FE0084B050 /* C.tmbundle in Resources */,
+				B7656C46144B53FE0084B050 /* CSS.tmbundle in Resources */,
+				B7656C47144B53FE0084B050 /* Diff.tmbundle in Resources */,
+				B7656C48144B53FE0084B050 /* Git.tmbundle in Resources */,
+				B7656C49144B53FE0084B050 /* HTML.tmbundle in Resources */,
+				B7656C4A144B53FE0084B050 /* Hyperlink Helper.tmbundle in Resources */,
+				B7656C4B144B53FE0084B050 /* Java.tmbundle in Resources */,
+				B7656C4C144B53FE0084B050 /* JavaDoc.tmbundle in Resources */,
+				B7656C4D144B53FE0084B050 /* JavaScript.tmbundle in Resources */,
+				B7656C4E144B53FE0084B050 /* LaTeX.tmbundle in Resources */,
+				B7656C4F144B53FE0084B050 /* Mail.tmbundle in Resources */,
+				B7656C50144B53FE0084B050 /* Make.tmbundle in Resources */,
+				B7656C51144B53FE0084B050 /* Markdown.tmbundle in Resources */,
+				B7656C52144B53FE0084B050 /* Math.tmbundle in Resources */,
+				B7656C53144B53FE0084B050 /* Objective-C.tmbundle in Resources */,
+				B7656C54144B53FE0084B050 /* OpenGL.tmbundle in Resources */,
+				B7656C55144B53FE0084B050 /* Perl.tmbundle in Resources */,
+				B7656C56144B53FE0084B050 /* PHP.tmbundle in Resources */,
+				B7656C57144B53FE0084B050 /* Property List.tmbundle in Resources */,
+				B7656C58144B53FE0084B050 /* Python.tmbundle in Resources */,
+				B7656C59144B53FE0084B050 /* Ruby on Rails.tmbundle in Resources */,
+				B7656C5A144B53FE0084B050 /* Ruby.tmbundle in Resources */,
+				B7656C5B144B53FE0084B050 /* Shell Script.tmbundle in Resources */,
+				B7656C5C144B53FE0084B050 /* Source.tmbundle in Resources */,
+				B7656C5D144B53FE0084B050 /* SQL.tmbundle in Resources */,
+				B7656C5E144B53FE0084B050 /* Subversion.tmbundle in Resources */,
+				B7656C5F144B53FE0084B050 /* Text.tmbundle in Resources */,
+				B7656C60144B53FE0084B050 /* Textile.tmbundle in Resources */,
+				B7656C61144B53FE0084B050 /* TextMate.tmbundle in Resources */,
+				B7656C62144B53FE0084B050 /* TODO.tmbundle in Resources */,
+				B7656C63144B53FE0084B050 /* Transmit.tmbundle in Resources */,
+				B7656C64144B53FE0084B050 /* Xcode.tmbundle in Resources */,
+				B7656C65144B53FE0084B050 /* XML.tmbundle in Resources */,
+				B7656C66144B53FE0084B050 /* YAML.tmbundle in Resources */,
+				B7656C7A144B54120084B050 /* All Hallow's Eve.tmTheme in Resources */,
+				B7656C7B144B54120084B050 /* Amy.tmTheme in Resources */,
+				B7656C7C144B54120084B050 /* Blackboard.tmTheme in Resources */,
+				B7656C7D144B54120084B050 /* Brilliance Black.tmTheme in Resources */,
+				B7656C7E144B54120084B050 /* Brilliance Dull.tmTheme in Resources */,
+				B7656C7F144B54120084B050 /* Cobalt.tmTheme in Resources */,
+				B7656C80144B54120084B050 /* Dawn.tmTheme in Resources */,
+				B7656C81144B54120084B050 /* Espresso Libre.tmTheme in Resources */,
+				B7656C82144B54120084B050 /* IDLE.tmTheme in Resources */,
+				B7656C83144B54120084B050 /* iPlastic.tmTheme in Resources */,
+				B7656C84144B54120084B050 /* LAZY.tmTheme in Resources */,
+				B7656C85144B54120084B050 /* Mac Classic.tmTheme in Resources */,
+				B7656C86144B54120084B050 /* MagicWB (Amiga).tmTheme in Resources */,
+				B7656C87144B54120084B050 /* Pastels on Dark.tmTheme in Resources */,
+				B7656C88144B54120084B050 /* Slush & Poppies.tmTheme in Resources */,
+				B7656C89144B54120084B050 /* SpaceCadet.tmTheme in Resources */,
+				B7656C8A144B54120084B050 /* Sunburst.tmTheme in Resources */,
+				B7656C8B144B54120084B050 /* Twilight.tmTheme in Resources */,
+				B7656C8C144B54120084B050 /* Zenburnesque.tmTheme in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

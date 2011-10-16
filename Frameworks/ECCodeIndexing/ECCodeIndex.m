@@ -31,19 +31,24 @@ static NSURL *_bundleDirectory;
 
 + (NSURL *)bundleDirectory
 {
+    if (self != [ECCodeIndex class])
+        return [ECCodeIndex bundleDirectory];
     return _bundleDirectory;
 }
 
 + (void)setBundleDirectory:(NSURL *)bundleDirectory
 {
+    if (self != [ECCodeIndex class])
+        return [ECCodeIndex setBundleDirectory:bundleDirectory];
     _bundleDirectory = bundleDirectory;
-    if (self == [ECCodeIndex class])
         for (Class extensionClass in _extensionClasses)
             [extensionClass setBundleDirectory:bundleDirectory];
 }
 
 + (void)registerExtension:(Class)extensionClass
 {
+    if (self != [ECCodeIndex class])
+        return;
     ECASSERT([extensionClass isSubclassOfClass:self]);
     if (!_extensionClassesByLanguage)
         _extensionClassesByLanguage = [[NSMutableDictionary alloc] init];
@@ -64,11 +69,15 @@ static NSURL *_bundleDirectory;
 
 + (NSArray *)supportedLanguages
 {
+    if (self != [ECCodeIndex class])
+        return nil;
     return [_extensionClassesByLanguage allKeys];
 }
 
 + (float)supportForFile:(NSURL *)fileURL
 {
+    if (self != [ECCodeIndex class])
+        return 0.0;
     float support = 0.0;
     for (Class extensionClass in _extensionClasses)
         support = MAX([extensionClass supportForFile:fileURL], support);
@@ -77,6 +86,8 @@ static NSURL *_bundleDirectory;
 
 - (id<ECCodeUnit>)unitWithFileURL:(NSURL *)fileURL
 {
+    if (self != [ECCodeIndex class])
+        return nil;
     NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] init];
     __block id<ECCodeUnit>codeUnit = nil;
     [fileCoordinator coordinateReadingItemAtURL:fileURL options:NSFileCoordinatorReadingResolvesSymbolicLink | NSFileCoordinatorReadingWithoutChanges error:NULL byAccessor:^(NSURL *newURL) {
@@ -103,6 +114,8 @@ static NSURL *_bundleDirectory;
 
 - (id<ECCodeUnit>)unitWithFileURL:(NSURL *)fileURL withLanguage:(NSString *)language
 {
+    if (self != [ECCodeIndex class])
+        return nil;
     NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] init];
     __block id<ECCodeUnit>codeUnit = nil;
     [fileCoordinator coordinateReadingItemAtURL:fileURL options:NSFileCoordinatorReadingResolvesSymbolicLink | NSFileCoordinatorReadingWithoutChanges error:NULL byAccessor:^(NSURL *newURL) {
