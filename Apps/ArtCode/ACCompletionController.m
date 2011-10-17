@@ -9,9 +9,6 @@
 #import "ACCompletionController.h"
 
 #import <ECFoundation/ECPatriciaTrie.h>
-#import <ECCodeIndexing/ECCodeCompletionResult.h>
-#import <ECCodeIndexing/ECCodeCompletionString.h>
-#import <ECCodeIndexing/ECCodeCompletionChunk.h>
 
 #define TRIE_OPTIONS (ECPatriciaTrieEnumerationOptionsSkipRoot | ECPatriciaTrieEnumerationOptionsSkipNotEndOfWord | ECPatriciaTrieEnumerationOptionsStopAtShallowestMatch)
 
@@ -65,7 +62,7 @@
     cell.textLabel.text = node.key;
     if (node.object)
     {
-        NSMutableString *string = [NSMutableString string];
+/*        NSMutableString *string = [NSMutableString string];
         for (ECCodeCompletionChunk *chunk in [[node.object completionString] completionChunks])
             [string appendString:chunk.string];
         cell.detailTextLabel.text = string;
@@ -118,7 +115,7 @@
                 break;
         }
         if (iconResource)
-            cell.imageView.image = [UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:iconResource ofType:@"tiff"]];
+            cell.imageView.image = [UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:iconResource ofType:@"tiff"]];*/
     }
     else
     {

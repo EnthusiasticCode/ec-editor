@@ -8,7 +8,6 @@
 
 #import "ACFileDocument.h"
 #import <ECCodeIndexing/ECCodeIndex.h>
-#import <ECCodeIndexing/ECCodeUnit.h>
 #import <ECCodeIndexing/TMTheme.h>
 #import <ECUIKit/ECTextStyle.h>
 
@@ -21,14 +20,14 @@ static NSRange intersectionOfRangeRelativeToRange(NSRange range, NSRange inRange
 
 @interface ACFileDocument ()
 @property (nonatomic, strong) NSString *contentString;
-@property (nonatomic, strong) id<ECCodeUnit>codeUnit;
+@property (nonatomic, strong) id<ECCodeParser>codeParser;
 @property (nonatomic, strong, readonly) ECTextStyle *defaultTextStyle;
 @end
 
 @implementation ACFileDocument
 
 @synthesize contentString = _contentString;
-@synthesize codeUnit = _codeUnit;
+@synthesize codeParser = _codeParser;
 @synthesize defaultTextStyle = _defaultTextStyle;
 @synthesize theme = _theme;
 
@@ -57,7 +56,7 @@ static NSRange intersectionOfRangeRelativeToRange(NSRange range, NSRange inRange
         if (success)
         {
             ECCodeIndex *codeIndex = [[ECCodeIndex alloc] init];
-            self.codeUnit = [codeIndex unitWithFileURL:self.fileURL];
+            self.codeParser = [codeIndex parserWithFileURL:self.fileURL language:nil];
         }
         completionHandler(success);
     }];
@@ -67,7 +66,7 @@ static NSRange intersectionOfRangeRelativeToRange(NSRange range, NSRange inRange
 {
     [super closeWithCompletionHandler:^(BOOL success){
         if (success)
-            self.codeUnit = nil;
+            self.codeParser = nil;
         completionHandler(success);
     }];
 }
@@ -95,7 +94,7 @@ static NSRange intersectionOfRangeRelativeToRange(NSRange range, NSRange inRange
     // Preparing result
     NSMutableAttributedString *result = [[NSMutableAttributedString alloc] initWithString:[self.contentString substringWithRange:stringRange] attributes:self.defaultTextStyle.CTAttributes];
     
-    [self.codeUnit enumerateScopesInMainFileWithContent:self.contentString inRange:stringRange usingBlock:^(NSArray *scopes, NSRange range, ECCodeScopeEnumerationStackChange change, BOOL *skipChildren, BOOL *cancel) {
+    [self.codeParser enumerateScopesInRange:stringRange usingBlock:^(NSArray *scopes, NSRange range, ECCodeScopeEnumerationStackChange change, BOOL *skipChildren, BOOL *cancel) {
         [result addAttributes:[self.theme attributesForScopeStack:scopes] range:range];
     }];
         

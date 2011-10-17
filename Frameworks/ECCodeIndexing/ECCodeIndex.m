@@ -7,7 +7,6 @@
 //
 
 #import "ECCodeIndex.h"
-#import "ECCodeUnit.h"
 
 static NSMutableDictionary *_extensionClassesByLanguage;
 static NSMutableOrderedSet *_extensionClasses;

@@ -12,7 +12,7 @@
 
 #import <ECUIKit/ECCodeView.h>
 #import <ECUIKit/ECTextRenderer.h>
-#import <ECCodeIndexing/ECCodeUnit.h>
+#import <ECCodeIndexing/ECCodeIndex.h>
 
 #import "ACToolFiltersView.h"
 #import "ACToolTextField.h"

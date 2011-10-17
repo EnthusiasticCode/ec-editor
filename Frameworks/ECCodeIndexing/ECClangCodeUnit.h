@@ -6,10 +6,10 @@
 //  Copyright 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import "ECCodeUnit.h"
+#import "ECCodeIndex.h"
 #import <ECFoundation/ECItemObserver.h>
 
-@interface ECClangCodeUnit : NSObject <ECCodeUnit, ECItemObserverDelegate>
+@interface ECClangCodeUnit : NSObject <ECCodeCompleter, ECCodeDiagnoser, ECCodeParser, ECItemObserverDelegate>
 
 - (id)initWithIndex:(ECCodeIndex *)index fileURL:(NSURL *)fileURL language:(NSString *)language;
 

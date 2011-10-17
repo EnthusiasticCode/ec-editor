@@ -6,8 +6,10 @@
 //  Copyright (c) 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import "ECCodeUnit.h"
+#import "ECCodeIndex.h"
 
-@interface TMCodeUnit : NSObject <ECCodeUnit>
+@interface TMCodeUnit : NSObject <ECCodeParser>
+
+- (id)initWithBundleName:(NSString *)bundleName language:(NSString *)language;
 
 @end

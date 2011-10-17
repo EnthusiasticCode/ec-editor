@@ -90,7 +90,6 @@
 		B7170D2C1428FAAF00DF7794 /* ECCodeDiagnostic.h in Headers */ = {isa = PBXBuildFile; fileRef = B7170D0E1428FAAE00DF7794 /* ECCodeDiagnostic.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B7170D301428FAAF00DF7794 /* ECCodeIndex.h in Headers */ = {isa = PBXBuildFile; fileRef = B7170D121428FAAE00DF7794 /* ECCodeIndex.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B7170D311428FAAF00DF7794 /* ECCodeIndex.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170D131428FAAE00DF7794 /* ECCodeIndex.m */; };
-		B7170D361428FAAF00DF7794 /* ECCodeUnit.h in Headers */ = {isa = PBXBuildFile; fileRef = B7170D181428FAAF00DF7794 /* ECCodeUnit.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B723370D1429FD8B006D540A /* libclang.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B72336FC1429FD8B006D540A /* libclang.a */; };
 		B7233746142A0918006D540A /* libstdc++.6.0.9.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B7233745142A0918006D540A /* libstdc++.6.0.9.dylib */; };
 		B7233747142A0918006D540A /* libstdc++.6.0.9.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B7233745142A0918006D540A /* libstdc++.6.0.9.dylib */; };
@@ -332,7 +331,6 @@
 		B7170D0E1428FAAE00DF7794 /* ECCodeDiagnostic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeDiagnostic.h; sourceTree = "<group>"; };
 		B7170D121428FAAE00DF7794 /* ECCodeIndex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeIndex.h; sourceTree = "<group>"; };
 		B7170D131428FAAE00DF7794 /* ECCodeIndex.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeIndex.m; sourceTree = "<group>"; };
-		B7170D181428FAAF00DF7794 /* ECCodeUnit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeUnit.h; sourceTree = "<group>"; };
 		B7170D3A1428FAF000DF7794 /* ECFoundation.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = ECFoundation.xcodeproj; sourceTree = "<group>"; };
 		B72336741429FD76006D540A /* libLLVMAnalysis.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libLLVMAnalysis.a; path = usr/lib/libLLVMAnalysis.a; sourceTree = SDKROOT; };
 		B72336851429FD76006D540A /* libLLVMCodeGen.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libLLVMCodeGen.a; path = usr/lib/libLLVMCodeGen.a; sourceTree = SDKROOT; };
@@ -742,7 +740,6 @@
 			children = (
 				B7170D121428FAAE00DF7794 /* ECCodeIndex.h */,
 				B7170D131428FAAE00DF7794 /* ECCodeIndex.m */,
-				B7170D181428FAAF00DF7794 /* ECCodeUnit.h */,
 				B7656BC6144ACCC80084B050 /* ECCodeScope.h */,
 				B7170D0A1428FAAE00DF7794 /* ECCodeCompletion.h */,
 				B7170D0E1428FAAE00DF7794 /* ECCodeDiagnostic.h */,
@@ -762,7 +759,6 @@
 				B7170D281428FAAF00DF7794 /* ECCodeCompletion.h in Headers */,
 				B7170D2C1428FAAF00DF7794 /* ECCodeDiagnostic.h in Headers */,
 				B7170D301428FAAF00DF7794 /* ECCodeIndex.h in Headers */,
-				B7170D361428FAAF00DF7794 /* ECCodeUnit.h in Headers */,
 				B7170C211428F72100DF7794 /* ECDebug.h in Headers */,
 				B7170D1E1428FAAF00DF7794 /* ECClangCodeIndex.h in Headers */,
 				B7170D201428FAAF00DF7794 /* ECClangCodeUnit.h in Headers */,

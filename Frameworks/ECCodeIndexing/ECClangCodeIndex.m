@@ -55,12 +55,18 @@
     return 0.0;
 }
  */
-- (id<ECCodeUnit>)unitWithFileURL:(NSURL *)fileURL
+
+- (id<ECCodeCompleter>)completerWithFileURL:(NSURL *)fileURL language:(NSString *)language
 {
-    return [self unitWithFileURL:fileURL withLanguage:nil];
+    return [[ECClangCodeUnit alloc] initWithIndex:self fileURL:fileURL language:language];
 }
 
-- (id<ECCodeUnit>)unitWithFileURL:(NSURL *)fileURL withLanguage:(NSString *)language
+- (id<ECCodeDiagnoser>)diagnoserWithFileURL:(NSURL *)fileURL language:(NSString *)language
+{
+    return [[ECClangCodeUnit alloc] initWithIndex:self fileURL:fileURL language:language];
+}
+
+- (id<ECCodeParser>)parserWithFileURL:(NSURL *)fileURL language:(NSString *)language
 {
     return [[ECClangCodeUnit alloc] initWithIndex:self fileURL:fileURL language:language];
 }
