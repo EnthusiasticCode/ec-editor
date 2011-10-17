@@ -13,5 +13,6 @@
 
 @property (strong, nonatomic) IBOutlet UIView *toolbarView;
 - (IBAction)changeToolbar:(id)sender;
+- (IBAction)resizeToolbar:(id)sender;
 
 @end

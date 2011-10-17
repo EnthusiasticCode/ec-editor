@@ -10,6 +10,8 @@
 #import "ACUITestToolBar.h"
 #import <QuartzCore/QuartzCore.h>
 
+#define DEFAULT_TOOLBAR_HEIGHT 44
+
 @interface ACToolbarController () {
 @private
     NSMutableArray *toolbars;
@@ -73,8 +75,28 @@
 - (CGFloat)toolbarHeight
 {
     if (_toolbarHeight == 0)
-        _toolbarHeight = 44;
+        _toolbarHeight = DEFAULT_TOOLBAR_HEIGHT;
     return _toolbarHeight;
+}
+
+- (void)setToolbarHeight:(CGFloat)toolbarHeight
+{
+    [self setToolbarHeight:toolbarHeight animated:NO];
+}
+
+- (void)setToolbarHeight:(CGFloat)toolbarHeight animated:(BOOL)animated
+{
+    if (toolbarHeight == _toolbarHeight 
+        || (toolbarHeight != DEFAULT_TOOLBAR_HEIGHT && self.currentToolbarView == self.defaultToolbar))
+        return;
+    
+    _toolbarHeight = toolbarHeight;
+    [self layoutChildViewsAnimated:animated];
+}
+
+- (void)resetToolbarHeightAnimated:(BOOL)animated
+{
+    [self setToolbarHeight:DEFAULT_TOOLBAR_HEIGHT animated:animated];
 }
 
 #pragma mark - View lifecycle
@@ -125,6 +147,8 @@
     
     if (self.isViewLoaded)
     {
+        [self resetToolbarHeightAnimated:animated];
+        
         if (animated)
         {
             lastToolbar.layer.anchorPointZ = 19;
@@ -160,6 +184,8 @@
     
     if (self.isViewLoaded)
     {
+        [self resetToolbarHeightAnimated:animated];
+        
         UIView *currentToolbar = [toolbars lastObject];
         UIView *lastToolbar = self.defaultToolbar;
         if ([toolbars count] > 1)

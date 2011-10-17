@@ -20,4 +20,12 @@
     else
         [parent pushToolbarView:toolbarView animated:YES];
 }
+
+- (IBAction)resizeToolbar:(id)sender {
+    ACToolbarController *parent = self.toolbarController;
+    if (parent.toolbarHeight != 88)
+        [parent setToolbarHeight:88 animated:YES];
+    else
+        [parent resetToolbarHeightAnimated:YES];
+}
 @end

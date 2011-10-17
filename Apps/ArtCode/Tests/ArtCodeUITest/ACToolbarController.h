@@ -19,6 +19,8 @@
 - (void)popToolbarViewAnimated:(BOOL)animated;
 
 @property (nonatomic) CGFloat toolbarHeight;
+- (void)setToolbarHeight:(CGFloat)toolbarHeight animated:(BOOL)animated;
+- (void)resetToolbarHeightAnimated:(BOOL)animated;
 
 @property (nonatomic, strong) IBOutlet UIViewController *contentViewController;
 - (void)setContentViewController:(UIViewController *)contentViewController animated:(BOOL)animated;
