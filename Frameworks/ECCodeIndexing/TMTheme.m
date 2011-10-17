@@ -7,9 +7,13 @@
 //
 
 #import "TMTheme.h"
+#import "NSString+ECCodeScopes.h"
 
 static NSString * const _themeFileExtension = @"tmTheme";
 static NSString * const _themeNameKey = @"name";
+static NSString * const _themeSettingsKey = @"settings";
+static NSString * const _themeSettingsScopeKey = @"scope";
+static NSString * const _themeSettingsSettingsKey = @"settings";
 
 static NSURL *_themeDirectory;
 static NSDictionary *_themeFileURLs;
@@ -49,6 +53,20 @@ static NSDictionary *_themeFileURLs;
     return [[self alloc] initWithFileURL:[_themeFileURLs objectForKey:name]];
 }
 
++ (void)_indexThemes
+{
+    NSMutableDictionary *themeFileURLs = [NSMutableDictionary dictionary];
+    NSFileManager *fileManager = [[NSFileManager alloc] init];
+    for (NSURL *fileURL in [fileManager contentsOfDirectoryAtURL:[self themeDirectory] includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles error:NULL])
+    {
+        TMTheme *theme = [[self alloc] initWithFileURL:fileURL];
+        if (!theme)
+            continue;
+        [themeFileURLs setObject:fileURL forKey:theme.name];
+    }
+    _themeFileURLs = [themeFileURLs copy];
+}
+
 #pragma mark - Properties
 
 @synthesize fileURL = _fileURL;
@@ -72,18 +90,22 @@ static NSDictionary *_themeFileURLs;
     return self;
 }
 
-+ (void)_indexThemes
+- (NSDictionary *)attributesForScopeStack:(NSArray *)scopeStack
 {
-    NSMutableDictionary *themeFileURLs = [NSMutableDictionary dictionary];
-    NSFileManager *fileManager = [[NSFileManager alloc] init];
-    for (NSURL *fileURL in [fileManager contentsOfDirectoryAtURL:[self themeDirectory] includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles error:NULL])
+    NSMutableDictionary *attributes = [NSMutableDictionary dictionary];
+    for (NSString *scope in scopeStack)
     {
-        TMTheme *theme = [[self alloc] initWithFileURL:fileURL];
-        if (!theme)
-            continue;
-        [themeFileURLs setObject:fileURL forKey:theme.name];
+        for (NSDictionary *settings in [self.plist objectForKey:_themeSettingsKey])
+        {
+            NSString *settingScope = [settings objectForKey:_themeSettingsScopeKey];
+            if (settingScope && ![scope containsScope:settingScope])
+                continue;
+            [[settings objectForKey:_themeSettingsSettingsKey] enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+                [attributes setObject:obj forKey:key];
+            }];
+        }
     }
-    _themeFileURLs = [themeFileURLs copy];
+    return [attributes copy];
 }
 
 @end
