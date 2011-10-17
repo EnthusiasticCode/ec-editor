@@ -160,16 +160,32 @@
     
     if (self.isViewLoaded)
     {
+        UIView *currentToolbar = [toolbars lastObject];
         UIView *lastToolbar = self.defaultToolbar;
         if ([toolbars count] > 1)
             lastToolbar = [toolbars objectAtIndex:[toolbars count] - 2];
         if (animated)
         {
-            [UIView transitionFromView:[toolbars lastObject] toView:lastToolbar duration:0.2 options:UIViewAnimationOptionTransitionFlipFromBottom completion:nil];
+            currentToolbar.layer.anchorPointZ = 19;
+            [self.view addSubview:lastToolbar];
+            lastToolbar.frame = currentToolbar.frame;
+            lastToolbar.layer.anchorPointZ = 19;
+            lastToolbar.layer.transform = CATransform3DMakeRotation(M_PI_2, 1, 0, 0);
+            lastToolbar.layer.opacity = 0.4;
+            
+            [UIView animateWithDuration:0.2 animations:^{
+                currentToolbar.layer.transform = CATransform3DMakeRotation(M_PI_2, -1, 0, 0);
+                currentToolbar.layer.opacity = 0.4;
+                lastToolbar.layer.transform = CATransform3DIdentity;
+                lastToolbar.layer.opacity = 1;
+            } completion:^(BOOL finished) {
+                currentToolbar.layer.transform = CATransform3DIdentity;
+                [currentToolbar removeFromSuperview];
+            }];
         }
         else
         {
-            [[toolbars lastObject] removeFromSuperview];
+            [currentToolbar removeFromSuperview];
             [self.view addSubview:lastToolbar];
         }
         
