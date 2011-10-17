@@ -8,12 +8,12 @@
 
 #import <UIKit/UIKit.h>
 
-@class ACUITestViewController;
+@class ACToolbarController;
 
 @interface ACUITestAppDelegate : UIResponder <UIApplicationDelegate>
 
 @property (strong, nonatomic) UIWindow *window;
 
-@property (strong, nonatomic) ACUITestViewController *viewController;
+@property (strong, nonatomic) ACToolbarController *viewController;
 
 @end

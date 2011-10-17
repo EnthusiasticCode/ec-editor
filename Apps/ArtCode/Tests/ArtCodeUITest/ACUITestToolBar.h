@@ -12,4 +12,7 @@
 
 @property (nonatomic, readonly, strong) UIButton *titleItem;
 
+@property (nonatomic, strong) UIBarButtonItem *toolItem;
+- (void)setToolItem:(UIBarButtonItem *)toolItem animated:(BOOL)animated;
+
 @end

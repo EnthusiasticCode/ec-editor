@@ -8,13 +8,10 @@
 
 #import <UIKit/UIKit.h>
 
-@class ACUITestToolbar;
 
 @interface ACUITestViewController : UIViewController
 
-@property (nonatomic, strong) IBOutlet ACUITestToolbar *barView;
-
-@property (nonatomic, strong) IBOutlet UIViewController *contentViewController;
-- (void)setContentViewController:(UIViewController *)contentViewController animated:(BOOL)animated;
+@property (strong, nonatomic) IBOutlet UIView *toolbarView;
+- (IBAction)changeToolbar:(id)sender;
 
 @end

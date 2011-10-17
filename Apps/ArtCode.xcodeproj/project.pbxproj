@@ -75,6 +75,8 @@
 		CD9F3CF914238DE200ACD841 /* projectBrowserTipsEmpty.png in Resources */ = {isa = PBXBuildFile; fileRef = CD9F3CF814238DE200ACD841 /* projectBrowserTipsEmpty.png */; };
 		CDD40B0313E1A046008AC36B /* ACPopoverHistoryToolController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDD40B0213E1A046008AC36B /* ACPopoverHistoryToolController.m */; };
 		CDDD8E3F144C252A00103CDD /* ACUITestToolBar.m in Sources */ = {isa = PBXBuildFile; fileRef = CDDD8E3E144C252A00103CDD /* ACUITestToolBar.m */; };
+		CDDD8E45144C835900103CDD /* ACToolbarController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDDD8E44144C835900103CDD /* ACToolbarController.m */; };
+		CDDD8E46144C8F3B00103CDD /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD7D2AFF13C0CD9700B889EE /* QuartzCore.framework */; };
 		CDE1CB81142102A500151BD7 /* ACTabButton.m in Sources */ = {isa = PBXBuildFile; fileRef = CDE1CB80142102A500151BD7 /* ACTabButton.m */; };
 		CDE3F14713C0DDD500DFFAFF /* Inconsolata-dz.otf in Resources */ = {isa = PBXBuildFile; fileRef = CDE3F14613C0DDD500DFFAFF /* Inconsolata-dz.otf */; };
 		CDF1D46D14150C4900EFEC21 /* libstdc++.6.0.9.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CDF1D46C14150C4900EFEC21 /* libstdc++.6.0.9.dylib */; };
@@ -327,6 +329,8 @@
 		CDD40B0213E1A046008AC36B /* ACPopoverHistoryToolController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACPopoverHistoryToolController.m; sourceTree = "<group>"; };
 		CDDD8E3D144C252A00103CDD /* ACUITestToolBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACUITestToolBar.h; sourceTree = "<group>"; };
 		CDDD8E3E144C252A00103CDD /* ACUITestToolBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACUITestToolBar.m; sourceTree = "<group>"; };
+		CDDD8E43144C835800103CDD /* ACToolbarController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACToolbarController.h; sourceTree = "<group>"; };
+		CDDD8E44144C835900103CDD /* ACToolbarController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACToolbarController.m; sourceTree = "<group>"; };
 		CDE1CB7F142102A500151BD7 /* ACTabButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACTabButton.h; sourceTree = "<group>"; };
 		CDE1CB80142102A500151BD7 /* ACTabButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACTabButton.m; sourceTree = "<group>"; };
 		CDE3F14613C0DDD500DFFAFF /* Inconsolata-dz.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Inconsolata-dz.otf"; sourceTree = "<group>"; };
@@ -380,6 +384,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CDDD8E46144C8F3B00103CDD /* QuartzCore.framework in Frameworks */,
 				CD884B16144B1D6200133140 /* UIKit.framework in Frameworks */,
 				CD884B18144B1D6200133140 /* Foundation.framework in Frameworks */,
 				CD884B1A144B1D6200133140 /* CoreGraphics.framework in Frameworks */,
@@ -751,6 +756,8 @@
 				CD884B1C144B1D6200133140 /* Supporting Files */,
 				CDDD8E3D144C252A00103CDD /* ACUITestToolBar.h */,
 				CDDD8E3E144C252A00103CDD /* ACUITestToolBar.m */,
+				CDDD8E43144C835800103CDD /* ACToolbarController.h */,
+				CDDD8E44144C835900103CDD /* ACToolbarController.m */,
 			);
 			path = ArtCodeUITest;
 			sourceTree = "<group>";
@@ -1097,6 +1104,7 @@
 				CD884B26144B1D6200133140 /* ACUITestAppDelegate.m in Sources */,
 				CD884B29144B1D6200133140 /* ACUITestViewController.m in Sources */,
 				CDDD8E3F144C252A00103CDD /* ACUITestToolBar.m in Sources */,
+				CDDD8E45144C835900103CDD /* ACToolbarController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
