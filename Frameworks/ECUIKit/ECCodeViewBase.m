@@ -287,6 +287,25 @@ static void init(ECCodeViewBase *self)
     else
     {
 #warning NIK TODO!!! optimize line to string range conversion
+
+//        NSMutableAttributedString *resultString = [[NSMutableAttributedString alloc] init];
+//        
+//        NSUInteger remainingStringLength = [self.datasource textLength];
+//        NSRange fetchStringRange = NSMakeRange(0, 0);
+//        __block NSUInteger lineIndex = 0;
+//        __block NSUInteger stringCursor = 0;
+//        
+//        fetchStringRange.location += fetchStringRange.length;
+//        fetchStringRange.length = MIN(300, remainingStringLength);
+//        NSAttributedString *currentString = [self.datasource codeView:self attributedStringInRange:fetchStringRange];
+////        currentString.string getLineStart:<#(NSUInteger *)#> end:<#(NSUInteger *)#> contentsEnd:<#(NSUInteger *)#> forRange:<#(NSRange)#>
+//        [currentString.string enumerateLinesUsingBlock:^(NSString *line, BOOL *stop) {
+//            stringCursor += [line length];
+//            // Skip line if before request
+//            if (lineIndex++ < (*lineRange).location)
+//                return;
+//        }];
+        
         NSUInteger lineIndex, stringLength = [self.datasource textLength];
         NSString *contentString = [self.datasource codeView:self attributedStringInRange:NSMakeRange(0, stringLength)].string;
         
@@ -311,6 +330,11 @@ static void init(ECCodeViewBase *self)
         *endOfString = (NSMaxRange(stringRange) == [self.datasource textLength]);
     
     return [self.datasource codeView:self attributedStringInRange:stringRange];
+}
+
+- (NSUInteger)textRenderer:(ECTextRenderer *)sender estimatedTextLineCountOfLength:(NSUInteger)maximumLineLength
+{
+    return 1 + [self.datasource textLength] / maximumLineLength;
 }
 
 #pragma mark - Text Renderer and CodeView String Datasource
