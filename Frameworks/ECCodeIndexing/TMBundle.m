@@ -58,8 +58,9 @@ static NSString * const _syntaxNameKey = @"name";
     for (NSURL *fileURL in [fileManager contentsOfDirectoryAtURL:[self bundleDirectory] includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles error:NULL])
     {
         TMBundle *bundle = [[self alloc] initWithBundleURL:fileURL];
-        if (bundle)
-            [bundleURLs setValue:fileURL forKey:bundle.bundleName];
+        if (!bundle)
+            continue;
+        [bundleURLs setValue:fileURL forKey:bundle.bundleName];
     }
     _bundleURLs = [bundleURLs copy];
 }
@@ -135,8 +136,6 @@ static NSString * const _syntaxNameKey = @"name";
     if (!self)
         return nil;
     NSDictionary *syntaxPlist = [NSPropertyListSerialization propertyListWithData:[NSData dataWithContentsOfURL:fileURL options:NSDataReadingUncached error:NULL] options:NSPropertyListImmutable format:NULL error:NULL];
-    if (!syntaxPlist)
-        return nil;
     NSString *syntaxName = [syntaxPlist objectForKey:_syntaxNameKey];
     if (!syntaxName)
         return nil;

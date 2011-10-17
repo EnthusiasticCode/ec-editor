@@ -17,6 +17,8 @@
 + (NSArray *)themeNames;
 + (TMTheme *)themeWithName:(NSString *)name;
 
+@property (nonatomic, strong, readonly) NSString *name;
+
 - (NSDictionary *)attributesForScopeStack:(NSArray *)scopeStack;
 
 @end
