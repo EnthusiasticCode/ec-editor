@@ -8,19 +8,27 @@
 
 #import "ACUITestAppDelegate.h"
 
+#import <ECUIKit/ECTabController.h>
 #import "ACTopBarController.h"
+
 
 @implementation ACUITestAppDelegate
 
 @synthesize window = _window;
-@synthesize viewController = _viewController;
+@synthesize topBarController = _topBarController;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+    
     // Override point for customization after application launch.
-    self.viewController = [[ACTopBarController alloc] initWithNibName:@"ACUITestViewController" bundle:nil];
-    self.window.rootViewController = self.viewController;
+    self.topBarController = [[ACTopBarController alloc] initWithNibName:@"ACUITestViewController" bundle:nil];
+    self.topBarController.title = @"Tab title";
+    
+    ECTabController *tabController = [[ECTabController alloc] init];
+    self.window.rootViewController = tabController;
+    [tabController addChildViewController:self.topBarController];
+    
     [self.window makeKeyAndVisible];
     return YES;
 }

@@ -14,6 +14,6 @@
 
 @property (strong, nonatomic) UIWindow *window;
 
-@property (strong, nonatomic) ACTopBarController *viewController;
+@property (strong, nonatomic) ACTopBarController *topBarController;
 
 @end

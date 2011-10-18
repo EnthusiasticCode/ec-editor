@@ -656,7 +656,7 @@ static void init(ECTabBar *self)
     
     ECTabBarButton *tabButton = (ECTabBarButton *)[self _dequeueReusableTabControlWithIdentifier:tabButtonReusableIdentifier];
     if (tabButton == nil) {
-        tabButton = [ECTabBarButton buttonWithType:UIButtonTypeCustom];
+        tabButton = [ECTabBarButton buttonWithType:UIButtonTypeRoundedRect];
         tabButton.titleEdgeInsets = UIEdgeInsetsMake(0, 44, 0, 0);
         tabButton.frame = CGRectMake(0, 0, 100, 44);
         
@@ -668,6 +668,8 @@ static void init(ECTabBar *self)
         
         [tabButton addSubview:tabCloseButton];
     }
+    
+    [tabButton setTitle:title forState:UIControlStateNormal];
     
     return tabButton;
 }

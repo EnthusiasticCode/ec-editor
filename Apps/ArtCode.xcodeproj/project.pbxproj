@@ -78,6 +78,9 @@
 		CDD77D05144D6C6000BAC852 /* ACTopBarController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDD77D03144D6C6000BAC852 /* ACTopBarController.m */; };
 		CDD77D08144D6CD000BAC852 /* ACTopBarToolbar.m in Sources */ = {isa = PBXBuildFile; fileRef = CDD77D07144D6CD000BAC852 /* ACTopBarToolbar.m */; };
 		CDD77D09144D6CD000BAC852 /* ACTopBarToolbar.m in Sources */ = {isa = PBXBuildFile; fileRef = CDD77D07144D6CD000BAC852 /* ACTopBarToolbar.m */; };
+		CDD77D2C144D70B100BAC852 /* libECUIKit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7170EB61429F3B800DF7794 /* libECUIKit.a */; };
+		CDD77D2D144D70C400BAC852 /* libECFoundation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7170EAF1429F3B800DF7794 /* libECFoundation.a */; };
+		CDD77D2E144D736000BAC852 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD7D2B0113C0CD9D00B889EE /* CoreText.framework */; };
 		CDDD8E46144C8F3B00103CDD /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD7D2AFF13C0CD9700B889EE /* QuartzCore.framework */; };
 		CDE1CB81142102A500151BD7 /* ACTabButton.m in Sources */ = {isa = PBXBuildFile; fileRef = CDE1CB80142102A500151BD7 /* ACTabButton.m */; };
 		CDE3F14713C0DDD500DFFAFF /* Inconsolata-dz.otf in Resources */ = {isa = PBXBuildFile; fileRef = CDE3F14613C0DDD500DFFAFF /* Inconsolata-dz.otf */; };
@@ -386,6 +389,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CDD77D2E144D736000BAC852 /* CoreText.framework in Frameworks */,
+				CDD77D2D144D70C400BAC852 /* libECFoundation.a in Frameworks */,
+				CDD77D2C144D70B100BAC852 /* libECUIKit.a in Frameworks */,
 				CDDD8E46144C8F3B00103CDD /* QuartzCore.framework in Frameworks */,
 				CD884B16144B1D6200133140 /* UIKit.framework in Frameworks */,
 				CD884B18144B1D6200133140 /* Foundation.framework in Frameworks */,
@@ -1252,7 +1258,10 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ArtCode/Tests/ArtCodeUITest/ArtCodeUITest-Prefix.pch";
 				GCC_STRICT_ALIASING = YES;
+				HEADER_SEARCH_PATHS = "${BUILD_DIR}/${CONFIGURATION}${EFFECTIVE_PLATFORM_NAME}/usr/local/include/";
 				INFOPLIST_FILE = "ArtCode/Tests/ArtCodeUITest/ArtCodeUITest-Info.plist";
+				LIBRARY_SEARCH_PATHS = "${BUILD_DIR}/";
+				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -1265,7 +1274,10 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ArtCode/Tests/ArtCodeUITest/ArtCodeUITest-Prefix.pch";
 				GCC_STRICT_ALIASING = YES;
+				HEADER_SEARCH_PATHS = "${BUILD_DIR}/${CONFIGURATION}${EFFECTIVE_PLATFORM_NAME}/usr/local/include/";
 				INFOPLIST_FILE = "ArtCode/Tests/ArtCodeUITest/ArtCodeUITest-Info.plist";
+				LIBRARY_SEARCH_PATHS = "${BUILD_DIR}/";
+				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
