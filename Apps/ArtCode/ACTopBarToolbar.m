@@ -1,22 +1,24 @@
 //
-//  ACUITestToolBar.m
+//  ACTopBarToolbar.m
 //  ArtCode
 //
-//  Created by Nicola Peduzzi on 17/10/11.
+//  Created by Nicola Peduzzi on 18/10/11.
 //  Copyright (c) 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import "ACUITestToolBar.h"
+#import "ACTopBarToolbar.h"
 
-@interface ACUITestToolbar ()
 
-@property (nonatomic, strong) UIButton *titleItem;
+@interface ACTopBarToolbar ()
+
+@property (nonatomic, strong) UIButton *titleControl;
 
 @end
 
-@implementation ACUITestToolbar
 
-@synthesize titleItem = _titleItem;
+@implementation ACTopBarToolbar
+
+@synthesize titleControl = _titleControl;
 @synthesize toolItem = _toolItem;
 
 - (void)setToolItem:(UIBarButtonItem *)toolItem
@@ -55,7 +57,7 @@
             UIBarButtonItem *buttonItem = (UIBarButtonItem *)item;
             if (buttonItem.customView != nil && [buttonItem.customView isKindOfClass:[UIButton class]])
             {
-                self.titleItem = (UIButton *)buttonItem.customView;
+                self.titleControl = (UIButton *)buttonItem.customView;
             }
         }
     }

@@ -6,13 +6,13 @@
 //  Copyright (c) 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import "ACToolbarController.h"
-#import "ACUITestToolBar.h"
+#import "ACTopBarController.h"
+#import "ACTopBarToolbar.h"
 #import <QuartzCore/QuartzCore.h>
 
 #define DEFAULT_TOOLBAR_HEIGHT 44
 
-@interface ACToolbarController () {
+@interface ACTopBarController () {
 @private
     NSMutableArray *toolbars;
 }
@@ -23,7 +23,7 @@
 @end
 
 
-@implementation ACToolbarController
+@implementation ACTopBarController
 
 @synthesize defaultToolbar = _defaultToolbar, contentViewController = _contentViewController;
 @synthesize toolbarHeight = _toolbarHeight;
@@ -249,21 +249,21 @@
 
 - (void)setupDefaultToolbarAnimated:(BOOL)animated
 {
-    [self.defaultToolbar.titleItem setTitle:_contentViewController.navigationItem.title forState:UIControlStateNormal];
+    [self.defaultToolbar.titleControl setTitle:_contentViewController.navigationItem.title forState:UIControlStateNormal];
     [self.defaultToolbar setToolItem:self.contentViewController.navigationItem.rightBarButtonItem animated:animated];
 }
 
 @end
 
 
-@implementation UIViewController (ACToolbarController)
+@implementation UIViewController (ACTopBarController)
 
--(ACToolbarController *)toolbarController
+- (ACTopBarController *)topBarController
 {
     UIViewController *parent = self;
-    while (parent && ![parent isKindOfClass:[ACToolbarController class]])
+    while (parent && ![parent isKindOfClass:[ACTopBarController class]])
         parent = parent.parentViewController;
-    return (ACToolbarController *)parent;
+    return (ACTopBarController *)parent;
 }
 
 @end

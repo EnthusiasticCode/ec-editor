@@ -8,11 +8,11 @@
 
 #import <UIKit/UIKit.h>
 
-@class ACUITestToolbar;
+@class ACTopBarToolbar;
 
-@interface ACToolbarController : UIViewController
+@interface ACTopBarController : UIViewController
 
-@property (nonatomic, strong) IBOutlet ACUITestToolbar *defaultToolbar;
+@property (nonatomic, strong) IBOutlet ACTopBarToolbar *defaultToolbar;
 @property (nonatomic, readonly, strong) UIView *currentToolbarView;
 
 - (void)pushToolbarView:(UIView *)toolbarView animated:(BOOL)animated;
@@ -28,8 +28,8 @@
 @end
 
 
-@interface UIViewController (ACToolbarController)
+@interface UIViewController (ACTopBarController)
 
-- (ACToolbarController *)toolbarController;
+- (ACTopBarController *)topBarController;
 
 @end

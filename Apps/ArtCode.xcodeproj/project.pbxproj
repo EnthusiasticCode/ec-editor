@@ -74,8 +74,10 @@
 		CD9F3CF71423855E00ACD841 /* projectBrowserTipsPopulatedEdit.png in Resources */ = {isa = PBXBuildFile; fileRef = CD9F3CF61423855E00ACD841 /* projectBrowserTipsPopulatedEdit.png */; };
 		CD9F3CF914238DE200ACD841 /* projectBrowserTipsEmpty.png in Resources */ = {isa = PBXBuildFile; fileRef = CD9F3CF814238DE200ACD841 /* projectBrowserTipsEmpty.png */; };
 		CDD40B0313E1A046008AC36B /* ACPopoverHistoryToolController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDD40B0213E1A046008AC36B /* ACPopoverHistoryToolController.m */; };
-		CDDD8E3F144C252A00103CDD /* ACUITestToolBar.m in Sources */ = {isa = PBXBuildFile; fileRef = CDDD8E3E144C252A00103CDD /* ACUITestToolBar.m */; };
-		CDDD8E45144C835900103CDD /* ACToolbarController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDDD8E44144C835900103CDD /* ACToolbarController.m */; };
+		CDD77D04144D6C6000BAC852 /* ACTopBarController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDD77D03144D6C6000BAC852 /* ACTopBarController.m */; };
+		CDD77D05144D6C6000BAC852 /* ACTopBarController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDD77D03144D6C6000BAC852 /* ACTopBarController.m */; };
+		CDD77D08144D6CD000BAC852 /* ACTopBarToolbar.m in Sources */ = {isa = PBXBuildFile; fileRef = CDD77D07144D6CD000BAC852 /* ACTopBarToolbar.m */; };
+		CDD77D09144D6CD000BAC852 /* ACTopBarToolbar.m in Sources */ = {isa = PBXBuildFile; fileRef = CDD77D07144D6CD000BAC852 /* ACTopBarToolbar.m */; };
 		CDDD8E46144C8F3B00103CDD /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD7D2AFF13C0CD9700B889EE /* QuartzCore.framework */; };
 		CDE1CB81142102A500151BD7 /* ACTabButton.m in Sources */ = {isa = PBXBuildFile; fileRef = CDE1CB80142102A500151BD7 /* ACTabButton.m */; };
 		CDE3F14713C0DDD500DFFAFF /* Inconsolata-dz.otf in Resources */ = {isa = PBXBuildFile; fileRef = CDE3F14613C0DDD500DFFAFF /* Inconsolata-dz.otf */; };
@@ -327,10 +329,10 @@
 		CD9F3CF814238DE200ACD841 /* projectBrowserTipsEmpty.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = projectBrowserTipsEmpty.png; path = Resources/projectBrowserTipsEmpty.png; sourceTree = "<group>"; };
 		CDD40B0113E1A046008AC36B /* ACPopoverHistoryToolController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACPopoverHistoryToolController.h; sourceTree = "<group>"; };
 		CDD40B0213E1A046008AC36B /* ACPopoverHistoryToolController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACPopoverHistoryToolController.m; sourceTree = "<group>"; };
-		CDDD8E3D144C252A00103CDD /* ACUITestToolBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACUITestToolBar.h; sourceTree = "<group>"; };
-		CDDD8E3E144C252A00103CDD /* ACUITestToolBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACUITestToolBar.m; sourceTree = "<group>"; };
-		CDDD8E43144C835800103CDD /* ACToolbarController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACToolbarController.h; sourceTree = "<group>"; };
-		CDDD8E44144C835900103CDD /* ACToolbarController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACToolbarController.m; sourceTree = "<group>"; };
+		CDD77D02144D6C6000BAC852 /* ACTopBarController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACTopBarController.h; sourceTree = "<group>"; };
+		CDD77D03144D6C6000BAC852 /* ACTopBarController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACTopBarController.m; sourceTree = "<group>"; };
+		CDD77D06144D6CD000BAC852 /* ACTopBarToolbar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACTopBarToolbar.h; sourceTree = "<group>"; };
+		CDD77D07144D6CD000BAC852 /* ACTopBarToolbar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACTopBarToolbar.m; sourceTree = "<group>"; };
 		CDE1CB7F142102A500151BD7 /* ACTabButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACTabButton.h; sourceTree = "<group>"; };
 		CDE1CB80142102A500151BD7 /* ACTabButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACTabButton.m; sourceTree = "<group>"; };
 		CDE3F14613C0DDD500DFFAFF /* Inconsolata-dz.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Inconsolata-dz.otf"; sourceTree = "<group>"; };
@@ -659,6 +661,8 @@
 		CD7D2B1613C0D39B00B889EE /* Navigation */ = {
 			isa = PBXGroup;
 			children = (
+				CDD77D02144D6C6000BAC852 /* ACTopBarController.h */,
+				CDD77D03144D6C6000BAC852 /* ACTopBarController.m */,
 				CD0DEAB613D4C2430087ADBB /* ACNavigationTarget.h */,
 				CD7D2B2513C0D4B700B889EE /* ACNavigationController.h */,
 				CD7D2B2613C0D4B700B889EE /* ACNavigationController.m */,
@@ -711,6 +715,8 @@
 		CD7D2B4513C0D53A00B889EE /* Views and Segues */ = {
 			isa = PBXGroup;
 			children = (
+				CDD77D06144D6CD000BAC852 /* ACTopBarToolbar.h */,
+				CDD77D07144D6CD000BAC852 /* ACTopBarToolbar.m */,
 				CD7D2B2713C0D4B700B889EE /* ACNavigationPushSegue.h */,
 				CD7D2B2813C0D4B700B889EE /* ACNavigationPushSegue.m */,
 				CD7D2B2313C0D4B700B889EE /* ACJumpBarTextField.h */,
@@ -754,10 +760,6 @@
 				CD884B28144B1D6200133140 /* ACUITestViewController.m */,
 				CD884B2A144B1D6200133140 /* ACUITestViewController.xib */,
 				CD884B1C144B1D6200133140 /* Supporting Files */,
-				CDDD8E3D144C252A00103CDD /* ACUITestToolBar.h */,
-				CDDD8E3E144C252A00103CDD /* ACUITestToolBar.m */,
-				CDDD8E43144C835800103CDD /* ACToolbarController.h */,
-				CDDD8E44144C835900103CDD /* ACToolbarController.m */,
 			);
 			path = ArtCodeUITest;
 			sourceTree = "<group>";
@@ -1093,6 +1095,8 @@
 				B71A1DE71435112700672F65 /* ACNewFilePopoverController.m in Sources */,
 				B7012921143759020070CCDF /* ACFileDocument.m in Sources */,
 				B7107AEE143A32E500827FD2 /* ACURLWrapper.m in Sources */,
+				CDD77D04144D6C6000BAC852 /* ACTopBarController.m in Sources */,
+				CDD77D08144D6CD000BAC852 /* ACTopBarToolbar.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1103,8 +1107,8 @@
 				CD884B22144B1D6200133140 /* main.m in Sources */,
 				CD884B26144B1D6200133140 /* ACUITestAppDelegate.m in Sources */,
 				CD884B29144B1D6200133140 /* ACUITestViewController.m in Sources */,
-				CDDD8E3F144C252A00103CDD /* ACUITestToolBar.m in Sources */,
-				CDDD8E45144C835900103CDD /* ACToolbarController.m in Sources */,
+				CDD77D05144D6C6000BAC852 /* ACTopBarController.m in Sources */,
+				CDD77D09144D6CD000BAC852 /* ACTopBarToolbar.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

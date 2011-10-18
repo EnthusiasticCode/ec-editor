@@ -8,7 +8,7 @@
 
 #import "ACUITestAppDelegate.h"
 
-#import "ACToolbarController.h"
+#import "ACTopBarController.h"
 
 @implementation ACUITestAppDelegate
 
@@ -19,7 +19,7 @@
 {
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     // Override point for customization after application launch.
-    self.viewController = [[ACToolbarController alloc] initWithNibName:@"ACUITestViewController" bundle:nil];
+    self.viewController = [[ACTopBarController alloc] initWithNibName:@"ACUITestViewController" bundle:nil];
     self.window.rootViewController = self.viewController;
     [self.window makeKeyAndVisible];
     return YES;

@@ -7,14 +7,14 @@
 //
 
 #import "ACUITestViewController.h"
-#import "ACToolbarController.h"
+#import "ACTopBarController.h"
 
 
 @implementation ACUITestViewController
 @synthesize toolbarView;
 
 - (IBAction)changeToolbar:(id)sender {
-    ACToolbarController *parent = self.toolbarController;
+    ACTopBarController *parent = self.topBarController;
     if (parent.currentToolbarView == toolbarView)
         [parent popToolbarViewAnimated:YES];
     else
@@ -22,7 +22,7 @@
 }
 
 - (IBAction)resizeToolbar:(id)sender {
-    ACToolbarController *parent = self.toolbarController;
+    ACTopBarController *parent = self.topBarController;
     if (parent.toolbarHeight != 88)
         [parent setToolbarHeight:88 animated:YES];
     else
