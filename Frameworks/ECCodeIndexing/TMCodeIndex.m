@@ -11,9 +11,4 @@
 
 @implementation TMCodeIndex
 
-+ (void)setBundleDirectory:(NSURL *)bundleDirectory
-{
-    [TMBundle setBundleDirectory:bundleDirectory];
-}
-
 @end
