@@ -70,7 +70,7 @@
             NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] init];
             __block NSString *firstLine = nil;
             [fileCoordinator coordinateReadingItemAtURL:fileURL options:NSFileCoordinatorReadingResolvesSymbolicLink error:NULL byAccessor:^(NSURL *newURL) {
-                NSString *fileContents = [NSString stringWithContentsOfURL:fileURL encoding:NSUTF8StringEncoding error:NULL];
+                NSString *fileContents = [NSString stringWithContentsOfURL:newURL encoding:NSUTF8StringEncoding error:NULL];
                 firstLine = [fileContents substringWithRange:[fileContents lineRangeForRange:NSMakeRange(0, 1)]];
             }];
             if ([syntax.firstLineMatch numberOfMatchesInString:firstLine options:0 range:NSMakeRange(0, [firstLine length])])

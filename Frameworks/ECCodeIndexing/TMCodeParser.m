@@ -9,6 +9,7 @@
 #import "TMCodeParser.h"
 #import "TMBundle.h"
 #import "TMSyntax.h"
+#import "TMPattern.h"
 
 @interface TMCodeParser ()
 {
@@ -48,7 +49,38 @@
 
 - (void)enumerateScopesInRange:(NSRange)range usingBlock:(void (^)(NSArray *, NSRange, ECCodeScopeEnumerationStackChange, BOOL *, BOOL *))block
 {
-    
+    __block NSString *string = nil;
+    NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] initWithFilePresenter:self];
+    [fileCoordinator coordinateReadingItemAtURL:self.fileURL options:NSFileCoordinatorReadingResolvesSymbolicLink error:NULL byAccessor:^(NSURL *newURL) {
+        string = [[NSString stringWithContentsOfURL:newURL encoding:NSUTF8StringEncoding error:NULL] substringWithRange:range];
+    }];
+    NSRange currentRange = NSMakeRange(0, range.length);
+    NSMutableArray *scopeStack = [NSMutableArray array];
+    NSTextCheckingResult *bestMatchResult = nil;
+    TMPattern *bestMatchPattern = nil;
+    do
+    {
+        for (TMPattern *pattern in self.syntax.patterns)
+        {
+            NSTextCheckingResult *matchResult = [pattern firstMatchInString:string options:0 range:currentRange];
+            if (!matchResult || matchResult.range.location > bestMatchResult.range.location || (matchResult.range.location == bestMatchResult.range.location && matchResult.range.length < bestMatchResult.range.length))
+                continue;
+            bestMatchResult = matchResult;
+            bestMatchPattern = pattern;
+        }
+        if (!bestMatchResult)
+            continue;
+        [scopeStack addObject:bestMatchPattern.name];
+        BOOL stop = NO;
+        BOOL skipChildren = NO;
+        block([scopeStack copy], bestMatchResult.range, ECCodeScopeEnumerationStackChangeContinue, &skipChildren, &stop);
+        if (stop)
+            break;
+        [scopeStack removeLastObject];
+        currentRange.location = NSMaxRange(bestMatchResult.range);
+        currentRange.length = [string length] - currentRange.location;
+    }
+    while (bestMatchResult);
 }
 
 #pragma mark - NSFileCoordination
