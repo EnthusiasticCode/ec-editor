@@ -7,6 +7,7 @@
 //
 
 #import "ECCodeIndex.h"
+#import "ECCodeIndexSubclass.h"
 
 static NSMutableArray *_extensionClasses;
 static NSURL *_bundleDirectory;
@@ -41,26 +42,6 @@ static NSURL *_bundleDirectory;
     _bundleDirectory = bundleDirectory;
 }
 
-+ (void)registerExtension:(Class)extensionClass
-{
-    if (self != [ECCodeIndex class])
-        return;
-    ECASSERT([extensionClass isSubclassOfClass:self]);
-    if (!_extensionClasses)
-        _extensionClasses = [[NSMutableArray alloc] init];
-    [_extensionClasses addObject:extensionClass];
-}
-
-+ (float)implementsProtocol:(Protocol *)protocol forFile:(NSURL *)fileURL language:(NSString *)language scope:(NSString *)scope
-{
-    if (self != [ECCodeIndex class])
-        return 0.0;
-    float support = 0.0;
-    for (Class extensionClass in _extensionClasses)
-        support = MAX([extensionClass implementsProtocol:protocol forFile:fileURL language:language scope:scope], support);
-    return support;
-}
-
 - (id)codeUnitImplementingProtocol:(Protocol *)protocol withFile:(NSURL *)fileURL language:(NSString *)language scope:(NSString *)scope
 {
     if (self != [ECCodeIndex class])
@@ -81,6 +62,7 @@ static NSURL *_bundleDirectory;
             winningSupport = support;
             winningExtensionClass = extensionClass;
         }
+        ECASSERT(winningSupport >= 0.0 && winningSupport < 1.0);
         if (winningSupport == 0.0)
             return;
         ECCodeIndex *extension = [self extensionForClass:winningExtensionClass];
@@ -100,4 +82,23 @@ static NSURL *_bundleDirectory;
     }
     return extension;
 }
+@end
+
+@implementation ECCodeIndex (Subclass)
+
++ (void)registerExtension:(Class)extensionClass
+{
+    if (self != [ECCodeIndex class])
+        return;
+    ECASSERT([extensionClass isSubclassOfClass:self]);
+    if (!_extensionClasses)
+        _extensionClasses = [[NSMutableArray alloc] init];
+    [_extensionClasses addObject:extensionClass];
+}
+
++ (float)implementsProtocol:(Protocol *)protocol forFile:(NSURL *)fileURL language:(NSString *)language scope:(NSString *)scope
+{
+    return 0.0;
+}
+
 @end

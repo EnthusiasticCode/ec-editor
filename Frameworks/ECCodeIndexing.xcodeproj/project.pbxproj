@@ -127,8 +127,11 @@
 		B7772668143D17EE00DA3FD3 /* libLLVMMC.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B72336961429FD76006D540A /* libLLVMMC.a */; };
 		B7772669143D185500DA3FD3 /* libLLVMSupport.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B72336AA1429FD76006D540A /* libLLVMSupport.a */; };
 		B777266A143D188200DA3FD3 /* libLLVMTransformUtils.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B72336AE1429FD76006D540A /* libLLVMTransformUtils.a */; };
-		B7D80665144B830E00EEC819 /* TMBundle.h in Headers */ = {isa = PBXBuildFile; fileRef = B7D80663144B830E00EEC819 /* TMBundle.h */; };
+		B7A3F018144D8CC900EC9623 /* TMSyntax.h in Headers */ = {isa = PBXBuildFile; fileRef = B7A3F016144D8CC900EC9623 /* TMSyntax.h */; settings = {ATTRIBUTES = (); }; };
+		B7A3F019144D8CC900EC9623 /* TMSyntax.m in Sources */ = {isa = PBXBuildFile; fileRef = B7A3F017144D8CC900EC9623 /* TMSyntax.m */; };
+		B7D80665144B830E00EEC819 /* TMBundle.h in Headers */ = {isa = PBXBuildFile; fileRef = B7D80663144B830E00EEC819 /* TMBundle.h */; settings = {ATTRIBUTES = (); }; };
 		B7D80666144B830E00EEC819 /* TMBundle.m in Sources */ = {isa = PBXBuildFile; fileRef = B7D80664144B830E00EEC819 /* TMBundle.m */; };
+		B7E550DD144E495200C07A0C /* ECCodeIndexSubclass.h in Headers */ = {isa = PBXBuildFile; fileRef = B7E550DC144E495200C07A0C /* ECCodeIndexSubclass.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -367,8 +370,11 @@
 		B7656C92144B78040084B050 /* TMCodeUnit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TMCodeUnit.m; sourceTree = "<group>"; };
 		B777262F143D127800DA3FD3 /* libclangFrontend.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libclangFrontend.a; path = usr/lib/libclangFrontend.a; sourceTree = SDKROOT; };
 		B7772631143D12CA00DA3FD3 /* libclangARCMigrate.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libclangARCMigrate.a; path = usr/lib/libclangARCMigrate.a; sourceTree = SDKROOT; };
+		B7A3F016144D8CC900EC9623 /* TMSyntax.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TMSyntax.h; sourceTree = "<group>"; };
+		B7A3F017144D8CC900EC9623 /* TMSyntax.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TMSyntax.m; sourceTree = "<group>"; };
 		B7D80663144B830E00EEC819 /* TMBundle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TMBundle.h; sourceTree = "<group>"; };
 		B7D80664144B830E00EEC819 /* TMBundle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TMBundle.m; sourceTree = "<group>"; };
+		B7E550DC144E495200C07A0C /* ECCodeIndexSubclass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeIndexSubclass.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -716,6 +722,8 @@
 				B7656BF0144B3D830084B050 /* TMTheme.m */,
 				B7D80663144B830E00EEC819 /* TMBundle.h */,
 				B7D80664144B830E00EEC819 /* TMBundle.m */,
+				B7A3F016144D8CC900EC9623 /* TMSyntax.h */,
+				B7A3F017144D8CC900EC9623 /* TMSyntax.m */,
 				B7656C8D144B77EF0084B050 /* TMCodeIndex.h */,
 				B7656C8E144B77F00084B050 /* TMCodeIndex.m */,
 				B7656C91144B78040084B050 /* TMCodeUnit.h */,
@@ -739,6 +747,7 @@
 			isa = PBXGroup;
 			children = (
 				B7170D121428FAAE00DF7794 /* ECCodeIndex.h */,
+				B7E550DC144E495200C07A0C /* ECCodeIndexSubclass.h */,
 				B7170D131428FAAE00DF7794 /* ECCodeIndex.m */,
 				B7656BC6144ACCC80084B050 /* ECCodeScope.h */,
 				B7170D0A1428FAAE00DF7794 /* ECCodeCompletion.h */,
@@ -768,6 +777,8 @@
 				B7656C8F144B77F00084B050 /* TMCodeIndex.h in Headers */,
 				B7656C93144B78050084B050 /* TMCodeUnit.h in Headers */,
 				B7D80665144B830E00EEC819 /* TMBundle.h in Headers */,
+				B7A3F018144D8CC900EC9623 /* TMSyntax.h in Headers */,
+				B7E550DD144E495200C07A0C /* ECCodeIndexSubclass.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -900,6 +911,7 @@
 				B7656C90144B77F00084B050 /* TMCodeIndex.m in Sources */,
 				B7656C94144B78050084B050 /* TMCodeUnit.m in Sources */,
 				B7D80666144B830E00EEC819 /* TMBundle.m in Sources */,
+				B7A3F019144D8CC900EC9623 /* TMSyntax.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

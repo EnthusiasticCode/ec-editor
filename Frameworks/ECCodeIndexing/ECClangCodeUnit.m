@@ -88,6 +88,22 @@ static void inclusionVisitor(CXFile included_file, CXSourceLocation* inclusion_s
         return nil;
     return self;
 }
+
+- (NSArray *)completionsAtOffset:(NSUInteger)offset
+{
+    UNIMPLEMENTED();
+}
+
+- (NSArray *)diagnostics
+{
+    UNIMPLEMENTED();
+}
+
+- (void)enumerateScopesInRange:(NSRange)range usingBlock:(void (^)(NSArray *, NSRange, ECCodeScopeEnumerationStackChange, BOOL *, BOOL *))block
+{
+    UNIMPLEMENTED_VOID();
+}
+
 /*
 - (NSArray *)completionsAtOffset:(NSUInteger)offset
 {

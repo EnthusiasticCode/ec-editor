@@ -8,22 +8,19 @@
 
 #import "TMCodeUnit.h"
 #import "TMBundle.h"
+#import "TMSyntax.h"
 
 @interface TMCodeUnit ()
 {
     NSOperationQueue *_presentedItemOperationQueue;
 }
 @property (atomic, strong) NSURL *fileURL;
-@property (nonatomic, strong) TMBundle *bundle;
-@property (nonatomic, strong) NSString *language;
 @property (nonatomic, strong) TMSyntax *syntax;
 @end
 
 @implementation TMCodeUnit
 
 @synthesize fileURL = _fileURL;
-@synthesize bundle = _bundle;
-@synthesize language = _language;
 @synthesize syntax = _syntax;
 
 - (ECCodeIndex *)index
@@ -32,24 +29,26 @@
     return nil;
 }
 
-- (id)initWithFileURL:(NSURL *)fileURL bundleName:(NSString *)bundleName language:(NSString *)language
+- (NSString *)language
+{
+    return self.syntax.name;
+}
+
+- (id)initWithFileURL:(NSURL *)fileURL syntax:(TMSyntax *)syntax
 {
     ECASSERT([fileURL isFileURL]);
-    ECASSERT(bundleName);
+    ECASSERT(syntax);
     self = [super init];
     if (!self)
         return nil;
-    TMBundle *bundle = [TMBundle bundleWithName:bundleName];
-    if (!language)
-        language = bundleName;
-    TMSyntax *syntax = [bundle.syntaxes objectForKey:language];
-    if (!syntax)
-        return nil;
     self.fileURL = fileURL;
-    self.bundle = bundle;
-    self.language = language;
     self.syntax = syntax;
     return self;
+}
+
+- (void)enumerateScopesInRange:(NSRange)range usingBlock:(void (^)(NSArray *, NSRange, ECCodeScopeEnumerationStackChange, BOOL *, BOOL *))block
+{
+    UNIMPLEMENTED_VOID();
 }
 
 #pragma mark - NSFileCoordination

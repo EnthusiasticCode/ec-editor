@@ -7,73 +7,21 @@
 //
 
 #import "TMBundle.h"
+#import "TMSyntax.h"
 
 static NSString * const _bundleExtension = @"tmbundle";
 static NSString * const _bundleInfoPlist = @"info.plist";
 static NSString * const _bundleNameKey = @"name";
-
-static NSURL *_bundleDirectory;
-static NSDictionary *_bundleURLs;
+static NSString * const _syntaxDirectory = @"Syntaxes";
 
 @interface TMBundle ()
-+ (void)_indexBundles;
 - (id)initWithBundleURL:(NSURL *)bundleURL;
 @property (nonatomic, strong) NSURL *bundleURL;
 @property (nonatomic, strong) NSString *bundleName;
 @property (nonatomic, strong) NSDictionary *bundlePlist;
-@property (nonatomic, strong) NSDictionary *syntaxes;
-@end
-
-static NSString * const _syntaxDirectory = @"Syntaxes";
-static NSString * const _syntaxNameKey = @"name";
-
-@interface TMSyntax ()
-@property (nonatomic, strong) NSURL *fileURL;
-@property (nonatomic, strong) NSString *name;
-@property (nonatomic, strong) NSDictionary *plist;
-- (id)initWithFileURL:(NSURL *)fileURL;
 @end
 
 @implementation TMBundle
-
-#pragma mark - Class methods
-
-+ (NSURL *)bundleDirectory
-{
-    return _bundleDirectory;
-}
-
-+ (void)setBundleDirectory:(NSURL *)bundleDirectory
-{
-    if (bundleDirectory == _bundleDirectory)
-        return;
-    _bundleDirectory = bundleDirectory;
-    [self _indexBundles];
-}
-
-+ (void)_indexBundles
-{
-    NSMutableDictionary *bundleURLs = [NSMutableDictionary dictionary];
-    NSFileManager *fileManager = [[NSFileManager alloc] init];
-    for (NSURL *fileURL in [fileManager contentsOfDirectoryAtURL:[self bundleDirectory] includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles error:NULL])
-    {
-        TMBundle *bundle = [[self alloc] initWithBundleURL:fileURL];
-        if (!bundle)
-            continue;
-        [bundleURLs setValue:fileURL forKey:bundle.bundleName];
-    }
-    _bundleURLs = [bundleURLs copy];
-}
-
-+ (NSArray *)bundleNames
-{
-    return [_bundleURLs allKeys];
-}
-
-+ (TMBundle *)bundleWithName:(NSString *)bundleName
-{
-    return [[self alloc] initWithBundleURL:[_bundleURLs objectForKey:bundleName]];
-}
 
 #pragma mark - Properties
 
@@ -82,18 +30,18 @@ static NSString * const _syntaxNameKey = @"name";
 @synthesize bundlePlist = _bundlePlist;
 @synthesize syntaxes = _syntaxes;
 
-- (NSDictionary *)syntaxes
+- (NSArray *)syntaxes
 {
     if (!_syntaxes)
     {
-        NSMutableDictionary *syntaxes = [NSMutableDictionary dictionary];
+        NSMutableArray *syntaxes = [NSMutableArray array];
         NSFileManager *fileManager = [[NSFileManager alloc] init];
         for (NSURL *fileURL in [fileManager contentsOfDirectoryAtURL:[self.bundleURL URLByAppendingPathComponent:_syntaxDirectory] includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles error:NULL])
         {
             TMSyntax *syntax = [[TMSyntax alloc] initWithFileURL:fileURL];
             if (!syntax)
                 continue;
-            [syntaxes setObject:syntax forKey:syntax.name];
+            [syntaxes addObject:syntax];
         }
         _syntaxes = [syntaxes copy];
     }
@@ -119,29 +67,6 @@ static NSString * const _syntaxNameKey = @"name";
     self.bundleURL = bundleURL;
     self.bundleName = bundleName;
     self.bundlePlist = bundlePlist;
-    return self;
-}
-
-@end
-
-@implementation TMSyntax
-
-@synthesize fileURL = _fileURL;
-@synthesize name = _name;
-@synthesize plist = _plist;
-
-- (id)initWithFileURL:(NSURL *)fileURL
-{
-    self = [super init];
-    if (!self)
-        return nil;
-    NSDictionary *syntaxPlist = [NSPropertyListSerialization propertyListWithData:[NSData dataWithContentsOfURL:fileURL options:NSDataReadingUncached error:NULL] options:NSPropertyListImmutable format:NULL error:NULL];
-    NSString *syntaxName = [syntaxPlist objectForKey:_syntaxNameKey];
-    if (!syntaxName)
-        return nil;
-    self.fileURL = fileURL;
-    self.name = syntaxName;
-    self.plist = syntaxPlist;
     return self;
 }
 

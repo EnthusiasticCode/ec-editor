@@ -8,24 +8,12 @@
 
 #import <Foundation/Foundation.h>
 
-@class TMSyntax;
-
 @interface TMBundle : NSObject
 
-/// The directory where language bundles are saved
-+ (NSURL *)bundleDirectory;
-+ (void)setBundleDirectory:(NSURL *)bundleDirectory;
-
-+ (NSArray *)bundleNames;
-+ (TMBundle *)bundleWithName:(NSString *)bundleName;
-
+@property (nonatomic, strong, readonly) NSURL *bundleURL;
 @property (nonatomic, strong, readonly) NSString *bundleName;
-@property (nonatomic, strong, readonly) NSDictionary *syntaxes;
+@property (nonatomic, strong, readonly) NSArray *syntaxes;
 
-@end
-
-@interface TMSyntax : NSObject
-
-@property (nonatomic, strong, readonly) NSString *name;
+- (id)initWithBundleURL:(NSURL *)bundleURL;
 
 @end

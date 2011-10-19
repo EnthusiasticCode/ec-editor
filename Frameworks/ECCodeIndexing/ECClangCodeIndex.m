@@ -7,6 +7,7 @@
 //
 
 #import <clang-c/Index.h>
+#import "ECCodeIndexSubclass.h"
 #import "ECClangCodeIndex.h"
 #import "ECClangCodeUnit.h"
 
@@ -33,18 +34,8 @@
     [ECCodeIndex registerExtension:self];
 }
 
-+ (void)registerExtension:(Class)extensionClass
-{
-    ECASSERT(NO); // ECClangCodeIndex does not support extensions at the moment
-}
-
-+ (NSArray *)supportedLanguages
-{
-    return [NSArray arrayWithObjects:@"C", @"Objective C", @"C++", @"Objective C++", nil];
-}
-
 /* leave this out for now until we figure out how to best plug it in the textmate one
-+ (float)supportForFile:(NSURL *)fileURL
++ (float)implementsProtocol:(Protocol *)protocol forFile:(NSURL *)fileURL language:(NSString *)language scope:(NSString *)scope
 {
     ECASSERT([fileURL isFileURL]);
     NSString *fileExtension = [fileURL pathExtension];
@@ -56,17 +47,7 @@
 }
  */
 
-- (id<ECCodeCompleter>)completerWithFileURL:(NSURL *)fileURL language:(NSString *)language
-{
-    return [[ECClangCodeUnit alloc] initWithIndex:self fileURL:fileURL language:language];
-}
-
-- (id<ECCodeDiagnoser>)diagnoserWithFileURL:(NSURL *)fileURL language:(NSString *)language
-{
-    return [[ECClangCodeUnit alloc] initWithIndex:self fileURL:fileURL language:language];
-}
-
-- (id<ECCodeParser>)parserWithFileURL:(NSURL *)fileURL language:(NSString *)language
+- (id)codeUnitImplementingProtocol:(Protocol *)protocol withFile:(NSURL *)fileURL language:(NSString *)language scope:(NSString *)scope
 {
     return [[ECClangCodeUnit alloc] initWithIndex:self fileURL:fileURL language:language];
 }

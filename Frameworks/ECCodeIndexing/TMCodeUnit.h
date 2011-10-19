@@ -8,8 +8,10 @@
 
 #import "ECCodeIndex.h"
 
+@class TMSyntax;
+
 @interface TMCodeUnit : NSObject <ECCodeParser>
 
-- (id)initWithBundleName:(NSString *)bundleName language:(NSString *)language;
+- (id)initWithFileURL:(NSURL *)fileURL syntax:(TMSyntax *)syntax;
 
 @end
