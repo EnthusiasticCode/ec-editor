@@ -14,6 +14,7 @@
 @property (nonatomic, strong, readonly) NSString *scope;
 @property (nonatomic, strong, readonly) NSArray *fileTypes;
 @property (nonatomic, strong, readonly) NSRegularExpression *firstLineMatch;
+@property (nonatomic, strong, readonly) NSArray *patterns;
 
 - (id)initWithFileURL:(NSURL *)fileURL;
 

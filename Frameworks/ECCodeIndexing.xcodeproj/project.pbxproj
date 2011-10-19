@@ -86,15 +86,12 @@
 		B7170D1F1428FAAF00DF7794 /* ECClangCodeIndex.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170D011428FAAE00DF7794 /* ECClangCodeIndex.m */; };
 		B7170D201428FAAF00DF7794 /* ECClangCodeUnit.h in Headers */ = {isa = PBXBuildFile; fileRef = B7170D021428FAAE00DF7794 /* ECClangCodeUnit.h */; };
 		B7170D211428FAAF00DF7794 /* ECClangCodeUnit.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170D031428FAAE00DF7794 /* ECClangCodeUnit.m */; };
-		B7170D281428FAAF00DF7794 /* ECCodeCompletion.h in Headers */ = {isa = PBXBuildFile; fileRef = B7170D0A1428FAAE00DF7794 /* ECCodeCompletion.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B7170D2C1428FAAF00DF7794 /* ECCodeDiagnostic.h in Headers */ = {isa = PBXBuildFile; fileRef = B7170D0E1428FAAE00DF7794 /* ECCodeDiagnostic.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B7170D301428FAAF00DF7794 /* ECCodeIndex.h in Headers */ = {isa = PBXBuildFile; fileRef = B7170D121428FAAE00DF7794 /* ECCodeIndex.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B7170D311428FAAF00DF7794 /* ECCodeIndex.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170D131428FAAE00DF7794 /* ECCodeIndex.m */; };
 		B723370D1429FD8B006D540A /* libclang.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B72336FC1429FD8B006D540A /* libclang.a */; };
 		B7233746142A0918006D540A /* libstdc++.6.0.9.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B7233745142A0918006D540A /* libstdc++.6.0.9.dylib */; };
 		B7233747142A0918006D540A /* libstdc++.6.0.9.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B7233745142A0918006D540A /* libstdc++.6.0.9.dylib */; };
 		B7233748142A0D62006D540A /* libECFoundation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7170D431428FAF100DF7794 /* libECFoundation.a */; };
-		B7656BC7144ACCC80084B050 /* ECCodeScope.h in Headers */ = {isa = PBXBuildFile; fileRef = B7656BC6144ACCC80084B050 /* ECCodeScope.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B7656BEB144B3BCE0084B050 /* NSString+ECCodeScopes.h in Headers */ = {isa = PBXBuildFile; fileRef = B7656BE9144B3BCE0084B050 /* NSString+ECCodeScopes.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B7656BEC144B3BCE0084B050 /* NSString+ECCodeScopes.m in Sources */ = {isa = PBXBuildFile; fileRef = B7656BEA144B3BCE0084B050 /* NSString+ECCodeScopes.m */; };
 		B7656BF1144B3D830084B050 /* TMTheme.h in Headers */ = {isa = PBXBuildFile; fileRef = B7656BEF144B3D830084B050 /* TMTheme.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -132,6 +129,8 @@
 		B7D80665144B830E00EEC819 /* TMBundle.h in Headers */ = {isa = PBXBuildFile; fileRef = B7D80663144B830E00EEC819 /* TMBundle.h */; settings = {ATTRIBUTES = (); }; };
 		B7D80666144B830E00EEC819 /* TMBundle.m in Sources */ = {isa = PBXBuildFile; fileRef = B7D80664144B830E00EEC819 /* TMBundle.m */; };
 		B7E550DD144E495200C07A0C /* ECCodeIndexSubclass.h in Headers */ = {isa = PBXBuildFile; fileRef = B7E550DC144E495200C07A0C /* ECCodeIndexSubclass.h */; };
+		B7E55665144F058B00C07A0C /* TMPattern.h in Headers */ = {isa = PBXBuildFile; fileRef = B7E55663144F058B00C07A0C /* TMPattern.h */; };
+		B7E55666144F058B00C07A0C /* TMPattern.m in Sources */ = {isa = PBXBuildFile; fileRef = B7E55664144F058B00C07A0C /* TMPattern.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -330,8 +329,6 @@
 		B7170D011428FAAE00DF7794 /* ECClangCodeIndex.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECClangCodeIndex.m; sourceTree = "<group>"; };
 		B7170D021428FAAE00DF7794 /* ECClangCodeUnit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECClangCodeUnit.h; sourceTree = "<group>"; };
 		B7170D031428FAAE00DF7794 /* ECClangCodeUnit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECClangCodeUnit.m; sourceTree = "<group>"; };
-		B7170D0A1428FAAE00DF7794 /* ECCodeCompletion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeCompletion.h; sourceTree = "<group>"; };
-		B7170D0E1428FAAE00DF7794 /* ECCodeDiagnostic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeDiagnostic.h; sourceTree = "<group>"; };
 		B7170D121428FAAE00DF7794 /* ECCodeIndex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeIndex.h; sourceTree = "<group>"; };
 		B7170D131428FAAE00DF7794 /* ECCodeIndex.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeIndex.m; sourceTree = "<group>"; };
 		B7170D3A1428FAF000DF7794 /* ECFoundation.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = ECFoundation.xcodeproj; sourceTree = "<group>"; };
@@ -359,7 +356,6 @@
 		B72337081429FD8B006D540A /* libclangSema.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libclangSema.a; path = usr/lib/libclangSema.a; sourceTree = SDKROOT; };
 		B72337091429FD8B006D540A /* libclangSerialization.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libclangSerialization.a; path = usr/lib/libclangSerialization.a; sourceTree = SDKROOT; };
 		B7233745142A0918006D540A /* libstdc++.6.0.9.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libstdc++.6.0.9.dylib"; path = "usr/lib/libstdc++.6.0.9.dylib"; sourceTree = SDKROOT; };
-		B7656BC6144ACCC80084B050 /* ECCodeScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeScope.h; sourceTree = "<group>"; };
 		B7656BE9144B3BCE0084B050 /* NSString+ECCodeScopes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+ECCodeScopes.h"; sourceTree = "<group>"; };
 		B7656BEA144B3BCE0084B050 /* NSString+ECCodeScopes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+ECCodeScopes.m"; sourceTree = "<group>"; };
 		B7656BEF144B3D830084B050 /* TMTheme.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TMTheme.h; sourceTree = "<group>"; };
@@ -375,6 +371,8 @@
 		B7D80663144B830E00EEC819 /* TMBundle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TMBundle.h; sourceTree = "<group>"; };
 		B7D80664144B830E00EEC819 /* TMBundle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TMBundle.m; sourceTree = "<group>"; };
 		B7E550DC144E495200C07A0C /* ECCodeIndexSubclass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeIndexSubclass.h; sourceTree = "<group>"; };
+		B7E55663144F058B00C07A0C /* TMPattern.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TMPattern.h; sourceTree = "<group>"; };
+		B7E55664144F058B00C07A0C /* TMPattern.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TMPattern.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -718,16 +716,18 @@
 		B7656C14144B511D0084B050 /* TextMate */ = {
 			isa = PBXGroup;
 			children = (
+				B7656C8D144B77EF0084B050 /* TMCodeIndex.h */,
+				B7656C8E144B77F00084B050 /* TMCodeIndex.m */,
+				B7656C91144B78040084B050 /* TMCodeParser.h */,
+				B7656C92144B78040084B050 /* TMCodeParser.m */,
 				B7656BEF144B3D830084B050 /* TMTheme.h */,
 				B7656BF0144B3D830084B050 /* TMTheme.m */,
 				B7D80663144B830E00EEC819 /* TMBundle.h */,
 				B7D80664144B830E00EEC819 /* TMBundle.m */,
 				B7A3F016144D8CC900EC9623 /* TMSyntax.h */,
 				B7A3F017144D8CC900EC9623 /* TMSyntax.m */,
-				B7656C8D144B77EF0084B050 /* TMCodeIndex.h */,
-				B7656C8E144B77F00084B050 /* TMCodeIndex.m */,
-				B7656C91144B78040084B050 /* TMCodeParser.h */,
-				B7656C92144B78040084B050 /* TMCodeParser.m */,
+				B7E55663144F058B00C07A0C /* TMPattern.h */,
+				B7E55664144F058B00C07A0C /* TMPattern.m */,
 			);
 			name = TextMate;
 			sourceTree = "<group>";
@@ -749,9 +749,6 @@
 				B7170D121428FAAE00DF7794 /* ECCodeIndex.h */,
 				B7E550DC144E495200C07A0C /* ECCodeIndexSubclass.h */,
 				B7170D131428FAAE00DF7794 /* ECCodeIndex.m */,
-				B7656BC6144ACCC80084B050 /* ECCodeScope.h */,
-				B7170D0A1428FAAE00DF7794 /* ECCodeCompletion.h */,
-				B7170D0E1428FAAE00DF7794 /* ECCodeDiagnostic.h */,
 				B7656BE9144B3BCE0084B050 /* NSString+ECCodeScopes.h */,
 				B7656BEA144B3BCE0084B050 /* NSString+ECCodeScopes.m */,
 			);
@@ -765,13 +762,10 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B7170D281428FAAF00DF7794 /* ECCodeCompletion.h in Headers */,
-				B7170D2C1428FAAF00DF7794 /* ECCodeDiagnostic.h in Headers */,
 				B7170D301428FAAF00DF7794 /* ECCodeIndex.h in Headers */,
 				B7170C211428F72100DF7794 /* ECDebug.h in Headers */,
 				B7170D1E1428FAAF00DF7794 /* ECClangCodeIndex.h in Headers */,
 				B7170D201428FAAF00DF7794 /* ECClangCodeUnit.h in Headers */,
-				B7656BC7144ACCC80084B050 /* ECCodeScope.h in Headers */,
 				B7656BEB144B3BCE0084B050 /* NSString+ECCodeScopes.h in Headers */,
 				B7656BF1144B3D830084B050 /* TMTheme.h in Headers */,
 				B7656C8F144B77F00084B050 /* TMCodeIndex.h in Headers */,
@@ -779,6 +773,7 @@
 				B7D80665144B830E00EEC819 /* TMBundle.h in Headers */,
 				B7A3F018144D8CC900EC9623 /* TMSyntax.h in Headers */,
 				B7E550DD144E495200C07A0C /* ECCodeIndexSubclass.h in Headers */,
+				B7E55665144F058B00C07A0C /* TMPattern.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -912,6 +907,7 @@
 				B7656C94144B78050084B050 /* TMCodeParser.m in Sources */,
 				B7D80666144B830E00EEC819 /* TMBundle.m in Sources */,
 				B7A3F019144D8CC900EC9623 /* TMSyntax.m in Sources */,
+				B7E55666144F058B00C07A0C /* TMPattern.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
