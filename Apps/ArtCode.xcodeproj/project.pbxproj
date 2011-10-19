@@ -73,6 +73,13 @@
 		CD9F3CF4142381EF00ACD841 /* fileBrowserEditArrow.png in Resources */ = {isa = PBXBuildFile; fileRef = CD9F3CF3142381EF00ACD841 /* fileBrowserEditArrow.png */; };
 		CD9F3CF71423855E00ACD841 /* projectBrowserTipsPopulatedEdit.png in Resources */ = {isa = PBXBuildFile; fileRef = CD9F3CF61423855E00ACD841 /* projectBrowserTipsPopulatedEdit.png */; };
 		CD9F3CF914238DE200ACD841 /* projectBrowserTipsEmpty.png in Resources */ = {isa = PBXBuildFile; fileRef = CD9F3CF814238DE200ACD841 /* projectBrowserTipsEmpty.png */; };
+		CDB39BE8144EC86900B4FD57 /* topBar_Background.png in Resources */ = {isa = PBXBuildFile; fileRef = CDB39BE7144EC86900B4FD57 /* topBar_Background.png */; };
+		CDB39BEA144ECC4600B4FD57 /* topBar_NormalButton_Default.png in Resources */ = {isa = PBXBuildFile; fileRef = CDB39BE9144ECC4600B4FD57 /* topBar_NormalButton_Default.png */; };
+		CDB39BED144ED51E00B4FD57 /* ACTopBarTitleControl.m in Sources */ = {isa = PBXBuildFile; fileRef = CDB39BEC144ED51E00B4FD57 /* ACTopBarTitleControl.m */; };
+		CDB39BEF144ED6F300B4FD57 /* topBar_TitleButton_Normal.png in Resources */ = {isa = PBXBuildFile; fileRef = CDB39BEE144ED6F300B4FD57 /* topBar_TitleButton_Normal.png */; };
+		CDB39BF1144ED99400B4FD57 /* topBar_TitleButton_Selected.png in Resources */ = {isa = PBXBuildFile; fileRef = CDB39BF0144ED99400B4FD57 /* topBar_TitleButton_Selected.png */; };
+		CDB39BF5144EDAD700B4FD57 /* tabBar_TabBackground.png in Resources */ = {isa = PBXBuildFile; fileRef = CDB39BF3144EDAD700B4FD57 /* tabBar_TabBackground.png */; };
+		CDB39BF6144EDAD700B4FD57 /* tabBar_TabCloseButton.png in Resources */ = {isa = PBXBuildFile; fileRef = CDB39BF4144EDAD700B4FD57 /* tabBar_TabCloseButton.png */; };
 		CDD40B0313E1A046008AC36B /* ACPopoverHistoryToolController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDD40B0213E1A046008AC36B /* ACPopoverHistoryToolController.m */; };
 		CDD77D04144D6C6000BAC852 /* ACTopBarController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDD77D03144D6C6000BAC852 /* ACTopBarController.m */; };
 		CDD77D05144D6C6000BAC852 /* ACTopBarController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDD77D03144D6C6000BAC852 /* ACTopBarController.m */; };
@@ -330,6 +337,14 @@
 		CD9F3CF3142381EF00ACD841 /* fileBrowserEditArrow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = fileBrowserEditArrow.png; path = Resources/fileBrowserEditArrow.png; sourceTree = "<group>"; };
 		CD9F3CF61423855E00ACD841 /* projectBrowserTipsPopulatedEdit.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = projectBrowserTipsPopulatedEdit.png; path = Resources/projectBrowserTipsPopulatedEdit.png; sourceTree = "<group>"; };
 		CD9F3CF814238DE200ACD841 /* projectBrowserTipsEmpty.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = projectBrowserTipsEmpty.png; path = Resources/projectBrowserTipsEmpty.png; sourceTree = "<group>"; };
+		CDB39BE7144EC86900B4FD57 /* topBar_Background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = topBar_Background.png; path = ArtCode/Resources/topBar_Background.png; sourceTree = SOURCE_ROOT; };
+		CDB39BE9144ECC4600B4FD57 /* topBar_NormalButton_Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = topBar_NormalButton_Default.png; path = ArtCode/Resources/topBar_NormalButton_Default.png; sourceTree = SOURCE_ROOT; };
+		CDB39BEB144ED51E00B4FD57 /* ACTopBarTitleControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACTopBarTitleControl.h; sourceTree = "<group>"; };
+		CDB39BEC144ED51E00B4FD57 /* ACTopBarTitleControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACTopBarTitleControl.m; sourceTree = "<group>"; };
+		CDB39BEE144ED6F300B4FD57 /* topBar_TitleButton_Normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = topBar_TitleButton_Normal.png; path = ArtCode/Resources/topBar_TitleButton_Normal.png; sourceTree = SOURCE_ROOT; };
+		CDB39BF0144ED99400B4FD57 /* topBar_TitleButton_Selected.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = topBar_TitleButton_Selected.png; path = ArtCode/Resources/topBar_TitleButton_Selected.png; sourceTree = SOURCE_ROOT; };
+		CDB39BF3144EDAD700B4FD57 /* tabBar_TabBackground.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = tabBar_TabBackground.png; path = ArtCode/Resources/tabBar_TabBackground.png; sourceTree = SOURCE_ROOT; };
+		CDB39BF4144EDAD700B4FD57 /* tabBar_TabCloseButton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = tabBar_TabCloseButton.png; path = ArtCode/Resources/tabBar_TabCloseButton.png; sourceTree = SOURCE_ROOT; };
 		CDD40B0113E1A046008AC36B /* ACPopoverHistoryToolController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACPopoverHistoryToolController.h; sourceTree = "<group>"; };
 		CDD40B0213E1A046008AC36B /* ACPopoverHistoryToolController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACPopoverHistoryToolController.m; sourceTree = "<group>"; };
 		CDD77D02144D6C6000BAC852 /* ACTopBarController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACTopBarController.h; sourceTree = "<group>"; };
@@ -723,6 +738,8 @@
 			children = (
 				CDD77D06144D6CD000BAC852 /* ACTopBarToolbar.h */,
 				CDD77D07144D6CD000BAC852 /* ACTopBarToolbar.m */,
+				CDB39BEB144ED51E00B4FD57 /* ACTopBarTitleControl.h */,
+				CDB39BEC144ED51E00B4FD57 /* ACTopBarTitleControl.m */,
 				CD7D2B2713C0D4B700B889EE /* ACNavigationPushSegue.h */,
 				CD7D2B2813C0D4B700B889EE /* ACNavigationPushSegue.m */,
 				CD7D2B2313C0D4B700B889EE /* ACJumpBarTextField.h */,
@@ -760,6 +777,7 @@
 		CD884B1B144B1D6200133140 /* ArtCodeUITest */ = {
 			isa = PBXGroup;
 			children = (
+				CDB39BE6144EC7FE00B4FD57 /* Resources */,
 				CD884B24144B1D6200133140 /* ACUITestAppDelegate.h */,
 				CD884B25144B1D6200133140 /* ACUITestAppDelegate.m */,
 				CD884B27144B1D6200133140 /* ACUITestViewController.h */,
@@ -787,6 +805,35 @@
 				CD884B1B144B1D6200133140 /* ArtCodeUITest */,
 			);
 			path = Tests;
+			sourceTree = "<group>";
+		};
+		CDB39BE6144EC7FE00B4FD57 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				CDB39BF7144EDADC00B4FD57 /* TabBar */,
+				CDB39BF2144EDAC200B4FD57 /* TopBar */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		CDB39BF2144EDAC200B4FD57 /* TopBar */ = {
+			isa = PBXGroup;
+			children = (
+				CDB39BF0144ED99400B4FD57 /* topBar_TitleButton_Selected.png */,
+				CDB39BEE144ED6F300B4FD57 /* topBar_TitleButton_Normal.png */,
+				CDB39BE9144ECC4600B4FD57 /* topBar_NormalButton_Default.png */,
+				CDB39BE7144EC86900B4FD57 /* topBar_Background.png */,
+			);
+			name = TopBar;
+			sourceTree = "<group>";
+		};
+		CDB39BF7144EDADC00B4FD57 /* TabBar */ = {
+			isa = PBXGroup;
+			children = (
+				CDB39BF3144EDAD700B4FD57 /* tabBar_TabBackground.png */,
+				CDB39BF4144EDAD700B4FD57 /* tabBar_TabCloseButton.png */,
+			);
+			name = TabBar;
 			sourceTree = "<group>";
 		};
 		CDD40AFF13E19FC4008AC36B /* Popovers Content Controllers */ = {
@@ -1051,6 +1098,12 @@
 			files = (
 				CD884B20144B1D6200133140 /* InfoPlist.strings in Resources */,
 				CD884B2C144B1D6200133140 /* ACUITestViewController.xib in Resources */,
+				CDB39BE8144EC86900B4FD57 /* topBar_Background.png in Resources */,
+				CDB39BEA144ECC4600B4FD57 /* topBar_NormalButton_Default.png in Resources */,
+				CDB39BEF144ED6F300B4FD57 /* topBar_TitleButton_Normal.png in Resources */,
+				CDB39BF1144ED99400B4FD57 /* topBar_TitleButton_Selected.png in Resources */,
+				CDB39BF5144EDAD700B4FD57 /* tabBar_TabBackground.png in Resources */,
+				CDB39BF6144EDAD700B4FD57 /* tabBar_TabCloseButton.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1115,6 +1168,7 @@
 				CD884B29144B1D6200133140 /* ACUITestViewController.m in Sources */,
 				CDD77D05144D6C6000BAC852 /* ACTopBarController.m in Sources */,
 				CDD77D09144D6CD000BAC852 /* ACTopBarToolbar.m in Sources */,
+				CDB39BED144ED51E00B4FD57 /* ACTopBarTitleControl.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

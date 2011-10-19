@@ -7,6 +7,7 @@
 //
 
 #import "ACTopBarToolbar.h"
+#import "ACTopBarTitleControl.h"
 
 
 @interface ACTopBarToolbar ()
@@ -55,9 +56,9 @@
         if ([item isKindOfClass:[UIBarButtonItem class]])
         {
             UIBarButtonItem *buttonItem = (UIBarButtonItem *)item;
-            if (buttonItem.customView != nil && [buttonItem.customView isKindOfClass:[UIButton class]])
+            if (buttonItem.customView != nil && [buttonItem.customView isKindOfClass:[ACTopBarTitleControl class]])
             {
-                self.titleControl = (UIButton *)buttonItem.customView;
+                self.titleControl = (ACTopBarTitleControl *)buttonItem.customView;
             }
         }
     }

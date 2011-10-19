@@ -8,8 +8,14 @@
 
 #import "ACUITestAppDelegate.h"
 
-#import <ECUIKit/ECTabController.h>
 #import "ACTopBarController.h"
+
+#import <ECUIKit/ECTabController.h>
+#import <ECUIKit/ECTabBar.h>
+
+#import "ACTopBarToolbar.h"
+#import "ACTopBarTitleControl.h"
+
 
 
 @implementation ACUITestAppDelegate
@@ -19,6 +25,18 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    // Top bar
+    [[ACTopBarToolbar appearance] setBackgroundImage:[UIImage imageNamed:@"topBar_Background"] forToolbarPosition:UIToolbarPositionAny barMetrics:UIBarMetricsDefault];
+    [[UIBarButtonItem appearanceWhenContainedIn:[ACTopBarToolbar class], nil] setBackgroundImage:[[UIImage imageNamed:@"topBar_NormalButton_Default"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 6, 0, 6)] forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
+    // Top bar Title control
+    [[ACTopBarTitleControl appearance] setBackgroundImage:[[UIImage imageNamed:@"topBar_TitleButton_Normal"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 16, 0, 16)] forState:UIControlStateNormal];
+    [[ACTopBarTitleControl appearance] setBackgroundImage:[[UIImage imageNamed:@"topBar_TitleButton_Selected"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 16, 0, 16)] forState:UIControlStateSelected];
+    // Tab bar
+    [[ECTabBarButton appearance] setBackgroundImage:[[UIImage imageNamed:@"tabBar_TabBackground"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 10, 0, 10)] forState:UIControlStateNormal];
+    [[ECTabBarButtonCloseButton appearance] setImage:[UIImage imageNamed:@"tabBar_TabCloseButton"] forState:UIControlStateNormal];
+//    [[UILabel appearanceWhenContainedIn:[ECTabBarButton class], nil] setFont:[UIFont systemFontOfSize:10]];
+    
+    //
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     
     // Override point for customization after application launch.
@@ -26,6 +44,8 @@
     self.topBarController.title = @"Tab title";
     
     ECTabController *tabController = [[ECTabController alloc] init];
+    tabController.tabBar.tabControlInsets = UIEdgeInsetsMake(2, 3, 0, 3);
+    
     self.window.rootViewController = tabController;
     [tabController addChildViewController:self.topBarController];
     

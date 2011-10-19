@@ -8,6 +8,7 @@
 
 #import "ACTopBarController.h"
 #import "ACTopBarToolbar.h"
+#import "ACTopBarTitleControl.h"
 #import <QuartzCore/QuartzCore.h>
 
 #define DEFAULT_TOOLBAR_HEIGHT 44

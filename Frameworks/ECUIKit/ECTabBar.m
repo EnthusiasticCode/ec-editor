@@ -656,7 +656,7 @@ static void init(ECTabBar *self)
     
     ECTabBarButton *tabButton = (ECTabBarButton *)[self _dequeueReusableTabControlWithIdentifier:tabButtonReusableIdentifier];
     if (tabButton == nil) {
-        tabButton = [ECTabBarButton buttonWithType:UIButtonTypeRoundedRect];
+        tabButton = [ECTabBarButton buttonWithType:UIButtonTypeCustom];
         tabButton.titleEdgeInsets = UIEdgeInsetsMake(0, 44, 0, 0);
         tabButton.frame = CGRectMake(0, 0, 100, 44);
         

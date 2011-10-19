@@ -8,9 +8,11 @@
 
 #import <UIKit/UIKit.h>
 
+@class ACTopBarTitleControl;
+
 @interface ACTopBarToolbar : UIToolbar
 
-@property (nonatomic, readonly, strong) UIButton *titleControl;
+@property (nonatomic, readonly, strong) ACTopBarTitleControl *titleControl;
 
 @property (nonatomic, strong) UIBarButtonItem *toolItem;
 - (void)setToolItem:(UIBarButtonItem *)toolItem animated:(BOOL)animated;
