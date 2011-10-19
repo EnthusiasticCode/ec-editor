@@ -93,6 +93,7 @@
 		CDE3F14713C0DDD500DFFAFF /* Inconsolata-dz.otf in Resources */ = {isa = PBXBuildFile; fileRef = CDE3F14613C0DDD500DFFAFF /* Inconsolata-dz.otf */; };
 		CDF1D46D14150C4900EFEC21 /* libstdc++.6.0.9.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CDF1D46C14150C4900EFEC21 /* libstdc++.6.0.9.dylib */; };
 		CDF215F713E4468F005B520F /* ACEditableTableCell.m in Sources */ = {isa = PBXBuildFile; fileRef = CDF215F613E4468F005B520F /* ACEditableTableCell.m */; };
+		CDF4BFC6144F0A9E00475F6B /* UITabBar_Background.png in Resources */ = {isa = PBXBuildFile; fileRef = CDF4BFC5144F0A9E00475F6B /* UITabBar_Background.png */; };
 		CDFF3DDF13C0D9BB00108DE2 /* toolBookmarksNote.png in Resources */ = {isa = PBXBuildFile; fileRef = CDFF3DCA13C0D9BB00108DE2 /* toolBookmarksNote.png */; };
 		CDFF3DE013C0D9BB00108DE2 /* toolBookmarksStar.png in Resources */ = {isa = PBXBuildFile; fileRef = CDFF3DCB13C0D9BB00108DE2 /* toolBookmarksStar.png */; };
 		CDFF3DE113C0D9BB00108DE2 /* toolFilterBookmarksNote.png in Resources */ = {isa = PBXBuildFile; fileRef = CDFF3DCC13C0D9BB00108DE2 /* toolFilterBookmarksNote.png */; };
@@ -357,6 +358,7 @@
 		CDF1D46C14150C4900EFEC21 /* libstdc++.6.0.9.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libstdc++.6.0.9.dylib"; path = "usr/lib/libstdc++.6.0.9.dylib"; sourceTree = SDKROOT; };
 		CDF215F513E4468F005B520F /* ACEditableTableCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACEditableTableCell.h; sourceTree = "<group>"; };
 		CDF215F613E4468F005B520F /* ACEditableTableCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACEditableTableCell.m; sourceTree = "<group>"; };
+		CDF4BFC5144F0A9E00475F6B /* UITabBar_Background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = UITabBar_Background.png; path = ArtCode/Resources/UITabBar_Background.png; sourceTree = SOURCE_ROOT; };
 		CDFF3DCA13C0D9BB00108DE2 /* toolBookmarksNote.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = toolBookmarksNote.png; sourceTree = "<group>"; };
 		CDFF3DCB13C0D9BB00108DE2 /* toolBookmarksStar.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = toolBookmarksStar.png; sourceTree = "<group>"; };
 		CDFF3DCC13C0D9BB00108DE2 /* toolFilterBookmarksNote.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = toolFilterBookmarksNote.png; sourceTree = "<group>"; };
@@ -810,6 +812,7 @@
 		CDB39BE6144EC7FE00B4FD57 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				CDF4BFC5144F0A9E00475F6B /* UITabBar_Background.png */,
 				CDB39BF7144EDADC00B4FD57 /* TabBar */,
 				CDB39BF2144EDAC200B4FD57 /* TopBar */,
 			);
@@ -1104,6 +1107,7 @@
 				CDB39BF1144ED99400B4FD57 /* topBar_TitleButton_Selected.png in Resources */,
 				CDB39BF5144EDAD700B4FD57 /* tabBar_TabBackground.png in Resources */,
 				CDB39BF6144EDAD700B4FD57 /* tabBar_TabCloseButton.png in Resources */,
+				CDF4BFC6144F0A9E00475F6B /* UITabBar_Background.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

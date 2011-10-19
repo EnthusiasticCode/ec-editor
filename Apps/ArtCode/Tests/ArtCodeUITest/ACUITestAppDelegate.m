@@ -36,6 +36,9 @@
     [[ECTabBarButtonCloseButton appearance] setImage:[UIImage imageNamed:@"tabBar_TabCloseButton"] forState:UIControlStateNormal];
 //    [[UILabel appearanceWhenContainedIn:[ECTabBarButton class], nil] setFont:[UIFont systemFontOfSize:10]];
     
+    // Bottom ui tab bar
+    [[UITabBar appearance] setBackgroundImage:[UIImage imageNamed:@"UITabBar_Background"]];
+    
     //
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     
