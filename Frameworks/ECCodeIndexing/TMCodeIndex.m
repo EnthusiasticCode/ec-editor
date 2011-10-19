@@ -8,7 +8,18 @@
 
 #import "ECCodeIndexSubclass.h"
 #import "TMCodeIndex.h"
+#import "TMCodeParser.h"
 #import "TMBundle.h"
+#import "TMSyntax.h"
+
+@interface TMCodeIndex ()
+#warning TODO: add some caching or indexing of syntaxes if necessary
++ (TMSyntax *)_syntaxForFile:(NSURL *)fileURL language:(NSString *)language scope:(NSString *)scope;
++ (TMSyntax *)_syntaxForFile:(NSURL *)fileURL;
++ (TMSyntax *)_syntaxWithLanguage:(NSString *)language;
++ (TMSyntax *)_syntaxWithScope:(NSString *)scope;
++ (TMSyntax *)_syntaxWithPredicateBlock:(BOOL(^)(TMSyntax *syntax))predicateBlock;
+@end
 
 @implementation TMCodeIndex
 
@@ -19,12 +30,82 @@
 
 + (float)implementsProtocol:(Protocol *)protocol forFile:(NSURL *)fileURL language:(NSString *)language scope:(NSString *)scope
 {
-    
+    ECASSERT(fileURL);
+    if (protocol != @protocol(ECCodeParser))
+        return 0.0;
+    if (![self _syntaxForFile:fileURL language:language scope:scope])
+        return 0.0;
+    return 0.5;
 }
 
 - (id)codeUnitImplementingProtocol:(Protocol *)protocol withFile:(NSURL *)fileURL language:(NSString *)language scope:(NSString *)scope
 {
-    
+    ECASSERT(protocol);
+    ECASSERT(fileURL);
+    if (protocol == @protocol(ECCodeParser))
+        return [[TMCodeParser alloc] initWithFileURL:fileURL syntax:[[self class] _syntaxForFile:fileURL language:language scope:scope]];
+    return nil;
+}
+
++ (TMSyntax *)_syntaxForFile:(NSURL *)fileURL language:(NSString *)language scope:(NSString *)scope
+{
+    TMSyntax *syntax = [self _syntaxWithScope:scope];
+    if (!syntax)
+        syntax = [self _syntaxWithLanguage:language];
+    if (!syntax)
+        syntax = [self _syntaxForFile:fileURL];
+    return syntax;
+}
+
++ (TMSyntax *)_syntaxForFile:(NSURL *)fileURL
+{
+    TMSyntax *foundSyntax = [self _syntaxWithPredicateBlock:^BOOL(TMSyntax *syntax) {
+        for (NSString *fileType in syntax.fileTypes)
+            if ([fileType isEqualToString:[fileURL pathExtension]])
+                return YES;
+        return NO;
+    }];
+    if (!foundSyntax)
+        foundSyntax = [self _syntaxWithPredicateBlock:^BOOL(TMSyntax *syntax) {
+            NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] init];
+            __block NSString *firstLine = nil;
+            [fileCoordinator coordinateReadingItemAtURL:fileURL options:NSFileCoordinatorReadingResolvesSymbolicLink error:NULL byAccessor:^(NSURL *newURL) {
+                NSString *fileContents = [NSString stringWithContentsOfURL:fileURL encoding:NSUTF8StringEncoding error:NULL];
+                firstLine = [fileContents substringWithRange:[fileContents lineRangeForRange:NSMakeRange(0, 1)]];
+            }];
+            if ([syntax.firstLineMatch numberOfMatchesInString:firstLine options:0 range:NSMakeRange(0, [firstLine length])])
+                return YES;
+            return NO;
+        }];
+    return foundSyntax;
+}
+
++ (TMSyntax *)_syntaxWithLanguage:(NSString *)language
+{
+    return [self _syntaxWithPredicateBlock:^BOOL(TMSyntax *syntax) {
+        return [syntax.name isEqualToString:language];
+    }];
+}
+
++ (TMSyntax *)_syntaxWithScope:(NSString *)scope
+{
+    return [self _syntaxWithPredicateBlock:^BOOL(TMSyntax *syntax) {
+        return [syntax.scope isEqualToString:scope];
+    }];
+}
+
++ (TMSyntax *)_syntaxWithPredicateBlock:(BOOL (^)(TMSyntax *))predicateBlock
+{
+    NSFileManager *fileManager = [[NSFileManager alloc] init];
+    for (NSURL *fileURL in [fileManager contentsOfDirectoryAtURL:[self bundleDirectory] includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles error:NULL])
+    {
+        TMBundle *bundle = [[TMBundle alloc] initWithBundleURL:fileURL];
+        if (bundle)
+            for (TMSyntax *syntax in bundle.syntaxes)
+                if (predicateBlock(syntax))
+                    return syntax;
+    }
+    return nil;
 }
 
 @end

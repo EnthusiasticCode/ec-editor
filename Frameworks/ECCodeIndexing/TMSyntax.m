@@ -44,7 +44,9 @@ static NSString * const _syntaxFirstLineMatchKey = @"firstLineMatch";
     self.name = syntaxName;
     self.scope = [syntaxPlist objectForKey:_syntaxScopeKey];
     self.fileTypes = [syntaxPlist objectForKey:_syntaxFileTypesKey];
-    self.firstLineMatch = [NSRegularExpression regularExpressionWithPattern:[syntaxPlist objectForKey:_syntaxFirstLineMatchKey] options:0 error:NULL];
+    NSString *firstLineMatchRegex = [syntaxPlist objectForKey:_syntaxFirstLineMatchKey];
+    if (firstLineMatchRegex)
+        self.firstLineMatch = [NSRegularExpression regularExpressionWithPattern:firstLineMatchRegex options:0 error:NULL];
     self.plist = syntaxPlist;
     return self;
 }

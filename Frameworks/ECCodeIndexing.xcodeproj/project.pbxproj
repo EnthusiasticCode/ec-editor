@@ -101,8 +101,8 @@
 		B7656BF2144B3D830084B050 /* TMTheme.m in Sources */ = {isa = PBXBuildFile; fileRef = B7656BF0144B3D830084B050 /* TMTheme.m */; };
 		B7656C8F144B77F00084B050 /* TMCodeIndex.h in Headers */ = {isa = PBXBuildFile; fileRef = B7656C8D144B77EF0084B050 /* TMCodeIndex.h */; };
 		B7656C90144B77F00084B050 /* TMCodeIndex.m in Sources */ = {isa = PBXBuildFile; fileRef = B7656C8E144B77F00084B050 /* TMCodeIndex.m */; };
-		B7656C93144B78050084B050 /* TMCodeUnit.h in Headers */ = {isa = PBXBuildFile; fileRef = B7656C91144B78040084B050 /* TMCodeUnit.h */; };
-		B7656C94144B78050084B050 /* TMCodeUnit.m in Sources */ = {isa = PBXBuildFile; fileRef = B7656C92144B78040084B050 /* TMCodeUnit.m */; };
+		B7656C93144B78050084B050 /* TMCodeParser.h in Headers */ = {isa = PBXBuildFile; fileRef = B7656C91144B78040084B050 /* TMCodeParser.h */; };
+		B7656C94144B78050084B050 /* TMCodeParser.m in Sources */ = {isa = PBXBuildFile; fileRef = B7656C92144B78040084B050 /* TMCodeParser.m */; };
 		B7772630143D127800DA3FD3 /* libclangFrontend.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B777262F143D127800DA3FD3 /* libclangFrontend.a */; };
 		B7772633143D137800DA3FD3 /* libLLVMAnalysis.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B72336741429FD76006D540A /* libLLVMAnalysis.a */; };
 		B7772634143D139400DA3FD3 /* libclangAnalysis.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B72336FD1429FD8B006D540A /* libclangAnalysis.a */; };
@@ -366,8 +366,8 @@
 		B7656BF0144B3D830084B050 /* TMTheme.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TMTheme.m; sourceTree = "<group>"; };
 		B7656C8D144B77EF0084B050 /* TMCodeIndex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TMCodeIndex.h; sourceTree = "<group>"; };
 		B7656C8E144B77F00084B050 /* TMCodeIndex.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TMCodeIndex.m; sourceTree = "<group>"; };
-		B7656C91144B78040084B050 /* TMCodeUnit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TMCodeUnit.h; sourceTree = "<group>"; };
-		B7656C92144B78040084B050 /* TMCodeUnit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TMCodeUnit.m; sourceTree = "<group>"; };
+		B7656C91144B78040084B050 /* TMCodeParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TMCodeParser.h; sourceTree = "<group>"; };
+		B7656C92144B78040084B050 /* TMCodeParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TMCodeParser.m; sourceTree = "<group>"; };
 		B777262F143D127800DA3FD3 /* libclangFrontend.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libclangFrontend.a; path = usr/lib/libclangFrontend.a; sourceTree = SDKROOT; };
 		B7772631143D12CA00DA3FD3 /* libclangARCMigrate.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libclangARCMigrate.a; path = usr/lib/libclangARCMigrate.a; sourceTree = SDKROOT; };
 		B7A3F016144D8CC900EC9623 /* TMSyntax.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TMSyntax.h; sourceTree = "<group>"; };
@@ -726,8 +726,8 @@
 				B7A3F017144D8CC900EC9623 /* TMSyntax.m */,
 				B7656C8D144B77EF0084B050 /* TMCodeIndex.h */,
 				B7656C8E144B77F00084B050 /* TMCodeIndex.m */,
-				B7656C91144B78040084B050 /* TMCodeUnit.h */,
-				B7656C92144B78040084B050 /* TMCodeUnit.m */,
+				B7656C91144B78040084B050 /* TMCodeParser.h */,
+				B7656C92144B78040084B050 /* TMCodeParser.m */,
 			);
 			name = TextMate;
 			sourceTree = "<group>";
@@ -775,7 +775,7 @@
 				B7656BEB144B3BCE0084B050 /* NSString+ECCodeScopes.h in Headers */,
 				B7656BF1144B3D830084B050 /* TMTheme.h in Headers */,
 				B7656C8F144B77F00084B050 /* TMCodeIndex.h in Headers */,
-				B7656C93144B78050084B050 /* TMCodeUnit.h in Headers */,
+				B7656C93144B78050084B050 /* TMCodeParser.h in Headers */,
 				B7D80665144B830E00EEC819 /* TMBundle.h in Headers */,
 				B7A3F018144D8CC900EC9623 /* TMSyntax.h in Headers */,
 				B7E550DD144E495200C07A0C /* ECCodeIndexSubclass.h in Headers */,
@@ -909,7 +909,7 @@
 				B7656BEC144B3BCE0084B050 /* NSString+ECCodeScopes.m in Sources */,
 				B7656BF2144B3D830084B050 /* TMTheme.m in Sources */,
 				B7656C90144B77F00084B050 /* TMCodeIndex.m in Sources */,
-				B7656C94144B78050084B050 /* TMCodeUnit.m in Sources */,
+				B7656C94144B78050084B050 /* TMCodeParser.m in Sources */,
 				B7D80666144B830E00EEC819 /* TMBundle.m in Sources */,
 				B7A3F019144D8CC900EC9623 /* TMSyntax.m in Sources */,
 			);

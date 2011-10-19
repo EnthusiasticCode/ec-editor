@@ -44,7 +44,7 @@ static NSURL *_bundleDirectory;
 
 - (id)codeUnitImplementingProtocol:(Protocol *)protocol withFile:(NSURL *)fileURL language:(NSString *)language scope:(NSString *)scope
 {
-    if (self != [ECCodeIndex class])
+    if (![self isMemberOfClass:[ECCodeIndex class]])
         return nil;
     NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] init];
     __block id<ECCodeUnit>codeUnit = nil;
