@@ -669,6 +669,8 @@ static void init(ECTabBar *self)
         [tabButton addSubview:tabCloseButton];
     }
     
+    [tabButton setTitle:title forState:UIControlStateNormal];
+    
     return tabButton;
 }
 

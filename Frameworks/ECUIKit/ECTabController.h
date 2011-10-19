@@ -16,6 +16,8 @@
 
 #pragma mark Managing the tab bar
 
+@property (nonatomic, readonly, strong) ECTabBar *tabBar;
+
 /// Indicates if the tab bar is visible or not.
 @property (nonatomic) BOOL showTabBar;
 - (void)setShowTabBar:(BOOL)value animated:(BOOL)animated;

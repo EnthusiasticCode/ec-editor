@@ -11,7 +11,7 @@
 #import "UIView+ReuseIdentifier.h"
 #import "ECCustomizableScrollView.h"
 
-#define TABBAR_HEIGHT 44
+#define TABBAR_HEIGHT 40
 
 static void *childViewControllerTitleContext;
 
@@ -21,7 +21,6 @@ static void *childViewControllerTitleContext;
     BOOL keepCurrentPageCentered;
 }
 
-@property (nonatomic, readonly, strong) ECTabBar *tabBar;
 @property (nonatomic, readonly, strong) ECCustomizableScrollView *contentScrollView;
 
 - (void)layoutChildViews;
