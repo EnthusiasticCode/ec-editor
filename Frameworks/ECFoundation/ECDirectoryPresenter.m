@@ -111,7 +111,14 @@
 
 - (void)presentedItemDidChange
 {
-    ECASSERT(NO);
+    // This one gets called sometimes, the subitem ones never
+    // once the subitem methods get called delete this one
+    NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] initWithFilePresenter:self];
+    [fileCoordinator coordinateReadingItemAtURL:self.directory options:NSFileCoordinatorReadingResolvesSymbolicLink error:NULL byAccessor:^(NSURL *newURL) {
+        NSFileManager *fileManager = [[NSFileManager alloc] init];
+        NSArray *fileURLs = [fileManager contentsOfDirectoryAtURL:newURL includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsPackageDescendants error:NULL];
+        self.fileURLs = [NSMutableOrderedSet orderedSetWithArray:fileURLs];
+    }];
 }
 
 - (void)presentedItemDidMoveToURL:(NSURL *)newURL
