@@ -127,6 +127,10 @@
 		CDE3F14713C0DDD500DFFAFF /* Inconsolata-dz.otf in Resources */ = {isa = PBXBuildFile; fileRef = CDE3F14613C0DDD500DFFAFF /* Inconsolata-dz.otf */; };
 		CDF1D46D14150C4900EFEC21 /* libstdc++.6.0.9.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CDF1D46C14150C4900EFEC21 /* libstdc++.6.0.9.dylib */; };
 		CDF215F713E4468F005B520F /* ACEditableTableCell.m in Sources */ = {isa = PBXBuildFile; fileRef = CDF215F613E4468F005B520F /* ACEditableTableCell.m */; };
+		CDF4C00C144F2C4800475F6B /* SingleTabController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CDF4C00B144F2C4800475F6B /* SingleTabController.xib */; };
+		CDF4C011144F2C7900475F6B /* ACTopBarTitleControl.m in Sources */ = {isa = PBXBuildFile; fileRef = CDF4C00E144F2C7900475F6B /* ACTopBarTitleControl.m */; };
+		CDF4C012144F2C7900475F6B /* ACTopBarToolbar.m in Sources */ = {isa = PBXBuildFile; fileRef = CDF4C010144F2C7900475F6B /* ACTopBarToolbar.m */; };
+		CDF4C015144F2C8A00475F6B /* ACSingleTabController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDF4C014144F2C8A00475F6B /* ACSingleTabController.m */; };
 		CDFF3DDF13C0D9BB00108DE2 /* toolBookmarksNote.png in Resources */ = {isa = PBXBuildFile; fileRef = CDFF3DCA13C0D9BB00108DE2 /* toolBookmarksNote.png */; };
 		CDFF3DE013C0D9BB00108DE2 /* toolBookmarksStar.png in Resources */ = {isa = PBXBuildFile; fileRef = CDFF3DCB13C0D9BB00108DE2 /* toolBookmarksStar.png */; };
 		CDFF3DE113C0D9BB00108DE2 /* toolFilterBookmarksNote.png in Resources */ = {isa = PBXBuildFile; fileRef = CDFF3DCC13C0D9BB00108DE2 /* toolFilterBookmarksNote.png */; };
@@ -422,6 +426,13 @@
 		CDF1D46C14150C4900EFEC21 /* libstdc++.6.0.9.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libstdc++.6.0.9.dylib"; path = "usr/lib/libstdc++.6.0.9.dylib"; sourceTree = SDKROOT; };
 		CDF215F513E4468F005B520F /* ACEditableTableCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACEditableTableCell.h; sourceTree = "<group>"; };
 		CDF215F613E4468F005B520F /* ACEditableTableCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACEditableTableCell.m; sourceTree = "<group>"; };
+		CDF4C00B144F2C4800475F6B /* SingleTabController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SingleTabController.xib; sourceTree = "<group>"; };
+		CDF4C00D144F2C7900475F6B /* ACTopBarTitleControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACTopBarTitleControl.h; sourceTree = "<group>"; };
+		CDF4C00E144F2C7900475F6B /* ACTopBarTitleControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACTopBarTitleControl.m; sourceTree = "<group>"; };
+		CDF4C00F144F2C7900475F6B /* ACTopBarToolbar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACTopBarToolbar.h; sourceTree = "<group>"; };
+		CDF4C010144F2C7900475F6B /* ACTopBarToolbar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACTopBarToolbar.m; sourceTree = "<group>"; };
+		CDF4C013144F2C8A00475F6B /* ACSingleTabController.h */ = {isa = PBXFileReference; fileEncoding = 4; path = ACSingleTabController.h; sourceTree = "<group>"; };
+		CDF4C014144F2C8A00475F6B /* ACSingleTabController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACSingleTabController.m; sourceTree = "<group>"; };
 		CDFF3DCA13C0D9BB00108DE2 /* toolBookmarksNote.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = toolBookmarksNote.png; sourceTree = "<group>"; };
 		CDFF3DCB13C0D9BB00108DE2 /* toolBookmarksStar.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = toolBookmarksStar.png; sourceTree = "<group>"; };
 		CDFF3DCC13C0D9BB00108DE2 /* toolFilterBookmarksNote.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = toolFilterBookmarksNote.png; sourceTree = "<group>"; };
@@ -722,7 +733,7 @@
 				CD7D2B0A13C0CEFF00B889EE /* Images */,
 				B7656C18144B53500084B050 /* Language Bundles */,
 				B7656C17144B53330084B050 /* Themes */,
-				CD7D2B0913C0CEE100B889EE /* Storyboards */,
+				CD7D2B0913C0CEE100B889EE /* UI */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -742,14 +753,15 @@
 			name = Classes;
 			sourceTree = "<group>";
 		};
-		CD7D2B0913C0CEE100B889EE /* Storyboards */ = {
+		CD7D2B0913C0CEE100B889EE /* UI */ = {
 			isa = PBXGroup;
 			children = (
+				CDF4C00B144F2C4800475F6B /* SingleTabController.xib */,
 				B7AC172D14216CD4009E9205 /* NewFilePopover.storyboard */,
 				B7AC172E14216CD4009E9205 /* NewProjectPopover.storyboard */,
 				CD7D2B4D13C0D5FB00B889EE /* ToolPanelStoryboard.storyboard */,
 			);
-			name = Storyboards;
+			name = UI;
 			sourceTree = "<group>";
 		};
 		CD7D2B0A13C0CEFF00B889EE /* Images */ = {
@@ -801,6 +813,8 @@
 		CD7D2B1613C0D39B00B889EE /* Navigation */ = {
 			isa = PBXGroup;
 			children = (
+				CDF4C013144F2C8A00475F6B /* ACSingleTabController.h */,
+				CDF4C014144F2C8A00475F6B /* ACSingleTabController.m */,
 				CD0DEAB613D4C2430087ADBB /* ACNavigationTarget.h */,
 				CD7D2B2513C0D4B700B889EE /* ACNavigationController.h */,
 				CD7D2B2613C0D4B700B889EE /* ACNavigationController.m */,
@@ -853,6 +867,10 @@
 		CD7D2B4513C0D53A00B889EE /* Views and Segues */ = {
 			isa = PBXGroup;
 			children = (
+				CDF4C00D144F2C7900475F6B /* ACTopBarTitleControl.h */,
+				CDF4C00E144F2C7900475F6B /* ACTopBarTitleControl.m */,
+				CDF4C00F144F2C7900475F6B /* ACTopBarToolbar.h */,
+				CDF4C010144F2C7900475F6B /* ACTopBarToolbar.m */,
 				CD7D2B2713C0D4B700B889EE /* ACNavigationPushSegue.h */,
 				CD7D2B2813C0D4B700B889EE /* ACNavigationPushSegue.m */,
 				CD7D2B2313C0D4B700B889EE /* ACJumpBarTextField.h */,
@@ -1180,6 +1198,7 @@
 				B7656C8A144B54120084B050 /* Sunburst.tmTheme in Resources */,
 				B7656C8B144B54120084B050 /* Twilight.tmTheme in Resources */,
 				B7656C8C144B54120084B050 /* Zenburnesque.tmTheme in Resources */,
+				CDF4C00C144F2C4800475F6B /* SingleTabController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1229,6 +1248,9 @@
 				B71A1DE71435112700672F65 /* ACNewFilePopoverController.m in Sources */,
 				B7012921143759020070CCDF /* ACFileDocument.m in Sources */,
 				B7107AEE143A32E500827FD2 /* ACURLWrapper.m in Sources */,
+				CDF4C011144F2C7900475F6B /* ACTopBarTitleControl.m in Sources */,
+				CDF4C012144F2C7900475F6B /* ACTopBarToolbar.m in Sources */,
+				CDF4C015144F2C8A00475F6B /* ACSingleTabController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
