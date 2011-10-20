@@ -99,7 +99,7 @@ static void inclusionVisitor(CXFile included_file, CXSourceLocation* inclusion_s
     UNIMPLEMENTED_VOID();
 }
 
-- (void)enumerateScopesInRange:(NSRange)range usingBlock:(void (^)(NSArray *, NSRange, ECCodeScopeEnumerationStackChange, BOOL *, BOOL *))block
+- (void)enumerateScopesInRange:(NSRange)range usingBlock:(void (^)(NSString *, NSRange, BOOL, BOOL, BOOL, NSArray *, BOOL *, BOOL *))block
 {
     UNIMPLEMENTED_VOID();
 }

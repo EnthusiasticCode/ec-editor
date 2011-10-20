@@ -25,19 +25,6 @@
 
 @end
 
-/// An enum identifying how the scope stack changed in order to trigger the enumeration
-/// ECCodeScopeEnumerationStackChangeBreak specifies the stack wasn't changed properly, perhaps because the file or enumeration range started or ended abruptly or because of syntax errors
-/// ECCodeScopeEnumerationStackChangePush specifies the enumeration was caused by pushing a new scope on the stack
-/// ECCodeScopeEnumerationStackChangePop specifies the enumeration was caused by popping a scope from the stack, note that in this case the enumerated scope was also enumerated when it was originally pushed on the stack
-/// ECCodeScopeEnumerationStackChangeContinue specifies the enumeration was caused by enumerating a sibling scope
-typedef enum
-{
-    ECCodeScopeEnumerationStackChangeBreak,
-    ECCodeScopeEnumerationStackChangePush,
-    ECCodeScopeEnumerationStackChangePop,
-    ECCodeScopeEnumerationStackChangeContinue,
-} ECCodeScopeEnumerationStackChange;
-
 /// Class that encapsulates interaction with parsing and indexing libraries to provide language related file-specific functionality such as syntax aware highlighting, diagnostics and completions.
 @protocol ECCodeUnit <NSObject, NSFilePresenter>
 
@@ -78,6 +65,6 @@ typedef enum
 @protocol ECCodeParser <ECCodeUnit>
 
 /// Parse the code unit's main source file
-- (void)enumerateScopesInRange:(NSRange)range usingBlock:(void(^)(NSArray *scopes, NSRange range, ECCodeScopeEnumerationStackChange change, BOOL *skipChildren, BOOL *stop))block;
+- (void)enumerateScopesInRange:(NSRange)range usingBlock:(void(^)(NSString *scope, NSRange scopeRange, BOOL isExitingScope, BOOL isLeafScope, BOOL skippedScopes, NSArray *scopesStack, BOOL *skipChildren, BOOL *stop))block;
 
 @end
