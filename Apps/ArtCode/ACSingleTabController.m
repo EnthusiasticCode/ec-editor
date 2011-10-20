@@ -43,6 +43,15 @@ static void *tabCurrentURLObservingContext;
 @synthesize toolbarHeight = _toolbarHeight;
 @synthesize tab = _tab;
 
+- (ACTopBarToolbar *)defaultToolbar
+{
+    if (!_defaultToolbar)
+    {
+        _defaultToolbar = [[ACTopBarToolbar alloc] initWithFrame:CGRectMake(0, 0, 300, 44)];
+    }
+    return _defaultToolbar;
+}
+
 - (void)setDefaultToolbar:(ACTopBarToolbar *)defaultToolbar
 {
     if (defaultToolbar == _defaultToolbar)
@@ -62,8 +71,8 @@ static void *tabCurrentURLObservingContext;
         _defaultToolbar = defaultToolbar;
     }
     
-    _defaultToolbar.backItem.action = @selector(_historyBackAction:);
-    _defaultToolbar.forwardItem.action = @selector(_historyForwardAction:);
+//    _defaultToolbar.backItem.action = @selector(_historyBackAction:);
+//    _defaultToolbar.forwardItem.action = @selector(_historyForwardAction:);
     
     [self didChangeValueForKey:@"defaultToolbar"];
 }
@@ -189,8 +198,8 @@ static void *tabCurrentURLObservingContext;
     _tab = tab;
     
     [_tab addObserver:self forKeyPath:@"currentURL" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial context:&tabCurrentURLObservingContext];
-    self.defaultToolbar.backItem.enabled = _tab.canMoveBackInHistory;
-    self.defaultToolbar.forwardItem.enabled = _tab.canMoveForwardInHistory;
+//    self.defaultToolbar.backItem.enabled = _tab.canMoveBackInHistory;
+//    self.defaultToolbar.forwardItem.enabled = _tab.canMoveForwardInHistory;
     
     [self didChangeValueForKey:@"tab"];
 }
@@ -211,8 +220,8 @@ static void *tabCurrentURLObservingContext;
 {
     if (context == &tabCurrentURLObservingContext)
     {
-        self.defaultToolbar.backItem.enabled = self.tab.canMoveBackInHistory;
-        self.defaultToolbar.forwardItem.enabled = self.tab.canMoveForwardInHistory;
+//        self.defaultToolbar.backItem.enabled = self.tab.canMoveBackInHistory;
+//        self.defaultToolbar.forwardItem.enabled = self.tab.canMoveForwardInHistory;
         [self setContentViewController:[self _viewControllerWithURL:self.tab.currentURL] animated:YES];
     }
     else
@@ -228,12 +237,8 @@ static void *tabCurrentURLObservingContext;
     [super viewDidLoad];
     
     // Adding child views
-    UIView *currentToolbar = self.currentToolbarView;
-    if (currentToolbar != self.defaultToolbar)
-    {
-        [self.defaultToolbar removeFromSuperview];
-        [self.view addSubview:currentToolbar];
-    }
+    [self.defaultToolbar removeFromSuperview];
+    [self.view addSubview:self.currentToolbarView];
     [self.view addSubview:self.contentViewController.view];
     
     // Layout and setup

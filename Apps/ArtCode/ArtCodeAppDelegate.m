@@ -20,6 +20,7 @@
 
 #import <ECUIKit/ECTabBar.h>
 #import "ACTopBarToolbar.h"
+#import "ACTopBarTitleControl.h"
 
 #import "ACApplication.h"
 #import "ACTab.h"
@@ -71,6 +72,12 @@
     id closeButtonInTabBarAppearance = [ECTabBarButtonCloseButton appearance];
     [closeButtonInTabBarAppearance setImage:[UIImage styleCloseImageWithColor:[UIColor styleBackgroundColor] outlineColor:[UIColor styleForegroundColor] shadowColor:nil] forState:UIControlStateNormal];
     [closeButtonInTabBarAppearance setImage:[UIImage styleCloseImageWithColor:[UIColor styleForegroundColor] outlineColor:[UIColor styleBackgroundColor] shadowColor:nil] forState:UIControlStateHighlighted];
+    
+    ////////////////////////////////////////////////////////////////////////////
+    // Top bar
+    [[ACTopBarToolbar appearance] setBackgroundImage:[UIImage imageNamed:@"topBar_Background"]];
+    [[ACTopBarTitleControl appearance] setBackgroundImage:[[UIImage imageNamed:@"topBar_TitleButton_Normal"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 15, 0, 15)] forState:UIControlStateNormal];
+    [[ACTopBarEditButton appearance] setBackgroundImage:[[UIImage imageNamed:@"topBar_ToolButton_Normal"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 10, 0, 10)] forState:UIControlStateNormal];
     
     ////////////////////////////////////////////////////////////////////////////
     // Creating UI controllers

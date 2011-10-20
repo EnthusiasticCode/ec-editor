@@ -9,98 +9,216 @@
 #import "ACTopBarToolbar.h"
 #import "ACTopBarTitleControl.h"
 
+#define DEFAULT_BUTTON_WIDTH 48
+
+static const void *editItemContext;
 
 @interface ACTopBarToolbar ()
 
-@property (nonatomic, strong) UIButton *titleControl;
+- (void)_setupButton:(UIButton *)button withBarButtonItem:(UIBarButtonItem *)item;
 
 @end
 
 
 @implementation ACTopBarToolbar
 
-@synthesize titleControl = _titleControl;
-@synthesize editItem = _editItem, toolItems = _toolItems;
+#pragma mark - Properties
 
-- (UIBarButtonItem *)backItem
+@synthesize backButton, forwardButton;
+@synthesize titleControl;
+@synthesize editItem, toolItems;
+
+@synthesize backgroundImage, buttonsInsets, controlsGap;
+
+- (UIButton *)backButton
 {
-    return [self.items objectAtIndex:0];
+    if (!backButton)
+    {
+        backButton = [UIButton new];
+        [backButton setImage:[UIImage imageNamed:@"topBar_BackButton_Normal"] forState:UIControlStateNormal];
+        backButton.autoresizingMask = UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleHeight;
+    }
+    return backButton;
 }
 
-- (UIBarButtonItem *)forwardItem
+- (UIButton *)forwardButton
 {
-    return [self.items objectAtIndex:1];
+    if (!forwardButton)
+    {
+        forwardButton = [UIButton new];
+        [forwardButton setImage:[UIImage imageNamed:@"topBar_ForwardButton_Normal"] forState:UIControlStateNormal];
+        forwardButton.autoresizingMask = UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleHeight;
+    }
+    return forwardButton;
 }
 
-- (void)setEditItem:(UIBarButtonItem *)editItem
+- (ACTopBarTitleControl *)titleControl
 {
-    if (editItem == _editItem)
+    if (!titleControl)
+    {
+        titleControl = [ACTopBarTitleControl new];
+        titleControl.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    }
+    return titleControl;
+}
+
+- (void)setEditItem:(UIBarButtonItem *)item
+{
+    if (item == editItem)
         return;
     
     [self willChangeValueForKey:@"editItem"];
     
-    NSMutableArray *newItems = [self.items mutableCopy];
-    if (_editItem)
-        [newItems removeObject:_editItem];
     if (editItem)
-        [newItems addObject:editItem];
+    {
+        [editItem.customView removeFromSuperview];
+        [editItem removeObserver:self forKeyPath:@"title" context:&editItemContext];
+    }
     
-    _editItem = editItem;
-    [super setItems:newItems animated:NO];
+    if ((editItem = item))
+    {
+        [editItem addObserver:self forKeyPath:@"title" options:NSKeyValueObservingOptionNew context:&editItemContext];
+        
+        if (!editItem.customView)
+            [self _setupButton:[ACTopBarEditButton new] withBarButtonItem:editItem];
+        [self addSubview:editItem.customView];
+    }
     
     [self didChangeValueForKey:@"editItem"];
 }
 
-- (void)setToolItems:(NSArray *)toolItems
+- (void)setToolItems:(NSArray *)items animated:(BOOL)animated
 {
-    [self setToolItems:toolItems animated:NO];
-}
-
-- (void)setToolItems:(NSArray *)toolItems animated:(BOOL)animated
-{
-    if (toolItems == _toolItems)
+    if (items == toolItems)
         return;
     
     [self willChangeValueForKey:@"toolItems"];
     
-    NSMutableArray *newItems = [self.items mutableCopy];
-    NSUInteger count = [newItems count];
-    if (_toolItems)
-        [newItems removeObjectsInArray:_toolItems];
-    if (toolItems)
-        [newItems insertObjects:toolItems atIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(count - 2, [toolItems count])]];
+    NSArray *oldItems = toolItems;
+    toolItems = items;
     
-    _toolItems = toolItems;
-    [super setItems:newItems animated:animated];
-    
-    [self didChangeValueForKey:@"toolItems"];
-}
-
-- (void)setItems:(NSArray *)items animated:(BOOL)animated
-{
-    ECASSERT([items count] >= 5 && "This kind of bar must have 4 buttons and a title item");
-    
-    for (UIBarItem *item in items)
+    if (animated)
     {
-        if ([item isKindOfClass:[UIBarButtonItem class]])
-        {
-            UIBarButtonItem *buttonItem = (UIBarButtonItem *)item;
-            if (buttonItem.customView != nil && [buttonItem.customView isKindOfClass:[ACTopBarTitleControl class]])
-            {
-                self.titleControl = (ACTopBarTitleControl *)buttonItem.customView;
-            }
+        // TODO
+    }
+    else
+    {
+        for (UIBarButtonItem *item in oldItems) {
+            [item.customView removeFromSuperview];
+        }
+        for (UIBarButtonItem *item in toolItems) {
+            if (!item.customView)
+                [self _setupButton:[ACTopBarToolButton new] withBarButtonItem:item];
+            [self addSubview:item.customView];
         }
     }
     
-    [self willChangeValueForKey:@"toolItems"];
-    _toolItems = [NSArray arrayWithObject:[items objectAtIndex:[items count] - 2]];
     [self didChangeValueForKey:@"toolItems"];
-    
-    [self willChangeValueForKey:@"editItem"];
-    _editItem = [items objectAtIndex:[items count] - 1];
-    [self didChangeValueForKey:@"editItem"];
-    
-    [super setItems:items animated:animated];
 }
 
+#pragma mark - Observing edit item
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    if (context == &editItemContext && [self.editItem.customView isMemberOfClass:[ACTopBarEditButton class]])
+    {
+        if ([keyPath isEqualToString:@"title"])
+            [(UIButton *)self.editItem.customView setTitle:[change objectForKey:NSKeyValueChangeNewKey] forState:UIControlStateNormal];
+    }
+    else
+    {
+        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+    }
+}
+
+- (void)dealloc
+{
+    self.editItem = nil;
+}
+
+#pragma mark - View lifecycle
+
+static void init(ACTopBarToolbar *self)
+{
+    self->buttonsInsets = UIEdgeInsetsMake(7, 7, 7, 7);
+    self->controlsGap = 10;
+    
+    [self addSubview:self.backButton];
+    [self addSubview:self.forwardButton];
+    [self addSubview:self.titleControl];
+}
+
+- (id)initWithFrame:(CGRect)frame
+{
+    if (!(self = [super initWithFrame:frame]))
+        return nil;
+    init(self);
+    return self;
+}
+
+- (id)initWithCoder:(NSCoder *)coder {
+    if (!(self = [super initWithCoder:coder]))
+        return nil;
+    init(self);
+    return self;
+}
+
+- (void)drawRect:(CGRect)rect
+{
+    [self.backgroundImage drawInRect:rect];
+}
+
+- (void)layoutSubviews
+{
+    // TODO move to setters, let layout be automatic
+    CGRect bounds = self.bounds;
+    
+    CGRect leftButtonsFrame = UIEdgeInsetsInsetRect(bounds, buttonsInsets);
+    CGRect rightButtonsFrame = leftButtonsFrame;
+    leftButtonsFrame.size.width = DEFAULT_BUTTON_WIDTH;
+    rightButtonsFrame.origin.x += rightButtonsFrame.size.width;
+    
+    self.backButton.frame = leftButtonsFrame;
+    leftButtonsFrame.origin.x += DEFAULT_BUTTON_WIDTH + controlsGap;
+    
+    self.forwardButton.frame = leftButtonsFrame;
+    leftButtonsFrame.origin.x += DEFAULT_BUTTON_WIDTH + controlsGap;
+    
+    if (self.editItem)
+    {
+        rightButtonsFrame.size.width = editItem.width ? editItem.width : DEFAULT_BUTTON_WIDTH;
+        rightButtonsFrame.origin.x -= rightButtonsFrame.size.width;
+        editItem.customView.frame = rightButtonsFrame;
+        rightButtonsFrame.origin.x -= controlsGap;
+    }
+    
+    for (UIBarButtonItem *item in toolItems)
+    {
+        rightButtonsFrame.size.width = item.width ? item.width : DEFAULT_BUTTON_WIDTH;
+        rightButtonsFrame.origin.x -= rightButtonsFrame.size.width;
+        item.customView.frame = rightButtonsFrame;
+        rightButtonsFrame.origin.x -= controlsGap;
+    }
+    
+    self.titleControl.frame = (CGRect){ CGPointMake(leftButtonsFrame.origin.x, 0), CGSizeMake(rightButtonsFrame.origin.x - leftButtonsFrame.origin.x, bounds.size.height) }; 
+}
+
+#pragma mark - Private methods
+
+- (void)_setupButton:(UIButton *)button withBarButtonItem:(UIBarButtonItem *)item
+{
+    button.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleHeight;
+    [button setTitle:item.title forState:UIControlStateNormal];
+    if (item.target && item.action)
+        [button addTarget:item.target action:item.action forControlEvents:UIControlEventTouchUpInside];
+    item.customView = button;
+}
+
+@end
+
+
+@implementation ACTopBarToolButton
+@end
+
+@implementation ACTopBarEditButton
 @end
