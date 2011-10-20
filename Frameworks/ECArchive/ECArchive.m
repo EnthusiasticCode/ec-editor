@@ -42,9 +42,9 @@
 - (void)extractToDirectory:(NSURL *)URL
 {
     NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] init];
-    __block int returnCode;
+    __block int returnCode = -1;
     NSFileManager *fileManager = [[NSFileManager alloc] init];
-    __block NSURL *workingDirectory;
+    __block NSURL *workingDirectory = nil;
     __block BOOL workingDirectoryAlreadyExists = YES;
     do
     {

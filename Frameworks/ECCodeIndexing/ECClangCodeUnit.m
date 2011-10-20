@@ -89,14 +89,14 @@ static void inclusionVisitor(CXFile included_file, CXSourceLocation* inclusion_s
     return self;
 }
 
-- (NSArray *)completionsAtOffset:(NSUInteger)offset
+- (void)enumerateCompletionsAtOffset:(NSUInteger)offset usingBlock:(void (^)(NSString *, NSString *))block
 {
-    UNIMPLEMENTED();
+    UNIMPLEMENTED_VOID();
 }
 
-- (NSArray *)diagnostics
+- (void)enumerateDiagnosticsInRange:(NSRange)range usingBlock:(void (^)(ECCodeDiagnosticSeverity, NSString *, NSString *, BOOL *))block
 {
-    UNIMPLEMENTED();
+    UNIMPLEMENTED_VOID();
 }
 
 - (void)enumerateScopesInRange:(NSRange)range usingBlock:(void (^)(NSArray *, NSRange, ECCodeScopeEnumerationStackChange, BOOL *, BOOL *))block

@@ -55,14 +55,23 @@ typedef enum
 @protocol ECCodeCompleter <ECCodeUnit>
 
 /// Returns the possible completions at a given insertion point in the unit's main source file.
-- (NSArray *)completionsAtOffset:(NSUInteger)offset;
+- (void)enumerateCompletionsAtOffset:(NSUInteger)offset usingBlock:(void(^)(NSString *typedText, NSString *completion))block;
 
 @end
+
+typedef enum
+{
+    ECCodeDiagnosticSeverityIgnored = 0,
+    ECCodeDiagnosticSeverityNote = 1,
+    ECCodeDiagnosticSeverityWarning = 2,
+    ECCodeDiagnosticSeverityError = 3, 
+    ECCodeDiagnosticSeverityFatal = 4 
+} ECCodeDiagnosticSeverity;
 
 @protocol ECCodeDiagnoser <ECCodeUnit>
 
 /// Returns warnings and errors in the unit
-- (NSArray *)diagnostics;
+- (void)enumerateDiagnosticsInRange:(NSRange)range usingBlock:(void(^)(ECCodeDiagnosticSeverity severity, NSString *message, NSString *category, BOOL *stop))block;
 
 @end
 

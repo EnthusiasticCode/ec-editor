@@ -7,11 +7,13 @@
 //
 
 #import "TMSyntax.h"
+#import "TMPattern.h"
 
 static NSString * const _syntaxNameKey = @"name";
 static NSString * const _syntaxScopeKey = @"scopeName";
 static NSString * const _syntaxFileTypesKey = @"fileTypes";
 static NSString * const _syntaxFirstLineMatchKey = @"firstLineMatch";
+static NSString * const _syntaxPatternsKey = @"patterns";
 
 @interface TMSyntax ()
 @property (nonatomic, strong) NSURL *fileURL;
@@ -29,7 +31,20 @@ static NSString * const _syntaxFirstLineMatchKey = @"firstLineMatch";
 @synthesize scope = _scope;
 @synthesize fileTypes = _fileTypes;
 @synthesize firstLineMatch = _firstLineMatch;
+@synthesize patterns = _patterns;
 @synthesize plist = _plist;
+
+- (NSArray *)patterns
+{
+    if (!_patterns)
+    {
+        NSMutableArray *patterns = [NSMutableArray array];
+        for (NSDictionary *dictionary in [self.plist objectForKey:_syntaxPatternsKey])
+            [patterns addObject:[[TMPattern alloc] initWithDictionary:dictionary]];
+        _patterns = [patterns copy];
+    }
+    return _patterns;
+}
 
 - (id)initWithFileURL:(NSURL *)fileURL
 {
