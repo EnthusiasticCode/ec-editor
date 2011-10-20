@@ -12,6 +12,9 @@
 
 @interface ACTopBarToolbar : UIToolbar
 
+@property (nonatomic, readonly, strong) UIBarButtonItem *backItem;
+@property (nonatomic, readonly, strong) UIBarButtonItem *forwardItem;
+
 @property (nonatomic, readonly, strong) ACTopBarTitleControl *titleControl;
 
 @property (nonatomic, strong) UIBarButtonItem *editItem;

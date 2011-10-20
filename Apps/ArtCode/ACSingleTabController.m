@@ -29,6 +29,8 @@ static void *tabCurrentURLObservingContext;
 - (void)_layoutChildViewsAnimated:(BOOL)animated;
 - (void)_setupDefaultToolbarAnimated:(BOOL)animated;
 - (UIViewController *)_viewControllerWithURL:(NSURL *)url;
+- (void)_historyBackAction:(id)sender;
+- (void)_historyForwardAction:(id)sender;
 
 @end
 
@@ -60,6 +62,9 @@ static void *tabCurrentURLObservingContext;
         _defaultToolbar = defaultToolbar;
     }
     
+    _defaultToolbar.backItem.action = @selector(_historyBackAction:);
+    _defaultToolbar.forwardItem.action = @selector(_historyForwardAction:);
+    
     [self didChangeValueForKey:@"defaultToolbar"];
 }
 
@@ -83,14 +88,22 @@ static void *tabCurrentURLObservingContext;
         
         if (_contentViewController != nil && animated)
         {
-            [UIView transitionFromView:_contentViewController.view toView:contentViewController.view duration:0.2 options:UIViewAnimationOptionTransitionCrossDissolve completion:^(BOOL finished) {
-                [_contentViewController.view removeFromSuperview];
-                [_contentViewController viewDidDisappear:YES];
+            UIViewController *oldViewController = _contentViewController;
+            contentViewController.view.alpha = 0;
+            contentViewController.view.frame = oldViewController.view.frame;
+            [self.view addSubview:contentViewController.view];
+            [UIView animateWithDuration:0.2 animations:^{
+                contentViewController.view.alpha = 1;
+                oldViewController.view.alpha = 0;
+            } completion:^(BOOL finished) {
+                [oldViewController.view removeFromSuperview];
+                [oldViewController viewDidDisappear:YES];
                 [contentViewController viewDidAppear:YES];
             }];
         }
         else
         {
+            contentViewController.view.frame = _contentViewController.view.frame;
             [self.view addSubview:contentViewController.view];
             [_contentViewController.view removeFromSuperview];
             [_contentViewController viewDidDisappear:NO];
@@ -112,7 +125,6 @@ static void *tabCurrentURLObservingContext;
         [_contentViewController didMoveToParentViewController:self];
     }
     
-    [self _layoutChildViewsAnimated:animated];
     [self _setupDefaultToolbarAnimated:animated];
     
     [self didChangeValueForKey:@"contentViewController"];
@@ -171,9 +183,15 @@ static void *tabCurrentURLObservingContext;
     if (tab == _tab)
         return;
     [self willChangeValueForKey:@"tab"];
+    
     [_tab removeObserver:self forKeyPath:@"currentURL" context:&tabCurrentURLObservingContext];
+    
     _tab = tab;
+    
     [_tab addObserver:self forKeyPath:@"currentURL" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial context:&tabCurrentURLObservingContext];
+    self.defaultToolbar.backItem.enabled = _tab.canMoveBackInHistory;
+    self.defaultToolbar.forwardItem.enabled = _tab.canMoveForwardInHistory;
+    
     [self didChangeValueForKey:@"tab"];
 }
 
@@ -193,7 +211,9 @@ static void *tabCurrentURLObservingContext;
 {
     if (context == &tabCurrentURLObservingContext)
     {
-        self.contentViewController = [self _viewControllerWithURL:self.tab.currentURL];
+        self.defaultToolbar.backItem.enabled = self.tab.canMoveBackInHistory;
+        self.defaultToolbar.forwardItem.enabled = self.tab.canMoveForwardInHistory;
+        [self setContentViewController:[self _viewControllerWithURL:self.tab.currentURL] animated:YES];
     }
     else
     {
@@ -343,9 +363,6 @@ static void *tabCurrentURLObservingContext;
 
 - (void)_setupDefaultToolbarAnimated:(BOOL)animated
 {
-    if (!self.isViewLoaded)
-        return;
-    
     [self.defaultToolbar.titleControl setTitle:_contentViewController.title forState:UIControlStateNormal];
     self.defaultToolbar.editItem = _contentViewController.editButtonItem;
     [self.defaultToolbar setToolItems:_contentViewController.toolbarItems animated:animated];
@@ -397,6 +414,16 @@ static void *tabCurrentURLObservingContext;
         }
     }
     return result;
+}
+
+- (void)_historyBackAction:(id)sender
+{
+    [self.tab moveBackInHistory];
+}
+
+- (void)_historyForwardAction:(id)sender
+{
+    [self.tab moveForwardInHistory];
 }
 
 @end

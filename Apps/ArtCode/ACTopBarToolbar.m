@@ -22,6 +22,16 @@
 @synthesize titleControl = _titleControl;
 @synthesize editItem = _editItem, toolItems = _toolItems;
 
+- (UIBarButtonItem *)backItem
+{
+    return [self.items objectAtIndex:0];
+}
+
+- (UIBarButtonItem *)forwardItem
+{
+    return [self.items objectAtIndex:1];
+}
+
 - (void)setEditItem:(UIBarButtonItem *)editItem
 {
     if (editItem == _editItem)
