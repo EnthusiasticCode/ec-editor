@@ -63,7 +63,8 @@
         for (TMPattern *pattern in self.syntax.patterns)
         {
             NSTextCheckingResult *matchResult = [pattern firstMatchInString:string options:0 range:currentRange];
-            if (!matchResult || matchResult.range.location > bestMatchResult.range.location || (matchResult.range.location == bestMatchResult.range.location && matchResult.range.length < bestMatchResult.range.length))
+            if (bestMatchResult)
+                if (!matchResult || matchResult.range.location > bestMatchResult.range.location || (matchResult.range.location == bestMatchResult.range.location && matchResult.range.length < bestMatchResult.range.length))
                 continue;
             bestMatchResult = matchResult;
             bestMatchPattern = pattern;
@@ -79,6 +80,7 @@
         [scopeStack removeLastObject];
         currentRange.location = NSMaxRange(bestMatchResult.range);
         currentRange.length = [string length] - currentRange.location;
+        bestMatchResult = nil;
     }
     while (bestMatchResult);
 }

@@ -334,6 +334,9 @@ static void init(ECCodeViewBase *self)
 
 - (NSUInteger)textRenderer:(ECTextRenderer *)sender estimatedTextLineCountOfLength:(NSUInteger)maximumLineLength
 {
+    if (![self.datasource textLength])
+        return 0;
+    ECASSERT(maximumLineLength);
     return 1 + [self.datasource textLength] / maximumLineLength;
 }
 
