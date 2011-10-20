@@ -23,7 +23,7 @@ static NSString * const _patternsPatternsKey = @"patterns";
 @property (nonatomic, strong) NSString *scope;
 @property (nonatomic, strong) NSArray *fileTypes;
 @property (nonatomic, strong) NSRegularExpression *firstLineMatch;
-@property (nonatomic, strong) TMPattern *pattern;
+@property (nonatomic, strong) NSArray *patterns;
 @property (nonatomic, strong) NSDictionary *plist;
 @end
 
@@ -34,16 +34,16 @@ static NSString * const _patternsPatternsKey = @"patterns";
 @synthesize scope = _scope;
 @synthesize fileTypes = _fileTypes;
 @synthesize firstLineMatch = _firstLineMatch;
-@synthesize pattern = _pattern;
+@synthesize patterns = _patterns;
 @synthesize plist = _plist;
 
-- (TMPattern *)pattern
+- (NSArray *)pattern
 {
-    if (!_pattern)
+    if (!_patterns)
     {
-        _pattern = [[TMPattern alloc] initWithDictionary:[NSDictionary dictionaryWithObjectsAndKeys: self.scope, _patternScopeKey, [self.plist objectForKey:_syntaxPatternsKey], _patternsPatternsKey, nil]];
+        _patterns = [self.plist objectForKey:_syntaxPatternsKey];
     }
-    return _pattern;
+    return _patterns;
 }
 
 - (id)initWithFileURL:(NSURL *)fileURL

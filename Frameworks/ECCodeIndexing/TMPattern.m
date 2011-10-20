@@ -74,6 +74,7 @@ static NSString * const _patternPatternsKey = @"patterns";
     NSString *endRegex = [dictionary objectForKey:_patternEndKey];
     if (endRegex)
         self.end = [NSRegularExpression regularExpressionWithPattern:endRegex options:0 error:NULL];
+    ECASSERT(!self.match || (!self.patterns && [self.captures objectForKey:[NSNumber numberWithUnsignedInteger:0]]));
     return self;
 }
 
