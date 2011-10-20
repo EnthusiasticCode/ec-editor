@@ -8,7 +8,6 @@
 
 #import "ACFileTableController.h"
 #import "AppStyle.h"
-#import "ACNavigationController.h"
 #import "ACEditableTableCell.h"
 #import "ACNewFilePopoverController.h"
 #import <ECFoundation/ECDirectoryPresenter.h>
@@ -85,8 +84,6 @@ static void * directoryPresenterFileURLsObservingContext;
 @synthesize filterString = _filterString;
 @synthesize filterCount = _filterCount;
 @synthesize filteredFileURLs = _filteredFileURLs;
-
-@synthesize toolButton;
 
 - (void)setDirectory:(NSURL *)directory
 {
@@ -264,6 +261,7 @@ static void * directoryPresenterFileURLsObservingContext;
 
 - (void)setEditing:(BOOL)editing animated:(BOOL)animated
 {
+    [super setEditing:editing animated:animated];
     [tableView setEditing:editing animated:animated];
     
     CGRect bounds = self.view.bounds;
@@ -317,46 +315,19 @@ static void * directoryPresenterFileURLsObservingContext;
     return tableView.isEditing;
 }
 
-#pragma mark - Tool Target Methods
+#pragma mark - TODO refactor: Tool Target Methods
 
-+ (id)newNavigationTargetController
-{
-    return [[ACFileTableController alloc] initWithNibName:@"ACFileTableController" bundle:nil];
-}
-
-- (BOOL)enableTabBar
-{
-    return YES;
-}
-
-- (BOOL)enableToolPanelControllerWithIdentifier:(NSString *)toolControllerIdentifier
-{
-    return YES;
-}
-
-- (void)setScrollToRequireGestureRecognizerToFail:(UIGestureRecognizer *)recognizer
-{
-    [tableView.panGestureRecognizer requireGestureRecognizerToFail:recognizer];
-}
-
-- (id<UITextFieldDelegate>)delegateForFilterField:(UITextField *)textField
-{
-    return self;
-}
-
-- (UIButton *)toolButton
-{
-    if (!toolButton)
-    {
-        toolButton = [UIButton new];
-        [toolButton addTarget:self action:@selector(toolButtonAction:) forControlEvents:UIControlEventTouchUpInside];
-        [toolButton setImage:[UIImage styleAddImageWithColor:[UIColor styleForegroundColor] shadowColor:[UIColor whiteColor]] forState:UIControlStateNormal];
-        toolButton.adjustsImageWhenHighlighted = NO;
-    }
-    return toolButton;
-}
-
-#pragma mark -
+//- (UIButton *)toolButton
+//{
+//    if (!toolButton)
+//    {
+//        toolButton = [UIButton new];
+//        [toolButton addTarget:self action:@selector(toolButtonAction:) forControlEvents:UIControlEventTouchUpInside];
+//        [toolButton setImage:[UIImage styleAddImageWithColor:[UIColor styleForegroundColor] shadowColor:[UIColor whiteColor]] forState:UIControlStateNormal];
+//        toolButton.adjustsImageWhenHighlighted = NO;
+//    }
+//    return toolButton;
+//}
 
 - (void)toolButtonAction:(id)sender
 {

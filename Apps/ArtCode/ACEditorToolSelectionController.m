@@ -10,13 +10,12 @@
 #import "ACEditorToolSelectionController.h"
 #import <ECUIKit/ECRoundedContentCornersView.h>
 
-#import "ACNavigationController.h"
 #import <ECUIKit/ECPopoverController.h>
 #import "ACToolPanelController.h"
 
 @implementation ACEditorToolSelectionController
 
-@synthesize /*targetNavigationController, */containerPopoverController;
+@synthesize containerPopoverController;
 
 #pragma mark - View lifecycle
 

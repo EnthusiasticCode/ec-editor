@@ -11,23 +11,57 @@
 #import "ACTopBarTitleControl.h"
 #import <QuartzCore/QuartzCore.h>
 
+#import "ACTab.h"
+#import "ACApplication.h"
+
+#import "ACProjectTableController.h"
+#import "ACFileTableController.h"
+#import "ACCodeFileController.h"
+
 #define DEFAULT_TOOLBAR_HEIGHT 44
+static void *tabCurrentURLObservingContext;
 
 @interface ACSingleTabController () {
 @private
     NSMutableArray *toolbars;
 }
 
-- (void)layoutChildViewsAnimated:(BOOL)animated;
-- (void)setupDefaultToolbarAnimated:(BOOL)animated;
+- (void)_layoutChildViewsAnimated:(BOOL)animated;
+- (void)_setupDefaultToolbarAnimated:(BOOL)animated;
+- (UIViewController *)_viewControllerWithURL:(NSURL *)url;
 
 @end
 
 
 @implementation ACSingleTabController
 
+#pragma mark - Properties
+
 @synthesize defaultToolbar = _defaultToolbar, contentViewController = _contentViewController;
 @synthesize toolbarHeight = _toolbarHeight;
+@synthesize tab = _tab;
+
+- (void)setDefaultToolbar:(ACTopBarToolbar *)defaultToolbar
+{
+    if (defaultToolbar == _defaultToolbar)
+        return;
+    
+    [self willChangeValueForKey:@"defaultToolbar"];
+    
+    if (self.isViewLoaded)
+    {
+        [_defaultToolbar removeFromSuperview];
+        [self.view addSubview:defaultToolbar];
+        _defaultToolbar = defaultToolbar;
+        [self _layoutChildViewsAnimated:NO];
+    }
+    else
+    {
+        _defaultToolbar = defaultToolbar;
+    }
+    
+    [self didChangeValueForKey:@"defaultToolbar"];
+}
 
 - (void)setContentViewController:(UIViewController *)contentViewController
 {
@@ -41,27 +75,45 @@
     
     [self willChangeValueForKey:@"contentViewController"];
     
+    // Animate view in position
     if (self.isViewLoaded)
     {
+        [_contentViewController viewWillDisappear:animated];
+        [contentViewController viewWillAppear:animated];
+        
         if (_contentViewController != nil && animated)
         {
             [UIView transitionFromView:_contentViewController.view toView:contentViewController.view duration:0.2 options:UIViewAnimationOptionTransitionCrossDissolve completion:^(BOOL finished) {
                 [_contentViewController.view removeFromSuperview];
+                [_contentViewController viewDidDisappear:YES];
+                [contentViewController viewDidAppear:YES];
             }];
         }
         else
         {
             [self.view addSubview:contentViewController.view];
             [_contentViewController.view removeFromSuperview];
+            [_contentViewController viewDidDisappear:NO];
+            [contentViewController viewDidAppear:NO];
         }
-        
-        [self layoutChildViewsAnimated:animated];
-        [self setupDefaultToolbarAnimated:animated];
     }
     
-    [self.childViewControllers makeObjectsPerformSelector:@selector(removeFromParentViewController)];
-    [self addChildViewController:contentViewController];
-    _contentViewController = contentViewController;
+    // Remove old view controller
+    if (_contentViewController)
+    {
+        [_contentViewController willMoveToParentViewController:nil];
+        [_contentViewController removeFromParentViewController];
+    }
+
+    // Setup new controller
+    if ((_contentViewController = contentViewController))
+    {
+        [self addChildViewController:_contentViewController];
+        [_contentViewController didMoveToParentViewController:self];
+    }
+    
+    [self _layoutChildViewsAnimated:animated];
+    [self _setupDefaultToolbarAnimated:animated];
     
     [self didChangeValueForKey:@"contentViewController"];
 }
@@ -92,7 +144,7 @@
         return;
     
     _toolbarHeight = toolbarHeight;
-    [self layoutChildViewsAnimated:animated];
+    [self _layoutChildViewsAnimated:animated];
 }
 
 - (void)resetToolbarHeightAnimated:(BOOL)animated
@@ -100,12 +152,56 @@
     [self setToolbarHeight:DEFAULT_TOOLBAR_HEIGHT animated:animated];
 }
 
-#pragma mark - View lifecycle
+#pragma mark Editing
+
+- (void)setEditing:(BOOL)editing animated:(BOOL)animated
+{
+    [self.contentViewController setEditing:editing animated:animated];
+}
+
++ (NSSet *)keyPathsForValuesAffectingEditing
+{
+    return [NSSet setWithObject:@"contentViewController.editing"];
+}
+
+#pragma mark Tab
+
+- (void)setTab:(ACTab *)tab
+{
+    if (tab == _tab)
+        return;
+    [self willChangeValueForKey:@"tab"];
+    [_tab removeObserver:self forKeyPath:@"currentURL" context:&tabCurrentURLObservingContext];
+    _tab = tab;
+    [_tab addObserver:self forKeyPath:@"currentURL" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial context:&tabCurrentURLObservingContext];
+    [self didChangeValueForKey:@"tab"];
+}
+
+#pragma mark - Controller methods
+
+- (void)dealloc
+{
+    [self.tab removeObserver:self forKeyPath:@"currentURL" context:&tabCurrentURLObservingContext];
+}
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
     return YES;
 }
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    if (context == &tabCurrentURLObservingContext)
+    {
+        self.contentViewController = [self _viewControllerWithURL:self.tab.currentURL];
+    }
+    else
+    {
+        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+    }
+}
+
+#pragma mark - View lifecycle
 
 - (void)viewDidLoad
 {
@@ -121,18 +217,12 @@
     [self.view addSubview:self.contentViewController.view];
     
     // Layout and setup
-    [self setupDefaultToolbarAnimated:NO];
-    [self layoutChildViewsAnimated:NO];
+    [self _setupDefaultToolbarAnimated:NO];
+    [self _layoutChildViewsAnimated:NO];
 }
 
-- (void)viewDidUnload
-{
-    [super viewDidUnload];
-    // Release any retained subviews of the main view.
-    // e.g. self.myOutlet = nil;
-}
 
-#pragma mark - Additional toolbars
+#pragma mark - Toolbars control
 
 - (void)pushToolbarView:(UIView *)toolbarView animated:(BOOL)animated
 {
@@ -173,7 +263,7 @@
         {
             [lastToolbar removeFromSuperview];
             [self.view addSubview:toolbarView];
-            [self layoutChildViewsAnimated:NO];
+            [self _layoutChildViewsAnimated:NO];
         }
     }
 }
@@ -216,7 +306,7 @@
             [self.view addSubview:lastToolbar];
         }
         
-        [self layoutChildViewsAnimated:NO];
+        [self _layoutChildViewsAnimated:NO];
     }
     
     [toolbars removeLastObject];
@@ -224,8 +314,11 @@
 
 #pragma mark - Private methods
 
-- (void)layoutChildViewsAnimated:(BOOL)animated
+- (void)_layoutChildViewsAnimated:(BOOL)animated
 {
+    if (!self.isViewLoaded)
+        return;
+    
     CGRect contentFrame = self.view.bounds;
     CGRect toolbarFrame = contentFrame;
     toolbarFrame.size.height = self.toolbarHeight;
@@ -248,18 +341,71 @@
     }
 }
 
-- (void)setupDefaultToolbarAnimated:(BOOL)animated
+- (void)_setupDefaultToolbarAnimated:(BOOL)animated
 {
-    [self.defaultToolbar.titleControl setTitle:_contentViewController.navigationItem.title forState:UIControlStateNormal];
-    [self.defaultToolbar setToolItem:self.contentViewController.navigationItem.rightBarButtonItem animated:animated];
+    if (!self.isViewLoaded)
+        return;
+    
+    [self.defaultToolbar.titleControl setTitle:_contentViewController.title forState:UIControlStateNormal];
+    self.defaultToolbar.editItem = _contentViewController.editButtonItem;
+    [self.defaultToolbar setToolItems:_contentViewController.toolbarItems animated:animated];
+}
+
+- (UIViewController *)_viewControllerWithURL:(NSURL *)url
+{
+    UIViewController *result = nil;
+    NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] init];
+    __block BOOL currentURLIsEqualToProjectsDirectory = NO;
+    __block BOOL currentURLExists = NO;
+    __block BOOL currentURLIsDirectory = NO;
+    [fileCoordinator coordinateReadingItemAtURL:url options:NSFileCoordinatorReadingResolvesSymbolicLink | NSFileCoordinatorReadingWithoutChanges error:NULL byAccessor:^(NSURL *newURL) {
+        currentURLIsEqualToProjectsDirectory = [newURL isEqual:[self.tab.application projectsDirectory]];
+        NSFileManager *fileManager = [[NSFileManager alloc] init];
+        currentURLExists = [fileManager fileExistsAtPath:[newURL path] isDirectory:&currentURLIsDirectory];
+    }];
+    if (currentURLIsEqualToProjectsDirectory)
+    {
+        if ([self.contentViewController isKindOfClass:[ACProjectTableController class]])
+            result = self.contentViewController;
+        else
+            result = [[ACProjectTableController alloc] init];
+        ACProjectTableController *projectTableController = (ACProjectTableController *)result;
+        projectTableController.projectsDirectory = url;
+        projectTableController.tab = self.tab;
+    }
+    else if (currentURLExists)
+    {
+        if (currentURLIsDirectory)
+        {
+            if ([self.contentViewController isKindOfClass:[ACFileTableController class]])
+                result = self.contentViewController;
+            else
+                result = [[ACFileTableController alloc] init];
+            ACFileTableController *fileTableController = (ACFileTableController *)result;
+            fileTableController.directory = url;
+            fileTableController.tab = self.tab;
+        }
+        else
+        {
+            if ([self.contentViewController isKindOfClass:[ACCodeFileController class]])
+                result = self.contentViewController;
+            else
+                result = [[ACCodeFileController alloc] init];
+            ACCodeFileController *codeFileController = (ACCodeFileController *)result;
+            codeFileController.fileURL = url;
+            codeFileController.tab = self.tab;
+        }
+    }
+    return result;
 }
 
 @end
 
+#pragma mark -
 
-@implementation UIViewController (ACTopBarController)
+@implementation UIViewController (ACSingleTabController)
 
-- (ACSingleTabController *)topBarController
+- (ACSingleTabController *)singleTabController
 {
     UIViewController *parent = self;
     while (parent && ![parent isKindOfClass:[ACSingleTabController class]])

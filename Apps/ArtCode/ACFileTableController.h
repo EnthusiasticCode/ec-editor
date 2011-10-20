@@ -7,12 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "ACNavigationTarget.h"
 
 @class ACToolFiltersView, ACGroup, ACTab;
 
 
-@interface ACFileTableController : UIViewController <ACNavigationTarget, UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate>
+@interface ACFileTableController : UIViewController <UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate>
 
 @property (nonatomic, strong) NSURL *directory;
 

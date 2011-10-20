@@ -14,7 +14,6 @@
 #import "ArtCodeAppDelegate.h"
 #import "ACApplication.h"
 #import "ACTab.h"
-#import "ACNavigationController.h"
 
 #import "ACNewProjectPopoverController.h"
 
@@ -159,43 +158,19 @@ static void * directoryPresenterFileURLsObservingContext;
 #warning TODO remove 'create new project' tip after creating the first project
 }
 
-#pragma mark - Tool Target Protocol
+#pragma mark - TODO refactor: Tool Target Protocol
 
-@synthesize toolButton;
-
-+ (id)newNavigationTargetController
-{
-    return [ACProjectTableController new];
-}
-
-- (BOOL)enableTabBar
-{
-    return YES;
-}
-
-- (BOOL)enableToolPanelControllerWithIdentifier:(NSString *)toolControllerIdentifier
-{
-    return NO;
-}
-
-- (void)applyFilter:(NSString *)filter
-{
-    // TODO filter
-}
-
-- (UIButton *)toolButton
-{
-    if (!toolButton)
-    {
-        toolButton = [UIButton new];
-        [toolButton addTarget:self action:@selector(toolButtonAction:) forControlEvents:UIControlEventTouchUpInside];
-        [toolButton setImage:[UIImage styleAddImageWithColor:[UIColor styleForegroundColor] shadowColor:[UIColor whiteColor]] forState:UIControlStateNormal];
-        toolButton.adjustsImageWhenHighlighted = NO;
-    }
-    return toolButton;
-}
-
-#pragma mark -
+//- (UIButton *)toolButton
+//{
+//    if (!toolButton)
+//    {
+//        toolButton = [UIButton new];
+//        [toolButton addTarget:self action:@selector(toolButtonAction:) forControlEvents:UIControlEventTouchUpInside];
+//        [toolButton setImage:[UIImage styleAddImageWithColor:[UIColor styleForegroundColor] shadowColor:[UIColor whiteColor]] forState:UIControlStateNormal];
+//        toolButton.adjustsImageWhenHighlighted = NO;
+//    }
+//    return toolButton;
+//}
 
 - (void)toolButtonAction:(id)sender
 {

@@ -10,8 +10,6 @@
 #import "ACFileDocument.h"
 #import "ACCodeFileController.h"
 
-#import "ACNavigationController.h"
-
 #import <ECUIKit/ECPopoverController.h>
 #import <ECUIKit/ECCodeView.h>
 
@@ -96,54 +94,20 @@
     // Release any cached data, images, etc that aren't in use.
 }
 
-#pragma mark - Tool Target Protocol Implementation
+#pragma mark - TODO refactor: Tool Target Protocol Implementation
 
-@synthesize toolButton;
-
-+ (id)newNavigationTargetController
-{
-    return [ACCodeFileController new];
-}
-
-- (BOOL)enableTabBar
-{
-    return YES;
-}
-
-- (BOOL)enableToolPanelControllerWithIdentifier:(NSString *)toolControllerIdentifier
-{
-    return YES;
-}
-
-- (BOOL)shouldShowTabBar
-{
-    return YES;
-}
-
-- (BOOL)shouldShowToolPanelController:(ACToolController *)toolController
-{
-    return YES;
-}
-
-- (id<UITextFieldDelegate>)delegateForFilterField:(UITextField *)textField
-{
-    return self;
-}
-
-- (UIButton *)toolButton
-{
-    if (!toolButton)
-    {
-        toolButton = [UIButton new];
-        [toolButton setTitle:@"Tools" forState:UIControlStateNormal];
-        [toolButton setTitleColor:[UIColor styleForegroundColor] forState:UIControlStateNormal];
-        toolButton.titleLabel.font = [UIFont styleFontWithSize:14];
-        [toolButton addTarget:self action:@selector(toolButtonAction:) forControlEvents:UIControlEventTouchUpInside];
-    }
-    return toolButton;
-}
-
-#pragma mark -
+//- (UIButton *)toolButton
+//{
+//    if (!toolButton)
+//    {
+//        toolButton = [UIButton new];
+//        [toolButton setTitle:@"Tools" forState:UIControlStateNormal];
+//        [toolButton setTitleColor:[UIColor styleForegroundColor] forState:UIControlStateNormal];
+//        toolButton.titleLabel.font = [UIFont styleFontWithSize:14];
+//        [toolButton addTarget:self action:@selector(toolButtonAction:) forControlEvents:UIControlEventTouchUpInside];
+//    }
+//    return toolButton;
+//}
 
 - (void)toolButtonAction:(id)sender
 {

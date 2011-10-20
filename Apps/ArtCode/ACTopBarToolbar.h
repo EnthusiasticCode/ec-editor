@@ -14,7 +14,9 @@
 
 @property (nonatomic, readonly, strong) ACTopBarTitleControl *titleControl;
 
-@property (nonatomic, strong) UIBarButtonItem *toolItem;
-- (void)setToolItem:(UIBarButtonItem *)toolItem animated:(BOOL)animated;
+@property (nonatomic, strong) UIBarButtonItem *editItem;
+
+@property (nonatomic, copy) NSArray *toolItems;
+- (void)setToolItems:(NSArray *)toolItems animated:(BOOL)animated;
 
 @end

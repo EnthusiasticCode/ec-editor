@@ -15,9 +15,7 @@
 @interface ArtCodeAppDelegate : UIResponder <UIApplicationDelegate>
 
 @property (nonatomic, strong) UIWindow *window;
-@property (nonatomic, strong) ECSplitViewController *splitViewController;
 @property (nonatomic, strong) ECTabController *tabController;
-@property (nonatomic, strong) ACToolPanelController *toolPanelController;
 
 @property (readonly, strong, nonatomic) NSManagedObjectContext *managedObjectContext;
 @property (readonly, strong, nonatomic) NSManagedObjectModel *managedObjectModel;

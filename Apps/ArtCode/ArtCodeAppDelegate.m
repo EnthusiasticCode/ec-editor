@@ -13,18 +13,13 @@
 #import <ECCodeIndexing/TMTheme.h>
 
 #import "AppStyle.h"
-#import <ECUIKit/ECSplitViewController.h>
 #import <ECUIKit/ECTabController.h>
 #import <ECUIKit/ECPopoverView.h>
 
-#import "ACNavigationController.h"
-#import "ACTopBarView.h"
-#import "ACToolPanelController.h"
-#import <ECUIKit/ECTabBar.h>
-#import <ECUIKit/ECJumpBar.h>
-#import "ACToolFiltersView.h"
+#import "ACSingleTabController.h"
 
-#import "ACEditableTableCell.h"
+#import <ECUIKit/ECTabBar.h>
+#import "ACTopBarToolbar.h"
 
 #import "ACApplication.h"
 #import "ACTab.h"
@@ -32,8 +27,7 @@
 @implementation ArtCodeAppDelegate
 
 @synthesize window = _window;
-@synthesize splitViewController = _splitViewController, tabController = _tabController;
-@synthesize toolPanelController = _toolPanelController;
+@synthesize tabController = _tabController;
 
 @synthesize managedObjectContext = _managedObjectContext;
 @synthesize managedObjectModel = _managedObjectModel;
@@ -61,28 +55,6 @@
     [popoverAppearance setShadowOpacity:0.5];
     [popoverAppearance setShadowRadius:4];
     [popoverAppearance setShadowOffsetForArrowDirectionUpToAutoOrient:CGSizeMake(0, 2)];
-    
-    ////////////////////////////////////////////////////////////////////////////
-    // Button in top bar
-    id buttonInTopBarAppearance = [UIButton appearanceWhenContainedIn:[ACTopBarView class], nil];
-    [buttonInTopBarAppearance setBackgroundImage:[UIImage styleBackgroundImageWithColor:[UIColor styleBackgroundColor] borderColor:[UIColor styleForegroundColor]] forState:UIControlStateNormal];
-    [buttonInTopBarAppearance setBackgroundImage:[UIImage styleBackgroundImageWithColor:[UIColor styleHighlightColor] borderColor:[UIColor styleForegroundColor]] forState:UIControlStateHighlighted];
-    [buttonInTopBarAppearance setBackgroundImage:[UIImage styleBackgroundImageWithColor:[UIColor styleThemeColorOne] borderColor:[UIColor styleForegroundColor]] forState:UIControlStateSelected];
-    [buttonInTopBarAppearance setTitleColor:[UIColor styleForegroundColor] forState:UIControlStateNormal];
-    [buttonInTopBarAppearance setTitleShadowColor:[UIColor styleForegroundShadowColor] forState:UIControlStateNormal];
-    
-    id labelForButtonInTopBarAppearance = [UILabel appearanceWhenContainedIn:[UIButton class], [ACTopBarView class], nil];
-    [labelForButtonInTopBarAppearance setFont:[UIFont styleFontWithSize:14]];
-    
-    ////////////////////////////////////////////////////////////////////////////
-    // Jump bar
-    id jumpBarAppearance = [ECJumpBar appearance];
-    [jumpBarAppearance setJumpElementMargins:UIEdgeInsetsMake(0, -3, 0, -12)];
-    [jumpBarAppearance setTextElementInsets:UIEdgeInsetsMake(0, 3, 0, 7)];
-    
-    id buttonInJumpBarAppearance = [ECJumpBarElementButton appearance];
-    [buttonInJumpBarAppearance setBackgroundImage:[UIImage styleBackgroundImageWithColor:[UIColor styleBackgroundColor] borderColor:[UIColor styleForegroundColor] insets:UIEdgeInsetsZero arrowSize:CGSizeMake(10, 30) roundingCorners:UIRectCornerAllCorners] forState:UIControlStateNormal];
-    [buttonInJumpBarAppearance setBackgroundImage:[UIImage styleBackgroundImageWithColor:[UIColor styleHighlightColor] borderColor:[UIColor styleForegroundColor] insets:UIEdgeInsetsZero arrowSize:CGSizeMake(10, 30) roundingCorners:UIRectCornerAllCorners] forState:UIControlStateHighlighted];
 
     ////////////////////////////////////////////////////////////////////////////
     // Tab Bar
@@ -99,38 +71,15 @@
     id closeButtonInTabBarAppearance = [ECTabBarButtonCloseButton appearance];
     [closeButtonInTabBarAppearance setImage:[UIImage styleCloseImageWithColor:[UIColor styleBackgroundColor] outlineColor:[UIColor styleForegroundColor] shadowColor:nil] forState:UIControlStateNormal];
     [closeButtonInTabBarAppearance setImage:[UIImage styleCloseImageWithColor:[UIColor styleForegroundColor] outlineColor:[UIColor styleBackgroundColor] shadowColor:nil] forState:UIControlStateHighlighted];
-
-    ////////////////////////////////////////////////////////////////////////////
-    // Tools
-    id buttonInToolFiltersView = [UIButton appearanceWhenContainedIn:[ACToolFiltersView class], nil];
-    [buttonInToolFiltersView setBackgroundImage:[UIImage styleBackgroundImageWithColor:[UIColor styleForegroundColor] borderColor:[UIColor styleBackgroundColor] insets:UIEdgeInsetsMake(7, 3, 7, 3) arrowSize:CGSizeZero roundingCorners:UIRectCornerAllCorners] forState:UIControlStateNormal];
-    [buttonInToolFiltersView setTitleColor:[UIColor styleBackgroundColor] forState:UIControlStateNormal];
-    [buttonInToolFiltersView setBackgroundImage:[UIImage styleBackgroundImageWithColor:[UIColor styleBackgroundColor] borderColor:[UIColor styleBackgroundColor] insets:UIEdgeInsetsMake(7, 3, 7, 3) arrowSize:CGSizeZero roundingCorners:UIRectCornerAllCorners] forState:UIControlStateSelected];
-    [buttonInToolFiltersView setTitleColor:[UIColor styleForegroundColor] forState:UIControlStateSelected];
-    
-    id textFieldInToolFiltersView = [UITextField appearanceWhenContainedIn:[ACToolFiltersView class], nil];
-    [textFieldInToolFiltersView setTextColor:[UIColor styleBackgroundColor]];
-    [textFieldInToolFiltersView setBackground:[UIImage styleBackgroundImageWithColor:[UIColor colorWithWhite:0.2 alpha:1] borderColor:[UIColor styleBackgroundColor] insets:UIEdgeInsetsMake(7, 3, 7, 3) arrowSize:CGSizeZero roundingCorners:UIRectCornerAllCorners]];
-    
-    ////////////////////////////////////////////////////////////////////////////
-    // Editable table cell
-    id buttonIneditableTableCellDeleteContainer = [UIButton appearanceWhenContainedIn:[ACEditableTableCellCustomDeleteContainerView class], nil];
-    [buttonIneditableTableCellDeleteContainer setBackgroundImage:[UIImage styleBackgroundImageWithColor:[UIColor colorWithRed:200./255. green:8./255. blue:21./255. alpha:1] borderColor:[UIColor styleForegroundColor] insets:UIEdgeInsetsZero arrowSize:CGSizeZero roundingCorners:UIRectCornerTopRight | UIRectCornerBottomRight] forState:UIControlStateNormal];
-    [buttonIneditableTableCellDeleteContainer setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    [buttonIneditableTableCellDeleteContainer setTitleShadowColor:[UIColor styleForegroundColor] forState:UIControlStateNormal];
     
     ////////////////////////////////////////////////////////////////////////////
     // Creating UI controllers
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-    self.splitViewController = [[ECSplitViewController alloc] init];
     self.tabController = [[ECTabController alloc] init];
-    self.toolPanelController = [[UIStoryboard storyboardWithName:@"ToolPanelStoryboard" bundle:nil] instantiateInitialViewController];
     
     ////////////////////////////////////////////////////////////////////////////
     // Setup UI
-    self.window.rootViewController = self.splitViewController;
-    self.splitViewController.mainViewController = self.tabController;
-    self.splitViewController.sidebarViewController = self.toolPanelController;
+    self.window.rootViewController = self.tabController;
 
     ////////////////////////////////////////////////////////////////////////////
     // Resume tabs
@@ -138,9 +87,9 @@
         [self.application insertTabAtIndex:0];
     for (ACTab *tab in self.application.tabs)
     {
-        ACNavigationController *navigationController = [[ACNavigationController alloc] init];
-        navigationController.tab = tab;
-        [self.tabController addChildViewController:navigationController];
+        ACSingleTabController *singleTabController = [[ACSingleTabController alloc] initWithNibName:@"SingleTabController" bundle:nil];
+        singleTabController.tab = tab;
+        [self.tabController addChildViewController:singleTabController];
     }
 
     [self.window makeKeyAndVisible];

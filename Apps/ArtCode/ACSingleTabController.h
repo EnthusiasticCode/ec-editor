@@ -9,8 +9,18 @@
 #import <UIKit/UIKit.h>
 
 @class ACTopBarToolbar;
+@class ACTab;
 
 @interface ACSingleTabController : UIViewController
+
+#pragma mark Content selection
+
+@property (nonatomic, strong) ACTab *tab;
+
+@property (nonatomic, strong) IBOutlet UIViewController *contentViewController;
+- (void)setContentViewController:(UIViewController *)contentViewController animated:(BOOL)animated;
+
+#pragma mark Managing toolbars
 
 @property (nonatomic, strong) IBOutlet ACTopBarToolbar *defaultToolbar;
 @property (nonatomic, readonly, strong) UIView *currentToolbarView;
@@ -22,14 +32,11 @@
 - (void)setToolbarHeight:(CGFloat)toolbarHeight animated:(BOOL)animated;
 - (void)resetToolbarHeightAnimated:(BOOL)animated;
 
-@property (nonatomic, strong) IBOutlet UIViewController *contentViewController;
-- (void)setContentViewController:(UIViewController *)contentViewController animated:(BOOL)animated;
-
 @end
 
 
-@interface UIViewController (ACTopBarController)
+@interface UIViewController (ACSingleTabController)
 
-- (ACSingleTabController *)topBarController;
+- (ACSingleTabController *)singleTabController;
 
 @end

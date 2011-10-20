@@ -20,31 +20,50 @@
 @implementation ACTopBarToolbar
 
 @synthesize titleControl = _titleControl;
-@synthesize toolItem = _toolItem;
+@synthesize editItem = _editItem, toolItems = _toolItems;
 
-- (void)setToolItem:(UIBarButtonItem *)toolItem
+- (void)setEditItem:(UIBarButtonItem *)editItem
 {
-    [self setToolItem:toolItem animated:NO];
-}
-
-- (void)setToolItem:(UIBarButtonItem *)toolItem animated:(BOOL)animated
-{
-    if (toolItem == _toolItem)
+    if (editItem == _editItem)
         return;
     
-    [self willChangeValueForKey:@"toolItem"];
+    [self willChangeValueForKey:@"editItem"];
+    
+    NSMutableArray *newItems = [self.items mutableCopy];
+    if (_editItem)
+        [newItems removeObject:_editItem];
+    if (editItem)
+        [newItems addObject:editItem];
+    
+    _editItem = editItem;
+    [super setItems:newItems animated:NO];
+    
+    [self didChangeValueForKey:@"editItem"];
+}
+
+- (void)setToolItems:(NSArray *)toolItems
+{
+    [self setToolItems:toolItems animated:NO];
+}
+
+- (void)setToolItems:(NSArray *)toolItems animated:(BOOL)animated
+{
+    if (toolItems == _toolItems)
+        return;
+    
+    [self willChangeValueForKey:@"toolItems"];
     
     NSMutableArray *newItems = [self.items mutableCopy];
     NSUInteger count = [newItems count];
-    if (_toolItem)
-        [newItems removeObject:_toolItem];
-    if (toolItem)
-        [newItems insertObject:toolItem atIndex:count - 2];
+    if (_toolItems)
+        [newItems removeObjectsInArray:_toolItems];
+    if (toolItems)
+        [newItems insertObjects:toolItems atIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(count - 2, [toolItems count])]];
     
-    _toolItem = toolItem;
-    [self setItems:newItems animated:animated];
+    _toolItems = toolItems;
+    [super setItems:newItems animated:animated];
     
-    [self didChangeValueForKey:@"toolItem"];
+    [self didChangeValueForKey:@"toolItems"];
 }
 
 - (void)setItems:(NSArray *)items animated:(BOOL)animated
@@ -63,9 +82,13 @@
         }
     }
     
-    [self willChangeValueForKey:@"toolItem"];
-    _toolItem = [items objectAtIndex:[items count] - 2];
-    [self didChangeValueForKey:@"toolItem"];
+    [self willChangeValueForKey:@"toolItems"];
+    _toolItems = [NSArray arrayWithObject:[items objectAtIndex:[items count] - 2]];
+    [self didChangeValueForKey:@"toolItems"];
+    
+    [self willChangeValueForKey:@"editItem"];
+    _editItem = [items objectAtIndex:[items count] - 1];
+    [self didChangeValueForKey:@"editItem"];
     
     [super setItems:items animated:animated];
 }

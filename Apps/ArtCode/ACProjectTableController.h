@@ -7,10 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "ACNavigationTarget.h"
 @class ACApplication, ACTab;
 
-@interface ACProjectTableController : UITableViewController <ACNavigationTarget, UITextFieldDelegate>
+@interface ACProjectTableController : UITableViewController <UITextFieldDelegate>
 
 @property (nonatomic, strong) NSURL *projectsDirectory;
 
