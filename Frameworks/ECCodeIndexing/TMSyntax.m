@@ -14,6 +14,8 @@ static NSString * const _syntaxScopeKey = @"scopeName";
 static NSString * const _syntaxFileTypesKey = @"fileTypes";
 static NSString * const _syntaxFirstLineMatchKey = @"firstLineMatch";
 static NSString * const _syntaxPatternsKey = @"patterns";
+static NSString * const _patternScopeKey = @"name";
+static NSString * const _patternsPatternsKey = @"patterns";
 
 @interface TMSyntax ()
 @property (nonatomic, strong) NSURL *fileURL;
@@ -21,6 +23,7 @@ static NSString * const _syntaxPatternsKey = @"patterns";
 @property (nonatomic, strong) NSString *scope;
 @property (nonatomic, strong) NSArray *fileTypes;
 @property (nonatomic, strong) NSRegularExpression *firstLineMatch;
+@property (nonatomic, strong) TMPattern *pattern;
 @property (nonatomic, strong) NSDictionary *plist;
 @end
 
@@ -31,19 +34,16 @@ static NSString * const _syntaxPatternsKey = @"patterns";
 @synthesize scope = _scope;
 @synthesize fileTypes = _fileTypes;
 @synthesize firstLineMatch = _firstLineMatch;
-@synthesize patterns = _patterns;
+@synthesize pattern = _pattern;
 @synthesize plist = _plist;
 
-- (NSArray *)patterns
+- (TMPattern *)pattern
 {
-    if (!_patterns)
+    if (!_pattern)
     {
-        NSMutableArray *patterns = [NSMutableArray array];
-        for (NSDictionary *dictionary in [self.plist objectForKey:_syntaxPatternsKey])
-            [patterns addObject:[[TMPattern alloc] initWithDictionary:dictionary]];
-        _patterns = [patterns copy];
+        _pattern = [[TMPattern alloc] initWithDictionary:[NSDictionary dictionaryWithObjectsAndKeys: self.scope, _patternScopeKey, [self.plist objectForKey:_syntaxPatternsKey], _patternsPatternsKey, nil]];
     }
-    return _patterns;
+    return _pattern;
 }
 
 - (id)initWithFileURL:(NSURL *)fileURL

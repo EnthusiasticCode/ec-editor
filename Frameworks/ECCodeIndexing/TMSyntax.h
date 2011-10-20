@@ -8,13 +8,15 @@
 
 #import <Foundation/Foundation.h>
 
+@class TMPattern;
+
 @interface TMSyntax : NSObject
 
 @property (nonatomic, strong, readonly) NSString *name;
 @property (nonatomic, strong, readonly) NSString *scope;
 @property (nonatomic, strong, readonly) NSArray *fileTypes;
 @property (nonatomic, strong, readonly) NSRegularExpression *firstLineMatch;
-@property (nonatomic, strong, readonly) NSArray *patterns;
+@property (nonatomic, strong, readonly) TMPattern *pattern;
 
 - (id)initWithFileURL:(NSURL *)fileURL;
 

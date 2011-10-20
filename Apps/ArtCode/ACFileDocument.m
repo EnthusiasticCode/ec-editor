@@ -94,10 +94,10 @@ static NSRange intersectionOfRangeRelativeToRange(NSRange range, NSRange inRange
     // Preparing result
     NSMutableAttributedString *result = [[NSMutableAttributedString alloc] initWithString:[self.contentString substringWithRange:stringRange] attributes:self.defaultTextStyle.CTAttributes];
     
-    [self.codeParser enumerateScopesInRange:stringRange usingBlock:^(NSArray *scopes, NSRange range, ECCodeScopeEnumerationStackChange change, BOOL *skipChildren, BOOL *cancel) {
-        NSLog(@"%@", [scopes lastObject]);
+    [self.codeParser enumerateScopesInRange:stringRange usingBlock:^(NSString *scope, NSRange scopeRange, BOOL isExitingScope, BOOL isLeafScope, BOOL skippedScopes, NSArray *scopesStack, BOOL *skipChildren, BOOL *stop) {
+        NSLog(@"%@", scope);
     }];
-        
+    
     // Append tailing new line
     if (NSMaxRange(stringRange) == self.contentString.length) 
     {
