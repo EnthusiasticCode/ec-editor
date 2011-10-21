@@ -15,6 +15,7 @@ static const void *editItemContext;
 
 @interface ACTopBarToolbar ()
 
+- (void)_setupLayout;
 - (void)_setupButton:(UIButton *)button withBarButtonItem:(UIBarButtonItem *)item;
 
 @end
@@ -84,6 +85,8 @@ static const void *editItemContext;
         [self addSubview:editItem.customView];
     }
     
+    [self _setupLayout];
+    
     [self didChangeValueForKey:@"editItem"];
 }
 
@@ -111,6 +114,7 @@ static const void *editItemContext;
                 [self _setupButton:[ACTopBarToolButton new] withBarButtonItem:item];
             [self addSubview:item.customView];
         }
+        [self _setupLayout];
     }
     
     [self didChangeValueForKey:@"toolItems"];
@@ -140,12 +144,15 @@ static const void *editItemContext;
 
 static void init(ACTopBarToolbar *self)
 {
+    self.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleWidth;
     self->buttonsInsets = UIEdgeInsetsMake(7, 7, 7, 7);
     self->controlsGap = 10;
     
     [self addSubview:self.backButton];
     [self addSubview:self.forwardButton];
     [self addSubview:self.titleControl];
+    
+    [self _setupLayout];
 }
 
 - (id)initWithFrame:(CGRect)frame
@@ -168,9 +175,10 @@ static void init(ACTopBarToolbar *self)
     [self.backgroundImage drawInRect:rect];
 }
 
-- (void)layoutSubviews
+#pragma mark - Private methods
+
+- (void)_setupLayout
 {
-    // TODO move to setters, let layout be automatic
     CGRect bounds = self.bounds;
     
     CGRect leftButtonsFrame = UIEdgeInsetsInsetRect(bounds, buttonsInsets);
@@ -200,10 +208,8 @@ static void init(ACTopBarToolbar *self)
         rightButtonsFrame.origin.x -= controlsGap;
     }
     
-    self.titleControl.frame = (CGRect){ CGPointMake(leftButtonsFrame.origin.x, 0), CGSizeMake(rightButtonsFrame.origin.x - leftButtonsFrame.origin.x, bounds.size.height) }; 
+    self.titleControl.frame = (CGRect){ CGPointMake(leftButtonsFrame.origin.x, 0), CGSizeMake(rightButtonsFrame.origin.x - leftButtonsFrame.origin.x, bounds.size.height) };
 }
-
-#pragma mark - Private methods
 
 - (void)_setupButton:(UIButton *)button withBarButtonItem:(UIBarButtonItem *)item
 {
