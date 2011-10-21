@@ -97,6 +97,19 @@ typedef void (^ScrollViewBlock)(UIScrollView *scrollView);
                              (__bridge id)(backgroundColor.CGColor), nil];
 }
 
+- (void)setTabControlInsets:(UIEdgeInsets)insets
+{
+    if (UIEdgeInsetsEqualToEdgeInsets(insets, tabControlInsets))
+        return;
+    
+    [self willChangeValueForKey:@"tabControlInsets"];
+    
+    tabControlInsets = insets;
+    [tabControlsContainerView setNeedsLayout];
+    
+    [self didChangeValueForKey:@"tabControlInsets"];
+}
+
 - (void)setAdditionalControls:(NSArray *)array
 {
     additionalControls = [array copy];
