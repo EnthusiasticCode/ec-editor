@@ -12,8 +12,11 @@ static NSString * const _patternNameKey = @"name";
 static NSString * const _patternMatchKey = @"match";
 static NSString * const _patternBeginKey = @"begin";
 static NSString * const _patternEndKey = @"end";
+static NSString * const _patternBeginCapturesKey = @"beginCaptures";
+static NSString * const _patternEndCapturesKey = @"endCaptures";
 static NSString * const _patternCapturesKey = @"captures";
 static NSString * const _patternPatternsKey = @"patterns";
+static NSString * const _patternIncludeKey = @"include";
 
 @interface TMPattern ()
 {
@@ -33,8 +36,11 @@ static NSString * const _patternPatternsKey = @"patterns";
 
 @synthesize dictionary = _dictionary;
 @synthesize match = _match;
+@synthesize captures = _captures;
 @synthesize begin = _begin;
 @synthesize end = _end;
+@synthesize beginCaptures = _beginCaptures;
+@synthesize endCaptures = _endCaptures;
 @synthesize patterns = _patterns;
 
 - (NSString *)name
@@ -44,7 +50,36 @@ static NSString * const _patternPatternsKey = @"patterns";
 
 - (NSDictionary *)captures
 {
-    return [self.dictionary objectForKey:_patternCapturesKey];
+    if (!_captures)
+    {
+        ECASSERT(![self.dictionary objectForKey:_patternCapturesKey] || (![self.dictionary objectForKey:_patternBeginCapturesKey] && ![self.dictionary objectForKey:_patternEndCapturesKey]));
+        _captures = [self.dictionary objectForKey:_patternCapturesKey];
+    }
+    return _captures;
+}
+
+- (NSDictionary *)beginCaptures
+{
+    if (!_beginCaptures)
+    {
+        ECASSERT(![self.dictionary objectForKey:_patternBeginCapturesKey] || ![self.dictionary objectForKey:_patternCapturesKey]);
+        _beginCaptures = [self.dictionary objectForKey:_patternBeginCapturesKey];
+        if (!_beginCaptures)
+            _beginCaptures = [self.dictionary objectForKey:_patternCapturesKey];
+    }
+    return _beginCaptures;
+}
+
+- (NSDictionary *)endCaptures
+{
+    if (!_endCaptures)
+    {
+        ECASSERT(![self.dictionary objectForKey:_patternEndCapturesKey] || ![self.dictionary objectForKey:_patternCapturesKey]);
+        _endCaptures = [self.dictionary objectForKey:_patternEndCapturesKey];
+        if (!_endCaptures)
+            _endCaptures = [self.dictionary objectForKey:_patternCapturesKey];
+    }
+    return _endCaptures;
 }
 
 - (NSArray *)patterns
@@ -57,6 +92,11 @@ static NSString * const _patternPatternsKey = @"patterns";
         _patterns = [patterns copy];
     }
     return _patterns;
+}
+
+- (NSString *)include
+{
+    return [self.dictionary objectForKey:_patternIncludeKey];
 }
 
 - (id)initWithDictionary:(NSDictionary *)dictionary
@@ -74,30 +114,10 @@ static NSString * const _patternPatternsKey = @"patterns";
     NSString *endRegex = [dictionary objectForKey:_patternEndKey];
     if (endRegex)
         self.end = [NSRegularExpression regularExpressionWithPattern:endRegex options:0 error:NULL];
-    ECASSERT(!self.match || (!self.patterns && [self.captures objectForKey:[NSNumber numberWithUnsignedInteger:0]]));
+    ECASSERT(!self.match || (!self.patterns && !self.begin && !self.include && [self.captures objectForKey:[NSNumber numberWithUnsignedInteger:0]]));
+    ECASSERT(!self.begin || self.end && !self.include);
+    ECASSERT(!self.end || self.begin);
     return self;
-}
-
-- (NSTextCheckingResult *)firstMatchInString:(NSString *)string options:(NSMatchingOptions)options range:(NSRange)range
-{
-    NSTextCheckingResult *result = [self _cachedResultInString:string options:options range:range];
-    if (result)
-        return result;
-    if (self.match)
-    {
-        result = [self.match firstMatchInString:string options:options range:range];
-    }
-    
-    _cachedMatchString = string;
-    _cachedMatchOptions = options;
-    _cachedMatchRange = range;
-    _cachedMatchResult = result;
-    return result;
-}
-
-- (NSTextCheckingResult *)_cachedResultInString:(NSString *)string options:(NSMatchingOptions)options range:(NSRange)range
-{
-    return nil;
 }
 
 @end

@@ -90,10 +90,10 @@ static NSDictionary *_themeFileURLs;
     return self;
 }
 
-- (NSDictionary *)attributesForScopeStack:(NSArray *)scopeStack
+- (NSDictionary *)attributesForScopeStack:(NSArray *)scopesStack
 {
     NSMutableDictionary *attributes = [NSMutableDictionary dictionary];
-    for (NSString *scope in scopeStack)
+    for (NSString *scope in scopesStack)
     {
         for (NSDictionary *settings in [self.plist objectForKey:_themeSettingsKey])
         {
