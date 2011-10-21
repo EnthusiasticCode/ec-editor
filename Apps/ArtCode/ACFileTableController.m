@@ -307,6 +307,9 @@ static void * directoryPresenterFileURLsObservingContext;
                 [editingToolsView removeFromSuperview];
             }];
         }
+        
+        // Tool buttons for top bar
+        self.toolbarItems = [NSArray arrayWithObject:[[UIBarButtonItem alloc] initWithTitle:@"add" style:UIBarButtonItemStylePlain target:self action:@selector(toolButtonAction:)]];
     }
 }
 

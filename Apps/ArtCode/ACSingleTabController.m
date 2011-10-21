@@ -19,7 +19,8 @@
 #import "ACCodeFileController.h"
 
 #define DEFAULT_TOOLBAR_HEIGHT 44
-static void *tabCurrentURLObservingContext;
+static const void *tabCurrentURLObservingContext;
+static const void *contentViewControllerContext;
 
 @interface ACSingleTabController () {
 @private
@@ -47,7 +48,7 @@ static void *tabCurrentURLObservingContext;
 {
     if (!_defaultToolbar)
     {
-        _defaultToolbar = [[ACTopBarToolbar alloc] initWithFrame:CGRectMake(0, 0, 300, 44)];
+        self.defaultToolbar = [[ACTopBarToolbar alloc] initWithFrame:CGRectMake(0, 0, 300, 44)];
     }
     return _defaultToolbar;
 }
@@ -71,8 +72,8 @@ static void *tabCurrentURLObservingContext;
         _defaultToolbar = defaultToolbar;
     }
     
-//    _defaultToolbar.backItem.action = @selector(_historyBackAction:);
-//    _defaultToolbar.forwardItem.action = @selector(_historyForwardAction:);
+    [_defaultToolbar.backButton addTarget:self action:@selector(_historyBackAction:) forControlEvents:UIControlEventTouchUpInside];
+    [_defaultToolbar.forwardButton addTarget:self action:@selector(_historyForwardAction:) forControlEvents:UIControlEventTouchUpInside];
     
     [self didChangeValueForKey:@"defaultToolbar"];
 }
@@ -125,6 +126,7 @@ static void *tabCurrentURLObservingContext;
     {
         [_contentViewController willMoveToParentViewController:nil];
         [_contentViewController removeFromParentViewController];
+        [_contentViewController removeObserver:self forKeyPath:@"toolbarItems" context:&contentViewControllerContext];
     }
 
     // Setup new controller
@@ -132,6 +134,7 @@ static void *tabCurrentURLObservingContext;
     {
         [self addChildViewController:_contentViewController];
         [_contentViewController didMoveToParentViewController:self];
+        [_contentViewController addObserver:self forKeyPath:@"toolbarItems" options:NSKeyValueObservingOptionNew context:&contentViewControllerContext];
     }
     
     [self _setupDefaultToolbarAnimated:animated];
@@ -198,8 +201,6 @@ static void *tabCurrentURLObservingContext;
     _tab = tab;
     
     [_tab addObserver:self forKeyPath:@"currentURL" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial context:&tabCurrentURLObservingContext];
-//    self.defaultToolbar.backItem.enabled = _tab.canMoveBackInHistory;
-//    self.defaultToolbar.forwardItem.enabled = _tab.canMoveForwardInHistory;
     
     [self didChangeValueForKey:@"tab"];
 }
@@ -208,7 +209,8 @@ static void *tabCurrentURLObservingContext;
 
 - (void)dealloc
 {
-    [self.tab removeObserver:self forKeyPath:@"currentURL" context:&tabCurrentURLObservingContext];
+    self.tab = nil;
+    self.contentViewController = nil;
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
@@ -220,9 +222,13 @@ static void *tabCurrentURLObservingContext;
 {
     if (context == &tabCurrentURLObservingContext)
     {
-//        self.defaultToolbar.backItem.enabled = self.tab.canMoveBackInHistory;
-//        self.defaultToolbar.forwardItem.enabled = self.tab.canMoveForwardInHistory;
+        self.defaultToolbar.backButton.enabled = self.tab.canMoveBackInHistory;
+        self.defaultToolbar.forwardButton.enabled = self.tab.canMoveForwardInHistory;
         [self setContentViewController:[self _viewControllerWithURL:self.tab.currentURL] animated:YES];
+    }
+    else if (context == &contentViewControllerContext)
+    {
+        [self.defaultToolbar setToolItems:[change valueForKey:NSKeyValueChangeNewKey] animated:YES];
     }
     else
     {
