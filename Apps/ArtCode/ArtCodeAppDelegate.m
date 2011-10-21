@@ -11,6 +11,7 @@
 #import <ECFoundation/NSURL+ECAdditions.h>
 #import <ECCodeIndexing/ECCodeIndex.h>
 #import <ECCodeIndexing/TMTheme.h>
+#import <ECUIKit/UIControl+BlockAction.h>
 
 #import "AppStyle.h"
 #import <ECUIKit/ECTabController.h>
@@ -81,12 +82,24 @@
     [[ACTopBarToolButton appearance] setBackgroundImage:[[UIImage imageNamed:@"topBar_ToolButton_Normal"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 10, 0, 10)] forState:UIControlStateNormal];
     
     ////////////////////////////////////////////////////////////////////////////
-    // Creating UI controllers
-    self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+    // Creating main tab controllers
     self.tabController = [[ECTabController alloc] init];
+    UIButton *addTabButton = [UIButton new];
+    [addTabButton setImage:[UIImage imageNamed:@"tabBar_TabAddButton"] forState:UIControlStateNormal];
+    [addTabButton setActionBlock:^(id sender) {
+        // Duplicate current tab
+        ACSingleTabController *singleTabController = [[ACSingleTabController alloc] initWithNibName:@"SingleTabController" bundle:nil];
+        [self.application insertTabAtIndex:[self.application.tabs count]];
+        singleTabController.tab = [self.application.tabs lastObject];
+        [singleTabController.tab pushURL:[(ACSingleTabController *)self.tabController.selectedViewController tab].currentURL];
+        //
+        [self.tabController addChildViewController:singleTabController animated:YES];
+    } forControlEvent:UIControlEventTouchUpInside];
+    self.tabController.tabBar.additionalControls = [NSArray arrayWithObject:addTabButton];
     
     ////////////////////////////////////////////////////////////////////////////
-    // Setup UI
+    // Setup window
+    self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     self.window.rootViewController = self.tabController;
 
     ////////////////////////////////////////////////////////////////////////////

@@ -42,7 +42,7 @@ static void *childViewControllerTitleContext;
     if (_tabBar == nil)
     {
         // Creating tab bar
-        _tabBar = [[ECTabBar alloc] init];
+        _tabBar = [[ECTabBar alloc] initWithFrame:CGRectMake(0, 0, 300, TABBAR_HEIGHT)];
         _tabBar.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleBottomMargin;
         _tabBar.delegate = self;
     }

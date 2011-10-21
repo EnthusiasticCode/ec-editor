@@ -51,6 +51,7 @@ typedef void (^ScrollViewBlock)(UIScrollView *scrollView);
 
 @property (nonatomic, readonly, strong) NSArray *tabControls;
 @property (nonatomic, weak) UIControl *selectedTabControl;
+- (void)_setSelectedTabControl:(UIControl *)tabControl;
 - (void)_setSelectedTabControl:(UIControl *)tabControl animated:(BOOL)animated;
 - (void)_removeTabControl:(UIControl *)tabControl animated:(BOOL)animated;
 
@@ -112,7 +113,7 @@ typedef void (^ScrollViewBlock)(UIScrollView *scrollView);
 
 - (void)setAdditionalControls:(NSArray *)array
 {
-    additionalControls = [array copy];
+    additionalControls = array;
     
     if (!additionalControls || [additionalControls count] == 0)
     {
@@ -345,7 +346,7 @@ static void init(ECTabBar *self)
     [tabControls addObject:newTabControl];
     
     // Assigning default tab control selection action
-    [newTabControl addTarget:self action:@selector(setSelectedTabControl:) forControlEvents:UIControlEventTouchUpInside];
+    [newTabControl addTarget:self action:@selector(_setSelectedTabControl:) forControlEvents:UIControlEventTouchUpInside];
     
     // Position and size new tab control
     //    CGRect tabControlFrame = (CGRect) { CGPointMake(tabControlSize.width * newTabControlIndex, 0), tabControlSize };
@@ -533,6 +534,11 @@ static void init(ECTabBar *self)
 }
 
 #pragma mark - Private methods
+
+- (void)_setSelectedTabControl:(UIControl *)tabControl
+{
+    [self _setSelectedTabControl:tabControl animated:YES];
+}
 
 - (void)_setSelectedTabControl:(UIControl *)tabControl animated:(BOOL)animated
 {
