@@ -109,33 +109,15 @@ static const void *editItemContext;
     
     if (animated)
     {
-        BOOL willRemoveButtons = [oldItems count] > [toolItems count];
-        [UIView animateWithDuration:0.1 animations:^{
-            if (willRemoveButtons)
-            {
+        [self bringSubviewToFront:self.titleControl];
+        [UIView animateWithDuration:0.2 animations:^{
+            // Layout title control
+            [self _setupLayout];
+        } completion:^(BOOL finished) {
+            [UIView animateWithDuration:0.10 animations:^{
                 // Fade-out old items
                 for (UIBarButtonItem *item in oldItems) {
                     item.customView.alpha = 0;
-                }
-            }
-            else
-            {
-                // Layout title control
-                [self _setupLayout];
-            }
-        } completion:^(BOOL finished) {
-            [UIView animateWithDuration:0.10 animations:^{
-                if (willRemoveButtons)
-                {
-                    // Layout title control
-                    [self _setupLayout];
-                }
-                else
-                {
-                    // Fade-out old items
-                    for (UIBarButtonItem *item in oldItems) {
-                        item.customView.alpha = 0;
-                    }
                 }
                 // Fade-in new ones
                 for (UIBarButtonItem *item in toolItems) {
