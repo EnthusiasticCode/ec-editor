@@ -17,7 +17,8 @@
 }
 @property (atomic, strong) NSURL *fileURL;
 @property (nonatomic, strong) TMSyntax *syntax;
-- (void)_enumerateScopesInString:(NSString *)string range:(NSRange)range withPattern:(TMPattern *)pattern scopeStack:(NSMutableArray *)scopesStack usingBlock:(void(^)(NSTextCheckingResult *beginMatch, NSTextCheckingResult *endMatch, TMPattern *pattern, NSString *scope, BOOL isExitingScope, BOOL isLeafScope, BOOL skippedScopes, BOOL *skipChildren, BOOL *stop))block;
+- (void)_enumerateScopesInString:(NSString *)string range:(NSRange)range withPatterns:(NSArray *)patterns scopesStack:(NSMutableArray *)scopesStack usingBlock:(void(^)(NSTextCheckingResult *beginMatch, NSTextCheckingResult *endMatch, TMPattern *pattern, NSString *scope, BOOL isExitingScope, BOOL isLeafScope, BOOL skippedScopes, BOOL *skipChildren, BOOL *stop))block;
+- (void)_enumerateScopesInString:(NSString *)string range:(NSRange)range withPattern:(TMPattern *)pattern scopesStack:(NSMutableArray *)scopesStack usingBlock:(void(^)(NSTextCheckingResult *beginMatch, NSTextCheckingResult *endMatch, TMPattern *pattern, NSString *scope, BOOL isLeafScope, BOOL skippedScopes, BOOL *skipChildren, BOOL *stop))block;
 @end
 
 @implementation TMCodeParser
@@ -57,34 +58,32 @@
     }];
     NSMutableArray *scopesStack = [NSMutableArray array];
     __block BOOL firstMatch = YES;
-    [self _enumerateScopesInString:string range:NSMakeRange(0, [string length]) withPattern:self.syntax.pattern scopeStack:scopesStack usingBlock:^(NSTextCheckingResult *beginMatch, NSTextCheckingResult *endMatch, TMPattern *pattern, NSString *scope, BOOL isExitingScope, BOOL isLeafScope, BOOL skippedScopes, BOOL *skipChildren, BOOL *stop) {
-        ECASSERT(beginMatch);
-        ECASSERT(pattern);
-        ECASSERT(skipChildren);
-        ECASSERT(stop);
-        if (!endMatch && (NSMaxRange(beginMatch.range) < range.location || beginMatch.range.location > NSMaxRange(range)))
+    [self _enumerateScopesInString:string range:NSMakeRange(0, [string length]) withPatterns:self.syntax.patterns scopesStack:scopesStack usingBlock:^(NSTextCheckingResult *beginMatch, NSTextCheckingResult *endMatch, TMPattern *pattern, NSString *scope, BOOL isExitingScope, BOOL isLeafScope, BOOL skippedScopes, BOOL *skipChildren, BOOL *stop) {
+        ECASSERT(beginMatch && pattern && scope && skipChildren && stop);
+        ECASSERT(isLeafScope || endMatch);
+        ECASSERT(!isExitingScope || !isLeafScope);
+        if ((isLeafScope || !isExitingScope) && (NSMaxRange(beginMatch.range) < range.location || beginMatch.range.location >= NSMaxRange(range)))
             return;
-        if (endMatch && (NSMaxRange(endMatch.range) < range.location || beginMatch.range.location > NSMaxRange(range)))
+        if (isExitingScope && (NSMaxRange(endMatch.range) < range.location || endMatch.range.location >= NSMaxRange(range)))
             return;
         if (firstMatch)
         {
             skippedScopes = YES;
             firstMatch = NO;
         }
-        if (endMatch && !isExitingScope)
+        if (!isLeafScope && !isExitingScope)
         {
             block(scope, NSMakeRange(beginMatch.range.location, NSMaxRange(endMatch.range) - beginMatch.range.location), isExitingScope, isLeafScope, skippedScopes, [scopesStack copy], skipChildren, stop);
             if (*stop || *skipChildren)
                 return;
         }
-        if (![pattern.captures count])
-            return;
-        if ((isExitingScope && !endMatch) || (!isExitingScope && !beginMatch))
-            return;
-        NSString *mainCapture = [pattern.captures objectForKey:[NSNumber numberWithUnsignedInteger:0]];
+        NSDictionary *captures = isLeafScope ? pattern.captures : (isExitingScope ? pattern.endCaptures : pattern.beginCaptures);
+        NSString *mainCapture = [captures objectForKey:[NSNumber numberWithUnsignedInteger:0]];
         NSTextCheckingResult *capturesMatch = isExitingScope ? endMatch : beginMatch;
         NSUInteger numMatchRanges = capturesMatch.numberOfRanges;
         NSUInteger numCaptures = MIN([pattern.captures count] - (mainCapture ? 1 : 0), numMatchRanges);
+        if (!mainCapture && numCaptures)
+            mainCapture = pattern.name;
         BOOL skipCaptures = NO;
         if (mainCapture && capturesMatch.range.location >= range.location)
         {
@@ -100,9 +99,9 @@
                 NSRange currentMatchRange = [capturesMatch rangeAtIndex:currentMatchRangeIndex];
                 if (NSMaxRange(currentMatchRange) < range.location)
                     continue;
-                if (currentMatchRange.location > NSMaxRange(range))
+                if (currentMatchRange.location >= NSMaxRange(range))
                     break;
-                NSString *currentCapture = [pattern.captures objectForKey:[NSNumber numberWithUnsignedInteger:currentMatchRangeIndex]];
+                NSString *currentCapture = [captures objectForKey:[NSNumber numberWithUnsignedInteger:currentMatchRangeIndex]];
                 if (!currentCapture)
                     continue;
                 [scopesStack addObject:currentCapture];
@@ -112,11 +111,17 @@
                     return;
             }
         }
-        if (mainCapture && NSMaxRange(capturesMatch.range) <= NSMaxRange(range))
+        if (mainCapture && numCaptures && NSMaxRange(capturesMatch.range) <= NSMaxRange(range))
         {
-            block(mainCapture, capturesMatch.range, YES, numCaptures ? YES : NO, NO, [scopesStack copy], &skipCaptures, stop);
+            block(mainCapture, capturesMatch.range, YES, YES, NO, [scopesStack copy], &skipCaptures, stop);
             [scopesStack removeLastObject];
             if (*stop)
+                return;
+        }
+        if (!isLeafScope && isExitingScope)
+        {
+            block(scope, NSMakeRange(beginMatch.range.location, NSMaxRange(endMatch.range) - beginMatch.range.location), isExitingScope, isLeafScope, skippedScopes, [scopesStack copy], skipChildren, stop);
+            if (*stop || *skipChildren)
                 return;
         }
     }];
@@ -156,40 +161,83 @@
 
 #pragma mark - Private methods
 
-- (void)_enumerateScopesInString:(NSString *)string range:(NSRange)range withPattern:(TMPattern *)pattern scopeStack:(NSMutableArray *)scopesStack usingBlock:(void (^)(NSTextCheckingResult *, NSTextCheckingResult *, TMPattern *, NSString *, BOOL, BOOL, BOOL, BOOL *, BOOL *))block
+- (void)_enumerateScopesInString:(NSString *)string range:(NSRange)range withPatterns:(NSArray *)patterns scopesStack:(NSMutableArray *)scopesStack usingBlock:(void (^)(NSTextCheckingResult *, NSTextCheckingResult *, TMPattern *, NSString *, BOOL, BOOL, BOOL, BOOL *, BOOL *))block
 {
-    
-    /*
     NSRange currentRange = range;
-    NSTextCheckingResult *bestMatchResult = nil;
-    TMPattern *bestMatchPattern = nil;
-    do
+    for (;;)
     {
-        for (TMPattern *pattern in self.syntax.patterns)
-        {
-            NSTextCheckingResult *matchResult = [pattern firstMatchInString:string options:0 range:currentRange];
-            if (bestMatchResult)
-                if (!matchResult || matchResult.range.location > bestMatchResult.range.location || (matchResult.range.location == bestMatchResult.range.location && matchResult.range.length < bestMatchResult.range.length))
-                    continue;
-            bestMatchResult = matchResult;
-            bestMatchPattern = pattern;
-        }
-        if (!bestMatchResult)
+        __block NSTextCheckingResult *firstScopeBeginMatch = nil;
+        __block NSTextCheckingResult *firstScopeEndMatch = nil;
+        __block TMPattern *firstScopePattern = nil;
+        __block NSString *firstScope = nil;
+        __block BOOL firstScopeIsLeaf = NO;
+        __block BOOL firstScopeSkippedScopes = NO;
+        for (TMPattern *pattern in patterns)
+            [self _enumerateScopesInString:string range:currentRange withPattern:pattern scopesStack:scopesStack usingBlock:^(NSTextCheckingResult *beginMatch, NSTextCheckingResult *endMatch, TMPattern *pattern, NSString *scope, BOOL isLeafScope, BOOL skippedScopes, BOOL *skipChildren, BOOL *stop) {
+                ECASSERT(beginMatch && pattern && scope && skipChildren && stop);
+                ECASSERT(isLeafScope || endMatch);
+                if (firstScopeBeginMatch)
+                {
+                    NSRange beginRange = beginMatch.range;
+                    NSRange firstRange = firstScopeBeginMatch.range;
+                    if (beginRange.location > firstRange.location || (beginRange.location == firstRange.location && beginRange.length < firstRange.length))
+                        return;
+                }
+                firstScopeBeginMatch = beginMatch;
+                firstScopeEndMatch = endMatch;
+                firstScopePattern = pattern;
+                firstScope = scope;
+                firstScopeIsLeaf = isLeafScope;
+                firstScopeSkippedScopes = skippedScopes;
+            }];
+        if (!firstScopeBeginMatch)
             break;
-        [scopeStack addObject:bestMatchPattern.name];
+        
+        [scopesStack addObject:firstScope];
         BOOL stop = NO;
         BOOL skipChildren = NO;
-        block([scopeStack copy], bestMatchResult.range, ECCodeScopeEnumerationStackChangeContinue, &skipChildren, &stop);
+        block(firstScopeBeginMatch, firstScopeEndMatch, firstScopePattern, firstScope, NO, firstScopeIsLeaf, firstScopeSkippedScopes, &skipChildren, &stop);
         if (stop)
             break;
-        [scopeStack removeLastObject];
-        NSUInteger offset = NSMaxRange(bestMatchResult.range) - currentRange.location;
+        if (!firstScopeIsLeaf)
+        {
+            if (!skipChildren && [firstScopePattern.patterns count])
+            {
+                NSUInteger childrenRangeLocation = NSMaxRange(firstScopeBeginMatch.range);
+                [self _enumerateScopesInString:string range:NSMakeRange(childrenRangeLocation, firstScopeEndMatch.range.location - childrenRangeLocation) withPatterns:firstScopePattern.patterns scopesStack:scopesStack usingBlock:block];
+            }
+            block(firstScopeBeginMatch, firstScopeEndMatch, firstScopePattern, firstScope, YES, NO, firstScopeSkippedScopes, &skipChildren, &stop);
+        }
+        [scopesStack removeLastObject];
+        if (stop)
+            break;        
+        NSUInteger offset = (firstScopeIsLeaf ? NSMaxRange(firstScopeBeginMatch.range) : NSMaxRange(firstScopeEndMatch.range)) - currentRange.location;
         currentRange.location += offset;
         currentRange.length -= offset;
-        bestMatchResult = nil;
     }
-    while (bestMatchResult);
-     */
+}
+
+- (void)_enumerateScopesInString:(NSString *)string range:(NSRange)range withPattern:(TMPattern *)pattern scopesStack:(NSMutableArray *)scopesStack usingBlock:(void (^)(NSTextCheckingResult *, NSTextCheckingResult *, TMPattern *, NSString *, BOOL, BOOL, BOOL *, BOOL *))block
+{
+    ECASSERT(pattern.include || pattern.match || pattern.begin || pattern.patterns);
+    if (pattern.include)
+    {
+        
+    }
+    else if (pattern.match)
+    {
+        
+    }
+    else if (pattern.begin)
+    {
+        
+    }
+    else
+    {
+        [self _enumerateScopesInString:string range:range withPatterns:pattern.patterns scopesStack:scopesStack usingBlock:^(NSTextCheckingResult *beginMatch, NSTextCheckingResult *endMatch, TMPattern *pattern, NSString *scope, BOOL isExitingScope, BOOL isLeafScope, BOOL skippedScopes, BOOL *skipChildren, BOOL *stop) {
+            block(beginMatch, endMatch, pattern, scope, isLeafScope, skippedScopes, skipChildren, stop);
+        }];
+    }
 }
 
 @end

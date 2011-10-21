@@ -19,6 +19,6 @@
 
 @property (nonatomic, strong, readonly) NSString *name;
 
-- (NSDictionary *)attributesForScopeStack:(NSArray *)scopeStack;
+- (NSDictionary *)attributesForScopeStack:(NSArray *)scopesStack;
 
 @end
