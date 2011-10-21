@@ -99,20 +99,59 @@ static const void *editItemContext;
     
     NSArray *oldItems = toolItems;
     toolItems = items;
+    for (UIBarButtonItem *item in toolItems) {
+        if (!item.customView)
+            [self _setupButton:[ACTopBarToolButton new] withBarButtonItem:item];
+        if (animated)
+            item.customView.alpha = 0;
+        [self addSubview:item.customView];
+    }
     
     if (animated)
     {
-        // TODO
+        BOOL willRemoveButtons = [oldItems count] > [toolItems count];
+        [UIView animateWithDuration:0.1 animations:^{
+            if (willRemoveButtons)
+            {
+                // Fade-out old items
+                for (UIBarButtonItem *item in oldItems) {
+                    item.customView.alpha = 0;
+                }
+            }
+            else
+            {
+                // Layout title control
+                [self _setupLayout];
+            }
+        } completion:^(BOOL finished) {
+            [UIView animateWithDuration:0.10 animations:^{
+                if (willRemoveButtons)
+                {
+                    // Layout title control
+                    [self _setupLayout];
+                }
+                else
+                {
+                    // Fade-out old items
+                    for (UIBarButtonItem *item in oldItems) {
+                        item.customView.alpha = 0;
+                    }
+                }
+                // Fade-in new ones
+                for (UIBarButtonItem *item in toolItems) {
+                    item.customView.alpha = 1;
+                }
+            } completion:^(BOOL finished) {
+                for (UIBarButtonItem *item in oldItems) {
+                    [item.customView removeFromSuperview];
+                }
+            }];
+        }];
     }
     else
     {
         for (UIBarButtonItem *item in oldItems) {
             [item.customView removeFromSuperview];
-        }
-        for (UIBarButtonItem *item in toolItems) {
-            if (!item.customView)
-                [self _setupButton:[ACTopBarToolButton new] withBarButtonItem:item];
-            [self addSubview:item.customView];
         }
         [self _setupLayout];
     }
