@@ -314,15 +314,18 @@ static void init(ECTabController *self)
 
 - (BOOL)tabBar:(ECTabBar *)tabBar willSelectTabControl:(UIControl *)tabControl atIndex:(NSUInteger)index
 {
+    if (!self.isViewLoaded || self.view.window == nil)
+    {
+        selectedViewControllerIndex = index;
+        return YES;
+    }
+    
     UIViewController *toViewController = nil;
     if (index != NSNotFound)
     {
         ECASSERT(index < [orderedChildViewControllers count]);
         toViewController = [orderedChildViewControllers objectAtIndex:index];
     }
-    
-    if (!self.isViewLoaded || self.view.window == nil)
-        return YES;
     
     if (abs(selectedViewControllerIndex - (NSInteger)index) <= 1)
     {
