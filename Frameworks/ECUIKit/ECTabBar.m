@@ -54,6 +54,8 @@ typedef void (^ScrollViewBlock)(UIScrollView *scrollView);
 - (void)_setSelectedTabControl:(UIControl *)tabControl;
 - (void)_setSelectedTabControl:(UIControl *)tabControl animated:(BOOL)animated;
 - (void)_removeTabControl:(UIControl *)tabControl animated:(BOOL)animated;
+/// Action attached to close button that willk remove the tab button
+- (void)_closeTabAction:(id)sender;
 
 - (UIControl *)_dequeueReusableTabControlWithIdentifier:(NSString *)reuseIdentifier;
 - (UIControl *)_controlForTabWithTitle:(NSString *)title atIndex:(NSUInteger)tabIndex;
@@ -650,6 +652,11 @@ static void init(ECTabBar *self)
     }
 }
 
+- (void)_closeTabAction:(id)sender
+{
+    [self _removeTabControl:(UIControl *)[sender superview] animated:YES];
+}
+
 - (UIControl *)_dequeueReusableTabControlWithIdentifier:(NSString *)reuseIdentifier
 {
     ECASSERT(reuseIdentifier != nil);
@@ -682,6 +689,7 @@ static void init(ECTabBar *self)
         tabButton.reuseIdentifier = tabButtonReusableIdentifier;
         
         ECTabBarButtonCloseButton *tabCloseButton = [ECTabBarButtonCloseButton buttonWithType:UIButtonTypeCustom];
+        [tabCloseButton addTarget:self action:@selector(_closeTabAction:) forControlEvents:UIControlEventTouchUpInside];
         tabCloseButton.autoresizingMask = UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleHeight;
         tabCloseButton.frame = CGRectMake(0, 0, 44, 44);
         

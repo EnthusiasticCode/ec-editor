@@ -196,7 +196,11 @@ static const void *contentViewControllerContext;
         return;
     [self willChangeValueForKey:@"tab"];
     
-    [_tab removeObserver:self forKeyPath:@"currentURL" context:&tabCurrentURLObservingContext];
+    if (_tab)
+    {
+        [_tab removeObserver:self forKeyPath:@"currentURL" context:&tabCurrentURLObservingContext];
+        [_tab.application removeTabAtIndex:[_tab.application.tabs indexOfObject:_tab]];
+    }
     
     _tab = tab;
     

@@ -297,10 +297,6 @@ static void init(ECTabController *self)
 - (void)removeChildViewControllerAtIndex:(NSUInteger)controllerIndex animated:(BOOL)animated
 {
     ECASSERT(controllerIndex < [orderedChildViewControllers count]);
-    
-    UIViewController *childController = [orderedChildViewControllers objectAtIndex:controllerIndex];
-    [childController removeObserver:self forKeyPath:@"title"];
-    
     [self.tabBar removeTabAtIndex:controllerIndex animated:animated];
 }
 
@@ -348,6 +344,7 @@ static void init(ECTabController *self)
 - (BOOL)tabBar:(ECTabBar *)tabBar willRemoveTabControl:(UIControl *)tabControl atIndex:(NSUInteger)tabIndex
 { 
     UIViewController *controller = [orderedChildViewControllers objectAtIndex:tabIndex];
+    [controller removeObserver:self forKeyPath:@"title"];
     [controller willMoveToParentViewController:nil];
     
     // Remove from tab controller
