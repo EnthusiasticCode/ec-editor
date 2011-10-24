@@ -62,9 +62,18 @@ typedef enum
 
 @end
 
+typedef enum
+{
+    ECCodeVisitorResultBreak,
+    ECCodeVisitorResultContinue,
+    ECCodeVisitorResultRecurse,
+} ECCodeVisitorResult;
+
+typedef ECCodeVisitorResult(^ECCodeVisitor)(NSString *scope, NSRange scopeRange, BOOL isLeafScope, BOOL isExitingScope, NSArray *scopesStack);
+
 @protocol ECCodeParser <ECCodeUnit>
 
-/// Parse the code unit's main source file
-- (void)enumerateScopesInRange:(NSRange)range usingBlock:(void(^)(NSString *scope, NSRange scopeRange, BOOL isExitingScope, BOOL isLeafScope, BOOL skippedScopes, NSArray *scopesStack, BOOL *skipChildren, BOOL *stop))block;
+/// Visit the scopes in the code unit's main source file
+- (void)visitScopesInRange:(NSRange)range usingVisitor:(ECCodeVisitor)visitorBlock;
 
 @end

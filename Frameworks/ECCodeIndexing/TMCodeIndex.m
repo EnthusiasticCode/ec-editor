@@ -17,7 +17,6 @@
 + (TMSyntax *)_syntaxForFile:(NSURL *)fileURL language:(NSString *)language scope:(NSString *)scope;
 + (TMSyntax *)_syntaxForFile:(NSURL *)fileURL;
 + (TMSyntax *)_syntaxWithLanguage:(NSString *)language;
-+ (TMSyntax *)_syntaxWithScope:(NSString *)scope;
 + (TMSyntax *)_syntaxWithPredicateBlock:(BOOL(^)(TMSyntax *syntax))predicateBlock;
 @end
 
@@ -43,13 +42,13 @@
     ECASSERT(protocol);
     ECASSERT(fileURL);
     if (protocol == @protocol(ECCodeParser))
-        return [[TMCodeParser alloc] initWithFileURL:fileURL syntax:[[self class] _syntaxForFile:fileURL language:language scope:scope]];
+        return [[TMCodeParser alloc] initWithIndex:self fileURL:fileURL syntax:[[self class] _syntaxForFile:fileURL language:language scope:scope]];
     return nil;
 }
 
 + (TMSyntax *)_syntaxForFile:(NSURL *)fileURL language:(NSString *)language scope:(NSString *)scope
 {
-    TMSyntax *syntax = [self _syntaxWithScope:scope];
+    TMSyntax *syntax = [self syntaxWithScope:scope];
     if (!syntax)
         syntax = [self _syntaxWithLanguage:language];
     if (!syntax)
@@ -87,7 +86,7 @@
     }];
 }
 
-+ (TMSyntax *)_syntaxWithScope:(NSString *)scope
++ (TMSyntax *)syntaxWithScope:(NSString *)scope
 {
     return [self _syntaxWithPredicateBlock:^BOOL(TMSyntax *syntax) {
         return [syntax.scope isEqualToString:scope];

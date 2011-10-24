@@ -29,7 +29,6 @@ static NSString * const _patternIncludeKey = @"include";
 @property (nonatomic, strong) NSRegularExpression *match;
 @property (nonatomic, strong) NSRegularExpression *begin;
 @property (nonatomic, strong) NSRegularExpression *end;
-- (NSTextCheckingResult *)_cachedResultInString:(NSString *)string options:(NSMatchingOptions)options range:(NSRange)range;
 @end
 
 @implementation TMPattern
@@ -54,6 +53,7 @@ static NSString * const _patternIncludeKey = @"include";
     {
         ECASSERT(![self.dictionary objectForKey:_patternCapturesKey] || (![self.dictionary objectForKey:_patternBeginCapturesKey] && ![self.dictionary objectForKey:_patternEndCapturesKey]));
         _captures = [self.dictionary objectForKey:_patternCapturesKey];
+        ECASSERT(!_captures || [_captures count]);
     }
     return _captures;
 }
@@ -66,6 +66,7 @@ static NSString * const _patternIncludeKey = @"include";
         _beginCaptures = [self.dictionary objectForKey:_patternBeginCapturesKey];
         if (!_beginCaptures)
             _beginCaptures = [self.dictionary objectForKey:_patternCapturesKey];
+        ECASSERT(!_beginCaptures || [_beginCaptures count]);
     }
     return _beginCaptures;
 }
@@ -78,6 +79,7 @@ static NSString * const _patternIncludeKey = @"include";
         _endCaptures = [self.dictionary objectForKey:_patternEndCapturesKey];
         if (!_endCaptures)
             _endCaptures = [self.dictionary objectForKey:_patternCapturesKey];
+        ECASSERT(!_endCaptures || [_endCaptures count]);
     }
     return _endCaptures;
 }
@@ -89,7 +91,9 @@ static NSString * const _patternIncludeKey = @"include";
         NSMutableArray *patterns = [NSMutableArray array];
         for (NSDictionary *dictionary in [self.dictionary objectForKey:_patternPatternsKey])
             [patterns addObject:[[[self class] alloc] initWithDictionary:dictionary]];
-        _patterns = [patterns copy];
+        if ([patterns count])
+            _patterns = [patterns copy];
+        ECASSERT(!_patterns || [_patterns count]);
     }
     return _patterns;
 }
@@ -106,17 +110,21 @@ static NSString * const _patternIncludeKey = @"include";
         return nil;
     self.dictionary = dictionary;
     NSString *matchRegex = [dictionary objectForKey:_patternMatchKey];
+    NSError *error = nil;
     if (matchRegex)
-        self.match = [NSRegularExpression regularExpressionWithPattern:matchRegex options:0 error:NULL];
+        self.match = [NSRegularExpression regularExpressionWithPattern:matchRegex options:0 error:&error];
     NSString *beginRegex = [dictionary objectForKey:_patternBeginKey];
     if (beginRegex)
-        self.begin = [NSRegularExpression regularExpressionWithPattern:beginRegex options:0 error:NULL];
+        self.begin = [NSRegularExpression regularExpressionWithPattern:beginRegex options:0 error:&error];
     NSString *endRegex = [dictionary objectForKey:_patternEndKey];
+    if (error)
+        NSLog(@"%@", [error localizedDescription]);
     if (endRegex)
         self.end = [NSRegularExpression regularExpressionWithPattern:endRegex options:0 error:NULL];
-    ECASSERT(!self.match || (!self.patterns && !self.begin && !self.include && [self.captures objectForKey:[NSNumber numberWithUnsignedInteger:0]]));
+    ECASSERT(!self.match || (![self.patterns count] && !self.begin && !self.include && ![self.captures objectForKey:[NSNumber numberWithUnsignedInteger:0]] && ![dictionary objectForKey:_patternBeginCapturesKey] && ![dictionary objectForKey:_patternEndCapturesKey]));
     ECASSERT(!self.begin || self.end && !self.include);
     ECASSERT(!self.end || self.begin);
+    ECASSERT(!self.include || (![self.patterns count] && !self.captures && !self.beginCaptures && !self.endCaptures));
     return self;
 }
 

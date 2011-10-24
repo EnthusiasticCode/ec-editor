@@ -14,6 +14,7 @@ static NSString * const _syntaxScopeKey = @"scopeName";
 static NSString * const _syntaxFileTypesKey = @"fileTypes";
 static NSString * const _syntaxFirstLineMatchKey = @"firstLineMatch";
 static NSString * const _syntaxPatternsKey = @"patterns";
+static NSString * const _syntaxRepositoryKey = @"repository";
 static NSString * const _patternScopeKey = @"name";
 static NSString * const _patternsPatternsKey = @"patterns";
 
@@ -23,7 +24,7 @@ static NSString * const _patternsPatternsKey = @"patterns";
 @property (nonatomic, strong) NSString *scope;
 @property (nonatomic, strong) NSArray *fileTypes;
 @property (nonatomic, strong) NSRegularExpression *firstLineMatch;
-@property (nonatomic, strong) NSArray *patterns;
+@property (nonatomic, strong) NSDictionary *repository;
 @property (nonatomic, strong) NSDictionary *plist;
 @end
 
@@ -34,16 +35,31 @@ static NSString * const _patternsPatternsKey = @"patterns";
 @synthesize scope = _scope;
 @synthesize fileTypes = _fileTypes;
 @synthesize firstLineMatch = _firstLineMatch;
-@synthesize patterns = _patterns;
+@synthesize pattern = _pattern;
+@synthesize repository = _repository;
 @synthesize plist = _plist;
 
-- (NSArray *)pattern
+- (TMPattern *)pattern
 {
-    if (!_patterns)
+    if (!_pattern)
     {
-        _patterns = [self.plist objectForKey:_syntaxPatternsKey];
+        ECASSERT([self.plist objectForKey:_syntaxPatternsKey]);
+        _pattern = [[TMPattern alloc] initWithDictionary:[NSDictionary dictionaryWithObjectsAndKeys:self.scope, _patternScopeKey, [self.plist objectForKey:_syntaxPatternsKey], _patternsPatternsKey, nil]];
     }
-    return _patterns;
+    return _pattern;
+}
+
+- (NSDictionary *)repository
+{
+    if (!_repository)
+    {
+        NSMutableDictionary *repository = [NSMutableDictionary dictionary];
+        [[self.plist objectForKey:_syntaxRepositoryKey] enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+            [repository setObject:[[TMPattern alloc] initWithDictionary:obj] forKey:key];
+        }];
+        _repository = [repository copy];
+    }
+    return _repository;
 }
 
 - (id)initWithFileURL:(NSURL *)fileURL
