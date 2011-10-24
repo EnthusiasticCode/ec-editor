@@ -124,6 +124,9 @@
 		CD9F3CF4142381EF00ACD841 /* fileBrowserEditArrow.png in Resources */ = {isa = PBXBuildFile; fileRef = CD9F3CF3142381EF00ACD841 /* fileBrowserEditArrow.png */; };
 		CD9F3CF71423855E00ACD841 /* projectBrowserTipsPopulatedEdit.png in Resources */ = {isa = PBXBuildFile; fileRef = CD9F3CF61423855E00ACD841 /* projectBrowserTipsPopulatedEdit.png */; };
 		CD9F3CF914238DE200ACD841 /* projectBrowserTipsEmpty.png in Resources */ = {isa = PBXBuildFile; fileRef = CD9F3CF814238DE200ACD841 /* projectBrowserTipsEmpty.png */; };
+		CDB7C92B145572EA00E0D2B2 /* ACSingleProjectBrowsersController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDB7C92A145572EA00E0D2B2 /* ACSingleProjectBrowsersController.m */; };
+		CDB7C92E1455731600E0D2B2 /* ACBottomTabBar.m in Sources */ = {isa = PBXBuildFile; fileRef = CDB7C92D1455731600E0D2B2 /* ACBottomTabBar.m */; };
+		CDB7C9301455762E00E0D2B2 /* SingleProjectBrowsers.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CDB7C92F1455762E00E0D2B2 /* SingleProjectBrowsers.storyboard */; };
 		CDC2829314508D500054358D /* topBar_Background.png in Resources */ = {isa = PBXBuildFile; fileRef = CDC2828F14508D500054358D /* topBar_Background.png */; };
 		CDC2829414508D500054358D /* topBar_ForwardButton_Normal.png in Resources */ = {isa = PBXBuildFile; fileRef = CDC2829014508D500054358D /* topBar_ForwardButton_Normal.png */; };
 		CDC2829514508D500054358D /* topBar_TitleButton_Normal.png in Resources */ = {isa = PBXBuildFile; fileRef = CDC2829114508D500054358D /* topBar_TitleButton_Normal.png */; };
@@ -420,6 +423,11 @@
 		CD9F3CF3142381EF00ACD841 /* fileBrowserEditArrow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = fileBrowserEditArrow.png; path = Resources/fileBrowserEditArrow.png; sourceTree = "<group>"; };
 		CD9F3CF61423855E00ACD841 /* projectBrowserTipsPopulatedEdit.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = projectBrowserTipsPopulatedEdit.png; path = Resources/projectBrowserTipsPopulatedEdit.png; sourceTree = "<group>"; };
 		CD9F3CF814238DE200ACD841 /* projectBrowserTipsEmpty.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = projectBrowserTipsEmpty.png; path = Resources/projectBrowserTipsEmpty.png; sourceTree = "<group>"; };
+		CDB7C929145572EA00E0D2B2 /* ACSingleProjectBrowsersController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACSingleProjectBrowsersController.h; sourceTree = "<group>"; };
+		CDB7C92A145572EA00E0D2B2 /* ACSingleProjectBrowsersController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACSingleProjectBrowsersController.m; sourceTree = "<group>"; };
+		CDB7C92C1455731600E0D2B2 /* ACBottomTabBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACBottomTabBar.h; sourceTree = "<group>"; };
+		CDB7C92D1455731600E0D2B2 /* ACBottomTabBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACBottomTabBar.m; sourceTree = "<group>"; };
+		CDB7C92F1455762E00E0D2B2 /* SingleProjectBrowsers.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = SingleProjectBrowsers.storyboard; sourceTree = "<group>"; };
 		CDC2828F14508D500054358D /* topBar_Background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = topBar_Background.png; sourceTree = "<group>"; };
 		CDC2829014508D500054358D /* topBar_ForwardButton_Normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = topBar_ForwardButton_Normal.png; sourceTree = "<group>"; };
 		CDC2829114508D500054358D /* topBar_TitleButton_Normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = topBar_TitleButton_Normal.png; sourceTree = "<group>"; };
@@ -764,6 +772,7 @@
 				B7AC172D14216CD4009E9205 /* NewFilePopover.storyboard */,
 				B7AC172E14216CD4009E9205 /* NewProjectPopover.storyboard */,
 				CD7D2B4D13C0D5FB00B889EE /* ToolPanelStoryboard.storyboard */,
+				CDB7C92F1455762E00E0D2B2 /* SingleProjectBrowsers.storyboard */,
 			);
 			name = UI;
 			sourceTree = "<group>";
@@ -793,6 +802,10 @@
 				B7AC174F14216D25009E9205 /* Popover Content Controllers */,
 				CD8108D613E334F7000E1941 /* Views and Controls */,
 				CD82554014224D3D00B742AF /* Resources */,
+				CDB7C929145572EA00E0D2B2 /* ACSingleProjectBrowsersController.h */,
+				CDB7C92A145572EA00E0D2B2 /* ACSingleProjectBrowsersController.m */,
+				CDB7C92C1455731600E0D2B2 /* ACBottomTabBar.h */,
+				CDB7C92D1455731600E0D2B2 /* ACBottomTabBar.m */,
 			);
 			name = Browsers;
 			sourceTree = "<group>";
@@ -1220,6 +1233,7 @@
 				CD9CB5EA145191FC00973204 /* tabBar_TabBackground_Normal.png in Resources */,
 				CD9CB5EB145191FC00973204 /* tabBar_TabBackground_Selected.png in Resources */,
 				CD4719A6145196CE00C7BCC5 /* tabBar_TabAddButton.png in Resources */,
+				CDB7C9301455762E00E0D2B2 /* SingleProjectBrowsers.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1267,6 +1281,8 @@
 				CDF4C011144F2C7900475F6B /* ACTopBarTitleControl.m in Sources */,
 				CDF4C012144F2C7900475F6B /* ACTopBarToolbar.m in Sources */,
 				CDF4C015144F2C8A00475F6B /* ACSingleTabController.m in Sources */,
+				CDB7C92B145572EA00E0D2B2 /* ACSingleProjectBrowsersController.m in Sources */,
+				CDB7C92E1455731600E0D2B2 /* ACBottomTabBar.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

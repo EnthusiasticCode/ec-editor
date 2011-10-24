@@ -84,6 +84,7 @@
     ////////////////////////////////////////////////////////////////////////////
     // Creating main tab controllers
     self.tabController = [[ECTabController alloc] init];
+    // Add tab button
     UIButton *addTabButton = [UIButton new];
     [addTabButton setImage:[UIImage imageNamed:@"tabBar_TabAddButton"] forState:UIControlStateNormal];
     [addTabButton setActionBlock:^(id sender) {

@@ -203,7 +203,7 @@ static void init(ECTabController *self)
         NSUInteger tabIndex = [orderedChildViewControllers indexOfObject:object];
         if (tabIndex != NSNotFound)
         {
-            [self.tabBar setTitle:[change objectForKey:NSKeyValueChangeNewKey] forTabAtIndex:tabIndex];
+            [self.tabBar setTitle:[object title] forTabAtIndex:tabIndex];
         }
     }
     else 

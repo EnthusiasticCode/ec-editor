@@ -15,7 +15,7 @@
 #import "ACApplication.h"
 
 #import "ACProjectTableController.h"
-#import "ACFileTableController.h"
+#import "ACSingleProjectBrowsersController.h"
 #import "ACCodeFileController.h"
 
 #define DEFAULT_TOOLBAR_HEIGHT 44
@@ -136,7 +136,7 @@ static const void *contentViewControllerContext;
         [_contentViewController didMoveToParentViewController:self];
         [_contentViewController addObserver:self forKeyPath:@"toolbarItems" options:NSKeyValueObservingOptionNew context:&contentViewControllerContext];
     }
-    
+
     [self _setupDefaultToolbarAnimated:animated];
     
     [self didChangeValueForKey:@"contentViewController"];
@@ -174,6 +174,21 @@ static const void *contentViewControllerContext;
 - (void)resetToolbarHeightAnimated:(BOOL)animated
 {
     [self setToolbarHeight:DEFAULT_TOOLBAR_HEIGHT animated:animated];
+}
+
+- (NSString *)title
+{
+    return self.contentViewController.title;
+}
+
+- (void)setTitle:(NSString *)title
+{
+    self.contentViewController.title = title;
+}
+
++ (NSSet *)keyPathsForValuesAffectingTitle
+{
+    return [NSSet setWithObject:@"contentViewController.title"];
 }
 
 #pragma mark Editing
@@ -409,13 +424,14 @@ static const void *contentViewControllerContext;
     {
         if (currentURLIsDirectory)
         {
-            if ([self.contentViewController isKindOfClass:[ACFileTableController class]])
+            if ([self.contentViewController isKindOfClass:[ACSingleProjectBrowsersController class]])
                 result = self.contentViewController;
             else
-                result = [[ACFileTableController alloc] init];
-            ACFileTableController *fileTableController = (ACFileTableController *)result;
-            fileTableController.directory = url;
-            fileTableController.tab = self.tab;
+                result = [[UIStoryboard storyboardWithName:@"SingleProjectBrowsers" bundle:nil] instantiateInitialViewController];
+                
+            ACSingleProjectBrowsersController *singleProjectController = (ACSingleProjectBrowsersController *)result;
+            singleProjectController.tab = self.tab;
+            [singleProjectController openFileBrowserWithURL:url];
         }
         else
         {
