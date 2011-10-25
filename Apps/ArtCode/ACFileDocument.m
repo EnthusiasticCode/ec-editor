@@ -94,10 +94,10 @@ static NSRange intersectionOfRangeRelativeToRange(NSRange range, NSRange inRange
     // Preparing result
     NSMutableAttributedString *result = [[NSMutableAttributedString alloc] initWithString:[self.contentString substringWithRange:stringRange] attributes:self.defaultTextStyle.CTAttributes];
     
-    [self.codeParser visitScopesInRange:stringRange usingVisitor:^ECCodeVisitorResult(NSString *scope, NSRange scopeRange, BOOL isLeafScope, BOOL isExitingScope, NSArray *scopesStack) {
-//        NSLog(@"%@", scope);
-        return ECCodeVisitorResultRecurse;
-    }];
+//    [self.codeParser visitScopesInRange:stringRange usingVisitor:^ECCodeVisitorResult(NSString *scope, NSRange scopeRange, BOOL isLeafScope, BOOL isExitingScope, NSArray *scopesStack) {
+////        NSLog(@"%@", scope);
+//        return ECCodeVisitorResultRecurse;
+//    }];
     
     // Append tailing new line
     if (NSMaxRange(stringRange) == self.contentString.length) 
@@ -157,7 +157,7 @@ static NSRange intersectionOfRangeRelativeToRange(NSRange range, NSRange inRange
             self.contentString = mutableContentString;
         }
         
-        [codeView updateTextInLineRange:fromLineRange toLineRange:(NSRange){ fromLineRange.location, toLineCount }];
+        //[codeView updateTextInLineRange:fromLineRange toLineRange:(NSRange){ fromLineRange.location, toLineCount }];
     }
 }
 

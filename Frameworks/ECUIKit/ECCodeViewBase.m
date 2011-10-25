@@ -11,6 +11,7 @@
 
 #define TILE_HEIGHT 300
 
+static const void *rendererContext;
 
 @interface ECCodeViewBaseContentView : UIView
 @property (nonatomic, weak) ECCodeViewBase *parentCodeView;
@@ -64,7 +65,7 @@
         _renderer = [ECTextRenderer new];
         _renderer.delegate = self;
         _renderer.datasource = self;
-        _renderer.preferredLineCountPerSegment = 500;
+        _renderer.maximumStringLenghtPerSegment = 1024;
     }
     return _renderer;
 }
@@ -91,9 +92,9 @@
     
     // Setup renderer wrap with keeping in to account insets and line display
     if (self.ownsRenderer)
-        self.renderer.wrapWidth = frame.size.width;
+        self.renderer.renderWidth = frame.size.width;
     
-    CGFloat contentHeight = self.renderer.estimatedHeight * self.contentScaleFactor;
+    CGFloat contentHeight = self.renderer.renderHeight * self.contentScaleFactor;
     if (contentHeight == 0)
         contentHeight = frame.size.height;
     self.contentSize = CGSizeMake(frame.size.width, contentHeight);
@@ -154,8 +155,8 @@ static void init(ECCodeViewBase *self)
     [self addSubview:self->_contentView];
     
     if (self.ownsRenderer)
-        self.renderer.wrapWidth = self.bounds.size.width;
-    [self.renderer addObserver:self forKeyPath:@"estimatedHeight" options:NSKeyValueObservingOptionNew context:nil];
+        self.renderer.renderWidth = self.bounds.size.width;
+    [self.renderer addObserver:self forKeyPath:@"renderHeight" options:NSKeyValueObservingOptionNew context:&rendererContext];
 }
 
 - (id)initWithFrame:(CGRect)frame renderer:(ECTextRenderer *)aRenderer renderingQueue:(NSOperationQueue *)queue
@@ -193,7 +194,7 @@ static void init(ECCodeViewBase *self)
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
-    if (object == self.renderer)
+    if (context == &rendererContext)
     {
         CGSize boundsSize = self.bounds.size;
         CGFloat height = [[change valueForKey:NSKeyValueChangeNewKey] floatValue];
@@ -201,6 +202,10 @@ static void init(ECCodeViewBase *self)
             height = boundsSize.height;
         CGFloat width = boundsSize.width;
         self.contentSize = CGSizeMake(width, height * self.contentScaleFactor);
+    }
+    else 
+    {
+        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
     }
 }
 
@@ -211,9 +216,9 @@ static void init(ECCodeViewBase *self)
     [self.renderer updateAllText];
 }
 
-- (void)updateTextInLineRange:(NSRange)originalRange toLineRange:(NSRange)newRange
+- (void)updateTextFromStringRange:(NSRange)originalRange toStringRange:(NSRange)newRange
 {
-    [self.renderer updateTextInLineRange:originalRange toLineRange:newRange];
+    [self.renderer updateTextFromStringRange:originalRange toStringRange:newRange];
 }
 
 #pragma mark - Text Renderer Delegate
@@ -272,72 +277,24 @@ static void init(ECCodeViewBase *self)
 
 #pragma mark - Text Renderer Data source
 
-- (NSAttributedString *)textRenderer:(ECTextRenderer *)sender stringInLineRange:(NSRange *)lineRange endOfString:(BOOL *)endOfString
+- (NSAttributedString *)textRenderer:(ECTextRenderer *)sender attributedStringInRange:(NSRange)stringRange
 {
     ECASSERT(sender == self.renderer);
     
     if (self.datasource == nil)
         return nil;
     
-    NSRange stringRange = NSMakeRange(0, 0);
-    if (dataSourceHasStringRangeForLineRange)
-    {
-        stringRange = [self.datasource codeView:self stringRangeForLineRange:lineRange];
-    }
-    else
-    {
-#warning NIK TODO!!! optimize line to string range conversion
-
-//        NSMutableAttributedString *resultString = [[NSMutableAttributedString alloc] init];
-//        
-//        NSUInteger remainingStringLength = [self.datasource textLength];
-//        NSRange fetchStringRange = NSMakeRange(0, 0);
-//        __block NSUInteger lineIndex = 0;
-//        __block NSUInteger stringCursor = 0;
-//        
-//        fetchStringRange.location += fetchStringRange.length;
-//        fetchStringRange.length = MIN(300, remainingStringLength);
-//        NSAttributedString *currentString = [self.datasource codeView:self attributedStringInRange:fetchStringRange];
-////        currentString.string getLineStart:<#(NSUInteger *)#> end:<#(NSUInteger *)#> contentsEnd:<#(NSUInteger *)#> forRange:<#(NSRange)#>
-//        [currentString.string enumerateLinesUsingBlock:^(NSString *line, BOOL *stop) {
-//            stringCursor += [line length];
-//            // Skip line if before request
-//            if (lineIndex++ < (*lineRange).location)
-//                return;
-//        }];
-        
-        NSUInteger lineIndex, stringLength = [self.datasource textLength];
-        NSString *contentString = [self.datasource codeView:self attributedStringInRange:NSMakeRange(0, stringLength)].string;
-        
-        // Calculate string range location for query line range location
-        for (lineIndex = 0; lineIndex < lineRange->location; ++lineIndex)
-            stringRange.location = NSMaxRange([contentString lineRangeForRange:(NSRange){ stringRange.location, 0 }]);
-        
-        if (stringRange.location < stringLength)
-        {        
-            // Calculate string range lenght for query line range length
-            stringRange.length = stringRange.location;
-            for (lineIndex = 0; lineIndex < lineRange->length && stringRange.length < stringLength; ++lineIndex)
-                stringRange.length = NSMaxRange([contentString lineRangeForRange:(NSRange){ stringRange.length, 0 }]);
-            stringRange.length -= stringRange.location;
-            
-            // Assign return read count of lines
-            lineRange->length = lineIndex;
-        }
-    }
-    
-    if (endOfString)
-        *endOfString = (NSMaxRange(stringRange) == [self.datasource textLength]);
-    
     return [self.datasource codeView:self attributedStringInRange:stringRange];
 }
 
-- (NSUInteger)textRenderer:(ECTextRenderer *)sender estimatedTextLineCountOfLength:(NSUInteger)maximumLineLength
+- (NSUInteger)stringLengthForTextRenderer:(ECTextRenderer *)sender
 {
-    if (![self.datasource textLength])
+    ECASSERT(sender == self.renderer);
+    
+    if (self.datasource == nil)
         return 0;
-    ECASSERT(maximumLineLength);
-    return 1 + [self.datasource textLength] / maximumLineLength;
+    
+    return [self.datasource textLength];
 }
 
 #pragma mark - Text Renderer and CodeView String Datasource
@@ -369,8 +326,8 @@ static void init(ECCodeViewBase *self)
     
     // Update tiles
     CGRect bounds = self.bounds;
-    self.renderer.wrapWidth = bounds.size.width;
-    self.contentSize = CGSizeMake(bounds.size.width, self.renderer.estimatedHeight * self.contentScaleFactor);
+    self.renderer.renderWidth = bounds.size.width;
+    self.contentSize = CGSizeMake(bounds.size.width, self.renderer.renderHeight * self.contentScaleFactor);
     
     [_contentView setNeedsDisplay];
 }

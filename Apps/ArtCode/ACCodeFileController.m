@@ -160,8 +160,6 @@
         //            CGContextFillRect(context, lineNumberBounds);
     };
     
-    codeView.renderer.preferredLineCountPerSegment = 500;
-    
     self.view = codeView;
 }
 

@@ -65,7 +65,7 @@ typedef void (^LineNumberRenderingBlock)(CGContextRef context, CGRect lineNumber
 - (void)updateAllText;
 
 /// Invalidate a particular section of the text making the reveiver redraw it.
-- (void)updateTextInLineRange:(NSRange)originalRange toLineRange:(NSRange)newRange;
+- (void)updateTextFromStringRange:(NSRange)originalRange toStringRange:(NSRange)newRange;
 
 #pragma mark Styling Text Display
 

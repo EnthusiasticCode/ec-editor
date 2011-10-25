@@ -240,8 +240,8 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
     // Check to be contained in text bounds
     if (textRect.origin.x < -10)
         textRect.origin.x = -10;
-    else if (CGRectGetMaxX(textRect) > parent.renderer.wrapWidth + 10)
-        textRect.origin.x = parent.renderer.wrapWidth - textRect.size.width + 10;
+    else if (CGRectGetMaxX(textRect) > parent.renderer.renderWidth + 10)
+        textRect.origin.x = parent.renderer.renderWidth - textRect.size.width + 10;
     // Render magnified image
     __weak TextMagnificationView *this = self;
     [parent.renderingQueue addOperationWithBlock:^(void) {
