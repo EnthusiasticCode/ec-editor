@@ -8,6 +8,8 @@
 
 #import "TMPattern.h"
 
+#import "OnigRegexp.h"
+
 static NSString * const _patternNameKey = @"name";
 static NSString * const _patternMatchKey = @"match";
 static NSString * const _patternBeginKey = @"begin";
@@ -26,9 +28,9 @@ static NSString * const _patternIncludeKey = @"include";
     NSTextCheckingResult *_cachedMatchResult;
 }
 @property (nonatomic, strong) NSDictionary *dictionary;
-@property (nonatomic, strong) NSRegularExpression *match;
-@property (nonatomic, strong) NSRegularExpression *begin;
-@property (nonatomic, strong) NSRegularExpression *end;
+@property (nonatomic, strong) OnigRegexp *match;
+@property (nonatomic, strong) OnigRegexp *begin;
+@property (nonatomic, strong) OnigRegexp *end;
 @end
 
 @implementation TMPattern
@@ -110,17 +112,14 @@ static NSString * const _patternIncludeKey = @"include";
         return nil;
     self.dictionary = dictionary;
     NSString *matchRegex = [dictionary objectForKey:_patternMatchKey];
-    NSError *error = nil;
     if (matchRegex)
-        self.match = [NSRegularExpression regularExpressionWithPattern:matchRegex options:0 error:&error];
+        self.match = [OnigRegexp compile:matchRegex ignorecase:NO multiline:YES];
     NSString *beginRegex = [dictionary objectForKey:_patternBeginKey];
     if (beginRegex)
-        self.begin = [NSRegularExpression regularExpressionWithPattern:beginRegex options:0 error:&error];
+        self.begin = [OnigRegexp compile:beginRegex ignorecase:NO multiline:YES];
     NSString *endRegex = [dictionary objectForKey:_patternEndKey];
-    if (error)
-        NSLog(@"%@", [error localizedDescription]);
     if (endRegex)
-        self.end = [NSRegularExpression regularExpressionWithPattern:endRegex options:0 error:NULL];
+        self.end = [OnigRegexp compile:endRegex ignorecase:NO multiline:YES];
     ECASSERT(!self.match || (![self.patterns count] && !self.begin && !self.include && ![self.captures objectForKey:[NSNumber numberWithUnsignedInteger:0]] && ![dictionary objectForKey:_patternBeginCapturesKey] && ![dictionary objectForKey:_patternEndCapturesKey]));
     ECASSERT(!self.begin || self.end && !self.include);
     ECASSERT(!self.end || self.begin);

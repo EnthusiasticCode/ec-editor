@@ -95,7 +95,7 @@ static NSRange intersectionOfRangeRelativeToRange(NSRange range, NSRange inRange
     NSMutableAttributedString *result = [[NSMutableAttributedString alloc] initWithString:[self.contentString substringWithRange:stringRange] attributes:self.defaultTextStyle.CTAttributes];
     
     [self.codeParser visitScopesInRange:stringRange usingVisitor:^ECCodeVisitorResult(NSString *scope, NSRange scopeRange, BOOL isLeafScope, BOOL isExitingScope, NSArray *scopesStack) {
-//        NSLog(@"%@", scope);
+//        NSLog(@"visited scope: %@ at range: {%d,%d}", scope, scopeRange.location, scopeRange.length);
         return ECCodeVisitorResultRecurse;
     }];
     

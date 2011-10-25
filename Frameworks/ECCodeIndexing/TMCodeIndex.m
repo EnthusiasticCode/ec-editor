@@ -13,7 +13,6 @@
 #import "TMSyntax.h"
 
 @interface TMCodeIndex ()
-#warning TODO: add some caching or indexing of syntaxes if necessary
 + (TMSyntax *)_syntaxForFile:(NSURL *)fileURL language:(NSString *)language scope:(NSString *)scope;
 + (TMSyntax *)_syntaxForFile:(NSURL *)fileURL;
 + (TMSyntax *)_syntaxWithLanguage:(NSString *)language;

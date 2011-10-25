@@ -10,6 +10,12 @@
 #import "TMBundle.h"
 #import "TMSyntax.h"
 #import "TMPattern.h"
+#import "OnigRegexp.h"
+
+static NSRange _rangeFromEndOfRangeToEndOfRange(NSRange firstRange, NSRange secondRange)
+{
+    return NSMakeRange(NSMaxRange(firstRange), NSMaxRange(secondRange) - NSMaxRange(firstRange));
+}
 
 @interface TMCodeParser ()
 {
@@ -100,18 +106,6 @@
 
 #pragma mark - Private methods
 
-#define STOP_IF_VISITORRESULT_EQUALS_BREAK \
-do\
-{\
-if (visitorResult == ECCodeVisitorResultBreak)\
-{\
-*stop = YES;\
-return;\
-}\
-}\
-while(NO);
-
-
 - (void)_visitScopesInString:(NSString *)string range:(NSRange)range withPattern:(TMPattern *)pattern previousScopeStack:(NSMutableArray *)previousScopeStack usingVisitor:(ECCodeVisitor)visitorBlock
 {
     ECASSERT([string length] && NSMaxRange(range) <= [string length] && pattern && previousScopeStack && visitorBlock);
@@ -131,7 +125,7 @@ while(NO);
     unichar firstCharacter = [pattern.include characterAtIndex:0];
     if (firstCharacter == '$')
     {
-        [self _visitScopesInString:string range:range withPattern:pattern previousScopeStack:previousScopeStack usingVisitor:visitorBlock];
+        [self _visitScopesInString:string range:range withPattern:self.syntax.pattern previousScopeStack:previousScopeStack usingVisitor:visitorBlock];
     }
     else if (firstCharacter == '#')
     {
@@ -152,35 +146,50 @@ while(NO);
     if (pattern.name)
         [previousScopeStack addObject:pattern.name];
     if (pattern.captures)
-        [pattern.match enumerateMatchesInString:string options:0 range:range usingBlock:^(NSTextCheckingResult *result, NSMatchingFlags flags, BOOL *stop) {
-            ECASSERT(result.numberOfRanges > 1);
-            ECCodeVisitorResult visitorResult = visitorBlock(pattern.name, result.range, NO, NO, [previousScopeStack copy]);
-            STOP_IF_VISITORRESULT_EQUALS_BREAK;
-            if (visitorResult == ECCodeVisitorResultRecurse)
+    {
+        OnigResult *result = [pattern.match search:string range:range];
+        while (result)
+        {
+            ECASSERT([result count] > 1);
+            ECCodeVisitorResult visitorResult = visitorBlock(pattern.name, [result rangeAt:0], NO, NO, [previousScopeStack copy]);
+            if (visitorResult == ECCodeVisitorResultBreak)
+                break;
+            else if (visitorResult == ECCodeVisitorResultRecurse)
             {
-                NSUInteger numMatchRanges = result.numberOfRanges;
+                NSUInteger numMatchRanges = [result count];
                 for (NSUInteger currentMatchRangeIndex = 1; currentMatchRangeIndex < numMatchRanges; ++currentMatchRangeIndex)
                 {
-                    NSRange currentMatchRange = [result rangeAtIndex:currentMatchRangeIndex];
+                    NSRange currentMatchRange = [result rangeAt:currentMatchRangeIndex];
                     NSString *currentCapture = [pattern.captures objectForKey:[NSNumber numberWithUnsignedInteger:currentMatchRangeIndex]];
                     if (!currentCapture)
                         continue;
                     [previousScopeStack addObject:currentCapture];
                     visitorResult = visitorBlock(currentCapture, currentMatchRange, YES, NO, [previousScopeStack copy]);
-                    STOP_IF_VISITORRESULT_EQUALS_BREAK;
                     [previousScopeStack removeLastObject];
+                    if (visitorResult == ECCodeVisitorResultBreak)
+                        break;
                 }
             }
-            visitorResult = visitorBlock(pattern.name, result.range, NO, YES, [previousScopeStack copy]);
-            STOP_IF_VISITORRESULT_EQUALS_BREAK;
-            [previousScopeStack removeLastObject];
-        }];
+            if (visitorResult == ECCodeVisitorResultBreak)
+                break;
+            visitorResult = visitorBlock(pattern.name, [result rangeAt:0], NO, YES, [previousScopeStack copy]);
+            if (visitorResult == ECCodeVisitorResultBreak)
+                break;
+            result = [pattern.match search:string range:_rangeFromEndOfRangeToEndOfRange([result rangeAt:0], range)];
+        }
+    }
     else
-        [pattern.match enumerateMatchesInString:string options:0 range:range usingBlock:^(NSTextCheckingResult *result, NSMatchingFlags flags, BOOL *stop) {
+    {
+        OnigResult *result = [pattern.match search:string range:range];
+        while (result)
+        {
             ECASSERT(pattern.name);
-            ECCodeVisitorResult visitorResult = visitorBlock(pattern.name, result.range, YES, NO, [previousScopeStack copy]);
-            STOP_IF_VISITORRESULT_EQUALS_BREAK;
-        }];
+            ECCodeVisitorResult visitorResult = visitorBlock(pattern.name, [result rangeAt:0], YES, NO, [previousScopeStack copy]);
+            if (visitorResult == ECCodeVisitorResultBreak)
+                break;
+            result = [pattern.match search:string range:_rangeFromEndOfRangeToEndOfRange([result rangeAt:0], range)];
+        }
+    }
     if (pattern.name)
         [previousScopeStack removeLastObject];
 }
@@ -189,19 +198,23 @@ while(NO);
 {
     if (pattern.name)
         [previousScopeStack addObject:pattern.name];
-    [pattern.begin enumerateMatchesInString:string options:0 range:range usingBlock:^(NSTextCheckingResult *result, NSMatchingFlags flags, BOOL *stop) {
-        NSTextCheckingResult *endMatch = [pattern.end firstMatchInString:string options:0 range:NSMakeRange(range.location + result.range.length, range.length - result.range.length)];
-        NSUInteger spanStart = result.range.location;
-        NSUInteger spanEnd = endMatch ? NSMaxRange(endMatch.range) : NSMaxRange(range) - spanStart;
-        NSUInteger childScopesStart = NSMaxRange(result.range);
-        NSUInteger childScopesEnd = endMatch ? endMatch.range.location : NSMaxRange(range) - childScopesStart;
+    OnigResult *result = [pattern.begin search:string range:range];
+    while (result)
+    {
+        OnigResult *endMatch = [pattern.end search:string range:_rangeFromEndOfRangeToEndOfRange([result rangeAt:0], range)];
+        ECASSERT(!endMatch || [endMatch rangeAt:0].location >= NSMaxRange([result rangeAt:0]));
+        NSUInteger spanStart = [result rangeAt:0].location;
+        NSUInteger spanEnd = endMatch ? NSMaxRange([endMatch rangeAt:0]) : NSMaxRange(range);
+        NSUInteger childScopesStart = NSMaxRange([result rangeAt:0]);
+        NSUInteger childScopesEnd = endMatch ? [endMatch rangeAt:0].location : NSMaxRange(range);
         NSRange spanRange = NSMakeRange(spanStart, spanEnd - spanStart);
         NSRange childScopesRange = NSMakeRange(childScopesStart, childScopesEnd - childScopesStart);
-        ECCodeVisitorResult visitorResult = ECCodeVisitorResultRecurse;
+        __block ECCodeVisitorResult visitorResult = ECCodeVisitorResultRecurse;
         if (pattern.name)
             visitorResult = visitorBlock(pattern.name, spanRange, NO, NO, [previousScopeStack copy]);
-        STOP_IF_VISITORRESULT_EQUALS_BREAK;
-        if (visitorResult == ECCodeVisitorResultRecurse)
+        if (visitorResult == ECCodeVisitorResultBreak)
+            break;
+        else if (visitorResult == ECCodeVisitorResultRecurse)
         {
             if (pattern.beginCaptures)
             {
@@ -209,68 +222,92 @@ while(NO);
                 if (mainCapture)
                 {
                     [previousScopeStack addObject:mainCapture];
-                    visitorResult = visitorBlock(mainCapture, result.range, NO, NO, [previousScopeStack copy]);
+                    visitorResult = visitorBlock(mainCapture, [result rangeAt:0], NO, NO, [previousScopeStack copy]);
+                    if (visitorResult == ECCodeVisitorResultBreak)
+                    {
+                        [previousScopeStack removeLastObject];
+                        break;
+                    }
                 }
-                STOP_IF_VISITORRESULT_EQUALS_BREAK;
                 if (visitorResult == ECCodeVisitorResultRecurse)
                 {
-                    NSUInteger numMatchRanges = result.numberOfRanges;
+                    NSUInteger numMatchRanges = [result count];
                     for (NSUInteger currentMatchRangeIndex = 1; currentMatchRangeIndex < numMatchRanges; ++currentMatchRangeIndex)
                     {
-                        NSRange currentMatchRange = [result rangeAtIndex:currentMatchRangeIndex];
+                        NSRange currentMatchRange = [result rangeAt:currentMatchRangeIndex];
                         NSString *currentCapture = [pattern.beginCaptures objectForKey:[NSNumber numberWithUnsignedInteger:currentMatchRangeIndex]];
                         if (!currentCapture)
                             continue;
                         [previousScopeStack addObject:currentCapture];
                         visitorResult = visitorBlock(currentCapture, currentMatchRange, YES, NO, [previousScopeStack copy]);
-                        STOP_IF_VISITORRESULT_EQUALS_BREAK;
                         [previousScopeStack removeLastObject];
+                        if (visitorResult == ECCodeVisitorResultBreak)
+                            break;
                     }
                 }
                 if (mainCapture)
                 {
-                    visitorResult = visitorBlock(mainCapture, result.range, NO, YES, [previousScopeStack copy]);
+                    if (visitorResult != ECCodeVisitorResultBreak)
+                        visitorResult = visitorBlock(mainCapture, [result rangeAt:0], NO, YES, [previousScopeStack copy]);
                     [previousScopeStack removeLastObject];
                 }
-                STOP_IF_VISITORRESULT_EQUALS_BREAK;
+                if (visitorResult == ECCodeVisitorResultBreak)
+                    break;
             }
-            [self _visitScopesInString:string range:childScopesRange withChildPatternsOfPattern:pattern previousScopeStack:previousScopeStack usingVisitor:visitorBlock];
+            [self _visitScopesInString:string range:childScopesRange withChildPatternsOfPattern:pattern previousScopeStack:previousScopeStack usingVisitor:^ECCodeVisitorResult(NSString *scope, NSRange scopeRange, BOOL isLeafScope, BOOL isExitingScope, NSArray *scopesStack) {
+                visitorResult = visitorBlock(scope, scopeRange, isLeafScope, isExitingScope, scopesStack);
+                return visitorResult;
+            }];
+            if (visitorResult == ECCodeVisitorResultBreak)
+                break;
             if (pattern.endCaptures && endMatch)
             {
                 NSString *mainCapture = [pattern.endCaptures objectForKey:[NSNumber numberWithUnsignedInteger:0]];
                 if (mainCapture)
                 {
                     [previousScopeStack addObject:mainCapture];
-                    visitorResult = visitorBlock(mainCapture, endMatch.range, NO, NO, [previousScopeStack copy]);
+                    visitorResult = visitorBlock(mainCapture, [endMatch rangeAt:0], NO, NO, [previousScopeStack copy]);
+                    if (visitorResult == ECCodeVisitorResultBreak)
+                    {
+                        [previousScopeStack removeLastObject];
+                        break;
+                    }
                 }
-                STOP_IF_VISITORRESULT_EQUALS_BREAK;
                 if (visitorResult == ECCodeVisitorResultRecurse)
                 {
-                    NSUInteger numMatchRanges = endMatch.numberOfRanges;
+                    NSUInteger numMatchRanges = [endMatch count];
                     for (NSUInteger currentMatchRangeIndex = 1; currentMatchRangeIndex < numMatchRanges; ++currentMatchRangeIndex)
                     {
-                        NSRange currentMatchRange = [endMatch rangeAtIndex:currentMatchRangeIndex];
+                        NSRange currentMatchRange = [endMatch rangeAt:currentMatchRangeIndex];
                         NSString *currentCapture = [pattern.beginCaptures objectForKey:[NSNumber numberWithUnsignedInteger:currentMatchRangeIndex]];
                         if (!currentCapture)
                             continue;
                         [previousScopeStack addObject:currentCapture];
                         visitorResult = visitorBlock(currentCapture, currentMatchRange, YES, NO, [previousScopeStack copy]);
-                        STOP_IF_VISITORRESULT_EQUALS_BREAK;
                         [previousScopeStack removeLastObject];
+                        if (visitorResult == ECCodeVisitorResultBreak)
+                            break;
                     }
                 }
                 if (mainCapture)
                 {
-                    visitorResult = visitorBlock(mainCapture, endMatch.range, NO, YES, [previousScopeStack copy]);
+                    if (visitorResult != ECCodeVisitorResultBreak)
+                        visitorResult = visitorBlock(mainCapture, [endMatch rangeAt:0], NO, YES, [previousScopeStack copy]);
                     [previousScopeStack removeLastObject];
                 }
-                STOP_IF_VISITORRESULT_EQUALS_BREAK;
+                if (visitorResult == ECCodeVisitorResultBreak)
+                    break;
             }
         }
         if (pattern.name)
             visitorResult = visitorBlock(pattern.name, spanRange, NO, YES, [previousScopeStack copy]);
-        STOP_IF_VISITORRESULT_EQUALS_BREAK;
-    }];
+        if (visitorResult == ECCodeVisitorResultBreak)
+            break;
+        if (endMatch)
+            result = [pattern.match search:string range:_rangeFromEndOfRangeToEndOfRange([endMatch rangeAt:0], range)];
+        else
+            break;
+    }
     if (pattern.name)
         [previousScopeStack removeLastObject];
 }
