@@ -661,7 +661,7 @@
     
     // Trim returned string if needed
     if (lineRange.location != stringLength)
-        attributedString = [attributedString attributedSubstringFromRange:NSMakeRange(0, lineRange.length)];
+        attributedString = [attributedString attributedSubstringFromRange:NSMakeRange(0, lineRange.location)];
     
     if (lines)
         *lines = lineCount;
