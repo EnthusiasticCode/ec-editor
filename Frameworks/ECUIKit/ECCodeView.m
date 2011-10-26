@@ -157,7 +157,6 @@
 @private
     id<ECCodeViewDataSource> datasource;
     ECTextRenderer *renderer;
-    NSOperationQueue *renderingQueue;
     
     ECCodeViewBase *navigatorView;
     
@@ -166,8 +165,7 @@
 
 - (id)initWithFrame:(CGRect)frame 
 navigatorDatasource:(id<ECCodeViewDataSource>)source 
-           renderer:(ECTextRenderer *)aRenderer 
-     renderingQueue:(NSOperationQueue *)queue;
+           renderer:(ECTextRenderer *)aRenderer;
 
 #pragma mark Parent Layout
 
@@ -244,7 +242,7 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
         textRect.origin.x = parent.renderer.renderWidth - textRect.size.width + 10;
     // Render magnified image
     __weak TextMagnificationView *this = self;
-    [parent.renderingQueue addOperationWithBlock:^(void) {
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(void) {
         UIGraphicsBeginImageContext(this.bounds.size);
         // Prepare magnified context
         CGContextRef imageContext = UIGraphicsGetCurrentContext();        
@@ -267,7 +265,7 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
         [[NSOperationQueue mainQueue] addOperationWithBlock:^(void) {
             [this setNeedsDisplay];
         }];
-    }];
+    });
 }
 
 @end
@@ -644,7 +642,7 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
 @synthesize normalWidth, navigatorWidth;
 @synthesize navigatorInsets, navigatorVisible, navigatorBackgroundColor;
 
-- (id)initWithFrame:(CGRect)frame navigatorDatasource:(id<ECCodeViewDataSource>)source renderer:(ECTextRenderer *)aRenderer renderingQueue:(NSOperationQueue *)queue
+- (id)initWithFrame:(CGRect)frame navigatorDatasource:(id<ECCodeViewDataSource>)source renderer:(ECTextRenderer *)aRenderer
 {
     parentSize = [UIScreen mainScreen].bounds.size;
     normalWidth = 11;
@@ -657,7 +655,6 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
     {
         datasource = source;
         renderer = aRenderer;
-        renderingQueue = queue;
         
         self.backgroundColor = [UIColor clearColor];
         
@@ -715,7 +712,7 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
         CGRect frame = (CGRect){ CGPointZero, parentSize };
         frame.size.width = navigatorWidth;
         frame = UIEdgeInsetsInsetRect(frame, navigatorInsets);
-        navigatorView = [[ECCodeViewBase alloc] initWithFrame:frame renderer:renderer renderingQueue:renderingQueue];
+        navigatorView = [[ECCodeViewBase alloc] initWithFrame:frame renderer:renderer];
         navigatorView.datasource = datasource;
         navigatorView.contentScaleFactor = (navigatorWidth - navigatorInsets.left - navigatorInsets.right) / parentSize.width;
         navigatorView.backgroundColor = [UIColor whiteColor];
@@ -909,7 +906,7 @@ static void init(ECCodeView *self)
     {
         if (!infoView)
         {
-            infoView = [[CodeInfoView alloc] initWithFrame:self.bounds navigatorDatasource:self.datasource renderer:self.renderer renderingQueue:self.renderingQueue];
+            infoView = [[CodeInfoView alloc] initWithFrame:self.bounds navigatorDatasource:self.datasource renderer:self.renderer];
             infoView.navigatorBackgroundColor = navigatorBackgroundColor;
             infoView.navigatorWidth = navigatorWidth;
             infoView.parentSize = self.bounds.size;

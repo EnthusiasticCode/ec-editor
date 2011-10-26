@@ -32,6 +32,8 @@ static const void *rendererContext;
 @property (nonatomic, strong) ECTextRenderer *renderer;
 @property (nonatomic, readonly) BOOL ownsRenderer;
 
+- (void)_forwardTextInsetsToRenderer;
+
 @end
 
 
@@ -41,8 +43,7 @@ static const void *rendererContext;
 #pragma mark Properties
 
 @synthesize datasource = _datasource;
-@synthesize renderingQueue = _renderingQueue, renderer = _renderer;
-@synthesize textInsets, lineNumbersEnabled, lineNumbersWidth, lineNumbersFont, lineNumbersColor, lineNumberRenderingBlock;
+@synthesize renderer = _renderer;
 
 - (void)setDatasource:(id<ECCodeViewBaseDataSource>)datasource
 {
@@ -75,16 +76,6 @@ static const void *rendererContext;
     return self.renderer.delegate == self;
 }
 
-- (NSOperationQueue *)renderingQueue
-{
-    if (_renderingQueue == nil)
-    {
-        _renderingQueue = [NSOperationQueue new];
-        [_renderingQueue setMaxConcurrentOperationCount:1];
-    }
-    return _renderingQueue;
-}
-
 - (void)setFrame:(CGRect)frame
 {
     if (CGRectEqualToRect(frame, self.frame))
@@ -109,10 +100,14 @@ static const void *rendererContext;
     [super setContentSize:contentRect.size];
 }
 
+@synthesize textInsets, lineNumbersEnabled, lineNumbersWidth, lineNumbersFont, lineNumbersColor;
+
 - (void)setLineNumbersEnabled:(BOOL)enabled
 {
     if (lineNumbersEnabled == enabled)
         return;
+    
+    [self willChangeValueForKey:@"lineNumbersEnabled"];
     
     lineNumbersEnabled = enabled;
     
@@ -143,6 +138,41 @@ static const void *rendererContext;
     {
         [self removePassLayerForKey:lineNumberPassKey];
     }
+    [self _forwardTextInsetsToRenderer];
+    
+    [self didChangeValueForKey:@"lineNumbersEnabled"];
+}
+
+- (void)setTextInsets:(UIEdgeInsets)insets
+{
+    if (UIEdgeInsetsEqualToEdgeInsets(insets, textInsets))
+        return;
+    
+    [self willChangeValueForKey:@"textInsets"];
+    textInsets = insets;
+    [self _forwardTextInsetsToRenderer];
+    [self didChangeValueForKey:@"textInsets"];
+}
+
+- (void)setLineNumbersWidth:(CGFloat)width
+{
+    if (width == lineNumbersWidth)
+        return;
+    
+    [self willChangeValueForKey:@"lineNumbersWidth"];
+    lineNumbersWidth = width;
+    [self _forwardTextInsetsToRenderer];
+    [self didChangeValueForKey:@"lineNumbersWidth"];
+}
+
+- (void)_forwardTextInsetsToRenderer
+{
+    UIEdgeInsets insets = self.textInsets;
+    
+    if (lineNumbersEnabled)
+        insets.left += lineNumbersWidth;
+    
+    self.renderer.textInsets = insets;
 }
 
 #pragma mark NSObject Methods
@@ -159,13 +189,12 @@ static void init(ECCodeViewBase *self)
     [self.renderer addObserver:self forKeyPath:@"renderHeight" options:NSKeyValueObservingOptionNew context:&rendererContext];
 }
 
-- (id)initWithFrame:(CGRect)frame renderer:(ECTextRenderer *)aRenderer renderingQueue:(NSOperationQueue *)queue
+- (id)initWithFrame:(CGRect)frame renderer:(ECTextRenderer *)aRenderer
 {    
     if (!(self = [super initWithFrame:frame]))
         return nil;
  
     self.renderer = aRenderer;
-    self.renderingQueue = queue;
 
     init(self);
 
@@ -223,28 +252,8 @@ static void init(ECCodeViewBase *self)
 
 #pragma mark - Text Renderer Delegate
 
-- (UIEdgeInsets)textInsetsForTextRenderer:(ECTextRenderer *)sender
-{
-    UIEdgeInsets insets = textInsets;
-    if (lineNumbersEnabled)
-        insets.left += lineNumbersWidth;
-    return insets;
-}
-
-- (NSArray *)underlayPassesForTextRenderer:(ECTextRenderer *)sender
-{
-    return [underlayPasses allValues];
-}
-
-
-- (NSArray *)overlayPassesForTextRenderer:(ECTextRenderer *)sender
-{
-    return [overlayPasses allValues];
-}
-
 - (void)textRenderer:(ECTextRenderer *)sender invalidateRenderInRect:(CGRect)rect
 {
-#warning TODO fix rect with insects
     if (rect.size.height == 0)
         [_contentView setNeedsDisplay];
     else
@@ -260,12 +269,16 @@ static void init(ECCodeViewBase *self)
         if (!underlayPasses)
             underlayPasses = [NSMutableDictionary new];
         [underlayPasses setObject:[block copy] forKey:passKey];
+        
+        self.renderer.underlayRenderingPasses = [underlayPasses allValues];
     }
     else
     {
         if (!overlayPasses)
             overlayPasses = [NSMutableDictionary new];
-        [overlayPasses setObject:[block copy] forKey:passKey];        
+        [overlayPasses setObject:[block copy] forKey:passKey];
+        
+        self.renderer.overlayRenderingPasses = [overlayPasses allValues];
     }
 }
 
@@ -273,6 +286,9 @@ static void init(ECCodeViewBase *self)
 {
     [underlayPasses removeObjectForKey:passKey];
     [overlayPasses removeObjectForKey:passKey];
+    
+    self.renderer.underlayRenderingPasses = [underlayPasses allValues];
+    self.renderer.overlayRenderingPasses = [overlayPasses allValues];
 }
 
 #pragma mark - Text Renderer Data source

@@ -41,13 +41,10 @@ typedef void (^LineNumberRenderingBlock)(CGContextRef context, CGRect lineNumber
 /// Initialize a codeview with external renderer and rendering queue.
 /// The codeview initialized with this method will be set to not own the 
 /// renderer and will use it only as a consumer.
-- (id)initWithFrame:(CGRect)frame renderer:(ECTextRenderer *)aRenderer renderingQueue:(NSOperationQueue *)queue;
+- (id)initWithFrame:(CGRect)frame renderer:(ECTextRenderer *)aRenderer;
 
 /// Renderer used in the codeview.
 @property (nonatomic, readonly, strong) ECTextRenderer *renderer;
-
-/// Queue where renderer should be used.
-@property (nonatomic, strong) NSOperationQueue *renderingQueue;
 
 #pragma mark Providing Source Data
 
@@ -84,13 +81,6 @@ typedef void (^LineNumberRenderingBlock)(CGContextRef context, CGRect lineNumber
 
 /// Color to be used for rendering line numbers
 @property (nonatomic, strong) UIColor *lineNumbersColor;
-
-/// Provide a block that will be called for each line and may render the number of the line
-/// in the given context. The block receives: the context in which to draw, bounds in which
-/// the drawing may be bounded, a baseline relative to the bounds y to align with the text
-/// line, the number of the line that will be drawn and a value indicating if the requested
-/// line is a wrapped line.
-@property (nonatomic, copy) LineNumberRenderingBlock lineNumberRenderingBlock;
 
 /// Add a layer pass that will be used by the renderer for overlays or underlays.
 - (void)addPassLayerBlock:(ECTextRendererLayerPass)block underText:(BOOL)isUnderlay forKey:(NSString *)passKey;

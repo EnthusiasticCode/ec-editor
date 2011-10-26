@@ -85,6 +85,8 @@
 
 /// A Text Segment represent a part of the text rendered. The segment represented
 /// text is limited by the number of lines in \c preferredLineCountPerSegment.
+#warning TODO NIK make this an NSDiscardableContent, typesetter, lines and string to be the content
+// TODO also: the isLastSegment property instead of a variable in the container
 @interface TextSegment : NSObject {
 @private
     ECTextRenderer *parentRenderer;
@@ -692,7 +694,6 @@
                     lastTextSegment = [textSegments lastObject];
                     break;
                 }
-                // TODO check if loading the string here is neccessary
                 else if ((currentStringOffset + [segment.string length]) >= [datasource stringLengthForTextRenderer:self])
                 {
                     lastTextSegment = segment;
