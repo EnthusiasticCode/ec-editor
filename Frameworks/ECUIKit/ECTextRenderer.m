@@ -541,9 +541,8 @@
     
     [self willChangeValueForKey:@"datasource"];
     datasource = aDatasource;
-    [self didChangeValueForKey:@"datasource"];
-
     [self updateAllText];
+    [self didChangeValueForKey:@"datasource"];
 }
 
 - (void)setRenderWidth:(CGFloat)width

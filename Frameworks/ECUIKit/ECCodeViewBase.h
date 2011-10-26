@@ -10,25 +10,8 @@
 #import <QuartzCore/QuartzCore.h>
 #import "ECTextRenderer.h"
 
-@class ECCodeViewBase;
 
-@protocol ECCodeViewBaseDataSource <NSObject>
-@required
-
-/// When implemented return the length of the text in the datasource.
-- (NSUInteger)textLength;
-
-/// Return the substring in the given range. Used to implement
-/// \c UITextInput methods.
-- (NSAttributedString *)codeView:(ECCodeViewBase *)codeView attributedStringInRange:(NSRange)range;
-
-@end
-
-
-typedef void (^LineNumberRenderingBlock)(CGContextRef context, CGRect lineNumberBounds, CGFloat baseline, NSUInteger lineNumber, BOOL isWrappedLine);
-
-
-@interface ECCodeViewBase : UIScrollView <ECTextRendererDelegate, ECTextRendererDataSource>
+@interface ECCodeViewBase : UIScrollView <ECTextRendererDelegate>
 
 #pragma mark Advanced Initialization and Configuration
 
@@ -44,7 +27,7 @@ typedef void (^LineNumberRenderingBlock)(CGContextRef context, CGRect lineNumber
 
 /// The datasource for the text displayed by the code view. Default is self.
 /// If this datasource is not self, the text property will have no effect.
-@property (nonatomic, strong) id<ECCodeViewBaseDataSource> datasource;
+@property (nonatomic, strong) id<ECTextRendererDataSource> datasource;
 
 #pragma mark Managing Text Content
 

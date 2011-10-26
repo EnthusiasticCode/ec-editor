@@ -1078,7 +1078,7 @@ static void init(ECCodeView *self)
 
 - (BOOL)hasText
 {
-    return [self.datasource textLength] > 0;
+    return [self.datasource stringLengthForTextRenderer:self.renderer] > 0;
 }
 
 - (void)insertText:(NSString *)string
@@ -1177,7 +1177,7 @@ static void init(ECCodeView *self)
     if (e <= s)
         result = @"";
     else
-        result = [self.datasource codeView:self attributedStringInRange:(NSRange){s, e - s}].string;
+        result = [self.datasource textRenderer:self.renderer attributedStringInRange:(NSRange){s, e - s}].string;
     
     return result;
 }
@@ -1193,7 +1193,7 @@ static void init(ECCodeView *self)
     if (e < s)
         return;
     
-    NSUInteger textLength = [self.datasource textLength];
+    NSUInteger textLength = [self.datasource stringLengthForTextRenderer:self.renderer];
     if (s > textLength)
         s = textLength;
     
@@ -1337,7 +1337,7 @@ static void init(ECCodeView *self)
             return nil;
     }
     
-    NSUInteger textLength = [self.datasource textLength];
+    NSUInteger textLength = [self.datasource stringLengthForTextRenderer:self.renderer];
     if (result > textLength)
         result = textLength;
     
@@ -1354,7 +1354,7 @@ static void init(ECCodeView *self)
 
 - (UITextPosition *)endOfDocument
 {
-    ECTextPosition *p = [[ECTextPosition alloc] initWithIndex:[self.datasource textLength]];
+    ECTextPosition *p = [[ECTextPosition alloc] initWithIndex:[self.datasource stringLengthForTextRenderer:self.renderer]];
     return p;
 }
 
@@ -1456,7 +1456,7 @@ static void init(ECCodeView *self)
 {
     ECTextPosition *pos = (ECTextPosition *)[self closestPositionToPoint:point];
     
-    NSRange r = [[self.datasource codeView:self attributedStringInRange:(NSRange){ pos.index, 1 }].string rangeOfComposedCharacterSequenceAtIndex:0];
+    NSRange r = [[self.datasource textRenderer:self.renderer attributedStringInRange:(NSRange){ pos.index, 1 }].string rangeOfComposedCharacterSequenceAtIndex:0];
     
     if (r.location == NSNotFound)
         return nil;
@@ -1509,7 +1509,7 @@ static void init(ECCodeView *self)
     if (selectionView.hasSelection && !selectionView.hidden)
         selectedRange = selectionView.selectionRange;
     else
-        selectedRange = [ECTextRange textRangeWithRange:NSMakeRange([self.datasource textLength], 0)];
+        selectedRange = [ECTextRange textRangeWithRange:NSMakeRange([self.datasource stringLengthForTextRenderer:self.renderer], 0)];
     
     [inputDelegate textWillChange:self];
     [inputDelegate selectionWillChange:self];

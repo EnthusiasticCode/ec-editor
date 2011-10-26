@@ -84,12 +84,12 @@ static NSRange intersectionOfRangeRelativeToRange(NSRange range, NSRange inRange
 
 #pragma mark - Code View DataSource Methods
 
-- (NSUInteger)textLength
+- (NSUInteger)stringLengthForTextRenderer:(ECTextRenderer *)sender
 {
     return [self.contentString length];
 }
 
-- (NSAttributedString *)codeView:(ECCodeViewBase *)codeView attributedStringInRange:(NSRange)stringRange
+- (NSAttributedString *)textRenderer:(ECTextRenderer *)sender attributedStringInRange:(NSRange)stringRange
 {
     // Preparing result
     NSMutableAttributedString *result = [[NSMutableAttributedString alloc] initWithString:[self.contentString substringWithRange:stringRange] attributes:self.defaultTextStyle.CTAttributes];

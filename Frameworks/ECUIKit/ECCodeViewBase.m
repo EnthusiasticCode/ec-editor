@@ -40,21 +40,8 @@ static const void *rendererContext;
 
 #pragma mark Properties
 
-@synthesize datasource = _datasource;
+@dynamic datasource;
 @synthesize renderer = _renderer;
-
-- (void)setDatasource:(id<ECCodeViewBaseDataSource>)datasource
-{
-    if (datasource == _datasource)
-        return;
-    
-    [self willChangeValueForKey:@"datasource"];
-    
-    _datasource = datasource;
-    [self.renderer updateAllText];
-    
-    [self didChangeValueForKey:@"datasource"];
-}
 
 - (ECTextRenderer *)renderer
 {
@@ -62,7 +49,6 @@ static const void *rendererContext;
     {
         _renderer = [ECTextRenderer new];
         _renderer.delegate = self;
-        _renderer.datasource = self;
         _renderer.maximumStringLenghtPerSegment = 1024;
     }
     return _renderer;
@@ -219,6 +205,17 @@ static void init(ECCodeViewBase *self)
     return self;
 }
 
+- (id)forwardingTargetForSelector:(SEL)aSelector
+{
+    // Forwarding renderer calls
+    if (aSelector == @selector(datasource)
+        || aSelector == @selector(setDatasource:)
+        || aSelector == @selector(updateAllText)
+        || aSelector == @selector(updateTextFromStringRange:toStringRange:))
+        return self.renderer;
+    return [super forwardingTargetForSelector:aSelector];
+}
+
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
     if (context == &rendererContext)
@@ -234,15 +231,6 @@ static void init(ECCodeViewBase *self)
     {
         [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
     }
-}
-
-- (id)forwardingTargetForSelector:(SEL)aSelector
-{
-    // Forwarding renderer calls
-    if (aSelector == @selector(updateAllText)
-        || aSelector == @selector(updateTextFromStringRange:toStringRange:))
-        return self.renderer;
-    return nil;
 }
 
 #pragma mark - Text Renderer Delegate
@@ -295,7 +283,7 @@ static void init(ECCodeViewBase *self)
     if (self.datasource == nil)
         return nil;
     
-    return [self.datasource codeView:self attributedStringInRange:stringRange];
+    return [self.datasource textRenderer:self.renderer attributedStringInRange:stringRange];
 }
 
 - (NSUInteger)stringLengthForTextRenderer:(ECTextRenderer *)sender
@@ -305,25 +293,25 @@ static void init(ECCodeViewBase *self)
     if (self.datasource == nil)
         return 0;
     
-    return [self.datasource textLength];
+    return [self.datasource stringLengthForTextRenderer:self.renderer];
 }
 
 #pragma mark - Text Renderer and CodeView String Datasource
 
 - (NSString *)text
 {
-    if (_datasource == nil)
+    if (self.datasource == nil)
         return nil;
     
     if (![self.datasource isKindOfClass:[ECCodeStringDataSource class]])
         return nil;
     
-    return [(ECCodeStringDataSource *)_datasource string];
+    return [(ECCodeStringDataSource *)self.datasource string];
 }
 
 - (void)setText:(NSString *)string
 {
-    if (_datasource == nil)
+    if (self.datasource == nil)
         self.datasource = [ECCodeStringDataSource new];
     
     ECASSERT([self.datasource isKindOfClass:[ECCodeStringDataSource class]]);
@@ -331,7 +319,7 @@ static void init(ECCodeViewBase *self)
     if (!self.ownsRenderer)
         return;
     
-    [(ECCodeStringDataSource *)_datasource setString:string];
+    [(ECCodeStringDataSource *)self.datasource setString:string];
     
     [self.renderer updateAllText];
     

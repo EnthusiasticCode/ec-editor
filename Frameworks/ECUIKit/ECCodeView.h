@@ -11,7 +11,7 @@
 
 @class ECCodeView;
 
-@protocol ECCodeViewDataSource <ECCodeViewBaseDataSource>
+@protocol ECCodeViewDataSource <ECTextRendererDataSource>
 @optional
 
 /// Returns a value that indicate if the codeview can edit the datasource
