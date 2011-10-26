@@ -51,7 +51,7 @@ static const void *rendererContext;
     [self willChangeValueForKey:@"datasource"];
     
     _datasource = datasource;
-    [_renderer updateAllText];
+    [self.renderer updateAllText];
     
     [self didChangeValueForKey:@"datasource"];
 }
@@ -247,7 +247,7 @@ static void init(ECCodeViewBase *self)
 
 #pragma mark - Text Renderer Delegate
 
-- (void)textRenderer:(ECTextRenderer *)sender invalidateRenderInRect:(CGRect)rect
+- (void)textRenderer:(ECTextRenderer *)sender didInvalidateRenderInRect:(CGRect)rect
 {
     if (rect.size.height == 0)
         [_contentView setNeedsDisplay];
