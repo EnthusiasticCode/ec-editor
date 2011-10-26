@@ -1074,8 +1074,6 @@
     
     if (delegateHasDidInvalidateRenderInRect) 
         [delegate textRenderer:self didInvalidateRenderInRect:CGRectMake(0, 0, self.renderWidth, self.renderHeight)];
-    
-    self.renderHeight = 0;
 }
 
 - (void)updateTextFromStringRange:(NSRange)originalRange toStringRange:(NSRange)newRange

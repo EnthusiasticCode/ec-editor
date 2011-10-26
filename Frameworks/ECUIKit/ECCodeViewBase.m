@@ -25,8 +25,6 @@ static const void *rendererContext;
     // Dictionaries that holds additional passes
     NSMutableDictionary *overlayPasses;
     NSMutableDictionary *underlayPasses;
-    
-    BOOL dataSourceHasStringRangeForLineRange;
 }
 
 @property (nonatomic, strong) ECTextRenderer *renderer;
@@ -53,7 +51,6 @@ static const void *rendererContext;
     [self willChangeValueForKey:@"datasource"];
     
     _datasource = datasource;
-    dataSourceHasStringRangeForLineRange = [_datasource respondsToSelector:@selector(codeView:stringRangeForLineRange:)];
     [_renderer updateAllText];
     
     [self didChangeValueForKey:@"datasource"];
@@ -95,6 +92,7 @@ static const void *rendererContext;
 
 - (void)setContentSize:(CGSize)contentSize
 {
+    // When the scrollview content size changes, reflect the same change to the content view
     CGRect contentRect = CGRectMake(0, 0, ceilf(contentSize.width), ceilf(contentSize.height));
     [_contentView setFrame:contentRect];
     [super setContentSize:contentRect.size];
@@ -238,16 +236,13 @@ static void init(ECCodeViewBase *self)
     }
 }
 
-#pragma mark - Rendering Methods
-
-- (void)updateAllText
+- (id)forwardingTargetForSelector:(SEL)aSelector
 {
-    [self.renderer updateAllText];
-}
-
-- (void)updateTextFromStringRange:(NSRange)originalRange toStringRange:(NSRange)newRange
-{
-    [self.renderer updateTextFromStringRange:originalRange toStringRange:newRange];
+    // Forwarding renderer calls
+    if (aSelector == @selector(updateAllText)
+        || aSelector == @selector(updateTextFromStringRange:toStringRange:))
+        return self.renderer;
+    return nil;
 }
 
 #pragma mark - Text Renderer Delegate
