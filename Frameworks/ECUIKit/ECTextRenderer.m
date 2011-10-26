@@ -559,6 +559,16 @@
     [self didChangeValueForKey:@"renderWidth"];
 }
 
+- (void)setRenderHeight:(CGFloat)height
+{
+    if (height == renderHeight)
+        return;
+    
+    [self willChangeValueForKey:@"renderHeight"];
+    renderHeight = height + textInsets.top + textInsets.bottom;
+    [self didChangeValueForKey:@"renderHeight"];
+}
+
 - (void)setTextInsets:(UIEdgeInsets)insets
 {
     if (UIEdgeInsetsEqualToEdgeInsets(insets, textInsets))
