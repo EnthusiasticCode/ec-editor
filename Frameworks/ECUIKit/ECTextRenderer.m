@@ -1088,9 +1088,69 @@
         [delegate textRenderer:self didInvalidateRenderInRect:CGRectMake(0, 0, self.renderWidth, self.renderHeight)];
 }
 
-- (void)updateTextFromStringRange:(NSRange)originalRange toStringRange:(NSRange)newRange
+- (void)updateTextFromStringRange:(NSRange)fromRange toStringRange:(NSRange)toRange
 {
+    // Calculate change withing single semgment
+    NSInteger segmentIndex = -1, removeFromSegmentIndex = NSNotFound;
+    CGFloat affectedSegmentHeight = 0, removeFromSegmentYOffset = 0;
+    NSRange segmentRange = NSMakeRange(0, 0);
+    NSUInteger fromRangeEnd = NSMaxRange(fromRange), segmentRangeEnd;
+    for (TextSegment *segment in textSegments)
+    {
+        segmentIndex++;
+        segmentRange.location += segmentRange.length;
+        segmentRange.length = segment.stringLength;
+        segmentRangeEnd = NSMaxRange(segmentRange);
+        affectedSegmentHeight = segment.renderHeight;
+        
+        // Skip untouched segments
+        ECASSERT(segmentRange.location < fromRangeEnd);
+        if (segmentRangeEnd >= fromRange.location)
+        {
+            // Will remove every segment after the current if changes are crossing multiple segments
+            if (fromRange.location < segmentRangeEnd
+                && fromRangeEnd >= segmentRangeEnd)
+            {
+                removeFromSegmentIndex = segmentIndex;
+                break;
+            }
+            
+            // Will remove segment if modifying it will change it's string lenght too much
+            NSInteger segmentNewLength = segment.stringLength + (toRange.length - fromRange.length);
+            if (segmentNewLength > maximumStringLenghtPerSegment * 1.5 
+                || segmentNewLength < maximumStringLenghtPerSegment / 2)
+            {
+                removeFromSegmentIndex = segmentIndex;
+                break;
+            }
+            
+            // Only one segment is affected
+            segment.stringLength = segmentNewLength;
+            [segmentStringsCache removeObjectForKey:segment];
+            [segmentTypesettersCache removeObjectForKey:segment];
+            [segmentRenderedLinesCache removeObjectForKey:segment];
+            break;
+        }
+        
+        removeFromSegmentYOffset += affectedSegmentHeight;
+    }
     
+    // If the change crosses multiple segments, recreate all from the one where the change start
+    if (removeFromSegmentIndex != NSNotFound)
+    {
+        NSIndexSet *removeSet = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(removeFromSegmentIndex, [textSegments count] - removeFromSegmentIndex)];
+        [textSegments enumerateObjectsAtIndexes:removeSet options:0 usingBlock:^(TextSegment *segment, NSUInteger idx, BOOL *stop) {
+            [segmentStringsCache removeObjectForKey:segment];
+            [segmentTypesettersCache removeObjectForKey:segment];
+            [segmentRenderedLinesCache removeObjectForKey:segment];
+        }];
+        [textSegments removeObjectsAtIndexes:removeSet];
+        lastTextSegment = nil;
+    }
+    
+    // Send invalidation for specific rect
+    if (delegateHasDidInvalidateRenderInRect)
+        [delegate textRenderer:self didInvalidateRenderInRect:CGRectMake(0, removeFromSegmentYOffset, self.renderWidth, (removeFromSegmentIndex != NSNotFound ? self.renderHeight - removeFromSegmentYOffset : affectedSegmentHeight))];
 }
 
 //- (void)updateTextInLineRange:(NSRange)originalRange toLineRange:(NSRange)newRange
