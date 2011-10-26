@@ -565,7 +565,10 @@
         return;
     
     [self willChangeValueForKey:@"renderHeight"];
-    renderHeight = height + textInsets.top + textInsets.bottom;
+    if (height > 0)
+        renderHeight = height + textInsets.top + textInsets.bottom;
+    else
+        renderHeight = 0;
     [self didChangeValueForKey:@"renderHeight"];
 }
 
