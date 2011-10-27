@@ -13,7 +13,24 @@
 
 @implementation ACSingleProjectBrowsersController
 
+#pragma mark - Properties
+
 @synthesize tab;
+
+- (NSArray *)toolbarItems
+{
+    return self.selectedViewController.toolbarItems;
+}
+
+- (void)setToolbarItems:(NSArray *)toolbarItems
+{
+    self.selectedViewController.toolbarItems = toolbarItems;
+}
+
++ (NSSet *)keyPathsForValuesAffectingToolbarItems
+{
+    return [NSSet setWithObject:@"selectedViewController.toolbarItems"];
+}
 
 #pragma mark - View lifecycle
 

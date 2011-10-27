@@ -13,6 +13,8 @@
 #import <ECUIKit/ECPopoverController.h>
 #import <ECUIKit/ECCodeView.h>
 
+#import "ACSingleTabController.h"
+
 #import "ACEditorToolSelectionController.h"
 #import "ACCodeFileFilterController.h"
 
@@ -94,20 +96,12 @@
     // Release any cached data, images, etc that aren't in use.
 }
 
-#pragma mark - TODO refactor: Tool Target Protocol Implementation
+#pragma mark - Single Tab Controller Toolbar Actions
 
-//- (UIButton *)toolButton
-//{
-//    if (!toolButton)
-//    {
-//        toolButton = [UIButton new];
-//        [toolButton setTitle:@"Tools" forState:UIControlStateNormal];
-//        [toolButton setTitleColor:[UIColor styleForegroundColor] forState:UIControlStateNormal];
-//        toolButton.titleLabel.font = [UIFont styleFontWithSize:14];
-//        [toolButton addTarget:self action:@selector(toolButtonAction:) forControlEvents:UIControlEventTouchUpInside];
-//    }
-//    return toolButton;
-//}
+- (BOOL)singleTabController:(ACSingleTabController *)singleTabController shouldEnableTitleControlForDefaultToolbar:(ACTopBarToolbar *)toolbar
+{
+    return YES;
+}
 
 - (void)toolButtonAction:(id)sender
 {
@@ -130,6 +124,11 @@
 }
 
 #pragma mark - View lifecycle
+
+- (void)willMoveToParentViewController:(UIViewController *)parent
+{
+    self.toolbarItems = [NSArray arrayWithObject:[[UIBarButtonItem alloc] initWithTitle:@"tools" style:UIBarButtonItemStylePlain target:self action:@selector(toolButtonAction:)]];
+}
 
 - (void)loadView
 {
