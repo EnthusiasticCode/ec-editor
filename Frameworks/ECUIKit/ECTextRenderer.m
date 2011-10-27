@@ -456,15 +456,15 @@
 {
     ECASSERT(renderer != nil);
     
-    if ((self = [super init])) 
-    {
-        parentRenderer = renderer;
-        
-        // Will generate the segment derived data.
-        [self beginContentAccess];
-        valid = self.typesetter != NULL;
-        [self endContentAccess];
-    }
+    if (!(self = [super init]))
+        return nil;
+
+    parentRenderer = renderer;
+    
+    // Will generate the segment derived data.
+    [self beginContentAccess];
+    valid = self.typesetter != NULL;
+    
     return self;
 }
 
@@ -781,7 +781,6 @@
             {
                 segment = [[TextSegment alloc] initWithTextRenderer:self];
                 segment.renderWrapWidth = [self _wrapWidth];
-                [segment beginContentAccess];
                 if (!segment.isValid) 
                 {
                     lastTextSegment = [textSegments lastObject];
