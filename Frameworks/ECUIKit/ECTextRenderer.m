@@ -21,6 +21,8 @@
     TextSegment *lastTextSegment;
     
     BOOL delegateHasDidInvalidateRenderInRect;
+    
+    id _notificationCenterMemoryWarningObserver;
 }
 
 /// Redefined to accept private changes.
@@ -650,11 +652,25 @@
 
 - (id)init 
 {
-    if ((self = [super init])) 
-    {
-        textSegments = [NSMutableArray new];
-    }
+    if (!(self = [super init])) 
+        return nil;
+    
+    textSegments = [NSMutableArray new];
+    
+    __weak ECTextRenderer *this = self;
+    _notificationCenterMemoryWarningObserver = [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationDidReceiveMemoryWarningNotification object:nil queue:nil usingBlock:^(NSNotification *note) {
+        for (TextSegment *segment in this->textSegments)
+        {
+            [segment discardContentIfPossible];
+        }
+    }];
+    
     return self;
+}
+
+- (void)dealloc
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:_notificationCenterMemoryWarningObserver];
 }
 
 #pragma mark Private Methods
@@ -729,7 +745,10 @@
     // Side effect! clear caches if segment changes its ragne
     if (requestSegment.lineCount > 0 && lineCount != requestSegment.lineCount)
     {
-        [self clearCache];
+        NSUInteger requestSegmentIndex = [textSegments indexOfObject:requestSegment];
+        [textSegments enumerateObjectsAtIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(requestSegmentIndex, [textSegments count] - requestSegmentIndex)] options:0 usingBlock:^(TextSegment *segment, NSUInteger idx, BOOL *stop) {
+            [segment discardContent];
+        }];
     }
     
     // Trim returned string if needed
@@ -1145,7 +1164,11 @@
 
 - (void)updateAllText
 {
-    [self clearCache];
+    for (TextSegment *segment in textSegments)
+    {
+        [segment discardContent];
+    }
+    
     [textSegments removeAllObjects];
     lastTextSegment = nil;
     
@@ -1208,14 +1231,6 @@
     // Send invalidation for specific rect
     if (delegateHasDidInvalidateRenderInRect)
         [delegate textRenderer:self didInvalidateRenderInRect:CGRectMake(0, removeFromSegmentYOffset, self.renderWidth, (removeFromSegmentIndex != NSNotFound ? self.renderHeight - removeFromSegmentYOffset : affectedSegmentHeight))];
-}
-
-- (void)clearCache
-{
-    for (TextSegment *segment in textSegments)
-    {
-        [segment discardContentIfPossible];
-    }
 }
 
 @end

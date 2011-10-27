@@ -79,12 +79,6 @@ typedef void (^ECTextRendererLayerPass)(CGContextRef context, ECTextRendererLine
 /// line; the new range can as well have a length of 0 to indicate deletion.
 - (void)updateTextFromStringRange:(NSRange)originalRange toStringRange:(NSRange)newRange;
 
-#pragma mark Caching Behaviours
-
-/// Use this method to clear the rendered cache if memory usage start to be 
-/// a problem.
-- (void)clearCache;
-
 #pragma mark Customizing Rendering
 
 /// The width to use for the rendering canvas.
