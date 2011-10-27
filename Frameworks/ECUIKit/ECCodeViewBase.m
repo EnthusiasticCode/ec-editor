@@ -40,7 +40,6 @@ static const void *rendererContext;
 
 #pragma mark Properties
 
-@dynamic datasource;
 @synthesize renderer = _renderer;
 
 - (ECTextRenderer *)renderer

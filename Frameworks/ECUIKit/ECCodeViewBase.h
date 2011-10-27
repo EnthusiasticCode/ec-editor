@@ -23,23 +23,11 @@
 /// Renderer used in the codeview.
 @property (nonatomic, readonly, strong) ECTextRenderer *renderer;
 
-#pragma mark Providing Source Data
-
-/// The datasource for the text displayed by the code view. Default is self.
-/// If this datasource is not self, the text property will have no effect.
-@property (nonatomic, strong) id<ECTextRendererDataSource> datasource;
-
 #pragma mark Managing Text Content
 
 /// Set the text fot the control. This property is only used if textDatasource
 /// is the code view itself.
 @property (nonatomic, strong) NSString *text;
-
-/// Invalidate the text making the receiver redraw it.
-- (void)updateAllText;
-
-/// Invalidate a particular section of the text making the reveiver redraw it.
-- (void)updateTextFromStringRange:(NSRange)originalRange toStringRange:(NSRange)newRange;
 
 #pragma mark Styling Text Display
 
@@ -64,5 +52,20 @@
 
 // Removes a layer pass from the rendering process.
 - (void)removePassLayerForKey:(NSString *)passKey;
+
+@end
+
+
+@interface ECCodeViewBase (ECTextRendererForwarding)
+
+/// The datasource for the text displayed by the code view. Default is self.
+/// If this datasource is not self, the text property will have no effect.
+@property (nonatomic, strong) id<ECTextRendererDataSource> datasource;
+
+/// Invalidate the text making the receiver redraw it.
+- (void)updateAllText;
+
+/// Invalidate a particular section of the text making the reveiver redraw it.
+- (void)updateTextFromStringRange:(NSRange)originalRange toStringRange:(NSRange)newRange;
 
 @end
