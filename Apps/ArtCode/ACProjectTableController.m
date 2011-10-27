@@ -78,7 +78,7 @@ static void * directoryPresenterFileURLsObservingContext;
         [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
 }
 
-#pragma mark - General methods
+#pragma mark - Controller Methods
 
 - (void)dealloc
 {

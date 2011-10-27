@@ -393,9 +393,14 @@ static const void *contentViewControllerContext;
 
 - (void)_setupDefaultToolbarAnimated:(BOOL)animated
 {
+    if (!self.isViewLoaded)
+        return;
+    
     [self.defaultToolbar.titleControl setTitle:_contentViewController.title forState:UIControlStateNormal];
     self.defaultToolbar.editItem = _contentViewController.editButtonItem;
     [self.defaultToolbar setToolItems:_contentViewController.toolbarItems animated:animated];
+    
+    self.defaultToolbar.titleControl.enabled = [_contentViewController singleTabController:self shouldEnableTitleControlForDefaultToolbar:self.defaultToolbar];
 }
 
 - (UIViewController *)_viewControllerWithURL:(NSURL *)url
@@ -469,6 +474,11 @@ static const void *contentViewControllerContext;
     while (parent && ![parent isKindOfClass:[ACSingleTabController class]])
         parent = parent.parentViewController;
     return (ACSingleTabController *)parent;
+}
+
+- (BOOL)singleTabController:(ACSingleTabController *)singleTabController shouldEnableTitleControlForDefaultToolbar:(ACTopBarToolbar *)toolbar
+{
+    return NO;
 }
 
 @end

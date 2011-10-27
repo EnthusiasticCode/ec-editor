@@ -780,10 +780,7 @@
 		CD7D2B0A13C0CEFF00B889EE /* Images */ = {
 			isa = PBXGroup;
 			children = (
-				CD4719A5145196CE00C7BCC5 /* tabBar_TabAddButton.png */,
-				CD9CB5E8145191FC00973204 /* tabBar_TabBackground_Normal.png */,
-				CD9CB5E9145191FC00973204 /* tabBar_TabBackground_Selected.png */,
-				CD9CB5E51451902C00973204 /* tabBar_TabCloseButton.png */,
+				CDC2A6B81459D9C600978008 /* Tab Bar */,
 				CDC2828E14508D250054358D /* Top Bar */,
 				CDFF3DF413C0D9D100108DE2 /* Tools Tab Icons */,
 				CDFF3DF513C0D9FD00108DE2 /* Tools Filters Icons */,
@@ -927,6 +924,17 @@
 				CD2568C61450D5B600A3CCDE /* topBar_ToolButton_Normal.png */,
 			);
 			name = "Top Bar";
+			sourceTree = "<group>";
+		};
+		CDC2A6B81459D9C600978008 /* Tab Bar */ = {
+			isa = PBXGroup;
+			children = (
+				CD4719A5145196CE00C7BCC5 /* tabBar_TabAddButton.png */,
+				CD9CB5E8145191FC00973204 /* tabBar_TabBackground_Normal.png */,
+				CD9CB5E9145191FC00973204 /* tabBar_TabBackground_Selected.png */,
+				CD9CB5E51451902C00973204 /* tabBar_TabCloseButton.png */,
+			);
+			name = "Tab Bar";
 			sourceTree = "<group>";
 		};
 		CDD40AFF13E19FC4008AC36B /* Popovers Content Controllers */ = {
