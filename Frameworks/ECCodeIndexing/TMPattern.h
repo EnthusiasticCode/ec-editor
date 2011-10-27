@@ -12,16 +12,15 @@
 
 @interface TMPattern : NSObject
 
-@property (nonatomic, strong, readonly) NSString *name;
-@property (nonatomic, strong, readonly) OnigRegexp *match;
-@property (nonatomic, strong, readonly) NSDictionary *captures;
-@property (nonatomic, strong, readonly) OnigRegexp *begin;
-@property (nonatomic, strong, readonly) OnigRegexp *end;
-@property (nonatomic, strong, readonly) NSDictionary *beginCaptures;
-@property (nonatomic, strong, readonly) NSDictionary *endCaptures;
-@property (nonatomic, strong, readonly) NSArray *patterns;
-@property (nonatomic, strong, readonly) NSString *include;
-
+- (NSString *)name;
+- (OnigRegexp *)match;
+- (NSDictionary *)captures;
+- (OnigRegexp *)begin;
+- (OnigRegexp *)end;
+- (NSDictionary *)beginCaptures;
+- (NSDictionary *)endCaptures;
+- (NSArray *)patterns;
+- (NSString *)include;
 - (id)initWithDictionary:(NSDictionary *)dictionary;
 
 @end

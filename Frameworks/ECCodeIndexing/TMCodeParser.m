@@ -19,14 +19,14 @@ static NSRange _rangeFromEndOfRangeToEndOfRange(NSRange firstRange, NSRange seco
 
 @interface TMCodeParser ()
 {
+    NSURL *_presentedItemURL;
     NSOperationQueue *_presentedItemOperationQueue;
     NSInteger _contentAccessCount;
+    TMSyntax *_syntax;
+    TMCodeIndex *_index;
 }
-@property (nonatomic, strong) TMCodeIndex *index;
-@property (atomic, strong) NSURL *fileURL;
-@property (nonatomic, strong) TMSyntax *syntax;
-// Returns an array containing the first begin match at index 0 and the first end match at index 1 if the first matching pattern has an end matchv
-// The patterns array may only contain matching patterns, not include patterns
+// presentedItemURL needs to be declared as assign because it's declared as assign in the protocol, it is however backed by a strong ivar
+@property (assign) NSURL *presentedItemURL;
 - (void)_visitScopesInString:(NSString *)string range:(NSRange)range withPattern:(TMPattern *)pattern previousScopeStack:(NSMutableArray *)previousScopeStack usingVisitor:(ECCodeVisitor)visitorBlock;
 - (void)_visitScopesInString:(NSString *)string range:(NSRange)range withIncludePattern:(TMPattern *)pattern previousScopeStack:(NSMutableArray *)previousScopeStack usingVisitor:(ECCodeVisitor)visitorBlock;
 - (void)_visitScopesInString:(NSString *)string range:(NSRange)range withMatchPattern:(TMPattern *)pattern previousScopeStack:(NSMutableArray *)previousScopeStack usingVisitor:(ECCodeVisitor)visitorBlock;
@@ -36,13 +36,24 @@ static NSRange _rangeFromEndOfRangeToEndOfRange(NSRange firstRange, NSRange seco
 
 @implementation TMCodeParser
 
-@synthesize index = _index;
-@synthesize fileURL = _fileURL;
-@synthesize syntax = _syntax;
+- (NSURL *)fileURL
+{
+    return self.presentedItemURL;
+}
+
++ (NSSet *)keyPathsForValuesAffectingFileURL
+{
+    return [NSSet setWithObject:@"presentedItemURL"];
+}
+
+- (ECCodeIndex *)index
+{
+    return _index;
+}
 
 - (NSString *)language
 {
-    return self.syntax.name;
+    return _syntax.name;
 }
 
 - (id)initWithIndex:(TMCodeIndex *)index fileURL:(NSURL *)fileURL syntax:(TMSyntax *)syntax
@@ -53,14 +64,16 @@ static NSRange _rangeFromEndOfRangeToEndOfRange(NSRange firstRange, NSRange seco
     self = [super init];
     if (!self)
         return nil;
-    self.index = index;
-    self.fileURL = fileURL;
-    self.syntax = syntax;
+    _contentAccessCount = 1;
+    _index = index;
+    _presentedItemURL = fileURL;
+    _syntax = syntax;
     return self;
 }
 
 - (void)visitScopesInRange:(NSRange)range usingVisitor:(ECCodeVisitor)visitorBlock
 {
+    ECASSERT(_contentAccessCount > 0);
     if (!visitorBlock)
         return;
     __block NSString *string = nil;
@@ -68,8 +81,8 @@ static NSRange _rangeFromEndOfRangeToEndOfRange(NSRange firstRange, NSRange seco
     [fileCoordinator coordinateReadingItemAtURL:self.fileURL options:NSFileCoordinatorReadingResolvesSymbolicLink error:NULL byAccessor:^(NSURL *newURL) {
         string = [NSString stringWithContentsOfURL:newURL encoding:NSUTF8StringEncoding error:NULL];
         ECASSERT(NSMaxRange(range) <= [string length]);
-        NSMutableArray *scopesStack = [NSMutableArray arrayWithObject:self.syntax.scope];
-        [self _visitScopesInString:string range:range withPattern:self.syntax.pattern previousScopeStack:scopesStack usingVisitor:visitorBlock];
+        NSMutableArray *scopesStack = [NSMutableArray arrayWithObject:_syntax.scope];
+        [self _visitScopesInString:string range:range withPattern:_syntax.pattern previousScopeStack:scopesStack usingVisitor:visitorBlock];
     }];
 }
 
@@ -102,12 +115,19 @@ static NSRange _rangeFromEndOfRangeToEndOfRange(NSRange firstRange, NSRange seco
 
 - (NSURL *)presentedItemURL
 {
-    return self.fileURL;
+    return _presentedItemURL;
 }
 
-+ (NSSet *)keyPathsForValuesAffectingPresentedItemURL
+- (void)setPresentedItemURL:(NSURL *)presentedItemURL
 {
-    return [NSSet setWithObject:@"fileURL"];
+    if (presentedItemURL == _presentedItemURL)
+        return;
+    [self willChangeValueForKey:@"presentedItemURL"];
+    @synchronized(self)
+    {
+        _presentedItemURL = presentedItemURL;
+    }
+    [self didChangeValueForKey:@"presentedItemURL"];
 }
 
 - (NSOperationQueue *)presentedItemOperationQueue
@@ -122,12 +142,12 @@ static NSRange _rangeFromEndOfRangeToEndOfRange(NSRange firstRange, NSRange seco
 
 - (void)presentedItemDidMoveToURL:(NSURL *)newURL
 {
-    self.fileURL = newURL;
+    self.presentedItemURL = newURL;
 }
 
 - (void)accommodatePresentedItemDeletionWithCompletionHandler:(void (^)(NSError *))completionHandler
 {
-    self.fileURL = nil;
+    self.presentedItemURL = nil;
 }
 
 #pragma mark - Private methods
@@ -151,11 +171,11 @@ static NSRange _rangeFromEndOfRangeToEndOfRange(NSRange firstRange, NSRange seco
     unichar firstCharacter = [pattern.include characterAtIndex:0];
     if (firstCharacter == '$')
     {
-        [self _visitScopesInString:string range:range withPattern:self.syntax.pattern previousScopeStack:previousScopeStack usingVisitor:visitorBlock];
+        [self _visitScopesInString:string range:range withPattern:_syntax.pattern previousScopeStack:previousScopeStack usingVisitor:visitorBlock];
     }
     else if (firstCharacter == '#')
     {
-        [self _visitScopesInString:string range:range withPattern:[self.syntax.repository objectForKey:[pattern.include substringFromIndex:1]] previousScopeStack:previousScopeStack usingVisitor:visitorBlock];
+        [self _visitScopesInString:string range:range withPattern:[_syntax.repository objectForKey:[pattern.include substringFromIndex:1]] previousScopeStack:previousScopeStack usingVisitor:visitorBlock];
     }
     else
     {

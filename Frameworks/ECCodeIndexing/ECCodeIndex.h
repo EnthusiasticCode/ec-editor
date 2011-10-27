@@ -28,14 +28,14 @@
 /// Class that encapsulates interaction with parsing and indexing libraries to provide language related file-specific functionality such as syntax aware highlighting, diagnostics and completions.
 @protocol ECCodeUnit <NSObject, NSFilePresenter>
 
-/// The code index that generated the code unit.
-@property (nonatomic, readonly, strong) ECCodeIndex *index;
-
 /// The main source file the unit is interpreting.
-@property (atomic, readonly, strong) NSURL *fileURL;
+@property (nonatomic, readonly, strong) NSURL *fileURL;
+
+/// The code index that generated the code unit.
+- (ECCodeIndex *)index;
 
 /// The language the unit is using to interpret the main source file's contents.
-@property (nonatomic, readonly, strong) NSString *language;
+- (NSString *)language;
 
 @end
 

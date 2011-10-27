@@ -82,17 +82,17 @@ static NSString * const _patternsPatternsKey = @"patterns";
     self = [super init];
     if (!self)
         return nil;
-    self.fileURL = fileURL;
-    [self beginContentAccess];
-    self.name = [self.plist objectForKey:_syntaxNameKey];
-    if (!self.name)
+    _contentAccessCount = 1;
+    _fileURL = fileURL;
+    _plist = [NSPropertyListSerialization propertyListWithData:[NSData dataWithContentsOfURL:fileURL options:NSDataReadingUncached error:NULL] options:NSPropertyListImmutable format:NULL error:NULL];
+    _name = [_plist objectForKey:_syntaxNameKey];
+    if (_name)
         return nil;
-    self.scope = [self.plist objectForKey:_syntaxScopeKey];
-    self.fileTypes = [self.plist objectForKey:_syntaxFileTypesKey];
-    NSString *firstLineMatchRegex = [self.plist objectForKey:_syntaxFirstLineMatchKey];
+    _scope = [_plist objectForKey:_syntaxScopeKey];
+    _fileTypes = [_plist objectForKey:_syntaxFileTypesKey];
+    NSString *firstLineMatchRegex = [_plist objectForKey:_syntaxFirstLineMatchKey];
     if (firstLineMatchRegex)
-        self.firstLineMatch = [OnigRegexp compile:firstLineMatchRegex ignorecase:NO multiline:YES];
-    [self endContentAccess];
+        _firstLineMatch = [OnigRegexp compile:firstLineMatchRegex ignorecase:NO multiline:YES];
     return self;
 }
 

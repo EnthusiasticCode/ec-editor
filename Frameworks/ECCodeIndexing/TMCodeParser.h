@@ -12,8 +12,6 @@
 
 @interface TMCodeParser : NSObject <ECCodeParser, NSDiscardableContent>
 
-@property (nonatomic, strong, readonly) TMCodeIndex *index;
-
 - (id)initWithIndex:(TMCodeIndex *)index fileURL:(NSURL *)fileURL syntax:(TMSyntax *)syntax;
 
 @end

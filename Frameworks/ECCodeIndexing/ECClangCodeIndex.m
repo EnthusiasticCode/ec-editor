@@ -13,7 +13,7 @@
 
 @implementation ECClangCodeIndex
 
-@synthesize index = index_;
+@synthesize index = _index;
 
 - (void)dealloc
 {
@@ -25,7 +25,7 @@
     self = [super init];
     if (!self)
         return nil;
-    self.index = clang_createIndex(0, 1);
+    _index = clang_createIndex(0, 1);
     return self;
 }
 

@@ -18,9 +18,13 @@
 + (TMSyntax *)_syntaxForFile:(NSURL *)fileURL;
 + (TMSyntax *)_syntaxWithLanguage:(NSString *)language;
 + (TMSyntax *)_syntaxWithPredicateBlock:(BOOL(^)(TMSyntax *syntax))predicateBlock;
+@property (nonatomic, strong, readonly) NSCache *_codeUnitCache;
++ (id)_codeUnitCacheKeyForFileURL:(NSURL *)fileURL syntax:(TMSyntax *)syntax;
 @end
 
 @implementation TMCodeIndex
+
+@synthesize _codeUnitCache = __codeUnitCache;
 
 + (void)load
 {
@@ -41,9 +45,17 @@
 {
     ECASSERT(protocol);
     ECASSERT(fileURL);
-    if (protocol == @protocol(ECCodeParser))
-        return [[TMCodeParser alloc] initWithIndex:self fileURL:fileURL syntax:[[self class] _syntaxForFile:fileURL language:language scope:scope]];
-    return nil;
+    if (protocol != @protocol(ECCodeParser))
+        return nil;
+    TMSyntax *syntax = [[self class] _syntaxForFile:fileURL language:language scope:scope];
+    id cacheKey = [[self class] _codeUnitCacheKeyForFileURL:fileURL syntax:syntax];
+    TMCodeParser *codeParser = [[self _codeUnitCache] objectForKey:cacheKey];
+    if (!codeParser)
+    {
+        codeParser = [[TMCodeParser alloc] initWithIndex:self fileURL:fileURL syntax:syntax];
+        [[self _codeUnitCache] setObject:codeParser forKey:cacheKey];
+    }
+    return [codeParser autoContentAccessingProxy];
 }
 
 + (TMSyntax *)_syntaxForFile:(NSURL *)fileURL language:(NSString *)language scope:(NSString *)scope
@@ -105,6 +117,18 @@
                     return syntax;
     }
     return nil;
+}
+
+- (NSCache *)_codeUnitCache
+{
+    if (!__codeUnitCache)
+        __codeUnitCache = [[NSCache alloc] init];
+    return __codeUnitCache;
+}
+
++ (id)_codeUnitCacheKeyForFileURL:(NSURL *)fileURL syntax:(TMSyntax *)syntax
+{
+    return [NSString stringWithFormat:@"%@:%@", syntax.name, [fileURL absoluteString]];
 }
 
 @end

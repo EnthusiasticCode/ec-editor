@@ -16,9 +16,11 @@
 @property (nonatomic, strong, readonly) NSString *scope;
 @property (nonatomic, strong, readonly) NSArray *fileTypes;
 @property (nonatomic, strong, readonly) OnigRegexp *firstLineMatch;
-@property (nonatomic, strong, readonly) TMPattern *pattern;
-@property (nonatomic, strong, readonly) NSDictionary *repository;
 
 - (id)initWithFileURL:(NSURL *)fileURL;
+
+/// Content:
+@property (nonatomic, strong, readonly) TMPattern *pattern;
+@property (nonatomic, strong, readonly) NSDictionary *repository;
 
 @end

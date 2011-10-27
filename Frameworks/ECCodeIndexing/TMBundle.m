@@ -66,12 +66,12 @@ static NSString * const _syntaxDirectory = @"Syntaxes";
         return nil;
     if (![[bundleURL pathExtension] isEqualToString:_bundleExtension])
         return nil;
-    self.bundleURL = bundleURL;
-    [self beginContentAccess];
-    self.bundleName = [self.bundlePlist objectForKey:_bundleNameKey];
-    if (!self.bundleName)
+    _contentAccessCount = 1;
+    _bundleURL = bundleURL;
+    _bundlePlist = [NSPropertyListSerialization propertyListWithData:[NSData dataWithContentsOfURL:[bundleURL URLByAppendingPathComponent:_bundleInfoPlist] options:NSDataReadingUncached error:NULL] options:NSPropertyListImmutable format:NULL error:NULL];
+    _bundleName = [self.bundlePlist objectForKey:_bundleNameKey];
+    if (!_bundleName)
         return nil;
-    [self endContentAccess];
     return self;
 }
 
