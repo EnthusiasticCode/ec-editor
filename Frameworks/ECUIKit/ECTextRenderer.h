@@ -26,19 +26,8 @@ typedef void (^ECTextRendererLayerPass)(CGContextRef context, ECTextRendererLine
 @protocol ECTextRendererDelegate <NSObject>
 @optional
 
-/// Returns insets for the given renderer.
-- (UIEdgeInsets)textInsetsForTextRenderer:(ECTextRenderer *)sender;
-
-/// An array of ECTextRendererLayerPass that will be applied in order to every
-/// line before rendering the actual text line.
-- (NSArray *)underlayPassesForTextRenderer:(ECTextRenderer *)sender;
-
-/// An array of ECTextRendererLayerPass that will be applied in order to every
-/// line after rendering the actual text line.
-- (NSArray *)overlayPassesForTextRenderer:(ECTextRenderer *)sender;
-
 /// Called when the renderer update a part of its content.
-- (void)textRenderer:(ECTextRenderer *)sender invalidateRenderInRect:(CGRect)rect;
+- (void)textRenderer:(ECTextRenderer *)sender didInvalidateRenderInRect:(CGRect)rect;
 
 @end
 
@@ -46,24 +35,13 @@ typedef void (^ECTextRendererLayerPass)(CGContextRef context, ECTextRendererLine
 @protocol ECTextRendererDataSource <NSObject>
 @required
 
-/// An implementer of this method should return a string from the input
-/// text that start at the given line location and that contain maximum
-/// the given line count.
-/// lineRange in input is the desired range of lines, in ouput its length
-/// should be less or equal to the input value to indicate how many lines 
-/// have actually been return.
-/// endOfString is an output parameter that should be set to YES if the 
-/// requested line range contains the end of the source string.
-/// The returned string should contain an additional new line at the end of
-/// the source text for optimal rendering.
-- (NSAttributedString *)textRenderer:(ECTextRenderer *)sender stringInLineRange:(NSRange *)lineRange endOfString:(BOOL *)endOfString;
+/// Returns the length of the source string.
+- (NSUInteger)stringLengthForTextRenderer:(ECTextRenderer *)sender;
 
-@optional
-/// When implemented, this delegate method should return the total number 
-/// of lines in the input text. Lines that exceed the given maximum length
-/// of characters shold be considered as multiple lines. If this method
-/// returns 0 a different estime will be used.
-- (NSUInteger)textRenderer:(ECTextRenderer *)sender estimatedTextLineCountOfLength:(NSUInteger)maximumLineLength;
+/// An implementer of this method should return a string from the input
+/// text in the given string range. If the range length is 0
+/// the caller is expected to get all the remaining string.
+- (NSAttributedString *)textRenderer:(ECTextRenderer *)sender attributedStringInRange:(NSRange)stringRange;
 
 @end
 
@@ -83,12 +61,12 @@ typedef void (^ECTextRendererLayerPass)(CGContextRef context, ECTextRendererLine
 /// \c ECTextRendererDatasource protocol.
 @property (nonatomic, weak) id <ECTextRendererDataSource> datasource;
 
-/// Defines the preferred number of lines to use for one segment of input.
+/// Defines the maximum number of characters to use for one rendering segment.
 /// If this property is non-zero, input strings from the datasource will
 /// be requested in segments when needed. This will reduce the ammount of 
 /// text read and rendered at a time to improve speed and memory 
 /// performance. Default value is 0.
-@property (nonatomic) NSUInteger preferredLineCountPerSegment;
+@property (nonatomic) NSUInteger maximumStringLenghtPerSegment;
 
 /// Invalidate the content making the renderer call back to its datasource
 /// to refresh required strings.
@@ -99,32 +77,37 @@ typedef void (^ECTextRendererLayerPass)(CGContextRef context, ECTextRendererLine
 /// to retrieve the modified content.
 /// The original range can have length of 0 to indicate an insertion before the 
 /// line; the new range can as well have a length of 0 to indicate deletion.
-- (void)updateTextInLineRange:(NSRange)originalRange toLineRange:(NSRange)newRange;
+- (void)updateTextFromStringRange:(NSRange)originalRange toStringRange:(NSRange)newRange;
 
-#pragma mark Caching Behaviours
+#pragma mark Customizing Rendering
 
-/// Use this method to clear the rendered cache if memory usage start to be 
-/// a problem.
-- (void)clearCache;
-
-#pragma mark Managing Rendering Behaviours
-
-/// The width to use to wrap the text. If the datasource provide a textInset greater
-/// than zero, this width will be changed to account for that. 
+/// The width to use for the rendering canvas.
 /// Changing this property will make the renderer to invalidate it's content.
-@property (nonatomic) CGFloat wrapWidth;
+@property (nonatomic) CGFloat renderWidth;
 
-/// Returns the estimated height for the current content at the current wrap
-/// width. A user can observe this property to receive updates on the estimation.
-@property (nonatomic, readonly) CGFloat estimatedHeight;
+/// Returns the current height of the rendered text. This property may change it's
+/// value based on the lazy loading process of the renderer.
+/// A user can observe this property to receive updates on the changing height.
+@property (nonatomic, readonly) CGFloat renderHeight;
+
+/// Insets to give to the text in the rendering area.
+@property (nonatomic) UIEdgeInsets textInsets;
+
+/// An array of ECTextRendererLayerPass that will be applied in order to every
+/// line before rendering the actual text line.
+@property (nonatomic, copy) NSArray *underlayRenderingPasses;
+
+/// An array of ECTextRendererLayerPass that will be applied in order to every
+/// line after rendering the actual text line.
+@property (nonatomic, copy) NSArray *overlayRenderingPasses;
+
+#pragma mark Rendering Content
 
 /// Given a rect in the rendered text space, this method return a centered
 /// and resized to fit an integral number of lines present in that original
 /// rect. The result can be computed faster but inpreciselly if the guessed
 /// flag is set to YES.
-- (CGRect)rectForIntegralNumberOfTextLinesWithinRect:(CGRect)rect allowGuessedResult:(BOOL)guessed;
-
-#pragma mark Rendering Content
+//- (CGRect)rectForIntegralNumberOfTextLinesWithinRect:(CGRect)rect allowGuessedResult:(BOOL)guessed;
 
 /// Convenience function to enumerate throught all lines (indipendent from text segment)
 /// contained in the given rect relative to the rendered text space.
