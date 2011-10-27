@@ -624,14 +624,7 @@
 }
 
 - (NSAttributedString *)_stringForTextSegment:(TextSegment *)requestSegment lineCount:(NSUInteger *)lines
-{
-#warning TODO NIK put tailing new line logic here 
-//    if (NSMaxRange(stringRange) == self.contentString.length) 
-//    {
-//        NSAttributedString *newLine = [[NSAttributedString alloc] initWithString:@"\n" attributes:self.defaultTextStyle.CTAttributes];
-//        [result appendAttributedString:newLine];
-//    }
-    
+{    
     NSUInteger inputStringLenght = [datasource stringLengthForTextRenderer:self];
     if (inputStringLenght == 0)
         return nil;
@@ -672,6 +665,14 @@
         lineCount++;
     }
     
+    // Add a tailing new line 
+    if (inputStringLenght == NSMaxRange(stringRange))
+    {
+        NSMutableAttributedString *newLineString = [attributedString mutableCopy];
+        [newLineString appendAttributedString:[[NSAttributedString alloc] initWithString:@"\n" attributes:[newLineString attributesAtIndex:stringLength - 1 effectiveRange:NULL]]];
+        attributedString = newLineString;
+    }
+
     // Side effect! clear caches if segment changes its ragne
     if (requestSegment.lineCount > 0 && lineCount != requestSegment.lineCount)
     {

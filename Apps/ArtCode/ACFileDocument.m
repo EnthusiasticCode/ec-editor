@@ -101,13 +101,6 @@ static NSRange intersectionOfRangeRelativeToRange(NSRange range, NSRange inRange
 //        return ECCodeVisitorResultRecurse;
 //    }];
     
-    // Append tailing new line
-    if (NSMaxRange(stringRange) == self.contentString.length) 
-    {
-        NSAttributedString *newLine = [[NSAttributedString alloc] initWithString:@"\n" attributes:self.defaultTextStyle.CTAttributes];
-        [result appendAttributedString:newLine];
-    }
-    
     return result;
 }
 

@@ -35,15 +35,12 @@ typedef void (^ECTextRendererLayerPass)(CGContextRef context, ECTextRendererLine
 @protocol ECTextRendererDataSource <NSObject>
 @required
 
+/// Returns the length of the source string.
 - (NSUInteger)stringLengthForTextRenderer:(ECTextRenderer *)sender;
 
 /// An implementer of this method should return a string from the input
 /// text in the given string range. If the range length is 0
 /// the caller is expected to get all the remaining string.
-/// endOfString is an output parameter that should be set to YES if the 
-/// requested range contains the end of the source string.
-/// The returned string should contain an additional new line at the end of
-/// the source text for optimal rendering.
 - (NSAttributedString *)textRenderer:(ECTextRenderer *)sender attributedStringInRange:(NSRange)stringRange;
 
 @end
