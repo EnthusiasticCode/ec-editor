@@ -26,15 +26,6 @@
 /// Redefined to accept private changes.
 @property (nonatomic) CGFloat renderHeight;
 
-/// Text renderer strings' cache shared among all text segments.
-@property (nonatomic, readonly, strong) NSCache *segmentStringsCache;
-
-/// Text renderer typesetters' cache shared among all text segments.
-@property (nonatomic, readonly, strong) NSCache *segmentTypesettersCache;
-
-/// Text renderer line arrays' cache shared among all text segments.
-@property (nonatomic, readonly, strong) NSCache *segmentRenderedLinesCache;
-
 /// Gets the render width for the text considering the text insets
 - (CGFloat)_wrapWidth;
 
@@ -85,11 +76,15 @@
 
 /// A Text Segment represent a part of the text rendered. The segment represented
 /// text is limited by the number of lines in \c preferredLineCountPerSegment.
-#warning TODO NIK make this an NSDiscardableContent, typesetter, lines and string to be the content
-// TODO also: the isLastSegment property instead of a variable in the container
-@interface TextSegment : NSObject {
+@interface TextSegment : NSObject <NSDiscardableContent> {
 @private
+    NSInteger _discardableContentCount;
     ECTextRenderer *parentRenderer;
+    
+    // Content
+    NSAttributedString *_string;
+    CTTypesetterRef _typesetter;
+    NSMutableArray *_renderedLines;
     
     /// Cache of heights for wrap widths
     struct { CGFloat wrapWidth; CGFloat height; } heightCache[HEIGHT_CACHE_SIZE];
@@ -97,18 +92,25 @@
 
 - (id)initWithTextRenderer:(ECTextRenderer *)renderer;
 
+#pragma mark Content
+
 /// The string rendered with this text segment.
-@property (nonatomic, readonly, weak) NSAttributedString *string;
+@property (nonatomic, strong) NSAttributedString *string;
 
 /// The length of the receiver's string. Use this method instead of [string length]
 /// to avoid calling on a deallocated cache.
 @property (nonatomic) NSUInteger stringLength;
 
 /// The typesetter generated from the text segment string.
-@property (nonatomic, readonly) CTTypesetterRef typesetter;
+@property (nonatomic) CTTypesetterRef typesetter;
+
+/// Removes the content.
+- (void)discardContent;
+
+#pragma mark Derived Data
 
 /// An array of rendered wrapped lines ready to be drawn on a context.
-@property (nonatomic, readonly, weak) NSArray *renderedLines;
+@property (nonatomic, strong) NSArray *renderedLines;
 
 /// Count of elements in renderedLines. Reading this property does not generate the rendered lines if not needed.
 @property (nonatomic, readonly) NSUInteger renderedLineCount;
@@ -270,56 +272,66 @@
 
 #pragma mark TextSegment Properties
 
+@synthesize string = _string, typesetter = _typesetter, renderedLines = _renderedLines;
 @synthesize lineCount, renderedLineCount, renderWrapWidth, stringLength, valid;
 
 - (NSAttributedString *)string
 {
-    NSAttributedString *string = [parentRenderer.segmentStringsCache objectForKey:self];
+    ECASSERT(_discardableContentCount  > 0);
     
-    if (!string)
+    if (!_string)
     {
-        string = [parentRenderer _stringForTextSegment:self lineCount:&lineCount];
-        if (!string)
+        _string = [parentRenderer _stringForTextSegment:self lineCount:&lineCount];
+        if (!_string)
             return nil;
         
-        stringLength = [string length];
-        [parentRenderer.segmentStringsCache setObject:string forKey:self];
+        stringLength = [_string length];
+        
+        ECASSERT(_typesetter == NULL && "With typesetter there should be no way to reach this point");
     }
     
-    return string;
+    return _string;
 }
 
 - (CTTypesetterRef)typesetter
 {
-    CTTypesetterRef t = (__bridge CTTypesetterRef)[parentRenderer.segmentTypesettersCache objectForKey:self];
+    ECASSERT(_discardableContentCount > 0);
     
-    if (!t)
+    if (!_typesetter)
     {
-        t = CTTypesetterCreateWithAttributedString((__bridge CFAttributedStringRef)self.string);
-        
-        // Cache
-        if (t) 
-        {
-            [parentRenderer.segmentTypesettersCache setObject:(__bridge id)t forKey:self];
-            CFRelease(t);
-        }
+        _typesetter = CTTypesetterCreateWithAttributedString((__bridge CFAttributedStringRef)self.string);
 
-        // Remove frame
-        [parentRenderer.segmentRenderedLinesCache removeObjectForKey:self];
+        // Remove rendered lines
+        self.renderedLines = nil;
     }
     
-    return t;
+    return _typesetter;
+}
+
+- (void)setTypesetter:(CTTypesetterRef)typesetter
+{
+    if (typesetter == _typesetter)
+        return;
+    
+    [self willChangeValueForKey:@"typesetter"];
+    if (_typesetter)
+        CFRelease(_typesetter);
+    if (typesetter)
+        _typesetter = CFRetain(typesetter);
+    else
+        _typesetter = NULL;
+    [self didChangeValueForKey:@"typesetter"];
 }
 
 - (NSArray *)renderedLines
 {
-    NSMutableArray *lines = [parentRenderer.segmentRenderedLinesCache objectForKey:self];
+    ECASSERT(_discardableContentCount > 0);
     
-    if (!lines)
+    if (!_renderedLines)
     {
         // Retrieve typesetter and string
         CTTypesetterRef typesetter = self.typesetter;
-        lines = [[NSMutableArray alloc] initWithCapacity:lineCount];
+        _renderedLines = [[NSMutableArray alloc] initWithCapacity:lineCount];
         
         // Generate wrapped lines
         __block CFRange lineRange = CFRangeMake(0, 0);
@@ -335,17 +347,16 @@
                 lineRange.location += lineRange.length;
                 
                 // Save line
-                [lines addObject:[ECTextRendererLine textRendererLineWithCTLine:ctline hasNewLine:(lineLength <= truncationLenght)]];
+                [_renderedLines addObject:[ECTextRendererLine textRendererLineWithCTLine:ctline hasNewLine:(lineLength <= truncationLenght)]];
                 lineLength -= truncationLenght;
                 CFRelease(ctline);
             } while (lineLength > 0);
         }];
         
         // Cache result
-        [parentRenderer.segmentRenderedLinesCache setObject:lines forKey:self];
-        renderedLineCount = [lines count];
+        renderedLineCount = [_renderedLines count];
     }
-    return lines;
+    return _renderedLines;
 }
 
 - (NSUInteger)renderedLineCount
@@ -357,11 +368,12 @@
 
 - (void)setRenderWrapWidth:(CGFloat)width
 {
-    if (renderWrapWidth != width) 
-    {
-        renderWrapWidth = width;
-        [parentRenderer.segmentRenderedLinesCache removeObjectForKey:self];
-    }
+    if (renderWrapWidth == width) 
+        return;
+    
+    renderWrapWidth = width;
+    self.renderedLines = nil;
+    self.typesetter = nil;
 }
 
 - (CGFloat)renderHeight
@@ -383,12 +395,57 @@
     // Calculate actual height
     heightCache[cacheIdx].wrapWidth = renderWrapWidth;
     heightCache[cacheIdx].height = 0;
+    [self beginContentAccess];
     for (ECTextRendererLine *line in self.renderedLines)
     {
         heightCache[cacheIdx].height += line->ascent + line->descent;
     }
+    [self endContentAccess];
     
     return heightCache[cacheIdx].height;
+}
+
+#pragma mark NSDiscardableContent Methods
+
+- (BOOL)beginContentAccess
+{
+    return ++_discardableContentCount;
+}
+
+- (void)endContentAccess
+{
+    ECASSERT(_discardableContentCount > 0);
+    
+    --_discardableContentCount;
+}
+
+- (BOOL)isContentDiscarded
+{
+    return _string == nil && _typesetter == NULL && _renderedLines == nil;
+}
+
+- (void)discardContentIfPossible
+{
+    ECASSERT(_discardableContentCount >= 0);
+    
+    if (_discardableContentCount > 0 || [self isContentDiscarded])
+        return;
+    
+    [self discardContent];
+}
+
+#pragma mark Content Discarding
+
+- (void)discardContent
+{
+    self.string = nil;
+    self.renderedLines = nil;
+    self.typesetter = nil;
+}
+
+- (void)dealloc
+{
+    [self discardContent];
 }
 
 #pragma mark TextSegment Methods
@@ -400,7 +457,11 @@
     if ((self = [super init])) 
     {
         parentRenderer = renderer;
+        
+        // Will generate the segment derived data.
+        [self beginContentAccess];
         valid = self.typesetter != NULL;
+        [self endContentAccess];
     }
     return self;
 }
@@ -516,7 +577,6 @@
 
 #pragma mark Properties
 
-@synthesize segmentStringsCache, segmentTypesettersCache, segmentRenderedLinesCache;
 @synthesize delegate, datasource;
 @synthesize renderWidth, renderHeight, textInsets, maximumStringLenghtPerSegment;
 @synthesize underlayRenderingPasses, overlayRenderingPasses;
@@ -593,12 +653,6 @@
     if ((self = [super init])) 
     {
         textSegments = [NSMutableArray new];
-        segmentStringsCache = [NSCache new];
-        segmentStringsCache.countLimit = 5;
-        segmentTypesettersCache = [NSCache new];
-        segmentTypesettersCache.countLimit = 5;
-        segmentRenderedLinesCache = [NSCache new];
-        segmentRenderedLinesCache.countLimit = 3;
     }
     return self;
 }
@@ -613,7 +667,6 @@
 - (void)_updateRenderWidth:(CGFloat)width
 {
     CGFloat wrapWidth = width - textInsets.left - textInsets.right;
-    [segmentRenderedLinesCache removeAllObjects];
     for (TextSegment *segment in textSegments) 
     {
         segment.renderWrapWidth = wrapWidth;
@@ -709,6 +762,7 @@
             {
                 segment = [[TextSegment alloc] initWithTextRenderer:self];
                 segment.renderWrapWidth = [self _wrapWidth];
+                [segment beginContentAccess];
                 if (!segment.isValid) 
                 {
                     lastTextSegment = [textSegments lastObject];
@@ -724,6 +778,7 @@
             else
             {
                 segment = [textSegments objectAtIndex:currentIndex];
+                [segment beginContentAccess];
             }
 
             // Apply block
@@ -735,6 +790,8 @@
             currentLineRange.location += currentLineRange.length;
             currentStringOffset += segment.stringLength;
             currentPositionOffset += segment.renderHeight;
+            
+            [segment endContentAccess];
             
         } while (!stop);
         
@@ -1134,9 +1191,7 @@
             
             // Only one segment is affected
             segment.stringLength = segmentNewLength;
-            [segmentStringsCache removeObjectForKey:segment];
-            [segmentTypesettersCache removeObjectForKey:segment];
-            [segmentRenderedLinesCache removeObjectForKey:segment];
+            [segment discardContent];
             break;
         }
         
@@ -1146,13 +1201,7 @@
     // If the change crosses multiple segments, recreate all from the one where the change start
     if (removeFromSegmentIndex != NSNotFound)
     {
-        NSIndexSet *removeSet = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(removeFromSegmentIndex, [textSegments count] - removeFromSegmentIndex)];
-        [textSegments enumerateObjectsAtIndexes:removeSet options:0 usingBlock:^(TextSegment *segment, NSUInteger idx, BOOL *stop) {
-            [segmentStringsCache removeObjectForKey:segment];
-            [segmentTypesettersCache removeObjectForKey:segment];
-            [segmentRenderedLinesCache removeObjectForKey:segment];
-        }];
-        [textSegments removeObjectsAtIndexes:removeSet];
+        [textSegments removeObjectsAtIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(removeFromSegmentIndex, [textSegments count] - removeFromSegmentIndex)]];
         lastTextSegment = nil;
     }
     
@@ -1163,9 +1212,10 @@
 
 - (void)clearCache
 {
-    [segmentStringsCache removeAllObjects];
-    [segmentTypesettersCache removeAllObjects];
-    [segmentRenderedLinesCache removeAllObjects];
+    for (TextSegment *segment in textSegments)
+    {
+        [segment discardContentIfPossible];
+    }
 }
 
 @end
