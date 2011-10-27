@@ -15,12 +15,11 @@
 @optional
 
 /// Returns a value that indicate if the codeview can edit the datasource
-/// in the specified text range.
+/// in the specified text range. By default, if not implemented, this method will
+/// return YES if codeView:commitString:forTextInRange: is implemented.
 - (BOOL)codeView:(ECCodeView *)codeView canEditTextInRange:(NSRange)range;
 
 /// Commit a change for the given range with the given string.
-/// The datasource is responsible for calling one of the update methods of the 
-/// codeview after the text has been changed.
 - (void)codeView:(ECCodeView *)codeView commitString:(NSString *)string forTextInRange:(NSRange)range;
 
 /// If implemented, indicate that the data source support completion of words.

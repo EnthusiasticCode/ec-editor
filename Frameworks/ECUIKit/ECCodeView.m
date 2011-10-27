@@ -37,9 +37,12 @@
     NSTimer *touchScrollTimer;
     
     // Delegate and datasource flags
-    BOOL dataSourceHasCodeCanEditTextInRange;
-    BOOL dataSourceHasViewControllerForCompletionAtTextInRange;
-    BOOL delegateHasCompletionRequestAtTextLocationWithFilterWord;
+    struct {
+        unsigned int dataSourceHasCodeCanEditTextInRange : 1;
+        unsigned int dataSourceHasCommitStringForTextInRange : 1;
+        unsigned int dataSourceHasViewControllerForCompletionAtTextInRange : 1;
+        unsigned int delegateHasCompletionRequestAtTextLocationWithFilterWord : 1;
+    } flags;
     
     // Recognizers
     UITapGestureRecognizer *focusRecognizer;
@@ -814,8 +817,9 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
 {
     [super setDatasource:aDatasource];
     
-    dataSourceHasCodeCanEditTextInRange = [self.datasource respondsToSelector:@selector(codeView:canEditTextInRange:)];
-    dataSourceHasViewControllerForCompletionAtTextInRange = [self.datasource respondsToSelector:@selector(codeView:viewControllerForCompletionAtTextInRange:)];
+    flags.dataSourceHasCodeCanEditTextInRange = [self.datasource respondsToSelector:@selector(codeView:canEditTextInRange:)];
+    flags.dataSourceHasCommitStringForTextInRange = [self.datasource respondsToSelector:@selector(codeView:commitString:forTextInRange:)];
+    flags.dataSourceHasViewControllerForCompletionAtTextInRange = [self.datasource respondsToSelector:@selector(codeView:viewControllerForCompletionAtTextInRange:)];
 }
 
 - (void)setCaretColor:(UIColor *)caretColor
@@ -978,7 +982,7 @@ static void init(ECCodeView *self)
 
 - (void)showCompletionForTextInRange:(NSRange)textRange
 {
-    if (!dataSourceHasViewControllerForCompletionAtTextInRange)
+    if (!flags.dataSourceHasViewControllerForCompletionAtTextInRange)
         return;
     
     if (!completionPopover)
@@ -1003,7 +1007,7 @@ static void init(ECCodeView *self)
 - (BOOL)canBecomeFirstResponder
 {
     // TODO should return depending on edit enabled state
-    return dataSourceHasCodeCanEditTextInRange;
+    return flags.dataSourceHasCommitStringForTextInRange;
 }
 
 - (BOOL)becomeFirstResponder
@@ -1612,17 +1616,21 @@ static void init(ECCodeView *self)
 
 - (void)editDataSourceInRange:(NSRange)range withString:(NSString *)string
 {
-    if (dataSourceHasCodeCanEditTextInRange
-        && [self.datasource codeView:self canEditTextInRange:range]) 
-    {
-        [self unmarkText];
-        
-        [inputDelegate textWillChange:self];
-        
-        [self.datasource codeView:self commitString:string forTextInRange:range];
-        
-        [inputDelegate textDidChange:self];
-    }
+    if (!flags.dataSourceHasCommitStringForTextInRange)
+        return;
+    
+    if (flags.dataSourceHasCodeCanEditTextInRange
+        && ![self.datasource codeView:self canEditTextInRange:range]) 
+        return;
+
+    [self unmarkText];
+    
+    [inputDelegate textWillChange:self];
+    [self.datasource codeView:self commitString:string forTextInRange:range];
+    [inputDelegate textDidChange:self];
+    
+    // Inform the renderer that text has changed
+    [self.renderer updateTextFromStringRange:range toStringRange:NSMakeRange(range.location, [string length])];
 }
 
 - (void)setSelectedTextRange:(NSRange)newSelection notifyDelegate:(BOOL)shouldNotify

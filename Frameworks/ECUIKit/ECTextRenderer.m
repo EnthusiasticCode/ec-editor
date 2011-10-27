@@ -625,6 +625,13 @@
 
 - (NSAttributedString *)_stringForTextSegment:(TextSegment *)requestSegment lineCount:(NSUInteger *)lines
 {
+#warning TODO NIK put tailing new line logic here 
+//    if (NSMaxRange(stringRange) == self.contentString.length) 
+//    {
+//        NSAttributedString *newLine = [[NSAttributedString alloc] initWithString:@"\n" attributes:self.defaultTextStyle.CTAttributes];
+//        [result appendAttributedString:newLine];
+//    }
+    
     NSUInteger inputStringLenght = [datasource stringLengthForTextRenderer:self];
     if (inputStringLenght == 0)
         return nil;
@@ -1118,7 +1125,7 @@
             // Will remove segment if modifying it will change it's string lenght too much
             NSInteger segmentNewLength = segment.stringLength + (toRange.length - fromRange.length);
             if (segmentNewLength > maximumStringLenghtPerSegment * 1.5 
-                || segmentNewLength < maximumStringLenghtPerSegment / 2)
+                || (segment != lastTextSegment && segmentNewLength < maximumStringLenghtPerSegment / 2))
             {
                 removeFromSegmentIndex = segmentIndex;
                 break;
@@ -1152,49 +1159,6 @@
     if (delegateHasDidInvalidateRenderInRect)
         [delegate textRenderer:self didInvalidateRenderInRect:CGRectMake(0, removeFromSegmentYOffset, self.renderWidth, (removeFromSegmentIndex != NSNotFound ? self.renderHeight - removeFromSegmentYOffset : affectedSegmentHeight))];
 }
-
-//- (void)updateTextInLineRange:(NSRange)originalRange toLineRange:(NSRange)newRange
-//{
-//    CGFloat currentY = 0;
-//    CGRect changedRect = CGRectNull, currentRect;
-//    
-//    NSUInteger currentLineLocation = 0;
-//    NSRange segmentRange, origInsersect, newIntersec;
-//    for (TextSegment *segment in textSegments) 
-//    {
-//        segmentRange = (NSRange){ currentLineLocation, segment.lineCount };
-//        
-//        origInsersect = NSIntersectionRange(originalRange, segmentRange);
-//        if (origInsersect.length > 0)
-//        {
-//            // Compute change intersection
-//            newIntersec = NSIntersectionRange(newRange, segmentRange);
-//            segmentRange.length += (newIntersec.length - origInsersect.length);
-//            segment.lineCount = segmentRange.length;
-//            
-//            // Update dirty rect
-//            currentRect = CGRectMake(0, currentY, wrapWidth, segment.renderHeight);
-//            changedRect = CGRectUnion(changedRect, currentRect);
-//            currentY += currentRect.size.height;
-//            
-//#warning NIK TODO!!! if lineCount > 1.5 * preferred -> split or merge if * 0.5
-//            // and remember to set proper lastTextSegment
-//            [segmentStringsCache removeObjectForKey:segment];
-//            [typesettersCache removeObjectForKey:segment];
-//            [renderedLinesCache removeObjectForKey:segment];
-//            // TODO!!! instead of cleaning the cache, use a segment method to update just those lines
-//        }
-//        
-//        currentLineLocation += segmentRange.length;
-//    }
-//    
-//    if (flags.delegateHasTextRendererInvalidateRenderInRect) 
-//    {
-//        [delegate textRenderer:self invalidateRenderInRect:[self convertFromTextRect:changedRect]];
-//    }
-//    
-//    self.estimatedHeight = 0;
-//}
 
 - (void)clearCache
 {

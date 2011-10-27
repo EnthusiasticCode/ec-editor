@@ -147,6 +147,8 @@
     codeView.lineNumbersFont = [UIFont systemFontOfSize:10];
     codeView.lineNumbersColor = [UIColor colorWithWhite:0.8 alpha:1];
     
+    codeView.alwaysBounceVertical = YES;
+    
     self.view = codeView;
 }
 
