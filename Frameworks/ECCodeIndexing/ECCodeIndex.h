@@ -8,8 +8,6 @@
 
 #import <Foundation/Foundation.h>
 
-#warning TODO: the whole ECCodeIndexing architecture requires uniquing, especially the TMSyntaxes
-
 @protocol ECCodeUnit;
 
 /// Class that encapsulates interaction with parsing and indexing libraries to provide language related non file specific functionality such as symbol resolution and refactoring.

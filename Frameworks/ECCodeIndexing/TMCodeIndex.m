@@ -11,6 +11,7 @@
 #import "TMCodeParser.h"
 #import "TMBundle.h"
 #import "TMSyntax.h"
+#import "OnigRegexp.h"
 
 @interface TMCodeIndex ()
 + (TMSyntax *)_syntaxForFile:(NSURL *)fileURL language:(NSString *)language scope:(NSString *)scope;
@@ -71,7 +72,7 @@
                 NSString *fileContents = [NSString stringWithContentsOfURL:newURL encoding:NSUTF8StringEncoding error:NULL];
                 firstLine = [fileContents substringWithRange:[fileContents lineRangeForRange:NSMakeRange(0, 1)]];
             }];
-            if ([syntax.firstLineMatch numberOfMatchesInString:firstLine options:0 range:NSMakeRange(0, [firstLine length])])
+            if ([syntax.firstLineMatch search:firstLine])
                 return YES;
             return NO;
         }];

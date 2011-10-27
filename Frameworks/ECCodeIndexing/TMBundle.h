@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@interface TMBundle : NSObject
+@interface TMBundle : NSObject <NSDiscardableContent>
 
 @property (nonatomic, strong, readonly) NSURL *bundleURL;
 @property (nonatomic, strong, readonly) NSString *bundleName;

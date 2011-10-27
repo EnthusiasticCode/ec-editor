@@ -9,6 +9,8 @@
 #import "TMSyntax.h"
 #import "TMPattern.h"
 
+#import "OnigRegexp.h"
+
 static NSString * const _syntaxNameKey = @"name";
 static NSString * const _syntaxScopeKey = @"scopeName";
 static NSString * const _syntaxFileTypesKey = @"fileTypes";
@@ -19,6 +21,9 @@ static NSString * const _patternScopeKey = @"name";
 static NSString * const _patternsPatternsKey = @"patterns";
 
 @interface TMSyntax ()
+{
+    NSInteger _contentAccessCount;
+}
 @property (nonatomic, strong) NSURL *fileURL;
 @property (nonatomic, strong) NSString *name;
 @property (nonatomic, strong) NSString *scope;
@@ -41,6 +46,7 @@ static NSString * const _patternsPatternsKey = @"patterns";
 
 - (TMPattern *)pattern
 {
+    ECASSERT(_contentAccessCount > 0);
     if (!_pattern)
     {
         ECASSERT([self.plist objectForKey:_syntaxPatternsKey]);
@@ -51,6 +57,7 @@ static NSString * const _patternsPatternsKey = @"patterns";
 
 - (NSDictionary *)repository
 {
+    ECASSERT(_contentAccessCount > 0);
     if (!_repository)
     {
         NSMutableDictionary *repository = [NSMutableDictionary dictionary];
@@ -62,24 +69,59 @@ static NSString * const _patternsPatternsKey = @"patterns";
     return _repository;
 }
 
+- (NSDictionary *)plist
+{
+    ECASSERT(_contentAccessCount > 0);
+    if (!_plist)
+        _plist = [NSPropertyListSerialization propertyListWithData:[NSData dataWithContentsOfURL:self.fileURL options:NSDataReadingUncached error:NULL] options:NSPropertyListImmutable format:NULL error:NULL];
+    return _plist;
+}
+
 - (id)initWithFileURL:(NSURL *)fileURL
 {
     self = [super init];
     if (!self)
         return nil;
-    NSDictionary *syntaxPlist = [NSPropertyListSerialization propertyListWithData:[NSData dataWithContentsOfURL:fileURL options:NSDataReadingUncached error:NULL] options:NSPropertyListImmutable format:NULL error:NULL];
-    NSString *syntaxName = [syntaxPlist objectForKey:_syntaxNameKey];
-    if (!syntaxName)
-        return nil;
     self.fileURL = fileURL;
-    self.name = syntaxName;
-    self.scope = [syntaxPlist objectForKey:_syntaxScopeKey];
-    self.fileTypes = [syntaxPlist objectForKey:_syntaxFileTypesKey];
-    NSString *firstLineMatchRegex = [syntaxPlist objectForKey:_syntaxFirstLineMatchKey];
+    [self beginContentAccess];
+    self.name = [self.plist objectForKey:_syntaxNameKey];
+    if (!self.name)
+        return nil;
+    self.scope = [self.plist objectForKey:_syntaxScopeKey];
+    self.fileTypes = [self.plist objectForKey:_syntaxFileTypesKey];
+    NSString *firstLineMatchRegex = [self.plist objectForKey:_syntaxFirstLineMatchKey];
     if (firstLineMatchRegex)
-        self.firstLineMatch = [NSRegularExpression regularExpressionWithPattern:firstLineMatchRegex options:0 error:NULL];
-    self.plist = syntaxPlist;
+        self.firstLineMatch = [OnigRegexp compile:firstLineMatchRegex ignorecase:NO multiline:YES];
+    [self endContentAccess];
     return self;
+}
+
+- (BOOL)beginContentAccess
+{
+    ECASSERT(_contentAccessCount >= 0);
+    ++_contentAccessCount;
+    return YES;
+}
+
+- (void)endContentAccess
+{
+    ECASSERT(_contentAccessCount > 0);
+    --_contentAccessCount;
+}
+
+- (void)discardContentIfPossible
+{
+    ECASSERT(_contentAccessCount >= 0);
+    if (_contentAccessCount > 0)
+        return;
+    _pattern = nil;
+    _repository = nil;
+    _plist = nil;
+}
+
+- (BOOL)isContentDiscarded
+{
+    return !_pattern && !_repository && !_plist;
 }
 
 @end

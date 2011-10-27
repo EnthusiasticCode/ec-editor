@@ -20,6 +20,7 @@ static NSRange _rangeFromEndOfRangeToEndOfRange(NSRange firstRange, NSRange seco
 @interface TMCodeParser ()
 {
     NSOperationQueue *_presentedItemOperationQueue;
+    NSInteger _contentAccessCount;
 }
 @property (nonatomic, strong) TMCodeIndex *index;
 @property (atomic, strong) NSURL *fileURL;
@@ -70,6 +71,31 @@ static NSRange _rangeFromEndOfRangeToEndOfRange(NSRange firstRange, NSRange seco
         NSMutableArray *scopesStack = [NSMutableArray arrayWithObject:self.syntax.scope];
         [self _visitScopesInString:string range:range withPattern:self.syntax.pattern previousScopeStack:scopesStack usingVisitor:visitorBlock];
     }];
+}
+
+#pragma mark - NSDiscardableContent
+
+- (BOOL)beginContentAccess
+{
+    ++_contentAccessCount;
+    return YES;
+}
+
+- (void)endContentAccess
+{
+    ECASSERT(_contentAccessCount > 0);
+    --_contentAccessCount;
+}
+
+- (void)discardContentIfPossible
+{
+    ECASSERT(_contentAccessCount >= 0);
+}
+
+- (BOOL)isContentDiscarded
+{
+    ECASSERT(_contentAccessCount > 0);
+    return !_contentAccessCount;
 }
 
 #pragma mark - NSFileCoordination
@@ -350,7 +376,5 @@ static NSRange _rangeFromEndOfRangeToEndOfRange(NSRange firstRange, NSRange seco
         currentRange.length -= offset;
     }
 }
-
-#undef STOP_IF_VISITORRESULT_EQUALS_BREAK
 
 @end

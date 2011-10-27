@@ -10,7 +10,7 @@
 
 @class TMSyntax;
 
-@interface TMCodeParser : NSObject <ECCodeParser>
+@interface TMCodeParser : NSObject <ECCodeParser, NSDiscardableContent>
 
 @property (nonatomic, strong, readonly) TMCodeIndex *index;
 

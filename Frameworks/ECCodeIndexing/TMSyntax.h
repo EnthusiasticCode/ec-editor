@@ -8,14 +8,14 @@
 
 #import <Foundation/Foundation.h>
 
-@class TMPattern;
+@class TMPattern, OnigRegexp;
 
-@interface TMSyntax : NSObject
+@interface TMSyntax : NSObject <NSDiscardableContent>
 
 @property (nonatomic, strong, readonly) NSString *name;
 @property (nonatomic, strong, readonly) NSString *scope;
 @property (nonatomic, strong, readonly) NSArray *fileTypes;
-@property (nonatomic, strong, readonly) NSRegularExpression *firstLineMatch;
+@property (nonatomic, strong, readonly) OnigRegexp *firstLineMatch;
 @property (nonatomic, strong, readonly) TMPattern *pattern;
 @property (nonatomic, strong, readonly) NSDictionary *repository;
 

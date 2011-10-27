@@ -15,6 +15,9 @@ static NSString * const _bundleNameKey = @"name";
 static NSString * const _syntaxDirectory = @"Syntaxes";
 
 @interface TMBundle ()
+{
+    NSInteger _contentAccessCount;
+}
 - (id)initWithBundleURL:(NSURL *)bundleURL;
 @property (nonatomic, strong) NSURL *bundleURL;
 @property (nonatomic, strong) NSString *bundleName;
@@ -29,6 +32,14 @@ static NSString * const _syntaxDirectory = @"Syntaxes";
 @synthesize bundleName = _bundleName;
 @synthesize bundlePlist = _bundlePlist;
 @synthesize syntaxes = _syntaxes;
+
+- (NSDictionary *)bundlePlist
+{
+    ECASSERT(_contentAccessCount > 0);
+    if (!_bundlePlist)
+        _bundlePlist = [NSPropertyListSerialization propertyListWithData:[NSData dataWithContentsOfURL:[self.bundleURL URLByAppendingPathComponent:_bundleInfoPlist] options:NSDataReadingUncached error:NULL] options:NSPropertyListImmutable format:NULL error:NULL];
+    return _bundlePlist;
+}
 
 - (NSArray *)syntaxes
 {
@@ -55,19 +66,40 @@ static NSString * const _syntaxDirectory = @"Syntaxes";
         return nil;
     if (![[bundleURL pathExtension] isEqualToString:_bundleExtension])
         return nil;
-    NSData *plistData = [NSData dataWithContentsOfURL:[bundleURL URLByAppendingPathComponent:_bundleInfoPlist] options:NSDataReadingUncached error:NULL];
-    if (!plistData)
-        return nil;
-    NSDictionary *bundlePlist = [NSPropertyListSerialization propertyListWithData:plistData options:NSPropertyListImmutable format:NULL error:NULL];
-    if (!bundlePlist)
-        return nil;
-    NSString *bundleName = [bundlePlist objectForKey:_bundleNameKey];
-    if (!bundleName)
-        return nil;
     self.bundleURL = bundleURL;
-    self.bundleName = bundleName;
-    self.bundlePlist = bundlePlist;
+    [self beginContentAccess];
+    self.bundleName = [self.bundlePlist objectForKey:_bundleNameKey];
+    if (!self.bundleName)
+        return nil;
+    [self endContentAccess];
     return self;
+}
+
+- (BOOL)beginContentAccess
+{
+    ECASSERT(_contentAccessCount >= 0);
+    ++_contentAccessCount;
+    return YES;
+}
+
+- (void)endContentAccess
+{
+    ECASSERT(_contentAccessCount > 0);
+    --_contentAccessCount;
+}
+
+- (void)discardContentIfPossible
+{
+    ECASSERT(_contentAccessCount >= 0);
+    if (_contentAccessCount > 0)
+        return;
+    _bundlePlist = nil;
+    _syntaxes = nil;
+}
+
+- (BOOL)isContentDiscarded
+{
+    return !_bundlePlist && !_syntaxes;
 }
 
 @end
