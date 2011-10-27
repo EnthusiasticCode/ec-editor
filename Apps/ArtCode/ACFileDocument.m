@@ -19,7 +19,8 @@ static NSRange intersectionOfRangeRelativeToRange(NSRange range, NSRange inRange
 }
 
 @interface ACFileDocument ()
-@property (nonatomic, strong) NSString *contentString;
+
+@property (nonatomic, strong) NSMutableString *contentString;
 @property (nonatomic, strong) id<ECCodeParser>codeParser;
 @property (nonatomic, strong, readonly) ECTextStyle *defaultTextStyle;
 @end
@@ -31,7 +32,7 @@ static NSRange intersectionOfRangeRelativeToRange(NSRange range, NSRange inRange
 @synthesize defaultTextStyle = _defaultTextStyle;
 @synthesize theme = _theme;
 
-- (void)setContentString:(NSString *)contentString
+- (void)setContentString:(NSMutableString *)contentString
 {
     if (contentString == _contentString)
         return;
@@ -78,18 +79,19 @@ static NSRange intersectionOfRangeRelativeToRange(NSRange range, NSRange inRange
 
 - (BOOL)loadFromContents:(id)contents ofType:(NSString *)typeName error:(NSError *__autoreleasing *)outError
 {
-    self.contentString = [NSString stringWithContentsOfURL:self.fileURL encoding:NSUTF8StringEncoding error:NULL];
+    // TODO handle error
+    self.contentString = [NSMutableString stringWithContentsOfURL:self.fileURL encoding:NSUTF8StringEncoding error:NULL];
     return YES;
 }
 
 #pragma mark - Code View DataSource Methods
 
-- (NSUInteger)textLength
+- (NSUInteger)stringLengthForTextRenderer:(ECTextRenderer *)sender
 {
     return [self.contentString length];
 }
 
-- (NSAttributedString *)codeView:(ECCodeViewBase *)codeView attributedStringInRange:(NSRange)stringRange
+- (NSAttributedString *)textRenderer:(ECTextRenderer *)sender attributedStringInRange:(NSRange)stringRange
 {
     // Preparing result
     NSMutableAttributedString *result = [[NSMutableAttributedString alloc] initWithString:[self.contentString substringWithRange:stringRange] attributes:self.defaultTextStyle.CTAttributes];
@@ -109,55 +111,17 @@ static NSRange intersectionOfRangeRelativeToRange(NSRange range, NSRange inRange
     return result;
 }
 
-- (BOOL)codeView:(ECCodeViewBase *)codeView canEditTextInRange:(NSRange)range
-{
-    return YES;
-}
-
 - (void)codeView:(ECCodeViewBase *)codeView commitString:(NSString *)commitString forTextInRange:(NSRange)range
 {
-    NSUInteger strLength = [self.contentString length];
-    if (range.location + range.length > strLength) 
-        return;
-    
-    if (range.length == strLength) 
+    if ([commitString length] != 0)
     {
-        self.contentString = commitString;
-        [codeView updateAllText];
+        [self.contentString replaceCharactersInRange:range withString:commitString];
+        [self updateChangeCount:UIDocumentChangeDone];
     }
     else
     {
-        NSUInteger index = 0;
-        NSRange fromLineRange = NSMakeRange(0, 0);
-        NSUInteger toLineCount = 0, limit;
-        // From line location
-        for (index = 0; index < range.location; ++fromLineRange.location)
-            index = NSMaxRange([self.contentString lineRangeForRange:(NSRange){ index, 0 }]);
-        if (fromLineRange.location)
-            fromLineRange.location--;
-        // From line count
-        limit = NSMaxRange(range);
-        for (index = range.location; index <= limit; ++fromLineRange.length)
-            index = NSMaxRange([self.contentString lineRangeForRange:(NSRange){ index, 0 }]);
-        // To line count
-        limit = range.location + [commitString length];
-        for (index = range.location; index <= limit; ++toLineCount)
-            index = NSMaxRange([self.contentString lineRangeForRange:(NSRange){ index, 0 }]);
-        
-        if ([commitString length])
-        {
-            NSMutableString *mutableContentString = [NSMutableString stringWithString:self.contentString];
-            [mutableContentString replaceCharactersInRange:range withString:commitString];
-            self.contentString = mutableContentString;
-        }
-        else
-        {
-            NSMutableString *mutableContentString = [NSMutableString stringWithString:self.contentString];
-            [mutableContentString deleteCharactersInRange:range];
-            self.contentString = mutableContentString;
-        }
-        
-        [codeView updateTextInLineRange:fromLineRange toLineRange:(NSRange){ fromLineRange.location, toLineCount }];
+        [self.contentString deleteCharactersInRange:range];
+        [self updateChangeCount:UIDocumentChangeDone];
     }
 }
 

@@ -38,7 +38,7 @@
 
 - (void)enableSwipeRecognizers;
 - (void)handleGestureSwipe:(UISwipeGestureRecognizer *)recognizer;
-- (void)handleGesturePan:(UIPanGestureRecognizer *)recognizer;
+//- (void)handleGesturePan:(UIPanGestureRecognizer *)recognizer;
 
 @end
 

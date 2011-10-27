@@ -9,16 +9,6 @@
 #import "ECTextRenderer.h"
 #import "ECTextStyle.h"
 
-// Internal working notes: (outdated)
-// - The renderer keeps an array of ordered framesetter informations:
-//    > framesetter string range: the range of the total input used to
-//      generate the framesetter. (order cryteria)
-//    > framesetter: to be cached undefinetly untill clearCache message;
-//    > frame: that cover the entire framesetter's text and is reused
-//      when wrap size changes;
-//    > frame info cache: that cache wrap sizes to frame infos;
-//    > actual size: cache the actual size of rendered text.
-
 
 @class TextSegment;
 @class TextSegmentFrame;
@@ -30,47 +20,38 @@
     NSMutableArray *textSegments;
     TextSegment *lastTextSegment;
     
-    struct {
-        unsigned int delegateHasTextInsetsForTextRenderer : 1;
-        unsigned int delegateHasTextRendererInvalidateRenderInRect : 1;
-        unsigned int delegateHasUnderlayPassesForTextRenderer : 1;
-        unsigned int delegateHasOverlayPassesForTextRenderer : 1;
-        unsigned int dataSourceHasTextRendererEstimatedTextLineCountOfLength : 1;
-        unsigned int reserved : 3;
-    } flags;
+    BOOL delegateHasDidInvalidateRenderInRect;
+    
+    id _notificationCenterMemoryWarningObserver;
 }
 
-@property (nonatomic) CGFloat estimatedHeight;
+/// Redefined to accept private changes.
+@property (nonatomic) CGFloat renderHeight;
 
-/// Shourtcut to retrieve the text insets from the delegate.
-@property (nonatomic, readonly) UIEdgeInsets textInsets;
+/// Gets the render width for the text considering the text insets
+- (CGFloat)_wrapWidth;
 
-/// Text renderer strings' cache shared among all text segments.
-@property (nonatomic, readonly, strong) NSCache *segmentStringsCache;
-
-/// Text renderer typesetters' cache shared among all text segments.
-@property (nonatomic, readonly, strong) NSCache *typesettersCache;
-
-/// Text renderer line arrays' cache shared among all text segments.
-@property (nonatomic, readonly, strong) NSCache *renderedLinesCache;
+/// Updates every segment wrap width with the given width accounting for text
+/// insets and inform the delegate that the old rendering rect has changed.
+- (void)_updateRenderWidth:(CGFloat)width;
 
 /// Retrieve the string for the given text segment. Line count is an output parameter, pass NULL if not interested.
 /// This function is supposed to be used by a text segment to generate it's typesetter if not present in cache.
-/// The function can return NULL if the source string has no text for the given segment.
-- (NSAttributedString *)stringForTextSegment:(TextSegment *)segment lineCount:(NSUInteger *)lines;
+/// The function can return nil if the source string has no text for the given segment.
+- (NSAttributedString *)_stringForTextSegment:(TextSegment *)segment lineCount:(NSUInteger *)lines;
 
 /// Enumerate throught text segments creating them if not yet present. This function
 /// guarantee to enumerate throught all the text segments that cover the entire
 /// source text.
-- (void)generateTextSegmentsAndEnumerateUsingBlock:(void(^)(TextSegment *segment, NSUInteger idx, NSUInteger lineOffset, NSUInteger stringOffset, CGFloat positionOffset, BOOL *stop))block;
+- (void)_generateTextSegmentsAndEnumerateUsingBlock:(void(^)(TextSegment *segment, NSUInteger idx, NSUInteger lineOffset, NSUInteger stringOffset, CGFloat positionOffset, BOOL *stop))block;
 
 /// Returns the line number of a given position in the text. Optionally returns
 /// the X offset of the position in the returned line.
-- (NSUInteger)lineNumberForPosition:(NSUInteger)position offsetX:(CGFloat *)outXOffset;
+- (NSUInteger)_lineNumberForPosition:(NSUInteger)position offsetX:(CGFloat *)outXOffset;
 
 /// Returns the text position of the given line and, withing that line, the character
 /// at the specified X offset.
-- (NSUInteger)positionForLine:(NSUInteger)requestLine graphicalOffset:(CGFloat)offsetX;
+- (NSUInteger)_positionForLine:(NSUInteger)requestLine graphicalOffset:(CGFloat)offsetX;
 
 @end
 
@@ -97,9 +78,15 @@
 
 /// A Text Segment represent a part of the text rendered. The segment represented
 /// text is limited by the number of lines in \c preferredLineCountPerSegment.
-@interface TextSegment : NSObject {
+@interface TextSegment : NSObject <NSDiscardableContent> {
 @private
+    NSInteger _discardableContentCount;
     ECTextRenderer *parentRenderer;
+    
+    // Content
+    NSAttributedString *_string;
+    CTTypesetterRef _typesetter;
+    NSMutableArray *_renderedLines;
     
     /// Cache of heights for wrap widths
     struct { CGFloat wrapWidth; CGFloat height; } heightCache[HEIGHT_CACHE_SIZE];
@@ -107,18 +94,25 @@
 
 - (id)initWithTextRenderer:(ECTextRenderer *)renderer;
 
+#pragma mark Content
+
 /// The string rendered with this text segment.
-@property (nonatomic, readonly, weak) NSAttributedString *string;
+@property (nonatomic, strong) NSAttributedString *string;
 
 /// The length of the receiver's string. Use this method instead of [string length]
 /// to avoid calling on a deallocated cache.
 @property (nonatomic) NSUInteger stringLength;
 
 /// The typesetter generated from the text segment string.
-@property (nonatomic, readonly) CTTypesetterRef typesetter;
+@property (nonatomic) CTTypesetterRef typesetter;
+
+/// Removes the content.
+- (void)discardContent;
+
+#pragma mark Derived Data
 
 /// An array of rendered wrapped lines ready to be drawn on a context.
-@property (nonatomic, readonly, weak) NSArray *renderedLines;
+@property (nonatomic, strong) NSArray *renderedLines;
 
 /// Count of elements in renderedLines. Reading this property does not generate the rendered lines if not needed.
 @property (nonatomic, readonly) NSUInteger renderedLineCount;
@@ -280,56 +274,66 @@
 
 #pragma mark TextSegment Properties
 
+@synthesize string = _string, typesetter = _typesetter, renderedLines = _renderedLines;
 @synthesize lineCount, renderedLineCount, renderWrapWidth, stringLength, valid;
 
 - (NSAttributedString *)string
 {
-    NSAttributedString *string = [parentRenderer.segmentStringsCache objectForKey:self];
+    ECASSERT(_discardableContentCount  > 0);
     
-    if (!string)
+    if (!_string)
     {
-        string = [parentRenderer stringForTextSegment:self lineCount:&lineCount];
-        if (!string)
+        _string = [parentRenderer _stringForTextSegment:self lineCount:&lineCount];
+        if (!_string)
             return nil;
         
-        stringLength = [string length];
-        [parentRenderer.segmentStringsCache setObject:string forKey:self];
+        stringLength = [_string length];
+        
+        ECASSERT(_typesetter == NULL && "With typesetter there should be no way to reach this point");
     }
     
-    return string;
+    return _string;
 }
 
 - (CTTypesetterRef)typesetter
 {
-    CTTypesetterRef t = (__bridge CTTypesetterRef)[parentRenderer.typesettersCache objectForKey:self];
+    ECASSERT(_discardableContentCount > 0);
     
-    if (!t)
+    if (!_typesetter)
     {
-        t = CTTypesetterCreateWithAttributedString((__bridge CFAttributedStringRef)self.string);
-        
-        // Cache
-        if (t) 
-        {
-            [parentRenderer.typesettersCache setObject:(__bridge id)t forKey:self];
-            CFRelease(t);
-        }
+        _typesetter = CTTypesetterCreateWithAttributedString((__bridge CFAttributedStringRef)self.string);
 
-        // Remove frame
-        [parentRenderer.renderedLinesCache removeObjectForKey:self];
+        // Remove rendered lines
+        self.renderedLines = nil;
     }
     
-    return t;
+    return _typesetter;
+}
+
+- (void)setTypesetter:(CTTypesetterRef)typesetter
+{
+    if (typesetter == _typesetter)
+        return;
+    
+    [self willChangeValueForKey:@"typesetter"];
+    if (_typesetter)
+        CFRelease(_typesetter);
+    if (typesetter)
+        _typesetter = CFRetain(typesetter);
+    else
+        _typesetter = NULL;
+    [self didChangeValueForKey:@"typesetter"];
 }
 
 - (NSArray *)renderedLines
 {
-    NSMutableArray *lines = [parentRenderer.renderedLinesCache objectForKey:self];
+    ECASSERT(_discardableContentCount > 0);
     
-    if (!lines)
+    if (!_renderedLines)
     {
         // Retrieve typesetter and string
         CTTypesetterRef typesetter = self.typesetter;
-        lines = [[NSMutableArray alloc] initWithCapacity:lineCount];
+        _renderedLines = [[NSMutableArray alloc] initWithCapacity:lineCount];
         
         // Generate wrapped lines
         __block CFRange lineRange = CFRangeMake(0, 0);
@@ -345,17 +349,16 @@
                 lineRange.location += lineRange.length;
                 
                 // Save line
-                [lines addObject:[ECTextRendererLine textRendererLineWithCTLine:ctline hasNewLine:(lineLength <= truncationLenght)]];
+                [_renderedLines addObject:[ECTextRendererLine textRendererLineWithCTLine:ctline hasNewLine:(lineLength <= truncationLenght)]];
                 lineLength -= truncationLenght;
                 CFRelease(ctline);
             } while (lineLength > 0);
         }];
         
         // Cache result
-        [parentRenderer.renderedLinesCache setObject:lines forKey:self];
-        renderedLineCount = [lines count];
+        renderedLineCount = [_renderedLines count];
     }
-    return lines;
+    return _renderedLines;
 }
 
 - (NSUInteger)renderedLineCount
@@ -367,11 +370,12 @@
 
 - (void)setRenderWrapWidth:(CGFloat)width
 {
-    if (renderWrapWidth != width) 
-    {
-        renderWrapWidth = width;
-        [parentRenderer.renderedLinesCache removeObjectForKey:self];
-    }
+    if (renderWrapWidth == width) 
+        return;
+    
+    renderWrapWidth = width;
+    self.renderedLines = nil;
+    self.typesetter = nil;
 }
 
 - (CGFloat)renderHeight
@@ -393,12 +397,57 @@
     // Calculate actual height
     heightCache[cacheIdx].wrapWidth = renderWrapWidth;
     heightCache[cacheIdx].height = 0;
+    [self beginContentAccess];
     for (ECTextRendererLine *line in self.renderedLines)
     {
         heightCache[cacheIdx].height += line->ascent + line->descent;
     }
+    [self endContentAccess];
     
     return heightCache[cacheIdx].height;
+}
+
+#pragma mark NSDiscardableContent Methods
+
+- (BOOL)beginContentAccess
+{
+    return ++_discardableContentCount;
+}
+
+- (void)endContentAccess
+{
+    ECASSERT(_discardableContentCount > 0);
+    
+    --_discardableContentCount;
+}
+
+- (BOOL)isContentDiscarded
+{
+    return _string == nil && _typesetter == NULL && _renderedLines == nil;
+}
+
+- (void)discardContentIfPossible
+{
+    ECASSERT(_discardableContentCount >= 0);
+    
+    if (_discardableContentCount > 0 || [self isContentDiscarded])
+        return;
+    
+    [self discardContent];
+}
+
+#pragma mark Content Discarding
+
+- (void)discardContent
+{
+    self.string = nil;
+    self.renderedLines = nil;
+    self.typesetter = nil;
+}
+
+- (void)dealloc
+{
+    [self discardContent];
 }
 
 #pragma mark TextSegment Methods
@@ -410,7 +459,11 @@
     if ((self = [super init])) 
     {
         parentRenderer = renderer;
+        
+        // Will generate the segment derived data.
+        [self beginContentAccess];
         valid = self.typesetter != NULL;
+        [self endContentAccess];
     }
     return self;
 }
@@ -526,16 +579,21 @@
 
 #pragma mark Properties
 
-@synthesize segmentStringsCache, typesettersCache, renderedLinesCache;
-@synthesize delegate, datasource, preferredLineCountPerSegment, wrapWidth, estimatedHeight;
+@synthesize delegate, datasource;
+@synthesize renderWidth, renderHeight, textInsets, maximumStringLenghtPerSegment;
+@synthesize underlayRenderingPasses, overlayRenderingPasses;
 
 - (void)setDelegate:(id<ECTextRendererDelegate>)aDelegate
 {
+    if (aDelegate == delegate)
+        return;
+    
+    [self willChangeValueForKey:@"delegate"];
+    
     delegate = aDelegate;
-    flags.delegateHasTextInsetsForTextRenderer = [delegate respondsToSelector:@selector(textInsetsForTextRenderer:)];
-    flags.delegateHasUnderlayPassesForTextRenderer = [delegate respondsToSelector:@selector(underlayPassesForTextRenderer:)];
-    flags.delegateHasOverlayPassesForTextRenderer = [delegate respondsToSelector:@selector(overlayPassesForTextRenderer:)];
-    flags.delegateHasTextRendererInvalidateRenderInRect = [delegate respondsToSelector:@selector(textRenderer:invalidateRenderInRect:)];
+    delegateHasDidInvalidateRenderInRect = [delegate respondsToSelector:@selector(textRenderer:didInvalidateRenderInRect:)];
+    
+    [self didChangeValueForKey:@"delegate"];
 }
 
 - (void)setDatasource:(id<ECTextRendererDataSource>)aDatasource
@@ -543,124 +601,167 @@
     if (datasource == aDatasource)
         return;
     
+    [self willChangeValueForKey:@"datasource"];
     datasource = aDatasource;
-    
-    flags.dataSourceHasTextRendererEstimatedTextLineCountOfLength = [datasource respondsToSelector:@selector(textRenderer:estimatedTextLineCountOfLength:)];
-    
     [self updateAllText];
+    [self didChangeValueForKey:@"datasource"];
 }
 
-- (void)setWrapWidth:(CGFloat)width
+- (void)setRenderWidth:(CGFloat)width
 {
-    UIEdgeInsets textInsets = self.textInsets;
-    width -= textInsets.left + textInsets.right;
-    
-    if (wrapWidth == width) 
-        return;
-
-    [self willChangeValueForKey:@"wrapWidth"];
-    
-    [renderedLinesCache removeAllObjects];
-    wrapWidth = width;
-    for (TextSegment *segment in textSegments) 
-    {
-        segment.renderWrapWidth = width;
-    }
-    [self didChangeValueForKey:@"wrapWidth"];
-    
-    self.estimatedHeight = 0;
-}
-
-- (CGFloat)estimatedHeight
-{
-    if (estimatedHeight == 0) 
-    {
-        estimatedHeight = [self rectForIntegralNumberOfTextLinesWithinRect:CGRectInfinite allowGuessedResult:YES].size.height;
-    }
-    
-    if (estimatedHeight != 0)
-    {
-        UIEdgeInsets textInsets = self.textInsets;
-        estimatedHeight += textInsets.top + textInsets.bottom;
-    }
-    
-    return estimatedHeight;
-}
-
-- (void)setEstimatedHeight:(CGFloat)height
-{
-    if (height == estimatedHeight)
+    if (width == renderWidth)
         return;
     
-    [self willChangeValueForKey:@"estimatedHeight"];
-    if (height == 0)
-    {
-        // TODO this whole estimated height calculation and information should be handled better
-        estimatedHeight = 0;
-        [self estimatedHeight];
-    }
+    [self willChangeValueForKey:@"renderWidth"];
+    
+    // Order here mater because the update will inform the delegate that the old rendering rect changed. Than we update that rect size itself.
+    [self _updateRenderWidth:width];
+    renderWidth = width;
+    
+    [self didChangeValueForKey:@"renderWidth"];
+}
+
+- (void)setRenderHeight:(CGFloat)height
+{
+    if (height == renderHeight)
+        return;
+    
+    [self willChangeValueForKey:@"renderHeight"];
+    if (height > 0)
+        renderHeight = height + textInsets.top + textInsets.bottom;
     else
-    {
-        estimatedHeight = height;
-    }
-    [self didChangeValueForKey:@"estimatedHeight"];
+        renderHeight = 0;
+    [self didChangeValueForKey:@"renderHeight"];
+}
+
+- (void)setTextInsets:(UIEdgeInsets)insets
+{
+    if (UIEdgeInsetsEqualToEdgeInsets(insets, textInsets))
+        return;
+    
+    [self willChangeValueForKey:@"textInsets"];
+    
+    // Order matter, update will use textInsets to evalue wrap with for segments
+    textInsets = insets;
+    [self _updateRenderWidth:self.renderWidth];
+    
+    [self didChangeValueForKey:@"textInsets"];
 }
 
 #pragma mark NSObject Methods
 
 - (id)init 
 {
-    if ((self = [super init])) 
-    {
-        textSegments = [NSMutableArray new];
-        segmentStringsCache = [NSCache new];
-        segmentStringsCache.countLimit = 5;
-        typesettersCache = [NSCache new];
-        typesettersCache.countLimit = 5;
-        renderedLinesCache = [NSCache new];
-        renderedLinesCache.countLimit = 3;
-    }
+    if (!(self = [super init])) 
+        return nil;
+    
+    textSegments = [NSMutableArray new];
+    
+    __weak ECTextRenderer *this = self;
+    _notificationCenterMemoryWarningObserver = [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationDidReceiveMemoryWarningNotification object:nil queue:nil usingBlock:^(NSNotification *note) {
+        for (TextSegment *segment in this->textSegments)
+        {
+            [segment discardContentIfPossible];
+        }
+    }];
+    
     return self;
 }
 
-- (UIEdgeInsets)textInsets
+- (void)dealloc
 {
-    if (flags.delegateHasTextInsetsForTextRenderer)
-        return [delegate textInsetsForTextRenderer:self];
-    return UIEdgeInsetsZero;
+    [[NSNotificationCenter defaultCenter] removeObserver:_notificationCenterMemoryWarningObserver];
 }
 
 #pragma mark Private Methods
 
-- (NSAttributedString *)stringForTextSegment:(TextSegment *)requestSegment lineCount:(NSUInteger *)lines
+- (CGFloat)_wrapWidth
 {
-    NSRange lineRange = NSMakeRange(0, 0);
+    return renderWidth - textInsets.left - textInsets.right;
+}
+
+- (void)_updateRenderWidth:(CGFloat)width
+{
+    CGFloat wrapWidth = width - textInsets.left - textInsets.right;
+    for (TextSegment *segment in textSegments) 
+    {
+        segment.renderWrapWidth = wrapWidth;
+    }
+    
+    if (delegateHasDidInvalidateRenderInRect)
+        [delegate textRenderer:self didInvalidateRenderInRect:CGRectMake(0, 0, self.renderWidth, self.renderHeight)];
+}
+
+- (NSAttributedString *)_stringForTextSegment:(TextSegment *)requestSegment lineCount:(NSUInteger *)lines
+{    
+    NSUInteger inputStringLenght = [datasource stringLengthForTextRenderer:self];
+    if (inputStringLenght == 0)
+        return nil;
+    
+    NSRange stringRange = NSMakeRange(0, 0);
     
     // Source text line offset for requested segment
     for (TextSegment *segment in textSegments) 
     {
         if (segment == requestSegment)
             break;
-        lineRange.location += segment.lineCount;
+        stringRange.location += segment.stringLength;
     }
     
-    // Source text string for requested segment
-    BOOL endOfString = NO;
-    lineRange.length = requestSegment.lineCount ? requestSegment.lineCount : preferredLineCountPerSegment;
-    NSAttributedString *string = [datasource textRenderer:self stringInLineRange:&lineRange endOfString:&endOfString];
-    if (!string || lineRange.length == 0 || [string length] == 0)
-        return NULL;
+    // If the segment already has it's string length, it means that this request
+    // has been done to refresh it. See updateTextFromStringRange:toStringRange:
+    // to understand how this stringLenght is properly adjusted.
+    stringRange.length = MIN((inputStringLenght - stringRange.location), (requestSegment.stringLength ? requestSegment.stringLength : maximumStringLenghtPerSegment));
+    NSAttributedString *attributedString = [datasource textRenderer:self attributedStringInRange:stringRange];
+    NSUInteger stringLength = [attributedString length];
+    if (!attributedString || stringLength == 0)
+        return nil;
     
-    if (endOfString)
-        lastTextSegment = requestSegment;
+    // Calculate the number of lines in the string
+    NSString *string = attributedString.string;
+    NSUInteger lineStart = 0, lineEnd = 0, contentsEnd;
+    NSRange lineRange = NSMakeRange(0, 0);
+    NSUInteger lineCount = 0;
+    do {
+        lineRange.location += lineEnd - lineStart;
+        [string getLineStart:&lineStart end:&lineEnd contentsEnd:&contentsEnd forRange:lineRange];
+    } while (lineEnd < stringLength && lineEnd != contentsEnd && ++lineCount);
+    
+    // Add tailing line if at the end of an actual line
+    if (lineEnd != contentsEnd || inputStringLenght == NSMaxRange(stringRange))
+    {
+        lineRange.location += lineEnd - lineStart;
+        lineCount++;
+    }
+    
+    // Add a tailing new line 
+    if (inputStringLenght == NSMaxRange(stringRange))
+    {
+        NSMutableAttributedString *newLineString = [attributedString mutableCopy];
+        [newLineString appendAttributedString:[[NSAttributedString alloc] initWithString:@"\n" attributes:[newLineString attributesAtIndex:stringLength - 1 effectiveRange:NULL]]];
+        attributedString = newLineString;
+    }
+
+    // Side effect! clear caches if segment changes its ragne
+    if (requestSegment.lineCount > 0 && lineCount != requestSegment.lineCount)
+    {
+        NSUInteger requestSegmentIndex = [textSegments indexOfObject:requestSegment];
+        [textSegments enumerateObjectsAtIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(requestSegmentIndex, [textSegments count] - requestSegmentIndex)] options:0 usingBlock:^(TextSegment *segment, NSUInteger idx, BOOL *stop) {
+            [segment discardContent];
+        }];
+    }
+    
+    // Trim returned string if needed
+    if (lineRange.location != stringLength)
+        attributedString = [attributedString attributedSubstringFromRange:NSMakeRange(0, lineRange.location)];
     
     if (lines)
-        *lines = lineRange.length;
+        *lines = lineCount;
     
-    return string;
+    return attributedString;
 }
 
-- (void)generateTextSegmentsAndEnumerateUsingBlock:(void (^)(TextSegment *, NSUInteger, NSUInteger, NSUInteger, CGFloat, BOOL *))block
+- (void)_generateTextSegmentsAndEnumerateUsingBlock:(void (^)(TextSegment *, NSUInteger, NSUInteger, NSUInteger, CGFloat, BOOL *))block
 {
     BOOL stop = NO;
     TextSegment *segment = nil;
@@ -679,11 +780,16 @@
             if ([textSegments count] <= currentIndex) 
             {
                 segment = [[TextSegment alloc] initWithTextRenderer:self];
-                segment.renderWrapWidth = wrapWidth;
+                segment.renderWrapWidth = [self _wrapWidth];
+                [segment beginContentAccess];
                 if (!segment.isValid) 
                 {
                     lastTextSegment = [textSegments lastObject];
                     break;
+                }
+                else if ((currentStringOffset + [segment.string length]) >= [datasource stringLengthForTextRenderer:self])
+                {
+                    lastTextSegment = segment;
                 }
                 
                 [textSegments addObject:segment];
@@ -691,9 +797,9 @@
             else
             {
                 segment = [textSegments objectAtIndex:currentIndex];
+                [segment beginContentAccess];
             }
-    //        currentLineRange.length = segment.lineCount;
-            
+
             // Apply block
             block(segment, currentIndex, currentLineRange.location, currentStringOffset, currentPositionOffset, &stop);
             
@@ -704,22 +810,24 @@
             currentStringOffset += segment.stringLength;
             currentPositionOffset += segment.renderHeight;
             
+            [segment endContentAccess];
+            
         } while (!stop);
         
         // Update estimated height
-        if (currentPositionOffset > estimatedHeight 
-            || (lastTextSegment == segment && currentPositionOffset != estimatedHeight)) 
+        if (currentPositionOffset > renderHeight 
+            || (lastTextSegment == segment && currentPositionOffset != renderHeight)) 
         {
-            self.estimatedHeight = currentPositionOffset;
+            self.renderHeight = currentPositionOffset;
         }
     }
 }
 
-- (NSUInteger)lineNumberForPosition:(NSUInteger)position offsetX:(CGFloat *)outXOffset
+- (NSUInteger)_lineNumberForPosition:(NSUInteger)position offsetX:(CGFloat *)outXOffset
 {
     __block CGFloat positionX = 0;
     __block NSUInteger positionLine = NSUIntegerMax;
-    [self generateTextSegmentsAndEnumerateUsingBlock:^(TextSegment *segment, NSUInteger outerIdx, NSUInteger lineOffset, NSUInteger stringOffset, CGFloat positionOffset, BOOL *stop) {
+    [self _generateTextSegmentsAndEnumerateUsingBlock:^(TextSegment *segment, NSUInteger outerIdx, NSUInteger lineOffset, NSUInteger stringOffset, CGFloat positionOffset, BOOL *stop) {
         // Skip segment if before required string range
         if (stringOffset + segment.stringLength < position)
             return;
@@ -744,11 +852,11 @@
     return positionLine;
 }
 
-- (NSUInteger)positionForLine:(NSUInteger)requestLine graphicalOffset:(CGFloat)offsetX
+- (NSUInteger)_positionForLine:(NSUInteger)requestLine graphicalOffset:(CGFloat)offsetX
 {
     __block CGFloat positionX = offsetX;
     __block NSUInteger requestPosition = NSNotFound;
-    [self generateTextSegmentsAndEnumerateUsingBlock:^(TextSegment *segment, NSUInteger idx, NSUInteger lineOffset, NSUInteger stringOffset, CGFloat positionOffset, BOOL *stop) {
+    [self _generateTextSegmentsAndEnumerateUsingBlock:^(TextSegment *segment, NSUInteger idx, NSUInteger lineOffset, NSUInteger stringOffset, CGFloat positionOffset, BOOL *stop) {
         // Skip segment if before required line
         if (lineOffset + segment.lineCount < requestLine)
             return;
@@ -782,7 +890,7 @@
     
     CGFloat rectEnd = CGRectGetMaxY(rect);
     
-    [self generateTextSegmentsAndEnumerateUsingBlock:^(TextSegment *segment, NSUInteger idx, NSUInteger lineNumberOffset, NSUInteger stringOffset, CGFloat positionOffset, BOOL *stop) {
+    [self _generateTextSegmentsAndEnumerateUsingBlock:^(TextSegment *segment, NSUInteger idx, NSUInteger lineNumberOffset, NSUInteger stringOffset, CGFloat positionOffset, BOOL *stop) {
         // End when past rect
         if (positionOffset > rectEnd)
         {
@@ -825,7 +933,6 @@
     CGContextScaleCTM(context, 1, -1);
     
     // Get text insets
-    UIEdgeInsets textInsets = self.textInsets;
     rect.size.height -= textInsets.top;
     if (rect.origin.y > textInsets.top)
     {
@@ -837,10 +944,6 @@
         rect.origin.y = 0;
         CGContextTranslateCTM(context, textInsets.left, -textInsets.top);
     }
-    
-    // Get rendering passes
-    NSArray *underlays = flags.delegateHasUnderlayPassesForTextRenderer ? [delegate underlayPassesForTextRenderer:self] : nil;
-    NSArray *overlays = flags.delegateHasOverlayPassesForTextRenderer ? [delegate overlayPassesForTextRenderer:self] : nil;
     
     // Draw needed lines from this segment
     [self enumerateLinesIntersectingRect:rect usingBlock:^(ECTextRendererLine *line, NSUInteger lineIndex, NSUInteger lineNumber, CGFloat lineOffset, NSRange stringRange, BOOL *stop) {
@@ -856,7 +959,7 @@
         }
         
         // Apply underlay passes
-        for (ECTextRendererLayerPass pass in underlays)
+        for (ECTextRendererLayerPass pass in underlayRenderingPasses)
         {
             CGContextSaveGState(context);
             CGContextSetTextPosition(context, 0, 0);
@@ -872,7 +975,7 @@
         CGContextRestoreGState(context);
         
         // Apply overlay passes
-        for (ECTextRendererLayerPass pass in overlays)
+        for (ECTextRendererLayerPass pass in overlayRenderingPasses)
         {
             CGContextSaveGState(context);
             CGContextSetTextPosition(context, 0, 0);
@@ -888,7 +991,7 @@
     
     __block CFIndex result = 0;
     __block CTLineRef lastLine = NULL;
-    [self generateTextSegmentsAndEnumerateUsingBlock:^(TextSegment *segment, NSUInteger outerIdx, NSUInteger lineOffset, NSUInteger stringOffset, CGFloat positionOffset, BOOL *stop) {
+    [self _generateTextSegmentsAndEnumerateUsingBlock:^(TextSegment *segment, NSUInteger outerIdx, NSUInteger lineOffset, NSUInteger stringOffset, CGFloat positionOffset, BOOL *stop) {
         NSUInteger segmentStringLength = segment.stringLength;
         
         // Skip segment if before required string range
@@ -933,7 +1036,7 @@
 - (ECRectSet *)rectsForStringRange:(NSRange)queryStringRange limitToFirstLine:(BOOL)limit
 {
     ECMutableRectSet *result = [ECMutableRectSet rectSetWithCapacity:1];
-    [self generateTextSegmentsAndEnumerateUsingBlock:^(TextSegment *segment, NSUInteger outerIdx, NSUInteger lineOffset, NSUInteger stringOffset, CGFloat positionOffset, BOOL *stop) {
+    [self _generateTextSegmentsAndEnumerateUsingBlock:^(TextSegment *segment, NSUInteger outerIdx, NSUInteger lineOffset, NSUInteger stringOffset, CGFloat positionOffset, BOOL *stop) {
         // Skip segment if before required string range
         if (stringOffset + segment.stringLength < queryStringRange.location)
             return;
@@ -992,14 +1095,14 @@
         {
             // TODO extract this to a convinience method - lineIndexForPosition:
             CGFloat positionX = 0;
-            NSUInteger positionLine = [self lineNumberForPosition:position offsetX:&positionX];
+            NSUInteger positionLine = [self _lineNumberForPosition:position offsetX:&positionX];
             
             // If offset will move outsite rendered text line range, return
             if (offset < 0 && -offset > (NSInteger)positionLine)
                 break;
             
             // Look for new position
-            NSUInteger requestPosition = [self positionForLine:(positionLine + offset) graphicalOffset:positionX];
+            NSUInteger requestPosition = [self _positionForLine:(positionLine + offset) graphicalOffset:positionX];
             
             // Set result if present
             if (requestPosition != NSNotFound)
@@ -1027,114 +1130,10 @@
     return result;
 }
 
-- (CGRect)rectForIntegralNumberOfTextLinesWithinRect:(CGRect)rect allowGuessedResult:(BOOL)guessed
-{
-    __block CGRect result = CGRectZero;
-    __block CGFloat meanLineHeight = 0;
-    __block NSUInteger maxCharsForLine = 0;
-    
-    if (CGRectIsNull(rect) || CGRectIsEmpty(rect)) 
-    {
-        rect = CGRectInfinite;
-    }
-    
-    // Count for existing segments
-    CGFloat lastSegmentEnd = 0;
-    NSRange currentLineRange = NSMakeRange(0, 0);
-    CGRect currentRect = rect;
-    CGFloat currentRectEnd;
-    // TODO this should be more like the draw function for non guessed requests
-    for (TextSegment *segment in textSegments)
-    {
-//        if (guessed && [framesettersCache objectForKey:segment] == nil)
-//            break;
-        
-        currentLineRange.length = segment.lineCount;
-        currentLineRange.location += currentLineRange.length;
-        
-        currentRect.origin.y -= lastSegmentEnd;
-        if (currentRect.origin.y < 0) 
-        {
-            currentRect.size.height += currentRect.origin.y;
-            currentRect.origin.y = 0;
-        }
-        currentRectEnd = CGRectGetMaxY(currentRect);
-        if (currentRectEnd <= 0)
-            return result;
-        
-        lastSegmentEnd += segment.renderHeight;
-        if (rect.origin.y > lastSegmentEnd)
-            continue;
-        
-        [segment enumerateLinesIntersectingRect:currentRect usingBlock:^(ECTextRendererLine *line, NSUInteger lineIndex, NSUInteger lineNumber, CGFloat lineOffset, BOOL *stop) {
-            CGSize lineSize = line.size;
-            
-            result.size.width = MAX(result.size.width, lineSize.width);
-            result.size.height += lineSize.height;
-            
-            if (meanLineHeight > 0) 
-            {
-                meanLineHeight = (meanLineHeight + lineSize.height) / 2.0;
-            }
-            else
-            {
-                meanLineHeight = lineSize.height;
-            }
-            maxCharsForLine = MAX((CFIndex)maxCharsForLine, CTLineGetGlyphCount(line.CTLine));
-        }];
-    }
-    
-    // Guess remaining result
-    if (guessed && lastSegmentEnd < CGRectGetMaxY(rect)) 
-    {
-        // Create datasource enabled guess
-        if (flags.dataSourceHasTextRendererEstimatedTextLineCountOfLength) 
-        {
-            // Ensure to have a mean line height or generate it
-            if (meanLineHeight == 0) 
-            {
-                BOOL isStringEnd = NO;
-                NSRange tempRange = NSMakeRange(0, 1);
-                NSAttributedString *string = [self.datasource textRenderer:self stringInLineRange:&tempRange endOfString:&isStringEnd];
-                if (string) 
-                {
-                    CTLineRef line = CTLineCreateWithAttributedString((__bridge CFAttributedStringRef)string);
-                    CGFloat width, ascent, descent, leading;
-                    width = CTLineGetTypographicBounds(line, &ascent, &descent, &leading);
-                    meanLineHeight = ascent + descent + leading;
-                    maxCharsForLine = wrapWidth * CTLineGetGlyphCount(line) / width;
-                    CFRelease(line);
-                }
-                else
-                {
-                    // TODO use ctfontgetascent?
-                    meanLineHeight = 13.0;
-                    maxCharsForLine = wrapWidth / 10.0;
-                }
-            }
-            
-            // Estime
-            NSUInteger totalLines = [datasource textRenderer:self estimatedTextLineCountOfLength:maxCharsForLine];
-            totalLines -= currentLineRange.location;
-            result.size.height += totalLines * meanLineHeight;
-        }
-        else
-        {
-            // TODO CTFramesetterSuggestFrameSizeWithConstraints
-        }
-    }
-    
-    UIEdgeInsets textInsets = self.textInsets;
-    result.size.height += textInsets.top + textInsets.bottom;
-    
-    return result;
-}
-
 #pragma mark -
 
 - (CGRect)convertFromTextRect:(CGRect)rect
 {
-    UIEdgeInsets textInsets = self.textInsets;
     rect.origin.x += textInsets.left;
     rect.origin.y += textInsets.top;
     return rect;
@@ -1142,7 +1141,6 @@
 
 - (CGPoint)convertFromTextPoint:(CGPoint)point
 {
-    UIEdgeInsets textInsets = self.textInsets;
     point.x += textInsets.left;
     point.y += textInsets.top;
     return point;
@@ -1150,7 +1148,6 @@
 
 - (CGRect)convertToTextRect:(CGRect)rect
 {
-    UIEdgeInsets textInsets = self.textInsets;
     rect.origin.x -= textInsets.left;
     rect.origin.y -= textInsets.top;
     return rect;
@@ -1158,7 +1155,6 @@
 
 - (CGPoint)convertToTextPoint:(CGPoint)point
 {
-    UIEdgeInsets textInsets = self.textInsets;
     point.x -= textInsets.left;
     point.y -= textInsets.top;
     return point;
@@ -1168,67 +1164,73 @@
 
 - (void)updateAllText
 {
-    [self clearCache];
+    for (TextSegment *segment in textSegments)
+    {
+        [segment discardContent];
+    }
+    
     [textSegments removeAllObjects];
     lastTextSegment = nil;
     
-    if (flags.delegateHasTextRendererInvalidateRenderInRect) 
-    {
-        CGRect changedRect = CGRectMake(0, 0, wrapWidth, self.estimatedHeight);
-        [delegate textRenderer:self invalidateRenderInRect:[self convertFromTextRect:changedRect]];
-    }
-    
-    self.estimatedHeight = 0;
+    if (delegateHasDidInvalidateRenderInRect) 
+        [delegate textRenderer:self didInvalidateRenderInRect:CGRectMake(0, 0, self.renderWidth, self.renderHeight)];
 }
 
-- (void)updateTextInLineRange:(NSRange)originalRange toLineRange:(NSRange)newRange
+- (void)updateTextFromStringRange:(NSRange)fromRange toStringRange:(NSRange)toRange
 {
-    CGFloat currentY = 0;
-    CGRect changedRect = CGRectNull, currentRect;
-    
-    NSUInteger currentLineLocation = 0;
-    NSRange segmentRange, origInsersect, newIntersec;
-    for (TextSegment *segment in textSegments) 
+    // Calculate change withing single semgment
+    NSInteger segmentIndex = -1, removeFromSegmentIndex = NSNotFound;
+    CGFloat affectedSegmentHeight = 0, removeFromSegmentYOffset = 0;
+    NSRange segmentRange = NSMakeRange(0, 0);
+    NSUInteger fromRangeEnd = NSMaxRange(fromRange), segmentRangeEnd;
+    for (TextSegment *segment in textSegments)
     {
-        segmentRange = (NSRange){ currentLineLocation, segment.lineCount };
+        segmentIndex++;
+        segmentRange.location += segmentRange.length;
+        segmentRange.length = segment.stringLength;
+        segmentRangeEnd = NSMaxRange(segmentRange);
+        affectedSegmentHeight = segment.renderHeight;
         
-        origInsersect = NSIntersectionRange(originalRange, segmentRange);
-        if (origInsersect.length > 0)
+        // Skip untouched segments
+        ECASSERT(segmentRange.location < fromRangeEnd);
+        if (segmentRangeEnd >= fromRange.location)
         {
-            // Compute change intersection
-            newIntersec = NSIntersectionRange(newRange, segmentRange);
-            segmentRange.length += (newIntersec.length - origInsersect.length);
-            segment.lineCount = segmentRange.length;
+            // Will remove every segment after the current if changes are crossing multiple segments
+            if (fromRange.location < segmentRangeEnd
+                && fromRangeEnd >= segmentRangeEnd)
+            {
+                removeFromSegmentIndex = segmentIndex;
+                break;
+            }
             
-            // Update dirty rect
-            currentRect = CGRectMake(0, currentY, wrapWidth, segment.renderHeight);
-            changedRect = CGRectUnion(changedRect, currentRect);
-            currentY += currentRect.size.height;
+            // Will remove segment if modifying it will change it's string lenght too much
+            NSInteger segmentNewLength = segment.stringLength + (toRange.length - fromRange.length);
+            if (segmentNewLength > maximumStringLenghtPerSegment * 1.5 
+                || (segment != lastTextSegment && segmentNewLength < maximumStringLenghtPerSegment / 2))
+            {
+                removeFromSegmentIndex = segmentIndex;
+                break;
+            }
             
-#warning NIK TODO!!! if lineCount > 1.5 * preferred -> split or merge if * 0.5
-            // and remember to set proper lastTextSegment
-            [segmentStringsCache removeObjectForKey:segment];
-            [typesettersCache removeObjectForKey:segment];
-            [renderedLinesCache removeObjectForKey:segment];
-            // TODO!!! instead of cleaning the cache, use a segment method to update just those lines
+            // Only one segment is affected
+            segment.stringLength = segmentNewLength;
+            [segment discardContent];
+            break;
         }
         
-        currentLineLocation += segmentRange.length;
+        removeFromSegmentYOffset += affectedSegmentHeight;
     }
     
-    if (flags.delegateHasTextRendererInvalidateRenderInRect) 
+    // If the change crosses multiple segments, recreate all from the one where the change start
+    if (removeFromSegmentIndex != NSNotFound)
     {
-        [delegate textRenderer:self invalidateRenderInRect:[self convertFromTextRect:changedRect]];
+        [textSegments removeObjectsAtIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(removeFromSegmentIndex, [textSegments count] - removeFromSegmentIndex)]];
+        lastTextSegment = nil;
     }
     
-    self.estimatedHeight = 0;
-}
-
-- (void)clearCache
-{
-    [segmentStringsCache removeAllObjects];
-    [typesettersCache removeAllObjects];
-    [renderedLinesCache removeAllObjects];
+    // Send invalidation for specific rect
+    if (delegateHasDidInvalidateRenderInRect)
+        [delegate textRenderer:self didInvalidateRenderInRect:CGRectMake(0, removeFromSegmentYOffset, self.renderWidth, (removeFromSegmentIndex != NSNotFound ? self.renderHeight - removeFromSegmentYOffset : affectedSegmentHeight))];
 }
 
 @end

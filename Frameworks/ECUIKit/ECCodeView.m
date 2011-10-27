@@ -37,9 +37,12 @@
     NSTimer *touchScrollTimer;
     
     // Delegate and datasource flags
-    BOOL dataSourceHasCodeCanEditTextInRange;
-    BOOL dataSourceHasViewControllerForCompletionAtTextInRange;
-    BOOL delegateHasCompletionRequestAtTextLocationWithFilterWord;
+    struct {
+        unsigned int dataSourceHasCodeCanEditTextInRange : 1;
+        unsigned int dataSourceHasCommitStringForTextInRange : 1;
+        unsigned int dataSourceHasViewControllerForCompletionAtTextInRange : 1;
+        unsigned int delegateHasCompletionRequestAtTextLocationWithFilterWord : 1;
+    } flags;
     
     // Recognizers
     UITapGestureRecognizer *focusRecognizer;
@@ -157,7 +160,6 @@
 @private
     id<ECCodeViewDataSource> datasource;
     ECTextRenderer *renderer;
-    NSOperationQueue *renderingQueue;
     
     ECCodeViewBase *navigatorView;
     
@@ -166,8 +168,7 @@
 
 - (id)initWithFrame:(CGRect)frame 
 navigatorDatasource:(id<ECCodeViewDataSource>)source 
-           renderer:(ECTextRenderer *)aRenderer 
-     renderingQueue:(NSOperationQueue *)queue;
+           renderer:(ECTextRenderer *)aRenderer;
 
 #pragma mark Parent Layout
 
@@ -240,11 +241,11 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
     // Check to be contained in text bounds
     if (textRect.origin.x < -10)
         textRect.origin.x = -10;
-    else if (CGRectGetMaxX(textRect) > parent.renderer.wrapWidth + 10)
-        textRect.origin.x = parent.renderer.wrapWidth - textRect.size.width + 10;
+    else if (CGRectGetMaxX(textRect) > parent.renderer.renderWidth + 10)
+        textRect.origin.x = parent.renderer.renderWidth - textRect.size.width + 10;
     // Render magnified image
     __weak TextMagnificationView *this = self;
-    [parent.renderingQueue addOperationWithBlock:^(void) {
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(void) {
         UIGraphicsBeginImageContext(this.bounds.size);
         // Prepare magnified context
         CGContextRef imageContext = UIGraphicsGetCurrentContext();        
@@ -267,7 +268,7 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
         [[NSOperationQueue mainQueue] addOperationWithBlock:^(void) {
             [this setNeedsDisplay];
         }];
-    }];
+    });
 }
 
 @end
@@ -644,7 +645,7 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
 @synthesize normalWidth, navigatorWidth;
 @synthesize navigatorInsets, navigatorVisible, navigatorBackgroundColor;
 
-- (id)initWithFrame:(CGRect)frame navigatorDatasource:(id<ECCodeViewDataSource>)source renderer:(ECTextRenderer *)aRenderer renderingQueue:(NSOperationQueue *)queue
+- (id)initWithFrame:(CGRect)frame navigatorDatasource:(id<ECCodeViewDataSource>)source renderer:(ECTextRenderer *)aRenderer
 {
     parentSize = [UIScreen mainScreen].bounds.size;
     normalWidth = 11;
@@ -657,7 +658,6 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
     {
         datasource = source;
         renderer = aRenderer;
-        renderingQueue = queue;
         
         self.backgroundColor = [UIColor clearColor];
         
@@ -715,7 +715,7 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
         CGRect frame = (CGRect){ CGPointZero, parentSize };
         frame.size.width = navigatorWidth;
         frame = UIEdgeInsetsInsetRect(frame, navigatorInsets);
-        navigatorView = [[ECCodeViewBase alloc] initWithFrame:frame renderer:renderer renderingQueue:renderingQueue];
+        navigatorView = [[ECCodeViewBase alloc] initWithFrame:frame renderer:renderer];
         navigatorView.datasource = datasource;
         navigatorView.contentScaleFactor = (navigatorWidth - navigatorInsets.left - navigatorInsets.right) / parentSize.width;
         navigatorView.backgroundColor = [UIColor whiteColor];
@@ -817,8 +817,9 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
 {
     [super setDatasource:aDatasource];
     
-    dataSourceHasCodeCanEditTextInRange = [self.datasource respondsToSelector:@selector(codeView:canEditTextInRange:)];
-    dataSourceHasViewControllerForCompletionAtTextInRange = [self.datasource respondsToSelector:@selector(codeView:viewControllerForCompletionAtTextInRange:)];
+    flags.dataSourceHasCodeCanEditTextInRange = [self.datasource respondsToSelector:@selector(codeView:canEditTextInRange:)];
+    flags.dataSourceHasCommitStringForTextInRange = [self.datasource respondsToSelector:@selector(codeView:commitString:forTextInRange:)];
+    flags.dataSourceHasViewControllerForCompletionAtTextInRange = [self.datasource respondsToSelector:@selector(codeView:viewControllerForCompletionAtTextInRange:)];
 }
 
 - (void)setCaretColor:(UIColor *)caretColor
@@ -909,7 +910,7 @@ static void init(ECCodeView *self)
     {
         if (!infoView)
         {
-            infoView = [[CodeInfoView alloc] initWithFrame:self.bounds navigatorDatasource:self.datasource renderer:self.renderer renderingQueue:self.renderingQueue];
+            infoView = [[CodeInfoView alloc] initWithFrame:self.bounds navigatorDatasource:self.datasource renderer:self.renderer];
             infoView.navigatorBackgroundColor = navigatorBackgroundColor;
             infoView.navigatorWidth = navigatorWidth;
             infoView.parentSize = self.bounds.size;
@@ -981,7 +982,7 @@ static void init(ECCodeView *self)
 
 - (void)showCompletionForTextInRange:(NSRange)textRange
 {
-    if (!dataSourceHasViewControllerForCompletionAtTextInRange)
+    if (!flags.dataSourceHasViewControllerForCompletionAtTextInRange)
         return;
     
     if (!completionPopover)
@@ -1006,7 +1007,7 @@ static void init(ECCodeView *self)
 - (BOOL)canBecomeFirstResponder
 {
     // TODO should return depending on edit enabled state
-    return dataSourceHasCodeCanEditTextInRange;
+    return flags.dataSourceHasCommitStringForTextInRange;
 }
 
 - (BOOL)becomeFirstResponder
@@ -1081,7 +1082,7 @@ static void init(ECCodeView *self)
 
 - (BOOL)hasText
 {
-    return [self.datasource textLength] > 0;
+    return [self.datasource stringLengthForTextRenderer:self.renderer] > 0;
 }
 
 - (void)insertText:(NSString *)string
@@ -1180,7 +1181,7 @@ static void init(ECCodeView *self)
     if (e <= s)
         result = @"";
     else
-        result = [self.datasource codeView:self attributedStringInRange:(NSRange){s, e - s}].string;
+        result = [self.datasource textRenderer:self.renderer attributedStringInRange:(NSRange){s, e - s}].string;
     
     return result;
 }
@@ -1196,7 +1197,7 @@ static void init(ECCodeView *self)
     if (e < s)
         return;
     
-    NSUInteger textLength = [self.datasource textLength];
+    NSUInteger textLength = [self.datasource stringLengthForTextRenderer:self.renderer];
     if (s > textLength)
         s = textLength;
     
@@ -1340,7 +1341,7 @@ static void init(ECCodeView *self)
             return nil;
     }
     
-    NSUInteger textLength = [self.datasource textLength];
+    NSUInteger textLength = [self.datasource stringLengthForTextRenderer:self.renderer];
     if (result > textLength)
         result = textLength;
     
@@ -1357,7 +1358,7 @@ static void init(ECCodeView *self)
 
 - (UITextPosition *)endOfDocument
 {
-    ECTextPosition *p = [[ECTextPosition alloc] initWithIndex:[self.datasource textLength]];
+    ECTextPosition *p = [[ECTextPosition alloc] initWithIndex:[self.datasource stringLengthForTextRenderer:self.renderer]];
     return p;
 }
 
@@ -1459,7 +1460,7 @@ static void init(ECCodeView *self)
 {
     ECTextPosition *pos = (ECTextPosition *)[self closestPositionToPoint:point];
     
-    NSRange r = [[self.datasource codeView:self attributedStringInRange:(NSRange){ pos.index, 1 }].string rangeOfComposedCharacterSequenceAtIndex:0];
+    NSRange r = [[self.datasource textRenderer:self.renderer attributedStringInRange:(NSRange){ pos.index, 1 }].string rangeOfComposedCharacterSequenceAtIndex:0];
     
     if (r.location == NSNotFound)
         return nil;
@@ -1512,7 +1513,7 @@ static void init(ECCodeView *self)
     if (selectionView.hasSelection && !selectionView.hidden)
         selectedRange = selectionView.selectionRange;
     else
-        selectedRange = [ECTextRange textRangeWithRange:NSMakeRange([self.datasource textLength], 0)];
+        selectedRange = [ECTextRange textRangeWithRange:NSMakeRange([self.datasource stringLengthForTextRenderer:self.renderer], 0)];
     
     [inputDelegate textWillChange:self];
     [inputDelegate selectionWillChange:self];
@@ -1615,17 +1616,21 @@ static void init(ECCodeView *self)
 
 - (void)editDataSourceInRange:(NSRange)range withString:(NSString *)string
 {
-    if (dataSourceHasCodeCanEditTextInRange
-        && [self.datasource codeView:self canEditTextInRange:range]) 
-    {
-        [self unmarkText];
-        
-        [inputDelegate textWillChange:self];
-        
-        [self.datasource codeView:self commitString:string forTextInRange:range];
-        
-        [inputDelegate textDidChange:self];
-    }
+    if (!flags.dataSourceHasCommitStringForTextInRange)
+        return;
+    
+    if (flags.dataSourceHasCodeCanEditTextInRange
+        && ![self.datasource codeView:self canEditTextInRange:range]) 
+        return;
+
+    [self unmarkText];
+    
+    [inputDelegate textWillChange:self];
+    [self.datasource codeView:self commitString:string forTextInRange:range];
+    [inputDelegate textDidChange:self];
+    
+    // Inform the renderer that text has changed
+    [self.renderer updateTextFromStringRange:range toStringRange:NSMakeRange(range.location, [string length])];
 }
 
 - (void)setSelectedTextRange:(NSRange)newSelection notifyDelegate:(BOOL)shouldNotify

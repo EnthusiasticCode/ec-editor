@@ -41,37 +41,12 @@
 
 #pragma mark Code View DataSource Methods
 
-- (NSUInteger)textLength
+- (NSUInteger)stringLengthForTextRenderer:(ECTextRenderer *)sender
 {
     return [string length];
 }
 
-- (NSRange)codeView:(ECCodeViewBase *)codeView stringRangeForLineRange:(NSRange *)lineRange
-{
-    NSString *str = [string string];
-    NSUInteger lineIndex, stringLength = [str length];
-    NSRange stringRange = NSMakeRange(0, 0);
-    
-    // Calculate string range location for query line range location
-    for (lineIndex = 0; lineIndex < lineRange->location; ++lineIndex)
-        stringRange.location = NSMaxRange([str lineRangeForRange:(NSRange){ stringRange.location, 0 }]);
-    
-    if (stringRange.location >= stringLength)
-        return NSMakeRange(0, 0);
-    
-    // Calculate string range lenght for query line range length
-    stringRange.length = stringRange.location;
-    for (lineIndex = 0; lineIndex < lineRange->length && stringRange.length < stringLength; ++lineIndex)
-        stringRange.length = NSMaxRange([str lineRangeForRange:(NSRange){ stringRange.length, 0 }]);
-    stringRange.length -= stringRange.location;
-    
-    // Assign return read count of lines
-    lineRange->length = lineIndex;
-    
-    return stringRange;
-}
-
-- (NSAttributedString *)codeView:(ECCodeViewBase *)codeView attributedStringInRange:(NSRange)stringRange
+- (NSAttributedString *)textRenderer:(ECTextRenderer *)sender attributedStringInRange:(NSRange)stringRange
 {
     if (string == nil)
         return nil;
