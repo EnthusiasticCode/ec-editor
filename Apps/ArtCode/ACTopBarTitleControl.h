@@ -8,6 +8,13 @@
 
 #import <UIKit/UIKit.h>
 
+enum {
+    ACControlStateLoading = 1 << 4
+};
+
 @interface ACTopBarTitleControl : UIButton
+
+/// Indicates if the title control should show a loading animated background.
+@property (nonatomic, getter = isLoadingMode) BOOL loadingMode;
 
 @end

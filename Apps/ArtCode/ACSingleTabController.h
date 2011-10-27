@@ -39,4 +39,12 @@
 
 - (ACSingleTabController *)singleTabController;
 
+/// If overriden, this function indicates if the title control of the default toolbar
+/// of the given single tab controller should be enabled. By default this method 
+/// returns NO.
+- (BOOL)singleTabController:(ACSingleTabController *)singleTabController shouldEnableTitleControlForDefaultToolbar:(ACTopBarToolbar *)toolbar;
+
+/// Indicates if the controller is in a loading state.
+@property (nonatomic, getter = isLoading) BOOL loading;
+
 @end

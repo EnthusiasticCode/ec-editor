@@ -10,6 +10,7 @@
 #import "ACTopBarToolbar.h"
 #import "ACTopBarTitleControl.h"
 #import <QuartzCore/QuartzCore.h>
+#import <objc/runtime.h>
 
 #import "ACTab.h"
 #import "ACApplication.h"
@@ -78,6 +79,16 @@ static const void *contentViewControllerContext;
     [self didChangeValueForKey:@"defaultToolbar"];
 }
 
+- (BOOL)isShowingLoadingAnimation
+{
+    return self.defaultToolbar.titleControl.isLoadingMode;
+}
+
+- (void)setShowLoadingAnimation:(BOOL)showLoadingAnimation
+{
+    self.defaultToolbar.titleControl.loadingMode = showLoadingAnimation;
+}
+
 - (void)setContentViewController:(UIViewController *)contentViewController
 {
     [self setContentViewController:contentViewController animated:NO];
@@ -127,6 +138,7 @@ static const void *contentViewControllerContext;
         [_contentViewController willMoveToParentViewController:nil];
         [_contentViewController removeFromParentViewController];
         [_contentViewController removeObserver:self forKeyPath:@"toolbarItems" context:&contentViewControllerContext];
+        [_contentViewController removeObserver:self forKeyPath:@"loading" context:&contentViewControllerContext];
     }
 
     // Setup new controller
@@ -135,6 +147,7 @@ static const void *contentViewControllerContext;
         [self addChildViewController:_contentViewController];
         [_contentViewController didMoveToParentViewController:self];
         [_contentViewController addObserver:self forKeyPath:@"toolbarItems" options:NSKeyValueObservingOptionNew context:&contentViewControllerContext];
+        [_contentViewController addObserver:self forKeyPath:@"loading" options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew context:&contentViewControllerContext];
     }
 
     [self _setupDefaultToolbarAnimated:animated];
@@ -247,7 +260,10 @@ static const void *contentViewControllerContext;
     }
     else if (context == &contentViewControllerContext)
     {
-        [self.defaultToolbar setToolItems:[change valueForKey:NSKeyValueChangeNewKey] animated:YES];
+        if ([keyPath isEqualToString:@"toolbarItems"])
+            [self.defaultToolbar setToolItems:[change valueForKey:NSKeyValueChangeNewKey] animated:YES];
+        else if ([keyPath isEqualToString:@"loading"])
+            self.defaultToolbar.titleControl.loadingMode = [object isLoading];
     }
     else
     {
@@ -393,9 +409,14 @@ static const void *contentViewControllerContext;
 
 - (void)_setupDefaultToolbarAnimated:(BOOL)animated
 {
+    if (!self.isViewLoaded)
+        return;
+    
     [self.defaultToolbar.titleControl setTitle:_contentViewController.title forState:UIControlStateNormal];
     self.defaultToolbar.editItem = _contentViewController.editButtonItem;
     [self.defaultToolbar setToolItems:_contentViewController.toolbarItems animated:animated];
+    
+    self.defaultToolbar.titleControl.enabled = [_contentViewController singleTabController:self shouldEnableTitleControlForDefaultToolbar:self.defaultToolbar];
 }
 
 - (UIViewController *)_viewControllerWithURL:(NSURL *)url
@@ -461,6 +482,8 @@ static const void *contentViewControllerContext;
 
 #pragma mark -
 
+static const char *UIViewControllerLoadingKey = "UIViewControllerLoading";
+
 @implementation UIViewController (ACSingleTabController)
 
 - (ACSingleTabController *)singleTabController
@@ -469,6 +492,26 @@ static const void *contentViewControllerContext;
     while (parent && ![parent isKindOfClass:[ACSingleTabController class]])
         parent = parent.parentViewController;
     return (ACSingleTabController *)parent;
+}
+
+- (BOOL)singleTabController:(ACSingleTabController *)singleTabController shouldEnableTitleControlForDefaultToolbar:(ACTopBarToolbar *)toolbar
+{
+    return NO;
+}
+
+- (BOOL)isLoading
+{
+    return [objc_getAssociatedObject(self, UIViewControllerLoadingKey) boolValue];
+}
+
+- (void)setLoading:(BOOL)loading
+{
+    if (loading == self.isLoading)
+        return;
+    
+    [self willChangeValueForKey:@"loading"];
+    objc_setAssociatedObject(self, UIViewControllerLoadingKey, [NSNumber numberWithBool:loading], OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    [self didChangeValueForKey:@"loading"];
 }
 
 @end

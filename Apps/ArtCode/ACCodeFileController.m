@@ -13,6 +13,8 @@
 #import <ECUIKit/ECPopoverController.h>
 #import <ECUIKit/ECCodeView.h>
 
+#import "ACSingleTabController.h"
+
 #import "ACEditorToolSelectionController.h"
 #import "ACCodeFileFilterController.h"
 
@@ -48,7 +50,17 @@
     
     _fileURL = fileURL;
     
-    self.document = fileURL ? [[ACFileDocument alloc] initWithFileURL:fileURL] : nil;
+    if (fileURL)
+    {
+        self.loading = YES;
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            ACFileDocument *document = [[ACFileDocument alloc] initWithFileURL:fileURL];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                self.document = document;
+                self.loading = NO;
+            });
+        });
+    }
     
     [self didChangeValueForKey:@"fileURL"];
 }
@@ -94,20 +106,12 @@
     // Release any cached data, images, etc that aren't in use.
 }
 
-#pragma mark - TODO refactor: Tool Target Protocol Implementation
+#pragma mark - Single Tab Controller Toolbar Actions
 
-//- (UIButton *)toolButton
-//{
-//    if (!toolButton)
-//    {
-//        toolButton = [UIButton new];
-//        [toolButton setTitle:@"Tools" forState:UIControlStateNormal];
-//        [toolButton setTitleColor:[UIColor styleForegroundColor] forState:UIControlStateNormal];
-//        toolButton.titleLabel.font = [UIFont styleFontWithSize:14];
-//        [toolButton addTarget:self action:@selector(toolButtonAction:) forControlEvents:UIControlEventTouchUpInside];
-//    }
-//    return toolButton;
-//}
+- (BOOL)singleTabController:(ACSingleTabController *)singleTabController shouldEnableTitleControlForDefaultToolbar:(ACTopBarToolbar *)toolbar
+{
+    return YES;
+}
 
 - (void)toolButtonAction:(id)sender
 {
@@ -150,6 +154,11 @@
     codeView.alwaysBounceVertical = YES;
     
     self.view = codeView;
+}
+
+- (void)viewDidLoad
+{
+    self.toolbarItems = [NSArray arrayWithObject:[[UIBarButtonItem alloc] initWithTitle:@"tools" style:UIBarButtonItemStylePlain target:self action:@selector(toolButtonAction:)]];
 }
 
 - (void)viewDidUnload
