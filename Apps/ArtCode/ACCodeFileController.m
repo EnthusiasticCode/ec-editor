@@ -50,7 +50,17 @@
     
     _fileURL = fileURL;
     
-    self.document = fileURL ? [[ACFileDocument alloc] initWithFileURL:fileURL] : nil;
+    if (fileURL)
+    {
+        self.loading = YES;
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            ACFileDocument *document = [[ACFileDocument alloc] initWithFileURL:fileURL];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                self.document = document;
+                self.loading = NO;
+            });
+        });
+    }
     
     [self didChangeValueForKey:@"fileURL"];
 }
@@ -125,11 +135,6 @@
 
 #pragma mark - View lifecycle
 
-- (void)willMoveToParentViewController:(UIViewController *)parent
-{
-    self.toolbarItems = [NSArray arrayWithObject:[[UIBarButtonItem alloc] initWithTitle:@"tools" style:UIBarButtonItemStylePlain target:self action:@selector(toolButtonAction:)]];
-}
-
 - (void)loadView
 {
     codeView = [ECCodeView new];
@@ -149,6 +154,11 @@
     codeView.alwaysBounceVertical = YES;
     
     self.view = codeView;
+}
+
+- (void)viewDidLoad
+{
+    self.toolbarItems = [NSArray arrayWithObject:[[UIBarButtonItem alloc] initWithTitle:@"tools" style:UIBarButtonItemStylePlain target:self action:@selector(toolButtonAction:)]];
 }
 
 - (void)viewDidUnload

@@ -44,4 +44,7 @@
 /// returns NO.
 - (BOOL)singleTabController:(ACSingleTabController *)singleTabController shouldEnableTitleControlForDefaultToolbar:(ACTopBarToolbar *)toolbar;
 
+/// Indicates if the controller is in a loading state.
+@property (nonatomic, getter = isLoading) BOOL loading;
+
 @end
