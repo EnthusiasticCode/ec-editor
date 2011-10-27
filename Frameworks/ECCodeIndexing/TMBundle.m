@@ -99,6 +99,7 @@ static NSString * const _syntaxDirectory = @"Syntaxes";
 
 - (BOOL)isContentDiscarded
 {
+    ECASSERT(_contentAccessCount >= 0);
     return !_bundlePlist && !_syntaxes;
 }
 

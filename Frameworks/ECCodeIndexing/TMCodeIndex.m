@@ -55,7 +55,9 @@
         codeParser = [[TMCodeParser alloc] initWithIndex:self fileURL:fileURL syntax:syntax];
         [[self _codeUnitCache] setObject:codeParser forKey:cacheKey];
     }
-    return [codeParser autoContentAccessingProxy];
+    else
+        [codeParser beginContentAccess];
+    return codeParser;
 }
 
 + (TMSyntax *)_syntaxForFile:(NSURL *)fileURL language:(NSString *)language scope:(NSString *)scope
@@ -93,6 +95,8 @@
 
 + (TMSyntax *)_syntaxWithLanguage:(NSString *)language
 {
+    if (!language)
+        return nil;
     return [self _syntaxWithPredicateBlock:^BOOL(TMSyntax *syntax) {
         return [syntax.name isEqualToString:language];
     }];
@@ -100,6 +104,8 @@
 
 + (TMSyntax *)syntaxWithScope:(NSString *)scope
 {
+    if (!scope)
+        return nil;
     return [self _syntaxWithPredicateBlock:^BOOL(TMSyntax *syntax) {
         return [syntax.scope isEqualToString:scope];
     }];

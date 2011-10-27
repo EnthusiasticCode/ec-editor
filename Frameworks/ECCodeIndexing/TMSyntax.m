@@ -86,7 +86,7 @@ static NSString * const _patternsPatternsKey = @"patterns";
     _fileURL = fileURL;
     _plist = [NSPropertyListSerialization propertyListWithData:[NSData dataWithContentsOfURL:fileURL options:NSDataReadingUncached error:NULL] options:NSPropertyListImmutable format:NULL error:NULL];
     _name = [_plist objectForKey:_syntaxNameKey];
-    if (_name)
+    if (!_name)
         return nil;
     _scope = [_plist objectForKey:_syntaxScopeKey];
     _fileTypes = [_plist objectForKey:_syntaxFileTypesKey];
@@ -121,6 +121,7 @@ static NSString * const _patternsPatternsKey = @"patterns";
 
 - (BOOL)isContentDiscarded
 {
+    ECASSERT(_contentAccessCount >= 0);
     return !_pattern && !_repository && !_plist;
 }
 
