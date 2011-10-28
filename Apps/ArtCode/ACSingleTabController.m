@@ -28,9 +28,18 @@ static const void *contentViewControllerContext;
     NSMutableArray *toolbars;
 }
 
+/// Position the bar and content.
 - (void)_layoutChildViewsAnimated:(BOOL)animated;
-- (void)_setupDefaultToolbarAnimated:(BOOL)animated;
+
+/// Will setup the toolbar items.
+- (void)_setupDefaultToolbarItemsAnimated:(BOOL)animated;
+
+/// Will setup the title control by enabling it and setting the labels according to the current URL.
+- (void)_setupDefaultToolbarTitle;
+
+/// Routing method that resolve an URL to the view controller that can handle it.
 - (UIViewController *)_viewControllerWithURL:(NSURL *)url;
+
 - (void)_historyBackAction:(id)sender;
 - (void)_historyForwardAction:(id)sender;
 
@@ -139,6 +148,7 @@ static const void *contentViewControllerContext;
         [_contentViewController removeFromParentViewController];
         [_contentViewController removeObserver:self forKeyPath:@"toolbarItems" context:&contentViewControllerContext];
         [_contentViewController removeObserver:self forKeyPath:@"loading" context:&contentViewControllerContext];
+        [_contentViewController removeObserver:self forKeyPath:@"title" context:&contentViewControllerContext];
     }
 
     // Setup new controller
@@ -146,11 +156,10 @@ static const void *contentViewControllerContext;
     {
         [self addChildViewController:_contentViewController];
         [_contentViewController didMoveToParentViewController:self];
-        [_contentViewController addObserver:self forKeyPath:@"toolbarItems" options:NSKeyValueObservingOptionNew context:&contentViewControllerContext];
+        [_contentViewController addObserver:self forKeyPath:@"toolbarItems" options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew context:&contentViewControllerContext];
         [_contentViewController addObserver:self forKeyPath:@"loading" options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew context:&contentViewControllerContext];
+        [_contentViewController addObserver:self forKeyPath:@"title" options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew context:&contentViewControllerContext];
     }
-
-    [self _setupDefaultToolbarAnimated:animated];
     
     [self didChangeValueForKey:@"contentViewController"];
 }
@@ -261,7 +270,9 @@ static const void *contentViewControllerContext;
     else if (context == &contentViewControllerContext)
     {
         if ([keyPath isEqualToString:@"toolbarItems"])
-            [self.defaultToolbar setToolItems:[change valueForKey:NSKeyValueChangeNewKey] animated:YES];
+            [self _setupDefaultToolbarItemsAnimated:YES];
+        if ([keyPath isEqualToString:@"title"])
+            [self _setupDefaultToolbarTitle];
         else if ([keyPath isEqualToString:@"loading"])
             self.defaultToolbar.titleControl.loadingMode = [object isLoading];
     }
@@ -281,9 +292,6 @@ static const void *contentViewControllerContext;
     [self.defaultToolbar removeFromSuperview];
     [self.view addSubview:self.currentToolbarView];
     [self.view addSubview:self.contentViewController.view];
-    
-    // Layout and setup
-    [self _setupDefaultToolbarAnimated:NO];
     [self _layoutChildViewsAnimated:NO];
 }
 
@@ -407,14 +415,18 @@ static const void *contentViewControllerContext;
     }
 }
 
-- (void)_setupDefaultToolbarAnimated:(BOOL)animated
+- (void)_setupDefaultToolbarItemsAnimated:(BOOL)animated
 {
-    if (!self.isViewLoaded)
-        return;
-    
-    [self.defaultToolbar.titleControl setTitle:_contentViewController.title forState:UIControlStateNormal];
     self.defaultToolbar.editItem = _contentViewController.editButtonItem;
     [self.defaultToolbar setToolItems:_contentViewController.toolbarItems animated:animated];
+}
+
+- (void)_setupDefaultToolbarTitle
+{
+    if ([_contentViewController.title length] > 0)
+        [self.defaultToolbar.titleControl setTitle:_contentViewController.title forState:UIControlStateNormal];
+    else
+        [self.defaultToolbar.titleControl setTitle:self.tab.currentURL.path forState:UIControlStateNormal];
     
     self.defaultToolbar.titleControl.enabled = [_contentViewController singleTabController:self shouldEnableTitleControlForDefaultToolbar:self.defaultToolbar];
 }
