@@ -10,7 +10,7 @@
 
 @class TMSyntax;
 
-@interface TMCodeParser : NSObject <ECCodeParser>
+@interface TMCodeParser : NSObject <ECCodeParser, NSDiscardableContent>
 
 - (id)initWithIndex:(TMCodeIndex *)index fileURL:(NSURL *)fileURL syntax:(TMSyntax *)syntax;
 

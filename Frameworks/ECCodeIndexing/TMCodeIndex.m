@@ -12,6 +12,7 @@
 #import "TMBundle.h"
 #import "TMSyntax.h"
 #import "OnigRegexp.h"
+#import <ECFoundation/NSObject+FixedAutoContentAccessingProxy.h>
 
 @interface TMCodeIndex ()
 + (TMSyntax *)_syntaxForFile:(NSURL *)fileURL language:(NSString *)language scope:(NSString *)scope;
@@ -41,7 +42,7 @@
     return 0.5;
 }
 
-- (id)codeUnitImplementingProtocol:(Protocol *)protocol withFile:(NSURL *)fileURL language:(NSString *)language scope:(NSString *)scope
+- (id<ECCodeUnit>)codeUnitImplementingProtocol:(Protocol *)protocol withFile:(NSURL *)fileURL language:(NSString *)language scope:(NSString *)scope
 {
     ECASSERT(protocol);
     ECASSERT(fileURL);
@@ -50,14 +51,15 @@
     TMSyntax *syntax = [[self class] _syntaxForFile:fileURL language:language scope:scope];
     id cacheKey = [[self class] _codeUnitCacheKeyForFileURL:fileURL syntax:syntax];
     TMCodeParser *codeParser = [[self _codeUnitCache] objectForKey:cacheKey];
+    id<ECCodeParser> proxy = [codeParser autoContentAccessingProxy];
     if (!codeParser)
     {
         codeParser = [[TMCodeParser alloc] initWithIndex:self fileURL:fileURL syntax:syntax];
         [[self _codeUnitCache] setObject:codeParser forKey:cacheKey];
+        proxy = [codeParser autoContentAccessingProxy];
+        [codeParser endContentAccess];
     }
-    else
-        [codeParser beginContentAccess];
-    return codeParser;
+    return proxy;
 }
 
 + (TMSyntax *)_syntaxForFile:(NSURL *)fileURL language:(NSString *)language scope:(NSString *)scope

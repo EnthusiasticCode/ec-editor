@@ -180,11 +180,10 @@ static NSRange _rangeFromEndOfRangeToEndOfRange(NSRange firstRange, NSRange seco
     else
     {
         [previousScopeStack addObject:pattern.include];
-        id<ECCodeParser> codeParser = [self.index codeUnitImplementingProtocol:@protocol(ECCodeParser) withFile:self.fileURL language:nil scope:pattern.include];
+        id<ECCodeParser> codeParser = (id<ECCodeParser>)[self.index codeUnitImplementingProtocol:@protocol(ECCodeParser) withFile:self.fileURL language:nil scope:pattern.include];
         [codeParser visitScopesInRange:range usingVisitor:^ECCodeVisitorResult(NSString *scope, NSRange scopeRange, BOOL isExitingScope, BOOL isLeafScope, NSArray *scopesStack) {
             return visitorBlock(scope, scopeRange, isExitingScope, isLeafScope, [previousScopeStack arrayByAddingObjectsFromArray:scopesStack]);
         }];
-        [codeParser endContentAccess];
         [previousScopeStack removeObject:pattern.include];
     }
 }

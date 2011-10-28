@@ -57,7 +57,7 @@ static NSRange intersectionOfRangeRelativeToRange(NSRange range, NSRange inRange
         if (success)
         {
             ECCodeIndex *codeIndex = [[ECCodeIndex alloc] init];
-            self.codeParser = [codeIndex codeUnitImplementingProtocol:@protocol(ECCodeParser) withFile:self.fileURL language:nil scope:nil];
+            self.codeParser = (id<ECCodeParser>)[codeIndex codeUnitImplementingProtocol:@protocol(ECCodeParser) withFile:self.fileURL language:nil scope:nil];
         }
         completionHandler(success);
     }];
@@ -67,7 +67,6 @@ static NSRange intersectionOfRangeRelativeToRange(NSRange range, NSRange inRange
 {
     [super closeWithCompletionHandler:^(BOOL success){
         ECASSERT(success);
-        [self.codeParser endContentAccess];
         self.codeParser = nil;
         completionHandler(success);
     }];
