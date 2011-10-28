@@ -28,6 +28,7 @@
 
 @synthesize loadingMode;
 @synthesize titleFragments, selectedTitleFragments;
+@synthesize secondaryTitleFragmentsTint;
 
 - (void)setTitleFragments:(NSArray *)fragments
 {
@@ -35,10 +36,8 @@
         return;
     
     [self willChangeValueForKey:@"titleFragments"];
-    
     titleFragments = fragments;
     [self _setupTitle];
-    
     [self didChangeValueForKey:@"titleFragments"];
 }
 
@@ -48,11 +47,27 @@
         return;
     
     [self willChangeValueForKey:@"selectedTitleFragments"];
-    
     selectedTitleFragments = fragments;
     [self _setupTitle];
-    
     [self didChangeValueForKey:@"selectedTitleFragments"];
+}
+
+- (UIColor *)secondaryTitleFragmentsTint
+{
+    if (!secondaryTitleFragmentsTint)
+        secondaryTitleFragmentsTint = [UIColor grayColor];
+    return secondaryTitleFragmentsTint;
+}
+
+- (void)setSecondaryTitleFragmentsTint:(UIColor *)tint
+{
+    if (tint == secondaryTitleFragmentsTint)
+        return;
+    
+    [self willChangeValueForKey:@"secondaryTitleFragmentsTint"];
+    secondaryTitleFragmentsTint = tint;
+    [self _setupTitle];
+    [self didChangeValueForKey:@"secondaryTitleFragmentsTint"];
 }
 
 - (void)setLoadingMode:(BOOL)mode
@@ -90,7 +105,37 @@
 {
     [super layoutSubviews];
     
-#warning TODO NIK do layout of segments
+    CGRect bounds = self.bounds;
+    CGRect labelFrame = self.titleLabel.frame;
+    
+    CGFloat maxSegmentWidth = (bounds.size.width - labelFrame.size.width) / 2;
+    
+    // Pre views layout
+    CGRect lastViewFrame = CGRectMake(labelFrame.origin.x, 0, 0, labelFrame.origin.y);
+    for (UIView *view in [_preViews reverseObjectEnumerator])
+    {
+        [view sizeToFit];
+        CGRect viewFrame = view.frame;
+        if (viewFrame.size.width > maxSegmentWidth)
+            viewFrame.size.width = maxSegmentWidth;
+        viewFrame.origin = CGPointMake(lastViewFrame.origin.x - viewFrame.size.width, ceilf((labelFrame.origin.y - viewFrame.size.height) / 2));
+        view.frame = viewFrame;
+        lastViewFrame = viewFrame;
+    }
+    
+    // Post views layout
+    lastViewFrame = CGRectMake(CGRectGetMaxX(labelFrame), CGRectGetMaxY(labelFrame), 0, bounds.size.height - CGRectGetMaxY(labelFrame));
+    for (UIView *view in _postViews)
+    {
+        [view sizeToFit];
+        CGRect viewFrame = view.frame;
+        if (viewFrame.size.width > maxSegmentWidth)
+            viewFrame.size.width = maxSegmentWidth;
+        viewFrame.origin = CGPointMake(lastViewFrame.origin.x, floorf((CGRectGetMaxY(labelFrame) * 2 - viewFrame.size.height) / 2));
+        view.frame = viewFrame;
+        viewFrame.origin.x += viewFrame.size.width;
+        lastViewFrame = viewFrame;
+    }
 }
 
 - (void)setTitle:(NSString *)title forState:(UIControlState)state
@@ -113,7 +158,7 @@
     _preViews = ([selected firstIndex] > 0) ? [self _setupViewArrayFromTitleFragmentIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, [selected firstIndex])]] : nil;
     
     [_postViews makeObjectsPerformSelector:@selector(removeFromSuperview)];
-    _postViews = ([selected lastIndex] < [titleFragments count] - 1) ? [self _setupViewArrayFromTitleFragmentIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange([selected lastIndex], [titleFragments count] - [selected lastIndex])]] : nil;
+    _postViews = ([selected lastIndex] + 1 < [titleFragments count]) ? [self _setupViewArrayFromTitleFragmentIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange([selected lastIndex] + 1, [titleFragments count] - [selected lastIndex] - 1)]] : nil;
     
     [super setTitle:nil forState:UIControlStateNormal];
     [super setImage:nil forState:UIControlStateNormal];
@@ -139,6 +184,9 @@
         if ([obj isKindOfClass:[NSString class]])
         {
             UILabel *label = [UILabel new];
+            label.lineBreakMode = UILineBreakModeMiddleTruncation;
+            label.backgroundColor = [UIColor clearColor];
+            label.textColor = self.secondaryTitleFragmentsTint;
             label.text = (NSString *)obj;
             [result addObject:label];
         }

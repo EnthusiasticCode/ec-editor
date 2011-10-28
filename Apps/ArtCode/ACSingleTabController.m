@@ -435,7 +435,7 @@ static const void *contentViewControllerContext;
         self.defaultToolbar.titleControl.titleFragments = [NSArray arrayWithObjects:
                                                            [currentURL.path stringByDeletingLastPathComponent],
                                                            [currentURL lastPathComponent],
-                                                           [currentURL fragment], nil];
+                                                           [UIImage imageNamed:@"toolFilterBookmarksStar"], @"#lulz", nil]; //[currentURL fragment]
         self.defaultToolbar.titleControl.selectedTitleFragments = [NSIndexSet indexSetWithIndex:1];
     }
     
