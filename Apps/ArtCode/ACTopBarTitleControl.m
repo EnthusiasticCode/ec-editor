@@ -122,7 +122,7 @@
         CGRect viewFrame = view.frame;
         if (viewFrame.size.width > maxSegmentWidth)
             viewFrame.size.width = maxSegmentWidth;
-        viewFrame.origin = CGPointMake(lastViewFrame.origin.x - viewFrame.size.width, (labelFrame.origin.y - viewFrame.size.height) / 2);
+        viewFrame.origin = CGPointMake(lastViewFrame.origin.x - viewFrame.size.width, ((labelFrame.origin.y - viewFrame.size.height) / 2) + 3);
         
         lastViewFrame = CGRectIntegral(viewFrame);
         view.frame = lastViewFrame;
@@ -137,7 +137,7 @@
         CGRect viewFrame = view.frame;
         if (viewFrame.size.width > maxSegmentWidth)
             viewFrame.size.width = maxSegmentWidth;
-        viewFrame.origin = CGPointMake(lastViewFrame.origin.x, (CGRectGetMaxY(labelFrame) * 2 - viewFrame.size.height) / 2);
+        viewFrame.origin = CGPointMake(lastViewFrame.origin.x, ((CGRectGetMaxY(labelFrame) * 2 - viewFrame.size.height) / 2));
         
         lastViewFrame = CGRectIntegral(viewFrame);
         view.frame = lastViewFrame;
@@ -193,7 +193,10 @@
             UILabel *label = [UILabel new];
             label.lineBreakMode = UILineBreakModeMiddleTruncation;
             label.backgroundColor = [UIColor clearColor];
+            
             label.textColor = self.secondaryTitleFragmentsTint;
+            label.font = [UIFont systemFontOfSize:14];
+            
             label.text = (NSString *)obj;
             [result addObject:label];
         }
