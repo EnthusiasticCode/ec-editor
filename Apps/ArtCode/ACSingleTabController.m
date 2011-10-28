@@ -424,9 +424,20 @@ static const void *contentViewControllerContext;
 - (void)_setupDefaultToolbarTitle
 {
     if ([_contentViewController.title length] > 0)
-        [self.defaultToolbar.titleControl setTitle:_contentViewController.title forState:UIControlStateNormal];
+    {
+        self.defaultToolbar.titleControl.titleFragments = [NSArray arrayWithObject:_contentViewController.title];
+        self.defaultToolbar.titleControl.selectedTitleFragments = nil;
+    }
     else
-        [self.defaultToolbar.titleControl setTitle:self.tab.currentURL.path forState:UIControlStateNormal];
+    {
+        NSURL *currentURL = self.tab.currentURL;
+        // TODO parse URL query to determine images etc...
+        self.defaultToolbar.titleControl.titleFragments = [NSArray arrayWithObjects:
+                                                           [currentURL.path stringByDeletingLastPathComponent],
+                                                           [currentURL lastPathComponent],
+                                                           [currentURL fragment], nil];
+        self.defaultToolbar.titleControl.selectedTitleFragments = [NSIndexSet indexSetWithIndex:1];
+    }
     
     self.defaultToolbar.titleControl.enabled = [_contentViewController singleTabController:self shouldEnableTitleControlForDefaultToolbar:self.defaultToolbar];
 }
