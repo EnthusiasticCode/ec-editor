@@ -84,9 +84,9 @@ static NSDictionary *_themeFileURLs;
     NSString *name = [plist objectForKey:_themeNameKey];
     if (!name)
         return nil;
-    self.fileURL = fileURL;
-    self.name = name;
-    self.plist = plist;
+    _fileURL = fileURL;
+    _name = name;
+    _plist = plist;
     return self;
 }
 

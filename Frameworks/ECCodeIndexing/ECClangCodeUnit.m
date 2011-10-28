@@ -22,14 +22,16 @@
 
 @interface ECClangCodeUnit ()
 {
+    NSURL *_presentedItemURL;
     NSOperationQueue *_presentedItemOperationQueue;
 }
 @property (nonatomic, strong) ECCodeIndex *index;
 @property (nonatomic, readonly) CXIndex clangIndex;
 @property (nonatomic) CXTranslationUnit translationUnit;
 @property (nonatomic, readonly) CXFile mainSourceFile;
-@property (atomic, strong) NSURL *fileURL;
 @property (nonatomic, strong) NSString *language;
+// presentedItemURL needs to be declared as assign because it's declared as assign in the protocol, it is however backed by a strong ivar
+@property (assign) NSURL *presentedItemURL;
 @property (nonatomic, strong) NSDate *presentedItemLastModificationDate;
 @property (nonatomic) BOOL sourceFilesContentsHaveChangesSinceLastReparse;
 - (void)loadTranslationUnitForFileURL:(NSURL *)fileURL;
@@ -46,11 +48,20 @@ static void inclusionVisitor(CXFile included_file, CXSourceLocation* inclusion_s
 
 @synthesize index = _index;
 @synthesize translationUnit = _translationUnit;
-@synthesize fileURL = _fileURL;
 @synthesize language = _language;
 @synthesize presentedItemLastModificationDate = _presentedItemLastModificationDate;
 @synthesize sourceFilesContentsHaveChangesSinceLastReparse = _sourceFilesContentsHaveChangesSinceLastReparse;
 @synthesize observedIncludedFiles = _observedIncludedFiles;
+
+- (NSURL *)fileURL
+{
+    return self.presentedItemURL;
+}
+
++ (NSSet *)keyPathsForValuesAffectingFileURL
+{
+    return [NSSet setWithObject:@"presentedItemURL"];
+}
 
 - (CXIndex)clangIndex
 {
@@ -81,8 +92,8 @@ static void inclusionVisitor(CXFile included_file, CXSourceLocation* inclusion_s
     self = [super init];
     if (!self)
         return nil;
-    self.language = language;
-    self.index = index;
+    _language = language;
+    _index = index;
     [self loadTranslationUnitForFileURL:fileURL];
     if (!self.translationUnit)
         return nil;
@@ -177,7 +188,7 @@ static void inclusionVisitor(CXFile included_file, CXSourceLocation* inclusion_s
     if (self.translationUnit)
         clang_disposeTranslationUnit(self.translationUnit);
     self.observedIncludedFiles = nil;
-    self.fileURL = nil;
+    self.presentedItemURL = nil;
     if ([[NSFileCoordinator filePresenters] containsObject:self])
         [NSFileCoordinator removeFilePresenter:self];
     if (!fileURL)
@@ -191,7 +202,7 @@ static void inclusionVisitor(CXFile included_file, CXSourceLocation* inclusion_s
         int parameter_count = 11;
         const char const *parameters[] = {"-ObjC", "-fobjc-nonfragile-abi", "-nostdinc", "-nobuiltininc", "-I/Developer/usr/lib/clang/3.0/include", "-I/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator5.0.sdk/usr/include", "-F/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator5.0.sdk/System/Library/Frameworks", "-isysroot=/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator5.0.sdk/", "-DTARGET_OS_IPHONE=1", "-UTARGET_OS_MAC", "-miphoneos-version-min=4.3"};
         this.translationUnit = clang_parseTranslationUnit(this.clangIndex, [[newURL path] fileSystemRepresentation], parameters, parameter_count, 0, 0, clang_defaultEditingTranslationUnitOptions());
-        this.fileURL = newURL;
+        this.presentedItemURL = newURL;
         [NSFileCoordinator addFilePresenter:self];
     }];
 }
@@ -219,12 +230,19 @@ static void inclusionVisitor(CXFile included_file, CXSourceLocation* inclusion_s
 
 - (NSURL *)presentedItemURL
 {
-    return self.fileURL;
+    return _presentedItemURL;
 }
 
-+ (NSSet *)keyPathsForValuesAffectingPresentedItemURL
+- (void)setPresentedItemURL:(NSURL *)presentedItemURL
 {
-    return [NSSet setWithObject:@"fileURL"];
+    if (presentedItemURL == _presentedItemURL)
+        return;
+    [self willChangeValueForKey:@"presentedItemURL"];
+    @synchronized(self)
+    {
+        _presentedItemURL = presentedItemURL;
+    }
+    [self didChangeValueForKey:@"presentedItemURL"];
 }
 
 - (NSOperationQueue *)presentedItemOperationQueue

@@ -12,8 +12,10 @@
 
 @property (nonatomic, strong, readonly) NSURL *bundleURL;
 @property (nonatomic, strong, readonly) NSString *bundleName;
-@property (nonatomic, strong, readonly) NSArray *syntaxes;
 
 - (id)initWithBundleURL:(NSURL *)bundleURL;
+
+/// Content:
+@property (nonatomic, strong, readonly) NSArray *syntaxes;
 
 @end

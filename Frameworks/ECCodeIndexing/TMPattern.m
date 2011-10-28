@@ -26,48 +26,60 @@ static NSString * const _patternIncludeKey = @"include";
     NSMatchingOptions _cachedMatchOptions;
     NSRange _cachedMatchRange;
     NSTextCheckingResult *_cachedMatchResult;
+    
+    OnigRegexp *_match;
+    NSDictionary *_captures;
+    OnigRegexp *_begin;
+    OnigRegexp *_end;
+    NSDictionary *_beginCaptures;
+    NSDictionary *_endCaptures;
+    NSArray *_patterns;
+    
+    NSDictionary *_dictionary;
 }
-@property (nonatomic, strong) NSDictionary *dictionary;
-@property (nonatomic, strong) OnigRegexp *match;
-@property (nonatomic, strong) OnigRegexp *begin;
-@property (nonatomic, strong) OnigRegexp *end;
 @end
 
 @implementation TMPattern
 
-@synthesize dictionary = _dictionary;
-@synthesize match = _match;
-@synthesize captures = _captures;
-@synthesize begin = _begin;
-@synthesize end = _end;
-@synthesize beginCaptures = _beginCaptures;
-@synthesize endCaptures = _endCaptures;
-@synthesize patterns = _patterns;
-
 - (NSString *)name
 {
-    return [self.dictionary objectForKey:_patternNameKey];
+    return [_dictionary objectForKey:_patternNameKey];
+}
+
+- (OnigRegexp *)match
+{
+    return _match;
 }
 
 - (NSDictionary *)captures
 {
     if (!_captures)
     {
-        ECASSERT(![self.dictionary objectForKey:_patternCapturesKey] || (![self.dictionary objectForKey:_patternBeginCapturesKey] && ![self.dictionary objectForKey:_patternEndCapturesKey]));
-        _captures = [self.dictionary objectForKey:_patternCapturesKey];
+        ECASSERT(![_dictionary objectForKey:_patternCapturesKey] || (![_dictionary objectForKey:_patternBeginCapturesKey] && ![_dictionary objectForKey:_patternEndCapturesKey]));
+        _captures = [_dictionary objectForKey:_patternCapturesKey];
         ECASSERT(!_captures || [_captures count]);
     }
     return _captures;
+}
+
+- (OnigRegexp *)begin
+{
+    return _begin;
+}
+
+- (OnigRegexp *)end
+{
+    return _end;
 }
 
 - (NSDictionary *)beginCaptures
 {
     if (!_beginCaptures)
     {
-        ECASSERT(![self.dictionary objectForKey:_patternBeginCapturesKey] || ![self.dictionary objectForKey:_patternCapturesKey]);
-        _beginCaptures = [self.dictionary objectForKey:_patternBeginCapturesKey];
+        ECASSERT(![_dictionary objectForKey:_patternBeginCapturesKey] || ![_dictionary objectForKey:_patternCapturesKey]);
+        _beginCaptures = [_dictionary objectForKey:_patternBeginCapturesKey];
         if (!_beginCaptures)
-            _beginCaptures = [self.dictionary objectForKey:_patternCapturesKey];
+            _beginCaptures = [_dictionary objectForKey:_patternCapturesKey];
         ECASSERT(!_beginCaptures || [_beginCaptures count]);
     }
     return _beginCaptures;
@@ -77,10 +89,10 @@ static NSString * const _patternIncludeKey = @"include";
 {
     if (!_endCaptures)
     {
-        ECASSERT(![self.dictionary objectForKey:_patternEndCapturesKey] || ![self.dictionary objectForKey:_patternCapturesKey]);
-        _endCaptures = [self.dictionary objectForKey:_patternEndCapturesKey];
+        ECASSERT(![_dictionary objectForKey:_patternEndCapturesKey] || ![_dictionary objectForKey:_patternCapturesKey]);
+        _endCaptures = [_dictionary objectForKey:_patternEndCapturesKey];
         if (!_endCaptures)
-            _endCaptures = [self.dictionary objectForKey:_patternCapturesKey];
+            _endCaptures = [_dictionary objectForKey:_patternCapturesKey];
         ECASSERT(!_endCaptures || [_endCaptures count]);
     }
     return _endCaptures;
@@ -91,7 +103,7 @@ static NSString * const _patternIncludeKey = @"include";
     if (!_patterns)
     {
         NSMutableArray *patterns = [NSMutableArray array];
-        for (NSDictionary *dictionary in [self.dictionary objectForKey:_patternPatternsKey])
+        for (NSDictionary *dictionary in [_dictionary objectForKey:_patternPatternsKey])
             [patterns addObject:[[[self class] alloc] initWithDictionary:dictionary]];
         if ([patterns count])
             _patterns = [patterns copy];
@@ -102,7 +114,7 @@ static NSString * const _patternIncludeKey = @"include";
 
 - (NSString *)include
 {
-    return [self.dictionary objectForKey:_patternIncludeKey];
+    return [_dictionary objectForKey:_patternIncludeKey];
 }
 
 - (id)initWithDictionary:(NSDictionary *)dictionary
@@ -110,20 +122,20 @@ static NSString * const _patternIncludeKey = @"include";
     self = [super init];
     if (!self)
         return nil;
-    self.dictionary = dictionary;
+    _dictionary = dictionary;
     NSString *matchRegex = [dictionary objectForKey:_patternMatchKey];
     if (matchRegex)
-        self.match = [OnigRegexp compile:matchRegex ignorecase:NO multiline:YES];
+        _match = [OnigRegexp compile:matchRegex ignorecase:NO multiline:YES];
     NSString *beginRegex = [dictionary objectForKey:_patternBeginKey];
     if (beginRegex)
-        self.begin = [OnigRegexp compile:beginRegex ignorecase:NO multiline:YES];
+        _begin = [OnigRegexp compile:beginRegex ignorecase:NO multiline:YES];
     NSString *endRegex = [dictionary objectForKey:_patternEndKey];
     if (endRegex)
-        self.end = [OnigRegexp compile:endRegex ignorecase:NO multiline:YES];
-    ECASSERT(!self.match || (![self.patterns count] && !self.begin && !self.include && ![self.captures objectForKey:[NSNumber numberWithUnsignedInteger:0]] && ![dictionary objectForKey:_patternBeginCapturesKey] && ![dictionary objectForKey:_patternEndCapturesKey]));
-    ECASSERT(!self.begin || self.end && !self.include);
-    ECASSERT(!self.end || self.begin);
-    ECASSERT(!self.include || (![self.patterns count] && !self.captures && !self.beginCaptures && !self.endCaptures));
+        _end = [OnigRegexp compile:endRegex ignorecase:NO multiline:YES];
+    ECASSERT(!_match || (![_patterns count] && !_begin && ![self include] && ![_captures objectForKey:[NSNumber numberWithUnsignedInteger:0]] && ![dictionary objectForKey:_patternBeginCapturesKey] && ![dictionary objectForKey:_patternEndCapturesKey]));
+    ECASSERT(!_begin || _end && ![self include]);
+    ECASSERT(!_end || _begin);
+    ECASSERT(![self include] || (![_patterns count] && !_captures && !_beginCaptures && !_endCaptures));
     return self;
 }
 

@@ -21,21 +21,21 @@
 /// The file must exist, but it can be empty
 /// If the language or scope are not specified, they will be autodetected
 /// Scope takes precedence over language
-- (id)codeUnitImplementingProtocol:(Protocol *)protocol withFile:(NSURL *)fileURL language:(NSString *)language scope:(NSString *)scope;
+- (id<ECCodeUnit>)codeUnitImplementingProtocol:(Protocol *)protocol withFile:(NSURL *)fileURL language:(NSString *)language scope:(NSString *)scope;
 
 @end
 
 /// Class that encapsulates interaction with parsing and indexing libraries to provide language related file-specific functionality such as syntax aware highlighting, diagnostics and completions.
 @protocol ECCodeUnit <NSObject, NSFilePresenter>
 
-/// The code index that generated the code unit.
-@property (nonatomic, readonly, strong) ECCodeIndex *index;
-
 /// The main source file the unit is interpreting.
-@property (atomic, readonly, strong) NSURL *fileURL;
+@property (nonatomic, readonly, strong) NSURL *fileURL;
+
+/// The code index that generated the code unit.
+- (ECCodeIndex *)index;
 
 /// The language the unit is using to interpret the main source file's contents.
-@property (nonatomic, readonly, strong) NSString *language;
+- (NSString *)language;
 
 @end
 

@@ -57,7 +57,7 @@ static NSRange intersectionOfRangeRelativeToRange(NSRange range, NSRange inRange
         if (success)
         {
             ECCodeIndex *codeIndex = [[ECCodeIndex alloc] init];
-            self.codeParser = [codeIndex codeUnitImplementingProtocol:@protocol(ECCodeParser) withFile:self.fileURL language:nil scope:nil];
+            self.codeParser = (id<ECCodeParser>)[codeIndex codeUnitImplementingProtocol:@protocol(ECCodeParser) withFile:self.fileURL language:nil scope:nil];
         }
         completionHandler(success);
     }];
@@ -66,8 +66,8 @@ static NSRange intersectionOfRangeRelativeToRange(NSRange range, NSRange inRange
 - (void)closeWithCompletionHandler:(void (^)(BOOL))completionHandler
 {
     [super closeWithCompletionHandler:^(BOOL success){
-        if (success)
-            self.codeParser = nil;
+        ECASSERT(success);
+        self.codeParser = nil;
         completionHandler(success);
     }];
 }
@@ -96,10 +96,10 @@ static NSRange intersectionOfRangeRelativeToRange(NSRange range, NSRange inRange
     // Preparing result
     NSMutableAttributedString *result = [[NSMutableAttributedString alloc] initWithString:[self.contentString substringWithRange:stringRange] attributes:self.defaultTextStyle.CTAttributes];
     
-//    [self.codeParser visitScopesInRange:stringRange usingVisitor:^ECCodeVisitorResult(NSString *scope, NSRange scopeRange, BOOL isLeafScope, BOOL isExitingScope, NSArray *scopesStack) {
-////        NSLog(@"visited scope: %@ at range: {%d,%d}", scope, scopeRange.location, scopeRange.length);
-//        return ECCodeVisitorResultRecurse;
-//    }];
+    [self.codeParser visitScopesInRange:stringRange usingVisitor:^ECCodeVisitorResult(NSString *scope, NSRange scopeRange, BOOL isLeafScope, BOOL isExitingScope, NSArray *scopesStack) {
+        NSLog(@"visited scope: %@ at range: {%d,%d}", scope, scopeRange.location, scopeRange.length);
+        return ECCodeVisitorResultRecurse;
+    }];
     
     return result;
 }

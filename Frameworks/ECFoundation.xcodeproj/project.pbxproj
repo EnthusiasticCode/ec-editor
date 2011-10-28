@@ -99,6 +99,8 @@
 		B7A4BB35143F918200BB6F29 /* NSString+ECAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = B7A4BB33143F918200BB6F29 /* NSString+ECAdditions.m */; };
 		B7C9A841142BB046009D8FF3 /* ECItemObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = B7C9A83F142BB046009D8FF3 /* ECItemObserver.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B7C9A842142BB046009D8FF3 /* ECItemObserver.m in Sources */ = {isa = PBXBuildFile; fileRef = B7C9A840142BB046009D8FF3 /* ECItemObserver.m */; };
+		B7E84A06145AB2FE001EB4E4 /* NSObject+FixedAutoContentAccessingProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = B7E84A04145AB2FE001EB4E4 /* NSObject+FixedAutoContentAccessingProxy.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B7E84A07145AB2FE001EB4E4 /* NSObject+FixedAutoContentAccessingProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = B7E84A05145AB2FE001EB4E4 /* NSObject+FixedAutoContentAccessingProxy.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -289,6 +291,8 @@
 		B7A4BB33143F918200BB6F29 /* NSString+ECAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+ECAdditions.m"; sourceTree = "<group>"; };
 		B7C9A83F142BB046009D8FF3 /* ECItemObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECItemObserver.h; sourceTree = "<group>"; };
 		B7C9A840142BB046009D8FF3 /* ECItemObserver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECItemObserver.m; sourceTree = "<group>"; };
+		B7E84A04145AB2FE001EB4E4 /* NSObject+FixedAutoContentAccessingProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+FixedAutoContentAccessingProxy.h"; sourceTree = "<group>"; };
+		B7E84A05145AB2FE001EB4E4 /* NSObject+FixedAutoContentAccessingProxy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+FixedAutoContentAccessingProxy.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -414,6 +418,8 @@
 				B71707811428D52F00DF7794 /* NSTimer+block.m */,
 				B7A4BB32143F918200BB6F29 /* NSString+ECAdditions.h */,
 				B7A4BB33143F918200BB6F29 /* NSString+ECAdditions.m */,
+				B7E84A04145AB2FE001EB4E4 /* NSObject+FixedAutoContentAccessingProxy.h */,
+				B7E84A05145AB2FE001EB4E4 /* NSObject+FixedAutoContentAccessingProxy.m */,
 			);
 			name = Additions;
 			sourceTree = "<group>";
@@ -604,6 +610,7 @@
 				B717078C1428D52F00DF7794 /* MurmurHash3.h in Headers */,
 				B717078F1428D52F00DF7794 /* pstdint.h in Headers */,
 				B7012971143860490070CCDF /* ECDirectoryPresenter.h in Headers */,
+				B7E84A06145AB2FE001EB4E4 /* NSObject+FixedAutoContentAccessingProxy.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -712,6 +719,7 @@
 				B7C9A842142BB046009D8FF3 /* ECItemObserver.m in Sources */,
 				B7012972143860490070CCDF /* ECDirectoryPresenter.m in Sources */,
 				B7A4BB35143F918200BB6F29 /* NSString+ECAdditions.m in Sources */,
+				B7E84A07145AB2FE001EB4E4 /* NSObject+FixedAutoContentAccessingProxy.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
