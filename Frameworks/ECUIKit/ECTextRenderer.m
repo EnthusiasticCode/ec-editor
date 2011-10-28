@@ -1180,6 +1180,13 @@
 
 - (void)updateTextFromStringRange:(NSRange)fromRange toStringRange:(NSRange)toRange
 {
+    // Handle special case in which requested update range is longer than the input string
+    if (fromRange.length >= [datasource stringLengthForTextRenderer:self])
+    {
+        [self updateAllText];
+        return;
+    }
+        
     // Calculate change withing single semgment
     NSInteger segmentIndex = -1, removeFromSegmentIndex = NSNotFound;
     CGFloat affectedSegmentHeight = 0, removeFromSegmentYOffset = 0;
