@@ -25,7 +25,7 @@
 
 #pragma mark Managing Text Content
 
-/// Set the text fot the control. This property is only used if textDatasource
+/// Set the text fot the control. This property is only used if textDataSource
 /// is the code view itself.
 @property (nonatomic, strong) NSString *text;
 
@@ -58,9 +58,9 @@
 
 @interface ECCodeViewBase (ECTextRendererForwarding)
 
-/// The datasource for the text displayed by the code view. Default is self.
-/// If this datasource is not self, the text property will have no effect.
-@property (nonatomic, strong) id<ECTextRendererDataSource> datasource;
+/// The dataSource for the text displayed by the code view. Default is self.
+/// If this dataSource is not self, the text property will have no effect.
+@property (nonatomic, strong) id<ECTextRendererDataSource> dataSource;
 
 /// Invalidate the text making the receiver redraw it.
 - (void)updateAllText;

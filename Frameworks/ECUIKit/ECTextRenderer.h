@@ -46,7 +46,7 @@ typedef void (^ECTextRendererLayerPass)(CGContextRef context, ECTextRendererLine
 @end
 
 
-/// A class that present a text retrieved by a datasource ready to be drawn
+/// A class that present a text retrieved by a dataSource ready to be drawn
 /// fully or partially. The user of an instance of this class should 
 /// consider as if an etire text wrapped at the given wrap width is 
 /// ready to be rendered.
@@ -57,23 +57,23 @@ typedef void (^ECTextRendererLayerPass)(CGContextRef context, ECTextRendererLine
 /// A delegate that will recevie notifications from the text renderer.
 @property (nonatomic, weak) id <ECTextRendererDelegate> delegate;
 
-/// The datasource to retrieve the text to render. It has to conform to
-/// \c ECTextRendererDatasource protocol.
-@property (nonatomic, weak) id <ECTextRendererDataSource> datasource;
+/// The dataSource to retrieve the text to render. It has to conform to
+/// \c ECTextRendererDataSource protocol.
+@property (nonatomic, weak) id <ECTextRendererDataSource> dataSource;
 
 /// Defines the maximum number of characters to use for one rendering segment.
-/// If this property is non-zero, input strings from the datasource will
+/// If this property is non-zero, input strings from the dataSource will
 /// be requested in segments when needed. This will reduce the ammount of 
 /// text read and rendered at a time to improve speed and memory 
 /// performance. Default value is 0.
 @property (nonatomic) NSUInteger maximumStringLenghtPerSegment;
 
-/// Invalidate the content making the renderer call back to its datasource
+/// Invalidate the content making the renderer call back to its dataSource
 /// to refresh required strings.
 - (void)updateAllText;
 
 /// Invalidate a particular section of the content indicating how it changed.
-/// This method will eventually make the renderer call back to it's datasource
+/// This method will eventually make the renderer call back to it's dataSource
 /// to retrieve the modified content.
 /// The original range can have length of 0 to indicate an insertion before the 
 /// line; the new range can as well have a length of 0 to indicate deletion.

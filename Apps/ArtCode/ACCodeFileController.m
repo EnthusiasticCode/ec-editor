@@ -92,7 +92,7 @@
     _document = document;
     [_document openWithCompletionHandler:^(BOOL success) {
         ECASSERT(success);
-        self.codeView.datasource = _document;
+        self.codeView.dataSource = _document;
     }];
     
     [self didChangeValueForKey:@"document"];

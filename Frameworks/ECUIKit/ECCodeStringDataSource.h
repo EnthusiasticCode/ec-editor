@@ -14,13 +14,13 @@ typedef void (^ECCodeStringDataSourceStylingBlock)(NSMutableAttributedString *st
 
 @interface ECCodeStringDataSource : NSObject <ECCodeViewDataSource>
 
-/// The string to be managed by the datasource
+/// The string to be managed by the dataSource
 @property (nonatomic, strong) NSString *string;
 
 /// Default style applied to the entire string.
 @property (nonatomic, strong) ECTextStyle *defaultTextStyle;
 
-/// Add a styling block that will be called when the datasource will have to return
+/// Add a styling block that will be called when the dataSource will have to return
 /// a string. Styling blocks are applyed in unknown order and should not remove
 /// any attributes from the provided string but only add them. The string will
 /// initially only have the defaultTextStyle applied to it.

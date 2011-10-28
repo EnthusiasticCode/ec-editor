@@ -207,8 +207,8 @@ static void init(ECCodeViewBase *self)
 - (id)forwardingTargetForSelector:(SEL)aSelector
 {
     // Forwarding renderer calls
-    if (aSelector == @selector(datasource)
-        || aSelector == @selector(setDatasource:)
+    if (aSelector == @selector(dataSource)
+        || aSelector == @selector(setDataSource:)
         || aSelector == @selector(updateAllText)
         || aSelector == @selector(updateTextFromStringRange:toStringRange:))
         return self.renderer;
@@ -279,46 +279,46 @@ static void init(ECCodeViewBase *self)
 {
     ECASSERT(sender == self.renderer);
     
-    if (self.datasource == nil)
+    if (self.dataSource == nil)
         return nil;
     
-    return [self.datasource textRenderer:self.renderer attributedStringInRange:stringRange];
+    return [self.dataSource textRenderer:self.renderer attributedStringInRange:stringRange];
 }
 
 - (NSUInteger)stringLengthForTextRenderer:(ECTextRenderer *)sender
 {
     ECASSERT(sender == self.renderer);
     
-    if (self.datasource == nil)
+    if (self.dataSource == nil)
         return 0;
     
-    return [self.datasource stringLengthForTextRenderer:self.renderer];
+    return [self.dataSource stringLengthForTextRenderer:self.renderer];
 }
 
-#pragma mark - Text Renderer and CodeView String Datasource
+#pragma mark - Text Renderer and CodeView String DataSource
 
 - (NSString *)text
 {
-    if (self.datasource == nil)
+    if (self.dataSource == nil)
         return nil;
     
-    if (![self.datasource isKindOfClass:[ECCodeStringDataSource class]])
+    if (![self.dataSource isKindOfClass:[ECCodeStringDataSource class]])
         return nil;
     
-    return [(ECCodeStringDataSource *)self.datasource string];
+    return [(ECCodeStringDataSource *)self.dataSource string];
 }
 
 - (void)setText:(NSString *)string
 {
-    if (self.datasource == nil)
-        self.datasource = [ECCodeStringDataSource new];
+    if (self.dataSource == nil)
+        self.dataSource = [ECCodeStringDataSource new];
     
-    ECASSERT([self.datasource isKindOfClass:[ECCodeStringDataSource class]]);
+    ECASSERT([self.dataSource isKindOfClass:[ECCodeStringDataSource class]]);
     
     if (!self.ownsRenderer)
         return;
     
-    [(ECCodeStringDataSource *)self.datasource setString:string];
+    [(ECCodeStringDataSource *)self.dataSource setString:string];
     
     [self.renderer updateAllText];
     

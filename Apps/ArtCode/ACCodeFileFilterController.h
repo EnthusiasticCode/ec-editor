@@ -18,7 +18,7 @@ typedef void (^ACCodeFileFilterBlock)(ACCodeFileFilterController *sender);
 
 /// A controller that present a filtrable list of code view related elements.
 /// Without filtering, the controller displays a list of symbols derived from 
-/// the target code indexer datasource's code unit.
+/// the target code indexer dataSource's code unit.
 /// When filtering the following elements are displayed under categories in order:
 /// - Filtered symbols (if any present)
 /// - Searches in file's content (if any present)

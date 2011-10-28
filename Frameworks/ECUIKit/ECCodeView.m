@@ -36,7 +36,7 @@
     // Touch scrolling timer
     NSTimer *touchScrollTimer;
     
-    // Delegate and datasource flags
+    // Delegate and dataSource flags
     struct {
         unsigned int dataSourceHasCodeCanEditTextInRange : 1;
         unsigned int dataSourceHasCommitStringForTextInRange : 1;
@@ -158,7 +158,7 @@
 
 @interface CodeInfoView : UIView {
 @private
-    id<ECCodeViewDataSource> datasource;
+    id<ECCodeViewDataSource> dataSource;
     ECTextRenderer *renderer;
     
     ECCodeViewBase *navigatorView;
@@ -167,7 +167,7 @@
 }
 
 - (id)initWithFrame:(CGRect)frame 
-navigatorDatasource:(id<ECCodeViewDataSource>)source 
+navigatorDataSource:(id<ECCodeViewDataSource>)source 
            renderer:(ECTextRenderer *)aRenderer;
 
 #pragma mark Parent Layout
@@ -645,7 +645,7 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
 @synthesize normalWidth, navigatorWidth;
 @synthesize navigatorInsets, navigatorVisible, navigatorBackgroundColor;
 
-- (id)initWithFrame:(CGRect)frame navigatorDatasource:(id<ECCodeViewDataSource>)source renderer:(ECTextRenderer *)aRenderer
+- (id)initWithFrame:(CGRect)frame navigatorDataSource:(id<ECCodeViewDataSource>)source renderer:(ECTextRenderer *)aRenderer
 {
     parentSize = [UIScreen mainScreen].bounds.size;
     normalWidth = 11;
@@ -656,7 +656,7 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
     
     if ((self = [super initWithFrame:frame])) 
     {
-        datasource = source;
+        dataSource = source;
         renderer = aRenderer;
         
         self.backgroundColor = [UIColor clearColor];
@@ -716,7 +716,7 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
         frame.size.width = navigatorWidth;
         frame = UIEdgeInsetsInsetRect(frame, navigatorInsets);
         navigatorView = [[ECCodeViewBase alloc] initWithFrame:frame renderer:renderer];
-        navigatorView.datasource = datasource;
+        navigatorView.dataSource = dataSource;
         navigatorView.contentScaleFactor = (navigatorWidth - navigatorInsets.left - navigatorInsets.right) / parentSize.width;
         navigatorView.backgroundColor = [UIColor whiteColor];
         navigatorView.scrollEnabled = NO;
@@ -811,15 +811,15 @@ navigatorDatasource:(id<ECCodeViewDataSource>)source
     [infoView updateNavigator];
 }
 
-@dynamic datasource;
+@dynamic dataSource;
 
-- (void)setDatasource:(id<ECCodeViewDataSource>)aDatasource
+- (void)setDataSource:(id<ECCodeViewDataSource>)aDataSource
 {
-    [super setDatasource:aDatasource];
+    [super setDataSource:aDataSource];
     
-    flags.dataSourceHasCodeCanEditTextInRange = [self.datasource respondsToSelector:@selector(codeView:canEditTextInRange:)];
-    flags.dataSourceHasCommitStringForTextInRange = [self.datasource respondsToSelector:@selector(codeView:commitString:forTextInRange:)];
-    flags.dataSourceHasViewControllerForCompletionAtTextInRange = [self.datasource respondsToSelector:@selector(codeView:viewControllerForCompletionAtTextInRange:)];
+    flags.dataSourceHasCodeCanEditTextInRange = [self.dataSource respondsToSelector:@selector(codeView:canEditTextInRange:)];
+    flags.dataSourceHasCommitStringForTextInRange = [self.dataSource respondsToSelector:@selector(codeView:commitString:forTextInRange:)];
+    flags.dataSourceHasViewControllerForCompletionAtTextInRange = [self.dataSource respondsToSelector:@selector(codeView:viewControllerForCompletionAtTextInRange:)];
 }
 
 - (void)setCaretColor:(UIColor *)caretColor
@@ -910,7 +910,7 @@ static void init(ECCodeView *self)
     {
         if (!infoView)
         {
-            infoView = [[CodeInfoView alloc] initWithFrame:self.bounds navigatorDatasource:self.datasource renderer:self.renderer];
+            infoView = [[CodeInfoView alloc] initWithFrame:self.bounds navigatorDataSource:self.dataSource renderer:self.renderer];
             infoView.navigatorBackgroundColor = navigatorBackgroundColor;
             infoView.navigatorWidth = navigatorWidth;
             infoView.parentSize = self.bounds.size;
@@ -991,7 +991,7 @@ static void init(ECCodeView *self)
         completionPopover.automaticDismiss = YES;
     }
     
-    completionPopover.contentViewController = [self.datasource codeView:self viewControllerForCompletionAtTextInRange:textRange];
+    completionPopover.contentViewController = [self.dataSource codeView:self viewControllerForCompletionAtTextInRange:textRange];
     
     // TODO something if completionPopover.contentViewController is nil
     
@@ -1082,7 +1082,7 @@ static void init(ECCodeView *self)
 
 - (BOOL)hasText
 {
-    return [self.datasource stringLengthForTextRenderer:self.renderer] > 0;
+    return [self.dataSource stringLengthForTextRenderer:self.renderer] > 0;
 }
 
 - (void)insertText:(NSString *)string
@@ -1154,7 +1154,7 @@ static void init(ECCodeView *self)
 @synthesize inputDelegate;
 @synthesize tokenizer;
 
-// TODO create a proper code tokenizer, should be retreived from the datasource
+// TODO create a proper code tokenizer, should be retreived from the dataSource
 - (id<UITextInputTokenizer>)tokenizer
 {
     if (!_tokenizer)
@@ -1181,7 +1181,7 @@ static void init(ECCodeView *self)
     if (e <= s)
         result = @"";
     else
-        result = [self.datasource textRenderer:self.renderer attributedStringInRange:(NSRange){s, e - s}].string;
+        result = [self.dataSource textRenderer:self.renderer attributedStringInRange:(NSRange){s, e - s}].string;
     
     return result;
 }
@@ -1197,7 +1197,7 @@ static void init(ECCodeView *self)
     if (e < s)
         return;
     
-    NSUInteger textLength = [self.datasource stringLengthForTextRenderer:self.renderer];
+    NSUInteger textLength = [self.dataSource stringLengthForTextRenderer:self.renderer];
     if (s > textLength)
         s = textLength;
     
@@ -1341,7 +1341,7 @@ static void init(ECCodeView *self)
             return nil;
     }
     
-    NSUInteger textLength = [self.datasource stringLengthForTextRenderer:self.renderer];
+    NSUInteger textLength = [self.dataSource stringLengthForTextRenderer:self.renderer];
     if (result > textLength)
         result = textLength;
     
@@ -1358,7 +1358,7 @@ static void init(ECCodeView *self)
 
 - (UITextPosition *)endOfDocument
 {
-    ECTextPosition *p = [[ECTextPosition alloc] initWithIndex:[self.datasource stringLengthForTextRenderer:self.renderer]];
+    ECTextPosition *p = [[ECTextPosition alloc] initWithIndex:[self.dataSource stringLengthForTextRenderer:self.renderer]];
     return p;
 }
 
@@ -1460,7 +1460,7 @@ static void init(ECCodeView *self)
 {
     ECTextPosition *pos = (ECTextPosition *)[self closestPositionToPoint:point];
     
-    NSRange r = [[self.datasource textRenderer:self.renderer attributedStringInRange:(NSRange){ pos.index, 1 }].string rangeOfComposedCharacterSequenceAtIndex:0];
+    NSRange r = [[self.dataSource textRenderer:self.renderer attributedStringInRange:(NSRange){ pos.index, 1 }].string rangeOfComposedCharacterSequenceAtIndex:0];
     
     if (r.location == NSNotFound)
         return nil;
@@ -1513,7 +1513,7 @@ static void init(ECCodeView *self)
     if (selectionView.hasSelection && !selectionView.hidden)
         selectedRange = selectionView.selectionRange;
     else
-        selectedRange = [ECTextRange textRangeWithRange:NSMakeRange([self.datasource stringLengthForTextRenderer:self.renderer], 0)];
+        selectedRange = [ECTextRange textRangeWithRange:NSMakeRange([self.dataSource stringLengthForTextRenderer:self.renderer], 0)];
     
     [inputDelegate textWillChange:self];
     [inputDelegate selectionWillChange:self];
@@ -1620,13 +1620,13 @@ static void init(ECCodeView *self)
         return;
     
     if (flags.dataSourceHasCodeCanEditTextInRange
-        && ![self.datasource codeView:self canEditTextInRange:range]) 
+        && ![self.dataSource codeView:self canEditTextInRange:range]) 
         return;
 
     [self unmarkText];
     
     [inputDelegate textWillChange:self];
-    [self.datasource codeView:self commitString:string forTextInRange:range];
+    [self.dataSource codeView:self commitString:string forTextInRange:range];
     [inputDelegate textDidChange:self];
     
     // Inform the renderer that text has changed

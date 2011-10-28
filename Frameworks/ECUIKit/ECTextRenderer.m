@@ -579,7 +579,7 @@
 
 #pragma mark Properties
 
-@synthesize delegate, datasource;
+@synthesize delegate, dataSource;
 @synthesize renderWidth, renderHeight, textInsets, maximumStringLenghtPerSegment;
 @synthesize underlayRenderingPasses, overlayRenderingPasses;
 
@@ -596,15 +596,15 @@
     [self didChangeValueForKey:@"delegate"];
 }
 
-- (void)setDatasource:(id<ECTextRendererDataSource>)aDatasource
+- (void)setDataSource:(id<ECTextRendererDataSource>)aDataSource
 {
-    if (datasource == aDatasource)
+    if (dataSource == aDataSource)
         return;
     
-    [self willChangeValueForKey:@"datasource"];
-    datasource = aDatasource;
+    [self willChangeValueForKey:@"dataSource"];
+    dataSource = aDataSource;
     [self updateAllText];
-    [self didChangeValueForKey:@"datasource"];
+    [self didChangeValueForKey:@"dataSource"];
 }
 
 - (void)setRenderWidth:(CGFloat)width
@@ -694,7 +694,7 @@
 
 - (NSAttributedString *)_stringForTextSegment:(TextSegment *)requestSegment lineCount:(NSUInteger *)lines
 {    
-    NSUInteger inputStringLenght = [datasource stringLengthForTextRenderer:self];
+    NSUInteger inputStringLenght = [dataSource stringLengthForTextRenderer:self];
     if (inputStringLenght == 0)
         return nil;
     
@@ -712,7 +712,7 @@
     // has been done to refresh it. See updateTextFromStringRange:toStringRange:
     // to understand how this stringLenght is properly adjusted.
     stringRange.length = MIN((inputStringLenght - stringRange.location), (requestSegment.stringLength ? requestSegment.stringLength : maximumStringLenghtPerSegment));
-    NSAttributedString *attributedString = [datasource textRenderer:self attributedStringInRange:stringRange];
+    NSAttributedString *attributedString = [dataSource textRenderer:self attributedStringInRange:stringRange];
     NSUInteger stringLength = [attributedString length];
     if (!attributedString || stringLength == 0)
         return nil;
@@ -786,7 +786,7 @@
                     lastTextSegment = [textSegments lastObject];
                     break;
                 }
-                else if ((currentStringOffset + [segment.string length]) >= [datasource stringLengthForTextRenderer:self])
+                else if ((currentStringOffset + [segment.string length]) >= [dataSource stringLengthForTextRenderer:self])
                 {
                     lastTextSegment = segment;
                 }
