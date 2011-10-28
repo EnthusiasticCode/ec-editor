@@ -434,9 +434,9 @@ static const void *contentViewControllerContext;
         // TODO parse URL query to determine images etc...
         self.defaultToolbar.titleControl.titleFragments = [NSArray arrayWithObjects:
                                                            [currentURL.path stringByDeletingLastPathComponent],
-                                                           [currentURL lastPathComponent],
+                                                           [UIImage imageNamed:@"toolPanelNavigatorToolImage"], [currentURL lastPathComponent],
                                                            [UIImage imageNamed:@"toolFilterBookmarksStar"], @"#lulz", nil]; //[currentURL fragment]
-        self.defaultToolbar.titleControl.selectedTitleFragments = [NSIndexSet indexSetWithIndex:1];
+        self.defaultToolbar.titleControl.selectedTitleFragments = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(1, 2)];
     }
     
     self.defaultToolbar.titleControl.enabled = [_contentViewController singleTabController:self shouldEnableTitleControlForDefaultToolbar:self.defaultToolbar];

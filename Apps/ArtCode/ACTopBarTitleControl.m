@@ -28,7 +28,7 @@
 
 @synthesize loadingMode;
 @synthesize titleFragments, selectedTitleFragments;
-@synthesize secondaryTitleFragmentsTint;
+@synthesize secondaryTitleFragmentsTint, gapBetweenFragments;
 
 - (void)setTitleFragments:(NSArray *)fragments
 {
@@ -43,6 +43,8 @@
 
 - (void)setSelectedTitleFragments:(NSIndexSet *)fragments
 {
+    ECASSERT([fragments lastIndex] < [titleFragments count]);
+    
     if (fragments == selectedTitleFragments)
         return;
     
@@ -106,7 +108,9 @@
     [super layoutSubviews];
     
     CGRect bounds = self.bounds;
-    CGRect labelFrame = self.titleLabel.frame;
+    CGRect labelFrame = self.titleLabel.text ? self.titleLabel.frame : CGRectNull;
+    if (self.imageView.image)
+        labelFrame = CGRectUnion(labelFrame, self.imageView.frame);
     
     CGFloat maxSegmentWidth = (bounds.size.width - labelFrame.size.width) / 2;
     
@@ -118,9 +122,11 @@
         CGRect viewFrame = view.frame;
         if (viewFrame.size.width > maxSegmentWidth)
             viewFrame.size.width = maxSegmentWidth;
-        viewFrame.origin = CGPointMake(lastViewFrame.origin.x - viewFrame.size.width, ceilf((labelFrame.origin.y - viewFrame.size.height) / 2));
-        view.frame = viewFrame;
-        lastViewFrame = viewFrame;
+        viewFrame.origin = CGPointMake(lastViewFrame.origin.x - viewFrame.size.width, (labelFrame.origin.y - viewFrame.size.height) / 2);
+        
+        lastViewFrame = CGRectIntegral(viewFrame);
+        view.frame = lastViewFrame;
+        lastViewFrame.origin.x -= gapBetweenFragments;
     }
     
     // Post views layout
@@ -131,10 +137,11 @@
         CGRect viewFrame = view.frame;
         if (viewFrame.size.width > maxSegmentWidth)
             viewFrame.size.width = maxSegmentWidth;
-        viewFrame.origin = CGPointMake(lastViewFrame.origin.x, floorf((CGRectGetMaxY(labelFrame) * 2 - viewFrame.size.height) / 2));
-        view.frame = viewFrame;
-        viewFrame.origin.x += viewFrame.size.width;
-        lastViewFrame = viewFrame;
+        viewFrame.origin = CGPointMake(lastViewFrame.origin.x, (CGRectGetMaxY(labelFrame) * 2 - viewFrame.size.height) / 2);
+        
+        lastViewFrame = CGRectIntegral(viewFrame);
+        view.frame = lastViewFrame;
+        lastViewFrame.origin.x += viewFrame.size.width + gapBetweenFragments;
     }
 }
 

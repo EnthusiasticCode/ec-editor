@@ -25,6 +25,9 @@ enum {
 /// Set the tint to apply to unselected title fragments
 @property (nonatomic, strong) UIColor *secondaryTitleFragmentsTint UI_APPEARANCE_SELECTOR;
 
+/// Defines the gap between fragments on the same line.
+@property (nonatomic) CGFloat gapBetweenFragments UI_APPEARANCE_SELECTOR;
+
 #pragma mark Additional Modes
 
 /// Indicates if the title control should show a loading animated background.
