@@ -18,7 +18,6 @@
 @interface ECTextRenderer () {
 @private
     NSMutableArray *textSegments;
-    TextSegment *lastTextSegment;
     
     BOOL delegateHasDidInvalidateRenderInRect;
     
@@ -35,10 +34,12 @@
 /// insets and inform the delegate that the old rendering rect has changed.
 - (void)_updateRenderWidth:(CGFloat)width;
 
-/// Retrieve the string for the given text segment. Line count is an output parameter, pass NULL if not interested.
+/// Retrieve the string for the given text segment. 
+/// lineCount is an output parameter, pass NULL if not interested.
+/// isFinalPart, if provided, will contain a value indicating if the input string has been exausted with the call. 
 /// This function is supposed to be used by a text segment to generate it's typesetter if not present in cache.
 /// The function can return nil if the source string has no text for the given segment.
-- (NSAttributedString *)_stringForTextSegment:(TextSegment *)segment lineCount:(NSUInteger *)lines;
+- (NSAttributedString *)_stringForTextSegment:(TextSegment *)segment lineCount:(NSUInteger *)lines finalPart:(BOOL *)isFinalPart;
 
 /// Enumerate throught text segments creating them if not yet present. This function
 /// guarantee to enumerate throught all the text segments that cover the entire
@@ -122,6 +123,9 @@
 
 /// Indicates if the text segment is valid.
 @property (nonatomic, readonly, getter = isValid) BOOL valid;
+
+/// Indicates if this segment is the last one.
+@property (nonatomic, readonly, getter = isLastSegment) BOOL lastSegment;
 
 /// The current render width. Changing this property will make the segment to
 /// generate a new frame if no one with this width is present in cache.
@@ -275,7 +279,7 @@
 #pragma mark TextSegment Properties
 
 @synthesize string = _string, typesetter = _typesetter, renderedLines = _renderedLines;
-@synthesize lineCount, renderedLineCount, renderWrapWidth, stringLength, valid;
+@synthesize lineCount, renderedLineCount, renderWrapWidth, stringLength, valid, lastSegment;
 
 - (NSAttributedString *)string
 {
@@ -283,7 +287,7 @@
     
     if (!_string)
     {
-        _string = [parentRenderer _stringForTextSegment:self lineCount:&lineCount];
+        _string = [parentRenderer _stringForTextSegment:self lineCount:&lineCount finalPart:&lastSegment];
         if (!_string)
             return nil;
         
@@ -464,6 +468,8 @@
     // Will generate the segment derived data.
     [self beginContentAccess];
     valid = self.typesetter != NULL;
+    if (!valid)
+        lastSegment = YES;
     
     return self;
 }
@@ -634,6 +640,11 @@
     [self didChangeValueForKey:@"renderHeight"];
 }
 
+- (BOOL)isRenderHeightFinal
+{
+    return textSegments && [[textSegments lastObject] isLastSegment];
+}
+
 - (void)setTextInsets:(UIEdgeInsets)insets
 {
     if (UIEdgeInsetsEqualToEdgeInsets(insets, textInsets))
@@ -692,7 +703,7 @@
         [delegate textRenderer:self didInvalidateRenderInRect:CGRectMake(0, 0, self.renderWidth, self.renderHeight)];
 }
 
-- (NSAttributedString *)_stringForTextSegment:(TextSegment *)requestSegment lineCount:(NSUInteger *)lines
+- (NSAttributedString *)_stringForTextSegment:(TextSegment *)requestSegment lineCount:(NSUInteger *)lines finalPart:(BOOL *)isFinalPart
 {    
     NSUInteger inputStringLenght = [datasource stringLengthForTextRenderer:self];
     if (inputStringLenght == 0)
@@ -740,6 +751,9 @@
         NSMutableAttributedString *newLineString = [attributedString mutableCopy];
         [newLineString appendAttributedString:[[NSAttributedString alloc] initWithString:@"\n" attributes:[newLineString attributesAtIndex:stringLength - 1 effectiveRange:NULL]]];
         attributedString = newLineString;
+        
+        if (isFinalPart)
+            *isFinalPart = YES;
     }
 
     // Side effect! clear caches if segment changes its ragne
@@ -773,23 +787,13 @@
     {
         do
         {
-            if (lastTextSegment && lastTextSegment == segment)
-                break;
-            
             // Generate segment if needed
             if ([textSegments count] <= currentIndex) 
             {
                 segment = [[TextSegment alloc] initWithTextRenderer:self];
                 segment.renderWrapWidth = [self _wrapWidth];
-                if (!segment.isValid) 
-                {
-                    lastTextSegment = [textSegments lastObject];
+                if (!segment.isValid)
                     break;
-                }
-                else if ((currentStringOffset + [segment.string length]) >= [datasource stringLengthForTextRenderer:self])
-                {
-                    lastTextSegment = segment;
-                }
                 
                 [textSegments addObject:segment];
             }
@@ -811,11 +815,11 @@
             
             [segment endContentAccess];
             
-        } while (!stop);
+        } while (!stop && !segment.isLastSegment);
         
         // Update estimated height
         if (currentPositionOffset > renderHeight 
-            || (lastTextSegment == segment && currentPositionOffset != renderHeight)) 
+            || (segment.isLastSegment && currentPositionOffset != renderHeight)) 
         {
             self.renderHeight = currentPositionOffset;
         }
@@ -1169,7 +1173,6 @@
     }
     
     [textSegments removeAllObjects];
-    lastTextSegment = nil;
     
     if (delegateHasDidInvalidateRenderInRect) 
         [delegate textRenderer:self didInvalidateRenderInRect:CGRectMake(0, 0, self.renderWidth, self.renderHeight)];
@@ -1205,7 +1208,7 @@
             // Will remove segment if modifying it will change it's string lenght too much
             NSInteger segmentNewLength = segment.stringLength + (toRange.length - fromRange.length);
             if (segmentNewLength > maximumStringLenghtPerSegment * 1.5 
-                || (segment != lastTextSegment && segmentNewLength < maximumStringLenghtPerSegment / 2))
+                || (!segment.isLastSegment && segmentNewLength < maximumStringLenghtPerSegment / 2))
             {
                 removeFromSegmentIndex = segmentIndex;
                 break;
@@ -1224,7 +1227,6 @@
     if (removeFromSegmentIndex != NSNotFound)
     {
         [textSegments removeObjectsAtIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(removeFromSegmentIndex, [textSegments count] - removeFromSegmentIndex)]];
-        lastTextSegment = nil;
     }
     
     // Send invalidation for specific rect
