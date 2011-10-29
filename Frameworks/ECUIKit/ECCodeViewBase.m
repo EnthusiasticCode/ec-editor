@@ -78,9 +78,11 @@ static const void *rendererContext;
 - (void)setContentSize:(CGSize)contentSize
 {
     // When the scrollview content size changes, reflect the same change to the content view
-    CGRect contentRect = CGRectMake(0, 0, ceilf(contentSize.width), ceilf(contentSize.height));
-    [_contentView setFrame:contentRect];
-    [super setContentSize:contentRect.size];
+    CGSize size = CGSizeMake(ceilf(contentSize.width), ceilf(contentSize.height));
+    [_contentView setFrame:self.renderer.isRenderHeightFinal ?
+     (CGRect){ CGPointZero, size } :
+     CGRectMake(0, 0, size.width, size.height + TILE_HEIGHT)];
+    [super setContentSize:size];
 }
 
 @synthesize textInsets, lineNumbersEnabled, lineNumbersWidth, lineNumbersFont, lineNumbersColor;

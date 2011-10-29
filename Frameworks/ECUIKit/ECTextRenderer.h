@@ -90,6 +90,9 @@ typedef void (^ECTextRendererLayerPass)(CGContextRef context, ECTextRendererLine
 /// A user can observe this property to receive updates on the changing height.
 @property (nonatomic, readonly) CGFloat renderHeight;
 
+/// Indicates if the render height is completely computed or there are still non-generated text segments.
+@property (nonatomic, readonly, getter = isRenderHeightFinal) BOOL renderHeightFinal;
+
 /// Insets to give to the text in the rendering area.
 @property (nonatomic) UIEdgeInsets textInsets;
 

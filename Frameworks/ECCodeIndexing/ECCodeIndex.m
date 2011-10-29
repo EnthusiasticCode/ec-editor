@@ -46,7 +46,7 @@ static NSURL *_bundleDirectory;
 {
     if (![self isMemberOfClass:[ECCodeIndex class]])
         return nil;
-    NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] init];
+    NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] initWithFilePresenter:nil];
     __block id<ECCodeUnit>codeUnit = nil;
     [fileCoordinator coordinateReadingItemAtURL:fileURL options:NSFileCoordinatorReadingResolvesSymbolicLink | NSFileCoordinatorReadingWithoutChanges error:NULL byAccessor:^(NSURL *newURL) {
         NSFileManager *fileManager = [[NSFileManager alloc] init];

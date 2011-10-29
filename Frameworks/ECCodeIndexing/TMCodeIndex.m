@@ -82,7 +82,7 @@
     }];
     if (!foundSyntax)
         foundSyntax = [self _syntaxWithPredicateBlock:^BOOL(TMSyntax *syntax) {
-            NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] init];
+            NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] initWithFilePresenter:nil];
             __block NSString *firstLine = nil;
             [fileCoordinator coordinateReadingItemAtURL:fileURL options:NSFileCoordinatorReadingResolvesSymbolicLink error:NULL byAccessor:^(NSURL *newURL) {
                 NSString *fileContents = [NSString stringWithContentsOfURL:newURL encoding:NSUTF8StringEncoding error:NULL];

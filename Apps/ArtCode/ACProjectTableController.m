@@ -255,7 +255,7 @@ static void * directoryPresenterFileURLsObservingContext;
     NSInteger rowIndex = [(UIControl *)sender tag];
     ECASSERT(rowIndex >= 0);
     NSURL *fileURL = [self.directoryPresenter.fileURLs objectAtIndex:rowIndex];
-    NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] init];
+    NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] initWithFilePresenter:nil];
     [fileCoordinator coordinateWritingItemAtURL:fileURL options:NSFileCoordinatorWritingForDeleting error:NULL byAccessor:^(NSURL *newURL) {
         NSFileManager *fileManager = [[NSFileManager alloc] init];
         [fileManager removeItemAtURL:newURL error:NULL];
@@ -272,7 +272,7 @@ static void * directoryPresenterFileURLsObservingContext;
     if (![textField.text length])
         return NO;
     NSURL *fileURL = [self.directoryPresenter.fileURLs objectAtIndex:textField.tag];
-    NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] init];
+    NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] initWithFilePresenter:nil];
     [fileCoordinator coordinateWritingItemAtURL:fileURL options:NSFileCoordinatorWritingForMoving error:NULL byAccessor:^(NSURL *newURL) {
         NSFileManager *fileManager = [[NSFileManager alloc] init];
         [fileManager moveItemAtURL:newURL toURL:[[newURL URLByDeletingLastPathComponent] URLByAppendingPathComponent:textField.text] error:NULL];

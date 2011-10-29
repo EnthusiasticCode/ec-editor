@@ -41,7 +41,7 @@
 
 - (void)extractToDirectory:(NSURL *)URL
 {
-    NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] init];
+    NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] initWithFilePresenter:nil];
     __block int returnCode = -1;
     NSFileManager *fileManager = [[NSFileManager alloc] init];
     __block NSURL *workingDirectory = nil;
@@ -113,7 +113,7 @@
         archive_write_finish(output);
         if (returnCode == ARCHIVE_OK)
         {
-            NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] init];
+            NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] initWithFilePresenter:nil];
             for (NSURL *fileURL in [fileManager contentsOfDirectoryAtURL:workingDirectory includingPropertiesForKeys:nil options:0 error:NULL])
             {
                 NSURL *destinationURL = [URL URLByAppendingPathComponent:[fileURL lastPathComponent]];

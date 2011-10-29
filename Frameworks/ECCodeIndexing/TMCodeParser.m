@@ -76,10 +76,9 @@ static NSRange _rangeFromEndOfRangeToEndOfRange(NSRange firstRange, NSRange seco
     ECASSERT(_contentAccessCount > 0);
     if (!visitorBlock)
         return;
-    __block NSString *string = nil;
     NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] initWithFilePresenter:self];
     [fileCoordinator coordinateReadingItemAtURL:self.fileURL options:NSFileCoordinatorReadingResolvesSymbolicLink error:NULL byAccessor:^(NSURL *newURL) {
-        string = [NSString stringWithContentsOfURL:newURL encoding:NSUTF8StringEncoding error:NULL];
+        NSString *string = [NSString stringWithContentsOfURL:newURL encoding:NSUTF8StringEncoding error:NULL];
         ECASSERT(NSMaxRange(range) <= [string length]);
         NSMutableArray *scopesStack = [NSMutableArray arrayWithObject:_syntax.scope];
         [self _visitScopesInString:string range:range withPattern:_syntax.pattern previousScopeStack:scopesStack usingVisitor:visitorBlock];

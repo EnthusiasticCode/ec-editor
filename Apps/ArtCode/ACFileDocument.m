@@ -72,8 +72,10 @@ static NSRange intersectionOfRangeRelativeToRange(NSRange range, NSRange inRange
     // [self.contentString ... (apply styles to result)];
     if (self.isCancelled || !_document || _document._syntaxColoringOperation != self)
         return;
-    for (id caller in [_document _callers])
-        [caller updateTextFromStringRange:stringRange toStringRange:stringRange];
+    [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+        for (id caller in [_document _callers])
+            [caller updateTextFromStringRange:stringRange toStringRange:stringRange];
+    }];
 }
 
 @end
