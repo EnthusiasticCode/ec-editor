@@ -271,7 +271,7 @@ static const void *contentViewControllerContext;
     {
         if ([keyPath isEqualToString:@"toolbarItems"])
             [self _setupDefaultToolbarItemsAnimated:YES];
-        if ([keyPath isEqualToString:@"title"])
+        else if ([keyPath isEqualToString:@"title"])
             [self _setupDefaultToolbarTitle];
         else if ([keyPath isEqualToString:@"loading"])
             self.defaultToolbar.titleControl.loadingMode = [object isLoading];
@@ -293,6 +293,7 @@ static const void *contentViewControllerContext;
     [self.view addSubview:self.currentToolbarView];
     [self.view addSubview:self.contentViewController.view];
     [self _layoutChildViewsAnimated:NO];
+    [self _setupDefaultToolbarItemsAnimated:NO];
 }
 
 
@@ -417,6 +418,9 @@ static const void *contentViewControllerContext;
 
 - (void)_setupDefaultToolbarItemsAnimated:(BOOL)animated
 {
+    if (!self.isViewLoaded)
+        return;
+    
     self.defaultToolbar.editItem = _contentViewController.editButtonItem;
     [self.defaultToolbar setToolItems:_contentViewController.toolbarItems animated:animated];
 }
