@@ -28,7 +28,8 @@
 
 @synthesize loadingMode;
 @synthesize titleFragments, selectedTitleFragments;
-@synthesize secondaryTitleFragmentsTint, gapBetweenFragments;
+@synthesize secondaryTitleFragmentsTint, gapBetweenFragments, contentInsets;
+@synthesize secondaryFragmentFont;
 
 - (void)setTitleFragments:(NSArray *)fragments
 {
@@ -72,6 +73,39 @@
     [self didChangeValueForKey:@"secondaryTitleFragmentsTint"];
 }
 
+- (UIFont *)selectedFragmentFont
+{
+    return self.titleLabel.font;
+}
+
+- (void)setSelectedFragmentFont:(UIFont *)font
+{
+    if (font == self.selectedFragmentFont)
+        return;
+    
+    [self willChangeValueForKey:@"selectedFragmentFont"];
+    self.titleLabel.font = font;
+    [self didChangeValueForKey:@"selectedFragmentFont"];
+}
+
+- (UIFont *)secondaryFragmentFont
+{
+    if (secondaryFragmentFont == nil)
+        secondaryFragmentFont = [UIFont systemFontOfSize:14];
+    return secondaryFragmentFont;
+}
+
+- (void)setSecondaryFragmentFont:(UIFont *)font
+{
+    if (font == secondaryFragmentFont)
+        return;
+    
+    [self willChangeValueForKey:@"secondaryFragmentFont"];
+    secondaryFragmentFont = font;
+    [self _setupTitle];
+    [self didChangeValueForKey:@"secondaryFragmentFont"];
+}
+
 - (void)setLoadingMode:(BOOL)mode
 {
     if (mode == loadingMode)
@@ -106,42 +140,40 @@
 - (void)layoutSubviews
 {
     [super layoutSubviews];
-    
+
     CGRect bounds = self.bounds;
     CGRect labelFrame = self.titleLabel.text ? self.titleLabel.frame : CGRectNull;
     if (self.imageView.image)
         labelFrame = CGRectUnion(labelFrame, self.imageView.frame);
     
-    CGFloat maxSegmentWidth = (bounds.size.width - labelFrame.size.width) / 2;
+    CGFloat maxSegmentWidth = (bounds.size.width - labelFrame.size.width) / 2 - gapBetweenFragments;
     
     // Pre views layout
-    CGRect lastViewFrame = CGRectMake(labelFrame.origin.x, 0, 0, labelFrame.origin.y);
+    CGRect lastViewFrame = labelFrame;
     for (UIView *view in [_preViews reverseObjectEnumerator])
     {
         [view sizeToFit];
         CGRect viewFrame = view.frame;
-        if (viewFrame.size.width > maxSegmentWidth)
-            viewFrame.size.width = maxSegmentWidth;
-        viewFrame.origin = CGPointMake(lastViewFrame.origin.x - viewFrame.size.width, ((labelFrame.origin.y - viewFrame.size.height) / 2) + 3);
+        if (viewFrame.size.width > maxSegmentWidth - contentInsets.left)
+            viewFrame.size.width = maxSegmentWidth - contentInsets.left;
+        viewFrame.origin = CGPointMake(lastViewFrame.origin.x - viewFrame.size.width - gapBetweenFragments, labelFrame.origin.y + (labelFrame.size.height - viewFrame.size.height) / 2);
         
         lastViewFrame = CGRectIntegral(viewFrame);
         view.frame = lastViewFrame;
-        lastViewFrame.origin.x -= gapBetweenFragments;
     }
     
     // Post views layout
-    lastViewFrame = CGRectMake(CGRectGetMaxX(labelFrame), CGRectGetMaxY(labelFrame), 0, bounds.size.height - CGRectGetMaxY(labelFrame));
+    lastViewFrame = labelFrame;
     for (UIView *view in _postViews)
     {
         [view sizeToFit];
         CGRect viewFrame = view.frame;
-        if (viewFrame.size.width > maxSegmentWidth)
-            viewFrame.size.width = maxSegmentWidth;
-        viewFrame.origin = CGPointMake(lastViewFrame.origin.x, ((CGRectGetMaxY(labelFrame) * 2 - viewFrame.size.height) / 2));
+        if (viewFrame.size.width > maxSegmentWidth - contentInsets.right)
+            viewFrame.size.width = maxSegmentWidth - contentInsets.right;
+        viewFrame.origin = CGPointMake(CGRectGetMaxX(lastViewFrame) + gapBetweenFragments, labelFrame.origin.y + (labelFrame.size.height - viewFrame.size.height) / 2);
         
         lastViewFrame = CGRectIntegral(viewFrame);
         view.frame = lastViewFrame;
-        lastViewFrame.origin.x += viewFrame.size.width + gapBetweenFragments;
     }
 }
 
@@ -173,6 +205,8 @@
         if ([obj isKindOfClass:[NSString class]])
         {
             [super setTitle:(NSString *)obj forState:UIControlStateNormal];
+            self.titleLabel.shadowColor = [UIColor blackColor];
+            self.titleLabel.shadowOffset = CGSizeMake(0, -1);
         }
         else if ([obj isKindOfClass:[UIImage class]])
         {
@@ -195,7 +229,9 @@
             label.backgroundColor = [UIColor clearColor];
             
             label.textColor = self.secondaryTitleFragmentsTint;
-            label.font = [UIFont systemFontOfSize:14];
+            label.font = self.secondaryFragmentFont;
+            
+            label.shadowColor = [UIColor colorWithWhite:0.1 alpha:1];
             
             label.text = (NSString *)obj;
             [result addObject:label];

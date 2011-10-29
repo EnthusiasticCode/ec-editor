@@ -28,6 +28,12 @@ enum {
 /// Defines the gap between fragments on the same line.
 @property (nonatomic) CGFloat gapBetweenFragments UI_APPEARANCE_SELECTOR;
 
+/// Insets to apply to the content.
+@property (nonatomic) UIEdgeInsets contentInsets UI_APPEARANCE_SELECTOR;
+
+@property (nonatomic, strong) UIFont *selectedFragmentFont UI_APPEARANCE_SELECTOR;
+@property (nonatomic, strong) UIFont *secondaryFragmentFont UI_APPEARANCE_SELECTOR;
+
 #pragma mark Additional Modes
 
 /// Indicates if the title control should show a loading animated background.
