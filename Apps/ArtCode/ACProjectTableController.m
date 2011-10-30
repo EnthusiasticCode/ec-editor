@@ -92,8 +92,6 @@ static void * directoryPresenterFileURLsObservingContext;
     [super viewDidLoad];
     
     self.tableView.rowHeight = 55;
-    self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
-    self.tableView.backgroundColor = [UIColor styleBackgroundColor];
     
     self.tableView.tableFooterView = [UIView new];
     
@@ -116,46 +114,6 @@ static void * directoryPresenterFileURLsObservingContext;
     [super didReceiveMemoryWarning];
     
     popoverLabelColorController = nil;
-}
-
-- (void)setEditing:(BOOL)editing animated:(BOOL)animated
-{
-    [super setEditing:editing animated:animated];
-    
-    // Prepare tips image view
-    UIView *newView = nil;
-    if ([self tableView:self.tableView numberOfRowsInSection:0] == 0)
-    {
-        if (!editing)
-        {
-            newView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"projectBrowserTipsEmpty"]];
-            CGRect frame = newView.frame;
-            frame.origin.x += 37;
-            newView.frame = frame;
-        }
-    }
-    else if (editing)
-    {
-        newView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"projectBrowserTipsPopulatedEdit"]];
-        CGRect frame = newView.frame;
-        frame.origin.x += 22;
-        newView.frame = frame;
-    }
-    
-    // Animate new tip in place with crossfade with one already present
-    NSArray *oldViews = self.tableView.tableFooterView.subviews;
-    [self.tableView.tableFooterView addSubview:newView];
-    newView.alpha = 0;
-    [UIView animateWithDuration:STYLE_ANIMATION_DURATION animations:^{
-        for (UIView *currentViews in oldViews) {
-            currentViews.alpha = 0;
-        }
-        newView.alpha = 1;
-    } completion:^(BOOL finished) {
-        [oldViews makeObjectsPerformSelector:@selector(removeFromSuperview)];
-    }];
-    
-#warning TODO remove 'create new project' tip after creating the first project
 }
 
 #pragma mark - TODO refactor: Tool Target Protocol
@@ -296,43 +254,17 @@ static void * directoryPresenterFileURLsObservingContext;
     
     // Create cell
     static NSString *CellIdentifier = @"ProjectCell";
-    ACEditableTableCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     if (cell == nil)
     {
-        cell = [[ACEditableTableCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
-        cell.backgroundView = [[UIImageView alloc] initWithImage:cellBackgroundImage];
-        cell.selectedBackgroundView = [[UIImageView alloc] initWithImage:cellHighlightedImage];
-        
-        // Icon button default setup
-        [cell.iconButton addTarget:self action:@selector(labelColorAction:) forControlEvents:UIControlEventTouchUpInside];
-        
-        // Text field default setup
-        STATIC_OBJECT(UIFont, font, [UIFont styleFontWithSize:18]);
-        cell.textField.font = font;
-        cell.textField.delegate = self;
-        
-        // Accessory default setup
-        STATIC_OBJECT(UIImage, disclosureImage, [UIImage styleTableDisclosureImageWithColor:[UIColor styleForegroundColor] shadowColor:[UIColor whiteColor]]);
-        cell.accessoryView = [[UIImageView alloc] initWithImage:disclosureImage];
-        
-        // Layout
-        cell.contentInsets = UIEdgeInsetsMake(3, 10, 0, 10);
-        cell.editingContentInsets = UIEdgeInsetsMake(4, 8, 4, 7);
-        cell.iconButton.bounds = CGRectMake(0, 0, 32, 33);
-        cell.customDelete = YES;
-        [cell.customDeleteButton addTarget:self action:@selector(deleteTableRow:) forControlEvents:UIControlEventTouchUpInside];
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
     }
     
     // Setup project icon
-    // TODO use project color
-    [cell.iconButton setImage:[self projectIconWithColor:[UIColor styleForegroundColor]] forState:UIControlStateNormal];
+    [cell.imageView setImage:[self projectIconWithColor:[UIColor styleForegroundColor]]];
     
     // Setup project title
-    [cell.textField setText:[[[self.directoryPresenter.fileURLs objectAtIndex:indexPath.row] lastPathComponent] stringByDeletingPathExtension]];
-    
-    // Setup tags for callbacks
-    [cell.customDeleteButton setTag:indexPath.row];
-    [cell.textField setTag:indexPath.row];
+    [cell.textLabel setText:[[[self.directoryPresenter.fileURLs objectAtIndex:indexPath.row] lastPathComponent] stringByDeletingPathExtension]];
     
     return cell;
 }
