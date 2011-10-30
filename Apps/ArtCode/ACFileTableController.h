@@ -11,14 +11,10 @@
 @class ACToolFiltersView, ACGroup, ACTab;
 
 
-@interface ACFileTableController : UIViewController <UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate>
+@interface ACFileTableController : UITableViewController
 
 @property (nonatomic, strong) NSURL *directory;
 
 @property (nonatomic, strong) ACTab *tab;
-
-@property (nonatomic, strong) IBOutlet UITableView *tableView;
-
-@property (nonatomic, strong) IBOutlet ACToolFiltersView *editingToolsView;
 
 @end

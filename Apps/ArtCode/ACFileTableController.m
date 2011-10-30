@@ -73,17 +73,18 @@ static void * directoryPresenterFileURLsObservingContext;
 - (void)directoryPresenterDidRemoveFileURLsAtIndexes:(NSIndexSet *)indexes fromFileURLs:(NSArray *)oldFileURLs;
 @end
 
+#pragma mark - Implementations
+#pragma mark -
+
 @implementation ACFileTableController {
     NSArray *extensions;
 }
 
-@synthesize tableView, editingToolsView;
-@synthesize directory = _directory;
+#pragma mark - Properties
+
 @synthesize tab = _tab;
-@synthesize directoryPresenter = _directoryPresenter;
-@synthesize filterString = _filterString;
-@synthesize filterCount = _filterCount;
-@synthesize filteredFileURLs = _filteredFileURLs;
+@synthesize directory = _directory, directoryPresenter = _directoryPresenter;
+@synthesize filterString = _filterString, filterCount = _filterCount, filteredFileURLs = _filteredFileURLs;
 
 - (void)setDirectory:(NSURL *)directory
 {
@@ -210,37 +211,17 @@ static void * directoryPresenterFileURLsObservingContext;
 
 #pragma mark - View lifecycle
 
-- (void)loadView
+- (void)viewDidLoad
 {
-    [super loadView];
-
-    // Creating the table view
-    if (!tableView)
-    {
-        tableView = [[UITableView alloc] initWithFrame:self.view.bounds style:UITableViewStylePlain];
-        tableView.dataSource = self;
-        tableView.delegate = self;
-        tableView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-        [self.view addSubview:tableView];
-        
-        tableView.backgroundColor = [UIColor styleBackgroundColor];
-        tableView.separatorColor = [UIColor styleForegroundColor];
-        tableView.allowsMultipleSelectionDuringEditing = YES;
-    }
+    [super viewDidLoad];
     
     // TODO Write hints in this view
     UIView *footerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.tableView.bounds.size.width, 0)];
-    tableView.tableFooterView = footerView;
+    self.tableView.tableFooterView = footerView;
     
     extensions = [NSArray arrayWithObjects:@"h", @"m", @"hpp", @"cpp", @"mm", @"py", nil];
     
     [self setEditing:NO animated:NO];
-}
-
-- (void)viewDidUnload
-{
-    [super viewDidUnload];
-    tableView = nil;
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -262,60 +243,16 @@ static void * directoryPresenterFileURLsObservingContext;
 - (void)setEditing:(BOOL)editing animated:(BOOL)animated
 {
     [super setEditing:editing animated:animated];
-    [tableView setEditing:editing animated:animated];
     
-    CGRect bounds = self.view.bounds;
     if (editing)
     {
-        if (!editingToolsView)
-        {
-            editingToolsView = [ACToolFiltersView new];
-            editingToolsView.backgroundColor = [UIColor styleForegroundColor];
-            editingToolsView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleTopMargin;
-        }
-        editingToolsView.frame = CGRectMake(0, bounds.size.height - 44, bounds.size.width, 44);
-        bounds.size.height -= 44;
-        if (!animated)
-        {
-            [self.view addSubview:editingToolsView];
-            tableView.frame = bounds;
-        }
-        else
-        {
-            CGPoint center = editingToolsView.center;
-            editingToolsView.center = CGPointMake(center.x, center.y + 44);
-            [self.view addSubview:editingToolsView];
-            [UIView animateWithDuration:0.10 animations:^(void) {
-                editingToolsView.center = center;
-                tableView.frame = bounds;
-            }];
-        }
+        // TODO set editin toolbar items
     }
     else
-    {
-        if (!animated)
-        {
-            [editingToolsView removeFromSuperview];
-            tableView.frame = self.view.bounds;
-        }
-        else
-        {
-            [UIView animateWithDuration:0.10 animations:^(void) {
-                editingToolsView.frame = CGRectMake(0, bounds.size.height, bounds.size.width, 44);
-                tableView.frame = self.view.bounds;
-            } completion:^(BOOL finished) {
-                [editingToolsView removeFromSuperview];
-            }];
-        }
-        
+    {  
         // Tool buttons for top bar
         self.toolbarItems = [NSArray arrayWithObject:[[UIBarButtonItem alloc] initWithTitle:@"add" style:UIBarButtonItemStylePlain target:self action:@selector(toolButtonAction:)]];
     }
-}
-
-- (BOOL)isEditing
-{
-    return tableView.isEditing;
 }
 
 #pragma mark - TODO refactor: Tool Target Methods
@@ -356,16 +293,10 @@ static void * directoryPresenterFileURLsObservingContext;
 {
     static NSString *FileCellIdentifier = @"FileCell";
     
-    ACEditableTableCell *cell = [tView dequeueReusableCellWithIdentifier:FileCellIdentifier];
+    UITableViewCell *cell = [tView dequeueReusableCellWithIdentifier:FileCellIdentifier];
     if (cell == nil)
     {
-        cell = [[ACEditableTableCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:FileCellIdentifier];
-        cell.backgroundView = nil;
-        cell.indentationWidth = 38;
-        
-        UIView *selectionView = [UIView new];
-        selectionView.backgroundColor = [UIColor styleHighlightColor];
-        cell.selectedBackgroundView = selectionView;
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:FileCellIdentifier];        
     }
     
     // Configure the cell...
@@ -376,7 +307,7 @@ static void * directoryPresenterFileURLsObservingContext;
         cell.imageView.image = [UIImage styleDocumentImageWithSize:CGSizeMake(32, 32) 
                                                              color:[[fileName pathExtension] isEqualToString:@"h"] ? [UIColor styleFileRedColor] : [UIColor styleFileBlueColor]
                                                               text:[fileName pathExtension]];
-    cell.textField.text = fileName;
+    cell.textLabel.text = fileName;
     return cell;
 }
 
