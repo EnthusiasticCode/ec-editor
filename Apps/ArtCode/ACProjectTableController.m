@@ -8,7 +8,6 @@
 
 #import "ACProjectTableController.h"
 #import "AppStyle.h"
-#import "ACEditableTableCell.h"
 #import "ACColorSelectionControl.h"
 
 #import "ArtCodeAppDelegate.h"
@@ -163,9 +162,6 @@ static void * directoryPresenterFileURLsObservingContext;
 - (void)colorSelectionAction:(ACColorSelectionControl *)sender
 {
     // TODO change way of retrieving cell?
-    
-    ACEditableTableCell *cell = (ACEditableTableCell *)sender.userInfo;
-    [cell.iconButton setImage:[self projectIconWithColor:sender.selectedColor] forState:UIControlStateNormal];
     
     [popoverLabelColorController dismissPopoverAnimated:YES];
     

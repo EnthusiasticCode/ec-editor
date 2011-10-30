@@ -8,7 +8,6 @@
 
 #import "ACFileTableController.h"
 #import "AppStyle.h"
-#import "ACEditableTableCell.h"
 #import "ACNewFilePopoverController.h"
 #import <ECFoundation/ECDirectoryPresenter.h>
 #import <ECFoundation/NSTimer+block.h>
