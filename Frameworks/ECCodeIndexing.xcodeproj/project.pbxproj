@@ -92,8 +92,6 @@
 		B7233746142A0918006D540A /* libstdc++.6.0.9.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B7233745142A0918006D540A /* libstdc++.6.0.9.dylib */; };
 		B7233747142A0918006D540A /* libstdc++.6.0.9.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B7233745142A0918006D540A /* libstdc++.6.0.9.dylib */; };
 		B7233748142A0D62006D540A /* libECFoundation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7170D431428FAF100DF7794 /* libECFoundation.a */; };
-		B7656BEB144B3BCE0084B050 /* NSString+ECCodeScopes.h in Headers */ = {isa = PBXBuildFile; fileRef = B7656BE9144B3BCE0084B050 /* NSString+ECCodeScopes.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B7656BEC144B3BCE0084B050 /* NSString+ECCodeScopes.m in Sources */ = {isa = PBXBuildFile; fileRef = B7656BEA144B3BCE0084B050 /* NSString+ECCodeScopes.m */; };
 		B7656BF1144B3D830084B050 /* TMTheme.h in Headers */ = {isa = PBXBuildFile; fileRef = B7656BEF144B3D830084B050 /* TMTheme.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B7656BF2144B3D830084B050 /* TMTheme.m in Sources */ = {isa = PBXBuildFile; fileRef = B7656BF0144B3D830084B050 /* TMTheme.m */; };
 		B7656C8F144B77F00084B050 /* TMCodeIndex.h in Headers */ = {isa = PBXBuildFile; fileRef = B7656C8D144B77EF0084B050 /* TMCodeIndex.h */; };
@@ -152,6 +150,10 @@
 		B7E550DD144E495200C07A0C /* ECCodeIndexSubclass.h in Headers */ = {isa = PBXBuildFile; fileRef = B7E550DC144E495200C07A0C /* ECCodeIndexSubclass.h */; };
 		B7E55665144F058B00C07A0C /* TMPattern.h in Headers */ = {isa = PBXBuildFile; fileRef = B7E55663144F058B00C07A0C /* TMPattern.h */; };
 		B7E55666144F058B00C07A0C /* TMPattern.m in Sources */ = {isa = PBXBuildFile; fileRef = B7E55664144F058B00C07A0C /* TMPattern.m */; };
+		CDBDB86F145D75A5002E77B3 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CDBDB86B145D6FA4002E77B3 /* CoreText.framework */; };
+		CDBDB870145D7891002E77B3 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7170C221428F7B000DF7794 /* UIKit.framework */; };
+		CDBDB873145D78DA002E77B3 /* UIColor+HexColor.h in Headers */ = {isa = PBXBuildFile; fileRef = CDBDB871145D78DA002E77B3 /* UIColor+HexColor.h */; };
+		CDBDB874145D78DA002E77B3 /* UIColor+HexColor.m in Sources */ = {isa = PBXBuildFile; fileRef = CDBDB872145D78DA002E77B3 /* UIColor+HexColor.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -377,8 +379,6 @@
 		B72337081429FD8B006D540A /* libclangSema.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libclangSema.a; path = usr/lib/libclangSema.a; sourceTree = SDKROOT; };
 		B72337091429FD8B006D540A /* libclangSerialization.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libclangSerialization.a; path = usr/lib/libclangSerialization.a; sourceTree = SDKROOT; };
 		B7233745142A0918006D540A /* libstdc++.6.0.9.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libstdc++.6.0.9.dylib"; path = "usr/lib/libstdc++.6.0.9.dylib"; sourceTree = SDKROOT; };
-		B7656BE9144B3BCE0084B050 /* NSString+ECCodeScopes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+ECCodeScopes.h"; sourceTree = "<group>"; };
-		B7656BEA144B3BCE0084B050 /* NSString+ECCodeScopes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+ECCodeScopes.m"; sourceTree = "<group>"; };
 		B7656BEF144B3D830084B050 /* TMTheme.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TMTheme.h; sourceTree = "<group>"; };
 		B7656BF0144B3D830084B050 /* TMTheme.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TMTheme.m; sourceTree = "<group>"; };
 		B7656C8D144B77EF0084B050 /* TMCodeIndex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TMCodeIndex.h; sourceTree = "<group>"; };
@@ -416,6 +416,9 @@
 		B7E550DC144E495200C07A0C /* ECCodeIndexSubclass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeIndexSubclass.h; sourceTree = "<group>"; };
 		B7E55663144F058B00C07A0C /* TMPattern.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TMPattern.h; sourceTree = "<group>"; };
 		B7E55664144F058B00C07A0C /* TMPattern.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TMPattern.m; sourceTree = "<group>"; };
+		CDBDB86B145D6FA4002E77B3 /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
+		CDBDB871145D78DA002E77B3 /* UIColor+HexColor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+HexColor.h"; sourceTree = "<group>"; };
+		CDBDB872145D78DA002E77B3 /* UIColor+HexColor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+HexColor.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -423,6 +426,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CDBDB870145D7891002E77B3 /* UIKit.framework in Frameworks */,
+				CDBDB86F145D75A5002E77B3 /* CoreText.framework in Frameworks */,
 				B7170BF61428F65A00DF7794 /* Foundation.framework in Frameworks */,
 				B723370D1429FD8B006D540A /* libclang.a in Frameworks */,
 				B7233746142A0918006D540A /* libstdc++.6.0.9.dylib in Frameworks */,
@@ -498,6 +503,7 @@
 				B7170C241428F7C400DF7794 /* Kiwi */,
 				B7170BF51428F65A00DF7794 /* Foundation.framework */,
 				B7170C221428F7B000DF7794 /* UIKit.framework */,
+				CDBDB86B145D6FA4002E77B3 /* CoreText.framework */,
 				B7170C031428F65B00DF7794 /* SenTestingKit.framework */,
 			);
 			name = Frameworks;
@@ -839,8 +845,8 @@
 				B7170D121428FAAE00DF7794 /* ECCodeIndex.h */,
 				B7E550DC144E495200C07A0C /* ECCodeIndexSubclass.h */,
 				B7170D131428FAAE00DF7794 /* ECCodeIndex.m */,
-				B7656BE9144B3BCE0084B050 /* NSString+ECCodeScopes.h */,
-				B7656BEA144B3BCE0084B050 /* NSString+ECCodeScopes.m */,
+				CDBDB871145D78DA002E77B3 /* UIColor+HexColor.h */,
+				CDBDB872145D78DA002E77B3 /* UIColor+HexColor.m */,
 			);
 			name = General;
 			sourceTree = "<group>";
@@ -856,7 +862,6 @@
 				B7170C211428F72100DF7794 /* ECDebug.h in Headers */,
 				B7170D1E1428FAAF00DF7794 /* ECClangCodeIndex.h in Headers */,
 				B7170D201428FAAF00DF7794 /* ECClangCodeUnit.h in Headers */,
-				B7656BEB144B3BCE0084B050 /* NSString+ECCodeScopes.h in Headers */,
 				B7656BF1144B3D830084B050 /* TMTheme.h in Headers */,
 				B7656C8F144B77F00084B050 /* TMCodeIndex.h in Headers */,
 				B7656C93144B78050084B050 /* TMCodeParser.h in Headers */,
@@ -871,6 +876,7 @@
 				B77825601457037700872046 /* regint.h in Headers */,
 				B77825621457037700872046 /* regparse.h in Headers */,
 				B77825671457037700872046 /* st.h in Headers */,
+				CDBDB873145D78DA002E77B3 /* UIColor+HexColor.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -998,7 +1004,6 @@
 				B7170D1F1428FAAF00DF7794 /* ECClangCodeIndex.m in Sources */,
 				B7170D211428FAAF00DF7794 /* ECClangCodeUnit.m in Sources */,
 				B7170D311428FAAF00DF7794 /* ECCodeIndex.m in Sources */,
-				B7656BEC144B3BCE0084B050 /* NSString+ECCodeScopes.m in Sources */,
 				B7656BF2144B3D830084B050 /* TMTheme.m in Sources */,
 				B7656C90144B77F00084B050 /* TMCodeIndex.m in Sources */,
 				B7656C94144B78050084B050 /* TMCodeParser.m in Sources */,
@@ -1019,6 +1024,7 @@
 				B77825641457037700872046 /* regtrav.c in Sources */,
 				B77825651457037700872046 /* regversion.c in Sources */,
 				B77825661457037700872046 /* st.c in Sources */,
+				CDBDB874145D78DA002E77B3 /* UIColor+HexColor.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

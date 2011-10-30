@@ -6,19 +6,20 @@
 //  Copyright (c) 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
+
+extern NSString *const TMThemeBackgroundColorAttributeName;
+extern NSString *const TMThemeFontStyleAttributeName;
 
 @interface TMTheme : NSObject
 
-/// The directory where theme files are saved
-+ (NSURL *)themeDirectory;
-+ (void)setThemeDirectory:(NSURL *)themeDirectory;
++ (TMTheme *)themeWithName:(NSString *)name bundle:(NSBundle *)bundle;
 
-+ (NSArray *)themeNames;
-+ (TMTheme *)themeWithName:(NSString *)name;
+- (id)initWithFileURL:(NSURL *)url;
+
+/// Returns an array of Core Text attributes applicable to an NSAttributedString for the given scopes stack.
+- (NSDictionary *)attributesForScopeStack:(NSArray *)scopesStack;
 
 @property (nonatomic, strong, readonly) NSString *name;
-
-- (NSDictionary *)attributesForScopeStack:(NSArray *)scopesStack;
 
 @end

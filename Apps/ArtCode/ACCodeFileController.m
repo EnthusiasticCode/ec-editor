@@ -10,6 +10,8 @@
 #import "ACFileDocument.h"
 #import "ACCodeFileController.h"
 
+#import <ECCodeIndexing/TMTheme.h>
+
 #import <ECUIKit/ECPopoverController.h>
 #import <ECUIKit/ECCodeView.h>
 
@@ -55,6 +57,7 @@
         self.loading = YES;
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             ACFileDocument *document = [[ACFileDocument alloc] initWithFileURL:fileURL];
+            document.theme = [TMTheme themeWithName:@"Mac Classic" bundle:nil];
             dispatch_async(dispatch_get_main_queue(), ^{
                 self.document = document;
                 self.loading = NO;

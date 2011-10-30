@@ -11,38 +11,40 @@
 #import <ECCodeIndexing/TMTheme.h>
 #import <ECUIKit/ECTextStyle.h>
 
-static NSRange intersectionOfRangeRelativeToRange(NSRange range, NSRange inRange)
-{
-    NSRange intersectionRange = NSIntersectionRange(range, inRange);
-    intersectionRange.location -= inRange.location;
-    return intersectionRange;
-}
-
-@interface SyntaxColoringOperation : NSOperation
-{
-    __weak ACFileDocument *_document;
-    __weak NSMutableAttributedString *_string;
-}
-- (id)initWithDocument:(ACFileDocument *)document;
-@end
+@class SyntaxColoringOperation;
 
 @interface ACFileDocument ()
 {
     NSOperationQueue *_parserQueue;
-    NSMutableSet *__callers;
 }
+
 @property (nonatomic, strong) NSMutableAttributedString *contentString;
 @property (nonatomic, strong) id<ECCodeParser>codeParser;
 @property (nonatomic, strong, readonly) SyntaxColoringOperation *_syntaxColoringOperation;
 @property (nonatomic, strong, readonly) ECTextStyle *defaultTextStyle;
-- (void)_queueSyntaxColoringOperation;
-- (NSSet *)_callers;
-- (void)_addCaller:(id)caller;
+
+@property (nonatomic) NSRange _dirtyRange;
+- (void)_queueSyntaxColoringOperationForTextRenderer:(ECTextRenderer *)textRenderer;
+
 @end
+
+
+@interface SyntaxColoringOperation : NSOperation {
+    __weak ACFileDocument *_document;
+    __weak ECTextRenderer *_textRenderer;
+}
+
+- (id)initWithDocument:(ACFileDocument *)document textRenderer:(ECTextRenderer *)textRenderer;
+
+@end
+
+#pragma mark - Implementations
+
+#pragma mark -
 
 @implementation SyntaxColoringOperation
 
-- (id)initWithDocument:(ACFileDocument *)document
+- (id)initWithDocument:(ACFileDocument *)document textRenderer:(ECTextRenderer *)textRenderer
 {
     if (!document)
         return nil;
@@ -50,43 +52,55 @@ static NSRange intersectionOfRangeRelativeToRange(NSRange range, NSRange inRange
     if (!self)
         return nil;
     _document = document;
+    _textRenderer = textRenderer;
     return self;
 }
 
+#define CHECK_CANCELED_RETURN if (self.isCancelled || !_document || _document._syntaxColoringOperation != self) return
+
 - (void)main
 {
-    if (self.isCancelled || !_document || _document._syntaxColoringOperation != self)
-        return;
-    NSMutableAttributedString *string = _document.contentString;
+    CHECK_CANCELED_RETURN;
+    
+    NSMutableAttributedString *string = [_document.contentString mutableCopy];
     if (![string length])
         return;
-    if (self.isCancelled || !_document || _document._syntaxColoringOperation != self)
-        return;
+    
+    CHECK_CANCELED_RETURN;
+    
     NSRange stringRange = NSMakeRange(0, [string length]);
     [_document.codeParser visitScopesInRange:stringRange usingVisitor:^ECCodeVisitorResult(NSString *scope, NSRange scopeRange, BOOL isLeafScope, BOOL isExitingScope, NSArray *scopesStack) {
-        NSLog(@"visited scope: %@ at range: {%d,%d}", scope, scopeRange.location, scopeRange.length);
-        if (self.isCancelled || !_document || _document._syntaxColoringOperation != self)
-            return ECCodeVisitorResultBreak;
+//        NSLog(@"visited scope: %@ at range: {%d,%d}", scope, scopeRange.location, scopeRange.length);
+        
+        if (isLeafScope)
+        {
+            [string setAttributes:[_document.theme attributesForScopeStack:scopesStack] range:scopeRange];
+        }
+        
+        CHECK_CANCELED_RETURN ECCodeVisitorResultBreak;
         return ECCodeVisitorResultRecurse;
     }];
-    // [self.contentString ... (apply styles to result)];
-    if (self.isCancelled || !_document || _document._syntaxColoringOperation != self)
-        return;
+    
+    CHECK_CANCELED_RETURN;
+    
     [[NSOperationQueue mainQueue] addOperationWithBlock:^{
-        for (id caller in [_document _callers])
-            [caller updateTextFromStringRange:stringRange toStringRange:stringRange];
+        _document.contentString = string;
+        _document._dirtyRange = NSMakeRange(0, 0);
+        [_textRenderer updateTextFromStringRange:stringRange toStringRange:stringRange];
     }];
 }
 
 @end
 
+#pragma mark -
+
 @implementation ACFileDocument
 
 @synthesize contentString = _contentString;
 @synthesize codeParser = _codeParser;
-@synthesize _syntaxColoringOperation = __syntaxColoringOperation;
 @synthesize defaultTextStyle = _defaultTextStyle;
 @synthesize theme = _theme;
+@synthesize _syntaxColoringOperation = __syntaxColoringOperation, _dirtyRange = __dirtyRange;
 
 - (void)setContentString:(NSMutableAttributedString *)contentString
 {
@@ -96,13 +110,6 @@ static NSRange intersectionOfRangeRelativeToRange(NSRange range, NSRange inRange
     _contentString = contentString;
     [self updateChangeCount:UIDocumentChangeDone];
     [self didChangeValueForKey:@"contentString"];
-}
-
-- (TMTheme *)theme
-{
-    if (!_theme)
-        _theme = [TMTheme themeWithName:[[TMTheme themeNames] lastObject]];
-    return _theme;
 }
 
 #pragma mark - UIDocument methods
@@ -123,9 +130,8 @@ static NSRange intersectionOfRangeRelativeToRange(NSRange range, NSRange inRange
                 [[NSOperationQueue mainQueue] addOperationWithBlock:^{
                     this.codeParser = codeParser;
                 }];
-                [this _queueSyntaxColoringOperation];
             }];
-            
+            __dirtyRange = NSMakeRange(0, self.contentString.length);
         }
         completionHandler(success);
     }];
@@ -163,7 +169,8 @@ static NSRange intersectionOfRangeRelativeToRange(NSRange range, NSRange inRange
 
 - (NSAttributedString *)textRenderer:(ECTextRenderer *)sender attributedStringInRange:(NSRange)stringRange
 {
-    [self _addCaller:sender];
+    if (NSIntersectionRange(stringRange, __dirtyRange).length > 0)
+        [self _queueSyntaxColoringOperationForTextRenderer:sender];
     return [self.contentString attributedSubstringFromRange:stringRange];
 }
 
@@ -179,41 +186,23 @@ static NSRange intersectionOfRangeRelativeToRange(NSRange range, NSRange inRange
         [self.contentString deleteCharactersInRange:range];
         [self updateChangeCount:UIDocumentChangeDone];
     }
-    [self _queueSyntaxColoringOperation];
+    [self _queueSyntaxColoringOperationForTextRenderer:codeView.renderer];
 }
 
 #pragma mark - Private Methods
 
-- (void)_queueSyntaxColoringOperation
+- (void)_queueSyntaxColoringOperationForTextRenderer:(ECTextRenderer *)textRenderer
 {
+    if (self.theme == nil)
+        return;
+    
     [self willChangeValueForKey:@"_syntaxColoringOperation"];
     [__syntaxColoringOperation cancel];
     __weak id this = self;
-    __syntaxColoringOperation = [[SyntaxColoringOperation alloc] initWithDocument:this];
+    __syntaxColoringOperation = [[SyntaxColoringOperation alloc] initWithDocument:this textRenderer:textRenderer];
     [_parserQueue addOperation:__syntaxColoringOperation];
     [self didChangeValueForKey:@"_syntaxColoringOperation"];
 }
 
-- (NSArray *)_callers
-{
-    NSSet *callersToDiscard = [__callers objectsPassingTest:^BOOL(id obj, BOOL *stop) {
-        if (![obj respondsToSelector:@selector(dataSource)] || ![obj respondsToSelector:@selector(updateTextFromStringRange:toStringRange:)])
-            return YES;
-        if ((id)[obj dataSource] != self)
-            return YES;
-        return NO;
-    }];
-    [__callers minusSet:callersToDiscard];
-    return [__callers copy];
-}
-
-- (void)_addCaller:(id)caller
-{
-    if (![caller respondsToSelector:@selector(dataSource)] || ![caller respondsToSelector:@selector(updateTextFromStringRange:toStringRange:)])
-        return;
-    if ((id)[caller dataSource] != self)
-        return;
-    [__callers addObject:caller];
-}
 
 @end

@@ -40,7 +40,6 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     [ECCodeIndex setBundleDirectory:[[NSBundle mainBundle] bundleURL]];
-    [TMTheme setThemeDirectory:[[NSBundle mainBundle] bundleURL]];
     UIFont *defaultFont = [UIFont styleFontWithSize:14];    
 
     ////////////////////////////////////////////////////////////////////////////

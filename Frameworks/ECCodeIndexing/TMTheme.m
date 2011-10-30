@@ -7,105 +7,117 @@
 //
 
 #import "TMTheme.h"
-#import "NSString+ECCodeScopes.h"
+#import <CoreText/CoreText.h>
+#import "UIColor+HexColor.h"
+
+NSString * const TMThemeBackgroundColorAttributeName = @"BackgroundColor";
+NSString * const TMThemeFontStyleAttributeName = @"FontStyle";
 
 static NSString * const _themeFileExtension = @"tmTheme";
 static NSString * const _themeNameKey = @"name";
 static NSString * const _themeSettingsKey = @"settings";
+static NSString * const _themeSettingsNameKey = @"name";
 static NSString * const _themeSettingsScopeKey = @"scope";
-static NSString * const _themeSettingsSettingsKey = @"settings";
 
-static NSURL *_themeDirectory;
-static NSDictionary *_themeFileURLs;
 
 @interface TMTheme ()
-+ (void)_indexThemes;
+
 @property (nonatomic, strong) NSURL *fileURL;
 @property (nonatomic, strong) NSString *name;
-@property (nonatomic, strong) NSDictionary *plist;
-- (id)initWithFileURL:(NSURL *)fileURL;
+@property (nonatomic, strong) NSDictionary *settings;
+
 @end
 
 @implementation TMTheme
 
 #pragma mark - Class methods
 
-+ (NSURL *)themeDirectory
++ (TMTheme *)themeWithName:(NSString *)name bundle:(NSBundle *)bundle
 {
-    return _themeDirectory;
-}
-
-+ (void)setThemeDirectory:(NSURL *)themeDirectory
-{
-    if (themeDirectory == _themeDirectory)
-        return;
-    _themeDirectory = themeDirectory;
-    [self _indexThemes];
-}
-
-+ (NSArray *)themeNames
-{
-    return [_themeFileURLs allKeys];
-}
-
-+ (TMTheme *)themeWithName:(NSString *)name
-{
-    return [[self alloc] initWithFileURL:[_themeFileURLs objectForKey:name]];
-}
-
-+ (void)_indexThemes
-{
-    NSMutableDictionary *themeFileURLs = [NSMutableDictionary dictionary];
-    NSFileManager *fileManager = [[NSFileManager alloc] init];
-    for (NSURL *fileURL in [fileManager contentsOfDirectoryAtURL:[self themeDirectory] includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles error:NULL])
-    {
-        TMTheme *theme = [[self alloc] initWithFileURL:fileURL];
-        if (!theme)
-            continue;
-        [themeFileURLs setObject:fileURL forKey:theme.name];
-    }
-    _themeFileURLs = [themeFileURLs copy];
+    if (bundle == nil)
+        bundle = [NSBundle mainBundle];
+    
+    return [[self alloc] initWithFileURL:[bundle URLForResource:name withExtension:_themeFileExtension]];
 }
 
 #pragma mark - Properties
 
 @synthesize fileURL = _fileURL;
 @synthesize name = _name;
-@synthesize plist = _plist;
+@synthesize settings = _settings;
 
 - (id)initWithFileURL:(NSURL *)fileURL
 {
-    self = [super init];
-    if (!self)
+    if (!(self = [super init]))
         return nil;
+    
     if (![[fileURL pathExtension] isEqualToString:_themeFileExtension])
         return nil;
+    
     NSDictionary *plist = [NSPropertyListSerialization propertyListWithData:[NSData dataWithContentsOfURL:fileURL options:NSDataReadingUncached error:NULL] options:NSPropertyListImmutable format:NULL error:NULL];
+    
     NSString *name = [plist objectForKey:_themeNameKey];
     if (!name)
         return nil;
+    
     _fileURL = fileURL;
     _name = name;
-    _plist = plist;
+    
+    // Preprocess settings
+    NSMutableDictionary *settings = [[NSMutableDictionary alloc] initWithCapacity:[[plist objectForKey:_themeSettingsKey] count]];
+    for (NSDictionary *plistSetting in [plist objectForKey:_themeSettingsKey])
+    {
+        NSString *settingScope = [plistSetting objectForKey:_themeSettingsScopeKey];
+        if (!settingScope)
+            continue;
+        
+        NSMutableDictionary *setting = [[NSMutableDictionary alloc] initWithCapacity:[[plistSetting objectForKey:_themeSettingsKey] count]];
+        
+        // Pre-map settings with Core Text attributes
+        [[plistSetting objectForKey:_themeSettingsKey] enumerateKeysAndObjectsUsingBlock:^(NSString *key, NSString *value, BOOL *stop) {
+            ECASSERT([value isKindOfClass:[NSString class]]);
+            
+            if ([key isEqualToString:@"fontStyle"]) {
+                [setting setObject:value forKey:TMThemeFontStyleAttributeName];
+            }
+            else if ([key isEqualToString:@"foreground"]) {
+                [setting setObject:(__bridge id)[UIColor colorWithHexString:value].CGColor forKey:(__bridge id)kCTForegroundColorAttributeName];
+            }
+            else {
+                [setting setObject:value forKey:key];
+            }
+        }];
+        
+        ECASSERT([settings objectForKey:settingScope] == nil && "Scope should be unique");
+        
+        // Setting's scope can have multiple scopes separated by a comma
+        for (NSString *singleSettingScope in [settingScope componentsSeparatedByString:@","])
+        {
+            if (singleSettingScope.length == 0)
+                continue;
+            
+            [settings setObject:setting forKey:[singleSettingScope stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]]];
+        }
+    }
+    _settings = settings;
+    
     return self;
 }
 
 - (NSDictionary *)attributesForScopeStack:(NSArray *)scopesStack
 {
+    // TODO premap every key of the settings with CT attributes
+    
     NSMutableDictionary *attributes = [NSMutableDictionary dictionary];
     for (NSString *scope in scopesStack)
     {
-        for (NSDictionary *settings in [self.plist objectForKey:_themeSettingsKey])
-        {
-            NSString *settingScope = [settings objectForKey:_themeSettingsScopeKey];
-            if (settingScope && ![scope containsScope:settingScope])
-                continue;
-            [[settings objectForKey:_themeSettingsSettingsKey] enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
-                [attributes setObject:obj forKey:key];
-            }];
-        }
+        [self.settings enumerateKeysAndObjectsUsingBlock:^(NSString *settingScope, NSDictionary *settingAttributes, BOOL *stop) {
+            if (![scope hasPrefix:settingScope])
+                return;
+            [attributes addEntriesFromDictionary:settingAttributes];
+        }];
     }
-    return [attributes copy];
+    return attributes;
 }
 
 @end
