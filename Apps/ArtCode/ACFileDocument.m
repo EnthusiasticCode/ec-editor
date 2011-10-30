@@ -69,14 +69,11 @@
     CHECK_CANCELED_RETURN;
     
     NSRange stringRange = NSMakeRange(0, [string length]);
-    [_document.codeParser visitScopesInRange:stringRange usingVisitor:^ECCodeVisitorResult(NSString *scope, NSRange scopeRange, BOOL isLeafScope, BOOL isExitingScope, NSArray *scopesStack) {
-//        NSLog(@"visited scope: %@ at range: {%d,%d}", scope, scopeRange.location, scopeRange.length);
-        
-        if (isLeafScope)
+    [_document.codeParser visitScopesInRange:stringRange usingVisitor:^ECCodeVisitorResult(NSString *scope, NSRange scopeRange, BOOL isLeafScope, BOOL isExitingScope, NSArray *scopesStack) {        
+        if (!isExitingScope)
         {
             [string setAttributes:[_document.theme attributesForScopeStack:scopesStack] range:scopeRange];
         }
-        
         CHECK_CANCELED_RETURN ECCodeVisitorResultBreak;
         return ECCodeVisitorResultRecurse;
     }];
