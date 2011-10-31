@@ -82,8 +82,7 @@
     
     // Create view
     UIImageView *bezelView = [[UIImageView alloc] initWithImage:bezelBackgroundImage];
-//    bezelView.contentMode = UIViewContentModeScaleToFill;
-#warning FIX the resulting immage is not properly scaled (corners are deformed)
+    bezelView.contentMode = UIViewContentModeScaleToFill;
     bezelView.autoresizingMask = autoresizingMask;
     self.view = bezelView;
 }
@@ -133,6 +132,7 @@
         bezelFrame.origin.y = presentingBounds.size.height - bezelFrame.size.height - margins.bottom;
     else
         bezelFrame.origin.y = (presentingBounds.size.height - bezelFrame.size.height) / 2.;
+    bezelFrame = CGRectIntegral(bezelFrame);
     
     // Animate bezel view
     if (self.view.superview)
