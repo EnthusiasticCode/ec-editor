@@ -27,10 +27,16 @@
 - (IBAction)moveResultAction:(id)sender {
 }
 
-- (IBAction)toggleReplaceAction:(id)sender {
+- (IBAction)toggleReplaceAction:(id)sender
+{
+    if (self.singleTabController.toolbarHeight != 88)
+        [self.singleTabController setToolbarHeight:88 animated:YES];
+    else
+        [self.singleTabController resetToolbarHeightAnimated:YES];
 }
 
-- (IBAction)closeBarAction:(id)sender {
+- (IBAction)closeBarAction:(id)sender
+{
     ECASSERT(self.singleTabController.toolbarViewController == self);
     [self.singleTabController setToolbarViewController:nil animated:YES];
 }

@@ -203,7 +203,6 @@ static const void *contentViewControllerContext;
         
         lastToolbar.layer.anchorPointZ = 19;
         [self.view addSubview:toolbarView];
-        toolbarView.frame = lastToolbar.frame;
         toolbarView.layer.anchorPointZ = 19;
         toolbarView.layer.transform = CATransform3DMakeRotation(M_PI_2, -1 * direction, 0, 0);
         toolbarView.layer.opacity = 0.4;
