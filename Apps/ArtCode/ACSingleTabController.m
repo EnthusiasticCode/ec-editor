@@ -298,9 +298,13 @@ static const void *contentViewControllerContext;
     [self.view addSubview:self.contentViewController.view];
 }
 
-- (void)viewDidAppear:(BOOL)animated
+- (void)viewWillAppear:(BOOL)animated
 {
     [self _layoutChildViewsAnimated:NO];
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
     [self _setupDefaultToolbarItemsAnimated:NO];
 }
 
@@ -403,7 +407,7 @@ static const void *contentViewControllerContext;
 
 - (void)_layoutChildViewsAnimated:(BOOL)animated
 {
-    if (!self._isViewVisible)
+    if (!self.isViewLoaded)
         return;
     
     CGRect contentFrame = self.view.bounds;

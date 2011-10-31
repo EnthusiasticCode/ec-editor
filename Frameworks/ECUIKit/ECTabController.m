@@ -435,6 +435,9 @@ static void init(ECTabController *self)
 
 - (void)loadSelectedAndAdiacentTabViews
 {
+    if (!self.isViewLoaded)
+        return;
+    
     NSUInteger minLoadableIndex = selectedViewControllerIndex > 0 ? selectedViewControllerIndex - 1 : selectedViewControllerIndex;
     NSUInteger maxLoadableIndex = selectedViewControllerIndex < [orderedChildViewControllers count] - 1 ? selectedViewControllerIndex + 1 : selectedViewControllerIndex;
     
