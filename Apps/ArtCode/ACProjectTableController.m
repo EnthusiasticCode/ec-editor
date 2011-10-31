@@ -18,30 +18,36 @@
 
 #import <ECFoundation/ECDirectoryPresenter.h>
 
-#import <ECUIKit/ECPopoverController.h>
-
 #import <ECUIKit/ECBezelAlert.h>
 
 static void * directoryPresenterFileURLsObservingContext;
 
 #define STATIC_OBJECT(typ, nam, init) static typ *nam = nil; if (!nam) nam = init
 
-@interface ACProjectTableController ()
-{
-    ECPopoverController *popoverLabelColorController;
-    ECPopoverController *_popover;
+@interface ACProjectTableController () {
+    UIPopoverController *_toolItemPopover;
+    
+    NSArray *_toolItemsNormal;
+    NSArray *_toolItemsEditing;
 }
+
+/// Represent a directory's contents.
 @property (nonatomic, strong) ECDirectoryPresenter *directoryPresenter;
 - (void)deleteTableRow:(id)sender;
+
+- (void)_toolNormalAddAction:(id)sender;
+
 @end
+
+#pragma mark - Implementation
+#pragma mark -
 
 @implementation ACProjectTableController
 
 #pragma mark - Properties
 
-@synthesize projectsDirectory = _projectsDirectory;
 @synthesize tab = _tab;
-@synthesize directoryPresenter = _directoryPresenter;
+@synthesize projectsDirectory = _projectsDirectory, directoryPresenter = _directoryPresenter;
 
 - (void)setProjectsDirectory:(NSURL *)projectsDirectory
 {
@@ -64,7 +70,22 @@ static void * directoryPresenterFileURLsObservingContext;
     [self didChangeValueForKey:@"directoryPresenter"];
 }
 
-#pragma mark - KVO
+- (void)setEditing:(BOOL)editing animated:(BOOL)animated
+{
+    [super setEditing:editing animated:animated];
+    
+    if (!editing)
+    {
+        self.toolbarItems = _toolItemsNormal;
+    }
+}
+
+#pragma mark - Controller Methods
+
+- (void)dealloc
+{
+    [self.directoryPresenter removeObserver:self forKeyPath:@"fileURLs" context:&directoryPresenterFileURLsObservingContext];
+}
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
@@ -77,13 +98,6 @@ static void * directoryPresenterFileURLsObservingContext;
         [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
 }
 
-#pragma mark - Controller Methods
-
-- (void)dealloc
-{
-    [self.directoryPresenter removeObserver:self forKeyPath:@"fileURLs" context:&directoryPresenterFileURLsObservingContext];
-}
-
 #pragma mark - View lifecycle
 
 - (void)viewDidLoad
@@ -93,6 +107,9 @@ static void * directoryPresenterFileURLsObservingContext;
     self.tableView.rowHeight = 55;
     
     self.tableView.tableFooterView = [UIView new];
+    
+    // Preparing tool items array changed in set editing
+    _toolItemsNormal = [NSArray arrayWithObject:[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"tabBar_TabAddButton"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolNormalAddAction:)]];
     
     [self setEditing:NO animated:NO];
 }
@@ -108,41 +125,22 @@ static void * directoryPresenterFileURLsObservingContext;
     self.directoryPresenter = nil;
 }
 
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
-    
-    popoverLabelColorController = nil;
-}
+#pragma mark - Tool Items Actions
 
-#pragma mark - TODO refactor: Tool Target Protocol
-
-//- (UIButton *)toolButton
-//{
-//    if (!toolButton)
-//    {
-//        toolButton = [UIButton new];
-//        [toolButton addTarget:self action:@selector(toolButtonAction:) forControlEvents:UIControlEventTouchUpInside];
-//        [toolButton setImage:[UIImage styleAddImageWithColor:[UIColor styleForegroundColor] shadowColor:[UIColor whiteColor]] forState:UIControlStateNormal];
-//        toolButton.adjustsImageWhenHighlighted = NO;
-//    }
-//    return toolButton;
-//}
-
-- (void)toolButtonAction:(id)sender
+- (void)_toolNormalAddAction:(id)sender
 {
     // Removing the lazy loading could cause the old popover to be overwritten by the new one causing a dealloc while popover is visible
-    if (!_popover)
+    if (!_toolItemPopover)
     {
         UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"NewProjectPopover" bundle:[NSBundle mainBundle]];
         ACNewProjectPopoverController *popoverViewController = (ACNewProjectPopoverController *)[storyboard instantiateInitialViewController];
         popoverViewController.projectsDirectory = self.projectsDirectory;
-        _popover = [[ECPopoverController alloc] initWithContentViewController:popoverViewController];
+        _toolItemPopover = [[UIPopoverController alloc] initWithContentViewController:popoverViewController];
     }
-    [_popover presentPopoverFromRect:[sender frame] inView:[sender superview] permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
+    [_toolItemPopover presentPopoverFromBarButtonItem:sender permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
 }
 
-#pragma mark - Colored icons
+#pragma mark - Cell Methods and Actions
 
 - (UIImage *)projectIconWithColor:(UIColor *)color
 {
@@ -152,55 +150,46 @@ static void * directoryPresenterFileURLsObservingContext;
     // Cell icon
     UIImage *cellIcon = [iconCache objectForKey:color];
     if (!cellIcon)
+    {
         cellIcon = [UIImage styleProjectImageWithSize:CGSizeMake(32, 33) labelColor:color];
+        [iconCache setObject:cellIcon forKey:color];
+    }
     
     return cellIcon;
 }
 
-#pragma mark - Color label selection methods
-
-- (void)colorSelectionAction:(ACColorSelectionControl *)sender
-{
-    // TODO change way of retrieving cell?
-    
-    [popoverLabelColorController dismissPopoverAnimated:YES];
-    
-    // TODO here change persisten color with sender.selectedColor
-}
-
-
-- (void)labelColorAction:(id)sender
-{
-    if (!popoverLabelColorController)
-    {
-        ACColorSelectionControl *colorControl = [ACColorSelectionControl new];
-        colorControl.colorCellsMargin = 2;
-        colorControl.columns = 3;
-        colorControl.rows = 2;
-        colorControl.colors = [NSArray arrayWithObjects:
-                               [UIColor colorWithRed:255./255. green:106./255. blue:89./255. alpha:1], 
-                               [UIColor colorWithRed:255./255. green:184./255. blue:62./255. alpha:1], 
-                               [UIColor colorWithRed:237./255. green:233./255. blue:68./255. alpha:1],
-                               [UIColor colorWithRed:168./255. green:230./255. blue:75./255. alpha:1],
-                               [UIColor colorWithRed:93./255. green:157./255. blue:255./255. alpha:1],
-                               [UIColor styleForegroundColor], nil];
-        [colorControl addTarget:self action:@selector(colorSelectionAction:) forControlEvents:UIControlEventTouchUpInside];
-        
-        UIViewController *viewController = [UIViewController new];
-        viewController.contentSizeForViewInPopover = CGSizeMake(145, 90);
-        viewController.view = colorControl;
-        
-        popoverLabelColorController = [[ECPopoverController alloc] initWithContentViewController:viewController];
-    }
-    
-    // Retrieve cell
-    id cell = sender;
-    while (cell && ![cell isKindOfClass:[UITableViewCell class]])
-        cell = [cell superview];
-    [(ACColorSelectionControl *)popoverLabelColorController.contentViewController.view setUserInfo:cell];
-    
-    [popoverLabelColorController presentPopoverFromRect:[sender frame] inView:[sender superview] permittedArrowDirections:UIPopoverArrowDirectionLeft animated:YES];
-}
+//- (void)labelColorAction:(id)sender
+//{
+//    if (!popoverLabelColorController)
+//    {
+//        ACColorSelectionControl *colorControl = [ACColorSelectionControl new];
+//        colorControl.colorCellsMargin = 2;
+//        colorControl.columns = 3;
+//        colorControl.rows = 2;
+//        colorControl.colors = [NSArray arrayWithObjects:
+//                               [UIColor colorWithRed:255./255. green:106./255. blue:89./255. alpha:1], 
+//                               [UIColor colorWithRed:255./255. green:184./255. blue:62./255. alpha:1], 
+//                               [UIColor colorWithRed:237./255. green:233./255. blue:68./255. alpha:1],
+//                               [UIColor colorWithRed:168./255. green:230./255. blue:75./255. alpha:1],
+//                               [UIColor colorWithRed:93./255. green:157./255. blue:255./255. alpha:1],
+//                               [UIColor styleForegroundColor], nil];
+//        [colorControl addTarget:self action:@selector(colorSelectionAction:) forControlEvents:UIControlEventTouchUpInside];
+//        
+//        UIViewController *viewController = [UIViewController new];
+//        viewController.contentSizeForViewInPopover = CGSizeMake(145, 90);
+//        viewController.view = colorControl;
+//        
+//        popoverLabelColorController = [[ECPopoverController alloc] initWithContentViewController:viewController];
+//    }
+//    
+//    // Retrieve cell
+//    id cell = sender;
+//    while (cell && ![cell isKindOfClass:[UITableViewCell class]])
+//        cell = [cell superview];
+//    [(ACColorSelectionControl *)popoverLabelColorController.contentViewController.view setUserInfo:cell];
+//    
+//    [popoverLabelColorController presentPopoverFromRect:[sender frame] inView:[sender superview] permittedArrowDirections:UIPopoverArrowDirectionLeft animated:YES];
+//}
 
 #pragma mark - Table view functionality
 

@@ -156,10 +156,12 @@ static const void *contentViewControllerContext;
     {
         [self addChildViewController:_contentViewController];
         [_contentViewController didMoveToParentViewController:self];
-        [_contentViewController addObserver:self forKeyPath:@"toolbarItems" options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew context:&contentViewControllerContext];
+        [_contentViewController addObserver:self forKeyPath:@"toolbarItems" options:NSKeyValueObservingOptionNew context:&contentViewControllerContext];
         [_contentViewController addObserver:self forKeyPath:@"loading" options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew context:&contentViewControllerContext];
         [_contentViewController addObserver:self forKeyPath:@"title" options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew context:&contentViewControllerContext];
     }
+    
+    [self _setupDefaultToolbarItemsAnimated:animated];
     
     [self didChangeValueForKey:@"contentViewController"];
 }

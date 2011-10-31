@@ -236,6 +236,7 @@ static void init(ACTopBarToolbar *self)
 {
     button.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleHeight;
     [button setTitle:item.title forState:UIControlStateNormal];
+    [button setImage:item.image forState:UIControlStateNormal];
     if (item.target && item.action)
         [button addTarget:item.target action:item.action forControlEvents:UIControlEventTouchUpInside];
     item.customView = button;
@@ -245,6 +246,13 @@ static void init(ACTopBarToolbar *self)
 
 
 @implementation ACTopBarToolButton
+
+/// Method called by UIPopoverController if presenting from toolbar item.
+- (UIView *)view 
+{
+    return self;
+}
+
 @end
 
 @implementation ACTopBarEditButton
