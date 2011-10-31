@@ -129,7 +129,6 @@
 		CDD40B0313E1A046008AC36B /* ACPopoverHistoryToolController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDD40B0213E1A046008AC36B /* ACPopoverHistoryToolController.m */; };
 		CDE3F14713C0DDD500DFFAFF /* Inconsolata-dz.otf in Resources */ = {isa = PBXBuildFile; fileRef = CDE3F14613C0DDD500DFFAFF /* Inconsolata-dz.otf */; };
 		CDF1D46D14150C4900EFEC21 /* libstdc++.6.0.9.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CDF1D46C14150C4900EFEC21 /* libstdc++.6.0.9.dylib */; };
-		CDF4C00C144F2C4800475F6B /* SingleTabController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CDF4C00B144F2C4800475F6B /* SingleTabController.xib */; };
 		CDF4C011144F2C7900475F6B /* ACTopBarTitleControl.m in Sources */ = {isa = PBXBuildFile; fileRef = CDF4C00E144F2C7900475F6B /* ACTopBarTitleControl.m */; };
 		CDF4C012144F2C7900475F6B /* ACTopBarToolbar.m in Sources */ = {isa = PBXBuildFile; fileRef = CDF4C010144F2C7900475F6B /* ACTopBarToolbar.m */; };
 		CDF4C015144F2C8A00475F6B /* ACSingleTabController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDF4C014144F2C8A00475F6B /* ACSingleTabController.m */; };
@@ -424,7 +423,6 @@
 		CDD40B0213E1A046008AC36B /* ACPopoverHistoryToolController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACPopoverHistoryToolController.m; sourceTree = "<group>"; };
 		CDE3F14613C0DDD500DFFAFF /* Inconsolata-dz.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Inconsolata-dz.otf"; sourceTree = "<group>"; };
 		CDF1D46C14150C4900EFEC21 /* libstdc++.6.0.9.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libstdc++.6.0.9.dylib"; path = "usr/lib/libstdc++.6.0.9.dylib"; sourceTree = SDKROOT; };
-		CDF4C00B144F2C4800475F6B /* SingleTabController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SingleTabController.xib; sourceTree = "<group>"; };
 		CDF4C00D144F2C7900475F6B /* ACTopBarTitleControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACTopBarTitleControl.h; sourceTree = "<group>"; };
 		CDF4C00E144F2C7900475F6B /* ACTopBarTitleControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACTopBarTitleControl.m; sourceTree = "<group>"; };
 		CDF4C00F144F2C7900475F6B /* ACTopBarToolbar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACTopBarToolbar.h; sourceTree = "<group>"; };
@@ -754,7 +752,6 @@
 		CD7D2B0913C0CEE100B889EE /* UI */ = {
 			isa = PBXGroup;
 			children = (
-				CDF4C00B144F2C4800475F6B /* SingleTabController.xib */,
 				B7AC172D14216CD4009E9205 /* NewFilePopover.storyboard */,
 				B7AC172E14216CD4009E9205 /* NewProjectPopover.storyboard */,
 				CD7D2B4D13C0D5FB00B889EE /* ToolPanelStoryboard.storyboard */,
@@ -1196,7 +1193,6 @@
 				B7656C8A144B54120084B050 /* Sunburst.tmTheme in Resources */,
 				B7656C8B144B54120084B050 /* Twilight.tmTheme in Resources */,
 				B7656C8C144B54120084B050 /* Zenburnesque.tmTheme in Resources */,
-				CDF4C00C144F2C4800475F6B /* SingleTabController.xib in Resources */,
 				CDC2829314508D500054358D /* topBar_Background.png in Resources */,
 				CDC2829414508D500054358D /* topBar_ForwardButton_Normal.png in Resources */,
 				CDC2829514508D500054358D /* topBar_TitleButton_Normal.png in Resources */,

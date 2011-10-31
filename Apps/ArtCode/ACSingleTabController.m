@@ -28,6 +28,8 @@ static const void *contentViewControllerContext;
     NSMutableArray *toolbars;
 }
 
+- (BOOL)_isViewVisible;
+
 /// Position the bar and content.
 - (void)_layoutChildViewsAnimated:(BOOL)animated;
 
@@ -70,7 +72,7 @@ static const void *contentViewControllerContext;
     
     [self willChangeValueForKey:@"defaultToolbar"];
     
-    if (self.isViewLoaded)
+    if (self._isViewVisible)
     {
         [_defaultToolbar removeFromSuperview];
         [self.view addSubview:defaultToolbar];
@@ -111,7 +113,7 @@ static const void *contentViewControllerContext;
     [self willChangeValueForKey:@"contentViewController"];
     
     // Animate view in position
-    if (self.isViewLoaded)
+    if (self._isViewVisible)
     {
         [_contentViewController viewWillDisappear:animated];
         [contentViewController viewWillAppear:animated];
@@ -294,10 +296,13 @@ static const void *contentViewControllerContext;
     [self.defaultToolbar removeFromSuperview];
     [self.view addSubview:self.currentToolbarView];
     [self.view addSubview:self.contentViewController.view];
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
     [self _layoutChildViewsAnimated:NO];
     [self _setupDefaultToolbarItemsAnimated:NO];
 }
-
 
 #pragma mark - Toolbars control
 
@@ -313,7 +318,7 @@ static const void *contentViewControllerContext;
         toolbars = [NSMutableArray new];
     [toolbars addObject:toolbarView];
     
-    if (self.isViewLoaded)
+    if (self._isViewVisible)
     {
         [self resetToolbarHeightAnimated:animated];
         
@@ -350,7 +355,7 @@ static const void *contentViewControllerContext;
     if (![toolbars count])
         return;
     
-    if (self.isViewLoaded)
+    if (self._isViewVisible)
     {
         [self resetToolbarHeightAnimated:animated];
         
@@ -391,9 +396,14 @@ static const void *contentViewControllerContext;
 
 #pragma mark - Private methods
 
+- (BOOL)_isViewVisible
+{
+    return self.isViewLoaded && self.view.window != nil;
+}
+
 - (void)_layoutChildViewsAnimated:(BOOL)animated
 {
-    if (!self.isViewLoaded)
+    if (!self._isViewVisible)
         return;
     
     CGRect contentFrame = self.view.bounds;
@@ -420,7 +430,7 @@ static const void *contentViewControllerContext;
 
 - (void)_setupDefaultToolbarItemsAnimated:(BOOL)animated
 {
-    if (!self.isViewLoaded)
+    if (!self._isViewVisible)
         return;
     
     self.defaultToolbar.editItem = _contentViewController.editButtonItem;

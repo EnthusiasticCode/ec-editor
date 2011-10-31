@@ -98,7 +98,7 @@
     [addTabButton setImage:[UIImage imageNamed:@"tabBar_TabAddButton"] forState:UIControlStateNormal];
     [addTabButton setActionBlock:^(id sender) {
         // Duplicate current tab
-        ACSingleTabController *singleTabController = [[ACSingleTabController alloc] initWithNibName:@"SingleTabController" bundle:nil];
+        ACSingleTabController *singleTabController = [[ACSingleTabController alloc] init];
         [self.application insertTabAtIndex:[self.application.tabs count]];
         singleTabController.tab = [self.application.tabs lastObject];
         [singleTabController.tab pushURL:[(ACSingleTabController *)self.tabController.selectedViewController tab].currentURL];
@@ -118,11 +118,11 @@
         [self.application insertTabAtIndex:0];
     for (ACTab *tab in self.application.tabs)
     {
-        ACSingleTabController *singleTabController = [[ACSingleTabController alloc] initWithNibName:@"SingleTabController" bundle:nil];
+        ACSingleTabController *singleTabController = [[ACSingleTabController alloc] init];
         singleTabController.tab = tab;
         [self.tabController addChildViewController:singleTabController];
     }
-
+    
     [self.window makeKeyAndVisible];
     return YES;
 }
