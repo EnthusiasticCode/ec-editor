@@ -23,10 +23,7 @@
 static const void *tabCurrentURLObservingContext;
 static const void *contentViewControllerContext;
 
-@interface ACSingleTabController () {
-@private
-    NSMutableArray *toolbars;
-}
+@interface ACSingleTabController ()
 
 - (BOOL)_isViewVisible;
 
@@ -52,8 +49,8 @@ static const void *contentViewControllerContext;
 
 #pragma mark - Properties
 
-@synthesize defaultToolbar = _defaultToolbar, contentViewController = _contentViewController;
-@synthesize toolbarHeight = _toolbarHeight;
+@synthesize defaultToolbar = _defaultToolbar, toolbarViewController = _toolbarViewController, toolbarHeight = _toolbarHeight;
+@synthesize contentViewController = _contentViewController;
 @synthesize tab = _tab;
 
 - (ACTopBarToolbar *)defaultToolbar
@@ -170,9 +167,75 @@ static const void *contentViewControllerContext;
 
 - (UIView *)currentToolbarView
 {
-    if (toolbars && [toolbars count])
-        return [toolbars lastObject];
+    if (_toolbarViewController)
+        return _toolbarViewController.view;
     return self.defaultToolbar;
+}
+
+- (void)setToolbarViewController:(UIViewController *)toolbarViewController
+{
+    [self setToolbarViewController:toolbarViewController animated:NO];
+}
+
+- (void)setToolbarViewController:(UIViewController *)toolbarViewController animated:(BOOL)animated
+{
+    if (toolbarViewController == _toolbarViewController)
+        return;
+    
+    [self willChangeValueForKey:@"toolbarViewController"];
+    
+    UIViewController *oldToolbarViewController = _toolbarViewController;
+    
+    _toolbarViewController = toolbarViewController;
+    if (_toolbarViewController)
+        [self addChildViewController:_toolbarViewController];
+    [oldToolbarViewController willMoveToParentViewController:nil];
+    
+    UIView *lastToolbar = oldToolbarViewController ? oldToolbarViewController.view : self.defaultToolbar;
+    UIView *toolbarView = _toolbarViewController ? _toolbarViewController.view : self.defaultToolbar;
+    CGFloat direction = _toolbarViewController ? 1 : -1;
+    toolbarView.frame = lastToolbar.frame;
+    toolbarView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleBottomMargin;
+    
+    if (self._isViewVisible && animated)
+    {
+        [self resetToolbarHeightAnimated:animated];
+        
+        lastToolbar.layer.anchorPointZ = 19;
+        [self.view addSubview:toolbarView];
+        toolbarView.frame = lastToolbar.frame;
+        toolbarView.layer.anchorPointZ = 19;
+        toolbarView.layer.transform = CATransform3DMakeRotation(M_PI_2, -1 * direction, 0, 0);
+        toolbarView.layer.opacity = 0.4;
+        
+        [UIView animateWithDuration:0.2 animations:^{
+            lastToolbar.layer.transform = CATransform3DMakeRotation(M_PI_2, 1 * direction, 0, 0);
+            lastToolbar.layer.opacity = 0.4;
+            toolbarView.layer.transform = CATransform3DIdentity;
+            toolbarView.layer.opacity = 1;
+        } completion:^(BOOL finished) {
+            lastToolbar.layer.transform = CATransform3DIdentity;
+            [lastToolbar removeFromSuperview];
+            
+            [_toolbarViewController didMoveToParentViewController:self];
+            [oldToolbarViewController removeFromParentViewController];
+            
+            [self didChangeValueForKey:@"toolbarViewController"];
+        }];
+    }
+    else
+    {
+        [_toolbarViewController didMoveToParentViewController:self];
+        [oldToolbarViewController removeFromParentViewController];
+        if (!animated)
+        {
+            if (oldToolbarViewController.isViewLoaded)
+                [oldToolbarViewController.view removeFromSuperview];
+            [self.view addSubview:toolbarView];
+            [self _layoutChildViewsAnimated:NO];
+        }
+        [self didChangeValueForKey:@"toolbarViewController"];
+    }
 }
 
 - (CGFloat)toolbarHeight
@@ -306,96 +369,6 @@ static const void *contentViewControllerContext;
 - (void)viewDidAppear:(BOOL)animated
 {
     [self _setupDefaultToolbarItemsAnimated:NO];
-}
-
-#pragma mark - Toolbars control
-
-- (void)pushToolbarView:(UIView *)toolbarView animated:(BOOL)animated
-{
-    ECASSERT(toolbarView != nil);
-    
-    UIView *lastToolbar = self.currentToolbarView;
-    toolbarView.frame = lastToolbar.frame;
-    toolbarView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleBottomMargin;
-    
-    if (!toolbars)
-        toolbars = [NSMutableArray new];
-    [toolbars addObject:toolbarView];
-    
-    if (self._isViewVisible)
-    {
-        [self resetToolbarHeightAnimated:animated];
-        
-        if (animated)
-        {
-            lastToolbar.layer.anchorPointZ = 19;
-            [self.view addSubview:toolbarView];
-            toolbarView.frame = lastToolbar.frame;
-            toolbarView.layer.anchorPointZ = 19;
-            toolbarView.layer.transform = CATransform3DMakeRotation(M_PI_2, -1, 0, 0);
-            toolbarView.layer.opacity = 0.4;
-            
-            [UIView animateWithDuration:0.2 animations:^{
-                lastToolbar.layer.transform = CATransform3DMakeRotation(M_PI_2, 1, 0, 0);
-                lastToolbar.layer.opacity = 0.4;
-                toolbarView.layer.transform = CATransform3DIdentity;
-                toolbarView.layer.opacity = 1;
-            } completion:^(BOOL finished) {
-                lastToolbar.layer.transform = CATransform3DIdentity;
-                [lastToolbar removeFromSuperview];
-            }];
-        }
-        else
-        {
-            [lastToolbar removeFromSuperview];
-            [self.view addSubview:toolbarView];
-            [self _layoutChildViewsAnimated:NO];
-        }
-    }
-}
-
-- (void)popToolbarViewAnimated:(BOOL)animated
-{
-    if (![toolbars count])
-        return;
-    
-    if (self._isViewVisible)
-    {
-        [self resetToolbarHeightAnimated:animated];
-        
-        UIView *currentToolbar = [toolbars lastObject];
-        UIView *lastToolbar = self.defaultToolbar;
-        if ([toolbars count] > 1)
-            lastToolbar = [toolbars objectAtIndex:[toolbars count] - 2];
-        if (animated)
-        {
-            currentToolbar.layer.anchorPointZ = 19;
-            [self.view addSubview:lastToolbar];
-            lastToolbar.frame = currentToolbar.frame;
-            lastToolbar.layer.anchorPointZ = 19;
-            lastToolbar.layer.transform = CATransform3DMakeRotation(M_PI_2, 1, 0, 0);
-            lastToolbar.layer.opacity = 0.4;
-            
-            [UIView animateWithDuration:0.2 animations:^{
-                currentToolbar.layer.transform = CATransform3DMakeRotation(M_PI_2, -1, 0, 0);
-                currentToolbar.layer.opacity = 0.4;
-                lastToolbar.layer.transform = CATransform3DIdentity;
-                lastToolbar.layer.opacity = 1;
-            } completion:^(BOOL finished) {
-                currentToolbar.layer.transform = CATransform3DIdentity;
-                [currentToolbar removeFromSuperview];
-            }];
-        }
-        else
-        {
-            [currentToolbar removeFromSuperview];
-            [self.view addSubview:lastToolbar];
-        }
-        
-        [self _layoutChildViewsAnimated:NO];
-    }
-    
-    [toolbars removeLastObject];
 }
 
 #pragma mark - Private methods
