@@ -19,8 +19,8 @@
 @property (nonatomic, readonly, strong) ECTabBar *tabBar;
 
 /// Indicates if the tab bar is visible or not.
-@property (nonatomic) BOOL showTabBar;
-- (void)setShowTabBar:(BOOL)value animated:(BOOL)animated;
+@property (nonatomic, getter = isTabBarVisible) BOOL tabBarVisible;
+- (void)setTabBarVisible:(BOOL)value animated:(BOOL)animated;
 
 #pragma mark Managing tabs
 
@@ -39,5 +39,11 @@
 
 /// Reorder tabs by moving them to the specified index.
 - (void)moveChildViewControllerAtIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex animated:(BOOL)animated;
+
+@end
+
+@interface UIViewController (ECTabController)
+
+- (ECTabController *)tabCollectionController;
 
 @end

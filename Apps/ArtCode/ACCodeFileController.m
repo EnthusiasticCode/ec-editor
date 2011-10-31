@@ -12,6 +12,7 @@
 
 #import <ECCodeIndexing/TMTheme.h>
 
+#import <ECUIKit/ECTabController.h>
 #import <ECUIKit/ECPopoverController.h>
 #import <ECUIKit/ECCodeView.h>
 
@@ -25,6 +26,9 @@
 
 @interface ACCodeFileController ()
 {
+    UIPopoverController *_toolbarPopover;
+    UIActionSheet *_toolsActionSheet;
+    
     ACEditorToolSelectionController *editorToolSelectionController;
     ECPopoverController *editorToolSelectionPopover;
     
@@ -109,7 +113,7 @@
     // Release any cached data, images, etc that aren't in use.
 }
 
-#pragma mark - Single Tab Controller Toolbar Actions
+#pragma mark - Toolbar Items Actions
 
 - (BOOL)singleTabController:(ACSingleTabController *)singleTabController shouldEnableTitleControlForDefaultToolbar:(ACTopBarToolbar *)toolbar
 {
@@ -118,22 +122,24 @@
 
 - (void)toolButtonAction:(id)sender
 {
-    if (!editorToolSelectionController)
-    {
-        editorToolSelectionController = [[ACEditorToolSelectionController alloc] initWithNibName:@"ACEditorToolSelectionController" bundle:nil];
-        editorToolSelectionController.contentSizeForViewInPopover = CGSizeMake(250, 284);
-//        editorToolSelectionController.targetNavigationController = self.ACNavigationController;
-    }
+    if (!_toolsActionSheet)
+        _toolsActionSheet = [[UIActionSheet alloc] initWithTitle:@"Select action" delegate:self cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:@"Show/hide tabs", nil];
     
-    if (!editorToolSelectionPopover)
-    {
-        editorToolSelectionPopover = [[ECPopoverController alloc] initWithContentViewController:editorToolSelectionController];
-        editorToolSelectionPopover.popoverView.contentCornerRadius = 0;
-        
-        editorToolSelectionController.containerPopoverController = editorToolSelectionPopover;
+    [_toolsActionSheet showFromRect:[sender frame] inView:[sender superview] animated:YES];
+}
+
+- (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    switch (buttonIndex) {
+        case 0:
+        {
+            [self.tabCollectionController setTabBarVisible:!self.tabCollectionController.isTabBarVisible animated:YES];
+            break;
+        }
+            
+        default:
+            break;
     }
-    
-    [editorToolSelectionPopover presentPopoverFromRect:[sender frame] inView:[sender superview] permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
 }
 
 #pragma mark - View lifecycle

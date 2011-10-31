@@ -33,7 +33,7 @@ static void *childViewControllerTitleContext;
 
 #pragma mark - Properties
 
-@synthesize tabBar = _tabBar, showTabBar = _showTabBar;
+@synthesize tabBar = _tabBar, tabBarVisible = _tabBarVisible;
 @synthesize contentScrollView = _contentScrollView, tabPageMargin;
 @synthesize selectedViewControllerIndex;
 
@@ -49,36 +49,36 @@ static void *childViewControllerTitleContext;
     return _tabBar;
 }
 
-- (void)setShowTabBar:(BOOL)value
+- (void)setTabBarVisible:(BOOL)tabBarVisible
 {
-    [self setShowTabBar:value animated:NO];
+    [self setTabBarVisible:tabBarVisible animated:NO];
 }
 
-- (void)setShowTabBar:(BOOL)value animated:(BOOL)animated
+- (void)setTabBarVisible:(BOOL)value animated:(BOOL)animated
 {
-    if (value == _showTabBar)
+    if (value == _tabBarVisible)
         return;
     
     [self willChangeValueForKey:@"showTabBar"];
-    _showTabBar = value;
+    _tabBarVisible = value;
     
     if (self.isViewLoaded)
     {
-        if (_showTabBar)
+        if (_tabBarVisible)
             [self.view addSubview:self.tabBar];
         if (animated)
         {
             [UIView animateWithDuration:0.2 delay:0 options:UIViewAnimationOptionAllowUserInteraction | UIViewAnimationOptionBeginFromCurrentState animations:^{
                 [self layoutChildViews]; 
             } completion:^(BOOL finished) {
-                if (finished && !_showTabBar)
+                if (finished && !_tabBarVisible)
                     [self.tabBar removeFromSuperview];
             }];
         }
         else
         {
             [self layoutChildViews];
-            if (!_showTabBar)
+            if (!_tabBarVisible)
                 [self.tabBar removeFromSuperview];
         }
     }
@@ -174,7 +174,7 @@ static void *childViewControllerTitleContext;
 static void init(ECTabController *self)
 {
     self->selectedViewControllerIndex = NSNotFound;
-    self->_showTabBar = YES;
+    self->_tabBarVisible = YES;
 }
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -223,7 +223,7 @@ static void init(ECTabController *self)
 {
     [super viewDidLoad];
     
-    if (self.showTabBar)
+    if (self.isTabBarVisible)
         [self.view addSubview:self.tabBar];
     [self.view addSubview:self.contentScrollView];
     
@@ -426,10 +426,10 @@ static void init(ECTabController *self)
     
     // Layout tab bar
     if (self.tabBar.superview != nil)
-        self.tabBar.frame = CGRectMake(0, self.showTabBar ? 0 : -TABBAR_HEIGHT, bounds.size.width, TABBAR_HEIGHT);;
+        self.tabBar.frame = CGRectMake(0, self.isTabBarVisible ? 0 : -TABBAR_HEIGHT, bounds.size.width, TABBAR_HEIGHT);;
     
     // Creating the content view
-    CGFloat tabBarActualHeight = self.showTabBar ? TABBAR_HEIGHT : 0;
+    CGFloat tabBarActualHeight = self.isTabBarVisible ? TABBAR_HEIGHT : 0;
     self.contentScrollView.frame = CGRectMake(-tabPageMargin / 2, tabBarActualHeight, bounds.size.width + tabPageMargin, bounds.size.height - tabBarActualHeight);
 }
 
@@ -472,6 +472,19 @@ static void init(ECTabController *self)
     [self.contentScrollView layoutIfNeeded];
     CGFloat pageWidth = self.contentScrollView.bounds.size.width;
     [self.contentScrollView scrollRectToVisible:CGRectMake(pageWidth * selectedViewControllerIndex, 0, pageWidth, 1) animated:animated];
+}
+
+@end
+
+
+@implementation UIViewController (ECTabController)
+
+- (ECTabController *)tabCollectionController
+{
+    UIViewController *result = self;
+    while (result && ![result isKindOfClass:[ECTabController class]])
+        result = result.parentViewController;
+    return result;
 }
 
 @end

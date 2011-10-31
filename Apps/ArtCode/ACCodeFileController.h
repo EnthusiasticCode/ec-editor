@@ -10,7 +10,7 @@
 
 @class ECCodeView, ACTab;
 
-@interface ACCodeFileController : UIViewController <UITextFieldDelegate>
+@interface ACCodeFileController : UIViewController <UITextFieldDelegate, UIActionSheetDelegate>
 
 @property (nonatomic, strong) NSURL *fileURL;
 
