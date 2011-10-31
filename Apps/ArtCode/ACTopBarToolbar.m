@@ -15,7 +15,6 @@ static const void *editItemContext;
 
 @interface ACTopBarToolbar ()
 
-- (void)_setupLayout;
 - (void)_setupButton:(UIButton *)button withBarButtonItem:(UIBarButtonItem *)item;
 
 @end
@@ -85,7 +84,7 @@ static const void *editItemContext;
         [self addSubview:editItem.customView];
     }
     
-    [self _setupLayout];
+    [self layoutSubviews];
     
     [self didChangeValueForKey:@"editItem"];
 }
@@ -112,7 +111,7 @@ static const void *editItemContext;
         [self bringSubviewToFront:self.titleControl];
         [UIView animateWithDuration:0.2 animations:^{
             // Layout title control
-            [self _setupLayout];
+            [self layoutSubviews];
         } completion:^(BOOL finished) {
             [UIView animateWithDuration:0.10 animations:^{
                 // Fade-out old items
@@ -135,7 +134,7 @@ static const void *editItemContext;
         for (UIBarButtonItem *item in oldItems) {
             [item.customView removeFromSuperview];
         }
-        [self _setupLayout];
+        [self setNeedsLayout];
     }
     
     [self didChangeValueForKey:@"toolItems"];
@@ -172,8 +171,6 @@ static void init(ACTopBarToolbar *self)
     [self addSubview:self.backButton];
     [self addSubview:self.forwardButton];
     [self addSubview:self.titleControl];
-    
-    [self _setupLayout];
 }
 
 - (id)initWithFrame:(CGRect)frame
@@ -196,9 +193,7 @@ static void init(ACTopBarToolbar *self)
     [self.backgroundImage drawInRect:rect];
 }
 
-#pragma mark - Private methods
-
-- (void)_setupLayout
+- (void)layoutSubviews
 {
     CGRect bounds = self.bounds;
     
@@ -231,6 +226,8 @@ static void init(ACTopBarToolbar *self)
     
     self.titleControl.frame = (CGRect){ CGPointMake(leftButtonsFrame.origin.x, 0), CGSizeMake(rightButtonsFrame.origin.x - leftButtonsFrame.origin.x, bounds.size.height) };
 }
+
+#pragma mark - Private methods
 
 - (void)_setupButton:(UIButton *)button withBarButtonItem:(UIBarButtonItem *)item
 {
