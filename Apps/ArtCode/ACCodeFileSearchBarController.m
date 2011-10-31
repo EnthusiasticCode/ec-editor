@@ -211,8 +211,10 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
         _searchFilterMatches = [filterRegExp matchesInString:text options:0 range:NSMakeRange(0, [text length])];
         
         dispatch_async(dispatch_get_main_queue(), ^{
-            _searchFilterMatchesLocation = -1;
+            _searchFilterMatchesLocation = 0;
             [targetCodeFileController.codeView updateAllText];
+            if ([_searchFilterMatches count] > 0)
+                [targetCodeFileController.codeView flashTextInRange:[[_searchFilterMatches objectAtIndex:0] range]];
         });
     });
 }
