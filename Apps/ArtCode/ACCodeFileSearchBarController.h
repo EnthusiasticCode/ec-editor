@@ -8,12 +8,19 @@
 
 #import <UIKit/UIKit.h>
 
-@interface ACCodeFileSearchBarController : UIViewController
+@class ACCodeFileController;
+
+@interface ACCodeFileSearchBarController : UIViewController <UITextFieldDelegate>
+
+@property (weak, nonatomic) ACCodeFileController *targetCodeFileController;
 
 @property (strong, nonatomic) IBOutlet UITextField *findTextField;
+@property (strong, nonatomic) IBOutlet UITextField *replaceTextField;
 
 - (IBAction)moveResultAction:(id)sender;
 - (IBAction)toggleReplaceAction:(id)sender;
 - (IBAction)closeBarAction:(id)sender;
+
+- (IBAction)replaceAllAction:(id)sender;
 
 @end

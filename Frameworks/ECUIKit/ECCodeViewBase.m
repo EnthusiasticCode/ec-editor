@@ -304,10 +304,7 @@ static void init(ECCodeViewBase *self)
     if (self.dataSource == nil)
         return nil;
     
-    if (![self.dataSource isKindOfClass:[ECCodeStringDataSource class]])
-        return nil;
-    
-    return [(ECCodeStringDataSource *)self.dataSource string];
+    return [[self.dataSource textRenderer:self.renderer attributedStringInRange:NSMakeRange(0, [self.dataSource stringLengthForTextRenderer:self.renderer])] string];
 }
 
 - (void)setText:(NSString *)string

@@ -131,7 +131,10 @@
         case 1: // toggle find/replace 
         {
             if (!_searchBarController)
+            {
                 _searchBarController = [[ACCodeFileSearchBarController alloc] initWithNibName:@"ACCodeFileSearchBarController" bundle:nil];
+                _searchBarController.targetCodeFileController = self;
+            }
             if (self.singleTabController.toolbarViewController != _searchBarController)
                 [self.singleTabController setToolbarViewController:_searchBarController animated:YES];
             else
