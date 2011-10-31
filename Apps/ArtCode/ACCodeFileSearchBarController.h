@@ -16,6 +16,7 @@
 
 @property (strong, nonatomic) IBOutlet UITextField *findTextField;
 @property (strong, nonatomic) IBOutlet UITextField *replaceTextField;
+@property (strong, nonatomic) IBOutlet UILabel *findResultLabel;
 
 - (IBAction)moveResultAction:(id)sender;
 - (IBAction)toggleReplaceAction:(id)sender;

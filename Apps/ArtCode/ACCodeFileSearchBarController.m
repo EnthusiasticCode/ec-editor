@@ -34,7 +34,7 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
 #pragma mark - Properties
 
 @synthesize targetCodeFileController;
-@synthesize findTextField, replaceTextField;
+@synthesize findTextField, replaceTextField, findResultLabel;
 
 - (void)setTargetCodeFileController:(ACCodeFileController *)controller
 {
@@ -69,6 +69,7 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
     
     [self setFindTextField:nil];
     [self setReplaceTextField:nil];
+    [self setFindResultLabel:nil];
     [super viewDidUnload];
 }
 
@@ -204,6 +205,14 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
     
     NSString *filterString = self.findTextField.text;
     
+    if (filterString.length == 0)
+    {
+        findResultLabel.hidden = YES;
+        _searchFilterMatches = nil;
+        [targetCodeFileController.codeView updateAllText];
+        return;
+    }
+    
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         // TODO create here? manage error
         NSRegularExpression *filterRegExp = [NSRegularExpression regularExpressionWithPattern:filterString options:0 error:NULL];
@@ -216,7 +225,15 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
             _searchFilterMatchesLocation = 0;
             [targetCodeFileController.codeView updateAllText];
             if ([_searchFilterMatches count] > 0)
+            {
                 [targetCodeFileController.codeView flashTextInRange:[[_searchFilterMatches objectAtIndex:0] range]];
+                findResultLabel.text = [NSString stringWithFormat:@"%u matches", [_searchFilterMatches count]];
+            }
+            else
+            {
+                findResultLabel.text = @"Not found";
+            }
+            findResultLabel.hidden = NO;
         });
     });
 }

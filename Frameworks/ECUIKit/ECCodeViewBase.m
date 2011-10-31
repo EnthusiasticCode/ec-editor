@@ -382,7 +382,7 @@ static void init(ECCodeViewBase *self)
     
     [view addSubview:self];
     self.contentMode = UIViewContentModeScaleToFill;
-    self.frame = rect;
+    self.frame = CGRectIntegral(rect);
     self.alpha = 0;
     self.transform = CGAffineTransformIdentity;
     [UIView animateWithDuration:duration delay:0 options:UIViewAnimationOptionCurveEaseIn | UIViewAnimationOptionAllowUserInteraction animations:^{
