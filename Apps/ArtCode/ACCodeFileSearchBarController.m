@@ -12,12 +12,14 @@
 #import "ACCodeFileController.h"
 #import <ECFoundation/NSTimer+block.h>
 #import <ECUIKit/ECCodeView.h>
+#import <ECUIKit/ECBezelAlert.h>
 
 static NSString * findFilterPassBlockKey = @"findFilterPass";
 
 
 @interface ACCodeFileSearchBarController () {
     NSArray *_searchFilterMatches;
+    NSInteger _searchFilterMatchesLocation;
     NSTimer *_filterDebounceTimer;
 }
 
@@ -101,7 +103,24 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
 
 #pragma mark - Action Methods
 
-- (IBAction)moveResultAction:(id)sender {
+- (IBAction)moveResultAction:(id)sender
+{
+    if (targetCodeFileController == nil)
+        return;
+    
+    _searchFilterMatchesLocation += [sender tag];
+    if (_searchFilterMatchesLocation < 0)
+    {
+        // TODO bezer alert cycling
+        _searchFilterMatchesLocation = [_searchFilterMatches count] - 1;
+    }
+    else if (_searchFilterMatchesLocation >= [_searchFilterMatches count])
+    {
+        // TODO bezer alert cycling
+        _searchFilterMatchesLocation = 0;
+    }
+    
+    [targetCodeFileController.codeView flashTextInRange:[[_searchFilterMatches objectAtIndex:_searchFilterMatchesLocation] range]];
 }
 
 - (IBAction)toggleReplaceAction:(id)sender
@@ -187,10 +206,12 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
         // TODO create here? manage error
         NSRegularExpression *filterRegExp = [NSRegularExpression regularExpressionWithPattern:filterString options:0 error:NULL];
         
+        // TODO get string from document instead
         NSString *text = [targetCodeFileController.codeView text];
         _searchFilterMatches = [filterRegExp matchesInString:text options:0 range:NSMakeRange(0, [text length])];
         
         dispatch_async(dispatch_get_main_queue(), ^{
+            _searchFilterMatchesLocation = -1;
             [targetCodeFileController.codeView updateAllText];
         });
     });

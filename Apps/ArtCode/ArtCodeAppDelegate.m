@@ -11,6 +11,7 @@
 #import <ECFoundation/NSURL+ECAdditions.h>
 #import <ECCodeIndexing/ECCodeIndex.h>
 #import <ECCodeIndexing/TMTheme.h>
+#import <ECUIKit/ECCodeViewBase.h>
 #import <ECUIKit/UIControl+BlockAction.h>
 
 #import "AppStyle.h"
@@ -58,11 +59,7 @@
     [popoverAppearance setShadowOffsetForArrowDirectionUpToAutoOrient:CGSizeMake(0, 2)];
 
     ////////////////////////////////////////////////////////////////////////////
-    // Tab Bar
-    id tabBarAppearance = [ECTabBar appearance];
-    [tabBarAppearance setBackgroundColor:[UIColor blackColor]];
-    [tabBarAppearance setTabControlInsets:UIEdgeInsetsMake(3, 3, 0, 3)];
-    
+    // Tab Bar    
     id buttonInTabBarAppearance = [ECTabBarButton appearance];
     [buttonInTabBarAppearance setBackgroundImage:[[UIImage imageNamed:@"tabBar_TabBackground_Normal"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 15, 0, 15)] forState:UIControlStateNormal];
     [buttonInTabBarAppearance setBackgroundImage:[[UIImage imageNamed:@"tabBar_TabBackground_Selected"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 15, 0, 15)] forState:UIControlStateSelected];
@@ -91,8 +88,14 @@
     [[ACTopBarToolButton appearance] setBackgroundImage:[[UIImage imageNamed:@"topBar_ToolButton_Normal"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 10, 0, 10)] forState:UIControlStateNormal];
     
     ////////////////////////////////////////////////////////////////////////////
+    // Code view elements
+    [[ECCodeFlashView appearance] setBackgroundColor:[UIColor redColor]];
+    
+    ////////////////////////////////////////////////////////////////////////////
     // Creating main tab controllers
     self.tabController = [[ECTabController alloc] init];
+    self.tabController.tabBar.backgroundColor = [UIColor blackColor];
+    self.tabController.tabBar.tabControlInsets = UIEdgeInsetsMake(3, 3, 0, 3);
     // Add tab button
     UIButton *addTabButton = [UIButton new];
     [addTabButton setImage:[UIImage imageNamed:@"tabBar_TabAddButton"] forState:UIControlStateNormal];

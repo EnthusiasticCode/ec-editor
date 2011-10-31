@@ -244,7 +244,7 @@ static void init(ECCodeViewBase *self)
         [_contentView setNeedsDisplayInRect:rect];
 }
 
-#pragma mark -
+#pragma mark - Text Decoration Methods
 
 - (void)addPassLayerBlock:(ECTextRendererLayerPass)block underText:(BOOL)isUnderlay forKey:(NSString *)passKey
 {
@@ -275,29 +275,22 @@ static void init(ECCodeViewBase *self)
     self.renderer.overlayRenderingPasses = [overlayPasses allValues];
 }
 
-#pragma mark - Text Renderer Data source
-
-- (NSAttributedString *)textRenderer:(ECTextRenderer *)sender attributedStringInRange:(NSRange)stringRange
+- (void)flashTextInRange:(NSRange)textRange
 {
-    ECASSERT(sender == self.renderer);
+    ECRectSet *rects = [self.renderer rectsForStringRange:textRange limitToFirstLine:NO];
     
-    if (self.dataSource == nil)
-        return nil;
+    // Scroll to center selected rect
+    [UIView animateWithDuration:0.25 delay:0 options:UIViewAnimationOptionCurveEaseInOut | UIViewAnimationOptionAllowUserInteraction animations:^{
+        [self scrollRectToVisible:CGRectInset(rects.bounds, -100, -100) animated:NO];
+    } completion:^(BOOL finished) {
+        [rects enumerateRectsUsingBlock:^(CGRect rect, BOOL *stop) {
+            [[ECCodeFlashView new] flashInRect:rect view:self withDuration:0.15];
+        }];
+    }];
     
-    return [self.dataSource textRenderer:self.renderer attributedStringInRange:stringRange];
 }
 
-- (NSUInteger)stringLengthForTextRenderer:(ECTextRenderer *)sender
-{
-    ECASSERT(sender == self.renderer);
-    
-    if (self.dataSource == nil)
-        return 0;
-    
-    return [self.dataSource stringLengthForTextRenderer:self.renderer];
-}
-
-#pragma mark - Text Renderer and CodeView String DataSource
+#pragma mark - Text Access Methods
 
 - (NSString *)text
 {
@@ -309,6 +302,7 @@ static void init(ECCodeViewBase *self)
 
 - (void)setText:(NSString *)string
 {
+    // TODO rethink this method
     if (self.dataSource == nil)
         self.dataSource = [ECCodeStringDataSource new];
     
@@ -371,3 +365,37 @@ static void init(ECCodeViewBase *self)
 
 @end
 
+
+@implementation ECCodeFlashView
+
+@synthesize cornerRadius, backgroundImage;
+
+- (void)drawRect:(CGRect)rect
+{    
+    if (backgroundImage)
+        [backgroundImage drawInRect:rect];
+}
+
+- (void)flashInRect:(CGRect)rect view:(UIView *)view withDuration:(NSTimeInterval)duration
+{
+    [self setNeedsDisplay];
+    
+    [view addSubview:self];
+    self.contentMode = UIViewContentModeScaleToFill;
+    self.frame = rect;
+    self.alpha = 0;
+    self.transform = CGAffineTransformIdentity;
+    [UIView animateWithDuration:duration delay:0 options:UIViewAnimationOptionCurveEaseIn | UIViewAnimationOptionAllowUserInteraction animations:^{
+        self.alpha = 1;
+        self.transform = CGAffineTransformMakeScale(1.7, 1.7);
+    } completion:^(BOOL finished) {
+        [UIView animateWithDuration:duration / 2 delay:0 options:UIViewAnimationOptionCurveEaseOut | UIViewAnimationOptionAllowUserInteraction animations:^{
+            self.alpha = 0;
+            self.transform = CGAffineTransformIdentity;
+        } completion:^(BOOL finished) {
+            [self removeFromSuperview];
+        }];
+    }];
+}
+
+@end
