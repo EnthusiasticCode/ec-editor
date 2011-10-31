@@ -111,12 +111,14 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
     _searchFilterMatchesLocation += [sender tag];
     if (_searchFilterMatchesLocation < 0)
     {
-        // TODO bezer alert cycling
+        // TODO use image isntead
+        [[ECBezelAlert centerBezelAlert] addAlertMessageWithText:@"Cycle to bottom" image:nil displayImmediatly:YES];
         _searchFilterMatchesLocation = [_searchFilterMatches count] - 1;
     }
     else if (_searchFilterMatchesLocation >= [_searchFilterMatches count])
     {
-        // TODO bezer alert cycling
+        // TODO use image isntead
+        [[ECBezelAlert centerBezelAlert] addAlertMessageWithText:@"Cycle to top" image:nil displayImmediatly:YES];
         _searchFilterMatchesLocation = 0;
     }
     
