@@ -447,10 +447,8 @@ static void init(ECTabController *self)
         {
             if (viewController.view.superview == nil)
             {
-                [viewController viewWillAppear:NO];
                 [self.contentScrollView addSubview:viewController.view];
                 viewController.view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-                [viewController viewDidAppear:NO];
             }
             else
             {
@@ -459,9 +457,7 @@ static void init(ECTabController *self)
         }
         else if (viewController.isViewLoaded)
         {
-            [viewController viewWillDisappear:NO];
             [viewController.view removeFromSuperview];
-            [viewController viewDidDisappear:NO];
         }
     }];
 }
@@ -484,7 +480,7 @@ static void init(ECTabController *self)
     UIViewController *result = self;
     while (result && ![result isKindOfClass:[ECTabController class]])
         result = result.parentViewController;
-    return result;
+    return (ECTabController *)result;
 }
 
 @end
