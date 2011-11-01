@@ -16,27 +16,27 @@
 #define PREVIEW_SECTION 1
 #define PREVIEW_SECTION_IMAGE_HEIGHT 55
 #define PREVIEW_SECTION_IMAGE_WIDTH 280
-static void const * searchBarControllerContext;
+static void const * parentSearchBarControllerContext;
 
 
 @implementation ACCodeFileSearchOptionsController
 
 #pragma mark - Properties
 
-@synthesize searchBarController;
+@synthesize parentSearchBarController, parentPopoverController;
 
 - (void)setSearchBarController:(ACCodeFileSearchBarController *)controller
 {
-    if (controller == searchBarController)
+    if (controller == parentSearchBarController)
         return;
     
-    [self willChangeValueForKey:@"searchBarController"];
+    [self willChangeValueForKey:@"parentSearchBarController"];
     
-    [searchBarController removeObserver:self forKeyPath:@"searchFilterMatches" context:&searchBarControllerContext];
-    searchBarController = controller;
-    [searchBarController addObserver:self forKeyPath:@"searchFilterMatches" options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew context:&searchBarControllerContext];
+    [parentSearchBarController removeObserver:self forKeyPath:@"searchFilterMatches" context:&parentSearchBarControllerContext];
+    parentSearchBarController = controller;
+    [parentSearchBarController addObserver:self forKeyPath:@"searchFilterMatches" options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew context:&parentSearchBarControllerContext];
     
-    [self didChangeValueForKey:@"searchBarController"];
+    [self didChangeValueForKey:@"parentSearchBarController"];
 }
 
 #pragma mark - Controller Methods
@@ -48,7 +48,7 @@ static void const * searchBarControllerContext;
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
-    if (context == &searchBarControllerContext)
+    if (context == &parentSearchBarControllerContext)
     {
         // filter mathces changed
         [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:PREVIEW_SECTION] withRowAnimation:UITableViewRowAnimationAutomatic];
@@ -73,7 +73,7 @@ static void const * searchBarControllerContext;
             return 1;
             
         case PREVIEW_SECTION:
-            return (searchBarController && searchBarController.targetCodeFileController) ? [searchBarController.searchFilterMatches count] : 0;
+            return (parentSearchBarController && parentSearchBarController.targetCodeFileController) ? [parentSearchBarController.searchFilterMatches count] : 0;
             
         default:
             return 0;
@@ -116,11 +116,11 @@ static void const * searchBarControllerContext;
             cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:PreviewCellIdentifier];
         }
         
-        ECASSERT([searchBarController.searchFilterMatches count] > index);
-        ECASSERT([[searchBarController.searchFilterMatches objectAtIndex:index] respondsToSelector:@selector(rangeAtIndex:)]);
+        ECASSERT([parentSearchBarController.searchFilterMatches count] > index);
+        ECASSERT([[parentSearchBarController.searchFilterMatches objectAtIndex:index] respondsToSelector:@selector(rangeAtIndex:)]);
         
         // Retrieve the match bounding box in the code view rendered text.
-        CGRect matchRect = [searchBarController.targetCodeFileController.codeView.renderer rectsForStringRange:[[searchBarController.searchFilterMatches objectAtIndex:index] rangeAtIndex:0] limitToFirstLine:NO].bounds;
+        CGRect matchRect = [parentSearchBarController.targetCodeFileController.codeView.renderer rectsForStringRange:[[parentSearchBarController.searchFilterMatches objectAtIndex:index] rangeAtIndex:0] limitToFirstLine:NO].bounds;
         CGRect clipRect = CGRectMake(0, 0, PREVIEW_SECTION_IMAGE_WIDTH, PREVIEW_SECTION_IMAGE_HEIGHT);
         clipRect.origin.x = CGRectGetMidX(matchRect) - PREVIEW_SECTION_IMAGE_WIDTH / 2;
         clipRect.origin.y = CGRectGetMidY(matchRect) - PREVIEW_SECTION_IMAGE_HEIGHT / 2;
@@ -162,7 +162,7 @@ static void const * searchBarControllerContext;
                 CGContextTranslateCTM(context, -clipRect.origin.x, 0);
             
             // Draw text
-            [searchBarController.targetCodeFileController.codeView.renderer drawTextWithinRect:clipRect inContext:context];
+            [parentSearchBarController.targetCodeFileController.codeView.renderer drawTextWithinRect:clipRect inContext:context];
         }
         UIImageView *previewImageView = [[UIImageView alloc] initWithImage:UIGraphicsGetImageFromCurrentImageContext()];
         UIGraphicsEndImageContext();
@@ -186,13 +186,17 @@ static void const * searchBarControllerContext;
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    // Navigation logic may go here. Create and push another view controller.
-    /*
-     <#DetailViewController#> *detailViewController = [[<#DetailViewController#> alloc] initWithNibName:@"<#Nib name#>" bundle:nil];
-     // ...
-     // Pass the selected object to the new view controller.
-     [self.navigationController pushViewController:detailViewController animated:YES];
-     */
+    NSUInteger index = [indexPath indexAtPosition:1];
+    if ([indexPath indexAtPosition:0] == OPTIONS_SECTION)
+    {
+        // TODO manage options
+    }
+    else
+    {
+        [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
+        [self.parentPopoverController dismissPopoverAnimated:YES];
+        [self.parentSearchBarController.targetCodeFileController.codeView flashTextInRange:[[self.parentSearchBarController.searchFilterMatches objectAtIndex:index] range]];
+    }
 }
 
 @end

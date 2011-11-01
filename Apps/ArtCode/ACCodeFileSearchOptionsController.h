@@ -13,6 +13,9 @@
 @interface ACCodeFileSearchOptionsController : UITableViewController
 
 /// The parent search bar controller that will display this options.
-@property (nonatomic, weak) ACCodeFileSearchBarController *searchBarController;
+@property (weak, nonatomic) ACCodeFileSearchBarController *parentSearchBarController;
+
+/// The popover controller displaying this controller if any.
+@property (weak, nonatomic) UIPopoverController *parentPopoverController;
 
 @end

@@ -176,7 +176,7 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
     {
         _searchOptionsController = [[ACCodeFileSearchOptionsController alloc] initWithStyle:UITableViewStyleGrouped];
         _searchOptionsController.contentSizeForViewInPopover = CGSizeMake(300, 1020);
-        _searchOptionsController.searchBarController = self;
+        _searchOptionsController.parentSearchBarController = self;
     }
     
     if (!_popover)
@@ -188,6 +188,8 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
     {
         [_popover setContentViewController:_searchOptionsController];
     }
+    
+    _searchOptionsController.parentPopoverController = _popover;
     
     [_popover presentPopoverFromRect:[sender frame] inView:[sender superview] permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
 }
