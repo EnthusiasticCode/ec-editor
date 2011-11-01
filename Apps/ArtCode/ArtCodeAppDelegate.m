@@ -23,6 +23,7 @@
 #import <ECUIKit/ECTabBar.h>
 #import "ACTopBarToolbar.h"
 #import "ACTopBarTitleControl.h"
+#import "ACCodeFileSearchBarController.h"
 
 #import "ACApplication.h"
 #import "ACTab.h"
@@ -84,8 +85,10 @@
     [ACTopBarTitleControlAppearance setSecondaryFragmentFont:[UIFont systemFontOfSize:14]];
    
     [[ACTopBarEditButton appearance] setBackgroundImage:[[UIImage imageNamed:@"topBar_ToolButton_Normal"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 10, 0, 10)] forState:UIControlStateNormal];
+    [[ACTopBarEditButton appearanceWhenContainedIn:[ACCodeFileSearchBarView class], nil] setBackgroundImage:[[UIImage imageNamed:@"searchBar_Button_Normal"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 10, 0, 10)] forState:UIControlStateNormal];
     
     [[ACTopBarToolButton appearance] setBackgroundImage:[[UIImage imageNamed:@"topBar_ToolButton_Normal"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 10, 0, 10)] forState:UIControlStateNormal];
+    [[ACTopBarToolButton appearanceWhenContainedIn:[ACCodeFileSearchBarView class], nil] setBackgroundImage:[[UIImage imageNamed:@"searchBar_Button_Normal"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 10, 0, 10)] forState:UIControlStateNormal];
     
     ////////////////////////////////////////////////////////////////////////////
     // Code view elements

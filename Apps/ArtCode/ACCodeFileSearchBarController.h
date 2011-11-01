@@ -25,10 +25,15 @@
 - (IBAction)closeBarAction:(id)sender;
 - (IBAction)toggleSearchOptionAction:(id)sender;
 
+- (IBAction)replaceSingleAction:(id)sender;
 - (IBAction)replaceAllAction:(id)sender;
 
 #pragma mark Filtering Options
 
 @property (nonatomic, readonly, strong) NSArray *searchFilterMatches;
 
+@end
+
+// View used as the container for the search bar.
+@interface ACCodeFileSearchBarView : UIView
 @end

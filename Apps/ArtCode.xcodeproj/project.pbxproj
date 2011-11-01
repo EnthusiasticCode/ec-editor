@@ -119,6 +119,11 @@
 		CDB7C92B145572EA00E0D2B2 /* ACSingleProjectBrowsersController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDB7C92A145572EA00E0D2B2 /* ACSingleProjectBrowsersController.m */; };
 		CDB7C9301455762E00E0D2B2 /* SingleProjectBrowsers.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CDB7C92F1455762E00E0D2B2 /* SingleProjectBrowsers.storyboard */; };
 		CDC13330145FFE390028423F /* ACCodeFileSearchOptionsController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDC1332F145FFE390028423F /* ACCodeFileSearchOptionsController.m */; };
+		CDC1333614602F5E0028423F /* searchBar_Background.png in Resources */ = {isa = PBXBuildFile; fileRef = CDC1333214602F5E0028423F /* searchBar_Background.png */; };
+		CDC1333714602F5E0028423F /* searchBar_Button_Normal.png in Resources */ = {isa = PBXBuildFile; fileRef = CDC1333314602F5E0028423F /* searchBar_Button_Normal.png */; };
+		CDC1333814602F5E0028423F /* searchBar_NextButton_Normal.png in Resources */ = {isa = PBXBuildFile; fileRef = CDC1333414602F5E0028423F /* searchBar_NextButton_Normal.png */; };
+		CDC1333914602F5E0028423F /* searchBar_PrevButton_Normal.png in Resources */ = {isa = PBXBuildFile; fileRef = CDC1333514602F5E0028423F /* searchBar_PrevButton_Normal.png */; };
+		CDC1333B146030380028423F /* searchBar_OptionButton.png in Resources */ = {isa = PBXBuildFile; fileRef = CDC1333A146030380028423F /* searchBar_OptionButton.png */; };
 		CDC2829314508D500054358D /* topBar_Background.png in Resources */ = {isa = PBXBuildFile; fileRef = CDC2828F14508D500054358D /* topBar_Background.png */; };
 		CDC2829414508D500054358D /* topBar_ForwardButton_Normal.png in Resources */ = {isa = PBXBuildFile; fileRef = CDC2829014508D500054358D /* topBar_ForwardButton_Normal.png */; };
 		CDC2829514508D500054358D /* topBar_TitleButton_Normal.png in Resources */ = {isa = PBXBuildFile; fileRef = CDC2829114508D500054358D /* topBar_TitleButton_Normal.png */; };
@@ -409,6 +414,11 @@
 		CDB7C92F1455762E00E0D2B2 /* SingleProjectBrowsers.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = SingleProjectBrowsers.storyboard; sourceTree = "<group>"; };
 		CDC1332E145FFE390028423F /* ACCodeFileSearchOptionsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACCodeFileSearchOptionsController.h; sourceTree = "<group>"; };
 		CDC1332F145FFE390028423F /* ACCodeFileSearchOptionsController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACCodeFileSearchOptionsController.m; sourceTree = "<group>"; };
+		CDC1333214602F5E0028423F /* searchBar_Background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = searchBar_Background.png; sourceTree = "<group>"; };
+		CDC1333314602F5E0028423F /* searchBar_Button_Normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = searchBar_Button_Normal.png; sourceTree = "<group>"; };
+		CDC1333414602F5E0028423F /* searchBar_NextButton_Normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = searchBar_NextButton_Normal.png; sourceTree = "<group>"; };
+		CDC1333514602F5E0028423F /* searchBar_PrevButton_Normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = searchBar_PrevButton_Normal.png; sourceTree = "<group>"; };
+		CDC1333A146030380028423F /* searchBar_OptionButton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = searchBar_OptionButton.png; sourceTree = "<group>"; };
 		CDC2828F14508D500054358D /* topBar_Background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = topBar_Background.png; sourceTree = "<group>"; };
 		CDC2829014508D500054358D /* topBar_ForwardButton_Normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = topBar_ForwardButton_Normal.png; sourceTree = "<group>"; };
 		CDC2829114508D500054358D /* topBar_TitleButton_Normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = topBar_TitleButton_Normal.png; sourceTree = "<group>"; };
@@ -753,6 +763,7 @@
 			children = (
 				CDC2A6B81459D9C600978008 /* Tab Bar */,
 				CDC2828E14508D250054358D /* Top Bar */,
+				CDC1333114602F430028423F /* Search Bar */,
 				CDFF3DF413C0D9D100108DE2 /* Tools Tab Icons */,
 				CDFF3DF513C0D9FD00108DE2 /* Tools Filters Icons */,
 				CDFF3DF613C0DA1100108DE2 /* Tools Table Icons */,
@@ -865,6 +876,18 @@
 				CD8108D413E31A28000E1941 /* ACColorSelectionControl.m */,
 			);
 			name = "Views and Controls";
+			sourceTree = "<group>";
+		};
+		CDC1333114602F430028423F /* Search Bar */ = {
+			isa = PBXGroup;
+			children = (
+				CDC1333A146030380028423F /* searchBar_OptionButton.png */,
+				CDC1333214602F5E0028423F /* searchBar_Background.png */,
+				CDC1333314602F5E0028423F /* searchBar_Button_Normal.png */,
+				CDC1333414602F5E0028423F /* searchBar_NextButton_Normal.png */,
+				CDC1333514602F5E0028423F /* searchBar_PrevButton_Normal.png */,
+			);
+			name = "Search Bar";
 			sourceTree = "<group>";
 		};
 		CDC2828E14508D250054358D /* Top Bar */ = {
@@ -1191,6 +1214,11 @@
 				CD4719A6145196CE00C7BCC5 /* tabBar_TabAddButton.png in Resources */,
 				CDB7C9301455762E00E0D2B2 /* SingleProjectBrowsers.storyboard in Resources */,
 				CDE8F9D7145EEF3F00CA4496 /* ACCodeFileSearchBarController.xib in Resources */,
+				CDC1333614602F5E0028423F /* searchBar_Background.png in Resources */,
+				CDC1333714602F5E0028423F /* searchBar_Button_Normal.png in Resources */,
+				CDC1333814602F5E0028423F /* searchBar_NextButton_Normal.png in Resources */,
+				CDC1333914602F5E0028423F /* searchBar_PrevButton_Normal.png in Resources */,
+				CDC1333B146030380028423F /* searchBar_OptionButton.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

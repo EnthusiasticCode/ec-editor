@@ -72,7 +72,7 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
     
     UIButton *findOptionsButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [findOptionsButton addTarget:self action:@selector(toggleSearchOptionAction:) forControlEvents:UIControlEventTouchUpInside];
-    [findOptionsButton setImage:[UIImage imageNamed:@"toolPanelNavigatorToolSelectedImage"] forState:UIControlStateNormal];
+    [findOptionsButton setImage:[UIImage imageNamed:@"searchBar_OptionButton"] forState:UIControlStateNormal];
     [findOptionsButton sizeToFit];
     // TODO fix problem that mask first part of editing area with button hit box (probably moving editing rect and put button outside)
     self.findTextField.leftViewMode = UITextFieldViewModeAlways;
@@ -194,6 +194,9 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
     [_popover presentPopoverFromRect:[sender frame] inView:[sender superview] permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
 }
 
+- (IBAction)replaceSingleAction:(id)sender {
+}
+
 - (IBAction)replaceAllAction:(id)sender {
 }
 
@@ -294,3 +297,5 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
 
 @end
 
+@implementation ACCodeFileSearchBarView
+@end
