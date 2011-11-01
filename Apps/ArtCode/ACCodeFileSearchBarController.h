@@ -12,6 +12,8 @@
 
 @interface ACCodeFileSearchBarController : UIViewController <UITextFieldDelegate>
 
+#pragma mark Controller Setup
+
 @property (weak, nonatomic) ACCodeFileController *targetCodeFileController;
 
 @property (strong, nonatomic) IBOutlet UITextField *findTextField;
@@ -24,5 +26,9 @@
 - (IBAction)toggleSearchOptionAction:(id)sender;
 
 - (IBAction)replaceAllAction:(id)sender;
+
+#pragma mark Filtering Options
+
+@property (nonatomic, readonly, strong) NSArray *searchFilterMatches;
 
 @end

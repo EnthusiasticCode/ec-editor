@@ -20,7 +20,6 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
 
 
 @interface ACCodeFileSearchBarController () {
-    NSArray *_searchFilterMatches;
     NSInteger _searchFilterMatchesLocation;
     
     UIPopoverController *_popover;
@@ -28,6 +27,8 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
     
     NSTimer *_filterDebounceTimer;
 }
+
+@property (nonatomic, readwrite, strong) NSArray *searchFilterMatches;
 
 - (void)_addFindFilterCodeViewPass;
 - (void)_applyFindFilter;
@@ -41,6 +42,7 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
 
 @synthesize targetCodeFileController;
 @synthesize findTextField, replaceTextField, findResultLabel;
+@synthesize searchFilterMatches;
 
 - (void)setTargetCodeFileController:(ACCodeFileController *)controller
 {
@@ -79,10 +81,10 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
 
 - (void)viewDidUnload 
 {
-    _searchFilterMatches = nil;
     _popover = nil;
     _searchOptionsController = nil;
     
+    [self setSearchFilterMatches:nil];
     [self setFindTextField:nil];
     [self setReplaceTextField:nil];
     [self setFindResultLabel:nil];
@@ -98,11 +100,11 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
 - (void)viewDidDisappear:(BOOL)animated
 {
     [self.targetCodeFileController.codeView removePassLayerForKey:findFilterPassBlockKey];
-    if ([_searchFilterMatches count] > 0)
+    if ([searchFilterMatches count] > 0)
     {
         [self.targetCodeFileController.codeView updateAllText];
     }
-    _searchFilterMatches = nil;
+    self.searchFilterMatches = nil;
 }
 
 #pragma mark - Text Field Delegate Methods
@@ -142,16 +144,16 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
     {
         // TODO use image isntead
         [[ECBezelAlert centerBezelAlert] addAlertMessageWithText:@"Cycle to bottom" image:nil displayImmediatly:YES];
-        _searchFilterMatchesLocation = [_searchFilterMatches count] - 1;
+        _searchFilterMatchesLocation = [searchFilterMatches count] - 1;
     }
-    else if (_searchFilterMatchesLocation >= [_searchFilterMatches count])
+    else if (_searchFilterMatchesLocation >= [searchFilterMatches count])
     {
         // TODO use image isntead
         [[ECBezelAlert centerBezelAlert] addAlertMessageWithText:@"Cycle to top" image:nil displayImmediatly:YES];
         _searchFilterMatchesLocation = 0;
     }
     
-    [targetCodeFileController.codeView flashTextInRange:[[_searchFilterMatches objectAtIndex:_searchFilterMatchesLocation] range]];
+    [targetCodeFileController.codeView flashTextInRange:[[searchFilterMatches objectAtIndex:_searchFilterMatchesLocation] range]];
 }
 
 - (IBAction)toggleReplaceAction:(id)sender
@@ -174,11 +176,13 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
     {
         _searchOptionsController = [[ACCodeFileSearchOptionsController alloc] initWithStyle:UITableViewStyleGrouped];
         _searchOptionsController.contentSizeForViewInPopover = CGSizeMake(300, 1020);
+        _searchOptionsController.searchBarController = self;
     }
     
     if (!_popover)
     {
         _popover = [[UIPopoverController alloc] initWithContentViewController:_searchOptionsController];
+        _popover.passthroughViews = [NSArray arrayWithObject:self.findTextField];
     }
     else
     {
@@ -202,7 +206,7 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
     __block NSMutableIndexSet *searchSectionIndexes = nil;
     __block NSUInteger lastLine = NSUIntegerMax;
     [targetCodeFileController.codeView addPassLayerBlock:^(CGContextRef context, ECTextRendererLine *line, CGRect lineBounds, NSRange stringRange, NSUInteger lineNumber) {
-        NSArray *searchSection = _searchFilterMatches;
+        NSArray *searchSection = searchFilterMatches;
         NSUInteger searchSectionCount = [searchSection count];
         if (searchSectionCount == 0)
             return;
@@ -256,7 +260,7 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
     if (filterString.length == 0)
     {
         findResultLabel.hidden = YES;
-        _searchFilterMatches = nil;
+        self.searchFilterMatches = nil;
         [targetCodeFileController.codeView updateAllText];
         return;
     }
@@ -267,15 +271,15 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
         
         // TODO get string from document instead
         NSString *text = [targetCodeFileController.codeView text];
-        _searchFilterMatches = [filterRegExp matchesInString:text options:0 range:NSMakeRange(0, [text length])];
+        self.searchFilterMatches = [filterRegExp matchesInString:text options:0 range:NSMakeRange(0, [text length])];
         
         dispatch_async(dispatch_get_main_queue(), ^{
             _searchFilterMatchesLocation = 0;
             [targetCodeFileController.codeView updateAllText];
-            if ([_searchFilterMatches count] > 0)
+            if ([searchFilterMatches count] > 0)
             {
-                [targetCodeFileController.codeView flashTextInRange:[[_searchFilterMatches objectAtIndex:0] range]];
-                findResultLabel.text = [NSString stringWithFormat:@"%u matches", [_searchFilterMatches count]];
+                [targetCodeFileController.codeView flashTextInRange:[[searchFilterMatches objectAtIndex:0] range]];
+                findResultLabel.text = [NSString stringWithFormat:@"%u matches", [searchFilterMatches count]];
             }
             else
             {
