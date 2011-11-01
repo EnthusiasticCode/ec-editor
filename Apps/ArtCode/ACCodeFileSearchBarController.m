@@ -14,12 +14,18 @@
 #import <ECUIKit/ECCodeView.h>
 #import <ECUIKit/ECBezelAlert.h>
 
+#import "ACCodeFileSearchOptionsController.h"
+
 static NSString * findFilterPassBlockKey = @"findFilterPass";
 
 
 @interface ACCodeFileSearchBarController () {
     NSArray *_searchFilterMatches;
     NSInteger _searchFilterMatchesLocation;
+    
+    UIPopoverController *_popover;
+    ACCodeFileSearchOptionsController *_searchOptionsController;
+    
     NSTimer *_filterDebounceTimer;
 }
 
@@ -61,11 +67,21 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    UIButton *findOptionsButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [findOptionsButton addTarget:self action:@selector(toggleSearchOptionAction:) forControlEvents:UIControlEventTouchUpInside];
+    [findOptionsButton setImage:[UIImage imageNamed:@"toolPanelNavigatorToolSelectedImage"] forState:UIControlStateNormal];
+    [findOptionsButton sizeToFit];
+    // TODO fix problem that mask first part of editing area with button hit box (probably moving editing rect and put button outside)
+    self.findTextField.leftViewMode = UITextFieldViewModeAlways;
+    self.findTextField.leftView = findOptionsButton;
 }
 
 - (void)viewDidUnload 
 {
     _searchFilterMatches = nil;
+    _popover = nil;
+    _searchOptionsController = nil;
     
     [self setFindTextField:nil];
     [self setReplaceTextField:nil];
@@ -99,6 +115,18 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
         [self _applyFindFilter];
     } repeats:NO];
     
+    return YES;
+}
+
+- (BOOL)textFieldShouldClear:(UITextField *)textField
+{
+    [self textField:textField shouldChangeCharactersInRange:NSMakeRange(0, 0) replacementString:nil];
+    return YES;
+}
+
+- (BOOL)textFieldShouldReturn:(UITextField *)textField
+{
+    [textField resignFirstResponder];
     return YES;
 }
 
@@ -138,6 +166,26 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
 {
     ECASSERT(self.singleTabController.toolbarViewController == self);
     [self.singleTabController setToolbarViewController:nil animated:YES];
+}
+
+- (void)toggleSearchOptionAction:(id)sender
+{
+    if (!_searchOptionsController)
+    {
+        _searchOptionsController = [[ACCodeFileSearchOptionsController alloc] initWithStyle:UITableViewStyleGrouped];
+        _searchOptionsController.contentSizeForViewInPopover = CGSizeMake(300, 1020);
+    }
+    
+    if (!_popover)
+    {
+        _popover = [[UIPopoverController alloc] initWithContentViewController:_searchOptionsController];
+    }
+    else
+    {
+        [_popover setContentViewController:_searchOptionsController];
+    }
+    
+    [_popover presentPopoverFromRect:[sender frame] inView:[sender superview] permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
 }
 
 - (IBAction)replaceAllAction:(id)sender {
@@ -239,3 +287,4 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
 }
 
 @end
+

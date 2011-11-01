@@ -21,6 +21,7 @@
 - (IBAction)moveResultAction:(id)sender;
 - (IBAction)toggleReplaceAction:(id)sender;
 - (IBAction)closeBarAction:(id)sender;
+- (IBAction)toggleSearchOptionAction:(id)sender;
 
 - (IBAction)replaceAllAction:(id)sender;
 

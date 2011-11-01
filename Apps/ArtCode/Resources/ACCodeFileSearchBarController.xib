@@ -194,6 +194,8 @@
 						<float key="IBUIMinimumFontSize">17</float>
 						<object class="IBUITextInputTraits" key="IBUITextInputTraits">
 							<int key="IBUIAutocorrectionType">1</int>
+							<int key="IBUIReturnKeyType">6</int>
+							<bool key="IBUIEnablesReturnKeyAutomatically">YES</bool>
 							<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
 						</object>
 						<int key="IBUIClearButtonMode">3</int>
@@ -478,6 +480,7 @@
 						<string key="moveResultAction:">id</string>
 						<string key="replaceAllAction:">id</string>
 						<string key="toggleReplaceAction:">id</string>
+						<string key="toggleSearchOptionAction:">id</string>
 					</dictionary>
 					<dictionary class="NSMutableDictionary" key="actionInfosByName">
 						<object class="IBActionInfo" key="closeBarAction:">
@@ -494,6 +497,10 @@
 						</object>
 						<object class="IBActionInfo" key="toggleReplaceAction:">
 							<string key="name">toggleReplaceAction:</string>
+							<string key="candidateClassName">id</string>
+						</object>
+						<object class="IBActionInfo" key="toggleSearchOptionAction:">
+							<string key="name">toggleSearchOptionAction:</string>
 							<string key="candidateClassName">id</string>
 						</object>
 					</dictionary>
