@@ -20,7 +20,7 @@ static void updateContentCorners(ECRoundedContentCornersView *self);
 
 @synthesize contentCornerRadius, contentInsets, clipContent;
 
-#warning TODO remove content instets. Popover view will need to have one of this view as a subview instead of deriving from it.
+// TODO remove content instets. Popover view will need to have one of this view as a subview instead of deriving from it.
 - (void)setContentInsets:(UIEdgeInsets)insets
 {
     contentInsets = insets;

@@ -19,15 +19,11 @@
 
 @class TextSelectionView;
 @class TextMagnificationView;
-@class CodeInfoView;
 
 #pragma mark -
 
 @interface ECCodeView () {
-@private    
-    // Navigator
-    CodeInfoView *infoView;
-    
+@private
     // Text management
     TextSelectionView *selectionView;
     ECPopoverController *completionPopover;
@@ -53,9 +49,6 @@
     UILongPressGestureRecognizer *longDoublePressRecognizer;
     id<UITextInputTokenizer> _tokenizer;
 }
-
-/// Specify if the info view containing search marks and navigator should be visible.
-@property (nonatomic, getter = isInfoViewVisible) BOOL infoViewVisible;
 
 /// Method to be used before any text modification occurs.
 - (void)editDataSourceInRange:(NSRange)range withString:(NSString *)string;
@@ -151,52 +144,6 @@
 - (void)setMagnify:(BOOL)doMagnify fromRect:(CGRect)rect ratio:(BOOL)ratio animated:(BOOL)animated;
 
 - (void)handleKnobGesture:(UILongPressGestureRecognizer *)recognizer;
-
-@end
-
-#pragma mark -
-
-@interface CodeInfoView : UIView {
-@private
-    id<ECCodeViewDataSource> dataSource;
-    ECTextRenderer *renderer;
-    
-    ECCodeViewBase *navigatorView;
-    
-    UITapGestureRecognizer *tapRecognizer;
-}
-
-- (id)initWithFrame:(CGRect)frame 
-navigatorDataSource:(id<ECCodeViewDataSource>)source 
-           renderer:(ECTextRenderer *)aRenderer;
-
-#pragma mark Parent Layout
-
-@property (nonatomic) CGSize parentSize;
-
-@property (nonatomic) CGFloat parentContentOffsetRatio;
-
-#pragma mark Info View Layout and Style
-
-@property (nonatomic) CGFloat normalWidth;
-
-@property (nonatomic) CGFloat navigatorWidth;
-
-@property (nonatomic, readonly) CGFloat currentWidth;
-
-@property (nonatomic) UIEdgeInsets navigatorInsets;
-
-@property (nonatomic, strong) UIColor *navigatorBackgroundColor;
-
-@property (nonatomic, getter = isNavigatorVisible) BOOL navigatorVisible;
-
-- (void)setNavigatorVisible:(BOOL)visible animated:(BOOL)animated;
-
-#pragma mark User Interaction
-
-- (void)updateNavigator;
-
-- (void)handleTap:(UITapGestureRecognizer *)recognizer;
 
 @end
 
@@ -636,180 +583,11 @@ navigatorDataSource:(id<ECCodeViewDataSource>)source
 
 @end
 
-#pragma mark -
-#pragma mark CodeInfoView
-
-@implementation CodeInfoView
-
-@synthesize parentSize, parentContentOffsetRatio;
-@synthesize normalWidth, navigatorWidth;
-@synthesize navigatorInsets, navigatorVisible, navigatorBackgroundColor;
-
-- (id)initWithFrame:(CGRect)frame navigatorDataSource:(id<ECCodeViewDataSource>)source renderer:(ECTextRenderer *)aRenderer
-{
-    parentSize = [UIScreen mainScreen].bounds.size;
-    normalWidth = 11;
-    navigatorInsets = UIEdgeInsetsMake(5, 5, 5, 0);
-    
-    frame.origin.x += frame.size.width - normalWidth;
-    frame.size.width = normalWidth;
-    
-    if ((self = [super initWithFrame:frame])) 
-    {
-        dataSource = source;
-        renderer = aRenderer;
-        
-        self.backgroundColor = [UIColor clearColor];
-        
-        tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTap:)];
-        [self addGestureRecognizer:tapRecognizer];
-    }
-    return self;
-}
-
-
-- (void)setParentSize:(CGSize)size
-{
-    if (CGSizeEqualToSize(size, parentSize))
-        return;
-    
-    parentSize = size;
-    
-    if (!navigatorVisible)
-        return;
-    
-    navigatorView.contentScaleFactor = (navigatorWidth - navigatorInsets.left - navigatorInsets.right) / parentSize.width;
-}
-
-- (void)setParentContentOffsetRatio:(CGFloat)ratio
-{
-    if (ratio == parentContentOffsetRatio)
-        return;
-    
-    parentContentOffsetRatio = ratio;
-    
-    if (!navigatorVisible)
-        return;
-    
-    CGFloat height = (navigatorView.contentSize.height - navigatorView.bounds.size.height);
-    navigatorView.contentOffset = CGPointMake(0, height > 0 ? parentContentOffsetRatio * height : 0);
-}
-
-- (CGFloat)currentWidth
-{
-    return navigatorVisible ? normalWidth + navigatorWidth : normalWidth;
-}
-
-- (void)setNavigatorVisible:(BOOL)visible
-{
-    [self setNavigatorVisible:visible animated:NO];
-}
-
-- (void)setNavigatorVisible:(BOOL)visible animated:(BOOL)animated
-{
-    if (visible == navigatorVisible)
-        return;
-    
-    if (!navigatorView) 
-    {
-        CGRect frame = (CGRect){ CGPointZero, parentSize };
-        frame.size.width = navigatorWidth;
-        frame = UIEdgeInsetsInsetRect(frame, navigatorInsets);
-        navigatorView = [[ECCodeViewBase alloc] initWithFrame:frame renderer:renderer];
-        navigatorView.dataSource = dataSource;
-        navigatorView.contentScaleFactor = (navigatorWidth - navigatorInsets.left - navigatorInsets.right) / parentSize.width;
-        navigatorView.backgroundColor = [UIColor whiteColor];
-        navigatorView.scrollEnabled = NO;
-        [self updateNavigator];
-        CGFloat height = (navigatorView.contentSize.height - navigatorView.bounds.size.height);
-        navigatorView.contentOffset = CGPointMake(0, height > 0 ? parentContentOffsetRatio * height : 0);
-        // TODO make this more effcient (like 4 subviews at corners)
-        navigatorView.layer.cornerRadius = 3;
-    }
-    
-    if (visible)
-        [self addSubview:navigatorView];
-    
-    if (animated)
-    {
-        if (visible)
-            navigatorVisible = YES;
-        navigatorView.alpha = 0;
-        [UIView animateWithDuration:0.25 delay:0 options:(UIViewAnimationOptionAllowUserInteraction | UIViewAnimationOptionBeginFromCurrentState | UIViewAnimationOptionCurveEaseInOut) animations:^(void) {
-            self.backgroundColor = visible ? navigatorBackgroundColor : [UIColor clearColor];
-            navigatorView.alpha = visible;
-        } completion:^(BOOL finished) {
-            if (finished)
-            {
-                if (!visible) 
-                {
-                    navigatorVisible = NO;
-                    [navigatorView removeFromSuperview];
-                }
-            }
-        }];
-    }
-    else
-    {
-        navigatorVisible = visible;
-        if (visible) 
-        {
-            navigatorView.alpha = 1;
-            self.backgroundColor = navigatorBackgroundColor;
-        }
-        else
-        {
-            self.backgroundColor = [UIColor clearColor];
-            [navigatorView removeFromSuperview];
-        }
-    }
-}
-
-- (void)updateNavigator
-{    
-    CGRect frame = self.bounds;
-    frame.size.width = navigatorWidth;
-    frame = UIEdgeInsetsInsetRect(frame, navigatorInsets);
-    
-    // Resetting the frame will trigger actual layout update
-    navigatorView.frame = frame;
-    [navigatorView setNeedsLayout];
-}
-
-- (void)handleTap:(UITapGestureRecognizer *)recognizer
-{
-    // TODO manage search marks
-//    [self setNavigatorVisible:!navigatorVisible animated:YES];
-}
-
-@end
-
-#pragma mark -
-#pragma mark ECCodeView
+#pragma mark - ECCodeView
 
 @implementation ECCodeView
 
-#pragma mark -
-#pragma mark Properties
-
-@synthesize infoViewVisible;
-@synthesize navigatorBackgroundColor;
-@synthesize navigatorWidth;
-
-- (void)setFrame:(CGRect)frame
-{
-    if (self.navigatorVisible) 
-        infoView.parentSize = frame.size;
-
-    [super setFrame:frame];    
-}
-
-- (void)setContentSize:(CGSize)contentSize
-{
-    [super setContentSize:contentSize];
-    
-    [infoView updateNavigator];
-}
+#pragma mark - Properties
 
 @dynamic dataSource;
 
@@ -878,87 +656,7 @@ static void init(ECCodeView *self)
     return self;
 }
 
-
-- (void)layoutSubviews
-{
-    if (infoViewVisible) 
-    {
-        CGRect infoFrame = self.bounds;
-        infoView.parentContentOffsetRatio = infoFrame.origin.y / (self.contentSize.height - infoFrame.size.height);
-        
-        CGFloat infoWidth = infoView.currentWidth;
-        infoFrame.origin.x = infoFrame.size.width - infoWidth;
-        infoFrame.size.width = infoWidth;        
-        infoView.frame = infoFrame;
-        
-        [self sendSubviewToBack:infoView];
-    }
-    
-    [super layoutSubviews];
-}
-
-#pragma mark - InfoView and Navigator methods
-
-- (void)setInfoViewVisible:(BOOL)visible
-{
-    if (visible == infoViewVisible)
-        return;
-    
-    infoViewVisible = visible;
-    
-    if (visible) 
-    {
-        if (!infoView)
-        {
-            infoView = [[CodeInfoView alloc] initWithFrame:self.bounds navigatorDataSource:self.dataSource renderer:self.renderer];
-            infoView.navigatorBackgroundColor = navigatorBackgroundColor;
-            infoView.navigatorWidth = navigatorWidth;
-            infoView.parentSize = self.bounds.size;
-        }
-        [self addSubview:infoView];
-    }
-    else
-    {
-        [infoView removeFromSuperview];
-    }
-}
-
-- (BOOL)isNavigatorVisible
-{
-    return infoView.navigatorVisible;
-}
-
-- (void)setNavigatorVisible:(BOOL)visible
-{
-    if (visible == infoView.navigatorVisible)
-        return;
-    
-    if (visible)
-    {
-        self.infoViewVisible = YES;
-        [infoView setNavigatorVisible:YES animated:YES];
-        [infoView updateNavigator];
-    }
-    else
-    {
-        [infoView setNavigatorVisible:NO animated:YES];
-    }
-}
-
-- (void)setNavigatorWidth:(CGFloat)width
-{
-    navigatorWidth = width;
-    infoView.navigatorWidth = width;
-}
-
-- (void)setNavigatorBackgroundColor:(UIColor *)color
-{
-    navigatorBackgroundColor = color;
-    infoView.navigatorBackgroundColor = color;
-}
-
-#pragma mark -
-#pragma mark Completion
+#pragma mark - Completion
 
 - (void)showCompletionPopoverAtCursor
 {
@@ -1001,8 +699,7 @@ static void init(ECCodeView *self)
     [completionPopover presentPopoverFromRect:textRect inView:self permittedArrowDirections:UIPopoverArrowDirectionUp | UIPopoverArrowDirectionDown animated:YES];
 }
 
-#pragma mark -
-#pragma mark UIResponder methods
+#pragma mark - UIResponder methods
 
 - (BOOL)canBecomeFirstResponder
 {

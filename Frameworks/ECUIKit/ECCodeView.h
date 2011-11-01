@@ -46,14 +46,6 @@
 /// Specify the color of the selection rect.
 @property (nonatomic, strong) UIColor *selectionColor;
 
-#pragma mark Managing the Navigator
-
-@property (nonatomic) CGFloat navigatorWidth;
-
-@property (nonatomic, strong) UIColor *navigatorBackgroundColor;
-
-@property (nonatomic, getter = isNavigatorVisible) BOOL navigatorVisible;
-
 #pragma mark Completion
 
 - (void)showCompletionPopoverAtCursor;
