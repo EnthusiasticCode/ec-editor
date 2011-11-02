@@ -13,20 +13,12 @@ static NSMutableArray *_extensionClasses;
 static NSURL *_bundleDirectory;
 
 @interface ECCodeIndex ()
-@property (nonatomic, strong, readonly) NSMutableDictionary *extensionsByExtensionClass;
-- (ECCodeIndex *)extensionForClass:(Class)extensionClass;
+{
+    NSMutableArray *_extensions;
+}
 @end
 
 @implementation ECCodeIndex
-
-@synthesize extensionsByExtensionClass = _extensionsByExtensionClass;
-
-- (NSMutableDictionary *)extensionsByExtensionClass
-{
-    if (!_extensionsByExtensionClass)
-        _extensionsByExtensionClass = [[NSMutableDictionary alloc] init];
-    return _extensionsByExtensionClass;
-}
 
 + (NSURL *)bundleDirectory
 {
@@ -42,46 +34,42 @@ static NSURL *_bundleDirectory;
     _bundleDirectory = bundleDirectory;
 }
 
+- (id)init
+{
+    if (![self isMemberOfClass:[ECCodeIndex class]])
+        return [super init];
+    self = [super init];
+    if (!self)
+        return nil;
+    _extensions = [NSMutableArray arrayWithCapacity:[_extensionClasses count]];
+    for (Class extensionClass in _extensionClasses)
+        [_extensions addObject:[[extensionClass alloc] init]];
+    return self;
+}
+
 - (id)codeUnitImplementingProtocol:(Protocol *)protocol withFile:(NSURL *)fileURL language:(NSString *)language scope:(NSString *)scope
 {
     if (![self isMemberOfClass:[ECCodeIndex class]])
         return nil;
-    NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] initWithFilePresenter:nil];
-    __block id<ECCodeUnit>codeUnit = nil;
-    [fileCoordinator coordinateReadingItemAtURL:fileURL options:NSFileCoordinatorReadingResolvesSymbolicLink | NSFileCoordinatorReadingWithoutChanges error:NULL byAccessor:^(NSURL *newURL) {
-        NSFileManager *fileManager = [[NSFileManager alloc] init];
-        if (![fileManager fileExistsAtPath:[newURL path]])
-            return;
-        float winningSupport = 0.0;
-        Class winningExtensionClass;
-        for (Class extensionClass in _extensionClasses)
-        {
-            float support = [extensionClass implementsProtocol:protocol forFile:fileURL language:language scope:scope];
-            if (support <= winningSupport)
-                continue;
-            winningSupport = support;
-            winningExtensionClass = extensionClass;
-        }
-        ECASSERT(winningSupport >= 0.0 && winningSupport < 1.0);
-        if (winningSupport == 0.0)
-            return;
-        ECCodeIndex *extension = [self extensionForClass:winningExtensionClass];
-        codeUnit = [extension codeUnitImplementingProtocol:protocol withFile:fileURL language:language scope:scope];
-    }];
-    return codeUnit;
+    NSFileManager *fileManager = [[NSFileManager alloc] init];
+    if (![fileManager fileExistsAtPath:[fileURL path]])
+        return nil;
+    float winningSupport = 0.0;
+    ECCodeIndex *winningExtension = nil;
+    for (ECCodeIndex *extension in _extensions)
+    {
+        float support = [extension implementsProtocol:protocol forFile:fileURL language:language scope:scope];
+        if (support <= winningSupport)
+            continue;
+        winningSupport = support;
+        winningExtension = extension;
+    }
+    ECASSERT(winningSupport >= 0.0 && winningSupport < 1.0);
+    if (winningSupport == 0.0)
+        return nil;
+    return [winningExtension codeUnitImplementingProtocol:protocol withFile:fileURL language:language scope:scope];;
 }
 
-- (ECCodeIndex *)extensionForClass:(Class)extensionClass
-{
-    NSString *className = NSStringFromClass(extensionClass);
-    ECCodeIndex *extension = [self.extensionsByExtensionClass objectForKey:className];
-    if (!extension)
-    {
-        extension = [[extensionClass alloc] init];
-        [self.extensionsByExtensionClass setObject:extension forKey:className];
-    }
-    return extension;
-}
 @end
 
 @implementation ECCodeIndex (Subclass)
@@ -96,7 +84,7 @@ static NSURL *_bundleDirectory;
     [_extensionClasses addObject:extensionClass];
 }
 
-+ (float)implementsProtocol:(Protocol *)protocol forFile:(NSURL *)fileURL language:(NSString *)language scope:(NSString *)scope
+- (float)implementsProtocol:(Protocol *)protocol forFile:(NSURL *)fileURL language:(NSString *)language scope:(NSString *)scope
 {
     return 0.0;
 }

@@ -23,6 +23,8 @@ static NSRange _rangeFromEndOfRangeToEndOfRange(NSRange firstRange, NSRange seco
     NSOperationQueue *_presentedItemOperationQueue;
     TMSyntax *_syntax;
     TMCodeIndex *_index;
+    NSMutableDictionary *_firstBeginMatches;
+    NSMutableDictionary *_firstEndMatches;
 }
 // presentedItemURL needs to be declared as assign because it's declared as assign in the protocol, it is however backed by a strong ivar
 @property (assign) NSURL *presentedItemURL;
@@ -31,6 +33,9 @@ static NSRange _rangeFromEndOfRangeToEndOfRange(NSRange firstRange, NSRange seco
 - (void)_visitScopesInAttributedString:(NSMutableAttributedString *)attributedString range:(NSRange)range withMatchPattern:(TMPattern *)pattern previousScopeStack:(NSMutableArray *)previousScopeStack usingVisitor:(ECCodeVisitor)visitorBlock;
 - (void)_visitScopesInAttributedString:(NSMutableAttributedString *)attributedString range:(NSRange)range withSpanPattern:(TMPattern *)pattern previousScopeStack:(NSMutableArray *)previousScopeStack usingVisitor:(ECCodeVisitor)visitorBlock;
 - (void)_visitScopesInAttributedString:(NSMutableAttributedString *)attributedString range:(NSRange)range withChildPatternsOfPattern:(TMPattern *)pattern previousScopeStack:(NSMutableArray *)previousScopeStack usingVisitor:(ECCodeVisitor)visitorBlock;
+- (OnigResult *)_firstBeginMatchInAttributedString:(NSMutableAttributedString *)attributedString range:(NSRange)range forRegexp:(OnigRegexp *)regexp;
+- (OnigResult *)_firstEndMatchInAttributedString:(NSMutableAttributedString *)attributedString range:(NSRange)range forRegexp:(OnigRegexp *)regexp;
+- (OnigResult *)_firstMatchInAttributedString:(NSMutableAttributedString *)attributedString range:(NSRange)range forRegexp:(OnigRegexp *)regexp cache:(NSMutableDictionary *)matchesCache;
 @end
 
 @implementation TMCodeParser
@@ -73,6 +78,8 @@ static NSRange _rangeFromEndOfRangeToEndOfRange(NSRange firstRange, NSRange seco
 {
     if (!visitorBlock)
         return;
+    _firstBeginMatches = [NSMutableDictionary dictionary];
+    _firstEndMatches = [NSMutableDictionary dictionary];
     NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] initWithFilePresenter:self];
     [fileCoordinator coordinateReadingItemAtURL:self.fileURL options:NSFileCoordinatorReadingResolvesSymbolicLink error:NULL byAccessor:^(NSURL *newURL) {
         NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:[NSString stringWithContentsOfURL:newURL encoding:NSUTF8StringEncoding error:NULL]];
@@ -80,15 +87,21 @@ static NSRange _rangeFromEndOfRangeToEndOfRange(NSRange firstRange, NSRange seco
         NSMutableArray *scopesStack = [NSMutableArray arrayWithObject:_syntax.scope];
         [self _visitScopesInAttributedString:attributedString range:range withPattern:_syntax.pattern previousScopeStack:scopesStack usingVisitor:visitorBlock];
     }];
+    _firstBeginMatches = nil;
+    _firstEndMatches = nil;
 }
 
 - (void)visitScopesInAttributedString:(NSMutableAttributedString *)attributedString range:(NSRange)range usingVisitor:(ECCodeVisitor)visitorBlock
 {
     if (!visitorBlock)
         return;
+    _firstBeginMatches = [NSMutableDictionary dictionary];
+    _firstEndMatches = [NSMutableDictionary dictionary];
     ECASSERT(NSMaxRange(range) <= [attributedString length]);
     NSMutableArray *scopesStack = [NSMutableArray arrayWithObject:_syntax.scope];
     [self _visitScopesInAttributedString:attributedString range:range withPattern:_syntax.pattern previousScopeStack:scopesStack usingVisitor:visitorBlock];
+    _firstBeginMatches = nil;
+    _firstEndMatches = nil;
 }
 
 #pragma mark - NSFileCoordination
@@ -172,9 +185,8 @@ static NSRange _rangeFromEndOfRangeToEndOfRange(NSRange firstRange, NSRange seco
 {
     if (pattern.name)
         [previousScopeStack addObject:pattern.name];
+    OnigResult *result = [self _firstBeginMatchInAttributedString:attributedString range:range forRegexp:pattern.match];
     if (pattern.captures)
-    {
-        OnigResult *result = [pattern.match search:[attributedString string] range:range];
         while (result)
         {
             ECASSERT([result count] > 1);
@@ -202,21 +214,17 @@ static NSRange _rangeFromEndOfRangeToEndOfRange(NSRange firstRange, NSRange seco
             visitorResult = visitorBlock(pattern.name, [result rangeAt:0], NO, YES, [previousScopeStack copy]);
             if (visitorResult == ECCodeVisitorResultBreak)
                 break;
-            result = [pattern.match search:[attributedString string] range:_rangeFromEndOfRangeToEndOfRange([result rangeAt:0], range)];
+            result = [self _firstBeginMatchInAttributedString:attributedString range:_rangeFromEndOfRangeToEndOfRange([result rangeAt:0], range) forRegexp:pattern.match];
         }
-    }
     else
-    {
-        OnigResult *result = [pattern.match search:[attributedString string] range:range];
         while (result)
         {
             ECASSERT(pattern.name);
             ECCodeVisitorResult visitorResult = visitorBlock(pattern.name, [result rangeAt:0], YES, NO, [previousScopeStack copy]);
             if (visitorResult == ECCodeVisitorResultBreak)
                 break;
-            result = [pattern.match search:[attributedString string] range:_rangeFromEndOfRangeToEndOfRange([result rangeAt:0], range)];
+            result = [self _firstBeginMatchInAttributedString:attributedString range:_rangeFromEndOfRangeToEndOfRange([result rangeAt:0], range) forRegexp:pattern.match];
         }
-    }
     if (pattern.name)
         [previousScopeStack removeLastObject];
 }
@@ -225,10 +233,10 @@ static NSRange _rangeFromEndOfRangeToEndOfRange(NSRange firstRange, NSRange seco
 {
     if (pattern.name)
         [previousScopeStack addObject:pattern.name];
-    OnigResult *result = [pattern.begin search:[attributedString string] range:range];
+    OnigResult *result = [self _firstBeginMatchInAttributedString:attributedString range:range forRegexp:pattern.begin];
     while (result)
     {
-        OnigResult *endMatch = [pattern.end search:[attributedString string] range:_rangeFromEndOfRangeToEndOfRange([result rangeAt:0], range)];
+        OnigResult *endMatch = [self _firstEndMatchInAttributedString:attributedString range:_rangeFromEndOfRangeToEndOfRange([result rangeAt:0], range) forRegexp:pattern.end];
         ECASSERT(!endMatch || [endMatch rangeAt:0].location >= NSMaxRange([result rangeAt:0]));
         NSUInteger spanStart = [result rangeAt:0].location;
         NSUInteger spanEnd = endMatch ? NSMaxRange([endMatch rangeAt:0]) : NSMaxRange(range);
@@ -281,10 +289,11 @@ static NSRange _rangeFromEndOfRangeToEndOfRange(NSRange firstRange, NSRange seco
                 if (visitorResult == ECCodeVisitorResultBreak)
                     break;
             }
-            [self _visitScopesInAttributedString:attributedString range:childScopesRange withChildPatternsOfPattern:pattern previousScopeStack:previousScopeStack usingVisitor:^ECCodeVisitorResult(NSString *scope, NSRange scopeRange, BOOL isLeafScope, BOOL isExitingScope, NSArray *scopesStack) {
-                visitorResult = visitorBlock(scope, scopeRange, isLeafScope, isExitingScope, scopesStack);
-                return visitorResult;
-            }];
+            if (childScopesRange.length)
+                [self _visitScopesInAttributedString:attributedString range:childScopesRange withChildPatternsOfPattern:pattern previousScopeStack:previousScopeStack usingVisitor:^ECCodeVisitorResult(NSString *scope, NSRange scopeRange, BOOL isLeafScope, BOOL isExitingScope, NSArray *scopesStack) {
+                    visitorResult = visitorBlock(scope, scopeRange, isLeafScope, isExitingScope, scopesStack);
+                    return visitorResult;
+                }];
             if (visitorResult == ECCodeVisitorResultBreak)
                 break;
             if (pattern.endCaptures && endMatch)
@@ -331,7 +340,7 @@ static NSRange _rangeFromEndOfRangeToEndOfRange(NSRange firstRange, NSRange seco
         if (visitorResult == ECCodeVisitorResultBreak)
             break;
         if (endMatch)
-            result = [pattern.match search:[attributedString string] range:_rangeFromEndOfRangeToEndOfRange([endMatch rangeAt:0], range)];
+            [self _firstBeginMatchInAttributedString:attributedString range:_rangeFromEndOfRangeToEndOfRange([endMatch rangeAt:0], range) forRegexp:pattern.begin];
         else
             break;
     }
@@ -373,9 +382,37 @@ static NSRange _rangeFromEndOfRangeToEndOfRange(NSRange firstRange, NSRange seco
         if (visitorResult == ECCodeVisitorResultBreak)
             break;
         NSUInteger offset = NSMaxRange(firstMatchRange) - currentRange.location;
+        ECASSERT(currentRange.length >= offset);
         currentRange.location += offset;
         currentRange.length -= offset;
+        if (!currentRange.length)
+            break;
     }
+}
+
+- (OnigResult *)_firstBeginMatchInAttributedString:(NSMutableAttributedString *)attributedString range:(NSRange)range forRegexp:(OnigRegexp *)regexp
+{
+    return [self _firstMatchInAttributedString:attributedString range:range forRegexp:regexp cache:_firstBeginMatches];
+}
+
+- (OnigResult *)_firstEndMatchInAttributedString:(NSMutableAttributedString *)attributedString range:(NSRange)range forRegexp:(OnigRegexp *)regexp
+{
+    return [self _firstMatchInAttributedString:attributedString range:range forRegexp:regexp cache:_firstEndMatches];
+}
+
+- (OnigResult *)_firstMatchInAttributedString:(NSMutableAttributedString *)attributedString range:(NSRange)range forRegexp:(OnigRegexp *)regexp cache:(NSMutableDictionary *)matchesCache
+{
+    OnigResult *result = [matchesCache objectForKey:regexp];
+    if (result && (id)result != [NSNull null] && [result rangeAt:0].location >= range.location && NSMaxRange([result rangeAt:0]) <= NSMaxRange(range))
+        return result;
+    if ((id)result == [NSNull null])
+        return nil;
+    result = [regexp search:[attributedString string] range:range];
+    if (result)
+        [matchesCache setObject:result forKey:regexp];
+    else
+        [matchesCache setObject:[NSNull null] forKey:regexp];
+    return result;
 }
 
 @end
