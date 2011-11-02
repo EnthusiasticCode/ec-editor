@@ -276,9 +276,10 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
         
         // TODO get string from document instead
         NSString *text = [targetCodeFileController.codeView text];
-        self.searchFilterMatches = [filterRegExp matchesInString:text options:0 range:NSMakeRange(0, [text length])];
+        NSArray *matches = [filterRegExp matchesInString:text options:0 range:NSMakeRange(0, [text length])];
         
         dispatch_async(dispatch_get_main_queue(), ^{
+            self.searchFilterMatches = matches;
             _searchFilterMatchesLocation = 0;
             [targetCodeFileController.codeView updateAllText];
             if ([searchFilterMatches count] > 0)
