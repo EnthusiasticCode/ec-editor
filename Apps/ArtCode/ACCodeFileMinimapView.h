@@ -8,28 +8,12 @@
 
 #import <UIKit/UIKit.h>
 
-@class ACCodeFileMinimapView;
+@class ECTextRenderer;
 
-@protocol ACCodeFileMinimapViewDataSource <NSObject>
-@required
-
-/// Returns the number of lines that the minimap has to display.
-- (NSUInteger)numberOfLinesForCodeFileMinimapView:(ACCodeFileMinimapView *)minimapView;
-
-/// Returns the length of the line at the given index as a number between 0 and 1, where 1 is the 
-/// length of the longest line. If given, the lineColor will be used instead of the default color
-/// for the line.
-- (CGFloat)codeFileMinimapView:(ACCodeFileMinimapView *)minimapView lenghtOfLineAtIndex:(NSUInteger)lineIndex applyColor:(UIColor **)lineColor;
-
-@end
 
 @interface ACCodeFileMinimapView : UIScrollView
 
-#pragma mark - Providing Data
-
-@property (weak, nonatomic) id<ACCodeFileMinimapViewDataSource> dataSource;
-
-- (void)reloadAllData;
+@property (weak, nonatomic) ECTextRenderer *renderer;
 
 #pragma mark - Managing Minimap Style
 

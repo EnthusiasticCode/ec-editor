@@ -728,7 +728,8 @@
     if (!attributedString || stringLength == 0)
         return nil;
     
-    // Calculate the number of lines in the string
+    // Calculate the number of lines in lineCount 
+    // and the end of useful string in lineRange.location
     NSString *string = attributedString.string;
     NSUInteger lineStart = 0, lineEnd = 0, contentsEnd;
     NSRange lineRange = NSMakeRange(0, 0);
@@ -745,8 +746,12 @@
         lineCount++;
     }
     
+    // Trim returned string if needed
+    if (lineRange.location != stringLength)
+        attributedString = [attributedString attributedSubstringFromRange:NSMakeRange(0, lineRange.location)];
+    
     // Add a tailing new line 
-    if (inputStringLenght == NSMaxRange(stringRange))
+    else if (inputStringLenght == NSMaxRange(stringRange))
     {
         NSMutableAttributedString *newLineString = [attributedString mutableCopy];
         [newLineString appendAttributedString:[[NSAttributedString alloc] initWithString:@"\n" attributes:[newLineString attributesAtIndex:stringLength - 1 effectiveRange:NULL]]];
@@ -756,7 +761,7 @@
             *isFinalPart = YES;
     }
 
-    // Side effect! clear caches if segment changes its ragne
+    // Side effect! clear caches if segment changes its range
     if (requestSegment.lineCount > 0 && lineCount != requestSegment.lineCount)
     {
         NSUInteger requestSegmentIndex = [textSegments indexOfObject:requestSegment];
@@ -764,10 +769,6 @@
             [segment discardContent];
         }];
     }
-    
-    // Trim returned string if needed
-    if (lineRange.location != stringLength)
-        attributedString = [attributedString attributedSubstringFromRange:NSMakeRange(0, lineRange.location)];
     
     if (lines)
         *lines = lineCount;

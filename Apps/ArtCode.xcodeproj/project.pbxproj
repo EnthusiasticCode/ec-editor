@@ -91,6 +91,7 @@
 		CD62BACD13CA1F8700266BC0 /* ACToolSnippetsController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD62BACC13CA1F8600266BC0 /* ACToolSnippetsController.m */; };
 		CD62BAD013CA248C00266BC0 /* ACToolSymbolsController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD62BACF13CA248C00266BC0 /* ACToolSymbolsController.m */; };
 		CD62BAD313CA2ABD00266BC0 /* ACToolNavigatorController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD62BAD213CA2ABC00266BC0 /* ACToolNavigatorController.m */; };
+		CD6E416C14614A0C00A9CE7F /* ACCodeFileMinimapView.m in Sources */ = {isa = PBXBuildFile; fileRef = CD6E416B14614A0C00A9CE7F /* ACCodeFileMinimapView.m */; };
 		CD7D2AE413C0CD2600B889EE /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD7D2AE313C0CD2600B889EE /* UIKit.framework */; };
 		CD7D2AE613C0CD2600B889EE /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD7D2AE513C0CD2600B889EE /* Foundation.framework */; };
 		CD7D2AE813C0CD2600B889EE /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD7D2AE713C0CD2600B889EE /* CoreGraphics.framework */; };
@@ -367,6 +368,8 @@
 		CD62BACF13CA248C00266BC0 /* ACToolSymbolsController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACToolSymbolsController.m; sourceTree = "<group>"; };
 		CD62BAD113CA2ABB00266BC0 /* ACToolNavigatorController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACToolNavigatorController.h; sourceTree = "<group>"; };
 		CD62BAD213CA2ABC00266BC0 /* ACToolNavigatorController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACToolNavigatorController.m; sourceTree = "<group>"; };
+		CD6E416A14614A0C00A9CE7F /* ACCodeFileMinimapView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACCodeFileMinimapView.h; sourceTree = "<group>"; };
+		CD6E416B14614A0C00A9CE7F /* ACCodeFileMinimapView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACCodeFileMinimapView.m; sourceTree = "<group>"; };
 		CD7D2ADF13C0CD2600B889EE /* ArtCode.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ArtCode.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CD7D2AE313C0CD2600B889EE /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		CD7D2AE513C0CD2600B889EE /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -641,7 +644,7 @@
 			name = "Core Data";
 			sourceTree = "<group>";
 		};
-		CD6580C514157B300079412F /* Views and Controllers */ = {
+		CD6580C514157B300079412F /* Find & Replace Controllers */ = {
 			isa = PBXGroup;
 			children = (
 				CDE8F9D1145EEEFE00CA4496 /* ACCodeFileSearchBarController.h */,
@@ -649,7 +652,16 @@
 				CDC1332E145FFE390028423F /* ACCodeFileSearchOptionsController.h */,
 				CDC1332F145FFE390028423F /* ACCodeFileSearchOptionsController.m */,
 			);
-			name = "Views and Controllers";
+			name = "Find & Replace Controllers";
+			sourceTree = "<group>";
+		};
+		CD6E416D14614A2A00A9CE7F /* Minimap View */ = {
+			isa = PBXGroup;
+			children = (
+				CD6E416A14614A0C00A9CE7F /* ACCodeFileMinimapView.h */,
+				CD6E416B14614A0C00A9CE7F /* ACCodeFileMinimapView.m */,
+			);
+			name = "Minimap View";
 			sourceTree = "<group>";
 		};
 		CD7D2AD413C0CD2600B889EE = {
@@ -838,7 +850,8 @@
 			children = (
 				CD9CD96E13DC22AF007964D3 /* ACCodeFileController.h */,
 				CD9CD96F13DC22AF007964D3 /* ACCodeFileController.m */,
-				CD6580C514157B300079412F /* Views and Controllers */,
+				CD6580C514157B300079412F /* Find & Replace Controllers */,
+				CD6E416D14614A2A00A9CE7F /* Minimap View */,
 			);
 			name = Editor;
 			sourceTree = "<group>";
@@ -1265,6 +1278,7 @@
 				CDB7C92B145572EA00E0D2B2 /* ACSingleProjectBrowsersController.m in Sources */,
 				CDE8F9D4145EEEFE00CA4496 /* ACCodeFileSearchBarController.m in Sources */,
 				CDC13330145FFE390028423F /* ACCodeFileSearchOptionsController.m in Sources */,
+				CD6E416C14614A0C00A9CE7F /* ACCodeFileMinimapView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
