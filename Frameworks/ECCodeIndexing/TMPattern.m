@@ -125,13 +125,13 @@ static NSString * const _patternIncludeKey = @"include";
     _dictionary = dictionary;
     NSString *matchRegex = [dictionary objectForKey:_patternMatchKey];
     if (matchRegex)
-        _match = [OnigRegexp compile:matchRegex ignorecase:NO multiline:YES];
+        _match = [OnigRegexp compile:matchRegex options:OnigOptionNotbol | OnigOptionNoteol];
     NSString *beginRegex = [dictionary objectForKey:_patternBeginKey];
     if (beginRegex)
-        _begin = [OnigRegexp compile:beginRegex ignorecase:NO multiline:YES];
+        _begin = [OnigRegexp compile:beginRegex options:OnigOptionNotbol | OnigOptionNoteol];
     NSString *endRegex = [dictionary objectForKey:_patternEndKey];
     if (endRegex)
-        _end = [OnigRegexp compile:endRegex ignorecase:NO multiline:YES];
+        _end = [OnigRegexp compile:endRegex  options:OnigOptionNotbol | OnigOptionNoteol];
     ECASSERT(!_match || (![_patterns count] && !_begin && ![self include] && ![_captures objectForKey:[NSNumber numberWithUnsignedInteger:0]] && ![dictionary objectForKey:_patternBeginCapturesKey] && ![dictionary objectForKey:_patternEndCapturesKey]));
     ECASSERT(!_begin || _end && ![self include]);
     ECASSERT(!_end || _begin);
