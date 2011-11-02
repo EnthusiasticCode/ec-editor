@@ -10,7 +10,7 @@
 
 @class OnigRegexp;
 
-@interface TMPattern : NSObject
+@interface TMPattern : NSObject <NSCopying>
 
 - (NSString *)name;
 - (OnigRegexp *)match;

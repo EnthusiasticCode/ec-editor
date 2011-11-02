@@ -35,7 +35,7 @@
 }
 
 /* leave this out for now until we figure out how to best plug it in the textmate one
-+ (float)implementsProtocol:(Protocol *)protocol forFile:(NSURL *)fileURL language:(NSString *)language scope:(NSString *)scope
+- (float)implementsProtocol:(Protocol *)protocol forFile:(NSURL *)fileURL language:(NSString *)language scope:(NSString *)scope
 {
     ECASSERT([fileURL isFileURL]);
     NSString *fileExtension = [fileURL pathExtension];
