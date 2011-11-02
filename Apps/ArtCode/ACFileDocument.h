@@ -15,4 +15,7 @@
 
 @property (nonatomic, strong) TMTheme *theme;
 
+/// Returns the number of lines in the document.
+- (NSUInteger)lineCount;
+
 @end

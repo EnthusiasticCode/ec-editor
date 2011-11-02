@@ -16,6 +16,7 @@
 @interface ACFileDocument ()
 {
     NSOperationQueue *_parserQueue;
+    NSUInteger _lineCount;
 }
 
 @property (nonatomic, strong) NSMutableAttributedString *contentString;
@@ -93,6 +94,8 @@
 
 @implementation ACFileDocument
 
+#pragma mark - Properties
+
 @synthesize contentString = _contentString;
 @synthesize codeParser = _codeParser;
 @synthesize defaultTextStyle = _defaultTextStyle;
@@ -104,6 +107,7 @@
     if (contentString == _contentString)
         return;
     [self willChangeValueForKey:@"contentString"];
+    _lineCount = NSUIntegerMax;
     _contentString = contentString;
     [self updateChangeCount:UIDocumentChangeDone];
     [self didChangeValueForKey:@"contentString"];
@@ -173,6 +177,7 @@
 
 - (void)codeView:(ECCodeViewBase *)codeView commitString:(NSString *)commitString forTextInRange:(NSRange)range
 {
+    _lineCount = NSUIntegerMax;
     if ([commitString length] != 0)
     {
         [self.contentString replaceCharactersInRange:range withString:commitString];
@@ -184,6 +189,20 @@
         [self updateChangeCount:UIDocumentChangeDone];
     }
     [self _queueSyntaxColoringOperationForTextRenderer:codeView.renderer];
+}
+
+#pragma mark - Content Information Methods
+
+- (NSUInteger)lineCount
+{
+    if (_lineCount == NSUIntegerMax)
+    {
+        NSString *string = [_contentString string];
+        unsigned index, stringLength = [string length];
+        for (index = 0, _lineCount = 0; index < stringLength; ++_lineCount)
+            index = NSMaxRange([string lineRangeForRange:NSMakeRange(index, 0)]);
+    }
+    return _lineCount;
 }
 
 #pragma mark - Private Methods
@@ -200,6 +219,5 @@
     [_parserQueue addOperation:__syntaxColoringOperation];
     [self didChangeValueForKey:@"_syntaxColoringOperation"];
 }
-
 
 @end
