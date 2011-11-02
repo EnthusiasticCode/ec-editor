@@ -80,6 +80,7 @@ static NSRange _rangeFromEndOfRangeToEndOfRange(NSRange firstRange, NSRange seco
         return;
     _firstBeginMatches = [NSMutableDictionary dictionary];
     _firstEndMatches = [NSMutableDictionary dictionary];
+    [_syntax beginContentAccess];
     NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] initWithFilePresenter:self];
     [fileCoordinator coordinateReadingItemAtURL:self.fileURL options:NSFileCoordinatorReadingResolvesSymbolicLink error:NULL byAccessor:^(NSURL *newURL) {
         NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:[NSString stringWithContentsOfURL:newURL encoding:NSUTF8StringEncoding error:NULL]];
@@ -87,6 +88,7 @@ static NSRange _rangeFromEndOfRangeToEndOfRange(NSRange firstRange, NSRange seco
         NSMutableArray *scopesStack = [NSMutableArray arrayWithObject:_syntax.scope];
         [self _visitScopesInAttributedString:attributedString range:range withPattern:_syntax.pattern previousScopeStack:scopesStack usingVisitor:visitorBlock];
     }];
+    [_syntax endContentAccess];
     _firstBeginMatches = nil;
     _firstEndMatches = nil;
 }
@@ -97,9 +99,11 @@ static NSRange _rangeFromEndOfRangeToEndOfRange(NSRange firstRange, NSRange seco
         return;
     _firstBeginMatches = [NSMutableDictionary dictionary];
     _firstEndMatches = [NSMutableDictionary dictionary];
+    [_syntax beginContentAccess];
     ECASSERT(NSMaxRange(range) <= [attributedString length]);
     NSMutableArray *scopesStack = [NSMutableArray arrayWithObject:_syntax.scope];
     [self _visitScopesInAttributedString:attributedString range:range withPattern:_syntax.pattern previousScopeStack:scopesStack usingVisitor:visitorBlock];
+    [_syntax endContentAccess];
     _firstBeginMatches = nil;
     _firstEndMatches = nil;
 }

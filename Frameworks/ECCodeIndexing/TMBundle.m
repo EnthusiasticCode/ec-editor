@@ -53,6 +53,7 @@ static NSString * const _syntaxDirectory = @"Syntaxes";
             if (!syntax)
                 continue;
             [syntaxes addObject:syntax];
+            [syntax endContentAccess];
         }
         _syntaxes = [syntaxes copy];
     }
