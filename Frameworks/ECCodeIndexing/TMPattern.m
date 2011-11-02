@@ -139,4 +139,14 @@ static NSString * const _patternIncludeKey = @"include";
     return self;
 }
 
+- (id)copyWithZone:(NSZone *)zone
+{
+    return self;
+}
+
+- (NSUInteger)hash
+{
+    return [_dictionary hash];
+}
+
 @end
