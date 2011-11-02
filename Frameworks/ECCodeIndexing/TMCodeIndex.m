@@ -13,26 +13,30 @@
 #import "TMSyntax.h"
 #import "OnigRegexp.h"
 #import <ECFoundation/NSObject+FixedAutoContentAccessingProxy.h>
+#import <ECFoundation/ECCache.h>
+#import <ECFoundation/ECDiscardableMutableDictionary.h>
 
 @interface TMCodeIndex ()
-+ (TMSyntax *)_syntaxForFile:(NSURL *)fileURL language:(NSString *)language scope:(NSString *)scope;
-+ (TMSyntax *)_syntaxForFile:(NSURL *)fileURL;
-+ (TMSyntax *)_syntaxWithLanguage:(NSString *)language;
-+ (TMSyntax *)_syntaxWithPredicateBlock:(BOOL(^)(TMSyntax *syntax))predicateBlock;
-@property (nonatomic, strong, readonly) NSCache *_codeUnitCache;
-+ (id)_codeUnitCacheKeyForFileURL:(NSURL *)fileURL syntax:(TMSyntax *)syntax;
+{
+    ECCache *_codeUnitCache;
+    ECDiscardableMutableDictionary *_syntaxes;
+}
+- (void)_loadSyntaxes;
+- (TMSyntax *)_syntaxForFile:(NSURL *)fileURL language:(NSString *)language scope:(NSString *)scope;
+- (TMSyntax *)_syntaxForFile:(NSURL *)fileURL;
+- (TMSyntax *)_syntaxWithLanguage:(NSString *)language;
+- (TMSyntax *)_syntaxWithPredicateBlock:(BOOL(^)(TMSyntax *syntax))predicateBlock;
+- (id)_codeUnitCacheKeyForFileURL:(NSURL *)fileURL syntax:(TMSyntax *)syntax;
 @end
 
 @implementation TMCodeIndex
-
-@synthesize _codeUnitCache = __codeUnitCache;
 
 + (void)load
 {
     [ECCodeIndex registerExtension:self];
 }
 
-+ (float)implementsProtocol:(Protocol *)protocol forFile:(NSURL *)fileURL language:(NSString *)language scope:(NSString *)scope
+- (float)implementsProtocol:(Protocol *)protocol forFile:(NSURL *)fileURL language:(NSString *)language scope:(NSString *)scope
 {
     ECASSERT(fileURL);
     if (protocol != @protocol(ECCodeParser))
@@ -42,24 +46,41 @@
     return 0.5;
 }
 
+- (id)init
+{
+    self = [super init];
+    if (!self)
+        return nil;
+    _codeUnitCache = [[ECCache alloc] init];
+    [self _loadSyntaxes];
+    return self;
+}
+
 - (id<ECCodeUnit>)codeUnitImplementingProtocol:(Protocol *)protocol withFile:(NSURL *)fileURL language:(NSString *)language scope:(NSString *)scope
 {
     ECASSERT(protocol);
     ECASSERT(fileURL);
     if (protocol != @protocol(ECCodeParser))
         return nil;
-    TMSyntax *syntax = [[self class] _syntaxForFile:fileURL language:language scope:scope];
-    id cacheKey = [[self class] _codeUnitCacheKeyForFileURL:fileURL syntax:syntax];
-    TMCodeParser *codeParser = [[self _codeUnitCache] objectForKey:cacheKey];
+    TMSyntax *syntax = [self _syntaxForFile:fileURL language:language scope:scope];
+    id cacheKey = [self _codeUnitCacheKeyForFileURL:fileURL syntax:syntax];
+    TMCodeParser *codeParser = [_codeUnitCache objectForKey:cacheKey];
     if (!codeParser)
     {
         codeParser = [[TMCodeParser alloc] initWithIndex:self fileURL:fileURL syntax:syntax];
-        [[self _codeUnitCache] setObject:codeParser forKey:cacheKey];
+        [_codeUnitCache setObject:codeParser forKey:cacheKey];
     }
     return codeParser;
 }
 
-+ (TMSyntax *)_syntaxForFile:(NSURL *)fileURL language:(NSString *)language scope:(NSString *)scope
+- (TMSyntax *)syntaxWithScope:(NSString *)scope
+{
+    if (!scope)
+        return nil;
+    return [_syntaxes objectForKey:scope];
+}
+             
+- (TMSyntax *)_syntaxForFile:(NSURL *)fileURL language:(NSString *)language scope:(NSString *)scope
 {
     TMSyntax *syntax = [self syntaxWithScope:scope];
     if (!syntax)
@@ -69,7 +90,21 @@
     return syntax;
 }
 
-+ (TMSyntax *)_syntaxForFile:(NSURL *)fileURL
+- (void)_loadSyntaxes
+{
+    _syntaxes = [ECDiscardableMutableDictionary dictionary];
+    NSFileManager *fileManager = [[NSFileManager alloc] init];
+    for (NSURL *fileURL in [fileManager contentsOfDirectoryAtURL:[[self class] bundleDirectory] includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles error:NULL])
+    {
+        TMBundle *bundle = [[TMBundle alloc] initWithBundleURL:fileURL];
+        if (!bundle)
+            continue;
+        for (TMSyntax *syntax in bundle.syntaxes)
+            [_syntaxes setObject:syntax forKey:syntax.scope];
+    }
+}
+
+- (TMSyntax *)_syntaxForFile:(NSURL *)fileURL
 {
     TMSyntax *foundSyntax = [self _syntaxWithPredicateBlock:^BOOL(TMSyntax *syntax) {
         for (NSString *fileType in syntax.fileTypes)
@@ -92,7 +127,7 @@
     return foundSyntax;
 }
 
-+ (TMSyntax *)_syntaxWithLanguage:(NSString *)language
+- (TMSyntax *)_syntaxWithLanguage:(NSString *)language
 {
     if (!language)
         return nil;
@@ -101,37 +136,15 @@
     }];
 }
 
-+ (TMSyntax *)syntaxWithScope:(NSString *)scope
+- (TMSyntax *)_syntaxWithPredicateBlock:(BOOL (^)(TMSyntax *))predicateBlock
 {
-    if (!scope)
-        return nil;
-    return [self _syntaxWithPredicateBlock:^BOOL(TMSyntax *syntax) {
-        return [syntax.scope isEqualToString:scope];
-    }];
-}
-
-+ (TMSyntax *)_syntaxWithPredicateBlock:(BOOL (^)(TMSyntax *))predicateBlock
-{
-    NSFileManager *fileManager = [[NSFileManager alloc] init];
-    for (NSURL *fileURL in [fileManager contentsOfDirectoryAtURL:[self bundleDirectory] includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles error:NULL])
-    {
-        TMBundle *bundle = [[TMBundle alloc] initWithBundleURL:fileURL];
-        if (bundle)
-            for (TMSyntax *syntax in bundle.syntaxes)
-                if (predicateBlock(syntax))
-                    return syntax;
-    }
+    for (TMSyntax *syntax in [_syntaxes objectEnumerator])
+        if (predicateBlock(syntax))
+            return syntax;
     return nil;
 }
 
-- (NSCache *)_codeUnitCache
-{
-    if (!__codeUnitCache)
-        __codeUnitCache = [[NSCache alloc] init];
-    return __codeUnitCache;
-}
-
-+ (id)_codeUnitCacheKeyForFileURL:(NSURL *)fileURL syntax:(TMSyntax *)syntax
+- (id)_codeUnitCacheKeyForFileURL:(NSURL *)fileURL syntax:(TMSyntax *)syntax
 {
     return [NSString stringWithFormat:@"%@:%@", syntax.name, [fileURL absoluteString]];
 }

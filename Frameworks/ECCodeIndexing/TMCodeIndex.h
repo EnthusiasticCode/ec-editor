@@ -12,6 +12,6 @@
 
 @interface TMCodeIndex : ECCodeIndex
 
-+ (TMSyntax *)syntaxWithScope:(NSString *)scope;
+- (TMSyntax *)syntaxWithScope:(NSString *)scope;
 
 @end
