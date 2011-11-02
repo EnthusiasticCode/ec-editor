@@ -25,7 +25,7 @@ static void const * parentSearchBarControllerContext;
 
 @synthesize parentSearchBarController, parentPopoverController;
 
-- (void)setSearchBarController:(ACCodeFileSearchBarController *)controller
+- (void)setParentSearchBarController:(ACCodeFileSearchBarController *)controller
 {
     if (controller == parentSearchBarController)
         return;
