@@ -71,9 +71,15 @@ typedef enum
 
 typedef ECCodeVisitorResult(^ECCodeVisitor)(NSString *scope, NSRange scopeRange, BOOL isLeafScope, BOOL isExitingScope, NSArray *scopesStack);
 
+extern NSString * const ECCodeScopeStackAttributeName;
+
 @protocol ECCodeParser <ECCodeUnit>
 
 /// Visit the scopes in the code unit's main source file
 - (void)visitScopesInRange:(NSRange)range usingVisitor:(ECCodeVisitor)visitorBlock;
+
+/// Visit the scopes in the passed NSMutableAttributedString, both adding them to the string as attributes, and calling the visitorBlock.
+/// If the passed attributed string has scope attributes, those will be considered correct. Remove the attributes before passing the attributed string if necessary.
+- (void)visitScopesInAttributedString:(NSMutableAttributedString *)attributedString range:(NSRange)range usingVisitor:(ECCodeVisitor)visitorBlock;
 
 @end

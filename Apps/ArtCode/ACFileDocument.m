@@ -69,7 +69,7 @@
     CHECK_CANCELED_RETURN;
     
     NSRange stringRange = NSMakeRange(0, [string length]);
-    [_document.codeParser visitScopesInRange:stringRange usingVisitor:^ECCodeVisitorResult(NSString *scope, NSRange scopeRange, BOOL isLeafScope, BOOL isExitingScope, NSArray *scopesStack) {        
+    [_document.codeParser visitScopesInAttributedString:_document.contentString range:stringRange usingVisitor:^ECCodeVisitorResult(NSString *scope, NSRange scopeRange, BOOL isLeafScope, BOOL isExitingScope, NSArray *scopesStack) {
         if (!isExitingScope)
         {
             [string setAttributes:[_document.theme attributesForScopeStack:scopesStack] range:scopeRange];

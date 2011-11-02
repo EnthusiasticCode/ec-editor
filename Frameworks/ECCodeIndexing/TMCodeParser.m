@@ -21,17 +21,16 @@ static NSRange _rangeFromEndOfRangeToEndOfRange(NSRange firstRange, NSRange seco
 {
     NSURL *_presentedItemURL;
     NSOperationQueue *_presentedItemOperationQueue;
-    NSInteger _contentAccessCount;
     TMSyntax *_syntax;
     TMCodeIndex *_index;
 }
 // presentedItemURL needs to be declared as assign because it's declared as assign in the protocol, it is however backed by a strong ivar
 @property (assign) NSURL *presentedItemURL;
-- (void)_visitScopesInString:(NSString *)string range:(NSRange)range withPattern:(TMPattern *)pattern previousScopeStack:(NSMutableArray *)previousScopeStack usingVisitor:(ECCodeVisitor)visitorBlock;
-- (void)_visitScopesInString:(NSString *)string range:(NSRange)range withIncludePattern:(TMPattern *)pattern previousScopeStack:(NSMutableArray *)previousScopeStack usingVisitor:(ECCodeVisitor)visitorBlock;
-- (void)_visitScopesInString:(NSString *)string range:(NSRange)range withMatchPattern:(TMPattern *)pattern previousScopeStack:(NSMutableArray *)previousScopeStack usingVisitor:(ECCodeVisitor)visitorBlock;
-- (void)_visitScopesInString:(NSString *)string range:(NSRange)range withSpanPattern:(TMPattern *)pattern previousScopeStack:(NSMutableArray *)previousScopeStack usingVisitor:(ECCodeVisitor)visitorBlock;
-- (void)_visitScopesInString:(NSString *)string range:(NSRange)range withChildPatternsOfPattern:(TMPattern *)pattern previousScopeStack:(NSMutableArray *)previousScopeStack usingVisitor:(ECCodeVisitor)visitorBlock;
+- (void)_visitScopesInAttributedString:(NSMutableAttributedString *)attributedString range:(NSRange)range withPattern:(TMPattern *)pattern previousScopeStack:(NSMutableArray *)previousScopeStack usingVisitor:(ECCodeVisitor)visitorBlock;
+- (void)_visitScopesInAttributedString:(NSMutableAttributedString *)attributedString range:(NSRange)range withIncludePattern:(TMPattern *)pattern previousScopeStack:(NSMutableArray *)previousScopeStack usingVisitor:(ECCodeVisitor)visitorBlock;
+- (void)_visitScopesInAttributedString:(NSMutableAttributedString *)attributedString range:(NSRange)range withMatchPattern:(TMPattern *)pattern previousScopeStack:(NSMutableArray *)previousScopeStack usingVisitor:(ECCodeVisitor)visitorBlock;
+- (void)_visitScopesInAttributedString:(NSMutableAttributedString *)attributedString range:(NSRange)range withSpanPattern:(TMPattern *)pattern previousScopeStack:(NSMutableArray *)previousScopeStack usingVisitor:(ECCodeVisitor)visitorBlock;
+- (void)_visitScopesInAttributedString:(NSMutableAttributedString *)attributedString range:(NSRange)range withChildPatternsOfPattern:(TMPattern *)pattern previousScopeStack:(NSMutableArray *)previousScopeStack usingVisitor:(ECCodeVisitor)visitorBlock;
 @end
 
 @implementation TMCodeParser
@@ -64,7 +63,6 @@ static NSRange _rangeFromEndOfRangeToEndOfRange(NSRange firstRange, NSRange seco
     self = [super init];
     if (!self)
         return nil;
-    _contentAccessCount = 1;
     _index = index;
     _presentedItemURL = fileURL;
     _syntax = syntax;
@@ -73,41 +71,24 @@ static NSRange _rangeFromEndOfRangeToEndOfRange(NSRange firstRange, NSRange seco
 
 - (void)visitScopesInRange:(NSRange)range usingVisitor:(ECCodeVisitor)visitorBlock
 {
-    ECASSERT(_contentAccessCount > 0);
     if (!visitorBlock)
         return;
     NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] initWithFilePresenter:self];
     [fileCoordinator coordinateReadingItemAtURL:self.fileURL options:NSFileCoordinatorReadingResolvesSymbolicLink error:NULL byAccessor:^(NSURL *newURL) {
-        NSString *string = [NSString stringWithContentsOfURL:newURL encoding:NSUTF8StringEncoding error:NULL];
-        ECASSERT(NSMaxRange(range) <= [string length]);
+        NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:[NSString stringWithContentsOfURL:newURL encoding:NSUTF8StringEncoding error:NULL]];
+        ECASSERT(NSMaxRange(range) <= [attributedString length]);
         NSMutableArray *scopesStack = [NSMutableArray arrayWithObject:_syntax.scope];
-        [self _visitScopesInString:string range:range withPattern:_syntax.pattern previousScopeStack:scopesStack usingVisitor:visitorBlock];
+        [self _visitScopesInAttributedString:attributedString range:range withPattern:_syntax.pattern previousScopeStack:scopesStack usingVisitor:visitorBlock];
     }];
 }
 
-#pragma mark - NSDiscardableContent
-
-- (BOOL)beginContentAccess
+- (void)visitScopesInAttributedString:(NSMutableAttributedString *)attributedString range:(NSRange)range usingVisitor:(ECCodeVisitor)visitorBlock
 {
-    ++_contentAccessCount;
-    return YES;
-}
-
-- (void)endContentAccess
-{
-    ECASSERT(_contentAccessCount > 0);
-    --_contentAccessCount;
-}
-
-- (void)discardContentIfPossible
-{
-    ECASSERT(_contentAccessCount >= 0);
-}
-
-- (BOOL)isContentDiscarded
-{
-    ECASSERT(_contentAccessCount >= 0);
-    return !_contentAccessCount;
+    if (!visitorBlock)
+        return;
+    ECASSERT(NSMaxRange(range) <= [attributedString length]);
+    NSMutableArray *scopesStack = [NSMutableArray arrayWithObject:_syntax.scope];
+    [self _visitScopesInAttributedString:attributedString range:range withPattern:_syntax.pattern previousScopeStack:scopesStack usingVisitor:visitorBlock];
 }
 
 #pragma mark - NSFileCoordination
@@ -151,49 +132,49 @@ static NSRange _rangeFromEndOfRangeToEndOfRange(NSRange firstRange, NSRange seco
 
 #pragma mark - Private methods
 
-- (void)_visitScopesInString:(NSString *)string range:(NSRange)range withPattern:(TMPattern *)pattern previousScopeStack:(NSMutableArray *)previousScopeStack usingVisitor:(ECCodeVisitor)visitorBlock
+- (void)_visitScopesInAttributedString:(NSMutableAttributedString *)attributedString range:(NSRange)range withPattern:(TMPattern *)pattern previousScopeStack:(NSMutableArray *)previousScopeStack usingVisitor:(ECCodeVisitor)visitorBlock
 {
-    ECASSERT([string length] && NSMaxRange(range) <= [string length] && pattern && previousScopeStack && visitorBlock);
+    ECASSERT([attributedString length] && NSMaxRange(range) <= [attributedString length] && pattern && previousScopeStack && visitorBlock);
     ECASSERT(pattern.include || pattern.match || pattern.begin || pattern.patterns);
     if (pattern.include)
-        [self _visitScopesInString:string range:range withIncludePattern:pattern previousScopeStack:previousScopeStack usingVisitor:visitorBlock];
+        [self _visitScopesInAttributedString:attributedString range:range withIncludePattern:pattern previousScopeStack:previousScopeStack usingVisitor:visitorBlock];
     else if (pattern.match)
-        [self _visitScopesInString:string range:range withMatchPattern:pattern previousScopeStack:previousScopeStack usingVisitor:visitorBlock];
+        [self _visitScopesInAttributedString:attributedString range:range withMatchPattern:pattern previousScopeStack:previousScopeStack usingVisitor:visitorBlock];
     else if (pattern.begin)
-        [self _visitScopesInString:string range:range withSpanPattern:pattern previousScopeStack:previousScopeStack usingVisitor:visitorBlock];
+        [self _visitScopesInAttributedString:attributedString range:range withSpanPattern:pattern previousScopeStack:previousScopeStack usingVisitor:visitorBlock];
     else
-        [self _visitScopesInString:string range:range withChildPatternsOfPattern:pattern previousScopeStack:previousScopeStack usingVisitor:visitorBlock];
+        [self _visitScopesInAttributedString:attributedString range:range withChildPatternsOfPattern:pattern previousScopeStack:previousScopeStack usingVisitor:visitorBlock];
 }
 
-- (void)_visitScopesInString:(NSString *)string range:(NSRange)range withIncludePattern:(TMPattern *)pattern previousScopeStack:(NSMutableArray *)previousScopeStack usingVisitor:(ECCodeVisitor)visitorBlock
+- (void)_visitScopesInAttributedString:(NSMutableAttributedString *)attributedString range:(NSRange)range withIncludePattern:(TMPattern *)pattern previousScopeStack:(NSMutableArray *)previousScopeStack usingVisitor:(ECCodeVisitor)visitorBlock
 {
     unichar firstCharacter = [pattern.include characterAtIndex:0];
     if (firstCharacter == '$')
     {
-        [self _visitScopesInString:string range:range withPattern:_syntax.pattern previousScopeStack:previousScopeStack usingVisitor:visitorBlock];
+        [self _visitScopesInAttributedString:attributedString range:range withPattern:_syntax.pattern previousScopeStack:previousScopeStack usingVisitor:visitorBlock];
     }
     else if (firstCharacter == '#')
     {
-        [self _visitScopesInString:string range:range withPattern:[_syntax.repository objectForKey:[pattern.include substringFromIndex:1]] previousScopeStack:previousScopeStack usingVisitor:visitorBlock];
+        [self _visitScopesInAttributedString:attributedString range:range withPattern:[_syntax.repository objectForKey:[pattern.include substringFromIndex:1]] previousScopeStack:previousScopeStack usingVisitor:visitorBlock];
     }
     else
     {
         [previousScopeStack addObject:pattern.include];
         id<ECCodeParser> codeParser = (id<ECCodeParser>)[self.index codeUnitImplementingProtocol:@protocol(ECCodeParser) withFile:self.fileURL language:nil scope:pattern.include];
-        [codeParser visitScopesInRange:range usingVisitor:^ECCodeVisitorResult(NSString *scope, NSRange scopeRange, BOOL isExitingScope, BOOL isLeafScope, NSArray *scopesStack) {
+        [codeParser visitScopesInAttributedString:attributedString range:range usingVisitor:^ECCodeVisitorResult(NSString *scope, NSRange scopeRange, BOOL isExitingScope, BOOL isLeafScope, NSArray *scopesStack) {
             return visitorBlock(scope, scopeRange, isExitingScope, isLeafScope, [previousScopeStack arrayByAddingObjectsFromArray:scopesStack]);
         }];
         [previousScopeStack removeObject:pattern.include];
     }
 }
 
-- (void)_visitScopesInString:(NSString *)string range:(NSRange)range withMatchPattern:(TMPattern *)pattern previousScopeStack:(NSMutableArray *)previousScopeStack usingVisitor:(ECCodeVisitor)visitorBlock
+- (void)_visitScopesInAttributedString:(NSMutableAttributedString *)attributedString range:(NSRange)range withMatchPattern:(TMPattern *)pattern previousScopeStack:(NSMutableArray *)previousScopeStack usingVisitor:(ECCodeVisitor)visitorBlock
 {
     if (pattern.name)
         [previousScopeStack addObject:pattern.name];
     if (pattern.captures)
     {
-        OnigResult *result = [pattern.match search:string range:range];
+        OnigResult *result = [pattern.match search:[attributedString string] range:range];
         while (result)
         {
             ECASSERT([result count] > 1);
@@ -221,33 +202,33 @@ static NSRange _rangeFromEndOfRangeToEndOfRange(NSRange firstRange, NSRange seco
             visitorResult = visitorBlock(pattern.name, [result rangeAt:0], NO, YES, [previousScopeStack copy]);
             if (visitorResult == ECCodeVisitorResultBreak)
                 break;
-            result = [pattern.match search:string range:_rangeFromEndOfRangeToEndOfRange([result rangeAt:0], range)];
+            result = [pattern.match search:[attributedString string] range:_rangeFromEndOfRangeToEndOfRange([result rangeAt:0], range)];
         }
     }
     else
     {
-        OnigResult *result = [pattern.match search:string range:range];
+        OnigResult *result = [pattern.match search:[attributedString string] range:range];
         while (result)
         {
             ECASSERT(pattern.name);
             ECCodeVisitorResult visitorResult = visitorBlock(pattern.name, [result rangeAt:0], YES, NO, [previousScopeStack copy]);
             if (visitorResult == ECCodeVisitorResultBreak)
                 break;
-            result = [pattern.match search:string range:_rangeFromEndOfRangeToEndOfRange([result rangeAt:0], range)];
+            result = [pattern.match search:[attributedString string] range:_rangeFromEndOfRangeToEndOfRange([result rangeAt:0], range)];
         }
     }
     if (pattern.name)
         [previousScopeStack removeLastObject];
 }
 
-- (void)_visitScopesInString:(NSString *)string range:(NSRange)range withSpanPattern:(TMPattern *)pattern previousScopeStack:(NSMutableArray *)previousScopeStack usingVisitor:(ECCodeVisitor)visitorBlock
+- (void)_visitScopesInAttributedString:(NSMutableAttributedString *)attributedString range:(NSRange)range withSpanPattern:(TMPattern *)pattern previousScopeStack:(NSMutableArray *)previousScopeStack usingVisitor:(ECCodeVisitor)visitorBlock
 {
     if (pattern.name)
         [previousScopeStack addObject:pattern.name];
-    OnigResult *result = [pattern.begin search:string range:range];
+    OnigResult *result = [pattern.begin search:[attributedString string] range:range];
     while (result)
     {
-        OnigResult *endMatch = [pattern.end search:string range:_rangeFromEndOfRangeToEndOfRange([result rangeAt:0], range)];
+        OnigResult *endMatch = [pattern.end search:[attributedString string] range:_rangeFromEndOfRangeToEndOfRange([result rangeAt:0], range)];
         ECASSERT(!endMatch || [endMatch rangeAt:0].location >= NSMaxRange([result rangeAt:0]));
         NSUInteger spanStart = [result rangeAt:0].location;
         NSUInteger spanEnd = endMatch ? NSMaxRange([endMatch rangeAt:0]) : NSMaxRange(range);
@@ -300,7 +281,7 @@ static NSRange _rangeFromEndOfRangeToEndOfRange(NSRange firstRange, NSRange seco
                 if (visitorResult == ECCodeVisitorResultBreak)
                     break;
             }
-            [self _visitScopesInString:string range:childScopesRange withChildPatternsOfPattern:pattern previousScopeStack:previousScopeStack usingVisitor:^ECCodeVisitorResult(NSString *scope, NSRange scopeRange, BOOL isLeafScope, BOOL isExitingScope, NSArray *scopesStack) {
+            [self _visitScopesInAttributedString:attributedString range:childScopesRange withChildPatternsOfPattern:pattern previousScopeStack:previousScopeStack usingVisitor:^ECCodeVisitorResult(NSString *scope, NSRange scopeRange, BOOL isLeafScope, BOOL isExitingScope, NSArray *scopesStack) {
                 visitorResult = visitorBlock(scope, scopeRange, isLeafScope, isExitingScope, scopesStack);
                 return visitorResult;
             }];
@@ -350,7 +331,7 @@ static NSRange _rangeFromEndOfRangeToEndOfRange(NSRange firstRange, NSRange seco
         if (visitorResult == ECCodeVisitorResultBreak)
             break;
         if (endMatch)
-            result = [pattern.match search:string range:_rangeFromEndOfRangeToEndOfRange([endMatch rangeAt:0], range)];
+            result = [pattern.match search:[attributedString string] range:_rangeFromEndOfRangeToEndOfRange([endMatch rangeAt:0], range)];
         else
             break;
     }
@@ -358,7 +339,7 @@ static NSRange _rangeFromEndOfRangeToEndOfRange(NSRange firstRange, NSRange seco
         [previousScopeStack removeLastObject];
 }
 
-- (void)_visitScopesInString:(NSString *)string range:(NSRange)range withChildPatternsOfPattern:(TMPattern *)pattern previousScopeStack:(NSMutableArray *)previousScopeStack usingVisitor:(ECCodeVisitor)visitorBlock
+- (void)_visitScopesInAttributedString:(NSMutableAttributedString *)attributedString range:(NSRange)range withChildPatternsOfPattern:(TMPattern *)pattern previousScopeStack:(NSMutableArray *)previousScopeStack usingVisitor:(ECCodeVisitor)visitorBlock
 {
     NSRange currentRange = range;
     for (;;)
@@ -366,7 +347,7 @@ static NSRange _rangeFromEndOfRangeToEndOfRange(NSRange firstRange, NSRange seco
         __block NSRange firstMatchRange = NSMakeRange(NSNotFound, 0);
         __block TMPattern *firstMatchPattern = nil;
         for (TMPattern *childPattern in pattern.patterns)
-            [self _visitScopesInString:string range:currentRange withPattern:childPattern previousScopeStack:previousScopeStack usingVisitor:^ECCodeVisitorResult(NSString *scope, NSRange scopeRange, BOOL isLeafScope, BOOL isExitingScope, NSArray *scopesStack) {
+            [self _visitScopesInAttributedString:attributedString range:currentRange withPattern:childPattern previousScopeStack:previousScopeStack usingVisitor:^ECCodeVisitorResult(NSString *scope, NSRange scopeRange, BOOL isLeafScope, BOOL isExitingScope, NSArray *scopesStack) {
                 if (scopeRange.location < firstMatchRange.location || (scopeRange.location == firstMatchRange.location && scopeRange.length > firstMatchRange.length))
                 {
                     firstMatchRange = scopeRange;
@@ -378,7 +359,7 @@ static NSRange _rangeFromEndOfRangeToEndOfRange(NSRange firstRange, NSRange seco
             break;
         __block NSUInteger stackDepth = 0;
         __block ECCodeVisitorResult visitorResult = ECCodeVisitorResultRecurse;
-        [self _visitScopesInString:string range:currentRange withPattern:firstMatchPattern previousScopeStack:previousScopeStack usingVisitor:^ECCodeVisitorResult(NSString *scope, NSRange scopeRange, BOOL isLeafScope, BOOL isExitingScope, NSArray *scopesStack) {
+        [self _visitScopesInAttributedString:attributedString range:currentRange withPattern:firstMatchPattern previousScopeStack:previousScopeStack usingVisitor:^ECCodeVisitorResult(NSString *scope, NSRange scopeRange, BOOL isLeafScope, BOOL isExitingScope, NSArray *scopesStack) {
             visitorResult = visitorBlock(scope, scopeRange, isLeafScope, isExitingScope, scopesStack);
             if (!isLeafScope)
                 if (isExitingScope)

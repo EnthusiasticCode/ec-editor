@@ -51,15 +51,12 @@
     TMSyntax *syntax = [[self class] _syntaxForFile:fileURL language:language scope:scope];
     id cacheKey = [[self class] _codeUnitCacheKeyForFileURL:fileURL syntax:syntax];
     TMCodeParser *codeParser = [[self _codeUnitCache] objectForKey:cacheKey];
-    id<ECCodeParser> proxy = [codeParser autoContentAccessingProxy];
     if (!codeParser)
     {
         codeParser = [[TMCodeParser alloc] initWithIndex:self fileURL:fileURL syntax:syntax];
         [[self _codeUnitCache] setObject:codeParser forKey:cacheKey];
-        proxy = [codeParser autoContentAccessingProxy];
-        [codeParser endContentAccess];
     }
-    return proxy;
+    return codeParser;
 }
 
 + (TMSyntax *)_syntaxForFile:(NSURL *)fileURL language:(NSString *)language scope:(NSString *)scope
