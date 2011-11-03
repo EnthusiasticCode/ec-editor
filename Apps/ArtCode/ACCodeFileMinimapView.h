@@ -37,6 +37,14 @@ typedef NSInteger ACCodeFileMinimapLineDecoration;
 /// The renderer to use to produce the minimap.
 @property (weak, nonatomic) ECTextRenderer *renderer;
 
+#pragma mark - Selection Rectangle
+
+/// The selection rectangle espressed in renderer coordinates. Set to CGRectNull to remove the selection.
+@property (nonatomic) CGRect selectionRectangle;
+
+/// A view used to mark the selection if any.
+@property (strong, nonatomic) UIView *selectionView;
+
 #pragma mark - Managing Minimap Style
 
 /// A view positioned as the background.

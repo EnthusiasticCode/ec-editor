@@ -45,6 +45,7 @@
     if (!_codeView)
     {
         _codeView = [ECCodeView new];
+        _codeView.delegate = self;
         
         _codeView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
         _codeView.backgroundColor = [UIColor whiteColor];
@@ -213,6 +214,8 @@
         case 1: // toggle minimap
         {
             [self setMinimapVisible:!self.minimapVisible animated:YES];
+            if (self.minimapVisible)
+                self.minimapView.selectionRectangle = self.codeView.bounds;
             break;
         }
             
@@ -290,13 +293,23 @@
         *decorationColor = [UIColor whiteColor];
     }
     
-    if (lineNumber == 26)
+    if (lineNumber == 154)
     {
         *decoration = ACCodeFileMinimapLineDecorationSquare;
         *decorationColor = [UIColor whiteColor];
     }
     
     return YES;
+}
+
+#pragma mark - Code View Delegate Methods
+
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView
+{
+    if (_minimapVisible && scrollView == _codeView)
+    {
+        _minimapView.selectionRectangle = _codeView.bounds;
+    }
 }
 
 #pragma mark - Private Methods

@@ -22,6 +22,7 @@ static const void *rendererContext;
 @interface ACCodeFileMinimapView () {
 @private
     ACCodeFileMinimapViewContent *_contentView;
+    
     CGAffineTransform _toMinimapTransform;
     CGAffineTransform _toRendererTransform;
     
@@ -41,7 +42,7 @@ static const void *rendererContext;
 #pragma mark - Properties
 
 @dynamic delegate;
-@synthesize renderer;
+@synthesize renderer, selectionRectangle, selectionView;
 @synthesize backgroundView;
 @synthesize lineDecorationInset, lineThickness, lineDefaultColor, lineShadowColor;
 
@@ -64,6 +65,45 @@ static const void *rendererContext;
     renderer = aRenderer;
     [renderer addObserver:self forKeyPath:@"renderHeight" options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew context:&rendererContext];
     [self didChangeValueForKey:@"renderer"];
+}
+
+- (UIView *)selectionView
+{
+    if (!selectionView)
+    {
+        selectionView = [UIView new];
+        selectionView.backgroundColor = [UIColor colorWithRed:0 green:113.0/255.0 blue:188.0/255.0 alpha:0.1];
+        selectionView.layer.borderWidth = 1;
+        selectionView.layer.borderColor = [UIColor colorWithRed:0 green:113.0/255.0 blue:188.0/255.0 alpha:1].CGColor;
+    }
+    return selectionView;
+}
+
+- (void)setSelectionRectangle:(CGRect)_selectionRectangle
+{
+    if (CGRectEqualToRect(_selectionRectangle, selectionRectangle))
+        return;
+    
+    [self willChangeValueForKey:@"selectionRectangle"];
+    selectionRectangle = _selectionRectangle;
+    if (CGRectEqualToRect(selectionRectangle, CGRectNull))
+    {
+        [selectionView removeFromSuperview];
+    }
+    else
+    {
+        if (renderer)
+        {
+            UIEdgeInsets rendererTextInsets = renderer.textInsets;
+            selectionRectangle.size.width -= rendererTextInsets.left + rendererTextInsets.right;
+            selectionRectangle.size.height -= rendererTextInsets.top + rendererTextInsets.bottom;
+            selectionRectangle.origin.x -= rendererTextInsets.left;
+            selectionRectangle.origin.y -= rendererTextInsets.top;
+        }
+        [self addSubview:self.selectionView];
+    }
+    
+    [self didChangeValueForKey:@"selectionRectangle"];
 }
 
 - (void)setBackgroundView:(UIView *)_backgroundView
@@ -115,7 +155,7 @@ static const void *rendererContext;
         
         __block UIColor *lastLineColor = this.lineDefaultColor;
         [this.renderer enumerateLinesIntersectingRect:CGRectApplyAffineTransform(rect, this->_toRendererTransform) usingBlock:^(ECTextRendererLine *line, NSUInteger lineIndex, NSUInteger lineNumber, CGFloat lineYOffset, NSRange stringRange, BOOL *stop) {
-
+            
             ACCodeFileMinimapLineDecoration customDecoration = 0;
             
             // Draw line block if color changes
@@ -141,7 +181,7 @@ static const void *rendererContext;
             }
             
             // Position line
-            CGFloat lineY = floorf(lineYOffset * this->_toMinimapTransform.a - rect.origin.y) + ((NSInteger)this->lineThickness % 2 ? 0.5 : 0);
+            CGFloat lineY = floorf(lineYOffset * this->_toMinimapTransform.a) + ((NSInteger)this->lineThickness % 2 ? 0.5 : 0);
             
             // Render decoration for line
             if (customDecoration > 0 && this->lineDecorationInset > 0)
@@ -191,6 +231,14 @@ static const void *rendererContext;
 - (void)layoutSubviews
 {
     [super layoutSubviews];
+    
+    if (!CGRectEqualToRect(selectionRectangle, CGRectNull))
+    {
+        CGRect selectionViewFrame = CGRectApplyAffineTransform(selectionRectangle, _toMinimapTransform);
+        selectionViewFrame.origin.x = lineDecorationInset;
+        selectionViewFrame.size.width = self.contentSize.width - lineDecorationInset;
+        selectionView.frame = CGRectInset(selectionViewFrame, -1, -1);
+    }
     
     if (backgroundView)
         backgroundView.frame = (CGRect){ self.contentOffset, self.frame.size };
