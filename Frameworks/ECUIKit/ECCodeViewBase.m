@@ -13,6 +13,10 @@
 
 static const void *rendererContext;
 
+@interface FastCATiledLayer : CATiledLayer
+@end
+
+
 @interface ECCodeViewBaseContentView : UIView
 @property (nonatomic, weak) ECCodeViewBase *parentCodeView;
 @end
@@ -326,13 +330,23 @@ static void init(ECCodeViewBase *self)
 @end
 
 
+@implementation FastCATiledLayer
+
++ (CFTimeInterval)fadeDuration
+{
+    return 0.0f;
+}
+
+@end
+
+
 @implementation ECCodeViewBaseContentView
 
 @synthesize parentCodeView;
 
 + (Class)layerClass
 {
-    return [CATiledLayer class];
+    return [FastCATiledLayer class];
 }
 
 - (void)drawRect:(CGRect)rect

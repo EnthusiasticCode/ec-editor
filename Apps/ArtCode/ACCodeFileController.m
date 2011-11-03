@@ -71,7 +71,7 @@
         _minimapView.delegate = self;
         _minimapView.renderer = self.codeView.renderer;
         
-        _minimapView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+        _minimapView.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleHeight;
         _minimapView.contentInset = UIEdgeInsetsMake(10, 10, 10, 10);
         
         _minimapView.rendererMinimumLineWidth = 4;

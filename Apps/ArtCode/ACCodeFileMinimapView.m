@@ -80,6 +80,12 @@ static const void *rendererContext;
     return lineGap;
 }
 
+- (void)setFrame:(CGRect)frame
+{
+    [super setFrame:frame];
+    [self _setupContentSize];
+}
+
 #pragma mark - View Methods
 
 - (id)initWithFrame:(CGRect)frame
@@ -88,7 +94,6 @@ static const void *rendererContext;
         return nil;
     
     _contentView = [[ACCodeFileMinimapViewContent alloc] initWithFrame:(CGRect){ CGPointZero, frame.size }];
-    _contentView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     _contentView.backgroundColor = [UIColor clearColor];
     __weak ACCodeFileMinimapView *this = self;
     _contentView.customDrawRectBlock = ^(CGRect rect) {
@@ -152,12 +157,18 @@ static const void *rendererContext;
     }
 }
 
+- (void)didMoveToSuperview
+{
+    [super didMoveToSuperview];
+    
+}
+
 - (void)_setupContentSize
 {
     CGRect contentRect = CGRectMake(0, 0,
                                     self.frame.size.width - self.contentInset.left - self.contentInset.right, 
                                     self.renderer.renderHeight);
-    if (contentRect.size.width <= 0)
+    if (contentRect.size.width <= 0 || CGRectEqualToRect(_contentView.frame, contentRect))
         return;
     
     CGFloat scale = contentRect.size.width / self.renderer.renderWidth;
