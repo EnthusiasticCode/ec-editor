@@ -15,6 +15,8 @@
 
 @property (nonatomic, strong) TMTheme *theme;
 
+@property (nonatomic, strong) NSDictionary *defaultTextAttributes;
+
 /// Returns the number of lines in the document.
 - (NSUInteger)lineCount;
 

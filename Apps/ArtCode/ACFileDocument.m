@@ -10,6 +10,7 @@
 #import <ECCodeIndexing/ECCodeIndex.h>
 #import <ECCodeIndexing/TMTheme.h>
 #import <ECUIKit/ECTextStyle.h>
+#import <CoreText/CoreText.h>
 
 @class SyntaxColoringOperation;
 
@@ -22,7 +23,6 @@
 @property (nonatomic, strong) NSMutableAttributedString *contentString;
 @property (nonatomic, strong) id<ECCodeParser>codeParser;
 @property (nonatomic, strong, readonly) SyntaxColoringOperation *_syntaxColoringOperation;
-@property (nonatomic, strong, readonly) ECTextStyle *defaultTextStyle;
 
 @property (nonatomic) NSRange _dirtyRange;
 - (void)_queueSyntaxColoringOperationForTextRenderer:(ECTextRenderer *)textRenderer;
@@ -41,65 +41,12 @@
 
 #pragma mark - Implementations
 
-#pragma mark -
-
-@implementation SyntaxColoringOperation
-
-- (id)initWithDocument:(ACFileDocument *)document textRenderer:(ECTextRenderer *)textRenderer
-{
-    if (!document)
-        return nil;
-    self = [super init];
-    if (!self)
-        return nil;
-    _document = document;
-    _textRenderer = textRenderer;
-    return self;
-}
-
-#define CHECK_CANCELED_RETURN if (self.isCancelled || !_document || _document._syntaxColoringOperation != self) return
-
-- (void)main
-{
-    CHECK_CANCELED_RETURN;
-    
-    NSMutableAttributedString *string = [_document.contentString mutableCopy];
-    if (![string length])
-        return;
-    
-    CHECK_CANCELED_RETURN;
-    
-    NSRange stringRange = NSMakeRange(0, [string length]);
-    [_document.codeParser visitScopesInAttributedString:_document.contentString range:stringRange usingVisitor:^ECCodeVisitorResult(NSString *scope, NSRange scopeRange, BOOL isLeafScope, BOOL isExitingScope, NSArray *scopesStack) {
-        if (!isExitingScope)
-        {
-            [string setAttributes:[_document.theme attributesForScopeStack:scopesStack] range:scopeRange];
-        }
-        CHECK_CANCELED_RETURN ECCodeVisitorResultBreak;
-        return ECCodeVisitorResultRecurse;
-    }];
-    
-    CHECK_CANCELED_RETURN;
-    
-    [[NSOperationQueue mainQueue] addOperationWithBlock:^{
-        _document.contentString = string;
-        _document._dirtyRange = NSMakeRange(0, 0);
-        [_textRenderer updateTextFromStringRange:stringRange toStringRange:stringRange];
-    }];
-}
-
-@end
-
-#pragma mark -
-
 @implementation ACFileDocument
 
 #pragma mark - Properties
 
-@synthesize contentString = _contentString;
-@synthesize codeParser = _codeParser;
-@synthesize defaultTextStyle = _defaultTextStyle;
-@synthesize theme = _theme;
+@synthesize contentString = _contentString, codeParser = _codeParser;
+@synthesize theme = _theme, defaultTextAttributes;
 @synthesize _syntaxColoringOperation = __syntaxColoringOperation, _dirtyRange = __dirtyRange;
 
 - (void)setContentString:(NSMutableAttributedString *)contentString
@@ -111,6 +58,19 @@
     _contentString = contentString;
     [self updateChangeCount:UIDocumentChangeDone];
     [self didChangeValueForKey:@"contentString"];
+}
+
+- (NSDictionary *)defaultTextAttributes
+{
+    if (!defaultTextAttributes)
+    {
+        CTFontRef defaultFont = CTFontCreateWithName((__bridge CFStringRef)@"Inconsolata-dz", 16, NULL);
+        defaultTextAttributes = [NSDictionary dictionaryWithObjectsAndKeys:
+                                 (__bridge id)defaultFont, kCTFontAttributeName,
+                                 [NSNumber numberWithInt:0], kCTLigatureAttributeName, nil];
+        CFRelease(defaultFont);
+    }
+    return defaultTextAttributes;
 }
 
 #pragma mark - UIDocument methods
@@ -157,7 +117,7 @@
 - (BOOL)loadFromContents:(id)contents ofType:(NSString *)typeName error:(NSError *__autoreleasing *)outError
 {
     // TODO handle error
-    self.contentString = [[NSMutableAttributedString alloc] initWithString:[NSString stringWithContentsOfURL:self.fileURL encoding:NSUTF8StringEncoding error:NULL] attributes:self.defaultTextStyle.CTAttributes];
+    self.contentString = [[NSMutableAttributedString alloc] initWithString:[NSString stringWithContentsOfURL:self.fileURL encoding:NSUTF8StringEncoding error:NULL] attributes:self.defaultTextAttributes];
     return YES;
 }
 
@@ -218,6 +178,56 @@
     __syntaxColoringOperation = [[SyntaxColoringOperation alloc] initWithDocument:this textRenderer:textRenderer];
     [_parserQueue addOperation:__syntaxColoringOperation];
     [self didChangeValueForKey:@"_syntaxColoringOperation"];
+}
+
+@end
+
+#pragma mark -
+
+@implementation SyntaxColoringOperation
+
+- (id)initWithDocument:(ACFileDocument *)document textRenderer:(ECTextRenderer *)textRenderer
+{
+    if (!document)
+        return nil;
+    self = [super init];
+    if (!self)
+        return nil;
+    _document = document;
+    _textRenderer = textRenderer;
+    return self;
+}
+
+#define CHECK_CANCELED_RETURN if (self.isCancelled || !_document || _document._syntaxColoringOperation != self) return
+
+- (void)main
+{
+    CHECK_CANCELED_RETURN;
+    
+    //    NSMutableAttributedString *string = [_document.contentString mutableCopy];
+    NSMutableAttributedString *string = [[NSMutableAttributedString alloc] initWithString:_document.contentString.string attributes:_document.defaultTextAttributes];
+    if (![string length])
+        return;
+    
+    CHECK_CANCELED_RETURN;
+    
+    NSRange stringRange = NSMakeRange(0, [string length]);
+    [_document.codeParser visitScopesInAttributedString:_document.contentString range:stringRange usingVisitor:^ECCodeVisitorResult(NSString *scope, NSRange scopeRange, BOOL isLeafScope, BOOL isExitingScope, NSArray *scopesStack) {
+        if (!isExitingScope)
+        {
+            [string addAttributes:[_document.theme attributesForScopeStack:scopesStack] range:scopeRange];
+        }
+        CHECK_CANCELED_RETURN ECCodeVisitorResultBreak;
+        return ECCodeVisitorResultRecurse;
+    }];
+    
+    CHECK_CANCELED_RETURN;
+    
+    [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+        _document.contentString = string;
+        _document._dirtyRange = NSMakeRange(0, 0);
+        [_textRenderer updateTextFromStringRange:stringRange toStringRange:stringRange];
+    }];
 }
 
 @end
