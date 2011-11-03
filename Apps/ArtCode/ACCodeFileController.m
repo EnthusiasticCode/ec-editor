@@ -284,6 +284,18 @@
     if (lineNumber < 8)
         *lineColor = [UIColor greenColor];
     
+    if (lineNumber == 15)
+    {
+        *decoration = ACCodeFileMinimapLineDecorationDisc;
+        *decorationColor = [UIColor whiteColor];
+    }
+    
+    if (lineNumber == 26)
+    {
+        *decoration = ACCodeFileMinimapLineDecorationSquare;
+        *decorationColor = [UIColor whiteColor];
+    }
+    
     return YES;
 }
 

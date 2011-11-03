@@ -110,32 +110,58 @@ static const void *rendererContext;
         
         CGContextSetLineWidth(context, this.lineThickness);
         
+        CGFloat lindeDecorationInset_2 = this->lineDecorationInset / 2;
+        CGFloat lindeDecorationInset_4 = this->lineDecorationInset / 4;
+        
         __block UIColor *lastLineColor = this.lineDefaultColor;
         [this.renderer enumerateLinesIntersectingRect:CGRectApplyAffineTransform(rect, this->_toRendererTransform) usingBlock:^(ECTextRendererLine *line, NSUInteger lineIndex, NSUInteger lineNumber, CGFloat lineYOffset, NSRange stringRange, BOOL *stop) {
 
+            ACCodeFileMinimapLineDecoration customDecoration = 0;
+            
             // Draw line block if color changes
             if (this->flags.delegateHasShouldRendererLineNumberWithColorDecorationDecorationColor)
             {
                 // Retrieve delegate informations for line
-                ACCodeFileMinimapLineDecoration customDecoration = 0;
                 __autoreleasing UIColor *customLineColor = this->lineDefaultColor;
                 __autoreleasing UIColor *customDecorationColor = this->lineDefaultColor;
                 if (![this.delegate codeFileMinimapView:this shouldRenderLine:line number:lineNumber withColor:&customLineColor deocration:&customDecoration decorationColor:&customDecorationColor])
                     return;
                 
                 // Render previous placed lines
-                if (customLineColor != lastLineColor)
+                if (customDecoration != 0 || customLineColor != lastLineColor)
                 {
                     CGContextSetStrokeColorWithColor(context, lastLineColor.CGColor);
                     CGContextStrokePath(context);
                     lastLineColor = customLineColor;
                 }
                 
-                // TODO Render decoration for line
+                // Set decoration color
+                if (customDecoration > 0 && this->lineDecorationInset > 0)
+                    CGContextSetFillColorWithColor(context, customDecorationColor.CGColor);
             }
             
             // Position line
             CGFloat lineY = floorf(lineYOffset * this->_toMinimapTransform.a - rect.origin.y) + ((NSInteger)this->lineThickness % 2 ? 0.5 : 0);
+            
+            // Render decoration for line
+            if (customDecoration > 0 && this->lineDecorationInset > 0)
+            {
+                switch (customDecoration) {
+                    case ACCodeFileMinimapLineDecorationDisc:
+                        CGContextAddArc(context, lindeDecorationInset_2, lineY, lindeDecorationInset_4, -M_PI, M_PI, 0);
+                        break;
+                        
+                    case ACCodeFileMinimapLineDecorationSquare:
+                    {
+                        CGContextAddRect(context, CGRectIntegral(CGRectMake(lindeDecorationInset_4, lineY - lindeDecorationInset_4, lindeDecorationInset_2, lindeDecorationInset_2)));
+                        break;
+                    }
+                        
+                    default:
+                        break;
+                }
+                CGContextFillPath(context);
+            }
             
             // Draw line
             CGContextMoveToPoint(context, this->lineDecorationInset, lineY);

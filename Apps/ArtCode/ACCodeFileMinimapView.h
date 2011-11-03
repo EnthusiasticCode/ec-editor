@@ -10,6 +10,12 @@
 
 @class ACCodeFileMinimapView, ECTextRenderer, ECTextRendererLine;
 
+enum {
+    ACCodeFileMinimapLineDecorationNone,
+    ACCodeFileMinimapLineDecorationDisc,
+    ACCodeFileMinimapLineDecorationSquare
+};
+
 typedef NSInteger ACCodeFileMinimapLineDecoration;
 
 @protocol ACCodeFileMinimapViewDelegate <UIScrollViewDelegate>
