@@ -66,6 +66,18 @@ static const void *rendererContext;
     [self didChangeValueForKey:@"renderer"];
 }
 
+- (void)setBackgroundView:(UIView *)_backgroundView
+{
+    if (backgroundView == _backgroundView)
+        return;
+    
+    [self willChangeValueForKey:@"backgroundView"];
+    [backgroundView removeFromSuperview];
+    backgroundView = _backgroundView;
+    [self insertSubview:backgroundView belowSubview:_contentView];
+    [self didChangeValueForKey:@"backgroundView"];
+}
+
 - (CGFloat)lineHeight
 {
     if (lineHeight < 1)
@@ -102,7 +114,7 @@ static const void *rendererContext;
         // Setup context and shadow
         CGContextRef context = UIGraphicsGetCurrentContext();
         if (this.lineShadowColor != nil)
-            CGContextSetShadowWithColor(context, CGSizeMake(1, 1), 0, this.lineShadowColor.CGColor);
+            CGContextSetShadowWithColor(context, CGSizeMake(1, 1), 1, this.lineShadowColor.CGColor);
         
         CGContextSetLineWidth(context, this.lineHeight);
         
@@ -157,10 +169,12 @@ static const void *rendererContext;
     }
 }
 
-- (void)didMoveToSuperview
+- (void)layoutSubviews
 {
-    [super didMoveToSuperview];
+    [super layoutSubviews];
     
+    if (backgroundView)
+        backgroundView.frame = (CGRect){ self.contentOffset, self.frame.size };
 }
 
 - (void)_setupContentSize

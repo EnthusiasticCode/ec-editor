@@ -75,8 +75,9 @@
         _minimapView.contentInset = UIEdgeInsetsMake(10, 10, 10, 10);
         
         _minimapView.rendererMinimumLineWidth = 4;
-        _minimapView.backgroundColor = [UIColor grayColor];
-        _minimapView.lineShadowColor = [UIColor colorWithWhite:0 alpha:0.3];
+        _minimapView.backgroundView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"minimap_Background"]];
+        _minimapView.backgroundView.contentMode = UIViewContentModeTopLeft;
+        _minimapView.lineShadowColor = [UIColor colorWithWhite:0 alpha:0.75];
         _minimapView.lineDefaultColor = [UIColor whiteColor];
     }
     return _minimapView;

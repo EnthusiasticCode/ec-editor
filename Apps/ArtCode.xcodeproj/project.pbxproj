@@ -130,6 +130,7 @@
 		CDC2829514508D500054358D /* topBar_TitleButton_Normal.png in Resources */ = {isa = PBXBuildFile; fileRef = CDC2829114508D500054358D /* topBar_TitleButton_Normal.png */; };
 		CDC2829614508D500054358D /* topBar_TitleButton_Selected.png in Resources */ = {isa = PBXBuildFile; fileRef = CDC2829214508D500054358D /* topBar_TitleButton_Selected.png */; };
 		CDD40B0313E1A046008AC36B /* ACPopoverHistoryToolController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDD40B0213E1A046008AC36B /* ACPopoverHistoryToolController.m */; };
+		CDDC95071462E23F00E2B96C /* minimap_Background.png in Resources */ = {isa = PBXBuildFile; fileRef = CDDC95061462E23F00E2B96C /* minimap_Background.png */; };
 		CDE3F14713C0DDD500DFFAFF /* Inconsolata-dz.otf in Resources */ = {isa = PBXBuildFile; fileRef = CDE3F14613C0DDD500DFFAFF /* Inconsolata-dz.otf */; };
 		CDE8F9D4145EEEFE00CA4496 /* ACCodeFileSearchBarController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDE8F9D2145EEEFE00CA4496 /* ACCodeFileSearchBarController.m */; };
 		CDE8F9D7145EEF3F00CA4496 /* ACCodeFileSearchBarController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CDE8F9D6145EEF3F00CA4496 /* ACCodeFileSearchBarController.xib */; };
@@ -428,6 +429,7 @@
 		CDC2829214508D500054358D /* topBar_TitleButton_Selected.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = topBar_TitleButton_Selected.png; sourceTree = "<group>"; };
 		CDD40B0113E1A046008AC36B /* ACPopoverHistoryToolController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACPopoverHistoryToolController.h; sourceTree = "<group>"; };
 		CDD40B0213E1A046008AC36B /* ACPopoverHistoryToolController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACPopoverHistoryToolController.m; sourceTree = "<group>"; };
+		CDDC95061462E23F00E2B96C /* minimap_Background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = minimap_Background.png; sourceTree = "<group>"; };
 		CDE3F14613C0DDD500DFFAFF /* Inconsolata-dz.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Inconsolata-dz.otf"; sourceTree = "<group>"; };
 		CDE8F9D1145EEEFE00CA4496 /* ACCodeFileSearchBarController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACCodeFileSearchBarController.h; sourceTree = "<group>"; };
 		CDE8F9D2145EEEFE00CA4496 /* ACCodeFileSearchBarController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACCodeFileSearchBarController.m; sourceTree = "<group>"; };
@@ -773,6 +775,7 @@
 		CD7D2B0A13C0CEFF00B889EE /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				CDDC95061462E23F00E2B96C /* minimap_Background.png */,
 				CDC2A6B81459D9C600978008 /* Tab Bar */,
 				CDC2828E14508D250054358D /* Top Bar */,
 				CDC1333114602F430028423F /* Search Bar */,
@@ -1232,6 +1235,7 @@
 				CDC1333814602F5E0028423F /* searchBar_NextButton_Normal.png in Resources */,
 				CDC1333914602F5E0028423F /* searchBar_PrevButton_Normal.png in Resources */,
 				CDC1333B146030380028423F /* searchBar_OptionButton.png in Resources */,
+				CDDC95071462E23F00E2B96C /* minimap_Background.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
