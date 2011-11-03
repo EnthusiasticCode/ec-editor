@@ -49,16 +49,6 @@
     return [_fileURLs copy];
 }
 
-- (void)insertFileURLs:(NSArray *)array atIndexes:(NSIndexSet *)indexes
-{
-    [[self mutableOrderedSetValueForKey:@"fileURLs"] insertObjects:array atIndexes:indexes];
-}
-
-- (void)replaceFileURLsAtIndexes:(NSIndexSet *)indexes withFileURLs:(NSArray *)array
-{
-    [[self mutableOrderedSetValueForKey:@"fileURLs"] replaceObjectsAtIndexes:indexes withObjects:array];
-}
-
 #pragma mark - General methods
 
 - (id)init
