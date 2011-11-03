@@ -8,28 +8,27 @@
 
 #import <UIKit/UIKit.h>
 
-@class ACCodeFileMinimapView;
+@class ACCodeFileMinimapView, ECTextRenderer, ECTextRendererLine;
 
-@protocol ACCodeFileMinimapViewDataSource <NSObject>
-@required
+@protocol ACCodeFileMinimapViewDelegate <UIScrollViewDelegate>
+@optional
 
-/// Returns the number of lines that the minimap has to display.
-- (NSUInteger)numberOfLinesForCodeFileMinimapView:(ACCodeFileMinimapView *)minimapView;
-
-/// Returns the length of the line at the given index as a number between 0 and 1, where 1 is the 
-/// length of the longest line. If given, the lineColor will be used instead of the default color
-/// for the line.
-- (CGFloat)codeFileMinimapView:(ACCodeFileMinimapView *)minimapView lenghtOfLineAtIndex:(NSUInteger)lineIndex applyColor:(UIColor **)lineColor;
+- (UIColor *)codeFileMinimapView:(ACCodeFileMinimapView *)minimapView colorForRendererLine:(ECTextRendererLine *)line number:(NSUInteger)lineNumber;
 
 @end
 
+
 @interface ACCodeFileMinimapView : UIScrollView
 
-#pragma mark - Providing Data
+#pragma mark - Providing Content
 
-@property (weak, nonatomic) id<ACCodeFileMinimapViewDataSource> dataSource;
+@property (weak, nonatomic) id<ACCodeFileMinimapViewDelegate> delegate;
 
-- (void)reloadAllData;
+/// The renderer to use to produce the minimap.
+@property (weak, nonatomic) ECTextRenderer *renderer;
+
+/// Provide the minimum line width that will be rendered in the minimap.
+@property (nonatomic) CGFloat rendererMinimumLineWidth;
 
 #pragma mark - Managing Minimap Style
 
@@ -43,7 +42,7 @@
 @property (nonatomic) CGFloat lineGap;
 
 /// The default line color. If nil, black will be used.
-@property (strong, nonatomic) UIColor *lineColor;
+@property (strong, nonatomic) UIColor *lineDefaultColor;
 
 /// The color of the shadow for a line. Default nil meaning that lines will have no shadows.
 @property (strong, nonatomic) UIColor *lineShadowColor;

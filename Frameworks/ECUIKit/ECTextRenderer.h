@@ -90,6 +90,9 @@ typedef void (^ECTextRendererLayerPass)(CGContextRef context, ECTextRendererLine
 /// A user can observe this property to receive updates on the changing height.
 @property (nonatomic, readonly) CGFloat renderHeight;
 
+/// Like render height but only include height of rendered text without insets.
+@property (nonatomic, readonly) CGFloat renderTextHeight;
+
 /// Indicates if the render height is completely computed or there are still non-generated text segments.
 @property (nonatomic, readonly, getter = isRenderHeightFinal) BOOL renderHeightFinal;
 
@@ -104,17 +107,13 @@ typedef void (^ECTextRendererLayerPass)(CGContextRef context, ECTextRendererLine
 /// line after rendering the actual text line.
 @property (nonatomic, copy) NSArray *overlayRenderingPasses;
 
-#pragma mark Rendering Content
-
-/// Given a rect in the rendered text space, this method return a centered
-/// and resized to fit an integral number of lines present in that original
-/// rect. The result can be computed faster but inpreciselly if the guessed
-/// flag is set to YES.
-//- (CGRect)rectForIntegralNumberOfTextLinesWithinRect:(CGRect)rect allowGuessedResult:(BOOL)guessed;
+#pragma mark Accessing Renered Lines
 
 /// Convenience function to enumerate throught all lines (indipendent from text segment)
 /// contained in the given rect relative to the rendered text space.
-- (void)enumerateLinesIntersectingRect:(CGRect)rect usingBlock:(void(^)(ECTextRendererLine *line, NSUInteger lineIndex, NSUInteger lineNumber, CGFloat lineOffset, NSRange stringRange, BOOL *stop))block;
+- (void)enumerateLinesIntersectingRect:(CGRect)rect usingBlock:(void(^)(ECTextRendererLine *line, NSUInteger lineIndex, NSUInteger lineNumber, CGFloat lineYOffset, NSRange stringRange, BOOL *stop))block;
+
+#pragma mark Rendering Content
 
 /// Renders the content text contained in the given rect to the specified 
 /// context. The given context will not be modified prior rendering. Lines

@@ -7,15 +7,33 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "ACCodeFileMinimapView.h"
 
-@class ECCodeView, ACTab;
+@class ACTab, ECCodeView;
 
-@interface ACCodeFileController : UIViewController <UITextFieldDelegate, UIActionSheetDelegate>
+@interface ACCodeFileController : UIViewController <ACCodeFileMinimapViewDelegate, UIActionSheetDelegate>
 
+#pragma mark - Controller's location
+
+/// The file URL that the controller is displaying
 @property (nonatomic, strong) NSURL *fileURL;
 
+/// The tab in which the controller is displayed.
 @property (nonatomic, strong) ACTab *tab;
 
+#pragma mark - Code viewing and editing
+
+/// The code view used to display code.
 @property (nonatomic, strong, readonly) ECCodeView *codeView;
+
+/// The code minimap view.
+@property (nonatomic, strong, readonly) ACCodeFileMinimapView *minimapView;
+
+/// Indicates if the minimap is visible.
+@property (nonatomic, getter = isMinimapVisible) BOOL minimapVisible;
+- (void)setMinimapVisible:(BOOL)minimapVisible animated:(BOOL)animated;
+
+/// Indicates the width of the minimap.
+@property (nonatomic) CGFloat minimapWidth;
 
 @end

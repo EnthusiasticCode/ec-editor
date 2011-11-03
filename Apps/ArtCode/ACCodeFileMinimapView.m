@@ -7,33 +7,63 @@
 //
 
 #import "ACCodeFileMinimapView.h"
+#import <ECUIKit/ECTextRenderer.h>
 #import <QuartzCore/QuartzCore.h>
 
-#define LINES_PER_TILE 200
+static const void *rendererContext;
+#define TILE_HEIGHT 400
+
 
 @interface ACCodeFileMinimapViewContent : UIView
 @property (copy, nonatomic) void (^customDrawRectBlock)(CGRect rect);
 @end
 
-@implementation ACCodeFileMinimapView {
+
+@interface ACCodeFileMinimapView () {
+@private
     ACCodeFileMinimapViewContent *_contentView;
+    CGAffineTransform _toMinimapTransform;
+    CGAffineTransform _toRendererTransform;
+    
+    struct {
+        unsigned delegateHasColorForRendererLineNumber : 1;
+        unsigned reserved : 3;
+    } flags;
 }
+
+- (void)_setupContentSize;
+
+@end
+
+
+@implementation ACCodeFileMinimapView
 
 #pragma mark - Properties
 
-@synthesize dataSource;
+@dynamic delegate;
+@synthesize renderer, rendererMinimumLineWidth;
 @synthesize backgroundView;
-@synthesize lineHeight, lineGap, lineColor, lineShadowColor;
+@synthesize lineHeight, lineGap, lineDefaultColor, lineShadowColor;
 
-- (void)setDataSource:(id<ACCodeFileMinimapViewDataSource>)aDataSource
+- (void)setDelegate:(id<ACCodeFileMinimapViewDelegate>)aDelegate
 {
-    if (aDataSource == dataSource)
+    if (aDelegate == self.delegate)
         return;
     
-    [self willChangeValueForKey:@"dataSource"];
-    dataSource = aDataSource;
-    [self reloadAllData];
-    [self didChangeValueForKey:@"dataSource"];
+    super.delegate = aDelegate;
+    flags.delegateHasColorForRendererLineNumber = [self.delegate respondsToSelector:@selector(codeFileMinimapView:colorForRendererLine:number:)];
+}
+
+- (void)setRenderer:(ECTextRenderer *)aRenderer
+{
+    if (aRenderer == renderer)
+        return;
+    
+    [self willChangeValueForKey:@"renderer"];
+    [renderer removeObserver:self forKeyPath:@"renderHeight" context:&rendererContext];
+    renderer = aRenderer;
+    [renderer addObserver:self forKeyPath:@"renderHeight" options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew context:&rendererContext];
+    [self didChangeValueForKey:@"renderer"];
 }
 
 - (CGFloat)lineHeight
@@ -43,17 +73,6 @@
     return lineHeight;
 }
 
-- (void)setLineHeight:(CGFloat)height
-{
-    if (height == lineHeight)
-        return;
-    
-    [self willChangeValueForKey:@"lineHeight"];
-    lineHeight = height;
-    [self reloadAllData];
-    [self didChangeValueForKey:@"lineHeight"];
-}
-
 - (CGFloat)lineGap
 {
     if (lineGap < 1)
@@ -61,69 +80,64 @@
     return lineGap;
 }
 
-- (void)setLineGap:(CGFloat)gap
+- (void)setFrame:(CGRect)frame
 {
-    if (gap == lineGap)
-        return;
-    
-    [self willChangeValueForKey:@"lineGap"];
-    lineGap = gap;
-    [self reloadAllData];
-    [self didChangeValueForKey:@"lineGap"];
+    [super setFrame:frame];
+    [self _setupContentSize];
 }
 
 #pragma mark - View Methods
 
 - (id)initWithFrame:(CGRect)frame
 {
-    if ((self = [super initWithFrame:frame]))
+    if (!(self = [super initWithFrame:frame]))
         return nil;
     
     _contentView = [[ACCodeFileMinimapViewContent alloc] initWithFrame:(CGRect){ CGPointZero, frame.size }];
-    _contentView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    _contentView.backgroundColor = [UIColor clearColor];
     __weak ACCodeFileMinimapView *this = self;
     _contentView.customDrawRectBlock = ^(CGRect rect) {
         // This method will be called for every tile of _contentView and rect will be the rect of the tile.
-        // Calculate index of first line to render and validate it
-        CGFloat totalLineHeight = this.lineHeight + this.lineGap;
-        NSUInteger lineIndex = rect.origin.y * totalLineHeight;
-        NSUInteger lineCount = [this.dataSource numberOfLinesForCodeFileMinimapView:this];
-        if (lineIndex >= lineCount)
-            return;
         
-        // Calculate number of lines to render
-        lineCount = MIN((lineCount - lineIndex), rect.size.height * totalLineHeight);
-        
-        // Setup shadow
+        // Setup context and shadow
         CGContextRef context = UIGraphicsGetCurrentContext();
         if (this.lineShadowColor != nil)
             CGContextSetShadowWithColor(context, CGSizeMake(1, 1), 0, this.lineShadowColor.CGColor);
         
-        // Render lines
-        UIColor *color, *lastColor = this.lineColor;
-        CGFloat lineOffset = (fabsf(this.lineHeight) != this.lineHeight || (NSInteger)this.lineHeight % 2) ? 0 : 0.5;
-        CGPoint lineEndPoint;
-        for (; lineIndex < lineCount; ++lineIndex)
-        {
-            // Compute line width and color
-            color = this.lineColor;
-            lineEndPoint = CGPointMake([this.dataSource codeFileMinimapView:this lenghtOfLineAtIndex:lineIndex applyColor:&color] * rect.size.width, lineIndex * totalLineHeight + lineOffset);
-            
-            // Draw previous path of lines if with different color
-            if (lastColor != color)
+        CGContextSetLineWidth(context, this.lineHeight);
+        
+        CGFloat gap = this.lineHeight + this.lineGap;
+        __block CGFloat lineY = CGFLOAT_MAX;
+        __block UIColor *customLineColor, *lastLineColor = this.lineDefaultColor;
+        [this.renderer enumerateLinesIntersectingRect:CGRectApplyAffineTransform(rect, this->_toRendererTransform) usingBlock:^(ECTextRendererLine *line, NSUInteger lineIndex, NSUInteger lineNumber, CGFloat lineYOffset, NSRange stringRange, BOOL *stop) {
+            // Draw line block if color changes
+            if (this->flags.delegateHasColorForRendererLineNumber)
             {
-                CGContextSetStrokeColorWithColor(context, lastColor.CGColor);
-                CGContextStrokePath(context);
-                lastColor = color;
+                customLineColor = [this.delegate codeFileMinimapView:this colorForRendererLine:line number:lineNumber];
+                if (customLineColor == nil)
+                    customLineColor = this->lineDefaultColor;
+                if (customLineColor != lastLineColor)
+                {
+                    CGContextSetStrokeColorWithColor(context, lastLineColor.CGColor);
+                    CGContextStrokePath(context);
+                    lastLineColor = customLineColor;
+                }
             }
             
-            // Add line to context path
-            CGContextMoveToPoint(context, 0, lineEndPoint.y);
-            CGContextAddLineToPoint(context, lineEndPoint.x, lineEndPoint.y);
-        }
+            // Position first line
+            if (lineY == CGFLOAT_MAX)
+                lineY = floorf(lineYOffset * this->_toMinimapTransform.a - rect.origin.y) + ((NSInteger)this.lineHeight % 2 ? 0.5 : 0);
+            
+            // Draw line
+            if (line.width >= this->rendererMinimumLineWidth)
+            {
+                CGContextMoveToPoint(context, 0, lineY);
+                CGContextAddLineToPoint(context, line.width * this->_toMinimapTransform.a, lineY);
+            }
+            lineY += gap;
+        }];
         
-        // Rendering last line group
-        CGContextSetStrokeColorWithColor(context, lastColor.CGColor);
+        CGContextSetStrokeColorWithColor(context, lastLineColor.CGColor);
         CGContextStrokePath(context);
     };
     [self addSubview:_contentView];
@@ -131,14 +145,43 @@
     return self;
 }
 
-#pragma mark - Data Methods
-
-- (void)reloadAllData
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
-    ECASSERT(dataSource != nil);
+    if (context == &rendererContext)
+    {
+        [self _setupContentSize];
+    }
+    else
+    {
+        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+    }
+}
+
+- (void)didMoveToSuperview
+{
+    [super didMoveToSuperview];
     
-    self.contentSize = CGSizeMake(UIEdgeInsetsInsetRect(self.frame, self.contentInset).size.width, [self.dataSource numberOfLinesForCodeFileMinimapView:self] * (self.lineHeight + self.lineGap));
-    [(CATiledLayer *)_contentView.layer setTileSize:CGSizeMake(self.contentSize.width, LINES_PER_TILE * (self.lineHeight + self.lineGap))];
+}
+
+- (void)_setupContentSize
+{
+    CGRect contentRect = CGRectMake(0, 0,
+                                    self.frame.size.width - self.contentInset.left - self.contentInset.right, 
+                                    self.renderer.renderHeight);
+    if (contentRect.size.width <= 0 || CGRectEqualToRect(_contentView.frame, contentRect))
+        return;
+    
+    CGFloat scale = contentRect.size.width / self.renderer.renderWidth;
+    contentRect.size.height *= scale;
+    contentRect = CGRectIntegral(contentRect);
+    
+    _toMinimapTransform = CGAffineTransformMakeScale(scale, scale);
+    _toRendererTransform = CGAffineTransformInvert(_toMinimapTransform);
+    
+    self.contentSize = contentRect.size;
+
+    _contentView.frame = contentRect;
+    [(CATiledLayer *)_contentView.layer setTileSize:CGSizeMake(contentRect.size.width, TILE_HEIGHT)];
     [_contentView setNeedsDisplay];
 }
 

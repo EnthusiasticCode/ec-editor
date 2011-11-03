@@ -133,7 +133,7 @@
 
 /// The actual render height of the whole string in the segment at the current
 /// wrap width.
-@property (nonatomic, readonly) CGFloat renderHeight;
+@property (nonatomic, readonly) CGFloat renderSegmentHeight;
 
 /// Enumerate all the rendered lines in the text segment that intersect the given rect. 
 /// The rect should be relative to this segment coordinates.
@@ -382,7 +382,7 @@
     self.typesetter = nil;
 }
 
-- (CGFloat)renderHeight
+- (CGFloat)renderSegmentHeight
 {
     // Get height cache entry to update
     int cacheIdx = 0;
@@ -586,7 +586,7 @@
 #pragma mark Properties
 
 @synthesize delegate, dataSource;
-@synthesize renderWidth, renderHeight, textInsets, maximumStringLenghtPerSegment;
+@synthesize renderWidth, renderHeight, renderTextHeight, textInsets, maximumStringLenghtPerSegment;
 @synthesize underlayRenderingPasses, overlayRenderingPasses;
 
 - (void)setDelegate:(id<ECTextRendererDelegate>)aDelegate
@@ -627,17 +627,15 @@
     [self didChangeValueForKey:@"renderWidth"];
 }
 
-- (void)setRenderHeight:(CGFloat)height
+- (void)setRenderTextHeight:(CGFloat)height
 {
-    if (height == renderHeight)
+    if (height == renderTextHeight)
         return;
     
-    [self willChangeValueForKey:@"renderHeight"];
-    if (height > 0)
-        renderHeight = height + textInsets.top + textInsets.bottom;
-    else
-        renderHeight = 0;
-    [self didChangeValueForKey:@"renderHeight"];
+    [self willChangeValueForKey:@"renderTextHeight"];
+    renderTextHeight = height;
+    [self didChangeValueForKey:@"renderTextHeight"];
+    self.renderHeight = height + textInsets.top + textInsets.bottom;
 }
 
 - (BOOL)isRenderHeightFinal
@@ -728,7 +726,8 @@
     if (!attributedString || stringLength == 0)
         return nil;
     
-    // Calculate the number of lines in the string
+    // Calculate the number of lines in lineCount 
+    // and the end of useful string in lineRange.location
     NSString *string = attributedString.string;
     NSUInteger lineStart = 0, lineEnd = 0, contentsEnd;
     NSRange lineRange = NSMakeRange(0, 0);
@@ -745,8 +744,12 @@
         lineCount++;
     }
     
+    // Trim returned string if needed
+    if (lineRange.location != stringLength)
+        attributedString = [attributedString attributedSubstringFromRange:NSMakeRange(0, lineRange.location)];
+    
     // Add a tailing new line 
-    if (inputStringLenght == NSMaxRange(stringRange))
+    else if (inputStringLenght == NSMaxRange(stringRange))
     {
         NSMutableAttributedString *newLineString = [attributedString mutableCopy];
         [newLineString appendAttributedString:[[NSAttributedString alloc] initWithString:@"\n" attributes:[newLineString attributesAtIndex:stringLength - 1 effectiveRange:NULL]]];
@@ -756,7 +759,7 @@
             *isFinalPart = YES;
     }
 
-    // Side effect! clear caches if segment changes its ragne
+    // Side effect! clear caches if segment changes its range
     if (requestSegment.lineCount > 0 && lineCount != requestSegment.lineCount)
     {
         NSUInteger requestSegmentIndex = [textSegments indexOfObject:requestSegment];
@@ -764,10 +767,6 @@
             [segment discardContent];
         }];
     }
-    
-    // Trim returned string if needed
-    if (lineRange.location != stringLength)
-        attributedString = [attributedString attributedSubstringFromRange:NSMakeRange(0, lineRange.location)];
     
     if (lines)
         *lines = lineCount;
@@ -811,17 +810,17 @@
             currentLineRange.length = segment.lineCount;
             currentLineRange.location += currentLineRange.length;
             currentStringOffset += segment.stringLength;
-            currentPositionOffset += segment.renderHeight;
+            currentPositionOffset += segment.renderSegmentHeight;
             
             [segment endContentAccess];
             
         } while (!stop && !segment.isLastSegment);
         
         // Update estimated height
-        if (currentPositionOffset > renderHeight 
-            || (segment.isLastSegment && currentPositionOffset != renderHeight)) 
+        if (currentPositionOffset > renderTextHeight 
+            || (segment.isLastSegment && currentPositionOffset != renderTextHeight)) 
         {
-            self.renderHeight = currentPositionOffset;
+            self.renderTextHeight = currentPositionOffset;
         }
     }
 }
@@ -902,7 +901,7 @@
         }
         
         // Skip not intersected segments
-        if (rect.origin.y > positionOffset + segment.renderHeight)
+        if (rect.origin.y > positionOffset + segment.renderSegmentHeight)
             return;
         
         // Adjust rect to current segment relative coordinates
@@ -1198,7 +1197,7 @@
         segmentRange.location += segmentRange.length;
         segmentRange.length = segment.stringLength;
         segmentRangeEnd = NSMaxRange(segmentRange);
-        affectedSegmentHeight = segment.renderHeight;
+        affectedSegmentHeight = segment.renderSegmentHeight;
         
         // Skip untouched segments
         ECASSERT(segmentRange.location < fromRangeEnd);
@@ -1238,7 +1237,10 @@
     
     // Send invalidation for specific rect
     if (delegateHasDidInvalidateRenderInRect)
+    {
+        removeFromSegmentYOffset += textInsets.top;
         [delegate textRenderer:self didInvalidateRenderInRect:CGRectMake(0, removeFromSegmentYOffset, self.renderWidth, (removeFromSegmentIndex != NSNotFound ? self.renderHeight - removeFromSegmentYOffset : affectedSegmentHeight))];
+    }
 }
 
 @end
