@@ -171,6 +171,8 @@
     
     _minimapView = [[ACCodeFileMinimapView alloc] initWithFrame:CGRectZero];
     _minimapView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    _minimapView.contentInset = UIEdgeInsetsMake(10, 10, 10, 10);
+    _minimapView.rendererMinimumLineWidth = 4;
     _minimapView.renderer = _codeView.renderer;
     [self.view addSubview:_minimapView];
 }
@@ -193,6 +195,7 @@
     [super viewWillAppear:animated];
     
     CGRect frame = self.view.frame;
+#warning TODO NIK actually use minimapVisible
     _codeView.frame = CGRectMake(0, 0, frame.size.width - 124, frame.size.height);
     _minimapView.frame = CGRectMake(frame.size.width - 124, 0, 124, frame.size.height);
 }

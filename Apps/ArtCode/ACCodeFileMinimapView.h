@@ -13,7 +13,13 @@
 
 @interface ACCodeFileMinimapView : UIScrollView
 
+#pragma mark - Providing Content
+
+/// The renderer to use to produce the minimap.
 @property (weak, nonatomic) ECTextRenderer *renderer;
+
+/// Provide the minimum line width that will be rendered in the minimap.
+@property (nonatomic) CGFloat rendererMinimumLineWidth;
 
 #pragma mark - Managing Minimap Style
 

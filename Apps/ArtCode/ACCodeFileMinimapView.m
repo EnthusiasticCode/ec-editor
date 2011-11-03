@@ -35,7 +35,7 @@ static const void *rendererContext;
 
 #pragma mark - Properties
 
-@synthesize renderer;
+@synthesize renderer, rendererMinimumLineWidth;
 @synthesize backgroundView;
 @synthesize lineHeight, lineGap, lineColor, lineShadowColor;
 
@@ -90,9 +90,12 @@ static const void *rendererContext;
         __block CGFloat lineY = CGFLOAT_MAX;
         [this.renderer enumerateLinesIntersectingRect:CGRectApplyAffineTransform(rect, this->_toRendererTransform) usingBlock:^(ECTextRendererLine *line, NSUInteger lineIndex, NSUInteger lineNumber, CGFloat lineYOffset, NSRange stringRange, BOOL *stop) {
             if (lineY == CGFLOAT_MAX)
-                lineY = lineYOffset * this->_toMinimapTransform.a - rect.origin.y;
-            CGContextMoveToPoint(context, 0, lineY);
-            CGContextAddLineToPoint(context, line.width * this->_toMinimapTransform.a, lineY);
+                lineY = floorf(lineYOffset * this->_toMinimapTransform.a - rect.origin.y) + ((NSInteger)this.lineHeight % 2 ? 0 : 0.5);
+            if (line.width >= this->rendererMinimumLineWidth)
+            {
+                CGContextMoveToPoint(context, 0, lineY);
+                CGContextAddLineToPoint(context, line.width * this->_toMinimapTransform.a, lineY);
+            }
             lineY += gap;
         }];
         
