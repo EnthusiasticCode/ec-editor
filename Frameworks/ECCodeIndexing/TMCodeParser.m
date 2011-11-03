@@ -205,6 +205,8 @@ static NSRange _rangeFromEndOfRangeToEndOfRange(NSRange firstRange, NSRange seco
                 for (NSUInteger currentMatchRangeIndex = 1; currentMatchRangeIndex < numMatchRanges; ++currentMatchRangeIndex)
                 {
                     NSRange currentMatchRange = [result rangeAt:currentMatchRangeIndex];
+                    if (!currentMatchRange.length)
+                        continue;
                     NSString *currentCaptureName = [[pattern.captures objectForKey:[NSString stringWithFormat:@"%d", currentMatchRangeIndex]] objectForKey:_patternCaptureName];
                     if (!currentCaptureName)
                         continue;
@@ -276,6 +278,8 @@ static NSRange _rangeFromEndOfRangeToEndOfRange(NSRange firstRange, NSRange seco
                     for (NSUInteger currentMatchRangeIndex = 1; currentMatchRangeIndex < numMatchRanges; ++currentMatchRangeIndex)
                     {
                         NSRange currentMatchRange = [result rangeAt:currentMatchRangeIndex];
+                        if (!currentMatchRange.length)
+                            continue;
                         NSString *currentCaptureName = [[pattern.beginCaptures objectForKey:[NSString stringWithFormat:@"%d", currentMatchRangeIndex]] objectForKey:_patternCaptureName];
                         if (!currentCaptureName)
                             continue;
@@ -322,6 +326,8 @@ static NSRange _rangeFromEndOfRangeToEndOfRange(NSRange firstRange, NSRange seco
                     for (NSUInteger currentMatchRangeIndex = 1; currentMatchRangeIndex < numMatchRanges; ++currentMatchRangeIndex)
                     {
                         NSRange currentMatchRange = [endMatch rangeAt:currentMatchRangeIndex];
+                        if (!currentMatchRange.length)
+                            continue;
                         NSString *currentCaptureName = [[pattern.beginCaptures objectForKey:[NSString stringWithFormat:@"%d", currentMatchRangeIndex]] objectForKey:_patternCaptureName];
                         if (!currentCaptureName)
                             continue;
