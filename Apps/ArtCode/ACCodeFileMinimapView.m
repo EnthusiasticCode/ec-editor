@@ -43,7 +43,7 @@ static const void *rendererContext;
 @dynamic delegate;
 @synthesize renderer;
 @synthesize backgroundView;
-@synthesize lineHeight, lineDefaultColor, lineShadowColor;
+@synthesize lineDecorationInset, lineThickness, lineDefaultColor, lineShadowColor;
 
 - (void)setDelegate:(id<ACCodeFileMinimapViewDelegate>)aDelegate
 {
@@ -78,11 +78,11 @@ static const void *rendererContext;
     [self didChangeValueForKey:@"backgroundView"];
 }
 
-- (CGFloat)lineHeight
+- (CGFloat)lineThickness
 {
-    if (lineHeight < 1)
-        lineHeight = 1;
-    return lineHeight;
+    if (lineThickness < 1)
+        lineThickness = 1;
+    return lineThickness;
 }
 
 - (void)setFrame:(CGRect)frame
@@ -103,13 +103,12 @@ static const void *rendererContext;
     __weak ACCodeFileMinimapView *this = self;
     _contentView.customDrawRectBlock = ^(CGRect rect) {
         // This method will be called for every tile of _contentView and rect will be the rect of the tile.
-        
         // Setup context and shadow
         CGContextRef context = UIGraphicsGetCurrentContext();
         if (this.lineShadowColor != nil)
             CGContextSetShadowWithColor(context, CGSizeMake(1, 1), 1, this.lineShadowColor.CGColor);
         
-        CGContextSetLineWidth(context, this.lineHeight);
+        CGContextSetLineWidth(context, this.lineThickness);
         
         __block UIColor *customLineColor, *lastLineColor = this.lineDefaultColor;
         [this.renderer enumerateLinesIntersectingRect:CGRectApplyAffineTransform(rect, this->_toRendererTransform) usingBlock:^(ECTextRendererLine *line, NSUInteger lineIndex, NSUInteger lineNumber, CGFloat lineYOffset, NSRange stringRange, BOOL *stop) {
@@ -132,11 +131,11 @@ static const void *rendererContext;
                 return;
             
             // Position line
-            CGFloat lineY = floorf(lineYOffset * this->_toMinimapTransform.a - rect.origin.y) + ((NSInteger)this.lineHeight % 2 ? 0.5 : 0);
+            CGFloat lineY = floorf(lineYOffset * this->_toMinimapTransform.a - rect.origin.y) + ((NSInteger)this->lineThickness % 2 ? 0.5 : 0);
             
             // Draw line
-            CGContextMoveToPoint(context, 0, lineY);
-            CGContextAddLineToPoint(context, line.width * this->_toMinimapTransform.a, lineY);
+            CGContextMoveToPoint(context, this->lineDecorationInset, lineY);
+            CGContextAddLineToPoint(context, this->lineDecorationInset + line.width * this->_toMinimapTransform.a, lineY);
         }];
         
         CGContextSetStrokeColorWithColor(context, lastLineColor.CGColor);
@@ -170,19 +169,19 @@ static const void *rendererContext;
 - (void)_setupContentSize
 {
     CGRect contentRect = CGRectMake(0, 0,
-                                    self.frame.size.width - self.contentInset.left - self.contentInset.right, 
+                                    self.frame.size.width, 
                                     self.renderer.renderHeight);
     if (contentRect.size.width <= 0 || CGRectEqualToRect(_contentView.frame, contentRect))
         return;
     
-    CGFloat scale = contentRect.size.width / self.renderer.renderWidth;
+    CGFloat scale = (contentRect.size.width - self.lineDecorationInset - self.contentInset.left - self.contentInset.right) / self.renderer.renderWidth;
     contentRect.size.height *= scale;
     contentRect = CGRectIntegral(contentRect);
     
     _toMinimapTransform = CGAffineTransformMakeScale(scale, scale);
     _toRendererTransform = CGAffineTransformInvert(_toMinimapTransform);
     
-    self.contentSize = contentRect.size;
+    self.contentSize = (CGSize){ (contentRect.size.width - self.contentInset.left - self.contentInset.right), contentRect.size.height };
 
     _contentView.frame = contentRect;
     [(CATiledLayer *)_contentView.layer setTileSize:CGSizeMake(contentRect.size.width, TILE_HEIGHT)];

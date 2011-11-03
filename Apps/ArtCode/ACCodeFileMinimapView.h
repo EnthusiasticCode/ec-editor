@@ -32,8 +32,11 @@
 /// A view positioned as the background.
 @property (strong, nonatomic) UIView *backgroundView;
 
+/// An inset applied to the decoration side of the minimap.
+@property (nonatomic) CGFloat lineDecorationInset;
+
 /// The thickness of the uniform line representing a text line. Default 1, the minimum.
-@property (nonatomic) CGFloat lineHeight;
+@property (nonatomic) CGFloat lineThickness;
 
 /// The default line color. If nil, black will be used.
 @property (strong, nonatomic) UIColor *lineDefaultColor;
