@@ -45,6 +45,7 @@
     if (!_codeView)
     {
         _codeView = [ECCodeView new];
+        _codeView.delegate = self;
         
         _codeView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
         _codeView.backgroundColor = [UIColor whiteColor];
@@ -72,11 +73,12 @@
         _minimapView.renderer = self.codeView.renderer;
         
         _minimapView.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleHeight;
-        _minimapView.contentInset = UIEdgeInsetsMake(10, 10, 10, 10);
+        _minimapView.contentInset = UIEdgeInsetsMake(10, 0, 10, 10);
         _minimapView.alwaysBounceVertical = YES;
         
         _minimapView.backgroundView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"minimap_Background"]];
         _minimapView.backgroundView.contentMode = UIViewContentModeTopLeft;
+        _minimapView.lineDecorationInset = 10;
         _minimapView.lineShadowColor = [UIColor colorWithWhite:0 alpha:0.75];
         _minimapView.lineDefaultColor = [UIColor colorWithWhite:0.7 alpha:1];
     }
@@ -212,6 +214,8 @@
         case 1: // toggle minimap
         {
             [self setMinimapVisible:!self.minimapVisible animated:YES];
+            if (self.minimapVisible)
+                self.minimapView.selectionRectangle = self.codeView.bounds;
             break;
         }
             
@@ -265,6 +269,12 @@
 	return YES;
 }
 
+- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
+{
+    if (self.minimapVisible)
+        self.minimapView.selectionRectangle = self.codeView.bounds;
+}
+
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
@@ -275,12 +285,43 @@
 
 #pragma mark - Minimap Delegate Methods
 
-- (UIColor *)codeFileMinimapView:(ACCodeFileMinimapView *)minimapView colorForRendererLine:(ECTextRendererLine *)line number:(NSUInteger)lineNumber
+- (BOOL)codeFileMinimapView:(ACCodeFileMinimapView *)minimapView shouldRenderLine:(ECTextRendererLine *)line number:(NSUInteger)lineNumber withColor:(UIColor *__autoreleasing *)lineColor deocration:(ACCodeFileMinimapLineDecoration *)decoration decorationColor:(UIColor *__autoreleasing *)decorationColor
 {
-    // TODO actual logic for coloring minimap
+    if (line.width < line.height)
+        return NO;
+    
     if (lineNumber < 8)
-        return [UIColor greenColor];
-    return nil;
+        *lineColor = [UIColor greenColor];
+    
+    if (lineNumber == 15)
+    {
+        *decoration = ACCodeFileMinimapLineDecorationDisc;
+        *decorationColor = [UIColor whiteColor];
+    }
+    
+    if (lineNumber == 154)
+    {
+        *decoration = ACCodeFileMinimapLineDecorationSquare;
+        *decorationColor = [UIColor whiteColor];
+    }
+    
+    return YES;
+}
+
+- (BOOL)codeFileMinimapView:(ACCodeFileMinimapView *)minimapView shouldChangeSelectionRectangle:(CGRect)newSelection
+{
+    [self.codeView scrollRectToVisible:newSelection animated:YES];
+    return NO;
+}
+
+#pragma mark - Code View Delegate Methods
+
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView
+{
+    if (_minimapVisible && scrollView == _codeView)
+    {
+        _minimapView.selectionRectangle = _codeView.bounds;
+    }
 }
 
 #pragma mark - Private Methods

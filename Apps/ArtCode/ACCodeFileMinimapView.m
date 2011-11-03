@@ -22,16 +22,19 @@ static const void *rendererContext;
 @interface ACCodeFileMinimapView () {
 @private
     ACCodeFileMinimapViewContent *_contentView;
+    
     CGAffineTransform _toMinimapTransform;
     CGAffineTransform _toRendererTransform;
     
     struct {
-        unsigned delegateHasColorForRendererLineNumber : 1;
-        unsigned reserved : 3;
+        unsigned delegateHasShouldRendererLineNumberWithColorDecorationDecorationColor : 1;
+        unsigned delegateHasShouldChangeSelectionRectangle : 1;
+        unsigned reserved : 2;
     } flags;
 }
 
 - (void)_setupContentSize;
+- (void)_handleGestureMinimapTap:(UITapGestureRecognizer *)recognizer;
 
 @end
 
@@ -41,9 +44,9 @@ static const void *rendererContext;
 #pragma mark - Properties
 
 @dynamic delegate;
-@synthesize renderer;
+@synthesize renderer, selectionRectangle, selectionView;
 @synthesize backgroundView;
-@synthesize lineHeight, lineDefaultColor, lineShadowColor;
+@synthesize lineDecorationInset, lineThickness, lineDefaultColor, lineShadowColor;
 
 - (void)setDelegate:(id<ACCodeFileMinimapViewDelegate>)aDelegate
 {
@@ -51,7 +54,8 @@ static const void *rendererContext;
         return;
     
     super.delegate = aDelegate;
-    flags.delegateHasColorForRendererLineNumber = [self.delegate respondsToSelector:@selector(codeFileMinimapView:colorForRendererLine:number:)];
+    flags.delegateHasShouldRendererLineNumberWithColorDecorationDecorationColor = [self.delegate respondsToSelector:@selector(codeFileMinimapView:shouldRenderLine:number:withColor:deocration:decorationColor:)];
+    flags.delegateHasShouldChangeSelectionRectangle = [self.delegate respondsToSelector:@selector(codeFileMinimapView:shouldChangeSelectionRectangle:)];
 }
 
 - (void)setRenderer:(ECTextRenderer *)aRenderer
@@ -66,6 +70,40 @@ static const void *rendererContext;
     [self didChangeValueForKey:@"renderer"];
 }
 
+- (UIView *)selectionView
+{
+    if (!selectionView)
+    {
+        selectionView = [UIView new];
+        selectionView.backgroundColor = [UIColor colorWithRed:0 green:113.0/255.0 blue:188.0/255.0 alpha:0.1];
+        selectionView.layer.borderWidth = 1;
+        selectionView.layer.borderColor = [UIColor colorWithRed:0 green:113.0/255.0 blue:188.0/255.0 alpha:1].CGColor;
+    }
+    return selectionView;
+}
+
+- (void)setSelectionRectangle:(CGRect)_selectionRectangle
+{
+    [self willChangeValueForKey:@"selectionRectangle"];
+    selectionRectangle = _selectionRectangle;
+    if (CGRectEqualToRect(selectionRectangle, CGRectNull))
+    {
+        [selectionView removeFromSuperview];
+    }
+    else
+    {
+        if (renderer)
+        {
+            UIEdgeInsets rendererTextInsets = renderer.textInsets;
+            selectionRectangle.size.height -= rendererTextInsets.top + rendererTextInsets.bottom;
+            selectionRectangle.origin.y -= rendererTextInsets.top;
+        }
+        [self addSubview:self.selectionView];
+    }
+    
+    [self didChangeValueForKey:@"selectionRectangle"];
+}
+
 - (void)setBackgroundView:(UIView *)_backgroundView
 {
     if (backgroundView == _backgroundView)
@@ -78,11 +116,11 @@ static const void *rendererContext;
     [self didChangeValueForKey:@"backgroundView"];
 }
 
-- (CGFloat)lineHeight
+- (CGFloat)lineThickness
 {
-    if (lineHeight < 1)
-        lineHeight = 1;
-    return lineHeight;
+    if (lineThickness < 1)
+        lineThickness = 1;
+    return lineThickness;
 }
 
 - (void)setFrame:(CGRect)frame
@@ -103,46 +141,77 @@ static const void *rendererContext;
     __weak ACCodeFileMinimapView *this = self;
     _contentView.customDrawRectBlock = ^(CGRect rect) {
         // This method will be called for every tile of _contentView and rect will be the rect of the tile.
-        
         // Setup context and shadow
         CGContextRef context = UIGraphicsGetCurrentContext();
         if (this.lineShadowColor != nil)
             CGContextSetShadowWithColor(context, CGSizeMake(1, 1), 1, this.lineShadowColor.CGColor);
         
-        CGContextSetLineWidth(context, this.lineHeight);
+        CGContextSetLineWidth(context, this.lineThickness);
         
-        __block UIColor *customLineColor, *lastLineColor = this.lineDefaultColor;
+        CGFloat lindeDecorationInset_2 = this->lineDecorationInset / 2;
+        CGFloat lindeDecorationInset_4 = this->lineDecorationInset / 4;
+        
+        __block UIColor *lastLineColor = this.lineDefaultColor;
         [this.renderer enumerateLinesIntersectingRect:CGRectApplyAffineTransform(rect, this->_toRendererTransform) usingBlock:^(ECTextRendererLine *line, NSUInteger lineIndex, NSUInteger lineNumber, CGFloat lineYOffset, NSRange stringRange, BOOL *stop) {
-
+            
+            ACCodeFileMinimapLineDecoration customDecoration = 0;
+            
             // Draw line block if color changes
-            if (this->flags.delegateHasColorForRendererLineNumber)
+            if (this->flags.delegateHasShouldRendererLineNumberWithColorDecorationDecorationColor)
             {
-                customLineColor = [this.delegate codeFileMinimapView:this colorForRendererLine:line number:lineNumber];
-                if (customLineColor == nil)
-                    customLineColor = this->lineDefaultColor;
-                if (customLineColor != lastLineColor)
+                // Retrieve delegate informations for line
+                __autoreleasing UIColor *customLineColor = this->lineDefaultColor;
+                __autoreleasing UIColor *customDecorationColor = this->lineDefaultColor;
+                if (![this.delegate codeFileMinimapView:this shouldRenderLine:line number:lineNumber withColor:&customLineColor deocration:&customDecoration decorationColor:&customDecorationColor])
+                    return;
+                
+                // Render previous placed lines
+                if (customDecoration != 0 || customLineColor != lastLineColor)
                 {
                     CGContextSetStrokeColorWithColor(context, lastLineColor.CGColor);
                     CGContextStrokePath(context);
                     lastLineColor = customLineColor;
                 }
+                
+                // Set decoration color
+                if (customDecoration > 0 && this->lineDecorationInset > 0)
+                    CGContextSetFillColorWithColor(context, customDecorationColor.CGColor);
             }
             
-            if (line.width < line.height)
-                return;
-            
             // Position line
-            CGFloat lineY = floorf(lineYOffset * this->_toMinimapTransform.a - rect.origin.y) + ((NSInteger)this.lineHeight % 2 ? 0.5 : 0);
+            CGFloat lineY = floorf(lineYOffset * this->_toMinimapTransform.a) + ((NSInteger)this->lineThickness % 2 ? 0.5 : 0);
+            
+            // Render decoration for line
+            if (customDecoration > 0 && this->lineDecorationInset > 0)
+            {
+                switch (customDecoration) {
+                    case ACCodeFileMinimapLineDecorationDisc:
+                        CGContextAddArc(context, lindeDecorationInset_2, lineY, lindeDecorationInset_4, -M_PI, M_PI, 0);
+                        break;
+                        
+                    case ACCodeFileMinimapLineDecorationSquare:
+                    {
+                        CGContextAddRect(context, CGRectIntegral(CGRectMake(lindeDecorationInset_4, lineY - lindeDecorationInset_4, lindeDecorationInset_2, lindeDecorationInset_2)));
+                        break;
+                    }
+                        
+                    default:
+                        break;
+                }
+                CGContextFillPath(context);
+            }
             
             // Draw line
-            CGContextMoveToPoint(context, 0, lineY);
-            CGContextAddLineToPoint(context, line.width * this->_toMinimapTransform.a, lineY);
+            CGContextMoveToPoint(context, this->lineDecorationInset, lineY);
+            CGContextAddLineToPoint(context, this->lineDecorationInset + line.width * this->_toMinimapTransform.a, lineY);
         }];
         
         CGContextSetStrokeColorWithColor(context, lastLineColor.CGColor);
         CGContextStrokePath(context);
     };
     [self addSubview:_contentView];
+    
+    [_contentView addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(_handleGestureMinimapTap:)]];
     
     return self;
 }
@@ -163,30 +232,52 @@ static const void *rendererContext;
 {
     [super layoutSubviews];
     
+    if (!CGRectEqualToRect(selectionRectangle, CGRectNull))
+    {
+        CGRect selectionViewFrame = CGRectApplyAffineTransform(selectionRectangle, _toMinimapTransform);
+        selectionViewFrame.origin.x = lineDecorationInset;
+        selectionViewFrame.size.width = self.contentSize.width - lineDecorationInset;
+        selectionView.frame = CGRectInset(selectionViewFrame, -1, -1);
+    }
+    
     if (backgroundView)
         backgroundView.frame = (CGRect){ self.contentOffset, self.frame.size };
 }
 
+#pragma mark - Private Methods
+
 - (void)_setupContentSize
 {
     CGRect contentRect = CGRectMake(0, 0,
-                                    self.frame.size.width - self.contentInset.left - self.contentInset.right, 
+                                    self.frame.size.width, 
                                     self.renderer.renderHeight);
     if (contentRect.size.width <= 0 || CGRectEqualToRect(_contentView.frame, contentRect))
         return;
     
-    CGFloat scale = contentRect.size.width / self.renderer.renderWidth;
+    CGFloat scale = (contentRect.size.width - self.lineDecorationInset - self.contentInset.left - self.contentInset.right) / self.renderer.renderWidth;
     contentRect.size.height *= scale;
     contentRect = CGRectIntegral(contentRect);
     
     _toMinimapTransform = CGAffineTransformMakeScale(scale, scale);
     _toRendererTransform = CGAffineTransformInvert(_toMinimapTransform);
     
-    self.contentSize = contentRect.size;
+    self.contentSize = (CGSize){ (contentRect.size.width - self.contentInset.left - self.contentInset.right), contentRect.size.height };
 
     _contentView.frame = contentRect;
     [(CATiledLayer *)_contentView.layer setTileSize:CGSizeMake(contentRect.size.width, TILE_HEIGHT)];
     [_contentView setNeedsDisplay];
+}
+
+- (void)_handleGestureMinimapTap:(UITapGestureRecognizer *)recognizer
+{
+    CGPoint tapPoint = CGPointApplyAffineTransform([recognizer locationInView:_contentView], _toRendererTransform);
+    CGRect selection = selectionRectangle;
+    selection.origin.y = tapPoint.y - selection.size.height / 2;
+    
+    if (flags.delegateHasShouldChangeSelectionRectangle && ![self.delegate codeFileMinimapView:self shouldChangeSelectionRectangle:selection])
+        return;
+    
+    self.selectionRectangle = selection;
 }
 
 @end
