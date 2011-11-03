@@ -28,11 +28,13 @@ static const void *rendererContext;
     
     struct {
         unsigned delegateHasShouldRendererLineNumberWithColorDecorationDecorationColor : 1;
-        unsigned reserved : 3;
+        unsigned delegateHasShouldChangeSelectionRectangle : 1;
+        unsigned reserved : 2;
     } flags;
 }
 
 - (void)_setupContentSize;
+- (void)_handleGestureMinimapTap:(UITapGestureRecognizer *)recognizer;
 
 @end
 
@@ -53,6 +55,7 @@ static const void *rendererContext;
     
     super.delegate = aDelegate;
     flags.delegateHasShouldRendererLineNumberWithColorDecorationDecorationColor = [self.delegate respondsToSelector:@selector(codeFileMinimapView:shouldRenderLine:number:withColor:deocration:decorationColor:)];
+    flags.delegateHasShouldChangeSelectionRectangle = [self.delegate respondsToSelector:@selector(codeFileMinimapView:shouldChangeSelectionRectangle:)];
 }
 
 - (void)setRenderer:(ECTextRenderer *)aRenderer
@@ -81,9 +84,6 @@ static const void *rendererContext;
 
 - (void)setSelectionRectangle:(CGRect)_selectionRectangle
 {
-    if (CGRectEqualToRect(_selectionRectangle, selectionRectangle))
-        return;
-    
     [self willChangeValueForKey:@"selectionRectangle"];
     selectionRectangle = _selectionRectangle;
     if (CGRectEqualToRect(selectionRectangle, CGRectNull))
@@ -95,9 +95,7 @@ static const void *rendererContext;
         if (renderer)
         {
             UIEdgeInsets rendererTextInsets = renderer.textInsets;
-            selectionRectangle.size.width -= rendererTextInsets.left + rendererTextInsets.right;
             selectionRectangle.size.height -= rendererTextInsets.top + rendererTextInsets.bottom;
-            selectionRectangle.origin.x -= rendererTextInsets.left;
             selectionRectangle.origin.y -= rendererTextInsets.top;
         }
         [self addSubview:self.selectionView];
@@ -213,6 +211,8 @@ static const void *rendererContext;
     };
     [self addSubview:_contentView];
     
+    [_contentView addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(_handleGestureMinimapTap:)]];
+    
     return self;
 }
 
@@ -244,6 +244,8 @@ static const void *rendererContext;
         backgroundView.frame = (CGRect){ self.contentOffset, self.frame.size };
 }
 
+#pragma mark - Private Methods
+
 - (void)_setupContentSize
 {
     CGRect contentRect = CGRectMake(0, 0,
@@ -264,6 +266,18 @@ static const void *rendererContext;
     _contentView.frame = contentRect;
     [(CATiledLayer *)_contentView.layer setTileSize:CGSizeMake(contentRect.size.width, TILE_HEIGHT)];
     [_contentView setNeedsDisplay];
+}
+
+- (void)_handleGestureMinimapTap:(UITapGestureRecognizer *)recognizer
+{
+    CGPoint tapPoint = CGPointApplyAffineTransform([recognizer locationInView:_contentView], _toRendererTransform);
+    CGRect selection = selectionRectangle;
+    selection.origin.y = tapPoint.y - selection.size.height / 2;
+    
+    if (flags.delegateHasShouldChangeSelectionRectangle && ![self.delegate codeFileMinimapView:self shouldChangeSelectionRectangle:selection])
+        return;
+    
+    self.selectionRectangle = selection;
 }
 
 @end

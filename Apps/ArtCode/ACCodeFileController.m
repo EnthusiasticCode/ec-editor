@@ -269,6 +269,12 @@
 	return YES;
 }
 
+- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
+{
+    if (self.minimapVisible)
+        self.minimapView.selectionRectangle = self.codeView.bounds;
+}
+
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
@@ -300,6 +306,12 @@
     }
     
     return YES;
+}
+
+- (BOOL)codeFileMinimapView:(ACCodeFileMinimapView *)minimapView shouldChangeSelectionRectangle:(CGRect)newSelection
+{
+    [self.codeView scrollRectToVisible:newSelection animated:YES];
+    return NO;
 }
 
 #pragma mark - Code View Delegate Methods

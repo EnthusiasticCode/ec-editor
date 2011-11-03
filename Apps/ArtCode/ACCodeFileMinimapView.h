@@ -25,6 +25,9 @@ typedef NSInteger ACCodeFileMinimapLineDecoration;
 /// All this last three parameters can be assigned to change the way the line is rendered.
 - (BOOL)codeFileMinimapView:(ACCodeFileMinimapView *)minimapView shouldRenderLine:(ECTextRendererLine *)line number:(NSUInteger)lineNumber withColor:(UIColor **)lineColor deocration:(ACCodeFileMinimapLineDecoration *)decoration decorationColor:(UIColor **)decorationColor;
 
+/// Called when the user changes the selection rectangle from the minimap.
+- (BOOL)codeFileMinimapView:(ACCodeFileMinimapView *)minimapView shouldChangeSelectionRectangle:(CGRect)newSelection;
+
 @end
 
 
@@ -40,6 +43,7 @@ typedef NSInteger ACCodeFileMinimapLineDecoration;
 #pragma mark - Selection Rectangle
 
 /// The selection rectangle espressed in renderer coordinates. Set to CGRectNull to remove the selection.
+/// This property should be observed to respont to the user moving the selection in the minimap.
 @property (nonatomic) CGRect selectionRectangle;
 
 /// A view used to mark the selection if any.
