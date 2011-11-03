@@ -174,6 +174,8 @@
     _minimapView.contentInset = UIEdgeInsetsMake(10, 10, 10, 10);
     _minimapView.rendererMinimumLineWidth = 4;
     _minimapView.renderer = _codeView.renderer;
+    _minimapView.backgroundColor = [UIColor grayColor];
+    _minimapView.lineShadowColor = [UIColor colorWithWhite:0 alpha:0.3];
     [self.view addSubview:_minimapView];
 }
 

@@ -74,6 +74,7 @@ static const void *rendererContext;
     
     _contentView = [[ACCodeFileMinimapViewContent alloc] initWithFrame:(CGRect){ CGPointZero, frame.size }];
     _contentView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    _contentView.backgroundColor = [UIColor clearColor];
     __weak ACCodeFileMinimapView *this = self;
     _contentView.customDrawRectBlock = ^(CGRect rect) {
         // This method will be called for every tile of _contentView and rect will be the rect of the tile.
@@ -83,14 +84,14 @@ static const void *rendererContext;
         if (this.lineShadowColor != nil)
             CGContextSetShadowWithColor(context, CGSizeMake(1, 1), 0, this.lineShadowColor.CGColor);
         
-        CGContextSetStrokeColorWithColor(context, [UIColor redColor].CGColor);
+        CGContextSetStrokeColorWithColor(context, [UIColor whiteColor].CGColor);
         CGContextSetLineWidth(context, this.lineHeight);
         
         CGFloat gap = this.lineHeight + this.lineGap;
         __block CGFloat lineY = CGFLOAT_MAX;
         [this.renderer enumerateLinesIntersectingRect:CGRectApplyAffineTransform(rect, this->_toRendererTransform) usingBlock:^(ECTextRendererLine *line, NSUInteger lineIndex, NSUInteger lineNumber, CGFloat lineYOffset, NSRange stringRange, BOOL *stop) {
             if (lineY == CGFLOAT_MAX)
-                lineY = floorf(lineYOffset * this->_toMinimapTransform.a - rect.origin.y) + ((NSInteger)this.lineHeight % 2 ? 0 : 0.5);
+                lineY = floorf(lineYOffset * this->_toMinimapTransform.a - rect.origin.y) + ((NSInteger)this.lineHeight % 2 ? 0.5 : 0);
             if (line.width >= this->rendererMinimumLineWidth)
             {
                 CGContextMoveToPoint(context, 0, lineY);
