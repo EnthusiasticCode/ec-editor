@@ -16,8 +16,6 @@
 #import <ECUIKit/ECTabController.h>
 #import <ECUIKit/ECCodeView.h>
 
-#import "ACCodeFileMinimapView.h"
-
 #import "ACSingleTabController.h"
 #import "ACCodeFileSearchBarController.h"
 
@@ -169,7 +167,8 @@
     
     [self.view addSubview:_codeView];
     
-    _minimapView = [[ACCodeFileMinimapView alloc] initWithFrame:CGRectZero];
+    _minimapView = [ACCodeFileMinimapView new];
+    _minimapView.delegate = self;
     _minimapView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     _minimapView.contentInset = UIEdgeInsetsMake(10, 10, 10, 10);
     _minimapView.rendererMinimumLineWidth = 4;
@@ -208,16 +207,14 @@
 	return YES;
 }
 
-#pragma mark - Minimap Data Source Methods
+#pragma mark - Minimap Delegate Methods
 
-- (NSUInteger)numberOfLinesForCodeFileMinimapView:(ACCodeFileMinimapView *)minimapView
+- (UIColor *)codeFileMinimapView:(ACCodeFileMinimapView *)minimapView colorForRendererLine:(ECTextRendererLine *)line number:(NSUInteger)lineNumber
 {
-    return [self.document lineCount];
-}
-
-- (CGFloat)codeFileMinimapView:(ACCodeFileMinimapView *)minimapView lenghtOfLineAtIndex:(NSUInteger)lineIndex applyColor:(UIColor *__autoreleasing *)lineColor
-{
-//    self.codeView.renderer 
+    // TODO actual logic for coloring minimap
+    if (lineNumber < 8)
+        return [UIColor greenColor];
+    return nil;
 }
 
 @end

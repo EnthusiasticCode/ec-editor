@@ -40,19 +40,18 @@ static const void *rendererContext;
 
 #pragma mark - Properties
 
-@synthesize delegate, renderer, rendererMinimumLineWidth;
+@dynamic delegate;
+@synthesize renderer, rendererMinimumLineWidth;
 @synthesize backgroundView;
 @synthesize lineHeight, lineGap, lineDefaultColor, lineShadowColor;
 
 - (void)setDelegate:(id<ACCodeFileMinimapViewDelegate>)aDelegate
 {
-    if (aDelegate == delegate)
+    if (aDelegate == self.delegate)
         return;
     
-    [self willChangeValueForKey:@"delegate"];
-    delegate = aDelegate;
-    flags.delegateHasColorForRendererLineNumber = [delegate respondsToSelector:@selector(codeFileMinimapView:colorForRendererLine:number:)];
-    [self didChangeValueForKey:@"delegate"];
+    super.delegate = aDelegate;
+    flags.delegateHasColorForRendererLineNumber = [self.delegate respondsToSelector:@selector(codeFileMinimapView:colorForRendererLine:number:)];
 }
 
 - (void)setRenderer:(ECTextRenderer *)aRenderer
@@ -109,7 +108,7 @@ static const void *rendererContext;
             // Draw line block if color changes
             if (this->flags.delegateHasColorForRendererLineNumber)
             {
-                customLineColor = [this->delegate codeFileMinimapView:this colorForRendererLine:line number:lineNumber];
+                customLineColor = [this.delegate codeFileMinimapView:this colorForRendererLine:line number:lineNumber];
                 if (customLineColor == nil)
                     customLineColor = this->lineDefaultColor;
                 if (customLineColor != lastLineColor)
