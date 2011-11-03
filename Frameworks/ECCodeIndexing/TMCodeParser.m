@@ -12,6 +12,8 @@
 #import "TMPattern.h"
 #import "OnigRegexp.h"
 
+static NSString * const _patternCaptureName = @"name";
+
 static NSRange _rangeFromEndOfRangeToEndOfRange(NSRange firstRange, NSRange secondRange)
 {
     return NSMakeRange(NSMaxRange(firstRange), NSMaxRange(secondRange) - NSMaxRange(firstRange));
@@ -203,11 +205,11 @@ static NSRange _rangeFromEndOfRangeToEndOfRange(NSRange firstRange, NSRange seco
                 for (NSUInteger currentMatchRangeIndex = 1; currentMatchRangeIndex < numMatchRanges; ++currentMatchRangeIndex)
                 {
                     NSRange currentMatchRange = [result rangeAt:currentMatchRangeIndex];
-                    NSString *currentCapture = [pattern.captures objectForKey:[NSNumber numberWithUnsignedInteger:currentMatchRangeIndex]];
-                    if (!currentCapture)
+                    NSString *currentCaptureName = [[pattern.captures objectForKey:[NSString stringWithFormat:@"%d", currentMatchRangeIndex]] objectForKey:_patternCaptureName];
+                    if (!currentCaptureName)
                         continue;
-                    [previousScopeStack addObject:currentCapture];
-                    visitorResult = visitorBlock(currentCapture, currentMatchRange, YES, NO, [previousScopeStack copy]);
+                    [previousScopeStack addObject:currentCaptureName];
+                    visitorResult = visitorBlock(currentCaptureName, currentMatchRange, YES, NO, [previousScopeStack copy]);
                     [previousScopeStack removeLastObject];
                     if (visitorResult == ECCodeVisitorResultBreak)
                         break;
@@ -257,11 +259,11 @@ static NSRange _rangeFromEndOfRangeToEndOfRange(NSRange firstRange, NSRange seco
         {
             if (pattern.beginCaptures)
             {
-                NSString *mainCapture = [pattern.beginCaptures objectForKey:[NSNumber numberWithUnsignedInteger:0]];
-                if (mainCapture)
+                NSString *mainCaptureName = [[pattern.beginCaptures objectForKey:[NSString stringWithFormat:@"%d", 0]] objectForKey:_patternCaptureName];
+                if (mainCaptureName)
                 {
-                    [previousScopeStack addObject:mainCapture];
-                    visitorResult = visitorBlock(mainCapture, [result rangeAt:0], NO, NO, [previousScopeStack copy]);
+                    [previousScopeStack addObject:mainCaptureName];
+                    visitorResult = visitorBlock(mainCaptureName, [result rangeAt:0], NO, NO, [previousScopeStack copy]);
                     if (visitorResult == ECCodeVisitorResultBreak)
                     {
                         [previousScopeStack removeLastObject];
@@ -274,20 +276,20 @@ static NSRange _rangeFromEndOfRangeToEndOfRange(NSRange firstRange, NSRange seco
                     for (NSUInteger currentMatchRangeIndex = 1; currentMatchRangeIndex < numMatchRanges; ++currentMatchRangeIndex)
                     {
                         NSRange currentMatchRange = [result rangeAt:currentMatchRangeIndex];
-                        NSString *currentCapture = [pattern.beginCaptures objectForKey:[NSNumber numberWithUnsignedInteger:currentMatchRangeIndex]];
-                        if (!currentCapture)
+                        NSString *currentCaptureName = [[pattern.beginCaptures objectForKey:[NSString stringWithFormat:@"%d", currentMatchRangeIndex]] objectForKey:_patternCaptureName];
+                        if (!currentCaptureName)
                             continue;
-                        [previousScopeStack addObject:currentCapture];
-                        visitorResult = visitorBlock(currentCapture, currentMatchRange, YES, NO, [previousScopeStack copy]);
+                        [previousScopeStack addObject:currentCaptureName];
+                        visitorResult = visitorBlock(currentCaptureName, currentMatchRange, YES, NO, [previousScopeStack copy]);
                         [previousScopeStack removeLastObject];
                         if (visitorResult == ECCodeVisitorResultBreak)
                             break;
                     }
                 }
-                if (mainCapture)
+                if (mainCaptureName)
                 {
                     if (visitorResult != ECCodeVisitorResultBreak)
-                        visitorResult = visitorBlock(mainCapture, [result rangeAt:0], NO, YES, [previousScopeStack copy]);
+                        visitorResult = visitorBlock(mainCaptureName, [result rangeAt:0], NO, YES, [previousScopeStack copy]);
                     [previousScopeStack removeLastObject];
                 }
                 if (visitorResult == ECCodeVisitorResultBreak)
@@ -302,11 +304,11 @@ static NSRange _rangeFromEndOfRangeToEndOfRange(NSRange firstRange, NSRange seco
                 break;
             if (pattern.endCaptures && endMatch)
             {
-                NSString *mainCapture = [pattern.endCaptures objectForKey:[NSNumber numberWithUnsignedInteger:0]];
-                if (mainCapture)
+                NSString *mainCaptureName = [[pattern.endCaptures objectForKey:[NSString stringWithFormat:@"%d", 0]] objectForKey:_patternCaptureName];
+                if (mainCaptureName)
                 {
-                    [previousScopeStack addObject:mainCapture];
-                    visitorResult = visitorBlock(mainCapture, [endMatch rangeAt:0], NO, NO, [previousScopeStack copy]);
+                    [previousScopeStack addObject:mainCaptureName];
+                    visitorResult = visitorBlock(mainCaptureName, [endMatch rangeAt:0], NO, NO, [previousScopeStack copy]);
                     if (visitorResult == ECCodeVisitorResultBreak)
                     {
                         [previousScopeStack removeLastObject];
@@ -319,20 +321,20 @@ static NSRange _rangeFromEndOfRangeToEndOfRange(NSRange firstRange, NSRange seco
                     for (NSUInteger currentMatchRangeIndex = 1; currentMatchRangeIndex < numMatchRanges; ++currentMatchRangeIndex)
                     {
                         NSRange currentMatchRange = [endMatch rangeAt:currentMatchRangeIndex];
-                        NSString *currentCapture = [pattern.beginCaptures objectForKey:[NSNumber numberWithUnsignedInteger:currentMatchRangeIndex]];
-                        if (!currentCapture)
+                        NSString *currentCaptureName = [[pattern.beginCaptures objectForKey:[NSString stringWithFormat:@"%d", currentMatchRangeIndex]] objectForKey:_patternCaptureName];
+                        if (!currentCaptureName)
                             continue;
-                        [previousScopeStack addObject:currentCapture];
-                        visitorResult = visitorBlock(currentCapture, currentMatchRange, YES, NO, [previousScopeStack copy]);
+                        [previousScopeStack addObject:currentCaptureName];
+                        visitorResult = visitorBlock(currentCaptureName, currentMatchRange, YES, NO, [previousScopeStack copy]);
                         [previousScopeStack removeLastObject];
                         if (visitorResult == ECCodeVisitorResultBreak)
                             break;
                     }
                 }
-                if (mainCapture)
+                if (mainCaptureName)
                 {
                     if (visitorResult != ECCodeVisitorResultBreak)
-                        visitorResult = visitorBlock(mainCapture, [endMatch rangeAt:0], NO, YES, [previousScopeStack copy]);
+                        visitorResult = visitorBlock(mainCaptureName, [endMatch rangeAt:0], NO, YES, [previousScopeStack copy]);
                     [previousScopeStack removeLastObject];
                 }
                 if (visitorResult == ECCodeVisitorResultBreak)
