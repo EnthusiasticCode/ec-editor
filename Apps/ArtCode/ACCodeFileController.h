@@ -33,4 +33,7 @@
 @property (nonatomic, getter = isMinimapVisible) BOOL minimapVisible;
 - (void)setMinimapVisible:(BOOL)minimapVisible animated:(BOOL)animated;
 
+/// Indicates the width of the minimap.
+@property (nonatomic) CGFloat minimapWidth;
+
 @end

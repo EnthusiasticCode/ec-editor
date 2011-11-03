@@ -28,6 +28,8 @@
 
 @property (nonatomic, strong) ACFileDocument *document;
 
+- (void)_layoutChildViews;
+
 @end
 
 
@@ -36,7 +38,49 @@
 #pragma mark - Properties
 
 @synthesize fileURL = _fileURL, tab = _tab, document = _document;
-@synthesize codeView = _codeView, minimapView = _minimapView, minimapVisible = _minimapVisible;
+@synthesize codeView = _codeView, minimapView = _minimapView, minimapVisible = _minimapVisible, minimapWidth = _minimapWidth;
+
+- (ECCodeView *)codeView
+{
+    if (!_codeView)
+    {
+        _codeView = [ECCodeView new];
+        
+        _codeView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+        _codeView.backgroundColor = [UIColor whiteColor];
+        _codeView.caretColor = [UIColor blackColor]; // TODO use TMTheme cursor color
+        _codeView.selectionColor = [[UIColor blueColor] colorWithAlphaComponent:0.3];
+        _codeView.textInsets = UIEdgeInsetsMake(10, 10, 10, 10);
+        
+        _codeView.lineNumbersEnabled = YES;
+        _codeView.lineNumbersWidth = 30;
+        _codeView.lineNumbersFont = [UIFont systemFontOfSize:10];
+        _codeView.lineNumbersColor = [UIColor colorWithWhite:0.8 alpha:1];
+        
+        _codeView.alwaysBounceVertical = YES;
+        _codeView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    }
+    return _codeView;
+}
+
+- (ACCodeFileMinimapView *)minimapView
+{
+    if (!_minimapView)
+    {
+        _minimapView = [ACCodeFileMinimapView new];
+        _minimapView.delegate = self;
+        _minimapView.renderer = self.codeView.renderer;
+        
+        _minimapView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+        _minimapView.contentInset = UIEdgeInsetsMake(10, 10, 10, 10);
+        
+        _minimapView.rendererMinimumLineWidth = 4;
+        _minimapView.backgroundColor = [UIColor grayColor];
+        _minimapView.lineShadowColor = [UIColor colorWithWhite:0 alpha:0.3];
+        _minimapView.lineDefaultColor = [UIColor whiteColor];
+    }
+    return _minimapView;
+}
 
 - (void)setFileURL:(NSURL *)fileURL
 {
@@ -91,12 +135,45 @@
     [self didChangeValueForKey:@"document"];
 }
 
-- (void)didReceiveMemoryWarning
+- (CGFloat)minimapWidth
 {
-    // Releases the view if it doesn't have a superview.
-    [super didReceiveMemoryWarning];
+    if (_minimapWidth == 0)
+        _minimapWidth = 124;
+    return _minimapWidth;
+}
+
+- (void)setMinimapVisible:(BOOL)minimapVisible
+{
+    [self setMinimapVisible:minimapVisible animated:NO];
+}
+
+- (void)setMinimapVisible:(BOOL)minimapVisible animated:(BOOL)animated
+{
+    if (_minimapVisible == minimapVisible)
+        return;
     
-    // Release any cached data, images, etc that aren't in use.
+    [self willChangeValueForKey:@"minimapVisible"];
+    if (minimapVisible)
+        [self.view addSubview:self.minimapView];
+    if (animated)
+    {
+        [self _layoutChildViews];
+        _minimapVisible = minimapVisible;
+        [UIView animateWithDuration:0.25 animations:^{
+            [self _layoutChildViews];
+        } completion:^(BOOL finished) {
+            if (!_minimapVisible)
+                [_minimapView removeFromSuperview];
+        }];
+    }
+    else
+    {
+        _minimapVisible = minimapVisible;
+        if (!_minimapVisible)
+            [_minimapView removeFromSuperview];
+        [self _layoutChildViews];
+    }
+    [self didChangeValueForKey:@"minimapVisible"];
 }
 
 #pragma mark - Toolbar Items Actions
@@ -109,21 +186,15 @@
 - (void)toolButtonAction:(id)sender
 {
     if (!_toolsActionSheet)
-        _toolsActionSheet = [[UIActionSheet alloc] initWithTitle:@"Select action" delegate:self cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:@"Show/hide tabs", @"Toggle find and replace", nil];
+        _toolsActionSheet = [[UIActionSheet alloc] initWithTitle:@"Select action" delegate:self cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:@"Toggle find and replace", @"Toggle minimap", @"Show/hide tabs", nil];
     
     [_toolsActionSheet showFromRect:[sender frame] inView:[sender superview] animated:YES];
 }
 
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
 {
-    switch (buttonIndex) {
-        case 0: // toggle tabs
-        {
-            [self.tabCollectionController setTabBarVisible:!self.tabCollectionController.isTabBarVisible animated:YES];
-            break;
-        }
-            
-        case 1: // toggle find/replace 
+    switch (buttonIndex) {    
+        case 0: // toggle find/replace 
         {
             if (!_searchBarController)
             {
@@ -134,6 +205,18 @@
                 [self.singleTabController setToolbarViewController:_searchBarController animated:YES];
             else
                 [self.singleTabController setToolbarViewController:nil animated:YES];
+            break;
+        }
+        
+        case 1: // toggle minimap
+        {
+            [self setMinimapVisible:!self.minimapVisible animated:YES];
+            break;
+        }
+            
+        case 2: // toggle tabs
+        {
+            [self.tabCollectionController setTabBarVisible:!self.tabCollectionController.isTabBarVisible animated:YES];
             break;
         }
             
@@ -148,35 +231,7 @@
 {
     [super loadView];
     
-    _codeView = [ECCodeView new];
-        
-    // Layout setup
-    _codeView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-    _codeView.backgroundColor = [UIColor whiteColor];
-    _codeView.caretColor = [UIColor blackColor]; // TODO use TMTheme cursor color
-    _codeView.selectionColor = [[UIColor blueColor] colorWithAlphaComponent:0.3];
-    _codeView.textInsets = UIEdgeInsetsMake(10, 10, 10, 10);
-    
-    _codeView.lineNumbersEnabled = YES;
-    _codeView.lineNumbersWidth = 30;
-    _codeView.lineNumbersFont = [UIFont systemFontOfSize:10];
-    _codeView.lineNumbersColor = [UIColor colorWithWhite:0.8 alpha:1];
-    
-    _codeView.alwaysBounceVertical = YES;
-    _codeView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-    
-    [self.view addSubview:_codeView];
-    
-    _minimapView = [ACCodeFileMinimapView new];
-    _minimapView.delegate = self;
-    _minimapView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-    _minimapView.contentInset = UIEdgeInsetsMake(10, 10, 10, 10);
-    _minimapView.rendererMinimumLineWidth = 4;
-    _minimapView.renderer = _codeView.renderer;
-    _minimapView.backgroundColor = [UIColor grayColor];
-    _minimapView.lineShadowColor = [UIColor colorWithWhite:0 alpha:0.3];
-    _minimapView.lineDefaultColor = [UIColor whiteColor];
-    [self.view addSubview:_minimapView];
+    [self.view addSubview:self.codeView];
 }
 
 - (void)viewDidLoad
@@ -188,6 +243,9 @@
 {
     [super viewDidUnload];
     
+    _minimapView = nil;
+    _codeView = nil;
+    
     _toolsActionSheet = nil;
     _searchBarController = nil;
 }
@@ -196,15 +254,22 @@
 {
     [super viewWillAppear:animated];
     
-    CGRect frame = self.view.frame;
-#warning TODO NIK actually use minimapVisible
-    _codeView.frame = CGRectMake(0, 0, frame.size.width - 124, frame.size.height);
-    _minimapView.frame = CGRectMake(frame.size.width - 124, 0, 124, frame.size.height);
+    [self _layoutChildViews];
 }
+
+#pragma mark - Controller Methods
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
 	return YES;
+}
+
+- (void)didReceiveMemoryWarning
+{
+    [super didReceiveMemoryWarning];
+    
+    if (!_minimapVisible)
+        _minimapView = nil;
 }
 
 #pragma mark - Minimap Delegate Methods
@@ -215,6 +280,23 @@
     if (lineNumber < 8)
         return [UIColor greenColor];
     return nil;
+}
+
+#pragma mark - Private Methods
+
+- (void)_layoutChildViews
+{
+    CGRect frame = (CGRect){ CGPointZero, self.view.frame.size };
+    if (self.minimapVisible)
+    {
+        self.codeView.frame = CGRectMake(0, 0, frame.size.width - self.minimapWidth, frame.size.height);
+        self.minimapView.frame = CGRectMake(frame.size.width - self.minimapWidth, 0, self.minimapWidth, frame.size.height);
+    }
+    else
+    {
+        self.codeView.frame = frame;
+        _minimapView.frame = CGRectMake(frame.size.width, 0, self.minimapWidth, frame.size.height);
+    }
 }
 
 @end
