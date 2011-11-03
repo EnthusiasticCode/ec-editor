@@ -24,6 +24,11 @@ static const void *rendererContext;
     ACCodeFileMinimapViewContent *_contentView;
     CGAffineTransform _toMinimapTransform;
     CGAffineTransform _toRendererTransform;
+    
+    struct {
+        unsigned delegateHasColorForRendererLineNumber : 1;
+        unsigned reserved : 3;
+    } flags;
 }
 
 - (void)_setupContentSize;
@@ -35,9 +40,20 @@ static const void *rendererContext;
 
 #pragma mark - Properties
 
-@synthesize renderer, rendererMinimumLineWidth;
+@synthesize delegate, renderer, rendererMinimumLineWidth;
 @synthesize backgroundView;
-@synthesize lineHeight, lineGap, lineColor, lineShadowColor;
+@synthesize lineHeight, lineGap, lineDefaultColor, lineShadowColor;
+
+- (void)setDelegate:(id<ACCodeFileMinimapViewDelegate>)aDelegate
+{
+    if (aDelegate == delegate)
+        return;
+    
+    [self willChangeValueForKey:@"delegate"];
+    delegate = aDelegate;
+    flags.delegateHasColorForRendererLineNumber = [delegate respondsToSelector:@selector(codeFileMinimapView:colorForRendererLine:number:)];
+    [self didChangeValueForKey:@"delegate"];
+}
 
 - (void)setRenderer:(ECTextRenderer *)aRenderer
 {
@@ -84,14 +100,31 @@ static const void *rendererContext;
         if (this.lineShadowColor != nil)
             CGContextSetShadowWithColor(context, CGSizeMake(1, 1), 0, this.lineShadowColor.CGColor);
         
-        CGContextSetStrokeColorWithColor(context, [UIColor whiteColor].CGColor);
         CGContextSetLineWidth(context, this.lineHeight);
         
         CGFloat gap = this.lineHeight + this.lineGap;
         __block CGFloat lineY = CGFLOAT_MAX;
+        __block UIColor *customLineColor, *lastLineColor = this.lineDefaultColor;
         [this.renderer enumerateLinesIntersectingRect:CGRectApplyAffineTransform(rect, this->_toRendererTransform) usingBlock:^(ECTextRendererLine *line, NSUInteger lineIndex, NSUInteger lineNumber, CGFloat lineYOffset, NSRange stringRange, BOOL *stop) {
+            // Draw line block if color changes
+            if (this->flags.delegateHasColorForRendererLineNumber)
+            {
+                customLineColor = [this->delegate codeFileMinimapView:this colorForRendererLine:line number:lineNumber];
+                if (customLineColor == nil)
+                    customLineColor = this->lineDefaultColor;
+                if (customLineColor != lastLineColor)
+                {
+                    CGContextSetStrokeColorWithColor(context, lastLineColor.CGColor);
+                    CGContextStrokePath(context);
+                    lastLineColor = customLineColor;
+                }
+            }
+            
+            // Position first line
             if (lineY == CGFLOAT_MAX)
                 lineY = floorf(lineYOffset * this->_toMinimapTransform.a - rect.origin.y) + ((NSInteger)this.lineHeight % 2 ? 0.5 : 0);
+            
+            // Draw line
             if (line.width >= this->rendererMinimumLineWidth)
             {
                 CGContextMoveToPoint(context, 0, lineY);
@@ -100,6 +133,7 @@ static const void *rendererContext;
             lineY += gap;
         }];
         
+        CGContextSetStrokeColorWithColor(context, lastLineColor.CGColor);
         CGContextStrokePath(context);
     };
     [self addSubview:_contentView];

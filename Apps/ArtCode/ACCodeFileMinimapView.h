@@ -8,12 +8,21 @@
 
 #import <UIKit/UIKit.h>
 
-@class ECTextRenderer;
+@class ACCodeFileMinimapView, ECTextRenderer, ECTextRendererLine;
+
+@protocol ACCodeFileMinimapViewDelegate <UIScrollViewDelegate>
+@optional
+
+- (UIColor *)codeFileMinimapView:(ACCodeFileMinimapView *)minimapView colorForRendererLine:(ECTextRendererLine *)line number:(NSUInteger)lineNumber;
+
+@end
 
 
 @interface ACCodeFileMinimapView : UIScrollView
 
 #pragma mark - Providing Content
+
+@property (weak, nonatomic) id<ACCodeFileMinimapViewDelegate> delegate;
 
 /// The renderer to use to produce the minimap.
 @property (weak, nonatomic) ECTextRenderer *renderer;
@@ -33,7 +42,7 @@
 @property (nonatomic) CGFloat lineGap;
 
 /// The default line color. If nil, black will be used.
-@property (strong, nonatomic) UIColor *lineColor;
+@property (strong, nonatomic) UIColor *lineDefaultColor;
 
 /// The color of the shadow for a line. Default nil meaning that lines will have no shadows.
 @property (strong, nonatomic) UIColor *lineShadowColor;

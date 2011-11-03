@@ -176,6 +176,7 @@
     _minimapView.renderer = _codeView.renderer;
     _minimapView.backgroundColor = [UIColor grayColor];
     _minimapView.lineShadowColor = [UIColor colorWithWhite:0 alpha:0.3];
+    _minimapView.lineDefaultColor = [UIColor whiteColor];
     [self.view addSubview:_minimapView];
 }
 
