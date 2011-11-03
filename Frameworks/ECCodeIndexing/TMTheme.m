@@ -20,7 +20,9 @@ static NSString * const _themeSettingsNameKey = @"name";
 static NSString * const _themeSettingsScopeKey = @"scope";
 
 
-@interface TMTheme ()
+@interface TMTheme () {
+    NSArray *_settingsOrderedScopes;
+}
 
 @property (nonatomic, strong) NSURL *fileURL;
 @property (nonatomic, strong) NSString *name;
@@ -100,6 +102,14 @@ static NSString * const _themeSettingsScopeKey = @"scope";
         }
     }
     _settings = settings;
+    _settingsOrderedScopes = [[_settings allKeys] sortedArrayUsingComparator:^NSComparisonResult(NSString *obj1, NSString *obj2) {
+        NSInteger diff = [[obj2 componentsSeparatedByString:@"."] count] - [[obj1 componentsSeparatedByString:@"."] count];
+        if (diff > 0)
+            return NSOrderedDescending;
+        else if (diff < 0)
+            return NSOrderedAscending;
+        return NSOrderedSame;
+    }];
     
     return self;
 }
@@ -111,10 +121,11 @@ static NSString * const _themeSettingsScopeKey = @"scope";
     NSMutableDictionary *attributes = [NSMutableDictionary dictionary];
     for (NSString *scope in scopesStack)
     {
-        [self.settings enumerateKeysAndObjectsUsingBlock:^(NSString *settingScope, NSDictionary *settingAttributes, BOOL *stop) {
+        [_settingsOrderedScopes enumerateObjectsUsingBlock:^(NSString *settingScope, NSUInteger idx, BOOL *stop) {
             if (![scope hasPrefix:settingScope])
                 return;
-            [attributes addEntriesFromDictionary:settingAttributes];
+            [attributes addEntriesFromDictionary:[self.settings objectForKey:settingScope]];
+            *stop = YES;
         }];
     }
     return attributes;
