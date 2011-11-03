@@ -260,10 +260,11 @@ static NSRange _rangeFromEndOfRangeToEndOfRange(NSRange firstRange, NSRange seco
             if (pattern.beginCaptures)
             {
                 NSString *mainCaptureName = [[pattern.beginCaptures objectForKey:[NSString stringWithFormat:@"%d", 0]] objectForKey:_patternCaptureName];
+                NSUInteger numMatchRanges = [result count];
                 if (mainCaptureName)
                 {
                     [previousScopeStack addObject:mainCaptureName];
-                    visitorResult = visitorBlock(mainCaptureName, [result rangeAt:0], NO, NO, [previousScopeStack copy]);
+                    visitorResult = visitorBlock(mainCaptureName, [result rangeAt:0], numMatchRanges > 1 ? NO : YES, NO, [previousScopeStack copy]);
                     if (visitorResult == ECCodeVisitorResultBreak)
                     {
                         [previousScopeStack removeLastObject];
@@ -272,7 +273,6 @@ static NSRange _rangeFromEndOfRangeToEndOfRange(NSRange firstRange, NSRange seco
                 }
                 if (visitorResult == ECCodeVisitorResultRecurse)
                 {
-                    NSUInteger numMatchRanges = [result count];
                     for (NSUInteger currentMatchRangeIndex = 1; currentMatchRangeIndex < numMatchRanges; ++currentMatchRangeIndex)
                     {
                         NSRange currentMatchRange = [result rangeAt:currentMatchRangeIndex];
@@ -286,7 +286,7 @@ static NSRange _rangeFromEndOfRangeToEndOfRange(NSRange firstRange, NSRange seco
                             break;
                     }
                 }
-                if (mainCaptureName)
+                if (mainCaptureName && numMatchRanges > 1)
                 {
                     if (visitorResult != ECCodeVisitorResultBreak)
                         visitorResult = visitorBlock(mainCaptureName, [result rangeAt:0], NO, YES, [previousScopeStack copy]);
@@ -305,10 +305,11 @@ static NSRange _rangeFromEndOfRangeToEndOfRange(NSRange firstRange, NSRange seco
             if (pattern.endCaptures && endMatch)
             {
                 NSString *mainCaptureName = [[pattern.endCaptures objectForKey:[NSString stringWithFormat:@"%d", 0]] objectForKey:_patternCaptureName];
+                NSUInteger numMatchRanges = [endMatch count];
                 if (mainCaptureName)
                 {
                     [previousScopeStack addObject:mainCaptureName];
-                    visitorResult = visitorBlock(mainCaptureName, [endMatch rangeAt:0], NO, NO, [previousScopeStack copy]);
+                    visitorResult = visitorBlock(mainCaptureName, [endMatch rangeAt:0], numMatchRanges > 1 ? NO : YES, NO, [previousScopeStack copy]);
                     if (visitorResult == ECCodeVisitorResultBreak)
                     {
                         [previousScopeStack removeLastObject];
@@ -331,7 +332,7 @@ static NSRange _rangeFromEndOfRangeToEndOfRange(NSRange firstRange, NSRange seco
                             break;
                     }
                 }
-                if (mainCaptureName)
+                if (mainCaptureName && numMatchRanges > 1)
                 {
                     if (visitorResult != ECCodeVisitorResultBreak)
                         visitorResult = visitorBlock(mainCaptureName, [endMatch rangeAt:0], NO, YES, [previousScopeStack copy]);
