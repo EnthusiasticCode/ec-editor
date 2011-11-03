@@ -41,9 +41,9 @@ static const void *rendererContext;
 #pragma mark - Properties
 
 @dynamic delegate;
-@synthesize renderer, rendererMinimumLineWidth;
+@synthesize renderer;
 @synthesize backgroundView;
-@synthesize lineHeight, lineGap, lineDefaultColor, lineShadowColor;
+@synthesize lineHeight, lineDefaultColor, lineShadowColor;
 
 - (void)setDelegate:(id<ACCodeFileMinimapViewDelegate>)aDelegate
 {
@@ -85,13 +85,6 @@ static const void *rendererContext;
     return lineHeight;
 }
 
-- (CGFloat)lineGap
-{
-    if (lineGap < 1)
-        lineGap = 1;
-    return lineGap;
-}
-
 - (void)setFrame:(CGRect)frame
 {
     [super setFrame:frame];
@@ -118,10 +111,9 @@ static const void *rendererContext;
         
         CGContextSetLineWidth(context, this.lineHeight);
         
-        CGFloat gap = this.lineHeight + this.lineGap;
-        __block CGFloat lineY = CGFLOAT_MAX;
         __block UIColor *customLineColor, *lastLineColor = this.lineDefaultColor;
         [this.renderer enumerateLinesIntersectingRect:CGRectApplyAffineTransform(rect, this->_toRendererTransform) usingBlock:^(ECTextRendererLine *line, NSUInteger lineIndex, NSUInteger lineNumber, CGFloat lineYOffset, NSRange stringRange, BOOL *stop) {
+
             // Draw line block if color changes
             if (this->flags.delegateHasColorForRendererLineNumber)
             {
@@ -136,17 +128,15 @@ static const void *rendererContext;
                 }
             }
             
-            // Position first line
-            if (lineY == CGFLOAT_MAX)
-                lineY = floorf(lineYOffset * this->_toMinimapTransform.a - rect.origin.y) + ((NSInteger)this.lineHeight % 2 ? 0.5 : 0);
+            if (line.width < line.height)
+                return;
+            
+            // Position line
+            CGFloat lineY = floorf(lineYOffset * this->_toMinimapTransform.a - rect.origin.y) + ((NSInteger)this.lineHeight % 2 ? 0.5 : 0);
             
             // Draw line
-            if (line.width >= this->rendererMinimumLineWidth)
-            {
-                CGContextMoveToPoint(context, 0, lineY);
-                CGContextAddLineToPoint(context, line.width * this->_toMinimapTransform.a, lineY);
-            }
-            lineY += gap;
+            CGContextMoveToPoint(context, 0, lineY);
+            CGContextAddLineToPoint(context, line.width * this->_toMinimapTransform.a, lineY);
         }];
         
         CGContextSetStrokeColorWithColor(context, lastLineColor.CGColor);

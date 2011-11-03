@@ -27,9 +27,6 @@
 /// The renderer to use to produce the minimap.
 @property (weak, nonatomic) ECTextRenderer *renderer;
 
-/// Provide the minimum line width that will be rendered in the minimap.
-@property (nonatomic) CGFloat rendererMinimumLineWidth;
-
 #pragma mark - Managing Minimap Style
 
 /// A view positioned as the background.
@@ -37,9 +34,6 @@
 
 /// The thickness of the uniform line representing a text line. Default 1, the minimum.
 @property (nonatomic) CGFloat lineHeight;
-
-/// The gap between two lines. Default 1, the minimum.
-@property (nonatomic) CGFloat lineGap;
 
 /// The default line color. If nil, black will be used.
 @property (strong, nonatomic) UIColor *lineDefaultColor;

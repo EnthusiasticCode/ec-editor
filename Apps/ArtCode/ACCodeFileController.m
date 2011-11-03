@@ -73,12 +73,12 @@
         
         _minimapView.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleHeight;
         _minimapView.contentInset = UIEdgeInsetsMake(10, 10, 10, 10);
+        _minimapView.alwaysBounceVertical = YES;
         
-        _minimapView.rendererMinimumLineWidth = 4;
         _minimapView.backgroundView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"minimap_Background"]];
         _minimapView.backgroundView.contentMode = UIViewContentModeTopLeft;
         _minimapView.lineShadowColor = [UIColor colorWithWhite:0 alpha:0.75];
-        _minimapView.lineDefaultColor = [UIColor whiteColor];
+        _minimapView.lineDefaultColor = [UIColor colorWithWhite:0.7 alpha:1];
     }
     return _minimapView;
 }
