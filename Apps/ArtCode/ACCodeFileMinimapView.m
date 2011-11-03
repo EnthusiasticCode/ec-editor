@@ -26,7 +26,7 @@ static const void *rendererContext;
     CGAffineTransform _toRendererTransform;
     
     struct {
-        unsigned delegateHasColorForRendererLineNumber : 1;
+        unsigned delegateHasShouldRendererLineNumberWithColorDecorationDecorationColor : 1;
         unsigned reserved : 3;
     } flags;
 }
@@ -51,7 +51,7 @@ static const void *rendererContext;
         return;
     
     super.delegate = aDelegate;
-    flags.delegateHasColorForRendererLineNumber = [self.delegate respondsToSelector:@selector(codeFileMinimapView:colorForRendererLine:number:)];
+    flags.delegateHasShouldRendererLineNumberWithColorDecorationDecorationColor = [self.delegate respondsToSelector:@selector(codeFileMinimapView:shouldRenderLine:number:withColor:deocration:decorationColor:)];
 }
 
 - (void)setRenderer:(ECTextRenderer *)aRenderer
@@ -110,25 +110,29 @@ static const void *rendererContext;
         
         CGContextSetLineWidth(context, this.lineThickness);
         
-        __block UIColor *customLineColor, *lastLineColor = this.lineDefaultColor;
+        __block UIColor *lastLineColor = this.lineDefaultColor;
         [this.renderer enumerateLinesIntersectingRect:CGRectApplyAffineTransform(rect, this->_toRendererTransform) usingBlock:^(ECTextRendererLine *line, NSUInteger lineIndex, NSUInteger lineNumber, CGFloat lineYOffset, NSRange stringRange, BOOL *stop) {
 
             // Draw line block if color changes
-            if (this->flags.delegateHasColorForRendererLineNumber)
+            if (this->flags.delegateHasShouldRendererLineNumberWithColorDecorationDecorationColor)
             {
-                customLineColor = [this.delegate codeFileMinimapView:this colorForRendererLine:line number:lineNumber];
-                if (customLineColor == nil)
-                    customLineColor = this->lineDefaultColor;
+                // Retrieve delegate informations for line
+                ACCodeFileMinimapLineDecoration customDecoration = 0;
+                __autoreleasing UIColor *customLineColor = this->lineDefaultColor;
+                __autoreleasing UIColor *customDecorationColor = this->lineDefaultColor;
+                if (![this.delegate codeFileMinimapView:this shouldRenderLine:line number:lineNumber withColor:&customLineColor deocration:&customDecoration decorationColor:&customDecorationColor])
+                    return;
+                
+                // Render previous placed lines
                 if (customLineColor != lastLineColor)
                 {
                     CGContextSetStrokeColorWithColor(context, lastLineColor.CGColor);
                     CGContextStrokePath(context);
                     lastLineColor = customLineColor;
                 }
+                
+                // TODO Render decoration for line
             }
-            
-            if (line.width < line.height)
-                return;
             
             // Position line
             CGFloat lineY = floorf(lineYOffset * this->_toMinimapTransform.a - rect.origin.y) + ((NSInteger)this->lineThickness % 2 ? 0.5 : 0);

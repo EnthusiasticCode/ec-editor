@@ -276,12 +276,15 @@
 
 #pragma mark - Minimap Delegate Methods
 
-- (UIColor *)codeFileMinimapView:(ACCodeFileMinimapView *)minimapView colorForRendererLine:(ECTextRendererLine *)line number:(NSUInteger)lineNumber
+- (BOOL)codeFileMinimapView:(ACCodeFileMinimapView *)minimapView shouldRenderLine:(ECTextRendererLine *)line number:(NSUInteger)lineNumber withColor:(UIColor *__autoreleasing *)lineColor deocration:(ACCodeFileMinimapLineDecoration *)decoration decorationColor:(UIColor *__autoreleasing *)decorationColor
 {
-    // TODO actual logic for coloring minimap
+    if (line.width < line.height)
+        return NO;
+    
     if (lineNumber < 8)
-        return [UIColor greenColor];
-    return nil;
+        *lineColor = [UIColor greenColor];
+    
+    return YES;
 }
 
 #pragma mark - Private Methods

@@ -10,10 +10,14 @@
 
 @class ACCodeFileMinimapView, ECTextRenderer, ECTextRendererLine;
 
+typedef NSInteger ACCodeFileMinimapLineDecoration;
+
 @protocol ACCodeFileMinimapViewDelegate <UIScrollViewDelegate>
 @optional
 
-- (UIColor *)codeFileMinimapView:(ACCodeFileMinimapView *)minimapView colorForRendererLine:(ECTextRendererLine *)line number:(NSUInteger)lineNumber;
+/// Returns if the given line should be rendered by the minimap with the given color, decoration and decoration color.
+/// All this last three parameters can be assigned to change the way the line is rendered.
+- (BOOL)codeFileMinimapView:(ACCodeFileMinimapView *)minimapView shouldRenderLine:(ECTextRendererLine *)line number:(NSUInteger)lineNumber withColor:(UIColor **)lineColor deocration:(ACCodeFileMinimapLineDecoration *)decoration decorationColor:(UIColor **)decorationColor;
 
 @end
 
