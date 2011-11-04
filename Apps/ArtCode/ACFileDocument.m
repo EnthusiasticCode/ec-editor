@@ -116,8 +116,7 @@
 
 - (BOOL)loadFromContents:(id)contents ofType:(NSString *)typeName error:(NSError *__autoreleasing *)outError
 {
-    // TODO handle error
-    self.contentString = [[NSMutableAttributedString alloc] initWithString:[NSString stringWithContentsOfURL:self.fileURL encoding:NSUTF8StringEncoding error:NULL] attributes:self.defaultTextAttributes];
+    self.contentString = [[NSMutableAttributedString alloc] initWithString:[[NSString alloc] initWithData:contents encoding:NSUTF8StringEncoding] attributes:self.defaultTextAttributes];
     return YES;
 }
 
