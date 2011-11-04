@@ -30,6 +30,9 @@
 
 - (void)_layoutChildViews;
 
+- (void)_handleGestureUndo:(UISwipeGestureRecognizer *)recognizer;
+- (void)_handleGestureRedo:(UISwipeGestureRecognizer *)recognizer;
+
 @end
 
 
@@ -60,6 +63,16 @@
         
         _codeView.alwaysBounceVertical = YES;
         _codeView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+        
+        UISwipeGestureRecognizer *undoRecognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(_handleGestureUndo:)];
+        undoRecognizer.direction = UISwipeGestureRecognizerDirectionRight;
+        undoRecognizer.numberOfTouchesRequired = 2;
+        [_codeView addGestureRecognizer:undoRecognizer];
+        
+        UISwipeGestureRecognizer *redoRecognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(_handleGestureRedo:)];
+        redoRecognizer.direction = UISwipeGestureRecognizerDirectionLeft;
+        undoRecognizer.numberOfTouchesRequired = 2;
+        [_codeView addGestureRecognizer:redoRecognizer];
     }
     return _codeView;
 }
@@ -339,6 +352,16 @@
         self.codeView.frame = frame;
         _minimapView.frame = CGRectMake(frame.size.width, 0, self.minimapWidth, frame.size.height);
     }
+}
+
+- (void)_handleGestureUndo:(UISwipeGestureRecognizer *)recognizer
+{
+    [_codeView.undoManager undo];
+}
+
+- (void)_handleGestureRedo:(UISwipeGestureRecognizer *)recognizer
+{
+    [_codeView.undoManager redo];
 }
 
 @end
