@@ -282,8 +282,8 @@ static void preinit(ECPopoverController *self)
 
 - (void)presentPopoverFromBarButtonItem:(UIBarButtonItem *)item permittedArrowDirections:(UIPopoverArrowDirection)arrowDirections animated:(BOOL)animated
 {
-    // TODO implement this
-    abort();
+    UIView *itemView = item.customView != nil ? item.customView : [item performSelector:@selector(view)];
+    [self presentPopoverFromRect:[itemView frame] inView:[itemView superview] permittedArrowDirections:arrowDirections animated:animated];
 }
 
 - (void)dismissPopoverAnimated:(BOOL)animated
