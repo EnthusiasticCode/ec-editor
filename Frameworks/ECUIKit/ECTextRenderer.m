@@ -18,6 +18,7 @@
 @interface ECTextRenderer () {
 @private
     NSMutableArray *textSegments;
+    dispatch_semaphore_t textSegmentsSemaphore;
     
     BOOL delegateHasDidInvalidateRenderInRect;
     
@@ -665,13 +666,19 @@
         return nil;
     
     textSegments = [NSMutableArray new];
+    textSegmentsSemaphore = dispatch_semaphore_create(1);
     
     __weak ECTextRenderer *this = self;
     _notificationCenterMemoryWarningObserver = [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationDidReceiveMemoryWarningNotification object:nil queue:nil usingBlock:^(NSNotification *note) {
+        if (dispatch_semaphore_wait(textSegmentsSemaphore, dispatch_time(DISPATCH_TIME_NOW, 5 * 1000 * 1000)) != 0)
+            return;
+        
         for (TextSegment *segment in this->textSegments)
         {
             [segment discardContentIfPossible];
         }
+        
+        dispatch_semaphore_signal(textSegmentsSemaphore);
     }];
     
     return self;
@@ -680,6 +687,7 @@
 - (void)dealloc
 {
     [[NSNotificationCenter defaultCenter] removeObserver:_notificationCenterMemoryWarningObserver];
+    dispatch_release(textSegmentsSemaphore);
 }
 
 #pragma mark Private Methods
@@ -692,17 +700,22 @@
 - (void)_updateRenderWidth:(CGFloat)width
 {
     CGFloat wrapWidth = width - textInsets.left - textInsets.right;
-    for (TextSegment *segment in textSegments) 
+    dispatch_semaphore_wait(textSegmentsSemaphore, DISPATCH_TIME_FOREVER);
     {
-        segment.renderWrapWidth = wrapWidth;
+        for (TextSegment *segment in textSegments) 
+        {
+            segment.renderWrapWidth = wrapWidth;
+        }
     }
+    dispatch_semaphore_signal(textSegmentsSemaphore);
     
     if (delegateHasDidInvalidateRenderInRect)
         [delegate textRenderer:self didInvalidateRenderInRect:CGRectMake(0, 0, self.renderWidth, self.renderHeight)];
 }
 
+// Already locked in _generateTextSegmentsAndEnumerateUsingBlock
 - (NSAttributedString *)_stringForTextSegment:(TextSegment *)requestSegment lineCount:(NSUInteger *)lines finalPart:(BOOL *)isFinalPart
-{    
+{
     NSUInteger inputStringLenght = [dataSource stringLengthForTextRenderer:self];
     if (inputStringLenght == 0)
         return nil;
@@ -782,46 +795,50 @@
     NSRange currentLineRange = NSMakeRange(0, 0);
     NSUInteger currentStringOffset = 0;
     CGFloat currentPositionOffset = 0;
-    @synchronized (textSegments)
+    do
     {
-        do
-        {
-            // Generate segment if needed
-            if ([textSegments count] <= currentIndex) 
-            {
-                segment = [[TextSegment alloc] initWithTextRenderer:self];
-                segment.renderWrapWidth = [self _wrapWidth];
-                if (!segment.isValid)
-                    break;
-                
-                [textSegments addObject:segment];
-            }
-            else
-            {
-                segment = [textSegments objectAtIndex:currentIndex];
-                [segment beginContentAccess];
-            }
-
-            // Apply block
-            block(segment, currentIndex, currentLineRange.location, currentStringOffset, currentPositionOffset, &stop);
-            
-            // Update offsets
-            currentIndex++;
-            currentLineRange.length = segment.lineCount;
-            currentLineRange.location += currentLineRange.length;
-            currentStringOffset += segment.stringLength;
-            currentPositionOffset += segment.renderSegmentHeight;
-            
-            [segment endContentAccess];
-            
-        } while (!stop && !segment.isLastSegment);
+        dispatch_semaphore_wait(textSegmentsSemaphore, DISPATCH_TIME_FOREVER);
         
-        // Update estimated height
-        if (currentPositionOffset > renderTextHeight 
-            || (segment.isLastSegment && currentPositionOffset != renderTextHeight)) 
+        // Generate segment if needed
+        if ([textSegments count] <= currentIndex) 
         {
-            self.renderTextHeight = currentPositionOffset;
+            segment = [[TextSegment alloc] initWithTextRenderer:self];
+            segment.renderWrapWidth = [self _wrapWidth];
+            if (!segment.isValid)
+            {
+                dispatch_semaphore_signal(textSegmentsSemaphore);
+                break;
+            }
+            
+            [textSegments addObject:segment];
         }
+        else
+        {
+            segment = [textSegments objectAtIndex:currentIndex];
+            [segment beginContentAccess];
+        }
+
+        // Apply block
+        block(segment, currentIndex, currentLineRange.location, currentStringOffset, currentPositionOffset, &stop);
+        
+        // Update offsets
+        currentIndex++;
+        currentLineRange.length = segment.lineCount;
+        currentLineRange.location += currentLineRange.length;
+        currentStringOffset += segment.stringLength;
+        currentPositionOffset += segment.renderSegmentHeight;
+        
+        [segment endContentAccess];
+        
+        dispatch_semaphore_signal(textSegmentsSemaphore);
+        
+    } while (!stop && !segment.isLastSegment);
+    
+    // Update estimated height
+    if (currentPositionOffset > renderTextHeight 
+        || (segment.isLastSegment && currentPositionOffset != renderTextHeight)) 
+    {
+        self.renderTextHeight = currentPositionOffset;
     }
 }
 
@@ -1166,12 +1183,16 @@
 
 - (void)updateAllText
 {
-    for (TextSegment *segment in textSegments)
+    dispatch_semaphore_wait(textSegmentsSemaphore, DISPATCH_TIME_FOREVER);
     {
-        [segment discardContent];
+        for (TextSegment *segment in textSegments)
+        {
+            [segment discardContent];
+        }
+        
+        [textSegments removeAllObjects];
     }
-    
-    [textSegments removeAllObjects];
+    dispatch_semaphore_signal(textSegmentsSemaphore);
     
     if (delegateHasDidInvalidateRenderInRect) 
         [delegate textRenderer:self didInvalidateRenderInRect:CGRectMake(0, 0, self.renderWidth, self.renderHeight)];
@@ -1185,55 +1206,60 @@
         [self updateAllText];
         return;
     }
-        
-    // Calculate change withing single semgment
+    
     NSInteger segmentIndex = -1, removeFromSegmentIndex = NSNotFound;
     CGFloat affectedSegmentHeight = 0, removeFromSegmentYOffset = 0;
     NSRange segmentRange = NSMakeRange(0, 0);
     NSUInteger fromRangeEnd = NSMaxRange(fromRange), segmentRangeEnd;
-    for (TextSegment *segment in textSegments)
+    
+    dispatch_semaphore_wait(textSegmentsSemaphore, DISPATCH_TIME_FOREVER);
     {
-        segmentIndex++;
-        segmentRange.location += segmentRange.length;
-        segmentRange.length = segment.stringLength;
-        segmentRangeEnd = NSMaxRange(segmentRange);
-        affectedSegmentHeight = segment.renderSegmentHeight;
-        
-        // Skip untouched segments
-        ECASSERT(segmentRange.location < fromRangeEnd);
-        if (segmentRangeEnd >= fromRange.location)
+        // Calculate change withing single semgment
+        for (TextSegment *segment in textSegments)
         {
-            // Will remove every segment after the current if changes are crossing multiple segments
-            if (fromRange.location < segmentRangeEnd
-                && fromRangeEnd >= segmentRangeEnd)
+            segmentIndex++;
+            segmentRange.location += segmentRange.length;
+            segmentRange.length = segment.stringLength;
+            segmentRangeEnd = NSMaxRange(segmentRange);
+            affectedSegmentHeight = segment.renderSegmentHeight;
+            
+            // Skip untouched segments
+            ECASSERT(segmentRange.location < fromRangeEnd);
+            if (segmentRangeEnd >= fromRange.location)
             {
-                removeFromSegmentIndex = segmentIndex;
+                // Will remove every segment after the current if changes are crossing multiple segments
+                if (fromRange.location < segmentRangeEnd
+                    && fromRangeEnd >= segmentRangeEnd)
+                {
+                    removeFromSegmentIndex = segmentIndex;
+                    break;
+                }
+                
+                // Will remove segment if modifying it will change it's string lenght too much
+                NSInteger segmentNewLength = segment.stringLength + (toRange.length - fromRange.length);
+                if (segmentNewLength > maximumStringLenghtPerSegment * 1.5 
+                    || (!segment.isLastSegment && segmentNewLength < maximumStringLenghtPerSegment / 2))
+                {
+                    removeFromSegmentIndex = segmentIndex;
+                    break;
+                }
+                
+                // Only one segment is affected
+                segment.stringLength = segmentNewLength;
+                [segment discardContent];
                 break;
             }
             
-            // Will remove segment if modifying it will change it's string lenght too much
-            NSInteger segmentNewLength = segment.stringLength + (toRange.length - fromRange.length);
-            if (segmentNewLength > maximumStringLenghtPerSegment * 1.5 
-                || (!segment.isLastSegment && segmentNewLength < maximumStringLenghtPerSegment / 2))
-            {
-                removeFromSegmentIndex = segmentIndex;
-                break;
-            }
-            
-            // Only one segment is affected
-            segment.stringLength = segmentNewLength;
-            [segment discardContent];
-            break;
+            removeFromSegmentYOffset += affectedSegmentHeight;
         }
         
-        removeFromSegmentYOffset += affectedSegmentHeight;
+        // If the change crosses multiple segments, recreate all from the one where the change start
+        if (removeFromSegmentIndex != NSNotFound)
+        {
+            [textSegments removeObjectsAtIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(removeFromSegmentIndex, [textSegments count] - removeFromSegmentIndex)]];
+        }
     }
-    
-    // If the change crosses multiple segments, recreate all from the one where the change start
-    if (removeFromSegmentIndex != NSNotFound)
-    {
-        [textSegments removeObjectsAtIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(removeFromSegmentIndex, [textSegments count] - removeFromSegmentIndex)]];
-    }
+    dispatch_semaphore_signal(textSegmentsSemaphore);
     
     // Send invalidation for specific rect
     if (delegateHasDidInvalidateRenderInRect)
