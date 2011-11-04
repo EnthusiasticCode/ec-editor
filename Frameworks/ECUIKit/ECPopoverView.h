@@ -7,9 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "ECRoundedContentCornersView.h"
 
-@interface ECPopoverView : ECRoundedContentCornersView
+@interface ECPopoverView : UIView
 
 #pragma mark Style
 
@@ -25,9 +24,18 @@
 
 #pragma mark Content
 
+@property (nonatomic, strong) UIView *contentView;
+
+/// The content size. Chaning this property will affect the receiver's bounds.
 @property (nonatomic) CGSize contentSize;
 
-@property (nonatomic, strong) UIView *contentView;
+@property (nonatomic) UIEdgeInsets contentInsets UI_APPEARANCE_SELECTOR;
+
+@property (nonatomic, readonly, strong) UIView *contentWrapView;
+
+@property (nonatomic) CGFloat contentWrapCornerRadius UI_APPEARANCE_SELECTOR;
+
+#pragma mark Top Bar
 
 @property (nonatomic, strong) UIView *barView;
 

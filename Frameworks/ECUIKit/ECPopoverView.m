@@ -7,64 +7,84 @@
 //
 
 #import "ECPopoverView.h"
+#import "ECRoundedContentCornersView.h"
 #import <QuartzCore/QuartzCore.h>
 
 #define BARVIEW_HEIGHT 44
 
 @implementation ECPopoverView {
-    CGRect contentRect;
+    ECRoundedContentCornersView *_contentWrapView;
 }
 
 static void updatePath(ECPopoverView *self);
 
 #pragma mark - Properties
 
-@synthesize contentView, barView;
+@synthesize contentView = _contentView;
+@synthesize contentWrapView = _contentWrapView, contentInsets;
+@synthesize barView = _barView;
 @synthesize cornerRadius, shadowOffsetForArrowDirectionUpToAutoOrient;
 @synthesize arrowDirection, arrowPosition, arrowSize, arrowMargin, arrowCornerRadius;
 
-- (UIEdgeInsets)contentInsets
+- (void)setContentView:(UIView *)contentView
 {
-    UIEdgeInsets insets = [super contentInsets];
-    if (barView)
-        insets.top += BARVIEW_HEIGHT;
-    return insets;
-}
-
-- (void)setContentInsets:(UIEdgeInsets)insets
-{
-    [super setContentInsets:insets];
-    contentRect = UIEdgeInsetsInsetRect(self.bounds, self.contentInsets);
+    if (contentView == _contentView)
+        return;
+    
+    [self willChangeValueForKey:@"contentView"];
+    [_contentView removeFromSuperview];
+    _contentView = contentView;
+    [self.contentWrapView addSubview:_contentView];
+    [self setNeedsLayout];
+    [self didChangeValueForKey:@"contentView"];
 }
 
 - (CGSize)contentSize
 {
-    return contentRect.size;
+    CGSize contentSize = UIEdgeInsetsInsetRect(self.bounds, self.contentInsets).size;
+    if (self.barView)
+        contentSize.height -= BARVIEW_HEIGHT;
+    return contentSize;
 }
 
-- (void)setContentSize:(CGSize)size
+- (void)setContentSize:(CGSize)contentSize
 {
-    if (CGSizeEqualToSize(size, contentRect.size))
+    [self willChangeValueForKey:@"contentSize"];
+    contentSize.width += self.contentInsets.left + self.contentInsets.right;
+    contentSize.height += self.contentInsets.top + self.contentInsets.bottom;
+    self.bounds = (CGRect){ CGPointZero, contentSize };
+    [self didChangeValueForKey:@"contentSize"];
+}
+
+- (UIView *)contentWrapView
+{
+    if (!_contentWrapView)
+    {
+        _contentWrapView = [ECRoundedContentCornersView new];
+    }
+    return _contentWrapView;
+}
+
+- (CGFloat)contentWrapCornerRadius
+{
+    return [(ECRoundedContentCornersView *)self.contentWrapView contentCornerRadius];
+}
+
+- (void)setContentWrapCornerRadius:(CGFloat)contentWrapCornerRadius
+{
+    [(ECRoundedContentCornersView *)self.contentWrapView setContentCornerRadius:contentWrapCornerRadius];
+}
+
+- (void)setBarView:(UIView *)barView
+{
+    if (barView == _barView)
         return;
     
-    UIEdgeInsets contentInsets = self.contentInsets;
-    [self setBounds:(CGRect){ CGPointZero, {
-        size.width + contentInsets.left + contentInsets.right,
-        size.height + contentInsets.top + contentInsets.bottom
-    } }];
-}
-
-- (void)setContentView:(UIView *)view
-{
-    [contentView removeFromSuperview];
-    contentView = view;
-    [self addSubview:contentView];
-}
-
-- (void)setBarView:(UIView *)view
-{
-    barView = view;
-    [self addSubview:barView];
+    [self willChangeValueForKey:@"barView"];
+    [_barView removeFromSuperview];
+    _barView = barView;
+    [self addSubview:_barView];
+    [self didChangeValueForKey:@"barView"];
 }
 
 - (void)setArrowPosition:(CGFloat)position
@@ -87,26 +107,6 @@ static void updatePath(ECPopoverView *self);
     updatePath(self);
 }
 
-- (void)setBounds:(CGRect)bounds
-{
-    if (CGRectEqualToRect(bounds, self.bounds))
-        return;
-    
-    [super setBounds:bounds];
-    contentRect = UIEdgeInsetsInsetRect(bounds, self.contentInsets);
-    updatePath(self);
-}
-
-- (void)setFrame:(CGRect)frame
-{
-    if (CGRectEqualToRect(frame, self.frame))
-        return;
-    
-    [super setFrame:frame];
-    contentRect = UIEdgeInsetsInsetRect(self.bounds, self.contentInsets);
-    updatePath(self);
-}
-
 - (UIColor *)backgroundColor
 {
     return [UIColor colorWithCGColor:[(CAShapeLayer *)self.layer fillColor]];
@@ -117,7 +117,7 @@ static void updatePath(ECPopoverView *self);
     CGColorRef color = backgroundColor.CGColor;
     [(CAShapeLayer *)self.layer setFillColor:color];
     
-    [super setBackgroundColor:backgroundColor];
+    self.contentWrapView.backgroundColor = backgroundColor;
 }
 
 - (CGFloat)shadowRadius
@@ -146,9 +146,25 @@ static void updatePath(ECPopoverView *self);
     updatePath(self);
 }
 
+- (void)setBounds:(CGRect)bounds
+{
+    [super setBounds:bounds];
+    if (CGRectEqualToRect(bounds, self.bounds))
+        return;
+    updatePath(self);
+}
+
+- (void)setFrame:(CGRect)frame
+{
+    [super setFrame:frame];
+    if (CGSizeEqualToSize(frame.size, self.frame.size))
+        return;
+    updatePath(self);
+}
+
 #pragma mark - UIView Methods
 
-static void preinit(ECPopoverView *self)
+static void init(ECPopoverView *self)
 {
     self->arrowSize = 20;
     self->arrowCornerRadius = 2;
@@ -159,17 +175,14 @@ static void preinit(ECPopoverView *self)
     self->cornerRadius = 5;
     
     self.contentInsets = UIEdgeInsetsMake(5, 5, 5, 5);
-}
-
-static void init(ECPopoverView *self)
-{    
-    self->contentRect = UIEdgeInsetsInsetRect(self.bounds, self.contentInsets);
+    
     updatePath(self);
+    
+    [self addSubview:self.contentWrapView];
 }
 
 - (id)initWithFrame:(CGRect)frame
 {
-    preinit(self);
     if ((self = [super initWithFrame:frame])) 
     {
         init(self);
@@ -179,7 +192,6 @@ static void init(ECPopoverView *self)
 
 - (id)initWithCoder:(NSCoder *)coder 
 {
-    preinit(self);
     if ((self = [super initWithCoder:coder])) 
     {
         init(self);
@@ -194,12 +206,17 @@ static void init(ECPopoverView *self)
 
 - (void)layoutSubviews
 {
-    contentView.frame = contentRect;
-    
-    if (barView)
-        barView.frame = CGRectMake(contentRect.origin.x, contentRect.origin.y - BARVIEW_HEIGHT, contentRect.size.width, BARVIEW_HEIGHT);
-    
-    [super layoutSubviews];
+    CGRect bounds = UIEdgeInsetsInsetRect(self.bounds, self.contentInsets);
+
+    if (self.barView)
+    {
+        self.barView.frame = (CGRect){ bounds.origin, CGSizeMake(bounds.size.width, BARVIEW_HEIGHT) };
+        bounds.origin.y += BARVIEW_HEIGHT;
+        bounds.size.height -= BARVIEW_HEIGHT;
+    }
+
+    self.contentWrapView.frame = bounds;
+    self.contentView.frame = self.contentWrapView.bounds;
 }
 
 #pragma mark - Private Methods

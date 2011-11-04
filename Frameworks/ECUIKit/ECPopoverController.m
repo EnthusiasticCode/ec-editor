@@ -25,7 +25,7 @@
     BOOL delegateHasPopoverControllerDidDismissPopover;
 }
 
-- (void)presentPopoverInView:(UIView *)view WithFrame:(CGRect)frame animated:(BOOL)animated;
+- (void)_presentPopoverInView:(UIView *)view withFrame:(CGRect)frame animated:(BOOL)animated;
 
 - (void)dismissHandler:(UIGestureRecognizer *)recognizer;
 
@@ -206,7 +206,7 @@ static void preinit(ECPopoverController *self)
         {
             popoverView.arrowDirection = UIPopoverArrowDirectionDown;
             popoverView.arrowPosition = arrowPoint.x - resultFrame.origin.x;
-            [self presentPopoverInView:view WithFrame:resultFrame animated:animated];
+            [self _presentPopoverInView:view withFrame:resultFrame animated:animated];
             return;
         }
         else if (CGRectIsNull(backupFrame))
@@ -226,7 +226,7 @@ static void preinit(ECPopoverController *self)
         {
             popoverView.arrowDirection = UIPopoverArrowDirectionLeft;
             popoverView.arrowPosition = arrowPoint.y - resultFrame.origin.y;
-            [self presentPopoverInView:view WithFrame:resultFrame animated:animated];
+            [self _presentPopoverInView:view withFrame:resultFrame animated:animated];
             return;
         }
         // TODO instead of check for null, check if intersection of this result frame > intersection with current backupframe
@@ -248,7 +248,7 @@ static void preinit(ECPopoverController *self)
         popoverView.arrowPosition = arrowPoint.x - resultFrame.origin.x;
         if (CGRectContainsRect(allowedRect, resultFrame)) 
         {
-            [self presentPopoverInView:view WithFrame:resultFrame animated:animated];
+            [self _presentPopoverInView:view withFrame:resultFrame animated:animated];
             return;
         }
         else if (CGRectIsNull(backupFrame))
@@ -266,7 +266,7 @@ static void preinit(ECPopoverController *self)
         {
             popoverView.arrowDirection = UIPopoverArrowDirectionRight;
             popoverView.arrowPosition = arrowPoint.y - resultFrame.origin.y;
-            [self presentPopoverInView:view WithFrame:resultFrame animated:animated];
+            [self _presentPopoverInView:view withFrame:resultFrame animated:animated];
             return;
         }
         else if (CGRectIsNull(backupFrame))
@@ -277,7 +277,7 @@ static void preinit(ECPopoverController *self)
         }
     }
     
-    [self presentPopoverInView:view WithFrame:backupFrame animated:animated];
+    [self _presentPopoverInView:view withFrame:backupFrame animated:animated];
 }
 
 - (void)presentPopoverFromBarButtonItem:(UIBarButtonItem *)item permittedArrowDirections:(UIPopoverArrowDirection)arrowDirections animated:(BOOL)animated
@@ -318,11 +318,8 @@ static void preinit(ECPopoverController *self)
 #pragma mark -
 #pragma mark Private Methods
 
-- (void)presentPopoverInView:(UIView *)view WithFrame:(CGRect)frame animated:(BOOL)animated
+- (void)_presentPopoverInView:(UIView *)view withFrame:(CGRect)frame animated:(BOOL)animated
 {
-    if (popoverView.superview != nil)
-        return;
-    
     [view.window.rootViewController.view addSubview:popoverView];
     frame.origin.x = roundf(frame.origin.x);
     frame.origin.y = roundf(frame.origin.y);
