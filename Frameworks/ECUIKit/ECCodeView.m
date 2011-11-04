@@ -17,8 +17,8 @@
 
 #pragma mark - Interfaces
 
-@class TextSelectionView;
-@class TextMagnificationView;
+@class TextSelectionView, TextMagnificationView, ECCodeViewUndoManager;
+
 
 #pragma mark -
 
@@ -28,6 +28,8 @@
     TextSelectionView *selectionView;
     ECPopoverController *completionPopover;
     NSRange markedRange;
+    
+    ECCodeViewUndoManager *_undoManager;
     
     // Touch scrolling timer
     NSTimer *touchScrollTimer;
@@ -144,6 +146,12 @@
 - (void)setMagnify:(BOOL)doMagnify fromRect:(CGRect)rect ratio:(BOOL)ratio animated:(BOOL)animated;
 
 - (void)handleKnobGesture:(UILongPressGestureRecognizer *)recognizer;
+
+@end
+
+#pragma mark -
+
+@interface ECCodeViewUndoManager : NSUndoManager
 
 @end
 
@@ -786,7 +794,10 @@ static void init(ECCodeView *self)
 {
     NSRange insertRange = selectionView.selection;
     [self editDataSourceInRange:insertRange withString:string];
-    [self setSelectedIndex:(insertRange.location + [string length])];
+    
+    // Interrupting undo grouping on user return
+    if ([string hasSuffix:@"\n"] && self.undoManager.groupingLevel != 0)
+        [self.undoManager endUndoGrouping];
 }
 
 - (void)deleteBackward
@@ -810,7 +821,6 @@ static void init(ECCodeView *self)
     {
         NSRange cr = (NSRange){ s - 1, 1 };
         [self editDataSourceInRange:cr withString:nil];
-        [self setSelectedIndex:cr.location];
     }
 }
 
@@ -898,21 +908,17 @@ static void init(ECCodeView *self)
     if (s > textLength)
         s = textLength;
     
-    NSUInteger endIndex;
     if (e > s)
     {
         NSRange c = (NSRange){s, e - s};
         if (c.location + c.length > textLength)
             c.length = textLength - c.location;
         [self editDataSourceInRange:c withString:string];
-        endIndex = c.location + [string length];
     }
     else
     {
         [self editDataSourceInRange:(NSRange){s, 0} withString:string];
-        endIndex = s + [string length];
     }
-    [self setSelectedIndex:endIndex];
 }
 
 #pragma mark Working with Marked and Selected Text
@@ -1308,6 +1314,17 @@ static void init(ECCodeView *self)
     return NO;
 }
 
+#pragma mark - Undo management
+
+- (NSUndoManager *)undoManager
+{
+    if (!_undoManager)
+    {
+        _undoManager = [ECCodeViewUndoManager new];
+        // TODO fill the manager with stored stacks?
+    }
+    return _undoManager;
+}
 
 #pragma mark - Private methods
 
@@ -1322,12 +1339,22 @@ static void init(ECCodeView *self)
 
     [self unmarkText];
     
+    NSUInteger stringLenght = [string length];
+    // Register undo operation
+    if (self.undoManager.groupingLevel == 0)
+        [self.undoManager beginUndoGrouping];
+    [[self.undoManager prepareWithInvocationTarget:self] editDataSourceInRange:NSMakeRange(range.location, stringLenght) withString:range.length ? [[self.dataSource textRenderer:self.renderer attributedStringInRange:range] string] : nil];
+    
+    // Commit string
     [inputDelegate textWillChange:self];
     [self.dataSource codeView:self commitString:string forTextInRange:range];
     [inputDelegate textDidChange:self];
     
     // Inform the renderer that text has changed
     [self.renderer updateTextFromStringRange:range toStringRange:NSMakeRange(range.location, [string length])];
+    
+    // Update caret location
+    [self setSelectedTextRange:self.undoManager.isUndoing ? NSMakeRange(range.location, stringLenght) : NSMakeRange(range.location + stringLenght, 0) notifyDelegate:NO];
 }
 
 - (void)setSelectedTextRange:(NSRange)newSelection notifyDelegate:(BOOL)shouldNotify
@@ -1335,6 +1362,10 @@ static void init(ECCodeView *self)
     if (shouldNotify && NSEqualRanges(selectionView.selection, newSelection))
         return;
 
+    // Close undo grouping if selection explicitly modified
+    if (shouldNotify && self.undoManager.groupingLevel != 0)
+        [self.undoManager endUndoGrouping];
+    
     //    if (newSelection && (![newSelection isEmpty])) // TODO or solid caret
     //        [self setNeedsDisplayInRange:newSelection];
     
@@ -1509,6 +1540,19 @@ static void init(ECCodeView *self)
             [self autoScrollForTouchAtPoint:tapPoint];
         }
     }
+}
+
+@end
+
+#pragma mark -
+
+@implementation ECCodeViewUndoManager
+
+- (void)undo
+{
+    if (self.groupingLevel != 0)
+        [self endUndoGrouping];
+    [super undo];
 }
 
 @end
