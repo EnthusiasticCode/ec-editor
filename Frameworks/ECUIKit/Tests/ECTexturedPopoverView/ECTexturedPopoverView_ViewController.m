@@ -25,12 +25,12 @@
 {
     [super viewDidLoad];
 
-    self.popoverView.image =[[UIImage imageNamed:@"accessoryView_popoverBackground"] resizableImageWithCapInsets:UIEdgeInsetsMake(10, 10, 40, 10)];
+    self.popoverView.image =[[UIImage imageNamed:@"accessoryView_popoverBackground"] resizableImageWithCapInsets:UIEdgeInsetsMake(20, 15, 60, 15)];
     [self.popoverView setArrowImage:[[UIImage imageNamed:@"accessoryView_popoverArrowMiddle"] resizableImageWithCapInsets:UIEdgeInsetsMake(10, 10, 10, 10)] forDirection:UIPopoverArrowDirectionDown metaPosition:ECPopoverViewArrowMetaPositionMiddle];
     [self.popoverView setArrowImage:[[UIImage imageNamed:@"accessoryView_popoverArrowRight"] resizableImageWithCapInsets:UIEdgeInsetsMake(10, 10, 10, 10)] forDirection:UIPopoverArrowDirectionDown metaPosition:ECPopoverViewArrowMetaPositionFarRight];
     [self.popoverView setArrowImage:[[UIImage imageNamed:@"accessoryView_popoverArrowLeft"] resizableImageWithCapInsets:UIEdgeInsetsMake(10, 10, 10, 10)] forDirection:UIPopoverArrowDirectionDown metaPosition:ECPopoverViewArrowMetaPositionFarLeft];
     [self.popoverView setArrowSize:CGSizeMake(70, 44) forMetaPosition:ECPopoverViewArrowMetaPositionMiddle];
-    self.popoverView.arrowInsets = UIEdgeInsetsMake(6, 6, 6, 6);
+    self.popoverView.arrowInsets = UIEdgeInsetsMake(12, 12, 12, 12);
     self.popoverView.arrowDirection = UIPopoverArrowDirectionDown;
     self.popoverView.arrowPosition = 200;
 }
