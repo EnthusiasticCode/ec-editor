@@ -153,6 +153,10 @@
 		B77825671457037700872046 /* st.h in Headers */ = {isa = PBXBuildFile; fileRef = B77825501457037700872046 /* st.h */; };
 		B7A3F018144D8CC900EC9623 /* TMSyntax.h in Headers */ = {isa = PBXBuildFile; fileRef = B7A3F016144D8CC900EC9623 /* TMSyntax.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B7A3F019144D8CC900EC9623 /* TMSyntax.m in Sources */ = {isa = PBXBuildFile; fileRef = B7A3F017144D8CC900EC9623 /* TMSyntax.m */; };
+		B7AA73F11467081A00D2B5F4 /* ECClangCodeUnit.h in Headers */ = {isa = PBXBuildFile; fileRef = B7AA73EF1467081A00D2B5F4 /* ECClangCodeUnit.h */; };
+		B7AA73F21467081A00D2B5F4 /* ECClangCodeUnit.m in Sources */ = {isa = PBXBuildFile; fileRef = B7AA73F01467081A00D2B5F4 /* ECClangCodeUnit.m */; };
+		B7D445061466FBCA0010E4C2 /* ECClangCodeIndex.h in Headers */ = {isa = PBXBuildFile; fileRef = B7D445041466FBCA0010E4C2 /* ECClangCodeIndex.h */; };
+		B7D445071466FBCA0010E4C2 /* ECClangCodeIndex.m in Sources */ = {isa = PBXBuildFile; fileRef = B7D445051466FBCA0010E4C2 /* ECClangCodeIndex.m */; };
 		B7D80665144B830E00EEC819 /* TMBundle.h in Headers */ = {isa = PBXBuildFile; fileRef = B7D80663144B830E00EEC819 /* TMBundle.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B7D80666144B830E00EEC819 /* TMBundle.m in Sources */ = {isa = PBXBuildFile; fileRef = B7D80664144B830E00EEC819 /* TMBundle.m */; };
 		B7E550DD144E495200C07A0C /* ECCodeIndex+Subclass.h in Headers */ = {isa = PBXBuildFile; fileRef = B7E550DC144E495200C07A0C /* ECCodeIndex+Subclass.h */; };
@@ -425,6 +429,10 @@
 		B77825501457037700872046 /* st.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = st.h; sourceTree = "<group>"; };
 		B7A3F016144D8CC900EC9623 /* TMSyntax.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TMSyntax.h; sourceTree = "<group>"; };
 		B7A3F017144D8CC900EC9623 /* TMSyntax.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TMSyntax.m; sourceTree = "<group>"; };
+		B7AA73EF1467081A00D2B5F4 /* ECClangCodeUnit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECClangCodeUnit.h; sourceTree = "<group>"; };
+		B7AA73F01467081A00D2B5F4 /* ECClangCodeUnit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECClangCodeUnit.m; sourceTree = "<group>"; };
+		B7D445041466FBCA0010E4C2 /* ECClangCodeIndex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECClangCodeIndex.h; sourceTree = "<group>"; };
+		B7D445051466FBCA0010E4C2 /* ECClangCodeIndex.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECClangCodeIndex.m; sourceTree = "<group>"; };
 		B7D80663144B830E00EEC819 /* TMBundle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TMBundle.h; sourceTree = "<group>"; };
 		B7D80664144B830E00EEC819 /* TMBundle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TMBundle.m; sourceTree = "<group>"; };
 		B7E550DC144E495200C07A0C /* ECCodeIndex+Subclass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ECCodeIndex+Subclass.h"; sourceTree = "<group>"; };
@@ -526,6 +534,7 @@
 			children = (
 				B7C9A800142A10C8009D8FF3 /* General */,
 				B7656C14144B511D0084B050 /* TextMate */,
+				B7D445011466FB500010E4C2 /* libclang */,
 				B7170BF81428F65A00DF7794 /* Supporting Files */,
 			);
 			path = ECCodeIndexing;
@@ -861,6 +870,17 @@
 			name = General;
 			sourceTree = "<group>";
 		};
+		B7D445011466FB500010E4C2 /* libclang */ = {
+			isa = PBXGroup;
+			children = (
+				B7D445041466FBCA0010E4C2 /* ECClangCodeIndex.h */,
+				B7D445051466FBCA0010E4C2 /* ECClangCodeIndex.m */,
+				B7AA73EF1467081A00D2B5F4 /* ECClangCodeUnit.h */,
+				B7AA73F01467081A00D2B5F4 /* ECClangCodeUnit.m */,
+			);
+			name = libclang;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -892,6 +912,8 @@
 				B72658E41465B77500E4C9F1 /* TMPattern.h in Headers */,
 				B72658E81465BAE000E4C9F1 /* TMPattern+Internal.h in Headers */,
 				B72658EC1465C0B500E4C9F1 /* TMBundle+Internal.h in Headers */,
+				B7D445061466FBCA0010E4C2 /* ECClangCodeIndex.h in Headers */,
+				B7AA73F11467081A00D2B5F4 /* ECClangCodeUnit.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1041,6 +1063,8 @@
 				B72658D81463EC4400E4C9F1 /* TMScope.m in Sources */,
 				B72658DC146402F000E4C9F1 /* TMToken.m in Sources */,
 				B72658E51465B77500E4C9F1 /* TMPattern.m in Sources */,
+				B7D445071466FBCA0010E4C2 /* ECClangCodeIndex.m in Sources */,
+				B7AA73F21467081A00D2B5F4 /* ECClangCodeUnit.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

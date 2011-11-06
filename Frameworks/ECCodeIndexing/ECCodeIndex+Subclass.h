@@ -26,13 +26,11 @@
 
 @interface ECCodeIndex (Subclass)
 
-/// Return a number in range [0.0, 1.0[ depending on how well the code index supports a given file
-/// Language or scope can be nil, in which case the index is free to detect them based on file name and contents
-/// Scope takes precedence over language if both are specified
-/// Return 0.0 if the protocol is not implemented. Never return 1.0.
-- (float)supportForFile:(NSURL *)fileURL language:(NSString *)language scope:(NSString *)scope;
+/// Return a number in range [0.0, 1.0[ depending on how well the code index supports a given scope
+/// Return 0.0 if the scope is not supported at all. Never return 1.0.
+- (float)supportForScope:(NSString *)scope;
 
-/// Return a code unit initialized with the passed index and fileURL
-- (ECCodeUnit *)codeUnitWithIndex:(ECCodeIndex *)index forFile:(NSURL *)fileURL language:(NSString *)language scope:(NSString *)scope;
+/// Return a code unit for the given fileURL initialized with the given index and scope
+- (ECCodeUnit *)codeUnitWithIndex:(ECCodeIndex *)index forFile:(NSURL *)fileURL scope:(NSString *)scope;
 
 @end

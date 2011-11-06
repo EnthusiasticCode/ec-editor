@@ -15,6 +15,6 @@
 @interface ECCodeUnit (Internal)
 
 /// Designated initializer
-- (id)initWithIndex:(ECCodeIndex *)index file:(NSURL *)fileURL language:(NSString *)language scope:(NSString *)scope;
+- (id)initWithIndex:(ECCodeIndex *)index file:(NSURL *)fileURL scope:(NSString *)scope;
 
 @end

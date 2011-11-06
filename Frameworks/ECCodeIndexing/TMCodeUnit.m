@@ -40,15 +40,16 @@ static NSString * const _tokenAttributeName = @"TMTokenAttributeName";
 
 @implementation TMCodeUnit
 
-- (id)initWithIndex:(ECCodeIndex *)index fileURL:(NSURL *)fileURL syntax:(TMSyntax *)syntax
+- (id)initWithIndex:(ECCodeIndex *)index file:(NSURL *)fileURL scope:(NSString *)scope
 {
     ECASSERT(index);
     ECASSERT([fileURL isFileURL]);
-    ECASSERT(syntax);
-    self = [super initWithIndex:index file:fileURL language:[syntax name] scope:[syntax scope]];
+    ECASSERT([scope length]);
+    self = [super initWithIndex:index file:fileURL scope:scope];
     if (!self)
         return nil;
-    __syntax = syntax;
+    __syntax = [TMSyntax syntaxWithScope:scope];
+    ECASSERT(__syntax);
     [__syntax beginContentAccess];
     return self;
 }

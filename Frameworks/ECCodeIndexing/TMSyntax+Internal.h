@@ -13,7 +13,7 @@
 + (void)loadAllSyntaxes;
 
 /// Content:
-- (NSDictionary *)_repository;
-- (NSArray *)_patternsDictionaries;
+- (NSDictionary *)repository;
+- (NSArray *)patternsDictionaries;
 
 @end

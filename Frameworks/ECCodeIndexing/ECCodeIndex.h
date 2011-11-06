@@ -19,9 +19,8 @@
 - (void)setUnsavedContent:(NSString *)content forFile:(NSURL *)fileURL;
 
 /// Code unit creation
-/// If the language or scope are not specified, they will be autodetected
-/// Scope takes precedence over language
-- (ECCodeUnit *)codeUnitForFile:(NSURL *)fileURL language:(NSString *)language scope:(NSString *)scope;
+/// If the scope is not specified, it will be detected automatically
+- (ECCodeUnit *)codeUnitForFile:(NSURL *)fileURL scope:(NSString *)scope;
 
 @end
 

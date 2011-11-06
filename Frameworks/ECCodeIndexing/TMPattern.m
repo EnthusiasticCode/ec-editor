@@ -194,14 +194,14 @@ static NSArray *_patternsIncludedByPatterns(NSArray *patterns)
                 {
                     TMSyntax *patternSyntax = [containerPattern _syntax];
                     [patternSyntax beginContentAccess];
-                    [includedPatterns addObject:[[TMPattern alloc] _initWithSyntax:patternSyntax dictionary:[[patternSyntax _repository] objectForKey:[[containerPattern _include] substringFromIndex:1]]]];
+                    [includedPatterns addObject:[[TMPattern alloc] _initWithSyntax:patternSyntax dictionary:[[patternSyntax repository] objectForKey:[[containerPattern _include] substringFromIndex:1]]]];
                     [patternSyntax endContentAccess];
                 }
                 else
                 {
                     TMSyntax *includedSyntax = (firstCharacter == '$') ? [containerPattern _syntax] : [TMSyntax syntaxWithScope:[containerPattern _include]];
                     [includedSyntax beginContentAccess];
-                    for (NSDictionary *dictionary in [includedSyntax _patternsDictionaries])
+                    for (NSDictionary *dictionary in [includedSyntax patternsDictionaries])
                         [includedPatterns addObject:[[TMPattern alloc] _initWithSyntax:includedSyntax dictionary:dictionary]];
                     [includedSyntax endContentAccess];
                 }

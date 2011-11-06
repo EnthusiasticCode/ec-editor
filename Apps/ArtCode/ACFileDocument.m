@@ -88,7 +88,7 @@
             [_parserQueue addOperationWithBlock:^{
                 if (!this)
                     return;
-                ECCodeUnit *codeUnit = [codeIndex codeUnitForFile:this.fileURL language:nil scope:nil];
+                ECCodeUnit *codeUnit = [codeIndex codeUnitForFile:this.fileURL scope:nil];
                 [[NSOperationQueue mainQueue] addOperationWithBlock:^{
                     this.codeUnit = codeUnit;
                 }];

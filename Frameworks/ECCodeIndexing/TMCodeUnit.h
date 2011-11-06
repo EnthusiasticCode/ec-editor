@@ -12,6 +12,4 @@
 
 @interface TMCodeUnit : ECCodeUnit
 
-- (id)initWithIndex:(ECCodeIndex *)index fileURL:(NSURL *)fileURL syntax:(TMSyntax *)syntax;
-
 @end

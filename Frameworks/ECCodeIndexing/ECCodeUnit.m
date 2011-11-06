@@ -12,14 +12,13 @@
 {
     ECCodeIndex *_index;
     NSURL *_fileURL;
-    NSString *_language;
     NSString *_scope;
 }
 @end
 
 @implementation ECCodeUnit
 
-- (id)initWithIndex:(ECCodeIndex *)index file:(NSURL *)fileURL language:(NSString *)language scope:(NSString *)scope
+- (id)initWithIndex:(ECCodeIndex *)index file:(NSURL *)fileURL scope:(NSString *)scope
 {
     ECASSERT(index && fileURL);
     self = [super init];
@@ -27,7 +26,6 @@
         return nil;
     _index = index;
     _fileURL = fileURL;
-    _language = language;
     _scope = scope;
     return self;
 }
@@ -40,11 +38,6 @@
 - (NSURL *)fileURL
 {
     return _fileURL;
-}
-
-- (NSString *)language
-{
-    return _language;
 }
 
 - (NSString *)scope
