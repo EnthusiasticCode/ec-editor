@@ -7,7 +7,6 @@
 //
 
 #import "ACCodeFileKeyboardAccessoryController.h"
-#import "ACCodeFileKeyboardAccessoryView.h"
 #import "ACCodeFileController.h"
 #import <ECUIKit/ECCodeView.h>
 
@@ -16,8 +15,6 @@
 #define KEYBOARD_DOCKED_MINIMUM_HEIGHT 264
 
 @interface ACCodeFileKeyboardAccessoryController ()
-
-@property (nonatomic, readonly, strong) ACCodeFileKeyboardAccessoryView *_keyboardAccessoryView;
 
 - (void)_keyboardWillChangeFrame:(NSNotification *)notification;
 - (void)_keyboardDidChangeFrame:(NSNotification *)notification;
@@ -29,10 +26,10 @@
 
 #pragma mark - Properties
 
-@synthesize _keyboardAccessoryView;
+@synthesize keyboardAccessoryView = _keyboardAccessoryView;
 @synthesize targetCodeFileController;
 
-- (ACCodeFileKeyboardAccessoryView *)_keyboardAccessoryView
+- (ACCodeFileKeyboardAccessoryView *)keyboardAccessoryView
 {
     if (!_keyboardAccessoryView)
     {
@@ -45,6 +42,20 @@
         splitBackgroundView.contentMode = UIViewContentModeTopRight;
         _keyboardAccessoryView.splitRightBackgroundView = splitBackgroundView;
         _keyboardAccessoryView.splitBackgroundViewInsets = UIEdgeInsetsMake(-10, 0, 0, 0);
+        
+        // Tests
+        _keyboardAccessoryView.items = [NSArray arrayWithObjects:
+                                        [[UIBarButtonItem alloc] initWithTitle:@"one" style:UIBarButtonItemStylePlain target:nil action:NULL],
+                                        [[UIBarButtonItem alloc] initWithTitle:@"one" style:UIBarButtonItemStylePlain target:nil action:NULL],
+                                        [[UIBarButtonItem alloc] initWithTitle:@"one" style:UIBarButtonItemStylePlain target:nil action:NULL],
+                                        [[UIBarButtonItem alloc] initWithTitle:@"one" style:UIBarButtonItemStylePlain target:nil action:NULL],
+                                        [[UIBarButtonItem alloc] initWithTitle:@"one" style:UIBarButtonItemStylePlain target:nil action:NULL],
+                                        [[UIBarButtonItem alloc] initWithTitle:@"one" style:UIBarButtonItemStylePlain target:nil action:NULL],
+                                        [[UIBarButtonItem alloc] initWithTitle:@"one" style:UIBarButtonItemStylePlain target:nil action:NULL],
+                                        [[UIBarButtonItem alloc] initWithTitle:@"one" style:UIBarButtonItemStylePlain target:nil action:NULL],
+                                        [[UIBarButtonItem alloc] initWithTitle:@"one" style:UIBarButtonItemStylePlain target:nil action:NULL],
+                                        [[UIBarButtonItem alloc] initWithTitle:@"one" style:UIBarButtonItemStylePlain target:nil action:NULL],
+                                        [[UIBarButtonItem alloc] initWithTitle:@"one" style:UIBarButtonItemStylePlain target:nil action:NULL], nil];
     }
     return _keyboardAccessoryView;
 }
@@ -53,7 +64,7 @@
 
 - (void)loadView
 {
-    self.view = self._keyboardAccessoryView;
+    self.view = self.keyboardAccessoryView;
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation

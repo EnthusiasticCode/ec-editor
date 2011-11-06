@@ -7,11 +7,14 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "ACCodeFileKeyboardAccessoryView.h"
 
 @class ACCodeFileController;
 
 @interface ACCodeFileKeyboardAccessoryController : UIViewController
 
 @property (weak, nonatomic) ACCodeFileController *targetCodeFileController;
+
+@property (nonatomic, readonly, strong) ACCodeFileKeyboardAccessoryView *keyboardAccessoryView;
 
 @end

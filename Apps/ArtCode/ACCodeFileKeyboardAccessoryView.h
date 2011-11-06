@@ -8,10 +8,33 @@
 
 #import <UIKit/UIKit.h>
 
+enum {
+    ACCodeFileKeyboardAccessoryItemSizeNormal,
+    ACCodeFileKeyboardAccessoryItemSizeBig,
+    ACCodeFileKeyboardAccessoryItemSizeSmall,
+    ACCodeFileKeyboardAccessoryItemSizeSmallImportant
+};
+typedef NSInteger ACCodeFileKeyboardAccessoryItemSize;
+
+
 @interface ACCodeFileKeyboardAccessoryView : UIView
 
-#pragma mark - Accessory Behaviour
+#pragma mark - Accessory Buttons
 
+/// Array of UIBarButtonItem presented on the accessory view from left to right.
+@property (nonatomic, strong) NSArray *items;
+- (void)setItems:(NSArray *)items animated:(BOOL)animated;
+
+/// Insets applyed view bounds to fit items.
+- (void)setItemsInsets:(UIEdgeInsets)insets forItemSize:(ACCodeFileKeyboardAccessoryItemSize)size;
+- (UIEdgeInsets)itemsInsetsForItemSize:(ACCodeFileKeyboardAccessoryItemSize)size;
+
+/// Set the image used for button items of the given size.
+- (void)setButtonItemBackgroundImage:(UIImage *)image forItemSize:(ACCodeFileKeyboardAccessoryItemSize)size;
+- (UIImage *)buttonItemBackgroundImageForItemSize:(ACCodeFileKeyboardAccessoryItemSize)size;
+
+/// Returns the size of the items with the current accessory configuration.
+- (ACCodeFileKeyboardAccessoryItemSize)currentItemSize;
 
 #pragma mark - Managing Accessory Appearance
 
