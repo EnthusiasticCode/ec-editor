@@ -6,12 +6,12 @@
 //  Copyright (c) 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import "TMCodeIndex.h"
+#import "ECCodeUnit+Subclass.h"
 
 @class TMSyntax;
 
-@interface TMCodeParser : NSObject <ECCodeParser>
+@interface TMCodeUnit : ECCodeUnit
 
-- (id)initWithIndex:(TMCodeIndex *)index fileURL:(NSURL *)fileURL syntax:(TMSyntax *)syntax;
+- (id)initWithIndex:(ECCodeIndex *)index fileURL:(NSURL *)fileURL syntax:(TMSyntax *)syntax;
 
 @end

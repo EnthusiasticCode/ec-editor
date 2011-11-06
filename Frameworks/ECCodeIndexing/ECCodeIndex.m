@@ -7,32 +7,18 @@
 //
 
 #import "ECCodeIndex.h"
-#import "ECCodeIndexSubclass.h"
+#import "ECCodeIndex+Subclass.h"
 
 static NSMutableArray *_extensionClasses;
-static NSURL *_bundleDirectory;
 
 @interface ECCodeIndex ()
 {
     NSMutableArray *_extensions;
+    NSMutableDictionary *_fileBuffers;
 }
 @end
 
 @implementation ECCodeIndex
-
-+ (NSURL *)bundleDirectory
-{
-    if (self != [ECCodeIndex class])
-        return [ECCodeIndex bundleDirectory];
-    return _bundleDirectory;
-}
-
-+ (void)setBundleDirectory:(NSURL *)bundleDirectory
-{
-    if (self != [ECCodeIndex class])
-        return [ECCodeIndex setBundleDirectory:bundleDirectory];
-    _bundleDirectory = bundleDirectory;
-}
 
 - (id)init
 {
@@ -44,10 +30,22 @@ static NSURL *_bundleDirectory;
     _extensions = [NSMutableArray arrayWithCapacity:[_extensionClasses count]];
     for (Class extensionClass in _extensionClasses)
         [_extensions addObject:[[extensionClass alloc] init]];
+    _fileBuffers = [NSMutableDictionary dictionary];
     return self;
 }
 
-- (id)codeUnitImplementingProtocol:(Protocol *)protocol withFile:(NSURL *)fileURL language:(NSString *)language scope:(NSString *)scope
+- (void)setUnsavedContent:(NSString *)content forFile:(NSURL *)fileURL
+{
+    if (![self isMemberOfClass:[ECCodeIndex class]])
+        return;
+    ECASSERT(fileURL);
+    if (content)
+        [_fileBuffers setObject:content forKey:fileURL];
+    else
+        [_fileBuffers removeObjectForKey:fileURL];
+}
+
+- (ECCodeUnit *)codeUnitForFile:(NSURL *)fileURL language:(NSString *)language scope:(NSString *)scope
 {
     if (![self isMemberOfClass:[ECCodeIndex class]])
         return nil;
@@ -58,7 +56,7 @@ static NSURL *_bundleDirectory;
     ECCodeIndex *winningExtension = nil;
     for (ECCodeIndex *extension in _extensions)
     {
-        float support = [extension implementsProtocol:protocol forFile:fileURL language:language scope:scope];
+        float support = [extension supportForFile:fileURL language:language scope:scope];
         if (support <= winningSupport)
             continue;
         winningSupport = support;
@@ -67,12 +65,12 @@ static NSURL *_bundleDirectory;
     ECASSERT(winningSupport >= 0.0 && winningSupport < 1.0);
     if (winningSupport == 0.0)
         return nil;
-    return [winningExtension codeUnitImplementingProtocol:protocol withFile:fileURL language:language scope:scope];;
+    return [winningExtension codeUnitForFile:fileURL language:language scope:scope];
 }
 
 @end
 
-@implementation ECCodeIndex (Subclass)
+@implementation ECCodeIndex (Internal)
 
 + (void)registerExtension:(Class)extensionClass
 {
@@ -84,9 +82,18 @@ static NSURL *_bundleDirectory;
     [_extensionClasses addObject:extensionClass];
 }
 
-- (float)implementsProtocol:(Protocol *)protocol forFile:(NSURL *)fileURL language:(NSString *)language scope:(NSString *)scope
+- (NSString *)contentsForFile:(NSURL *)fileURL
 {
-    return 0.0;
+    ECASSERT(fileURL);
+    NSString *contents = [_fileBuffers objectForKey:fileURL];
+    if (!contents)
+    {
+        NSError *error = nil;
+        contents = [NSString stringWithContentsOfURL:fileURL encoding:NSUTF8StringEncoding error:&error];
+        if (error)
+            contents = nil;
+    }
+    return contents;
 }
 
 @end

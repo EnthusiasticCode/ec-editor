@@ -8,14 +8,12 @@
 
 #import <Foundation/Foundation.h>
 
-@interface TMBundle : NSObject <NSDiscardableContent>
+@interface TMBundle : NSObject
 
-@property (nonatomic, strong, readonly) NSURL *bundleURL;
-@property (nonatomic, strong, readonly) NSString *bundleName;
+/// The directory where language bundles are saved, must be set before loading bundles
++ (NSURL *)bundleDirectory;
++ (void)setBundleDirectory:(NSURL *)bundleDirectory;
 
-- (id)initWithBundleURL:(NSURL *)bundleURL;
-
-/// Content:
-@property (nonatomic, strong, readonly) NSArray *syntaxes;
++ (void)loadAllBundles;
 
 @end

@@ -8,10 +8,6 @@
 
 #import "ECCodeIndex.h"
 
-@class TMSyntax;
-
 @interface TMCodeIndex : ECCodeIndex
-
-- (TMSyntax *)syntaxWithScope:(NSString *)scope;
 
 @end

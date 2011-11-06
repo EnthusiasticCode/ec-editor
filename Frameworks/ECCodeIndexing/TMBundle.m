@@ -6,102 +6,45 @@
 //  Copyright (c) 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import "TMBundle.h"
-#import "TMSyntax.h"
+#import "TMBundle+Internal.h"
+#import "TMSyntax+Internal.h"
 
 static NSString * const _bundleExtension = @"tmbundle";
-static NSString * const _bundleInfoPlist = @"info.plist";
-static NSString * const _bundleNameKey = @"name";
 static NSString * const _syntaxDirectory = @"Syntaxes";
 
-@interface TMBundle ()
-{
-    NSInteger _contentAccessCount;
-}
-- (id)initWithBundleURL:(NSURL *)bundleURL;
-@property (nonatomic, strong) NSURL *bundleURL;
-@property (nonatomic, strong) NSString *bundleName;
-@property (nonatomic, strong) NSDictionary *bundlePlist;
-@end
+static NSURL *_bundleDirectory;
 
 @implementation TMBundle
 
 #pragma mark - Properties
 
-@synthesize bundleURL = _bundleURL;
-@synthesize bundleName = _bundleName;
-@synthesize bundlePlist = _bundlePlist;
-@synthesize syntaxes = _syntaxes;
-
-- (NSDictionary *)bundlePlist
++ (NSURL *)bundleDirectory
 {
-    ECASSERT(_contentAccessCount > 0);
-    if (!_bundlePlist)
-        _bundlePlist = [NSPropertyListSerialization propertyListWithData:[NSData dataWithContentsOfURL:[self.bundleURL URLByAppendingPathComponent:_bundleInfoPlist] options:NSDataReadingUncached error:NULL] options:NSPropertyListImmutable format:NULL error:NULL];
-    return _bundlePlist;
+    return _bundleDirectory;
 }
 
-- (NSArray *)syntaxes
++ (void)setBundleDirectory:(NSURL *)bundleDirectory
 {
-    if (!_syntaxes)
+    _bundleDirectory = bundleDirectory;
+}
+
++ (void)loadAllBundles
+{
+    [TMSyntax loadAllSyntaxes];
+}
+
++ (NSArray *)syntaxFileURLs
+{
+    NSMutableArray *syntaxFileURLs = [NSMutableArray array];
+    NSFileManager *fileManager = [[NSFileManager alloc] init];
+    for (NSURL *bundleURL in [fileManager contentsOfDirectoryAtURL:[self bundleDirectory] includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles error:NULL])
     {
-        NSMutableArray *syntaxes = [NSMutableArray array];
-        NSFileManager *fileManager = [[NSFileManager alloc] init];
-        for (NSURL *fileURL in [fileManager contentsOfDirectoryAtURL:[self.bundleURL URLByAppendingPathComponent:_syntaxDirectory] includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles error:NULL])
-        {
-            TMSyntax *syntax = [[TMSyntax alloc] initWithFileURL:fileURL];
-            if (!syntax)
-                continue;
-            [syntaxes addObject:syntax];
-            [syntax endContentAccess];
-        }
-        _syntaxes = [syntaxes copy];
+        if (![[bundleURL pathExtension] isEqualToString:_bundleExtension])
+            continue;
+        for (NSURL *syntaxURL in [fileManager contentsOfDirectoryAtURL:[bundleURL URLByAppendingPathComponent:_syntaxDirectory] includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles error:NULL])
+            [syntaxFileURLs addObject:syntaxURL];
     }
-    return _syntaxes;
-}
-
-- (id)initWithBundleURL:(NSURL *)bundleURL
-{
-    self = [super init];
-    if (!self)
-        return nil;
-    if (![[bundleURL pathExtension] isEqualToString:_bundleExtension])
-        return nil;
-    _contentAccessCount = 1;
-    _bundleURL = bundleURL;
-    _bundlePlist = [NSPropertyListSerialization propertyListWithData:[NSData dataWithContentsOfURL:[bundleURL URLByAppendingPathComponent:_bundleInfoPlist] options:NSDataReadingUncached error:NULL] options:NSPropertyListImmutable format:NULL error:NULL];
-    _bundleName = [self.bundlePlist objectForKey:_bundleNameKey];
-    if (!_bundleName)
-        return nil;
-    return self;
-}
-
-- (BOOL)beginContentAccess
-{
-    ECASSERT(_contentAccessCount >= 0);
-    ++_contentAccessCount;
-    return YES;
-}
-
-- (void)endContentAccess
-{
-    ECASSERT(_contentAccessCount > 0);
-    --_contentAccessCount;
-}
-
-- (void)discardContentIfPossible
-{
-    ECASSERT(_contentAccessCount >= 0);
-    if (_contentAccessCount > 0)
-        return;
-    _bundlePlist = nil;
-    _syntaxes = nil;
-}
-
-- (BOOL)isContentDiscarded
-{
-    ECASSERT(_contentAccessCount >= 0);
-    return !_bundlePlist && !_syntaxes;
+    return syntaxFileURLs;
 }
 
 @end

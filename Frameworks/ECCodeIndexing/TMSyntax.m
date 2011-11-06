@@ -6,10 +6,12 @@
 //  Copyright (c) 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import "TMSyntax.h"
-#import "TMPattern.h"
-
+#import "TMSyntax+Internal.h"
+#import "TMBundle+Internal.h"
+#import "TMPattern+Internal.h"
+#import "TMCodeIndex.h"
 #import "OnigRegexp.h"
+#import <ECFoundation/ECDiscardableMutableDictionary.h>
 
 static NSString * const _syntaxNameKey = @"name";
 static NSString * const _syntaxScopeKey = @"scopeName";
@@ -17,68 +19,109 @@ static NSString * const _syntaxFileTypesKey = @"fileTypes";
 static NSString * const _syntaxFirstLineMatchKey = @"firstLineMatch";
 static NSString * const _syntaxPatternsKey = @"patterns";
 static NSString * const _syntaxRepositoryKey = @"repository";
-static NSString * const _patternScopeKey = @"name";
-static NSString * const _patternsPatternsKey = @"patterns";
+
+static ECDiscardableMutableDictionary *_syntaxes;
 
 @interface TMSyntax ()
 {
     NSInteger _contentAccessCount;
+    NSURL *_fileURL;
+    NSString *_name;
+    NSString *_scope;
+    NSArray *__fileTypes;
+    OnigRegexp *__firstLineMatch;
+    NSDictionary *_plist;
+    NSArray *_patterns;
+    NSDictionary *_repository;
 }
-@property (nonatomic, strong) NSURL *fileURL;
-@property (nonatomic, strong) NSString *name;
-@property (nonatomic, strong) NSString *scope;
-@property (nonatomic, strong) NSArray *fileTypes;
-@property (nonatomic, strong) NSRegularExpression *firstLineMatch;
-@property (nonatomic, strong) NSDictionary *repository;
-@property (nonatomic, strong) NSDictionary *plist;
+- (id)_initWithFileURL:(NSURL *)fileURL;
+- (NSArray *)_fileTypes;
+- (OnigRegexp *)_firstLineMatch;
++ (TMSyntax *)_syntaxForFile:(NSURL *)fileURL;
++ (TMSyntax *)_syntaxWithLanguage:(NSString *)language;
++ (TMSyntax *)_syntaxWithPredicateBlock:(BOOL(^)(TMSyntax *syntax))predicateBlock;
 @end
 
 @implementation TMSyntax
 
-@synthesize fileURL = _fileURL;
-@synthesize name = _name;
-@synthesize scope = _scope;
-@synthesize fileTypes = _fileTypes;
-@synthesize firstLineMatch = _firstLineMatch;
-@synthesize pattern = _pattern;
-@synthesize repository = _repository;
-@synthesize plist = _plist;
-
-- (TMPattern *)pattern
++ (TMSyntax *)syntaxWithScope:(NSString *)scope
 {
-    ECASSERT(_contentAccessCount > 0);
-    if (!_pattern)
-    {
-        ECASSERT([self.plist objectForKey:_syntaxPatternsKey]);
-        _pattern = [[TMPattern alloc] initWithDictionary:[NSDictionary dictionaryWithObjectsAndKeys:self.scope, _patternScopeKey, [self.plist objectForKey:_syntaxPatternsKey], _patternsPatternsKey, nil]];
-    }
-    return _pattern;
+    if (!scope)
+        return nil;
+    return [_syntaxes objectForKey:scope];
 }
 
-- (NSDictionary *)repository
++ (TMSyntax *)syntaxForFile:(NSURL *)fileURL language:(NSString *)language scope:(NSString *)scope
 {
-    ECASSERT(_contentAccessCount > 0);
-    if (!_repository)
-    {
-        NSMutableDictionary *repository = [NSMutableDictionary dictionary];
-        [[self.plist objectForKey:_syntaxRepositoryKey] enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
-            [repository setObject:[[TMPattern alloc] initWithDictionary:obj] forKey:key];
+    TMSyntax *syntax = nil;
+    if (scope)
+        syntax = [self syntaxWithScope:scope];
+    if (!syntax && language)
+        syntax = [self _syntaxWithLanguage:language];
+    if (!syntax && fileURL)
+        syntax = [self _syntaxForFile:fileURL];
+    return syntax;
+}
+
++ (TMSyntax *)_syntaxForFile:(NSURL *)fileURL
+{
+    ECASSERT(fileURL);
+    TMSyntax *foundSyntax = [self _syntaxWithPredicateBlock:^BOOL(TMSyntax *syntax) {
+        for (NSString *fileType in [syntax _fileTypes])
+            if ([fileType isEqualToString:[fileURL pathExtension]])
+                return YES;
+        return NO;
+    }];
+    if (!foundSyntax)
+        foundSyntax = [self _syntaxWithPredicateBlock:^BOOL(TMSyntax *syntax) {
+            NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] initWithFilePresenter:nil];
+            __block NSString *firstLine = nil;
+            [fileCoordinator coordinateReadingItemAtURL:fileURL options:NSFileCoordinatorReadingResolvesSymbolicLink error:NULL byAccessor:^(NSURL *newURL) {
+                NSString *fileContents = [NSString stringWithContentsOfURL:newURL encoding:NSUTF8StringEncoding error:NULL];
+                firstLine = [fileContents substringWithRange:[fileContents lineRangeForRange:NSMakeRange(0, 1)]];
+            }];
+            if ([[syntax _firstLineMatch] search:firstLine])
+                return YES;
+            return NO;
         }];
-        _repository = [repository copy];
+    return foundSyntax;
+}
+
++ (TMSyntax *)_syntaxWithLanguage:(NSString *)language
+{
+    ECASSERT(language);
+    if (!language)
+        return nil;
+    return [self _syntaxWithPredicateBlock:^BOOL(TMSyntax *syntax) {
+        return [syntax.name isEqualToString:language];
+    }];
+}
+
++ (TMSyntax *)_syntaxWithPredicateBlock:(BOOL (^)(TMSyntax *))predicateBlock
+{
+    ECASSERT(predicateBlock);
+    for (TMSyntax *syntax in [_syntaxes objectEnumerator])
+        if (predicateBlock(syntax))
+            return syntax;
+    return nil;
+}
+
++ (void)loadAllSyntaxes
+{
+    _syntaxes = [ECDiscardableMutableDictionary dictionary];
+    for (NSURL *syntaxURL in [TMBundle syntaxFileURLs])
+    {
+        TMSyntax *syntax = [[TMSyntax alloc] _initWithFileURL:syntaxURL];
+        if (!syntax)
+            continue;
+        [syntax endContentAccess];
+        [_syntaxes setObject:syntax forKey:[syntax scope]];
     }
-    return _repository;
 }
 
-- (NSDictionary *)plist
+- (id)_initWithFileURL:(NSURL *)fileURL
 {
-    ECASSERT(_contentAccessCount > 0);
-    if (!_plist)
-        _plist = [NSPropertyListSerialization propertyListWithData:[NSData dataWithContentsOfURL:self.fileURL options:NSDataReadingUncached error:NULL] options:NSPropertyListImmutable format:NULL error:NULL];
-    return _plist;
-}
-
-- (id)initWithFileURL:(NSURL *)fileURL
-{
+    ECASSERT(fileURL);
     self = [super init];
     if (!self)
         return nil;
@@ -89,11 +132,59 @@ static NSString * const _patternsPatternsKey = @"patterns";
     if (!_name)
         return nil;
     _scope = [_plist objectForKey:_syntaxScopeKey];
-    _fileTypes = [_plist objectForKey:_syntaxFileTypesKey];
+    __fileTypes = [_plist objectForKey:_syntaxFileTypesKey];
     NSString *firstLineMatchRegex = [_plist objectForKey:_syntaxFirstLineMatchKey];
     if (firstLineMatchRegex)
-        _firstLineMatch = [OnigRegexp compile:firstLineMatchRegex ignorecase:NO multiline:YES];
+        __firstLineMatch = [OnigRegexp compile:firstLineMatchRegex ignorecase:NO multiline:YES];
     return self;
+}
+
+- (NSString *)name
+{
+    return _name;
+}
+
+- (NSString *)scope
+{
+    return _scope;
+}
+
+- (NSArray *)_fileTypes
+{
+    return __fileTypes;
+}
+
+- (OnigRegexp *)_firstLineMatch
+{
+    return __firstLineMatch;
+}
+
+- (NSArray *)patterns
+{
+    ECASSERT(_contentAccessCount > 0);
+    if (!_patterns)
+    {
+        ECASSERT([_plist objectForKey:_syntaxPatternsKey]);
+        NSMutableArray *patterns = [NSMutableArray array];
+        for (NSDictionary *patternDictionary in [_plist objectForKey:_syntaxPatternsKey])
+            [patterns addObjectsFromArray:[TMPattern patternsWithSyntax:self inDictionary:patternDictionary]];
+        _patterns = [patterns copy];
+    }
+    return _patterns;
+}
+
+- (NSDictionary *)_repository
+{
+    ECASSERT(_contentAccessCount > 0);
+    return [_plist objectForKey:_syntaxRepositoryKey];
+}
+
+- (NSDictionary *)plist
+{
+    ECASSERT(_contentAccessCount > 0);
+    if (!_plist)
+        _plist = [NSPropertyListSerialization propertyListWithData:[NSData dataWithContentsOfURL:_fileURL options:NSDataReadingUncached error:NULL] options:NSPropertyListImmutable format:NULL error:NULL];
+    return _plist;
 }
 
 - (BOOL)beginContentAccess
@@ -114,7 +205,7 @@ static NSString * const _patternsPatternsKey = @"patterns";
     ECASSERT(_contentAccessCount >= 0);
     if (_contentAccessCount > 0)
         return;
-    _pattern = nil;
+    _patterns = nil;
     _repository = nil;
     _plist = nil;
 }
@@ -122,7 +213,8 @@ static NSString * const _patternsPatternsKey = @"patterns";
 - (BOOL)isContentDiscarded
 {
     ECASSERT(_contentAccessCount >= 0);
-    return !_pattern && !_repository && !_plist;
+    return !_patterns && !_repository && !_plist;
 }
 
 @end
+

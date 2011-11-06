@@ -2,7 +2,7 @@
 //  TMPattern.h
 //  ECCodeIndexing
 //
-//  Created by Uri Baghin on 10/19/11.
+//  Created by Uri Baghin on 11/5/11.
 //  Copyright (c) 2011 __MyCompanyName__. All rights reserved.
 //
 
@@ -20,7 +20,5 @@
 - (NSDictionary *)beginCaptures;
 - (NSDictionary *)endCaptures;
 - (NSArray *)patterns;
-- (NSString *)include;
-- (id)initWithDictionary:(NSDictionary *)dictionary;
 
 @end
