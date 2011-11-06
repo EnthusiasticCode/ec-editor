@@ -92,6 +92,8 @@ static NSMutableArray *_extensionClasses;
         contents = [NSString stringWithContentsOfURL:fileURL encoding:NSUTF8StringEncoding error:&error];
         if (error)
             contents = nil;
+        else
+            [_fileBuffers setObject:contents forKey:fileURL];
     }
     return contents;
 }
