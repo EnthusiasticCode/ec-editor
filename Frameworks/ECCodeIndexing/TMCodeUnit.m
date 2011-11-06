@@ -19,8 +19,6 @@
 static NSString * const _patternCaptureName = @"name";
 static NSString * const _tokenAttributeName = @"TMTokenAttributeName";
 
-static void _addRangeOffsetRecursivelyToScope(NSUInteger offset, TMScope *scope);
-
 @interface TMCodeUnit ()
 {
     TMSyntax *__syntax;
@@ -195,8 +193,6 @@ static void _addRangeOffsetRecursivelyToScope(NSUInteger offset, TMScope *scope)
             firstMatchRange = resultRange;
             firstMatchPattern = childPattern;
         }
-        if (!firstMatchPattern)
-            break;
         OnigResult *stopResult = regexp ? [self _firstMatchInRange:range forRegexp:regexp] : nil;
         if (stopResult && [stopResult bodyRange].location < firstMatchRange.location)
         {
@@ -205,6 +201,8 @@ static void _addRangeOffsetRecursivelyToScope(NSUInteger offset, TMScope *scope)
                 [scopes addObjectsFromArray:endCaptures];
             return scopes;
         }
+        if (!firstMatchPattern)
+            break;
         if ([firstMatchPattern match])
             [scopes addObjectsFromArray:[self _createScopesInRange:currentRange withMatchPattern:firstMatchPattern remainingRange:&currentRange]];
         else
@@ -236,7 +234,11 @@ static void _addRangeOffsetRecursivelyToScope(NSUInteger offset, TMScope *scope)
     scope.identifier = name;
     scope.range = [result bodyRange];
     if ([captureScopes count])
+    {
+        for (TMScope *captureScope in captureScopes)
+            captureScope.parent = scope;
         scope.children = captureScopes;
+    }
     return [NSArray arrayWithObject:scope];
 }
 
@@ -278,12 +280,3 @@ static void _addRangeOffsetRecursivelyToScope(NSUInteger offset, TMScope *scope)
 }
 
 @end
-
-static void _addRangeOffsetRecursivelyToScope(NSUInteger offset, TMScope *scope)
-{
-    NSRange range = scope.range;
-    range.location += offset;
-    scope.range = range;
-    for (TMScope *childScope in [scope children])
-        _addRangeOffsetRecursivelyToScope(offset, childScope);
-}
