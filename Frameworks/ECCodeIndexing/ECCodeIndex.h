@@ -7,79 +7,44 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <clang-c/Index.h>
 
-@protocol ECCodeUnit;
+@class ECCodeUnit;
 
 /// Class that encapsulates interaction with parsing and indexing libraries to provide language related non file specific functionality such as symbol resolution and refactoring.
 @interface ECCodeIndex : NSObject
 
-/// The directory where language bundles are saved
-+ (NSURL *)bundleDirectory;
-+ (void)setBundleDirectory:(NSURL *)bundleDirectory;
+/// Sets a file's unsaved contents to be available for all the code index's units.
+/// Set to nil to have the index read the file contents from disk again
+- (void)setUnsavedContent:(NSString *)content forFile:(NSURL *)fileURL;
 
 /// Code unit creation
-/// The file must exist, but it can be empty
 /// If the language or scope are not specified, they will be autodetected
 /// Scope takes precedence over language
-- (id<ECCodeUnit>)codeUnitImplementingProtocol:(Protocol *)protocol withFile:(NSURL *)fileURL language:(NSString *)language scope:(NSString *)scope;
+- (ECCodeUnit *)codeUnitForFile:(NSURL *)fileURL language:(NSString *)language scope:(NSString *)scope;
 
 @end
 
-/// Class that encapsulates interaction with parsing and indexing libraries to provide language related file-specific functionality such as syntax aware highlighting, diagnostics and completions.
-@protocol ECCodeUnit <NSObject, NSFilePresenter>
-
-/// The main source file the unit is interpreting.
-@property (nonatomic, readonly, strong) NSURL *fileURL;
-
-/// The code index that generated the code unit.
-- (ECCodeIndex *)index;
-
-/// The language the unit is using to interpret the main source file's contents.
-- (NSString *)language;
+@protocol ECCodeCompletion <NSObject>
 
 @end
 
-@protocol ECCodeCompleter <ECCodeUnit>
-
-/// Returns the possible completions at a given insertion point in the unit's main source file.
-- (void)enumerateCompletionsAtOffset:(NSUInteger)offset usingBlock:(void(^)(NSString *typedText, NSString *completion))block;
+@protocol ECCodeDiagnostic <NSObject>
 
 @end
 
-typedef enum
-{
-    ECCodeDiagnosticSeverityIgnored = 0,
-    ECCodeDiagnosticSeverityNote = 1,
-    ECCodeDiagnosticSeverityWarning = 2,
-    ECCodeDiagnosticSeverityError = 3, 
-    ECCodeDiagnosticSeverityFatal = 4 
-} ECCodeDiagnosticSeverity;
+@protocol ECCodeCursor <NSObject>
 
-@protocol ECCodeDiagnoser <ECCodeUnit>
-
-/// Returns warnings and errors in the unit
-- (void)enumerateDiagnosticsInRange:(NSRange)range usingBlock:(void(^)(ECCodeDiagnosticSeverity severity, NSString *message, NSString *category, BOOL *stop))block;
+- (NSString *)scopeIdentifier;
+- (NSArray *)scopeIdentifiersStack;
 
 @end
 
-typedef enum
-{
-    ECCodeVisitorResultBreak,
-    ECCodeVisitorResultContinue,
-    ECCodeVisitorResultRecurse,
-} ECCodeVisitorResult;
+@protocol ECCodeToken <NSObject>
 
-typedef ECCodeVisitorResult(^ECCodeVisitor)(NSString *scope, NSRange scopeRange, BOOL isLeafScope, BOOL isExitingScope, NSArray *scopesStack);
-
-extern NSString * const ECCodeScopeStackAttributeName;
-
-@protocol ECCodeParser <ECCodeUnit>
-
-/// Visit the scopes in the code unit's main source file
-- (void)visitScopesInRange:(NSRange)range usingVisitor:(ECCodeVisitor)visitorBlock;
-
-/// Visit the scopes in the passed NSMutableAttributedString, both adding them to the string as attributes, and calling the visitorBlock.
-/// If the passed attributed string has scope attributes, those will be considered correct. Remove the attributes before passing the attributed string if necessary.
-- (void)visitScopesInAttributedString:(NSMutableAttributedString *)attributedString range:(NSRange)range usingVisitor:(ECCodeVisitor)visitorBlock;
+- (NSRange)range;
+- (NSString *)spelling;
+- (CXTokenKind)kind;
+- (id<ECCodeCursor>)cursor;
 
 @end

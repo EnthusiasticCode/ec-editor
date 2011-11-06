@@ -8,19 +8,15 @@
 
 #import <Foundation/Foundation.h>
 
-@class TMPattern, OnigRegexp;
-
 @interface TMSyntax : NSObject <NSDiscardableContent>
 
-@property (nonatomic, strong, readonly) NSString *name;
-@property (nonatomic, strong, readonly) NSString *scope;
-@property (nonatomic, strong, readonly) NSArray *fileTypes;
-@property (nonatomic, strong, readonly) OnigRegexp *firstLineMatch;
++ (TMSyntax *)syntaxWithScope:(NSString *)scope;
++ (TMSyntax *)syntaxForFile:(NSURL *)fileURL language:(NSString *)language scope:(NSString *)scope;
 
-- (id)initWithFileURL:(NSURL *)fileURL;
-
+- (NSString *)name;
+- (NSString *)scope;
 /// Content:
-@property (nonatomic, strong, readonly) TMPattern *pattern;
-@property (nonatomic, strong, readonly) NSDictionary *repository;
+- (NSArray *)patterns;
 
 @end
+
