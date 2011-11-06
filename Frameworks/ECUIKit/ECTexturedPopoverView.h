@@ -30,11 +30,6 @@ typedef NSInteger ECPopoverViewArrowMetaPosition;
 /// The actual position of the arrow adjusted according to it's direction and view frame.
 - (CGFloat)arrowActualPosition;
 
-/// Insets of the arrow. Only the margin opposite to the arrow direction will be considered.
-/// For example, if the arrow is positioned on the up direction, the bottom margin will be used 
-/// to compute its position relative to the view.
-@property (nonatomic) UIEdgeInsets arrowInsets UI_APPEARANCE_SELECTOR;
-
 /// Returns the size of the arrow in the given meta position as if it was in the up direction.
 - (CGSize)arrowSizeForMetaPosition:(ECPopoverViewArrowMetaPosition)metaPosition;
 
@@ -48,6 +43,11 @@ typedef NSInteger ECPopoverViewArrowMetaPosition;
 
 /// The arrow view
 @property (nonatomic, readonly, strong) UIImageView *arrowView;
+
+/// Insets of the arrow. Only the margin opposite to the arrow direction will be considered.
+/// For example, if the arrow is positioned on the up direction, the bottom margin will be used 
+/// to compute its position relative to the view.
+@property (nonatomic) UIEdgeInsets arrowInsets UI_APPEARANCE_SELECTOR;
 
 /// Gets the image used for the arrow in the given direction and meta position.
 /// If the image for the given meta position does not exist, the image for the middle meta position
