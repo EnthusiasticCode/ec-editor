@@ -19,11 +19,14 @@
 #import "ACSingleTabController.h"
 #import "ACCodeFileSearchBarController.h"
 
+#import "ACCodeFileKeyboardAccessoryController.h"
 
 
 @interface ACCodeFileController () {
     UIActionSheet *_toolsActionSheet;
     ACCodeFileSearchBarController *_searchBarController;
+    
+    ACCodeFileKeyboardAccessoryController *_keyboardAccessoryController;
 }
 
 @property (nonatomic, strong) ACFileDocument *document;
@@ -255,17 +258,25 @@
 - (void)viewDidLoad
 {
     self.toolbarItems = [NSArray arrayWithObject:[[UIBarButtonItem alloc] initWithTitle:@"tools" style:UIBarButtonItemStylePlain target:self action:@selector(toolButtonAction:)]];
+    
+    _keyboardAccessoryController = [ACCodeFileKeyboardAccessoryController new];
+    _keyboardAccessoryController.targetCodeFileController = self;
+    [self addChildViewController:_keyboardAccessoryController];
 }
 
 - (void)viewDidUnload
 {
     [super viewDidUnload];
     
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    
     _minimapView = nil;
     _codeView = nil;
     
     _toolsActionSheet = nil;
     _searchBarController = nil;
+    
+    _keyboardAccessoryController = nil;
 }
 
 - (void)viewWillAppear:(BOOL)animated
