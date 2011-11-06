@@ -12,7 +12,7 @@
 #import <ECUIKit/ECCodeView.h>
 
 #define ACCESSORY_HEIGHT 45
-#define ACCESSORY_FLIP_Y_POSITION 300
+#define ACCESSORY_FLIP_Y_POSITION 180
 #define KEYBOARD_DOCKED_MINIMUM_HEIGHT 264
 
 @interface ACCodeFileKeyboardAccessoryController ()

@@ -8,7 +8,8 @@
 
 #import "ACCodeFileKeyboardAccessoryView.h"
 
-#define SPLIT_KEYBOARD_SEGMENT_WIDTH 256
+#define SPLIT_KEYBOARD_LEFT_SEGMENT_WIDTH 256
+#define SPLIT_KEYBOARD_RIGHT_SEGMENT_WIDTH 281
 
 @implementation ACCodeFileKeyboardAccessoryView
 
@@ -61,16 +62,19 @@
     CGRect bounds = self.bounds;
     if (self.isSplit && self.splitLeftBackgroundView)
     {
+        UIEdgeInsets insets = self.splitBackgroundViewInsets;
         if (self.isFlipped)
         {
             self.splitLeftBackgroundView.transform = self.splitRightBackgroundView.transform = CGAffineTransformMakeScale(1, -1);
+            insets.top = splitBackgroundViewInsets.bottom;
+            insets.bottom = splitBackgroundViewInsets.top;
         }
         else
         {
             self.splitLeftBackgroundView.transform = self.splitRightBackgroundView.transform = CGAffineTransformIdentity;
         }
-        self.splitLeftBackgroundView.frame = UIEdgeInsetsInsetRect(CGRectMake(0, 0, SPLIT_KEYBOARD_SEGMENT_WIDTH, bounds.size.height), self.splitBackgroundViewInsets);
-        self.splitRightBackgroundView.frame = UIEdgeInsetsInsetRect(CGRectMake(bounds.size.width - SPLIT_KEYBOARD_SEGMENT_WIDTH, 0, SPLIT_KEYBOARD_SEGMENT_WIDTH, bounds.size.height), self.splitBackgroundViewInsets);
+        self.splitLeftBackgroundView.frame = UIEdgeInsetsInsetRect(CGRectMake(0, 0, SPLIT_KEYBOARD_LEFT_SEGMENT_WIDTH, bounds.size.height), insets);
+        self.splitRightBackgroundView.frame = UIEdgeInsetsInsetRect(CGRectMake(bounds.size.width - SPLIT_KEYBOARD_RIGHT_SEGMENT_WIDTH, 0, SPLIT_KEYBOARD_RIGHT_SEGMENT_WIDTH, bounds.size.height), insets);
     }
     else if (self.dockedBackgroundView)
     {
