@@ -14,5 +14,6 @@
 
 /// Content:
 - (NSDictionary *)_repository;
+- (NSArray *)_patternsDictionaries;
 
 @end

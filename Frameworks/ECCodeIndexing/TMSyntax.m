@@ -159,6 +159,18 @@ static ECDiscardableMutableDictionary *_syntaxes;
     return __firstLineMatch;
 }
 
+- (NSDictionary *)_repository
+{
+    ECASSERT(_contentAccessCount > 0);
+    return [_plist objectForKey:_syntaxRepositoryKey];
+}
+
+- (NSArray *)_patternsDictionaries
+{
+    ECASSERT(_contentAccessCount > 0);
+    return [_plist objectForKey:_syntaxPatternsKey];
+}
+
 - (NSArray *)patterns
 {
     ECASSERT(_contentAccessCount > 0);
@@ -171,12 +183,6 @@ static ECDiscardableMutableDictionary *_syntaxes;
         _patterns = [patterns copy];
     }
     return _patterns;
-}
-
-- (NSDictionary *)_repository
-{
-    ECASSERT(_contentAccessCount > 0);
-    return [_plist objectForKey:_syntaxRepositoryKey];
 }
 
 - (NSDictionary *)plist

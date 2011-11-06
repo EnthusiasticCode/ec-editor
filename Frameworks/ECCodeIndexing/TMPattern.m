@@ -168,48 +168,6 @@ static NSArray *_patternsIncludedByPatterns(NSArray *patterns);
 
 @end
 
-//static NSArray *_patternsIncludedByPatterns(NSArray *patterns)
-//{
-//    NSMutableArray *includedPatterns = [NSMutableArray array];
-//    for (TMPattern *pattern in patterns)
-//    {
-//        if ([pattern match] || [pattern begin])
-//            [includedPatterns addObject:pattern];
-//        else if ([pattern patterns])
-//            for (TMPattern *childPattern in [pattern patterns])
-//                [includedPatterns addObjectsFromArray:_patternsIncludedByPatterns([NSArray arrayWithObject:childPattern])];
-//        else
-//        {
-//            ECASSERT([pattern _include]);
-//            unichar firstCharacter = [[pattern _include] characterAtIndex:0];
-//            if (firstCharacter == '$')
-//            {
-//                TMSyntax *patternSyntax = [pattern _syntax];
-//                [patternSyntax beginContentAccess];
-//                [includedPatterns addObjectsFromArray:_patternsIncludedByPatterns([patternSyntax patterns])];
-//                [patternSyntax endContentAccess];
-//            }
-//            else if (firstCharacter == '#')
-//            {
-//                TMSyntax *patternSyntax = [pattern _syntax];
-//                [patternSyntax beginContentAccess];
-//                [includedPatterns addObjectsFromArray:_patternsIncludedByPatterns([[patternSyntax repository] objectForKey:[[pattern _include] substringFromIndex:1]])];
-//                [patternSyntax endContentAccess];
-//            }
-//            else
-//            {
-//                TMSyntax *includedSyntax = [TMSyntax syntaxWithScope:[pattern _include]];
-//                [includedSyntax beginContentAccess];
-//                [includedPatterns addObjectsFromArray:_patternsIncludedByPatterns([includedSyntax patterns])];
-//                [includedSyntax endContentAccess];
-//            }
-//        }    
-//    }
-//    NSMutableSet *includedPatternsSet = [NSMutableSet setWithArray:includedPatterns];
-//    ECASSERT([includedPatterns count] == [includedPatternsSet count]);
-//    return includedPatterns;
-//}
-//
 static NSArray *_patternsIncludedByPatterns(NSArray *patterns)
 {
     NSMutableArray *includedPatterns = [NSMutableArray arrayWithArray:patterns];
@@ -232,14 +190,7 @@ static NSArray *_patternsIncludedByPatterns(NSArray *patterns)
             if ([containerPattern _include])
             {
                 unichar firstCharacter = [[containerPattern _include] characterAtIndex:0];
-                if (firstCharacter == '$')
-                {
-                    TMSyntax *patternSyntax = [containerPattern _syntax];
-                    [patternSyntax beginContentAccess];
-                    [includedPatterns addObjectsFromArray:[patternSyntax patterns]];
-                    [patternSyntax endContentAccess];
-                }
-                else if (firstCharacter == '#')
+                if (firstCharacter == '#')
                 {
                     TMSyntax *patternSyntax = [containerPattern _syntax];
                     [patternSyntax beginContentAccess];
@@ -248,9 +199,10 @@ static NSArray *_patternsIncludedByPatterns(NSArray *patterns)
                 }
                 else
                 {
-                    TMSyntax *includedSyntax = [TMSyntax syntaxWithScope:[containerPattern _include]];
+                    TMSyntax *includedSyntax = (firstCharacter == '$') ? [containerPattern _syntax] : [TMSyntax syntaxWithScope:[containerPattern _include]];
                     [includedSyntax beginContentAccess];
-                    [includedPatterns addObjectsFromArray:[includedSyntax patterns]];
+                    for (NSDictionary *dictionary in [includedSyntax _patternsDictionaries])
+                        [includedPatterns addObject:[[TMPattern alloc] _initWithSyntax:includedSyntax dictionary:dictionary]];
                     [includedSyntax endContentAccess];
                 }
             }

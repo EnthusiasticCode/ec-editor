@@ -156,12 +156,10 @@ static void _addRangeOffsetRecursivelyToScope(NSUInteger offset, TMScope *scope)
     }
     ECASSERT([scope range].length);
     return [NSArray arrayWithObject:scope];
-    
 }
 
 - (NSArray *)_createScopesInRange:(NSRange)range withPatterns:(NSArray *)patterns stopOnRegexp:(OnigRegexp *)regexp withName:(NSString *)name captures:(NSDictionary *)captures remainingRange:(NSRange *)remainingRange
 {
-    // TODO: change the first match check to use regexp instead of whole patterns, introduce error checking on consecutive ranges
     NSRange currentRange = range;
     NSMutableArray *scopes = [NSMutableArray array];
     while (currentRange.length)
@@ -172,7 +170,7 @@ static void _addRangeOffsetRecursivelyToScope(NSUInteger offset, TMScope *scope)
         {
             ECASSERT([childPattern match] || [childPattern begin]);
             OnigRegexp *patternRegexp = [childPattern match] ? [childPattern match] : [childPattern begin];
-            OnigResult *result = [self _firstMatchInRange:range forRegexp:patternRegexp];
+            OnigResult *result = [self _firstMatchInRange:currentRange forRegexp:patternRegexp];
             if (!result)
                 continue;
             NSRange resultRange = [result bodyRange];
