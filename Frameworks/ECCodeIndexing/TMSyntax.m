@@ -93,7 +93,7 @@ static ECDiscardableMutableDictionary *_syntaxes;
     if (!language)
         return nil;
     return [self _syntaxWithPredicateBlock:^BOOL(TMSyntax *syntax) {
-        return [syntax.name isEqualToString:language];
+        return [[syntax name] isEqualToString:language];
     }];
 }
 

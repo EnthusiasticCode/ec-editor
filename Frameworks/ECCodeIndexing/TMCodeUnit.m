@@ -47,7 +47,7 @@ static void _addRangeOffsetRecursivelyToScope(NSUInteger offset, TMScope *scope)
     ECASSERT(index);
     ECASSERT([fileURL isFileURL]);
     ECASSERT(syntax);
-    self = [super initWithIndex:index file:fileURL language:syntax.name scope:syntax.scope];
+    self = [super initWithIndex:index file:fileURL language:[syntax name] scope:[syntax scope]];
     if (!self)
         return nil;
     __syntax = syntax;
@@ -83,8 +83,8 @@ static void _addRangeOffsetRecursivelyToScope(NSUInteger offset, TMScope *scope)
 - (NSArray *)annotatedTokensInRange:(NSRange)range
 {
     _tokens = [NSMutableArray array];
-    [[self _contentString] enumerateSubstringsInRange:range options:NSStringEnumerationByWords | NSStringEnumerationSubstringNotRequired usingBlock:^(NSString *substring, NSRange substringRange, NSRange enclosingRange, BOOL *stop) {
-        [_tokens addObject:[[TMToken alloc] initWithContainingString:[self _contentString] range:substringRange scope:[self _scopeContainingRange:substringRange]]];
+    [[self _contentString] enumerateLinguisticTagsInRange:range scheme:NSLinguisticTagSchemeTokenType options:NSLinguisticTaggerOmitWhitespace orthography:[NSOrthography orthographyWithDominantScript:@"Zyyy" languageMap:nil] usingBlock:^(NSString *tag, NSRange tokenRange, NSRange sentenceRange, BOOL *stop) {
+        [_tokens addObject:[[TMToken alloc] initWithContainingString:[self _contentString] range:tokenRange scope:[self _scopeContainingRange:tokenRange]]];
     }];
     return _tokens;
 }
@@ -130,23 +130,39 @@ static void _addRangeOffsetRecursivelyToScope(NSUInteger offset, TMScope *scope)
 
 - (NSArray *)_createScopesInRange:(NSRange)range withMatchPattern:(TMPattern *)pattern remainingRange:(NSRange *)remainingRange
 {
-    return [self _createScopesInRange:range withRegexp:pattern.match name:pattern.name captures:pattern.captures remainingRange:remainingRange];
+    return [self _createScopesInRange:range withRegexp:[pattern match] name:[pattern name] captures:[pattern captures] remainingRange:remainingRange];
 }
 
 - (NSArray *)_createScopesInRange:(NSRange)range withSpanPattern:(TMPattern *)pattern remainingRange:(NSRange *)remainingRange
 {
     NSRange localRemainingRange;
-    NSMutableArray *childScopes = [NSMutableArray arrayWithArray:[self _createScopesInRange:range withRegexp:pattern.begin name:[pattern.beginCaptures objectForKey:[NSString stringWithFormat:@"%d", 0]] captures:pattern.beginCaptures remainingRange:&localRemainingRange]];
-    if (![childScopes count])
-        return nil;
-    [childScopes addObjectsFromArray:[self _createScopesInRange:localRemainingRange withPatterns:[pattern patterns] stopOnRegexp:pattern.end withName:[[pattern endCaptures] objectForKey:[NSString stringWithFormat:@"%d", 0]] captures:[pattern endCaptures] remainingRange:&localRemainingRange]];
+    if (remainingRange)
+        *remainingRange = range;
+    NSMutableArray *childScopes = [NSMutableArray array];
+    if ([pattern beginCaptures])
+    {
+        NSArray *beginScopes = [self _createScopesInRange:range withRegexp:[pattern begin] name:[[[pattern beginCaptures] objectForKey:[NSString stringWithFormat:@"%d", 0]] objectForKey:_patternCaptureName] captures:[pattern beginCaptures] remainingRange:&localRemainingRange];
+        if (![beginScopes count])
+            return nil;
+        [childScopes addObjectsFromArray:beginScopes];
+    }
+    else
+    {
+        OnigResult *beginResult = [self _firstMatchInRange:range forRegexp:[pattern begin]];
+        if (!beginResult)
+            return nil;
+        localRemainingRange.location = NSMaxRange([beginResult bodyRange]);
+        localRemainingRange.length = NSMaxRange(range) - localRemainingRange.location;
+    }
+    [childScopes addObjectsFromArray:[self _createScopesInRange:localRemainingRange withPatterns:[pattern patterns] stopOnRegexp:[pattern end] withName:[[[pattern endCaptures] objectForKey:[NSString stringWithFormat:@"%d", 0]] objectForKey:_patternCaptureName] captures:[pattern endCaptures] remainingRange:&localRemainingRange]];
     if (remainingRange)
         *remainingRange = localRemainingRange;
-    if (!pattern.name)
+    if (![pattern name])
         return childScopes;
     TMScope *scope = [[TMScope alloc] init];
     scope.containingString = [self _contentString];
-    scope.identifier = pattern.name;
+    ECASSERT([[pattern name] isKindOfClass:[NSString class]]);
+    scope.identifier = [pattern name];
     scope.range = NSMakeRange(range.location, localRemainingRange.location - range.location);
     if ([childScopes count])
     {
@@ -184,7 +200,9 @@ static void _addRangeOffsetRecursivelyToScope(NSUInteger offset, TMScope *scope)
         OnigResult *stopResult = regexp ? [self _firstMatchInRange:range forRegexp:regexp] : nil;
         if (stopResult && [stopResult bodyRange].location < firstMatchRange.location)
         {
-            [scopes addObjectsFromArray:[self _createScopesInRange:currentRange withRegexp:regexp name:name captures:captures remainingRange:remainingRange]];
+            NSArray *endCaptures = [self _createScopesInRange:currentRange withRegexp:regexp name:name captures:captures remainingRange:remainingRange];
+            if ([endCaptures count])
+                [scopes addObjectsFromArray:endCaptures];
             return scopes;
         }
         if ([firstMatchPattern match])
@@ -214,6 +232,7 @@ static void _addRangeOffsetRecursivelyToScope(NSUInteger offset, TMScope *scope)
         return captureScopes;
     TMScope *scope = [[TMScope alloc] init];
     scope.containingString = [self _contentString];
+    ECASSERT([name isKindOfClass:[NSString class]]);
     scope.identifier = name;
     scope.range = [result bodyRange];
     if ([captureScopes count])
@@ -235,6 +254,7 @@ static void _addRangeOffsetRecursivelyToScope(NSUInteger offset, TMScope *scope)
             continue;
         TMScope *scope = [[TMScope alloc] init];
         scope.containingString = [self _contentString];
+        ECASSERT([currentCaptureName isKindOfClass:[NSString class]]);
         scope.identifier = currentCaptureName;
         scope.range = currentMatchRange;
         [captureScopes addObject:scope];
