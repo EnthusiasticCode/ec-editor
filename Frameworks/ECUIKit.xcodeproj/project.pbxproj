@@ -170,7 +170,7 @@
 		CD6B0F051434D43000049625 /* ECInverseCornerShapeView.h in Headers */ = {isa = PBXBuildFile; fileRef = CD6B0F031434D43000049625 /* ECInverseCornerShapeView.h */; };
 		CD6B0F061434D43000049625 /* ECInverseCornerShapeView.m in Sources */ = {isa = PBXBuildFile; fileRef = CD6B0F041434D43000049625 /* ECInverseCornerShapeView.m */; };
 		CD6B0F071434D43000049625 /* ECInverseCornerShapeView.m in Sources */ = {isa = PBXBuildFile; fileRef = CD6B0F041434D43000049625 /* ECInverseCornerShapeView.m */; };
-		CD9DFED61465D32B00922E8C /* ECTexturedPopoverView.h in Headers */ = {isa = PBXBuildFile; fileRef = CD9DFED41465D32B00922E8C /* ECTexturedPopoverView.h */; };
+		CD9DFED61465D32B00922E8C /* ECTexturedPopoverView.h in Headers */ = {isa = PBXBuildFile; fileRef = CD9DFED41465D32B00922E8C /* ECTexturedPopoverView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CD9DFED71465D32B00922E8C /* ECTexturedPopoverView.m in Sources */ = {isa = PBXBuildFile; fileRef = CD9DFED51465D32B00922E8C /* ECTexturedPopoverView.m */; };
 		CD9DFED81465D32B00922E8C /* ECTexturedPopoverView.m in Sources */ = {isa = PBXBuildFile; fileRef = CD9DFED51465D32B00922E8C /* ECTexturedPopoverView.m */; };
 		CD9DFEDB14660A0500922E8C /* accessoryView_popoverArrowRight.png in Resources */ = {isa = PBXBuildFile; fileRef = CD9DFED914660A0500922E8C /* accessoryView_popoverArrowRight.png */; };
@@ -1085,6 +1085,7 @@
 				B7170BB51428EB2500DF7794 /* ECTextRenderer.h in Headers */,
 				CD2A5FCD142A4A9900A2CACD /* ECSplitViewController.h in Headers */,
 				CDBD28261435101B00E05F40 /* ECTabController.h in Headers */,
+				CD9DFED61465D32B00922E8C /* ECTexturedPopoverView.h in Headers */,
 				B7170BB71428EB2500DF7794 /* ECTextStyle.h in Headers */,
 				B7170BB91428EB2500DF7794 /* UIControl+BlockAction.h in Headers */,
 				B7170BBB1428EB2500DF7794 /* UIImage+BlockDrawing.h in Headers */,
@@ -1092,7 +1093,6 @@
 				B71709DB1428E64F00DF7794 /* ECDebug.h in Headers */,
 				CD6B0F051434D43000049625 /* ECInverseCornerShapeView.h in Headers */,
 				CD06BA5F1438640200295E5A /* ECCustomizableScrollView.h in Headers */,
-				CD9DFED61465D32B00922E8C /* ECTexturedPopoverView.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

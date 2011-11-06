@@ -178,7 +178,7 @@ static void init(ECTexturedPopoverView *self)
             break;
             
         default:
-            // ECASSERT(NO && "Invalid arrow direction");
+            ECASSERT(NO && "Invalid arrow direction");
             break;
     }
 }
@@ -207,7 +207,7 @@ static void init(ECTexturedPopoverView *self)
 
 - (CGSize)arrowSizeForMetaPosition:(ECPopoverViewArrowMetaPosition)metaPosition
 {
-    // ECASSERT(abs(metaPosition) <= 1);
+    ECASSERT(abs(metaPosition) <= 1);
     CGSize size = _arrowSizes[metaPosition + 1];
     if (metaPosition != ECPopoverViewArrowMetaPositionMiddle && CGSizeEqualToSize(CGSizeZero, size))
         size = _arrowSizes[1];
@@ -218,7 +218,7 @@ static void init(ECTexturedPopoverView *self)
 
 - (void)setArrowSize:(CGSize)arrowSize forMetaPosition:(ECPopoverViewArrowMetaPosition)metaPosition
 {
-    // ECASSERT(abs(metaPosition) <= 1);
+    ECASSERT(abs(metaPosition) <= 1);
     _arrowSizes[metaPosition + 1] = arrowSize;
     [self _setNeedsImageAndTransformForArrowView];
 }
@@ -259,8 +259,8 @@ static void init(ECTexturedPopoverView *self)
 
 - (UIImage *)arrowImageForDirection:(UIPopoverArrowDirection)direction metaPosition:(ECPopoverViewArrowMetaPosition)metaPosition
 {
-    // ECASSERT(direction == UIPopoverArrowDirectionUp || ...);
-    // ECASSERT(abs(metaPosition) <= 1);
+    ECASSERT(direction == UIPopoverArrowDirectionUp || direction == UIPopoverArrowDirectionDown || direction == UIPopoverArrowDirectionLeft || direction == UIPopoverArrowDirectionRight);
+    ECASSERT(abs(metaPosition) <= 1);
     
     if (!_arrowDirectionImages)
         return nil;
@@ -287,7 +287,7 @@ static void init(ECTexturedPopoverView *self)
 
 - (void)setArrowImage:(UIImage *)image forDirection:(UIPopoverArrowDirection)direction metaPosition:(ECPopoverViewArrowMetaPosition)metaPosition
 {
-    // ECASSERT(abs(metaPosition) <= 1);
+    ECASSERT(abs(metaPosition) <= 1);
 
     if (!_arrowDirectionImages)
         _arrowDirectionImages = [NSMutableArray arrayWithObjects:[NSNull null], [NSNull null], [NSNull null], [NSNull null], nil];
