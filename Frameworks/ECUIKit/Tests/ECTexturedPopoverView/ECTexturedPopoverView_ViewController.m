@@ -58,4 +58,8 @@
     self.popoverView.arrowPosition = [(UISlider *)sender value] * relativeSize;
 }
 
+- (IBAction)changePopoverOpacity:(id)sender {
+    self.popoverView.alpha = [(UISlider *)sender value];
+}
+
 @end

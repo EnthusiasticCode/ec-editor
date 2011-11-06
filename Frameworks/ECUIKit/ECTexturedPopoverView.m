@@ -7,6 +7,7 @@
 //
 
 #import "ECTexturedPopoverView.h"
+#import <QuartzCore/QuartzCore.h>
 
 @implementation ECTexturedPopoverView {
     /// Array of array filled with NSNull with indexes corresponding to directions: up, down, left, right. Sub arrays has 3 elements: far left, middle, far right.
@@ -104,6 +105,13 @@
     if (arrowView == nil)
         arrowView = [UIImageView new];
     return arrowView;
+}
+
+- (void)setAlpha:(CGFloat)alpha
+{
+    if (!UIEdgeInsetsEqualToEdgeInsets(self.arrowInsets, UIEdgeInsetsZero))
+        self.layer.shouldRasterize = alpha < 1;
+    [super setAlpha:alpha];
 }
 
 #pragma mark - View Methods
