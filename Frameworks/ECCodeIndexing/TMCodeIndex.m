@@ -10,14 +10,6 @@
 #import "TMCodeIndex.h"
 #import "TMCodeUnit.h"
 #import "TMSyntax.h"
-#import <ECFoundation/ECCache.h>
-
-@interface TMCodeIndex ()
-{
-    ECCache *_codeUnitCache;
-}
-- (id)_codeUnitCacheKeyForFileURL:(NSURL *)fileURL syntax:(TMSyntax *)syntax;
-@end
 
 @implementation TMCodeIndex
 
@@ -26,40 +18,18 @@
     [ECCodeIndex registerExtension:self];
 }
 
-- (float)supportForFile:(NSURL *)fileURL language:(NSString *)language scope:(NSString *)scope
+- (float)supportForScope:(NSString *)scope
 {
-    ECASSERT(fileURL);
-    if (![TMSyntax syntaxForFile:fileURL language:language scope:scope])
+    ECASSERT(scope);
+    if (![TMSyntax syntaxWithScope:scope])
         return 0.0;
     return 0.3;
 }
 
-- (id)init
+- (ECCodeUnit *)codeUnitWithIndex:(ECCodeIndex *)index forFile:(NSURL *)fileURL scope:(NSString *)scope
 {
-    self = [super init];
-    if (!self)
-        return nil;
-    _codeUnitCache = [[ECCache alloc] init];
-    return self;
-}
-
-- (ECCodeUnit *)codeUnitForFile:(NSURL *)fileURL language:(NSString *)language scope:(NSString *)scope
-{
-    ECASSERT(fileURL);
-    TMSyntax *syntax = [TMSyntax syntaxForFile:fileURL language:language scope:scope];
-    id cacheKey = [self _codeUnitCacheKeyForFileURL:fileURL syntax:syntax];
-    TMCodeUnit *codeUnit = [_codeUnitCache objectForKey:cacheKey];
-    if (!codeUnit)
-    {
-        codeUnit = [[TMCodeUnit alloc] initWithIndex:self fileURL:fileURL syntax:syntax];
-        [_codeUnitCache setObject:codeUnit forKey:cacheKey];
-    }
-    return codeUnit;
-}
-
-- (id)_codeUnitCacheKeyForFileURL:(NSURL *)fileURL syntax:(TMSyntax *)syntax
-{
-    return [NSString stringWithFormat:@"%@:%@", [syntax name], [fileURL absoluteString]];
+    ECASSERT(index && fileURL && scope);
+    return [[TMCodeUnit alloc] initWithIndex:index file:fileURL scope:scope];
 }
 
 @end

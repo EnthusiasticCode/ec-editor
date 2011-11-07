@@ -10,7 +10,7 @@
 
 @class TMScope;
 
-@interface TMToken : NSObject <ECCodeToken, ECCodeCursor>
+@interface TMToken : NSObject <ECCodeToken>
 
 - (id)initWithContainingString:(NSString *)containingString range:(NSRange)range scope:(TMScope *)scope;
 

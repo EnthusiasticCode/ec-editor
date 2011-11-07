@@ -19,9 +19,6 @@
 /// The main source file the unit is interpreting.
 - (NSURL *)fileURL;
 
-/// The language the unit is using to interpret the main source file's contents.
-- (NSString *)language;
-
 - (NSString *)scope;
 
 /// Returns the possible completions at a given insertion point in the unit's main source file.

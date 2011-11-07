@@ -37,12 +37,12 @@ static ECDiscardableMutableDictionary *_syntaxes;
 - (id)_initWithFileURL:(NSURL *)fileURL;
 - (NSArray *)_fileTypes;
 - (OnigRegexp *)_firstLineMatch;
-+ (TMSyntax *)_syntaxForFile:(NSURL *)fileURL;
-+ (TMSyntax *)_syntaxWithLanguage:(NSString *)language;
 + (TMSyntax *)_syntaxWithPredicateBlock:(BOOL(^)(TMSyntax *syntax))predicateBlock;
 @end
 
 @implementation TMSyntax
+
+#pragma mark - Public Class Methods
 
 + (TMSyntax *)syntaxWithScope:(NSString *)scope
 {
@@ -51,19 +51,7 @@ static ECDiscardableMutableDictionary *_syntaxes;
     return [_syntaxes objectForKey:scope];
 }
 
-+ (TMSyntax *)syntaxForFile:(NSURL *)fileURL language:(NSString *)language scope:(NSString *)scope
-{
-    TMSyntax *syntax = nil;
-    if (scope)
-        syntax = [self syntaxWithScope:scope];
-    if (!syntax && language)
-        syntax = [self _syntaxWithLanguage:language];
-    if (!syntax && fileURL)
-        syntax = [self _syntaxForFile:fileURL];
-    return syntax;
-}
-
-+ (TMSyntax *)_syntaxForFile:(NSURL *)fileURL
++ (TMSyntax *)syntaxForFile:(NSURL *)fileURL
 {
     ECASSERT(fileURL);
     TMSyntax *foundSyntax = [self _syntaxWithPredicateBlock:^BOOL(TMSyntax *syntax) {
@@ -87,24 +75,7 @@ static ECDiscardableMutableDictionary *_syntaxes;
     return foundSyntax;
 }
 
-+ (TMSyntax *)_syntaxWithLanguage:(NSString *)language
-{
-    ECASSERT(language);
-    if (!language)
-        return nil;
-    return [self _syntaxWithPredicateBlock:^BOOL(TMSyntax *syntax) {
-        return [[syntax name] isEqualToString:language];
-    }];
-}
-
-+ (TMSyntax *)_syntaxWithPredicateBlock:(BOOL (^)(TMSyntax *))predicateBlock
-{
-    ECASSERT(predicateBlock);
-    for (TMSyntax *syntax in [_syntaxes objectEnumerator])
-        if (predicateBlock(syntax))
-            return syntax;
-    return nil;
-}
+#pragma mark - Internal Class Methods
 
 + (void)loadAllSyntaxes
 {
@@ -118,6 +89,59 @@ static ECDiscardableMutableDictionary *_syntaxes;
         [_syntaxes setObject:syntax forKey:[syntax scope]];
     }
 }
+
+#pragma mark - Private Class Methods
+
++ (TMSyntax *)_syntaxWithPredicateBlock:(BOOL (^)(TMSyntax *))predicateBlock
+{
+    ECASSERT(predicateBlock);
+    for (TMSyntax *syntax in [_syntaxes objectEnumerator])
+        if (predicateBlock(syntax))
+            return syntax;
+    return nil;
+}
+
+#pragma mark - Public Methods
+
+- (NSString *)name
+{
+    return _name;
+}
+
+- (NSString *)scope
+{
+    return _scope;
+}
+
+- (NSArray *)patterns
+{
+    ECASSERT(_contentAccessCount > 0);
+    if (!_patterns)
+    {
+        ECASSERT([_plist objectForKey:_syntaxPatternsKey]);
+        NSMutableArray *patterns = [NSMutableArray array];
+        for (NSDictionary *patternDictionary in [_plist objectForKey:_syntaxPatternsKey])
+            [patterns addObjectsFromArray:[TMPattern patternsWithSyntax:self inDictionary:patternDictionary]];
+        _patterns = [patterns copy];
+    }
+    return _patterns;
+}
+
+#pragma mark - Internal Methods
+
+- (NSDictionary *)repository
+{
+    ECASSERT(_contentAccessCount > 0);
+    return [_plist objectForKey:_syntaxRepositoryKey];
+}
+
+- (NSArray *)patternsDictionaries
+{
+    ECASSERT(_contentAccessCount > 0);
+    return [_plist objectForKey:_syntaxPatternsKey];
+}
+
+#pragma mark - Private Methods
 
 - (id)_initWithFileURL:(NSURL *)fileURL
 {
@@ -139,16 +163,6 @@ static ECDiscardableMutableDictionary *_syntaxes;
     return self;
 }
 
-- (NSString *)name
-{
-    return _name;
-}
-
-- (NSString *)scope
-{
-    return _scope;
-}
-
 - (NSArray *)_fileTypes
 {
     return __fileTypes;
@@ -159,39 +173,7 @@ static ECDiscardableMutableDictionary *_syntaxes;
     return __firstLineMatch;
 }
 
-- (NSDictionary *)_repository
-{
-    ECASSERT(_contentAccessCount > 0);
-    return [_plist objectForKey:_syntaxRepositoryKey];
-}
-
-- (NSArray *)_patternsDictionaries
-{
-    ECASSERT(_contentAccessCount > 0);
-    return [_plist objectForKey:_syntaxPatternsKey];
-}
-
-- (NSArray *)patterns
-{
-    ECASSERT(_contentAccessCount > 0);
-    if (!_patterns)
-    {
-        ECASSERT([_plist objectForKey:_syntaxPatternsKey]);
-        NSMutableArray *patterns = [NSMutableArray array];
-        for (NSDictionary *patternDictionary in [_plist objectForKey:_syntaxPatternsKey])
-            [patterns addObjectsFromArray:[TMPattern patternsWithSyntax:self inDictionary:patternDictionary]];
-        _patterns = [patterns copy];
-    }
-    return _patterns;
-}
-
-- (NSDictionary *)plist
-{
-    ECASSERT(_contentAccessCount > 0);
-    if (!_plist)
-        _plist = [NSPropertyListSerialization propertyListWithData:[NSData dataWithContentsOfURL:_fileURL options:NSDataReadingUncached error:NULL] options:NSPropertyListImmutable format:NULL error:NULL];
-    return _plist;
-}
+#pragma mark - NSDiscardableContent
 
 - (BOOL)beginContentAccess
 {

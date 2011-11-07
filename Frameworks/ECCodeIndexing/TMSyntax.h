@@ -11,7 +11,7 @@
 @interface TMSyntax : NSObject <NSDiscardableContent>
 
 + (TMSyntax *)syntaxWithScope:(NSString *)scope;
-+ (TMSyntax *)syntaxForFile:(NSURL *)fileURL language:(NSString *)language scope:(NSString *)scope;
++ (TMSyntax *)syntaxForFile:(NSURL *)fileURL;
 
 - (NSString *)name;
 - (NSString *)scope;

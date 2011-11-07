@@ -8,6 +8,8 @@
 
 #import "ECCodeIndex.h"
 #import "ECCodeIndex+Subclass.h"
+#import "TMSyntax.h"
+#import <ECFoundation/ECCache.h>
 
 static NSMutableArray *_extensionClasses;
 
@@ -15,7 +17,9 @@ static NSMutableArray *_extensionClasses;
 {
     NSMutableArray *_extensions;
     NSMutableDictionary *_fileBuffers;
+    ECCache *_codeUnitCache;
 }
+- (id)_codeUnitCacheKeyForFileURL:(NSURL *)fileURL scope:(NSString *)scope;
 @end
 
 @implementation ECCodeIndex
@@ -31,6 +35,7 @@ static NSMutableArray *_extensionClasses;
     for (Class extensionClass in _extensionClasses)
         [_extensions addObject:[[extensionClass alloc] init]];
     _fileBuffers = [NSMutableDictionary dictionary];
+    _codeUnitCache = [[ECCache alloc] init];
     return self;
 }
 
@@ -45,27 +50,42 @@ static NSMutableArray *_extensionClasses;
         [_fileBuffers removeObjectForKey:fileURL];
 }
 
-- (ECCodeUnit *)codeUnitForFile:(NSURL *)fileURL language:(NSString *)language scope:(NSString *)scope
+- (ECCodeUnit *)codeUnitForFile:(NSURL *)fileURL scope:(NSString *)scope
 {
     if (![self isMemberOfClass:[ECCodeIndex class]])
         return nil;
-    NSFileManager *fileManager = [[NSFileManager alloc] init];
-    if (![fileManager fileExistsAtPath:[fileURL path]])
-        return nil;
-    float winningSupport = 0.0;
-    ECCodeIndex *winningExtension = nil;
-    for (ECCodeIndex *extension in _extensions)
+    if (!scope)
+        scope = [[TMSyntax syntaxForFile:fileURL] scope];
+    id cacheKey = [self _codeUnitCacheKeyForFileURL:fileURL scope:scope];
+    ECCodeUnit *codeUnit = [_codeUnitCache objectForKey:cacheKey];
+    if (!codeUnit)
     {
-        float support = [extension supportForFile:fileURL language:language scope:scope];
-        if (support <= winningSupport)
-            continue;
-        winningSupport = support;
-        winningExtension = extension;
+        NSFileManager *fileManager = [[NSFileManager alloc] init];
+        if (![fileManager fileExistsAtPath:[fileURL path]])
+            return nil;
+        float winningSupport = 0.0;
+        ECCodeIndex *winningExtension = nil;
+        for (ECCodeIndex *extension in _extensions)
+        {
+            float support = [extension supportForScope:scope];
+            if (support <= winningSupport)
+                continue;
+            winningSupport = support;
+            winningExtension = extension;
+        }
+        ECASSERT(winningSupport >= 0.0 && winningSupport < 1.0);
+        if (winningSupport == 0.0)
+            return nil;
+        codeUnit = [winningExtension codeUnitWithIndex:self forFile:fileURL scope:scope];
+        [_codeUnitCache setObject:codeUnit forKey:[self _codeUnitCacheKeyForFileURL:fileURL scope:scope]];
     }
-    ECASSERT(winningSupport >= 0.0 && winningSupport < 1.0);
-    if (winningSupport == 0.0)
-        return nil;
-    return [winningExtension codeUnitForFile:fileURL language:language scope:scope];
+    return codeUnit;
+}
+
+- (id)_codeUnitCacheKeyForFileURL:(NSURL *)fileURL scope:(NSString *)scope
+{
+    ECASSERT(fileURL && [scope length]);
+    return [NSString stringWithFormat:@"%@:%@", scope, [fileURL absoluteString]];
 }
 
 @end
