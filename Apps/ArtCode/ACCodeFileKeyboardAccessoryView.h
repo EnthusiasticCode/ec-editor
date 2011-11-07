@@ -19,19 +19,26 @@ typedef NSInteger ACCodeFileKeyboardAccessoryItemSize;
 
 @interface ACCodeFileKeyboardAccessoryView : UIView
 
-#pragma mark - Accessory Buttons
+#pragma mark - Accessory Items
 
 /// Array of UIBarButtonItem presented on the accessory view from left to right.
 @property (nonatomic, strong) NSArray *items;
 - (void)setItems:(NSArray *)items animated:(BOOL)animated;
 
-/// Insets applyed view bounds to fit items.
-- (void)setItemsInsets:(UIEdgeInsets)insets forItemSize:(ACCodeFileKeyboardAccessoryItemSize)size;
-- (UIEdgeInsets)itemsInsetsForItemSize:(ACCodeFileKeyboardAccessoryItemSize)size;
+/// Insets applyed to the content view.
+- (void)setContentInsets:(UIEdgeInsets)insets forItemSize:(ACCodeFileKeyboardAccessoryItemSize)size;
+- (UIEdgeInsets)contentInsetsForItemSize:(ACCodeFileKeyboardAccessoryItemSize)size;
 
-/// Set the image used for button items of the given size.
-- (void)setButtonItemBackgroundImage:(UIImage *)image forItemSize:(ACCodeFileKeyboardAccessoryItemSize)size;
-- (UIImage *)buttonItemBackgroundImageForItemSize:(ACCodeFileKeyboardAccessoryItemSize)size;
+/// Insets applyed to every item.
+- (void)setItemInsets:(UIEdgeInsets)insets forItemSize:(ACCodeFileKeyboardAccessoryItemSize)size;
+- (UIEdgeInsets)itemInsetsForItemSize:(ACCodeFileKeyboardAccessoryItemSize)size;
+
+/// Width used for item of given size.
+- (void)setItemWidth:(CGFloat)width forItemSize:(ACCodeFileKeyboardAccessoryItemSize)size;
+- (CGFloat)itemWidthForItemSize:(ACCodeFileKeyboardAccessoryItemSize)size;
+
+/// Set the image used for button items.
+@property (nonatomic, strong) UIImage *itemBackgroundImage;
 
 /// Returns the size of the items with the current accessory configuration.
 - (ACCodeFileKeyboardAccessoryItemSize)currentItemSize;

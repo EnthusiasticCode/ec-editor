@@ -10,10 +10,12 @@
 
 #define SPLIT_KEYBOARD_LEFT_SEGMENT_WIDTH 256
 #define SPLIT_KEYBOARD_RIGHT_SEGMENT_WIDTH 281
+#define PORTRAIT_KEYBOARD_WIDTH 768
 
 @implementation ACCodeFileKeyboardAccessoryView {
-    UIImage *_itemBackgroundImages[4];
-    UIEdgeInsets _itemsInsets[3];
+    UIEdgeInsets _itemInsets[3];
+    CGFloat _itemWidth[4];
+    UIEdgeInsets _contentIntets[3];
 }
 
 // TODO see http://developer.apple.com/library/ios/#documentation/StringsTextFonts/Conceptual/TextAndWebiPhoneOS/InputViews/InputViews.html#//apple_ref/doc/uid/TP40009542-CH12-SW1 for input clicks
@@ -21,7 +23,7 @@
 
 @synthesize split, flipped;
 @synthesize dockedBackgroundView, splitLeftBackgroundView, splitRightBackgroundView, splitBackgroundViewInsets;
-@synthesize items;
+@synthesize items, itemBackgroundImage;
 
 - (void)setDockedBackgroundView:(UIView *)value
 {
@@ -60,39 +62,72 @@
     [self didChangeValueForKey:@"split"];
 }
 
+- (void)setItemBackgroundImage:(UIImage *)value
+{
+    if (value == itemBackgroundImage)
+        return;
+    [self willChangeValueForKey:@"itemBackgroundImage"];
+    itemBackgroundImage = value;
+    for (UIBarButtonItem *item in self.items)
+    {
+        [(UIButton *)item.customView setBackgroundImage:itemBackgroundImage forState:UIControlStateNormal];
+    }
+    [self didChangeValueForKey:@"itemBackgroundImage"];
+
+}
+
 #pragma mark - View's Methods
 
 - (void)layoutSubviews
 {
     CGRect bounds = self.bounds;
-    if (self.isSplit && self.splitLeftBackgroundView)
+    ACCodeFileKeyboardAccessoryItemSize currentSize = [self currentItemSize];
+    UIEdgeInsets contentInsets = [self contentInsetsForItemSize:currentSize];
+    UIEdgeInsets itemInsets = [self itemInsetsForItemSize:currentSize];
+    if (currentSize >= ACCodeFileKeyboardAccessoryItemSizeSmall)
     {
-        UIEdgeInsets insets = self.splitBackgroundViewInsets;
-        if (self.isFlipped)
+        // Background
+        if (splitLeftBackgroundView && splitRightBackgroundView)
         {
-            self.splitLeftBackgroundView.transform = self.splitRightBackgroundView.transform = CGAffineTransformMakeScale(1, -1);
-            insets.top = splitBackgroundViewInsets.bottom;
-            insets.bottom = splitBackgroundViewInsets.top;
+            UIEdgeInsets insets = self.splitBackgroundViewInsets;
+            if (self.isFlipped)
+            {
+                self.splitLeftBackgroundView.transform = self.splitRightBackgroundView.transform = CGAffineTransformMakeScale(1, -1);
+                insets.top = splitBackgroundViewInsets.bottom;
+                insets.bottom = splitBackgroundViewInsets.top;
+            }
+            else
+            {
+                self.splitLeftBackgroundView.transform = self.splitRightBackgroundView.transform = CGAffineTransformIdentity;
+            }
+            self.splitLeftBackgroundView.frame = UIEdgeInsetsInsetRect(CGRectMake(0, 0, SPLIT_KEYBOARD_LEFT_SEGMENT_WIDTH, bounds.size.height), insets);
+            self.splitRightBackgroundView.frame = UIEdgeInsetsInsetRect(CGRectMake(bounds.size.width - SPLIT_KEYBOARD_RIGHT_SEGMENT_WIDTH, 0, SPLIT_KEYBOARD_RIGHT_SEGMENT_WIDTH, bounds.size.height), insets);
         }
-        else
-        {
-            self.splitLeftBackgroundView.transform = self.splitRightBackgroundView.transform = CGAffineTransformIdentity;
-        }
-        self.splitLeftBackgroundView.frame = UIEdgeInsetsInsetRect(CGRectMake(0, 0, SPLIT_KEYBOARD_LEFT_SEGMENT_WIDTH, bounds.size.height), insets);
-        self.splitRightBackgroundView.frame = UIEdgeInsetsInsetRect(CGRectMake(bounds.size.width - SPLIT_KEYBOARD_RIGHT_SEGMENT_WIDTH, 0, SPLIT_KEYBOARD_RIGHT_SEGMENT_WIDTH, bounds.size.height), insets);
-        
         // Items
-        UIEdgeInsets itemsInsets = [self itemsInsetsForItemSize:self.currentItemSize];
-        __block CGRect itemFrame = CGRectMake(itemsInsets.left, 
-                                              itemsInsets.top, 44, 
-                                              bounds.size.height - itemsInsets.top - itemsInsets.bottom);
+        __block CGRect itemFrame = CGRectMake(contentInsets.left + itemInsets.left, contentInsets.top + itemInsets.top, [self itemWidthForItemSize:ACCodeFileKeyboardAccessoryItemSizeSmallImportant], bounds.size.height - contentInsets.top - contentInsets.bottom - itemInsets.top - itemInsets.bottom);
         [self.items enumerateObjectsUsingBlock:^(UIBarButtonItem *item, NSUInteger itemIndex, BOOL *stop) {
+            // Layout and move to next
             item.customView.frame = itemFrame;
             if (itemIndex == 4)
-                itemFrame.origin.x = bounds.size.width - SPLIT_KEYBOARD_RIGHT_SEGMENT_WIDTH + itemsInsets.left;
+                *stop = YES;
             else
-                itemFrame.origin.x += itemFrame.size.width + 7;
-            itemFrame.size.width = itemIndex == 10 ? 44 : 36;
+                itemFrame.origin.x += itemFrame.size.width + itemInsets.right + itemInsets.left;
+            itemFrame.size.width = [self itemWidthForItemSize:ACCodeFileKeyboardAccessoryItemSizeSmall];
+        }];
+        itemFrame.origin.x = bounds.size.width - contentInsets.right - itemInsets.right;
+        itemFrame.size.width = [self itemWidthForItemSize:ACCodeFileKeyboardAccessoryItemSizeSmallImportant];
+        [self.items enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(UIBarButtonItem *item, NSUInteger itemIndex, BOOL *stop) {
+            if (itemIndex <= 4)
+            {
+                *stop = YES;
+                return;
+            }
+            
+            // Layout and move to next
+            itemFrame.origin.x -= itemFrame.size.width;
+            item.customView.frame = itemFrame;
+            itemFrame.origin.x -= itemInsets.right + itemInsets.left;
+            itemFrame.size.width = [self itemWidthForItemSize:ACCodeFileKeyboardAccessoryItemSizeSmall];
         }];
     }
     else if (self.dockedBackgroundView)
@@ -100,16 +135,13 @@
         self.dockedBackgroundView.frame = bounds;
         
         // Items
-        UIEdgeInsets itemsInsets = [self itemsInsetsForItemSize:self.currentItemSize];
-        CGFloat itemGap = self.currentItemSize == ACCodeFileKeyboardAccessoryItemSizeNormal ? 10 : 12;
-        CGRect itemFrame = CGRectMake(itemsInsets.left, 
-                                      itemsInsets.top, 
-                                      self.currentItemSize == ACCodeFileKeyboardAccessoryItemSizeNormal ? 59 : 81,
-                                      bounds.size.height - itemsInsets.top - itemsInsets.bottom);
+        CGRect itemFrame = CGRectMake(contentInsets.left + itemInsets.left, contentInsets.top + itemInsets.top, [self itemWidthForItemSize:currentSize], bounds.size.height - contentInsets.top - contentInsets.bottom - itemInsets.top - itemInsets.bottom);
         for (UIBarButtonItem *item in self.items)
         {
+            if (item.width != 0)
+                itemFrame.size.width = item.width;
             item.customView.frame = itemFrame;
-            itemFrame.origin.x += itemFrame.size.width + itemGap;
+            itemFrame.origin.x += itemFrame.size.width + itemInsets.right + itemInsets.left;
         }
     }
 }
@@ -132,11 +164,10 @@
         [item.customView removeFromSuperview];
     }
     items = value;
-    UIImage *itemImage = [self buttonItemBackgroundImageForItemSize:self.currentItemSize];
     for (UIBarButtonItem *item in items)
     {
         UIButton *itemButton = [UIButton new];
-        [itemButton setBackgroundImage:itemImage forState:UIControlStateNormal];
+        [itemButton setBackgroundImage:self.itemBackgroundImage forState:UIControlStateNormal];
         [itemButton setTitle:item.title forState:UIControlStateNormal];
         // TODO initialize item
         item.customView = itemButton;
@@ -145,44 +176,53 @@
     [self didChangeValueForKey:@"items"];
 }
 
-- (void)setButtonItemBackgroundImage:(UIImage *)image forItemSize:(ACCodeFileKeyboardAccessoryItemSize)size
+- (void)setItemWidth:(CGFloat)width forItemSize:(ACCodeFileKeyboardAccessoryItemSize)size;
 {
     ECASSERT(size >= 0 && size < 4);
-    _itemBackgroundImages[size] = image;
-    if (self.currentItemSize == size)
-    {
-        for (UIBarButtonItem *item in self.items)
-        {
-            [(UIButton *)item.customView setBackgroundImage:image forState:UIControlStateNormal];
-        }
-    }
-}
-
-- (UIImage *)buttonItemBackgroundImageForItemSize:(ACCodeFileKeyboardAccessoryItemSize)size
-{
-    ECASSERT(size >= 0 && size < 4);
-    return _itemBackgroundImages[size];
-}
-
-- (void)setItemsInsets:(UIEdgeInsets)insets forItemSize:(ACCodeFileKeyboardAccessoryItemSize)size
-{
-    ECASSERT(size >= 0 && size < 3);
-    _itemsInsets[size] = insets;
+    _itemWidth[size] = width;
     if (self.currentItemSize == size)
         [self setNeedsLayout];
 }
 
-- (UIEdgeInsets)itemsInsetsForItemSize:(ACCodeFileKeyboardAccessoryItemSize)size
+- (CGFloat)itemWidthForItemSize:(ACCodeFileKeyboardAccessoryItemSize)size;
+{
+    ECASSERT(size >= 0 && size < 4);
+    return _itemWidth[size];
+}
+
+- (void)setContentInsets:(UIEdgeInsets)insets forItemSize:(ACCodeFileKeyboardAccessoryItemSize)size
 {
     ECASSERT(size >= 0 && size < 3);
-    return _itemsInsets[size];
+    _contentIntets[size] = insets;
+    if (self.currentItemSize == size)
+        [self setNeedsLayout];
+}
+
+- (UIEdgeInsets)contentInsetsForItemSize:(ACCodeFileKeyboardAccessoryItemSize)size
+{
+    ECASSERT(size >= 0 && size < 3);
+    return _contentIntets[size];
+}
+
+- (void)setItemInsets:(UIEdgeInsets)insets forItemSize:(ACCodeFileKeyboardAccessoryItemSize)size
+{
+    ECASSERT(size >= 0 && size < 3);
+    _itemInsets[size] = insets;
+    if (self.currentItemSize == size)
+        [self setNeedsLayout];
+}
+
+- (UIEdgeInsets)itemInsetsForItemSize:(ACCodeFileKeyboardAccessoryItemSize)size
+{
+    ECASSERT(size >= 0 && size < 3);
+    return _itemInsets[size];
 }
 
 - (ACCodeFileKeyboardAccessoryItemSize)currentItemSize
 {
     if (self.isSplit)
         return ACCodeFileKeyboardAccessoryItemSizeSmall;
-    if (self.bounds.size.width > 768)
+    if (self.bounds.size.width > PORTRAIT_KEYBOARD_WIDTH)
         return ACCodeFileKeyboardAccessoryItemSizeBig;
     return ACCodeFileKeyboardAccessoryItemSizeNormal;
 }

@@ -43,6 +43,23 @@
         _keyboardAccessoryView.splitRightBackgroundView = splitBackgroundView;
         _keyboardAccessoryView.splitBackgroundViewInsets = UIEdgeInsetsMake(-10, 0, 0, 0);
         
+        //
+        _keyboardAccessoryView.itemBackgroundImage = [[UIImage imageNamed:@"accessoryView_itemBackground"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 12, 0, 12)];
+        
+        [_keyboardAccessoryView setItemWidth:59 + 4 forItemSize:ACCodeFileKeyboardAccessoryItemSizeNormal];
+        [_keyboardAccessoryView setItemWidth:81 + 4 forItemSize:ACCodeFileKeyboardAccessoryItemSizeBig];
+        [_keyboardAccessoryView setItemWidth:36 + 4 forItemSize:ACCodeFileKeyboardAccessoryItemSizeSmall];
+        [_keyboardAccessoryView setItemWidth:44 + 4 forItemSize:ACCodeFileKeyboardAccessoryItemSizeSmallImportant];
+        
+        [_keyboardAccessoryView setContentInsets:UIEdgeInsetsMake(3, 0, 2, 0) forItemSize:ACCodeFileKeyboardAccessoryItemSizeNormal];
+        [_keyboardAccessoryView setItemInsets:UIEdgeInsetsMake(0, 3, 0, 3) forItemSize:ACCodeFileKeyboardAccessoryItemSizeNormal];
+        
+        [_keyboardAccessoryView setContentInsets:UIEdgeInsetsMake(3, 3, 2, 3) forItemSize:ACCodeFileKeyboardAccessoryItemSizeBig];
+        [_keyboardAccessoryView setItemInsets:UIEdgeInsetsMake(0, 0, 0, 8) forItemSize:ACCodeFileKeyboardAccessoryItemSizeBig];
+        
+        [_keyboardAccessoryView setContentInsets:UIEdgeInsetsMake(3, 10, 2, 7) forItemSize:ACCodeFileKeyboardAccessoryItemSizeSmall];
+        [_keyboardAccessoryView setItemInsets:UIEdgeInsetsMake(0, 0, 0, 3) forItemSize:ACCodeFileKeyboardAccessoryItemSizeSmall];
+        
         // Tests
         _keyboardAccessoryView.items = [NSArray arrayWithObjects:
                                         [[UIBarButtonItem alloc] initWithTitle:@"one" style:UIBarButtonItemStylePlain target:nil action:NULL],
