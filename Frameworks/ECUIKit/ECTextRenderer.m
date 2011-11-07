@@ -952,7 +952,6 @@
     CGContextScaleCTM(context, 1, -1);
     
     // Get text insets
-    rect.size.height -= textInsets.top;
     if (rect.origin.y > textInsets.top)
     {
         CGContextTranslateCTM(context, textInsets.left, 0);
