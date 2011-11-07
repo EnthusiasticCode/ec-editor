@@ -248,24 +248,27 @@ static const void *rendererContext;
 
 - (void)_setupContentSize
 {
-    CGRect contentRect = CGRectMake(0, 0,
-                                    self.frame.size.width, 
-                                    self.renderer.renderHeight);
-    if (contentRect.size.width <= 0 || CGRectEqualToRect(_contentView.frame, contentRect))
-        return;
-    
-    CGFloat scale = (contentRect.size.width - self.lineDecorationInset - self.contentInset.left - self.contentInset.right) / self.renderer.renderWidth;
-    contentRect.size.height *= scale;
-    contentRect = CGRectIntegral(contentRect);
-    
-    _toMinimapTransform = CGAffineTransformMakeScale(scale, scale);
-    _toRendererTransform = CGAffineTransformInvert(_toMinimapTransform);
-    
-    self.contentSize = (CGSize){ (contentRect.size.width - self.contentInset.left - self.contentInset.right), contentRect.size.height };
+    // TODO Use the rendering queue instead
+    dispatch_async(dispatch_get_main_queue(), ^{
+        CGRect contentRect = CGRectMake(0, 0,
+                                        self.frame.size.width, 
+                                        self.renderer.renderHeight);
+        if (contentRect.size.width <= 0 || CGRectEqualToRect(_contentView.frame, contentRect))
+            return;
+        
+        CGFloat scale = (contentRect.size.width - self.lineDecorationInset - self.contentInset.left - self.contentInset.right) / self.renderer.renderWidth;
+        contentRect.size.height *= scale;
+        contentRect = CGRectIntegral(contentRect);
+        
+        _toMinimapTransform = CGAffineTransformMakeScale(scale, scale);
+        _toRendererTransform = CGAffineTransformInvert(_toMinimapTransform);
+        
+        self.contentSize = (CGSize){ (contentRect.size.width - self.contentInset.left - self.contentInset.right), contentRect.size.height };
 
-    _contentView.frame = contentRect;
-    [(CATiledLayer *)_contentView.layer setTileSize:CGSizeMake(contentRect.size.width, TILE_HEIGHT)];
-    [_contentView setNeedsDisplay];
+        _contentView.frame = contentRect;
+        [(CATiledLayer *)_contentView.layer setTileSize:CGSizeMake(contentRect.size.width, TILE_HEIGHT)];
+        [_contentView setNeedsDisplay];
+    });
 }
 
 - (void)_handleGestureMinimapTap:(UITapGestureRecognizer *)recognizer
