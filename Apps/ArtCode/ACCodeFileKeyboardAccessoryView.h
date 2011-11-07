@@ -9,12 +9,11 @@
 #import <UIKit/UIKit.h>
 
 enum {
-    ACCodeFileKeyboardAccessoryItemSizeNormal,
-    ACCodeFileKeyboardAccessoryItemSizeBig,
-    ACCodeFileKeyboardAccessoryItemSizeSmall,
-    ACCodeFileKeyboardAccessoryItemSizeSmallImportant
+    ACCodeFileKeyboardAccessoryPositionPortrait,
+    ACCodeFileKeyboardAccessoryPositionLandscape,
+    ACCodeFileKeyboardAccessoryPositionFloating
 };
-typedef NSInteger ACCodeFileKeyboardAccessoryItemSize;
+typedef NSInteger ACCodeFileKeyboardAccessoryPosition;
 
 
 @interface ACCodeFileKeyboardAccessoryView : UIView
@@ -26,22 +25,22 @@ typedef NSInteger ACCodeFileKeyboardAccessoryItemSize;
 - (void)setItems:(NSArray *)items animated:(BOOL)animated;
 
 /// Insets applyed to the content view.
-- (void)setContentInsets:(UIEdgeInsets)insets forItemSize:(ACCodeFileKeyboardAccessoryItemSize)size;
-- (UIEdgeInsets)contentInsetsForItemSize:(ACCodeFileKeyboardAccessoryItemSize)size;
+- (void)setContentInsets:(UIEdgeInsets)insets forAccessoryPosition:(ACCodeFileKeyboardAccessoryPosition)position;
+- (UIEdgeInsets)contentInsetsForAccessoryPosition:(ACCodeFileKeyboardAccessoryPosition)position;
 
 /// Insets applyed to every item.
-- (void)setItemInsets:(UIEdgeInsets)insets forItemSize:(ACCodeFileKeyboardAccessoryItemSize)size;
-- (UIEdgeInsets)itemInsetsForItemSize:(ACCodeFileKeyboardAccessoryItemSize)size;
+- (void)setItemInsets:(UIEdgeInsets)insets forAccessoryPosition:(ACCodeFileKeyboardAccessoryPosition)position;
+- (UIEdgeInsets)itemInsetsForAccessoryPosition:(ACCodeFileKeyboardAccessoryPosition)position;
 
-/// Width used for item of given size.
-- (void)setItemWidth:(CGFloat)width forItemSize:(ACCodeFileKeyboardAccessoryItemSize)size;
-- (CGFloat)itemWidthForItemSize:(ACCodeFileKeyboardAccessoryItemSize)size;
+/// Width used for item of given position. If an item declare a width greater than 0, that with will be used instead.
+- (void)setItemDefaultWidth:(CGFloat)width forAccessoryPosition:(ACCodeFileKeyboardAccessoryPosition)position;
+- (CGFloat)itemDefaultWidthForAccessoryPosition:(ACCodeFileKeyboardAccessoryPosition)position;
 
 /// Set the image used for button items.
 @property (nonatomic, strong) UIImage *itemBackgroundImage;
 
-/// Returns the size of the items with the current accessory configuration.
-- (ACCodeFileKeyboardAccessoryItemSize)currentItemSize;
+/// Returns the current accessory configuration.
+- (ACCodeFileKeyboardAccessoryPosition)currentAccessoryPosition;
 
 #pragma mark - Managing Accessory Appearance
 
@@ -62,5 +61,13 @@ typedef NSInteger ACCodeFileKeyboardAccessoryItemSize;
 
 /// Inset to apply to the split background views.
 @property (nonatomic) UIEdgeInsets splitBackgroundViewInsets;
+
+@end
+
+
+@interface ACCodeFileKeyboardAccessoryItem : UIBarButtonItem
+
+- (void)setWidth:(CGFloat)width forAccessoryPosition:(ACCodeFileKeyboardAccessoryPosition)position;
+- (CGFloat)widthForAccessoryPosition:(ACCodeFileKeyboardAccessoryPosition)position;
 
 @end

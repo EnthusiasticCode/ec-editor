@@ -19,6 +19,8 @@
 - (void)_keyboardWillChangeFrame:(NSNotification *)notification;
 - (void)_keyboardDidChangeFrame:(NSNotification *)notification;
 
+- (void)_itemAction:(id)sender;
+
 @end
 
 
@@ -43,36 +45,46 @@
         _keyboardAccessoryView.splitRightBackgroundView = splitBackgroundView;
         _keyboardAccessoryView.splitBackgroundViewInsets = UIEdgeInsetsMake(-10, 0, 0, 0);
         
-        //
+        // Layou
         _keyboardAccessoryView.itemBackgroundImage = [[UIImage imageNamed:@"accessoryView_itemBackground"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 12, 0, 12)];
         
-        [_keyboardAccessoryView setItemWidth:59 + 4 forItemSize:ACCodeFileKeyboardAccessoryItemSizeNormal];
-        [_keyboardAccessoryView setItemWidth:81 + 4 forItemSize:ACCodeFileKeyboardAccessoryItemSizeBig];
-        [_keyboardAccessoryView setItemWidth:36 + 4 forItemSize:ACCodeFileKeyboardAccessoryItemSizeSmall];
-        [_keyboardAccessoryView setItemWidth:44 + 4 forItemSize:ACCodeFileKeyboardAccessoryItemSizeSmallImportant];
+        [_keyboardAccessoryView setItemDefaultWidth:59 + 4 forAccessoryPosition:ACCodeFileKeyboardAccessoryPositionPortrait];
+        [_keyboardAccessoryView setItemDefaultWidth:81 + 4 forAccessoryPosition:ACCodeFileKeyboardAccessoryPositionLandscape];
+        [_keyboardAccessoryView setItemDefaultWidth:36 + 4 forAccessoryPosition:ACCodeFileKeyboardAccessoryPositionFloating]; // 44
         
-        [_keyboardAccessoryView setContentInsets:UIEdgeInsetsMake(3, 0, 2, 0) forItemSize:ACCodeFileKeyboardAccessoryItemSizeNormal];
-        [_keyboardAccessoryView setItemInsets:UIEdgeInsetsMake(0, 3, 0, 3) forItemSize:ACCodeFileKeyboardAccessoryItemSizeNormal];
+        [_keyboardAccessoryView setContentInsets:UIEdgeInsetsMake(3, 0, 2, 0) forAccessoryPosition:ACCodeFileKeyboardAccessoryPositionPortrait];
+        [_keyboardAccessoryView setItemInsets:UIEdgeInsetsMake(0, 3, 0, 3) forAccessoryPosition:ACCodeFileKeyboardAccessoryPositionPortrait];
         
-        [_keyboardAccessoryView setContentInsets:UIEdgeInsetsMake(3, 3, 2, 3) forItemSize:ACCodeFileKeyboardAccessoryItemSizeBig];
-        [_keyboardAccessoryView setItemInsets:UIEdgeInsetsMake(0, 0, 0, 8) forItemSize:ACCodeFileKeyboardAccessoryItemSizeBig];
+        [_keyboardAccessoryView setContentInsets:UIEdgeInsetsMake(3, 4, 2, 3) forAccessoryPosition:ACCodeFileKeyboardAccessoryPositionLandscape];
+        [_keyboardAccessoryView setItemInsets:UIEdgeInsetsMake(0, 0, 0, 8) forAccessoryPosition:ACCodeFileKeyboardAccessoryPositionLandscape];
         
-        [_keyboardAccessoryView setContentInsets:UIEdgeInsetsMake(3, 10, 2, 7) forItemSize:ACCodeFileKeyboardAccessoryItemSizeSmall];
-        [_keyboardAccessoryView setItemInsets:UIEdgeInsetsMake(0, 0, 0, 3) forItemSize:ACCodeFileKeyboardAccessoryItemSizeSmall];
+        [_keyboardAccessoryView setContentInsets:UIEdgeInsetsMake(3, 10, 2, 7) forAccessoryPosition:ACCodeFileKeyboardAccessoryPositionFloating];
+        [_keyboardAccessoryView setItemInsets:UIEdgeInsetsMake(0, 0, 0, 3) forAccessoryPosition:ACCodeFileKeyboardAccessoryPositionFloating];
         
-        // Tests
-        _keyboardAccessoryView.items = [NSArray arrayWithObjects:
-                                        [[UIBarButtonItem alloc] initWithTitle:@"one" style:UIBarButtonItemStylePlain target:nil action:NULL],
-                                        [[UIBarButtonItem alloc] initWithTitle:@"one" style:UIBarButtonItemStylePlain target:nil action:NULL],
-                                        [[UIBarButtonItem alloc] initWithTitle:@"one" style:UIBarButtonItemStylePlain target:nil action:NULL],
-                                        [[UIBarButtonItem alloc] initWithTitle:@"one" style:UIBarButtonItemStylePlain target:nil action:NULL],
-                                        [[UIBarButtonItem alloc] initWithTitle:@"one" style:UIBarButtonItemStylePlain target:nil action:NULL],
-                                        [[UIBarButtonItem alloc] initWithTitle:@"one" style:UIBarButtonItemStylePlain target:nil action:NULL],
-                                        [[UIBarButtonItem alloc] initWithTitle:@"one" style:UIBarButtonItemStylePlain target:nil action:NULL],
-                                        [[UIBarButtonItem alloc] initWithTitle:@"one" style:UIBarButtonItemStylePlain target:nil action:NULL],
-                                        [[UIBarButtonItem alloc] initWithTitle:@"one" style:UIBarButtonItemStylePlain target:nil action:NULL],
-                                        [[UIBarButtonItem alloc] initWithTitle:@"one" style:UIBarButtonItemStylePlain target:nil action:NULL],
-                                        [[UIBarButtonItem alloc] initWithTitle:@"one" style:UIBarButtonItemStylePlain target:nil action:NULL], nil];
+        // Items
+        NSMutableArray *items = [NSMutableArray arrayWithCapacity:11];
+        ACCodeFileKeyboardAccessoryItem *item;
+        
+        for (NSInteger i = 0; i < 11; ++i)
+        {
+            item = [[ACCodeFileKeyboardAccessoryItem alloc] initWithTitle:[NSString stringWithFormat:@"%d", i] style:UIBarButtonItemStylePlain target:self action:@selector(_itemAction:)];
+            item.tag = i;
+            [items addObject:item];
+            
+            if (i == 0)
+                [item setWidth:44 + 4 forAccessoryPosition:ACCodeFileKeyboardAccessoryPositionFloating];
+            
+            if (i % 2)
+                [item setWidth:60 + 4 forAccessoryPosition:ACCodeFileKeyboardAccessoryPositionPortrait];
+                
+            if (i == 10)
+            {
+                [item setWidth:63 + 4 forAccessoryPosition:ACCodeFileKeyboardAccessoryPositionPortrait];
+                [item setWidth:82 + 4 forAccessoryPosition:ACCodeFileKeyboardAccessoryPositionLandscape];
+                [item setWidth:44 + 4 forAccessoryPosition:ACCodeFileKeyboardAccessoryPositionFloating];
+            }
+        }
+        _keyboardAccessoryView.items = items;
     }
     return _keyboardAccessoryView;
 }
