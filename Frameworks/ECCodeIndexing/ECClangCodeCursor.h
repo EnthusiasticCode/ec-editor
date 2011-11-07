@@ -19,4 +19,8 @@
 
 - (ECClangCodeCursor *)lexicalParent;
 
+- (NSString *)language;
+
+- (NSString *)scopeIdentifier;
+
 @end

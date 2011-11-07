@@ -15,7 +15,7 @@
     NSRange _range;
     NSString *_spelling;
     CXTokenKind _kind;
-    id<ECCodeCursor>_cursor;
+    ECClangCodeCursor *_cursor;
 }
 @end
 
@@ -63,13 +63,13 @@
     switch ([self kind])
     {
         case CXToken_Comment:
-            return @"comment";
+            return _cursor ? [@"comment" stringByAppendingString:[@"." stringByAppendingString:[_cursor language]]] : @"comment";
         case CXToken_Identifier:
-            return @"variable";
+            return _cursor ? [_cursor scopeIdentifier] : @"variable";
         case CXToken_Keyword:
             return @"keyword";
         case CXToken_Literal:
-            return @"string";
+            return _cursor ? [_cursor scopeIdentifier] : @"constant";
         case CXToken_Punctuation:
             return @"punctuation";
     }
@@ -77,7 +77,17 @@
 
 - (NSArray *)scopeIdentifiersStack
 {
-    return [NSArray arrayWithObject:[self scopeIdentifier]];
+    NSMutableArray *scopeIdentifiersStack = [NSMutableArray arrayWithObject:[self scopeIdentifier]];
+    if (_cursor)
+    {
+        ECClangCodeCursor *cursor = [_cursor lexicalParent];
+        while ([cursor lexicalParent])
+        {
+            [scopeIdentifiersStack insertObject:[cursor scopeIdentifier] atIndex:0];
+            cursor = [cursor lexicalParent];
+        }
+    }
+    return scopeIdentifiersStack;
 }
 
 - (id<ECCodeCursor>)cursor
