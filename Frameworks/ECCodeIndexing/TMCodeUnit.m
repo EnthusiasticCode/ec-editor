@@ -27,7 +27,6 @@ static NSString * const _tokenAttributeName = @"TMTokenAttributeName";
     NSArray *__topLevelScopes;
 }
 - (TMSyntax *)_syntax;
-- (NSString *)_contentString;
 - (NSArray *)_topLevelScopes;
 - (TMScope *)_scopeContainingRange:(NSRange)range;
 - (NSArray *)_createScopesInRange:(NSRange)range withMatchPattern:(TMPattern *)pattern remainingRange:(NSRange *)remainingRange;
@@ -64,49 +63,34 @@ static NSString * const _tokenAttributeName = @"TMTokenAttributeName";
     return __syntax;
 }
 
-- (NSArray *)tokens
-{
-    return [self annotatedTokens];
-}
-
 - (NSArray *)tokensInRange:(NSRange)range
 {
     return [self annotatedTokensInRange:range];
 }
 
-- (NSArray *)annotatedTokens
-{
-    return [self annotatedTokensInRange:NSMakeRange(0, [[self _contentString] length])];
-}
-
 - (NSArray *)annotatedTokensInRange:(NSRange)range
 {
     _tokens = [NSMutableArray array];
-    [[self _contentString] enumerateLinguisticTagsInRange:range scheme:NSLinguisticTagSchemeTokenType options:NSLinguisticTaggerOmitWhitespace orthography:[NSOrthography orthographyWithDominantScript:@"Zyyy" languageMap:nil] usingBlock:^(NSString *tag, NSRange tokenRange, NSRange sentenceRange, BOOL *stop) {
-        [_tokens addObject:[[TMToken alloc] initWithContainingString:[self _contentString] range:tokenRange scope:[self _scopeContainingRange:tokenRange]]];
+    [[[self index] contentsForFile:self.fileURL] enumerateLinguisticTagsInRange:range scheme:NSLinguisticTagSchemeTokenType options:NSLinguisticTaggerOmitWhitespace orthography:[NSOrthography orthographyWithDominantScript:@"Zyyy" languageMap:nil] usingBlock:^(NSString *tag, NSRange tokenRange, NSRange sentenceRange, BOOL *stop) {
+        [_tokens addObject:[[TMToken alloc] initWithContainingString:[[self index] contentsForFile:self.fileURL] range:tokenRange scope:[self _scopeContainingRange:tokenRange]]];
     }];
     return _tokens;
 }
 
 #pragma mark - Private methods
 
-- (NSString *)_contentString
-{
-    return [self.index contentsForFile:self.fileURL];
-}
-
 - (NSArray *)_topLevelScopes
 {
     if (!__topLevelScopes)
     {
-        __topLevelScopes = [self _createScopesInRange:NSMakeRange(0, [[self _contentString] length]) withPatterns:[[self _syntax] patterns] stopOnRegexp:nil withName:nil captures:nil remainingRange:NULL];
+        __topLevelScopes = [self _createScopesInRange:NSMakeRange(0, [[[self index] contentsForFile:self.fileURL] length]) withPatterns:[[self _syntax] patterns] stopOnRegexp:nil withName:nil captures:nil remainingRange:NULL];
     }
     return __topLevelScopes;
 }
 
 - (TMScope *)_scopeContainingRange:(NSRange)range
 {
-    ECASSERT(NSMaxRange(range) <= [[self _contentString] length]);
+    ECASSERT(NSMaxRange(range) <= [[[self index] contentsForFile:self.fileURL] length]);
     NSArray *currentScopes = [self _topLevelScopes];
     TMScope *containingScope = nil;
     BOOL childScopeContainsRange = NO;
@@ -159,7 +143,7 @@ static NSString * const _tokenAttributeName = @"TMTokenAttributeName";
     if (![pattern name])
         return childScopes;
     TMScope *scope = [[TMScope alloc] init];
-    scope.containingString = [self _contentString];
+    scope.containingString = [[self index] contentsForFile:self.fileURL];
     ECASSERT([[pattern name] isKindOfClass:[NSString class]]);
     scope.identifier = [pattern name];
     scope.range = NSMakeRange(range.location, localRemainingRange.location - range.location);
@@ -230,7 +214,7 @@ static NSString * const _tokenAttributeName = @"TMTokenAttributeName";
     if (!name)
         return captureScopes;
     TMScope *scope = [[TMScope alloc] init];
-    scope.containingString = [self _contentString];
+    scope.containingString = [[self index] contentsForFile:self.fileURL];
     ECASSERT([name isKindOfClass:[NSString class]]);
     scope.identifier = name;
     scope.range = [result bodyRange];
@@ -256,7 +240,7 @@ static NSString * const _tokenAttributeName = @"TMTokenAttributeName";
         if (!currentCaptureName)
             continue;
         TMScope *scope = [[TMScope alloc] init];
-        scope.containingString = [self _contentString];
+        scope.containingString = [[self index] contentsForFile:self.fileURL];
         ECASSERT([currentCaptureName isKindOfClass:[NSString class]]);
         scope.identifier = currentCaptureName;
         scope.range = currentMatchRange;
@@ -272,7 +256,7 @@ static NSString * const _tokenAttributeName = @"TMTokenAttributeName";
         return result;
     if ((id)result == [NSNull null])
         return nil;
-    result = [regexp search:[self _contentString] range:range];
+    result = [regexp search:[[self index] contentsForFile:self.fileURL] range:range];
     if (result)
         [_firstMatches setObject:result forKey:regexp];
     else

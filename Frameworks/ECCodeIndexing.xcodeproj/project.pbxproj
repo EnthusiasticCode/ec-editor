@@ -155,6 +155,12 @@
 		B7A3F019144D8CC900EC9623 /* TMSyntax.m in Sources */ = {isa = PBXBuildFile; fileRef = B7A3F017144D8CC900EC9623 /* TMSyntax.m */; };
 		B7AA73F11467081A00D2B5F4 /* ECClangCodeUnit.h in Headers */ = {isa = PBXBuildFile; fileRef = B7AA73EF1467081A00D2B5F4 /* ECClangCodeUnit.h */; };
 		B7AA73F21467081A00D2B5F4 /* ECClangCodeUnit.m in Sources */ = {isa = PBXBuildFile; fileRef = B7AA73F01467081A00D2B5F4 /* ECClangCodeUnit.m */; };
+		B7AA73F714673EF700D2B5F4 /* ECClangCodeToken.h in Headers */ = {isa = PBXBuildFile; fileRef = B7AA73F514673EF700D2B5F4 /* ECClangCodeToken.h */; };
+		B7AA73F814673EF700D2B5F4 /* ECClangCodeToken.m in Sources */ = {isa = PBXBuildFile; fileRef = B7AA73F614673EF700D2B5F4 /* ECClangCodeToken.m */; };
+		B7AA73FB14673F0700D2B5F4 /* ECClangCodeCursor.h in Headers */ = {isa = PBXBuildFile; fileRef = B7AA73F914673F0600D2B5F4 /* ECClangCodeCursor.h */; };
+		B7AA73FC14673F0700D2B5F4 /* ECClangCodeCursor.m in Sources */ = {isa = PBXBuildFile; fileRef = B7AA73FA14673F0600D2B5F4 /* ECClangCodeCursor.m */; };
+		B7AA73FF146747B800D2B5F4 /* ClangHelperFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = B7AA73FD146747B700D2B5F4 /* ClangHelperFunctions.h */; };
+		B7AA7400146747B800D2B5F4 /* ClangHelperFunctions.m in Sources */ = {isa = PBXBuildFile; fileRef = B7AA73FE146747B700D2B5F4 /* ClangHelperFunctions.m */; };
 		B7D445061466FBCA0010E4C2 /* ECClangCodeIndex.h in Headers */ = {isa = PBXBuildFile; fileRef = B7D445041466FBCA0010E4C2 /* ECClangCodeIndex.h */; };
 		B7D445071466FBCA0010E4C2 /* ECClangCodeIndex.m in Sources */ = {isa = PBXBuildFile; fileRef = B7D445051466FBCA0010E4C2 /* ECClangCodeIndex.m */; };
 		B7D80665144B830E00EEC819 /* TMBundle.h in Headers */ = {isa = PBXBuildFile; fileRef = B7D80663144B830E00EEC819 /* TMBundle.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -431,6 +437,12 @@
 		B7A3F017144D8CC900EC9623 /* TMSyntax.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TMSyntax.m; sourceTree = "<group>"; };
 		B7AA73EF1467081A00D2B5F4 /* ECClangCodeUnit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECClangCodeUnit.h; sourceTree = "<group>"; };
 		B7AA73F01467081A00D2B5F4 /* ECClangCodeUnit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECClangCodeUnit.m; sourceTree = "<group>"; };
+		B7AA73F514673EF700D2B5F4 /* ECClangCodeToken.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECClangCodeToken.h; sourceTree = "<group>"; };
+		B7AA73F614673EF700D2B5F4 /* ECClangCodeToken.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECClangCodeToken.m; sourceTree = "<group>"; };
+		B7AA73F914673F0600D2B5F4 /* ECClangCodeCursor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECClangCodeCursor.h; sourceTree = "<group>"; };
+		B7AA73FA14673F0600D2B5F4 /* ECClangCodeCursor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECClangCodeCursor.m; sourceTree = "<group>"; };
+		B7AA73FD146747B700D2B5F4 /* ClangHelperFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClangHelperFunctions.h; sourceTree = "<group>"; };
+		B7AA73FE146747B700D2B5F4 /* ClangHelperFunctions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ClangHelperFunctions.m; sourceTree = "<group>"; };
 		B7D445041466FBCA0010E4C2 /* ECClangCodeIndex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECClangCodeIndex.h; sourceTree = "<group>"; };
 		B7D445051466FBCA0010E4C2 /* ECClangCodeIndex.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECClangCodeIndex.m; sourceTree = "<group>"; };
 		B7D80663144B830E00EEC819 /* TMBundle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TMBundle.h; sourceTree = "<group>"; };
@@ -877,6 +889,12 @@
 				B7D445051466FBCA0010E4C2 /* ECClangCodeIndex.m */,
 				B7AA73EF1467081A00D2B5F4 /* ECClangCodeUnit.h */,
 				B7AA73F01467081A00D2B5F4 /* ECClangCodeUnit.m */,
+				B7AA73F514673EF700D2B5F4 /* ECClangCodeToken.h */,
+				B7AA73F614673EF700D2B5F4 /* ECClangCodeToken.m */,
+				B7AA73F914673F0600D2B5F4 /* ECClangCodeCursor.h */,
+				B7AA73FA14673F0600D2B5F4 /* ECClangCodeCursor.m */,
+				B7AA73FD146747B700D2B5F4 /* ClangHelperFunctions.h */,
+				B7AA73FE146747B700D2B5F4 /* ClangHelperFunctions.m */,
 			);
 			name = libclang;
 			sourceTree = "<group>";
@@ -914,6 +932,9 @@
 				B72658EC1465C0B500E4C9F1 /* TMBundle+Internal.h in Headers */,
 				B7D445061466FBCA0010E4C2 /* ECClangCodeIndex.h in Headers */,
 				B7AA73F11467081A00D2B5F4 /* ECClangCodeUnit.h in Headers */,
+				B7AA73F714673EF700D2B5F4 /* ECClangCodeToken.h in Headers */,
+				B7AA73FB14673F0700D2B5F4 /* ECClangCodeCursor.h in Headers */,
+				B7AA73FF146747B800D2B5F4 /* ClangHelperFunctions.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1065,6 +1086,9 @@
 				B72658E51465B77500E4C9F1 /* TMPattern.m in Sources */,
 				B7D445071466FBCA0010E4C2 /* ECClangCodeIndex.m in Sources */,
 				B7AA73F21467081A00D2B5F4 /* ECClangCodeUnit.m in Sources */,
+				B7AA73F814673EF700D2B5F4 /* ECClangCodeToken.m in Sources */,
+				B7AA73FC14673F0700D2B5F4 /* ECClangCodeCursor.m in Sources */,
+				B7AA7400146747B800D2B5F4 /* ClangHelperFunctions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

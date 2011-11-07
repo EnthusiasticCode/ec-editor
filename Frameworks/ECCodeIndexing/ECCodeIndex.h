@@ -34,9 +34,6 @@
 
 @protocol ECCodeCursor <NSObject>
 
-- (NSString *)scopeIdentifier;
-- (NSArray *)scopeIdentifiersStack;
-
 @end
 
 @protocol ECCodeToken <NSObject>
@@ -44,6 +41,8 @@
 - (NSRange)range;
 - (NSString *)spelling;
 - (CXTokenKind)kind;
+- (NSString *)scopeIdentifier;
+- (NSArray *)scopeIdentifiersStack;
 - (id<ECCodeCursor>)cursor;
 
 @end

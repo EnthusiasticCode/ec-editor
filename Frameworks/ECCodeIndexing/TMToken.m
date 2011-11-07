@@ -56,13 +56,6 @@
         return CXToken_Identifier;
 }
 
-- (id<ECCodeCursor>)cursor
-{
-    return self;
-}
-
-#pragma mark ECCodeCursor
-
 - (NSString *)scopeIdentifier
 {
     return _scope.identifier;
@@ -71,6 +64,11 @@
 - (NSArray *)scopeIdentifiersStack
 {
     return [_scope identifiersStack];
+}
+
+- (id<ECCodeCursor>)cursor
+{
+    return nil;
 }
 
 @end

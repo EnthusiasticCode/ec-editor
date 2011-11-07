@@ -7,6 +7,7 @@
 //
 
 #import "ECCodeUnit.h"
+#import "ECCodeIndex+Subclass.h"
 
 @interface ECCodeUnit ()
 {
@@ -57,7 +58,7 @@
 
 - (NSArray *)tokens
 {
-    return nil;
+    return [self tokensInRange:NSMakeRange(0, [[[self index] contentsForFile:self.fileURL] length])];
 }
 
 - (NSArray *)tokensInRange:(NSRange)range
@@ -67,7 +68,7 @@
 
 - (NSArray *)annotatedTokens
 {
-    return nil;
+    return [self annotatedTokensInRange:NSMakeRange(0, [[[self index] contentsForFile:self.fileURL] length])];
 }
 
 - (NSArray *)annotatedTokensInRange:(NSRange)range

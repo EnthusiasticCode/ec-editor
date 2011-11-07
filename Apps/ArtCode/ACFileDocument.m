@@ -216,7 +216,7 @@
     for (id<ECCodeToken>token in [_document.codeUnit annotatedTokens])
     {
         CHECK_CANCELED_RETURN;
-        [string addAttributes:[_document.theme attributesForScopeStack:[[token cursor] scopeIdentifiersStack]] range:[token range]];
+        [string addAttributes:[_document.theme attributesForScopeStack:[token scopeIdentifiersStack]] range:[token range]];
         CHECK_CANCELED_RETURN;
     }
     
