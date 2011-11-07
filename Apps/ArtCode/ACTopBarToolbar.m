@@ -96,8 +96,8 @@ static const void *editItemContext;
     
     [self willChangeValueForKey:@"toolItems"];
     
-    NSArray *oldItems = toolItems;
-    toolItems = items;
+    NSArray *oldItems = [toolItems copy];
+    toolItems = [items copy];
     for (UIBarButtonItem *item in toolItems) {
         if (!item.customView)
             [self _setupButton:[ACTopBarToolButton new] withBarButtonItem:item];
@@ -108,12 +108,11 @@ static const void *editItemContext;
     
     if (animated)
     {
-        [self bringSubviewToFront:self.titleControl];
-        [UIView animateWithDuration:0.2 animations:^{
+        [UIView animateWithDuration:0.25 animations:^{
             // Layout title control
             [self layoutSubviews];
         } completion:^(BOOL finished) {
-            [UIView animateWithDuration:0.10 animations:^{
+            [UIView animateWithDuration:0.25 animations:^{
                 // Fade-out old items
                 for (UIBarButtonItem *item in oldItems) {
                     item.customView.alpha = 0;

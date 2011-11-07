@@ -860,7 +860,7 @@
 				CDF4C013144F2C8A00475F6B /* ACSingleTabController.h */,
 				CDF4C014144F2C8A00475F6B /* ACSingleTabController.m */,
 				CDD40AFF13E19FC4008AC36B /* Popovers Content Controllers */,
-				CD7D2B4513C0D53A00B889EE /* Views and Segues */,
+				CD7D2B4513C0D53A00B889EE /* Top Bar Controller */,
 			);
 			name = Navigation;
 			sourceTree = "<group>";
@@ -906,7 +906,7 @@
 			name = "Views and Segues";
 			sourceTree = "<group>";
 		};
-		CD7D2B4513C0D53A00B889EE /* Views and Segues */ = {
+		CD7D2B4513C0D53A00B889EE /* Top Bar Controller */ = {
 			isa = PBXGroup;
 			children = (
 				CDF4C00D144F2C7900475F6B /* ACTopBarTitleControl.h */,
@@ -914,7 +914,7 @@
 				CDF4C00F144F2C7900475F6B /* ACTopBarToolbar.h */,
 				CDF4C010144F2C7900475F6B /* ACTopBarToolbar.m */,
 			);
-			name = "Views and Segues";
+			name = "Top Bar Controller";
 			sourceTree = "<group>";
 		};
 		CD8108D613E334F7000E1941 /* Views and Controls */ = {
