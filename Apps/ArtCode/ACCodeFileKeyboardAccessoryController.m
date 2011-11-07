@@ -36,6 +36,7 @@
     if (!_keyboardAccessoryView)
     {
         _keyboardAccessoryView = [ACCodeFileKeyboardAccessoryView new];
+        _keyboardAccessoryView.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
         _keyboardAccessoryView.dockedBackgroundView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"accessoryView_backgroundDocked"]];
         UIImageView *splitBackgroundView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"accessoryView_backgroundSplitLeftTop"]];
         splitBackgroundView.contentMode = UIViewContentModeTopLeft;
