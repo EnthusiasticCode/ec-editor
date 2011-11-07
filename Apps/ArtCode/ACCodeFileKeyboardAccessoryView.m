@@ -7,6 +7,7 @@
 //
 
 #import "ACCodeFileKeyboardAccessoryView.h"
+#import <objc/message.h>
 
 #define SPLIT_KEYBOARD_LEFT_SEGMENT_WIDTH 256
 #define SPLIT_KEYBOARD_RIGHT_SEGMENT_WIDTH 281
@@ -73,7 +74,6 @@
         [(UIButton *)item.customView setBackgroundImage:itemBackgroundImage forState:UIControlStateNormal];
     }
     [self didChangeValueForKey:@"itemBackgroundImage"];
-
 }
 
 #pragma mark - View's Methods
@@ -158,31 +158,40 @@
 
 #pragma mark - Items Methods
 
-- (void)setItems:(NSArray *)value
+- (void)_itemButtonAction:(UIButton *)sender
 {
-    [self setItems:value animated:NO];
+    NSUInteger tag = sender.tag;
+    if (tag > 0 && tag < [self.items count])
+    {
+        UIBarButtonItem *item = [self.items objectAtIndex:tag];
+        if (item.target && item.action)
+            objc_msgSend(item.target, item.action, item);
+    }
 }
 
-- (void)setItems:(NSArray *)value animated:(BOOL)animated
+- (void)setItems:(NSArray *)value
 {
     if (items == value)
         return;
     [self willChangeValueForKey:@"items"];
-    // TODO animate
     for (UIBarButtonItem *item in items)
     {
         [item.customView removeFromSuperview];
     }
     items = value;
-    for (UIBarButtonItem *item in items)
-    {
+    [items enumerateObjectsUsingBlock:^(UIBarButtonItem *item, NSUInteger itemIndex, BOOL *stop) {
         UIButton *itemButton = [UIButton new];
+        itemButton.tag = itemIndex;
+        [itemButton addTarget:self action:@selector(_itemButtonAction:) forControlEvents:UIControlEventTouchUpInside];
         [itemButton setBackgroundImage:self.itemBackgroundImage forState:UIControlStateNormal];
-        [itemButton setTitle:item.title forState:UIControlStateNormal];
+        if (item.title)
+            [itemButton setTitle:item.title forState:UIControlStateNormal];
+        if (item.image) // TODO listen to image change
+            [itemButton setImage:item.image forState:UIControlStateNormal];
         // TODO initialize item
         item.customView = itemButton;
-        [self addSubview:item.customView];
-    }
+        [self addSubview:item.customView]; 
+    }];
     [self didChangeValueForKey:@"items"];
 }
 

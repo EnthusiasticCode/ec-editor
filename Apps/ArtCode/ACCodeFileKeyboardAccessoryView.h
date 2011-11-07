@@ -22,7 +22,6 @@ typedef NSInteger ACCodeFileKeyboardAccessoryPosition;
 
 /// Array of UIBarButtonItem presented on the accessory view from left to right.
 @property (nonatomic, strong) NSArray *items;
-- (void)setItems:(NSArray *)items animated:(BOOL)animated;
 
 /// Insets applyed to the content view.
 - (void)setContentInsets:(UIEdgeInsets)insets forAccessoryPosition:(ACCodeFileKeyboardAccessoryPosition)position;
