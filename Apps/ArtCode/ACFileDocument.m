@@ -204,7 +204,6 @@
 {
     CHECK_CANCELED_RETURN;
     
-    //    NSMutableAttributedString *string = [_document.contentString mutableCopy];
     NSMutableAttributedString *string = [[NSMutableAttributedString alloc] initWithString:_document.contentString.string attributes:_document.defaultTextAttributes];
     if (![string length])
         return;
@@ -216,6 +215,7 @@
     for (id<ECCodeToken>token in [_document.codeUnit annotatedTokens])
     {
         CHECK_CANCELED_RETURN;
+//        NSLog(@"%@ : %@", NSStringFromRange([token range]), [token scopeIdentifier]);
         [string addAttributes:[_document.theme attributesForScopeStack:[token scopeIdentifiersStack]] range:[token range]];
         CHECK_CANCELED_RETURN;
     }

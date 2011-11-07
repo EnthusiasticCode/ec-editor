@@ -57,9 +57,13 @@
     if (!numClangTokens)
         return nil;
     NSMutableArray *tokens = [NSMutableArray arrayWithCapacity:numClangTokens];
-    if (NO)
+    if (annotated)
     {
-        // TODO: implement cursors etc etc
+        CXCursor *clangCursors = malloc(numClangTokens * sizeof(CXCursor));
+        clang_annotateTokens(_clangUnit, clangTokens, numClangTokens, clangCursors);
+        for (unsigned int tokenIndex = 0; tokenIndex < numClangTokens; ++tokenIndex)
+            [tokens addObject:[[ECClangCodeToken alloc] initWithClangToken:clangTokens[tokenIndex] withClangTranslationUnit:_clangUnit clangCursor:clangCursors[tokenIndex]]];
+        free(clangCursors);
     }
     else
         for (unsigned int tokenIndex = 0; tokenIndex < numClangTokens; ++tokenIndex)

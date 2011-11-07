@@ -60,16 +60,18 @@
 
 - (NSString *)scopeIdentifier
 {
+    if (_cursor)
+        return [_cursor scopeIdentifier];
     switch ([self kind])
     {
         case CXToken_Comment:
-            return _cursor ? [@"comment" stringByAppendingString:[@"." stringByAppendingString:[_cursor language]]] : @"comment";
+            return @"comment";
         case CXToken_Identifier:
-            return _cursor ? [_cursor scopeIdentifier] : @"variable";
+            return @"variable";
         case CXToken_Keyword:
             return @"keyword";
         case CXToken_Literal:
-            return _cursor ? [_cursor scopeIdentifier] : @"constant";
+            return @"constant";
         case CXToken_Punctuation:
             return @"punctuation";
     }
