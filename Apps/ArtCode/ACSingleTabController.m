@@ -119,7 +119,7 @@ static const void *contentViewControllerContext;
         {
             UIViewController *oldViewController = _contentViewController;
             contentViewController.view.alpha = 0;
-            contentViewController.view.frame = oldViewController.view.frame;
+            contentViewController.view.frame = CGRectMake(0, self.toolbarHeight, self.view.frame.size.width, self.view.frame.size.height - self.toolbarHeight);
             [self.view addSubview:contentViewController.view];
             [UIView animateWithDuration:0.2 animations:^{
                 contentViewController.view.alpha = 1;
