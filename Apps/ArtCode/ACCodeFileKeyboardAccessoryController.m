@@ -18,6 +18,7 @@
 
 - (void)_keyboardWillChangeFrame:(NSNotification *)notification;
 - (void)_keyboardDidChangeFrame:(NSNotification *)notification;
+- (void)_keyboardWillHide:(NSNotification *)notification;
 
 - (void)_itemAction:(id)sender;
 
@@ -46,7 +47,7 @@
         _keyboardAccessoryView.splitRightBackgroundView = splitBackgroundView;
         _keyboardAccessoryView.splitBackgroundViewInsets = UIEdgeInsetsMake(-10, 0, 0, 0);
         
-        // Layou
+        // Layout
         _keyboardAccessoryView.itemBackgroundImage = [[UIImage imageNamed:@"accessoryView_itemBackground"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 12, 0, 12)];
         
         [_keyboardAccessoryView setItemDefaultWidth:59 + 4 forAccessoryPosition:ACCodeFileKeyboardAccessoryPositionPortrait];
@@ -111,6 +112,7 @@
     NSNotificationCenter *defaultCenter = [NSNotificationCenter defaultCenter];
     [defaultCenter addObserver:self selector:@selector(_keyboardWillChangeFrame:) name:UIKeyboardWillChangeFrameNotification object:nil];
     [defaultCenter addObserver:self selector:@selector(_keyboardDidChangeFrame:) name:UIKeyboardDidChangeFrameNotification object:nil];
+    [defaultCenter addObserver:self selector:@selector(_keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
     return self;
 }
 
@@ -147,13 +149,20 @@
     _keyboardAccessoryView.split = (keyboardEndFrame.size.height < KEYBOARD_DOCKED_MINIMUM_HEIGHT);
     _keyboardAccessoryView.flipped = (keyboardEndFrame.origin.y < ACCESSORY_FLIP_Y_POSITION);
     
-    if (_keyboardAccessoryView.split && _keyboardAccessoryView.flipped)
+    if (_keyboardAccessoryView.split)
     {
-        keyboardEndFrame.origin.y += keyboardEndFrame.size.height;
+        if (_keyboardAccessoryView.flipped)
+            keyboardEndFrame.origin.y += keyboardEndFrame.size.height;
+        else
+            keyboardEndFrame.origin.y -= ACCESSORY_HEIGHT;
     }
     else
     {
         keyboardEndFrame.origin.y -= ACCESSORY_HEIGHT;
+        // Modifying the target view to not hide content
+        CGRect frame = self.targetCodeFileController.view.frame;
+        frame.size.height -= ACCESSORY_HEIGHT;
+        self.targetCodeFileController.view.frame = frame;
     }
     keyboardEndFrame.size.height = ACCESSORY_HEIGHT;
     _keyboardAccessoryView.frame = keyboardEndFrame;
@@ -163,6 +172,17 @@
     [UIView animateWithDuration:0.25 animations:^{
         _keyboardAccessoryView.alpha = 1;
     }];
+}
+
+- (void)_keyboardWillHide:(NSNotification *)notification
+{
+    // TODO NIK use self.targetCodeFileController.isEditing insead
+    if (!self.targetCodeFileController.codeView.isFirstResponder)
+        return;
+    
+    CGRect frame = self.targetCodeFileController.view.frame;
+    frame.size.height += ACCESSORY_HEIGHT;
+    self.targetCodeFileController.view.frame = frame;
 }
 
 - (void)_itemAction:(id)sender

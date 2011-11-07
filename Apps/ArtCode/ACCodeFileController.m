@@ -388,20 +388,14 @@
     [UIView animateWithDuration:[[[notification userInfo] objectForKey:UIKeyboardAnimationDurationUserInfoKey] doubleValue] delay:0 options:[[[notification userInfo] objectForKey:UIKeyboardAnimationCurveUserInfoKey] intValue] << 16 animations:^{
         CGRect frame = self.view.frame;
         // TODO remove hard coded accessory height
-        frame.size.height = keyboardEndFrame.origin.y - 45;
+        frame.size.height = keyboardEndFrame.origin.y;
         self.view.frame = frame;
     } completion:nil];
 }
 
 - (void)_keyboardWillHide:(NSNotification *)notification
 {
-    CGRect keyboardEndFrame = [self.view convertRect:[[[notification userInfo] objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue] fromView:nil];
-    
-    [UIView animateWithDuration:[[[notification userInfo] objectForKey:UIKeyboardAnimationDurationUserInfoKey] doubleValue] delay:0 options:[[[notification userInfo] objectForKey:UIKeyboardAnimationCurveUserInfoKey] intValue] << 16 animations:^{
-        CGRect frame = self.view.frame;
-        frame.size.height = keyboardEndFrame.origin.y;
-        self.view.frame = frame;
-    } completion:nil];
+    [self _keyboardWillShow:notification];
 }
 
 @end
