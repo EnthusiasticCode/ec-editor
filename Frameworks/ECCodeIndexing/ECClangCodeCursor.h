@@ -19,8 +19,6 @@
 
 - (ECClangCodeCursor *)semanticParent;
 
-- (NSString *)language;
-
 - (NSString *)scopeIdentifier;
 
 @end

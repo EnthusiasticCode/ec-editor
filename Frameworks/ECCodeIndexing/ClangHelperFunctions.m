@@ -71,7 +71,7 @@ NSString *Clang_CursorKindScopeIdentifier(enum CXCursorKind cursorKind)
         case CXCursor_ObjCPropertyDecl:
             return @"meta.class.property";
         case CXCursor_ObjCIvarDecl:
-            return @"meta.class.instance-variable";
+            return @"variable.other.instance-variable";
         case CXCursor_ObjCInstanceMethodDecl:
             return @"meta.function.instance-method";
         case CXCursor_ObjCClassMethodDecl:
@@ -115,9 +115,9 @@ NSString *Clang_CursorKindScopeIdentifier(enum CXCursorKind cursorKind)
         case CXCursor_TypeAliasDecl:
             return @"meta.alias";
         case CXCursor_ObjCSynthesizeDecl:
-            return @"meta.class.property.synthesize";
+            return @"variable.other.property.synthesize";
         case CXCursor_ObjCDynamicDecl:
-            return @"meta.class.property.dynamic";
+            return @"variable.other.property.dynamic";
         case CXCursor_CXXAccessSpecifier:
             return @"meta.access-specifier";
             // References:
@@ -154,7 +154,7 @@ NSString *Clang_CursorKindScopeIdentifier(enum CXCursorKind cursorKind)
         case CXCursor_DeclRefExpr:
             return @"meta.expression.declaration";
         case CXCursor_MemberRefExpr:
-            return @"variable.other.dot-access";
+            return @"meta.expression.member";
         case CXCursor_CallExpr:
             return @"meta.function-call";
         case CXCursor_ObjCMessageExpr:
@@ -241,61 +241,61 @@ NSString *Clang_CursorKindScopeIdentifier(enum CXCursorKind cursorKind)
         case CXCursor_UnexposedStmt:
             return @"meta.statement.unexposed";
         case CXCursor_LabelStmt:
-            return @"meta.statement.control.label";
+            return @"keyword.control.label";
         case CXCursor_CompoundStmt:
             return @"meta.statement.compound";
         case CXCursor_CaseStmt:
-            return @"meta.statement.control.switch.case";
+            return @"keyword.control.switch.case";
         case CXCursor_DefaultStmt:
-            return @"meta.statement.control.switch.default";
+            return @"keyword.control.switch.default";
         case CXCursor_IfStmt:
-            return @"meta.statement.control.if";
+            return @"keyword.control.if";
         case CXCursor_SwitchStmt:
-            return @"meta.statement.control.switch";
+            return @"keyword.control.switch";
         case CXCursor_WhileStmt:
-            return @"meta.statement.control.while";
+            return @"keyword.control.while";
         case CXCursor_DoStmt:
-            return @"meta.statement.control.do";
+            return @"keyword.control.do";
         case CXCursor_ForStmt:
-            return @"meta.statement.control.for";
+            return @"keyword.control.for";
         case CXCursor_GotoStmt:
-            return @"meta.statement.control.goto";
+            return @"keyword.control.goto";
         case CXCursor_IndirectGotoStmt:
-            return @"meta.statement.control.goto.indirect";
+            return @"keyword.control.goto.indirect";
         case CXCursor_ContinueStmt:
-            return @"meta.statement.control.continue";
+            return @"keyword.control.continue";
         case CXCursor_BreakStmt:
-            return @"meta.statement.control.break";
+            return @"keyword.control.break";
         case CXCursor_ReturnStmt:
-            return @"meta.statement.control.return";
+            return @"keyword.control.return";
         case CXCursor_AsmStmt:
-            return @"meta.statement.asm";
+            return @"keyword.asm";
         case CXCursor_ObjCAtTryStmt:
-            return @"meta.statement.exception.try-catch";
+            return @"keyword.exception.try-catch";
         case CXCursor_ObjCAtCatchStmt:
-            return @"meta.statement.exception.catch";
+            return @"keyword.exception.catch";
         case CXCursor_ObjCAtFinallyStmt:
-            return @"meta.statement.exception.finally";
+            return @"keyword.exception.finally";
         case CXCursor_ObjCAtThrowStmt:
-            return @"meta.statement.exception.throw";
+            return @"keyword.exception.throw";
         case CXCursor_ObjCAtSynchronizedStmt:
-            return @"meta.statement.synchronized";
+            return @"keyword.synchronized";
         case CXCursor_ObjCAutoreleasePoolStmt:
-            return @"meta.statement.autoreleasepool";
+            return @"keyword.autoreleasepool";
         case CXCursor_ObjCForCollectionStmt:
-            return @"meta.statement.control.for.fast-enumeration";
+            return @"keyword.control.for.fast-enumeration";
         case CXCursor_CXXCatchStmt:
-            return @"meta.statement.exception.catch";
+            return @"keyword.exception.catch";
         case CXCursor_CXXTryStmt:
-            return @"meta.statement.exception.try";
+            return @"keyword.exception.try";
         case CXCursor_CXXForRangeStmt:
-            return @"meta.statement.control.for.range";
+            return @"keyword.control.for.range";
         case CXCursor_SEHTryStmt:
-            return @"meta.statement.exception.try";
+            return @"keyword.exception.try";
         case CXCursor_SEHExceptStmt:
-            return @"meta.statement.exception.catch";
+            return @"keyword.exception.catch";
         case CXCursor_SEHFinallyStmt:
-            return @"meta.statement.exception.finally";
+            return @"keyword.exception.finally";
         case CXCursor_NullStmt:
             return @"meta.statement.null-statement";
         case CXCursor_DeclStmt:
@@ -315,6 +315,8 @@ NSString *Clang_CursorKindScopeIdentifier(enum CXCursorKind cursorKind)
             return @"storage.modifier.final";
         case CXCursor_CXXOverrideAttr:
             return @"storage.modifier.override";
+        case CXCursor_AnnotateAttr:
+            return @"storage.modifier.annotate";
             // Preprocessing
         case CXCursor_PreprocessingDirective:
             return @"meta.preprocessor";

@@ -60,6 +60,8 @@
 
 - (NSString *)scopeIdentifier
 {
+    if ([self kind] == CXToken_Comment)
+        return @"comment";
     if (_cursor)
         return [_cursor scopeIdentifier];
     switch ([self kind])
@@ -95,6 +97,30 @@
 - (id<ECCodeCursor>)cursor
 {
     return _cursor;
+}
+
+- (NSString *)description
+{
+    NSString *tokenKind = nil;
+    switch ([self kind])
+    {
+        case CXToken_Comment:
+            tokenKind = @"comment";
+            break;
+        case CXToken_Identifier:
+            tokenKind = @"identifier";
+            break;
+        case CXToken_Keyword:
+            tokenKind = @"keyword";
+            break;
+        case CXToken_Literal:
+            tokenKind = @"literal";
+            break;
+        case CXToken_Punctuation:
+            tokenKind = @"punctuation";
+            break;
+    }
+    return [NSString stringWithFormat:@"ECClangCodeToken %@ at %@ / %@ : %@", tokenKind, NSStringFromRange([self range]), _cursor ? Clang_CursorKindScopeIdentifier([_cursor kind]) : @"<null>" , [self spelling]];
 }
 
 @end
