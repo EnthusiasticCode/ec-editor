@@ -7,11 +7,12 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <ECUIKit/ECCodeView.h>
 #import "ACCodeFileMinimapView.h"
 
-@class ACTab, ECCodeView;
+@class ACTab;
 
-@interface ACCodeFileController : UIViewController <ACCodeFileMinimapViewDelegate, UIScrollViewDelegate, UIActionSheetDelegate>
+@interface ACCodeFileController : UIViewController <ACCodeFileMinimapViewDelegate, ECCodeViewDelegate, UIActionSheetDelegate>
 
 #pragma mark - Controller's location
 

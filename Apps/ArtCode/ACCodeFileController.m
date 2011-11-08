@@ -14,19 +14,16 @@
 #import <ECCodeIndexing/TMTheme.h>
 
 #import <ECUIKit/ECTabController.h>
-#import <ECUIKit/ECCodeView.h>
 
 #import "ACSingleTabController.h"
 #import "ACCodeFileSearchBarController.h"
 
-#import "ACCodeFileKeyboardAccessoryController.h"
+#import "ACCodeFileKeyboardAccessoryView.h"
 
 
 @interface ACCodeFileController () {
     UIActionSheet *_toolsActionSheet;
     ACCodeFileSearchBarController *_searchBarController;
-    
-    ACCodeFileKeyboardAccessoryController *_keyboardAccessoryController;
 }
 
 @property (nonatomic, strong) ACFileDocument *document;
@@ -82,6 +79,8 @@
         redoRecognizer.direction = UISwipeGestureRecognizerDirectionLeft;
         undoRecognizer.numberOfTouchesRequired = 2;
         [_codeView addGestureRecognizer:redoRecognizer];
+        
+        _codeView.keyboardAccessoryView = [[ACCodeFileKeyboardAccessoryView alloc] initWithFrame:CGRectZero];
     }
     return _codeView;
 }
@@ -265,10 +264,6 @@
 {
     self.toolbarItems = [NSArray arrayWithObject:[[UIBarButtonItem alloc] initWithTitle:@"tools" style:UIBarButtonItemStylePlain target:self action:@selector(toolButtonAction:)]];
     
-    _keyboardAccessoryController = [ACCodeFileKeyboardAccessoryController new];
-    _keyboardAccessoryController.targetCodeFileController = self;
-    [self addChildViewController:_keyboardAccessoryController];
-    
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
 }
@@ -284,8 +279,6 @@
     
     _toolsActionSheet = nil;
     _searchBarController = nil;
-    
-    _keyboardAccessoryController = nil;
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -355,6 +348,20 @@
     {
         _minimapView.selectionRectangle = _codeView.bounds;
     }
+}
+
+- (BOOL)codeView:(ECCodeView *)codeView shouldShowKeyboardAccessoryViewInView:(UIView *__autoreleasing *)view withFrame:(CGRect *)frame
+{
+    ECASSERT(view && frame);
+    
+    if ((*frame).origin.y < 200)
+        codeView.keyboardAccessoryView.flipped = YES;
+    
+    UIView *targetView = self.view.window.rootViewController.view;
+    *frame = [targetView convertRect:*frame fromView:*view];
+    *view = targetView;
+    
+    return YES;
 }
 
 #pragma mark - Private Methods
