@@ -80,7 +80,48 @@
         undoRecognizer.numberOfTouchesRequired = 2;
         [_codeView addGestureRecognizer:redoRecognizer];
         
-        _codeView.keyboardAccessoryView = [[ACCodeFileKeyboardAccessoryView alloc] initWithFrame:CGRectZero];
+        // Accessory view
+        ACCodeFileKeyboardAccessoryView *accessoryView = [ACCodeFileKeyboardAccessoryView new];
+        accessoryView.itemBackgroundImage = [[UIImage imageNamed:@"accessoryView_itemBackground"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 12, 0, 12)];
+        
+        [accessoryView setItemDefaultWidth:59 + 4 forAccessoryPosition:ECKeyboardAccessoryPositionPortrait];
+        [accessoryView setItemDefaultWidth:81 + 4 forAccessoryPosition:ECKeyboardAccessoryPositionLandscape];
+        [accessoryView setItemDefaultWidth:36 + 4 forAccessoryPosition:ECKeyboardAccessoryPositionFloating]; // 44
+        
+        [accessoryView setContentInsets:UIEdgeInsetsMake(3, 0, 2, 0) forAccessoryPosition:ECKeyboardAccessoryPositionPortrait];
+        [accessoryView setItemInsets:UIEdgeInsetsMake(0, 3, 0, 3) forAccessoryPosition:ECKeyboardAccessoryPositionPortrait];
+        
+        [accessoryView setContentInsets:UIEdgeInsetsMake(3, 4, 2, 3) forAccessoryPosition:ECKeyboardAccessoryPositionLandscape];
+        [accessoryView setItemInsets:UIEdgeInsetsMake(0, 0, 0, 8) forAccessoryPosition:ECKeyboardAccessoryPositionLandscape];
+        
+        [accessoryView setContentInsets:UIEdgeInsetsMake(3, 10, 2, 7) forAccessoryPosition:ECKeyboardAccessoryPositionFloating];
+        [accessoryView setItemInsets:UIEdgeInsetsMake(0, 0, 0, 3) forAccessoryPosition:ECKeyboardAccessoryPositionFloating];
+        
+        // Items
+        NSMutableArray *items = [NSMutableArray arrayWithCapacity:11];
+        ACCodeFileKeyboardAccessoryItem *item;
+        
+        for (NSInteger i = 0; i < 11; ++i)
+        {
+            item = [[ACCodeFileKeyboardAccessoryItem alloc] initWithTitle:[NSString stringWithFormat:@"%d", i] style:UIBarButtonItemStylePlain target:self action:@selector(_itemAction:)];
+            item.tag = i;
+            [items addObject:item];
+            
+            if (i == 0)
+                [item setWidth:44 + 4 forAccessoryPosition:ECKeyboardAccessoryPositionFloating];
+            
+            if (i % 2)
+                [item setWidth:60 + 4 forAccessoryPosition:ECKeyboardAccessoryPositionPortrait];
+            
+            if (i == 10)
+            {
+                [item setWidth:63 + 4 forAccessoryPosition:ECKeyboardAccessoryPositionPortrait];
+                [item setWidth:82 + 4 forAccessoryPosition:ECKeyboardAccessoryPositionLandscape];
+                [item setWidth:44 + 4 forAccessoryPosition:ECKeyboardAccessoryPositionFloating];
+            }
+        }
+        accessoryView.items = items;
+        _codeView.keyboardAccessoryView = accessoryView;
     }
     return _codeView;
 }
