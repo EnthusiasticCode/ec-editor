@@ -171,6 +171,7 @@ static const void *rendererContext;
 
 static void init(ECCodeViewBase *self)
 {
+    self.contentMode = UIViewContentModeTopLeft;
     self->_contentView = [ECCodeViewBaseContentView new];
     self->_contentView.parentCodeView = self;
     self->_contentView.contentMode = UIViewContentModeRedraw;
