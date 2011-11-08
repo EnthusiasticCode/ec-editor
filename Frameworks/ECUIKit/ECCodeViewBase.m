@@ -105,11 +105,9 @@ static const void *rendererContext;
     if (lineNumbersEnabled)
     {
         __weak ECCodeViewBase *this = self;
-        __block NSUInteger lastLine = NSUIntegerMax;
-        __block CGRect lastLineFrame = CGRectNull;
         [self addPassLayerBlock:^(CGContextRef context, ECTextRendererLine *line, CGRect lineBounds, NSRange stringRange, NSUInteger lineNumber) {
             CGContextSetFillColorWithColor(context, this->lineNumbersColor.CGColor);
-            if (lastLine != lineNumber)
+            if (!line.isTruncation)
             {
                 // Rendering line number
                 // TODO get this more efficient. possibly by creating line numbers with preallocated characters.
@@ -126,8 +124,6 @@ static const void *rendererContext;
                 // Rendering dot
                 CGContextFillEllipseInRect(context, CGRectMake(-lineBounds.origin.x + this->lineNumbersWidth - 3 - 4, (line.height - 3) / 2, 3, 3));
             }
-            lastLineFrame = lineBounds;
-            lastLine = lineNumber;
         } underText:YES forKey:lineNumberPassKey setupTileBlock:^(CGContextRef context, CGRect rect) {
             // Line number background
             [this->lineNumbersBackgroundColor setFill];
@@ -137,10 +133,7 @@ static const void *rendererContext;
             CGContextMoveToPoint(context, rect.origin.x + this->lineNumbersWidth + 0.5, rect.origin.y);
             CGContextAddLineToPoint(context, rect.origin.x + this->lineNumbersWidth + 0.5, CGRectGetMaxY(rect));
             CGContextStrokePath(context);
-        } cleanupTileBlock:^(CGContextRef context, CGRect rect) {
-            if (!CGRectEqualToRect(lastLineFrame, CGRectIntersection(lastLineFrame, rect)))
-                lastLine -= 1;
-        }];
+        } cleanupTileBlock:nil];
     }
     else
     {

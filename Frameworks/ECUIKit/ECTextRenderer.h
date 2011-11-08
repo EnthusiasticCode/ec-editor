@@ -161,9 +161,9 @@ typedef void (^ECTextRendererLayerPass)(CGContextRef context, ECTextRendererLine
 @property (nonatomic, readonly) CGFloat height;
 @property (nonatomic, readonly) CGSize size;
 
-/// Indicates if the line text has a new line meaning that it will advance the 
-/// actual text line count.
-@property (nonatomic) BOOL hasNewLine;
+/// Indicates if the line is a truncation of a full text line.
+/// if a text line is truncated in two, only the second part will be marked as isTruncation.
+@property (nonatomic) BOOL isTruncation;
 
 - (void)drawInContext:(CGContextRef)context;
 

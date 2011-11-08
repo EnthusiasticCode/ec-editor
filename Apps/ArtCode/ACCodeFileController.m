@@ -60,7 +60,7 @@
         _codeView.backgroundColor = [UIColor whiteColor];
         _codeView.caretColor = [UIColor blackColor]; // TODO use TMTheme cursor color
         _codeView.selectionColor = [[UIColor blueColor] colorWithAlphaComponent:0.3];
-        _codeView.textInsets = UIEdgeInsetsMake(10, 10, 10, 10);
+        _codeView.textInsets = UIEdgeInsetsMake(0, 10, 0, 10);
         
         _codeView.lineNumbersEnabled = YES;
         _codeView.lineNumbersWidth = 30;

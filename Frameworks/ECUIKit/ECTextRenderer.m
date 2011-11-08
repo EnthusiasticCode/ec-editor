@@ -65,12 +65,12 @@
     CGFloat width;
     CGFloat ascent;
     CGFloat descent;
-    BOOL hasNewLine;
+    BOOL isTruncation;
 }
 
 @property (nonatomic) CTLineRef CTLine;
 
-+ (id)textRendererLineWithCTLine:(CTLineRef)line hasNewLine:(BOOL)newLine;
++ (id)textRendererLineWithCTLine:(CTLineRef)line isTruncation:(BOOL)truncation;
 
 @end
 
@@ -157,7 +157,7 @@
 
 @implementation ECTextRendererLine
 
-@synthesize CTLine, width, ascent, descent, hasNewLine;
+@synthesize CTLine, width, ascent, descent, isTruncation;
 
 - (CGFloat)height
 {
@@ -169,14 +169,14 @@
     return CGSizeMake(width, ascent + descent);
 }
 
-+ (ECTextRendererLine *)textRendererLineWithCTLine:(CTLineRef)line hasNewLine:(BOOL)newLine
++ (ECTextRendererLine *)textRendererLineWithCTLine:(CTLineRef)line isTruncation:(BOOL)truncation
 {
     ECASSERT(line != NULL);
     
     ECTextRendererLine *result = [ECTextRendererLine new];
     result->CTLine = CFRetain(line);
     result->width = CTLineGetTypographicBounds(line, &result->ascent, &result->descent, NULL);
-    result->hasNewLine = newLine;
+    result->isTruncation = truncation;
     return result;
 }
 
@@ -344,6 +344,7 @@
         __block CFRange lineRange = CFRangeMake(0, 0);
         [self.string.string enumerateLinesUsingBlock:^(NSString *line, BOOL *stop) {
             CFIndex lineLength = [line length], truncationLenght;
+            BOOL truncation = NO;
             do {
                 // TODO possibly filter using customizable block
                 truncationLenght = CTTypesetterSuggestLineBreak(typesetter, lineRange.location, renderWrapWidth);
@@ -354,7 +355,8 @@
                 lineRange.location += lineRange.length;
                 
                 // Save line
-                [_renderedLines addObject:[ECTextRendererLine textRendererLineWithCTLine:ctline hasNewLine:(lineLength <= truncationLenght)]];
+                [_renderedLines addObject:[ECTextRendererLine textRendererLineWithCTLine:ctline isTruncation:truncation]];
+                truncation = YES;
                 lineLength -= truncationLenght;
                 CFRelease(ctline);
             } while (lineLength > 0);
@@ -503,7 +505,8 @@
             if (stop) break;
         }
         index++;
-        number += line.hasNewLine;
+        if (!line.isTruncation)
+            ++number;
         currentY = nextY;
     }
 }
