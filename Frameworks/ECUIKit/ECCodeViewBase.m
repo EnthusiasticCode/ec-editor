@@ -171,7 +171,7 @@ static const void *rendererContext;
 
 static void init(ECCodeViewBase *self)
 {
-    self.contentMode = UIViewContentModeTopLeft;
+    self.contentMode = UIViewContentModeRedraw;
     self->_contentView = [ECCodeViewBaseContentView new];
     self->_contentView.parentCodeView = self;
     self->_contentView.contentMode = UIViewContentModeRedraw;
@@ -244,6 +244,8 @@ static void init(ECCodeViewBase *self)
 
 - (void)drawRect:(CGRect)rect
 {
+    [super drawRect:rect];
+    
     if (self->lineNumbersEnabled)
     {
         CGContextRef context = UIGraphicsGetCurrentContext();
