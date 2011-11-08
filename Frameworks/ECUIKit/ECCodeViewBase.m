@@ -26,6 +26,10 @@ static const void *rendererContext;
     // Dictionaries that holds additional passes
     NSMutableDictionary *overlayPasses;
     NSMutableDictionary *underlayPasses;
+    
+@package
+    NSMutableDictionary *setupPasses;
+    NSMutableDictionary *cleanupPasses;
 }
 
 @property (nonatomic, strong) ECTextRenderer *renderer;
@@ -102,6 +106,7 @@ static const void *rendererContext;
     {
         __weak ECCodeViewBase *this = self;
         __block NSUInteger lastLine = NSUIntegerMax;
+        __block CGRect lastLineFrame = CGRectNull;
         [self addPassLayerBlock:^(CGContextRef context, ECTextRendererLine *line, CGRect lineBounds, NSRange stringRange, NSUInteger lineNumber) {
             CGContextSetFillColorWithColor(context, this->lineNumbersColor.CGColor);
             if (lastLine != lineNumber)
@@ -121,9 +126,21 @@ static const void *rendererContext;
                 // Rendering dot
                 CGContextFillEllipseInRect(context, CGRectMake(-lineBounds.origin.x + this->lineNumbersWidth - 3 - 4, (line.height - 3) / 2, 3, 3));
             }
-            
+            lastLineFrame = lineBounds;
             lastLine = lineNumber;
-        } underText:YES forKey:lineNumberPassKey];
+        } underText:YES forKey:lineNumberPassKey setupTileBlock:^(CGContextRef context, CGRect rect) {
+            // Line number background
+            [this->lineNumbersBackgroundColor setFill];
+            CGContextFillRect(context, (CGRect){ rect.origin, CGSizeMake(this->lineNumbersWidth, rect.size.height) });
+            [this->lineNumbersColor setStroke];
+            CGContextSetLineWidth(context, 1);
+            CGContextMoveToPoint(context, rect.origin.x + this->lineNumbersWidth + 0.5, rect.origin.y);
+            CGContextAddLineToPoint(context, rect.origin.x + this->lineNumbersWidth + 0.5, CGRectGetMaxY(rect));
+            CGContextStrokePath(context);
+        } cleanupTileBlock:^(CGContextRef context, CGRect rect) {
+            if (!CGRectEqualToRect(lastLineFrame, CGRectIntersection(lastLineFrame, rect)))
+                lastLine -= 1;
+        }];
     }
     else
     {
@@ -254,6 +271,11 @@ static void init(ECCodeViewBase *self)
 
 - (void)addPassLayerBlock:(ECTextRendererLayerPass)block underText:(BOOL)isUnderlay forKey:(NSString *)passKey
 {
+    [self addPassLayerBlock:block underText:isUnderlay forKey:passKey setupTileBlock:nil cleanupTileBlock:nil];
+}
+
+- (void)addPassLayerBlock:(ECTextRendererLayerPass)block underText:(BOOL)isUnderlay forKey:(NSString *)passKey setupTileBlock:(ECCodeViewBaseTileSetupBlock)setupBlock cleanupTileBlock:(ECCodeViewBaseTileSetupBlock)cleanupBlock
+{
     if (isUnderlay)
     {
         if (!underlayPasses)
@@ -270,12 +292,28 @@ static void init(ECCodeViewBase *self)
         
         self.renderer.overlayRenderingPasses = [overlayPasses allValues];
     }
+    
+    if (setupBlock)
+    {
+        if (!setupPasses)
+            setupPasses = [NSMutableDictionary new];
+        [setupPasses setObject:[setupBlock copy] forKey:passKey];
+    }
+    
+    if (cleanupBlock)
+    {
+        if (!cleanupPasses)
+            cleanupPasses = [NSMutableDictionary new];
+        [cleanupPasses setObject:[cleanupBlock copy] forKey:passKey];
+    }
 }
 
 - (void)removePassLayerForKey:(NSString *)passKey
 {
     [underlayPasses removeObjectForKey:passKey];
     [overlayPasses removeObjectForKey:passKey];
+    [setupPasses removeObjectForKey:passKey];
+    [cleanupPasses removeObjectForKey:passKey];
     
     self.renderer.underlayRenderingPasses = [underlayPasses allValues];
     self.renderer.overlayRenderingPasses = [overlayPasses allValues];
@@ -350,22 +388,20 @@ static void init(ECCodeViewBase *self)
     [parentCodeView.backgroundColor setFill];
     CGContextFillRect(context, rect);
     
-    // Line number background
-    if (parentCodeView.isLineNumbersEnabled)
-    {
-        [parentCodeView.lineNumbersBackgroundColor setFill];
-        CGContextFillRect(context, (CGRect){ rect.origin, CGSizeMake(parentCodeView.lineNumbersWidth, rect.size.height) });
-        [parentCodeView.lineNumbersColor setStroke];
-        CGContextSetLineWidth(context, 1);
-        CGContextMoveToPoint(context, rect.origin.x + parentCodeView.lineNumbersWidth + 0.5, rect.origin.y);
-        CGContextAddLineToPoint(context, rect.origin.x + parentCodeView.lineNumbersWidth + 0.5, CGRectGetMaxY(rect));
-        CGContextStrokePath(context);
-    }
-    
+    // Setup tile passes
+    [parentCodeView->setupPasses enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+        ((ECCodeViewBaseTileSetupBlock)obj)(context, rect);
+    }];
+
     // Drawing text
     if (rect.origin.y > 0)
         CGContextTranslateCTM(context, 0, rect.origin.y);
     [parentCodeView.renderer drawTextWithinRect:rect inContext:context];
+    
+    // Cleanup tile passes
+    [parentCodeView->cleanupPasses enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+        ((ECCodeViewBaseTileSetupBlock)obj)(context, rect);
+    }];
 }
 
 - (void)setFrame:(CGRect)frame

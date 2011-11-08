@@ -10,6 +10,7 @@
 #import <QuartzCore/QuartzCore.h>
 #import "ECTextRenderer.h"
 
+typedef void (^ECCodeViewBaseTileSetupBlock)(CGContextRef context, CGRect rect);
 
 @interface ECCodeViewBase : UIScrollView <ECTextRendererDelegate>
 
@@ -52,6 +53,10 @@
 
 /// Add a layer pass that will be used by the renderer for overlays or underlays.
 - (void)addPassLayerBlock:(ECTextRendererLayerPass)block underText:(BOOL)isUnderlay forKey:(NSString *)passKey;
+
+/// In addition to the pass layer block, this method also add a block to be executed before a tile is rendered
+/// and after it's rendered.
+- (void)addPassLayerBlock:(ECTextRendererLayerPass)block underText:(BOOL)isUnderlay forKey:(NSString *)passKey setupTileBlock:(ECCodeViewBaseTileSetupBlock)setupBlock cleanupTileBlock:(ECCodeViewBaseTileSetupBlock)cleanupBlock;
 
 /// Removes a layer pass from the rendering process.
 - (void)removePassLayerForKey:(NSString *)passKey;
