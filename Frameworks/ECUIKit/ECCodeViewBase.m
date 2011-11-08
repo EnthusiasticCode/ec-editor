@@ -86,7 +86,7 @@ static const void *rendererContext;
     [super setContentSize:size];
 }
 
-@synthesize textInsets, lineNumbersEnabled, lineNumbersWidth, lineNumbersFont, lineNumbersColor;
+@synthesize textInsets, lineNumbersEnabled, lineNumbersWidth, lineNumbersFont, lineNumbersColor, lineNumbersBackgroundColor;
 
 - (void)setLineNumbersEnabled:(BOOL)enabled
 {
@@ -103,18 +103,23 @@ static const void *rendererContext;
         __weak ECCodeViewBase *this = self;
         __block NSUInteger lastLine = NSUIntegerMax;
         [self addPassLayerBlock:^(CGContextRef context, ECTextRendererLine *line, CGRect lineBounds, NSRange stringRange, NSUInteger lineNumber) {
-            // Rendering line number
+            CGContextSetFillColorWithColor(context, this->lineNumbersColor.CGColor);
             if (lastLine != lineNumber)
             {
+                // Rendering line number
                 // TODO get this more efficient. possibly by creating line numbers with preallocated characters.
                 NSString *lineNumberString = [NSString stringWithFormat:@"%u", lineNumber + 1];
                 CGSize lineNumberStringSize = [lineNumberString sizeWithFont:this->lineNumbersFont];
                 
                 CGContextSelectFont(context, this->lineNumbersFont.fontName.UTF8String, this->lineNumbersFont.pointSize, kCGEncodingMacRoman);
                 CGContextSetTextDrawingMode(context, kCGTextFill);
-                CGContextSetFillColorWithColor(context, this->lineNumbersColor.CGColor);
                 
-                CGContextShowTextAtPoint(context, -lineBounds.origin.x + this->lineNumbersWidth - lineNumberStringSize.width, line.descent + (lineBounds.size.height - lineNumberStringSize.height) / 2, lineNumberString.UTF8String, [lineNumberString lengthOfBytesUsingEncoding:NSUTF8StringEncoding]);
+                CGContextShowTextAtPoint(context, -lineBounds.origin.x + this->lineNumbersWidth - lineNumberStringSize.width - 2, line.descent + (lineBounds.size.height - lineNumberStringSize.height) / 2, lineNumberString.UTF8String, [lineNumberString lengthOfBytesUsingEncoding:NSUTF8StringEncoding]);
+            }
+            else
+            {
+                // Rendering dot
+                CGContextFillEllipseInRect(context, CGRectMake(-lineBounds.origin.x + this->lineNumbersWidth - 3 - 4, (line.height - 3) / 2, 3, 3));
             }
             
             lastLine = lineNumber;
@@ -344,6 +349,18 @@ static void init(ECCodeViewBase *self)
     
     [parentCodeView.backgroundColor setFill];
     CGContextFillRect(context, rect);
+    
+    // Line number background
+    if (parentCodeView.isLineNumbersEnabled)
+    {
+        [parentCodeView.lineNumbersBackgroundColor setFill];
+        CGContextFillRect(context, (CGRect){ rect.origin, CGSizeMake(parentCodeView.lineNumbersWidth, rect.size.height) });
+        [parentCodeView.lineNumbersColor setStroke];
+        CGContextSetLineWidth(context, 1);
+        CGContextMoveToPoint(context, rect.origin.x + parentCodeView.lineNumbersWidth + 0.5, rect.origin.y);
+        CGContextAddLineToPoint(context, rect.origin.x + parentCodeView.lineNumbersWidth + 0.5, CGRectGetMaxY(rect));
+        CGContextStrokePath(context);
+    }
     
     // Drawing text
     if (rect.origin.y > 0)

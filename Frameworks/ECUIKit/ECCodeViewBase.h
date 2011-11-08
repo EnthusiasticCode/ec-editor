@@ -47,6 +47,9 @@
 /// Color to be used for rendering line numbers
 @property (nonatomic, strong) UIColor *lineNumbersColor;
 
+/// Color to be used as the background of line numbers.
+@property (nonatomic, strong) UIColor *lineNumbersBackgroundColor;
+
 /// Add a layer pass that will be used by the renderer for overlays or underlays.
 - (void)addPassLayerBlock:(ECTextRendererLayerPass)block underText:(BOOL)isUnderlay forKey:(NSString *)passKey;
 

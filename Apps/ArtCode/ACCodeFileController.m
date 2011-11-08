@@ -65,7 +65,8 @@
         _codeView.lineNumbersEnabled = YES;
         _codeView.lineNumbersWidth = 30;
         _codeView.lineNumbersFont = [UIFont systemFontOfSize:10];
-        _codeView.lineNumbersColor = [UIColor colorWithWhite:0.8 alpha:1];
+        _codeView.lineNumbersColor = [UIColor colorWithWhite:0.62 alpha:1];
+        _codeView.lineNumbersBackgroundColor = [UIColor colorWithWhite:0.91 alpha:1];
         
         _codeView.alwaysBounceVertical = YES;
         _codeView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
