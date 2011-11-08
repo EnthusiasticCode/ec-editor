@@ -124,16 +124,7 @@ static const void *rendererContext;
                 // Rendering dot
                 CGContextFillEllipseInRect(context, CGRectMake(-lineBounds.origin.x + this->lineNumbersWidth - 3 - 4, (line.height - 3) / 2, 3, 3));
             }
-        } underText:YES forKey:lineNumberPassKey setupTileBlock:^(CGContextRef context, CGRect rect) {
-            // Line number background
-            [this->lineNumbersBackgroundColor setFill];
-            CGContextFillRect(context, (CGRect){ rect.origin, CGSizeMake(this->lineNumbersWidth, rect.size.height) });
-            [this->lineNumbersColor setStroke];
-            CGContextSetLineWidth(context, 1);
-            CGContextMoveToPoint(context, rect.origin.x + this->lineNumbersWidth + 0.5, rect.origin.y);
-            CGContextAddLineToPoint(context, rect.origin.x + this->lineNumbersWidth + 0.5, CGRectGetMaxY(rect));
-            CGContextStrokePath(context);
-        } cleanupTileBlock:nil];
+        } underText:YES forKey:lineNumberPassKey];
     }
     else
     {
@@ -176,7 +167,7 @@ static const void *rendererContext;
     self.renderer.textInsets = insets;
 }
 
-#pragma mark NSObject Methods
+#pragma mark View Methods
 
 static void init(ECCodeViewBase *self)
 {
@@ -247,6 +238,22 @@ static void init(ECCodeViewBase *self)
     else 
     {
         [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+    }
+}
+
+- (void)drawRect:(CGRect)rect
+{
+    if (self->lineNumbersEnabled)
+    {
+        CGContextRef context = UIGraphicsGetCurrentContext();
+        // Line number background
+        [self->lineNumbersBackgroundColor setFill];
+        CGContextFillRect(context, (CGRect){ rect.origin, CGSizeMake(self->lineNumbersWidth, rect.size.height) });
+        [self->lineNumbersColor setStroke];
+        CGContextSetLineWidth(context, 1);
+        CGContextMoveToPoint(context, rect.origin.x + self->lineNumbersWidth + 0.5, rect.origin.y);
+        CGContextAddLineToPoint(context, rect.origin.x + self->lineNumbersWidth + 0.5, CGRectGetMaxY(rect));
+        CGContextStrokePath(context);
     }
 }
 
@@ -385,6 +392,18 @@ static void init(ECCodeViewBase *self)
     [parentCodeView->setupPasses enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
         ((ECCodeViewBaseTileSetupBlock)obj)(context, rect);
     }];
+    
+    // Line number background
+    if (parentCodeView.isLineNumbersEnabled)
+    {
+        [parentCodeView.lineNumbersBackgroundColor setFill];
+        CGContextFillRect(context, (CGRect){ rect.origin, CGSizeMake(parentCodeView.lineNumbersWidth, rect.size.height) });
+        [parentCodeView.lineNumbersColor setStroke];
+        CGContextSetLineWidth(context, 1);
+        CGContextMoveToPoint(context, rect.origin.x + parentCodeView.lineNumbersWidth + 0.5, rect.origin.y);
+        CGContextAddLineToPoint(context, rect.origin.x + parentCodeView.lineNumbersWidth + 0.5, CGRectGetMaxY(rect));
+        CGContextStrokePath(context);
+    }
 
     // Drawing text
     if (rect.origin.y > 0)
