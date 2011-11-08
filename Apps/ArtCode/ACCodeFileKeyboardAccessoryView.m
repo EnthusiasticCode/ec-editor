@@ -1,17 +1,15 @@
 //
-//  ACCodeFileInputAccessoryView.m
+//  ACCodeFileKeyboardAccessoryView.m
 //  ArtCode
 //
-//  Created by Nicola Peduzzi on 06/11/11.
+//  Created by Nicola Peduzzi on 08/11/11.
 //  Copyright (c) 2011 __MyCompanyName__. All rights reserved.
 //
 
 #import "ACCodeFileKeyboardAccessoryView.h"
 #import <objc/message.h>
 
-#define SPLIT_KEYBOARD_LEFT_SEGMENT_WIDTH 256
-#define SPLIT_KEYBOARD_RIGHT_SEGMENT_WIDTH 281
-#define PORTRAIT_KEYBOARD_WIDTH 768
+// TODO see http://developer.apple.com/library/ios/#documentation/StringsTextFonts/Conceptual/TextAndWebiPhoneOS/InputViews/InputViews.html#//apple_ref/doc/uid/TP40009542-CH12-SW1 for input clicks
 
 @implementation ACCodeFileKeyboardAccessoryView {
     UIEdgeInsets _itemInsets[3];
@@ -19,49 +17,9 @@
     UIEdgeInsets _contentIntets[3];
 }
 
-// TODO see http://developer.apple.com/library/ios/#documentation/StringsTextFonts/Conceptual/TextAndWebiPhoneOS/InputViews/InputViews.html#//apple_ref/doc/uid/TP40009542-CH12-SW1 for input clicks
 #pragma mark - Properties
 
-@synthesize split, flipped;
-@synthesize dockedBackgroundView, splitLeftBackgroundView, splitRightBackgroundView, splitBackgroundViewInsets;
 @synthesize items, itemBackgroundImage;
-
-- (void)setDockedBackgroundView:(UIView *)value
-{
-    if (value == dockedBackgroundView)
-        return;
-    [self willChangeValueForKey:@"dockedBackgroundView"];
-    if (!self.isSplit)
-    {
-        [dockedBackgroundView removeFromSuperview];
-        if (value)
-            [self insertSubview:value atIndex:0];
-    }
-    dockedBackgroundView = value;
-    [self didChangeValueForKey:@"dockedBackgroundView"];
-}
-
-- (void)setSplit:(BOOL)value
-{
-    if (value == split)
-        return;
-    
-    [self willChangeValueForKey:@"split"];
-    split = value;
-    if (split)
-    {
-        [dockedBackgroundView removeFromSuperview];
-        [self insertSubview:self.splitLeftBackgroundView atIndex:0];
-        [self insertSubview:self.splitRightBackgroundView atIndex:0];
-    }
-    else
-    {
-        [splitLeftBackgroundView removeFromSuperview];
-        [splitRightBackgroundView removeFromSuperview];
-        [self insertSubview:self.dockedBackgroundView atIndex:0];
-    }
-    [self didChangeValueForKey:@"split"];
-}
 
 - (void)setItemBackgroundImage:(UIImage *)value
 {
@@ -76,33 +34,37 @@
     [self didChangeValueForKey:@"itemBackgroundImage"];
 }
 
-#pragma mark - View's Methods
+#pragma mark - View Methods
+
+- (id)initWithFrame:(CGRect)frame
+{
+    self = [super initWithFrame:frame];
+    if (!self)
+        return nil;
+    
+    // Setup backgrounds
+    self.dockedBackgroundView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"accessoryView_backgroundDocked"]];
+    UIImageView *splitBackgroundView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"accessoryView_backgroundSplitLeftTop"]];
+    splitBackgroundView.contentMode = UIViewContentModeTopLeft;
+    self.splitLeftBackgroundView = splitBackgroundView;
+    splitBackgroundView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"accessoryView_backgroundSplitRightTop"]];
+    splitBackgroundView.contentMode = UIViewContentModeTopRight;
+    self.splitRightBackgroundView = splitBackgroundView;
+    self.splitBackgroundViewInsets = UIEdgeInsetsMake(-10, 0, 0, 0);
+    
+    return self;
+}
 
 - (void)layoutSubviews
 {
+    [super layoutSubviews];
+    
     CGRect bounds = self.bounds;
-    ACCodeFileKeyboardAccessoryPosition currentPosition = [self currentAccessoryPosition];
+    ECKeyboardAccessoryPosition currentPosition = [self currentAccessoryPosition];
     UIEdgeInsets contentInsets = [self contentInsetsForAccessoryPosition:currentPosition];
     UIEdgeInsets itemInsets = [self itemInsetsForAccessoryPosition:currentPosition];
-    if (currentPosition >= ACCodeFileKeyboardAccessoryPositionFloating)
+    if (currentPosition >= ECKeyboardAccessoryPositionFloating)
     {
-        // Background
-        if (splitLeftBackgroundView && splitRightBackgroundView)
-        {
-            UIEdgeInsets insets = self.splitBackgroundViewInsets;
-            if (self.isFlipped)
-            {
-                self.splitLeftBackgroundView.transform = self.splitRightBackgroundView.transform = CGAffineTransformMakeScale(1, -1);
-                insets.top = splitBackgroundViewInsets.bottom;
-                insets.bottom = splitBackgroundViewInsets.top;
-            }
-            else
-            {
-                self.splitLeftBackgroundView.transform = self.splitRightBackgroundView.transform = CGAffineTransformIdentity;
-            }
-            self.splitLeftBackgroundView.frame = UIEdgeInsetsInsetRect(CGRectMake(0, 0, SPLIT_KEYBOARD_LEFT_SEGMENT_WIDTH, bounds.size.height), insets);
-            self.splitRightBackgroundView.frame = UIEdgeInsetsInsetRect(CGRectMake(bounds.size.width - SPLIT_KEYBOARD_RIGHT_SEGMENT_WIDTH, 0, SPLIT_KEYBOARD_RIGHT_SEGMENT_WIDTH, bounds.size.height), insets);
-        }
         // Items
         __block CGRect itemFrame = CGRectMake(contentInsets.left + itemInsets.left, contentInsets.top + itemInsets.top, [self itemDefaultWidthForAccessoryPosition:currentPosition], bounds.size.height - contentInsets.top - contentInsets.bottom - itemInsets.top - itemInsets.bottom);
         [self.items enumerateObjectsUsingBlock:^(UIBarButtonItem *item, NSUInteger itemIndex, BOOL *stop) {
@@ -139,8 +101,6 @@
     }
     else if (self.dockedBackgroundView)
     {
-        self.dockedBackgroundView.frame = bounds;
-        
         // Items
         CGRect itemFrame = CGRectMake(contentInsets.left + itemInsets.left, contentInsets.top + itemInsets.top, 0, bounds.size.height - contentInsets.top - contentInsets.bottom - itemInsets.top - itemInsets.bottom);
         for (UIBarButtonItem *item in self.items)
@@ -195,7 +155,7 @@
     [self didChangeValueForKey:@"items"];
 }
 
-- (void)setItemDefaultWidth:(CGFloat)width forAccessoryPosition:(ACCodeFileKeyboardAccessoryPosition)position
+- (void)setItemDefaultWidth:(CGFloat)width forAccessoryPosition:(ECKeyboardAccessoryPosition)position
 {
     ECASSERT(position >= 0 && position < 3);
     _itemWidth[position] = width;
@@ -203,13 +163,13 @@
         [self setNeedsLayout];
 }
 
-- (CGFloat)itemDefaultWidthForAccessoryPosition:(ACCodeFileKeyboardAccessoryPosition)position
+- (CGFloat)itemDefaultWidthForAccessoryPosition:(ECKeyboardAccessoryPosition)position
 {
     ECASSERT(position >= 0 && position < 3);
     return _itemWidth[position];
 }
 
-- (void)setContentInsets:(UIEdgeInsets)insets forAccessoryPosition:(ACCodeFileKeyboardAccessoryPosition)position
+- (void)setContentInsets:(UIEdgeInsets)insets forAccessoryPosition:(ECKeyboardAccessoryPosition)position
 {
     ECASSERT(position >= 0 && position < 3);
     _contentIntets[position] = insets;
@@ -217,13 +177,13 @@
         [self setNeedsLayout];
 }
 
-- (UIEdgeInsets)contentInsetsForAccessoryPosition:(ACCodeFileKeyboardAccessoryPosition)position
+- (UIEdgeInsets)contentInsetsForAccessoryPosition:(ECKeyboardAccessoryPosition)position
 {
     ECASSERT(position >= 0 && position < 3);
     return _contentIntets[position];
 }
 
-- (void)setItemInsets:(UIEdgeInsets)insets forAccessoryPosition:(ACCodeFileKeyboardAccessoryPosition)position
+- (void)setItemInsets:(UIEdgeInsets)insets forAccessoryPosition:(ECKeyboardAccessoryPosition)position
 {
     ECASSERT(position >= 0 && position < 3);
     _itemInsets[position] = insets;
@@ -231,19 +191,10 @@
         [self setNeedsLayout];
 }
 
-- (UIEdgeInsets)itemInsetsForAccessoryPosition:(ACCodeFileKeyboardAccessoryPosition)position
+- (UIEdgeInsets)itemInsetsForAccessoryPosition:(ECKeyboardAccessoryPosition)position
 {
     ECASSERT(position >= 0 && position < 3);
     return _itemInsets[position];
-}
-
-- (ACCodeFileKeyboardAccessoryPosition)currentAccessoryPosition
-{
-    if (self.isSplit)
-        return ACCodeFileKeyboardAccessoryPositionFloating;
-    if (self.bounds.size.width > PORTRAIT_KEYBOARD_WIDTH)
-        return ACCodeFileKeyboardAccessoryPositionLandscape;
-    return ACCodeFileKeyboardAccessoryPositionPortrait;
 }
 
 @end
@@ -253,13 +204,13 @@
     CGFloat _widthForPosition[3];
 }
 
-- (void)setWidth:(CGFloat)width forAccessoryPosition:(ACCodeFileKeyboardAccessoryPosition)position
+- (void)setWidth:(CGFloat)width forAccessoryPosition:(ECKeyboardAccessoryPosition)position
 {
     ECASSERT(position >= 0 && position < 3);
     _widthForPosition[position] = width;
 }
 
-- (CGFloat)widthForAccessoryPosition:(ACCodeFileKeyboardAccessoryPosition)position
+- (CGFloat)widthForAccessoryPosition:(ECKeyboardAccessoryPosition)position
 {
     ECASSERT(position >= 0 && position < 3);
     return _widthForPosition[position];
