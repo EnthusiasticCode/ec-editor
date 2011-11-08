@@ -17,7 +17,7 @@ static ECWeakDictionary *_cursorsByUSR;
     NSString *_USR;
     enum CXCursorKind _kind;
     CXType _type;
-    ECClangCodeCursor *_lexicalParent;
+    ECClangCodeCursor *_semanticParent;
     NSString *_language;
     NSString *_scopeIdentifier;
 }
@@ -46,7 +46,7 @@ static ECWeakDictionary *_cursorsByUSR;
     _USR = USR;
     _kind = clang_getCursorKind(clangCursor);
     _type = clang_getCursorType(clangCursor);
-    _lexicalParent = [[ECClangCodeCursor alloc] initWithClangCursor:clang_getCursorLexicalParent(clangCursor)];
+    _semanticParent = [[ECClangCodeCursor alloc] initWithClangCursor:clang_getCursorSemanticParent(clangCursor)];
     switch (clang_getCursorLanguage(clangCursor))
     {
         case CXLanguage_Invalid:
@@ -76,9 +76,9 @@ static ECWeakDictionary *_cursorsByUSR;
     return _type;
 }
 
-- (ECClangCodeCursor *)lexicalParent
+- (ECClangCodeCursor *)semanticParent
 {
-    return _lexicalParent;
+    return _semanticParent;
 }
 
 - (NSString *)language

@@ -17,7 +17,7 @@
 
 - (CXType)type;
 
-- (ECClangCodeCursor *)lexicalParent;
+- (ECClangCodeCursor *)semanticParent;
 
 - (NSString *)language;
 

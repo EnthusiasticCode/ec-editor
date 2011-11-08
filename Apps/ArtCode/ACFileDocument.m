@@ -215,7 +215,25 @@
     for (id<ECCodeToken>token in [_document.codeUnit annotatedTokens])
     {
         CHECK_CANCELED_RETURN;
-//        NSLog(@"%@ : %@", NSStringFromRange([token range]), [token scopeIdentifier]);
+//        NSString *tokenKind = nil;
+//        switch ([token kind]) {
+//            case CXToken_Comment:
+//                tokenKind = @"Comment";
+//                break;
+//            case CXToken_Identifier:
+//                tokenKind = @"Identifier";
+//                break;
+//            case CXToken_Keyword:
+//                tokenKind = @"Keyword";
+//                break;
+//            case CXToken_Literal:
+//                tokenKind = @"Literal";
+//                break;
+//            case CXToken_Punctuation:
+//                tokenKind = @"Punctuation";
+//                break;
+//        }
+//        NSLog(@"%@ : %@/%@ : %@", NSStringFromRange([token range]), tokenKind, [token scopeIdentifier], [token spelling]);
         [string addAttributes:[_document.theme attributesForScopeStack:[token scopeIdentifiersStack]] range:[token range]];
         CHECK_CANCELED_RETURN;
     }

@@ -82,11 +82,11 @@
     NSMutableArray *scopeIdentifiersStack = [NSMutableArray arrayWithObject:[self scopeIdentifier]];
     if (_cursor)
     {
-        ECClangCodeCursor *cursor = [_cursor lexicalParent];
-        while ([cursor lexicalParent])
+        ECClangCodeCursor *cursor = [_cursor semanticParent];
+        while ([cursor semanticParent])
         {
             [scopeIdentifiersStack insertObject:[cursor scopeIdentifier] atIndex:0];
-            cursor = [cursor lexicalParent];
+            cursor = [cursor semanticParent];
         }
     }
     return scopeIdentifiersStack;
