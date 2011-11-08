@@ -46,6 +46,9 @@
 /// Returns if the codeview should hide its keyboard accessory view.
 - (BOOL)codeViewShouldHideKeyboardAccessoryView:(ECCodeView *)codeView;
 
+/// Informs the delegate that the accessory view has been hidden.
+- (void)codeViewDidHideKeyboardAccessoryView:(ECCodeView *)codeView;
+
 @end
 
 

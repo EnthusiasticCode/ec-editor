@@ -32,8 +32,9 @@
     
     ECCodeViewUndoManager *_undoManager;
     
-    // Touch scrolling timer
+    // Support objects
     NSTimer *touchScrollTimer;
+    CGRect _keyboardFrame;
     
     // Delegate and dataSource flags
     struct {
@@ -43,7 +44,8 @@
         unsigned delegateHasShouldShowKeyboardAccessoryViewInViewWithFrame : 1;
         unsigned delegateHasDidShowKeyboardAccessoryViewInViewWithFrame : 1;
         unsigned delegateHasShouldHideKeyboardAccessoryView : 1;
-        unsigned reserved : 2;
+        unsigned delegateHasDidHideKeyboardAccessoryView : 1;
+        unsigned reserved : 1;
     } flags;
     
     // Recognizers
@@ -82,6 +84,7 @@
 // Handle keyboard display
 - (void)_keyboardWillChangeFrame:(NSNotification *)notification;
 - (void)_keyboardDidChangeFrame:(NSNotification *)notification;
+- (void)_setAccessoryViewVisible:(BOOL)visible animated:(BOOL)animated;
 
 @end
 
@@ -622,6 +625,7 @@
     flags.delegateHasShouldShowKeyboardAccessoryViewInViewWithFrame = [delegate respondsToSelector:@selector(codeView:shouldShowKeyboardAccessoryViewInView:withFrame:)];
     flags.delegateHasDidShowKeyboardAccessoryViewInViewWithFrame = [delegate respondsToSelector:@selector(codeView:didShowKeyboardAccessoryViewInView:withFrame:)];
     flags.delegateHasShouldHideKeyboardAccessoryView = [delegate respondsToSelector:@selector(codeViewShouldHideKeyboardAccessoryView:)];
+    flags.delegateHasDidHideKeyboardAccessoryView = [delegate respondsToSelector:@selector(codeViewDidHideKeyboardAccessoryView:)];
 }
 
 - (void)setKeyboardAccessoryView:(ECKeyboardAccessoryView *)value
@@ -665,6 +669,7 @@ static void init(ECCodeView *self)
 {
     // Adding selection view
     self->selectionView = [[TextSelectionView alloc] initWithFrame:CGRectZero codeView:self];
+    self->_keyboardFrame = CGRectNull;
 //    [self->selectionView setCaretColor:[UIColor styleThemeColorOne]];
 //    [self->selectionView setSelectionColor:[[UIColor styleThemeColorOne] colorWithAlphaComponent:0.3]];
     [self->selectionView setOpaque:NO];
@@ -736,7 +741,7 @@ static void init(ECCodeView *self)
         // TODO initialize gesture recognizers
     }
     
-    // Activate recognizers
+    // Activate recognizers and keyboard accessory
     if (shouldBecomeFirstResponder)
     {
         focusRecognizer.enabled = NO;
@@ -745,6 +750,8 @@ static void init(ECCodeView *self)
         doubleTapRecognizer.enabled = YES;
         longPressRecognizer.enabled = YES;
         longDoublePressRecognizer.enabled = YES;
+        
+        [self _setAccessoryViewVisible:YES animated:YES];
     }
     
     [self setNeedsLayout];
@@ -767,6 +774,9 @@ static void init(ECCodeView *self)
         
         // Remove selection
         selectionView.hidden = YES;
+        
+        // Remove keyboard accessory
+        [self _setAccessoryViewVisible:NO animated:YES];
     }
     
     [self setNeedsLayout];
@@ -1532,57 +1542,77 @@ static void init(ECCodeView *self)
 
 - (void)_keyboardWillChangeFrame:(NSNotification *)notification
 {
-    if (keyboardAccessoryView && keyboardAccessoryView.subviews)
-    {
-        if (flags.delegateHasShouldHideKeyboardAccessoryView && ![self.delegate codeViewShouldHideKeyboardAccessoryView:self])
-            return;
-        [keyboardAccessoryView removeFromSuperview];
-    }
+    [self _setAccessoryViewVisible:NO animated:NO];
 }
 
 - (void)_keyboardDidChangeFrame:(NSNotification *)notification
 {
-    if (!self.keyboardAccessoryView || !self.isFirstResponder)
-        return;
-    
-    CGRect targetFrame = [[[notification userInfo] objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue];
+    _keyboardFrame = [[[notification userInfo] objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue];
     
     // Only show accessory view if keyboard is visible
-    if (!CGRectIntersectsRect(targetFrame, [[UIScreen mainScreen] bounds]))
-        return;
-    
-    // Setup accessory view
-    targetFrame = [self convertRect:targetFrame fromView:nil];
-    CGFloat keyboardHeight = targetFrame.size.height;
-    targetFrame.size.height = ACCESSORY_HEIGHT;
-    targetFrame.origin.y -= ACCESSORY_HEIGHT;
-    self.keyboardAccessoryView.split = (keyboardHeight < KEYBOARD_DOCKED_MINIMUM_HEIGHT);
-    self.keyboardAccessoryView.flipped = NO;
-    
-    // Ask delegate if accessory view should be shown
-    __autoreleasing UIView *targetView = self;
-    if (flags.delegateHasShouldShowKeyboardAccessoryViewInViewWithFrame && ![self.delegate codeView:self shouldShowKeyboardAccessoryViewInView:&targetView withFrame:&targetFrame])
-        return;
-    
-    // Reposition if flipped
-    if (self.keyboardAccessoryView.isFlipped)
+    // TODO check for hardware keyboard
+    if (!CGRectIntersectsRect(_keyboardFrame, [[UIScreen mainScreen] bounds]))
     {
-        targetFrame.origin.y += keyboardHeight + ACCESSORY_HEIGHT;
+        _keyboardFrame = CGRectNull;
+        return;
     }
     
-    // Add accessory to target view
-    self.keyboardAccessoryView.frame = targetFrame;
-    [targetView addSubview:self.keyboardAccessoryView];
-    [self.keyboardAccessoryView setNeedsLayout];
-    self.keyboardAccessoryView.alpha = 0;
-    [UIView animateWithDuration:0.25 animations:^{
-        self.keyboardAccessoryView.alpha = 1;
-    } completion:^(BOOL finished) {
-        if (flags.delegateHasDidShowKeyboardAccessoryViewInViewWithFrame)
+    [self _setAccessoryViewVisible:YES animated:YES];
+}
+
+- (void)_setAccessoryViewVisible:(BOOL)visible animated:(BOOL)animated
+{
+    if (!self.keyboardAccessoryView || CGRectIsNull(_keyboardFrame) || (self.keyboardAccessoryView.superview != nil) == visible)
+        return;
+    
+    if (visible && self.isFirstResponder)
+    {
+        // Setup accessory view
+        CGRect targetFrame = [self convertRect:_keyboardFrame fromView:nil];
+        CGFloat keyboardHeight = targetFrame.size.height;
+        targetFrame.size.height = ACCESSORY_HEIGHT;
+        targetFrame.origin.y -= ACCESSORY_HEIGHT;
+        self.keyboardAccessoryView.split = (keyboardHeight < KEYBOARD_DOCKED_MINIMUM_HEIGHT);
+        self.keyboardAccessoryView.flipped = NO;
+        
+        // Ask delegate if accessory view should be shown
+        __autoreleasing UIView *targetView = self;
+        if (flags.delegateHasShouldShowKeyboardAccessoryViewInViewWithFrame && ![self.delegate codeView:self shouldShowKeyboardAccessoryViewInView:&targetView withFrame:&targetFrame])
+            return;
+        
+        // Reposition if flipped
+        if (self.keyboardAccessoryView.isFlipped)
         {
-            [self.delegate codeView:self didShowKeyboardAccessoryViewInView:targetView withFrame:targetFrame];
+            targetFrame.origin.y += keyboardHeight + ACCESSORY_HEIGHT;
         }
-    }];
+        
+        // Add accessory to target view
+        self.keyboardAccessoryView.frame = targetFrame;
+        [targetView addSubview:self.keyboardAccessoryView];
+        [self.keyboardAccessoryView setNeedsLayout];
+        self.keyboardAccessoryView.alpha = 0;
+        [UIView animateWithDuration:(animated ? 0.25 : 0) delay:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
+            self.keyboardAccessoryView.alpha = 1;
+        } completion:^(BOOL finished) {
+            if (flags.delegateHasDidShowKeyboardAccessoryViewInViewWithFrame)
+            {
+                [self.delegate codeView:self didShowKeyboardAccessoryViewInView:targetView withFrame:targetFrame];
+            }
+        }];
+    }
+    else if (!flags.delegateHasShouldHideKeyboardAccessoryView || [self.delegate codeViewShouldHideKeyboardAccessoryView:self])
+    {
+        [UIView animateWithDuration:(animated ? 0.25 : 0) delay:0 options:UIViewAnimationOptionCurveEaseInOut | UIViewAnimationOptionBeginFromCurrentState animations:^{
+            keyboardAccessoryView.alpha = 0;
+        } completion:^(BOOL finished) {
+            [keyboardAccessoryView removeFromSuperview];
+            keyboardAccessoryView.alpha = 1;
+            if (flags.delegateHasDidHideKeyboardAccessoryView)
+            {
+                [self.delegate codeViewDidHideKeyboardAccessoryView:self];
+            }
+        }];
+    }
 }
 
 @end
