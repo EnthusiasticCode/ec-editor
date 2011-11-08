@@ -8,6 +8,7 @@
 
 #import "ECClangCodeUnit.h"
 #import "ECCodeUnit+Subclass.h"
+#import "ECCodeIndex+Subclass.h"
 #import "ECClangCodeToken.h"
 #import "ClangHelperFunctions.h"
 
@@ -62,7 +63,19 @@
         CXCursor *clangCursors = malloc(numClangTokens * sizeof(CXCursor));
         clang_annotateTokens(_clangUnit, clangTokens, numClangTokens, clangCursors);
         for (unsigned int tokenIndex = 0; tokenIndex < numClangTokens; ++tokenIndex)
-            [tokens addObject:[[ECClangCodeToken alloc] initWithClangToken:clangTokens[tokenIndex] withClangTranslationUnit:_clangUnit clangCursor:clangCursors[tokenIndex]]];
+        {
+            NSRange tokenRange = Clang_SourceRangeRange(clang_getTokenExtent(_clangUnit, clangTokens[tokenIndex]), NULL);
+            __block CXCursor moreSpecificCursor = clangCursors[tokenIndex];
+            if (!clang_equalCursors(clangCursors[tokenIndex], clang_getNullCursor()) && !clang_isInvalid(clang_getCursorKind(clangCursors[tokenIndex])))
+                clang_visitChildrenWithBlock(clangCursors[tokenIndex], ^enum CXChildVisitResult(CXCursor cursor, CXCursor parent) {
+                    NSRange cursorRange = Clang_SourceRangeRange(clang_getCursorExtent(cursor), NULL);
+                    if (cursorRange.location > tokenRange.location || NSMaxRange(cursorRange) < NSMaxRange(tokenRange))
+                        return CXChildVisit_Continue;
+                    moreSpecificCursor = cursor;
+                    return CXChildVisit_Recurse;
+                });
+            [tokens addObject:[[ECClangCodeToken alloc] initWithClangToken:clangTokens[tokenIndex] withClangTranslationUnit:_clangUnit clangCursor:moreSpecificCursor]];
+        }
         free(clangCursors);
     }
     else
