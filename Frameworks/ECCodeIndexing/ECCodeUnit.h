@@ -10,7 +10,13 @@
 #import <clang-c/Index.h>
 
 @class ECCodeIndex;
-@protocol ECCodeCursor, ECCodeCompletionString, ECCodeCompletionChunk;
+@protocol ECCodeCursor, ECCodeCompletionString, ECCodeCompletionChunk, ECCodeCompletionResult;
+
+@protocol ECCodeCompletionResultSet <NSObject>
+- (NSUInteger)count;
+- (id<ECCodeCompletionResult>)completionResultAtIndex:(NSUInteger)resultIndex;
+- (NSUInteger)indexOfHighestRatedCompletionResult;
+@end
 
 @protocol ECCodeCompletionResult <NSObject>
 
@@ -68,8 +74,7 @@
 - (NSString *)scope;
 
 /// Returns the possible completions at a given insertion point in the unit's main source file.
-- (NSArray *)completionsAtOffset:(NSUInteger)offset;
-- (id<ECCodeCompletionResult>)bestCompletionAtOffset:(NSUInteger)offset;
+- (id<ECCodeCompletionResultSet>)completionsAtOffset:(NSUInteger)offset;
 
 /// Returns warnings and errors in the unit.
 - (NSArray *)diagnostics;

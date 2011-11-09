@@ -12,5 +12,6 @@
 @interface ECClangCodeUnit : ECCodeUnit
 
 - (id)initWithIndex:(ECCodeIndex *)index clangIndex:(CXIndex)clangIndex fileURL:(NSURL *)fileURL scope:(NSString *)scope;
+- (CXTranslationUnit)clangTranslationUnit;
 
 @end

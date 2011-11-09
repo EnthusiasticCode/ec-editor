@@ -10,7 +10,7 @@
 #import "ECCodeUnit+Subclass.h"
 #import "ECCodeIndex+Subclass.h"
 #import "ECClangCodeToken.h"
-#import "ECClangCodeCompletionResult.h"
+#import "ECClangCodeCompletionResultSet.h"
 #import "ClangHelperFunctions.h"
 
 @interface ECClangCodeUnit ()
@@ -39,23 +39,9 @@
     return self;
 }
 
-- (NSArray *)completionsAtOffset:(NSUInteger)offset
+- (id<ECCodeCompletionResultSet>)completionsAtOffset:(NSUInteger)offset
 {
-    CXSourceLocation completeLocation = clang_getLocationForOffset(_clangUnit, _clangFile, offset);
-    unsigned int completeLine;
-    unsigned int completeColumn;
-    clang_getInstantiationLocation(completeLocation, NULL, &completeLine, &completeColumn, NULL);
-    CXCodeCompleteResults *clangCompletions = clang_codeCompleteAt(_clangUnit, [[[self fileURL] path] fileSystemRepresentation], completeLine, completeColumn, NULL, 0, clang_defaultCodeCompleteOptions());
-    clang_sortCodeCompletionResults(clangCompletions->Results, clangCompletions->NumResults);
-    NSMutableArray *results = [NSMutableArray array];
-    for (unsigned resultIndex = 0; resultIndex < clangCompletions->NumResults; ++resultIndex)
-        [results addObject:[[ECClangCodeCompletionResult alloc] initWithClangCompletionResult:clangCompletions->Results[resultIndex]]];
-    return results;
-}
-
-- (id<ECCodeCompletionResult>)bestCompletionAtOffset:(NSUInteger)offset
-{
-    return nil;
+    return [[ECClangCodeCompletionResultSet alloc] initWithCodeUnit:self atOffset:offset];
 }
 
 - (NSArray *)tokensInRange:(NSRange)range
@@ -103,6 +89,11 @@
             [tokens addObject:[[ECClangCodeToken alloc] initWithClangToken:clangTokens[tokenIndex] withClangTranslationUnit:_clangUnit]];
     clang_disposeTokens(_clangUnit, clangTokens, numClangTokens);
     return tokens;
+}
+
+- (CXTranslationUnit)clangTranslationUnit
+{
+    return _clangUnit;
 }
 
 @end
