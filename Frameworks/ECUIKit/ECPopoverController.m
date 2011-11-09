@@ -19,7 +19,7 @@
 
 @interface ECPopoverController () {
 @private
-    CGFloat keyboardHeight;
+    CGRect _keyboardFrame;
     
     ECInstantGestureRecognizer *dismissRecognizer;
     
@@ -40,7 +40,7 @@
 @implementation ECPopoverController
 
 @synthesize popoverView;
-@synthesize automaticDismiss;
+@synthesize automaticDismiss, allowedBoundsInsets;
 
 - (ECBasePopoverView *)popoverView
 {
@@ -66,6 +66,7 @@ static void init(ECPopoverController *self)
     [nc addObserver:self selector:@selector(keyboardHidden:) name:UIKeyboardDidHideNotification object:nil];
     
     self->automaticDismiss = YES;
+    self.allowedBoundsInsets = UIEdgeInsetsMake(5, 5, 5, 5);
 }
 
 - (id)init
@@ -175,26 +176,16 @@ static void init(ECPopoverController *self)
 
 - (void)presentPopoverFromRect:(CGRect)rect inView:(UIView *)view permittedArrowDirections:(UIPopoverArrowDirection)arrowDirections animated:(BOOL)animated
 {
-    UIView *rootView = view.window.rootViewController.view;
-    CGRect allowedRect = rootView.bounds;
+    CGRect allowedRect = [view convertRect:view.window.frame fromView:nil];
     // Remove keyboard
-    allowedRect.size.height -= keyboardHeight;
+    if (!CGRectIsEmpty(_keyboardFrame))
+        allowedRect.size.height -= [view convertRect:_keyboardFrame fromView:nil].size.height;
     // Inset to give a little margin
-    allowedRect = CGRectInset(allowedRect, 5, 5);
-    // Transform to view's space
-    UIView *v = view;
-    CGPoint viewOriging;
-    while (v != rootView)
-    {
-        viewOriging = v.frame.origin;
-        rect.origin.x += viewOriging.x;
-        rect.origin.y += viewOriging.y;
-        v = v.superview;
-    }
+    allowedRect = UIEdgeInsetsInsetRect(allowedRect, self.allowedBoundsInsets);
     
     // Point where the arrow should point
     CGPoint arrowPoint = CGPointMake(CGRectGetMidX(rect), CGRectGetMidY(rect));
-    CGFloat arrowHeight = [self.self.popoverView arrowSizeForMetaPosition:ECPopoverViewArrowMetaPositionMiddle].height;
+    CGFloat arrowHeight = [self.popoverView arrowSizeForMetaPosition:ECPopoverViewArrowMetaPositionMiddle].height;
     
     CGRect backupFrame = CGRectNull;
     CGRect resultFrame = CGRectZero;
@@ -203,7 +194,7 @@ static void init(ECPopoverController *self)
     {
         resultFrame = self.popoverView.bounds;
         resultFrame.origin.x = MAX(allowedRect.origin.x, MIN(CGRectGetMaxX(allowedRect) - resultFrame.size.width, arrowPoint.x - resultFrame.size.width / 2));
-        resultFrame.origin.y = rect.origin.y - resultFrame.size.height - arrowHeight;
+        resultFrame.origin.y = rect.origin.y - resultFrame.size.height - arrowHeight + self.popoverView.positioningInsets.bottom;
         if (CGRectContainsRect(allowedRect, resultFrame)) 
         {
             self.popoverView.arrowDirection = UIPopoverArrowDirectionDown;
@@ -222,7 +213,7 @@ static void init(ECPopoverController *self)
     if (arrowDirections & UIPopoverArrowDirectionLeft) 
     {
         resultFrame = self.popoverView.bounds;
-        resultFrame.origin.x = CGRectGetMaxX(rect) + arrowHeight;
+        resultFrame.origin.x = CGRectGetMaxX(rect) + arrowHeight - self.popoverView.positioningInsets.left;
         resultFrame.origin.y = MAX(allowedRect.origin.y ,MIN(CGRectGetMaxY(allowedRect) - resultFrame.size.height, arrowPoint.y - resultFrame.size.height / 2));
         if (CGRectContainsRect(allowedRect, resultFrame)) 
         {
@@ -245,7 +236,7 @@ static void init(ECPopoverController *self)
         resultFrame = self.popoverView.bounds;
         CGFloat minOrigin = MIN(CGRectGetMaxX(allowedRect) - resultFrame.size.width, arrowPoint.x - resultFrame.size.width / 2);
         resultFrame.origin.x = MAX(allowedRect.origin.x, minOrigin);
-        resultFrame.origin.y = CGRectGetMaxY(rect) + arrowHeight;
+        resultFrame.origin.y = CGRectGetMaxY(rect) + arrowHeight - self.popoverView.positioningInsets.top;
         self.popoverView.arrowDirection = UIPopoverArrowDirectionUp;
         self.popoverView.arrowPosition = arrowPoint.x - resultFrame.origin.x;
         if (CGRectContainsRect(allowedRect, resultFrame)) 
@@ -262,7 +253,7 @@ static void init(ECPopoverController *self)
     if (arrowDirections & UIPopoverArrowDirectionRight) 
     {
         resultFrame = self.popoverView.bounds;
-        resultFrame.origin.x = rect.origin.x - resultFrame.size.width - arrowHeight;
+        resultFrame.origin.x = rect.origin.x - resultFrame.size.width - arrowHeight + self.popoverView.positioningInsets.right;
         resultFrame.origin.y = MIN(CGRectGetMaxY(allowedRect) - resultFrame.size.height, arrowPoint.y - resultFrame.size.height / 2);
         if (CGRectContainsRect(allowedRect, resultFrame)) 
         {
@@ -322,7 +313,7 @@ static void init(ECPopoverController *self)
 
 - (void)_presentPopoverInView:(UIView *)view withFrame:(CGRect)frame animated:(BOOL)animated
 {
-    [view.window.rootViewController.view addSubview:self.popoverView];
+    [view addSubview:self.popoverView];
     frame.origin.x = roundf(frame.origin.x);
     frame.origin.y = roundf(frame.origin.y);
     self.popoverView.frame = frame;
@@ -370,13 +361,12 @@ static void init(ECPopoverController *self)
 
 - (void)keyboardShown:(NSNotification *)aNotification
 {
-    CGRect keyboardFrame = [[[aNotification userInfo] objectForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue];
-    keyboardHeight = abs(keyboardFrame.origin.x) > abs(keyboardFrame.origin.y) ? keyboardFrame.size.width : keyboardFrame.size.height;
+    _keyboardFrame = [[[aNotification userInfo] objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue];
 }
 
 - (void)keyboardHidden:(NSNotification *)aNotification
 {
-    keyboardHeight = 0;
+    _keyboardFrame = CGRectZero;
 }
 
 @end

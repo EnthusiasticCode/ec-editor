@@ -123,7 +123,7 @@
 - (void)_itemButtonAction:(UIButton *)sender
 {
     NSUInteger tag = sender.tag;
-    if (tag > 0 && tag < [self.items count])
+    if (tag < [self.items count])
     {
         UIBarButtonItem *item = [self.items objectAtIndex:tag];
         if (item.target && item.action)

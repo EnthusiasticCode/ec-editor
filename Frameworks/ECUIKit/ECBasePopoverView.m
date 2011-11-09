@@ -18,6 +18,7 @@
 
 @synthesize contentView, contentInsets;
 @synthesize arrowDirection, arrowPosition, arrowInsets;
+@synthesize positioningInsets;
 
 - (void)setContentView:(UIView *)value
 {

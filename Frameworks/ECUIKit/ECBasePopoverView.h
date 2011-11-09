@@ -60,4 +60,10 @@ typedef NSInteger ECPopoverViewArrowMetaPosition;
 /// This method returns CGAffineTransformIdentity in it's default implementation.
 - (CGAffineTransform)arrowRotationTransformInDirection:(UIPopoverArrowDirection)direction metaPosition:(ECPopoverViewArrowMetaPosition)metaPosition;
 
+#pragma mark Positioning
+
+/// Insets used by a popover controller to modify the position of the popover when presented.
+/// By default, the popover will be offsetted by the arrow's relevant size on a particular position. This insets can modify that offset.
+@property (nonatomic) UIEdgeInsets positioningInsets;
+
 @end

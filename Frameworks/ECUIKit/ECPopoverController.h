@@ -45,6 +45,9 @@
 
 #pragma mark Advanced Behaviours
 
+/// Insets applied to the calculated allowed bounds to fit the popover view during presentation. Default 5 for all values.
+@property (nonatomic) UIEdgeInsets allowedBoundsInsets;
+
 /// If YES (default), the user will be able to dismiss the popover by tapping anyehere outside it and passthroughViews views.
 @property (nonatomic, getter = isAutomaticDismiss) BOOL automaticDismiss;
 
