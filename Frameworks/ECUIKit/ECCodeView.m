@@ -137,6 +137,7 @@
 @property (nonatomic) NSRange selection;
 @property (nonatomic, weak) ECTextRange *selectionRange;
 @property (nonatomic, readonly) ECTextPosition *selectionPosition;
+@property (nonatomic, readonly) ECRectSet *selectionRects;
 @property (nonatomic, readonly, getter = isEmpty) BOOL empty;
 @property (nonatomic, readonly) BOOL hasSelection;
 
@@ -296,7 +297,7 @@
 
 #pragma mark Properties
 
-@synthesize selection, hasSelection;
+@synthesize selection, hasSelection, selectionRects;
 @synthesize selectionColor, caretColor, blink;
 
 - (void)setSelection:(NSRange)range
@@ -304,6 +305,8 @@
     if (NSEqualRanges(range, selection))
         return;
     
+    [parent willChangeValueForKey:@"selectionRange"];
+    // TODO also infrom for selectionTextRange?
     hasSelection = YES;
     selection = range;
     if (blinkDelayTimer)
@@ -378,6 +381,7 @@
     }
     
     [self setNeedsDisplay];
+    [parent didChangeValueForKey:@"selectionRange"];
 }
 
 - (ECTextRange *)selectionRange
@@ -661,6 +665,25 @@
 - (UIColor *)selectionColor
 {
     return selectionView.selectionColor;
+}
+
+- (NSRange)selectionRange
+{
+    return selectionView.selection;
+}
+
+- (void)setSelectionRange:(NSRange)selectionRange
+{
+    selectionView.selection = selectionRange;
+}
+
+- (ECRectSet *)selectionRects
+{
+    if (!selectionView.hasSelection)
+        return nil;
+    if (selectionView.selection.length == 0)
+        return [ECRectSet rectSetWithRect:[self caretRectForPosition:selectionView.selectionPosition]];
+    return selectionView.selectionRects;
 }
 
 #pragma mark NSObject Methods

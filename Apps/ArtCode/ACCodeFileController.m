@@ -410,7 +410,7 @@
     return YES;
 }
 
-- (void)codeView:(ECCodeView *)codeView didShowKeyboardAccessoryViewInView:(UIView *)view withFrame:(CGRect)frame
+- (void)codeView:(ECCodeView *)codeView didShowKeyboardAccessoryViewInView:(UIView *)view withFrame:(CGRect)accessoryFrame
 {
     if (!codeView.keyboardAccessoryView.isSplit)
     {
@@ -418,7 +418,13 @@
             CGRect frame = self.view.frame;
             frame.size.height = _keyboardFrame.origin.y - codeView.keyboardAccessoryView.frame.size.height;
             self.view.frame = frame;
-        } completion:nil];
+        } completion:^(BOOL finished) {
+            // Scroll to selection
+            ECRectSet *selectionRects = self.codeView.selectionRects;
+            if (selectionRects == nil)
+                return;
+            [self.codeView scrollRectToVisible:CGRectInset(selectionRects.bounds, 0, -50) animated:YES];
+        }];
     }
 }
 

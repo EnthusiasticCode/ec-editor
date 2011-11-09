@@ -81,4 +81,12 @@
 /// A dictionary of attributes that describes how marked text should be drawn.
 @property (nonatomic, copy) NSDictionary *markedTextStyle;
 
+#pragma mark Selection Management
+
+/// Gets or set the selection like selectedTextRange but with a plain NSRange.
+@property (nonatomic) NSRange selectionRange;
+
+/// Gets the selection rects of the current selection. If the selection is empty, this methods returns the caret rect. If no selection returns nil.
+@property (nonatomic, readonly, copy) ECRectSet *selectionRects;
+
 @end
