@@ -24,6 +24,7 @@
 @interface ACCodeFileController () {
     UIActionSheet *_toolsActionSheet;
     ACCodeFileSearchBarController *_searchBarController;
+    CGRect _keyboardFrame;
 }
 
 @property (nonatomic, strong) ACFileDocument *document;
@@ -35,6 +36,8 @@
 
 - (void)_keyboardWillShow:(NSNotification *)notification;
 - (void)_keyboardWillHide:(NSNotification *)notification;
+
+- (void)_keyboardAccessoryItemAction:(UIBarButtonItem *)item;
 
 @end
 
@@ -103,7 +106,8 @@
         
         for (NSInteger i = 0; i < 11; ++i)
         {
-            item = [[ACCodeFileKeyboardAccessoryItem alloc] initWithTitle:[NSString stringWithFormat:@"%d", i] style:UIBarButtonItemStylePlain target:self action:@selector(_itemAction:)];
+            // TODO add long press menu
+            item = [[ACCodeFileKeyboardAccessoryItem alloc] initWithTitle:[NSString stringWithFormat:@"%d", i] style:UIBarButtonItemStylePlain target:self action:@selector(_keyboardAccessoryItemAction:)];
             item.tag = i;
             [items addObject:item];
             
@@ -307,6 +311,7 @@
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
+    _keyboardFrame = CGRectMake(0 ,CGRectGetMaxY(self.view.frame), self.view.frame.size.width, 0);
 }
 
 - (void)viewDidUnload
@@ -405,6 +410,31 @@
     return YES;
 }
 
+- (void)codeView:(ECCodeView *)codeView didShowKeyboardAccessoryViewInView:(UIView *)view withFrame:(CGRect)frame
+{
+    if (!codeView.keyboardAccessoryView.isSplit)
+    {
+        [UIView animateWithDuration:0.25 delay:0 options:UIViewAnimationOptionCurveEaseInOut | UIViewAnimationOptionBeginFromCurrentState animations:^{
+            CGRect frame = self.view.frame;
+            frame.size.height = _keyboardFrame.origin.y - codeView.keyboardAccessoryView.frame.size.height;
+            self.view.frame = frame;
+        } completion:nil];
+    }
+}
+
+- (BOOL)codeViewShouldHideKeyboardAccessoryView:(ECCodeView *)codeView
+{
+    if (!codeView.keyboardAccessoryView.isSplit)
+    {
+        [UIView animateWithDuration:0.25 delay:0 options:UIViewAnimationOptionCurveEaseInOut | UIViewAnimationOptionBeginFromCurrentState animations:^{
+            CGRect frame = self.view.frame;
+            frame.size.height = _keyboardFrame.origin.y;
+            self.view.frame = frame;
+        } completion:nil];
+    }
+    return YES;
+}
+
 #pragma mark - Private Methods
 
 - (void)_layoutChildViews
@@ -434,12 +464,11 @@
 
 - (void)_keyboardWillShow:(NSNotification *)notification
 {
-    CGRect keyboardEndFrame = [self.view convertRect:[[[notification userInfo] objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue] fromView:nil];
+    _keyboardFrame = [self.view convertRect:[[[notification userInfo] objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue] fromView:nil];
     
-    [UIView animateWithDuration:[[[notification userInfo] objectForKey:UIKeyboardAnimationDurationUserInfoKey] doubleValue] delay:0 options:[[[notification userInfo] objectForKey:UIKeyboardAnimationCurveUserInfoKey] intValue] << 16 animations:^{
+    [UIView animateWithDuration:[[[notification userInfo] objectForKey:UIKeyboardAnimationDurationUserInfoKey] doubleValue] delay:0 options:[[[notification userInfo] objectForKey:UIKeyboardAnimationCurveUserInfoKey] intValue] << 16 | UIViewAnimationOptionBeginFromCurrentState animations:^{
         CGRect frame = self.view.frame;
-        // TODO remove hard coded accessory height
-        frame.size.height = keyboardEndFrame.origin.y;
+        frame.size.height = _keyboardFrame.origin.y;
         self.view.frame = frame;
     } completion:nil];
 }
@@ -447,6 +476,11 @@
 - (void)_keyboardWillHide:(NSNotification *)notification
 {
     [self _keyboardWillShow:notification];
+}
+
+- (void)_keyboardAccessoryItemAction:(UIBarButtonItem *)item
+{
+    // TODO use item tag to see what action to perform
 }
 
 @end

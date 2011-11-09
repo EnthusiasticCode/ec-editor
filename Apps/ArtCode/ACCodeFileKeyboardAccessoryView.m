@@ -42,6 +42,8 @@
     if (!self)
         return nil;
     
+    self.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
+    
     // Setup backgrounds
     self.dockedBackgroundView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"accessoryView_backgroundDocked"]];
     UIImageView *splitBackgroundView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"accessoryView_backgroundSplitLeftTop"]];
