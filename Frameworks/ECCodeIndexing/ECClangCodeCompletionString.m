@@ -8,6 +8,7 @@
 
 #import "ECClangCodeCompletionString.h"
 #import "ECClangCodeCompletionChunk.h"
+#import "ClangHelperFunctions.h"
 
 @interface ECClangCodeCompletionString ()
 {
@@ -38,6 +39,15 @@
         if (clangCompletionKind == CXCompletionChunk_TypedText)
             _typedTextChunk = [completionChunks lastObject];
     }
+    // check for character in the typed text string
+#if DEBUG
+    ECASSERT(_typedTextChunk);
+    NSUInteger textLength = [[_typedTextChunk text] length];
+    for (NSUInteger index = 0; index < textLength; ++index)
+    {
+        ECASSERT([Clang_ValidCompletionTypedTextCharacterSet() characterIsMember:[[_typedTextChunk text] characterAtIndex:index]]);
+    }
+#endif
     _completionChunks = [completionChunks copy];
     NSMutableArray *annotations = [NSMutableArray array];
     unsigned numClangCompletionAnnotations = clang_getCompletionNumAnnotations(clangCompletionString);
