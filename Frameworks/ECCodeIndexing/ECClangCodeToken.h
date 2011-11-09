@@ -6,8 +6,7 @@
 //  Copyright (c) 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import "ECCodeIndex.h"
-#import <clang-c/Index.h>
+#import "ECCodeUnit.h"
 
 @interface ECClangCodeToken : NSObject <ECCodeToken>
 

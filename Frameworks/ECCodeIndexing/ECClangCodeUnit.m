@@ -10,6 +10,7 @@
 #import "ECCodeUnit+Subclass.h"
 #import "ECCodeIndex+Subclass.h"
 #import "ECClangCodeToken.h"
+#import "ECClangCodeCompletionResult.h"
 #import "ClangHelperFunctions.h"
 
 @interface ECClangCodeUnit ()
@@ -36,6 +37,25 @@
     _clangUnit = clang_parseTranslationUnit(clangIndex, clangFilePath, parameters, parameter_count, 0, 0, clang_defaultEditingTranslationUnitOptions());
     _clangFile = clang_getFile(_clangUnit, clangFilePath);
     return self;
+}
+
+- (NSArray *)completionsAtOffset:(NSUInteger)offset
+{
+    CXSourceLocation completeLocation = clang_getLocationForOffset(_clangUnit, _clangFile, offset);
+    unsigned int completeLine;
+    unsigned int completeColumn;
+    clang_getInstantiationLocation(completeLocation, NULL, &completeLine, &completeColumn, NULL);
+    CXCodeCompleteResults *clangCompletions = clang_codeCompleteAt(_clangUnit, [[[self fileURL] path] fileSystemRepresentation], completeLine, completeColumn, NULL, 0, clang_defaultCodeCompleteOptions());
+    clang_sortCodeCompletionResults(clangCompletions->Results, clangCompletions->NumResults);
+    NSMutableArray *results = [NSMutableArray array];
+    for (unsigned resultIndex = 0; resultIndex < clangCompletions->NumResults; ++resultIndex)
+        [results addObject:[[ECClangCodeCompletionResult alloc] initWithClangCompletionResult:clangCompletions->Results[resultIndex]]];
+    return results;
+}
+
+- (id<ECCodeCompletionResult>)bestCompletionAtOffset:(NSUInteger)offset
+{
+    return nil;
 }
 
 - (NSArray *)tokensInRange:(NSRange)range

@@ -23,26 +23,3 @@
 - (ECCodeUnit *)codeUnitForFile:(NSURL *)fileURL scope:(NSString *)scope;
 
 @end
-
-@protocol ECCodeCompletion <NSObject>
-
-@end
-
-@protocol ECCodeDiagnostic <NSObject>
-
-@end
-
-@protocol ECCodeCursor <NSObject>
-
-@end
-
-@protocol ECCodeToken <NSObject>
-
-- (NSRange)range;
-- (NSString *)spelling;
-- (CXTokenKind)kind;
-- (NSString *)scopeIdentifier;
-- (NSArray *)scopeIdentifiersStack;
-- (id<ECCodeCursor>)cursor;
-
-@end

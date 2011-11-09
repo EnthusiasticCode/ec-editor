@@ -7,8 +7,54 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <clang-c/Index.h>
 
 @class ECCodeIndex;
+@protocol ECCodeCursor, ECCodeCompletionString, ECCodeCompletionChunk;
+
+@protocol ECCodeCompletionResult <NSObject>
+
+- (id<ECCodeCompletionString>)completionString;
+- (enum CXCursorKind)cursorKind;
+
+@end
+
+@protocol ECCodeCompletionString <NSObject>
+
+- (NSArray *)completionChunks;
+- (id<ECCodeCompletionChunk>)typedTextChunk;
+- (NSArray *)annotations;
+- (unsigned)priority;
+- (enum CXAvailabilityKind)availability;
+
+@end
+
+@protocol ECCodeCompletionChunk <NSObject>
+
+- (enum CXCompletionChunkKind)kind;
+- (NSString *)text;
+- (id<ECCodeCompletionString>)completionString;
+
+@end
+
+@protocol ECCodeDiagnostic <NSObject>
+
+@end
+
+@protocol ECCodeToken <NSObject>
+
+- (NSRange)range;
+- (NSString *)spelling;
+- (CXTokenKind)kind;
+- (NSString *)scopeIdentifier;
+- (NSArray *)scopeIdentifiersStack;
+- (id<ECCodeCursor>)cursor;
+
+@end
+
+@protocol ECCodeCursor <NSObject>
+
+@end
 
 /// Class that encapsulates interaction with parsing and indexing libraries to provide language related file-specific functionality such as syntax aware highlighting, diagnostics and completions.
 @interface ECCodeUnit : NSObject
@@ -23,6 +69,7 @@
 
 /// Returns the possible completions at a given insertion point in the unit's main source file.
 - (NSArray *)completionsAtOffset:(NSUInteger)offset;
+- (id<ECCodeCompletionResult>)bestCompletionAtOffset:(NSUInteger)offset;
 
 /// Returns warnings and errors in the unit.
 - (NSArray *)diagnostics;
