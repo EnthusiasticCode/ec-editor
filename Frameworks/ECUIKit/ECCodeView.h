@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "ECCodeViewBase.h"
 
-@class ECCodeView;
+@class ECCodeView, ECKeyboardAccessoryView;
 
 @protocol ECCodeViewDataSource <ECTextRendererDataSource>
 @optional
@@ -33,10 +33,29 @@
 
 @end
 
+@protocol ECCodeViewDelegate <UIScrollViewDelegate>
+@optional
+
+/// Returns if the codeview should show its keyboard accessory view in the given view with the given frame. 
+/// The provided frame is relative to the given view. The implementer can return a different view and frame. The frame will be automatically adjusted after this method if the accessovy view 'flipped' property will be set to YES.
+- (BOOL)codeView:(ECCodeView *)codeView shouldShowKeyboardAccessoryViewInView:(UIView **)view withFrame:(CGRect *)frame;
+
+/// Informs the delegate that the accessory view has been displayed in the given view with the given frame.
+- (void)codeView:(ECCodeView *)codeView didShowKeyboardAccessoryViewInView:(UIView *)view withFrame:(CGRect)frame;
+
+/// Returns if the codeview should hide its keyboard accessory view.
+- (BOOL)codeViewShouldHideKeyboardAccessoryView:(ECCodeView *)codeView;
+
+/// Informs the delegate that the accessory view has been hidden.
+- (void)codeViewDidHideKeyboardAccessoryView:(ECCodeView *)codeView;
+
+@end
+
 
 @interface ECCodeView : ECCodeViewBase <UIKeyInput, UITextInputTraits, UITextInput>
 
-@property (nonatomic, strong) id<ECCodeViewDataSource> dataSource;
+@property (nonatomic, weak) id<ECCodeViewDelegate> delegate;
+@property (nonatomic, weak) id<ECCodeViewDataSource> dataSource;
 
 #pragma mark Style
 
@@ -46,9 +65,10 @@
 /// Specify the color of the selection rect.
 @property (nonatomic, strong) UIColor *selectionColor;
 
-#pragma mark Completion
+#pragma mark Accessory View
 
-- (void)showCompletionPopoverAtCursor;
+/// Gets the receiver's accessory view.
+@property (nonatomic, strong) ECKeyboardAccessoryView *keyboardAccessoryView;
 
 #pragma mark UITextInput Properties
 
@@ -60,5 +80,13 @@
 
 /// A dictionary of attributes that describes how marked text should be drawn.
 @property (nonatomic, copy) NSDictionary *markedTextStyle;
+
+#pragma mark Selection Management
+
+/// Gets or set the selection like selectedTextRange but with a plain NSRange.
+@property (nonatomic) NSRange selectionRange;
+
+/// Gets the selection rects of the current selection. If the selection is empty, this methods returns the caret rect. If no selection returns nil.
+@property (nonatomic, readonly, copy) ECRectSet *selectionRects;
 
 @end

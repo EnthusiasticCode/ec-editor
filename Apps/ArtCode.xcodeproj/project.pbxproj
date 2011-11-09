@@ -121,12 +121,11 @@
 		CD9ED8E21466BE7700A517A5 /* accessoryView_popoverArrowMiddle.png in Resources */ = {isa = PBXBuildFile; fileRef = CD9ED8DE1466BE7700A517A5 /* accessoryView_popoverArrowMiddle.png */; };
 		CD9ED8E31466BE7700A517A5 /* accessoryView_popoverArrowRight.png in Resources */ = {isa = PBXBuildFile; fileRef = CD9ED8DF1466BE7700A517A5 /* accessoryView_popoverArrowRight.png */; };
 		CD9ED8E41466BE7700A517A5 /* accessoryView_popoverBackground.png in Resources */ = {isa = PBXBuildFile; fileRef = CD9ED8E01466BE7700A517A5 /* accessoryView_popoverBackground.png */; };
-		CD9ED8E81466C41400A517A5 /* ACCodeFileKeyboardAccessoryView.m in Sources */ = {isa = PBXBuildFile; fileRef = CD9ED8E71466C41400A517A5 /* ACCodeFileKeyboardAccessoryView.m */; };
 		CD9ED8EC1466EFCE00A517A5 /* accessoryView_backgroundDocked.png in Resources */ = {isa = PBXBuildFile; fileRef = CD9ED8E91466EFCE00A517A5 /* accessoryView_backgroundDocked.png */; };
 		CD9ED8ED1466EFCE00A517A5 /* accessoryView_backgroundSplitLeftTop.png in Resources */ = {isa = PBXBuildFile; fileRef = CD9ED8EA1466EFCE00A517A5 /* accessoryView_backgroundSplitLeftTop.png */; };
 		CD9ED8EE1466EFCE00A517A5 /* accessoryView_backgroundSplitRightTop.png in Resources */ = {isa = PBXBuildFile; fileRef = CD9ED8EB1466EFCE00A517A5 /* accessoryView_backgroundSplitRightTop.png */; };
-		CD9ED8F11467041800A517A5 /* ACCodeFileKeyboardAccessoryController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD9ED8F01467041800A517A5 /* ACCodeFileKeyboardAccessoryController.m */; };
 		CD9ED8FB1467E5C300A517A5 /* accessoryView_itemBackground.png in Resources */ = {isa = PBXBuildFile; fileRef = CD9ED8F71467E5C300A517A5 /* accessoryView_itemBackground.png */; };
+		CDA7630C146976260004FAC7 /* ACCodeFileKeyboardAccessoryView.m in Sources */ = {isa = PBXBuildFile; fileRef = CDA7630B146976260004FAC7 /* ACCodeFileKeyboardAccessoryView.m */; };
 		CDB7C92B145572EA00E0D2B2 /* ACSingleProjectBrowsersController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDB7C92A145572EA00E0D2B2 /* ACSingleProjectBrowsersController.m */; };
 		CDB7C9301455762E00E0D2B2 /* SingleProjectBrowsers.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CDB7C92F1455762E00E0D2B2 /* SingleProjectBrowsers.storyboard */; };
 		CDC13330145FFE390028423F /* ACCodeFileSearchOptionsController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDC1332F145FFE390028423F /* ACCodeFileSearchOptionsController.m */; };
@@ -434,14 +433,12 @@
 		CD9ED8DE1466BE7700A517A5 /* accessoryView_popoverArrowMiddle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = accessoryView_popoverArrowMiddle.png; sourceTree = "<group>"; };
 		CD9ED8DF1466BE7700A517A5 /* accessoryView_popoverArrowRight.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = accessoryView_popoverArrowRight.png; sourceTree = "<group>"; };
 		CD9ED8E01466BE7700A517A5 /* accessoryView_popoverBackground.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = accessoryView_popoverBackground.png; sourceTree = "<group>"; };
-		CD9ED8E61466C41400A517A5 /* ACCodeFileKeyboardAccessoryView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACCodeFileKeyboardAccessoryView.h; sourceTree = "<group>"; };
-		CD9ED8E71466C41400A517A5 /* ACCodeFileKeyboardAccessoryView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACCodeFileKeyboardAccessoryView.m; sourceTree = "<group>"; };
 		CD9ED8E91466EFCE00A517A5 /* accessoryView_backgroundDocked.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = accessoryView_backgroundDocked.png; sourceTree = "<group>"; };
 		CD9ED8EA1466EFCE00A517A5 /* accessoryView_backgroundSplitLeftTop.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = accessoryView_backgroundSplitLeftTop.png; sourceTree = "<group>"; };
 		CD9ED8EB1466EFCE00A517A5 /* accessoryView_backgroundSplitRightTop.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = accessoryView_backgroundSplitRightTop.png; sourceTree = "<group>"; };
-		CD9ED8EF1467041800A517A5 /* ACCodeFileKeyboardAccessoryController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACCodeFileKeyboardAccessoryController.h; sourceTree = "<group>"; };
-		CD9ED8F01467041800A517A5 /* ACCodeFileKeyboardAccessoryController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACCodeFileKeyboardAccessoryController.m; sourceTree = "<group>"; };
 		CD9ED8F71467E5C300A517A5 /* accessoryView_itemBackground.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = accessoryView_itemBackground.png; sourceTree = "<group>"; };
+		CDA7630A146976260004FAC7 /* ACCodeFileKeyboardAccessoryView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACCodeFileKeyboardAccessoryView.h; sourceTree = "<group>"; };
+		CDA7630B146976260004FAC7 /* ACCodeFileKeyboardAccessoryView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACCodeFileKeyboardAccessoryView.m; sourceTree = "<group>"; };
 		CDB7C929145572EA00E0D2B2 /* ACSingleProjectBrowsersController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACSingleProjectBrowsersController.h; sourceTree = "<group>"; };
 		CDB7C92A145572EA00E0D2B2 /* ACSingleProjectBrowsersController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACSingleProjectBrowsersController.m; sourceTree = "<group>"; };
 		CDB7C92F1455762E00E0D2B2 /* SingleProjectBrowsers.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = SingleProjectBrowsers.storyboard; sourceTree = "<group>"; };
@@ -939,10 +936,8 @@
 		CD9ED8E51466C3E600A517A5 /* Keyboard Accessory View */ = {
 			isa = PBXGroup;
 			children = (
-				CD9ED8EF1467041800A517A5 /* ACCodeFileKeyboardAccessoryController.h */,
-				CD9ED8F01467041800A517A5 /* ACCodeFileKeyboardAccessoryController.m */,
-				CD9ED8E61466C41400A517A5 /* ACCodeFileKeyboardAccessoryView.h */,
-				CD9ED8E71466C41400A517A5 /* ACCodeFileKeyboardAccessoryView.m */,
+				CDA7630A146976260004FAC7 /* ACCodeFileKeyboardAccessoryView.h */,
+				CDA7630B146976260004FAC7 /* ACCodeFileKeyboardAccessoryView.m */,
 			);
 			name = "Keyboard Accessory View";
 			sourceTree = "<group>";
@@ -1380,8 +1375,7 @@
 				CDE8F9D4145EEEFE00CA4496 /* ACCodeFileSearchBarController.m in Sources */,
 				CDC13330145FFE390028423F /* ACCodeFileSearchOptionsController.m in Sources */,
 				CD6E416C14614A0C00A9CE7F /* ACCodeFileMinimapView.m in Sources */,
-				CD9ED8E81466C41400A517A5 /* ACCodeFileKeyboardAccessoryView.m in Sources */,
-				CD9ED8F11467041800A517A5 /* ACCodeFileKeyboardAccessoryController.m in Sources */,
+				CDA7630C146976260004FAC7 /* ACCodeFileKeyboardAccessoryView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -85,8 +85,6 @@
 		B7170B201428E6A300DF7794 /* NSValue+KiwiAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170A991428E6A200DF7794 /* NSValue+KiwiAdditions.m */; };
 		B7170B891428EB2500DF7794 /* ECBezelAlert.h in Headers */ = {isa = PBXBuildFile; fileRef = B7170B511428EB2300DF7794 /* ECBezelAlert.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B7170B8A1428EB2500DF7794 /* ECBezelAlert.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170B521428EB2300DF7794 /* ECBezelAlert.m */; };
-		B7170B911428EB2500DF7794 /* ECCodeStringDataSource.h in Headers */ = {isa = PBXBuildFile; fileRef = B7170B591428EB2300DF7794 /* ECCodeStringDataSource.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B7170B921428EB2500DF7794 /* ECCodeStringDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170B5A1428EB2300DF7794 /* ECCodeStringDataSource.m */; };
 		B7170B931428EB2500DF7794 /* ECCodeView.h in Headers */ = {isa = PBXBuildFile; fileRef = B7170B5B1428EB2300DF7794 /* ECCodeView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B7170B941428EB2500DF7794 /* ECCodeView.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170B5C1428EB2300DF7794 /* ECCodeView.m */; };
 		B7170B951428EB2500DF7794 /* ECCodeViewBase.h in Headers */ = {isa = PBXBuildFile; fileRef = B7170B5D1428EB2300DF7794 /* ECCodeViewBase.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -153,7 +151,6 @@
 		CD17F2FD144598B80008ED91 /* ECTextRange.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170B7C1428EB2500DF7794 /* ECTextRange.m */; };
 		CD17F2FE144598B80008ED91 /* ECTextRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170B7E1428EB2500DF7794 /* ECTextRenderer.m */; };
 		CD17F2FF144598B80008ED91 /* ECTextStyle.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170B801428EB2500DF7794 /* ECTextStyle.m */; };
-		CD17F300144598B80008ED91 /* ECCodeStringDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170B5A1428EB2300DF7794 /* ECCodeStringDataSource.m */; };
 		CD17F30314459C730008ED91 /* libECFoundation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7170BCF1428ECC300DF7794 /* libECFoundation.a */; };
 		CD17F30414459CB90008ED91 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7170BD61428F00800DF7794 /* QuartzCore.framework */; };
 		CD17F30514459CCF0008ED91 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7170BD51428F00800DF7794 /* CoreText.framework */; };
@@ -177,6 +174,10 @@
 		CD9DFEDC14660A0500922E8C /* accessoryView_popoverBackground.png in Resources */ = {isa = PBXBuildFile; fileRef = CD9DFEDA14660A0500922E8C /* accessoryView_popoverBackground.png */; };
 		CD9ED8A41466991200A517A5 /* accessoryView_popoverArrowMiddle.png in Resources */ = {isa = PBXBuildFile; fileRef = CD9ED8A31466991200A517A5 /* accessoryView_popoverArrowMiddle.png */; };
 		CD9ED8A614669C9900A517A5 /* accessoryView_popoverArrowLeft.png in Resources */ = {isa = PBXBuildFile; fileRef = CD9ED8A514669C9900A517A5 /* accessoryView_popoverArrowLeft.png */; };
+		CDA76308146968E30004FAC7 /* ECKeyboardAccessoryView.h in Headers */ = {isa = PBXBuildFile; fileRef = CDA76306146968E30004FAC7 /* ECKeyboardAccessoryView.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CDA76309146968E30004FAC7 /* ECKeyboardAccessoryView.m in Sources */ = {isa = PBXBuildFile; fileRef = CDA76307146968E30004FAC7 /* ECKeyboardAccessoryView.m */; };
+		CDA763101469775C0004FAC7 /* ECCodeStringDataSource.h in Headers */ = {isa = PBXBuildFile; fileRef = CDA7630E1469775B0004FAC7 /* ECCodeStringDataSource.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CDA763111469775C0004FAC7 /* ECCodeStringDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = CDA7630F1469775C0004FAC7 /* ECCodeStringDataSource.m */; };
 		CDBD28261435101B00E05F40 /* ECTabController.h in Headers */ = {isa = PBXBuildFile; fileRef = CDBD28241435101B00E05F40 /* ECTabController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CDBD28271435101B00E05F40 /* ECTabController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDBD28251435101B00E05F40 /* ECTabController.m */; };
 		CDBD282E1435104F00E05F40 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B71709DC1428E68A00DF7794 /* UIKit.framework */; };
@@ -407,8 +408,6 @@
 		B7170A991428E6A200DF7794 /* NSValue+KiwiAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSValue+KiwiAdditions.m"; sourceTree = "<group>"; };
 		B7170B511428EB2300DF7794 /* ECBezelAlert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECBezelAlert.h; sourceTree = "<group>"; };
 		B7170B521428EB2300DF7794 /* ECBezelAlert.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ECBezelAlert.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
-		B7170B591428EB2300DF7794 /* ECCodeStringDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeStringDataSource.h; sourceTree = "<group>"; };
-		B7170B5A1428EB2300DF7794 /* ECCodeStringDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeStringDataSource.m; sourceTree = "<group>"; };
 		B7170B5B1428EB2300DF7794 /* ECCodeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeView.h; sourceTree = "<group>"; };
 		B7170B5C1428EB2300DF7794 /* ECCodeView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeView.m; sourceTree = "<group>"; };
 		B7170B5D1428EB2300DF7794 /* ECCodeViewBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeViewBase.h; sourceTree = "<group>"; };
@@ -477,6 +476,10 @@
 		CD9DFEDA14660A0500922E8C /* accessoryView_popoverBackground.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = accessoryView_popoverBackground.png; path = ../../../../Apps/ArtCode/Resources/accessoryView_popoverBackground.png; sourceTree = "<group>"; };
 		CD9ED8A31466991200A517A5 /* accessoryView_popoverArrowMiddle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = accessoryView_popoverArrowMiddle.png; path = ../../../../Apps/ArtCode/Resources/accessoryView_popoverArrowMiddle.png; sourceTree = "<group>"; };
 		CD9ED8A514669C9900A517A5 /* accessoryView_popoverArrowLeft.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = accessoryView_popoverArrowLeft.png; path = ../../../../Apps/ArtCode/Resources/accessoryView_popoverArrowLeft.png; sourceTree = "<group>"; };
+		CDA76306146968E30004FAC7 /* ECKeyboardAccessoryView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECKeyboardAccessoryView.h; sourceTree = "<group>"; };
+		CDA76307146968E30004FAC7 /* ECKeyboardAccessoryView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECKeyboardAccessoryView.m; sourceTree = "<group>"; };
+		CDA7630E1469775B0004FAC7 /* ECCodeStringDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeStringDataSource.h; sourceTree = "<group>"; };
+		CDA7630F1469775C0004FAC7 /* ECCodeStringDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeStringDataSource.m; sourceTree = "<group>"; };
 		CDBD28241435101B00E05F40 /* ECTabController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECTabController.h; sourceTree = "<group>"; };
 		CDBD28251435101B00E05F40 /* ECTabController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECTabController.m; sourceTree = "<group>"; };
 		CDBD282C1435104F00E05F40 /* ECTabControllerTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ECTabControllerTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -879,7 +882,8 @@
 				B7170B5D1428EB2300DF7794 /* ECCodeViewBase.h */,
 				B7170B5E1428EB2300DF7794 /* ECCodeViewBase.m */,
 				CD0DD9E41429194200FE8B5B /* Text */,
-				CD0DD9E51429194900FE8B5B /* Data Sources */,
+				CDA762FF1469647D0004FAC7 /* Accessory */,
+				CDA7630D1469773D0004FAC7 /* Datasource */,
 			);
 			name = "Code View";
 			sourceTree = "<group>";
@@ -897,15 +901,6 @@
 				B7170B801428EB2500DF7794 /* ECTextStyle.m */,
 			);
 			name = Text;
-			sourceTree = "<group>";
-		};
-		CD0DD9E51429194900FE8B5B /* Data Sources */ = {
-			isa = PBXGroup;
-			children = (
-				B7170B591428EB2300DF7794 /* ECCodeStringDataSource.h */,
-				B7170B5A1428EB2300DF7794 /* ECCodeStringDataSource.m */,
-			);
-			name = "Data Sources";
 			sourceTree = "<group>";
 		};
 		CD0DD9E61429196300FE8B5B /* Gesture Recognizers */ = {
@@ -1015,6 +1010,24 @@
 			name = "Popover Images";
 			sourceTree = "<group>";
 		};
+		CDA762FF1469647D0004FAC7 /* Accessory */ = {
+			isa = PBXGroup;
+			children = (
+				CDA76306146968E30004FAC7 /* ECKeyboardAccessoryView.h */,
+				CDA76307146968E30004FAC7 /* ECKeyboardAccessoryView.m */,
+			);
+			name = Accessory;
+			sourceTree = "<group>";
+		};
+		CDA7630D1469773D0004FAC7 /* Datasource */ = {
+			isa = PBXGroup;
+			children = (
+				CDA7630E1469775B0004FAC7 /* ECCodeStringDataSource.h */,
+				CDA7630F1469775C0004FAC7 /* ECCodeStringDataSource.m */,
+			);
+			name = Datasource;
+			sourceTree = "<group>";
+		};
 		CDBD28311435104F00E05F40 /* ECTabControllerTest */ = {
 			isa = PBXGroup;
 			children = (
@@ -1069,9 +1082,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				B7170B891428EB2500DF7794 /* ECBezelAlert.h in Headers */,
-				B7170B911428EB2500DF7794 /* ECCodeStringDataSource.h in Headers */,
 				B7170B931428EB2500DF7794 /* ECCodeView.h in Headers */,
 				B7170B951428EB2500DF7794 /* ECCodeViewBase.h in Headers */,
+				CDA763101469775C0004FAC7 /* ECCodeStringDataSource.h in Headers */,
+				CDA76308146968E30004FAC7 /* ECKeyboardAccessoryView.h in Headers */,
 				B7170B9B1428EB2500DF7794 /* ECInstantGestureRecognizer.h in Headers */,
 				B7170B9D1428EB2500DF7794 /* ECJumpBar.h in Headers */,
 				B7170BA11428EB2500DF7794 /* ECPopoverController.h in Headers */,
@@ -1331,7 +1345,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				B7170B8A1428EB2500DF7794 /* ECBezelAlert.m in Sources */,
-				B7170B921428EB2500DF7794 /* ECCodeStringDataSource.m in Sources */,
 				B7170B941428EB2500DF7794 /* ECCodeView.m in Sources */,
 				B7170B961428EB2500DF7794 /* ECCodeViewBase.m in Sources */,
 				B7170B9C1428EB2500DF7794 /* ECInstantGestureRecognizer.m in Sources */,
@@ -1354,6 +1367,8 @@
 				CDBD28271435101B00E05F40 /* ECTabController.m in Sources */,
 				CD06BA601438640200295E5A /* ECCustomizableScrollView.m in Sources */,
 				CD9DFED71465D32B00922E8C /* ECTexturedPopoverView.m in Sources */,
+				CDA76309146968E30004FAC7 /* ECKeyboardAccessoryView.m in Sources */,
+				CDA763111469775C0004FAC7 /* ECCodeStringDataSource.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1458,7 +1473,6 @@
 				CD17F2FD144598B80008ED91 /* ECTextRange.m in Sources */,
 				CD17F2FE144598B80008ED91 /* ECTextRenderer.m in Sources */,
 				CD17F2FF144598B80008ED91 /* ECTextStyle.m in Sources */,
-				CD17F300144598B80008ED91 /* ECCodeStringDataSource.m in Sources */,
 				CD17F30614459CE50008ED91 /* ECPopoverController.m in Sources */,
 				CD17F30714459CE80008ED91 /* ECPopoverView.m in Sources */,
 				CD17F30814459D0A0008ED91 /* ECRectSet.m in Sources */,

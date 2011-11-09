@@ -14,19 +14,17 @@
 #import <ECCodeIndexing/TMTheme.h>
 
 #import <ECUIKit/ECTabController.h>
-#import <ECUIKit/ECCodeView.h>
 
 #import "ACSingleTabController.h"
 #import "ACCodeFileSearchBarController.h"
 
-#import "ACCodeFileKeyboardAccessoryController.h"
+#import "ACCodeFileKeyboardAccessoryView.h"
 
 
 @interface ACCodeFileController () {
     UIActionSheet *_toolsActionSheet;
     ACCodeFileSearchBarController *_searchBarController;
-    
-    ACCodeFileKeyboardAccessoryController *_keyboardAccessoryController;
+    CGRect _keyboardFrame;
 }
 
 @property (nonatomic, strong) ACFileDocument *document;
@@ -38,6 +36,8 @@
 
 - (void)_keyboardWillShow:(NSNotification *)notification;
 - (void)_keyboardWillHide:(NSNotification *)notification;
+
+- (void)_keyboardAccessoryItemAction:(UIBarButtonItem *)item;
 
 @end
 
@@ -82,6 +82,50 @@
         redoRecognizer.direction = UISwipeGestureRecognizerDirectionLeft;
         undoRecognizer.numberOfTouchesRequired = 2;
         [_codeView addGestureRecognizer:redoRecognizer];
+        
+        // Accessory view
+        ACCodeFileKeyboardAccessoryView *accessoryView = [ACCodeFileKeyboardAccessoryView new];
+        accessoryView.itemBackgroundImage = [[UIImage imageNamed:@"accessoryView_itemBackground"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 12, 0, 12)];
+        
+        [accessoryView setItemDefaultWidth:59 + 4 forAccessoryPosition:ECKeyboardAccessoryPositionPortrait];
+        [accessoryView setItemDefaultWidth:81 + 4 forAccessoryPosition:ECKeyboardAccessoryPositionLandscape];
+        [accessoryView setItemDefaultWidth:36 + 4 forAccessoryPosition:ECKeyboardAccessoryPositionFloating]; // 44
+        
+        [accessoryView setContentInsets:UIEdgeInsetsMake(3, 0, 2, 0) forAccessoryPosition:ECKeyboardAccessoryPositionPortrait];
+        [accessoryView setItemInsets:UIEdgeInsetsMake(0, 3, 0, 3) forAccessoryPosition:ECKeyboardAccessoryPositionPortrait];
+        
+        [accessoryView setContentInsets:UIEdgeInsetsMake(3, 4, 2, 3) forAccessoryPosition:ECKeyboardAccessoryPositionLandscape];
+        [accessoryView setItemInsets:UIEdgeInsetsMake(0, 0, 0, 8) forAccessoryPosition:ECKeyboardAccessoryPositionLandscape];
+        
+        [accessoryView setContentInsets:UIEdgeInsetsMake(3, 10, 2, 7) forAccessoryPosition:ECKeyboardAccessoryPositionFloating];
+        [accessoryView setItemInsets:UIEdgeInsetsMake(0, 0, 0, 3) forAccessoryPosition:ECKeyboardAccessoryPositionFloating];
+        
+        // Items
+        NSMutableArray *items = [NSMutableArray arrayWithCapacity:11];
+        ACCodeFileKeyboardAccessoryItem *item;
+        
+        for (NSInteger i = 0; i < 11; ++i)
+        {
+            // TODO add long press menu
+            item = [[ACCodeFileKeyboardAccessoryItem alloc] initWithTitle:[NSString stringWithFormat:@"%d", i] style:UIBarButtonItemStylePlain target:self action:@selector(_keyboardAccessoryItemAction:)];
+            item.tag = i;
+            [items addObject:item];
+            
+            if (i == 0)
+                [item setWidth:44 + 4 forAccessoryPosition:ECKeyboardAccessoryPositionFloating];
+            
+            if (i % 2)
+                [item setWidth:60 + 4 forAccessoryPosition:ECKeyboardAccessoryPositionPortrait];
+            
+            if (i == 10)
+            {
+                [item setWidth:63 + 4 forAccessoryPosition:ECKeyboardAccessoryPositionPortrait];
+                [item setWidth:82 + 4 forAccessoryPosition:ECKeyboardAccessoryPositionLandscape];
+                [item setWidth:44 + 4 forAccessoryPosition:ECKeyboardAccessoryPositionFloating];
+            }
+        }
+        accessoryView.items = items;
+        _codeView.keyboardAccessoryView = accessoryView;
     }
     return _codeView;
 }
@@ -265,12 +309,9 @@
 {
     self.toolbarItems = [NSArray arrayWithObject:[[UIBarButtonItem alloc] initWithTitle:@"tools" style:UIBarButtonItemStylePlain target:self action:@selector(toolButtonAction:)]];
     
-    _keyboardAccessoryController = [ACCodeFileKeyboardAccessoryController new];
-    _keyboardAccessoryController.targetCodeFileController = self;
-    [self addChildViewController:_keyboardAccessoryController];
-    
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
+    _keyboardFrame = CGRectMake(0 ,CGRectGetMaxY(self.view.frame), self.view.frame.size.width, 0);
 }
 
 - (void)viewDidUnload
@@ -284,8 +325,6 @@
     
     _toolsActionSheet = nil;
     _searchBarController = nil;
-    
-    _keyboardAccessoryController = nil;
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -357,6 +396,51 @@
     }
 }
 
+- (BOOL)codeView:(ECCodeView *)codeView shouldShowKeyboardAccessoryViewInView:(UIView *__autoreleasing *)view withFrame:(CGRect *)frame
+{
+    ECASSERT(view && frame);
+    
+    if ((*frame).origin.y < 200)
+        codeView.keyboardAccessoryView.flipped = YES;
+    
+    UIView *targetView = self.view.window.rootViewController.view;
+    *frame = [targetView convertRect:*frame fromView:*view];
+    *view = targetView;
+    
+    return YES;
+}
+
+- (void)codeView:(ECCodeView *)codeView didShowKeyboardAccessoryViewInView:(UIView *)view withFrame:(CGRect)accessoryFrame
+{
+    if (!codeView.keyboardAccessoryView.isSplit)
+    {
+        [UIView animateWithDuration:0.25 delay:0 options:UIViewAnimationOptionCurveEaseInOut | UIViewAnimationOptionBeginFromCurrentState animations:^{
+            CGRect frame = self.view.frame;
+            frame.size.height = _keyboardFrame.origin.y - codeView.keyboardAccessoryView.frame.size.height;
+            self.view.frame = frame;
+        } completion:^(BOOL finished) {
+            // Scroll to selection
+            ECRectSet *selectionRects = self.codeView.selectionRects;
+            if (selectionRects == nil)
+                return;
+            [self.codeView scrollRectToVisible:CGRectInset(selectionRects.bounds, 0, -50) animated:YES];
+        }];
+    }
+}
+
+- (BOOL)codeViewShouldHideKeyboardAccessoryView:(ECCodeView *)codeView
+{
+    if (!codeView.keyboardAccessoryView.isSplit)
+    {
+        [UIView animateWithDuration:0.25 delay:0 options:UIViewAnimationOptionCurveEaseInOut | UIViewAnimationOptionBeginFromCurrentState animations:^{
+            CGRect frame = self.view.frame;
+            frame.size.height = _keyboardFrame.origin.y;
+            self.view.frame = frame;
+        } completion:nil];
+    }
+    return YES;
+}
+
 #pragma mark - Private Methods
 
 - (void)_layoutChildViews
@@ -386,12 +470,11 @@
 
 - (void)_keyboardWillShow:(NSNotification *)notification
 {
-    CGRect keyboardEndFrame = [self.view convertRect:[[[notification userInfo] objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue] fromView:nil];
+    _keyboardFrame = [self.view convertRect:[[[notification userInfo] objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue] fromView:nil];
     
-    [UIView animateWithDuration:[[[notification userInfo] objectForKey:UIKeyboardAnimationDurationUserInfoKey] doubleValue] delay:0 options:[[[notification userInfo] objectForKey:UIKeyboardAnimationCurveUserInfoKey] intValue] << 16 animations:^{
+    [UIView animateWithDuration:[[[notification userInfo] objectForKey:UIKeyboardAnimationDurationUserInfoKey] doubleValue] delay:0 options:[[[notification userInfo] objectForKey:UIKeyboardAnimationCurveUserInfoKey] intValue] << 16 | UIViewAnimationOptionBeginFromCurrentState animations:^{
         CGRect frame = self.view.frame;
-        // TODO remove hard coded accessory height
-        frame.size.height = keyboardEndFrame.origin.y;
+        frame.size.height = _keyboardFrame.origin.y;
         self.view.frame = frame;
     } completion:nil];
 }
@@ -399,6 +482,11 @@
 - (void)_keyboardWillHide:(NSNotification *)notification
 {
     [self _keyboardWillShow:notification];
+}
+
+- (void)_keyboardAccessoryItemAction:(UIBarButtonItem *)item
+{
+    // TODO use item tag to see what action to perform
 }
 
 @end

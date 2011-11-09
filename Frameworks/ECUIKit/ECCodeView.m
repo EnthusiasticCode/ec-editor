@@ -12,6 +12,7 @@
 #import "ECTextRange.h"
 #import <ECFoundation/NSTimer+block.h>
 #import "ECPopoverController.h"
+#import "ECKeyboardAccessoryView.h"
 
 #define CARET_WIDTH 2
 
@@ -31,15 +32,20 @@
     
     ECCodeViewUndoManager *_undoManager;
     
-    // Touch scrolling timer
+    // Support objects
     NSTimer *touchScrollTimer;
+    CGRect _keyboardFrame;
     
     // Delegate and dataSource flags
     struct {
-        unsigned int dataSourceHasCodeCanEditTextInRange : 1;
-        unsigned int dataSourceHasCommitStringForTextInRange : 1;
-        unsigned int dataSourceHasViewControllerForCompletionAtTextInRange : 1;
-        unsigned int delegateHasCompletionRequestAtTextLocationWithFilterWord : 1;
+        unsigned dataSourceHasCodeCanEditTextInRange : 1;
+        unsigned dataSourceHasCommitStringForTextInRange : 1;
+        unsigned dataSourceHasViewControllerForCompletionAtTextInRange : 1;
+        unsigned delegateHasShouldShowKeyboardAccessoryViewInViewWithFrame : 1;
+        unsigned delegateHasDidShowKeyboardAccessoryViewInViewWithFrame : 1;
+        unsigned delegateHasShouldHideKeyboardAccessoryView : 1;
+        unsigned delegateHasDidHideKeyboardAccessoryView : 1;
+        unsigned reserved : 1;
     } flags;
     
     // Recognizers
@@ -68,14 +74,17 @@
 /// scroll the content faster as the point approaches the receiver's bounds.
 - (void)autoScrollForTouchAtPoint:(CGPoint)point;
 
-- (void)showCompletionForTextInRange:(NSRange)textRange;
-
 // Gestures handlers
 - (void)handleGestureFocus:(UITapGestureRecognizer *)recognizer;
 - (void)handleGestureTap:(UITapGestureRecognizer *)recognizer;
 - (void)handleGestureTapTwoTouches:(UITapGestureRecognizer *)recognizer;
 - (void)handleGestureDoubleTap:(UITapGestureRecognizer *)recognizer;
 - (void)handleGestureLongPress:(UILongPressGestureRecognizer *)recognizer;
+
+// Handle keyboard display
+- (void)_keyboardWillChangeFrame:(NSNotification *)notification;
+- (void)_keyboardDidChangeFrame:(NSNotification *)notification;
+- (void)_setAccessoryViewVisible:(BOOL)visible animated:(BOOL)animated;
 
 @end
 
@@ -128,6 +137,7 @@
 @property (nonatomic) NSRange selection;
 @property (nonatomic, weak) ECTextRange *selectionRange;
 @property (nonatomic, readonly) ECTextPosition *selectionPosition;
+@property (nonatomic, readonly) ECRectSet *selectionRects;
 @property (nonatomic, readonly, getter = isEmpty) BOOL empty;
 @property (nonatomic, readonly) BOOL hasSelection;
 
@@ -287,7 +297,7 @@
 
 #pragma mark Properties
 
-@synthesize selection, hasSelection;
+@synthesize selection, hasSelection, selectionRects;
 @synthesize selectionColor, caretColor, blink;
 
 - (void)setSelection:(NSRange)range
@@ -295,6 +305,8 @@
     if (NSEqualRanges(range, selection))
         return;
     
+    [parent willChangeValueForKey:@"selectionRange"];
+    // TODO also infrom for selectionTextRange?
     hasSelection = YES;
     selection = range;
     if (blinkDelayTimer)
@@ -369,6 +381,7 @@
     }
     
     [self setNeedsDisplay];
+    [parent didChangeValueForKey:@"selectionRange"];
 }
 
 - (ECTextRange *)selectionRange
@@ -597,7 +610,8 @@
 
 #pragma mark - Properties
 
-@dynamic dataSource;
+@dynamic dataSource, delegate;
+@synthesize keyboardAccessoryView;
 
 - (void)setDataSource:(id<ECCodeViewDataSource>)aDataSource
 {
@@ -606,6 +620,31 @@
     flags.dataSourceHasCodeCanEditTextInRange = [self.dataSource respondsToSelector:@selector(codeView:canEditTextInRange:)];
     flags.dataSourceHasCommitStringForTextInRange = [self.dataSource respondsToSelector:@selector(codeView:commitString:forTextInRange:)];
     flags.dataSourceHasViewControllerForCompletionAtTextInRange = [self.dataSource respondsToSelector:@selector(codeView:viewControllerForCompletionAtTextInRange:)];
+}
+
+- (void)setDelegate:(id<ECCodeViewDelegate>)delegate
+{
+    [super setDelegate:delegate];
+    
+    flags.delegateHasShouldShowKeyboardAccessoryViewInViewWithFrame = [delegate respondsToSelector:@selector(codeView:shouldShowKeyboardAccessoryViewInView:withFrame:)];
+    flags.delegateHasDidShowKeyboardAccessoryViewInViewWithFrame = [delegate respondsToSelector:@selector(codeView:didShowKeyboardAccessoryViewInView:withFrame:)];
+    flags.delegateHasShouldHideKeyboardAccessoryView = [delegate respondsToSelector:@selector(codeViewShouldHideKeyboardAccessoryView:)];
+    flags.delegateHasDidHideKeyboardAccessoryView = [delegate respondsToSelector:@selector(codeViewDidHideKeyboardAccessoryView:)];
+}
+
+- (void)setKeyboardAccessoryView:(ECKeyboardAccessoryView *)value
+{
+    if (value == keyboardAccessoryView)
+        return;
+    [self willChangeValueForKey:@"keyboardAccessoryView"];
+    if (!keyboardAccessoryView)
+    {
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_keyboardWillChangeFrame:) name:UIKeyboardWillChangeFrameNotification object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_keyboardDidChangeFrame:) name:UIKeyboardDidChangeFrameNotification object:nil];
+    }
+    keyboardAccessoryView = value;
+    [self didChangeValueForKey:@"keyboardAccessoryView"];
+
 }
 
 - (void)setCaretColor:(UIColor *)caretColor
@@ -628,12 +667,32 @@
     return selectionView.selectionColor;
 }
 
+- (NSRange)selectionRange
+{
+    return selectionView.selection;
+}
+
+- (void)setSelectionRange:(NSRange)selectionRange
+{
+    selectionView.selection = selectionRange;
+}
+
+- (ECRectSet *)selectionRects
+{
+    if (!selectionView.hasSelection)
+        return nil;
+    if (selectionView.selection.length == 0)
+        return [ECRectSet rectSetWithRect:[self caretRectForPosition:selectionView.selectionPosition]];
+    return selectionView.selectionRects;
+}
+
 #pragma mark NSObject Methods
 
 static void init(ECCodeView *self)
 {
     // Adding selection view
     self->selectionView = [[TextSelectionView alloc] initWithFrame:CGRectZero codeView:self];
+    self->_keyboardFrame = CGRectNull;
 //    [self->selectionView setCaretColor:[UIColor styleThemeColorOne]];
 //    [self->selectionView setSelectionColor:[[UIColor styleThemeColorOne] colorWithAlphaComponent:0.3]];
     [self->selectionView setOpaque:NO];
@@ -664,47 +723,9 @@ static void init(ECCodeView *self)
     return self;
 }
 
-#pragma mark - Completion
-
-- (void)showCompletionPopoverAtCursor
+- (void)dealloc
 {
-    if (![self isFirstResponder])
-        return;
-    
-    NSRange completionRange = selectionView.selection;
-    if (completionRange.length == 0) 
-    {
-        ECTextPosition *cursorPosition = selectionView.selectionPosition;
-        ECTextPosition *wordStart = (ECTextPosition *)[self.tokenizer positionFromPosition:cursorPosition toBoundary:UITextGranularityWord inDirection:UITextStorageDirectionBackward];
-        
-        if (!wordStart)
-            wordStart = cursorPosition;
-        
-        completionRange = NSMakeRange(wordStart.index, cursorPosition.index - wordStart.index);
-    }
-    
-    [self showCompletionForTextInRange:completionRange];
-}
-
-- (void)showCompletionForTextInRange:(NSRange)textRange
-{
-    if (!flags.dataSourceHasViewControllerForCompletionAtTextInRange)
-        return;
-    
-    if (!completionPopover)
-    {
-        completionPopover = [[ECPopoverController alloc] initWithContentViewController:nil];
-        completionPopover.automaticDismiss = YES;
-    }
-    
-    completionPopover.contentViewController = [self.dataSource codeView:self viewControllerForCompletionAtTextInRange:textRange];
-    
-    // TODO something if completionPopover.contentViewController is nil
-    
-    CGRect textRect = [self.renderer rectsForStringRange:textRange limitToFirstLine:YES].bounds;
-    textRect.origin.x += textRect.size.width - 1;
-    textRect.size.width = 2;
-    [completionPopover presentPopoverFromRect:textRect inView:self permittedArrowDirections:UIPopoverArrowDirectionUp | UIPopoverArrowDirectionDown animated:YES];
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 #pragma mark - UIResponder methods
@@ -743,7 +764,7 @@ static void init(ECCodeView *self)
         // TODO initialize gesture recognizers
     }
     
-    // Activate recognizers
+    // Activate recognizers and keyboard accessory
     if (shouldBecomeFirstResponder)
     {
         focusRecognizer.enabled = NO;
@@ -752,6 +773,8 @@ static void init(ECCodeView *self)
         doubleTapRecognizer.enabled = YES;
         longPressRecognizer.enabled = YES;
         longDoublePressRecognizer.enabled = YES;
+        
+        [self _setAccessoryViewVisible:YES animated:YES];
     }
     
     [self setNeedsLayout];
@@ -774,6 +797,9 @@ static void init(ECCodeView *self)
         
         // Remove selection
         selectionView.hidden = YES;
+        
+        // Remove keyboard accessory
+        [self _setAccessoryViewVisible:NO animated:YES];
     }
     
     [self setNeedsLayout];
@@ -1272,11 +1298,6 @@ static void init(ECCodeView *self)
     // TODO
 }
 
-- (void)complete:(id)sender
-{
-    [self showCompletionPopoverAtCursor];
-}
-
 - (BOOL)canPerformAction:(SEL)action withSender:(id)sender
 {
     if (action == @selector(copy:) || action == @selector(cut:) || action == @selector(delete:))
@@ -1288,11 +1309,6 @@ static void init(ECCodeView *self)
     {
         UIPasteboard *generalPasteboard = [UIPasteboard generalPasteboard];
         return [generalPasteboard containsPasteboardTypes:UIPasteboardTypeListString];
-    }
-    
-    if (action == @selector(complete:))
-    {
-        return selectionView.hasSelection;
     }
     
     if (action == @selector(select:))
@@ -1539,6 +1555,86 @@ static void init(ECCodeView *self)
             tapPoint.y -= self.contentOffset.y;
             [self autoScrollForTouchAtPoint:tapPoint];
         }
+    }
+}
+
+#pragma mark - Keyboard Accessory Methods
+
+#define ACCESSORY_HEIGHT 45
+#define KEYBOARD_DOCKED_MINIMUM_HEIGHT 264
+
+- (void)_keyboardWillChangeFrame:(NSNotification *)notification
+{
+    [self _setAccessoryViewVisible:NO animated:NO];
+}
+
+- (void)_keyboardDidChangeFrame:(NSNotification *)notification
+{
+    _keyboardFrame = [[[notification userInfo] objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue];
+    
+    // Only show accessory view if keyboard is visible
+    // TODO check for hardware keyboard
+    if (!CGRectIntersectsRect(_keyboardFrame, [[UIScreen mainScreen] bounds]))
+    {
+        _keyboardFrame = CGRectNull;
+        return;
+    }
+    
+    [self _setAccessoryViewVisible:YES animated:YES];
+}
+
+- (void)_setAccessoryViewVisible:(BOOL)visible animated:(BOOL)animated
+{
+    if (!self.keyboardAccessoryView || CGRectIsNull(_keyboardFrame) || (self.keyboardAccessoryView.superview != nil) == visible)
+        return;
+    
+    if (visible && self.isFirstResponder)
+    {
+        // Setup accessory view
+        CGRect targetFrame = [self convertRect:_keyboardFrame fromView:nil];
+        CGFloat keyboardHeight = targetFrame.size.height;
+        targetFrame.size.height = ACCESSORY_HEIGHT;
+        targetFrame.origin.y -= ACCESSORY_HEIGHT;
+        self.keyboardAccessoryView.split = (keyboardHeight < KEYBOARD_DOCKED_MINIMUM_HEIGHT);
+        self.keyboardAccessoryView.flipped = NO;
+        
+        // Ask delegate if accessory view should be shown
+        __autoreleasing UIView *targetView = self;
+        if (flags.delegateHasShouldShowKeyboardAccessoryViewInViewWithFrame && ![self.delegate codeView:self shouldShowKeyboardAccessoryViewInView:&targetView withFrame:&targetFrame])
+            return;
+        
+        // Reposition if flipped
+        if (self.keyboardAccessoryView.isFlipped)
+        {
+            targetFrame.origin.y += keyboardHeight + ACCESSORY_HEIGHT;
+        }
+        
+        // Add accessory to target view
+        self.keyboardAccessoryView.frame = targetFrame;
+        [targetView addSubview:self.keyboardAccessoryView];
+        [self.keyboardAccessoryView setNeedsLayout];
+        self.keyboardAccessoryView.alpha = 0;
+        [UIView animateWithDuration:(animated ? 0.25 : 0) delay:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
+            self.keyboardAccessoryView.alpha = 1;
+        } completion:^(BOOL finished) {
+            if (flags.delegateHasDidShowKeyboardAccessoryViewInViewWithFrame)
+            {
+                [self.delegate codeView:self didShowKeyboardAccessoryViewInView:targetView withFrame:targetFrame];
+            }
+        }];
+    }
+    else if (!flags.delegateHasShouldHideKeyboardAccessoryView || [self.delegate codeViewShouldHideKeyboardAccessoryView:self])
+    {
+        [UIView animateWithDuration:(animated ? 0.25 : 0) delay:0 options:UIViewAnimationOptionCurveEaseInOut | UIViewAnimationOptionBeginFromCurrentState animations:^{
+            keyboardAccessoryView.alpha = 0;
+        } completion:^(BOOL finished) {
+            [keyboardAccessoryView removeFromSuperview];
+            keyboardAccessoryView.alpha = 1;
+            if (flags.delegateHasDidHideKeyboardAccessoryView)
+            {
+                [self.delegate codeViewDidHideKeyboardAccessoryView:self];
+            }
+        }];
     }
 }
 
