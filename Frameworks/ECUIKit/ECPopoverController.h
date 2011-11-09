@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "ECPopoverView.h"
+#import "ECBasePopoverView.h"
 
 
 /// Replace the \c UIPopoverController with a popovercontroller that is customizable.
@@ -39,11 +39,17 @@
 
 #pragma mark Customizable Popover
 
-@property (nonatomic, readonly, strong) ECPopoverView *popoverView;
+@property (nonatomic, readonly, strong) ECBasePopoverView *popoverView;
+
++ (Class)popoverViewClass;
 
 #pragma mark Advanced Behaviours
 
 /// If YES (default), the user will be able to dismiss the popover by tapping anyehere outside it and passthroughViews views.
 @property (nonatomic, getter = isAutomaticDismiss) BOOL automaticDismiss;
 
+@end
+
+
+@interface ECTexturedPopoverController : ECPopoverController
 @end

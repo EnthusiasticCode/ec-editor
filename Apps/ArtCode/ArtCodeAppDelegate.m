@@ -16,7 +16,7 @@
 
 #import "AppStyle.h"
 #import <ECUIKit/ECTabController.h>
-#import <ECUIKit/ECPopoverView.h>
+#import <ECUIKit/ECShapePopoverView.h>
 
 #import "ACSingleTabController.h"
 
@@ -54,7 +54,7 @@
     
     ////////////////////////////////////////////////////////////////////////////
     // Generic popover
-    id popoverAppearance = [ECPopoverView appearance];
+    id popoverAppearance = [ECShapePopoverView appearance];
     [popoverAppearance setBackgroundColor:[UIColor styleForegroundColor]];
     [popoverAppearance setContentWrapCornerRadius:4];
     [popoverAppearance setShadowOpacity:0.5];

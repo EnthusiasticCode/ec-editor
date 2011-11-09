@@ -95,8 +95,8 @@
 		B7170B9E1428EB2500DF7794 /* ECJumpBar.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170B661428EB2400DF7794 /* ECJumpBar.m */; };
 		B7170BA11428EB2500DF7794 /* ECPopoverController.h in Headers */ = {isa = PBXBuildFile; fileRef = B7170B691428EB2400DF7794 /* ECPopoverController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B7170BA21428EB2500DF7794 /* ECPopoverController.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170B6A1428EB2400DF7794 /* ECPopoverController.m */; };
-		B7170BA31428EB2500DF7794 /* ECPopoverView.h in Headers */ = {isa = PBXBuildFile; fileRef = B7170B6B1428EB2400DF7794 /* ECPopoverView.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B7170BA41428EB2500DF7794 /* ECPopoverView.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170B6C1428EB2400DF7794 /* ECPopoverView.m */; };
+		B7170BA31428EB2500DF7794 /* ECShapePopoverView.h in Headers */ = {isa = PBXBuildFile; fileRef = B7170B6B1428EB2400DF7794 /* ECShapePopoverView.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B7170BA41428EB2500DF7794 /* ECShapePopoverView.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170B6C1428EB2400DF7794 /* ECShapePopoverView.m */; };
 		B7170BA51428EB2500DF7794 /* ECRectSet.h in Headers */ = {isa = PBXBuildFile; fileRef = B7170B6D1428EB2400DF7794 /* ECRectSet.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B7170BA61428EB2500DF7794 /* ECRectSet.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170B6E1428EB2400DF7794 /* ECRectSet.m */; };
 		B7170BA71428EB2500DF7794 /* ECRoundedContentCornersView.h in Headers */ = {isa = PBXBuildFile; fileRef = B7170B6F1428EB2400DF7794 /* ECRoundedContentCornersView.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -155,7 +155,7 @@
 		CD17F30414459CB90008ED91 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7170BD61428F00800DF7794 /* QuartzCore.framework */; };
 		CD17F30514459CCF0008ED91 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7170BD51428F00800DF7794 /* CoreText.framework */; };
 		CD17F30614459CE50008ED91 /* ECPopoverController.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170B6A1428EB2400DF7794 /* ECPopoverController.m */; };
-		CD17F30714459CE80008ED91 /* ECPopoverView.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170B6C1428EB2400DF7794 /* ECPopoverView.m */; };
+		CD17F30714459CE80008ED91 /* ECShapePopoverView.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170B6C1428EB2400DF7794 /* ECShapePopoverView.m */; };
 		CD17F30814459D0A0008ED91 /* ECRectSet.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170B6E1428EB2400DF7794 /* ECRectSet.m */; };
 		CD17F30914459D680008ED91 /* ECRoundedContentCornersView.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170B701428EB2400DF7794 /* ECRoundedContentCornersView.m */; };
 		CD17F30A14459D7A0008ED91 /* ECInstantGestureRecognizer.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170B641428EB2400DF7794 /* ECInstantGestureRecognizer.m */; };
@@ -178,6 +178,8 @@
 		CDA76309146968E30004FAC7 /* ECKeyboardAccessoryView.m in Sources */ = {isa = PBXBuildFile; fileRef = CDA76307146968E30004FAC7 /* ECKeyboardAccessoryView.m */; };
 		CDA763101469775C0004FAC7 /* ECCodeStringDataSource.h in Headers */ = {isa = PBXBuildFile; fileRef = CDA7630E1469775B0004FAC7 /* ECCodeStringDataSource.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CDA763111469775C0004FAC7 /* ECCodeStringDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = CDA7630F1469775C0004FAC7 /* ECCodeStringDataSource.m */; };
+		CDBCD37E146AC06600C7EDD6 /* ECBasePopoverView.h in Headers */ = {isa = PBXBuildFile; fileRef = CDBCD37C146AC06600C7EDD6 /* ECBasePopoverView.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CDBCD37F146AC06600C7EDD6 /* ECBasePopoverView.m in Sources */ = {isa = PBXBuildFile; fileRef = CDBCD37D146AC06600C7EDD6 /* ECBasePopoverView.m */; };
 		CDBD28261435101B00E05F40 /* ECTabController.h in Headers */ = {isa = PBXBuildFile; fileRef = CDBD28241435101B00E05F40 /* ECTabController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CDBD28271435101B00E05F40 /* ECTabController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDBD28251435101B00E05F40 /* ECTabController.m */; };
 		CDBD282E1435104F00E05F40 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B71709DC1428E68A00DF7794 /* UIKit.framework */; };
@@ -418,8 +420,8 @@
 		B7170B661428EB2400DF7794 /* ECJumpBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECJumpBar.m; sourceTree = "<group>"; };
 		B7170B691428EB2400DF7794 /* ECPopoverController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECPopoverController.h; sourceTree = "<group>"; };
 		B7170B6A1428EB2400DF7794 /* ECPopoverController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECPopoverController.m; sourceTree = "<group>"; };
-		B7170B6B1428EB2400DF7794 /* ECPopoverView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECPopoverView.h; sourceTree = "<group>"; };
-		B7170B6C1428EB2400DF7794 /* ECPopoverView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECPopoverView.m; sourceTree = "<group>"; };
+		B7170B6B1428EB2400DF7794 /* ECShapePopoverView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECShapePopoverView.h; sourceTree = "<group>"; };
+		B7170B6C1428EB2400DF7794 /* ECShapePopoverView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECShapePopoverView.m; sourceTree = "<group>"; };
 		B7170B6D1428EB2400DF7794 /* ECRectSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECRectSet.h; sourceTree = "<group>"; };
 		B7170B6E1428EB2400DF7794 /* ECRectSet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECRectSet.m; sourceTree = "<group>"; };
 		B7170B6F1428EB2400DF7794 /* ECRoundedContentCornersView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECRoundedContentCornersView.h; sourceTree = "<group>"; };
@@ -480,6 +482,8 @@
 		CDA76307146968E30004FAC7 /* ECKeyboardAccessoryView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECKeyboardAccessoryView.m; sourceTree = "<group>"; };
 		CDA7630E1469775B0004FAC7 /* ECCodeStringDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeStringDataSource.h; sourceTree = "<group>"; };
 		CDA7630F1469775C0004FAC7 /* ECCodeStringDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCodeStringDataSource.m; sourceTree = "<group>"; };
+		CDBCD37C146AC06600C7EDD6 /* ECBasePopoverView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECBasePopoverView.h; sourceTree = "<group>"; };
+		CDBCD37D146AC06600C7EDD6 /* ECBasePopoverView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECBasePopoverView.m; sourceTree = "<group>"; };
 		CDBD28241435101B00E05F40 /* ECTabController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECTabController.h; sourceTree = "<group>"; };
 		CDBD28251435101B00E05F40 /* ECTabController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECTabController.m; sourceTree = "<group>"; };
 		CDBD282C1435104F00E05F40 /* ECTabControllerTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ECTabControllerTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -835,8 +839,10 @@
 			children = (
 				B7170B691428EB2400DF7794 /* ECPopoverController.h */,
 				B7170B6A1428EB2400DF7794 /* ECPopoverController.m */,
-				B7170B6B1428EB2400DF7794 /* ECPopoverView.h */,
-				B7170B6C1428EB2400DF7794 /* ECPopoverView.m */,
+				CDBCD37C146AC06600C7EDD6 /* ECBasePopoverView.h */,
+				CDBCD37D146AC06600C7EDD6 /* ECBasePopoverView.m */,
+				B7170B6B1428EB2400DF7794 /* ECShapePopoverView.h */,
+				B7170B6C1428EB2400DF7794 /* ECShapePopoverView.m */,
 				CD9DFED41465D32B00922E8C /* ECTexturedPopoverView.h */,
 				CD9DFED51465D32B00922E8C /* ECTexturedPopoverView.m */,
 				B7170B6F1428EB2400DF7794 /* ECRoundedContentCornersView.h */,
@@ -1089,7 +1095,9 @@
 				B7170B9B1428EB2500DF7794 /* ECInstantGestureRecognizer.h in Headers */,
 				B7170B9D1428EB2500DF7794 /* ECJumpBar.h in Headers */,
 				B7170BA11428EB2500DF7794 /* ECPopoverController.h in Headers */,
-				B7170BA31428EB2500DF7794 /* ECPopoverView.h in Headers */,
+				CDBCD37E146AC06600C7EDD6 /* ECBasePopoverView.h in Headers */,
+				B7170BA31428EB2500DF7794 /* ECShapePopoverView.h in Headers */,
+				CD9DFED61465D32B00922E8C /* ECTexturedPopoverView.h in Headers */,
 				B7170BA51428EB2500DF7794 /* ECRectSet.h in Headers */,
 				B7170BA71428EB2500DF7794 /* ECRoundedContentCornersView.h in Headers */,
 				B7170BAD1428EB2500DF7794 /* ECSwipeGestureRecognizer.h in Headers */,
@@ -1099,7 +1107,6 @@
 				B7170BB51428EB2500DF7794 /* ECTextRenderer.h in Headers */,
 				CD2A5FCD142A4A9900A2CACD /* ECSplitViewController.h in Headers */,
 				CDBD28261435101B00E05F40 /* ECTabController.h in Headers */,
-				CD9DFED61465D32B00922E8C /* ECTexturedPopoverView.h in Headers */,
 				B7170BB71428EB2500DF7794 /* ECTextStyle.h in Headers */,
 				B7170BB91428EB2500DF7794 /* UIControl+BlockAction.h in Headers */,
 				B7170BBB1428EB2500DF7794 /* UIImage+BlockDrawing.h in Headers */,
@@ -1350,7 +1357,7 @@
 				B7170B9C1428EB2500DF7794 /* ECInstantGestureRecognizer.m in Sources */,
 				B7170B9E1428EB2500DF7794 /* ECJumpBar.m in Sources */,
 				B7170BA21428EB2500DF7794 /* ECPopoverController.m in Sources */,
-				B7170BA41428EB2500DF7794 /* ECPopoverView.m in Sources */,
+				B7170BA41428EB2500DF7794 /* ECShapePopoverView.m in Sources */,
 				B7170BA61428EB2500DF7794 /* ECRectSet.m in Sources */,
 				B7170BA81428EB2500DF7794 /* ECRoundedContentCornersView.m in Sources */,
 				B7170BAE1428EB2500DF7794 /* ECSwipeGestureRecognizer.m in Sources */,
@@ -1369,6 +1376,7 @@
 				CD9DFED71465D32B00922E8C /* ECTexturedPopoverView.m in Sources */,
 				CDA76309146968E30004FAC7 /* ECKeyboardAccessoryView.m in Sources */,
 				CDA763111469775C0004FAC7 /* ECCodeStringDataSource.m in Sources */,
+				CDBCD37F146AC06600C7EDD6 /* ECBasePopoverView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1474,7 +1482,7 @@
 				CD17F2FE144598B80008ED91 /* ECTextRenderer.m in Sources */,
 				CD17F2FF144598B80008ED91 /* ECTextStyle.m in Sources */,
 				CD17F30614459CE50008ED91 /* ECPopoverController.m in Sources */,
-				CD17F30714459CE80008ED91 /* ECPopoverView.m in Sources */,
+				CD17F30714459CE80008ED91 /* ECShapePopoverView.m in Sources */,
 				CD17F30814459D0A0008ED91 /* ECRectSet.m in Sources */,
 				CD17F30914459D680008ED91 /* ECRoundedContentCornersView.m in Sources */,
 				CD17F30A14459D7A0008ED91 /* ECInstantGestureRecognizer.m in Sources */,

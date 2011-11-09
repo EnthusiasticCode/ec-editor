@@ -9,6 +9,8 @@
 #import <QuartzCore/QuartzCore.h>
 #import "ECPopoverController.h"
 #import "ECInstantGestureRecognizer.h"
+#import "ECShapePopoverView.h"
+#import "ECTexturedPopoverView.h"
 
 #pragma mark -
 #pragma makr Popover Controller
@@ -40,10 +42,24 @@
 @synthesize popoverView;
 @synthesize automaticDismiss;
 
+- (ECBasePopoverView *)popoverView
+{
+    if (!popoverView)
+    {
+        popoverView = [[[self class] popoverViewClass] new];
+    }
+    return popoverView;
+}
+
++ (Class)popoverViewClass
+{
+    return [ECShapePopoverView class];
+}
+
 #pragma mark -
 #pragma mark Initializing the Popover
 
-static void preinit(ECPopoverController *self)
+static void init(ECPopoverController *self)
 {
     NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
     [nc addObserver:self selector:@selector(keyboardShown:) name:UIKeyboardDidShowNotification object:nil];
@@ -54,20 +70,18 @@ static void preinit(ECPopoverController *self)
 
 - (id)init
 {
-    preinit(self);
     if ((self = [super init]))
     {
-        popoverView = [ECPopoverView new];
+        init(self);
     }
     return self;
 }
 
 - (id)initWithContentViewController:(UIViewController *)viewController
 {
-    preinit(self);
     if ((self = [super init])) 
     {
-        popoverView = [ECPopoverView new];
+        init(self);
         [self setContentViewController:viewController animated:NO];
     }
     return self;
@@ -95,39 +109,26 @@ static void preinit(ECPopoverController *self)
     
     contentViewController = viewController;
     
-    // Add navigation bar if needed
-    if ([contentViewController isKindOfClass:[UINavigationController class]])
-    {
-        [(UINavigationController *)contentViewController setNavigationBarHidden:YES];
-        
-        UIView *navigationBar = [UIView new];
-        navigationBar.backgroundColor = [UIColor redColor];
-        navigationBar.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-        popoverView.barView = navigationBar;
-    }
-    else
-    {
-        popoverView.barView = nil;
-    }
+    // TODO Add navigation bar if needed
     
     // Show content view
     if (animated) 
     {
         // TODO change with opacity animation
-        [UIView transitionFromView:popoverView.contentView toView:contentViewController.view duration:ANIMATION_DURATION options:0 completion:^(BOOL finished) {
+        [UIView transitionFromView:self.popoverView.contentView toView:contentViewController.view duration:ANIMATION_DURATION options:0 completion:^(BOOL finished) {
            [self setPopoverContentSize:contentViewController.contentSizeForViewInPopover animated:YES]; 
         }];
     }
     else
     {
         [self setPopoverContentSize:contentViewController.contentSizeForViewInPopover animated:NO]; 
-        popoverView.contentView = contentViewController.view;
+        self.popoverView.contentView = contentViewController.view;
     }
 }
 
 - (CGSize)popoverContentSize
 {
-    return popoverView.contentSize;
+    return self.popoverView.contentSize;
 }
 
 - (void)setPopoverContentSize:(CGSize)size
@@ -140,12 +141,12 @@ static void preinit(ECPopoverController *self)
     if (animated) 
     {
         [UIView animateWithDuration:ANIMATION_DURATION animations:^(void) {
-            popoverView.contentSize = size;
+            self.popoverView.contentSize = size;
         }];
     }
     else
     {
-        popoverView.contentSize = size;
+        self.popoverView.contentSize = size;
     }
 }
 
@@ -166,7 +167,7 @@ static void preinit(ECPopoverController *self)
 
 - (UIPopoverArrowDirection)popoverArrowDirection
 {
-    return popoverView.arrowDirection;
+    return self.popoverView.arrowDirection;
 }
 
 #pragma mark -
@@ -193,59 +194,60 @@ static void preinit(ECPopoverController *self)
     
     // Point where the arrow should point
     CGPoint arrowPoint = CGPointMake(CGRectGetMidX(rect), CGRectGetMidY(rect));
+    CGFloat arrowHeight = [self.self.popoverView arrowSizeForMetaPosition:ECPopoverViewArrowMetaPositionMiddle].height;
     
     CGRect backupFrame = CGRectNull;
     CGRect resultFrame = CGRectZero;
     
     if (arrowDirections & UIPopoverArrowDirectionDown) 
     {
-        resultFrame = popoverView.bounds;
+        resultFrame = self.popoverView.bounds;
         resultFrame.origin.x = MAX(allowedRect.origin.x, MIN(CGRectGetMaxX(allowedRect) - resultFrame.size.width, arrowPoint.x - resultFrame.size.width / 2));
-        resultFrame.origin.y = rect.origin.y - resultFrame.size.height - popoverView.arrowMargin;
+        resultFrame.origin.y = rect.origin.y - resultFrame.size.height - arrowHeight;
         if (CGRectContainsRect(allowedRect, resultFrame)) 
         {
-            popoverView.arrowDirection = UIPopoverArrowDirectionDown;
-            popoverView.arrowPosition = arrowPoint.x - resultFrame.origin.x;
+            self.popoverView.arrowDirection = UIPopoverArrowDirectionDown;
+            self.popoverView.arrowPosition = arrowPoint.x - resultFrame.origin.x;
             [self _presentPopoverInView:view withFrame:resultFrame animated:animated];
             return;
         }
         else if (CGRectIsNull(backupFrame))
         {
-            popoverView.arrowDirection = UIPopoverArrowDirectionDown;
-            popoverView.arrowPosition = arrowPoint.x - resultFrame.origin.x;
+            self.popoverView.arrowDirection = UIPopoverArrowDirectionDown;
+            self.popoverView.arrowPosition = arrowPoint.x - resultFrame.origin.x;
             backupFrame = resultFrame;
         }
     }
     
     if (arrowDirections & UIPopoverArrowDirectionLeft) 
     {
-        resultFrame = popoverView.bounds;
-        resultFrame.origin.x = CGRectGetMaxX(rect) + popoverView.arrowMargin;
+        resultFrame = self.popoverView.bounds;
+        resultFrame.origin.x = CGRectGetMaxX(rect) + arrowHeight;
         resultFrame.origin.y = MAX(allowedRect.origin.y ,MIN(CGRectGetMaxY(allowedRect) - resultFrame.size.height, arrowPoint.y - resultFrame.size.height / 2));
         if (CGRectContainsRect(allowedRect, resultFrame)) 
         {
-            popoverView.arrowDirection = UIPopoverArrowDirectionLeft;
-            popoverView.arrowPosition = arrowPoint.y - resultFrame.origin.y;
+            self.popoverView.arrowDirection = UIPopoverArrowDirectionLeft;
+            self.popoverView.arrowPosition = arrowPoint.y - resultFrame.origin.y;
             [self _presentPopoverInView:view withFrame:resultFrame animated:animated];
             return;
         }
         // TODO instead of check for null, check if intersection of this result frame > intersection with current backupframe
         else if (CGRectIsNull(backupFrame))
         {
-            popoverView.arrowDirection = UIPopoverArrowDirectionLeft;
-            popoverView.arrowPosition = arrowPoint.y - resultFrame.origin.y;
+            self.popoverView.arrowDirection = UIPopoverArrowDirectionLeft;
+            self.popoverView.arrowPosition = arrowPoint.y - resultFrame.origin.y;
             backupFrame = resultFrame;
         }
     }
     
     if (arrowDirections & UIPopoverArrowDirectionUp) 
     {
-        resultFrame = popoverView.bounds;
+        resultFrame = self.popoverView.bounds;
         CGFloat minOrigin = MIN(CGRectGetMaxX(allowedRect) - resultFrame.size.width, arrowPoint.x - resultFrame.size.width / 2);
         resultFrame.origin.x = MAX(allowedRect.origin.x, minOrigin);
-        resultFrame.origin.y = CGRectGetMaxY(rect) + popoverView.arrowMargin;
-        popoverView.arrowDirection = UIPopoverArrowDirectionUp;
-        popoverView.arrowPosition = arrowPoint.x - resultFrame.origin.x;
+        resultFrame.origin.y = CGRectGetMaxY(rect) + arrowHeight;
+        self.popoverView.arrowDirection = UIPopoverArrowDirectionUp;
+        self.popoverView.arrowPosition = arrowPoint.x - resultFrame.origin.x;
         if (CGRectContainsRect(allowedRect, resultFrame)) 
         {
             [self _presentPopoverInView:view withFrame:resultFrame animated:animated];
@@ -259,20 +261,20 @@ static void preinit(ECPopoverController *self)
     
     if (arrowDirections & UIPopoverArrowDirectionRight) 
     {
-        resultFrame = popoverView.bounds;
-        resultFrame.origin.x = rect.origin.x - resultFrame.size.width - popoverView.arrowMargin;
+        resultFrame = self.popoverView.bounds;
+        resultFrame.origin.x = rect.origin.x - resultFrame.size.width - arrowHeight;
         resultFrame.origin.y = MIN(CGRectGetMaxY(allowedRect) - resultFrame.size.height, arrowPoint.y - resultFrame.size.height / 2);
         if (CGRectContainsRect(allowedRect, resultFrame)) 
         {
-            popoverView.arrowDirection = UIPopoverArrowDirectionRight;
-            popoverView.arrowPosition = arrowPoint.y - resultFrame.origin.y;
+            self.popoverView.arrowDirection = UIPopoverArrowDirectionRight;
+            self.popoverView.arrowPosition = arrowPoint.y - resultFrame.origin.y;
             [self _presentPopoverInView:view withFrame:resultFrame animated:animated];
             return;
         }
         else if (CGRectIsNull(backupFrame))
         {
-            popoverView.arrowDirection = UIPopoverArrowDirectionRight;
-            popoverView.arrowPosition = arrowPoint.y - resultFrame.origin.y;
+            self.popoverView.arrowDirection = UIPopoverArrowDirectionRight;
+            self.popoverView.arrowPosition = arrowPoint.y - resultFrame.origin.y;
             backupFrame = resultFrame;
         }
     }
@@ -293,12 +295,12 @@ static void preinit(ECPopoverController *self)
     
     if (animated) 
     {
-        popoverView.layer.shouldRasterize = YES;
+        self.popoverView.layer.shouldRasterize = YES;
         [UIView animateWithDuration:ANIMATION_DURATION animations:^(void) {
-            popoverView.alpha = 0;
+            self.popoverView.alpha = 0;
         } completion:^(BOOL finished) {
-            popoverView.layer.shouldRasterize = NO;
-            [popoverView removeFromSuperview];
+            self.popoverView.layer.shouldRasterize = NO;
+            [self.popoverView removeFromSuperview];
             popoverVisible = NO;
             
             if (delegateHasPopoverControllerDidDismissPopover)
@@ -307,7 +309,7 @@ static void preinit(ECPopoverController *self)
     }
     else
     {
-        [popoverView removeFromSuperview];
+        [self.popoverView removeFromSuperview];
         popoverVisible = NO;
         
         if (delegateHasPopoverControllerDidDismissPopover)
@@ -320,23 +322,23 @@ static void preinit(ECPopoverController *self)
 
 - (void)_presentPopoverInView:(UIView *)view withFrame:(CGRect)frame animated:(BOOL)animated
 {
-    [view.window.rootViewController.view addSubview:popoverView];
+    [view.window.rootViewController.view addSubview:self.popoverView];
     frame.origin.x = roundf(frame.origin.x);
     frame.origin.y = roundf(frame.origin.y);
-    popoverView.frame = frame;
+    self.popoverView.frame = frame;
     if (animated)
     {
-        popoverView.layer.shouldRasterize = YES;
-        popoverView.alpha = 0;
+        self.popoverView.layer.shouldRasterize = YES;
+        self.popoverView.alpha = 0;
         [UIView animateWithDuration:ANIMATION_DURATION animations:^(void) {
-            popoverView.alpha = 1;
+            self.popoverView.alpha = 1;
         } completion:^(BOOL finished) {
-            popoverView.layer.shouldRasterize = NO;
+            self.popoverView.layer.shouldRasterize = NO;
         }];
     }
     else
     {
-        popoverView.alpha = 1;
+        self.popoverView.alpha = 1;
     }
     popoverVisible = YES;
     
@@ -350,8 +352,8 @@ static void preinit(ECPopoverController *self)
 
 - (void)dismissHandler:(UIGestureRecognizer *)recognizer
 {
-    CGPoint pointInView = [recognizer locationInView:popoverView];
-    if ([popoverView pointInside:pointInView withEvent:nil])
+    CGPoint pointInView = [recognizer locationInView:self.popoverView];
+    if ([self.popoverView pointInside:pointInView withEvent:nil])
         return;
     
     for (UIView *view in passthroughViews) 
@@ -375,6 +377,16 @@ static void preinit(ECPopoverController *self)
 - (void)keyboardHidden:(NSNotification *)aNotification
 {
     keyboardHeight = 0;
+}
+
+@end
+
+
+@implementation ECTexturedPopoverController
+
++ (Class)popoverViewClass
+{
+    return [ECTexturedPopoverView class];
 }
 
 @end
