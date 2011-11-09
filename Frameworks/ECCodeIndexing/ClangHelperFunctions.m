@@ -328,3 +328,8 @@ NSString *Clang_CursorKindScopeIdentifier(enum CXCursorKind cursorKind)
             return @"meta.preprocessor.include";
     }
 }
+
+NSCharacterSet *Clang_ValidCompletionTypedTextCharacterSet(void)
+{
+    return [NSCharacterSet characterSetWithCharactersInString:@"#0123456789@ABCDEFGHIJKLMNOPQRSTUVXYZ_abcdefghijklmnopqrstuvxyz"];
+}

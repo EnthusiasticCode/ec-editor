@@ -51,6 +51,11 @@
     return nil;
 }
 
+- (id<ECCodeCompletionResult>)bestCompletionAtOffset:(NSUInteger)offset
+{
+    return nil;
+}
+
 - (NSArray *)diagnostics
 {
     return nil;
@@ -58,7 +63,7 @@
 
 - (NSArray *)tokens
 {
-    return [self tokensInRange:NSMakeRange(0, [[[self index] contentsForFile:self.fileURL] length])];
+    return [self tokensInRange:NSMakeRange(0, [[[self index] contentsForFile:[self fileURL]] length])];
 }
 
 - (NSArray *)tokensInRange:(NSRange)range
@@ -68,7 +73,7 @@
 
 - (NSArray *)annotatedTokens
 {
-    return [self annotatedTokensInRange:NSMakeRange(0, [[[self index] contentsForFile:self.fileURL] length])];
+    return [self annotatedTokensInRange:NSMakeRange(0, [[[self index] contentsForFile:[self fileURL]] length])];
 }
 
 - (NSArray *)annotatedTokensInRange:(NSRange)range
