@@ -7,8 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "ECBasePopoverView.h"
 
-@interface ECPopoverView : UIView
+@interface ECShapePopoverView : ECBasePopoverView
 
 #pragma mark Style
 
@@ -24,13 +25,6 @@
 
 #pragma mark Content
 
-@property (nonatomic, strong) UIView *contentView;
-
-/// The content size. Chaning this property will affect the receiver's bounds.
-@property (nonatomic) CGSize contentSize;
-
-@property (nonatomic) UIEdgeInsets contentInsets UI_APPEARANCE_SELECTOR;
-
 @property (nonatomic, readonly, strong) UIView *contentWrapView;
 
 @property (nonatomic) CGFloat contentWrapCornerRadius UI_APPEARANCE_SELECTOR;
@@ -41,14 +35,6 @@
 
 #pragma mark Arrow
 
-@property (nonatomic) UIPopoverArrowDirection arrowDirection;
-
-@property (nonatomic) CGFloat arrowPosition;
-
-@property (nonatomic) CGFloat arrowSize UI_APPEARANCE_SELECTOR;
-
 @property (nonatomic) CGFloat arrowCornerRadius UI_APPEARANCE_SELECTOR;
-
-@property (nonatomic) CGFloat arrowMargin;
 
 @end

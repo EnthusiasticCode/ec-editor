@@ -12,14 +12,10 @@
 @implementation ECTexturedPopoverView {
     /// Array of array filled with NSNull with indexes corresponding to directions: up, down, left, right. Sub arrays has 3 elements: far left, middle, far right.
     NSMutableArray *_arrowDirectionImages;
-    
-    /// Arrow sizes for meta position: far left, middle, far right.
-    CGSize _arrowSizes[3];
-    
     BOOL _needsImageAndTransformForArrowView;
 }
 
-@synthesize arrowDirection, arrowPosition, arrowInsets, arrowView;
+@synthesize arrowView, backgroundView;
 
 #pragma mark - Private Methods
 
@@ -29,7 +25,7 @@
     [self setNeedsLayout];
 }
 
-- (CGAffineTransform)_transformForArrowViewInDirection:(UIPopoverArrowDirection)direction metaPosition:(ECPopoverViewArrowMetaPosition)metaPosition usedImage:(UIImage **)usedImage
+- (CGAffineTransform)_arrowRotationTransformInDirection:(UIPopoverArrowDirection)direction metaPosition:(ECPopoverViewArrowMetaPosition)metaPosition usedImage:(UIImage **)usedImage
 {
     UIImage *image = [self arrowImageForDirection:direction metaPosition:metaPosition];
     CGAffineTransform transform = CGAffineTransformIdentity;
@@ -72,32 +68,26 @@
 
 - (void)setArrowDirection:(UIPopoverArrowDirection)value
 {
-    if (value == arrowDirection)
+    if (value == self.arrowDirection)
         return;
-    [self willChangeValueForKey:@"arrowDirection"];
-    arrowDirection = value;
+    [super setArrowDirection:value];
     [self _setNeedsImageAndTransformForArrowView];
-    [self didChangeValueForKey:@"arrowDirection"];
 }
 
 - (void)setArrowPosition:(CGFloat)value
 {
-    if (value == arrowPosition)
+    if (value == self.arrowPosition)
         return;
-    [self willChangeValueForKey:@"arrowPosition"];
-    arrowPosition = value;
+    [super setArrowPosition:value];
     [self _setNeedsImageAndTransformForArrowView];
-    [self didChangeValueForKey:@"arrowPosition"];
 }
 
 - (void)setArrowInsets:(UIEdgeInsets)value
 {
-    if (UIEdgeInsetsEqualToEdgeInsets(value, arrowInsets))
+    if (UIEdgeInsetsEqualToEdgeInsets(value, self.arrowInsets))
         return;
-    [self willChangeValueForKey:@"arrowInsets"];
-    arrowInsets = value;
+    [super setArrowInsets:value];
     [self setNeedsLayout];
-    [self didChangeValueForKey:@"arrowInsets"];
 }
 
 - (UIImageView *)arrowView
@@ -105,6 +95,13 @@
     if (arrowView == nil)
         arrowView = [UIImageView new];
     return arrowView;
+}
+
+- (UIImageView *)backgroundView
+{
+    if (backgroundView == nil)
+        backgroundView = [UIImageView new];
+    return backgroundView;
 }
 
 - (void)setAlpha:(CGFloat)alpha
@@ -118,6 +115,7 @@
 
 static void init(ECTexturedPopoverView *self)
 {
+    [self addSubview:self.backgroundView];
     [self addSubview:self.arrowView];
     [self _setNeedsImageAndTransformForArrowView];
 }
@@ -137,10 +135,11 @@ static void init(ECTexturedPopoverView *self)
     return self;
 }
 
-- (id)initWithImage:(UIImage *)image
+- (id)initWithBackgroundImage:(UIImage *)image
 {
-    if (!(self = [super initWithImage:image]))
+    if (!(self = [super initWithFrame:(CGRect){ CGPointZero, image.size }]))
         return nil;
+    self.backgroundView.image = image;
     init(self);
     return self;
 }
@@ -149,11 +148,13 @@ static void init(ECTexturedPopoverView *self)
 {
     [super layoutSubviews];
     
+    self.backgroundView.frame = self.bounds;
+    
     if (_needsImageAndTransformForArrowView)
     {
         UIImage *arrowImage = nil;
         ECPopoverViewArrowMetaPosition metaPosition = [self currentArrowMetaPosition];
-        self.arrowView.transform = [self _transformForArrowViewInDirection:self.arrowDirection metaPosition:metaPosition usedImage:&arrowImage];
+        self.arrowView.transform = [self _arrowRotationTransformInDirection:self.arrowDirection metaPosition:metaPosition usedImage:&arrowImage];
         self.arrowView.image = arrowImage;
         self.arrowView.bounds = (CGRect){ CGPointZero, [self arrowSizeForMetaPosition:metaPosition] };
         _needsImageAndTransformForArrowView = NO;
@@ -184,78 +185,6 @@ static void init(ECTexturedPopoverView *self)
 }
 
 #pragma mark - Arrow Methods
-
-- (ECPopoverViewArrowMetaPosition)currentArrowMetaPosition
-{
-    CGFloat relevantSize = [self arrowSizeForMetaPosition:ECPopoverViewArrowMetaPositionMiddle].width / 2;
-    if (self.arrowDirection & (UIPopoverArrowDirectionRight | UIPopoverArrowDirectionLeft))
-    {
-        if (arrowPosition <= relevantSize + self.arrowInsets.top)
-            return ECPopoverViewArrowMetaPositionFarTop;
-        if (arrowPosition >= self.bounds.size.height - relevantSize - self.arrowInsets.bottom)
-            return ECPopoverViewArrowMetaPositionFarBottom;
-    }
-    else
-    {
-        if (arrowPosition <= relevantSize + self.arrowInsets.left)
-            return ECPopoverViewArrowMetaPositionFarLeft;
-        if (arrowPosition >= self.bounds.size.width - relevantSize - self.arrowInsets.right)
-            return ECPopoverViewArrowMetaPositionFarRight;
-    }
-    return ECPopoverViewArrowMetaPositionMiddle;
-}
-
-- (CGSize)arrowSizeForMetaPosition:(ECPopoverViewArrowMetaPosition)metaPosition
-{
-    ECASSERT(abs(metaPosition) <= 1);
-    CGSize size = _arrowSizes[metaPosition + 1];
-    if (metaPosition != ECPopoverViewArrowMetaPositionMiddle && CGSizeEqualToSize(CGSizeZero, size))
-        size = _arrowSizes[1];
-    if (CGSizeEqualToSize(CGSizeZero, size))
-        size = [self.arrowView sizeThatFits:size];
-    return size;
-}
-
-- (void)setArrowSize:(CGSize)arrowSize forMetaPosition:(ECPopoverViewArrowMetaPosition)metaPosition
-{
-    ECASSERT(abs(metaPosition) <= 1);
-    _arrowSizes[metaPosition + 1] = arrowSize;
-    [self _setNeedsImageAndTransformForArrowView];
-}
-
-- (CGFloat)arrowActualPosition
-{
-    ECPopoverViewArrowMetaPosition metaPosition = [self currentArrowMetaPosition];
-    CGSize arrowSize = CGSizeApplyAffineTransform([self arrowSizeForMetaPosition:metaPosition], [self _transformForArrowViewInDirection:self.arrowDirection metaPosition:metaPosition usedImage:NULL]);
-    CGFloat relevantSize = 0;
-    CGFloat relevantLimit = 0;
-    CGFloat relevantInset = 0;
-    if (self.arrowDirection & (UIPopoverArrowDirectionUp | UIPopoverArrowDirectionDown))
-    {
-        relevantSize = fabs(arrowSize.width / 2);
-        relevantLimit = self.bounds.size.width - relevantSize;
-        if (metaPosition == ECPopoverViewArrowMetaPositionFarLeft)
-            relevantInset = self.arrowInsets.left;
-        else if (metaPosition == ECPopoverViewArrowMetaPositionFarRight)
-            relevantInset = -self.arrowInsets.right;
-    }
-    else
-    {
-        relevantSize = fabs(arrowSize.height / 2);
-        relevantLimit = self.bounds.size.height - relevantSize;
-        if (metaPosition == ECPopoverViewArrowMetaPositionFarTop)
-            relevantInset = self.arrowInsets.top;
-        else if (metaPosition == ECPopoverViewArrowMetaPositionFarBottom)
-            relevantInset = -self.arrowInsets.bottom;
-    }
-    
-    CGFloat position = self.arrowPosition;
-    if (position < relevantSize + relevantInset)
-        return relevantSize;
-    if (position > relevantLimit + relevantInset)
-        return relevantLimit;
-    return position;
-}
 
 - (UIImage *)arrowImageForDirection:(UIPopoverArrowDirection)direction metaPosition:(ECPopoverViewArrowMetaPosition)metaPosition
 {
@@ -312,6 +241,25 @@ static void init(ECTexturedPopoverView *self)
     } while (++directionIndex < 4);
     
     [self _setNeedsImageAndTransformForArrowView];
+}
+
+- (CGSize)arrowSizeForMetaPosition:(ECPopoverViewArrowMetaPosition)metaPosition
+{
+    CGSize size = [super arrowSizeForMetaPosition:metaPosition];
+    if (CGSizeEqualToSize(CGSizeZero, size))
+        size = [self.arrowView sizeThatFits:size];
+    return size;
+}
+
+- (void)setArrowSize:(CGSize)arrowSize forMetaPosition:(ECPopoverViewArrowMetaPosition)metaPosition
+{
+    [super setArrowSize:arrowSize forMetaPosition:metaPosition];
+    [self _setNeedsImageAndTransformForArrowView];
+}
+
+- (CGAffineTransform)arrowRotationTransformInDirection:(UIPopoverArrowDirection)direction metaPosition:(ECPopoverViewArrowMetaPosition)metaPosition
+{
+    return [self _arrowRotationTransformInDirection:direction metaPosition:metaPosition usedImage:NULL];
 }
 
 @end
