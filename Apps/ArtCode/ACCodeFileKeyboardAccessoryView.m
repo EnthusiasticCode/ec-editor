@@ -140,7 +140,7 @@
     {
         [item.customView removeFromSuperview];
     }
-    items = value;
+    items = [value copy];
     [items enumerateObjectsUsingBlock:^(UIBarButtonItem *item, NSUInteger itemIndex, BOOL *stop) {
         UIButton *itemButton = [UIButton new];
         itemButton.tag = itemIndex;

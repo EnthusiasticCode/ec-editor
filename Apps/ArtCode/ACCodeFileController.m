@@ -29,10 +29,10 @@
 
     CGRect _keyboardFrame;
     CGRect _keyboardRotationFrame;
-    ECPopoverController *_popoverAccessoryItem;
 }
 
 @property (nonatomic, strong) ACFileDocument *document;
+@property (nonatomic, strong, readonly) ECPopoverController *_keyboardAccessoryItemPopover;
 
 - (void)_layoutChildViews;
 
@@ -44,6 +44,7 @@
 - (void)_keyboardWillChangeFrame:(NSNotification *)notification;
 
 - (void)_keyboardAccessoryItemAction:(UIBarButtonItem *)item;
+- (void)_keyboardAccessoryItemLongPressHandler:(UILongPressGestureRecognizer *)recognizer;
 
 @end
 
@@ -131,6 +132,17 @@
             }
         }
         accessoryView.items = items;
+        
+        // Items long press action
+        [items enumerateObjectsUsingBlock:^(UIBarButtonItem *item, NSUInteger itemIndex, BOOL *stop) {
+            if (itemIndex > 0 && itemIndex < 10)
+            {
+                UILongPressGestureRecognizer *itemLongPressrecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(_keyboardAccessoryItemLongPressHandler:)];
+                itemLongPressrecognizer.minimumPressDuration = 1;
+                [item.customView addGestureRecognizer:itemLongPressrecognizer];
+            }
+        }];
+        
         _codeView.keyboardAccessoryView = accessoryView;
     }
     return _codeView;
@@ -249,6 +261,33 @@
         [self _layoutChildViews];
     }
     [self didChangeValueForKey:@"minimapVisible"];
+}
+
+#pragma mark -
+
+@synthesize _keyboardAccessoryItemPopover;
+
+- (ECPopoverController *)_keyboardAccessoryItemPopover
+{
+    if (!_keyboardAccessoryItemPopover)
+    {
+        UIViewController *tempViewController = [UIViewController new];
+        tempViewController.contentSizeForViewInPopover = CGSizeMake(300, 300);
+        tempViewController.view.backgroundColor = [UIColor whiteColor];
+        
+        _keyboardAccessoryItemPopover = [[ECTexturedPopoverController alloc] initWithContentViewController:tempViewController];
+        ECTexturedPopoverView *popoverView = (ECTexturedPopoverView *)_keyboardAccessoryItemPopover.popoverView;
+        popoverView.contentInsets = UIEdgeInsetsMake(5, 5, 5, 5);
+        popoverView.backgroundView.image = [[UIImage imageNamed:@"accessoryView_popoverBackground"] resizableImageWithCapInsets:UIEdgeInsetsMake(10, 10, 10, 10)];
+        [popoverView setArrowImage:[[UIImage imageNamed:@"accessoryView_popoverArrowMiddle"] resizableImageWithCapInsets:UIEdgeInsetsMake(10, 10, 10, 10)] forDirection:UIPopoverArrowDirectionDown metaPosition:ECPopoverViewArrowMetaPositionMiddle];
+        [popoverView setArrowImage:[[UIImage imageNamed:@"accessoryView_popoverArrowRight"] resizableImageWithCapInsets:UIEdgeInsetsMake(10, 10, 10, 10)] forDirection:UIPopoverArrowDirectionDown metaPosition:ECPopoverViewArrowMetaPositionFarRight];
+        [popoverView setArrowImage:[[UIImage imageNamed:@"accessoryView_popoverArrowLeft"] resizableImageWithCapInsets:UIEdgeInsetsMake(10, 10, 10, 10)] forDirection:UIPopoverArrowDirectionDown metaPosition:ECPopoverViewArrowMetaPositionFarLeft];
+        [popoverView setArrowSize:CGSizeMake(70, 54) forMetaPosition:ECPopoverViewArrowMetaPositionMiddle];
+        popoverView.positioningInsets = UIEdgeInsetsMake(59, 58, 58, 58);
+        popoverView.arrowInsets = UIEdgeInsetsMake(12, 12, 12, 12);
+        popoverView.contentInsets = UIEdgeInsetsMake(10, 10, 10, 10);
+    }
+    return _keyboardAccessoryItemPopover;
 }
 
 #pragma mark - Toolbar Items Actions
@@ -516,7 +555,7 @@
         self.view.frame = frame;
     } completion:nil];
     
-    [_popoverAccessoryItem dismissPopoverAnimated:YES];
+    [_keyboardAccessoryItemPopover dismissPopoverAnimated:YES];
 }
 
 - (void)_keyboardWillHide:(NSNotification *)notification
@@ -524,45 +563,44 @@
     [self _keyboardWillShow:notification];
 }
 
+#pragma mark -
+
 - (void)_keyboardAccessoryItemAction:(UIBarButtonItem *)item
 {
     // TODO use item tag to see what action to perform
-    if (!_popoverAccessoryItem)
+
+    if (item.tag == 10)
     {
-        UIViewController *tempViewController = [UIViewController new];
-        tempViewController.contentSizeForViewInPopover = CGSizeMake(300, 300);
-        tempViewController.view.backgroundColor = [UIColor whiteColor];
+        switch (self.codeView.keyboardAccessoryView.currentAccessoryPosition) {
+            case ECKeyboardAccessoryPositionFloating:
+                self._keyboardAccessoryItemPopover.allowedBoundsInsets = UIEdgeInsetsMake(0, 3, 0, 3);
+                break;
+                
+            case ECKeyboardAccessoryPositionPortrait:
+                self._keyboardAccessoryItemPopover.allowedBoundsInsets = UIEdgeInsetsMake(0, -4, 0, -4);
+                break;
+                
+            default:
+                self._keyboardAccessoryItemPopover.allowedBoundsInsets = UIEdgeInsetsMake(0, -3, 0, -3);
+                break;
+        }
         
-        _popoverAccessoryItem = [[ECTexturedPopoverController alloc] initWithContentViewController:tempViewController];
-        ECTexturedPopoverView *popoverView = (ECTexturedPopoverView *)_popoverAccessoryItem.popoverView;
-        popoverView.contentInsets = UIEdgeInsetsMake(5, 5, 5, 5);
-        popoverView.backgroundView.image = [[UIImage imageNamed:@"accessoryView_popoverBackground"] resizableImageWithCapInsets:UIEdgeInsetsMake(10, 10, 10, 10)];
-        [popoverView setArrowImage:[[UIImage imageNamed:@"accessoryView_popoverArrowMiddle"] resizableImageWithCapInsets:UIEdgeInsetsMake(10, 10, 10, 10)] forDirection:UIPopoverArrowDirectionDown metaPosition:ECPopoverViewArrowMetaPositionMiddle];
-        [popoverView setArrowImage:[[UIImage imageNamed:@"accessoryView_popoverArrowRight"] resizableImageWithCapInsets:UIEdgeInsetsMake(10, 10, 10, 10)] forDirection:UIPopoverArrowDirectionDown metaPosition:ECPopoverViewArrowMetaPositionFarRight];
-        [popoverView setArrowImage:[[UIImage imageNamed:@"accessoryView_popoverArrowLeft"] resizableImageWithCapInsets:UIEdgeInsetsMake(10, 10, 10, 10)] forDirection:UIPopoverArrowDirectionDown metaPosition:ECPopoverViewArrowMetaPositionFarLeft];
-        [popoverView setArrowSize:CGSizeMake(70, 54) forMetaPosition:ECPopoverViewArrowMetaPositionMiddle];
-        popoverView.positioningInsets = UIEdgeInsetsMake(59, 58, 58, 58);
-        popoverView.arrowInsets = UIEdgeInsetsMake(12, 12, 12, 12);
-        popoverView.contentInsets = UIEdgeInsetsMake(10, 10, 10, 10);
+        [(ECTexturedPopoverView *)self._keyboardAccessoryItemPopover.popoverView setArrowSize:CGSizeMake(item.customView.bounds.size.width + 14, 54) forMetaPosition:ECPopoverViewArrowMetaPositionMiddle];
+        [self._keyboardAccessoryItemPopover presentPopoverFromBarButtonItem:item permittedArrowDirections:self.codeView.keyboardAccessoryView.isFlipped ? UIPopoverArrowDirectionUp : UIPopoverArrowDirectionDown animated:YES];
+        [item.customView.superview bringSubviewToFront:item.customView];
     }
-    
-    switch (self.codeView.keyboardAccessoryView.currentAccessoryPosition) {
-        case ECKeyboardAccessoryPositionFloating:
-            _popoverAccessoryItem.allowedBoundsInsets = UIEdgeInsetsMake(0, 3, 0, 3);
-            break;
-            
-        case ECKeyboardAccessoryPositionPortrait:
-            _popoverAccessoryItem.allowedBoundsInsets = UIEdgeInsetsMake(0, -4, 0, -4);
-            break;
-            
-        default:
-            _popoverAccessoryItem.allowedBoundsInsets = UIEdgeInsetsMake(0, -3, 0, -3);
-            break;
+}
+
+- (void)_keyboardAccessoryItemLongPressHandler:(UILongPressGestureRecognizer *)recognizer
+{
+    if (recognizer.state == UIGestureRecognizerStateBegan)
+    {
+        UIView *itemView = recognizer.view;
+        self._keyboardAccessoryItemPopover.allowedBoundsInsets = UIEdgeInsetsMake(5, 5, 5, 5);
+        [(ECTexturedPopoverView *)self._keyboardAccessoryItemPopover.popoverView setArrowSize:CGSizeMake(itemView.bounds.size.width + 14, 54) forMetaPosition:ECPopoverViewArrowMetaPositionMiddle];
+        [self._keyboardAccessoryItemPopover presentPopoverFromRect:[itemView frame] inView:[itemView superview] permittedArrowDirections:self.codeView.keyboardAccessoryView.isFlipped ? UIPopoverArrowDirectionUp : UIPopoverArrowDirectionDown animated:YES];
+        [itemView.superview bringSubviewToFront:itemView];
     }
-    
-    [(ECTexturedPopoverView *)_popoverAccessoryItem.popoverView setArrowSize:CGSizeMake(item.customView.bounds.size.width + 14, 54) forMetaPosition:ECPopoverViewArrowMetaPositionMiddle];
-    [_popoverAccessoryItem presentPopoverFromBarButtonItem:item permittedArrowDirections:self.codeView.keyboardAccessoryView.isFlipped ? UIPopoverArrowDirectionUp : UIPopoverArrowDirectionDown animated:YES];
-    [item.customView.superview bringSubviewToFront:item.customView];
 }
 
 @end

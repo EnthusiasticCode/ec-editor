@@ -12,7 +12,7 @@
 @interface ACCodeFileKeyboardAccessoryView : ECKeyboardAccessoryView
 
 /// Array of UIBarButtonItem presented on the accessory view from left to right.
-@property (nonatomic, strong) NSArray *items;
+@property (nonatomic, copy) NSArray *items;
 
 /// Set the image used for button items.
 @property (nonatomic, strong) UIImage *itemBackgroundImage;

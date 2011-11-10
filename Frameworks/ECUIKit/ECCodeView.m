@@ -1581,6 +1581,7 @@ static void init(ECCodeView *self)
 
 - (void)_keyboardWillChangeFrame:(NSNotification *)notification
 {
+    _keyboardFrame = CGRectNull;
     [self _setAccessoryViewVisible:NO animated:NO];
     _keyboardWillShow = YES;
 }
