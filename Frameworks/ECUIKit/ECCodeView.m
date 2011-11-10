@@ -1581,8 +1581,8 @@ static void init(ECCodeView *self)
 
 - (void)_keyboardWillChangeFrame:(NSNotification *)notification
 {
-    _keyboardWillShow = YES;
     [self _setAccessoryViewVisible:NO animated:NO];
+    _keyboardWillShow = YES;
 }
 
 - (void)_keyboardDidChangeFrame:(NSNotification *)notification
@@ -1594,7 +1594,7 @@ static void init(ECCodeView *self)
 
 - (void)_setAccessoryViewVisible:(BOOL)visible animated:(BOOL)animated
 {
-    if (!self.keyboardAccessoryView || (self.keyboardAccessoryView.superview != nil) == visible)
+    if (_keyboardWillShow || !self.keyboardAccessoryView || (self.keyboardAccessoryView.superview != nil) == visible)
         return;
     
     if (visible && self.isFirstResponder)

@@ -50,13 +50,13 @@
 #endif
     _completionChunks = [completionChunks copy];
     NSMutableArray *annotations = [NSMutableArray array];
-    unsigned numClangCompletionAnnotations = clang_getCompletionNumAnnotations(clangCompletionString);
-    for (unsigned annotationIndex = 0; annotationIndex < numClangCompletionAnnotations; ++annotationIndex)
-    {
-        CXString clangAnnotation = clang_getCompletionAnnotation(clangCompletionString, annotationIndex);
-        [annotations addObject:[NSString stringWithUTF8String:clang_getCString(clangAnnotation)]];
-        clang_disposeString(clangAnnotation);
-    }
+//    unsigned numClangCompletionAnnotations = clang_getCompletionNumAnnotations(clangCompletionString);
+//    for (unsigned annotationIndex = 0; annotationIndex < numClangCompletionAnnotations; ++annotationIndex)
+//    {
+//        CXString clangAnnotation = clang_getCompletionAnnotation(clangCompletionString, annotationIndex);
+//        [annotations addObject:[NSString stringWithUTF8String:clang_getCString(clangAnnotation)]];
+//        clang_disposeString(clangAnnotation);
+//    }
     _annotations = [annotations copy];
     _priority = clang_getCompletionPriority(clangCompletionString);
     _availability = clang_getCompletionAvailability(clangCompletionString);
