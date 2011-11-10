@@ -143,6 +143,7 @@
 @property (nonatomic, readonly) ECRectSet *selectionRects;
 @property (nonatomic, readonly, getter = isEmpty) BOOL empty;
 @property (nonatomic, readonly) BOOL hasSelection;
+- (void)update;
 
 #pragma mark Selection Styles
 
@@ -312,6 +313,37 @@
     // TODO also infrom for selectionTextRange?
     hasSelection = YES;
     selection = range;
+    [self update];
+    [parent didChangeValueForKey:@"selectionRange"];
+}
+
+- (ECTextRange *)selectionRange
+{
+    return [[ECTextRange alloc] initWithRange:selection];
+}
+
+- (void)setSelectionRange:(ECTextRange *)selectionRange
+{
+    self.selection = [selectionRange range];
+}
+
+- (ECTextPosition *)selectionPosition
+{
+    return [[ECTextPosition alloc] initWithIndex:selection.location];
+}
+
+- (BOOL)isEmpty
+{
+    return selection.length == 0;
+}
+
+#pragma mark Selection updating
+
+- (void)update
+{
+    if (!hasSelection)
+        return;
+    
     if (blinkDelayTimer)
     {
         [blinkDelayTimer invalidate];
@@ -384,27 +416,6 @@
     }
     
     [self setNeedsDisplay];
-    [parent didChangeValueForKey:@"selectionRange"];
-}
-
-- (ECTextRange *)selectionRange
-{
-    return [[ECTextRange alloc] initWithRange:selection];
-}
-
-- (void)setSelectionRange:(ECTextRange *)selectionRange
-{
-    self.selection = [selectionRange range];
-}
-
-- (ECTextPosition *)selectionPosition
-{
-    return [[ECTextPosition alloc] initWithIndex:selection.location];
-}
-
-- (BOOL)isEmpty
-{
-    return selection.length == 0;
 }
 
 #pragma mark Blinking
@@ -689,7 +700,7 @@
     return selectionView.selectionRects;
 }
 
-#pragma mark NSObject Methods
+#pragma mark UIView Methods
 
 static void init(ECCodeView *self)
 {
@@ -727,6 +738,12 @@ static void init(ECCodeView *self)
 - (void)dealloc
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
+- (void)layoutSubviews
+{
+    [super layoutSubviews];
+    [selectionView update];
 }
 
 #pragma mark - UIResponder methods
