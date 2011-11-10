@@ -40,6 +40,7 @@
 
 - (void)_keyboardWillShow:(NSNotification *)notification;
 - (void)_keyboardWillHide:(NSNotification *)notification;
+- (void)_keyboardWillChangeFrame:(NSNotification *)notification;
 
 - (void)_keyboardAccessoryItemAction:(UIBarButtonItem *)item;
 
@@ -315,7 +316,8 @@
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
-    _keyboardFrame = CGRectMake(0 ,CGRectGetMaxY(self.view.frame), self.view.frame.size.width, 0);
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_keyboardWillChangeFrame:) name:UIKeyboardWillChangeFrameNotification object:nil];
+    _keyboardFrame = CGRectNull;
 }
 
 - (void)viewDidUnload
@@ -347,6 +349,7 @@
 
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
 {
+    [super didRotateFromInterfaceOrientation:fromInterfaceOrientation];
     if (self.minimapVisible)
         self.minimapView.selectionRectangle = self.codeView.bounds;
 }
@@ -420,7 +423,7 @@
     {
         [UIView animateWithDuration:0.25 delay:0 options:UIViewAnimationOptionCurveEaseInOut | UIViewAnimationOptionBeginFromCurrentState animations:^{
             CGRect frame = self.view.frame;
-            frame.size.height = _keyboardFrame.origin.y - codeView.keyboardAccessoryView.frame.size.height;
+            frame.size.height = (CGRectIsNull(_keyboardFrame) ? frame.size.height : _keyboardFrame.origin.y) - codeView.keyboardAccessoryView.frame.size.height;
             self.view.frame = frame;
         } completion:^(BOOL finished) {
             // Scroll to selection
@@ -438,8 +441,9 @@
     {
         [UIView animateWithDuration:0.25 delay:0 options:UIViewAnimationOptionCurveEaseInOut | UIViewAnimationOptionBeginFromCurrentState animations:^{
             CGRect frame = self.view.frame;
-            frame.size.height = _keyboardFrame.origin.y;
+            frame.size.height = (CGRectIsNull(_keyboardFrame) ? frame.size.height + codeView.keyboardAccessoryView.frame.size.height : _keyboardFrame.origin.y);
             self.view.frame = frame;
+            _keyboardFrame = CGRectNull;
         } completion:nil];
     }
     return YES;
@@ -472,10 +476,14 @@
     [_codeView.undoManager redo];
 }
 
+- (void)_keyboardWillChangeFrame:(NSNotification *)notification
+{
+    _keyboardFrame = [self.view convertRect:[[[notification userInfo] objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue] fromView:nil];
+}
+
 - (void)_keyboardWillShow:(NSNotification *)notification
 {
     _keyboardFrame = [self.view convertRect:[[[notification userInfo] objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue] fromView:nil];
-    
     [UIView animateWithDuration:[[[notification userInfo] objectForKey:UIKeyboardAnimationDurationUserInfoKey] doubleValue] delay:0 options:[[[notification userInfo] objectForKey:UIKeyboardAnimationCurveUserInfoKey] intValue] << 16 | UIViewAnimationOptionBeginFromCurrentState animations:^{
         CGRect frame = self.view.frame;
         frame.size.height = _keyboardFrame.origin.y;

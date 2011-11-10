@@ -15,6 +15,8 @@
 #import "ECKeyboardAccessoryView.h"
 
 #define CARET_WIDTH 2
+#define ACCESSORY_HEIGHT 45
+#define KEYBOARD_DOCKED_MINIMUM_HEIGHT 264
 
 #pragma mark - Interfaces
 
@@ -35,6 +37,7 @@
     // Support objects
     NSTimer *touchScrollTimer;
     CGRect _keyboardFrame;
+    BOOL _keyboardWillShow;
     
     // Delegate and dataSource flags
     struct {
@@ -690,14 +693,12 @@
 
 static void init(ECCodeView *self)
 {
-    // Adding selection view
+    // Setup keyboard and selection
     self->selectionView = [[TextSelectionView alloc] initWithFrame:CGRectZero codeView:self];
-    self->_keyboardFrame = CGRectNull;
-//    [self->selectionView setCaretColor:[UIColor styleThemeColorOne]];
-//    [self->selectionView setSelectionColor:[[UIColor styleThemeColorOne] colorWithAlphaComponent:0.3]];
     [self->selectionView setOpaque:NO];
     [self->selectionView setHidden:YES];
     [self addSubview:self->selectionView];
+    self->_keyboardFrame = CGRectNull;
     
     // Adding focus recognizer
     self->focusRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleGestureFocus:)];
@@ -774,7 +775,8 @@ static void init(ECCodeView *self)
         longPressRecognizer.enabled = YES;
         longDoublePressRecognizer.enabled = YES;
         
-        [self _setAccessoryViewVisible:YES animated:YES];
+        if (!_keyboardWillShow)
+            [self _setAccessoryViewVisible:YES animated:YES];
     }
     
     [self setNeedsLayout];
@@ -1560,38 +1562,28 @@ static void init(ECCodeView *self)
 
 #pragma mark - Keyboard Accessory Methods
 
-#define ACCESSORY_HEIGHT 45
-#define KEYBOARD_DOCKED_MINIMUM_HEIGHT 264
-
 - (void)_keyboardWillChangeFrame:(NSNotification *)notification
 {
+    _keyboardWillShow = YES;
     [self _setAccessoryViewVisible:NO animated:NO];
 }
 
 - (void)_keyboardDidChangeFrame:(NSNotification *)notification
 {
+    _keyboardWillShow = NO;
     _keyboardFrame = [[[notification userInfo] objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue];
-    
-    // Only show accessory view if keyboard is visible
-    // TODO check for hardware keyboard
-    if (!CGRectIntersectsRect(_keyboardFrame, [[UIScreen mainScreen] bounds]))
-    {
-        _keyboardFrame = CGRectNull;
-        return;
-    }
-    
     [self _setAccessoryViewVisible:YES animated:YES];
 }
 
 - (void)_setAccessoryViewVisible:(BOOL)visible animated:(BOOL)animated
 {
-    if (!self.keyboardAccessoryView || CGRectIsNull(_keyboardFrame) || (self.keyboardAccessoryView.superview != nil) == visible)
+    if (!self.keyboardAccessoryView || (self.keyboardAccessoryView.superview != nil) == visible)
         return;
     
     if (visible && self.isFirstResponder)
     {
         // Setup accessory view
-        CGRect targetFrame = [self convertRect:_keyboardFrame fromView:nil];
+        CGRect targetFrame = CGRectIsNull(_keyboardFrame) ? CGRectMake(0, CGRectGetMaxY(self.bounds), [self convertRect:[[UIScreen mainScreen] bounds] fromView:nil].size.width, KEYBOARD_DOCKED_MINIMUM_HEIGHT) : [self convertRect:_keyboardFrame fromView:nil];
         CGFloat keyboardHeight = targetFrame.size.height;
         targetFrame.size.height = ACCESSORY_HEIGHT;
         targetFrame.origin.y -= ACCESSORY_HEIGHT;
