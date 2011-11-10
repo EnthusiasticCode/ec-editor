@@ -10,6 +10,7 @@
 #import "ECCodeUnit+Subclass.h"
 #import "ECCodeIndex+Subclass.h"
 #import "ECClangCodeToken.h"
+#import "ECClangCodeCompletionResultSet.h"
 #import "ClangHelperFunctions.h"
 
 @interface ECClangCodeUnit ()
@@ -36,6 +37,11 @@
     _clangUnit = clang_parseTranslationUnit(clangIndex, clangFilePath, parameters, parameter_count, 0, 0, clang_defaultEditingTranslationUnitOptions());
     _clangFile = clang_getFile(_clangUnit, clangFilePath);
     return self;
+}
+
+- (id<ECCodeCompletionResultSet>)completionsAtOffset:(NSUInteger)offset
+{
+    return [[ECClangCodeCompletionResultSet alloc] initWithCodeUnit:self atOffset:offset];
 }
 
 - (NSArray *)tokensInRange:(NSRange)range
@@ -83,6 +89,11 @@
             [tokens addObject:[[ECClangCodeToken alloc] initWithClangToken:clangTokens[tokenIndex] withClangTranslationUnit:_clangUnit]];
     clang_disposeTokens(_clangUnit, clangTokens, numClangTokens);
     return tokens;
+}
+
+- (CXTranslationUnit)clangTranslationUnit
+{
+    return _clangUnit;
 }
 
 @end

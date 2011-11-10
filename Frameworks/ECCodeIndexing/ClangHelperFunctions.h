@@ -12,3 +12,4 @@
 extern NSUInteger Clang_SourceLocationOffset(CXSourceLocation clangSourceLocation, NSURL **fileURL);
 extern NSRange Clang_SourceRangeRange(CXSourceRange clangSourceRange, NSURL **fileURL);
 extern NSString *Clang_CursorKindScopeIdentifier(enum CXCursorKind cursorKind);
+extern NSCharacterSet *Clang_ValidCompletionTypedTextCharacterSet(void);
