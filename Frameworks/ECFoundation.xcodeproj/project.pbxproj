@@ -107,8 +107,6 @@
 		B7C9A842142BB046009D8FF3 /* ECItemObserver.m in Sources */ = {isa = PBXBuildFile; fileRef = B7C9A840142BB046009D8FF3 /* ECItemObserver.m */; };
 		B7D4DDBA146BD04D002DF6D4 /* ECFileBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = B7D4DDB8146BD04D002DF6D4 /* ECFileBuffer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B7D4DDBB146BD04D002DF6D4 /* ECFileBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = B7D4DDB9146BD04D002DF6D4 /* ECFileBuffer.m */; };
-		B7D4DDBF146BDF7C002DF6D4 /* ECAttributedFileBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = B7D4DDBD146BDF7C002DF6D4 /* ECAttributedFileBuffer.h */; };
-		B7D4DDC0146BDF7D002DF6D4 /* ECAttributedFileBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = B7D4DDBE146BDF7C002DF6D4 /* ECAttributedFileBuffer.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -307,8 +305,6 @@
 		B7C9A840142BB046009D8FF3 /* ECItemObserver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECItemObserver.m; sourceTree = "<group>"; };
 		B7D4DDB8146BD04D002DF6D4 /* ECFileBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECFileBuffer.h; sourceTree = "<group>"; };
 		B7D4DDB9146BD04D002DF6D4 /* ECFileBuffer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECFileBuffer.m; sourceTree = "<group>"; };
-		B7D4DDBD146BDF7C002DF6D4 /* ECAttributedFileBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECAttributedFileBuffer.h; sourceTree = "<group>"; };
-		B7D4DDBE146BDF7C002DF6D4 /* ECAttributedFileBuffer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECAttributedFileBuffer.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -611,8 +607,6 @@
 				B7C9A840142BB046009D8FF3 /* ECItemObserver.m */,
 				B7D4DDB8146BD04D002DF6D4 /* ECFileBuffer.h */,
 				B7D4DDB9146BD04D002DF6D4 /* ECFileBuffer.m */,
-				B7D4DDBD146BDF7C002DF6D4 /* ECAttributedFileBuffer.h */,
-				B7D4DDBE146BDF7C002DF6D4 /* ECAttributedFileBuffer.m */,
 			);
 			name = "File Coordination";
 			sourceTree = "<group>";
@@ -638,7 +632,6 @@
 				B726571714613FD100E4C9F1 /* ECWeakDictionary.h in Headers */,
 				B726573C146160F000E4C9F1 /* ECDiscardableMutableDictionary.h in Headers */,
 				B7D4DDBA146BD04D002DF6D4 /* ECFileBuffer.h in Headers */,
-				B7D4DDBF146BDF7C002DF6D4 /* ECAttributedFileBuffer.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -751,7 +744,6 @@
 				B726571814613FD100E4C9F1 /* ECWeakDictionary.m in Sources */,
 				B726573D146160F000E4C9F1 /* ECDiscardableMutableDictionary.m in Sources */,
 				B7D4DDBB146BD04D002DF6D4 /* ECFileBuffer.m in Sources */,
-				B7D4DDC0146BDF7D002DF6D4 /* ECAttributedFileBuffer.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

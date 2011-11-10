@@ -11,15 +11,21 @@
 
 NSString * const ECFileBufferWillReplaceCharactersNotificationName = @"ECFileBufferReplacementNotificationName";
 NSString * const ECFileBufferDidReplaceCharactersNotificationName = @"ECFileBufferDidReplaceCharactersNotificationName";
+NSString * const ECFileBufferWillChangeAttributesNotificationName = @"ECFileBufferWillSetAttributesNotificationName";
+NSString * const ECFileBufferDidChangeAttributesNotificationName = @"ECFileBufferDidSetAttributesNotificationName";
 NSString * const ECFileBufferRangeKey = @"ECFileBufferRangeKey";
 NSString * const ECFileBufferStringKey = @"ECFileBufferStringKey";
+NSString * const ECFileBufferAttributedStringKey = @"ECFileBufferAttributedStringKey";
+NSString * const ECFileBufferAttributeNameKey = @"ECFileBufferAttributeNameKey";
+NSString * const ECFileBufferAttributesChangeKey = @"ECFileBufferAttributesChangeKey";
+NSString * const ECFileBufferAttributesKey = @"ECFileBufferAttributesKey";
 
 static ECWeakDictionary *_fileBuffers;
 
 @interface ECFileBuffer ()
 {
     NSURL *_fileURL;
-    NSMutableString *_contents;
+    NSMutableAttributedString *_contents;
 }
 @end
 
@@ -40,9 +46,9 @@ static ECWeakDictionary *_fileBuffers;
     if (!self)
         return nil;
     _fileURL = fileURL;
-    _contents = [NSMutableString stringWithContentsOfURL:fileURL encoding:NSUTF8StringEncoding error:NULL];
+    _contents = [[NSMutableAttributedString alloc] initWithString:[NSString stringWithContentsOfURL:fileURL encoding:NSUTF8StringEncoding error:NULL]];
     if (!_contents)
-        _contents = [NSMutableString string];
+        _contents = [[NSMutableAttributedString alloc] initWithString:@""];
     [_fileBuffers setObject:self forKey:fileURL];
     return self;
 }
@@ -59,7 +65,7 @@ static ECWeakDictionary *_fileBuffers;
 
 - (BOOL)saveToFileURL:(NSURL *)fileURL error:(NSError *__autoreleasing *)error
 {
-    return [_contents writeToURL:_fileURL atomically:YES encoding:NSUTF8StringEncoding error:error];
+    return [[_contents string] writeToURL:_fileURL atomically:YES encoding:NSUTF8StringEncoding error:error];
 }
 
 - (NSUInteger)length
@@ -69,7 +75,7 @@ static ECWeakDictionary *_fileBuffers;
 
 - (NSString *)stringInRange:(NSRange)range
 {
-    return [_contents substringWithRange:range];
+    return [[_contents string] substringWithRange:range];
 }
 
 - (void)replaceCharactersInRange:(NSRange)range withString:(NSString *)string
@@ -79,12 +85,66 @@ static ECWeakDictionary *_fileBuffers;
     if (!range.length && ![string length])
         return;
     // replacing a substring with an equal string, no change required
-    if ([string isEqualToString:[_contents substringWithRange:range]])
+    if ([string isEqualToString:[[_contents string] substringWithRange:range]])
         return;
-    NSDictionary *change = [NSDictionary dictionaryWithObjectsAndKeys:[NSValue valueWithRange:range], ECFileBufferRangeKey, string, ECFileBufferStringKey, nil];
+    NSDictionary *change = [NSDictionary dictionaryWithObjectsAndKeys:[NSValue valueWithRange:range], ECFileBufferRangeKey, string, ECFileBufferStringKey, [[NSAttributedString alloc] initWithString:string], ECFileBufferAttributedStringKey, nil];
     [[NSNotificationCenter defaultCenter] postNotificationName:ECFileBufferWillReplaceCharactersNotificationName object:self userInfo:change];
     [_contents replaceCharactersInRange:range withString:string];
     [[NSNotificationCenter defaultCenter] postNotificationName:ECFileBufferDidReplaceCharactersNotificationName object:self userInfo:change];
+}
+
+- (NSAttributedString *)attributedStringInRange:(NSRange)range
+{
+    return [_contents attributedSubstringFromRange:range];
+}
+
+- (void)replaceCharactersInRange:(NSRange)range withAttributedString:(NSAttributedString *)attributedString
+{
+    ECASSERT(NSMaxRange(range) <= [_contents length]);
+    // replacing an empty range with an empty string, no change required
+    if (!range.length && ![attributedString length])
+        return;
+    // replacing a substring with an equal string, no change required
+    if ([attributedString isEqualToAttributedString:[_contents attributedSubstringFromRange:range]])
+        return;
+    NSDictionary *change = [NSDictionary dictionaryWithObjectsAndKeys:[NSValue valueWithRange:range], ECFileBufferRangeKey, [attributedString string], ECFileBufferStringKey, attributedString, ECFileBufferAttributedStringKey, nil];
+    [[NSNotificationCenter defaultCenter] postNotificationName:ECFileBufferWillReplaceCharactersNotificationName object:self userInfo:change];
+    [_contents replaceCharactersInRange:range withAttributedString:attributedString];
+    [[NSNotificationCenter defaultCenter] postNotificationName:ECFileBufferDidReplaceCharactersNotificationName object:self userInfo:change];
+}
+
+- (void)setAttributes:(NSDictionary *)attributes range:(NSRange)range
+{
+    ECASSERT(NSMaxRange(range) <= [_contents length]);
+    if (![attributes count] || !range.length)
+        return;
+    NSDictionary *change = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithInt:ECFileBufferAttributesChangeSet], ECFileBufferAttributesChangeKey, attributes, ECFileBufferAttributesKey, [NSValue valueWithRange:range], ECFileBufferRangeKey, nil];
+    [[NSNotificationCenter defaultCenter] postNotificationName:ECFileBufferWillChangeAttributesNotificationName object:self userInfo:change];
+    [_contents setAttributes:attributes range:range];
+    [[NSNotificationCenter defaultCenter] postNotificationName:ECFileBufferDidChangeAttributesNotificationName object:self userInfo:change];
+}
+
+- (void)addAttributes:(NSDictionary *)attributes range:(NSRange)range
+{
+    ECASSERT(NSMaxRange(range) <= [_contents length]);
+    if (![attributes count] || !range.length)
+        return;
+    NSDictionary *change = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithInt:ECFileBufferAttributesChangeAdd], ECFileBufferAttributesChangeKey, attributes, ECFileBufferAttributesKey, [NSValue valueWithRange:range], ECFileBufferRangeKey, nil];
+    [[NSNotificationCenter defaultCenter] postNotificationName:ECFileBufferWillChangeAttributesNotificationName object:self userInfo:change];
+    [_contents addAttributes:attributes range:range];
+    [[NSNotificationCenter defaultCenter] postNotificationName:ECFileBufferDidChangeAttributesNotificationName object:self userInfo:change];
+}
+
+- (void)removeAttribute:(NSString *)attributeName range:(NSRange)range
+{
+    ECASSERT(NSMaxRange(range) <= [_contents length]);
+    ECASSERT([attributeName length]);
+    if (!range.length)
+        return;
+    NSDictionary *change = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithInt:ECFileBufferAttributesChangeRemove], ECFileBufferAttributesChangeKey, attributeName, ECFileBufferAttributeNameKey, [NSValue valueWithRange:range], ECFileBufferRangeKey, nil];
+    [[NSNotificationCenter defaultCenter] postNotificationName:ECFileBufferWillChangeAttributesNotificationName object:self userInfo:change];
+    [_contents removeAttribute:attributeName range:range];
+    [[NSNotificationCenter defaultCenter] postNotificationName:ECFileBufferDidChangeAttributesNotificationName object:self userInfo:change];
 }
 
 @end
