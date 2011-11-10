@@ -404,7 +404,7 @@
 {
     ECASSERT(view && frame);
     
-    if ((*frame).origin.y < 200)
+    if ((*frame).origin.y - (*view).bounds.origin.y < (*view).bounds.size.height / 4)
         codeView.keyboardAccessoryView.flipped = YES;
     
     UIView *targetView = self.view.window.rootViewController.view;

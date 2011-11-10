@@ -1604,7 +1604,7 @@ static void init(ECCodeView *self)
             return;
         
         // Reposition if flipped
-        if (self.keyboardAccessoryView.isFlipped)
+        if (self.keyboardAccessoryView.isSplit && self.keyboardAccessoryView.isFlipped)
         {
             targetFrame.origin.y += keyboardHeight + ACCESSORY_HEIGHT;
         }
