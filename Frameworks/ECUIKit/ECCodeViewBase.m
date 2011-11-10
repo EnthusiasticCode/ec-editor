@@ -9,7 +9,7 @@
 #import "ECCodeViewBase.h"
 #import "ECCodeStringDataSource.h"
 
-#define TILE_HEIGHT 300
+#define TILE_HEIGHT 1024
 
 static const void *rendererContext;
 
