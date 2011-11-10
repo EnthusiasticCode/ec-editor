@@ -8,9 +8,9 @@
 
 #import <Foundation/Foundation.h>
 
-/// Name of the notifications posted when the buffer is modified
-extern NSString * const ECFileBufferWillReplaceNotificationName;
-extern NSString * const ECFileBufferDidReplaceNotificationName;
+/// Names of the notifications posted when the buffer is modified
+extern NSString * const ECFileBufferWillReplaceCharactersNotificationName;
+extern NSString * const ECFileBufferDidReplaceCharactersNotificationName;
 /// Keys of the notification userinfo dictionary
 extern NSString * const ECFileBufferRangeKey;
 extern NSString * const ECFileBufferStringKey;

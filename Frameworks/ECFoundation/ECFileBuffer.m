@@ -9,8 +9,8 @@
 #import "ECFileBuffer.h"
 #import "ECWeakDictionary.h"
 
-NSString * const ECFileBufferWillReplaceNotificationName = @"ECFileBufferReplacementNotificationName";
-NSString * const ECFileBufferDidReplaceNotificationName = @"ECFileBufferDidReplaceNotificationName";
+NSString * const ECFileBufferWillReplaceCharactersNotificationName = @"ECFileBufferReplacementNotificationName";
+NSString * const ECFileBufferDidReplaceCharactersNotificationName = @"ECFileBufferDidReplaceCharactersNotificationName";
 NSString * const ECFileBufferRangeKey = @"ECFileBufferRangeKey";
 NSString * const ECFileBufferStringKey = @"ECFileBufferStringKey";
 
@@ -82,9 +82,9 @@ static ECWeakDictionary *_fileBuffers;
     if ([string isEqualToString:[_contents substringWithRange:range]])
         return;
     NSDictionary *change = [NSDictionary dictionaryWithObjectsAndKeys:[NSValue valueWithRange:range], ECFileBufferRangeKey, string, ECFileBufferStringKey, nil];
-    [[NSNotificationCenter defaultCenter] postNotificationName:ECFileBufferWillReplaceNotificationName object:self userInfo:change];
+    [[NSNotificationCenter defaultCenter] postNotificationName:ECFileBufferWillReplaceCharactersNotificationName object:self userInfo:change];
     [_contents replaceCharactersInRange:range withString:string];
-    [[NSNotificationCenter defaultCenter] postNotificationName:ECFileBufferDidReplaceNotificationName object:self userInfo:change];
+    [[NSNotificationCenter defaultCenter] postNotificationName:ECFileBufferDidReplaceCharactersNotificationName object:self userInfo:change];
 }
 
 @end
