@@ -7,6 +7,8 @@
 //
 
 #import "ACFileDocument.h"
+#import <ECFoundation/ECFileBuffer.h>
+#import "ACSyntaxColorer.h"
 #import "ACCodeFileController.h"
 #import <ECFoundation/NSTimer+block.h>
 #import <QuartzCore/QuartzCore.h>
@@ -169,7 +171,7 @@
         self.loading = YES;
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             ACFileDocument *document = [[ACFileDocument alloc] initWithFileURL:fileURL];
-            document.theme = [TMTheme themeWithName:@"Mac Classic" bundle:nil];
+            [document syntaxColorer].theme = [TMTheme themeWithName:@"Mac Classic" bundle:nil];
             dispatch_async(dispatch_get_main_queue(), ^{
                 self.document = document;
                 self.loading = NO;
@@ -336,6 +338,12 @@
     [super viewWillAppear:animated];
     
     [self _layoutChildViews];
+}
+
+- (void)viewDidDisappear:(BOOL)animated
+{
+    
+    [super viewDidDisappear:animated];
 }
 
 #pragma mark - Controller Methods

@@ -37,12 +37,6 @@ extern NSString * const ECFileBufferAttributesKey;
 
 - (NSURL *)fileURL;
 
-/// Saves the contents of the buffer to it's file
-- (void)save;
-
-/// Saves the contents of the buffer to a given file
-- (BOOL)saveToFileURL:(NSURL *)fileURL error:(NSError **)error;
-
 /// Length of the buffer
 - (NSUInteger)length;
 /// Retrieves string made by a subrange of the buffer's character. The given range must be fully contained in the buffer's character range.

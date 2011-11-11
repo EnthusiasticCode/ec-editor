@@ -39,9 +39,9 @@ static ECWeakDictionary *_fileBuffers;
 - (id)initWithFileURL:(NSURL *)fileURL
 {
     ECASSERT(fileURL);
-    self = [_fileBuffers objectForKey:fileURL];
-    if (self)
-        return self;
+    ECFileBuffer *existingFileBuffer = [_fileBuffers objectForKey:fileURL];
+    if (existingFileBuffer)
+        return existingFileBuffer;
     self = [super init];
     if (!self)
         return nil;
@@ -56,16 +56,6 @@ static ECWeakDictionary *_fileBuffers;
 - (NSURL *)fileURL
 {
     return _fileURL;
-}
-
-- (void)save;
-{
-    [self saveToFileURL:_fileURL error:NULL];
-}
-
-- (BOOL)saveToFileURL:(NSURL *)fileURL error:(NSError *__autoreleasing *)error
-{
-    return [[_contents string] writeToURL:_fileURL atomically:YES encoding:NSUTF8StringEncoding error:error];
 }
 
 - (NSUInteger)length
