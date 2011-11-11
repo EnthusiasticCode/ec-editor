@@ -450,7 +450,8 @@
 
 - (void)setHidden:(BOOL)hidden
 {
-    [self setBlink:NO];
+    if (hidden)
+        [self setBlink:NO];
     [super setHidden:hidden];
 }
 
