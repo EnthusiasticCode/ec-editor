@@ -20,6 +20,8 @@
 - (BOOL)codeView:(ECCodeView *)codeView canEditTextInRange:(NSRange)range;
 
 /// Commit a change for the given range with the given string.
+/// This operation will not update the renered text. It sould be done using 
+/// updateStringFromStringRange:toStringRange:
 - (void)codeView:(ECCodeView *)codeView commitString:(NSString *)string forTextInRange:(NSRange)range;
 
 /// If implemented, indicate that the data source support completion of words.

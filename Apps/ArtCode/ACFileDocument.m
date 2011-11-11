@@ -149,6 +149,10 @@
         [self updateChangeCount:UIDocumentChangeDone];
     }
     [self _queueSyntaxColoringOperationForTextRenderer:codeView.renderer];
+    
+    
+    // Inform the renderer that text has changed
+    [codeView updateTextFromStringRange:range toStringRange:NSMakeRange(range.location, [commitString length])];
 }
 
 #pragma mark - Content Information Methods

@@ -1385,9 +1385,6 @@ static void init(ECCodeView *self)
     [self.dataSource codeView:self commitString:string forTextInRange:range];
     [inputDelegate textDidChange:self];
     
-    // Inform the renderer that text has changed
-    [self.renderer updateTextFromStringRange:range toStringRange:NSMakeRange(range.location, [string length])];
-    
     // Update caret location
     [self setSelectedTextRange:self.undoManager.isUndoing ? NSMakeRange(range.location, stringLenght) : NSMakeRange(range.location + stringLenght, 0) notifyDelegate:NO];
 }
