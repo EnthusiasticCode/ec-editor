@@ -34,6 +34,8 @@
 }
 
 @property (nonatomic, strong) ACFileDocument *document;
+@property (nonatomic, strong, readonly) ACSyntaxColorer *syntaxColorer;
+@property (nonatomic, strong) NSDictionary *defaultTextAttributes;
 
 - (void)_layoutChildViews;
 
@@ -54,12 +56,14 @@
 
 @synthesize fileURL = _fileURL, tab = _tab, document = _document;
 @synthesize codeView = _codeView, minimapView = _minimapView, minimapVisible = _minimapVisible, minimapWidth = _minimapWidth;
+@synthesize defaultTextAttributes = _defaultTextAttributes, syntaxColorer = _syntaxColorer;
 
 - (ECCodeView *)codeView
 {
     if (!_codeView)
     {
         _codeView = [ECCodeView new];
+        _codeView.dataSource = self;
         _codeView.delegate = self;
         
         _codeView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
@@ -168,46 +172,36 @@
     
     if (fileURL)
     {
-        self.loading = YES;
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            ACFileDocument *document = [[ACFileDocument alloc] initWithFileURL:fileURL];
-            [document syntaxColorer].theme = [TMTheme themeWithName:@"Mac Classic" bundle:nil];
-            dispatch_async(dispatch_get_main_queue(), ^{
-                self.document = document;
-                self.loading = NO;
-            });
-        });
+        ACFileDocument *document = [[ACFileDocument alloc] initWithFileURL:fileURL];
+        [document openWithCompletionHandler:nil];
+        self.document = document;
     }
     
     [self didChangeValueForKey:@"fileURL"];
 }
 
-- (ACFileDocument *)document
+- (NSDictionary *)defaultTextAttributes
 {
-    if (!self.fileURL)
-        return nil;
-    if (!_document)
+    if (!_defaultTextAttributes)
     {
-        self.document = [[ACFileDocument alloc] initWithFileURL:self.fileURL];
+        CTFontRef defaultFont = CTFontCreateWithName((__bridge CFStringRef)@"Inconsolata-dz", 16, NULL);
+        _defaultTextAttributes = [NSDictionary dictionaryWithObjectsAndKeys:
+                                  (__bridge id)defaultFont, kCTFontAttributeName,
+                                  [NSNumber numberWithInt:0], kCTLigatureAttributeName, nil];
+        CFRelease(defaultFont);
     }
-    return _document;
+    return _defaultTextAttributes;
 }
 
-- (void)setDocument:(ACFileDocument *)document
+- (ACSyntaxColorer *)syntaxColorer
 {
-    if (document == _document)
-        return;
-    
-    [self willChangeValueForKey:@"document"];
-    
-    [_document closeWithCompletionHandler:nil];
-    _document = document;
-    [_document openWithCompletionHandler:^(BOOL success) {
-        ECASSERT(success);
-        self.codeView.dataSource = _document;
-    }];
-    
-    [self didChangeValueForKey:@"document"];
+    if (!_syntaxColorer)
+    {
+        _syntaxColorer = [[ACSyntaxColorer alloc] initWithFileBuffer:[self.document fileBuffer]];
+        _syntaxColorer.defaultTextAttributes = self.defaultTextAttributes;
+        _syntaxColorer.theme = [TMTheme themeWithName:@"Mac Classic" bundle:nil];
+    }
+    return _syntaxColorer;
 }
 
 - (CGFloat)minimapWidth
@@ -340,12 +334,6 @@
     [self _layoutChildViews];
 }
 
-- (void)viewDidDisappear:(BOOL)animated
-{
-    
-    [super viewDidDisappear:animated];
-}
-
 #pragma mark - Controller Methods
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
@@ -396,6 +384,23 @@
 {
     [self.codeView scrollRectToVisible:newSelection animated:YES];
     return NO;
+}
+
+#pragma mark - Code View DataSource Methods
+
+- (NSUInteger)stringLengthForTextRenderer:(ECTextRenderer *)sender
+{
+    return [[self.document fileBuffer] length];
+}
+
+- (NSAttributedString *)textRenderer:(ECTextRenderer *)sender attributedStringInRange:(NSRange)stringRange
+{
+    return [[self.document fileBuffer] attributedStringInRange:stringRange];
+}
+
+- (void)codeView:(ECCodeViewBase *)codeView commitString:(NSString *)commitString forTextInRange:(NSRange)range
+{
+    [[self.document fileBuffer] replaceCharactersInRange:range withString:commitString];
 }
 
 #pragma mark - Code View Delegate Methods

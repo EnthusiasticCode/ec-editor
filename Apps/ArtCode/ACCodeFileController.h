@@ -12,7 +12,7 @@
 
 @class ACTab;
 
-@interface ACCodeFileController : UIViewController <ACCodeFileMinimapViewDelegate, ECCodeViewDelegate, UIActionSheetDelegate>
+@interface ACCodeFileController : UIViewController <ACCodeFileMinimapViewDelegate, ECCodeViewDataSource, ECCodeViewDelegate, UIActionSheetDelegate>
 
 #pragma mark - Controller's location
 

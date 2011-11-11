@@ -7,14 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
-#import <ECUIKit/ECCodeView.h>
+@class ECFileBuffer;
 
-@class ACSyntaxColorer;
+@interface ACFileDocument : UIDocument
 
-@interface ACFileDocument : UIDocument <ECCodeViewDataSource>
-
-@property (nonatomic, strong) NSDictionary *defaultTextAttributes;
-
-- (ACSyntaxColorer *)syntaxColorer;
+- (ECFileBuffer *)fileBuffer;
 
 @end
