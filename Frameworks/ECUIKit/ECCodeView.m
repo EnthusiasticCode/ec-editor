@@ -142,8 +142,8 @@
 @property (nonatomic, readonly) ECTextPosition *selectionPosition;
 @property (nonatomic, readonly) ECRectSet *selectionRects;
 @property (nonatomic, readonly, getter = isEmpty) BOOL empty;
-@property (nonatomic, readonly) BOOL hasSelection;
 - (void)update;
+- (void)removeSelection;
 
 #pragma mark Selection Styles
 
@@ -301,7 +301,7 @@
 
 #pragma mark Properties
 
-@synthesize selection, hasSelection, selectionRects;
+@synthesize selection, selectionRects;
 @synthesize selectionColor, caretColor, blink;
 
 - (void)setSelection:(NSRange)range
@@ -311,7 +311,6 @@
     
     [parent willChangeValueForKey:@"selectionRange"];
     // TODO also infrom for selectionTextRange?
-    hasSelection = YES;
     selection = range;
     [self update];
     [parent didChangeValueForKey:@"selectionRange"];
@@ -341,7 +340,7 @@
 
 - (void)update
 {
-    if (!hasSelection)
+    if (self.isHidden)
         return;
     
     if (blinkDelayTimer)
@@ -447,6 +446,12 @@
         [self.layer removeAnimationForKey:@"blink"];
         self.layer.opacity = 1.0;
     }
+}
+
+- (void)setHidden:(BOOL)hidden
+{
+    [self setBlink:NO];
+    [super setHidden:hidden];
 }
 
 #pragma mark Magnification
@@ -693,7 +698,7 @@
 
 - (ECRectSet *)selectionRects
 {
-    if (!selectionView.hasSelection)
+    if (selectionView.isHidden)
         return nil;
     if (selectionView.selection.length == 0)
         return [ECRectSet rectSetWithRect:[self caretRectForPosition:selectionView.selectionPosition]];
@@ -1258,7 +1263,7 @@ static void init(ECCodeView *self)
         return;
     
     ECTextRange *selectedRange;
-    if (selectionView.hasSelection && !selectionView.hidden)
+    if (!selectionView.hidden)
         selectedRange = selectionView.selectionRange;
     else
         selectedRange = [ECTextRange textRangeWithRange:NSMakeRange([self.dataSource stringLengthForTextRenderer:self.renderer], 0)];
@@ -1337,7 +1342,7 @@ static void init(ECCodeView *self)
     
     if (action == @selector(selectAll:))
     {
-        if (!selectionView.hasSelection)
+        if (selectionView.isHidden)
             return YES;
         
         UITextRange *selectionRange = selectionView.selectionRange;
@@ -1391,7 +1396,7 @@ static void init(ECCodeView *self)
 
 - (void)setSelectedTextRange:(NSRange)newSelection notifyDelegate:(BOOL)shouldNotify
 {
-    if (shouldNotify && NSEqualRanges(selectionView.selection, newSelection))
+    if (shouldNotify && !selectionView.isHidden && NSEqualRanges(selectionView.selection, newSelection))
         return;
 
     // Close undo grouping if selection explicitly modified
