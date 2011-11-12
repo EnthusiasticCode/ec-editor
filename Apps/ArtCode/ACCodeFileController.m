@@ -7,7 +7,7 @@
 //
 
 #import "ACFileDocument.h"
-#import <ECFoundation/ECFileBuffer.h>
+#import <ECFoundation/ECAttributedUTF8FileBuffer.h>
 #import "ACSyntaxColorer.h"
 #import "ACCodeFileController.h"
 #import <ECFoundation/NSTimer+block.h>
@@ -34,7 +34,7 @@
 }
 
 @property (nonatomic, strong) ACFileDocument *document;
-@property (nonatomic, strong, readonly) ACSyntaxColorer *syntaxColorer;
+@property (nonatomic, strong) ACSyntaxColorer *syntaxColorer;
 @property (nonatomic, strong) NSDictionary *defaultTextAttributes;
 
 - (void)_layoutChildViews;
@@ -167,14 +167,30 @@
         return;
     
     [self willChangeValueForKey:@"fileURL"];
-    
+    [_document closeWithCompletionHandler:nil];
+    self.document = nil;
+    self.syntaxColorer = nil;
     _fileURL = fileURL;
     
     if (fileURL)
     {
-        ACFileDocument *document = [[ACFileDocument alloc] initWithFileURL:fileURL];
-        [document openWithCompletionHandler:nil];
-        self.document = document;
+        self.loading = YES;
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            ACFileDocument *document = [[ACFileDocument alloc] initWithFileURL:fileURL];
+            [document openWithCompletionHandler:^(BOOL success) {
+                ECASSERT(success);
+                ACSyntaxColorer *colorer = [[ACSyntaxColorer alloc] initWithFileBuffer:[document fileBuffer]];
+                colorer.defaultTextAttributes = self.defaultTextAttributes;
+                colorer.theme = [TMTheme themeWithName:@"Mac Classic" bundle:nil];
+                [colorer applySyntaxColoringToRange:NSMakeRange(0, [[document fileBuffer] length])];
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    self.document = document;
+                    self.syntaxColorer = colorer;
+                    self.loading = NO;
+                    [self.codeView updateAllText];
+                });
+            }];
+        });
     }
     
     [self didChangeValueForKey:@"fileURL"];
@@ -191,17 +207,6 @@
         CFRelease(defaultFont);
     }
     return _defaultTextAttributes;
-}
-
-- (ACSyntaxColorer *)syntaxColorer
-{
-    if (!_syntaxColorer)
-    {
-        _syntaxColorer = [[ACSyntaxColorer alloc] initWithFileBuffer:[self.document fileBuffer]];
-        _syntaxColorer.defaultTextAttributes = self.defaultTextAttributes;
-        _syntaxColorer.theme = [TMTheme themeWithName:@"Mac Classic" bundle:nil];
-    }
-    return _syntaxColorer;
 }
 
 - (CGFloat)minimapWidth
@@ -332,6 +337,12 @@
     [super viewWillAppear:animated];
     
     [self _layoutChildViews];
+}
+
+- (void)viewDidDisappear:(BOOL)animated
+{
+    
+    [super viewDidDisappear:animated];
 }
 
 #pragma mark - Controller Methods
