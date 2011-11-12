@@ -508,7 +508,6 @@
         }];
         
         // Show popover
-        rect.origin.y -= parent.contentOffset.y;
         [self.magnificationPopover presentPopoverFromRect:rect inView:parent permittedArrowDirections:UIPopoverArrowDirectionDown animated:animated];
     }
 }
