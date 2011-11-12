@@ -7,12 +7,12 @@
 //
 
 #import "ACFileDocument.h"
-#import <ECFoundation/ECFileBuffer.h>
+#import <ECFoundation/ECAttributedUTF8FileBuffer.h>
 #import "ACSyntaxColorer.h"
 
 @interface ACFileDocument ()
 {
-    ECFileBuffer *_fileBuffer;
+    ECAttributedUTF8FileBuffer *_fileBuffer;
 }
 @end
 
@@ -20,10 +20,10 @@
 
 #pragma mark - Properties
 
-- (ECFileBuffer *)fileBuffer
+- (ECAttributedUTF8FileBuffer *)fileBuffer
 {
     if (!_fileBuffer)
-        _fileBuffer = [[ECFileBuffer alloc] initWithFileURL:self.fileURL];
+        _fileBuffer = [[ECAttributedUTF8FileBuffer alloc] initWithFileURL:self.fileURL];
     return _fileBuffer;
 }
 

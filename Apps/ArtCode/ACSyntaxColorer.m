@@ -7,79 +7,16 @@
 //
 
 #import "ACSyntaxColorer.h"
-#import <ECFoundation/ECFileBuffer.h>
+#import <ECFoundation/ECAttributedUTF8FileBuffer.h>
 #import <ECCodeIndexing/ECCodeIndex.h>
 #import <ECCodeIndexing/ECCodeUnit.h>
 #import <ECCodeIndexing/TMTheme.h>
 #import <ECUIKit/ECTextStyle.h>
 #import <CoreText/CoreText.h>
 
-@interface SyntaxColoringOperation : NSOperation
-{
-    ACSyntaxColorer *_syntaxColorer;
-    NSRange _range;
-}
-- (id)initWithSyntaxColorer:(ACSyntaxColorer *)syntaxColorer range:(NSRange)range;
-NSRange rangeRelativeToRange(NSRange range, NSRange referenceRange);
-@end
-
-@implementation SyntaxColoringOperation
-
-- (id)initWithSyntaxColorer:(ACSyntaxColorer *)syntaxColorer range:(NSRange)range
-{
-    ECASSERT(syntaxColorer && NSMaxRange(range) <= [[syntaxColorer fileBuffer] length]);
-    self = [super init];
-    if (!self)
-        return nil;
-    _syntaxColorer = syntaxColorer;
-    _range = range;
-    return self;
-}
-
-- (void)main
-{
-    if (self.isCancelled)
-        return;
-    
-    NSMutableAttributedString *string = [[NSMutableAttributedString alloc] initWithString:[[_syntaxColorer fileBuffer] stringInRange:_range] attributes:_syntaxColorer.defaultTextAttributes];
-    if (![string length])
-        return;
-    
-    if (self.isCancelled)
-        return;
-    
-    for (id<ECCodeToken>token in [[_syntaxColorer codeUnit] annotatedTokensInRange:_range])
-    {
-        if (self.isCancelled)
-            return;
-        [string addAttributes:[_syntaxColorer.theme attributesForScopeStack:[token scopeIdentifiersStack]] range:rangeRelativeToRange([token range], _range)];
-        if (self.isCancelled)
-            return;
-    }
-    
-    if (self.isCancelled)
-        return;
-    
-    [[NSOperationQueue mainQueue] addOperationWithBlock:^{
-        if (self.isCancelled)
-            return;
-        [[_syntaxColorer fileBuffer] replaceCharactersInRange:_range withAttributedString:string];
-    }];
-}
-
-NSRange rangeRelativeToRange(NSRange range, NSRange referenceRange)
-{
-    NSRange relativeRange = NSIntersectionRange(range, referenceRange);
-    relativeRange.location -= referenceRange.location;
-    return relativeRange;
-}
-
-@end
-
 @interface ACSyntaxColorer ()
 {
-    ECFileBuffer *_fileBuffer;
-    NSOperationQueue *_parserQueue;
+    ECAttributedUTF8FileBuffer *_fileBuffer;
     ECCodeUnit *_codeUnit;
 }
 @end
@@ -89,32 +26,19 @@ NSRange rangeRelativeToRange(NSRange range, NSRange referenceRange)
 @synthesize theme = _theme;
 @synthesize defaultTextAttributes = _defaultTextAttributes;
 
-- (id)initWithFileBuffer:(ECFileBuffer *)fileBuffer
+- (id)initWithFileBuffer:(ECAttributedUTF8FileBuffer *)fileBuffer
 {
     ECASSERT(fileBuffer);
     self = [super init];
     if (!self)
         return nil;
     _fileBuffer = fileBuffer;
-    _parserQueue = [[NSOperationQueue alloc] init];
-    _parserQueue.maxConcurrentOperationCount = 1;
     ECCodeIndex *codeIndex = [[ECCodeIndex alloc] init];
-    __weak ACSyntaxColorer *this = self;
-    [_parserQueue addOperationWithBlock:^{
-        ECCodeUnit *codeUnit = [codeIndex codeUnitForFile:[this->_fileBuffer fileURL] scope:nil];
-        [[NSOperationQueue mainQueue] addOperationWithBlock:^{
-            this->_codeUnit = codeUnit;
-        }];
-    }];
+    _codeUnit = [codeIndex codeUnitForFile:[_fileBuffer fileURL] scope:nil];
     return self;
 }
 
-- (void)dealloc
-{
-    [_parserQueue cancelAllOperations];
-}
-
-- (ECFileBuffer *)fileBuffer
+- (ECAttributedUTF8FileBuffer *)fileBuffer
 {
     return _fileBuffer;
 }
@@ -126,7 +50,16 @@ NSRange rangeRelativeToRange(NSRange range, NSRange referenceRange)
 
 - (void)applySyntaxColoringToRange:(NSRange)range
 {
-    [_parserQueue addOperation:[[SyntaxColoringOperation alloc] initWithSyntaxColorer:self range:range]];
+    [_fileBuffer setAttributes:self.defaultTextAttributes range:range];
+    for (id<ECCodeToken>token in [_codeUnit annotatedTokensInRange:range])
+    {
+        NSRange relativeRange = NSIntersectionRange([token range], range);
+        if (!relativeRange.length)
+            continue;
+        else
+            relativeRange.location -= range.location;
+        [_fileBuffer addAttributes:[self.theme attributesForScopeStack:[token scopeIdentifiersStack]] range:relativeRange];
+    }
 }
 
 @end
