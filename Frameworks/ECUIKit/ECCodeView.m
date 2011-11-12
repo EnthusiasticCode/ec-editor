@@ -847,6 +847,12 @@ static void init(ECCodeView *self)
     // Interrupting undo grouping on user return
     if ([string hasSuffix:@"\n"] && self.undoManager.groupingLevel != 0)
         [self.undoManager endUndoGrouping];
+    
+    // Center editing area if not visible
+    if (!CGRectIntersectsRect(selectionView.frame, self.bounds))
+        [self scrollRectToVisible:CGRectInset(selectionView.frame, 0, -100) animated:NO];
+    else
+        [self scrollRectToVisible:selectionView.frame animated:NO];
 }
 
 - (void)deleteBackward
@@ -1203,9 +1209,8 @@ static void init(ECCodeView *self)
         point.y /= scale;
     }
     
-    NSUInteger location = [self.renderer closestStringLocationToPoint:point 
-                                               withinStringRange:range ? [(ECTextRange *)range range] : (NSRange){0, 0}];
-    return [[ECTextPosition alloc] initWithIndex:location];;
+    NSUInteger location = [self.renderer closestStringLocationToPoint:point withinStringRange:range ? [(ECTextRange *)range range] : (NSRange){0, 0}];
+    return [[ECTextPosition alloc] initWithIndex:location];
 }
 
 - (UITextRange *)characterRangeAtPoint:(CGPoint)point
@@ -1418,9 +1423,8 @@ static void init(ECCodeView *self)
     if ([self isFirstResponder])
     {
         selectionView.hidden = NO;
-        // TODO this has been removed because it was putting the selection view
-        // on top of thumb handlers.
-//        [self bringSubviewToFront:selectionView];
+        if (shouldNotify)
+            [self scrollRectToVisible:selectionView.frame animated:NO];
     }
 }
 
