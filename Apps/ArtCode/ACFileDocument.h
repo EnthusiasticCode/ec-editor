@@ -7,17 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
-#import <ECUIKit/ECCodeView.h>
+@class ECAttributedUTF8FileBuffer;
 
-@class ECCodeUnit, TMTheme;
+@interface ACFileDocument : UIDocument
 
-@interface ACFileDocument : UIDocument <ECCodeViewDataSource>
-
-@property (nonatomic, strong) TMTheme *theme;
-
-@property (nonatomic, strong) NSDictionary *defaultTextAttributes;
-
-/// Returns the number of lines in the document.
-- (NSUInteger)lineCount;
+- (ECAttributedUTF8FileBuffer *)fileBuffer;
 
 @end

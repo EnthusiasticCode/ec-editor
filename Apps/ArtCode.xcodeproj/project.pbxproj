@@ -82,6 +82,7 @@
 		B7AC174D14216D1C009E9205 /* ACNewProjectPopoverController.m in Sources */ = {isa = PBXBuildFile; fileRef = B7AC174214216D1C009E9205 /* ACNewProjectPopoverController.m */; };
 		B7AC175514216D91009E9205 /* libz.1.2.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B7AC175414216D91009E9205 /* libz.1.2.5.dylib */; };
 		B7D3BE761431BA3A00BF43EB /* Application.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = B7D3BE741431BA3A00BF43EB /* Application.xcdatamodeld */; };
+		B7D4DDE7146C4BB0002DF6D4 /* ACSyntaxColorer.m in Sources */ = {isa = PBXBuildFile; fileRef = B7D4DDE6146C4BB0002DF6D4 /* ACSyntaxColorer.m */; };
 		CD21547913F45CC200614B83 /* ACToolButton.m in Sources */ = {isa = PBXBuildFile; fileRef = CD21547813F45CC200614B83 /* ACToolButton.m */; };
 		CD2568C31450D44000A3CCDE /* topBar_BackButton_Normal.png in Resources */ = {isa = PBXBuildFile; fileRef = CD2568C21450D44000A3CCDE /* topBar_BackButton_Normal.png */; };
 		CD2568C71450D5B600A3CCDE /* topBar_ToolButton_Normal.png in Resources */ = {isa = PBXBuildFile; fileRef = CD2568C61450D5B600A3CCDE /* topBar_ToolButton_Normal.png */; };
@@ -370,6 +371,8 @@
 		B7AC174214216D1C009E9205 /* ACNewProjectPopoverController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACNewProjectPopoverController.m; sourceTree = "<group>"; };
 		B7AC175414216D91009E9205 /* libz.1.2.5.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.1.2.5.dylib; path = usr/lib/libz.1.2.5.dylib; sourceTree = SDKROOT; };
 		B7D3BE751431BA3A00BF43EB /* Application.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Application.xcdatamodel; sourceTree = "<group>"; };
+		B7D4DDE5146C4BB0002DF6D4 /* ACSyntaxColorer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACSyntaxColorer.h; sourceTree = "<group>"; };
+		B7D4DDE6146C4BB0002DF6D4 /* ACSyntaxColorer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACSyntaxColorer.m; sourceTree = "<group>"; };
 		CD21547713F45CC200614B83 /* ACToolButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACToolButton.h; sourceTree = "<group>"; };
 		CD21547813F45CC200614B83 /* ACToolButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACToolButton.m; sourceTree = "<group>"; };
 		CD2568C21450D44000A3CCDE /* topBar_BackButton_Normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = topBar_BackButton_Normal.png; sourceTree = "<group>"; };
@@ -568,6 +571,8 @@
 				B7107AED143A32E500827FD2 /* ACURLWrapper.m */,
 				B701291F143759010070CCDF /* ACFileDocument.h */,
 				B7012920143759010070CCDF /* ACFileDocument.m */,
+				B7D4DDE5146C4BB0002DF6D4 /* ACSyntaxColorer.h */,
+				B7D4DDE6146C4BB0002DF6D4 /* ACSyntaxColorer.m */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -1376,6 +1381,7 @@
 				CDC13330145FFE390028423F /* ACCodeFileSearchOptionsController.m in Sources */,
 				CD6E416C14614A0C00A9CE7F /* ACCodeFileMinimapView.m in Sources */,
 				CDA7630C146976260004FAC7 /* ACCodeFileKeyboardAccessoryView.m in Sources */,
+				B7D4DDE7146C4BB0002DF6D4 /* ACSyntaxColorer.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

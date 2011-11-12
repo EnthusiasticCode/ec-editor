@@ -143,7 +143,6 @@
 @property (nonatomic, readonly) ECRectSet *selectionRects;
 @property (nonatomic, readonly, getter = isEmpty) BOOL empty;
 - (void)update;
-- (void)removeSelection;
 
 #pragma mark Selection Styles
 

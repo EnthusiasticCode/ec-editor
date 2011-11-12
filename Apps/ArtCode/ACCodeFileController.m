@@ -7,6 +7,8 @@
 //
 
 #import "ACFileDocument.h"
+#import <ECFoundation/ECAttributedUTF8FileBuffer.h>
+#import "ACSyntaxColorer.h"
 #import "ACCodeFileController.h"
 #import <ECFoundation/NSTimer+block.h>
 #import <QuartzCore/QuartzCore.h>
@@ -33,6 +35,8 @@
 
 @property (nonatomic, strong) ACFileDocument *document;
 @property (nonatomic, strong, readonly) ECPopoverController *_keyboardAccessoryItemPopover;
+@property (nonatomic, strong) ACSyntaxColorer *syntaxColorer;
+@property (nonatomic, strong) NSDictionary *defaultTextAttributes;
 
 - (void)_layoutChildViews;
 
@@ -55,12 +59,14 @@
 
 @synthesize fileURL = _fileURL, tab = _tab, document = _document;
 @synthesize codeView = _codeView, minimapView = _minimapView, minimapVisible = _minimapVisible, minimapWidth = _minimapWidth;
+@synthesize defaultTextAttributes = _defaultTextAttributes, syntaxColorer = _syntaxColorer;
 
 - (ECCodeView *)codeView
 {
     if (!_codeView)
     {
         _codeView = [ECCodeView new];
+        _codeView.dataSource = self;
         _codeView.delegate = self;
         
         _codeView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
@@ -175,7 +181,9 @@
         return;
     
     [self willChangeValueForKey:@"fileURL"];
-    
+    [_document closeWithCompletionHandler:nil];
+    self.document = nil;
+    self.syntaxColorer = nil;
     _fileURL = fileURL;
     
     if (fileURL)
@@ -183,43 +191,36 @@
         self.loading = YES;
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             ACFileDocument *document = [[ACFileDocument alloc] initWithFileURL:fileURL];
-            document.theme = [TMTheme themeWithName:@"Mac Classic" bundle:nil];
-            dispatch_async(dispatch_get_main_queue(), ^{
-                self.document = document;
-                self.loading = NO;
-            });
+            [document openWithCompletionHandler:^(BOOL success) {
+                ECASSERT(success);
+                ACSyntaxColorer *colorer = [[ACSyntaxColorer alloc] initWithFileBuffer:[document fileBuffer]];
+                colorer.defaultTextAttributes = self.defaultTextAttributes;
+                colorer.theme = [TMTheme themeWithName:@"Mac Classic" bundle:nil];
+                [colorer applySyntaxColoringToRange:NSMakeRange(0, [[document fileBuffer] length])];
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    self.document = document;
+                    self.syntaxColorer = colorer;
+                    self.loading = NO;
+                    [self.codeView updateAllText];
+                });
+            }];
         });
     }
     
     [self didChangeValueForKey:@"fileURL"];
 }
 
-- (ACFileDocument *)document
+- (NSDictionary *)defaultTextAttributes
 {
-    if (!self.fileURL)
-        return nil;
-    if (!_document)
+    if (!_defaultTextAttributes)
     {
-        self.document = [[ACFileDocument alloc] initWithFileURL:self.fileURL];
+        CTFontRef defaultFont = CTFontCreateWithName((__bridge CFStringRef)@"Inconsolata-dz", 16, NULL);
+        _defaultTextAttributes = [NSDictionary dictionaryWithObjectsAndKeys:
+                                  (__bridge id)defaultFont, kCTFontAttributeName,
+                                  [NSNumber numberWithInt:0], kCTLigatureAttributeName, nil];
+        CFRelease(defaultFont);
     }
-    return _document;
-}
-
-- (void)setDocument:(ACFileDocument *)document
-{
-    if (document == _document)
-        return;
-    
-    [self willChangeValueForKey:@"document"];
-    
-    [_document closeWithCompletionHandler:nil];
-    _document = document;
-    [_document openWithCompletionHandler:^(BOOL success) {
-        ECASSERT(success);
-        self.codeView.dataSource = _document;
-    }];
-    
-    [self didChangeValueForKey:@"document"];
+    return _defaultTextAttributes;
 }
 
 - (CGFloat)minimapWidth
@@ -381,6 +382,12 @@
     [self _layoutChildViews];
 }
 
+- (void)viewDidDisappear:(BOOL)animated
+{
+    
+    [super viewDidDisappear:animated];
+}
+
 #pragma mark - Controller Methods
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
@@ -432,6 +439,23 @@
 {
     [self.codeView scrollRectToVisible:newSelection animated:YES];
     return NO;
+}
+
+#pragma mark - Code View DataSource Methods
+
+- (NSUInteger)stringLengthForTextRenderer:(ECTextRenderer *)sender
+{
+    return [[self.document fileBuffer] length];
+}
+
+- (NSAttributedString *)textRenderer:(ECTextRenderer *)sender attributedStringInRange:(NSRange)stringRange
+{
+    return [[self.document fileBuffer] attributedStringInRange:stringRange];
+}
+
+- (void)codeView:(ECCodeViewBase *)codeView commitString:(NSString *)commitString forTextInRange:(NSRange)range
+{
+    [[self.document fileBuffer] replaceCharactersInRange:range withString:commitString];
 }
 
 #pragma mark - Code View Delegate Methods
