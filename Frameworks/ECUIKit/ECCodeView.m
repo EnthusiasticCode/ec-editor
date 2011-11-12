@@ -848,6 +848,12 @@ static void init(ECCodeView *self)
     // Interrupting undo grouping on user return
     if ([string hasSuffix:@"\n"] && self.undoManager.groupingLevel != 0)
         [self.undoManager endUndoGrouping];
+    
+    // Center editing area if not visible
+    if (!CGRectIntersectsRect(selectionView.frame, self.bounds))
+        [self scrollRectToVisible:CGRectInset(selectionView.frame, 0, -100) animated:NO];
+    else
+        [self scrollRectToVisible:selectionView.frame animated:NO];
 }
 
 - (void)deleteBackward
