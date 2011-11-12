@@ -6,9 +6,7 @@
 //  Copyright (c) 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import "ECCodeUnit+Subclass.h"
-
-@class TMSyntax;
+#import "ECCodeUnit.h"
 
 @interface TMCodeUnit : ECCodeUnit
 

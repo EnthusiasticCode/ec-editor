@@ -7,19 +7,13 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <clang-c/Index.h>
-
-@class ECCodeUnit;
+@class ECCodeUnit, ECAttributedUTF8FileBuffer;
 
 /// Class that encapsulates interaction with parsing and indexing libraries to provide language related non file specific functionality such as symbol resolution and refactoring.
 @interface ECCodeIndex : NSObject
 
-/// Sets a file's unsaved contents to be available for all the code index's units.
-/// Set to nil to have the index read the file contents from disk again
-- (void)setUnsavedContent:(NSString *)content forFile:(NSURL *)fileURL;
-
 /// Code unit creation
 /// If the scope is not specified, it will be detected automatically
-- (ECCodeUnit *)codeUnitForFile:(NSURL *)fileURL scope:(NSString *)scope;
+- (ECCodeUnit *)codeUnitForFileBuffer:(ECAttributedUTF8FileBuffer *)fileBuffer scope:(NSString *)scope;
 
 @end

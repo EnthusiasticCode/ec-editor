@@ -34,7 +34,7 @@
         return nil;
     _fileBuffer = fileBuffer;
     ECCodeIndex *codeIndex = [[ECCodeIndex alloc] init];
-    _codeUnit = [codeIndex codeUnitForFile:[_fileBuffer fileURL] scope:nil];
+    _codeUnit = [codeIndex codeUnitForFileBuffer:fileBuffer scope:nil];
     return self;
 }
 

@@ -12,6 +12,7 @@
 #import "ECClangCodeToken.h"
 #import "ECClangCodeCompletionResultSet.h"
 #import "ClangHelperFunctions.h"
+#import <ECFoundation/ECAttributedUTF8FileBuffer.h>
 
 @interface ECClangCodeUnit ()
 {
@@ -24,16 +25,16 @@
 
 @implementation ECClangCodeUnit
 
-- (id)initWithIndex:(ECCodeIndex *)index clangIndex:(CXIndex)clangIndex fileURL:(NSURL *)fileURL scope:(NSString *)scope
+- (id)initWithIndex:(ECCodeIndex *)index clangIndex:(CXIndex)clangIndex fileBuffer:(ECAttributedUTF8FileBuffer *)fileBuffer scope:(NSString *)scope
 {
-    ECASSERT(index && clangIndex && fileURL && [scope length]);
-    self = [super initWithIndex:index file:fileURL scope:scope];
+    ECASSERT(index && clangIndex && fileBuffer && [scope length]);
+    self = [super initWithIndex:index fileBuffer:fileBuffer scope:scope];
     if (!self)
         return nil;
     _clangIndex = clangIndex;
     int parameter_count = 11;
     const char const *parameters[] = {"-ObjC", "-fobjc-nonfragile-abi", "-nostdinc", "-nobuiltininc", "-I/Developer/usr/lib/clang/3.0/include", "-I/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator5.0.sdk/usr/include", "-F/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator5.0.sdk/System/Library/Frameworks", "-isysroot=/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator5.0.sdk/", "-DTARGET_OS_IPHONE=1", "-UTARGET_OS_MAC", "-miphoneos-version-min=4.3"};
-    const char * clangFilePath = [[fileURL path] fileSystemRepresentation];
+    const char * clangFilePath = [[[fileBuffer fileURL] path] fileSystemRepresentation];
     _clangUnit = clang_parseTranslationUnit(clangIndex, clangFilePath, parameters, parameter_count, 0, 0, clang_defaultEditingTranslationUnitOptions());
     _clangFile = clang_getFile(_clangUnit, clangFilePath);
     return self;

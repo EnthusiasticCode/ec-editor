@@ -7,6 +7,7 @@
 //
 
 #import "ECCodeUnit.h"
+@class ECAttributedUTF8FileBuffer;
 
 /// The base ECCodeUnit class does not provide any functionality other than initializing the values of index and fileURL.
 /// Extensions of ECCodeIndex should return instances of subclasses of ECCodeUnit.
@@ -15,6 +16,6 @@
 @interface ECCodeUnit (Internal)
 
 /// Designated initializer
-- (id)initWithIndex:(ECCodeIndex *)index file:(NSURL *)fileURL scope:(NSString *)scope;
+- (id)initWithIndex:(ECCodeIndex *)index fileBuffer:(ECAttributedUTF8FileBuffer *)fileBuffer scope:(NSString *)scope;
 
 @end

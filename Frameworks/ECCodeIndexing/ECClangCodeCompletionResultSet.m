@@ -11,6 +11,7 @@
 #import "ECCodeIndex+Subclass.h"
 #import "ECClangCodeCompletionResult.h"
 #import "ClangHelperFunctions.h"
+#import <ECFoundation/ECAttributedUTF8FileBuffer.h>
 
 @interface ECClangCodeCompletionResultSet ()
 {
@@ -30,7 +31,7 @@
         return nil;
     _codeUnit = codeUnit;
     CXTranslationUnit clangTranslationUnit = [codeUnit clangTranslationUnit];
-    const char *fileName = [[[codeUnit fileURL] path] fileSystemRepresentation];
+    const char *fileName = [[[[codeUnit fileBuffer] fileURL] path] fileSystemRepresentation];
     CXFile clangFile = clang_getFile(clangTranslationUnit, fileName);
     CXSourceLocation completeLocation = clang_getLocationForOffset(clangTranslationUnit, clangFile, offset);
     unsigned int completeLine;
@@ -44,7 +45,7 @@
     }
     clang_sortCodeCompletionResults(_clangResults->Results, _clangResults->NumResults);
     NSInteger firstCharacterIndex;
-    NSString *content = [[codeUnit index] contentsForFile:[codeUnit fileURL]];
+    NSString *content = [[codeUnit fileBuffer] stringInRange:NSMakeRange(0, [[codeUnit fileBuffer] length])];
     for (firstCharacterIndex = offset - 1; firstCharacterIndex >= 0; --firstCharacterIndex)
     {
         if ([Clang_ValidCompletionTypedTextCharacterSet() characterIsMember:[content characterAtIndex:firstCharacterIndex]])
