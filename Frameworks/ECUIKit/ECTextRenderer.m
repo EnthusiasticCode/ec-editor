@@ -49,11 +49,11 @@
 
 /// Returns the line number of a given position in the text. Optionally returns
 /// the X offset of the position in the returned line.
-- (NSUInteger)_lineNumberForPosition:(NSUInteger)position offsetX:(CGFloat *)outXOffset;
+- (NSUInteger)_renderedLineIndexFromPosition:(NSUInteger)position graphicalOffset:(CGFloat *)outXOffset;
 
 /// Returns the text position of the given line and, withing that line, the character
 /// at the specified X offset.
-- (NSUInteger)_positionForLine:(NSUInteger)requestLine graphicalOffset:(CGFloat)offsetX;
+- (NSUInteger)_positionFromRenderedLineAtIndex:(NSUInteger)requestLine graphicalOffset:(CGFloat)offsetX;
 
 @end
 
@@ -146,7 +146,7 @@
 /// string range. The block will also receive the relative line string range.
 - (void)enumerateLinesInStringRange:(NSRange)range usingBlock:(void(^)(CTLineRef line, NSUInteger lineNumber, CGRect lineBounds, NSRange lineStringRange, BOOL *stop))block;
 
-- (void)enumerateLinesInLineRange:(NSRange)range usingBlock:(void(^)(CTLineRef line, NSUInteger lineNumber, CGRect lineBounds, NSRange lineStringRange, BOOL *stop))block;
+- (void)enumerateLinesInRenderedLineIndexRange:(NSRange)range usingBlock:(void(^)(CTLineRef line, NSUInteger lineNumber, CGRect lineBounds, NSRange lineStringRange, BOOL *stop))block;
 
 @end
 
@@ -544,8 +544,7 @@
     }
 }
 
-- (void)enumerateLinesInLineRange:(NSRange)queryRange 
-                       usingBlock:(void (^)(CTLineRef, NSUInteger, CGRect, NSRange, BOOL *))block
+- (void)enumerateLinesInRenderedLineIndexRange:(NSRange)queryRange usingBlock:(void (^)(CTLineRef, NSUInteger, CGRect, NSRange, BOOL *))block
 {
     ECASSERT(valid);
     
@@ -845,14 +844,17 @@
     }
 }
 
-- (NSUInteger)_lineNumberForPosition:(NSUInteger)position offsetX:(CGFloat *)outXOffset
+- (NSUInteger)_renderedLineIndexFromPosition:(NSUInteger)position graphicalOffset:(CGFloat *)outXOffset
 {
     __block CGFloat positionX = 0;
-    __block NSUInteger positionLine = NSUIntegerMax;
+    __block NSUInteger renderedLineIndex = 0;
     [self _generateTextSegmentsAndEnumerateUsingBlock:^(TextSegment *segment, NSUInteger outerIdx, NSUInteger lineOffset, NSUInteger stringOffset, CGFloat positionOffset, BOOL *stop) {
         // Skip segment if before required string range
-        if (stringOffset + segment.stringLength < position)
+        if (stringOffset + segment.stringLength <= position)
+        {
+            renderedLineIndex += segment.renderedLineCount;
             return;
+        }
         
         // Get relative positions to current semgnet
         NSRange segmentRelativeStringRange = NSMakeRange(position, 0);
@@ -860,7 +862,7 @@
         
         // Retrieve start position line index
         [segment enumerateLinesInStringRange:segmentRelativeStringRange usingBlock:^(CTLineRef line, NSUInteger innerIdx, CGRect lineBounds, NSRange lineStringRange, BOOL *innserStop) {
-            positionLine = innerIdx;
+            renderedLineIndex += innerIdx;
             
             positionX = CTLineGetOffsetForStringIndex(line, (position - stringOffset), NULL);
             positionX += lineBounds.origin.x;
@@ -871,24 +873,28 @@
     
     if (outXOffset)
         *outXOffset = positionX;
-    return positionLine;
+    return renderedLineIndex;
 }
 
-- (NSUInteger)_positionForLine:(NSUInteger)requestLine graphicalOffset:(CGFloat)offsetX
+- (NSUInteger)_positionFromRenderedLineAtIndex:(NSUInteger)requestIndex graphicalOffset:(CGFloat)offsetX
 {
     __block CGFloat positionX = offsetX;
     __block NSUInteger requestPosition = NSNotFound;
+    __block NSUInteger lineIndexOffset = 0;
     [self _generateTextSegmentsAndEnumerateUsingBlock:^(TextSegment *segment, NSUInteger idx, NSUInteger lineOffset, NSUInteger stringOffset, CGFloat positionOffset, BOOL *stop) {
         // Skip segment if before required line
-        if (lineOffset + segment.lineCount < requestLine)
+        if (lineIndexOffset + segment.renderedLineCount <= requestIndex)
+        {
+            lineIndexOffset += segment.renderedLineCount; 
             return;
+        }
         
         // Get relative positions to current semgnet
-        NSRange segmentRelativeLineRange = NSMakeRange(requestLine, 0);
-        segmentRelativeLineRange.location -= lineOffset;
+        NSRange segmentRelativeLineRange = NSMakeRange(requestIndex, 1);
+        segmentRelativeLineRange.location -= lineIndexOffset;
         
         // Retrieve start position line index
-        [segment enumerateLinesInLineRange:segmentRelativeLineRange usingBlock:^(CTLineRef line, NSUInteger lineNumber, CGRect lineBounds, NSRange lineStringRange, BOOL *stopInner) {
+        [segment enumerateLinesInRenderedLineIndexRange:segmentRelativeLineRange usingBlock:^(CTLineRef line, NSUInteger lineNumber, CGRect lineBounds, NSRange lineStringRange, BOOL *stopInner) {
             positionX -= lineBounds.origin.x;
             if (positionX >= CGRectGetMaxX(lineBounds))
                 requestPosition = NSMaxRange(lineStringRange) - 1;
@@ -1116,14 +1122,14 @@
         {
             // TODO extract this to a convinience method - lineIndexForPosition:
             CGFloat positionX = 0;
-            NSUInteger positionLine = [self _lineNumberForPosition:position offsetX:&positionX];
+            NSUInteger positionLine = [self _renderedLineIndexFromPosition:position graphicalOffset:&positionX];
             
             // If offset will move outsite rendered text line range, return
             if (offset < 0 && -offset > (NSInteger)positionLine)
                 break;
             
             // Look for new position
-            NSUInteger requestPosition = [self _positionForLine:(positionLine + offset) graphicalOffset:positionX];
+            NSUInteger requestPosition = [self _positionFromRenderedLineAtIndex:(positionLine + offset) graphicalOffset:positionX];
             
             // Set result if present
             if (requestPosition != NSNotFound)
