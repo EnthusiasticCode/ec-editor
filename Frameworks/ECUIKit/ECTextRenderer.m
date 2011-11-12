@@ -627,6 +627,9 @@
     [self _updateRenderWidth:width];
     renderWidth = width;
     
+    if (delegateHasDidInvalidateRenderInRect)
+        [delegate textRenderer:self didInvalidateRenderInRect:CGRectMake(0, 0, self.renderWidth, self.renderHeight)];
+    
     [self didChangeValueForKey:@"renderWidth"];
 }
 
@@ -656,6 +659,9 @@
     // Order matter, update will use textInsets to evalue wrap with for segments
     textInsets = insets;
     [self _updateRenderWidth:self.renderWidth];
+    
+    if (delegateHasDidInvalidateRenderInRect)
+        [delegate textRenderer:self didInvalidateRenderInRect:CGRectMake(0, 0, self.renderWidth, self.renderHeight)];
     
     [self didChangeValueForKey:@"textInsets"];
 }
@@ -710,9 +716,6 @@
         }
     }
     dispatch_semaphore_signal(textSegmentsSemaphore);
-    
-    if (delegateHasDidInvalidateRenderInRect)
-        [delegate textRenderer:self didInvalidateRenderInRect:CGRectMake(0, 0, self.renderWidth, self.renderHeight)];
 }
 
 // Already locked in _generateTextSegmentsAndEnumerateUsingBlock

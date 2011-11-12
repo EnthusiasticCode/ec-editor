@@ -14,7 +14,6 @@
 @class ECTextRenderer;
 @class ECTextRendererLine;
 
-
 /// Block used to apply an overlay or underlay pass to the rendering.
 /// The block should draw on the given context and inside the lineBounds rect which
 /// is relative to the current context state. Bounds will account for text insets.

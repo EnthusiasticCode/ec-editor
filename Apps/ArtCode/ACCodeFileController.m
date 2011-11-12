@@ -378,14 +378,7 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    
     [self _layoutChildViews];
-}
-
-- (void)viewDidDisappear:(BOOL)animated
-{
-    
-    [super viewDidDisappear:animated];
 }
 
 #pragma mark - Controller Methods

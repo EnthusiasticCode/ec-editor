@@ -25,6 +25,7 @@ static const void *rendererContext;
     
     CGAffineTransform _toMinimapTransform;
     CGAffineTransform _toRendererTransform;
+    CGSize _renderSize;
     
     struct {
         unsigned delegateHasShouldRendererLineNumberWithColorDecorationDecorationColor : 1;
@@ -33,7 +34,6 @@ static const void *rendererContext;
     } flags;
 }
 
-- (void)_setupContentSize;
 - (void)_handleGestureMinimapTap:(UITapGestureRecognizer *)recognizer;
 
 @end
@@ -64,8 +64,10 @@ static const void *rendererContext;
         return;
     
     [self willChangeValueForKey:@"renderer"];
+    [renderer removeObserver:self forKeyPath:@"renderWidth" context:&rendererContext];
     [renderer removeObserver:self forKeyPath:@"renderHeight" context:&rendererContext];
     renderer = aRenderer;
+    [renderer addObserver:self forKeyPath:@"renderWidth" options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew context:&rendererContext];
     [renderer addObserver:self forKeyPath:@"renderHeight" options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew context:&rendererContext];
     [self didChangeValueForKey:@"renderer"];
 }
@@ -121,12 +123,6 @@ static const void *rendererContext;
     if (lineThickness < 1)
         lineThickness = 1;
     return lineThickness;
-}
-
-- (void)setFrame:(CGRect)frame
-{
-    [super setFrame:frame];
-    [self _setupContentSize];
 }
 
 #pragma mark - View Methods
@@ -220,7 +216,29 @@ static const void *rendererContext;
 {
     if (context == &rendererContext)
     {
-        [self _setupContentSize];
+        CGSize newRenderSize = CGSizeMake(self.renderer.renderWidth, self.renderer.renderHeight);
+        if (CGSizeEqualToSize(_renderSize, newRenderSize))
+            return;
+        _renderSize = newRenderSize;
+        
+        CGRect contentRect = CGRectMake(0, 0,
+                                        self.frame.size.width, 
+                                        _renderSize.height);
+        if (contentRect.size.width <= 0 || CGRectEqualToRect(_contentView.frame, contentRect))
+            return;
+        
+        CGFloat scale = (contentRect.size.width - self.lineDecorationInset - self.contentInset.left - self.contentInset.right) / _renderSize.width;
+        contentRect.size.height *= scale;
+        contentRect = CGRectIntegral(contentRect);
+        
+        _toMinimapTransform = CGAffineTransformMakeScale(scale, scale);
+        _toRendererTransform = CGAffineTransformInvert(_toMinimapTransform);
+        
+        self.contentSize = (CGSize){ (contentRect.size.width - self.contentInset.left - self.contentInset.right), contentRect.size.height };
+        
+        _contentView.frame = contentRect;
+        [(CATiledLayer *)_contentView.layer setTileSize:CGSizeMake(contentRect.size.width, TILE_HEIGHT)];
+        [_contentView setNeedsDisplay];
     }
     else
     {
@@ -245,31 +263,6 @@ static const void *rendererContext;
 }
 
 #pragma mark - Private Methods
-
-- (void)_setupContentSize
-{
-    // TODO Use the rendering queue instead
-    dispatch_async(dispatch_get_main_queue(), ^{
-        CGRect contentRect = CGRectMake(0, 0,
-                                        self.frame.size.width, 
-                                        self.renderer.renderHeight);
-        if (contentRect.size.width <= 0 || CGRectEqualToRect(_contentView.frame, contentRect))
-            return;
-        
-        CGFloat scale = (contentRect.size.width - self.lineDecorationInset - self.contentInset.left - self.contentInset.right) / self.renderer.renderWidth;
-        contentRect.size.height *= scale;
-        contentRect = CGRectIntegral(contentRect);
-        
-        _toMinimapTransform = CGAffineTransformMakeScale(scale, scale);
-        _toRendererTransform = CGAffineTransformInvert(_toMinimapTransform);
-        
-        self.contentSize = (CGSize){ (contentRect.size.width - self.contentInset.left - self.contentInset.right), contentRect.size.height };
-
-        _contentView.frame = contentRect;
-        [(CATiledLayer *)_contentView.layer setTileSize:CGSizeMake(contentRect.size.width, TILE_HEIGHT)];
-        [_contentView setNeedsDisplay];
-    });
-}
 
 - (void)_handleGestureMinimapTap:(UITapGestureRecognizer *)recognizer
 {
