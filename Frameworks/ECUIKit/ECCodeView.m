@@ -650,6 +650,25 @@
     flags.delegateHasDidHideKeyboardAccessoryView = [delegate respondsToSelector:@selector(codeViewDidHideKeyboardAccessoryView:)];
 }
 
+- (void)setKeyboardAccessoryView:(ECKeyboardAccessoryView *)value
+{
+    if (value == keyboardAccessoryView)
+        return;
+    [self willChangeValueForKey:@"keyboardAccessoryView"];
+    if (!keyboardAccessoryView && self.superview != nil)
+    {
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_keyboardWillChangeFrame:) name:UIKeyboardWillChangeFrameNotification object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_keyboardDidChangeFrame:) name:UIKeyboardDidChangeFrameNotification object:nil];
+    }
+    keyboardAccessoryView = value;
+    if (!keyboardAccessoryView)
+    {
+        [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillChangeFrameNotification object:nil];
+        [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardDidChangeFrameNotification object:nil];
+    }
+    [self didChangeValueForKey:@"keyboardAccessoryView"];
+}
+
 - (void)setCaretColor:(UIColor *)caretColor
 {
     selectionView.caretColor = caretColor;
@@ -739,15 +758,18 @@ static void init(ECCodeView *self)
 {
     [super willMoveToSuperview:newSuperview];
     
-    if (newSuperview != nil)
+    if (self.keyboardAccessoryView != nil)
     {
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_keyboardWillChangeFrame:) name:UIKeyboardWillChangeFrameNotification object:nil];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_keyboardDidChangeFrame:) name:UIKeyboardDidChangeFrameNotification object:nil];
-    }
-    else
-    {
-        [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillChangeFrameNotification object:nil];
-        [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardDidChangeFrameNotification object:nil];
+        if (newSuperview != nil)
+        {
+            [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_keyboardWillChangeFrame:) name:UIKeyboardWillChangeFrameNotification object:nil];
+            [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_keyboardDidChangeFrame:) name:UIKeyboardDidChangeFrameNotification object:nil];
+        }
+        else
+        {
+            [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillChangeFrameNotification object:nil];
+            [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardDidChangeFrameNotification object:nil];
+        }
     }
 }
 
