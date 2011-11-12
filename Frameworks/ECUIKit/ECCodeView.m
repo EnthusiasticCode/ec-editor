@@ -1418,9 +1418,8 @@ static void init(ECCodeView *self)
     if ([self isFirstResponder])
     {
         selectionView.hidden = NO;
-        // TODO this has been removed because it was putting the selection view
-        // on top of thumb handlers.
-//        [self bringSubviewToFront:selectionView];
+        if (shouldNotify)
+            [self scrollRectToVisible:selectionView.frame animated:NO];
     }
 }
 
