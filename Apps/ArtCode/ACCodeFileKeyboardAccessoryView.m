@@ -57,6 +57,16 @@
     return self;
 }
 
+- (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event
+{
+    // This will make touches to pass through when the accessory is splitted but,
+    // unlike userInteractionEnabled = NO, let subviews handle touches.
+    UIView *hitTestView = [super hitTest:point withEvent:event];
+    if (hitTestView == self)
+        return nil;
+    return hitTestView;
+}
+
 - (void)layoutSubviews
 {
     [super layoutSubviews];
