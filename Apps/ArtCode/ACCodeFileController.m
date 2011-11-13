@@ -456,6 +456,9 @@
 - (void)codeView:(ECCodeViewBase *)codeView commitString:(NSString *)commitString forTextInRange:(NSRange)range
 {
     [[self.document fileBuffer] replaceCharactersInRange:range withString:commitString];
+    NSRange newRange = NSMakeRange(range.location, [commitString length]);
+    [self.syntaxColorer applySyntaxColoringToRange:NSMakeRange(range.location, [commitString length])];
+    [self.codeView updateTextFromStringRange:range toStringRange:newRange];
 }
 
 #pragma mark - Code View Delegate Methods

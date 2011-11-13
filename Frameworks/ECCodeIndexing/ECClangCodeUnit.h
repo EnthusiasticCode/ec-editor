@@ -7,7 +7,6 @@
 //
 
 #import "ECCodeUnit.h"
-#import <clang-c/Index.h>
 
 @interface ECClangCodeUnit : ECCodeUnit
 

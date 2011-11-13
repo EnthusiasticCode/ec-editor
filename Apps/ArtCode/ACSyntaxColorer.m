@@ -52,14 +52,7 @@
 {
     [_fileBuffer setAttributes:self.defaultTextAttributes range:range];
     for (id<ECCodeToken>token in [_codeUnit annotatedTokensInRange:range])
-    {
-        NSRange relativeRange = NSIntersectionRange([token range], range);
-        if (!relativeRange.length)
-            continue;
-        else
-            relativeRange.location -= range.location;
-        [_fileBuffer addAttributes:[self.theme attributesForScopeStack:[token scopeIdentifiersStack]] range:relativeRange];
-    }
+        [_fileBuffer addAttributes:[self.theme attributesForScopeStack:[token scopeIdentifiersStack]] range:[token range]];
 }
 
 @end
