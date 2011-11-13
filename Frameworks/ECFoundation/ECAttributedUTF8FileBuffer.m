@@ -77,9 +77,12 @@ static ECWeakDictionary *_fileBuffers;
     // replacing a substring with an equal string, no change required
     if ([string isEqualToString:[[_contents string] substringWithRange:range]])
         return;
-    NSDictionary *change = [NSDictionary dictionaryWithObjectsAndKeys:[NSValue valueWithRange:range], ECFileBufferRangeKey, string, ECFileBufferStringKey, [[NSAttributedString alloc] initWithString:string], ECFileBufferAttributedStringKey, nil];
+    NSDictionary *change = [NSDictionary dictionaryWithObjectsAndKeys:[NSValue valueWithRange:range], ECFileBufferRangeKey, [string length] ? string : [NSNull null], ECFileBufferStringKey, [string length] ? [[NSAttributedString alloc] initWithString:string] : [NSNull null], ECFileBufferAttributedStringKey, nil];
     [[NSNotificationCenter defaultCenter] postNotificationName:ECFileBufferWillReplaceCharactersNotificationName object:self userInfo:change];
-    [_contents replaceCharactersInRange:range withString:string];
+    if ([string length])
+        [_contents replaceCharactersInRange:range withString:string];
+    else
+        [_contents deleteCharactersInRange:range];
     [[NSNotificationCenter defaultCenter] postNotificationName:ECFileBufferDidReplaceCharactersNotificationName object:self userInfo:change];
 }
 
@@ -97,9 +100,12 @@ static ECWeakDictionary *_fileBuffers;
     // replacing a substring with an equal string, no change required
     if ([attributedString isEqualToAttributedString:[_contents attributedSubstringFromRange:range]])
         return;
-    NSDictionary *change = [NSDictionary dictionaryWithObjectsAndKeys:[NSValue valueWithRange:range], ECFileBufferRangeKey, [attributedString string], ECFileBufferStringKey, attributedString, ECFileBufferAttributedStringKey, nil];
+    NSDictionary *change = [NSDictionary dictionaryWithObjectsAndKeys:[NSValue valueWithRange:range], ECFileBufferRangeKey, [attributedString length] ? [attributedString string] : [NSNull null], ECFileBufferStringKey, [attributedString length] ? attributedString : [NSNull null], ECFileBufferAttributedStringKey, nil];
     [[NSNotificationCenter defaultCenter] postNotificationName:ECFileBufferWillReplaceCharactersNotificationName object:self userInfo:change];
-    [_contents replaceCharactersInRange:range withAttributedString:attributedString];
+    if ([attributedString length])
+        [_contents replaceCharactersInRange:range withAttributedString:attributedString];
+    else
+        [_contents deleteCharactersInRange:range];
     [[NSNotificationCenter defaultCenter] postNotificationName:ECFileBufferDidReplaceCharactersNotificationName object:self userInfo:change];
 }
 
