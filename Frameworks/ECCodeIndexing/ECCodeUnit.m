@@ -6,39 +6,28 @@
 //  Copyright (c) 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import "ECCodeUnit.h"
+#import "ECCodeUnit+Subclass.h"
 #import "ECCodeIndex+Subclass.h"
+#import <ECFoundation/ECAttributedUTF8FileBuffer.h>
 
 @interface ECCodeUnit ()
 {
     ECCodeIndex *_index;
-    NSURL *_fileURL;
+    ECAttributedUTF8FileBuffer *_fileBuffer;
     NSString *_scope;
 }
 @end
 
 @implementation ECCodeUnit
 
-- (id)initWithIndex:(ECCodeIndex *)index file:(NSURL *)fileURL scope:(NSString *)scope
-{
-    ECASSERT(index && fileURL);
-    self = [super init];
-    if (!self)
-        return nil;
-    _index = index;
-    _fileURL = fileURL;
-    _scope = scope;
-    return self;
-}
-
 - (ECCodeIndex *)index
 {
     return _index;
 }
 
-- (NSURL *)fileURL
+- (ECAttributedUTF8FileBuffer *)fileBuffer
 {
-    return _fileURL;
+    return _fileBuffer;
 }
 
 - (NSString *)scope
@@ -63,7 +52,7 @@
 
 - (NSArray *)tokens
 {
-    return [self tokensInRange:NSMakeRange(0, [[[self index] contentsForFile:[self fileURL]] length])];
+    return [self tokensInRange:NSMakeRange(0, [[self fileBuffer] length])];
 }
 
 - (NSArray *)tokensInRange:(NSRange)range
@@ -73,12 +62,28 @@
 
 - (NSArray *)annotatedTokens
 {
-    return [self annotatedTokensInRange:NSMakeRange(0, [[[self index] contentsForFile:[self fileURL]] length])];
+    return [self annotatedTokensInRange:NSMakeRange(0, [[self fileBuffer] length])];
 }
 
 - (NSArray *)annotatedTokensInRange:(NSRange)range
 {
     return nil;
+}
+
+@end
+
+@implementation ECCodeUnit (Internal)
+
+- (id)initWithIndex:(ECCodeIndex *)index fileBuffer:(ECAttributedUTF8FileBuffer *)fileBuffer scope:(NSString *)scope
+{
+    ECASSERT(index && fileBuffer);
+    self = [super init];
+    if (!self)
+        return nil;
+    _index = index;
+    _fileBuffer = fileBuffer;
+    _scope = scope;
+    return self;
 }
 
 @end

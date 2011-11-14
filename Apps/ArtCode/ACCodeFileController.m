@@ -31,6 +31,8 @@
 
     CGRect _keyboardFrame;
     CGRect _keyboardRotationFrame;
+    
+    NSTimer *_syntaxColoringTimer;
 }
 
 @property (nonatomic, strong) ACFileDocument *document;
@@ -196,7 +198,7 @@
                 ACSyntaxColorer *colorer = [[ACSyntaxColorer alloc] initWithFileBuffer:[document fileBuffer]];
                 colorer.defaultTextAttributes = self.defaultTextAttributes;
                 colorer.theme = [TMTheme themeWithName:@"Mac Classic" bundle:nil];
-                [colorer applySyntaxColoringToRange:NSMakeRange(0, [[document fileBuffer] length])];
+                [colorer applySyntaxColoring];
                 dispatch_async(dispatch_get_main_queue(), ^{
                     self.document = document;
                     self.syntaxColorer = colorer;
@@ -448,7 +450,14 @@
 
 - (void)codeView:(ECCodeViewBase *)codeView commitString:(NSString *)commitString forTextInRange:(NSRange)range
 {
-    [[self.document fileBuffer] replaceCharactersInRange:range withString:commitString];
+    [[self.document fileBuffer] replaceCharactersInRange:range withAttributedString:[commitString length] ? [[NSAttributedString alloc] initWithString:commitString attributes:self.defaultTextAttributes] : nil];
+    NSRange newRange = NSMakeRange(range.location, [commitString length]);
+    [_syntaxColoringTimer invalidate];
+    _syntaxColoringTimer = [NSTimer scheduledTimerWithTimeInterval:1.0 usingBlock:^(NSTimer *timer) {
+        [self.syntaxColorer applySyntaxColoring];
+        [self.codeView updateAllText];
+    } repeats:NO];
+    [self.codeView updateTextFromStringRange:range toStringRange:newRange];
 }
 
 #pragma mark - Code View Delegate Methods

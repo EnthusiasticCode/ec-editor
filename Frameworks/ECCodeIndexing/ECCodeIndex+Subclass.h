@@ -17,11 +17,6 @@
 /// All extensions should call this method in their +load method.
 + (void)registerExtension:(Class)extensionClass;
 
-/// Returns the contents of a file, either by reading it from disk or from a buffer.
-/// Returns nil if the file does not exist or is not a valid source file.
-/// All accesses to files must be done using this method
-- (NSString *)contentsForFile:(NSURL *)fileURL;
-
 @end
 
 @interface ECCodeIndex (Subclass)
@@ -31,6 +26,6 @@
 - (float)supportForScope:(NSString *)scope;
 
 /// Return a code unit for the given fileURL initialized with the given index and scope
-- (ECCodeUnit *)codeUnitWithIndex:(ECCodeIndex *)index forFile:(NSURL *)fileURL scope:(NSString *)scope;
+- (ECCodeUnit *)codeUnitWithIndex:(ECCodeIndex *)index forFileBuffer:(ECAttributedUTF8FileBuffer *)fileBuffer scope:(NSString *)scope;
 
 @end

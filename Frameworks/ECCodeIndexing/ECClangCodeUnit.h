@@ -7,11 +7,10 @@
 //
 
 #import "ECCodeUnit.h"
-#import <clang-c/Index.h>
 
 @interface ECClangCodeUnit : ECCodeUnit
 
-- (id)initWithIndex:(ECCodeIndex *)index clangIndex:(CXIndex)clangIndex fileURL:(NSURL *)fileURL scope:(NSString *)scope;
+- (id)initWithIndex:(ECCodeIndex *)index clangIndex:(CXIndex)clangIndex fileBuffer:(ECAttributedUTF8FileBuffer *)fileBuffer scope:(NSString *)scope;
 - (CXTranslationUnit)clangTranslationUnit;
 
 @end

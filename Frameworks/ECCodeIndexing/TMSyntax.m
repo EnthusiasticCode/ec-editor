@@ -12,6 +12,7 @@
 #import "TMCodeIndex.h"
 #import "OnigRegexp.h"
 #import <ECFoundation/ECDiscardableMutableDictionary.h>
+#import <ECFoundation/ECAttributedUTF8FileBuffer.h>
 
 static NSString * const _syntaxNameKey = @"name";
 static NSString * const _syntaxScopeKey = @"scopeName";
@@ -26,6 +27,7 @@ static ECDiscardableMutableDictionary *_syntaxes;
 {
     NSInteger _contentAccessCount;
     NSURL *_fileURL;
+    ECAttributedUTF8FileBuffer *_fileBuffer;
     NSString *_name;
     NSString *_scope;
     NSArray *__fileTypes;
@@ -51,23 +53,19 @@ static ECDiscardableMutableDictionary *_syntaxes;
     return [_syntaxes objectForKey:scope];
 }
 
-+ (TMSyntax *)syntaxForFile:(NSURL *)fileURL
++ (TMSyntax *)syntaxForFileBuffer:(ECAttributedUTF8FileBuffer *)fileBuffer
 {
-    ECASSERT(fileURL);
+    ECASSERT(fileBuffer);
     TMSyntax *foundSyntax = [self _syntaxWithPredicateBlock:^BOOL(TMSyntax *syntax) {
         for (NSString *fileType in [syntax _fileTypes])
-            if ([fileType isEqualToString:[fileURL pathExtension]])
+            if ([fileType isEqualToString:[[fileBuffer fileURL] pathExtension]])
                 return YES;
         return NO;
     }];
     if (!foundSyntax)
         foundSyntax = [self _syntaxWithPredicateBlock:^BOOL(TMSyntax *syntax) {
-            NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] initWithFilePresenter:nil];
-            __block NSString *firstLine = nil;
-            [fileCoordinator coordinateReadingItemAtURL:fileURL options:NSFileCoordinatorReadingResolvesSymbolicLink error:NULL byAccessor:^(NSURL *newURL) {
-                NSString *fileContents = [NSString stringWithContentsOfURL:newURL encoding:NSUTF8StringEncoding error:NULL];
-                firstLine = [fileContents substringWithRange:[fileContents lineRangeForRange:NSMakeRange(0, 1)]];
-            }];
+            NSString *fileContents = [fileBuffer stringInRange:NSMakeRange(0, [fileBuffer length])];
+            NSString *firstLine = [fileContents substringWithRange:[fileContents lineRangeForRange:NSMakeRange(0, 1)]];
             if ([[syntax _firstLineMatch] search:firstLine])
                 return YES;
             return NO;

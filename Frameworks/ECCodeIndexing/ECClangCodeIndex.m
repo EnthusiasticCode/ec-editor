@@ -45,10 +45,10 @@
     clang_disposeIndex(_clangIndex);
 }
 
-- (ECCodeUnit *)codeUnitWithIndex:(ECCodeIndex *)index forFile:(NSURL *)fileURL scope:(NSString *)scope
+- (ECCodeUnit *)codeUnitWithIndex:(ECCodeIndex *)index forFileBuffer:(ECAttributedUTF8FileBuffer *)fileBuffer scope:(NSString *)scope
 {
-    ECASSERT(fileURL && scope);
-    return [[ECClangCodeUnit alloc] initWithIndex:index clangIndex:_clangIndex fileURL:fileURL scope:scope];
+    ECASSERT(index && fileBuffer && scope);
+    return [[ECClangCodeUnit alloc] initWithIndex:index clangIndex:_clangIndex fileBuffer:fileBuffer scope:scope];
 }
 
 @end

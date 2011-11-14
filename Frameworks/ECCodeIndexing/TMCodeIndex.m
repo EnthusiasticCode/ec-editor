@@ -9,6 +9,7 @@
 #import "ECCodeIndex+Subclass.h"
 #import "TMCodeIndex.h"
 #import "TMCodeUnit.h"
+#import "ECCodeUnit+Subclass.h"
 #import "TMSyntax.h"
 
 @implementation TMCodeIndex
@@ -26,10 +27,10 @@
     return 0.3;
 }
 
-- (ECCodeUnit *)codeUnitWithIndex:(ECCodeIndex *)index forFile:(NSURL *)fileURL scope:(NSString *)scope
+- (ECCodeUnit *)codeUnitWithIndex:(ECCodeIndex *)index forFileBuffer:(ECAttributedUTF8FileBuffer *)fileBuffer scope:(NSString *)scope
 {
-    ECASSERT(index && fileURL && scope);
-    return [[TMCodeUnit alloc] initWithIndex:index file:fileURL scope:scope];
+    ECASSERT(index && fileBuffer && scope);
+    return [[TMCodeUnit alloc] initWithIndex:index fileBuffer:fileBuffer scope:scope];
 }
 
 @end

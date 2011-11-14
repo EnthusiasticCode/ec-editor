@@ -18,6 +18,8 @@
 {
     ECAttributedUTF8FileBuffer *_fileBuffer;
     ECCodeUnit *_codeUnit;
+    id _fileBufferObserver;
+    BOOL _needsToReapplySyntaxColoring;
 }
 @end
 
@@ -34,8 +36,17 @@
         return nil;
     _fileBuffer = fileBuffer;
     ECCodeIndex *codeIndex = [[ECCodeIndex alloc] init];
-    _codeUnit = [codeIndex codeUnitForFile:[_fileBuffer fileURL] scope:nil];
+    _codeUnit = [codeIndex codeUnitForFileBuffer:fileBuffer scope:nil];
+    _needsToReapplySyntaxColoring = YES;
+    _fileBufferObserver = [[NSNotificationCenter defaultCenter] addObserverForName:ECFileBufferWillReplaceCharactersNotificationName object:fileBuffer queue:nil usingBlock:^(NSNotification *note) {
+        _needsToReapplySyntaxColoring = YES;
+    }];
     return self;
+}
+
+- (void)dealloc
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:_fileBufferObserver];
 }
 
 - (ECAttributedUTF8FileBuffer *)fileBuffer
@@ -48,18 +59,15 @@
     return _codeUnit;
 }
 
-- (void)applySyntaxColoringToRange:(NSRange)range
+- (void)applySyntaxColoring
 {
+    if (!_needsToReapplySyntaxColoring)
+        return;
+    NSRange range = NSMakeRange(0, [_fileBuffer length]);
     [_fileBuffer setAttributes:self.defaultTextAttributes range:range];
     for (id<ECCodeToken>token in [_codeUnit annotatedTokensInRange:range])
-    {
-        NSRange relativeRange = NSIntersectionRange([token range], range);
-        if (!relativeRange.length)
-            continue;
-        else
-            relativeRange.location -= range.location;
-        [_fileBuffer addAttributes:[self.theme attributesForScopeStack:[token scopeIdentifiersStack]] range:relativeRange];
-    }
+        [_fileBuffer addAttributes:[self.theme attributesForScopeStack:[token scopeIdentifiersStack]] range:[token range]];
+    _needsToReapplySyntaxColoring = NO;
 }
 
 @end
