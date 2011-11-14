@@ -1549,7 +1549,14 @@ static void init(ECCodeView *self)
 - (void)handleGestureDoubleTap:(UITapGestureRecognizer *)recognizer
 {
     CGPoint tapPoint = [recognizer locationInView:self];
-    ECTextRange *sel = (ECTextRange *)[self.tokenizer rangeEnclosingPosition:[self closestPositionToPoint:tapPoint] withGranularity:UITextGranularityWord inDirection:UITextLayoutDirectionLeft];
+    UITextPosition *tapPosition = [self closestPositionToPoint:tapPoint];
+    ECTextRange *sel = (ECTextRange *)[self.tokenizer rangeEnclosingPosition:tapPosition withGranularity:UITextGranularityWord inDirection:UITextStorageDirectionForward];
+    if (sel == nil)
+    {
+        UITextPosition *tapStart = [self.tokenizer positionFromPosition:tapPosition toBoundary:UITextGranularityWord inDirection:UITextStorageDirectionBackward];
+        UITextPosition *tapEnd = [self.tokenizer positionFromPosition:tapPosition toBoundary:UITextGranularityWord inDirection:UITextStorageDirectionForward];
+        sel = [[ECTextRange alloc] initWithStart:(ECTextPosition *)tapStart end:(ECTextPosition *)tapEnd];
+    }
     [self setSelectedTextRange:sel];
 }
 
