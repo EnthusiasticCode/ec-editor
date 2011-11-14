@@ -17,6 +17,6 @@
 - (id)initWithFileBuffer:(ECAttributedUTF8FileBuffer *)fileBuffer;
 - (ECAttributedUTF8FileBuffer *)fileBuffer;
 - (ECCodeUnit *)codeUnit;
-- (void)applySyntaxColoringToRange:(NSRange)range;
+- (void)applySyntaxColoring;
 
 @end
