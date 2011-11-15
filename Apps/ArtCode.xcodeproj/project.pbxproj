@@ -391,7 +391,7 @@
 		CD62BAD213CA2ABC00266BC0 /* ACToolNavigatorController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACToolNavigatorController.m; sourceTree = "<group>"; };
 		CD6E416A14614A0C00A9CE7F /* ACCodeFileMinimapView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACCodeFileMinimapView.h; sourceTree = "<group>"; };
 		CD6E416B14614A0C00A9CE7F /* ACCodeFileMinimapView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACCodeFileMinimapView.m; sourceTree = "<group>"; };
-		CD78E51E14729A0E00801C3F /* ACCodeFileCompletionsController.h */ = {isa = PBXFileReference; fileEncoding = 4; path = ACCodeFileCompletionsController.h; sourceTree = "<group>"; };
+		CD78E51E14729A0E00801C3F /* ACCodeFileCompletionsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACCodeFileCompletionsController.h; sourceTree = "<group>"; };
 		CD78E51F14729A0E00801C3F /* ACCodeFileCompletionsController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACCodeFileCompletionsController.m; sourceTree = "<group>"; };
 		CD7D2ADF13C0CD2600B889EE /* ArtCode.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ArtCode.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CD7D2AE313C0CD2600B889EE /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };

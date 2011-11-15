@@ -331,5 +331,5 @@ NSString *Clang_CursorKindScopeIdentifier(enum CXCursorKind cursorKind)
 
 NSCharacterSet *Clang_ValidCompletionTypedTextCharacterSet(void)
 {
-    return [NSCharacterSet characterSetWithCharactersInString:@"#0123456789@ABCDEFGHIJKLMNOPQRSTUVXYZ_abcdefghijklmnopqrstuvxyz"];
+    return [NSCharacterSet characterSetWithCharactersInString:@"#0123456789@ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz"];
 }
