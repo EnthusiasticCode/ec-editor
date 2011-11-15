@@ -10,7 +10,7 @@
 #import <ECUIKit/ECCodeView.h>
 #import "ACCodeFileMinimapView.h"
 
-@class ACTab;
+@class ACTab, ACFileDocument;
 
 @interface ACCodeFileController : UIViewController <ACCodeFileMinimapViewDelegate, ECCodeViewDataSource, ECCodeViewDelegate, UIActionSheetDelegate>
 
@@ -21,6 +21,9 @@
 
 /// The tab in which the controller is displayed.
 @property (nonatomic, strong) ACTab *tab;
+
+/// The document opened with the given file URL.
+@property (nonatomic, strong, readonly) ACFileDocument *document;
 
 #pragma mark - Code viewing and editing
 

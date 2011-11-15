@@ -23,6 +23,7 @@
 #import "ACCodeFileKeyboardAccessoryView.h"
 #import <ECUIKit/ECPopoverController.h>
 #import <ECUIKit/ECTexturedPopoverView.h>
+#import "ACCodeFileCompletionsController.h"
 
 
 @interface ACCodeFileController () {
@@ -36,7 +37,10 @@
 }
 
 @property (nonatomic, strong) ACFileDocument *document;
+
 @property (nonatomic, strong, readonly) ECPopoverController *_keyboardAccessoryItemPopover;
+@property (nonatomic, strong, readonly) ACCodeFileCompletionsController *_completionsController;
+
 @property (nonatomic, strong) ACSyntaxColorer *syntaxColorer;
 @property (nonatomic, strong) NSDictionary *defaultTextAttributes;
 
@@ -268,17 +272,13 @@
 
 #pragma mark -
 
-@synthesize _keyboardAccessoryItemPopover;
+@synthesize _keyboardAccessoryItemPopover, _completionsController;
 
 - (ECPopoverController *)_keyboardAccessoryItemPopover
 {
     if (!_keyboardAccessoryItemPopover)
     {
-        UIViewController *tempViewController = [UIViewController new];
-        tempViewController.contentSizeForViewInPopover = CGSizeMake(300, 300);
-        tempViewController.view.backgroundColor = [UIColor whiteColor];
-        
-        _keyboardAccessoryItemPopover = [[ECTexturedPopoverController alloc] initWithContentViewController:tempViewController];
+        _keyboardAccessoryItemPopover = [[ECTexturedPopoverController alloc] init];
         ECTexturedPopoverView *popoverView = (ECTexturedPopoverView *)_keyboardAccessoryItemPopover.popoverView;
         popoverView.contentInsets = UIEdgeInsetsMake(5, 5, 5, 5);
         popoverView.backgroundView.image = [[UIImage imageNamed:@"accessoryView_popoverBackground"] resizableImageWithCapInsets:UIEdgeInsetsMake(10, 10, 10, 10)];
@@ -291,6 +291,17 @@
         popoverView.contentInsets = UIEdgeInsetsMake(10, 10, 10, 10);
     }
     return _keyboardAccessoryItemPopover;
+}
+
+- (ACCodeFileCompletionsController *)_completionsController
+{
+    if (!_completionsController)
+    {
+        _completionsController = [[ACCodeFileCompletionsController alloc] initWithStyle:UITableViewStylePlain];
+        _completionsController.targetCodeFileController = self;
+        _completionsController.contentSizeForViewInPopover = CGSizeMake(300, 300);
+    }
+    return _completionsController;
 }
 
 #pragma mark - Toolbar Items Actions
@@ -597,6 +608,12 @@
 
     if (item.tag == 10)
     {
+        // Prepare completion controller
+        self._completionsController.targetPopoverController = self._keyboardAccessoryItemPopover;
+        self._completionsController.offsetInDocumentForCompletions = self.codeView.selectionRange.location;
+        
+        // Prepare popover
+        self._keyboardAccessoryItemPopover.contentViewController = self._completionsController;
         switch (self.codeView.keyboardAccessoryView.currentAccessoryPosition) {
             case ECKeyboardAccessoryPositionFloating:
                 self._keyboardAccessoryItemPopover.allowedBoundsInsets = UIEdgeInsetsMake(0, 3, 0, 3);
