@@ -56,7 +56,7 @@
     NSRange filterStringRange = NSMakeRange(firstCharacterIndex, offset - firstCharacterIndex);
     if (filterStringRange.length)
     {
-        NSString *filterString = [content substringWithRange:filterStringRange];
+        NSString *filterString = [[content substringWithRange:filterStringRange] lowercaseString];
         NSUInteger rangeStart = 0;
         NSUInteger lastLesserIndex = 0;
         NSUInteger firstEqualIndex = _clangResults->NumResults - 1;
@@ -64,26 +64,26 @@
        {
             rangeStart = lastLesserIndex + ((firstEqualIndex - lastLesserIndex) / 2);
             ECClangCodeCompletionResult *startResult = [[ECClangCodeCompletionResult alloc] initWithClangCompletionResult:_clangResults->Results[rangeStart]];
-            NSComparisonResult startComparisonResult = [[[[startResult completionString] typedTextChunk] text] compare:filterString];
+            NSComparisonResult startComparisonResult = [[[[[startResult completionString] typedTextChunk] text] lowercaseString] compare:filterString];
             if (startComparisonResult == NSOrderedAscending)
                 lastLesserIndex = rangeStart;
             else
                 firstEqualIndex = rangeStart;
         }
         NSUInteger rangeEnd = _clangResults->NumResults - 1;
-        NSUInteger lastEqualIndex = 0;
+        NSUInteger lastEqualIndex = firstEqualIndex;
         NSUInteger firstGreaterIndex = _clangResults->NumResults - 1;
         while (firstGreaterIndex != lastEqualIndex + 1)
         {
             rangeEnd = lastEqualIndex + ((firstGreaterIndex - lastEqualIndex) / 2);
             ECClangCodeCompletionResult *endResult = [[ECClangCodeCompletionResult alloc] initWithClangCompletionResult:_clangResults->Results[rangeEnd]];
-            NSComparisonResult endComparisonResult = [[[[endResult completionString] typedTextChunk] text] compare:filterString];
+            NSComparisonResult endComparisonResult = [[[[[endResult completionString] typedTextChunk] text] lowercaseString] compare:filterString];
             if (endComparisonResult == NSOrderedDescending)
                 firstGreaterIndex = rangeEnd;
             else
                 lastEqualIndex = rangeEnd;
         }
-        _filteredResultRange = NSMakeRange(rangeStart, rangeEnd - rangeStart);
+        _filteredResultRange = NSMakeRange(firstEqualIndex, firstGreaterIndex - firstEqualIndex);
     }
     else
         _filteredResultRange = NSMakeRange(0, _clangResults->NumResults);
