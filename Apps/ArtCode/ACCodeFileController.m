@@ -620,10 +620,6 @@
         self._completionsController.targetPopoverController = self._keyboardAccessoryItemPopover;
         self._completionsController.offsetInDocumentForCompletions = self.codeView.selectionRange.location;
         
-        // Layout substitutive button in popover view
-        _keyboardAccessoryItemPopoverButton.frame = [item.customView.superview convertRect:item.customView.frame toView:self._keyboardAccessoryItemPopover.popoverView];
-        _keyboardAccessoryItemPopoverButton.tag = item.tag;
-        
         // Prepare popover
         self._keyboardAccessoryItemPopover.contentViewController = self._completionsController;
         switch (self.codeView.keyboardAccessoryView.currentAccessoryPosition) {
@@ -642,6 +638,10 @@
         
         [(ECTexturedPopoverView *)self._keyboardAccessoryItemPopover.popoverView setArrowSize:CGSizeMake(item.customView.bounds.size.width + 14, 54) forMetaPosition:ECPopoverViewArrowMetaPositionMiddle];
         [self._keyboardAccessoryItemPopover presentPopoverFromRect:[item.customView.superview convertRect:item.customView.frame toView:self.view.window.rootViewController.view] inView:self.view.window.rootViewController.view permittedArrowDirections:self.codeView.keyboardAccessoryView.isFlipped ? UIPopoverArrowDirectionUp : UIPopoverArrowDirectionDown animated:YES];
+        
+        // Layout substitutive button in popover view
+        _keyboardAccessoryItemPopoverButton.frame = [item.customView.superview convertRect:item.customView.frame toView:self._keyboardAccessoryItemPopover.popoverView];
+        _keyboardAccessoryItemPopoverButton.tag = item.tag;
     }
 }
 
@@ -652,8 +652,10 @@
         UIView *itemView = recognizer.view;
         self._keyboardAccessoryItemPopover.allowedBoundsInsets = UIEdgeInsetsMake(5, 5, 5, 5);
         [(ECTexturedPopoverView *)self._keyboardAccessoryItemPopover.popoverView setArrowSize:CGSizeMake(itemView.bounds.size.width + 14, 54) forMetaPosition:ECPopoverViewArrowMetaPositionMiddle];
-        [self._keyboardAccessoryItemPopover presentPopoverFromRect:[itemView frame] inView:[itemView superview] permittedArrowDirections:self.codeView.keyboardAccessoryView.isFlipped ? UIPopoverArrowDirectionUp : UIPopoverArrowDirectionDown animated:YES];
-        [itemView.superview bringSubviewToFront:itemView];
+        [self._keyboardAccessoryItemPopover presentPopoverFromRect:[itemView.superview convertRect:itemView.frame toView:self.view.window.rootViewController.view] inView:self.view.window.rootViewController.view permittedArrowDirections:self.codeView.keyboardAccessoryView.isFlipped ? UIPopoverArrowDirectionUp : UIPopoverArrowDirectionDown animated:YES];
+        
+        _keyboardAccessoryItemPopoverButton.frame = [itemView.superview convertRect:itemView.frame toView:self._keyboardAccessoryItemPopover.popoverView];
+        _keyboardAccessoryItemPopoverButton.tag = itemView.tag;
     }
 }
 
