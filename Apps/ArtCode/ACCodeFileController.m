@@ -34,6 +34,10 @@
     CGRect _keyboardRotationFrame;
     
     NSTimer *_syntaxColoringTimer;
+    
+    /// Button inside keyboard accessory popover that look like the underneat button that presented the popover from the accessory.
+    /// This button is supposed to have the same appearance of the underlying button and the same tag.
+    UIButton *_keyboardAccessoryItemPopoverButton;
 }
 
 @property (nonatomic, strong) ACFileDocument *document;
@@ -281,7 +285,7 @@
         _keyboardAccessoryItemPopover = [[ECTexturedPopoverController alloc] init];
         ECTexturedPopoverView *popoverView = (ECTexturedPopoverView *)_keyboardAccessoryItemPopover.popoverView;
         popoverView.contentInsets = UIEdgeInsetsMake(5, 5, 5, 5);
-        popoverView.backgroundView.image = [[UIImage imageNamed:@"accessoryView_popoverBackground"] resizableImageWithCapInsets:UIEdgeInsetsMake(10, 10, 10, 10)];
+        popoverView.backgroundView.image = [[UIImage imageNamed:@"accessoryView_popoverBackground"] resizableImageWithCapInsets:UIEdgeInsetsMake(10, 10, 50, 10)];
         [popoverView setArrowImage:[[UIImage imageNamed:@"accessoryView_popoverArrowMiddle"] resizableImageWithCapInsets:UIEdgeInsetsMake(10, 10, 10, 10)] forDirection:UIPopoverArrowDirectionDown metaPosition:ECPopoverViewArrowMetaPositionMiddle];
         [popoverView setArrowImage:[[UIImage imageNamed:@"accessoryView_popoverArrowRight"] resizableImageWithCapInsets:UIEdgeInsetsMake(10, 10, 10, 10)] forDirection:UIPopoverArrowDirectionDown metaPosition:ECPopoverViewArrowMetaPositionFarRight];
         [popoverView setArrowImage:[[UIImage imageNamed:@"accessoryView_popoverArrowLeft"] resizableImageWithCapInsets:UIEdgeInsetsMake(10, 10, 10, 10)] forDirection:UIPopoverArrowDirectionDown metaPosition:ECPopoverViewArrowMetaPositionFarLeft];
@@ -289,6 +293,10 @@
         popoverView.positioningInsets = UIEdgeInsetsMake(59, 58, 58, 58);
         popoverView.arrowInsets = UIEdgeInsetsMake(12, 12, 12, 12);
         popoverView.contentInsets = UIEdgeInsetsMake(10, 10, 10, 10);
+        
+        _keyboardAccessoryItemPopoverButton = [UIButton new];
+        [_keyboardAccessoryItemPopoverButton setBackgroundImage:[[UIImage imageNamed:@"accessoryView_itemBackground"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 12, 0, 12)] forState:UIControlStateNormal];
+        [popoverView addSubview:_keyboardAccessoryItemPopoverButton];
     }
     return _keyboardAccessoryItemPopover;
 }
@@ -612,6 +620,10 @@
         self._completionsController.targetPopoverController = self._keyboardAccessoryItemPopover;
         self._completionsController.offsetInDocumentForCompletions = self.codeView.selectionRange.location;
         
+        // Layout substitutive button in popover view
+        _keyboardAccessoryItemPopoverButton.frame = [item.customView.superview convertRect:item.customView.frame toView:self._keyboardAccessoryItemPopover.popoverView];
+        _keyboardAccessoryItemPopoverButton.tag = item.tag;
+        
         // Prepare popover
         self._keyboardAccessoryItemPopover.contentViewController = self._completionsController;
         switch (self.codeView.keyboardAccessoryView.currentAccessoryPosition) {
@@ -629,8 +641,7 @@
         }
         
         [(ECTexturedPopoverView *)self._keyboardAccessoryItemPopover.popoverView setArrowSize:CGSizeMake(item.customView.bounds.size.width + 14, 54) forMetaPosition:ECPopoverViewArrowMetaPositionMiddle];
-        [self._keyboardAccessoryItemPopover presentPopoverFromBarButtonItem:item permittedArrowDirections:self.codeView.keyboardAccessoryView.isFlipped ? UIPopoverArrowDirectionUp : UIPopoverArrowDirectionDown animated:YES];
-        [item.customView.superview bringSubviewToFront:item.customView];
+        [self._keyboardAccessoryItemPopover presentPopoverFromRect:[item.customView.superview convertRect:item.customView.frame toView:self.view.window.rootViewController.view] inView:self.view.window.rootViewController.view permittedArrowDirections:self.codeView.keyboardAccessoryView.isFlipped ? UIPopoverArrowDirectionUp : UIPopoverArrowDirectionDown animated:YES];
     }
 }
 
