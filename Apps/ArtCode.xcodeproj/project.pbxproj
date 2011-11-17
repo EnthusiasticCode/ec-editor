@@ -86,6 +86,8 @@
 		CD21547913F45CC200614B83 /* ACToolButton.m in Sources */ = {isa = PBXBuildFile; fileRef = CD21547813F45CC200614B83 /* ACToolButton.m */; };
 		CD2568C31450D44000A3CCDE /* topBar_BackButton_Normal.png in Resources */ = {isa = PBXBuildFile; fileRef = CD2568C21450D44000A3CCDE /* topBar_BackButton_Normal.png */; };
 		CD2568C71450D5B600A3CCDE /* topBar_ToolButton_Normal.png in Resources */ = {isa = PBXBuildFile; fileRef = CD2568C61450D5B600A3CCDE /* topBar_ToolButton_Normal.png */; };
+		CD41529814752D61004C7157 /* ACCodeFileAccessoryItemsGridView.m in Sources */ = {isa = PBXBuildFile; fileRef = CD41529714752D61004C7157 /* ACCodeFileAccessoryItemsGridView.m */; };
+		CD41529B14753520004C7157 /* ACCodeFileAccessoryAction.m in Sources */ = {isa = PBXBuildFile; fileRef = CD41529A14753520004C7157 /* ACCodeFileAccessoryAction.m */; };
 		CD4719A6145196CE00C7BCC5 /* tabBar_TabAddButton.png in Resources */ = {isa = PBXBuildFile; fileRef = CD4719A5145196CE00C7BCC5 /* tabBar_TabAddButton.png */; };
 		CD62BAC613CA06A900266BC0 /* ACToolController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD62BAC513CA06A900266BC0 /* ACToolController.m */; };
 		CD62BACA13CA1B4600266BC0 /* ACToolHistoryController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD62BAC913CA1B4500266BC0 /* ACToolHistoryController.m */; };
@@ -378,6 +380,10 @@
 		CD21547813F45CC200614B83 /* ACToolButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACToolButton.m; sourceTree = "<group>"; };
 		CD2568C21450D44000A3CCDE /* topBar_BackButton_Normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = topBar_BackButton_Normal.png; sourceTree = "<group>"; };
 		CD2568C61450D5B600A3CCDE /* topBar_ToolButton_Normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = topBar_ToolButton_Normal.png; sourceTree = "<group>"; };
+		CD41529614752D61004C7157 /* ACCodeFileAccessoryItemsGridView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACCodeFileAccessoryItemsGridView.h; sourceTree = "<group>"; };
+		CD41529714752D61004C7157 /* ACCodeFileAccessoryItemsGridView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACCodeFileAccessoryItemsGridView.m; sourceTree = "<group>"; };
+		CD41529914753520004C7157 /* ACCodeFileAccessoryAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACCodeFileAccessoryAction.h; sourceTree = "<group>"; };
+		CD41529A14753520004C7157 /* ACCodeFileAccessoryAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACCodeFileAccessoryAction.m; sourceTree = "<group>"; };
 		CD4719A5145196CE00C7BCC5 /* tabBar_TabAddButton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = tabBar_TabAddButton.png; sourceTree = "<group>"; };
 		CD62BAC413CA06A900266BC0 /* ACToolController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACToolController.h; sourceTree = "<group>"; };
 		CD62BAC513CA06A900266BC0 /* ACToolController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACToolController.m; sourceTree = "<group>"; };
@@ -681,6 +687,26 @@
 			name = "Core Data";
 			sourceTree = "<group>";
 		};
+		CD41529C1475564F004C7157 /* Completion */ = {
+			isa = PBXGroup;
+			children = (
+				CD78E51E14729A0E00801C3F /* ACCodeFileCompletionsController.h */,
+				CD78E51F14729A0E00801C3F /* ACCodeFileCompletionsController.m */,
+			);
+			name = Completion;
+			sourceTree = "<group>";
+		};
+		CD41529D1475565E004C7157 /* Actions */ = {
+			isa = PBXGroup;
+			children = (
+				CD41529914753520004C7157 /* ACCodeFileAccessoryAction.h */,
+				CD41529A14753520004C7157 /* ACCodeFileAccessoryAction.m */,
+				CD41529614752D61004C7157 /* ACCodeFileAccessoryItemsGridView.h */,
+				CD41529714752D61004C7157 /* ACCodeFileAccessoryItemsGridView.m */,
+			);
+			name = Actions;
+			sourceTree = "<group>";
+		};
 		CD6580C514157B300079412F /* Find & Replace Controllers */ = {
 			isa = PBXGroup;
 			children = (
@@ -891,7 +917,7 @@
 				CD9CD96F13DC22AF007964D3 /* ACCodeFileController.m */,
 				CD6580C514157B300079412F /* Find & Replace Controllers */,
 				CD6E416D14614A2A00A9CE7F /* Minimap View */,
-				CD9ED8E51466C3E600A517A5 /* Keyboard Accessory View */,
+				CD9ED8E51466C3E600A517A5 /* Keyboard Accessory */,
 			);
 			name = Editor;
 			sourceTree = "<group>";
@@ -941,15 +967,15 @@
 			name = "Accessory View";
 			sourceTree = "<group>";
 		};
-		CD9ED8E51466C3E600A517A5 /* Keyboard Accessory View */ = {
+		CD9ED8E51466C3E600A517A5 /* Keyboard Accessory */ = {
 			isa = PBXGroup;
 			children = (
 				CDA7630A146976260004FAC7 /* ACCodeFileKeyboardAccessoryView.h */,
 				CDA7630B146976260004FAC7 /* ACCodeFileKeyboardAccessoryView.m */,
-				CD78E51E14729A0E00801C3F /* ACCodeFileCompletionsController.h */,
-				CD78E51F14729A0E00801C3F /* ACCodeFileCompletionsController.m */,
+				CD41529D1475565E004C7157 /* Actions */,
+				CD41529C1475564F004C7157 /* Completion */,
 			);
-			name = "Keyboard Accessory View";
+			name = "Keyboard Accessory";
 			sourceTree = "<group>";
 		};
 		CD9ED8F21467E59E00A517A5 /* Backgrounds */ = {
@@ -1388,6 +1414,8 @@
 				CDA7630C146976260004FAC7 /* ACCodeFileKeyboardAccessoryView.m in Sources */,
 				B7D4DDE7146C4BB0002DF6D4 /* ACSyntaxColorer.m in Sources */,
 				CD78E52014729A0E00801C3F /* ACCodeFileCompletionsController.m in Sources */,
+				CD41529814752D61004C7157 /* ACCodeFileAccessoryItemsGridView.m in Sources */,
+				CD41529B14753520004C7157 /* ACCodeFileAccessoryAction.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

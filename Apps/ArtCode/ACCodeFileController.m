@@ -24,6 +24,8 @@
 #import <ECUIKit/ECPopoverController.h>
 #import <ECUIKit/ECTexturedPopoverView.h>
 #import "ACCodeFileCompletionsController.h"
+#import "ACCodeFileAccessoryAction.h"
+#import "ACCodeFileAccessoryItemsGridView.h"
 
 
 @interface ACCodeFileController () {
@@ -44,6 +46,7 @@
 
 @property (nonatomic, strong, readonly) ECPopoverController *_keyboardAccessoryItemPopover;
 @property (nonatomic, strong, readonly) ACCodeFileCompletionsController *_completionsController;
+@property (nonatomic, strong, readonly) UIViewController *_customizeAccessoryItemController;
 
 @property (nonatomic, strong) ACSyntaxColorer *syntaxColorer;
 @property (nonatomic, strong) NSDictionary *defaultTextAttributes;
@@ -276,7 +279,7 @@
 
 #pragma mark -
 
-@synthesize _keyboardAccessoryItemPopover, _completionsController;
+@synthesize _keyboardAccessoryItemPopover, _completionsController, _customizeAccessoryItemController;
 
 - (ECPopoverController *)_keyboardAccessoryItemPopover
 {
@@ -310,6 +313,21 @@
         _completionsController.contentSizeForViewInPopover = CGSizeMake(300, 300);
     }
     return _completionsController;
+}
+
+- (UIViewController *)_customizeAccessoryItemController
+{
+    if (!_customizeAccessoryItemController)
+    {
+        ACCodeFileAccessoryItemsGridView *gridView = [ACCodeFileAccessoryItemsGridView new];
+        gridView.itemSize = CGSizeMake(50, 30);
+        gridView.itemInsents = UIEdgeInsetsMake(5, 5, 5, 5);
+        
+        _customizeAccessoryItemController = [[UIViewController alloc] init];
+        _customizeAccessoryItemController.view = gridView;
+        _customizeAccessoryItemController.contentSizeForViewInPopover = CGSizeMake(300, 200);
+    }
+    return _customizeAccessoryItemController;
 }
 
 #pragma mark - Toolbar Items Actions
@@ -650,10 +668,16 @@
     if (recognizer.state == UIGestureRecognizerStateBegan)
     {
         UIView *itemView = recognizer.view;
+        // 
+        [(ACCodeFileAccessoryItemsGridView *)self._customizeAccessoryItemController.view setAccessoryActions:[ACCodeFileAccessoryAction accessoryActionsForLanguageWithIdentifier:nil]];
+        
+        // Show popover
+        self._keyboardAccessoryItemPopover.contentViewController = self._customizeAccessoryItemController;
         self._keyboardAccessoryItemPopover.allowedBoundsInsets = UIEdgeInsetsMake(5, 5, 5, 5);
         [(ECTexturedPopoverView *)self._keyboardAccessoryItemPopover.popoverView setArrowSize:CGSizeMake(itemView.bounds.size.width + 14, 54) forMetaPosition:ECPopoverViewArrowMetaPositionMiddle];
         [self._keyboardAccessoryItemPopover presentPopoverFromRect:[itemView.superview convertRect:itemView.frame toView:self.view.window.rootViewController.view] inView:self.view.window.rootViewController.view permittedArrowDirections:self.codeView.keyboardAccessoryView.isFlipped ? UIPopoverArrowDirectionUp : UIPopoverArrowDirectionDown animated:YES];
         
+        // Layout substitutive button in popover view
         _keyboardAccessoryItemPopoverButton.frame = [itemView.superview convertRect:itemView.frame toView:self._keyboardAccessoryItemPopover.popoverView];
         _keyboardAccessoryItemPopoverButton.tag = itemView.tag;
     }
