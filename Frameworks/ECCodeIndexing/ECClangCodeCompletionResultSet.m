@@ -29,11 +29,22 @@
     self = [super init];
     if (!self)
         return nil;
+
+    NSInteger firstCharacterIndex;
+    NSString *content = [[codeUnit fileBuffer] stringInRange:NSMakeRange(0, [[codeUnit fileBuffer] length])];
+    for (firstCharacterIndex = offset - 1; firstCharacterIndex >= 0; --firstCharacterIndex)
+    {
+        if ([Clang_ValidCompletionTypedTextCharacterSet() characterIsMember:[content characterAtIndex:firstCharacterIndex]])
+            continue;
+        break;
+    }
+    ++firstCharacterIndex;
+
     _codeUnit = codeUnit;
     CXTranslationUnit clangTranslationUnit = [codeUnit clangTranslationUnit];
     const char *fileName = [[[[codeUnit fileBuffer] fileURL] path] fileSystemRepresentation];
     CXFile clangFile = clang_getFile(clangTranslationUnit, fileName);
-    CXSourceLocation completeLocation = clang_getLocationForOffset(clangTranslationUnit, clangFile, offset);
+    CXSourceLocation completeLocation = clang_getLocationForOffset(clangTranslationUnit, clangFile, firstCharacterIndex);
     unsigned int completeLine;
     unsigned int completeColumn;
     clang_getInstantiationLocation(completeLocation, NULL, &completeLine, &completeColumn, NULL);
@@ -44,15 +55,7 @@
         return self;
     }
     clang_sortCodeCompletionResults(_clangResults->Results, _clangResults->NumResults);
-    NSInteger firstCharacterIndex;
-    NSString *content = [[codeUnit fileBuffer] stringInRange:NSMakeRange(0, [[codeUnit fileBuffer] length])];
-    for (firstCharacterIndex = offset - 1; firstCharacterIndex >= 0; --firstCharacterIndex)
-    {
-        if ([Clang_ValidCompletionTypedTextCharacterSet() characterIsMember:[content characterAtIndex:firstCharacterIndex]])
-            continue;
-        break;
-    }
-    ++firstCharacterIndex;
+    
     NSRange filterStringRange = NSMakeRange(firstCharacterIndex, offset - firstCharacterIndex);
     if (filterStringRange.length)
     {
