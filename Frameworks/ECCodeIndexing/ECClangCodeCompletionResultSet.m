@@ -56,34 +56,55 @@
     NSRange filterStringRange = NSMakeRange(firstCharacterIndex, offset - firstCharacterIndex);
     if (filterStringRange.length)
     {
-        NSString *filterString = [[content substringWithRange:filterStringRange] lowercaseString];
-        NSUInteger rangeStart = 0;
+        NSString *filterString = [content substringWithRange:filterStringRange];
+        NSRange comparisonRange = NSMakeRange(0, [filterString length]);
+        NSUInteger currentPosition = 0;
         NSUInteger lastLesserIndex = 0;
-        NSUInteger firstEqualIndex = _clangResults->NumResults - 1;
-        while (firstEqualIndex != lastLesserIndex + 1)
-       {
-            rangeStart = lastLesserIndex + ((firstEqualIndex - lastLesserIndex) / 2);
-            ECClangCodeCompletionResult *startResult = [[ECClangCodeCompletionResult alloc] initWithClangCompletionResult:_clangResults->Results[rangeStart]];
-            NSComparisonResult startComparisonResult = [[[[[startResult completionString] typedTextChunk] text] lowercaseString] compare:filterString];
-            if (startComparisonResult == NSOrderedAscending)
-                lastLesserIndex = rangeStart;
-            else
-                firstEqualIndex = rangeStart;
-        }
-        NSUInteger rangeEnd = _clangResults->NumResults - 1;
-        NSUInteger lastEqualIndex = firstEqualIndex;
+        NSUInteger firstEqualIndex = NSNotFound;
+        NSUInteger lastEqualIndex = NSNotFound;
         NSUInteger firstGreaterIndex = _clangResults->NumResults - 1;
-        while (firstGreaterIndex != lastEqualIndex + 1)
+        while (firstGreaterIndex > lastLesserIndex + 1)
         {
-            rangeEnd = lastEqualIndex + ((firstGreaterIndex - lastEqualIndex) / 2);
-            ECClangCodeCompletionResult *endResult = [[ECClangCodeCompletionResult alloc] initWithClangCompletionResult:_clangResults->Results[rangeEnd]];
-            NSComparisonResult endComparisonResult = [[[[[endResult completionString] typedTextChunk] text] lowercaseString] compare:filterString];
-            if (endComparisonResult == NSOrderedDescending)
-                firstGreaterIndex = rangeEnd;
+            currentPosition = lastLesserIndex + ((firstGreaterIndex - lastLesserIndex) / 2);
+            ECClangCodeCompletionResult *currentResult = [[ECClangCodeCompletionResult alloc] initWithClangCompletionResult:_clangResults->Results[currentPosition]];
+            NSComparisonResult currentComparisonResult = [[[[currentResult completionString] typedTextChunk] text] compare:filterString options:NSCaseInsensitiveSearch | NSLiteralSearch range:comparisonRange];
+            if (currentComparisonResult == NSOrderedAscending)
+                lastLesserIndex = currentPosition;
+            else if (currentComparisonResult == NSOrderedDescending)
+                firstGreaterIndex = currentPosition;
             else
-                lastEqualIndex = rangeEnd;
+            {
+                firstEqualIndex = currentPosition;
+                lastEqualIndex = currentPosition;
+                break;
+            }
         }
-        _filteredResultRange = NSMakeRange(firstEqualIndex, firstGreaterIndex - firstEqualIndex);
+        if (firstEqualIndex != NSNotFound)
+        {
+            while (firstEqualIndex > lastLesserIndex + 1)
+            {
+                currentPosition = lastLesserIndex + ((firstEqualIndex - lastLesserIndex) / 2);
+                ECClangCodeCompletionResult *currentResult = [[ECClangCodeCompletionResult alloc] initWithClangCompletionResult:_clangResults->Results[currentPosition]];
+                NSComparisonResult currentComparisonResult = [[[[currentResult completionString] typedTextChunk] text] compare:filterString options:NSCaseInsensitiveSearch | NSLiteralSearch range:comparisonRange];
+                if (currentComparisonResult == NSOrderedAscending)
+                    lastLesserIndex = currentPosition;
+                else
+                    firstEqualIndex = currentPosition;
+            }
+            while (firstGreaterIndex > lastEqualIndex + 1)
+            {
+                currentPosition = lastEqualIndex + ((firstGreaterIndex - lastEqualIndex) / 2);
+                ECClangCodeCompletionResult *currentResult = [[ECClangCodeCompletionResult alloc] initWithClangCompletionResult:_clangResults->Results[currentPosition]];
+                NSComparisonResult currentComparisonResult = [[[[currentResult completionString] typedTextChunk] text] compare:filterString options:NSCaseInsensitiveSearch | NSLiteralSearch range:comparisonRange];
+                if (currentComparisonResult == NSOrderedDescending)
+                    firstGreaterIndex = currentPosition;
+                else
+                    lastEqualIndex = currentPosition;
+            }
+            _filteredResultRange = NSMakeRange(firstEqualIndex, lastEqualIndex - firstEqualIndex + 1);
+        }
+        else
+            _filteredResultRange = NSMakeRange(lastLesserIndex, 0);
     }
     else
         _filteredResultRange = NSMakeRange(0, _clangResults->NumResults);
@@ -110,8 +131,8 @@
     NSUInteger index = NSNotFound;
     // priority in clang is the inverse of rating, lowest priority means highest rating
     NSUInteger priority = NSUIntegerMax;
-    NSInteger lastResultIndex = NSMaxRange(_filteredResultRange) - 1;
-    for (unsigned int resultIndex = _filteredResultRange.location; resultIndex < lastResultIndex; ++resultIndex)
+    NSInteger resultRangeEnd = NSMaxRange(_filteredResultRange);
+    for (NSInteger resultIndex = _filteredResultRange.location; resultIndex < resultRangeEnd; ++resultIndex)
     {
         NSUInteger currentPriority = clang_getCompletionPriority(_clangResults->Results[resultIndex].CompletionString);
         if (currentPriority >= priority)
@@ -119,7 +140,7 @@
         index = resultIndex;
         priority = currentPriority;
     }
-    return index;
+    return index - _filteredResultRange.location;
 }
 
 @end

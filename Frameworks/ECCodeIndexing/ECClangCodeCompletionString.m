@@ -36,8 +36,8 @@
         clang_disposeString(clangCompletionText);
         enum CXCompletionChunkKind clangCompletionKind = clang_getCompletionChunkKind(clangCompletionString, chunkIndex);
         [completionChunks addObject:[[ECClangCodeCompletionChunk alloc] initWithKind:clangCompletionKind text:completionText completionString:(clangCompletionKind == CXCompletionChunk_Optional) ? [[ECClangCodeCompletionString alloc] initWithClangCompletionString:clang_getCompletionChunkCompletionString(clangCompletionString, chunkIndex)] : nil]];
-        if (clangCompletionKind == CXCompletionChunk_TypedText)
-            _typedTextChunk = [completionChunks lastObject];
+        if (!_typedTextChunk && clangCompletionKind == CXCompletionChunk_TypedText)
+            _typedTextChunk = [completionChunks objectAtIndex:chunkIndex];
     }
     // check for character in the typed text string
 #if DEBUG

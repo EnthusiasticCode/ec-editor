@@ -86,7 +86,8 @@
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
-    [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:[self._completionResults indexOfHighestRatedCompletionResult] inSection:0] atScrollPosition:UITableViewScrollPositionMiddle animated:NO];
+    if ([self._completionResults count])
+        [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:[self._completionResults indexOfHighestRatedCompletionResult] inSection:0] atScrollPosition:UITableViewScrollPositionMiddle animated:NO];
 }
 
 - (void)viewDidUnload
