@@ -11,6 +11,7 @@
 #import "ECCodeIndex+Subclass.h"
 #import "ECClangCodeToken.h"
 #import "ECClangCodeCompletionResultSet.h"
+#import "ECClangCodeDiagnostic.h"
 #import "ClangHelperFunctions.h"
 #import <ECFoundation/ECAttributedUTF8FileBuffer.h>
 
@@ -55,6 +56,15 @@
 - (id<ECCodeCompletionResultSet>)completionsAtOffset:(NSUInteger)offset
 {
     return [[ECClangCodeCompletionResultSet alloc] initWithCodeUnit:self atOffset:offset];
+}
+
+- (NSArray *)diagnostics
+{
+    NSMutableArray *diagnostics = [NSMutableArray array];
+    NSUInteger numDiagnostics = clang_getNumDiagnostics(_clangUnit);
+    for (NSUInteger diagnosticIndex = 0; diagnosticIndex < numDiagnostics; ++diagnosticIndex)
+        [diagnostics addObject:[[ECClangCodeDiagnostic alloc] initWithClangDiagnostic:clang_getDiagnostic(_clangUnit, diagnosticIndex)]];
+    return diagnostics;
 }
 
 - (NSArray *)tokensInRange:(NSRange)range

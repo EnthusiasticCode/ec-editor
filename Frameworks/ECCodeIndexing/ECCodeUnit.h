@@ -44,6 +44,11 @@
 
 @protocol ECCodeDiagnostic <NSObject>
 
+- (enum CXDiagnosticSeverity)severity;
+- (NSString *)spelling;
+- (NSUInteger)line;
+- (NSRange)range;
+
 @end
 
 @protocol ECCodeToken <NSObject>

@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B70B36D41475545900A5A860 /* ECClangCodeDiagnostic.h in Headers */ = {isa = PBXBuildFile; fileRef = B70B36D21475545900A5A860 /* ECClangCodeDiagnostic.h */; };
+		B70B36D51475545900A5A860 /* ECClangCodeDiagnostic.m in Sources */ = {isa = PBXBuildFile; fileRef = B70B36D31475545900A5A860 /* ECClangCodeDiagnostic.m */; };
 		B7170BF61428F65A00DF7794 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7170BF51428F65A00DF7794 /* Foundation.framework */; };
 		B7170C041428F65B00DF7794 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7170C031428F65B00DF7794 /* SenTestingKit.framework */; };
 		B7170C071428F65B00DF7794 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7170BF51428F65A00DF7794 /* Foundation.framework */; };
@@ -212,6 +214,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		B70B36D21475545900A5A860 /* ECClangCodeDiagnostic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECClangCodeDiagnostic.h; sourceTree = "<group>"; };
+		B70B36D31475545900A5A860 /* ECClangCodeDiagnostic.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECClangCodeDiagnostic.m; sourceTree = "<group>"; };
 		B7170BF21428F65A00DF7794 /* libECCodeIndexing.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libECCodeIndexing.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		B7170BF51428F65A00DF7794 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		B7170BF91428F65A00DF7794 /* ECCodeIndexing-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ECCodeIndexing-Prefix.pch"; sourceTree = "<group>"; };
@@ -917,6 +921,8 @@
 				B76C33E114696CA100107E20 /* ECClangCodeCompletionString.m */,
 				B76C33E414696CB400107E20 /* ECClangCodeCompletionChunk.h */,
 				B76C33E514696CB400107E20 /* ECClangCodeCompletionChunk.m */,
+				B70B36D21475545900A5A860 /* ECClangCodeDiagnostic.h */,
+				B70B36D31475545900A5A860 /* ECClangCodeDiagnostic.m */,
 				B7AA73FD146747B700D2B5F4 /* ClangHelperFunctions.h */,
 				B7AA73FE146747B700D2B5F4 /* ClangHelperFunctions.m */,
 			);
@@ -963,6 +969,7 @@
 				B76C33E214696CA100107E20 /* ECClangCodeCompletionString.h in Headers */,
 				B76C33E614696CB400107E20 /* ECClangCodeCompletionChunk.h in Headers */,
 				B7A103A9146ACE67003508C6 /* ECClangCodeCompletionResultSet.h in Headers */,
+				B70B36D41475545900A5A860 /* ECClangCodeDiagnostic.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1121,6 +1128,7 @@
 				B76C33E314696CA100107E20 /* ECClangCodeCompletionString.m in Sources */,
 				B76C33E714696CB400107E20 /* ECClangCodeCompletionChunk.m in Sources */,
 				B7A103AA146ACE67003508C6 /* ECClangCodeCompletionResultSet.m in Sources */,
+				B70B36D51475545900A5A860 /* ECClangCodeDiagnostic.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
