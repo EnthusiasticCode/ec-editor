@@ -57,6 +57,12 @@ static NSArray *systemDefaultAccessoryActions = nil;
         [codeView insertText:@";\n"];
     }];
     [actionDictionary setObject:action forKey:action.name];
+    
+    // TODO test button
+    action = [[ACCodeFileAccessoryAction alloc] initWithName:@"addAsd" title:@"asd" imageNamed:nil actionBlock:^(ECCodeView *codeView) {
+        [codeView insertText:@"asd"];
+    }];
+    [actionDictionary setObject:action forKey:action.name];
         
     systemAccessoryActions = actionDictionary;
 }
@@ -71,7 +77,7 @@ static NSArray *systemDefaultAccessoryActions = nil;
 {
 #warning TODO NIK load plist
     if (!systemDefaultAccessoryActions)
-        systemDefaultAccessoryActions = [NSArray arrayWithObjects:[systemAccessoryActions objectForKey:@"commaReturn"], nil];
+        systemDefaultAccessoryActions = [NSArray arrayWithObjects:[systemAccessoryActions objectForKey:@"commaReturn"], [systemAccessoryActions objectForKey:@"addAsd"], nil];
     return systemDefaultAccessoryActions;
 }
 

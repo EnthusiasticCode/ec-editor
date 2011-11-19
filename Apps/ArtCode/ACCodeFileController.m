@@ -40,13 +40,19 @@
     /// Button inside keyboard accessory popover that look like the underneat button that presented the popover from the accessory.
     /// This button is supposed to have the same appearance of the underlying button and the same tag.
     UIButton *_keyboardAccessoryItemPopoverButton;
+    
+    /// Tag of the keyboard accessory button that is being customized via long press.
+    NSUInteger _keyboardAccessoryItemCustomizingTag;
+    
+    /// Actions associated to items in the accessory view. Associations are made with tag (as array index) to ACCodeFileAccessoryAction.
+    NSMutableArray *_keyboardAccessoryItemActions;
 }
 
 @property (nonatomic, strong) ACFileDocument *document;
 
 @property (nonatomic, strong, readonly) ECPopoverController *_keyboardAccessoryItemPopover;
-@property (nonatomic, strong, readonly) ACCodeFileCompletionsController *_completionsController;
-@property (nonatomic, strong, readonly) UIViewController *_customizeAccessoryItemController;
+@property (nonatomic, strong, readonly) ACCodeFileCompletionsController *_keyboardAccessoryItemCompletionsController;
+@property (nonatomic, strong, readonly) UIViewController *_keyboardAccessoryItemCustomizeController;
 
 @property (nonatomic, strong) ACSyntaxColorer *syntaxColorer;
 @property (nonatomic, strong) NSDictionary *defaultTextAttributes;
@@ -60,6 +66,7 @@
 - (void)_keyboardWillHide:(NSNotification *)notification;
 - (void)_keyboardWillChangeFrame:(NSNotification *)notification;
 
+- (void)_keyboardAccessoryItemSetupWithActions:(NSArray *)actions;
 - (void)_keyboardAccessoryItemAction:(UIBarButtonItem *)item;
 - (void)_keyboardAccessoryItemLongPressHandler:(UILongPressGestureRecognizer *)recognizer;
 
@@ -73,6 +80,7 @@
 @synthesize fileURL = _fileURL, tab = _tab, document = _document;
 @synthesize codeView = _codeView, minimapView = _minimapView, minimapVisible = _minimapVisible, minimapWidth = _minimapWidth;
 @synthesize defaultTextAttributes = _defaultTextAttributes, syntaxColorer = _syntaxColorer;
+@synthesize _keyboardAccessoryItemPopover, _keyboardAccessoryItemCompletionsController, _keyboardAccessoryItemCustomizeController;
 
 - (ECCodeView *)codeView
 {
@@ -126,43 +134,18 @@
         [accessoryView setContentInsets:UIEdgeInsetsMake(3, 10, 2, 7) forAccessoryPosition:ECKeyboardAccessoryPositionFloating];
         [accessoryView setItemInsets:UIEdgeInsetsMake(0, 0, 0, 3) forAccessoryPosition:ECKeyboardAccessoryPositionFloating];
         
-        // Items
-        NSMutableArray *items = [NSMutableArray arrayWithCapacity:11];
-        ACCodeFileKeyboardAccessoryItem *item;
+        self.codeView.keyboardAccessoryView = accessoryView;
         
-        for (NSInteger i = 0; i < 11; ++i)
-        {
-            // TODO add long press menu
-            item = [[ACCodeFileKeyboardAccessoryItem alloc] initWithTitle:[NSString stringWithFormat:@"%d", i] style:UIBarButtonItemStylePlain target:self action:@selector(_keyboardAccessoryItemAction:)];
-            item.tag = i;
-            [items addObject:item];
-            
-            if (i == 0)
-                [item setWidth:44 + 4 forAccessoryPosition:ECKeyboardAccessoryPositionFloating];
-            
-            if (i % 2)
-                [item setWidth:60 + 4 forAccessoryPosition:ECKeyboardAccessoryPositionPortrait];
-            
-            if (i == 10)
-            {
-                [item setWidth:63 + 4 forAccessoryPosition:ECKeyboardAccessoryPositionPortrait];
-                [item setWidth:82 + 4 forAccessoryPosition:ECKeyboardAccessoryPositionLandscape];
-                [item setWidth:44 + 4 forAccessoryPosition:ECKeyboardAccessoryPositionFloating];
-            }
+        // Items actions
+        #warning TODO load from plist and change for current language
+        _keyboardAccessoryItemActions = [NSMutableArray arrayWithCapacity:9];
+        // TODO method to set items based on language
+        for (int i = 0; i < 9; ++i) {
+            [_keyboardAccessoryItemActions addObject:[ACCodeFileAccessoryAction accessoryActionWithName:@"commaReturn"]];
         }
-        accessoryView.items = items;
         
-        // Items long press action
-        [items enumerateObjectsUsingBlock:^(UIBarButtonItem *item, NSUInteger itemIndex, BOOL *stop) {
-            if (itemIndex > 0 && itemIndex < 10)
-            {
-                UILongPressGestureRecognizer *itemLongPressrecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(_keyboardAccessoryItemLongPressHandler:)];
-                itemLongPressrecognizer.minimumPressDuration = 1;
-                [item.customView addGestureRecognizer:itemLongPressrecognizer];
-            }
-        }];
-        
-        _codeView.keyboardAccessoryView = accessoryView;
+        // Items setup
+        [self _keyboardAccessoryItemSetupWithActions:_keyboardAccessoryItemActions];
     }
     return _codeView;
 }
@@ -275,59 +258,6 @@
         [self _layoutChildViews];
     }
     [self didChangeValueForKey:@"minimapVisible"];
-}
-
-#pragma mark -
-
-@synthesize _keyboardAccessoryItemPopover, _completionsController, _customizeAccessoryItemController;
-
-- (ECPopoverController *)_keyboardAccessoryItemPopover
-{
-    if (!_keyboardAccessoryItemPopover)
-    {
-        _keyboardAccessoryItemPopover = [[ECTexturedPopoverController alloc] init];
-        ECTexturedPopoverView *popoverView = (ECTexturedPopoverView *)_keyboardAccessoryItemPopover.popoverView;
-        popoverView.contentInsets = UIEdgeInsetsMake(5, 5, 5, 5);
-        popoverView.backgroundView.image = [[UIImage imageNamed:@"accessoryView_popoverBackground"] resizableImageWithCapInsets:UIEdgeInsetsMake(10, 10, 50, 10)];
-        [popoverView setArrowImage:[[UIImage imageNamed:@"accessoryView_popoverArrowMiddle"] resizableImageWithCapInsets:UIEdgeInsetsMake(10, 10, 10, 10)] forDirection:UIPopoverArrowDirectionDown metaPosition:ECPopoverViewArrowMetaPositionMiddle];
-        [popoverView setArrowImage:[[UIImage imageNamed:@"accessoryView_popoverArrowRight"] resizableImageWithCapInsets:UIEdgeInsetsMake(10, 10, 10, 10)] forDirection:UIPopoverArrowDirectionDown metaPosition:ECPopoverViewArrowMetaPositionFarRight];
-        [popoverView setArrowImage:[[UIImage imageNamed:@"accessoryView_popoverArrowLeft"] resizableImageWithCapInsets:UIEdgeInsetsMake(10, 10, 10, 10)] forDirection:UIPopoverArrowDirectionDown metaPosition:ECPopoverViewArrowMetaPositionFarLeft];
-        [popoverView setArrowSize:CGSizeMake(70, 54) forMetaPosition:ECPopoverViewArrowMetaPositionMiddle];
-        popoverView.positioningInsets = UIEdgeInsetsMake(59, 58, 58, 58);
-        popoverView.arrowInsets = UIEdgeInsetsMake(12, 12, 12, 12);
-        popoverView.contentInsets = UIEdgeInsetsMake(10, 10, 10, 10);
-        
-        _keyboardAccessoryItemPopoverButton = [UIButton new];
-        [_keyboardAccessoryItemPopoverButton setBackgroundImage:[[UIImage imageNamed:@"accessoryView_itemBackground"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 12, 0, 12)] forState:UIControlStateNormal];
-        [popoverView addSubview:_keyboardAccessoryItemPopoverButton];
-    }
-    return _keyboardAccessoryItemPopover;
-}
-
-- (ACCodeFileCompletionsController *)_completionsController
-{
-    if (!_completionsController)
-    {
-        _completionsController = [[ACCodeFileCompletionsController alloc] initWithStyle:UITableViewStylePlain];
-        _completionsController.targetCodeFileController = self;
-        _completionsController.contentSizeForViewInPopover = CGSizeMake(300, 300);
-    }
-    return _completionsController;
-}
-
-- (UIViewController *)_customizeAccessoryItemController
-{
-    if (!_customizeAccessoryItemController)
-    {
-        ACCodeFileAccessoryItemsGridView *gridView = [ACCodeFileAccessoryItemsGridView new];
-        gridView.itemSize = CGSizeMake(50, 30);
-        gridView.itemInsents = UIEdgeInsetsMake(5, 5, 5, 5);
-        
-        _customizeAccessoryItemController = [[UIViewController alloc] init];
-        _customizeAccessoryItemController.view = gridView;
-        _customizeAccessoryItemController.contentSizeForViewInPopover = CGSizeMake(300, 200);
-    }
-    return _customizeAccessoryItemController;
 }
 
 #pragma mark - Toolbar Items Actions
@@ -626,20 +556,151 @@
     [self _keyboardWillShow:notification];
 }
 
-#pragma mark -
+#pragma mark - Keyboard Accessory Item Methods
+
+- (ECPopoverController *)_keyboardAccessoryItemPopover
+{
+    if (!_keyboardAccessoryItemPopover)
+    {
+        _keyboardAccessoryItemPopover = [[ECTexturedPopoverController alloc] init];
+        ECTexturedPopoverView *popoverView = (ECTexturedPopoverView *)_keyboardAccessoryItemPopover.popoverView;
+        popoverView.contentInsets = UIEdgeInsetsMake(5, 5, 5, 5);
+        popoverView.backgroundView.image = [[UIImage imageNamed:@"accessoryView_popoverBackground"] resizableImageWithCapInsets:UIEdgeInsetsMake(10, 10, 50, 10)];
+        [popoverView setArrowImage:[[UIImage imageNamed:@"accessoryView_popoverArrowMiddle"] resizableImageWithCapInsets:UIEdgeInsetsMake(10, 10, 10, 10)] forDirection:UIPopoverArrowDirectionDown metaPosition:ECPopoverViewArrowMetaPositionMiddle];
+        [popoverView setArrowImage:[[UIImage imageNamed:@"accessoryView_popoverArrowRight"] resizableImageWithCapInsets:UIEdgeInsetsMake(10, 10, 10, 10)] forDirection:UIPopoverArrowDirectionDown metaPosition:ECPopoverViewArrowMetaPositionFarRight];
+        [popoverView setArrowImage:[[UIImage imageNamed:@"accessoryView_popoverArrowLeft"] resizableImageWithCapInsets:UIEdgeInsetsMake(10, 10, 10, 10)] forDirection:UIPopoverArrowDirectionDown metaPosition:ECPopoverViewArrowMetaPositionFarLeft];
+        [popoverView setArrowSize:CGSizeMake(70, 54) forMetaPosition:ECPopoverViewArrowMetaPositionMiddle];
+        popoverView.positioningInsets = UIEdgeInsetsMake(59, 58, 58, 58);
+        popoverView.arrowInsets = UIEdgeInsetsMake(12, 12, 12, 12);
+        popoverView.contentInsets = UIEdgeInsetsMake(10, 10, 10, 10);
+        
+        _keyboardAccessoryItemPopoverButton = [UIButton new];
+        [_keyboardAccessoryItemPopoverButton setBackgroundImage:[[UIImage imageNamed:@"accessoryView_itemBackground"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 12, 0, 12)] forState:UIControlStateNormal];
+        [popoverView addSubview:_keyboardAccessoryItemPopoverButton];
+    }
+    return _keyboardAccessoryItemPopover;
+}
+
+- (ACCodeFileCompletionsController *)_keyboardAccessoryItemCompletionsController
+{
+    if (!_keyboardAccessoryItemCompletionsController)
+    {
+        _keyboardAccessoryItemCompletionsController = [[ACCodeFileCompletionsController alloc] initWithStyle:UITableViewStylePlain];
+        _keyboardAccessoryItemCompletionsController.targetCodeFileController = self;
+        _keyboardAccessoryItemCompletionsController.contentSizeForViewInPopover = CGSizeMake(300, 300);
+    }
+    return _keyboardAccessoryItemCompletionsController;
+}
+
+/// Controller shown on long press on non-fixed keyboard accessory items
+- (UIViewController *)_keyboardAccessoryItemCustomizeController
+{
+    if (!_keyboardAccessoryItemCustomizeController)
+    {
+        ACCodeFileAccessoryItemsGridView *gridView = [ACCodeFileAccessoryItemsGridView new];
+        gridView.itemSize = CGSizeMake(50, 30);
+        gridView.itemInsents = UIEdgeInsetsMake(5, 5, 5, 5);
+        gridView.didSelectActionItemBlock = ^(ACCodeFileAccessoryItemsGridView *view, ACCodeFileAccessoryAction *action) {
+            ECASSERT(_keyboardAccessoryItemCustomizingTag > 0 && _keyboardAccessoryItemCustomizingTag < 10);
+            [_keyboardAccessoryItemPopover dismissPopoverAnimated:YES];
+            // Setup changed keyboard accessory item
+            [_keyboardAccessoryItemActions removeObjectAtIndex:_keyboardAccessoryItemCustomizingTag - 1];
+            [_keyboardAccessoryItemActions insertObject:action atIndex:_keyboardAccessoryItemCustomizingTag - 1];
+            [self _keyboardAccessoryItemSetupWithActions:_keyboardAccessoryItemActions];
+        };
+        
+        _keyboardAccessoryItemCustomizeController = [[UIViewController alloc] init];
+        _keyboardAccessoryItemCustomizeController.view = gridView;
+        _keyboardAccessoryItemCustomizeController.contentSizeForViewInPopover = CGSizeMake(300, 200);
+    }
+    return _keyboardAccessoryItemCustomizeController;
+}
+
+- (void)_keyboardAccessoryItemSetupWithActions:(NSArray *)actions
+{
+    ECASSERT([actions count] == 9);
+    
+    ACCodeFileKeyboardAccessoryView *accessoryView = (ACCodeFileKeyboardAccessoryView *)self.codeView.keyboardAccessoryView;
+    
+    // Items
+    if (accessoryView.items == nil)
+    {
+        NSMutableArray *items = [NSMutableArray arrayWithCapacity:11];
+        ACCodeFileKeyboardAccessoryItem *item = nil;
+        ACCodeFileAccessoryAction *action = nil;
+        
+        for (NSInteger i = 0; i < 11; ++i)
+        {
+            item = [[ACCodeFileKeyboardAccessoryItem alloc] initWithTitle:[NSString stringWithFormat:@"%d", i] style:UIBarButtonItemStylePlain target:self action:@selector(_keyboardAccessoryItemAction:)];
+            
+            if (i == 0)
+            {
+                item.title = @"tab";
+                [item setWidth:44 + 4 forAccessoryPosition:ECKeyboardAccessoryPositionFloating];
+            }
+            else if (i == 10)
+            {
+                item.title = @"compl";
+                [item setWidth:63 + 4 forAccessoryPosition:ECKeyboardAccessoryPositionPortrait];
+                [item setWidth:82 + 4 forAccessoryPosition:ECKeyboardAccessoryPositionLandscape];
+                [item setWidth:44 + 4 forAccessoryPosition:ECKeyboardAccessoryPositionFloating];
+            }
+            else 
+            {
+                action = [actions objectAtIndex:i - 1];
+                item.title = action.title;
+                item.image = [UIImage imageNamed:action.imageName];
+                if (i % 2)
+                    [item setWidth:60 + 4 forAccessoryPosition:ECKeyboardAccessoryPositionPortrait];
+            }
+            
+            item.tag = i;
+            [items addObject:item];
+        }
+        
+        accessoryView.items = items;
+
+        // Items long press action
+        [items enumerateObjectsUsingBlock:^(UIBarButtonItem *item, NSUInteger itemIndex, BOOL *stop) {
+            if (itemIndex < 1 || itemIndex > 9)
+                return;
+            
+            UILongPressGestureRecognizer *itemLongPressrecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(_keyboardAccessoryItemLongPressHandler:)];
+            itemLongPressrecognizer.minimumPressDuration = 1;
+            [item.customView addGestureRecognizer:itemLongPressrecognizer];
+        }];
+    }
+    else
+    {
+        NSArray *items = accessoryView.items;
+        [items enumerateObjectsUsingBlock:^(ACCodeFileKeyboardAccessoryItem *item, NSUInteger itemIndex, BOOL *stop) {
+            if (itemIndex < 1 || itemIndex > 9)
+                return;
+            
+            ACCodeFileAccessoryAction *action = [actions objectAtIndex:itemIndex - 1];
+            item.title = action.title;
+            item.image = [UIImage imageNamed:action.imageName];
+        }];
+        accessoryView.items = items;
+    }
+}
 
 - (void)_keyboardAccessoryItemAction:(UIBarButtonItem *)item
 {
     // TODO use item tag to see what action to perform
 
-    if (item.tag == 10)
+    if (item.tag == 0)
+    {
+        
+    }
+    else if (item.tag == 10)
     {
         // Prepare completion controller
-        self._completionsController.targetPopoverController = self._keyboardAccessoryItemPopover;
-        self._completionsController.offsetInDocumentForCompletions = self.codeView.selectionRange.location;
+        self._keyboardAccessoryItemCompletionsController.targetPopoverController = self._keyboardAccessoryItemPopover;
+        self._keyboardAccessoryItemCompletionsController.offsetInDocumentForCompletions = self.codeView.selectionRange.location;
         
         // Prepare popover
-        self._keyboardAccessoryItemPopover.contentViewController = self._completionsController;
+        self._keyboardAccessoryItemPopover.contentViewController = self._keyboardAccessoryItemCompletionsController;
         switch (self.codeView.keyboardAccessoryView.currentAccessoryPosition) {
             case ECKeyboardAccessoryPositionFloating:
                 self._keyboardAccessoryItemPopover.allowedBoundsInsets = UIEdgeInsetsMake(0, 3, 0, 3);
@@ -661,6 +722,13 @@
         _keyboardAccessoryItemPopoverButton.frame = [item.customView.superview convertRect:item.customView.frame toView:self._keyboardAccessoryItemPopover.popoverView];
         _keyboardAccessoryItemPopoverButton.tag = item.tag;
     }
+    else
+    {
+        ECASSERT([_keyboardAccessoryItemActions count] == 9);
+        ECASSERT([[_keyboardAccessoryItemActions objectAtIndex:item.tag - 1] actionBlock] != nil);
+        
+        [[_keyboardAccessoryItemActions objectAtIndex:item.tag - 1] actionBlock](self.codeView);
+    }
 }
 
 - (void)_keyboardAccessoryItemLongPressHandler:(UILongPressGestureRecognizer *)recognizer
@@ -668,11 +736,12 @@
     if (recognizer.state == UIGestureRecognizerStateBegan)
     {
         UIView *itemView = recognizer.view;
+        _keyboardAccessoryItemCustomizingTag = itemView.tag;
         // 
-        [(ACCodeFileAccessoryItemsGridView *)self._customizeAccessoryItemController.view setAccessoryActions:[ACCodeFileAccessoryAction accessoryActionsForLanguageWithIdentifier:nil]];
+        [(ACCodeFileAccessoryItemsGridView *)self._keyboardAccessoryItemCustomizeController.view setAccessoryActions:[ACCodeFileAccessoryAction accessoryActionsForLanguageWithIdentifier:nil]];
         
         // Show popover
-        self._keyboardAccessoryItemPopover.contentViewController = self._customizeAccessoryItemController;
+        self._keyboardAccessoryItemPopover.contentViewController = self._keyboardAccessoryItemCustomizeController;
         self._keyboardAccessoryItemPopover.allowedBoundsInsets = UIEdgeInsetsMake(5, 5, 5, 5);
         [(ECTexturedPopoverView *)self._keyboardAccessoryItemPopover.popoverView setArrowSize:CGSizeMake(itemView.bounds.size.width + 14, 54) forMetaPosition:ECPopoverViewArrowMetaPositionMiddle];
         [self._keyboardAccessoryItemPopover presentPopoverFromRect:[itemView.superview convertRect:itemView.frame toView:self.view.window.rootViewController.view] inView:self.view.window.rootViewController.view permittedArrowDirections:self.codeView.keyboardAccessoryView.isFlipped ? UIPopoverArrowDirectionUp : UIPopoverArrowDirectionDown animated:YES];

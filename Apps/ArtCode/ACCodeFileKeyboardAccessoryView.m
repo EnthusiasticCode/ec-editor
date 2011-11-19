@@ -11,6 +11,8 @@
 
 // TODO see http://developer.apple.com/library/ios/#documentation/StringsTextFonts/Conceptual/TextAndWebiPhoneOS/InputViews/InputViews.html#//apple_ref/doc/uid/TP40009542-CH12-SW1 for input clicks
 
+static const void *itemContext;
+
 @implementation ACCodeFileKeyboardAccessoryView {
     UIEdgeInsets _itemInsets[3];
     CGFloat _itemWidth[4];
@@ -55,6 +57,22 @@
     self.splitBackgroundViewInsets = UIEdgeInsetsMake(-10, 0, 0, 0);
     
     return self;
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    if (context == &itemContext)
+    {
+        UIBarButtonItem *item = (UIBarButtonItem *)object;
+        if ([keyPath isEqualToString:@"title"])
+            [(UIButton *)item.customView setTitle:item.title forState:UIControlStateNormal];
+        else if ([keyPath isEqualToString:@"image"])
+            [(UIButton *)item.customView setImage:item.image forState:UIControlStateNormal];
+    }
+    else
+    {
+        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+    }
 }
 
 - (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event
@@ -149,20 +167,21 @@
     for (UIBarButtonItem *item in items)
     {
         [item.customView removeFromSuperview];
+        [item removeObserver:self forKeyPath:@"title" context:&itemContext];
+        [item removeObserver:self forKeyPath:@"image" context:&itemContext];
     }
     items = [value copy];
     [items enumerateObjectsUsingBlock:^(UIBarButtonItem *item, NSUInteger itemIndex, BOOL *stop) {
+        // Creating button for item
         UIButton *itemButton = [UIButton new];
         itemButton.tag = itemIndex;
         [itemButton addTarget:self action:@selector(_itemButtonAction:) forControlEvents:UIControlEventTouchUpInside];
         [itemButton setBackgroundImage:self.itemBackgroundImage forState:UIControlStateNormal];
-        if (item.title)
-            [itemButton setTitle:item.title forState:UIControlStateNormal];
-        if (item.image) // TODO listen to image change
-            [itemButton setImage:item.image forState:UIControlStateNormal];
-        // TODO initialize item
         item.customView = itemButton;
-        [self addSubview:item.customView]; 
+        [self addSubview:item.customView];
+        // Adding observers
+        [item addObserver:self forKeyPath:@"title" options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew context:&itemContext];
+        [item addObserver:self forKeyPath:@"image" options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew context:&itemContext];
     }];
     [self didChangeValueForKey:@"items"];
 }
