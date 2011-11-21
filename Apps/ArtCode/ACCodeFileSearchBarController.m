@@ -310,11 +310,21 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
         
         dispatch_async(dispatch_get_main_queue(), ^{
             self.searchFilterMatches = matches;
-            _searchFilterMatchesLocation = 0;
             [targetCodeFileController.codeView updateAllText];
+            // Set first match to flash
+            _searchFilterMatchesLocation = 0;
+            NSRange visibleRange = self.targetCodeFileController.codeView.visibleTextRange;
+            [matches enumerateObjectsUsingBlock:^(NSTextCheckingResult *check, NSUInteger idx, BOOL *stop) {
+                if ([check rangeAtIndex:0].location >= visibleRange.location)
+                {
+                    _searchFilterMatchesLocation = idx;
+                    *stop = YES;
+                }
+            }];
+            // Change report label
             if ([searchFilterMatches count] > 0)
             {
-                [targetCodeFileController.codeView flashTextInRange:[[searchFilterMatches objectAtIndex:0] range]];
+                [targetCodeFileController.codeView flashTextInRange:[[searchFilterMatches objectAtIndex:_searchFilterMatchesLocation] range]];
                 findResultLabel.text = [NSString stringWithFormat:@"%u matches", [searchFilterMatches count]];
             }
             else

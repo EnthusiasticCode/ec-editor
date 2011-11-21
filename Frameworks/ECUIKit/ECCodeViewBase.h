@@ -33,6 +33,9 @@ typedef void (^ECCodeViewBaseTileSetupBlock)(CGContextRef context, CGRect rect);
 /// Text insets for the rendering.
 @property (nonatomic) UIEdgeInsets textInsets;
 
+/// Returns the text range that is currently visible in the receiver's bounds.
+- (NSRange)visibleTextRange;
+
 #pragma mark Code Display Enhancements
 
 /// Indicates if line numbers should be displayed according to line numbers properties.

@@ -370,6 +370,17 @@ static void init(ECCodeViewBase *self)
     [_contentView setNeedsDisplay];
 }
 
+- (NSRange)visibleTextRange
+{
+    __block NSRange result = NSMakeRange(NSUIntegerMax, 0);
+    [self.renderer enumerateLinesIntersectingRect:self.bounds usingBlock:^(ECTextRendererLine *line, NSUInteger lineIndex, NSUInteger lineNumber, CGFloat lineYOffset, NSRange stringRange, BOOL *stop) {
+        if (result.location == NSUIntegerMax)
+            result.location = stringRange.location;
+        result.length += stringRange.length;
+    }];
+    return result;
+}
+
 @end
 
 
