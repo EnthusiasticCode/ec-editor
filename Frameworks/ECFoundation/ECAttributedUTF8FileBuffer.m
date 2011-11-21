@@ -143,4 +143,22 @@ static ECWeakDictionary *_fileBuffers;
     [[NSNotificationCenter defaultCenter] postNotificationName:ECFileBufferDidChangeAttributesNotificationName object:self userInfo:change];
 }
 
+- (NSUInteger)numberOfMatchesOfRegexp:(NSRegularExpression *)regexp options:(NSMatchingOptions)options range:(NSRange)range
+{
+    ECASSERT(regexp);
+    return [regexp numberOfMatchesInString:[_contents string] options:options range:range];
+}
+
+- (NSArray *)matchesOfRegexp:(NSRegularExpression *)regexp options:(NSMatchingOptions)options range:(NSRange)range
+{
+    ECASSERT(regexp);
+    return [regexp matchesInString:[_contents string] options:options range:range];
+}
+
+- (void)replaceMatchesOfRegexp:(NSRegularExpression *)regexp options:(NSMatchingOptions)options range:(NSRange)range withTemplate:(NSString *)replacementTemplate
+{
+    ECASSERT(regexp && replacementTemplate);
+    [self replaceCharactersInRange:NSMakeRange(0, [self length]) withString:[regexp stringByReplacingMatchesInString:[_contents string] options:options range:range withTemplate:replacementTemplate]];
+}
+
 @end

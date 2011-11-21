@@ -54,4 +54,12 @@ extern NSString * const ECFileBufferAttributesKey;
 - (void)addAttributes:(NSDictionary *)attributes range:(NSRange)range;
 - (void)removeAttribute:(NSString *)attributeName range:(NSRange)range;
 
+/// Find and replace functionality
+
+- (NSUInteger)numberOfMatchesOfRegexp:(NSRegularExpression *)regexp options:(NSMatchingOptions)options range:(NSRange)range;
+
+- (NSArray *)matchesOfRegexp:(NSRegularExpression *)regexp options:(NSMatchingOptions)options range:(NSRange)range;
+
+- (void)replaceMatchesOfRegexp:(NSRegularExpression *)regexp options:(NSMatchingOptions)options range:(NSRange)range withTemplate:(NSString *)replacementTemplate;
+
 @end
