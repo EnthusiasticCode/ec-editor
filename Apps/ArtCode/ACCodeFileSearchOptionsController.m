@@ -93,7 +93,7 @@ static void const * parentSearchBarControllerContext;
 {
     switch (section) {
         case OPTIONS_SECTION:
-            return 2;
+            return 3;
             
         case PREVIEW_SECTION:
             return MAX([_searchFilterMatches count], 1);

@@ -272,7 +272,7 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
     if (!targetCodeFileController)
         return;
     
-    NSString *filterString = self.findTextField.text;
+    NSMutableString *filterString = [self.findTextField.text mutableCopy];
     
     if (filterString.length == 0)
     {
@@ -283,8 +283,12 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
     }
     
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        if (self.hitMustOption == ACCodeFileSearchHitMustStartWith || self.hitMustOption == ACCodeFileSearchHitMustMatch)
+            [filterString insertString:@"\\b" atIndex:0];
+        if (self.hitMustOption == ACCodeFileSearchHitMustEndWith || self.hitMustOption == ACCodeFileSearchHitMustMatch)
+            [filterString appendString:@"\\b"];
+            
         // TODO create here? manage error
-        #warning TODO wire in 'hit must' option
         NSRegularExpression *filterRegExp = [NSRegularExpression regularExpressionWithPattern:filterString options:self.regExpOptions error:NULL];
         NSArray *matches = [self.targetCodeFileController.document.fileBuffer matchesOfRegexp:filterRegExp options:0];
         
