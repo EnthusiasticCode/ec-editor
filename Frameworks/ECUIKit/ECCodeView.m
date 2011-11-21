@@ -1625,7 +1625,8 @@ static void init(ECCodeView *self)
 {
     _keyboardWillShow = NO;
     _keyboardFrame = [[[notification userInfo] objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue];
-    [self _setAccessoryViewVisible:YES animated:YES];
+    if (self.isFirstResponder)
+        [self _setAccessoryViewVisible:YES animated:YES];
 }
 
 - (void)_setAccessoryViewVisible:(BOOL)visible animated:(BOOL)animated
