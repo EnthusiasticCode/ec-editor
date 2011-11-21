@@ -166,4 +166,10 @@ static ECWeakDictionary *_fileBuffers;
     [self replaceCharactersInRange:NSMakeRange(0, [self length]) withString:[regexp stringByReplacingMatchesInString:[_contents string] options:options range:range withTemplate:replacementTemplate]];
 }
 
+- (void)replaceMatch:(NSTextCheckingResult *)match withTemplate:(NSString *)replacementTemplate
+{
+    ECASSERT(match && replacementTemplate);
+    [self replaceCharactersInRange:match.range withString:[match.regularExpression replacementStringForResult:match inString:[_contents string] offset:0 template:replacementTemplate]];
+}
+
 @end
