@@ -272,7 +272,7 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
     if (!targetCodeFileController)
         return;
     
-    NSMutableString *filterString = [self.findTextField.text mutableCopy];
+    __block NSString *filterString = self.findTextField.text;
     
     if (filterString.length == 0)
     {
@@ -283,13 +283,29 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
     }
     
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        if (self.hitMustOption == ACCodeFileSearchHitMustStartWith || self.hitMustOption == ACCodeFileSearchHitMustMatch)
-            [filterString insertString:@"\\b" atIndex:0];
-        if (self.hitMustOption == ACCodeFileSearchHitMustEndWith || self.hitMustOption == ACCodeFileSearchHitMustMatch)
-            [filterString appendString:@"\\b"];
+        NSRegularExpressionOptions options = self.regExpOptions;
+        
+        if (self.hitMustOption != ACCodeFileSearchHitMustContain)
+        {
+            NSMutableString *modifiedFilterString = nil;
+            if (options & NSRegularExpressionIgnoreMetacharacters)
+            {
+                options &= ~NSRegularExpressionIgnoreMetacharacters;
+                modifiedFilterString = [[NSRegularExpression escapedPatternForString:filterString] mutableCopy];
+            }
+            else
+            {
+                modifiedFilterString = [filterString mutableCopy];
+            }
+            if (self.hitMustOption == ACCodeFileSearchHitMustStartWith || self.hitMustOption == ACCodeFileSearchHitMustMatch)
+                [modifiedFilterString insertString:@"\\b" atIndex:0];
+            if (self.hitMustOption == ACCodeFileSearchHitMustEndWith || self.hitMustOption == ACCodeFileSearchHitMustMatch)
+                [modifiedFilterString appendString:@"\\b"];
+            filterString = modifiedFilterString;
+        }
             
         // TODO create here? manage error
-        NSRegularExpression *filterRegExp = [NSRegularExpression regularExpressionWithPattern:filterString options:self.regExpOptions error:NULL];
+        NSRegularExpression *filterRegExp = [NSRegularExpression regularExpressionWithPattern:filterString options:options error:NULL];
         NSArray *matches = [self.targetCodeFileController.document.fileBuffer matchesOfRegexp:filterRegExp options:0];
         
         dispatch_async(dispatch_get_main_queue(), ^{
