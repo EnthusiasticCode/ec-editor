@@ -95,6 +95,7 @@
 		CD62BAD013CA248C00266BC0 /* ACToolSymbolsController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD62BACF13CA248C00266BC0 /* ACToolSymbolsController.m */; };
 		CD62BAD313CA2ABD00266BC0 /* ACToolNavigatorController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD62BAD213CA2ABC00266BC0 /* ACToolNavigatorController.m */; };
 		CD6E416C14614A0C00A9CE7F /* ACCodeFileMinimapView.m in Sources */ = {isa = PBXBuildFile; fileRef = CD6E416B14614A0C00A9CE7F /* ACCodeFileMinimapView.m */; };
+		CD70F4CE147A615000EAEEDC /* SearchBar.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CD70F4CD147A615000EAEEDC /* SearchBar.storyboard */; };
 		CD78E52014729A0E00801C3F /* ACCodeFileCompletionsController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD78E51F14729A0E00801C3F /* ACCodeFileCompletionsController.m */; };
 		CD7D2AE413C0CD2600B889EE /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD7D2AE313C0CD2600B889EE /* UIKit.framework */; };
 		CD7D2AE613C0CD2600B889EE /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD7D2AE513C0CD2600B889EE /* Foundation.framework */; };
@@ -146,7 +147,6 @@
 		CDDC95071462E23F00E2B96C /* minimap_Background.png in Resources */ = {isa = PBXBuildFile; fileRef = CDDC95061462E23F00E2B96C /* minimap_Background.png */; };
 		CDE3F14713C0DDD500DFFAFF /* Inconsolata-dz.otf in Resources */ = {isa = PBXBuildFile; fileRef = CDE3F14613C0DDD500DFFAFF /* Inconsolata-dz.otf */; };
 		CDE8F9D4145EEEFE00CA4496 /* ACCodeFileSearchBarController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDE8F9D2145EEEFE00CA4496 /* ACCodeFileSearchBarController.m */; };
-		CDE8F9D7145EEF3F00CA4496 /* ACCodeFileSearchBarController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CDE8F9D6145EEF3F00CA4496 /* ACCodeFileSearchBarController.xib */; };
 		CDF1D46D14150C4900EFEC21 /* libstdc++.6.0.9.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CDF1D46C14150C4900EFEC21 /* libstdc++.6.0.9.dylib */; };
 		CDF4C011144F2C7900475F6B /* ACTopBarTitleControl.m in Sources */ = {isa = PBXBuildFile; fileRef = CDF4C00E144F2C7900475F6B /* ACTopBarTitleControl.m */; };
 		CDF4C012144F2C7900475F6B /* ACTopBarToolbar.m in Sources */ = {isa = PBXBuildFile; fileRef = CDF4C010144F2C7900475F6B /* ACTopBarToolbar.m */; };
@@ -397,6 +397,7 @@
 		CD62BAD213CA2ABC00266BC0 /* ACToolNavigatorController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACToolNavigatorController.m; sourceTree = "<group>"; };
 		CD6E416A14614A0C00A9CE7F /* ACCodeFileMinimapView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACCodeFileMinimapView.h; sourceTree = "<group>"; };
 		CD6E416B14614A0C00A9CE7F /* ACCodeFileMinimapView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACCodeFileMinimapView.m; sourceTree = "<group>"; };
+		CD70F4CD147A615000EAEEDC /* SearchBar.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = SearchBar.storyboard; sourceTree = "<group>"; };
 		CD78E51E14729A0E00801C3F /* ACCodeFileCompletionsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACCodeFileCompletionsController.h; sourceTree = "<group>"; };
 		CD78E51F14729A0E00801C3F /* ACCodeFileCompletionsController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACCodeFileCompletionsController.m; sourceTree = "<group>"; };
 		CD7D2ADF13C0CD2600B889EE /* ArtCode.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ArtCode.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -471,7 +472,6 @@
 		CDE3F14613C0DDD500DFFAFF /* Inconsolata-dz.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Inconsolata-dz.otf"; sourceTree = "<group>"; };
 		CDE8F9D1145EEEFE00CA4496 /* ACCodeFileSearchBarController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACCodeFileSearchBarController.h; sourceTree = "<group>"; };
 		CDE8F9D2145EEEFE00CA4496 /* ACCodeFileSearchBarController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACCodeFileSearchBarController.m; sourceTree = "<group>"; };
-		CDE8F9D6145EEF3F00CA4496 /* ACCodeFileSearchBarController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ACCodeFileSearchBarController.xib; sourceTree = "<group>"; };
 		CDF1D46C14150C4900EFEC21 /* libstdc++.6.0.9.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libstdc++.6.0.9.dylib"; path = "usr/lib/libstdc++.6.0.9.dylib"; sourceTree = SDKROOT; };
 		CDF4C00D144F2C7900475F6B /* ACTopBarTitleControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACTopBarTitleControl.h; sourceTree = "<group>"; };
 		CDF4C00E144F2C7900475F6B /* ACTopBarTitleControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACTopBarTitleControl.m; sourceTree = "<group>"; };
@@ -824,11 +824,11 @@
 		CD7D2B0913C0CEE100B889EE /* UI */ = {
 			isa = PBXGroup;
 			children = (
-				CDE8F9D6145EEF3F00CA4496 /* ACCodeFileSearchBarController.xib */,
 				B7AC172D14216CD4009E9205 /* NewFilePopover.storyboard */,
 				B7AC172E14216CD4009E9205 /* NewProjectPopover.storyboard */,
 				CD7D2B4D13C0D5FB00B889EE /* ToolPanelStoryboard.storyboard */,
 				CDB7C92F1455762E00E0D2B2 /* SingleProjectBrowsers.storyboard */,
+				CD70F4CD147A615000EAEEDC /* SearchBar.storyboard */,
 			);
 			name = UI;
 			sourceTree = "<group>";
@@ -1349,7 +1349,6 @@
 				CD9CB5EB145191FC00973204 /* tabBar_TabBackground_Selected.png in Resources */,
 				CD4719A6145196CE00C7BCC5 /* tabBar_TabAddButton.png in Resources */,
 				CDB7C9301455762E00E0D2B2 /* SingleProjectBrowsers.storyboard in Resources */,
-				CDE8F9D7145EEF3F00CA4496 /* ACCodeFileSearchBarController.xib in Resources */,
 				CDC1333614602F5E0028423F /* searchBar_Background.png in Resources */,
 				CDC1333714602F5E0028423F /* searchBar_Button_Normal.png in Resources */,
 				CDC1333814602F5E0028423F /* searchBar_NextButton_Normal.png in Resources */,
@@ -1364,6 +1363,7 @@
 				CD9ED8ED1466EFCE00A517A5 /* accessoryView_backgroundSplitLeftTop.png in Resources */,
 				CD9ED8EE1466EFCE00A517A5 /* accessoryView_backgroundSplitRightTop.png in Resources */,
 				CD9ED8FB1467E5C300A517A5 /* accessoryView_itemBackground.png in Resources */,
+				CD70F4CE147A615000EAEEDC /* SearchBar.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

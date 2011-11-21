@@ -282,7 +282,7 @@
         {
             if (!_searchBarController)
             {
-                _searchBarController = [[ACCodeFileSearchBarController alloc] initWithNibName:@"ACCodeFileSearchBarController" bundle:nil];
+                _searchBarController = [[UIStoryboard storyboardWithName:@"SearchBar" bundle:nil] instantiateInitialViewController];
                 _searchBarController.targetCodeFileController = self;
             }
             if (self.singleTabController.toolbarViewController != _searchBarController)

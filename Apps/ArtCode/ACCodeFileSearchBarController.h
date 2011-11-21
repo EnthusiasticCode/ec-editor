@@ -23,17 +23,20 @@
 - (IBAction)moveResultAction:(id)sender;
 - (IBAction)toggleReplaceAction:(id)sender;
 - (IBAction)closeBarAction:(id)sender;
-- (IBAction)toggleSearchOptionAction:(id)sender;
 
 - (IBAction)replaceSingleAction:(id)sender;
 - (IBAction)replaceAllAction:(id)sender;
 
 #pragma mark Filtering Options
 
-@property (nonatomic, readonly, strong) NSArray *searchFilterMatches;
+@property (readonly, copy) NSArray *searchFilterMatches;
 
 @end
 
 // View used as the container for the search bar.
 @interface ACCodeFileSearchBarView : UIView
+@end
+
+// Text field with increased left margin.
+@interface ACCodeFileSearchTextField : UITextField
 @end

@@ -21,14 +21,10 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
 
 @interface ACCodeFileSearchBarController () {
     NSInteger _searchFilterMatchesLocation;
-    
-    UIPopoverController *_popover;
-    ACCodeFileSearchOptionsController *_searchOptionsController;
-    
     NSTimer *_filterDebounceTimer;
 }
 
-@property (nonatomic, readwrite, strong) NSArray *searchFilterMatches;
+@property (readwrite, copy) NSArray *searchFilterMatches;
 
 - (void)_addFindFilterCodeViewPass;
 - (void)_applyFindFilter;
@@ -66,24 +62,8 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
 
 #pragma mark - View Lifecycle
 
-- (void)viewDidLoad
-{
-    [super viewDidLoad];
-    
-    UIButton *findOptionsButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [findOptionsButton addTarget:self action:@selector(toggleSearchOptionAction:) forControlEvents:UIControlEventTouchUpInside];
-    [findOptionsButton setImage:[UIImage imageNamed:@"searchBar_OptionButton"] forState:UIControlStateNormal];
-    [findOptionsButton sizeToFit];
-    // TODO fix problem that mask first part of editing area with button hit box (probably moving editing rect and put button outside)
-    self.findTextField.leftViewMode = UITextFieldViewModeAlways;
-    self.findTextField.leftView = findOptionsButton;
-}
-
 - (void)viewDidUnload 
 {
-    _popover = nil;
-    _searchOptionsController = nil;
-    
     [self setSearchFilterMatches:nil];
     [self setFindTextField:nil];
     [self setReplaceTextField:nil];
@@ -105,6 +85,20 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
         [self.targetCodeFileController.codeView updateAllText];
     }
     self.searchFilterMatches = nil;
+}
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+{
+    if ([segue.destinationViewController isKindOfClass:[ACCodeFileSearchOptionsController class]])
+    {
+        [(ACCodeFileSearchOptionsController *)segue.destinationViewController setParentSearchBarController:self];
+        if ([segue isKindOfClass:[UIStoryboardPopoverSegue class]])
+            [(ACCodeFileSearchOptionsController *)segue.destinationViewController setParentPopoverController:[(UIStoryboardPopoverSegue *)segue popoverController]];
+    }
+    else
+    {
+        [super prepareForSegue:segue sender:sender];
+    }
 }
 
 #pragma mark - Text Field Delegate Methods
@@ -168,30 +162,6 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
 {
     ECASSERT(self.singleTabController.toolbarViewController == self);
     [self.singleTabController setToolbarViewController:nil animated:YES];
-}
-
-- (void)toggleSearchOptionAction:(id)sender
-{
-    if (!_searchOptionsController)
-    {
-        _searchOptionsController = [[ACCodeFileSearchOptionsController alloc] initWithStyle:UITableViewStyleGrouped];
-        _searchOptionsController.contentSizeForViewInPopover = CGSizeMake(300, 1020);
-        _searchOptionsController.parentSearchBarController = self;
-    }
-    
-    if (!_popover)
-    {
-        _popover = [[UIPopoverController alloc] initWithContentViewController:_searchOptionsController];
-        _popover.passthroughViews = [NSArray arrayWithObject:self.findTextField];
-    }
-    else
-    {
-        [_popover setContentViewController:_searchOptionsController];
-    }
-    
-    _searchOptionsController.parentPopoverController = _popover;
-    
-    [_popover presentPopoverFromRect:[sender frame] inView:[sender superview] permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
 }
 
 - (IBAction)replaceSingleAction:(id)sender {
@@ -299,4 +269,21 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
 @end
 
 @implementation ACCodeFileSearchBarView
+@end
+
+@implementation ACCodeFileSearchTextField
+
+- (CGRect)textRectForBounds:(CGRect)bounds
+{
+    bounds = [super textRectForBounds:bounds];
+    bounds.origin.x += 30;
+    bounds.size.width -= 30;
+    return bounds;
+}
+
+- (CGRect)editingRectForBounds:(CGRect)bounds
+{
+    return [self textRectForBounds:bounds];
+}
+
 @end

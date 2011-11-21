@@ -19,7 +19,9 @@
 static void const * parentSearchBarControllerContext;
 
 
-@implementation ACCodeFileSearchOptionsController
+@implementation ACCodeFileSearchOptionsController {
+    NSArray *_searchFilterMatches;
+}
 
 #pragma mark - Properties
 
@@ -46,12 +48,33 @@ static void const * parentSearchBarControllerContext;
 	return YES;
 }
 
+- (void)viewWillAppear:(BOOL)animated
+{
+    _searchFilterMatches = [self.parentSearchBarController.searchFilterMatches copy];
+    [super viewWillAppear:animated];
+}
+
+- (void)viewDidDisappear:(BOOL)animated
+{
+    [super viewDidDisappear:animated];
+    _searchFilterMatches = nil;
+}
+
+- (void)dealloc
+{
+    self.parentSearchBarController = nil;
+}
+
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
     if (context == &parentSearchBarControllerContext)
     {
         // filter mathces changed
-        [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:PREVIEW_SECTION] withRowAnimation:UITableViewRowAnimationAutomatic];
+        if (self.isViewLoaded && self.view.window != nil)
+        {
+            _searchFilterMatches = [self.parentSearchBarController.searchFilterMatches copy];
+            [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:PREVIEW_SECTION] withRowAnimation:UITableViewRowAnimationAutomatic];
+        }
     }
     else
     {
@@ -73,7 +96,7 @@ static void const * parentSearchBarControllerContext;
             return 1;
             
         case PREVIEW_SECTION:
-            return (parentSearchBarController && parentSearchBarController.targetCodeFileController) ? [parentSearchBarController.searchFilterMatches count] : 0;
+            return MAX([_searchFilterMatches count], 1);
             
         default:
             return 0;
@@ -108,6 +131,16 @@ static void const * parentSearchBarControllerContext;
         
         cell.textLabel.text = @"Option";
     }
+    else if ([_searchFilterMatches count] == 0)
+    {
+        static NSString *NoMatchesCellIdentifier = @"NoMatchesCell";
+        
+        if ((cell = [tableView dequeueReusableCellWithIdentifier:NoMatchesCellIdentifier]) == nil) {
+            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:NoMatchesCellIdentifier];
+        }
+        
+        cell.textLabel.text = @"No matches";
+    }
     else
     {
         static NSString *PreviewCellIdentifier = @"PreviewCell";
@@ -116,11 +149,11 @@ static void const * parentSearchBarControllerContext;
             cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:PreviewCellIdentifier];
         }
         
-        ECASSERT([parentSearchBarController.searchFilterMatches count] > index);
-        ECASSERT([[parentSearchBarController.searchFilterMatches objectAtIndex:index] respondsToSelector:@selector(rangeAtIndex:)]);
+        ECASSERT([_searchFilterMatches count] > index);
+        ECASSERT([[_searchFilterMatches objectAtIndex:index] respondsToSelector:@selector(rangeAtIndex:)]);
         
         // Retrieve the match bounding box in the code view rendered text.
-        CGRect matchRect = [parentSearchBarController.targetCodeFileController.codeView.renderer rectsForStringRange:[[parentSearchBarController.searchFilterMatches objectAtIndex:index] rangeAtIndex:0] limitToFirstLine:NO].bounds;
+        CGRect matchRect = [self.parentSearchBarController.targetCodeFileController.codeView.renderer rectsForStringRange:[[_searchFilterMatches objectAtIndex:index] rangeAtIndex:0] limitToFirstLine:NO].bounds;
         CGRect clipRect = CGRectMake(0, 0, PREVIEW_SECTION_IMAGE_WIDTH, PREVIEW_SECTION_IMAGE_HEIGHT);
         clipRect.origin.x = CGRectGetMidX(matchRect) - PREVIEW_SECTION_IMAGE_WIDTH / 2;
         clipRect.origin.y = CGRectGetMidY(matchRect) - PREVIEW_SECTION_IMAGE_HEIGHT / 2;
@@ -195,7 +228,7 @@ static void const * parentSearchBarControllerContext;
     {
         [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
         [self.parentPopoverController dismissPopoverAnimated:YES];
-        [self.parentSearchBarController.targetCodeFileController.codeView flashTextInRange:[[self.parentSearchBarController.searchFilterMatches objectAtIndex:index] range]];
+        [self.parentSearchBarController.targetCodeFileController.codeView flashTextInRange:[[_searchFilterMatches objectAtIndex:index] range]];
     }
 }
 
