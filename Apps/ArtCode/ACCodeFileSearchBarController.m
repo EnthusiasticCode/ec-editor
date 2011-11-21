@@ -10,6 +10,8 @@
 #import "ACSingleTabController.h"
 
 #import "ACCodeFileController.h"
+#import "ACFileDocument.h"
+#import <ECFoundation/ECAttributedUTF8FileBuffer.h>
 #import <ECFoundation/NSTimer+block.h>
 #import <ECUIKit/ECCodeView.h>
 #import <ECUIKit/ECBezelAlert.h>
@@ -38,7 +40,7 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
 
 @synthesize targetCodeFileController;
 @synthesize findTextField, replaceTextField, findResultLabel;
-@synthesize searchFilterMatches;
+@synthesize searchFilterMatches, regExpOptions, hitMustOption;
 
 - (void)setTargetCodeFileController:(ACCodeFileController *)controller
 {
@@ -58,6 +60,46 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
     }
     
     [self didChangeValueForKey:@"targetCodeFileController"];
+}
+
+- (void)setRegExpOptions:(NSRegularExpressionOptions)value
+{
+    if (value == regExpOptions)
+        return;
+    [self willChangeValueForKey:@"regExpOptions"];
+    regExpOptions = value;
+    [self _applyFindFilter];
+    [self didChangeValueForKey:@"regExpOptions"];
+}
+
+- (void)setHitMustOption:(ACCodeFileSearchHitMustOption)value
+{
+    if (value == hitMustOption)
+        return;
+    [self willChangeValueForKey:@"hitMustOption"];
+    hitMustOption = value;
+    [self _applyFindFilter];
+    [self didChangeValueForKey:@"hitMustOption"];
+}
+
+#pragma mark - Controller Lifecycle
+
+- (id)initWithCoder:(NSCoder *)coder {
+    self = [super initWithCoder:coder];
+    if (self) {
+        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+        self.regExpOptions = [[defaults objectForKey:@"CodeFileFindRegExpOptions"] unsignedIntegerValue] | NSRegularExpressionAnchorsMatchLines;
+        self.hitMustOption = [[defaults objectForKey:@"CodeFileFindHitMustOption"] unsignedIntegerValue];
+    }
+    return self;
+}
+
+- (void)dealloc
+{
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    [defaults setObject:[NSNumber numberWithUnsignedInteger:self.regExpOptions] forKey:@"CodeFileFindRegExpOptions"];
+    [defaults setObject:[NSNumber numberWithUnsignedInteger:self.hitMustOption] forKey:@"CodeFileFindHitMustOption"];
+    [defaults synchronize];
 }
 
 #pragma mark - View Lifecycle
@@ -242,11 +284,9 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
     
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         // TODO create here? manage error
-        NSRegularExpression *filterRegExp = [NSRegularExpression regularExpressionWithPattern:filterString options:0 error:NULL];
-        
-        // TODO get string from document instead
-        NSString *text = [targetCodeFileController.codeView text];
-        NSArray *matches = [filterRegExp matchesInString:text options:0 range:NSMakeRange(0, [text length])];
+        #warning TODO wire in 'hit must' option
+        NSRegularExpression *filterRegExp = [NSRegularExpression regularExpressionWithPattern:filterString options:self.regExpOptions error:NULL];
+        NSArray *matches = [self.targetCodeFileController.document.fileBuffer matchesOfRegexp:filterRegExp options:0];
         
         dispatch_async(dispatch_get_main_queue(), ^{
             self.searchFilterMatches = matches;

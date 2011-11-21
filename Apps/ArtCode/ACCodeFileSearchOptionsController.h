@@ -18,4 +18,8 @@
 /// The popover controller displaying this controller if any.
 @property (weak, nonatomic) UIPopoverController *parentPopoverController;
 
+- (IBAction)changeRegExpOptionAction:(UISwitch *)sender;
+- (IBAction)changeMatchCaseOptionAction:(UISwitch *)sender;
+- (IBAction)changeHitMustOptionAction:(UISegmentedControl *)sender;
+
 @end

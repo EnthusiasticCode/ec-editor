@@ -93,7 +93,7 @@ static void const * parentSearchBarControllerContext;
 {
     switch (section) {
         case OPTIONS_SECTION:
-            return 3;
+            return 2;
             
         case PREVIEW_SECTION:
             return MAX([_searchFilterMatches count], 1);
@@ -125,22 +125,33 @@ static void const * parentSearchBarControllerContext;
     {  
         switch (index) {
             case 0:
+            {
                 cell = [tableView dequeueReusableCellWithIdentifier:@"RegExpOptionCell"];
+                UISwitch *optionSwitch = (UISwitch *)[cell viewWithTag:1];
+                optionSwitch.on = !(self.parentSearchBarController.regExpOptions & NSRegularExpressionIgnoreMetacharacters);
                 break;
+            }
                 
             case 1:
+            {
                 cell = [tableView dequeueReusableCellWithIdentifier:@"MatchCaseOptionCell"];
+                UISwitch *optionSwitch = (UISwitch *)[cell viewWithTag:1];
+                optionSwitch.on = !(self.parentSearchBarController.regExpOptions & NSRegularExpressionCaseInsensitive);
                 break;
+            }
                 
             case 2:
+            {
                 cell = [tableView dequeueReusableCellWithIdentifier:@"HitMustOptionCell"];
+                UISegmentedControl *hitMustControl = (UISegmentedControl *)[cell viewWithTag:1];
+                hitMustControl.selectedSegmentIndex = self.parentSearchBarController.hitMustOption;
                 break;
+            }
                 
             default:
                 ECASSERT(NO && "There shoud be a cell");
                 break;
         }
-        
         ECASSERT(cell != nil && "Cell not defined in storyboard");
     }
     else if ([_searchFilterMatches count] == 0)
@@ -244,4 +255,26 @@ static void const * parentSearchBarControllerContext;
     }
 }
 
+#pragma mark - Option change actions
+
+- (IBAction)changeRegExpOptionAction:(UISwitch *)sender
+{
+    if (sender.on)
+        self.parentSearchBarController.regExpOptions &= ~NSRegularExpressionIgnoreMetacharacters;
+    else
+        self.parentSearchBarController.regExpOptions |= NSRegularExpressionIgnoreMetacharacters;
+}
+
+- (IBAction)changeMatchCaseOptionAction:(UISwitch *)sender
+{
+    if (sender.on)
+        self.parentSearchBarController.regExpOptions &= ~NSRegularExpressionCaseInsensitive;
+    else
+        self.parentSearchBarController.regExpOptions |= NSRegularExpressionCaseInsensitive;
+}
+
+- (IBAction)changeHitMustOptionAction:(UISegmentedControl *)sender
+{
+    self.parentSearchBarController.hitMustOption = sender.selectedSegmentIndex;
+}
 @end

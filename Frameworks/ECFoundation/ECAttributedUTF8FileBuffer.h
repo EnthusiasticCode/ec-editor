@@ -60,6 +60,8 @@ extern NSString * const ECFileBufferAttributesKey;
 
 - (NSArray *)matchesOfRegexp:(NSRegularExpression *)regexp options:(NSMatchingOptions)options range:(NSRange)range;
 
+- (NSArray *)matchesOfRegexp:(NSRegularExpression *)regexp options:(NSMatchingOptions)options;
+
 - (void)replaceMatchesOfRegexp:(NSRegularExpression *)regexp options:(NSMatchingOptions)options range:(NSRange)range withTemplate:(NSString *)replacementTemplate;
 
 @end

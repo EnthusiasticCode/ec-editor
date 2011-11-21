@@ -10,6 +10,16 @@
 
 @class ACCodeFileController;
 
+/// Options used to choose how to match the search phrase
+enum {
+    ACCodeFileSearchHitMustContain,
+    ACCodeFileSearchHitMustStartWith,
+    ACCodeFileSearchHitMustMatch,
+    ACCodeFileSearchHitMustEndWith
+};
+typedef NSUInteger ACCodeFileSearchHitMustOption;
+
+
 @interface ACCodeFileSearchBarController : UIViewController <UITextFieldDelegate>
 
 #pragma mark Controller Setup
@@ -28,6 +38,9 @@
 - (IBAction)replaceAllAction:(id)sender;
 
 #pragma mark Filtering Options
+
+@property (nonatomic) NSRegularExpressionOptions regExpOptions;
+@property (nonatomic) ACCodeFileSearchHitMustOption hitMustOption;
 
 @property (readonly, copy) NSArray *searchFilterMatches;
 

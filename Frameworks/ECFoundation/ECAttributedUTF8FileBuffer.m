@@ -155,6 +155,11 @@ static ECWeakDictionary *_fileBuffers;
     return [regexp matchesInString:[_contents string] options:options range:range];
 }
 
+- (NSArray *)matchesOfRegexp:(NSRegularExpression *)regexp options:(NSMatchingOptions)options
+{
+    return [self matchesOfRegexp:regexp options:options range:NSMakeRange(0, [self length])];
+}
+
 - (void)replaceMatchesOfRegexp:(NSRegularExpression *)regexp options:(NSMatchingOptions)options range:(NSRange)range withTemplate:(NSString *)replacementTemplate
 {
     ECASSERT(regexp && replacementTemplate);
