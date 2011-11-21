@@ -93,7 +93,7 @@ static void const * parentSearchBarControllerContext;
 {
     switch (section) {
         case OPTIONS_SECTION:
-            return 1;
+            return 3;
             
         case PREVIEW_SECTION:
             return MAX([_searchFilterMatches count], 1);
@@ -122,14 +122,26 @@ static void const * parentSearchBarControllerContext;
     UITableViewCell *cell = nil;
     NSUInteger index = [indexPath indexAtPosition:1];
     if ([indexPath indexAtPosition:0] == OPTIONS_SECTION)
-    {
-        static NSString *OptionsCellIdentifier = @"OptionsCell";
-        
-        if ((cell = [tableView dequeueReusableCellWithIdentifier:OptionsCellIdentifier]) == nil) {
-            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:OptionsCellIdentifier];
+    {  
+        switch (index) {
+            case 0:
+                cell = [tableView dequeueReusableCellWithIdentifier:@"RegExpOptionCell"];
+                break;
+                
+            case 1:
+                cell = [tableView dequeueReusableCellWithIdentifier:@"MatchCaseOptionCell"];
+                break;
+                
+            case 2:
+                cell = [tableView dequeueReusableCellWithIdentifier:@"HitMustOptionCell"];
+                break;
+                
+            default:
+                ECASSERT(NO && "There shoud be a cell");
+                break;
         }
         
-        cell.textLabel.text = @"Option";
+        ECASSERT(cell != nil && "Cell not defined in storyboard");
     }
     else if ([_searchFilterMatches count] == 0)
     {
