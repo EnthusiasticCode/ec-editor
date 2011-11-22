@@ -160,10 +160,9 @@ static ECWeakDictionary *_fileBuffers;
     return [self matchesOfRegexp:regexp options:options range:NSMakeRange(0, [self length])];
 }
 
-- (void)replaceMatchesOfRegexp:(NSRegularExpression *)regexp options:(NSMatchingOptions)options range:(NSRange)range withTemplate:(NSString *)replacementTemplate
+- (NSString *)replacementStringForResult:(NSTextCheckingResult *)result offset:(NSInteger)offset template:(NSString *)replacementTemplate
 {
-    ECASSERT(regexp && replacementTemplate);
-    [self replaceCharactersInRange:NSMakeRange(0, [self length]) withString:[regexp stringByReplacingMatchesInString:[_contents string] options:options range:range withTemplate:replacementTemplate]];
+    return [result.regularExpression replacementStringForResult:result inString:[_contents string] offset:offset template:replacementTemplate];
 }
 
 - (NSRange)replaceMatch:(NSTextCheckingResult *)match withTemplate:(NSString *)replacementTemplate offset:(NSInteger)offset
@@ -171,7 +170,7 @@ static ECWeakDictionary *_fileBuffers;
     ECASSERT(match && replacementTemplate);
     
     NSRange replacementRange = match.range;
-    NSString *replacementString = [match.regularExpression replacementStringForResult:match inString:[_contents string] offset:offset template:replacementTemplate];
+    NSString *replacementString =  [self replacementStringForResult:match offset:offset template:replacementTemplate];
     
     replacementRange.location += offset;
     [self replaceCharactersInRange:replacementRange withString:replacementString];

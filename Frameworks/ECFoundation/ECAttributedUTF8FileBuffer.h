@@ -62,7 +62,8 @@ extern NSString * const ECFileBufferAttributesKey;
 
 - (NSArray *)matchesOfRegexp:(NSRegularExpression *)regexp options:(NSMatchingOptions)options;
 
-- (void)replaceMatchesOfRegexp:(NSRegularExpression *)regexp options:(NSMatchingOptions)options range:(NSRange)range withTemplate:(NSString *)replacementTemplate;
+/// Returns the replacement string for the given template. See NSRegularExpression method for more informations.
+- (NSString *)replacementStringForResult:(NSTextCheckingResult *)result offset:(NSInteger)offset template:(NSString *)replacementTemplate;
 
 /// Replaces the given match with the given template
 /// The match must be valid and returns from one of the file buffer find methods

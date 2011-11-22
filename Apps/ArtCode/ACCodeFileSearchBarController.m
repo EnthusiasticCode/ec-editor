@@ -14,6 +14,7 @@
 #import <ECFoundation/ECAttributedUTF8FileBuffer.h>
 #import <ECFoundation/NSTimer+block.h>
 #import <ECUIKit/ECCodeView.h>
+#import <ECUIKit/ECTextRange.h>
 #import <ECUIKit/ECBezelAlert.h>
 
 #import "ACCodeFileSearchOptionsController.h"
@@ -218,6 +219,29 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
 
 - (IBAction)replaceSingleAction:(id)sender
 {
+    if ([self.searchFilterMatches count] == 0)
+    {
+        [[ECBezelAlert defaultBezelAlert] addAlertMessageWithText:@"Nothing to replace" image:nil displayImmediatly:YES];
+        return;
+    }
+    
+    _isReplacing = YES;
+    
+    // Get the string to replace
+    NSTextCheckingResult *match = [self.searchFilterMatches objectAtIndex:_searchFilterMatchesLocation];
+    NSString *replacementString = self.replaceTextField.text;
+    if (self.regExpOptions & NSRegularExpressionIgnoreMetacharacters)
+        replacementString = [NSRegularExpression escapedTemplateForString:replacementString];
+    replacementString = [self.targetCodeFileController.document.fileBuffer replacementStringForResult:match offset:0 template:replacementString];
+    
+    [self.targetCodeFileController.codeView.undoManager beginUndoGrouping];
+    [self.targetCodeFileController.codeView.undoManager setActionName:@"Replace"];
+    [self.targetCodeFileController.codeView replaceRange:[ECTextRange textRangeWithRange:match.range] withText:replacementString];
+    [self.targetCodeFileController.codeView.undoManager endUndoGrouping];
+    
+    _isReplacing = NO;
+    [self.targetCodeFileController.codeView flashTextInRange:NSMakeRange(match.range.location, [replacementString length])];
+    [self _applyFindFilterAndFlash:NO];
 }
 
 - (IBAction)replaceAllAction:(id)sender
