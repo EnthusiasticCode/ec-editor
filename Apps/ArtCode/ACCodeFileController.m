@@ -62,6 +62,8 @@
 - (void)_handleGestureUndo:(UISwipeGestureRecognizer *)recognizer;
 - (void)_handleGestureRedo:(UISwipeGestureRecognizer *)recognizer;
 
+- (void)_fileBufferDidChange:(NSNotification *)notification;
+
 - (void)_keyboardWillShow:(NSNotification *)notification;
 - (void)_keyboardWillHide:(NSNotification *)notification;
 - (void)_keyboardWillChangeFrame:(NSNotification *)notification;
@@ -177,7 +179,11 @@
         return;
     
     [self willChangeValueForKey:@"fileURL"];
+    
     [_document closeWithCompletionHandler:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:ECFileBufferDidReplaceCharactersNotificationName object:_document.fileBuffer];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:ECFileBufferDidChangeAttributesNotificationName object:_document.fileBuffer];
+    
     self.document = nil;
     self.syntaxColorer = nil;
     _fileURL = fileURL;
@@ -187,6 +193,10 @@
         self.loading = YES;
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             ACFileDocument *document = [[ACFileDocument alloc] initWithFileURL:fileURL];
+            
+            [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_fileBufferDidChange:) name:ECFileBufferDidReplaceCharactersNotificationName object:self.document.fileBuffer];
+            [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_fileBufferDidChange:) name:ECFileBufferDidChangeAttributesNotificationName object:self.document.fileBuffer];
+            
             [document openWithCompletionHandler:^(BOOL success) {
                 ECASSERT(success);
                 ACSyntaxColorer *colorer = [[ACSyntaxColorer alloc] initWithFileBuffer:[document fileBuffer]];
@@ -196,8 +206,8 @@
                 dispatch_async(dispatch_get_main_queue(), ^{
                     self.document = document;
                     self.syntaxColorer = colorer;
-                    self.loading = NO;
                     [self.codeView updateAllText];
+                    self.loading = NO;
                 });
             }];
         });
@@ -324,6 +334,14 @@
 {
     self.toolbarItems = [NSArray arrayWithObject:[[UIBarButtonItem alloc] initWithTitle:@"tools" style:UIBarButtonItemStylePlain target:self action:@selector(toolButtonAction:)]];
     
+    // File buffer notifications
+    if (self.document.fileBuffer)
+    {
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_fileBufferDidChange:) name:ECFileBufferDidReplaceCharactersNotificationName object:self.document.fileBuffer];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_fileBufferDidChange:) name:ECFileBufferDidChangeAttributesNotificationName object:self.document.fileBuffer];
+    }
+    
+    // Keyboard nottifications
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_keyboardWillChangeFrame:) name:UIKeyboardWillChangeFrameNotification object:nil];
@@ -418,13 +436,14 @@
 - (void)codeView:(ECCodeViewBase *)codeView commitString:(NSString *)commitString forTextInRange:(NSRange)range
 {
     [[self.document fileBuffer] replaceCharactersInRange:range withAttributedString:[commitString length] ? [[NSAttributedString alloc] initWithString:commitString attributes:self.defaultTextAttributes] : nil];
-    NSRange newRange = NSMakeRange(range.location, [commitString length]);
+//    NSRange newRange = NSMakeRange(range.location, [commitString length]);
     [_syntaxColoringTimer invalidate];
     _syntaxColoringTimer = [NSTimer scheduledTimerWithTimeInterval:1.0 usingBlock:^(NSTimer *timer) {
         [self.syntaxColorer applySyntaxColoring];
-        [self.codeView updateAllText];
+//        [self.codeView setNeedsUpdate];
     } repeats:NO];
-    [self.codeView updateTextFromStringRange:range toStringRange:newRange];
+//    [self.codeView updateTextFromStringRange:range toStringRange:newRange];
+    // CodeView is updated from file buffer notification in _fileBufferDidChange:
 }
 
 #pragma mark - Code View Delegate Methods
@@ -554,6 +573,18 @@
 - (void)_keyboardWillHide:(NSNotification *)notification
 {
     [self _keyboardWillShow:notification];
+}
+
+#pragma mark - File Buffer Notifications
+
+- (void)_fileBufferDidChange:(NSNotification *)notification
+{
+    NSRange fromRange = [[notification.userInfo objectForKey:ECFileBufferRangeKey] rangeValue];
+    NSRange toRange = fromRange;
+    NSString *toString = [notification.userInfo objectForKey:ECFileBufferStringKey];
+    if (toString != nil && (NSNull *)toString != [NSNull null])
+        toRange = NSMakeRange(fromRange.location, [toString length]);
+    [self.codeView updateTextFromStringRange:fromRange toStringRange:toRange];
 }
 
 #pragma mark - Keyboard Accessory Item Methods

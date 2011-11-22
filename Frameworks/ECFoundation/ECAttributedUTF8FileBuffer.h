@@ -66,7 +66,8 @@ extern NSString * const ECFileBufferAttributesKey;
 
 /// Replaces the given match with the given template
 /// The match must be valid and returns from one of the file buffer find methods
-/// After the replacement occurs, the file buffer could be changed in a way that invalidates matches found before the replacement took place
-- (void)replaceMatch:(NSTextCheckingResult *)match withTemplate:(NSString *)replacementTemplate;
+/// After the replacement occurs, the file buffer could be changed in a way that invalidates matches found before the replacement took place. For this reason, the offset paramenter can be used to specify that the match location should be offsetted by the given amount.
+/// Returns the range of the replaced text after the replacement.
+- (NSRange)replaceMatch:(NSTextCheckingResult *)match withTemplate:(NSString *)replacementTemplate offset:(NSInteger)offset;
 
 @end

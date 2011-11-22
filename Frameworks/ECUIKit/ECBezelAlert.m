@@ -36,6 +36,11 @@
 
 #pragma mark - Controller Methods
 
++ (ECBezelAlert *)defaultBezelAlert
+{
+    return [self centerBezelAlert];
+}
+
 + (ECBezelAlert *)centerBezelAlert
 {
     static ECBezelAlert *_centerBezelAlert = nil;

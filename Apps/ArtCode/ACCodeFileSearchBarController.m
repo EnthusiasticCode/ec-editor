@@ -24,12 +24,16 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
 @interface ACCodeFileSearchBarController () {
     NSInteger _searchFilterMatchesLocation;
     NSTimer *_filterDebounceTimer;
+    // Indicate if the controller is in a replacement procedure. This will avoid the file buffer changes to update the filter.
+    BOOL _isReplacing;
 }
 
 @property (readwrite, copy) NSArray *searchFilterMatches;
 
 - (void)_addFindFilterCodeViewPass;
-- (void)_applyFindFilter;
+- (void)_applyFindFilterAndFlash:(BOOL)shouldFlash;
+- (void)_fileBufferWillChangeNotification:(NSNotification *)notification;
+- (void)_fileBufferDidChangeNotification:(NSNotification *)notification;
 
 @end
 
@@ -56,7 +60,7 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
     
     if (self.isViewLoaded && self.view.window != nil) {
         [self _addFindFilterCodeViewPass];
-        [self _applyFindFilter];
+        [self _applyFindFilterAndFlash:YES];
     }
     
     [self didChangeValueForKey:@"targetCodeFileController"];
@@ -68,7 +72,7 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
         return;
     [self willChangeValueForKey:@"regExpOptions"];
     regExpOptions = value;
-    [self _applyFindFilter];
+    [self _applyFindFilterAndFlash:YES];
     [self didChangeValueForKey:@"regExpOptions"];
 }
 
@@ -78,7 +82,7 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
         return;
     [self willChangeValueForKey:@"hitMustOption"];
     hitMustOption = value;
-    [self _applyFindFilter];
+    [self _applyFindFilterAndFlash:YES];
     [self didChangeValueForKey:@"hitMustOption"];
 }
 
@@ -116,12 +120,18 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
 - (void)viewWillAppear:(BOOL)animated
 {
     [self _addFindFilterCodeViewPass];
-    [self _applyFindFilter];
+    [self _applyFindFilterAndFlash:YES];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_fileBufferWillChangeNotification:) name:ECFileBufferWillReplaceCharactersNotificationName object:self.targetCodeFileController.document.fileBuffer];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_fileBufferDidChangeNotification:) name:ECFileBufferDidReplaceCharactersNotificationName object:self.targetCodeFileController.document.fileBuffer];
 }
 
 - (void)viewDidDisappear:(BOOL)animated
 {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    
     [self.targetCodeFileController.codeView removePassLayerForKey:findFilterPassBlockKey];
+    
     if ([searchFilterMatches count] > 0)
     {
         [self.targetCodeFileController.codeView updateAllText];
@@ -150,7 +160,7 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
     if (_filterDebounceTimer)
         [_filterDebounceTimer invalidate];
     _filterDebounceTimer = [NSTimer scheduledTimerWithTimeInterval:0.25 usingBlock:^(NSTimer *timer) {
-        [self _applyFindFilter];
+        [self _applyFindFilterAndFlash:YES];
     } repeats:NO];
     
     return YES;
@@ -206,10 +216,42 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
     [self.singleTabController setToolbarViewController:nil animated:YES];
 }
 
-- (IBAction)replaceSingleAction:(id)sender {
+- (IBAction)replaceSingleAction:(id)sender
+{
 }
 
-- (IBAction)replaceAllAction:(id)sender {
+- (IBAction)replaceAllAction:(id)sender
+{
+    if ([self.searchFilterMatches count] == 0)
+    {
+        [[ECBezelAlert defaultBezelAlert] addAlertMessageWithText:@"Nothing to replace" image:nil displayImmediatly:YES];
+        return;
+    }
+    
+    NSArray *matches = self.searchFilterMatches;
+    _isReplacing = YES;
+    
+    [self.targetCodeFileController.codeView.undoManager beginUndoGrouping];
+    [self.targetCodeFileController.codeView.undoManager setActionName:@"Replace All"];
+    
+    NSString *replacementString = self.replaceTextField.text;
+    NSRange replacementRange;
+    NSString *originalString = nil;
+    NSInteger offset = 0;
+    for (NSTextCheckingResult *match in matches)
+    {
+        originalString = [self.targetCodeFileController.document.fileBuffer stringInRange:NSMakeRange(match.range.location + offset, match.range.length)];
+        replacementRange = [self.targetCodeFileController.document.fileBuffer replaceMatch:match withTemplate:replacementString offset:offset];
+        [[self.targetCodeFileController.codeView.undoManager prepareWithInvocationTarget:self.targetCodeFileController.document.fileBuffer] replaceCharactersInRange:replacementRange withString:originalString];
+        offset += replacementRange.length - [originalString length];
+    }
+    
+    [self.targetCodeFileController.codeView.undoManager endUndoGrouping];
+    
+    [[ECBezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormat:@"Replaced %u occurrences", [matches count]] image:nil displayImmediatly:YES];
+    
+    _isReplacing = NO;
+    [self _applyFindFilterAndFlash:NO];
 }
 
 #pragma mark - Private Methods
@@ -223,7 +265,7 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
     __block NSMutableIndexSet *searchSectionIndexes = nil;
     __block NSUInteger lastLine = NSUIntegerMax;
     [targetCodeFileController.codeView addPassLayerBlock:^(CGContextRef context, ECTextRendererLine *line, CGRect lineBounds, NSRange stringRange, NSUInteger lineNumber) {
-        NSArray *searchSection = searchFilterMatches;
+        NSArray *searchSection = self.searchFilterMatches;
         NSUInteger searchSectionCount = [searchSection count];
         if (searchSectionCount == 0)
             return;
@@ -267,7 +309,7 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
     } underText:YES forKey:findFilterPassBlockKey];
 }
 
-- (void)_applyFindFilter
+- (void)_applyFindFilterAndFlash:(BOOL)shouldFlash
 {
     if (!targetCodeFileController)
         return;
@@ -324,7 +366,8 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
             // Change report label
             if ([searchFilterMatches count] > 0)
             {
-                [targetCodeFileController.codeView flashTextInRange:[[searchFilterMatches objectAtIndex:_searchFilterMatchesLocation] range]];
+                if (shouldFlash)
+                    [targetCodeFileController.codeView flashTextInRange:[[searchFilterMatches objectAtIndex:_searchFilterMatchesLocation] range]];
                 findResultLabel.text = [NSString stringWithFormat:@"%u matches", [searchFilterMatches count]];
             }
             else
@@ -334,6 +377,17 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
             findResultLabel.hidden = NO;
         });
     });
+}
+
+- (void)_fileBufferWillChangeNotification:(NSNotification *)notification
+{
+    self.searchFilterMatches = nil;
+}
+
+- (void)_fileBufferDidChangeNotification:(NSNotification *)notification
+{
+    if (!_isReplacing)
+        [self _applyFindFilterAndFlash:NO];
 }
 
 @end

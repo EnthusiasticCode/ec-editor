@@ -13,6 +13,7 @@
 #import <ECFoundation/NSTimer+block.h>
 #import "ECPopoverController.h"
 #import "ECKeyboardAccessoryView.h"
+#import <ECUIKit/ECBezelAlert.h>
 
 #define CARET_WIDTH 2
 #define ACCESSORY_HEIGHT 45
@@ -1409,7 +1410,10 @@ static void init(ECCodeView *self)
     NSUInteger stringLenght = [string length];
     // Register undo operation
     if (self.undoManager.groupingLevel == 0)
+    {
         [self.undoManager beginUndoGrouping];
+        [self.undoManager setActionName:@"Typing"];
+    }
     [[self.undoManager prepareWithInvocationTarget:self] editDataSourceInRange:NSMakeRange(range.location, stringLenght) withString:range.length ? [[self.dataSource textRenderer:self.renderer attributedStringInRange:range] string] : nil];
     
     // Commit string
@@ -1690,10 +1694,20 @@ static void init(ECCodeView *self)
 
 @implementation ECCodeViewUndoManager
 
+- (void)beginUndoGrouping
+{
+    if (self.groupingLevel != 0)
+        [self endUndoGrouping];
+    [super beginUndoGrouping];
+}
+
 - (void)undo
 {
     if (self.groupingLevel != 0)
         [self endUndoGrouping];
+    
+    [[ECBezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormat:@"Undo %@", [self undoActionName]] image:nil displayImmediatly:YES];
+    
     [super undo];
 }
 

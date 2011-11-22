@@ -19,6 +19,9 @@ typedef NSInteger ECBezelAlertAnimationType;
 /// Shows a bezel styled alert for a given time.
 @interface ECBezelAlert : UIViewController
 
+/// Returns the default bezel alert. By default this method returns the centerBezelAlert.
++ (ECBezelAlert *)defaultBezelAlert;
+
 /// Return a shared instance of the bezel alert centered in the screen.
 /// This allert will have a fade + pop presentation animation by default.
 + (ECBezelAlert *)centerBezelAlert;
