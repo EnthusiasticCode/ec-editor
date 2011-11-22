@@ -1706,9 +1706,18 @@ static void init(ECCodeView *self)
     if (self.groupingLevel != 0)
         [self endUndoGrouping];
     
-    [[ECBezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormat:@"Undo %@", [self undoActionName]] image:nil displayImmediatly:YES];
+    if ([[self undoActionName] length] > 0)
+        [[ECBezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormat:@"Undo %@", [self undoActionName]] image:nil displayImmediatly:YES];
     
     [super undo];
+}
+
+- (void)redo
+{
+    if ([[self redoActionName] length] > 0)
+        [[ECBezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormat:@"Redo %@", [self redoActionName]] image:nil displayImmediatly:YES];
+    
+    [super redo];
 }
 
 @end
