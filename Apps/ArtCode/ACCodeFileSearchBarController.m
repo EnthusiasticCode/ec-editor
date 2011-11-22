@@ -235,6 +235,9 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
     [self.targetCodeFileController.codeView.undoManager setActionName:@"Replace All"];
     
     NSString *replacementString = self.replaceTextField.text;
+    if (self.regExpOptions & NSRegularExpressionIgnoreMetacharacters)
+        replacementString = [NSRegularExpression escapedTemplateForString:replacementString];
+        
     NSRange replacementRange;
     NSString *originalString = nil;
     NSInteger offset = 0;
@@ -348,7 +351,9 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
             
         // TODO create here? manage error
         NSRegularExpression *filterRegExp = [NSRegularExpression regularExpressionWithPattern:filterString options:options error:NULL];
-        NSArray *matches = [self.targetCodeFileController.document.fileBuffer matchesOfRegexp:filterRegExp options:0];
+        NSArray *matches = nil;
+        if (filterRegExp != nil)
+            matches = [self.targetCodeFileController.document.fileBuffer matchesOfRegexp:filterRegExp options:0];
         
         dispatch_async(dispatch_get_main_queue(), ^{
             self.searchFilterMatches = matches;
