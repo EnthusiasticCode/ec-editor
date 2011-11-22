@@ -369,7 +369,11 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
                 }
             }];
             // Change report label
-            if ([searchFilterMatches count] > 0)
+            if (filterRegExp == nil)
+            {
+                findResultLabel.text = @"Invalid RegExp";
+            } 
+            else if ([searchFilterMatches count] > 0)
             {
                 if (shouldFlash)
                     [targetCodeFileController.codeView flashTextInRange:[[searchFilterMatches objectAtIndex:_searchFilterMatchesLocation] range]];
