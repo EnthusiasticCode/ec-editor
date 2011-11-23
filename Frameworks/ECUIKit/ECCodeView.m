@@ -36,7 +36,10 @@
     ECCodeViewUndoManager *_undoManager;
     
     // Support objects
-    NSTimer *touchScrollTimer;
+    NSTimer *_touchScrollTimer;
+    CGFloat _touchScrollSpeed;
+    void(^_touchScrollTimerCallback)(BOOL isScrolling);
+    
     CGRect _keyboardFrame;
     BOOL _keyboardWillShow;
     
@@ -76,7 +79,8 @@
 
 /// Given a touch point on the top or bottom of the codeview, this method
 /// scroll the content faster as the point approaches the receiver's bounds.
-- (void)autoScrollForTouchAtPoint:(CGPoint)point;
+- (void)autoScrollForTouchAtPoint:(CGPoint)point eventBlock:(void(^)(BOOL isScrolling))block;
+- (void)stopAutoScroll;
 
 // Gestures handlers
 - (void)handleGestureFocus:(UITapGestureRecognizer *)recognizer;
@@ -157,7 +161,8 @@
 @property (nonatomic, readonly, strong) ECPopoverController *magnificationPopover;
 @property (nonatomic, readonly, strong) TextMagnificationView *magnificationView;
 
-- (void)setMagnify:(BOOL)doMagnify fromRect:(CGRect)rect ratio:(BOOL)ratio animated:(BOOL)animated;
+- (void)setMagnify:(BOOL)doMagnify fromRect:(CGRect)rect textPoint:(CGPoint)textPoint ratio:(CGFloat)ratio animated:(BOOL)animated;
+- (void)setMagnify:(BOOL)doMagnify fromRect:(CGRect)rect ratio:(CGFloat)ratio animated:(BOOL)animated; // set tap point = middle of rect
 
 - (void)handleKnobGesture:(UILongPressGestureRecognizer *)recognizer;
 
@@ -467,7 +472,12 @@
     [self setMagnify:doMagnify fromRect:self.frame ratio:2 animated:YES];
 }
 
-- (void)setMagnify:(BOOL)doMagnify fromRect:(CGRect)rect ratio:(BOOL)ratio animated:(BOOL)animated
+- (void)setMagnify:(BOOL)doMagnify fromRect:(CGRect)rect ratio:(CGFloat)ratio animated:(BOOL)animated
+{
+    [self setMagnify:doMagnify fromRect:rect textPoint:CGPointMake(CGRectGetMidX(rect), CGRectGetMidY(rect)) ratio:ratio animated:animated];
+}
+
+- (void)setMagnify:(BOOL)doMagnify fromRect:(CGRect)rect textPoint:(CGPoint)textPoint ratio:(CGFloat)ratio animated:(BOOL)animated
 {
     magnify = doMagnify;
     
@@ -487,7 +497,6 @@
         self.blink = NO;
         
         // Magnify at the center of given rect
-        CGPoint textPoint = CGPointMake(CGRectGetMidX(rect), CGRectGetMidY(rect));
         [self.magnificationView detailTextAtPoint:textPoint magnification:ratio additionalDrawingBlock:^(CGContextRef context, CGPoint textOffset) {
             if (selection.length == 0) 
             {
@@ -508,7 +517,9 @@
         }];
         
         // Show popover
-        [self.magnificationPopover presentPopoverFromRect:rect inView:parent permittedArrowDirections:UIPopoverArrowDirectionDown animated:animated];
+        
+        rect = [parent.window.rootViewController.view convertRect:rect fromView:parent];
+        [self.magnificationPopover presentPopoverFromRect:rect inView:parent.window.rootViewController.view permittedArrowDirections:UIPopoverArrowDirectionDown animated:animated];
     }
 }
 
@@ -543,11 +554,10 @@
     // TODO it may be needed to change thumbs hit test, see ouieditableframe 1842
     
     CGPoint tapPoint = [recognizer locationInView:parent];
-    CGPoint textPoint = tapPoint;
     
     // Retrieving position
-    NSUInteger pos = [parent.renderer closestStringLocationToPoint:textPoint withinStringRange:(NSRange){0, 0}];
-    
+    NSUInteger pos = [parent.renderer closestStringLocationToPoint:tapPoint withinStringRange:NSMakeRange(0, 0)];
+
     // Changing selection
     if (recognizer.view == rightKnob) 
     {   
@@ -566,12 +576,12 @@
     
     // Magnification
     BOOL animatePopover = NO;
-    
     switch (recognizer.state)
     {
         case UIGestureRecognizerStateEnded:
         case UIGestureRecognizerStateCancelled:
             self.magnify = NO;
+            [parent stopAutoScroll];
             break;
             
         case UIGestureRecognizerStateBegan:
@@ -584,7 +594,27 @@
             
             // Scrolling
             tapPoint.y -= parent.contentOffset.y;
-            [parent autoScrollForTouchAtPoint:tapPoint];
+            [parent autoScrollForTouchAtPoint:tapPoint eventBlock:^(BOOL isScrolling) {
+                if (isScrolling)
+                    self.magnify = NO;
+                else
+                    [self setMagnify:YES fromRect:recognizer.view.frame ratio:2 animated:YES];
+                NSUInteger p = [parent.renderer closestStringLocationToPoint:[recognizer locationInView:parent] withinStringRange:(NSRange){0, 0}];
+                if (recognizer.view == rightKnob) 
+                {   
+                    if (p > selection.location) 
+                    {
+                        self.selection = NSMakeRange(selection.location, p - selection.location);
+                    }
+                }
+                else
+                {
+                    if (p < NSMaxRange(selection)) 
+                    {
+                        self.selection = NSMakeRange(pos, NSMaxRange(selection) - p);
+                    }
+                }
+            }];
         }
     }
 }
@@ -1475,48 +1505,63 @@ static void init(ECCodeView *self)
     
 }
 
-- (void)autoScrollForTouchAtPoint:(CGPoint)point
+- (void)autoScrollForTouchAtPoint:(CGPoint)point eventBlock:(void(^)(BOOL isScrolling))block
 {
-    CGRect bounds = self.bounds;
+    CGRect frame = self.frame;
     
     // Stop old scrolling 
-    if (touchScrollTimer) 
-    {
-        [touchScrollTimer invalidate];
-        touchScrollTimer = nil;
-    }
+    if (_touchScrollTimerCallback)
+        _touchScrollTimerCallback(NO);
+    [self stopAutoScroll];
     
     // Get scrolling speed and direction
     CGFloat scrollingOffset = 0;
-    // TODO parametrize scrolling area
-    if (point.y < 50) 
+    if (point.y < 1) 
     {
-        scrollingOffset = point.y - 50;
+        scrollingOffset = point.y - 1;
     }
-    else if (point.y > CGRectGetMaxY(bounds) - 50)
+    else if (point.y > frame.size.height - 1)
     {
-        scrollingOffset = point.y - (CGRectGetMaxY(bounds) - 50);
+        scrollingOffset = point.y - (frame.size.height - 1);
     }
     
     // Schedule new scrolling timer if needed
     if (scrollingOffset != 0) 
     {
-        touchScrollTimer = [NSTimer scheduledTimerWithTimeInterval:1.0/ 60.0 usingBlock:^(NSTimer *timer) {
-            CGFloat contentOffset = self.contentOffset.y;
+        _touchScrollTimerCallback = [block copy];
+        _touchScrollTimer = [NSTimer scheduledTimerWithTimeInterval:1.0/30.0 usingBlock:^(NSTimer *timer) {
+            CGFloat contentOffset = (scrollingOffset > 0 ? 1.0 : -1.0) * _touchScrollSpeed + self.contentOffset.y + (scrollingOffset > 0 ? self.bounds.size.height : 0);
             
             // Invalidate timer if reaging content limits
-            if (contentOffset <= 0 || contentOffset >= (self.contentSize.height - self.bounds.size.height)) 
+            if (contentOffset < 0 || contentOffset > self.contentSize.height) 
             {
-                [touchScrollTimer invalidate];
-                touchScrollTimer = nil;
+                [_touchScrollTimer invalidate];
+                _touchScrollTimer = nil;
+                _touchScrollSpeed = 1;
+                if (_touchScrollTimerCallback)
+                    _touchScrollTimerCallback(NO);
             }
             else
             {
-                contentOffset += scrollingOffset;
-                [self scrollRectToVisible:CGRectMake(0, contentOffset, 1, 1) animated:NO];
+                [self scrollRectToVisible:CGRectMake(0, contentOffset, 1, 0.01) animated:NO];
+                if (_touchScrollSpeed < 10.0)
+                    _touchScrollSpeed += 0.1;
+                if (_touchScrollTimerCallback)
+                    _touchScrollTimerCallback(YES);
             }
         } repeats:YES];
     }
+}
+
+- (void)stopAutoScroll
+{
+    if (_touchScrollTimer) 
+    {
+        [_touchScrollTimer invalidate];
+        _touchScrollTimer = nil;
+    }
+    _touchScrollSpeed = 1;
+    _touchScrollTimerCallback = nil;
 }
 
 #pragma mark -
@@ -1583,6 +1628,7 @@ static void init(ECCodeView *self)
             [self setSelectedTextFromPoint:tapPoint toPoint:secondTapPoint];
         case UIGestureRecognizerStateCancelled:
             selectionView.magnify = NO;
+            [self stopAutoScroll];
             break;
             
         case UIGestureRecognizerStateBegan:
@@ -1611,7 +1657,18 @@ static void init(ECCodeView *self)
 
             // Scrolling
             tapPoint.y -= self.contentOffset.y;
-            [self autoScrollForTouchAtPoint:tapPoint];
+            [self autoScrollForTouchAtPoint:tapPoint eventBlock:^(BOOL isScrolling) {
+                CGPoint point = [recognizer locationOfTouch:0 inView:self];
+                if ([recognizer numberOfTouches] > 1) 
+                {
+                    [self setSelectedTextFromPoint:point toPoint:[recognizer locationOfTouch:1 inView:self]];
+                }
+                else
+                {
+                    selectionView.selection = NSMakeRange([self.renderer closestStringLocationToPoint:point withinStringRange:(NSRange){0, 0}], 0);
+                    [selectionView setMagnify:YES fromRect:CGRectMake(tapPoint.x, self.contentOffset.y + tapPoint.y, 2, 2) textPoint:point ratio:2 animated:animatePopover];
+                }
+            }];
         }
     }
 }

@@ -1068,12 +1068,20 @@
     ECMutableRectSet *result = [ECMutableRectSet rectSetWithCapacity:1];
     [self _generateTextSegmentsAndEnumerateUsingBlock:^(TextSegment *segment, NSUInteger outerIdx, NSUInteger lineOffset, NSUInteger stringOffset, CGFloat positionOffset, BOOL *stop) {
         // Skip segment if before required string range
-        if (stringOffset + segment.stringLength < queryStringRange.location)
+        if (stringOffset + segment.stringLength <= queryStringRange.location)
             return;
         
         // Get relative positions to current semgnet
         NSRange segmentRelativeStringRange = queryStringRange;
-        segmentRelativeStringRange.location -= stringOffset;
+        if (segmentRelativeStringRange.location >= stringOffset)
+        {
+            segmentRelativeStringRange.location -= stringOffset;
+        }
+        else
+        {
+            segmentRelativeStringRange.length -= stringOffset - segmentRelativeStringRange.location;
+            segmentRelativeStringRange.location = 0;
+        }
         NSUInteger segmentRelativeStringRangeEnd = segmentRelativeStringRange.location + segmentRelativeStringRange.length;
         
         __block NSUInteger stringEnd = stringOffset;
@@ -1098,14 +1106,14 @@
             lineBounds = [self convertFromTextRect:lineBounds];
             [result addRect:lineBounds];
             
-            stringEnd += lineStringRange.length;
+            stringEnd = stringOffset + NSMaxRange(lineStringRange);
             
             if (limit)
                 *stop = *innserStop = YES;
         }];
         
         // Exit if finished
-        if (stringEnd >= queryStringRange.location + queryStringRange.length)
+        if (stringEnd >= NSMaxRange(queryStringRange))
             *stop = YES;
     }];
     return result;
