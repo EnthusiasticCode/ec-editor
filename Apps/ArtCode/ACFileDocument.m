@@ -31,7 +31,8 @@
 
 - (BOOL)loadFromContents:(id)contents ofType:(NSString *)typeName error:(NSError *__autoreleasing *)outError
 {
-    [[self fileBuffer] replaceCharactersInRange:NSMakeRange(0, [[self fileBuffer] length]) withString:[[NSString alloc] initWithData:contents encoding:NSUTF8StringEncoding]];
+//    [[self fileBuffer] replaceCharactersInRange:NSMakeRange(0, [[self fileBuffer] length]) withString:[[NSString alloc] initWithData:contents encoding:NSUTF8StringEncoding]];
+    [self fileBuffer];
     return YES;
 }
 

@@ -194,9 +194,6 @@
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             ACFileDocument *document = [[ACFileDocument alloc] initWithFileURL:fileURL];
             
-            [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_fileBufferDidChange:) name:ECFileBufferDidReplaceCharactersNotificationName object:self.document.fileBuffer];
-            [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_fileBufferDidChange:) name:ECFileBufferDidChangeAttributesNotificationName object:self.document.fileBuffer];
-            
             [document openWithCompletionHandler:^(BOOL success) {
                 ECASSERT(success);
                 ACSyntaxColorer *colorer = [[ACSyntaxColorer alloc] initWithFileBuffer:[document fileBuffer]];
@@ -204,9 +201,15 @@
                 colorer.theme = [TMTheme themeWithName:@"Mac Classic" bundle:nil];
                 [colorer applySyntaxColoring];
                 dispatch_async(dispatch_get_main_queue(), ^{
+                    document.undoManager = self.codeView.undoManager;
                     self.document = document;
                     self.syntaxColorer = colorer;
                     [self.codeView updateAllText];
+                    if (self.isViewLoaded)
+                    {
+                        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_fileBufferDidChange:) name:ECFileBufferDidReplaceCharactersNotificationName object:self.document.fileBuffer];
+                        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_fileBufferDidChange:) name:ECFileBufferDidChangeAttributesNotificationName object:self.document.fileBuffer];
+                    }
                     self.loading = NO;
                 });
             }];
