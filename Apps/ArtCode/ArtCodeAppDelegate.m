@@ -107,10 +107,8 @@
     [addTabButton setActionBlock:^(id sender) {
         // Duplicate current tab
         ACSingleTabController *singleTabController = [[ACSingleTabController alloc] init];
-        [self.application insertTabAtIndex:[self.application.tabs count]];
+        [self.application insertTabAtIndex:[self.application.tabs count] withInitialURL:[(ACSingleTabController *)self.tabController.selectedViewController tab].currentURL];
         singleTabController.tab = [self.application.tabs lastObject];
-        [singleTabController.tab pushURL:[(ACSingleTabController *)self.tabController.selectedViewController tab].currentURL];
-        //
         [self.tabController addChildViewController:singleTabController animated:YES];
     } forControlEvent:UIControlEventTouchUpInside];
     self.tabController.tabBar.additionalControls = [NSArray arrayWithObject:addTabButton];
@@ -123,7 +121,7 @@
     ////////////////////////////////////////////////////////////////////////////
     // Resume tabs
     if (![self.application.tabs count])
-        [self.application insertTabAtIndex:0];
+        [self.application insertTabAtIndex:0 withInitialURL:[self.application projectsDirectory]];
     for (ACTab *tab in self.application.tabs)
     {
         ACSingleTabController *singleTabController = [[ACSingleTabController alloc] init];

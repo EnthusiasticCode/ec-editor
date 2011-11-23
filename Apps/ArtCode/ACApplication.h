@@ -15,7 +15,7 @@
 
 @property (nonatomic, strong) NSOrderedSet *tabs;
 
-- (ACTab *)insertTabAtIndex:(NSUInteger)index;
+- (ACTab *)insertTabAtIndex:(NSUInteger)index withInitialURL:(NSURL *)url;
 - (void)removeTabAtIndex:(NSUInteger)index;
 
 /// Reorder the tabs list

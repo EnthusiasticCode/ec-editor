@@ -22,12 +22,13 @@ static NSString * const ACProjectListDirectoryName = @"ACLocalProjects";
 
 @synthesize _projectsDirectoryPathComponentsCount = __projectsDirectoryPathComponentsCount;
 
-- (ACTab *)insertTabAtIndex:(NSUInteger)index
+- (ACTab *)insertTabAtIndex:(NSUInteger)index withInitialURL:(NSURL *)url
 {
+    ECASSERT(url);
     ACTab *tab = [NSEntityDescription insertNewObjectForEntityForName:@"Tab" inManagedObjectContext:self.managedObjectContext];
     NSMutableOrderedSet *tabs = [self mutableOrderedSetValueForKey:@"tabs"];
     [tabs insertObject:tab atIndex:index];
-    [tab pushURL:[self projectsDirectory]];
+    [tab pushURL:url];
     return tab;
 }
 
