@@ -60,8 +60,9 @@
     NSUInteger lastPosition = [self.historyItems count] - 1;
     if (self.currentHistoryPosition < lastPosition)
     {
-        NSMutableOrderedSet *historyItems = [self mutableOrderedSetValueForKey:@"historyItems"];
-        [historyItems removeObjectsInRange:NSMakeRange(self.currentHistoryPosition + 1, lastPosition - self.currentHistoryPosition)];
+        NSArray *historyItemsToDelete = [[self.historyItems array] subarrayWithRange:NSMakeRange(self.currentHistoryPosition + 1, lastPosition - self.currentHistoryPosition)];
+        for (ACHistoryItem *historyItem in historyItemsToDelete)
+            [self.managedObjectContext deleteObject:historyItem];
     }
     ACHistoryItem *historyItem = [NSEntityDescription insertNewObjectForEntityForName:@"HistoryItem" inManagedObjectContext:self.managedObjectContext];
     historyItem.tab = self;
