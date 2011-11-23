@@ -62,7 +62,10 @@
     {
         NSArray *historyItemsToDelete = [[self.historyItems array] subarrayWithRange:NSMakeRange(self.currentHistoryPosition + 1, lastPosition - self.currentHistoryPosition)];
         for (ACHistoryItem *historyItem in historyItemsToDelete)
+        {
+            historyItem.tab = nil;
             [self.managedObjectContext deleteObject:historyItem];
+        }
     }
     ACHistoryItem *historyItem = [NSEntityDescription insertNewObjectForEntityForName:@"HistoryItem" inManagedObjectContext:self.managedObjectContext];
     historyItem.tab = self;
