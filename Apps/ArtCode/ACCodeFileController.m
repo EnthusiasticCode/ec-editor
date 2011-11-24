@@ -270,9 +270,14 @@
                 _searchBarController.targetCodeFileController = self;
             }
             if (self.singleTabController.toolbarViewController != _searchBarController)
+            {
                 [self.singleTabController setToolbarViewController:_searchBarController animated:YES];
+                [_searchBarController.findTextField becomeFirstResponder];
+            }
             else
+            {
                 [self.singleTabController setToolbarViewController:nil animated:YES];
+            }
             break;
         }
         
