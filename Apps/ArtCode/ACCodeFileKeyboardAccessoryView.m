@@ -21,7 +21,7 @@ static const void *itemContext;
 
 #pragma mark - Properties
 
-@synthesize items, itemBackgroundImage;
+@synthesize items, itemBackgroundImage, itemPopoverView;
 
 - (void)setItemBackgroundImage:(UIImage *)value
 {
@@ -34,6 +34,15 @@ static const void *itemContext;
         [(UIButton *)item.customView setBackgroundImage:itemBackgroundImage forState:UIControlStateNormal];
     }
     [self didChangeValueForKey:@"itemBackgroundImage"];
+}
+
+- (ACCodeFileKeyboardAccessoryPopoverView *)itemPopoverView
+{
+    if (!itemPopoverView)
+    {
+        itemPopoverView = [ACCodeFileKeyboardAccessoryPopoverView new];
+    }
+    return itemPopoverView;
 }
 
 #pragma mark - View Methods
@@ -226,6 +235,24 @@ static const void *itemContext;
 {
     ECASSERT(position >= 0 && position < 3);
     return _itemInsets[position];
+}
+
+#pragma mark - Popover Methods
+
+- (void)presentPopoverForItemAtIndex:(NSUInteger)index permittedArrowDirection:(UIPopoverArrowDirection)direction animated:(BOOL)animated
+{
+    ECASSERT(index < [self.items count]);
+    
+    UIView *itemView = [[self.items objectAtIndex:index] customView];
+    if (!itemView)
+        return;
+    
+    
+}
+
+- (void)dismissPopoverForItemAnimated:(BOOL)animated
+{
+    
 }
 
 @end

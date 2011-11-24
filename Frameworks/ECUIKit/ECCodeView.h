@@ -67,7 +67,10 @@
 /// Specify the color of the selection rect.
 @property (nonatomic, strong) UIColor *selectionColor;
 
-#pragma mark Accessory View
+#pragma mark Accessories
+
+/// The popover controller to use to show magnifications.
++ (Class)magnificationPopoverControllerClass;
 
 /// Gets the receiver's accessory view.
 @property (nonatomic, strong) ECKeyboardAccessoryView *keyboardAccessoryView;

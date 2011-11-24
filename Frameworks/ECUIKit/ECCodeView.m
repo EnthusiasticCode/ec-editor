@@ -11,7 +11,6 @@
 #import "ECTextPosition.h"
 #import "ECTextRange.h"
 #import <ECFoundation/NSTimer+block.h>
-#import "ECPopoverController.h"
 #import "ECKeyboardAccessoryView.h"
 #import <ECUIKit/ECBezelAlert.h>
 
@@ -30,7 +29,6 @@
 @private
     // Text management
     TextSelectionView *selectionView;
-    ECPopoverController *completionPopover;
     NSRange markedRange;
     
     ECCodeViewUndoManager *_undoManager;
@@ -158,7 +156,7 @@
 #pragma mark Magnification
 
 @property (nonatomic, getter = isMagnifying) BOOL magnify;
-@property (nonatomic, readonly, strong) ECPopoverController *magnificationPopover;
+@property (nonatomic, readonly, strong) UIPopoverController *magnificationPopover;
 @property (nonatomic, readonly, strong) TextMagnificationView *magnificationView;
 
 - (void)setMagnify:(BOOL)doMagnify fromRect:(CGRect)rect textPoint:(CGPoint)textPoint ratio:(CGFloat)ratio animated:(BOOL)animated;
@@ -308,6 +306,7 @@
 
 @synthesize selection, selectionRects;
 @synthesize selectionColor, caretColor, blink;
+@synthesize magnificationPopover, magnificationView;
 
 - (void)setSelection:(NSRange)range
 {
@@ -462,7 +461,7 @@
 
 #pragma mark Magnification
 
-@synthesize magnify, magnificationPopover;
+@synthesize magnify;
 
 - (void)setMagnify:(BOOL)doMagnify
 {
@@ -523,30 +522,30 @@
     }
 }
 
-- (ECPopoverController *)magnificationPopover
+- (UIPopoverController *)magnificationPopover
 {
     if (!magnificationPopover) 
     {
-        magnificationPopover = [[ECPopoverController alloc] initWithContentViewController:nil];
-        magnificationPopover.automaticDismiss = NO;
-        // TODO size with proportional text line height
-        [magnificationPopover setPopoverContentSize:(CGSize){200, 40} animated:NO];
+        UIViewController *magnificationViewController = [[UIViewController alloc] init];
+        magnificationViewController.view = self.magnificationView;
+        magnificationViewController.contentSizeForViewInPopover = CGSizeMake(200, 40);
         
-        TextMagnificationView *detail = [[TextMagnificationView alloc] initWithFrame:CGRectMake(0, 0, 200, 40) codeView:parent];
-        detail.backgroundColor = parent.backgroundColor;
-        // TODO make this more efficient
-        detail.layer.cornerRadius = 3;
-        detail.layer.masksToBounds = YES;
-        
-        magnificationPopover.popoverView.contentView = detail;
-        
+        magnificationPopover = [[[[parent class] magnificationPopoverControllerClass] alloc] initWithContentViewController:magnificationViewController];
     }
     return magnificationPopover;
 }
 
 - (TextMagnificationView *)magnificationView
 {
-    return (TextMagnificationView *)self.magnificationPopover.popoverView.contentView;
+    if (!magnificationView)
+    {
+        magnificationView = [[TextMagnificationView alloc] initWithFrame:CGRectMake(0, 0, 200, 40) codeView:parent];
+        magnificationView.backgroundColor = parent.backgroundColor;
+        // TODO make this more efficient
+        magnificationView.layer.cornerRadius = 3;
+        magnificationView.layer.masksToBounds = YES;
+    }
+    return magnificationView;
 }
 
 - (void)handleKnobGesture:(UILongPressGestureRecognizer *)recognizer
@@ -737,6 +736,11 @@
     if (selectionView.selection.length == 0)
         return [ECRectSet rectSetWithRect:[self caretRectForPosition:selectionView.selectionPosition]];
     return selectionView.selectionRects;
+}
+
++ (Class)magnificationPopoverControllerClass
+{
+    return [UIPopoverController class];
 }
 
 #pragma mark UIView Methods
