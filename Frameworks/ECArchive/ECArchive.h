@@ -10,10 +10,7 @@
 
 @interface ECArchive : NSObject
 
-/// Initializes the archive with a file URL referencing an existing archive file
-- (id)initWithFileURL:(NSURL *)URL;
-
-/// Extracts the archive to the specified directory
-- (void)extractToDirectory:(NSURL *)URL;
++ (BOOL)extractArchiveAtURL:(NSURL *)archiveURL toDirectory:(NSURL *)directoryURL;
++ (BOOL)compressDirectoryAtURL:(NSURL *)directoryURL toArchive:(NSURL *)archiveURL;
 
 @end

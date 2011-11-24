@@ -94,8 +94,7 @@
     }
     else if (indexPath.section == 1)
     {
-        ECArchive *archive = [[ECArchive alloc] initWithFileURL:[_documentsDirectoryPresenter.fileURLs objectAtIndex:indexPath.row]];
-        [archive extractToDirectory:self.projectsDirectory];
+        [ECArchive extractArchiveAtURL:[_documentsDirectoryPresenter.fileURLs objectAtIndex:indexPath.row] toDirectory:self.projectsDirectory];
     }
 }
 
