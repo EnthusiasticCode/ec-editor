@@ -516,7 +516,7 @@
         self._keyboardAccessoryView.itemPopoverView.positioningInsets = UIEdgeInsetsMake(4, 3, 4, 3);
         [self._keyboardAccessoryView.itemPopoverView setArrowSize:CGSizeMake(62, 54) forMetaPosition:PopoverViewArrowMetaPositionFarLeft];
         [self._keyboardAccessoryView.itemPopoverView setArrowSize:CGSizeMake(56, 54) forMetaPosition:PopoverViewArrowMetaPositionMiddle];
-        [self._keyboardAccessoryView.itemPopoverView setArrowSize:CGSizeMake(70, 54) forMetaPosition:PopoverViewArrowMetaPositionFarRight];
+        [self._keyboardAccessoryView.itemPopoverView setArrowSize:CGSizeMake(62, 54) forMetaPosition:PopoverViewArrowMetaPositionFarRight];
     }
     else if (_keyboardFrame.size.width > 768)
     {
@@ -574,6 +574,8 @@
 
 - (BOOL)codeViewShouldHideKeyboardAccessoryView:(ECCodeView *)codeView
 {
+    [self._keyboardAccessoryView dismissPopoverForItemAnimated:YES];
+    
     if (!codeView.keyboardAccessoryView.isSplit)
     {
         [UIView animateWithDuration:0.25 delay:0 options:UIViewAnimationOptionCurveEaseInOut | UIViewAnimationOptionBeginFromCurrentState animations:^{

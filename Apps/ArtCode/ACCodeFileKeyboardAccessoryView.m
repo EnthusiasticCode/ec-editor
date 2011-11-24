@@ -7,6 +7,7 @@
 //
 
 #import "ACCodeFileKeyboardAccessoryView.h"
+#import <ECUIKit/ECInstantGestureRecognizer.h>
 #import <objc/message.h>
 
 // TODO see http://developer.apple.com/library/ios/#documentation/StringsTextFonts/Conceptual/TextAndWebiPhoneOS/InputViews/InputViews.html#//apple_ref/doc/uid/TP40009542-CH12-SW1 for input clicks
@@ -17,6 +18,28 @@ static const void *itemContext;
     UIEdgeInsets _itemInsets[3];
     CGFloat _itemWidth[4];
     UIEdgeInsets _contentIntets[3];
+    ECInstantGestureRecognizer *_itemPopoverViewDismissRecognizer;
+}
+
+#pragma mark - Private Methods
+
+- (void)_handleDismissRecognizer:(ECInstantGestureRecognizer *)recognizer
+{
+    if (recognizer.state == UIGestureRecognizerStateRecognized)
+    {
+        [self dismissPopoverForItemAnimated:YES];
+    }
+}
+
+- (ECInstantGestureRecognizer *)_itemPopoverViewDismissRecognizer
+{
+    if (!_itemPopoverViewDismissRecognizer)
+    {
+        _itemPopoverViewDismissRecognizer = [[ECInstantGestureRecognizer alloc] initWithTarget:self action:@selector(_handleDismissRecognizer:)];
+//        _itemPopoverViewDismissRecognizer.cancelsTouchesInView = NO;
+        _itemPopoverViewDismissRecognizer.passTroughViews = [NSArray arrayWithObject:self.itemPopoverView.contentView];
+    }
+    return _itemPopoverViewDismissRecognizer;
 }
 
 #pragma mark - Properties
@@ -41,6 +64,7 @@ static const void *itemContext;
     if (!itemPopoverView)
     {
         itemPopoverView = [ACCodeFileKeyboardAccessoryPopoverView new];
+        itemPopoverView.alpha = 0;
     }
     return itemPopoverView;
 }
@@ -290,6 +314,8 @@ static const void *itemContext;
         // Present
         [UIView animateWithDuration:animated ? 0.25 : 0 animations:^{
             self.itemPopoverView.alpha = 1;
+        } completion:^(BOOL finished) {
+            [self.window addGestureRecognizer:[self _itemPopoverViewDismissRecognizer]];
         }];
     }];    
 }
@@ -298,6 +324,8 @@ static const void *itemContext;
 {
     if (itemPopoverView.superview == nil)
         return;
+    
+    [self.window removeGestureRecognizer:[self _itemPopoverViewDismissRecognizer]];
     
     if (self.willDismissPopoverForItemBlock)
         self.willDismissPopoverForItemBlock(self, 0.25);

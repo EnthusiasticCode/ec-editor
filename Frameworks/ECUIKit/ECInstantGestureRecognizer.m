@@ -11,28 +11,30 @@
 
 @implementation ECInstantGestureRecognizer
 
-- (id)initWithTarget:(id)target action:(SEL)action
-{
-    if ((self = [super initWithTarget:target action:action])) 
-    {
-        self.cancelsTouchesInView = NO;
-    }
-    return self;
-}
+@synthesize passTroughViews;
 
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
 {
+    UITouch *touch = [touches anyObject];
+    for (UIView *view in self.passTroughViews)
+    {
+        if (CGRectContainsPoint(view.bounds, [touch locationInView:view]))
+        {
+            [self ignoreTouch:touch forEvent:event];
+            return;
+        }
+    }
     self.state = UIGestureRecognizerStateRecognized;
 }
 
 - (BOOL)canPreventGestureRecognizer:(UIGestureRecognizer *)preventedGestureRecognizer
 {
-    return NO;
+    return YES;
 }
 
 - (BOOL)canBePreventedByGestureRecognizer:(UIGestureRecognizer *)preventingGestureRecognizer
 {
-    return YES;
+    return NO;
 }
 
 @end

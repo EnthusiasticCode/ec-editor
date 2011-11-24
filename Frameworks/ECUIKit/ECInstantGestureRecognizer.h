@@ -12,4 +12,6 @@
 /// canceling it.
 @interface ECInstantGestureRecognizer : UIGestureRecognizer
 
+@property (nonatomic, copy) NSArray *passTroughViews;
+
 @end
