@@ -239,6 +239,8 @@ static const void *itemContext;
 
 #pragma mark - Popover Methods
 
+@synthesize willPresentPopoverForItemBlock, willDismissPopoverForItemBlock;
+
 - (void)presentPopoverForItemAtIndex:(NSUInteger)index permittedArrowDirection:(UIPopoverArrowDirection)direction animated:(BOOL)animated
 {
     ECASSERT(index < [self.items count]);
@@ -247,12 +249,64 @@ static const void *itemContext;
     if (!itemView)
         return;
     
+    // Get popover size
+    UIEdgeInsets popoverContentInsets = self.itemPopoverView.contentInsets;
+    CGSize popoverSize = self.itemPopoverView.contentSize;
+    popoverSize.width += popoverContentInsets.left + popoverContentInsets.right;
+    popoverSize.height += popoverContentInsets.top + popoverContentInsets.bottom;
+    CGSize popoverSize_2 = CGSizeMake(popoverSize.width / 2.0, popoverSize.height / 2.0);
     
+    // Set popover center
+    UIEdgeInsets positioningInsets = self.itemPopoverView.positioningInsets;
+    CGPoint center = itemView.center;
+    center.x = MAX(popoverSize_2.width + positioningInsets.left, MIN(self.frame.size.width - popoverSize_2.width - positioningInsets.right, center.x));
+    if (direction & UIPopoverArrowDirectionUp)
+    {
+        self.itemPopoverView.arrowDirection = UIPopoverArrowDirectionUp;
+        center.y = CGRectGetMaxY(itemView.frame) + popoverSize_2.height - positioningInsets.top;
+    }
+    else
+    {
+        self.itemPopoverView.arrowDirection = UIPopoverArrowDirectionDown;
+        center.y = itemView.frame.origin.y - popoverSize_2.height + positioningInsets.bottom;
+    }
+
+    // Dismiss popover if already visible
+    BOOL shouldHidePopoverFirst = (self.itemPopoverView.superview != nil);
+    if (shouldHidePopoverFirst && self.willDismissPopoverForItemBlock)
+        self.willDismissPopoverForItemBlock(self, 0.25);
+    
+    // Present popover
+    [self insertSubview:self.itemPopoverView belowSubview:itemView];
+    [UIView animateWithDuration:shouldHidePopoverFirst ? 0.25 : 0 animations:^{
+        self.itemPopoverView.alpha = 0;
+    } completion:^(BOOL finished) {
+        // Setup view
+        self.itemPopoverView.center = center;
+        self.itemPopoverView.arrowPosition = itemView.center.x - self.itemPopoverView.frame.origin.x;
+        // Inform handler
+        if (self.willPresentPopoverForItemBlock)
+            self.willPresentPopoverForItemBlock(self, index, self.itemPopoverView.contentView.frame, 0.25);
+        // Present
+        [UIView animateWithDuration:animated ? 0.25 : 0 animations:^{
+            self.itemPopoverView.alpha = 1;
+        }];
+    }];    
 }
 
 - (void)dismissPopoverForItemAnimated:(BOOL)animated
 {
+    if (itemPopoverView.superview == nil)
+        return;
     
+    if (self.willDismissPopoverForItemBlock)
+        self.willDismissPopoverForItemBlock(self, 0.25);
+    
+    [UIView animateWithDuration:animated ? 0.25 : 0 animations:^{
+        itemPopoverView.alpha = 0;
+    } completion:^(BOOL finished) {
+        [itemPopoverView removeFromSuperview];
+    }];
 }
 
 @end
