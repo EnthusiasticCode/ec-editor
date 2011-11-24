@@ -605,17 +605,6 @@
     [self didChangeValueForKey:@"delegate"];
 }
 
-- (void)setDataSource:(id<ECTextRendererDataSource>)aDataSource
-{
-    if (dataSource == aDataSource)
-        return;
-    
-    [self willChangeValueForKey:@"dataSource"];
-    dataSource = aDataSource;
-    [self updateAllText];
-    [self didChangeValueForKey:@"dataSource"];
-}
-
 - (void)setRenderWidth:(CGFloat)width
 {
     if (width == renderWidth)
