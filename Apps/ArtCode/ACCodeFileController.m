@@ -48,14 +48,15 @@
     NSMutableArray *_keyboardAccessoryItemActions;
 }
 
-@property (nonatomic, strong) ACFileDocument *document;
-
 @property (nonatomic, strong, readonly) ECPopoverController *_keyboardAccessoryItemPopover;
 @property (nonatomic, strong, readonly) ACCodeFileCompletionsController *_keyboardAccessoryItemCompletionsController;
 @property (nonatomic, strong, readonly) UIViewController *_keyboardAccessoryItemCustomizeController;
 
 @property (nonatomic, strong) ACSyntaxColorer *syntaxColorer;
 @property (nonatomic, strong) NSDictionary *defaultTextAttributes;
+
+- (void)_loadDocument;
+- (void)_unloadDocument;
 
 - (void)_layoutChildViews;
 
@@ -180,41 +181,11 @@
     
     [self willChangeValueForKey:@"fileURL"];
     
-    [_document closeWithCompletionHandler:nil];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:ECFileBufferDidReplaceCharactersNotificationName object:_document.fileBuffer];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:ECFileBufferDidChangeAttributesNotificationName object:_document.fileBuffer];
-    
-    self.document = nil;
-    self.syntaxColorer = nil;
+    [self _unloadDocument];
     _fileURL = fileURL;
     
-    if (fileURL)
-    {
-        self.loading = YES;
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            ACFileDocument *document = [[ACFileDocument alloc] initWithFileURL:fileURL];
-            
-            [document openWithCompletionHandler:^(BOOL success) {
-                ECASSERT(success);
-                ACSyntaxColorer *colorer = [[ACSyntaxColorer alloc] initWithFileBuffer:[document fileBuffer]];
-                colorer.defaultTextAttributes = self.defaultTextAttributes;
-                colorer.theme = [TMTheme themeWithName:@"Mac Classic" bundle:nil];
-                [colorer applySyntaxColoring];
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    document.undoManager = self.codeView.undoManager;
-                    self.document = document;
-                    self.syntaxColorer = colorer;
-                    [self.codeView updateAllText];
-                    if (self.isViewLoaded)
-                    {
-                        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_fileBufferDidChange:) name:ECFileBufferDidReplaceCharactersNotificationName object:self.document.fileBuffer];
-                        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_fileBufferDidChange:) name:ECFileBufferDidChangeAttributesNotificationName object:self.document.fileBuffer];
-                    }
-                    self.loading = NO;
-                });
-            }];
-        });
-    }
+    if (fileURL && self.isViewLoaded)
+        [self _loadDocument];
     
     [self didChangeValueForKey:@"fileURL"];
 }
@@ -337,14 +308,9 @@
 {
     self.toolbarItems = [NSArray arrayWithObject:[[UIBarButtonItem alloc] initWithTitle:@"tools" style:UIBarButtonItemStylePlain target:self action:@selector(toolButtonAction:)]];
     
-    // File buffer notifications
-    if (self.document.fileBuffer)
-    {
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_fileBufferDidChange:) name:ECFileBufferDidReplaceCharactersNotificationName object:self.document.fileBuffer];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_fileBufferDidChange:) name:ECFileBufferDidChangeAttributesNotificationName object:self.document.fileBuffer];
-    }
+    [self _loadDocument];
     
-    // Keyboard nottifications
+    // Keyboard notifications
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_keyboardWillChangeFrame:) name:UIKeyboardWillChangeFrameNotification object:nil];
@@ -355,6 +321,8 @@
 - (void)viewDidUnload
 {
     [super viewDidUnload];
+    
+    [self _unloadDocument];
     
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     
@@ -529,6 +497,46 @@
 }
 
 #pragma mark - Private Methods
+
+- (void)_loadDocument
+{
+    ECASSERT(self.isViewLoaded);
+    if (!self.fileURL)
+        return;
+    
+    self.loading = YES;
+    _document = [[ACFileDocument alloc] initWithFileURL:self.fileURL];
+    ECASSERT(_document);
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        [_document openWithCompletionHandler:^(BOOL success) {
+            ECASSERT(success);
+            ACSyntaxColorer *colorer = [[ACSyntaxColorer alloc] initWithFileBuffer:[_document fileBuffer]];
+            colorer.defaultTextAttributes = self.defaultTextAttributes;
+            colorer.theme = [TMTheme themeWithName:@"Mac Classic" bundle:nil];
+            [colorer applySyntaxColoring];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                _document.undoManager = self.codeView.undoManager;
+                self.syntaxColorer = colorer;
+                [self.codeView updateAllText];
+                [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_fileBufferDidChange:) name:ECFileBufferDidReplaceCharactersNotificationName object:_document.fileBuffer];
+                [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_fileBufferDidChange:) name:ECFileBufferDidChangeAttributesNotificationName object:_document.fileBuffer];
+                self.loading = NO;
+            });
+        }];
+    });
+}
+
+- (void)_unloadDocument
+{
+    self.syntaxColorer = nil;
+    if (_document)
+    {
+        [[NSNotificationCenter defaultCenter] removeObserver:self name:ECFileBufferDidReplaceCharactersNotificationName object:_document.fileBuffer];
+        [[NSNotificationCenter defaultCenter] removeObserver:self name:ECFileBufferDidChangeAttributesNotificationName object:_document.fileBuffer];
+        [_document closeWithCompletionHandler:nil];
+        _document = nil;
+    }
+}
 
 - (void)_layoutChildViews
 {
