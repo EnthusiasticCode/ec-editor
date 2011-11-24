@@ -7,6 +7,7 @@
 //
 
 #import "ACCodeFileCompletionsController.h"
+#import "ACCodeFileCompletionCell.h"
 
 #import <ECFoundation/ECAttributedUTF8FileBuffer.h>
 #import <ECCodeIndexing/ECCodeUnit.h>
@@ -33,6 +34,7 @@
 
 @synthesize targetCodeFileController, targetPopoverController;
 @synthesize offsetInDocumentForCompletions;
+@synthesize completionCell;
 @synthesize _codeIndex, _codeUnit, _completionResults;
 
 - (void)setTargetCodeFileController:(ACCodeFileController *)value
@@ -92,6 +94,7 @@
 
 - (void)viewDidUnload
 {
+    [self setCompletionCell:nil];
     [super viewDidUnload];
     self._codeUnit = nil;
     self._codeIndex = nil;
@@ -119,18 +122,75 @@
 {
     static NSString *CellIdentifier = @"Cell";
     
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
-    if (cell == nil) {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
+    ACCodeFileCompletionCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+    if (cell == nil)
+    {
+        [[NSBundle mainBundle] loadNibNamed:@"CompletionControllerCell" owner:self options:nil];
+        cell = self.completionCell;
+        completionCell = nil;
+        
+        cell.definitionLabel.font = cell.typeLabel.font = [UIFont fontWithName:@"Inconsolata-dz" size:14];
+        cell.typeLabelSize = 0;
     }
     
     id<ECCodeCompletionResult> result = [self._completionResults completionResultAtIndex:[indexPath indexAtPosition:1]];
     
-    NSMutableString *text = [NSMutableString new];
-    for (id<ECCodeCompletionChunk> chunk in [[result completionString] completionChunks])
-        [text appendFormat:@"%@, ", [chunk text]];
-    cell.textLabel.text = text;
+    // Kind
+    cell.kindImageView.image = [UIImage imageNamed:[NSString stringWithFormat:@"completionKind_%d", [result cursorKind]]];
     
+    // Type
+    // TODO
+    
+    // Definition
+    NSInteger parenDepth = 0;
+    NSMutableString *definition = [NSMutableString new];
+    for (id<ECCodeCompletionChunk> chunk in [[result completionString] completionChunks])
+    {
+        switch ([chunk kind]) {
+            case CXCompletionChunk_Comma:
+                [definition appendString:@", "];
+                break;
+                
+            case CXCompletionChunk_Equal:
+                [definition appendString:@" = "];
+                break;
+                
+                
+            case CXCompletionChunk_LeftParen:
+                parenDepth++;
+                [definition appendString:[chunk text]];
+                break;
+                
+            case CXCompletionChunk_RightParen:
+                parenDepth--;
+                [definition appendString:[chunk text]];
+                break;
+                
+            case CXCompletionChunk_Text:
+                if (parenDepth == 0)
+                    break;
+                [definition appendString:[chunk text]];
+                break;
+                
+            case CXCompletionChunk_Informative:
+            case CXCompletionChunk_SemiColon:
+                // Ignore
+                break;
+                
+            case CXCompletionChunk_Optional:
+            case CXCompletionChunk_VerticalSpace:
+                // Unhandled
+                ECASSERT(NO && "Unhandled chunk kind");
+                break;
+                
+            case CXCompletionChunk_Placeholder:
+            default:
+                [definition appendString:[chunk text]];
+                break;
+        }
+    }
+    cell.definitionLabel.text = definition;
+
     return cell;
 }
 
@@ -138,13 +198,9 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    // Navigation logic may go here. Create and push another view controller.
-    /*
-     <#DetailViewController#> *detailViewController = [[<#DetailViewController#> alloc] initWithNibName:@"<#Nib name#>" bundle:nil];
-     // ...
-     // Pass the selected object to the new view controller.
-     [self.navigationController pushViewController:detailViewController animated:YES];
-     */
+    // Dismiss selection
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
+    [self.targetPopoverController dismissPopoverAnimated:YES];
 }
 
 @end

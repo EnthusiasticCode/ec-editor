@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@class ACCodeFileController, ECPopoverController, ECCodeIndex, ECCodeUnit;
+@class ACCodeFileController, ECPopoverController, ECCodeIndex, ECCodeUnit, ACCodeFileCompletionCell;
 
 @interface ACCodeFileCompletionsController : UITableViewController
 
@@ -21,5 +21,8 @@
 
 /// The offset in the target code file controller's document content for which show completions. Setting this property will make the controller reload the completions.
 @property (nonatomic) NSUInteger offsetInDocumentForCompletions;
+
+/// Cell instantiated by loading the CompletionControllerCell xib.
+@property (strong, nonatomic) IBOutlet ACCodeFileCompletionCell *completionCell;
 
 @end

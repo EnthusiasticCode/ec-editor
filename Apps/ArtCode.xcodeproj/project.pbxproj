@@ -139,6 +139,8 @@
 		CDC1333814602F5E0028423F /* searchBar_NextButton_Normal.png in Resources */ = {isa = PBXBuildFile; fileRef = CDC1333414602F5E0028423F /* searchBar_NextButton_Normal.png */; };
 		CDC1333914602F5E0028423F /* searchBar_PrevButton_Normal.png in Resources */ = {isa = PBXBuildFile; fileRef = CDC1333514602F5E0028423F /* searchBar_PrevButton_Normal.png */; };
 		CDC1333B146030380028423F /* searchBar_OptionButton.png in Resources */ = {isa = PBXBuildFile; fileRef = CDC1333A146030380028423F /* searchBar_OptionButton.png */; };
+		CDC1A079147E6EC300E01B7A /* ACCodeFileCompletionCell.m in Sources */ = {isa = PBXBuildFile; fileRef = CDC1A078147E6EC300E01B7A /* ACCodeFileCompletionCell.m */; };
+		CDC1A07B147E6EF500E01B7A /* CompletionControllerCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = CDC1A07A147E6EF500E01B7A /* CompletionControllerCell.xib */; };
 		CDC2829314508D500054358D /* topBar_Background.png in Resources */ = {isa = PBXBuildFile; fileRef = CDC2828F14508D500054358D /* topBar_Background.png */; };
 		CDC2829414508D500054358D /* topBar_ForwardButton_Normal.png in Resources */ = {isa = PBXBuildFile; fileRef = CDC2829014508D500054358D /* topBar_ForwardButton_Normal.png */; };
 		CDC2829514508D500054358D /* topBar_TitleButton_Normal.png in Resources */ = {isa = PBXBuildFile; fileRef = CDC2829114508D500054358D /* topBar_TitleButton_Normal.png */; };
@@ -462,6 +464,9 @@
 		CDC1333414602F5E0028423F /* searchBar_NextButton_Normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = searchBar_NextButton_Normal.png; sourceTree = "<group>"; };
 		CDC1333514602F5E0028423F /* searchBar_PrevButton_Normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = searchBar_PrevButton_Normal.png; sourceTree = "<group>"; };
 		CDC1333A146030380028423F /* searchBar_OptionButton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = searchBar_OptionButton.png; sourceTree = "<group>"; };
+		CDC1A077147E6EC300E01B7A /* ACCodeFileCompletionCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACCodeFileCompletionCell.h; sourceTree = "<group>"; };
+		CDC1A078147E6EC300E01B7A /* ACCodeFileCompletionCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACCodeFileCompletionCell.m; sourceTree = "<group>"; };
+		CDC1A07A147E6EF500E01B7A /* CompletionControllerCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CompletionControllerCell.xib; sourceTree = "<group>"; };
 		CDC2828F14508D500054358D /* topBar_Background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = topBar_Background.png; sourceTree = "<group>"; };
 		CDC2829014508D500054358D /* topBar_ForwardButton_Normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = topBar_ForwardButton_Normal.png; sourceTree = "<group>"; };
 		CDC2829114508D500054358D /* topBar_TitleButton_Normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = topBar_TitleButton_Normal.png; sourceTree = "<group>"; };
@@ -692,6 +697,8 @@
 			children = (
 				CD78E51E14729A0E00801C3F /* ACCodeFileCompletionsController.h */,
 				CD78E51F14729A0E00801C3F /* ACCodeFileCompletionsController.m */,
+				CDC1A077147E6EC300E01B7A /* ACCodeFileCompletionCell.h */,
+				CDC1A078147E6EC300E01B7A /* ACCodeFileCompletionCell.m */,
 			);
 			name = Completion;
 			sourceTree = "<group>";
@@ -829,6 +836,7 @@
 				CD7D2B4D13C0D5FB00B889EE /* ToolPanelStoryboard.storyboard */,
 				CDB7C92F1455762E00E0D2B2 /* SingleProjectBrowsers.storyboard */,
 				CD70F4CD147A615000EAEEDC /* SearchBar.storyboard */,
+				CDC1A07A147E6EF500E01B7A /* CompletionControllerCell.xib */,
 			);
 			name = UI;
 			sourceTree = "<group>";
@@ -1364,6 +1372,7 @@
 				CD9ED8EE1466EFCE00A517A5 /* accessoryView_backgroundSplitRightTop.png in Resources */,
 				CD9ED8FB1467E5C300A517A5 /* accessoryView_itemBackground.png in Resources */,
 				CD70F4CE147A615000EAEEDC /* SearchBar.storyboard in Resources */,
+				CDC1A07B147E6EF500E01B7A /* CompletionControllerCell.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1416,6 +1425,7 @@
 				CD78E52014729A0E00801C3F /* ACCodeFileCompletionsController.m in Sources */,
 				CD41529814752D61004C7157 /* ACCodeFileAccessoryItemsGridView.m in Sources */,
 				CD41529B14753520004C7157 /* ACCodeFileAccessoryAction.m in Sources */,
+				CDC1A079147E6EC300E01B7A /* ACCodeFileCompletionCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
