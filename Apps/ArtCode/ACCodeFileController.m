@@ -20,7 +20,6 @@
 #import "ACSingleTabController.h"
 #import "ACCodeFileSearchBarController.h"
 
-#import <ECUIKit/ECTexturedPopoverView.h>
 #import "ACCodeFileKeyboardAccessoryView.h"
 #import "ACCodeFileKeyboardAccessoryPopoverView.h"
 #import "ACCodeFileCompletionsController.h"
@@ -157,7 +156,7 @@
                 presentedView = this._keyboardAccessoryItemCompletionsController.view;
             else if (itemIndex > 0)
                 presentedView = this._keyboardAccessoryItemCustomizeController.view;
-            CGRect popoverContentFrame = [presentingView convertRect:sender.itemPopoverView.contentView.frame fromView:sender.itemPopoverView];
+            CGRect popoverContentFrame = CGRectIntegral([presentingView convertRect:sender.itemPopoverView.contentView.frame fromView:sender.itemPopoverView]);
             presentedView.frame = popoverContentFrame;
             [presentingView addSubview:presentedView];
             presentedView.alpha = 0;
