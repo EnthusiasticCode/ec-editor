@@ -6,27 +6,28 @@
 //  Copyright 2011 __MyCompanyName__. All rights reserved.
 //
 
+#import "ACCodeFileController.h"
+#import <QuartzCore/QuartzCore.h>
+#import <ECFoundation/NSTimer+block.h>
+
 #import "ACFileDocument.h"
 #import <ECFoundation/ECAttributedUTF8FileBuffer.h>
-#import "ACSyntaxColorer.h"
-#import "ACCodeFileController.h"
-#import <ECFoundation/NSTimer+block.h>
-#import <QuartzCore/QuartzCore.h>
 
+#import "ACSyntaxColorer.h"
 #import <ECCodeIndexing/TMTheme.h>
 
 #import <ECUIKit/ECTabController.h>
-
 #import "ACSingleTabController.h"
 #import "ACCodeFileSearchBarController.h"
 
+#import <ECUIKit/ECTexturedPopoverView.h>
 #import "ACCodeFileKeyboardAccessoryView.h"
 #import "ACCodeFileKeyboardAccessoryPopoverView.h"
-#import <ECUIKit/ECTexturedPopoverView.h>
 #import "ACCodeFileCompletionsController.h"
 #import "ACCodeFileAccessoryAction.h"
 #import "ACCodeFileAccessoryItemsGridView.h"
 
+#import "ACShapePopoverBackgroundView.h"
 
 @interface ACCodeFileController () {
     UIActionSheet *_toolsActionSheet;
@@ -91,6 +92,7 @@
         _codeView = [ECCodeView new];
         _codeView.dataSource = self;
         _codeView.delegate = self;
+        _codeView.magnificationPopoverControllerClass = [ACShapePopoverController class];
         
         _codeView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
         _codeView.backgroundColor = [UIColor whiteColor];

@@ -15,8 +15,8 @@
 #import <ECUIKit/UIControl+BlockAction.h>
 
 #import "AppStyle.h"
+#import "ACShapePopoverBackgroundView.h"
 #import <ECUIKit/ECTabController.h>
-#import <ECUIKit/ECShapePopoverView.h>
 
 #import "ACSingleTabController.h"
 
@@ -54,12 +54,8 @@
     
     ////////////////////////////////////////////////////////////////////////////
     // Generic popover
-    id popoverAppearance = [ECShapePopoverView appearance];
+    id popoverAppearance = [ACShapePopoverBackgroundView appearance];
     [popoverAppearance setBackgroundColor:[UIColor styleForegroundColor]];
-    [popoverAppearance setContentWrapCornerRadius:4];
-    [popoverAppearance setShadowOpacity:0.5];
-    [popoverAppearance setShadowRadius:4];
-    [popoverAppearance setShadowOffsetForArrowDirectionUpToAutoOrient:CGSizeMake(0, 2)];
 
     ////////////////////////////////////////////////////////////////////////////
     // Tab Bar    

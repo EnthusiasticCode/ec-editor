@@ -530,7 +530,7 @@
         magnificationViewController.view = self.magnificationView;
         magnificationViewController.contentSizeForViewInPopover = CGSizeMake(200, 40);
         
-        magnificationPopover = [[[[parent class] magnificationPopoverControllerClass] alloc] initWithContentViewController:magnificationViewController];
+        magnificationPopover = [[parent.magnificationPopoverControllerClass alloc] initWithContentViewController:magnificationViewController];
     }
     return magnificationPopover;
 }
@@ -659,7 +659,7 @@
 #pragma mark - Properties
 
 @dynamic dataSource, delegate;
-@synthesize keyboardAccessoryView;
+@synthesize keyboardAccessoryView, magnificationPopoverControllerClass;
 
 - (void)setDataSource:(id<ECCodeViewDataSource>)aDataSource
 {
@@ -738,9 +738,11 @@
     return selectionView.selectionRects;
 }
 
-+ (Class)magnificationPopoverControllerClass
+- (Class)magnificationPopoverControllerClass
 {
-    return [UIPopoverController class];
+    if (!magnificationPopoverControllerClass)
+        magnificationPopoverControllerClass = [UIPopoverController class];
+    return magnificationPopoverControllerClass;
 }
 
 #pragma mark UIView Methods

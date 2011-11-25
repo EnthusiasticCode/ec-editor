@@ -70,7 +70,7 @@
 #pragma mark Accessories
 
 /// The popover controller to use to show magnifications.
-+ (Class)magnificationPopoverControllerClass;
+@property (nonatomic, strong) Class magnificationPopoverControllerClass;
 
 /// Gets the receiver's accessory view.
 @property (nonatomic, strong) ECKeyboardAccessoryView *keyboardAccessoryView;
