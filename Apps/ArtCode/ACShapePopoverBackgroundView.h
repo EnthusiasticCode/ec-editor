@@ -1,15 +1,15 @@
 //
-//  ECPopoverView.h
-//  MokupControls
+//  ACShapeBackgroundPopoverView.h
+//  ArtCode
 //
-//  Created by Nicola Peduzzi on 08/04/11.
-//  Copyright 2011 __MyCompanyName__. All rights reserved.
+//  Created by Nicola Peduzzi on 25/11/11.
+//  Copyright (c) 2011 __MyCompanyName__. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
-#import "ECBasePopoverView.h"
+#import <UIKit/UIPopoverBackgroundView.h>
 
-@interface ECShapePopoverView : ECBasePopoverView
+@interface ACShapePopoverBackgroundView : UIPopoverBackgroundView
 
 #pragma mark Style
 
@@ -23,18 +23,12 @@
 
 @property (nonatomic) CGFloat shadowRadius UI_APPEARANCE_SELECTOR;
 
-#pragma mark Content
-
-@property (nonatomic, readonly, strong) UIView *contentWrapView;
-
-@property (nonatomic) CGFloat contentWrapCornerRadius UI_APPEARANCE_SELECTOR;
-
-#pragma mark Top Bar
-
-@property (nonatomic, strong) UIView *barView;
-
 #pragma mark Arrow
 
 @property (nonatomic) CGFloat arrowCornerRadius UI_APPEARANCE_SELECTOR;
 
+@end
+
+
+@interface ACShapePopoverController : UIPopoverController
 @end

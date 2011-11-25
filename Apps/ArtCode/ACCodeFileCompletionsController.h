@@ -8,14 +8,16 @@
 
 #import <UIKit/UIKit.h>
 
-@class ACCodeFileController, ECPopoverController, ECCodeIndex, ECCodeUnit, ACCodeFileCompletionCell;
+@class ECCodeIndex, ECCodeUnit;
+@class ACCodeFileKeyboardAccessoryView;
+@class ACCodeFileController, ACCodeFileCompletionCell;
 
 @interface ACCodeFileCompletionsController : UITableViewController
 
 #pragma mark Targets
 
 @property (weak, nonatomic) ACCodeFileController *targetCodeFileController;
-@property (weak, nonatomic) ECPopoverController *targetPopoverController;
+@property (weak, nonatomic) ACCodeFileKeyboardAccessoryView *targetKeyboardAccessoryView;
 
 #pragma mark Completions
 

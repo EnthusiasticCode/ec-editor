@@ -1,95 +1,58 @@
 //
-//  ECPopoverView.m
-//  MokupControls
+//  ACShapeBackgroundPopoverView.m
+//  ArtCode
 //
-//  Created by Nicola Peduzzi on 08/04/11.
-//  Copyright 2011 __MyCompanyName__. All rights reserved.
+//  Created by Nicola Peduzzi on 25/11/11.
+//  Copyright (c) 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import "ECShapePopoverView.h"
-#import "ECRoundedContentCornersView.h"
+#import "ACShapePopoverBackgroundView.h"
 #import <QuartzCore/QuartzCore.h>
 
-#define BARVIEW_HEIGHT 44
+@implementation ACShapePopoverBackgroundView
 
-@implementation ECShapePopoverView {
-    ECRoundedContentCornersView *_contentWrapView;
+static void updatePath(ACShapePopoverBackgroundView *self);
+
++ (CGFloat)arrowBase
+{
+    return 20;
 }
 
-static void updatePath(ECShapePopoverView *self);
++ (CGFloat)arrowHeight
+{
+    return 15;
+}
+
++ (UIEdgeInsets)contentViewInsets
+{
+    return UIEdgeInsetsMake(5, 5, 5, 5);
+}
 
 #pragma mark - Properties
 
-@synthesize contentWrapView = _contentWrapView;
-@synthesize barView = _barView;
+@synthesize arrowOffset, arrowDirection;
 @synthesize cornerRadius, shadowOffsetForArrowDirectionUpToAutoOrient;
 @synthesize arrowCornerRadius;
 
-- (void)setContentView:(UIView *)contentView
+- (void)setArrowOffset:(CGFloat)value
 {
-    if (contentView == self.contentView)
+    if (value == arrowOffset)
         return;
     
-    [super setContentView:contentView];
-    [self.contentView removeFromSuperview];
-    [self.contentWrapView addSubview:self.contentView];
-}
-
-- (CGSize)contentSize
-{
-    CGSize contentSize = [super contentSize];
-    if (self.barView)
-        contentSize.height -= BARVIEW_HEIGHT;
-    return contentSize;
-}
-
-- (UIView *)contentWrapView
-{
-    if (!_contentWrapView)
-    {
-        _contentWrapView = [ECRoundedContentCornersView new];
-    }
-    return _contentWrapView;
-}
-
-- (CGFloat)contentWrapCornerRadius
-{
-    return [(ECRoundedContentCornersView *)self.contentWrapView contentCornerRadius];
-}
-
-- (void)setContentWrapCornerRadius:(CGFloat)contentWrapCornerRadius
-{
-    [(ECRoundedContentCornersView *)self.contentWrapView setContentCornerRadius:contentWrapCornerRadius];
-}
-
-- (void)setBarView:(UIView *)barView
-{
-    if (barView == _barView)
-        return;
-    
-    [self willChangeValueForKey:@"barView"];
-    [_barView removeFromSuperview];
-    _barView = barView;
-    [self addSubview:_barView];
-    [self didChangeValueForKey:@"barView"];
-}
-
-- (void)setArrowPosition:(CGFloat)position
-{
-    if (position == self.arrowPosition)
-        return;
-
-    [super setArrowPosition:position];
+    [self willChangeValueForKey:@"arrowOffset"];
+    arrowOffset = value;
     updatePath(self);
+    [self didChangeValueForKey:@"arrowOffset"];
 }
 
-- (void)setArrowDirection:(UIPopoverArrowDirection)direction
+- (void)setArrowDirection:(UIPopoverArrowDirection)value
 {
-    if (self.arrowDirection == direction)
+    if (value == arrowDirection)
         return;
-    
-    [super setArrowDirection:direction];
+    [self willChangeValueForKey:@"arrowDirection"];
+    arrowDirection = value;
     updatePath(self);
+    [self didChangeValueForKey:@"arrowDirection"];
 }
 
 - (UIColor *)backgroundColor
@@ -101,8 +64,6 @@ static void updatePath(ECShapePopoverView *self);
 {
     CGColorRef color = backgroundColor.CGColor;
     [(CAShapeLayer *)self.layer setFillColor:color];
-    
-    self.contentWrapView.backgroundColor = backgroundColor;
 }
 
 - (CGFloat)shadowRadius
@@ -149,17 +110,12 @@ static void updatePath(ECShapePopoverView *self);
 
 #pragma mark - UIView Methods
 
-static void init(ECShapePopoverView *self)
+static void init(ACShapePopoverBackgroundView *self)
 {
-    [self setArrowSize:CGSizeMake(20, 20) forMetaPosition:ECPopoverViewArrowMetaPositionMiddle];
     self->arrowCornerRadius = 2;
     self->cornerRadius = 5;
     
-    self.contentInsets = UIEdgeInsetsMake(5, 5, 5, 5);
-    
     updatePath(self);
-    
-    [self addSubview:self.contentWrapView];
 }
 
 - (id)initWithFrame:(CGRect)frame
@@ -185,41 +141,42 @@ static void init(ECShapePopoverView *self)
     return [CAShapeLayer class];
 }
 
-- (void)layoutSubviews
-{
-    CGRect bounds = UIEdgeInsetsInsetRect(self.bounds, self.contentInsets);
-
-    if (self.barView)
-    {
-        self.barView.frame = (CGRect){ bounds.origin, CGSizeMake(bounds.size.width, BARVIEW_HEIGHT) };
-        bounds.origin.y += BARVIEW_HEIGHT;
-        bounds.size.height -= BARVIEW_HEIGHT;
-    }
-
-    self.contentWrapView.frame = bounds;
-    self.contentView.frame = self.contentWrapView.bounds;
-}
-
 #pragma mark - Private Methods
 
-// TODO: NIK fix drawing of arrow based on arrowLength
-static void updatePath(ECShapePopoverView *self)
+static void updatePath(ACShapePopoverBackgroundView *self)
 {
     CGRect rect = self.bounds;
     if (CGRectIsEmpty(rect))
         return;
     
+    CGFloat localArrowPosition = self.arrowOffset;
+    switch (self.arrowDirection)
+    {
+        case UIPopoverArrowDirectionUp:
+            rect.origin.x += [[self class] arrowHeight];
+        case UIPopoverArrowDirectionDown:
+            rect.size.height -= [[self class] arrowHeight];
+            localArrowPosition += rect.size.width / 2;
+            break;
+            
+        case UIPopoverArrowDirectionLeft:
+            rect.origin.y += [[self class] arrowHeight];
+        case UIPopoverArrowDirectionRight:
+            rect.size.width -= [[self class] arrowHeight];
+            localArrowPosition += rect.size.height / 2;
+            break;
+    }
+    
     CGMutablePathRef path = CGPathCreateMutable();
     
-    CGFloat localArrowPosition = self.arrowPosition;
     if (self.arrowDirection == UIPopoverArrowDirectionDown)
         localArrowPosition = (rect.size.width <= localArrowPosition) ? 0 : (rect.size.width - localArrowPosition);
     else if (self.arrowDirection == UIPopoverArrowDirectionLeft)
         localArrowPosition = (rect.size.height <= localArrowPosition) ? 0 : (rect.size.height - localArrowPosition);
     
-    CGFloat arrowSize = [self arrowSizeForMetaPosition:self.currentArrowMetaPosition].height;
+    CGFloat arrowSize = [[self class] arrowHeight];
     CGFloat arrowNoCornerSize = arrowSize - self->arrowCornerRadius;
-    CGFloat arrowLength2 = [self arrowSizeForMetaPosition:self.currentArrowMetaPosition].width;
+    CGFloat arrowLength2 = [[self class] arrowBase];
     CGFloat arrowLength = arrowLength2 / 2;
     
     CGRect innerRect = CGRectInset(rect, self->cornerRadius, self->cornerRadius);
@@ -446,6 +403,18 @@ static void updatePath(ECShapePopoverView *self)
     }
     
     CGPathRelease(path); 
+}
+
+@end
+
+@implementation ACShapePopoverController
+
+- (id)initWithContentViewController:(UIViewController *)viewController
+{
+    if (!(self = [super initWithContentViewController:viewController]))
+        return nil;
+    self.popoverBackgroundViewClass = [ACShapePopoverBackgroundView class];
+    return self;
 }
 
 @end

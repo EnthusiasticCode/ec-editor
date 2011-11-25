@@ -14,7 +14,6 @@
 #import <ECFoundation/NSString+ECAdditions.h>
 
 #import "ACToolFiltersView.h"
-#import <ECUIKit/ECPopoverController.h>
 
 #import "ACTab.h"
 
@@ -60,7 +59,7 @@ static void * directoryPresenterFileURLsObservingContext;
 @end
 
 @interface ACFileTableController () {
-    ECPopoverController *_popover;
+    UIPopoverController *_popover;
     NSTimer *filterDebounceTimer;
 }
 @property (nonatomic, strong) ECDirectoryPresenter *directoryPresenter;
@@ -276,7 +275,7 @@ static void * directoryPresenterFileURLsObservingContext;
         UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"NewFilePopover" bundle:[NSBundle mainBundle]];
         ACNewFilePopoverController *popoverViewController = (ACNewFilePopoverController *)[storyboard instantiateInitialViewController];
 //        popoverViewController.group = self.group;
-        _popover = [[ECPopoverController alloc] initWithContentViewController:popoverViewController];
+        _popover = [[UIPopoverController alloc] initWithContentViewController:popoverViewController];
     }
     [_popover presentPopoverFromRect:[sender frame] inView:[sender superview] permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
 }

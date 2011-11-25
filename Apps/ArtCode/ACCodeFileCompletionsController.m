@@ -15,8 +15,7 @@
 
 #import "ACFileDocument.h"
 #import "ACCodeFileController.h"
-
-#import <ECUIKit/ECPopoverController.h>
+#import "ACCodeFileKeyboardAccessoryView.h"
 
 
 @interface ACCodeFileCompletionsController ()
@@ -32,7 +31,7 @@
 
 #pragma mark - Properties
 
-@synthesize targetCodeFileController, targetPopoverController;
+@synthesize targetCodeFileController, targetKeyboardAccessoryView;
 @synthesize offsetInDocumentForCompletions;
 @synthesize completionCell;
 @synthesize _codeIndex, _codeUnit, _completionResults;
@@ -200,7 +199,7 @@
 {
     // Dismiss selection
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
-    [self.targetPopoverController dismissPopoverAnimated:YES];
+    [self.targetKeyboardAccessoryView dismissPopoverForItemAnimated:YES];
 }
 
 @end
