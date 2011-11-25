@@ -158,10 +158,6 @@
 		CD6B0F051434D43000049625 /* ECInverseCornerShapeView.h in Headers */ = {isa = PBXBuildFile; fileRef = CD6B0F031434D43000049625 /* ECInverseCornerShapeView.h */; };
 		CD6B0F061434D43000049625 /* ECInverseCornerShapeView.m in Sources */ = {isa = PBXBuildFile; fileRef = CD6B0F041434D43000049625 /* ECInverseCornerShapeView.m */; };
 		CD6B0F071434D43000049625 /* ECInverseCornerShapeView.m in Sources */ = {isa = PBXBuildFile; fileRef = CD6B0F041434D43000049625 /* ECInverseCornerShapeView.m */; };
-		CD9DFEDB14660A0500922E8C /* accessoryView_popoverArrowRight.png in Resources */ = {isa = PBXBuildFile; fileRef = CD9DFED914660A0500922E8C /* accessoryView_popoverArrowRight.png */; };
-		CD9DFEDC14660A0500922E8C /* accessoryView_popoverBackground.png in Resources */ = {isa = PBXBuildFile; fileRef = CD9DFEDA14660A0500922E8C /* accessoryView_popoverBackground.png */; };
-		CD9ED8A41466991200A517A5 /* accessoryView_popoverArrowMiddle.png in Resources */ = {isa = PBXBuildFile; fileRef = CD9ED8A31466991200A517A5 /* accessoryView_popoverArrowMiddle.png */; };
-		CD9ED8A614669C9900A517A5 /* accessoryView_popoverArrowLeft.png in Resources */ = {isa = PBXBuildFile; fileRef = CD9ED8A514669C9900A517A5 /* accessoryView_popoverArrowLeft.png */; };
 		CDA76308146968E30004FAC7 /* ECKeyboardAccessoryView.h in Headers */ = {isa = PBXBuildFile; fileRef = CDA76306146968E30004FAC7 /* ECKeyboardAccessoryView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CDA76309146968E30004FAC7 /* ECKeyboardAccessoryView.m in Sources */ = {isa = PBXBuildFile; fileRef = CDA76307146968E30004FAC7 /* ECKeyboardAccessoryView.m */; };
 		CDA763101469775C0004FAC7 /* ECCodeStringDataSource.h in Headers */ = {isa = PBXBuildFile; fileRef = CDA7630E1469775B0004FAC7 /* ECCodeStringDataSource.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -177,14 +173,6 @@
 		CDBD28461435115900E05F40 /* ECTabController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDBD28251435101B00E05F40 /* ECTabController.m */; };
 		CDBD2847143512B200E05F40 /* ECTabBar.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170B781428EB2400DF7794 /* ECTabBar.m */; };
 		CDC7C952142A4ADD00FCF269 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7170BD61428F00800DF7794 /* QuartzCore.framework */; };
-		CDE26CD81465D1AB00BF07CA /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B71709DC1428E68A00DF7794 /* UIKit.framework */; };
-		CDE26CD91465D1AB00BF07CA /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B71709AF1428E3CD00DF7794 /* Foundation.framework */; };
-		CDE26CDA1465D1AB00BF07CA /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7170BE41428F1A000DF7794 /* CoreGraphics.framework */; };
-		CDE26CE01465D1AB00BF07CA /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = CDE26CDE1465D1AB00BF07CA /* InfoPlist.strings */; };
-		CDE26CE21465D1AB00BF07CA /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = CDE26CE11465D1AB00BF07CA /* main.m */; };
-		CDE26CE61465D1AB00BF07CA /* ECTexturedPopoverView_AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = CDE26CE51465D1AB00BF07CA /* ECTexturedPopoverView_AppDelegate.m */; };
-		CDE26CE91465D1AB00BF07CA /* ECTexturedPopoverView_ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDE26CE81465D1AB00BF07CA /* ECTexturedPopoverView_ViewController.m */; };
-		CDE26CEC1465D1AB00BF07CA /* ECTexturedPopoverView_ViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CDE26CEA1465D1AB00BF07CA /* ECTexturedPopoverView_ViewController.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -451,10 +439,6 @@
 		CD2A5FCC142A4A9900A2CACD /* ECSplitViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECSplitViewController.m; sourceTree = "<group>"; };
 		CD6B0F031434D43000049625 /* ECInverseCornerShapeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECInverseCornerShapeView.h; sourceTree = "<group>"; };
 		CD6B0F041434D43000049625 /* ECInverseCornerShapeView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECInverseCornerShapeView.m; sourceTree = "<group>"; };
-		CD9DFED914660A0500922E8C /* accessoryView_popoverArrowRight.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = accessoryView_popoverArrowRight.png; path = ../../../../Apps/ArtCode/Resources/accessoryView_popoverArrowRight.png; sourceTree = "<group>"; };
-		CD9DFEDA14660A0500922E8C /* accessoryView_popoverBackground.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = accessoryView_popoverBackground.png; path = ../../../../Apps/ArtCode/Resources/accessoryView_popoverBackground.png; sourceTree = "<group>"; };
-		CD9ED8A31466991200A517A5 /* accessoryView_popoverArrowMiddle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = accessoryView_popoverArrowMiddle.png; path = ../../../../Apps/ArtCode/Resources/accessoryView_popoverArrowMiddle.png; sourceTree = "<group>"; };
-		CD9ED8A514669C9900A517A5 /* accessoryView_popoverArrowLeft.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = accessoryView_popoverArrowLeft.png; path = ../../../../Apps/ArtCode/Resources/accessoryView_popoverArrowLeft.png; sourceTree = "<group>"; };
 		CDA76306146968E30004FAC7 /* ECKeyboardAccessoryView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECKeyboardAccessoryView.h; sourceTree = "<group>"; };
 		CDA76307146968E30004FAC7 /* ECKeyboardAccessoryView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECKeyboardAccessoryView.m; sourceTree = "<group>"; };
 		CDA7630E1469775B0004FAC7 /* ECCodeStringDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCodeStringDataSource.h; sourceTree = "<group>"; };
@@ -468,16 +452,6 @@
 		CDBD28391435104F00E05F40 /* ECTabControllerTest-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ECTabControllerTest-Prefix.pch"; sourceTree = "<group>"; };
 		CDBD283A1435104F00E05F40 /* ECTabControllerTest_AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ECTabControllerTest_AppDelegate.h; sourceTree = "<group>"; };
 		CDBD283B1435104F00E05F40 /* ECTabControllerTest_AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ECTabControllerTest_AppDelegate.m; sourceTree = "<group>"; };
-		CDE26CD61465D1AB00BF07CA /* ECTexturedPopoverView.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ECTexturedPopoverView.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		CDE26CDD1465D1AB00BF07CA /* ECTexturedPopoverView-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ECTexturedPopoverView-Info.plist"; sourceTree = "<group>"; };
-		CDE26CDF1465D1AB00BF07CA /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		CDE26CE11465D1AB00BF07CA /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		CDE26CE31465D1AB00BF07CA /* ECTexturedPopoverView-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ECTexturedPopoverView-Prefix.pch"; sourceTree = "<group>"; };
-		CDE26CE41465D1AB00BF07CA /* ECTexturedPopoverView_AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ECTexturedPopoverView_AppDelegate.h; sourceTree = "<group>"; };
-		CDE26CE51465D1AB00BF07CA /* ECTexturedPopoverView_AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ECTexturedPopoverView_AppDelegate.m; sourceTree = "<group>"; };
-		CDE26CE71465D1AB00BF07CA /* ECTexturedPopoverView_ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ECTexturedPopoverView_ViewController.h; sourceTree = "<group>"; };
-		CDE26CE81465D1AB00BF07CA /* ECTexturedPopoverView_ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ECTexturedPopoverView_ViewController.m; sourceTree = "<group>"; };
-		CDE26CEB1465D1AB00BF07CA /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/ECTexturedPopoverView_ViewController.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -543,16 +517,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		CDE26CD31465D1AB00BF07CA /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				CDE26CD81465D1AB00BF07CA /* UIKit.framework in Frameworks */,
-				CDE26CD91465D1AB00BF07CA /* Foundation.framework in Frameworks */,
-				CDE26CDA1465D1AB00BF07CA /* CoreGraphics.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -576,7 +540,6 @@
 				CD0DDA1414293E7300FE8B5B /* ECSplitViewControllerTest.app */,
 				CDBD282C1435104F00E05F40 /* ECTabControllerTest.app */,
 				CD17F2E0144596F60008ED91 /* ECCodeViewTest.app */,
-				CDE26CD61465D1AB00BF07CA /* ECTexturedPopoverView.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -625,7 +588,6 @@
 			children = (
 				CDBD28311435104F00E05F40 /* ECTabControllerTest */,
 				CD0DDA1914293E7300FE8B5B /* ECSplitViewControllerTest */,
-				CDE26CDB1465D1AB00BF07CA /* ECTexturedPopoverView */,
 				CD0DD9F114293D9E00FE8B5B /* Unit Tests */,
 			);
 			name = Tests;
@@ -962,17 +924,6 @@
 			name = "Split View";
 			sourceTree = "<group>";
 		};
-		CD9ED8A714669C9E00A517A5 /* Popover Images */ = {
-			isa = PBXGroup;
-			children = (
-				CD9ED8A514669C9900A517A5 /* accessoryView_popoverArrowLeft.png */,
-				CD9ED8A31466991200A517A5 /* accessoryView_popoverArrowMiddle.png */,
-				CD9DFED914660A0500922E8C /* accessoryView_popoverArrowRight.png */,
-				CD9DFEDA14660A0500922E8C /* accessoryView_popoverBackground.png */,
-			);
-			name = "Popover Images";
-			sourceTree = "<group>";
-		};
 		CDA762FF1469647D0004FAC7 /* Accessory */ = {
 			isa = PBXGroup;
 			children = (
@@ -1008,31 +959,6 @@
 				CDBD28341435104F00E05F40 /* InfoPlist.strings */,
 				CDBD28371435104F00E05F40 /* main.m */,
 				CDBD28391435104F00E05F40 /* ECTabControllerTest-Prefix.pch */,
-			);
-			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
-		CDE26CDB1465D1AB00BF07CA /* ECTexturedPopoverView */ = {
-			isa = PBXGroup;
-			children = (
-				CD9ED8A714669C9E00A517A5 /* Popover Images */,
-				CDE26CE41465D1AB00BF07CA /* ECTexturedPopoverView_AppDelegate.h */,
-				CDE26CE51465D1AB00BF07CA /* ECTexturedPopoverView_AppDelegate.m */,
-				CDE26CE71465D1AB00BF07CA /* ECTexturedPopoverView_ViewController.h */,
-				CDE26CE81465D1AB00BF07CA /* ECTexturedPopoverView_ViewController.m */,
-				CDE26CEA1465D1AB00BF07CA /* ECTexturedPopoverView_ViewController.xib */,
-				CDE26CDC1465D1AB00BF07CA /* Supporting Files */,
-			);
-			path = ECTexturedPopoverView;
-			sourceTree = "<group>";
-		};
-		CDE26CDC1465D1AB00BF07CA /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				CDE26CDD1465D1AB00BF07CA /* ECTexturedPopoverView-Info.plist */,
-				CDE26CDE1465D1AB00BF07CA /* InfoPlist.strings */,
-				CDE26CE11465D1AB00BF07CA /* main.m */,
-				CDE26CE31465D1AB00BF07CA /* ECTexturedPopoverView-Prefix.pch */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -1162,23 +1088,6 @@
 			productReference = CDBD282C1435104F00E05F40 /* ECTabControllerTest.app */;
 			productType = "com.apple.product-type.application";
 		};
-		CDE26CD51465D1AB00BF07CA /* ECTexturedPopoverView */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = CDE26CED1465D1AB00BF07CA /* Build configuration list for PBXNativeTarget "ECTexturedPopoverView" */;
-			buildPhases = (
-				CDE26CD21465D1AB00BF07CA /* Sources */,
-				CDE26CD31465D1AB00BF07CA /* Frameworks */,
-				CDE26CD41465D1AB00BF07CA /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = ECTexturedPopoverView;
-			productName = ECTexturedPopoverView;
-			productReference = CDE26CD61465D1AB00BF07CA /* ECTexturedPopoverView.app */;
-			productType = "com.apple.product-type.application";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -1210,7 +1119,6 @@
 				CD0DDA1314293E7300FE8B5B /* ECSplitViewControllerTest */,
 				CDBD282B1435104F00E05F40 /* ECTabControllerTest */,
 				CD17F2DF144596F60008ED91 /* ECCodeViewTest */,
-				CDE26CD51465D1AB00BF07CA /* ECTexturedPopoverView */,
 			);
 		};
 /* End PBXProject section */
@@ -1264,19 +1172,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				CDBD28361435104F00E05F40 /* InfoPlist.strings in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		CDE26CD41465D1AB00BF07CA /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				CDE26CE01465D1AB00BF07CA /* InfoPlist.strings in Resources */,
-				CDE26CEC1465D1AB00BF07CA /* ECTexturedPopoverView_ViewController.xib in Resources */,
-				CD9DFEDB14660A0500922E8C /* accessoryView_popoverArrowRight.png in Resources */,
-				CD9DFEDC14660A0500922E8C /* accessoryView_popoverBackground.png in Resources */,
-				CD9ED8A41466991200A517A5 /* accessoryView_popoverArrowMiddle.png in Resources */,
-				CD9ED8A614669C9900A517A5 /* accessoryView_popoverArrowLeft.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1445,16 +1340,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		CDE26CD21465D1AB00BF07CA /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				CDE26CE21465D1AB00BF07CA /* main.m in Sources */,
-				CDE26CE61465D1AB00BF07CA /* ECTexturedPopoverView_AppDelegate.m in Sources */,
-				CDE26CE91465D1AB00BF07CA /* ECTexturedPopoverView_ViewController.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -1519,22 +1404,6 @@
 				CDBD28351435104F00E05F40 /* en */,
 			);
 			name = InfoPlist.strings;
-			sourceTree = "<group>";
-		};
-		CDE26CDE1465D1AB00BF07CA /* InfoPlist.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				CDE26CDF1465D1AB00BF07CA /* en */,
-			);
-			name = InfoPlist.strings;
-			sourceTree = "<group>";
-		};
-		CDE26CEA1465D1AB00BF07CA /* ECTexturedPopoverView_ViewController.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				CDE26CEB1465D1AB00BF07CA /* en */,
-			);
-			name = ECTexturedPopoverView_ViewController.xib;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
@@ -1747,33 +1616,6 @@
 			};
 			name = Release;
 		};
-		CDE26CEE1465D1AB00BF07CA /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "ECUIKit/Tests/ECTexturedPopoverView/ECTexturedPopoverView-Prefix.pch";
-				INFOPLIST_FILE = "ECUIKit/Tests/ECTexturedPopoverView/ECTexturedPopoverView-Info.plist";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TARGETED_DEVICE_FAMILY = 2;
-				WRAPPER_EXTENSION = app;
-			};
-			name = Debug;
-		};
-		CDE26CEF1465D1AB00BF07CA /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "ECUIKit/Tests/ECTexturedPopoverView/ECTexturedPopoverView-Prefix.pch";
-				INFOPLIST_FILE = "ECUIKit/Tests/ECTexturedPopoverView/ECTexturedPopoverView-Info.plist";
-				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TARGETED_DEVICE_FAMILY = 2;
-				WRAPPER_EXTENSION = app;
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -1827,15 +1669,6 @@
 			buildConfigurations = (
 				CDBD28441435104F00E05F40 /* Debug */,
 				CDBD28451435104F00E05F40 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		CDE26CED1465D1AB00BF07CA /* Build configuration list for PBXNativeTarget "ECTexturedPopoverView" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				CDE26CEE1465D1AB00BF07CA /* Debug */,
-				CDE26CEF1465D1AB00BF07CA /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
