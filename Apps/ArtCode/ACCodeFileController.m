@@ -592,7 +592,7 @@
             colorer.defaultTextAttributes = self.defaultTextAttributes;
             colorer.theme = [TMTheme themeWithName:@"Mac Classic" bundle:nil];
             [colorer applySyntaxColoring];
-            dispatch_async(dispatch_get_main_queue(), ^{
+            dispatch_async(dispatch_get_main_queue(), ^{                
                 _document.undoManager = self.codeView.undoManager;
                 self.syntaxColorer = colorer;
                 [self.codeView updateAllText];

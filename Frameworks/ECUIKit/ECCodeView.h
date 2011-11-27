@@ -9,6 +9,10 @@
 #import <UIKit/UIKit.h>
 #import "ECCodeViewBase.h"
 
+/// The placeholder status of the text to which this attribute applies. Value must be a CFBooleanRef object. Default is false. This attribute does not alter the display of the text but the behaviour of the code view selection.
+extern NSString * const ECCodeViewPlaceholderAttributeName;
+
+
 @class ECCodeView, ECKeyboardAccessoryView;
 
 @protocol ECCodeViewDataSource <ECTextRendererDataSource>

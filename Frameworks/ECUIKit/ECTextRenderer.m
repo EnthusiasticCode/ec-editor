@@ -213,7 +213,7 @@
             runAttributes = nil;
         else
             runAttributes = (__bridge NSDictionary *)CTRunGetAttributes(run);
-        
+
         // Apply custom back attributes
         if (runAttributes)
         {

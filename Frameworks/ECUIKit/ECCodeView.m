@@ -18,6 +18,8 @@
 #define ACCESSORY_HEIGHT 45
 #define KEYBOARD_DOCKED_MINIMUM_HEIGHT 264
 
+NSString * const ECCodeViewPlaceholderAttributeName = @"codeViewPlaceholder";
+
 #pragma mark - Interfaces
 
 @class TextSelectionView, TextMagnificationView, ECCodeViewUndoManager;
@@ -1470,14 +1472,31 @@ static void init(ECCodeView *self)
     if (shouldNotify && self.undoManager.groupingLevel != 0)
         [self.undoManager endUndoGrouping];
     
-    //    if (newSelection && (![newSelection isEmpty])) // TODO or solid caret
-    //        [self setNeedsDisplayInRange:newSelection];
-    
     if (shouldNotify)
         [inputDelegate selectionWillChange:self];
     
+    // TODO modify selection if selecting a placeholder
+    NSRange placeholderSearchRange = NSMakeRange(newSelection.location > 100 ? newSelection.location - 100 : 0, NSMaxRange(newSelection) + 100);
+    __block NSRange modifiedNewSelection = NSMakeRange(newSelection.location - placeholderSearchRange.location, newSelection.length);
+    [[self.dataSource textRenderer:self.renderer attributedStringInRange:placeholderSearchRange] enumerateAttribute:ECCodeViewPlaceholderAttributeName inRange:NSMakeRange(0, placeholderSearchRange.length) options:0 usingBlock:^(id value, NSRange range, BOOL *stop) {
+        if (!value 
+            || !CFBooleanGetValue((__bridge CFBooleanRef)value) 
+            || NSEqualRanges(NSIntersectionRange(range, modifiedNewSelection), (NSRange){ 0, 0 }))
+            return;
+        if (range.location < modifiedNewSelection.location)
+        {
+            modifiedNewSelection.location = range.location;
+            if (NSMaxRange(range) > NSMaxRange(modifiedNewSelection))
+            {
+                modifiedNewSelection.length = NSMaxRange(range) - modifiedNewSelection.location;
+            }
+            *stop = YES;
+        }
+    }];
+    modifiedNewSelection.location += placeholderSearchRange.location;
+    
     // Will automatically resize and position the selection view
-    selectionView.selection = newSelection;
+    selectionView.selection = modifiedNewSelection;
     
     if (shouldNotify)
         [inputDelegate selectionDidChange:self];

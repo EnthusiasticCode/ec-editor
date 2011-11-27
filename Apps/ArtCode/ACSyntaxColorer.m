@@ -14,6 +14,9 @@
 #import <ECUIKit/ECTextStyle.h>
 #import <CoreText/CoreText.h>
 
+#warning DEBUG
+#import <ECUIKit/ECCodeView.h>
+
 @interface ACSyntaxColorer ()
 {
     ECAttributedUTF8FileBuffer *_fileBuffer;
@@ -68,6 +71,9 @@
     for (id<ECCodeToken>token in [_codeUnit annotatedTokensInRange:range])
         [_fileBuffer addAttributes:[self.theme attributesForScopeStack:[token scopeIdentifiersStack]] range:[token range]];
     _needsToReapplySyntaxColoring = NO;
+    
+#warning DEBUG
+    [_fileBuffer addAttributes:[NSDictionary dictionaryWithObject:[NSNumber numberWithBool:YES] forKey:ECCodeViewPlaceholderAttributeName] range:NSMakeRange(10, 5)];
 }
 
 @end
