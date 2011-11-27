@@ -1475,7 +1475,7 @@ static void init(ECCodeView *self)
     if (shouldNotify)
         [inputDelegate selectionWillChange:self];
     
-    // TODO modify selection if selecting a placeholder
+    // Modify selection to account for placeholders
     NSRange placeholderSearchRange = NSMakeRange(newSelection.location > 100 ? newSelection.location - 100 : 0, NSMaxRange(newSelection) + 100);
     __block NSRange modifiedNewSelection = NSMakeRange(newSelection.location - placeholderSearchRange.location, newSelection.length);
     [[self.dataSource textRenderer:self.renderer attributedStringInRange:placeholderSearchRange] enumerateAttribute:ECCodeViewPlaceholderAttributeName inRange:NSMakeRange(0, placeholderSearchRange.length) options:0 usingBlock:^(id value, NSRange range, BOOL *stop) {

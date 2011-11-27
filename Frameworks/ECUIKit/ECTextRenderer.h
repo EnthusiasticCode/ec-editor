@@ -11,6 +11,12 @@
 #import <CoreText/CoreText.h>
 #import "ECRectSet.h"
 
+extern NSString * const ECTextRendererRunBackgroundColorAttributeName;
+extern NSString * const ECTextRendererRunOverlayBlockAttributeName;
+extern NSString * const ECTextRendererRunUnderlayBlockAttributeName;
+
+typedef void (^ECTextRendererRunBlock)(CGContextRef context, CTRunRef run, CGRect runRect);
+
 @class ECTextRenderer;
 @class ECTextRendererLine;
 

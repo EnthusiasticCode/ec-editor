@@ -15,7 +15,9 @@
 #import <CoreText/CoreText.h>
 
 #warning DEBUG
+#import <ECUIKit/ECTextRenderer.h>
 #import <ECUIKit/ECCodeView.h>
+
 
 @interface ACSyntaxColorer ()
 {
@@ -62,6 +64,10 @@
     return _codeUnit;
 }
 
+static CGFloat widthCallback(void *refcon) {
+    return 3;
+}
+
 - (void)applySyntaxColoring
 {
     if (!_needsToReapplySyntaxColoring)
@@ -73,7 +79,15 @@
     _needsToReapplySyntaxColoring = NO;
     
 #warning DEBUG
-    [_fileBuffer addAttributes:[NSDictionary dictionaryWithObject:[NSNumber numberWithBool:YES] forKey:ECCodeViewPlaceholderAttributeName] range:NSMakeRange(10, 5)];
+    [_fileBuffer addAttributes:[NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithBool:YES], ECCodeViewPlaceholderAttributeName, [^(CGContextRef context, CTRunRef run, CGRect rect) {
+        CGPathRef path = [UIBezierPath bezierPathWithRoundedRect:rect cornerRadius:rect.size.height / 2].CGPath;
+        CGContextSetFillColorWithColor(context, [UIColor colorWithRed:234.0/255.0 green:240.0/255.0 blue:250.0/255.0 alpha:1].CGColor);
+        CGContextAddPath(context, path);
+        CGContextFillPath(context);
+        CGContextSetStrokeColorWithColor(context, [UIColor colorWithRed:197.0/255.0 green:216.0/255.0 blue:243.0/255.0 alpha:1].CGColor);
+        CGContextAddPath(context, path);
+        CGContextStrokePath(context);
+    } copy], ECTextRendererRunUnderlayBlockAttributeName, [UIColor blackColor].CGColor, kCTForegroundColorAttributeName, nil] range:NSMakeRange(10, 5)];
 }
 
 @end
