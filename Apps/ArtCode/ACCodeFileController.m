@@ -242,7 +242,7 @@
 {
     if (!_defaultTextAttributes)
     {
-        CTFontRef defaultFont = CTFontCreateWithName((__bridge CFStringRef)@"Inconsolata-dz", 16, NULL);
+        CTFontRef defaultFont = CTFontCreateWithName((__bridge CFStringRef)@"Inconsolata-dz", 14, NULL);
         _defaultTextAttributes = [NSDictionary dictionaryWithObjectsAndKeys:
                                   (__bridge id)defaultFont, kCTFontAttributeName,
                                   [NSNumber numberWithInt:0], kCTLigatureAttributeName, nil];
@@ -470,6 +470,11 @@
     // CodeView is updated from file buffer notification in _fileBufferDidChange:
 }
 
+- (id)codeView:(ECCodeView *)codeView attribute:(NSString *)attributeName atIndex:(NSUInteger)index longestEffectiveRange:(NSRangePointer)effectiveRange
+{
+    return [[self.document fileBuffer] attribute:attributeName atIndex:index longestEffectiveRange:effectiveRange];
+}
+
 #pragma mark - Code View Delegate Methods
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
@@ -592,7 +597,7 @@
             colorer.defaultTextAttributes = self.defaultTextAttributes;
             colorer.theme = [TMTheme themeWithName:@"Mac Classic" bundle:nil];
             [colorer applySyntaxColoring];
-            dispatch_async(dispatch_get_main_queue(), ^{
+            dispatch_async(dispatch_get_main_queue(), ^{                
                 _document.undoManager = self.codeView.undoManager;
                 self.syntaxColorer = colorer;
                 [self.codeView updateAllText];

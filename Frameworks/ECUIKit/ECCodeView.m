@@ -18,6 +18,8 @@
 #define ACCESSORY_HEIGHT 45
 #define KEYBOARD_DOCKED_MINIMUM_HEIGHT 264
 
+NSString * const ECCodeViewPlaceholderAttributeName = @"codeViewPlaceholder";
+
 #pragma mark - Interfaces
 
 @class TextSelectionView, TextMagnificationView, ECCodeViewUndoManager;
@@ -46,11 +48,11 @@
         unsigned dataSourceHasCodeCanEditTextInRange : 1;
         unsigned dataSourceHasCommitStringForTextInRange : 1;
         unsigned dataSourceHasViewControllerForCompletionAtTextInRange : 1;
+        unsigned dataSourceHasAttributeAtIndexLongestEffectiveRange : 1;
         unsigned delegateHasShouldShowKeyboardAccessoryViewInViewWithFrame : 1;
         unsigned delegateHasDidShowKeyboardAccessoryViewInViewWithFrame : 1;
         unsigned delegateHasShouldHideKeyboardAccessoryView : 1;
         unsigned delegateHasDidHideKeyboardAccessoryView : 1;
-        unsigned reserved : 1;
     } flags;
     
     // Recognizers
@@ -668,6 +670,7 @@
     flags.dataSourceHasCodeCanEditTextInRange = [self.dataSource respondsToSelector:@selector(codeView:canEditTextInRange:)];
     flags.dataSourceHasCommitStringForTextInRange = [self.dataSource respondsToSelector:@selector(codeView:commitString:forTextInRange:)];
     flags.dataSourceHasViewControllerForCompletionAtTextInRange = [self.dataSource respondsToSelector:@selector(codeView:viewControllerForCompletionAtTextInRange:)];
+    flags.dataSourceHasAttributeAtIndexLongestEffectiveRange = [self.dataSource respondsToSelector:@selector(codeView:attribute:atIndex:longestEffectiveRange:)];
 }
 
 - (void)setDelegate:(id<ECCodeViewDelegate>)delegate
@@ -1470,12 +1473,31 @@ static void init(ECCodeView *self)
     if (shouldNotify && self.undoManager.groupingLevel != 0)
         [self.undoManager endUndoGrouping];
     
-    //    if (newSelection && (![newSelection isEmpty])) // TODO or solid caret
-    //        [self setNeedsDisplayInRange:newSelection];
-    
     if (shouldNotify)
         [inputDelegate selectionWillChange:self];
     
+    // Modify selection to account for placeholders
+    if (flags.dataSourceHasAttributeAtIndexLongestEffectiveRange)
+    {
+        NSRange replaceSelection = newSelection;
+        NSRange placeholderRangeAtLocation;
+        id placeholderValue = [self.dataSource codeView:self attribute:ECCodeViewPlaceholderAttributeName atIndex:newSelection.location longestEffectiveRange:&placeholderRangeAtLocation];
+        if (placeholderValue && placeholderRangeAtLocation.location != newSelection.location)
+        {
+            replaceSelection = NSUnionRange(placeholderRangeAtLocation, replaceSelection);
+        }
+        if (newSelection.length > 0)
+        {
+            NSRange placeholderRangeAtEnd;
+            id placeholderValue = [self.dataSource codeView:self attribute:ECCodeViewPlaceholderAttributeName atIndex:NSMaxRange(newSelection) longestEffectiveRange:&placeholderRangeAtEnd];
+            if (placeholderValue && !NSEqualRanges(placeholderRangeAtLocation, placeholderRangeAtEnd) && placeholderRangeAtEnd.location != NSMaxRange(newSelection))
+            {
+                replaceSelection = NSUnionRange(placeholderRangeAtEnd, replaceSelection);
+            }
+        }
+        newSelection = replaceSelection;
+    }
+
     // Will automatically resize and position the selection view
     selectionView.selection = newSelection;
     
