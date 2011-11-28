@@ -143,6 +143,11 @@ static ECWeakDictionary *_fileBuffers;
     [[NSNotificationCenter defaultCenter] postNotificationName:ECFileBufferDidChangeAttributesNotificationName object:self userInfo:change];
 }
 
+- (id)attribute:(NSString *)attrName atIndex:(NSUInteger)location longestEffectiveRange:(NSRangePointer)range
+{
+    return [_contents attribute:attrName atIndex:location longestEffectiveRange:range inRange:NSMakeRange(0, [_contents length])];
+}
+
 - (NSUInteger)numberOfMatchesOfRegexp:(NSRegularExpression *)regexp options:(NSMatchingOptions)options range:(NSRange)range
 {
     ECASSERT(regexp);
@@ -168,7 +173,7 @@ static ECWeakDictionary *_fileBuffers;
 - (NSRange)replaceMatch:(NSTextCheckingResult *)match withTemplate:(NSString *)replacementTemplate offset:(NSInteger)offset
 {
     ECASSERT(match && replacementTemplate);
-    
+
     NSRange replacementRange = match.range;
     NSString *replacementString =  [self replacementStringForResult:match offset:offset template:replacementTemplate];
     

@@ -470,6 +470,11 @@
     // CodeView is updated from file buffer notification in _fileBufferDidChange:
 }
 
+- (id)codeView:(ECCodeView *)codeView attribute:(NSString *)attributeName atIndex:(NSUInteger)index longestEffectiveRange:(NSRangePointer)effectiveRange
+{
+    return [[self.document fileBuffer] attribute:attributeName atIndex:index longestEffectiveRange:effectiveRange];
+}
+
 #pragma mark - Code View Delegate Methods
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView

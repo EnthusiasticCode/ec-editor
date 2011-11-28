@@ -53,6 +53,7 @@ extern NSString * const ECFileBufferAttributesKey;
 - (void)setAttributes:(NSDictionary *)attributes range:(NSRange)range;
 - (void)addAttributes:(NSDictionary *)attributes range:(NSRange)range;
 - (void)removeAttribute:(NSString *)attributeName range:(NSRange)range;
+- (id)attribute:(NSString *)attrName atIndex:(NSUInteger)index longestEffectiveRange:(NSRangePointer)effectiveRange;
 
 /// Find and replace functionality
 

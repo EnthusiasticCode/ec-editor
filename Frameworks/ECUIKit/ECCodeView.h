@@ -37,6 +37,10 @@ extern NSString * const ECCodeViewPlaceholderAttributeName;
 /// codeView:commitString:forTextInRange: to actually complete the word.
 - (UIViewController *)codeView:(ECCodeView *)codeView viewControllerForCompletionAtTextInRange:(NSRange)range;
 
+/// If implemented, return the attribute value at the given index. 
+/// If effectiveRange is not NULL, the effective range of the given attribute found at index is returned.
+- (id)codeView:(ECCodeView *)codeView attribute:(NSString *)attributeName atIndex:(NSUInteger)index longestEffectiveRange:(NSRangePointer)effectiveRange;
+
 @end
 
 @protocol ECCodeViewDelegate <UIScrollViewDelegate>

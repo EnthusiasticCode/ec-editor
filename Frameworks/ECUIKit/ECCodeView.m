@@ -48,11 +48,11 @@ NSString * const ECCodeViewPlaceholderAttributeName = @"codeViewPlaceholder";
         unsigned dataSourceHasCodeCanEditTextInRange : 1;
         unsigned dataSourceHasCommitStringForTextInRange : 1;
         unsigned dataSourceHasViewControllerForCompletionAtTextInRange : 1;
+        unsigned dataSourceHasAttributeAtIndexLongestEffectiveRange : 1;
         unsigned delegateHasShouldShowKeyboardAccessoryViewInViewWithFrame : 1;
         unsigned delegateHasDidShowKeyboardAccessoryViewInViewWithFrame : 1;
         unsigned delegateHasShouldHideKeyboardAccessoryView : 1;
         unsigned delegateHasDidHideKeyboardAccessoryView : 1;
-        unsigned reserved : 1;
     } flags;
     
     // Recognizers
@@ -670,6 +670,7 @@ NSString * const ECCodeViewPlaceholderAttributeName = @"codeViewPlaceholder";
     flags.dataSourceHasCodeCanEditTextInRange = [self.dataSource respondsToSelector:@selector(codeView:canEditTextInRange:)];
     flags.dataSourceHasCommitStringForTextInRange = [self.dataSource respondsToSelector:@selector(codeView:commitString:forTextInRange:)];
     flags.dataSourceHasViewControllerForCompletionAtTextInRange = [self.dataSource respondsToSelector:@selector(codeView:viewControllerForCompletionAtTextInRange:)];
+    flags.dataSourceHasAttributeAtIndexLongestEffectiveRange = [self.dataSource respondsToSelector:@selector(codeView:attribute:atIndex:longestEffectiveRange:)];
 }
 
 - (void)setDelegate:(id<ECCodeViewDelegate>)delegate
@@ -1476,32 +1477,29 @@ static void init(ECCodeView *self)
         [inputDelegate selectionWillChange:self];
     
     // Modify selection to account for placeholders
-    NSRange placeholderSearchRange = NSMakeRange(newSelection.location > 100 ? newSelection.location - 100 : 0, NSMaxRange(newSelection) + 100);
-    __block NSRange modifiedNewSelection = NSMakeRange(newSelection.location - placeholderSearchRange.location, newSelection.length);
-    [[self.dataSource textRenderer:self.renderer attributedStringInRange:placeholderSearchRange] enumerateAttribute:ECCodeViewPlaceholderAttributeName inRange:NSMakeRange(0, placeholderSearchRange.length) options:0 usingBlock:^(id value, NSRange range, BOOL *stop) {
-        if (!value 
-            || !CFBooleanGetValue((__bridge CFBooleanRef)value) 
-            || NSEqualRanges(NSIntersectionRange(range, modifiedNewSelection), (NSRange){ 0, 0 }))
-            return;
-        if (range.location < modifiedNewSelection.location)
+    if (flags.dataSourceHasAttributeAtIndexLongestEffectiveRange)
+    {
+        NSRange replaceSelection = newSelection;
+        NSRange placeholderRangeAtLocation;
+        id placeholderValue = [self.dataSource codeView:self attribute:ECCodeViewPlaceholderAttributeName atIndex:newSelection.location longestEffectiveRange:&placeholderRangeAtLocation];
+        if (placeholderValue && placeholderRangeAtLocation.location != newSelection.location)
         {
-            modifiedNewSelection.location = range.location;
-            if (NSMaxRange(range) > NSMaxRange(modifiedNewSelection))
+            replaceSelection = NSUnionRange(placeholderRangeAtLocation, replaceSelection);
+        }
+        if (newSelection.length > 0)
+        {
+            NSRange placeholderRangeAtEnd;
+            id placeholderValue = [self.dataSource codeView:self attribute:ECCodeViewPlaceholderAttributeName atIndex:NSMaxRange(newSelection) longestEffectiveRange:&placeholderRangeAtEnd];
+            if (placeholderValue && !NSEqualRanges(placeholderRangeAtLocation, placeholderRangeAtEnd) && placeholderRangeAtEnd.location != NSMaxRange(newSelection))
             {
-                modifiedNewSelection.length = NSMaxRange(range) - modifiedNewSelection.location;
+                replaceSelection = NSUnionRange(placeholderRangeAtEnd, replaceSelection);
             }
-            *stop = YES;
         }
-        else if (modifiedNewSelection.length > 0 && NSMaxRange(range) > NSMaxRange(modifiedNewSelection))
-        {
-            modifiedNewSelection.length = NSMaxRange(range) - modifiedNewSelection.location;
-            *stop = YES;
-        }
-    }];
-    modifiedNewSelection.location += placeholderSearchRange.location;
-    
+        newSelection = replaceSelection;
+    }
+
     // Will automatically resize and position the selection view
-    selectionView.selection = modifiedNewSelection;
+    selectionView.selection = newSelection;
     
     if (shouldNotify)
         [inputDelegate selectionDidChange:self];
