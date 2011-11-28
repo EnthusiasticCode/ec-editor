@@ -14,7 +14,6 @@
 #import <ECUIKit/ECTextStyle.h>
 #import <CoreText/CoreText.h>
 
-#warning DEBUG
 #import <ECUIKit/ECTextRenderer.h>
 #import <ECUIKit/ECCodeView.h>
 
@@ -25,6 +24,9 @@
     id _fileBufferObserver;
     BOOL _needsToReapplySyntaxColoring;
 }
+
+- (void)_markPlaceholderWithName:(NSString *)name range:(NSRange)range;
+
 @end
 
 @implementation ACSyntaxColorer
@@ -63,7 +65,32 @@
     return _codeUnit;
 }
 
-static CGFloat widthCallback(void *refcon) {
+- (void)applySyntaxColoring
+{
+    if (!_needsToReapplySyntaxColoring)
+        return;
+    _needsToReapplySyntaxColoring = NO;
+    
+    NSRange range = NSMakeRange(0, [_fileBuffer length]);
+    [_fileBuffer setAttributes:self.defaultTextAttributes range:range];
+    
+    // Syntax coloring
+    for (id<ECCodeToken>token in [_codeUnit annotatedTokensInRange:range])
+        [_fileBuffer addAttributes:[self.theme attributesForScopeStack:[token scopeIdentifiersStack]] range:[token range]];
+    
+    // Placeholders
+    static NSRegularExpression *placeholderRegExp = nil;
+    if (!placeholderRegExp)
+        placeholderRegExp = [NSRegularExpression regularExpressionWithPattern:@"<#(.+?)#>" options:0 error:NULL];
+    for (NSTextCheckingResult *placeholderMatch in [_fileBuffer matchesOfRegexp:placeholderRegExp options:0])
+    {
+        [self _markPlaceholderWithName:[_fileBuffer stringInRange:[placeholderMatch rangeAtIndex:1]] range:placeholderMatch.range];
+    }
+}
+
+#pragma mark - Private Methods
+
+static CGFloat placeholderEndingsWidthCallback(void *refcon) {
     if (refcon)
     {
         CGFloat height = CTFontGetXHeight(refcon);
@@ -72,22 +99,30 @@ static CGFloat widthCallback(void *refcon) {
     return 4.5;
 }
 
-- (void)applySyntaxColoring
+static CTRunDelegateCallbacks placeholderEndingsRunCallbacks = {
+    kCTRunDelegateVersion1,
+    NULL,
+    NULL,
+    NULL,
+    &placeholderEndingsWidthCallback
+};
+
+- (void)_markPlaceholderWithName:(NSString *)name range:(NSRange)range
 {
-    if (!_needsToReapplySyntaxColoring)
-        return;
-    NSRange range = NSMakeRange(0, [_fileBuffer length]);
-    [_fileBuffer setAttributes:self.defaultTextAttributes range:range];
-    for (id<ECCodeToken>token in [_codeUnit annotatedTokensInRange:range])
-        [_fileBuffer addAttributes:[self.theme attributesForScopeStack:[token scopeIdentifiersStack]] range:[token range]];
-    _needsToReapplySyntaxColoring = NO;
+    ECASSERT(range.length > 4);
     
-#warning DEBUG
-    // placeholder body style
-    [_fileBuffer addAttributes:[NSDictionary dictionaryWithObjectsAndKeys:[^(CGContextRef context, CTRunRef run, CGRect rect, CGFloat baselineOffset) {
+    static CGColorRef placeholderFillColor = NULL;
+    if (!placeholderFillColor)
+        placeholderFillColor = CGColorRetain([UIColor colorWithRed:234.0/255.0 green:240.0/255.0 blue:250.0/255.0 alpha:1].CGColor);
+    
+    static CGColorRef placeholderStrokeColor = NULL;
+    if (!placeholderStrokeColor)
+        placeholderStrokeColor = CGColorRetain([UIColor colorWithRed:197.0/255.0 green:216.0/255.0 blue:243.0/255.0 alpha:1].CGColor);
+    
+    static ECTextRendererRunBlock placeHolderBodyBlock = ^(CGContextRef context, CTRunRef run, CGRect rect, CGFloat baselineOffset) {
         rect.origin.y += 1;
         rect.size.height -= baselineOffset;
-        CGContextSetFillColorWithColor(context, [UIColor colorWithRed:234.0/255.0 green:240.0/255.0 blue:250.0/255.0 alpha:1].CGColor);
+        CGContextSetFillColorWithColor(context, placeholderFillColor);
         CGContextAddRect(context, rect);
         CGContextFillPath(context);
         //
@@ -95,60 +130,61 @@ static CGFloat widthCallback(void *refcon) {
         CGContextAddLineToPoint(context, CGRectGetMaxX(rect), rect.origin.y);
         CGContextMoveToPoint(context, rect.origin.x, CGRectGetMaxY(rect));
         CGContextAddLineToPoint(context, CGRectGetMaxX(rect), CGRectGetMaxY(rect));
-        CGContextSetStrokeColorWithColor(context, [UIColor colorWithRed:197.0/255.0 green:216.0/255.0 blue:243.0/255.0 alpha:1].CGColor);
+        CGContextSetStrokeColorWithColor(context, placeholderStrokeColor);
         CGContextStrokePath(context);
-    } copy], ECTextRendererRunUnderlayBlockAttributeName, [UIColor blackColor].CGColor, kCTForegroundColorAttributeName, nil] range:NSMakeRange(10, 5)];
+    };
+    
+    static ECTextRendererRunBlock placeholderLeftBlock = ^(CGContextRef context, CTRunRef run, CGRect rect, CGFloat baselineOffset) {
+        rect.origin.y += 1;
+        rect.size.height -= baselineOffset;
+        CGPoint rectMax = CGPointMake(CGRectGetMaxX(rect), CGRectGetMaxY(rect));
+        //
+        CGContextMoveToPoint(context, rectMax.x, rect.origin.y);
+        CGContextAddCurveToPoint(context, rect.origin.x, rect.origin.y, rect.origin.x, rectMax.y, rectMax.x, rectMax.y);
+        CGContextClosePath(context);
+        CGContextSetFillColorWithColor(context, placeholderFillColor);
+        CGContextFillPath(context);
+        //
+        CGContextMoveToPoint(context, rectMax.x, rect.origin.y);
+        CGContextAddCurveToPoint(context, rect.origin.x, rect.origin.y, rect.origin.x, rectMax.y, rectMax.x, rectMax.y);
+        CGContextSetStrokeColorWithColor(context, placeholderStrokeColor);
+        CGContextStrokePath(context);
+    };
+    
+    static ECTextRendererRunBlock placeholderRightBlock = ^(CGContextRef context, CTRunRef run, CGRect rect, CGFloat baselineOffset) {
+        rect.origin.y += 1;
+        rect.size.height -= baselineOffset;
+        CGPoint rectMax = CGPointMake(CGRectGetMaxX(rect), CGRectGetMaxY(rect));
+        //
+        CGContextMoveToPoint(context, rect.origin.x, rect.origin.y);
+        CGContextAddCurveToPoint(context, rectMax.x, rect.origin.y, rectMax.x, rectMax.y, rect.origin.x, rectMax.y);
+        CGContextClosePath(context);
+        CGContextSetFillColorWithColor(context, placeholderFillColor);
+        CGContextFillPath(context);
+        //
+        CGContextMoveToPoint(context, rect.origin.x, rect.origin.y);
+        CGContextAddCurveToPoint(context, rectMax.x, rect.origin.y, rectMax.x, rectMax.y, rect.origin.x, rectMax.y);
+        CGContextSetStrokeColorWithColor(context, placeholderStrokeColor);
+        CGContextStrokePath(context);
+    };
+    
+    // placeholder body style
+    [_fileBuffer addAttributes:[NSDictionary dictionaryWithObjectsAndKeys:placeHolderBodyBlock, ECTextRendererRunUnderlayBlockAttributeName, [UIColor blackColor].CGColor, kCTForegroundColorAttributeName, nil] range:NSMakeRange(range.location + 2, range.length - 4)];
     
     // Opening and Closing style
-    CTRunDelegateCallbacks callbacks = {
-        kCTRunDelegateVersion1,
-        NULL,
-        NULL,
-        NULL,
-        &widthCallback
-    };
-    //E<#odeVi#>.m
+    
+    //
     CGFontRef font = (__bridge CGFontRef)[self.defaultTextAttributes objectForKey:(__bridge id)kCTFontAttributeName];
     ECASSERT(font);
-    CTRunDelegateRef delegateRef = CTRunDelegateCreate(&callbacks, font);
+    CTRunDelegateRef delegateRef = CTRunDelegateCreate(&placeholderEndingsRunCallbacks, font);
     //
-    [_fileBuffer setAttributes:[NSDictionary dictionaryWithObjectsAndKeys:(__bridge id)delegateRef, kCTRunDelegateAttributeName, ^(CGContextRef context, CTRunRef run, CGRect rect, CGFloat baselineOffset) {
-        rect.origin.y += 1;
-        rect.size.height -= baselineOffset;
-        CGPoint rectMax = CGPointMake(CGRectGetMaxX(rect), CGRectGetMaxY(rect));
-        //
-        CGContextMoveToPoint(context, rectMax.x, rect.origin.y);
-        CGContextAddCurveToPoint(context, rect.origin.x, rect.origin.y, rect.origin.x, rectMax.y, rectMax.x, rectMax.y);
-        CGContextClosePath(context);
-        CGContextSetFillColorWithColor(context, [UIColor colorWithRed:234.0/255.0 green:240.0/255.0 blue:250.0/255.0 alpha:1].CGColor);
-        CGContextFillPath(context);
-        //
-        CGContextMoveToPoint(context, rectMax.x, rect.origin.y);
-        CGContextAddCurveToPoint(context, rect.origin.x, rect.origin.y, rect.origin.x, rectMax.y, rectMax.x, rectMax.y);
-        CGContextSetStrokeColorWithColor(context, [UIColor colorWithRed:197.0/255.0 green:216.0/255.0 blue:243.0/255.0 alpha:1].CGColor);
-        CGContextStrokePath(context);
-    }, ECTextRendererRunDrawBlockAttributeName, nil] range:NSMakeRange(8, 2)];
-    [_fileBuffer setAttributes:[NSDictionary dictionaryWithObjectsAndKeys:(__bridge id)delegateRef, kCTRunDelegateAttributeName, ^(CGContextRef context, CTRunRef run, CGRect rect, CGFloat baselineOffset) {
-        rect.origin.y += 1;
-        rect.size.height -= baselineOffset;
-        CGPoint rectMax = CGPointMake(CGRectGetMaxX(rect), CGRectGetMaxY(rect));
-        //
-        CGContextMoveToPoint(context, rect.origin.x, rect.origin.y);
-        CGContextAddCurveToPoint(context, rectMax.x, rect.origin.y, rectMax.x, rectMax.y, rect.origin.x, rectMax.y);
-        CGContextClosePath(context);
-        CGContextSetFillColorWithColor(context, [UIColor colorWithRed:234.0/255.0 green:240.0/255.0 blue:250.0/255.0 alpha:1].CGColor);
-        CGContextFillPath(context);
-        //
-        CGContextMoveToPoint(context, rect.origin.x, rect.origin.y);
-        CGContextAddCurveToPoint(context, rectMax.x, rect.origin.y, rectMax.x, rectMax.y, rect.origin.x, rectMax.y);
-        CGContextSetStrokeColorWithColor(context, [UIColor colorWithRed:197.0/255.0 green:216.0/255.0 blue:243.0/255.0 alpha:1].CGColor);
-        CGContextStrokePath(context);
-    }, ECTextRendererRunDrawBlockAttributeName, nil] range:NSMakeRange(15, 2)];
+    [_fileBuffer setAttributes:[NSDictionary dictionaryWithObjectsAndKeys:(__bridge id)delegateRef, kCTRunDelegateAttributeName, placeholderLeftBlock, ECTextRendererRunDrawBlockAttributeName, nil] range:NSMakeRange(range.location, 2)];
+    [_fileBuffer setAttributes:[NSDictionary dictionaryWithObjectsAndKeys:(__bridge id)delegateRef, kCTRunDelegateAttributeName, placeholderRightBlock, ECTextRendererRunDrawBlockAttributeName, nil] range:NSMakeRange(NSMaxRange(range) - 2, 2)];
     //
     CFRelease(delegateRef);
     
     // Placeholder behaviour
-    [_fileBuffer addAttributes:[NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithBool:YES], ECCodeViewPlaceholderAttributeName, nil] range:NSMakeRange(8, 9)];
+    [_fileBuffer addAttributes:[NSDictionary dictionaryWithObjectsAndKeys:name, ECCodeViewPlaceholderAttributeName, nil] range:range];
 }
 
 @end
