@@ -15,7 +15,10 @@ extern NSString * const ECTextRendererRunBackgroundColorAttributeName;
 extern NSString * const ECTextRendererRunOverlayBlockAttributeName;
 extern NSString * const ECTextRendererRunUnderlayBlockAttributeName;
 
-typedef void (^ECTextRendererRunBlock)(CGContextRef context, CTRunRef run, CGRect runRect);
+/// Indicates a block to be used to render a run. The value of this attribute must be a ECTextRendererRunBlock. If not specified the default CTRunDraw will be called instead.
+extern NSString * const ECTextRendererRunDrawBlockAttributeName;
+
+typedef void (^ECTextRendererRunBlock)(CGContextRef context, CTRunRef run, CGRect runRect, CGFloat baselineOffset);
 
 @class ECTextRenderer;
 @class ECTextRendererLine;

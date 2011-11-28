@@ -11,6 +11,7 @@
 NSString * const ECTextRendererRunBackgroundColorAttributeName = @"runBackground";
 NSString * const ECTextRendererRunOverlayBlockAttributeName = @"runOverlayBlock";
 NSString * const ECTextRendererRunUnderlayBlockAttributeName = @"runUnderlayBlock";
+NSString * const ECTextRendererRunDrawBlockAttributeName = @"runDrawBlock";
 
 @class TextSegment;
 @class TextSegmentFrame;
@@ -205,7 +206,6 @@ NSString * const ECTextRendererRunUnderlayBlockAttributeName = @"runUnderlayBloc
     {
         run = CFArrayGetValueAtIndex(runs, i);
         
-        
         // Get run width
         runWidth = CTRunGetTypographicBounds(run, (CFRange){0, 0}, NULL, NULL, NULL);
         runRect.size.width = runWidth;
@@ -229,19 +229,29 @@ NSString * const ECTextRendererRunUnderlayBlockAttributeName = @"runUnderlayBloc
             if (block) 
             {
                 CGContextSaveGState(context);
-                block(context, run, runRect);
+                block(context, run, runRect, descent);
                 CGContextRestoreGState(context);
             }
         }
         
         // Draw run
-        CTRunDraw(run, context, (CFRange){ 0, 0 });
+        block = [runAttributes objectForKey:ECTextRendererRunDrawBlockAttributeName];
+        if (block)
+        {
+            CGContextSaveGState(context);
+            block(context, run, runRect, descent);
+            CGContextRestoreGState(context);
+        }
+        else
+        {
+            CTRunDraw(run, context, (CFRange){ 0, 0 });
+        }
         
         // Apply custom front attributes
         if (runAttributes && (block = [runAttributes objectForKey:ECTextRendererRunOverlayBlockAttributeName])) 
         {
             CGContextSaveGState(context);
-            block(context, run, runRect);
+            block(context, run, runRect, descent);
             CGContextRestoreGState(context);
         }
         

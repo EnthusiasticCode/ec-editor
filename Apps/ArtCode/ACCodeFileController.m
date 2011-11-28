@@ -242,7 +242,7 @@
 {
     if (!_defaultTextAttributes)
     {
-        CTFontRef defaultFont = CTFontCreateWithName((__bridge CFStringRef)@"Inconsolata-dz", 16, NULL);
+        CTFontRef defaultFont = CTFontCreateWithName((__bridge CFStringRef)@"Inconsolata-dz", 14, NULL);
         _defaultTextAttributes = [NSDictionary dictionaryWithObjectsAndKeys:
                                   (__bridge id)defaultFont, kCTFontAttributeName,
                                   [NSNumber numberWithInt:0], kCTLigatureAttributeName, nil];

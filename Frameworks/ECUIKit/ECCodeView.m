@@ -1492,6 +1492,11 @@ static void init(ECCodeView *self)
             }
             *stop = YES;
         }
+        else if (modifiedNewSelection.length > 0 && NSMaxRange(range) > NSMaxRange(modifiedNewSelection))
+        {
+            modifiedNewSelection.length = NSMaxRange(range) - modifiedNewSelection.location;
+            *stop = YES;
+        }
     }];
     modifiedNewSelection.location += placeholderSearchRange.location;
     
