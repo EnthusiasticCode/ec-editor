@@ -507,9 +507,9 @@
     else
     {
         self._keyboardAccessoryView.itemPopoverView.positioningInsets = UIEdgeInsetsMake(4, -3, 4, -3);
-        [self._keyboardAccessoryView.itemPopoverView setArrowSize:CGSizeMake(75, 54) forMetaPosition:PopoverViewArrowMetaPositionFarLeft];
+        [self._keyboardAccessoryView.itemPopoverView setArrowSize:CGSizeMake(79, 54) forMetaPosition:PopoverViewArrowMetaPositionFarLeft];
         [self._keyboardAccessoryView.itemPopoverView setArrowSize:CGSizeMake(77, 54) forMetaPosition:PopoverViewArrowMetaPositionMiddle];
-        [self._keyboardAccessoryView.itemPopoverView setArrowSize:CGSizeMake(75, 54) forMetaPosition:PopoverViewArrowMetaPositionFarRight];
+        [self._keyboardAccessoryView.itemPopoverView setArrowSize:CGSizeMake(79, 54) forMetaPosition:PopoverViewArrowMetaPositionFarRight];
     }
     
     if ((*frame).origin.y - (*view).bounds.origin.y < (*view).bounds.size.height / 4)
