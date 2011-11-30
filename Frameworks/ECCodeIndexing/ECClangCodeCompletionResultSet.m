@@ -18,6 +18,7 @@
     ECClangCodeUnit *_codeUnit;
     CXCodeCompleteResults *_clangResults;
     NSRange _filteredResultRange;
+    NSRange _filterStringRange;
 }
 @end
 
@@ -56,10 +57,10 @@
     }
     clang_sortCodeCompletionResults(_clangResults->Results, _clangResults->NumResults);
     
-    NSRange filterStringRange = NSMakeRange(firstCharacterIndex, offset - firstCharacterIndex);
-    if (filterStringRange.length)
+    _filterStringRange = NSMakeRange(firstCharacterIndex, offset - firstCharacterIndex);
+    if (_filterStringRange.length)
     {
-        NSString *filterString = [content substringWithRange:filterStringRange];
+        NSString *filterString = [content substringWithRange:_filterStringRange];
         NSRange comparisonRange = NSMakeRange(0, [filterString length]);
         NSUInteger currentPosition = 0;
         NSUInteger lastLesserIndex = 0;
@@ -144,6 +145,11 @@
         priority = currentPriority;
     }
     return index - _filteredResultRange.location;
+}
+
+- (NSRange)filterStringRange
+{
+    return _filterStringRange;
 }
 
 @end

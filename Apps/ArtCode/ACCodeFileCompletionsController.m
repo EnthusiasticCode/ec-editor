@@ -12,13 +12,16 @@
 #import <ECFoundation/ECAttributedUTF8FileBuffer.h>
 #import <ECCodeIndexing/ECCodeUnit.h>
 #import <ECCodeIndexing/ECCodeIndex.h>
+#import <ECUIKit/ECTextRange.h>
 
 #import "ACFileDocument.h"
 #import "ACCodeFileController.h"
 #import "ACCodeFileKeyboardAccessoryView.h"
 
 
-@interface ACCodeFileCompletionsController ()
+@interface ACCodeFileCompletionsController () {
+    CGFloat _minimumTypeLabelSize;
+}
 
 @property (nonatomic, strong) ECCodeIndex *_codeIndex;
 @property (nonatomic, strong) ECCodeUnit *_codeUnit;
@@ -53,6 +56,7 @@
     [self willChangeValueForKey:@"offsetInDocumentForCompletions"];
     offsetInDocumentForCompletions = value;
     self._completionResults = nil;
+    _minimumTypeLabelSize = 0;
     [self.tableView reloadData];
     [self didChangeValueForKey:@"offsetInDocumentForCompletions"];
 }
@@ -137,15 +141,18 @@
     // Kind
     cell.kindImageView.image = [UIImage imageNamed:[NSString stringWithFormat:@"completionKind_%d", [result cursorKind]]];
     
-    // Type
-    // TODO
-    
     // Definition
     NSInteger parenDepth = 0;
     NSMutableString *definition = [NSMutableString new];
+    NSString *resultType = nil;
     for (id<ECCodeCompletionChunk> chunk in [[result completionString] completionChunks])
     {
         switch ([chunk kind]) {
+            case CXCompletionChunk_ResultType:
+                ECASSERT(resultType == nil && "There should be only one result type");
+                resultType = [chunk text];
+                break;
+                
             case CXCompletionChunk_Comma:
                 [definition appendString:@", "];
                 break;
@@ -182,13 +189,21 @@
                 ECASSERT(NO && "Unhandled chunk kind");
                 break;
                 
-            case CXCompletionChunk_Placeholder:
             default:
                 [definition appendString:[chunk text]];
                 break;
         }
     }
     cell.definitionLabel.text = definition;
+    cell.typeLabel.text = resultType;
+    
+    // Type label size
+    if (resultType)
+    {
+        CGSize typeLabelSize = [cell.typeLabel sizeThatFits:CGSizeZero];
+        _minimumTypeLabelSize = MIN(typeLabelSize.width, 100);
+    }
+    cell.typeLabelSize = _minimumTypeLabelSize;
 
     return cell;
 }
@@ -197,6 +212,37 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    // Insert selected completion
+    id<ECCodeCompletionResult> result = [self._completionResults completionResultAtIndex:[indexPath indexAtPosition:1]];
+    NSMutableString *completionString = [NSMutableString new];
+    for (id<ECCodeCompletionChunk> chunk in [[result completionString] completionChunks])
+    {
+//        NSLog(@"%d - %@", [chunk kind], [chunk text]);
+        switch ([chunk kind]) {
+            case CXCompletionChunk_Placeholder:
+                [completionString appendFormat:@"<#%@#>", [chunk text]];
+                break;
+                
+            case CXCompletionChunk_ResultType:
+            case CXCompletionChunk_Informative:
+            case CXCompletionChunk_SemiColon:
+            case CXCompletionChunk_Equal:
+                // Ignore
+                break;
+                
+            case CXCompletionChunk_Optional:
+            case CXCompletionChunk_VerticalSpace:
+                // Unhandled
+                ECASSERT(NO && "Unhandled chunk kind");
+                break;
+                
+            default:
+                [completionString appendString:[chunk text]];
+                break;
+        }
+    }
+    [self.targetCodeFileController.codeView replaceRange:[ECTextRange textRangeWithRange:[self._completionResults filterStringRange]] withText:completionString];
+    
     // Dismiss selection
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     [self.targetKeyboardAccessoryView dismissPopoverForItemAnimated:YES];

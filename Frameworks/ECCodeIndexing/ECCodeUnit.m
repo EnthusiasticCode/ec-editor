@@ -35,12 +35,7 @@
     return _scope;
 }
 
-- (NSArray *)completionsAtOffset:(NSUInteger)offset
-{
-    return nil;
-}
-
-- (id<ECCodeCompletionResult>)bestCompletionAtOffset:(NSUInteger)offset
+- (id<ECCodeCompletionResultSet>)completionsAtOffset:(NSUInteger)offset
 {
     return nil;
 }

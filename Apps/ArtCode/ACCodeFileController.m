@@ -694,6 +694,7 @@
     {
         _keyboardAccessoryItemCompletionsController = [[ACCodeFileCompletionsController alloc] initWithStyle:UITableViewStylePlain];
         _keyboardAccessoryItemCompletionsController.targetCodeFileController = self;
+        _keyboardAccessoryItemCompletionsController.targetKeyboardAccessoryView = self._keyboardAccessoryView;
         _keyboardAccessoryItemCompletionsController.contentSizeForViewInPopover = CGSizeMake(300, 300);
     }
     return _keyboardAccessoryItemCompletionsController;

@@ -15,6 +15,11 @@
 - (NSUInteger)count;
 - (id<ECCodeCompletionResult>)completionResultAtIndex:(NSUInteger)resultIndex;
 - (NSUInteger)indexOfHighestRatedCompletionResult;
+
+/// The range of the string in the code unit file buffer used to filter the results.
+/// This range is constructed from the offset provided in initialization.
+- (NSRange)filterStringRange;
+
 @end
 
 @protocol ECCodeCompletionResult <NSObject>
@@ -78,6 +83,8 @@
 - (NSString *)scope;
 
 /// Returns the possible completions at a given insertion point in the unit's main source file.
+/// If filterRange is not NULL, in output it will contain the file buffer string range that contains 
+/// the substring used for filtering.
 - (id<ECCodeCompletionResultSet>)completionsAtOffset:(NSUInteger)offset;
 
 /// Returns warnings and errors in the unit.
