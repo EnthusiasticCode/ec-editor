@@ -86,6 +86,11 @@
     return _completionResults;
 }
 
+- (BOOL)hasCompletions
+{
+    return [self._completionResults count] > 0;
+}
+
 #pragma mark - View lifecycle
 
 - (void)viewDidAppear:(BOOL)animated

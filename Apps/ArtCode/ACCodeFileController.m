@@ -9,6 +9,7 @@
 #import "ACCodeFileController.h"
 #import <QuartzCore/QuartzCore.h>
 #import <ECFoundation/NSTimer+block.h>
+#import <ECUIKit/ECBezelAlert.h>
 
 #import "ACFileDocument.h"
 #import <ECFoundation/ECAttributedUTF8FileBuffer.h>
@@ -804,7 +805,12 @@
     {
         // Prepare completion controller
         self._keyboardAccessoryItemCompletionsController.offsetInDocumentForCompletions = self.codeView.selectionRange.location;
-
+        if (![self._keyboardAccessoryItemCompletionsController hasCompletions])
+        {
+            [[ECBezelAlert defaultBezelAlert] addAlertMessageWithText:@"No completions" image:nil displayImmediatly:YES];
+            return;
+        }
+        
         [self._keyboardAccessoryView presentPopoverForItemAtIndex:item.tag permittedArrowDirection:(self.codeView.keyboardAccessoryView.isFlipped ? UIPopoverArrowDirectionUp : UIPopoverArrowDirectionDown) animated:YES];
     }
     else
