@@ -519,8 +519,7 @@ NSString * const ECCodeViewPlaceholderAttributeName = @"codeViewPlaceholder";
         
         // Show popover
         
-        rect = [parent.window.rootViewController.view convertRect:rect fromView:parent];
-        [self.magnificationPopover presentPopoverFromRect:rect inView:parent.window.rootViewController.view permittedArrowDirections:UIPopoverArrowDirectionDown animated:animated];
+        [self.magnificationPopover presentPopoverFromRect:rect inView:parent permittedArrowDirections:UIPopoverArrowDirectionDown animated:animated];
     }
 }
 
