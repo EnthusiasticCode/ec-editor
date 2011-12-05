@@ -94,7 +94,6 @@
         _codeView.delegate = self;
         _codeView.magnificationPopoverControllerClass = [ACShapePopoverController class];
         
-        _codeView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
         _codeView.backgroundColor = [UIColor whiteColor];
         _codeView.caretColor = [UIColor blackColor]; // TODO use TMTheme cursor color
         _codeView.selectionColor = [[UIColor blueColor] colorWithAlphaComponent:0.3];

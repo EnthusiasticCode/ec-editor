@@ -13,6 +13,9 @@
 #import "ArtCodeAppDelegate.h"
 #import "ACApplication.h"
 #import "ACTab.h"
+#import "ACProjectCell.h"
+#import "ACProjectCellNormalView.h"
+#import "ACProjectCellEditingView.h"
 
 #import "ACNewProjectPopoverController.h"
 
@@ -30,11 +33,9 @@ static void * directoryPresenterFileURLsObservingContext;
     NSArray *_toolItemsNormal;
     NSArray *_toolItemsEditing;
 }
-
+@property (nonatomic, strong) GMGridView *gridView;
 /// Represent a directory's contents.
 @property (nonatomic, strong) ECDirectoryPresenter *directoryPresenter;
-- (void)deleteTableRow:(id)sender;
-
 - (void)_toolNormalAddAction:(id)sender;
 
 @end
@@ -47,7 +48,19 @@ static void * directoryPresenterFileURLsObservingContext;
 #pragma mark - Properties
 
 @synthesize tab = _tab;
+@synthesize gridView = _gridView;
 @synthesize projectsDirectory = _projectsDirectory, directoryPresenter = _directoryPresenter;
+
+- (GMGridView *)gridView
+{
+    if (!_gridView)
+    {
+        _gridView = [[GMGridView alloc] init];
+        _gridView.dataSource = self;
+        _gridView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    }
+    return _gridView;
+}
 
 - (void)setProjectsDirectory:(NSURL *)projectsDirectory
 {
@@ -72,12 +85,25 @@ static void * directoryPresenterFileURLsObservingContext;
 
 - (void)setEditing:(BOOL)editing animated:(BOOL)animated
 {
+    BOOL editingChanged = NO;
+    if (editing != self.editing)
+        editingChanged = YES;
     [super setEditing:editing animated:animated];
     
+    if (!editingChanged)
+        return;
+    
     if (!editing)
-    {
         self.toolbarItems = _toolItemsNormal;
-    }
+    else
+        self.toolbarItems = _toolItemsEditing;
+    
+    if (editing)
+        for (ACProjectCell *cell in [self.gridView visibleCells])
+            cell.contentView = cell.editingView;
+    else
+        for (ACProjectCell *cell in [self.gridView visibleCells])
+            cell.contentView = cell.normalView;
 }
 
 #pragma mark - Controller Methods
@@ -92,7 +118,7 @@ static void * directoryPresenterFileURLsObservingContext;
     if (context == &directoryPresenterFileURLsObservingContext)
     {
         // TODO: add / delete / move table rows instead of reloading all once NSFilePresenter actually works
-        [self.tableView reloadData];
+        [self.gridView reloadData];
     }
     else
         [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
@@ -100,13 +126,16 @@ static void * directoryPresenterFileURLsObservingContext;
 
 #pragma mark - View lifecycle
 
+- (void)loadView
+{
+    [super loadView];
+    self.gridView.frame = self.view.bounds;
+    [self.view addSubview:self.gridView];
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
-    self.tableView.rowHeight = 55;
-    
-    self.tableView.tableFooterView = [UIView new];
     
     // Preparing tool items array changed in set editing
     _toolItemsNormal = [NSArray arrayWithObject:[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"tabBar_TabAddButton"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolNormalAddAction:)]];
@@ -190,6 +219,49 @@ static void * directoryPresenterFileURLsObservingContext;
 //    
 //    [popoverLabelColorController presentPopoverFromRect:[sender frame] inView:[sender superview] permittedArrowDirections:UIPopoverArrowDirectionLeft animated:YES];
 //}
+
+#pragma mark - GridViewDataSource
+
+- (NSInteger)numberOfItemsInGMGridView:(GMGridView *)gridView
+{
+    return [self.directoryPresenter.fileURLs count];
+}
+
+- (CGSize)sizeForItemsInGMGridView:(GMGridView *)gridView
+{
+    return CGSizeMake(320.0, 150.0);
+}
+
+- (GMGridViewCell *)GMGridView:(GMGridView *)gridView cellForItemAtIndex:(NSInteger)index
+{
+    // Backgrounds images
+    STATIC_OBJECT(UIImage, cellBackgroundImage, [UIImage styleBackgroundImageWithColor:[UIColor styleBackgroundColor] borderColor:[UIColor styleForegroundColor] insets:UIEdgeInsetsMake(4, 7, 4, 7) arrowSize:CGSizeZero roundingCorners:UIRectCornerAllCorners]);
+    STATIC_OBJECT(UIImage, cellHighlightedImage, [UIImage styleBackgroundImageWithColor:[UIColor styleHighlightColor] borderColor:[UIColor styleForegroundColor] insets:UIEdgeInsetsMake(4, 7, 4, 7) arrowSize:CGSizeZero roundingCorners:UIRectCornerAllCorners]);
+    
+    // Create cell
+    ACProjectCell *cell = (ACProjectCell *)[self.gridView dequeueReusableCell];
+    if (cell == nil)
+    {
+        cell = [[ACProjectCell alloc] init];
+        [[NSBundle mainBundle] loadNibNamed:@"ProjectCell" owner:cell options:nil];
+        
+        // Setup project icon
+        [cell.normalView.imageView setImage:[self projectIconWithColor:[UIColor styleForegroundColor]]];
+        [cell.editingView.imageView setImage:[self projectIconWithColor:[UIColor styleForegroundColor]]];
+    }
+    
+    
+    // Setup project title
+    [cell.normalView.textLabel setText:[[[self.directoryPresenter.fileURLs objectAtIndex:index] lastPathComponent] stringByDeletingPathExtension]];
+    [cell.editingView.textLabel setText:[[[self.directoryPresenter.fileURLs objectAtIndex:index] lastPathComponent] stringByDeletingPathExtension]];
+    
+    if (self.editing)
+        cell.contentView = cell.editingView;
+    else
+        cell.contentView = cell.normalView;
+    
+    return cell;
+}
 
 #pragma mark - Table view functionality
 
