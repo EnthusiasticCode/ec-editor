@@ -11,7 +11,7 @@
 @implementation ACProjectCellEditingView
 
 @synthesize imageView;
-@synthesize textLabel;
+@synthesize textField;
 @synthesize configureButton;
 @synthesize deleteButton;
 

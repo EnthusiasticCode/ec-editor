@@ -11,7 +11,7 @@
 @interface ACProjectCellEditingView : UIView
 
 @property (strong, nonatomic) IBOutlet UIImageView *imageView;
-@property (strong, nonatomic) IBOutlet UILabel *textLabel;
+@property (strong, nonatomic) IBOutlet UITextField *textField;
 @property (strong, nonatomic) IBOutlet UIButton *configureButton;
 @property (strong, nonatomic) IBOutlet UIButton *deleteButton;
 

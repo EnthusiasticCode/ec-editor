@@ -37,6 +37,8 @@ static void * directoryPresenterFileURLsObservingContext;
 /// Represent a directory's contents.
 @property (nonatomic, strong) ECDirectoryPresenter *directoryPresenter;
 - (void)_toolNormalAddAction:(id)sender;
+- (void)_openButtonAction:(id)sender;
+- (void)_deleteButtonAction:(id)sender;
 
 @end
 
@@ -253,7 +255,15 @@ static void * directoryPresenterFileURLsObservingContext;
     
     // Setup project title
     [cell.normalView.textLabel setText:[[[self.directoryPresenter.fileURLs objectAtIndex:index] lastPathComponent] stringByDeletingPathExtension]];
-    [cell.editingView.textLabel setText:[[[self.directoryPresenter.fileURLs objectAtIndex:index] lastPathComponent] stringByDeletingPathExtension]];
+    [cell.editingView.textField setText:[[[self.directoryPresenter.fileURLs objectAtIndex:index] lastPathComponent] stringByDeletingPathExtension]];
+    [cell.editingView.textField setTag:index];
+    [cell.editingView.textField setDelegate:self];
+    
+    [cell.normalView.openButton setTag:index];
+    [cell.normalView.openButton addTarget:self action:@selector(_openButtonAction:) forControlEvents:UIControlEventTouchUpInside];
+    
+    [cell.editingView.deleteButton setTag:index];
+    [cell.editingView.deleteButton addTarget:self action:@selector(_deleteButtonAction:) forControlEvents:UIControlEventTouchUpInside];
     
     if (self.editing)
         cell.contentView = cell.editingView;
@@ -263,23 +273,9 @@ static void * directoryPresenterFileURLsObservingContext;
     return cell;
 }
 
-#pragma mark - Table view functionality
-
-- (void)deleteTableRow:(id)sender
-{
-    NSInteger rowIndex = [(UIControl *)sender tag];
-    ECASSERT(rowIndex >= 0);
-    NSURL *fileURL = [self.directoryPresenter.fileURLs objectAtIndex:rowIndex];
-    NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] initWithFilePresenter:nil];
-    [fileCoordinator coordinateWritingItemAtURL:fileURL options:NSFileCoordinatorWritingForDeleting error:NULL byAccessor:^(NSURL *newURL) {
-        NSFileManager *fileManager = [[NSFileManager alloc] init];
-        [fileManager removeItemAtURL:newURL error:NULL];
-    }];
-}
-
 - (void)textFieldDidEndEditing:(UITextField *)textField
 {
-    textField.text = [[self.directoryPresenter.fileURLs objectAtIndex:textField.tag] lastPathComponent];
+    textField.text = [[[self.directoryPresenter.fileURLs objectAtIndex:textField.tag] lastPathComponent] stringByDeletingPathExtension];
 }
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
@@ -290,55 +286,32 @@ static void * directoryPresenterFileURLsObservingContext;
     NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] initWithFilePresenter:nil];
     [fileCoordinator coordinateWritingItemAtURL:fileURL options:NSFileCoordinatorWritingForMoving error:NULL byAccessor:^(NSURL *newURL) {
         NSFileManager *fileManager = [[NSFileManager alloc] init];
-        [fileManager moveItemAtURL:newURL toURL:[[newURL URLByDeletingLastPathComponent] URLByAppendingPathComponent:textField.text] error:NULL];
+        [fileManager moveItemAtURL:newURL toURL:[[[newURL URLByDeletingLastPathComponent] URLByAppendingPathComponent:textField.text] URLByAppendingPathExtension:@"weakpkg"] error:NULL];
     }];
     [textField resignFirstResponder];
+    [self.gridView reloadData];
     return YES;
 }
 
-#pragma mark - Table view data source
-
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+- (void)_openButtonAction:(id)sender
 {
-    return [self.directoryPresenter.fileURLs count];
+    ECASSERT(!self.editing);
+    NSInteger rowIndex = [(UIControl *)sender tag];
+    ECASSERT(rowIndex >= 0);
+    [self.tab pushURL:[self.directoryPresenter.fileURLs objectAtIndex:rowIndex]];
 }
 
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
-{    
-    // Backgrounds images
-    STATIC_OBJECT(UIImage, cellBackgroundImage, [UIImage styleBackgroundImageWithColor:[UIColor styleBackgroundColor] borderColor:[UIColor styleForegroundColor] insets:UIEdgeInsetsMake(4, 7, 4, 7) arrowSize:CGSizeZero roundingCorners:UIRectCornerAllCorners]);
-    STATIC_OBJECT(UIImage, cellHighlightedImage, [UIImage styleBackgroundImageWithColor:[UIColor styleHighlightColor] borderColor:[UIColor styleForegroundColor] insets:UIEdgeInsetsMake(4, 7, 4, 7) arrowSize:CGSizeZero roundingCorners:UIRectCornerAllCorners]);
-    
-    // Create cell
-    static NSString *CellIdentifier = @"ProjectCell";
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
-    if (cell == nil)
-    {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
-    }
-    
-    // Setup project icon
-    [cell.imageView setImage:[self projectIconWithColor:[UIColor styleForegroundColor]]];
-    
-    // Setup project title
-    [cell.textLabel setText:[[[self.directoryPresenter.fileURLs objectAtIndex:indexPath.row] lastPathComponent] stringByDeletingPathExtension]];
-    
-    return cell;
-}
-
-- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
+- (void)_deleteButtonAction:(id)sender
 {
-    // Remove 'slide to delete' on cells.
-    return self.isEditing;
-}
-
-#pragma mark - Table view delegate
-
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    if (self.isEditing)
-        return;
-    [self.tab pushURL:[self.directoryPresenter.fileURLs objectAtIndex:indexPath.row]];
+    ECASSERT(self.editing);
+    NSInteger rowIndex = [(UIControl *)sender tag];
+    ECASSERT(rowIndex >= 0);
+    NSURL *fileURL = [self.directoryPresenter.fileURLs objectAtIndex:rowIndex];
+    NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] initWithFilePresenter:nil];
+    [fileCoordinator coordinateWritingItemAtURL:fileURL options:NSFileCoordinatorWritingForDeleting error:NULL byAccessor:^(NSURL *newURL) {
+        NSFileManager *fileManager = [[NSFileManager alloc] init];
+        [fileManager removeItemAtURL:newURL error:NULL];
+    }];
 }
 
 @end
