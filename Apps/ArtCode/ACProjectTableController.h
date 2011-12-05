@@ -6,10 +6,10 @@
 //  Copyright 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
-@class ACApplication, ACTab;
+#import "GMGridView.h"
+@class ACApplication, ACTab, ACProjectCell;
 
-@interface ACProjectTableController : UITableViewController <UITextFieldDelegate>
+@interface ACProjectTableController : UIViewController <UITextFieldDelegate, GMGridViewDataSource>
 
 @property (nonatomic, strong) NSURL *projectsDirectory;
 
