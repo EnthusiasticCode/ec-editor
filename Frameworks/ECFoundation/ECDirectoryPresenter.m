@@ -7,12 +7,14 @@
 //
 
 #import "ECDirectoryPresenter.h"
+#import <libkern/OSAtomic.h>
 
 @interface ECDirectoryPresenter ()
 {
+    NSURL *_presentedItemURL;
     NSOperationQueue *_presentedItemOperationQueue;
 }
-@property (nonatomic, strong) NSOrderedSet *fileURLs;
+@property (nonatomic, strong) NSArray *fileURLs;
 - (NSUInteger)insertionPointForFileURL:(NSURL *)fileURL;
 - (BOOL)fileURLIsDirectDescendant:(NSURL *)fileURL;
 @end
@@ -30,13 +32,16 @@
         return;
     [self willChangeValueForKey:@"directory"];
     _directory = directory;
+    @synchronized(self)
+    {
+        _presentedItemURL = directory;
+    }
     if (directory)
     {
         ECFileCoordinator *fileCoordinator = [[ECFileCoordinator alloc] initWithFilePresenter:self];
         [fileCoordinator coordinateReadingItemAtURL:self.directory options:NSFileCoordinatorReadingResolvesSymbolicLink error:NULL byAccessor:^(NSURL *newURL) {
             NSFileManager *fileManager = [[NSFileManager alloc] init];
-            NSArray *fileURLs = [fileManager contentsOfDirectoryAtURL:newURL includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsPackageDescendants error:NULL];
-            self.fileURLs = [NSMutableOrderedSet orderedSetWithArray:fileURLs];
+            self.fileURLs = [NSMutableArray arrayWithArray:[fileManager contentsOfDirectoryAtURL:newURL includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsPackageDescendants error:NULL]];
         }];
     }
     else
@@ -44,9 +49,33 @@
     [self didChangeValueForKey:@"directory"];
 }
 
-- (NSOrderedSet *)fileURLs
+- (NSArray *)fileURLs
 {
     return [_fileURLs copy];
+}
+
+- (void)insertFileURLs:(NSArray *)array atIndexes:(NSIndexSet *)indexes
+{
+    ECASSERT(_fileURLs);
+    [self willChange:NSKeyValueChangeInsertion valuesAtIndexes:indexes forKey:@"fileURLs"];
+    [(NSMutableArray *)_fileURLs insertObjects:array atIndexes:indexes];
+    [self didChange:NSKeyValueChangeInsertion valuesAtIndexes:indexes forKey:@"fileURLs"];
+}
+
+- (void)removeFileURLsAtIndexes:(NSIndexSet *)indexes
+{
+    ECASSERT(_fileURLs);
+    [self willChange:NSKeyValueChangeRemoval valuesAtIndexes:indexes forKey:@"fileURLs"];
+    [(NSMutableArray *)_fileURLs removeObjectsAtIndexes:indexes];
+    [self didChange:NSKeyValueChangeRemoval valuesAtIndexes:indexes forKey:@"fileURLs"];
+}
+
+- (void)replaceFileURLsAtIndexes:(NSIndexSet *)indexes withFileURLs:(NSArray *)array
+{
+    ECASSERT(_fileURLs);
+    [self willChange:NSKeyValueChangeReplacement valuesAtIndexes:indexes forKey:@"fileURLs"];
+    [(NSMutableArray *)_fileURLs replaceObjectsAtIndexes:indexes withObjects:array];
+    [self didChange:NSKeyValueChangeReplacement valuesAtIndexes:indexes forKey:@"fileURLs"];
 }
 
 #pragma mark - General methods
@@ -81,7 +110,12 @@
 
 - (NSURL *)presentedItemURL
 {
-    return self.directory;
+    NSURL *presentedItemURL = nil;
+    @synchronized(self)
+    {
+        presentedItemURL = _presentedItemURL;
+    }
+    return presentedItemURL;
 }
 
 + (NSSet *)keyPathsForValuesAffectingPresentedItemURL
@@ -93,27 +127,16 @@
 {
     if (!_presentedItemOperationQueue)
     {
-        _presentedItemOperationQueue = [[NSOperationQueue alloc] init];
-        _presentedItemOperationQueue.maxConcurrentOperationCount = 1;
+        NSOperationQueue *presentedItemOperationQueue = [[NSOperationQueue alloc] init];
+        presentedItemOperationQueue.maxConcurrentOperationCount = 1;
+        OSAtomicCompareAndSwapPtrBarrier(NULL, (__bridge void *) presentedItemOperationQueue, (void *)&_presentedItemOperationQueue);
     }
     return _presentedItemOperationQueue;
 }
 
-- (void)presentedItemDidChange
-{
-    // This one gets called sometimes, the subitem ones never
-    // once the subitem methods get called delete this one
-    ECFileCoordinator *fileCoordinator = [[ECFileCoordinator alloc] initWithFilePresenter:self];
-    [fileCoordinator coordinateReadingItemAtURL:self.directory options:NSFileCoordinatorReadingResolvesSymbolicLink error:NULL byAccessor:^(NSURL *newURL) {
-        NSFileManager *fileManager = [[NSFileManager alloc] init];
-        NSArray *fileURLs = [fileManager contentsOfDirectoryAtURL:newURL includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsPackageDescendants error:NULL];
-        self.fileURLs = [NSMutableOrderedSet orderedSetWithArray:fileURLs];
-    }];
-}
-
 - (void)presentedItemDidMoveToURL:(NSURL *)newURL
 {
-    ECASSERT(NO);
+    ECASSERT(_fileURLs);
     ECFileCoordinator *fileCoordinator = [[ECFileCoordinator alloc] initWithFilePresenter:self];
     [fileCoordinator coordinateReadingItemAtURL:newURL options:NSFileCoordinatorReadingResolvesSymbolicLink error:NULL byAccessor:^(NSURL *newURL) {
         self.directory = newURL;
@@ -122,55 +145,61 @@
 
 - (void)accommodatePresentedItemDeletionWithCompletionHandler:(void (^)(NSError *))completionHandler
 {
-    ECASSERT(NO);
+    ECASSERT(_fileURLs);
     self.directory = nil;
     completionHandler(nil);
 }
 
 - (void)presentedSubitemDidAppearAtURL:(NSURL *)url
 {
-    ECASSERT(NO);
+    ECASSERT(_fileURLs);
     ECFileCoordinator *fileCoordinator = [[ECFileCoordinator alloc] initWithFilePresenter:self];
     [fileCoordinator coordinateReadingItemAtURL:url options:NSFileCoordinatorReadingResolvesSymbolicLink error:NULL byAccessor:^(NSURL *newURL) {
         if (![self fileURLIsDirectDescendant:newURL])
             return;
         NSUInteger insertionPoint = [self insertionPointForFileURL:newURL];
-        [[self mutableOrderedSetValueForKey:@"fileURLs"] insertObject:newURL atIndex:insertionPoint];
+        [[self mutableArrayValueForKey:@"fileURLs"] insertObject:newURL atIndex:insertionPoint];
     }];
 }
 
 - (void)accommodatePresentedSubitemDeletionAtURL:(NSURL *)url completionHandler:(void (^)(NSError *))completionHandler
 {
-    ECASSERT(NO);
+    ECASSERT(_fileURLs);
     if (![self fileURLIsDirectDescendant:url])
         return completionHandler(nil);
-    [[self mutableOrderedSetValueForKey:@"fileURLs"] removeObject:url];
+    [[self mutableArrayValueForKey:@"fileURLs"] removeObject:url];
     completionHandler(nil);
 }
 
 - (void)presentedSubitemAtURL:(NSURL *)oldURL didMoveToURL:(NSURL *)newURL
 {
-    ECASSERT(NO);
+    ECASSERT(_fileURLs);
     ECFileCoordinator *fileCoordinator = [[ECFileCoordinator alloc] initWithFilePresenter:self];
     [fileCoordinator coordinateReadingItemAtURL:newURL options:NSFileCoordinatorReadingResolvesSymbolicLink error:NULL byAccessor:^(NSURL *newURL) {
         if ([self fileURLIsDirectDescendant:oldURL])
         {
             if ([self fileURLIsDirectDescendant:newURL])
             {
-                NSUInteger index = [self.fileURLs indexOfObject:oldURL];
-                [[self mutableOrderedSetValueForKey:@"fileURLs"] replaceObjectAtIndex:index withObject:newURL];
-                [[self mutableOrderedSetValueForKey:@"fileURLs"] moveObjectsAtIndexes:[NSIndexSet indexSetWithIndex:index] toIndex:[self insertionPointForFileURL:newURL]];
+                NSUInteger oldIndex = [self.fileURLs indexOfObject:oldURL];
+                NSUInteger newIndex = [self insertionPointForFileURL:newURL];
+                if (newIndex > oldIndex)
+                {
+                    [[self mutableArrayValueForKey:@"fileURLs"] insertObject:newURL atIndex:newIndex];
+                    [[self mutableArrayValueForKey:@"fileURLs"] removeObjectAtIndex:oldIndex];
+                }
+                else
+                {
+                    [[self mutableArrayValueForKey:@"fileURLs"] removeObjectAtIndex:oldIndex];
+                    [[self mutableArrayValueForKey:@"fileURLs"] insertObject:newURL atIndex:newIndex];
+                }
             }
             else
             {
-                [[self mutableOrderedSetValueForKey:@"fileURLs"] removeObject:oldURL];
+                [[self mutableArrayValueForKey:@"fileURLs"] removeObject:oldURL];
             }
         }
         else if ([self fileURLIsDirectDescendant:newURL])
-        {
-            NSUInteger insertionPoint = [self insertionPointForFileURL:newURL];
-            [[self mutableOrderedSetValueForKey:@"fileURLs"] insertObject:newURL atIndex:insertionPoint];
-        }
+            [[self mutableArrayValueForKey:@"fileURLs"] insertObject:newURL atIndex:[self insertionPointForFileURL:newURL]];
     }];
 }
 

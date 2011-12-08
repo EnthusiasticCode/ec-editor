@@ -14,6 +14,6 @@
 @property (nonatomic, strong) NSURL *directory;
 
 /// Files in the directory. This property will be automatically updated on file system changes. Thus a good target to be observed.
-@property (nonatomic, strong, readonly) NSOrderedSet *fileURLs;
+@property (nonatomic, strong, readonly) NSArray *fileURLs;
 
 @end
