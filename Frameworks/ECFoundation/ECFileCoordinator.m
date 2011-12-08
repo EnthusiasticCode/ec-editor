@@ -29,7 +29,12 @@ static NSMutableArray *_filePresenters;
 {
     dispatch_barrier_async(_fileCoordinationDispatchQueue, ^{
         ECASSERT([filePresenter conformsToProtocol:@protocol(NSFilePresenter)]);
-        [_filePresenters addObject:filePresenter];
+        @try {
+            [_filePresenters addObject:filePresenter];
+        }
+        @catch (NSException *exception) {
+            ECASSERT(exception);
+        }
     });
 }
 
@@ -37,7 +42,12 @@ static NSMutableArray *_filePresenters;
 {
     dispatch_barrier_sync(_fileCoordinationDispatchQueue, ^{
         ECASSERT([_filePresenters containsObject:filePresenter]);
-        [_filePresenters removeObject:filePresenter];
+        @try {
+            [_filePresenters removeObject:filePresenter];
+        }
+        @catch (NSException *exception) {
+            ECASSERT(exception);
+        }
     });
 }
 
@@ -45,7 +55,12 @@ static NSMutableArray *_filePresenters;
 {
     __block NSArray *filePresenters = nil;
     dispatch_barrier_sync(_fileCoordinationDispatchQueue, ^{
-        filePresenters = [_filePresenters copy];
+        @try {
+            filePresenters = [_filePresenters copy];
+        }
+        @catch (NSException *exception) {
+            ECASSERT(exception);
+        }
     });
     return filePresenters;
 }
@@ -62,27 +77,32 @@ static NSMutableArray *_filePresenters;
 - (void)coordinateReadingItemAtURL:(NSURL *)url options:(NSFileCoordinatorReadingOptions)options error:(NSError *__autoreleasing *)outError byAccessor:(void (^)(NSURL *))reader
 {
     dispatch_sync(_fileCoordinationDispatchQueue, ^{
-        NSMutableArray *affectedFilePresenters = [[NSMutableArray alloc] init];
-        for (id<NSFilePresenter>filePresenter in _filePresenters)
-        {
-            if (filePresenter == _filePresenterToIgnore || ![filePresenter respondsToSelector:@selector(relinquishPresentedItemToReader:)])
-                continue;
-            NSURL *filePresenterURL = filePresenter.presentedItemURL;
-            if (![[filePresenterURL absoluteString] isEqualToString:[url absoluteString]])
-                continue;
-            [affectedFilePresenters addObject:filePresenter];
+        @try {
+            NSMutableArray *affectedFilePresenters = [[NSMutableArray alloc] init];
+            for (id<NSFilePresenter>filePresenter in _filePresenters)
+            {
+                if (filePresenter == _filePresenterToIgnore || ![filePresenter respondsToSelector:@selector(relinquishPresentedItemToReader:)])
+                    continue;
+                NSURL *filePresenterURL = filePresenter.presentedItemURL;
+                if (![[filePresenterURL absoluteString] isEqualToString:[url absoluteString]])
+                    continue;
+                [affectedFilePresenters addObject:filePresenter];
+            }
+            NSMutableArray *reaquirers = [[NSMutableArray alloc] init];
+            for (id<NSFilePresenter>filePresenter in affectedFilePresenters)
+                [filePresenter.presentedItemOperationQueue addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
+                    [filePresenter relinquishPresentedItemToReader:^(void(^reaquirer)(void)) {
+                        if (reaquirer)
+                            [reaquirers addObject:reaquirer];
+                    }];
+                }]] waitUntilFinished:YES];
+            reader(url);
+            for (void(^reaquirer)(void) in reaquirers)
+                reaquirer();
         }
-        NSMutableArray *reaquirers = [[NSMutableArray alloc] init];
-        for (id<NSFilePresenter>filePresenter in affectedFilePresenters)
-            [filePresenter.presentedItemOperationQueue addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
-                [filePresenter relinquishPresentedItemToReader:^(void(^reaquirer)(void)) {
-                    if (reaquirer)
-                        [reaquirers addObject:reaquirer];
-                }];
-            }]] waitUntilFinished:YES];
-        reader(url);
-        for (void(^reaquirer)(void) in reaquirers)
-            reaquirer();
+        @catch (NSException *exception) {
+            ECASSERT(exception);
+        }
     });
 }
 
