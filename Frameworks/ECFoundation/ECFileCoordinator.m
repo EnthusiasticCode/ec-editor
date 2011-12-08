@@ -61,7 +61,29 @@ static NSMutableArray *_filePresenters;
 
 - (void)coordinateReadingItemAtURL:(NSURL *)url options:(NSFileCoordinatorReadingOptions)options error:(NSError *__autoreleasing *)outError byAccessor:(void (^)(NSURL *))reader
 {
-    UNIMPLEMENTED_VOID();
+    dispatch_sync(_fileCoordinationDispatchQueue, ^{
+        NSMutableArray *affectedFilePresenters = [[NSMutableArray alloc] init];
+        for (id<NSFilePresenter>filePresenter in _filePresenters)
+        {
+            if (filePresenter == _filePresenterToIgnore || ![filePresenter respondsToSelector:@selector(relinquishPresentedItemToReader:)])
+                continue;
+            NSURL *filePresenterURL = filePresenter.presentedItemURL;
+            if (![[filePresenterURL absoluteString] isEqualToString:[url absoluteString]])
+                continue;
+            [affectedFilePresenters addObject:filePresenter];
+        }
+        NSMutableArray *reaquirers = [[NSMutableArray alloc] init];
+        for (id<NSFilePresenter>filePresenter in affectedFilePresenters)
+            [filePresenter.presentedItemOperationQueue addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
+                [filePresenter relinquishPresentedItemToReader:^(void(^reaquirer)(void)) {
+                    if (reaquirer)
+                        [reaquirers addObject:reaquirer];
+                }];
+            }]] waitUntilFinished:YES];
+        reader(url);
+        for (void(^reaquirer)(void) in reaquirers)
+            reaquirer();
+    });
 }
 
 - (void)coordinateWritingItemAtURL:(NSURL *)url options:(NSFileCoordinatorWritingOptions)options error:(NSError *__autoreleasing *)outError byAccessor:(void (^)(NSURL *))writer
