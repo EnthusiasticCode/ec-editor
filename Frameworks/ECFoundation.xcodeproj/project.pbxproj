@@ -103,8 +103,6 @@
 		B726573D146160F000E4C9F1 /* ECDiscardableMutableDictionary.m in Sources */ = {isa = PBXBuildFile; fileRef = B726573B146160F000E4C9F1 /* ECDiscardableMutableDictionary.m */; };
 		B7A4BB34143F918200BB6F29 /* NSString+ECAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = B7A4BB32143F918200BB6F29 /* NSString+ECAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B7A4BB35143F918200BB6F29 /* NSString+ECAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = B7A4BB33143F918200BB6F29 /* NSString+ECAdditions.m */; };
-		B7C9A841142BB046009D8FF3 /* ECItemObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = B7C9A83F142BB046009D8FF3 /* ECItemObserver.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B7C9A842142BB046009D8FF3 /* ECItemObserver.m in Sources */ = {isa = PBXBuildFile; fileRef = B7C9A840142BB046009D8FF3 /* ECItemObserver.m */; };
 		B7D25F51149156D8002CD5C9 /* ECFileCoordinator.h in Headers */ = {isa = PBXBuildFile; fileRef = B7D25F4D149156D8002CD5C9 /* ECFileCoordinator.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B7D25F52149156D8002CD5C9 /* ECFileCoordinator.m in Sources */ = {isa = PBXBuildFile; fileRef = B7D25F4E149156D8002CD5C9 /* ECFileCoordinator.m */; };
 		B7D4DDBA146BD04D002DF6D4 /* ECAttributedUTF8FileBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = B7D4DDB8146BD04D002DF6D4 /* ECAttributedUTF8FileBuffer.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -303,8 +301,6 @@
 		B726573B146160F000E4C9F1 /* ECDiscardableMutableDictionary.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECDiscardableMutableDictionary.m; sourceTree = "<group>"; };
 		B7A4BB32143F918200BB6F29 /* NSString+ECAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+ECAdditions.h"; sourceTree = "<group>"; };
 		B7A4BB33143F918200BB6F29 /* NSString+ECAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+ECAdditions.m"; sourceTree = "<group>"; };
-		B7C9A83F142BB046009D8FF3 /* ECItemObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECItemObserver.h; sourceTree = "<group>"; };
-		B7C9A840142BB046009D8FF3 /* ECItemObserver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECItemObserver.m; sourceTree = "<group>"; };
 		B7D25F4D149156D8002CD5C9 /* ECFileCoordinator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECFileCoordinator.h; sourceTree = "<group>"; };
 		B7D25F4E149156D8002CD5C9 /* ECFileCoordinator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECFileCoordinator.m; sourceTree = "<group>"; };
 		B7D4DDB8146BD04D002DF6D4 /* ECAttributedUTF8FileBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECAttributedUTF8FileBuffer.h; sourceTree = "<group>"; };
@@ -609,8 +605,6 @@
 				B7D25F4E149156D8002CD5C9 /* ECFileCoordinator.m */,
 				B701296F143860490070CCDF /* ECDirectoryPresenter.h */,
 				B7012970143860490070CCDF /* ECDirectoryPresenter.m */,
-				B7C9A83F142BB046009D8FF3 /* ECItemObserver.h */,
-				B7C9A840142BB046009D8FF3 /* ECItemObserver.m */,
 				B7D4DDB8146BD04D002DF6D4 /* ECAttributedUTF8FileBuffer.h */,
 				B7D4DDB9146BD04D002DF6D4 /* ECAttributedUTF8FileBuffer.m */,
 			);
@@ -626,7 +620,6 @@
 			files = (
 				B71707851428D52F00DF7794 /* ECHashing.h in Headers */,
 				B71707871428D52F00DF7794 /* ECPatriciaTrie.h in Headers */,
-				B7C9A841142BB046009D8FF3 /* ECItemObserver.h in Headers */,
 				B71707891428D52F00DF7794 /* NSURL+ECAdditions.h in Headers */,
 				B717078D1428D52F00DF7794 /* NSTimer+block.h in Headers */,
 				B71707751428D50000DF7794 /* ECDebug.h in Headers */,
@@ -744,7 +737,6 @@
 				B717078A1428D52F00DF7794 /* NSURL+ECAdditions.m in Sources */,
 				B717078B1428D52F00DF7794 /* MurmurHash3.c in Sources */,
 				B717078E1428D52F00DF7794 /* NSTimer+block.m in Sources */,
-				B7C9A842142BB046009D8FF3 /* ECItemObserver.m in Sources */,
 				B7012972143860490070CCDF /* ECDirectoryPresenter.m in Sources */,
 				B7A4BB35143F918200BB6F29 /* NSString+ECAdditions.m in Sources */,
 				B726571314613FBF00E4C9F1 /* ECCache.m in Sources */,
