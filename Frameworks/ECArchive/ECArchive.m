@@ -22,7 +22,7 @@
         archive_read_finish(archive);
         return NO;
     }
-    NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] initWithFilePresenter:nil];
+    ECFileCoordinator *fileCoordinator = [[ECFileCoordinator alloc] initWithFilePresenter:nil];
     __block int returnCode = -1;
     NSFileManager *fileManager = [[NSFileManager alloc] init];
     __block NSURL *workingDirectory = nil;
@@ -97,7 +97,7 @@
         archive_write_finish(output);
         if (returnCode == ARCHIVE_OK)
         {
-            NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] initWithFilePresenter:nil];
+            ECFileCoordinator *fileCoordinator = [[ECFileCoordinator alloc] initWithFilePresenter:nil];
             for (NSURL *fileURL in [fileManager contentsOfDirectoryAtURL:workingDirectory includingPropertiesForKeys:nil options:0 error:NULL])
             {
                 NSURL *destinationURL = [directoryURL URLByAppendingPathComponent:[fileURL lastPathComponent]];
@@ -123,7 +123,7 @@
     archive_write_set_format_zip(archive);
     archive_write_open_filename(archive, [[archiveURL path] fileSystemRepresentation]);
     
-    NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] initWithFilePresenter:nil];
+    ECFileCoordinator *fileCoordinator = [[ECFileCoordinator alloc] initWithFilePresenter:nil];
     [fileCoordinator coordinateReadingItemAtURL:directoryURL options:NSFileCoordinatorReadingResolvesSymbolicLink error:NULL byAccessor:^(NSURL *newURL) {
         NSFileManager *fileManager = [[NSFileManager alloc] init];
         for (NSURL *fileURL in [fileManager enumeratorAtURL:directoryURL includingPropertiesForKeys:[NSArray arrayWithObjects:NSURLIsRegularFileKey, NSURLIsReadableKey, nil] options:0 errorHandler:nil])

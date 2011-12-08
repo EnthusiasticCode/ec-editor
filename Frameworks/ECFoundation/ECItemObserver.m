@@ -45,26 +45,26 @@
     if (!self)
         return nil;
     _presentedItemOperationQueue = queue;
-    NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] initWithFilePresenter:self];
+    ECFileCoordinator *fileCoordinator = [[ECFileCoordinator alloc] initWithFilePresenter:self];
     __weak ECItemObserver *this = self;
     [fileCoordinator coordinateReadingItemAtURL:itemURL options:NSFileCoordinatorReadingResolvesSymbolicLink error:NULL byAccessor:^(NSURL *newURL) {
         this.observedItemURL = newURL;
         id lastModificationDate;
         [newURL getResourceValue:&lastModificationDate forKey:NSURLContentModificationDateKey error:NULL];
         this.presentedItemLastModificationDate = lastModificationDate;
-        [NSFileCoordinator addFilePresenter:self];
+        [ECFileCoordinator addFilePresenter:self];
     }];
     return self;
 }
 
 - (void)dealloc
 {
-    [NSFileCoordinator removeFilePresenter:self];
+    [ECFileCoordinator removeFilePresenter:self];
 }
 
 - (void)presentedItemDidChange
 {
-    NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] initWithFilePresenter:self];
+    ECFileCoordinator *fileCoordinator = [[ECFileCoordinator alloc] initWithFilePresenter:self];
     __weak ECItemObserver *this = self;
     [fileCoordinator coordinateReadingItemAtURL:self.observedItemURL options:NSFileCoordinatorReadingResolvesSymbolicLink error:NULL byAccessor:^(NSURL *newURL) {
         id lastModificationDate;

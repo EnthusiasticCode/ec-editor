@@ -32,7 +32,7 @@
     _directory = directory;
     if (directory)
     {
-        NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] initWithFilePresenter:self];
+        ECFileCoordinator *fileCoordinator = [[ECFileCoordinator alloc] initWithFilePresenter:self];
         [fileCoordinator coordinateReadingItemAtURL:self.directory options:NSFileCoordinatorReadingResolvesSymbolicLink error:NULL byAccessor:^(NSURL *newURL) {
             NSFileManager *fileManager = [[NSFileManager alloc] init];
             NSArray *fileURLs = [fileManager contentsOfDirectoryAtURL:newURL includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsPackageDescendants error:NULL];
@@ -56,13 +56,13 @@
     self = [super init];
     if (!self)
         return nil;
-    [NSFileCoordinator addFilePresenter:self];
+    [ECFileCoordinator addFilePresenter:self];
     return self;
 }
 
 - (void)dealloc
 {
-    [NSFileCoordinator removeFilePresenter:self];
+    [ECFileCoordinator removeFilePresenter:self];
 }
 
 - (NSUInteger)insertionPointForFileURL:(NSURL *)fileURL
@@ -103,7 +103,7 @@
 {
     // This one gets called sometimes, the subitem ones never
     // once the subitem methods get called delete this one
-    NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] initWithFilePresenter:self];
+    ECFileCoordinator *fileCoordinator = [[ECFileCoordinator alloc] initWithFilePresenter:self];
     [fileCoordinator coordinateReadingItemAtURL:self.directory options:NSFileCoordinatorReadingResolvesSymbolicLink error:NULL byAccessor:^(NSURL *newURL) {
         NSFileManager *fileManager = [[NSFileManager alloc] init];
         NSArray *fileURLs = [fileManager contentsOfDirectoryAtURL:newURL includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsPackageDescendants error:NULL];
@@ -114,7 +114,7 @@
 - (void)presentedItemDidMoveToURL:(NSURL *)newURL
 {
     ECASSERT(NO);
-    NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] initWithFilePresenter:self];
+    ECFileCoordinator *fileCoordinator = [[ECFileCoordinator alloc] initWithFilePresenter:self];
     [fileCoordinator coordinateReadingItemAtURL:newURL options:NSFileCoordinatorReadingResolvesSymbolicLink error:NULL byAccessor:^(NSURL *newURL) {
         self.directory = newURL;
     }];
@@ -130,7 +130,7 @@
 - (void)presentedSubitemDidAppearAtURL:(NSURL *)url
 {
     ECASSERT(NO);
-    NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] initWithFilePresenter:self];
+    ECFileCoordinator *fileCoordinator = [[ECFileCoordinator alloc] initWithFilePresenter:self];
     [fileCoordinator coordinateReadingItemAtURL:url options:NSFileCoordinatorReadingResolvesSymbolicLink error:NULL byAccessor:^(NSURL *newURL) {
         if (![self fileURLIsDirectDescendant:newURL])
             return;
@@ -151,7 +151,7 @@
 - (void)presentedSubitemAtURL:(NSURL *)oldURL didMoveToURL:(NSURL *)newURL
 {
     ECASSERT(NO);
-    NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] initWithFilePresenter:self];
+    ECFileCoordinator *fileCoordinator = [[ECFileCoordinator alloc] initWithFilePresenter:self];
     [fileCoordinator coordinateReadingItemAtURL:newURL options:NSFileCoordinatorReadingResolvesSymbolicLink error:NULL byAccessor:^(NSURL *newURL) {
         if ([self fileURLIsDirectDescendant:oldURL])
         {
