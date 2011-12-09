@@ -12,7 +12,7 @@
 
 @interface ACFileDocument ()
 {
-    ECAttributedUTF8FileBuffer *_fileBuffer;
+    ECFileBuffer *_fileBuffer;
 }
 @end
 
@@ -20,10 +20,10 @@
 
 #pragma mark - Properties
 
-- (ECAttributedUTF8FileBuffer *)fileBuffer
+- (ECFileBuffer *)fileBuffer
 {
     if (!_fileBuffer)
-        _fileBuffer = [[ECAttributedUTF8FileBuffer alloc] initWithFileURL:self.fileURL];
+        _fileBuffer = [[ECFileBuffer alloc] initWithFileURL:self.fileURL];
     return _fileBuffer;
 }
 

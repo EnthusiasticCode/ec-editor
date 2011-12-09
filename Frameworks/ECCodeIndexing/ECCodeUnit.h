@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import <clang-c/Index.h>
-@class ECCodeIndex, ECAttributedUTF8FileBuffer;
+@class ECCodeIndex, ECFileBuffer;
 @protocol ECCodeCursor, ECCodeCompletionString, ECCodeCompletionChunk, ECCodeCompletionResult;
 
 @protocol ECCodeCompletionResultSet <NSObject>
@@ -78,7 +78,7 @@
 - (ECCodeIndex *)index;
 
 /// The main source file the unit is interpreting.
-- (ECAttributedUTF8FileBuffer *)fileBuffer;
+- (ECFileBuffer *)fileBuffer;
 
 - (NSString *)scope;
 

@@ -7,10 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
-@class ECAttributedUTF8FileBuffer;
+@class ECFileBuffer;
 
 @interface ACFileDocument : UIDocument
 
-- (ECAttributedUTF8FileBuffer *)fileBuffer;
+- (ECFileBuffer *)fileBuffer;
 
 @end

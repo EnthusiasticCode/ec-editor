@@ -29,7 +29,7 @@
 
 @implementation ECClangCodeUnit
 
-- (id)initWithIndex:(ECCodeIndex *)index clangIndex:(CXIndex)clangIndex fileBuffer:(ECAttributedUTF8FileBuffer *)fileBuffer scope:(NSString *)scope
+- (id)initWithIndex:(ECCodeIndex *)index clangIndex:(CXIndex)clangIndex fileBuffer:(ECFileBuffer *)fileBuffer scope:(NSString *)scope
 {
     ECASSERT(index && clangIndex && fileBuffer && [scope length]);
     self = [super initWithIndex:index fileBuffer:fileBuffer scope:scope];

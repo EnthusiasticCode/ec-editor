@@ -27,7 +27,7 @@ static ECDiscardableMutableDictionary *_syntaxes;
 {
     NSInteger _contentAccessCount;
     NSURL *_fileURL;
-    ECAttributedUTF8FileBuffer *_fileBuffer;
+    ECFileBuffer *_fileBuffer;
     NSString *_name;
     NSString *_scope;
     NSArray *__fileTypes;
@@ -53,7 +53,7 @@ static ECDiscardableMutableDictionary *_syntaxes;
     return [_syntaxes objectForKey:scope];
 }
 
-+ (TMSyntax *)syntaxForFileBuffer:(ECAttributedUTF8FileBuffer *)fileBuffer
++ (TMSyntax *)syntaxForFileBuffer:(ECFileBuffer *)fileBuffer
 {
     ECASSERT(fileBuffer);
     TMSyntax *foundSyntax = [self _syntaxWithPredicateBlock:^BOOL(TMSyntax *syntax) {

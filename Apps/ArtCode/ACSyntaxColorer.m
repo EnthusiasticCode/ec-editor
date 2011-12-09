@@ -19,7 +19,7 @@
 
 @interface ACSyntaxColorer ()
 {
-    ECAttributedUTF8FileBuffer *_fileBuffer;
+    ECFileBuffer *_fileBuffer;
     ECCodeUnit *_codeUnit;
     id _fileBufferObserver;
     BOOL _needsToReapplySyntaxColoring;
@@ -34,7 +34,7 @@
 @synthesize theme = _theme;
 @synthesize defaultTextAttributes = _defaultTextAttributes;
 
-- (id)initWithFileBuffer:(ECAttributedUTF8FileBuffer *)fileBuffer
+- (id)initWithFileBuffer:(ECFileBuffer *)fileBuffer
 {
     ECASSERT(fileBuffer);
     self = [super init];
@@ -55,7 +55,7 @@
     [[NSNotificationCenter defaultCenter] removeObserver:_fileBufferObserver];
 }
 
-- (ECAttributedUTF8FileBuffer *)fileBuffer
+- (ECFileBuffer *)fileBuffer
 {
     return _fileBuffer;
 }

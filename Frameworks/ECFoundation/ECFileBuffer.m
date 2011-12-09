@@ -77,9 +77,12 @@ static ECWeakDictionary *_fileBuffers;
     // replacing a substring with an equal string, no change required
     if ([string isEqualToString:[[_contents string] substringWithRange:range]])
         return;
-    NSDictionary *change = [NSDictionary dictionaryWithObjectsAndKeys:[NSValue valueWithRange:range], ECFileBufferRangeKey, string, ECFileBufferStringKey, [[NSAttributedString alloc] initWithString:string], ECFileBufferAttributedStringKey, nil];
+    NSDictionary *change = [NSDictionary dictionaryWithObjectsAndKeys:[NSValue valueWithRange:range], ECFileBufferRangeKey, [string length] ? string : [NSNull null], ECFileBufferStringKey, [string length] ? [[NSAttributedString alloc] initWithString:string] : [NSNull null], ECFileBufferAttributedStringKey, nil];
     [[NSNotificationCenter defaultCenter] postNotificationName:ECFileBufferWillReplaceCharactersNotificationName object:self userInfo:change];
-    [_contents replaceCharactersInRange:range withString:string];
+    if ([string length])
+        [_contents replaceCharactersInRange:range withString:string];
+    else
+        [_contents deleteCharactersInRange:range];
     [[NSNotificationCenter defaultCenter] postNotificationName:ECFileBufferDidReplaceCharactersNotificationName object:self userInfo:change];
 }
 
@@ -97,9 +100,12 @@ static ECWeakDictionary *_fileBuffers;
     // replacing a substring with an equal string, no change required
     if ([attributedString isEqualToAttributedString:[_contents attributedSubstringFromRange:range]])
         return;
-    NSDictionary *change = [NSDictionary dictionaryWithObjectsAndKeys:[NSValue valueWithRange:range], ECFileBufferRangeKey, [attributedString string], ECFileBufferStringKey, attributedString, ECFileBufferAttributedStringKey, nil];
+    NSDictionary *change = [NSDictionary dictionaryWithObjectsAndKeys:[NSValue valueWithRange:range], ECFileBufferRangeKey, [attributedString length] ? [attributedString string] : [NSNull null], ECFileBufferStringKey, [attributedString length] ? attributedString : [NSNull null], ECFileBufferAttributedStringKey, nil];
     [[NSNotificationCenter defaultCenter] postNotificationName:ECFileBufferWillReplaceCharactersNotificationName object:self userInfo:change];
-    [_contents replaceCharactersInRange:range withAttributedString:attributedString];
+    if ([attributedString length])
+        [_contents replaceCharactersInRange:range withAttributedString:attributedString];
+    else
+        [_contents deleteCharactersInRange:range];
     [[NSNotificationCenter defaultCenter] postNotificationName:ECFileBufferDidReplaceCharactersNotificationName object:self userInfo:change];
 }
 
@@ -135,6 +141,47 @@ static ECWeakDictionary *_fileBuffers;
     [[NSNotificationCenter defaultCenter] postNotificationName:ECFileBufferWillChangeAttributesNotificationName object:self userInfo:change];
     [_contents removeAttribute:attributeName range:range];
     [[NSNotificationCenter defaultCenter] postNotificationName:ECFileBufferDidChangeAttributesNotificationName object:self userInfo:change];
+}
+
+- (id)attribute:(NSString *)attrName atIndex:(NSUInteger)location longestEffectiveRange:(NSRangePointer)range
+{
+    return [_contents attribute:attrName atIndex:location longestEffectiveRange:range inRange:NSMakeRange(0, [_contents length])];
+}
+
+- (NSUInteger)numberOfMatchesOfRegexp:(NSRegularExpression *)regexp options:(NSMatchingOptions)options range:(NSRange)range
+{
+    ECASSERT(regexp);
+    return [regexp numberOfMatchesInString:[_contents string] options:options range:range];
+}
+
+- (NSArray *)matchesOfRegexp:(NSRegularExpression *)regexp options:(NSMatchingOptions)options range:(NSRange)range
+{
+    ECASSERT(regexp);
+    return [regexp matchesInString:[_contents string] options:options range:range];
+}
+
+- (NSArray *)matchesOfRegexp:(NSRegularExpression *)regexp options:(NSMatchingOptions)options
+{
+    return [self matchesOfRegexp:regexp options:options range:NSMakeRange(0, [self length])];
+}
+
+- (NSString *)replacementStringForResult:(NSTextCheckingResult *)result offset:(NSInteger)offset template:(NSString *)replacementTemplate
+{
+    return [result.regularExpression replacementStringForResult:result inString:[_contents string] offset:offset template:replacementTemplate];
+}
+
+- (NSRange)replaceMatch:(NSTextCheckingResult *)match withTemplate:(NSString *)replacementTemplate offset:(NSInteger)offset
+{
+    ECASSERT(match && replacementTemplate);
+
+    NSRange replacementRange = match.range;
+    NSString *replacementString =  [self replacementStringForResult:match offset:offset template:replacementTemplate];
+    
+    replacementRange.location += offset;
+    [self replaceCharactersInRange:replacementRange withString:replacementString];
+    replacementRange.length = replacementString.length;
+    
+    return replacementRange;
 }
 
 @end

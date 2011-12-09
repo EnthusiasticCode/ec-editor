@@ -7,15 +7,15 @@
 //
 
 #import <Foundation/Foundation.h>
-@class ECAttributedUTF8FileBuffer, TMTheme, ECCodeUnit;
+@class ECFileBuffer, TMTheme, ECCodeUnit;
 
 @interface ACSyntaxColorer : NSObject
 
 @property (nonatomic, strong) TMTheme *theme;
 @property (nonatomic, strong) NSDictionary *defaultTextAttributes;
 
-- (id)initWithFileBuffer:(ECAttributedUTF8FileBuffer *)fileBuffer;
-- (ECAttributedUTF8FileBuffer *)fileBuffer;
+- (id)initWithFileBuffer:(ECFileBuffer *)fileBuffer;
+- (ECFileBuffer *)fileBuffer;
 - (ECCodeUnit *)codeUnit;
 - (void)applySyntaxColoring;
 

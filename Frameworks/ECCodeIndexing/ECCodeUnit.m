@@ -13,7 +13,7 @@
 @interface ECCodeUnit ()
 {
     ECCodeIndex *_index;
-    ECAttributedUTF8FileBuffer *_fileBuffer;
+    ECFileBuffer *_fileBuffer;
     NSString *_scope;
 }
 @end
@@ -25,7 +25,7 @@
     return _index;
 }
 
-- (ECAttributedUTF8FileBuffer *)fileBuffer
+- (ECFileBuffer *)fileBuffer
 {
     return _fileBuffer;
 }
@@ -69,7 +69,7 @@
 
 @implementation ECCodeUnit (Internal)
 
-- (id)initWithIndex:(ECCodeIndex *)index fileBuffer:(ECAttributedUTF8FileBuffer *)fileBuffer scope:(NSString *)scope
+- (id)initWithIndex:(ECCodeIndex *)index fileBuffer:(ECFileBuffer *)fileBuffer scope:(NSString *)scope
 {
     ECASSERT(index && fileBuffer);
     self = [super init];

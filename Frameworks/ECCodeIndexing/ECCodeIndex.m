@@ -38,7 +38,7 @@ static NSMutableArray *_extensionClasses;
     return self;
 }
 
-- (ECCodeUnit *)codeUnitForFileBuffer:(ECAttributedUTF8FileBuffer *)fileBuffer scope:(NSString *)scope
+- (ECCodeUnit *)codeUnitForFileBuffer:(ECFileBuffer *)fileBuffer scope:(NSString *)scope
 {
     if (![self isMemberOfClass:[ECCodeIndex class]])
         return nil;

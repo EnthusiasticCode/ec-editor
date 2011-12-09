@@ -45,7 +45,7 @@
     clang_disposeIndex(_clangIndex);
 }
 
-- (ECCodeUnit *)codeUnitWithIndex:(ECCodeIndex *)index forFileBuffer:(ECAttributedUTF8FileBuffer *)fileBuffer scope:(NSString *)scope
+- (ECCodeUnit *)codeUnitWithIndex:(ECCodeIndex *)index forFileBuffer:(ECFileBuffer *)fileBuffer scope:(NSString *)scope
 {
     ECASSERT(index && fileBuffer && scope);
     return [[ECClangCodeUnit alloc] initWithIndex:index clangIndex:_clangIndex fileBuffer:fileBuffer scope:scope];
