@@ -33,7 +33,7 @@ static NSMutableArray *_filePresenters;
             [_filePresenters addObject:filePresenter];
         }
         @catch (NSException *exception) {
-            ECASSERT(exception);
+            ECASSERT(NO);
         }
     });
 }
@@ -46,7 +46,7 @@ static NSMutableArray *_filePresenters;
             [_filePresenters removeObject:filePresenter];
         }
         @catch (NSException *exception) {
-            ECASSERT(exception);
+            ECASSERT(NO);
         }
     });
 }
@@ -59,7 +59,7 @@ static NSMutableArray *_filePresenters;
             filePresenters = [_filePresenters copy];
         }
         @catch (NSException *exception) {
-            ECASSERT(exception);
+            ECASSERT(NO);
         }
     });
     return filePresenters;
@@ -101,7 +101,7 @@ static NSMutableArray *_filePresenters;
                 reaquirer();
         }
         @catch (NSException *exception) {
-            ECASSERT(exception);
+            ECASSERT(NO);
         }
     });
 }
