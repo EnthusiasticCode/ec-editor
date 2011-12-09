@@ -96,6 +96,13 @@ static NSMutableArray *_filePresenters;
                             [reaquirers addObject:reaquirer];
                     }];
                 }]] waitUntilFinished:YES];
+            if (!(options & NSFileCoordinatorReadingWithoutChanges))
+                for (id<NSFilePresenter>filePresenter in affectedFilePresenters)
+                    [filePresenter.presentedItemOperationQueue addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
+                        [filePresenter savePresentedItemChangesWithCompletionHandler:^(NSError *errorOrNil) {
+                            ECASSERT(!errorOrNil); // TODO: forward error
+                        }];
+                    }]] waitUntilFinished:YES];
             reader(url);
             for (void(^reaquirer)(void) in reaquirers)
                 reaquirer();
