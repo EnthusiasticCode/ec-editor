@@ -8,22 +8,22 @@
 
 #import <UIKit/UIKit.h>
 #import <ECUIKit/ECCodeView.h>
+#import <ECFoundation/ECFileBuffer.h>
 #import "ACCodeFileMinimapView.h"
 
-@class ACTab, ACFileDocument;
+@class ACTab;
 
-@interface ACCodeFileController : UIViewController <ACCodeFileMinimapViewDelegate, ECCodeViewDataSource, ECCodeViewDelegate, UIActionSheetDelegate>
+@interface ACCodeFileController : UIViewController <ACCodeFileMinimapViewDelegate, ECCodeViewDataSource, ECCodeViewDelegate, UIActionSheetDelegate, ECFileBufferConsumer>
 
 #pragma mark - Controller's location
 
 /// The file URL that the controller is displaying
 @property (nonatomic, strong) NSURL *fileURL;
 
+@property (nonatomic, strong, readonly) ECFileBuffer *fileBuffer;
+
 /// The tab in which the controller is displayed.
 @property (nonatomic, strong) ACTab *tab;
-
-/// The document opened with the given file URL.
-@property (nonatomic, strong, readonly) ACFileDocument *document;
 
 #pragma mark - Code viewing and editing
 

@@ -11,10 +11,6 @@
 #import <ECFoundation/NSTimer+block.h>
 #import <ECUIKit/ECBezelAlert.h>
 
-#import "ACFileDocument.h"
-#import <ECFoundation/ECFileBuffer.h>
-
-#import "ACSyntaxColorer.h"
 #import <ECCodeIndexing/TMTheme.h>
 
 #import <ECUIKit/ECTabController.h>
@@ -53,18 +49,15 @@
 @property (nonatomic, strong, readonly) ACCodeFileCompletionsController *_keyboardAccessoryItemCompletionsController;
 @property (nonatomic, strong, readonly) UIViewController *_keyboardAccessoryItemCustomizeController;
 
-@property (nonatomic, strong) ACSyntaxColorer *syntaxColorer;
+@property (nonatomic, strong) TMTheme *theme;
 @property (nonatomic, strong) NSDictionary *defaultTextAttributes;
-
-- (void)_loadDocument;
-- (void)_unloadDocument;
 
 - (void)_layoutChildViews;
 
+- (void)_markPlaceholderWithName:(NSString *)name range:(NSRange)range;
+
 - (void)_handleGestureUndo:(UISwipeGestureRecognizer *)recognizer;
 - (void)_handleGestureRedo:(UISwipeGestureRecognizer *)recognizer;
-
-//- (void)_fileBufferDidChange:(NSNotification *)notification;
 
 - (void)_keyboardWillShow:(NSNotification *)notification;
 - (void)_keyboardWillHide:(NSNotification *)notification;
@@ -81,9 +74,9 @@
 
 #pragma mark - Properties
 
-@synthesize fileURL = _fileURL, tab = _tab, document = _document;
+@synthesize fileURL = _fileURL, tab = _tab, fileBuffer = _fileBuffer;
 @synthesize codeView = _codeView, minimapView = _minimapView, minimapVisible = _minimapVisible, minimapWidth = _minimapWidth;
-@synthesize defaultTextAttributes = _defaultTextAttributes, syntaxColorer = _syntaxColorer;
+@synthesize defaultTextAttributes = _defaultTextAttributes, theme = _theme;
 @synthesize _keyboardAccessoryItemCompletionsController, _keyboardAccessoryItemCustomizeController;
 
 - (ECCodeView *)codeView
@@ -229,13 +222,24 @@
     
     [self willChangeValueForKey:@"fileURL"];
     
-    [self _unloadDocument];
     _fileURL = fileURL;
-    
-    if (fileURL && self.isViewLoaded)
-        [self _loadDocument];
+    _fileBuffer = nil;
     
     [self didChangeValueForKey:@"fileURL"];
+}
+
+- (ECFileBuffer *)fileBuffer
+{
+    if (!_fileBuffer && self.fileURL)
+        _fileBuffer = [[ECFileBuffer alloc] initWithFileURL:self.fileURL];
+    return _fileBuffer;
+}
+
+- (TMTheme *)theme
+{
+    if (!_theme)
+        _theme = [TMTheme themeWithName:@"Mac Classic" bundle:nil];
+    return _theme;
 }
 
 - (NSDictionary *)defaultTextAttributes
@@ -361,8 +365,6 @@
 {
     self.toolbarItems = [NSArray arrayWithObject:[[UIBarButtonItem alloc] initWithTitle:@"tools" style:UIBarButtonItemStylePlain target:self action:@selector(toolButtonAction:)]];
     
-    [self _loadDocument];
-    
     // Keyboard notifications
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
@@ -374,8 +376,6 @@
 - (void)viewDidUnload
 {
     [super viewDidUnload];
-    
-    [self _unloadDocument];
     
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     
@@ -449,30 +449,24 @@
 
 - (NSUInteger)stringLengthForTextRenderer:(ECTextRenderer *)sender
 {
-    return [[self.document fileBuffer] length];
+    return [self.fileBuffer length];
 }
 
 - (NSAttributedString *)textRenderer:(ECTextRenderer *)sender attributedStringInRange:(NSRange)stringRange
 {
-    return [[self.document fileBuffer] attributedStringInRange:stringRange];
+    NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithAttributedString:[self.fileBuffer attributedStringInRange:stringRange]];
+    [attributedString addAttributes:self.defaultTextAttributes range:NSMakeRange(0, [attributedString length])];
+    return attributedString;
 }
 
 - (void)codeView:(ECCodeViewBase *)codeView commitString:(NSString *)commitString forTextInRange:(NSRange)range
 {
-    [[self.document fileBuffer] replaceCharactersInRange:range withAttributedString:[commitString length] ? [[NSAttributedString alloc] initWithString:commitString attributes:self.defaultTextAttributes] : nil];
-//    NSRange newRange = NSMakeRange(range.location, [commitString length]);
-    [_syntaxColoringTimer invalidate];
-    _syntaxColoringTimer = [NSTimer scheduledTimerWithTimeInterval:1.0 usingBlock:^(NSTimer *timer) {
-        [self.syntaxColorer applySyntaxColoring];
-//        [self.codeView setNeedsUpdate];
-    } repeats:NO];
-//    [self.codeView updateTextFromStringRange:range toStringRange:newRange];
-    // CodeView is updated from file buffer notification in _fileBufferDidChange:
+    [self.fileBuffer replaceCharactersInRange:range withString:commitString];
 }
 
 - (id)codeView:(ECCodeView *)codeView attribute:(NSString *)attributeName atIndex:(NSUInteger)index longestEffectiveRange:(NSRangePointer)effectiveRange
 {
-    return [[self.document fileBuffer] attribute:attributeName atIndex:index longestEffectiveRange:effectiveRange];
+    return [self.fileBuffer attribute:attributeName atIndex:index longestEffectiveRange:effectiveRange];
 }
 
 #pragma mark - Code View Delegate Methods
@@ -581,46 +575,6 @@
 
 #pragma mark - Private Methods
 
-- (void)_loadDocument
-{
-    ECASSERT(self.isViewLoaded);
-    if (!self.fileURL)
-        return;
-    
-    self.loading = YES;
-    _document = [[ACFileDocument alloc] initWithFileURL:self.fileURL];
-    ECASSERT(_document);
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        [_document openWithCompletionHandler:^(BOOL success) {
-            ECASSERT(success);
-            ACSyntaxColorer *colorer = [[ACSyntaxColorer alloc] initWithFileBuffer:[_document fileBuffer]];
-            colorer.defaultTextAttributes = self.defaultTextAttributes;
-            colorer.theme = [TMTheme themeWithName:@"Mac Classic" bundle:nil];
-            [colorer applySyntaxColoring];
-            dispatch_async(dispatch_get_main_queue(), ^{                
-                _document.undoManager = self.codeView.undoManager;
-                self.syntaxColorer = colorer;
-                [self.codeView updateAllText];
-//                [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_fileBufferDidChange:) name:ECFileBufferDidReplaceCharactersNotificationName object:_document.fileBuffer];
-//                [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_fileBufferDidChange:) name:ECFileBufferDidChangeAttributesNotificationName object:_document.fileBuffer];
-                self.loading = NO;
-            });
-        }];
-    });
-}
-
-- (void)_unloadDocument
-{
-    self.syntaxColorer = nil;
-    if (_document)
-    {
-//        [[NSNotificationCenter defaultCenter] removeObserver:self name:ECFileBufferDidReplaceCharactersNotificationName object:_document.fileBuffer];
-//        [[NSNotificationCenter defaultCenter] removeObserver:self name:ECFileBufferDidChangeAttributesNotificationName object:_document.fileBuffer];
-        [_document closeWithCompletionHandler:nil];
-        _document = nil;
-    }
-}
-
 - (void)_layoutChildViews
 {
     CGRect frame = (CGRect){ CGPointZero, self.view.frame.size };
@@ -634,6 +588,126 @@
         self.codeView.frame = frame;
         _minimapView.frame = CGRectMake(frame.size.width, 0, self.minimapWidth, frame.size.height);
     }
+}
+
+- (void)applySyntaxColoring
+{
+//    if (!_needsToReapplySyntaxColoring)
+//        return;
+//    _needsToReapplySyntaxColoring = NO;
+//    
+//    NSRange range = NSMakeRange(0, [self.fileBuffer length]);
+//    //    [self.fileBuffer setAttributes:self.defaultTextAttributes range:range];
+//    
+//    // Syntax coloring
+//    for (id<ECCodeToken>token in [_codeUnit annotatedTokensInRange:range])
+//        [self.fileBuffer addAttributes:[self.theme attributesForScopeStack:[token scopeIdentifiersStack]] range:[token range]];
+//    
+//    // Placeholders
+//    static NSRegularExpression *placeholderRegExp = nil;
+//    if (!placeholderRegExp)
+//        placeholderRegExp = [NSRegularExpression regularExpressionWithPattern:@"<#(.+?)#>" options:0 error:NULL];
+//    for (NSTextCheckingResult *placeholderMatch in [self.fileBuffer matchesOfRegexp:placeholderRegExp options:0])
+//    {
+//        [self _markPlaceholderWithName:[self.fileBuffer stringInRange:[placeholderMatch rangeAtIndex:1]] range:placeholderMatch.range];
+//    }
+}
+
+static CGFloat placeholderEndingsWidthCallback(void *refcon) {
+    if (refcon)
+    {
+        CGFloat height = CTFontGetXHeight(refcon);
+        return height / 2.0;
+    }
+    return 4.5;
+}
+
+static CTRunDelegateCallbacks placeholderEndingsRunCallbacks = {
+    kCTRunDelegateVersion1,
+    NULL,
+    NULL,
+    NULL,
+    &placeholderEndingsWidthCallback
+};
+
+- (void)_markPlaceholderWithName:(NSString *)name range:(NSRange)range
+{
+    ECASSERT(range.length > 4);
+    
+    static CGColorRef placeholderFillColor = NULL;
+    if (!placeholderFillColor)
+        placeholderFillColor = CGColorRetain([UIColor colorWithRed:234.0/255.0 green:240.0/255.0 blue:250.0/255.0 alpha:1].CGColor);
+    
+    static CGColorRef placeholderStrokeColor = NULL;
+    if (!placeholderStrokeColor)
+        placeholderStrokeColor = CGColorRetain([UIColor colorWithRed:197.0/255.0 green:216.0/255.0 blue:243.0/255.0 alpha:1].CGColor);
+    
+    static ECTextRendererRunBlock placeHolderBodyBlock = ^(CGContextRef context, CTRunRef run, CGRect rect, CGFloat baselineOffset) {
+        rect.origin.y += 1;
+        rect.size.height -= baselineOffset;
+        CGContextSetFillColorWithColor(context, placeholderFillColor);
+        CGContextAddRect(context, rect);
+        CGContextFillPath(context);
+        //
+        CGContextMoveToPoint(context, rect.origin.x, rect.origin.y);
+        CGContextAddLineToPoint(context, CGRectGetMaxX(rect), rect.origin.y);
+        CGContextMoveToPoint(context, rect.origin.x, CGRectGetMaxY(rect));
+        CGContextAddLineToPoint(context, CGRectGetMaxX(rect), CGRectGetMaxY(rect));
+        CGContextSetStrokeColorWithColor(context, placeholderStrokeColor);
+        CGContextStrokePath(context);
+    };
+    
+    static ECTextRendererRunBlock placeholderLeftBlock = ^(CGContextRef context, CTRunRef run, CGRect rect, CGFloat baselineOffset) {
+        rect.origin.y += 1;
+        rect.size.height -= baselineOffset;
+        CGPoint rectMax = CGPointMake(CGRectGetMaxX(rect), CGRectGetMaxY(rect));
+        //
+        CGContextMoveToPoint(context, rectMax.x, rect.origin.y);
+        CGContextAddCurveToPoint(context, rect.origin.x, rect.origin.y, rect.origin.x, rectMax.y, rectMax.x, rectMax.y);
+        CGContextClosePath(context);
+        CGContextSetFillColorWithColor(context, placeholderFillColor);
+        CGContextFillPath(context);
+        //
+        CGContextMoveToPoint(context, rectMax.x, rect.origin.y);
+        CGContextAddCurveToPoint(context, rect.origin.x, rect.origin.y, rect.origin.x, rectMax.y, rectMax.x, rectMax.y);
+        CGContextSetStrokeColorWithColor(context, placeholderStrokeColor);
+        CGContextStrokePath(context);
+    };
+    
+    static ECTextRendererRunBlock placeholderRightBlock = ^(CGContextRef context, CTRunRef run, CGRect rect, CGFloat baselineOffset) {
+        rect.origin.y += 1;
+        rect.size.height -= baselineOffset;
+        CGPoint rectMax = CGPointMake(CGRectGetMaxX(rect), CGRectGetMaxY(rect));
+        //
+        CGContextMoveToPoint(context, rect.origin.x, rect.origin.y);
+        CGContextAddCurveToPoint(context, rectMax.x, rect.origin.y, rectMax.x, rectMax.y, rect.origin.x, rectMax.y);
+        CGContextClosePath(context);
+        CGContextSetFillColorWithColor(context, placeholderFillColor);
+        CGContextFillPath(context);
+        //
+        CGContextMoveToPoint(context, rect.origin.x, rect.origin.y);
+        CGContextAddCurveToPoint(context, rectMax.x, rect.origin.y, rectMax.x, rectMax.y, rect.origin.x, rectMax.y);
+        CGContextSetStrokeColorWithColor(context, placeholderStrokeColor);
+        CGContextStrokePath(context);
+    };
+    
+    // placeholder body style
+    [self.fileBuffer addAttributes:[NSDictionary dictionaryWithObjectsAndKeys:placeHolderBodyBlock, ECTextRendererRunUnderlayBlockAttributeName, [UIColor blackColor].CGColor, kCTForegroundColorAttributeName, nil] range:NSMakeRange(range.location + 2, range.length - 4)];
+    
+    // Opening and Closing style
+    
+    //
+    CGFontRef font = (__bridge CGFontRef)[self.defaultTextAttributes objectForKey:(__bridge id)kCTFontAttributeName];
+    ECASSERT(font);
+    CTRunDelegateRef delegateRef = CTRunDelegateCreate(&placeholderEndingsRunCallbacks, font);
+
+    [self.fileBuffer addAttributes:[NSDictionary dictionaryWithObjectsAndKeys:(__bridge id)delegateRef, kCTRunDelegateAttributeName, placeholderLeftBlock, ECTextRendererRunDrawBlockAttributeName, nil] range:NSMakeRange(range.location, 2)];
+    [self.fileBuffer addAttributes:[NSDictionary dictionaryWithObjectsAndKeys:(__bridge id)delegateRef, kCTRunDelegateAttributeName, placeholderRightBlock, ECTextRendererRunDrawBlockAttributeName, nil] range:NSMakeRange(NSMaxRange(range) - 2, 2)];
+
+    CFRelease(delegateRef);
+    
+    // Placeholder behaviour
+    [self.fileBuffer addAttributes:[NSDictionary dictionaryWithObjectsAndKeys:name, ECCodeViewPlaceholderAttributeName, nil] range:range];
 }
 
 - (void)_handleGestureUndo:(UISwipeGestureRecognizer *)recognizer
@@ -668,18 +742,6 @@
 {
     [self _keyboardWillShow:notification];
 }
-
-#pragma mark - File Buffer Notifications
-
-//- (void)_fileBufferDidChange:(NSNotification *)notification
-//{
-//    NSRange fromRange = [[notification.userInfo objectForKey:ECFileBufferRangeKey] rangeValue];
-//    NSRange toRange = fromRange;
-//    NSString *toString = [notification.userInfo objectForKey:ECFileBufferStringKey];
-//    if (toString != nil && (NSNull *)toString != [NSNull null])
-//        toRange = NSMakeRange(fromRange.location, [toString length]);
-//    [self.codeView updateTextFromStringRange:fromRange toStringRange:toRange];
-//}
 
 #pragma mark - Keyboard Accessory Item Methods
 
