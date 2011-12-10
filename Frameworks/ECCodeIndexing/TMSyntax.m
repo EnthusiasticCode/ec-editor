@@ -12,7 +12,7 @@
 #import "TMCodeIndex.h"
 #import "OnigRegexp.h"
 #import <ECFoundation/ECDiscardableMutableDictionary.h>
-#import <ECFoundation/ECAttributedUTF8FileBuffer.h>
+#import <ECFoundation/ECFileBuffer.h>
 
 static NSString * const _syntaxNameKey = @"name";
 static NSString * const _syntaxScopeKey = @"scopeName";

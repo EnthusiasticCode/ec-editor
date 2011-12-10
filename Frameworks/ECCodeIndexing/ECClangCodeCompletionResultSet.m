@@ -11,7 +11,7 @@
 #import "ECCodeIndex+Subclass.h"
 #import "ECClangCodeCompletionResult.h"
 #import "ClangHelperFunctions.h"
-#import <ECFoundation/ECAttributedUTF8FileBuffer.h>
+#import <ECFoundation/ECFileBuffer.h>
 
 @interface ECClangCodeCompletionResultSet ()
 {

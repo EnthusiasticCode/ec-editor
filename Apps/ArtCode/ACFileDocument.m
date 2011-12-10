@@ -7,7 +7,7 @@
 //
 
 #import "ACFileDocument.h"
-#import <ECFoundation/ECAttributedUTF8FileBuffer.h>
+#import <ECFoundation/ECFileBuffer.h>
 #import "ACSyntaxColorer.h"
 
 @interface ACFileDocument ()

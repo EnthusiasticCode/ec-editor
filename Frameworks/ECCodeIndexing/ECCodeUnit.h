@@ -7,8 +7,9 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <ECFoundation/ECFileBuffer.h>
 #import <clang-c/Index.h>
-@class ECCodeIndex, ECFileBuffer;
+@class ECCodeIndex;
 @protocol ECCodeCursor, ECCodeCompletionString, ECCodeCompletionChunk, ECCodeCompletionResult;
 
 @protocol ECCodeCompletionResultSet <NSObject>
@@ -72,7 +73,7 @@
 @end
 
 /// Class that encapsulates interaction with parsing and indexing libraries to provide language related file-specific functionality such as syntax aware highlighting, diagnostics and completions.
-@interface ECCodeUnit : NSObject
+@interface ECCodeUnit : NSObject <ECFileBufferConsumer>
 
 /// The code index that generated the code unit.
 - (ECCodeIndex *)index;

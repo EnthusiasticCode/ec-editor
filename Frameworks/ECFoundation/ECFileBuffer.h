@@ -8,39 +8,62 @@
 
 #import <Foundation/Foundation.h>
 
-/// Names of the notifications posted when the buffer is modified
-extern NSString * const ECFileBufferWillReplaceCharactersNotificationName;
-extern NSString * const ECFileBufferDidReplaceCharactersNotificationName;
-extern NSString * const ECFileBufferWillChangeAttributesNotificationName;
-extern NSString * const ECFileBufferDidChangeAttributesNotificationName;
+@class ECFileBuffer;
 
-/// Keys of the notification userinfo dictionary
-extern NSString * const ECFileBufferRangeKey;
-extern NSString * const ECFileBufferStringKey;
-extern NSString * const ECFileBufferAttributedStringKey;
-extern NSString * const ECFileBufferAttributeNameKey;
 typedef enum {
     ECFileBufferAttributesChangeSet,
     ECFileBufferAttributesChangeAdd,
     ECFileBufferAttributesChangeRemove,
 } ECFileBufferAttributesChange;
-extern NSString * const ECFileBufferAttributesChangeKey;
-extern NSString * const ECFileBufferAttributesKey;
+
+@protocol ECFileBufferConsumer <NSObject>
+
+@required
+/// This method can be called from any queue, at any time.
+/// All other consumer methods will be called on the returned queue.
+- (NSOperationQueue *)consumerOperationQueue;
+
+/// All the "will" methods are blocking, so return from them as soon as possible
+/// All the "did" methods are asynchronous and aren't coalesced, so they may be called multiple times in succession, and not immediately after the change has gone through
+
+@optional
+- (void)fileWillBeDeletedForFileBuffer:(ECFileBuffer *)fileBuffer;
+- (void)fileWasDeletedForFileBuffer:(ECFileBuffer *)fileBuffer;
+- (void)fileBuffer:(ECFileBuffer *)fileBuffer fileWillMoveFromURL:(NSURL *)srcURL toURL:(NSURL *)dstURL;
+- (void)fileBuffer:(ECFileBuffer *)fileBuffer fileDidMoveFromURL:(NSURL *)srcURL toURL:(NSURL *)dstURL;
+
+/// Both regular and attributed versions of these methods are called regardless of whether the change was triggered by a call to the regular or attributed version of the replace methods
+- (void)fileBuffer:(ECFileBuffer *)fileBuffer willReplaceCharactersInRange:(NSRange)range withString:(NSString *)string;
+- (void)fileBuffer:(ECFileBuffer *)fileBuffer didReplaceCharactersInRange:(NSRange)range withString:(NSString *)string;
+- (void)fileBuffer:(ECFileBuffer *)fileBuffer willReplaceCharactersInRange:(NSRange)range withAttributedString:(NSAttributedString *)string;
+- (void)fileBuffer:(ECFileBuffer *)fileBuffer didReplaceCharactersInRange:(NSRange)range withAttributedString:(NSAttributedString *)string;
+
+- (void)fileBuffer:(ECFileBuffer *)fileBuffer willAddAttributes:(NSDictionary *)attributes range:(NSRange)range;
+- (void)fileBuffer:(ECFileBuffer *)fileBuffer didAddAttributes:(NSDictionary *)attributes range:(NSRange)range;
+- (void)fileBuffer:(ECFileBuffer *)fileBuffer willRemoveAttributes:(NSArray *)attributes range:(NSRange)range;
+- (void)fileBuffer:(ECFileBuffer *)fileBuffer didRemoveAttributes:(NSArray *)attributes range:(NSRange)range;
+
+@end
 
 /// A buffer containing the contents of a file
 /// Contents are only read from the file during initialization, no file coordination support at the moment
 /// Only the contents are persisted to disk on a save, not the attributes
-@interface ECFileBuffer : NSObject
+@interface ECFileBuffer : NSObject <NSFilePresenter>
 
 /// Initializes a file buffer with a given file
 - (id)initWithFileURL:(NSURL *)fileURL;
 
 - (NSURL *)fileURL;
 
+- (void)addConsumer:(id<ECFileBufferConsumer>)consumer;
+- (void)removeConsumer:(id<ECFileBufferConsumer>)consumer;
+- (NSArray *)consumers;
+
 /// Length of the buffer
 - (NSUInteger)length;
 /// Retrieves string made by a subrange of the buffer's character. The given range must be fully contained in the buffer's character range.
 - (NSString *)stringInRange:(NSRange)range;
+- (NSString *)string;
 
 /// Replace the characters in a given range with a given string.
 /// Pass a range of length 0 to insert characters, pass a string of length 0 to delete characters.
@@ -48,11 +71,11 @@ extern NSString * const ECFileBufferAttributesKey;
 
 /// Attributed methods
 - (NSAttributedString *)attributedStringInRange:(NSRange)range;
+- (NSAttributedString *)attributedString;
 - (void)replaceCharactersInRange:(NSRange)range withAttributedString:(NSAttributedString *)attributedString;
 
-- (void)setAttributes:(NSDictionary *)attributes range:(NSRange)range;
 - (void)addAttributes:(NSDictionary *)attributes range:(NSRange)range;
-- (void)removeAttribute:(NSString *)attributeName range:(NSRange)range;
+- (void)removeAttributes:(NSArray *)attributeNames range:(NSRange)range;
 - (id)attribute:(NSString *)attrName atIndex:(NSUInteger)index longestEffectiveRange:(NSRangePointer)effectiveRange;
 
 /// Find and replace functionality

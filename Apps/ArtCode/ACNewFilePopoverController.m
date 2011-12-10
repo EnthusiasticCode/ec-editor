@@ -27,7 +27,7 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     ECFileCoordinator *fileCoordinator = [[ECFileCoordinator alloc] initWithFilePresenter:nil];
-    [fileCoordinator coordinateReadingItemAtURL:[NSURL applicationDocumentsDirectory] options:NSFileCoordinatorReadingResolvesSymbolicLink error:NULL byAccessor:^(NSURL *newURL) {
+    [fileCoordinator coordinateReadingItemAtURL:[NSURL applicationDocumentsDirectory] options:0 error:NULL byAccessor:^(NSURL *newURL) {
         NSFileManager *fileManager = [[NSFileManager alloc] init];
         _fileURLs = [fileManager contentsOfDirectoryAtURL:[NSURL applicationDocumentsDirectory] includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsPackageDescendants | NSDirectoryEnumerationSkipsSubdirectoryDescendants error:NULL];
     }];

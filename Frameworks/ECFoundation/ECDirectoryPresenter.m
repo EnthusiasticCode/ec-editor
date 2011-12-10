@@ -39,7 +39,7 @@
     if (directory)
     {
         ECFileCoordinator *fileCoordinator = [[ECFileCoordinator alloc] initWithFilePresenter:self];
-        [fileCoordinator coordinateReadingItemAtURL:self.directory options:NSFileCoordinatorReadingResolvesSymbolicLink error:NULL byAccessor:^(NSURL *newURL) {
+        [fileCoordinator coordinateReadingItemAtURL:self.directory options:0 error:NULL byAccessor:^(NSURL *newURL) {
             NSFileManager *fileManager = [[NSFileManager alloc] init];
             self.fileURLs = [NSMutableArray arrayWithArray:[fileManager contentsOfDirectoryAtURL:newURL includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsPackageDescendants error:NULL]];
         }];
@@ -138,7 +138,7 @@
 {
     ECASSERT(_fileURLs);
     ECFileCoordinator *fileCoordinator = [[ECFileCoordinator alloc] initWithFilePresenter:self];
-    [fileCoordinator coordinateReadingItemAtURL:newURL options:NSFileCoordinatorReadingResolvesSymbolicLink error:NULL byAccessor:^(NSURL *newURL) {
+    [fileCoordinator coordinateReadingItemAtURL:newURL options:0 error:NULL byAccessor:^(NSURL *newURL) {
         self.directory = newURL;
     }];
 }
@@ -154,7 +154,7 @@
 {
     ECASSERT(_fileURLs);
     ECFileCoordinator *fileCoordinator = [[ECFileCoordinator alloc] initWithFilePresenter:self];
-    [fileCoordinator coordinateReadingItemAtURL:url options:NSFileCoordinatorReadingResolvesSymbolicLink error:NULL byAccessor:^(NSURL *newURL) {
+    [fileCoordinator coordinateReadingItemAtURL:url options:0 error:NULL byAccessor:^(NSURL *newURL) {
         if (![self fileURLIsDirectDescendant:newURL])
             return;
         NSUInteger insertionPoint = [self insertionPointForFileURL:newURL];
@@ -175,7 +175,7 @@
 {
     ECASSERT(_fileURLs);
     ECFileCoordinator *fileCoordinator = [[ECFileCoordinator alloc] initWithFilePresenter:self];
-    [fileCoordinator coordinateReadingItemAtURL:newURL options:NSFileCoordinatorReadingResolvesSymbolicLink error:NULL byAccessor:^(NSURL *newURL) {
+    [fileCoordinator coordinateReadingItemAtURL:newURL options:0 error:NULL byAccessor:^(NSURL *newURL) {
         if ([self fileURLIsDirectDescendant:oldURL])
         {
             if ([self fileURLIsDirectDescendant:newURL])

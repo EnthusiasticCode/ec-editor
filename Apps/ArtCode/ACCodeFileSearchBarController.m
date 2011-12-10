@@ -11,7 +11,7 @@
 
 #import "ACCodeFileController.h"
 #import "ACFileDocument.h"
-#import <ECFoundation/ECAttributedUTF8FileBuffer.h>
+#import <ECFoundation/ECFileBuffer.h>
 #import <ECFoundation/NSTimer+block.h>
 #import <ECUIKit/ECCodeView.h>
 #import <ECUIKit/ECTextRange.h>
@@ -123,13 +123,13 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
     [self _addFindFilterCodeViewPass];
     [self _applyFindFilterAndFlash:YES];
     
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_fileBufferWillChangeNotification:) name:ECFileBufferWillReplaceCharactersNotificationName object:self.targetCodeFileController.document.fileBuffer];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_fileBufferDidChangeNotification:) name:ECFileBufferDidReplaceCharactersNotificationName object:self.targetCodeFileController.document.fileBuffer];
+//    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_fileBufferWillChangeNotification:) name:ECFileBufferWillReplaceCharactersNotificationName object:self.targetCodeFileController.document.fileBuffer];
+//    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_fileBufferDidChangeNotification:) name:ECFileBufferDidReplaceCharactersNotificationName object:self.targetCodeFileController.document.fileBuffer];
 }
 
 - (void)viewDidDisappear:(BOOL)animated
 {
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
+//    [[NSNotificationCenter defaultCenter] removeObserver:self];
     
     [self.targetCodeFileController.codeView removePassLayerForKey:findFilterPassBlockKey];
     

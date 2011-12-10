@@ -7,7 +7,7 @@
 //
 
 #import "ACSyntaxColorer.h"
-#import <ECFoundation/ECAttributedUTF8FileBuffer.h>
+#import <ECFoundation/ECFileBuffer.h>
 #import <ECCodeIndexing/ECCodeIndex.h>
 #import <ECCodeIndexing/ECCodeUnit.h>
 #import <ECCodeIndexing/TMTheme.h>
@@ -44,15 +44,15 @@
     ECCodeIndex *codeIndex = [[ECCodeIndex alloc] init];
     _codeUnit = [codeIndex codeUnitForFileBuffer:fileBuffer scope:nil];
     _needsToReapplySyntaxColoring = YES;
-    _fileBufferObserver = [[NSNotificationCenter defaultCenter] addObserverForName:ECFileBufferWillReplaceCharactersNotificationName object:fileBuffer queue:nil usingBlock:^(NSNotification *note) {
-        _needsToReapplySyntaxColoring = YES;
-    }];
+//    _fileBufferObserver = [[NSNotificationCenter defaultCenter] addObserverForName:ECFileBufferWillReplaceCharactersNotificationName object:fileBuffer queue:nil usingBlock:^(NSNotification *note) {
+//        _needsToReapplySyntaxColoring = YES;
+//    }];
     return self;
 }
 
 - (void)dealloc
 {
-    [[NSNotificationCenter defaultCenter] removeObserver:_fileBufferObserver];
+//    [[NSNotificationCenter defaultCenter] removeObserver:_fileBufferObserver];
 }
 
 - (ECFileBuffer *)fileBuffer
@@ -72,7 +72,7 @@
     _needsToReapplySyntaxColoring = NO;
     
     NSRange range = NSMakeRange(0, [_fileBuffer length]);
-    [_fileBuffer setAttributes:self.defaultTextAttributes range:range];
+//    [_fileBuffer setAttributes:self.defaultTextAttributes range:range];
     
     // Syntax coloring
     for (id<ECCodeToken>token in [_codeUnit annotatedTokensInRange:range])
@@ -178,8 +178,8 @@ static CTRunDelegateCallbacks placeholderEndingsRunCallbacks = {
     ECASSERT(font);
     CTRunDelegateRef delegateRef = CTRunDelegateCreate(&placeholderEndingsRunCallbacks, font);
     //
-    [_fileBuffer setAttributes:[NSDictionary dictionaryWithObjectsAndKeys:(__bridge id)delegateRef, kCTRunDelegateAttributeName, placeholderLeftBlock, ECTextRendererRunDrawBlockAttributeName, nil] range:NSMakeRange(range.location, 2)];
-    [_fileBuffer setAttributes:[NSDictionary dictionaryWithObjectsAndKeys:(__bridge id)delegateRef, kCTRunDelegateAttributeName, placeholderRightBlock, ECTextRendererRunDrawBlockAttributeName, nil] range:NSMakeRange(NSMaxRange(range) - 2, 2)];
+//    [_fileBuffer setAttributes:[NSDictionary dictionaryWithObjectsAndKeys:(__bridge id)delegateRef, kCTRunDelegateAttributeName, placeholderLeftBlock, ECTextRendererRunDrawBlockAttributeName, nil] range:NSMakeRange(range.location, 2)];
+//    [_fileBuffer setAttributes:[NSDictionary dictionaryWithObjectsAndKeys:(__bridge id)delegateRef, kCTRunDelegateAttributeName, placeholderRightBlock, ECTextRendererRunDrawBlockAttributeName, nil] range:NSMakeRange(NSMaxRange(range) - 2, 2)];
     //
     CFRelease(delegateRef);
     

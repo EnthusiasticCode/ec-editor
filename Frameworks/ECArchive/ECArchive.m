@@ -124,7 +124,7 @@
     archive_write_open_filename(archive, [[archiveURL path] fileSystemRepresentation]);
     
     ECFileCoordinator *fileCoordinator = [[ECFileCoordinator alloc] initWithFilePresenter:nil];
-    [fileCoordinator coordinateReadingItemAtURL:directoryURL options:NSFileCoordinatorReadingResolvesSymbolicLink error:NULL byAccessor:^(NSURL *newURL) {
+    [fileCoordinator coordinateReadingItemAtURL:directoryURL options:0 error:NULL byAccessor:^(NSURL *newURL) {
         NSFileManager *fileManager = [[NSFileManager alloc] init];
         for (NSURL *fileURL in [fileManager enumeratorAtURL:directoryURL includingPropertiesForKeys:[NSArray arrayWithObjects:NSURLIsRegularFileKey, NSURLIsReadableKey, nil] options:0 errorHandler:nil])
         {

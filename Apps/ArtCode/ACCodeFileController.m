@@ -12,7 +12,7 @@
 #import <ECUIKit/ECBezelAlert.h>
 
 #import "ACFileDocument.h"
-#import <ECFoundation/ECAttributedUTF8FileBuffer.h>
+#import <ECFoundation/ECFileBuffer.h>
 
 #import "ACSyntaxColorer.h"
 #import <ECCodeIndexing/TMTheme.h>
@@ -64,7 +64,7 @@
 - (void)_handleGestureUndo:(UISwipeGestureRecognizer *)recognizer;
 - (void)_handleGestureRedo:(UISwipeGestureRecognizer *)recognizer;
 
-- (void)_fileBufferDidChange:(NSNotification *)notification;
+//- (void)_fileBufferDidChange:(NSNotification *)notification;
 
 - (void)_keyboardWillShow:(NSNotification *)notification;
 - (void)_keyboardWillHide:(NSNotification *)notification;
@@ -601,8 +601,8 @@
                 _document.undoManager = self.codeView.undoManager;
                 self.syntaxColorer = colorer;
                 [self.codeView updateAllText];
-                [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_fileBufferDidChange:) name:ECFileBufferDidReplaceCharactersNotificationName object:_document.fileBuffer];
-                [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_fileBufferDidChange:) name:ECFileBufferDidChangeAttributesNotificationName object:_document.fileBuffer];
+//                [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_fileBufferDidChange:) name:ECFileBufferDidReplaceCharactersNotificationName object:_document.fileBuffer];
+//                [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_fileBufferDidChange:) name:ECFileBufferDidChangeAttributesNotificationName object:_document.fileBuffer];
                 self.loading = NO;
             });
         }];
@@ -614,8 +614,8 @@
     self.syntaxColorer = nil;
     if (_document)
     {
-        [[NSNotificationCenter defaultCenter] removeObserver:self name:ECFileBufferDidReplaceCharactersNotificationName object:_document.fileBuffer];
-        [[NSNotificationCenter defaultCenter] removeObserver:self name:ECFileBufferDidChangeAttributesNotificationName object:_document.fileBuffer];
+//        [[NSNotificationCenter defaultCenter] removeObserver:self name:ECFileBufferDidReplaceCharactersNotificationName object:_document.fileBuffer];
+//        [[NSNotificationCenter defaultCenter] removeObserver:self name:ECFileBufferDidChangeAttributesNotificationName object:_document.fileBuffer];
         [_document closeWithCompletionHandler:nil];
         _document = nil;
     }
@@ -671,15 +671,15 @@
 
 #pragma mark - File Buffer Notifications
 
-- (void)_fileBufferDidChange:(NSNotification *)notification
-{
-    NSRange fromRange = [[notification.userInfo objectForKey:ECFileBufferRangeKey] rangeValue];
-    NSRange toRange = fromRange;
-    NSString *toString = [notification.userInfo objectForKey:ECFileBufferStringKey];
-    if (toString != nil && (NSNull *)toString != [NSNull null])
-        toRange = NSMakeRange(fromRange.location, [toString length]);
-    [self.codeView updateTextFromStringRange:fromRange toStringRange:toRange];
-}
+//- (void)_fileBufferDidChange:(NSNotification *)notification
+//{
+//    NSRange fromRange = [[notification.userInfo objectForKey:ECFileBufferRangeKey] rangeValue];
+//    NSRange toRange = fromRange;
+//    NSString *toString = [notification.userInfo objectForKey:ECFileBufferStringKey];
+//    if (toString != nil && (NSNull *)toString != [NSNull null])
+//        toRange = NSMakeRange(fromRange.location, [toString length]);
+//    [self.codeView updateTextFromStringRange:fromRange toStringRange:toRange];
+//}
 
 #pragma mark - Keyboard Accessory Item Methods
 

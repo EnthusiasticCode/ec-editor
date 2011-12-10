@@ -9,7 +9,7 @@
 #import "ACCodeFileCompletionsController.h"
 #import "ACCodeFileCompletionCell.h"
 
-#import <ECFoundation/ECAttributedUTF8FileBuffer.h>
+#import <ECFoundation/ECFileBuffer.h>
 #import <ECCodeIndexing/ECCodeUnit.h>
 #import <ECCodeIndexing/ECCodeIndex.h>
 #import <ECUIKit/ECTextRange.h>

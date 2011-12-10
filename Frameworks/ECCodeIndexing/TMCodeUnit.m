@@ -16,7 +16,7 @@
 #import "TMToken.h"
 #import "TMCodeIndex.h"
 #import "OnigRegexp.h"
-#import <ECFoundation/ECAttributedUTF8FileBuffer.h>
+#import <ECFoundation/ECFileBuffer.h>
 
 static NSString * const _patternCaptureName = @"name";
 static NSString * const _tokenAttributeName = @"TMTokenAttributeName";

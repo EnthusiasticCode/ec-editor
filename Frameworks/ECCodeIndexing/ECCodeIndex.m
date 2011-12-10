@@ -10,7 +10,7 @@
 #import "ECCodeIndex+Subclass.h"
 #import "TMSyntax.h"
 #import <ECFoundation/ECCache.h>
-#import <ECFoundation/ECAttributedUTF8FileBuffer.h>
+#import <ECFoundation/ECFileBuffer.h>
 
 static NSMutableArray *_extensionClasses;
 
