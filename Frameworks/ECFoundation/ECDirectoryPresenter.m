@@ -85,6 +85,8 @@
     self = [super init];
     if (!self)
         return nil;
+    _presentedItemOperationQueue = [[NSOperationQueue alloc] init];
+    _presentedItemOperationQueue.maxConcurrentOperationCount = 1;
     [ECFileCoordinator addFilePresenter:self];
     return self;
 }
@@ -125,14 +127,6 @@
 
 - (NSOperationQueue *)presentedItemOperationQueue
 {
-    if (!_presentedItemOperationQueue)
-    {
-        static dispatch_once_t onceToken;
-        dispatch_once(&onceToken, ^{
-            _presentedItemOperationQueue = [[NSOperationQueue alloc] init];
-            _presentedItemOperationQueue.maxConcurrentOperationCount = 1;
-        });
-    }
     return _presentedItemOperationQueue;
 }
 
