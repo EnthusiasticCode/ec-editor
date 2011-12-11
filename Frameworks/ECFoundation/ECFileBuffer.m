@@ -267,12 +267,12 @@ static dispatch_queue_t _fileBuffersQueue;
 - (id)attribute:(NSString *)attrName atIndex:(NSUInteger)location longestEffectiveRange:(NSRangePointer)range
 {
     __block id attribute = nil;
-    NSRangePointer longestEffectiveRange;
+    NSRange longestEffectiveRange = NSMakeRange(NSNotFound, 0);
     dispatch_sync_rethrow_exceptions(_fileAccessQueue, ^{
-        attribute = [_contents attribute:attrName atIndex:location longestEffectiveRange:longestEffectiveRange inRange:NSMakeRange(0, [_contents length])];
+        attribute = [_contents attribute:attrName atIndex:location longestEffectiveRange:(NSRangePointer)&longestEffectiveRange inRange:NSMakeRange(0, [_contents length])];
     });
     if (range)
-        *range = *longestEffectiveRange;
+        *range = longestEffectiveRange;
     return attribute;
 }
 

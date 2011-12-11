@@ -10,6 +10,7 @@
 #import "ACSingleTabController.h"
 
 #import "ACCodeFileController.h"
+#import "ACCodeFile.h"
 #import <ECFoundation/ECFileBuffer.h>
 #import <ECFoundation/NSTimer+block.h>
 #import <ECUIKit/ECCodeView.h>
@@ -122,8 +123,8 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
     [self _addFindFilterCodeViewPass];
     [self _applyFindFilterAndFlash:YES];
     
-//    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_fileBufferWillChangeNotification:) name:ECFileBufferWillReplaceCharactersNotificationName object:self.targetCodeFileController.fileBuffer];
-//    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_fileBufferDidChangeNotification:) name:ECFileBufferDidReplaceCharactersNotificationName object:self.targetCodeFileController.fileBuffer];
+//    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_fileBufferWillChangeNotification:) name:ECFileBufferWillReplaceCharactersNotificationName object:self.targetCodeFileController.codeFile.fileBuffer];
+//    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_fileBufferDidChangeNotification:) name:ECFileBufferDidReplaceCharactersNotificationName object:self.targetCodeFileController.codeFile.fileBuffer];
 }
 
 - (void)viewDidDisappear:(BOOL)animated
@@ -231,7 +232,7 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
     NSString *replacementString = self.replaceTextField.text;
     if (self.regExpOptions & NSRegularExpressionIgnoreMetacharacters)
         replacementString = [NSRegularExpression escapedTemplateForString:replacementString];
-    replacementString = [self.targetCodeFileController.fileBuffer replacementStringForResult:match offset:0 template:replacementString];
+    replacementString = [self.targetCodeFileController.codeFile.fileBuffer replacementStringForResult:match offset:0 template:replacementString];
     
     [self.targetCodeFileController.codeView.undoManager beginUndoGrouping];
     [self.targetCodeFileController.codeView.undoManager setActionName:@"Replace"];
@@ -266,9 +267,9 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
     NSInteger offset = 0;
     for (NSTextCheckingResult *match in matches)
     {
-        originalString = [self.targetCodeFileController.fileBuffer stringInRange:NSMakeRange(match.range.location + offset, match.range.length)];
-        replacementRange = [self.targetCodeFileController.fileBuffer replaceMatch:match withTemplate:replacementString offset:offset];
-        [[self.targetCodeFileController.codeView.undoManager prepareWithInvocationTarget:self.targetCodeFileController.fileBuffer] replaceCharactersInRange:replacementRange withString:originalString];
+        originalString = [self.targetCodeFileController.codeFile.fileBuffer stringInRange:NSMakeRange(match.range.location + offset, match.range.length)];
+        replacementRange = [self.targetCodeFileController.codeFile.fileBuffer replaceMatch:match withTemplate:replacementString offset:offset];
+        [[self.targetCodeFileController.codeView.undoManager prepareWithInvocationTarget:self.targetCodeFileController.codeFile.fileBuffer] replaceCharactersInRange:replacementRange withString:originalString];
         offset += replacementRange.length - [originalString length];
     }
     
@@ -376,7 +377,7 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
         NSRegularExpression *filterRegExp = [NSRegularExpression regularExpressionWithPattern:filterString options:options error:NULL];
         NSArray *matches = nil;
         if (filterRegExp != nil)
-            matches = [self.targetCodeFileController.fileBuffer matchesOfRegexp:filterRegExp options:0];
+            matches = [self.targetCodeFileController.codeFile.fileBuffer matchesOfRegexp:filterRegExp options:0];
         
         dispatch_async(dispatch_get_main_queue(), ^{
             self.searchFilterMatches = matches;

@@ -17,6 +17,7 @@
 		B7170ECC1429F54D00DF7794 /* libECFoundation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7170EAF1429F3B800DF7794 /* libECFoundation.a */; };
 		B7170ECD1429F54D00DF7794 /* libECUIKit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7170EB61429F3B800DF7794 /* libECUIKit.a */; };
 		B71A1DE71435112700672F65 /* ACNewFilePopoverController.m in Sources */ = {isa = PBXBuildFile; fileRef = B71A1DE61435112700672F65 /* ACNewFilePopoverController.m */; };
+		B72C7AA71493F17E0075A57F /* ACCodeFile.m in Sources */ = {isa = PBXBuildFile; fileRef = B72C7AA61493F17E0075A57F /* ACCodeFile.m */; };
 		B732D01513DB361600637FBE /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B732D01413DB361600637FBE /* CoreData.framework */; };
 		B7656C40144B53FE0084B050 /* ActionScript.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7656C19144B53FE0084B050 /* ActionScript.tmbundle */; };
 		B7656C41144B53FE0084B050 /* Apache.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7656C1A144B53FE0084B050 /* Apache.tmbundle */; };
@@ -310,6 +311,8 @@
 		B7170E8E1429F3B600DF7794 /* ECUIKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ECUIKit.xcodeproj; path = ../Frameworks/ECUIKit.xcodeproj; sourceTree = "<group>"; };
 		B71A1DE51435112700672F65 /* ACNewFilePopoverController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACNewFilePopoverController.h; sourceTree = "<group>"; };
 		B71A1DE61435112700672F65 /* ACNewFilePopoverController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACNewFilePopoverController.m; sourceTree = "<group>"; };
+		B72C7AA51493F17E0075A57F /* ACCodeFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACCodeFile.h; sourceTree = "<group>"; };
+		B72C7AA61493F17E0075A57F /* ACCodeFile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACCodeFile.m; sourceTree = "<group>"; };
 		B732CFE913DB1B6B00637FBE /* ECDebug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECDebug.h; path = ../../Frameworks/ECDebug.h; sourceTree = "<group>"; };
 		B732D01413DB361600637FBE /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		B7656C19144B53FE0084B050 /* ActionScript.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = ActionScript.tmbundle; sourceTree = "<group>"; };
@@ -602,6 +605,8 @@
 				B702320214345B5A006D23F7 /* ACBookmark.m */,
 				B7107AEC143A32E500827FD2 /* ACURLWrapper.h */,
 				B7107AED143A32E500827FD2 /* ACURLWrapper.m */,
+				B72C7AA51493F17E0075A57F /* ACCodeFile.h */,
+				B72C7AA61493F17E0075A57F /* ACCodeFile.m */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -1473,6 +1478,7 @@
 				B78077DF148696C4006C0C6B /* ACProjectCell.m in Sources */,
 				B7DE5535148ACF8400E6A79B /* ACProjectCellNormalView.m in Sources */,
 				B7DE5538148ACF9400E6A79B /* ACProjectCellEditingView.m in Sources */,
+				B72C7AA71493F17E0075A57F /* ACCodeFile.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

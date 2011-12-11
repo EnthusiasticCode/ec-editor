@@ -15,6 +15,7 @@
 #import <ECUIKit/ECTextRange.h>
 
 #import "ACCodeFileController.h"
+#import "ACCodeFile.h"
 #import "ACCodeFileKeyboardAccessoryView.h"
 
 
@@ -72,13 +73,13 @@
     ECASSERT(self.targetCodeFileController != nil);
     
     if (!_codeUnit)
-        _codeUnit = [self._codeIndex codeUnitForFileBuffer:self.targetCodeFileController.fileBuffer scope:nil];
+        _codeUnit = [self._codeIndex codeUnitForFileBuffer:self.targetCodeFileController.codeFile.fileBuffer scope:nil];
     return _codeUnit;
 }
 
 - (id<ECCodeCompletionResultSet>)_completionResults
 {
-    ECASSERT(self.targetCodeFileController.fileBuffer.length > self.offsetInDocumentForCompletions);
+    ECASSERT(self.targetCodeFileController.codeFile.fileBuffer.length > self.offsetInDocumentForCompletions);
     
     if (!_completionResults)
         _completionResults = [self._codeUnit completionsAtOffset:self.offsetInDocumentForCompletions];

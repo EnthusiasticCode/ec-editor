@@ -127,9 +127,11 @@
 {
     if (!_presentedItemOperationQueue)
     {
-        NSOperationQueue *presentedItemOperationQueue = [[NSOperationQueue alloc] init];
-        presentedItemOperationQueue.maxConcurrentOperationCount = 1;
-        OSAtomicCompareAndSwapPtrBarrier(NULL, (__bridge void *) presentedItemOperationQueue, (void *)&_presentedItemOperationQueue);
+        static dispatch_once_t onceToken;
+        dispatch_once(&onceToken, ^{
+            _presentedItemOperationQueue = [[NSOperationQueue alloc] init];
+            _presentedItemOperationQueue.maxConcurrentOperationCount = 1;
+        });
     }
     return _presentedItemOperationQueue;
 }
