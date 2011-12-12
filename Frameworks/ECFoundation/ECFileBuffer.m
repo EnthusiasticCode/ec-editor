@@ -26,6 +26,8 @@ static dispatch_queue_t _fileBuffersQueue;
 
 + (void)initialize
 {
+    if (self != [ECFileBuffer class])
+        return;
     _fileBuffers = [[ECWeakDictionary alloc] init];
     _fileBuffersQueue = dispatch_queue_create(NULL, DISPATCH_QUEUE_CONCURRENT);
 }

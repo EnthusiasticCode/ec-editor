@@ -22,6 +22,8 @@ static NSMutableArray *_filePresenters;
 
 + (void)initialize
 {
+    if (self != [ECFileCoordinator class])
+        return;
     _fileCoordinationDispatchQueue = dispatch_queue_create(NULL, DISPATCH_QUEUE_CONCURRENT);
     _filePresenters = [[NSMutableArray alloc] init];
 }

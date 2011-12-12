@@ -26,6 +26,8 @@ static ECWeakDictionary *_cursorsByUSR;
 
 + (void)initialize
 {
+    if (self != [ECClangCodeCursor class])
+        return;
     _cursorsByUSR = [[ECWeakDictionary alloc] init];
 }
 
