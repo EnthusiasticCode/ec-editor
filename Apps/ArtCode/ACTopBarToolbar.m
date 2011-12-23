@@ -36,6 +36,7 @@ static const void *editItemContext;
     {
         backButton = [UIButton new];
         [backButton setImage:[UIImage imageNamed:@"topBar_BackButton_Normal"] forState:UIControlStateNormal];
+        [backButton setImage:[UIImage imageNamed:@"topBar_BackButton_Disabled"] forState:UIControlStateDisabled];
         backButton.autoresizingMask = UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleHeight;
     }
     return backButton;
@@ -47,6 +48,7 @@ static const void *editItemContext;
     {
         forwardButton = [UIButton new];
         [forwardButton setImage:[UIImage imageNamed:@"topBar_ForwardButton_Normal"] forState:UIControlStateNormal];
+        [forwardButton setImage:[UIImage imageNamed:@"topBar_ForwardButton_Disabled"] forState:UIControlStateDisabled];
         forwardButton.autoresizingMask = UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleHeight;
     }
     return forwardButton;
@@ -164,7 +166,7 @@ static const void *editItemContext;
 static void init(ACTopBarToolbar *self)
 {
     self.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleWidth;
-    self->buttonsInsets = UIEdgeInsetsMake(7, 7, 7, 7);
+    self->buttonsInsets = UIEdgeInsetsMake(6, 7, 5, 7);
     self->controlsGap = 10;
     
     [self addSubview:self.backButton];
