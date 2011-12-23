@@ -142,6 +142,7 @@
 		CD9ED8FB1467E5C300A517A5 /* accessoryView_itemBackground.png in Resources */ = {isa = PBXBuildFile; fileRef = CD9ED8F71467E5C300A517A5 /* accessoryView_itemBackground.png */; };
 		CDA0B9E714A4B30200714F74 /* topBar_BackButton_Disabled.png in Resources */ = {isa = PBXBuildFile; fileRef = CDA0B9E514A4B30200714F74 /* topBar_BackButton_Disabled.png */; };
 		CDA0B9E814A4B30200714F74 /* topBar_ForwardButton_Disabled.png in Resources */ = {isa = PBXBuildFile; fileRef = CDA0B9E614A4B30200714F74 /* topBar_ForwardButton_Disabled.png */; };
+		CDA0B9EA14A4E9C900714F74 /* topBar_ToolButton_Selected.png in Resources */ = {isa = PBXBuildFile; fileRef = CDA0B9E914A4E9C900714F74 /* topBar_ToolButton_Selected.png */; };
 		CDA7630C146976260004FAC7 /* ACCodeFileKeyboardAccessoryView.m in Sources */ = {isa = PBXBuildFile; fileRef = CDA7630B146976260004FAC7 /* ACCodeFileKeyboardAccessoryView.m */; };
 		CDB7C92B145572EA00E0D2B2 /* ACSingleProjectBrowsersController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDB7C92A145572EA00E0D2B2 /* ACSingleProjectBrowsersController.m */; };
 		CDB7C9301455762E00E0D2B2 /* SingleProjectBrowsers.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CDB7C92F1455762E00E0D2B2 /* SingleProjectBrowsers.storyboard */; };
@@ -459,6 +460,7 @@
 		CD9ED8F71467E5C300A517A5 /* accessoryView_itemBackground.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = accessoryView_itemBackground.png; sourceTree = "<group>"; };
 		CDA0B9E514A4B30200714F74 /* topBar_BackButton_Disabled.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = topBar_BackButton_Disabled.png; sourceTree = "<group>"; };
 		CDA0B9E614A4B30200714F74 /* topBar_ForwardButton_Disabled.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = topBar_ForwardButton_Disabled.png; sourceTree = "<group>"; };
+		CDA0B9E914A4E9C900714F74 /* topBar_ToolButton_Selected.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = topBar_ToolButton_Selected.png; sourceTree = "<group>"; };
 		CDA7630A146976260004FAC7 /* ACCodeFileKeyboardAccessoryView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACCodeFileKeyboardAccessoryView.h; sourceTree = "<group>"; };
 		CDA7630B146976260004FAC7 /* ACCodeFileKeyboardAccessoryView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACCodeFileKeyboardAccessoryView.m; sourceTree = "<group>"; };
 		CDB7C929145572EA00E0D2B2 /* ACSingleProjectBrowsersController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACSingleProjectBrowsersController.h; sourceTree = "<group>"; };
@@ -1074,6 +1076,7 @@
 				CDC2829114508D500054358D /* topBar_TitleButton_Normal.png */,
 				CDC2829214508D500054358D /* topBar_TitleButton_Selected.png */,
 				CD2568C61450D5B600A3CCDE /* topBar_ToolButton_Normal.png */,
+				CDA0B9E914A4E9C900714F74 /* topBar_ToolButton_Selected.png */,
 			);
 			name = "Top Bar";
 			sourceTree = "<group>";
@@ -1388,6 +1391,7 @@
 				B78077E114869702006C0C6B /* ProjectCell.xib in Resources */,
 				CDA0B9E714A4B30200714F74 /* topBar_BackButton_Disabled.png in Resources */,
 				CDA0B9E814A4B30200714F74 /* topBar_ForwardButton_Disabled.png in Resources */,
+				CDA0B9EA14A4E9C900714F74 /* topBar_ToolButton_Selected.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
