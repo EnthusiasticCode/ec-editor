@@ -47,5 +47,5 @@
 @end
 
 /// Button used for appearance styling. This button will be used for the edit button.
-@interface ACTopBarEditButton : UIButton
+@interface ACTopBarEditButton : ACTopBarToolButton
 @end

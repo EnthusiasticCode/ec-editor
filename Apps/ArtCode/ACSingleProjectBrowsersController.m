@@ -8,6 +8,7 @@
 
 #import "ACSingleProjectBrowsersController.h"
 #import "ACTab.h"
+#import "ACTopBarTitleControl.h"
 
 #import "ACFileTableController.h"
 
@@ -37,6 +38,14 @@
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
 	return YES;
+}
+
+#pragma mark - Single tab content controller protocol methods
+
+- (BOOL)singleTabController:(ACSingleTabController *)singleTabController setupDefaultToolbarTitleControl:(ACTopBarTitleControl *)titleControl
+{
+    // TODO setup project color selection button
+    return NO;
 }
 
 #pragma mark - Opening Browser

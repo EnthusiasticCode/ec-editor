@@ -415,7 +415,12 @@ static const void *contentViewControllerContext;
 
 - (void)_setupDefaultToolbarTitle
 {
-    if ([_contentViewController.title length] > 0)
+    if ([_contentViewController respondsToSelector:@selector(singleTabController:setupDefaultToolbarTitleControl:)]
+        && [(UIViewController<ACSingleTabContentController> *)_contentViewController singleTabController:self setupDefaultToolbarTitleControl:self.defaultToolbar.titleControl])
+    {
+        return;
+    }
+    else if ([_contentViewController.title length] > 0)
     {
         self.defaultToolbar.titleControl.titleFragments = [NSArray arrayWithObject:_contentViewController.title];
         self.defaultToolbar.titleControl.selectedTitleFragments = nil;
@@ -426,9 +431,8 @@ static const void *contentViewControllerContext;
         // TODO parse URL query to determine images etc...
         self.defaultToolbar.titleControl.titleFragments = [NSArray arrayWithObjects:
                                                            [currentURL.path stringByDeletingLastPathComponent],
-                                                           [UIImage imageNamed:@"toolPanelNavigatorToolImage"], [currentURL lastPathComponent],
-                                                           [UIImage imageNamed:@"toolFilterBookmarksStar"], @"#lulz", nil]; //[currentURL fragment]
-        self.defaultToolbar.titleControl.selectedTitleFragments = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(1, 2)];
+                                                           [currentURL lastPathComponent], nil];
+        self.defaultToolbar.titleControl.selectedTitleFragments = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(1, 1)];
     }
     
     self.defaultToolbar.titleControl.enabled = [_contentViewController singleTabController:self shouldEnableTitleControlForDefaultToolbar:self.defaultToolbar];
