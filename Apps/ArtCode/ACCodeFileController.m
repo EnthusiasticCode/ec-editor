@@ -44,6 +44,8 @@
     
     /// Actions associated to items in the accessory view. Associations are made with tag (as array index) to ACCodeFileAccessoryAction.
     NSMutableArray *_keyboardAccessoryItemActions;
+    
+    NSOperationQueue *_consumerOperationQueue;
 }
 
 @property (nonatomic, strong) ACCodeFile *codeFile;
@@ -226,6 +228,27 @@
         self.codeFile = nil;
     
     [self didChangeValueForKey:@"fileURL"];
+}
+
+- (void)setCodeFile:(ACCodeFile *)codeFile
+{
+    if (codeFile == _codeFile)
+        return;
+    
+    [self willChangeValueForKey:@"codeFile"];
+    
+    [_codeFile.fileBuffer removeConsumer:self];
+    _codeFile = codeFile;
+    if (!_consumerOperationQueue)
+    {
+        _consumerOperationQueue = [[NSOperationQueue alloc] init];
+        _consumerOperationQueue.maxConcurrentOperationCount = 1;
+    }
+    else
+        [_consumerOperationQueue cancelAllOperations];
+    [_codeFile.fileBuffer addConsumer:self];
+    
+    [self didChangeValueForKey:@"codeFile"];
 }
 
 - (CGFloat)minimapWidth
@@ -416,6 +439,21 @@
 {
     [self.codeView scrollRectToVisible:newSelection animated:YES];
     return NO;
+}
+
+#pragma mark - ECFileBufferConsumer
+
+- (NSOperationQueue *)consumerOperationQueue
+{
+    ECASSERT(_consumerOperationQueue);
+    return _consumerOperationQueue;
+}
+
+- (void)fileBuffer:(ECFileBuffer *)fileBuffer didReplaceCharactersInRange:(NSRange)range withString:(NSString *)string
+{
+    [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+        [self.codeView updateTextFromStringRange:range toStringRange:NSMakeRange(range.location, [string length])];
+    }];
 }
 
 #pragma mark - Code View Delegate Methods

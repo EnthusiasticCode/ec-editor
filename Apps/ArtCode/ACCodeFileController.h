@@ -8,11 +8,12 @@
 
 #import <UIKit/UIKit.h>
 #import <ECUIKit/ECCodeView.h>
+#import <ECFoundation/ECFileBuffer.h>
 #import "ACCodeFileMinimapView.h"
 
 @class ACTab, ACCodeFile;
 
-@interface ACCodeFileController : UIViewController <ACCodeFileMinimapViewDelegate, ECCodeViewDelegate, UIActionSheetDelegate>
+@interface ACCodeFileController : UIViewController <ACCodeFileMinimapViewDelegate, ECCodeViewDelegate, UIActionSheetDelegate, ECFileBufferConsumer>
 
 #pragma mark - Controller's location
 

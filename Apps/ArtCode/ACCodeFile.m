@@ -8,10 +8,11 @@
 
 #import "ACCodeFile.h"
 #import <ECCodeIndexing/TMTheme.h>
+#import <ECFoundation/ECFileBuffer.h>
 
 @interface ACCodeFile ()
 {
-    
+    NSOperationQueue *_consumerOperationQueue;
 }
 - (void)_markPlaceholderWithName:(NSString *)name range:(NSRange)range;
 @end
@@ -39,6 +40,24 @@
         CFRelease(defaultFont);
     }
     return _defaultTextAttributes;
+}
+
+- (id)initWithFileURL:(NSURL *)fileURL
+{
+    self = [super init];
+    if (!self)
+        return nil;
+    _consumerOperationQueue = [[NSOperationQueue alloc] init];
+    _consumerOperationQueue.maxConcurrentOperationCount = 1;
+    _fileBuffer = [[ECFileBuffer alloc] initWithFileURL:fileURL];
+    return self;
+}
+
+#pragma mark - ECFileBufferConsumer
+
+- (NSOperationQueue *)consumerOperationQueue
+{
+    return _consumerOperationQueue;
 }
 
 #pragma mark - Code View DataSource Methods
