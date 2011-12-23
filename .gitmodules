@@ -3,4 +3,4 @@
 	url = https://github.com/allending/Kiwi.git
 [submodule "ThirdParty/GMGridView"]
 	path = ThirdParty/GMGridView
-	url = ssh://git@localhost/Users/Shared/Projects/GMGridView.git
+	url = ssh://git@coneko.no-ip.org/Users/Shared/Projects/GMGridView.git

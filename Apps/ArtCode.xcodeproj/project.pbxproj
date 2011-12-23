@@ -164,27 +164,6 @@
 		CDF4C011144F2C7900475F6B /* ACTopBarTitleControl.m in Sources */ = {isa = PBXBuildFile; fileRef = CDF4C00E144F2C7900475F6B /* ACTopBarTitleControl.m */; };
 		CDF4C012144F2C7900475F6B /* ACTopBarToolbar.m in Sources */ = {isa = PBXBuildFile; fileRef = CDF4C010144F2C7900475F6B /* ACTopBarToolbar.m */; };
 		CDF4C015144F2C8A00475F6B /* ACSingleTabController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDF4C014144F2C8A00475F6B /* ACSingleTabController.m */; };
-		CDFF3DDF13C0D9BB00108DE2 /* toolBookmarksNote.png in Resources */ = {isa = PBXBuildFile; fileRef = CDFF3DCA13C0D9BB00108DE2 /* toolBookmarksNote.png */; };
-		CDFF3DE013C0D9BB00108DE2 /* toolBookmarksStar.png in Resources */ = {isa = PBXBuildFile; fileRef = CDFF3DCB13C0D9BB00108DE2 /* toolBookmarksStar.png */; };
-		CDFF3DE113C0D9BB00108DE2 /* toolFilterBookmarksNote.png in Resources */ = {isa = PBXBuildFile; fileRef = CDFF3DCC13C0D9BB00108DE2 /* toolFilterBookmarksNote.png */; };
-		CDFF3DE213C0D9BB00108DE2 /* toolFilterBookmarksStar.png in Resources */ = {isa = PBXBuildFile; fileRef = CDFF3DCD13C0D9BB00108DE2 /* toolFilterBookmarksStar.png */; };
-		CDFF3DE313C0D9BB00108DE2 /* toolFilterSnippetsPaste.png in Resources */ = {isa = PBXBuildFile; fileRef = CDFF3DCE13C0D9BB00108DE2 /* toolFilterSnippetsPaste.png */; };
-		CDFF3DE413C0D9BB00108DE2 /* toolFilterSnippetsSnippet.png in Resources */ = {isa = PBXBuildFile; fileRef = CDFF3DCF13C0D9BB00108DE2 /* toolFilterSnippetsSnippet.png */; };
-		CDFF3DE513C0D9BB00108DE2 /* toolHistoryBack.png in Resources */ = {isa = PBXBuildFile; fileRef = CDFF3DD013C0D9BB00108DE2 /* toolHistoryBack.png */; };
-		CDFF3DE613C0D9BB00108DE2 /* toolHistoryForward.png in Resources */ = {isa = PBXBuildFile; fileRef = CDFF3DD113C0D9BB00108DE2 /* toolHistoryForward.png */; };
-		CDFF3DE713C0D9BB00108DE2 /* toolHistoryNow.png in Resources */ = {isa = PBXBuildFile; fileRef = CDFF3DD213C0D9BB00108DE2 /* toolHistoryNow.png */; };
-		CDFF3DE813C0D9BB00108DE2 /* toolPanelHistoryToolSelectedImage.png in Resources */ = {isa = PBXBuildFile; fileRef = CDFF3DD313C0D9BB00108DE2 /* toolPanelHistoryToolSelectedImage.png */; };
-		CDFF3DE913C0D9BB00108DE2 /* toolPanelHistoryToolImage.png in Resources */ = {isa = PBXBuildFile; fileRef = CDFF3DD413C0D9BB00108DE2 /* toolPanelHistoryToolImage.png */; };
-		CDFF3DEA13C0D9BB00108DE2 /* toolPanelNavigatorToolSelectedImage.png in Resources */ = {isa = PBXBuildFile; fileRef = CDFF3DD513C0D9BB00108DE2 /* toolPanelNavigatorToolSelectedImage.png */; };
-		CDFF3DEB13C0D9BB00108DE2 /* toolPanelNavigatorToolImage.png in Resources */ = {isa = PBXBuildFile; fileRef = CDFF3DD613C0D9BB00108DE2 /* toolPanelNavigatorToolImage.png */; };
-		CDFF3DEC13C0D9BB00108DE2 /* toolPanelSnippetsToolSelectedImage.png in Resources */ = {isa = PBXBuildFile; fileRef = CDFF3DD713C0D9BB00108DE2 /* toolPanelSnippetsToolSelectedImage.png */; };
-		CDFF3DED13C0D9BB00108DE2 /* toolPanelSnippetsToolImage.png in Resources */ = {isa = PBXBuildFile; fileRef = CDFF3DD813C0D9BB00108DE2 /* toolPanelSnippetsToolImage.png */; };
-		CDFF3DEE13C0D9BB00108DE2 /* toolPanelBookmarksToolSelectedImage.png in Resources */ = {isa = PBXBuildFile; fileRef = CDFF3DD913C0D9BB00108DE2 /* toolPanelBookmarksToolSelectedImage.png */; };
-		CDFF3DEF13C0D9BB00108DE2 /* toolPanelBookmarksToolImage.png in Resources */ = {isa = PBXBuildFile; fileRef = CDFF3DDA13C0D9BB00108DE2 /* toolPanelBookmarksToolImage.png */; };
-		CDFF3DF013C0D9BB00108DE2 /* toolPanelSymbolsToolSelectedImage.png in Resources */ = {isa = PBXBuildFile; fileRef = CDFF3DDB13C0D9BB00108DE2 /* toolPanelSymbolsToolSelectedImage.png */; };
-		CDFF3DF113C0D9BB00108DE2 /* toolPanelSymbolsToolImage.png in Resources */ = {isa = PBXBuildFile; fileRef = CDFF3DDC13C0D9BB00108DE2 /* toolPanelSymbolsToolImage.png */; };
-		CDFF3DF213C0D9BB00108DE2 /* toolSnippetsPaste.png in Resources */ = {isa = PBXBuildFile; fileRef = CDFF3DDD13C0D9BB00108DE2 /* toolSnippetsPaste.png */; };
-		CDFF3DF313C0D9BB00108DE2 /* toolSnippetsSnippet.png in Resources */ = {isa = PBXBuildFile; fileRef = CDFF3DDE13C0D9BB00108DE2 /* toolSnippetsSnippet.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1311,27 +1290,6 @@
 			files = (
 				CD7D2AEE13C0CD2600B889EE /* InfoPlist.strings in Resources */,
 				CD7D2B4E13C0D5FB00B889EE /* ToolPanelStoryboard.storyboard in Resources */,
-				CDFF3DDF13C0D9BB00108DE2 /* toolBookmarksNote.png in Resources */,
-				CDFF3DE013C0D9BB00108DE2 /* toolBookmarksStar.png in Resources */,
-				CDFF3DE113C0D9BB00108DE2 /* toolFilterBookmarksNote.png in Resources */,
-				CDFF3DE213C0D9BB00108DE2 /* toolFilterBookmarksStar.png in Resources */,
-				CDFF3DE313C0D9BB00108DE2 /* toolFilterSnippetsPaste.png in Resources */,
-				CDFF3DE413C0D9BB00108DE2 /* toolFilterSnippetsSnippet.png in Resources */,
-				CDFF3DE513C0D9BB00108DE2 /* toolHistoryBack.png in Resources */,
-				CDFF3DE613C0D9BB00108DE2 /* toolHistoryForward.png in Resources */,
-				CDFF3DE713C0D9BB00108DE2 /* toolHistoryNow.png in Resources */,
-				CDFF3DE813C0D9BB00108DE2 /* toolPanelHistoryToolSelectedImage.png in Resources */,
-				CDFF3DE913C0D9BB00108DE2 /* toolPanelHistoryToolImage.png in Resources */,
-				CDFF3DEA13C0D9BB00108DE2 /* toolPanelNavigatorToolSelectedImage.png in Resources */,
-				CDFF3DEB13C0D9BB00108DE2 /* toolPanelNavigatorToolImage.png in Resources */,
-				CDFF3DEC13C0D9BB00108DE2 /* toolPanelSnippetsToolSelectedImage.png in Resources */,
-				CDFF3DED13C0D9BB00108DE2 /* toolPanelSnippetsToolImage.png in Resources */,
-				CDFF3DEE13C0D9BB00108DE2 /* toolPanelBookmarksToolSelectedImage.png in Resources */,
-				CDFF3DEF13C0D9BB00108DE2 /* toolPanelBookmarksToolImage.png in Resources */,
-				CDFF3DF013C0D9BB00108DE2 /* toolPanelSymbolsToolSelectedImage.png in Resources */,
-				CDFF3DF113C0D9BB00108DE2 /* toolPanelSymbolsToolImage.png in Resources */,
-				CDFF3DF213C0D9BB00108DE2 /* toolSnippetsPaste.png in Resources */,
-				CDFF3DF313C0D9BB00108DE2 /* toolSnippetsSnippet.png in Resources */,
 				CDE3F14713C0DDD500DFFAFF /* Inconsolata-dz.otf in Resources */,
 				CD8A677C13D0BB000037D742 /* ipad_icon.png in Resources */,
 				B7AC172F14216CD4009E9205 /* NewFilePopover.storyboard in Resources */,
