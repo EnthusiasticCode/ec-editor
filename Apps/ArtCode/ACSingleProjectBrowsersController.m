@@ -44,8 +44,13 @@
 
 - (BOOL)singleTabController:(ACSingleTabController *)singleTabController setupDefaultToolbarTitleControl:(ACTopBarTitleControl *)titleControl
 {
+    UIButton *aButton  = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+    [aButton setTitle:@"C" forState:UIControlStateNormal];
+    [aButton sizeToFit];
+    titleControl.titleFragments = [NSArray arrayWithObjects:aButton, @"title", nil];
+    titleControl.selectedTitleFragments = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, 2)];
     // TODO setup project color selection button
-    return NO;
+    return YES;
 }
 
 #pragma mark - Opening Browser

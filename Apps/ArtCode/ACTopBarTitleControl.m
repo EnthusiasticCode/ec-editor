@@ -12,6 +12,7 @@
 @interface ACTopBarTitleControl () {
     NSArray *_preViews;
     NSArray *_postViews;
+    UIView *_customSelectedFragmentView;
     
     UIActivityIndicatorView *_activityIndicatorView;
 }
@@ -146,6 +147,16 @@
     if (self.imageView.image)
         labelFrame = CGRectUnion(labelFrame, self.imageView.frame);
     
+    // Poisition custom selected view
+    if (_customSelectedFragmentView)
+    {
+        if (CGRectIsNull(labelFrame))
+            _customSelectedFragmentView.center = CGPointMake(bounds.size.width / 2.0, bounds.size.height / 2.0);
+        else
+            _customSelectedFragmentView.center = CGPointMake(labelFrame.origin.x - gapBetweenFragments - _customSelectedFragmentView.bounds.size.width / 2.0, bounds.size.height / 2.0);
+        labelFrame = CGRectUnion(labelFrame, _customSelectedFragmentView.frame);
+    }
+    
     CGFloat maxSegmentWidth = (bounds.size.width - labelFrame.size.width) / 2 - gapBetweenFragments;
     
     // Pre views layout
@@ -201,6 +212,8 @@
     
     [super setTitle:nil forState:UIControlStateNormal];
     [super setImage:nil forState:UIControlStateNormal];
+    [_customSelectedFragmentView removeFromSuperview];
+    _customSelectedFragmentView = nil;
     [titleFragments enumerateObjectsAtIndexes:selected options:0 usingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
         if ([obj isKindOfClass:[NSString class]])
         {
@@ -211,6 +224,11 @@
         else if ([obj isKindOfClass:[UIImage class]])
         {
             [super setImage:(UIImage *)obj forState:UIControlStateNormal];
+        }
+        else if ([obj isKindOfClass:[UIView class]])
+        {
+            _customSelectedFragmentView = obj;
+            [self addSubview:_customSelectedFragmentView];
         }
     }];
 }

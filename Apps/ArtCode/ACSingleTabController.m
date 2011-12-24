@@ -415,27 +415,26 @@ static const void *contentViewControllerContext;
 
 - (void)_setupDefaultToolbarTitle
 {
-    if ([_contentViewController respondsToSelector:@selector(singleTabController:setupDefaultToolbarTitleControl:)]
-        && [(UIViewController<ACSingleTabContentController> *)_contentViewController singleTabController:self setupDefaultToolbarTitleControl:self.defaultToolbar.titleControl])
+    if (![_contentViewController respondsToSelector:@selector(singleTabController:setupDefaultToolbarTitleControl:)]
+        || ![(UIViewController<ACSingleTabContentController> *)_contentViewController singleTabController:self setupDefaultToolbarTitleControl:self.defaultToolbar.titleControl])
     {
-        return;
-    }
-    else if ([_contentViewController.title length] > 0)
-    {
-        self.defaultToolbar.titleControl.titleFragments = [NSArray arrayWithObject:_contentViewController.title];
-        self.defaultToolbar.titleControl.selectedTitleFragments = nil;
-    }
-    else
-    {
-        NSURL *currentURL = self.tab.currentURL;
-        // TODO parse URL query to determine images etc...
-        self.defaultToolbar.titleControl.titleFragments = [NSArray arrayWithObjects:
-                                                           [currentURL.path stringByDeletingLastPathComponent],
-                                                           [currentURL lastPathComponent], nil];
-        self.defaultToolbar.titleControl.selectedTitleFragments = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(1, 1)];
+        if ([_contentViewController.title length] > 0)
+        {
+            self.defaultToolbar.titleControl.titleFragments = [NSArray arrayWithObject:_contentViewController.title];
+            self.defaultToolbar.titleControl.selectedTitleFragments = nil;
+        }
+        else
+        {
+            NSURL *currentURL = self.tab.currentURL;
+            // TODO parse URL query to determine images etc...
+            self.defaultToolbar.titleControl.titleFragments = [NSArray arrayWithObjects:
+                                                               [currentURL.path stringByDeletingLastPathComponent],
+                                                               [currentURL lastPathComponent], nil];
+            self.defaultToolbar.titleControl.selectedTitleFragments = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(1, 1)];
+        }
     }
     
-    self.defaultToolbar.titleControl.enabled = [_contentViewController singleTabController:self shouldEnableTitleControlForDefaultToolbar:self.defaultToolbar];
+    self.defaultToolbar.titleControl.enabled = [(UIViewController<ACSingleTabContentController> *)_contentViewController singleTabController:self shouldEnableTitleControlForDefaultToolbar:self.defaultToolbar];
 }
 
 - (UIViewController *)_viewControllerWithURL:(NSURL *)url
