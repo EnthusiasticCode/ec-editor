@@ -25,6 +25,9 @@
 /// foreground color and shadow.
 + (UIImage *)styleProjectImageWithSize:(CGSize)size labelColor:(UIColor *)labelColor;
 
+/// Icon of a label similar to the one on the project image.
++ (UIImage *)styleProjectLabelImageWithSize:(CGSize)size color:(UIColor *)color;
+
 /// Icon of a document with 1 pixel outline and colored inside.
 /// A label may also be applied to indicate document extension.
 + (UIImage *)styleDocumentImageWithSize:(CGSize)size color:(UIColor *)color text:(NSString *)text;

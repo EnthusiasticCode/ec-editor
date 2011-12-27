@@ -237,6 +237,43 @@
     }];
 }
 
++ (UIImage *)styleProjectLabelImageWithSize:(CGSize)size color:(UIColor *)color
+{
+    return [UIImage imageWithSize:size block:^(CGContextRef ctx, CGRect rect) {
+        // Removing one pixel to add shadow
+        rect.size.height -= 1;
+        
+        //
+        // Bookmark Path        
+        CGFloat bookmarkWidth = rect.size.width - 0.5;
+        CGFloat bookmarkHeight = rect.size.height - 0.5;
+        CGFloat bookmarkInnerHeight = ceilf(bookmarkHeight * 0.7);
+        
+        CGMutablePathRef bookmarkPath = CGPathCreateMutable();
+        CGPathMoveToPoint(bookmarkPath, NULL, rect.origin.x + 0.5, rect.origin.y + 0.5);
+        CGPathAddLineToPoint(bookmarkPath, NULL, bookmarkWidth, rect.origin.y + 0.5);
+        CGPathAddLineToPoint(bookmarkPath, NULL, bookmarkWidth, bookmarkHeight);
+        CGPathAddLineToPoint(bookmarkPath, NULL, (rect.origin.x + bookmarkWidth) / 2.0, bookmarkInnerHeight);
+        CGPathAddLineToPoint(bookmarkPath, NULL, rect.origin.x + 0.5, bookmarkHeight);
+        CGPathCloseSubpath(bookmarkPath);
+        
+        // Draw bookmark
+        CGContextSetShadowWithColor(ctx, CGSizeMake(0, -1), 0, [UIColor styleForegroundShadowColor].CGColor);
+        CGContextSetStrokeColorWithColor(ctx, [UIColor styleForegroundColor].CGColor);
+        CGContextSetFillColorWithColor(ctx, color.CGColor);
+        CGContextSetLineWidth(ctx, 1);
+        
+        CGContextAddPath(ctx, bookmarkPath);
+        CGContextFillPath(ctx);
+        
+        CGContextSetShadow(ctx, CGSizeZero, 0);
+        CGContextAddPath(ctx, bookmarkPath);
+        CGContextStrokePath(ctx);
+        
+        CGPathRelease(bookmarkPath);
+    }];
+}
+
 + (UIImage *)styleDocumentImageWithSize:(CGSize)size color:(UIColor *)color text:(NSString *)text
 {
     // Account for shadow

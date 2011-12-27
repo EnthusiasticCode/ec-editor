@@ -434,7 +434,7 @@ static const void *contentViewControllerContext;
         }
     }
     
-    self.defaultToolbar.titleControl.enabled = [(UIViewController<ACSingleTabContentController> *)_contentViewController singleTabController:self shouldEnableTitleControlForDefaultToolbar:self.defaultToolbar];
+    self.defaultToolbar.titleControl.backgroundButton.enabled = [(UIViewController<ACSingleTabContentController> *)_contentViewController singleTabController:self shouldEnableTitleControlForDefaultToolbar:self.defaultToolbar];
 }
 
 - (UIViewController *)_viewControllerWithURL:(NSURL *)url
