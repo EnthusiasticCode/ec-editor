@@ -23,7 +23,7 @@ typedef NSInteger ACCodeFileMinimapLineDecoration;
 
 /// Returns if the given line should be rendered by the minimap with the given color, decoration and decoration color.
 /// All this last three parameters can be assigned to change the way the line is rendered.
-- (BOOL)codeFileMinimapView:(ACCodeFileMinimapView *)minimapView shouldRenderLine:(ECTextRendererLine *)line number:(NSUInteger)lineNumber withColor:(UIColor **)lineColor deocration:(ACCodeFileMinimapLineDecoration *)decoration decorationColor:(UIColor **)decorationColor;
+- (BOOL)codeFileMinimapView:(ACCodeFileMinimapView *)minimapView shouldRenderLine:(ECTextRendererLine *)line number:(NSUInteger)lineNumber withColor:(UIColor **)lineColor decoration:(ACCodeFileMinimapLineDecoration *)decoration decorationColor:(UIColor **)decorationColor;
 
 /// Called when the user changes the selection rectangle from the minimap.
 - (BOOL)codeFileMinimapView:(ACCodeFileMinimapView *)minimapView shouldChangeSelectionRectangle:(CGRect)newSelection;

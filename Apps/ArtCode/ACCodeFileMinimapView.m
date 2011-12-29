@@ -54,7 +54,7 @@ static const void *rendererContext;
         return;
     
     super.delegate = aDelegate;
-    flags.delegateHasShouldRendererLineNumberWithColorDecorationDecorationColor = [self.delegate respondsToSelector:@selector(codeFileMinimapView:shouldRenderLine:number:withColor:deocration:decorationColor:)];
+    flags.delegateHasShouldRendererLineNumberWithColorDecorationDecorationColor = [self.delegate respondsToSelector:@selector(codeFileMinimapView:shouldRenderLine:number:withColor:decoration:decorationColor:)];
     flags.delegateHasShouldChangeSelectionRectangle = [self.delegate respondsToSelector:@selector(codeFileMinimapView:shouldChangeSelectionRectangle:)];
 }
 
@@ -158,7 +158,7 @@ static const void *rendererContext;
                 // Retrieve delegate informations for line
                 __autoreleasing UIColor *customLineColor = this->lineDefaultColor;
                 __autoreleasing UIColor *customDecorationColor = this->lineDefaultColor;
-                if (![this.delegate codeFileMinimapView:this shouldRenderLine:line number:lineNumber withColor:&customLineColor deocration:&customDecoration decorationColor:&customDecorationColor])
+                if (![this.delegate codeFileMinimapView:this shouldRenderLine:line number:lineNumber withColor:&customLineColor decoration:&customDecoration decorationColor:&customDecorationColor])
                     return;
                 
                 // Render previous placed lines
