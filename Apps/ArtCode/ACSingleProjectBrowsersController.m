@@ -50,6 +50,7 @@
 
 - (void)_projectColorLabelSelectionAction:(id)sender
 {
+    [_projectColorLabelButton setImage:[UIImage styleProjectLabelImageWithSize:CGSizeMake(14, 22) color:[(ACColorSelectionControl *)sender selectedColor]] forState:UIControlStateNormal];
     [_projectColorLabelPopover dismissPopoverAnimated:YES];
 }
 
