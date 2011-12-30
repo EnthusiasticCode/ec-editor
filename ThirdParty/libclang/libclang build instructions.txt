@@ -7,13 +7,15 @@ cd ..
 #If you already have sources:
 #make update
 
+sudo cp /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator5.0.sdk/usr/include/crt_externs.h $SDKROOT/usr/include
+
 #Make cross-compile build tools:
 mkdir BuildTools
 cd BuildTools
 #if it complains about "already configured" delete / move include/llvm/Config/config.h
-../configure
+../configure --build=x86_64-apple-darwin11.2.0 --host=x86_64-apple-darwin11.2.0 --target=x86_64-apple-darwin11.2.0 --disable-polly
 cd ..
-make -C BuildTools ENABLE_OPTIMIZED=1 BUILD_DIRS_ONLY=1 TOOL_VERBOSE=1
+make -C BuildTools ENABLE_OPTIMIZED=1 BUILD_DIRS_ONLY=1 DISABLE_ASSERTIONS=1
 
 #For ipad:
 
@@ -22,7 +24,6 @@ export SDKROOT=$DEVROOT/SDKs/iPhoneOS5.0.sdk
 export CFLAGS="-isysroot $SDKROOT -arch armv7 -miphoneos-version-min=5.0"
 export CXXFLAGS="-isysroot $SDKROOT -arch armv7 -miphoneos-version-min=5.0"
 export LDFLAGS="-isysroot $SDKROOT -arch armv7 -miphoneos-version-min=5.0 -lstdc++"
-sudo cp /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator5.0.sdk/usr/include/crt_externs.h $SDKROOT/usr/include
 
 #For simulator:
 
@@ -47,22 +48,26 @@ export CXXCPP="$DEVROOT/usr/bin/clang -E"
 
 #For ipad:
 
-./configure --enable-optimized --disable-threads --disable-shared --disable-docs --host=armv7-apple-darwin10 --prefix=$SDKROOT/usr
-
-make TOOL_VERBOSE=1
+./configure --enable-optimized --disable-shared --disable-docs --host=armv7-apple-darwin11 --prefix=$SDKROOT/usr
+make
+sudo make install UNIVERSAL=1 UNIVERSAL_ARCH=armv7 UNIVERSAL_SDK_PATH=$SDKROOT
+sudo rm $SDKROOT/usr/lib/libclang.dylib
 
 #For simulator:
 
-./configure --enable-optimized --disable-threads --disable-shared --disable-docs --host=i386-apple-darwin10 --prefix=$SDKROOT/usr
+./configure --enable-optimized --disable-shared --disable-docs --host=i386-apple-darwin11 --prefix=$SDKROOT/usr
+make
 
 #this will eventually fail because tblgen can't find Intrinsic class
-make TOOL_VERBOSE=1
 #that's because llvm-tblgen and clang-tblgen are broken when compiled for i386, just copy over the buildtools bins from the cross compile build
-cp -r BuildTools/Release+Asserts/bin/ ./Release+Asserts/bin/
+cp ~/Desktop/BuildTools/Release/bin/* ./Release/bin/
 #and make again
-make TOOL_VERBOSE=1
+make
 
-#For both:
-
-sudo make install
+sudo make install UNIVERSAL_ARCH=i386 UNIVERSAL_SDK_PATH=$SDKROOT
 sudo rm $SDKROOT/usr/lib/libclang.dylib
+
+#After building ipad:
+#backup BuildTools on desktop
+cp -r BuildTools ~/Desktop/
+make clean
