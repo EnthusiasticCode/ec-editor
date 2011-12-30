@@ -12,12 +12,13 @@
 @interface ACTopBarTitleControl () {
     NSArray *_preViews;
     NSArray *_postViews;
+    NSArray *_currentViews;
     
     UIActivityIndicatorView *_activityIndicatorView;
 }
 
 - (void)_setupTitle;
-- (NSArray *)_setupViewArrayFromTitleFragmentIndexes:(NSIndexSet *)fragmentIndexes;
+- (NSArray *)_setupViewArrayFromTitleFragmentIndexes:(NSIndexSet *)fragmentIndexes isPrimary:(BOOL)isPrimary;
 
 @end
 
@@ -26,10 +27,21 @@
 
 #pragma mark - Properties
 
+@synthesize backgroundButton;
 @synthesize loadingMode;
 @synthesize titleFragments, selectedTitleFragments;
-@synthesize secondaryTitleFragmentsTint, gapBetweenFragments, contentInsets;
-@synthesize secondaryFragmentFont;
+@synthesize selectedTitleFragmentsTint, secondaryTitleFragmentsTint, gapBetweenFragments, contentInsets;
+@synthesize selectedFragmentFont, secondaryFragmentFont;
+
+- (UIButton *)backgroundButton
+{
+    if (!backgroundButton)
+    {
+        backgroundButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        [self insertSubview:backgroundButton atIndex:0];
+    }
+    return backgroundButton;
+}
 
 - (void)setTitleFragments:(NSArray *)fragments
 {
@@ -73,21 +85,6 @@
     [self didChangeValueForKey:@"secondaryTitleFragmentsTint"];
 }
 
-- (UIFont *)selectedFragmentFont
-{
-    return self.titleLabel.font;
-}
-
-- (void)setSelectedFragmentFont:(UIFont *)font
-{
-    if (font == self.selectedFragmentFont)
-        return;
-    
-    [self willChangeValueForKey:@"selectedFragmentFont"];
-    self.titleLabel.font = font;
-    [self didChangeValueForKey:@"selectedFragmentFont"];
-}
-
 - (UIFont *)secondaryFragmentFont
 {
     if (secondaryFragmentFont == nil)
@@ -117,7 +114,6 @@
     
     if (loadingMode)
     {
-//        UIImage *loadingBackgroundImage = [self backgroundImageForState:ACControlStateLoading];
         if (!_activityIndicatorView)
         {
             _activityIndicatorView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
@@ -139,21 +135,39 @@
 
 - (void)layoutSubviews
 {
-    [super layoutSubviews];
-
     CGRect bounds = self.bounds;
-    CGRect labelFrame = self.titleLabel.text ? self.titleLabel.frame : CGRectNull;
-    if (self.imageView.image)
-        labelFrame = CGRectUnion(labelFrame, self.imageView.frame);
+    self.backgroundButton.frame = bounds;
+    
+    CGRect labelFrame = CGRectZero;
+    for (UIView *view in _currentViews)
+    {
+        [view sizeToFit];
+        labelFrame.size.width += view.bounds.size.width + gapBetweenFragments;
+    }
+    labelFrame.size.width -= gapBetweenFragments;
+    labelFrame.size.height = bounds.size.height;
+    labelFrame.origin = CGPointMake((bounds.size.width - labelFrame.size.width) / 2.0, (bounds.size.height - labelFrame.size.height) / 2.0);
+    
+    // Selected, current views layout
+    CGRect viewFrame, lastViewFrame = labelFrame;
+    lastViewFrame.size = CGSizeZero;
+    for (UIView *view in _currentViews)
+    {
+        viewFrame = view.frame;
+        viewFrame.origin = CGPointMake(CGRectGetMaxX(lastViewFrame), labelFrame.origin.y + (labelFrame.size.height - viewFrame.size.height) / 2.0);
+        lastViewFrame = CGRectIntegral(viewFrame);
+        view.frame = lastViewFrame;
+        lastViewFrame.origin.x += gapBetweenFragments;
+    }
     
     CGFloat maxSegmentWidth = (bounds.size.width - labelFrame.size.width) / 2 - gapBetweenFragments;
     
     // Pre views layout
-    CGRect lastViewFrame = labelFrame;
+    lastViewFrame = labelFrame;
     for (UIView *view in [_preViews reverseObjectEnumerator])
     {
         [view sizeToFit];
-        CGRect viewFrame = view.frame;
+        viewFrame = view.frame;
         if (viewFrame.size.width > maxSegmentWidth - contentInsets.left)
             viewFrame.size.width = maxSegmentWidth - contentInsets.left;
         viewFrame.origin = CGPointMake(lastViewFrame.origin.x - viewFrame.size.width - gapBetweenFragments, labelFrame.origin.y + (labelFrame.size.height - viewFrame.size.height) / 2);
@@ -167,7 +181,7 @@
     for (UIView *view in _postViews)
     {
         [view sizeToFit];
-        CGRect viewFrame = view.frame;
+        viewFrame = view.frame;
         if (viewFrame.size.width > maxSegmentWidth - contentInsets.right)
             viewFrame.size.width = maxSegmentWidth - contentInsets.right;
         viewFrame.origin = CGPointMake(CGRectGetMaxX(lastViewFrame) + gapBetweenFragments, labelFrame.origin.y + (labelFrame.size.height - viewFrame.size.height) / 2);
@@ -175,6 +189,16 @@
         lastViewFrame = CGRectIntegral(viewFrame);
         view.frame = lastViewFrame;
     }
+}
+
+- (void)setBackgroundImage:(UIImage *)image forState:(UIControlState)state
+{
+    [self.backgroundButton setBackgroundImage:image forState:state];
+}
+
+- (UIImage *)backgroundImageForState:(UIControlState)state
+{
+    return [self.backgroundButton backgroundImageForState:state];
 }
 
 - (void)setTitle:(NSString *)title forState:(UIControlState)state
@@ -194,28 +218,16 @@
     NSIndexSet *selected = selectedTitleFragments ? selectedTitleFragments : [NSIndexSet indexSetWithIndex:[titleFragments count] - 1];
     
     [_preViews makeObjectsPerformSelector:@selector(removeFromSuperview)];
-    _preViews = ([selected firstIndex] > 0) ? [self _setupViewArrayFromTitleFragmentIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, [selected firstIndex])]] : nil;
+    _preViews = ([selected firstIndex] > 0) ? [self _setupViewArrayFromTitleFragmentIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, [selected firstIndex])] isPrimary:NO] : nil;
     
     [_postViews makeObjectsPerformSelector:@selector(removeFromSuperview)];
-    _postViews = ([selected lastIndex] + 1 < [titleFragments count]) ? [self _setupViewArrayFromTitleFragmentIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange([selected lastIndex] + 1, [titleFragments count] - [selected lastIndex] - 1)]] : nil;
+    _postViews = ([selected lastIndex] + 1 < [titleFragments count]) ? [self _setupViewArrayFromTitleFragmentIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange([selected lastIndex] + 1, [titleFragments count] - [selected lastIndex] - 1) ] isPrimary:NO] : nil;
     
-    [super setTitle:nil forState:UIControlStateNormal];
-    [super setImage:nil forState:UIControlStateNormal];
-    [titleFragments enumerateObjectsAtIndexes:selected options:0 usingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-        if ([obj isKindOfClass:[NSString class]])
-        {
-            [super setTitle:(NSString *)obj forState:UIControlStateNormal];
-            self.titleLabel.shadowColor = [UIColor blackColor];
-            self.titleLabel.shadowOffset = CGSizeMake(0, -1);
-        }
-        else if ([obj isKindOfClass:[UIImage class]])
-        {
-            [super setImage:(UIImage *)obj forState:UIControlStateNormal];
-        }
-    }];
+    [_currentViews makeObjectsPerformSelector:@selector(removeFromSuperview)];
+    _currentViews = [selected count] ? [self _setupViewArrayFromTitleFragmentIndexes:selected isPrimary:YES] : nil;
 }
 
-- (NSArray *)_setupViewArrayFromTitleFragmentIndexes:(NSIndexSet *)fragmentIndexes
+- (NSArray *)_setupViewArrayFromTitleFragmentIndexes:(NSIndexSet *)fragmentIndexes isPrimary:(BOOL)isPrimary
 {
     if ([fragmentIndexes count] == 0)
         return nil;
@@ -228,8 +240,8 @@
             label.lineBreakMode = UILineBreakModeMiddleTruncation;
             label.backgroundColor = [UIColor clearColor];
             
-            label.textColor = self.secondaryTitleFragmentsTint;
-            label.font = self.secondaryFragmentFont;
+            label.textColor = isPrimary ? self.selectedTitleFragmentsTint : self.secondaryTitleFragmentsTint;
+            label.font = isPrimary ? self.selectedFragmentFont : self.secondaryFragmentFont;
             
             label.shadowColor = [UIColor colorWithWhite:0.1 alpha:1];
             

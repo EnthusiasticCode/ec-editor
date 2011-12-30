@@ -12,7 +12,10 @@ enum {
     ACControlStateLoading = 1 << 4
 };
 
-@interface ACTopBarTitleControl : UIButton
+@interface ACTopBarTitleControl : UIView
+
+/// The button used as clickable background.
+@property (nonatomic, strong, readonly) UIButton *backgroundButton;
 
 #pragma mark Managin Title Fragments
 
@@ -21,6 +24,9 @@ enum {
 
 /// Indicates which title fragments are active. If nil, the last title fragment will be set active by default.
 @property (nonatomic, strong) NSIndexSet *selectedTitleFragments;
+
+/// Set the tint to apply to selected title fragments
+@property (nonatomic, strong) UIColor *selectedTitleFragmentsTint UI_APPEARANCE_SELECTOR;
 
 /// Set the tint to apply to unselected title fragments
 @property (nonatomic, strong) UIColor *secondaryTitleFragmentsTint UI_APPEARANCE_SELECTOR;
@@ -40,3 +46,13 @@ enum {
 @property (nonatomic, getter = isLoadingMode) BOOL loadingMode;
 
 @end
+
+
+/// Forwards some UIButton methods to the backgroundButton
+@interface ACTopBarTitleControl (UIBUttonForwarding)
+
+- (void)setBackgroundImage:(UIImage *)image forState:(UIControlState)state UI_APPEARANCE_SELECTOR;
+- (UIImage *)backgroundImageForState:(UIControlState)state UI_APPEARANCE_SELECTOR;
+
+@end
+

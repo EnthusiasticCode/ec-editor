@@ -7,10 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "ACSingleTabController.h"
 
 @class ACTab;
 
-@interface ACSingleProjectBrowsersController : UITabBarController
+@interface ACSingleProjectBrowsersController : UITabBarController <ACSingleTabContentController>
 
 @property (nonatomic, strong) ACTab *tab;
 

@@ -77,15 +77,13 @@
     [ACTopBarTitleControlAppearance setBackgroundImage:[[UIImage imageNamed:@"topBar_TitleButton_Selected"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 15, 0, 15)] forState:UIControlStateSelected];
     [ACTopBarTitleControlAppearance setBackgroundImage:[UIImage imageNamed:@"topBar_Background"] forState:UIControlStateDisabled];
     [ACTopBarTitleControlAppearance setGapBetweenFragments:3];
+    [ACTopBarTitleControlAppearance setSelectedTitleFragmentsTint:[UIColor whiteColor]];
     [ACTopBarTitleControlAppearance setSecondaryTitleFragmentsTint:[UIColor colorWithWhite:0.7 alpha:1]];
-    [ACTopBarTitleControlAppearance setContentInsets:UIEdgeInsetsMake(3, 10, 3, 10)];
     [ACTopBarTitleControlAppearance setSelectedFragmentFont:[UIFont boldSystemFontOfSize:20]];
     [ACTopBarTitleControlAppearance setSecondaryFragmentFont:[UIFont systemFontOfSize:14]];
    
-    [[ACTopBarEditButton appearance] setBackgroundImage:[[UIImage imageNamed:@"topBar_ToolButton_Normal"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 10, 0, 10)] forState:UIControlStateNormal];
-    [[ACTopBarEditButton appearanceWhenContainedIn:[ACCodeFileSearchBarView class], nil] setBackgroundImage:[[UIImage imageNamed:@"searchBar_Button_Normal"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 10, 0, 10)] forState:UIControlStateNormal];
-    
     [[ACTopBarToolButton appearance] setBackgroundImage:[[UIImage imageNamed:@"topBar_ToolButton_Normal"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 10, 0, 10)] forState:UIControlStateNormal];
+    [[ACTopBarToolButton appearance] setBackgroundImage:[[UIImage imageNamed:@"topBar_ToolButton_Selected"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 10, 0, 10)] forState:UIControlStateSelected];
     [[ACTopBarToolButton appearanceWhenContainedIn:[ACCodeFileSearchBarView class], nil] setBackgroundImage:[[UIImage imageNamed:@"searchBar_Button_Normal"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 10, 0, 10)] forState:UIControlStateNormal];
     
     ////////////////////////////////////////////////////////////////////////////
