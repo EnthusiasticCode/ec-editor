@@ -9,17 +9,20 @@
 #import "ACCodeFile.h"
 #import <ECCodeIndexing/TMTheme.h>
 #import <ECFoundation/ECFileBuffer.h>
+#import <ECCodeIndexing/ECCodeIndex.h>
+#import <ECCodeIndexing/ECCodeUnit.h>
 
 @interface ACCodeFile ()
 {
     NSOperationQueue *_consumerOperationQueue;
 }
+@property (nonatomic, strong) ECCodeUnit *codeUnit;
 - (void)_markPlaceholderWithName:(NSString *)name range:(NSRange)range;
 @end
 
 @implementation ACCodeFile
 
-@synthesize fileBuffer = _fileBuffer;
+@synthesize fileBuffer = _fileBuffer, codeUnit = _codeUnit;
 @synthesize defaultTextAttributes = _defaultTextAttributes, theme = _theme;
 
 - (TMTheme *)theme
@@ -50,6 +53,7 @@
     _consumerOperationQueue = [[NSOperationQueue alloc] init];
     _consumerOperationQueue.maxConcurrentOperationCount = 1;
     _fileBuffer = [[ECFileBuffer alloc] initWithFileURL:fileURL];
+    _codeUnit = [[[ECCodeIndex alloc] init] codeUnitForFileBuffer:_fileBuffer scope:nil];
     return self;
 }
 
@@ -67,10 +71,26 @@
     return [self.fileBuffer length];
 }
 
+static NSRange intersectionOfRangeRelativeToRange(NSRange range, NSRange inRange)
+{
+    NSRange intersectionRange = NSIntersectionRange(range, inRange);
+    intersectionRange.location -= inRange.location;
+    return intersectionRange;
+}
+
 - (NSAttributedString *)textRenderer:(ECTextRenderer *)sender attributedStringInRange:(NSRange)stringRange
 {
     NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithAttributedString:[self.fileBuffer attributedStringInRange:stringRange]];
     [attributedString addAttributes:self.defaultTextAttributes range:NSMakeRange(0, [attributedString length])];
+    for (id<ECCodeToken>token in [self.codeUnit annotatedTokensInRange:stringRange])
+        [attributedString addAttributes:[self.theme attributesForScopeStack:[token scopeIdentifiersStack]] range:intersectionOfRangeRelativeToRange([token range], stringRange)];
+//    static NSRegularExpression *placeholderRegExp = nil;
+//    if (!placeholderRegExp)
+//        placeholderRegExp = [NSRegularExpression regularExpressionWithPattern:@"<#(.+?)#>" options:0 error:NULL];
+//    for (NSTextCheckingResult *placeholderMatch in [self.fileBuffer matchesOfRegexp:placeholderRegExp options:0])
+//    {
+//        [self _markPlaceholderWithName:[self.fileBuffer stringInRange:[placeholderMatch rangeAtIndex:1]] range:placeholderMatch.range];
+//    }
     return attributedString;
 }
 
@@ -84,28 +104,7 @@
     return [self.fileBuffer attribute:attributeName atIndex:index longestEffectiveRange:effectiveRange];
 }
 
-- (void)applySyntaxColoring
-{
-    //    if (!_needsToReapplySyntaxColoring)
-    //        return;
-    //    _needsToReapplySyntaxColoring = NO;
-    //    
-    //    NSRange range = NSMakeRange(0, [self.fileBuffer length]);
-    //    //    [self.fileBuffer setAttributes:self.defaultTextAttributes range:range];
-    //    
-    //    // Syntax coloring
-    //    for (id<ECCodeToken>token in [_codeUnit annotatedTokensInRange:range])
-    //        [self.fileBuffer addAttributes:[self.theme attributesForScopeStack:[token scopeIdentifiersStack]] range:[token range]];
-    //    
-    //    // Placeholders
-    //    static NSRegularExpression *placeholderRegExp = nil;
-    //    if (!placeholderRegExp)
-    //        placeholderRegExp = [NSRegularExpression regularExpressionWithPattern:@"<#(.+?)#>" options:0 error:NULL];
-    //    for (NSTextCheckingResult *placeholderMatch in [self.fileBuffer matchesOfRegexp:placeholderRegExp options:0])
-    //    {
-    //        [self _markPlaceholderWithName:[self.fileBuffer stringInRange:[placeholderMatch rangeAtIndex:1]] range:placeholderMatch.range];
-    //    }
-}
+#pragma mark - Private methods
 
 static CGFloat placeholderEndingsWidthCallback(void *refcon) {
     if (refcon)

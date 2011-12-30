@@ -37,7 +37,6 @@
         return nil;
     _clangIndex = clangIndex;
     [self clangTranslationUnit];
-    _fileBufferHasUnparsedChanges = YES;
     return self;
 }
 
