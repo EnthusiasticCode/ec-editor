@@ -30,6 +30,9 @@
 /// The code view used to display code.
 @property (nonatomic, strong, readonly) ECCodeView *codeView;
 
+/// The web view used for preview webpages.
+@property (nonatomic, strong, readonly) UIWebView *webView;
+
 /// The code minimap view.
 @property (nonatomic, strong, readonly) ACCodeFileMinimapView *minimapView;
 

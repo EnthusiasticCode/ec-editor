@@ -29,6 +29,8 @@
 
 #import "ACShapePopoverBackgroundView.h"
 
+static const void * webViewContext;
+
 @interface ACCodeFileController () {
     UIActionSheet *_toolsActionSheet;
     ACCodeFileSearchBarController *_searchBarController;
@@ -49,12 +51,23 @@
     NSMutableArray *_keyboardAccessoryItemActions;
 }
 
+@property (nonatomic, strong) ECCodeView *codeView;
+@property (nonatomic, strong) UIWebView *webView;
+
 @property (nonatomic, strong, readonly) ACCodeFileKeyboardAccessoryView *_keyboardAccessoryView;
 @property (nonatomic, strong, readonly) ACCodeFileCompletionsController *_keyboardAccessoryItemCompletionsController;
 @property (nonatomic, strong, readonly) UIViewController *_keyboardAccessoryItemCustomizeController;
 
 @property (nonatomic, strong) ACSyntaxColorer *syntaxColorer;
 @property (nonatomic, strong) NSDictionary *defaultTextAttributes;
+
+/// Returns the content view used to display the content in the given editing state.
+/// This method evaluate if using the codeView or the webView based on the current fileURL.
+- (UIView *)_contentViewForEditingState:(BOOL)editingState;
+- (UIView *)_contentView;
+
+/// Indicates if the current content view is the web preview.
+- (BOOL)_isWebPreview;
 
 - (void)_loadDocument;
 - (void)_unloadDocument;
@@ -82,7 +95,7 @@
 #pragma mark - Properties
 
 @synthesize fileURL = _fileURL, tab = _tab, document = _document;
-@synthesize codeView = _codeView, minimapView = _minimapView, minimapVisible = _minimapVisible, minimapWidth = _minimapWidth;
+@synthesize codeView = _codeView, webView = _webView, minimapView = _minimapView, minimapVisible = _minimapVisible, minimapWidth = _minimapWidth;
 @synthesize defaultTextAttributes = _defaultTextAttributes, syntaxColorer = _syntaxColorer;
 @synthesize _keyboardAccessoryItemCompletionsController, _keyboardAccessoryItemCustomizeController;
 
@@ -201,6 +214,26 @@
     return _codeView;
 }
 
+- (UIWebView *)webView
+{
+    if (!_webView)
+    {
+        _webView = [[UIWebView alloc] init];
+        [_webView addObserver:self forKeyPath:@"loading" options:NSKeyValueObservingOptionNew context:&webViewContext];
+    }
+    return _webView;
+}
+
+- (void)setWebView:(UIWebView *)value
+{
+    if (value == _webView)
+        return;
+    [self willChangeValueForKey:@"webView"];
+    [_webView removeObserver:self forKeyPath:@"loading" context:&webViewContext];
+    _webView = value;
+    [self didChangeValueForKey:@"webView"];
+}
+
 - (ACCodeFileMinimapView *)minimapView
 {
     if (!_minimapView)
@@ -265,7 +298,7 @@
 
 - (void)setMinimapVisible:(BOOL)minimapVisible animated:(BOOL)animated
 {
-    if (_minimapVisible == minimapVisible)
+    if (_minimapVisible == minimapVisible || [self _isWebPreview])
         return;
     
     [self willChangeValueForKey:@"minimapVisible"];
@@ -354,7 +387,7 @@
 {
     [super loadView];
     
-    [self.view addSubview:self.codeView];
+    [self.view addSubview:[self _contentView]];
 }
 
 - (void)viewDidLoad
@@ -386,10 +419,23 @@
     _searchBarController = nil;
 }
 
-- (void)viewWillAppear:(BOOL)animated
+- (void)viewDidAppear:(BOOL)animated
 {
-    [super viewWillAppear:animated];
+    [super viewDidAppear:animated];
     [self _layoutChildViews];
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    if (context == &webViewContext)
+    {
+        // Will show the loading animation when the web view is loading.
+        self.loading = _webView.loading;
+    }
+    else
+    {
+        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+    }
 }
 
 #pragma mark - Controller Methods
@@ -412,6 +458,30 @@
     
     if (!_minimapVisible)
         _minimapView = nil;
+    
+    if ([self _isWebPreview])
+        self.codeView = nil;
+    else
+        self.webView = nil;
+}
+
+#pragma mark - Controller Editing Methods
+
+- (void)setEditing:(BOOL)editing animated:(BOOL)animated
+{
+    UIView *oldContentView = [self _contentView];
+    
+    [super setEditing:editing animated:animated];
+    
+    UIView *currentContentView = [self _contentView];
+    if (oldContentView != currentContentView)
+    {
+        [self _loadDocument];
+        // TODO account for minimap
+        [UIView transitionFromView:oldContentView toView:currentContentView duration:animated ? 0.25 : 0 options:UIViewAnimationTransitionFlipFromLeft completion:^(BOOL finished) {
+            [self _layoutChildViews];
+        }];
+    }
 }
 
 #pragma mark - Minimap Delegate Methods
@@ -581,32 +651,65 @@
 
 #pragma mark - Private Methods
 
+- (UIView *)_contentViewForEditingState:(BOOL)editingState
+{
+    // TODO better check for file type
+    if (editingState || ![[self.fileURL pathExtension] isEqualToString:@"html"])
+    {
+        return self.codeView;
+    }
+    else
+    {
+        return self.webView;
+    }
+}
+
+- (UIView *)_contentView
+{
+    return [self _contentViewForEditingState:self.isEditing];
+}
+
+- (BOOL)_isWebPreview
+{
+    return [self _contentViewForEditingState:self.isEditing] == _webView;
+}
+
 - (void)_loadDocument
 {
     ECASSERT(self.isViewLoaded);
     if (!self.fileURL)
         return;
     
-    self.loading = YES;
-    _document = [[ACFileDocument alloc] initWithFileURL:self.fileURL];
-    ECASSERT(_document);
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        [_document openWithCompletionHandler:^(BOOL success) {
-            ECASSERT(success);
-            ACSyntaxColorer *colorer = [[ACSyntaxColorer alloc] initWithFileBuffer:[_document fileBuffer]];
-            colorer.defaultTextAttributes = self.defaultTextAttributes;
-            colorer.theme = [TMTheme themeWithName:@"Mac Classic" bundle:nil];
-            [colorer applySyntaxColoring];
-            dispatch_async(dispatch_get_main_queue(), ^{                
-                _document.undoManager = self.codeView.undoManager;
-                self.syntaxColorer = colorer;
-                [self.codeView updateAllText];
-                [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_fileBufferDidChange:) name:ECFileBufferDidReplaceCharactersNotificationName object:_document.fileBuffer];
-                [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_fileBufferDidChange:) name:ECFileBufferDidChangeAttributesNotificationName object:_document.fileBuffer];
-                self.loading = NO;
-            });
-        }];
-    });
+    if ([self _isWebPreview])
+    {
+        if (_document)
+            [self.webView loadHTMLString:[[_document fileBuffer] stringInRange:NSMakeRange(0, [[_document fileBuffer] length])] baseURL:self.fileURL];
+        else
+            [self.webView loadRequest:[NSURLRequest requestWithURL:self.fileURL]];
+    }
+    else
+    {
+        self.loading = YES;
+        _document = [[ACFileDocument alloc] initWithFileURL:self.fileURL];
+        ECASSERT(_document);
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            [_document openWithCompletionHandler:^(BOOL success) {
+                ECASSERT(success);
+                ACSyntaxColorer *colorer = [[ACSyntaxColorer alloc] initWithFileBuffer:[_document fileBuffer]];
+                colorer.defaultTextAttributes = self.defaultTextAttributes;
+                colorer.theme = [TMTheme themeWithName:@"Mac Classic" bundle:nil];
+                [colorer applySyntaxColoring];
+                dispatch_async(dispatch_get_main_queue(), ^{                
+                    _document.undoManager = self.codeView.undoManager;
+                    self.syntaxColorer = colorer;
+                    [self.codeView updateAllText];
+                    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_fileBufferDidChange:) name:ECFileBufferDidReplaceCharactersNotificationName object:_document.fileBuffer];
+                    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_fileBufferDidChange:) name:ECFileBufferDidChangeAttributesNotificationName object:_document.fileBuffer];
+                    self.loading = NO;
+                });
+            }];
+        });
+    }
 }
 
 - (void)_unloadDocument
@@ -624,15 +727,22 @@
 - (void)_layoutChildViews
 {
     CGRect frame = (CGRect){ CGPointZero, self.view.frame.size };
-    if (self.minimapVisible)
+    if ([self _isWebPreview])
     {
-        self.codeView.frame = CGRectMake(0, 0, frame.size.width - self.minimapWidth, frame.size.height);
-        self.minimapView.frame = CGRectMake(frame.size.width - self.minimapWidth, 0, self.minimapWidth, frame.size.height);
+        self.webView.frame = frame;
     }
     else
     {
-        self.codeView.frame = frame;
-        _minimapView.frame = CGRectMake(frame.size.width, 0, self.minimapWidth, frame.size.height);
+        if (self.minimapVisible)
+        {
+            self.codeView.frame = CGRectMake(0, 0, frame.size.width - self.minimapWidth, frame.size.height);
+            self.minimapView.frame = CGRectMake(frame.size.width - self.minimapWidth, 0, self.minimapWidth, frame.size.height);
+        }
+        else
+        {
+            self.codeView.frame = frame;
+            _minimapView.frame = CGRectMake(frame.size.width, 0, self.minimapWidth, frame.size.height);
+        }
     }
 }
 
@@ -795,8 +905,6 @@
 
 - (void)_keyboardAccessoryItemAction:(UIBarButtonItem *)item
 {
-    // TODO use item tag to see what action to perform
-
     if (item.tag == 0)
     {
     }
