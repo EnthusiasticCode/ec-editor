@@ -219,6 +219,7 @@ static const void * webViewContext;
     if (!_webView)
     {
         _webView = [[UIWebView alloc] init];
+        _webView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
         [_webView addObserver:self forKeyPath:@"loading" options:NSKeyValueObservingOptionNew context:&webViewContext];
     }
     return _webView;
@@ -419,9 +420,9 @@ static const void * webViewContext;
     _searchBarController = nil;
 }
 
-- (void)viewDidAppear:(BOOL)animated
+- (void)viewWillAppear:(BOOL)animated
 {
-    [super viewDidAppear:animated];
+    [super viewWillAppear:animated];
     [self _layoutChildViews];
 }
 
@@ -478,7 +479,8 @@ static const void * webViewContext;
     {
         [self _loadDocument];
         // TODO account for minimap
-        [UIView transitionFromView:oldContentView toView:currentContentView duration:animated ? 0.25 : 0 options:UIViewAnimationTransitionFlipFromLeft completion:^(BOOL finished) {
+        // TODO make transition 
+        [UIView transitionFromView:oldContentView toView:currentContentView duration:animated ? 0.2 : 0 options:UIViewAnimationOptionCurveEaseInOut | UIViewAnimationOptionTransitionCrossDissolve completion:^(BOOL finished) {
             [self _layoutChildViews];
         }];
     }
