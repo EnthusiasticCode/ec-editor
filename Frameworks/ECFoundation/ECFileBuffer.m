@@ -67,7 +67,8 @@ static dispatch_queue_t _fileBuffersQueue;
 
 - (void)dealloc
 {
-    dispatch_release(_fileAccessQueue);
+    if (_fileAccessQueue)
+        dispatch_release(_fileAccessQueue);
 }
 
 - (NSURL *)fileURL
