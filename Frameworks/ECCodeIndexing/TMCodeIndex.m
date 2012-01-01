@@ -27,7 +27,7 @@
     return 0.3;
 }
 
-- (ECCodeUnit *)codeUnitWithIndex:(ECCodeIndex *)index forFileBuffer:(ECAttributedUTF8FileBuffer *)fileBuffer scope:(NSString *)scope
+- (ECCodeUnit *)codeUnitWithIndex:(ECCodeIndex *)index forFileBuffer:(ECFileBuffer *)fileBuffer scope:(NSString *)scope
 {
     ECASSERT(index && fileBuffer && scope);
     return [[TMCodeUnit alloc] initWithIndex:index fileBuffer:fileBuffer scope:scope];

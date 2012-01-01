@@ -16,7 +16,7 @@
 #import "TMToken.h"
 #import "TMCodeIndex.h"
 #import "OnigRegexp.h"
-#import <ECFoundation/ECAttributedUTF8FileBuffer.h>
+#import <ECFoundation/ECFileBuffer.h>
 
 static NSString * const _patternCaptureName = @"name";
 static NSString * const _tokenAttributeName = @"TMTokenAttributeName";
@@ -41,7 +41,7 @@ static NSString * const _tokenAttributeName = @"TMTokenAttributeName";
 
 @implementation TMCodeUnit
 
-- (id)initWithIndex:(ECCodeIndex *)index fileBuffer:(ECAttributedUTF8FileBuffer *)fileBuffer scope:(NSString *)scope
+- (id)initWithIndex:(ECCodeIndex *)index fileBuffer:(ECFileBuffer *)fileBuffer scope:(NSString *)scope
 {
     ECASSERT(index && fileBuffer && [scope length]);
     self = [super initWithIndex:index fileBuffer:fileBuffer scope:scope];

@@ -26,6 +26,6 @@
 - (float)supportForScope:(NSString *)scope;
 
 /// Return a code unit for the given fileURL initialized with the given index and scope
-- (ECCodeUnit *)codeUnitWithIndex:(ECCodeIndex *)index forFileBuffer:(ECAttributedUTF8FileBuffer *)fileBuffer scope:(NSString *)scope;
+- (ECCodeUnit *)codeUnitWithIndex:(ECCodeIndex *)index forFileBuffer:(ECFileBuffer *)fileBuffer scope:(NSString *)scope;
 
 @end

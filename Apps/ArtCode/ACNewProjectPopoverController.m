@@ -86,7 +86,7 @@
     if (indexPath.section == 0)
     {
         NSString *projectName = [@"Project " stringByAppendingString:[NSString stringWithFormat:@"%d", arc4random()]];
-        NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] initWithFilePresenter:nil];
+        ECFileCoordinator *fileCoordinator = [[ECFileCoordinator alloc] initWithFilePresenter:nil];
         [fileCoordinator coordinateWritingItemAtURL:[[self.projectsDirectory URLByAppendingPathComponent:projectName] URLByAppendingPathExtension:@"weakpkg"] options:0 error:NULL byAccessor:^(NSURL *newURL) {
             NSFileManager *fileManager = [[NSFileManager alloc] init];
             [fileManager createDirectoryAtURL:newURL withIntermediateDirectories:YES attributes:nil error:NULL];

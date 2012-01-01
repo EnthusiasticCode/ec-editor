@@ -8,24 +8,44 @@
 
 #import "ECCodeUnit+Subclass.h"
 #import "ECCodeIndex+Subclass.h"
-#import <ECFoundation/ECAttributedUTF8FileBuffer.h>
+#import <ECFoundation/ECFileBuffer.h>
 
 @interface ECCodeUnit ()
 {
+    NSOperationQueue *_consumerOperationQueue;
     ECCodeIndex *_index;
-    ECAttributedUTF8FileBuffer *_fileBuffer;
+    ECFileBuffer *_fileBuffer;
     NSString *_scope;
 }
 @end
 
 @implementation ECCodeUnit
 
+- (id)initWithIndex:(ECCodeIndex *)index fileBuffer:(ECFileBuffer *)fileBuffer scope:(NSString *)scope
+{
+    ECASSERT(index && fileBuffer);
+    self = [super init];
+    if (!self)
+        return nil;
+    _consumerOperationQueue = [NSOperationQueue currentQueue];
+    _index = index;
+    _fileBuffer = fileBuffer;
+    [_fileBuffer addConsumer:self];
+    _scope = scope;
+    return self;
+}
+
+- (void)dealloc
+{
+    [_fileBuffer removeConsumer:self];
+}
+
 - (ECCodeIndex *)index
 {
     return _index;
 }
 
-- (ECAttributedUTF8FileBuffer *)fileBuffer
+- (ECFileBuffer *)fileBuffer
 {
     return _fileBuffer;
 }
@@ -65,20 +85,11 @@
     return nil;
 }
 
-@end
+#pragma mark - ECFileBufferConsumer
 
-@implementation ECCodeUnit (Internal)
-
-- (id)initWithIndex:(ECCodeIndex *)index fileBuffer:(ECAttributedUTF8FileBuffer *)fileBuffer scope:(NSString *)scope
+- (NSOperationQueue *)consumerOperationQueue
 {
-    ECASSERT(index && fileBuffer);
-    self = [super init];
-    if (!self)
-        return nil;
-    _index = index;
-    _fileBuffer = fileBuffer;
-    _scope = scope;
-    return self;
+    return _consumerOperationQueue;
 }
 
 @end

@@ -7,12 +7,12 @@
 //
 
 #import <Foundation/Foundation.h>
-@class ECAttributedUTF8FileBuffer;
+@class ECFileBuffer;
 
 @interface TMSyntax : NSObject <NSDiscardableContent>
 
 + (TMSyntax *)syntaxWithScope:(NSString *)scope;
-+ (TMSyntax *)syntaxForFileBuffer:(ECAttributedUTF8FileBuffer *)fileBuffer;
++ (TMSyntax *)syntaxForFileBuffer:(ECFileBuffer *)fileBuffer;
 
 - (NSString *)name;
 - (NSString *)scope;

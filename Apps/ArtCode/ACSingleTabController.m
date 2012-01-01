@@ -440,7 +440,7 @@ static const void *contentViewControllerContext;
 - (UIViewController *)_viewControllerWithURL:(NSURL *)url
 {
     UIViewController *result = nil;
-    NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] initWithFilePresenter:nil];
+    ECFileCoordinator *fileCoordinator = [[ECFileCoordinator alloc] initWithFilePresenter:nil];
     __block BOOL currentURLIsEqualToProjectsDirectory = NO;
     __block BOOL currentURLExists = NO;
     __block BOOL currentURLIsDirectory = NO;

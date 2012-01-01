@@ -103,10 +103,12 @@
 		B726573D146160F000E4C9F1 /* ECDiscardableMutableDictionary.m in Sources */ = {isa = PBXBuildFile; fileRef = B726573B146160F000E4C9F1 /* ECDiscardableMutableDictionary.m */; };
 		B7A4BB34143F918200BB6F29 /* NSString+ECAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = B7A4BB32143F918200BB6F29 /* NSString+ECAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B7A4BB35143F918200BB6F29 /* NSString+ECAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = B7A4BB33143F918200BB6F29 /* NSString+ECAdditions.m */; };
-		B7C9A841142BB046009D8FF3 /* ECItemObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = B7C9A83F142BB046009D8FF3 /* ECItemObserver.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B7C9A842142BB046009D8FF3 /* ECItemObserver.m in Sources */ = {isa = PBXBuildFile; fileRef = B7C9A840142BB046009D8FF3 /* ECItemObserver.m */; };
-		B7D4DDBA146BD04D002DF6D4 /* ECAttributedUTF8FileBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = B7D4DDB8146BD04D002DF6D4 /* ECAttributedUTF8FileBuffer.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B7D4DDBB146BD04D002DF6D4 /* ECAttributedUTF8FileBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = B7D4DDB9146BD04D002DF6D4 /* ECAttributedUTF8FileBuffer.m */; };
+		B7D25F51149156D8002CD5C9 /* ECFileCoordinator.h in Headers */ = {isa = PBXBuildFile; fileRef = B7D25F4D149156D8002CD5C9 /* ECFileCoordinator.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B7D25F52149156D8002CD5C9 /* ECFileCoordinator.m in Sources */ = {isa = PBXBuildFile; fileRef = B7D25F4E149156D8002CD5C9 /* ECFileCoordinator.m */; };
+		B7D260411492C5F8002CD5C9 /* libdispatch+ECAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = B7D2603F1492C5F8002CD5C9 /* libdispatch+ECAdditions.h */; settings = {ATTRIBUTES = (); }; };
+		B7D260421492C5F8002CD5C9 /* libdispatch+ECAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = B7D260401492C5F8002CD5C9 /* libdispatch+ECAdditions.m */; };
+		B7D4DDBA146BD04D002DF6D4 /* ECFileBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = B7D4DDB8146BD04D002DF6D4 /* ECFileBuffer.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B7D4DDBB146BD04D002DF6D4 /* ECFileBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = B7D4DDB9146BD04D002DF6D4 /* ECFileBuffer.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -301,10 +303,12 @@
 		B726573B146160F000E4C9F1 /* ECDiscardableMutableDictionary.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECDiscardableMutableDictionary.m; sourceTree = "<group>"; };
 		B7A4BB32143F918200BB6F29 /* NSString+ECAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+ECAdditions.h"; sourceTree = "<group>"; };
 		B7A4BB33143F918200BB6F29 /* NSString+ECAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+ECAdditions.m"; sourceTree = "<group>"; };
-		B7C9A83F142BB046009D8FF3 /* ECItemObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECItemObserver.h; sourceTree = "<group>"; };
-		B7C9A840142BB046009D8FF3 /* ECItemObserver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECItemObserver.m; sourceTree = "<group>"; };
-		B7D4DDB8146BD04D002DF6D4 /* ECAttributedUTF8FileBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECAttributedUTF8FileBuffer.h; sourceTree = "<group>"; };
-		B7D4DDB9146BD04D002DF6D4 /* ECAttributedUTF8FileBuffer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECAttributedUTF8FileBuffer.m; sourceTree = "<group>"; };
+		B7D25F4D149156D8002CD5C9 /* ECFileCoordinator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECFileCoordinator.h; sourceTree = "<group>"; };
+		B7D25F4E149156D8002CD5C9 /* ECFileCoordinator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECFileCoordinator.m; sourceTree = "<group>"; };
+		B7D2603F1492C5F8002CD5C9 /* libdispatch+ECAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "libdispatch+ECAdditions.h"; sourceTree = "<group>"; };
+		B7D260401492C5F8002CD5C9 /* libdispatch+ECAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "libdispatch+ECAdditions.m"; sourceTree = "<group>"; };
+		B7D4DDB8146BD04D002DF6D4 /* ECFileBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECFileBuffer.h; sourceTree = "<group>"; };
+		B7D4DDB9146BD04D002DF6D4 /* ECFileBuffer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECFileBuffer.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -601,12 +605,14 @@
 		B7C9A83E142BAFF7009D8FF3 /* File Coordination */ = {
 			isa = PBXGroup;
 			children = (
+				B7D25F4D149156D8002CD5C9 /* ECFileCoordinator.h */,
+				B7D25F4E149156D8002CD5C9 /* ECFileCoordinator.m */,
 				B701296F143860490070CCDF /* ECDirectoryPresenter.h */,
 				B7012970143860490070CCDF /* ECDirectoryPresenter.m */,
-				B7C9A83F142BB046009D8FF3 /* ECItemObserver.h */,
-				B7C9A840142BB046009D8FF3 /* ECItemObserver.m */,
-				B7D4DDB8146BD04D002DF6D4 /* ECAttributedUTF8FileBuffer.h */,
-				B7D4DDB9146BD04D002DF6D4 /* ECAttributedUTF8FileBuffer.m */,
+				B7D4DDB8146BD04D002DF6D4 /* ECFileBuffer.h */,
+				B7D4DDB9146BD04D002DF6D4 /* ECFileBuffer.m */,
+				B7D2603F1492C5F8002CD5C9 /* libdispatch+ECAdditions.h */,
+				B7D260401492C5F8002CD5C9 /* libdispatch+ECAdditions.m */,
 			);
 			name = "File Coordination";
 			sourceTree = "<group>";
@@ -620,7 +626,6 @@
 			files = (
 				B71707851428D52F00DF7794 /* ECHashing.h in Headers */,
 				B71707871428D52F00DF7794 /* ECPatriciaTrie.h in Headers */,
-				B7C9A841142BB046009D8FF3 /* ECItemObserver.h in Headers */,
 				B71707891428D52F00DF7794 /* NSURL+ECAdditions.h in Headers */,
 				B717078D1428D52F00DF7794 /* NSTimer+block.h in Headers */,
 				B71707751428D50000DF7794 /* ECDebug.h in Headers */,
@@ -631,7 +636,9 @@
 				B726571214613FBF00E4C9F1 /* ECCache.h in Headers */,
 				B726571714613FD100E4C9F1 /* ECWeakDictionary.h in Headers */,
 				B726573C146160F000E4C9F1 /* ECDiscardableMutableDictionary.h in Headers */,
-				B7D4DDBA146BD04D002DF6D4 /* ECAttributedUTF8FileBuffer.h in Headers */,
+				B7D4DDBA146BD04D002DF6D4 /* ECFileBuffer.h in Headers */,
+				B7D25F51149156D8002CD5C9 /* ECFileCoordinator.h in Headers */,
+				B7D260411492C5F8002CD5C9 /* libdispatch+ECAdditions.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -737,13 +744,14 @@
 				B717078A1428D52F00DF7794 /* NSURL+ECAdditions.m in Sources */,
 				B717078B1428D52F00DF7794 /* MurmurHash3.c in Sources */,
 				B717078E1428D52F00DF7794 /* NSTimer+block.m in Sources */,
-				B7C9A842142BB046009D8FF3 /* ECItemObserver.m in Sources */,
 				B7012972143860490070CCDF /* ECDirectoryPresenter.m in Sources */,
 				B7A4BB35143F918200BB6F29 /* NSString+ECAdditions.m in Sources */,
 				B726571314613FBF00E4C9F1 /* ECCache.m in Sources */,
 				B726571814613FD100E4C9F1 /* ECWeakDictionary.m in Sources */,
 				B726573D146160F000E4C9F1 /* ECDiscardableMutableDictionary.m in Sources */,
-				B7D4DDBB146BD04D002DF6D4 /* ECAttributedUTF8FileBuffer.m in Sources */,
+				B7D4DDBB146BD04D002DF6D4 /* ECFileBuffer.m in Sources */,
+				B7D25F52149156D8002CD5C9 /* ECFileCoordinator.m in Sources */,
+				B7D260421492C5F8002CD5C9 /* libdispatch+ECAdditions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

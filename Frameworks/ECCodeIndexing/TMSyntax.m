@@ -12,7 +12,7 @@
 #import "TMCodeIndex.h"
 #import "OnigRegexp.h"
 #import <ECFoundation/ECDiscardableMutableDictionary.h>
-#import <ECFoundation/ECAttributedUTF8FileBuffer.h>
+#import <ECFoundation/ECFileBuffer.h>
 
 static NSString * const _syntaxNameKey = @"name";
 static NSString * const _syntaxScopeKey = @"scopeName";
@@ -27,7 +27,7 @@ static ECDiscardableMutableDictionary *_syntaxes;
 {
     NSInteger _contentAccessCount;
     NSURL *_fileURL;
-    ECAttributedUTF8FileBuffer *_fileBuffer;
+    ECFileBuffer *_fileBuffer;
     NSString *_name;
     NSString *_scope;
     NSArray *__fileTypes;
@@ -53,7 +53,7 @@ static ECDiscardableMutableDictionary *_syntaxes;
     return [_syntaxes objectForKey:scope];
 }
 
-+ (TMSyntax *)syntaxForFileBuffer:(ECAttributedUTF8FileBuffer *)fileBuffer
++ (TMSyntax *)syntaxForFileBuffer:(ECFileBuffer *)fileBuffer
 {
     ECASSERT(fileBuffer);
     TMSyntax *foundSyntax = [self _syntaxWithPredicateBlock:^BOOL(TMSyntax *syntax) {

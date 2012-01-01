@@ -10,7 +10,7 @@
 #import "ECCodeIndex+Subclass.h"
 #import "TMSyntax.h"
 #import <ECFoundation/ECCache.h>
-#import <ECFoundation/ECAttributedUTF8FileBuffer.h>
+#import <ECFoundation/ECFileBuffer.h>
 
 static NSMutableArray *_extensionClasses;
 
@@ -38,7 +38,7 @@ static NSMutableArray *_extensionClasses;
     return self;
 }
 
-- (ECCodeUnit *)codeUnitForFileBuffer:(ECAttributedUTF8FileBuffer *)fileBuffer scope:(NSString *)scope
+- (ECCodeUnit *)codeUnitForFileBuffer:(ECFileBuffer *)fileBuffer scope:(NSString *)scope
 {
     if (![self isMemberOfClass:[ECCodeIndex class]])
         return nil;

@@ -9,13 +9,8 @@
 #import "ACCodeFileController.h"
 #import <QuartzCore/QuartzCore.h>
 #import <ECFoundation/NSTimer+block.h>
+#import <ECFoundation/ECFileBuffer.h>
 #import <ECUIKit/ECBezelAlert.h>
-
-#import "ACFileDocument.h"
-#import <ECFoundation/ECAttributedUTF8FileBuffer.h>
-
-#import "ACSyntaxColorer.h"
-#import <ECCodeIndexing/TMTheme.h>
 
 #import <ECUIKit/ECTabController.h>
 #import "ACSingleTabController.h"
@@ -28,6 +23,8 @@
 #import "ACCodeFileAccessoryItemsGridView.h"
 
 #import "ACShapePopoverBackgroundView.h"
+
+#import "ACCodeFile.h"
 
 static const void * webViewContext;
 
@@ -49,17 +46,17 @@ static const void * webViewContext;
     
     /// Actions associated to items in the accessory view. Associations are made with tag (as array index) to ACCodeFileAccessoryAction.
     NSMutableArray *_keyboardAccessoryItemActions;
+    
+    NSOperationQueue *_consumerOperationQueue;
 }
 
 @property (nonatomic, strong) ECCodeView *codeView;
 @property (nonatomic, strong) UIWebView *webView;
+@property (nonatomic, strong) ACCodeFile *codeFile;
 
 @property (nonatomic, strong, readonly) ACCodeFileKeyboardAccessoryView *_keyboardAccessoryView;
 @property (nonatomic, strong, readonly) ACCodeFileCompletionsController *_keyboardAccessoryItemCompletionsController;
 @property (nonatomic, strong, readonly) UIViewController *_keyboardAccessoryItemCustomizeController;
-
-@property (nonatomic, strong) ACSyntaxColorer *syntaxColorer;
-@property (nonatomic, strong) NSDictionary *defaultTextAttributes;
 
 /// Returns the content view used to display the content in the given editing state.
 /// This method evaluate if using the codeView or the webView based on the current fileURL.
@@ -69,15 +66,10 @@ static const void * webViewContext;
 /// Indicates if the current content view is the web preview.
 - (BOOL)_isWebPreview;
 
-- (void)_loadDocument;
-- (void)_unloadDocument;
-
 - (void)_layoutChildViews;
 
 - (void)_handleGestureUndo:(UISwipeGestureRecognizer *)recognizer;
 - (void)_handleGestureRedo:(UISwipeGestureRecognizer *)recognizer;
-
-- (void)_fileBufferDidChange:(NSNotification *)notification;
 
 - (void)_keyboardWillShow:(NSNotification *)notification;
 - (void)_keyboardWillHide:(NSNotification *)notification;
@@ -94,9 +86,8 @@ static const void * webViewContext;
 
 #pragma mark - Properties
 
-@synthesize fileURL = _fileURL, tab = _tab, document = _document;
 @synthesize codeView = _codeView, webView = _webView, minimapView = _minimapView, minimapVisible = _minimapVisible, minimapWidth = _minimapWidth;
-@synthesize defaultTextAttributes = _defaultTextAttributes, syntaxColorer = _syntaxColorer;
+@synthesize fileURL = _fileURL, tab = _tab, codeFile = _codeFile;
 @synthesize _keyboardAccessoryItemCompletionsController, _keyboardAccessoryItemCustomizeController;
 
 - (ECCodeView *)codeView
@@ -104,7 +95,7 @@ static const void * webViewContext;
     if (!_codeView)
     {
         _codeView = [ECCodeView new];
-        _codeView.dataSource = self;
+        _codeView.dataSource = self.codeFile;
         _codeView.delegate = self;
         _codeView.magnificationPopoverControllerClass = [ACShapePopoverController class];
         
@@ -263,26 +254,34 @@ static const void * webViewContext;
     
     [self willChangeValueForKey:@"fileURL"];
     
-    [self _unloadDocument];
     _fileURL = fileURL;
-    
-    if (fileURL && self.isViewLoaded)
-        [self _loadDocument];
+    if (fileURL)
+        self.codeFile = [[ACCodeFile alloc] initWithFileURL:fileURL];
+    else
+        self.codeFile = nil;
     
     [self didChangeValueForKey:@"fileURL"];
 }
 
-- (NSDictionary *)defaultTextAttributes
+- (void)setCodeFile:(ACCodeFile *)codeFile
 {
-    if (!_defaultTextAttributes)
+    if (codeFile == _codeFile)
+        return;
+    
+    [self willChangeValueForKey:@"codeFile"];
+    
+    [_codeFile.fileBuffer removeConsumer:self];
+    _codeFile = codeFile;
+    if (!_consumerOperationQueue)
     {
-        CTFontRef defaultFont = CTFontCreateWithName((__bridge CFStringRef)@"Inconsolata-dz", 14, NULL);
-        _defaultTextAttributes = [NSDictionary dictionaryWithObjectsAndKeys:
-                                  (__bridge id)defaultFont, kCTFontAttributeName,
-                                  [NSNumber numberWithInt:0], kCTLigatureAttributeName, nil];
-        CFRelease(defaultFont);
+        _consumerOperationQueue = [[NSOperationQueue alloc] init];
+        _consumerOperationQueue.maxConcurrentOperationCount = 1;
     }
-    return _defaultTextAttributes;
+    else
+        [_consumerOperationQueue cancelAllOperations];
+    [_codeFile.fileBuffer addConsumer:self];
+    
+    [self didChangeValueForKey:@"codeFile"];
 }
 
 - (CGFloat)minimapWidth
@@ -395,21 +394,24 @@ static const void * webViewContext;
 {
     self.toolbarItems = [NSArray arrayWithObject:[[UIBarButtonItem alloc] initWithTitle:@"tools" style:UIBarButtonItemStylePlain target:self action:@selector(toolButtonAction:)]];
     
-    [self _loadDocument];
-    
     // Keyboard notifications
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_keyboardWillChangeFrame:) name:UIKeyboardWillChangeFrameNotification object:nil];
     _keyboardFrame = CGRectNull;
     _keyboardRotationFrame = CGRectNull;
+    if ([self _isWebPreview])
+    {
+        if (self.codeFile)
+            [self.webView loadHTMLString:[[self.codeFile fileBuffer] string] baseURL:self.fileURL];
+        else
+            [self.webView loadRequest:[NSURLRequest requestWithURL:self.fileURL]];
+    }
 }
 
 - (void)viewDidUnload
 {
     [super viewDidUnload];
-    
-    [self _unloadDocument];
     
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     
@@ -477,7 +479,6 @@ static const void * webViewContext;
     UIView *currentContentView = [self _contentView];
     if (oldContentView != currentContentView)
     {
-        [self _loadDocument];
         // TODO account for minimap
         // TODO make transition 
         [UIView transitionFromView:oldContentView toView:currentContentView duration:animated ? 0.2 : 0 options:UIViewAnimationOptionCurveEaseInOut | UIViewAnimationOptionTransitionCrossDissolve completion:^(BOOL finished) {
@@ -517,34 +518,19 @@ static const void * webViewContext;
     return NO;
 }
 
-#pragma mark - Code View DataSource Methods
+#pragma mark - ECFileBufferConsumer
 
-- (NSUInteger)stringLengthForTextRenderer:(ECTextRenderer *)sender
+- (NSOperationQueue *)consumerOperationQueue
 {
-    return [[self.document fileBuffer] length];
+    ECASSERT(_consumerOperationQueue);
+    return _consumerOperationQueue;
 }
 
-- (NSAttributedString *)textRenderer:(ECTextRenderer *)sender attributedStringInRange:(NSRange)stringRange
+- (void)fileBuffer:(ECFileBuffer *)fileBuffer didReplaceCharactersInRange:(NSRange)range withString:(NSString *)string
 {
-    return [[self.document fileBuffer] attributedStringInRange:stringRange];
-}
-
-- (void)codeView:(ECCodeViewBase *)codeView commitString:(NSString *)commitString forTextInRange:(NSRange)range
-{
-    [[self.document fileBuffer] replaceCharactersInRange:range withAttributedString:[commitString length] ? [[NSAttributedString alloc] initWithString:commitString attributes:self.defaultTextAttributes] : nil];
-//    NSRange newRange = NSMakeRange(range.location, [commitString length]);
-    [_syntaxColoringTimer invalidate];
-    _syntaxColoringTimer = [NSTimer scheduledTimerWithTimeInterval:1.0 usingBlock:^(NSTimer *timer) {
-        [self.syntaxColorer applySyntaxColoring];
-//        [self.codeView setNeedsUpdate];
-    } repeats:NO];
-//    [self.codeView updateTextFromStringRange:range toStringRange:newRange];
-    // CodeView is updated from file buffer notification in _fileBufferDidChange:
-}
-
-- (id)codeView:(ECCodeView *)codeView attribute:(NSString *)attributeName atIndex:(NSUInteger)index longestEffectiveRange:(NSRangePointer)effectiveRange
-{
-    return [[self.document fileBuffer] attribute:attributeName atIndex:index longestEffectiveRange:effectiveRange];
+    [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+        [self.codeView updateTextFromStringRange:range toStringRange:NSMakeRange(range.location, [string length])];
+    }];
 }
 
 #pragma mark - Code View Delegate Methods
@@ -676,56 +662,6 @@ static const void * webViewContext;
     return [self _contentViewForEditingState:self.isEditing] == _webView;
 }
 
-- (void)_loadDocument
-{
-    ECASSERT(self.isViewLoaded);
-    if (!self.fileURL)
-        return;
-    
-    if ([self _isWebPreview])
-    {
-        if (_document)
-            [self.webView loadHTMLString:[[_document fileBuffer] stringInRange:NSMakeRange(0, [[_document fileBuffer] length])] baseURL:self.fileURL];
-        else
-            [self.webView loadRequest:[NSURLRequest requestWithURL:self.fileURL]];
-    }
-    else
-    {
-        self.loading = YES;
-        _document = [[ACFileDocument alloc] initWithFileURL:self.fileURL];
-        ECASSERT(_document);
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            [_document openWithCompletionHandler:^(BOOL success) {
-                ECASSERT(success);
-                ACSyntaxColorer *colorer = [[ACSyntaxColorer alloc] initWithFileBuffer:[_document fileBuffer]];
-                colorer.defaultTextAttributes = self.defaultTextAttributes;
-                colorer.theme = [TMTheme themeWithName:@"Mac Classic" bundle:nil];
-                [colorer applySyntaxColoring];
-                dispatch_async(dispatch_get_main_queue(), ^{                
-                    _document.undoManager = self.codeView.undoManager;
-                    self.syntaxColorer = colorer;
-                    [self.codeView updateAllText];
-                    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_fileBufferDidChange:) name:ECFileBufferDidReplaceCharactersNotificationName object:_document.fileBuffer];
-                    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_fileBufferDidChange:) name:ECFileBufferDidChangeAttributesNotificationName object:_document.fileBuffer];
-                    self.loading = NO;
-                });
-            }];
-        });
-    }
-}
-
-- (void)_unloadDocument
-{
-    self.syntaxColorer = nil;
-    if (_document)
-    {
-        [[NSNotificationCenter defaultCenter] removeObserver:self name:ECFileBufferDidReplaceCharactersNotificationName object:_document.fileBuffer];
-        [[NSNotificationCenter defaultCenter] removeObserver:self name:ECFileBufferDidChangeAttributesNotificationName object:_document.fileBuffer];
-        [_document closeWithCompletionHandler:nil];
-        _document = nil;
-    }
-}
-
 - (void)_layoutChildViews
 {
     CGRect frame = (CGRect){ CGPointZero, self.view.frame.size };
@@ -779,18 +715,6 @@ static const void * webViewContext;
 - (void)_keyboardWillHide:(NSNotification *)notification
 {
     [self _keyboardWillShow:notification];
-}
-
-#pragma mark - File Buffer Notifications
-
-- (void)_fileBufferDidChange:(NSNotification *)notification
-{
-    NSRange fromRange = [[notification.userInfo objectForKey:ECFileBufferRangeKey] rangeValue];
-    NSRange toRange = fromRange;
-    NSString *toString = [notification.userInfo objectForKey:ECFileBufferStringKey];
-    if (toString != nil && (NSNull *)toString != [NSNull null])
-        toRange = NSMakeRange(fromRange.location, [toString length]);
-    [self.codeView updateTextFromStringRange:fromRange toStringRange:toRange];
 }
 
 #pragma mark - Keyboard Accessory Item Methods
