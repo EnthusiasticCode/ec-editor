@@ -212,6 +212,9 @@ static const void * webViewContext;
         _webView = [[UIWebView alloc] init];
         _webView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
         [_webView addObserver:self forKeyPath:@"loading" options:NSKeyValueObservingOptionNew context:&webViewContext];
+        
+        if (_codeFile)
+            [_webView loadHTMLString:[_codeFile.fileBuffer string] baseURL:self.fileURL];
     }
     return _webView;
 }
@@ -280,6 +283,11 @@ static const void * webViewContext;
     else
         [_consumerOperationQueue cancelAllOperations];
     [_codeFile.fileBuffer addConsumer:self];
+    
+    if ([self _isWebPreview])
+    {
+        [self.webView loadHTMLString:[_codeFile.fileBuffer string] baseURL:self.fileURL];
+    }
     
     [self didChangeValueForKey:@"codeFile"];
 }
@@ -400,13 +408,6 @@ static const void * webViewContext;
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_keyboardWillChangeFrame:) name:UIKeyboardWillChangeFrameNotification object:nil];
     _keyboardFrame = CGRectNull;
     _keyboardRotationFrame = CGRectNull;
-    if ([self _isWebPreview])
-    {
-        if (self.codeFile)
-            [self.webView loadHTMLString:[[self.codeFile fileBuffer] string] baseURL:self.fileURL];
-        else
-            [self.webView loadRequest:[NSURLRequest requestWithURL:self.fileURL]];
-    }
 }
 
 - (void)viewDidUnload
@@ -480,7 +481,6 @@ static const void * webViewContext;
     if (oldContentView != currentContentView)
     {
         // TODO account for minimap
-        // TODO make transition 
         [UIView transitionFromView:oldContentView toView:currentContentView duration:animated ? 0.2 : 0 options:UIViewAnimationOptionCurveEaseInOut | UIViewAnimationOptionTransitionCrossDissolve completion:^(BOOL finished) {
             [self _layoutChildViews];
         }];
