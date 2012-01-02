@@ -937,12 +937,11 @@ static void init(ECCodeView *self)
     else
     {
         NSRange cr = (NSRange){ s - 1, 1 };
-        [self editDataSourceInRange:cr withString:nil];
+        [self editDataSourceInRange:cr withString:@""];
     }
 }
 
-#pragma mark -
-#pragma mark UITextInputTraits protocol
+#pragma mark - UITextInputTraits protocol
 
 // TODO return key based on contest
 
@@ -1436,6 +1435,8 @@ static void init(ECCodeView *self)
 
 - (void)editDataSourceInRange:(NSRange)range withString:(NSString *)string
 {
+    ECASSERT(string);
+    
     if (!flags.dataSourceHasCommitStringForTextInRange)
         return;
     
