@@ -7,7 +7,6 @@
 //
 
 #import "ECFileCoordinator.h"
-#import "libdispatch+ECAdditions.h"
 
 static dispatch_queue_t _fileCoordinationDispatchQueue;
 static NSMutableArray *_filePresenters;
@@ -30,7 +29,7 @@ static NSMutableArray *_filePresenters;
 
 + (void)addFilePresenter:(id<NSFilePresenter>)filePresenter
 {
-    dispatch_barrier_async_rethrow_exceptions(_fileCoordinationDispatchQueue, ^{
+    dispatch_barrier_async(_fileCoordinationDispatchQueue, ^{
         ECASSERT([filePresenter conformsToProtocol:@protocol(NSFilePresenter)]);
         [_filePresenters addObject:filePresenter];
     });
@@ -38,7 +37,7 @@ static NSMutableArray *_filePresenters;
 
 + (void)removeFilePresenter:(id<NSFilePresenter>)filePresenter
 {
-    dispatch_barrier_sync_rethrow_exceptions(_fileCoordinationDispatchQueue, ^{
+    dispatch_barrier_sync(_fileCoordinationDispatchQueue, ^{
         ECASSERT([_filePresenters containsObject:filePresenter]);
         [_filePresenters removeObject:filePresenter];
     });
@@ -47,7 +46,7 @@ static NSMutableArray *_filePresenters;
 + (NSArray *)filePresenters
 {
     __block NSArray *filePresenters = nil;
-    dispatch_barrier_sync_rethrow_exceptions(_fileCoordinationDispatchQueue, ^{
+    dispatch_barrier_sync(_fileCoordinationDispatchQueue, ^{
         filePresenters = [_filePresenters copy];
     });
     return filePresenters;
@@ -64,7 +63,7 @@ static NSMutableArray *_filePresenters;
 
 - (void)coordinateReadingItemAtURL:(NSURL *)url options:(NSFileCoordinatorReadingOptions)options error:(NSError *__autoreleasing *)outError byAccessor:(void (^)(NSURL *))reader
 {
-    dispatch_sync_rethrow_exceptions(_fileCoordinationDispatchQueue, ^{
+    dispatch_sync(_fileCoordinationDispatchQueue, ^{
         NSMutableArray *affectedFilePresenters = [[NSMutableArray alloc] init];
         for (id<NSFilePresenter>filePresenter in _filePresenters)
         {

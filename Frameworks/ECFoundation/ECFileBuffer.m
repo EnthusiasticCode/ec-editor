@@ -7,7 +7,6 @@
 //
 
 #import "ECFileBuffer.h"
-#import "libdispatch+ECAdditions.h"
 #import "ECWeakDictionary.h"
 
 static ECWeakDictionary *_fileBuffers;
@@ -36,7 +35,7 @@ static dispatch_queue_t _fileBuffersQueue;
 {
     ECASSERT(fileURL);
     __block ECFileBuffer *existingFileBuffer = nil;
-    dispatch_sync_rethrow_exceptions(_fileBuffersQueue, ^{
+    dispatch_sync(_fileBuffersQueue, ^{
         existingFileBuffer = [_fileBuffers objectForKey:fileURL];
     });
     if (existingFileBuffer)
@@ -55,7 +54,7 @@ static dispatch_queue_t _fileBuffersQueue;
     if (!_contents)
         _contents = [[NSMutableAttributedString alloc] initWithString:@""];
     
-    dispatch_barrier_sync_rethrow_exceptions(_fileBuffersQueue, ^{
+    dispatch_barrier_sync(_fileBuffersQueue, ^{
         existingFileBuffer = [_fileBuffers objectForKey:fileURL];
         if (!existingFileBuffer)
             [_fileBuffers setObject:self forKey:fileURL];
@@ -78,7 +77,7 @@ static dispatch_queue_t _fileBuffersQueue;
 
 - (void)addConsumer:(id<ECFileBufferConsumer>)consumer
 {
-    dispatch_barrier_async_rethrow_exceptions(_fileAccessQueue, ^{
+    dispatch_barrier_async(_fileAccessQueue, ^{
         ECASSERT([consumer conformsToProtocol:@protocol(ECFileBufferConsumer)]);
         [_consumers addObject:consumer];
     });
@@ -86,7 +85,7 @@ static dispatch_queue_t _fileBuffersQueue;
 
 - (void)removeConsumer:(id<ECFileBufferConsumer>)consumer
 {
-    dispatch_barrier_sync_rethrow_exceptions(_fileAccessQueue, ^{
+    dispatch_barrier_sync(_fileAccessQueue, ^{
         ECASSERT([_consumers containsObject:consumer]);
         [_consumers removeObject:consumer];
     });
@@ -95,7 +94,7 @@ static dispatch_queue_t _fileBuffersQueue;
 - (NSArray *)consumers
 {
     __block NSArray *consumers = nil;
-    dispatch_barrier_sync_rethrow_exceptions(_fileAccessQueue, ^{
+    dispatch_barrier_sync(_fileAccessQueue, ^{
         consumers = [_consumers copy];
     });
     return consumers;
@@ -104,7 +103,7 @@ static dispatch_queue_t _fileBuffersQueue;
 - (NSUInteger)length
 {
     __block NSUInteger length = 0;
-    dispatch_sync_rethrow_exceptions(_fileAccessQueue, ^{
+    dispatch_sync(_fileAccessQueue, ^{
         length = [_contents length];
     });
     return length;
@@ -113,7 +112,7 @@ static dispatch_queue_t _fileBuffersQueue;
 - (NSString *)stringInRange:(NSRange)range
 {
     __block NSString *stringInRange = nil;
-    dispatch_sync_rethrow_exceptions(_fileAccessQueue, ^{
+    dispatch_sync(_fileAccessQueue, ^{
         stringInRange = [[_contents string] substringWithRange:range];
     });
     return stringInRange;
@@ -122,7 +121,7 @@ static dispatch_queue_t _fileBuffersQueue;
 - (NSString *)string
 {
     __block NSString *string = nil;
-    dispatch_sync_rethrow_exceptions(_fileAccessQueue, ^{
+    dispatch_sync(_fileAccessQueue, ^{
         string = [_contents string];
     });
     return string;
@@ -137,7 +136,7 @@ static dispatch_queue_t _fileBuffersQueue;
     // replacing a substring with an equal string, no change required
     if ([string isEqualToString:[self stringInRange:range]])
         return;
-    dispatch_barrier_async_rethrow_exceptions(_fileAccessQueue, ^{
+    dispatch_barrier_async(_fileAccessQueue, ^{
         NSAttributedString *attributedString = [[NSAttributedString alloc] initWithString:string];
         for (id<ECFileBufferConsumer> consumer in _consumers)
         {
@@ -171,7 +170,7 @@ static dispatch_queue_t _fileBuffersQueue;
 - (NSAttributedString *)attributedStringInRange:(NSRange)range
 {
     __block NSAttributedString *attributedStringInRange = nil;
-    dispatch_sync_rethrow_exceptions(_fileAccessQueue, ^{
+    dispatch_sync(_fileAccessQueue, ^{
         attributedStringInRange = [_contents attributedSubstringFromRange:range];
     });
     return attributedStringInRange;
@@ -180,7 +179,7 @@ static dispatch_queue_t _fileBuffersQueue;
 - (NSAttributedString *)attributedString
 {
     __block NSAttributedString *attributedString = nil;
-    dispatch_sync_rethrow_exceptions(_fileAccessQueue, ^{
+    dispatch_sync(_fileAccessQueue, ^{
         attributedString = [_contents copy];
     });
     return attributedString;
@@ -195,7 +194,7 @@ static dispatch_queue_t _fileBuffersQueue;
     // replacing a substring with an equal string, no change required
     if ([attributedString isEqualToAttributedString:[self attributedStringInRange:range]])
         return;
-    dispatch_barrier_async_rethrow_exceptions(_fileAccessQueue, ^{
+    dispatch_barrier_async(_fileAccessQueue, ^{
         NSString *string = [attributedString string];
         for (id<ECFileBufferConsumer> consumer in _consumers)
         {
@@ -231,7 +230,7 @@ static dispatch_queue_t _fileBuffersQueue;
     ECASSERT(NSMaxRange(range) <= [_contents length]);
     if (![attributes count] || !range.length)
         return;
-    dispatch_barrier_async_rethrow_exceptions(_fileAccessQueue, ^{
+    dispatch_barrier_async(_fileAccessQueue, ^{
         for (id<ECFileBufferConsumer> consumer in _consumers)
             if ([consumer respondsToSelector:@selector(fileBuffer:willAddAttributes:range:)])
                 [[consumer consumerOperationQueue] addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
@@ -251,7 +250,7 @@ static dispatch_queue_t _fileBuffersQueue;
     ECASSERT(NSMaxRange(range) <= [_contents length]);
     if (![attributeNames count] || !range.length)
         return;
-    dispatch_barrier_async_rethrow_exceptions(_fileAccessQueue, ^{
+    dispatch_barrier_async(_fileAccessQueue, ^{
         for (id<ECFileBufferConsumer> consumer in _consumers)
             if ([consumer respondsToSelector:@selector(fileBuffer:willRemoveAttributes:range:)])
                 [[consumer consumerOperationQueue] addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
@@ -271,7 +270,7 @@ static dispatch_queue_t _fileBuffersQueue;
 {
     __block id attribute = nil;
     NSRange longestEffectiveRange = NSMakeRange(NSNotFound, 0);
-    dispatch_sync_rethrow_exceptions(_fileAccessQueue, ^{
+    dispatch_sync(_fileAccessQueue, ^{
         attribute = [_contents attribute:attrName atIndex:location longestEffectiveRange:(NSRangePointer)&longestEffectiveRange inRange:NSMakeRange(0, [_contents length])];
     });
     if (range)
@@ -283,7 +282,7 @@ static dispatch_queue_t _fileBuffersQueue;
 {
     ECASSERT(regexp);
     __block NSUInteger numberOfMatches = 0;
-    dispatch_sync_rethrow_exceptions(_fileAccessQueue, ^{
+    dispatch_sync(_fileAccessQueue, ^{
         numberOfMatches = [regexp numberOfMatchesInString:[_contents string] options:options range:range];
     });
     return numberOfMatches;
@@ -293,7 +292,7 @@ static dispatch_queue_t _fileBuffersQueue;
 {
     ECASSERT(regexp);
     __block NSArray *matches = nil;
-    dispatch_sync_rethrow_exceptions(_fileAccessQueue, ^{
+    dispatch_sync(_fileAccessQueue, ^{
         matches = [regexp matchesInString:[_contents string] options:options range:range];
     });
     return matches;
@@ -309,7 +308,7 @@ static dispatch_queue_t _fileBuffersQueue;
 {
     ECASSERT(result);
     __block NSString *replacementString = nil;
-    dispatch_sync_rethrow_exceptions(_fileAccessQueue, ^{
+    dispatch_sync(_fileAccessQueue, ^{
         replacementString = [result.regularExpression replacementStringForResult:result inString:[_contents string] offset:offset template:replacementTemplate];
     });
     return replacementString;
