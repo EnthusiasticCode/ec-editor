@@ -149,12 +149,23 @@
     [self didChangeValueForKey:@"loadingMode"];
 }
 
+- (void)setContentInsets:(UIEdgeInsets)value
+{
+    if (UIEdgeInsetsEqualToEdgeInsets(value, contentInsets))
+        return;
+    [self willChangeValueForKey:@"contentInsets"];
+    contentInsets = value;
+    [self setNeedsLayout];
+    [self didChangeValueForKey:@"contentInsets"];
+}
+
 #pragma mark - View Methods
 
 - (void)layoutSubviews
 {
     CGRect bounds = self.bounds;
     self.backgroundButton.frame = bounds;
+    bounds = UIEdgeInsetsInsetRect(bounds, self.contentInsets);
     
     CGRect labelFrame = CGRectZero;
     for (UIView *view in _currentViews)
@@ -164,7 +175,7 @@
     }
     labelFrame.size.width -= gapBetweenFragments;
     labelFrame.size.height = bounds.size.height;
-    labelFrame.origin = CGPointMake((bounds.size.width - labelFrame.size.width) / 2.0, (bounds.size.height - labelFrame.size.height) / 2.0);
+    labelFrame.origin = CGPointMake( self.contentInsets.left + (bounds.size.width - labelFrame.size.width) / 2.0, self.contentInsets.top + (bounds.size.height - labelFrame.size.height) / 2.0);
     
     // Selected, current views layout
     CGRect viewFrame, lastViewFrame = labelFrame;
@@ -178,7 +189,7 @@
         lastViewFrame.origin.x += gapBetweenFragments;
     }
     
-    CGFloat maxSegmentWidth = (bounds.size.width - labelFrame.size.width) / 2 - gapBetweenFragments;
+    CGFloat maxSegmentWidth = (bounds.size.width - labelFrame.size.width) / 2.0 - gapBetweenFragments;
     
     // Pre views layout
     lastViewFrame = labelFrame;
@@ -186,9 +197,9 @@
     {
         [view sizeToFit];
         viewFrame = view.frame;
-        if (viewFrame.size.width > maxSegmentWidth - contentInsets.left)
-            viewFrame.size.width = maxSegmentWidth - contentInsets.left;
-        viewFrame.origin = CGPointMake(lastViewFrame.origin.x - viewFrame.size.width - gapBetweenFragments, labelFrame.origin.y + (labelFrame.size.height - viewFrame.size.height) / 2);
+        if (viewFrame.size.width > maxSegmentWidth)
+            viewFrame.size.width = maxSegmentWidth;
+        viewFrame.origin = CGPointMake(lastViewFrame.origin.x - viewFrame.size.width - gapBetweenFragments, labelFrame.origin.y + (labelFrame.size.height - viewFrame.size.height) / 2.0);
         
         lastViewFrame = CGRectIntegral(viewFrame);
         view.frame = lastViewFrame;
@@ -200,9 +211,9 @@
     {
         [view sizeToFit];
         viewFrame = view.frame;
-        if (viewFrame.size.width > maxSegmentWidth - contentInsets.right)
-            viewFrame.size.width = maxSegmentWidth - contentInsets.right;
-        viewFrame.origin = CGPointMake(CGRectGetMaxX(lastViewFrame) + gapBetweenFragments, labelFrame.origin.y + (labelFrame.size.height - viewFrame.size.height) / 2);
+        if (viewFrame.size.width > maxSegmentWidth)
+            viewFrame.size.width = maxSegmentWidth;
+        viewFrame.origin = CGPointMake(CGRectGetMaxX(lastViewFrame) + gapBetweenFragments, labelFrame.origin.y + (labelFrame.size.height - viewFrame.size.height) / 2.0);
         
         lastViewFrame = CGRectIntegral(viewFrame);
         view.frame = lastViewFrame;
