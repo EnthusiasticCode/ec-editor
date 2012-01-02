@@ -91,6 +91,7 @@
 		B7F9FB5114867DDB0025D21C /* GMGridViewLayoutStrategies.m in Sources */ = {isa = PBXBuildFile; fileRef = B7F9FB4A14867DDB0025D21C /* GMGridViewLayoutStrategies.m */; };
 		B7F9FB5214867DDB0025D21C /* UIGestureRecognizer+GMGridViewAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = B7F9FB4C14867DDB0025D21C /* UIGestureRecognizer+GMGridViewAdditions.m */; };
 		B7F9FB5314867DDB0025D21C /* UIView+GMGridViewAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = B7F9FB4E14867DDB0025D21C /* UIView+GMGridViewAdditions.m */; };
+		CD1973ED14B1D2B200CACF5E /* topBarItem_Edit.png in Resources */ = {isa = PBXBuildFile; fileRef = CD1973EC14B1D2B200CACF5E /* topBarItem_Edit.png */; };
 		CD21547913F45CC200614B83 /* ACToolButton.m in Sources */ = {isa = PBXBuildFile; fileRef = CD21547813F45CC200614B83 /* ACToolButton.m */; };
 		CD2568C31450D44000A3CCDE /* topBar_BackButton_Normal.png in Resources */ = {isa = PBXBuildFile; fileRef = CD2568C21450D44000A3CCDE /* topBar_BackButton_Normal.png */; };
 		CD2568C71450D5B600A3CCDE /* topBar_ToolButton_Normal.png in Resources */ = {isa = PBXBuildFile; fileRef = CD2568C61450D5B600A3CCDE /* topBar_ToolButton_Normal.png */; };
@@ -379,6 +380,7 @@
 		B7F9FB4C14867DDB0025D21C /* UIGestureRecognizer+GMGridViewAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIGestureRecognizer+GMGridViewAdditions.m"; path = "../ThirdParty/GMGridView/GMGridView/API/UIGestureRecognizer+GMGridViewAdditions.m"; sourceTree = "<group>"; };
 		B7F9FB4D14867DDB0025D21C /* UIView+GMGridViewAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIView+GMGridViewAdditions.h"; path = "../ThirdParty/GMGridView/GMGridView/API/UIView+GMGridViewAdditions.h"; sourceTree = "<group>"; };
 		B7F9FB4E14867DDB0025D21C /* UIView+GMGridViewAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIView+GMGridViewAdditions.m"; path = "../ThirdParty/GMGridView/GMGridView/API/UIView+GMGridViewAdditions.m"; sourceTree = "<group>"; };
+		CD1973EC14B1D2B200CACF5E /* topBarItem_Edit.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = topBarItem_Edit.png; sourceTree = "<group>"; };
 		CD21547713F45CC200614B83 /* ACToolButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACToolButton.h; sourceTree = "<group>"; };
 		CD21547813F45CC200614B83 /* ACToolButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACToolButton.m; sourceTree = "<group>"; };
 		CD2568C21450D44000A3CCDE /* topBar_BackButton_Normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = topBar_BackButton_Normal.png; sourceTree = "<group>"; };
@@ -714,6 +716,14 @@
 				B7F9FB4E14867DDB0025D21C /* UIView+GMGridViewAdditions.m */,
 			);
 			name = GMGridView;
+			sourceTree = "<group>";
+		};
+		CD1973EB14B1D2A600CACF5E /* Items */ = {
+			isa = PBXGroup;
+			children = (
+				CD1973EC14B1D2B200CACF5E /* topBarItem_Edit.png */,
+			);
+			name = Items;
 			sourceTree = "<group>";
 		};
 		CD41529C1475564F004C7157 /* Completion */ = {
@@ -1065,6 +1075,7 @@
 		CDC2828E14508D250054358D /* Top Bar */ = {
 			isa = PBXGroup;
 			children = (
+				CD1973EB14B1D2A600CACF5E /* Items */,
 				CDC2828F14508D500054358D /* topBar_Background.png */,
 				CD2568C21450D44000A3CCDE /* topBar_BackButton_Normal.png */,
 				CDC2829014508D500054358D /* topBar_ForwardButton_Normal.png */,
@@ -1387,6 +1398,7 @@
 				CDA0B9E714A4B30200714F74 /* topBar_BackButton_Disabled.png in Resources */,
 				CDA0B9E814A4B30200714F74 /* topBar_ForwardButton_Disabled.png in Resources */,
 				CDA0B9EA14A4E9C900714F74 /* topBar_ToolButton_Selected.png in Resources */,
+				CD1973ED14B1D2B200CACF5E /* topBarItem_Edit.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

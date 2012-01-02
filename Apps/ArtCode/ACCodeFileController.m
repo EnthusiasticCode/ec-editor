@@ -395,6 +395,9 @@ static const void * webViewContext;
 {
     [super loadView];
     
+    self.editButtonItem.title = @"";
+    self.editButtonItem.image = [UIImage imageNamed:@"topBarItem_Edit"];
+    
     [self.view addSubview:[self _contentView]];
 }
 
@@ -475,7 +478,10 @@ static const void * webViewContext;
 {
     UIView *oldContentView = [self _contentView];
     
+    [self willChangeValueForKey:@"editing"];
+    
     [super setEditing:editing animated:animated];
+    self.editButtonItem.title = @"";
     
     UIView *currentContentView = [self _contentView];
     if (oldContentView != currentContentView)
@@ -487,7 +493,12 @@ static const void * webViewContext;
         
         [UIView transitionFromView:oldContentView toView:currentContentView duration:animated ? 0.2 : 0 options:UIViewAnimationOptionCurveEaseInOut | UIViewAnimationOptionTransitionCrossDissolve completion:^(BOOL finished) {
             [self _layoutChildViews];
+            [self didChangeValueForKey:@"editing"];
         }];
+    }
+    else
+    {
+        [self didChangeValueForKey:@"editing"];
     }
 }
 

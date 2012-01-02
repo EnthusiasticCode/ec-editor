@@ -148,6 +148,7 @@ static const void *contentViewControllerContext;
         [_contentViewController removeObserver:self forKeyPath:@"toolbarItems" context:&contentViewControllerContext];
         [_contentViewController removeObserver:self forKeyPath:@"loading" context:&contentViewControllerContext];
         [_contentViewController removeObserver:self forKeyPath:@"title" context:&contentViewControllerContext];
+        [_contentViewController removeObserver:self forKeyPath:@"editing" context:&contentViewControllerContext];
     }
 
     // Setup new controller
@@ -158,6 +159,7 @@ static const void *contentViewControllerContext;
         [_contentViewController addObserver:self forKeyPath:@"toolbarItems" options:NSKeyValueObservingOptionNew context:&contentViewControllerContext];
         [_contentViewController addObserver:self forKeyPath:@"loading" options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew context:&contentViewControllerContext];
         [_contentViewController addObserver:self forKeyPath:@"title" options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew context:&contentViewControllerContext];
+        [_contentViewController addObserver:self forKeyPath:@"editing" options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew context:&contentViewControllerContext];
     }
     
     [self _setupDefaultToolbarItemsAnimated:animated];
@@ -335,7 +337,9 @@ static const void *contentViewControllerContext;
     }
     else if (context == &contentViewControllerContext)
     {
-        if ([keyPath isEqualToString:@"toolbarItems"])
+        if ([keyPath isEqualToString:@"editing"])
+            [(UIButton *)self.defaultToolbar.editItem.customView setSelected:_contentViewController.isEditing];
+        else if ([keyPath isEqualToString:@"toolbarItems"])
             [self _setupDefaultToolbarItemsAnimated:YES];
         else if ([keyPath isEqualToString:@"title"])
             [self _setupDefaultToolbarTitle];
