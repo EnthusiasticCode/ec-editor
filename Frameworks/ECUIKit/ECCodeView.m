@@ -822,13 +822,13 @@ static void init(ECCodeView *self)
 - (void)updateAllText
 {
     [self.renderer updateAllText];
-    [self setSelectedTextRange:selectionView.selection notifyDelegate:NO];
+    [selectionView update];
 }
 
 - (void)updateTextFromStringRange:(NSRange)originalRange toStringRange:(NSRange)newRange
 {
     [self.renderer updateTextFromStringRange:originalRange toStringRange:newRange];
-    [self setSelectedTextRange:selectionView.selection notifyDelegate:NO];
+    [selectionView update];
 }
 
 #pragma mark - UIResponder methods
