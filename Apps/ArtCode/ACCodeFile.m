@@ -10,7 +10,6 @@
 #import <ECCodeIndexing/TMTheme.h>
 #import <ECFoundation/ECFileBuffer.h>
 #import <ECCodeIndexing/ECCodeIndex.h>
-#import <ECCodeIndexing/ECCodeUnit.h>
 
 @interface ACCodeFile ()
 {
@@ -53,7 +52,7 @@
     _consumerOperationQueue = [[NSOperationQueue alloc] init];
     _consumerOperationQueue.maxConcurrentOperationCount = 1;
     _fileBuffer = [[ECFileBuffer alloc] initWithFileURL:fileURL];
-    _codeUnit = [[[ECCodeIndex alloc] init] codeUnitForFileBuffer:_fileBuffer scope:nil];
+    _codeUnit = [[[ECCodeIndex alloc] init] codeUnitForFileBuffer:_fileBuffer rootScopeIdentifier:nil];
     return self;
 }
 
@@ -82,15 +81,15 @@ static NSRange intersectionOfRangeRelativeToRange(NSRange range, NSRange inRange
 {
     NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithAttributedString:[self.fileBuffer attributedStringInRange:stringRange]];
     [attributedString addAttributes:self.defaultTextAttributes range:NSMakeRange(0, [attributedString length])];
-    for (id<ECCodeToken>token in [self.codeUnit annotatedTokensInRange:stringRange])
-        [attributedString addAttributes:[self.theme attributesForScopeStack:[token scopeIdentifiersStack]] range:intersectionOfRangeRelativeToRange([token range], stringRange)];
-//    static NSRegularExpression *placeholderRegExp = nil;
-//    if (!placeholderRegExp)
-//        placeholderRegExp = [NSRegularExpression regularExpressionWithPattern:@"<#(.+?)#>" options:0 error:NULL];
-//    for (NSTextCheckingResult *placeholderMatch in [self.fileBuffer matchesOfRegexp:placeholderRegExp options:0])
-//    {
-//        [self _markPlaceholderWithName:[self.fileBuffer stringInRange:[placeholderMatch rangeAtIndex:1]] range:placeholderMatch.range];
-//    }
+//    for (id<ECCodeToken>token in [self.codeUnit annotatedTokensInRange:stringRange])
+//        [attributedString addAttributes:[self.theme attributesForScopeStack:[token scopeIdentifiersStack]] range:intersectionOfRangeRelativeToRange([token range], stringRange)];
+    static NSRegularExpression *placeholderRegExp = nil;
+    if (!placeholderRegExp)
+        placeholderRegExp = [NSRegularExpression regularExpressionWithPattern:@"<#(.+?)#>" options:0 error:NULL];
+    for (NSTextCheckingResult *placeholderMatch in [self.fileBuffer matchesOfRegexp:placeholderRegExp options:0])
+    {
+        [self _markPlaceholderWithName:[self.fileBuffer stringInRange:[placeholderMatch rangeAtIndex:1]] range:placeholderMatch.range];
+    }
     return attributedString;
 }
 

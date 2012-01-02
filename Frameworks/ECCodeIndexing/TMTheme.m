@@ -114,20 +114,17 @@ static NSString * const _themeSettingsScopeKey = @"scope";
     return self;
 }
 
-- (NSDictionary *)attributesForScopeStack:(NSArray *)scopesStack
+- (NSDictionary *)attributesForScopeIdentifier:(NSString *)scopeIdentifier
 {
     // TODO premap every key of the settings with CT attributes
     
     NSMutableDictionary *attributes = [NSMutableDictionary dictionary];
-    for (NSString *scope in scopesStack)
-    {
-        [_settingsOrderedScopes enumerateObjectsUsingBlock:^(NSString *settingScope, NSUInteger idx, BOOL *stop) {
-            if (![scope hasPrefix:settingScope])
-                return;
-            [attributes addEntriesFromDictionary:[self.settings objectForKey:settingScope]];
-            *stop = YES;
-        }];
-    }
+    [_settingsOrderedScopes enumerateObjectsUsingBlock:^(NSString *settingScope, NSUInteger idx, BOOL *stop) {
+        if (![scopeIdentifier hasPrefix:settingScope])
+            return;
+        [attributes addEntriesFromDictionary:[self.settings objectForKey:settingScope]];
+        *stop = YES;
+    }];
     return attributes;
 }
 

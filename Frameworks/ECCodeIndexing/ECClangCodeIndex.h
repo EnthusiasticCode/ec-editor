@@ -6,8 +6,13 @@
 //  Copyright (c) 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import "ECCodeIndex.h"
+#import "ECCodeIndex+Internal.h"
+#import <clang-c/Index.h>
 
-@interface ECClangCodeIndex : ECCodeIndex
+extern NSString * const ClangExtensionKey;
+
+@interface ECClangCodeIndex : NSObject <ECCodeIndexExtension>
+
+- (CXIndex)clangIndex;
 
 @end

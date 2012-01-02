@@ -6,11 +6,10 @@
 //  Copyright (c) 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import "ECCodeUnit.h"
+#import "ECClangCodeIndex.h"
 
-@interface ECClangCodeUnit : ECCodeUnit
+@interface ECClangCodeUnit : NSObject <ECCodeUnitExtension>
 
-- (id)initWithIndex:(ECCodeIndex *)index clangIndex:(CXIndex)clangIndex fileBuffer:(ECFileBuffer *)fileBuffer scope:(NSString *)scope;
 - (CXTranslationUnit)clangTranslationUnit;
 
 @end

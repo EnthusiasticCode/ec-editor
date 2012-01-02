@@ -15,7 +15,7 @@
 + (TMSyntax *)syntaxForFileBuffer:(ECFileBuffer *)fileBuffer;
 
 - (NSString *)name;
-- (NSString *)scope;
+- (NSString *)scopeIdentifier;
 /// Content:
 - (NSArray *)patterns;
 

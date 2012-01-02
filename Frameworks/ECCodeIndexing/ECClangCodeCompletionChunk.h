@@ -6,7 +6,7 @@
 //  Copyright (c) 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import "ECCodeUnit.h"
+#import "ECClangCodeIndex.h"
 
 @interface ECClangCodeCompletionChunk : NSObject <ECCodeCompletionChunk>
 

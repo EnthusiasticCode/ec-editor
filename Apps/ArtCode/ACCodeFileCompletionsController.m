@@ -10,7 +10,6 @@
 #import "ACCodeFileCompletionCell.h"
 
 #import <ECFoundation/ECFileBuffer.h>
-#import <ECCodeIndexing/ECCodeUnit.h>
 #import <ECCodeIndexing/ECCodeIndex.h>
 #import <ECUIKit/ECTextRange.h>
 
@@ -73,7 +72,7 @@
     ECASSERT(self.targetCodeFileController != nil);
     
     if (!_codeUnit)
-        _codeUnit = [self._codeIndex codeUnitForFileBuffer:self.targetCodeFileController.codeFile.fileBuffer scope:nil];
+        _codeUnit = [self._codeIndex codeUnitForFileBuffer:self.targetCodeFileController.codeFile.fileBuffer rootScopeIdentifier:nil];
     return _codeUnit;
 }
 

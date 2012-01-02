@@ -6,11 +6,10 @@
 //  Copyright (c) 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import "ECCodeUnit.h"
-@class ECClangCodeUnit;
+#import "ECClangCodeIndex.h"
 
 @interface ECClangCodeCompletionResultSet : NSObject <ECCodeCompletionResultSet>
 
-- (id)initWithCodeUnit:(ECClangCodeUnit *)codeUnit atOffset:(NSUInteger)offset;
+- (id)initWithCodeUnit:(ECCodeUnit *)codeUnit atOffset:(NSUInteger)offset;
 
 @end

@@ -18,7 +18,7 @@ extern NSString *const TMThemeFontStyleAttributeName;
 - (id)initWithFileURL:(NSURL *)url;
 
 /// Returns an array of Core Text attributes applicable to an NSAttributedString for the given scopes stack.
-- (NSDictionary *)attributesForScopeStack:(NSArray *)scopesStack;
+- (NSDictionary *)attributesForScopeIdentifier:(NSString *)scopeIdentifier;
 
 @property (nonatomic, strong, readonly) NSString *name;
 

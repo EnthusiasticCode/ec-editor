@@ -9,7 +9,7 @@
 #import "TMSyntax+Internal.h"
 #import "TMBundle+Internal.h"
 #import "TMPattern+Internal.h"
-#import "TMCodeIndex.h"
+#import "ECCodeIndex.h"
 #import "OnigRegexp.h"
 #import <ECFoundation/ECDiscardableMutableDictionary.h>
 #import <ECFoundation/ECFileBuffer.h>
@@ -29,7 +29,7 @@ static ECDiscardableMutableDictionary *_syntaxes;
     NSURL *_fileURL;
     ECFileBuffer *_fileBuffer;
     NSString *_name;
-    NSString *_scope;
+    NSString *_scopeIdentifier;
     NSArray *__fileTypes;
     OnigRegexp *__firstLineMatch;
     NSDictionary *_plist;
@@ -84,7 +84,7 @@ static ECDiscardableMutableDictionary *_syntaxes;
         if (!syntax)
             continue;
         [syntax endContentAccess];
-        [_syntaxes setObject:syntax forKey:[syntax scope]];
+        [_syntaxes setObject:syntax forKey:[syntax scopeIdentifier]];
     }
 }
 
@@ -106,9 +106,9 @@ static ECDiscardableMutableDictionary *_syntaxes;
     return _name;
 }
 
-- (NSString *)scope
+- (NSString *)scopeIdentifier
 {
-    return _scope;
+    return _scopeIdentifier;
 }
 
 - (NSArray *)patterns
@@ -154,7 +154,7 @@ static ECDiscardableMutableDictionary *_syntaxes;
     _name = [_plist objectForKey:_syntaxNameKey];
     if (!_name)
         return nil;
-    _scope = [_plist objectForKey:_syntaxScopeKey];
+    _scopeIdentifier = [_plist objectForKey:_syntaxScopeKey];
     __fileTypes = [_plist objectForKey:_syntaxFileTypesKey];
     NSString *firstLineMatchRegex = [_plist objectForKey:_syntaxFirstLineMatchKey];
     if (firstLineMatchRegex)

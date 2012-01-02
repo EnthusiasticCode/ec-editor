@@ -6,8 +6,7 @@
 //  Copyright (c) 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import "ECCodeUnit.h"
-#import <clang-c/Index.h>
+#import "ECClangCodeIndex.h"
 
 @interface ECClangCodeCursor : NSObject <ECCodeCursor>
 

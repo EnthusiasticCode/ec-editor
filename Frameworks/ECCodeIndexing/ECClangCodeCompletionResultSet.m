@@ -8,14 +8,13 @@
 
 #import "ECClangCodeCompletionResultSet.h"
 #import "ECClangCodeUnit.h"
-#import "ECCodeIndex+Subclass.h"
 #import "ECClangCodeCompletionResult.h"
 #import "ClangHelperFunctions.h"
 #import <ECFoundation/ECFileBuffer.h>
 
 @interface ECClangCodeCompletionResultSet ()
 {
-    ECClangCodeUnit *_codeUnit;
+    ECCodeUnit *_codeUnit;
     CXCodeCompleteResults *_clangResults;
     NSRange _filteredResultRange;
     NSRange _filterStringRange;
@@ -24,7 +23,7 @@
 
 @implementation ECClangCodeCompletionResultSet
 
-- (id)initWithCodeUnit:(ECClangCodeUnit *)codeUnit atOffset:(NSUInteger)offset
+- (id)initWithCodeUnit:(ECCodeUnit *)codeUnit atOffset:(NSUInteger)offset
 {
     ECASSERT(codeUnit);
     self = [super init];
@@ -42,7 +41,7 @@
     ++firstCharacterIndex;
 
     _codeUnit = codeUnit;
-    CXTranslationUnit clangTranslationUnit = [codeUnit clangTranslationUnit];
+    CXTranslationUnit clangTranslationUnit = 0;// [codeUnit clangTranslationUnit];
     const char *fileName = [[[[codeUnit fileBuffer] fileURL] path] fileSystemRepresentation];
     CXFile clangFile = clang_getFile(clangTranslationUnit, fileName);
     CXSourceLocation completeLocation = clang_getLocationForOffset(clangTranslationUnit, clangFile, firstCharacterIndex);

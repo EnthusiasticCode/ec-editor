@@ -6,10 +6,9 @@
 //  Copyright (c) 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import "ECCodeIndex+Subclass.h"
 #import "ECClangCodeIndex.h"
-#import "ECClangCodeUnit.h"
-#import <clang-c/Index.h>
+
+NSString * const ClangExtensionKey = @"libclang";
 
 @interface ECClangCodeIndex ()
 {
@@ -21,14 +20,7 @@
 
 + (void)load
 {
-    [ECCodeIndex registerExtension:self];
-}
-
-- (float)supportForScope:(NSString *)scope
-{
-    if (![scope isEqualToString:@"source.c"] && ![scope isEqualToString:@"source.objc"] && ![scope isEqualToString:@"source.objc++"] && ![scope isEqualToString:@"source.c++"])
-        return 0.0;
-    return 0.8;
+    [ECCodeIndex registerExtension:self forKey:ClangExtensionKey];
 }
 
 - (id)init
@@ -45,10 +37,9 @@
     clang_disposeIndex(_clangIndex);
 }
 
-- (ECCodeUnit *)codeUnitWithIndex:(ECCodeIndex *)index forFileBuffer:(ECFileBuffer *)fileBuffer scope:(NSString *)scope
+- (CXIndex)clangIndex
 {
-    ECASSERT(index && fileBuffer && scope);
-    return [[ECClangCodeUnit alloc] initWithIndex:index clangIndex:_clangIndex fileBuffer:fileBuffer scope:scope];
+    return _clangIndex;
 }
 
 @end

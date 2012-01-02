@@ -7,16 +7,16 @@
 //
 
 #import "ECCodeIndex.h"
-#import "ECCodeIndex+Subclass.h"
+#import "ECCodeIndex+Internal.h"
 #import "TMSyntax.h"
 #import <ECFoundation/ECCache.h>
 #import <ECFoundation/ECFileBuffer.h>
 
-static NSMutableArray *_extensionClasses;
+static NSMutableDictionary *_extensionClasses;
 
 @interface ECCodeIndex ()
 {
-    NSMutableArray *_extensions;
+    NSMutableDictionary *_extensions;
     ECCache *_codeUnitCache;
 }
 - (id)_codeUnitCacheKeyForFileURL:(NSURL *)fileURL scope:(NSString *)scope;
@@ -24,67 +24,52 @@ static NSMutableArray *_extensionClasses;
 
 @implementation ECCodeIndex
 
++ (void)registerExtension:(Class)extensionClass forKey:(id)key
+{
+    if (!_extensionClasses)
+        _extensionClasses = [[NSMutableDictionary alloc] init];
+    [_extensionClasses setObject:extensionClass forKey:key];
+}
+
 - (id)init
 {
-    if (![self isMemberOfClass:[ECCodeIndex class]])
-        return [super init];
     self = [super init];
     if (!self)
         return nil;
-    _extensions = [NSMutableArray arrayWithCapacity:[_extensionClasses count]];
-    for (Class extensionClass in _extensionClasses)
-        [_extensions addObject:[[extensionClass alloc] init]];
+    _extensions = [NSMutableDictionary dictionaryWithCapacity:[_extensionClasses count]];
+    [_extensionClasses enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+        id extension = [[obj alloc] init];
+        if (!extension)
+            return;
+        [_extensions setObject:extension forKey:key];
+    }];
     _codeUnitCache = [[ECCache alloc] init];
     return self;
 }
 
-- (ECCodeUnit *)codeUnitForFileBuffer:(ECFileBuffer *)fileBuffer scope:(NSString *)scope
+- (ECCodeUnit *)codeUnitForFileBuffer:(ECFileBuffer *)fileBuffer rootScopeIdentifier:(NSString *)rootScopeIdentifier
 {
-    if (![self isMemberOfClass:[ECCodeIndex class]])
-        return nil;
-    if (!scope)
-        scope = [[TMSyntax syntaxForFileBuffer:fileBuffer] scope];
-    id cacheKey = [self _codeUnitCacheKeyForFileURL:[fileBuffer fileURL] scope:scope];
+    if (!rootScopeIdentifier)
+        rootScopeIdentifier = [[TMSyntax syntaxForFileBuffer:fileBuffer] scopeIdentifier];
+    id cacheKey = [self _codeUnitCacheKeyForFileURL:[fileBuffer fileURL] scope:rootScopeIdentifier];
     ECCodeUnit *codeUnit = [_codeUnitCache objectForKey:cacheKey];
     if (!codeUnit)
     {
-        float winningSupport = 0.0;
-        ECCodeIndex *winningExtension = nil;
-        for (ECCodeIndex *extension in _extensions)
-        {
-            float support = [extension supportForScope:scope];
-            if (support <= winningSupport)
-                continue;
-            winningSupport = support;
-            winningExtension = extension;
-        }
-        ECASSERT(winningSupport >= 0.0 && winningSupport < 1.0);
-        if (winningSupport == 0.0)
-            return nil;
-        codeUnit = [winningExtension codeUnitWithIndex:self forFileBuffer:fileBuffer scope:scope];
-        [_codeUnitCache setObject:codeUnit forKey:[self _codeUnitCacheKeyForFileURL:[fileBuffer fileURL] scope:scope]];
+        codeUnit = [[ECCodeUnit alloc] initWithIndex:self fileBuffer:fileBuffer rootScopeIdentifier:rootScopeIdentifier];
+        [_codeUnitCache setObject:codeUnit forKey:[self _codeUnitCacheKeyForFileURL:[fileBuffer fileURL] scope:rootScopeIdentifier]];
     }
     return codeUnit;
+}
+
+- (id)extensionForKey:(id)key
+{
+    return [_extensions objectForKey:key];
 }
 
 - (id)_codeUnitCacheKeyForFileURL:(NSURL *)fileURL scope:(NSString *)scope
 {
     ECASSERT(fileURL && [scope length]);
     return [NSString stringWithFormat:@"%@:%@", scope, [fileURL absoluteString]];
-}
-
-@end
-
-@implementation ECCodeIndex (Internal)
-
-+ (void)registerExtension:(Class)extensionClass
-{
-    if (self != [ECCodeIndex class])
-        return;
-    ECASSERT([extensionClass isSubclassOfClass:self]);
-    if (!_extensionClasses)
-        _extensionClasses = [[NSMutableArray alloc] init];
-    [_extensionClasses addObject:extensionClass];
 }
 
 @end
