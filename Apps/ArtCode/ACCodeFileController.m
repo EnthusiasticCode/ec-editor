@@ -395,12 +395,15 @@ static const void * webViewContext;
 {
     [super loadView];
     
+    self.editButtonItem.title = @"";
+    self.editButtonItem.image = [UIImage imageNamed:@"topBarItem_Edit"];
+    
     [self.view addSubview:[self _contentView]];
 }
 
 - (void)viewDidLoad
 {
-    self.toolbarItems = [NSArray arrayWithObject:[[UIBarButtonItem alloc] initWithTitle:@"tools" style:UIBarButtonItemStylePlain target:self action:@selector(toolButtonAction:)]];
+    self.toolbarItems = [NSArray arrayWithObject:[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"topBarItem_Tools"] style:UIBarButtonItemStylePlain target:self action:@selector(toolButtonAction:)]];
     
     // Keyboard notifications
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
@@ -475,7 +478,10 @@ static const void * webViewContext;
 {
     UIView *oldContentView = [self _contentView];
     
+    [self willChangeValueForKey:@"editing"];
+    
     [super setEditing:editing animated:animated];
+    self.editButtonItem.title = @"";
     
     UIView *currentContentView = [self _contentView];
     if (oldContentView != currentContentView)
@@ -485,10 +491,14 @@ static const void * webViewContext;
             [self.webView loadHTMLString:[self.codeFile.fileBuffer string] baseURL:self.fileURL];
         }
         
-        // TODO account for minimap
         [UIView transitionFromView:oldContentView toView:currentContentView duration:animated ? 0.2 : 0 options:UIViewAnimationOptionCurveEaseInOut | UIViewAnimationOptionTransitionCrossDissolve completion:^(BOOL finished) {
             [self _layoutChildViews];
+            [self didChangeValueForKey:@"editing"];
         }];
+    }
+    else
+    {
+        [self didChangeValueForKey:@"editing"];
     }
 }
 

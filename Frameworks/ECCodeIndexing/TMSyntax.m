@@ -116,7 +116,7 @@ static ECDiscardableMutableDictionary *_syntaxes;
     ECASSERT(_contentAccessCount > 0);
     if (!_patterns)
     {
-        NSLog(@"%@", _plist);
+#warning TODO URI patterns is lazy loading but _plist is discardable
         ECASSERT([_plist objectForKey:_syntaxPatternsKey]);
         NSMutableArray *patterns = [NSMutableArray array];
         for (NSDictionary *patternDictionary in [_plist objectForKey:_syntaxPatternsKey])
