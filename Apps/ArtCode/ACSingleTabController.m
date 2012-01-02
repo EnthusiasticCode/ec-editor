@@ -424,8 +424,8 @@ static const void *contentViewControllerContext;
     {
         if ([_contentViewController.title length] > 0)
         {
-            self.defaultToolbar.titleControl.titleFragments = [NSArray arrayWithObject:_contentViewController.title];
             self.defaultToolbar.titleControl.selectedTitleFragments = nil;
+            self.defaultToolbar.titleControl.titleFragments = [NSArray arrayWithObject:_contentViewController.title];
         }
         else
         {

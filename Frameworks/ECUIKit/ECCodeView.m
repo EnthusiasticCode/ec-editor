@@ -312,9 +312,6 @@ NSString * const ECCodeViewPlaceholderAttributeName = @"codeViewPlaceholder";
 
 - (void)setSelection:(NSRange)range
 {
-    if (NSEqualRanges(range, selection))
-        return;
-    
     [parent willChangeValueForKey:@"selectionRange"];
     // TODO also infrom for selectionTextRange?
     selection = range;
@@ -810,6 +807,28 @@ static void init(ECCodeView *self)
             [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardDidChangeFrameNotification object:nil];
         }
     }
+}
+
+- (id)forwardingTargetForSelector:(SEL)aSelector
+{
+    if (aSelector == @selector(updateAllText)
+        || aSelector == @selector(updateTextFromStringRange:toStringRange:))
+        return nil;
+    return [super forwardingTargetForSelector:aSelector];
+}
+
+#pragma mark - Text Renderer Methods
+
+- (void)updateAllText
+{
+    [self.renderer updateAllText];
+    [selectionView update];
+}
+
+- (void)updateTextFromStringRange:(NSRange)originalRange toStringRange:(NSRange)newRange
+{
+    [self.renderer updateTextFromStringRange:originalRange toStringRange:newRange];
+    [selectionView update];
 }
 
 #pragma mark - UIResponder methods

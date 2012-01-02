@@ -462,6 +462,9 @@ NSString * const ECTextRendererRunDrawBlockAttributeName = @"runDrawBlock";
     self.string = nil;
     self.renderedLines = nil;
     self.typesetter = nil;
+    heightCache[0].wrapWidth = 0;
+    heightCache[1].wrapWidth = 0;
+    heightCache[2].wrapWidth = 0;
 }
 
 - (void)dealloc

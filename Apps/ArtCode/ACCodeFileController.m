@@ -65,6 +65,7 @@ static const void * webViewContext;
 
 /// Indicates if the current content view is the web preview.
 - (BOOL)_isWebPreview;
+- (void)_loadWebPreviewContentAndTitle;
 
 - (void)_layoutChildViews;
 
@@ -210,23 +211,12 @@ static const void * webViewContext;
     if (!_webView)
     {
         _webView = [[UIWebView alloc] init];
+        _webView.delegate = self;
         _webView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-        [_webView addObserver:self forKeyPath:@"loading" options:NSKeyValueObservingOptionNew context:&webViewContext];
         
-        if (_codeFile)
-            [_webView loadHTMLString:[_codeFile.fileBuffer string] baseURL:self.fileURL];
+        [self _loadWebPreviewContentAndTitle];
     }
     return _webView;
-}
-
-- (void)setWebView:(UIWebView *)value
-{
-    if (value == _webView)
-        return;
-    [self willChangeValueForKey:@"webView"];
-    [_webView removeObserver:self forKeyPath:@"loading" context:&webViewContext];
-    _webView = value;
-    [self didChangeValueForKey:@"webView"];
 }
 
 - (ACCodeFileMinimapView *)minimapView
@@ -284,10 +274,7 @@ static const void * webViewContext;
         [_consumerOperationQueue cancelAllOperations];
     [_codeFile.fileBuffer addConsumer:self];
     
-    if ([self _isWebPreview])
-    {
-        [self.webView loadHTMLString:[_codeFile.fileBuffer string] baseURL:self.fileURL];
-    }
+    [self _loadWebPreviewContentAndTitle];
     
     [self didChangeValueForKey:@"codeFile"];
 }
@@ -432,19 +419,6 @@ static const void * webViewContext;
     [self _layoutChildViews];
 }
 
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
-{
-    if (context == &webViewContext)
-    {
-        // Will show the loading animation when the web view is loading.
-        self.loading = _webView.loading;
-    }
-    else
-    {
-        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
-    }
-}
-
 #pragma mark - Controller Methods
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
@@ -486,10 +460,7 @@ static const void * webViewContext;
     UIView *currentContentView = [self _contentView];
     if (oldContentView != currentContentView)
     {
-        if ([self _isWebPreview])
-        {
-            [self.webView loadHTMLString:[self.codeFile.fileBuffer string] baseURL:self.fileURL];
-        }
+        [self _loadWebPreviewContentAndTitle];
         
         [UIView transitionFromView:oldContentView toView:currentContentView duration:animated ? 0.2 : 0 options:UIViewAnimationOptionCurveEaseInOut | UIViewAnimationOptionTransitionCrossDissolve completion:^(BOOL finished) {
             [self _layoutChildViews];
@@ -504,7 +475,12 @@ static const void * webViewContext;
 
 #pragma mark - Minimap Delegate Methods
 
-- (BOOL)codeFileMinimapView:(ACCodeFileMinimapView *)minimapView shouldRenderLine:(ECTextRendererLine *)line number:(NSUInteger)lineNumber withColor:(UIColor *__autoreleasing *)lineColor decoration:(ACCodeFileMinimapLineDecoration *)decoration decorationColor:(UIColor *__autoreleasing *)decorationColor
+- (BOOL)codeFileMinimapView:(ACCodeFileMinimapView *)minimapView 
+           shouldRenderLine:(ECTextRendererLine *)line 
+                     number:(NSUInteger)lineNumber 
+                  withColor:(UIColor *__autoreleasing *)lineColor 
+                 decoration:(ACCodeFileMinimapLineDecoration *)decoration 
+            decorationColor:(UIColor *__autoreleasing *)decorationColor
 {
     if (line.width < line.height)
         return NO;
@@ -652,6 +628,20 @@ static const void * webViewContext;
     return YES;
 }
 
+#pragma mark - Webview delegate methods
+
+- (void)webViewDidStartLoad:(UIWebView *)webView
+{
+    self.loading = YES;
+}
+
+- (void)webViewDidFinishLoad:(UIWebView *)webView
+{
+    self.loading = NO;
+    if ([self _isWebPreview])
+        self.title = [self.webView stringByEvaluatingJavaScriptFromString:@"document.title"];
+}
+
 #pragma mark - Private Methods
 
 - (UIView *)_contentViewForEditingState:(BOOL)editingState
@@ -675,6 +665,19 @@ static const void * webViewContext;
 - (BOOL)_isWebPreview
 {
     return [self _contentViewForEditingState:self.isEditing] == _webView;
+}
+
+- (void)_loadWebPreviewContentAndTitle
+{
+    if ([self _isWebPreview] && self.codeFile)
+    {
+        [self.webView loadHTMLString:[self.codeFile.fileBuffer string] baseURL:self.fileURL];
+        self.title = [self.webView stringByEvaluatingJavaScriptFromString:@"document.title"];
+    }
+    else
+    {
+        self.title = nil;
+    }
 }
 
 - (void)_layoutChildViews
