@@ -85,6 +85,24 @@
     [self didChangeValueForKey:@"secondaryTitleFragmentsTint"];
 }
 
+- (UIFont *)selectedFragmentFont
+{
+    if (selectedFragmentFont == nil)
+        selectedFragmentFont = [UIFont boldSystemFontOfSize:20];
+    return selectedFragmentFont;
+}
+
+- (void)setSelectedFragmentFont:(UIFont *)font
+{
+    if (font == selectedFragmentFont)
+        return;
+    
+    [self willChangeValueForKey:@"selectedFragmentFont"];
+    selectedFragmentFont = font;
+    [self _setupTitle];
+    [self didChangeValueForKey:@"selectedFragmentFont"];
+}
+
 - (UIFont *)secondaryFragmentFont
 {
     if (secondaryFragmentFont == nil)

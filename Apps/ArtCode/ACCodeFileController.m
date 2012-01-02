@@ -485,7 +485,6 @@ static const void * webViewContext;
             [self.webView loadHTMLString:[self.codeFile.fileBuffer string] baseURL:self.fileURL];
         }
         
-        // TODO account for minimap
         [UIView transitionFromView:oldContentView toView:currentContentView duration:animated ? 0.2 : 0 options:UIViewAnimationOptionCurveEaseInOut | UIViewAnimationOptionTransitionCrossDissolve completion:^(BOOL finished) {
             [self _layoutChildViews];
         }];
