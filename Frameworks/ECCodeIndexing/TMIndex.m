@@ -6,15 +6,15 @@
 //  Copyright 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import "ECCodeIndex.h"
-#import "ECCodeIndex+Internal.h"
+#import "ECCodeIndexing.h"
+#import "ECCodeIndexing+Internal.h"
 #import "TMSyntax.h"
 #import <ECFoundation/ECCache.h>
 #import <ECFoundation/ECFileBuffer.h>
 
 static NSMutableDictionary *_extensionClasses;
 
-@interface ECCodeIndex ()
+@interface TMIndex ()
 {
     NSMutableDictionary *_extensions;
     ECCache *_codeUnitCache;
@@ -22,7 +22,7 @@ static NSMutableDictionary *_extensionClasses;
 - (id)_codeUnitCacheKeyForFileURL:(NSURL *)fileURL scope:(NSString *)scope;
 @end
 
-@implementation ECCodeIndex
+@implementation TMIndex
 
 + (void)registerExtension:(Class)extensionClass forKey:(id)key
 {
@@ -47,15 +47,15 @@ static NSMutableDictionary *_extensionClasses;
     return self;
 }
 
-- (ECCodeUnit *)codeUnitForFileBuffer:(ECFileBuffer *)fileBuffer rootScopeIdentifier:(NSString *)rootScopeIdentifier
+- (TMUnit *)codeUnitForFileBuffer:(ECFileBuffer *)fileBuffer rootScopeIdentifier:(NSString *)rootScopeIdentifier
 {
     if (!rootScopeIdentifier)
         rootScopeIdentifier = [[TMSyntax syntaxForFileBuffer:fileBuffer] scopeIdentifier];
     id cacheKey = [self _codeUnitCacheKeyForFileURL:[fileBuffer fileURL] scope:rootScopeIdentifier];
-    ECCodeUnit *codeUnit = [_codeUnitCache objectForKey:cacheKey];
+    TMUnit *codeUnit = [_codeUnitCache objectForKey:cacheKey];
     if (!codeUnit)
     {
-        codeUnit = [[ECCodeUnit alloc] initWithIndex:self fileBuffer:fileBuffer rootScopeIdentifier:rootScopeIdentifier];
+        codeUnit = [[TMUnit alloc] initWithIndex:self fileBuffer:fileBuffer rootScopeIdentifier:rootScopeIdentifier];
         [_codeUnitCache setObject:codeUnit forKey:[self _codeUnitCacheKeyForFileURL:[fileBuffer fileURL] scope:rootScopeIdentifier]];
     }
     return codeUnit;

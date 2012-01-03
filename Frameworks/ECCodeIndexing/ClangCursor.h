@@ -6,9 +6,9 @@
 //  Copyright (c) 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import "ECClangCodeIndex.h"
+#import "ClangIndexExtension.h"
 
-@interface ECClangCodeCursor : NSObject <ECCodeCursor>
+@interface ClangCursor : NSObject <ECCodeCursor>
 
 - (id)initWithClangCursor:(CXCursor)clangCursor;
 
@@ -16,7 +16,7 @@
 
 - (CXType)type;
 
-- (ECClangCodeCursor *)semanticParent;
+- (ClangCursor *)semanticParent;
 
 - (NSString *)scopeIdentifier;
 

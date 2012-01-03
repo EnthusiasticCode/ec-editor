@@ -6,21 +6,21 @@
 //  Copyright (c) 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import "ECClangCodeIndex.h"
+#import "ClangIndexExtension.h"
 
 NSString * const ClangExtensionKey = @"libclang";
 
-@interface ECClangCodeIndex ()
+@interface ClangIndexExtension ()
 {
     CXIndex _clangIndex;
 }
 @end
 
-@implementation ECClangCodeIndex
+@implementation ClangIndexExtension
 
 + (void)load
 {
-    [ECCodeIndex registerExtension:self forKey:ClangExtensionKey];
+    [TMIndex registerExtension:self forKey:ClangExtensionKey];
 }
 
 - (id)init

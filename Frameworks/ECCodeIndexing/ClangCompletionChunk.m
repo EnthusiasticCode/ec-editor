@@ -1,14 +1,14 @@
 //
-//  ECClangCodeCompletionChunk.m
+//  ClangCompletionChunk.m
 //  ECCodeIndexing
 //
 //  Created by Uri Baghin on 11/8/11.
 //  Copyright (c) 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import "ECClangCodeCompletionChunk.h"
+#import "ClangCompletionChunk.h"
 
-@interface ECClangCodeCompletionChunk ()
+@interface ClangCompletionChunk ()
 {
     enum CXCompletionChunkKind _kind;
     NSString *_text;
@@ -16,7 +16,7 @@
 }
 @end
 
-@implementation ECClangCodeCompletionChunk
+@implementation ClangCompletionChunk
 
 - (id)initWithKind:(enum CXCompletionChunkKind)kind text:(NSString *)text completionString:(id<ECCodeCompletionString>)completionString
 {

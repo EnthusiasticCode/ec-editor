@@ -6,9 +6,9 @@
 //  Copyright (c) 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import "ECClangCodeIndex.h"
+#import "ClangIndexExtension.h"
 
-@interface ECClangCodeUnit : NSObject <ECCodeUnitExtension>
+@interface ClangUnitExtension : NSObject <TMUnitExtension>
 
 - (CXTranslationUnit)clangTranslationUnit;
 

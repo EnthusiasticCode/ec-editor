@@ -1,14 +1,14 @@
 //
-//  ECClangCodeCompletionResult.h
+//  ClangCompletionResult.h
 //  ECCodeIndexing
 //
 //  Created by Uri Baghin on 11/8/11.
 //  Copyright (c) 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import "ECClangCodeIndex.h"
+#import "ClangIndexExtension.h"
 
-@interface ECClangCodeCompletionResult : NSObject <ECCodeCompletionResult>
+@interface ClangCompletionResult : NSObject <ECCodeCompletionResult>
 
 - (id)initWithClangCompletionResult:(CXCompletionResult)clangCompletionResult;
 

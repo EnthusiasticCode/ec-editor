@@ -1,30 +1,30 @@
 //
-//  ECClangCodeCompletionResult.m
+//  ClangCompletionResult.m
 //  ECCodeIndexing
 //
 //  Created by Uri Baghin on 11/8/11.
 //  Copyright (c) 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import "ECClangCodeCompletionResult.h"
-#import "ECClangCodeCompletionString.h"
+#import "ClangCompletionResult.h"
+#import "ClangCompletionString.h"
 #import "ClangHelperFunctions.h"
 
-@interface ECClangCodeCompletionResult ()
+@interface ClangCompletionResult ()
 {
-    ECClangCodeCompletionString *_completionString;
+    ClangCompletionString *_completionString;
     enum CXCursorKind _cursorKind;
 }
 @end
 
-@implementation ECClangCodeCompletionResult
+@implementation ClangCompletionResult
 
 - (id)initWithClangCompletionResult:(CXCompletionResult)clangCompletionResult
 {
     self = [super init];
     if (!self)
         return nil;
-    _completionString = [[ECClangCodeCompletionString alloc] initWithClangCompletionString:clangCompletionResult.CompletionString];
+    _completionString = [[ClangCompletionString alloc] initWithClangCompletionString:clangCompletionResult.CompletionString];
     _cursorKind = clangCompletionResult.CursorKind;
     return self;
 }
@@ -41,7 +41,7 @@
 
 - (NSString *)description
 {
-    return [NSString stringWithFormat:@"ECClangCodeCompletionResult %@ : %@", Clang_CursorKindScopeIdentifier(_cursorKind), [_completionString description]];
+    return [NSString stringWithFormat:@"ClangCompletionResult %@ : %@", Clang_CursorKindScopeIdentifier(_cursorKind), [_completionString description]];
 }
 
 @end

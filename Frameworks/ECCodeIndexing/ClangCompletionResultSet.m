@@ -1,29 +1,29 @@
 //
-//  ECClangCodeCompletionResultSet.m
+//  ClangCompletionResultSet.m
 //  ECCodeIndexing
 //
 //  Created by Uri Baghin on 11/9/11.
 //  Copyright (c) 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import "ECClangCodeCompletionResultSet.h"
-#import "ECClangCodeUnit.h"
-#import "ECClangCodeCompletionResult.h"
+#import "ClangCompletionResultSet.h"
+#import "ClangUnitExtension.h"
+#import "ClangCompletionResult.h"
 #import "ClangHelperFunctions.h"
 #import <ECFoundation/ECFileBuffer.h>
 
-@interface ECClangCodeCompletionResultSet ()
+@interface ClangCompletionResultSet ()
 {
-    ECCodeUnit *_codeUnit;
+    TMUnit *_codeUnit;
     CXCodeCompleteResults *_clangResults;
     NSRange _filteredResultRange;
     NSRange _filterStringRange;
 }
 @end
 
-@implementation ECClangCodeCompletionResultSet
+@implementation ClangCompletionResultSet
 
-- (id)initWithCodeUnit:(ECCodeUnit *)codeUnit atOffset:(NSUInteger)offset
+- (id)initWithCodeUnit:(TMUnit *)codeUnit atOffset:(NSUInteger)offset
 {
     ECASSERT(codeUnit);
     self = [super init];
@@ -41,7 +41,8 @@
     ++firstCharacterIndex;
 
     _codeUnit = codeUnit;
-    CXTranslationUnit clangTranslationUnit = 0;// [codeUnit clangTranslationUnit];
+    ClangUnitExtension *clangExtension = [codeUnit extensionForKey:ClangExtensionKey];
+    CXTranslationUnit clangTranslationUnit = [clangExtension clangTranslationUnit];
     const char *fileName = [[[[codeUnit fileBuffer] fileURL] path] fileSystemRepresentation];
     CXFile clangFile = clang_getFile(clangTranslationUnit, fileName);
     CXSourceLocation completeLocation = clang_getLocationForOffset(clangTranslationUnit, clangFile, firstCharacterIndex);
@@ -69,7 +70,7 @@
         while (firstGreaterIndex > lastLesserIndex + 1)
         {
             currentPosition = lastLesserIndex + ((firstGreaterIndex - lastLesserIndex) / 2);
-            ECClangCodeCompletionResult *currentResult = [[ECClangCodeCompletionResult alloc] initWithClangCompletionResult:_clangResults->Results[currentPosition]];
+            ClangCompletionResult *currentResult = [[ClangCompletionResult alloc] initWithClangCompletionResult:_clangResults->Results[currentPosition]];
             NSComparisonResult currentComparisonResult = [[[[currentResult completionString] typedTextChunk] text] compare:filterString options:NSCaseInsensitiveSearch | NSLiteralSearch range:comparisonRange];
             if (currentComparisonResult == NSOrderedAscending)
                 lastLesserIndex = currentPosition;
@@ -87,7 +88,7 @@
             while (firstEqualIndex > lastLesserIndex + 1)
             {
                 currentPosition = lastLesserIndex + ((firstEqualIndex - lastLesserIndex) / 2);
-                ECClangCodeCompletionResult *currentResult = [[ECClangCodeCompletionResult alloc] initWithClangCompletionResult:_clangResults->Results[currentPosition]];
+                ClangCompletionResult *currentResult = [[ClangCompletionResult alloc] initWithClangCompletionResult:_clangResults->Results[currentPosition]];
                 NSComparisonResult currentComparisonResult = [[[[currentResult completionString] typedTextChunk] text] compare:filterString options:NSCaseInsensitiveSearch | NSLiteralSearch range:comparisonRange];
                 if (currentComparisonResult == NSOrderedAscending)
                     lastLesserIndex = currentPosition;
@@ -97,7 +98,7 @@
             while (firstGreaterIndex > lastEqualIndex + 1)
             {
                 currentPosition = lastEqualIndex + ((firstGreaterIndex - lastEqualIndex) / 2);
-                ECClangCodeCompletionResult *currentResult = [[ECClangCodeCompletionResult alloc] initWithClangCompletionResult:_clangResults->Results[currentPosition]];
+                ClangCompletionResult *currentResult = [[ClangCompletionResult alloc] initWithClangCompletionResult:_clangResults->Results[currentPosition]];
                 NSComparisonResult currentComparisonResult = [[[[currentResult completionString] typedTextChunk] text] compare:filterString options:NSCaseInsensitiveSearch | NSLiteralSearch range:comparisonRange];
                 if (currentComparisonResult == NSOrderedDescending)
                     firstGreaterIndex = currentPosition;
@@ -126,7 +127,7 @@
 
 - (id<ECCodeCompletionResult>)completionResultAtIndex:(NSUInteger)resultIndex
 {
-    return [[ECClangCodeCompletionResult alloc] initWithClangCompletionResult:_clangResults->Results[resultIndex + _filteredResultRange.location]];
+    return [[ClangCompletionResult alloc] initWithClangCompletionResult:_clangResults->Results[resultIndex + _filteredResultRange.location]];
 }
 
 - (NSUInteger)indexOfHighestRatedCompletionResult

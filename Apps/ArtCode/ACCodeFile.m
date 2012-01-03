@@ -9,13 +9,13 @@
 #import "ACCodeFile.h"
 #import <ECCodeIndexing/TMTheme.h>
 #import <ECFoundation/ECFileBuffer.h>
-#import <ECCodeIndexing/ECCodeIndex.h>
+#import <ECCodeIndexing/ECCodeIndexing.h>
 
 @interface ACCodeFile ()
 {
     NSOperationQueue *_consumerOperationQueue;
 }
-@property (nonatomic, strong) ECCodeUnit *codeUnit;
+@property (nonatomic, strong) TMUnit *codeUnit;
 - (void)_markPlaceholderWithName:(NSString *)name range:(NSRange)range;
 @end
 
@@ -52,7 +52,7 @@
     _consumerOperationQueue = [[NSOperationQueue alloc] init];
     _consumerOperationQueue.maxConcurrentOperationCount = 1;
     _fileBuffer = [[ECFileBuffer alloc] initWithFileURL:fileURL];
-    _codeUnit = [[[ECCodeIndex alloc] init] codeUnitForFileBuffer:_fileBuffer rootScopeIdentifier:nil];
+    _codeUnit = [[[TMIndex alloc] init] codeUnitForFileBuffer:_fileBuffer rootScopeIdentifier:nil];
     return self;
 }
 

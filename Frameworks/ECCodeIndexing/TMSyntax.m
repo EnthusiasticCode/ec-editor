@@ -9,7 +9,7 @@
 #import "TMSyntax+Internal.h"
 #import "TMBundle+Internal.h"
 #import "TMPattern+Internal.h"
-#import "ECCodeIndex.h"
+#import "ECCodeIndexing.h"
 #import "OnigRegexp.h"
 #import <ECFoundation/ECDiscardableMutableDictionary.h>
 #import <ECFoundation/ECFileBuffer.h>

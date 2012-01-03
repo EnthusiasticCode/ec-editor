@@ -8,14 +8,14 @@
 
 #import "Kiwi.h"
 
-#import <ECCodeIndexing/ECCodeIndex.h>
-#import <ECCodeIndexing/ECCodeUnit.h>
+#import <ECCodeIndexing/ECCodeIndexing.h>
+#import <ECCodeIndexing/TMUnit.h>
 
 SPEC_BEGIN(ECCodeIndexingSpec)
 
 describe(@"A code index",^{
-    __block ECCodeIndex *codeIndex;
-    __block id<ECCodeUnit>cCodeUnit;
+    __block TMIndex *codeIndex;
+    __block id<TMUnit>cCodeUnit;
     __block NSURL *cFileURL;
     __block NSURL *invalidFileURL;
     beforeAll(^{
@@ -31,7 +31,7 @@ describe(@"A code index",^{
     });
     
     beforeEach(^{
-        codeIndex = [[ECCodeIndex alloc] init];
+        codeIndex = [[TMIndex alloc] init];
         [@"" writeToURL:cFileURL atomically:NO encoding:NSUTF8StringEncoding error:NULL];
     });
     
@@ -40,7 +40,7 @@ describe(@"A code index",^{
     });
     
     it(@"should support at least 4 languages", ^{
-        [[[ECCodeIndex should] haveAtLeast:4] supportedLanguages];
+        [[[TMIndex should] haveAtLeast:4] supportedLanguages];
     });
     
     it(@"doesn't create an invalid code unit", ^{

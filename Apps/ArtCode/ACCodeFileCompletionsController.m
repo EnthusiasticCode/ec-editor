@@ -10,7 +10,7 @@
 #import "ACCodeFileCompletionCell.h"
 
 #import <ECFoundation/ECFileBuffer.h>
-#import <ECCodeIndexing/ECCodeIndex.h>
+#import <ECCodeIndexing/ECCodeIndexing.h>
 #import <ECUIKit/ECTextRange.h>
 
 #import "ACCodeFileController.h"
@@ -22,8 +22,8 @@
     CGFloat _minimumTypeLabelSize;
 }
 
-@property (nonatomic, strong) ECCodeIndex *_codeIndex;
-@property (nonatomic, strong) ECCodeUnit *_codeUnit;
+@property (nonatomic, strong) TMIndex *_codeIndex;
+@property (nonatomic, strong) TMUnit *_codeUnit;
 @property (nonatomic, strong) id<ECCodeCompletionResultSet> _completionResults;
 
 @end
@@ -60,14 +60,14 @@
     [self didChangeValueForKey:@"offsetInDocumentForCompletions"];
 }
 
-- (ECCodeIndex *)_codeIndex
+- (TMIndex *)_codeIndex
 {
     if (!_codeIndex)
-        _codeIndex = [ECCodeIndex new];
+        _codeIndex = [TMIndex new];
     return _codeIndex;
 }
 
-- (ECCodeUnit *)_codeUnit
+- (TMUnit *)_codeUnit
 {
     ECASSERT(self.targetCodeFileController != nil);
     

@@ -1,5 +1,5 @@
 //
-//  ECCodeIndex.h
+//  ECCodeIndexing.h
 //  edit
 //
 //  Created by Uri Baghin on 1/20/11.
@@ -9,25 +9,25 @@
 #import <Foundation/Foundation.h>
 #import <ECFoundation/ECFileBuffer.h>
 #import <clang-c/Index.h>
-@class ECCodeUnit, ECFileBuffer, ECCodeScope;
+@class TMUnit, ECFileBuffer;
 @protocol ECCodeCursor, ECCodeCompletionString, ECCodeCompletionChunk, ECCodeCompletionResult, ECCodeCompletionResultSet;
 
 
 /// Class that encapsulates interaction with parsing and indexing libraries to provide language related non file specific functionality such as symbol resolution and refactoring.
-@interface ECCodeIndex : NSObject
+@interface TMIndex : NSObject
 
 /// Code unit creation
 /// If the scope is not specified, it will be detected automatically
-- (ECCodeUnit *)codeUnitForFileBuffer:(ECFileBuffer *)fileBuffer rootScopeIdentifier:(NSString *)rootScopeIdentifier;
+- (TMUnit *)codeUnitForFileBuffer:(ECFileBuffer *)fileBuffer rootScopeIdentifier:(NSString *)rootScopeIdentifier;
 
 @end
 
 
 /// Class that encapsulates interaction with parsing and indexing libraries to provide language related file-specific functionality such as syntax aware highlighting, diagnostics and completions.
-@interface ECCodeUnit : NSObject <ECFileBufferConsumer>
+@interface TMUnit : NSObject <ECFileBufferConsumer>
 
 /// The code index that generated the code unit.
-- (ECCodeIndex *)index;
+- (TMIndex *)index;
 
 /// The main source file the unit is interpreting.
 - (ECFileBuffer *)fileBuffer;
@@ -43,7 +43,6 @@
 - (NSArray *)diagnostics;
 
 @end
-
 
 @protocol ECCodeCompletionResultSet <NSObject>
 - (NSUInteger)count;

@@ -6,21 +6,21 @@
 //  Copyright (c) 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import "ECClangCodeCompletionString.h"
-#import "ECClangCodeCompletionChunk.h"
+#import "ClangCompletionString.h"
+#import "ClangCompletionChunk.h"
 #import "ClangHelperFunctions.h"
 
-@interface ECClangCodeCompletionString ()
+@interface ClangCompletionString ()
 {
     NSArray *_completionChunks;
-    ECClangCodeCompletionChunk *_typedTextChunk;
+    ClangCompletionChunk *_typedTextChunk;
     NSArray *_annotations;
     unsigned _priority;
     enum CXAvailabilityKind _availability;
 }
 @end
 
-@implementation ECClangCodeCompletionString
+@implementation ClangCompletionString
 
 - (id)initWithClangCompletionString:(CXCompletionString)clangCompletionString
 {
@@ -35,7 +35,7 @@
         NSString *completionText = [NSString stringWithUTF8String:clang_getCString(clangCompletionText)];
         clang_disposeString(clangCompletionText);
         enum CXCompletionChunkKind clangCompletionKind = clang_getCompletionChunkKind(clangCompletionString, chunkIndex);
-        [completionChunks addObject:[[ECClangCodeCompletionChunk alloc] initWithKind:clangCompletionKind text:completionText completionString:(clangCompletionKind == CXCompletionChunk_Optional) ? [[ECClangCodeCompletionString alloc] initWithClangCompletionString:clang_getCompletionChunkCompletionString(clangCompletionString, chunkIndex)] : nil]];
+        [completionChunks addObject:[[ClangCompletionChunk alloc] initWithKind:clangCompletionKind text:completionText completionString:(clangCompletionKind == CXCompletionChunk_Optional) ? [[ClangCompletionString alloc] initWithClangCompletionString:clang_getCompletionChunkCompletionString(clangCompletionString, chunkIndex)] : nil]];
         if (!_typedTextChunk && clangCompletionKind == CXCompletionChunk_TypedText)
             _typedTextChunk = [completionChunks objectAtIndex:chunkIndex];
     }
@@ -91,7 +91,7 @@
 - (NSString *)description
 {
     NSMutableString *description = [NSMutableString string];
-    for (ECClangCodeCompletionChunk *chunk in _completionChunks)
+    for (ClangCompletionChunk *chunk in _completionChunks)
         [description appendString:[chunk text]];
     return description;
 }

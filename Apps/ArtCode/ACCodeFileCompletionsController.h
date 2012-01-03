@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@class ECCodeIndex, ECCodeUnit;
+@class TMIndex, TMUnit;
 @class ACCodeFileKeyboardAccessoryView;
 @class ACCodeFileController, ACCodeFileCompletionCell;
 

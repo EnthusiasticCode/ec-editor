@@ -6,10 +6,10 @@
 //  Copyright (c) 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import "ECClangCodeDiagnostic.h"
+#import "ClangDiagnostic.h"
 #import "ClangHelperFunctions.h"
 
-@interface ECClangCodeDiagnostic ()
+@interface ClangDiagnostic ()
 {
     enum CXDiagnosticSeverity _severity;
     NSString *_spelling;
@@ -18,7 +18,7 @@
 }
 @end
 
-@implementation ECClangCodeDiagnostic
+@implementation ClangDiagnostic
 
 - (id)initWithClangDiagnostic:(CXDiagnostic)clangDiagnostic
 {

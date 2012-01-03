@@ -6,27 +6,27 @@
 //  Copyright (c) 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import "ECClangCodeCursor.h"
+#import "ClangCursor.h"
 #import <ECFoundation/ECWeakDictionary.h>
 #import "ClangHelperFunctions.h"
 
 static ECWeakDictionary *_cursorsByUSR;
 
-@interface ECClangCodeCursor ()
+@interface ClangCursor ()
 {
     NSString *_USR;
     enum CXCursorKind _kind;
     CXType _type;
-    ECClangCodeCursor *_semanticParent;
+    ClangCursor *_semanticParent;
     NSString *_scopeIdentifier;
 }
 @end
 
-@implementation ECClangCodeCursor
+@implementation ClangCursor
 
 + (void)initialize
 {
-    if (self != [ECClangCodeCursor class])
+    if (self != [ClangCursor class])
         return;
     _cursorsByUSR = [[ECWeakDictionary alloc] init];
 }
@@ -38,7 +38,7 @@ static ECWeakDictionary *_cursorsByUSR;
     CXString clangUSR = clang_getCursorUSR(clangCursor);
     NSString *USR = [NSString stringWithUTF8String:clang_getCString(clangUSR)];
     clang_disposeString(clangUSR);
-    ECClangCodeCursor *existingCursor = [_cursorsByUSR objectForKey:USR];
+    ClangCursor *existingCursor = [_cursorsByUSR objectForKey:USR];
     if (existingCursor)
         return existingCursor;
     self = [super init];
@@ -47,7 +47,7 @@ static ECWeakDictionary *_cursorsByUSR;
     _USR = USR;
     _kind = clang_getCursorKind(clangCursor);
     _type = clang_getCursorType(clangCursor);
-    _semanticParent = [[ECClangCodeCursor alloc] initWithClangCursor:clang_getCursorSemanticParent(clangCursor)];
+    _semanticParent = [[ClangCursor alloc] initWithClangCursor:clang_getCursorSemanticParent(clangCursor)];
     _scopeIdentifier = Clang_CursorKindScopeIdentifier(clang_getCursorKind(clangCursor));
     [_cursorsByUSR setObject:self forKey:USR];
     return self;
@@ -63,7 +63,7 @@ static ECWeakDictionary *_cursorsByUSR;
     return _type;
 }
 
-- (ECClangCodeCursor *)semanticParent
+- (ClangCursor *)semanticParent
 {
     return _semanticParent;
 }
