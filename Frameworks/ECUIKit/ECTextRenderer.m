@@ -68,12 +68,13 @@ NSString * const ECTextRendererRunDrawBlockAttributeName = @"runDrawBlock";
     CGFloat width;
     CGFloat ascent;
     CGFloat descent;
+    CGFloat leading;
     BOOL isTruncation;
 }
 
 @property (nonatomic) CTLineRef CTLine;
 
-+ (id)textRendererLineWithCTLine:(CTLineRef)line isTruncation:(BOOL)truncation;
++ (id)textRendererLineWithCTLine:(CTLineRef)line font:(CTFontRef)font isTruncation:(BOOL)truncation;
 
 @end
 
@@ -164,22 +165,37 @@ NSString * const ECTextRendererRunDrawBlockAttributeName = @"runDrawBlock";
 
 - (CGFloat)height
 {
-    return ascent + descent;
+    return ascent + descent + leading;
 }
 
 - (CGSize)size
 {
-    return CGSizeMake(width, ascent + descent);
+    return CGSizeMake(width, ascent + descent + leading);
 }
 
-+ (ECTextRendererLine *)textRendererLineWithCTLine:(CTLineRef)line isTruncation:(BOOL)truncation
++ (ECTextRendererLine *)textRendererLineWithCTLine:(CTLineRef)line font:(CTFontRef)font isTruncation:(BOOL)truncation
 {
     ECASSERT(line != NULL);
     
     ECTextRendererLine *result = [ECTextRendererLine new];
     result->CTLine = CFRetain(line);
-    result->width = CTLineGetTypographicBounds(line, &result->ascent, &result->descent, NULL);
+    result->width = CTLineGetTypographicBounds(line, &result->ascent, &result->descent, &result->leading);
     result->isTruncation = truncation;
+    
+    // Fixing problem with new-lines not retaining font attribute
+    if (font)
+    {
+        CGFloat fix = CTFontGetAscent(font);
+        if (result->ascent < fix)
+            result->ascent = fix;
+        fix = CTFontGetDescent(font);
+        if (result->descent < fix)
+            result->descent = fix;
+        fix = CTFontGetLeading(font);
+        if (result->leading < fix)
+            result->leading = fix;
+    }
+    
     return result;
 }
 
@@ -191,7 +207,7 @@ NSString * const ECTextRendererRunDrawBlockAttributeName = @"runDrawBlock";
 
 - (void)drawInContext:(CGContextRef)context
 {
-    CGRect runRect = CGRectMake(0, 0, width, ascent + descent);
+    CGRect runRect = CGRectMake(0, 0, width, ascent + descent + leading);
     runRect.origin.y = -descent;
     CGFloat runWidth;
     
@@ -266,7 +282,7 @@ NSString * const ECTextRendererRunDrawBlockAttributeName = @"runDrawBlock";
     
     CFRange lineStringRange = CTLineGetStringRange(CTLine);
     
-    CGRect result = CGRectMake(0, 0, 0, ascent + descent);
+    CGRect result = CGRectMake(0, 0, 0, ascent + descent + leading);
     
     if (stringRange.location > 0)
     {
@@ -354,6 +370,7 @@ NSString * const ECTextRendererRunDrawBlockAttributeName = @"runDrawBlock";
         
         // Generate wrapped lines
         __block CFRange lineRange = CFRangeMake(0, 0);
+        CTFontRef font = (__bridge CTFontRef)[self.string attribute:(__bridge NSString *)kCTFontAttributeName atIndex:0 effectiveRange:NULL];
         [self.string.string enumerateLinesUsingBlock:^(NSString *line, BOOL *stop) {
             CFIndex lineLength = [line length], truncationLenght;
             BOOL truncation = NO;
@@ -367,7 +384,7 @@ NSString * const ECTextRendererRunDrawBlockAttributeName = @"runDrawBlock";
                 lineRange.location += lineRange.length;
                 
                 // Save line
-                [_renderedLines addObject:[ECTextRendererLine textRendererLineWithCTLine:ctline isTruncation:truncation]];
+                [_renderedLines addObject:[ECTextRendererLine textRendererLineWithCTLine:ctline font:lineLength ? nil : font isTruncation:truncation]];
                 truncation = YES;
                 lineLength -= truncationLenght;
                 CFRelease(ctline);
@@ -419,7 +436,7 @@ NSString * const ECTextRendererRunDrawBlockAttributeName = @"runDrawBlock";
     [self beginContentAccess];
     for (ECTextRendererLine *line in self.renderedLines)
     {
-        heightCache[cacheIdx].height += line->ascent + line->descent;
+        heightCache[cacheIdx].height += line->ascent + line->descent + line->leading;
     }
     [self endContentAccess];
     
@@ -546,7 +563,7 @@ NSString * const ECTextRendererRunDrawBlockAttributeName = @"runDrawBlock";
         if ((NSUInteger)stringRange.location >= queryRangeEnd)
             return;
         
-        bounds = CGRectMake(0, currentY, line->width, line->ascent + line->descent);
+        bounds = CGRectMake(0, currentY, line->width, line->ascent + line->descent + line->leading);
         
         if ((NSUInteger)(stringRange.location + stringRange.length) > queryRange.location) 
         {
@@ -580,7 +597,7 @@ NSString * const ECTextRendererRunDrawBlockAttributeName = @"runDrawBlock";
             
         stringRange = CTLineGetStringRange(line->CTLine);
         
-        bounds = CGRectMake(0, currentY, line->width, line->ascent + line->descent);
+        bounds = CGRectMake(0, currentY, line->width, line->ascent + line->descent + line->leading);
         
         if (lineIndex >= queryRange.location) 
         {

@@ -80,8 +80,8 @@ static NSRange intersectionOfRangeRelativeToRange(NSRange range, NSRange inRange
 
 - (NSAttributedString *)textRenderer:(ECTextRenderer *)sender attributedStringInRange:(NSRange)stringRange
 {
-    NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithAttributedString:[self.fileBuffer attributedStringInRange:stringRange]];
-    [attributedString addAttributes:self.defaultTextAttributes range:NSMakeRange(0, [attributedString length])];
+    NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:[self.fileBuffer stringInRange:stringRange]];
+    [attributedString setAttributes:self.defaultTextAttributes range:NSMakeRange(0, [attributedString length])];
     for (id<ECCodeToken>token in [self.codeUnit annotatedTokensInRange:stringRange])
         [attributedString addAttributes:[self.theme attributesForScopeStack:[token scopeIdentifiersStack]] range:intersectionOfRangeRelativeToRange([token range], stringRange)];
 //    static NSRegularExpression *placeholderRegExp = nil;

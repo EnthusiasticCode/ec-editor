@@ -194,7 +194,7 @@ static ECDiscardableMutableDictionary *_syntaxes;
         return;
     _patterns = nil;
     _repository = nil;
-    _plist = nil;
+//    _plist = nil;
 }
 
 - (BOOL)isContentDiscarded
