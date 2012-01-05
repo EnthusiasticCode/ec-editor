@@ -147,6 +147,8 @@
 		CDA7630C146976260004FAC7 /* ACCodeFileKeyboardAccessoryView.m in Sources */ = {isa = PBXBuildFile; fileRef = CDA7630B146976260004FAC7 /* ACCodeFileKeyboardAccessoryView.m */; };
 		CDB7C92B145572EA00E0D2B2 /* ACSingleProjectBrowsersController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDB7C92A145572EA00E0D2B2 /* ACSingleProjectBrowsersController.m */; };
 		CDB7C9301455762E00E0D2B2 /* SingleProjectBrowsers.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CDB7C92F1455762E00E0D2B2 /* SingleProjectBrowsers.storyboard */; };
+		CDBCC5DC14B6081A005E5C46 /* ACHighlightLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = CDBCC5DB14B6081A005E5C46 /* ACHighlightLabel.m */; };
+		CDBCC5DF14B60F9E005E5C46 /* ACHighlightTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = CDBCC5DE14B60F9E005E5C46 /* ACHighlightTableViewCell.m */; };
 		CDC13330145FFE390028423F /* ACCodeFileSearchOptionsController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDC1332F145FFE390028423F /* ACCodeFileSearchOptionsController.m */; };
 		CDC1333614602F5E0028423F /* searchBar_Background.png in Resources */ = {isa = PBXBuildFile; fileRef = CDC1333214602F5E0028423F /* searchBar_Background.png */; };
 		CDC1333714602F5E0028423F /* searchBar_Button_Normal.png in Resources */ = {isa = PBXBuildFile; fileRef = CDC1333314602F5E0028423F /* searchBar_Button_Normal.png */; };
@@ -467,6 +469,10 @@
 		CDB7C929145572EA00E0D2B2 /* ACSingleProjectBrowsersController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACSingleProjectBrowsersController.h; sourceTree = "<group>"; };
 		CDB7C92A145572EA00E0D2B2 /* ACSingleProjectBrowsersController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACSingleProjectBrowsersController.m; sourceTree = "<group>"; };
 		CDB7C92F1455762E00E0D2B2 /* SingleProjectBrowsers.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = SingleProjectBrowsers.storyboard; sourceTree = "<group>"; };
+		CDBCC5DA14B6081A005E5C46 /* ACHighlightLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACHighlightLabel.h; sourceTree = "<group>"; };
+		CDBCC5DB14B6081A005E5C46 /* ACHighlightLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACHighlightLabel.m; sourceTree = "<group>"; };
+		CDBCC5DD14B60F9E005E5C46 /* ACHighlightTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACHighlightTableViewCell.h; sourceTree = "<group>"; };
+		CDBCC5DE14B60F9E005E5C46 /* ACHighlightTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACHighlightTableViewCell.m; sourceTree = "<group>"; };
 		CDC1332E145FFE390028423F /* ACCodeFileSearchOptionsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACCodeFileSearchOptionsController.h; sourceTree = "<group>"; };
 		CDC1332F145FFE390028423F /* ACCodeFileSearchOptionsController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACCodeFileSearchOptionsController.m; sourceTree = "<group>"; };
 		CDC1333214602F5E0028423F /* searchBar_Background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = searchBar_Background.png; sourceTree = "<group>"; };
@@ -1007,6 +1013,10 @@
 				B7DE5534148ACF8400E6A79B /* ACProjectCellNormalView.m */,
 				B7DE5536148ACF9400E6A79B /* ACProjectCellEditingView.h */,
 				B7DE5537148ACF9400E6A79B /* ACProjectCellEditingView.m */,
+				CDBCC5DA14B6081A005E5C46 /* ACHighlightLabel.h */,
+				CDBCC5DB14B6081A005E5C46 /* ACHighlightLabel.m */,
+				CDBCC5DD14B60F9E005E5C46 /* ACHighlightTableViewCell.h */,
+				CDBCC5DE14B60F9E005E5C46 /* ACHighlightTableViewCell.m */,
 			);
 			name = "Views and Controls";
 			sourceTree = "<group>";
@@ -1465,6 +1475,8 @@
 				B7DE5535148ACF8400E6A79B /* ACProjectCellNormalView.m in Sources */,
 				B7DE5538148ACF9400E6A79B /* ACProjectCellEditingView.m in Sources */,
 				B75B575D14B0B62D00053783 /* ACCodeFile.m in Sources */,
+				CDBCC5DC14B6081A005E5C46 /* ACHighlightLabel.m in Sources */,
+				CDBCC5DF14B60F9E005E5C46 /* ACHighlightTableViewCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

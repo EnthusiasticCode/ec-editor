@@ -14,6 +14,7 @@
 #import <ECFoundation/NSString+ECAdditions.h>
 
 #import "ACToolFiltersView.h"
+#import "ACHighlightTableViewCell.h"
 
 #import "ACTab.h"
 
@@ -291,10 +292,10 @@ static void * directoryPresenterFileURLsObservingContext;
 {
     static NSString *FileCellIdentifier = @"FileCell";
     
-    UITableViewCell *cell = [tView dequeueReusableCellWithIdentifier:FileCellIdentifier];
+    ACHighlightTableViewCell *cell = [tView dequeueReusableCellWithIdentifier:FileCellIdentifier];
     if (cell == nil)
     {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:FileCellIdentifier];        
+        cell = [[ACHighlightTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:FileCellIdentifier];        
     }
     
     // Configure the cell...
@@ -305,7 +306,9 @@ static void * directoryPresenterFileURLsObservingContext;
         cell.imageView.image = [UIImage styleDocumentImageWithSize:CGSizeMake(32, 32) 
                                                              color:[[fileName pathExtension] isEqualToString:@"h"] ? [UIColor styleFileRedColor] : [UIColor styleFileBlueColor]
                                                               text:[fileName pathExtension]];
-    cell.textLabel.text = fileName;
+    cell.highlightLabel.text = fileName;
+    cell.highlightLabel.highlightedCharacters = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(2, 2)];
+    cell.highlightLabel.highlightedBackgroundColor = [UIColor orangeColor];
     return cell;
 }
 
