@@ -24,7 +24,7 @@
 
 - (NSString *)spelling
 {
-    return [self.baseString substringWithRange:NSMakeRange(self.baseOffset, self.length)];
+    return nil;// [self.baseString substringWithRange:NSMakeRange(self.baseOffset, self.length)];
 }
 
 + (NSSet *)keyPathsForValuesAffectingSpelling
@@ -56,68 +56,31 @@
 
 - (NSUInteger)baseOffset
 {
-    return self.offset + self.parent.baseOffset;
-}
-
-- (void)setBaseOffset:(NSUInteger)baseOffset
-{
-    ECASSERT(baseOffset >= self.parent.baseOffset);
-    self.offset = baseOffset - self.parent.baseOffset;
+    if (!self.parent)
+        return self.offset;
+    NSUInteger childIndex = [self.parent.children indexOfObject:self];
+    if (!childIndex)
+        return self.offset + self.parent.baseOffset;
+    TMScope *previousSibling = [self.parent.children objectAtIndex:childIndex - 1];
+    return self.offset + previousSibling.baseOffset + previousSibling.length;
 }
 
 + (NSSet *)keyPathsForValuesAffectingBaseOffset
 {
-    return [NSSet setWithObjects:@"offset", @"parent.baseOffset", nil];
+    return [NSSet setWithObjects:@"offset", @"parent.baseOffset", @"parent.children", nil];
 }
 
 - (NSArray *)children
 {
-    return [_children copy];
-}
-
-- (NSUInteger)countOfChildren
-{
-    return [_children count];
-}
-
-- (NSArray *)childrenAtIndexes:(NSIndexSet *)indexes
-{
-    return [_children objectsAtIndexes:indexes];
-}
-
-- (void)getChildren:(TMScope * __unsafe_unretained *)buffer range:(NSRange)inRange
-{
-    return [_children getObjects:buffer range:inRange];
-}
-
-- (void)insertChildren:(NSArray *)array atIndexes:(NSIndexSet *)indexes
-{
-    [_children insertObjects:array atIndexes:indexes];
-}
-
-- (void)removeChildrenAtIndexes:(NSIndexSet *)indexes
-{
-    [_children removeObjectsAtIndexes:indexes];
-}
-
-- (void)replaceChildrenAtIndexes:(NSIndexSet *)indexes withChildren:(NSArray *)array
-{
-    [_children replaceObjectsAtIndexes:indexes withObjects:array];
-}
-
-- (id)init
-{
-    self = [super init];
-    if (!self)
+    if (![_children count])
         return nil;
-    _children = [NSMutableArray array];
-    return self;
+    return [_children copy];
 }
 
 - (id)initWithIdentifier:(NSString *)identifier string:(NSString *)string
 {
     ECASSERT(identifier && string);
-    self = [self init];
+    self = [super init];
     if (!self)
         return nil;
     _identifier = identifier;
@@ -131,7 +94,9 @@
     TMScope *childScope = [[[self class] alloc] init];
     childScope.parent = self;
     childScope.identifier = identifier;
-    [[self mutableArrayValueForKey:@"children"] addObject:childScope];
+    if (!_children)
+        _children = [NSMutableArray array];
+    [_children addObject:childScope];
     return childScope;
 }
 

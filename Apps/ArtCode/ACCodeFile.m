@@ -70,19 +70,14 @@
     return [self.fileBuffer length];
 }
 
-static NSRange intersectionOfRangeRelativeToRange(NSRange range, NSRange inRange)
-{
-    NSRange intersectionRange = NSIntersectionRange(range, inRange);
-    intersectionRange.location -= inRange.location;
-    return intersectionRange;
-}
-
 - (NSAttributedString *)textRenderer:(ECTextRenderer *)sender attributedStringInRange:(NSRange)stringRange
 {
     NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithAttributedString:[self.fileBuffer attributedStringInRange:stringRange]];
     [attributedString addAttributes:self.defaultTextAttributes range:NSMakeRange(0, [attributedString length])];
-//    for (id<ECCodeToken>token in [self.codeUnit annotatedTokensInRange:stringRange])
-//        [attributedString addAttributes:[self.theme attributesForScopeStack:[token scopeIdentifiersStack]] range:intersectionOfRangeRelativeToRange([token range], stringRange)];
+    [self.codeUnit visitScopesInRange:stringRange options:TMUnitVisitOptionsRelativeRange withBlock:^TMUnitVisitResult(NSString *scopeIdentifier, NSRange range, NSString *spelling, NSString *parentScopeIdentifier, NSArray *scopeIdentifiersStack) {
+        [attributedString addAttributes:[self.theme attributesForScopeIdentifier:scopeIdentifier] range:range];
+        return TMUnitVisitResultRecurse;
+    }];
     static NSRegularExpression *placeholderRegExp = nil;
     if (!placeholderRegExp)
         placeholderRegExp = [NSRegularExpression regularExpressionWithPattern:@"<#(.+?)#>" options:0 error:NULL];

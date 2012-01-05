@@ -12,7 +12,7 @@
 /// The identifier of the scope's class
 @property (nonatomic, strong) NSString *identifier;
 /// The offset of the scope's beginning from the end of it's previous sibling
-@property (nonatomic) NSUInteger offset;
+@property (nonatomic) NSInteger offset;
 /// The length of the scope
 @property (nonatomic) NSUInteger length;
 /// The spelling of the scope
@@ -20,7 +20,7 @@
 /// The base string containing the scope
 @property (nonatomic, strong) NSString *baseString;
 /// The offset of the scope relative to the base string
-@property (nonatomic) NSUInteger baseOffset;
+@property (nonatomic, readonly) NSUInteger baseOffset;
 /// The parent scope, if one exists
 @property (nonatomic, weak) TMScope *parent;
 /// The children scopes, if any exist

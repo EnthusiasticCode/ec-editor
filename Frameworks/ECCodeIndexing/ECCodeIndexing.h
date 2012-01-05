@@ -22,6 +22,18 @@
 
 @end
 
+typedef enum
+{
+    TMUnitVisitOptionsAbsoluteRange = 0 << 0,
+    TMUnitVisitOptionsRelativeRange = 1 << 0,
+} TMUnitVisitOptions;
+
+typedef enum
+{
+    TMUnitVisitResultBreak,
+    TMUnitVisitResultContinue,
+    TMUnitVisitResultRecurse,
+} TMUnitVisitResult;
 
 /// Class that encapsulates interaction with parsing and indexing libraries to provide language related file-specific functionality such as syntax aware highlighting, diagnostics and completions.
 @interface TMUnit : NSObject <ECFileBufferConsumer>
@@ -33,6 +45,10 @@
 - (ECFileBuffer *)fileBuffer;
 
 - (NSString *)rootScopeIdentifier;
+
+- (void)visitScopesWithBlock:(TMUnitVisitResult(^)(NSString *scopeIdentifier, NSRange range, NSString *spelling, NSString *parentScopeIdentifier, NSArray *scopeIdentifiersStack))block;
+
+- (void)visitScopesInRange:(NSRange)range options:(TMUnitVisitOptions)options withBlock:(TMUnitVisitResult(^)(NSString *scopeIdentifier, NSRange range, NSString *spelling, NSString *parentScopeIdentifier, NSArray *scopeIdentifiersStack))block;
 
 /// Returns the possible completions at a given insertion point in the unit's main source file.
 /// If filterRange is not NULL, in output it will contain the file buffer string range that contains 
