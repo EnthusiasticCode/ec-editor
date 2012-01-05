@@ -13,6 +13,7 @@
 @interface TMPattern : NSObject <NSCopying>
 
 - (NSString *)name;
+- (NSString *)contentName;
 - (OnigRegexp *)match;
 - (NSDictionary *)captures;
 - (OnigRegexp *)begin;

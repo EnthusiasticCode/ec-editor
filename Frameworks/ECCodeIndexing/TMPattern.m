@@ -12,6 +12,7 @@
 
 static NSString * const _patternScopeKey = @"name";
 static NSString * const _patternNameKey = @"name";
+static NSString * const _patternContentNameKey = @"contentName";
 static NSString * const _patternMatchKey = @"match";
 static NSString * const _patternBeginKey = @"begin";
 static NSString * const _patternEndKey = @"end";
@@ -69,6 +70,7 @@ static NSArray *_patternsIncludedByPatterns(NSArray *patterns);
     ECASSERT(!_begin || _end && ![self _include]);
     ECASSERT(!_end || _begin);
     ECASSERT(![self _include] || (![_patterns count] && !_captures && !_beginCaptures && !_endCaptures));
+    ECASSERT(![self contentName] || _begin);
     return self;
 }
 
@@ -85,6 +87,11 @@ static NSArray *_patternsIncludedByPatterns(NSArray *patterns);
 - (NSString *)name
 {
     return [_dictionary objectForKey:_patternNameKey];
+}
+
+- (NSString *)contentName
+{
+    return [_dictionary objectForKey:_patternContentNameKey];
 }
 
 - (OnigRegexp *)match
