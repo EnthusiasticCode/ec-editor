@@ -276,8 +276,15 @@ static NSString * const _patternCaptureName = @"name";
             if (!result)
                 continue;
             NSRange resultRange = [result bodyRange];
-            if (resultRange.location > firstMatchRange.location || (resultRange.location == firstMatchRange.location && resultRange.length < firstMatchRange.length))
+            // Find the first match, if two matches have the same locations, take the longest of the two, unless one of the two has length 0, in which case take that one
+            // This is because some patterns match using lookahead, and return 0 lenght matches
+            if (resultRange.location > firstMatchRange.location)
                 continue;
+            if (resultRange.location == firstMatchRange.location)
+                if (firstMatchRange.length == 0)
+                    continue;
+                else if (resultRange.length < firstMatchRange.length && resultRange.length != 0)
+                    continue;
             firstMatchRange = resultRange;
             firstMatchPattern = childPattern;
             matchFound = YES;
