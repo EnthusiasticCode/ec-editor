@@ -55,7 +55,10 @@
     ////////////////////////////////////////////////////////////////////////////
     // Generic popover
     id popoverAppearance = [ACShapePopoverBackgroundView appearance];
-    [popoverAppearance setBackgroundColor:[UIColor styleForegroundColor]];
+    [popoverAppearance setBackgroundColor:[UIColor colorWithRed:57.0/255.0 green:58.0/255.0 blue:62.0/255.0 alpha:1.0]];
+    [popoverAppearance setShadowOpacity:0.5];
+    [popoverAppearance setShadowRadius:3];
+    [popoverAppearance setShadowOffsetForArrowDirectionUpToAutoOrient:CGSizeMake(0, 1)];
 
     ////////////////////////////////////////////////////////////////////////////
     // Tab Bar    

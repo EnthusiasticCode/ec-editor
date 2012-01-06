@@ -108,6 +108,13 @@
 		CD6E416C14614A0C00A9CE7F /* ACCodeFileMinimapView.m in Sources */ = {isa = PBXBuildFile; fileRef = CD6E416B14614A0C00A9CE7F /* ACCodeFileMinimapView.m */; };
 		CD70F4CE147A615000EAEEDC /* SearchBar.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CD70F4CD147A615000EAEEDC /* SearchBar.storyboard */; };
 		CD78E52014729A0E00801C3F /* ACCodeFileCompletionsController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD78E51F14729A0E00801C3F /* ACCodeFileCompletionsController.m */; };
+		CD7BC79414B7059000313CDB /* RemoteOptions.xib in Resources */ = {isa = PBXBuildFile; fileRef = CD7BC79314B7059000313CDB /* RemoteOptions.xib */; };
+		CD7BC79914B70FBE00313CDB /* itemIcon_Export.png in Resources */ = {isa = PBXBuildFile; fileRef = CD7BC79514B70FBE00313CDB /* itemIcon_Export.png */; };
+		CD7BC79A14B70FBE00313CDB /* itemIcon_Find.png in Resources */ = {isa = PBXBuildFile; fileRef = CD7BC79614B70FBE00313CDB /* itemIcon_Find.png */; };
+		CD7BC79B14B70FBE00313CDB /* itemIcon_Minimap.png in Resources */ = {isa = PBXBuildFile; fileRef = CD7BC79714B70FBE00313CDB /* itemIcon_Minimap.png */; };
+		CD7BC79C14B70FBE00313CDB /* itemIcon_Options.png in Resources */ = {isa = PBXBuildFile; fileRef = CD7BC79814B70FBE00313CDB /* itemIcon_Options.png */; };
+		CD7BC79E14B70FE600313CDB /* itemIcon_Tab.png in Resources */ = {isa = PBXBuildFile; fileRef = CD7BC79D14B70FE600313CDB /* itemIcon_Tab.png */; };
+		CD7BC7A014B7100A00313CDB /* CodeFileController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CD7BC79F14B7100A00313CDB /* CodeFileController.xib */; };
 		CD7D2AE413C0CD2600B889EE /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD7D2AE313C0CD2600B889EE /* UIKit.framework */; };
 		CD7D2AE613C0CD2600B889EE /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD7D2AE513C0CD2600B889EE /* Foundation.framework */; };
 		CD7D2AE813C0CD2600B889EE /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD7D2AE713C0CD2600B889EE /* CoreGraphics.framework */; };
@@ -411,6 +418,13 @@
 		CD70F4CD147A615000EAEEDC /* SearchBar.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = SearchBar.storyboard; sourceTree = "<group>"; };
 		CD78E51E14729A0E00801C3F /* ACCodeFileCompletionsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACCodeFileCompletionsController.h; sourceTree = "<group>"; };
 		CD78E51F14729A0E00801C3F /* ACCodeFileCompletionsController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACCodeFileCompletionsController.m; sourceTree = "<group>"; };
+		CD7BC79314B7059000313CDB /* RemoteOptions.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = RemoteOptions.xib; sourceTree = "<group>"; };
+		CD7BC79514B70FBE00313CDB /* itemIcon_Export.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = itemIcon_Export.png; sourceTree = "<group>"; };
+		CD7BC79614B70FBE00313CDB /* itemIcon_Find.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = itemIcon_Find.png; sourceTree = "<group>"; };
+		CD7BC79714B70FBE00313CDB /* itemIcon_Minimap.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = itemIcon_Minimap.png; sourceTree = "<group>"; };
+		CD7BC79814B70FBE00313CDB /* itemIcon_Options.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = itemIcon_Options.png; sourceTree = "<group>"; };
+		CD7BC79D14B70FE600313CDB /* itemIcon_Tab.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = itemIcon_Tab.png; sourceTree = "<group>"; };
+		CD7BC79F14B7100A00313CDB /* CodeFileController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CodeFileController.xib; sourceTree = "<group>"; };
 		CD7D2ADF13C0CD2600B889EE /* ArtCode.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ArtCode.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CD7D2AE313C0CD2600B889EE /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		CD7D2AE513C0CD2600B889EE /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -502,27 +516,6 @@
 		CDF4C010144F2C7900475F6B /* ACTopBarToolbar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACTopBarToolbar.m; sourceTree = "<group>"; };
 		CDF4C013144F2C8A00475F6B /* ACSingleTabController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACSingleTabController.h; sourceTree = "<group>"; };
 		CDF4C014144F2C8A00475F6B /* ACSingleTabController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACSingleTabController.m; sourceTree = "<group>"; };
-		CDFF3DCA13C0D9BB00108DE2 /* toolBookmarksNote.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = toolBookmarksNote.png; sourceTree = "<group>"; };
-		CDFF3DCB13C0D9BB00108DE2 /* toolBookmarksStar.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = toolBookmarksStar.png; sourceTree = "<group>"; };
-		CDFF3DCC13C0D9BB00108DE2 /* toolFilterBookmarksNote.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = toolFilterBookmarksNote.png; sourceTree = "<group>"; };
-		CDFF3DCD13C0D9BB00108DE2 /* toolFilterBookmarksStar.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = toolFilterBookmarksStar.png; sourceTree = "<group>"; };
-		CDFF3DCE13C0D9BB00108DE2 /* toolFilterSnippetsPaste.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = toolFilterSnippetsPaste.png; sourceTree = "<group>"; };
-		CDFF3DCF13C0D9BB00108DE2 /* toolFilterSnippetsSnippet.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = toolFilterSnippetsSnippet.png; sourceTree = "<group>"; };
-		CDFF3DD013C0D9BB00108DE2 /* toolHistoryBack.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = toolHistoryBack.png; sourceTree = "<group>"; };
-		CDFF3DD113C0D9BB00108DE2 /* toolHistoryForward.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = toolHistoryForward.png; sourceTree = "<group>"; };
-		CDFF3DD213C0D9BB00108DE2 /* toolHistoryNow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = toolHistoryNow.png; sourceTree = "<group>"; };
-		CDFF3DD313C0D9BB00108DE2 /* toolPanelHistoryToolSelectedImage.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = toolPanelHistoryToolSelectedImage.png; sourceTree = "<group>"; };
-		CDFF3DD413C0D9BB00108DE2 /* toolPanelHistoryToolImage.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = toolPanelHistoryToolImage.png; sourceTree = "<group>"; };
-		CDFF3DD513C0D9BB00108DE2 /* toolPanelNavigatorToolSelectedImage.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = toolPanelNavigatorToolSelectedImage.png; sourceTree = "<group>"; };
-		CDFF3DD613C0D9BB00108DE2 /* toolPanelNavigatorToolImage.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = toolPanelNavigatorToolImage.png; sourceTree = "<group>"; };
-		CDFF3DD713C0D9BB00108DE2 /* toolPanelSnippetsToolSelectedImage.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = toolPanelSnippetsToolSelectedImage.png; sourceTree = "<group>"; };
-		CDFF3DD813C0D9BB00108DE2 /* toolPanelSnippetsToolImage.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = toolPanelSnippetsToolImage.png; sourceTree = "<group>"; };
-		CDFF3DD913C0D9BB00108DE2 /* toolPanelBookmarksToolSelectedImage.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = toolPanelBookmarksToolSelectedImage.png; sourceTree = "<group>"; };
-		CDFF3DDA13C0D9BB00108DE2 /* toolPanelBookmarksToolImage.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = toolPanelBookmarksToolImage.png; sourceTree = "<group>"; };
-		CDFF3DDB13C0D9BB00108DE2 /* toolPanelSymbolsToolSelectedImage.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = toolPanelSymbolsToolSelectedImage.png; sourceTree = "<group>"; };
-		CDFF3DDC13C0D9BB00108DE2 /* toolPanelSymbolsToolImage.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = toolPanelSymbolsToolImage.png; sourceTree = "<group>"; };
-		CDFF3DDD13C0D9BB00108DE2 /* toolSnippetsPaste.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = toolSnippetsPaste.png; sourceTree = "<group>"; };
-		CDFF3DDE13C0D9BB00108DE2 /* toolSnippetsSnippet.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = toolSnippetsSnippet.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -777,6 +770,13 @@
 			name = "Minimap View";
 			sourceTree = "<group>";
 		};
+		CD7BC79214B7054800313CDB /* Remotes Controllers */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = "Remotes Controllers";
+			sourceTree = "<group>";
+		};
 		CD7D2AD413C0CD2600B889EE = {
 			isa = PBXGroup;
 			children = (
@@ -881,6 +881,8 @@
 				CD70F4CD147A615000EAEEDC /* SearchBar.storyboard */,
 				CDC1A07A147E6EF500E01B7A /* CompletionControllerCell.xib */,
 				B78077E014869701006C0C6B /* ProjectCell.xib */,
+				CD7BC79314B7059000313CDB /* RemoteOptions.xib */,
+				CD7BC79F14B7100A00313CDB /* CodeFileController.xib */,
 			);
 			name = UI;
 			sourceTree = "<group>";
@@ -893,9 +895,7 @@
 				CDC2828E14508D250054358D /* Top Bar */,
 				CDC1333114602F430028423F /* Search Bar */,
 				CD9ED8DC1466BE5000A517A5 /* Accessory View */,
-				CDFF3DF413C0D9D100108DE2 /* Tools Tab Icons */,
-				CDFF3DF513C0D9FD00108DE2 /* Tools Filters Icons */,
-				CDFF3DF613C0DA1100108DE2 /* Tools Table Icons */,
+				CDFF3DF613C0DA1100108DE2 /* Icons */,
 			);
 			name = Images;
 			sourceTree = "<group>";
@@ -972,6 +972,7 @@
 				CD6580C514157B300079412F /* Find & Replace Controllers */,
 				CD6E416D14614A2A00A9CE7F /* Minimap View */,
 				CD9ED8E51466C3E600A517A5 /* Keyboard Accessory */,
+				CD7BC79214B7054800313CDB /* Remotes Controllers */,
 			);
 			name = Editor;
 			sourceTree = "<group>";
@@ -1122,46 +1123,16 @@
 			name = "Popovers Content Controllers";
 			sourceTree = "<group>";
 		};
-		CDFF3DF413C0D9D100108DE2 /* Tools Tab Icons */ = {
+		CDFF3DF613C0DA1100108DE2 /* Icons */ = {
 			isa = PBXGroup;
 			children = (
-				CDFF3DD313C0D9BB00108DE2 /* toolPanelHistoryToolSelectedImage.png */,
-				CDFF3DD413C0D9BB00108DE2 /* toolPanelHistoryToolImage.png */,
-				CDFF3DD513C0D9BB00108DE2 /* toolPanelNavigatorToolSelectedImage.png */,
-				CDFF3DD613C0D9BB00108DE2 /* toolPanelNavigatorToolImage.png */,
-				CDFF3DD713C0D9BB00108DE2 /* toolPanelSnippetsToolSelectedImage.png */,
-				CDFF3DD813C0D9BB00108DE2 /* toolPanelSnippetsToolImage.png */,
-				CDFF3DD913C0D9BB00108DE2 /* toolPanelBookmarksToolSelectedImage.png */,
-				CDFF3DDA13C0D9BB00108DE2 /* toolPanelBookmarksToolImage.png */,
-				CDFF3DDB13C0D9BB00108DE2 /* toolPanelSymbolsToolSelectedImage.png */,
-				CDFF3DDC13C0D9BB00108DE2 /* toolPanelSymbolsToolImage.png */,
+				CD7BC79D14B70FE600313CDB /* itemIcon_Tab.png */,
+				CD7BC79514B70FBE00313CDB /* itemIcon_Export.png */,
+				CD7BC79614B70FBE00313CDB /* itemIcon_Find.png */,
+				CD7BC79714B70FBE00313CDB /* itemIcon_Minimap.png */,
+				CD7BC79814B70FBE00313CDB /* itemIcon_Options.png */,
 			);
-			name = "Tools Tab Icons";
-			sourceTree = "<group>";
-		};
-		CDFF3DF513C0D9FD00108DE2 /* Tools Filters Icons */ = {
-			isa = PBXGroup;
-			children = (
-				CDFF3DCC13C0D9BB00108DE2 /* toolFilterBookmarksNote.png */,
-				CDFF3DCD13C0D9BB00108DE2 /* toolFilterBookmarksStar.png */,
-				CDFF3DCE13C0D9BB00108DE2 /* toolFilterSnippetsPaste.png */,
-				CDFF3DCF13C0D9BB00108DE2 /* toolFilterSnippetsSnippet.png */,
-			);
-			name = "Tools Filters Icons";
-			sourceTree = "<group>";
-		};
-		CDFF3DF613C0DA1100108DE2 /* Tools Table Icons */ = {
-			isa = PBXGroup;
-			children = (
-				CDFF3DCA13C0D9BB00108DE2 /* toolBookmarksNote.png */,
-				CDFF3DCB13C0D9BB00108DE2 /* toolBookmarksStar.png */,
-				CDFF3DD013C0D9BB00108DE2 /* toolHistoryBack.png */,
-				CDFF3DD113C0D9BB00108DE2 /* toolHistoryForward.png */,
-				CDFF3DD213C0D9BB00108DE2 /* toolHistoryNow.png */,
-				CDFF3DDD13C0D9BB00108DE2 /* toolSnippetsPaste.png */,
-				CDFF3DDE13C0D9BB00108DE2 /* toolSnippetsSnippet.png */,
-			);
-			name = "Tools Table Icons";
+			name = Icons;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1413,6 +1384,13 @@
 				CDA0B9EA14A4E9C900714F74 /* topBar_ToolButton_Selected.png in Resources */,
 				CD1973ED14B1D2B200CACF5E /* topBarItem_Edit.png in Resources */,
 				CD1973EF14B1D4F600CACF5E /* topBarItem_Tools.png in Resources */,
+				CD7BC79414B7059000313CDB /* RemoteOptions.xib in Resources */,
+				CD7BC79914B70FBE00313CDB /* itemIcon_Export.png in Resources */,
+				CD7BC79A14B70FBE00313CDB /* itemIcon_Find.png in Resources */,
+				CD7BC79B14B70FBE00313CDB /* itemIcon_Minimap.png in Resources */,
+				CD7BC79C14B70FBE00313CDB /* itemIcon_Options.png in Resources */,
+				CD7BC79E14B70FE600313CDB /* itemIcon_Tab.png in Resources */,
+				CD7BC7A014B7100A00313CDB /* CodeFileController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

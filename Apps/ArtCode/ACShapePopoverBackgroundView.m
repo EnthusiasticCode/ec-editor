@@ -15,12 +15,12 @@ static void updatePath(ACShapePopoverBackgroundView *self);
 
 + (CGFloat)arrowBase
 {
-    return 20;
+    return 38;
 }
 
 + (CGFloat)arrowHeight
 {
-    return 15;
+    return 18;
 }
 
 + (UIEdgeInsets)contentViewInsets
@@ -41,7 +41,7 @@ static void updatePath(ACShapePopoverBackgroundView *self);
     
     [self willChangeValueForKey:@"arrowOffset"];
     arrowOffset = value;
-    updatePath(self);
+    [self setNeedsLayout];
     [self didChangeValueForKey:@"arrowOffset"];
 }
 
@@ -51,7 +51,7 @@ static void updatePath(ACShapePopoverBackgroundView *self);
         return;
     [self willChangeValueForKey:@"arrowDirection"];
     arrowDirection = value;
-    updatePath(self);
+    [self setNeedsLayout];
     [self didChangeValueForKey:@"arrowDirection"];
 }
 
@@ -74,6 +74,7 @@ static void updatePath(ACShapePopoverBackgroundView *self);
 - (void)setShadowRadius:(CGFloat)shadowRadius
 {
     self.layer.shadowRadius = shadowRadius;
+    [self setNeedsLayout];
 }
 
 - (CGFloat)shadowOpacity
@@ -84,28 +85,13 @@ static void updatePath(ACShapePopoverBackgroundView *self);
 - (void)setShadowOpacity:(CGFloat)shadowOpacity
 {
     self.layer.shadowOpacity = shadowOpacity;
+    [self setNeedsLayout];
 }
 
 - (void)setShadowOffsetForArrowDirectionUpToAutoOrient:(CGSize)offset
 {
     shadowOffsetForArrowDirectionUpToAutoOrient = offset;
-    updatePath(self);
-}
-
-- (void)setBounds:(CGRect)bounds
-{
-    [super setBounds:bounds];
-    if (CGRectEqualToRect(bounds, self.bounds))
-        return;
-    updatePath(self);
-}
-
-- (void)setFrame:(CGRect)frame
-{
-    [super setFrame:frame];
-    if (CGSizeEqualToSize(frame.size, self.frame.size))
-        return;
-    updatePath(self);
+    [self setNeedsLayout];
 }
 
 #pragma mark - UIView Methods
@@ -114,8 +100,6 @@ static void init(ACShapePopoverBackgroundView *self)
 {
     self->arrowCornerRadius = 2;
     self->cornerRadius = 5;
-    
-    updatePath(self);
 }
 
 - (id)initWithFrame:(CGRect)frame
@@ -141,6 +125,13 @@ static void init(ACShapePopoverBackgroundView *self)
     return [CAShapeLayer class];
 }
 
+- (void)layoutSubviews
+{
+    [super layoutSubviews];
+    
+    updatePath(self);
+}
+
 #pragma mark - Private Methods
 
 static void updatePath(ACShapePopoverBackgroundView *self)
@@ -153,14 +144,14 @@ static void updatePath(ACShapePopoverBackgroundView *self)
     switch (self.arrowDirection)
     {
         case UIPopoverArrowDirectionUp:
-            rect.origin.x += [[self class] arrowHeight];
+            rect.origin.y += [[self class] arrowHeight];
         case UIPopoverArrowDirectionDown:
             rect.size.height -= [[self class] arrowHeight];
             localArrowPosition += rect.size.width / 2;
             break;
             
         case UIPopoverArrowDirectionLeft:
-            rect.origin.y += [[self class] arrowHeight];
+            rect.origin.x += [[self class] arrowHeight];
         case UIPopoverArrowDirectionRight:
             rect.size.width -= [[self class] arrowHeight];
             localArrowPosition += rect.size.height / 2;
@@ -368,7 +359,7 @@ static void updatePath(ACShapePopoverBackgroundView *self)
     layer.path = path;
     
     // Apply path to shadow
-    if (layer.shadowOpacity > 0.)
+    if (layer.shadowOpacity > 0)
     {
         layer.shadowPath = path;
         
