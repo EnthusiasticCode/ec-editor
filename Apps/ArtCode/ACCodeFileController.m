@@ -26,7 +26,6 @@
 
 #import "ACCodeFile.h"
 
-static const void * webViewContext;
 
 @interface ACCodeFileController () {
     UIActionSheet *_toolsActionSheet;

@@ -13,6 +13,26 @@
 
 @synthesize highlightedCharacters, highlightedBackgroundColor;
 
+- (void)setHighlightedCharacters:(NSIndexSet *)value
+{
+    if (value == highlightedCharacters)
+        return;
+    [self willChangeValueForKey:@"highlightedCharacters"];
+    highlightedCharacters = value;
+    [self setNeedsDisplay];
+    [self didChangeValueForKey:@"highlightedCharacters"];
+}
+
+- (void)setHighlightedBackgroundColor:(UIColor *)value
+{
+    if (value == highlightedBackgroundColor)
+        return;
+    [self willChangeValueForKey:@"highlightedBackgroundColor"];
+    highlightedBackgroundColor = value;
+    [self setNeedsDisplay];
+    [self didChangeValueForKey:@"highlightedBackgroundColor"];
+}
+
 - (NSAttributedString *)attributedText
 {
     CTFontRef font = CTFontCreateWithName((__bridge CFStringRef)self.font.fontName, self.font.pointSize, NULL);
