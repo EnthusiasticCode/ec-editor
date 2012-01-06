@@ -31,6 +31,7 @@ static NSString * const _patternCaptureName = @"name";
     NSString *_contents;
     TMScope *__scope;
     NSDictionary *_patternsIncludedByPattern;
+    NSUInteger _generation;
 }
 - (TMSyntax *)_syntax;
 - (TMScope *)_scope;
@@ -81,6 +82,7 @@ static NSString * const _patternCaptureName = @"name";
     ECASSERT(__syntax && _rootScopeIdentifier);
     [__syntax beginContentAccess];
     _patternsIncludedByPattern = [NSMutableDictionary dictionary];
+    _generation = 1;
     _extensions = [[NSMutableDictionary alloc] init];
     [_extensionClasses enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
         if (![rootScopeIdentifier isEqualToString:key])
@@ -139,7 +141,7 @@ static NSString * const _patternCaptureName = @"name";
     {
         @autoreleasepool
         {
-            NSRange currentScopeRange = NSMakeRange(currentScope.baseOffset, currentScope.length);
+            NSRange currentScopeRange = NSMakeRange([currentScope baseOffsetForGeneration:_generation], currentScope.length);
             if (options & TMUnitVisitOptionsRelativeRange)
                 currentScopeRange = intersectionOfRangeRelativeToRange(currentScopeRange, range);
             TMUnitVisitResult result = block(currentScope.identifier, currentScopeRange, currentScope.spelling, currentScope.parent.identifier, [scopeIdentifiersStack copy]);
