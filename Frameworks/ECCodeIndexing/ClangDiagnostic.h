@@ -6,7 +6,7 @@
 //  Copyright (c) 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import "ClangIndexExtension.h"
+#import "TMUnit.h"
 
 @interface ClangDiagnostic : NSObject <ECCodeDiagnostic>
 

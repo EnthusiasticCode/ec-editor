@@ -8,10 +8,13 @@
 
 #import <Foundation/Foundation.h>
 
-@class OnigRegexp;
+@class OnigRegexp, TMSyntax;
 
 @interface TMPattern : NSObject <NSCopying>
 
++ (TMPattern *)patternWithDictionary:(NSDictionary *)dictionary inSyntax:(TMSyntax *)syntax;
+
+- (TMSyntax *)syntax;
 - (NSString *)name;
 - (NSString *)contentName;
 - (OnigRegexp *)match;
@@ -21,5 +24,6 @@
 - (NSDictionary *)beginCaptures;
 - (NSDictionary *)endCaptures;
 - (NSArray *)patterns;
+- (NSString *)include;
 
 @end

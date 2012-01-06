@@ -7,6 +7,7 @@
 //
 
 #import "ClangUnitExtension.h"
+#import "ClangIndexExtension.h"
 #import "ClangCompletionResultSet.h"
 #import "ClangDiagnostic.h"
 #import "ClangHelperFunctions.h"
@@ -61,7 +62,7 @@
     return _clangUnit;
 }
 
-- (id<ECCodeCompletionResultSet>)completionsAtOffset:(NSUInteger)offset
+- (id<TMCompletionResultSet>)completionsAtOffset:(NSUInteger)offset
 {
     return [[ClangCompletionResultSet alloc] initWithCodeUnit:_codeUnit atOffset:offset];
 }

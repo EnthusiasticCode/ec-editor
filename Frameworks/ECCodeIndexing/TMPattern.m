@@ -6,9 +6,10 @@
 //  Copyright (c) 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import "TMPattern+Internal.h"
-#import "TMSyntax+Internal.h"
+#import "TMPattern.h"
+#import "TMSyntax.h"
 #import "OnigRegexp.h"
+#import <ECFoundation/ECWeakDictionary.h>
 
 static NSString * const _patternScopeKey = @"name";
 static NSString * const _patternNameKey = @"name";
@@ -22,7 +23,7 @@ static NSString * const _patternCapturesKey = @"captures";
 static NSString * const _patternPatternsKey = @"patterns";
 static NSString * const _patternIncludeKey = @"include";
 
-static NSArray *_patternsIncludedByPatterns(NSArray *patterns);
+static ECWeakDictionary *_allPatterns;
 
 @interface TMPattern ()
 {
@@ -33,29 +34,38 @@ static NSArray *_patternsIncludedByPatterns(NSArray *patterns);
     NSDictionary *_beginCaptures;
     NSDictionary *_endCaptures;
     NSArray *_patterns;
-    TMSyntax *__syntax;
+    TMSyntax *_syntax;
     NSDictionary *_dictionary;
 }
-- (id)_initWithSyntax:(TMSyntax *)syntax dictionary:(NSDictionary *)dictionary;
-- (TMSyntax *)_syntax;
-- (NSString *)_include;
+- (id)_initWithDictionary:(NSDictionary *)dictionary inSyntax:(TMSyntax *)syntax;
 @end
 
 @implementation TMPattern
 
-+ (NSArray *)patternsWithSyntax:(TMSyntax *)syntax inDictionary:(NSDictionary *)dictionary
++ (void)initialize
 {
-    TMPattern *pattern = [[self alloc] _initWithSyntax:syntax dictionary:dictionary];
-    return _patternsIncludedByPatterns([NSArray arrayWithObject:pattern]);
+    _allPatterns = [[ECWeakDictionary alloc] init];
 }
 
-- (id)_initWithSyntax:(TMSyntax *)syntax dictionary:(NSDictionary *)dictionary
++ (TMPattern *)patternWithDictionary:(NSDictionary *)dictionary inSyntax:(TMSyntax *)syntax
+{
+    TMPattern *pattern = [_allPatterns objectForKey:dictionary];
+    if (!pattern)
+    {
+        pattern = [[self alloc] _initWithDictionary:dictionary inSyntax:syntax];
+        [_allPatterns setObject:pattern forKey:dictionary];
+    }
+    return pattern;
+}
+
+- (id)_initWithDictionary:(NSDictionary *)dictionary inSyntax:(TMSyntax *)syntax
 {
     ECASSERT(syntax && dictionary);
     self = [super init];
     if (!self)
         return nil;
-    __syntax = syntax;
+    _syntax = syntax;
+    [_syntax beginContentAccess];
     _dictionary = dictionary;
     NSString *matchRegex = [dictionary objectForKey:_patternMatchKey];
     if (matchRegex)
@@ -66,12 +76,17 @@ static NSArray *_patternsIncludedByPatterns(NSArray *patterns);
     NSString *endRegex = [dictionary objectForKey:_patternEndKey];
     if (endRegex)
         _end = [OnigRegexp compile:endRegex  options:OnigOptionNotbol | OnigOptionNoteol];
-    ECASSERT(!_match || (![_patterns count] && !_begin && ![self _include] && ![_captures objectForKey:[NSNumber numberWithUnsignedInteger:0]] && ![dictionary objectForKey:_patternBeginCapturesKey] && ![dictionary objectForKey:_patternEndCapturesKey]));
-    ECASSERT(!_begin || _end && ![self _include]);
+    ECASSERT(!_match || (![self patterns] && !_begin && ![self include] && ![_captures objectForKey:[NSNumber numberWithUnsignedInteger:0]] && ![dictionary objectForKey:_patternBeginCapturesKey] && ![dictionary objectForKey:_patternEndCapturesKey]));
+    ECASSERT(!_begin || _end && ![self include]);
     ECASSERT(!_end || _begin);
-    ECASSERT(![self _include] || (![_patterns count] && !_captures && !_beginCaptures && !_endCaptures));
     ECASSERT(![self contentName] || _begin);
     return self;
+}
+
+- (void)dealloc
+{
+    if (_dictionary)
+        [_syntax endContentAccess];
 }
 
 - (id)copyWithZone:(NSZone *)zone
@@ -82,6 +97,11 @@ static NSArray *_patternsIncludedByPatterns(NSArray *patterns);
 - (NSUInteger)hash
 {
     return [_dictionary hash];
+}
+
+- (TMSyntax *)syntax
+{
+    return _syntax;
 }
 
 - (NSString *)name
@@ -150,77 +170,19 @@ static NSArray *_patternsIncludedByPatterns(NSArray *patterns);
 {
     if (!_patterns)
     {
+        if (![_dictionary objectForKey:_patternPatternsKey])
+            return nil;
         NSMutableArray *patterns = [NSMutableArray array];
         for (NSDictionary *dictionary in [_dictionary objectForKey:_patternPatternsKey])
-            [patterns addObjectsFromArray:[[self class] patternsWithSyntax:[self _syntax] inDictionary:dictionary]];
-        _patterns = [patterns count] ? [patterns copy] : (NSArray *)[NSNull null];
+            [patterns addObject:[[self class] patternWithDictionary:dictionary inSyntax:[self syntax]]];
+        _patterns = [patterns copy];
     }
-    return (id)_patterns == [NSNull null] ? nil : _patterns;
+    return _patterns;
 }
 
-- (TMSyntax *)_syntax
-{
-    return __syntax;
-}
-
-- (NSString *)_include
+- (NSString *)include
 {
     return [_dictionary objectForKey:_patternIncludeKey];
 }
 
-- (NSDictionary *)_debugDictionary
-{
-    return _dictionary;
-}
-
 @end
-
-static NSArray *_patternsIncludedByPatterns(NSArray *patterns)
-{
-    NSMutableArray *includedPatterns = [NSMutableArray arrayWithArray:patterns];
-    NSMutableSet *dereferencedPatterns = [NSMutableSet set];
-    NSMutableIndexSet *containerPatternIndexes = [NSMutableIndexSet indexSet];
-    do
-    {
-        [containerPatternIndexes removeAllIndexes];
-        [includedPatterns enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-            if ([obj match] || [obj begin])
-                return;
-            [containerPatternIndexes addIndex:idx];
-        }];
-        [containerPatternIndexes enumerateIndexesWithOptions:NSEnumerationReverse usingBlock:^(NSUInteger idx, BOOL *stop) {
-            TMPattern *containerPattern = [includedPatterns objectAtIndex:idx];
-            if ([dereferencedPatterns containsObject:containerPattern])
-                return;
-            ECASSERT([containerPattern _include] || [containerPattern patterns]);
-            ECASSERT(![containerPattern _include] || ![containerPattern patterns]);
-            if ([containerPattern _include])
-            {
-                unichar firstCharacter = [[containerPattern _include] characterAtIndex:0];
-                if (firstCharacter == '#')
-                {
-                    TMSyntax *patternSyntax = [containerPattern _syntax];
-                    [patternSyntax beginContentAccess];
-                    [includedPatterns addObject:[[TMPattern alloc] _initWithSyntax:patternSyntax dictionary:[[patternSyntax repository] objectForKey:[[containerPattern _include] substringFromIndex:1]]]];
-                    [patternSyntax endContentAccess];
-                }
-                else
-                {
-                    TMSyntax *includedSyntax = (firstCharacter == '$') ? [containerPattern _syntax] : [TMSyntax syntaxWithScope:[containerPattern _include]];
-                    [includedSyntax beginContentAccess];
-                    for (NSDictionary *dictionary in [includedSyntax patternsDictionaries])
-                        [includedPatterns addObject:[[TMPattern alloc] _initWithSyntax:includedSyntax dictionary:dictionary]];
-                    [includedSyntax endContentAccess];
-                }
-            }
-            else
-            {
-                [includedPatterns addObjectsFromArray:[containerPattern patterns]];
-            }
-            [dereferencedPatterns addObject:containerPattern];
-            [includedPatterns removeObjectAtIndex:idx];
-        }];
-    }
-    while ([containerPatternIndexes count]);
-    return includedPatterns;
-}

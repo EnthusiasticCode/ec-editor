@@ -10,7 +10,8 @@
 #import "ACCodeFileCompletionCell.h"
 
 #import <ECFoundation/ECFileBuffer.h>
-#import <ECCodeIndexing/ECCodeIndexing.h>
+#import <ECCodeIndexing/TMIndex.h>
+#import <ECCodeIndexing/TMUnit.h>
 #import <ECUIKit/ECTextRange.h>
 
 #import "ACCodeFileController.h"
@@ -24,7 +25,7 @@
 
 @property (nonatomic, strong) TMIndex *_codeIndex;
 @property (nonatomic, strong) TMUnit *_codeUnit;
-@property (nonatomic, strong) id<ECCodeCompletionResultSet> _completionResults;
+@property (nonatomic, strong) id<TMCompletionResultSet> _completionResults;
 
 @end
 
@@ -76,7 +77,7 @@
     return _codeUnit;
 }
 
-- (id<ECCodeCompletionResultSet>)_completionResults
+- (id<TMCompletionResultSet>)_completionResults
 {
     ECASSERT(self.targetCodeFileController.codeFile.fileBuffer.length > self.offsetInDocumentForCompletions);
     
@@ -140,7 +141,7 @@
         cell.typeLabelSize = 0;
     }
     
-    id<ECCodeCompletionResult> result = [self._completionResults completionResultAtIndex:[indexPath indexAtPosition:1]];
+    id<TMCompletionResult> result = [self._completionResults completionResultAtIndex:[indexPath indexAtPosition:1]];
     
     // Kind
     cell.kindImageView.image = [UIImage imageNamed:[NSString stringWithFormat:@"completionKind_%d", [result cursorKind]]];
@@ -149,7 +150,7 @@
     NSInteger parenDepth = 0;
     NSMutableString *definition = [NSMutableString new];
     NSString *resultType = nil;
-    for (id<ECCodeCompletionChunk> chunk in [[result completionString] completionChunks])
+    for (id<TMCompletionChunk> chunk in [[result completionString] completionChunks])
     {
         switch ([chunk kind]) {
             case CXCompletionChunk_ResultType:
@@ -217,9 +218,9 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     // Insert selected completion
-    id<ECCodeCompletionResult> result = [self._completionResults completionResultAtIndex:[indexPath indexAtPosition:1]];
+    id<TMCompletionResult> result = [self._completionResults completionResultAtIndex:[indexPath indexAtPosition:1]];
     NSMutableString *completionString = [NSMutableString new];
-    for (id<ECCodeCompletionChunk> chunk in [[result completionString] completionChunks])
+    for (id<TMCompletionChunk> chunk in [[result completionString] completionChunks])
     {
 //        NSLog(@"%d - %@", [chunk kind], [chunk text]);
         switch ([chunk kind]) {

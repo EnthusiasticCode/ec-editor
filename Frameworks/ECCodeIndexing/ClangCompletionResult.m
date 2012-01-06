@@ -29,7 +29,7 @@
     return self;
 }
 
-- (id<ECCodeCompletionString>)completionString
+- (id<TMCompletionString>)completionString
 {
     return _completionString;
 }
