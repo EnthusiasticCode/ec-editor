@@ -6,7 +6,7 @@
 //  Copyright (c) 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import "ClangIndexExtension.h"
+#import "TMUnit+Internal.h"
 
 @interface ClangUnitExtension : NSObject <TMUnitExtension>
 

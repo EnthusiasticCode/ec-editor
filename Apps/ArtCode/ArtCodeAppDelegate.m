@@ -9,8 +9,6 @@
 #import "ArtCodeAppDelegate.h"
 
 #import <ECFoundation/NSURL+ECAdditions.h>
-#import <ECCodeIndexing/TMBundle.h>
-#import <ECCodeIndexing/TMTheme.h>
 #import <ECUIKit/ECCodeViewBase.h>
 #import <ECUIKit/UIControl+BlockAction.h>
 
@@ -41,9 +39,6 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    [TMBundle setBundleDirectory:[[NSBundle mainBundle] bundleURL]];
-    [TMBundle loadAllBundles];
-    
     UIFont *defaultFont = [UIFont styleFontWithSize:14];    
 
     ////////////////////////////////////////////////////////////////////////////

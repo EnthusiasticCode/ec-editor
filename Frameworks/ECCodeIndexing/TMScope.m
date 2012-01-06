@@ -11,6 +11,8 @@
 @interface TMScope ()
 {
     NSMutableArray *_children;
+    NSUInteger _baseOffset;
+    NSUInteger _generation;
 }
 @end
 
@@ -98,6 +100,31 @@
         _children = [NSMutableArray array];
     [_children addObject:childScope];
     return childScope;
+}
+
+- (NSUInteger)baseOffsetForGeneration:(NSUInteger)generation
+{
+    if (generation <= _generation)
+        return _baseOffset;
+    _generation = generation;
+    if (!self.parent)
+    {
+        _baseOffset = self.offset;
+    }
+    else
+    {
+        NSUInteger childIndex = [self.parent.children indexOfObject:self];
+        if (!childIndex)
+        {
+            _baseOffset = self.offset + [self.parent baseOffsetForGeneration:generation];
+        }
+        else
+        {
+            TMScope *previousSibling = [self.parent.children objectAtIndex:childIndex - 1];
+            _baseOffset = self.offset + [previousSibling baseOffsetForGeneration:generation] + previousSibling.length;
+        }
+    }
+    return _baseOffset;
 }
 
 @end

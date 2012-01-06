@@ -11,12 +11,18 @@
 
 @interface TMSyntax : NSObject <NSDiscardableContent>
 
+/// A dictionary containing all syntaxes indexed by scopeIdentifier
++ (NSDictionary *)allSyntaxes;
 + (TMSyntax *)syntaxWithScope:(NSString *)scope;
 + (TMSyntax *)syntaxForFileBuffer:(ECFileBuffer *)fileBuffer;
 
+- (id)initWithFileURL:(NSURL *)fileURL;
+
 - (NSString *)name;
 - (NSString *)scopeIdentifier;
+
 /// Content:
+- (NSDictionary *)repository;
 - (NSArray *)patterns;
 
 @end

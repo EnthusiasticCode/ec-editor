@@ -68,7 +68,7 @@
     return _completionChunks;
 }
 
-- (id<ECCodeCompletionChunk>)typedTextChunk
+- (id<TMCompletionChunk>)typedTextChunk
 {
     return _typedTextChunk;
 }

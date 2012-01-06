@@ -6,7 +6,8 @@
 //  Copyright (c) 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import "ECCodeIndexing+Internal.h"
+#import "TMUnit+Internal.h"
+#import "TMIndex+Internal.h"
 #import <ECFoundation/ECFileBuffer.h>
 #import "TMScope.h"
 #import "TMBundle.h"
@@ -29,6 +30,8 @@ static NSString * const _patternCaptureName = @"name";
     NSMutableDictionary *_firstMatches;
     NSString *_contents;
     TMScope *__scope;
+    NSDictionary *_patternsIncludedByPattern;
+    NSUInteger _generation;
 }
 - (TMSyntax *)_syntax;
 - (TMScope *)_scope;
@@ -37,6 +40,8 @@ static NSString * const _patternCaptureName = @"name";
 - (NSUInteger)_addChildScopesToScope:(TMScope *)scope inRange:(NSRange)range relativeToOffset:(NSUInteger)offset withPatterns:(NSArray *)patterns stopOnRegexp:(OnigRegexp *)regexp stopMatch:(OnigResult **)stopMatch;
 - (NSUInteger)_addChildScopesToScope:(TMScope *)scope inRange:(NSRange)range relativeToOffset:(NSUInteger)offset withRegexp:(OnigRegexp *)regexp name:(NSString *)name captures:(NSDictionary *)captures;
 - (OnigResult *)_firstMatchInRange:(NSRange)range forRegexp:(OnigRegexp *)regexp;
+- (NSArray *)_patternsIncludedByPatterns:(NSArray *)patterns;
+- (NSArray *)_patternsIncludedByPattern:(TMPattern *)pattern;
 @end
 
 @implementation TMUnit
@@ -76,6 +81,8 @@ static NSString * const _patternCaptureName = @"name";
     }
     ECASSERT(__syntax && _rootScopeIdentifier);
     [__syntax beginContentAccess];
+    _patternsIncludedByPattern = [NSMutableDictionary dictionary];
+    _generation = 1;
     _extensions = [[NSMutableDictionary alloc] init];
     [_extensionClasses enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
         if (![rootScopeIdentifier isEqualToString:key])
@@ -132,35 +139,37 @@ static NSString * const _patternCaptureName = @"name";
     NSMutableArray *scopeIdentifiersStack = [NSMutableArray arrayWithObject:currentScope];
     while (currentScope)
     {
-        NSLog(@"%@: %d>{%d, %d}", currentScope.identifier, [scopeIdentifiersStack count], currentScope.offset, currentScope.length);
-        NSRange currentScopeRange = NSMakeRange(currentScope.baseOffset, currentScope.length);
-        if (options & TMUnitVisitOptionsRelativeRange)
-            currentScopeRange = intersectionOfRangeRelativeToRange(currentScopeRange, range);
-        TMUnitVisitResult result = block(currentScope.identifier, currentScopeRange, currentScope.spelling, currentScope.parent.identifier, [scopeIdentifiersStack copy]);
-        if (result == TMUnitVisitResultBreak)
-            break;
-        if (result == TMUnitVisitResultRecurse && currentScope.children)
+        @autoreleasepool
         {
-            currentScope = [currentScope.children objectAtIndex:0];
-            [scopeIdentifiersStack addObject:[currentScope identifier]];
-            continue;
-        }
-        while (currentScope)
-        {
-            NSUInteger currentScopeIndex = [currentScope.parent.children indexOfObject:currentScope];
-            [scopeIdentifiersStack removeLastObject];
-            if (currentScopeIndex + 1 < [currentScope.parent.children count])
-            {
-                currentScope = [currentScope.parent.children objectAtIndex:currentScopeIndex + 1];
-                [scopeIdentifiersStack addObject:[currentScope identifier]];
+            NSRange currentScopeRange = NSMakeRange([currentScope baseOffsetForGeneration:_generation], currentScope.length);
+            if (options & TMUnitVisitOptionsRelativeRange)
+                currentScopeRange = intersectionOfRangeRelativeToRange(currentScopeRange, range);
+            TMUnitVisitResult result = block(currentScope.identifier, currentScopeRange, currentScope.spelling, currentScope.parent.identifier, [scopeIdentifiersStack copy]);
+            if (result == TMUnitVisitResultBreak)
                 break;
+            if (result == TMUnitVisitResultRecurse && currentScope.children)
+            {
+                currentScope = [currentScope.children objectAtIndex:0];
+                [scopeIdentifiersStack addObject:[currentScope identifier]];
+                continue;
             }
-            currentScope = currentScope.parent;
+            while (currentScope)
+            {
+                NSUInteger currentScopeIndex = [currentScope.parent.children indexOfObject:currentScope];
+                [scopeIdentifiersStack removeLastObject];
+                if (currentScopeIndex + 1 < [currentScope.parent.children count])
+                {
+                    currentScope = [currentScope.parent.children objectAtIndex:currentScopeIndex + 1];
+                    [scopeIdentifiersStack addObject:[currentScope identifier]];
+                    break;
+                }
+                currentScope = currentScope.parent;
+            }
         }
     }
 }
 
-- (id<ECCodeCompletionResultSet>)completionsAtOffset:(NSUInteger)offset
+- (id<TMCompletionResultSet>)completionsAtOffset:(NSUInteger)offset
 {
     return nil;
 }
@@ -220,7 +229,7 @@ static NSString * const _patternCaptureName = @"name";
     }
     if ([pattern beginCaptures])
         offset = [self _addChildScopesToScope:currentScope inRange:range relativeToOffset:offset withRegexp:[pattern begin] name:[[[pattern beginCaptures] objectForKey:@"0"] objectForKey:_patternCaptureName] captures:[pattern beginCaptures]];
-    NSRange childPatternsRange = NSMakeRange(NSMaxRange([beginResult bodyRange]), range.length - [beginResult bodyRange].length);
+    NSRange childPatternsRange = NSMakeRange(NSMaxRange([beginResult bodyRange]), NSMaxRange(range) - NSMaxRange([beginResult bodyRange]));
     NSString *patternContentName = [pattern contentName];
     TMScope *spanContentScope = nil;
     if (patternContentName)
@@ -252,6 +261,7 @@ static NSString * const _patternCaptureName = @"name";
 
 - (NSUInteger)_addChildScopesToScope:(TMScope *)scope inRange:(NSRange)range relativeToOffset:(NSUInteger)offset withPatterns:(NSArray *)patterns stopOnRegexp:(OnigRegexp *)regexp stopMatch:(OnigResult *__autoreleasing *)stopMatch
 {
+    patterns = [self _patternsIncludedByPatterns:patterns];
     BOOL matchFound;
     do
     {
@@ -348,6 +358,72 @@ static NSString * const _patternCaptureName = @"name";
     else
         [_firstMatches setObject:[NSNull null] forKey:regexp];
     return result;
+}
+
+- (NSArray *)_patternsIncludedByPatterns:(NSArray *)patterns
+{
+    NSMutableArray *includedPatterns = [NSMutableArray array];
+    for (TMPattern *pattern in patterns)
+        [includedPatterns addObjectsFromArray:[self _patternsIncludedByPattern:pattern]];
+    return includedPatterns;
+}
+
+- (NSArray *)_patternsIncludedByPattern:(TMPattern *)pattern
+{
+    NSMutableArray *includedPatterns = [_patternsIncludedByPattern objectForKey:pattern];
+    if (includedPatterns)
+        return includedPatterns;
+    includedPatterns = [NSMutableArray arrayWithObject:pattern];
+    NSMutableSet *dereferencedPatterns = [NSMutableSet set];
+    NSMutableIndexSet *containerPatternIndexes = [NSMutableIndexSet indexSet];
+    do
+    {
+        [containerPatternIndexes removeAllIndexes];
+        [includedPatterns enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+            if ([obj match] || [obj begin])
+                return;
+            [containerPatternIndexes addIndex:idx];
+        }];
+        [containerPatternIndexes enumerateIndexesWithOptions:NSEnumerationReverse usingBlock:^(NSUInteger idx, BOOL *stop) {
+            TMPattern *containerPattern = [includedPatterns objectAtIndex:idx];
+            [includedPatterns removeObjectAtIndex:idx];
+            if ([dereferencedPatterns containsObject:containerPattern])
+                return;
+            ECASSERT([containerPattern include] || [containerPattern patterns]);
+            ECASSERT(![containerPattern include] || ![containerPattern patterns]);
+            if ([containerPattern include])
+            {
+                unichar firstCharacter = [[containerPattern include] characterAtIndex:0];
+                if (firstCharacter == '#')
+                {
+                    TMSyntax *patternSyntax = [containerPattern syntax];
+                    [patternSyntax beginContentAccess];
+                    [includedPatterns addObject:[TMPattern patternWithDictionary:[[patternSyntax repository] objectForKey:[[containerPattern include] substringFromIndex:1]] inSyntax:patternSyntax]];
+                    [patternSyntax endContentAccess];
+                }
+                else
+                {
+                    ECASSERT(firstCharacter != '$' || [[containerPattern include] isEqualToString:@"$base"] || [[containerPattern include] isEqualToString:@"$self"]);
+                    TMSyntax *includedSyntax = nil;
+                    if ([[containerPattern include] isEqualToString:@"$base"])
+                        includedSyntax = [self _syntax];
+                    else if ([[containerPattern include] isEqualToString:@"$self"])
+                        includedSyntax = [containerPattern syntax];
+                    else
+                        includedSyntax = [TMSyntax syntaxWithScope:[containerPattern include]];
+                    [includedSyntax beginContentAccess];
+                    for (TMPattern *pattern in [includedSyntax patterns])
+                        [includedPatterns addObject:pattern];
+                    [includedSyntax endContentAccess];
+                }
+            }
+            else
+                [includedPatterns addObjectsFromArray:[containerPattern patterns]];
+            [dereferencedPatterns addObject:containerPattern];
+        }];
+    }
+    while ([containerPatternIndexes count]);
+    return includedPatterns;
 }
 
 @end

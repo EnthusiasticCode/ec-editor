@@ -12,13 +12,13 @@
 {
     enum CXCompletionChunkKind _kind;
     NSString *_text;
-    id<ECCodeCompletionString>_completionString;
+    id<TMCompletionString>_completionString;
 }
 @end
 
 @implementation ClangCompletionChunk
 
-- (id)initWithKind:(enum CXCompletionChunkKind)kind text:(NSString *)text completionString:(id<ECCodeCompletionString>)completionString
+- (id)initWithKind:(enum CXCompletionChunkKind)kind text:(NSString *)text completionString:(id<TMCompletionString>)completionString
 {
     self = [super init];
     if (!self)
@@ -39,7 +39,7 @@
     return _text;
 }
 
-- (id<ECCodeCompletionString>)completionString
+- (id<TMCompletionString>)completionString
 {
     return _completionString;
 }

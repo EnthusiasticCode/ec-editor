@@ -6,9 +6,9 @@
 //  Copyright (c) 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import "ClangIndexExtension.h"
+#import "TMUnit.h"
 
-@interface ClangCompletionString : NSObject <ECCodeCompletionString>
+@interface ClangCompletionString : NSObject <TMCompletionString>
 
 - (id)initWithClangCompletionString:(CXCompletionString)clangCompletionString;
 

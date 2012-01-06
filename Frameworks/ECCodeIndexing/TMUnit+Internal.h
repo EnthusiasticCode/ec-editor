@@ -1,23 +1,13 @@
 //
-//  ECCodeIndexing+Internal.h
+//  TMUnit+Internal.h
 //  ECCodeIndexing
 //
-//  Created by Uri Baghin on 1/2/12.
+//  Created by Uri Baghin on 1/6/12.
 //  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 //
 
-#import "ECCodeIndexing.h"
-@class ECFileBuffer;
-
-@interface TMIndex (Internal)
-
-/// Extension support
-/// Register a class as an extension of ECCodeIndex.
-+ (void)registerExtension:(Class)extensionClass forKey:(id)key;
-
-- (id)extensionForKey:(id)key;
-
-@end
+#import "TMUnit.h"
+@class TMIndex;
 
 @interface TMUnit (Internal)
 
@@ -26,11 +16,6 @@
 - (id)initWithIndex:(TMIndex *)index fileBuffer:(ECFileBuffer *)fileBuffer rootScopeIdentifier:(NSString *)rootScopeIdentifier;
 
 - (id)extensionForKey:(id)key;
-
-@end
-
-@protocol TMIndexExtension <NSObject>
-
 
 @end
 
