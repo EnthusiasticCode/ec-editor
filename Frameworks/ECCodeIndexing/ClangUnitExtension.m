@@ -28,9 +28,12 @@
 
 + (void)load
 {
-    NSArray *languages = [NSArray arrayWithObjects:@"c", @"objc", @"objc++", @"c++", nil];
-    for (NSString *language in languages)
-        [TMUnit registerExtension:self forLanguageIdentifier:language forKey:ClangExtensionKey];
+    @autoreleasepool
+    {
+        NSArray *languages = [NSArray arrayWithObjects:@"c", @"objc", @"objc++", @"c++", nil];
+        for (NSString *language in languages)
+            [TMUnit registerExtension:self forLanguageIdentifier:language forKey:ClangExtensionKey];
+    }
 }
 
 - (id)initWithCodeUnit:(TMUnit *)codeUnit
