@@ -7,6 +7,7 @@
 //
 
 #import "ClangUnitExtension.h"
+#import "ClangIndexExtension.h"
 #import "ClangCompletionResultSet.h"
 #import "ClangDiagnostic.h"
 #import "ClangHelperFunctions.h"
@@ -27,9 +28,12 @@
 
 + (void)load
 {
-    NSArray *languages = [NSArray arrayWithObjects:@"c", @"objc", @"objc++", @"c++", nil];
-    for (NSString *language in languages)
-        [TMUnit registerExtension:self forLanguageIdentifier:language forKey:ClangExtensionKey];
+    @autoreleasepool
+    {
+        NSArray *languages = [NSArray arrayWithObjects:@"c", @"objc", @"objc++", @"c++", nil];
+        for (NSString *language in languages)
+            [TMUnit registerExtension:self forLanguageIdentifier:language forKey:ClangExtensionKey];
+    }
 }
 
 - (id)initWithCodeUnit:(TMUnit *)codeUnit
@@ -61,7 +65,7 @@
     return _clangUnit;
 }
 
-- (id<ECCodeCompletionResultSet>)completionsAtOffset:(NSUInteger)offset
+- (id<TMCompletionResultSet>)completionsAtOffset:(NSUInteger)offset
 {
     return [[ClangCompletionResultSet alloc] initWithCodeUnit:_codeUnit atOffset:offset];
 }

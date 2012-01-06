@@ -8,6 +8,7 @@
 
 #import "ClangCompletionResultSet.h"
 #import "ClangUnitExtension.h"
+#import "ClangIndexExtension.h"
 #import "ClangCompletionResult.h"
 #import "ClangHelperFunctions.h"
 #import <ECFoundation/ECFileBuffer.h>
@@ -125,7 +126,7 @@
     return _filteredResultRange.length;
 }
 
-- (id<ECCodeCompletionResult>)completionResultAtIndex:(NSUInteger)resultIndex
+- (id<TMCompletionResult>)completionResultAtIndex:(NSUInteger)resultIndex
 {
     return [[ClangCompletionResult alloc] initWithClangCompletionResult:_clangResults->Results[resultIndex + _filteredResultRange.location]];
 }

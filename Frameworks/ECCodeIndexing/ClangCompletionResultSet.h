@@ -6,9 +6,9 @@
 //  Copyright (c) 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import "ClangIndexExtension.h"
+#import "TMUnit.h"
 
-@interface ClangCompletionResultSet : NSObject <ECCodeCompletionResultSet>
+@interface ClangCompletionResultSet : NSObject <TMCompletionResultSet>
 
 - (id)initWithCodeUnit:(TMUnit *)codeUnit atOffset:(NSUInteger)offset;
 

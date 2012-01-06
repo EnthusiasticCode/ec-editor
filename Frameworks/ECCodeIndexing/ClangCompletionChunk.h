@@ -6,10 +6,10 @@
 //  Copyright (c) 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import "ClangIndexExtension.h"
+#import "TMUnit.h"
 
-@interface ClangCompletionChunk : NSObject <ECCodeCompletionChunk>
+@interface ClangCompletionChunk : NSObject <TMCompletionChunk>
 
-- (id)initWithKind:(enum CXCompletionChunkKind)kind text:(NSString *)text completionString:(id<ECCodeCompletionString>)completionString;
+- (id)initWithKind:(enum CXCompletionChunkKind)kind text:(NSString *)text completionString:(id<TMCompletionString>)completionString;
 
 @end

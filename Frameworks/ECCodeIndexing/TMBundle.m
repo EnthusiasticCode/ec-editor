@@ -6,13 +6,22 @@
 //  Copyright (c) 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import "TMBundle+Internal.h"
-#import "TMSyntax+Internal.h"
+#import "TMBundle.h"
+#import "TMSyntax.h"
 
 static NSString * const _bundleExtension = @"tmbundle";
 static NSString * const _syntaxDirectory = @"Syntaxes";
 
 static NSURL *_bundleDirectory;
+static NSArray *_allBundles;
+
+@interface TMBundle ()
+{
+    NSURL *_bundleURL;
+    NSArray *_syntaxes;
+}
+- (id)_initWithBundleURL:(NSURL *)bundleURL;
+@end
 
 @implementation TMBundle
 
@@ -20,6 +29,8 @@ static NSURL *_bundleDirectory;
 
 + (NSURL *)bundleDirectory
 {
+    if (!_bundleDirectory)
+        _bundleDirectory = [[NSBundle mainBundle] bundleURL];
     return _bundleDirectory;
 }
 
@@ -28,23 +39,55 @@ static NSURL *_bundleDirectory;
     _bundleDirectory = bundleDirectory;
 }
 
-+ (void)loadAllBundles
++ (NSArray *)allBundles
 {
-    [TMSyntax loadAllSyntaxes];
+    if (!_allBundles)
+    {
+        NSMutableArray *allBundles = [NSMutableArray array];
+        NSFileManager *fileManager = [[NSFileManager alloc] init];
+        for (NSURL *bundleURL in [fileManager contentsOfDirectoryAtURL:[self bundleDirectory] includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles error:NULL])
+        {
+            if (![[bundleURL pathExtension] isEqualToString:_bundleExtension])
+                continue;
+            [allBundles addObject:[[self alloc] _initWithBundleURL:bundleURL]];
+        }
+        _allBundles = [allBundles copy];
+    }
+    return _allBundles;
 }
 
-+ (NSArray *)syntaxFileURLs
+- (id)_initWithBundleURL:(NSURL *)bundleURL
 {
-    NSMutableArray *syntaxFileURLs = [NSMutableArray array];
-    NSFileManager *fileManager = [[NSFileManager alloc] init];
-    for (NSURL *bundleURL in [fileManager contentsOfDirectoryAtURL:[self bundleDirectory] includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles error:NULL])
+    ECASSERT(bundleURL);
+    self = [super init];
+    if (!self)
+        return nil;
+    _bundleURL = bundleURL;
+    return self;
+}
+
+- (NSString *)name
+{
+    return [[_bundleURL lastPathComponent] stringByDeletingPathExtension];
+}
+
+- (NSArray *)syntaxes
+{
+    if (!_syntaxes)
     {
-        if (![[bundleURL pathExtension] isEqualToString:_bundleExtension])
-            continue;
-        for (NSURL *syntaxURL in [fileManager contentsOfDirectoryAtURL:[bundleURL URLByAppendingPathComponent:_syntaxDirectory] includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles error:NULL])
-            [syntaxFileURLs addObject:syntaxURL];
+        NSMutableArray *syntaxes = [NSMutableArray array];
+        NSFileManager *fileManager = [[NSFileManager alloc] init];
+        for (NSURL *syntaxURL in [fileManager contentsOfDirectoryAtURL:[_bundleURL URLByAppendingPathComponent:_syntaxDirectory] includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles error:NULL])
+        {
+            TMSyntax *syntax = [[TMSyntax alloc] initWithFileURL:syntaxURL];
+            if (!syntax)
+                continue;
+            [syntax endContentAccess];
+            [syntaxes addObject:syntax];
+        }
+        _syntaxes = [syntaxes copy];
     }
-    return syntaxFileURLs;
+    return _syntaxes;
 }
 
 @end

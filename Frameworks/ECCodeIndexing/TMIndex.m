@@ -6,8 +6,8 @@
 //  Copyright 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import "ECCodeIndexing.h"
-#import "ECCodeIndexing+Internal.h"
+#import "TMIndex+Internal.h"
+#import "TMUnit+Internal.h"
 #import "TMSyntax.h"
 #import <ECFoundation/ECCache.h>
 #import <ECFoundation/ECFileBuffer.h>
