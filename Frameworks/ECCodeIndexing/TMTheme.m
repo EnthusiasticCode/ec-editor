@@ -11,7 +11,6 @@
 #import "UIColor+HexColor.h"
 
 NSString * const TMThemeBackgroundColorAttributeName = @"BackgroundColor";
-NSString * const TMThemeFontStyleAttributeName = @"FontStyle";
 
 static NSString * const _themeFileExtension = @"tmTheme";
 static NSString * const _themeNameKey = @"name";
@@ -19,6 +18,10 @@ static NSString * const _themeSettingsKey = @"settings";
 static NSString * const _themeSettingsNameKey = @"name";
 static NSString * const _themeSettingsScopeKey = @"scope";
 
+static CTFontRef _defaultFont = NULL;
+static CTFontRef _defaultItalicFont = NULL;
+static CTFontRef _defaultBoldFont = NULL;
+static NSDictionary *_defaultAttributes = nil;
 
 @interface TMTheme () {
     NSArray *_settingsOrderedScopes;
@@ -42,14 +45,32 @@ static NSString * const _themeSettingsScopeKey = @"scope";
     return [[self alloc] initWithFileURL:[bundle URLForResource:name withExtension:_themeFileExtension]];
 }
 
++ (NSDictionary *)defaultAttributes
+{
+    // TODO load from application preference plist
+    if (!_defaultFont) {
+        _defaultFont = CTFontCreateWithName((__bridge CFStringRef)@"Inconsolata-dz", 14, NULL);
+        _defaultItalicFont = CTFontCreateCopyWithSymbolicTraits(_defaultFont, 0, NULL, kCTFontItalicTrait, kCTFontItalicTrait);
+        _defaultBoldFont = CTFontCreateCopyWithSymbolicTraits(_defaultFont, 0, NULL, kCTFontBoldTrait, kCTFontBoldTrait);
+    }
+    if (!_defaultAttributes)
+    {
+        _defaultAttributes = [NSDictionary dictionaryWithObjectsAndKeys:
+                              (__bridge id)_defaultFont, kCTFontAttributeName,
+                              [NSNumber numberWithInt:0], kCTLigatureAttributeName, nil];
+    }
+    return _defaultAttributes;
+}
+
 #pragma mark - Properties
 
-@synthesize fileURL = _fileURL;
-@synthesize name = _name;
-@synthesize settings = _settings;
+@synthesize fileURL = _fileURL, name = _name, settings = _settings;
 
 - (id)initWithFileURL:(NSURL *)fileURL
 {
+    // Initialize default attributes
+    [[self class] defaultAttributes];
+    
     if (!(self = [super init]))
         return nil;
     
@@ -79,11 +100,22 @@ static NSString * const _themeSettingsScopeKey = @"scope";
         [[plistSetting objectForKey:_themeSettingsKey] enumerateKeysAndObjectsUsingBlock:^(NSString *key, NSString *value, BOOL *stop) {
             ECASSERT([value isKindOfClass:[NSString class]]);
             
-            if ([key isEqualToString:@"fontStyle"]) {
-                [setting setObject:value forKey:TMThemeFontStyleAttributeName];
+            if ([key isEqualToString:@"fontStyle"]) { // italic, bold, underline
+                if ([value isEqualToString:@"italic"] && _defaultItalicFont) {
+                    [setting setObject:(__bridge id)_defaultItalicFont forKey:(__bridge id)kCTFontAttributeName];
+                }
+                else if ([value isEqualToString:@"bold"] && _defaultBoldFont) {
+                    [setting setObject:(__bridge id)_defaultBoldFont forKey:(__bridge id)kCTFontAttributeName];
+                }
+                else if ([value isEqualToString:@"underline"]) {
+                    [setting setObject:[NSNumber numberWithUnsignedInt:kCTUnderlineStyleSingle] forKey:(__bridge id)kCTUnderlineStyleAttributeName];
+                }
             }
             else if ([key isEqualToString:@"foreground"]) {
                 [setting setObject:(__bridge id)[UIColor colorWithHexString:value].CGColor forKey:(__bridge id)kCTForegroundColorAttributeName];
+            }
+            else if ([key isEqualToString:@"background"]) {
+                [setting setObject:(__bridge id)[UIColor colorWithHexString:value].CGColor forKey:TMThemeBackgroundColorAttributeName];
             }
             else {
                 [setting setObject:value forKey:key];
@@ -116,8 +148,6 @@ static NSString * const _themeSettingsScopeKey = @"scope";
 
 - (NSDictionary *)attributesForScopeIdentifier:(NSString *)scopeIdentifier
 {
-    // TODO premap every key of the settings with CT attributes
-    
     NSMutableDictionary *attributes = [NSMutableDictionary dictionary];
     [_settingsOrderedScopes enumerateObjectsUsingBlock:^(NSString *settingScope, NSUInteger idx, BOOL *stop) {
         if (![scopeIdentifier hasPrefix:settingScope])

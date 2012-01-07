@@ -9,17 +9,24 @@
 #import <UIKit/UIKit.h>
 
 extern NSString *const TMThemeBackgroundColorAttributeName;
-extern NSString *const TMThemeFontStyleAttributeName;
 
 @interface TMTheme : NSObject
 
-+ (TMTheme *)themeWithName:(NSString *)name bundle:(NSBundle *)bundle;
-
+/// Initialize a theme with the URL of it's .tmbundle file.
 - (id)initWithFileURL:(NSURL *)url;
+
+/// The name of the theme
+@property (nonatomic, strong, readonly) NSString *name;
 
 /// Returns an array of Core Text attributes applicable to an NSAttributedString for the given scopes stack.
 - (NSDictionary *)attributesForScopeIdentifier:(NSString *)scopeIdentifier;
 
-@property (nonatomic, strong, readonly) NSString *name;
+#pragma mark Default styles
+
+/// Creates a theme from a name and bundle.
++ (TMTheme *)themeWithName:(NSString *)name bundle:(NSBundle *)bundle;
+
+/// Returns a dictionary containing the default attributes of a string, common to every theme item.
++ (NSDictionary *)defaultAttributes;
 
 @end

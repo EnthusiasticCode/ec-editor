@@ -62,6 +62,7 @@ static void * directoryPresenterFileURLsObservingContext;
 @interface ACFileTableController () {
     UIPopoverController *_popover;
     NSTimer *filterDebounceTimer;
+    NSArray *extensions;
 }
 @property (nonatomic, strong) ECDirectoryPresenter *directoryPresenter;
 @property (nonatomic, strong) NSString *filterString;
@@ -75,9 +76,7 @@ static void * directoryPresenterFileURLsObservingContext;
 #pragma mark - Implementations
 #pragma mark -
 
-@implementation ACFileTableController {
-    NSArray *extensions;
-}
+@implementation ACFileTableController
 
 #pragma mark - Properties
 
@@ -298,8 +297,9 @@ static void * directoryPresenterFileURLsObservingContext;
         cell = [[ACHighlightTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:FileCellIdentifier];        
     }
     
-    // Configure the cell...
-    NSString *fileName = [[[self.filteredFileURLs objectAtIndex:indexPath.row] fileURL] lastPathComponent];
+    // Configure the cell
+    FilteredFileURLWrapper *fileWrapper = [self.filteredFileURLs objectAtIndex:indexPath.row];
+    NSString *fileName = [[fileWrapper fileURL] lastPathComponent];
     if (![fileName pathExtension])
         cell.imageView.image = [UIImage styleGroupImageWithSize:CGSizeMake(32, 32)];
     else
@@ -307,8 +307,16 @@ static void * directoryPresenterFileURLsObservingContext;
                                                              color:[[fileName pathExtension] isEqualToString:@"h"] ? [UIColor styleFileRedColor] : [UIColor styleFileBlueColor]
                                                               text:[fileName pathExtension]];
     cell.highlightLabel.text = fileName;
-    cell.highlightLabel.highlightedCharacters = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(2, 2)];
-    cell.highlightLabel.highlightedBackgroundColor = [UIColor orangeColor];
+    
+    if ([fileWrapper.hitMask count] > 0)
+    {
+        cell.highlightLabel.highlightedBackgroundColor = [UIColor colorWithRed:225.0/255.0 green:220.0/255.0 blue:92.0/255.0 alpha:1];
+        cell.highlightLabel.highlightedCharacters = fileWrapper.hitMask;
+    }
+    else
+    {
+        cell.highlightLabel.highlightedCharacters = nil;
+    }
     return cell;
 }
 
@@ -325,24 +333,18 @@ static void * directoryPresenterFileURLsObservingContext;
 
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
 {
-    // Calculate filter string
-    NSMutableString *filterString = [textField.text mutableCopy];
-    [filterString replaceCharactersInRange:range withString:string];
-    
     // Apply filter to filterController with .3 second debounce
     [filterDebounceTimer invalidate];
     filterDebounceTimer = [NSTimer scheduledTimerWithTimeInterval:0.3 usingBlock:^(NSTimer *timer) {
-        self.filterString = filterString;
+        self.filterString = textField.text;
     } repeats:NO];
 
-    if ([textField.rightView isKindOfClass:[UIButton class]])
-    {
-        if ([filterString length])
-            [(UIButton *)textField.rightView setSelected:YES];
-        else
-            [(UIButton *)textField.rightView setSelected:NO];            
-    }
-    
+    return YES;
+}
+
+- (BOOL)textFieldShouldClear:(UITextField *)textField
+{
+    self.filterString = nil;
     return YES;
 }
 
