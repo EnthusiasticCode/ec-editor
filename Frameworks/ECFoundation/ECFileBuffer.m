@@ -115,7 +115,7 @@ static dispatch_queue_t _fileBuffersQueue;
     dispatch_sync(_fileAccessQueue, ^{
         stringInRange = [[_contents string] substringWithRange:range];
     });
-    return stringInRange;
+    return [stringInRange copy];
 }
 
 - (NSString *)string
@@ -124,7 +124,7 @@ static dispatch_queue_t _fileBuffersQueue;
     dispatch_sync(_fileAccessQueue, ^{
         string = [_contents string];
     });
-    return string;
+    return [string copy];
 }
 
 - (void)replaceCharactersInRange:(NSRange)range withString:(NSString *)string

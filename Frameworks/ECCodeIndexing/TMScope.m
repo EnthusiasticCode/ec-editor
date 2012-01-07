@@ -76,6 +76,7 @@
 {
     if (![_children count])
         return nil;
+#warning TODO URI this copy here is too expensive and is called way too much, fix it somehow
     return [_children copy];
 }
 
