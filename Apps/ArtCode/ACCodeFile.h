@@ -15,7 +15,6 @@
 
 @property (nonatomic, strong, readonly) ECFileBuffer *fileBuffer;
 @property (nonatomic, strong) TMTheme *theme;
-@property (nonatomic, strong) NSDictionary *defaultTextAttributes;
 
 - (id)initWithFileURL:(NSURL *)fileURL;
 

@@ -10,7 +10,7 @@
 #import <CoreText/CoreText.h>
 
 
-NSString *const ECTSBackgroundColorAttributeName = @"ECTextStyleBackgroundAttribute";
+NSString *const ECTSBackgroundColorAttributeName = @"BackgroundColor";
 NSString *const ECTSFrontCustomOverlayAttributeName = @"ECTextStyleFrontCustomOverlayAttribute";
 NSString *const ECTSBackCustomOverlayAttributeName = @"ECTextStyleBackCustomOverlayAttribute";
 
@@ -29,13 +29,25 @@ NSString *const ECTSBackCustomOverlayAttributeName = @"ECTextStyleBackCustomOver
 
 - (void)setFont:(UIFont *)aFont
 {
+    [self setFont:aFont bold:NO italic:NO];
+}
+
+- (void)setFont:(UIFont *)aFont bold:(BOOL)isBold italic:(BOOL)isItalic
+{
     font = aFont;
     
     if (font)
     {
-        CTFontRef CTFont = CTFontCreateWithName((__bridge CFStringRef)font.fontName, font.pointSize, NULL);
+        CTFontDescriptorRef fontDescriptor = CTFontDescriptorCreateWithAttributes((__bridge CFDictionaryRef)[NSDictionary dictionaryWithObjectsAndKeys:
+            font.fontName, kCTFontNameAttribute, 
+            [NSDictionary dictionaryWithObjectsAndKeys:
+                 [NSNumber numberWithFloat:isBold ? 0.5 : 0], kCTFontWeightTrait, 
+                 [NSNumber numberWithFloat:isItalic ? 1.0 : 0], kCTFontSlantTrait, 
+            nil], kCTFontTraitsAttribute, nil]);
+        CTFontRef CTFont = CTFontCreateWithFontDescriptor(fontDescriptor, font.pointSize, NULL);
         [CTAttributes setObject:(__bridge id)CTFont forKey:(__bridge id)kCTFontAttributeName];
         CFRelease(CTFont);
+        CFRelease(fontDescriptor);
     }
     else
     {

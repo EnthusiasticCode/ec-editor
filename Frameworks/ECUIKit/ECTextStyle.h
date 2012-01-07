@@ -8,9 +8,9 @@
 
 #import <UIKit/UIKit.h>
 
-NSString *const ECTSBackgroundColorAttributeName;
-NSString *const ECTSFrontCustomOverlayAttributeName;
-NSString *const ECTSBackCustomOverlayAttributeName;
+extern NSString *const ECTSBackgroundColorAttributeName;
+extern NSString *const ECTSFrontCustomOverlayAttributeName;
+extern NSString *const ECTSBackCustomOverlayAttributeName;
 
 typedef enum {
     ECUnderlineStyleNone = 0x00,
@@ -35,6 +35,7 @@ typedef void (^ECTextStyleCustomOverlayBlock)(CGContextRef context, CGRect rect)
 /// The font to use for this style.
 // TODO specify family, attributes instead
 @property (nonatomic, strong) UIFont *font;
+- (void)setFont:(UIFont *)font bold:(BOOL)isBold italic:(BOOL)isItalic;
 
 /// The font color to use for this style.
 @property (nonatomic, strong) UIColor *foregroundColor;

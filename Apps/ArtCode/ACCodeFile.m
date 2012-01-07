@@ -23,26 +23,13 @@
 @implementation ACCodeFile
 
 @synthesize fileBuffer = _fileBuffer, codeUnit = _codeUnit;
-@synthesize defaultTextAttributes = _defaultTextAttributes, theme = _theme;
+@synthesize theme = _theme;
 
 - (TMTheme *)theme
 {
     if (!_theme)
         _theme = [TMTheme themeWithName:@"Mac Classic" bundle:nil];
     return _theme;
-}
-
-- (NSDictionary *)defaultTextAttributes
-{
-    if (!_defaultTextAttributes)
-    {
-        CTFontRef defaultFont = CTFontCreateWithName((__bridge CFStringRef)@"Inconsolata-dz", 14, NULL);
-        _defaultTextAttributes = [NSDictionary dictionaryWithObjectsAndKeys:
-                                  (__bridge id)defaultFont, kCTFontAttributeName,
-                                  [NSNumber numberWithInt:0], kCTLigatureAttributeName, nil];
-        CFRelease(defaultFont);
-    }
-    return _defaultTextAttributes;
 }
 
 - (id)initWithFileURL:(NSURL *)fileURL
@@ -74,7 +61,7 @@
 - (NSAttributedString *)textRenderer:(ECTextRenderer *)sender attributedStringInRange:(NSRange)stringRange
 {
     NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithAttributedString:[self.fileBuffer attributedStringInRange:stringRange]];
-    [attributedString addAttributes:self.defaultTextAttributes range:NSMakeRange(0, [attributedString length])];
+    [attributedString addAttributes:[TMTheme defaultAttributes] range:NSMakeRange(0, [attributedString length])];
     [self.codeUnit visitScopesInRange:stringRange options:TMUnitVisitOptionsRelativeRange withBlock:^TMUnitVisitResult(NSString *scopeIdentifier, NSRange range, NSString *spelling, NSString *parentScopeIdentifier, NSArray *scopeIdentifiersStack) {
         [attributedString addAttributes:[self.theme attributesForScopeIdentifier:scopeIdentifier] range:range];
         return TMUnitVisitResultRecurse;
@@ -185,7 +172,7 @@ static CTRunDelegateCallbacks placeholderEndingsRunCallbacks = {
     // Opening and Closing style
     
     //
-    CGFontRef font = (__bridge CGFontRef)[self.defaultTextAttributes objectForKey:(__bridge id)kCTFontAttributeName];
+    CGFontRef font = (__bridge CGFontRef)[[TMTheme defaultAttributes] objectForKey:(__bridge id)kCTFontAttributeName];
     ECASSERT(font);
     CTRunDelegateRef delegateRef = CTRunDelegateCreate(&placeholderEndingsRunCallbacks, font);
     
