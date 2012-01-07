@@ -264,11 +264,33 @@ NSString * const ECTextRendererRunDrawBlockAttributeName = @"runDrawBlock";
         }
         
         // Apply custom front attributes
-        if (runAttributes && (block = [runAttributes objectForKey:ECTextRendererRunOverlayBlockAttributeName])) 
+        if (runAttributes) 
         {
-            CGContextSaveGState(context);
-            block(context, run, runRect, descent);
-            CGContextRestoreGState(context);
+            NSNumber *underlineStyle = [runAttributes objectForKey:(__bridge id)kCTUnderlineStyleAttributeName];
+            if (underlineStyle)
+            {
+                unsigned underline = [underlineStyle unsignedIntValue];
+                CGColorRef underlineColor = (__bridge CGColorRef)[runAttributes objectForKey:(__bridge id)kCTUnderlineColorAttributeName];
+                if (!underlineColor)
+                    underlineColor = (__bridge CGColorRef)[runAttributes objectForKey:(__bridge id)kCTForegroundColorAttributeName];
+                CGContextSetStrokeColorWithColor(context, underlineColor);
+                
+                CGFloat ty = CGContextGetCTM(context).ty;
+                CGFloat underlineY = (1.0 - (ty - floorf(ty))) + floorf(runRect.origin.y) + ((underline & kCTUnderlineStyleThick) ? 0 : 0.5);
+                CGContextSetLineWidth(context, (underline & kCTUnderlineStyleThick) ? 2 : 1);
+                
+                CGContextBeginPath(context);
+                CGContextMoveToPoint(context, runRect.origin.x, underlineY);
+                CGContextAddLineToPoint(context, runRect.origin.x + runWidth, underlineY);
+                CGContextStrokePath(context);
+            }
+            block = [runAttributes objectForKey:ECTextRendererRunOverlayBlockAttributeName];
+            if (block)
+            {
+                CGContextSaveGState(context);
+                block(context, run, runRect, descent);
+                CGContextRestoreGState(context);
+            }
         }
         
         // Advance run origin
