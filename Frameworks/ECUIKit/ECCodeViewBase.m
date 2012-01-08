@@ -172,7 +172,9 @@ static const void *rendererContext;
 static void init(ECCodeViewBase *self)
 {
     self.contentMode = UIViewContentModeRedraw;
+    self.clearsContextBeforeDrawing = NO;
     self->_contentView = [ECCodeViewBaseContentView new];
+    self->_contentView.clearsContextBeforeDrawing = NO;
     self->_contentView.parentCodeView = self;
     self->_contentView.contentMode = UIViewContentModeRedraw;
     [self addSubview:self->_contentView];

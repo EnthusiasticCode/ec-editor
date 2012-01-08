@@ -174,11 +174,9 @@ NSString * const ECCodeViewPlaceholderAttributeName = @"codeViewPlaceholder";
 
 @end
 
-#pragma mark -
-#pragma mark Implementations
+#pragma mark - Implementations
 
-#pragma mark -
-#pragma mark TextMagnificationView
+#pragma mark - TextMagnificationView
 
 @implementation TextMagnificationView
 
@@ -195,7 +193,7 @@ NSString * const ECCodeViewPlaceholderAttributeName = @"codeViewPlaceholder";
 - (void)drawRect:(CGRect)rect
 {
     [self.backgroundColor setFill];
-    UIRectFill(rect);
+    CGContextFillRect(UIGraphicsGetCurrentContext(), rect);
     
     @synchronized(detailImage)
     {
@@ -502,7 +500,7 @@ NSString * const ECCodeViewPlaceholderAttributeName = @"codeViewPlaceholder";
                 CGRect detailCaretRect = self.frame;
                 detailCaretRect.origin.y -= textOffset.y;
                 [caretColor setFill];
-                UIRectFill(detailCaretRect);    
+                CGContextFillRect(context, detailCaretRect);
             }
             else
             {
@@ -630,9 +628,9 @@ NSString * const ECCodeViewPlaceholderAttributeName = @"codeViewPlaceholder";
 
 - (void)drawRect:(CGRect)rect
 {
+    CGContextRef context = UIGraphicsGetCurrentContext();
     if (selection.length > 0) 
     {
-        CGContextRef context = UIGraphicsGetCurrentContext();
         [selectionColor setFill];
         
         CGPoint rectsOrigin = selectionRects.bounds.origin;
@@ -644,7 +642,7 @@ NSString * const ECCodeViewPlaceholderAttributeName = @"codeViewPlaceholder";
     else
     {
         [caretColor setFill];
-        UIRectFill(rect);
+        CGContextFillRect(context, rect);
     }
 }
 
