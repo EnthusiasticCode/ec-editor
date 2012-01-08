@@ -150,20 +150,15 @@ static NSDictionary *_defaultAttributes = nil;
     NSDictionary *attributes = [self.settings objectForKey:scopeIdentifier];
     if (attributes)
         return attributes;
-
-    NSArray *scopeParts = [scopeIdentifier componentsSeparatedByString:@"."];
-    if ([scopeParts count] <= 1)
-        return nil;
     
-    NSInteger scopeLength = [scopeIdentifier length];
-    for (NSString *part in [scopeParts reverseObjectEnumerator])
+    for (NSUInteger i = [scopeIdentifier length] - 1; i != 0; --i)
     {
-        scopeLength -= [part length] + 1;
-        if (scopeLength <= 0)
-            return nil;
-        attributes = [self.settings objectForKey:[scopeIdentifier substringToIndex:scopeLength]];
-        if (attributes)
-            return attributes;
+        if ([scopeIdentifier characterAtIndex:i] == L'.')
+        {
+            attributes = [self.settings objectForKey:[scopeIdentifier substringToIndex:i]];
+            if (attributes)
+                return attributes;
+        }
     }
     
     return nil;
