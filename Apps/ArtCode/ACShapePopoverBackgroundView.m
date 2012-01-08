@@ -147,14 +147,14 @@ static void updatePath(ACShapePopoverBackgroundView *self)
             rect.origin.y += [[self class] arrowHeight];
         case UIPopoverArrowDirectionDown:
             rect.size.height -= [[self class] arrowHeight];
-            localArrowPosition += rect.size.width / 2;
+            localArrowPosition += rect.size.width / 2.0 - self->cornerRadius;
             break;
             
         case UIPopoverArrowDirectionLeft:
             rect.origin.x += [[self class] arrowHeight];
         case UIPopoverArrowDirectionRight:
             rect.size.width -= [[self class] arrowHeight];
-            localArrowPosition += rect.size.height / 2;
+            localArrowPosition += rect.size.height / 2.0 - self->cornerRadius;
             break;
     }
     
@@ -168,7 +168,7 @@ static void updatePath(ACShapePopoverBackgroundView *self)
     CGFloat arrowSize = [[self class] arrowHeight];
     CGFloat arrowNoCornerSize = arrowSize - self->arrowCornerRadius;
     CGFloat arrowLength2 = [[self class] arrowBase];
-    CGFloat arrowLength = arrowLength2 / 2;
+    CGFloat arrowLength = arrowLength2 / 2.0;
     
     CGRect innerRect = CGRectInset(rect, self->cornerRadius, self->cornerRadius);
     
@@ -183,13 +183,13 @@ static void updatePath(ACShapePopoverBackgroundView *self)
     
     UIPopoverArrowDirection arrowCorner = 0;
     NSUInteger arrowCornerAtStart = 1UL << 8;
-    if (localArrowPosition <= arrowLength2 + self->cornerRadius)
+    if (localArrowPosition <= arrowLength + self->cornerRadius)
     {
         arrowCorner = (NSInteger)self.arrowDirection | arrowCornerAtStart;
     }
     else if (
-             (self.arrowDirection <= UIPopoverArrowDirectionDown && localArrowPosition >= rect.size.width - arrowLength2 - self->cornerRadius)
-             || (self.arrowDirection > UIPopoverArrowDirectionDown && localArrowPosition >= rect.size.height - arrowLength2 - self->cornerRadius))
+             (self.arrowDirection <= UIPopoverArrowDirectionDown && localArrowPosition >= rect.size.width - arrowLength - self->cornerRadius)
+             || (self.arrowDirection > UIPopoverArrowDirectionDown && localArrowPosition >= rect.size.height - arrowLength - self->cornerRadius))
     {
         arrowCorner = (NSInteger)self.arrowDirection;
     }

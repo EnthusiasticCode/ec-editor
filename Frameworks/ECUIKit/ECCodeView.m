@@ -1686,7 +1686,6 @@ static void init(ECCodeView *self)
             if (CGPointEqualToPoint(tapPoint, CGPointZero)) 
             {
                 selectionView.magnify = NO;
-                // TODO fix this?
                 [self setSelectedTextFromPoint:tapPoint toPoint:secondTapPoint];
                 return;
             }
