@@ -7,7 +7,7 @@
 //
 
 #import "ACCodeFile.h"
-#import <ECCodeIndexing/TMTheme.h>
+#import "TMTheme.h"
 #import <ECFoundation/ECFileBuffer.h>
 #import <ECCodeIndexing/TMIndex.h>
 #import <ECCodeIndexing/TMUnit.h>

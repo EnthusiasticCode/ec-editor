@@ -172,6 +172,8 @@
 		CDE3F14713C0DDD500DFFAFF /* Inconsolata-dz.otf in Resources */ = {isa = PBXBuildFile; fileRef = CDE3F14613C0DDD500DFFAFF /* Inconsolata-dz.otf */; };
 		CDE80660147F949300C94BFD /* ACShapePopoverBackgroundView.m in Sources */ = {isa = PBXBuildFile; fileRef = CDE8065F147F949300C94BFD /* ACShapePopoverBackgroundView.m */; };
 		CDE8F9D4145EEEFE00CA4496 /* ACCodeFileSearchBarController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDE8F9D2145EEEFE00CA4496 /* ACCodeFileSearchBarController.m */; };
+		CDE8FA8514B9B32A00CFC953 /* TMTheme.m in Sources */ = {isa = PBXBuildFile; fileRef = CDE8FA8214B9B32A00CFC953 /* TMTheme.m */; };
+		CDE8FA8614B9B32A00CFC953 /* UIColor+HexColor.m in Sources */ = {isa = PBXBuildFile; fileRef = CDE8FA8414B9B32A00CFC953 /* UIColor+HexColor.m */; };
 		CDF1D46D14150C4900EFEC21 /* libstdc++.6.0.9.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CDF1D46C14150C4900EFEC21 /* libstdc++.6.0.9.dylib */; };
 		CDF4C011144F2C7900475F6B /* ACTopBarTitleControl.m in Sources */ = {isa = PBXBuildFile; fileRef = CDF4C00E144F2C7900475F6B /* ACTopBarTitleControl.m */; };
 		CDF4C012144F2C7900475F6B /* ACTopBarToolbar.m in Sources */ = {isa = PBXBuildFile; fileRef = CDF4C010144F2C7900475F6B /* ACTopBarToolbar.m */; };
@@ -507,6 +509,10 @@
 		CDE8065F147F949300C94BFD /* ACShapePopoverBackgroundView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACShapePopoverBackgroundView.m; sourceTree = "<group>"; };
 		CDE8F9D1145EEEFE00CA4496 /* ACCodeFileSearchBarController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACCodeFileSearchBarController.h; sourceTree = "<group>"; };
 		CDE8F9D2145EEEFE00CA4496 /* ACCodeFileSearchBarController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACCodeFileSearchBarController.m; sourceTree = "<group>"; };
+		CDE8FA8114B9B32A00CFC953 /* TMTheme.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TMTheme.h; sourceTree = "<group>"; };
+		CDE8FA8214B9B32A00CFC953 /* TMTheme.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TMTheme.m; sourceTree = "<group>"; };
+		CDE8FA8314B9B32A00CFC953 /* UIColor+HexColor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+HexColor.h"; sourceTree = "<group>"; };
+		CDE8FA8414B9B32A00CFC953 /* UIColor+HexColor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+HexColor.m"; sourceTree = "<group>"; };
 		CDF1D46C14150C4900EFEC21 /* libstdc++.6.0.9.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libstdc++.6.0.9.dylib"; path = "usr/lib/libstdc++.6.0.9.dylib"; sourceTree = SDKROOT; };
 		CDF4C00D144F2C7900475F6B /* ACTopBarTitleControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACTopBarTitleControl.h; sourceTree = "<group>"; };
 		CDF4C00E144F2C7900475F6B /* ACTopBarTitleControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACTopBarTitleControl.m; sourceTree = "<group>"; };
@@ -949,6 +955,8 @@
 			isa = PBXGroup;
 			children = (
 				CD7D2B1913C0D47C00B889EE /* AppStyle.h */,
+				CDE8FA8314B9B32A00CFC953 /* UIColor+HexColor.h */,
+				CDE8FA8414B9B32A00CFC953 /* UIColor+HexColor.m */,
 				CD7D2B1A13C0D47C00B889EE /* UIColor+AppStyle.h */,
 				CD7D2B1B13C0D47C00B889EE /* UIColor+AppStyle.m */,
 				CD7D2B1C13C0D47C00B889EE /* UIFont+AppStyle.h */,
@@ -966,6 +974,7 @@
 			children = (
 				CD9CD96E13DC22AF007964D3 /* ACCodeFileController.h */,
 				CD9CD96F13DC22AF007964D3 /* ACCodeFileController.m */,
+				CDE8FA8014B9B31500CFC953 /* Themes */,
 				CD6580C514157B300079412F /* Find & Replace Controllers */,
 				CD6E416D14614A2A00A9CE7F /* Minimap View */,
 				CD9ED8E51466C3E600A517A5 /* Keyboard Accessory */,
@@ -1118,6 +1127,15 @@
 				CDD40B0213E1A046008AC36B /* ACPopoverHistoryToolController.m */,
 			);
 			name = "Popovers Content Controllers";
+			sourceTree = "<group>";
+		};
+		CDE8FA8014B9B31500CFC953 /* Themes */ = {
+			isa = PBXGroup;
+			children = (
+				CDE8FA8114B9B32A00CFC953 /* TMTheme.h */,
+				CDE8FA8214B9B32A00CFC953 /* TMTheme.m */,
+			);
+			name = Themes;
 			sourceTree = "<group>";
 		};
 		CDFF3DF613C0DA1100108DE2 /* Icons */ = {
@@ -1451,6 +1469,8 @@
 				B75B575D14B0B62D00053783 /* ACCodeFile.m in Sources */,
 				CDBCC5DC14B6081A005E5C46 /* ACHighlightLabel.m in Sources */,
 				CDBCC5DF14B60F9E005E5C46 /* ACHighlightTableViewCell.m in Sources */,
+				CDE8FA8514B9B32A00CFC953 /* TMTheme.m in Sources */,
+				CDE8FA8614B9B32A00CFC953 /* UIColor+HexColor.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
