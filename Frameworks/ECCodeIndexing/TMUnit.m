@@ -140,6 +140,7 @@ static NSString * const _patternCaptureName = @"name";
     while (currentScope)
     {
         NSRange currentScopeRange = NSMakeRange([currentScope baseOffsetForGeneration:_generation], currentScope.length);
+//        NSLog(@"%d> %@ : %@", [scopeIdentifiersStack count], NSStringFromRange(currentScopeRange), [currentScope identifier]);
         if (options & TMUnitVisitOptionsRelativeRange)
             currentScopeRange = intersectionOfRangeRelativeToRange(currentScopeRange, range);
         TMUnitVisitResult result = block(currentScope.identifier, currentScopeRange, currentScope.spelling, currentScope.parent.identifier, scopeIdentifiersStack);
@@ -273,8 +274,6 @@ static NSString * const _patternCaptureName = @"name";
             if (!result)
                 continue;
             NSRange resultRange = [result bodyRange];
-            // Find the first match, if two matches have the same locations, take the longest of the two, unless one of the two has length 0, in which case take that one
-            // This is because some patterns match using lookahead, and return 0 lenght matches
             if (resultRange.location > firstMatchRange.location)
                 continue;
             if (resultRange.location == firstMatchRange.location)
@@ -285,9 +284,11 @@ static NSString * const _patternCaptureName = @"name";
             firstMatchRange = resultRange;
             firstMatchPattern = childPattern;
             matchFound = YES;
+            if (firstMatchRange.location == range.location && firstMatchRange.length == 0)
+                break;
         }
         OnigResult *stopResult = regexp ? [self _firstMatchInRange:range forRegexp:regexp] : nil;
-        if (stopResult && [stopResult bodyRange].location < firstMatchRange.location)
+        if (stopResult && [stopResult bodyRange].location <= firstMatchRange.location)
         {
             if (stopMatch)
                 *stopMatch = stopResult;
