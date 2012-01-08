@@ -1698,7 +1698,8 @@ static void init(ECCodeView *self)
             else
             {
                 selectionView.selection = NSMakeRange([self.renderer closestStringLocationToPoint:tapPoint withinStringRange:(NSRange){0, 0}], 0);
-                [selectionView setMagnify:YES fromRect:selectionView.frame ratio:2 animated:animatePopover];
+                CGRect selectionFrame = selectionView.frame;
+                [selectionView setMagnify:YES fromRect:CGRectMake(tapPoint.x - 1, selectionFrame.origin.y, 2, selectionFrame.size.height) textPoint:CGPointMake(CGRectGetMidX(selectionFrame), CGRectGetMidY(selectionFrame)) ratio:2 animated:animatePopover];
             }
 
             // Scrolling
