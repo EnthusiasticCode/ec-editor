@@ -22,7 +22,7 @@
 /// The parent scope, if one exists
 @property (nonatomic, weak) TMScope *parent;
 /// The children scopes, if any exist
-@property (nonatomic, readonly) NSArray *children;
+@property (nonatomic, strong, readonly) NSMutableArray *children;
 /// Creates a new root scope with the given identifier and base string
 - (id)initWithIdentifier:(NSString *)identifier string:(NSString *)string;
 /// Adds a new child scope with the given identifier

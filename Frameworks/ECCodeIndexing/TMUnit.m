@@ -139,32 +139,29 @@ static NSString * const _patternCaptureName = @"name";
     NSMutableArray *scopeIdentifiersStack = [NSMutableArray arrayWithObject:currentScope];
     while (currentScope)
     {
-        @autoreleasepool
+        NSRange currentScopeRange = NSMakeRange([currentScope baseOffsetForGeneration:_generation], currentScope.length);
+        if (options & TMUnitVisitOptionsRelativeRange)
+            currentScopeRange = intersectionOfRangeRelativeToRange(currentScopeRange, range);
+        TMUnitVisitResult result = block(currentScope.identifier, currentScopeRange, currentScope.spelling, currentScope.parent.identifier, scopeIdentifiersStack);
+        if (result == TMUnitVisitResultBreak)
+            break;
+        if (result == TMUnitVisitResultRecurse && [currentScope.children count])
         {
-            NSRange currentScopeRange = NSMakeRange([currentScope baseOffsetForGeneration:_generation], currentScope.length);
-            if (options & TMUnitVisitOptionsRelativeRange)
-                currentScopeRange = intersectionOfRangeRelativeToRange(currentScopeRange, range);
-            TMUnitVisitResult result = block(currentScope.identifier, currentScopeRange, currentScope.spelling, currentScope.parent.identifier, [scopeIdentifiersStack copy]);
-            if (result == TMUnitVisitResultBreak)
-                break;
-            if (result == TMUnitVisitResultRecurse && currentScope.children)
+            currentScope = [currentScope.children objectAtIndex:0];
+            [scopeIdentifiersStack addObject:[currentScope identifier]];
+            continue;
+        }
+        while (currentScope)
+        {
+            NSUInteger currentScopeIndex = [currentScope.parent.children indexOfObject:currentScope];
+            [scopeIdentifiersStack removeLastObject];
+            if (currentScopeIndex + 1 < [currentScope.parent.children count])
             {
-                currentScope = [currentScope.children objectAtIndex:0];
+                currentScope = [currentScope.parent.children objectAtIndex:currentScopeIndex + 1];
                 [scopeIdentifiersStack addObject:[currentScope identifier]];
-                continue;
+                break;
             }
-            while (currentScope)
-            {
-                NSUInteger currentScopeIndex = [currentScope.parent.children indexOfObject:currentScope];
-                [scopeIdentifiersStack removeLastObject];
-                if (currentScopeIndex + 1 < [currentScope.parent.children count])
-                {
-                    currentScope = [currentScope.parent.children objectAtIndex:currentScopeIndex + 1];
-                    [scopeIdentifiersStack addObject:[currentScope identifier]];
-                    break;
-                }
-                currentScope = currentScope.parent;
-            }
+            currentScope = currentScope.parent;
         }
     }
 }

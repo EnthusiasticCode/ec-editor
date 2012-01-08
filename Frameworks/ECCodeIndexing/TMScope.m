@@ -10,7 +10,6 @@
 
 @interface TMScope ()
 {
-    NSMutableArray *_children;
     NSUInteger _baseOffset;
     NSUInteger _generation;
 }
@@ -23,6 +22,7 @@
 @synthesize length = _length;
 @synthesize baseString = _baseString;
 @synthesize parent = _parent;
+@synthesize children = _children;
 
 - (NSString *)spelling
 {
@@ -72,34 +72,24 @@
     return [NSSet setWithObjects:@"offset", @"parent.baseOffset", @"parent.children", nil];
 }
 
-- (NSArray *)children
-{
-    if (![_children count])
-        return nil;
-#warning TODO URI this copy here is too expensive and is called way too much, fix it somehow
-    return [_children copy];
-}
-
 - (id)initWithIdentifier:(NSString *)identifier string:(NSString *)string
 {
-    ECASSERT(identifier && string);
+    ECASSERT(identifier);
     self = [super init];
     if (!self)
         return nil;
     _identifier = identifier;
     _baseString = string;
+    _children = [NSMutableArray array];
     return self;
 }
 
 - (TMScope *)newChildScopeWithIdentifier:(NSString *)identifier
 {
     ECASSERT(identifier);
-    TMScope *childScope = [[[self class] alloc] init];
+    TMScope *childScope = [[[self class] alloc] initWithIdentifier:identifier string:nil];
     childScope.parent = self;
-    childScope.identifier = identifier;
-    if (!_children)
-        _children = [NSMutableArray array];
-    [_children addObject:childScope];
+    [self.children addObject:childScope];
     return childScope;
 }
 

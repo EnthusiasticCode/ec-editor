@@ -148,12 +148,13 @@ static NSDictionary *_defaultAttributes = nil;
 - (NSDictionary *)attributesForScopeIdentifier:(NSString *)scopeIdentifier
 {
     NSMutableDictionary *attributes = [NSMutableDictionary dictionary];
-    [_settingsOrderedScopes enumerateObjectsUsingBlock:^(NSString *settingScope, NSUInteger idx, BOOL *stop) {
+    for (NSString *settingScope in _settingsOrderedScopes)
+    {
         if (![scopeIdentifier hasPrefix:settingScope])
-            return;
+            continue;
         [attributes addEntriesFromDictionary:[self.settings objectForKey:settingScope]];
-        *stop = YES;
-    }];
+        break;
+    }
     return attributes;
 }
 
