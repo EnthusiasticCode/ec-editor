@@ -147,15 +147,26 @@ static NSDictionary *_defaultAttributes = nil;
 
 - (NSDictionary *)attributesForScopeIdentifier:(NSString *)scopeIdentifier
 {
-    NSMutableDictionary *attributes = [NSMutableDictionary dictionary];
-    for (NSString *settingScope in _settingsOrderedScopes)
+    NSDictionary *attributes = [self.settings objectForKey:scopeIdentifier];
+    if (attributes)
+        return attributes;
+
+    NSArray *scopeParts = [scopeIdentifier componentsSeparatedByString:@"."];
+    if ([scopeParts count] <= 1)
+        return nil;
+    
+    NSInteger scopeLength = [scopeIdentifier length];
+    for (NSString *part in [scopeParts reverseObjectEnumerator])
     {
-        if (![scopeIdentifier hasPrefix:settingScope])
-            continue;
-        [attributes addEntriesFromDictionary:[self.settings objectForKey:settingScope]];
-        break;
+        scopeLength -= [part length] + 1;
+        if (scopeLength <= 0)
+            return nil;
+        attributes = [self.settings objectForKey:[scopeIdentifier substringToIndex:scopeLength]];
+        if (attributes)
+            return attributes;
     }
-    return attributes;
+    
+    return nil;
 }
 
 @end
