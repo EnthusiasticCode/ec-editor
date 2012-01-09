@@ -38,9 +38,9 @@ typedef enum
 /// Visit the scopes in the unit.
 /// All the parameters passed to the block are only valid until the block returns, and should not be modified
 
-- (void)visitScopesWithBlock:(TMUnitVisitResult(^)(NSString *scopeIdentifier, NSRange range, NSString *spelling, NSString *parentScopeIdentifier, NSArray *scopeIdentifiersStack))block;
+- (void)visitScopesWithBlock:(TMUnitVisitResult(^)(NSString *scopeIdentifier, NSRange range))block;
 
-- (void)visitScopesInRange:(NSRange)range options:(TMUnitVisitOptions)options withBlock:(TMUnitVisitResult(^)(NSString *scopeIdentifier, NSRange range, NSString *spelling, NSString *parentScopeIdentifier, NSArray *scopeIdentifiersStack))block;
+- (void)visitScopesInRange:(NSRange)range options:(TMUnitVisitOptions)options withBlock:(TMUnitVisitResult(^)(NSString *scopeIdentifier, NSRange range))block;
 
 /// Returns the possible completions at a given insertion point in the unit's main source file.
 /// If filterRange is not NULL, in output it will contain the file buffer string range that contains 
