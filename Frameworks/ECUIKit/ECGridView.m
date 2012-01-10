@@ -107,7 +107,7 @@
         return nil;
     
     NSMutableArray *reusableArray = [_reusableCells objectForKey:identifier];
-    if (!reusableArray)
+    if (![reusableArray count])
         return nil;
     
     id result = [reusableArray objectAtIndex:0];
