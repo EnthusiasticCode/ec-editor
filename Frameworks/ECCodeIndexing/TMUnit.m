@@ -167,7 +167,9 @@ static NSString * const _patternCaptureName = @"name";
     };
     NSRange scopeRange = NSMakeRange(scope.location + offset, scope.length);
     offset = scopeRange.location;
-    if (scopeRange.location > NSMaxRange(range) || NSMaxRange(scopeRange) < range.location)
+    if (scopeRange.location > NSMaxRange(range))
+        return TMUnitVisitResultBreak;
+    if (NSMaxRange(scopeRange) < range.location)
         return TMUnitVisitResultContinue;
     if (options & TMUnitVisitOptionsRelativeRange)
         scopeRange = intersectionOfRangeRelativeToRange(scopeRange, range);
@@ -179,7 +181,9 @@ static NSString * const _patternCaptureName = @"name";
         if (result == TMUnitVisitResultContinue)
         {
             scopeRange = NSMakeRange(scope.location + offset, scope.length);
-            if (scopeRange.location > NSMaxRange(range) || NSMaxRange(scopeRange) < range.location)
+            if (scopeRange.location > NSMaxRange(range))
+                return TMUnitVisitResultBreak;
+            if (NSMaxRange(scopeRange) < range.location)
                 continue;
             if (options & TMUnitVisitOptionsRelativeRange)
                 scopeRange = intersectionOfRangeRelativeToRange(scopeRange, range);
@@ -352,6 +356,13 @@ static NSString * const _patternCaptureName = @"name";
             currentCaptureScope.length = currentMatchRange.length;
             endOfLastScope = MAX(endOfLastScope, NSMaxRange(currentMatchRange));
         }
+        [[(capturesScope ? capturesScope : scope) children] sortUsingComparator:^NSComparisonResult(TMScope *obj1, TMScope *obj2) {
+            if (obj1.location < obj2.location)
+                return NSOrderedAscending;
+            if (obj1.location > obj2.location)
+                return NSOrderedDescending;
+            return NSOrderedSame;
+        }];
     }
     ECASSERT(endOfLastScope <= NSMaxRange(range));
     return endOfLastScope;
