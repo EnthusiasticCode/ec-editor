@@ -180,7 +180,7 @@ static void _init(ECGridView *self)
 - (void)layoutSubviews
 {
     [super layoutSubviews];
-    const CGRect bounds = [self bounds];
+    const CGRect bounds = UIEdgeInsetsInsetRect([self bounds], self.contentInset);
     const NSUInteger columns = self.columnNumber;
     const CGSize cellSize = CGSizeMake(bounds.size.width / (CGFloat)columns, self.rowHeight);
     

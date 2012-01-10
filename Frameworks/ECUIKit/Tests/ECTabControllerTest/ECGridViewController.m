@@ -16,6 +16,10 @@
     ECGridView *gridView = [[ECGridView alloc] initWithFrame:CGRectMake(0, 0, 100, 100)];
     gridView.delegate = self;
     gridView.dataSource = self;
+    
+    gridView.backgroundColor = [UIColor grayColor];
+    gridView.contentInset = UIEdgeInsetsMake(10, 10, 10, 10);
+    
     self.view = gridView;
 }
 
