@@ -7,11 +7,13 @@
 //
 
 #import "ECGridView.h"
+#import <objc/runtime.h>
 
 @interface ECGridView (/*Private Methods*/)
 
 - (void)_enqueueReusableCells:(NSArray *)cells;
 - (void)_updateContentSize;
+- (ECGridViewCell *)_addSubviewCellAtIndex:(NSInteger)cellIndex;
 - (void)_handleSelectionRecognizer:(UITapGestureRecognizer *)recognizer;
 
 @end
@@ -26,6 +28,7 @@
     NSMutableIndexSet *_selectedEditingCells;
     
     NSMutableDictionary *_reusableCells;
+    NSMutableArray *_updateBatches;
     
     UITapGestureRecognizer *_selectionGestureRecognizer;
     
@@ -300,6 +303,97 @@
 
 #pragma mark Inserting, Deleting, and Moving Cells
 
+static const void *updateActionKey;
+static const void *updateAnimatedKey;
+static NSString * const updateInsertActionKey = @"insert";
+static NSString * const updateDeleteActionKey = @"delete";
+
+- (void)beginUpdate
+{
+    if (!_updateBatches)
+        _updateBatches = [NSMutableArray new];
+    
+    [_updateBatches addObject:[NSMutableArray new]];
+}
+
+- (void)endUpdate
+{
+    ECASSERT([_updateBatches count]);
+    
+    [_selectedCells removeAllIndexes];
+    [_selectedEditingCells removeAllIndexes];
+    
+    //
+    NSArray *batch = [_updateBatches lastObject];
+    NSString *action = nil;
+    BOOL animated = NO;
+    NSInteger updatedCount = _cellCount;
+    NSMutableArray *updatedCells = [_cells mutableCopy];
+    for (NSIndexSet *indexes in batch)
+    {
+        action = objc_getAssociatedObject(indexes, &updateActionKey);
+        animated = [objc_getAssociatedObject(indexes, &updateAnimatedKey) boolValue];
+        if (action == updateInsertActionKey)
+        {
+            updatedCount += [indexes count];
+#warning TODO NIK implement this
+            if (!animated)
+            {
+                [indexes enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
+                    if (NSLocationInRange(idx, _cellsLoadedRange))
+                    {
+                        [updatedCells insertObject:[self _addSubviewCellAtIndex:idx] atIndex:(idx - _cellsLoadedRange.location)];
+                    }
+                }];
+            }
+        }
+        else if (action == updateDeleteActionKey)
+        {
+            updatedCount -= [indexes count];
+            
+        }
+    }
+    
+    // Calculate visible differences
+    _cellCount = [self.dataSource numberOfCellsForGridView:self];
+    ECASSERT(_cellCount == updatedCount);
+    
+    const CGRect bounds = UIEdgeInsetsInsetRect([self bounds], self.contentInset);
+    const NSUInteger columns = self.columnNumber;
+    const CGSize cellSize = CGSizeMake(bounds.size.width / (CGFloat)columns, self.rowHeight);
+    NSRange visibleRange = NSIntersectionRange(NSMakeRange((NSUInteger)floorf(bounds.origin.y / cellSize.height) * columns, (NSUInteger)(ceilf(bounds.size.height / self.rowHeight) + 1) * columns), (NSRange){ 0, _cellCount });
+    
+}
+
+- (void)_addBatchActionWithKey:(NSString *)action withCellIndexes:(NSIndexSet *)indexes animated:(BOOL)animated
+{
+    BOOL isSingleInsert = NO;
+    if ([_updateBatches count] == 0)
+    {
+        isSingleInsert = YES;
+        [self beginUpdate];
+    }
+    
+    NSMutableArray *batch = [_updateBatches lastObject];
+    [batch addObject:indexes];
+    objc_setAssociatedObject(indexes, &updateActionKey, action, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    objc_setAssociatedObject(indexes, &updateAnimatedKey, [NSNumber numberWithBool:animated], OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    
+    if (isSingleInsert)
+    {
+        [self endUpdate];
+    }
+}
+
+- (void)insertCellAtIndexes:(NSIndexSet *)indexes animated:(BOOL)animated
+{
+    [self _addBatchActionWithKey:updateInsertActionKey withCellIndexes:indexes animated:animated];
+}
+
+- (void)deleteCellAtIndexes:(NSIndexSet *)indexes animated:(BOOL)animated
+{
+    [self _addBatchActionWithKey:updateDeleteActionKey withCellIndexes:indexes animated:animated];
+}
 
 #pragma mark Managing the Editing of Cells
 
@@ -404,42 +498,17 @@ static void _init(ECGridView *self)
         }
         // Create new cells array
         NSMutableArray *newCells = [NSMutableArray arrayWithCapacity:cellsRequiredRange.length];
-        ECGridViewCell *cell = nil;
         NSUInteger i;
         for (i = cellsRequiredRange.location; i < cellsReuseRange.location; ++i) 
         {
-            cell = [self.dataSource gridView:self cellAtIndex:i];
-            if (self.isEditing)
-            {
-                [cell setEditing:YES animated:NO];
-                [cell setSelected:[_selectedEditingCells containsIndex:i] animated:NO];
-            }
-            else
-            {
-                [cell setEditing:NO animated:NO];
-                [cell setSelected:[_selectedCells containsIndex:i] animated:NO];
-            }
-            [newCells addObject:cell];
-            [self insertSubview:cell atIndex:1];
+            [newCells addObject:[self _addSubviewCellAtIndex:i]];
         }
         if (cellsReuseRange.length)
         {
             [newCells addObjectsFromArray:[_cells subarrayWithRange:NSMakeRange(cellsReuseRange.location - _cellsLoadedRange.location, cellsReuseRange.length)]];
         }
         for (i = NSMaxRange(cellsReuseRange); i < NSMaxRange(cellsRequiredRange); ++i) {
-            cell = [self.dataSource gridView:self cellAtIndex:i];
-            if (self.isEditing)
-            {
-                [cell setEditing:YES animated:NO];
-                [cell setSelected:[_selectedEditingCells containsIndex:i] animated:NO];
-            }
-            else
-            {
-                [cell setEditing:NO animated:NO];
-                [cell setSelected:[_selectedCells containsIndex:i] animated:NO];
-            }
-            [newCells addObject:cell];
-            [self insertSubview:cell atIndex:1];
+            [newCells addObject:[self _addSubviewCellAtIndex:i]];
         }
         _cells = newCells;
         _cellsLoadedRange = cellsRequiredRange;
@@ -472,6 +541,23 @@ static void _init(ECGridView *self)
 {
     // TODO update on bounds change
     [super setContentSize:CGSizeMake(self.bounds.size.width, self.rowHeight * (_cellCount / self.columnNumber))];
+}
+
+- (ECGridViewCell *)_addSubviewCellAtIndex:(NSInteger)cellIndex
+{
+    ECGridViewCell *cell = [self.dataSource gridView:self cellAtIndex:cellIndex];
+    if (self.isEditing)
+    {
+        [cell setEditing:YES animated:NO];
+        [cell setSelected:[_selectedEditingCells containsIndex:cellIndex] animated:NO];
+    }
+    else
+    {
+        [cell setEditing:NO animated:NO];
+        [cell setSelected:[_selectedCells containsIndex:cellIndex] animated:NO];
+    }
+    [self insertSubview:cell atIndex:1];
+    return cell;
 }
 
 - (void)_handleSelectionRecognizer:(UITapGestureRecognizer *)recognizer
@@ -630,16 +716,53 @@ static void _init(ECGridView *self)
 
 #pragma mark View Methods
 
+static void _initGridViewCell(ECGridViewCell *self)
+{
+    [self addSubview:self.contentView];
+    if (self.backgroundView)
+        [self addSubview:self.backgroundView];
+}
+
+- (id)initWithCoder:(NSCoder *)coder {
+    self = [super initWithCoder:coder];
+    if (self)
+        return nil;
+    _initGridViewCell(self);
+    return self;
+}
+
+- (id)initWithFrame:(CGRect)frame
+{
+    if (!(self = [super initWithFrame:frame]))
+        return nil;
+    _initGridViewCell(self);
+    return self;
+}
+
 - (id)initWithFrame:(CGRect)frame reuseIdentifier:(NSString *)aReuseIdentifier
 {
     self = [super initWithFrame:frame];
     if (!self)
         return nil;
     reuseIdentifier = aReuseIdentifier;
-    [self addSubview:self.contentView];
-    if (self.backgroundView)
-        [self addSubview:self.backgroundView];
     return self;
+}
+
+#pragma mark Class Methods
+
++ (ECGridViewCell *)gridViewCellWithReuseIdentifier:(NSString *)reuseIdentifier
+{
+    return [[self class] gridViewCellWithReuseIdentifier:reuseIdentifier fromNibNamed:nil bundle:nil];
+}
+
++ (ECGridViewCell *)gridViewCellWithReuseIdentifier:(NSString *)reuseIdentifier fromNibNamed:(NSString *)nibName bundle:(NSBundle *)bundle
+{
+    ECGridViewCell *result = [[[self class] alloc] initWithFrame:CGRectMake(0, 0, 20, 10) reuseIdentifier:reuseIdentifier];
+    if (nibName)
+    {
+        [(bundle ? bundle : [NSBundle mainBundle]) loadNibNamed:nibName owner:result options:nil];
+    }
+    return result;
 }
 
 @end

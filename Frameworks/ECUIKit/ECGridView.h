@@ -81,6 +81,9 @@
 
 - (id)initWithFrame:(CGRect)frame reuseIdentifier:(NSString *)reuseIdentifier;
 
++ (ECGridViewCell *)gridViewCellWithReuseIdentifier:(NSString *)reuseIdentifier;
++ (ECGridViewCell *)gridViewCellWithReuseIdentifier:(NSString *)reuseIdentifier fromNibNamed:(NSString *)nibName bundle:(NSBundle *)bundle;
+
 #pragma mark Reusing Cells
 @property (nonatomic, readonly, strong) NSString *reuseIdentifier;
 - (void)prepareForReuse;
