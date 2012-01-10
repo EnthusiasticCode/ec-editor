@@ -12,6 +12,7 @@
 
 - (void)_enqueueReusableCells:(NSArray *)cells;
 - (void)_updateContentSize;
+- (void)_handleSelectionRecognizer:(UITapGestureRecognizer *)recognizer;
 
 @end
 
@@ -162,6 +163,8 @@ static void _init(ECGridView *self)
 {
     self->rowHeight = 200;
     self->columnNumber = 2;
+    
+    [self addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(_handleSelectionRecognizer:)]];
 }
 
 - (id)initWithFrame:(CGRect)frame
@@ -261,7 +264,44 @@ static void _init(ECGridView *self)
 
 - (void)_updateContentSize
 {
-    [super setContentSize:CGSizeMake([self bounds].size.width, self.rowHeight * (_cellCount / self.columnNumber))];
+    // TODO update on bounds change
+    [super setContentSize:CGSizeMake(self.bounds.size.width, self.rowHeight * (_cellCount / self.columnNumber))];
+}
+
+- (void)_handleSelectionRecognizer:(UITapGestureRecognizer *)recognizer
+{
+    if (recognizer.state != UIGestureRecognizerStateRecognized)
+        return;
+    
+    CGPoint tapPoint = [recognizer locationInView:self];
+    tapPoint.y += self.contentOffset.y;
+    
+    NSInteger cellIndex = (NSInteger)floorf(tapPoint.y / self.rowHeight) * self.columnNumber + (NSInteger)floorf(tapPoint.x / self.bounds.size.width * self.columnNumber);
+    ECASSERT(NSLocationInRange(cellIndex, _cellsLoadedRange));
+    
+    ECGridViewCell *cell = [_cells objectAtIndex:(cellIndex - _cellsLoadedRange.location)];
+    if (cell.isSelected)
+    {
+        if (_flags.delegateHasWillDeselectCellAtIndex)
+            [self.delegate gridView:self willDeselectCellAtIndex:cellIndex];
+    }
+    else
+    {
+        if (_flags.delegateHasWillSelectCellAtIndex)
+            [self.delegate gridView:self willSelectCellAtIndex:cellIndex];
+    }
+    [cell setSelected:!cell.isSelected animated:YES];
+    // TODO call this after animation somehow
+    if (cell.isSelected)
+    {
+        if (_flags.delegateHasDidSelectCellAtIndex)
+            [self.delegate gridView:self didSelectCellAtIndex:cellIndex];
+    }
+    else
+    {
+        if (_flags.delegateHasDidDeselectCellAtIndex)
+            [self.delegate gridView:self didDeselectCellAtIndex:cellIndex];
+    }
 }
 
 @end
@@ -310,7 +350,7 @@ static void _init(ECGridView *self)
     [self willChangeValueForKey:@"selectedBackgroundView"];
     [selectedBackgroundView removeFromSuperview];
     selectedBackgroundView = value;
-    selectedBackgroundView.frame = self.bounds;
+    selectedBackgroundView.frame = [self bounds];
     selectedBackgroundView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     if (selectedBackgroundView && self.isSelected)
         [self insertSubview:selectedBackgroundView belowSubview:self.contentView];
@@ -334,12 +374,22 @@ static void _init(ECGridView *self)
     UIView *fromView = (selected ? selectedBackgroundView : backgroundView);
     UIView *toView = (!selected ? selectedBackgroundView : backgroundView);
     selected = value;
-    // TODO animate
     if (toView)
     {
-        [fromView removeFromSuperview];
-        [self addSubview:toView];
+        toView.alpha = 0;
+        toView.frame = [self bounds];
+        [self insertSubview:toView atIndex:0];
     }
+    [UIView animateWithDuration:animated ? 0.25 : 0 animations:^{
+        if (toView)
+        {
+            toView.alpha = 1;
+            fromView.alpha = 0;
+        }
+    } completion:^(BOOL finished) {
+        if (toView)
+            [fromView removeFromSuperview];
+    }];
     [self didChangeValueForKey:@"selected"];
 }
 

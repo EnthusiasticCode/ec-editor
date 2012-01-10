@@ -45,6 +45,8 @@
         cell = [[TestCell alloc] initWithFrame:CGRectMake(0, 0, 20, 20) reuseIdentifier:cellIdengifier];
         cell.backgroundView = [UIView new];
         cell.backgroundView.backgroundColor = [UIColor darkGrayColor];
+        cell.selectedBackgroundView = [UIView new];
+        cell.selectedBackgroundView.backgroundColor = [UIColor redColor];
         cell.contentInsets = UIEdgeInsetsMake(10, 10, 10, 10);
     }
     
