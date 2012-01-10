@@ -47,12 +47,28 @@
 @property (nonatomic, strong) UIView *backgroundView;
 - (id)dequeueReusableCellWithIdentifier:(NSString *)identifier;
 
+#pragma mark Managing Selections
+
+@property (nonatomic) BOOL allowSelection;
+@property (nonatomic) BOOL allowMultipleSelection;
+@property (nonatomic) BOOL allowSelectionDuringEditing;
+@property (nonatomic) BOOL allowMultipleSelectionDuringEditing;
+- (NSInteger)indexForSelectedCell;
+- (NSIndexSet *)indexesForSelectedCells;
+- (void)selectCellAtIndex:(NSInteger)cellIndex animated:(BOOL)animated;
+- (void)deselectCellAtIndex:(NSInteger)cellIndex animated:(BOOL)animated;
+
 #pragma mark Inserting, Deleting, and Moving Cells
 
 - (void)beginUpdate;
 - (void)endUpdate;
 - (void)insertCellAtIndexes:(NSIndexSet *)indexes animated:(BOOL)animated;
 - (void)deleteCellAtIndexes:(NSIndexSet *)indexes animated:(BOOL)animated;
+
+#pragma mark Managing the Editing of Cells
+
+@property (nonatomic, getter = isEditing) BOOL editing;
+- (void)setEditing:(BOOL)editing animated:(BOOL)animated;
 
 #pragma mark Reloading the Grid View
 

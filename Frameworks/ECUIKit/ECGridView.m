@@ -22,8 +22,12 @@
     NSInteger _cellCount;
     NSMutableArray *_cells;
     NSRange _cellsLoadedRange;
+    NSMutableIndexSet *_selectedCells;
+    NSMutableIndexSet *_selectedEditingCells;
     
     NSMutableDictionary *_reusableCells;
+    
+    UITapGestureRecognizer *_selectionGestureRecognizer;
     
     struct {
         unsigned delegateHasWillSelectCellAtIndex : 1;
@@ -138,8 +142,190 @@
     }];
 }
 
+#pragma mark Managing Selections
+
+@synthesize allowSelection, allowMultipleSelection, allowSelectionDuringEditing, allowMultipleSelectionDuringEditing;
+
+- (void)setAllowSelection:(BOOL)value
+{
+    if (value == allowSelection)
+        return;
+    [self willChangeValueForKey:@"allowSelection"];
+    allowSelection = value;
+    if (!_selectionGestureRecognizer)
+    {
+        _selectionGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(_handleSelectionRecognizer:)];
+        [self addGestureRecognizer:_selectionGestureRecognizer];
+    }
+    if (!self.isEditing)
+        _selectionGestureRecognizer.enabled = value;
+    [self didChangeValueForKey:@"allowSelection"];
+}
+
+- (void)setAllowMultipleSelection:(BOOL)value
+{
+    if (value == allowMultipleSelection)
+        return;
+    [self willChangeValueForKey:@"allowMultipleSelection"];
+    allowMultipleSelection = value;
+    if (allowMultipleSelection && !self.allowSelection)
+        self.allowSelection = YES;
+    [self didChangeValueForKey:@"allowMultipleSelection"];
+}
+
+- (void)setAllowSelectionDuringEditing:(BOOL)value
+{
+    if (value == allowSelectionDuringEditing)
+        return;
+    [self willChangeValueForKey:@"allowSelectionDuringEditing"];
+    allowSelectionDuringEditing = value;
+    if (!_selectionGestureRecognizer)
+    {
+        _selectionGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(_handleSelectionRecognizer:)];
+        [self addGestureRecognizer:_selectionGestureRecognizer];
+    }
+    if (self.isEditing)
+        _selectionGestureRecognizer.enabled = value;
+    [self didChangeValueForKey:@"allowSelectionDuringEditing"];
+}
+
+- (void)setAllowMultipleSelectionDuringEditing:(BOOL)value
+{
+    if (value == allowMultipleSelectionDuringEditing)
+        return;
+    [self willChangeValueForKey:@"allowMultipleSelectionDuringEditing"];
+    allowMultipleSelectionDuringEditing = value;
+    if (allowMultipleSelectionDuringEditing && !self.allowSelectionDuringEditing)
+        self.allowSelectionDuringEditing = YES;
+    [self didChangeValueForKey:@"allowMultipleSelectionDuringEditing"];
+}
+
+- (NSInteger)indexForSelectedCell
+{
+    if ([_selectedCells count] != 1)
+        return -1;
+    return [_selectedCells firstIndex];
+}
+
+- (NSIndexSet *)indexesForSelectedCells
+{
+    return [_selectedCells copy];
+}
+
+- (void)selectCellAtIndex:(NSInteger)cellIndex animated:(BOOL)animated
+{
+    if (self.isEditing)
+    {
+        // Exit if already selected
+        if ([_selectedEditingCells containsIndex:cellIndex])
+            return;
+        
+        // Deselect others if multiple selection not allowed
+        if (!self.allowMultipleSelectionDuringEditing)
+        {
+            NSIndexSet *selected = [_selectedEditingCells copy];
+            [selected enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
+                [self deselectCellAtIndex:idx animated:animated];
+            }];
+        }
+        
+        // Add selection
+        if (!_selectedEditingCells)
+            _selectedEditingCells = [NSMutableIndexSet new];
+        [_selectedEditingCells addIndex:cellIndex];
+    }
+    else
+    {
+        // Exit if already selected
+        if ([_selectedCells containsIndex:cellIndex])
+            return;
+        
+        // Deselect others if multiple selection not allowed
+        if (!self.allowMultipleSelection)
+        {
+            NSIndexSet *selected = [_selectedCells copy];
+            [selected enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
+                [self deselectCellAtIndex:idx animated:animated];
+            }];
+        }
+        
+        // Add selection
+        if (!_selectedCells)
+            _selectedCells = [NSMutableIndexSet new];
+        [_selectedCells addIndex:cellIndex];
+    }
+
+    if (_flags.delegateHasWillSelectCellAtIndex)
+        [self.delegate gridView:self willSelectCellAtIndex:cellIndex];
+
+    // Select cell if visible
+    if (NSLocationInRange(cellIndex, _cellsLoadedRange))
+    {
+        ECGridViewCell *cell = [_cells objectAtIndex:(cellIndex - _cellsLoadedRange.location)];
+        [cell setSelected:YES animated:animated];
+    }
+    
+    if (_flags.delegateHasDidSelectCellAtIndex)
+        [self.delegate gridView:self didSelectCellAtIndex:cellIndex];
+}
+
+- (void)deselectCellAtIndex:(NSInteger)cellIndex animated:(BOOL)animated
+{
+    if (self.isEditing)
+    {
+        if (![_selectedEditingCells containsIndex:cellIndex])
+            return;
+        [_selectedEditingCells removeIndex:cellIndex];
+    }
+    else
+    {
+        if (![_selectedCells containsIndex:cellIndex])
+            return;
+        [_selectedCells removeIndex:cellIndex];
+    }
+    
+    if (_flags.delegateHasWillDeselectCellAtIndex)
+        [self.delegate gridView:self willDeselectCellAtIndex:cellIndex];
+    
+    // Select cell if visible
+    if (NSLocationInRange(cellIndex, _cellsLoadedRange))
+    {
+        ECGridViewCell *cell = [_cells objectAtIndex:(cellIndex - _cellsLoadedRange.location)];
+        [cell setSelected:NO animated:animated];
+    }
+    
+    if (_flags.delegateHasDidDeselectCellAtIndex)
+        [self.delegate gridView:self didDeselectCellAtIndex:cellIndex];
+}
+
 #pragma mark Inserting, Deleting, and Moving Cells
 
+
+#pragma mark Managing the Editing of Cells
+
+@synthesize editing;
+
+- (void)setEditing:(BOOL)value
+{
+    [self setEditing:value animated:NO];
+}
+
+- (void)setEditing:(BOOL)value animated:(BOOL)animated
+{
+    if (value == editing)
+        return;
+    [self willChangeValueForKey:@"editing"];
+    editing = value;
+    if (value)
+        [_selectionGestureRecognizer setEnabled:self.allowSelectionDuringEditing];
+    else
+        [_selectionGestureRecognizer setEnabled:self.allowSelection];
+    for (ECGridViewCell *cell in _cells)
+    {
+        [cell setEditing:value animated:animated];
+    }
+    [self didChangeValueForKey:@"editing"];
+}
 
 #pragma mark Reloading the Grid View
 
@@ -164,7 +350,7 @@ static void _init(ECGridView *self)
     self->rowHeight = 200;
     self->columnNumber = 2;
     
-    [self addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(_handleSelectionRecognizer:)]];
+    self.allowSelection = YES;
 }
 
 - (id)initWithFrame:(CGRect)frame
@@ -218,11 +404,21 @@ static void _init(ECGridView *self)
         }
         // Create new cells array
         NSMutableArray *newCells = [NSMutableArray arrayWithCapacity:cellsRequiredRange.length];
-        UIView *cell = nil;
+        ECGridViewCell *cell = nil;
         NSUInteger i;
         for (i = cellsRequiredRange.location; i < cellsReuseRange.location; ++i) 
         {
             cell = [self.dataSource gridView:self cellAtIndex:i];
+            if (self.isEditing)
+            {
+                [cell setEditing:YES animated:NO];
+                [cell setSelected:[_selectedEditingCells containsIndex:i] animated:NO];
+            }
+            else
+            {
+                [cell setEditing:NO animated:NO];
+                [cell setSelected:[_selectedCells containsIndex:i] animated:NO];
+            }
             [newCells addObject:cell];
             [self insertSubview:cell atIndex:1];
         }
@@ -232,6 +428,16 @@ static void _init(ECGridView *self)
         }
         for (i = NSMaxRange(cellsReuseRange); i < NSMaxRange(cellsRequiredRange); ++i) {
             cell = [self.dataSource gridView:self cellAtIndex:i];
+            if (self.isEditing)
+            {
+                [cell setEditing:YES animated:NO];
+                [cell setSelected:[_selectedEditingCells containsIndex:i] animated:NO];
+            }
+            else
+            {
+                [cell setEditing:NO animated:NO];
+                [cell setSelected:[_selectedCells containsIndex:i] animated:NO];
+            }
             [newCells addObject:cell];
             [self insertSubview:cell atIndex:1];
         }
@@ -274,33 +480,18 @@ static void _init(ECGridView *self)
         return;
     
     CGPoint tapPoint = [recognizer locationInView:self];
-    tapPoint.y += self.contentOffset.y;
-    
     NSInteger cellIndex = (NSInteger)floorf(tapPoint.y / self.rowHeight) * self.columnNumber + (NSInteger)floorf(tapPoint.x / self.bounds.size.width * self.columnNumber);
-    ECASSERT(NSLocationInRange(cellIndex, _cellsLoadedRange));
     
-    ECGridViewCell *cell = [_cells objectAtIndex:(cellIndex - _cellsLoadedRange.location)];
-    if (cell.isSelected)
+    if (!(self.isEditing ? self.allowMultipleSelectionDuringEditing : self.allowMultipleSelection))
     {
-        if (_flags.delegateHasWillDeselectCellAtIndex)
-            [self.delegate gridView:self willDeselectCellAtIndex:cellIndex];
+        [self selectCellAtIndex:cellIndex animated:YES];
     }
     else
     {
-        if (_flags.delegateHasWillSelectCellAtIndex)
-            [self.delegate gridView:self willSelectCellAtIndex:cellIndex];
-    }
-    [cell setSelected:!cell.isSelected animated:YES];
-    // TODO call this after animation somehow
-    if (cell.isSelected)
-    {
-        if (_flags.delegateHasDidSelectCellAtIndex)
-            [self.delegate gridView:self didSelectCellAtIndex:cellIndex];
-    }
-    else
-    {
-        if (_flags.delegateHasDidDeselectCellAtIndex)
-            [self.delegate gridView:self didDeselectCellAtIndex:cellIndex];
+        if ([(self.isEditing ? _selectedEditingCells : _selectedCells) containsIndex:cellIndex])
+            [self deselectCellAtIndex:cellIndex animated:YES];
+        else
+            [self selectCellAtIndex:cellIndex animated:YES];
     }
 }
 
