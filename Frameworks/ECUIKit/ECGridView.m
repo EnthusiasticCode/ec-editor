@@ -653,13 +653,15 @@ static void _init(ECGridView *self)
         _cells = newCells;
         _cellsLoadedRange = cellsRequiredRange;
         
+        NSLog(@"%u", [[self subviews] count]);
+        
         // Layout cells
         __block CGRect cellFrame = (CGRect){ CGPointMake(bounds.origin.x, (CGFloat)(cellsRequiredRange.location / columns) * cellSize.height), cellSize };
         const UIEdgeInsets cinsets = self.cellInsets;
         [_cells enumerateObjectsUsingBlock:^(UIView *cell, NSUInteger cellIndex, BOOL *stop) {
-            CGRect frame = UIEdgeInsetsInsetRect(cellFrame, cinsets);
             if (cellIndex == 0)
             {
+                CGRect frame = UIEdgeInsetsInsetRect(cellFrame, cinsets);
                 cell.bounds = (CGRect){ CGPointZero, frame.size };
                 cell.center = CGPointMake(CGRectGetMidX(frame), CGRectGetMidY(frame));
                 return;
@@ -673,6 +675,7 @@ static void _init(ECGridView *self)
             {
                 cellFrame.origin.x += cellSize.width;
             }
+            CGRect frame = UIEdgeInsetsInsetRect(cellFrame, cinsets);
             cell.bounds = (CGRect){ CGPointZero, frame.size };
             cell.center = CGPointMake(CGRectGetMidX(frame), CGRectGetMidY(frame));
         }];
