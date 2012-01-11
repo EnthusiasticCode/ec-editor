@@ -20,6 +20,9 @@
 
 
 @interface ACProjectCell : ECGridViewCell
+
+@property (strong, nonatomic) IBOutlet UILabel *title;
 @property (strong, nonatomic) IBOutlet UILabel *label;
+@property (strong, nonatomic) IBOutlet UIImageView *icon;
 
 @end

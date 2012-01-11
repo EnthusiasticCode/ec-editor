@@ -91,6 +91,11 @@
     [self didChangeValueForKey:@"rowHeight"];
 }
 
+- (NSUInteger)columnNumber
+{
+    return MAX(1, columnNumber);
+}
+
 - (void)setColumnNumber:(NSUInteger)value
 {
     ECASSERT(value > 0);
@@ -560,11 +565,20 @@ static void _init(ECGridView *self)
     }
 }
 
+- (void)setFrame:(CGRect)frame
+{
+    if (CGRectEqualToRect(frame, self.frame))
+        return;
+    
+    _cellsLoadedRange = NSMakeRange(0, 0);
+    [super setFrame:frame];
+    [self _updateContentSize];
+}
+
 #pragma mark - Private Methods
 
 - (void)_updateContentSize
 {
-    // TODO update on bounds change
     [super setContentSize:CGSizeMake(self.bounds.size.width, self.rowHeight * (_cellCount / self.columnNumber))];
 }
 

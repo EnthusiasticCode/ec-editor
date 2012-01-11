@@ -59,6 +59,7 @@ static void * directoryPresenterFileURLsObservingContext;
         _gridView = [[ECGridView alloc] initWithFrame:CGRectMake(0, 0, 100, 100)];
         _gridView.dataSource = self;
         _gridView.delegate = self;
+        _gridView.rowHeight = 120 + 15;
         _gridView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
         _gridView.alwaysBounceVertical = YES;
         _gridView.cellInsets = UIEdgeInsetsMake(15, 15, 15, 15);
@@ -198,7 +199,9 @@ static void * directoryPresenterFileURLsObservingContext;
     }
     
     // Setup project title
-    cell.label.text = [[[self.directoryPresenter.fileURLs objectAtIndex:cellIndex] lastPathComponent] stringByDeletingPathExtension];
+    cell.title.text = [[[self.directoryPresenter.fileURLs objectAtIndex:cellIndex] lastPathComponent] stringByDeletingPathExtension];
+    cell.label.text = @"";
+    cell.icon.image = [UIImage styleProjectImageWithSize:cell.icon.bounds.size labelColor:[UIColor styleThemeColorOne]];
     
     return cell;
 }
@@ -258,7 +261,9 @@ static void * directoryPresenterFileURLsObservingContext;
 
 
 @implementation ACProjectCell
+@synthesize title;
 @synthesize label;
+@synthesize icon;
 
 
 @end
