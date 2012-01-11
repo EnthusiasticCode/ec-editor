@@ -77,20 +77,12 @@
 		B7656C8A144B54120084B050 /* Sunburst.tmTheme in Resources */ = {isa = PBXBuildFile; fileRef = B7656C77144B54120084B050 /* Sunburst.tmTheme */; };
 		B7656C8B144B54120084B050 /* Twilight.tmTheme in Resources */ = {isa = PBXBuildFile; fileRef = B7656C78144B54120084B050 /* Twilight.tmTheme */; };
 		B7656C8C144B54120084B050 /* Zenburnesque.tmTheme in Resources */ = {isa = PBXBuildFile; fileRef = B7656C79144B54120084B050 /* Zenburnesque.tmTheme */; };
-		B78077DF148696C4006C0C6B /* ACProjectCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B78077DE148696C4006C0C6B /* ACProjectCell.m */; };
 		B78077E114869702006C0C6B /* ProjectCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B78077E014869701006C0C6B /* ProjectCell.xib */; };
 		B7AC172F14216CD4009E9205 /* NewFilePopover.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B7AC172D14216CD4009E9205 /* NewFilePopover.storyboard */; };
 		B7AC173014216CD4009E9205 /* NewProjectPopover.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B7AC172E14216CD4009E9205 /* NewProjectPopover.storyboard */; };
 		B7AC174D14216D1C009E9205 /* ACNewProjectPopoverController.m in Sources */ = {isa = PBXBuildFile; fileRef = B7AC174214216D1C009E9205 /* ACNewProjectPopoverController.m */; };
 		B7AC175514216D91009E9205 /* libz.1.2.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B7AC175414216D91009E9205 /* libz.1.2.5.dylib */; };
 		B7D3BE761431BA3A00BF43EB /* Application.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = B7D3BE741431BA3A00BF43EB /* Application.xcdatamodeld */; };
-		B7DE5535148ACF8400E6A79B /* ACProjectCellNormalView.m in Sources */ = {isa = PBXBuildFile; fileRef = B7DE5534148ACF8400E6A79B /* ACProjectCellNormalView.m */; };
-		B7DE5538148ACF9400E6A79B /* ACProjectCellEditingView.m in Sources */ = {isa = PBXBuildFile; fileRef = B7DE5537148ACF9400E6A79B /* ACProjectCellEditingView.m */; };
-		B7F9FB4F14867DDB0025D21C /* GMGridView.m in Sources */ = {isa = PBXBuildFile; fileRef = B7F9FB4514867DDB0025D21C /* GMGridView.m */; };
-		B7F9FB5014867DDB0025D21C /* GMGridViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B7F9FB4714867DDB0025D21C /* GMGridViewCell.m */; };
-		B7F9FB5114867DDB0025D21C /* GMGridViewLayoutStrategies.m in Sources */ = {isa = PBXBuildFile; fileRef = B7F9FB4A14867DDB0025D21C /* GMGridViewLayoutStrategies.m */; };
-		B7F9FB5214867DDB0025D21C /* UIGestureRecognizer+GMGridViewAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = B7F9FB4C14867DDB0025D21C /* UIGestureRecognizer+GMGridViewAdditions.m */; };
-		B7F9FB5314867DDB0025D21C /* UIView+GMGridViewAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = B7F9FB4E14867DDB0025D21C /* UIView+GMGridViewAdditions.m */; };
 		CD1973ED14B1D2B200CACF5E /* topBarItem_Edit.png in Resources */ = {isa = PBXBuildFile; fileRef = CD1973EC14B1D2B200CACF5E /* topBarItem_Edit.png */; };
 		CD1973EF14B1D4F600CACF5E /* topBarItem_Tools.png in Resources */ = {isa = PBXBuildFile; fileRef = CD1973EE14B1D4F600CACF5E /* topBarItem_Tools.png */; };
 		CD21547913F45CC200614B83 /* ACToolButton.m in Sources */ = {isa = PBXBuildFile; fileRef = CD21547813F45CC200614B83 /* ACToolButton.m */; };
@@ -244,13 +236,6 @@
 			remoteGlobalIDString = B71709BC1428E3CD00DF7794;
 			remoteInfo = ECUIKitTests;
 		};
-		B7170EB91429F3B800DF7794 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B7170E8E1429F3B600DF7794 /* ECUIKit.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = CD0DDA1414293E7300FE8B5B;
-			remoteInfo = ECSplitViewControllerTest;
-		};
 		B7170EC21429F54300DF7794 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B7170E8B1429F3B600DF7794 /* ECFoundation.xcodeproj */;
@@ -278,13 +263,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = B71709AB1428E3CD00DF7794;
 			remoteInfo = ECUIKit;
-		};
-		CD65C0AD1446F6BE000F66CD /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B7170E8E1429F3B600DF7794 /* ECUIKit.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = CD17F2E0144596F60008ED91;
-			remoteInfo = ECCodeViewTest;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -367,8 +345,6 @@
 		B7656C77144B54120084B050 /* Sunburst.tmTheme */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = Sunburst.tmTheme; sourceTree = "<group>"; };
 		B7656C78144B54120084B050 /* Twilight.tmTheme */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = Twilight.tmTheme; sourceTree = "<group>"; };
 		B7656C79144B54120084B050 /* Zenburnesque.tmTheme */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = Zenburnesque.tmTheme; sourceTree = "<group>"; };
-		B78077DD148696C4006C0C6B /* ACProjectCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACProjectCell.h; sourceTree = "<group>"; };
-		B78077DE148696C4006C0C6B /* ACProjectCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACProjectCell.m; sourceTree = "<group>"; };
 		B78077E014869701006C0C6B /* ProjectCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ProjectCell.xib; sourceTree = "<group>"; };
 		B7AC172D14216CD4009E9205 /* NewFilePopover.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = NewFilePopover.storyboard; sourceTree = "<group>"; };
 		B7AC172E14216CD4009E9205 /* NewProjectPopover.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = NewProjectPopover.storyboard; sourceTree = "<group>"; };
@@ -376,21 +352,6 @@
 		B7AC174214216D1C009E9205 /* ACNewProjectPopoverController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACNewProjectPopoverController.m; sourceTree = "<group>"; };
 		B7AC175414216D91009E9205 /* libz.1.2.5.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.1.2.5.dylib; path = usr/lib/libz.1.2.5.dylib; sourceTree = SDKROOT; };
 		B7D3BE751431BA3A00BF43EB /* Application.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Application.xcdatamodel; sourceTree = "<group>"; };
-		B7DE5533148ACF8400E6A79B /* ACProjectCellNormalView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACProjectCellNormalView.h; sourceTree = "<group>"; };
-		B7DE5534148ACF8400E6A79B /* ACProjectCellNormalView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACProjectCellNormalView.m; sourceTree = "<group>"; };
-		B7DE5536148ACF9400E6A79B /* ACProjectCellEditingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACProjectCellEditingView.h; sourceTree = "<group>"; };
-		B7DE5537148ACF9400E6A79B /* ACProjectCellEditingView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACProjectCellEditingView.m; sourceTree = "<group>"; };
-		B7F9FB4414867DDB0025D21C /* GMGridView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GMGridView.h; path = ../ThirdParty/GMGridView/GMGridView/API/GMGridView.h; sourceTree = "<group>"; };
-		B7F9FB4514867DDB0025D21C /* GMGridView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GMGridView.m; path = ../ThirdParty/GMGridView/GMGridView/API/GMGridView.m; sourceTree = "<group>"; };
-		B7F9FB4614867DDB0025D21C /* GMGridViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GMGridViewCell.h; path = ../ThirdParty/GMGridView/GMGridView/API/GMGridViewCell.h; sourceTree = "<group>"; };
-		B7F9FB4714867DDB0025D21C /* GMGridViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GMGridViewCell.m; path = ../ThirdParty/GMGridView/GMGridView/API/GMGridViewCell.m; sourceTree = "<group>"; };
-		B7F9FB4814867DDB0025D21C /* GMGridViewCell+Extended.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "GMGridViewCell+Extended.h"; path = "../ThirdParty/GMGridView/GMGridView/API/GMGridViewCell+Extended.h"; sourceTree = "<group>"; };
-		B7F9FB4914867DDB0025D21C /* GMGridViewLayoutStrategies.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GMGridViewLayoutStrategies.h; path = ../ThirdParty/GMGridView/GMGridView/API/GMGridViewLayoutStrategies.h; sourceTree = "<group>"; };
-		B7F9FB4A14867DDB0025D21C /* GMGridViewLayoutStrategies.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GMGridViewLayoutStrategies.m; path = ../ThirdParty/GMGridView/GMGridView/API/GMGridViewLayoutStrategies.m; sourceTree = "<group>"; };
-		B7F9FB4B14867DDB0025D21C /* UIGestureRecognizer+GMGridViewAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIGestureRecognizer+GMGridViewAdditions.h"; path = "../ThirdParty/GMGridView/GMGridView/API/UIGestureRecognizer+GMGridViewAdditions.h"; sourceTree = "<group>"; };
-		B7F9FB4C14867DDB0025D21C /* UIGestureRecognizer+GMGridViewAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIGestureRecognizer+GMGridViewAdditions.m"; path = "../ThirdParty/GMGridView/GMGridView/API/UIGestureRecognizer+GMGridViewAdditions.m"; sourceTree = "<group>"; };
-		B7F9FB4D14867DDB0025D21C /* UIView+GMGridViewAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIView+GMGridViewAdditions.h"; path = "../ThirdParty/GMGridView/GMGridView/API/UIView+GMGridViewAdditions.h"; sourceTree = "<group>"; };
-		B7F9FB4E14867DDB0025D21C /* UIView+GMGridViewAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIView+GMGridViewAdditions.m"; path = "../ThirdParty/GMGridView/GMGridView/API/UIView+GMGridViewAdditions.m"; sourceTree = "<group>"; };
 		CD1973EC14B1D2B200CACF5E /* topBarItem_Edit.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = topBarItem_Edit.png; sourceTree = "<group>"; };
 		CD1973EE14B1D4F600CACF5E /* topBarItem_Tools.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = topBarItem_Tools.png; sourceTree = "<group>"; };
 		CD21547713F45CC200614B83 /* ACToolButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACToolButton.h; sourceTree = "<group>"; };
@@ -577,9 +538,7 @@
 			children = (
 				B7170EB61429F3B800DF7794 /* libECUIKit.a */,
 				B7170EB81429F3B800DF7794 /* ECUIKitTests.octest */,
-				B7170EBA1429F3B800DF7794 /* ECSplitViewControllerTest.app */,
 				B70129E91438696D0070CCDF /* ECTabControllerTest.app */,
-				CD65C0AE1446F6BE000F66CD /* ECCodeViewTest.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -679,7 +638,6 @@
 		B7AC172714216C59009E9205 /* Third Party */ = {
 			isa = PBXGroup;
 			children = (
-				B7F9FB4314867DBF0025D21C /* GMGridView */,
 				CDF1D46C14150C4900EFEC21 /* libstdc++.6.0.9.dylib */,
 				B7AC175414216D91009E9205 /* libz.1.2.5.dylib */,
 			);
@@ -703,24 +661,6 @@
 				B7D3BE741431BA3A00BF43EB /* Application.xcdatamodeld */,
 			);
 			name = "Core Data";
-			sourceTree = "<group>";
-		};
-		B7F9FB4314867DBF0025D21C /* GMGridView */ = {
-			isa = PBXGroup;
-			children = (
-				B7F9FB4414867DDB0025D21C /* GMGridView.h */,
-				B7F9FB4514867DDB0025D21C /* GMGridView.m */,
-				B7F9FB4614867DDB0025D21C /* GMGridViewCell.h */,
-				B7F9FB4714867DDB0025D21C /* GMGridViewCell.m */,
-				B7F9FB4814867DDB0025D21C /* GMGridViewCell+Extended.h */,
-				B7F9FB4914867DDB0025D21C /* GMGridViewLayoutStrategies.h */,
-				B7F9FB4A14867DDB0025D21C /* GMGridViewLayoutStrategies.m */,
-				B7F9FB4B14867DDB0025D21C /* UIGestureRecognizer+GMGridViewAdditions.h */,
-				B7F9FB4C14867DDB0025D21C /* UIGestureRecognizer+GMGridViewAdditions.m */,
-				B7F9FB4D14867DDB0025D21C /* UIView+GMGridViewAdditions.h */,
-				B7F9FB4E14867DDB0025D21C /* UIView+GMGridViewAdditions.m */,
-			);
-			name = GMGridView;
 			sourceTree = "<group>";
 		};
 		CD1973EB14B1D2A600CACF5E /* Items */ = {
@@ -1014,12 +954,6 @@
 			children = (
 				CD8108D313E31A28000E1941 /* ACColorSelectionControl.h */,
 				CD8108D413E31A28000E1941 /* ACColorSelectionControl.m */,
-				B78077DD148696C4006C0C6B /* ACProjectCell.h */,
-				B78077DE148696C4006C0C6B /* ACProjectCell.m */,
-				B7DE5533148ACF8400E6A79B /* ACProjectCellNormalView.h */,
-				B7DE5534148ACF8400E6A79B /* ACProjectCellNormalView.m */,
-				B7DE5536148ACF9400E6A79B /* ACProjectCellEditingView.h */,
-				B7DE5537148ACF9400E6A79B /* ACProjectCellEditingView.m */,
 				CDBCC5DA14B6081A005E5C46 /* ACHighlightLabel.h */,
 				CDBCC5DB14B6081A005E5C46 /* ACHighlightLabel.m */,
 				CDBCC5DD14B60F9E005E5C46 /* ACHighlightTableViewCell.h */,
@@ -1281,20 +1215,6 @@
 			remoteRef = B7170EB71429F3B800DF7794 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B7170EBA1429F3B800DF7794 /* ECSplitViewControllerTest.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = ECSplitViewControllerTest.app;
-			remoteRef = B7170EB91429F3B800DF7794 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		CD65C0AE1446F6BE000F66CD /* ECCodeViewTest.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = ECCodeViewTest.app;
-			remoteRef = CD65C0AD1446F6BE000F66CD /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
 /* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
@@ -1458,14 +1378,6 @@
 				CDC1A079147E6EC300E01B7A /* ACCodeFileCompletionCell.m in Sources */,
 				CD6CCAF9147EB0C50084D797 /* ACCodeFileKeyboardAccessoryPopoverView.m in Sources */,
 				CDE80660147F949300C94BFD /* ACShapePopoverBackgroundView.m in Sources */,
-				B7F9FB4F14867DDB0025D21C /* GMGridView.m in Sources */,
-				B7F9FB5014867DDB0025D21C /* GMGridViewCell.m in Sources */,
-				B7F9FB5114867DDB0025D21C /* GMGridViewLayoutStrategies.m in Sources */,
-				B7F9FB5214867DDB0025D21C /* UIGestureRecognizer+GMGridViewAdditions.m in Sources */,
-				B7F9FB5314867DDB0025D21C /* UIView+GMGridViewAdditions.m in Sources */,
-				B78077DF148696C4006C0C6B /* ACProjectCell.m in Sources */,
-				B7DE5535148ACF8400E6A79B /* ACProjectCellNormalView.m in Sources */,
-				B7DE5538148ACF9400E6A79B /* ACProjectCellEditingView.m in Sources */,
 				B75B575D14B0B62D00053783 /* ACCodeFile.m in Sources */,
 				CDBCC5DC14B6081A005E5C46 /* ACHighlightLabel.m in Sources */,
 				CDBCC5DF14B60F9E005E5C46 /* ACHighlightTableViewCell.m in Sources */,

@@ -6,13 +6,20 @@
 //  Copyright 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import "GMGridView.h"
+#import <ECUIKit/ECGridView.h>
+
 @class ACApplication, ACTab, ACProjectCell;
 
-@interface ACProjectTableController : UIViewController <UITextFieldDelegate, GMGridViewDataSource>
+
+@interface ACProjectTableController : UIViewController <UITextFieldDelegate, ECGridViewDataSource, ECGridViewDelegate>
 
 @property (nonatomic, strong) NSURL *projectsDirectory;
-
 @property (nonatomic, strong) ACTab *tab;
+
+@end
+
+
+@interface ACProjectCell : ECGridViewCell
+@property (strong, nonatomic) IBOutlet UILabel *label;
 
 @end

@@ -18,6 +18,12 @@
 
 @end
 
+@interface ECGridViewCell (/*Private Methods*/)
+
+- (void)_setSelected:(BOOL)selected animated:(BOOL)animated complitionHandler:(void(^)(void))completionHandler;
+
+@end
+
 #pragma mark -
 
 @implementation ECGridView {
@@ -265,11 +271,15 @@
     if (NSLocationInRange(cellIndex, _cellsLoadedRange))
     {
         ECGridViewCell *cell = [_cells objectAtIndex:(cellIndex - _cellsLoadedRange.location)];
-        [cell setSelected:YES animated:animated];
+        [cell _setSelected:YES animated:animated complitionHandler:^{
+            if (_flags.delegateHasDidSelectCellAtIndex)
+                [self.delegate gridView:self didSelectCellAtIndex:cellIndex];
+        }];
     }
-    
-    if (_flags.delegateHasDidSelectCellAtIndex)
+    else if (_flags.delegateHasDidSelectCellAtIndex)
+    {
         [self.delegate gridView:self didSelectCellAtIndex:cellIndex];
+    }
 }
 
 - (void)deselectCellAtIndex:(NSInteger)cellIndex animated:(BOOL)animated
@@ -294,11 +304,15 @@
     if (NSLocationInRange(cellIndex, _cellsLoadedRange))
     {
         ECGridViewCell *cell = [_cells objectAtIndex:(cellIndex - _cellsLoadedRange.location)];
-        [cell setSelected:NO animated:animated];
+        [cell _setSelected:NO animated:animated complitionHandler:^{
+            if (_flags.delegateHasDidDeselectCellAtIndex)
+                [self.delegate gridView:self didDeselectCellAtIndex:cellIndex];
+        }];
     }
-    
-    if (_flags.delegateHasDidDeselectCellAtIndex)
+    else if (_flags.delegateHasDidDeselectCellAtIndex)
+    {
         [self.delegate gridView:self didDeselectCellAtIndex:cellIndex];
+    }
 }
 
 #pragma mark Inserting, Deleting, and Moving Cells
@@ -606,6 +620,18 @@ static void _init(ECGridView *self)
     return contentView;
 }
 
+- (void)setContentView:(UIView *)value
+{
+    if (value == contentView)
+        return;
+    [self willChangeValueForKey:@"contentView"];
+    [contentView removeFromSuperview];
+    contentView = value;
+    contentView.frame = UIEdgeInsetsInsetRect([self bounds], self.contentInsets);
+    [self insertSubview:contentView atIndex:100];
+    [self didChangeValueForKey:@"contentView"];
+}
+
 - (void)setBackgroundView:(UIView *)value
 {
     if (value == backgroundView)
@@ -645,6 +671,11 @@ static void _init(ECGridView *self)
 
 - (void)setSelected:(BOOL)value animated:(BOOL)animated
 {
+    [self _setSelected:value animated:animated complitionHandler:nil];
+}
+
+- (void)_setSelected:(BOOL)value animated:(BOOL)animated complitionHandler:(void (^)(void))completionHandler
+{
     if (value == selected)
         return;
     [self willChangeValueForKey:@"selected"];
@@ -666,6 +697,8 @@ static void _init(ECGridView *self)
     } completion:^(BOOL finished) {
         if (toView)
             [fromView removeFromSuperview];
+        if (completionHandler)
+            completionHandler();
     }];
     [self didChangeValueForKey:@"selected"];
 }
@@ -716,52 +749,37 @@ static void _init(ECGridView *self)
 
 #pragma mark View Methods
 
-static void _initGridViewCell(ECGridViewCell *self)
-{
-    [self addSubview:self.contentView];
-    if (self.backgroundView)
-        [self addSubview:self.backgroundView];
-}
-
-- (id)initWithCoder:(NSCoder *)coder {
-    self = [super initWithCoder:coder];
-    if (self)
-        return nil;
-    _initGridViewCell(self);
-    return self;
-}
-
-- (id)initWithFrame:(CGRect)frame
-{
-    if (!(self = [super initWithFrame:frame]))
-        return nil;
-    _initGridViewCell(self);
-    return self;
-}
-
 - (id)initWithFrame:(CGRect)frame reuseIdentifier:(NSString *)aReuseIdentifier
 {
     self = [super initWithFrame:frame];
     if (!self)
         return nil;
     reuseIdentifier = aReuseIdentifier;
-    _initGridViewCell(self);
+    [self addSubview:self.contentView];
+    if (self.backgroundView)
+        [self addSubview:self.backgroundView];
     return self;
 }
 
 #pragma mark Class Methods
 
-+ (ECGridViewCell *)gridViewCellWithReuseIdentifier:(NSString *)reuseIdentifier
++ (id)gridViewCellWithReuseIdentifier:(NSString *)reuseIdentifier
 {
     return [[self class] gridViewCellWithReuseIdentifier:reuseIdentifier fromNibNamed:nil bundle:nil];
 }
 
-+ (ECGridViewCell *)gridViewCellWithReuseIdentifier:(NSString *)reuseIdentifier fromNibNamed:(NSString *)nibName bundle:(NSBundle *)bundle
++ (id)gridViewCellWithReuseIdentifier:(NSString *)reuseIdentifier fromNibNamed:(NSString *)nibName bundle:(NSBundle *)bundle
 {
-    ECGridViewCell *result = [[[self class] alloc] initWithFrame:CGRectMake(0, 0, 20, 10) reuseIdentifier:reuseIdentifier];
+    ECGridViewCell *result = nil;
     if (nibName)
     {
+        result = [[[self class] alloc] initWithFrame:CGRectMake(0, 0, 1000, 1000)];
+        result->reuseIdentifier = reuseIdentifier;
         [(bundle ? bundle : [NSBundle mainBundle]) loadNibNamed:nibName owner:result options:nil];
+    }
+    else
+    {
+        result = [[[self class] alloc] initWithFrame:CGRectMake(0, 0, 1000, 1000) reuseIdentifier:reuseIdentifier];
     }
     return result;
 }

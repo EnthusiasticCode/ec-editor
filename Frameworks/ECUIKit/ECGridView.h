@@ -81,8 +81,8 @@
 
 - (id)initWithFrame:(CGRect)frame reuseIdentifier:(NSString *)reuseIdentifier;
 
-+ (ECGridViewCell *)gridViewCellWithReuseIdentifier:(NSString *)reuseIdentifier;
-+ (ECGridViewCell *)gridViewCellWithReuseIdentifier:(NSString *)reuseIdentifier fromNibNamed:(NSString *)nibName bundle:(NSBundle *)bundle;
++ (id)gridViewCellWithReuseIdentifier:(NSString *)reuseIdentifier;
++ (id)gridViewCellWithReuseIdentifier:(NSString *)reuseIdentifier fromNibNamed:(NSString *)nibName bundle:(NSBundle *)bundle;
 
 #pragma mark Reusing Cells
 @property (nonatomic, readonly, strong) NSString *reuseIdentifier;
@@ -90,9 +90,9 @@
 
 #pragma mark Accessing Views of the Cell Object
 
-@property (nonatomic, readonly, strong) UIView *contentView;
-@property (nonatomic, strong) UIView *backgroundView;
-@property (nonatomic, strong) UIView *selectedBackgroundView;
+@property (nonatomic, strong) IBOutlet UIView *contentView;
+@property (nonatomic, strong) IBOutlet UIView *backgroundView;
+@property (nonatomic, strong) IBOutlet UIView *selectedBackgroundView;
 
 #pragma mark Managing Cell Selection and Highlighting
 

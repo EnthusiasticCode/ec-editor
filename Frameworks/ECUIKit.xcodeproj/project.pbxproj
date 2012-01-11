@@ -144,7 +144,7 @@
 		CDBD283C1435104F00E05F40 /* ECTabControllerTest_AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = CDBD283B1435104F00E05F40 /* ECTabControllerTest_AppDelegate.m */; };
 		CDBD28461435115900E05F40 /* ECTabController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDBD28251435101B00E05F40 /* ECTabController.m */; };
 		CDBD2847143512B200E05F40 /* ECTabBar.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170B781428EB2400DF7794 /* ECTabBar.m */; };
-		CDEE0D0E14BC56B50019FDEF /* ECGridView.h in Headers */ = {isa = PBXBuildFile; fileRef = CDEE0D0C14BC56B50019FDEF /* ECGridView.h */; };
+		CDEE0D0E14BC56B50019FDEF /* ECGridView.h in Headers */ = {isa = PBXBuildFile; fileRef = CDEE0D0C14BC56B50019FDEF /* ECGridView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CDEE0D0F14BC56B50019FDEF /* ECGridView.m in Sources */ = {isa = PBXBuildFile; fileRef = CDEE0D0D14BC56B50019FDEF /* ECGridView.m */; };
 		CDEE0D1E14BCAAF90019FDEF /* ECGridViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDEE0D1D14BCAAF90019FDEF /* ECGridViewController.m */; };
 		CDEE0D1F14BCAD290019FDEF /* ECGridView.m in Sources */ = {isa = PBXBuildFile; fileRef = CDEE0D0D14BC56B50019FDEF /* ECGridView.m */; };
@@ -908,6 +908,7 @@
 				B7170BAF1428EB2500DF7794 /* ECTabBar.h in Headers */,
 				B7170BB11428EB2500DF7794 /* ECTextPosition.h in Headers */,
 				B7170BB31428EB2500DF7794 /* ECTextRange.h in Headers */,
+				CDEE0D0E14BC56B50019FDEF /* ECGridView.h in Headers */,
 				B7170BB51428EB2500DF7794 /* ECTextRenderer.h in Headers */,
 				CD2A5FCD142A4A9900A2CACD /* ECSplitViewController.h in Headers */,
 				CDBD28261435101B00E05F40 /* ECTabController.h in Headers */,
@@ -918,7 +919,6 @@
 				B71709DB1428E64F00DF7794 /* ECDebug.h in Headers */,
 				CD6B0F051434D43000049625 /* ECInverseCornerShapeView.h in Headers */,
 				CD06BA5F1438640200295E5A /* ECCustomizableScrollView.h in Headers */,
-				CDEE0D0E14BC56B50019FDEF /* ECGridView.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

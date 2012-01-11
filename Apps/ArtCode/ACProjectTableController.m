@@ -13,9 +13,6 @@
 #import "ArtCodeAppDelegate.h"
 #import "ACApplication.h"
 #import "ACTab.h"
-#import "ACProjectCell.h"
-#import "ACProjectCellNormalView.h"
-#import "ACProjectCellEditingView.h"
 
 #import "ACNewProjectPopoverController.h"
 
@@ -33,12 +30,11 @@ static void * directoryPresenterFileURLsObservingContext;
     NSArray *_toolItemsNormal;
     NSArray *_toolItemsEditing;
 }
-@property (nonatomic, strong) GMGridView *gridView;
+@property (nonatomic, strong) ECGridView *gridView;
+
 /// Represent a directory's contents.
 @property (nonatomic, strong) ECDirectoryPresenter *directoryPresenter;
 - (void)_toolNormalAddAction:(id)sender;
-- (void)_openButtonAction:(id)sender;
-- (void)_deleteButtonAction:(id)sender;
 
 @end
 
@@ -53,13 +49,17 @@ static void * directoryPresenterFileURLsObservingContext;
 @synthesize gridView = _gridView;
 @synthesize projectsDirectory = _projectsDirectory, directoryPresenter = _directoryPresenter;
 
-- (GMGridView *)gridView
+- (ECGridView *)gridView
 {
     if (!_gridView)
     {
-        _gridView = [[GMGridView alloc] init];
+        _gridView = [[ECGridView alloc] initWithFrame:CGRectMake(0, 0, 100, 100)];
         _gridView.dataSource = self;
+        _gridView.delegate = self;
         _gridView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+        _gridView.alwaysBounceVertical = YES;
+        _gridView.backgroundView = [UIView new];
+        _gridView.backgroundView.backgroundColor = [UIColor grayColor];
     }
     return _gridView;
 }
@@ -100,12 +100,7 @@ static void * directoryPresenterFileURLsObservingContext;
     else
         self.toolbarItems = _toolItemsEditing;
     
-    if (editing)
-        for (ACProjectCell *cell in [self.gridView visibleCells])
-            cell.contentView = cell.editingView;
-    else
-        for (ACProjectCell *cell in [self.gridView visibleCells])
-            cell.contentView = cell.normalView;
+    [self.gridView setEditing:editing animated:animated];
 }
 
 #pragma mark - Controller Methods
@@ -130,9 +125,7 @@ static void * directoryPresenterFileURLsObservingContext;
 
 - (void)loadView
 {
-    [super loadView];
-    self.gridView.frame = self.view.bounds;
-    [self.view addSubview:self.gridView];
+    self.view = self.gridView;
 }
 
 - (void)viewDidLoad
@@ -171,147 +164,91 @@ static void * directoryPresenterFileURLsObservingContext;
     [_toolItemPopover presentPopoverFromBarButtonItem:sender permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
 }
 
-#pragma mark - Cell Methods and Actions
+#pragma mark - Grid View Data Source
 
-- (UIImage *)projectIconWithColor:(UIColor *)color
-{
-    // Icons cache
-    STATIC_OBJECT(NSCache, iconCache, [NSCache new]);
-    
-    // Cell icon
-    UIImage *cellIcon = [iconCache objectForKey:color];
-    if (!cellIcon)
-    {
-        cellIcon = [UIImage styleProjectImageWithSize:CGSizeMake(32, 33) labelColor:color];
-        [iconCache setObject:cellIcon forKey:color];
-    }
-    
-    return cellIcon;
-}
-
-//- (void)labelColorAction:(id)sender
-//{
-//    if (!popoverLabelColorController)
-//    {
-//        ACColorSelectionControl *colorControl = [ACColorSelectionControl new];
-//        colorControl.colorCellsMargin = 2;
-//        colorControl.columns = 3;
-//        colorControl.rows = 2;
-//        colorControl.colors = [NSArray arrayWithObjects:
-//                               [UIColor colorWithRed:255./255. green:106./255. blue:89./255. alpha:1], 
-//                               [UIColor colorWithRed:255./255. green:184./255. blue:62./255. alpha:1], 
-//                               [UIColor colorWithRed:237./255. green:233./255. blue:68./255. alpha:1],
-//                               [UIColor colorWithRed:168./255. green:230./255. blue:75./255. alpha:1],
-//                               [UIColor colorWithRed:93./255. green:157./255. blue:255./255. alpha:1],
-//                               [UIColor styleForegroundColor], nil];
-//        [colorControl addTarget:self action:@selector(colorSelectionAction:) forControlEvents:UIControlEventTouchUpInside];
-//        
-//        UIViewController *viewController = [UIViewController new];
-//        viewController.contentSizeForViewInPopover = CGSizeMake(145, 90);
-//        viewController.view = colorControl;
-//        
-//        popoverLabelColorController = [[ECPopoverController alloc] initWithContentViewController:viewController];
-//    }
-//    
-//    // Retrieve cell
-//    id cell = sender;
-//    while (cell && ![cell isKindOfClass:[UITableViewCell class]])
-//        cell = [cell superview];
-//    [(ACColorSelectionControl *)popoverLabelColorController.contentViewController.view setUserInfo:cell];
-//    
-//    [popoverLabelColorController presentPopoverFromRect:[sender frame] inView:[sender superview] permittedArrowDirections:UIPopoverArrowDirectionLeft animated:YES];
-//}
-
-#pragma mark - GridViewDataSource
-
-- (NSInteger)numberOfItemsInGMGridView:(GMGridView *)gridView
+- (NSInteger)numberOfCellsForGridView:(ECGridView *)gridView
 {
     return [self.directoryPresenter.fileURLs count];
 }
 
-- (CGSize)sizeForItemsInGMGridView:(GMGridView *)gridView
-{
-    return CGSizeMake(320.0, 150.0);
-}
-
-- (GMGridViewCell *)GMGridView:(GMGridView *)gridView cellForItemAtIndex:(NSInteger)index
+- (ECGridViewCell *)gridView:(ECGridView *)gridView cellAtIndex:(NSInteger)cellIndex
 {
     // Backgrounds images
     STATIC_OBJECT(UIImage, cellBackgroundImage, [UIImage styleBackgroundImageWithColor:[UIColor styleBackgroundColor] borderColor:[UIColor styleForegroundColor] insets:UIEdgeInsetsMake(4, 7, 4, 7) arrowSize:CGSizeZero roundingCorners:UIRectCornerAllCorners]);
     STATIC_OBJECT(UIImage, cellHighlightedImage, [UIImage styleBackgroundImageWithColor:[UIColor styleHighlightColor] borderColor:[UIColor styleForegroundColor] insets:UIEdgeInsetsMake(4, 7, 4, 7) arrowSize:CGSizeZero roundingCorners:UIRectCornerAllCorners]);
     
     // Create cell
-    ACProjectCell *cell = (ACProjectCell *)[self.gridView dequeueReusableCell];
+    static NSString *cellIdentifier = @"cell";
+    ACProjectCell *cell = [gridView dequeueReusableCellWithIdentifier:cellIdentifier];
     if (cell == nil)
     {
-        cell = [[ACProjectCell alloc] init];
-        [[NSBundle mainBundle] loadNibNamed:@"ProjectCell" owner:cell options:nil];
-        
-        // Setup project icon
-        [cell.normalView.imageView setImage:[self projectIconWithColor:[UIColor styleForegroundColor]]];
-        [cell.editingView.imageView setImage:[self projectIconWithColor:[UIColor styleForegroundColor]]];
+        cell = [ACProjectCell gridViewCellWithReuseIdentifier:cellIdentifier fromNibNamed:@"ProjectCell" bundle:nil];
+        cell.contentInsets = UIEdgeInsetsMake(10, 10, 10, 10);
     }
     
-    
     // Setup project title
-    [cell.normalView.textLabel setText:[[[self.directoryPresenter.fileURLs objectAtIndex:index] lastPathComponent] stringByDeletingPathExtension]];
-    [cell.editingView.textField setText:[[[self.directoryPresenter.fileURLs objectAtIndex:index] lastPathComponent] stringByDeletingPathExtension]];
-    [cell.editingView.textField setTag:index];
-    [cell.editingView.textField setDelegate:self];
-    
-    [cell.normalView.openButton setTag:index];
-    [cell.normalView.openButton addTarget:self action:@selector(_openButtonAction:) forControlEvents:UIControlEventTouchUpInside];
-    
-    [cell.editingView.deleteButton setTag:index];
-    [cell.editingView.deleteButton addTarget:self action:@selector(_deleteButtonAction:) forControlEvents:UIControlEventTouchUpInside];
-    
-    if (self.editing)
-        cell.contentView = cell.editingView;
-    else
-        cell.contentView = cell.normalView;
+    cell.label.text = [[[self.directoryPresenter.fileURLs objectAtIndex:cellIndex] lastPathComponent] stringByDeletingPathExtension];
     
     return cell;
 }
 
-- (void)textFieldDidEndEditing:(UITextField *)textField
+#pragma mark - Grid View Delegate
+
+- (void)gridView:(ECGridView *)gridView didSelectCellAtIndex:(NSInteger)cellIndex
 {
-    textField.text = [[[self.directoryPresenter.fileURLs objectAtIndex:textField.tag] lastPathComponent] stringByDeletingPathExtension];
+    if (!self.isEditing)
+    {
+        [self.tab pushURL:[self.directoryPresenter.fileURLs objectAtIndex:cellIndex]];
+    }
 }
 
-- (BOOL)textFieldShouldReturn:(UITextField *)textField
-{
-    if (![textField.text length])
-        return NO;
-    NSURL *fileURL = [self.directoryPresenter.fileURLs objectAtIndex:textField.tag];
-    ECFileCoordinator *fileCoordinator = [[ECFileCoordinator alloc] initWithFilePresenter:nil];
-    [fileCoordinator coordinateWritingItemAtURL:fileURL options:NSFileCoordinatorWritingForMoving error:NULL byAccessor:^(NSURL *newURL) {
-        NSFileManager *fileManager = [[NSFileManager alloc] init];
-        [fileManager moveItemAtURL:newURL toURL:[[[newURL URLByDeletingLastPathComponent] URLByAppendingPathComponent:textField.text] URLByAppendingPathExtension:@"weakpkg"] error:NULL];
-    }];
-    [textField resignFirstResponder];
-    [self.gridView reloadData];
-    return YES;
-}
-
-- (void)_openButtonAction:(id)sender
-{
-    ECASSERT(!self.editing);
-    NSInteger rowIndex = [(UIControl *)sender tag];
-    ECASSERT(rowIndex >= 0);
-    [self.tab pushURL:[self.directoryPresenter.fileURLs objectAtIndex:rowIndex]];
-}
-
-- (void)_deleteButtonAction:(id)sender
-{
-    ECASSERT(self.editing);
-    NSInteger rowIndex = [(UIControl *)sender tag];
-    ECASSERT(rowIndex >= 0);
-    NSURL *fileURL = [self.directoryPresenter.fileURLs objectAtIndex:rowIndex];
-    ECFileCoordinator *fileCoordinator = [[ECFileCoordinator alloc] initWithFilePresenter:nil];
-    [fileCoordinator coordinateWritingItemAtURL:fileURL options:NSFileCoordinatorWritingForDeleting error:NULL byAccessor:^(NSURL *newURL) {
-        NSFileManager *fileManager = [[NSFileManager alloc] init];
-        [fileManager removeItemAtURL:newURL error:NULL];
-    }];
-}
+//- (void)textFieldDidEndEditing:(UITextField *)textField
+//{
+//    textField.text = [[[self.directoryPresenter.fileURLs objectAtIndex:textField.tag] lastPathComponent] stringByDeletingPathExtension];
+//}
+//
+//- (BOOL)textFieldShouldReturn:(UITextField *)textField
+//{
+//    if (![textField.text length])
+//        return NO;
+//    NSURL *fileURL = [self.directoryPresenter.fileURLs objectAtIndex:textField.tag];
+//    ECFileCoordinator *fileCoordinator = [[ECFileCoordinator alloc] initWithFilePresenter:nil];
+//    [fileCoordinator coordinateWritingItemAtURL:fileURL options:NSFileCoordinatorWritingForMoving error:NULL byAccessor:^(NSURL *newURL) {
+//        NSFileManager *fileManager = [[NSFileManager alloc] init];
+//        [fileManager moveItemAtURL:newURL toURL:[[[newURL URLByDeletingLastPathComponent] URLByAppendingPathComponent:textField.text] URLByAppendingPathExtension:@"weakpkg"] error:NULL];
+//    }];
+//    [textField resignFirstResponder];
+//    [self.gridView reloadData];
+//    return YES;
+//}
+//
+//- (void)_openButtonAction:(id)sender
+//{
+//    ECASSERT(!self.editing);
+//    NSInteger rowIndex = [(UIControl *)sender tag];
+//    ECASSERT(rowIndex >= 0);
+//    [self.tab pushURL:[self.directoryPresenter.fileURLs objectAtIndex:rowIndex]];
+//}
+//
+//- (void)_deleteButtonAction:(id)sender
+//{
+//    ECASSERT(self.editing);
+//    NSInteger rowIndex = [(UIControl *)sender tag];
+//    ECASSERT(rowIndex >= 0);
+//    NSURL *fileURL = [self.directoryPresenter.fileURLs objectAtIndex:rowIndex];
+//    ECFileCoordinator *fileCoordinator = [[ECFileCoordinator alloc] initWithFilePresenter:nil];
+//    [fileCoordinator coordinateWritingItemAtURL:fileURL options:NSFileCoordinatorWritingForDeleting error:NULL byAccessor:^(NSURL *newURL) {
+//        NSFileManager *fileManager = [[NSFileManager alloc] init];
+//        [fileManager removeItemAtURL:newURL error:NULL];
+//    }];
+//}
 
 @end
+
+
+@implementation ACProjectCell
+@synthesize label;
+
+
+@end
+
