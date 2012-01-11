@@ -745,6 +745,7 @@ static void _initGridViewCell(ECGridViewCell *self)
     if (!self)
         return nil;
     reuseIdentifier = aReuseIdentifier;
+    _initGridViewCell(self);
     return self;
 }
 
