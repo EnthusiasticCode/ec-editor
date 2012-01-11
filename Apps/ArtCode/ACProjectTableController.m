@@ -188,8 +188,8 @@ static void * directoryPresenterFileURLsObservingContext;
 
 - (NSInteger)numberOfCellsForGridView:(ECGridView *)gridView
 {
-    return 20;
-//    return [self.directoryPresenter.fileURLs count];
+//    return additionals;
+    return [self.directoryPresenter.fileURLs count];
 }
 
 - (ECGridViewCell *)gridView:(ECGridView *)gridView cellAtIndex:(NSInteger)cellIndex
@@ -215,11 +215,11 @@ static void * directoryPresenterFileURLsObservingContext;
     }
     
     // Setup project title
-//    cell.title.text = [[[self.directoryPresenter.fileURLs objectAtIndex:cellIndex] lastPathComponent] stringByDeletingPathExtension];
-//    cell.label.text = @"";
-//    cell.icon.image = [UIImage styleProjectImageWithSize:cell.icon.bounds.size labelColor:[UIColor styleThemeColorOne]];
+    cell.title.text = [[[self.directoryPresenter.fileURLs objectAtIndex:cellIndex] lastPathComponent] stringByDeletingPathExtension];
+    cell.label.text = @"";
+    cell.icon.image = [UIImage styleProjectImageWithSize:cell.icon.bounds.size labelColor:[UIColor styleThemeColorOne]];
 
-    cell.title.text = [NSString stringWithFormat:@"%d", cellIndex];
+//    cell.title.text = [NSString stringWithFormat:@"%d", cellIndex];
     
     return cell;
 }

@@ -616,7 +616,7 @@ static void _init(ECGridView *self)
     // Load required cells
     if (bounds.origin.y < 0)
         return;
-    NSRange cellsRequiredRange = NSIntersectionRange(NSMakeRange((NSUInteger)floorf(bounds.origin.y / cellSize.height) * columns, (NSUInteger)(ceilf(bounds.size.height / self.rowHeight) + 1) * columns), (NSRange){ 0, _cellCount });
+    NSRange cellsRequiredRange = NSIntersectionRange(NSMakeRange((NSUInteger)floorf(bounds.origin.y / cellSize.height) * columns, (NSUInteger)(floorf(bounds.size.height / self.rowHeight) + 1) * columns), (NSRange){ 0, _cellCount });
     if (cellsRequiredRange.length && !NSEqualRanges(cellsRequiredRange, _cellsLoadedRange))
     {
         NSRange cellsReuseRange = NSIntersectionRange(cellsRequiredRange, _cellsLoadedRange);
@@ -652,9 +652,7 @@ static void _init(ECGridView *self)
         }
         _cells = newCells;
         _cellsLoadedRange = cellsRequiredRange;
-        
-        NSLog(@"%u", [[self subviews] count]);
-        
+
         // Layout cells
         __block CGRect cellFrame = (CGRect){ CGPointMake(bounds.origin.x, (CGFloat)(cellsRequiredRange.location / columns) * cellSize.height), cellSize };
         const UIEdgeInsets cinsets = self.cellInsets;
