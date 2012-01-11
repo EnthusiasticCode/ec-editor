@@ -351,6 +351,8 @@
     [self _updateContentSize];
     CGRect bounds = [self bounds];
     NSMutableArray *cellsAfterUpdate = [_cells mutableCopy];
+    if (!cellsAfterUpdate)
+        cellsAfterUpdate = [NSMutableArray new];
     NSRange cellsLoadedAfterUpdate = NSIntersectionRange(NSMakeRange((NSUInteger)floorf(bounds.origin.y / self.rowHeight) * self.columnNumber, (NSUInteger)(ceilf(bounds.size.height / self.rowHeight) + 1) * self.columnNumber), (NSRange){ 0, _cellCount });
     
     //
@@ -462,6 +464,13 @@
     _cells = cellsAfterUpdate;
     _cellsLoadedRange = cellsLoadedAfterUpdate;
     
+    [_updateInsert removeAllIndexes];
+    [_updateInsertAnimated removeAllIndexes];
+    [_updateDelete removeAllIndexes];
+    [_updateDeleteAnimated removeAllIndexes];
+    [_updateReload removeAllIndexes];
+    [_updateReloadAnimated removeAllIndexes];
+    
     NSLog(@"%u", [self.subviews count]);
 }
 
@@ -557,6 +566,7 @@
 {
     ECASSERT(self.dataSource);
     
+    [self _enqueueReusableCells:_cells];
     _cells = nil;
     _cellsLoadedRange = NSMakeRange(0, 0);
     
