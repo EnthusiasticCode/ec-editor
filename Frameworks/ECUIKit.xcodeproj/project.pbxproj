@@ -125,39 +125,11 @@
 		CD0AD99014362AF100FC1EFE /* libECFoundation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7170BCF1428ECC300DF7794 /* libECFoundation.a */; };
 		CD0AD991143634FC00FC1EFE /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7170BD61428F00800DF7794 /* QuartzCore.framework */; };
 		CD0BD4AA14374FD2006F2A37 /* UIView+ReuseIdentifier.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170B881428EB2500DF7794 /* UIView+ReuseIdentifier.m */; };
-		CD0DDA1614293E7300FE8B5B /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B71709DC1428E68A00DF7794 /* UIKit.framework */; };
-		CD0DDA1714293E7300FE8B5B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B71709AF1428E3CD00DF7794 /* Foundation.framework */; };
-		CD0DDA1814293E7300FE8B5B /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7170BE41428F1A000DF7794 /* CoreGraphics.framework */; };
-		CD0DDA1E14293E7300FE8B5B /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = CD0DDA1C14293E7300FE8B5B /* InfoPlist.strings */; };
-		CD0DDA2014293E7300FE8B5B /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = CD0DDA1F14293E7300FE8B5B /* main.m */; };
-		CD0DDA2414293E7300FE8B5B /* ECSplitViewControllerTest_AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = CD0DDA2314293E7300FE8B5B /* ECSplitViewControllerTest_AppDelegate.m */; };
-		CD17F2E2144596F60008ED91 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B71709DC1428E68A00DF7794 /* UIKit.framework */; };
-		CD17F2E3144596F60008ED91 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B71709AF1428E3CD00DF7794 /* Foundation.framework */; };
-		CD17F2E4144596F60008ED91 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7170BE41428F1A000DF7794 /* CoreGraphics.framework */; };
-		CD17F2EA144596F60008ED91 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = CD17F2E8144596F60008ED91 /* InfoPlist.strings */; };
-		CD17F2EC144596F60008ED91 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = CD17F2EB144596F60008ED91 /* main.m */; };
-		CD17F2F0144596F60008ED91 /* ECCodeViewTest_AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = CD17F2EF144596F60008ED91 /* ECCodeViewTest_AppDelegate.m */; };
-		CD17F2F3144596F60008ED91 /* ECCodeViewTest_ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD17F2F2144596F60008ED91 /* ECCodeViewTest_ViewController.m */; };
-		CD17F2F6144596F60008ED91 /* ECCodeViewTest_ViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CD17F2F4144596F60008ED91 /* ECCodeViewTest_ViewController.xib */; };
-		CD17F2FA144598B80008ED91 /* ECCodeView.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170B5C1428EB2300DF7794 /* ECCodeView.m */; };
-		CD17F2FB144598B80008ED91 /* ECCodeViewBase.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170B5E1428EB2300DF7794 /* ECCodeViewBase.m */; };
-		CD17F2FC144598B80008ED91 /* ECTextPosition.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170B7A1428EB2500DF7794 /* ECTextPosition.m */; };
-		CD17F2FD144598B80008ED91 /* ECTextRange.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170B7C1428EB2500DF7794 /* ECTextRange.m */; };
-		CD17F2FE144598B80008ED91 /* ECTextRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170B7E1428EB2500DF7794 /* ECTextRenderer.m */; };
-		CD17F2FF144598B80008ED91 /* ECTextStyle.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170B801428EB2500DF7794 /* ECTextStyle.m */; };
-		CD17F30314459C730008ED91 /* libECFoundation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7170BCF1428ECC300DF7794 /* libECFoundation.a */; };
-		CD17F30414459CB90008ED91 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7170BD61428F00800DF7794 /* QuartzCore.framework */; };
-		CD17F30514459CCF0008ED91 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7170BD51428F00800DF7794 /* CoreText.framework */; };
-		CD17F30814459D0A0008ED91 /* ECRectSet.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170B6E1428EB2400DF7794 /* ECRectSet.m */; };
-		CD17F30A14459D7A0008ED91 /* ECInstantGestureRecognizer.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170B641428EB2400DF7794 /* ECInstantGestureRecognizer.m */; };
-		CD2A5FC9142A4A7E00A2CACD /* ECSplitViewControllerTest_Window.xib in Resources */ = {isa = PBXBuildFile; fileRef = CD2A5FC8142A4A7E00A2CACD /* ECSplitViewControllerTest_Window.xib */; };
 		CD2A5FCD142A4A9900A2CACD /* ECSplitViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = CD2A5FCB142A4A9900A2CACD /* ECSplitViewController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CD2A5FCE142A4A9900A2CACD /* ECSplitViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD2A5FCC142A4A9900A2CACD /* ECSplitViewController.m */; };
 		CD2A5FCF142A4A9900A2CACD /* ECSplitViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD2A5FCC142A4A9900A2CACD /* ECSplitViewController.m */; };
-		CD2A5FD0142A4A9900A2CACD /* ECSplitViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD2A5FCC142A4A9900A2CACD /* ECSplitViewController.m */; };
 		CD6B0F051434D43000049625 /* ECInverseCornerShapeView.h in Headers */ = {isa = PBXBuildFile; fileRef = CD6B0F031434D43000049625 /* ECInverseCornerShapeView.h */; };
 		CD6B0F061434D43000049625 /* ECInverseCornerShapeView.m in Sources */ = {isa = PBXBuildFile; fileRef = CD6B0F041434D43000049625 /* ECInverseCornerShapeView.m */; };
-		CD6B0F071434D43000049625 /* ECInverseCornerShapeView.m in Sources */ = {isa = PBXBuildFile; fileRef = CD6B0F041434D43000049625 /* ECInverseCornerShapeView.m */; };
 		CDA76308146968E30004FAC7 /* ECKeyboardAccessoryView.h in Headers */ = {isa = PBXBuildFile; fileRef = CDA76306146968E30004FAC7 /* ECKeyboardAccessoryView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CDA76309146968E30004FAC7 /* ECKeyboardAccessoryView.m in Sources */ = {isa = PBXBuildFile; fileRef = CDA76307146968E30004FAC7 /* ECKeyboardAccessoryView.m */; };
 		CDA763101469775C0004FAC7 /* ECCodeStringDataSource.h in Headers */ = {isa = PBXBuildFile; fileRef = CDA7630E1469775B0004FAC7 /* ECCodeStringDataSource.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -172,7 +144,10 @@
 		CDBD283C1435104F00E05F40 /* ECTabControllerTest_AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = CDBD283B1435104F00E05F40 /* ECTabControllerTest_AppDelegate.m */; };
 		CDBD28461435115900E05F40 /* ECTabController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDBD28251435101B00E05F40 /* ECTabController.m */; };
 		CDBD2847143512B200E05F40 /* ECTabBar.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170B781428EB2400DF7794 /* ECTabBar.m */; };
-		CDC7C952142A4ADD00FCF269 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7170BD61428F00800DF7794 /* QuartzCore.framework */; };
+		CDEE0D0E14BC56B50019FDEF /* ECGridView.h in Headers */ = {isa = PBXBuildFile; fileRef = CDEE0D0C14BC56B50019FDEF /* ECGridView.h */; };
+		CDEE0D0F14BC56B50019FDEF /* ECGridView.m in Sources */ = {isa = PBXBuildFile; fileRef = CDEE0D0D14BC56B50019FDEF /* ECGridView.m */; };
+		CDEE0D1E14BCAAF90019FDEF /* ECGridViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDEE0D1D14BCAAF90019FDEF /* ECGridViewController.m */; };
+		CDEE0D1F14BCAD290019FDEF /* ECGridView.m in Sources */ = {isa = PBXBuildFile; fileRef = CDEE0D0D14BC56B50019FDEF /* ECGridView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -205,13 +180,6 @@
 			remoteInfo = ECFoundation;
 		};
 		CD0AD98E14362A4100FC1EFE /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B7170BC61428ECC200DF7794 /* ECFoundation.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = B71707431428D30500DF7794;
-			remoteInfo = ECFoundation;
-		};
-		CD17F30114459C6C0008ED91 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B7170BC61428ECC200DF7794 /* ECFoundation.xcodeproj */;
 			proxyType = 1;
@@ -417,14 +385,6 @@
 		B7170BE41428F1A000DF7794 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		CD06BA5D1438640200295E5A /* ECCustomizableScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECCustomizableScrollView.h; sourceTree = "<group>"; };
 		CD06BA5E1438640200295E5A /* ECCustomizableScrollView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECCustomizableScrollView.m; sourceTree = "<group>"; };
-		CD0DDA1414293E7300FE8B5B /* ECSplitViewControllerTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ECSplitViewControllerTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		CD0DDA1B14293E7300FE8B5B /* ECSplitViewControllerTest-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ECSplitViewControllerTest-Info.plist"; sourceTree = "<group>"; };
-		CD0DDA1D14293E7300FE8B5B /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		CD0DDA1F14293E7300FE8B5B /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		CD0DDA2114293E7300FE8B5B /* ECSplitViewControllerTest-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ECSplitViewControllerTest-Prefix.pch"; sourceTree = "<group>"; };
-		CD0DDA2214293E7300FE8B5B /* ECSplitViewControllerTest_AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ECSplitViewControllerTest_AppDelegate.h; sourceTree = "<group>"; };
-		CD0DDA2314293E7300FE8B5B /* ECSplitViewControllerTest_AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ECSplitViewControllerTest_AppDelegate.m; sourceTree = "<group>"; };
-		CD17F2E0144596F60008ED91 /* ECCodeViewTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ECCodeViewTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CD17F2E7144596F60008ED91 /* ECCodeViewTest-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ECCodeViewTest-Info.plist"; sourceTree = "<group>"; };
 		CD17F2E9144596F60008ED91 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		CD17F2EB144596F60008ED91 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -434,7 +394,6 @@
 		CD17F2F1144596F60008ED91 /* ECCodeViewTest_ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ECCodeViewTest_ViewController.h; sourceTree = "<group>"; };
 		CD17F2F2144596F60008ED91 /* ECCodeViewTest_ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ECCodeViewTest_ViewController.m; sourceTree = "<group>"; };
 		CD17F2F5144596F60008ED91 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/ECCodeViewTest_ViewController.xib; sourceTree = "<group>"; };
-		CD2A5FC8142A4A7E00A2CACD /* ECSplitViewControllerTest_Window.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ECSplitViewControllerTest_Window.xib; sourceTree = "<group>"; };
 		CD2A5FCB142A4A9900A2CACD /* ECSplitViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECSplitViewController.h; sourceTree = "<group>"; };
 		CD2A5FCC142A4A9900A2CACD /* ECSplitViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECSplitViewController.m; sourceTree = "<group>"; };
 		CD6B0F031434D43000049625 /* ECInverseCornerShapeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECInverseCornerShapeView.h; sourceTree = "<group>"; };
@@ -452,6 +411,10 @@
 		CDBD28391435104F00E05F40 /* ECTabControllerTest-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ECTabControllerTest-Prefix.pch"; sourceTree = "<group>"; };
 		CDBD283A1435104F00E05F40 /* ECTabControllerTest_AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ECTabControllerTest_AppDelegate.h; sourceTree = "<group>"; };
 		CDBD283B1435104F00E05F40 /* ECTabControllerTest_AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ECTabControllerTest_AppDelegate.m; sourceTree = "<group>"; };
+		CDEE0D0C14BC56B50019FDEF /* ECGridView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECGridView.h; sourceTree = "<group>"; };
+		CDEE0D0D14BC56B50019FDEF /* ECGridView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECGridView.m; sourceTree = "<group>"; };
+		CDEE0D1C14BCAAF90019FDEF /* ECGridViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECGridViewController.h; sourceTree = "<group>"; };
+		CDEE0D1D14BCAAF90019FDEF /* ECGridViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECGridViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -478,30 +441,6 @@
 				B71709C11428E3CE00DF7794 /* Foundation.framework in Frameworks */,
 				B71709C41428E3CE00DF7794 /* libECUIKit.a in Frameworks */,
 				B71709DE1428E69500DF7794 /* UIKit.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		CD0DDA1114293E7300FE8B5B /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				CDC7C952142A4ADD00FCF269 /* QuartzCore.framework in Frameworks */,
-				CD0DDA1614293E7300FE8B5B /* UIKit.framework in Frameworks */,
-				CD0DDA1714293E7300FE8B5B /* Foundation.framework in Frameworks */,
-				CD0DDA1814293E7300FE8B5B /* CoreGraphics.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		CD17F2DD144596F60008ED91 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				CD17F30514459CCF0008ED91 /* CoreText.framework in Frameworks */,
-				CD17F30414459CB90008ED91 /* QuartzCore.framework in Frameworks */,
-				CD17F30314459C730008ED91 /* libECFoundation.a in Frameworks */,
-				CD17F2E2144596F60008ED91 /* UIKit.framework in Frameworks */,
-				CD17F2E3144596F60008ED91 /* Foundation.framework in Frameworks */,
-				CD17F2E4144596F60008ED91 /* CoreGraphics.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -537,9 +476,7 @@
 			children = (
 				B71709AC1428E3CD00DF7794 /* libECUIKit.a */,
 				B71709BC1428E3CD00DF7794 /* ECUIKitTests.octest */,
-				CD0DDA1414293E7300FE8B5B /* ECSplitViewControllerTest.app */,
 				CDBD282C1435104F00E05F40 /* ECTabControllerTest.app */,
-				CD17F2E0144596F60008ED91 /* ECCodeViewTest.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -562,6 +499,7 @@
 		B71709B11428E3CD00DF7794 /* ECUIKit */ = {
 			isa = PBXGroup;
 			children = (
+				CDEE0D0914BC569F0019FDEF /* Grid View */,
 				CD0DD9E71429198900FE8B5B /* UIKit Additions */,
 				CD0DD9E61429196300FE8B5B /* Gesture Recognizers */,
 				CD0DD9E01429185100FE8B5B /* Jump Bar */,
@@ -587,7 +525,6 @@
 			isa = PBXGroup;
 			children = (
 				CDBD28311435104F00E05F40 /* ECTabControllerTest */,
-				CD0DDA1914293E7300FE8B5B /* ECSplitViewControllerTest */,
 				CD0DD9F114293D9E00FE8B5B /* Unit Tests */,
 			);
 			name = Tests;
@@ -866,28 +803,6 @@
 			path = UnitTests;
 			sourceTree = "<group>";
 		};
-		CD0DDA1914293E7300FE8B5B /* ECSplitViewControllerTest */ = {
-			isa = PBXGroup;
-			children = (
-				CD2A5FC8142A4A7E00A2CACD /* ECSplitViewControllerTest_Window.xib */,
-				CD0DDA2214293E7300FE8B5B /* ECSplitViewControllerTest_AppDelegate.h */,
-				CD0DDA2314293E7300FE8B5B /* ECSplitViewControllerTest_AppDelegate.m */,
-				CD0DDA1A14293E7300FE8B5B /* Supporting Files */,
-			);
-			path = ECSplitViewControllerTest;
-			sourceTree = "<group>";
-		};
-		CD0DDA1A14293E7300FE8B5B /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				CD0DDA1B14293E7300FE8B5B /* ECSplitViewControllerTest-Info.plist */,
-				CD0DDA1C14293E7300FE8B5B /* InfoPlist.strings */,
-				CD0DDA1F14293E7300FE8B5B /* main.m */,
-				CD0DDA2114293E7300FE8B5B /* ECSplitViewControllerTest-Prefix.pch */,
-			);
-			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
 		CD17F2E5144596F60008ED91 /* ECCodeViewTest */ = {
 			isa = PBXGroup;
 			children = (
@@ -948,6 +863,8 @@
 				CDBD283A1435104F00E05F40 /* ECTabControllerTest_AppDelegate.h */,
 				CDBD283B1435104F00E05F40 /* ECTabControllerTest_AppDelegate.m */,
 				CDBD28321435104F00E05F40 /* Supporting Files */,
+				CDEE0D1C14BCAAF90019FDEF /* ECGridViewController.h */,
+				CDEE0D1D14BCAAF90019FDEF /* ECGridViewController.m */,
 			);
 			path = ECTabControllerTest;
 			sourceTree = "<group>";
@@ -961,6 +878,15 @@
 				CDBD28391435104F00E05F40 /* ECTabControllerTest-Prefix.pch */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		CDEE0D0914BC569F0019FDEF /* Grid View */ = {
+			isa = PBXGroup;
+			children = (
+				CDEE0D0C14BC56B50019FDEF /* ECGridView.h */,
+				CDEE0D0D14BC56B50019FDEF /* ECGridView.m */,
+			);
+			name = "Grid View";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -992,6 +918,7 @@
 				B71709DB1428E64F00DF7794 /* ECDebug.h in Headers */,
 				CD6B0F051434D43000049625 /* ECInverseCornerShapeView.h in Headers */,
 				CD06BA5F1438640200295E5A /* ECCustomizableScrollView.h in Headers */,
+				CDEE0D0E14BC56B50019FDEF /* ECGridView.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1034,41 +961,6 @@
 			productName = ECUIKitTests;
 			productReference = B71709BC1428E3CD00DF7794 /* ECUIKitTests.octest */;
 			productType = "com.apple.product-type.bundle";
-		};
-		CD0DDA1314293E7300FE8B5B /* ECSplitViewControllerTest */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = CD0DDA2B14293E7300FE8B5B /* Build configuration list for PBXNativeTarget "ECSplitViewControllerTest" */;
-			buildPhases = (
-				CD0DDA1014293E7300FE8B5B /* Sources */,
-				CD0DDA1114293E7300FE8B5B /* Frameworks */,
-				CD0DDA1214293E7300FE8B5B /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = ECSplitViewControllerTest;
-			productName = ECSplitViewControllerTest;
-			productReference = CD0DDA1414293E7300FE8B5B /* ECSplitViewControllerTest.app */;
-			productType = "com.apple.product-type.application";
-		};
-		CD17F2DF144596F60008ED91 /* ECCodeViewTest */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = CD17F2F7144596F60008ED91 /* Build configuration list for PBXNativeTarget "ECCodeViewTest" */;
-			buildPhases = (
-				CD17F2DC144596F60008ED91 /* Sources */,
-				CD17F2DD144596F60008ED91 /* Frameworks */,
-				CD17F2DE144596F60008ED91 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				CD17F30214459C6C0008ED91 /* PBXTargetDependency */,
-			);
-			name = ECCodeViewTest;
-			productName = ECCodeViewTest;
-			productReference = CD17F2E0144596F60008ED91 /* ECCodeViewTest.app */;
-			productType = "com.apple.product-type.application";
 		};
 		CDBD282B1435104F00E05F40 /* ECTabControllerTest */ = {
 			isa = PBXNativeTarget;
@@ -1116,9 +1008,7 @@
 			targets = (
 				B71709AB1428E3CD00DF7794 /* ECUIKit */,
 				B71709BB1428E3CD00DF7794 /* ECUIKitTests */,
-				CD0DDA1314293E7300FE8B5B /* ECSplitViewControllerTest */,
 				CDBD282B1435104F00E05F40 /* ECTabControllerTest */,
-				CD17F2DF144596F60008ED91 /* ECCodeViewTest */,
 			);
 		};
 /* End PBXProject section */
@@ -1146,24 +1036,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				B71709CA1428E3CE00DF7794 /* InfoPlist.strings in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		CD0DDA1214293E7300FE8B5B /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				CD0DDA1E14293E7300FE8B5B /* InfoPlist.strings in Resources */,
-				CD2A5FC9142A4A7E00A2CACD /* ECSplitViewControllerTest_Window.xib in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		CD17F2DE144596F60008ED91 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				CD17F2EA144596F60008ED91 /* InfoPlist.strings in Resources */,
-				CD17F2F6144596F60008ED91 /* ECCodeViewTest_ViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1219,6 +1091,7 @@
 				CD06BA601438640200295E5A /* ECCustomizableScrollView.m in Sources */,
 				CDA76309146968E30004FAC7 /* ECKeyboardAccessoryView.m in Sources */,
 				CDA763111469775C0004FAC7 /* ECCodeStringDataSource.m in Sources */,
+				CDEE0D0F14BC56B50019FDEF /* ECGridView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1298,35 +1171,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		CD0DDA1014293E7300FE8B5B /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				CD0DDA2014293E7300FE8B5B /* main.m in Sources */,
-				CD0DDA2414293E7300FE8B5B /* ECSplitViewControllerTest_AppDelegate.m in Sources */,
-				CD2A5FD0142A4A9900A2CACD /* ECSplitViewController.m in Sources */,
-				CD6B0F071434D43000049625 /* ECInverseCornerShapeView.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		CD17F2DC144596F60008ED91 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				CD17F2EC144596F60008ED91 /* main.m in Sources */,
-				CD17F2F0144596F60008ED91 /* ECCodeViewTest_AppDelegate.m in Sources */,
-				CD17F2F3144596F60008ED91 /* ECCodeViewTest_ViewController.m in Sources */,
-				CD17F2FA144598B80008ED91 /* ECCodeView.m in Sources */,
-				CD17F2FB144598B80008ED91 /* ECCodeViewBase.m in Sources */,
-				CD17F2FC144598B80008ED91 /* ECTextPosition.m in Sources */,
-				CD17F2FD144598B80008ED91 /* ECTextRange.m in Sources */,
-				CD17F2FE144598B80008ED91 /* ECTextRenderer.m in Sources */,
-				CD17F2FF144598B80008ED91 /* ECTextStyle.m in Sources */,
-				CD17F30814459D0A0008ED91 /* ECRectSet.m in Sources */,
-				CD17F30A14459D7A0008ED91 /* ECInstantGestureRecognizer.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		CDBD28281435104F00E05F40 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1337,6 +1181,8 @@
 				CDBD2847143512B200E05F40 /* ECTabBar.m in Sources */,
 				CD0BD4AA14374FD2006F2A37 /* UIView+ReuseIdentifier.m in Sources */,
 				CD06BA611438640200295E5A /* ECCustomizableScrollView.m in Sources */,
+				CDEE0D1E14BCAAF90019FDEF /* ECGridViewController.m in Sources */,
+				CDEE0D1F14BCAD290019FDEF /* ECGridView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1358,11 +1204,6 @@
 			name = ECFoundation;
 			targetProxy = CD0AD98E14362A4100FC1EFE /* PBXContainerItemProxy */;
 		};
-		CD17F30214459C6C0008ED91 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = ECFoundation;
-			targetProxy = CD17F30114459C6C0008ED91 /* PBXContainerItemProxy */;
-		};
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
@@ -1370,14 +1211,6 @@
 			isa = PBXVariantGroup;
 			children = (
 				B71709C91428E3CE00DF7794 /* en */,
-			);
-			name = InfoPlist.strings;
-			sourceTree = "<group>";
-		};
-		CD0DDA1C14293E7300FE8B5B /* InfoPlist.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				CD0DDA1D14293E7300FE8B5B /* en */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
@@ -1521,70 +1354,6 @@
 			};
 			name = Release;
 		};
-		CD0DDA2C14293E7300FE8B5B /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "ECUIKit/Tests/ECSplitViewControllerTest/ECSplitViewControllerTest-Prefix.pch";
-				GCC_STRICT_ALIASING = YES;
-				INFOPLIST_FILE = "ECUIKit/Tests/ECSplitViewControllerTest/ECSplitViewControllerTest-Info.plist";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TARGETED_DEVICE_FAMILY = 2;
-				WRAPPER_EXTENSION = app;
-			};
-			name = Debug;
-		};
-		CD0DDA2D14293E7300FE8B5B /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "ECUIKit/Tests/ECSplitViewControllerTest/ECSplitViewControllerTest-Prefix.pch";
-				GCC_STRICT_ALIASING = YES;
-				INFOPLIST_FILE = "ECUIKit/Tests/ECSplitViewControllerTest/ECSplitViewControllerTest-Info.plist";
-				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TARGETED_DEVICE_FAMILY = 2;
-				WRAPPER_EXTENSION = app;
-			};
-			name = Release;
-		};
-		CD17F2F8144596F60008ED91 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "ECUIKit/Tests/ECCodeViewTest/ECCodeViewTest-Prefix.pch";
-				GCC_STRICT_ALIASING = YES;
-				HEADER_SEARCH_PATHS = "${BUILD_DIR}/${CONFIGURATION}$(EFFECTIVE_PLATFORM_NAME)/usr/local/include/";
-				INFOPLIST_FILE = "ECUIKit/Tests/ECCodeViewTest/ECCodeViewTest-Info.plist";
-				LIBRARY_SEARCH_PATHS = "${BUILD_DIR}/";
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TARGETED_DEVICE_FAMILY = 2;
-				WRAPPER_EXTENSION = app;
-			};
-			name = Debug;
-		};
-		CD17F2F9144596F60008ED91 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "ECUIKit/Tests/ECCodeViewTest/ECCodeViewTest-Prefix.pch";
-				GCC_STRICT_ALIASING = YES;
-				HEADER_SEARCH_PATHS = "${BUILD_DIR}/${CONFIGURATION}$(EFFECTIVE_PLATFORM_NAME)/usr/local/include/";
-				INFOPLIST_FILE = "ECUIKit/Tests/ECCodeViewTest/ECCodeViewTest-Info.plist";
-				LIBRARY_SEARCH_PATHS = "${BUILD_DIR}/";
-				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TARGETED_DEVICE_FAMILY = 2;
-				WRAPPER_EXTENSION = app;
-			};
-			name = Release;
-		};
 		CDBD28441435104F00E05F40 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1642,24 +1411,6 @@
 			buildConfigurations = (
 				B71709D41428E3CE00DF7794 /* Debug */,
 				B71709D51428E3CE00DF7794 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		CD0DDA2B14293E7300FE8B5B /* Build configuration list for PBXNativeTarget "ECSplitViewControllerTest" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				CD0DDA2C14293E7300FE8B5B /* Debug */,
-				CD0DDA2D14293E7300FE8B5B /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		CD17F2F7144596F60008ED91 /* Build configuration list for PBXNativeTarget "ECCodeViewTest" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				CD17F2F8144596F60008ED91 /* Debug */,
-				CD17F2F9144596F60008ED91 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

@@ -7,12 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "ECTabController.h"
 
 @interface ECTabControllerTest_AppDelegate : UIResponder <UIApplicationDelegate>
 
 @property (strong, nonatomic) UIWindow *window;
-
-@property (strong, nonatomic) ECTabController *tabController;
 
 @end
