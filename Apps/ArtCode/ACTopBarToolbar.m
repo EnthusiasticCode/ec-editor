@@ -110,11 +110,11 @@ static const void *editItemContext;
     
     if (animated)
     {
-        [UIView animateWithDuration:0.25 animations:^{
+        [UIView animateWithDuration:0.10 animations:^{
             // Layout title control
             [self layoutSubviews];
         } completion:^(BOOL finished) {
-            [UIView animateWithDuration:0.25 animations:^{
+            [UIView animateWithDuration:0.10 animations:^{
                 // Fade-out old items
                 for (UIBarButtonItem *item in oldItems) {
                     item.customView.alpha = 0;

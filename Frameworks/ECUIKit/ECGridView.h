@@ -61,10 +61,11 @@
 
 #pragma mark Inserting, Deleting, and Moving Cells
 
-- (void)beginUpdate;
-- (void)endUpdate;
-- (void)insertCellAtIndexes:(NSIndexSet *)indexes animated:(BOOL)animated;
-- (void)deleteCellAtIndexes:(NSIndexSet *)indexes animated:(BOOL)animated;
+- (void)beginUpdates;
+- (void)endUpdates;
+- (void)insertCellsAtIndexes:(NSIndexSet *)indexes animated:(BOOL)animated;
+- (void)deleteCellsAtIndexes:(NSIndexSet *)indexes animated:(BOOL)animated;
+- (void)reloadCellsAtIndexes:(NSIndexSet *)indexes animated:(BOOL)animated;
 
 #pragma mark Managing the Editing of Cells
 

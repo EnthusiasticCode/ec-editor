@@ -7,12 +7,12 @@
 //
 
 #import "ECGridView.h"
-#import <objc/runtime.h>
 
 @interface ECGridView (/*Private Methods*/)
 
 - (void)_enqueueReusableCells:(NSArray *)cells;
 - (void)_updateContentSize;
+- (void)_positionCell:(ECGridViewCell *)cell forIndex:(NSInteger)cellIndex;
 - (ECGridViewCell *)_addSubviewCellAtIndex:(NSInteger)cellIndex;
 - (void)_handleSelectionRecognizer:(UITapGestureRecognizer *)recognizer;
 
@@ -34,7 +34,8 @@
     NSMutableIndexSet *_selectedEditingCells;
     
     NSMutableDictionary *_reusableCells;
-    NSMutableArray *_updateBatches;
+    NSMutableIndexSet *_updateInsert, *_updateInsertAnimated, *_updateDelete, *_updateDeleteAnimated, *_updateReload, *_updateReloadAnimated;
+    NSUInteger _updateCount;
     
     UITapGestureRecognizer *_selectionGestureRecognizer;
     
@@ -329,96 +330,193 @@
 
 #pragma mark Inserting, Deleting, and Moving Cells
 
-static const void *updateActionKey;
-static const void *updateAnimatedKey;
-static NSString * const updateInsertActionKey = @"insert";
-static NSString * const updateDeleteActionKey = @"delete";
-
-- (void)beginUpdate
+- (void)beginUpdates
 {
-    if (!_updateBatches)
-        _updateBatches = [NSMutableArray new];
-    
-    [_updateBatches addObject:[NSMutableArray new]];
+    _updateCount++;
 }
 
-- (void)endUpdate
+- (void)endUpdates
 {
-    ECASSERT([_updateBatches count]);
+    ECASSERT(_updateCount);
+    
+    _updateCount--;
+    if (_updateCount > 0)
+        return;
     
     [_selectedCells removeAllIndexes];
     [_selectedEditingCells removeAllIndexes];
     
     //
-    NSArray *batch = [_updateBatches lastObject];
-    NSString *action = nil;
-    BOOL animated = NO;
-    NSInteger updatedCount = _cellCount;
-    NSMutableArray *updatedCells = [_cells mutableCopy];
-    for (NSIndexSet *indexes in batch)
+    _cellCount = [self.dataSource numberOfCellsForGridView:self];
+    [self _updateContentSize];
+    CGRect bounds = [self bounds];
+    NSMutableArray *cellsAfterUpdate = [_cells mutableCopy];
+    NSRange cellsLoadedAfterUpdate = NSIntersectionRange(NSMakeRange((NSUInteger)floorf(bounds.origin.y / self.rowHeight) * self.columnNumber, (NSUInteger)(ceilf(bounds.size.height / self.rowHeight) + 1) * self.columnNumber), (NSRange){ 0, _cellCount });
+    
+    //
+    NSInteger offsetBeforeAnimation = 0, offsetAfterAnimation = 0;
+    for (NSInteger cellIndex = 0; cellIndex < _cellCount; ++cellIndex)
     {
-        action = objc_getAssociatedObject(indexes, &updateActionKey);
-        animated = [objc_getAssociatedObject(indexes, &updateAnimatedKey) boolValue];
-        if (action == updateInsertActionKey)
+        // Delete
+        if ([_updateDelete containsIndex:cellIndex])
         {
-            updatedCount += [indexes count];
-#warning TODO NIK implement this
-            if (!animated)
+            if (NSLocationInRange(cellIndex, _cellsLoadedRange))
             {
-                [indexes enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
-                    if (NSLocationInRange(idx, _cellsLoadedRange))
-                    {
-                        [updatedCells insertObject:[self _addSubviewCellAtIndex:idx] atIndex:(idx - _cellsLoadedRange.location)];
-                    }
+                ECGridViewCell *cell = [_cells objectAtIndex:(cellIndex - _cellsLoadedRange.location)];
+                [cellsAfterUpdate removeObject:cell];
+                [cell removeFromSuperview];
+            }
+            offsetBeforeAnimation--;
+        }
+        else if ([_updateDeleteAnimated containsIndex:cellIndex])
+        {
+            if (NSLocationInRange(cellIndex, _cellsLoadedRange))
+            {
+                ECGridViewCell *cell = [_cells objectAtIndex:(cellIndex - _cellsLoadedRange.location)];
+                [cellsAfterUpdate removeObject:cell];
+                [self _positionCell:cell forIndex:(cellIndex + offsetBeforeAnimation)];
+                [UIView animateWithDuration:0.2 animations:^{
+                    cell.alpha = 0;
+                } completion:^(BOOL finished) {
+                    [cell removeFromSuperview];
                 }];
             }
+            offsetAfterAnimation--;
         }
-        else if (action == updateDeleteActionKey)
+        
+        // Reload
+        else if ([_updateReload containsIndex:cellIndex])
         {
-            updatedCount -= [indexes count];
-            
+            if (NSLocationInRange(cellIndex, _cellsLoadedRange))
+            {
+                ECGridViewCell *cell = [_cells objectAtIndex:(cellIndex - _cellsLoadedRange.location)];
+                [cellsAfterUpdate removeObject:cell];
+                [cell removeFromSuperview];
+            }
+            if (NSLocationInRange(cellIndex + offsetBeforeAnimation, cellsLoadedAfterUpdate))
+            {
+                ECGridViewCell *cell = [self.dataSource gridView:self cellAtIndex:(cellIndex + offsetBeforeAnimation)];
+                [self _positionCell:cell forIndex:(cellIndex + offsetBeforeAnimation)];
+                if (NSLocationInRange(cellIndex + offsetBeforeAnimation + offsetAfterAnimation, cellsLoadedAfterUpdate))
+                    [cellsAfterUpdate insertObject:cell atIndex:(cellIndex + offsetBeforeAnimation + offsetAfterAnimation - cellsLoadedAfterUpdate.location)];
+            }
+        }
+        else if ([_updateReloadAnimated containsIndex:cellIndex])
+        {
+            if (NSLocationInRange(cellIndex, _cellsLoadedRange))
+            {
+                ECGridViewCell *cell = [_cells objectAtIndex:(cellIndex - _cellsLoadedRange.location)];
+                [cellsAfterUpdate removeObject:cell];
+                [self _positionCell:cell forIndex:(cellIndex + offsetBeforeAnimation)];
+                [UIView animateWithDuration:0.2 animations:^{
+                    [self _positionCell:cell forIndex:(cellIndex + offsetBeforeAnimation + offsetAfterAnimation)];
+                } completion:^(BOOL finished) {
+                    [cell removeFromSuperview];
+                }];
+            }
+            if (NSLocationInRange(cellIndex + offsetBeforeAnimation, cellsLoadedAfterUpdate))
+            {
+                ECGridViewCell *cell = [self.dataSource gridView:self cellAtIndex:(cellIndex + offsetBeforeAnimation)];
+                [self _positionCell:cell forIndex:(cellIndex + offsetBeforeAnimation)];
+                [self addSubview:cell];
+                cell.alpha = 0;
+                [UIView animateWithDuration:0.2 animations:^{
+                    cell.alpha = 1;
+                    [self _positionCell:cell forIndex:(cellIndex + offsetBeforeAnimation + offsetAfterAnimation)];
+                } completion:nil];
+                if (NSLocationInRange(cellIndex + offsetBeforeAnimation + offsetAfterAnimation, cellsLoadedAfterUpdate))
+                    [cellsAfterUpdate insertObject:cell atIndex:(cellIndex + offsetBeforeAnimation + offsetAfterAnimation - cellsLoadedAfterUpdate.location)];
+            }
+        }
+        
+        // Insert
+        if ([_updateInsert containsIndex:cellIndex])
+        {
+            if (NSLocationInRange(cellIndex, cellsLoadedAfterUpdate))
+            {
+                ECGridViewCell *cell = [self.dataSource gridView:self cellAtIndex:cellIndex];
+                [self _positionCell:cell forIndex:cellIndex];
+                if (NSLocationInRange(cellIndex, cellsLoadedAfterUpdate))
+                    [cellsAfterUpdate insertObject:cell atIndex:(cellIndex - cellsLoadedAfterUpdate.location)];
+            }
+            offsetBeforeAnimation++;
+        }
+        else if ([_updateInsertAnimated containsIndex:cellIndex])
+        {
+            if (NSLocationInRange(cellIndex, cellsLoadedAfterUpdate))
+            {
+                ECGridViewCell *cell = [self.dataSource gridView:self cellAtIndex:cellIndex];
+                [self _positionCell:cell forIndex:cellIndex];
+                [self addSubview:cell];
+                cell.alpha = 0;
+                [UIView animateWithDuration:0.2 animations:^{
+                    cell.alpha = 1;
+                }];
+                if (NSLocationInRange(cellIndex, cellsLoadedAfterUpdate))
+                    [cellsAfterUpdate insertObject:cell atIndex:(cellIndex - cellsLoadedAfterUpdate.location)];
+            }
+            offsetAfterAnimation++;
         }
     }
+
+    _cells = cellsAfterUpdate;
+    _cellsLoadedRange = cellsLoadedAfterUpdate;
     
-    // Calculate visible differences
-    _cellCount = [self.dataSource numberOfCellsForGridView:self];
-    ECASSERT(_cellCount == updatedCount);
-    
-    const CGRect bounds = UIEdgeInsetsInsetRect([self bounds], self.contentInset);
-    const NSUInteger columns = self.columnNumber;
-    const CGSize cellSize = CGSizeMake(bounds.size.width / (CGFloat)columns, self.rowHeight);
-    NSRange visibleRange = NSIntersectionRange(NSMakeRange((NSUInteger)floorf(bounds.origin.y / cellSize.height) * columns, (NSUInteger)(ceilf(bounds.size.height / self.rowHeight) + 1) * columns), (NSRange){ 0, _cellCount });
-    
+    NSLog(@"%u", [self.subviews count]);
 }
 
-- (void)_addBatchActionWithKey:(NSString *)action withCellIndexes:(NSIndexSet *)indexes animated:(BOOL)animated
+- (void)insertCellsAtIndexes:(NSIndexSet *)indexes animated:(BOOL)animated
 {
-    BOOL isSingleInsert = NO;
-    if ([_updateBatches count] == 0)
+    [self beginUpdates];
+    if (animated)
     {
-        isSingleInsert = YES;
-        [self beginUpdate];
+        if (!_updateInsertAnimated)
+            _updateInsertAnimated = [NSMutableIndexSet new];
+        [_updateInsertAnimated addIndexes:indexes];
     }
-    
-    NSMutableArray *batch = [_updateBatches lastObject];
-    [batch addObject:indexes];
-    objc_setAssociatedObject(indexes, &updateActionKey, action, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-    objc_setAssociatedObject(indexes, &updateAnimatedKey, [NSNumber numberWithBool:animated], OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-    
-    if (isSingleInsert)
+    else
     {
-        [self endUpdate];
+        if (_updateInsert)
+            _updateInsert = [NSMutableIndexSet new];
+        [_updateInsert addIndexes:indexes];
     }
+    [self endUpdates];
 }
 
-- (void)insertCellAtIndexes:(NSIndexSet *)indexes animated:(BOOL)animated
+- (void)deleteCellsAtIndexes:(NSIndexSet *)indexes animated:(BOOL)animated
 {
-    [self _addBatchActionWithKey:updateInsertActionKey withCellIndexes:indexes animated:animated];
+    [self beginUpdates];
+    if (animated)
+    {
+        if (!_updateDeleteAnimated)
+            _updateDeleteAnimated = [NSMutableIndexSet new];
+        [_updateDeleteAnimated addIndexes:indexes];
+    }
+    else
+    {
+        if (_updateDelete)
+            _updateDelete = [NSMutableIndexSet new];
+        [_updateDelete addIndexes:indexes];
+    }
+    [self endUpdates];
 }
 
-- (void)deleteCellAtIndexes:(NSIndexSet *)indexes animated:(BOOL)animated
+- (void)reloadCellsAtIndexes:(NSIndexSet *)indexes animated:(BOOL)animated
 {
-    [self _addBatchActionWithKey:updateDeleteActionKey withCellIndexes:indexes animated:animated];
+    [self beginUpdates];
+    if (animated)
+    {
+        if (!_updateReloadAnimated)
+            _updateReloadAnimated = [NSMutableIndexSet new];
+        [_updateReloadAnimated addIndexes:indexes];
+    }
+    else
+    {
+        if (_updateReload)
+            _updateReload = [NSMutableIndexSet new];
+        [_updateReload addIndexes:indexes];
+    }
+    [self endUpdates];
 }
 
 #pragma mark Managing the Editing of Cells
@@ -603,6 +701,16 @@ static void _init(ECGridView *self)
     }
     [self insertSubview:cell atIndex:1];
     return cell;
+}
+
+- (void)_positionCell:(ECGridViewCell *)cell forIndex:(NSInteger)cellIndex
+{
+    CGRect bounds = UIEdgeInsetsInsetRect([self bounds], self.contentInset);
+    CGSize cellSize = CGSizeMake(bounds.size.width / (CGFloat)self.columnNumber, self.rowHeight);
+    CGPoint origin = CGPointMake((cellIndex % self.columnNumber) * cellSize.width, (cellIndex / self.columnNumber) * cellSize.height);
+    CGRect frame = UIEdgeInsetsInsetRect((CGRect){ origin, cellSize }, self.cellInsets);
+    cell.center = CGPointMake(CGRectGetMidX(frame), CGRectGetMidY(frame));
+    cell.bounds = (CGRect){ CGPointZero, frame.size };
 }
 
 - (void)_handleSelectionRecognizer:(UITapGestureRecognizer *)recognizer

@@ -121,6 +121,7 @@
         singleTabController.tab = tab;
         [self.tabController addChildViewController:singleTabController];
     }
+    [self.tabController setTabBarVisible:NO];
     
     [self.window makeKeyAndVisible];
     return YES;

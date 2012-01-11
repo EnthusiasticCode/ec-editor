@@ -34,6 +34,9 @@ static void * directoryPresenterFileURLsObservingContext;
     
     UIImage *_cellNormalBackground;
     UIImage *_cellSelectedBackground;
+    
+    
+    NSInteger additionals;
 }
 @property (nonatomic, strong) ECGridView *gridView;
 
@@ -95,13 +98,13 @@ static void * directoryPresenterFileURLsObservingContext;
 
 - (void)setEditing:(BOOL)editing animated:(BOOL)animated
 {
-    BOOL editingChanged = NO;
-    if (editing != self.editing)
-        editingChanged = YES;
-    [super setEditing:editing animated:animated];
-    
-    if (!editingChanged)
+    if (editing == self.editing)
         return;
+    
+    [self willChangeValueForKey:@"editing"];
+    
+    [super setEditing:editing animated:animated];
+    self.editButtonItem.title = @"";
     
     if (!editing)
         self.toolbarItems = _toolItemsNormal;
@@ -109,6 +112,8 @@ static void * directoryPresenterFileURLsObservingContext;
         self.toolbarItems = _toolItemsEditing;
     
     [self.gridView setEditing:editing animated:animated];
+    
+    [self didChangeValueForKey:@"editing"];
 }
 
 #pragma mark - Controller Methods
@@ -134,6 +139,9 @@ static void * directoryPresenterFileURLsObservingContext;
 - (void)loadView
 {
     self.view = self.gridView;
+    
+    self.editButtonItem.title = @"";
+    self.editButtonItem.image = [UIImage imageNamed:@"topBarItem_Edit"];
 }
 
 - (void)viewDidLoad
@@ -142,6 +150,7 @@ static void * directoryPresenterFileURLsObservingContext;
     
     // Preparing tool items array changed in set editing
     _toolItemsNormal = [NSArray arrayWithObject:[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"tabBar_TabAddButton"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolNormalAddAction:)]];
+    self.toolbarItems = _toolItemsNormal;
     
     [self setEditing:NO animated:NO];
 }
@@ -161,21 +170,25 @@ static void * directoryPresenterFileURLsObservingContext;
 
 - (void)_toolNormalAddAction:(id)sender
 {
+    additionals++;
+    [self.gridView insertCellsAtIndexes:[NSIndexSet indexSetWithIndex:(additionals - 1)] animated:YES];
+    
     // Removing the lazy loading could cause the old popover to be overwritten by the new one causing a dealloc while popover is visible
-    if (!_toolItemPopover)
-    {
-        UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"NewProjectPopover" bundle:[NSBundle mainBundle]];
-        ACNewProjectPopoverController *popoverViewController = (ACNewProjectPopoverController *)[storyboard instantiateInitialViewController];
-        popoverViewController.projectsDirectory = self.projectsDirectory;
-        _toolItemPopover = [[UIPopoverController alloc] initWithContentViewController:popoverViewController];
-    }
-    [_toolItemPopover presentPopoverFromBarButtonItem:sender permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
+//    if (!_toolItemPopover)
+//    {
+//        UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"NewProjectPopover" bundle:[NSBundle mainBundle]];
+//        ACNewProjectPopoverController *popoverViewController = (ACNewProjectPopoverController *)[storyboard instantiateInitialViewController];
+//        popoverViewController.projectsDirectory = self.projectsDirectory;
+//        _toolItemPopover = [[UIPopoverController alloc] initWithContentViewController:popoverViewController];
+//    }
+//    [_toolItemPopover presentPopoverFromBarButtonItem:sender permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
 }
 
 #pragma mark - Grid View Data Source
 
 - (NSInteger)numberOfCellsForGridView:(ECGridView *)gridView
 {
+//    return additionals;
     return [self.directoryPresenter.fileURLs count];
 }
 
@@ -205,6 +218,8 @@ static void * directoryPresenterFileURLsObservingContext;
     cell.title.text = [[[self.directoryPresenter.fileURLs objectAtIndex:cellIndex] lastPathComponent] stringByDeletingPathExtension];
     cell.label.text = @"";
     cell.icon.image = [UIImage styleProjectImageWithSize:cell.icon.bounds.size labelColor:[UIColor styleThemeColorOne]];
+
+//    cell.title.text = [NSString stringWithFormat:@"%d", cellIndex];
     
     return cell;
 }
