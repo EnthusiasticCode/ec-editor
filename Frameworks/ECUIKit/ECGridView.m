@@ -53,15 +53,12 @@
 
 - (void)setDelegate:(id<ECGridViewDelegate>)delegate
 {
-    if (delegate != self.delegate)
-    {
-        [super setDelegate:delegate];
-        
-        _flags.delegateHasWillSelectCellAtIndex = [delegate respondsToSelector:@selector(gridView:willSelectCellAtIndex:)];
-        _flags.delegateHasDidSelectCellAtIndex = [delegate respondsToSelector:@selector(gridView:didSelectCellAtIndex:)];
-        _flags.delegateHasWillDeselectCellAtIndex = [delegate respondsToSelector:@selector(gridView:willDeselectCellAtIndex:)];
-        _flags.delegateHasDidDeselectCellAtIndex = [delegate respondsToSelector:@selector(gridView:didDeselectCellAtIndex:)];
-    }
+    [super setDelegate:delegate];
+    
+    _flags.delegateHasWillSelectCellAtIndex = [delegate respondsToSelector:@selector(gridView:willSelectCellAtIndex:)];
+    _flags.delegateHasDidSelectCellAtIndex = [delegate respondsToSelector:@selector(gridView:didSelectCellAtIndex:)];
+    _flags.delegateHasWillDeselectCellAtIndex = [delegate respondsToSelector:@selector(gridView:willDeselectCellAtIndex:)];
+    _flags.delegateHasDidDeselectCellAtIndex = [delegate respondsToSelector:@selector(gridView:didDeselectCellAtIndex:)];
 }
 
 - (void)setDataSource:(id<ECGridViewDataSource>)value
@@ -439,14 +436,20 @@ static NSString * const updateDeleteActionKey = @"delete";
         return;
     [self willChangeValueForKey:@"editing"];
     editing = value;
+    // Enable selection recognizer
     if (value)
         [_selectionGestureRecognizer setEnabled:self.allowSelectionDuringEditing];
     else
         [_selectionGestureRecognizer setEnabled:self.allowSelection];
+    // Set cells editing state
     for (ECGridViewCell *cell in _cells)
     {
+        [cell setSelected:NO animated:animated];
         [cell setEditing:value animated:animated];
     }
+    // Clear selections
+    [_selectedCells removeAllIndexes];
+    [_selectedEditingCells removeAllIndexes];
     [self didChangeValueForKey:@"editing"];
 }
 
@@ -546,9 +549,11 @@ static void _init(ECGridView *self)
         __block CGRect cellFrame = (CGRect){ CGPointMake(bounds.origin.x, (CGFloat)(cellsRequiredRange.location / columns) * cellSize.height), cellSize };
         const UIEdgeInsets cinsets = self.cellInsets;
         [_cells enumerateObjectsUsingBlock:^(UIView *cell, NSUInteger cellIndex, BOOL *stop) {
+            CGRect frame = UIEdgeInsetsInsetRect(cellFrame, cinsets);
             if (cellIndex == 0)
             {
-                cell.frame = UIEdgeInsetsInsetRect(cellFrame, cinsets);
+                cell.bounds = (CGRect){ CGPointZero, frame.size };
+                cell.center = CGPointMake(CGRectGetMidX(frame), CGRectGetMidY(frame));
                 return;
             }
             if (cellIndex % columns == 0)
@@ -560,7 +565,8 @@ static void _init(ECGridView *self)
             {
                 cellFrame.origin.x += cellSize.width;
             }
-            cell.frame = cellFrame;
+            cell.bounds = (CGRect){ CGPointZero, frame.size };
+            cell.center = CGPointMake(CGRectGetMidX(frame), CGRectGetMidY(frame));
         }];
     }
 }
@@ -607,17 +613,31 @@ static void _init(ECGridView *self)
     CGPoint tapPoint = [recognizer locationInView:self];
     NSInteger cellIndex = (NSInteger)floorf(tapPoint.y / self.rowHeight) * self.columnNumber + (NSInteger)floorf(tapPoint.x / self.bounds.size.width * self.columnNumber);
     
-    if (!(self.isEditing ? self.allowMultipleSelectionDuringEditing : self.allowMultipleSelection))
-    {
-        [self selectCellAtIndex:cellIndex animated:YES];
-    }
-    else
-    {
-        if ([(self.isEditing ? _selectedEditingCells : _selectedCells) containsIndex:cellIndex])
-            [self deselectCellAtIndex:cellIndex animated:YES];
-        else
-            [self selectCellAtIndex:cellIndex animated:YES];
-    }
+    // Animate cell push
+    ECGridViewCell *cell = nil;
+    if(self.isEditing && NSLocationInRange(cellIndex, _cellsLoadedRange))
+        cell = [_cells objectAtIndex:(cellIndex - _cellsLoadedRange.location)];
+    
+    [UIView animateWithDuration:(self.isEditing ? 0.07 : 0) animations:^{
+        [cell setTransform:CGAffineTransformMakeScale(0.95, 0.95)];
+    } completion:^(BOOL finished) {
+        [UIView animateWithDuration:(self.isEditing ? 0.07 : 0) animations:^{
+            [cell setTransform:CGAffineTransformIdentity];
+        } completion:^(BOOL finished) {
+            // Set selection
+            if (!(self.isEditing ? self.allowMultipleSelectionDuringEditing : self.allowMultipleSelection))
+            {
+                [self selectCellAtIndex:cellIndex animated:YES];
+            }
+            else
+            {
+                if ([(self.isEditing ? _selectedEditingCells : _selectedCells) containsIndex:cellIndex])
+                    [self deselectCellAtIndex:cellIndex animated:YES];
+                else
+                    [self selectCellAtIndex:cellIndex animated:YES];
+            }
+        }];
+    }];
 }
 
 @end
@@ -713,7 +733,7 @@ static void _init(ECGridView *self)
         toView.frame = [self bounds];
         [self insertSubview:toView atIndex:0];
     }
-    [UIView animateWithDuration:animated ? 0.25 : 0 animations:^{
+    [UIView animateWithDuration:animated ? 0.2 : 0 animations:^{
         if (toView)
         {
             toView.alpha = 1;
@@ -739,7 +759,15 @@ static void _init(ECGridView *self)
         return;
     [self willChangeValueForKey:@"highlighted"];
     highlighted = value;
-    // TODO animate
+    for (id view in self.contentView.subviews)
+    {
+        if ([view respondsToSelector:@selector(setHighlighted:animated:)])
+            [view setHighlighted:value animated:animated];
+    }
+    if ([self.backgroundView respondsToSelector:@selector(setHighlighted:animated:)])
+        [(id)self.backgroundView setHighlighted:value animated:animated];
+    if ([self.selectedBackgroundView respondsToSelector:@selector(setHighlighted:animated:)])
+        [(id)self.selectedBackgroundView setHighlighted:value animated:animated];
     [self didChangeValueForKey:@"highlighted"];
 }
 

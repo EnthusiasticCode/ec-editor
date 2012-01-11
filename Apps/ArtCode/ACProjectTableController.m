@@ -6,6 +6,8 @@
 //  Copyright 2011 __MyCompanyName__. All rights reserved.
 //
 
+#import <QuartzCore/QuartzCore.h>
+
 #import "ACProjectTableController.h"
 #import "AppStyle.h"
 #import "ACColorSelectionControl.h"
@@ -57,6 +59,7 @@ static void * directoryPresenterFileURLsObservingContext;
     if (!_gridView)
     {
         _gridView = [[ECGridView alloc] initWithFrame:CGRectMake(0, 0, 100, 100)];
+        _gridView.allowMultipleSelectionDuringEditing = YES;
         _gridView.dataSource = self;
         _gridView.delegate = self;
         _gridView.rowHeight = 120 + 15;
@@ -208,12 +211,12 @@ static void * directoryPresenterFileURLsObservingContext;
 
 #pragma mark - Grid View Delegate
 
-- (void)gridView:(ECGridView *)gridView didSelectCellAtIndex:(NSInteger)cellIndex
+- (void)gridView:(ECGridView *)gridView willSelectCellAtIndex:(NSInteger)cellIndex
 {
-//    if (!self.isEditing)
-//    {
-//        [self.tab pushURL:[self.directoryPresenter.fileURLs objectAtIndex:cellIndex]];
-//    }
+    if (!self.isEditing)
+    {
+        [self.tab pushURL:[self.directoryPresenter.fileURLs objectAtIndex:cellIndex]];
+    }
 }
 
 //- (void)textFieldDidEndEditing:(UITextField *)textField
@@ -261,10 +264,37 @@ static void * directoryPresenterFileURLsObservingContext;
 
 
 @implementation ACProjectCell
+
 @synthesize title;
 @synthesize label;
 @synthesize icon;
 
+#define RADIANS(degrees) ((degrees * M_PI) / 180.0)
+
+- (void)setEditing:(BOOL)editing animated:(BOOL)animated
+{
+    [super setEditing:editing animated:animated];
+    
+    static NSString *jitterAnimationKey = @"jitter";
+    
+    if (editing)
+    {
+        CGFloat angle = RADIANS(0.7);
+        CABasicAnimation *jitter = [CABasicAnimation animationWithKeyPath:@"transform"];
+        jitter.fromValue = [NSValue valueWithCATransform3D:CATransform3DMakeRotation(-angle, 0, 0, 1)];
+        jitter.toValue = [NSValue valueWithCATransform3D:CATransform3DMakeRotation(angle, 0, 0, 1)];
+        jitter.autoreverses = YES;
+        jitter.duration = 0.125;
+        jitter.timeOffset = (CGFloat)rand() / RAND_MAX;
+        jitter.repeatCount = CGFLOAT_MAX;
+        
+        [self.layer addAnimation:jitter forKey:jitterAnimationKey];
+    }
+    else
+    {
+        [self.layer removeAnimationForKey:jitterAnimationKey];
+    }
+}
 
 @end
 
