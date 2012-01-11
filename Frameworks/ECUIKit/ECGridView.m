@@ -77,7 +77,7 @@
 #pragma mark Configuring a Grid View
 
 @synthesize rowHeight, columnNumber;
-@synthesize backgroundView;
+@synthesize backgroundView, cellInsets;
 
 - (void)setRowHeight:(CGFloat)value
 {
@@ -113,6 +113,16 @@
     if (backgroundView)
         [self insertSubview:backgroundView atIndex:0];
     [self didChangeValueForKey:@"backgroundView"];
+}
+
+- (void)setCellInsets:(UIEdgeInsets)value
+{
+    if (UIEdgeInsetsEqualToEdgeInsets(value, cellInsets))
+        return;
+    [self willChangeValueForKey:@"cellInsets"];
+    cellInsets = value;
+    [self setNeedsLayout];
+    [self didChangeValueForKey:@"cellInsets"];
 }
 
 - (id)dequeueReusableCellWithIdentifier:(NSString *)identifier
@@ -529,10 +539,11 @@ static void _init(ECGridView *self)
         
         // Layout cells
         __block CGRect cellFrame = (CGRect){ CGPointMake(bounds.origin.x, (CGFloat)(cellsRequiredRange.location / columns) * cellSize.height), cellSize };
+        const UIEdgeInsets cinsets = self.cellInsets;
         [_cells enumerateObjectsUsingBlock:^(UIView *cell, NSUInteger cellIndex, BOOL *stop) {
             if (cellIndex == 0)
             {
-                cell.frame = cellFrame;
+                cell.frame = UIEdgeInsetsInsetRect(cellFrame, cinsets);
                 return;
             }
             if (cellIndex % columns == 0)

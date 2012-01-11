@@ -45,6 +45,7 @@
 @property (nonatomic) CGFloat rowHeight;
 @property (nonatomic) NSUInteger columnNumber;
 @property (nonatomic, strong) UIView *backgroundView;
+@property (nonatomic) UIEdgeInsets cellInsets;
 - (id)dequeueReusableCellWithIdentifier:(NSString *)identifier;
 
 #pragma mark Managing Selections
