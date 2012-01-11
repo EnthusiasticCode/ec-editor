@@ -29,6 +29,9 @@ static void * directoryPresenterFileURLsObservingContext;
     
     NSArray *_toolItemsNormal;
     NSArray *_toolItemsEditing;
+    
+    UIImage *_cellNormalBackground;
+    UIImage *_cellSelectedBackground;
 }
 @property (nonatomic, strong) ECGridView *gridView;
 
@@ -58,8 +61,9 @@ static void * directoryPresenterFileURLsObservingContext;
         _gridView.delegate = self;
         _gridView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
         _gridView.alwaysBounceVertical = YES;
+        _gridView.cellInsets = UIEdgeInsetsMake(15, 15, 15, 15);
         _gridView.backgroundView = [UIView new];
-        _gridView.backgroundView.backgroundColor = [UIColor grayColor];
+        _gridView.backgroundView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"projectsTable_Background"]];
     }
     return _gridView;
 }
@@ -184,6 +188,13 @@ static void * directoryPresenterFileURLsObservingContext;
     {
         cell = [ACProjectCell gridViewCellWithReuseIdentifier:cellIdentifier fromNibNamed:@"ProjectCell" bundle:nil];
         cell.contentInsets = UIEdgeInsetsMake(10, 10, 10, 10);
+        
+        if (!_cellNormalBackground)
+            _cellNormalBackground = [[UIImage imageNamed:@"projectsTableCell_BackgroundNormal"] resizableImageWithCapInsets:UIEdgeInsetsMake(13, 13, 13, 13)];
+        [(UIImageView *)cell.backgroundView setImage:_cellNormalBackground];
+        if (!_cellSelectedBackground)
+            _cellSelectedBackground = [[UIImage imageNamed:@"projectsTableCell_BackgroundSelected"] resizableImageWithCapInsets:UIEdgeInsetsMake(13, 13, 13, 13)];
+        [(UIImageView *)cell.selectedBackgroundView setImage:_cellSelectedBackground];
     }
     
     // Setup project title
@@ -196,10 +207,10 @@ static void * directoryPresenterFileURLsObservingContext;
 
 - (void)gridView:(ECGridView *)gridView didSelectCellAtIndex:(NSInteger)cellIndex
 {
-    if (!self.isEditing)
-    {
-        [self.tab pushURL:[self.directoryPresenter.fileURLs objectAtIndex:cellIndex]];
-    }
+//    if (!self.isEditing)
+//    {
+//        [self.tab pushURL:[self.directoryPresenter.fileURLs objectAtIndex:cellIndex]];
+//    }
 }
 
 //- (void)textFieldDidEndEditing:(UITextField *)textField

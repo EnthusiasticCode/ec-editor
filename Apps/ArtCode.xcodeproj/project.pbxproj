@@ -166,6 +166,9 @@
 		CDE8F9D4145EEEFE00CA4496 /* ACCodeFileSearchBarController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDE8F9D2145EEEFE00CA4496 /* ACCodeFileSearchBarController.m */; };
 		CDE8FA8514B9B32A00CFC953 /* TMTheme.m in Sources */ = {isa = PBXBuildFile; fileRef = CDE8FA8214B9B32A00CFC953 /* TMTheme.m */; };
 		CDE8FA8614B9B32A00CFC953 /* UIColor+HexColor.m in Sources */ = {isa = PBXBuildFile; fileRef = CDE8FA8414B9B32A00CFC953 /* UIColor+HexColor.m */; };
+		CDEE0D7214BDA59B0019FDEF /* projectsTable_Background.png in Resources */ = {isa = PBXBuildFile; fileRef = CDEE0D7114BDA59B0019FDEF /* projectsTable_Background.png */; };
+		CDEE0D7514BDA77E0019FDEF /* projectsTableCell_BackgroundNormal.png in Resources */ = {isa = PBXBuildFile; fileRef = CDEE0D7314BDA77E0019FDEF /* projectsTableCell_BackgroundNormal.png */; };
+		CDEE0D7614BDA77E0019FDEF /* projectsTableCell_BackgroundSelected.png in Resources */ = {isa = PBXBuildFile; fileRef = CDEE0D7414BDA77E0019FDEF /* projectsTableCell_BackgroundSelected.png */; };
 		CDF1D46D14150C4900EFEC21 /* libstdc++.6.0.9.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CDF1D46C14150C4900EFEC21 /* libstdc++.6.0.9.dylib */; };
 		CDF4C011144F2C7900475F6B /* ACTopBarTitleControl.m in Sources */ = {isa = PBXBuildFile; fileRef = CDF4C00E144F2C7900475F6B /* ACTopBarTitleControl.m */; };
 		CDF4C012144F2C7900475F6B /* ACTopBarToolbar.m in Sources */ = {isa = PBXBuildFile; fileRef = CDF4C010144F2C7900475F6B /* ACTopBarToolbar.m */; };
@@ -474,6 +477,9 @@
 		CDE8FA8214B9B32A00CFC953 /* TMTheme.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TMTheme.m; sourceTree = "<group>"; };
 		CDE8FA8314B9B32A00CFC953 /* UIColor+HexColor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+HexColor.h"; sourceTree = "<group>"; };
 		CDE8FA8414B9B32A00CFC953 /* UIColor+HexColor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+HexColor.m"; sourceTree = "<group>"; };
+		CDEE0D7114BDA59B0019FDEF /* projectsTable_Background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = projectsTable_Background.png; sourceTree = "<group>"; };
+		CDEE0D7314BDA77E0019FDEF /* projectsTableCell_BackgroundNormal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = projectsTableCell_BackgroundNormal.png; sourceTree = "<group>"; };
+		CDEE0D7414BDA77E0019FDEF /* projectsTableCell_BackgroundSelected.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = projectsTableCell_BackgroundSelected.png; sourceTree = "<group>"; };
 		CDF1D46C14150C4900EFEC21 /* libstdc++.6.0.9.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libstdc++.6.0.9.dylib"; path = "usr/lib/libstdc++.6.0.9.dylib"; sourceTree = SDKROOT; };
 		CDF4C00D144F2C7900475F6B /* ACTopBarTitleControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACTopBarTitleControl.h; sourceTree = "<group>"; };
 		CDF4C00E144F2C7900475F6B /* ACTopBarTitleControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACTopBarTitleControl.m; sourceTree = "<group>"; };
@@ -837,6 +843,7 @@
 				CDC2A6B81459D9C600978008 /* Tab Bar */,
 				CDC2828E14508D250054358D /* Top Bar */,
 				CDC1333114602F430028423F /* Search Bar */,
+				CDEE0D7014BDA5790019FDEF /* Projects */,
 				CD9ED8DC1466BE5000A517A5 /* Accessory View */,
 				CDFF3DF613C0DA1100108DE2 /* Icons */,
 			);
@@ -1070,6 +1077,16 @@
 				CDE8FA8214B9B32A00CFC953 /* TMTheme.m */,
 			);
 			name = Themes;
+			sourceTree = "<group>";
+		};
+		CDEE0D7014BDA5790019FDEF /* Projects */ = {
+			isa = PBXGroup;
+			children = (
+				CDEE0D7314BDA77E0019FDEF /* projectsTableCell_BackgroundNormal.png */,
+				CDEE0D7414BDA77E0019FDEF /* projectsTableCell_BackgroundSelected.png */,
+				CDEE0D7114BDA59B0019FDEF /* projectsTable_Background.png */,
+			);
+			name = Projects;
 			sourceTree = "<group>";
 		};
 		CDFF3DF613C0DA1100108DE2 /* Icons */ = {
@@ -1325,6 +1342,9 @@
 				CD7BC79B14B70FBE00313CDB /* itemIcon_Minimap.png in Resources */,
 				CD7BC79C14B70FBE00313CDB /* itemIcon_Options.png in Resources */,
 				CD7BC79E14B70FE600313CDB /* itemIcon_Tab.png in Resources */,
+				CDEE0D7214BDA59B0019FDEF /* projectsTable_Background.png in Resources */,
+				CDEE0D7514BDA77E0019FDEF /* projectsTableCell_BackgroundNormal.png in Resources */,
+				CDEE0D7614BDA77E0019FDEF /* projectsTableCell_BackgroundSelected.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
