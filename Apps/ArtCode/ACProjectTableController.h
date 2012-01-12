@@ -6,12 +6,14 @@
 //  Copyright 2011 __MyCompanyName__. All rights reserved.
 //
 
+#import <UIKit/UIKit.h>
+#import <MessageUI/MessageUI.h>
 #import <ECUIKit/ECGridView.h>
 
 @class ACApplication, ACTab, ACProjectCell;
 
 
-@interface ACProjectTableController : UIViewController <UITextFieldDelegate, ECGridViewDataSource, ECGridViewDelegate>
+@interface ACProjectTableController : UIViewController <ECGridViewDataSource, ECGridViewDelegate, UIActionSheetDelegate, MFMailComposeViewControllerDelegate>
 
 @property (nonatomic, strong) NSURL *projectsDirectory;
 @property (nonatomic, strong) ACTab *tab;

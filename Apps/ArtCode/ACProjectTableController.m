@@ -31,6 +31,9 @@ static void * directoryPresenterFileURLsObservingContext;
     
     NSArray *_toolItemsNormal;
     NSArray *_toolItemsEditing;
+
+    UIActionSheet *_toolItemDeleteActionSheet;
+    UIActionSheet *_toolItemExportActionSheet;
     
     UIImage *_cellNormalBackground;
     UIImage *_cellSelectedBackground;
@@ -166,6 +169,22 @@ static void * directoryPresenterFileURLsObservingContext;
     [self setEditing:NO animated:NO];
 }
 
+- (void)viewDidUnload
+{
+    [super viewDidUnload];
+    
+    _toolItemPopover = nil;
+    
+    _toolItemsNormal = nil;
+    _toolItemsEditing = nil;
+    
+    _toolItemDeleteActionSheet = nil;
+    _toolItemExportActionSheet = nil;
+    
+    _cellNormalBackground = nil;
+    _cellSelectedBackground = nil;
+}
+
 - (void)viewWillAppear:(BOOL)animated
 {
     self.directoryPresenter = [[ECDirectoryPresenter alloc] init];
@@ -175,24 +194,6 @@ static void * directoryPresenterFileURLsObservingContext;
 - (void)viewDidDisappear:(BOOL)animated
 {
     self.directoryPresenter = nil;
-}
-
-#pragma mark - Tool Items Actions
-
-- (void)_toolNormalAddAction:(id)sender
-{
-    additionals++;
-    [self.gridView insertCellsAtIndexes:[NSIndexSet indexSetWithIndex:(additionals - 1)] animated:YES];
-    
-    // Removing the lazy loading could cause the old popover to be overwritten by the new one causing a dealloc while popover is visible
-//    if (!_toolItemPopover)
-//    {
-//        UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"NewProjectPopover" bundle:[NSBundle mainBundle]];
-//        ACNewProjectPopoverController *popoverViewController = (ACNewProjectPopoverController *)[storyboard instantiateInitialViewController];
-//        popoverViewController.projectsDirectory = self.projectsDirectory;
-//        _toolItemPopover = [[UIPopoverController alloc] initWithContentViewController:popoverViewController];
-//    }
-//    [_toolItemPopover presentPopoverFromBarButtonItem:sender permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
 }
 
 #pragma mark - Grid View Data Source
@@ -283,27 +284,124 @@ static void * directoryPresenterFileURLsObservingContext;
 //    [self.gridView reloadData];
 //    return YES;
 //}
-//
-//- (void)_openButtonAction:(id)sender
-//{
-//    ECASSERT(!self.editing);
-//    NSInteger rowIndex = [(UIControl *)sender tag];
-//    ECASSERT(rowIndex >= 0);
-//    [self.tab pushURL:[self.directoryPresenter.fileURLs objectAtIndex:rowIndex]];
-//}
-//
-//- (void)_deleteButtonAction:(id)sender
-//{
-//    ECASSERT(self.editing);
-//    NSInteger rowIndex = [(UIControl *)sender tag];
-//    ECASSERT(rowIndex >= 0);
-//    NSURL *fileURL = [self.directoryPresenter.fileURLs objectAtIndex:rowIndex];
-//    ECFileCoordinator *fileCoordinator = [[ECFileCoordinator alloc] initWithFilePresenter:nil];
-//    [fileCoordinator coordinateWritingItemAtURL:fileURL options:NSFileCoordinatorWritingForDeleting error:NULL byAccessor:^(NSURL *newURL) {
-//        NSFileManager *fileManager = [[NSFileManager alloc] init];
-//        [fileManager removeItemAtURL:newURL error:NULL];
-//    }];
-//}
+
+#pragma mark - Action Sheet Delegate
+
+- (void)actionSheet:(UIActionSheet *)actionSheet willDismissWithButtonIndex:(NSInteger)buttonIndex
+{
+    ECASSERT(self.isEditing);
+    ECASSERT([self.gridView indexForSelectedCell] != -1);
+    
+    if (actionSheet == _toolItemDeleteActionSheet)
+    {
+        ECASSERT(buttonIndex == actionSheet.destructiveButtonIndex);
+        
+        // Remove files
+        NSIndexSet *cellsToRemove = [self.gridView indexesForSelectedCells];
+        [cellsToRemove enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
+            
+            NSURL *fileURL = [self.directoryPresenter.fileURLs objectAtIndex:idx];
+            ECFileCoordinator *fileCoordinator = [[ECFileCoordinator alloc] initWithFilePresenter:nil];
+            [fileCoordinator coordinateWritingItemAtURL:fileURL options:NSFileCoordinatorWritingForDeleting error:NULL byAccessor:^(NSURL *newURL) {
+                NSFileManager *fileManager = [[NSFileManager alloc] init];
+                [fileManager removeItemAtURL:newURL error:NULL];
+            }];
+        }];
+        
+        // Remove cells from grid
+        [self.gridView deleteCellsAtIndexes:cellsToRemove animated:YES];
+        
+        // Show bezel alert
+        [[ECBezelAlert defaultBezelAlert] addAlertMessageWithText:([cellsToRemove count] == 1 ? @"Project removed" : [NSString stringWithFormat:@"%u projects removed", [cellsToRemove count]]) image:nil displayImmediatly:YES];
+    }
+    else if (actionSheet == _toolItemExportActionSheet)
+    {
+        if (buttonIndex == 0) // export to iTunes
+        {
+            
+        }
+        else if (buttonIndex == 1) // send mail
+        {
+            // TODO create content and zips
+            
+            [self setEditing:NO animated:YES];
+            
+            MFMailComposeViewController *mailComposer = [MFMailComposeViewController new];
+            mailComposer.mailComposeDelegate = self;
+            mailComposer.navigationBar.barStyle = UIBarStyleBlack;
+            mailComposer.modalPresentationStyle = UIModalPresentationFormSheet;
+            
+#warning TODO replace
+            NSString *content = @"";
+            NSString *pageLink = @"http://mugunthkumar.com/mygreatapp";
+            NSString *iTunesLink = @"http://link-to-mygreatapp";
+            NSString *emailBody =
+            [NSString stringWithFormat:@"%@<br/><br/><p>Sent from <a href = '%@'>MyGreatApp</a> on iPad. <a href = '%@'>Download</a> yours from AppStore now.</p>", content, pageLink, iTunesLink];
+            
+            [mailComposer setSubject:@"TODO"];
+            [mailComposer setMessageBody:emailBody isHTML:YES];
+            
+            [self presentModalViewController:mailComposer animated:YES];
+        }
+    }
+}
+
+#pragma mark - Mail composer Delegate
+
+- (void)mailComposeController:(MFMailComposeViewController *)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError *)error
+{
+    if (result == MFMailComposeResultSent)
+        [[ECBezelAlert defaultBezelAlert] addAlertMessageWithText:@"Mail sent" image:nil displayImmediatly:YES];
+    [self dismissModalViewControllerAnimated:YES];
+}
+
+#pragma mark - Private Methods
+
+- (void)_toolNormalAddAction:(id)sender
+{
+//    additionals++;
+//    [self.gridView insertCellsAtIndexes:[NSIndexSet indexSetWithIndex:(additionals - 1)] animated:YES];
+    
+    // Removing the lazy loading could cause the old popover to be overwritten by the new one causing a dealloc while popover is visible
+    if (!_toolItemPopover)
+    {
+        UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"NewProjectPopover" bundle:nil];
+        ACNewProjectPopoverController *popoverViewController = (ACNewProjectPopoverController *)[storyboard instantiateInitialViewController];
+        popoverViewController.projectsDirectory = self.projectsDirectory;
+        _toolItemPopover = [[UIPopoverController alloc] initWithContentViewController:popoverViewController];
+    }
+    [_toolItemPopover presentPopoverFromBarButtonItem:sender permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
+}
+
+- (void)_toolEditDeleteAction:(id)sender
+{
+    if (!_toolItemDeleteActionSheet)
+    {
+        _toolItemDeleteActionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:nil destructiveButtonTitle:@"Delete permanently" otherButtonTitles:nil];
+        _toolItemDeleteActionSheet.actionSheetStyle = UIActionSheetStyleBlackOpaque;
+    }
+    [_toolItemDeleteActionSheet showFromRect:[sender frame] inView:[sender superview] animated:YES];
+}
+
+- (void)_toolEditExportAction:(id)sender
+{
+    if (!_toolItemExportActionSheet)
+    {
+        _toolItemExportActionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:@"Export to iTunes", ([MFMailComposeViewController canSendMail] ? @"Send via E-Mail" : nil), nil];
+        _toolItemExportActionSheet.actionSheetStyle = UIActionSheetStyleBlackOpaque;
+    }
+    [_toolItemExportActionSheet showFromRect:[sender frame] inView:[sender superview] animated:YES];
+}
+
+- (void)_toolEditDuplicateAction:(id)sender
+{
+    ECASSERT(self.isEditing);
+    ECASSERT([self.gridView indexForSelectedCell] != -1);
+    
+    NSIndexSet *cellsToDuplicate = [self.gridView indexesForSelectedCells];
+    
+    // TODO
+}
 
 @end
 

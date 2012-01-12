@@ -96,6 +96,7 @@
 		CD62BACD13CA1F8700266BC0 /* ACToolSnippetsController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD62BACC13CA1F8600266BC0 /* ACToolSnippetsController.m */; };
 		CD62BAD013CA248C00266BC0 /* ACToolSymbolsController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD62BACF13CA248C00266BC0 /* ACToolSymbolsController.m */; };
 		CD62BAD313CA2ABD00266BC0 /* ACToolNavigatorController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD62BAD213CA2ABC00266BC0 /* ACToolNavigatorController.m */; };
+		CD6A8A6C14BF7C3100B78188 /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD6A8A6B14BF7C3100B78188 /* MessageUI.framework */; };
 		CD6CCAF9147EB0C50084D797 /* ACCodeFileKeyboardAccessoryPopoverView.m in Sources */ = {isa = PBXBuildFile; fileRef = CD6CCAF8147EB0C50084D797 /* ACCodeFileKeyboardAccessoryPopoverView.m */; };
 		CD6E416C14614A0C00A9CE7F /* ACCodeFileMinimapView.m in Sources */ = {isa = PBXBuildFile; fileRef = CD6E416B14614A0C00A9CE7F /* ACCodeFileMinimapView.m */; };
 		CD70F4CE147A615000EAEEDC /* SearchBar.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CD70F4CD147A615000EAEEDC /* SearchBar.storyboard */; };
@@ -378,6 +379,7 @@
 		CD62BACF13CA248C00266BC0 /* ACToolSymbolsController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACToolSymbolsController.m; sourceTree = "<group>"; };
 		CD62BAD113CA2ABB00266BC0 /* ACToolNavigatorController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACToolNavigatorController.h; sourceTree = "<group>"; };
 		CD62BAD213CA2ABC00266BC0 /* ACToolNavigatorController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACToolNavigatorController.m; sourceTree = "<group>"; };
+		CD6A8A6B14BF7C3100B78188 /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
 		CD6CCAF7147EB0C50084D797 /* ACCodeFileKeyboardAccessoryPopoverView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACCodeFileKeyboardAccessoryPopoverView.h; sourceTree = "<group>"; };
 		CD6CCAF8147EB0C50084D797 /* ACCodeFileKeyboardAccessoryPopoverView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACCodeFileKeyboardAccessoryPopoverView.m; sourceTree = "<group>"; };
 		CD6E416A14614A0C00A9CE7F /* ACCodeFileMinimapView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACCodeFileMinimapView.h; sourceTree = "<group>"; };
@@ -508,6 +510,7 @@
 				CD7D2AE613C0CD2600B889EE /* Foundation.framework in Frameworks */,
 				CD7D2AE813C0CD2600B889EE /* CoreGraphics.framework in Frameworks */,
 				B732D01513DB361600637FBE /* CoreData.framework in Frameworks */,
+				CD6A8A6C14BF7C3100B78188 /* MessageUI.framework in Frameworks */,
 				CDF1D46D14150C4900EFEC21 /* libstdc++.6.0.9.dylib in Frameworks */,
 				B7AC175514216D91009E9205 /* libz.1.2.5.dylib in Frameworks */,
 			);
@@ -786,6 +789,7 @@
 		CD7D2B0613C0CE3200B889EE /* Apple Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				CD6A8A6B14BF7C3100B78188 /* MessageUI.framework */,
 				B732D01413DB361600637FBE /* CoreData.framework */,
 				CD7D2B0113C0CD9D00B889EE /* CoreText.framework */,
 				CD7D2AFF13C0CD9700B889EE /* QuartzCore.framework */,
