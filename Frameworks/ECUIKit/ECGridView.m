@@ -347,18 +347,21 @@
     [_selectedEditingCells removeAllIndexes];
     
     //
-    _cellCount = [self.dataSource numberOfCellsForGridView:self];
-    [self _updateContentSize];
-    CGRect bounds = [self bounds];
+    CGRect bounds = UIEdgeInsetsInsetRect([self bounds], self.contentInset);
     NSMutableArray *cellsAfterUpdate = [_cells mutableCopy];
     if (!cellsAfterUpdate)
         cellsAfterUpdate = [NSMutableArray new];
-    NSRange cellsLoadedAfterUpdate = NSIntersectionRange(NSMakeRange((NSUInteger)floorf(bounds.origin.y / self.rowHeight) * self.columnNumber, (NSUInteger)(ceilf(bounds.size.height / self.rowHeight) + 1) * self.columnNumber), (NSRange){ 0, _cellCount });
+    NSInteger cellCountAfterUpdate = [self.dataSource numberOfCellsForGridView:self];
+    NSRange cellsLoadedAfterUpdate = NSIntersectionRange(NSMakeRange((NSUInteger)floorf(bounds.origin.y / self.rowHeight) * self.columnNumber, (NSUInteger)(floorf(bounds.size.height / self.rowHeight) + 1) * self.columnNumber), (NSRange){ 0, cellCountAfterUpdate });
     
     //
     NSInteger offsetBeforeAnimation = 0, offsetAfterAnimation = 0;
-    for (NSInteger cellIndex = 0; cellIndex < _cellCount; ++cellIndex)
+    NSInteger count = MAX(_cellCount, cellCountAfterUpdate);
+    BOOL hasAnimations = NO;
+    for (NSInteger cellIndex = 0; cellIndex < count; ++cellIndex)
     {
+        BOOL hasChanged = NO;
+        
         // Delete
         if ([_updateDelete containsIndex:cellIndex])
         {
@@ -369,6 +372,7 @@
                 [cell removeFromSuperview];
             }
             offsetBeforeAnimation--;
+            hasChanged = YES;
         }
         else if ([_updateDeleteAnimated containsIndex:cellIndex])
         {
@@ -384,6 +388,8 @@
                 }];
             }
             offsetAfterAnimation--;
+            hasChanged = YES;
+            hasAnimations = YES;
         }
         
         // Reload
@@ -402,6 +408,7 @@
                 if (NSLocationInRange(cellIndex + offsetBeforeAnimation + offsetAfterAnimation, cellsLoadedAfterUpdate))
                     [cellsAfterUpdate insertObject:cell atIndex:(cellIndex + offsetBeforeAnimation + offsetAfterAnimation - cellsLoadedAfterUpdate.location)];
             }
+            hasChanged = YES;
         }
         else if ([_updateReloadAnimated containsIndex:cellIndex])
         {
@@ -429,6 +436,8 @@
                 if (NSLocationInRange(cellIndex + offsetBeforeAnimation + offsetAfterAnimation, cellsLoadedAfterUpdate))
                     [cellsAfterUpdate insertObject:cell atIndex:(cellIndex + offsetBeforeAnimation + offsetAfterAnimation - cellsLoadedAfterUpdate.location)];
             }
+            hasChanged = YES;
+            hasAnimations = YES;
         }
         
         // Insert
@@ -442,6 +451,7 @@
                     [cellsAfterUpdate insertObject:cell atIndex:(cellIndex - cellsLoadedAfterUpdate.location)];
             }
             offsetBeforeAnimation++;
+            hasChanged = YES;
         }
         else if ([_updateInsertAnimated containsIndex:cellIndex])
         {
@@ -458,11 +468,28 @@
                     [cellsAfterUpdate insertObject:cell atIndex:(cellIndex - cellsLoadedAfterUpdate.location)];
             }
             offsetAfterAnimation++;
+            hasAnimations = YES;
+        }
+        
+        // Reposition non-changed elements
+        if (!hasChanged)
+        {
+            if (NSLocationInRange(cellIndex + offsetBeforeAnimation + offsetAfterAnimation, cellsLoadedAfterUpdate))
+            {
+                [UIView animateWithDuration:(hasAnimations ? 0.2 : 0) animations:^{
+                    ECGridViewCell *cell = [_cells objectAtIndex:(cellIndex)];
+                    [self _positionCell:cell forIndex:(cellIndex + offsetBeforeAnimation + offsetAfterAnimation)];
+                }];
+            }
         }
     }
 
+    ECASSERT([cellsAfterUpdate count] == cellsLoadedAfterUpdate.length);
+    
     _cells = cellsAfterUpdate;
     _cellsLoadedRange = cellsLoadedAfterUpdate;
+    _cellCount = cellCountAfterUpdate;
+    [self _updateContentSize];
     
     [_updateInsert removeAllIndexes];
     [_updateInsertAnimated removeAllIndexes];
@@ -470,8 +497,6 @@
     [_updateDeleteAnimated removeAllIndexes];
     [_updateReload removeAllIndexes];
     [_updateReloadAnimated removeAllIndexes];
-    
-    NSLog(@"%u", [self.subviews count]);
 }
 
 - (void)insertCellsAtIndexes:(NSIndexSet *)indexes animated:(BOOL)animated

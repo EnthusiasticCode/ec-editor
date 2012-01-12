@@ -234,6 +234,12 @@ static void * directoryPresenterFileURLsObservingContext;
     }
 }
 
+//- (void)gridView:(ECGridView *)gridView didSelectCellAtIndex:(NSInteger)cellIndex
+//{
+//    additionals--;
+//    [gridView deleteCellsAtIndexes:[NSIndexSet indexSetWithIndex:cellIndex] animated:YES];
+//}
+
 //- (void)textFieldDidEndEditing:(UITextField *)textField
 //{
 //    textField.text = [[[self.directoryPresenter.fileURLs objectAtIndex:textField.tag] lastPathComponent] stringByDeletingPathExtension];
