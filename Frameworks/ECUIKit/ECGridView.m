@@ -224,14 +224,14 @@
 
 - (NSInteger)indexForSelectedCell
 {
-    if ([_selectedCells count] != 1)
+    if ([(self.isEditing ? _selectedEditingCells : _selectedCells) count] == 0)
         return -1;
-    return [_selectedCells firstIndex];
+    return [(self.isEditing ? _selectedEditingCells : _selectedCells) firstIndex];
 }
 
 - (NSIndexSet *)indexesForSelectedCells
 {
-    return [_selectedCells copy];
+    return [(self.isEditing ? _selectedEditingCells : _selectedCells) copy];
 }
 
 - (void)selectCellAtIndex:(NSInteger)cellIndex animated:(BOOL)animated

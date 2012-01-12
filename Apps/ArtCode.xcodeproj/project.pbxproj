@@ -125,6 +125,8 @@
 		CD7D2B4313C0D4F400B889EE /* ACToolTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = CD7D2B3E13C0D4F400B889EE /* ACToolTextField.m */; };
 		CD7D2B4813C0D55700B889EE /* ACFileTableController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD7D2B4713C0D55700B889EE /* ACFileTableController.m */; };
 		CD7D2B4E13C0D5FB00B889EE /* ToolPanelStoryboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CD7D2B4D13C0D5FB00B889EE /* ToolPanelStoryboard.storyboard */; };
+		CD7FDD5414BEFBA0002B1122 /* itemIcon_Delete.png in Resources */ = {isa = PBXBuildFile; fileRef = CD7FDD5214BEFBA0002B1122 /* itemIcon_Delete.png */; };
+		CD7FDD5514BEFBA0002B1122 /* itemIcon_Duplicate.png in Resources */ = {isa = PBXBuildFile; fileRef = CD7FDD5314BEFBA0002B1122 /* itemIcon_Duplicate.png */; };
 		CD8108D513E31A28000E1941 /* ACColorSelectionControl.m in Sources */ = {isa = PBXBuildFile; fileRef = CD8108D413E31A28000E1941 /* ACColorSelectionControl.m */; };
 		CD8A677C13D0BB000037D742 /* ipad_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CD8A677B13D0BB000037D742 /* ipad_icon.png */; };
 		CD9CB5E71451902C00973204 /* tabBar_TabCloseButton.png in Resources */ = {isa = PBXBuildFile; fileRef = CD9CB5E51451902C00973204 /* tabBar_TabCloseButton.png */; };
@@ -423,6 +425,8 @@
 		CD7D2B4613C0D55700B889EE /* ACFileTableController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACFileTableController.h; sourceTree = "<group>"; };
 		CD7D2B4713C0D55700B889EE /* ACFileTableController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACFileTableController.m; sourceTree = "<group>"; };
 		CD7D2B4D13C0D5FB00B889EE /* ToolPanelStoryboard.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = ToolPanelStoryboard.storyboard; sourceTree = "<group>"; };
+		CD7FDD5214BEFBA0002B1122 /* itemIcon_Delete.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = itemIcon_Delete.png; sourceTree = "<group>"; };
+		CD7FDD5314BEFBA0002B1122 /* itemIcon_Duplicate.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = itemIcon_Duplicate.png; sourceTree = "<group>"; };
 		CD8108D313E31A28000E1941 /* ACColorSelectionControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACColorSelectionControl.h; sourceTree = "<group>"; };
 		CD8108D413E31A28000E1941 /* ACColorSelectionControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACColorSelectionControl.m; sourceTree = "<group>"; };
 		CD8A677B13D0BB000037D742 /* ipad_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ipad_icon.png; sourceTree = "<group>"; };
@@ -1092,6 +1096,8 @@
 		CDFF3DF613C0DA1100108DE2 /* Icons */ = {
 			isa = PBXGroup;
 			children = (
+				CD7FDD5214BEFBA0002B1122 /* itemIcon_Delete.png */,
+				CD7FDD5314BEFBA0002B1122 /* itemIcon_Duplicate.png */,
 				CD7BC79D14B70FE600313CDB /* itemIcon_Tab.png */,
 				CD7BC79514B70FBE00313CDB /* itemIcon_Export.png */,
 				CD7BC79614B70FBE00313CDB /* itemIcon_Find.png */,
@@ -1345,6 +1351,8 @@
 				CDEE0D7214BDA59B0019FDEF /* projectsTable_Background.png in Resources */,
 				CDEE0D7514BDA77E0019FDEF /* projectsTableCell_BackgroundNormal.png in Resources */,
 				CDEE0D7614BDA77E0019FDEF /* projectsTableCell_BackgroundSelected.png in Resources */,
+				CD7FDD5414BEFBA0002B1122 /* itemIcon_Delete.png in Resources */,
+				CD7FDD5514BEFBA0002B1122 /* itemIcon_Duplicate.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

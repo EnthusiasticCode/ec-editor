@@ -35,7 +35,6 @@ static void * directoryPresenterFileURLsObservingContext;
     UIImage *_cellNormalBackground;
     UIImage *_cellSelectedBackground;
     
-    
     NSInteger additionals;
 }
 @property (nonatomic, strong) ECGridView *gridView;
@@ -43,6 +42,9 @@ static void * directoryPresenterFileURLsObservingContext;
 /// Represent a directory's contents.
 @property (nonatomic, strong) ECDirectoryPresenter *directoryPresenter;
 - (void)_toolNormalAddAction:(id)sender;
+- (void)_toolEditDeleteAction:(id)sender;
+- (void)_toolEditDuplicateAction:(id)sender;
+- (void)_toolEditExportAction:(id)sender;
 
 @end
 
@@ -107,9 +109,16 @@ static void * directoryPresenterFileURLsObservingContext;
     self.editButtonItem.title = @"";
     
     if (!editing)
+    {
         self.toolbarItems = _toolItemsNormal;
+    }
     else
+    {
         self.toolbarItems = _toolItemsEditing;
+        [_toolItemsEditing enumerateObjectsUsingBlock:^(UIBarButtonItem *item, NSUInteger idx, BOOL *stop) {
+            [(UIButton *)item.customView setEnabled:NO];
+        }];
+    }
     
     [self.gridView setEditing:editing animated:animated];
     
@@ -149,6 +158,8 @@ static void * directoryPresenterFileURLsObservingContext;
     [super viewDidLoad];
     
     // Preparing tool items array changed in set editing
+    _toolItemsEditing = [NSArray arrayWithObjects:[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Export"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolEditExportAction:)], [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Duplicate"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolEditDuplicateAction:)], [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Delete"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolEditDeleteAction:)], nil];
+    
     _toolItemsNormal = [NSArray arrayWithObject:[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"tabBar_TabAddButton"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolNormalAddAction:)]];
     self.toolbarItems = _toolItemsNormal;
     
@@ -234,11 +245,24 @@ static void * directoryPresenterFileURLsObservingContext;
     }
 }
 
-//- (void)gridView:(ECGridView *)gridView didSelectCellAtIndex:(NSInteger)cellIndex
-//{
+- (void)gridView:(ECGridView *)gridView didSelectCellAtIndex:(NSInteger)cellIndex
+{
+    if (self.isEditing)
+    {
+        BOOL enable = [gridView indexForSelectedCell] != -1;
+        [_toolItemsEditing enumerateObjectsUsingBlock:^(UIBarButtonItem *item, NSUInteger idx, BOOL *stop) {
+            [(UIButton *)item.customView setEnabled:enable];
+        }];
+    }
 //    additionals--;
 //    [gridView deleteCellsAtIndexes:[NSIndexSet indexSetWithIndex:cellIndex] animated:YES];
-//}
+}
+
+- (void)gridView:(ECGridView *)gridView didDeselectCellAtIndex:(NSInteger)cellIndex
+{
+    // Will update editing items like in select
+    [self gridView:gridView didSelectCellAtIndex:cellIndex];
+}
 
 //- (void)textFieldDidEndEditing:(UITextField *)textField
 //{
