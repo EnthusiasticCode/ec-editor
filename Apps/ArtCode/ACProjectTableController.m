@@ -16,7 +16,7 @@
 #import "ACApplication.h"
 #import "ACTab.h"
 
-#import "ACNewProjectPopoverController.h"
+#import "ACNewProjectNavigationController.h"
 
 #import <ECFoundation/ECDirectoryPresenter.h>
 
@@ -294,25 +294,26 @@ static void * directoryPresenterFileURLsObservingContext;
     
     if (actionSheet == _toolItemDeleteActionSheet)
     {
-        ECASSERT(buttonIndex == actionSheet.destructiveButtonIndex);
-        
-        // Remove files
-        NSIndexSet *cellsToRemove = [self.gridView indexesForSelectedCells];
-        [cellsToRemove enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
-            
-            NSURL *fileURL = [self.directoryPresenter.fileURLs objectAtIndex:idx];
-            ECFileCoordinator *fileCoordinator = [[ECFileCoordinator alloc] initWithFilePresenter:nil];
-            [fileCoordinator coordinateWritingItemAtURL:fileURL options:NSFileCoordinatorWritingForDeleting error:NULL byAccessor:^(NSURL *newURL) {
-                NSFileManager *fileManager = [[NSFileManager alloc] init];
-                [fileManager removeItemAtURL:newURL error:NULL];
+        if (buttonIndex == actionSheet.destructiveButtonIndex)
+        {
+            // Remove files
+            NSIndexSet *cellsToRemove = [self.gridView indexesForSelectedCells];
+            [cellsToRemove enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
+                
+                NSURL *fileURL = [self.directoryPresenter.fileURLs objectAtIndex:idx];
+                ECFileCoordinator *fileCoordinator = [[ECFileCoordinator alloc] initWithFilePresenter:nil];
+                [fileCoordinator coordinateWritingItemAtURL:fileURL options:NSFileCoordinatorWritingForDeleting error:NULL byAccessor:^(NSURL *newURL) {
+                    NSFileManager *fileManager = [[NSFileManager alloc] init];
+                    [fileManager removeItemAtURL:newURL error:NULL];
+                }];
             }];
-        }];
-        
-        // Remove cells from grid
-        [self.gridView deleteCellsAtIndexes:cellsToRemove animated:YES];
-        
-        // Show bezel alert
-        [[ECBezelAlert defaultBezelAlert] addAlertMessageWithText:([cellsToRemove count] == 1 ? @"Project removed" : [NSString stringWithFormat:@"%u projects removed", [cellsToRemove count]]) image:nil displayImmediatly:YES];
+            
+            // Remove cells from grid
+            [self.gridView deleteCellsAtIndexes:cellsToRemove animated:YES];
+            
+            // Show bezel alert
+            [[ECBezelAlert defaultBezelAlert] addAlertMessageWithText:([cellsToRemove count] == 1 ? @"Project removed" : [NSString stringWithFormat:@"%u projects removed", [cellsToRemove count]]) image:nil displayImmediatly:YES];
+        }
     }
     else if (actionSheet == _toolItemExportActionSheet)
     {
@@ -328,7 +329,7 @@ static void * directoryPresenterFileURLsObservingContext;
             
             MFMailComposeViewController *mailComposer = [MFMailComposeViewController new];
             mailComposer.mailComposeDelegate = self;
-            mailComposer.navigationBar.barStyle = UIBarStyleBlack;
+            mailComposer.navigationBar.barStyle = UIBarStyleDefault;
             mailComposer.modalPresentationStyle = UIModalPresentationFormSheet;
             
 #warning TODO replace
@@ -366,9 +367,9 @@ static void * directoryPresenterFileURLsObservingContext;
     if (!_toolItemPopover)
     {
         UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"NewProjectPopover" bundle:nil];
-        ACNewProjectPopoverController *popoverViewController = (ACNewProjectPopoverController *)[storyboard instantiateInitialViewController];
-        popoverViewController.projectsDirectory = self.projectsDirectory;
-        _toolItemPopover = [[UIPopoverController alloc] initWithContentViewController:popoverViewController];
+        ACNewProjectNavigationController *newProjectNavigationController = (ACNewProjectNavigationController *)[storyboard instantiateInitialViewController];
+        newProjectNavigationController.projectsDirectory = self.projectsDirectory;
+        _toolItemPopover = [[UIPopoverController alloc] initWithContentViewController:newProjectNavigationController];
     }
     [_toolItemPopover presentPopoverFromBarButtonItem:sender permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
 }

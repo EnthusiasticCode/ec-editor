@@ -80,7 +80,7 @@
 		B78077E114869702006C0C6B /* ProjectCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B78077E014869701006C0C6B /* ProjectCell.xib */; };
 		B7AC172F14216CD4009E9205 /* NewFilePopover.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B7AC172D14216CD4009E9205 /* NewFilePopover.storyboard */; };
 		B7AC173014216CD4009E9205 /* NewProjectPopover.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B7AC172E14216CD4009E9205 /* NewProjectPopover.storyboard */; };
-		B7AC174D14216D1C009E9205 /* ACNewProjectPopoverController.m in Sources */ = {isa = PBXBuildFile; fileRef = B7AC174214216D1C009E9205 /* ACNewProjectPopoverController.m */; };
+		B7AC174D14216D1C009E9205 /* ACNewProjectController.m in Sources */ = {isa = PBXBuildFile; fileRef = B7AC174214216D1C009E9205 /* ACNewProjectController.m */; };
 		B7AC175514216D91009E9205 /* libz.1.2.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B7AC175414216D91009E9205 /* libz.1.2.5.dylib */; };
 		B7D3BE761431BA3A00BF43EB /* Application.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = B7D3BE741431BA3A00BF43EB /* Application.xcdatamodeld */; };
 		CD1973ED14B1D2B200CACF5E /* topBarItem_Edit.png in Resources */ = {isa = PBXBuildFile; fileRef = CD1973EC14B1D2B200CACF5E /* topBarItem_Edit.png */; };
@@ -88,6 +88,8 @@
 		CD21547913F45CC200614B83 /* ACToolButton.m in Sources */ = {isa = PBXBuildFile; fileRef = CD21547813F45CC200614B83 /* ACToolButton.m */; };
 		CD2568C31450D44000A3CCDE /* topBar_BackButton_Normal.png in Resources */ = {isa = PBXBuildFile; fileRef = CD2568C21450D44000A3CCDE /* topBar_BackButton_Normal.png */; };
 		CD2568C71450D5B600A3CCDE /* topBar_ToolButton_Normal.png in Resources */ = {isa = PBXBuildFile; fileRef = CD2568C61450D5B600A3CCDE /* topBar_ToolButton_Normal.png */; };
+		CD333CF814C031A900E0EEE2 /* ACNewProjectImportController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD333CF714C031A900E0EEE2 /* ACNewProjectImportController.m */; };
+		CD333CFC14C0340200E0EEE2 /* ACNewProjectNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD333CFB14C0340200E0EEE2 /* ACNewProjectNavigationController.m */; };
 		CD41529814752D61004C7157 /* ACCodeFileAccessoryItemsGridView.m in Sources */ = {isa = PBXBuildFile; fileRef = CD41529714752D61004C7157 /* ACCodeFileAccessoryItemsGridView.m */; };
 		CD41529B14753520004C7157 /* ACCodeFileAccessoryAction.m in Sources */ = {isa = PBXBuildFile; fileRef = CD41529A14753520004C7157 /* ACCodeFileAccessoryAction.m */; };
 		CD4719A6145196CE00C7BCC5 /* tabBar_TabAddButton.png in Resources */ = {isa = PBXBuildFile; fileRef = CD4719A5145196CE00C7BCC5 /* tabBar_TabAddButton.png */; };
@@ -354,8 +356,8 @@
 		B78077E014869701006C0C6B /* ProjectCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ProjectCell.xib; sourceTree = "<group>"; };
 		B7AC172D14216CD4009E9205 /* NewFilePopover.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = NewFilePopover.storyboard; sourceTree = "<group>"; };
 		B7AC172E14216CD4009E9205 /* NewProjectPopover.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = NewProjectPopover.storyboard; sourceTree = "<group>"; };
-		B7AC174114216D1C009E9205 /* ACNewProjectPopoverController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACNewProjectPopoverController.h; sourceTree = "<group>"; };
-		B7AC174214216D1C009E9205 /* ACNewProjectPopoverController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACNewProjectPopoverController.m; sourceTree = "<group>"; };
+		B7AC174114216D1C009E9205 /* ACNewProjectController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACNewProjectController.h; sourceTree = "<group>"; };
+		B7AC174214216D1C009E9205 /* ACNewProjectController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACNewProjectController.m; sourceTree = "<group>"; };
 		B7AC175414216D91009E9205 /* libz.1.2.5.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.1.2.5.dylib; path = usr/lib/libz.1.2.5.dylib; sourceTree = SDKROOT; };
 		B7D3BE751431BA3A00BF43EB /* Application.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Application.xcdatamodel; sourceTree = "<group>"; };
 		CD1973EC14B1D2B200CACF5E /* topBarItem_Edit.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = topBarItem_Edit.png; sourceTree = "<group>"; };
@@ -364,6 +366,10 @@
 		CD21547813F45CC200614B83 /* ACToolButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACToolButton.m; sourceTree = "<group>"; };
 		CD2568C21450D44000A3CCDE /* topBar_BackButton_Normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = topBar_BackButton_Normal.png; sourceTree = "<group>"; };
 		CD2568C61450D5B600A3CCDE /* topBar_ToolButton_Normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = topBar_ToolButton_Normal.png; sourceTree = "<group>"; };
+		CD333CF614C031A900E0EEE2 /* ACNewProjectImportController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACNewProjectImportController.h; sourceTree = "<group>"; };
+		CD333CF714C031A900E0EEE2 /* ACNewProjectImportController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACNewProjectImportController.m; sourceTree = "<group>"; };
+		CD333CFA14C0340200E0EEE2 /* ACNewProjectNavigationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACNewProjectNavigationController.h; sourceTree = "<group>"; };
+		CD333CFB14C0340200E0EEE2 /* ACNewProjectNavigationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACNewProjectNavigationController.m; sourceTree = "<group>"; };
 		CD41529614752D61004C7157 /* ACCodeFileAccessoryItemsGridView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACCodeFileAccessoryItemsGridView.h; sourceTree = "<group>"; };
 		CD41529714752D61004C7157 /* ACCodeFileAccessoryItemsGridView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACCodeFileAccessoryItemsGridView.m; sourceTree = "<group>"; };
 		CD41529914753520004C7157 /* ACCodeFileAccessoryAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACCodeFileAccessoryAction.h; sourceTree = "<group>"; };
@@ -660,8 +666,7 @@
 		B7AC174F14216D25009E9205 /* Popover Content Controllers */ = {
 			isa = PBXGroup;
 			children = (
-				B7AC174114216D1C009E9205 /* ACNewProjectPopoverController.h */,
-				B7AC174214216D1C009E9205 /* ACNewProjectPopoverController.m */,
+				CD333CF914C033BD00E0EEE2 /* New Project */,
 				B71A1DE51435112700672F65 /* ACNewFilePopoverController.h */,
 				B71A1DE61435112700672F65 /* ACNewFilePopoverController.m */,
 			);
@@ -683,6 +688,19 @@
 				CD1973EC14B1D2B200CACF5E /* topBarItem_Edit.png */,
 			);
 			name = Items;
+			sourceTree = "<group>";
+		};
+		CD333CF914C033BD00E0EEE2 /* New Project */ = {
+			isa = PBXGroup;
+			children = (
+				CD333CFA14C0340200E0EEE2 /* ACNewProjectNavigationController.h */,
+				CD333CFB14C0340200E0EEE2 /* ACNewProjectNavigationController.m */,
+				B7AC174114216D1C009E9205 /* ACNewProjectController.h */,
+				B7AC174214216D1C009E9205 /* ACNewProjectController.m */,
+				CD333CF614C031A900E0EEE2 /* ACNewProjectImportController.h */,
+				CD333CF714C031A900E0EEE2 /* ACNewProjectImportController.m */,
+			);
+			name = "New Project";
 			sourceTree = "<group>";
 		};
 		CD41529C1475564F004C7157 /* Completion */ = {
@@ -1388,7 +1406,7 @@
 				CDD40B0313E1A046008AC36B /* ACPopoverHistoryToolController.m in Sources */,
 				CD8108D513E31A28000E1941 /* ACColorSelectionControl.m in Sources */,
 				CD21547913F45CC200614B83 /* ACToolButton.m in Sources */,
-				B7AC174D14216D1C009E9205 /* ACNewProjectPopoverController.m in Sources */,
+				B7AC174D14216D1C009E9205 /* ACNewProjectController.m in Sources */,
 				B7D3BE761431BA3A00BF43EB /* Application.xcdatamodeld in Sources */,
 				B70231FA14345B5A006D23F7 /* ACTab.m in Sources */,
 				B702320314345B5A006D23F7 /* ACBookmark.m in Sources */,
@@ -1415,6 +1433,8 @@
 				CDBCC5DF14B60F9E005E5C46 /* ACHighlightTableViewCell.m in Sources */,
 				CDE8FA8514B9B32A00CFC953 /* TMTheme.m in Sources */,
 				CDE8FA8614B9B32A00CFC953 /* UIColor+HexColor.m in Sources */,
+				CD333CF814C031A900E0EEE2 /* ACNewProjectImportController.m in Sources */,
+				CD333CFC14C0340200E0EEE2 /* ACNewProjectNavigationController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
