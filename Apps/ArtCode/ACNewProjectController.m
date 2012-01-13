@@ -13,14 +13,18 @@
 #import <ECFoundation/ECDirectoryPresenter.h>
 #import <ECUIKit/ECBezelAlert.h>
 
+#import "AppStyle.h"
 #import "ACColorSelectionControl.h"
 
 @implementation ACNewProjectController {
     UIViewController *changeColorController;
+
+    UIColor *projectColor;
 }
 
 @synthesize projectColorButton;
 @synthesize projectNameTextField;
+
 
 - (void)viewDidUnload {
     [self setProjectNameTextField:nil];
@@ -28,9 +32,17 @@
     [super viewDidUnload];
 }
 
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    [self.projectColorButton setImage:[UIImage styleProjectLabelImageWithSize:self.projectColorButton.bounds.size color:projectColor] forState:UIControlStateNormal];
+}
+
 - (void)_selectColorAction:(ACColorSelectionControl *)sender
 {
-//    sender.selectedColor
+    projectColor = sender.selectedColor;
+    [self.projectColorButton setImage:[UIImage styleProjectLabelImageWithSize:self.projectColorButton.bounds.size color:projectColor] forState:UIControlStateNormal];
+    [self.navigationController popViewControllerAnimated:YES];
 }
 
 - (IBAction)changeColorAction:(id)sender
@@ -48,26 +60,28 @@
                                [UIColor colorWithRed:237./255. green:233./255. blue:68./255. alpha:1],
                                [UIColor colorWithRed:168./255. green:230./255. blue:75./255. alpha:1],
                                [UIColor colorWithRed:93./255. green:157./255. blue:255./255. alpha:1],
-                               [UIColor blackColor], nil];
+                               [UIColor styleForegroundColor], nil];
 
         changeColorController = [UIViewController new];
         changeColorController.view = colorSelectionControl;
-        changeColorController.contentSizeForViewInPopover = CGSizeMake(300, 200);
+        changeColorController.contentSizeForViewInPopover = CGSizeMake(400, 200);
     }
     [self.navigationController pushViewController:changeColorController animated:YES];
-    [[(ACNewProjectNavigationController *)self.navigationController popoverController] setPopoverContentSize:CGSizeMake(300, 200) animated:YES];
 }
 
 - (IBAction)createProjectAction:(id)sender
 {
     NSString *projectName = self.projectNameTextField.text;
+    ECFileCoordinator *fileCoordinator = [[ECFileCoordinator alloc] initWithFilePresenter:nil];
+
     if ([projectName length] == 0)
     {
         // TODO alert for missing text name or already existing
     }
     
-    ECFileCoordinator *fileCoordinator = [[ECFileCoordinator alloc] initWithFilePresenter:nil];
+    
     NSURL *projectsDirectory = [(ACNewProjectNavigationController *)self.navigationController projectsDirectory];
+
     [fileCoordinator coordinateWritingItemAtURL:[[projectsDirectory URLByAppendingPathComponent:projectName] URLByAppendingPathExtension:@"weakpkg"] options:0 error:NULL byAccessor:^(NSURL *newURL) {
         NSFileManager *fileManager = [[NSFileManager alloc] init];
         [fileManager createDirectoryAtURL:newURL withIntermediateDirectories:YES attributes:nil error:NULL];

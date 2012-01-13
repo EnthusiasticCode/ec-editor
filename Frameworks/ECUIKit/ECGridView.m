@@ -762,10 +762,10 @@ static void _init(ECGridView *self)
     if(self.isEditing && NSLocationInRange(cellIndex, _cellsLoadedRange))
         cell = [_cells objectAtIndex:(cellIndex - _cellsLoadedRange.location)];
     
-    [UIView animateWithDuration:(self.isEditing ? 0.06 : 0) animations:^{
-        [cell setTransform:CGAffineTransformMakeScale(0.96, 0.96)];
+    [UIView animateWithDuration:(self.isEditing ? 0.1 : 0) animations:^{
+        [cell setTransform:CGAffineTransformMakeScale(0.95, 0.95)];
     } completion:^(BOOL finished) {
-        [UIView animateWithDuration:(self.isEditing ? 0.06 : 0) animations:^{
+        [UIView animateWithDuration:(self.isEditing ? 0.1 : 0) animations:^{
             [cell setTransform:CGAffineTransformIdentity];
         } completion:^(BOOL finished) {
             // Set selection

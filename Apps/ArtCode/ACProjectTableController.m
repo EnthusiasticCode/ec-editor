@@ -19,7 +19,7 @@
 #import "ACNewProjectNavigationController.h"
 
 #import <ECFoundation/ECDirectoryPresenter.h>
-
+#import <ECArchive/ECArchive.h>
 #import <ECUIKit/ECBezelAlert.h>
 
 static void * directoryPresenterFileURLsObservingContext;
@@ -298,10 +298,10 @@ static void * directoryPresenterFileURLsObservingContext;
         {
             // Remove files
             NSIndexSet *cellsToRemove = [self.gridView indexesForSelectedCells];
+            ECFileCoordinator *fileCoordinator = [[ECFileCoordinator alloc] initWithFilePresenter:nil];
             [cellsToRemove enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
                 
                 NSURL *fileURL = [self.directoryPresenter.fileURLs objectAtIndex:idx];
-                ECFileCoordinator *fileCoordinator = [[ECFileCoordinator alloc] initWithFilePresenter:nil];
                 [fileCoordinator coordinateWritingItemAtURL:fileURL options:NSFileCoordinatorWritingForDeleting error:NULL byAccessor:^(NSURL *newURL) {
                     NSFileManager *fileManager = [[NSFileManager alloc] init];
                     [fileManager removeItemAtURL:newURL error:NULL];
@@ -323,14 +323,49 @@ static void * directoryPresenterFileURLsObservingContext;
         }
         else if (buttonIndex == 1) // send mail
         {
-            // TODO create content and zips
-            
-            [self setEditing:NO animated:YES];
-            
             MFMailComposeViewController *mailComposer = [MFMailComposeViewController new];
             mailComposer.mailComposeDelegate = self;
             mailComposer.navigationBar.barStyle = UIBarStyleDefault;
             mailComposer.modalPresentationStyle = UIModalPresentationFormSheet;
+            
+            // Compressing projects to export
+            NSIndexSet *cellsToExport = [self.gridView indexesForSelectedCells];
+            [self setEditing:NO animated:YES];
+            [cellsToExport enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
+                NSURL *projectURL = [self.directoryPresenter.fileURLs objectAtIndex:idx];
+                NSURL *tempDirectory = [NSURL fileURLWithPath:NSTemporaryDirectory()];
+                __block NSURL *workingDirectory = nil;
+                __block BOOL workingDirectoryAlreadyExists = YES;
+                ECFileCoordinator *fileCoordinator = [[ECFileCoordinator alloc] init];
+                NSFileManager *fileManager = [[NSFileManager alloc] init];
+                // Generate a working temporary directory to write attachments into
+                do
+                {
+                    CFUUIDRef uuid = CFUUIDCreate(CFAllocatorGetDefault());
+                    CFStringRef uuidString = CFUUIDCreateString(CFAllocatorGetDefault(), uuid);
+                    workingDirectory = [tempDirectory URLByAppendingPathComponent:(__bridge NSString *)uuidString];
+                    CFRelease(uuidString);
+                    CFRelease(uuid);
+                    [fileCoordinator coordinateWritingItemAtURL:workingDirectory options:0 error:NULL byAccessor:^(NSURL *newURL) {
+                        workingDirectoryAlreadyExists = [fileManager fileExistsAtPath:[newURL path]];
+                        workingDirectory = newURL;
+                    }];
+                }
+                while (workingDirectoryAlreadyExists);
+                // Generate zip attachments
+                __block NSData *attachment = nil;
+                NSString *archiveName = [[[projectURL lastPathComponent] stringByDeletingPathExtension] stringByAppendingPathExtension:@"zip"];
+                [fileCoordinator coordinateReadingItemAtURL:projectURL options:0 writingItemAtURL:workingDirectory options:0 error:NULL byAccessor:^(NSURL *newReadingURL, NSURL *newWritingURL) {
+                    NSURL *archiveURL = [newWritingURL URLByAppendingPathComponent:archiveName];
+                    [ECArchive compressDirectoryAtURL:newReadingURL toArchive:archiveURL];
+                    attachment = [NSData dataWithContentsOfURL:archiveURL];
+                }];
+                [mailComposer addAttachmentData:attachment mimeType:@"application/zip" fileName:archiveName];
+                // Remove attachments
+                [fileCoordinator coordinateWritingItemAtURL:workingDirectory options:0 error:NULL byAccessor:^(NSURL *newURL) {
+                    [fileManager removeItemAtURL:newURL error:NULL];
+                }];
+            }];
             
 #warning TODO replace
             NSString *content = @"";
