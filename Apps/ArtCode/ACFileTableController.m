@@ -68,6 +68,8 @@ static void * directoryPresenterFileURLsObservingContext;
     NSArray *_toolEditItems;
     
     UIPopoverController *_toolNormalAddPopover;
+    UIActionSheet *_toolEditItemDeleteActionSheet;
+    UIActionSheet *_toolEditItemExportActionSheet;
     
     NSTimer *_filterDebounceTimer;
     
@@ -435,6 +437,13 @@ static void * directoryPresenterFileURLsObservingContext;
     return YES;
 }
 
+#pragma mark - Action Sheet Delegate
+
+- (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex
+{
+    // TODO, delete, export
+}
+
 #pragma mark - Private Methods
 
 - (void)_toolNormalAddAction:(id)sender
@@ -447,6 +456,26 @@ static void * directoryPresenterFileURLsObservingContext;
         _toolNormalAddPopover = [[UIPopoverController alloc] initWithContentViewController:popoverViewController];
     }
     [_toolNormalAddPopover presentPopoverFromRect:[sender frame] inView:[sender superview] permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
+}
+
+- (void)_toolEditDeleteAction:(id)sender
+{
+    if (!_toolEditItemDeleteActionSheet)
+    {
+        _toolEditItemDeleteActionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:nil destructiveButtonTitle:@"Delete permanently" otherButtonTitles:nil];
+        _toolEditItemDeleteActionSheet.actionSheetStyle = UIActionSheetStyleBlackOpaque;
+    }
+    [_toolEditItemDeleteActionSheet showFromRect:[sender frame] inView:[sender superview] animated:YES];
+}
+
+- (void)_toolEditExportAction:(id)sender
+{
+    if (!_toolEditItemExportActionSheet)
+    {
+        _toolEditItemExportActionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:@"Move to new location", @"Export to iTunes", ([MFMailComposeViewController canSendMail] ? @"Send via E-Mail" : nil), nil];
+        _toolEditItemExportActionSheet.actionSheetStyle = UIActionSheetStyleBlackOpaque;
+    }
+    [_toolEditItemExportActionSheet showFromRect:[sender frame] inView:[sender superview] animated:YES];
 }
 
 @end
