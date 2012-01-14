@@ -8,7 +8,7 @@
 
 #import "ACFileTableController.h"
 #import "AppStyle.h"
-#import "ACNewFilePopoverController.h"
+#import "ACNewFileController.h"
 #import <ECFoundation/ECDirectoryPresenter.h>
 #import <ECFoundation/NSTimer+block.h>
 #import <ECFoundation/NSString+ECAdditions.h>
@@ -21,12 +21,16 @@
 static void * directoryPresenterFileURLsObservingContext;
 
 @interface FilteredFileURLWrapper : NSObject
+
 @property (nonatomic) float score;
 @property (nonatomic, strong) NSIndexSet *hitMask;
 @property (nonatomic, strong) NSURL *fileURL;
+
 - (id)initWithFileURL:(NSURL *)fileURL;
 - (NSComparisonResult)compare:(FilteredFileURLWrapper *)wrapper;
+
 @end
+
 
 @implementation FilteredFileURLWrapper
 
@@ -60,17 +64,37 @@ static void * directoryPresenterFileURLsObservingContext;
 @end
 
 @interface ACFileTableController () {
-    UIPopoverController *_popover;
-    NSTimer *filterDebounceTimer;
+    NSArray *_toolNormalItems;
+    NSArray *_toolEditItems;
+    
+    UIPopoverController *_toolNormalAddPopover;
+    
+    NSTimer *_filterDebounceTimer;
+    
     NSArray *extensions;
+    NSMutableArray *_selectedURLs;
 }
+
 @property (nonatomic, strong) ECDirectoryPresenter *directoryPresenter;
+
+/// The string used to smart filter the file list
 @property (nonatomic, strong) NSString *filterString;
+
+/// The number of filteredFileURLs to consider.
 @property (nonatomic) NSUInteger filterCount;
+
+/// Array of URLs ordered based on filterString score.
 @property (nonatomic, strong) NSMutableArray *filteredFileURLs;
+
 - (void)directoryPresenterDidChangeFileURLs:(NSArray *)newFileURLs;
 - (void)directoryPresenterDidInsertFileURLsAtIndexes:(NSIndexSet *)indexes inFileURLs:(NSArray *)newFileURLs;
 - (void)directoryPresenterDidRemoveFileURLsAtIndexes:(NSIndexSet *)indexes fromFileURLs:(NSArray *)oldFileURLs;
+
+- (void)_toolNormalAddAction:(id)sender;
+- (void)_toolEditDeleteAction:(id)sender;
+- (void)_toolEditDuplicateAction:(id)sender;
+- (void)_toolEditExportAction:(id)sender;
+
 @end
 
 #pragma mark - Implementations
@@ -111,23 +135,71 @@ static void * directoryPresenterFileURLsObservingContext;
         return;
     [self willChangeValueForKey:@"filterString"];
     _filterString = filterString;
-    // TODO: update it by moving objects around in the array instead of making a new one, so we can match the tableview animations to the movements
-    NSMutableArray *newFilteredFileURLs = [NSMutableArray array];
-    NSUInteger newFilterCount = 0;
-    for (FilteredFileURLWrapper *wrapper in self.filteredFileURLs)
-    {
+    // Maintain selection
+    NSMutableArray *newSelectedIndexes = nil;
+    if (self.isEditing && [_selectedURLs count] > 0)
+        newSelectedIndexes = [NSMutableArray new];
+    // Sort URLs by score
+    NSMutableArray *newFilteredFileURLs = [[NSMutableArray alloc] initWithCapacity:[self.filteredFileURLs count]];
+    __block NSMutableArray *filteredOutIndexes = nil;
+    __block NSMutableArray *filteredInIndexes = nil;
+    __block NSMutableArray *filteredUpdateIndexes = nil;
+    __block NSUInteger newFilterCount = 0;
+    [self.filteredFileURLs enumerateObjectsUsingBlock:^(FilteredFileURLWrapper *wrapper, NSUInteger idx, BOOL *stop) {
         NSIndexSet *hitMask = nil;
         float score = [[wrapper.fileURL lastPathComponent] scoreForAbbreviation:filterString hitMask:&hitMask];
         if (score > 0.0)
+        {
+            if (idx < _filterCount)
+            {
+                if (!filteredUpdateIndexes)
+                    filteredUpdateIndexes = [NSMutableArray new];
+                [filteredUpdateIndexes addObject:[NSIndexPath indexPathForRow:idx inSection:0]];
+            }
+            else
+            {
+                if (!filteredInIndexes)
+                    filteredInIndexes = [NSMutableArray new];
+                [filteredInIndexes addObject:[NSIndexPath indexPathForRow:newFilterCount inSection:0]];
+            }
             ++newFilterCount;
+        }
+        else
+        {
+            if (idx < _filterCount)
+            {
+                if (!filteredOutIndexes)
+                    filteredOutIndexes = [NSMutableArray new];
+                [filteredOutIndexes addObject:[NSIndexPath indexPathForRow:idx inSection:0]];
+            }
+        }
         wrapper.score = score;
         wrapper.hitMask = hitMask;
         [newFilteredFileURLs addObject:wrapper];
-    }
+    }];
+    // Apply new filtered URLs
     [newFilteredFileURLs sortUsingSelector:@selector(compare:)];
     self.filteredFileURLs = newFilteredFileURLs;
     self.filterCount = newFilterCount;
-    [self.tableView reloadData];
+    // Animate filtering
+    [self.tableView beginUpdates];
+    if (filteredOutIndexes)
+        [self.tableView deleteRowsAtIndexPaths:filteredOutIndexes withRowAnimation:UITableViewRowAnimationAutomatic];
+    if (filteredUpdateIndexes)
+        [self.tableView reloadRowsAtIndexPaths:filteredUpdateIndexes withRowAnimation:UITableViewRowAnimationNone];
+    if (filteredInIndexes)
+        [self.tableView insertRowsAtIndexPaths:filteredInIndexes withRowAnimation:UITableViewRowAnimationAutomatic];
+    [self.tableView endUpdates];
+    // Apply selection
+    [newFilteredFileURLs enumerateObjectsUsingBlock:^(FilteredFileURLWrapper *wrapper, NSUInteger idx, BOOL *stop) {
+        if (idx >= newFilterCount)
+        {
+            *stop = YES;
+            return;
+        }
+        if ([_selectedURLs containsObject:wrapper.fileURL])
+            [self.tableView selectRowAtIndexPath:[NSIndexPath indexPathForRow:idx inSection:0] animated:NO scrollPosition:UITableViewScrollPositionNone];
+    }];
     [self didChangeValueForKey:@"filterString"];
 }
 
@@ -163,6 +235,7 @@ static void * directoryPresenterFileURLsObservingContext;
 - (void)directoryPresenterDidChangeFileURLs:(NSArray *)newFileURLs
 {
     [self.filteredFileURLs removeAllObjects];
+    [_selectedURLs removeAllObjects];
     NSUInteger newFilterCount = 0;
     for (NSURL *fileURL in newFileURLs)
     {
@@ -209,9 +282,9 @@ static void * directoryPresenterFileURLsObservingContext;
 
 #pragma mark - View lifecycle
 
-- (void)viewDidLoad
+- (void)loadView
 {
-    [super viewDidLoad];
+    [super loadView];
     
     // TODO Write hints in this view
     UIView *footerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.tableView.bounds.size.width, 0)];
@@ -219,18 +292,29 @@ static void * directoryPresenterFileURLsObservingContext;
     
     extensions = [NSArray arrayWithObjects:@"h", @"m", @"hpp", @"cpp", @"mm", @"py", nil];
     
-    [self setEditing:NO animated:NO];
+    // Preparing tool items array changed in set editing
+    _toolEditItems = [NSArray arrayWithObjects:[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Export"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolEditExportAction:)], [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Duplicate"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolEditDuplicateAction:)], [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Delete"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolEditDeleteAction:)], nil];
+    
+    _toolNormalItems = [NSArray arrayWithObject:[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"tabBar_TabAddButton"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolNormalAddAction:)]];
+    self.toolbarItems = _toolNormalItems;
 }
 
 - (void)viewWillAppear:(BOOL)animated
 {
+    [super viewWillAppear:animated];
+    
     self.directoryPresenter = [[ECDirectoryPresenter alloc] init];
     self.directoryPresenter.directory = self.directory;
+    
+    [_selectedURLs removeAllObjects];
 }
 
 - (void)viewDidDisappear:(BOOL)animated
 {
+    [super viewDidDisappear:animated];
+    
     self.directoryPresenter = nil;
+    _selectedURLs = nil;
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
@@ -242,42 +326,16 @@ static void * directoryPresenterFileURLsObservingContext;
 {
     [super setEditing:editing animated:animated];
     
+    [_selectedURLs removeAllObjects];
+    
     if (editing)
     {
-        // TODO set editin toolbar items
+        self.toolbarItems = _toolEditItems;
     }
     else
     {  
-        // Tool buttons for top bar
-        self.toolbarItems = [NSArray arrayWithObject:[[UIBarButtonItem alloc] initWithTitle:@"add" style:UIBarButtonItemStylePlain target:self action:@selector(toolButtonAction:)]];
+        self.toolbarItems = _toolNormalItems;
     }
-}
-
-#pragma mark - TODO refactor: Tool Target Methods
-
-//- (UIButton *)toolButton
-//{
-//    if (!toolButton)
-//    {
-//        toolButton = [UIButton new];
-//        [toolButton addTarget:self action:@selector(toolButtonAction:) forControlEvents:UIControlEventTouchUpInside];
-//        [toolButton setImage:[UIImage styleAddImageWithColor:[UIColor styleForegroundColor] shadowColor:[UIColor whiteColor]] forState:UIControlStateNormal];
-//        toolButton.adjustsImageWhenHighlighted = NO;
-//    }
-//    return toolButton;
-//}
-
-- (void)toolButtonAction:(id)sender
-{
-    // Removing the lazy loading could cause the old popover to be overwritten by the new one causing a dealloc while popover is visible
-    if (!_popover)
-    {
-        UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"NewFilePopover" bundle:[NSBundle mainBundle]];
-        ACNewFilePopoverController *popoverViewController = (ACNewFilePopoverController *)[storyboard instantiateInitialViewController];
-//        popoverViewController.group = self.group;
-        _popover = [[UIPopoverController alloc] initWithContentViewController:popoverViewController];
-    }
-    [_popover presentPopoverFromRect:[sender frame] inView:[sender superview] permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
 }
 
 #pragma mark - Table view data source
@@ -325,8 +383,23 @@ static void * directoryPresenterFileURLsObservingContext;
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (self.isEditing)
-        return;
-    [self.tab pushURL:[[self.filteredFileURLs objectAtIndex:indexPath.row] fileURL]];
+    {
+        if (!_selectedURLs)
+            _selectedURLs = [NSMutableArray new];
+        [_selectedURLs addObject:[[self.filteredFileURLs objectAtIndex:indexPath.row] fileURL]];
+    }
+    else
+    {
+        [self.tab pushURL:[[self.filteredFileURLs objectAtIndex:indexPath.row] fileURL]];
+    }
+}
+
+- (void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (self.isEditing)
+    {
+        [_selectedURLs removeObject:[[self.filteredFileURLs objectAtIndex:indexPath.row] fileURL]];
+    }
 }
 
 #pragma mark - UITextField Delegate Methods
@@ -334,8 +407,8 @@ static void * directoryPresenterFileURLsObservingContext;
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
 {
     // Apply filter to filterController with .3 second debounce
-    [filterDebounceTimer invalidate];
-    filterDebounceTimer = [NSTimer scheduledTimerWithTimeInterval:0.3 usingBlock:^(NSTimer *timer) {
+    [_filterDebounceTimer invalidate];
+    _filterDebounceTimer = [NSTimer scheduledTimerWithTimeInterval:0.3 usingBlock:^(NSTimer *timer) {
         self.filterString = textField.text;
     } repeats:NO];
 
@@ -346,6 +419,20 @@ static void * directoryPresenterFileURLsObservingContext;
 {
     self.filterString = nil;
     return YES;
+}
+
+#pragma mark - Private Methods
+
+- (void)_toolNormalAddAction:(id)sender
+{
+    if (!_toolNormalAddPopover)
+    {
+        UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"NewFilePopover" bundle:[NSBundle mainBundle]];
+        ACNewFileController *popoverViewController = (ACNewFileController *)[storyboard instantiateInitialViewController];
+        //        popoverViewController.group = self.group;
+        _toolNormalAddPopover = [[UIPopoverController alloc] initWithContentViewController:popoverViewController];
+    }
+    [_toolNormalAddPopover presentPopoverFromRect:[sender frame] inView:[sender superview] permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
 }
 
 @end

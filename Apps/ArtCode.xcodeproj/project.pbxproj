@@ -16,7 +16,7 @@
 		B7170ECB1429F54D00DF7794 /* libECCodeIndexing.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7170EA91429F3B800DF7794 /* libECCodeIndexing.a */; };
 		B7170ECC1429F54D00DF7794 /* libECFoundation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7170EAF1429F3B800DF7794 /* libECFoundation.a */; };
 		B7170ECD1429F54D00DF7794 /* libECUIKit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7170EB61429F3B800DF7794 /* libECUIKit.a */; };
-		B71A1DE71435112700672F65 /* ACNewFilePopoverController.m in Sources */ = {isa = PBXBuildFile; fileRef = B71A1DE61435112700672F65 /* ACNewFilePopoverController.m */; };
+		B71A1DE71435112700672F65 /* ACNewFileController.m in Sources */ = {isa = PBXBuildFile; fileRef = B71A1DE61435112700672F65 /* ACNewFileController.m */; };
 		B732D01513DB361600637FBE /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B732D01413DB361600637FBE /* CoreData.framework */; };
 		B75B575D14B0B62D00053783 /* ACCodeFile.m in Sources */ = {isa = PBXBuildFile; fileRef = B75B575C14B0B62D00053783 /* ACCodeFile.m */; };
 		B7656C40144B53FE0084B050 /* ActionScript.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7656C19144B53FE0084B050 /* ActionScript.tmbundle */; };
@@ -289,8 +289,8 @@
 		B7170E881429F3B600DF7794 /* ECCodeIndexing.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ECCodeIndexing.xcodeproj; path = ../Frameworks/ECCodeIndexing.xcodeproj; sourceTree = "<group>"; };
 		B7170E8B1429F3B600DF7794 /* ECFoundation.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ECFoundation.xcodeproj; path = ../Frameworks/ECFoundation.xcodeproj; sourceTree = "<group>"; };
 		B7170E8E1429F3B600DF7794 /* ECUIKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ECUIKit.xcodeproj; path = ../Frameworks/ECUIKit.xcodeproj; sourceTree = "<group>"; };
-		B71A1DE51435112700672F65 /* ACNewFilePopoverController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACNewFilePopoverController.h; sourceTree = "<group>"; };
-		B71A1DE61435112700672F65 /* ACNewFilePopoverController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACNewFilePopoverController.m; sourceTree = "<group>"; };
+		B71A1DE51435112700672F65 /* ACNewFileController.h */ = {isa = PBXFileReference; fileEncoding = 4; path = ACNewFileController.h; sourceTree = "<group>"; };
+		B71A1DE61435112700672F65 /* ACNewFileController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACNewFileController.m; sourceTree = "<group>"; };
 		B732CFE913DB1B6B00637FBE /* ECDebug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECDebug.h; path = ../../Frameworks/ECDebug.h; sourceTree = "<group>"; };
 		B732D01413DB361600637FBE /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		B75B575B14B0B62D00053783 /* ACCodeFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACCodeFile.h; sourceTree = "<group>"; };
@@ -667,8 +667,8 @@
 			isa = PBXGroup;
 			children = (
 				CD333CF914C033BD00E0EEE2 /* New Project */,
-				B71A1DE51435112700672F65 /* ACNewFilePopoverController.h */,
-				B71A1DE61435112700672F65 /* ACNewFilePopoverController.m */,
+				B71A1DE51435112700672F65 /* ACNewFileController.h */,
+				B71A1DE61435112700672F65 /* ACNewFileController.m */,
 			);
 			name = "Popover Content Controllers";
 			sourceTree = "<group>";
@@ -1412,7 +1412,7 @@
 				B702320314345B5A006D23F7 /* ACBookmark.m in Sources */,
 				B702320C14345B5A006D23F7 /* ACApplication.m in Sources */,
 				B702321214345B5B006D23F7 /* ACHistoryItem.m in Sources */,
-				B71A1DE71435112700672F65 /* ACNewFilePopoverController.m in Sources */,
+				B71A1DE71435112700672F65 /* ACNewFileController.m in Sources */,
 				B7107AEE143A32E500827FD2 /* ACURLWrapper.m in Sources */,
 				CDF4C011144F2C7900475F6B /* ACTopBarTitleControl.m in Sources */,
 				CDF4C012144F2C7900475F6B /* ACTopBarToolbar.m in Sources */,

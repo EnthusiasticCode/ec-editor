@@ -46,6 +46,26 @@
 	return YES;
 }
 
+- (void)loadView
+{
+    [super loadView];
+    
+    self.editButtonItem.title = @"";
+    self.editButtonItem.image = [UIImage imageNamed:@"topBarItem_Edit"];
+}
+
+- (void)setEditing:(BOOL)editing animated:(BOOL)animated
+{
+    [self willChangeValueForKey:@"editing"];
+    
+    [super setEditing:editing animated:animated];
+    self.editButtonItem.title = @"";
+    
+    [self.selectedViewController setEditing:editing animated:animated];
+    
+    [self didChangeValueForKey:@"editing"];
+}
+
 #pragma mark - Single tab content controller protocol methods
 
 - (void)_projectColorLabelSelectionAction:(id)sender
