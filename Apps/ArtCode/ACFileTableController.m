@@ -331,6 +331,10 @@ static void * directoryPresenterFileURLsObservingContext;
     if (editing)
     {
         self.toolbarItems = _toolEditItems;
+        for (UIBarButtonItem *item in _toolEditItems)
+        {
+            [(UIButton *)item.customView setEnabled:NO];
+        }
     }
     else
     {  
@@ -387,6 +391,11 @@ static void * directoryPresenterFileURLsObservingContext;
         if (!_selectedURLs)
             _selectedURLs = [NSMutableArray new];
         [_selectedURLs addObject:[[self.filteredFileURLs objectAtIndex:indexPath.row] fileURL]];
+        BOOL anySelected = [tableView indexPathForSelectedRow] == nil ? NO : YES;
+        for (UIBarButtonItem *item in _toolEditItems)
+        {
+            [(UIButton *)item.customView setEnabled:anySelected];
+        }
     }
     else
     {
@@ -399,6 +408,11 @@ static void * directoryPresenterFileURLsObservingContext;
     if (self.isEditing)
     {
         [_selectedURLs removeObject:[[self.filteredFileURLs objectAtIndex:indexPath.row] fileURL]];
+        BOOL anySelected = [tableView indexPathForSelectedRow] == nil ? NO : YES;
+        for (UIBarButtonItem *item in _toolEditItems)
+        {
+            [(UIButton *)item.customView setEnabled:anySelected];
+        }
     }
 }
 
