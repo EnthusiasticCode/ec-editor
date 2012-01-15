@@ -110,9 +110,9 @@
     NSString *projectName = [ACProject projectNameFromURL:self.tab.currentURL isProjectRoot:&isRoot];
     if (!isRoot)
     {
-        NSArray *pathComponents = [[[self.tab.currentURL path] substringFromIndex:[[[ACProject projectsDirectory] path] length]] pathComponents];
-        titleControl.titleFragments = pathComponents;
-        titleControl.selectedTitleFragments = nil;
+        NSString *currentPath = [self.tab.currentURL path];
+        NSArray *pathComponents = [[currentPath substringFromIndex:MIN([[[ACProject projectsDirectory] path] length] + 1, [currentPath length])] pathComponents];
+        [titleControl setTitleFragments:pathComponents selectedIndexes:nil];
     }
     else
     {
@@ -126,8 +126,8 @@
         [_projectColorLabelButton setImage:[UIImage styleProjectLabelImageWithSize:CGSizeMake(14, 22) color:project.labelColor] forState:UIControlStateNormal];
         [_projectColorLabelButton sizeToFit];
         
-        titleControl.titleFragments = [NSArray arrayWithObjects:_projectColorLabelButton, projectName, nil];
-        titleControl.selectedTitleFragments = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, 2)];
+        [titleControl setTitleFragments:[NSArray arrayWithObjects:_projectColorLabelButton, projectName, nil] 
+                        selectedIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, 2)]];
     }
     return YES;
 }

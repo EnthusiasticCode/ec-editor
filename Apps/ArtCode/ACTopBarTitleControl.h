@@ -20,10 +20,13 @@ enum {
 #pragma mark Managin Title Fragments
 
 /// Provides title fragments to display. A fragment can be either a NSString or a UIImage.
-@property (nonatomic, strong) NSArray *titleFragments;
+@property (nonatomic, strong, readonly) NSArray *titleFragments;
 
-/// Indicates which title fragments are active. If nil, the last title fragment will be set active by default.
-@property (nonatomic, strong) NSIndexSet *selectedTitleFragments;
+/// Indicates which title fragments are active.
+@property (nonatomic, strong, readonly) NSIndexSet *selectedTitleFragments;
+
+/// Sets the title fragments and the selection. If selection is nil, the last title fragment will be set active by default.
+- (void)setTitleFragments:(NSArray *)fragments selectedIndexes:(NSIndexSet *)selected;
 
 /// Set the tint to apply to selected title fragments
 @property (nonatomic, strong) UIColor *selectedTitleFragmentsTint UI_APPEARANCE_SELECTOR;

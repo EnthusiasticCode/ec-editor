@@ -14,6 +14,7 @@
 
 #import "ACTab.h"
 #import "ACApplication.h"
+#import "ACProject.h"
 
 #import "ACProjectTableController.h"
 #import "ACSingleProjectBrowsersController.h"
@@ -424,17 +425,18 @@ static const void *contentViewControllerContext;
     {
         if ([_contentViewController.title length] > 0)
         {
-            self.defaultToolbar.titleControl.selectedTitleFragments = nil;
-            self.defaultToolbar.titleControl.titleFragments = [NSArray arrayWithObject:_contentViewController.title];
+            [self.defaultToolbar.titleControl setTitleFragments:[NSArray arrayWithObject:_contentViewController.title] selectedIndexes:nil];
         }
         else
         {
-            NSURL *currentURL = self.tab.currentURL;
+            NSString *currentPath = [self.tab.currentURL path];
+            NSArray *pathComponents = [[currentPath substringFromIndex:MIN([[[ACProject projectsDirectory] path] length] + 1, [currentPath length])] pathComponents];
+            [self.defaultToolbar.titleControl setTitleFragments:pathComponents selectedIndexes:nil];
             // TODO parse URL query to determine images etc...
-            self.defaultToolbar.titleControl.titleFragments = [NSArray arrayWithObjects:
-                                                               [currentURL.path stringByDeletingLastPathComponent],
-                                                               [currentURL lastPathComponent], nil];
-            self.defaultToolbar.titleControl.selectedTitleFragments = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(1, 1)];
+//            [self.defaultToolbar.titleControl setTitleFragments:[NSArray arrayWithObjects:
+//                                                               [currentURL.path stringByDeletingLastPathComponent],
+//                                                               [currentURL lastPathComponent], nil] 
+//                                                selectedIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(1, 1)]];
         }
     }
     

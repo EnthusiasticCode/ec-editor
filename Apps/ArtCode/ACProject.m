@@ -131,6 +131,7 @@ static ECWeakDictionary *openProjects = nil;
 
 - (void)dealloc
 {
+#warning TODO uncomment when file coordination will work
 //    [self flush];
 }
 

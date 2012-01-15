@@ -43,28 +43,28 @@
     return backgroundButton;
 }
 
-- (void)setTitleFragments:(NSArray *)fragments
+- (void)setTitleFragments:(NSArray *)fragments selectedIndexes:(NSIndexSet *)selected
 {
-    if (fragments == titleFragments)
+    BOOL changeFragments = (fragments != titleFragments);
+    BOOL changeSelection = (selected != selectedTitleFragments);
+    if (!changeFragments && !changeSelection)
         return;
     
-    [self willChangeValueForKey:@"titleFragments"];
-    titleFragments = fragments;
-    [self _setupTitle];
-    [self didChangeValueForKey:@"titleFragments"];
-}
+    if (changeFragments)
+        [self willChangeValueForKey:@"titleFragments"];
 
-- (void)setSelectedTitleFragments:(NSIndexSet *)fragments
-{
-    ECASSERT([fragments lastIndex] < [titleFragments count]);
+    if (changeSelection)
+        [self willChangeValueForKey:@"selectedTitleFragments"];
     
-    if (fragments == selectedTitleFragments)
-        return;
-    
-    [self willChangeValueForKey:@"selectedTitleFragments"];
-    selectedTitleFragments = fragments;
+    titleFragments = fragments;
+    selectedTitleFragments = selected;
     [self _setupTitle];
-    [self didChangeValueForKey:@"selectedTitleFragments"];
+    
+    if (changeFragments)
+        [self didChangeValueForKey:@"titleFragments"];
+    
+    if (changeSelection)
+        [self didChangeValueForKey:@"selectedTitleFragments"];
 }
 
 - (UIColor *)secondaryTitleFragmentsTint
@@ -244,6 +244,9 @@
 
 - (void)_setupTitle
 {
+    if (![titleFragments count])
+        return;
+    
     NSIndexSet *selected = selectedTitleFragments ? selectedTitleFragments : [NSIndexSet indexSetWithIndex:[titleFragments count] - 1];
     
     [_preViews makeObjectsPerformSelector:@selector(removeFromSuperview)];
