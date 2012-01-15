@@ -126,7 +126,7 @@ static ECCache *openProjects = nil;
     [self flush];
     
     __block BOOL result = NO;
-    [[[ECFileCoordinator alloc] initWithFilePresenter:nil] coordinateReadingItemAtURL:self.URL options:0 writingItemAtURL:exportUrl options:0 error:NULL byAccessor:^(NSURL *newReadingURL, NSURL *newWritingURL) {
+    [[[ECFileCoordinator alloc] initWithFilePresenter:nil] coordinateReadingItemAtURL:self.URL options:0 writingItemAtURL:exportUrl options:NSFileCoordinatorWritingForReplacing error:NULL byAccessor:^(NSURL *newReadingURL, NSURL *newWritingURL) {
         result = [ECArchive compressDirectoryAtURL:newReadingURL toArchive:newWritingURL];
     }];
     return result;

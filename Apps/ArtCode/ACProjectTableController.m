@@ -17,9 +17,11 @@
 #import "ACProject.h"
 #import "ACTab.h"
 
+#import "ACSingleTabController.h"
 #import "ACNewProjectNavigationController.h"
 
 #import <ECFoundation/ECDirectoryPresenter.h>
+#import <ECFoundation/NSURL+ECAdditions.h>
 #import <ECArchive/ECArchive.h>
 #import <ECUIKit/ECBezelAlert.h>
 
@@ -308,11 +310,9 @@ static void * directoryPresenterFileURLsObservingContext;
             NSIndexSet *cellsToRemove = [self.gridView indexesForSelectedCells];
             ECFileCoordinator *fileCoordinator = [[ECFileCoordinator alloc] initWithFilePresenter:nil];
             [cellsToRemove enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
-                
                 NSURL *fileURL = [self.directoryPresenter.fileURLs objectAtIndex:idx];
                 [fileCoordinator coordinateWritingItemAtURL:fileURL options:NSFileCoordinatorWritingForDeleting error:NULL byAccessor:^(NSURL *newURL) {
-                    NSFileManager *fileManager = [[NSFileManager alloc] init];
-                    [fileManager removeItemAtURL:newURL error:NULL];
+                    [[NSFileManager defaultManager] removeItemAtURL:newURL error:NULL];
                 }];
             }];
             
@@ -327,7 +327,16 @@ static void * directoryPresenterFileURLsObservingContext;
     {
         if (buttonIndex == 0) // export to iTunes
         {
-            
+            [self setEditing:NO animated:YES];
+            self.loading = YES;
+            NSIndexSet *cellsToExport = [self.gridView indexesForSelectedCells];
+            [cellsToExport enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
+                ACProject *project = [ACProject projectWithURL:[self.directoryPresenter.fileURLs objectAtIndex:idx]];
+                NSURL *zipURL = [[NSURL applicationDocumentsDirectory] URLByAppendingPathComponent:[project.name stringByAppendingPathExtension:@"zip"]];
+                [project compressProjectToURL:zipURL];
+            }];
+            self.loading = NO;
+            [[ECBezelAlert defaultBezelAlert] addAlertMessageWithText:([cellsToExport count] == 1 ? @"Project exported" : [NSString stringWithFormat:@"%u projects exported", [cellsToExport count]]) image:nil displayImmediatly:YES];
         }
         else if (buttonIndex == 1) // send mail
         {
@@ -337,6 +346,7 @@ static void * directoryPresenterFileURLsObservingContext;
             mailComposer.modalPresentationStyle = UIModalPresentationFormSheet;
             
             // Compressing projects to export
+            self.loading = YES;
             NSIndexSet *cellsToExport = [self.gridView indexesForSelectedCells];
             [self setEditing:NO animated:YES];
             NSMutableString *subject = [NSMutableString new];
@@ -394,6 +404,7 @@ static void * directoryPresenterFileURLsObservingContext;
                 [mailComposer setMessageBody:@"<br/><p>Open this files with <a href=\"http://www.artcodeapp.com/\">ArtCode</a> to view the contained projects.</p>" isHTML:YES];
             
             [self presentModalViewController:mailComposer animated:YES];
+            self.loading = NO;
         }
     }
 }
