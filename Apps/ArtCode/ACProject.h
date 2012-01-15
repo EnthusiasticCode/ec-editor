@@ -33,6 +33,9 @@ typedef enum {
 /// Open or create a project with the given name in the projects directory.
 + (id)projectWithName:(NSString *)name;
 
+/// Open or create a project that holds the given URL.
++ (id)projectWithURL:(NSURL *)url;
+
 #pragma mark Initializing and exporting projects
 
 /// Initialize a new project residing in the given URL.

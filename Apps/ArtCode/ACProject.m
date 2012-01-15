@@ -134,8 +134,7 @@ static ECCache *openProjects = nil;
 
 - (void)dealloc
 {
-#warning TODO uncomment when file coordination will work
-//    [self flush];
+    [self flush];
 }
 
 #pragma mark Class methods
@@ -155,7 +154,7 @@ static ECCache *openProjects = nil;
     NSArray *components = [path pathComponents];
     if (isProjectRoot)
         *isProjectRoot = ([components count] == 2);
-    return [[components objectAtIndex:1] stringByDeletingPathExtension];
+    return [components count] >= 2 ? [[components objectAtIndex:1] stringByDeletingPathExtension] : nil;
 }
 
 + (BOOL)projectWithNameExists:(NSString *)name
@@ -211,6 +210,17 @@ static ECCache *openProjects = nil;
     project = [[self alloc] initWithURL:projectUrl];
     [openProjects setObject:project forKey:projectUrl];
     return project;
+}
+
++ (id)projectWithURL:(NSURL *)url
+{
+    ECASSERT(url != nil);
+    
+    NSString *projectName = [self projectNameFromURL:url isProjectRoot:NULL];
+    if (!projectName)
+        return nil;
+    
+    return [self projectWithName:projectName];
 }
 
 @end

@@ -71,7 +71,7 @@
 
 - (void)_projectColorLabelSelectionAction:(id)sender
 {
-    ACProject *project = [ACProject projectWithName:[ACProject projectNameFromURL:self.tab.currentURL isProjectRoot:NULL]];
+    ACProject *project = [ACProject projectWithURL:self.tab.currentURL];
     project.labelColor = [(ACColorSelectionControl *)sender selectedColor];
     [_projectColorLabelButton setImage:[UIImage styleProjectLabelImageWithSize:CGSizeMake(14, 22) color:project.labelColor] forState:UIControlStateNormal];
     [_projectColorLabelPopover dismissPopoverAnimated:YES];
