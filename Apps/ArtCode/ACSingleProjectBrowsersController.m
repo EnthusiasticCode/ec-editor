@@ -7,6 +7,7 @@
 //
 
 #import "ACSingleProjectBrowsersController.h"
+#import "ACProject.h"
 #import "ACTab.h"
 #import "ACTopBarTitleControl.h"
 
@@ -70,7 +71,9 @@
 
 - (void)_projectColorLabelSelectionAction:(id)sender
 {
-    [_projectColorLabelButton setImage:[UIImage styleProjectLabelImageWithSize:CGSizeMake(14, 22) color:[(ACColorSelectionControl *)sender selectedColor]] forState:UIControlStateNormal];
+    ACProject *project = [ACProject projectWithName:[ACProject projectNameFromURL:self.tab.currentURL isProjectRoot:NULL]];
+    project.labelColor = [(ACColorSelectionControl *)sender selectedColor];
+    [_projectColorLabelButton setImage:[UIImage styleProjectLabelImageWithSize:CGSizeMake(14, 22) color:project.labelColor] forState:UIControlStateNormal];
     [_projectColorLabelPopover dismissPopoverAnimated:YES];
 }
 
@@ -103,18 +106,29 @@
 
 - (BOOL)singleTabController:(ACSingleTabController *)singleTabController setupDefaultToolbarTitleControl:(ACTopBarTitleControl *)titleControl
 {
-    // TODO check tab.currentUrl and add button only if in a project root
-    if (!_projectColorLabelButton)
+    BOOL isRoot = NO;
+    NSString *projectName = [ACProject projectNameFromURL:self.tab.currentURL isProjectRoot:&isRoot];
+    if (!isRoot)
     {
-        _projectColorLabelButton  = [UIButton buttonWithType:UIButtonTypeCustom];
-        [_projectColorLabelButton addTarget:self action:@selector(_projectColorLabelAction:) forControlEvents:UIControlEventTouchUpInside];
+        NSArray *pathComponents = [[[self.tab.currentURL path] substringFromIndex:[[[ACProject projectsDirectory] path] length]] pathComponents];
+        titleControl.titleFragments = pathComponents;
+        titleControl.selectedTitleFragments = nil;
     }
-    [_projectColorLabelButton setImage:[UIImage styleProjectLabelImageWithSize:CGSizeMake(14, 22) color:[UIColor colorWithRed:255.0/255.0 green:147.0/255.0 blue:30.0/255.0 alpha:1]] forState:UIControlStateNormal];
-    [_projectColorLabelButton sizeToFit];
-    
-    titleControl.titleFragments = [NSArray arrayWithObjects:_projectColorLabelButton, @"title", nil];
-    titleControl.selectedTitleFragments = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, 2)];
-    // TODO setup project color selection button
+    else
+    {
+        ACProject *project = [ACProject projectWithName:projectName];
+        
+        if (!_projectColorLabelButton)
+        {
+            _projectColorLabelButton  = [UIButton buttonWithType:UIButtonTypeCustom];
+            [_projectColorLabelButton addTarget:self action:@selector(_projectColorLabelAction:) forControlEvents:UIControlEventTouchUpInside];
+        }
+        [_projectColorLabelButton setImage:[UIImage styleProjectLabelImageWithSize:CGSizeMake(14, 22) color:project.labelColor] forState:UIControlStateNormal];
+        [_projectColorLabelButton sizeToFit];
+        
+        titleControl.titleFragments = [NSArray arrayWithObjects:_projectColorLabelButton, projectName, nil];
+        titleControl.selectedTitleFragments = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, 2)];
+    }
     return YES;
 }
 

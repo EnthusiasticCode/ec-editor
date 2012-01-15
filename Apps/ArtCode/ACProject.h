@@ -20,11 +20,15 @@ typedef enum {
 /// Returns the URL in which projects are stored
 + (NSURL *)projectsDirectory;
 
+/// Gets the project name from an URL or nil if no project was found.
+/// Uppon return, in isProjectRoot is not NULL, it will contain a value indicating if the given URL is a project root.
++ (NSString *)projectNameFromURL:(NSURL *)url isProjectRoot:(BOOL *)isProjectRoot;
+
 /// Returns a value indicating if the project with the given name exists.
 + (BOOL)projectWithNameExists:(NSString *)name;
 
 /// Returns a name which does not conflict with a project name in the projects directory.
-+ (NSString *)validNameForProjectName:(NSString *)name;
++ (NSString *)validNameForNewProjectName:(NSString *)name;
 
 /// Open or create a project with the given name in the projects directory.
 + (id)projectWithName:(NSString *)name;

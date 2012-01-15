@@ -10,9 +10,11 @@
 #import <ECFoundation/ECFileCoordinator.h>
 #import <ECFoundation/NSURL+ECAdditions.h>
 #import <ECArchive/ECArchive.h>
+#import <ECFoundation/ECWeakDictionary.h>
 
 static NSString * const ACProjectsDirectoryName = @"ACLocalProjects";
 static NSString * const ACProjectPlistFileName = @"acproj.plist";
+static ECWeakDictionary *openProjects = nil;
 
 
 @interface ACProject ()
@@ -47,7 +49,9 @@ static NSString * const ACProjectPlistFileName = @"acproj.plist";
         [[NSFileManager defaultManager] moveItemAtURL:newURL1 toURL:newURL2 error:NULL];
         [coordinator itemAtURL:newURL1 didMoveToURL:newURL2];
     }];
+    [openProjects removeObjectForKey:URL];
     URL = newURL;
+    [openProjects setObject:self forKey:URL];
     [self didChangeValueForKey:@"name"];
 }
 
@@ -84,7 +88,8 @@ static NSString * const ACProjectPlistFileName = @"acproj.plist";
     
     _plistUrl = [URL URLByAppendingPathComponent:ACProjectPlistFileName];
     [[[ECFileCoordinator alloc] initWithFilePresenter:nil] coordinateReadingItemAtURL:_plistUrl options:0 error:NULL byAccessor:^(NSURL *newURL) {
-        plist = [NSPropertyListSerialization propertyListWithData:[NSData dataWithContentsOfURL:newURL] options:NSPropertyListMutableContainersAndLeaves format:NULL error:NULL];
+        if ([[NSFileManager defaultManager] fileExistsAtPath:[newURL path]])
+            plist = [NSPropertyListSerialization propertyListWithData:[NSData dataWithContentsOfURL:newURL] options:NSPropertyListMutableContainersAndLeaves format:NULL error:NULL];
     }];
     
     return self;
@@ -117,9 +122,16 @@ static NSString * const ACProjectPlistFileName = @"acproj.plist";
 {
     [self flush];
     
+    __block BOOL result = NO;
     [[[ECFileCoordinator alloc] initWithFilePresenter:nil] coordinateReadingItemAtURL:self.URL options:0 writingItemAtURL:exportUrl options:0 error:NULL byAccessor:^(NSURL *newReadingURL, NSURL *newWritingURL) {
-        [ECArchive compressDirectoryAtURL:newReadingURL toArchive:newWritingURL];
+        result = [ECArchive compressDirectoryAtURL:newReadingURL toArchive:newWritingURL];
     }];
+    return result;
+}
+
+- (void)dealloc
+{
+//    [self flush];
 }
 
 #pragma mark Class methods
@@ -129,6 +141,19 @@ static NSString * const ACProjectPlistFileName = @"acproj.plist";
     return [[NSURL applicationLibraryDirectory] URLByAppendingPathComponent:ACProjectsDirectoryName isDirectory:YES];
 }
 
++ (NSString *)projectNameFromURL:(NSURL *)url isProjectRoot:(BOOL *)isProjectRoot
+{
+    NSString *projectsPath = [[self projectsDirectory] path];
+    NSString *path = [url path];
+    if (![path hasPrefix:projectsPath])
+        return nil;
+    path = [path substringFromIndex:[projectsPath length]];
+    NSArray *components = [path pathComponents];
+    if (isProjectRoot)
+        *isProjectRoot = ([components count] == 2);
+    return [components objectAtIndex:1];
+}
+
 + (BOOL)projectWithNameExists:(NSString *)name
 {
     BOOL isDirectory = NO;
@@ -136,7 +161,7 @@ static NSString * const ACProjectPlistFileName = @"acproj.plist";
     return exists && isDirectory;
 }
 
-+ (NSString *)validNameForProjectName:(NSString *)name
++ (NSString *)validNameForNewProjectName:(NSString *)name
 {
     name = [name stringByReplacingOccurrencesOfString:@"\\" withString:@"_"];
     
@@ -154,7 +179,15 @@ static NSString * const ACProjectPlistFileName = @"acproj.plist";
 
 + (id)projectWithName:(NSString *)name
 {
-    NSURL *projectUrl = [[self projectsDirectory] URLByAppendingPathComponent:[self validNameForProjectName:name] isDirectory:YES];
+    name = [name stringByReplacingOccurrencesOfString:@"\\" withString:@"_"];
+    NSURL *projectUrl = [[self projectsDirectory] URLByAppendingPathComponent:name isDirectory:YES];
+    
+    if (!openProjects)
+        openProjects = [ECWeakDictionary new];
+    
+    id project = [openProjects objectForKey:projectUrl];
+    if (project)
+        return project;
     
     // Create project direcotry
     if (![[NSFileManager defaultManager] fileExistsAtPath:[projectUrl path]])
@@ -165,7 +198,9 @@ static NSString * const ACProjectPlistFileName = @"acproj.plist";
     }
     
     // Open project
-    return [[self alloc] initWithURL:projectUrl];
+    project = [[self alloc] initWithURL:projectUrl];
+    [openProjects setObject:project forKey:projectUrl];
+    return project;
 }
 
 @end
