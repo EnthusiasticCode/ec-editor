@@ -339,14 +339,21 @@ static void * directoryPresenterFileURLsObservingContext;
             // Compressing projects to export
             NSIndexSet *cellsToExport = [self.gridView indexesForSelectedCells];
             [self setEditing:NO animated:YES];
+            NSMutableString *subject = [NSMutableString new];
             [cellsToExport enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
                 NSURL *projectURL = [self.directoryPresenter.fileURLs objectAtIndex:idx];
+                
+                // Generate mail subject
+                NSString *projectName = [ACProject projectNameFromURL:projectURL isProjectRoot:NULL];
+                if (projectName)
+                    [subject appendFormat:@"%@, ", projectName];
+                
+                // Generate a working temporary directory to write attachments into
                 NSURL *tempDirectory = [NSURL fileURLWithPath:NSTemporaryDirectory()];
                 __block NSURL *workingDirectory = nil;
                 __block BOOL workingDirectoryAlreadyExists = YES;
                 ECFileCoordinator *fileCoordinator = [[ECFileCoordinator alloc] init];
                 NSFileManager *fileManager = [[NSFileManager alloc] init];
-                // Generate a working temporary directory to write attachments into
                 do
                 {
                     CFUUIDRef uuid = CFUUIDCreate(CFAllocatorGetDefault());
@@ -375,15 +382,16 @@ static void * directoryPresenterFileURLsObservingContext;
                 }];
             }];
             
-#warning TODO replace
-            NSString *content = @"";
-            NSString *pageLink = @"http://mugunthkumar.com/mygreatapp";
-            NSString *iTunesLink = @"http://link-to-mygreatapp";
-            NSString *emailBody =
-            [NSString stringWithFormat:@"%@<br/><br/><p>Sent from <a href = '%@'>MyGreatApp</a> on iPad. <a href = '%@'>Download</a> yours from AppStore now.</p>", content, pageLink, iTunesLink];
+            if ([subject length] > 2)
+                [subject replaceCharactersInRange:NSMakeRange([subject length] - 2, 2) withString:([cellsToExport count] == 1 ? @" project" : @" projects")];
+            else
+                subject = nil;
+            [mailComposer setSubject:(subject ? subject : @"ArtCode exported project")];
             
-            [mailComposer setSubject:@"TODO"];
-            [mailComposer setMessageBody:emailBody isHTML:YES];
+            if ([cellsToExport count] == 1)
+                [mailComposer setMessageBody:@"<br/><p>Open this file with <a href=\"http://www.artcodeapp.com/\">ArtCode</a> to view the contained project.</p>" isHTML:YES];
+            else
+                [mailComposer setMessageBody:@"<br/><p>Open this files with <a href=\"http://www.artcodeapp.com/\">ArtCode</a> to view the contained projects.</p>" isHTML:YES];
             
             [self presentModalViewController:mailComposer animated:YES];
         }
