@@ -8,6 +8,7 @@
 
 #import "ECArchive.h"
 #import "archive.h"
+#import "archive_entry.h"
 
 @implementation ECArchive
 
@@ -138,20 +139,24 @@
             struct stat st;
             char buff[8192];
             int len;
-            int fd;
             FILE *file;            
             const char *filename = [[fileURL path] fileSystemRepresentation];
             
             stat(filename, &st);
-            file = fopen(filename, "rb");
-            archive_read_disk_entry_from_file(archive, entry, fd, &st);
+            entry = archive_entry_new();
+            archive_entry_set_pathname(entry, filename);
+            archive_entry_set_size(entry, st.st_size);
+            archive_entry_set_filetype(entry, AE_IFREG);
+            archive_entry_set_perm(entry, 0644);
             archive_write_header(archive, entry);
-            len = read(fd, buff, sizeof(buff));
+            file = fopen(filename, "rb");
+            len = fread(buff, sizeof(char), sizeof(buff), file);
             while ( len > 0 ) {
                 archive_write_data(archive, buff, len);
-                len = read(fd, buff, sizeof(buff));
+                len = fread(buff, sizeof(char), sizeof(buff), file);
             }
             fclose(file);
+            archive_entry_free(entry);
         }
     }];
     archive_write_close(archive);

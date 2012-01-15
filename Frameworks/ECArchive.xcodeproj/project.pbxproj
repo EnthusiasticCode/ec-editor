@@ -82,11 +82,12 @@
 		B7170E59142901C800DF7794 /* NSObject+KiwiStubAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170E14142901C800DF7794 /* NSObject+KiwiStubAdditions.m */; };
 		B7170E5A142901C800DF7794 /* NSObject+KiwiVerifierAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170E16142901C800DF7794 /* NSObject+KiwiVerifierAdditions.m */; };
 		B7170E5B142901C800DF7794 /* NSValue+KiwiAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170E18142901C800DF7794 /* NSValue+KiwiAdditions.m */; };
-		B7170E5F1429022800DF7794 /* archive.h in Headers */ = {isa = PBXBuildFile; fileRef = B7170E5D1429022800DF7794 /* archive.h */; };
-		B7170E601429022800DF7794 /* libarc.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7170E5E1429022800DF7794 /* libarc.a */; };
 		B7170E611429046F00DF7794 /* ECArchive.h in Headers */ = {isa = PBXBuildFile; fileRef = B7170D5A1428FD0300DF7794 /* ECArchive.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B7170E631429048500DF7794 /* ECDebug.h in Headers */ = {isa = PBXBuildFile; fileRef = B7170E621429048500DF7794 /* ECDebug.h */; };
 		B7170E651429051900DF7794 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B7170E641429051900DF7794 /* libz.dylib */; };
+		B741D68214C2653F00B622D1 /* archive_entry.h in Headers */ = {isa = PBXBuildFile; fileRef = B741D68014C2653F00B622D1 /* archive_entry.h */; };
+		B741D68314C2653F00B622D1 /* archive.h in Headers */ = {isa = PBXBuildFile; fileRef = B741D68114C2653F00B622D1 /* archive.h */; };
+		B741D68514C2655200B622D1 /* libarc.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B741D68414C2655200B622D1 /* libarc.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -261,10 +262,11 @@
 		B7170E16142901C800DF7794 /* NSObject+KiwiVerifierAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+KiwiVerifierAdditions.m"; sourceTree = "<group>"; };
 		B7170E17142901C800DF7794 /* NSValue+KiwiAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSValue+KiwiAdditions.h"; sourceTree = "<group>"; };
 		B7170E18142901C800DF7794 /* NSValue+KiwiAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSValue+KiwiAdditions.m"; sourceTree = "<group>"; };
-		B7170E5D1429022800DF7794 /* archive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = archive.h; sourceTree = "<group>"; };
-		B7170E5E1429022800DF7794 /* libarc.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libarc.a; sourceTree = "<group>"; };
 		B7170E621429048500DF7794 /* ECDebug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECDebug.h; sourceTree = SOURCE_ROOT; };
 		B7170E641429051900DF7794 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
+		B741D68014C2653F00B622D1 /* archive_entry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = archive_entry.h; path = libarchive/libarchive/archive_entry.h; sourceTree = "<group>"; };
+		B741D68114C2653F00B622D1 /* archive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = archive.h; path = libarchive/libarchive/archive.h; sourceTree = "<group>"; };
+		B741D68414C2655200B622D1 /* libarc.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libarc.a; path = arc/build/libarc.a; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -273,7 +275,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B7170D561428FD0300DF7794 /* Foundation.framework in Frameworks */,
-				B7170E601429022800DF7794 /* libarc.a in Frameworks */,
+				B741D68514C2655200B622D1 /* libarc.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -523,8 +525,9 @@
 		B7170E5C1429022800DF7794 /* libarchive */ = {
 			isa = PBXGroup;
 			children = (
-				B7170E5D1429022800DF7794 /* archive.h */,
-				B7170E5E1429022800DF7794 /* libarc.a */,
+				B741D68414C2655200B622D1 /* libarc.a */,
+				B741D68014C2653F00B622D1 /* archive_entry.h */,
+				B741D68114C2653F00B622D1 /* archive.h */,
 			);
 			name = libarchive;
 			path = ../ThirdParty/libarchive;
@@ -537,9 +540,10 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B7170E5F1429022800DF7794 /* archive.h in Headers */,
 				B7170E611429046F00DF7794 /* ECArchive.h in Headers */,
 				B7170E631429048500DF7794 /* ECDebug.h in Headers */,
+				B741D68214C2653F00B622D1 /* archive_entry.h in Headers */,
+				B741D68314C2653F00B622D1 /* archive.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -793,6 +797,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../ThirdParty/libarchive\"",
+					"\"$(SRCROOT)/../ThirdParty/libarchive/arc/build\"",
 				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRIVATE_HEADERS_FOLDER_PATH = /usr/local/include/ECArchive;
@@ -812,6 +817,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../ThirdParty/libarchive\"",
+					"\"$(SRCROOT)/../ThirdParty/libarchive/arc/build\"",
 				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRIVATE_HEADERS_FOLDER_PATH = /usr/local/include/ECArchive;
