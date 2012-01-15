@@ -14,9 +14,9 @@
 
 static NSString * const ACProjectsDirectoryName = @"ACLocalProjects";
 static NSString * const ACProjectPlistFileName = @"acproj.plist";
+static NSString * const ACProjectExtension = @".weakpkg";
 static ECCache *openProjects = nil;
 
-#warning TODO use extension for project to work with icloud
 @interface ACProject ()
 
 @property (nonatomic, strong, readonly) NSMutableDictionary *plist;
@@ -34,11 +34,14 @@ static ECCache *openProjects = nil;
 
 - (NSString *)name
 {
-    return [self.URL lastPathComponent];
+    return [[self.URL lastPathComponent] stringByDeletingPathExtension];
 }
 
 - (void)setName:(NSString *)name
 {
+    if (![name hasSuffix:ACProjectExtension])
+        name = [name stringByAppendingString:ACProjectExtension];
+    
     if ([name isEqualToString:[self.URL lastPathComponent]])
         return;
     ECASSERT(![[self class] projectWithNameExists:name]);
@@ -152,11 +155,14 @@ static ECCache *openProjects = nil;
     NSArray *components = [path pathComponents];
     if (isProjectRoot)
         *isProjectRoot = ([components count] == 2);
-    return [components objectAtIndex:1];
+    return [[components objectAtIndex:1] stringByDeletingPathExtension];
 }
 
 + (BOOL)projectWithNameExists:(NSString *)name
 {
+    if (![name hasSuffix:ACProjectExtension])
+        name = [name stringByAppendingString:ACProjectExtension];
+    
     BOOL isDirectory = NO;
     BOOL exists =[[NSFileManager defaultManager] fileExistsAtPath:[[[self projectsDirectory] URLByAppendingPathComponent:name isDirectory:YES] path] isDirectory:&isDirectory];
     return exists && isDirectory;
@@ -181,6 +187,9 @@ static ECCache *openProjects = nil;
 + (id)projectWithName:(NSString *)name
 {
     name = [name stringByReplacingOccurrencesOfString:@"\\" withString:@"_"];
+    if (![name hasSuffix:ACProjectExtension])
+        name = [name stringByAppendingString:ACProjectExtension];
+    
     NSURL *projectUrl = [[self projectsDirectory] URLByAppendingPathComponent:name isDirectory:YES];
     
     if (!openProjects)

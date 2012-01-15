@@ -431,7 +431,14 @@ static const void *contentViewControllerContext;
         {
             NSString *currentPath = [self.tab.currentURL path];
             NSArray *pathComponents = [[currentPath substringFromIndex:MIN([[[ACProject projectsDirectory] path] length] + 1, [currentPath length])] pathComponents];
-            [self.defaultToolbar.titleControl setTitleFragments:pathComponents selectedIndexes:nil];
+            NSMutableString *path = [NSMutableString stringWithString:[[pathComponents objectAtIndex:0] stringByDeletingPathExtension]];
+            NSInteger lastIndex = [pathComponents count] - 1;
+            [pathComponents enumerateObjectsUsingBlock:^(NSString *component, NSUInteger idx, BOOL *stop) {
+                if (idx == 0 || idx == lastIndex)
+                    return;
+                [path appendFormat:@"/%@", component];
+            }];
+            [self.defaultToolbar.titleControl setTitleFragments:[NSArray arrayWithObjects:path, [pathComponents lastObject], nil] selectedIndexes:nil];
             // TODO parse URL query to determine images etc...
 //            [self.defaultToolbar.titleControl setTitleFragments:[NSArray arrayWithObjects:
 //                                                               [currentURL.path stringByDeletingLastPathComponent],

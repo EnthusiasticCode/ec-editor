@@ -110,9 +110,7 @@
     NSString *projectName = [ACProject projectNameFromURL:self.tab.currentURL isProjectRoot:&isRoot];
     if (!isRoot)
     {
-        NSString *currentPath = [self.tab.currentURL path];
-        NSArray *pathComponents = [[currentPath substringFromIndex:MIN([[[ACProject projectsDirectory] path] length] + 1, [currentPath length])] pathComponents];
-        [titleControl setTitleFragments:pathComponents selectedIndexes:nil];
+        return NO; // default behaviour
     }
     else
     {
