@@ -18,6 +18,7 @@
 		B7170ECD1429F54D00DF7794 /* libECUIKit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7170EB61429F3B800DF7794 /* libECUIKit.a */; };
 		B71A1DE71435112700672F65 /* ACNewFileController.m in Sources */ = {isa = PBXBuildFile; fileRef = B71A1DE61435112700672F65 /* ACNewFileController.m */; };
 		B732D01513DB361600637FBE /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B732D01413DB361600637FBE /* CoreData.framework */; };
+		B741D6F614C2E6C900B622D1 /* libiconv.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B741D6F514C2E6C900B622D1 /* libiconv.dylib */; };
 		B75B575D14B0B62D00053783 /* ACCodeFile.m in Sources */ = {isa = PBXBuildFile; fileRef = B75B575C14B0B62D00053783 /* ACCodeFile.m */; };
 		B7656C40144B53FE0084B050 /* ActionScript.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7656C19144B53FE0084B050 /* ActionScript.tmbundle */; };
 		B7656C41144B53FE0084B050 /* Apache.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7656C1A144B53FE0084B050 /* Apache.tmbundle */; };
@@ -293,6 +294,7 @@
 		B71A1DE61435112700672F65 /* ACNewFileController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACNewFileController.m; sourceTree = "<group>"; };
 		B732CFE913DB1B6B00637FBE /* ECDebug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECDebug.h; path = ../../Frameworks/ECDebug.h; sourceTree = "<group>"; };
 		B732D01413DB361600637FBE /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		B741D6F514C2E6C900B622D1 /* libiconv.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libiconv.dylib; path = usr/lib/libiconv.dylib; sourceTree = SDKROOT; };
 		B75B575B14B0B62D00053783 /* ACCodeFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACCodeFile.h; sourceTree = "<group>"; };
 		B75B575C14B0B62D00053783 /* ACCodeFile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACCodeFile.m; sourceTree = "<group>"; };
 		B7656C19144B53FE0084B050 /* ActionScript.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = ActionScript.tmbundle; sourceTree = "<group>"; };
@@ -506,6 +508,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B741D6F614C2E6C900B622D1 /* libiconv.dylib in Frameworks */,
 				B7170ECA1429F54D00DF7794 /* libECArchive.a in Frameworks */,
 				B7170ECB1429F54D00DF7794 /* libECCodeIndexing.a in Frameworks */,
 				B7170ECC1429F54D00DF7794 /* libECFoundation.a in Frameworks */,
@@ -658,6 +661,7 @@
 			isa = PBXGroup;
 			children = (
 				CDF1D46C14150C4900EFEC21 /* libstdc++.6.0.9.dylib */,
+				B741D6F514C2E6C900B622D1 /* libiconv.dylib */,
 				B7AC175414216D91009E9205 /* libz.1.2.5.dylib */,
 			);
 			name = "Third Party";
