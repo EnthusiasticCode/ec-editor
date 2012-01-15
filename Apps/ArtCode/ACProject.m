@@ -10,13 +10,13 @@
 #import <ECFoundation/ECFileCoordinator.h>
 #import <ECFoundation/NSURL+ECAdditions.h>
 #import <ECArchive/ECArchive.h>
-#import <ECFoundation/ECWeakDictionary.h>
+#import <ECFoundation/ECCache.h>
 
 static NSString * const ACProjectsDirectoryName = @"ACLocalProjects";
 static NSString * const ACProjectPlistFileName = @"acproj.plist";
-static ECWeakDictionary *openProjects = nil;
+static ECCache *openProjects = nil;
 
-
+#warning TODO use extension for project to work with icloud
 @interface ACProject ()
 
 @property (nonatomic, strong, readonly) NSMutableDictionary *plist;
@@ -184,7 +184,7 @@ static ECWeakDictionary *openProjects = nil;
     NSURL *projectUrl = [[self projectsDirectory] URLByAppendingPathComponent:name isDirectory:YES];
     
     if (!openProjects)
-        openProjects = [ECWeakDictionary new];
+        openProjects = [ECCache new];
     
     id project = [openProjects objectForKey:projectUrl];
     if (project)

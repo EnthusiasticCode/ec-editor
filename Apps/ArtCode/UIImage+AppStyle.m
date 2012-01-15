@@ -139,6 +139,8 @@
 
 + (UIImage *)styleProjectImageWithSize:(CGSize)size labelColor:(UIColor *)labelColor
 {
+    if (!labelColor)
+        labelColor = [UIColor styleForegroundColor];
     return [UIImage imageWithSize:size block:^(CGContextRef ctx, CGRect rect) {
         // Removing one pixel to add shadow
         rect.size.height -= 1;
@@ -239,6 +241,8 @@
 
 + (UIImage *)styleProjectLabelImageWithSize:(CGSize)size color:(UIColor *)color
 {
+    if (!color)
+        color = [UIColor styleForegroundColor];
     return [UIImage imageWithSize:size block:^(CGContextRef ctx, CGRect rect) {
         // Removing one pixel to add shadow
         rect.size.height -= 1;

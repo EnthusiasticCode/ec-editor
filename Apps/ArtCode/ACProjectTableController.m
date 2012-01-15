@@ -14,6 +14,7 @@
 
 #import "ArtCodeAppDelegate.h"
 #import "ACApplication.h"
+#import "ACProject.h"
 #import "ACTab.h"
 
 #import "ACNewProjectNavigationController.h"
@@ -146,6 +147,11 @@ static void * directoryPresenterFileURLsObservingContext;
         [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
 }
 
+- (NSString *)title
+{
+    return @"ArtCode";
+}
+
 #pragma mark - View lifecycle
 
 - (void)loadView
@@ -227,9 +233,11 @@ static void * directoryPresenterFileURLsObservingContext;
     }
     
     // Setup project title
-    cell.title.text = [[[self.directoryPresenter.fileURLs objectAtIndex:cellIndex] lastPathComponent] stringByDeletingPathExtension];
+    NSString *projectName = [[[self.directoryPresenter.fileURLs objectAtIndex:cellIndex] lastPathComponent] stringByDeletingPathExtension];
+    ACProject *project = [ACProject projectWithName:projectName];
+    cell.title.text = projectName;
     cell.label.text = @"";
-    cell.icon.image = [UIImage styleProjectImageWithSize:cell.icon.bounds.size labelColor:[UIColor styleThemeColorOne]];
+    cell.icon.image = [UIImage styleProjectImageWithSize:cell.icon.bounds.size labelColor:project.labelColor];
 
 //    cell.title.text = [NSString stringWithFormat:@"%d", cellIndex];
     
