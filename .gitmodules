@@ -7,3 +7,6 @@
 [submodule "ThirdParty/ConnectionKit"]
 	path = ThirdParty/ConnectionKit
 	url = ssh://git@coneko.no-ip.org/Users/Shared/Projects/ConnectionKit.git
+[submodule "ThirdParty/libarchive"]
+	path = ThirdParty/libarchive
+	url = ssh://git@coneko.no-ip.org/Users/Shared/Projects/iOS-libarchive.git
