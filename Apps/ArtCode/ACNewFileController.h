@@ -10,7 +10,7 @@
 
 @class ACGroup;
 
-@interface ACNewFilePopoverController : UITableViewController
+@interface ACNewFileController : UITableViewController
 
 @property (nonatomic, strong) ACGroup *group;
 

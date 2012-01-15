@@ -6,16 +6,14 @@
 //  Copyright (c) 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import "ACNewFilePopoverController.h"
+#import "ACNewFileController.h"
 #import <ECFoundation/NSURL+ECAdditions.h>
 
-@interface ACNewFilePopoverController ()
-{
+
+
+@implementation ACNewFileController {
     NSArray *_fileURLs;
 }
-@end
-
-@implementation ACNewFilePopoverController
 
 @synthesize group = _group;
 

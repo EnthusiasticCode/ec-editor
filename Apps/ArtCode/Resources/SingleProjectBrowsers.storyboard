@@ -46,7 +46,7 @@
                             <color key="backgroundColor" white="0.90634450604838723" alpha="1" colorSpace="calibratedWhite"/>
                         </view>
                         <prototypes>
-                            <tableViewCell contentMode="scaleToFill" selectionStyle="gray" hidesAccessoryWhenEditing="NO" indentationWidth="0.0" reuseIdentifier="FileCell" editingAccessoryType="checkmark" id="sfO-Hd-6dy" customClass="ACHighlightTableViewCell">
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="gray" hidesAccessoryWhenEditing="NO" indentationWidth="0.0" reuseIdentifier="FileCell" id="sfO-Hd-6dy" customClass="ACHighlightTableViewCell">
                                 <rect key="frame" x="0.0" y="91" width="768" height="46"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
