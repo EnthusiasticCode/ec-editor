@@ -26,6 +26,12 @@
 	return YES;
 }
 
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+    [self.tableView setEditing:YES animated:NO];
+}
+
 - (void)viewWillAppear:(BOOL)animated
 {
     _documentsDirectoryPresenter = [[ECDirectoryPresenter alloc] init];
