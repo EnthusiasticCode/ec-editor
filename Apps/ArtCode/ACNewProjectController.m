@@ -14,6 +14,7 @@
 #import "ACProject.h"
 #import "AppStyle.h"
 #import "ACColorSelectionControl.h"
+#import "ACTab.h"
 
 @implementation ACNewProjectController {
     UIViewController *changeColorController;
@@ -84,10 +85,13 @@
         return;
     }
     
-    // TODO manage error
+    ACProject *project = [ACProject projectWithName:projectName];
+    if (projectColor)
+        project.labelColor = projectColor;
     
     [[(ACNewProjectNavigationController *)self.navigationController popoverController] dismissPopoverAnimated:YES];
     [[ECBezelAlert defaultBezelAlert] addAlertMessageWithText:@"New project created" image:nil displayImmediatly:YES];
+    [[(ACNewProjectNavigationController *)self.navigationController parentController].tab performSelector:@selector(pushURL:) withObject:project.URL afterDelay:1];
 }
 
 @end

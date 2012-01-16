@@ -106,7 +106,7 @@ static void * directoryPresenterFileURLsObservingContext;
 
 - (void)setEditing:(BOOL)editing animated:(BOOL)animated
 {
-    if (editing == self.editing)
+    if (editing == self.isEditing)
         return;
     
     [self willChangeValueForKey:@"editing"];
@@ -302,10 +302,12 @@ static void * directoryPresenterFileURLsObservingContext;
     {
         if (buttonIndex == actionSheet.destructiveButtonIndex)
         {
-            // Remove files
             NSIndexSet *cellsToRemove = [self.gridView indexesForSelectedCells];
+            [self setEditing:NO animated:YES];
+            
+            // Remove files
             ECFileCoordinator *fileCoordinator = [[ECFileCoordinator alloc] initWithFilePresenter:nil];
-            [cellsToRemove enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
+            [cellsToRemove enumerateIndexesWithOptions:NSEnumerationReverse usingBlock:^(NSUInteger idx, BOOL *stop) {
                 NSURL *fileURL = [self.directoryPresenter.fileURLs objectAtIndex:idx];
                 [fileCoordinator coordinateWritingItemAtURL:fileURL options:NSFileCoordinatorWritingForDeleting error:NULL byAccessor:^(NSURL *newURL) {
                     [[NSFileManager new] removeItemAtURL:newURL error:NULL];
@@ -320,10 +322,12 @@ static void * directoryPresenterFileURLsObservingContext;
     {
         if (buttonIndex == 0) // export to iTunes
         {
-            [self setEditing:NO animated:YES];
-            self.loading = YES;
             NSIndexSet *cellsToExport = [self.gridView indexesForSelectedCells];
-            [cellsToExport enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
+            [self setEditing:NO animated:YES];
+            // TODO fix editing animation not stopping
+            
+            self.loading = YES;
+            [cellsToExport enumerateIndexesWithOptions:NSEnumerationReverse usingBlock:^(NSUInteger idx, BOOL *stop) {
                 ACProject *project = [ACProject projectWithURL:[self.directoryPresenter.fileURLs objectAtIndex:idx]];
                 if (!project)
                     return;
@@ -345,6 +349,7 @@ static void * directoryPresenterFileURLsObservingContext;
             self.loading = YES;
             NSIndexSet *cellsToExport = [self.gridView indexesForSelectedCells];
             [self setEditing:NO animated:YES];
+            
             NSMutableString *subject = [NSMutableString new];
             [cellsToExport enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
                 NSURL *projectURL = [self.directoryPresenter.fileURLs objectAtIndex:idx];
@@ -427,6 +432,7 @@ static void * directoryPresenterFileURLsObservingContext;
         UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"NewProjectPopover" bundle:nil];
         ACNewProjectNavigationController *newProjectNavigationController = (ACNewProjectNavigationController *)[storyboard instantiateInitialViewController];
         newProjectNavigationController.projectsDirectory = self.projectsDirectory;
+        newProjectNavigationController.parentController = self;
         _toolItemPopover = [[UIPopoverController alloc] initWithContentViewController:newProjectNavigationController];
         _toolItemPopover.popoverBackgroundViewClass = [ACShapePopoverBackgroundView class];
     }

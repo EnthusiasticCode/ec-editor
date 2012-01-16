@@ -595,6 +595,8 @@
 {
     ECASSERT(self.dataSource);
     
+    [self setEditing:NO animated:NO];
+    
     [self _enqueueReusableCells:_cells];
     _cells = nil;
     _cellsLoadedRange = NSMakeRange(0, 0);
