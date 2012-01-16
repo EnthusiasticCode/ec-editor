@@ -88,6 +88,7 @@
     ACProject *project = [ACProject projectWithName:projectName];
     if (projectColor)
         project.labelColor = projectColor;
+    [project flush];
     
     [[(ACNewProjectNavigationController *)self.navigationController popoverController] dismissPopoverAnimated:YES];
     [[ECBezelAlert defaultBezelAlert] addAlertMessageWithText:@"New project created" image:nil displayImmediatly:YES];

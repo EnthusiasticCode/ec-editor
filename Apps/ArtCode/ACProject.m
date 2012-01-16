@@ -11,6 +11,7 @@
 #import <ECFoundation/NSURL+ECAdditions.h>
 #import <ECArchive/ECArchive.h>
 #import <ECFoundation/ECCache.h>
+#import "UIColor+HexColor.h"
 
 static NSString * const ACProjectsDirectoryName = @"ACLocalProjects";
 static NSString * const ACProjectPlistFileName = @"acproj.plist";
@@ -60,13 +61,13 @@ static ECCache *openProjects = nil;
 
 - (UIColor *)labelColor
 {
-    return [self.plist objectForKey:@"labelColor"];
+    return [UIColor colorWithHexString:[self.plist objectForKey:@"labelColor"]];
 }
 
 - (void)setLabelColor:(UIColor *)labelColor
 {
     [self willChangeValueForKey:@"labelColor"];
-    [self.plist setObject:labelColor forKey:@"labelColor"];
+    [self.plist setObject:[labelColor hexString] forKey:@"labelColor"];
     [self didChangeValueForKey:@"labelColor"];
 }
 

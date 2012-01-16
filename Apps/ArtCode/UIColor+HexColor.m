@@ -51,4 +51,12 @@
                            alpha:(CGFloat)a / 255.0f];
 }
 
+- (NSString *)hexString
+{
+    CGFloat r, g, b, a;
+    if (![self getRed:&r green:&g blue:&b alpha:&a])
+        return nil;
+    return [NSString stringWithFormat:@"#%02X%02X%02X%02X", (NSInteger)(r * 255.0), (NSInteger)(g * 255.0), (NSInteger)(b * 255.0), (NSInteger)(a * 255.0)];
+}
+
 @end
