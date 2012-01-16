@@ -71,6 +71,8 @@ static ECCache *openProjects = nil;
     [self willChangeValueForKey:@"labelColor"];
     [self.plist setObject:[labelColor hexString] forKey:@"labelColor"];
     [self didChangeValueForKey:@"labelColor"];
+    // TODO remove this when a global autosaving method is created
+    [self flush];
 }
 
 - (NSMutableDictionary *)plist
