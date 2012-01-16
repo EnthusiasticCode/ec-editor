@@ -99,6 +99,7 @@
         viewController.view = colorControl;
         
         _projectColorLabelPopover = [[UIPopoverController alloc] initWithContentViewController:viewController];
+        _projectColorLabelPopover.popoverBackgroundViewClass = [ACShapePopoverBackgroundView class];
     }
     
     [_projectColorLabelPopover presentPopoverFromRect:[sender frame] inView:[sender superview] permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
