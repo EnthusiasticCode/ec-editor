@@ -225,12 +225,7 @@ NSString * const ECTextRendererRunDrawBlockAttributeName = @"runDrawBlock";
         // Get run width
         runWidth = CTRunGetTypographicBounds(run, (CFRange){0, 0}, NULL, NULL, NULL);
         runRect.size.width = runWidth;
-        
-        // Get run attributes but not for last run in line (new line character)
-        if (i == runCount - 1) 
-            runAttributes = nil;
-        else
-            runAttributes = (__bridge NSDictionary *)CTRunGetAttributes(run);
+        runAttributes = (__bridge NSDictionary *)CTRunGetAttributes(run);
 
         // Apply custom back attributes
         if (runAttributes)
@@ -239,7 +234,14 @@ NSString * const ECTextRendererRunDrawBlockAttributeName = @"runDrawBlock";
             if (backgroundColor) 
             {
                 CGContextSetFillColorWithColor(context, backgroundColor);
-                CGContextFillRect(context, runRect);
+                if (i == runCount - 1)
+                {
+                    CGContextFillRect(context, (CGRect){ runRect.origin, CGSizeMake(1024, runRect.size.height) });
+                }
+                else
+                {
+                    CGContextFillRect(context, runRect);
+                }
             }
             block = [runAttributes objectForKey:ECTextRendererRunUnderlayBlockAttributeName];
             if (block) 
