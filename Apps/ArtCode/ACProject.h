@@ -30,6 +30,9 @@ typedef enum {
 /// Returns a name which does not conflict with a project name in the projects directory.
 + (NSString *)validNameForNewProjectName:(NSString *)name;
 
+/// Returns a project URL from a project name. This method does not check for existance of the project.
++ (NSURL *)projectURLFromName:(NSString *)name;
+
 /// Open or create a project with the given name in the projects directory.
 + (id)projectWithName:(NSString *)name;
 

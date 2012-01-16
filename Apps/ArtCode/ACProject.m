@@ -176,11 +176,19 @@ static ECCache *openProjects = nil;
     
     NSUInteger count = 0;
     NSString *result = name;
-    while ([defaultManager fileExistsAtPath:[projectsPath stringByAppendingPathComponent:result]])
+    while ([defaultManager fileExistsAtPath:[projectsPath stringByAppendingPathComponent:[result stringByAppendingString:ACProjectExtension]]])
     {
         result = [name stringByAppendingFormat:@" (%u)", ++count];
     }
     return result;
+}
+
++ (NSURL *)projectURLFromName:(NSString *)name
+{
+    if (![name hasSuffix:ACProjectExtension])
+        name = [name stringByAppendingString:ACProjectExtension];
+    
+    return [[self projectsDirectory] URLByAppendingPathComponent:name];
 }
 
 + (id)projectWithName:(NSString *)name
