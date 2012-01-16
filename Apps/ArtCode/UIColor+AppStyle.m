@@ -43,7 +43,7 @@
 + (UIColor *)styleForegroundColor
 {
     RETURN_CACHED_COLOR(styleForegroundColor, 
-                        [UIColor colorWithWhite:0.16 alpha:1.0]);
+                        [UIColor colorWithWhite:0.10 alpha:1.0]);
 }
 
 + (UIColor *)styleForegroundShadowColor

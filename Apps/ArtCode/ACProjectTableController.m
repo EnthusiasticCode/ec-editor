@@ -312,9 +312,6 @@ static void * directoryPresenterFileURLsObservingContext;
                 }];
             }];
             
-            // Remove cells from grid
-            //[self.gridView deleteCellsAtIndexes:cellsToRemove animated:YES];
-            
             // Show bezel alert
             [[ECBezelAlert defaultBezelAlert] addAlertMessageWithText:([cellsToRemove count] == 1 ? @"Project removed" : [NSString stringWithFormat:@"%u projects removed", [cellsToRemove count]]) image:nil displayImmediatly:YES];
         }
@@ -431,6 +428,7 @@ static void * directoryPresenterFileURLsObservingContext;
         ACNewProjectNavigationController *newProjectNavigationController = (ACNewProjectNavigationController *)[storyboard instantiateInitialViewController];
         newProjectNavigationController.projectsDirectory = self.projectsDirectory;
         _toolItemPopover = [[UIPopoverController alloc] initWithContentViewController:newProjectNavigationController];
+        _toolItemPopover.popoverBackgroundViewClass = [ACShapePopoverBackgroundView class];
     }
     [_toolItemPopover presentPopoverFromBarButtonItem:sender permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
 }

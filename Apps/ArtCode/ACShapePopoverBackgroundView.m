@@ -66,6 +66,17 @@ static void updatePath(ACShapePopoverBackgroundView *self);
     [(CAShapeLayer *)self.layer setFillColor:color];
 }
 
+- (UIColor *)strokeColor
+{
+    return [UIColor colorWithCGColor:[(CAShapeLayer *)self.layer strokeColor]];
+}
+
+- (void)setStrokeColor:(UIColor *)strokeColor
+{
+    CGColorRef color = strokeColor.CGColor;
+    [(CAShapeLayer *)self.layer setStrokeColor:color];
+}
+
 - (CGFloat)shadowRadius
 {
     return self.layer.shadowRadius;

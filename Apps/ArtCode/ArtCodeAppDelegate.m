@@ -50,10 +50,15 @@
     ////////////////////////////////////////////////////////////////////////////
     // Generic popover
     id popoverAppearance = [ACShapePopoverBackgroundView appearance];
-    [popoverAppearance setBackgroundColor:[UIColor colorWithRed:57.0/255.0 green:58.0/255.0 blue:62.0/255.0 alpha:1.0]];
-    [popoverAppearance setShadowOpacity:0.5];
-    [popoverAppearance setShadowRadius:3];
+//    [popoverAppearance setBackgroundColor:[UIColor colorWithRed:57.0/255.0 green:58.0/255.0 blue:62.0/255.0 alpha:1.0]];
+    [popoverAppearance setBackgroundColor:[UIColor colorWithRed:67.0/255.0 green:68.0/255.0 blue:72.0/255.0 alpha:1.0]];
+    [(ACShapePopoverBackgroundView *)popoverAppearance setStrokeColor:[UIColor colorWithWhite:0.34 alpha:1]];
+    [popoverAppearance setShadowOpacity:0.7];
+    [popoverAppearance setShadowRadius:4];
     [popoverAppearance setShadowOffsetForArrowDirectionUpToAutoOrient:CGSizeMake(0, 1)];
+    
+    [[UIBarButtonItem appearance] setBackButtonBackgroundImage:[[UIImage imageNamed:@"topBar_BackButton"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 20, 0, 10)] forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
+    [[UIBarButtonItem appearance] setBackgroundImage:[[UIImage imageNamed:@"topBar_ToolButton_Selected"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 10, 10, 10)] forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
 
     ////////////////////////////////////////////////////////////////////////////
     // Tab Bar    
@@ -81,9 +86,9 @@
     [ACTopBarTitleControlAppearance setSelectedFragmentFont:[UIFont boldSystemFontOfSize:20]];
     [ACTopBarTitleControlAppearance setSecondaryFragmentFont:[UIFont systemFontOfSize:14]];
    
-    [[ACTopBarToolButton appearance] setBackgroundImage:[[UIImage imageNamed:@"topBar_ToolButton_Normal"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 10, 0, 10)] forState:UIControlStateNormal];
-    [[ACTopBarToolButton appearance] setBackgroundImage:[[UIImage imageNamed:@"topBar_ToolButton_Selected"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 10, 0, 10)] forState:UIControlStateSelected];
-    [[ACTopBarToolButton appearanceWhenContainedIn:[ACCodeFileSearchBarView class], nil] setBackgroundImage:[[UIImage imageNamed:@"searchBar_Button_Normal"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 10, 0, 10)] forState:UIControlStateNormal];
+    [[ACTopBarToolButton appearance] setBackgroundImage:[[UIImage imageNamed:@"topBar_ToolButton_Normal"] resizableImageWithCapInsets:UIEdgeInsetsMake(10, 10, 10, 10)] forState:UIControlStateNormal];
+    [[ACTopBarToolButton appearance] setBackgroundImage:[[UIImage imageNamed:@"topBar_ToolButton_Selected"] resizableImageWithCapInsets:UIEdgeInsetsMake(10, 10, 10, 10)] forState:UIControlStateSelected];
+    [[ACTopBarToolButton appearanceWhenContainedIn:[ACCodeFileSearchBarView class], nil] setBackgroundImage:[[UIImage imageNamed:@"searchBar_Button_Normal"] resizableImageWithCapInsets:UIEdgeInsetsMake(10, 10, 10, 10)] forState:UIControlStateNormal];
     
     ////////////////////////////////////////////////////////////////////////////
     // Code view elements

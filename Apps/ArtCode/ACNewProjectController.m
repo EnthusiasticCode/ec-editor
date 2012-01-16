@@ -9,10 +9,9 @@
 #import "ACNewProjectController.h"
 #import "ACNewProjectNavigationController.h"
 
-#import <ECFoundation/NSURL+ECAdditions.h>
-#import <ECFoundation/ECDirectoryPresenter.h>
 #import <ECUIKit/ECBezelAlert.h>
 
+#import "ACProject.h"
 #import "AppStyle.h"
 #import "ACColorSelectionControl.h"
 
@@ -24,11 +23,13 @@
 
 @synthesize projectColorButton;
 @synthesize projectNameTextField;
+@synthesize descriptionLabel;
 
 
 - (void)viewDidUnload {
     [self setProjectNameTextField:nil];
     [self setProjectColorButton:nil];
+    [self setDescriptionLabel:nil];
     [super viewDidUnload];
 }
 
@@ -72,20 +73,16 @@
 - (IBAction)createProjectAction:(id)sender
 {
     NSString *projectName = self.projectNameTextField.text;
-    ECFileCoordinator *fileCoordinator = [[ECFileCoordinator alloc] initWithFilePresenter:nil];
-
     if ([projectName length] == 0)
     {
-        // TODO alert for missing text name or already existing
+        self.descriptionLabel.text = @"A project name must be specified.";
+        return;
     }
-    
-    
-    NSURL *projectsDirectory = [(ACNewProjectNavigationController *)self.navigationController projectsDirectory];
-
-    [fileCoordinator coordinateWritingItemAtURL:[[projectsDirectory URLByAppendingPathComponent:projectName] URLByAppendingPathExtension:@"weakpkg"] options:0 error:NULL byAccessor:^(NSURL *newURL) {
-        NSFileManager *fileManager = [[NSFileManager alloc] init];
-        [fileManager createDirectoryAtURL:newURL withIntermediateDirectories:YES attributes:nil error:NULL];
-    }];
+    if ([ACProject projectWithNameExists:projectName])
+    {
+        self.descriptionLabel.text = @"A project with this name already exists, use a different name.";
+        return;
+    }
     
     // TODO manage error
     

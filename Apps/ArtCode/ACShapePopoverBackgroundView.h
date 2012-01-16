@@ -23,6 +23,8 @@
 
 @property (nonatomic) CGFloat shadowRadius UI_APPEARANCE_SELECTOR;
 
+@property (nonatomic, strong) UIColor *strokeColor UI_APPEARANCE_SELECTOR;
+
 #pragma mark Arrow
 
 @property (nonatomic) CGFloat arrowCornerRadius UI_APPEARANCE_SELECTOR;

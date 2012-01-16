@@ -12,6 +12,7 @@
 
 @property (strong, nonatomic) IBOutlet UIButton *projectColorButton;
 @property (strong, nonatomic) IBOutlet UITextField *projectNameTextField;
+@property (strong, nonatomic) IBOutlet UILabel *descriptionLabel;
 
 - (IBAction)changeColorAction:(id)sender;
 - (IBAction)createProjectAction:(id)sender;
