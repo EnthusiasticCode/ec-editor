@@ -14,7 +14,7 @@
 #import "UIColor+HexColor.h"
 
 static NSString * const ACProjectsDirectoryName = @"ACLocalProjects";
-static NSString * const ACProjectPlistFileName = @"acproj.plist";
+static NSString * const ACProjectPlistFileName = @".acproj";
 static NSString * const ACProjectExtension = @".weakpkg";
 static ECCache *openProjects = nil;
 
