@@ -156,6 +156,7 @@ static void updatePath(ACShapePopoverBackgroundView *self)
     {
         case UIPopoverArrowDirectionUp:
             rect.origin.y += [[self class] arrowHeight];
+            localArrowPosition += self->cornerRadius * 2;
         case UIPopoverArrowDirectionDown:
             rect.size.height -= [[self class] arrowHeight];
             localArrowPosition += rect.size.width / 2.0 - self->cornerRadius;
