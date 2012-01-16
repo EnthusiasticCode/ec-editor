@@ -213,11 +213,7 @@ static void * directoryPresenterFileURLsObservingContext;
 }
 
 - (ECGridViewCell *)gridView:(ECGridView *)gridView cellAtIndex:(NSInteger)cellIndex
-{
-    // Backgrounds images
-    STATIC_OBJECT(UIImage, cellBackgroundImage, [UIImage styleBackgroundImageWithColor:[UIColor styleBackgroundColor] borderColor:[UIColor styleForegroundColor] insets:UIEdgeInsetsMake(4, 7, 4, 7) arrowSize:CGSizeZero roundingCorners:UIRectCornerAllCorners]);
-    STATIC_OBJECT(UIImage, cellHighlightedImage, [UIImage styleBackgroundImageWithColor:[UIColor styleHighlightColor] borderColor:[UIColor styleForegroundColor] insets:UIEdgeInsetsMake(4, 7, 4, 7) arrowSize:CGSizeZero roundingCorners:UIRectCornerAllCorners]);
-    
+{    
     // Create cell
     static NSString *cellIdentifier = @"cell";
     ACProjectCell *cell = [gridView dequeueReusableCellWithIdentifier:cellIdentifier];
@@ -317,7 +313,7 @@ static void * directoryPresenterFileURLsObservingContext;
             }];
             
             // Remove cells from grid
-            [self.gridView deleteCellsAtIndexes:cellsToRemove animated:YES];
+            //[self.gridView deleteCellsAtIndexes:cellsToRemove animated:YES];
             
             // Show bezel alert
             [[ECBezelAlert defaultBezelAlert] addAlertMessageWithText:([cellsToRemove count] == 1 ? @"Project removed" : [NSString stringWithFormat:@"%u projects removed", [cellsToRemove count]]) image:nil displayImmediatly:YES];
@@ -332,6 +328,9 @@ static void * directoryPresenterFileURLsObservingContext;
             NSIndexSet *cellsToExport = [self.gridView indexesForSelectedCells];
             [cellsToExport enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
                 ACProject *project = [ACProject projectWithURL:[self.directoryPresenter.fileURLs objectAtIndex:idx]];
+                if (!project)
+                    return;
+                
                 NSURL *zipURL = [[NSURL applicationDocumentsDirectory] URLByAppendingPathComponent:[project.name stringByAppendingPathExtension:@"zip"]];
                 [project compressProjectToURL:zipURL];
             }];
@@ -403,7 +402,7 @@ static void * directoryPresenterFileURLsObservingContext;
             else
                 [mailComposer setMessageBody:@"<br/><p>Open this files with <a href=\"http://www.artcodeapp.com/\">ArtCode</a> to view the contained projects.</p>" isHTML:YES];
             
-            [self presentModalViewController:mailComposer animated:YES];
+            [self presentViewController:mailComposer animated:YES completion:nil];
             self.loading = NO;
         }
     }
@@ -461,9 +460,24 @@ static void * directoryPresenterFileURLsObservingContext;
     ECASSERT(self.isEditing);
     ECASSERT([self.gridView indexForSelectedCell] != -1);
     
+    self.loading = YES;
+
     NSIndexSet *cellsToDuplicate = [self.gridView indexesForSelectedCells];
+    ECFileCoordinator *coordinator = [[ECFileCoordinator alloc] initWithFilePresenter:nil];
+    NSFileManager *fileManager = [NSFileManager new];
     
-    // TODO
+    [self setEditing:NO animated:YES];
+    
+    [cellsToDuplicate enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
+        ACProject *project = [ACProject projectWithURL:[self.directoryPresenter.fileURLs objectAtIndex:idx]];
+        if (!project)
+            return;
+        
+        [coordinator coordinateReadingItemAtURL:project.URL options:0 writingItemAtURL:[ACProject projectURLFromName:[ACProject validNameForNewProjectName:project.name]] options:NSFileCoordinatorWritingForReplacing error:NULL byAccessor:^(NSURL *newReadingURL, NSURL *newWritingURL) {
+            [fileManager copyItemAtURL:newReadingURL toURL:newWritingURL error:NULL];
+        }];
+    }];
+    self.loading = NO;
 }
 
 @end
