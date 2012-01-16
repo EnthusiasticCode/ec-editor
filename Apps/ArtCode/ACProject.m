@@ -26,6 +26,7 @@ static ECCache *openProjects = nil;
 
 
 @implementation ACProject {
+    BOOL _dirty;
     NSURL *_plistUrl;
 }
 
@@ -66,6 +67,7 @@ static ECCache *openProjects = nil;
 
 - (void)setLabelColor:(UIColor *)labelColor
 {
+    _dirty = YES;
     [self willChangeValueForKey:@"labelColor"];
     [self.plist setObject:[labelColor hexString] forKey:@"labelColor"];
     [self didChangeValueForKey:@"labelColor"];
@@ -114,12 +116,14 @@ static ECCache *openProjects = nil;
 
 - (void)flush
 {
-    if ([plist count] == 0)
+    if (!_dirty || [plist count] == 0)
         return;
     
     [[[ECFileCoordinator alloc] initWithFilePresenter:nil] coordinateWritingItemAtURL:_plistUrl options:0 error:NULL byAccessor:^(NSURL *newURL) {
         [[NSPropertyListSerialization dataWithPropertyList:self.plist format:NSPropertyListBinaryFormat_v1_0 options:0 error:NULL] writeToURL:newURL atomically:YES];
     }];
+    
+    _dirty = NO;
 }
 
 - (BOOL)compressProjectToURL:(NSURL *)exportUrl
