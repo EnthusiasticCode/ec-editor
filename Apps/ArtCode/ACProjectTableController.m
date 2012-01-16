@@ -143,7 +143,16 @@ static void * directoryPresenterFileURLsObservingContext;
     if (context == &directoryPresenterFileURLsObservingContext)
     {
         // TODO: add / delete / move table rows instead of reloading all once NSFilePresenter actually works
-        [self.gridView reloadData];
+        if (dispatch_get_current_queue() != dispatch_get_main_queue())
+        {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self.gridView reloadData];
+            });
+        }
+        else
+        {
+            [self.gridView reloadData];
+        }
     }
     else
         [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
