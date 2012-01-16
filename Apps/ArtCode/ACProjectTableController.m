@@ -333,7 +333,6 @@ static void * directoryPresenterFileURLsObservingContext;
         {
             NSIndexSet *cellsToExport = [self.gridView indexesForSelectedCells];
             [self setEditing:NO animated:YES];
-            // TODO fix editing animation not stopping
             
             self.loading = YES;
             [cellsToExport enumerateIndexesWithOptions:NSEnumerationReverse usingBlock:^(NSUInteger idx, BOOL *stop) {

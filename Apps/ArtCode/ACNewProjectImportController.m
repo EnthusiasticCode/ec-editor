@@ -8,9 +8,12 @@
 
 #import "ACNewProjectImportController.h"
 #import "ACNewProjectNavigationController.h"
+
+#import "ACProject.h"
 #import <ECFoundation/NSURL+ECAdditions.h>
 #import <ECFoundation/ECDirectoryPresenter.h>
-#import <ECArchive/ECArchive.h>
+#import <ECUIKit/ECBezelAlert.h>
+
 
 @implementation ACNewProjectImportController {
     ECDirectoryPresenter *_documentsDirectoryPresenter;
@@ -62,13 +65,22 @@
 
 #pragma mark - Table view delegate
 
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+- (IBAction)importAction:(id)sender
 {
-
-    NSURL *projectsDirectory = [(ACNewProjectNavigationController *)self.navigationController projectsDirectory];
-    ECASSERT(projectsDirectory != nil);
-    
-    [ECArchive extractArchiveAtURL:[_documentsDirectoryPresenter.fileURLs objectAtIndex:indexPath.row] toDirectory:projectsDirectory];
+    ECFileCoordinator *coordinator = [[ECFileCoordinator alloc] initWithFilePresenter:nil];
+    NSFileManager *fileManager = [NSFileManager new];
+    NSArray *indexPaths = [self.tableView indexPathsForSelectedRows];
+    [indexPaths enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(NSIndexPath *indexPath, NSUInteger idx, BOOL *stop) {
+        NSURL *zipURL = [_documentsDirectoryPresenter.fileURLs objectAtIndex:indexPath.row];
+        ACProject *project = [[ACProject alloc] initByDecompressingFileAtURL:zipURL toURL:[ACProject projectURLFromName:[ACProject validNameForNewProjectName:[[zipURL lastPathComponent] stringByDeletingPathExtension]]]];
+        if (project)
+        {
+            [coordinator coordinateWritingItemAtURL:zipURL options:NSFileCoordinatorWritingForDeleting error:NULL byAccessor:^(NSURL *newURL) {
+                [fileManager removeItemAtURL:newURL error:NULL];
+            }];
+        }
+    }];
+    [[(ACNewProjectNavigationController *)self.navigationController popoverController] dismissPopoverAnimated:YES];
+    [[ECBezelAlert defaultBezelAlert] addAlertMessageWithText:([indexPaths count] == 1 ? @"Project imported" : [NSString stringWithFormat:@"%u projects imported", [indexPaths count]]) image:nil displayImmediatly:YES];
 }
-
 @end

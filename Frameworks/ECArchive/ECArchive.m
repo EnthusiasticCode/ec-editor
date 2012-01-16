@@ -87,21 +87,18 @@
         if (returnCode != ARCHIVE_OK)
             break;
     }
-    archive_write_finish(output);
+    archive_write_free(output);
     if (returnCode == ARCHIVE_OK)
     {
-        ECFileCoordinator *fileCoordinator = [[ECFileCoordinator alloc] initWithFilePresenter:nil];
         for (NSURL *fileURL in [fileManager contentsOfDirectoryAtURL:workingDirectory includingPropertiesForKeys:nil options:0 error:NULL])
         {
             NSURL *destinationURL = [directoryURL URLByAppendingPathComponent:[fileURL lastPathComponent]];
-            [fileCoordinator coordinateWritingItemAtURL:destinationURL options:NSFileCoordinatorReadingResolvesSymbolicLink | NSFileCoordinatorReadingWithoutChanges error:NULL byAccessor:^(NSURL *newURL) {
-                [fileManager moveItemAtURL:fileURL toURL:newURL error:NULL];
-            }];
+            [fileManager moveItemAtURL:fileURL toURL:destinationURL error:NULL];
         }
     }
     [fileManager removeItemAtURL:workingDirectory error:NULL];
     [fileManager changeCurrentDirectoryPath:currentDirectoryPath];
-    archive_read_finish(archive);
+    archive_read_free(archive);
     return returnCode == ARCHIVE_OK ? YES : NO;
 }
 
