@@ -444,6 +444,7 @@ static void * directoryPresenterFileURLsObservingContext;
         newProjectNavigationController.parentController = self;
         _toolItemPopover = [[UIPopoverController alloc] initWithContentViewController:newProjectNavigationController];
         _toolItemPopover.popoverBackgroundViewClass = [ACShapePopoverBackgroundView class];
+        newProjectNavigationController.popoverController = _toolItemPopover;
     }
     [_toolItemPopover presentPopoverFromBarButtonItem:sender permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
 }

@@ -91,7 +91,7 @@
     
     [[(ACNewProjectNavigationController *)self.navigationController popoverController] dismissPopoverAnimated:YES];
     [[ECBezelAlert defaultBezelAlert] addAlertMessageWithText:@"New project created" image:nil displayImmediatly:YES];
-    [[(ACNewProjectNavigationController *)self.navigationController parentController].tab performSelector:@selector(pushURL:) withObject:project.URL afterDelay:1];
+    [[(ACNewProjectNavigationController *)self.navigationController parentController].tab pushURL:project.URL];
 }
 
 @end
