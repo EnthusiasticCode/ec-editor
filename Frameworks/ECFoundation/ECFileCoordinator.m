@@ -69,7 +69,7 @@ static NSMutableArray *_filePresenters;
         NSMutableDictionary *reaquirers = [[NSMutableDictionary alloc] init];
         for (id<NSFilePresenter>filePresenter in _filePresenters)
         {
-            if (filePresenter == _filePresenterToIgnore)
+            if (filePresenter == _filePresenterToIgnore || ![filePresenter presentedItemURL])
                 continue;
             NSURL *filePresenterURL = filePresenter.presentedItemURL;
             if (![[filePresenterURL absoluteString] isEqualToString:[url absoluteString]])
@@ -108,7 +108,7 @@ static NSMutableArray *_filePresenters;
         NSMutableDictionary *reaquirers = [[NSMutableDictionary alloc] init];
         for (id<NSFilePresenter>filePresenter in _filePresenters)
         {
-            if (filePresenter == _filePresenterToIgnore)
+            if (filePresenter == _filePresenterToIgnore || ![filePresenter presentedItemURL])
                 continue;
             NSURL *filePresenterURL = filePresenter.presentedItemURL;
             if ([[filePresenterURL absoluteString] isEqualToString:[url absoluteString]])
@@ -217,7 +217,7 @@ static NSMutableArray *_filePresenters;
         NSMutableDictionary *readingReaquirers = [[NSMutableDictionary alloc] init];
         for (id<NSFilePresenter>filePresenter in _filePresenters)
         {
-            if (filePresenter == _filePresenterToIgnore)
+            if (filePresenter == _filePresenterToIgnore || ![filePresenter presentedItemURL])
                 continue;
             NSURL *filePresenterURL = filePresenter.presentedItemURL;
             if (![[filePresenterURL absoluteString] isEqualToString:[readingURL absoluteString]])
@@ -245,7 +245,7 @@ static NSMutableArray *_filePresenters;
         NSMutableDictionary *writingReaquirers = [[NSMutableDictionary alloc] init];
         for (id<NSFilePresenter>filePresenter in _filePresenters)
         {
-            if (filePresenter == _filePresenterToIgnore)
+            if (filePresenter == _filePresenterToIgnore || ![filePresenter presentedItemURL])
                 continue;
             NSURL *filePresenterURL = filePresenter.presentedItemURL;
             if ([[filePresenterURL absoluteString] isEqualToString:[writingURL absoluteString]])
@@ -359,7 +359,7 @@ static NSMutableArray *_filePresenters;
         NSMutableDictionary *reaquirers1 = [[NSMutableDictionary alloc] init];
         for (id<NSFilePresenter>filePresenter in _filePresenters)
         {
-            if (filePresenter == _filePresenterToIgnore)
+            if (filePresenter == _filePresenterToIgnore || ![filePresenter presentedItemURL])
                 continue;
             NSURL *filePresenterURL = filePresenter.presentedItemURL;
             if ([[filePresenterURL absoluteString] isEqualToString:[url1 absoluteString]])
@@ -432,7 +432,7 @@ static NSMutableArray *_filePresenters;
         NSMutableDictionary *reaquirers2 = [[NSMutableDictionary alloc] init];
         for (id<NSFilePresenter>filePresenter in _filePresenters)
         {
-            if (filePresenter == _filePresenterToIgnore)
+            if (filePresenter == _filePresenterToIgnore || ![filePresenter presentedItemURL])
                 continue;
             NSURL *filePresenterURL = filePresenter.presentedItemURL;
             if ([[filePresenterURL absoluteString] isEqualToString:[url2 absoluteString]])
@@ -571,7 +571,7 @@ static NSMutableArray *_filePresenters;
     ECASSERT(dispatch_get_current_queue() == _fileCoordinationDispatchQueue);
     for (id<NSFilePresenter>filePresenter in _filePresenters)
     {
-        if (filePresenter == _filePresenterToIgnore || ![filePresenter respondsToSelector:@selector(relinquishPresentedItemToWriter:)])
+        if (filePresenter == _filePresenterToIgnore || ![filePresenter presentedItemURL] || ![filePresenter respondsToSelector:@selector(relinquishPresentedItemToWriter:)])
             continue;
         NSURL *filePresenterURL = filePresenter.presentedItemURL;
         if ([[filePresenterURL absoluteString] isEqualToString:[oldURL absoluteString]])
