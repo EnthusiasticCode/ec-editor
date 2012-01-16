@@ -308,7 +308,7 @@ static void * directoryPresenterFileURLsObservingContext;
             [cellsToRemove enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
                 NSURL *fileURL = [self.directoryPresenter.fileURLs objectAtIndex:idx];
                 [fileCoordinator coordinateWritingItemAtURL:fileURL options:NSFileCoordinatorWritingForDeleting error:NULL byAccessor:^(NSURL *newURL) {
-                    [[NSFileManager defaultManager] removeItemAtURL:newURL error:NULL];
+                    [[NSFileManager new] removeItemAtURL:newURL error:NULL];
                 }];
             }];
             

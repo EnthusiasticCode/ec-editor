@@ -133,10 +133,7 @@
 - (void)presentedItemDidMoveToURL:(NSURL *)newURL
 {
     ECASSERT(_fileURLs);
-    ECFileCoordinator *fileCoordinator = [[ECFileCoordinator alloc] initWithFilePresenter:self];
-    [fileCoordinator coordinateReadingItemAtURL:newURL options:0 error:NULL byAccessor:^(NSURL *newURL) {
-        self.directory = newURL;
-    }];
+    self.directory = newURL;
 }
 
 - (void)accommodatePresentedItemDeletionWithCompletionHandler:(void (^)(NSError *))completionHandler
@@ -149,13 +146,10 @@
 - (void)presentedSubitemDidAppearAtURL:(NSURL *)url
 {
     ECASSERT(_fileURLs);
-    ECFileCoordinator *fileCoordinator = [[ECFileCoordinator alloc] initWithFilePresenter:self];
-    [fileCoordinator coordinateReadingItemAtURL:url options:0 error:NULL byAccessor:^(NSURL *newURL) {
-        if (![self fileURLIsDirectDescendant:newURL])
-            return;
-        NSUInteger insertionPoint = [self insertionPointForFileURL:newURL];
-        [[self mutableArrayValueForKey:@"fileURLs"] insertObject:newURL atIndex:insertionPoint];
-    }];
+    if (![self fileURLIsDirectDescendant:url])
+        return;
+    NSUInteger insertionPoint = [self insertionPointForFileURL:url];
+    [[self mutableArrayValueForKey:@"fileURLs"] insertObject:url atIndex:insertionPoint];
 }
 
 - (void)accommodatePresentedSubitemDeletionAtURL:(NSURL *)url completionHandler:(void (^)(NSError *))completionHandler
@@ -170,33 +164,30 @@
 - (void)presentedSubitemAtURL:(NSURL *)oldURL didMoveToURL:(NSURL *)newURL
 {
     ECASSERT(_fileURLs);
-    ECFileCoordinator *fileCoordinator = [[ECFileCoordinator alloc] initWithFilePresenter:self];
-    [fileCoordinator coordinateReadingItemAtURL:newURL options:0 error:NULL byAccessor:^(NSURL *newURL) {
-        if ([self fileURLIsDirectDescendant:oldURL])
+    if ([self fileURLIsDirectDescendant:oldURL])
+    {
+        if ([self fileURLIsDirectDescendant:newURL])
         {
-            if ([self fileURLIsDirectDescendant:newURL])
+            NSUInteger oldIndex = [self.fileURLs indexOfObject:oldURL];
+            NSUInteger newIndex = [self insertionPointForFileURL:newURL];
+            if (newIndex > oldIndex)
             {
-                NSUInteger oldIndex = [self.fileURLs indexOfObject:oldURL];
-                NSUInteger newIndex = [self insertionPointForFileURL:newURL];
-                if (newIndex > oldIndex)
-                {
-                    [[self mutableArrayValueForKey:@"fileURLs"] insertObject:newURL atIndex:newIndex];
-                    [[self mutableArrayValueForKey:@"fileURLs"] removeObjectAtIndex:oldIndex];
-                }
-                else
-                {
-                    [[self mutableArrayValueForKey:@"fileURLs"] removeObjectAtIndex:oldIndex];
-                    [[self mutableArrayValueForKey:@"fileURLs"] insertObject:newURL atIndex:newIndex];
-                }
+                [[self mutableArrayValueForKey:@"fileURLs"] insertObject:newURL atIndex:newIndex];
+                [[self mutableArrayValueForKey:@"fileURLs"] removeObjectAtIndex:oldIndex];
             }
             else
             {
-                [[self mutableArrayValueForKey:@"fileURLs"] removeObject:oldURL];
+                [[self mutableArrayValueForKey:@"fileURLs"] removeObjectAtIndex:oldIndex];
+                [[self mutableArrayValueForKey:@"fileURLs"] insertObject:newURL atIndex:newIndex];
             }
         }
-        else if ([self fileURLIsDirectDescendant:newURL])
-            [[self mutableArrayValueForKey:@"fileURLs"] insertObject:newURL atIndex:[self insertionPointForFileURL:newURL]];
-    }];
+        else
+        {
+            [[self mutableArrayValueForKey:@"fileURLs"] removeObject:oldURL];
+        }
+    }
+    else if ([self fileURLIsDirectDescendant:newURL])
+        [[self mutableArrayValueForKey:@"fileURLs"] insertObject:newURL atIndex:[self insertionPointForFileURL:newURL]];
 }
 
 @end

@@ -66,32 +66,35 @@ static NSMutableArray *_filePresenters;
     ECASSERT(dispatch_get_current_queue() != _fileCoordinationDispatchQueue);
     dispatch_sync(_fileCoordinationDispatchQueue, ^{
         NSMutableArray *affectedFilePresenters = [[NSMutableArray alloc] init];
-        NSMutableArray *reaquirers = [[NSMutableArray alloc] init];
+        NSMutableDictionary *reaquirers = [[NSMutableDictionary alloc] init];
         for (id<NSFilePresenter>filePresenter in _filePresenters)
         {
-            if (filePresenter == _filePresenterToIgnore || ![filePresenter respondsToSelector:@selector(relinquishPresentedItemToReader:)])
+            if (filePresenter == _filePresenterToIgnore)
                 continue;
             NSURL *filePresenterURL = filePresenter.presentedItemURL;
             if (![[filePresenterURL absoluteString] isEqualToString:[url absoluteString]])
                 continue;
             [affectedFilePresenters addObject:filePresenter];
-            [filePresenter.presentedItemOperationQueue addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
-                [filePresenter relinquishPresentedItemToReader:^(void(^reaquirer)(void)) {
-                    if (reaquirer)
-                        [reaquirers addObject:reaquirer];
-                }];
-            }]] waitUntilFinished:YES];
+            if ([filePresenter respondsToSelector:@selector(relinquishPresentedItemToReader:)])
+                [filePresenter.presentedItemOperationQueue addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
+                    [filePresenter relinquishPresentedItemToReader:^(void(^reaquirer)(void)) {
+                        if (reaquirer)
+                            [reaquirers setObject:filePresenter forKey:reaquirer];
+                    }];
+                }]] waitUntilFinished:YES];
         }
         if (!(options & NSFileCoordinatorReadingWithoutChanges))
             for (id<NSFilePresenter>filePresenter in affectedFilePresenters)
-                [filePresenter.presentedItemOperationQueue addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
-                    [filePresenter savePresentedItemChangesWithCompletionHandler:^(NSError *errorOrNil) {
-                        ECASSERT(!errorOrNil); // TODO: forward error
-                    }];
-                }]] waitUntilFinished:YES];
+                if ([filePresenter respondsToSelector:@selector(savePresentedItemChangesWithCompletionHandler:)])
+                    [filePresenter.presentedItemOperationQueue addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
+                        [filePresenter savePresentedItemChangesWithCompletionHandler:^(NSError *errorOrNil) {
+                            ECASSERT(!errorOrNil); // TODO: forward error
+                        }];
+                    }]] waitUntilFinished:YES];
         reader(url);
-        for (void(^reaquirer)(void) in reaquirers)
-            reaquirer();
+        [reaquirers enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+            [[obj presentedItemOperationQueue] addOperations:[NSArray arrayWithObject:key] waitUntilFinished:YES];
+        }];
     });
 }
 
@@ -102,10 +105,10 @@ static NSMutableArray *_filePresenters;
         NSMutableArray *affectedFilePresenters = [[NSMutableArray alloc] init];
         NSMutableArray *affectedSubitemPresenters = [[NSMutableArray alloc] init];
         NSMutableArray *affectedAncestorDirectoryPresenters = [[NSMutableArray alloc] init];
-        NSMutableArray *reaquirers = [[NSMutableArray alloc] init];
+        NSMutableDictionary *reaquirers = [[NSMutableDictionary alloc] init];
         for (id<NSFilePresenter>filePresenter in _filePresenters)
         {
-            if (filePresenter == _filePresenterToIgnore || ![filePresenter respondsToSelector:@selector(relinquishPresentedItemToWriter:)])
+            if (filePresenter == _filePresenterToIgnore)
                 continue;
             NSURL *filePresenterURL = filePresenter.presentedItemURL;
             if ([[filePresenterURL absoluteString] isEqualToString:[url absoluteString]])
@@ -116,54 +119,61 @@ static NSMutableArray *_filePresenters;
                 [affectedSubitemPresenters addObject:filePresenter];
             else
                 continue;
-            [filePresenter.presentedItemOperationQueue addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
-                [filePresenter relinquishPresentedItemToWriter:^(void(^reaquirer)(void)) {
-                    if (reaquirer)
-                        [reaquirers addObject:reaquirer];
-                }];
-            }]] waitUntilFinished:YES];
+            if ([filePresenter respondsToSelector:@selector(relinquishPresentedItemToWriter:)])
+                [filePresenter.presentedItemOperationQueue addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
+                    [filePresenter relinquishPresentedItemToWriter:^(void(^reaquirer)(void)) {
+                        if (reaquirer)
+                            [reaquirers setObject:filePresenter forKey:reaquirer];
+                    }];
+                }]] waitUntilFinished:YES];
         }
         if (options & (NSFileCoordinatorWritingForMerging | NSFileCoordinatorWritingForMoving))
         {
             for (id<NSFilePresenter>filePresenter in affectedFilePresenters)
-                [filePresenter.presentedItemOperationQueue addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
-                    [filePresenter savePresentedItemChangesWithCompletionHandler:^(NSError *errorOrNil) {
-                        ECASSERT(!errorOrNil); // TODO: forward error
-                    }];
-                }]] waitUntilFinished:YES];
+                if ([filePresenter respondsToSelector:@selector(savePresentedItemChangesWithCompletionHandler:)])
+                    [filePresenter.presentedItemOperationQueue addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
+                        [filePresenter savePresentedItemChangesWithCompletionHandler:^(NSError *errorOrNil) {
+                            ECASSERT(!errorOrNil); // TODO: forward error
+                        }];
+                    }]] waitUntilFinished:YES];
             for (id<NSFilePresenter>filePresenter in affectedSubitemPresenters)
-                [filePresenter.presentedItemOperationQueue addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
-                    [filePresenter savePresentedItemChangesWithCompletionHandler:^(NSError *errorOrNil) {
-                        ECASSERT(!errorOrNil); // TODO: forward error
-                    }];
-                }]] waitUntilFinished:YES];
+                if ([filePresenter respondsToSelector:@selector(savePresentedItemChangesWithCompletionHandler:)])
+                    [filePresenter.presentedItemOperationQueue addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
+                        [filePresenter savePresentedItemChangesWithCompletionHandler:^(NSError *errorOrNil) {
+                            ECASSERT(!errorOrNil); // TODO: forward error
+                        }];
+                    }]] waitUntilFinished:YES];
             for (id<NSFilePresenter>filePresenter in affectedAncestorDirectoryPresenters)
-                [filePresenter.presentedItemOperationQueue addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
-                    [filePresenter savePresentedItemChangesWithCompletionHandler:^(NSError *errorOrNil) {
-                        ECASSERT(!errorOrNil); // TODO: forward error
-                    }];
-                }]] waitUntilFinished:YES];
+                if ([filePresenter respondsToSelector:@selector(savePresentedItemChangesWithCompletionHandler:)])
+                    [filePresenter.presentedItemOperationQueue addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
+                        [filePresenter savePresentedItemChangesWithCompletionHandler:^(NSError *errorOrNil) {
+                            ECASSERT(!errorOrNil); // TODO: forward error
+                        }];
+                    }]] waitUntilFinished:YES];
         }
         else if (options & (NSFileCoordinatorWritingForReplacing | NSFileCoordinatorWritingForDeleting))
         {
             for (id<NSFilePresenter>filePresenter in affectedFilePresenters)
-                [filePresenter.presentedItemOperationQueue addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
-                    [filePresenter accommodatePresentedItemDeletionWithCompletionHandler:^(NSError *errorOrNil) {
-                        ECASSERT(!errorOrNil); // TODO: forward error
-                    }];
-                }]] waitUntilFinished:YES];
+                if ([filePresenter respondsToSelector:@selector(accommodatePresentedItemDeletionWithCompletionHandler:)])
+                    [filePresenter.presentedItemOperationQueue addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
+                        [filePresenter accommodatePresentedItemDeletionWithCompletionHandler:^(NSError *errorOrNil) {
+                            ECASSERT(!errorOrNil); // TODO: forward error
+                        }];
+                    }]] waitUntilFinished:YES];
             for (id<NSFilePresenter>filePresenter in affectedSubitemPresenters)
-                [filePresenter.presentedItemOperationQueue addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
-                    [filePresenter accommodatePresentedItemDeletionWithCompletionHandler:^(NSError *errorOrNil) {
-                        ECASSERT(!errorOrNil); // TODO: forward error
-                    }];
-                }]] waitUntilFinished:YES];
+                if ([filePresenter respondsToSelector:@selector(accommodatePresentedItemDeletionWithCompletionHandler:)])
+                    [filePresenter.presentedItemOperationQueue addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
+                        [filePresenter accommodatePresentedItemDeletionWithCompletionHandler:^(NSError *errorOrNil) {
+                            ECASSERT(!errorOrNil); // TODO: forward error
+                        }];
+                    }]] waitUntilFinished:YES];
             for (id<NSFilePresenter>filePresenter in affectedAncestorDirectoryPresenters)
-                [filePresenter.presentedItemOperationQueue addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
-                    [filePresenter accommodatePresentedSubitemDeletionAtURL:url completionHandler:^(NSError *errorOrNil) {
-                        ECASSERT(!errorOrNil); // TODO: forward error
-                    }];
-                }]] waitUntilFinished:YES];
+                if ([filePresenter respondsToSelector:@selector(accommodatePresentedSubitemDeletionAtURL:completionHandler:)])
+                    [filePresenter.presentedItemOperationQueue addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
+                        [filePresenter accommodatePresentedSubitemDeletionAtURL:url completionHandler:^(NSError *errorOrNil) {
+                            ECASSERT(!errorOrNil); // TODO: forward error
+                        }];
+                    }]] waitUntilFinished:YES];
         }
         
         NSFileManager *fileManager = [[NSFileManager alloc] init];
@@ -172,22 +182,30 @@ static NSMutableArray *_filePresenters;
         if (!(options & (NSFileCoordinatorWritingForMoving | NSFileCoordinatorWritingForDeleting)))
         {
             for (id<NSFilePresenter>filePresenter in affectedFilePresenters)
-                [filePresenter.presentedItemOperationQueue addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
-                    [filePresenter presentedItemDidChange];
-                }]] waitUntilFinished:YES];
+                if ([filePresenter respondsToSelector:@selector(presentedItemDidChange)])
+                    [filePresenter.presentedItemOperationQueue addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
+                        [filePresenter presentedItemDidChange];
+                    }]] waitUntilFinished:YES];
             if (fileExisted)
+            {
                 for (id<NSFilePresenter>filePresenter in affectedAncestorDirectoryPresenters)
-                    [filePresenter.presentedItemOperationQueue addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
-                        [filePresenter presentedSubitemDidChangeAtURL:url];
-                    }]] waitUntilFinished:YES];
+                    if ([filePresenter respondsToSelector:@selector(presentedSubitemDidChangeAtURL:)])
+                        [filePresenter.presentedItemOperationQueue addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
+                            [filePresenter presentedSubitemDidChangeAtURL:url];
+                        }]] waitUntilFinished:YES];
+            }
             else
+            {
                 for (id<NSFilePresenter>filePresenter in affectedAncestorDirectoryPresenters)
-                    [filePresenter.presentedItemOperationQueue addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
-                        [filePresenter presentedSubitemDidAppearAtURL:url];
-                    }]] waitUntilFinished:YES];
+                    if ([filePresenter respondsToSelector:@selector(presentedSubitemDidAppearAtURL:)])
+                        [filePresenter.presentedItemOperationQueue addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
+                            [filePresenter presentedSubitemDidAppearAtURL:url];
+                        }]] waitUntilFinished:YES];
+            }
         }
-        for (void(^reaquirer)(void) in reaquirers)
-            reaquirer();
+        [reaquirers enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+            [[obj presentedItemOperationQueue] addOperations:[NSArray arrayWithObject:key] waitUntilFinished:YES];
+        }];
     });
 }
 
@@ -196,36 +214,38 @@ static NSMutableArray *_filePresenters;
     ECASSERT(dispatch_get_current_queue() != _fileCoordinationDispatchQueue);
     dispatch_barrier_sync(_fileCoordinationDispatchQueue, ^{
         NSMutableArray *affectedReadingFilePresenters = [[NSMutableArray alloc] init];
-        NSMutableArray *readingReaquirers = [[NSMutableArray alloc] init];
+        NSMutableDictionary *readingReaquirers = [[NSMutableDictionary alloc] init];
         for (id<NSFilePresenter>filePresenter in _filePresenters)
         {
-            if (filePresenter == _filePresenterToIgnore || ![filePresenter respondsToSelector:@selector(relinquishPresentedItemToReader:)])
+            if (filePresenter == _filePresenterToIgnore)
                 continue;
             NSURL *filePresenterURL = filePresenter.presentedItemURL;
             if (![[filePresenterURL absoluteString] isEqualToString:[readingURL absoluteString]])
                 continue;
             [affectedReadingFilePresenters addObject:filePresenter];
-            [filePresenter.presentedItemOperationQueue addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
-                [filePresenter relinquishPresentedItemToReader:^(void(^reaquirer)(void)) {
-                    if (reaquirer)
-                        [readingReaquirers addObject:reaquirer];
-                }];
-            }]] waitUntilFinished:YES];
+            if ([filePresenter respondsToSelector:@selector(relinquishPresentedItemToReader:)])
+                [filePresenter.presentedItemOperationQueue addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
+                    [filePresenter relinquishPresentedItemToReader:^(void(^reaquirer)(void)) {
+                        if (reaquirer)
+                            [readingReaquirers setObject:filePresenter forKey:reaquirer];
+                    }];
+                }]] waitUntilFinished:YES];
         }
         if (!(readingOptions & NSFileCoordinatorReadingWithoutChanges))
             for (id<NSFilePresenter>filePresenter in affectedReadingFilePresenters)
-                [filePresenter.presentedItemOperationQueue addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
-                    [filePresenter savePresentedItemChangesWithCompletionHandler:^(NSError *errorOrNil) {
-                        ECASSERT(!errorOrNil); // TODO: forward error
-                    }];
-                }]] waitUntilFinished:YES];
+                if ([filePresenter respondsToSelector:@selector(savePresentedItemChangesWithCompletionHandler:)])
+                    [filePresenter.presentedItemOperationQueue addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
+                        [filePresenter savePresentedItemChangesWithCompletionHandler:^(NSError *errorOrNil) {
+                            ECASSERT(!errorOrNil); // TODO: forward error
+                        }];
+                    }]] waitUntilFinished:YES];
         NSMutableArray *affectedWritingFilePresenters = [[NSMutableArray alloc] init];
         NSMutableArray *affectedWritingSubitemPresenters = [[NSMutableArray alloc] init];
         NSMutableArray *affectedWritingAncestorDirectoryPresenters = [[NSMutableArray alloc] init];
-        NSMutableArray *writingReaquirers = [[NSMutableArray alloc] init];
+        NSMutableDictionary *writingReaquirers = [[NSMutableDictionary alloc] init];
         for (id<NSFilePresenter>filePresenter in _filePresenters)
         {
-            if (filePresenter == _filePresenterToIgnore || ![filePresenter respondsToSelector:@selector(relinquishPresentedItemToWriter:)])
+            if (filePresenter == _filePresenterToIgnore)
                 continue;
             NSURL *filePresenterURL = filePresenter.presentedItemURL;
             if ([[filePresenterURL absoluteString] isEqualToString:[writingURL absoluteString]])
@@ -236,54 +256,61 @@ static NSMutableArray *_filePresenters;
                 [affectedWritingSubitemPresenters addObject:filePresenter];
             else
                 continue;
-            [filePresenter.presentedItemOperationQueue addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
-                [filePresenter relinquishPresentedItemToWriter:^(void(^reaquirer)(void)) {
-                    if (reaquirer)
-                        [writingReaquirers addObject:reaquirer];
-                }];
-            }]] waitUntilFinished:YES];
+            if ([filePresenter respondsToSelector:@selector(relinquishPresentedItemToWriter:)])
+                [filePresenter.presentedItemOperationQueue addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
+                    [filePresenter relinquishPresentedItemToWriter:^(void(^reaquirer)(void)) {
+                        if (reaquirer)
+                            [writingReaquirers setObject:filePresenter forKey:reaquirer];
+                    }];
+                }]] waitUntilFinished:YES];
         }
         if (writingOptions & (NSFileCoordinatorWritingForMerging | NSFileCoordinatorWritingForMoving))
         {
             for (id<NSFilePresenter>filePresenter in affectedWritingFilePresenters)
-                [filePresenter.presentedItemOperationQueue addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
-                    [filePresenter savePresentedItemChangesWithCompletionHandler:^(NSError *errorOrNil) {
-                        ECASSERT(!errorOrNil); // TODO: forward error
-                    }];
-                }]] waitUntilFinished:YES];
+                if ([filePresenter respondsToSelector:@selector(savePresentedItemChangesWithCompletionHandler:)])
+                    [filePresenter.presentedItemOperationQueue addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
+                        [filePresenter savePresentedItemChangesWithCompletionHandler:^(NSError *errorOrNil) {
+                            ECASSERT(!errorOrNil); // TODO: forward error
+                        }];
+                    }]] waitUntilFinished:YES];
             for (id<NSFilePresenter>filePresenter in affectedWritingSubitemPresenters)
-                [filePresenter.presentedItemOperationQueue addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
-                    [filePresenter savePresentedItemChangesWithCompletionHandler:^(NSError *errorOrNil) {
-                        ECASSERT(!errorOrNil); // TODO: forward error
-                    }];
-                }]] waitUntilFinished:YES];
+                if ([filePresenter respondsToSelector:@selector(savePresentedItemChangesWithCompletionHandler:)])
+                    [filePresenter.presentedItemOperationQueue addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
+                        [filePresenter savePresentedItemChangesWithCompletionHandler:^(NSError *errorOrNil) {
+                            ECASSERT(!errorOrNil); // TODO: forward error
+                        }];
+                    }]] waitUntilFinished:YES];
             for (id<NSFilePresenter>filePresenter in affectedWritingAncestorDirectoryPresenters)
-                [filePresenter.presentedItemOperationQueue addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
-                    [filePresenter savePresentedItemChangesWithCompletionHandler:^(NSError *errorOrNil) {
-                        ECASSERT(!errorOrNil); // TODO: forward error
-                    }];
-                }]] waitUntilFinished:YES];
+                if ([filePresenter respondsToSelector:@selector(savePresentedItemChangesWithCompletionHandler:)])
+                    [filePresenter.presentedItemOperationQueue addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
+                        [filePresenter savePresentedItemChangesWithCompletionHandler:^(NSError *errorOrNil) {
+                            ECASSERT(!errorOrNil); // TODO: forward error
+                        }];
+                    }]] waitUntilFinished:YES];
         }
         else if (writingOptions & (NSFileCoordinatorWritingForReplacing | NSFileCoordinatorWritingForDeleting))
         {
             for (id<NSFilePresenter>filePresenter in affectedWritingFilePresenters)
-                [filePresenter.presentedItemOperationQueue addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
-                    [filePresenter accommodatePresentedItemDeletionWithCompletionHandler:^(NSError *errorOrNil) {
-                        ECASSERT(!errorOrNil); // TODO: forward error
-                    }];
-                }]] waitUntilFinished:YES];
+                if ([filePresenter respondsToSelector:@selector(accommodatePresentedItemDeletionWithCompletionHandler:)])
+                    [filePresenter.presentedItemOperationQueue addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
+                        [filePresenter accommodatePresentedItemDeletionWithCompletionHandler:^(NSError *errorOrNil) {
+                            ECASSERT(!errorOrNil); // TODO: forward error
+                        }];
+                    }]] waitUntilFinished:YES];
             for (id<NSFilePresenter>filePresenter in affectedWritingSubitemPresenters)
-                [filePresenter.presentedItemOperationQueue addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
-                    [filePresenter accommodatePresentedItemDeletionWithCompletionHandler:^(NSError *errorOrNil) {
-                        ECASSERT(!errorOrNil); // TODO: forward error
-                    }];
-                }]] waitUntilFinished:YES];
+                if ([filePresenter respondsToSelector:@selector(accommodatePresentedItemDeletionWithCompletionHandler:)])
+                    [filePresenter.presentedItemOperationQueue addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
+                        [filePresenter accommodatePresentedItemDeletionWithCompletionHandler:^(NSError *errorOrNil) {
+                            ECASSERT(!errorOrNil); // TODO: forward error
+                        }];
+                    }]] waitUntilFinished:YES];
             for (id<NSFilePresenter>filePresenter in affectedWritingAncestorDirectoryPresenters)
-                [filePresenter.presentedItemOperationQueue addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
-                    [filePresenter accommodatePresentedSubitemDeletionAtURL:writingURL completionHandler:^(NSError *errorOrNil) {
-                        ECASSERT(!errorOrNil); // TODO: forward error
-                    }];
-                }]] waitUntilFinished:YES];
+                if ([filePresenter respondsToSelector:@selector(accommodatePresentedSubitemDeletionAtURL:completionHandler:)])
+                    [filePresenter.presentedItemOperationQueue addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
+                        [filePresenter accommodatePresentedSubitemDeletionAtURL:writingURL completionHandler:^(NSError *errorOrNil) {
+                            ECASSERT(!errorOrNil); // TODO: forward error
+                        }];
+                    }]] waitUntilFinished:YES];
         }
         NSFileManager *fileManager = [[NSFileManager alloc] init];
         BOOL fileExisted = [fileManager fileExistsAtPath:[writingURL path]];
@@ -291,26 +318,35 @@ static NSMutableArray *_filePresenters;
         if (!(writingOptions & (NSFileCoordinatorWritingForMoving | NSFileCoordinatorWritingForDeleting)))
         {
             for (id<NSFilePresenter>filePresenter in affectedWritingFilePresenters)
-                [filePresenter.presentedItemOperationQueue addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
-                    [filePresenter presentedItemDidChange];
-                }]] waitUntilFinished:YES];
+                if ([filePresenter respondsToSelector:@selector(presentedItemDidChange)])
+                    [filePresenter.presentedItemOperationQueue addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
+                        [filePresenter presentedItemDidChange];
+                    }]] waitUntilFinished:YES];
             if (fileExisted)
+            {
                 for (id<NSFilePresenter>filePresenter in affectedWritingAncestorDirectoryPresenters)
-                    [filePresenter.presentedItemOperationQueue addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
-                        [filePresenter presentedSubitemDidChangeAtURL:writingURL];
-                    }]] waitUntilFinished:YES];
+                    if ([filePresenter respondsToSelector:@selector(presentedSubitemDidChangeAtURL:)])
+                        [filePresenter.presentedItemOperationQueue addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
+                            [filePresenter presentedSubitemDidChangeAtURL:writingURL];
+                        }]] waitUntilFinished:YES];
+            }
             else
+            {
                 for (id<NSFilePresenter>filePresenter in affectedWritingAncestorDirectoryPresenters)
-                    [filePresenter.presentedItemOperationQueue addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
-                        [filePresenter presentedSubitemDidAppearAtURL:writingURL];
-                    }]] waitUntilFinished:YES];
+                    if ([filePresenter respondsToSelector:@selector(presentedSubitemDidAppearAtURL:)])
+                        [filePresenter.presentedItemOperationQueue addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
+                            [filePresenter presentedSubitemDidAppearAtURL:writingURL];
+                        }]] waitUntilFinished:YES];
+            }
         }
-        for (void(^reaquirer)(void) in writingReaquirers)
-            reaquirer();
-        for (void(^reaquirer)(void) in readingReaquirers)
-            reaquirer();
+        [writingReaquirers enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+            [[obj presentedItemOperationQueue] addOperations:[NSArray arrayWithObject:key] waitUntilFinished:YES];
+        }];
+        [readingReaquirers enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+            [[obj presentedItemOperationQueue] addOperations:[NSArray arrayWithObject:key] waitUntilFinished:YES];
+        }];
     });
-
+    
 }
 
 - (void)coordinateWritingItemAtURL:(NSURL *)url1 options:(NSFileCoordinatorWritingOptions)options1 writingItemAtURL:(NSURL *)url2 options:(NSFileCoordinatorWritingOptions)options2 error:(NSError *__autoreleasing *)outError byAccessor:(void (^)(NSURL *, NSURL *))writer
@@ -320,10 +356,10 @@ static NSMutableArray *_filePresenters;
         NSMutableArray *affectedFilePresenters1 = [[NSMutableArray alloc] init];
         NSMutableArray *affectedSubitemPresenters1 = [[NSMutableArray alloc] init];
         NSMutableArray *affectedAncestorDirectoryPresenters1 = [[NSMutableArray alloc] init];
-        NSMutableArray *reaquirers1 = [[NSMutableArray alloc] init];
+        NSMutableDictionary *reaquirers1 = [[NSMutableDictionary alloc] init];
         for (id<NSFilePresenter>filePresenter in _filePresenters)
         {
-            if (filePresenter == _filePresenterToIgnore || ![filePresenter respondsToSelector:@selector(relinquishPresentedItemToWriter:)])
+            if (filePresenter == _filePresenterToIgnore)
                 continue;
             NSURL *filePresenterURL = filePresenter.presentedItemURL;
             if ([[filePresenterURL absoluteString] isEqualToString:[url1 absoluteString]])
@@ -334,62 +370,69 @@ static NSMutableArray *_filePresenters;
                 [affectedSubitemPresenters1 addObject:filePresenter];
             else
                 continue;
-            [filePresenter.presentedItemOperationQueue addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
-                [filePresenter relinquishPresentedItemToWriter:^(void(^reaquirer)(void)) {
-                    if (reaquirer)
-                        [reaquirers1 addObject:reaquirer];
-                }];
-            }]] waitUntilFinished:YES];
+            if ([filePresenter respondsToSelector:@selector(relinquishPresentedItemToWriter:)])
+                [filePresenter.presentedItemOperationQueue addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
+                    [filePresenter relinquishPresentedItemToWriter:^(void(^reaquirer)(void)) {
+                        if (reaquirer)
+                            [reaquirers1 setObject:filePresenter forKey:reaquirer];
+                    }];
+                }]] waitUntilFinished:YES];
         }
         if (options1 & (NSFileCoordinatorWritingForMerging | NSFileCoordinatorWritingForMoving))
         {
             for (id<NSFilePresenter>filePresenter in affectedFilePresenters1)
-                [filePresenter.presentedItemOperationQueue addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
-                    [filePresenter savePresentedItemChangesWithCompletionHandler:^(NSError *errorOrNil) {
-                        ECASSERT(!errorOrNil); // TODO: forward error
-                    }];
-                }]] waitUntilFinished:YES];
+                if ([filePresenter respondsToSelector:@selector(savePresentedItemChangesWithCompletionHandler:)])
+                    [filePresenter.presentedItemOperationQueue addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
+                        [filePresenter savePresentedItemChangesWithCompletionHandler:^(NSError *errorOrNil) {
+                            ECASSERT(!errorOrNil); // TODO: forward error
+                        }];
+                    }]] waitUntilFinished:YES];
             for (id<NSFilePresenter>filePresenter in affectedSubitemPresenters1)
-                [filePresenter.presentedItemOperationQueue addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
-                    [filePresenter savePresentedItemChangesWithCompletionHandler:^(NSError *errorOrNil) {
-                        ECASSERT(!errorOrNil); // TODO: forward error
-                    }];
-                }]] waitUntilFinished:YES];
+                if ([filePresenter respondsToSelector:@selector(savePresentedItemChangesWithCompletionHandler:)])
+                    [filePresenter.presentedItemOperationQueue addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
+                        [filePresenter savePresentedItemChangesWithCompletionHandler:^(NSError *errorOrNil) {
+                            ECASSERT(!errorOrNil); // TODO: forward error
+                        }];
+                    }]] waitUntilFinished:YES];
             for (id<NSFilePresenter>filePresenter in affectedAncestorDirectoryPresenters1)
-                [filePresenter.presentedItemOperationQueue addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
-                    [filePresenter savePresentedItemChangesWithCompletionHandler:^(NSError *errorOrNil) {
-                        ECASSERT(!errorOrNil); // TODO: forward error
-                    }];
-                }]] waitUntilFinished:YES];
+                if ([filePresenter respondsToSelector:@selector(savePresentedItemChangesWithCompletionHandler:)])
+                    [filePresenter.presentedItemOperationQueue addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
+                        [filePresenter savePresentedItemChangesWithCompletionHandler:^(NSError *errorOrNil) {
+                            ECASSERT(!errorOrNil); // TODO: forward error
+                        }];
+                    }]] waitUntilFinished:YES];
         }
         else if (options1 & (NSFileCoordinatorWritingForReplacing | NSFileCoordinatorWritingForDeleting))
         {
             for (id<NSFilePresenter>filePresenter in affectedFilePresenters1)
-                [filePresenter.presentedItemOperationQueue addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
-                    [filePresenter accommodatePresentedItemDeletionWithCompletionHandler:^(NSError *errorOrNil) {
-                        ECASSERT(!errorOrNil); // TODO: forward error
-                    }];
-                }]] waitUntilFinished:YES];
+                if ([filePresenter respondsToSelector:@selector(accommodatePresentedItemDeletionWithCompletionHandler:)])
+                    [filePresenter.presentedItemOperationQueue addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
+                        [filePresenter accommodatePresentedItemDeletionWithCompletionHandler:^(NSError *errorOrNil) {
+                            ECASSERT(!errorOrNil); // TODO: forward error
+                        }];
+                    }]] waitUntilFinished:YES];
             for (id<NSFilePresenter>filePresenter in affectedSubitemPresenters1)
-                [filePresenter.presentedItemOperationQueue addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
-                    [filePresenter accommodatePresentedItemDeletionWithCompletionHandler:^(NSError *errorOrNil) {
-                        ECASSERT(!errorOrNil); // TODO: forward error
-                    }];
-                }]] waitUntilFinished:YES];
+                if ([filePresenter respondsToSelector:@selector(accommodatePresentedItemDeletionWithCompletionHandler:)])
+                    [filePresenter.presentedItemOperationQueue addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
+                        [filePresenter accommodatePresentedItemDeletionWithCompletionHandler:^(NSError *errorOrNil) {
+                            ECASSERT(!errorOrNil); // TODO: forward error
+                        }];
+                    }]] waitUntilFinished:YES];
             for (id<NSFilePresenter>filePresenter in affectedAncestorDirectoryPresenters1)
-                [filePresenter.presentedItemOperationQueue addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
-                    [filePresenter accommodatePresentedSubitemDeletionAtURL:url1 completionHandler:^(NSError *errorOrNil) {
-                        ECASSERT(!errorOrNil); // TODO: forward error
-                    }];
-                }]] waitUntilFinished:YES];
+                if ([filePresenter respondsToSelector:@selector(accommodatePresentedSubitemDeletionAtURL:completionHandler:)])
+                    [filePresenter.presentedItemOperationQueue addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
+                        [filePresenter accommodatePresentedSubitemDeletionAtURL:url1 completionHandler:^(NSError *errorOrNil) {
+                            ECASSERT(!errorOrNil); // TODO: forward error
+                        }];
+                    }]] waitUntilFinished:YES];
         }
         NSMutableArray *affectedFilePresenters2 = [[NSMutableArray alloc] init];
         NSMutableArray *affectedSubitemPresenters2 = [[NSMutableArray alloc] init];
         NSMutableArray *affectedAncestorDirectoryPresenters2 = [[NSMutableArray alloc] init];
-        NSMutableArray *reaquirers2 = [[NSMutableArray alloc] init];
+        NSMutableDictionary *reaquirers2 = [[NSMutableDictionary alloc] init];
         for (id<NSFilePresenter>filePresenter in _filePresenters)
         {
-            if (filePresenter == _filePresenterToIgnore || ![filePresenter respondsToSelector:@selector(relinquishPresentedItemToWriter:)])
+            if (filePresenter == _filePresenterToIgnore)
                 continue;
             NSURL *filePresenterURL = filePresenter.presentedItemURL;
             if ([[filePresenterURL absoluteString] isEqualToString:[url2 absoluteString]])
@@ -400,54 +443,61 @@ static NSMutableArray *_filePresenters;
                 [affectedSubitemPresenters2 addObject:filePresenter];
             else
                 continue;
-            [filePresenter.presentedItemOperationQueue addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
-                [filePresenter relinquishPresentedItemToWriter:^(void(^reaquirer)(void)) {
-                    if (reaquirer)
-                        [reaquirers2 addObject:reaquirer];
-                }];
-            }]] waitUntilFinished:YES];
+            if ([filePresenter respondsToSelector:@selector(relinquishPresentedItemToWriter:)])
+                [filePresenter.presentedItemOperationQueue addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
+                    [filePresenter relinquishPresentedItemToWriter:^(void(^reaquirer)(void)) {
+                        if (reaquirer)
+                            [reaquirers2 setObject:filePresenter forKey:reaquirer];
+                    }];
+                }]] waitUntilFinished:YES];
         }
         if (options2 & (NSFileCoordinatorWritingForMerging | NSFileCoordinatorWritingForMoving))
         {
             for (id<NSFilePresenter>filePresenter in affectedFilePresenters2)
-                [filePresenter.presentedItemOperationQueue addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
-                    [filePresenter savePresentedItemChangesWithCompletionHandler:^(NSError *errorOrNil) {
-                        ECASSERT(!errorOrNil); // TODO: forward error
-                    }];
-                }]] waitUntilFinished:YES];
+                if ([filePresenter respondsToSelector:@selector(savePresentedItemChangesWithCompletionHandler:)])
+                    [filePresenter.presentedItemOperationQueue addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
+                        [filePresenter savePresentedItemChangesWithCompletionHandler:^(NSError *errorOrNil) {
+                            ECASSERT(!errorOrNil); // TODO: forward error
+                        }];
+                    }]] waitUntilFinished:YES];
             for (id<NSFilePresenter>filePresenter in affectedSubitemPresenters2)
-                [filePresenter.presentedItemOperationQueue addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
-                    [filePresenter savePresentedItemChangesWithCompletionHandler:^(NSError *errorOrNil) {
-                        ECASSERT(!errorOrNil); // TODO: forward error
-                    }];
-                }]] waitUntilFinished:YES];
+                if ([filePresenter respondsToSelector:@selector(savePresentedItemChangesWithCompletionHandler:)])
+                    [filePresenter.presentedItemOperationQueue addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
+                        [filePresenter savePresentedItemChangesWithCompletionHandler:^(NSError *errorOrNil) {
+                            ECASSERT(!errorOrNil); // TODO: forward error
+                        }];
+                    }]] waitUntilFinished:YES];
             for (id<NSFilePresenter>filePresenter in affectedAncestorDirectoryPresenters2)
-                [filePresenter.presentedItemOperationQueue addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
-                    [filePresenter savePresentedItemChangesWithCompletionHandler:^(NSError *errorOrNil) {
-                        ECASSERT(!errorOrNil); // TODO: forward error
-                    }];
-                }]] waitUntilFinished:YES];
+                if ([filePresenter respondsToSelector:@selector(savePresentedItemChangesWithCompletionHandler:)])
+                    [filePresenter.presentedItemOperationQueue addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
+                        [filePresenter savePresentedItemChangesWithCompletionHandler:^(NSError *errorOrNil) {
+                            ECASSERT(!errorOrNil); // TODO: forward error
+                        }];
+                    }]] waitUntilFinished:YES];
         }
         else if (options2 & (NSFileCoordinatorWritingForReplacing | NSFileCoordinatorWritingForDeleting))
         {
             for (id<NSFilePresenter>filePresenter in affectedFilePresenters2)
-                [filePresenter.presentedItemOperationQueue addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
-                    [filePresenter accommodatePresentedItemDeletionWithCompletionHandler:^(NSError *errorOrNil) {
-                        ECASSERT(!errorOrNil); // TODO: forward error
-                    }];
-                }]] waitUntilFinished:YES];
+                if ([filePresenter respondsToSelector:@selector(accommodatePresentedItemDeletionWithCompletionHandler:)])
+                    [filePresenter.presentedItemOperationQueue addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
+                        [filePresenter accommodatePresentedItemDeletionWithCompletionHandler:^(NSError *errorOrNil) {
+                            ECASSERT(!errorOrNil); // TODO: forward error
+                        }];
+                    }]] waitUntilFinished:YES];
             for (id<NSFilePresenter>filePresenter in affectedSubitemPresenters2)
-                [filePresenter.presentedItemOperationQueue addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
-                    [filePresenter accommodatePresentedItemDeletionWithCompletionHandler:^(NSError *errorOrNil) {
-                        ECASSERT(!errorOrNil); // TODO: forward error
-                    }];
-                }]] waitUntilFinished:YES];
+                if ([filePresenter respondsToSelector:@selector(accommodatePresentedItemDeletionWithCompletionHandler:)])
+                    [filePresenter.presentedItemOperationQueue addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
+                        [filePresenter accommodatePresentedItemDeletionWithCompletionHandler:^(NSError *errorOrNil) {
+                            ECASSERT(!errorOrNil); // TODO: forward error
+                        }];
+                    }]] waitUntilFinished:YES];
             for (id<NSFilePresenter>filePresenter in affectedAncestorDirectoryPresenters2)
-                [filePresenter.presentedItemOperationQueue addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
-                    [filePresenter accommodatePresentedSubitemDeletionAtURL:url2 completionHandler:^(NSError *errorOrNil) {
-                        ECASSERT(!errorOrNil); // TODO: forward error
-                    }];
-                }]] waitUntilFinished:YES];
+                if ([filePresenter respondsToSelector:@selector(accommodatePresentedSubitemDeletionAtURL:completionHandler:)])
+                    [filePresenter.presentedItemOperationQueue addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
+                        [filePresenter accommodatePresentedSubitemDeletionAtURL:url2 completionHandler:^(NSError *errorOrNil) {
+                            ECASSERT(!errorOrNil); // TODO: forward error
+                        }];
+                    }]] waitUntilFinished:YES];
         }
         NSFileManager *fileManager = [[NSFileManager alloc] init];
         BOOL fileExisted1 = [fileManager fileExistsAtPath:[url1 path]];
@@ -456,41 +506,57 @@ static NSMutableArray *_filePresenters;
         if (!(options2 & (NSFileCoordinatorWritingForMoving | NSFileCoordinatorWritingForDeleting)))
         {
             for (id<NSFilePresenter>filePresenter in affectedFilePresenters2)
-                [filePresenter.presentedItemOperationQueue addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
-                    [filePresenter presentedItemDidChange];
-                }]] waitUntilFinished:YES];
+                if ([filePresenter respondsToSelector:@selector(presentedItemDidChange)])
+                    [filePresenter.presentedItemOperationQueue addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
+                        [filePresenter presentedItemDidChange];
+                    }]] waitUntilFinished:YES];
             if (fileExisted2)
+            {
                 for (id<NSFilePresenter>filePresenter in affectedAncestorDirectoryPresenters2)
-                    [filePresenter.presentedItemOperationQueue addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
-                        [filePresenter presentedSubitemDidChangeAtURL:url2];
-                    }]] waitUntilFinished:YES];
+                    if ([filePresenter respondsToSelector:@selector(presentedSubitemDidChangeAtURL:)])
+                        [filePresenter.presentedItemOperationQueue addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
+                            [filePresenter presentedSubitemDidChangeAtURL:url2];
+                        }]] waitUntilFinished:YES];
+            }
             else
+            {
                 for (id<NSFilePresenter>filePresenter in affectedAncestorDirectoryPresenters2)
-                    [filePresenter.presentedItemOperationQueue addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
-                        [filePresenter presentedSubitemDidAppearAtURL:url2];
-                    }]] waitUntilFinished:YES];
+                    if ([filePresenter respondsToSelector:@selector(presentedSubitemDidAppearAtURL:)])
+                        [filePresenter.presentedItemOperationQueue addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
+                            [filePresenter presentedSubitemDidAppearAtURL:url2];
+                        }]] waitUntilFinished:YES];
+            }
         }
-        for (void(^reaquirer)(void) in reaquirers2)
-            reaquirer();
         if (!(options1 & (NSFileCoordinatorWritingForMoving | NSFileCoordinatorWritingForDeleting)))
         {
             for (id<NSFilePresenter>filePresenter in affectedFilePresenters1)
-                [filePresenter.presentedItemOperationQueue addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
-                    [filePresenter presentedItemDidChange];
-                }]] waitUntilFinished:YES];
+                if ([filePresenter respondsToSelector:@selector(presentedItemDidChange)])
+                    [filePresenter.presentedItemOperationQueue addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
+                        [filePresenter presentedItemDidChange];
+                    }]] waitUntilFinished:YES];
             if (fileExisted1)
+            {
                 for (id<NSFilePresenter>filePresenter in affectedAncestorDirectoryPresenters1)
-                    [filePresenter.presentedItemOperationQueue addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
-                        [filePresenter presentedSubitemDidChangeAtURL:url1];
-                    }]] waitUntilFinished:YES];
+                    if ([filePresenter respondsToSelector:@selector(presentedSubitemDidChangeAtURL:)])
+                        [filePresenter.presentedItemOperationQueue addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
+                            [filePresenter presentedSubitemDidChangeAtURL:url1];
+                        }]] waitUntilFinished:YES];
+            }
             else
+            {
                 for (id<NSFilePresenter>filePresenter in affectedAncestorDirectoryPresenters1)
-                    [filePresenter.presentedItemOperationQueue addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
-                        [filePresenter presentedSubitemDidAppearAtURL:url1];
-                    }]] waitUntilFinished:YES];
+                    if ([filePresenter respondsToSelector:@selector(presentedSubitemDidAppearAtURL:)])
+                        [filePresenter.presentedItemOperationQueue addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
+                            [filePresenter presentedSubitemDidAppearAtURL:url1];
+                        }]] waitUntilFinished:YES];
+            }
         }
-        for (void(^reaquirer)(void) in reaquirers1)
-            reaquirer();
+        [reaquirers2 enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+            [[obj presentedItemOperationQueue] addOperations:[NSArray arrayWithObject:key] waitUntilFinished:YES];
+        }];
+        [reaquirers1 enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+            [[obj presentedItemOperationQueue] addOperations:[NSArray arrayWithObject:key] waitUntilFinished:YES];
+        }];
     });
 }
 
@@ -509,18 +575,27 @@ static NSMutableArray *_filePresenters;
             continue;
         NSURL *filePresenterURL = filePresenter.presentedItemURL;
         if ([[filePresenterURL absoluteString] isEqualToString:[oldURL absoluteString]])
-            [filePresenter.presentedItemOperationQueue addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
-                [filePresenter presentedItemDidMoveToURL:newURL];
-            }]] waitUntilFinished:YES];            
+        {
+            if ([filePresenter respondsToSelector:@selector(presentedItemDidMoveToURL:)])
+                [filePresenter.presentedItemOperationQueue addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
+                    [filePresenter presentedItemDidMoveToURL:newURL];
+                }]] waitUntilFinished:YES];
+        }
         else if ([[oldURL absoluteString] hasPrefix:[filePresenterURL absoluteString]])
-            [filePresenter.presentedItemOperationQueue addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
-                [filePresenter presentedSubitemAtURL:oldURL didMoveToURL:newURL];
-            }]] waitUntilFinished:YES];            
+        {
+            if ([filePresenter respondsToSelector:@selector(presentedSubitemAtURL:didMoveToURL:)])
+                [filePresenter.presentedItemOperationQueue addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
+                    [filePresenter presentedSubitemAtURL:oldURL didMoveToURL:newURL];
+                }]] waitUntilFinished:YES];
+        }
         else if ([[filePresenterURL absoluteString] hasPrefix:[oldURL absoluteString]])
-            [filePresenter.presentedItemOperationQueue addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
-                NSString *subitemPath = [[filePresenterURL absoluteString] substringFromIndex:[[oldURL absoluteString] length]];
-                [filePresenter presentedItemDidMoveToURL:[newURL URLByAppendingPathComponent:subitemPath]];
-            }]] waitUntilFinished:YES];
+        {
+            if ([filePresenter respondsToSelector:@selector(presentedItemDidMoveToURL:)])
+                [filePresenter.presentedItemOperationQueue addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
+                    NSString *subitemPath = [[filePresenterURL absoluteString] substringFromIndex:[[oldURL absoluteString] length]];
+                    [filePresenter presentedItemDidMoveToURL:[newURL URLByAppendingPathComponent:subitemPath]];
+                }]] waitUntilFinished:YES];
+        }
     }
 }
 

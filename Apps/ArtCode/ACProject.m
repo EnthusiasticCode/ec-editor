@@ -49,7 +49,7 @@ static ECCache *openProjects = nil;
     NSURL *newURL = [[self.URL URLByDeletingLastPathComponent] URLByAppendingPathComponent:name];
     ECFileCoordinator *coordinator = [[ECFileCoordinator alloc] initWithFilePresenter:nil];
     [coordinator coordinateWritingItemAtURL:self.URL options:NSFileCoordinatorWritingForMoving writingItemAtURL:newURL options:0 error:NULL byAccessor:^(NSURL *newURL1, NSURL *newURL2) {
-        [[NSFileManager defaultManager] moveItemAtURL:newURL1 toURL:newURL2 error:NULL];
+        [[NSFileManager new] moveItemAtURL:newURL1 toURL:newURL2 error:NULL];
         [coordinator itemAtURL:newURL1 didMoveToURL:newURL2];
     }];
     [openProjects removeObjectForKey:URL];
@@ -85,13 +85,13 @@ static ECCache *openProjects = nil;
     if (!self)
         return nil;
     
-    ECASSERT([[NSFileManager defaultManager] fileExistsAtPath:[url path]]);
+    ECASSERT([[NSFileManager new] fileExistsAtPath:[url path]]);
     
     URL = url;
     
     _plistUrl = [URL URLByAppendingPathComponent:ACProjectPlistFileName];
     [[[ECFileCoordinator alloc] initWithFilePresenter:nil] coordinateReadingItemAtURL:_plistUrl options:0 error:NULL byAccessor:^(NSURL *newURL) {
-        if ([[NSFileManager defaultManager] fileExistsAtPath:[newURL path]])
+        if ([[NSFileManager new] fileExistsAtPath:[newURL path]])
             plist = [NSPropertyListSerialization propertyListWithData:[NSData dataWithContentsOfURL:newURL] options:NSPropertyListMutableContainersAndLeaves format:NULL error:NULL];
     }];
     
@@ -101,7 +101,7 @@ static ECCache *openProjects = nil;
 - (id)initByDecompressingFileAtURL:(NSURL *)compressedFileUrl toURL:(NSURL *)url
 {
     [[[ECFileCoordinator alloc] initWithFilePresenter:nil] coordinateReadingItemAtURL:compressedFileUrl options:0 writingItemAtURL:url options:0 error:NULL byAccessor:^(NSURL *newReadingURL, NSURL *newWritingURL) {
-        [[NSFileManager defaultManager] createDirectoryAtURL:newWritingURL withIntermediateDirectories:YES attributes:nil error:NULL];
+        [[NSFileManager new] createDirectoryAtURL:newWritingURL withIntermediateDirectories:YES attributes:nil error:NULL];
         [ECArchive extractArchiveAtURL:newReadingURL toDirectory:newWritingURL];
     }];
     
@@ -163,7 +163,7 @@ static ECCache *openProjects = nil;
         name = [name stringByAppendingString:ACProjectExtension];
     
     BOOL isDirectory = NO;
-    BOOL exists =[[NSFileManager defaultManager] fileExistsAtPath:[[[self projectsDirectory] URLByAppendingPathComponent:name isDirectory:YES] path] isDirectory:&isDirectory];
+    BOOL exists =[[NSFileManager new] fileExistsAtPath:[[[self projectsDirectory] URLByAppendingPathComponent:name isDirectory:YES] path] isDirectory:&isDirectory];
     return exists && isDirectory;
 }
 
@@ -171,12 +171,12 @@ static ECCache *openProjects = nil;
 {
     name = [name stringByReplacingOccurrencesOfString:@"\\" withString:@"_"];
     
-    NSFileManager *defaultManager = [NSFileManager defaultManager];
+    NSFileManager *new = [NSFileManager new];
     NSString *projectsPath = [[self projectsDirectory] path];
     
     NSUInteger count = 0;
     NSString *result = name;
-    while ([defaultManager fileExistsAtPath:[projectsPath stringByAppendingPathComponent:[result stringByAppendingString:ACProjectExtension]]])
+    while ([new fileExistsAtPath:[projectsPath stringByAppendingPathComponent:[result stringByAppendingString:ACProjectExtension]]])
     {
         result = [name stringByAppendingFormat:@" (%u)", ++count];
     }
@@ -207,10 +207,10 @@ static ECCache *openProjects = nil;
         return project;
     
     // Create project direcotry
-    if (![[NSFileManager defaultManager] fileExistsAtPath:[projectUrl path]])
+    if (![[NSFileManager new] fileExistsAtPath:[projectUrl path]])
     {
         [[[ECFileCoordinator alloc] initWithFilePresenter:nil] coordinateWritingItemAtURL:projectUrl options:0 error:NULL byAccessor:^(NSURL *newURL) {
-            [[NSFileManager defaultManager] createDirectoryAtURL:projectUrl withIntermediateDirectories:NO attributes:nil error:NULL];
+            [[NSFileManager new] createDirectoryAtURL:projectUrl withIntermediateDirectories:NO attributes:nil error:NULL];
         }];
     }
     
