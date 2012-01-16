@@ -27,6 +27,7 @@ static ECWeakDictionary *_allPatterns;
 
 @interface TMPattern ()
 {
+    NSString *_syntaxScope;
     OnigRegexp *_match;
     NSDictionary *_captures;
     OnigRegexp *_begin;
@@ -34,7 +35,6 @@ static ECWeakDictionary *_allPatterns;
     NSDictionary *_beginCaptures;
     NSDictionary *_endCaptures;
     NSArray *_patterns;
-    TMSyntax *_syntax;
     NSDictionary *_dictionary;
 }
 - (id)_initWithDictionary:(NSDictionary *)dictionary inSyntax:(TMSyntax *)syntax;
@@ -64,8 +64,8 @@ static ECWeakDictionary *_allPatterns;
     self = [super init];
     if (!self)
         return nil;
-    _syntax = syntax;
-    [_syntax beginContentAccess];
+    _syntaxScope = [syntax scopeIdentifier];
+    ECASSERT(_syntaxScope);
     _dictionary = dictionary;
     NSString *matchRegex = [dictionary objectForKey:_patternMatchKey];
     if (matchRegex)
@@ -83,12 +83,6 @@ static ECWeakDictionary *_allPatterns;
     return self;
 }
 
-- (void)dealloc
-{
-    if (_dictionary)
-        [_syntax endContentAccess];
-}
-
 - (id)copyWithZone:(NSZone *)zone
 {
     return self;
@@ -101,7 +95,8 @@ static ECWeakDictionary *_allPatterns;
 
 - (TMSyntax *)syntax
 {
-    return _syntax;
+    ECASSERT([TMSyntax syntaxWithScope:_syntaxScope]);
+    return [TMSyntax syntaxWithScope:_syntaxScope];
 }
 
 - (NSString *)name

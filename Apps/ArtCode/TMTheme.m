@@ -17,6 +17,8 @@ static NSString * const _themeSettingsKey = @"settings";
 static NSString * const _themeSettingsNameKey = @"name";
 static NSString * const _themeSettingsScopeKey = @"scope";
 
+static NSString * const _themeWildcard = @"*";
+
 static CTFontRef _defaultFont = NULL;
 static CTFontRef _defaultItalicFont = NULL;
 static CTFontRef _defaultBoldFont = NULL;
@@ -89,8 +91,8 @@ static NSDictionary *_defaultAttributes = nil;
     NSMutableDictionary *settings = [[NSMutableDictionary alloc] initWithCapacity:[[plist objectForKey:_themeSettingsKey] count]];
     for (NSDictionary *plistSetting in [plist objectForKey:_themeSettingsKey])
     {
-        NSString *settingScope = [plistSetting objectForKey:_themeSettingsScopeKey];
-        if (!settingScope)
+        NSString *settingScopes = [plistSetting objectForKey:_themeSettingsScopeKey];
+        if (!settingScopes)
             continue;
         
         NSMutableDictionary *setting = [[NSMutableDictionary alloc] initWithCapacity:[[plistSetting objectForKey:_themeSettingsKey] count]];
@@ -121,15 +123,29 @@ static NSDictionary *_defaultAttributes = nil;
             }
         }];
         
-        ECASSERT([settings objectForKey:settingScope] == nil && "Scope should be unique");
         
         // Setting's scope can have multiple scopes separated by a comma
-        for (NSString *singleSettingScope in [settingScope componentsSeparatedByString:@","])
+        for (NSString *settingScopeStack in [settingScopes componentsSeparatedByString:@","])
         {
-            if (singleSettingScope.length == 0)
-                continue;
-            
-            [settings setObject:setting forKey:[singleSettingScope stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]]];
+            NSMutableDictionary *scopeSettings = settings;
+            for (NSString *settingScope in [[settingScopeStack componentsSeparatedByString:@" "] reverseObjectEnumerator])
+            {
+                NSString *trimmedSettingScope = [settingScope stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+                if (trimmedSettingScope.length == 0)
+                    continue;
+                
+                NSMutableDictionary *nestedScopeSettings = [scopeSettings objectForKey:trimmedSettingScope];
+                if (!nestedScopeSettings)
+                {
+                    nestedScopeSettings = [NSMutableDictionary dictionary];
+                    [scopeSettings setObject:nestedScopeSettings forKey:trimmedSettingScope];
+                }
+                scopeSettings = nestedScopeSettings;
+            }
+            ECASSERT(scopeSettings != settings);
+            // the following assert is correct, but some themes have duplicated scopes
+            // ECASSERT([scopeSettings objectForKey:_themeWildcard] == nil && "Scope should be unique");
+            [scopeSettings setObject:setting forKey:_themeWildcard];
         }
     }
     _settings = settings;
@@ -145,23 +161,29 @@ static NSDictionary *_defaultAttributes = nil;
     return self;
 }
 
-- (NSDictionary *)attributesForScopeIdentifier:(NSString *)scopeIdentifier
+- (NSDictionary *)attributesForScopeIdentifier:(NSString *)scopeIdentifier withStack:(NSArray *)scopeIdentifiersStack
 {
-    NSDictionary *attributes = [self.settings objectForKey:scopeIdentifier];
-    if (attributes)
-        return attributes;
-    
-    for (NSUInteger i = [scopeIdentifier length] - 1; i != 0; --i)
+    NSDictionary *nestedSettings = self.settings;
+    for (scopeIdentifier in [scopeIdentifiersStack reverseObjectEnumerator])
     {
-        if ([scopeIdentifier characterAtIndex:i] == L'.')
+        NSDictionary *nextNestedSettings = [nestedSettings objectForKey:scopeIdentifier];
+        if (nextNestedSettings)
         {
-            attributes = [self.settings objectForKey:[scopeIdentifier substringToIndex:i]];
-            if (attributes)
-                return attributes;
+            nestedSettings = nextNestedSettings;
+            continue;
+        }
+        for (NSUInteger i = [scopeIdentifier length] - 1; i != 0; --i)
+        {
+            if ([scopeIdentifier characterAtIndex:i] != L'.')
+                continue;
+            nextNestedSettings = [nestedSettings objectForKey:[scopeIdentifier substringToIndex:i]];
+            if (!nextNestedSettings)
+                continue;
+            nestedSettings = nextNestedSettings;
+            break;
         }
     }
-    
-    return nil;
+    return [nestedSettings objectForKey:_themeWildcard];
 }
 
 @end

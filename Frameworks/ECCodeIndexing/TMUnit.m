@@ -34,7 +34,7 @@ static NSString * const _patternCaptureName = @"name";
     NSUInteger _generation;
 }
 - (TMSyntax *)_syntax;
-- (TMUnitVisitResult)_visitDescendantScopesOfScope:(TMScope *)scope withOffset:(NSUInteger)offset inRange:(NSRange)range options:(TMUnitVisitOptions)options withBlock:(TMUnitVisitResult(^)(NSString *scopeIdentifier, NSRange range))block;
+- (TMUnitVisitResult)_visitDescendantScopesOfScope:(TMScope *)scope withOffset:(NSUInteger)offset inRange:(NSRange)range options:(TMUnitVisitOptions)options scopeIdentifiersStack:(NSMutableArray *)scopeIdentifiersStack withBlock:(TMUnitVisitResult(^)(NSString *scopeIdentifier, NSRange range, NSMutableArray *))block;
 - (TMScope *)_scope;
 - (NSUInteger)_addChildScopesToScope:(TMScope *)scope inRange:(NSRange)range relativeToOffset:(NSUInteger)offset withMatchPattern:(TMPattern *)pattern;
 - (NSUInteger)_addChildScopesToScope:(TMScope *)scope inRange:(NSRange)range relativeToOffset:(NSUInteger)offset withSpanPattern:(TMPattern *)pattern;
@@ -124,14 +124,14 @@ static NSString * const _patternCaptureName = @"name";
     return [_extensions objectForKey:key];
 }
 
-- (void)visitScopesWithBlock:(TMUnitVisitResult (^)(NSString *, NSRange))block
+- (void)visitScopesWithBlock:(TMUnitVisitResult (^)(NSString *, NSRange, NSMutableArray *))block
 {
     [self visitScopesInRange:NSMakeRange(0, [self _scope].length) options:TMUnitVisitOptionsAbsoluteRange withBlock:block];
 }
 
-- (void)visitScopesInRange:(NSRange)range options:(TMUnitVisitOptions)options withBlock:(TMUnitVisitResult (^)(NSString *, NSRange))block
+- (void)visitScopesInRange:(NSRange)range options:(TMUnitVisitOptions)options withBlock:(TMUnitVisitResult (^)(NSString *, NSRange, NSMutableArray *))block
 {
-    [self _visitDescendantScopesOfScope:[self _scope] withOffset:0 inRange:range options:options withBlock:block];
+    [self _visitDescendantScopesOfScope:[self _scope] withOffset:0 inRange:range options:options scopeIdentifiersStack:[NSMutableArray array] withBlock:block];
 }
 
 - (id<TMCompletionResultSet>)completionsAtOffset:(NSUInteger)offset
@@ -158,7 +158,7 @@ static NSString * const _patternCaptureName = @"name";
     return __syntax;
 }
 
-- (TMUnitVisitResult)_visitDescendantScopesOfScope:(TMScope *)scope withOffset:(NSUInteger)offset inRange:(NSRange)range options:(TMUnitVisitOptions)options withBlock:(TMUnitVisitResult (^)(NSString *, NSRange))block
+- (TMUnitVisitResult)_visitDescendantScopesOfScope:(TMScope *)scope withOffset:(NSUInteger)offset inRange:(NSRange)range options:(TMUnitVisitOptions)options scopeIdentifiersStack:(NSMutableArray *)scopeIdentifiersStack withBlock:(TMUnitVisitResult (^)(NSString *, NSRange, NSMutableArray *))block
 {
     static NSRange (^intersectionOfRangeRelativeToRange)(NSRange range, NSRange inRange) = ^(NSRange range, NSRange inRange){
         NSRange intersectionRange = NSIntersectionRange(range, inRange);
@@ -173,7 +173,9 @@ static NSString * const _patternCaptureName = @"name";
         return TMUnitVisitResultContinue;
     if (options & TMUnitVisitOptionsRelativeRange)
         scopeRange = intersectionOfRangeRelativeToRange(scopeRange, range);
-    TMUnitVisitResult result = block(scope.identifier, scopeRange);
+    [scopeIdentifiersStack addObject:scope.identifier];
+    TMUnitVisitResult result = block(scope.identifier, scopeRange, scopeIdentifiersStack);
+//    NSLog(@"%@ : %@", NSStringFromRange(scopeRange), scopeIdentifiersStack);
     if (result != TMUnitVisitResultRecurse)
         return result;
     for (TMScope *childScope in [scope children])
@@ -187,16 +189,20 @@ static NSString * const _patternCaptureName = @"name";
                 continue;
             if (options & TMUnitVisitOptionsRelativeRange)
                 scopeRange = intersectionOfRangeRelativeToRange(scopeRange, range);
-            result = block(childScope.identifier, scopeRange);
+            [scopeIdentifiersStack addObject:childScope.identifier];
+            result = block(childScope.identifier, scopeRange, scopeIdentifiersStack);
+//            NSLog(@"%@ : %@", NSStringFromRange(scopeRange), scopeIdentifiersStack);
+            [scopeIdentifiersStack removeLastObject];
             continue;
         }
         if (result == TMUnitVisitResultRecurse)
         {
-            if ([self _visitDescendantScopesOfScope:childScope withOffset:offset inRange:range options:options withBlock:block] == TMUnitVisitResultContinue)
+            if ([self _visitDescendantScopesOfScope:childScope withOffset:offset inRange:range options:options scopeIdentifiersStack:scopeIdentifiersStack withBlock:block] == TMUnitVisitResultContinue)
                 continue;
         }
         return TMUnitVisitResultBreak;
     }
+    [scopeIdentifiersStack removeLastObject];
     return TMUnitVisitResultContinue;
 }
 

@@ -62,8 +62,8 @@
 {
     NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithAttributedString:[self.fileBuffer attributedStringInRange:stringRange]];
     [attributedString addAttributes:[TMTheme defaultAttributes] range:NSMakeRange(0, [attributedString length])];
-    [self.codeUnit visitScopesInRange:stringRange options:TMUnitVisitOptionsRelativeRange withBlock:^TMUnitVisitResult(NSString *scopeIdentifier, NSRange range) {
-        NSDictionary *attributes = [self.theme attributesForScopeIdentifier:scopeIdentifier];
+    [self.codeUnit visitScopesInRange:stringRange options:TMUnitVisitOptionsRelativeRange withBlock:^TMUnitVisitResult(NSString *scopeIdentifier, NSRange range, NSMutableArray *scopeIdentifiersStack) {
+        NSDictionary *attributes = [self.theme attributesForScopeIdentifier:scopeIdentifier withStack:scopeIdentifiersStack];
         if (attributes)
             [attributedString addAttributes:attributes range:range];
         return TMUnitVisitResultRecurse;
