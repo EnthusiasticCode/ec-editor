@@ -236,6 +236,8 @@
 
 - (void)selectCellAtIndex:(NSInteger)cellIndex animated:(BOOL)animated
 {
+    ECASSERT(cellIndex < _cellCount);
+    
     if (self.isEditing)
     {
         // Exit if already selected
@@ -297,6 +299,8 @@
 
 - (void)deselectCellAtIndex:(NSInteger)cellIndex animated:(BOOL)animated
 {
+    ECASSERT(cellIndex < _cellCount);
+    
     if (self.isEditing)
     {
         if (![_selectedEditingCells containsIndex:cellIndex])
@@ -756,6 +760,8 @@ static void _init(ECGridView *self)
     
     CGPoint tapPoint = [recognizer locationInView:self];
     NSInteger cellIndex = (NSInteger)floorf(tapPoint.y / self.rowHeight) * self.columnNumber + (NSInteger)floorf(tapPoint.x / self.bounds.size.width * self.columnNumber);
+    if (cellIndex >= _cellCount)
+        return;
     
     // Animate cell push
     ECGridViewCell *cell = nil;
