@@ -14,20 +14,11 @@
 
 + (BOOL)extractArchiveAtURL:(NSURL *)archiveURL toDirectory:(NSURL *)directoryURL
 {
-    ECASSERT(archiveURL);
-    struct archive *archive = archive_read_new();
-    archive_read_support_compression_all(archive);
-    archive_read_support_format_all(archive);
-    if (archive_read_open_filename(archive, [[archiveURL path] fileSystemRepresentation], 10240) != ARCHIVE_OK)
-    {
-        archive_read_finish(archive);
-        return NO;
-    }
-
-    __block int returnCode = -1;
+    ECASSERT(archiveURL && directoryURL);
+    
     NSFileManager *fileManager = [[NSFileManager alloc] init];
-    __block NSURL *workingDirectory = nil;
-    __block BOOL workingDirectoryAlreadyExists = YES;
+    NSURL *workingDirectory = nil;
+    BOOL workingDirectoryAlreadyExists = YES;
     do
     {
         CFUUIDRef uuid = CFUUIDCreate(CFAllocatorGetDefault());
@@ -38,118 +29,179 @@
         workingDirectoryAlreadyExists = [fileManager fileExistsAtPath:[workingDirectory path]];
     }
     while (workingDirectoryAlreadyExists);
-    returnCode = ![fileManager createDirectoryAtURL:workingDirectory withIntermediateDirectories:YES attributes:nil error:NULL];
-    if (returnCode)
+    if (![fileManager createDirectoryAtURL:workingDirectory withIntermediateDirectories:YES attributes:nil error:NULL])
+        return NO;
+    NSString *previousWorkingDirectory = [fileManager currentDirectoryPath];
+    [fileManager changeCurrentDirectoryPath:[workingDirectory path]];
+    
+    struct archive *archive = archive_read_new();
+    archive_read_support_compression_all(archive);
+    archive_read_support_format_all(archive);
+    if (archive_read_open_filename(archive, [[archiveURL path] fileSystemRepresentation], 10240) < 0)
     {
-        archive_read_finish(archive);
+        archive_read_free(archive);
         return NO;
     }
-    NSString *currentDirectoryPath = [fileManager currentDirectoryPath];
-    [fileManager changeCurrentDirectoryPath:[workingDirectory path]];
     struct archive *output = archive_write_disk_new();
     int flags = ARCHIVE_EXTRACT_TIME;
     archive_write_disk_set_options(output, flags);
     archive_write_disk_set_standard_lookup(output);
-    struct archive_entry *entry;
+    
+    int returnCode = -1;
     for (;;)
     {
+        struct archive_entry *entry;        
         returnCode = archive_read_next_header(archive, &entry);
-        if (returnCode == ARCHIVE_EOF)
+        if (returnCode < 0)
         {
-            returnCode = ARCHIVE_OK;
+            archive_entry_free(entry);
             break;
         }
-        if (returnCode != ARCHIVE_OK)
-            break;
         returnCode = archive_write_header(output, entry);
-        if (returnCode != ARCHIVE_OK)
+        if (returnCode < 0)
+        {
+            archive_entry_free(entry);
             break;
+        }
         const void *buff;
         size_t size;
         off_t offset;
         for (;;)
         {
-            returnCode = archive_read_data_block(archive, &buff, &size, &offset);
-            if (returnCode == ARCHIVE_EOF)
+            returnCode = archive_read_data_block(archive, (const void **)&buff, &size, &offset);
+            if (returnCode < 0)
             {
-                returnCode = ARCHIVE_OK;
+                archive_entry_free(entry);
                 break;
             }
-            if (returnCode != ARCHIVE_OK)
-                break;
             returnCode = archive_write_data_block(output, buff, size, offset);
-            if (returnCode != ARCHIVE_OK)
+            if (returnCode < 0)
+            {
+                archive_entry_free(entry);
                 break;
+            }
         }
-        if (returnCode != ARCHIVE_OK)
+        if (returnCode < 0)
+        {
+            archive_entry_free(entry);
             break;
-        returnCode = archive_write_finish_entry(output);
-        if (returnCode != ARCHIVE_OK)
-            break;
+        }
+        archive_entry_free(entry);
     }
-    archive_write_free(output);
-    if (returnCode == ARCHIVE_OK)
-    {
+    if (returnCode >= 0)
         for (NSURL *fileURL in [fileManager contentsOfDirectoryAtURL:workingDirectory includingPropertiesForKeys:nil options:0 error:NULL])
         {
             NSURL *destinationURL = [directoryURL URLByAppendingPathComponent:[fileURL lastPathComponent]];
             [fileManager moveItemAtURL:fileURL toURL:destinationURL error:NULL];
         }
-    }
-    [fileManager removeItemAtURL:workingDirectory error:NULL];
-    [fileManager changeCurrentDirectoryPath:currentDirectoryPath];
+    archive_write_close(output);
+    archive_write_free(output);
+    archive_read_close(archive);
     archive_read_free(archive);
-    return returnCode == ARCHIVE_OK ? YES : NO;
+    
+    [fileManager removeItemAtURL:workingDirectory error:NULL];
+    [fileManager changeCurrentDirectoryPath:previousWorkingDirectory];
+    
+    return returnCode >= 0 ? YES : NO;
 }
 
 + (BOOL)compressDirectoryAtURL:(NSURL *)directoryURL toArchive:(NSURL *)archiveURL
 {
-    ECASSERT(directoryURL);
-    
-    struct archive *archive;
-    struct archive_entry *entry;
-    struct stat st;
-    char buff[8192];
-    int len;
-    const char *filename;
-    FILE *file; 
-    
-    archive = archive_write_new();
-    archive_write_set_compression_lzma(archive);
-    archive_write_set_format_zip(archive);
-    archive_write_open_filename(archive, [[archiveURL path] fileSystemRepresentation]);
+    ECASSERT(directoryURL && archiveURL);
     
     NSFileManager *fileManager = [[NSFileManager alloc] init];
-    for (NSURL *fileURL in [fileManager enumeratorAtURL:directoryURL includingPropertiesForKeys:[NSArray arrayWithObjects:NSURLIsRegularFileKey, NSURLIsReadableKey, nil] options:0 errorHandler:nil])
+    ECASSERT([[fileManager attributesOfItemAtPath:[directoryURL path] error:NULL] fileType] == NSFileTypeDirectory);
+    NSString *previousWorkingDirectory = [fileManager currentDirectoryPath];
+    [fileManager changeCurrentDirectoryPath:[directoryURL path]];
+    
+    struct archive *archive = archive_write_new();
+    archive_write_set_compression_lzma(archive);
+    archive_write_set_format_zip(archive);
+    if (archive_write_open_filename(archive, [[archiveURL path] fileSystemRepresentation]) < 0)
     {
-        NSNumber *isRegular;
-        NSNumber *isReadable;
-        [fileURL getResourceValue:&isRegular forKey:NSURLIsRegularFileKey error:NULL];
-        [fileURL getResourceValue:&isReadable forKey:NSURLIsReadableKey error:NULL];
-        if (![isRegular boolValue] || ![isReadable boolValue])
-            continue;
-                   
-        filename = [[fileURL path] fileSystemRepresentation];
-        
-        stat(filename, &st);
-        entry = archive_entry_new();
-        archive_entry_set_pathname(entry, filename);
-        archive_entry_set_size(entry, st.st_size);
-        archive_entry_set_filetype(entry, AE_IFREG);
-        archive_entry_set_perm(entry, 0644);
-        archive_write_header(archive, entry);
-        file = fopen(filename, "rb");
-        len = fread(buff, sizeof(char), sizeof(buff), file);
-        while ( len > 0 ) {
-            archive_write_data(archive, buff, len);
-            len = fread(buff, sizeof(char), sizeof(buff), file);
-        }
-        fclose(file);
-        archive_entry_free(entry);
+        archive_write_free(archive);
+        return NO;
     }
-
+    
+    int returnCode = ARCHIVE_FATAL;
+    for (NSString *relativeFilePath in [fileManager contentsOfDirectoryAtPath:[directoryURL path] error:NULL])
+    {
+        struct archive *disk = archive_read_disk_new();
+        archive_read_disk_set_standard_lookup(disk);
+        if (archive_read_disk_open(disk, [relativeFilePath fileSystemRepresentation]) < 0)
+        {
+            archive_write_free(archive);
+            archive_read_free(disk);
+            return NO;
+        }
+        for (;;)
+        {
+            struct archive_entry *entry = archive_entry_new();
+            returnCode = archive_read_next_header2(disk, entry);
+            if (returnCode == ARCHIVE_EOF)
+                break;
+            archive_read_disk_descend(disk);
+            returnCode = archive_write_header(archive, entry);
+            if (returnCode == ARCHIVE_FATAL)
+            {
+                archive_entry_free(entry);
+                break;
+            }
+            if (returnCode >= 0)
+            {
+                FILE *file = fopen(archive_entry_sourcepath(entry), "rb");
+                // workaround for a bug in libarchive where an entry can have a path relative to the working directory before archive_read_disk_descend was called
+                if (!file)
+                    file = fopen(strstr(archive_entry_sourcepath(entry), "/") + 1, "rb");
+                ECASSERT(file);
+                char buff[8192];
+                size_t length = fread(buff, sizeof(char), sizeof(buff), file);
+                while (length > 0) {
+                    archive_write_data(archive, buff, length);
+                    length = fread(buff, sizeof(char), sizeof(buff), file);
+                }
+                fclose(file);
+            }
+            archive_entry_free(entry);
+        }
+        
+        archive_read_close(disk);
+        archive_read_free(disk);
+    }
+    archive_write_close(archive);
     archive_write_free(archive);
-    return YES;
+    
+    if (returnCode == ARCHIVE_FATAL)
+        [fileManager removeItemAtURL:archiveURL error:NULL];
+    [fileManager changeCurrentDirectoryPath:previousWorkingDirectory];
+    
+    return returnCode != ARCHIVE_FATAL ? YES : NO;
 }
 
 @end
+
+
+//for (NSString *relativeFilePath in [fileManager subpathsOfDirectoryAtPath:[directoryURL path] error:NULL])
+//{
+//    NSString *fileType = [[fileManager attributesOfItemAtPath:relativeFilePath error:NULL] fileType];
+//    if (!fileType || (fileType != NSFileTypeDirectory && fileType != NSFileTypeRegular))
+//        continue;
+//    
+//    struct stat st;        
+//    stat([relativeFilePath fileSystemRepresentation], &st);
+//    struct archive_entry *entry = archive_entry_new();
+//    archive_entry_set_pathname(entry, [relativeFilePath fileSystemRepresentation]);
+//    archive_entry_set_size(entry, st.st_size);
+//    archive_entry_set_filetype(entry, fileType == NSFileTypeDirectory ? AE_IFDIR : AE_IFREG);
+//    archive_entry_set_perm(entry, 0644);
+//    archive_write_header(archive, entry);
+//    FILE *file = fopen([relativeFilePath fileSystemRepresentation], "rb");
+//    char buff[8192];
+//    int fileSize = fread(buff, sizeof(char), sizeof(buff), file);
+//    while ( fileSize > 0 ) {
+//        archive_write_data(archive, buff, fileSize);
+//        fileSize = fread(buff, sizeof(char), sizeof(buff), file);
+//    }
+//    fclose(file);
+//    archive_entry_free(entry);
+//}
