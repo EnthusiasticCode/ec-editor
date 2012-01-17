@@ -86,7 +86,6 @@
 		B7D3BE761431BA3A00BF43EB /* Application.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = B7D3BE741431BA3A00BF43EB /* Application.xcdatamodeld */; };
 		CD1973ED14B1D2B200CACF5E /* topBarItem_Edit.png in Resources */ = {isa = PBXBuildFile; fileRef = CD1973EC14B1D2B200CACF5E /* topBarItem_Edit.png */; };
 		CD1973EF14B1D4F600CACF5E /* topBarItem_Tools.png in Resources */ = {isa = PBXBuildFile; fileRef = CD1973EE14B1D4F600CACF5E /* topBarItem_Tools.png */; };
-		CD21547913F45CC200614B83 /* ACToolButton.m in Sources */ = {isa = PBXBuildFile; fileRef = CD21547813F45CC200614B83 /* ACToolButton.m */; };
 		CD2568C31450D44000A3CCDE /* topBar_BackButton_Normal.png in Resources */ = {isa = PBXBuildFile; fileRef = CD2568C21450D44000A3CCDE /* topBar_BackButton_Normal.png */; };
 		CD2568C71450D5B600A3CCDE /* topBar_ToolButton_Normal.png in Resources */ = {isa = PBXBuildFile; fileRef = CD2568C61450D5B600A3CCDE /* topBar_ToolButton_Normal.png */; };
 		CD333CF814C031A900E0EEE2 /* ACNewProjectImportController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD333CF714C031A900E0EEE2 /* ACNewProjectImportController.m */; };
@@ -96,11 +95,6 @@
 		CD41529B14753520004C7157 /* ACCodeFileAccessoryAction.m in Sources */ = {isa = PBXBuildFile; fileRef = CD41529A14753520004C7157 /* ACCodeFileAccessoryAction.m */; };
 		CD4719A6145196CE00C7BCC5 /* tabBar_TabAddButton.png in Resources */ = {isa = PBXBuildFile; fileRef = CD4719A5145196CE00C7BCC5 /* tabBar_TabAddButton.png */; };
 		CD4E648614C1E984003AC39D /* ACProject.m in Sources */ = {isa = PBXBuildFile; fileRef = CD4E648514C1E984003AC39D /* ACProject.m */; };
-		CD62BAC613CA06A900266BC0 /* ACToolController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD62BAC513CA06A900266BC0 /* ACToolController.m */; };
-		CD62BACA13CA1B4600266BC0 /* ACToolHistoryController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD62BAC913CA1B4500266BC0 /* ACToolHistoryController.m */; };
-		CD62BACD13CA1F8700266BC0 /* ACToolSnippetsController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD62BACC13CA1F8600266BC0 /* ACToolSnippetsController.m */; };
-		CD62BAD013CA248C00266BC0 /* ACToolSymbolsController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD62BACF13CA248C00266BC0 /* ACToolSymbolsController.m */; };
-		CD62BAD313CA2ABD00266BC0 /* ACToolNavigatorController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD62BAD213CA2ABC00266BC0 /* ACToolNavigatorController.m */; };
 		CD6A8A6C14BF7C3100B78188 /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD6A8A6B14BF7C3100B78188 /* MessageUI.framework */; };
 		CD6CCAF9147EB0C50084D797 /* ACCodeFileKeyboardAccessoryPopoverView.m in Sources */ = {isa = PBXBuildFile; fileRef = CD6CCAF8147EB0C50084D797 /* ACCodeFileKeyboardAccessoryPopoverView.m */; };
 		CD6E416C14614A0C00A9CE7F /* ACCodeFileMinimapView.m in Sources */ = {isa = PBXBuildFile; fileRef = CD6E416B14614A0C00A9CE7F /* ACCodeFileMinimapView.m */; };
@@ -124,11 +118,6 @@
 		CD7D2B2113C0D47C00B889EE /* UIFont+AppStyle.m in Sources */ = {isa = PBXBuildFile; fileRef = CD7D2B1D13C0D47C00B889EE /* UIFont+AppStyle.m */; };
 		CD7D2B2213C0D47C00B889EE /* UIImage+AppStyle.m in Sources */ = {isa = PBXBuildFile; fileRef = CD7D2B1F13C0D47C00B889EE /* UIImage+AppStyle.m */; };
 		CD7D2B3413C0D4C700B889EE /* ACProjectTableController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD7D2B3213C0D4C700B889EE /* ACProjectTableController.m */; };
-		CD7D2B3F13C0D4F400B889EE /* ACToolBookmarksController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD7D2B3613C0D4F400B889EE /* ACToolBookmarksController.m */; };
-		CD7D2B4013C0D4F400B889EE /* ACToolFiltersView.m in Sources */ = {isa = PBXBuildFile; fileRef = CD7D2B3813C0D4F400B889EE /* ACToolFiltersView.m */; };
-		CD7D2B4113C0D4F400B889EE /* ACToolPanelController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD7D2B3A13C0D4F400B889EE /* ACToolPanelController.m */; };
-		CD7D2B4213C0D4F400B889EE /* ACToolPanelSegue.m in Sources */ = {isa = PBXBuildFile; fileRef = CD7D2B3C13C0D4F400B889EE /* ACToolPanelSegue.m */; };
-		CD7D2B4313C0D4F400B889EE /* ACToolTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = CD7D2B3E13C0D4F400B889EE /* ACToolTextField.m */; };
 		CD7D2B4813C0D55700B889EE /* ACFileTableController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD7D2B4713C0D55700B889EE /* ACFileTableController.m */; };
 		CD7D2B4E13C0D5FB00B889EE /* ToolPanelStoryboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CD7D2B4D13C0D5FB00B889EE /* ToolPanelStoryboard.storyboard */; };
 		CD7FDD5414BEFBA0002B1122 /* itemIcon_Delete.png in Resources */ = {isa = PBXBuildFile; fileRef = CD7FDD5214BEFBA0002B1122 /* itemIcon_Delete.png */; };
@@ -366,8 +355,6 @@
 		B7D3BE751431BA3A00BF43EB /* Application.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Application.xcdatamodel; sourceTree = "<group>"; };
 		CD1973EC14B1D2B200CACF5E /* topBarItem_Edit.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = topBarItem_Edit.png; sourceTree = "<group>"; };
 		CD1973EE14B1D4F600CACF5E /* topBarItem_Tools.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = topBarItem_Tools.png; sourceTree = "<group>"; };
-		CD21547713F45CC200614B83 /* ACToolButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACToolButton.h; sourceTree = "<group>"; };
-		CD21547813F45CC200614B83 /* ACToolButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACToolButton.m; sourceTree = "<group>"; };
 		CD2568C21450D44000A3CCDE /* topBar_BackButton_Normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = topBar_BackButton_Normal.png; sourceTree = "<group>"; };
 		CD2568C61450D5B600A3CCDE /* topBar_ToolButton_Normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = topBar_ToolButton_Normal.png; sourceTree = "<group>"; };
 		CD333CF614C031A900E0EEE2 /* ACNewProjectImportController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACNewProjectImportController.h; sourceTree = "<group>"; };
@@ -382,16 +369,6 @@
 		CD4719A5145196CE00C7BCC5 /* tabBar_TabAddButton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = tabBar_TabAddButton.png; sourceTree = "<group>"; };
 		CD4E648414C1E984003AC39D /* ACProject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACProject.h; sourceTree = "<group>"; };
 		CD4E648514C1E984003AC39D /* ACProject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACProject.m; sourceTree = "<group>"; };
-		CD62BAC413CA06A900266BC0 /* ACToolController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACToolController.h; sourceTree = "<group>"; };
-		CD62BAC513CA06A900266BC0 /* ACToolController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACToolController.m; sourceTree = "<group>"; };
-		CD62BAC813CA1B4500266BC0 /* ACToolHistoryController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACToolHistoryController.h; sourceTree = "<group>"; };
-		CD62BAC913CA1B4500266BC0 /* ACToolHistoryController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACToolHistoryController.m; sourceTree = "<group>"; };
-		CD62BACB13CA1F8500266BC0 /* ACToolSnippetsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACToolSnippetsController.h; sourceTree = "<group>"; };
-		CD62BACC13CA1F8600266BC0 /* ACToolSnippetsController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACToolSnippetsController.m; sourceTree = "<group>"; };
-		CD62BACE13CA248C00266BC0 /* ACToolSymbolsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACToolSymbolsController.h; sourceTree = "<group>"; };
-		CD62BACF13CA248C00266BC0 /* ACToolSymbolsController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACToolSymbolsController.m; sourceTree = "<group>"; };
-		CD62BAD113CA2ABB00266BC0 /* ACToolNavigatorController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACToolNavigatorController.h; sourceTree = "<group>"; };
-		CD62BAD213CA2ABC00266BC0 /* ACToolNavigatorController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACToolNavigatorController.m; sourceTree = "<group>"; };
 		CD6A8A6B14BF7C3100B78188 /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
 		CD6CCAF7147EB0C50084D797 /* ACCodeFileKeyboardAccessoryPopoverView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACCodeFileKeyboardAccessoryPopoverView.h; sourceTree = "<group>"; };
 		CD6CCAF8147EB0C50084D797 /* ACCodeFileKeyboardAccessoryPopoverView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACCodeFileKeyboardAccessoryPopoverView.m; sourceTree = "<group>"; };
@@ -427,16 +404,6 @@
 		CD7D2B1F13C0D47C00B889EE /* UIImage+AppStyle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = "UIImage+AppStyle.m"; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		CD7D2B3113C0D4C700B889EE /* ACProjectTableController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACProjectTableController.h; sourceTree = "<group>"; };
 		CD7D2B3213C0D4C700B889EE /* ACProjectTableController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACProjectTableController.m; sourceTree = "<group>"; };
-		CD7D2B3513C0D4F400B889EE /* ACToolBookmarksController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACToolBookmarksController.h; sourceTree = "<group>"; };
-		CD7D2B3613C0D4F400B889EE /* ACToolBookmarksController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACToolBookmarksController.m; sourceTree = "<group>"; };
-		CD7D2B3713C0D4F400B889EE /* ACToolFiltersView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACToolFiltersView.h; sourceTree = "<group>"; };
-		CD7D2B3813C0D4F400B889EE /* ACToolFiltersView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACToolFiltersView.m; sourceTree = "<group>"; };
-		CD7D2B3913C0D4F400B889EE /* ACToolPanelController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACToolPanelController.h; sourceTree = "<group>"; };
-		CD7D2B3A13C0D4F400B889EE /* ACToolPanelController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACToolPanelController.m; sourceTree = "<group>"; };
-		CD7D2B3B13C0D4F400B889EE /* ACToolPanelSegue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACToolPanelSegue.h; sourceTree = "<group>"; };
-		CD7D2B3C13C0D4F400B889EE /* ACToolPanelSegue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACToolPanelSegue.m; sourceTree = "<group>"; };
-		CD7D2B3D13C0D4F400B889EE /* ACToolTextField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACToolTextField.h; sourceTree = "<group>"; };
-		CD7D2B3E13C0D4F400B889EE /* ACToolTextField.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACToolTextField.m; sourceTree = "<group>"; };
 		CD7D2B4613C0D55700B889EE /* ACFileTableController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACFileTableController.h; sourceTree = "<group>"; };
 		CD7D2B4713C0D55700B889EE /* ACFileTableController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACFileTableController.m; sourceTree = "<group>"; };
 		CD7D2B4D13C0D5FB00B889EE /* ToolPanelStoryboard.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = ToolPanelStoryboard.storyboard; sourceTree = "<group>"; };
@@ -851,7 +818,6 @@
 				B732D00113DB2AD100637FBE /* Model */,
 				CD7D2B1713C0D3A600B889EE /* Styles */,
 				CD7D2B1613C0D39B00B889EE /* Navigation */,
-				CD7D2B1513C0D39000B889EE /* Tools */,
 				CD7D2B1413C0D38A00B889EE /* Browsers */,
 				CD7D2B1813C0D3B100B889EE /* Editor */,
 			);
@@ -902,28 +868,6 @@
 			name = Browsers;
 			sourceTree = "<group>";
 		};
-		CD7D2B1513C0D39000B889EE /* Tools */ = {
-			isa = PBXGroup;
-			children = (
-				CD7D2B3913C0D4F400B889EE /* ACToolPanelController.h */,
-				CD7D2B3A13C0D4F400B889EE /* ACToolPanelController.m */,
-				CD62BAC413CA06A900266BC0 /* ACToolController.h */,
-				CD62BAC513CA06A900266BC0 /* ACToolController.m */,
-				CD7D2B3513C0D4F400B889EE /* ACToolBookmarksController.h */,
-				CD7D2B3613C0D4F400B889EE /* ACToolBookmarksController.m */,
-				CD62BAC813CA1B4500266BC0 /* ACToolHistoryController.h */,
-				CD62BAC913CA1B4500266BC0 /* ACToolHistoryController.m */,
-				CD62BACB13CA1F8500266BC0 /* ACToolSnippetsController.h */,
-				CD62BACC13CA1F8600266BC0 /* ACToolSnippetsController.m */,
-				CD62BACE13CA248C00266BC0 /* ACToolSymbolsController.h */,
-				CD62BACF13CA248C00266BC0 /* ACToolSymbolsController.m */,
-				CD62BAD113CA2ABB00266BC0 /* ACToolNavigatorController.h */,
-				CD62BAD213CA2ABC00266BC0 /* ACToolNavigatorController.m */,
-				CD7D2B4413C0D51400B889EE /* Views and Segues */,
-			);
-			name = Tools;
-			sourceTree = "<group>";
-		};
 		CD7D2B1613C0D39B00B889EE /* Navigation */ = {
 			isa = PBXGroup;
 			children = (
@@ -965,21 +909,6 @@
 				CD7BC79214B7054800313CDB /* Remotes Controllers */,
 			);
 			name = Editor;
-			sourceTree = "<group>";
-		};
-		CD7D2B4413C0D51400B889EE /* Views and Segues */ = {
-			isa = PBXGroup;
-			children = (
-				CD7D2B3B13C0D4F400B889EE /* ACToolPanelSegue.h */,
-				CD7D2B3C13C0D4F400B889EE /* ACToolPanelSegue.m */,
-				CD7D2B3713C0D4F400B889EE /* ACToolFiltersView.h */,
-				CD7D2B3813C0D4F400B889EE /* ACToolFiltersView.m */,
-				CD7D2B3D13C0D4F400B889EE /* ACToolTextField.h */,
-				CD7D2B3E13C0D4F400B889EE /* ACToolTextField.m */,
-				CD21547713F45CC200614B83 /* ACToolButton.h */,
-				CD21547813F45CC200614B83 /* ACToolButton.m */,
-			);
-			name = "Views and Segues";
 			sourceTree = "<group>";
 		};
 		CD7D2B4513C0D53A00B889EE /* Top Bar Controller */ = {
@@ -1404,21 +1333,10 @@
 				CD7D2B2113C0D47C00B889EE /* UIFont+AppStyle.m in Sources */,
 				CD7D2B2213C0D47C00B889EE /* UIImage+AppStyle.m in Sources */,
 				CD7D2B3413C0D4C700B889EE /* ACProjectTableController.m in Sources */,
-				CD7D2B3F13C0D4F400B889EE /* ACToolBookmarksController.m in Sources */,
-				CD7D2B4013C0D4F400B889EE /* ACToolFiltersView.m in Sources */,
-				CD7D2B4113C0D4F400B889EE /* ACToolPanelController.m in Sources */,
-				CD7D2B4213C0D4F400B889EE /* ACToolPanelSegue.m in Sources */,
-				CD7D2B4313C0D4F400B889EE /* ACToolTextField.m in Sources */,
 				CD7D2B4813C0D55700B889EE /* ACFileTableController.m in Sources */,
-				CD62BAC613CA06A900266BC0 /* ACToolController.m in Sources */,
-				CD62BACA13CA1B4600266BC0 /* ACToolHistoryController.m in Sources */,
-				CD62BACD13CA1F8700266BC0 /* ACToolSnippetsController.m in Sources */,
-				CD62BAD013CA248C00266BC0 /* ACToolSymbolsController.m in Sources */,
-				CD62BAD313CA2ABD00266BC0 /* ACToolNavigatorController.m in Sources */,
 				CD9CD97013DC22AF007964D3 /* ACCodeFileController.m in Sources */,
 				CDD40B0313E1A046008AC36B /* ACPopoverHistoryToolController.m in Sources */,
 				CD8108D513E31A28000E1941 /* ACColorSelectionControl.m in Sources */,
-				CD21547913F45CC200614B83 /* ACToolButton.m in Sources */,
 				B7AC174D14216D1C009E9205 /* ACNewProjectController.m in Sources */,
 				B7D3BE761431BA3A00BF43EB /* Application.xcdatamodeld in Sources */,
 				B70231FA14345B5A006D23F7 /* ACTab.m in Sources */,

@@ -17,7 +17,6 @@
 #import <ECUIKit/NSURL+URLDuplicate.h>
 #import <ECUIKit/ECBezelAlert.h>
 
-#import "ACToolFiltersView.h"
 #import "ACHighlightTableViewCell.h"
 
 #import "ACTab.h"
