@@ -12,7 +12,7 @@
 
 - (NSURL *)URLByAddingDuplicateNumber:(NSUInteger)number
 {
-    return [[self URLByDeletingLastPathComponent] URLByAppendingPathComponent:[[[self lastPathComponent] stringByDeletingPathExtension] stringByAppendingFormat:@" (%u).%s", number, [self pathExtension]]];
+    return [[self URLByDeletingLastPathComponent] URLByAppendingPathComponent:[[[self lastPathComponent] stringByDeletingPathExtension] stringByAppendingFormat:@" (%u).%@", number, [self pathExtension]]];
 }
 
 @end
