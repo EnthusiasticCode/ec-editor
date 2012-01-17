@@ -23,8 +23,8 @@ typedef enum {
 /// All other consumer methods will be called on the returned queue.
 - (NSOperationQueue *)consumerOperationQueue;
 
-/// All the "will" methods are blocking, so return from them as soon as possible
-/// All the "did" methods are asynchronous and aren't coalesced, so they may be called multiple times in succession, and not immediately after the change has gone through
+/// All the "will" methods are blocking, so return from them as soon as possible. There's also a high chance they will cause a deadlock if they're not implemented with care.
+/// All the "did" methods are asynchronous and aren't coalesced, so they may be called multiple times in succession, and not immediately after the change has gone through.
 
 @optional
 - (void)fileWillBeDeletedForFileBuffer:(ECFileBuffer *)fileBuffer;

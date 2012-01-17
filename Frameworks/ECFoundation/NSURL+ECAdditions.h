@@ -17,4 +17,15 @@
 /// Return a temporary directory
 + (NSURL *)temporaryDirectory;
 
+/// Returns whether the receiver is a descendant of a subdirectory of the given directory
+- (BOOL)isSubdirectoryDescendantOfDirectoryAtURL:(NSURL *)directoryURL;
+
+/// Returns whether the receiver refers to a hidden file
+- (BOOL)isHidden;
+- (BOOL)isHiddenDescendant;
+
+/// Returns whether the receiver refers to a package
+- (BOOL)isPackage;
+- (BOOL)isPackageDescendant;
+
 @end

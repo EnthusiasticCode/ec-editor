@@ -13,9 +13,10 @@
 /// Bugs and known issues:
 /// It does not monitor file system events, so it only works with code that supports file coordination explicitly.
 /// It does not support file versioning.
-/// It does not support symlinks or directories containing symlinks.
+/// It does not support symlinks.
 /// It does not pass a new URL to accessor blocks, it always passes the same URL, even if the file was moved or deleted in the meantime.
-/// It is very slow.
+/// In NSFilePresenter methods with a completion handler, it does not wait for it to be called, it instead waits for the method to return. It also ignores the error passed within the completion handler.
+/// All the blocks passed to the coordinate methods are executed in the file coordination dispatch queue instead of the calling queue, unlike NSFileCoordinator.
 
 @interface ECFileCoordinator : NSFileCoordinator
 

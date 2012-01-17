@@ -9,6 +9,7 @@
 #import "ECFileCoordinator.h"
 
 static dispatch_queue_t _fileCoordinationDispatchQueue;
+static dispatch_queue_t _filePresentersDispatchQueue;
 static NSMutableArray *_filePresenters;
 
 @interface ECFileCoordinator ()
@@ -23,13 +24,14 @@ static NSMutableArray *_filePresenters;
 {
     if (self != [ECFileCoordinator class])
         return;
-    _fileCoordinationDispatchQueue = dispatch_queue_create(NULL, DISPATCH_QUEUE_CONCURRENT);
+    _fileCoordinationDispatchQueue = dispatch_queue_create(NULL, DISPATCH_QUEUE_SERIAL);
+    _filePresentersDispatchQueue = dispatch_queue_create(NULL, DISPATCH_QUEUE_CONCURRENT);
     _filePresenters = [[NSMutableArray alloc] init];
 }
 
 + (void)addFilePresenter:(id<NSFilePresenter>)filePresenter
 {
-    dispatch_barrier_async(_fileCoordinationDispatchQueue, ^{
+    dispatch_barrier_async(_filePresentersDispatchQueue, ^{
         ECASSERT([filePresenter conformsToProtocol:@protocol(NSFilePresenter)]);
         [_filePresenters addObject:filePresenter];
     });
@@ -37,7 +39,7 @@ static NSMutableArray *_filePresenters;
 
 + (void)removeFilePresenter:(id<NSFilePresenter>)filePresenter
 {
-    dispatch_barrier_sync(_fileCoordinationDispatchQueue, ^{
+    dispatch_barrier_sync(_filePresentersDispatchQueue, ^{
         ECASSERT([_filePresenters containsObject:filePresenter]);
         [_filePresenters removeObject:filePresenter];
     });
@@ -46,7 +48,7 @@ static NSMutableArray *_filePresenters;
 + (NSArray *)filePresenters
 {
     __block NSArray *filePresenters = nil;
-    dispatch_barrier_sync(_fileCoordinationDispatchQueue, ^{
+    dispatch_barrier_sync(_filePresentersDispatchQueue, ^{
         filePresenters = [_filePresenters copy];
     });
     return filePresenters;
@@ -67,7 +69,7 @@ static NSMutableArray *_filePresenters;
     dispatch_sync(_fileCoordinationDispatchQueue, ^{
         NSMutableArray *affectedFilePresenters = [[NSMutableArray alloc] init];
         NSMutableDictionary *reaquirers = [[NSMutableDictionary alloc] init];
-        for (id<NSFilePresenter>filePresenter in _filePresenters)
+        for (id<NSFilePresenter>filePresenter in [[self class] filePresenters])
         {
             if (filePresenter == _filePresenterToIgnore || ![filePresenter presentedItemURL])
                 continue;
@@ -101,12 +103,12 @@ static NSMutableArray *_filePresenters;
 - (void)coordinateWritingItemAtURL:(NSURL *)url options:(NSFileCoordinatorWritingOptions)options error:(NSError *__autoreleasing *)outError byAccessor:(void (^)(NSURL *))writer
 {
     ECASSERT(dispatch_get_current_queue() != _fileCoordinationDispatchQueue);
-    dispatch_barrier_sync(_fileCoordinationDispatchQueue, ^{
+    dispatch_sync(_fileCoordinationDispatchQueue, ^{
         NSMutableArray *affectedFilePresenters = [[NSMutableArray alloc] init];
         NSMutableArray *affectedSubitemPresenters = [[NSMutableArray alloc] init];
         NSMutableArray *affectedAncestorDirectoryPresenters = [[NSMutableArray alloc] init];
         NSMutableDictionary *reaquirers = [[NSMutableDictionary alloc] init];
-        for (id<NSFilePresenter>filePresenter in _filePresenters)
+        for (id<NSFilePresenter>filePresenter in [[self class] filePresenters])
         {
             if (filePresenter == _filePresenterToIgnore || ![filePresenter presentedItemURL])
                 continue;
@@ -212,10 +214,10 @@ static NSMutableArray *_filePresenters;
 - (void)coordinateReadingItemAtURL:(NSURL *)readingURL options:(NSFileCoordinatorReadingOptions)readingOptions writingItemAtURL:(NSURL *)writingURL options:(NSFileCoordinatorWritingOptions)writingOptions error:(NSError *__autoreleasing *)outError byAccessor:(void (^)(NSURL *, NSURL *))readerWriter
 {
     ECASSERT(dispatch_get_current_queue() != _fileCoordinationDispatchQueue);
-    dispatch_barrier_sync(_fileCoordinationDispatchQueue, ^{
+    dispatch_sync(_fileCoordinationDispatchQueue, ^{
         NSMutableArray *affectedReadingFilePresenters = [[NSMutableArray alloc] init];
         NSMutableDictionary *readingReaquirers = [[NSMutableDictionary alloc] init];
-        for (id<NSFilePresenter>filePresenter in _filePresenters)
+        for (id<NSFilePresenter>filePresenter in [[self class] filePresenters])
         {
             if (filePresenter == _filePresenterToIgnore || ![filePresenter presentedItemURL])
                 continue;
@@ -243,7 +245,7 @@ static NSMutableArray *_filePresenters;
         NSMutableArray *affectedWritingSubitemPresenters = [[NSMutableArray alloc] init];
         NSMutableArray *affectedWritingAncestorDirectoryPresenters = [[NSMutableArray alloc] init];
         NSMutableDictionary *writingReaquirers = [[NSMutableDictionary alloc] init];
-        for (id<NSFilePresenter>filePresenter in _filePresenters)
+        for (id<NSFilePresenter>filePresenter in [[self class] filePresenters])
         {
             if (filePresenter == _filePresenterToIgnore || ![filePresenter presentedItemURL])
                 continue;
@@ -352,12 +354,12 @@ static NSMutableArray *_filePresenters;
 - (void)coordinateWritingItemAtURL:(NSURL *)url1 options:(NSFileCoordinatorWritingOptions)options1 writingItemAtURL:(NSURL *)url2 options:(NSFileCoordinatorWritingOptions)options2 error:(NSError *__autoreleasing *)outError byAccessor:(void (^)(NSURL *, NSURL *))writer
 {
     ECASSERT(dispatch_get_current_queue() != _fileCoordinationDispatchQueue);
-    dispatch_barrier_sync(_fileCoordinationDispatchQueue, ^{
+    dispatch_sync(_fileCoordinationDispatchQueue, ^{
         NSMutableArray *affectedFilePresenters1 = [[NSMutableArray alloc] init];
         NSMutableArray *affectedSubitemPresenters1 = [[NSMutableArray alloc] init];
         NSMutableArray *affectedAncestorDirectoryPresenters1 = [[NSMutableArray alloc] init];
         NSMutableDictionary *reaquirers1 = [[NSMutableDictionary alloc] init];
-        for (id<NSFilePresenter>filePresenter in _filePresenters)
+        for (id<NSFilePresenter>filePresenter in [[self class] filePresenters])
         {
             if (filePresenter == _filePresenterToIgnore || ![filePresenter presentedItemURL])
                 continue;
@@ -430,7 +432,7 @@ static NSMutableArray *_filePresenters;
         NSMutableArray *affectedSubitemPresenters2 = [[NSMutableArray alloc] init];
         NSMutableArray *affectedAncestorDirectoryPresenters2 = [[NSMutableArray alloc] init];
         NSMutableDictionary *reaquirers2 = [[NSMutableDictionary alloc] init];
-        for (id<NSFilePresenter>filePresenter in _filePresenters)
+        for (id<NSFilePresenter>filePresenter in [[self class] filePresenters])
         {
             if (filePresenter == _filePresenterToIgnore || ![filePresenter presentedItemURL])
                 continue;
@@ -569,7 +571,7 @@ static NSMutableArray *_filePresenters;
 - (void)itemAtURL:(NSURL *)oldURL didMoveToURL:(NSURL *)newURL
 {
     ECASSERT(dispatch_get_current_queue() == _fileCoordinationDispatchQueue);
-    for (id<NSFilePresenter>filePresenter in _filePresenters)
+    for (id<NSFilePresenter>filePresenter in [[self class] filePresenters])
     {
         if (filePresenter == _filePresenterToIgnore || ![filePresenter presentedItemURL] || ![filePresenter respondsToSelector:@selector(relinquishPresentedItemToWriter:)])
             continue;

@@ -34,8 +34,7 @@
 
 - (void)viewWillAppear:(BOOL)animated
 {
-    _documentsDirectoryPresenter = [[ECDirectoryPresenter alloc] init];
-    _documentsDirectoryPresenter.directory = [NSURL applicationDocumentsDirectory];
+    _documentsDirectoryPresenter = [[ECDirectoryPresenter alloc] initWithDirectoryURL:[NSURL applicationDocumentsDirectory] options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants];
     [self.tableView reloadData];
 }
 

@@ -89,7 +89,7 @@ static void * directoryPresenterFileURLsObservingContext;
         return;
     [self willChangeValueForKey:@"projectsDirectory"];
     _projectsDirectory = projectsDirectory;
-    self.directoryPresenter.directory = _projectsDirectory;
+    self.directoryPresenter = [[ECDirectoryPresenter alloc] initWithDirectoryURL:_projectsDirectory options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants];
     [self didChangeValueForKey:@"projectsDirectory"];
 }
 
@@ -204,8 +204,7 @@ static void * directoryPresenterFileURLsObservingContext;
 
 - (void)viewWillAppear:(BOOL)animated
 {
-    self.directoryPresenter = [[ECDirectoryPresenter alloc] init];
-    self.directoryPresenter.directory = self.projectsDirectory;
+    self.directoryPresenter = [[ECDirectoryPresenter alloc] initWithDirectoryURL:self.projectsDirectory options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants];
 }
 
 - (void)viewDidDisappear:(BOOL)animated

@@ -8,6 +8,24 @@
 
 #import "NSURL+ECAdditions.h"
 
+@interface NSURL (ECAdditions_Internal)
++ (NSArray *)_packageExtensions;
+@end
+
+@implementation NSURL (ECAdditions_Internal)
+
++ (NSArray *)_packageExtensions
+{
+    static NSArray *packageExtensions = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        packageExtensions = [NSArray arrayWithObjects:@"app", @"tmbundle", @"bundle", nil];
+    });
+    return packageExtensions;
+}
+
+@end
+
 @implementation NSURL (ECAdditions)
 
 + (NSURL *)applicationDocumentsDirectory
@@ -34,6 +52,45 @@
     }
     while ([fileManager fileExistsAtPath:[temporaryDirectory path]]);
     return temporaryDirectory;
+}
+
+- (BOOL)isSubdirectoryDescendantOfDirectoryAtURL:(NSURL *)directoryURL
+{
+    if (![[self absoluteString] hasPrefix:[directoryURL absoluteString]])
+        return NO;
+    return [[directoryURL pathComponents] count] != [[self pathComponents] count] + 1;
+}
+
+- (BOOL)isHidden
+{
+    return [[self lastPathComponent] characterAtIndex:0] == L'.';
+}
+
+- (BOOL)isHiddenDescendant
+{
+    return !([[[self absoluteString] stringByDeletingLastPathComponent] rangeOfString:@"/."].location == NSNotFound);
+}
+
+- (BOOL)isPackage
+{
+    for (NSString *packageExtension in [[self class] _packageExtensions])
+        if ([[self pathExtension] isEqualToString:packageExtension])
+            return YES;
+    return NO;
+}
+
+- (BOOL)isPackageDescendant
+{
+    NSString *absoluteString = [self absoluteString];
+    if ([absoluteString characterAtIndex:[absoluteString length] - 1] == L'/')
+        absoluteString = [absoluteString substringToIndex:[absoluteString length] - 1];
+    for (NSString *packageExtension in [[self class] _packageExtensions])
+    {
+        NSRange rangeOfPackageExtension = [absoluteString rangeOfString:[packageExtension stringByAppendingString:@"/"]];
+        if (rangeOfPackageExtension.location != NSNotFound)
+            return YES;
+    }
+    return NO;
 }
 
 @end

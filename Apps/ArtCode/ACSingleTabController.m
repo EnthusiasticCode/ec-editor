@@ -457,7 +457,7 @@ static const void *contentViewControllerContext;
     __block BOOL currentURLIsEqualToProjectsDirectory = NO;
     __block BOOL currentURLExists = NO;
     __block BOOL currentURLIsDirectory = NO;
-    [fileCoordinator coordinateReadingItemAtURL:url options:NSFileCoordinatorReadingResolvesSymbolicLink | NSFileCoordinatorReadingWithoutChanges error:NULL byAccessor:^(NSURL *newURL) {
+    [fileCoordinator coordinateReadingItemAtURL:url options:0 error:NULL byAccessor:^(NSURL *newURL) {
         currentURLIsEqualToProjectsDirectory = [newURL isEqual:[self.tab.application projectsDirectory]];
         NSFileManager *fileManager = [[NSFileManager alloc] init];
         currentURLExists = [fileManager fileExistsAtPath:[newURL path] isDirectory:&currentURLIsDirectory];
