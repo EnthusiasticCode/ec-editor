@@ -11,7 +11,7 @@
 
 @class ACTab;
 
-@interface ACSingleProjectBrowsersController : UITabBarController <ACSingleTabContentController>
+@interface ACSingleProjectBrowsersController : UITabBarController <ACSingleTabContentController, UITextFieldDelegate>
 
 @property (nonatomic, strong) ACTab *tab;
 

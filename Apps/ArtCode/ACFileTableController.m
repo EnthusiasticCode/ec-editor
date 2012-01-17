@@ -500,7 +500,18 @@ static void * directoryPresenterFileURLsObservingContext;
     }
     else if (actionSheet == _toolEditItemExportActionSheet)
     {
-        
+        if (buttonIndex == 0) // Move
+        {
+            
+        }
+        else if (buttonIndex == 1) // iTunes
+        {
+            
+        }
+        else if (buttonIndex == 2) // Mail
+        {
+            
+        }
     }
 }
 

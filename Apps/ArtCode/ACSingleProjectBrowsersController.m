@@ -125,10 +125,34 @@
         [_projectColorLabelButton setImage:[UIImage styleProjectLabelImageWithSize:CGSizeMake(14, 22) color:project.labelColor] forState:UIControlStateNormal];
         [_projectColorLabelButton sizeToFit];
         
-        [titleControl setTitleFragments:[NSArray arrayWithObjects:_projectColorLabelButton, projectName, nil] 
+        UITextField *titleField = [UITextField new];
+        titleField.delegate = self;
+        titleField.font = [UIFont boldSystemFontOfSize:20];
+        titleField.textColor = [UIColor whiteColor];
+        titleField.text = projectName;
+        titleField.returnKeyType = UIReturnKeyDone;
+        [titleField sizeToFit];
+        
+        [titleControl setTitleFragments:[NSArray arrayWithObjects:_projectColorLabelButton, titleField, nil] 
                         selectedIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, 2)]];
     }
     return YES;
+}
+
+#pragma mark - Text Field delefate
+
+- (void)textFieldDidEndEditing:(UITextField *)textField
+{
+    NSString *projectName = [ACProject projectNameFromURL:self.tab.currentURL isProjectRoot:NULL];
+    if ([textField.text length] == 0 || [projectName isEqualToString:textField.text])
+        return;
+    
+#warning TODO check that the name is ok
+    
+    ACProject *project = [ACProject projectWithName:projectName];
+    project.name = textField.text;
+    
+    // File coordination will care about changing the tab url and hence reload the controller
 }
 
 #pragma mark - Opening Browser
