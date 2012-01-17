@@ -7,8 +7,10 @@
 //
 
 #import "ACFileTableController.h"
+#import "ACSingleTabController.h"
 #import "AppStyle.h"
 #import "ACNewFileController.h"
+
 #import <ECFoundation/ECDirectoryPresenter.h>
 #import <ECFoundation/NSTimer+block.h>
 #import <ECFoundation/NSString+ECAdditions.h>
@@ -71,6 +73,7 @@ static void * directoryPresenterFileURLsObservingContext;
     
     UIPopoverController *_toolNormalAddPopover;
     UIActionSheet *_toolEditItemDeleteActionSheet;
+    UIActionSheet *_toolEditItemDuplicateActionSheet;
     UIActionSheet *_toolEditItemExportActionSheet;
     
     NSTimer *_filterDebounceTimer;
@@ -303,6 +306,17 @@ static void * directoryPresenterFileURLsObservingContext;
     self.toolbarItems = _toolNormalItems;
 }
 
+- (void)viewDidUnload
+{
+    [super viewDidUnload];
+    
+    _toolNormalAddPopover = nil;
+    
+    _toolEditItemDeleteActionSheet = nil;
+    _toolEditItemExportActionSheet = nil;
+    _toolEditItemDuplicateActionSheet = nil;
+}
+
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
@@ -443,7 +457,52 @@ static void * directoryPresenterFileURLsObservingContext;
 
 - (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex
 {
-    // TODO, delete, export
+    if (actionSheet == _toolEditItemDeleteActionSheet)
+    {
+        if (buttonIndex == actionSheet.destructiveButtonIndex)
+        {
+            self.loading = YES;
+            ECFileCoordinator *coordinator = [[ECFileCoordinator alloc] initWithFilePresenter:nil];
+            NSFileManager *fileManager = [NSFileManager new];
+            [_selectedURLs enumerateObjectsUsingBlock:^(NSURL *url, NSUInteger idx, BOOL *stop) {
+                [coordinator coordinateWritingItemAtURL:url options:NSFileCoordinatorWritingForDeleting error:NULL byAccessor:^(NSURL *newURL) {
+                    [fileManager removeItemAtURL:newURL error:NULL];
+                }];
+            }];
+            self.loading = NO;
+            [[ECBezelAlert defaultBezelAlert] addAlertMessageWithText:([_selectedURLs count] == 1 ? @"File deleted" : [NSString stringWithFormat:@"%u files deleted", [_selectedURLs count]]) image:nil displayImmediatly:YES];
+            [self setEditing:NO animated:YES];
+        }
+    }
+    else if (actionSheet == _toolEditItemDuplicateActionSheet)
+    {
+        if (buttonIndex == 0) // Copy
+        {
+        }
+        else if (buttonIndex == 1) // Duplicate
+        {
+            self.loading = YES;
+            ECFileCoordinator *coordinator = [[ECFileCoordinator alloc] initWithFilePresenter:nil];
+            NSFileManager *fileManager = [NSFileManager new];
+            [_selectedURLs enumerateObjectsUsingBlock:^(NSURL *url, NSUInteger idx, BOOL *stop) {
+                NSUInteger count = 0;
+                NSURL *dupUrl = nil;
+                do {
+                    dupUrl = [url URLByAddingDuplicateNumber:++count];
+                } while ([fileManager fileExistsAtPath:[dupUrl path]]);
+                [coordinator coordinateReadingItemAtURL:url options:0 writingItemAtURL:dupUrl options:NSFileCoordinatorWritingForReplacing error:NULL byAccessor:^(NSURL *newReadingURL, NSURL *newWritingURL) {
+                    [fileManager copyItemAtURL:newReadingURL toURL:newWritingURL error:NULL];
+                }];
+            }];
+            self.loading = NO;
+            [[ECBezelAlert defaultBezelAlert] addAlertMessageWithText:([_selectedURLs count] == 1 ? @"File duplicated" : [NSString stringWithFormat:@"%u files duplicated", [_selectedURLs count]]) image:nil displayImmediatly:YES];
+            [self setEditing:NO animated:YES];
+        }
+    }
+    else if (actionSheet == _toolEditItemExportActionSheet)
+    {
+        
+    }
 }
 
 #pragma mark - Private Methods
@@ -482,20 +541,12 @@ static void * directoryPresenterFileURLsObservingContext;
 
 - (void)_toolEditDuplicateAction:(id)sender
 {
-    ECFileCoordinator *coordinator = [[ECFileCoordinator alloc] initWithFilePresenter:nil];
-    NSFileManager *fileManager = [NSFileManager new];
-    [_selectedURLs enumerateObjectsUsingBlock:^(NSURL *url, NSUInteger idx, BOOL *stop) {
-        NSUInteger count = 0;
-        NSURL *dupUrl = nil;
-        do {
-            dupUrl = [url URLByAddingDuplicateNumber:++count];
-        } while ([fileManager fileExistsAtPath:[dupUrl path]]);
-        [coordinator coordinateReadingItemAtURL:url options:0 writingItemAtURL:dupUrl options:NSFileCoordinatorWritingForReplacing error:NULL byAccessor:^(NSURL *newReadingURL, NSURL *newWritingURL) {
-            [fileManager copyItemAtURL:newReadingURL toURL:newWritingURL error:NULL];
-        }];
-    }];
-    [[ECBezelAlert defaultBezelAlert] addAlertMessageWithText:([_selectedURLs count] == 1 ? @"File duplicated" : [NSString stringWithFormat:@"%u files duplicated", [_selectedURLs count]]) image:nil displayImmediatly:YES];
-    [self setEditing:NO animated:YES];
+    if (!_toolEditItemDuplicateActionSheet)
+    {
+        _toolEditItemDuplicateActionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:@"Copy to new location", @"Duplicate", nil];
+        _toolEditItemDuplicateActionSheet.actionSheetStyle = UIActionSheetStyleBlackOpaque;
+    }
+    [_toolEditItemDuplicateActionSheet showFromRect:[sender frame] inView:[sender superview] animated:YES];
     
 }
 
