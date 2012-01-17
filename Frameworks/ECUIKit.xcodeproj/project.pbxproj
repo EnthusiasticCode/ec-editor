@@ -125,6 +125,8 @@
 		CD0AD99014362AF100FC1EFE /* libECFoundation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7170BCF1428ECC300DF7794 /* libECFoundation.a */; };
 		CD0AD991143634FC00FC1EFE /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7170BD61428F00800DF7794 /* QuartzCore.framework */; };
 		CD0BD4AA14374FD2006F2A37 /* UIView+ReuseIdentifier.m in Sources */ = {isa = PBXBuildFile; fileRef = B7170B881428EB2500DF7794 /* UIView+ReuseIdentifier.m */; };
+		CD29013D14C58BDB00F57D84 /* NSURL+URLDuplicate.h in Headers */ = {isa = PBXBuildFile; fileRef = CD29013B14C58BDB00F57D84 /* NSURL+URLDuplicate.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CD29013E14C58BDB00F57D84 /* NSURL+URLDuplicate.m in Sources */ = {isa = PBXBuildFile; fileRef = CD29013C14C58BDB00F57D84 /* NSURL+URLDuplicate.m */; };
 		CD2A5FCD142A4A9900A2CACD /* ECSplitViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = CD2A5FCB142A4A9900A2CACD /* ECSplitViewController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CD2A5FCE142A4A9900A2CACD /* ECSplitViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD2A5FCC142A4A9900A2CACD /* ECSplitViewController.m */; };
 		CD2A5FCF142A4A9900A2CACD /* ECSplitViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD2A5FCC142A4A9900A2CACD /* ECSplitViewController.m */; };
@@ -394,6 +396,8 @@
 		CD17F2F1144596F60008ED91 /* ECCodeViewTest_ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ECCodeViewTest_ViewController.h; sourceTree = "<group>"; };
 		CD17F2F2144596F60008ED91 /* ECCodeViewTest_ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ECCodeViewTest_ViewController.m; sourceTree = "<group>"; };
 		CD17F2F5144596F60008ED91 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/ECCodeViewTest_ViewController.xib; sourceTree = "<group>"; };
+		CD29013B14C58BDB00F57D84 /* NSURL+URLDuplicate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSURL+URLDuplicate.h"; sourceTree = "<group>"; };
+		CD29013C14C58BDB00F57D84 /* NSURL+URLDuplicate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSURL+URLDuplicate.m"; sourceTree = "<group>"; };
 		CD2A5FCB142A4A9900A2CACD /* ECSplitViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECSplitViewController.h; sourceTree = "<group>"; };
 		CD2A5FCC142A4A9900A2CACD /* ECSplitViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECSplitViewController.m; sourceTree = "<group>"; };
 		CD6B0F031434D43000049625 /* ECInverseCornerShapeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECInverseCornerShapeView.h; sourceTree = "<group>"; };
@@ -789,6 +793,8 @@
 				B7170B881428EB2500DF7794 /* UIView+ReuseIdentifier.m */,
 				CD06BA5D1438640200295E5A /* ECCustomizableScrollView.h */,
 				CD06BA5E1438640200295E5A /* ECCustomizableScrollView.m */,
+				CD29013B14C58BDB00F57D84 /* NSURL+URLDuplicate.h */,
+				CD29013C14C58BDB00F57D84 /* NSURL+URLDuplicate.m */,
 			);
 			name = "UIKit Additions";
 			sourceTree = "<group>";
@@ -916,6 +922,7 @@
 				B7170BB91428EB2500DF7794 /* UIControl+BlockAction.h in Headers */,
 				B7170BBB1428EB2500DF7794 /* UIImage+BlockDrawing.h in Headers */,
 				B7170BBF1428EB2500DF7794 /* UIView+ReuseIdentifier.h in Headers */,
+				CD29013D14C58BDB00F57D84 /* NSURL+URLDuplicate.h in Headers */,
 				B71709DB1428E64F00DF7794 /* ECDebug.h in Headers */,
 				CD6B0F051434D43000049625 /* ECInverseCornerShapeView.h in Headers */,
 				CD06BA5F1438640200295E5A /* ECCustomizableScrollView.h in Headers */,
@@ -1092,6 +1099,7 @@
 				CDA76309146968E30004FAC7 /* ECKeyboardAccessoryView.m in Sources */,
 				CDA763111469775C0004FAC7 /* ECCodeStringDataSource.m in Sources */,
 				CDEE0D0F14BC56B50019FDEF /* ECGridView.m in Sources */,
+				CD29013E14C58BDB00F57D84 /* NSURL+URLDuplicate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

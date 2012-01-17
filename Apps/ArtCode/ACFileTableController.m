@@ -12,6 +12,8 @@
 #import <ECFoundation/ECDirectoryPresenter.h>
 #import <ECFoundation/NSTimer+block.h>
 #import <ECFoundation/NSString+ECAdditions.h>
+#import <ECUIKit/NSURL+URLDuplicate.h>
+#import <ECUIKit/ECBezelAlert.h>
 
 #import "ACToolFiltersView.h"
 #import "ACHighlightTableViewCell.h"
@@ -476,6 +478,25 @@ static void * directoryPresenterFileURLsObservingContext;
         _toolEditItemExportActionSheet.actionSheetStyle = UIActionSheetStyleBlackOpaque;
     }
     [_toolEditItemExportActionSheet showFromRect:[sender frame] inView:[sender superview] animated:YES];
+}
+
+- (void)_toolEditDuplicateAction:(id)sender
+{
+    ECFileCoordinator *coordinator = [[ECFileCoordinator alloc] initWithFilePresenter:nil];
+    NSFileManager *fileManager = [NSFileManager new];
+    [_selectedURLs enumerateObjectsUsingBlock:^(NSURL *url, NSUInteger idx, BOOL *stop) {
+        NSUInteger count = 0;
+        NSURL *dupUrl = nil;
+        do {
+            dupUrl = [url URLByAddingDuplicateNumber:++count];
+        } while ([fileManager fileExistsAtPath:[dupUrl path]]);
+        [coordinator coordinateReadingItemAtURL:url options:0 writingItemAtURL:dupUrl options:NSFileCoordinatorWritingForReplacing error:NULL byAccessor:^(NSURL *newReadingURL, NSURL *newWritingURL) {
+            [fileManager copyItemAtURL:newReadingURL toURL:newWritingURL error:NULL];
+        }];
+    }];
+    [[ECBezelAlert defaultBezelAlert] addAlertMessageWithText:([_selectedURLs count] == 1 ? @"File duplicated" : [NSString stringWithFormat:@"%u files duplicated", [_selectedURLs count]]) image:nil displayImmediatly:YES];
+    [self setEditing:NO animated:YES];
+    
 }
 
 @end
