@@ -313,6 +313,13 @@ static void * directoryPresenterFileURLsObservingContext;
     self.toolbarItems = _toolNormalItems;
 }
 
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+    
+    self.tableView.contentOffset = CGPointMake(0, 45);
+}
+
 - (void)viewDidUnload
 {
     [super viewDidUnload];
@@ -441,23 +448,21 @@ static void * directoryPresenterFileURLsObservingContext;
     }
 }
 
-#pragma mark - UITextField Delegate Methods
+#pragma mark - UISeachBar Delegate Methods
 
-- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
+- (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText
 {
+    if ([searchText length] == 0)
+    {
+        self.filterString = nil;
+        return;
+    }
+    
     // Apply filter to filterController with .3 second debounce
     [_filterDebounceTimer invalidate];
     _filterDebounceTimer = [NSTimer scheduledTimerWithTimeInterval:0.3 usingBlock:^(NSTimer *timer) {
-        self.filterString = textField.text;
+        self.filterString = searchText;
     } repeats:NO];
-
-    return YES;
-}
-
-- (BOOL)textFieldShouldClear:(UITextField *)textField
-{
-    self.filterString = nil;
-    return YES;
 }
 
 #pragma mark - Action Sheet Delegate
