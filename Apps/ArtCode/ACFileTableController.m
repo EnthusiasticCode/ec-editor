@@ -103,6 +103,7 @@ static void * directoryPresenterFileURLsObservingContext;
 - (void)_toolEditDuplicateAction:(id)sender;
 - (void)_toolEditExportAction:(id)sender;
 
+- (void)_directoryBrowserShowWithRightBarItem:(UIBarButtonItem *)rightItem;
 - (void)_directoryBrowserDismissAction:(id)sender;
 - (void)_directoryBrowserCopyAction:(id)sender;
 - (void)_directoryBrowserMoveAction:(id)sender;
@@ -379,7 +380,7 @@ static void * directoryPresenterFileURLsObservingContext;
     ACHighlightTableViewCell *cell = [tView dequeueReusableCellWithIdentifier:FileCellIdentifier];
     if (cell == nil)
     {
-        cell = [[ACHighlightTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:FileCellIdentifier];        
+        cell = [[ACHighlightTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:FileCellIdentifier];
     }
     
     // Configure the cell
@@ -483,16 +484,7 @@ static void * directoryPresenterFileURLsObservingContext;
     {
         if (buttonIndex == 0) // Copy
         {
-
-            ACDirectoryBrowserController *directoryBrowser = [ACDirectoryBrowserController new];
-            UIBarButtonItem *cancelItem = [[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonItemStylePlain target:self action:@selector(_directoryBrowserDismissAction:)];
-            [cancelItem setBackgroundImage:[[UIImage imageNamed:@"topBar_ToolButton_Normal"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 10, 10, 10)] forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
-            directoryBrowser.navigationItem.leftBarButtonItem = cancelItem;
-            directoryBrowser.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Copy" style:UIBarButtonItemStylePlain target:self action:@selector(_directoryBrowserCopyAction:)];
-            directoryBrowser.URL = self.directory;
-            _directoryBrowserNavigationController = [[UINavigationController alloc] initWithRootViewController:directoryBrowser];
-            _directoryBrowserNavigationController.modalPresentationStyle = UIModalPresentationFormSheet;
-            [self presentViewController:_directoryBrowserNavigationController animated:YES completion:nil];
+            [self _directoryBrowserShowWithRightBarItem:[[UIBarButtonItem alloc] initWithTitle:@"Copy" style:UIBarButtonItemStylePlain target:self action:@selector(_directoryBrowserCopyAction:)]];
         }
         else if (buttonIndex == 1) // Duplicate
         {
@@ -518,7 +510,7 @@ static void * directoryPresenterFileURLsObservingContext;
     {
         if (buttonIndex == 0) // Move
         {
-            
+            [self _directoryBrowserShowWithRightBarItem:[[UIBarButtonItem alloc] initWithTitle:@"Move" style:UIBarButtonItemStylePlain target:self action:@selector(_directoryBrowserMoveAction:)]];
         }
         else if (buttonIndex == 1) // iTunes
         {
@@ -573,6 +565,19 @@ static void * directoryPresenterFileURLsObservingContext;
         _toolEditItemDuplicateActionSheet.actionSheetStyle = UIActionSheetStyleBlackOpaque;
     }
     [_toolEditItemDuplicateActionSheet showFromRect:[sender frame] inView:[sender superview] animated:YES];
+}
+
+- (void)_directoryBrowserShowWithRightBarItem:(UIBarButtonItem *)rightItem
+{
+    ACDirectoryBrowserController *directoryBrowser = [ACDirectoryBrowserController new];
+    UIBarButtonItem *cancelItem = [[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonItemStylePlain target:self action:@selector(_directoryBrowserDismissAction:)];
+    [cancelItem setBackgroundImage:[[UIImage imageNamed:@"topBar_ToolButton_Normal"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 10, 10, 10)] forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
+    directoryBrowser.navigationItem.leftBarButtonItem = cancelItem;
+    directoryBrowser.navigationItem.rightBarButtonItem = rightItem;
+    directoryBrowser.URL = self.directory;
+    _directoryBrowserNavigationController = [[UINavigationController alloc] initWithRootViewController:directoryBrowser];
+    _directoryBrowserNavigationController.modalPresentationStyle = UIModalPresentationFormSheet;
+    [self presentViewController:_directoryBrowserNavigationController animated:YES completion:nil];
 }
 
 - (void)_directoryBrowserDismissAction:(id)sender

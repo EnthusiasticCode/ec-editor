@@ -17,10 +17,40 @@
                     </tabBar>
                     <connections>
                         <segue destination="H4Z-Eh-HQX" kind="relationship" relationship="viewControllers" id="AlH-VL-5Tx"/>
+                        <segue destination="W93-lH-43y" kind="relationship" relationship="viewControllers" id="Gml-x5-OAt"/>
                     </connections>
                 </tabBarController>
             </objects>
             <point key="canvasLocation" x="-1183" y="-877"/>
+        </scene>
+        <scene sceneID="uvQ-Tk-a2c">
+            <objects>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="XJT-PM-0xs" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <tableViewController id="W93-lH-43y" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="singleLineEtched" allowsSelectionDuringEditing="YES" allowsMultipleSelectionDuringEditing="YES" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="gjM-zC-KMh">
+                        <rect key="frame" x="0.0" y="20" width="768" height="955"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+                        <prototypes>
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="9TK-qc-hGb">
+                                <rect key="frame" x="0.0" y="54" width="768" height="46"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                                    <rect key="frame" x="45" y="1" width="678" height="43"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                </view>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="W93-lH-43y" id="3NS-NB-vej"/>
+                            <outlet property="delegate" destination="W93-lH-43y" id="kfH-lU-dQM"/>
+                        </connections>
+                    </tableView>
+                    <tabBarItem key="tabBarItem" title="Bookmarks" id="b89-Kl-Xgk"/>
+                </tableViewController>
+            </objects>
+            <point key="canvasLocation" x="-196" y="-486"/>
         </scene>
         <scene sceneID="Lkk-XI-ads">
             <objects>
@@ -46,7 +76,7 @@
                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                         </view>
                         <prototypes>
-                            <tableViewCell contentMode="scaleToFill" selectionStyle="gray" hidesAccessoryWhenEditing="NO" indentationWidth="0.0" reuseIdentifier="FileCell" id="sfO-Hd-6dy" customClass="ACHighlightTableViewCell">
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationWidth="0.0" reuseIdentifier="FileCell" id="sfO-Hd-6dy" customClass="ACHighlightTableViewCell">
                                 <rect key="frame" x="0.0" y="91" width="768" height="46"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">

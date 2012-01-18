@@ -7,11 +7,10 @@
 //
 
 #import "ACDirectoryBrowserController.h"
+#import "UIImage+AppStyle.h"
 
 
 @interface ACDirectoryBrowserController (/*Private methods*/)
-
-@property (nonatomic, strong) NSURL *currentURL;
 
 - (void)_enumerateDirectoriesAtURL:(NSURL *)rootURL usignBlock:(void(^)(NSURL *url, BOOL *stop))block;
 
@@ -89,7 +88,7 @@
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     if (cell == nil) {
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
-        cell.selectionStyle = UITableViewCellSelectionStyleGray;
+        cell.imageView.image = [UIImage styleGroupImageWithSize:CGSizeMake(32, 32)];
     }
     
     DirectoryListItem *item = [_directoryItemsList objectAtIndex:[indexPath indexAtPosition:1]];
@@ -167,6 +166,7 @@
 {
     if (fileCount == 0 && subDirectoryCount == 0)
         return @"Empty";
+    // TODO singluar and plural
     NSString *result = fileCount ? [NSString stringWithFormat:@"%u files", fileCount] : nil;
     if (subDirectoryCount)
         result = result ? [result stringByAppendingFormat:@", %u folders", subDirectoryCount] : [NSString stringWithFormat:@"%u folders", subDirectoryCount];
