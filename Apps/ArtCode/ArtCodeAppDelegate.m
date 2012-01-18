@@ -58,6 +58,9 @@
     
     [[UIBarButtonItem appearance] setBackButtonBackgroundImage:[[UIImage imageNamed:@"topBar_BackButton"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 20, 0, 10)] forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
     [[UIBarButtonItem appearance] setBackgroundImage:[[UIImage imageNamed:@"topBar_ToolButton_Selected"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 10, 10, 10)] forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
+    
+    [[UINavigationBar appearance] setBackgroundImage:[UIImage imageNamed:@"topBar_Background"] forBarMetrics:UIBarMetricsDefault];
+    [[UINavigationBar appearance] setTitleTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys:[UIColor whiteColor], UITextAttributeTextColor, [UIColor blackColor], UITextAttributeTextShadowColor, [NSValue valueWithUIOffset:UIOffsetMake(0, -1)], UITextAttributeTextShadowOffset, nil]];
 
     ////////////////////////////////////////////////////////////////////////////
     // Tab Bar    

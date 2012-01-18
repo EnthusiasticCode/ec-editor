@@ -75,6 +75,7 @@ static void * directoryPresenterFileURLsObservingContext;
     UIActionSheet *_toolEditItemDeleteActionSheet;
     UIActionSheet *_toolEditItemDuplicateActionSheet;
     UIActionSheet *_toolEditItemExportActionSheet;
+    UINavigationController *_directoryBrowserNavigationController;
     
     NSTimer *_filterDebounceTimer;
     
@@ -101,6 +102,10 @@ static void * directoryPresenterFileURLsObservingContext;
 - (void)_toolEditDeleteAction:(id)sender;
 - (void)_toolEditDuplicateAction:(id)sender;
 - (void)_toolEditExportAction:(id)sender;
+
+- (void)_directoryBrowserDismissAction:(id)sender;
+- (void)_directoryBrowserCopyAction:(id)sender;
+- (void)_directoryBrowserMoveAction:(id)sender;
 
 @end
 
@@ -478,12 +483,16 @@ static void * directoryPresenterFileURLsObservingContext;
     {
         if (buttonIndex == 0) // Copy
         {
+
             ACDirectoryBrowserController *directoryBrowser = [ACDirectoryBrowserController new];
-            directoryBrowser.navigationItem.title = @"Choose copy destination";
-//            directoryBrowser.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Back" style:UIBarButtonItemStylePlain target:self action:@selector(alloc)];
-            UINavigationController *directoryNavigationController = [[UINavigationController alloc] initWithRootViewController:directoryBrowser];
-            directoryNavigationController.modalPresentationStyle = UIModalPresentationFormSheet;
-            [self presentViewController:directoryNavigationController animated:YES completion:nil];
+            UIBarButtonItem *cancelItem = [[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonItemStylePlain target:self action:@selector(_directoryBrowserDismissAction:)];
+            [cancelItem setBackgroundImage:[[UIImage imageNamed:@"topBar_ToolButton_Normal"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 10, 10, 10)] forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
+            directoryBrowser.navigationItem.leftBarButtonItem = cancelItem;
+            directoryBrowser.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Copy" style:UIBarButtonItemStylePlain target:self action:@selector(_directoryBrowserCopyAction:)];
+            directoryBrowser.URL = self.directory;
+            _directoryBrowserNavigationController = [[UINavigationController alloc] initWithRootViewController:directoryBrowser];
+            _directoryBrowserNavigationController.modalPresentationStyle = UIModalPresentationFormSheet;
+            [self presentViewController:_directoryBrowserNavigationController animated:YES completion:nil];
         }
         else if (buttonIndex == 1) // Duplicate
         {
@@ -564,7 +573,24 @@ static void * directoryPresenterFileURLsObservingContext;
         _toolEditItemDuplicateActionSheet.actionSheetStyle = UIActionSheetStyleBlackOpaque;
     }
     [_toolEditItemDuplicateActionSheet showFromRect:[sender frame] inView:[sender superview] animated:YES];
-    
+}
+
+- (void)_directoryBrowserDismissAction:(id)sender
+{
+    [self dismissViewControllerAnimated:YES completion:^{
+        _directoryBrowserNavigationController = nil;
+    }];
+}
+
+- (void)_directoryBrowserCopyAction:(id)sender
+{
+    ACDirectoryBrowserController *directoryBrowser = (ACDirectoryBrowserController *)_directoryBrowserNavigationController.topViewController;
+    NSURL *copyURL = directoryBrowser.selectedURL;
+    if (copyURL == nil)
+        copyURL = directoryBrowser.URL;
+    // TODO copy
+    NSLog(@"%@", copyURL);
+    [self _directoryBrowserDismissAction:sender];
 }
 
 @end

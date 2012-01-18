@@ -13,12 +13,8 @@
 @interface ACDirectoryBrowserController : UITableViewController
 
 /// URL used as base. The controller will not drill-up from this point.
-@property (nonatomic, strong) NSURL *baseURL;
+@property (nonatomic, strong) NSURL *URL;
 
-/// URL that the controller is currently displaying in its table view.
-@property (nonatomic, strong, readonly) NSURL *currentURL;
-
-/// Moves the currentURL back if possible.
-- (IBAction)moveBackOneLevelAction:(id)sender;
+@property (nonatomic, strong, readonly) NSURL *selectedURL;
 
 @end

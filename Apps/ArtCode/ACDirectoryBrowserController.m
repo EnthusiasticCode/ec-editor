@@ -24,6 +24,7 @@
 @property (nonatomic, readonly) NSUInteger subDirectoryCount;
 
 - (id)initWithURL:(NSURL *)url;
+- (NSString *)details;
 
 @end
 
@@ -31,36 +32,18 @@
 
 @implementation ACDirectoryBrowserController {
 @private
-    NSMutableArray *_historyStack;
     NSMutableArray *_directoryItemsList;
 }
 
-@synthesize baseURL, currentURL;
+@synthesize URL;
 
-- (void)setBaseURL:(NSURL *)value
+- (void)setURL:(NSURL *)value
 {
-    if (value == baseURL)
+    if (value == URL)
         return;
-    [self willChangeValueForKey:@"baseURL"];
-    baseURL = value;
-    self.currentURL = value;
-    [self didChangeValueForKey:@"baseURL"];
-}
-
-- (void)setCurrentURL:(NSURL *)value
-{
-    ECASSERT([[value path] hasPrefix:[self.baseURL path]]);
-    
-    if (value == currentURL)
-        return;
-    [self willChangeValueForKey:@"currentURL"];
-    if (currentURL)
-    {
-        if (!_historyStack)
-            _historyStack = [NSMutableArray new];
-        [_historyStack addObject:currentURL];
-    }
-    currentURL = value;
+    [self willChangeValueForKey:@"URL"];
+    URL = value;
+    self.navigationItem.title = [[value lastPathComponent] stringByDeletingPathExtension];
     if (!_directoryItemsList)
         _directoryItemsList = [NSMutableArray new];
     else
@@ -68,20 +51,16 @@
     [self _enumerateDirectoriesAtURL:value usignBlock:^(NSURL *url, BOOL *stop) {
         [_directoryItemsList addObject:[[DirectoryListItem alloc] initWithURL:url]];
     }];
-    // TODO animate change
     [self.tableView reloadData];
-    [self didChangeValueForKey:@"currentURL"];
+    [self didChangeValueForKey:@"URL"];
 }
 
-#pragma mark - Navigation methods
-
-- (void)moveBackOneLevelAction:(id)sender
+- (NSURL *)selectedURL
 {
-    if ([_historyStack count] == 0)
-        return;
-    NSURL *backURL = [_historyStack lastObject];
-    [_historyStack removeLastObject];
-    self.currentURL = backURL;
+    NSIndexPath *selectedIndexPath = self.tableView.indexPathForSelectedRow;
+    if (selectedIndexPath == nil)
+        return nil;
+    return [[_directoryItemsList objectAtIndex:[selectedIndexPath indexAtPosition:1]] URL];
 }
 
 #pragma mark - View lifecycle
@@ -89,13 +68,6 @@
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
 	return YES;
-}
-
-- (void)loadView
-{
-    [super loadView];
-    
-    self.toolbarItems = [NSArray arrayWithObject:[[UIBarButtonItem alloc] initWithTitle:@"Back" style:UIBarButtonItemStylePlain target:self action:@selector(moveBackOneLevelAction:)]];
 }
 
 #pragma mark - Table view data source
@@ -116,12 +88,14 @@
     
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     if (cell == nil) {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
+        cell.selectionStyle = UITableViewCellSelectionStyleGray;
     }
     
     DirectoryListItem *item = [_directoryItemsList objectAtIndex:[indexPath indexAtPosition:1]];
     cell.accessoryType = item.subDirectoryCount ? UITableViewCellAccessoryDetailDisclosureButton : UITableViewCellAccessoryNone;
     cell.textLabel.text = [item.URL lastPathComponent];
+    cell.detailTextLabel.text = [item details];
     
     return cell;
 }
@@ -130,9 +104,17 @@
 
 - (void)tableView:(UITableView *)tableView accessoryButtonTappedForRowWithIndexPath:(NSIndexPath *)indexPath
 {
-    DirectoryListItem *item = [_directoryItemsList objectAtIndex:[indexPath indexAtPosition:1]];
-    ECASSERT(item.subDirectoryCount != 0);
-    self.currentURL = item.URL;
+    if (self.navigationController != nil)
+    {
+        DirectoryListItem *item = [_directoryItemsList objectAtIndex:[indexPath indexAtPosition:1]];
+        ECASSERT(item.subDirectoryCount != 0);
+        
+        ACDirectoryBrowserController *nextBrowser = [[ACDirectoryBrowserController alloc] initWithStyle:self.tableView.style];
+        nextBrowser.URL = item.URL;
+        nextBrowser.navigationItem.rightBarButtonItem = self.navigationItem.rightBarButtonItem;
+        
+        [self.navigationController pushViewController:nextBrowser animated:YES];
+    }
 }
 
 #pragma mark - Private methods
@@ -144,7 +126,7 @@
     
     BOOL stop = NO;
     NSNumber *isDirectory = nil;
-    for (NSURL *url in [[NSFileManager new] enumeratorAtURL:rootURL includingPropertiesForKeys:[NSArray arrayWithObject:NSURLIsDirectoryKey] options:0 errorHandler:nil])
+    for (NSURL *url in [[NSFileManager new] enumeratorAtURL:rootURL includingPropertiesForKeys:[NSArray arrayWithObject:NSURLIsDirectoryKey] options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants errorHandler:nil])
     {
         [url getResourceValue:&isDirectory forKey:NSURLIsDirectoryKey error:NULL];
         if ([isDirectory boolValue])
@@ -170,7 +152,7 @@
         return nil;
     URL = itemUrl;
     NSNumber *isDirectory = nil;
-    for (NSURL *url in [[NSFileManager defaultManager] enumeratorAtURL:itemUrl includingPropertiesForKeys:[NSArray arrayWithObject:NSURLIsDirectoryKey] options:0 errorHandler:nil])
+    for (NSURL *url in [[NSFileManager defaultManager] enumeratorAtURL:itemUrl includingPropertiesForKeys:[NSArray arrayWithObject:NSURLIsDirectoryKey] options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants errorHandler:nil])
     {
         [url getResourceValue:&isDirectory forKey:NSURLIsDirectoryKey error:NULL];
         if ([isDirectory boolValue])
@@ -179,6 +161,16 @@
             fileCount++;
     }
     return self;
+}
+
+- (NSString *)details
+{
+    if (fileCount == 0 && subDirectoryCount == 0)
+        return @"Empty";
+    NSString *result = fileCount ? [NSString stringWithFormat:@"%u files", fileCount] : nil;
+    if (subDirectoryCount)
+        result = result ? [result stringByAppendingFormat:@", %u folders", subDirectoryCount] : [NSString stringWithFormat:@"%u folders", subDirectoryCount];
+    return result;
 }
 
 @end
