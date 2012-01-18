@@ -10,6 +10,7 @@
 #import "ACSingleTabController.h"
 #import "AppStyle.h"
 #import "ACNewFileController.h"
+#import "ACDirectoryBrowserController.h"
 
 #import <ECFoundation/ECDirectoryPresenter.h>
 #import <ECFoundation/NSTimer+block.h>
@@ -477,6 +478,12 @@ static void * directoryPresenterFileURLsObservingContext;
     {
         if (buttonIndex == 0) // Copy
         {
+            ACDirectoryBrowserController *directoryBrowser = [ACDirectoryBrowserController new];
+            directoryBrowser.navigationItem.title = @"Choose copy destination";
+//            directoryBrowser.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Back" style:UIBarButtonItemStylePlain target:self action:@selector(alloc)];
+            UINavigationController *directoryNavigationController = [[UINavigationController alloc] initWithRootViewController:directoryBrowser];
+            directoryNavigationController.modalPresentationStyle = UIModalPresentationFormSheet;
+            [self presentViewController:directoryNavigationController animated:YES completion:nil];
         }
         else if (buttonIndex == 1) // Duplicate
         {

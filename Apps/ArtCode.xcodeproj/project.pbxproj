@@ -139,6 +139,7 @@
 		CDA0B9E814A4B30200714F74 /* topBar_ForwardButton_Disabled.png in Resources */ = {isa = PBXBuildFile; fileRef = CDA0B9E614A4B30200714F74 /* topBar_ForwardButton_Disabled.png */; };
 		CDA0B9EA14A4E9C900714F74 /* topBar_ToolButton_Selected.png in Resources */ = {isa = PBXBuildFile; fileRef = CDA0B9E914A4E9C900714F74 /* topBar_ToolButton_Selected.png */; };
 		CDA7630C146976260004FAC7 /* ACCodeFileKeyboardAccessoryView.m in Sources */ = {isa = PBXBuildFile; fileRef = CDA7630B146976260004FAC7 /* ACCodeFileKeyboardAccessoryView.m */; };
+		CDB5DB6514C6F56A003DFD1F /* ACDirectoryBrowserController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDB5DB6414C6F56A003DFD1F /* ACDirectoryBrowserController.m */; };
 		CDB7C92B145572EA00E0D2B2 /* ACSingleProjectBrowsersController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDB7C92A145572EA00E0D2B2 /* ACSingleProjectBrowsersController.m */; };
 		CDB7C9301455762E00E0D2B2 /* SingleProjectBrowsers.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CDB7C92F1455762E00E0D2B2 /* SingleProjectBrowsers.storyboard */; };
 		CDBCC5DC14B6081A005E5C46 /* ACHighlightLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = CDBCC5DB14B6081A005E5C46 /* ACHighlightLabel.m */; };
@@ -427,6 +428,8 @@
 		CDA0B9E914A4E9C900714F74 /* topBar_ToolButton_Selected.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = topBar_ToolButton_Selected.png; sourceTree = "<group>"; };
 		CDA7630A146976260004FAC7 /* ACCodeFileKeyboardAccessoryView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACCodeFileKeyboardAccessoryView.h; sourceTree = "<group>"; };
 		CDA7630B146976260004FAC7 /* ACCodeFileKeyboardAccessoryView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACCodeFileKeyboardAccessoryView.m; sourceTree = "<group>"; };
+		CDB5DB6314C6F56A003DFD1F /* ACDirectoryBrowserController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACDirectoryBrowserController.h; sourceTree = "<group>"; };
+		CDB5DB6414C6F56A003DFD1F /* ACDirectoryBrowserController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACDirectoryBrowserController.m; sourceTree = "<group>"; };
 		CDB7C929145572EA00E0D2B2 /* ACSingleProjectBrowsersController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACSingleProjectBrowsersController.h; sourceTree = "<group>"; };
 		CDB7C92A145572EA00E0D2B2 /* ACSingleProjectBrowsersController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACSingleProjectBrowsersController.m; sourceTree = "<group>"; };
 		CDB7C92F1455762E00E0D2B2 /* SingleProjectBrowsers.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = SingleProjectBrowsers.storyboard; sourceTree = "<group>"; };
@@ -636,14 +639,13 @@
 			name = "Third Party";
 			sourceTree = "<group>";
 		};
-		B7AC174F14216D25009E9205 /* Popover Content Controllers */ = {
+		B7AC174F14216D25009E9205 /* Content Controllers */ = {
 			isa = PBXGroup;
 			children = (
 				CD333CF914C033BD00E0EEE2 /* New Project */,
-				B71A1DE51435112700672F65 /* ACNewFileController.h */,
-				B71A1DE61435112700672F65 /* ACNewFileController.m */,
+				CDB5DB6214C6F532003DFD1F /* File Browser */,
 			);
-			name = "Popover Content Controllers";
+			name = "Content Controllers";
 			sourceTree = "<group>";
 		};
 		B7C7389713F47AE6006EB040 /* Core Data */ = {
@@ -857,7 +859,7 @@
 				CDB7C92A145572EA00E0D2B2 /* ACSingleProjectBrowsersController.m */,
 				CD7D2B4613C0D55700B889EE /* ACFileTableController.h */,
 				CD7D2B4713C0D55700B889EE /* ACFileTableController.m */,
-				B7AC174F14216D25009E9205 /* Popover Content Controllers */,
+				B7AC174F14216D25009E9205 /* Content Controllers */,
 				CD8108D613E334F7000E1941 /* Views and Controls */,
 			);
 			name = Browsers;
@@ -980,6 +982,17 @@
 				CD9ED8F71467E5C300A517A5 /* accessoryView_itemBackground.png */,
 			);
 			name = Keys;
+			sourceTree = "<group>";
+		};
+		CDB5DB6214C6F532003DFD1F /* File Browser */ = {
+			isa = PBXGroup;
+			children = (
+				B71A1DE51435112700672F65 /* ACNewFileController.h */,
+				B71A1DE61435112700672F65 /* ACNewFileController.m */,
+				CDB5DB6314C6F56A003DFD1F /* ACDirectoryBrowserController.h */,
+				CDB5DB6414C6F56A003DFD1F /* ACDirectoryBrowserController.m */,
+			);
+			name = "File Browser";
 			sourceTree = "<group>";
 		};
 		CDC1333114602F430028423F /* Search Bar */ = {
@@ -1361,6 +1374,7 @@
 				CD333CF814C031A900E0EEE2 /* ACNewProjectImportController.m in Sources */,
 				CD333CFC14C0340200E0EEE2 /* ACNewProjectNavigationController.m in Sources */,
 				CD4E648614C1E984003AC39D /* ACProject.m in Sources */,
+				CDB5DB6514C6F56A003DFD1F /* ACDirectoryBrowserController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
