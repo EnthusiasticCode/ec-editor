@@ -325,6 +325,8 @@
         // Label
         if (text)
         {
+            CGContextSetShadowWithColor(ctx, CGSizeMake(0, -1), 0, [UIColor whiteColor].CGColor);
+            
             CGFloat fontSize = (rect.size.width - strokeWidth);
             if ([text length] > 1)
                 fontSize /= 2.;
