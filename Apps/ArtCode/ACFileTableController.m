@@ -21,6 +21,7 @@
 #import "ACHighlightTableViewCell.h"
 
 #import "ACTab.h"
+#import "ACProject.h"
 
 static void * directoryPresenterFileURLsObservingContext;
 
@@ -574,7 +575,7 @@ static void * directoryPresenterFileURLsObservingContext;
     [cancelItem setBackgroundImage:[[UIImage imageNamed:@"topBar_ToolButton_Normal"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 10, 10, 10)] forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
     directoryBrowser.navigationItem.leftBarButtonItem = cancelItem;
     directoryBrowser.navigationItem.rightBarButtonItem = rightItem;
-    directoryBrowser.URL = self.directory;
+    directoryBrowser.URL = [[ACProject projectWithURL:self.directory] URL];
     _directoryBrowserNavigationController = [[UINavigationController alloc] initWithRootViewController:directoryBrowser];
     _directoryBrowserNavigationController.modalPresentationStyle = UIModalPresentationFormSheet;
     [self presentViewController:_directoryBrowserNavigationController animated:YES completion:nil];
@@ -593,8 +594,17 @@ static void * directoryPresenterFileURLsObservingContext;
     NSURL *copyURL = directoryBrowser.selectedURL;
     if (copyURL == nil)
         copyURL = directoryBrowser.URL;
-    // TODO copy
-    NSLog(@"%@", copyURL);
+    
+    // TODO instead of copying here, show another controller that makes the copy and manages the conflicts.
+    NSFileManager *fileManager = [NSFileManager new];
+    [[[ECFileCoordinator alloc] initWithFilePresenter:nil] coordinateReadingItemAtURL:self.directory options:0 writingItemAtURL:copyURL options:NSFileCoordinatorWritingForReplacing error:NULL byAccessor:^(NSURL *newReadingURL, NSURL *newWritingURL) {
+        [_selectedURLs enumerateObjectsUsingBlock:^(NSURL *url, NSUInteger idx, BOOL *stop) {
+            [fileManager copyItemAtURL:url toURL:newWritingURL error:NULL];
+        }];
+    }];
+    
+    [[ECBezelAlert defaultBezelAlert] addAlertMessageWithText:([_selectedURLs count] == 1 ? @"File copied" : [NSString stringWithFormat:@"%u files copied", [_selectedURLs count]]) image:nil displayImmediatly:YES];
+    [self setEditing:NO animated:YES];
     [self _directoryBrowserDismissAction:sender];
 }
 
