@@ -11,6 +11,7 @@
 #import "AppStyle.h"
 #import "ACNewFileController.h"
 #import "ACDirectoryBrowserController.h"
+#import "ACMoveConflictController.h"
 
 #import <ECFoundation/ECDirectoryPresenter.h>
 #import <ECFoundation/NSTimer+block.h>
@@ -484,7 +485,7 @@ static void * directoryPresenterFileURLsObservingContext;
             }];
             self.loading = NO;
             [[ECBezelAlert defaultBezelAlert] addAlertMessageWithText:([_selectedURLs count] == 1 ? @"File deleted" : [NSString stringWithFormat:@"%u files deleted", [_selectedURLs count]]) image:nil displayImmediatly:YES];
-            [self setEditing:NO animated:YES];
+            [self.tabBarController setEditing:NO animated:YES];
         }
     }
     else if (actionSheet == _toolEditItemDuplicateActionSheet)
@@ -510,7 +511,7 @@ static void * directoryPresenterFileURLsObservingContext;
             }];
             self.loading = NO;
             [[ECBezelAlert defaultBezelAlert] addAlertMessageWithText:([_selectedURLs count] == 1 ? @"File duplicated" : [NSString stringWithFormat:@"%u files duplicated", [_selectedURLs count]]) image:nil displayImmediatly:YES];
-            [self setEditing:NO animated:YES];
+            [self.tabBarController setEditing:NO animated:YES];
         }
     }
     else if (actionSheet == _toolEditItemExportActionSheet)
@@ -532,7 +533,7 @@ static void * directoryPresenterFileURLsObservingContext;
             }];
             self.loading = NO;
             [[ECBezelAlert defaultBezelAlert] addAlertMessageWithText:([_selectedURLs count] == 1 ? @"File exported" : [NSString stringWithFormat:@"%u files exported", [_selectedURLs count]]) image:nil displayImmediatly:YES];
-            [self setEditing:NO animated:YES];
+            [self.tabBarController setEditing:NO animated:YES];
         }
         else if (buttonIndex == 2) // Mail
         {
@@ -561,7 +562,7 @@ static void * directoryPresenterFileURLsObservingContext;
             else
                 [mailComposer setMessageBody:@"<br/><p>Open this files with <a href=\"http://www.artcodeapp.com/\">ArtCode</a> to view the contained projects.</p>" isHTML:YES];
             
-            [self setEditing:NO animated:YES];
+            [self.tabBarController setEditing:NO animated:YES];
             [self presentViewController:mailComposer animated:YES completion:nil];
             [mailComposer.navigationBar.topItem.leftBarButtonItem setBackgroundImage:[[UIImage imageNamed:@"topBar_ToolButton_Normal"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 10, 10, 10)] forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
             self.loading = NO;
@@ -626,7 +627,7 @@ static void * directoryPresenterFileURLsObservingContext;
 {
     ACDirectoryBrowserController *directoryBrowser = [ACDirectoryBrowserController new];
     UIBarButtonItem *cancelItem = [[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonItemStylePlain target:self action:@selector(_directoryBrowserDismissAction:)];
-    [cancelItem setBackgroundImage:[[UIImage imageNamed:@"topBar_ToolButton_Normal"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 10, 10, 10)] forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
+    [cancelItem setBackgroundImage:[UIImage styleNormalButtonBackgroundImageForControlState:UIControlStateNormal] forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
     directoryBrowser.navigationItem.leftBarButtonItem = cancelItem;
     directoryBrowser.navigationItem.rightBarButtonItem = rightItem;
     directoryBrowser.URL = [[ACProject projectWithURL:self.directory] URL];
@@ -643,23 +644,49 @@ static void * directoryPresenterFileURLsObservingContext;
 }
 
 - (void)_directoryBrowserCopyAction:(id)sender
-{
+{    
+    // Retrieve URL to move to
     ACDirectoryBrowserController *directoryBrowser = (ACDirectoryBrowserController *)_directoryBrowserNavigationController.topViewController;
-    NSURL *copyURL = directoryBrowser.selectedURL;
-    if (copyURL == nil)
-        copyURL = directoryBrowser.URL;
-    
-    // TODO instead of copying here, show another controller that makes the copy and manages the conflicts.
+    NSURL *moveURL = directoryBrowser.selectedURL;
+    if (moveURL == nil)
+        moveURL = directoryBrowser.URL;
+    // Initialize conflict controller
+    ACMoveConflictController *conflictController = [[ACMoveConflictController alloc] initWithNibName:@"MoveConflictController" bundle:nil];
+    UIBarButtonItem *cancelItem = [[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonItemStylePlain target:self action:@selector(_directoryBrowserDismissAction:)];
+    [cancelItem setBackgroundImage:[UIImage styleNormalButtonBackgroundImageForControlState:UIControlStateNormal] forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
+    conflictController.navigationItem.leftBarButtonItem = cancelItem;
+    // Show conflict controller
     NSFileManager *fileManager = [NSFileManager new];
-    [[[ECFileCoordinator alloc] initWithFilePresenter:nil] coordinateReadingItemAtURL:self.directory options:0 writingItemAtURL:copyURL options:NSFileCoordinatorWritingForReplacing error:NULL byAccessor:^(NSURL *newReadingURL, NSURL *newWritingURL) {
-        [_selectedURLs enumerateObjectsUsingBlock:^(NSURL *url, NSUInteger idx, BOOL *stop) {
-            [fileManager copyItemAtURL:url toURL:newWritingURL error:NULL];
-        }];
+    [_directoryBrowserNavigationController pushViewController:conflictController animated:YES];
+    [conflictController processItemURLs:[_selectedURLs copy] toURL:moveURL usignProcessingBlock:^(NSURL *itemURL, NSURL *destinationURL) {
+        [fileManager copyItemAtURL:itemURL toURL:destinationURL error:NULL];
+    } completion:^{
+        [self.tabBarController setEditing:NO animated:YES];
+        [self _directoryBrowserDismissAction:sender];
     }];
-    
-    [[ECBezelAlert defaultBezelAlert] addAlertMessageWithText:([_selectedURLs count] == 1 ? @"File copied" : [NSString stringWithFormat:@"%u files copied", [_selectedURLs count]]) image:nil displayImmediatly:YES];
-    [self setEditing:NO animated:YES];
-    [self _directoryBrowserDismissAction:sender];
+}
+
+- (void)_directoryBrowserMoveAction:(id)sender
+{
+    // Retrieve URL to move to
+    ACDirectoryBrowserController *directoryBrowser = (ACDirectoryBrowserController *)_directoryBrowserNavigationController.topViewController;
+    NSURL *moveURL = directoryBrowser.selectedURL;
+    if (moveURL == nil)
+        moveURL = directoryBrowser.URL;
+    // Initialize conflict controller
+    ACMoveConflictController *conflictController = [[ACMoveConflictController alloc] initWithNibName:@"MoveConflictController" bundle:nil];
+    UIBarButtonItem *cancelItem = [[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonItemStylePlain target:self action:@selector(_directoryBrowserDismissAction:)];
+    [cancelItem setBackgroundImage:[UIImage styleNormalButtonBackgroundImageForControlState:UIControlStateNormal] forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
+    conflictController.navigationItem.leftBarButtonItem = cancelItem;
+    // Show conflict controller
+    NSFileManager *fileManager = [NSFileManager new];
+    [_directoryBrowserNavigationController pushViewController:conflictController animated:YES];
+    [conflictController processItemURLs:[_selectedURLs copy] toURL:moveURL usignProcessingBlock:^(NSURL *itemURL, NSURL *destinationURL) {
+        [fileManager moveItemAtURL:itemURL toURL:destinationURL error:NULL];
+    } completion:^{
+        [self.tabBarController setEditing:NO animated:YES];
+        [self _directoryBrowserDismissAction:sender];
+    }];
 }
 
 @end

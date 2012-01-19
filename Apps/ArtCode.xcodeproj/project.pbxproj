@@ -140,6 +140,8 @@
 		CDA0B9EA14A4E9C900714F74 /* topBar_ToolButton_Selected.png in Resources */ = {isa = PBXBuildFile; fileRef = CDA0B9E914A4E9C900714F74 /* topBar_ToolButton_Selected.png */; };
 		CDA7630C146976260004FAC7 /* ACCodeFileKeyboardAccessoryView.m in Sources */ = {isa = PBXBuildFile; fileRef = CDA7630B146976260004FAC7 /* ACCodeFileKeyboardAccessoryView.m */; };
 		CDB5DB6514C6F56A003DFD1F /* ACDirectoryBrowserController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDB5DB6414C6F56A003DFD1F /* ACDirectoryBrowserController.m */; };
+		CDB5DB6D14C8494E003DFD1F /* ACMoveConflictController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDB5DB6C14C8494E003DFD1F /* ACMoveConflictController.m */; };
+		CDB5DB6F14C849EA003DFD1F /* MoveConflictController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CDB5DB6E14C849EA003DFD1F /* MoveConflictController.xib */; };
 		CDB7C92B145572EA00E0D2B2 /* ACSingleProjectBrowsersController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDB7C92A145572EA00E0D2B2 /* ACSingleProjectBrowsersController.m */; };
 		CDB7C9301455762E00E0D2B2 /* SingleProjectBrowsers.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CDB7C92F1455762E00E0D2B2 /* SingleProjectBrowsers.storyboard */; };
 		CDBCC5DC14B6081A005E5C46 /* ACHighlightLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = CDBCC5DB14B6081A005E5C46 /* ACHighlightLabel.m */; };
@@ -430,6 +432,9 @@
 		CDA7630B146976260004FAC7 /* ACCodeFileKeyboardAccessoryView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACCodeFileKeyboardAccessoryView.m; sourceTree = "<group>"; };
 		CDB5DB6314C6F56A003DFD1F /* ACDirectoryBrowserController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACDirectoryBrowserController.h; sourceTree = "<group>"; };
 		CDB5DB6414C6F56A003DFD1F /* ACDirectoryBrowserController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACDirectoryBrowserController.m; sourceTree = "<group>"; };
+		CDB5DB6B14C8494E003DFD1F /* ACMoveConflictController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACMoveConflictController.h; sourceTree = "<group>"; };
+		CDB5DB6C14C8494E003DFD1F /* ACMoveConflictController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACMoveConflictController.m; sourceTree = "<group>"; };
+		CDB5DB6E14C849EA003DFD1F /* MoveConflictController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MoveConflictController.xib; sourceTree = "<group>"; };
 		CDB7C929145572EA00E0D2B2 /* ACSingleProjectBrowsersController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACSingleProjectBrowsersController.h; sourceTree = "<group>"; };
 		CDB7C92A145572EA00E0D2B2 /* ACSingleProjectBrowsersController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACSingleProjectBrowsersController.m; sourceTree = "<group>"; };
 		CDB7C92F1455762E00E0D2B2 /* SingleProjectBrowsers.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = SingleProjectBrowsers.storyboard; sourceTree = "<group>"; };
@@ -832,6 +837,7 @@
 				CDC1A07A147E6EF500E01B7A /* CompletionControllerCell.xib */,
 				B78077E014869701006C0C6B /* ProjectCell.xib */,
 				CD7BC79314B7059000313CDB /* RemoteOptions.xib */,
+				CDB5DB6E14C849EA003DFD1F /* MoveConflictController.xib */,
 			);
 			name = UI;
 			sourceTree = "<group>";
@@ -991,6 +997,8 @@
 				B71A1DE61435112700672F65 /* ACNewFileController.m */,
 				CDB5DB6314C6F56A003DFD1F /* ACDirectoryBrowserController.h */,
 				CDB5DB6414C6F56A003DFD1F /* ACDirectoryBrowserController.m */,
+				CDB5DB6B14C8494E003DFD1F /* ACMoveConflictController.h */,
+				CDB5DB6C14C8494E003DFD1F /* ACMoveConflictController.m */,
 			);
 			name = "File Browser";
 			sourceTree = "<group>";
@@ -1325,6 +1333,7 @@
 				CD7FDD5414BEFBA0002B1122 /* itemIcon_Delete.png in Resources */,
 				CD7FDD5514BEFBA0002B1122 /* itemIcon_Duplicate.png in Resources */,
 				CD3D69E114C45B9300325970 /* topBar_BackButton.png in Resources */,
+				CDB5DB6F14C849EA003DFD1F /* MoveConflictController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1375,6 +1384,7 @@
 				CD333CFC14C0340200E0EEE2 /* ACNewProjectNavigationController.m in Sources */,
 				CD4E648614C1E984003AC39D /* ACProject.m in Sources */,
 				CDB5DB6514C6F56A003DFD1F /* ACDirectoryBrowserController.m in Sources */,
+				CDB5DB6D14C8494E003DFD1F /* ACMoveConflictController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
