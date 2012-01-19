@@ -15,6 +15,7 @@
 #import <ECFoundation/ECDirectoryPresenter.h>
 #import <ECFoundation/NSTimer+block.h>
 #import <ECFoundation/NSString+ECAdditions.h>
+#import <ECFoundation/NSURL+ECAdditions.h>
 #import <ECUIKit/NSURL+URLDuplicate.h>
 #import <ECUIKit/ECBezelAlert.h>
 
@@ -471,7 +472,7 @@ static void * directoryPresenterFileURLsObservingContext;
 {
     if (actionSheet == _toolEditItemDeleteActionSheet)
     {
-        if (buttonIndex == actionSheet.destructiveButtonIndex)
+        if (buttonIndex == actionSheet.destructiveButtonIndex) // Delete
         {
             self.loading = YES;
             ECFileCoordinator *coordinator = [[ECFileCoordinator alloc] initWithFilePresenter:nil];
@@ -520,13 +521,61 @@ static void * directoryPresenterFileURLsObservingContext;
         }
         else if (buttonIndex == 1) // iTunes
         {
-            
+            self.loading = YES;
+            ECFileCoordinator *coordinator = [[ECFileCoordinator alloc] initWithFilePresenter:nil];
+            NSFileManager *fileManager = [NSFileManager new];
+            NSURL *documentsURL = [NSURL applicationDocumentsDirectory];
+            [_selectedURLs enumerateObjectsUsingBlock:^(NSURL *url, NSUInteger idx, BOOL *stop) {
+                [coordinator coordinateReadingItemAtURL:url options:0 writingItemAtURL:documentsURL options:NSFileCoordinatorWritingForReplacing error:NULL byAccessor:^(NSURL *newReadingURL, NSURL *newWritingURL) {
+                    [fileManager copyItemAtURL:newReadingURL toURL:newWritingURL error:NULL];
+                }];
+            }];
+            self.loading = NO;
+            [[ECBezelAlert defaultBezelAlert] addAlertMessageWithText:([_selectedURLs count] == 1 ? @"File exported" : [NSString stringWithFormat:@"%u files exported", [_selectedURLs count]]) image:nil displayImmediatly:YES];
+            [self setEditing:NO animated:YES];
         }
         else if (buttonIndex == 2) // Mail
         {
+            MFMailComposeViewController *mailComposer = [MFMailComposeViewController new];
+            mailComposer.mailComposeDelegate = self;
+            mailComposer.navigationBar.barStyle = UIBarStyleDefault;
+            mailComposer.modalPresentationStyle = UIModalPresentationFormSheet;
             
+            // Compressing projects to export
+            self.loading = YES;
+            
+            ECFileCoordinator *coordinator = [[ECFileCoordinator alloc] initWithFilePresenter:nil];
+            [_selectedURLs enumerateObjectsUsingBlock:^(NSURL *url, NSUInteger idx, BOOL *stop) {
+                // Generate zip attachments
+                __block NSData *attachment = nil;
+                [coordinator coordinateReadingItemAtURL:url options:0 error:NULL byAccessor:^(NSURL *newURL) {
+                    attachment = [NSData dataWithContentsOfURL:newURL];
+                }];
+                [mailComposer addAttachmentData:attachment mimeType:@"text/plain" fileName:[url lastPathComponent]];
+            }];
+            
+            [mailComposer setSubject:[NSString stringWithFormat:@"%@ exported files", [[ACProject projectWithURL:[_selectedURLs objectAtIndex:0]] name]]];
+            
+            if ([_selectedURLs count] == 1)
+                [mailComposer setMessageBody:@"<br/><p>Open this file with <a href=\"http://www.artcodeapp.com/\">ArtCode</a> to view the contained project.</p>" isHTML:YES];
+            else
+                [mailComposer setMessageBody:@"<br/><p>Open this files with <a href=\"http://www.artcodeapp.com/\">ArtCode</a> to view the contained projects.</p>" isHTML:YES];
+            
+            [self setEditing:NO animated:YES];
+            [self presentViewController:mailComposer animated:YES completion:nil];
+            [mailComposer.navigationBar.topItem.leftBarButtonItem setBackgroundImage:[[UIImage imageNamed:@"topBar_ToolButton_Normal"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 10, 10, 10)] forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
+            self.loading = NO;
         }
     }
+}
+
+#pragma mark - Mail composer Delegate
+
+- (void)mailComposeController:(MFMailComposeViewController *)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError *)error
+{
+    if (result == MFMailComposeResultSent)
+        [[ECBezelAlert defaultBezelAlert] addAlertMessageWithText:@"Mail sent" image:nil displayImmediatly:YES];
+    [self dismissModalViewControllerAnimated:YES];
 }
 
 #pragma mark - Private Methods
