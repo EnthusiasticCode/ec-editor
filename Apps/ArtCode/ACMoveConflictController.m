@@ -20,6 +20,7 @@
     NSURL *_destinationURL;
     void (^_processingBlock)(NSURL *sourceURL, NSURL *destinationURL);
     void (^_completionBlock)(void);
+    NSArray *_toolbarActiveItems;
 }
 
 @synthesize toolbar;
@@ -34,6 +35,12 @@
     
     [[self.toolbar.items objectAtIndex:0] setBackgroundImage:[UIImage styleNormalButtonBackgroundImageForControlState:UIControlStateNormal] forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
     [[self.toolbar.items objectAtIndex:1] setBackgroundImage:[UIImage styleNormalButtonBackgroundImageForControlState:UIControlStateNormal] forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
+    
+    _toolbarActiveItems = [self.toolbar.items subarrayWithRange:NSMakeRange(3, 3)];
+    for (UIBarButtonItem *item in _toolbarActiveItems)
+    {
+        item.enabled = NO;
+    }
 }
 
 - (void)viewDidUnload
@@ -69,6 +76,24 @@
     cell.textLabel.text = [[_conflictURLs objectAtIndex:[indexPath indexAtPosition:1]] lastPathComponent];
     
     return cell;
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    BOOL enabled = [tableView indexPathForSelectedRow] == nil ? NO : YES;
+    for (UIBarButtonItem *item in _toolbarActiveItems)
+    {
+        item.enabled = enabled;
+    }
+}
+
+- (void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    BOOL enabled = [tableView indexPathForSelectedRow] == nil ? NO : YES;
+    for (UIBarButtonItem *item in _toolbarActiveItems)
+    {
+        item.enabled = enabled;
+    }
 }
 
 #pragma mark - Public methods
@@ -121,6 +146,10 @@
     {
         [self.conflictTableView selectRowAtIndexPath:[NSIndexPath indexPathForRow:i inSection:0] animated:YES scrollPosition:UITableViewScrollPositionNone];
     }
+    for (UIBarButtonItem *item in _toolbarActiveItems)
+    {
+        item.enabled = YES;
+    }
 }
 
 - (IBAction)selectNoneAction:(id)sender
@@ -129,6 +158,10 @@
     for (NSInteger i = 0; i < count; ++i)
     {
         [self.conflictTableView deselectRowAtIndexPath:[NSIndexPath indexPathForRow:i inSection:0] animated:YES];
+    }
+    for (UIBarButtonItem *item in _toolbarActiveItems)
+    {
+        item.enabled = NO;
     }
 }
 
