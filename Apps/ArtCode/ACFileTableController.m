@@ -484,7 +484,7 @@ static void * directoryPresenterFileURLsObservingContext;
                 }];
             }];
             self.loading = NO;
-            [[ECBezelAlert defaultBezelAlert] addAlertMessageWithText:([_selectedURLs count] == 1 ? @"File deleted" : [NSString stringWithFormat:@"%u files deleted", [_selectedURLs count]]) image:nil displayImmediatly:YES];
+            [[ECBezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:@"File deleted" plural:@"%u files deleted" count:[_selectedURLs count]] image:nil displayImmediatly:YES];
             [self.tabBarController setEditing:NO animated:YES];
         }
     }
@@ -510,7 +510,7 @@ static void * directoryPresenterFileURLsObservingContext;
                 }];
             }];
             self.loading = NO;
-            [[ECBezelAlert defaultBezelAlert] addAlertMessageWithText:([_selectedURLs count] == 1 ? @"File duplicated" : [NSString stringWithFormat:@"%u files duplicated", [_selectedURLs count]]) image:nil displayImmediatly:YES];
+            [[ECBezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:@"File duplicated" plural:@"%u files duplicated" count:[_selectedURLs count]] image:nil displayImmediatly:YES];
             [self.tabBarController setEditing:NO animated:YES];
         }
     }
@@ -532,7 +532,7 @@ static void * directoryPresenterFileURLsObservingContext;
                 }];
             }];
             self.loading = NO;
-            [[ECBezelAlert defaultBezelAlert] addAlertMessageWithText:([_selectedURLs count] == 1 ? @"File exported" : [NSString stringWithFormat:@"%u files exported", [_selectedURLs count]]) image:nil displayImmediatly:YES];
+            [[ECBezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:@"File exported" plural:@"%u files exported" count:[_selectedURLs count]] image:nil displayImmediatly:YES];
             [self.tabBarController setEditing:NO animated:YES];
         }
         else if (buttonIndex == 2) // Mail

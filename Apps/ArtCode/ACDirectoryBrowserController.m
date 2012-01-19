@@ -9,6 +9,7 @@
 #import "ACDirectoryBrowserController.h"
 #import "UIImage+AppStyle.h"
 
+#import <ECFoundation/NSString+ECAdditions.h>
 
 @interface ACDirectoryBrowserController (/*Private methods*/)
 
@@ -167,9 +168,9 @@
     if (fileCount == 0 && subDirectoryCount == 0)
         return @"Empty";
     // TODO singluar and plural
-    NSString *result = fileCount ? [NSString stringWithFormat:@"%u files", fileCount] : nil;
+    NSString *result = fileCount ? [NSString stringWithFormatForSingular:@"%u file" plural:@"%u files" count:fileCount] : nil;
     if (subDirectoryCount)
-        result = result ? [result stringByAppendingFormat:@", %u folders", subDirectoryCount] : [NSString stringWithFormat:@"%u folders", subDirectoryCount];
+        result = result ? [result stringByAppendingFormatForSingular:@", %u folder" plural:@", %u folders" count:subDirectoryCount] : [NSString stringWithFormatForSingular:@"%u folder" plural:@"%u folders" count:subDirectoryCount];
     return result;
 }
 

@@ -22,6 +22,7 @@
 
 #import <ECFoundation/ECDirectoryPresenter.h>
 #import <ECFoundation/NSURL+ECAdditions.h>
+#import <ECFoundation/NSString+ECAdditions.h>
 #import <ECArchive/ECArchive.h>
 #import <ECUIKit/ECBezelAlert.h>
 
@@ -324,7 +325,7 @@ static void * directoryPresenterFileURLsObservingContext;
             }];
             
             // Show bezel alert
-            [[ECBezelAlert defaultBezelAlert] addAlertMessageWithText:([cellsToRemove count] == 1 ? @"Project removed" : [NSString stringWithFormat:@"%u projects removed", [cellsToRemove count]]) image:nil displayImmediatly:YES];
+            [[ECBezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:@"Project removed" plural:@"%u projects removed" count:[cellsToRemove count]] image:nil displayImmediatly:YES];
         }
     }
     else if (actionSheet == _toolItemExportActionSheet)
@@ -344,7 +345,7 @@ static void * directoryPresenterFileURLsObservingContext;
                 [project compressProjectToURL:zipURL];
             }];
             self.loading = NO;
-            [[ECBezelAlert defaultBezelAlert] addAlertMessageWithText:([cellsToExport count] == 1 ? @"Project exported" : [NSString stringWithFormat:@"%u projects exported", [cellsToExport count]]) image:nil displayImmediatly:YES];
+            [[ECBezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:@"Project exported" plural:@"%u projects exported" count:[cellsToExport count]] image:nil displayImmediatly:YES];
         }
         else if (buttonIndex == 1) // send mail
         {
