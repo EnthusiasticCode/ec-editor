@@ -7,7 +7,7 @@
 //
 
 #import "ACSingleProjectBrowsersController.h"
-#import "ACProject.h"
+
 #import "ACTab.h"
 #import "ACTopBarTitleControl.h"
 
@@ -23,7 +23,23 @@
 
 #pragma mark - Properties
 
-@synthesize tab;
+@synthesize tab, project;
+
+- (void)setTab:(ACTab *)value
+{
+    if (value == tab)
+        return;
+    [self willChangeValueForKey:@"tab"];
+    tab = value;
+    NSString *projectName = [ACProject projectNameFromURL:tab.currentURL isProjectRoot:NULL];
+    if ([ACProject projectWithNameExists:projectName])
+    {
+        [self willChangeValueForKey:@"project"];
+        project = [ACProject projectWithName:projectName];
+        [self didChangeValueForKey:@"project"];
+    }
+    [self didChangeValueForKey:@"tab"];
+}
 
 - (NSArray *)toolbarItems
 {
@@ -71,9 +87,8 @@
 
 - (void)_projectColorLabelSelectionAction:(id)sender
 {
-    ACProject *project = [ACProject projectWithURL:self.tab.currentURL];
-    project.labelColor = [(ACColorSelectionControl *)sender selectedColor];
-    [_projectColorLabelButton setImage:[UIImage styleProjectLabelImageWithSize:CGSizeMake(14, 22) color:project.labelColor] forState:UIControlStateNormal];
+    self.project.labelColor = [(ACColorSelectionControl *)sender selectedColor];
+    [_projectColorLabelButton setImage:[UIImage styleProjectLabelImageWithSize:CGSizeMake(14, 22) color:self.project.labelColor] forState:UIControlStateNormal];
     [_projectColorLabelPopover dismissPopoverAnimated:YES];
 }
 
@@ -115,14 +130,12 @@
     }
     else
     {
-        ACProject *project = [ACProject projectWithName:projectName];
-        
         if (!_projectColorLabelButton)
         {
             _projectColorLabelButton  = [UIButton buttonWithType:UIButtonTypeCustom];
             [_projectColorLabelButton addTarget:self action:@selector(_projectColorLabelAction:) forControlEvents:UIControlEventTouchUpInside];
         }
-        [_projectColorLabelButton setImage:[UIImage styleProjectLabelImageWithSize:CGSizeMake(14, 22) color:project.labelColor] forState:UIControlStateNormal];
+        [_projectColorLabelButton setImage:[UIImage styleProjectLabelImageWithSize:CGSizeMake(14, 22) color:self.project.labelColor] forState:UIControlStateNormal];
         [_projectColorLabelButton sizeToFit];
         
         UITextField *titleField = [UITextField new];
@@ -149,8 +162,7 @@
     
 #warning TODO check that the name is ok
     
-    ACProject *project = [ACProject projectWithName:projectName];
-    project.name = textField.text;
+    self.project.name = textField.text;
     
     // File coordination will care about changing the tab url and hence reload the controller
 }
@@ -173,9 +185,18 @@
         return;
     
     tableBrowser.directory = url;
-    tableBrowser.tab = tab;
     
     self.selectedViewController = tableBrowser;
+}
+
+@end
+
+
+@implementation UIViewController (ACSingleProjectBrowsersController)
+
+- (ACSingleProjectBrowsersController *)singleProjectBrowsersController
+{
+    return (ACSingleProjectBrowsersController *)self.parentViewController;
 }
 
 @end

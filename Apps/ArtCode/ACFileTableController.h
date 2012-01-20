@@ -16,6 +16,5 @@
 @interface ACFileTableController : UITableViewController <UISearchBarDelegate, UIActionSheetDelegate, MFMailComposeViewControllerDelegate, ECDirectoryPresenterDelegate>
 
 @property (nonatomic, strong) NSURL *directory;
-@property (nonatomic, strong) ACTab *tab;
 
 @end

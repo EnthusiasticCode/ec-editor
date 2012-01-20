@@ -26,7 +26,7 @@
         <scene sceneID="uvQ-Tk-a2c">
             <objects>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="XJT-PM-0xs" userLabel="First Responder" sceneMemberID="firstResponder"/>
-                <tableViewController id="W93-lH-43y" sceneMemberID="viewController">
+                <tableViewController id="W93-lH-43y" customClass="ACBookmarkTableController" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="singleLineEtched" allowsSelectionDuringEditing="YES" allowsMultipleSelectionDuringEditing="YES" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="gjM-zC-KMh">
                         <rect key="frame" x="0.0" y="20" width="768" height="955"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -99,17 +99,6 @@
             <point key="canvasLocation" x="-196" y="-1644"/>
         </scene>
     </scenes>
-    <classes>
-        <class className="ACFileTableController" superclassName="UITableViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/ACFileTableController.h"/>
-        </class>
-        <class className="ACHighlightTableViewCell" superclassName="UITableViewCell">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/ACHighlightTableViewCell.h"/>
-        </class>
-        <class className="ACSingleProjectBrowsersController" superclassName="UITabBarController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/ACSingleProjectBrowsersController.h"/>
-        </class>
-    </classes>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar" statusBarStyle="blackTranslucent"/>
         <simulatedOrientationMetrics key="orientation"/>

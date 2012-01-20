@@ -7,7 +7,8 @@
 //
 
 #import "ACFileTableController.h"
-#import "ACSingleTabController.h"
+#import "ACSingleProjectBrowsersController.h"
+
 #import "AppStyle.h"
 #import "ACNewFileController.h"
 #import "ACDirectoryBrowserController.h"
@@ -22,7 +23,6 @@
 #import "ACHighlightTableViewCell.h"
 
 #import "ACTab.h"
-#import "ACProject.h"
 
 
 @interface ACFileTableController () {
@@ -61,7 +61,6 @@
 
 #pragma mark - Properties
 
-@synthesize tab = _tab;
 @synthesize directory = _directory, directoryPresenter = _directoryPresenter;
 
 - (void)setDirectory:(NSURL *)directory
@@ -211,7 +210,7 @@
     }
     else
     {
-        [self.tab pushURL:[self.directoryPresenter.filteredFileURLs objectAtIndex:indexPath.row]];
+        [self.singleProjectBrowsersController.tab pushURL:[self.directoryPresenter.filteredFileURLs objectAtIndex:indexPath.row]];
     }
 }
 
@@ -297,7 +296,7 @@
             }];
             self.loading = NO;
             [[ECBezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:@"File deleted" plural:@"%u files deleted" count:[_selectedURLs count]] image:nil displayImmediatly:YES];
-            [self.tabBarController setEditing:NO animated:YES];
+            [self.singleProjectBrowsersController setEditing:NO animated:YES];
         }
     }
     else if (actionSheet == _toolEditItemDuplicateActionSheet)
@@ -323,7 +322,7 @@
             }];
             self.loading = NO;
             [[ECBezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:@"File duplicated" plural:@"%u files duplicated" count:[_selectedURLs count]] image:nil displayImmediatly:YES];
-            [self.tabBarController setEditing:NO animated:YES];
+            [self.singleProjectBrowsersController setEditing:NO animated:YES];
         }
     }
     else if (actionSheet == _toolEditItemExportActionSheet)
@@ -345,7 +344,7 @@
             }];
             self.loading = NO;
             [[ECBezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:@"File exported" plural:@"%u files exported" count:[_selectedURLs count]] image:nil displayImmediatly:YES];
-            [self.tabBarController setEditing:NO animated:YES];
+            [self.singleProjectBrowsersController setEditing:NO animated:YES];
         }
         else if (buttonIndex == 2) // Mail
         {
@@ -374,7 +373,7 @@
             else
                 [mailComposer setMessageBody:@"<br/><p>Open this files with <a href=\"http://www.artcodeapp.com/\">ArtCode</a> to view the contained projects.</p>" isHTML:YES];
             
-            [self.tabBarController setEditing:NO animated:YES];
+            [self.singleProjectBrowsersController setEditing:NO animated:YES];
             [self presentViewController:mailComposer animated:YES completion:nil];
             [mailComposer.navigationBar.topItem.leftBarButtonItem setBackgroundImage:[[UIImage imageNamed:@"topBar_ToolButton_Normal"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 10, 10, 10)] forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
             self.loading = NO;
@@ -442,7 +441,7 @@
     [cancelItem setBackgroundImage:[UIImage styleNormalButtonBackgroundImageForControlState:UIControlStateNormal] forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
     directoryBrowser.navigationItem.leftBarButtonItem = cancelItem;
     directoryBrowser.navigationItem.rightBarButtonItem = rightItem;
-    directoryBrowser.URL = [[ACProject projectWithURL:self.directory] URL];
+    directoryBrowser.URL = self.singleProjectBrowsersController.project.URL;
     _directoryBrowserNavigationController = [[UINavigationController alloc] initWithRootViewController:directoryBrowser];
     _directoryBrowserNavigationController.modalPresentationStyle = UIModalPresentationFormSheet;
     [self presentViewController:_directoryBrowserNavigationController animated:YES completion:nil];
@@ -473,7 +472,7 @@
     [conflictController processItemURLs:[_selectedURLs copy] toURL:moveURL usignProcessingBlock:^(NSURL *itemURL, NSURL *destinationURL) {
         [fileManager copyItemAtURL:itemURL toURL:destinationURL error:NULL];
     } completion:^{
-        [self.tabBarController setEditing:NO animated:YES];
+        [self.singleProjectBrowsersController setEditing:NO animated:YES];
         [self _directoryBrowserDismissAction:sender];
     }];
 }
@@ -496,7 +495,7 @@
     [conflictController processItemURLs:[_selectedURLs copy] toURL:moveURL usignProcessingBlock:^(NSURL *itemURL, NSURL *destinationURL) {
         [fileManager moveItemAtURL:itemURL toURL:destinationURL error:NULL];
     } completion:^{
-        [self.tabBarController setEditing:NO animated:YES];
+        [self.singleProjectBrowsersController setEditing:NO animated:YES];
         [self _directoryBrowserDismissAction:sender];
     }];
 }
