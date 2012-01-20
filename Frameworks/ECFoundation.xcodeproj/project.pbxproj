@@ -107,6 +107,10 @@
 		B7D25F52149156D8002CD5C9 /* ECFileCoordinator.m in Sources */ = {isa = PBXBuildFile; fileRef = B7D25F4E149156D8002CD5C9 /* ECFileCoordinator.m */; };
 		B7D4DDBA146BD04D002DF6D4 /* ECFileBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = B7D4DDB8146BD04D002DF6D4 /* ECFileBuffer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B7D4DDBB146BD04D002DF6D4 /* ECFileBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = B7D4DDB9146BD04D002DF6D4 /* ECFileBuffer.m */; };
+		B7F4867514C9768D005DF3AE /* ECWeakArray.h in Headers */ = {isa = PBXBuildFile; fileRef = B7F4867314C9768D005DF3AE /* ECWeakArray.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B7F4867614C9768D005DF3AE /* ECWeakArray.m in Sources */ = {isa = PBXBuildFile; fileRef = B7F4867414C9768D005DF3AE /* ECWeakArray.m */; };
+		B7F4867A14C977EA005DF3AE /* WeakObjectWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = B7F4867814C977EA005DF3AE /* WeakObjectWrapper.h */; };
+		B7F4867B14C977EA005DF3AE /* WeakObjectWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = B7F4867914C977EA005DF3AE /* WeakObjectWrapper.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -305,6 +309,10 @@
 		B7D25F4E149156D8002CD5C9 /* ECFileCoordinator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECFileCoordinator.m; sourceTree = "<group>"; };
 		B7D4DDB8146BD04D002DF6D4 /* ECFileBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECFileBuffer.h; sourceTree = "<group>"; };
 		B7D4DDB9146BD04D002DF6D4 /* ECFileBuffer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECFileBuffer.m; sourceTree = "<group>"; };
+		B7F4867314C9768D005DF3AE /* ECWeakArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECWeakArray.h; sourceTree = "<group>"; };
+		B7F4867414C9768D005DF3AE /* ECWeakArray.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECWeakArray.m; sourceTree = "<group>"; };
+		B7F4867814C977EA005DF3AE /* WeakObjectWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeakObjectWrapper.h; sourceTree = "<group>"; };
+		B7F4867914C977EA005DF3AE /* WeakObjectWrapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WeakObjectWrapper.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -419,10 +427,14 @@
 				B717077B1428D52F00DF7794 /* ECPatriciaTrie.m */,
 				B726571014613FBE00E4C9F1 /* ECCache.h */,
 				B726571114613FBF00E4C9F1 /* ECCache.m */,
-				B726571514613FD100E4C9F1 /* ECWeakDictionary.h */,
-				B726571614613FD100E4C9F1 /* ECWeakDictionary.m */,
 				B726573A146160EF00E4C9F1 /* ECDiscardableMutableDictionary.h */,
 				B726573B146160F000E4C9F1 /* ECDiscardableMutableDictionary.m */,
+				B726571514613FD100E4C9F1 /* ECWeakDictionary.h */,
+				B726571614613FD100E4C9F1 /* ECWeakDictionary.m */,
+				B7F4867314C9768D005DF3AE /* ECWeakArray.h */,
+				B7F4867414C9768D005DF3AE /* ECWeakArray.m */,
+				B7F4867814C977EA005DF3AE /* WeakObjectWrapper.h */,
+				B7F4867914C977EA005DF3AE /* WeakObjectWrapper.m */,
 			);
 			name = "Data Structures";
 			sourceTree = "<group>";
@@ -632,6 +644,8 @@
 				B726573C146160F000E4C9F1 /* ECDiscardableMutableDictionary.h in Headers */,
 				B7D4DDBA146BD04D002DF6D4 /* ECFileBuffer.h in Headers */,
 				B7D25F51149156D8002CD5C9 /* ECFileCoordinator.h in Headers */,
+				B7F4867514C9768D005DF3AE /* ECWeakArray.h in Headers */,
+				B7F4867A14C977EA005DF3AE /* WeakObjectWrapper.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -744,6 +758,8 @@
 				B726573D146160F000E4C9F1 /* ECDiscardableMutableDictionary.m in Sources */,
 				B7D4DDBB146BD04D002DF6D4 /* ECFileBuffer.m in Sources */,
 				B7D25F52149156D8002CD5C9 /* ECFileCoordinator.m in Sources */,
+				B7F4867614C9768D005DF3AE /* ECWeakArray.m in Sources */,
+				B7F4867B14C977EA005DF3AE /* WeakObjectWrapper.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
