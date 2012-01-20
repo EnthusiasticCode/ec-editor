@@ -178,40 +178,89 @@
             return;
         NSMutableIndexSet *indexesOfInsertedFilteredFileURLs = [[NSMutableIndexSet alloc] init];
         NSMutableIndexSet *indexesOfRemovedFilteredFileURLs = [[NSMutableIndexSet alloc] init];
-        NSMutableIndexSet *indexesOfChangedHitmasks = [[NSMutableIndexSet alloc] init];
-        NSUInteger index = 0;
-        if ([filterString length])
+        NSMutableIndexSet *indexesOfChangedHitMasks = [[NSMutableIndexSet alloc] init];
+        NSUInteger oldFilterStringLength = [_filterString length];
+        NSUInteger newFilterStringLength = [filterString length];
+        if (newFilterStringLength)
         {
-            for (NSURL *fileURL in _mutableFilteredFileURLs)
+            NSUInteger index = 0;
+            for (NSURL *fileURL in oldFilterStringLength ? _mutableFilteredFileURLs : _mutableFileURLs)
             {
-                NSIndexSet *hitMask;
+                NSIndexSet *hitMask = nil;
                 if (![[fileURL lastPathComponent] scoreForAbbreviation:filterString hitMask:&hitMask])
+                {
                     [indexesOfRemovedFilteredFileURLs addIndex:index];
-                else
+                }
+                else if (oldFilterStringLength)
+                {
                     [_mutableFilterHitMasks replaceObjectAtIndex:index withObject:hitMask];
+                }
+                else
+                {
+                    [_mutableFilteredFileURLs addObject:fileURL];
+                    [_mutableFilterHitMasks addObject:hitMask];
+                }
                 ++index;
             }
-            [_mutableFilteredFileURLs removeObjectsAtIndexes:indexesOfRemovedFilteredFileURLs];
-            [_mutableFilterHitMasks removeObjectsAtIndexes:indexesOfRemovedFilteredFileURLs];
-        }
-        for (NSURL *fileURL in _mutableFileURLs)
-        {
-            NSIndexSet *hitMask;
-            if ([filterString length] && ![[fileURL lastPathComponent] scoreForAbbreviation:filterString hitMask:&hitMask])
-                continue;
-            index = [self _indexOfFilteredFileURL:fileURL options:0];
-            if (index == NSNotFound)
+            if (oldFilterStringLength)
             {
-                [_mutableFilteredFileURLs insertObject:fileURL atIndex:index];
-                [indexesOfInsertedFilteredFileURLs addIndex:index];
+                [_mutableFilteredFileURLs removeObjectsAtIndexes:indexesOfRemovedFilteredFileURLs];
+                [_mutableFilterHitMasks removeObjectsAtIndexes:indexesOfRemovedFilteredFileURLs];
+            }
+        }
+        if (oldFilterStringLength)
+        {
+            if (newFilterStringLength)
+            {
+                for (NSURL *fileURL in _mutableFileURLs)
+                {
+                    NSIndexSet *hitMask = nil;
+                    if (![[fileURL lastPathComponent] scoreForAbbreviation:filterString hitMask:&hitMask])
+                        continue;
+                    NSUInteger indexOfExistingFilteredFileURL = [self _indexOfFilteredFileURL:fileURL options:0];
+                    if (indexOfExistingFilteredFileURL == NSNotFound)
+                    {
+                        NSUInteger indexOfNewFilteredFileURL = [self _indexOfFilteredFileURL:fileURL options:NSBinarySearchingInsertionIndex];
+                        [indexesOfInsertedFilteredFileURLs addIndex:indexOfNewFilteredFileURL];
+                        if (indexOfNewFilteredFileURL == [_mutableFilteredFileURLs count])
+                        {
+                            [_mutableFilteredFileURLs addObject:fileURL];
+                            [_mutableFilterHitMasks addObject:hitMask];
+                        }
+                        else
+                        {
+                            [_mutableFilteredFileURLs insertObject:fileURL atIndex:indexOfNewFilteredFileURL];
+                            [_mutableFilterHitMasks insertObject:hitMask atIndex:indexOfNewFilteredFileURL];
+                        }
+                    }
+                    else
+                    {
+                        [_mutableFilterHitMasks replaceObjectAtIndex:indexOfExistingFilteredFileURL withObject:hitMask];
+                    }
+                }
             }
             else
             {
-                [_mutableFilterHitMasks replaceObjectAtIndex:index withObject:hitMask];
+                NSUInteger index = 0;
+                for (NSURL *fileURL in _mutableFileURLs)
+                {
+                    NSUInteger indexOfExistingFilteredFileURL = [self _indexOfFilteredFileURL:fileURL options:0];
+                    if (indexOfExistingFilteredFileURL == NSNotFound)
+                        [indexesOfInsertedFilteredFileURLs addIndex:index];
+                    ++index;
+                }
+            }
+            if (!newFilterStringLength)
+            {
+                [_mutableFilteredFileURLs removeAllObjects];
+                [_mutableFilterHitMasks removeAllObjects];
             }
         }
-        [indexesOfChangedHitmasks addIndexesInRange:NSMakeRange(0, [_mutableFilteredFileURLs count])];
-        [indexesOfChangedHitmasks removeIndexes:indexesOfInsertedFilteredFileURLs];
+        [indexesOfChangedHitMasks addIndexesInRange:NSMakeRange(0, [(newFilterStringLength ? _mutableFilteredFileURLs : _mutableFileURLs) count])];
+        [indexesOfChangedHitMasks removeIndexes:indexesOfInsertedFilteredFileURLs];
+        
+        _filterString = filterString;
+        
         if (_delegateFlags.didInsertFiltered && [indexesOfInsertedFilteredFileURLs count])
             [[_delegate delegateOperationQueue] addOperationWithBlock:^{
                 [_delegate directoryPresenter:self didInsertFilteredFileURLsAtIndexes:indexesOfInsertedFilteredFileURLs];
@@ -220,9 +269,9 @@
             [[_delegate delegateOperationQueue] addOperationWithBlock:^{
                 [_delegate directoryPresenter:self didRemoveFilteredFileURLsAtIndexes:indexesOfRemovedFilteredFileURLs];
             }];
-        if (_delegateFlags.didChangeHitMasks && [indexesOfChangedHitmasks count])
+        if (_delegateFlags.didChangeHitMasks && [indexesOfChangedHitMasks count])
             [[_delegate delegateOperationQueue] addOperationWithBlock:^{
-                [_delegate directoryPresenter:self didChangeHitmasksAtIndexes:indexesOfChangedHitmasks];
+                [_delegate directoryPresenter:self didChangeHitMasksAtIndexes:indexesOfChangedHitMasks];
             }];
     });
 }
@@ -265,10 +314,10 @@
     {
         ECASSERT([self _indexOfFileURL:fileURL options:0] == NSNotFound);
         NSUInteger index = [self _indexOfFileURL:fileURL options:NSBinarySearchingInsertionIndex];
-        [_mutableFileURLs insertObject:fileURL atIndex:index];
+        index == [_mutableFileURLs count] ? [_mutableFileURLs addObject:fileURL] : [_mutableFileURLs insertObject:fileURL atIndex:index];
         [indexesOfInsertedFileURLs addIndex:index];
-        NSIndexSet *hitMask;
-        if ([_filterString length] && ![[fileURL lastPathComponent] scoreForAbbreviation:_filterString hitMask:&hitMask])
+        NSIndexSet *hitMask = nil;
+        if (![_filterString length] || ![[fileURL lastPathComponent] scoreForAbbreviation:_filterString hitMask:&hitMask])
             continue;
         ECASSERT([self _indexOfFilteredFileURL:fileURL options:0] == NSNotFound);
         NSUInteger filteredIndex = [self _indexOfFilteredFileURL:fileURL options:NSBinarySearchingInsertionIndex];
@@ -282,8 +331,8 @@
         ECASSERT(index != NSNotFound);
         [_mutableFileURLs removeObjectAtIndex:index];
         [indexesOfRemovedFileURLs addIndex:index];
-        NSIndexSet *hitMask;
-        if ([_filterString length] && ![[fileURL lastPathComponent] scoreForAbbreviation:_filterString hitMask:&hitMask])
+        NSIndexSet *hitMask = nil;
+        if (![_filterString length] || ![[fileURL lastPathComponent] scoreForAbbreviation:_filterString hitMask:&hitMask])
             continue;
         NSUInteger filteredIndex = [self _indexOfFilteredFileURL:fileURL options:0];
         [_mutableFilteredFileURLs removeObjectAtIndex:filteredIndex];
@@ -401,9 +450,9 @@
 - (void)accommodatePresentedItemDeletionWithCompletionHandler:(void (^)(NSError *))completionHandler
 {
     dispatch_barrier_sync(_internalAccessQueue, ^{
-        if ([_mutableFilteredFileURLs count] && _delegateFlags.didRemoveFiltered)
+        if (([_mutableFilteredFileURLs count] || ![_filterString length]) && _delegateFlags.didRemoveFiltered)
         {
-            NSIndexSet *indexSet = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, [_mutableFilteredFileURLs count])];
+            NSIndexSet *indexSet = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, [_filterString length] ? [_mutableFilteredFileURLs count] : [_mutableFileURLs count])];
             [[_delegate delegateOperationQueue] addOperationWithBlock:^{
                 [_delegate directoryPresenter:self didRemoveFilteredFileURLsAtIndexes:indexSet];
             }];

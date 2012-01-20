@@ -27,7 +27,7 @@
 - (void)directoryPresenter:(ECDirectoryPresenter *)directoryPresenter didRemoveFileURLsAtIndexes:(NSIndexSet *)indexes;
 - (void)directoryPresenter:(ECDirectoryPresenter *)directoryPresenter didInsertFilteredFileURLsAtIndexes:(NSIndexSet *)indexes;
 - (void)directoryPresenter:(ECDirectoryPresenter *)directoryPresenter didRemoveFilteredFileURLsAtIndexes:(NSIndexSet *)indexes;
-- (void)directoryPresenter:(ECDirectoryPresenter *)directoryPresenter didChangeHitmasksAtIndexes:(NSIndexSet *)indexes;
+- (void)directoryPresenter:(ECDirectoryPresenter *)directoryPresenter didChangeHitMasksAtIndexes:(NSIndexSet *)indexes;
 
 @end
 
