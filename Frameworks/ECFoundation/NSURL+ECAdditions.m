@@ -7,6 +7,7 @@
 //
 
 #import "NSURL+ECAdditions.h"
+#import "NSDictionary+ECAdditions.h"
 
 @interface NSURL (ECAdditions_Internal)
 + (NSArray *)_packageExtensions;
@@ -91,6 +92,16 @@
             return YES;
     }
     return NO;
+}
+
+- (NSURL *)URLByAppendingFragmentDictionary:(NSDictionary *)fragmentDictionary
+{
+    return [NSURL URLWithString:[NSString stringWithFormat:@"%@#%@", [self path], [fragmentDictionary stringWithURLEncodedComponents]]];
+}
+
+- (NSDictionary *)segmentDictionary
+{
+    return [NSDictionary dictionaryWithURLEncodedString:self.fragment];
 }
 
 @end

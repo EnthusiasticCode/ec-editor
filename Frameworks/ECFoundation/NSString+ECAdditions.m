@@ -86,6 +86,37 @@
 	return 0;
 }
 
+#pragma mark - URL extensions
+
+- (NSString *)stringByEscapingForURLQuery
+{
+	NSString *result = self;
+    
+	static CFStringRef leaveAlone = CFSTR(" ");
+	static CFStringRef toEscape = CFSTR("\n\r:/=,!$&'()*+;[]@#?%");
+    
+	CFStringRef escapedStr = CFURLCreateStringByAddingPercentEscapes(kCFAllocatorDefault, (__bridge CFStringRef)self, leaveAlone, toEscape, kCFStringEncodingUTF8);
+    
+	if (escapedStr)
+    {
+		NSMutableString *mutable = [NSMutableString stringWithString:(__bridge NSString *)escapedStr];
+		CFRelease(escapedStr);
+        
+		[mutable replaceOccurrencesOfString:@" " withString:@"+" options:0 range:NSMakeRange(0, [mutable length])];
+		result = mutable;
+	}
+	return result;  
+}
+
+
+- (NSString *)stringByUnescapingFromURLQuery
+{
+	NSString *deplussed = [self stringByReplacingOccurrencesOfString:@"+" withString:@" "];
+    return [deplussed stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+}
+
+#pragma mark - Plural string
+
 + (NSString *)stringWithFormatForSingular:(NSString *)singularFormat plural:(NSString *)pluralFormat count:(NSUInteger)count
 {
     return count == 1 ? [self stringWithFormat:singularFormat, count] : [self stringWithFormat:pluralFormat, count];

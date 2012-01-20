@@ -28,4 +28,7 @@
 - (BOOL)isPackage;
 - (BOOL)isPackageDescendant;
 
+- (NSURL *)URLByAppendingFragmentDictionary:(NSDictionary *)fragmentDictionary;
+- (NSDictionary *)fragmentDictionary;
+
 @end

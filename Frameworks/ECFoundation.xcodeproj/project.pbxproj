@@ -111,6 +111,8 @@
 		B7F4867614C9768D005DF3AE /* ECWeakArray.m in Sources */ = {isa = PBXBuildFile; fileRef = B7F4867414C9768D005DF3AE /* ECWeakArray.m */; };
 		B7F4867A14C977EA005DF3AE /* WeakObjectWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = B7F4867814C977EA005DF3AE /* WeakObjectWrapper.h */; };
 		B7F4867B14C977EA005DF3AE /* WeakObjectWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = B7F4867914C977EA005DF3AE /* WeakObjectWrapper.m */; };
+		CD8609F214C9F89200BF90CB /* NSDictionary+ECAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = CD8609F014C9F89200BF90CB /* NSDictionary+ECAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CD8609F314C9F89200BF90CB /* NSDictionary+ECAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = CD8609F114C9F89200BF90CB /* NSDictionary+ECAdditions.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -313,6 +315,8 @@
 		B7F4867414C9768D005DF3AE /* ECWeakArray.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECWeakArray.m; sourceTree = "<group>"; };
 		B7F4867814C977EA005DF3AE /* WeakObjectWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeakObjectWrapper.h; sourceTree = "<group>"; };
 		B7F4867914C977EA005DF3AE /* WeakObjectWrapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WeakObjectWrapper.m; sourceTree = "<group>"; };
+		CD8609F014C9F89200BF90CB /* NSDictionary+ECAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDictionary+ECAdditions.h"; sourceTree = "<group>"; };
+		CD8609F114C9F89200BF90CB /* NSDictionary+ECAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDictionary+ECAdditions.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -448,6 +452,8 @@
 				B71707811428D52F00DF7794 /* NSTimer+block.m */,
 				B7A4BB32143F918200BB6F29 /* NSString+ECAdditions.h */,
 				B7A4BB33143F918200BB6F29 /* NSString+ECAdditions.m */,
+				CD8609F014C9F89200BF90CB /* NSDictionary+ECAdditions.h */,
+				CD8609F114C9F89200BF90CB /* NSDictionary+ECAdditions.m */,
 			);
 			name = Additions;
 			sourceTree = "<group>";
@@ -633,6 +639,7 @@
 				B71707851428D52F00DF7794 /* ECHashing.h in Headers */,
 				B71707871428D52F00DF7794 /* ECPatriciaTrie.h in Headers */,
 				B71707891428D52F00DF7794 /* NSURL+ECAdditions.h in Headers */,
+				CD8609F214C9F89200BF90CB /* NSDictionary+ECAdditions.h in Headers */,
 				B717078D1428D52F00DF7794 /* NSTimer+block.h in Headers */,
 				B71707751428D50000DF7794 /* ECDebug.h in Headers */,
 				B7A4BB34143F918200BB6F29 /* NSString+ECAdditions.h in Headers */,
@@ -760,6 +767,7 @@
 				B7D25F52149156D8002CD5C9 /* ECFileCoordinator.m in Sources */,
 				B7F4867614C9768D005DF3AE /* ECWeakArray.m in Sources */,
 				B7F4867B14C977EA005DF3AE /* WeakObjectWrapper.m in Sources */,
+				CD8609F314C9F89200BF90CB /* NSDictionary+ECAdditions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
