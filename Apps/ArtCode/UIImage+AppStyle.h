@@ -32,6 +32,9 @@
 /// A label may also be applied to indicate document extension.
 + (UIImage *)styleDocumentImageWithSize:(CGSize)size color:(UIColor *)color text:(NSString *)text;
 
+/// Icon for a document based on extension. The images are 32x32 points in size.
++ (UIImage *)styleDocumentImageWithFileExtension:(NSString *)extension;
+
 /// Icon of a group.
 + (UIImage *)styleGroupImageWithSize:(CGSize)size;
 

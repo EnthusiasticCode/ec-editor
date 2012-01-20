@@ -16,6 +16,8 @@
 
 - (void)processItemURLs:(NSArray *)itemURLs toURL:(NSURL *)destinationURL usignProcessingBlock:(void (^)(NSURL *itemURL, NSURL *destinationURL))processingBlock completion:(void(^)(void))completionBlock;
 
+- (IBAction)doneAction:(id)sender;
+
 - (IBAction)selectAllAction:(id)sender;
 - (IBAction)selectNoneAction:(id)sender;
 - (IBAction)keepBothAction:(id)sender;

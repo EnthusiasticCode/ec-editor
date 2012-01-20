@@ -82,7 +82,6 @@ static void * directoryPresenterFileURLsObservingContext;
     
     NSTimer *_filterDebounceTimer;
     
-    NSArray *extensions;
     NSMutableArray *_selectedURLs;
 }
 
@@ -306,8 +305,6 @@ static void * directoryPresenterFileURLsObservingContext;
     UIView *footerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.tableView.bounds.size.width, 0)];
     self.tableView.tableFooterView = footerView;
     
-    extensions = [NSArray arrayWithObjects:@"h", @"m", @"hpp", @"cpp", @"mm", @"py", nil];
-    
     // Preparing tool items array changed in set editing
     _toolEditItems = [NSArray arrayWithObjects:[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Export"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolEditExportAction:)], [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Duplicate"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolEditDuplicateAction:)], [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Delete"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolEditDeleteAction:)], nil];
     
@@ -394,14 +391,15 @@ static void * directoryPresenterFileURLsObservingContext;
     
     // Configure the cell
     FilteredFileURLWrapper *fileWrapper = [self.filteredFileURLs objectAtIndex:indexPath.row];
-    NSString *fileName = [[fileWrapper fileURL] lastPathComponent];
-    if (![fileName pathExtension])
+    
+    BOOL isDirecotry = NO;
+    [[NSFileManager defaultManager] fileExistsAtPath:[fileWrapper.fileURL path] isDirectory:&isDirecotry];
+    if (isDirecotry)
         cell.imageView.image = [UIImage styleGroupImageWithSize:CGSizeMake(32, 32)];
     else
-        cell.imageView.image = [UIImage styleDocumentImageWithSize:CGSizeMake(32, 32) 
-                                                             color:[[fileName pathExtension] isEqualToString:@"h"] ? [UIColor styleFileRedColor] : [UIColor styleFileBlueColor]
-                                                              text:[fileName pathExtension]];
-    cell.highlightLabel.text = fileName;
+        cell.imageView.image = [UIImage styleDocumentImageWithFileExtension:[fileWrapper.fileURL pathExtension]];
+    
+    cell.highlightLabel.text = [fileWrapper.fileURL lastPathComponent];
     
     if ([fileWrapper.hitMask count] > 0)
     {
