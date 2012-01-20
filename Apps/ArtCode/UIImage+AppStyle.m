@@ -325,6 +325,8 @@
         // Label
         if (text)
         {
+            CGContextSetShadowWithColor(ctx, CGSizeMake(0, -1), 0, [UIColor whiteColor].CGColor);
+            
             CGFloat fontSize = (rect.size.width - strokeWidth);
             if ([text length] > 1)
                 fontSize /= 2.;
@@ -668,6 +670,22 @@
         }];
     }
     return _styleDeleteActivationImage;
+}
+
++ (UIImage *)styleNormalButtonBackgroundImageForControlState:(UIControlState)state
+{
+    static UIImage *images[2] = { nil, nil };
+    switch (state) {
+        case UIControlStateNormal:
+            if (images[0] == nil)
+                images[0] = [[UIImage imageNamed:@"topBar_ToolButton_Normal"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 10, 10, 10)];
+            return images[0];
+            
+        default:
+            if (images[1] == nil)
+                images[1] = [[UIImage imageNamed:@"topBar_ToolButton_Selected"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 10, 10, 10)];
+            return images[1];
+    }
 }
 
 @end

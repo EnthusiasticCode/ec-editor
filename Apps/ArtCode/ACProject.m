@@ -18,21 +18,18 @@ static NSString * const ACProjectPlistFileName = @".acproj";
 static NSString * const ACProjectExtension = @".weakpkg";
 static ECCache *openProjects = nil;
 
-@interface ACProject ()
-
-@property (nonatomic, strong, readonly) NSMutableDictionary *plist;
-
-@end
 
 
 @implementation ACProject {
     BOOL _dirty;
     NSURL *_plistUrl;
+    
+    NSMutableArray *bookmarks;
 }
 
 #pragma mark Properties
 
-@synthesize URL, plist;
+@synthesize URL, labelColor, bookmarks;
 
 - (NSString *)name
 {
@@ -60,26 +57,17 @@ static ECCache *openProjects = nil;
     [self didChangeValueForKey:@"name"];
 }
 
-- (UIColor *)labelColor
+- (void)setLabelColor:(UIColor *)value
 {
-    return [UIColor colorWithHexString:[self.plist objectForKey:@"labelColor"]];
-}
-
-- (void)setLabelColor:(UIColor *)labelColor
-{
+    if (value == labelColor)
+        return;
+    
     _dirty = YES;
     [self willChangeValueForKey:@"labelColor"];
-    [self.plist setObject:[labelColor hexString] forKey:@"labelColor"];
+    labelColor = value;
     [self didChangeValueForKey:@"labelColor"];
     // TODO remove this when a global autosaving method is created
     [self flush];
-}
-
-- (NSMutableDictionary *)plist
-{
-    if (!plist)
-        plist = [NSMutableDictionary new];
-    return plist;
 }
 
 #pragma mark Initializing and exporting projects
@@ -95,10 +83,24 @@ static ECCache *openProjects = nil;
     URL = url;
     
     _plistUrl = [URL URLByAppendingPathComponent:ACProjectPlistFileName];
+    __block NSDictionary *plist = nil;
     [[[ECFileCoordinator alloc] initWithFilePresenter:nil] coordinateReadingItemAtURL:_plistUrl options:0 error:NULL byAccessor:^(NSURL *newURL) {
         if ([[NSFileManager new] fileExistsAtPath:[newURL path]])
-            plist = [NSPropertyListSerialization propertyListWithData:[NSData dataWithContentsOfURL:newURL] options:NSPropertyListMutableContainersAndLeaves format:NULL error:NULL];
+            plist = [NSPropertyListSerialization propertyListWithData:[NSData dataWithContentsOfURL:newURL] options:NSPropertyListImmutable format:NULL error:NULL];
     }];
+    if (plist)
+    {
+        labelColor = [UIColor colorWithHexString:[plist objectForKey:@"labelColor"]];
+        NSArray *plistBookmarks = [plist objectForKey:@"bookmarks"];
+        if ([plistBookmarks count])
+        {
+            bookmarks = [NSMutableArray new];
+            for (NSDictionary *b in plistBookmarks)
+            {
+                [bookmarks addObject:[[ACProjectBookmark alloc] initWithProject:self propertyDictionary:b]];
+            }
+        }
+    }
     
     return self;
 }
@@ -118,11 +120,24 @@ static ECCache *openProjects = nil;
 
 - (void)flush
 {
-    if (!_dirty || [plist count] == 0)
+    if (!_dirty)
         return;
     
+    NSMutableDictionary *plist = [NSMutableDictionary new];
+    if (labelColor)
+        [plist setObject:[labelColor hexString] forKey:@"labelColor"];
+    if ([bookmarks count])
+    {
+        NSMutableArray *plistBookmarks = [[NSMutableArray alloc] initWithCapacity:[bookmarks count]];
+        for (ACProjectBookmark *b in bookmarks)
+        {
+            [plistBookmarks addObject:[b propertyDictionary]];
+        }
+        [plist setObject:plistBookmarks forKey:@"bookmarks"];
+    }
+    
     [[[ECFileCoordinator alloc] initWithFilePresenter:nil] coordinateWritingItemAtURL:_plistUrl options:0 error:NULL byAccessor:^(NSURL *newURL) {
-        [[NSPropertyListSerialization dataWithPropertyList:self.plist format:NSPropertyListBinaryFormat_v1_0 options:0 error:NULL] writeToURL:newURL atomically:YES];
+        [[NSPropertyListSerialization dataWithPropertyList:plist format:NSPropertyListBinaryFormat_v1_0 options:0 error:NULL] writeToURL:newURL atomically:YES];
     }];
     
     _dirty = NO;
@@ -142,6 +157,28 @@ static ECCache *openProjects = nil;
 - (void)dealloc
 {
     [self flush];
+}
+
+#pragma mark Bookmakrs methods
+
+- (ACProjectBookmark *)addBookmarkWithBookmarkURL:(NSURL *)bookmarkUrl note:(NSString *)note
+{
+    if (!bookmarks)
+        bookmarks = [NSMutableArray new];
+    
+    ACProjectBookmark *bookmark = [[ACProjectBookmark alloc] initWithProject:self URL:bookmarkUrl note:note];
+    [bookmarks addObject:bookmark];
+    _dirty = YES;
+    
+    // TODO remove flush here
+    [self flush];
+    
+    return bookmark;
+}
+
+- (void)removeBookmark:(ACProjectBookmark *)bookmark
+{
+    [bookmarks removeObject:bookmark];
 }
 
 #pragma mark Class methods
@@ -236,6 +273,57 @@ static ECCache *openProjects = nil;
         return nil;
     
     return [self projectWithName:projectName];
+}
+
+@end
+
+
+@implementation ACProjectBookmark {
+    NSString *url;
+}
+
+@synthesize project, note;
+
+- (NSURL *)URL
+{
+    return [project.URL URLByAppendingPathComponent:url];
+}
+
+- (id)initWithProject:(ACProject *)aProject URL:(NSURL *)aUrl note:(NSString *)aNote
+{
+    self = [super init];
+    if (!self)
+        return nil;
+    
+    project = aProject;
+    url = [[aUrl absoluteString] substringFromIndex:[[aProject.URL path] length]];
+    note = aNote;
+    return self;
+}
+
+- (id)initWithProject:(ACProject *)aProject propertyDictionary:(NSDictionary *)dictionary
+{
+    self = [super init];
+    if (!self)
+        return nil;
+    
+    project = aProject;
+    url = [dictionary objectForKey:@"URL"];
+    note = [dictionary objectForKey:@"note"];
+    
+    return self;
+}
+
+- (NSDictionary *)propertyDictionary
+{
+    if (note)
+    {
+        return [NSDictionary dictionaryWithObjectsAndKeys:url, @"URL", note, @"note", nil];
+    }
+    else
+    {
+        return [NSDictionary dictionaryWithObject:url forKey:@"URL"];
+    }
 }
 
 @end

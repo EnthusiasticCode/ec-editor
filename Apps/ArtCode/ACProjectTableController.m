@@ -22,6 +22,7 @@
 
 #import <ECFoundation/ECDirectoryPresenter.h>
 #import <ECFoundation/NSURL+ECAdditions.h>
+#import <ECFoundation/NSString+ECAdditions.h>
 #import <ECArchive/ECArchive.h>
 #import <ECUIKit/ECBezelAlert.h>
 
@@ -323,7 +324,7 @@ static void * directoryPresenterFileURLsObservingContext;
             }];
             
             // Show bezel alert
-            [[ECBezelAlert defaultBezelAlert] addAlertMessageWithText:([cellsToRemove count] == 1 ? @"Project removed" : [NSString stringWithFormat:@"%u projects removed", [cellsToRemove count]]) image:nil displayImmediatly:YES];
+            [[ECBezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:@"Project removed" plural:@"%u projects removed" count:[cellsToRemove count]] image:nil displayImmediatly:YES];
         }
     }
     else if (actionSheet == _toolItemExportActionSheet)
@@ -343,7 +344,7 @@ static void * directoryPresenterFileURLsObservingContext;
                 [project compressProjectToURL:zipURL];
             }];
             self.loading = NO;
-            [[ECBezelAlert defaultBezelAlert] addAlertMessageWithText:([cellsToExport count] == 1 ? @"Project exported" : [NSString stringWithFormat:@"%u projects exported", [cellsToExport count]]) image:nil displayImmediatly:YES];
+            [[ECBezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:@"Project exported" plural:@"%u projects exported" count:[cellsToExport count]] image:nil displayImmediatly:YES];
         }
         else if (buttonIndex == 1) // send mail
         {
@@ -412,6 +413,7 @@ static void * directoryPresenterFileURLsObservingContext;
                 [mailComposer setMessageBody:@"<br/><p>Open this files with <a href=\"http://www.artcodeapp.com/\">ArtCode</a> to view the contained projects.</p>" isHTML:YES];
             
             [self presentViewController:mailComposer animated:YES completion:nil];
+            [mailComposer.navigationBar.topItem.leftBarButtonItem setBackgroundImage:[[UIImage imageNamed:@"topBar_ToolButton_Normal"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 10, 10, 10)] forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
             self.loading = NO;
         }
     }

@@ -63,4 +63,7 @@
 /// An image to be used as a table delete activation control. Cached.
 + (UIImage *)styleDeleteActivationImage;
 
+/// Image for a normal button in the application for the given state.
++ (UIImage *)styleNormalButtonBackgroundImageForControlState:(UIControlState)state;
+
 @end

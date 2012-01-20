@@ -17,4 +17,8 @@
 - (float)scoreForAbbreviation:(NSString *)abbreviation hitMask:(NSIndexSet **)mask;
 - (float)scoreForAbbreviation:(NSString *)abbreviation inRange:(NSRange)searchRange fromRange:(NSRange)abbreviationRange hitMask:(NSIndexSet **)mask;
 
+/// Returna a new string based on the count. The count is passed to the format string.
++ (NSString *)stringWithFormatForSingular:(NSString *)singularFormat plural:(NSString *)pluralFormat count:(NSUInteger)count;
+- (NSString *)stringByAppendingFormatForSingular:(NSString *)singularFormat plural:(NSString *)pluralFormat count:(NSUInteger)count;
+
 @end

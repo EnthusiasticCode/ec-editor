@@ -8,12 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-typedef enum {
-    ACProjectMergeConflictPolicyKeepBoth,
-    ACProjectMergeConflictPolicyKeepOriginal,
-    ACProjectMergeConflictPolicyKeepNew
-} ACProjectMergeConflictPolicy;
-
+@class ACProjectBookmark;
 
 @interface ACProject : NSObject
 
@@ -53,11 +48,6 @@ typedef enum {
 /// Compress the project and saves it to the given URL.
 - (BOOL)compressProjectToURL:(NSURL *)exportUrl;
 
-/// Gets the content of the given URL and merge it to the content of the project.
-/// The conflict resolver block is used whenever a file in the project should be ovverriden to complete the merge. 
-/// If no conflict resolution is provided, both files are kept; meaning that the source file will be renamed.
-- (void)mergeFilesFromDirectoryWithURL:(NSURL *)mergeUrl conflictResolver:(ACProjectMergeConflictPolicy(^)(NSURL *mergeSourceUrl, NSURL *mergeDestinationUrl))conflictResolver;
-
 #pragma mark Locating the project
 
 /// The directory URL of the project
@@ -71,6 +61,29 @@ typedef enum {
 /// A color to be used to identify the project.
 @property (nonatomic, strong) UIColor *labelColor;
 
-// TODO bookmarks
+/// Access the bookmarks.
+@property (nonatomic, copy, readonly) NSArray *bookmarks;
+
+- (ACProjectBookmark *)addBookmarkWithBookmarkURL:(NSURL *)bookmarkUrl note:(NSString *)note;
+- (void)removeBookmark:(ACProjectBookmark *)bookmark;
+
+@end
+
+
+/// Represent a bookmark in a file of the project. 
+@interface ACProjectBookmark : NSObject
+
+@property (nonatomic, weak, readonly) ACProject *project;
+
+/// URL relative to the project root of the file that contain the bookmark.
+/// The URL also encode the range of the bookmark.
+@property (nonatomic, strong, readonly) NSURL *URL;
+
+/// Notes connected with the bookmark.
+@property (nonatomic, strong) NSString *note;
+
+- (id)initWithProject:(ACProject *)project URL:(NSURL *)url note:(NSString *)note;
+- (id)initWithProject:(ACProject *)project propertyDictionary:(NSDictionary *)dictionary;
+- (NSDictionary *)propertyDictionary;
 
 @end
