@@ -7,6 +7,7 @@
 //
 
 #import "ACCodeFileController.h"
+
 #import <QuartzCore/QuartzCore.h>
 #import <ECFoundation/NSTimer+block.h>
 #import <ECFoundation/ECFileBuffer.h>
@@ -25,6 +26,7 @@
 #import "ACShapePopoverBackgroundView.h"
 
 #import "ACCodeFile.h"
+#import "ACProject.h"
 
 
 @interface ACCodeFileController () {

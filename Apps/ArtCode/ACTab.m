@@ -9,17 +9,28 @@
 #import "ACTab.h"
 #import "ACApplication.h"
 #import "ACHistoryItem.h"
+#import "ACProject.h"
 
 
 @implementation ACTab
 
-@dynamic currentHistoryPosition;
-@dynamic application;
-@dynamic historyItems;
+@dynamic currentHistoryPosition, application, historyItems;
+@synthesize currentProject;
 
 - (NSURL *)currentURL
 {
     return [[self.historyItems objectAtIndex:self.currentHistoryPosition] URL];
+}
+
+- (ACProject *)currentProject
+{
+    if (currentProject == nil)
+    {
+        NSString *projectName = [ACProject projectNameFromURL:self.currentURL isProjectRoot:NULL];
+        if ([ACProject projectWithNameExists:projectName])
+            currentProject = [ACProject projectWithName:projectName];
+    }
+    return currentProject;
 }
 
 + (NSSet *)keyPathsForValuesAffectingCurrentURL
@@ -71,6 +82,7 @@
     historyItem.tab = self;
     historyItem.URL = url;
     self.currentHistoryPosition += 1;
+    currentProject = nil;
 }
 
 - (void)moveBackInHistory

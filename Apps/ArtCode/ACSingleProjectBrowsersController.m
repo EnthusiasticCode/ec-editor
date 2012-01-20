@@ -23,22 +23,11 @@
 
 #pragma mark - Properties
 
-@synthesize tab, project;
+@synthesize tab;
 
-- (void)setTab:(ACTab *)value
+- (ACProject *)project
 {
-    if (value == tab)
-        return;
-    [self willChangeValueForKey:@"tab"];
-    tab = value;
-    NSString *projectName = [ACProject projectNameFromURL:tab.currentURL isProjectRoot:NULL];
-    if ([ACProject projectWithNameExists:projectName])
-    {
-        [self willChangeValueForKey:@"project"];
-        project = [ACProject projectWithName:projectName];
-        [self didChangeValueForKey:@"project"];
-    }
-    [self didChangeValueForKey:@"tab"];
+    return self.tab.currentProject;
 }
 
 - (NSArray *)toolbarItems

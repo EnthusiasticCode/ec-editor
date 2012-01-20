@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
 
-@class ACApplication, ACHistoryItem;
+@class ACApplication, ACHistoryItem, ACProject;
 
 @interface ACTab : NSManagedObject
 
@@ -20,6 +20,9 @@
 /// The current URL the tab history is pointing at. This property is read only.
 /// To change the current URL use one of the move methods or pushURL.
 @property (nonatomic, strong, readonly) NSURL *currentURL;
+
+/// The current project the currentURL is pointing at.
+@property (nonatomic, strong, readonly) ACProject *currentProject;
 
 /// Pushes an URL to the tab's history.
 /// Changes the current url to the newly pushed url, and deletes any history items following the previously current one
