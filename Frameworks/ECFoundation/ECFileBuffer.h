@@ -27,10 +27,8 @@ typedef enum {
 /// All the "did" methods are asynchronous and aren't coalesced, so they may be called multiple times in succession, and not immediately after the change has gone through.
 
 @optional
-- (void)fileWillBeDeletedForFileBuffer:(ECFileBuffer *)fileBuffer;
-- (void)fileWasDeletedForFileBuffer:(ECFileBuffer *)fileBuffer;
-- (void)fileBuffer:(ECFileBuffer *)fileBuffer fileWillMoveFromURL:(NSURL *)srcURL toURL:(NSURL *)dstURL;
-- (void)fileBuffer:(ECFileBuffer *)fileBuffer fileDidMoveFromURL:(NSURL *)srcURL toURL:(NSURL *)dstURL;
+- (void)accommodateFileDeletionForFileBuffer:(ECFileBuffer *)fileBuffer;
+- (void)fileBuffer:(ECFileBuffer *)fileBuffer fileDidMoveToURL:(NSURL *)dstURL;
 
 /// Both regular and attributed versions of these methods are called regardless of whether the change was triggered by a call to the regular or attributed version of the replace methods
 - (void)fileBuffer:(ECFileBuffer *)fileBuffer willReplaceCharactersInRange:(NSRange)range withString:(NSString *)string;
