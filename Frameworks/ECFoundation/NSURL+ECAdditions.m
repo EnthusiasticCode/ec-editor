@@ -58,7 +58,7 @@
 {
     if (![[self absoluteString] hasPrefix:[directoryURL absoluteString]])
         return NO;
-    return [[directoryURL pathComponents] count] != [[self pathComponents] count] + 1;
+    return [[self pathComponents] count] != [[directoryURL pathComponents] count] + 1;
 }
 
 - (BOOL)isHidden

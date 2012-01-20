@@ -9,11 +9,12 @@
 #import <UIKit/UIKit.h>
 #import <MessageUI/MessageUI.h>
 #import <ECUIKit/ECGridView.h>
+#import <ECFoundation/ECDirectoryPresenter.h>
 
 @class ACApplication, ACTab, ACProjectCell;
 
 
-@interface ACProjectTableController : UIViewController <ECGridViewDataSource, ECGridViewDelegate, UIActionSheetDelegate, MFMailComposeViewControllerDelegate>
+@interface ACProjectTableController : UIViewController <ECGridViewDataSource, ECGridViewDelegate, UIActionSheetDelegate, MFMailComposeViewControllerDelegate, ECDirectoryPresenterDelegate>
 
 @property (nonatomic, strong) NSURL *projectsDirectory;
 @property (nonatomic, strong) ACTab *tab;

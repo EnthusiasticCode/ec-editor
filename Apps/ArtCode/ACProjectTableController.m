@@ -20,13 +20,10 @@
 #import "ACSingleTabController.h"
 #import "ACNewProjectNavigationController.h"
 
-#import <ECFoundation/ECDirectoryPresenter.h>
 #import <ECFoundation/NSURL+ECAdditions.h>
 #import <ECFoundation/NSString+ECAdditions.h>
 #import <ECArchive/ECArchive.h>
 #import <ECUIKit/ECBezelAlert.h>
-
-static void * directoryPresenterFileURLsObservingContext;
 
 #define STATIC_OBJECT(typ, nam, init) static typ *nam = nil; if (!nam) nam = init
 
@@ -91,18 +88,8 @@ static void * directoryPresenterFileURLsObservingContext;
     [self willChangeValueForKey:@"projectsDirectory"];
     _projectsDirectory = projectsDirectory;
     self.directoryPresenter = [[ECDirectoryPresenter alloc] initWithDirectoryURL:_projectsDirectory options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants];
+    self.directoryPresenter.delegate = self;
     [self didChangeValueForKey:@"projectsDirectory"];
-}
-
-- (void)setDirectoryPresenter:(ECDirectoryPresenter *)directoryPresenter
-{
-    if (directoryPresenter == _directoryPresenter)
-        return;
-    [self willChangeValueForKey:@"directoryPresenter"];
-    [_directoryPresenter removeObserver:self forKeyPath:@"fileURLs" context:&directoryPresenterFileURLsObservingContext];
-    _directoryPresenter = directoryPresenter;
-    [_directoryPresenter addObserver:self forKeyPath:@"fileURLs" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial context:&directoryPresenterFileURLsObservingContext];
-    [self didChangeValueForKey:@"directoryPresenter"];
 }
 
 - (void)setEditing:(BOOL)editing animated:(BOOL)animated
@@ -133,31 +120,6 @@ static void * directoryPresenterFileURLsObservingContext;
 }
 
 #pragma mark - Controller Methods
-
-- (void)dealloc
-{
-    [self.directoryPresenter removeObserver:self forKeyPath:@"fileURLs" context:&directoryPresenterFileURLsObservingContext];
-}
-
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
-{
-    if (context == &directoryPresenterFileURLsObservingContext)
-    {
-        // TODO: add / delete / move table rows instead of reloading all once NSFilePresenter actually works
-        if (dispatch_get_current_queue() != dispatch_get_main_queue())
-        {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [self.gridView reloadData];
-            });
-        }
-        else
-        {
-            [self.gridView reloadData];
-        }
-    }
-    else
-        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
-}
 
 - (NSString *)title
 {
@@ -203,15 +165,17 @@ static void * directoryPresenterFileURLsObservingContext;
     _cellSelectedBackground = nil;
 }
 
-- (void)viewWillAppear:(BOOL)animated
-{
-    self.directoryPresenter = [[ECDirectoryPresenter alloc] initWithDirectoryURL:self.projectsDirectory options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants];
-}
-
-- (void)viewDidDisappear:(BOOL)animated
-{
-    self.directoryPresenter = nil;
-}
+#warning URI TODO: uncomment once file coordinator stops keeping file presenters alive
+//- (void)viewWillAppear:(BOOL)animated
+//{
+//    self.directoryPresenter = [[ECDirectoryPresenter alloc] initWithDirectoryURL:self.projectsDirectory options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants];
+//    self.directoryPresenter.delegate = self;
+//}
+//
+//- (void)viewDidDisappear:(BOOL)animated
+//{
+//    self.directoryPresenter = nil;
+//}
 
 #pragma mark - Grid View Data Source
 
@@ -426,6 +390,24 @@ static void * directoryPresenterFileURLsObservingContext;
     if (result == MFMailComposeResultSent)
         [[ECBezelAlert defaultBezelAlert] addAlertMessageWithText:@"Mail sent" image:nil displayImmediatly:YES];
     [self dismissModalViewControllerAnimated:YES];
+}
+
+#pragma mark - Directory Presenter Delegate
+
+- (NSOperationQueue *)delegateOperationQueue
+{
+    // Just return the main queue, we have to run all UIKit code in it anyway
+    return [NSOperationQueue mainQueue];
+}
+
+- (void)directoryPresenter:(ECDirectoryPresenter *)directoryPresenter didInsertFileURLsAtIndexes:(NSIndexSet *)indexes
+{
+    [self.gridView insertCellsAtIndexes:indexes animated:YES];
+}
+
+- (void)directoryPresenter:(ECDirectoryPresenter *)directoryPresenter didRemoveFileURLsAtIndexes:(NSIndexSet *)indexes
+{
+    [self.gridView deleteCellsAtIndexes:indexes animated:YES];
 }
 
 #pragma mark - Private Methods

@@ -10,6 +10,7 @@
 
 static dispatch_queue_t _fileCoordinationDispatchQueue;
 static dispatch_queue_t _filePresentersDispatchQueue;
+#warning TODO URI: we need an ECWeakArray here, or file coordinator will keep all file presenters alive forever
 static NSMutableArray *_filePresenters;
 
 @interface ECFileCoordinator ()
@@ -182,12 +183,13 @@ static NSMutableArray *_filePresenters;
         BOOL fileExisted = [fileManager fileExistsAtPath:[url path]];
         writer(url);
         if (!(options & (NSFileCoordinatorWritingForMoving | NSFileCoordinatorWritingForDeleting)))
-        {
             for (id<NSFilePresenter>filePresenter in affectedFilePresenters)
                 if ([filePresenter respondsToSelector:@selector(presentedItemDidChange)])
                     [filePresenter.presentedItemOperationQueue addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
                         [filePresenter presentedItemDidChange];
                     }]] waitUntilFinished:YES];
+        if (!(options & NSFileCoordinatorWritingForDeleting))
+        {
             if (fileExisted)
             {
                 for (id<NSFilePresenter>filePresenter in affectedAncestorDirectoryPresenters)
@@ -318,12 +320,13 @@ static NSMutableArray *_filePresenters;
         BOOL fileExisted = [fileManager fileExistsAtPath:[writingURL path]];
         readerWriter(readingURL, writingURL);
         if (!(writingOptions & (NSFileCoordinatorWritingForMoving | NSFileCoordinatorWritingForDeleting)))
-        {
             for (id<NSFilePresenter>filePresenter in affectedWritingFilePresenters)
                 if ([filePresenter respondsToSelector:@selector(presentedItemDidChange)])
                     [filePresenter.presentedItemOperationQueue addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
                         [filePresenter presentedItemDidChange];
                     }]] waitUntilFinished:YES];
+        if (!(writingOptions & NSFileCoordinatorWritingForDeleting))
+        {
             if (fileExisted)
             {
                 for (id<NSFilePresenter>filePresenter in affectedWritingAncestorDirectoryPresenters)
@@ -506,12 +509,13 @@ static NSMutableArray *_filePresenters;
         BOOL fileExisted2 = [fileManager fileExistsAtPath:[url2 path]];
         writer(url1, url2);
         if (!(options2 & (NSFileCoordinatorWritingForMoving | NSFileCoordinatorWritingForDeleting)))
-        {
             for (id<NSFilePresenter>filePresenter in affectedFilePresenters2)
                 if ([filePresenter respondsToSelector:@selector(presentedItemDidChange)])
                     [filePresenter.presentedItemOperationQueue addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
                         [filePresenter presentedItemDidChange];
                     }]] waitUntilFinished:YES];
+            if (!(options2 & NSFileCoordinatorWritingForDeleting))
+            {
             if (fileExisted2)
             {
                 for (id<NSFilePresenter>filePresenter in affectedAncestorDirectoryPresenters2)
@@ -530,12 +534,13 @@ static NSMutableArray *_filePresenters;
             }
         }
         if (!(options1 & (NSFileCoordinatorWritingForMoving | NSFileCoordinatorWritingForDeleting)))
-        {
             for (id<NSFilePresenter>filePresenter in affectedFilePresenters1)
                 if ([filePresenter respondsToSelector:@selector(presentedItemDidChange)])
                     [filePresenter.presentedItemOperationQueue addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
                         [filePresenter presentedItemDidChange];
                     }]] waitUntilFinished:YES];
+        if (!(options1 & NSFileCoordinatorWritingForDeleting))
+        {
             if (fileExisted1)
             {
                 for (id<NSFilePresenter>filePresenter in affectedAncestorDirectoryPresenters1)

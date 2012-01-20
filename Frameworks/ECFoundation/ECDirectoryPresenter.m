@@ -240,6 +240,7 @@
 {
     ECASSERT(dispatch_get_current_queue() == _internalAccessQueue);
     ECASSERT(!_isBatchUpdating);
+    _isBatchUpdating = YES;
     _batchInsertFileURLs = [[NSMutableArray alloc] init];
     _batchRemoveFileURLs = [[NSMutableArray alloc] init];
 }
@@ -263,6 +264,8 @@
         [_mutableFileURLs insertObject:fileURL atIndex:index];
         [indexesOfInsertedFileURLs addIndex:index];
         NSIndexSet *hitMask;
+        if (![_filterString length])
+            continue;
         if (![[fileURL lastPathComponent] scoreForAbbreviation:_filterString hitMask:&hitMask])
             continue;
         ECASSERT([self _indexOfFilteredFileURL:fileURL options:0] == NSNotFound);
@@ -278,6 +281,8 @@
         [_mutableFileURLs removeObjectAtIndex:index];
         [indexesOfRemovedFileURLs addIndex:index];
         NSIndexSet *hitMask;
+        if (![_filterString length])
+            continue;
         if (![[fileURL lastPathComponent] scoreForAbbreviation:_filterString hitMask:&hitMask])
             continue;
         NSUInteger filteredIndex = [self _indexOfFilteredFileURL:fileURL options:0];
@@ -301,6 +306,9 @@
         [[_delegate delegateOperationQueue] addOperationWithBlock:^{
             [_delegate directoryPresenter:self didRemoveFilteredFileURLsAtIndexes:indexesOfRemovedFilteredFileURLs];
         }];
+    _batchInsertFileURLs = nil;
+    _batchRemoveFileURLs = nil;
+    _isBatchUpdating = NO;
 }
 
 - (void)_insertFileURL:(NSURL *)fileURL
@@ -430,6 +438,8 @@
 {
     dispatch_barrier_sync(_internalAccessQueue, ^{
         if ([self _shouldIgnoreFileURL:url])
+            return;
+        if ([self _indexOfFileURL:url options:0] == NSNotFound)
             return;
         [self _beginUpdates];
         [self _removeFileURL:url];
