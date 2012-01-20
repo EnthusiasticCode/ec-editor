@@ -369,6 +369,27 @@
     }];
 }
 
++ (UIImage *)styleDocumentImageWithFileExtension:(NSString *)extension
+{
+    static NSCache *documentImageCache = nil;
+    if (!documentImageCache)
+        documentImageCache = [NSCache new];
+    UIImage *documentImage = [documentImageCache objectForKey:extension];
+    if (documentImage)
+        return documentImage;
+    
+    UIColor *color = nil;
+    if ([extension isEqualToString:@"h"])
+        color = [UIColor colorWithRed:193.0/255.0 green:39.0/255.0 blue:45.0/255.0 alpha:1.0];
+    else if ([extension isEqualToString:@"m"])
+        color = [UIColor colorWithRed:0.0/255.0 green:113.0/255.0 blue:188.0/255.0 alpha:1.0];
+    else if ([extension rangeOfString:@"htm"].location != NSNotFound)
+        color = [UIColor colorWithRed:205.0/255.0 green:70.0/255.0 blue:48.0/255.0 alpha:1.0];
+    documentImage = [UIImage styleDocumentImageWithSize:CGSizeMake(32, 32) color:color text:extension];
+    [documentImageCache setObject:documentImage forKey:extension];
+    return documentImage;
+}
+
 + (UIImage *)styleGroupImageWithSize:(CGSize)size
 {
     size.height += 1;
