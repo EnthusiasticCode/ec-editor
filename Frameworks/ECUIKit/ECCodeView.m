@@ -26,6 +26,7 @@ NSString * const ECCodeViewPlaceholderAttributeName = @"codeViewPlaceholder";
 
 
 #pragma mark -
+#warning TODO NIk move selection logic to codeviewbase
 
 @interface ECCodeView () {
 @private
@@ -49,10 +50,12 @@ NSString * const ECCodeViewPlaceholderAttributeName = @"codeViewPlaceholder";
         unsigned dataSourceHasCommitStringForTextInRange : 1;
         unsigned dataSourceHasViewControllerForCompletionAtTextInRange : 1;
         unsigned dataSourceHasAttributeAtIndexLongestEffectiveRange : 1;
+        unsigned delegateHasSelectedLineNumber : 1;
         unsigned delegateHasShouldShowKeyboardAccessoryViewInViewWithFrame : 1;
         unsigned delegateHasDidShowKeyboardAccessoryViewInViewWithFrame : 1;
         unsigned delegateHasShouldHideKeyboardAccessoryView : 1;
         unsigned delegateHasDidHideKeyboardAccessoryView : 1;
+        unsigned reserved : 3;
     } _flags;
     
     // Recognizers
@@ -671,6 +674,7 @@ NSString * const ECCodeViewPlaceholderAttributeName = @"codeViewPlaceholder";
 {
     [super setDelegate:delegate];
     
+    _flags.delegateHasSelectedLineNumber = [delegate respondsToSelector:@selector(codeView:selectedLineNumber:)];
     _flags.delegateHasShouldShowKeyboardAccessoryViewInViewWithFrame = [delegate respondsToSelector:@selector(codeView:shouldShowKeyboardAccessoryViewInView:withFrame:)];
     _flags.delegateHasDidShowKeyboardAccessoryViewInViewWithFrame = [delegate respondsToSelector:@selector(codeView:didShowKeyboardAccessoryViewInView:withFrame:)];
     _flags.delegateHasShouldHideKeyboardAccessoryView = [delegate respondsToSelector:@selector(codeViewShouldHideKeyboardAccessoryView:)];
@@ -754,7 +758,7 @@ static void init(ECCodeView *self)
     self->_keyboardFrame = CGRectNull;
     
     // Adding focus recognizer
-    self->_focusRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleGestureFocus:)];
+    self->_focusRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(_handleGestureFocus:)];
     [self->_focusRecognizer setNumberOfTapsRequired:1];
     [self addGestureRecognizer:self->_focusRecognizer];
 }
@@ -844,21 +848,21 @@ static void init(ECCodeView *self)
     // Lazy create recognizers
     if (!_tapRecognizer && shouldBecomeFirstResponder)
     {
-        _tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleGestureTap:)];
+        _tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(_handleGestureTap:)];
         [self addGestureRecognizer:_tapRecognizer];
         
-        _tapTwoTouchesRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleGestureTapTwoTouches:)];
+        _tapTwoTouchesRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(_handleGestureTapTwoTouches:)];
         _tapTwoTouchesRecognizer.numberOfTouchesRequired = 2;
         [self addGestureRecognizer:_tapTwoTouchesRecognizer];
         
-        _doubleTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleGestureDoubleTap:)];
+        _doubleTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(_handleGestureDoubleTap:)];
         _doubleTapRecognizer.numberOfTapsRequired = 2;
         [self addGestureRecognizer:_doubleTapRecognizer];
         
-        _longPressRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleGestureLongPress:)];
+        _longPressRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(_handleGestureLongPress:)];
         [self addGestureRecognizer:_longPressRecognizer];
         
-        _longDoublePressRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleGestureLongPress:)];
+        _longDoublePressRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(_handleGestureLongPress:)];
         _longDoublePressRecognizer.numberOfTouchesRequired = 2;
         [self addGestureRecognizer:_longDoublePressRecognizer];
         
@@ -1609,8 +1613,7 @@ static void init(ECCodeView *self)
     _touchScrollTimerCallback = nil;
 }
 
-#pragma mark -
-#pragma mark Gesture Recognizers and Interaction
+#pragma mark - Gesture Recognizers and Interaction
 
 - (void)_handleGestureFocus:(UITapGestureRecognizer *)recognizer
 {
@@ -1623,7 +1626,16 @@ static void init(ECCodeView *self)
     [[UIMenuController sharedMenuController] setMenuVisible:NO animated:YES];
     
     CGPoint tapPoint = [recognizer locationInView:self];
-    // TODO if point on line numbers, call delegate
+    if (_flags.delegateHasSelectedLineNumber && tapPoint.x <= self.lineNumbersWidth)
+    {
+        __block NSUInteger tappedLineNumber = 0;
+        [self.renderer enumerateLinesIntersectingRect:(CGRect){ tapPoint, CGSizeMake(1, 1) } usingBlock:^(ECTextRendererLine *line, NSUInteger lineIndex, NSUInteger lineNumber, CGFloat lineYOffset, NSRange stringRange, BOOL *stop) {
+            tappedLineNumber = lineNumber + 1;
+            *stop = YES;
+        }];
+        [self.delegate codeView:self selectedLineNumber:tappedLineNumber];
+        return;
+    }
     [self _setSelectedTextFromPoint:tapPoint toPoint:tapPoint];
 }
 

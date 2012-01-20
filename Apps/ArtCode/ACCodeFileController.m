@@ -533,6 +533,11 @@
     }
 }
 
+- (void)codeView:(ECCodeView *)codeView selectedLineNumber:(NSUInteger)lineNumber
+{
+    NSLog(@"Line tapped: %u", lineNumber);
+}
+
 - (BOOL)codeView:(ECCodeView *)codeView shouldShowKeyboardAccessoryViewInView:(UIView *__autoreleasing *)view withFrame:(CGRect *)frame
 {
     ECASSERT(view && frame);
