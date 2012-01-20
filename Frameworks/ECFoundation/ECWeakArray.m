@@ -51,6 +51,16 @@
     return [_contents countByEnumeratingWithState:state objects:buffer count:len];
 }
 
+- (id)copyWithZone:(NSZone *)zone
+{
+    ECASSERT(_contents);
+    [self _purge];
+    NSMutableArray *copy = [[NSMutableArray alloc] init];
+    for (WeakObjectWrapper *wrapper in _contents)
+        [copy addObject:wrapper->object];
+    return [copy copy];
+}
+
 #pragma mark - NSMutableArray
 
 - (void)insertObject:(id)anObject atIndex:(NSUInteger)index

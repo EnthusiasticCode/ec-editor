@@ -165,17 +165,16 @@
     _cellSelectedBackground = nil;
 }
 
-#warning URI TODO: uncomment once file coordinator stops keeping file presenters alive
-//- (void)viewWillAppear:(BOOL)animated
-//{
-//    self.directoryPresenter = [[ECDirectoryPresenter alloc] initWithDirectoryURL:self.projectsDirectory options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants];
-//    self.directoryPresenter.delegate = self;
-//}
-//
-//- (void)viewDidDisappear:(BOOL)animated
-//{
-//    self.directoryPresenter = nil;
-//}
+- (void)viewWillAppear:(BOOL)animated
+{
+    self.directoryPresenter = [[ECDirectoryPresenter alloc] initWithDirectoryURL:self.projectsDirectory options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants];
+    self.directoryPresenter.delegate = self;
+}
+
+- (void)viewDidDisappear:(BOOL)animated
+{
+    self.directoryPresenter = nil;
+}
 
 #pragma mark - Grid View Data Source
 
