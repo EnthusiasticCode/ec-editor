@@ -8,14 +8,14 @@
 
 #import <UIKit/UIKit.h>
 #import <MessageUI/MessageUI.h>
+#import <ECFoundation/ECDirectoryPresenter.h>
 
 @class ACToolFiltersView, ACGroup, ACTab;
 
 
-@interface ACFileTableController : UITableViewController <UISearchBarDelegate, UIActionSheetDelegate, MFMailComposeViewControllerDelegate>
+@interface ACFileTableController : UITableViewController <UISearchBarDelegate, UIActionSheetDelegate, MFMailComposeViewControllerDelegate, ECDirectoryPresenterDelegate>
 
 @property (nonatomic, strong) NSURL *directory;
-
 @property (nonatomic, strong) ACTab *tab;
 
 @end

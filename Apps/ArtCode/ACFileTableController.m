@@ -13,7 +13,6 @@
 #import "ACDirectoryBrowserController.h"
 #import "ACMoveConflictController.h"
 
-#import <ECFoundation/ECDirectoryPresenter.h>
 #import <ECFoundation/NSTimer+block.h>
 #import <ECFoundation/NSString+ECAdditions.h>
 #import <ECFoundation/NSURL+ECAdditions.h>
@@ -25,50 +24,6 @@
 #import "ACTab.h"
 #import "ACProject.h"
 
-static void * directoryPresenterFileURLsObservingContext;
-
-@interface FilteredFileURLWrapper : NSObject
-
-@property (nonatomic) float score;
-@property (nonatomic, strong) NSIndexSet *hitMask;
-@property (nonatomic, strong) NSURL *fileURL;
-
-- (id)initWithFileURL:(NSURL *)fileURL;
-- (NSComparisonResult)compare:(FilteredFileURLWrapper *)wrapper;
-
-@end
-
-
-@implementation FilteredFileURLWrapper
-
-@synthesize score = _score, hitMask = _hitMask, fileURL = _fileURL;
-
-- (id)initWithFileURL:(NSURL *)fileURL
-{
-    self = [super init];
-    if (!self)
-        return nil;
-    self.fileURL = fileURL;
-    return self;
-}
-
-- (NSComparisonResult)compare:(FilteredFileURLWrapper *)wrapper
-{
-    if (self.score > wrapper.score)
-        return NSOrderedAscending;
-    else if (self.score < wrapper.score)
-        return NSOrderedDescending;
-    return [[self.fileURL lastPathComponent] compare:[wrapper.fileURL lastPathComponent]];
-}
-
-- (BOOL)isEqual:(id)object
-{
-    if (![object isKindOfClass:[self class]])
-        return NO;
-    return [self.fileURL isEqual:[object fileURL]];
-}
-
-@end
 
 @interface ACFileTableController () {
     NSArray *_toolNormalItems;
@@ -86,19 +41,6 @@ static void * directoryPresenterFileURLsObservingContext;
 }
 
 @property (nonatomic, strong) ECDirectoryPresenter *directoryPresenter;
-
-/// The string used to smart filter the file list
-@property (nonatomic, strong) NSString *filterString;
-
-/// The number of filteredFileURLs to consider.
-@property (nonatomic) NSUInteger filterCount;
-
-/// Array of URLs ordered based on filterString score.
-@property (nonatomic, strong) NSMutableArray *filteredFileURLs;
-
-- (void)directoryPresenterDidChangeFileURLs:(NSArray *)newFileURLs;
-- (void)directoryPresenterDidInsertFileURLsAtIndexes:(NSIndexSet *)indexes inFileURLs:(NSArray *)newFileURLs;
-- (void)directoryPresenterDidRemoveFileURLsAtIndexes:(NSIndexSet *)indexes fromFileURLs:(NSArray *)oldFileURLs;
 
 - (void)_toolNormalAddAction:(id)sender;
 - (void)_toolEditDeleteAction:(id)sender;
@@ -121,7 +63,6 @@ static void * directoryPresenterFileURLsObservingContext;
 
 @synthesize tab = _tab;
 @synthesize directory = _directory, directoryPresenter = _directoryPresenter;
-@synthesize filterString = _filterString, filterCount = _filterCount, filteredFileURLs = _filteredFileURLs;
 
 - (void)setDirectory:(NSURL *)directory
 {
@@ -130,169 +71,8 @@ static void * directoryPresenterFileURLsObservingContext;
     [self willChangeValueForKey:@"directory"];
     _directory = directory;
     self.directoryPresenter = [[ECDirectoryPresenter alloc] initWithDirectoryURL:_directory options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants];
+    self.directoryPresenter.delegate = self;
     [self didChangeValueForKey:@"directory"];
-}
-
-- (void)setDirectoryPresenter:(ECDirectoryPresenter *)directoryPresenter
-{
-    if (directoryPresenter == _directoryPresenter)
-        return;
-    [self willChangeValueForKey:@"directoryPresenter"];
-    [_directoryPresenter removeObserver:self forKeyPath:@"fileURLs" context:&directoryPresenterFileURLsObservingContext];
-    _directoryPresenter = directoryPresenter;
-    [_directoryPresenter addObserver:self forKeyPath:@"fileURLs" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial context:&directoryPresenterFileURLsObservingContext];
-    [self didChangeValueForKey:@"directoryPresenter"];
-}
-
-- (void)setFilterString:(NSString *)filterString
-{
-    if (filterString == _filterString)
-        return;
-    [self willChangeValueForKey:@"filterString"];
-    _filterString = filterString;
-    // Maintain selection
-    NSMutableArray *newSelectedIndexes = nil;
-    if (self.isEditing && [_selectedURLs count] > 0)
-        newSelectedIndexes = [NSMutableArray new];
-    // Sort URLs by score
-    NSMutableArray *newFilteredFileURLs = [[NSMutableArray alloc] initWithCapacity:[self.filteredFileURLs count]];
-    __block NSMutableArray *filteredOutIndexes = nil;
-    __block NSMutableArray *filteredInIndexes = nil;
-    __block NSMutableArray *filteredUpdateIndexes = nil;
-    __block NSUInteger newFilterCount = 0;
-    [self.filteredFileURLs enumerateObjectsUsingBlock:^(FilteredFileURLWrapper *wrapper, NSUInteger idx, BOOL *stop) {
-        NSIndexSet *hitMask = nil;
-        float score = [[wrapper.fileURL lastPathComponent] scoreForAbbreviation:filterString hitMask:&hitMask];
-        if (score > 0.0)
-        {
-            if (idx < _filterCount)
-            {
-                if (!filteredUpdateIndexes)
-                    filteredUpdateIndexes = [NSMutableArray new];
-                [filteredUpdateIndexes addObject:[NSIndexPath indexPathForRow:idx inSection:0]];
-            }
-            else
-            {
-                if (!filteredInIndexes)
-                    filteredInIndexes = [NSMutableArray new];
-                [filteredInIndexes addObject:[NSIndexPath indexPathForRow:newFilterCount inSection:0]];
-            }
-            ++newFilterCount;
-        }
-        else
-        {
-            if (idx < _filterCount)
-            {
-                if (!filteredOutIndexes)
-                    filteredOutIndexes = [NSMutableArray new];
-                [filteredOutIndexes addObject:[NSIndexPath indexPathForRow:idx inSection:0]];
-            }
-        }
-        wrapper.score = score;
-        wrapper.hitMask = hitMask;
-        [newFilteredFileURLs addObject:wrapper];
-    }];
-    // Apply new filtered URLs
-    [newFilteredFileURLs sortUsingSelector:@selector(compare:)];
-    self.filteredFileURLs = newFilteredFileURLs;
-    self.filterCount = newFilterCount;
-    // Animate filtering
-    [self.tableView beginUpdates];
-    if (filteredOutIndexes)
-        [self.tableView deleteRowsAtIndexPaths:filteredOutIndexes withRowAnimation:UITableViewRowAnimationAutomatic];
-    if (filteredUpdateIndexes)
-        [self.tableView reloadRowsAtIndexPaths:filteredUpdateIndexes withRowAnimation:UITableViewRowAnimationNone];
-    if (filteredInIndexes)
-        [self.tableView insertRowsAtIndexPaths:filteredInIndexes withRowAnimation:UITableViewRowAnimationAutomatic];
-    [self.tableView endUpdates];
-    // Apply selection
-    [newFilteredFileURLs enumerateObjectsUsingBlock:^(FilteredFileURLWrapper *wrapper, NSUInteger idx, BOOL *stop) {
-        if (idx >= newFilterCount)
-        {
-            *stop = YES;
-            return;
-        }
-        if ([_selectedURLs containsObject:wrapper.fileURL])
-            [self.tableView selectRowAtIndexPath:[NSIndexPath indexPathForRow:idx inSection:0] animated:NO scrollPosition:UITableViewScrollPositionNone];
-    }];
-    [self didChangeValueForKey:@"filterString"];
-}
-
-- (NSMutableArray *)filteredFileURLs
-{
-    if (!_filteredFileURLs)
-        _filteredFileURLs = [NSMutableArray array];
-    return _filteredFileURLs;
-}
-
-#pragma mark - KVO
-
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
-{
-    if (context == &directoryPresenterFileURLsObservingContext)
-    {
-        if ([[change objectForKey:NSKeyValueChangeKindKey] intValue] == NSKeyValueChangeInsertion)
-            [self directoryPresenterDidInsertFileURLsAtIndexes:[change objectForKey:NSKeyValueChangeIndexesKey] inFileURLs:[change objectForKey:NSKeyValueChangeNewKey]];
-        else if ([[change objectForKey:NSKeyValueChangeKindKey] intValue] == NSKeyValueChangeRemoval)
-            [self directoryPresenterDidRemoveFileURLsAtIndexes:[change objectForKey:NSKeyValueChangeIndexesKey] fromFileURLs:[change objectForKey:NSKeyValueChangeOldKey]];
-        else if ([[change objectForKey:NSKeyValueChangeKindKey] intValue] == NSKeyValueChangeReplacement)
-        {
-            [self directoryPresenterDidRemoveFileURLsAtIndexes:[change objectForKey:NSKeyValueChangeIndexesKey] fromFileURLs:[change objectForKey:NSKeyValueChangeOldKey]];
-            [self directoryPresenterDidInsertFileURLsAtIndexes:[change objectForKey:NSKeyValueChangeIndexesKey] inFileURLs:[change objectForKey:NSKeyValueChangeNewKey]];
-        }
-        else
-            [self directoryPresenterDidChangeFileURLs:[[change objectForKey:NSKeyValueChangeNewKey] isEqual:[NSNull null]] ? nil : [change objectForKey:NSKeyValueChangeNewKey]];
-    }
-    else
-        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
-}
-
-- (void)directoryPresenterDidChangeFileURLs:(NSArray *)newFileURLs
-{
-    [self.filteredFileURLs removeAllObjects];
-    [_selectedURLs removeAllObjects];
-    NSUInteger newFilterCount = 0;
-    for (NSURL *fileURL in newFileURLs)
-    {
-        FilteredFileURLWrapper *fileURLWrapper = [[FilteredFileURLWrapper alloc] initWithFileURL:fileURL];
-        NSIndexSet *hitMask = nil;
-        float score = [[fileURL lastPathComponent] scoreForAbbreviation:self.filterString hitMask:&hitMask];
-        if (score)
-            newFilterCount++;
-        fileURLWrapper.score = score;
-        fileURLWrapper.hitMask = hitMask;
-        [self.filteredFileURLs addObject:fileURLWrapper];
-    }
-    self.filterCount = newFilterCount;
-    [self.filteredFileURLs sortUsingSelector:@selector(compare:)];
-    [self.tableView reloadData];
-}
-
-- (void)directoryPresenterDidInsertFileURLsAtIndexes:(NSIndexSet *)indexes inFileURLs:(NSArray *)newFileURLs
-{
-    [indexes enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
-        NSURL *fileURL = [newFileURLs objectAtIndex:idx];
-        FilteredFileURLWrapper *fileURLWrapper = [[FilteredFileURLWrapper alloc] initWithFileURL:fileURL];
-        NSIndexSet *hitMask = nil;
-        fileURLWrapper.score = [[fileURL lastPathComponent] scoreForAbbreviation:self.filterString hitMask:&hitMask];
-        fileURLWrapper.hitMask = hitMask;
-        [self.filteredFileURLs insertObject:fileURLWrapper atIndex:[self.filteredFileURLs indexOfObject:fileURLWrapper inSortedRange:NSMakeRange(0, [self.filteredFileURLs count]) options:NSBinarySearchingInsertionIndex usingComparator:^NSComparisonResult(id obj1, id obj2) {
-            return [obj1 compare:obj2];
-        }]];
-    }];
-}
-
-- (void)directoryPresenterDidRemoveFileURLsAtIndexes:(NSIndexSet *)indexes fromFileURLs:(NSArray *)oldFileURLs
-{
-    [indexes enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
-        NSURL *fileURL = [oldFileURLs objectAtIndex:idx];
-        FilteredFileURLWrapper *fileURLWrapper = [[FilteredFileURLWrapper alloc] initWithFileURL:fileURL];
-        fileURLWrapper.score = [[fileURL lastPathComponent] scoreForAbbreviation:self.filterString hitMask:NULL];
-        NSUInteger index = [self.filteredFileURLs indexOfObject:fileURLWrapper inSortedRange:NSMakeRange(0, [self.filteredFileURLs count]) options:0 usingComparator:^NSComparisonResult(id obj1, id obj2) {
-            return [obj1 compare:obj2];
-        }];
-        [self.filteredFileURLs removeObjectAtIndex:index];
-    }];
 }
 
 #pragma mark - View lifecycle
@@ -335,6 +115,7 @@ static void * directoryPresenterFileURLsObservingContext;
     [super viewWillAppear:animated];
     
     self.directoryPresenter = [[ECDirectoryPresenter alloc] initWithDirectoryURL:self.directory options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants];
+    self.directoryPresenter.delegate = self;
     
     [_selectedURLs removeAllObjects];
 }
@@ -376,7 +157,7 @@ static void * directoryPresenterFileURLsObservingContext;
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return self.filterCount;
+    return [self.directoryPresenter.filteredFileURLs count];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -390,21 +171,21 @@ static void * directoryPresenterFileURLsObservingContext;
     }
     
     // Configure the cell
-    FilteredFileURLWrapper *fileWrapper = [self.filteredFileURLs objectAtIndex:indexPath.row];
+    NSURL *fileURL = [self.directoryPresenter.filteredFileURLs objectAtIndex:indexPath.row];
     
     BOOL isDirecotry = NO;
-    [[NSFileManager defaultManager] fileExistsAtPath:[fileWrapper.fileURL path] isDirectory:&isDirecotry];
+    [[NSFileManager defaultManager] fileExistsAtPath:[fileURL path] isDirectory:&isDirecotry];
     if (isDirecotry)
         cell.imageView.image = [UIImage styleGroupImageWithSize:CGSizeMake(32, 32)];
     else
-        cell.imageView.image = [UIImage styleDocumentImageWithFileExtension:[fileWrapper.fileURL pathExtension]];
+        cell.imageView.image = [UIImage styleDocumentImageWithFileExtension:[fileURL pathExtension]];
     
-    cell.highlightLabel.text = [fileWrapper.fileURL lastPathComponent];
+    cell.highlightLabel.text = [fileURL lastPathComponent];
     
-    if ([fileWrapper.hitMask count] > 0)
+    if ([self.directoryPresenter.filterString length] > 0)
     {
         cell.highlightLabel.highlightedBackgroundColor = [UIColor colorWithRed:225.0/255.0 green:220.0/255.0 blue:92.0/255.0 alpha:1];
-        cell.highlightLabel.highlightedCharacters = fileWrapper.hitMask;
+        cell.highlightLabel.highlightedCharacters = [self.directoryPresenter.filterHitMasks objectAtIndex:indexPath.row];
     }
     else
     {
@@ -421,7 +202,7 @@ static void * directoryPresenterFileURLsObservingContext;
     {
         if (!_selectedURLs)
             _selectedURLs = [NSMutableArray new];
-        [_selectedURLs addObject:[[self.filteredFileURLs objectAtIndex:indexPath.row] fileURL]];
+        [_selectedURLs addObject:[self.directoryPresenter.filteredFileURLs objectAtIndex:indexPath.row]];
         BOOL anySelected = [tableView indexPathForSelectedRow] == nil ? NO : YES;
         for (UIBarButtonItem *item in _toolEditItems)
         {
@@ -430,7 +211,7 @@ static void * directoryPresenterFileURLsObservingContext;
     }
     else
     {
-        [self.tab pushURL:[[self.filteredFileURLs objectAtIndex:indexPath.row] fileURL]];
+        [self.tab pushURL:[self.directoryPresenter.filteredFileURLs objectAtIndex:indexPath.row]];
     }
 }
 
@@ -438,7 +219,7 @@ static void * directoryPresenterFileURLsObservingContext;
 {
     if (self.isEditing)
     {
-        [_selectedURLs removeObject:[[self.filteredFileURLs objectAtIndex:indexPath.row] fileURL]];
+        [_selectedURLs removeObject:[self.directoryPresenter.filteredFileURLs objectAtIndex:indexPath.row]];
         BOOL anySelected = [tableView indexPathForSelectedRow] == nil ? NO : YES;
         for (UIBarButtonItem *item in _toolEditItems)
         {
@@ -447,20 +228,54 @@ static void * directoryPresenterFileURLsObservingContext;
     }
 }
 
+#pragma mark - Directory Presenter Delegate
+
+- (NSOperationQueue *)delegateOperationQueue
+{
+    return [NSOperationQueue mainQueue];
+}
+
+- (void)directoryPresenter:(ECDirectoryPresenter *)directoryPresenter didInsertFilteredFileURLsAtIndexes:(NSIndexSet *)indexes
+{
+    NSMutableArray *indexPaths = [NSMutableArray arrayWithCapacity:[indexes count]];
+    [indexes enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
+        [indexPaths addObject:[NSIndexPath indexPathForRow:idx inSection:0]];
+    }];
+    [self.tableView insertRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationAutomatic];
+}
+
+- (void)directoryPresenter:(ECDirectoryPresenter *)directoryPresenter didRemoveFilteredFileURLsAtIndexes:(NSIndexSet *)indexes
+{
+    NSMutableArray *indexPaths = [NSMutableArray arrayWithCapacity:[indexes count]];
+    [indexes enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
+        [indexPaths addObject:[NSIndexPath indexPathForRow:idx inSection:0]];
+    }];
+    [self.tableView deleteRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationAutomatic];
+}
+
+- (void)directoryPresenter:(ECDirectoryPresenter *)directoryPresenter didChangeHitmasksAtIndexes:(NSIndexSet *)indexes
+{
+    NSMutableArray *indexPaths = [NSMutableArray arrayWithCapacity:[indexes count]];
+    [indexes enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
+        [indexPaths addObject:[NSIndexPath indexPathForRow:idx inSection:0]];
+    }];
+    [self.tableView reloadRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationAutomatic];
+}
+
 #pragma mark - UISeachBar Delegate Methods
 
 - (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText
 {
     if ([searchText length] == 0)
     {
-        self.filterString = nil;
+        self.directoryPresenter.filterString = nil;
         return;
     }
     
     // Apply filter to filterController with .3 second debounce
     [_filterDebounceTimer invalidate];
     _filterDebounceTimer = [NSTimer scheduledTimerWithTimeInterval:0.3 usingBlock:^(NSTimer *timer) {
-        self.filterString = searchText;
+        self.directoryPresenter.filterString = searchText;
     } repeats:NO];
 }
 
