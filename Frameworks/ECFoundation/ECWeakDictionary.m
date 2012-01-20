@@ -7,25 +7,7 @@
 //
 
 #import "ECWeakDictionary.h"
-
-@interface WeakObjectWrapper : NSObject
-{
-    @package
-    __weak id object;
-}
-+ (WeakObjectWrapper *)wrapperWithObject:(id)object;
-@end
-
-@implementation WeakObjectWrapper
-
-+ (WeakObjectWrapper *)wrapperWithObject:(id)object
-{
-    WeakObjectWrapper *wrapper = [[self alloc] init];
-    wrapper->object = object;
-    return wrapper;
-}
-
-@end
+#import "WeakObjectWrapper.h"
 
 @interface ECWeakDictionary ()
 {
@@ -92,7 +74,7 @@
 
 - (void)setObject:(id)object forKey:(id)key
 {
-    ECASSERT(_contents);
+    ECASSERT(_contents && object);
     [_contents setObject:[WeakObjectWrapper wrapperWithObject:object] forKey:key];
 }
 

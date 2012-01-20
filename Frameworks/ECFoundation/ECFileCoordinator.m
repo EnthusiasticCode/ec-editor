@@ -7,11 +7,11 @@
 //
 
 #import "ECFileCoordinator.h"
+#import <ECFoundation/ECWeakArray.h>
 
 static dispatch_queue_t _fileCoordinationDispatchQueue;
 static dispatch_queue_t _filePresentersDispatchQueue;
-#warning TODO URI: we need an ECWeakArray here, or file coordinator will keep all file presenters alive forever
-static NSMutableArray *_filePresenters;
+static ECWeakArray *_filePresenters;
 
 @interface ECFileCoordinator ()
 {
@@ -27,7 +27,7 @@ static NSMutableArray *_filePresenters;
         return;
     _fileCoordinationDispatchQueue = dispatch_queue_create(NULL, DISPATCH_QUEUE_SERIAL);
     _filePresentersDispatchQueue = dispatch_queue_create(NULL, DISPATCH_QUEUE_CONCURRENT);
-    _filePresenters = [[NSMutableArray alloc] init];
+    _filePresenters = [[ECWeakArray alloc] init];
 }
 
 + (void)addFilePresenter:(id<NSFilePresenter>)filePresenter
@@ -41,7 +41,6 @@ static NSMutableArray *_filePresenters;
 + (void)removeFilePresenter:(id<NSFilePresenter>)filePresenter
 {
     dispatch_barrier_sync(_filePresentersDispatchQueue, ^{
-        ECASSERT([_filePresenters containsObject:filePresenter]);
         [_filePresenters removeObject:filePresenter];
     });
 }
