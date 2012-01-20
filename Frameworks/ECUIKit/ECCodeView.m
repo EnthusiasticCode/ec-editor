@@ -30,8 +30,8 @@ NSString * const ECCodeViewPlaceholderAttributeName = @"codeViewPlaceholder";
 @interface ECCodeView () {
 @private
     // Text management
-    TextSelectionView *selectionView;
-    NSRange markedRange;
+    TextSelectionView *_selectionView;
+    NSRange _markedRange;
     
     ECCodeViewUndoManager *_undoManager;
     
@@ -53,41 +53,41 @@ NSString * const ECCodeViewPlaceholderAttributeName = @"codeViewPlaceholder";
         unsigned delegateHasDidShowKeyboardAccessoryViewInViewWithFrame : 1;
         unsigned delegateHasShouldHideKeyboardAccessoryView : 1;
         unsigned delegateHasDidHideKeyboardAccessoryView : 1;
-    } flags;
+    } _flags;
     
     // Recognizers
-    UITapGestureRecognizer *focusRecognizer;
-    UITapGestureRecognizer *tapRecognizer;
-    UITapGestureRecognizer *tapTwoTouchesRecognizer;
-    UITapGestureRecognizer *doubleTapRecognizer;
-    UILongPressGestureRecognizer *longPressRecognizer;
-    UILongPressGestureRecognizer *longDoublePressRecognizer;
+    UITapGestureRecognizer *_focusRecognizer;
+    UITapGestureRecognizer *_tapRecognizer;
+    UITapGestureRecognizer *_tapTwoTouchesRecognizer;
+    UITapGestureRecognizer *_doubleTapRecognizer;
+    UILongPressGestureRecognizer *_longPressRecognizer;
+    UILongPressGestureRecognizer *_longDoublePressRecognizer;
     id<UITextInputTokenizer> _tokenizer;
 }
 
 /// Method to be used before any text modification occurs.
-- (void)editDataSourceInRange:(NSRange)range withString:(NSString *)string;
+- (void)_editDataSourceInRange:(NSRange)range withString:(NSString *)string;
 
 /// Support method to set the selection and notify the input delefate.
-- (void)setSelectedTextRange:(NSRange)newSelection notifyDelegate:(BOOL)shouldNotify;
+- (void)_setSelectedTextRange:(NSRange)newSelection notifyDelegate:(BOOL)shouldNotify;
 
 /// Convinience method to set the selection to an index location.
-- (void)setSelectedIndex:(NSUInteger)index;
+- (void)_setSelectedIndex:(NSUInteger)index;
 
 /// Helper method to set the selection starting from two points.
-- (void)setSelectedTextFromPoint:(CGPoint)fromPoint toPoint:(CGPoint)toPoint;
+- (void)_setSelectedTextFromPoint:(CGPoint)fromPoint toPoint:(CGPoint)toPoint;
 
 /// Given a touch point on the top or bottom of the codeview, this method
 /// scroll the content faster as the point approaches the receiver's bounds.
-- (void)autoScrollForTouchAtPoint:(CGPoint)point eventBlock:(void(^)(BOOL isScrolling))block;
-- (void)stopAutoScroll;
+- (void)_autoScrollForTouchAtPoint:(CGPoint)point eventBlock:(void(^)(BOOL isScrolling))block;
+- (void)_stopAutoScroll;
 
 // Gestures handlers
-- (void)handleGestureFocus:(UITapGestureRecognizer *)recognizer;
-- (void)handleGestureTap:(UITapGestureRecognizer *)recognizer;
-- (void)handleGestureTapTwoTouches:(UITapGestureRecognizer *)recognizer;
-- (void)handleGestureDoubleTap:(UITapGestureRecognizer *)recognizer;
-- (void)handleGestureLongPress:(UILongPressGestureRecognizer *)recognizer;
+- (void)_handleGestureFocus:(UITapGestureRecognizer *)recognizer;
+- (void)_handleGestureTap:(UITapGestureRecognizer *)recognizer;
+- (void)_handleGestureTapTwoTouches:(UITapGestureRecognizer *)recognizer;
+- (void)_handleGestureDoubleTap:(UITapGestureRecognizer *)recognizer;
+- (void)_handleGestureLongPress:(UILongPressGestureRecognizer *)recognizer;
 
 // Handle keyboard display
 - (void)_keyboardWillChangeFrame:(NSNotification *)notification;
@@ -576,7 +576,7 @@ NSString * const ECCodeViewPlaceholderAttributeName = @"codeViewPlaceholder";
         case UIGestureRecognizerStateEnded:
         case UIGestureRecognizerStateCancelled:
             self.magnify = NO;
-            [parent stopAutoScroll];
+            [parent _stopAutoScroll];
             break;
             
         case UIGestureRecognizerStateBegan:
@@ -589,7 +589,7 @@ NSString * const ECCodeViewPlaceholderAttributeName = @"codeViewPlaceholder";
             
             // Scrolling
             tapPoint.y -= parent.contentOffset.y;
-            [parent autoScrollForTouchAtPoint:tapPoint eventBlock:^(BOOL isScrolling) {
+            [parent _autoScrollForTouchAtPoint:tapPoint eventBlock:^(BOOL isScrolling) {
                 if (isScrolling)
                     self.magnify = NO;
                 else
@@ -661,20 +661,20 @@ NSString * const ECCodeViewPlaceholderAttributeName = @"codeViewPlaceholder";
 {
     [super setDataSource:aDataSource];
     
-    flags.dataSourceHasCodeCanEditTextInRange = [self.dataSource respondsToSelector:@selector(codeView:canEditTextInRange:)];
-    flags.dataSourceHasCommitStringForTextInRange = [self.dataSource respondsToSelector:@selector(codeView:commitString:forTextInRange:)];
-    flags.dataSourceHasViewControllerForCompletionAtTextInRange = [self.dataSource respondsToSelector:@selector(codeView:viewControllerForCompletionAtTextInRange:)];
-    flags.dataSourceHasAttributeAtIndexLongestEffectiveRange = [self.dataSource respondsToSelector:@selector(codeView:attribute:atIndex:longestEffectiveRange:)];
+    _flags.dataSourceHasCodeCanEditTextInRange = [self.dataSource respondsToSelector:@selector(codeView:canEditTextInRange:)];
+    _flags.dataSourceHasCommitStringForTextInRange = [self.dataSource respondsToSelector:@selector(codeView:commitString:forTextInRange:)];
+    _flags.dataSourceHasViewControllerForCompletionAtTextInRange = [self.dataSource respondsToSelector:@selector(codeView:viewControllerForCompletionAtTextInRange:)];
+    _flags.dataSourceHasAttributeAtIndexLongestEffectiveRange = [self.dataSource respondsToSelector:@selector(codeView:attribute:atIndex:longestEffectiveRange:)];
 }
 
 - (void)setDelegate:(id<ECCodeViewDelegate>)delegate
 {
     [super setDelegate:delegate];
     
-    flags.delegateHasShouldShowKeyboardAccessoryViewInViewWithFrame = [delegate respondsToSelector:@selector(codeView:shouldShowKeyboardAccessoryViewInView:withFrame:)];
-    flags.delegateHasDidShowKeyboardAccessoryViewInViewWithFrame = [delegate respondsToSelector:@selector(codeView:didShowKeyboardAccessoryViewInView:withFrame:)];
-    flags.delegateHasShouldHideKeyboardAccessoryView = [delegate respondsToSelector:@selector(codeViewShouldHideKeyboardAccessoryView:)];
-    flags.delegateHasDidHideKeyboardAccessoryView = [delegate respondsToSelector:@selector(codeViewDidHideKeyboardAccessoryView:)];
+    _flags.delegateHasShouldShowKeyboardAccessoryViewInViewWithFrame = [delegate respondsToSelector:@selector(codeView:shouldShowKeyboardAccessoryViewInView:withFrame:)];
+    _flags.delegateHasDidShowKeyboardAccessoryViewInViewWithFrame = [delegate respondsToSelector:@selector(codeView:didShowKeyboardAccessoryViewInView:withFrame:)];
+    _flags.delegateHasShouldHideKeyboardAccessoryView = [delegate respondsToSelector:@selector(codeViewShouldHideKeyboardAccessoryView:)];
+    _flags.delegateHasDidHideKeyboardAccessoryView = [delegate respondsToSelector:@selector(codeViewDidHideKeyboardAccessoryView:)];
 }
 
 - (void)setKeyboardAccessoryView:(ECKeyboardAccessoryView *)value
@@ -698,41 +698,41 @@ NSString * const ECCodeViewPlaceholderAttributeName = @"codeViewPlaceholder";
 
 - (void)setCaretColor:(UIColor *)caretColor
 {
-    selectionView.caretColor = caretColor;
+    _selectionView.caretColor = caretColor;
 }
 
 - (UIColor *)caretColor
 {
-    return selectionView.caretColor;
+    return _selectionView.caretColor;
 }
 
 - (void)setSelectionColor:(UIColor *)selectionColor
 {
-    selectionView.selectionColor = selectionColor;
+    _selectionView.selectionColor = selectionColor;
 }
 
 - (UIColor *)selectionColor
 {
-    return selectionView.selectionColor;
+    return _selectionView.selectionColor;
 }
 
 - (NSRange)selectionRange
 {
-    return selectionView.selection;
+    return _selectionView.selection;
 }
 
 - (void)setSelectionRange:(NSRange)selectionRange
 {
-    selectionView.selection = selectionRange;
+    _selectionView.selection = selectionRange;
 }
 
 - (ECRectSet *)selectionRects
 {
-    if (selectionView.isHidden)
+    if (_selectionView.isHidden)
         return nil;
-    if (selectionView.selection.length == 0)
-        return [ECRectSet rectSetWithRect:[self caretRectForPosition:selectionView.selectionPosition]];
-    return selectionView.selectionRects;
+    if (_selectionView.selection.length == 0)
+        return [ECRectSet rectSetWithRect:[self caretRectForPosition:_selectionView.selectionPosition]];
+    return _selectionView.selectionRects;
 }
 
 - (Class)magnificationPopoverControllerClass
@@ -747,16 +747,16 @@ NSString * const ECCodeViewPlaceholderAttributeName = @"codeViewPlaceholder";
 static void init(ECCodeView *self)
 {
     // Setup keyboard and selection
-    self->selectionView = [[TextSelectionView alloc] initWithFrame:CGRectZero codeView:self];
-    [self->selectionView setOpaque:NO];
-    [self->selectionView setHidden:YES];
-    [self addSubview:self->selectionView];
+    self->_selectionView = [[TextSelectionView alloc] initWithFrame:CGRectZero codeView:self];
+    [self->_selectionView setOpaque:NO];
+    [self->_selectionView setHidden:YES];
+    [self addSubview:self->_selectionView];
     self->_keyboardFrame = CGRectNull;
     
     // Adding focus recognizer
-    self->focusRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleGestureFocus:)];
-    [self->focusRecognizer setNumberOfTapsRequired:1];
-    [self addGestureRecognizer:self->focusRecognizer];
+    self->_focusRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleGestureFocus:)];
+    [self->_focusRecognizer setNumberOfTapsRequired:1];
+    [self addGestureRecognizer:self->_focusRecognizer];
 }
 
 - (id)initWithFrame:(CGRect)frame
@@ -785,7 +785,7 @@ static void init(ECCodeView *self)
 - (void)layoutSubviews
 {
     [super layoutSubviews];
-    [selectionView update];
+    [_selectionView update];
 }
 
 - (void)willMoveToSuperview:(UIView *)newSuperview
@@ -820,13 +820,13 @@ static void init(ECCodeView *self)
 - (void)updateAllText
 {
     [self.renderer updateAllText];
-    [selectionView update];
+    [_selectionView update];
 }
 
 - (void)updateTextFromStringRange:(NSRange)originalRange toStringRange:(NSRange)newRange
 {
     [self.renderer updateTextFromStringRange:originalRange toStringRange:newRange];
-    [selectionView update];
+    [_selectionView update];
 }
 
 #pragma mark - UIResponder methods
@@ -834,7 +834,7 @@ static void init(ECCodeView *self)
 - (BOOL)canBecomeFirstResponder
 {
     // TODO should return depending on edit enabled state
-    return flags.dataSourceHasCommitStringForTextInRange;
+    return _flags.dataSourceHasCommitStringForTextInRange;
 }
 
 - (BOOL)becomeFirstResponder
@@ -842,25 +842,25 @@ static void init(ECCodeView *self)
     BOOL shouldBecomeFirstResponder = [super becomeFirstResponder];
     
     // Lazy create recognizers
-    if (!tapRecognizer && shouldBecomeFirstResponder)
+    if (!_tapRecognizer && shouldBecomeFirstResponder)
     {
-        tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleGestureTap:)];
-        [self addGestureRecognizer:tapRecognizer];
+        _tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleGestureTap:)];
+        [self addGestureRecognizer:_tapRecognizer];
         
-        tapTwoTouchesRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleGestureTapTwoTouches:)];
-        tapTwoTouchesRecognizer.numberOfTouchesRequired = 2;
-        [self addGestureRecognizer:tapTwoTouchesRecognizer];
+        _tapTwoTouchesRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleGestureTapTwoTouches:)];
+        _tapTwoTouchesRecognizer.numberOfTouchesRequired = 2;
+        [self addGestureRecognizer:_tapTwoTouchesRecognizer];
         
-        doubleTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleGestureDoubleTap:)];
-        doubleTapRecognizer.numberOfTapsRequired = 2;
-        [self addGestureRecognizer:doubleTapRecognizer];
+        _doubleTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleGestureDoubleTap:)];
+        _doubleTapRecognizer.numberOfTapsRequired = 2;
+        [self addGestureRecognizer:_doubleTapRecognizer];
         
-        longPressRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleGestureLongPress:)];
-        [self addGestureRecognizer:longPressRecognizer];
+        _longPressRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleGestureLongPress:)];
+        [self addGestureRecognizer:_longPressRecognizer];
         
-        longDoublePressRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleGestureLongPress:)];
-        longDoublePressRecognizer.numberOfTouchesRequired = 2;
-        [self addGestureRecognizer:longDoublePressRecognizer];
+        _longDoublePressRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleGestureLongPress:)];
+        _longDoublePressRecognizer.numberOfTouchesRequired = 2;
+        [self addGestureRecognizer:_longDoublePressRecognizer];
         
         // TODO initialize gesture recognizers
     }
@@ -868,12 +868,12 @@ static void init(ECCodeView *self)
     // Activate recognizers and keyboard accessory
     if (shouldBecomeFirstResponder)
     {
-        focusRecognizer.enabled = NO;
-        tapRecognizer.enabled = YES;
-        tapTwoTouchesRecognizer.enabled = YES;
-        doubleTapRecognizer.enabled = YES;
-        longPressRecognizer.enabled = YES;
-        longDoublePressRecognizer.enabled = YES;
+        _focusRecognizer.enabled = NO;
+        _tapRecognizer.enabled = YES;
+        _tapTwoTouchesRecognizer.enabled = YES;
+        _doubleTapRecognizer.enabled = YES;
+        _longPressRecognizer.enabled = YES;
+        _longDoublePressRecognizer.enabled = YES;
         
         if (!_keyboardWillShow)
             [self _setAccessoryViewVisible:YES animated:YES];
@@ -890,15 +890,15 @@ static void init(ECCodeView *self)
     
     if (![self isFirstResponder])
     {
-        focusRecognizer.enabled = YES;
-        tapRecognizer.enabled = NO;
-        tapTwoTouchesRecognizer.enabled = NO;
-        doubleTapRecognizer.enabled = NO;
-        longPressRecognizer.enabled = NO;
-        longDoublePressRecognizer.enabled = NO;
+        _focusRecognizer.enabled = YES;
+        _tapRecognizer.enabled = NO;
+        _tapTwoTouchesRecognizer.enabled = NO;
+        _doubleTapRecognizer.enabled = NO;
+        _longPressRecognizer.enabled = NO;
+        _longDoublePressRecognizer.enabled = NO;
         
         // Remove selection
-        selectionView.hidden = YES;
+        _selectionView.hidden = YES;
         
         // Remove keyboard accessory
         [self _setAccessoryViewVisible:NO animated:YES];
@@ -920,18 +920,18 @@ static void init(ECCodeView *self)
 
 - (void)insertText:(NSString *)string
 {
-    NSRange insertRange = selectionView.selection;
-    [self editDataSourceInRange:insertRange withString:string];
+    NSRange insertRange = _selectionView.selection;
+    [self _editDataSourceInRange:insertRange withString:string];
     
     // Interrupting undo grouping on user return
     if ([string hasSuffix:@"\n"] && self.undoManager.groupingLevel != 0)
         [self.undoManager endUndoGrouping];
     
     // Center editing area if not visible
-    if (!CGRectIntersectsRect(selectionView.frame, self.bounds))
-        [self scrollRectToVisible:CGRectInset(selectionView.frame, 0, -100) animated:NO];
+    if (!CGRectIntersectsRect(_selectionView.frame, self.bounds))
+        [self scrollRectToVisible:CGRectInset(_selectionView.frame, 0, -100) animated:NO];
     else
-        [self scrollRectToVisible:selectionView.frame animated:NO];
+        [self scrollRectToVisible:_selectionView.frame animated:NO];
 }
 
 - (void)deleteBackward
@@ -954,7 +954,7 @@ static void init(ECCodeView *self)
     else
     {
         NSRange cr = (NSRange){ s - 1, 1 };
-        [self editDataSourceInRange:cr withString:@""];
+        [self _editDataSourceInRange:cr withString:@""];
     }
 }
 
@@ -1046,11 +1046,11 @@ static void init(ECCodeView *self)
         NSRange c = (NSRange){s, e - s};
         if (c.location + c.length > textLength)
             c.length = textLength - c.location;
-        [self editDataSourceInRange:c withString:string];
+        [self _editDataSourceInRange:c withString:string];
     }
     else
     {
-        [self editDataSourceInRange:(NSRange){s, 0} withString:string];
+        [self _editDataSourceInRange:(NSRange){s, 0} withString:string];
     }
 }
 
@@ -1058,7 +1058,7 @@ static void init(ECCodeView *self)
 
 - (UITextRange *)selectedTextRange
 {
-    return selectionView.selectionRange;
+    return _selectionView.selectionRange;
 }
 
 - (void)setSelectedTextRange:(UITextRange *)selectedTextRange
@@ -1067,17 +1067,17 @@ static void init(ECCodeView *self)
     
     [self unmarkText];
     
-    [self setSelectedTextRange:[(ECTextRange *)selectedTextRange range] notifyDelegate:YES];
+    [self _setSelectedTextRange:[(ECTextRange *)selectedTextRange range] notifyDelegate:YES];
 }
 
 @synthesize markedTextStyle;
 
 - (UITextRange *)markedTextRange
 {
-    if (markedRange.length == 0)
+    if (_markedRange.length == 0)
         return nil;
     
-    return [[ECTextRange alloc] initWithRange:markedRange];
+    return [[ECTextRange alloc] initWithRange:_markedRange];
 }
 
 - (void)setMarkedText:(NSString *)markedText selectedRange:(NSRange)selectedRange
@@ -1085,9 +1085,9 @@ static void init(ECCodeView *self)
     NSRange replaceRange;
 //    NSUInteger textLength = [self textLength];
     
-    if (markedRange.length == 0)
+    if (_markedRange.length == 0)
     {
-        replaceRange = selectionView.selection;
+        replaceRange = _selectionView.selection;
 //        if (selection)
 //        {
 //            replaceRange = [selection range];
@@ -1100,12 +1100,12 @@ static void init(ECCodeView *self)
     }
     else
     {
-        replaceRange = markedRange;
+        replaceRange = _markedRange;
     }
     
     NSRange newSelectionRange;
     NSUInteger markedTextLength = [markedText length];
-    [self editDataSourceInRange:replaceRange withString:markedText];
+    [self _editDataSourceInRange:replaceRange withString:markedText];
     
     // Adjust selection
     if (selectedRange.location > markedTextLength 
@@ -1119,20 +1119,20 @@ static void init(ECCodeView *self)
     }
     
     [self willChangeValueForKey:@"markedTextRange"];
-    [self setSelectedTextRange:newSelectionRange notifyDelegate:NO];
-    markedRange = (NSRange){replaceRange.location, markedTextLength};
+    [self _setSelectedTextRange:newSelectionRange notifyDelegate:NO];
+    _markedRange = (NSRange){replaceRange.location, markedTextLength};
     [self didChangeValueForKey:@"markedTextRange"];
 }
 
 - (void)unmarkText
 {
-    if (markedRange.length == 0)
+    if (_markedRange.length == 0)
         return;
     
     // TODO needsdisplay for markedText layer.
     [self willChangeValueForKey:@"markedTextRange"];
-    markedRange.location = 0;
-    markedRange.length = 0;
+    _markedRange.location = 0;
+    _markedRange.length = 0;
     [self didChangeValueForKey:@"markedTextRange"];
 }
 
@@ -1307,17 +1307,17 @@ static void init(ECCodeView *self)
 
 - (void)copy:(id)sender
 {
-    if (selectionView.isEmpty)
+    if (_selectionView.isEmpty)
         return;
     
     UIPasteboard *generalPasteboard = [UIPasteboard generalPasteboard];
-    NSString *text = [self textInRange:selectionView.selectionRange];
+    NSString *text = [self textInRange:_selectionView.selectionRange];
     generalPasteboard.string = text;
 }
 
 - (void)cut:(id)sender
 {
-    if (selectionView.isEmpty)
+    if (_selectionView.isEmpty)
         return;
     
     [self copy:sender];
@@ -1326,12 +1326,12 @@ static void init(ECCodeView *self)
 
 - (void)delete:(id)sender
 {
-    if (selectionView.isEmpty)
+    if (_selectionView.isEmpty)
         return;
     
     [inputDelegate textWillChange:self];
     [inputDelegate selectionWillChange:self];
-    [self replaceRange:selectionView.selectionRange withText:@""];
+    [self replaceRange:_selectionView.selectionRange withText:@""];
     [inputDelegate textDidChange:self];
     [inputDelegate selectionDidChange:self];
 }
@@ -1345,8 +1345,8 @@ static void init(ECCodeView *self)
         return;
     
     ECTextRange *selectedRange;
-    if (!selectionView.hidden)
-        selectedRange = selectionView.selectionRange;
+    if (!_selectionView.hidden)
+        selectedRange = _selectionView.selectionRange;
     else
         selectedRange = [ECTextRange textRangeWithRange:NSMakeRange([self.dataSource stringLengthForTextRenderer:self.renderer], 0)];
     
@@ -1359,7 +1359,7 @@ static void init(ECCodeView *self)
 
 - (void)select:(id)sender
 {
-    ECTextRange *selectionRange = selectionView.selectionRange;
+    ECTextRange *selectionRange = _selectionView.selectionRange;
     UITextRange *forwardRange = [tokenizer rangeEnclosingPosition:selectionRange.start withGranularity:UITextGranularityWord inDirection:UITextStorageDirectionForward];
     UITextRange *backRange = [tokenizer rangeEnclosingPosition:selectionRange.end withGranularity:UITextGranularityWord inDirection:UITextStorageDirectionBackward];
     
@@ -1408,7 +1408,7 @@ static void init(ECCodeView *self)
 {
     if (action == @selector(copy:) || action == @selector(cut:) || action == @selector(delete:))
     {
-        return !selectionView.isEmpty;
+        return !_selectionView.isEmpty;
     }
     
     if (action == @selector(paste:))
@@ -1419,15 +1419,15 @@ static void init(ECCodeView *self)
     
     if (action == @selector(select:))
     {
-        return selectionView.selection.length == 0;
+        return _selectionView.selection.length == 0;
     }
     
     if (action == @selector(selectAll:))
     {
-        if (selectionView.isHidden)
+        if (_selectionView.isHidden)
             return YES;
         
-        UITextRange *selectionRange = selectionView.selectionRange;
+        UITextRange *selectionRange = _selectionView.selectionRange;
         if (![selectionRange.start isEqual:[self beginningOfDocument]] 
             || ![selectionRange.end isEqual:[self endOfDocument]])
             return YES;
@@ -1450,14 +1450,14 @@ static void init(ECCodeView *self)
 
 #pragma mark - Private methods
 
-- (void)editDataSourceInRange:(NSRange)range withString:(NSString *)string
+- (void)_editDataSourceInRange:(NSRange)range withString:(NSString *)string
 {
     ECASSERT(string);
     
-    if (!flags.dataSourceHasCommitStringForTextInRange)
+    if (!_flags.dataSourceHasCommitStringForTextInRange)
         return;
     
-    if (flags.dataSourceHasCodeCanEditTextInRange
+    if (_flags.dataSourceHasCodeCanEditTextInRange
         && ![self.dataSource codeView:self canEditTextInRange:range]) 
         return;
 
@@ -1470,7 +1470,7 @@ static void init(ECCodeView *self)
         [self.undoManager beginUndoGrouping];
         [self.undoManager setActionName:@"Typing"];
     }
-    [[self.undoManager prepareWithInvocationTarget:self] editDataSourceInRange:NSMakeRange(range.location, stringLenght) withString:range.length ? [[self.dataSource textRenderer:self.renderer attributedStringInRange:range] string] : nil];
+    [[self.undoManager prepareWithInvocationTarget:self] _editDataSourceInRange:NSMakeRange(range.location, stringLenght) withString:range.length ? [[self.dataSource textRenderer:self.renderer attributedStringInRange:range] string] : nil];
     
     // Commit string
     [inputDelegate textWillChange:self];
@@ -1478,12 +1478,12 @@ static void init(ECCodeView *self)
     [inputDelegate textDidChange:self];
     
     // Update caret location
-    [self setSelectedTextRange:self.undoManager.isUndoing ? NSMakeRange(range.location, stringLenght) : NSMakeRange(range.location + stringLenght, 0) notifyDelegate:NO];
+    [self _setSelectedTextRange:self.undoManager.isUndoing ? NSMakeRange(range.location, stringLenght) : NSMakeRange(range.location + stringLenght, 0) notifyDelegate:NO];
 }
 
-- (void)setSelectedTextRange:(NSRange)newSelection notifyDelegate:(BOOL)shouldNotify
+- (void)_setSelectedTextRange:(NSRange)newSelection notifyDelegate:(BOOL)shouldNotify
 {
-    if (shouldNotify && !selectionView.isHidden && NSEqualRanges(selectionView.selection, newSelection))
+    if (shouldNotify && !_selectionView.isHidden && NSEqualRanges(_selectionView.selection, newSelection))
         return;
 
     // Close undo grouping if selection explicitly modified
@@ -1494,7 +1494,7 @@ static void init(ECCodeView *self)
         [inputDelegate selectionWillChange:self];
     
     // Modify selection to account for placeholders
-    if (flags.dataSourceHasAttributeAtIndexLongestEffectiveRange)
+    if (_flags.dataSourceHasAttributeAtIndexLongestEffectiveRange)
     {
         NSRange replaceSelection = newSelection;
         NSRange placeholderRangeAtLocation;
@@ -1516,7 +1516,7 @@ static void init(ECCodeView *self)
     }
 
     // Will automatically resize and position the selection view
-    selectionView.selection = newSelection;
+    _selectionView.selection = newSelection;
     
     if (shouldNotify)
         [inputDelegate selectionDidChange:self];
@@ -1524,18 +1524,18 @@ static void init(ECCodeView *self)
     // Position selection view
     if ([self isFirstResponder])
     {
-        selectionView.hidden = NO;
+        _selectionView.hidden = NO;
         if (shouldNotify)
-            [self scrollRectToVisible:selectionView.frame animated:NO];
+            [self scrollRectToVisible:_selectionView.frame animated:NO];
     }
 }
 
-- (void)setSelectedIndex:(NSUInteger)index
+- (void)_setSelectedIndex:(NSUInteger)index
 {
-    [self setSelectedTextRange:(NSRange){index, 0} notifyDelegate:NO];
+    [self _setSelectedTextRange:(NSRange){index, 0} notifyDelegate:NO];
 }
 
-- (void)setSelectedTextFromPoint:(CGPoint)fromPoint toPoint:(CGPoint)toPoint
+- (void)_setSelectedTextFromPoint:(CGPoint)fromPoint toPoint:(CGPoint)toPoint
 {
     UITextPosition *startPosition = [self closestPositionToPoint:fromPoint];
     UITextPosition *endPosition;
@@ -1550,14 +1550,14 @@ static void init(ECCodeView *self)
     
 }
 
-- (void)autoScrollForTouchAtPoint:(CGPoint)point eventBlock:(void(^)(BOOL isScrolling))block
+- (void)_autoScrollForTouchAtPoint:(CGPoint)point eventBlock:(void(^)(BOOL isScrolling))block
 {
     CGRect frame = self.frame;
     
     // Stop old scrolling 
     if (_touchScrollTimerCallback)
         _touchScrollTimerCallback(NO);
-    [self stopAutoScroll];
+    [self _stopAutoScroll];
     
     // Get scrolling speed and direction
     CGFloat scrollingOffset = 0;
@@ -1598,7 +1598,7 @@ static void init(ECCodeView *self)
     }
 }
 
-- (void)stopAutoScroll
+- (void)_stopAutoScroll
 {
     if (_touchScrollTimer) 
     {
@@ -1612,22 +1612,22 @@ static void init(ECCodeView *self)
 #pragma mark -
 #pragma mark Gesture Recognizers and Interaction
 
-- (void)handleGestureFocus:(UITapGestureRecognizer *)recognizer
+- (void)_handleGestureFocus:(UITapGestureRecognizer *)recognizer
 {
     [self becomeFirstResponder];
-    [self handleGestureTap:recognizer];
+    [self _handleGestureTap:recognizer];
 }
 
-- (void)handleGestureTap:(UITapGestureRecognizer *)recognizer
+- (void)_handleGestureTap:(UITapGestureRecognizer *)recognizer
 {
-    UIMenuController *sharedMenuController = [UIMenuController sharedMenuController];
-    [sharedMenuController setMenuVisible:NO animated:YES];
+    [[UIMenuController sharedMenuController] setMenuVisible:NO animated:YES];
     
     CGPoint tapPoint = [recognizer locationInView:self];
-    [self setSelectedTextFromPoint:tapPoint toPoint:tapPoint];
+    // TODO if point on line numbers, call delegate
+    [self _setSelectedTextFromPoint:tapPoint toPoint:tapPoint];
 }
 
-- (void)handleGestureTapTwoTouches:(UITapGestureRecognizer *)recognizer
+- (void)_handleGestureTapTwoTouches:(UITapGestureRecognizer *)recognizer
 {
     UIMenuController *sharedMenuController = [UIMenuController sharedMenuController];
     
@@ -1636,11 +1636,11 @@ static void init(ECCodeView *self)
     sharedMenuController.menuItems = [NSArray arrayWithObject:completionMenuItem];
     
     // Show context menu
-    [sharedMenuController setTargetRect:selectionView.frame inView:self];
+    [sharedMenuController setTargetRect:_selectionView.frame inView:self];
     [sharedMenuController setMenuVisible:YES animated:YES];
 }
 
-- (void)handleGestureDoubleTap:(UITapGestureRecognizer *)recognizer
+- (void)_handleGestureDoubleTap:(UITapGestureRecognizer *)recognizer
 {
     CGPoint tapPoint = [recognizer locationInView:self];
     UITextPosition *tapPosition = [self closestPositionToPoint:tapPoint];
@@ -1654,7 +1654,7 @@ static void init(ECCodeView *self)
     [self setSelectedTextRange:sel];
 }
 
-- (void)handleGestureLongPress:(UILongPressGestureRecognizer *)recognizer
+- (void)_handleGestureLongPress:(UILongPressGestureRecognizer *)recognizer
 {
     BOOL multiTouch = NO;
     CGPoint tapPoint = [recognizer locationOfTouch:0 inView:self];
@@ -1670,10 +1670,10 @@ static void init(ECCodeView *self)
     switch (recognizer.state)
     {
         case UIGestureRecognizerStateEnded:
-            [self setSelectedTextFromPoint:tapPoint toPoint:secondTapPoint];
+            [self _setSelectedTextFromPoint:tapPoint toPoint:secondTapPoint];
         case UIGestureRecognizerStateCancelled:
-            selectionView.magnify = NO;
-            [self stopAutoScroll];
+            _selectionView.magnify = NO;
+            [self _stopAutoScroll];
             break;
             
         case UIGestureRecognizerStateBegan:
@@ -1683,35 +1683,35 @@ static void init(ECCodeView *self)
         {
             if (CGPointEqualToPoint(tapPoint, CGPointZero)) 
             {
-                selectionView.magnify = NO;
-                [self setSelectedTextFromPoint:tapPoint toPoint:secondTapPoint];
+                _selectionView.magnify = NO;
+                [self _setSelectedTextFromPoint:tapPoint toPoint:secondTapPoint];
                 return;
             }
             
             // Set selection
             if (multiTouch) 
             {
-                [self setSelectedTextFromPoint:tapPoint toPoint:secondTapPoint];
+                [self _setSelectedTextFromPoint:tapPoint toPoint:secondTapPoint];
             }
             else
             {
-                selectionView.selection = NSMakeRange([self.renderer closestStringLocationToPoint:tapPoint withinStringRange:(NSRange){0, 0}], 0);
-                CGRect selectionFrame = selectionView.frame;
-                [selectionView setMagnify:YES fromRect:CGRectMake(tapPoint.x - 1, selectionFrame.origin.y, 2, selectionFrame.size.height) textPoint:CGPointMake(CGRectGetMidX(selectionFrame), CGRectGetMidY(selectionFrame)) ratio:2 animated:animatePopover];
+                _selectionView.selection = NSMakeRange([self.renderer closestStringLocationToPoint:tapPoint withinStringRange:(NSRange){0, 0}], 0);
+                CGRect selectionFrame = _selectionView.frame;
+                [_selectionView setMagnify:YES fromRect:CGRectMake(tapPoint.x - 1, selectionFrame.origin.y, 2, selectionFrame.size.height) textPoint:CGPointMake(CGRectGetMidX(selectionFrame), CGRectGetMidY(selectionFrame)) ratio:2 animated:animatePopover];
             }
 
             // Scrolling
             tapPoint.y -= self.contentOffset.y;
-            [self autoScrollForTouchAtPoint:tapPoint eventBlock:^(BOOL isScrolling) {
+            [self _autoScrollForTouchAtPoint:tapPoint eventBlock:^(BOOL isScrolling) {
                 CGPoint point = [recognizer locationOfTouch:0 inView:self];
                 if ([recognizer numberOfTouches] > 1) 
                 {
-                    [self setSelectedTextFromPoint:point toPoint:[recognizer locationOfTouch:1 inView:self]];
+                    [self _setSelectedTextFromPoint:point toPoint:[recognizer locationOfTouch:1 inView:self]];
                 }
                 else
                 {
-                    selectionView.selection = NSMakeRange([self.renderer closestStringLocationToPoint:point withinStringRange:(NSRange){0, 0}], 0);
-                    [selectionView setMagnify:YES fromRect:CGRectMake(tapPoint.x, self.contentOffset.y + tapPoint.y, 2, 2) textPoint:point ratio:2 animated:animatePopover];
+                    _selectionView.selection = NSMakeRange([self.renderer closestStringLocationToPoint:point withinStringRange:(NSRange){0, 0}], 0);
+                    [_selectionView setMagnify:YES fromRect:CGRectMake(tapPoint.x, self.contentOffset.y + tapPoint.y, 2, 2) textPoint:point ratio:2 animated:animatePopover];
                 }
             }];
         }
@@ -1752,7 +1752,7 @@ static void init(ECCodeView *self)
         
         // Ask delegate if accessory view should be shown
         __autoreleasing UIView *targetView = self;
-        if (flags.delegateHasShouldShowKeyboardAccessoryViewInViewWithFrame && ![self.delegate codeView:self shouldShowKeyboardAccessoryViewInView:&targetView withFrame:&targetFrame])
+        if (_flags.delegateHasShouldShowKeyboardAccessoryViewInViewWithFrame && ![self.delegate codeView:self shouldShowKeyboardAccessoryViewInView:&targetView withFrame:&targetFrame])
             return;
         
         // Reposition if flipped
@@ -1769,20 +1769,20 @@ static void init(ECCodeView *self)
         [UIView animateWithDuration:(animated ? 0.25 : 0) delay:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
             self.keyboardAccessoryView.alpha = 1;
         } completion:^(BOOL finished) {
-            if (flags.delegateHasDidShowKeyboardAccessoryViewInViewWithFrame)
+            if (_flags.delegateHasDidShowKeyboardAccessoryViewInViewWithFrame)
             {
                 [self.delegate codeView:self didShowKeyboardAccessoryViewInView:targetView withFrame:targetFrame];
             }
         }];
     }
-    else if (!flags.delegateHasShouldHideKeyboardAccessoryView || [self.delegate codeViewShouldHideKeyboardAccessoryView:self])
+    else if (!_flags.delegateHasShouldHideKeyboardAccessoryView || [self.delegate codeViewShouldHideKeyboardAccessoryView:self])
     {
         [UIView animateWithDuration:(animated ? 0.25 : 0) delay:0 options:UIViewAnimationOptionCurveEaseInOut | UIViewAnimationOptionBeginFromCurrentState animations:^{
             keyboardAccessoryView.alpha = 0;
         } completion:^(BOOL finished) {
             [keyboardAccessoryView removeFromSuperview];
             keyboardAccessoryView.alpha = 1;
-            if (flags.delegateHasDidHideKeyboardAccessoryView)
+            if (_flags.delegateHasDidHideKeyboardAccessoryView)
             {
                 [self.delegate codeViewDidHideKeyboardAccessoryView:self];
             }
