@@ -51,7 +51,7 @@
 
 /// An array of filtered file URLs
 /// Affected by the directory, options and filter
-/// Returns nil if the filter string is not set
+/// Returns all file URLs if not set
 - (NSArray *)filteredFileURLs;
 
 /// Smart filter string to apply to the filtered file URLs
