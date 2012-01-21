@@ -26,6 +26,7 @@
 #import "ACShapePopoverBackgroundView.h"
 
 #import "ACCodeFile.h"
+#import "ACTab.h"
 #import "ACProject.h"
 
 
@@ -537,7 +538,18 @@
 
 - (void)codeView:(ECCodeView *)codeView selectedLineNumber:(NSUInteger)lineNumber
 {
-    NSLog(@"Line tapped: %u", lineNumber);
+    NSArray *bookmarks = [self.tab.currentProject bookmarksForFile:self.tab.currentURL atLine:lineNumber];
+    if ([bookmarks count] == 0)
+    {
+        [self.tab.currentProject addBookmarkWithFileURL:self.tab.currentURL line:lineNumber note:nil];
+    }
+    else
+    {
+        for (ACProjectBookmark *bookmark in bookmarks)
+        {
+            [self.tab.currentProject removeBookmark:bookmark];
+        }
+    }
 }
 
 - (BOOL)codeView:(ECCodeView *)codeView shouldShowKeyboardAccessoryViewInView:(UIView *__autoreleasing *)view withFrame:(CGRect *)frame

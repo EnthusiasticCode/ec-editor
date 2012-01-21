@@ -64,8 +64,9 @@
 /// Access the bookmarks.
 @property (nonatomic, copy, readonly) NSArray *bookmarks;
 
-- (ACProjectBookmark *)addBookmarkWithBookmarkURL:(NSURL *)bookmarkUrl note:(NSString *)note;
+- (void)addBookmarkWithFileURL:(NSURL *)fileURL line:(NSUInteger)line note:(NSString *)note;
 - (void)removeBookmark:(ACProjectBookmark *)bookmark;
+- (NSArray *)bookmarksForFile:(NSURL *)fileURL atLine:(NSUInteger)lineNumber;
 
 @end
 
@@ -75,6 +76,10 @@
 
 @property (nonatomic, weak, readonly) ACProject *project;
 
+/// The actual path saved as the bookmark relative to the project URL and containing 
+/// fragment informations.
+@property (nonatomic, strong, readonly) NSString *bookmarkPath;
+
 /// URL relative to the project root of the file that contain the bookmark.
 /// The URL also encode the range of the bookmark.
 @property (nonatomic, strong, readonly) NSURL *URL;
@@ -82,8 +87,7 @@
 /// Notes connected with the bookmark.
 @property (nonatomic, strong) NSString *note;
 
-- (id)initWithProject:(ACProject *)project URL:(NSURL *)url note:(NSString *)note;
-- (id)initWithProject:(ACProject *)project propertyDictionary:(NSDictionary *)dictionary;
-- (NSDictionary *)propertyDictionary;
+/// Returns the line in the file URL 
+- (NSUInteger)line;
 
 @end

@@ -96,10 +96,11 @@
 
 - (NSURL *)URLByAppendingFragmentDictionary:(NSDictionary *)fragmentDictionary
 {
-    return [NSURL URLWithString:[NSString stringWithFormat:@"%@#%@", [self path], [fragmentDictionary stringWithURLEncodedComponents]]];
+    // TODO build the URL in a better way
+    return [NSURL URLWithString:[NSString stringWithFormat:@"%@#%@", [self absoluteString], [fragmentDictionary stringWithURLEncodedComponents]]];;
 }
 
-- (NSDictionary *)segmentDictionary
+- (NSDictionary *)fragmentDictionary
 {
     return [NSDictionary dictionaryWithURLEncodedString:self.fragment];
 }

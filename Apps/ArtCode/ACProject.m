@@ -19,6 +19,16 @@ static NSString * const ACProjectExtension = @".weakpkg";
 static ECCache *openProjects = nil;
 
 
+@interface ACProjectBookmark (/* Private methods */)
+
+@property (nonatomic, weak) ACProject *project;
+
+- (id)initWithProject:(ACProject *)project URL:(NSURL *)url note:(NSString *)note;
+- (id)initWithProject:(ACProject *)project propertyDictionary:(NSDictionary *)dictionary;
+- (NSDictionary *)propertyDictionary;
+
+@end
+
 
 @implementation ACProject {
     BOOL _dirty;
@@ -161,24 +171,41 @@ static ECCache *openProjects = nil;
 
 #pragma mark Bookmakrs methods
 
-- (ACProjectBookmark *)addBookmarkWithBookmarkURL:(NSURL *)bookmarkUrl note:(NSString *)note
+- (void)addBookmarkWithFileURL:(NSURL *)fileURL line:(NSUInteger)line note:(NSString *)note
 {
     if (!bookmarks)
         bookmarks = [NSMutableArray new];
     
-    ACProjectBookmark *bookmark = [[ACProjectBookmark alloc] initWithProject:self URL:bookmarkUrl note:note];
+    ACProjectBookmark *bookmark = [[ACProjectBookmark alloc] initWithProject:self URL:[fileURL URLByAppendingFragmentDictionary:[NSDictionary dictionaryWithObject:[NSNumber numberWithUnsignedInteger:line] forKey:@"line"]] note:note];
     [bookmarks addObject:bookmark];
     _dirty = YES;
     
     // TODO remove flush here
     [self flush];
-    
-    return bookmark;
 }
 
 - (void)removeBookmark:(ACProjectBookmark *)bookmark
 {
     [bookmarks removeObject:bookmark];
+}
+
+- (NSArray *)bookmarksForFile:(NSURL *)fileURL atLine:(NSUInteger)lineNumber
+{
+    NSString *filePath = [fileURL absoluteString];
+    NSString *projectPath = [self.URL absoluteString];
+    if (![filePath hasPrefix:projectPath])
+        return nil;
+    filePath = [filePath substringFromIndex:[projectPath length]];
+    
+    NSMutableArray *result = [NSMutableArray new];
+    for (ACProjectBookmark *bookmark in bookmarks)
+    {
+        if (![bookmark.bookmarkPath hasPrefix:filePath])
+            continue;
+        if ([bookmark line] == lineNumber)
+            [result addObject:bookmark];
+    }
+    return result;
 }
 
 #pragma mark Class methods
@@ -278,16 +305,21 @@ static ECCache *openProjects = nil;
 @end
 
 
-@implementation ACProjectBookmark {
-    NSString *url;
-}
+@implementation ACProjectBookmark
 
-@synthesize project, note;
+@synthesize bookmarkPath, project, note;
 
 - (NSURL *)URL
 {
-    return [project.URL URLByAppendingPathComponent:url];
+    return [NSURL URLWithString:bookmarkPath relativeToURL:project.URL];
 }
+
+- (NSUInteger)line
+{
+    return [[[self.URL fragmentDictionary] objectForKey:@"line"] integerValue];
+}
+
+#pragma mark Private methods
 
 - (id)initWithProject:(ACProject *)aProject URL:(NSURL *)aUrl note:(NSString *)aNote
 {
@@ -295,8 +327,10 @@ static ECCache *openProjects = nil;
     if (!self)
         return nil;
     
+    ECASSERT(aProject != nil && aUrl != nil);
+    
     project = aProject;
-    url = [[aUrl absoluteString] substringFromIndex:[[aProject.URL path] length]];
+    bookmarkPath = [[aUrl absoluteString] substringFromIndex:[[aProject.URL absoluteString] length]];
     note = aNote;
     return self;
 }
@@ -308,7 +342,7 @@ static ECCache *openProjects = nil;
         return nil;
     
     project = aProject;
-    url = [dictionary objectForKey:@"URL"];
+    bookmarkPath = [dictionary objectForKey:@"URL"];
     note = [dictionary objectForKey:@"note"];
     
     return self;
@@ -318,11 +352,11 @@ static ECCache *openProjects = nil;
 {
     if (note)
     {
-        return [NSDictionary dictionaryWithObjectsAndKeys:url, @"URL", note, @"note", nil];
+        return [NSDictionary dictionaryWithObjectsAndKeys:bookmarkPath, @"URL", note, @"note", nil];
     }
     else
     {
-        return [NSDictionary dictionaryWithObject:url forKey:@"URL"];
+        return [NSDictionary dictionaryWithObject:bookmarkPath forKey:@"URL"];
     }
 }
 
