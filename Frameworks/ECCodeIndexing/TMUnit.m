@@ -229,7 +229,6 @@ static NSString * const _patternCaptureName = @"name";
 - (NSUInteger)_addChildScopesToScope:(TMScope *)scope inRange:(NSRange)range relativeToOffset:(NSUInteger)offset withSpanPattern:(TMPattern *)pattern
 {
     TMScope *currentScope = scope;
-    NSUInteger endOfLastScope = range.location;
     OnigResult *beginResult = [self _firstMatchInRange:range forRegexp:[pattern begin]];
     if (!beginResult)
         return NSMaxRange(range);
@@ -243,10 +242,9 @@ static NSString * const _patternCaptureName = @"name";
         spanScope.location = [beginResult bodyRange].location - offset;
         currentScope = spanScope;
         spanScopeOffset = [beginResult bodyRange].location;
-        endOfLastScope = NSMaxRange([beginResult bodyRange]);
     }
     if ([pattern beginCaptures])
-        endOfLastScope = MAX(endOfLastScope, [self _addChildScopesToScope:currentScope inRange:range relativeToOffset:spanScopeOffset withRegexp:[pattern begin] name:[[[pattern beginCaptures] objectForKey:@"0"] objectForKey:_patternCaptureName] captures:[pattern beginCaptures]]);
+        [self _addChildScopesToScope:currentScope inRange:range relativeToOffset:spanScopeOffset withRegexp:[pattern begin] name:[[[pattern beginCaptures] objectForKey:@"0"] objectForKey:_patternCaptureName] captures:[pattern beginCaptures]];
     NSRange childPatternsRange = NSMakeRange(NSMaxRange([beginResult bodyRange]), NSMaxRange(range) - NSMaxRange([beginResult bodyRange]));
     NSString *patternContentName = [pattern contentName];
     TMScope *spanContentScope = nil;
@@ -260,7 +258,7 @@ static NSString * const _patternCaptureName = @"name";
         spanContentScopeOffset = childPatternsRange.location;
     }
     OnigResult *stopMatch = nil;
-    endOfLastScope = [self _addChildScopesToScope:currentScope inRange:childPatternsRange relativeToOffset:spanContentScopeOffset withPatterns:[pattern patterns] stopOnRegexp:[pattern end] stopMatch:&stopMatch];
+    NSUInteger endOfLastScope = [self _addChildScopesToScope:currentScope inRange:childPatternsRange relativeToOffset:spanContentScopeOffset withPatterns:[pattern patterns] stopOnRegexp:[pattern end] stopMatch:&stopMatch];
     if (spanContentScope)
     {
         spanContentScope.length = stopMatch ? ([stopMatch bodyRange].location - childPatternsRange.location) : childPatternsRange.length;
