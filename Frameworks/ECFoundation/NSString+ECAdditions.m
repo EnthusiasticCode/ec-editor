@@ -21,6 +21,8 @@
 
 - (float)scoreForAbbreviation:(NSString *)abbreviation inRange:(NSRange)searchRange fromRange:(NSRange)abbreviationRange hitMask:(NSIndexSet **)mask
 {
+    if (![abbreviation length])
+        return 0.0;
 	float score, remainingScore;
 	int i, j;
 	NSRange matchedRange, remainingSearchRange;

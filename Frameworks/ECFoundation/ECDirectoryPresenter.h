@@ -23,15 +23,12 @@
 - (void)accommodateDirectoryDeletionForDirectoryPresenter:(ECDirectoryPresenter *)directoryPresenter;
 - (void)directoryPresenter:(ECDirectoryPresenter *)directoryPresenter directoryDidMoveToURL:(NSURL *)dstURL;
 
-- (void)directoryPresenter:(ECDirectoryPresenter *)directoryPresenter didInsertFileURLsAtIndexes:(NSIndexSet *)indexes;
-- (void)directoryPresenter:(ECDirectoryPresenter *)directoryPresenter didRemoveFileURLsAtIndexes:(NSIndexSet *)indexes;
-- (void)directoryPresenter:(ECDirectoryPresenter *)directoryPresenter didInsertFilteredFileURLsAtIndexes:(NSIndexSet *)indexes;
-- (void)directoryPresenter:(ECDirectoryPresenter *)directoryPresenter didRemoveFilteredFileURLsAtIndexes:(NSIndexSet *)indexes;
-- (void)directoryPresenter:(ECDirectoryPresenter *)directoryPresenter didChangeHitMasksAtIndexes:(NSIndexSet *)indexes;
+- (void)directoryPresenter:(ECDirectoryPresenter *)directoryPresenter didInsertFileURLsAtIndexes:(NSIndexSet *)insertIndexes removeFileURLsAtIndexes:(NSIndexSet *)removeIndexes changeFileURLsAtIndexes:(NSIndexSet *)changeIndexes;
 
 @end
 
-@interface ECDirectoryPresenter : NSObject <NSFilePresenter>
+/// Provides the contents of a directory, updating in response to file system events
+@interface ECDirectoryPresenter : NSObject <NSFilePresenter, NSFastEnumeration>
 
 - (id)initWithDirectoryURL:(NSURL *)directoryURL options:(NSDirectoryEnumerationOptions)options;
 
@@ -49,18 +46,15 @@
 - (NSDirectoryEnumerationOptions)options;
 - (void)setOptions:(NSDirectoryEnumerationOptions)options;
 
-/// An array of filtered file URLs
-/// Affected by the directory, options and filter
-/// Returns all file URLs if not set
-- (NSArray *)filteredFileURLs;
+@end
 
-/// Smart filter string to apply to the filtered file URLs
+@interface ECSmartFilteredDirectoryPresenter : ECDirectoryPresenter <ECDirectoryPresenterDelegate>
+
+/// Smart filter string to apply to the file URLs
 - (NSString *)filterString;
 - (void)setFilterString:(NSString *)filterString;
 
-/// Array of NSIndexSets representing the filter hitmasks of the file URLs.
-/// Mapped 1:1 to the filtered file URLs array
-/// Returns nil if the filter string is not set
-- (NSArray *)filterHitMasks;
+/// Returns the hitmask for a certain filtered file URL
+- (NSIndexSet *)hitMaskForFileURL:(NSURL *)fileURL;
 
 @end

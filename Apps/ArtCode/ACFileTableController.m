@@ -40,7 +40,7 @@
     NSMutableArray *_selectedURLs;
 }
 
-@property (nonatomic, strong) ECDirectoryPresenter *directoryPresenter;
+@property (nonatomic, strong) ECSmartFilteredDirectoryPresenter *directoryPresenter;
 
 - (void)_toolNormalAddAction:(id)sender;
 - (void)_toolEditDeleteAction:(id)sender;
@@ -69,7 +69,7 @@
         return;
     [self willChangeValueForKey:@"directory"];
     _directory = directory;
-    self.directoryPresenter = [[ECDirectoryPresenter alloc] initWithDirectoryURL:_directory options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants];
+    self.directoryPresenter = [[ECSmartFilteredDirectoryPresenter alloc] initWithDirectoryURL:_directory options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants];
     self.directoryPresenter.delegate = self;
     [self didChangeValueForKey:@"directory"];
 }
@@ -113,7 +113,7 @@
 {
     [super viewWillAppear:animated];
     
-    self.directoryPresenter = [[ECDirectoryPresenter alloc] initWithDirectoryURL:self.directory options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants];
+    self.directoryPresenter = [[ECSmartFilteredDirectoryPresenter alloc] initWithDirectoryURL:self.directory options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants];
     self.directoryPresenter.delegate = self;
     
     [_selectedURLs removeAllObjects];
@@ -156,7 +156,7 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return [self.directoryPresenter.filteredFileURLs count];
+    return [self.directoryPresenter.fileURLs count];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -170,7 +170,7 @@
     }
     
     // Configure the cell
-    NSURL *fileURL = [self.directoryPresenter.filteredFileURLs objectAtIndex:indexPath.row];
+    NSURL *fileURL = [self.directoryPresenter.fileURLs objectAtIndex:indexPath.row];
     
     BOOL isDirecotry = NO;
     [[NSFileManager defaultManager] fileExistsAtPath:[fileURL path] isDirectory:&isDirecotry];
@@ -184,7 +184,7 @@
     if ([self.directoryPresenter.filterString length] > 0)
     {
         cell.highlightLabel.highlightedBackgroundColor = [UIColor colorWithRed:225.0/255.0 green:220.0/255.0 blue:92.0/255.0 alpha:1];
-        cell.highlightLabel.highlightedCharacters = [self.directoryPresenter.filterHitMasks objectAtIndex:indexPath.row];
+        cell.highlightLabel.highlightedCharacters = [self.directoryPresenter hitMaskForFileURL:fileURL];
     }
     else
     {
@@ -201,7 +201,7 @@
     {
         if (!_selectedURLs)
             _selectedURLs = [NSMutableArray new];
-        [_selectedURLs addObject:[self.directoryPresenter.filteredFileURLs objectAtIndex:indexPath.row]];
+        [_selectedURLs addObject:[self.directoryPresenter.fileURLs objectAtIndex:indexPath.row]];
         BOOL anySelected = [tableView indexPathForSelectedRow] == nil ? NO : YES;
         for (UIBarButtonItem *item in _toolEditItems)
         {
@@ -210,7 +210,7 @@
     }
     else
     {
-        [self.singleProjectBrowsersController.tab pushURL:[self.directoryPresenter.filteredFileURLs objectAtIndex:indexPath.row]];
+        [self.singleProjectBrowsersController.tab pushURL:[self.directoryPresenter.fileURLs objectAtIndex:indexPath.row]];
     }
 }
 
@@ -218,7 +218,7 @@
 {
     if (self.isEditing)
     {
-        [_selectedURLs removeObject:[self.directoryPresenter.filteredFileURLs objectAtIndex:indexPath.row]];
+        [_selectedURLs removeObject:[self.directoryPresenter.fileURLs objectAtIndex:indexPath.row]];
         BOOL anySelected = [tableView indexPathForSelectedRow] == nil ? NO : YES;
         for (UIBarButtonItem *item in _toolEditItems)
         {
@@ -234,31 +234,25 @@
     return [NSOperationQueue mainQueue];
 }
 
-- (void)directoryPresenter:(ECDirectoryPresenter *)directoryPresenter didInsertFilteredFileURLsAtIndexes:(NSIndexSet *)indexes
+- (void)directoryPresenter:(ECDirectoryPresenter *)directoryPresenter didInsertFileURLsAtIndexes:(NSIndexSet *)insertIndexes removeFileURLsAtIndexes:(NSIndexSet *)removeIndexes changeFileURLsAtIndexes:(NSIndexSet *)changeIndexes
 {
-    NSMutableArray *indexPaths = [NSMutableArray arrayWithCapacity:[indexes count]];
-    [indexes enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
-        [indexPaths addObject:[NSIndexPath indexPathForRow:idx inSection:0]];
+    NSMutableArray *insertIndexPaths = [NSMutableArray arrayWithCapacity:[insertIndexes count]];
+    [insertIndexes enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
+        [insertIndexPaths addObject:[NSIndexPath indexPathForRow:idx inSection:0]];
     }];
-    [self.tableView insertRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationAutomatic];
-}
-
-- (void)directoryPresenter:(ECDirectoryPresenter *)directoryPresenter didRemoveFilteredFileURLsAtIndexes:(NSIndexSet *)indexes
-{
-    NSMutableArray *indexPaths = [NSMutableArray arrayWithCapacity:[indexes count]];
-    [indexes enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
-        [indexPaths addObject:[NSIndexPath indexPathForRow:idx inSection:0]];
+    NSMutableArray *removeIndexPaths = [NSMutableArray arrayWithCapacity:[removeIndexes count]];
+    [removeIndexes enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
+        [removeIndexPaths addObject:[NSIndexPath indexPathForRow:idx inSection:0]];
     }];
-    [self.tableView deleteRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationAutomatic];
-}
-
-- (void)directoryPresenter:(ECDirectoryPresenter *)directoryPresenter didChangeHitMasksAtIndexes:(NSIndexSet *)indexes
-{
-    NSMutableArray *indexPaths = [NSMutableArray arrayWithCapacity:[indexes count]];
-    [indexes enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
-        [indexPaths addObject:[NSIndexPath indexPathForRow:idx inSection:0]];
+    NSMutableArray *changeIndexPaths = [NSMutableArray arrayWithCapacity:[changeIndexes count]];
+    [changeIndexes enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
+        [changeIndexPaths addObject:[NSIndexPath indexPathForRow:idx inSection:0]];
     }];
-    [self.tableView reloadRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationNone];
+    [self.tableView beginUpdates];
+    [self.tableView insertRowsAtIndexPaths:insertIndexPaths withRowAnimation:UITableViewRowAnimationAutomatic];
+    [self.tableView deleteRowsAtIndexPaths:removeIndexPaths withRowAnimation:UITableViewRowAnimationAutomatic];
+    [self.tableView reloadRowsAtIndexPaths:changeIndexPaths withRowAnimation:UITableViewRowAnimationNone];
+    [self.tableView endUpdates];
 }
 
 #pragma mark - UISeachBar Delegate Methods

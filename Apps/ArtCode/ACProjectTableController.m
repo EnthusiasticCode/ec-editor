@@ -399,14 +399,12 @@
     return [NSOperationQueue mainQueue];
 }
 
-- (void)directoryPresenter:(ECDirectoryPresenter *)directoryPresenter didInsertFileURLsAtIndexes:(NSIndexSet *)indexes
+- (void)directoryPresenter:(ECDirectoryPresenter *)directoryPresenter didInsertFileURLsAtIndexes:(NSIndexSet *)insertIndexes removeFileURLsAtIndexes:(NSIndexSet *)removeIndexes changeFileURLsAtIndexes:(NSIndexSet *)changeIndexes
 {
-    [self.gridView insertCellsAtIndexes:indexes animated:YES];
-}
-
-- (void)directoryPresenter:(ECDirectoryPresenter *)directoryPresenter didRemoveFileURLsAtIndexes:(NSIndexSet *)indexes
-{
-    [self.gridView deleteCellsAtIndexes:indexes animated:YES];
+    [self.gridView beginUpdates];
+    [self.gridView insertCellsAtIndexes:insertIndexes animated:YES];
+    [self.gridView deleteCellsAtIndexes:removeIndexes animated:YES];
+    [self.gridView endUpdates];
 }
 
 #pragma mark - Private Methods
