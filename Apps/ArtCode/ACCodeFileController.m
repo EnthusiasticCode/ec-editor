@@ -83,6 +83,27 @@
 
 @end
 
+#define PSIZE 14
+static void drawStencilStar(void *info, CGContextRef myContext)
+{
+    int k;
+    double r, theta;
+    
+    r = 0.8 * PSIZE / 2;
+    theta = 2 * M_PI * (2.0 / 5.0); // 144 degrees
+    
+    CGContextTranslateCTM (myContext, PSIZE/2, PSIZE/2);
+    
+    CGContextMoveToPoint(myContext, 0, r);
+    for (k = 1; k < 5; k++) {
+        CGContextAddLineToPoint (myContext,
+                                 r * sin(k * theta),
+                                 r * cos(k * theta));
+    }
+    CGContextClosePath(myContext);
+    CGContextFillPath(myContext);
+}
+
 
 @implementation ACCodeFileController
 
@@ -134,7 +155,8 @@
             if (!line.isTruncation && [[this.singleProjectBrowsersController.tab.currentProject bookmarksForFile:this.singleProjectBrowsersController.tab.currentURL atLine:(lineNumber + 1)] count] > 0)
             {
                 CGContextSetFillColorWithColor(context, this->_codeView.lineNumbersColor.CGColor);
-                CGContextFillEllipseInRect(context, CGRectMake(-lineBounds.origin.x + 3, line.descent + 3, 5, 5));
+                CGContextTranslateCTM(context, -lineBounds.origin.x, line.descent / 2.0 + 1);
+                drawStencilStar(NULL, context);
             }
         } underText:NO forKey:@"bookmarkMarkers"];
         
