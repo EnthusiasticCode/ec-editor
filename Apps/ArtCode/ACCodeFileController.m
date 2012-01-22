@@ -7,15 +7,14 @@
 //
 
 #import "ACCodeFileController.h"
+#import "ACSingleProjectBrowsersController.h"
+#import "ACCodeFileSearchBarController.h"
 
 #import <QuartzCore/QuartzCore.h>
 #import <ECFoundation/NSTimer+block.h>
 #import <ECFoundation/ECFileBuffer.h>
 #import <ECUIKit/ECBezelAlert.h>
-
 #import <ECUIKit/ECTabController.h>
-#import "ACSingleTabController.h"
-#import "ACCodeFileSearchBarController.h"
 
 #import "ACCodeFileKeyboardAccessoryView.h"
 #import "ACCodeFileKeyboardAccessoryPopoverView.h"
@@ -97,6 +96,8 @@
 {
     if (!_codeView)
     {
+        __weak ACCodeFileController *this = self;
+        
         _codeView = [ECCodeView new];
         _codeView.dataSource = self.codeFile;
         _codeView.delegate = self;
@@ -128,6 +129,15 @@
         undoRecognizer.numberOfTouchesRequired = 2;
         [_codeView addGestureRecognizer:redoRecognizer];
         
+        // Bookmark markers
+        [_codeView addPassLayerBlock:^(CGContextRef context, ECTextRendererLine *line, CGRect lineBounds, NSRange stringRange, NSUInteger lineNumber) {
+            if (!line.isTruncation && [[this.singleProjectBrowsersController.tab.currentProject bookmarksForFile:this.singleProjectBrowsersController.tab.currentURL atLine:(lineNumber + 1)] count] > 0)
+            {
+                CGContextSetFillColorWithColor(context, this->_codeView.lineNumbersColor.CGColor);
+                CGContextFillEllipseInRect(context, CGRectMake(-lineBounds.origin.x + 3, line.descent + 3, 5, 5));
+            }
+        } underText:NO forKey:@"bookmarkMarkers"];
+        
         // Accessory view
         ACCodeFileKeyboardAccessoryView *accessoryView = [ACCodeFileKeyboardAccessoryView new];
         accessoryView.itemBackgroundImage = [[UIImage imageNamed:@"accessoryView_itemBackground"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 12, 0, 12)];
@@ -156,7 +166,6 @@
         [accessoryView.itemPopoverView setArrowImage:[[UIImage imageNamed:@"accessoryView_popoverArrowLeft"] resizableImageWithCapInsets:UIEdgeInsetsMake(10, 10, 10, 10)] forDirection:UIPopoverArrowDirectionDown metaPosition:PopoverViewArrowMetaPositionFarLeft];
         accessoryView.itemPopoverView.arrowInsets = UIEdgeInsetsMake(12, 12, 12, 12);
         // Prepare handlers to show and hide controllers in keyboard accessory item popover
-        __weak ACCodeFileController *this = self;
         accessoryView.willPresentPopoverForItemBlock = ^(ACCodeFileKeyboardAccessoryView *sender, NSUInteger itemIndex, CGRect popoverContentRect, NSTimeInterval animationDuration) {
             UIView *presentedView = nil;
             UIView *presentingView = sender.superview;
@@ -550,6 +559,7 @@
             [self.tab.currentProject removeBookmark:bookmark];
         }
     }
+    [self.codeView setNeedsDisplay];
 }
 
 - (BOOL)codeView:(ECCodeView *)codeView shouldShowKeyboardAccessoryViewInView:(UIView *__autoreleasing *)view withFrame:(CGRect *)frame

@@ -9,6 +9,7 @@
 #import "ACBookmarkTableController.h"
 #import "ACSingleProjectBrowsersController.h"
 
+#import "ACTab.h"
 #import "ACProject.h"
 
 @interface ACBookmarkTableController ()
@@ -97,6 +98,14 @@
 }
 
 #pragma mark - Table view delegate
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (!self.isEditing)
+    {
+        [self.singleProjectBrowsersController.tab pushURL:[[self.singleProjectBrowsersController.project.bookmarks objectAtIndex:indexPath.row] URL]];
+    }
+}
 
 #pragma mark - Private methods
 

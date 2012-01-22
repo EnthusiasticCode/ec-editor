@@ -244,6 +244,12 @@ static void init(ECCodeViewBase *self)
     }
 }
 
+- (void)setNeedsDisplay
+{
+    [super setNeedsDisplay];
+    [_contentView setNeedsDisplay];
+}
+
 - (void)drawRect:(CGRect)rect
 {
     [super drawRect:rect];
