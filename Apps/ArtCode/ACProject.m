@@ -35,6 +35,11 @@ static ECCache *openProjects = nil;
     NSURL *_plistUrl;
     
     NSMutableArray *bookmarks;
+    
+    /// Dictionary to map file paths to array of related bookamrks. This dictionary
+    /// is used to quickly retrieve subsequent call from the same file without cycling 
+    /// all bookmarks. It is reset for a certian file path when a bookmark is added or deleted.
+    NSMutableDictionary *_fileToBookmarksCache;
 }
 
 #pragma mark Properties
@@ -173,12 +178,23 @@ static ECCache *openProjects = nil;
 
 - (void)addBookmarkWithFileURL:(NSURL *)fileURL line:(NSUInteger)line note:(NSString *)note
 {
+    NSString *filePath = [fileURL absoluteString];
+    NSString *projectPath = [self.URL absoluteString];
+    if (![filePath hasPrefix:projectPath])
+        return;
+    
     if (!bookmarks)
         bookmarks = [NSMutableArray new];
     
     ACProjectBookmark *bookmark = [[ACProjectBookmark alloc] initWithProject:self URL:[fileURL URLByAppendingFragmentDictionary:[NSDictionary dictionaryWithObject:[NSNumber numberWithUnsignedInteger:line] forKey:@"line"]] note:note];
     [bookmarks addObject:bookmark];
     _dirty = YES;
+    
+    // Clearing cacheing dictionary entry
+    if ([_fileToBookmarksCache count])
+    {
+        [_fileToBookmarksCache removeObjectForKey:[filePath substringFromIndex:[projectPath length]]];
+    }
     
     // TODO remove flush here
     [self flush];
@@ -188,6 +204,13 @@ static ECCache *openProjects = nil;
 {
     [bookmarks removeObject:bookmark];
     _dirty = YES;
+    
+    // Clearing cacheing dictionary entry
+    if ([_fileToBookmarksCache count])
+    {
+        NSString *str = [[bookmark.URL path] substringFromIndex:[[self.URL path] length] + 1];
+        [_fileToBookmarksCache removeObjectForKey:str];
+    }
     
     // TODO remove flush here
     [self flush];
@@ -201,14 +224,48 @@ static ECCache *openProjects = nil;
         return nil;
     filePath = [filePath substringFromIndex:[projectPath length]];
     
-    NSMutableArray *result = [NSMutableArray new];
+    NSMutableArray *result = nil;
+    NSMutableArray *fileBookmarks = [_fileToBookmarksCache objectForKey:projectPath];
+    
+    // Using cached bookmarks
+    for (ACProjectBookmark *bookmark in fileBookmarks)
+    {
+        if ([bookmark line] == lineNumber)
+        {
+            if (!result)
+                result = [NSMutableArray new];
+            [result addObject:bookmark];
+        }
+    }
+    if (result)
+        return result;
+
+    // Generate bookmarks collection for file
     for (ACProjectBookmark *bookmark in bookmarks)
     {
         if (![bookmark.bookmarkPath hasPrefix:filePath])
             continue;
+        
+        if (!fileBookmarks)
+            fileBookmarks = [NSMutableArray new];
+        [fileBookmarks addObject:bookmark];
+        
         if ([bookmark line] == lineNumber)
+        {
+            if (!result)
+                result = [NSMutableArray new];
             [result addObject:bookmark];
+        }
     }
+    
+    // Prepare cacheing dictionary
+    if (fileBookmarks)
+    {
+        if (!_fileToBookmarksCache)
+            _fileToBookmarksCache = [NSMutableDictionary new];
+        [_fileToBookmarksCache setObject:fileBookmarks forKey:filePath];
+    }
+    
     return result;
 }
 
