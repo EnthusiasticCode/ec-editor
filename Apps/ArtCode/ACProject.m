@@ -187,6 +187,10 @@ static ECCache *openProjects = nil;
 - (void)removeBookmark:(ACProjectBookmark *)bookmark
 {
     [bookmarks removeObject:bookmark];
+    _dirty = YES;
+    
+    // TODO remove flush here
+    [self flush];
 }
 
 - (NSArray *)bookmarksForFile:(NSURL *)fileURL atLine:(NSUInteger)lineNumber
