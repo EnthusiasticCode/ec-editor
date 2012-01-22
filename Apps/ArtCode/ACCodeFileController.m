@@ -83,6 +83,7 @@
 
 @end
 
+// from: http://developer.apple.com/library/mac/#documentation/GraphicsImaging/Conceptual/drawingwithquartz2d/dq_patterns/dq_patterns.html
 #define PSIZE 14
 static void drawStencilStar(void *info, CGContextRef myContext)
 {

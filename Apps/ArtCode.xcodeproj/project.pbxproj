@@ -123,6 +123,7 @@
 		CD7FDD5514BEFBA0002B1122 /* itemIcon_Duplicate.png in Resources */ = {isa = PBXBuildFile; fileRef = CD7FDD5314BEFBA0002B1122 /* itemIcon_Duplicate.png */; };
 		CD8108D513E31A28000E1941 /* ACColorSelectionControl.m in Sources */ = {isa = PBXBuildFile; fileRef = CD8108D413E31A28000E1941 /* ACColorSelectionControl.m */; };
 		CD8609E814C9A48C00BF90CB /* ACBookmarkTableController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD8609E714C9A48C00BF90CB /* ACBookmarkTableController.m */; };
+		CD8609F614CC515E00BF90CB /* bookmarkTable_Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CD8609F514CC515E00BF90CB /* bookmarkTable_Icon.png */; };
 		CD8A677C13D0BB000037D742 /* ipad_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CD8A677B13D0BB000037D742 /* ipad_icon.png */; };
 		CD9CB5E71451902C00973204 /* tabBar_TabCloseButton.png in Resources */ = {isa = PBXBuildFile; fileRef = CD9CB5E51451902C00973204 /* tabBar_TabCloseButton.png */; };
 		CD9CB5EA145191FC00973204 /* tabBar_TabBackground_Normal.png in Resources */ = {isa = PBXBuildFile; fileRef = CD9CB5E8145191FC00973204 /* tabBar_TabBackground_Normal.png */; };
@@ -414,6 +415,7 @@
 		CD8108D413E31A28000E1941 /* ACColorSelectionControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACColorSelectionControl.m; sourceTree = "<group>"; };
 		CD8609E614C9A48C00BF90CB /* ACBookmarkTableController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACBookmarkTableController.h; sourceTree = "<group>"; };
 		CD8609E714C9A48C00BF90CB /* ACBookmarkTableController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACBookmarkTableController.m; sourceTree = "<group>"; };
+		CD8609F514CC515E00BF90CB /* bookmarkTable_Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bookmarkTable_Icon.png; sourceTree = "<group>"; };
 		CD8A677B13D0BB000037D742 /* ipad_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ipad_icon.png; sourceTree = "<group>"; };
 		CD9CB5E51451902C00973204 /* tabBar_TabCloseButton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = tabBar_TabCloseButton.png; sourceTree = "<group>"; };
 		CD9CB5E8145191FC00973204 /* tabBar_TabBackground_Normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = tabBar_TabBackground_Normal.png; sourceTree = "<group>"; };
@@ -1080,6 +1082,7 @@
 		CDFF3DF613C0DA1100108DE2 /* Icons */ = {
 			isa = PBXGroup;
 			children = (
+				CD8609F514CC515E00BF90CB /* bookmarkTable_Icon.png */,
 				CD7FDD5214BEFBA0002B1122 /* itemIcon_Delete.png */,
 				CD7FDD5314BEFBA0002B1122 /* itemIcon_Duplicate.png */,
 				CD7BC79D14B70FE600313CDB /* itemIcon_Tab.png */,
@@ -1339,6 +1342,7 @@
 				CD7FDD5514BEFBA0002B1122 /* itemIcon_Duplicate.png in Resources */,
 				CD3D69E114C45B9300325970 /* topBar_BackButton.png in Resources */,
 				CDB5DB6F14C849EA003DFD1F /* MoveConflictController.xib in Resources */,
+				CD8609F614CC515E00BF90CB /* bookmarkTable_Icon.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

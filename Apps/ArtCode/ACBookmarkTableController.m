@@ -93,6 +93,7 @@
     {
         cell.textLabel.text = bookmark.bookmarkPath;
     }
+    cell.detailTextLabel.text = bookmark.note;
     
     return cell;
 }
