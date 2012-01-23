@@ -38,9 +38,11 @@
     NSTimer *_filterDebounceTimer;
     
     NSMutableArray *_selectedURLs;
+    
+    ECDirectoryPresenter *_directoryPresenter;
+    ECSmartFilteredDirectoryPresenter *_openQuicklyPresenter;
+    BOOL _isShowingOpenQuickly;
 }
-
-@property (nonatomic, strong) ECSmartFilteredDirectoryPresenter *directoryPresenter;
 
 - (void)_toolNormalAddAction:(id)sender;
 - (void)_toolEditDeleteAction:(id)sender;
@@ -52,6 +54,8 @@
 - (void)_directoryBrowserCopyAction:(id)sender;
 - (void)_directoryBrowserMoveAction:(id)sender;
 
+- (ECDirectoryPresenter *)_currentPresenter;
+
 @end
 
 #pragma mark - Implementations
@@ -61,7 +65,7 @@
 
 #pragma mark - Properties
 
-@synthesize directory = _directory, directoryPresenter = _directoryPresenter;
+@synthesize directory = _directory;
 
 - (void)setDirectory:(NSURL *)directory
 {
@@ -69,8 +73,8 @@
         return;
     [self willChangeValueForKey:@"directory"];
     _directory = directory;
-    self.directoryPresenter = [[ECSmartFilteredDirectoryPresenter alloc] initWithDirectoryURL:_directory options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants];
-    self.directoryPresenter.delegate = self;
+    _directoryPresenter = [[ECDirectoryPresenter alloc] initWithDirectoryURL:_directory options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants];
+    _directoryPresenter.delegate = self;
     [self didChangeValueForKey:@"directory"];
 }
 
@@ -113,8 +117,11 @@
 {
     [super viewWillAppear:animated];
     
-    self.directoryPresenter = [[ECSmartFilteredDirectoryPresenter alloc] initWithDirectoryURL:self.directory options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants];
-    self.directoryPresenter.delegate = self;
+    _directoryPresenter = [[ECDirectoryPresenter alloc] initWithDirectoryURL:self.directory options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants];
+    _directoryPresenter.delegate = self;
+    
+    _openQuicklyPresenter = [[ECSmartFilteredDirectoryPresenter alloc] initWithDirectoryURL:self.directory options:NSDirectoryEnumerationSkipsHiddenFiles];
+    _openQuicklyPresenter.delegate = self;
     
     [_selectedURLs removeAllObjects];
 }
@@ -123,7 +130,8 @@
 {
     [super viewDidDisappear:animated];
     
-    self.directoryPresenter = nil;
+    _directoryPresenter = nil;
+    _openQuicklyPresenter = nil;
     _selectedURLs = nil;
 }
 
@@ -156,7 +164,7 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return [self.directoryPresenter.fileURLs count];
+    return [[self _currentPresenter].fileURLs count];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -170,7 +178,7 @@
     }
     
     // Configure the cell
-    NSURL *fileURL = [self.directoryPresenter.fileURLs objectAtIndex:indexPath.row];
+    NSURL *fileURL = [[self _currentPresenter].fileURLs objectAtIndex:indexPath.row];
     
     BOOL isDirecotry = NO;
     [[NSFileManager defaultManager] fileExistsAtPath:[fileURL path] isDirectory:&isDirecotry];
@@ -181,10 +189,10 @@
     
     cell.highlightLabel.text = [fileURL lastPathComponent];
     
-    if ([self.directoryPresenter.filterString length] > 0)
+    if (_isShowingOpenQuickly)
     {
         cell.highlightLabel.highlightedBackgroundColor = [UIColor colorWithRed:225.0/255.0 green:220.0/255.0 blue:92.0/255.0 alpha:1];
-        cell.highlightLabel.highlightedCharacters = [self.directoryPresenter hitMaskForFileURL:fileURL];
+        cell.highlightLabel.highlightedCharacters = [_openQuicklyPresenter hitMaskForFileURL:fileURL];
     }
     else
     {
@@ -201,7 +209,7 @@
     {
         if (!_selectedURLs)
             _selectedURLs = [NSMutableArray new];
-        [_selectedURLs addObject:[self.directoryPresenter.fileURLs objectAtIndex:indexPath.row]];
+        [_selectedURLs addObject:[[self _currentPresenter].fileURLs objectAtIndex:indexPath.row]];
         BOOL anySelected = [tableView indexPathForSelectedRow] == nil ? NO : YES;
         for (UIBarButtonItem *item in _toolEditItems)
         {
@@ -210,7 +218,7 @@
     }
     else
     {
-        [self.singleProjectBrowsersController.tab pushURL:[self.directoryPresenter.fileURLs objectAtIndex:indexPath.row]];
+        [self.singleProjectBrowsersController.tab pushURL:[[self _currentPresenter].fileURLs objectAtIndex:indexPath.row]];
     }
 }
 
@@ -218,7 +226,7 @@
 {
     if (self.isEditing)
     {
-        [_selectedURLs removeObject:[self.directoryPresenter.fileURLs objectAtIndex:indexPath.row]];
+        [_selectedURLs removeObject:[[self _currentPresenter].fileURLs objectAtIndex:indexPath.row]];
         BOOL anySelected = [tableView indexPathForSelectedRow] == nil ? NO : YES;
         for (UIBarButtonItem *item in _toolEditItems)
         {
@@ -236,6 +244,8 @@
 
 - (void)directoryPresenter:(ECDirectoryPresenter *)directoryPresenter didInsertFileURLsAtIndexes:(NSIndexSet *)insertIndexes removeFileURLsAtIndexes:(NSIndexSet *)removeIndexes changeFileURLsAtIndexes:(NSIndexSet *)changeIndexes
 {
+    if ((_isShowingOpenQuickly && directoryPresenter != _openQuicklyPresenter) || (!_isShowingOpenQuickly && directoryPresenter != _directoryPresenter))
+        return;
     NSMutableArray *insertIndexPaths = [NSMutableArray arrayWithCapacity:[insertIndexes count]];
     [insertIndexes enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
         [insertIndexPaths addObject:[NSIndexPath indexPathForRow:idx inSection:0]];
@@ -262,7 +272,20 @@
     // Apply filter to filterController with .3 second debounce
     [_filterDebounceTimer invalidate];
     _filterDebounceTimer = [NSTimer scheduledTimerWithTimeInterval:0.3 usingBlock:^(NSTimer *timer) {
-        self.directoryPresenter.filterString = searchText;
+        if (_isShowingOpenQuickly)
+            [_selectedURLs removeAllObjects];
+        if ([searchText length] && !_isShowingOpenQuickly)
+        {
+            [_selectedURLs removeAllObjects];
+            _isShowingOpenQuickly = YES;
+            [self.tableView reloadData];
+        }
+        else if (![searchText length] && _isShowingOpenQuickly)
+        {
+            _isShowingOpenQuickly = NO;
+            [self.tableView reloadData];
+        }
+        _openQuicklyPresenter.filterString = searchText;
     } repeats:NO];
 }
 
@@ -486,6 +509,11 @@
         [self.singleProjectBrowsersController setEditing:NO animated:YES];
         [self _directoryBrowserDismissAction:sender];
     }];
+}
+
+- (ECDirectoryPresenter *)_currentPresenter
+{
+    return _isShowingOpenQuickly ? _openQuicklyPresenter : _directoryPresenter;
 }
 
 @end
