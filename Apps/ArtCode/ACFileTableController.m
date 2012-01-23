@@ -74,6 +74,7 @@
     [self willChangeValueForKey:@"directory"];
     _directory = directory;
     _directoryPresenter = [[ECDirectoryPresenter alloc] initWithDirectoryURL:_directory options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants];
+    _openQuicklyPresenter = [[ECSmartFilteredDirectoryPresenter alloc] initWithDirectoryURL:_directory options:NSDirectoryEnumerationSkipsHiddenFiles];
     _directoryPresenter.delegate = self;
     [self didChangeValueForKey:@"directory"];
 }
