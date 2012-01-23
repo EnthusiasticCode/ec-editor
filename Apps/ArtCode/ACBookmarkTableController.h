@@ -8,6 +8,11 @@
 
 #import <UIKit/UIKit.h>
 
-@interface ACBookmarkTableController : UITableViewController
+@class ACTab;
+
+
+@interface ACBookmarkTableController : UITableViewController <UISearchBarDelegate>
+
+@property (nonatomic, strong) ACTab *tab;
 
 @end

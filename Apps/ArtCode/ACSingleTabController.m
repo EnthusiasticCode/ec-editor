@@ -17,7 +17,8 @@
 #import "ACProject.h"
 
 #import "ACProjectTableController.h"
-#import "ACSingleProjectBrowsersController.h"
+#import "ACFileTableController.h"
+#import "ACBookmarkTableController.h"
 #import "ACCodeFileController.h"
 
 #define DEFAULT_TOOLBAR_HEIGHT 44
@@ -474,17 +475,18 @@ static const void *contentViewControllerContext;
     }
     else if (currentURLExists)
     {
+#warning TODO route bookmarks and remotes
         if (currentURLIsDirectory)
         {
-            if ([self.contentViewController isKindOfClass:[ACSingleProjectBrowsersController class]])
+            if ([self.contentViewController isKindOfClass:[ACFileTableController class]])
                 result = self.contentViewController;
             else
-                result = [[UIStoryboard storyboardWithName:@"SingleProjectBrowsers" bundle:nil] instantiateInitialViewController];
+                result = [[ACFileTableController alloc] initWithStyle:UITableViewStyleGrouped];
                 
-            ACSingleProjectBrowsersController *singleProjectController = (ACSingleProjectBrowsersController *)result;
-            singleProjectController.tab = self.tab;
-            [singleProjectController openFileBrowserWithURL:url];
-            [self _setupDefaultToolbarTitle];
+            ACFileTableController *fileTableController = (ACFileTableController *)result;
+            fileTableController.tab = self.tab;
+            [fileTableController setDirectory:url];
+//            [self _setupDefaultToolbarTitle];
         }
         else
         {

@@ -7,9 +7,12 @@
 //
 
 #import "ACFileTableController.h"
-#import "ACSingleProjectBrowsersController.h"
+#import "ACSingleTabController.h"
 
 #import "AppStyle.h"
+#import "ACColorSelectionControl.h"
+#import "ACHighlightTableViewCell.h"
+
 #import "ACNewFileController.h"
 #import "ACDirectoryBrowserController.h"
 #import "ACMoveConflictController.h"
@@ -20,12 +23,17 @@
 #import <ECUIKit/NSURL+URLDuplicate.h>
 #import <ECUIKit/ECBezelAlert.h>
 
-#import "ACHighlightTableViewCell.h"
-
 #import "ACTab.h"
+#import "ACProject.h"
+#import "ACTopBarToolbar.h"
+#import "ACTopBarTitleControl.h"
 
 
 @interface ACFileTableController () {
+    UIButton *_projectColorLabelButton;
+    UITextField *_projectTitleLabelTextField;
+    UIPopoverController *_projectColorLabelPopover;
+    
     NSArray *_toolNormalItems;
     NSArray *_toolEditItems;
     
@@ -65,7 +73,7 @@
 
 #pragma mark - Properties
 
-@synthesize directory = _directory;
+@synthesize directory = _directory, tab;
 
 - (void)setDirectory:(NSURL *)directory
 {
@@ -86,33 +94,53 @@
 {
     [super loadView];
     
+    // Add search bar
+    if (!self.tableView.tableHeaderView)
+    {
+        UISearchBar *searchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, 44)];
+        searchBar.delegate = self;
+        searchBar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+        self.tableView.tableHeaderView = searchBar;
+    }
+    
     // TODO Write hints in this view
-    UIView *footerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.tableView.bounds.size.width, 0)];
-    self.tableView.tableFooterView = footerView;
+    if (!self.tableView.tableFooterView)
+    {
+        UIView *footerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.tableView.bounds.size.width, 0)];
+        self.tableView.tableFooterView = footerView;
+    }
+    
+    // Prepare edit button
+    self.editButtonItem.title = @"";
+    self.editButtonItem.image = [UIImage imageNamed:@"topBarItem_Edit"];
     
     // Preparing tool items array changed in set editing
     _toolEditItems = [NSArray arrayWithObjects:[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Export"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolEditExportAction:)], [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Duplicate"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolEditDuplicateAction:)], [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Delete"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolEditDeleteAction:)], nil];
     
     _toolNormalItems = [NSArray arrayWithObject:[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"tabBar_TabAddButton"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolNormalAddAction:)]];
-    self.toolbarItems = _toolNormalItems;
 }
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     
+    self.tableView.allowsMultipleSelectionDuringEditing = YES;
     self.tableView.contentOffset = CGPointMake(0, 45);
+    self.toolbarItems = _toolNormalItems;
 }
 
 - (void)viewDidUnload
 {
-    [super viewDidUnload];
-    
     _toolNormalAddPopover = nil;
     
     _toolEditItemDeleteActionSheet = nil;
     _toolEditItemExportActionSheet = nil;
     _toolEditItemDuplicateActionSheet = nil;
+    
+    _toolEditItems = nil;
+    _toolNormalItems = nil;
+    
+    [super viewDidUnload];
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -144,7 +172,12 @@
 
 - (void)setEditing:(BOOL)editing animated:(BOOL)animated
 {
+    [self willChangeValueForKey:@"editing"];
+    
     [super setEditing:editing animated:animated];
+    
+    self.singleTabController.defaultToolbar.titleControl.backgroundButton.enabled = !editing;
+    _projectColorLabelButton.enabled = _projectTitleLabelTextField.enabled = editing;
     
     [_selectedURLs removeAllObjects];
     
@@ -160,6 +193,103 @@
     {  
         self.toolbarItems = _toolNormalItems;
     }
+    
+    [self didChangeValueForKey:@"editing"];
+}
+
+#pragma mark - Single tab content controller protocol methods
+
+- (void)_projectColorLabelSelectionAction:(id)sender
+{
+    self.tab.currentProject.labelColor = [(ACColorSelectionControl *)sender selectedColor];
+    [_projectColorLabelButton setImage:[UIImage styleProjectLabelImageWithSize:CGSizeMake(14, 22) color:self.tab.currentProject.labelColor] forState:UIControlStateNormal];
+    [_projectColorLabelPopover dismissPopoverAnimated:YES];
+}
+
+- (void)_projectColorLabelAction:(id)sender
+{
+    if (!_projectColorLabelPopover)
+    {
+        ACColorSelectionControl *colorControl = [ACColorSelectionControl new];
+        colorControl.colorCellsMargin = 2;
+        colorControl.columns = 3;
+        colorControl.rows = 2;
+        colorControl.colors = [NSArray arrayWithObjects:
+                               [UIColor colorWithRed:255./255. green:106./255. blue:89./255. alpha:1], 
+                               [UIColor colorWithRed:255./255. green:184./255. blue:62./255. alpha:1], 
+                               [UIColor colorWithRed:237./255. green:233./255. blue:68./255. alpha:1],
+                               [UIColor colorWithRed:168./255. green:230./255. blue:75./255. alpha:1],
+                               [UIColor colorWithRed:93./255. green:157./255. blue:255./255. alpha:1],
+                               [UIColor styleForegroundColor], nil];
+        [colorControl addTarget:self action:@selector(_projectColorLabelSelectionAction:) forControlEvents:UIControlEventTouchUpInside];
+        
+        UIViewController *viewController = [UIViewController new];
+        viewController.contentSizeForViewInPopover = CGSizeMake(145, 90);
+        viewController.view = colorControl;
+        
+        _projectColorLabelPopover = [[UIPopoverController alloc] initWithContentViewController:viewController];
+        _projectColorLabelPopover.popoverBackgroundViewClass = [ACShapePopoverBackgroundView class];
+    }
+    
+    [_projectColorLabelPopover presentPopoverFromRect:[sender frame] inView:[sender superview] permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
+}
+
+- (BOOL)singleTabController:(ACSingleTabController *)singleTabController shouldEnableTitleControlForDefaultToolbar:(ACTopBarToolbar *)toolbar
+{
+    return YES;
+}
+
+- (BOOL)singleTabController:(ACSingleTabController *)singleTabController setupDefaultToolbarTitleControl:(ACTopBarTitleControl *)titleControl
+{
+    BOOL isRoot = NO;
+    NSString *projectName = [ACProject projectNameFromURL:self.tab.currentURL isProjectRoot:&isRoot];
+    if (!isRoot)
+    {
+        return NO; // default behaviour
+    }
+    else
+    {
+        if (!_projectColorLabelButton)
+        {
+            _projectColorLabelButton  = [UIButton buttonWithType:UIButtonTypeCustom];
+            _projectColorLabelButton.adjustsImageWhenDisabled = NO;
+            [_projectColorLabelButton addTarget:self action:@selector(_projectColorLabelAction:) forControlEvents:UIControlEventTouchUpInside];
+        }
+        [_projectColorLabelButton setImage:[UIImage styleProjectLabelImageWithSize:CGSizeMake(14, 22) color:self.tab.currentProject.labelColor] forState:UIControlStateNormal];
+        [_projectColorLabelButton sizeToFit];
+        _projectColorLabelButton.enabled = self.isEditing;
+        
+        if (!_projectTitleLabelTextField)
+        {
+            _projectTitleLabelTextField = [UITextField new];
+            _projectTitleLabelTextField.delegate = self;
+            _projectTitleLabelTextField.font = [UIFont boldSystemFontOfSize:20];
+            _projectTitleLabelTextField.textColor = [UIColor whiteColor];
+            _projectTitleLabelTextField.returnKeyType = UIReturnKeyDone;
+        }
+        _projectTitleLabelTextField.text = projectName;
+        [_projectTitleLabelTextField sizeToFit];
+        _projectTitleLabelTextField.enabled = self.isEditing;
+        
+        [titleControl setTitleFragments:[NSArray arrayWithObjects:_projectColorLabelButton, _projectTitleLabelTextField, nil] 
+                        selectedIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, 2)]];
+    }
+    return YES;
+}
+
+#pragma mark - Text Field delefate
+
+- (void)textFieldDidEndEditing:(UITextField *)textField
+{
+    NSString *projectName = [ACProject projectNameFromURL:self.tab.currentURL isProjectRoot:NULL];
+    if ([textField.text length] == 0 || [projectName isEqualToString:textField.text])
+        return;
+    
+#warning TODO check that the name is ok
+    
+    self.tab.currentProject.name = textField.text;
+    
+    // File coordination will care about changing the tab url and hence reload the controller
 }
 
 #pragma mark - Table view data source
@@ -220,7 +350,7 @@
     }
     else
     {
-        [self.singleProjectBrowsersController.tab pushURL:[[self _currentPresenter].fileURLs objectAtIndex:indexPath.row]];
+        [self.tab pushURL:[[self _currentPresenter].fileURLs objectAtIndex:indexPath.row]];
     }
 }
 
@@ -309,7 +439,7 @@
             }];
             self.loading = NO;
             [[ECBezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:@"File deleted" plural:@"%u files deleted" count:[_selectedURLs count]] image:nil displayImmediatly:YES];
-            [self.singleProjectBrowsersController setEditing:NO animated:YES];
+            [self setEditing:NO animated:YES];
         }
     }
     else if (actionSheet == _toolEditItemDuplicateActionSheet)
@@ -335,7 +465,7 @@
             }];
             self.loading = NO;
             [[ECBezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:@"File duplicated" plural:@"%u files duplicated" count:[_selectedURLs count]] image:nil displayImmediatly:YES];
-            [self.singleProjectBrowsersController setEditing:NO animated:YES];
+            [self setEditing:NO animated:YES];
         }
     }
     else if (actionSheet == _toolEditItemExportActionSheet)
@@ -357,7 +487,7 @@
             }];
             self.loading = NO;
             [[ECBezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:@"File exported" plural:@"%u files exported" count:[_selectedURLs count]] image:nil displayImmediatly:YES];
-            [self.singleProjectBrowsersController setEditing:NO animated:YES];
+            [self setEditing:NO animated:YES];
         }
         else if (buttonIndex == 2) // Mail
         {
@@ -386,7 +516,7 @@
             else
                 [mailComposer setMessageBody:@"<br/><p>Open this files with <a href=\"http://www.artcodeapp.com/\">ArtCode</a> to view the contained projects.</p>" isHTML:YES];
             
-            [self.singleProjectBrowsersController setEditing:NO animated:YES];
+            [self setEditing:NO animated:YES];
             [self presentViewController:mailComposer animated:YES completion:nil];
             [mailComposer.navigationBar.topItem.leftBarButtonItem setBackgroundImage:[[UIImage imageNamed:@"topBar_ToolButton_Normal"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 10, 10, 10)] forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
             self.loading = NO;
@@ -454,7 +584,7 @@
     [cancelItem setBackgroundImage:[UIImage styleNormalButtonBackgroundImageForControlState:UIControlStateNormal] forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
     directoryBrowser.navigationItem.leftBarButtonItem = cancelItem;
     directoryBrowser.navigationItem.rightBarButtonItem = rightItem;
-    directoryBrowser.URL = self.singleProjectBrowsersController.project.URL;
+    directoryBrowser.URL = self.tab.currentProject.URL;
     _directoryBrowserNavigationController = [[UINavigationController alloc] initWithRootViewController:directoryBrowser];
     _directoryBrowserNavigationController.modalPresentationStyle = UIModalPresentationFormSheet;
     [self presentViewController:_directoryBrowserNavigationController animated:YES completion:nil];
@@ -485,7 +615,7 @@
     [conflictController processItemURLs:[_selectedURLs copy] toURL:moveURL usignProcessingBlock:^(NSURL *itemURL, NSURL *destinationURL) {
         [fileManager copyItemAtURL:itemURL toURL:destinationURL error:NULL];
     } completion:^{
-        [self.singleProjectBrowsersController setEditing:NO animated:YES];
+        [self setEditing:NO animated:YES];
         [self _directoryBrowserDismissAction:sender];
     }];
 }
@@ -508,7 +638,7 @@
     [conflictController processItemURLs:[_selectedURLs copy] toURL:moveURL usignProcessingBlock:^(NSURL *itemURL, NSURL *destinationURL) {
         [fileManager moveItemAtURL:itemURL toURL:destinationURL error:NULL];
     } completion:^{
-        [self.singleProjectBrowsersController setEditing:NO animated:YES];
+        [self setEditing:NO animated:YES];
         [self _directoryBrowserDismissAction:sender];
     }];
 }

@@ -7,7 +7,6 @@
 //
 
 #import "ACBookmarkTableController.h"
-#import "ACSingleProjectBrowsersController.h"
 
 #import "ACTab.h"
 #import "ACProject.h"
@@ -23,11 +22,22 @@
     NSArray *_toolEditItems;
 }
 
+@synthesize tab;
+
 #pragma mark - View lifecycle
 
 - (void)loadView
 {
     [super loadView];
+    
+    // Add search bar
+    if (!self.tableView.tableHeaderView)
+    {
+        UISearchBar *searchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, 44)];
+        searchBar.delegate = self;
+        searchBar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+        self.tableView.tableHeaderView = searchBar;
+    }
     
     _toolEditItems = [NSArray arrayWithObjects:[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Delete"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolEditDeleteAction:)], nil];
 }
@@ -38,6 +48,13 @@
     self.tableView.contentOffset = CGPointMake(0, 45);
 }
 
+- (void)viewDidUnload
+{
+    _toolEditItems = nil;
+    
+    [super viewDidUnload];
+}
+
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
 	return YES;
@@ -45,6 +62,8 @@
 
 - (void)setEditing:(BOOL)editing animated:(BOOL)animated
 {
+    [self willChangeValueForKey:@"editing"];
+    
     [super setEditing:editing animated:animated];
     
     if (editing)
@@ -55,13 +74,15 @@
     {
         self.toolbarItems = nil;
     }
+    
+    [self didChangeValueForKey:@"editing"];
 }
 
 #pragma mark - Table view data source
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return [self.singleProjectBrowsersController.project.bookmarks count];
+    return [self.tab.currentProject.bookmarks count];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -74,7 +95,7 @@
     }
     
     // TODO configure cell better
-    ACProjectBookmark *bookmark = [self.singleProjectBrowsersController.project.bookmarks objectAtIndex:indexPath.row];
+    ACProjectBookmark *bookmark = [self.tab.currentProject.bookmarks objectAtIndex:indexPath.row];
     
     NSUInteger bookmarkLine = [bookmark line];
     if (bookmarkLine != 0)
@@ -104,7 +125,7 @@
 {
     if (!self.isEditing)
     {
-        [self.singleProjectBrowsersController.tab pushURL:[[self.singleProjectBrowsersController.project.bookmarks objectAtIndex:indexPath.row] URL]];
+        [self.tab pushURL:[[self.tab.currentProject.bookmarks objectAtIndex:indexPath.row] URL]];
     }
 }
 
@@ -118,10 +139,10 @@
     
     for (NSIndexPath *indexPath in [selectedRows reverseObjectEnumerator])
     {
-        [self.singleProjectBrowsersController.project removeBookmark:[self.singleProjectBrowsersController.project.bookmarks objectAtIndex:indexPath.row]];
+        [self.tab.currentProject removeBookmark:[self.tab.currentProject.bookmarks objectAtIndex:indexPath.row]];
     }
     [self.tableView deleteRowsAtIndexPaths:selectedRows withRowAnimation:UITableViewRowAnimationAutomatic];
-    [self.singleProjectBrowsersController setEditing:NO animated:YES];
+    [self setEditing:NO animated:YES];
 }
 
 @end

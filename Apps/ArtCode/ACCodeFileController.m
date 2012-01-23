@@ -7,7 +7,7 @@
 //
 
 #import "ACCodeFileController.h"
-#import "ACSingleProjectBrowsersController.h"
+#import "ACSingleTabController.h"
 #import "ACCodeFileSearchBarController.h"
 
 #import <QuartzCore/QuartzCore.h>
@@ -153,7 +153,7 @@ static void drawStencilStar(void *info, CGContextRef myContext)
         
         // Bookmark markers
         [_codeView addPassLayerBlock:^(CGContextRef context, ECTextRendererLine *line, CGRect lineBounds, NSRange stringRange, NSUInteger lineNumber) {
-            if (!line.isTruncation && [[this.singleProjectBrowsersController.tab.currentProject bookmarksForFile:this.singleProjectBrowsersController.tab.currentURL atLine:(lineNumber + 1)] count] > 0)
+            if (!line.isTruncation && [[this.tab.currentProject bookmarksForFile:this.tab.currentURL atLine:(lineNumber + 1)] count] > 0)
             {
                 CGContextSetFillColorWithColor(context, this->_codeView.lineNumbersColor.CGColor);
                 CGContextTranslateCTM(context, -lineBounds.origin.x, line.descent / 2.0 + 1);

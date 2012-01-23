@@ -13,8 +13,9 @@
 @class ACToolFiltersView, ACGroup, ACTab;
 
 
-@interface ACFileTableController : UITableViewController <UISearchBarDelegate, UIActionSheetDelegate, MFMailComposeViewControllerDelegate, ECDirectoryPresenterDelegate>
+@interface ACFileTableController : UITableViewController <UISearchBarDelegate, UITextFieldDelegate, UIActionSheetDelegate, MFMailComposeViewControllerDelegate, ECDirectoryPresenterDelegate>
 
+@property (nonatomic, strong) ACTab *tab;
 @property (nonatomic, strong) NSURL *directory;
 
 @end

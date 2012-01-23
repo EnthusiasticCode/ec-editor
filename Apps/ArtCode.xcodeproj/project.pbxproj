@@ -144,8 +144,6 @@
 		CDB5DB6514C6F56A003DFD1F /* ACDirectoryBrowserController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDB5DB6414C6F56A003DFD1F /* ACDirectoryBrowserController.m */; };
 		CDB5DB6D14C8494E003DFD1F /* ACMoveConflictController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDB5DB6C14C8494E003DFD1F /* ACMoveConflictController.m */; };
 		CDB5DB6F14C849EA003DFD1F /* MoveConflictController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CDB5DB6E14C849EA003DFD1F /* MoveConflictController.xib */; };
-		CDB7C92B145572EA00E0D2B2 /* ACSingleProjectBrowsersController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDB7C92A145572EA00E0D2B2 /* ACSingleProjectBrowsersController.m */; };
-		CDB7C9301455762E00E0D2B2 /* SingleProjectBrowsers.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CDB7C92F1455762E00E0D2B2 /* SingleProjectBrowsers.storyboard */; };
 		CDBCC5DC14B6081A005E5C46 /* ACHighlightLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = CDBCC5DB14B6081A005E5C46 /* ACHighlightLabel.m */; };
 		CDBCC5DF14B60F9E005E5C46 /* ACHighlightTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = CDBCC5DE14B60F9E005E5C46 /* ACHighlightTableViewCell.m */; };
 		CDC13330145FFE390028423F /* ACCodeFileSearchOptionsController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDC1332F145FFE390028423F /* ACCodeFileSearchOptionsController.m */; };
@@ -441,9 +439,6 @@
 		CDB5DB6B14C8494E003DFD1F /* ACMoveConflictController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACMoveConflictController.h; sourceTree = "<group>"; };
 		CDB5DB6C14C8494E003DFD1F /* ACMoveConflictController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACMoveConflictController.m; sourceTree = "<group>"; };
 		CDB5DB6E14C849EA003DFD1F /* MoveConflictController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MoveConflictController.xib; sourceTree = "<group>"; };
-		CDB7C929145572EA00E0D2B2 /* ACSingleProjectBrowsersController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACSingleProjectBrowsersController.h; sourceTree = "<group>"; };
-		CDB7C92A145572EA00E0D2B2 /* ACSingleProjectBrowsersController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACSingleProjectBrowsersController.m; sourceTree = "<group>"; };
-		CDB7C92F1455762E00E0D2B2 /* SingleProjectBrowsers.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = SingleProjectBrowsers.storyboard; sourceTree = "<group>"; };
 		CDBCC5DA14B6081A005E5C46 /* ACHighlightLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACHighlightLabel.h; sourceTree = "<group>"; };
 		CDBCC5DB14B6081A005E5C46 /* ACHighlightLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACHighlightLabel.m; sourceTree = "<group>"; };
 		CDBCC5DD14B60F9E005E5C46 /* ACHighlightTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACHighlightTableViewCell.h; sourceTree = "<group>"; };
@@ -839,7 +834,6 @@
 				B7AC172D14216CD4009E9205 /* NewFilePopover.storyboard */,
 				B7AC172E14216CD4009E9205 /* NewProjectPopover.storyboard */,
 				CD7D2B4D13C0D5FB00B889EE /* ToolPanelStoryboard.storyboard */,
-				CDB7C92F1455762E00E0D2B2 /* SingleProjectBrowsers.storyboard */,
 				CD70F4CD147A615000EAEEDC /* SearchBar.storyboard */,
 				CDC1A07A147E6EF500E01B7A /* CompletionControllerCell.xib */,
 				B78077E014869701006C0C6B /* ProjectCell.xib */,
@@ -868,8 +862,6 @@
 			children = (
 				CD7D2B3113C0D4C700B889EE /* ACProjectTableController.h */,
 				CD7D2B3213C0D4C700B889EE /* ACProjectTableController.m */,
-				CDB7C929145572EA00E0D2B2 /* ACSingleProjectBrowsersController.h */,
-				CDB7C92A145572EA00E0D2B2 /* ACSingleProjectBrowsersController.m */,
 				CD7D2B4613C0D55700B889EE /* ACFileTableController.h */,
 				CD7D2B4713C0D55700B889EE /* ACFileTableController.m */,
 				CD8609E614C9A48C00BF90CB /* ACBookmarkTableController.h */,
@@ -1309,7 +1301,6 @@
 				CD9CB5EA145191FC00973204 /* tabBar_TabBackground_Normal.png in Resources */,
 				CD9CB5EB145191FC00973204 /* tabBar_TabBackground_Selected.png in Resources */,
 				CD4719A6145196CE00C7BCC5 /* tabBar_TabAddButton.png in Resources */,
-				CDB7C9301455762E00E0D2B2 /* SingleProjectBrowsers.storyboard in Resources */,
 				CDC1333614602F5E0028423F /* searchBar_Background.png in Resources */,
 				CDC1333714602F5E0028423F /* searchBar_Button_Normal.png in Resources */,
 				CDC1333814602F5E0028423F /* searchBar_NextButton_Normal.png in Resources */,
@@ -1377,7 +1368,6 @@
 				CDF4C011144F2C7900475F6B /* ACTopBarTitleControl.m in Sources */,
 				CDF4C012144F2C7900475F6B /* ACTopBarToolbar.m in Sources */,
 				CDF4C015144F2C8A00475F6B /* ACSingleTabController.m in Sources */,
-				CDB7C92B145572EA00E0D2B2 /* ACSingleProjectBrowsersController.m in Sources */,
 				CDE8F9D4145EEEFE00CA4496 /* ACCodeFileSearchBarController.m in Sources */,
 				CDC13330145FFE390028423F /* ACCodeFileSearchOptionsController.m in Sources */,
 				CD6E416C14614A0C00A9CE7F /* ACCodeFileMinimapView.m in Sources */,
