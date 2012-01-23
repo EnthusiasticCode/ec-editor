@@ -63,7 +63,7 @@
     
     [[UIToolbar appearance] setBackgroundImage:[UIImage imageNamed:@"topBar_Background"] forToolbarPosition:UIToolbarPositionAny barMetrics:UIBarMetricsDefault];
 
-    [[UISearchBar appearance] setBackgroundImage:[UIImage imageNamed:@"searchBar_Background"]];
+    [[UISearchBar appearance] setBackgroundImage:[UIImage imageNamed:@"topBar_Secondary_Background"]];
     
     [[UIBarButtonItem appearance] setBackButtonBackgroundImage:[[UIImage imageNamed:@"topBar_BackButton"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 20, 0, 10)] forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
     [[UIBarButtonItem appearance] setBackgroundImage:[UIImage styleNormalButtonBackgroundImageForControlState:UIControlStateSelected] forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];

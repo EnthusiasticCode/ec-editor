@@ -174,6 +174,7 @@
 		CDF4C011144F2C7900475F6B /* ACTopBarTitleControl.m in Sources */ = {isa = PBXBuildFile; fileRef = CDF4C00E144F2C7900475F6B /* ACTopBarTitleControl.m */; };
 		CDF4C012144F2C7900475F6B /* ACTopBarToolbar.m in Sources */ = {isa = PBXBuildFile; fileRef = CDF4C010144F2C7900475F6B /* ACTopBarToolbar.m */; };
 		CDF4C015144F2C8A00475F6B /* ACSingleTabController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDF4C014144F2C8A00475F6B /* ACSingleTabController.m */; };
+		CDF87A9D14CD85E500EED579 /* topBar_Secondary_Background.png in Resources */ = {isa = PBXBuildFile; fileRef = CDF87A9C14CD85E500EED579 /* topBar_Secondary_Background.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -483,6 +484,7 @@
 		CDF4C010144F2C7900475F6B /* ACTopBarToolbar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACTopBarToolbar.m; sourceTree = "<group>"; };
 		CDF4C013144F2C8A00475F6B /* ACSingleTabController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACSingleTabController.h; sourceTree = "<group>"; };
 		CDF4C014144F2C8A00475F6B /* ACSingleTabController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACSingleTabController.m; sourceTree = "<group>"; };
+		CDF87A9C14CD85E500EED579 /* topBar_Secondary_Background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = topBar_Secondary_Background.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1034,6 +1036,7 @@
 				CD2568C61450D5B600A3CCDE /* topBar_ToolButton_Normal.png */,
 				CDA0B9E914A4E9C900714F74 /* topBar_ToolButton_Selected.png */,
 				CD3D69E014C45B9300325970 /* topBar_BackButton.png */,
+				CDF87A9C14CD85E500EED579 /* topBar_Secondary_Background.png */,
 			);
 			name = "Top Bar";
 			sourceTree = "<group>";
@@ -1343,6 +1346,7 @@
 				CD3D69E114C45B9300325970 /* topBar_BackButton.png in Resources */,
 				CDB5DB6F14C849EA003DFD1F /* MoveConflictController.xib in Resources */,
 				CD8609F614CC515E00BF90CB /* bookmarkTable_Icon.png in Resources */,
+				CDF87A9D14CD85E500EED579 /* topBar_Secondary_Background.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
