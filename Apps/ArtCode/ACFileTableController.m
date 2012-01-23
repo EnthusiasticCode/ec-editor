@@ -76,6 +76,7 @@
     _directoryPresenter = [[ECDirectoryPresenter alloc] initWithDirectoryURL:_directory options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants];
     _openQuicklyPresenter = [[ECSmartFilteredDirectoryPresenter alloc] initWithDirectoryURL:_directory options:NSDirectoryEnumerationSkipsHiddenFiles];
     _directoryPresenter.delegate = self;
+    [self.tableView reloadData];
     [self didChangeValueForKey:@"directory"];
 }
 

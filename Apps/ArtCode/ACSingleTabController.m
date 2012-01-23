@@ -484,6 +484,7 @@ static const void *contentViewControllerContext;
             ACSingleProjectBrowsersController *singleProjectController = (ACSingleProjectBrowsersController *)result;
             singleProjectController.tab = self.tab;
             [singleProjectController openFileBrowserWithURL:url];
+            [self _setupDefaultToolbarTitle];
         }
         else
         {
