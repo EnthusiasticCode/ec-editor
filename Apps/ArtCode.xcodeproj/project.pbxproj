@@ -99,6 +99,8 @@
 		CD6E416C14614A0C00A9CE7F /* ACCodeFileMinimapView.m in Sources */ = {isa = PBXBuildFile; fileRef = CD6E416B14614A0C00A9CE7F /* ACCodeFileMinimapView.m */; };
 		CD70F4CE147A615000EAEEDC /* SearchBar.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CD70F4CD147A615000EAEEDC /* SearchBar.storyboard */; };
 		CD78E52014729A0E00801C3F /* ACCodeFileCompletionsController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD78E51F14729A0E00801C3F /* ACCodeFileCompletionsController.m */; };
+		CD7B435114CECA5700090CAE /* ACQuickBrowsersContainerController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD7B435014CECA5700090CAE /* ACQuickBrowsersContainerController.m */; };
+		CD7B435414CECA9900090CAE /* ACQuickFileBrowserController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD7B435314CECA9900090CAE /* ACQuickFileBrowserController.m */; };
 		CD7BC79414B7059000313CDB /* RemoteOptions.xib in Resources */ = {isa = PBXBuildFile; fileRef = CD7BC79314B7059000313CDB /* RemoteOptions.xib */; };
 		CD7BC79914B70FBE00313CDB /* itemIcon_Export.png in Resources */ = {isa = PBXBuildFile; fileRef = CD7BC79514B70FBE00313CDB /* itemIcon_Export.png */; };
 		CD7BC79A14B70FBE00313CDB /* itemIcon_Find.png in Resources */ = {isa = PBXBuildFile; fileRef = CD7BC79614B70FBE00313CDB /* itemIcon_Find.png */; };
@@ -378,6 +380,10 @@
 		CD70F4CD147A615000EAEEDC /* SearchBar.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = SearchBar.storyboard; sourceTree = "<group>"; };
 		CD78E51E14729A0E00801C3F /* ACCodeFileCompletionsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACCodeFileCompletionsController.h; sourceTree = "<group>"; };
 		CD78E51F14729A0E00801C3F /* ACCodeFileCompletionsController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACCodeFileCompletionsController.m; sourceTree = "<group>"; };
+		CD7B434F14CECA5700090CAE /* ACQuickBrowsersContainerController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACQuickBrowsersContainerController.h; sourceTree = "<group>"; };
+		CD7B435014CECA5700090CAE /* ACQuickBrowsersContainerController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACQuickBrowsersContainerController.m; sourceTree = "<group>"; };
+		CD7B435214CECA9900090CAE /* ACQuickFileBrowserController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACQuickFileBrowserController.h; sourceTree = "<group>"; };
+		CD7B435314CECA9900090CAE /* ACQuickFileBrowserController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACQuickFileBrowserController.m; sourceTree = "<group>"; };
 		CD7BC79314B7059000313CDB /* RemoteOptions.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = RemoteOptions.xib; sourceTree = "<group>"; };
 		CD7BC79514B70FBE00313CDB /* itemIcon_Export.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = itemIcon_Export.png; sourceTree = "<group>"; };
 		CD7BC79614B70FBE00313CDB /* itemIcon_Find.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = itemIcon_Find.png; sourceTree = "<group>"; };
@@ -727,6 +733,17 @@
 			name = "Minimap View";
 			sourceTree = "<group>";
 		};
+		CD7B434E14CEC9E900090CAE /* Quick Browsers */ = {
+			isa = PBXGroup;
+			children = (
+				CD7B434F14CECA5700090CAE /* ACQuickBrowsersContainerController.h */,
+				CD7B435014CECA5700090CAE /* ACQuickBrowsersContainerController.m */,
+				CD7B435214CECA9900090CAE /* ACQuickFileBrowserController.h */,
+				CD7B435314CECA9900090CAE /* ACQuickFileBrowserController.m */,
+			);
+			name = "Quick Browsers";
+			sourceTree = "<group>";
+		};
 		CD7BC79214B7054800313CDB /* Remotes Controllers */ = {
 			isa = PBXGroup;
 			children = (
@@ -823,6 +840,7 @@
 				CD7D2B1713C0D3A600B889EE /* Styles */,
 				CD7D2B1613C0D39B00B889EE /* Navigation */,
 				CD7D2B1413C0D38A00B889EE /* Browsers */,
+				CD7B434E14CEC9E900090CAE /* Quick Browsers */,
 				CD7D2B1813C0D3B100B889EE /* Editor */,
 			);
 			name = Classes;
@@ -1389,6 +1407,8 @@
 				CDB5DB6514C6F56A003DFD1F /* ACDirectoryBrowserController.m in Sources */,
 				CDB5DB6D14C8494E003DFD1F /* ACMoveConflictController.m in Sources */,
 				CD8609E814C9A48C00BF90CB /* ACBookmarkTableController.m in Sources */,
+				CD7B435114CECA5700090CAE /* ACQuickBrowsersContainerController.m in Sources */,
+				CD7B435414CECA9900090CAE /* ACQuickFileBrowserController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -41,6 +41,7 @@ static const void *contentViewControllerContext;
 /// Routing method that resolve an URL to the view controller that can handle it.
 - (UIViewController *)_viewControllerWithURL:(NSURL *)url;
 
+- (void)_defaultToolbarTitleButtonAction:(id)sender;
 - (void)_historyBackAction:(id)sender;
 - (void)_historyForwardAction:(id)sender;
 
@@ -83,6 +84,7 @@ static const void *contentViewControllerContext;
         _defaultToolbar = defaultToolbar;
     }
     
+    [_defaultToolbar.titleControl.backgroundButton addTarget:self action:@selector(_defaultToolbarTitleButtonAction:) forControlEvents:UIControlEventTouchUpInside];
     [_defaultToolbar.backButton addTarget:self action:@selector(_historyBackAction:) forControlEvents:UIControlEventTouchUpInside];
     [_defaultToolbar.forwardButton addTarget:self action:@selector(_historyForwardAction:) forControlEvents:UIControlEventTouchUpInside];
     
@@ -500,6 +502,12 @@ static const void *contentViewControllerContext;
         }
     }
     return result;
+}
+
+- (void)_defaultToolbarTitleButtonAction:(id)sender
+{
+    if ([self.contentViewController respondsToSelector:@selector(singleTabController:titleControlAction:)])
+        [(UIViewController<ACSingleTabContentController> *)self.contentViewController singleTabController:self titleControlAction:sender];
 }
 
 - (void)_historyBackAction:(id)sender

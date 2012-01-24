@@ -54,6 +54,9 @@
 /// returns NO.
 - (BOOL)singleTabController:(ACSingleTabController *)singleTabController shouldEnableTitleControlForDefaultToolbar:(ACTopBarToolbar *)toolbar;
 
+/// Called when the defailt toolbar title control has been tapped by the user.
+- (void)singleTabController:(ACSingleTabController *)singleTabController titleControlAction:(id)sender;
+
 /// When implemented, setup a title to the given title control. It returns YES
 /// if the title control has been setup, NO otherwise.
 - (BOOL)singleTabController:(ACSingleTabController *)singleTabController setupDefaultToolbarTitleControl:(ACTopBarTitleControl *)titleControl;

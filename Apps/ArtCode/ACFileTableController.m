@@ -28,6 +28,9 @@
 #import "ACTopBarToolbar.h"
 #import "ACTopBarTitleControl.h"
 
+#import "ACQuickBrowsersContainerController.h"
+#import "ACQuickFileBrowserController.h"
+
 
 @interface ACFileTableController () {
     UIButton *_projectColorLabelButton;
@@ -50,6 +53,8 @@
     ECDirectoryPresenter *_directoryPresenter;
     ECSmartFilteredDirectoryPresenter *_openQuicklyPresenter;
     BOOL _isShowingOpenQuickly;
+    
+    UIPopoverController *_quickBrowsersPopover;
 }
 
 - (void)_toolNormalAddAction:(id)sender;
@@ -100,6 +105,7 @@
         UISearchBar *searchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, 44)];
         searchBar.delegate = self;
         searchBar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+        searchBar.placeholder = @"Filter this folder files";
         self.tableView.tableHeaderView = searchBar;
     }
     
@@ -139,6 +145,8 @@
     
     _toolEditItems = nil;
     _toolNormalItems = nil;
+    
+    _quickBrowsersPopover = nil;
     
     [super viewDidUnload];
 }
@@ -237,6 +245,21 @@
 - (BOOL)singleTabController:(ACSingleTabController *)singleTabController shouldEnableTitleControlForDefaultToolbar:(ACTopBarToolbar *)toolbar
 {
     return YES;
+}
+
+- (void)singleTabController:(ACSingleTabController *)singleTabController titleControlAction:(id)sender
+{
+    if (!_quickBrowsersPopover)
+    {
+        ACQuickBrowsersContainerController *quickBrowserContainerController = [ACQuickBrowsersContainerController new];
+        quickBrowserContainerController.contentSizeForViewInPopover = CGSizeMake(500, 500);
+        quickBrowserContainerController.tab = self.tab;
+        [quickBrowserContainerController setViewControllers:[NSArray arrayWithObjects:[ACQuickFileBrowserController new], nil] animated:NO];
+        
+        _quickBrowsersPopover = [[UIPopoverController alloc] initWithContentViewController:quickBrowserContainerController];
+        quickBrowserContainerController.popoverController = _quickBrowsersPopover;
+    }
+    [_quickBrowsersPopover presentPopoverFromRect:[sender frame] inView:[sender superview] permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
 }
 
 - (BOOL)singleTabController:(ACSingleTabController *)singleTabController setupDefaultToolbarTitleControl:(ACTopBarTitleControl *)titleControl

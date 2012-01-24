@@ -66,7 +66,7 @@
     
     CFArrayRef lines = CTFrameGetLines(frame);
     CFIndex lineCount = CFArrayGetCount(lines);
-    ECASSERT(lineCount <= 1 && "Not designed for multiline");
+    //ECASSERT(lineCount <= 1 && "Not designed for multiline");
     for (CFIndex i = 0; i < lineCount; ++i)
     {
         CTLineRef line = CFArrayGetValueAtIndex(lines, i);
