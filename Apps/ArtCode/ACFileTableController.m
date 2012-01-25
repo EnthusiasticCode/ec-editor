@@ -30,6 +30,7 @@
 
 #import "ACQuickBrowsersContainerController.h"
 #import "ACQuickFileBrowserController.h"
+#import "ACQuickBookmarkBrowserController.h"
 
 
 @interface ACFileTableController () {
@@ -254,9 +255,13 @@
         ACQuickBrowsersContainerController *quickBrowserContainerController = [ACQuickBrowsersContainerController new];
         quickBrowserContainerController.contentSizeForViewInPopover = CGSizeMake(500, 500);
         quickBrowserContainerController.tab = self.tab;
-        [quickBrowserContainerController setViewControllers:[NSArray arrayWithObjects:[ACQuickFileBrowserController new], nil] animated:NO];
+        [quickBrowserContainerController setViewControllers:[NSArray arrayWithObjects:[ACQuickFileBrowserController new], [ACQuickBookmarkBrowserController new], nil] animated:NO];
         
-        _quickBrowsersPopover = [[UIPopoverController alloc] initWithContentViewController:quickBrowserContainerController];
+        UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:quickBrowserContainerController];
+        [navigationController.navigationBar setBackgroundImage:nil forBarMetrics:UIBarMetricsDefault];
+        
+        _quickBrowsersPopover = [[UIPopoverController alloc] initWithContentViewController:navigationController];
+        _quickBrowsersPopover.popoverBackgroundViewClass = [ACShapePopoverBackgroundView class];
         quickBrowserContainerController.popoverController = _quickBrowsersPopover;
     }
     [_quickBrowsersPopover presentPopoverFromRect:[sender frame] inView:[sender superview] permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];

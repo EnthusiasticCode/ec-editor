@@ -87,6 +87,7 @@
 		CD1973EF14B1D4F600CACF5E /* topBarItem_Tools.png in Resources */ = {isa = PBXBuildFile; fileRef = CD1973EE14B1D4F600CACF5E /* topBarItem_Tools.png */; };
 		CD2568C31450D44000A3CCDE /* topBar_BackButton_Normal.png in Resources */ = {isa = PBXBuildFile; fileRef = CD2568C21450D44000A3CCDE /* topBar_BackButton_Normal.png */; };
 		CD2568C71450D5B600A3CCDE /* topBar_ToolButton_Normal.png in Resources */ = {isa = PBXBuildFile; fileRef = CD2568C61450D5B600A3CCDE /* topBar_ToolButton_Normal.png */; };
+		CD2BA05A14CFF65700031E78 /* ACQuickBookmarkBrowserController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD2BA05914CFF65700031E78 /* ACQuickBookmarkBrowserController.m */; };
 		CD333CF814C031A900E0EEE2 /* ACNewProjectImportController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD333CF714C031A900E0EEE2 /* ACNewProjectImportController.m */; };
 		CD333CFC14C0340200E0EEE2 /* ACNewProjectNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD333CFB14C0340200E0EEE2 /* ACNewProjectNavigationController.m */; };
 		CD3D69E114C45B9300325970 /* topBar_BackButton.png in Resources */ = {isa = PBXBuildFile; fileRef = CD3D69E014C45B9300325970 /* topBar_BackButton.png */; };
@@ -360,6 +361,8 @@
 		CD1973EE14B1D4F600CACF5E /* topBarItem_Tools.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = topBarItem_Tools.png; sourceTree = "<group>"; };
 		CD2568C21450D44000A3CCDE /* topBar_BackButton_Normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = topBar_BackButton_Normal.png; sourceTree = "<group>"; };
 		CD2568C61450D5B600A3CCDE /* topBar_ToolButton_Normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = topBar_ToolButton_Normal.png; sourceTree = "<group>"; };
+		CD2BA05814CFF65700031E78 /* ACQuickBookmarkBrowserController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACQuickBookmarkBrowserController.h; sourceTree = "<group>"; };
+		CD2BA05914CFF65700031E78 /* ACQuickBookmarkBrowserController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACQuickBookmarkBrowserController.m; sourceTree = "<group>"; };
 		CD333CF614C031A900E0EEE2 /* ACNewProjectImportController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACNewProjectImportController.h; sourceTree = "<group>"; };
 		CD333CF714C031A900E0EEE2 /* ACNewProjectImportController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACNewProjectImportController.m; sourceTree = "<group>"; };
 		CD333CFA14C0340200E0EEE2 /* ACNewProjectNavigationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACNewProjectNavigationController.h; sourceTree = "<group>"; };
@@ -740,6 +743,8 @@
 				CD7B435014CECA5700090CAE /* ACQuickBrowsersContainerController.m */,
 				CD7B435214CECA9900090CAE /* ACQuickFileBrowserController.h */,
 				CD7B435314CECA9900090CAE /* ACQuickFileBrowserController.m */,
+				CD2BA05814CFF65700031E78 /* ACQuickBookmarkBrowserController.h */,
+				CD2BA05914CFF65700031E78 /* ACQuickBookmarkBrowserController.m */,
 			);
 			name = "Quick Browsers";
 			sourceTree = "<group>";
@@ -1409,6 +1414,7 @@
 				CD8609E814C9A48C00BF90CB /* ACBookmarkTableController.m in Sources */,
 				CD7B435114CECA5700090CAE /* ACQuickBrowsersContainerController.m in Sources */,
 				CD7B435414CECA9900090CAE /* ACQuickFileBrowserController.m in Sources */,
+				CD2BA05A14CFF65700031E78 /* ACQuickBookmarkBrowserController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

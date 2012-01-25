@@ -22,10 +22,13 @@
 
 @property (nonatomic, strong, readonly) ECSmartFilteredDirectoryPresenter *directoryPresenter;
 
+- (void)_showBrowserInTabAction:(id)sender;
+
 @end
 
 
 @implementation ACQuickFileBrowserController {
+    UISearchBar *_searchBar;
     UILabel *_infoLabel;
     NSTimer *_filterDebounceTimer;
 }
@@ -58,6 +61,17 @@
 
 #pragma mark - Controller lifecycle
 
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
+{
+    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+    if (!self)
+        return nil;
+    self.tabBarItem = [[UITabBarItem alloc] initWithTitle:@"Files" image:nil tag:0];
+    self.navigationItem.title = @"Open quickly";
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Show" style:UIBarButtonItemStyleDone target:self action:@selector(_showBrowserInTabAction:)];
+    return self;
+}
+
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
@@ -72,13 +86,13 @@
     [super loadView];
     
     CGRect bounds = self.view.bounds;
-    self.tabBarItem = [[UITabBarItem alloc] initWithTitle:@"Files" image:nil tag:0];
     
     // Add search bar
-    UISearchBar *searchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(0, 0, bounds.size.width, 44)];
-    searchBar.delegate = self;
-    searchBar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-    [self.view addSubview:searchBar];
+    _searchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(0, 0, bounds.size.width, 44)];
+    _searchBar.delegate = self;
+    _searchBar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+    _searchBar.placeholder = @"Search for file";
+    [self.view addSubview:_searchBar];
     
     // Add table view
     [self.view addSubview:self.tableView];
@@ -93,11 +107,18 @@
 
 - (void)viewDidUnload
 {
+    _searchBar = nil;
     _infoLabel = nil;
     tableView = nil;
     directoryPresenter = nil;
     
     [super viewDidUnload];
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    [_searchBar becomeFirstResponder];
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
@@ -188,6 +209,16 @@
 
 - (void)tableView:(UITableView *)table didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    [self.quickBrowsersContainerController.popoverController dismissPopoverAnimated:YES];
+    [self.quickBrowsersContainerController.tab pushURL:[self.directoryPresenter.fileURLs objectAtIndex:indexPath.row]];
+}
+
+#pragma mark - Private methods
+
+- (void)_showBrowserInTabAction:(id)sender
+{
+    [self.quickBrowsersContainerController.popoverController dismissPopoverAnimated:YES];
+    [self.quickBrowsersContainerController.tab pushURL:[self.quickBrowsersContainerController.tab.currentProject URL]];
 }
 
 @end

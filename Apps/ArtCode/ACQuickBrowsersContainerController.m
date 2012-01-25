@@ -10,7 +10,23 @@
 
 @implementation ACQuickBrowsersContainerController
 
+#pragma mark - Properties
+
 @synthesize tab, popoverController;
+
+- (void)setSelectedViewController:(UIViewController *)selectedViewController
+{
+    [super setSelectedViewController:selectedViewController];
+    self.navigationItem.leftBarButtonItem = selectedViewController.navigationItem.leftBarButtonItem;
+    self.navigationItem.rightBarButtonItem = selectedViewController.navigationItem.rightBarButtonItem;
+    self.navigationItem.title = selectedViewController.navigationItem.title;
+}
+
+- (void)setViewControllers:(NSArray *)viewControllers animated:(BOOL)animated
+{
+    [super setViewControllers:viewControllers animated:animated];
+    [self setSelectedViewController:[viewControllers objectAtIndex:0]];
+}
 
 #pragma mark - View lifecycle
 
@@ -18,6 +34,8 @@
 {
 	return YES;
 }
+
+// TODO dismiss on esc?
 
 @end
 

@@ -419,6 +419,7 @@
     {
         UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"NewProjectPopover" bundle:nil];
         ACNewProjectNavigationController *newProjectNavigationController = (ACNewProjectNavigationController *)[storyboard instantiateInitialViewController];
+        [newProjectNavigationController.navigationBar setBackgroundImage:nil forBarMetrics:UIBarMetricsDefault];
         newProjectNavigationController.projectsDirectory = self.projectsDirectory;
         newProjectNavigationController.parentController = self;
         _toolItemPopover = [[UIPopoverController alloc] initWithContentViewController:newProjectNavigationController];
