@@ -252,10 +252,7 @@
 {
     if (!_quickBrowsersPopover)
     {
-        ACQuickBrowsersContainerController *quickBrowserContainerController = [ACQuickBrowsersContainerController new];
-        quickBrowserContainerController.contentSizeForViewInPopover = CGSizeMake(500, 500);
-        quickBrowserContainerController.tab = self.tab;
-        [quickBrowserContainerController setViewControllers:[NSArray arrayWithObjects:[ACQuickFileBrowserController new], [ACQuickBookmarkBrowserController new], nil] animated:NO];
+        ACQuickBrowsersContainerController *quickBrowserContainerController = [ACQuickBrowsersContainerController quickBrowsersContainerControllerForTab:self.tab];
         
         UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:quickBrowserContainerController];
         [navigationController.navigationBar setBackgroundImage:nil forBarMetrics:UIBarMetricsDefault];

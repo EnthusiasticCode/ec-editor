@@ -8,7 +8,30 @@
 
 #import "ACQuickBrowsersContainerController.h"
 
+#import "ACTab.h"
+#import "ACQuickFileBrowserController.h"
+#import "ACQuickBookmarkBrowserController.h"
+
 @implementation ACQuickBrowsersContainerController
+
++ (id)quickBrowsersContainerControllerForTab:(ACTab *)tab
+{
+    ACQuickBrowsersContainerController *result = [ACQuickBrowsersContainerController new];
+    result.tab = tab;
+    result.contentSizeForViewInPopover = CGSizeMake(500, 500);
+    
+    BOOL isDirectory = NO;
+    [[NSFileManager defaultManager] fileExistsAtPath:[tab.currentURL path] isDirectory:&isDirectory];
+    if (isDirectory)
+    {
+        [result setViewControllers:[NSArray arrayWithObjects:[ACQuickFileBrowserController new], [ACQuickBookmarkBrowserController new], nil] animated:NO];
+    }
+    else
+    {
+        // TODO
+    }
+    return result;
+}
 
 #pragma mark - Properties
 

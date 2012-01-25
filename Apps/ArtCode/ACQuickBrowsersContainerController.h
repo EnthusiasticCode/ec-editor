@@ -13,6 +13,8 @@
 
 @interface ACQuickBrowsersContainerController : UITabBarController
 
++ (id)quickBrowsersContainerControllerForTab:(ACTab *)tab;
+
 @property (nonatomic, strong) ACTab *tab;
 @property (nonatomic, weak) UIPopoverController *popoverController;
 
