@@ -106,7 +106,7 @@
         UISearchBar *searchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, 44)];
         searchBar.delegate = self;
         searchBar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-        searchBar.placeholder = @"Filter this folder files";
+        searchBar.placeholder = @"Filter files";
         self.tableView.tableHeaderView = searchBar;
     }
     

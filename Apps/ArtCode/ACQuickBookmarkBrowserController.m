@@ -18,9 +18,9 @@
 #import "ACHighlightTableViewCell.h"
 
 @implementation ACQuickBookmarkBrowserController {
-//    UISearchBar *_searchBar;
+    UISearchBar *_searchBar;
     UILabel *_infoLabel;
-//    NSTimer *_filterDebounceTimer;
+    NSTimer *_filterDebounceTimer;
 }
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -45,6 +45,8 @@
         tableView.delegate = self;
         tableView.dataSource = self;
         tableView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+        tableView.backgroundColor = [UIColor colorWithWhite:0.91 alpha:1];
+        tableView.separatorColor = [UIColor colorWithWhite:0.35 alpha:1];
     }
     return tableView;
 }
@@ -57,21 +59,31 @@
     
     CGRect bounds = self.view.bounds;
     
+    // Add search bar
+    _searchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(0, 0, bounds.size.width, 44)];
+    _searchBar.delegate = self;
+    _searchBar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+    _searchBar.placeholder = @"Search for bookmark";
+    [self.view addSubview:_searchBar];
+    
     // Add table view
     [self.view addSubview:self.tableView];
-    self.tableView.frame = CGRectMake(0, 0, bounds.size.width, bounds.size.height);
+    self.tableView.frame = CGRectMake(0, 44, bounds.size.width, bounds.size.height - 44);
     
     // Add table view footer view
-//    _infoLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, self.tableView.bounds.size.width, 50)];
-//    _infoLabel.textAlignment = UITextAlignmentCenter;
-//    _infoLabel.text = @"The project has no bookmarks";
-//    self.tableView.tableFooterView = _infoLabel;
+    _infoLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, self.tableView.bounds.size.width, 50)];
+    _infoLabel.textAlignment = UITextAlignmentCenter;
+    _infoLabel.backgroundColor = [UIColor clearColor];
+    _infoLabel.textColor = [UIColor colorWithWhite:0.5 alpha:1];
+    _infoLabel.shadowColor = [UIColor whiteColor];
+    _infoLabel.shadowOffset = CGSizeMake(0, 1);
+    self.tableView.tableFooterView = _infoLabel;
 }
 
 
 - (void)viewDidUnload
 {
-//    _infoLabel = nil;
+    _infoLabel = nil;
     tableView = nil;
     
     [super viewDidUnload];
