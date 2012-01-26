@@ -42,27 +42,6 @@
     return [self init];
 }
 
-- (NSString *)_cellTitleForBookmark:(ACProjectBookmark *)bookmark
-{
-    NSUInteger bookmarkLine = [bookmark line];
-    if (bookmarkLine != 0)
-    {
-        NSInteger fragmentLocation = [bookmark.bookmarkPath rangeOfString:@"#"].location;
-        if (fragmentLocation != NSNotFound)
-        {
-            return [[bookmark.bookmarkPath substringToIndex:fragmentLocation] stringByAppendingFormat:@" - Line: %u", bookmarkLine];
-        }
-        else
-        {
-            return [bookmark.bookmarkPath stringByAppendingFormat:@" - Line: %u", bookmarkLine];
-        }
-    }
-    else
-    {
-        return bookmark.bookmarkPath;
-    }
-}
-
 #pragma mark - Properties
 
 @synthesize tableView;
@@ -95,6 +74,7 @@
     _searchBar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
     _searchBar.placeholder = @"Search for bookmark";
     [self.view addSubview:_searchBar];
+    [self searchBar:_searchBar textDidChange:nil];
     
     // Add table view
     [self.view addSubview:self.tableView];
@@ -128,20 +108,24 @@
 
 - (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText
 {
-    // Apply filter to filterController with .3 second debounce
     [_filterDebounceTimer invalidate];
+    
+    if ([searchText length] == 0)
+    {
+        _sortedBookmarks = [self.quickBrowsersContainerController.tab.currentProject.bookmarks sortedArrayUsingComparator:^NSComparisonResult(id obj1, id obj2) {
+            return [[obj1 description] compare:[obj2 description]];
+        }];
+        _sortedBookmarksHitMasks = nil;
+        [self.tableView reloadData];
+        return;
+    }
+    
+    // Apply filter to filterController with .3 second debounce
     _filterDebounceTimer = [NSTimer scheduledTimerWithTimeInterval:0.3 usingBlock:^(NSTimer *timer) {
         NSArray *hitMasks = nil;
-        if ([searchText length] == 0)
-        {
-            _sortedBookmarks = nil;
-        }
-        else
-        {
-            _sortedBookmarks = [self.quickBrowsersContainerController.tab.currentProject.bookmarks sortedArrayUsingScoreForAbbreviation:searchText resultHitMasks:&hitMasks extrapolateTargetStringBlock:^NSString *(ACProjectBookmark *bookmark) {
-                return [self _cellTitleForBookmark:bookmark];
-            }];
-        }
+        _sortedBookmarks = [self.quickBrowsersContainerController.tab.currentProject.bookmarks sortedArrayUsingScoreForAbbreviation:searchText resultHitMasks:&hitMasks extrapolateTargetStringBlock:^NSString *(ACProjectBookmark *bookmark) {
+            return [bookmark description];
+        }];
         _sortedBookmarksHitMasks = hitMasks;
         [self.tableView reloadData];
     } repeats:NO];
@@ -151,7 +135,7 @@
 
 - (NSInteger)tableView:(UITableView *)table numberOfRowsInSection:(NSInteger)section
 {
-    return _sortedBookmarks ? [_sortedBookmarks count] : [self.quickBrowsersContainerController.tab.currentProject.bookmarks count];
+    return [_sortedBookmarks count];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)table cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -164,10 +148,9 @@
         cell.highlightLabel.highlightedBackgroundColor = [UIColor colorWithRed:225.0/255.0 green:220.0/255.0 blue:92.0/255.0 alpha:1];
     }
     
-    ACProjectBookmark *bookmark = [(_sortedBookmarks ? _sortedBookmarks : self.quickBrowsersContainerController.tab.currentProject.bookmarks) objectAtIndex:indexPath.row];
+    ACProjectBookmark *bookmark = [_sortedBookmarks objectAtIndex:indexPath.row];
     
-    
-    cell.highlightLabel.text = [self _cellTitleForBookmark:bookmark];
+    cell.highlightLabel.text = [bookmark description];
     cell.highlightLabel.highlightedCharacters = _sortedBookmarksHitMasks ? [_sortedBookmarksHitMasks objectAtIndex:indexPath.row] : nil;
     cell.detailTextLabel.text = bookmark.note;
     cell.imageView.image = [UIImage imageNamed:@"bookmarkTable_Icon"];

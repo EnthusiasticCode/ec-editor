@@ -421,4 +421,25 @@ static ECCache *openProjects = nil;
     }
 }
 
+- (NSString *)description
+{
+    NSUInteger bookmarkLine = [self line];
+    if (bookmarkLine != 0)
+    {
+        NSInteger fragmentLocation = [self.bookmarkPath rangeOfString:@"#"].location;
+        if (fragmentLocation != NSNotFound)
+        {
+            return [[self.bookmarkPath substringToIndex:fragmentLocation] stringByAppendingFormat:@" - Line: %u", bookmarkLine];
+        }
+        else
+        {
+            return [self.bookmarkPath stringByAppendingFormat:@" - Line: %u", bookmarkLine];
+        }
+    }
+    else
+    {
+        return self.bookmarkPath;
+    }
+}
+
 @end
