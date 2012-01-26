@@ -31,6 +31,7 @@
     UISearchBar *_searchBar;
     UILabel *_infoLabel;
     NSTimer *_filterDebounceTimer;
+    NSString *_projectURLAbsoluteString;
 }
 
 #pragma mark - Properties
@@ -41,8 +42,10 @@
 {
     if (!directoryPresenter)
     {
-        directoryPresenter = [[ECSmartFilteredDirectoryPresenter alloc] initWithDirectoryURL:self.quickBrowsersContainerController.tab.currentProject.URL options:NSDirectoryEnumerationSkipsHiddenFiles];
+        NSURL *projectURL = self.quickBrowsersContainerController.tab.currentProject.URL;
+        directoryPresenter = [[ECSmartFilteredDirectoryPresenter alloc] initWithDirectoryURL:projectURL options:NSDirectoryEnumerationSkipsHiddenFiles];
         directoryPresenter.delegate = self;
+        _projectURLAbsoluteString = [projectURL absoluteString];
     }
     return directoryPresenter;
 }
@@ -211,6 +214,9 @@
     
     cell.textLabel.text = [fileURL lastPathComponent];
     cell.textLabelHighlightedCharacters = [self.directoryPresenter hitMaskForFileURL:fileURL];
+    
+    NSString *fileRelativePath = [[fileURL absoluteString] substringFromIndex:[_projectURLAbsoluteString length]];
+    cell.detailTextLabel.text = [fileRelativePath isEqualToString:cell.textLabel.text] ? nil : [fileRelativePath stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     
     return cell;
 }
