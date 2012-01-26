@@ -147,13 +147,13 @@
     ACHighlightTableViewCell *cell = [table dequeueReusableCellWithIdentifier:CellIdentifier];
     if (cell == nil) {
         cell = [[ACHighlightTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
-        cell.highlightLabel.highlightedBackgroundColor = [UIColor colorWithRed:225.0/255.0 green:220.0/255.0 blue:92.0/255.0 alpha:1];
+        cell.textLabelHighlightedCharactersBackgroundColor = [UIColor colorWithRed:225.0/255.0 green:220.0/255.0 blue:92.0/255.0 alpha:1];
     }
     
     ACProjectBookmark *bookmark = [_sortedBookmarks objectAtIndex:indexPath.row];
     
-    cell.highlightLabel.text = [bookmark description];
-    cell.highlightLabel.highlightedCharacters = _sortedBookmarksHitMasks ? [_sortedBookmarksHitMasks objectAtIndex:indexPath.row] : nil;
+    cell.textLabel.text = [bookmark description];
+    cell.textLabelHighlightedCharacters = _sortedBookmarksHitMasks ? [_sortedBookmarksHitMasks objectAtIndex:indexPath.row] : nil;
     cell.detailTextLabel.text = bookmark.note;
     cell.imageView.image = [UIImage imageNamed:@"bookmarkTable_Icon"];
     

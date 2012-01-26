@@ -7,10 +7,14 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "ACHighlightLabel.h"
+
 
 @interface ACHighlightTableViewCell : UITableViewCell
 
-@property (nonatomic, strong, readonly) ACHighlightLabel *highlightLabel;
+/// Index in the label text characters to which highlight the background.
+@property (nonatomic, strong) NSIndexSet *textLabelHighlightedCharacters;
+
+/// Indicate the color to be used for background highlighting.
+@property (nonatomic, strong) UIColor *textLabelHighlightedCharactersBackgroundColor UI_APPEARANCE_SELECTOR;
 
 @end

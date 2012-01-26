@@ -198,7 +198,7 @@
     ACHighlightTableViewCell *cell = [table dequeueReusableCellWithIdentifier:CellIdentifier];
     if (cell == nil) {
         cell = [[ACHighlightTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
-        cell.highlightLabel.highlightedBackgroundColor = [UIColor colorWithRed:225.0/255.0 green:220.0/255.0 blue:92.0/255.0 alpha:1];
+        cell.textLabelHighlightedCharactersBackgroundColor = [UIColor colorWithRed:225.0/255.0 green:220.0/255.0 blue:92.0/255.0 alpha:1];
     }
     
     NSURL *fileURL = [self.directoryPresenter.fileURLs objectAtIndex:indexPath.row];
@@ -209,8 +209,8 @@
     else
         cell.imageView.image = [UIImage styleDocumentImageWithFileExtension:[fileURL pathExtension]];
     
-    cell.highlightLabel.text = [fileURL lastPathComponent];
-    cell.highlightLabel.highlightedCharacters = [self.directoryPresenter hitMaskForFileURL:fileURL];
+    cell.textLabel.text = [fileURL lastPathComponent];
+    cell.textLabelHighlightedCharacters = [self.directoryPresenter hitMaskForFileURL:fileURL];
     
     return cell;
 }

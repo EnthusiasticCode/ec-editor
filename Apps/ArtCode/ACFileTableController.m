@@ -331,7 +331,8 @@
     ACHighlightTableViewCell *cell = [tView dequeueReusableCellWithIdentifier:FileCellIdentifier];
     if (cell == nil)
     {
-        cell = [[ACHighlightTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:FileCellIdentifier];
+        cell = [[ACHighlightTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:FileCellIdentifier];
+        cell.textLabelHighlightedCharactersBackgroundColor = [UIColor colorWithRed:225.0/255.0 green:220.0/255.0 blue:92.0/255.0 alpha:1];
     }
     
     // Configure the cell
@@ -344,17 +345,13 @@
     else
         cell.imageView.image = [UIImage styleDocumentImageWithFileExtension:[fileURL pathExtension]];
     
-    cell.highlightLabel.text = [fileURL lastPathComponent];
+    cell.textLabel.text = [fileURL lastPathComponent];
     
     if (_isShowingOpenQuickly)
-    {
-        cell.highlightLabel.highlightedBackgroundColor = [UIColor colorWithRed:225.0/255.0 green:220.0/255.0 blue:92.0/255.0 alpha:1];
-        cell.highlightLabel.highlightedCharacters = [_openQuicklyPresenter hitMaskForFileURL:fileURL];
-    }
+        cell.textLabelHighlightedCharacters = [_openQuicklyPresenter hitMaskForFileURL:fileURL];
     else
-    {
-        cell.highlightLabel.highlightedCharacters = nil;
-    }
+        cell.textLabelHighlightedCharacters = nil;
+    
     return cell;
 }
 
