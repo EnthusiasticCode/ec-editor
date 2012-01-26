@@ -30,6 +30,8 @@
         return 0.9; //deduct some points for all remaining letters
 	if (abbreviationRange.length>searchRange.length)
         return 0.0;
+    if (mask)
+        *mask = [NSMutableIndexSet indexSet];
 	for (i = abbreviationRange.length; i>0; i--)
     { //Search for steadily smaller portions of the abbreviation
 		matchedRange = [self rangeOfString:[abbreviation substringWithRange:NSMakeRange(abbreviationRange.location, i)] options:NSCaseInsensitiveSearch range:searchRange];
@@ -39,8 +41,6 @@
         
 		if (mask)
         {
-            if (!*mask)
-                *mask = [NSMutableIndexSet indexSet];
             [(NSMutableIndexSet *)*mask addIndexesInRange:matchedRange];
         }
         
