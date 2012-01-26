@@ -88,7 +88,7 @@
     [self willChangeValueForKey:@"directory"];
     _directory = directory;
     _directoryPresenter = [[ECDirectoryPresenter alloc] initWithDirectoryURL:_directory options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants];
-    _openQuicklyPresenter = [[ECSmartFilteredDirectoryPresenter alloc] initWithDirectoryURL:_directory options:NSDirectoryEnumerationSkipsHiddenFiles];
+    _openQuicklyPresenter = [[ECSmartFilteredDirectoryPresenter alloc] initWithDirectoryURL:_directory options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants];
     _directoryPresenter.delegate = self;
     [self.tableView reloadData];
     [self didChangeValueForKey:@"directory"];
@@ -159,7 +159,7 @@
     _directoryPresenter = [[ECDirectoryPresenter alloc] initWithDirectoryURL:self.directory options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants];
     _directoryPresenter.delegate = self;
     
-    _openQuicklyPresenter = [[ECSmartFilteredDirectoryPresenter alloc] initWithDirectoryURL:self.directory options:NSDirectoryEnumerationSkipsHiddenFiles];
+    _openQuicklyPresenter = [[ECSmartFilteredDirectoryPresenter alloc] initWithDirectoryURL:self.directory options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants];
     _openQuicklyPresenter.delegate = self;
     
     [_selectedURLs removeAllObjects];
