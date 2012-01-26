@@ -30,6 +30,7 @@
     NSIndexSet *hitmask = nil;
     for (id elem in self)
     {
+        hitmask = nil;
         NSString *targetString = targetStringBlock ? targetStringBlock(elem) : (NSString *)elem;
         float score = [targetString scoreForAbbreviation:abbreviation hitMask:&hitmask];
         if (score > 0.0)
