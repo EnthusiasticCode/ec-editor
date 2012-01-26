@@ -115,7 +115,7 @@
     _infoLabel.textColor = [UIColor colorWithWhite:0.5 alpha:1];
     _infoLabel.shadowColor = [UIColor whiteColor];
     _infoLabel.shadowOffset = CGSizeMake(0, 1);
-    _infoLabel.text = @"Type a file name to open";
+    _infoLabel.text = @"Type a file name to open.";
     self.tableView.tableFooterView = _infoLabel;
 }
 
@@ -178,7 +178,7 @@
         self.directoryPresenter.filterString = searchText;
         if ([self.directoryPresenter.fileURLs count] == 0)
         {
-            _infoLabel.text = @"Type a file name to open";
+            _infoLabel.text = [searchText length] ? @"No file found for the search term." : @"Type a file name to open.";
         }
         else
         {
