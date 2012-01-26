@@ -125,7 +125,6 @@
 		CD7FDD5414BEFBA0002B1122 /* itemIcon_Delete.png in Resources */ = {isa = PBXBuildFile; fileRef = CD7FDD5214BEFBA0002B1122 /* itemIcon_Delete.png */; };
 		CD7FDD5514BEFBA0002B1122 /* itemIcon_Duplicate.png in Resources */ = {isa = PBXBuildFile; fileRef = CD7FDD5314BEFBA0002B1122 /* itemIcon_Duplicate.png */; };
 		CD8108D513E31A28000E1941 /* ACColorSelectionControl.m in Sources */ = {isa = PBXBuildFile; fileRef = CD8108D413E31A28000E1941 /* ACColorSelectionControl.m */; };
-		CD8609E814C9A48C00BF90CB /* ACBookmarkTableController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD8609E714C9A48C00BF90CB /* ACBookmarkTableController.m */; };
 		CD8609F614CC515E00BF90CB /* bookmarkTable_Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CD8609F514CC515E00BF90CB /* bookmarkTable_Icon.png */; };
 		CD8A677C13D0BB000037D742 /* ipad_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CD8A677B13D0BB000037D742 /* ipad_icon.png */; };
 		CD9CB5E71451902C00973204 /* tabBar_TabCloseButton.png in Resources */ = {isa = PBXBuildFile; fileRef = CD9CB5E51451902C00973204 /* tabBar_TabCloseButton.png */; };
@@ -421,8 +420,6 @@
 		CD7FDD5314BEFBA0002B1122 /* itemIcon_Duplicate.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = itemIcon_Duplicate.png; sourceTree = "<group>"; };
 		CD8108D313E31A28000E1941 /* ACColorSelectionControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACColorSelectionControl.h; sourceTree = "<group>"; };
 		CD8108D413E31A28000E1941 /* ACColorSelectionControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACColorSelectionControl.m; sourceTree = "<group>"; };
-		CD8609E614C9A48C00BF90CB /* ACBookmarkTableController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACBookmarkTableController.h; sourceTree = "<group>"; };
-		CD8609E714C9A48C00BF90CB /* ACBookmarkTableController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACBookmarkTableController.m; sourceTree = "<group>"; };
 		CD8609F514CC515E00BF90CB /* bookmarkTable_Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bookmarkTable_Icon.png; sourceTree = "<group>"; };
 		CD8A677B13D0BB000037D742 /* ipad_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ipad_icon.png; sourceTree = "<group>"; };
 		CD9CB5E51451902C00973204 /* tabBar_TabCloseButton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = tabBar_TabCloseButton.png; sourceTree = "<group>"; };
@@ -887,8 +884,6 @@
 				CD7D2B3213C0D4C700B889EE /* ACProjectTableController.m */,
 				CD7D2B4613C0D55700B889EE /* ACFileTableController.h */,
 				CD7D2B4713C0D55700B889EE /* ACFileTableController.m */,
-				CD8609E614C9A48C00BF90CB /* ACBookmarkTableController.h */,
-				CD8609E714C9A48C00BF90CB /* ACBookmarkTableController.m */,
 				B7AC174F14216D25009E9205 /* Content Controllers */,
 				CD8108D613E334F7000E1941 /* Views and Controls */,
 			);
@@ -1411,7 +1406,6 @@
 				CD4E648614C1E984003AC39D /* ACProject.m in Sources */,
 				CDB5DB6514C6F56A003DFD1F /* ACDirectoryBrowserController.m in Sources */,
 				CDB5DB6D14C8494E003DFD1F /* ACMoveConflictController.m in Sources */,
-				CD8609E814C9A48C00BF90CB /* ACBookmarkTableController.m in Sources */,
 				CD7B435114CECA5700090CAE /* ACQuickBrowsersContainerController.m in Sources */,
 				CD7B435414CECA9900090CAE /* ACQuickFileBrowserController.m in Sources */,
 				CD2BA05A14CFF65700031E78 /* ACQuickBookmarkBrowserController.m in Sources */,

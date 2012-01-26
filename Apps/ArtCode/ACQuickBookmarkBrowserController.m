@@ -164,7 +164,7 @@
 - (void)tableView:(UITableView *)table didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     [self.quickBrowsersContainerController.popoverController dismissPopoverAnimated:YES];
-    [self.quickBrowsersContainerController.tab pushURL:[[self.quickBrowsersContainerController.tab.currentProject.bookmarks objectAtIndex:indexPath.row] URL]];
+    [self.quickBrowsersContainerController.tab pushURL:[[_sortedBookmarks objectAtIndex:indexPath.row] URL]];
 }
 
 @end
