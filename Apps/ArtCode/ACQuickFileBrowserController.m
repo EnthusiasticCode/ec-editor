@@ -65,7 +65,7 @@
 
 - (id)init
 {
-    self = [super init];
+    self = [super initWithNibName:nil bundle:nil];
     if (!self)
         return nil;
     self.tabBarItem = [[UITabBarItem alloc] initWithTitle:@"Files" image:nil tag:0];

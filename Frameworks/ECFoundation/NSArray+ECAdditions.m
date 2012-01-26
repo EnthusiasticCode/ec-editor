@@ -76,7 +76,7 @@
         return NSOrderedAscending;
     else if (self->score < wrapper->score)
         return NSOrderedDescending;
-    return [self->value compare:wrapper->value];
+    return [self->value respondsToSelector:@selector(compare:)] ? [self->value compare:wrapper->value] : NSOrderedSame;
 }
 
 - (BOOL)isEqual:(id)object

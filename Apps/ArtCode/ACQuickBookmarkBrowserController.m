@@ -10,6 +10,7 @@
 #import "ACQuickBrowsersContainerController.h"
 
 #import <ECFoundation/NSTimer+block.h>
+#import <ECFoundation/NSArray+ECAdditions.h>
 
 #import "ACTab.h"
 #import "ACProject.h"
@@ -21,11 +22,14 @@
     UISearchBar *_searchBar;
     UILabel *_infoLabel;
     NSTimer *_filterDebounceTimer;
+    
+    NSArray *_sortedBookmarks;
+    NSArray *_sortedBookmarksHitMasks;
 }
 
 - (id)init
 {
-    self = [super init];
+    self = [super initWithNibName:nil bundle:nil];
     if (!self)
         return nil;
     self.tabBarItem = [[UITabBarItem alloc] initWithTitle:@"Bookmarks" image:nil tag:0];
@@ -36,6 +40,27 @@
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     return [self init];
+}
+
+- (NSString *)_cellTitleForBookmark:(ACProjectBookmark *)bookmark
+{
+    NSUInteger bookmarkLine = [bookmark line];
+    if (bookmarkLine != 0)
+    {
+        NSInteger fragmentLocation = [bookmark.bookmarkPath rangeOfString:@"#"].location;
+        if (fragmentLocation != NSNotFound)
+        {
+            return [[bookmark.bookmarkPath substringToIndex:fragmentLocation] stringByAppendingFormat:@" - Line: %u", bookmarkLine];
+        }
+        else
+        {
+            return [bookmark.bookmarkPath stringByAppendingFormat:@" - Line: %u", bookmarkLine];
+        }
+    }
+    else
+    {
+        return bookmark.bookmarkPath;
+    }
 }
 
 #pragma mark - Properties
@@ -99,11 +124,34 @@
 	return YES;
 }
 
+#pragma mark - UISeachBar Delegate Methods
+
+- (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText
+{
+    // Apply filter to filterController with .3 second debounce
+    [_filterDebounceTimer invalidate];
+    _filterDebounceTimer = [NSTimer scheduledTimerWithTimeInterval:0.3 usingBlock:^(NSTimer *timer) {
+        NSArray *hitMasks = nil;
+        if ([searchText length] == 0)
+        {
+            _sortedBookmarks = nil;
+        }
+        else
+        {
+            _sortedBookmarks = [self.quickBrowsersContainerController.tab.currentProject.bookmarks sortedArrayUsingScoreForAbbreviation:searchText resultHitMasks:&hitMasks extrapolateTargetStringBlock:^NSString *(ACProjectBookmark *bookmark) {
+                return [self _cellTitleForBookmark:bookmark];
+            }];
+        }
+        _sortedBookmarksHitMasks = hitMasks;
+        [self.tableView reloadData];
+    } repeats:NO];
+}
+
 #pragma mark - Table view data source
 
 - (NSInteger)tableView:(UITableView *)table numberOfRowsInSection:(NSInteger)section
 {
-    return [self.quickBrowsersContainerController.tab.currentProject.bookmarks count];
+    return _sortedBookmarks ? [_sortedBookmarks count] : [self.quickBrowsersContainerController.tab.currentProject.bookmarks count];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)table cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -116,25 +164,11 @@
         cell.highlightLabel.highlightedBackgroundColor = [UIColor colorWithRed:225.0/255.0 green:220.0/255.0 blue:92.0/255.0 alpha:1];
     }
     
-    ACProjectBookmark *bookmark = [self.quickBrowsersContainerController.tab.currentProject.bookmarks objectAtIndex:indexPath.row];
+    ACProjectBookmark *bookmark = [(_sortedBookmarks ? _sortedBookmarks : self.quickBrowsersContainerController.tab.currentProject.bookmarks) objectAtIndex:indexPath.row];
     
-    NSUInteger bookmarkLine = [bookmark line];
-    if (bookmarkLine != 0)
-    {
-        NSInteger fragmentLocation = [bookmark.bookmarkPath rangeOfString:@"#"].location;
-        if (fragmentLocation != NSNotFound)
-        {
-            cell.textLabel.text = [[bookmark.bookmarkPath substringToIndex:fragmentLocation] stringByAppendingFormat:@" - Line: %u", bookmarkLine];
-        }
-        else
-        {
-            cell.textLabel.text = [bookmark.bookmarkPath stringByAppendingFormat:@" - Line: %u", bookmarkLine];
-        }
-    }
-    else
-    {
-        cell.textLabel.text = bookmark.bookmarkPath;
-    }
+    
+    cell.highlightLabel.text = [self _cellTitleForBookmark:bookmark];
+    cell.highlightLabel.highlightedCharacters = _sortedBookmarksHitMasks ? [_sortedBookmarksHitMasks objectAtIndex:indexPath.row] : nil;
     cell.detailTextLabel.text = bookmark.note;
     cell.imageView.image = [UIImage imageNamed:@"bookmarkTable_Icon"];
     
