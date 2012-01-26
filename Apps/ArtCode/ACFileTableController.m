@@ -630,7 +630,7 @@
     if (moveURL == nil)
         moveURL = directoryBrowser.URL;
     // Initialize conflict controller
-    ACMoveConflictController *conflictController = [[ACMoveConflictController alloc] initWithNibName:@"MoveConflictController" bundle:nil];
+    ACMoveConflictController *conflictController = [[ACMoveConflictController alloc] init];
     UIBarButtonItem *cancelItem = [[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonItemStylePlain target:self action:@selector(_directoryBrowserDismissAction:)];
     [cancelItem setBackgroundImage:[UIImage styleNormalButtonBackgroundImageForControlState:UIControlStateNormal] forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
     conflictController.navigationItem.leftBarButtonItem = cancelItem;
@@ -653,7 +653,7 @@
     if (moveURL == nil)
         moveURL = directoryBrowser.URL;
     // Initialize conflict controller
-    ACMoveConflictController *conflictController = [[ACMoveConflictController alloc] initWithNibName:@"MoveConflictController" bundle:nil];
+    ACMoveConflictController *conflictController = [[ACMoveConflictController alloc] init];
     UIBarButtonItem *cancelItem = [[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonItemStylePlain target:self action:@selector(_directoryBrowserDismissAction:)];
     [cancelItem setBackgroundImage:[UIImage styleNormalButtonBackgroundImageForControlState:UIControlStateNormal] forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
     conflictController.navigationItem.leftBarButtonItem = cancelItem;

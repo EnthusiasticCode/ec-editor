@@ -63,15 +63,20 @@
 
 #pragma mark - Controller lifecycle
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
+- (id)init
 {
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+    self = [super init];
     if (!self)
         return nil;
     self.tabBarItem = [[UITabBarItem alloc] initWithTitle:@"Files" image:nil tag:0];
     self.navigationItem.title = @"Open quickly";
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Show" style:UIBarButtonItemStyleDone target:self action:@selector(_showBrowserInTabAction:)];
     return self;
+}
+
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
+{
+    return [self init];
 }
 
 - (void)didReceiveMemoryWarning

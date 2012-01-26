@@ -26,6 +26,21 @@
 
 @synthesize conflictTableView, progressView;
 
+#pragma mark - Controller lifecycle
+
+- (id)init
+{
+    self = [super initWithNibName:@"MoveConflictController" bundle:nil];
+    if (!self)
+        return nil;
+    return self;
+}
+
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
+{
+    return [self init];
+}
+
 #pragma mark - View lifecycle
 
 - (void)loadView
