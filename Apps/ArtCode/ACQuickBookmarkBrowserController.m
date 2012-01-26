@@ -117,6 +117,7 @@
         }];
         _sortedBookmarksHitMasks = nil;
         [self.tableView reloadData];
+        _infoLabel.text = [_sortedBookmarks count] ? nil : [NSString stringWithFormat:@"%@ has no bookmarks.", self.quickBrowsersContainerController.tab.currentProject.name];
         return;
     }
     
@@ -128,6 +129,7 @@
         }];
         _sortedBookmarksHitMasks = hitMasks;
         [self.tableView reloadData];
+        _infoLabel.text = [_sortedBookmarks count] ? nil : @"No results matching the search string.";
     } repeats:NO];
 }
 
