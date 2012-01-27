@@ -17,6 +17,7 @@
 
 @property (nonatomic, strong) ACTab *tab;
 @property (nonatomic, weak) UIPopoverController *popoverController;
+@property (nonatomic, weak) UIButton *openingButton;
 
 @end
 

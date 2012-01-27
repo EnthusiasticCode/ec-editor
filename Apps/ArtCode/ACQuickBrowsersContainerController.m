@@ -35,7 +35,7 @@
 
 #pragma mark - Properties
 
-@synthesize tab, popoverController;
+@synthesize tab, popoverController, openingButton;
 
 - (void)setSelectedViewController:(UIViewController *)selectedViewController
 {
@@ -52,6 +52,18 @@
 }
 
 #pragma mark - View lifecycle
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    [self.openingButton setSelected:YES];
+}
+
+- (void)viewDidDisappear:(BOOL)animated
+{
+    [super viewDidDisappear:animated];
+    [self.openingButton setSelected:NO];
+}
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
