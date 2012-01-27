@@ -161,19 +161,20 @@
     NSMutableIndexSet *indexesOfInsertedFileURLs = [[NSMutableIndexSet alloc] init];
     NSMutableIndexSet *indexesOfRemovedFileURLs = [[NSMutableIndexSet alloc] init];
     
+    for (NSURL *fileURL in _batchRemoveFileURLs)
+    {
+        NSUInteger index = [self _indexOfFileURL:fileURL options:0];
+        ECASSERT(index != NSNotFound);
+        [indexesOfRemovedFileURLs addIndex:index];
+    }
+    [_mutableFileURLs removeObjectsAtIndexes:indexesOfRemovedFileURLs];
+    [_batchInsertFileURLs sortUsingComparator:[self _fileURLComparatorBlock]];
     for (NSURL *fileURL in _batchInsertFileURLs)
     {
         ECASSERT([self _indexOfFileURL:fileURL options:0] == NSNotFound);
         NSUInteger index = [self _indexOfFileURL:fileURL options:NSBinarySearchingInsertionIndex];
         index == [_mutableFileURLs count] ? [_mutableFileURLs addObject:fileURL] : [_mutableFileURLs insertObject:fileURL atIndex:index];
         [indexesOfInsertedFileURLs addIndex:index];
-    }
-    for (NSURL *fileURL in _batchRemoveFileURLs)
-    {
-        NSUInteger index = [self _indexOfFileURL:fileURL options:0];
-        ECASSERT(index != NSNotFound);
-        [_mutableFileURLs removeObjectAtIndex:index];
-        [indexesOfRemovedFileURLs addIndex:index];
     }
     if (_delegateFlags.didInsertRemoveChange)
         [[_delegate delegateOperationQueue] addOperationWithBlock:^{

@@ -50,50 +50,36 @@
     int returnCode = -1;
     for (;;)
     {
-        struct archive_entry *entry;        
+        struct archive_entry *entry;
         returnCode = archive_read_next_header(archive, &entry);
         if (returnCode < 0)
-        {
-            archive_entry_free(entry);
             break;
-        }
         returnCode = archive_write_header(output, entry);
         if (returnCode < 0)
-        {
-            archive_entry_free(entry);
             break;
-        }
         const void *buff;
         size_t size;
         off_t offset;
         for (;;)
         {
             returnCode = archive_read_data_block(archive, (const void **)&buff, &size, &offset);
-            if (returnCode < 0)
-            {
-                archive_entry_free(entry);
+            if (returnCode != 0)
                 break;
-            }
             returnCode = archive_write_data_block(output, buff, size, offset);
             if (returnCode < 0)
-            {
-                archive_entry_free(entry);
                 break;
-            }
         }
         if (returnCode < 0)
-        {
-            archive_entry_free(entry);
             break;
-        }
-        archive_entry_free(entry);
+        returnCode = archive_write_finish_entry(output);
+        if (returnCode < 0)
+            break;
     }
-    if (returnCode >= 0)
-        for (NSURL *fileURL in [fileManager contentsOfDirectoryAtURL:workingDirectory includingPropertiesForKeys:nil options:0 error:NULL])
-        {
-            NSURL *destinationURL = [directoryURL URLByAppendingPathComponent:[fileURL lastPathComponent]];
-            [fileManager moveItemAtURL:fileURL toURL:destinationURL error:NULL];
-        }
+    for (NSURL *fileURL in [fileManager contentsOfDirectoryAtURL:workingDirectory includingPropertiesForKeys:nil options:0 error:NULL])
+    {
+        NSURL *destinationURL = [directoryURL URLByAppendingPathComponent:[fileURL lastPathComponent]];
+        [fileManager moveItemAtURL:fileURL toURL:destinationURL error:NULL];
+    }
     archive_write_close(output);
     archive_write_free(output);
     archive_read_close(archive);
