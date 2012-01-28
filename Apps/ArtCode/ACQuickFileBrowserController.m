@@ -23,6 +23,7 @@
 @property (nonatomic, strong, readonly) ECSmartFilteredDirectoryPresenter *directoryPresenter;
 
 - (void)_showBrowserInTabAction:(id)sender;
+- (void)_showProjectsInTabAction:(id)sender;
 
 @end
 
@@ -74,6 +75,9 @@
     self.tabBarItem = [[UITabBarItem alloc] initWithTitle:@"Files" image:nil tag:0];
     self.navigationItem.title = @"Open quickly";
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Show" style:UIBarButtonItemStyleDone target:self action:@selector(_showBrowserInTabAction:)];
+    UIBarButtonItem *backToProjectsItem = [[UIBarButtonItem alloc] initWithTitle:@"Projects" style:UIBarButtonItemStylePlain target:self action:@selector(_showProjectsInTabAction:)];
+    [backToProjectsItem setBackgroundImage:[UIImage styleNormalButtonBackgroundImageForControlState:UIControlStateNormal] forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
+    self.navigationItem.leftBarButtonItem = backToProjectsItem;
     return self;
 }
 
@@ -236,6 +240,12 @@
 {
     [self.quickBrowsersContainerController.popoverController dismissPopoverAnimated:YES];
     [self.quickBrowsersContainerController.tab pushURL:[self.quickBrowsersContainerController.tab.currentProject URL]];
+}
+
+- (void)_showProjectsInTabAction:(id)sender
+{
+    [self.quickBrowsersContainerController.popoverController dismissPopoverAnimated:YES];
+    [self.quickBrowsersContainerController.tab pushURL:[ACProject projectsDirectory]];
 }
 
 @end

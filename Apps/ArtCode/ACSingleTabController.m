@@ -38,7 +38,7 @@ static const void *contentViewControllerContext;
 - (void)_setupDefaultToolbarTitle;
 
 /// Routing method that resolve an URL to the view controller that can handle it.
-- (UIViewController *)_viewControllerWithURL:(NSURL *)url;
+- (UIViewController *)_routeViewControllerWithURL:(NSURL *)url;
 
 - (void)_defaultToolbarTitleButtonAction:(id)sender;
 - (void)_historyBackAction:(id)sender;
@@ -336,7 +336,7 @@ static const void *contentViewControllerContext;
     {
         self.defaultToolbar.backButton.enabled = self.tab.canMoveBackInHistory;
         self.defaultToolbar.forwardButton.enabled = self.tab.canMoveForwardInHistory;
-        [self setContentViewController:[self _viewControllerWithURL:self.tab.currentURL] animated:YES];
+        [self setContentViewController:[self _routeViewControllerWithURL:self.tab.currentURL] animated:YES];
     }
     else if (context == &contentViewControllerContext)
     {
@@ -452,7 +452,7 @@ static const void *contentViewControllerContext;
     self.defaultToolbar.titleControl.backgroundButton.enabled = [(UIViewController<ACSingleTabContentController> *)_contentViewController singleTabController:self shouldEnableTitleControlForDefaultToolbar:self.defaultToolbar];
 }
 
-- (UIViewController *)_viewControllerWithURL:(NSURL *)url
+- (UIViewController *)_routeViewControllerWithURL:(NSURL *)url
 {
     UIViewController *result = nil;
     ECFileCoordinator *fileCoordinator = [[ECFileCoordinator alloc] initWithFilePresenter:nil];
@@ -460,7 +460,7 @@ static const void *contentViewControllerContext;
     __block BOOL currentURLExists = NO;
     __block BOOL currentURLIsDirectory = NO;
     [fileCoordinator coordinateReadingItemAtURL:url options:0 error:NULL byAccessor:^(NSURL *newURL) {
-        currentURLIsEqualToProjectsDirectory = [newURL isEqual:[self.tab.application projectsDirectory]];
+        currentURLIsEqualToProjectsDirectory = [newURL isEqual:[ACProject projectsDirectory]];
         NSFileManager *fileManager = [[NSFileManager alloc] init];
         currentURLExists = [fileManager fileExistsAtPath:[newURL path] isDirectory:&currentURLIsDirectory];
     }];

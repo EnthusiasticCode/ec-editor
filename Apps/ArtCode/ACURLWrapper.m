@@ -7,7 +7,8 @@
 //
 
 #import "ACURLWrapper.h"
-#import "ACApplication.h"
+
+#import "ACProject.h"
 
 @implementation ACURLWrapper
 
@@ -18,13 +19,13 @@
     NSURL *URL = [NSURL URLWithString:[self primitiveValueForKey:@"URL"]];
     if ([URL scheme])
         return URL;
-    return [[self.application projectsDirectory] URLByAppendingPathComponent:[self primitiveValueForKey:@"URL"]];
+    return [[ACProject projectsDirectory] URLByAppendingPathComponent:[self primitiveValueForKey:@"URL"]];
 }
 
 - (void)setURL:(NSURL *)URL
 {
     [self willChangeValueForKey:@"URL"];
-    NSString *string = [self.application pathRelativeToProjectsDirectory:URL];
+    NSString *string = [ACProject pathRelativeToProjectsDirectory:URL];
     if (!string)
         string = [URL absoluteString];
     ECASSERT(string);

@@ -10,7 +10,6 @@
 #import "ACTab.h"
 #import <ECFoundation/NSURL+ECAdditions.h>
 
-static NSString * const ACProjectListDirectoryName = @"ACLocalProjects";
 
 @interface ACApplication ()
 @property (nonatomic) NSUInteger _projectsDirectoryPathComponentsCount;
@@ -55,31 +54,6 @@ static NSString * const ACProjectListDirectoryName = @"ACLocalProjects";
 - (void)exchangeProjectAtIndex:(NSUInteger)fromIndex withProjectAtIndex:(NSUInteger)toIndex
 {
     [[self mutableOrderedSetValueForKey:@"projects"] exchangeObjectAtIndex:fromIndex withObjectAtIndex:toIndex];
-}
-
-- (NSURL *)projectsDirectory
-{
-    return [[NSURL applicationLibraryDirectory] URLByAppendingPathComponent:ACProjectListDirectoryName isDirectory:YES];
-}
-
-- (NSString *)pathRelativeToProjectsDirectory:(NSURL *)fileURL
-{
-    if (![fileURL isFileURL])
-        return nil;
-    NSArray *pathComponents = [[fileURL URLByStandardizingPath] pathComponents];
-    if (![[pathComponents subarrayWithRange:NSMakeRange(0, self._projectsDirectoryPathComponentsCount)] isEqualToArray:[[self projectsDirectory] pathComponents]])
-        return nil;
-    pathComponents = [pathComponents subarrayWithRange:NSMakeRange(self._projectsDirectoryPathComponentsCount, [pathComponents count] - self._projectsDirectoryPathComponentsCount)];
-    return [NSString pathWithComponents:pathComponents];
-}
-
-- (NSUInteger)_projectsDirectoryPathComponentsCount
-{
-    if (!__projectsDirectoryPathComponentsCount)
-    {
-        __projectsDirectoryPathComponentsCount = [[[self projectsDirectory] pathComponents] count];
-    }
-    return __projectsDirectoryPathComponentsCount;
 }
 
 @end

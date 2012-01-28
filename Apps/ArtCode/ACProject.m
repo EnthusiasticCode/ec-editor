@@ -273,7 +273,31 @@ static ECCache *openProjects = nil;
 
 + (NSURL *)projectsDirectory
 {
-    return [[NSURL applicationLibraryDirectory] URLByAppendingPathComponent:ACProjectsDirectoryName isDirectory:YES];
+    static NSURL *_projectsDirecotry = nil;
+    if (!_projectsDirecotry)
+        _projectsDirecotry = [[NSURL applicationLibraryDirectory] URLByAppendingPathComponent:ACProjectsDirectoryName isDirectory:YES];
+    return _projectsDirecotry;
+}
+
++ (NSUInteger)_projectsDirectoryPathComponentsCount
+{
+    static NSUInteger __projectsDirectoryPathComponentsCount = 0;
+    if (!__projectsDirectoryPathComponentsCount)
+    {
+        __projectsDirectoryPathComponentsCount = [[[self projectsDirectory] pathComponents] count];
+    }
+    return __projectsDirectoryPathComponentsCount;
+}
+
++ (NSString *)pathRelativeToProjectsDirectory:(NSURL *)fileURL
+{
+    if (![fileURL isFileURL])
+        return nil;
+    NSArray *pathComponents = [[fileURL URLByStandardizingPath] pathComponents];
+    if (![[pathComponents subarrayWithRange:NSMakeRange(0, self._projectsDirectoryPathComponentsCount)] isEqualToArray:[[self projectsDirectory] pathComponents]])
+        return nil;
+    pathComponents = [pathComponents subarrayWithRange:NSMakeRange(self._projectsDirectoryPathComponentsCount, [pathComponents count] - self._projectsDirectoryPathComponentsCount)];
+    return [NSString pathWithComponents:pathComponents];
 }
 
 + (NSString *)projectNameFromURL:(NSURL *)url isProjectRoot:(BOOL *)isProjectRoot
