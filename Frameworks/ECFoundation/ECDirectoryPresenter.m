@@ -55,6 +55,10 @@
     if (!self)
         return nil;
     _directoryURL = directoryURL;
+    _options = options;
+    _internalAccessQueue = dispatch_queue_create(NULL, DISPATCH_QUEUE_CONCURRENT);
+    _presentedItemOperationQueue = [[NSOperationQueue alloc] init];
+    _presentedItemOperationQueue.maxConcurrentOperationCount = 1;
     _mutableFileURLs = [[NSMutableArray alloc] init];
     ECFileCoordinator *fileCoordinator = [[ECFileCoordinator alloc] initWithFilePresenter:nil];
     [fileCoordinator coordinateReadingItemAtURL:directoryURL options:0 error:NULL byAccessor:^(NSURL *newURL) {
@@ -63,10 +67,6 @@
             [_mutableFileURLs addObject:fileURL];
         [ECFileCoordinator addFilePresenter:self];
     }];
-    _options = options;
-    _internalAccessQueue = dispatch_queue_create(NULL, DISPATCH_QUEUE_CONCURRENT);
-    _presentedItemOperationQueue = [[NSOperationQueue alloc] init];
-    _presentedItemOperationQueue.maxConcurrentOperationCount = 1;
     return self;
 }
 
