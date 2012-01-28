@@ -11,6 +11,7 @@
 #import "ACTab.h"
 #import "ACQuickFileBrowserController.h"
 #import "ACQuickBookmarkBrowserController.h"
+#import "ACQuickProjectInfoController.h"
 
 @implementation ACQuickBrowsersContainerController
 
@@ -24,7 +25,7 @@
     [[NSFileManager defaultManager] fileExistsAtPath:[tab.currentURL path] isDirectory:&isDirectory];
     if (isDirectory)
     {
-        [result setViewControllers:[NSArray arrayWithObjects:[ACQuickFileBrowserController new], [ACQuickBookmarkBrowserController new], nil] animated:NO];
+        [result setViewControllers:[NSArray arrayWithObjects: [ACQuickProjectInfoController new],[ACQuickFileBrowserController new], [ACQuickBookmarkBrowserController new], nil] animated:NO];
     }
     else
     {

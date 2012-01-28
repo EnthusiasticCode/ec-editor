@@ -10,7 +10,6 @@
 #import "ACSingleTabController.h"
 
 #import "AppStyle.h"
-#import "ACColorSelectionControl.h"
 #import "ACHighlightTableViewCell.h"
 
 #import "ACNewFileController.h"
@@ -32,11 +31,11 @@
 #import "ACQuickFileBrowserController.h"
 #import "ACQuickBookmarkBrowserController.h"
 
+static void *currentProjectContext;
+
 
 @interface ACFileTableController () {
-    UIButton *_projectColorLabelButton;
-    UITextField *_projectTitleLabelTextField;
-    UIPopoverController *_projectColorLabelPopover;
+    UIImageView *_projectLabelView;
     
     NSArray *_toolNormalItems;
     NSArray *_toolEditItems;
@@ -138,6 +137,8 @@
 
 - (void)viewDidUnload
 {
+    _projectLabelView = nil;
+    
     _toolNormalAddPopover = nil;
     
     _toolEditItemDeleteActionSheet = nil;
@@ -163,6 +164,8 @@
     _openQuicklyPresenter.delegate = self;
     
     [_selectedURLs removeAllObjects];
+    
+    [self.tab.currentProject addObserver:self forKeyPath:@"labelColor" options:NSKeyValueObservingOptionNew context:&currentProjectContext];
 }
 
 - (void)viewDidDisappear:(BOOL)animated
@@ -172,6 +175,8 @@
     _directoryPresenter = nil;
     _openQuicklyPresenter = nil;
     _selectedURLs = nil;
+    
+    [self.tab.currentProject removeObserver:self forKeyPath:@"labelColor" context:&currentProjectContext];
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
@@ -184,9 +189,6 @@
     [self willChangeValueForKey:@"editing"];
     
     [super setEditing:editing animated:animated];
-    
-    self.singleTabController.defaultToolbar.titleControl.backgroundButton.enabled = !editing;
-    _projectColorLabelButton.enabled = _projectTitleLabelTextField.enabled = editing;
     
     [_selectedURLs removeAllObjects];
     
@@ -206,42 +208,20 @@
     [self didChangeValueForKey:@"editing"];
 }
 
-#pragma mark - Single tab content controller protocol methods
-
-- (void)_projectColorLabelSelectionAction:(id)sender
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
-    self.tab.currentProject.labelColor = [(ACColorSelectionControl *)sender selectedColor];
-    [_projectColorLabelButton setImage:[UIImage styleProjectLabelImageWithSize:CGSizeMake(14, 22) color:self.tab.currentProject.labelColor] forState:UIControlStateNormal];
-    [_projectColorLabelPopover dismissPopoverAnimated:YES];
-}
-
-- (void)_projectColorLabelAction:(id)sender
-{
-    if (!_projectColorLabelPopover)
+    if (context == &currentProjectContext)
     {
-        ACColorSelectionControl *colorControl = [ACColorSelectionControl new];
-        colorControl.colorCellsMargin = 2;
-        colorControl.columns = 3;
-        colorControl.rows = 2;
-        colorControl.colors = [NSArray arrayWithObjects:
-                               [UIColor colorWithRed:255./255. green:106./255. blue:89./255. alpha:1], 
-                               [UIColor colorWithRed:255./255. green:184./255. blue:62./255. alpha:1], 
-                               [UIColor colorWithRed:237./255. green:233./255. blue:68./255. alpha:1],
-                               [UIColor colorWithRed:168./255. green:230./255. blue:75./255. alpha:1],
-                               [UIColor colorWithRed:93./255. green:157./255. blue:255./255. alpha:1],
-                               [UIColor styleForegroundColor], nil];
-        [colorControl addTarget:self action:@selector(_projectColorLabelSelectionAction:) forControlEvents:UIControlEventTouchUpInside];
-        
-        UIViewController *viewController = [UIViewController new];
-        viewController.contentSizeForViewInPopover = CGSizeMake(145, 90);
-        viewController.view = colorControl;
-        
-        _projectColorLabelPopover = [[UIPopoverController alloc] initWithContentViewController:viewController];
-        _projectColorLabelPopover.popoverBackgroundViewClass = [ACShapePopoverBackgroundView class];
+        if ([keyPath isEqualToString:@"labelColor"])
+            _projectLabelView.image = [UIImage styleProjectLabelImageWithSize:CGSizeMake(12, 22) color:self.tab.currentProject.labelColor];
     }
-    
-    [_projectColorLabelPopover presentPopoverFromRect:[sender frame] inView:[sender superview] permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
+    else
+    {
+        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+    }
 }
+
+#pragma mark - Single tab content controller protocol methods
 
 - (BOOL)singleTabController:(ACSingleTabController *)singleTabController shouldEnableTitleControlForDefaultToolbar:(ACTopBarToolbar *)toolbar
 {
@@ -275,47 +255,11 @@
     }
     else
     {
-        if (!_projectColorLabelButton)
-        {
-            _projectColorLabelButton  = [UIButton buttonWithType:UIButtonTypeCustom];
-            _projectColorLabelButton.adjustsImageWhenDisabled = NO;
-            [_projectColorLabelButton addTarget:self action:@selector(_projectColorLabelAction:) forControlEvents:UIControlEventTouchUpInside];
-        }
-        [_projectColorLabelButton setImage:[UIImage styleProjectLabelImageWithSize:CGSizeMake(14, 22) color:self.tab.currentProject.labelColor] forState:UIControlStateNormal];
-        [_projectColorLabelButton sizeToFit];
-        _projectColorLabelButton.enabled = self.isEditing;
-        
-        if (!_projectTitleLabelTextField)
-        {
-            _projectTitleLabelTextField = [UITextField new];
-            _projectTitleLabelTextField.delegate = self;
-            _projectTitleLabelTextField.font = [UIFont boldSystemFontOfSize:20];
-            _projectTitleLabelTextField.textColor = [UIColor whiteColor];
-            _projectTitleLabelTextField.returnKeyType = UIReturnKeyDone;
-        }
-        _projectTitleLabelTextField.text = projectName;
-        [_projectTitleLabelTextField sizeToFit];
-        _projectTitleLabelTextField.enabled = self.isEditing;
-        
-        [titleControl setTitleFragments:[NSArray arrayWithObjects:_projectColorLabelButton, _projectTitleLabelTextField, nil] 
+        _projectLabelView = [[UIImageView alloc] initWithImage:[UIImage styleProjectLabelImageWithSize:CGSizeMake(12, 22) color:self.tab.currentProject.labelColor]];
+        [titleControl setTitleFragments:[NSArray arrayWithObjects:_projectLabelView, projectName, nil] 
                         selectedIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, 2)]];
     }
     return YES;
-}
-
-#pragma mark - Text Field delefate
-
-- (void)textFieldDidEndEditing:(UITextField *)textField
-{
-    NSString *projectName = [ACProject projectNameFromURL:self.tab.currentURL isProjectRoot:NULL];
-    if ([textField.text length] == 0 || [projectName isEqualToString:textField.text])
-        return;
-    
-#warning TODO check that the name is ok
-    
-    self.tab.currentProject.name = textField.text;
-    
-    // File coordination will care about changing the tab url and hence reload the controller
 }
 
 #pragma mark - Table view data source

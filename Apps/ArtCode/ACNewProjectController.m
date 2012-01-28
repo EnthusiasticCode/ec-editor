@@ -53,16 +53,6 @@
     {
         ACColorSelectionControl *colorSelectionControl = [[ACColorSelectionControl alloc] initWithFrame:CGRectMake(0, 0, 300, 200)];
         [colorSelectionControl addTarget:self action:@selector(_selectColorAction:) forControlEvents:UIControlEventTouchUpInside];
-        colorSelectionControl.colorCellsMargin = 2;
-        colorSelectionControl.columns = 3;
-        colorSelectionControl.rows = 2;
-        colorSelectionControl.colors = [NSArray arrayWithObjects:
-                               [UIColor colorWithRed:255./255. green:106./255. blue:89./255. alpha:1], 
-                               [UIColor colorWithRed:255./255. green:184./255. blue:62./255. alpha:1], 
-                               [UIColor colorWithRed:237./255. green:233./255. blue:68./255. alpha:1],
-                               [UIColor colorWithRed:168./255. green:230./255. blue:75./255. alpha:1],
-                               [UIColor colorWithRed:93./255. green:157./255. blue:255./255. alpha:1],
-                               [UIColor styleForegroundColor], nil];
 
         changeColorController = [UIViewController new];
         changeColorController.view = colorSelectionControl;

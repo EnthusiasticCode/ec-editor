@@ -86,6 +86,8 @@
 		CD1973ED14B1D2B200CACF5E /* topBarItem_Edit.png in Resources */ = {isa = PBXBuildFile; fileRef = CD1973EC14B1D2B200CACF5E /* topBarItem_Edit.png */; };
 		CD1973EF14B1D4F600CACF5E /* topBarItem_Tools.png in Resources */ = {isa = PBXBuildFile; fileRef = CD1973EE14B1D4F600CACF5E /* topBarItem_Tools.png */; };
 		CD217EAC14D40A7E001AEA41 /* NSString+AppStyle.m in Sources */ = {isa = PBXBuildFile; fileRef = CD217EAB14D40A7E001AEA41 /* NSString+AppStyle.m */; };
+		CD217EB214D412F1001AEA41 /* QuickProjectInfo.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CD217EB114D412F1001AEA41 /* QuickProjectInfo.storyboard */; };
+		CD217EB514D41D95001AEA41 /* ACQuickProjectInfoController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD217EB414D41D95001AEA41 /* ACQuickProjectInfoController.m */; };
 		CD2568C31450D44000A3CCDE /* topBar_BackButton_Normal.png in Resources */ = {isa = PBXBuildFile; fileRef = CD2568C21450D44000A3CCDE /* topBar_BackButton_Normal.png */; };
 		CD2568C71450D5B600A3CCDE /* topBar_ToolButton_Normal.png in Resources */ = {isa = PBXBuildFile; fileRef = CD2568C61450D5B600A3CCDE /* topBar_ToolButton_Normal.png */; };
 		CD2BA05A14CFF65700031E78 /* ACQuickBookmarkBrowserController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD2BA05914CFF65700031E78 /* ACQuickBookmarkBrowserController.m */; };
@@ -360,6 +362,9 @@
 		CD1973EE14B1D4F600CACF5E /* topBarItem_Tools.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = topBarItem_Tools.png; sourceTree = "<group>"; };
 		CD217EAA14D40A7E001AEA41 /* NSString+AppStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+AppStyle.h"; sourceTree = "<group>"; };
 		CD217EAB14D40A7E001AEA41 /* NSString+AppStyle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+AppStyle.m"; sourceTree = "<group>"; };
+		CD217EB114D412F1001AEA41 /* QuickProjectInfo.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = QuickProjectInfo.storyboard; sourceTree = "<group>"; };
+		CD217EB314D41D95001AEA41 /* ACQuickProjectInfoController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACQuickProjectInfoController.h; sourceTree = "<group>"; };
+		CD217EB414D41D95001AEA41 /* ACQuickProjectInfoController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACQuickProjectInfoController.m; sourceTree = "<group>"; };
 		CD2568C21450D44000A3CCDE /* topBar_BackButton_Normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = topBar_BackButton_Normal.png; sourceTree = "<group>"; };
 		CD2568C61450D5B600A3CCDE /* topBar_ToolButton_Normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = topBar_ToolButton_Normal.png; sourceTree = "<group>"; };
 		CD2BA05814CFF65700031E78 /* ACQuickBookmarkBrowserController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACQuickBookmarkBrowserController.h; sourceTree = "<group>"; };
@@ -742,6 +747,8 @@
 				CD7B435314CECA9900090CAE /* ACQuickFileBrowserController.m */,
 				CD2BA05814CFF65700031E78 /* ACQuickBookmarkBrowserController.h */,
 				CD2BA05914CFF65700031E78 /* ACQuickBookmarkBrowserController.m */,
+				CD217EB314D41D95001AEA41 /* ACQuickProjectInfoController.h */,
+				CD217EB414D41D95001AEA41 /* ACQuickProjectInfoController.m */,
 			);
 			name = "Quick Browsers";
 			sourceTree = "<group>";
@@ -859,6 +866,7 @@
 				B78077E014869701006C0C6B /* ProjectCell.xib */,
 				CD7BC79314B7059000313CDB /* RemoteOptions.xib */,
 				CDB5DB6E14C849EA003DFD1F /* MoveConflictController.xib */,
+				CD217EB114D412F1001AEA41 /* QuickProjectInfo.storyboard */,
 			);
 			name = UI;
 			sourceTree = "<group>";
@@ -1356,6 +1364,7 @@
 				CDB5DB6F14C849EA003DFD1F /* MoveConflictController.xib in Resources */,
 				CD8609F614CC515E00BF90CB /* bookmarkTable_Icon.png in Resources */,
 				CDF87A9D14CD85E500EED579 /* topBar_Secondary_Background.png in Resources */,
+				CD217EB214D412F1001AEA41 /* QuickProjectInfo.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1409,6 +1418,7 @@
 				CD7B435414CECA9900090CAE /* ACQuickFileBrowserController.m in Sources */,
 				CD2BA05A14CFF65700031E78 /* ACQuickBookmarkBrowserController.m in Sources */,
 				CD217EAC14D40A7E001AEA41 /* NSString+AppStyle.m in Sources */,
+				CD217EB514D41D95001AEA41 /* ACQuickProjectInfoController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
