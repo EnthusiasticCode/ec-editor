@@ -35,7 +35,7 @@ static void *currentProjectContext;
 
 
 @interface ACFileTableController () {
-    UIImageView *_projectLabelView;
+    ACProject *_currentObservedProject;
     
     NSArray *_toolNormalItems;
     NSArray *_toolEditItems;
@@ -137,8 +137,6 @@ static void *currentProjectContext;
 
 - (void)viewDidUnload
 {
-    _projectLabelView = nil;
-    
     _toolNormalAddPopover = nil;
     
     _toolEditItemDeleteActionSheet = nil;
@@ -165,7 +163,9 @@ static void *currentProjectContext;
     
     [_selectedURLs removeAllObjects];
     
-    [self.tab.currentProject addObserver:self forKeyPath:@"labelColor" options:NSKeyValueObservingOptionNew context:&currentProjectContext];
+    _currentObservedProject = self.tab.currentProject;
+    [_currentObservedProject addObserver:self forKeyPath:@"labelColor" options:NSKeyValueObservingOptionNew context:&currentProjectContext];
+    [_currentObservedProject addObserver:self forKeyPath:@"name" options:NSKeyValueObservingOptionNew context:&currentProjectContext];
 }
 
 - (void)viewDidDisappear:(BOOL)animated
@@ -176,7 +176,9 @@ static void *currentProjectContext;
     _openQuicklyPresenter = nil;
     _selectedURLs = nil;
     
-    [self.tab.currentProject removeObserver:self forKeyPath:@"labelColor" context:&currentProjectContext];
+    [_currentObservedProject removeObserver:self forKeyPath:@"labelColor" context:&currentProjectContext];
+    [_currentObservedProject removeObserver:self forKeyPath:@"name" context:&currentProjectContext];
+    _currentObservedProject = nil;
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
@@ -212,8 +214,7 @@ static void *currentProjectContext;
 {
     if (context == &currentProjectContext)
     {
-        if ([keyPath isEqualToString:@"labelColor"])
-            _projectLabelView.image = [UIImage styleProjectLabelImageWithSize:CGSizeMake(12, 22) color:self.tab.currentProject.labelColor];
+        [self.singleTabController updateDefaultToolbarTitle];
     }
     else
     {
@@ -255,8 +256,7 @@ static void *currentProjectContext;
     }
     else
     {
-        _projectLabelView = [[UIImageView alloc] initWithImage:[UIImage styleProjectLabelImageWithSize:CGSizeMake(12, 22) color:self.tab.currentProject.labelColor]];
-        [titleControl setTitleFragments:[NSArray arrayWithObjects:_projectLabelView, projectName, nil] 
+        [titleControl setTitleFragments:[NSArray arrayWithObjects:[UIImage styleProjectLabelImageWithSize:CGSizeMake(12, 22) color:self.tab.currentProject.labelColor], projectName, nil] 
                         selectedIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, 2)]];
     }
     return YES;

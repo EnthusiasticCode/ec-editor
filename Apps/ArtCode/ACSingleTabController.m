@@ -34,9 +34,6 @@ static const void *contentViewControllerContext;
 /// Will setup the toolbar items.
 - (void)_setupDefaultToolbarItemsAnimated:(BOOL)animated;
 
-/// Will setup the title control by enabling it and setting the labels according to the current URL.
-- (void)_setupDefaultToolbarTitle;
-
 /// Routing method that resolve an URL to the view controller that can handle it.
 - (UIViewController *)_routeViewControllerWithURL:(NSURL *)url;
 
@@ -345,7 +342,7 @@ static const void *contentViewControllerContext;
         else if ([keyPath isEqualToString:@"toolbarItems"])
             [self _setupDefaultToolbarItemsAnimated:YES];
         else if ([keyPath isEqualToString:@"title"])
-            [self _setupDefaultToolbarTitle];
+            [self updateDefaultToolbarTitle];
         else if ([keyPath isEqualToString:@"loading"])
             self.defaultToolbar.titleControl.loadingMode = [object isLoading];
     }
@@ -375,6 +372,39 @@ static const void *contentViewControllerContext;
 - (void)viewDidAppear:(BOOL)animated
 {
     [self _setupDefaultToolbarItemsAnimated:NO];
+}
+
+#pragma mark - Public methods
+
+- (void)updateDefaultToolbarTitle
+{
+    if (![_contentViewController respondsToSelector:@selector(singleTabController:setupDefaultToolbarTitleControl:)]
+        || ![(UIViewController<ACSingleTabContentController> *)_contentViewController singleTabController:self setupDefaultToolbarTitleControl:self.defaultToolbar.titleControl])
+    {
+        if ([_contentViewController.title length] > 0)
+        {
+            [self.defaultToolbar.titleControl setTitleFragments:[NSArray arrayWithObject:_contentViewController.title] selectedIndexes:nil];
+        }
+        else
+        {
+            NSArray *pathComponents = [[ACProject pathRelativeToProjectsDirectory:self.tab.currentURL] pathComponents];
+            NSMutableString *path = [NSMutableString stringWithString:[[pathComponents objectAtIndex:0] stringByDeletingPathExtension]];
+            NSInteger lastIndex = [pathComponents count] - 1;
+            [pathComponents enumerateObjectsUsingBlock:^(NSString *component, NSUInteger idx, BOOL *stop) {
+                if (idx == 0 || idx == lastIndex)
+                    return;
+                [path appendFormat:@"/%@", component];
+            }];
+            [self.defaultToolbar.titleControl setTitleFragments:[NSArray arrayWithObjects:path, [pathComponents lastObject], nil] selectedIndexes:nil];
+            // TODO parse URL query to determine images etc...
+            //            [self.defaultToolbar.titleControl setTitleFragments:[NSArray arrayWithObjects:
+            //                                                               [currentURL.path stringByDeletingLastPathComponent],
+            //                                                               [currentURL lastPathComponent], nil] 
+            //                                                selectedIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(1, 1)]];
+        }
+    }
+    
+    self.defaultToolbar.titleControl.backgroundButton.enabled = [(UIViewController<ACSingleTabContentController> *)_contentViewController singleTabController:self shouldEnableTitleControlForDefaultToolbar:self.defaultToolbar];
 }
 
 #pragma mark - Private methods
@@ -418,38 +448,6 @@ static const void *contentViewControllerContext;
     
     self.defaultToolbar.editItem = _contentViewController.editButtonItem;
     [self.defaultToolbar setToolItems:_contentViewController.toolbarItems animated:animated];
-}
-
-- (void)_setupDefaultToolbarTitle
-{
-    if (![_contentViewController respondsToSelector:@selector(singleTabController:setupDefaultToolbarTitleControl:)]
-        || ![(UIViewController<ACSingleTabContentController> *)_contentViewController singleTabController:self setupDefaultToolbarTitleControl:self.defaultToolbar.titleControl])
-    {
-        if ([_contentViewController.title length] > 0)
-        {
-            [self.defaultToolbar.titleControl setTitleFragments:[NSArray arrayWithObject:_contentViewController.title] selectedIndexes:nil];
-        }
-        else
-        {
-            NSString *currentPath = [self.tab.currentURL path];
-            NSArray *pathComponents = [[currentPath substringFromIndex:MIN([[[ACProject projectsDirectory] path] length] + 1, [currentPath length])] pathComponents];
-            NSMutableString *path = [NSMutableString stringWithString:[[pathComponents objectAtIndex:0] stringByDeletingPathExtension]];
-            NSInteger lastIndex = [pathComponents count] - 1;
-            [pathComponents enumerateObjectsUsingBlock:^(NSString *component, NSUInteger idx, BOOL *stop) {
-                if (idx == 0 || idx == lastIndex)
-                    return;
-                [path appendFormat:@"/%@", component];
-            }];
-            [self.defaultToolbar.titleControl setTitleFragments:[NSArray arrayWithObjects:path, [pathComponents lastObject], nil] selectedIndexes:nil];
-            // TODO parse URL query to determine images etc...
-//            [self.defaultToolbar.titleControl setTitleFragments:[NSArray arrayWithObjects:
-//                                                               [currentURL.path stringByDeletingLastPathComponent],
-//                                                               [currentURL lastPathComponent], nil] 
-//                                                selectedIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(1, 1)]];
-        }
-    }
-    
-    self.defaultToolbar.titleControl.backgroundButton.enabled = [(UIViewController<ACSingleTabContentController> *)_contentViewController singleTabController:self shouldEnableTitleControlForDefaultToolbar:self.defaultToolbar];
 }
 
 - (UIViewController *)_routeViewControllerWithURL:(NSURL *)url

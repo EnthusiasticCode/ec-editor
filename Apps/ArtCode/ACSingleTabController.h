@@ -25,6 +25,7 @@
 @property (nonatomic, strong) IBOutlet ACTopBarToolbar *defaultToolbar;
 @property (nonatomic, readonly, strong) UIView *currentToolbarView;
 @property (nonatomic, strong) UIViewController *toolbarViewController;
+- (void)updateDefaultToolbarTitle;
 - (void)setToolbarViewController:(UIViewController *)toolbarViewController animated:(BOOL)animated;
 
 @property (nonatomic) CGFloat toolbarHeight;
