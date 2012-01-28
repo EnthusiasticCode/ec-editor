@@ -85,6 +85,7 @@
 		B7D3BE761431BA3A00BF43EB /* Application.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = B7D3BE741431BA3A00BF43EB /* Application.xcdatamodeld */; };
 		CD1973ED14B1D2B200CACF5E /* topBarItem_Edit.png in Resources */ = {isa = PBXBuildFile; fileRef = CD1973EC14B1D2B200CACF5E /* topBarItem_Edit.png */; };
 		CD1973EF14B1D4F600CACF5E /* topBarItem_Tools.png in Resources */ = {isa = PBXBuildFile; fileRef = CD1973EE14B1D4F600CACF5E /* topBarItem_Tools.png */; };
+		CD217EAC14D40A7E001AEA41 /* NSString+AppStyle.m in Sources */ = {isa = PBXBuildFile; fileRef = CD217EAB14D40A7E001AEA41 /* NSString+AppStyle.m */; };
 		CD2568C31450D44000A3CCDE /* topBar_BackButton_Normal.png in Resources */ = {isa = PBXBuildFile; fileRef = CD2568C21450D44000A3CCDE /* topBar_BackButton_Normal.png */; };
 		CD2568C71450D5B600A3CCDE /* topBar_ToolButton_Normal.png in Resources */ = {isa = PBXBuildFile; fileRef = CD2568C61450D5B600A3CCDE /* topBar_ToolButton_Normal.png */; };
 		CD2BA05A14CFF65700031E78 /* ACQuickBookmarkBrowserController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD2BA05914CFF65700031E78 /* ACQuickBookmarkBrowserController.m */; };
@@ -357,6 +358,8 @@
 		B7D3BE751431BA3A00BF43EB /* Application.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Application.xcdatamodel; sourceTree = "<group>"; };
 		CD1973EC14B1D2B200CACF5E /* topBarItem_Edit.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = topBarItem_Edit.png; sourceTree = "<group>"; };
 		CD1973EE14B1D4F600CACF5E /* topBarItem_Tools.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = topBarItem_Tools.png; sourceTree = "<group>"; };
+		CD217EAA14D40A7E001AEA41 /* NSString+AppStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+AppStyle.h"; sourceTree = "<group>"; };
+		CD217EAB14D40A7E001AEA41 /* NSString+AppStyle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+AppStyle.m"; sourceTree = "<group>"; };
 		CD2568C21450D44000A3CCDE /* topBar_BackButton_Normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = topBar_BackButton_Normal.png; sourceTree = "<group>"; };
 		CD2568C61450D5B600A3CCDE /* topBar_ToolButton_Normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = topBar_ToolButton_Normal.png; sourceTree = "<group>"; };
 		CD2BA05814CFF65700031E78 /* ACQuickBookmarkBrowserController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACQuickBookmarkBrowserController.h; sourceTree = "<group>"; };
@@ -910,6 +913,8 @@
 				CD7D2B1D13C0D47C00B889EE /* UIFont+AppStyle.m */,
 				CD7D2B1E13C0D47C00B889EE /* UIImage+AppStyle.h */,
 				CD7D2B1F13C0D47C00B889EE /* UIImage+AppStyle.m */,
+				CD217EAA14D40A7E001AEA41 /* NSString+AppStyle.h */,
+				CD217EAB14D40A7E001AEA41 /* NSString+AppStyle.m */,
 				CDE8065E147F949300C94BFD /* ACShapePopoverBackgroundView.h */,
 				CDE8065F147F949300C94BFD /* ACShapePopoverBackgroundView.m */,
 			);
@@ -1403,6 +1408,7 @@
 				CD7B435114CECA5700090CAE /* ACQuickBrowsersContainerController.m in Sources */,
 				CD7B435414CECA9900090CAE /* ACQuickFileBrowserController.m in Sources */,
 				CD2BA05A14CFF65700031E78 /* ACQuickBookmarkBrowserController.m in Sources */,
+				CD217EAC14D40A7E001AEA41 /* NSString+AppStyle.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

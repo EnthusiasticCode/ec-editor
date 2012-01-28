@@ -218,9 +218,7 @@
     
     cell.textLabel.text = [fileURL lastPathComponent];
     cell.textLabelHighlightedCharacters = [self.directoryPresenter hitMaskForFileURL:fileURL];
-    
-    NSString *fileRelativePath = [[fileURL absoluteString] substringFromIndex:[_projectURLAbsoluteString length]];
-    cell.detailTextLabel.text = [fileRelativePath isEqualToString:cell.textLabel.text] ? nil : [fileRelativePath stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    cell.detailTextLabel.text = [[ACProject pathRelativeToProjectsDirectory:fileURL] prettyPath];
     
     return cell;
 }
