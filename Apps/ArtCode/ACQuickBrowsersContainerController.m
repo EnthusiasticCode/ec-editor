@@ -11,6 +11,7 @@
 #import "ACTab.h"
 #import "ACQuickFileBrowserController.h"
 #import "ACQuickBookmarkBrowserController.h"
+#import "ACQuickProjectInfoController.h"
 
 @implementation ACQuickBrowsersContainerController
 
@@ -24,7 +25,7 @@
     [[NSFileManager defaultManager] fileExistsAtPath:[tab.currentURL path] isDirectory:&isDirectory];
     if (isDirectory)
     {
-        [result setViewControllers:[NSArray arrayWithObjects:[ACQuickFileBrowserController new], [ACQuickBookmarkBrowserController new], nil] animated:NO];
+        [result setViewControllers:[NSArray arrayWithObjects: [ACQuickProjectInfoController new],[ACQuickFileBrowserController new], [ACQuickBookmarkBrowserController new], nil] animated:NO];
     }
     else
     {
@@ -35,7 +36,7 @@
 
 #pragma mark - Properties
 
-@synthesize tab, popoverController;
+@synthesize tab, popoverController, openingButton;
 
 - (void)setSelectedViewController:(UIViewController *)selectedViewController
 {
@@ -52,6 +53,18 @@
 }
 
 #pragma mark - View lifecycle
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    [self.openingButton setSelected:YES];
+}
+
+- (void)viewDidDisappear:(BOOL)animated
+{
+    [super viewDidDisappear:animated];
+    [self.openingButton setSelected:NO];
+}
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {

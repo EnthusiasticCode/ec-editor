@@ -24,6 +24,7 @@
 
 #import "ACApplication.h"
 #import "ACTab.h"
+#import "ACProject.h"
 
 @implementation ArtCodeAppDelegate
 
@@ -128,7 +129,7 @@
     ////////////////////////////////////////////////////////////////////////////
     // Resume tabs
     if (![self.application.tabs count])
-        [self.application insertTabAtIndex:0 withInitialURL:[self.application projectsDirectory]];
+        [self.application insertTabAtIndex:0 withInitialURL:[ACProject projectsDirectory]];
     for (ACTab *tab in self.application.tabs)
     {
         ACSingleTabController *singleTabController = [[ACSingleTabController alloc] init];

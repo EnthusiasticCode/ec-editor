@@ -22,8 +22,4 @@
 - (void)moveTabsAtIndexes:(NSIndexSet *)indexes toIndex:(NSUInteger)index;
 - (void)exchangeTabAtIndex:(NSUInteger)fromIndex withTabAtIndex:(NSUInteger)toIndex;
 
-- (NSURL *)projectsDirectory;
-
-- (NSString *)pathRelativeToProjectsDirectory:(NSURL *)fileURL;
-
 @end
